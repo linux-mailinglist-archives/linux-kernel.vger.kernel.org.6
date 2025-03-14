@@ -1,191 +1,130 @@
-Return-Path: <linux-kernel+bounces-560583-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560584-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6273A606CF
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 02:09:10 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AE0CA606D1
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 02:10:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 252723B7F2A
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 01:08:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7EE754600E1
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 01:10:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47A1DCA4E;
-	Fri, 14 Mar 2025 01:09:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF4D2F4ED;
+	Fri, 14 Mar 2025 01:10:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=stgolabs.net header.i=@stgolabs.net header.b="TBuOX2eJ"
-Received: from aye.elm.relay.mailchannels.net (aye.elm.relay.mailchannels.net [23.83.212.6])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eUnwudUF"
+Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com [209.85.219.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2B3A2E3374
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 01:09:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=23.83.212.6
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741914543; cv=pass; b=SUW0dXtn+DgFagJkB68PbTzE2+lTaSuEEUhvDhOV4113EfXPWkKfbsY+fRhfeB390Zp2/UEENf2V9BD8Ibdhsq0WOoROiDi6r0iDSwRT5Nd1jOVQPSVv2AoSF0HKljMxLUG6Qt0tLbwNfxGj2v3pNWjEX6iWTnYKxwrkNuFyKdQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741914543; c=relaxed/simple;
-	bh=Fao4R1jwJFbqu3WPzplKpd7x/xDJM4gRsi2TTGRUsOM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=THw0byf5Vm6AkbExtZj8Y6wxHQaWBACcLm41CcK23IvfZmsptEOgVkL06yu4mhdmU+jReHWAAIZnGBHbNwL2eJtxX+C8xmdBDGF910PeKuQtrL2pfFKYlUmSfGsTAwjpWsET8jzwkEQ9vaVekZR50/cSppxrCFvU1qcofuj0SkA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stgolabs.net; spf=pass smtp.mailfrom=stgolabs.net; dkim=pass (2048-bit key) header.d=stgolabs.net header.i=@stgolabs.net header.b=TBuOX2eJ; arc=pass smtp.client-ip=23.83.212.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stgolabs.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=stgolabs.net
-X-Sender-Id: dreamhost|x-authsender|dave@stgolabs.net
-Received: from relay.mailchannels.net (localhost [127.0.0.1])
-	by relay.mailchannels.net (Postfix) with ESMTP id 17D8E1A3938;
-	Thu, 13 Mar 2025 20:36:15 +0000 (UTC)
-Received: from pdx1-sub0-mail-a233.dreamhost.com (100-115-211-97.trex-nlb.outbound.svc.cluster.local [100.115.211.97])
-	(Authenticated sender: dreamhost)
-	by relay.mailchannels.net (Postfix) with ESMTPA id 38A3B1A3941;
-	Thu, 13 Mar 2025 20:36:14 +0000 (UTC)
-ARC-Seal: i=1; s=arc-2022; d=mailchannels.net; t=1741898174; a=rsa-sha256;
-	cv=none;
-	b=3MnzZjQ15bP//389f5y0HBsyU3jrG4JQzK6un2fw4Y45dmBeNhVeDXRzbh42qxj/j07amX
-	uPjdG3bYF7pZvYn8VlfyKAEMA77oyYFG8QXZI11sVLenYyxLt+WfQZ0If6Ib1P+3K6Adc0
-	wVNmjViqS8Ouv71f7lTAusIcusz0jpQsxQlCLxL2MQ/J6FozKHgNbK9F9euxGVW0uRqIKQ
-	U6cFjxnG/4stEc5LjhL6xT8WLoi9PiDSDBe5lMchZNLhyu6RrKilQqiqzsCweOBINIG/l2
-	hrlCwXw1jk4pdIWG+n0GcbwaZqqE9YYcAtFHfc3p7u74sXl7ri6s7eTrn74ZKA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
- d=mailchannels.net;
-	s=arc-2022; t=1741898174;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references:dkim-signature;
-	bh=lSOcGU+o4GtrQ8wkO5JAJHvBA0325lVIyh7OVoVlQvQ=;
-	b=EOfqE8a988Pkq0Mt2PN9dOUUq0U8A0Bn8uG9VwSn4s6Xfr0FTnvPrqLq2KrGvfPSHQl+Uh
-	obSwDFkTCbtid3h3YnI9rcWasNgppEXqOt4XGQXGr5JNXKBul2mB9kqnM+mqbs/CknKqCa
-	1oY5cKqWrbNaL34hoOvS7uBzwqbi2bU5hQWYMwjfIsdGLApds9OcJ0xdfZaDus1uiKVqXD
-	85jXQW3/6SErbPIIoWURkTVEPV+BxGkzNh7J7TtE1i8h1G2viYsab/LnDx8p2Duok6gw+z
-	L2R3hM2SqQX42WutSA8VbI5KzbVCYSjvJ2QNAHR7X3FZFnqLimuY/yLpIOBLrA==
-ARC-Authentication-Results: i=1;
-	rspamd-7788c767f-xtt84;
-	auth=pass smtp.auth=dreamhost smtp.mailfrom=dave@stgolabs.net
-X-Sender-Id: dreamhost|x-authsender|dave@stgolabs.net
-X-MC-Relay: Neutral
-X-MailChannels-SenderId: dreamhost|x-authsender|dave@stgolabs.net
-X-MailChannels-Auth-Id: dreamhost
-X-Absorbed-Hook: 5ededd4b729628e5_1741898174875_1399200824
-X-MC-Loop-Signature: 1741898174875:2230088077
-X-MC-Ingress-Time: 1741898174875
-Received: from pdx1-sub0-mail-a233.dreamhost.com (pop.dreamhost.com
- [64.90.62.162])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
-	by 100.115.211.97 (trex/7.0.2);
-	Thu, 13 Mar 2025 20:36:14 +0000
-Received: from offworld (unknown [104.36.25.240])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: dave@stgolabs.net)
-	by pdx1-sub0-mail-a233.dreamhost.com (Postfix) with ESMTPSA id 4ZDK5l5W5Zz5x;
-	Thu, 13 Mar 2025 13:36:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=stgolabs.net;
-	s=dreamhost; t=1741898174;
-	bh=lSOcGU+o4GtrQ8wkO5JAJHvBA0325lVIyh7OVoVlQvQ=;
-	h=Date:From:To:Cc:Subject:Content-Type;
-	b=TBuOX2eJ/OwpGeqsZV/j8r91pfBhN8MdDpu/Z83RQT4aww0IcMZOXem8Dauxaft/9
-	 Z3ETKU4UXZ9eYF+9K6FpLD2ck5Md8pOPGyEMpoVcdx2fseY+PG3xAfnLBSdbhoto3+
-	 i2SQyE1jHTSiOv3tpSW16x3Z/EXqPTJQR4OlymWEfI87CDE5hTwClgxfQ1b1NOgugC
-	 g7ZKaDgY8h/R5W7FAp5wAzL87o1Rd0UnpRSGxumX5GAIzfRwoDAwQrDT2vAq55a8Nt
-	 IMODOx5AD72je4tJKfj0c3blJ61w3IPzkuw7oZunIRq3uOvQTBJLg9eqHOXSk60zAn
-	 vFMJWb00QeTPQ==
-Date: Thu, 13 Mar 2025 13:36:07 -0700
-From: Davidlohr Bueso <dave@stgolabs.net>
-To: Bharata B Rao <bharata@amd.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	AneeshKumar.KizhakeVeetil@arm.com, Hasan.Maruf@amd.com,
-	Jonathan.Cameron@huawei.com, Michael.Day@amd.com,
-	akpm@linux-foundation.org, dave.hansen@intel.com, david@redhat.com,
-	feng.tang@intel.com, gourry@gourry.net, hannes@cmpxchg.org,
-	honggyu.kim@sk.com, hughd@google.com, jhubbard@nvidia.com,
-	k.shutemov@gmail.com, kbusch@meta.com, kmanaouil.dev@gmail.com,
-	leesuyeon0506@gmail.com, leillc@google.com, liam.howlett@oracle.com,
-	mgorman@techsingularity.net, mingo@redhat.com, nadav.amit@gmail.com,
-	nphamcs@gmail.com, peterz@infradead.org, raghavendra.kt@amd.com,
-	riel@surriel.com, rientjes@google.com, rppt@kernel.org,
-	shivankg@amd.com, shy828301@gmail.com, sj@kernel.org,
-	vbabka@suse.cz, weixugc@google.com, willy@infradead.org,
-	ying.huang@linux.alibaba.com, ziy@nvidia.com, yuanchu@google.com,
-	hyeonggon.yoo@sk.com
-Subject: Re: [RFC PATCH 2/4] mm: kpromoted: Hot page info collection and
- promotion daemon
-Message-ID: <20250313203607.zod6lssjef37ynbf@offworld>
-Mail-Followup-To: Bharata B Rao <bharata@amd.com>,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	AneeshKumar.KizhakeVeetil@arm.com, Hasan.Maruf@amd.com,
-	Jonathan.Cameron@huawei.com, Michael.Day@amd.com,
-	akpm@linux-foundation.org, dave.hansen@intel.com, david@redhat.com,
-	feng.tang@intel.com, gourry@gourry.net, hannes@cmpxchg.org,
-	honggyu.kim@sk.com, hughd@google.com, jhubbard@nvidia.com,
-	k.shutemov@gmail.com, kbusch@meta.com, kmanaouil.dev@gmail.com,
-	leesuyeon0506@gmail.com, leillc@google.com, liam.howlett@oracle.com,
-	mgorman@techsingularity.net, mingo@redhat.com, nadav.amit@gmail.com,
-	nphamcs@gmail.com, peterz@infradead.org, raghavendra.kt@amd.com,
-	riel@surriel.com, rientjes@google.com, rppt@kernel.org,
-	shivankg@amd.com, shy828301@gmail.com, sj@kernel.org,
-	vbabka@suse.cz, weixugc@google.com, willy@infradead.org,
-	ying.huang@linux.alibaba.com, ziy@nvidia.com, yuanchu@google.com,
-	hyeonggon.yoo@sk.com
-References: <20250306054532.221138-1-bharata@amd.com>
- <20250306054532.221138-3-bharata@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C68D22E3374;
+	Fri, 14 Mar 2025 01:10:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.46
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741914611; cv=none; b=vCZv766VS/K8CigW/YABGiwUANdZw1Za85O2bohxr4dT8rpIhMSIEIQWDReae2uoj4Hy1DY/pxkMzgCRGTgKVdLAtswo5GtQgz7e/AeyZsVWeyNydQ/Ns0Ds7lsl/0qz9SaGT0rXJ45f2s60uilrKD3x7EiDrpVodhatNytfI7E=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741914611; c=relaxed/simple;
+	bh=CabPLOjFSc4Wpz1g5wSRcJa0dQvWkPwfqjYNijt/M3w=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=u7vB6Vi4tqSSVSmvA5g53pSkEXqxWcHIi+iY+6AXh6amng9562YhrQi04nlDBB1be2KZWidj/KtAg4dIT3eLV4Aq5aGq+XmMNeaYtgql8NarsuznHpamXVtWNd1A2uTzjPmJGOgQCjv2T49+Fa1YcVW1ELKcmpMSvjBOPHw18cM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eUnwudUF; arc=none smtp.client-ip=209.85.219.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f46.google.com with SMTP id 6a1803df08f44-6e8a1a92bb3so2746566d6.3;
+        Thu, 13 Mar 2025 18:10:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741914608; x=1742519408; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=hkSnH1tD+VyGeZC4CDJd4I/+pbRt7UbVDuyaiJJ96IA=;
+        b=eUnwudUF7+mDRVWoaxUPXT4b6ibdMma0nvy2j7Pszj9M7zqOj8w7PltqGMiUvQrU/5
+         EoRk8RO2Lh19dog9Wrc44RAhyHI/ZpdZfuVDaWrmIJgbVl0Cbar3dogBsWfgzSwzIJ9c
+         uxUwGmSz/xWQtk4k/CxRbC5ahNCbq7o4Jq1b5stVDutsTu3urKExRFKwvVUW0ErdGsQd
+         VEMGe73iedlJo2kTPGOx+qAwR6+xhuWi8WCWSrBERwlf7NveVETzkvvFjHZ+aItgY0pK
+         z+CttTIDZI616MBAXtZPatFlPFGyHnBcXguiblrnS9L+xE6ubrVRnWNnWTLPVRTl6zoB
+         vTJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741914608; x=1742519408;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hkSnH1tD+VyGeZC4CDJd4I/+pbRt7UbVDuyaiJJ96IA=;
+        b=GwaKeWA3704zCVv8YSwzH2QihYlXf3C16ogikId9rbUHzYiwynJqQ9+RTmg0BHnO3i
+         a4utabwKLSxV4PR1VIX2cu8f1lqNYPPKflsjcKc0ytJdczIfb3k6OhHNrm9EKV+VqRXk
+         u75saOvI6Qd/+KCiz2FoTWAnSABr70qquCTRjDGn+6/tUlq/bW7bMB8CK0Qe+8NHOSth
+         YxEdzmnILAAdlugjxNCUwPEMGWuX+8SWcyPF7lNSGOhTHA+ObMyLAco4VyVMSang/poE
+         qLQf1isBXoUJ0ZtSW73qBKPOv8U6JenPN7mmf2EOlFfDZsQZH9+iEXuGRokGE6dgyTYF
+         T5PA==
+X-Forwarded-Encrypted: i=1; AJvYcCU34acdxA9VButuJ9tsB6gpBDXUWvY/JvdF+3+YTza4kMGYSB9IuNQkR52UE8vmbmWK1ScrmBO2HxDi3TA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy5kGKBBNC1i/Q75wcu9p3ra3moA2jWVxNfKzBxcERni7tuzFRN
+	XRvLR51vP9eZn8wlmzywPdNUu5zi0YwNYW4RBaOgxLIkUqhnFI+u1cO0pfE=
+X-Gm-Gg: ASbGncuFlnXDX67pdH6N1ib1m743eJ3x0FEW/dNssL+4zva8F6minNnSwx6KQTjt9Qk
+	AMp0sXhTLGXCVL/R9UmVOK5obhCUBqxu7YOMCQidfZjnGfa5hHW3cnyEaN+neY1VM8lM/l/MfFq
+	H6PAYbIm7aFQgT2YgTQ2+5z9Yn6Arq91b8chDI9idbeyrRYJpfXt2HcSGIAz8+uBSaP1Zw/lr5u
+	uz8o9KgFR6cha7PoCgBYztgSGL+dAoLG4ITKAWa1BohcKirUhrX7bE1AETov3yf1zu8rOqRw0hi
+	ooT0s+Xmdz3AtqRThMiOHzJdi0Pm7M3fTVnC7cUx2A==
+X-Google-Smtp-Source: AGHT+IFmmZuJNS0zeaQVv7pfgVsxK7bio9LYQnBmmIvV0hbV2M/RWT5yx48Yln8G5HTdRHoKXlcTYQ==
+X-Received: by 2002:a05:6214:e8d:b0:6e6:5cad:5ce8 with SMTP id 6a1803df08f44-6eaeaaa0ca1mr2938166d6.6.1741914608576;
+        Thu, 13 Mar 2025 18:10:08 -0700 (PDT)
+Received: from ise-alpha.. ([2620:0:e00:550a:642:1aff:fee8:511b])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6eade34beb0sm16214436d6.105.2025.03.13.18.10.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Mar 2025 18:10:07 -0700 (PDT)
+From: Chenyuan Yang <chenyuan0y@gmail.com>
+To: robdclark@gmail.com,
+	quic_abhinavk@quicinc.com,
+	dmitry.baryshkov@linaro.org,
+	sean@poorly.run,
+	marijn.suijten@somainline.org,
+	airlied@gmail.com,
+	simona@ffwll.ch
+Cc: linux-arm-msm@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	freedreno@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	Chenyuan Yang <chenyuan0y@gmail.com>
+Subject: [PATCH] drm/msm/dpu: Fix error pointers in dpu_plane_virtual_atomic_check
+Date: Thu, 13 Mar 2025 20:10:04 -0500
+Message-Id: <20250314011004.663804-1-chenyuan0y@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20250306054532.221138-3-bharata@amd.com>
-User-Agent: NeoMutt/20220429
+Content-Transfer-Encoding: 8bit
 
-On Thu, 06 Mar 2025, Bharata B Rao wrote:
+The function dpu_plane_virtual_atomic_check was dereferencing pointers
+returned by drm_atomic_get_plane_state without checking for errors. This
+could lead to undefined behavior if the function returns an error pointer.
 
->+/*
->+ * Go thro' page hotness information and migrate pages if required.
->+ *
->+ * Promoted pages are not longer tracked in the hot list.
->+ * Cold pages are pruned from the list as well.
->+ *
->+ * TODO: Batching could be done
->+ */
->+static void kpromoted_migrate(pg_data_t *pgdat)
->+{
->+	int nid = pgdat->node_id;
->+	struct page_hotness_info *phi;
->+	struct hlist_node *tmp;
->+	int nr_bkts = HASH_SIZE(page_hotness_hash);
->+	int bkt;
->+
->+	for (bkt = 0; bkt < nr_bkts; bkt++) {
->+		mutex_lock(&page_hotness_lock[bkt]);
->+		hlist_for_each_entry_safe(phi, tmp, &page_hotness_hash[bkt], hnode) {
->+			if (phi->hot_node != nid)
->+				continue;
->+
->+			if (page_should_be_promoted(phi)) {
->+				count_vm_event(KPROMOTED_MIG_CANDIDATE);
->+				if (!kpromote_page(phi)) {
->+					count_vm_event(KPROMOTED_MIG_PROMOTED);
->+					hlist_del_init(&phi->hnode);
->+					kfree(phi);
->+				}
->+			} else {
->+				/*
->+				 * Not a suitable page or cold page, stop tracking it.
->+				 * TODO: Identify cold pages and drive demotion?
->+				 */
+This commit adds checks using IS_ERR to ensure that plane_state is
+valid before dereferencing them.
 
-I don't think kpromoted should drive demotion at all. No one is complaining about migrate
-in lieu of discard, and there is also proactive reclaim which users can trigger. All the
-in-kernel problems are wrt promotion. The simpler any of these kthreads are the better.
+Similar to commit da29abe71e16
+("drm/amd/display: Fix error pointers in amdgpu_dm_crtc_mem_type_changed").
 
->+				count_vm_event(KPROMOTED_MIG_DROPPED);
->+				hlist_del_init(&phi->hnode);
->+				kfree(phi);
->+			}
->+		}
->+		mutex_unlock(&page_hotness_lock[bkt]);
->+	}
->+}
+Fixes: 774bcfb73176 ("drm/msm/dpu: add support for virtual planes")
+Signed-off-by: Chenyuan Yang <chenyuan0y@gmail.com>
+---
+ drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c
+index af3e541f60c3..b19193b02ab3 100644
+--- a/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c
++++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c
+@@ -1059,6 +1059,9 @@ static int dpu_plane_virtual_atomic_check(struct drm_plane *plane,
+ 	struct drm_crtc_state *crtc_state;
+ 	int ret;
+ 
++	if (IS_ERR(plane_state))
++		return PTR_ERR(plane_state);
++
+ 	if (plane_state->crtc)
+ 		crtc_state = drm_atomic_get_new_crtc_state(state,
+ 							   plane_state->crtc);
+-- 
+2.34.1
+
 
