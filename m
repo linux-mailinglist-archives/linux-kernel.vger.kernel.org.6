@@ -1,141 +1,133 @@
-Return-Path: <linux-kernel+bounces-561001-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561002-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD436A60C38
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 09:52:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67DE5A60C39
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 09:53:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 366DA189BF46
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 08:52:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D7AE189D7FA
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 08:53:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30D211D86FB;
-	Fri, 14 Mar 2025 08:52:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 188321DA61D;
+	Fri, 14 Mar 2025 08:52:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R2DvmWPC"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="bexpi/8k"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E445DCA4E;
-	Fri, 14 Mar 2025 08:52:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E0E31DC988
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 08:52:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741942363; cv=none; b=t2ix0uUGjkWgDe2tJ4/5950qAd22KBOMZ6cthNq6PaMkGNFWSuUPuIZL2Ru9O7GLsDOTy9+Jdyjkpwxt16ht710zc4/SFqY3gN+3dR70xzG4fTG7zpUmPM5U+8gxGqPZ6iNM1r0jOedByU8ClBiEXjPUKbbjBiooQa+xXPk1AAM=
+	t=1741942369; cv=none; b=uLhQwV4tk4foI8TpK0JVv0gFxmGnYdUSVATrLVY+Eqj0Nf6fd8sZ2JAODonVJwh8afSqezm313vIGdpNPCY6aEhNUWMSmH6x93bMp5HMbsM1gOgcrCznAkP0M05Gpz0AQ3N2wdM6RG5CDwO7m3piE6hDpXqe39XyT4e3zljANdo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741942363; c=relaxed/simple;
-	bh=BoHoSEa4NsvV+dy2oB/wLr382g4IYcDMe9yZEQ2mwzA=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=lpxsApE/X1KUP6yeccESfzfjQopou/pijbVRwBWMPv+ZBNrLpM7MVobvauA3csTysE5CXXUs/uujGL623kv1l0JpEdhZdIGc/6tuwIb9Wg9DMgT3c29UKzRqeRi4GYPEDIHJjzpgucPVSt6BDG5X/oDZTnWR8xSrDTNFw3kJhJg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R2DvmWPC; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-54998f865b8so1651541e87.3;
-        Fri, 14 Mar 2025 01:52:41 -0700 (PDT)
+	s=arc-20240116; t=1741942369; c=relaxed/simple;
+	bh=U8UC2gIF9o0Nhc2v+e6c4HQdMiDf0IJmkSCRALHlx+o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rNjVLlg7FO49zGINSerb3/uqGGlNZS1lhrPrYFoL9I8UTDglc80WYAssWUc3y8c7BgmHksctlGpn7scxApx8W++hcBExzuHwqlG/T4p0WWDmxhRvARZceO2Z/x2oozM+Pk+PzL8rHuAhKZ/+2JT6g/P66Gr4S3UePAgPlQo73IU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=bexpi/8k; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-ab78e6edb99so275653566b.2
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 01:52:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741942360; x=1742547160; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=1TwkDJjW8tq5GKG2ABeakRbHyDFs82RN+GuIFGclwB0=;
-        b=R2DvmWPCYZnGZx/3R52Gmk98l2sAC0hVpJuMEwEwx6vGRC9pX7oeHwmsuPMGsGxd2r
-         UM9xI61eZU9BLBLM4WzV+f08IEtPt5gGC6/042k1dYYnARl3iamKHZgFrOzWCPjMgEoJ
-         ECsnIXUBgKo2zGTIRnEp/JpGjfRcC0Xn5Lz//MpIxUxRuMT/42RSQPWZUbnTuL52J0jn
-         oFKlspbBIR7DWuiH2mJMnZx2obLQqRvai/i4qqt8iHTV/1owJHXzvQvLyHhInPmvf1ra
-         M6lim4kP5xBBYJCI4GwF+2tgjntUA6W645YCseXZ8KpXOsJP4+XmBwgVCCzeN7sAwyS4
-         HNGQ==
+        d=suse.com; s=google; t=1741942366; x=1742547166; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=NHaG7FKCn55Pj7bQEh0xrrto1Kn/+ohEIM1jtxueJMM=;
+        b=bexpi/8kpqJT50f7AnQtkEduQQhQ9pl9lQvQTldEW4V8YR4nSxlTd5p+GrAyfGusiE
+         lWzaweOQ+/rg1SGxhcGwWuaTMwfYaiBBciPzKX4rywhuXow8YEIRx9P3N+9K7+rRN6+Z
+         kIQnWKEQBRL8i9JfX1FMTBTPuSw9vEyja32/K9b+2wAofwqgJaZ6HYbmQnwKcgK4uKQY
+         QeB2xrNGH1qG2ytyQ7sxRR6UcAHXeryQGyn0Qs3uQEarIsPbbKIskTceeOAnsaBuQ5PC
+         8MN2PG2X+HR/SbakMnl3xrXMSnxLmZ/s7B8vAztLDJCuUAHLClELmUc6czwpYBcmXZSB
+         Wj2w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741942360; x=1742547160;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1TwkDJjW8tq5GKG2ABeakRbHyDFs82RN+GuIFGclwB0=;
-        b=jDQaS+YKekEiFk6EWomr6XZmy8N46U1n7HIYnhuPtSGeDIR4umXgUlTnRWM/W92PtB
-         J45beDRYEK3L5hjYAEZz8l2tSG8FHLxrtgffNH3p5uvZ3L9nV0u3DDauBoDz4tveheLE
-         wYe/xpOK+v9wt+VFmsb/RdBLo/ioRVaBbVQ2Lwp1+KXwMg1vAxpQ3KF4XoTqkRBQSXLw
-         oflsvb+HJpnYjKDtbaON5DLhAKfFVQ2wMsUJxVvqyNz2SbmxIIadwe7qookX3tqp3GCs
-         yc3UJq+5lSdjJrXL6IuHXLdc/gnEjewKnJDkTf33WA5aOCW+gx9xfQ+7lnxqrRXVF0t2
-         5Ldg==
-X-Forwarded-Encrypted: i=1; AJvYcCUzRjNis58J4+JrCfXXntF0WpQnGD/Mu7LnHAKVMB/TRkvO/atfRWuQtSst4Hornuh/of9bhM1qqAk=@vger.kernel.org, AJvYcCV544IRIbKQluU+NM9zDLHbLTrzsQnl2jfZsBMPidS1O8ZijMB3o9SJtDJfcgca3UH5cR2q23NkBhzecWZE@vger.kernel.org
-X-Gm-Message-State: AOJu0YzDByqzz4fJo6lwzZ66gx3pryGYmEye+52zpCN73lXI/IdnI3aK
-	Ty5NZOBwYnjIpFF0tb1+26ow+jJk+JoH8kVtrIsvfQ+36EMmnnvH
-X-Gm-Gg: ASbGncvU0wLgRLrd63/YF53zYoeWFeS5UclS1qNh+chIq95LkkNeRgjP2QPFwR1MVr/
-	46WMSVNgsCPAmbEl2ipgQW6Hx4APiVbtDX8WnBF4NuAoP7DYEGitHYKSHLEuexYDSzrgTd8hxJq
-	Unq1LLc2cT5gECP+KO7VnqoBY/V9/zxOLrrBqmTlaoZpaUQyHRyuoXghVft+jTCP+tXrBxhZmVH
-	w4SrTntnnyGZJqOcXdsQlcS5m5AAC9vOKT0T3enWxQiiB40q9HmAx2qJLj1qGhpb2iawRVTwUwb
-	DJs2wuFT11+yRLvRzmSIF4jbUGq4u/MqwmcIZzKsabj4NNONC3sQoqnJ3QE/dLkNaCbydpiu4Wj
-	E+UECM24RPPpNjbv2WlTDzDv+1A==
-X-Google-Smtp-Source: AGHT+IFJxG9OcgZxwn1QoOztfmdw2MN3atHuJTqJa5ztoqK8h4tNerCOSGqG3rOb5xNECd1Z3BEUkg==
-X-Received: by 2002:a05:6512:3c8a:b0:545:5d:a5ea with SMTP id 2adb3069b0e04-549c38eaca6mr560643e87.3.1741942359678;
-        Fri, 14 Mar 2025 01:52:39 -0700 (PDT)
-Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-549ba8a9350sm453323e87.243.2025.03.14.01.52.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 14 Mar 2025 01:52:37 -0700 (PDT)
-Message-ID: <8de67803-e89d-42dc-ab4d-e4549819432c@gmail.com>
-Date: Fri, 14 Mar 2025 10:52:36 +0200
+        d=1e100.net; s=20230601; t=1741942366; x=1742547166;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NHaG7FKCn55Pj7bQEh0xrrto1Kn/+ohEIM1jtxueJMM=;
+        b=lqDCwNlICzSenh0DUGsd5ykp/i1+UHIRst20kVek/KKwS1HbYXyLsfjjPa6YiemJUW
+         zUbOnsv+z3cZo/5Os4Gz0vQuOpZdwqvxd9QBHEDkj8LHXZ+q7T5JITfN7DLII7JxkSdu
+         ByV5caURsV0Uog75wrYcOgEM9L+K3WgKTAIm/YR3MT/e5Y0HbhoTqi0C+UtkrNAY3CId
+         0cAXVMIvNyNn4v8WJigA7MkMltyylcXMF2gBVZ6h3Y/xNUSzMInMrhBdZVxp1xvnVqyi
+         CzphOvXulsmbP57jlPf15dsCvuBTRp49yfFf9znbvgF5yUvv7gBMbjGjKGgtFWfmuWLu
+         eJUw==
+X-Forwarded-Encrypted: i=1; AJvYcCWchzd282ZwXsdm17HnjczLt329JZ5B97XIBg/Dd8xtPWRIoZrCi8NZ4gkQbcY/wd39i4dc7LxQ7FvYVvo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzrCxKEMYb0RlBX0rTI6LBBIW09TZ27zAeIXlIp/BygiPsBr4B6
+	1EEYsBUkP0yQKlpBRobi267aPtly9utkLLgJkjp523d2ccyu0ABMQnKNfrgjM/I=
+X-Gm-Gg: ASbGncuOxRhLA3mbbmN744EJ4VUX/lGfk1/yrudLsGbNBiLzEMSNkP4tQ/PkhG5v0cF
+	igTkgKOk8RmYhDFfcgqJ4iiSv8H676ZViYDjYZnc0Phnd8LfCQvv3mtBDWVaUsL0CbJCombUCXM
+	S4cDr7hUIv92nB2Cp5V9doEoLtlM6HLlA282sLMwWhZESQm3rP0vgeclwzA/3j9vxZMbP0ysAAK
+	1CyP70cwa/PMmznw7oKyYBONJQhj0J6zQR+89zYjBrsEhEg8psIHZvw5/rxP0wavGIi9a8FC+UT
+	oYzUTIXbxTLyk+PG3z36fF2NeKlvVYFrViwVm1m4DFM82ZUkoSEnAnFv8A==
+X-Google-Smtp-Source: AGHT+IG6EIx9d8PTfLAdazXSoMvFJDIVIJlOXLltf+Qc1+aS7cgJMHAxVIqlJ9pMPC+fuwn0HD0EeA==
+X-Received: by 2002:a17:907:805:b0:abf:6db5:c9a9 with SMTP id a640c23a62f3a-ac330441fc0mr185944366b.39.1741942365632;
+        Fri, 14 Mar 2025 01:52:45 -0700 (PDT)
+Received: from localhost (109-81-85-167.rct.o2.cz. [109.81.85.167])
+        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-ac314a9db94sm198560466b.171.2025.03.14.01.52.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Mar 2025 01:52:45 -0700 (PDT)
+Date: Fri, 14 Mar 2025 09:52:44 +0100
+From: Michal Hocko <mhocko@suse.com>
+To: Zhongkun He <hezhongkun.hzk@bytedance.com>
+Cc: akpm@linux-foundation.org, hannes@cmpxchg.org, muchun.song@linux.dev,
+	yosry.ahmed@linux.dev, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V2] mm: vmscan: skip the file folios in proactive reclaim
+ if swappiness is MAX
+Message-ID: <Z9PuXMlHycL6Gco0@tiehlicka>
+References: <20250314033350.1156370-1-hezhongkun.hzk@bytedance.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 06/10] iio: adc: Support ROHM BD79124 ADC
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
- Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
- Nuno Sa <nuno.sa@analog.com>, David Lechner <dlechner@baylibre.com>,
- Javier Carrasco <javier.carrasco.cruz@gmail.com>,
- Olivier Moysan <olivier.moysan@foss.st.com>,
- Guillaume Stols <gstols@baylibre.com>,
- Dumitru Ceclan <mitrutzceclan@gmail.com>,
- Trevor Gamblin <tgamblin@baylibre.com>,
- Matteo Martelli <matteomartelli3@gmail.com>,
- Alisa-Dariana Roman <alisadariana@gmail.com>,
- =?UTF-8?Q?Jo=C3=A3o_Paulo_Gon=C3=A7alves?= <joao.goncalves@toradex.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org
-References: <cover.1741849323.git.mazziesaccount@gmail.com>
- <b6c02a5d75a20bbbf8c3370ccee615d269620117.1741849323.git.mazziesaccount@gmail.com>
- <Z9LbT1BvPEIp7U2N@smile.fi.intel.com>
- <bb403ddb-5c6f-4286-8d80-3ede40f94dc2@gmail.com>
-Content-Language: en-US, en-AU, en-GB, en-BW
-In-Reply-To: <bb403ddb-5c6f-4286-8d80-3ede40f94dc2@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250314033350.1156370-1-hezhongkun.hzk@bytedance.com>
 
-On 14/03/2025 09:31, Matti Vaittinen wrote:
-> On 13/03/2025 15:19, Andy Shevchenko wrote:
->> On Thu, Mar 13, 2025 at 09:19:03AM +0200, Matti Vaittinen wrote:
-
->>> +static int bd79124_chan_init(struct bd79124_data *data, int channel)
->>> +{
->>> +    int ret;
->>> +
->>> +    ret = regmap_write(data->map, 
->>> BD79124_GET_HIGH_LIMIT_REG(channel), 4095);
->>
->> BD79124_HIGH_LIMIT_MAX ?
->>
->>> +    if (ret)
->>> +        return ret;
->>> +
->>> +    return regmap_write(data->map, 
->>> BD79124_GET_LOW_LIMIT_REG(channel), 0);
->>
->> BD79124_HIGH_LIMIT_MIN ?
+On Fri 14-03-25 11:33:50, Zhongkun He wrote:
+> With this patch 'commit <68cd9050d871> ("mm: add swappiness= arg to
+> memory.reclaim")', we can submit an additional swappiness=<val> argument
+> to memory.reclaim. It is very useful because we can dynamically adjust
+> the reclamation ratio based on the anonymous folios and file folios of
+> each cgroup. For example,when swappiness is set to 0, we only reclaim
+> from file folios.
 > 
-> I think I originally had these defines but I was probably asked to drop 
-> the defines and use raw values instead.
+> However,we have also encountered a new issue: when swappiness is set to
+> the MAX_SWAPPINESS, it may still only reclaim file folios. This is due
+> to the knob of cache_trim_mode, which depends solely on the ratio of
+> inactive folios, regardless of whether there are a large number of cold
+> folios in anonymous folio list.
+> 
+> So, we hope to add a new control logic where proactive memory reclaim only
+> reclaims from anonymous folios when swappiness is set to MAX_SWAPPINESS.
+> For example, something like this:
+> 
+> echo "2M swappiness=200" > /sys/fs/cgroup/memory.reclaim
+> 
+> will perform reclaim on the rootcg with a swappiness setting of 200 (max
+> swappiness) regardless of the file folios. Users have a more comprehensive
+> view of the application's memory distribution because there are many
+> metrics available. For example, if we find that a certain cgroup has a
+> large number of inactive anon folios, we can reclaim only those and skip
+> file folios, because with the zram/zswap, the IO tradeoff that
+> cache_trim_mode is making doesn't hold - file refaults will cause IO,
+> whereas anon decompression will not.
+> 
+> With this patch, the swappiness argument of memory.reclaim has a more
+> precise semantics: 0 means reclaiming only from file pages, while 200
+> means reclaiming just from anonymous pages.
 
-Please ignore my reply here! It seems I still have the defines in other 
-places of the code so they haven't been dropped after all. I'll replace 
-the raw values as you suggested.
+Haven't you said you will try a slightly different approach and always
+bypass LRU balancing heuristics for pro-active reclaim and swappiness
+provided? What has happened with that?
 
-Thanks.
-
-Yours,
-	-- Matti
+-- 
+Michal Hocko
+SUSE Labs
 
