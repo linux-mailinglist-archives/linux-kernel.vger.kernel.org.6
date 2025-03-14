@@ -1,52 +1,52 @@
-Return-Path: <linux-kernel+bounces-561944-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561946-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 352BBA61900
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 19:05:05 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12C13A61903
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 19:05:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2741A1B6434D
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 18:05:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2997416B586
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 18:05:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A725C2E3389;
-	Fri, 14 Mar 2025 18:04:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AE48204098;
+	Fri, 14 Mar 2025 18:05:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nYPb+g6H"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gzeTk1PC"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C70D1FF615;
-	Fri, 14 Mar 2025 18:04:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DFA91FDA76;
+	Fri, 14 Mar 2025 18:05:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741975498; cv=none; b=AhVHShX1i+tvR/QkhYhKEC7NttLrdSXfAXdpDICMMlwdAxEHulqnsCP/xdOkfeE6esMBt9D9CaOML/EPp8lqVCTLgXEwDW9o4M745XA+Bs51msDbCnbqTGEUqXmsOMjOCip/fNuqmdlNuz3ecuUP6D4jT2PJl+BN5riuAOdYH+g=
+	t=1741975533; cv=none; b=cvDyiKVU7OWYRhPaXOYg45FkNs7NiQ23fuHA6XxLyemli2jSQnAk8OwAzkkXyCE/7IdEvctCFcT9bJWBF1Kn5zJwSgx0xGCcce+p/icRMULy95HgeSxPJbpgyrgyoiTF8ealXbhPeoeqpdFrKS/alv9IScHrHf4fvdGdpnufCXY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741975498; c=relaxed/simple;
-	bh=LHJM4OU3kl+/G82P3FTZUg4E77KcnwgPswr6Flbh2rM=;
-	h=Message-ID:Date:From:To:Subject:In-Reply-To:References:Cc; b=OWC0h1VUGlRX7M2C5o/C+Arkb8owquuWioPh5CnQT0HDG4jOCdJ6z07ZaceJFPLPSil49YyWahSIhNvlHikMs3zYyazFywQ8+LhS4HORBkfDKVI6cmrBNR05mHeUsIMGoB7QLE84GT0PPAzun8MuuAFe4CXvUT5MnLm+UGel0vk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nYPb+g6H; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D258BC4CEE5;
-	Fri, 14 Mar 2025 18:04:56 +0000 (UTC)
+	s=arc-20240116; t=1741975533; c=relaxed/simple;
+	bh=lhEsW5DulyDSp0JArffKcqrIScwbmbvbf0ZjrL1HpS8=;
+	h=Message-ID:Date:From:To:Subject:In-Reply-To:References:Cc; b=RYrlm+SdugSGWHPUg8eOpRRetGvEFYzst9X/QuFuZL49YCriSffeXCoerDeI/HSU5EUmaPA7BLchXwrJZRH8NPUGfsk7wsV9MctlZDYmZG6aNOTT7WMZIUFeIuP1yJat3gB/yJsMqPPU0esF1d0b0WkOiPpCNY6dYQt8Tfgumqo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gzeTk1PC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50BDFC4CEE3;
+	Fri, 14 Mar 2025 18:05:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741975497;
-	bh=LHJM4OU3kl+/G82P3FTZUg4E77KcnwgPswr6Flbh2rM=;
+	s=k20201202; t=1741975532;
+	bh=lhEsW5DulyDSp0JArffKcqrIScwbmbvbf0ZjrL1HpS8=;
 	h=Date:From:To:Subject:In-Reply-To:References:Cc:From;
-	b=nYPb+g6H7LYrbum7aeROxiYnk8fie4nu5F72GWC6DsqJdMDyU3nPz9+7gWsXus3ee
-	 MeQy+KYrAW4fvRe6QGQZwzQivZeF4GHmXZD7xliFgBFa97c18NhkYGfWvfqCvogNrY
-	 iD+m2/Yb8ki4IbQWPiMKW1GqFp5YRXdlUWbUwsOwmfUs5VL7uKutAJsCEvuFjSMpB/
-	 evvxcBfpCZrvdviy1gsOn/h0ldaiEtEl5qUYIM59+RbhL8E1RUtdub+IP8mQ+Id58r
-	 4MRlBQb6/tmg8O8NMwrAtg1yM1d6mSNKRB8ljvt2dJqhLd4YMAwk5EB1kjNLdjq2Sr
-	 0bRogUFvyBX1w==
-Message-ID: <4199151804db21307707fc7e023d10d7@kernel.org>
-Date: Fri, 14 Mar 2025 18:04:54 +0000
+	b=gzeTk1PCeOr6rPGhDbklSh+BDQerfNde0ttF/29dB0QzvQXCnn998ZRW02qHJTf5C
+	 2Dp5kPrBi+P7sNsz1LWOzMKJNWEBvTt1JGAnqdFqujlhDf1a4C1VUDWCK7y8UZuh5g
+	 V2CCeB04bQlWY69deQ1X+2heBphAGne3remu2rcmLCfDuoGvqy+4uUvkj5DYqNuGw6
+	 oUqnDOTKy6xlvV1VM8WTTJpZP0I+uOsEbzK343Y0y0j6+4JJiTxFazz1fWIwjQA93b
+	 /yBSGrPOXHFnIuESpBNdwRDh9o7Ds3tyG5Ofc7yXqHzWHtNqmGSfP6S0H6Ez3mAgcd
+	 SYJyZ0Bdw7npQ==
+Message-ID: <50d94c0223e60881c014bddd55382692@kernel.org>
+Date: Fri, 14 Mar 2025 18:05:30 +0000
 From: "Maxime Ripard" <mripard@kernel.org>
 To: "Luca Ceresoli" <luca.ceresoli@bootlin.com>
-Subject: Re: [PATCH v7 03/11] drm/bridge: get/put the bridge reference in
- drm_bridge_add/remove()
-In-Reply-To: <20250314-drm-bridge-refcount-v7-3-152571f8c694@bootlin.com>
-References: <20250314-drm-bridge-refcount-v7-3-152571f8c694@bootlin.com>
+Subject: Re: [PATCH v7 04/11] drm/bridge: get/put the bridge reference in
+ drm_bridge_attach/detach()
+In-Reply-To: <20250314-drm-bridge-refcount-v7-4-152571f8c694@bootlin.com>
+References: <20250314-drm-bridge-refcount-v7-4-152571f8c694@bootlin.com>
 Cc: dri-devel@lists.freedesktop.org, imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, "Andrzej
  Hajda" <andrzej.hajda@intel.com>, "Anusha Srivatsa" <asrivats@redhat.com>, "David
  Airlie" <airlied@gmail.com>, "Dmitry Baryshkov" <lumag@kernel.org>, "Fabio
@@ -68,9 +68,9 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 
-On Fri, 14 Mar 2025 11:31:16 +0100, Luca Ceresoli wrote:
-> drm_bridge_add() adds the bridge to the global bridge_list, so take a
-> reference for that. Vice versa in drm_bridge_remove().
+On Fri, 14 Mar 2025 11:31:17 +0100, Luca Ceresoli wrote:
+> drm_bridge_attach() adds the bridge to the encoder chain, so take a
+> reference for that. Vice versa in drm_bridge_detach().
 > 
 > Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
 > 
