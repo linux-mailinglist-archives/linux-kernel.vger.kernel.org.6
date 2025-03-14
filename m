@@ -1,191 +1,234 @@
-Return-Path: <linux-kernel+bounces-561865-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561866-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6794A6179E
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 18:29:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CDA7A617A1
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 18:29:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0AB03885158
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 17:28:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9BD82885452
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 17:29:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32EFE20485F;
-	Fri, 14 Mar 2025 17:28:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EE5A204C1D;
+	Fri, 14 Mar 2025 17:28:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y+mVsdSe"
-Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
+	dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b="egqEOekc"
+Received: from mail.tuxedocomputers.com (mail.tuxedocomputers.com [157.90.84.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A145204694;
-	Fri, 14 Mar 2025 17:28:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33CA6204863;
+	Fri, 14 Mar 2025 17:28:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=157.90.84.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741973298; cv=none; b=sLZvrf0osTrAup9J+itHTl4vA4mRYZMggpygYm6Et2RupKqptvVm8vgWyds8v/giHhT2FojcK+Uhmn/eFEZVNSzA25WdPMGMJENGrxf2xLFiGKmw4IOLFspG3XmNxAsYCwMf/Q5aAICkjxyzYW5NZAkj5/7RnYEAqZ1WiX9QQUM=
+	t=1741973303; cv=none; b=NC1odMtpmCRqdSVb6n986s598TDBZbWQ5Y/Nxct3xnKAXILU8E/vkWBuXKuS/046wwmfRjHIWzbPxxJO3+s9KracDNiHHg0Kz1f/gA5cMRzSgvvLOLuenp0tJQGlal/D78zWEyaTBiou6pjYrK88jnq+ssznFfnw6tyDxZJHBbo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741973298; c=relaxed/simple;
-	bh=mRc6Qzp+fDySnwvcYJlAcal8yjcDJzBh4K2OKc81DgM=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PTIeFkaVq+ltlVRQF3e3zSyw3BDaBFQyPvPz8s0w4Sr1yCD6BtXE9qY9G4+diRoc/+skcDnqGZe1vxhzBDhLfIaCjlGE7/6rpz1HTlKsqGfbidQT7LpC7eVawPUd4HhsYTDZ83hAT9HtfE0im1LQFqGWUR/aGTkZi7XnLw+xC1Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y+mVsdSe; arc=none smtp.client-ip=209.85.160.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-4767e969b94so36910151cf.2;
-        Fri, 14 Mar 2025 10:28:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741973294; x=1742578094; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:feedback-id:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KJghd27vPBEu/LGbRtV6LiK050yXADXaFFga3GAq6fg=;
-        b=Y+mVsdSeMacyBLhsWHNekr21R4AqDWskzSPb9c+YnmYW/4EEdZ8t0dBm0N4zPFQQXC
-         NDpQWjxoDR82PW+SWormp7+d0N2BIgONMJzs2Z4+ENfmrxuB3bRTdsSU+XMD9DJTNRxQ
-         2WZFadrb/wkGMFIh2EMkLcUY63yKNfIt0x4gS6Y6pQLpYZ/Jtzrl4jTAdOzQHeXP2ecG
-         YDVshHlMhAxt18rJrMGEg6vbb7/804sP8HJD3Un30f8a+xMLpW8tNdg+6nSMIT02X0MU
-         CoCaTJJaslRAXatJabKcoZ0H/CKekIJL0xbC2twyClJkceXWD7Z61/pL1jGsKsGdJA37
-         aGoQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741973294; x=1742578094;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:feedback-id:message-id:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KJghd27vPBEu/LGbRtV6LiK050yXADXaFFga3GAq6fg=;
-        b=ONazWLH7+ukpOTCnCnPjONw9UkFT0j3lK3BQF797HkbcACkCnfNQvu2FN7svGS1FrJ
-         /KHYWwiNCJHmEiA14FmigzOHeNy2rFLUV9aQWKx1xHaqzAHhhVC1lge7ltp8dpz5kNvT
-         /1qgsomOwlAqxx5fmAL4/ttDcihAqXhF1ay4RC+7r20efk+oJ4y+nluJdSfrw4lJZPCo
-         /AwGqOSrVpMP9YvuW0PIqKBowpFfhHwvnx3acsHycIHgQ6ljPHpnwaAzfWQjFbzJszHl
-         7rtJS25sipA2cGZQsnQYryVN532tTxXOUTf5KnivaF4N6fU3xQB01iFa4krAee1ApVoE
-         CZgA==
-X-Forwarded-Encrypted: i=1; AJvYcCUv4X+7wuEMDuqKEEul4hbaYrFZtD2IQv8pBXKlIFbF4GszuEb6f1VE6KCrwwoGKBXLNXwuSbPhp+5ABJE=@vger.kernel.org, AJvYcCV49PDrHCJbDz9GM+mP2LwoNCoINmJub+E8n/f2cE24d1IByYe/8C1EpmEYCHesj6G/H5U2YDs493T1ki98OCQ=@vger.kernel.org, AJvYcCVshgStkbiPQypWRFrz1PuYtUQEdqGhkuqK0KokElVyYGhkHc20dHez1vlw0Ys9SzC7TvHL2i82v8xx@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZb7IxrU27cNcbKhjPyM1NWBZ5UixIzDoLEnsBzQrcRz3tHhb+
-	EG7i8Dl6DcqSczQWQAEPXuPogTGTc7Sejcd263Ld6N58fnXFLiI/
-X-Gm-Gg: ASbGncvT93Z83lTFzwc1uloXOQ5pqjH7uZhT3wVhZNJb4Y+b1yTHAh9Ai3ZYKXVJxab
-	ZOSLgbZDCB7UtoSvQDfL2dFJnAoa+95mvcN63eRpD4NcO41B1jhNTEBe0qUCWYBwCw2e8XZ5oQn
-	VihmdMoILht44hUeX4rnyFNoTaPNLPIxx8+tVDAoSe2lIVhs6StaIMDapNIi1RitsaACivbbS+q
-	aiPPiJFMZxuWY4OHntZKQBXfGFOwtNcIOygF663HQgxHczNUJmlEtyp0Cy0jTMaddWl11jvjqMf
-	lCi2EBiyBsqDc8u1ZrtPm4OaBOlNmJzTx1L+DVo6Y4rdiEp8ia3iocgOmtLeXKXzc81fcjga8GT
-	D9+jBPL1fN7+Z6Se2uKK3xgLI8J1hm82F/0g=
-X-Google-Smtp-Source: AGHT+IFYWh9NNAwSznb00n2bz+DizWEr9n7C6oGg7LjQgfQkMSaO5pJuBPli7Iv5c8DcDoF88oq7Rg==
-X-Received: by 2002:a05:622a:180d:b0:476:6215:eaf7 with SMTP id d75a77b69052e-476c813f762mr51629721cf.19.1741973294000;
-        Fri, 14 Mar 2025 10:28:14 -0700 (PDT)
-Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-476bb63cb1csm25507461cf.19.2025.03.14.10.28.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Mar 2025 10:28:13 -0700 (PDT)
-Message-ID: <67d4672d.c80a0220.68408.902a@mx.google.com>
-X-Google-Original-Message-ID: <Z9RnKWBz92zhhAUc@winterfell.>
-Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 03E18120007F;
-	Fri, 14 Mar 2025 13:28:13 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-09.internal (MEProxy); Fri, 14 Mar 2025 13:28:13 -0400
-X-ME-Sender: <xms:LGfUZ3JSA28Qxtl7xetqlKDJhjjl6PMMIOGMkPEkIai3uM7cQjslKA>
-    <xme:LGfUZ7KiimWhf9Br8rB0f8oLFStG7KPOhURRCVFwUFnxoJzn3XZWixoYBcUMIQEAI
-    _hYkxfw626mRD-bTQ>
-X-ME-Received: <xmr:LGfUZ_uJqxn_PdhwEwlCyW1g9i2aCtfjpi_dc6yF34Yfa_thOGQniwDwyA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddufedugedvucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddt
-    vdenucfhrhhomhepuehoqhhunhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrih
-    hlrdgtohhmqeenucggtffrrghtthgvrhhnpefhtedvgfdtueekvdekieetieetjeeihedv
-    teehuddujedvkedtkeefgedvvdehtdenucffohhmrghinhepkhgvrhhnvghlrdhorhhgne
-    cuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsghoqhhu
-    nhdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqieelvdeghedtieegqdduje
-    ejkeehheehvddqsghoqhhunhdrfhgvnhhgpeepghhmrghilhdrtghomhesfhhigihmvgdr
-    nhgrmhgvpdhnsggprhgtphhtthhopeduiedpmhhouggvpehsmhhtphhouhhtpdhrtghpth
-    htohepuggrkhhrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehgrhgvghhkhheslhhi
-    nhhugihfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopehrrghfrggvlheskhgvrh
-    hnvghlrdhorhhgpdhrtghpthhtohepsghhvghlghgrrghssehgohhoghhlvgdrtghomhdp
-    rhgtphhtthhopehojhgvuggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegrlhgvgi
-    drghgrhihnohhrsehgmhgrihhlrdgtohhmpdhrtghpthhtohepghgrrhihsehgrghrhihg
-    uhhordhnvghtpdhrtghpthhtohepsghjohhrnhefpghghhesphhrohhtohhnmhgrihhlrd
-    gtohhmpdhrtghpthhtohepsggvnhhnohdrlhhoshhsihhnsehprhhothhonhdrmhgv
-X-ME-Proxy: <xmx:LGfUZwauSC5jiRC3mPD-sOuRoIfdLg7bgzSsyL9IVgIEpnUHNIxdxQ>
-    <xmx:LGfUZ-ZAF99Zrt_TgZFrXaeZzMki3pZ9naa2fQ8rKBofBajlnG2jDQ>
-    <xmx:LGfUZ0DiI6pz7GVQFQiJv8-HSnoh-5tMf6P4CKYeDDHbJMa7Ky-3jg>
-    <xmx:LGfUZ8ZmKjTZAA2robFGRsly6-MJoJ7IJvY8t2FEvXQG8WAcEUV7dA>
-    <xmx:LGfUZypznMllDmytb7hJL-pn2gjxQNSYoPy2SwmjU66xUGeUN3QoIzWW>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 14 Mar 2025 13:28:12 -0400 (EDT)
-Date: Fri, 14 Mar 2025 10:28:09 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: gregkh@linuxfoundation.org, rafael@kernel.org, bhelgaas@google.com,
-	ojeda@kernel.org, alex.gaynor@gmail.com, gary@garyguo.net,
-	bjorn3_gh@protonmail.com, benno.lossin@proton.me,
-	a.hindborg@kernel.org, aliceryhl@google.com, tmgross@umich.edu,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH v2 0/4] Improve soundness of bus device abstractions
-References: <20250314160932.100165-1-dakr@kernel.org>
+	s=arc-20240116; t=1741973303; c=relaxed/simple;
+	bh=KHgcPjnVOoijG9c/+h5zNbYKSPXH2dyw501fzPENB8Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=keKdelxgm8m+iL8DTNMSu6i20RYihwto+lb7BL8QcU/rAK5bzSotcq7dUbugPRek0fKQlYSJLotO88BIuwAilOXHPEyQcw8g6ECQBu8xhaoIrzABP/zYmOo+01ol7B9/M6qtuFM2LemJcGhyIZdw5sx7M5unBGN24GjdDayAdZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com; spf=pass smtp.mailfrom=tuxedocomputers.com; dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b=egqEOekc; arc=none smtp.client-ip=157.90.84.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxedocomputers.com
+Received: from [192.168.42.116] (p5b164989.dip0.t-ipconnect.de [91.22.73.137])
+	(Authenticated sender: wse@tuxedocomputers.com)
+	by mail.tuxedocomputers.com (Postfix) with ESMTPSA id 738322FC0186;
+	Fri, 14 Mar 2025 18:28:16 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tuxedocomputers.com;
+	s=default; t=1741973296;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9f8SrtAYLDdPkvh4yYPQ0CsmuisQdBIm3f9X5+S3QdE=;
+	b=egqEOekcf+kkiZHOmxGCkGYXbv9H6dMxnWRpdNvY7BreBwUcMgeby14SwsWDMQs0wDSt+1
+	E4jiHtq7DQSkDMCF1XTSVsCC405BHdEQE9Jt7v054/cTJfZTs2DXK1BgoCA/9ARisynnQl
+	btYRBbx9/PTYFzlGqsDpGtcO3joFeEY=
+Authentication-Results: mail.tuxedocomputers.com;
+	auth=pass smtp.auth=wse@tuxedocomputers.com smtp.mailfrom=wse@tuxedocomputers.com
+Message-ID: <c6c5aceb-e329-464e-82ca-b70c5310ca89@tuxedocomputers.com>
+Date: Fri, 14 Mar 2025 18:28:16 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250314160932.100165-1-dakr@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] platform/x86/tuxedo: Implement TUXEDO TUXI ACPI TFAN
+ via hwmon
+To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: Hans de Goede <hdegoede@redhat.com>, Jean Delvare <jdelvare@suse.com>,
+ Guenter Roeck <linux@roeck-us.net>, LKML <linux-kernel@vger.kernel.org>,
+ platform-driver-x86@vger.kernel.org, linux-hwmon@vger.kernel.org,
+ Daniel Lezcano <daniel.lezcano@linaro.org>
+References: <20250306132639.642369-1-wse@tuxedocomputers.com>
+ <70633701-31d2-c2ab-f4f4-043dd186f485@linux.intel.com>
+ <75556900-5fe3-4083-b81b-240994e4f8e0@tuxedocomputers.com>
+ <4344644a-582b-aee6-7eef-8afd3c0ee16f@linux.intel.com>
+ <49ceb1f4-93b1-47ed-a87b-b936fee1b371@tuxedocomputers.com>
+ <ad2e303d-1b13-d575-d58c-f4785e71d6e7@linux.intel.com>
+Content-Language: en-US
+From: Werner Sembach <wse@tuxedocomputers.com>
+In-Reply-To: <ad2e303d-1b13-d575-d58c-f4785e71d6e7@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Fri, Mar 14, 2025 at 05:09:03PM +0100, Danilo Krummrich wrote:
-> Currently, when sharing references of bus devices (e.g. ARef<pci::Device>), we
-> do not have a way to restrict which functions of a bus device can be called.
-> 
-> Consequently, it is possible to call all bus device functions concurrently from
-> any context. This includes functions, which access fields of the (bus) device,
-> which are not protected against concurrent access.
-> 
-> This is improved by applying an execution context to the bus device in form of a
-> generic type.
-> 
-> For instance, the PCI device reference that is passed to probe() has the type
-> pci::Device<Core>, which implements all functions that are only allowed to be
-> called from bus callbacks.
-> 
-> The implementation for the default context (pci::Device) contains all functions
-> that are safe to call from any context concurrently.
-> 
-> The context types can be extended as required, e.g. to limit availability  of
-> certain (bus) device functions to probe().
-> 
-> A branch containing the patches can be found in [1].
-> 
-> [1] https://web.git.kernel.org/pub/scm/linux/kernel/git/dakr/linux.git/log/?h=rust/device
-> 
+Hi Ilpo,
 
-Again,
+Am 14.03.25 um 14:59 schrieb Ilpo Järvinen:
+> On Fri, 14 Mar 2025, Werner Sembach wrote:
+>
+>> Sorry, resend, mail client did html message by accident
+> Np.
+>
+>> Am 14.03.25 um 11:05 schrieb Ilpo Järvinen:
+>>>>>> +			S32_MAX : (retval - TUXI_FW_TEMP_OFFSET) *
+>>>>>> 100;
+>>>>> Is the math wrong, as you do retval - TUXI_FW_TEMP_OFFSET before
+>>>>> multiplying?
+>>>> No, retval is in 10th of °K (but the last number is always 0) so is
+>>>> TUXI_FW_TEMP_OFFSET which is there to convert it to 10th of °C, the * 100
+>>>> is
+>>>> then to bring it in line with hwmon wanting to output milli degrees
+>>> So is result of S32_MAX correct when retval is 21474837?
+>>>
+>>> (21474837-2730)*100
+>>> 2147210700
+>>> 2^31-1
+>>> 2147483647
+>>>
+>>> 2147210700 would have been representable but the upper bound is
+>>> still applied (the value might be large enough to not have practical
+>>> significance but to me the code looks still illogical why it applies the
+>>> bound prematurely).
+>> Yeah my though was: this check is only here to catch the firmware doing some
+>> crazy stuff and sending highly unrealistic values, so gifting a small bit of
+>> the available range away doesn't matter
+> But it does matter as you could note. I stumbled on the logic which didn't
+> look right while reviewing. You even claimed afterwards is not wrong when
+> I raised this. :-/
+>
+> Please just correct the logic so it makes sense to the code reader, there
+> seems to be no well justified reason to keep the illogical code even if
+> the practical impact is very low. It's probably done the way it is only
+> because the variable types are what they are so you couldn't do the
+> subtraction like I proposed ;-). At minimum you'd need to add a comment to
+> warn about the inconsistency at which point rewriting to correct logic is
+> already way simpler.
+ok
+>
+>>> I see you already sent another version, it would have been prudent to wait
+>>> a bit longer as you contested some of the comments so you could have seen
+>>> my replies before sending the next version.
+>> I'm sorry. I just wanted to show that I'm iterating as I wait for the reply if
+>> the design with the periodic safeguard is acceptable. If that's gets rejected
+>> this driver must be rewritten anyway.
+> Kernel development is not a sprint. It's better to avoid sending versions
+> unnecessarily, a day or two isn't worth it when compared with ending up
+> into people's low priority bin which will inevitably happen when the
+> version counter starts to grow beyond v5-6.
+>
+> I (and likely others too) appreciate if they don't have to waste review
+> cycles on something that is not "complete" because we have to look at the
+> completed one later too. Maintainers work in good faith that developers
+> are simply improving their patches (or working on some other great
+> improvements to the kernel :-)) while nothing seemingly happens for a
+> while. There's no need to prove that something is going on just for the
+> sake of proving.
+>
+> Obviously RFC patches are still fine to ask specific questions about
+> something, but that's not about proving progress (in fact, RFC patches are
+> more about being "stuck" than about making progress).
+Sorry, didn't know though it will eventually just get skipped.
+>
+>>>>> Shouldn't it be like this:
+>>>>>
+>>>>> 		retval -= TUXI_FW_TEMP_OFFSET;
+>>>>> 		*val = min(retval * 100, (unsigned long long)S32_MAX);
+>>>> As retval is unsigned this would not work with (theoretical) negative °C.
+>>> So your code relies on implicit type conversion in this: (retval -
+>>> TUXI_FW_TEMP_OFFSET) ?
+>> I can add an explicit cast, np.
+>>
+>> [snip]
+>>
+>>>>>> +	}
+>>>>>> +	if (temp >= temp_high)
+>>>>>> +		ret = i;
+>>> Now that I reread things, is this also incorrect, as "i" is at the
+>>> terminator entry at this point?
+>> Yes that's intentional, the 3 entries in the array open up 4 ranges:
+>>
+>> lower then 1st entry i=0, between 1st and 2nd entry i=1, 2nd and 3rd i=2,
+>> higher then 3rd i=3 (the value that terminates the for loop)
+> I didn't realize that. To me { } looks just an terminating entry. So
+> what's the min_speed going to be for that last entry since it's
+> initialized to 0?
+>
+> Oh, I see you're taking .min_speed from temp_levels[temp_level - 1] which
+> I don't like either. You have a "state" and then store min_speed for the
+> state into other index inside the array?!?
 
-Acked-by: Boqun Feng <boqun.feng@gmail.com>
+Because state 0 is the implicit low temperature -> no min speed is required
 
-Regards,
-Boqun
+And then high states have higher min speeds. So to sync this up I would need to 
+add a dummy entry in the first position of the array.
 
-> Changes in v2:
->   - make `DeviceContext` trait sealed
->   - impl From<&pci::Device<device::Core>> for ARef<pci::Device>
->   - impl From<&platform::Device<device::Core>> for ARef<platform::Device>
->   - rebase onto v6.14-rc6
->   - apply RBs
-> 
-> Danilo Krummrich (4):
->   rust: pci: use to_result() in enable_device_mem()
->   rust: device: implement device context marker
->   rust: pci: fix unrestricted &mut pci::Device
->   rust: platform: fix unrestricted &mut platform::Device
-> 
->  rust/kernel/device.rs                |  26 +++++
->  rust/kernel/pci.rs                   | 137 +++++++++++++++++----------
->  rust/kernel/platform.rs              |  95 +++++++++++++------
->  samples/rust/rust_driver_pci.rs      |   8 +-
->  samples/rust/rust_driver_platform.rs |  11 ++-
->  5 files changed, 187 insertions(+), 90 deletions(-)
-> 
-> 
-> base-commit: 80e54e84911a923c40d7bee33a34c1b4be148d7a
-> -- 
-> 2.48.1
-> 
+>
+>>>>>> +
+>>>>>> +		temp = retval > S32_MAX / 100 ?
+>>>>>> +			S32_MAX : (retval - TUXI_FW_TEMP_OFFSET) *
+>>>>>> 100;
+>>>>> Same math issue comment as above.
+>>>>>
+>>>>> Why is the read+conversion code duplicated into two places?
+>>>> because here it is with special error handling and didn't thought about an
+>>>> own
+>>>> function for a defacto 2 liner
+>>> A function that does read+conversion would be 6-8 lines with the error
+>>> handling.
+>> I can add it.
+>>
+>> [snip]
+>>
+>> Thanks for the code review again.
+>>
+>>
+>> Last but not least: As already mentioned, I still wonder if the design with
+>> the periodic safeguard is ok or not or?
+> I'm not sure if fully understand Daniel's suggestion [1] as it
+> doesn't specify who/what is sending that notification to the thermal
+> engine.
+>
+> [1] https://lore.kernel.org/all/286f5efc-cd15-4e0b-bec2-2e9bbb93dd37@linaro.org/#t
+
+Me too, also at one point he was talking about device trees, but isn't that only 
+an ARM thing? Or can you define one for x86 devices too?
+
+I put him in the cc again
+
+>
+>
+> When it comes to your own concerns, I'm not exactly buying the argument
+> that userspace can do dangerous things. Yeah, it can shoot one's own
+> foot, no doubt, such as unloading this driver and there goes your periodic
+> safeguards. If the argument would be that userspace fails to respond (in
+> time), I would have less trouble in accepting that argument.
+>
+Unloading the driver will activate the auto mode again with firmware handling 
+the complete fancurve.
+
+Userspace not responding in time, or not responding at all, or intentionally 
+always requesting fan speed 0 kinda all result in the conclusion -> don't trust 
+userspace.
+
+Having this in driver is the only surefire way to communicate to the 
+User(-space) that this device must not be run under full load with the fans 
+turned off.
+
+Best regards,
+
+Werner
+
 
