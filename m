@@ -1,132 +1,177 @@
-Return-Path: <linux-kernel+bounces-561228-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561229-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C56B1A60EFF
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 11:34:04 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB52EA60F01
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 11:34:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7737116EB55
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 10:33:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4F6567ACD04
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 10:33:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F276C1FBE92;
-	Fri, 14 Mar 2025 10:32:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB0731F5839;
+	Fri, 14 Mar 2025 10:32:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="imYmTWDR"
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j3+19/Bi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C50301F4739
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 10:32:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB0781F4CAD;
+	Fri, 14 Mar 2025 10:32:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741948325; cv=none; b=iBovRFYO1FbI71q3OFacxWB0IRzMrTwfDNDm+G3hhc2e+UJvpM4mujglRGoZ5orCmVUpeiP2S+UtxcPKuVLVm2dbD3c+CnmW19kA8WHdVYQvkcIyrrS4w0R4aucWs2mZbzoZLRdVjLOxkgygYTlxc5AxWfDt5wNta4jacTjD7Qg=
+	t=1741948339; cv=none; b=WqtQ7Mz8HW1HYzb6f1axtuyS9loi7nOkONksiLYjFX287sF11HQRPtMD1RchqdkOGwBeCd33HXVi8X/Sgf2ZatDu8knQaaWzfcE8t/EG8YX3wN6qRf/31Ofgd8WZUdaozSBMSry9VZA48X8HY1c/nghS9/z3SMK5Wt8xj/ey0HA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741948325; c=relaxed/simple;
-	bh=U45g8iwNmKVwF8JuRRE40MIZL8GxhqYLJewGT8n6f/E=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=qdkoH4CHlyRSq061S30H8Sx/kDey4fm6r/5+5/JzDNpu32h5mGKu8T3//iiuhuq3g6xP15WNx5Zo5upe+So6GmyugBt7xc+58gZcY46nvP41ShzLL+f0Gn8sJu0DGIJi/qjix1svLbEfvzdgUxmHU3UG9Boopc9m2R5CGJYwRQo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=imYmTWDR; arc=none smtp.client-ip=217.70.183.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id B6A1E43319;
-	Fri, 14 Mar 2025 10:31:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1741948322;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9Iwx6p4M4famV166YaX+k9uap2aPfGPkWwiC9dV1gl4=;
-	b=imYmTWDRRIhUzZAYkTcvQhg8TrX0tR95/uZwexFiDRyobi1MbuYgAzHHu8UrE4vrOiGNSp
-	fgV5k/Hvcmdeog5rwuJDO8Cxr7IxdKBworYIYdJMfSuromtX0+7UGt2SqwAqrNW6ctBZJm
-	IQHWnEbAXWf3kKMdtJKfqf/AiBz2xR0SucCqwZPEstgACaqqqI8f1p4j9lX7uwpqGzPOLB
-	E4Ctq+Drb4UDgJgVXoZT08m/J1DXqIzSHU/ngDTSvPLshSGWrjY2xNiM7DRhaF2U8HOW4k
-	yN2GpNT2b7qEt2j5MyJhBuIlLZohvL45JmPGP1hVfbnvyYU7xCBvH7nCNw6/Qg==
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Date: Fri, 14 Mar 2025 11:31:24 +0100
-Subject: [PATCH v7 11/11] drm/bridge: samsung-dsim: use dynamic lifetime
- management
+	s=arc-20240116; t=1741948339; c=relaxed/simple;
+	bh=bIVEOosLbXV7zBjslXZjI9/mMTUHcG4P15ca5rWDDm0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EuAPJGY/3JQczJhCo1YhSN8ZirczNnAklNh0FfM2D1LpBfxwvxPjq/SXle8ryotrQ1sAWxiAVEX9VbGrkxTdKWlHAI092aPBDFP7gUS161d/0qCJjz5ZrNhwxK0tWvoRaPaai27+VoD3CNtu89ktxBMhbEcU+WjfMW2pfcfEkUY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j3+19/Bi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 735C0C4CEF4;
+	Fri, 14 Mar 2025 10:32:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741948338;
+	bh=bIVEOosLbXV7zBjslXZjI9/mMTUHcG4P15ca5rWDDm0=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=j3+19/BiN6v+pKli7W3LfZ4dOW/TqRiIxjSoUqF9o+jkG4SSng7zRIqEKXKKBsH4C
+	 xkZ11M7AcGfz/2r4brm4/Xx4UhzihYkcsZDkpM8yn02ikkw3QTpvp5VKBsj26525oi
+	 5K0yrlqBThCiaSvkU1bzENme1lXVpV644FHoeWZ/u0yhkz8Mqm7ShqeWu4VjQ3VZrs
+	 M6jxYoyZTzIQY3Yy9ACoJLNz/1MPJo91jmWcq5GH1xosg1hhFuBUG+TFhibP2gQMCQ
+	 W8wpYHTeCVg1ZMErre5+7Ri//vKGuvhIjYvFEt2kjnee7bwYxbOsWAa1scEc2gWCLp
+	 fejBWC9+Re/zg==
+Received: by mail-oa1-f46.google.com with SMTP id 586e51a60fabf-2c1c4e364c8so864348fac.1;
+        Fri, 14 Mar 2025 03:32:18 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVZjn0UIaNMmKJudSk9qSWkK9TtYp8OChmevBXg76ysmXXaCZoVCLCvs1ctju9rktUSyVt4aFx5FHXc@vger.kernel.org, AJvYcCW0fdv/uP3FOs16J2Q+d7UdVeVfU74fnmTr7ga92nagBkyCAfP0bj1PqRxbjwLPEqbzGw8LjBSQDfn02k/r@vger.kernel.org, AJvYcCW3KoxyXYr0O/DLLfuwOtVjdAybD53xpYZ350fhtYDmpJcNnLHggIfDGbANv0jPjYc/nWSBYmWVG5Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyCyeC7OM2QYfn1QHBkyLCJ5jrgsSRoFy72vCNGehDhZFJ7vb8p
+	9mY2bi1S5+WJ/fe8DQ/b+hodbG6tOFXHYkhAWFE7puj6PS4OUzIsGqiW46iR3T0zqvCvePXzJJ8
+	549LATPFzF/bGaoSoT+GgenyYQOY=
+X-Google-Smtp-Source: AGHT+IHMIhcxmJiI89lHkmcp10N9Gc8dwaHNOvydy7F0N4rYcB6pfEg4Jewk4sgyfM2HYz8d8QVhijGhPoQRMSCLG6M=
+X-Received: by 2002:a05:6871:8907:b0:2c3:13f7:2b3d with SMTP id
+ 586e51a60fabf-2c66faa0ad9mr3253949fac.13.1741948337647; Fri, 14 Mar 2025
+ 03:32:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250314-drm-bridge-refcount-v7-11-152571f8c694@bootlin.com>
-References: <20250314-drm-bridge-refcount-v7-0-152571f8c694@bootlin.com>
-In-Reply-To: <20250314-drm-bridge-refcount-v7-0-152571f8c694@bootlin.com>
-To: Andrzej Hajda <andrzej.hajda@intel.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Marek Vasut <marex@denx.de>, Stefan Agner <stefan@agner.ch>, 
- Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>, Inki Dae <inki.dae@samsung.com>, 
- Jagan Teki <jagan@amarulasolutions.com>, 
- Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- Anusha Srivatsa <asrivats@redhat.com>, 
- Paul Kocialkowski <paulk@sys-base.io>, Dmitry Baryshkov <lumag@kernel.org>, 
- =?utf-8?q?Herv=C3=A9_Codina?= <herve.codina@bootlin.com>, 
- Hui Pu <Hui.Pu@gehealthcare.com>, dri-devel@lists.freedesktop.org, 
- linux-kernel@vger.kernel.org, imx@lists.linux.dev, 
- linux-arm-kernel@lists.infradead.org, 
- Luca Ceresoli <luca.ceresoli@bootlin.com>
-X-Mailer: b4 0.14.2
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddufedtiedtucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhfffugggtgffkfhgjvfevofesthejredtredtjeenucfhrhhomhepnfhutggrucevvghrvghsohhlihcuoehluhgtrgdrtggvrhgvshholhhisegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeeiieeuvdfftefgueduleehueetgffgjeeitedtteetkeeuueeuueekveevvdeuveenucfkphepvdgrtddvmeeijedtmedvtddvtdemvggrtddumegrtddtvdemudgsrgejmeegkehfjeemudeltgehnecuvehluhhsthgvrhfuihiivgepkeenucfrrghrrghmpehinhgvthepvdgrtddvmeeijedtmedvtddvtdemvggrtddumegrtddtvdemudgsrgejmeegkehfjeemudeltgehpdhhvghloheplgduledvrdduieekrddujeekrdduudekngdpmhgrihhlfhhrohhmpehluhgtrgdrtggvrhgvshholhhisegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeefuddprhgtphhtthhopefjuhhirdfruhesghgvhhgvrghlthhhtggrrhgvrdgtohhmpdhrtghpthhtohepihhnkhhirdgurggvsehsrghmshhunhhgrdgtohhmpdhrtghpthhtohepmhgrrhgvgiesuggvnhigrdguvgdprhgtphhtthhopehjvghrn
- hgvjhdrshhkrhgrsggvtgesghhmrghilhdrtghomhdprhgtphhtthhopehprghulhhksehshihsqdgsrghsvgdrihhopdhrtghpthhtoheprghsrhhivhgrthhssehrvgguhhgrthdrtghomhdprhgtphhtthhopehmrhhiphgrrhgusehkvghrnhgvlhdrohhrghdprhgtphhtthhopehjohhnrghssehkfihisghoohdrshgv
-X-GND-Sasl: luca.ceresoli@bootlin.com
+References: <20250206131428.3261578-1-zhenglifeng1@huawei.com>
+ <20250206131428.3261578-4-zhenglifeng1@huawei.com> <CAJZ5v0iNzNROkPD4+b=Au8DwdF9unajKivdRQMBFfwzjFxHLcg@mail.gmail.com>
+ <4fc77a58-8c77-463c-a50d-06ad19685bfb@huawei.com>
+In-Reply-To: <4fc77a58-8c77-463c-a50d-06ad19685bfb@huawei.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Fri, 14 Mar 2025 11:32:05 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0gmGx-9QsTTdbKi6EMQm2tePfhBdYMry_88gbybLUY6WA@mail.gmail.com>
+X-Gm-Features: AQ5f1JoupU6GpOA9Iyps8s1JuMZY-IPPw-xEHtHAfwnoaE6pdAQsbzMgFba8YeA
+Message-ID: <CAJZ5v0gmGx-9QsTTdbKi6EMQm2tePfhBdYMry_88gbybLUY6WA@mail.gmail.com>
+Subject: Re: [PATCH v5 3/8] ACPI: CPPC: Rename cppc_get_perf() to cppc_get_reg_val()
+To: "zhenglifeng (A)" <zhenglifeng1@huawei.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, lenb@kernel.org, robert.moore@intel.com, 
+	viresh.kumar@linaro.org, mario.limonciello@amd.com, gautham.shenoy@amd.com, 
+	ray.huang@amd.com, pierre.gondois@arm.com, acpica-devel@lists.linux.dev, 
+	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-pm@vger.kernel.org, linuxarm@huawei.com, yumpusamongus@gmail.com, 
+	srinivas.pandruvada@linux.intel.com, jonathan.cameron@huawei.com, 
+	zhanjie9@hisilicon.com, lihuisong@huawei.com, hepeng68@huawei.com, 
+	fanghao11@huawei.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Allow this bridge to be removable without dangling pointers and
-use-after-free, together with proper use of drm_bridge_get() and _put() by
-consumers.
+On Fri, Mar 14, 2025 at 10:25=E2=80=AFAM zhenglifeng (A)
+<zhenglifeng1@huawei.com> wrote:
+>
+> On 2025/3/13 3:54, Rafael J. Wysocki wrote:
+>
+> > On Thu, Feb 6, 2025 at 2:14=E2=80=AFPM Lifeng Zheng <zhenglifeng1@huawe=
+i.com> wrote:
+> >>
+> >> Rename cppc_get_perf() to cppc_get_reg_val() as a generic function to =
+read
+> >> cppc registers. And extract the operations if register is in pcc out a=
+s
+> >> cppc_get_reg_val_in_pcc(). Without functional change.
+> >
+> > This should be split into two patches IMV.
+>
+> Yes. That makes sense. Thanks.
+>
+> >
+> >> Signed-off-by: Lifeng Zheng <zhenglifeng1@huawei.com>
+> >> ---
+> >>  drivers/acpi/cppc_acpi.c | 66 +++++++++++++++++++++------------------=
+-
+> >>  1 file changed, 35 insertions(+), 31 deletions(-)
+> >>
+> >> diff --git a/drivers/acpi/cppc_acpi.c b/drivers/acpi/cppc_acpi.c
+> >> index db22f8f107db..3c9c4ce2a0b0 100644
+> >> --- a/drivers/acpi/cppc_acpi.c
+> >> +++ b/drivers/acpi/cppc_acpi.c
+> >> @@ -1189,48 +1189,52 @@ static int cpc_write(int cpu, struct cpc_regis=
+ter_resource *reg_res, u64 val)
+> >>         return ret_val;
+> >>  }
+> >>
+> >> -static int cppc_get_perf(int cpunum, enum cppc_regs reg_idx, u64 *per=
+f)
+> >> +static int cppc_get_reg_val_in_pcc(int cpu, struct cpc_register_resou=
+rce *reg, u64 *val)
+> >>  {
+> >> -       struct cpc_desc *cpc_desc =3D per_cpu(cpc_desc_ptr, cpunum);
+> >> -       struct cpc_register_resource *reg;
+> >> +       int pcc_ss_id =3D per_cpu(cpu_pcc_subspace_idx, cpu);
+> >> +       struct cppc_pcc_data *pcc_ss_data =3D NULL;
+> >> +       int ret;
+> >>
+> >> -       if (!cpc_desc) {
+> >> -               pr_debug("No CPC descriptor for CPU:%d\n", cpunum);
+> >> +       if (pcc_ss_id < 0) {
+> >> +               pr_debug("Invalid pcc_ss_id\n");
+> >>                 return -ENODEV;
+> >>         }
+> >>
+> >> -       reg =3D &cpc_desc->cpc_regs[reg_idx];
+> >> +       pcc_ss_data =3D pcc_data[pcc_ss_id];
+> >>
+> >> -       if (IS_OPTIONAL_CPC_REG(reg_idx) && !CPC_SUPPORTED(reg)) {
+> >> -               pr_debug("CPC register (reg_idx=3D%d) is not supported=
+\n", reg_idx);
+> >> -               return -EOPNOTSUPP;
+> >> -       }
+> >
+> > I'm not a big fan of the IS_OPTIONAL_CPC_REG() macro.  I'm not
+> > convinced at all that it adds any value above (and in the next patch
+> > for that matter) and the message printing the register index is just
+> > plain unuseful to anyone who doesn't know how to decode it.
+>
+> With this index, it is easier to locate problems. This is what a "pr_debu=
+g"
+> for, isn't it?
 
-Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+For those who know how to decode it, yes.  For others, not really.
 
----
+> >
+> > If CPC_SUPPORTED(reg) is not true, the register cannot be used AFAICS
+> > regardless of what IS_OPTIONAL_CPC_REG() has to say about it.
+>
+> The name "CPC_SUPPORTED" may be a little confused. Actually, in ACPI 6.5,
+> only optional _CPC package fields that are not supported by the platform
+> should be encoded as 0 intergers or NULL registers. A mandatory field as =
+a
+> 0 interger is valid. So If I wanted to make this function as a generic on=
+e
+> to read cppc registers, it would have been more reasonable to do this
+> IS_OPTIONAL_CPC_REG() check before CPC_SUPPORTED().
 
-This patch was added in v7.
----
- drivers/gpu/drm/bridge/samsung-dsim.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+I see, so you need to explain this in the changelog.
 
-diff --git a/drivers/gpu/drm/bridge/samsung-dsim.c b/drivers/gpu/drm/bridge/samsung-dsim.c
-index 54de6ed2fae81bc13301a6b1ee8f38183a3118b6..3d41db7a0ceeddccc1a89a2ff1f38fe10ec6acfe 100644
---- a/drivers/gpu/drm/bridge/samsung-dsim.c
-+++ b/drivers/gpu/drm/bridge/samsung-dsim.c
-@@ -1935,9 +1935,9 @@ int samsung_dsim_probe(struct platform_device *pdev)
- 	struct samsung_dsim *dsi;
- 	int ret, i;
- 
--	dsi = devm_kzalloc(dev, sizeof(*dsi), GFP_KERNEL);
--	if (!dsi)
--		return -ENOMEM;
-+	dsi = devm_drm_bridge_alloc(dev, struct samsung_dsim, bridge, &samsung_dsim_bridge_funcs);
-+	if (IS_ERR(dsi))
-+		return PTR_ERR(dsi);
- 
- 	init_completion(&dsi->completed);
- 	spin_lock_init(&dsi->transfer_lock);
-@@ -2007,7 +2007,6 @@ int samsung_dsim_probe(struct platform_device *pdev)
- 
- 	pm_runtime_enable(dev);
- 
--	dsi->bridge.funcs = &samsung_dsim_bridge_funcs;
- 	dsi->bridge.of_node = dev->of_node;
- 	dsi->bridge.type = DRM_MODE_CONNECTOR_DSI;
- 
+And IMV the code logic should be:
 
--- 
-2.48.1
+(1) If this is a NULL register, don't use it.
+(2) If it is integer 0, check if it is optional.
+    (a) If it is optional, don't use it.
+    (b) Otherwise, use 0 as the value.
 
+Of course, there is a problem for platforms that may want to pass 0 as
+an optional field value, but this is a spec issue.
 
