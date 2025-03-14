@@ -1,194 +1,200 @@
-Return-Path: <linux-kernel+bounces-561250-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561251-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4AE4A60F3E
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 11:43:34 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60E05A60F40
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 11:44:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 641CE1B61F64
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 10:43:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 036141B62595
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 10:44:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E64F81FA854;
-	Fri, 14 Mar 2025 10:43:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B92D1FAC46;
+	Fri, 14 Mar 2025 10:44:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="egprhvgB"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b="erpJGrwQ"
+Received: from mail-ej1-f65.google.com (mail-ej1-f65.google.com [209.85.218.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C7A61F9A90
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 10:43:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 225F11FA243
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 10:44:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741949004; cv=none; b=hQPB3NVSMQFFCl587ekHKyjt9gJlG0w21L7W9fOHXEH63cGLctA/wa/0Bz5vV7XgesOXxEfLIUgnXAjsn706Vvaw4DO1r5cna/XNmMRgup9xQnWFev6gTLSjxiGneAfay1q6yTzac21fq4Sa2weFvsMUYNKTeTrwfrAHCWIRdI8=
+	t=1741949045; cv=none; b=B8hrc8oU86sv70fGYmO07c7I+7NUXt3ZOnJ2RN5mzUkUhSt5lWd1BNnE72tZ66TDKxDpku7G2VDf2sWAnbHPziO14JMGrcOT8rSncduWH4DHSWB2HIntkv8punjsIhtqg9B1slj6PUwUeEQIH5pGRlhn6abaSMzmA0EgReoQ6yM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741949004; c=relaxed/simple;
-	bh=5jTXyayO6Q3KIY9LJfU0tXvtnd2vFJFBraH9hLwJB5o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ys3YD2lpfxBHZ8r2XjNziuQHJZ+FSmJLXGESNe2fpUZndfkk2ONt+7ofLI3mRn+zKd0CHRTaFjlqW5oc1QpYdkDxxaEwq0HDlnxvXMWTncmyQi3pZbrH5hm2d8ey+Sc8G5OBg6JxXEVu/YPsPUQ4wYPjq4a+YZEi785N8C5pl9Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=egprhvgB; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-223fd89d036so40796905ad.1
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 03:43:22 -0700 (PDT)
+	s=arc-20240116; t=1741949045; c=relaxed/simple;
+	bh=yesTJPNbyIcSw648FltrN+NNbY8HcevtHpGeBr44k7w=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=kpSIzwCY46Ijk+HtOhYMzgsxGjV+0WUVE1goULzoKqSV7nLegRDBaNeqgxeqiVc+2nODK6XAJZXdkPrAgijJf/FhK8tvSExgMU0ikVOJhM6mhUAiv0XDKscE8cq70SfOhj/B/pt3rlXGZJL8SPpLMoKuDdQymjGj4MVcgw6UWCI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org; spf=none smtp.mailfrom=blackwall.org; dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b=erpJGrwQ; arc=none smtp.client-ip=209.85.218.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=blackwall.org
+Received: by mail-ej1-f65.google.com with SMTP id a640c23a62f3a-aaec111762bso417509566b.2
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 03:44:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1741949002; x=1742553802; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=UTlDKnMLcXVyGSVAY6ALlY0e8v0hRnFduog7uNlIoQI=;
-        b=egprhvgBvYieioxclIWS1TNr2WRdqgjpo21PyuKStP+UQckRcDIiVAuXDfxc66OJYQ
-         hImCecmzxHBhV7ygbCriegAaI/tIFjpp2axDaS6S4o+yKpweR9u69EUl3JWJVCVJlK2T
-         /9BMU6n2QWHQkPXPA7e2hAnn0X5zqeDm3xdwfOCKe/kwMJb/wUJPK1OJko5ss/iu8GZz
-         aXEVebXWV61Ku8QpjsWgTzOqcGr0rJeEUFyWMrpm/2YkrxbaOVL85fXT/w8rAtwqQgB3
-         SNqOx6bAM0nkeBEpM4HH6WN4Fu4zVG6R7M1v1balBbPU8Qub4mK5Zsrox8ZbEbzceowL
-         GjBw==
+        d=blackwall-org.20230601.gappssmtp.com; s=20230601; t=1741949042; x=1742553842; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=SbEOhoTEEu5x55+fPmrnGoGsT7RQD6j+d3DIIZHJ7QM=;
+        b=erpJGrwQZHOQAyxNmiWCMql0qfG/P2OzWHVGvaYHqFRC4k3EWrtNSoBzOkwEnXjK1T
+         a/YCjf0weFnySN1RDzhX2X1u5uDRNtYrpgOk6+OjnSWaMhlLVkECBAev4ByKOSTamr0H
+         uolwHQKFhPhfMNDUqrQeoh2FK4Le0v7ZExie73cGfBuKPlKUDJOtvqSpp+FbbKx0drGy
+         NYjy3o9TvApR2kx7Vg1CLheXuuE7YiA6VEm2h1pGydCcowDGuQbLOMsnPsAl7WRhmOKv
+         kQG+XC0i9MY/M7iSXVPiLplKNgyQGqrOXKH0bRBUrsFoJvyiq27Oy4nmElKCeHtFXd4K
+         Uwng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741949002; x=1742553802;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UTlDKnMLcXVyGSVAY6ALlY0e8v0hRnFduog7uNlIoQI=;
-        b=PoUC+wP62qaPpqMkE01FF01NmMIUD6ZMHKqE7vM5d/riyQtc56pMRBZA4FwwGgc8Lk
-         fdwbORQ+sefpXJzcrsY//tcHOHCqenHmo7jYRb++Pit0sPkV99i2fY00hJyh/+yKVvKY
-         mmGlX6nkxB2AFMPNRu2WuH4IGUPTmr513ktQvYbvsMnAtoFe3p6+FY9V0nBxGopr8vHl
-         3/I2zhEfcY20oUXYEpXkPWk56RLplLkzoRXKk9cEtWqqHvSI8U0MoWyb5QA7zlKIjjOO
-         4cN4Nh8tWs8erSbrQA+n3h4O7Rq77m9YIs6vmKt6WyMZrH2ixIxuotQ90Pp/MbqPvlCD
-         Txjw==
-X-Forwarded-Encrypted: i=1; AJvYcCW7WQz2dIm0vzypM+bp36cB9YVE258BojWhLbRUpG12pr8hJBLHXqPYwVPVMuBuagt4v29/p4koFq8FQac=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx4h6dWxCeBNRGINiOtRfUnCST8r8MctAoV7pIezNifAGc1KgXb
-	A1SxtMf3O9qM7ZZQsyN7T1HY1N8DljwZo01MgFYGwg9VpODfBTRLLcC5c8MFfw==
-X-Gm-Gg: ASbGnctbm963XcpGpgIpmVujp99xsr5UV/u470jC1SQn+t8beamrQna8kO5+6vtUaTJ
-	kZxmO6lfbdjKHLOKIvsQf4W8PycDCtL3lg2sXZa8bT5tDJ1ZIPq14TICzDE4bLM6BGM3USm9+V6
-	NMD/JPnnPciH4BTWX943vWtkFAMC4E+DZ0C1f1dBECqcu4caOJ2LAcYmPL0ujWjiOW/pV6yHcKB
-	ynIIoGwx6zeBV3HIFB964EkFRTb+r8THTQ3th4KiYaOuG6KRbwaKFh6qyhieOzyRF6fI7oQ6LTd
-	hs+lDiI1YQDyhkQ6/MmmTMhbItVy2nEAW5owkrYVjXUqvq97Dq4c/E8=
-X-Google-Smtp-Source: AGHT+IHEIImlaM784W7QpGqvoNscilIRXOZO9EaThuaGt5JkpmY4d0AkU2XDXPIzPuhaVlyOzO0rpQ==
-X-Received: by 2002:a17:90a:e18f:b0:2ee:b6c5:1def with SMTP id 98e67ed59e1d1-30151ce1224mr2900866a91.8.1741949001769;
-        Fri, 14 Mar 2025 03:43:21 -0700 (PDT)
-Received: from bytedance ([115.190.40.14])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3015363217dsm744379a91.32.2025.03.14.03.43.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Mar 2025 03:43:21 -0700 (PDT)
-Date: Fri, 14 Mar 2025 18:43:15 +0800
-From: Aaron Lu <ziqianlu@bytedance.com>
-To: K Prateek Nayak <kprateek.nayak@amd.com>
-Cc: Valentin Schneider <vschneid@redhat.com>,
-	Ben Segall <bsegall@google.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Josh Don <joshdon@google.com>, Ingo Molnar <mingo@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	linux-kernel@vger.kernel.org, Juri Lelli <juri.lelli@redhat.com>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>, Mel Gorman <mgorman@suse.de>,
-	Chengming Zhou <chengming.zhou@linux.dev>,
-	Chuyi Zhou <zhouchuyi@bytedance.com>
-Subject: Re: [RFC PATCH 3/7] sched/fair: Handle unthrottle path for task
- based throttle
-Message-ID: <20250314104315.GE1633113@bytedance>
-References: <20250313072030.1032893-1-ziqianlu@bytedance.com>
- <CANCG0GcAic5QThYG-r9CaXPgZtXJuB0RuCW5Y0SyBn7VyOQi=g@mail.gmail.com>
- <3fdb7163-d1f0-45c8-89fa-7c904b567696@amd.com>
+        d=1e100.net; s=20230601; t=1741949042; x=1742553842;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=SbEOhoTEEu5x55+fPmrnGoGsT7RQD6j+d3DIIZHJ7QM=;
+        b=oZuHtb5uePeWD4iJxJ7loAhisDG95trycHM2R2REPBw6R+H1U9yk03NEFGdp0LdTBR
+         RvyTE/4RpE5BeK8CYX0q6uWFyczjaRtPkiEATWEDcd2Jl6tlo8twTyczJ33CCgue5mvV
+         q6bg/IFc2f40vLFgsUEFXBhUQp8XoD2lsceF++VmQ+M+cn9hgio1dJK1JjtKc+x1N4xl
+         dOpWg5ZmxhSgw9I5WTmmasCq5NwlA5Je9URBJ+zXKrocskd0AQdbXjFvc1l15rOxqo3K
+         3VnnIRB3LRq+en5gNAUvu9Yt+4UqJNS8ezBwJqqobnaxfrlcoKa+hj7epjf7a/nsaHdo
+         l4yQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX6XYmnQEflnk0aZ/obc80sM3hv2/iQ9gwFTaF64yv7MiFvyYBA6FCdzXMg35+m3UodHPBaj9k+sEucXfk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx8l04w6GuBxBGUl5pB4nvmYzrJPIBLzShdM1qGFmD4lJO4Esyd
+	1EXNCODcTBlVmITGyW+JfCsbtoV3nMRZEATGlCZ9buvUSnxTVZEK9RnUwO8EzSw=
+X-Gm-Gg: ASbGncugIzNY4f7tr6RokY4Dh+gxlG20u4YM3059kz6t3pXIJDYrYRR/fu04XG5nM5S
+	UCxVGWkqIdW8EoW/o6t0nq5LfdcJr7w3IhcisUSzjx1dnv1vCYY198GNhEFpBSvUw8a2GomP6eK
+	ln3569meav8Ln66TQXjrNlry75wTEq0EIY6g3sRCv1pjbA4i9+ejv2pYUIuWZIGkrqvYspu5Woh
+	bx4XJ9jWgohu4QKpI5OUzmkM3ZGxxjoWo3ZDkKliuPSCW8WwFA5LcUapgKIlVj04U843RSr4aOE
+	PWJt0PHFCZEdf9MCSfMtlsSNwAXScmcD5e5/qqoa7MOmrw==
+X-Google-Smtp-Source: AGHT+IFSCVQoVEn7iPn/TuwJfbODuInfrvqO1582NK0pYg3MKgyFAbCeHu9p4jsr87CjNZKVjj3cpA==
+X-Received: by 2002:a17:907:3d87:b0:abf:6389:6d19 with SMTP id a640c23a62f3a-ac330258bcamr201708866b.15.1741949042421;
+        Fri, 14 Mar 2025 03:44:02 -0700 (PDT)
+Received: from [10.20.7.108] ([195.29.209.20])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3147f0bd3sm210194366b.67.2025.03.14.03.44.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 14 Mar 2025 03:44:01 -0700 (PDT)
+Message-ID: <96a4043b-fdac-4ca1-a7b9-a6352b1d7dfe@blackwall.org>
+Date: Fri, 14 Mar 2025 12:44:00 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3fdb7163-d1f0-45c8-89fa-7c904b567696@amd.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net] bonding: check xdp prog when set bond mode
+From: Nikolay Aleksandrov <razor@blackwall.org>
+To: =?UTF-8?Q?Toke_H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>,
+ Wang Liang <wangliang74@huawei.com>, jv@jvosburgh.net,
+ andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, ast@kernel.org, daniel@iogearbox.net,
+ hawk@kernel.org, john.fastabend@gmail.com, joamaki@gmail.com
+Cc: yuehaibing@huawei.com, zhangchangzhong@huawei.com,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org, bpf@vger.kernel.org
+References: <20250314073549.1030998-1-wangliang74@huawei.com>
+ <87y0x7rkck.fsf@toke.dk> <21d52659-622a-4b2a-b091-787bf0f5d67f@blackwall.org>
+Content-Language: en-US
+In-Reply-To: <21d52659-622a-4b2a-b091-787bf0f5d67f@blackwall.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Fri, Mar 14, 2025 at 09:23:47AM +0530, K Prateek Nayak wrote:
-> Hello Aaron,
+On 3/14/25 12:22 PM, Nikolay Aleksandrov wrote:
+> On 3/14/25 12:13 PM, Toke Høiland-Jørgensen wrote:
+>> Wang Liang <wangliang74@huawei.com> writes:
+>>
+>>> Following operations can trigger a warning[1]:
+>>>
+>>>     ip netns add ns1
+>>>     ip netns exec ns1 ip link add bond0 type bond mode balance-rr
+>>>     ip netns exec ns1 ip link set dev bond0 xdp obj af_xdp_kern.o sec xdp
+>>>     ip netns exec ns1 ip link set bond0 type bond mode broadcast
+>>>     ip netns del ns1
+>>>
+>>> When delete the namespace, dev_xdp_uninstall() is called to remove xdp
+>>> program on bond dev, and bond_xdp_set() will check the bond mode. If bond
+>>> mode is changed after attaching xdp program, the warning may occur.
+>>>
+>>> Some bond modes (broadcast, etc.) do not support native xdp. Set bond mode
+>>> with xdp program attached is not good. Add check for xdp program when set
+>>> bond mode.
+>>>
+>>>     [1]
+>>>     ------------[ cut here ]------------
+>>>     WARNING: CPU: 0 PID: 11 at net/core/dev.c:9912 unregister_netdevice_many_notify+0x8d9/0x930
+>>>     Modules linked in:
+>>>     CPU: 0 UID: 0 PID: 11 Comm: kworker/u4:0 Not tainted 6.14.0-rc4 #107
+>>>     Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.15.0-0-g2dd4b9b3f840-prebuilt.qemu.org 04/01/2014
+>>>     Workqueue: netns cleanup_net
+>>>     RIP: 0010:unregister_netdevice_many_notify+0x8d9/0x930
+>>>     Code: 00 00 48 c7 c6 6f e3 a2 82 48 c7 c7 d0 b3 96 82 e8 9c 10 3e ...
+>>>     RSP: 0018:ffffc90000063d80 EFLAGS: 00000282
+>>>     RAX: 00000000ffffffa1 RBX: ffff888004959000 RCX: 00000000ffffdfff
+>>>     RDX: 0000000000000000 RSI: 00000000ffffffea RDI: ffffc90000063b48
+>>>     RBP: ffffc90000063e28 R08: ffffffff82d39b28 R09: 0000000000009ffb
+>>>     R10: 0000000000000175 R11: ffffffff82d09b40 R12: ffff8880049598e8
+>>>     R13: 0000000000000001 R14: dead000000000100 R15: ffffc90000045000
+>>>     FS:  0000000000000000(0000) GS:ffff888007a00000(0000) knlGS:0000000000000000
+>>>     CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>>>     CR2: 000000000d406b60 CR3: 000000000483e000 CR4: 00000000000006f0
+>>>     Call Trace:
+>>>      <TASK>
+>>>      ? __warn+0x83/0x130
+>>>      ? unregister_netdevice_many_notify+0x8d9/0x930
+>>>      ? report_bug+0x18e/0x1a0
+>>>      ? handle_bug+0x54/0x90
+>>>      ? exc_invalid_op+0x18/0x70
+>>>      ? asm_exc_invalid_op+0x1a/0x20
+>>>      ? unregister_netdevice_many_notify+0x8d9/0x930
+>>>      ? bond_net_exit_batch_rtnl+0x5c/0x90
+>>>      cleanup_net+0x237/0x3d0
+>>>      process_one_work+0x163/0x390
+>>>      worker_thread+0x293/0x3b0
+>>>      ? __pfx_worker_thread+0x10/0x10
+>>>      kthread+0xec/0x1e0
+>>>      ? __pfx_kthread+0x10/0x10
+>>>      ? __pfx_kthread+0x10/0x10
+>>>      ret_from_fork+0x2f/0x50
+>>>      ? __pfx_kthread+0x10/0x10
+>>>      ret_from_fork_asm+0x1a/0x30
+>>>      </TASK>
+>>>     ---[ end trace 0000000000000000 ]---
+>>>
+>>> Fixes: 9e2ee5c7e7c3 ("net, bonding: Add XDP support to the bonding driver")
+>>> Signed-off-by: Wang Liang <wangliang74@huawei.com>
+>>> ---
+>>>  drivers/net/bonding/bond_options.c | 3 +++
+>>>  1 file changed, 3 insertions(+)
+>>>
+>>> diff --git a/drivers/net/bonding/bond_options.c b/drivers/net/bonding/bond_options.c
+>>> index 327b6ecdc77e..127181866829 100644
+>>> --- a/drivers/net/bonding/bond_options.c
+>>> +++ b/drivers/net/bonding/bond_options.c
+>>> @@ -868,6 +868,9 @@ static bool bond_set_xfrm_features(struct bonding *bond)
+>>>  static int bond_option_mode_set(struct bonding *bond,
+>>>  				const struct bond_opt_value *newval)
+>>>  {
+>>> +	if (bond->xdp_prog)
+>>> +		return -EOPNOTSUPP;
+>>> +
+>>
+>> Should we allow changing as long as the new mode also supports XDP?
+>>
+>> -Toke
+>>
+>>
 > 
-> On 3/13/2025 12:51 PM, Aaron Lu wrote:
+> +1
+> I think we should allow it, the best way probably is to add a new option 
+> BOND_VALFLAG_XDP_UNSUPP (for example) as a bond option flag and to set
+> it in bond_options.c for each mode that doesn't support XDP, then you
+> can do the check in a generic way (for any option) in
+> bond_opt_check_deps. Any bond option that can't be changed with XDP prog
+
+err, I meant any bond option's value that isn't supported with XDP, for
+a whole option it would be a bit different
+
+> should have that flag set.
 > 
-> [..snip..]
+> Cheers,
+>  Nik
 > 
-> > ---
-> >   kernel/sched/fair.c | 132 +++++++++++++++-----------------------------
-> >   1 file changed, 45 insertions(+), 87 deletions(-)
-> > 
-> > diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> > index ab403ff7d53c8..4a95fe3785e43 100644
-> > --- a/kernel/sched/fair.c
-> > +++ b/kernel/sched/fair.c
-> > @@ -5366,18 +5366,17 @@ enqueue_entity(struct cfs_rq *cfs_rq, struct
-> > sched_entity *se, int flags)
-> > 
-> >   	if (cfs_rq->nr_queued == 1) {
-> >   		check_enqueue_throttle(cfs_rq);
-> > -		if (!throttled_hierarchy(cfs_rq)) {
-> > -			list_add_leaf_cfs_rq(cfs_rq);
-> > -		} else {
-> > +		list_add_leaf_cfs_rq(cfs_rq);
-> >   #ifdef CONFIG_CFS_BANDWIDTH
-> > +		if (throttled_hierarchy(cfs_rq)) {
-> >   			struct rq *rq = rq_of(cfs_rq);
-> > 
-> >   			if (cfs_rq_throttled(cfs_rq) && !cfs_rq->throttled_clock)
-> >   				cfs_rq->throttled_clock = rq_clock(rq);
-> >   			if (!cfs_rq->throttled_clock_self)
-> >   				cfs_rq->throttled_clock_self = rq_clock(rq);
-> 
-> These bits probabaly need revisiting. From what I understand, these
-> stats were maintained to know when a task was woken up on a
-> throttled hierarchy which was not connected to the parent essentially
-> tracking the amount of time runnable tasks were waiting on the
-> cfs_rq before an unthrottle event allowed them to be picked.
 
-Do you mean these throttled_clock stats?
-
-I think they are here because we do not record the throttled_clock for
-empty cfs_rqs and once the cfs_rq has task enqueued, it needs to record
-its throttled_clock. This is done in commit 79462e8c879a("sched: don't
-account throttle time for empty groups") by Josh. I don't think per-task
-throttle change this.
-
-With this said, I think there is a gap in per-task throttle, i.e. when
-all tasks are dequeued from this throttled cfs_rq, we should record its
-throttled_time and clear its throttled_clock.
-
-> 
-> With per-task throttle, these semantics no longer apply since a woken
-> task will run and dequeue itself when exiting to userspace.
-> 
-> Josh do you have any thoughts on this?
-> 
-> > -#endif
-> >   		}
-> > +#endif
-> >   	}
-> >   }
-> >
-
-> > @@ -5947,12 +5967,16 @@ static int tg_throttle_down(struct task_group
-> > *tg, void *data)
-> > 
-> >   	/* group is entering throttled state, stop time */
-> >   	cfs_rq->throttled_clock_pelt = rq_clock_pelt(rq);
-> > -	list_del_leaf_cfs_rq(cfs_rq);
-> > 
-> >   	SCHED_WARN_ON(cfs_rq->throttled_clock_self);
-> >   	if (cfs_rq->nr_queued)
-> >   		cfs_rq->throttled_clock_self = rq_clock(rq);
-> > 
-> > +	if (!cfs_rq->nr_queued) {
-> > +		list_del_leaf_cfs_rq(cfs_rq);
-> > +		return 0;
-> > +	}
-> > +
-> 
-> This bit can perhaps go in Patch 2?
-
-I kept all the changes to leaf cfs_rq handling in one patch, I think it
-is easier to review :-)
-
-Thanks,
-Aaron
-
-> >   	WARN_ON_ONCE(!list_empty(&cfs_rq->throttled_limbo_list));
-> >   	/*
-> >   	 * rq_lock is held, current is (obviously) executing this in kernelspace.
 
