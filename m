@@ -1,153 +1,139 @@
-Return-Path: <linux-kernel+bounces-560973-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560976-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A2BAA60BD7
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 09:36:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93A97A60BE4
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 09:37:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0362E7ACC39
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 08:35:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 49C7918907CC
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 08:38:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D059E1C5F13;
-	Fri, 14 Mar 2025 08:36:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5BA41D86C6;
+	Fri, 14 Mar 2025 08:37:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gpscJe9q"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UpEVmwjc"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25CBD288DA;
-	Fri, 14 Mar 2025 08:36:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 175591A5B93
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 08:37:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741941373; cv=none; b=cqht3RQt+u+q6CEGx5ZMeIySDtai/UWVpWdHV2Klkc1FUyWy/KdweEkoJS1UeeFVGe1PuGOmvqx7hyA0V42vwtV7i2Vu2wY5x4rUzZ6H8NEtd7SznNX6ake5DYcBj6eQWqC+N/7/g9JeilPhDYuIGvC578st5toZ0HqBzpTx9nI=
+	t=1741941456; cv=none; b=Ecw/qX4iojRc1711fV4cHA928eNITTomA1MDH0OKefMDoJ2S82RUnkVNG5rNHcmNdnQfWzTAnJblGJM49LCXLFMBkKgk/HNtcHXRCj4MtaoqYwfJveRq3a4OwHG1uxKWdoRiMUXnJc8aVi/3dZB4D++Ef8i44zsycD1r0TwqgMA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741941373; c=relaxed/simple;
-	bh=0XELGK3NlJpfm2jYvbE8iTtmJ7oQJYjOFPHBv93++5Y=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=tCS8ZVkq1YKsHRqCK0s4TyAg3gf7QuFgduaZA1dL5y2ibKPv4yhT2SxxnTkV3sAfw92hFNnuhsaXDR+cvLwKdTibUmW8rktJ7HYtNVCxC4U+KQCHrJ7T5EbyTj/ZmZpXRd/wEMKqED2OZjtBbthWa7rn+Sk3bc9jLzIsHcRUCBg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gpscJe9q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9D2BC4CEE5;
-	Fri, 14 Mar 2025 08:36:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741941372;
-	bh=0XELGK3NlJpfm2jYvbE8iTtmJ7oQJYjOFPHBv93++5Y=;
-	h=From:Date:Subject:To:Cc:From;
-	b=gpscJe9qItz3bc/oGOZyAicdMAFrxZQWc5rBxTOeuv24EKCvjOTOOF+5KD11S/yGV
-	 lNdIqbtk4vsfncabF/obhHt2Dj2oz/sCFn3jsjDiZdytDfsVwKBIH2U6EJX0vBTwDM
-	 VDvCJ/U62up9CuI6vBH4g8CYqAQpBOSmTBsaqFFIoG89QmwKnzFnEQqH1JF05M0HoD
-	 a5sLs2Ugp/2mQvnpdgmmZhXJHVytfGk5f14Ad7rcTml6Wjm2M9QoJPQjcDUkfCJxUU
-	 P6DHngkJcwNB/VXX0yr4+Ms9XODY2mCs9405pTfohz/LIIruMQAn0PInANTPEvBb5Y
-	 khMV9YlJwIlKQ==
-From: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
-Date: Fri, 14 Mar 2025 09:35:51 +0100
-Subject: [PATCH net-next] selftests: drv-net: fix merge conflicts
- resolution
+	s=arc-20240116; t=1741941456; c=relaxed/simple;
+	bh=dk+ejBCS3NH9te+aXnCnqbhIl0UgK8PkFWM4qXXJ5TY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=W/Z7B/G52qvM5K8/Jt/O6ERALBKR6Wtb3cK3Z9pEh6Pk4WAjwzcg0wAoOOGWOFJycEK0L+GAQQTl7/dn6+b0iaWxgvHFTcIZ7j61Hom6zO0+g7pj4fcCeVkRBljRRMnkprYCPl2F6gmAJVDS4oHmjifT1W0FdxJlICVHQGPpVlg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UpEVmwjc; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-aaeec07b705so292694966b.2
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 01:37:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1741941451; x=1742546251; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=tdW92HTTZmGzjR6ChSxqLyGpU5fNUkYFaVmkq1y4xX4=;
+        b=UpEVmwjchAI6nFe3+Vz4Cydv+26qouM/cxZsaP3CA171bf+Di/cVfMWDk4e4QbU6Ed
+         umOIE/IBkq6glc2lBrDbEqBlwGEblFZqYTBNsEfphtDFIZFMMRH9UsesKeEgdY6fgNQN
+         uCfxvoOIoOghh0T8gUtGR5gt98T+ej+y/AHKNxn3SVvFv/l+UjnzuC72BNyZM7PUPdVc
+         lvtRzRHu/zplQ0Cpt1fCKAyV9emZOXBcAJ8xxgiDfHyojo8pqeLk0ewMDYT+qWj0AGmO
+         1BKyqtIBLlruMzaqr3STVFgcVIVBblGSFJoEUPng8C8VWp6KM2YCqlc/EhlkPDtB0klx
+         56og==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741941451; x=1742546251;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=tdW92HTTZmGzjR6ChSxqLyGpU5fNUkYFaVmkq1y4xX4=;
+        b=YqPm9NNi08gEb3RZffMbn4AJEBegpRaEZ27zQMa2STjzC/sjbBhXW3X7VFyRzQugfD
+         qb/7p0F8IOjJCR8Ltabn8Thd4c8vYeuskwGULYjw8PqXptSJsBLj0qEHjqs8nOxbPHlA
+         DSaVhXh5hNhgDhWe/Web9eBqmtGx8WdRefT8HmBGO1Vee9t9j0aRNrQk9hy5dFFl3P6P
+         EhbEsq2WNB6G0aoj6LBwd1ejDCc/WrcvoR+BiN+AkGc4gxQdPWsB5xgj/0M4UU111TWE
+         3881MFJM6eXcEXUCj952HUuHdCK+j/AL34srRzpQa3+NTdscgurM+rsq8KT6R4Piw638
+         mmFA==
+X-Forwarded-Encrypted: i=1; AJvYcCXaqp9/BgxvpV7BXvu3sF7rjOOWqtlGIthUv6rqtu2WCTnQL0tCgc+mV0hcG8EdArk0kp0etM02Be/iAXU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzaIUoH0SNxb1av6yEvgjGFdxByzZ6inWrTQb2R9jUJgVa9zcs8
+	V43KdBtUYyLzjkmyZSZFUoPBu0yzxi7G5MNJkwMiYXV3qecbjzw58C6Zcy34neU=
+X-Gm-Gg: ASbGncuqqeovSrbhrw7mHIASVKYkrMqkRRhw04+GMNre+OlA8RYe4TDLQto9rklwJM1
+	1vGk1WY9IEOsIvMdlBor4c/69zOkr/OksoWREZ2k3v1VYpyVxIEnSdWcolKqrESIZID2xuD+4QZ
+	CJ6MEDGkqRNTNFpbLEQYlM92gjF6u4LYgagXE13zUvdyLpjrh0xxGVKz35MEeWl3TBJAPz41EJb
+	CYliagKdFKF4hSDVgXUDnV3hhOZPVDfK4xKqHoFxniFk8HgGOJloWB3qCWvKIFLVbY0pX58ownJ
+	gmXBfnSs7O22ULN8G6xV/iuvBbl9cujEldas2UYwOCch1vwQuJWkkFyu+zl/IeuY/AxkD5Le4by
+	M9u9eBeAjfc4OOYFFg+QZ+oPKWjWHjgJMHTlh9NXjL6oXq237xOz0a5AdnfyMskhMdiO7g8bKb4
+	NvXfX38HkLRwMQv/Xnv9JWSWBxyHrxYWg=
+X-Google-Smtp-Source: AGHT+IFUOlHrTuzko/qUKZDoHX5T+vqpZFWSBwlhEPozEDwkhttO5RnwU44O1wIX8uDl5bdWFAV2Vg==
+X-Received: by 2002:a17:907:6ea9:b0:ac2:64eb:d4e8 with SMTP id a640c23a62f3a-ac32fa44234mr197432866b.0.1741941451312;
+        Fri, 14 Mar 2025 01:37:31 -0700 (PDT)
+Received: from ?IPV6:2001:1c06:2302:5600:7555:cca3:bbc4:648b? (2001-1c06-2302-5600-7555-cca3-bbc4-648b.cable.dynamic.v6.ziggo.nl. [2001:1c06:2302:5600:7555:cca3:bbc4:648b])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3149cfbb3sm194289566b.101.2025.03.14.01.37.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 14 Mar 2025 01:37:30 -0700 (PDT)
+Message-ID: <9089c8e7-d38e-4c36-9b97-0f4a3039a29b@linaro.org>
+Date: Fri, 14 Mar 2025 08:37:28 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 1/5] dt-bindings: clock: qcom,x1e80100-camcc: Fix the
+ list of required-opps
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Robert Foss <rfoss@kernel.org>,
+ Todor Tomov <todor.too@gmail.com>, Mauro Carvalho Chehab
+ <mchehab@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>,
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-media@vger.kernel.org,
+ Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+References: <20250313-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v5-0-846c9a6493a8@linaro.org>
+ <20250313-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v5-1-846c9a6493a8@linaro.org>
+ <20250314-nimble-exuberant-ermine-8ceb43@krzk-bin>
+Content-Language: en-US
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <20250314-nimble-exuberant-ermine-8ceb43@krzk-bin>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250314-net-next-drv-net-ping-fix-merge-v1-1-0d5c19daf707@kernel.org>
-X-B4-Tracking: v=1; b=H4sIAGbq02cC/zWNSQqAMAxFryJZG7CO4FXEhdqoWVglFSkU724ou
- PiLx58ieBImD30WQehhz6dTMHkGyz65jZCtMpRF2RSVqdHRrQo3WnkSXOw2XDngQaLxudJY262
- WTAu6cgmpmR4G+Mswvu8HA8CvyXsAAAA=
-X-Change-ID: 20250314-net-next-drv-net-ping-fix-merge-b303167fde16
-To: mptcp@lists.linux.dev, Andrew Lunn <andrew+netdev@lunn.ch>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Shuah Khan <shuah@kernel.org>
-Cc: netdev@vger.kernel.org, linux-kselftest@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, 
- "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3166; i=matttbe@kernel.org;
- h=from:subject:message-id; bh=0XELGK3NlJpfm2jYvbE8iTtmJ7oQJYjOFPHBv93++5Y=;
- b=owEBbQKS/ZANAwAIAfa3gk9CaaBzAcsmYgBn0+p3gxFMBZfYI6UpmoWmrPP9IfoxmGSO3gC0U
- wLb2Eki1tKJAjMEAAEIAB0WIQToy4X3aHcFem4n93r2t4JPQmmgcwUCZ9PqdwAKCRD2t4JPQmmg
- c+CeD/9eFz1NROsTVTXuf1WLbGaRlr+d+pdn2adbNA6sbNnsDjAhv0WEI/cXDqUWN5tqjqESA1X
- dPoEKeUZG1wzs/TKs9k6wNTw9wCwQKlxIxxyAVhzoVuzym3HATtVU8I6E/9VUhyyoo71jCGJUPC
- 6A8qXlPAfxIgWwvmGLnCU2jXxRsvWwEpylIUze7SUxV2eF/YEzPJHxx5wjbBGhkELq6sW0Qg6rF
- zt6Z5mBSRlnlYBIzg+FGZNKdTxJKkzRQZjUPWlFvk2eVrq1EKl22N57H/W1EaNc4tpYOWJtnRuh
- B1droVB5X5IlTYqORQ6/DlAbGsPWRKIZXw0+HvoCnnO525ThYLqO8yH9itOthk0xb+HiBBha+uR
- B6IUjiGIafrESoOJRYkr91b3HAdKAyZd05J9Cm+PigDslX063P7xCufgx8c/bI9sqPbpAv4PZ38
- 5TN0zCxQbZjkDeUTNXn9ipwANBi6jupRjpgPjGb9UYnRy7+1Rpqo9xYG499C1QBUENQ5cKw00Hk
- w7yMljIidF9cN05CBe01Ur/LWpJHwxt8lFf8eN7RvETYjYN8XkjFaJUMvEFbl/q1uvdGxRFk/iK
- PZfNGUIHizQku81l1rvqLOVgaOLVgN9GsiEpKmIAQvW+QzIXEoR8CDcWjebG02z49y18TIo/ktb
- meKgneP7ZINrsjg==
-X-Developer-Key: i=matttbe@kernel.org; a=openpgp;
- fpr=E8CB85F76877057A6E27F77AF6B7824F4269A073
 
-After the recent merge between net-next and net, I got some conflicts on
-my side because the merge resolution was different from Stephen's one
-[1] I applied on my side in the MPTCP tree.
+On 14/03/2025 07:51, Krzysztof Kozlowski wrote:
+> On Thu, Mar 13, 2025 at 09:43:13PM +0000, Bryan O'Donoghue wrote:
+>> From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+>>
+>> The switch to multiple power domains implies that the required-opps
+>> property shall be updated accordingly, a record in one property
+>> corresponds to a record in another one.
+>>
+>> Fixes: 7ec95ff9abf4 ("dt-bindings: clock: move qcom,x1e80100-camcc to its own file")
+>> Signed-off-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+>> Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+>> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+> 
+> I do not see improvements:
+> 
+> https://lore.kernel.org/all/20250305-little-frigatebird-of-calibration-244f79@krzk-bin/
+> 
+> I expect both comments to be addressed in the file.
+> 
+> Best regards,
+> Krzysztof
+> 
 
-It looks like the code that is now in net-next is using the old way to
-retrieve the local and remote addresses. This patch is now using the new
-way, like what was in Stephen's email [1].
+Pardon me,
 
-Also, in get_interface_info(), there were no conflicts in this area,
-because that was new code from 'net', but a small adaptation was needed
-there as well to get the remote address.
+I missed you had left additional comments.
 
-Fixes: 941defcea7e1 ("Merge git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net")
-Link: https://lore.kernel.org/20250311115758.17a1d414@canb.auug.org.au [1]
-Suggested-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
----
- tools/testing/selftests/drivers/net/ping.py | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
-
-diff --git a/tools/testing/selftests/drivers/net/ping.py b/tools/testing/selftests/drivers/net/ping.py
-index 7a1026a073681d159202015fc6945e91368863fe..79f07e0510ecc14d3bc2716e14f49f9381bb919f 100755
---- a/tools/testing/selftests/drivers/net/ping.py
-+++ b/tools/testing/selftests/drivers/net/ping.py
-@@ -15,18 +15,18 @@ no_sleep=False
- def _test_v4(cfg) -> None:
-     cfg.require_ipver("4")
- 
--    cmd(f"ping -c 1 -W0.5 {cfg.remote_v4}")
--    cmd(f"ping -c 1 -W0.5 {cfg.v4}", host=cfg.remote)
--    cmd(f"ping -s 65000 -c 1 -W0.5 {cfg.remote_v4}")
--    cmd(f"ping -s 65000 -c 1 -W0.5 {cfg.v4}", host=cfg.remote)
-+    cmd("ping -c 1 -W0.5 " + cfg.remote_addr_v["4"])
-+    cmd("ping -c 1 -W0.5 " + cfg.addr_v["4"], host=cfg.remote)
-+    cmd("ping -s 65000 -c 1 -W0.5 " + cfg.remote_addr_v["4"])
-+    cmd("ping -s 65000 -c 1 -W0.5 " + cfg.addr_v["4"], host=cfg.remote)
- 
- def _test_v6(cfg) -> None:
-     cfg.require_ipver("6")
- 
--    cmd(f"ping -c 1 -W5 {cfg.remote_v6}")
--    cmd(f"ping -c 1 -W5 {cfg.v6}", host=cfg.remote)
--    cmd(f"ping -s 65000 -c 1 -W0.5 {cfg.remote_v6}")
--    cmd(f"ping -s 65000 -c 1 -W0.5 {cfg.v6}", host=cfg.remote)
-+    cmd("ping -c 1 -W5 " + cfg.remote_addr_v["6"])
-+    cmd("ping -c 1 -W5 " + cfg.addr_v["6"], host=cfg.remote)
-+    cmd("ping -s 65000 -c 1 -W0.5 " + cfg.remote_addr_v["6"])
-+    cmd("ping -s 65000 -c 1 -W0.5 " + cfg.addr_v["6"], host=cfg.remote)
- 
- def _test_tcp(cfg) -> None:
-     cfg.require_cmd("socat", remote=True)
-@@ -120,7 +120,7 @@ def get_interface_info(cfg) -> None:
-     global remote_ifname
-     global no_sleep
- 
--    remote_info = cmd(f"ip -4 -o addr show to {cfg.remote_v4} | awk '{{print $2}}'", shell=True, host=cfg.remote).stdout
-+    remote_info = cmd(f"ip -4 -o addr show to {cfg.remote_addr_v['4']} | awk '{{print $2}}'", shell=True, host=cfg.remote).stdout
-     remote_ifname = remote_info.rstrip('\n')
-     if remote_ifname == "":
-         raise KsftFailEx('Can not get remote interface')
+I will fix this up.
 
 ---
-base-commit: 941defcea7e11ad7ff8f0d4856716dd637d757dd
-change-id: 20250314-net-next-drv-net-ping-fix-merge-b303167fde16
-
-Best regards,
--- 
-Matthieu Baerts (NGI0) <matttbe@kernel.org>
-
+bod
 
