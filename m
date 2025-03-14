@@ -1,182 +1,132 @@
-Return-Path: <linux-kernel+bounces-561510-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561511-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72AA3A612E1
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 14:39:09 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58B7CA612E3
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 14:40:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F62D461931
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 13:39:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D48C462863
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 13:40:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2528B1FFC54;
-	Fri, 14 Mar 2025 13:39:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7012A1FFC4A;
+	Fri, 14 Mar 2025 13:39:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eITjjaqA"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="C+L/HE4u"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5A1F1FECA2;
-	Fri, 14 Mar 2025 13:39:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45CFF1FECA2;
+	Fri, 14 Mar 2025 13:39:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741959542; cv=none; b=aYW/U/jemHgmS7ZlHa7m5rJaJT4tYme/k/bTdm2m/zgJOx9ikeXyDA1jTC13KHlQgiw5PXD6Xp9Ap3Q8McST5Q572WA83b1BlQOqKyZ6owyKYXOsE3qpfc/+838SxqByTODUIEUXDYXkD1R0h7UQlpoTChbZ6JJr/wnV/P4mZlI=
+	t=1741959598; cv=none; b=N+vWAb/+4QN/TPmuHZ11iekrC7jmueZI0zwi+JWHt3Wb2iDXnuFifVH8Afu77EMFJdgjztZxhzC5aRzDId2sqXLSANENpuuRBbLNDQO7nzVGRkMVeulweoZ+RhlM53TOcdg9nuHCx8/YChxqSrX5QCQS4deedfeP18BQUkgiI5w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741959542; c=relaxed/simple;
-	bh=hCH0QbOU7YEFPetxxX91L6YysqIx/EQog2etLguJj28=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=snp8BZ46eBrdPPDeXJZPjCXivKNyB0tIb5RxSZOpUa5R1TY627dsyvrrAssKNzLDioikTCMscz5s48RVn9g3MEzbeJ7U2gNrGZTvLstMdiECuYoH6J8ZD31BtRTfKB60qCsfxcMHUpErTgQ3Aq3o8Sgp5mb4l00LR+PKxhOkVcY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eITjjaqA; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-54998f865b8so1876887e87.3;
-        Fri, 14 Mar 2025 06:39:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741959539; x=1742564339; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ZhzCTWJ98QeetX0Lqy44K0mjT6jwPvVzdYi9tkPlycc=;
-        b=eITjjaqAGeDI5YJO5zJAVJttv0yqg8+mYlIX+IwAgFLsZ358lIF/gu+rSgMrGLGuxN
-         TTVaFZelesMv+TsFeqs6dtsA882yLave9qfoOZMZmEChers98eZ+0qiFw9SnsoqjFDyD
-         o18PvZRfU46AFT6YBg8zUhqB8/vFhIVNurJpD+rtYPzYQbiiGjsfqBksbhA6eHpd0VjR
-         3yVyLJ+f1SAGnbfitdXkqmsXfS1gfuLCtXlh+rrbY9NEQYQkS8vEEqcSzXEmzvQkFcXp
-         hDbzDj4U6UQ5zXzXX7PhoIu3TdFxRaE/LxHejd11vJuMnYFzfig5Aq7ITEtpmnvKKkRc
-         UdOA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741959539; x=1742564339;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZhzCTWJ98QeetX0Lqy44K0mjT6jwPvVzdYi9tkPlycc=;
-        b=vFSiNbkExVefTI4pFQmDVlOlSaRP9oHGU+2a4tO4NlznQALGYdmyCzYIV3i+uuS5uR
-         SFogtu8dYnJd25Z9JHRAKXgEZiYFJliG/hdEsii3dO+FJhPcYuDbe9vA+LwZUozo1ZlE
-         f38EJ+W5ezs4iH42bc4y//DOgdvJy8PwfTW16Ya6oS4ZxGqvwPbbir44vTrAmzQU8Rqb
-         gDlqsBM3aa/C+LiR6kCuucoY5l4tYN6p345B9B93ZYfXIeklWxZZf76csvgR1bzUPsk8
-         qq+5JGZS2dapD/P7Rth22xoout5vWFOjAmkpCknAQrbnfhCLCgx0+xAaJ9i6bM0ym8ib
-         jScg==
-X-Forwarded-Encrypted: i=1; AJvYcCWL1ZiGNlQ2o/e4x49ueJXF0VnP0/9ucYc1Vs4x2VxauibkgYaHMOxlKFJwdS3psWORAsHy0hEJ/G4=@vger.kernel.org, AJvYcCXBnsuazmhz7WtYyOA2/3uBQ2UDhnscSK6efg1W9OmmXiLSVVXgBo04ePzocZM9dYAkKZKqdehUqEzKZIU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzlMDHLuiXKP8qeh8Pbgj6T3AlWZePvZz4k7ot1+qqdkPu1HA2c
-	bjkBk/F/B2zdapEunh4q939B1c9Ao3QpfRRxntDZDiuxTuPx0qoE
-X-Gm-Gg: ASbGncueaYtXPDCJcQcL0KCV+N7jC8GdN8UiTO3jxU6OgVQSJ1re/ZLVkcAITXkaZTD
-	zrb2eX2pFPYIgepFBqh2gWte4ut6s8D3hVdLbFoXufr5yTaJ6Kl49b/5sShOLuZ0ngYWMRx9HJS
-	+rpJ0zMdSMNofa6w3hV9mJV11wfmh+PaoL9COaUp31+e9lfNOEfkhazOc5p/Gl+th6osfpc4gch
-	552bhoVGJVA7ec9BCbYCcSb8NUMLndr2F2CQrNa5IAUkxul/kBEj0VdqIEc8PdyItPz8uJFCOJH
-	hDBdWfB/H8AtaYrdAHBnAOn3UKLZ9Z4ikTPE1IMlv288wL0C12YY5HjuKYhpHupVFog+aA02YNB
-	EAN9ReGbLjSTdYlwU0uRO7q4cxw==
-X-Google-Smtp-Source: AGHT+IH1My44mUZhsIp30MFzqw7ymCnGpSbaC4sDTDo0UIMwA5zmXEolpYiOvBXwOInnJCKMdYyptw==
-X-Received: by 2002:a05:6512:b0e:b0:545:3032:bc50 with SMTP id 2adb3069b0e04-549c38fb8f3mr1052670e87.19.1741959538508;
-        Fri, 14 Mar 2025 06:38:58 -0700 (PDT)
-Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-549ba881f66sm525666e87.178.2025.03.14.06.38.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 14 Mar 2025 06:38:56 -0700 (PDT)
-Message-ID: <a8f76dd0-56be-46a5-9cc1-2d17d013127d@gmail.com>
-Date: Fri, 14 Mar 2025 15:38:55 +0200
+	s=arc-20240116; t=1741959598; c=relaxed/simple;
+	bh=SAXEOg96Mga7d7rdhRAloDCo8jhUtoSQKUQYAMvQSuI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=af2Ws2iDdH9HXip/cuCKW+yN0hwtgkoImNnvu3v0YFmxKHTmaLgzckNPvdi4+fF1bum8Na6JsuvWl8zDMjm54xiI/1zCa21LbBrqWPO3vA+kYJjm0pPAsyx2z7hOUzcesfZYMY+jvp8g5BgMd2QAxjulrNwQx0d7lMtyUXxdDu0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=C+L/HE4u; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741959597; x=1773495597;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=SAXEOg96Mga7d7rdhRAloDCo8jhUtoSQKUQYAMvQSuI=;
+  b=C+L/HE4u7HFMReUTwm7XgJjoRLThaJTk+CyC+PXYazC68fTZiTR0zEb9
+   waPqT/cwaCtDfzzIW0Jt8FzpXKl6VJTnPpqsSzlphdLz6m81o7dBY//mv
+   Cwe7K1cr34Yc3SEtJW70QsfNFwL0/Ma3HLHc92iHwIVTZqH/a1406ulkE
+   GgY7bUMoGaZiSkBOXrrqiwx6Sjm2+Z8uOZHYvE9hcgqo23XELKC6QfvUX
+   axyAC2jOLk+3ENWrQTjO1neOR59nsCW+yx2FQd+Rb7XmIjCec5qX2DSMb
+   E5sl/zovVKqcoirc7hdxYKBL2QGXli9wdem7ltOqS48WVWRnII/SReQuM
+   g==;
+X-CSE-ConnectionGUID: upHeWtNBRL+/6f/lluPQRA==
+X-CSE-MsgGUID: yIRwLZJxRGSDGM8FDrTWtg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11373"; a="43318961"
+X-IronPort-AV: E=Sophos;i="6.14,246,1736841600"; 
+   d="scan'208";a="43318961"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Mar 2025 06:39:57 -0700
+X-CSE-ConnectionGUID: FcwDeTBSTWKzT1QQ6QY+ZQ==
+X-CSE-MsgGUID: A9Jbvv2HRaKcX8pj0hyLOw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,246,1736841600"; 
+   d="scan'208";a="125474143"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by fmviesa003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Mar 2025 06:39:54 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tt5GS-00000002TC8-154m;
+	Fri, 14 Mar 2025 15:39:52 +0200
+Date: Fri, 14 Mar 2025 15:39:52 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Lee Jones <lee@kernel.org>
+Cc: Raag Jadav <raag.jadav@intel.com>, giometti@enneenne.com,
+	gregkh@linuxfoundation.org, raymond.tan@intel.com,
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/5] mfd: intel_ehl_pse_gpio: Introduce Intel Elkhart
+ Lake PSE GPIO and TIO
+Message-ID: <Z9QxqH3DJvyW3sjo@smile.fi.intel.com>
+References: <20250307052231.551737-1-raag.jadav@intel.com>
+ <20250307052231.551737-2-raag.jadav@intel.com>
+ <20250314124450.GP3890718@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 7/7] Documentation: Add sysfs documentation for PSCRR
- reboot reason tracking
-To: Oleksij Rempel <o.rempel@pengutronix.de>,
- Sebastian Reichel <sre@kernel.org>,
- Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
- Benson Leung <bleung@chromium.org>, Tzung-Bi Shih <tzungbi@kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: kernel@pengutronix.de, linux-kernel@vger.kernel.org,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
- Lukasz Luba <lukasz.luba@arm.com>, linux-pm@vger.kernel.org,
- =?UTF-8?Q?S=C3=B8ren_Andersen?= <san@skov.dk>,
- Guenter Roeck <groeck@chromium.org>, Ahmad Fatoum <a.fatoum@pengutronix.de>,
- Andrew Morton <akpm@linux-foundation.org>, chrome-platform@lists.linux.dev
-References: <20250314113604.1776201-1-o.rempel@pengutronix.de>
- <20250314113604.1776201-8-o.rempel@pengutronix.de>
-Content-Language: en-US, en-AU, en-GB, en-BW
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-In-Reply-To: <20250314113604.1776201-8-o.rempel@pengutronix.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250314124450.GP3890718@google.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On 14/03/2025 13:36, Oleksij Rempel wrote:
-> Add documentation for the Power State Change Reason Recorder (PSCRR)
-> sysfs interface, which allows tracking of system shutdown and reboot
-> reasons. The documentation provides details on available sysfs entries
-> under `/sys/kernel/pscrr/`, explaining their functionality, example usage,
-> and how they interact with different backend storage options (e.g., NVMEM).
+On Fri, Mar 14, 2025 at 12:44:50PM +0000, Lee Jones wrote:
+> On Fri, 07 Mar 2025, Raag Jadav wrote:
 > 
-> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
-> ---
->   .../ABI/testing/sysfs-kernel-reboot-pscrr     | 46 +++++++++++++++++++
->   1 file changed, 46 insertions(+)
->   create mode 100644 Documentation/ABI/testing/sysfs-kernel-reboot-pscrr
+> > Intel Elkhart Lake Programmable Service Engine (PSE) includes two PCI
+> > devices that expose two different capabilities of GPIO and Timed I/O
+> > as a single PCI function through shared MMIO.
+
+...
+
+> > +	ret = pci_alloc_irq_vectors(pci, 2, 2, PCI_IRQ_ALL_TYPES);
+> > +	if (ret < 0)
+> > +		return ret;
+> > +
+> > +	ret = mfd_add_devices(&pci->dev, PLATFORM_DEVID_AUTO, ehl_pse_gpio_devs,
 > 
-> diff --git a/Documentation/ABI/testing/sysfs-kernel-reboot-pscrr b/Documentation/ABI/testing/sysfs-kernel-reboot-pscrr
-> new file mode 100644
-> index 000000000000..7cc643f89675
-> --- /dev/null
-> +++ b/Documentation/ABI/testing/sysfs-kernel-reboot-pscrr
-> @@ -0,0 +1,46 @@
-> +What:		/sys/kernel/pscrr/reason
-> +Date:		April 2025
-> +KernelVersion:  6.15
-> +Contact:	Oleksij Rempel <o.rempel@pengutronix.de>
-> +Description:
-> +		This file provides access to the last recorded power state
-> +		change reason. The storage backend is configurable and, if
-> +		supported, the reason may be stored persistently in an
-> +		NVMEM cell or another backend.
-> +
-> +		Reading this file returns an integer representing the last
-> +		recorded shutdown or reboot cause.
-> +
-> +		Writing an integer value to this file sets the reason to be
-> +		stored and recorded for system analysis.
-> +
-> +		Example usage (values are for illustration and may not reflect
-> +		actual reasons used in a given system):
-> +		  Read:
-> +			$ cat /sys/kernel/pscrr/reason
-> +			3   # (Example: Power loss event, may differ per system)
-> +
-> +		  Write:
-> +			$ echo 5 > /sys/kernel/pscrr/reason
-> +			# Sets the reason to 5 (Example: User-triggered reboot,
-> +			# this may not be a real value in your system)
-> +
-> +		Values are defined in:
-> +		  - `include/linux/reboot.h` (enum psc_reason)
+> dev_*?
 
-Is it possible to provide the reason (also) as string?
+devm_* ?
 
-I believe we should fix the meaning of the numbers so the ABI is not 
-changing for the users. Hence we could as well document the meaning of 
-the values(?) If I read the suggestion right, we will in any case have 
-predefined set of reasons in the kernel side.
 
-Or, am I missing something?
+> > +			      ARRAY_SIZE(ehl_pse_gpio_devs), pci_resource_n(pci, 0),
+> > +			      pci_irq_vector(pci, 0), NULL);
+> > +	if (ret)
+> > +		pci_free_irq_vectors(pci);
 
-> +
-> +What:		/sys/kernel/pscrr/reason_boot
-> +Date:		April 2025
-> +KernelVersion:  6.15
-> +Contact:	Oleksij Rempel <o.rempel@pengutronix.de>
-> +Description:
-> +		This file provides the last recorded power state change reason
-> +		from before the current system boot. If a supported backend
-> +		(e.g., NVMEM) is configured, this value is retained across
-> +		reboots.
-> +
-> +		Example usage (values are for illustration and may not reflect
-> +		actual reasons used in a given system):
-> +		  Read:
-> +			$ cat /sys/kernel/pscrr/reason_boot
-> +			2   # (Example: Over-temperature shutdown, may differ per system)
-> +
+Anyway, the choice as far as I understood it is motivated by usage of
+pci_*_irq_vector() APIs, which are officially not manageable (however
+in practice they are).
+
+> > +	return ret;
+> > +}
+> > +
+> > +static void ehl_pse_gpio_remove(struct pci_dev *pdev)
+> > +{
+> > +	mfd_remove_devices(&pdev->dev);
+> > +	pci_free_irq_vectors(pdev);
+> > +}
+
+Same here.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
 
 
