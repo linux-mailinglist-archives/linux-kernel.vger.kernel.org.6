@@ -1,117 +1,146 @@
-Return-Path: <linux-kernel+bounces-561470-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98EB5A6124E
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 14:16:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F4DAA61256
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 14:17:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE6831B630EB
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 13:16:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0AB861B62EFA
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 13:16:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F35251FF61E;
-	Fri, 14 Mar 2025 13:14:39 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA52F1FE470
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 13:14:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E151202C31;
+	Fri, 14 Mar 2025 13:14:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="n/IyhA90";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="046hKvlz";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="n/IyhA90";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="046hKvlz"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3141F20299F
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 13:14:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741958079; cv=none; b=UFKM4Sw7JEENFt9StrttmvjDafadfBa5SzPvMGIBsy4ixxCYYlUfNnBIE5Bm80TO8BzmZqdSbCJzhKAEs7ezdDxzPQgXZXJgOH2iqa4YBDJnD5VzOdtJdfZke5xJadp+/tp3I72qp4HZ6U2Dgxt1dC1t5t0cM4L5Cvta4GURIO4=
+	t=1741958090; cv=none; b=kgGlBCHl2eXdN0CfeFy2cvxtzTjmf+W/JUXuktJoT4nfj1qmyJf9iyADJD2riJB7BNKImlxG9ZuORZVJ1V+WyOSRG/dfD63UqGoy2kRameEty6/LcFGB1zNitLWYsDT5E9lo7NkyCk0ZN0Kl1ISeDC4CL8Zl3XoMM1hd2uO7aVo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741958079; c=relaxed/simple;
-	bh=LCOwegfYSlyPxTWUkilJBjC5KUTBoSn6ooShxFJ+aZo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=skrSawIRqmGrKQLXVvCAxkzKWSHGxGPhsjqyThCe5FQgw+4BwfaY1N7EICoyMHZa8Ulu6fgCK4Xc2mf7tH3mpHH857gF8plb1SC8F/oaylhAHZq1w2qMQ6adiN+EKeiyFVItS9ByPVivHEIH/uyVjpKuLRG+fGgIRhKkOYBzHtc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 40CF71424;
-	Fri, 14 Mar 2025 06:14:47 -0700 (PDT)
-Received: from [10.57.40.41] (unknown [10.57.40.41])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1B3363F673;
-	Fri, 14 Mar 2025 06:14:34 -0700 (PDT)
-Message-ID: <7dbd7dd3-dbf7-42e0-97c4-c5eb50250947@arm.com>
-Date: Fri, 14 Mar 2025 13:14:33 +0000
+	s=arc-20240116; t=1741958090; c=relaxed/simple;
+	bh=i5pgVOZlVnq0y47YV+bp584paVxAqR35NM0VmcVJbdg=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=kLxHp2MdT95IPeeJuEdNiIrQfunj1PcOch+LtIIOWruyaHo473w87Vdd/BfqMXbYUYbnCDBGkgUWxRYygIV5XfFxk2ncjNBDQkcudssx428WTM5wCLgMVO+93VVdtgsLheClRlRxxAQ75knNDh5c+Za9sRRzQD/H497SPY207mU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=n/IyhA90; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=046hKvlz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=n/IyhA90; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=046hKvlz; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from pobox.suse.cz (unknown [10.100.2.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 452362116E;
+	Fri, 14 Mar 2025 13:14:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1741958087; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1avXQwhwgX4XEF1ZEtVMSZaAo6rnSr1qiGZubxC19HI=;
+	b=n/IyhA90i67l1TV9Wmw/AAAoC09i6VEIyW3oqYoz/ufMi8M80UMHynYNPrdr9T1l3aJkuU
+	mSKm4UlMNAKUUATOhTWzp6fIBkMwGiuBLWZdRKQiVgwkOztvbVBAkd1qrPIMZeCdTWEkkH
+	ObDqUvKR/S2trp9DThBQrQ+yGdUEAdw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1741958087;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1avXQwhwgX4XEF1ZEtVMSZaAo6rnSr1qiGZubxC19HI=;
+	b=046hKvlzpKzF6HYX5VwZ4n+XsiebxqUX0uiwyuiUvUAS7p/JSfP+xbtLXKuurjfxiedIKo
+	msUURfaBIYr1AaCA==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1741958087; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1avXQwhwgX4XEF1ZEtVMSZaAo6rnSr1qiGZubxC19HI=;
+	b=n/IyhA90i67l1TV9Wmw/AAAoC09i6VEIyW3oqYoz/ufMi8M80UMHynYNPrdr9T1l3aJkuU
+	mSKm4UlMNAKUUATOhTWzp6fIBkMwGiuBLWZdRKQiVgwkOztvbVBAkd1qrPIMZeCdTWEkkH
+	ObDqUvKR/S2trp9DThBQrQ+yGdUEAdw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1741958087;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1avXQwhwgX4XEF1ZEtVMSZaAo6rnSr1qiGZubxC19HI=;
+	b=046hKvlzpKzF6HYX5VwZ4n+XsiebxqUX0uiwyuiUvUAS7p/JSfP+xbtLXKuurjfxiedIKo
+	msUURfaBIYr1AaCA==
+Date: Fri, 14 Mar 2025 14:14:47 +0100 (CET)
+From: Miroslav Benes <mbenes@suse.cz>
+To: Filipe Xavier <felipeaggger@gmail.com>
+cc: Josh Poimboeuf <jpoimboe@kernel.org>, Jiri Kosina <jikos@kernel.org>, 
+    Petr Mladek <pmladek@suse.com>, Joe Lawrence <joe.lawrence@redhat.com>, 
+    Shuah Khan <shuah@kernel.org>, Marcos Paulo de Souza <mpdesouza@suse.com>, 
+    live-patching@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+    linux-kernel@vger.kernel.org, felipe_life@live.com
+Subject: Re: [PATCH PATCH 2/2] selftests: livepatch: test if ftrace can trace
+ a livepatched function
+In-Reply-To: <20250306-ftrace-sftest-livepatch-v1-2-a6f1dfc30e17@gmail.com>
+Message-ID: <alpine.LSU.2.21.2503141411010.4442@pobox.suse.cz>
+References: <20250306-ftrace-sftest-livepatch-v1-0-a6f1dfc30e17@gmail.com> <20250306-ftrace-sftest-livepatch-v1-2-a6f1dfc30e17@gmail.com>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH] sched/util_est: Do not sub the delayed-task's
- util-est
-To: Xuewen Yan <xuewen.yan@unisoc.com>, dietmar.eggemann@arm.com,
- vincent.guittot@linaro.org, mingo@redhat.com, peterz@infradead.org,
- juri.lelli@redhat.com
-Cc: rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
- vschneid@redhat.co, linux-kernel@vger.kernel.org, qyousef@layalina.io,
- ke.wang@unisoc.com, di.shen@unisoc.com, xuewen.yan94@gmail.com
-References: <20250314090909.8404-1-xuewen.yan@unisoc.com>
-Content-Language: en-US
-From: Hongyan Xia <hongyan.xia2@arm.com>
-In-Reply-To: <20250314090909.8404-1-xuewen.yan@unisoc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.29 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.19)[-0.973];
+	MIME_GOOD(-0.10)[text/plain];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	ARC_NA(0.00)[];
+	FREEMAIL_TO(0.00)[gmail.com];
+	RCVD_COUNT_ZERO(0.00)[0];
+	MID_RHS_MATCH_FROMTLD(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com,live.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[kernel.org,suse.com,redhat.com,vger.kernel.org,live.com];
+	MIME_TRACE(0.00)[0:+];
+	FROM_EQ_ENVFROM(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	TO_DN_SOME(0.00)[]
+X-Spam-Score: -4.29
+X-Spam-Flag: NO
 
-On 14/03/2025 09:09, Xuewen Yan wrote:
-> In cpu_util_without, When the task is in rq, we should
-> sub the task's util_est, however, the delayed_task->on_rq
-> is true, however, the delayed_task's util had been sub
-> when sleep, so there is no need to sub the delayed task's
-> util-est. So add the checking of delayed-task.
-> 
-> On the other hand, as said in [1], the logic of util_est's
-> enqueue/dequeue could be simplified.
-> So simplify it by aligning with the conditions of uclamp.
-> 
-> [1]https://lore.kernel.org/all/CAB8ipk8pEvOtCm-d0o1rsekwxPWUHk9iBGtt9TLTWW-iWTQKiA@mail.gmail.com/
-> 
-> Signed-off-by: Xuewen Yan <xuewen.yan@unisoc.com>
-> ---
->   kernel/sched/fair.c | 7 ++++---
->   1 file changed, 4 insertions(+), 3 deletions(-)
-> 
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index c798d2795243..bebf40a0fa4e 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -6930,7 +6930,7 @@ enqueue_task_fair(struct rq *rq, struct task_struct *p, int flags)
->   	 * Let's add the task's estimated utilization to the cfs_rq's
->   	 * estimated utilization, before we update schedutil.
->   	 */
-> -	if (!(p->se.sched_delayed && (task_on_rq_migrating(p) || (flags & ENQUEUE_RESTORE))))
-> +	if (!p->se.sched_delayed || (flags & ENQUEUE_DELAYED))
->   		util_est_enqueue(&rq->cfs, p);
->   
->   	if (flags & ENQUEUE_DELAYED) {
-> @@ -7168,7 +7168,7 @@ static int dequeue_entities(struct rq *rq, struct sched_entity *se, int flags)
->    */
->   static bool dequeue_task_fair(struct rq *rq, struct task_struct *p, int flags)
->   {
-> -	if (!(p->se.sched_delayed && (task_on_rq_migrating(p) || (flags & DEQUEUE_SAVE))))
-> +	if (!p->se.sched_delayed)
->   		util_est_dequeue(&rq->cfs, p);
->   
->   	util_est_update(&rq->cfs, p, flags & DEQUEUE_SLEEP);
-> @@ -8037,7 +8037,8 @@ cpu_util(int cpu, struct task_struct *p, int dst_cpu, int boost)
->   		 */
->   		if (dst_cpu == cpu)
->   			util_est += _task_util_est(p);
-> -		else if (p && unlikely(task_on_rq_queued(p) || current == p))
-> +		else if (p && unlikely(current == p ||
-> +			 (task_on_rq_queued(p) && !p->se.sched_delayed)))
->   			lsub_positive(&util_est, _task_util_est(p));
->   
->   		util = max(util, util_est);
+Hi,
 
-Have you tested the above changes to make sure util_est enqueue dequeue 
-are balanced? util_est was broken for quite a while when merging delayed 
-dequeue because now enqueue_ and dequeue_task() do not always appear in 
-pairs. Since then, I always have a local patch like this (may be a bit 
-out of date now) to make sure util_est is balanced
+> +start_test "trace livepatched function and check that the live patch remains in effect"
+> +
+> +FUNCTION_NAME="livepatch_cmdline_proc_show"
+> +
+> +load_lp $MOD_LIVEPATCH
+> +trace_function "$FUNCTION_NAME"
 
-https://lore.kernel.org/all/752ae417c02b9277ca3ec18893747c54dd5f277f.1724245193.git.hongyan.xia2@arm.com/
+trace_funtion() calls cleanup_ftrace() to prepare the test. Ok.
+
+> +if [[ "$(cat /proc/cmdline)" == "$MOD_LIVEPATCH: this has been live patched" ]] ; then
+> +	log "livepatch: ok"
+> +fi
+> +
+> +check_traced_function "$FUNCTION_NAME"
+> +
+> +cleanup_tracing
+
+Here, I suppose, cleanup_tracing() is called to clean up after the check 
+above so that nothing stays and more tests can be added later. Right? 
+Would it make sense then to call cleanup_tracing() in 
+check_traced_function()? I think it would less error prone. 
+If needed, check_traced_function() can always be upgraded so that it 
+checks for more traced functions.
+
+Miroslav
 
