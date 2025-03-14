@@ -1,84 +1,76 @@
-Return-Path: <linux-kernel+bounces-561954-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561955-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C466FA61936
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 19:17:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EB0FA61938
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 19:17:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E538E3A92ED
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 18:17:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC8B23B0176
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 18:17:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AE89204081;
-	Fri, 14 Mar 2025 18:17:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0360D204C1B;
+	Fri, 14 Mar 2025 18:17:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pUZr8M+5"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GbfMpJ/w"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B640E14A0A3;
-	Fri, 14 Mar 2025 18:17:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 623EE14A0A3;
+	Fri, 14 Mar 2025 18:17:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741976240; cv=none; b=YgTDwBF7YdaNdmgi8Z7YHSff+3s+vX0smQa/FrBqc6fGxR9C4Xb8f4iTpZm9iRIu/eby/CiNor2rcw2X4RYDbmQw5jTBtrCiM2tyI4JXRtVzsiVFO/nu04mNCoxQzwFCnMICMORxoVgJ9JJC8WLlr0z5Gyxdj42N4I6+Tz+f5tY=
+	t=1741976246; cv=none; b=R/o2Tw8U4vbJO5TPJYx2jCpAL5eSZPToKpW7SJ0BQ8mbbNMHE0YNCFEjPOxT1WL4TpiwnG2ao65aQ9wQGuXiJ6LEq4w6HTNjdntaETa75oxHnuyaHFRcYxPBySCFvghi/zpymG/el0RHRyY55VH3pKBUpQe6fdRG8ptzOtGziMc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741976240; c=relaxed/simple;
-	bh=1BOoTpa7j7kOWDgvxrb0tXDEr/wUI29Rp0UJrHYohJA=;
-	h=Message-ID:Date:From:To:Subject:In-Reply-To:References:Cc; b=sRymJ2SqesJXtUJ4KhSpqs3hiL8xjbdFUYoVdV+HtPyLzL6m5Z7ybWQfNnYVgto83jTrR/Q2vsRVDjO6X52q9UQaqZbmzZt02PktmlGYvNo9vNFJ63CdxPT1oPkOfzZ6qCJKx5ub/TOl5hP7bqMluxXkif7a+HBZL1EJ1HhoTNA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pUZr8M+5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B31E9C4CEE3;
-	Fri, 14 Mar 2025 18:17:19 +0000 (UTC)
+	s=arc-20240116; t=1741976246; c=relaxed/simple;
+	bh=BzvMRiH24ZD6cSiM6yAOWEs/fnpgpmdAPB0QcLeRWlE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pPEiVh5hWbK+4Zo5NwlDl7otzC7zKu/ZKZRaJUKICTkjF6vbZyLHysMcsOtoz4LIvlt3KsRq665XvUZ1HwWsKVVbcU4n2KQsKbmeFIHOhAnxD1mVnS21yP1EUg32RoagAmzBXR7INrM2FtsNoeRDHXRFBDOqTRkpnGvl5Pb62io=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GbfMpJ/w; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81A7DC4CEE3;
+	Fri, 14 Mar 2025 18:17:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741976240;
-	bh=1BOoTpa7j7kOWDgvxrb0tXDEr/wUI29Rp0UJrHYohJA=;
-	h=Date:From:To:Subject:In-Reply-To:References:Cc:From;
-	b=pUZr8M+5YqTB0gwHjL2uSg75N4jc4CDIxlCHb7r1mXjx3YKJCmr8XK4iL2+emxFei
-	 lX2P5axT3LQE0vqeQiA9N6V6JNTGttlyHixDMwDJbeY7sE6LXdmX62UZ/mLGzaF1PU
-	 sjWxU+hkq4nT+hHhYo/NY/ggRFfO5MJ+KMinzqjzhJW+1fjnTsQZst58KpmkzNFSkw
-	 Ncw+wZWsjOUl3j7zOLzEFpzV1gSUqyozZTFKyb/8rC28QAuuhb7M8Tn5DSPCt1Vub3
-	 H6hpRu+O4ZAO2S36uWVrdlryZxxok2R3VVfiu1ZRaOl4IvEra9sYRV9cEhTxpTGVu6
-	 2Q/eSha1g30iw==
-Message-ID: <028ca14a547f52456a10529508cb0207@kernel.org>
-Date: Fri, 14 Mar 2025 18:17:17 +0000
-From: "Maxime Ripard" <mripard@kernel.org>
-To: "Luca Ceresoli" <luca.ceresoli@bootlin.com>
-Subject: Re: [PATCH v7 10/11] drm/bridge: ti-sn65dsi83: use dynamic lifetime
- management
-In-Reply-To: <20250314-drm-bridge-refcount-v7-10-152571f8c694@bootlin.com>
-References: <20250314-drm-bridge-refcount-v7-10-152571f8c694@bootlin.com>
-Cc: dri-devel@lists.freedesktop.org, imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, "Andrzej
- Hajda" <andrzej.hajda@intel.com>, "Anusha Srivatsa" <asrivats@redhat.com>, "David
- Airlie" <airlied@gmail.com>, "Dmitry Baryshkov" <lumag@kernel.org>, "Fabio
- Estevam" <festevam@gmail.com>, =?utf-8?b?SGVydsOpIENvZGluYQ==?= <herve.codina@bootlin.com>, "Hui
- Pu" <Hui.Pu@gehealthcare.com>, "Inki Dae" <inki.dae@samsung.com>, "Jagan
- Teki" <jagan@amarulasolutions.com>, "Jernej Skrabec" <jernej.skrabec@gmail.com>, "Jonas
- Karlman" <jonas@kwiboo.se>, "Laurent Pinchart" <Laurent.pinchart@ideasonboard.com>, "Maarten
- Lankhorst" <maarten.lankhorst@linux.intel.com>, "Marek Szyprowski" <m.szyprowski@samsung.com>, "Marek
- Vasut" <marex@denx.de>, "Maxime Ripard" <mripard@kernel.org>, "Neil
- Armstrong" <neil.armstrong@linaro.org>, "Paul Kocialkowski" <paulk@sys-base.io>, "Pengutronix
- Kernel Team" <kernel@pengutronix.de>, "Robert Foss" <rfoss@kernel.org>, "Sascha
- Hauer" <s.hauer@pengutronix.de>, "Shawn Guo" <shawnguo@kernel.org>, "Simona
- Vetter" <simona@ffwll.ch>, "Stefan Agner" <stefan@agner.ch>, "Thomas
- Petazzoni" <thomas.petazzoni@bootlin.com>, "Thomas Zimmermann" <tzimmermann@suse.de>
-Content-Transfer-Encoding: quoted-printable
+	s=k20201202; t=1741976245;
+	bh=BzvMRiH24ZD6cSiM6yAOWEs/fnpgpmdAPB0QcLeRWlE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GbfMpJ/w9QgzYo1y2fhJJIflFaPMQSaXW+h6FNMDIpKqAwI0tGK4/hBU2IYShfEuM
+	 DUlfj2yjkcimMndQ6V79dPyH/tGHLXAf6GC1eGljOYzTmq0C3ju5ll/a9/StoDa108
+	 0+ZXI4iZa2zmR1rQ/LGUhvz2NR0UArabdOg0ScYupDAvF9ks+j8zQmIl6AI8aBdJeo
+	 AsbHPwyxLXcu89zq9unmMN0i2TVtbMOUYfWr1o97U8WJEqAYMv6IcvKjdN5hiVmqNg
+	 2l0/9jWp3aDl1vfdO4ijYfqvnVxZ3ABLYe218BogpdjuKFwsbw5aX685NMvTVD+jRW
+	 xW3UBj6d3xNDw==
+Date: Fri, 14 Mar 2025 08:17:24 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Andrea Righi <arighi@nvidia.com>
+Cc: David Vernet <void@manifault.com>, Changwoo Min <changwoo@igalia.com>,
+	bpf@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/8] sched_ext: idle: Refactor scx_select_cpu_dfl()
+Message-ID: <Z9RytEzaW2VOh3Bj@slm.duckdns.org>
+References: <20250314094827.167563-1-arighi@nvidia.com>
+ <20250314094827.167563-3-arighi@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250314094827.167563-3-arighi@nvidia.com>
 
-On Fri, 14 Mar 2025 11:31:23 +0100, Luca Ceresoli wrote:
-> Allow this bridge to be removable without dangling pointers and
-> use-after-free, together with proper use of drm_bridge_get() and _put() by
-> consumers.
->=20
-> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
->=20
-> [ ... ]
+On Fri, Mar 14, 2025 at 10:45:34AM +0100, Andrea Righi wrote:
+> Make scx_select_cpu_dfl() more consistent with the other idle-related
+> APIs by returning a negative value when an idle CPU isn't found.
+> 
+> No functional changes, this is purely a refactoring.
+> 
+> Signed-off-by: Andrea Righi <arighi@nvidia.com>
 
-Reviewed-by: Maxime Ripard <mripard@kernel.org>
+Applied 1-2 to sched_ext/for-6.15.
 
-Thanks!
-Maxime
+Thanks.
+
+-- 
+tejun
 
