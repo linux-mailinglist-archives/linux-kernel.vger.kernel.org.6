@@ -1,233 +1,139 @@
-Return-Path: <linux-kernel+bounces-560740-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560741-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CFD4A608F6
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 07:12:10 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E39AFA608F9
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 07:12:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D71E3BEBF1
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 06:11:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 951DE3BF967
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 06:12:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 191071547C5;
-	Fri, 14 Mar 2025 06:10:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EA0B15FA7B;
+	Fri, 14 Mar 2025 06:11:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="TEg6QFXq"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DB1A13633F;
-	Fri, 14 Mar 2025 06:10:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="iXyRTU/K"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D4241519B0
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 06:11:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741932655; cv=none; b=ImX/gouHyHR3M8sKGorgvNtaXm2VVEd8YQrlFWWUK1pir9+5xP9W+rd6bTiZtPMwPfueN15uoiNQ35RsDEXGkamAaWuXxTCTsRSiBxvT06Fqd7qAH9E8h20ZfmwyFyHkbIW/LeyGLEA/By6797PgwsV70lm35VI5evpjjtZiC0k=
+	t=1741932691; cv=none; b=MXAgQE/sRt+5AK74VP+BEFAPsdo+6+cDXpk1iRPvn8AzMVzwdZ41MfHXuAD4xMpEW+7QcdkcKQZKJ6JdUYT8Q1aXSgpXV0LYCkK+LRro8CCGdh9C7fF2EV5FuJcPLFEQ5MF86xD/FLq4qo55Q0CVFdSE2AXnokLFYy7Pl6tG0wM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741932655; c=relaxed/simple;
-	bh=eI3Zi2O3auHkAWMS+FhVcslK0rzQo/XlbeCKPvJWGL0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=BsUBR85opV33ZhVAVRnL4Nop1/YS03+iM4g0RRmxJPqKe4ANIt8vd6xrq85NlN8cX/vX8rgZAfYyFQTthVFJCSPWhjAyt7l1FW2oAE/bnqWmsLGizUuFrV5pOW3tJ8hbq3H8vvK4lcvtSyQTk2LqzsoWqzvNG5USTuAUXbW6gt4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=TEg6QFXq; arc=none smtp.client-ip=117.135.210.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=RRnkf
-	MTBSRRXPXJIg5gqXaJXUBODgkV4NaNBWUvqcgA=; b=TEg6QFXqutLMtiLGuK7yT
-	kRuhOHW6YDoVoIIBeeiTwKqwUFiZxFYV60npH6EhgjBZhKNYeQdhqroCHlDJcPhb
-	VWZSACFyiyCWf2qd+PZk9yjldkf0TgnMDeACyHPr2yDD7InwHC0dXZ5Fp067auxm
-	WaoaZYjl176145rK9k6kvE=
-Received: from localhost.localdomain (unknown [])
-	by gzsmtp2 (Coremail) with SMTP id PSgvCgCXX9wnyNNn+8z4Kw--.41638S2;
-	Fri, 14 Mar 2025 14:09:45 +0800 (CST)
-From: oushixiong1025@163.com
-To: Simona Vetter <simona@ffwll.ch>
-Cc: Helge Deller <deller@gmx.de>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Samuel Thibault <samuel.thibault@ens-lyon.org>,
-	Zsolt Kajtar <soci@c64.rulez.org>,
-	=?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
-	linux-fbdev@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	Shixiong Ou <oushixiong@kylinos.cn>
-Subject: [PATCH v2] fbcon: Use static attribute groups for sysfs entries
-Date: Fri, 14 Mar 2025 14:09:41 +0800
-Message-Id: <20250314060941.160048-1-oushixiong1025@163.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1741932691; c=relaxed/simple;
+	bh=lrGYN7jbovnBRsiy0qwZkDhfHsm6h9AUq8L5qgxMF80=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YK26hsBleoD/774PuNtHwAuizGtVoxmuzw8HKyzY3kHdMHHkm7/ZMo9kFuhZ52urSQZWtkiox5ekfFdll/3SDV1CEltM0WXLzsA7AdcOmvnw2mO07SMooq4mcHld6rc/Rfo3lxnEGJ1lg9zDqPlFKfvbOOoJ67W/+vtTjrxTuPY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=iXyRTU/K; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52DHGtBk019128
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 06:11:29 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=IScPRMJWlAypVVGTG3eAzrrq
+	ZqNhSbnrEPn3z5FtHkc=; b=iXyRTU/KjwoMm7sAi2n6/0MoFdyJBjWemiSQIiuz
+	9+4o1A0h52Vtt1uwzkVm62tTPwx1p+E6Ix1ZZdhdKzgsIf8jjUlOrUus7eqjFtHA
+	LMKpgYLYM3O61kvZTgWqJNUnACPaAqn2dgqp9Hq17OkXQ7XGH0Z4qj8nhZIJ7g5i
+	HU/rIBrLqPtn+w44KjNhCPsHp4TlRKHm4LiY/EXUwU25ZjU5Ti9IsUdbgdsOpGNC
+	+6KVypEYLvaIH3Cf+Aj68WzdW9r3GIM3K5XPoRiPtkE8n8kEpb+ZfmzHTcCdxDgw
+	Jf7TaekIC7TH0cNdEGa3clDdH3MAFJTfWtBd1qP4bvsYXA==
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45bts0k9mp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 06:11:28 +0000 (GMT)
+Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-47689dc0f6dso32454581cf.3
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 23:11:28 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741932688; x=1742537488;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IScPRMJWlAypVVGTG3eAzrrqZqNhSbnrEPn3z5FtHkc=;
+        b=pmyafMs6AH6WCMUPoGTmBv1id1kDxrItOXdjWacekb0kJ7cYnGRqzPLQwGnSwK/MLI
+         q+jwUdZZpBtzzvD6IWYL5Ot45l4xRxhad/PjThresX8y7T9nP8qDxSdu3wf3S26Bun6K
+         5jCb21AbgSSYOMzvwC9Z9owXCifcu+g7lMh8R3y5adKk83NnwoaG9DLAb/+9L/x8Olr7
+         6HOkED+X+5ewDQc6+3EzSLBwdAO+lBxEbtfpItsNeqyj1LPTgsUDTqBjvFegQ2kHhH3w
+         nNpaswcVfneYiyUv+Vwae70/H5Sn7m6/xMoy/xzjjuowwg1nFrDB5VnNyf9l9I9PmKKx
+         nSHA==
+X-Forwarded-Encrypted: i=1; AJvYcCU8vso88PyFjS2tZMP8oWEBhecxrZKU9on9vtrhm0+cGh5aCIydHZx+MClMcZS8uEdQfJ5HXy8hLXHJmUQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwkNE/CB82TdRweDPQuZEYTlz7fmk66bBr80t5lT8F3hxE5MW3R
+	O0ZYVd1VZMI19oy5s37KwvGDqgjqa6yJy7YpzrTaq90Cl2b6SuN1k/UjrhTzX4VBiFbGISITlZp
+	//DPU01qq2fOIRZmEVdy9HLpfse95xlg0zl2kcjT/MmTEtvokMMxfBfEJf2KlLGE=
+X-Gm-Gg: ASbGnct9GmOCNYDPPl1jH42zzvwsPDV+ALfWYpQh9tXboRzr9DUV4J/p1q9Gyk7JnCo
+	vKw0UH/a5LLlDndIT4pNjFuX5aSRgn2z4cG0txLYnD70/+POwLTUMCfLhnk5ebKB2R+k8TsIIsV
+	JBe9vBXmpmPe+AVVFvHQj50wxUVmiFFYkD9jfGInYQujF7nErnhsMfwU4suDC4u/v+Q44tqyYoy
+	IMSl/6MtSgvdzhcEFDGTwtQEiDgmsCremGkRjTEOtMmqx0ziidd8OikueW8V7fPo/xxsa23Xx//
+	6F1oL0Fz/UMo9fn/clltwBkxsnddrzOeP0FPo53U/RnJDNpHjKTDPkoFwBul9HPOGkarzdr2DO4
+	+1Co=
+X-Received: by 2002:a05:622a:438b:b0:476:b33f:6694 with SMTP id d75a77b69052e-476c815ef7bmr17238371cf.28.1741932688211;
+        Thu, 13 Mar 2025 23:11:28 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFHNONjkAR8RZmnBgw7/nNpbDzwNbQgBnWMqJdks15ZpyrrMTOeZPgm8VR3KSNnTn4CBULsAw==
+X-Received: by 2002:a05:622a:438b:b0:476:b33f:6694 with SMTP id d75a77b69052e-476c815ef7bmr17237651cf.28.1741932686118;
+        Thu, 13 Mar 2025 23:11:26 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-549ba88577csm415667e87.205.2025.03.13.23.11.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Mar 2025 23:11:24 -0700 (PDT)
+Date: Fri, 14 Mar 2025 08:11:21 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Chenyuan Yang <chenyuan0y@gmail.com>
+Cc: robdclark@gmail.com, quic_abhinavk@quicinc.com,
+        dmitry.baryshkov@linaro.org, sean@poorly.run,
+        marijn.suijten@somainline.org, airlied@gmail.com, simona@ffwll.ch,
+        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/msm/dpu: Fix error pointers in
+ dpu_plane_virtual_atomic_check
+Message-ID: <5dhbi7a62mebu6trwr3umjnkiia7nnaru533653z67qmmsc2hb@krmvfeuw5xtn>
+References: <20250314011004.663804-1-chenyuan0y@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:PSgvCgCXX9wnyNNn+8z4Kw--.41638S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxGF1fArW7Gw43tF43Kw4rXwb_yoWrtF17pr
-	4UtayYgF45G3ZxWw45Zw4DZwnxWwn7C34fXr48Kw1SgF97ArZIqa48JFyjyayfJrZ7GF1r
-	Aa4Dtry8AF4xur7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jn4SrUUUUU=
-X-CM-SenderInfo: xrxvxxx0lr0wirqskqqrwthudrp/xtbBYwEQD2fTx4YNHAAAsZ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250314011004.663804-1-chenyuan0y@gmail.com>
+X-Proofpoint-ORIG-GUID: 1Hapnz8iHSD_jOibl77fziAm8Xpx0EqT
+X-Authority-Analysis: v=2.4 cv=DNSP4zNb c=1 sm=1 tr=0 ts=67d3c890 cx=c_pps a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=Vs1iUdzkB0EA:10 a=pGLkceISAAAA:8 a=EUspDBNiAAAA:8 a=fWY0QR86pWCIX_IcxasA:9 a=CjuIK1q_8ugA:10 a=zgiPjhLxNE0A:10
+ a=dawVfQjAaf238kedN5IG:22
+X-Proofpoint-GUID: 1Hapnz8iHSD_jOibl77fziAm8Xpx0EqT
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-14_02,2025-03-13_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ clxscore=1015 phishscore=0 malwarescore=0 mlxlogscore=894
+ priorityscore=1501 mlxscore=0 spamscore=0 bulkscore=0 impostorscore=0
+ suspectscore=0 adultscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503140047
 
-From: Shixiong Ou <oushixiong@kylinos.cn>
+On Thu, Mar 13, 2025 at 08:10:04PM -0500, Chenyuan Yang wrote:
+> The function dpu_plane_virtual_atomic_check was dereferencing pointers
+> returned by drm_atomic_get_plane_state without checking for errors. This
+> could lead to undefined behavior if the function returns an error pointer.
+> 
+> This commit adds checks using IS_ERR to ensure that plane_state is
+> valid before dereferencing them.
+> 
+> Similar to commit da29abe71e16
+> ("drm/amd/display: Fix error pointers in amdgpu_dm_crtc_mem_type_changed").
+> 
+> Fixes: 774bcfb73176 ("drm/msm/dpu: add support for virtual planes")
+> Signed-off-by: Chenyuan Yang <chenyuan0y@gmail.com>
+> ---
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
 
-Using device_create_with_groups() to simplify creation and removal.
-Same as commit 1083a7be4504 ("tty: Use static attribute groups for
-sysfs entries").
-
-Signed-off-by: Shixiong Ou <oushixiong@kylinos.cn>
----
- drivers/video/fbdev/core/fbcon.c | 69 +++++++++-----------------------
- 1 file changed, 19 insertions(+), 50 deletions(-)
-
-diff --git a/drivers/video/fbdev/core/fbcon.c b/drivers/video/fbdev/core/fbcon.c
-index 07d127110ca4..1d792bd11063 100644
---- a/drivers/video/fbdev/core/fbcon.c
-+++ b/drivers/video/fbdev/core/fbcon.c
-@@ -160,7 +160,6 @@ static int info_idx = -1;
- 
- /* console rotation */
- static int initial_rotation = -1;
--static int fbcon_has_sysfs;
- static int margin_color;
- 
- static const struct consw fb_con;
-@@ -3159,7 +3158,7 @@ static const struct consw fb_con = {
- 	.con_debug_leave	= fbcon_debug_leave,
- };
- 
--static ssize_t store_rotate(struct device *device,
-+static ssize_t rotate_store(struct device *device,
- 			    struct device_attribute *attr, const char *buf,
- 			    size_t count)
- {
-@@ -3181,7 +3180,7 @@ static ssize_t store_rotate(struct device *device,
- 	return count;
- }
- 
--static ssize_t store_rotate_all(struct device *device,
-+static ssize_t rotate_all_store(struct device *device,
- 				struct device_attribute *attr,const char *buf,
- 				size_t count)
- {
-@@ -3203,7 +3202,7 @@ static ssize_t store_rotate_all(struct device *device,
- 	return count;
- }
- 
--static ssize_t show_rotate(struct device *device,
-+static ssize_t rotate_show(struct device *device,
- 			   struct device_attribute *attr,char *buf)
- {
- 	struct fb_info *info;
-@@ -3222,7 +3221,7 @@ static ssize_t show_rotate(struct device *device,
- 	return sysfs_emit(buf, "%d\n", rotate);
- }
- 
--static ssize_t show_cursor_blink(struct device *device,
-+static ssize_t cursor_blink_show(struct device *device,
- 				 struct device_attribute *attr, char *buf)
- {
- 	struct fb_info *info;
-@@ -3247,7 +3246,7 @@ static ssize_t show_cursor_blink(struct device *device,
- 	return sysfs_emit(buf, "%d\n", blink);
- }
- 
--static ssize_t store_cursor_blink(struct device *device,
-+static ssize_t cursor_blink_store(struct device *device,
- 				  struct device_attribute *attr,
- 				  const char *buf, size_t count)
- {
-@@ -3281,35 +3280,18 @@ static ssize_t store_cursor_blink(struct device *device,
- 	return count;
- }
- 
--static struct device_attribute device_attrs[] = {
--	__ATTR(rotate, S_IRUGO|S_IWUSR, show_rotate, store_rotate),
--	__ATTR(rotate_all, S_IWUSR, NULL, store_rotate_all),
--	__ATTR(cursor_blink, S_IRUGO|S_IWUSR, show_cursor_blink,
--	       store_cursor_blink),
--};
--
--static int fbcon_init_device(void)
--{
--	int i, error = 0;
-+static DEVICE_ATTR_RW(rotate);
-+static DEVICE_ATTR_WO(rotate_all);
-+static DEVICE_ATTR_RW(cursor_blink);
- 
--	fbcon_has_sysfs = 1;
--
--	for (i = 0; i < ARRAY_SIZE(device_attrs); i++) {
--		error = device_create_file(fbcon_device, &device_attrs[i]);
--
--		if (error)
--			break;
--	}
--
--	if (error) {
--		while (--i >= 0)
--			device_remove_file(fbcon_device, &device_attrs[i]);
--
--		fbcon_has_sysfs = 0;
--	}
-+static struct attribute *fbcon_device_attrs[] = {
-+	&dev_attr_rotate.attr,
-+	&dev_attr_rotate_all.attr,
-+	&dev_attr_cursor_blink.attr,
-+	NULL
-+};
- 
--	return 0;
--}
-+ATTRIBUTE_GROUPS(fbcon_device);
- 
- #ifdef CONFIG_FRAMEBUFFER_CONSOLE_DEFERRED_TAKEOVER
- static void fbcon_register_existing_fbs(struct work_struct *work)
-@@ -3367,16 +3349,16 @@ void __init fb_console_init(void)
- 	int i;
- 
- 	console_lock();
--	fbcon_device = device_create(fb_class, NULL, MKDEV(0, 0), NULL,
--				     "fbcon");
-+	fbcon_device = device_create_with_groups(fb_class, NULL,
-+						 MKDEV(0, 0), NULL,
-+						 fbcon_device_groups, "fbcon");
- 
- 	if (IS_ERR(fbcon_device)) {
- 		printk(KERN_WARNING "Unable to create device "
- 		       "for fbcon; errno = %ld\n",
- 		       PTR_ERR(fbcon_device));
- 		fbcon_device = NULL;
--	} else
--		fbcon_init_device();
-+	}
- 
- 	for (i = 0; i < MAX_NR_CONSOLES; i++)
- 		con2fb_map[i] = -1;
-@@ -3387,18 +3369,6 @@ void __init fb_console_init(void)
- 
- #ifdef MODULE
- 
--static void __exit fbcon_deinit_device(void)
--{
--	int i;
--
--	if (fbcon_has_sysfs) {
--		for (i = 0; i < ARRAY_SIZE(device_attrs); i++)
--			device_remove_file(fbcon_device, &device_attrs[i]);
--
--		fbcon_has_sysfs = 0;
--	}
--}
--
- void __exit fb_console_exit(void)
- {
- #ifdef CONFIG_FRAMEBUFFER_CONSOLE_DEFERRED_TAKEOVER
-@@ -3411,7 +3381,6 @@ void __exit fb_console_exit(void)
- #endif
- 
- 	console_lock();
--	fbcon_deinit_device();
- 	device_destroy(fb_class, MKDEV(0, 0));
- 
- 	do_unregister_con_driver(&fb_con);
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 -- 
-2.25.1
-
+With best wishes
+Dmitry
 
