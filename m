@@ -1,107 +1,129 @@
-Return-Path: <linux-kernel+bounces-560661-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560662-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02A7CA607D9
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 04:46:27 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78ED0A607DE
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 04:47:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 995838805F3
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 03:46:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD30717771B
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 03:47:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98382145B3E;
-	Fri, 14 Mar 2025 03:46:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24EF413B2B8;
+	Fri, 14 Mar 2025 03:47:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=antoniohickey.com header.i=@antoniohickey.com header.b="eU6wvbIK";
-	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="BgwayS0N"
-Received: from a8-71.smtp-out.amazonses.com (a8-71.smtp-out.amazonses.com [54.240.8.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Qsb9XeYS"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 717822A1BF;
-	Fri, 14 Mar 2025 03:46:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.240.8.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E2F02E3368;
+	Fri, 14 Mar 2025 03:47:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741923971; cv=none; b=KqfU248b+pz6nMprdOV9aw2Hia2zhnCeJWYXsCR7diYECLuh1Y06KCtzLAY5cQxnMfG+1LzmRgqIC2Ngf+SdPE5A8qb+BvZV3EnOGakXlN2KRvHq60wUQ2SnZZVEEU3Ky1aKS5J/rRcP2AE+l5DqAOWAYzHgW2nQmUGcus7PZjM=
+	t=1741924033; cv=none; b=SlpCFTQxXKYG2LILWSDaZcRs73vthZObwy+EGIvlfxr1SD11xgNDY/bMLJ/8Q+jNRPse6gQfcRLxaMAMu4Jg9FG3YBNRnPbZ3kvagRUB5s+UIXLdNpciNB2Hx7qILh63AdJKRRvvoONdyRtKJ8OXZakVQj7H1SDSNcM1ml0jhKM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741923971; c=relaxed/simple;
-	bh=BZsxbOv11+gtP8gKLucWQhlfuchqb01i3Ny90m4JiRg=;
+	s=arc-20240116; t=1741924033; c=relaxed/simple;
+	bh=5csq7Xilf/ZeCp0TAlwqDeQoXcKSZIer57d9vlUbrfE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=XEfHbcFmTg10msOa6rOH2KTZJsW8nQGnh+ub7xs3bGIs18t+hClVwJbxYW5X9keEIgW2pKuMztEOlZpTjY1F7IvyQvYwyv4moqX6uFnC5HyMhiZ2kDVgZofwXRmKqDet/3k8BEE0jK0MtQvs4e7fGGJ5VYv7/cfuQjU8hUJeMW4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antoniohickey.com; spf=pass smtp.mailfrom=amazonses.com; dkim=pass (2048-bit key) header.d=antoniohickey.com header.i=@antoniohickey.com header.b=eU6wvbIK; dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b=BgwayS0N; arc=none smtp.client-ip=54.240.8.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antoniohickey.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazonses.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-	s=cgcwyxycg75iw36cao5ku2ksreqpjkvc; d=antoniohickey.com;
-	t=1741923968;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding;
-	bh=BZsxbOv11+gtP8gKLucWQhlfuchqb01i3Ny90m4JiRg=;
-	b=eU6wvbIKKe4irY4Ge9CZFS0v1Ak7HtwkdDCyKYzA5yx0zhTarrRiHWei9Q8l9NuV
-	rqhpZ8tbYvM2HKQPHleNoi71e4zfiHVhpQRfrG9PEHHjrVXC9GBoFCmrSG06zlJ4TwQ
-	04EDESUe+j7GkCfNIzCnLDGeV7EKIqzAOFrqNiAmrGnXAu+fICk51R7Yg1GJNeHflmU
-	djR6Pb1yxFmoF2IiF0qdDYnSavJ+7ZkIDFxTBKTlNLSkFO9z/RWROkq+sCRZXrzQFyq
-	JWThBkBlmmIWft/k4kNzed7BnvrTcbCgjaP25TVv7Gr3z76PPaTw7kwT3cfpQ7DlXgz
-	RHz2hTyMHA==
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-	s=6gbrjpgwjskckoa6a5zn6fwqkn67xbtw; d=amazonses.com; t=1741923968;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Feedback-ID;
-	bh=BZsxbOv11+gtP8gKLucWQhlfuchqb01i3Ny90m4JiRg=;
-	b=BgwayS0Nz97NkoMduLV5fztWpww6kKMEHztUaAtYHfL/a1hukeESuxpnpNFvZBN6
-	xe9hqopl3GLsGr14kHBVPdCcdZ3s+bIkJbJeRGTtRf2NCHLly7QAZjZ22I/qT038Idu
-	AFiXA2b8zIuohS1uRmZuUtauyH8ohqnWveprqRe4=
-From: Antonio Hickey <contact@antoniohickey.com>
-To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>
-Cc: Antonio Hickey <contact@antoniohickey.com>, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/3] rust: clippy: disable `addr_of!`, `addr_of_mut!` macros
-Date: Fri, 14 Mar 2025 03:46:08 +0000
-Message-ID: <0100019592c26506-b2399cba-7bdb-4c0b-9888-393a0576a127-000000@email.amazonses.com>
+	 MIME-Version:Content-Type; b=SIVgLF2RaTunfA/5hWbv597x9duCc2j5qyKz3S2OydY6WQ5JLS3FKAD4LOPA2Fd3fTKOpn+mSIUxy3P7WZkRTI306isZgAduVYkFed9t0b6RaM+3kPPhhaS2WgEGwjMkqHrDQBTFfV+gbVmPHfxKNwtKf8nZVTqwujQ2+1Nzw+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Qsb9XeYS; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52DNOuSx030460;
+	Fri, 14 Mar 2025 03:46:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=JXua5c
+	aTwTNUTtdBvGHDVqyhcKPAlSgEyDPOfiwv554=; b=Qsb9XeYSWL6uv6usciKbcH
+	6j8mtMqjAlvVTbvYL0Z8cwvqAODUDf4AVUSDCXjQJbADa7QZNsOIFizxuhnsD/mt
+	yDy2FHcXvhUf4RxpO7V10v81zPY28NCqMOUP4E066bOQNNo9Or1rGAvrmaFA7+E3
+	tfHguPylMLn0XkMkQKRGortUB0ZRP1514ykq9dq0GVQaO9TPExs+JziiQYhZCUxa
+	DpDLhfZRe6Q1gApAVtkN6lTKaBwz5VgmrFJqEuj0eQa+BUaP8VZMwTBn2ZT2/6Dw
+	Dk40THwCA2ddQfwSgh7dDko5vTbaDW1m+JAwElj33q4fFRRFeYm0JVMmHuWS0yTg
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45byd8v1ns-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 14 Mar 2025 03:46:53 +0000 (GMT)
+Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 52E3jDN1014449;
+	Fri, 14 Mar 2025 03:46:53 GMT
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45byd8v1nq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 14 Mar 2025 03:46:53 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52DNlWnS003127;
+	Fri, 14 Mar 2025 03:46:52 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 45atstw3a7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 14 Mar 2025 03:46:52 +0000
+Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
+	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52E3km0331719790
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 14 Mar 2025 03:46:48 GMT
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id D06F120040;
+	Fri, 14 Mar 2025 03:46:48 +0000 (GMT)
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 1F1D620043;
+	Fri, 14 Mar 2025 03:46:46 +0000 (GMT)
+Received: from li-c439904c-24ed-11b2-a85c-b284a6847472.in.ibm.com (unknown [9.204.206.207])
+	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Fri, 14 Mar 2025 03:46:45 +0000 (GMT)
+From: Madhavan Srinivasan <maddy@linux.ibm.com>
+To: Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
+        kvm-ppc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        Amit Machhiwal <amachhiw@linux.ibm.com>
+Cc: Vaibhav Jain <vaibhav@linux.ibm.com>,
+        Shivaprasad G Bhat <sbhat@linux.ibm.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Naveen N Rao <naveen@kernel.org>, kvm@vger.kernel.org,
+        stable@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
+Subject: Re: [PATCH v3] KVM: PPC: Enable CAP_SPAPR_TCE_VFIO on pSeries KVM guests
+Date: Fri, 14 Mar 2025 09:16:45 +0530
+Message-ID: <174192385435.14370.11531277481779566442.b4-ty@linux.ibm.com>
 X-Mailer: git-send-email 2.48.1
-In-Reply-To: <010001958dfeacb5-9039aaab-6114-494a-9f1d-f13982091169-000000@email.amazonses.com>
-References: <010001958dfeacb5-9039aaab-6114-494a-9f1d-f13982091169-000000@email.amazonses.com>
+In-Reply-To: <20250220070002.1478849-1-amachhiw@linux.ibm.com>
+References: <20250220070002.1478849-1-amachhiw@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Feedback-ID: ::1.us-east-1.3SHHfi5Rh4c+NdtIv+pxNWeqDT0J3zAhYZLMebdhE9o=:AmazonSES
-X-SES-Outgoing: 2025.03.14-54.240.8.71
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: I-iNyNSGkOlt7gHk5ndV6xI-yg1ozl1W
+X-Proofpoint-ORIG-GUID: HfY6S5Tm98aVoIP7IKzo1zopnf1RSUjU
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-14_01,2025-03-13_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 spamscore=0
+ malwarescore=0 impostorscore=0 priorityscore=1501 bulkscore=0 phishscore=0
+ lowpriorityscore=0 suspectscore=0 mlxlogscore=679 clxscore=1015 mlxscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503140026
 
-With the `raw_ref_op` feature enabled we no longer want to
-allow use of `addr_of!` and `addr_of_mut!` macros.
+On Thu, 20 Feb 2025 12:30:02 +0530, Amit Machhiwal wrote:
+> Currently on book3s-hv, the capability KVM_CAP_SPAPR_TCE_VFIO is only
+> available for KVM Guests running on PowerNV and not for the KVM guests
+> running on pSeries hypervisors. This prevents a pSeries L2 guest from
+> leveraging the in-kernel acceleration for H_PUT_TCE_INDIRECT and
+> H_STUFF_TCE hcalls that results in slow startup times for large memory
+> guests.
+> 
+> [...]
 
-We instead want to use `&raw const` and `&raw mut` to get raw
-pointers to a place.
+Applied to powerpc/next.
 
-Suggested-by: Benno Lossin <benno.lossin@proton.me>
-Link: https://github.com/Rust-for-Linux/linux/issues/1148
-Signed-off-by: Antonio Hickey <contact@antoniohickey.com>
----
- .clippy.toml | 4 ++++
- 1 file changed, 4 insertions(+)
+[1/1] KVM: PPC: Enable CAP_SPAPR_TCE_VFIO on pSeries KVM guests
+      https://git.kernel.org/powerpc/c/b4392813bbc3b05fc01a33c64d8b8c6c62c32cfa
 
-diff --git a/.clippy.toml b/.clippy.toml
-index 815c94732ed7..95c73959f039 100644
---- a/.clippy.toml
-+++ b/.clippy.toml
-@@ -8,4 +8,8 @@ disallowed-macros = [
-     # The `clippy::dbg_macro` lint only works with `std::dbg!`, thus we simulate
-     # it here, see: https://github.com/rust-lang/rust-clippy/issues/11303.
-     { path = "kernel::dbg", reason = "the `dbg!` macro is intended as a debugging tool" },
-+    # With `raw_ref_op` feature enabled we no longer want to allow use of `addr_of!`
-+    # and `addr_of_mut!` macros, but instead use `&raw` or `&raw mut`.
-+    { path = "core::ptr::addr_of_mut", reason = "use `&raw mut` instead `addr_of_mut!`" },
-+    { path = "core::ptr::addr_of", reason = "use `&raw` instead `addr_of!`" },
- ]
--- 
-2.48.1
-
+Thanks
 
