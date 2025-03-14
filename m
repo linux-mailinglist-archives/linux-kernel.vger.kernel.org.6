@@ -1,361 +1,382 @@
-Return-Path: <linux-kernel+bounces-560618-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560620-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB8E7A60724
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 02:49:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7296A60727
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 02:57:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17DF93BD71F
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 01:49:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A4A23BBD42
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 01:57:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C70270830;
-	Fri, 14 Mar 2025 01:49:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFF7E18EB0;
+	Fri, 14 Mar 2025 01:57:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="ExTagKRW";
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="ExTagKRW"
-Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011052.outbound.protection.outlook.com [52.101.70.52])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="kdqgE2Yq"
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2045.outbound.protection.outlook.com [40.107.243.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8672943AB7;
-	Fri, 14 Mar 2025 01:49:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.52
-ARC-Seal:i=3; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741916980; cv=fail; b=Ef6ombZsN20BkH5tFulPsdZ1WBLjK1PqGhGtBvziDMC1zflEpFVHAxCe+A5MdxEjayPrJrTDik9pgNMQOxDf8ejtwcgbOhQZoXVelYW5SnIbryP4k/3bvsoRr1wcmjaZoc8qULODhIRbYR2Y1KFWtbJoNz7MgEB4uOIYqPQYyAY=
-ARC-Message-Signature:i=3; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741916980; c=relaxed/simple;
-	bh=7Re03j3Sbayf758i5qz8eWDIXYw7XQ6/tEkzQYBJ6to=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=FR2pEjIrIMPvyOAyNc3iIXDa0U9vT9rvpoOufCPk/GywKcMwbtlFtrO+QhjqrtEGMMu8gFxo2NLUyeRa4Vq/hH7mffK2U58HASf1xIm706+OrrTe4gKQokeBu2yJGrEH6/pX1e3WhhS2gyZ3zgGUbQ+0RO+hZ/AJ46yOUwNN68E=
-ARC-Authentication-Results:i=3; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=ExTagKRW; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=ExTagKRW; arc=fail smtp.client-ip=52.101.70.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-ARC-Seal: i=2; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=pass;
- b=ozWfYiZGfJ1KPmXFPcwlGpY5nyHWSt704z3rJ0ZHb9Jj13VEXqEcrpJZAyzWabV69EOKNQFOjDM80NdA4sGcn3Cm//GA5QDxtQRJnsjn85Au5pw+MyPasYCzCLHsY7cmXORYWv6cyx8HJR4xDWB01KxlJwvImhO6E4TUOYMYcluQkGDVpGHmcRa8a+P3/J+MGZaw4L19oncsGvi+VJTGl6EUThPbIdAX/97goBNk8xe0wGEG8F64X13kkvUdkZmDgMg3mvhEtO463l3btvR5h/vMaOuWRLCSiLpnKDf/m9GPgDyWKdPbOdqHxsGMt7Chi/W72I0rUGDXAFAZEeIT8w==
-ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=m07BJeZ5BiFp7WsH2L7wyCxOhwfgkG7iorEBQ3xAaPw=;
- b=b7PT+JP7o+/i1bGE4lZjmANAh4LCcAHJl9Rv46eo1qhbM6WSpWF5GrN7KYJC3iCIhp6Cb/afDx8PniVyZH6G953Fbu/f0En+0MAFevZnyEJcYhP3+YX2QMSF/CeLu2Vfx6plBfIJf9nAc7QV3q4SMjDzWFxRR9MMMaFm0ZsxMoQaYT9N8zFg169uCtEOVXGxxbT59oPgPo0O94dKsCKGcxSl6mBHxcs+kfdXy4uioY9WXv4XLL9pXEv9dvBYSWGOegXDmA2ljyJKndtlzRjSRWEyECpo4T0I7QZAEmHU8ptEeP+ANiOOaq+t8dbhODz5JsRLymPnGdcUH1NbCW0dpA==
-ARC-Authentication-Results: i=2; mx.microsoft.com 1; spf=pass (sender ip is
- 63.35.35.123) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=arm.com;
- dmarc=pass (p=none sp=none pct=100) action=none header.from=arm.com;
- dkim=pass (signature was verified) header.d=arm.com; arc=pass (0 oda=1 ltdi=1
- spf=[1,1,smtp.mailfrom=arm.com] dkim=[1,1,header.d=arm.com]
- dmarc=[1,1,header.from=arm.com])
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=m07BJeZ5BiFp7WsH2L7wyCxOhwfgkG7iorEBQ3xAaPw=;
- b=ExTagKRW7bQaCtlNURLh8CJKS6TkItEkVeqh6efXZATkopGDRGskJuC50sPApdY58NmywMa+hnynoK0veNV2pMqDiClaHRgzFDs5+TV2kdcs6w+yYEnmYOKqGBr+oullfBx/Cr70IdtHRQ0pBOiV93DyUfXWgrQAOjgRz5rt04U=
-Received: from DU7P250CA0002.EURP250.PROD.OUTLOOK.COM (2603:10a6:10:54f::15)
- by DU2PR08MB9961.eurprd08.prod.outlook.com (2603:10a6:10:494::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.27; Fri, 14 Mar
- 2025 01:49:30 +0000
-Received: from DB5PEPF00014B9E.eurprd02.prod.outlook.com
- (2603:10a6:10:54f:cafe::15) by DU7P250CA0002.outlook.office365.com
- (2603:10a6:10:54f::15) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8534.24 via Frontend Transport; Fri,
- 14 Mar 2025 01:49:30 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 63.35.35.123)
- smtp.mailfrom=arm.com; dkim=pass (signature was verified)
- header.d=arm.com;dmarc=pass action=none header.from=arm.com;
-Received-SPF: Pass (protection.outlook.com: domain of arm.com designates
- 63.35.35.123 as permitted sender) receiver=protection.outlook.com;
- client-ip=63.35.35.123; helo=64aa7808-outbound-1.mta.getcheckrecipient.com;
- pr=C
-Received: from 64aa7808-outbound-1.mta.getcheckrecipient.com (63.35.35.123) by
- DB5PEPF00014B9E.mail.protection.outlook.com (10.167.8.171) with Microsoft
- SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.8534.20
- via Frontend Transport; Fri, 14 Mar 2025 01:49:28 +0000
-Received: ("Tessian outbound f89894bb7c0d:v594"); Fri, 14 Mar 2025 01:49:28 +0000
-X-CheckRecipientChecked: true
-X-CR-MTA-CID: d7511033f37636e1
-X-TessianGatewayMetadata: U+ABToPwcP4aCa9bFs1Ke+OE/C6HPsw5S9S+UfGcoO5Uajr1R3kzdGoO9HwjN6pUzf6voc8XcmdjCBYvDYX8nP9FG/xJxhrtmoHh3mgPRSTRfts2oyJcQdRbOouDruuD2ZeLhsNB+S7XexrlxWNqt48pQeAb802MYWcS5LkbBkbKSvlGAjdzrCM/S4jYCfxqNAuIG5hdsXwTWykBn8+UWw==
-X-CR-MTA-TID: 64aa7808
-Received: from L85dd1ebe956e.2
-	by 64aa7808-outbound-1.mta.getcheckrecipient.com id 4357C608-6E21-4567-8AA9-95D62AFC74DE.1;
-	Fri, 14 Mar 2025 01:49:21 +0000
-Received: from DB3PR0202CU003.outbound.protection.outlook.com
-    by 64aa7808-outbound-1.mta.getcheckrecipient.com with ESMTPS id L85dd1ebe956e.2
-    (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384);
-    Fri, 14 Mar 2025 01:49:21 +0000
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A94B3D530
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 01:57:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.45
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741917436; cv=fail; b=OJSQh7nbSQ3H+JzUnHJ9Ft10EBCeMM47B0PZemH1tSfU9Uh1A7lbJAKkc//YOZFO9NRk0IT0ssBrOjOwdlcKVI8lhVG5jxlZ86u4ihideuCJOjyb/dNG6Za8qf4yUTp66/g+4pxNvgpei74RiHJh1h8aJka4P3jZKMZRixNvHmw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741917436; c=relaxed/simple;
+	bh=sqXsNOjjpChZrQS2qPuavLACDzA5ycoj7VEaZ6+BYX8=;
+	h=Message-ID:Date:Subject:To:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=N/xpMl3wzsn17XutJt7e0QAxlX4dwZFXPOTDgRadGR6yV3KXY90CvZOUN+S4olpSv71pF1TKZA+cPjXtBB996TkaGD7qgzCwDGa1VTaPi6R8239wcgHr8uBMo39MLWF7P/g2yR7vWn+aRKlX0rzWVIe/XNOipVOxsO99d4z6PWA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=kdqgE2Yq; arc=fail smtp.client-ip=40.107.243.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=OYLzQvxt7GLfnV7MGzT+yIPH/k3RQ400ZnjxWbyuDTum/HouczQ8fqoaUPUUbiDJ9fG2GJBisNnEj7WVPdF95uXB60v1knOKeYQyZanIWbNOOwRiC7WEOZYbEQs/Fi+t6l4082Mn+5zti+IOWFPkrgm3h7t5zibXREcIpktOP+KcX100tSWfTyDyIVZc9SBwYZ5VRVN3ucwAO47n5nDQqHS4Lt/HqsEycMhHJfP5Vgn9THK/2vCpmKn7VRq8EgcI/LFzNaE51Diy7HQL5HtPKFUhBIYjQRTpSux5mkVEBpj9VbHcOH0rHNky77tp0DPrkqSnCjvMS+7gAatR3TinHQ==
+ b=W2I5xyY0g8ag9+85Zy6hPQkMH5tCa6LL2VkRJcyn0lE+AOX1Ou0GV5o3uHcOHczczzdnd9zSa2v29CaiBiDNRLbnvRWbJQBWiMrwjOFx65ZrgyVnhXAJt8jwvSu0SLeaVNEgsXjFCRpd+Y5y7wucsnCnBj5Vo4Upvvd5V0bZFuUYyx0e8KSnl83Ltu3Yhw3vj7r28b/cBEpoPnS9f7yiL5uW6E97Mf0d9bumebyxC3eHCfs2fYS9S61lbQmhg/F3XarwknL41+Vbf7iVpJ5UdX/vsZxOOh7AcSqiyrnS6tNZp3+91MpCL7D/TFHt0UcI4s3At1wgleW+QZk8MiD9Tg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=m07BJeZ5BiFp7WsH2L7wyCxOhwfgkG7iorEBQ3xAaPw=;
- b=bXH4AUOYv4ASO7eaMT9R6YrhriFGqfo6yBBh2odT19TQ91VL2Z0jmJ74B4oSzEqP/cHWcmn2gqEFV9RcKAdopopzH50w0lZTUC2i9vVq9sNSQtwxFu46K/WO6pG7Z1B2ESzzGzu5EupXK7Tp2he6psM0zgi7cvmtyJxb9fRAbo6zA+yHSvgL8cQik7VB6FKu0TzdZXwBkimC5SnHz8hQVaG6RCanbQA32KIIh0Yq2+5SW3EM4s8xMUsz/B7yKTYiDwjcTmPt+Mx+Vl86wlz9JvzuMnNOuwsH9n1vSGP9uOgjsUl4/XP8l4fWkWSxVEM+v+vbencRmGIWyQxg411kzg==
+ bh=fY3zY3qIkwfFSdjci+DQOSrxS5bj++W1tdGaHd9SAQk=;
+ b=xQ4f4pxBhqYOmIDnV1tAAx8bRsZ+sf3ZgqM+65neN0AKe20WYIB04yshaxuqJIoik42eff2pcKCW2YRexIQ5D3LVk59KyuoxSZ9ucAPCbjsgsqHRifnGnflg6YQCY/wILKSd3N841ffkSn0jFPoe22NAdZgUqVGiSWdWtFgKCDHhdrNG0PROE3qs6C9qY/OIYl9vQgStexPEzjacqtIRg7WxO093nbOsYR6L02isjRKbWYCs85fS3KFKDjyVsD71YZkxz1V2rLPCJuvTehHSwsxQJ/DJ/AFQynn7zlS+jCVqsrdlUeQRP0eXas8q12cGnykhQCu4h8mRSY6KAIdEwg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
- header.d=arm.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=m07BJeZ5BiFp7WsH2L7wyCxOhwfgkG7iorEBQ3xAaPw=;
- b=ExTagKRW7bQaCtlNURLh8CJKS6TkItEkVeqh6efXZATkopGDRGskJuC50sPApdY58NmywMa+hnynoK0veNV2pMqDiClaHRgzFDs5+TV2kdcs6w+yYEnmYOKqGBr+oullfBx/Cr70IdtHRQ0pBOiV93DyUfXWgrQAOjgRz5rt04U=
-Received: from PAWPR08MB8909.eurprd08.prod.outlook.com (2603:10a6:102:33a::19)
- by AS2PR08MB10352.eurprd08.prod.outlook.com (2603:10a6:20b:578::14) with
+ bh=fY3zY3qIkwfFSdjci+DQOSrxS5bj++W1tdGaHd9SAQk=;
+ b=kdqgE2YqBciW6NoXAc4T3P3+J+cMgrGOlxhs+qXu6MjOHZvJ2TmMA03QtUfuEOpnVw3LoOC3VLu8pQ9FWV5NQ2Wktymdoy1vq/0bM9m5TCTUnCWFT93y7xlQZPgn1kMdBjuALK4yNz3gl9Nv8c1lmxi6HLgxDSq3mGrJTtwO4sg=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from PH7PR12MB5805.namprd12.prod.outlook.com (2603:10b6:510:1d1::13)
+ by PH7PR12MB6811.namprd12.prod.outlook.com (2603:10b6:510:1b5::9) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.28; Fri, 14 Mar
- 2025 01:49:18 +0000
-Received: from PAWPR08MB8909.eurprd08.prod.outlook.com
- ([fe80::613d:8d51:60e5:d294]) by PAWPR08MB8909.eurprd08.prod.outlook.com
- ([fe80::613d:8d51:60e5:d294%5]) with mapi id 15.20.8511.026; Fri, 14 Mar 2025
- 01:49:18 +0000
-From: Wathsala Wathawana Vithanage <wathsala.vithanage@arm.com>
-To: "Tian, Kevin" <kevin.tian@intel.com>, Alex Williamson
-	<alex.williamson@redhat.com>
-CC: Jason Gunthorpe <jgg@ziepe.ca>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, nd <nd@arm.com>, Philipp Stanner
-	<pstanner@redhat.com>, Yunxiang Li <Yunxiang.Li@amd.com>, "Dr. David Alan
- Gilbert" <linux@treblig.org>, Ankit Agrawal <ankita@nvidia.com>, "open
- list:VFIO DRIVER" <kvm@vger.kernel.org>, Dhruv Tripathi
-	<Dhruv.Tripathi@arm.com>, Honnappa Nagarahalli
-	<Honnappa.Nagarahalli@arm.com>, Jeremy Linton <Jeremy.Linton@arm.com>
-Subject: RE: [RFC PATCH] vfio/pci: add PCIe TPH to device feature ioctl
-Thread-Topic: [RFC PATCH] vfio/pci: add PCIe TPH to device feature ioctl
-Thread-Index:
- AQHbhLKEApVfqCfEsEO/VXZQklRIvLNjFiyAgACJGACAADH7gIAAQ1nQgAsppICAArg00A==
-Date: Fri, 14 Mar 2025 01:49:18 +0000
-Message-ID:
- <PAWPR08MB89092CC3B8587E9938CCAA0C9FD22@PAWPR08MB8909.eurprd08.prod.outlook.com>
-References: <20250221224638.1836909-1-wathsala.vithanage@arm.com>
-	<20250304141447.GY5011@ziepe.ca>
-	<PAWPR08MB89093BBC1C7F725873921FB79FC82@PAWPR08MB8909.eurprd08.prod.outlook.com>
- <20250304182421.05b6a12f.alex.williamson@redhat.com>
- <PAWPR08MB89095339DEAC58C405A0CF8F9FCB2@PAWPR08MB8909.eurprd08.prod.outlook.com>
- <BN9PR11MB5276468F5963137D5E734CB78CD02@BN9PR11MB5276.namprd11.prod.outlook.com>
-In-Reply-To:
- <BN9PR11MB5276468F5963137D5E734CB78CD02@BN9PR11MB5276.namprd11.prod.outlook.com>
-Accept-Language: en-US
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.27; Fri, 14 Mar
+ 2025 01:57:11 +0000
+Received: from PH7PR12MB5805.namprd12.prod.outlook.com
+ ([fe80::11c7:4914:62f4:f4a3]) by PH7PR12MB5805.namprd12.prod.outlook.com
+ ([fe80::11c7:4914:62f4:f4a3%3]) with mapi id 15.20.8511.026; Fri, 14 Mar 2025
+ 01:57:11 +0000
+Message-ID: <56872982-8676-4d65-85ef-b894728db18b@amd.com>
+Date: Fri, 14 Mar 2025 07:26:55 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [LSF/MM/BPF TOPIC] Overhauling hot page detection and promotion
+ based on PTE A bit scanning
+To: "Huang, Ying" <ying.huang@linux.alibaba.com>, linux-mm@kvack.org,
+ akpm@linux-foundation.org, lsf-pc@lists.linux-foundation.org,
+ bharata@amd.com, gourry@gourry.net, nehagholkar@meta.com,
+ abhishekd@meta.com, nphamcs@gmail.com, hannes@cmpxchg.org,
+ feng.tang@intel.com, kbusch@meta.com, Hasan.Maruf@amd.com, sj@kernel.org,
+ david@redhat.com, willy@infradead.org, k.shutemov@gmail.com,
+ mgorman@techsingularity.net, vbabka@suse.cz, hughd@google.com,
+ rientjes@google.com, shy828301@gmail.com, liam.howlett@oracle.com,
+ peterz@infradead.org, mingo@redhat.com, nadav.amit@gmail.com,
+ shivankg@amd.com, ziy@nvidia.com, jhubbard@nvidia.com,
+ AneeshKumar.KizhakeVeetil@arm.com, linux-kernel@vger.kernel.org,
+ jon.grimm@amd.com, santosh.shukla@amd.com, Michael.Day@amd.com,
+ riel@surriel.com, weixugc@google.com, leesuyeon0506@gmail.com,
+ honggyu.kim@sk.com, leillc@google.com, kmanaouil.dev@gmail.com,
+ rppt@kernel.org, dave.hansen@intel.com, dongjoo.linux.dev@gmail.com
+References: <20250123105721.424117-1-raghavendra.kt@amd.com>
+ <87o6zub978.fsf@DESKTOP-5N7EMDA> <20250207190651.hpmkzl4f2zynqiun@offworld>
 Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Authentication-Results-Original: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=arm.com;
-x-ms-traffictypediagnostic:
-	PAWPR08MB8909:EE_|AS2PR08MB10352:EE_|DB5PEPF00014B9E:EE_|DU2PR08MB9961:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9b885b0c-b677-4811-2d9d-08dd629a7556
-x-checkrecipientrouted: true
-nodisclaimer: true
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam-Untrusted:
- BCL:0;ARA:13230040|1800799024|376014|366016|38070700018;
-X-Microsoft-Antispam-Message-Info-Original:
- =?us-ascii?Q?8z/uhD+zyxWnjgRanpab750SFOiB8whhpgOgzBe9Dz6Z7wfeT2Tu1MCvcmzC?=
- =?us-ascii?Q?lqlyQEPRepJ4Ca0ZTnUmVhlqdWqDUkwGpX5y7AuQSe/SmMOvFJ88KwIT3w/o?=
- =?us-ascii?Q?p2tOaZ9jpOoTcPZVAuPdPJsfn3yIh9V4OKmz1W5CtSLgor5SNcVtCplaGOLe?=
- =?us-ascii?Q?A16bUzzfPX6Lwrg1gkPLFZNx55O8elmXyX/5ia8BBjEPpYAXuKRz8GNlRbYs?=
- =?us-ascii?Q?CKa/x77wkUJcvgy11Q6ZA0C4M2cDAVaxCYUZ/VeLWy/e1kunaGUyU/QCMHKL?=
- =?us-ascii?Q?47tXwj0nnoNkNESEX29v5LlTQAdV9MUX1XxW7IdmwXvvwXN+tvS42CdrRbgq?=
- =?us-ascii?Q?f75duqtyVZwYOfwbd2zMr/9XxHEiuichgPeAcltGz6lZeUbD8AfVtjKfez0P?=
- =?us-ascii?Q?WxkzcF6oJbFjjnBGZ4Boxp7zpdwdmaVZSA8H/ZbS6U0MIAJHLc0ksYSlOZvb?=
- =?us-ascii?Q?Yd1qLccXX2nEI1QrKz9IepFlLXD80DNQX5iC5NBDspYax0GWeXRDItYMPQpJ?=
- =?us-ascii?Q?6u5QOcQaVcWOGk+DXKoiXHGAfhkr89yPcIBCUo97hfBS+zb0GQqhA0y8+8Nz?=
- =?us-ascii?Q?IuYeuKbiaFZS9KN202iWdhqhF/lwB9dUv+lqUiFhk/sZMqFNkgS6EL42R69M?=
- =?us-ascii?Q?iWdiUkzLDzwdQowr3nNII5i6FucCopTjVyBSQ09rVbVUPqm3wBO2uZmEqGsM?=
- =?us-ascii?Q?IDPryObhLCHsYQdnvys+70bC0/6uDiVLCCEtMwW7ABWo2o6/+BLf8xJn9g7T?=
- =?us-ascii?Q?cirVddZq37hl35JiCtx1xO+4woHftr0qfdvq4PXQEpbyc6wqlAOfJW/AwVcF?=
- =?us-ascii?Q?gET2t8WoXsgwJFJFAA4+aE1bJqsLdplxCLqKNBBN74WEqMte2tv49tzZnqgL?=
- =?us-ascii?Q?KN/fVIpNTLnfDcVsaw6GzWvhHty5YrAC4lytncbzTEby/Ea9DxLQzBWmdxL6?=
- =?us-ascii?Q?Nhj05GmXDVEec3Hec+8wREll92iCS3jF3ppiCISgRDmmVJGyFJb1x5bVva6p?=
- =?us-ascii?Q?rBV8opEMBcHzjlkFfCfcpdzzLYS5Z3Y07SXqiUa0GWCBqJDLuc56O0X0ZSk1?=
- =?us-ascii?Q?LVA6wAjlDvCCN3oNcK3ZepRYXi74X4Aemw1a/v2BY4M2Pqs5nfmAIj0tCtRf?=
- =?us-ascii?Q?yEdVOpu7mW1ph2yeM7WY4mNxIPPR2P80dIe20PO70ZI3qkjQ3eR4gFLYUmbP?=
- =?us-ascii?Q?V23j3V5QVrIHcJkZHgkDNDDlBNNlvQBz55opbVsrDc6P1i1il3ZbBuLWDYx7?=
- =?us-ascii?Q?mMCO+SYRp7Odd+tCFHu6wgisPDcZ10l0takXT7ciQirpJmrnlIqBCnfTfkyT?=
- =?us-ascii?Q?PpHG9ThF5mF1kD2ZCgIe9hs5YGIKOPiqWLrZ0bzX9CP3klCsn9q2m0kxHszw?=
- =?us-ascii?Q?yI6VQFbv5cfd/grl/98tHw2G2nRXZt/WaoWSBVHw4TEQC2ItniC0E8QsM8Ah?=
- =?us-ascii?Q?+fl6HuVZ7VphSkOKn7SL60WLT4kq7bua?=
-X-Forefront-Antispam-Report-Untrusted:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAWPR08MB8909.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(38070700018);DIR:OUT;SFP:1101;
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+From: Raghavendra K T <raghavendra.kt@amd.com>
+In-Reply-To: <20250207190651.hpmkzl4f2zynqiun@offworld>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: PN3PR01CA0015.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:c01:95::19) To PH7PR12MB5805.namprd12.prod.outlook.com
+ (2603:10b6:510:1d1::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS2PR08MB10352
-Original-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=arm.com;
-X-EOPAttributedMessage: 0
-X-MS-Exchange-SkipListedInternetSender:
- ip=[2603:10a6:102:33a::19];domain=PAWPR08MB8909.eurprd08.prod.outlook.com
-X-MS-Exchange-Transport-CrossTenantHeadersStripped:
- DB5PEPF00014B9E.eurprd02.prod.outlook.com
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id-Prvs:
-	f9ef7d40-611f-48b8-f913-08dd629a6f3f
+X-MS-TrafficTypeDiagnostic: PH7PR12MB5805:EE_|PH7PR12MB6811:EE_
+X-MS-Office365-Filtering-Correlation-Id: 74608381-f98e-46f9-172d-08dd629b88e0
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|14060799003|35042699022|82310400026|376014|1800799024|36860700013|7053199007;
+	BCL:0;ARA:13230040|376014|7416014|366016|1800799024|921020;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?FOKQCtmKULqsjpFIJShzGmDOAHSxXd+I9xGEzuw+CaUWtNRRVz3uxD1umCSP?=
- =?us-ascii?Q?N9lxif4/PmKnJpMwHhEtJvERirSHxTbndVcre3C5brTFmrmGH53W2XFKG5SY?=
- =?us-ascii?Q?LIeo0vQtvXKYipZgFv/aaHCvkzXsBlIMLuIGEpjr5cQAzlOj0DKrAIE72Ag2?=
- =?us-ascii?Q?Y/FQcSS3u67t7xPlcGP6Y7GLCl/jUTHGfmzlp1ZY7QNIjPhzjs9W0wUDDPIh?=
- =?us-ascii?Q?+A0fGgWN3kWsh4hEzRs+se4hKa7qjyxxKDlIuR1UO3UGJmIy/l6cMf0m+UGA?=
- =?us-ascii?Q?aexyV1JLI4iJkKdverWCFYwKGkexrGsxqP7pTX2wPg5Px3u3eeB5eJp3LT7D?=
- =?us-ascii?Q?xjd0h+S1c4fevPwEWw7KgeXCOC0Kfn3FwWcT6cTo2FIrkEUQvtbwmXMkV+uU?=
- =?us-ascii?Q?iMB6xkrIco6DLD0hxS4vKapWYRFl5xrCusuSU+jXvGvRVEWDjVrbuxnRJ4R7?=
- =?us-ascii?Q?bPuCx1E+z/mZLonjiQwsivvd7mKrUXs0O4B5+vUsx611R72347jsLPNwCuh4?=
- =?us-ascii?Q?OkRTM/ZUMvf1yx3U06+sQDbRGebUpbIN2Dl59J7r5J9YInnZN8BBdQ9mM+xK?=
- =?us-ascii?Q?j5LxoHcLLT4mHaUreAuXlyLHYdy7uuJlaYwbkzMP3vec+vl4Wq5BgSbEAEek?=
- =?us-ascii?Q?jj+hL44PX5Ht0NYl8FaRztvPNOjlp+ohtQqfkd+1W7f4agk+52wTvYPTMu7g?=
- =?us-ascii?Q?MSqrFKwHm9iGFEt0/j2qumTMlZKThdtbD/yzkpLdLA4IBPSV/kATKrv3rna0?=
- =?us-ascii?Q?jCSpmYUHDpTFae5t1LaLd5Oykj9teSWtHmJKJJNlaJ0rQx3g+LGic0mif+YF?=
- =?us-ascii?Q?+0JFc3dYiPcvoqOJwPGTnJNHKcony03XIITl7202XroFjBEaZFn5dms3bJxx?=
- =?us-ascii?Q?bzLU51qD1TMgDwqne+3QDpmOl2NW9C6kqVTJi1H9c90JRrM/83v55Bu8t+4R?=
- =?us-ascii?Q?LD3ctw2yB6AZqbdpNpuiS4LoDv7ZoN2BsHZ1GlRIy5/JjOfYKPkTXo4Ycm9l?=
- =?us-ascii?Q?n8Wp8Nit4pA6xaOQtGQbR/7rvxE6T3fyvCtHXeF4cc1TwnDIaB5YDEStVjKU?=
- =?us-ascii?Q?83kT03rgwxjFPOWVYxGzP4W2krHC/IcLz6W/Q6+HgKUVsBKfv7+RyIEcVAWB?=
- =?us-ascii?Q?KVWDRnCbTHC9ebSaLwd5/S6RgQgZ1vytDjzdA4DQVQyqhyZJlXj0yLAC/fRO?=
- =?us-ascii?Q?JVslCMV4pFgKA/ib0AT6ROUDjtOL1KrfH6NR2WqBD8X7SA29alpyWkZsHTgH?=
- =?us-ascii?Q?y/V10v1+zvgEHxjg1YF0sWq9VCBjjX7NK0CFzu+DFjQ9w/bsDXUFNumbAix2?=
- =?us-ascii?Q?yx/m5Yk8mNlOrBC6znuy9gyoPa0fvbBhi0pik6dNROTfxkLQVcnMOqywI25v?=
- =?us-ascii?Q?GaE9mKMcWBw8um7+JluJiLJIFjiE60WENAIbXUUGVvYyufXODcgCcN7TwQDQ?=
- =?us-ascii?Q?kx5UCmeyTyxnIuPKWw9BNEHw9pu+I6H3qO1bBUQ82wLSwdoL2hYDxQ=3D=3D?=
+	=?utf-8?B?WVM4WUZyQ3R4VUFBd2Yvc2ZFdGtGR2FyUnBVM0ZvSEo1aGM1OURsMmtjNWl1?=
+ =?utf-8?B?VkNWbmQ4aVlGTkVNZWN5ejVDU2twdUI1cTRIbGdRSDNWblRiZmwyelVpQUVi?=
+ =?utf-8?B?ZmJlbzFPZmlTaXRQQTE2YkRHbVVESFg3SG1mQS9wTURNOTZlMWJZWk9MZCsw?=
+ =?utf-8?B?SVJneWZRRUhZWW1BQjdJTWxtbUNtNGYzU1hzTlhBdmR4K2JzRzh2eW1zdElv?=
+ =?utf-8?B?SmhhNnpFYk1wUlZVK2xtYVBNRXJCbmRRaGZZdTJmOGFkR0ozUjkwd0diR2Fs?=
+ =?utf-8?B?TXNIZHcvNktSak5Kb2IyN29yTnFhT2F0RklNVzYyM2ROR01OdE40Q1oxQVg0?=
+ =?utf-8?B?L281UlM1VnRWWnJ6R0ZvcWtLSm4zeWlMMHVHbVVmQ3d3UlBrWmdQekRrb28y?=
+ =?utf-8?B?c1E2SW9udjFCU3Q2aWVHOTZ5VW8wUWd1ZkFEcWdoa09hUDlqQWFLSHN5cWla?=
+ =?utf-8?B?UC9ROVlSN01MMW92dzBtMGF2U0U2SERLOHQ2aVBpUTNnVE5USWZDbE1SclpG?=
+ =?utf-8?B?NlRZcDkvOURZY2lObmxWTXlic1VGcXFVVjhUM0JRWnc1RlFqdmpFbjB2TU5I?=
+ =?utf-8?B?UnpUVzk4NUl5Qy9ValpaTXp4U0NRSFRhTGUza0VISnZ0dXVNYmdSR2swK0tK?=
+ =?utf-8?B?WnZjN1hUVm16Ym94dHlZWE1iZXJlTWxnREc2a1prcS9ocHJ3N2U1blRzaVI5?=
+ =?utf-8?B?b0lGZURWcmwvcnBzRVFnQnZzL0NlMDJIQ3dNaWVFc3VpZ3I3ZUJ0U0FmV3Mx?=
+ =?utf-8?B?ZEtPaVI4S2VyQkNEUTdiMStXQ2tyeWZGVWlvcDR4UzlBWFhpOGxVVnNaZ3hv?=
+ =?utf-8?B?NGtvSWpLNTg1dTFDZUhpa3lrZllJWFFvTWJkMjlqYS93SllOWHVxZ0hPSk1D?=
+ =?utf-8?B?SHF2UGN4bUNwNm5qMktzazlVaWM5aG5PQnlXaHptekpQR05xZGVJSjErWmNy?=
+ =?utf-8?B?R0dBb1VZazVFYVM5ZGs2a3pnRFlub0lnbWxsa0plV3N0RUdKSVAxZ2t2RkVk?=
+ =?utf-8?B?VVROSDAxQWVxR08vaU15dXlnQnpnTVA2SEZSck4wQ2tjMjNSN1ljMWU4RHAr?=
+ =?utf-8?B?b21uT1Z0MVlCTUdVMFo0MlJVL3kvVTNwSlRXSjBPcUF4c2RGa0FUSVQxdTNC?=
+ =?utf-8?B?RDhyZElCdVNQOGdYVjVNalI1aHpZekRGSmZXMFFseUlXaEVNTmZLNFhaU2FJ?=
+ =?utf-8?B?RERTS3RkeHZFQ3R3K21kTjdYeDdLZ0xIY0tjMncwUDFPWmx4QWpTdU56YUZX?=
+ =?utf-8?B?bEhUK1JVdXNlZVUwTWx6UzBVNHJsdlk5WjVLRnhxbm5oeEFxckxteDk0RXRa?=
+ =?utf-8?B?Rmk2T2pmRWZka2ZZc2VkUkcwUU1xUytEVnJSbHMzSU0zUDQxMUw5WVRXb2wv?=
+ =?utf-8?B?emVCYjl1SWQ4cXFZRlc4MzVtc1piVnpvSFg5LzJzODIzTDF4MXlWMkN2amRy?=
+ =?utf-8?B?Y3hYNmhuNE5rYjQvMUJZUkRuTUlYVEpRUFk5SlZGWUdDUy96U3l3alkwNnlw?=
+ =?utf-8?B?QzhKM05JN0hZL0s1dTl5OFRIUGRhSFQ3T2toRmJWUmluYnl1anZQUzd6b2Vr?=
+ =?utf-8?B?VUVmMnVIRnN5QmJVV3FNa25ra2hzUlZoT3JFM2hjS21NMFBnZnhMdjExV2xJ?=
+ =?utf-8?B?OU4yLzdLZ21MYnVhVldMZFpVNzU3cHpEM21NdG9CVzB1Zi93Q1BwLzR1ZDg2?=
+ =?utf-8?B?eFhSWlFLd2FBaDd3bllWSTdJTUNLRG5ZQ0pIcnhLMm85Um85aUJ1QTV4NlBY?=
+ =?utf-8?B?enFRaTRqZ1lobm1FT1QydCtqOWN4akFPZlhlZHFZemY1S0NBdXQ5bUpqd3ds?=
+ =?utf-8?B?cTI5Zm5uNmNrZ1pnVktvS0hRNlk4eVVZSTlqUmdhSlRldGRldHBGVGpKZDJ5?=
+ =?utf-8?Q?aYnI9PcEEJEF9?=
 X-Forefront-Antispam-Report:
-	CIP:63.35.35.123;CTRY:IE;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:64aa7808-outbound-1.mta.getcheckrecipient.com;PTR:64aa7808-outbound-1.mta.getcheckrecipient.com;CAT:NONE;SFS:(13230040)(14060799003)(35042699022)(82310400026)(376014)(1800799024)(36860700013)(7053199007);DIR:OUT;SFP:1101;
-X-OriginatorOrg: arm.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Mar 2025 01:49:28.7358
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5805.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?UTZxaHlGTkdiQWVpNyttUGpYZHNqQkpyZDJPYnF4d0NrYzM3OXJORE4vU2Rz?=
+ =?utf-8?B?ZkdjbVB0YTg4QW9aZnhFeFhDTVQ0Z2h0MElOck9hMDVKTXFIaTZ1QUlSc00w?=
+ =?utf-8?B?YWxvRXJvR0ZwQUkyWGl0TmJtck4yZ3M2L1BzNTVYUHVYdE9nbm54ZlZ6M1Ez?=
+ =?utf-8?B?N3dmZGMrZ0JtaFk0cTQxZXJVVG5SZ1lzRGZYaVFkQTJhTExQdXJuNG0zSjJu?=
+ =?utf-8?B?ZE1QU0ZEck0xVUlWWHhIUDFhN0wvMGZDaUIzVTNXSU0xUUp2Y202N3hlcG1U?=
+ =?utf-8?B?eWcxUDdCZ2hSUzlUSjJFTFFUMFByN0FJRTBaOWcrZkx1QlBSdksyeHhvWVcr?=
+ =?utf-8?B?QWVlNE50YS90b1F2V3hQMUN4bnRkTGZHdk9jYS9FYjNOajh5ZjQzMklsTmd1?=
+ =?utf-8?B?dG9PWU9uMGkzVXd3L2lkbzI1Vk1PYWFudnFlNTRhR1RvdjYrMGk1WFFGRjVZ?=
+ =?utf-8?B?S0xwOXVVSHhhWVlyd2lqb2NsbDhKNEhNbVI0ZEo4YzhyNkhXR21SbFlNWTQr?=
+ =?utf-8?B?bFFkSFFYdFBtMDBNVDJSQUxSNTJldE5BKzljSE01eDhNV3RqSldxWTU2SkZm?=
+ =?utf-8?B?UFZyd1RCOVh4YUtrVFVwVDJLclI1SG54ZEpHcVIxekVCZXlNVTBPQ0dyZ0px?=
+ =?utf-8?B?U0hXK0RYeUpITm9jTUZld3dEbWMwMklFVmlxWWZxYXVHVStwQ2FGRFdWMzI4?=
+ =?utf-8?B?S3g3VlJnQm9kaXZ5WTZhMGpobVd5L2NGSkx1VHpwN0NWK0twbnVENWJrbkZx?=
+ =?utf-8?B?a2JSK2s2Q3hhVk1DVmlDNEwwdnI2L3BnQ0xCTTdGcW9rbzc5aGtnUDMvZlFx?=
+ =?utf-8?B?aTlmQnNBNTFFN2NZRy9EdGNhUUhENGwrZVpTSUd6Z2s5RlFBWFJabWl4RHg5?=
+ =?utf-8?B?MHBQTWMzMWZaZ3RWek84TGJ1ZWpHZWxXb0NuRXVBT25RR0duUXQvUDhDQ2dB?=
+ =?utf-8?B?YUR5OFJSZXNIR0RsMXZxcVhHcDFQTzNiY1JkdWV4c2lDZGxMNkdRWXBvYjNK?=
+ =?utf-8?B?Wi9JQWRCeEcrOHA5TnVkNlFpdXdkYW9FNTNHR2hoTVdkbSthcWpURHFuS3pa?=
+ =?utf-8?B?d3U0by8yL0RBK0Nha1ExZzVUVWpHbFh0SDJCdVhzUi9aRzdiWmJCS1JVMkFy?=
+ =?utf-8?B?Skk5dWZNS3dibUNVMEtlRnJ2T1hkekwwZTNJOU51alZWSzRyZngvQnRTY1Ja?=
+ =?utf-8?B?THppMkl6N203MVdhSjhTM2FIbWFHdlU3MXNaUnpzUjdGZmtnUUZiT0xwTkhQ?=
+ =?utf-8?B?TG1mUUxhTW1JcGoxcnIvbHdodXBRa0tEQjFaRUltakw4Q2M5ZkNDNXpSNUtx?=
+ =?utf-8?B?UzFFSWxqRjNHSEZ6TFdpTG80ZGxRQ2JudFA0V2lQTW1rUW1OZDZjQ01zbnFt?=
+ =?utf-8?B?a3poTmdNOFZGdGNaVDhJTUt2Rk9WTThPcTY5eWF1Z3FscHFudHc3SlViQUJM?=
+ =?utf-8?B?ZnlnaGF6bks4WjhhZmpNdmtQVzRDNUtwNkxQZGVPVTFCcnBEYzMzWHpCVll3?=
+ =?utf-8?B?aTFzWVpYNWNZSEtmZ2JHMlJHdk03L2g4a3JIT0xSWUhsTSsrRmpoc3dldFE5?=
+ =?utf-8?B?VmpRelVlK3FsNjJEaGJQNzF3TUh5aFc1YXdoblZseEozb3c2WGpSQW9PaVhU?=
+ =?utf-8?B?a1lqdWlJbkRJT1AvL0w0SEFBYVhoTEJSbitBbUp0MmhZWFJ5S2xVZHNiZTlM?=
+ =?utf-8?B?SXkzOHVCWGNVR0cyYmd5NGwvcGJIL211V0JGalc4MG1jbTZpRXBwQllwaWNn?=
+ =?utf-8?B?QmU5cG9QS0JhZ3UyN3h3cE1jV1REdFhJaXBUbXF6aGRrU2JMZCtvSlVUeDF1?=
+ =?utf-8?B?QlFib1kxb1hmcWQyaHNmZktneU4vR0IwdmdlUjlMT0JWcDN3RzhzcDBGTWNP?=
+ =?utf-8?B?TDVrNXpFM1FxVGNuMUplVXJXR20vc05wZnJ0SmdJelhMRTFJOE9DSHAyVEdJ?=
+ =?utf-8?B?SCt0ck1QMDIyditYR29GR21Cb25udWd4Vi83WGZGQVpoQ0o3dDNhcDNrb0k2?=
+ =?utf-8?B?dDFNYzZyaGQwbmNBbXNKUG5MelRyVGN6TnNFcEREc0FIcHRvU2tET0VLNGxT?=
+ =?utf-8?B?U1RaeU9sV3VWSk1IMEVKdzlDUGtKaXdsZHRRUHhKT3R1WEtsdmhaZm9SOEpi?=
+ =?utf-8?Q?N5Zc761Z98xvbBpWRdvuixgGH?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 74608381-f98e-46f9-172d-08dd629b88e0
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5805.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Mar 2025 01:57:11.6632
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9b885b0c-b677-4811-2d9d-08dd629a7556
-X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d;Ip=[63.35.35.123];Helo=[64aa7808-outbound-1.mta.getcheckrecipient.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	DB5PEPF00014B9E.eurprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU2PR08MB9961
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: +91B/29HX2lisUfJ1pZqnIVdx2tDIQ7ZrvsXArfpAF2bSB+4AR5O7XvX9Zh8acAkt7aM7uDgcY/6z/lqQozY+g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB6811
 
 
 
-> -----Original Message-----
-> From: Tian, Kevin <kevin.tian@intel.com>
-> Sent: Wednesday, March 12, 2025 2:53 AM
-> To: Wathsala Wathawana Vithanage <wathsala.vithanage@arm.com>; Alex
-> Williamson <alex.williamson@redhat.com>
-> Cc: Jason Gunthorpe <jgg@ziepe.ca>; linux-kernel@vger.kernel.org; nd
-> <nd@arm.com>; Philipp Stanner <pstanner@redhat.com>; Yunxiang Li
-> <Yunxiang.Li@amd.com>; Dr. David Alan Gilbert <linux@treblig.org>; Ankit
-> Agrawal <ankita@nvidia.com>; open list:VFIO DRIVER <kvm@vger.kernel.org>;
-> Dhruv Tripathi <Dhruv.Tripathi@arm.com>; Honnappa Nagarahalli
-> <Honnappa.Nagarahalli@arm.com>; Jeremy Linton <Jeremy.Linton@arm.com>
-> Subject: RE: [RFC PATCH] vfio/pci: add PCIe TPH to device feature ioctl
->=20
-> > From: Wathsala Wathawana Vithanage <wathsala.vithanage@arm.com>
-> > Sent: Wednesday, March 5, 2025 2:11 PM
-> >
-> > > -----Original Message-----
-> > > From: Alex Williamson <alex.williamson@redhat.com>
-> > > Sent: Tuesday, March 4, 2025 7:24 PM
-> > > To: Wathsala Wathawana Vithanage <wathsala.vithanage@arm.com>
-> > > Cc: Jason Gunthorpe <jgg@ziepe.ca>; linux-kernel@vger.kernel.org; nd
-> > > <nd@arm.com>; Kevin Tian <kevin.tian@intel.com>; Philipp Stanner
-> > > <pstanner@redhat.com>; Yunxiang Li <Yunxiang.Li@amd.com>; Dr. David
-> > Alan
-> > > Gilbert <linux@treblig.org>; Ankit Agrawal <ankita@nvidia.com>; open
-> > list:VFIO
-> > > DRIVER <kvm@vger.kernel.org>
-> > > Subject: Re: [RFC PATCH] vfio/pci: add PCIe TPH to device feature ioc=
-tl
-> > >
-> > > On Tue, 4 Mar 2025 22:38:16 +0000
-> > > Wathsala Wathawana Vithanage <wathsala.vithanage@arm.com> wrote:
-> > >
-> > > > > > Linux v6.13 introduced the PCIe TLP Processing Hints (TPH) feat=
-ure for
-> > > > > > direct cache injection. As described in the relevant patch set =
-[1],
-> > > > > > direct cache injection in supported hardware allows optimal pla=
-tform
-> > > > > > resource utilization for specific requests on the PCIe bus. Thi=
-s feature
-> > > > > > is currently available only for kernel device drivers. However,
-> > > > > > user space applications, especially those whose performance is
-> > sensitive
-> > > > > > to the latency of inbound writes as seen by a CPU core, may ben=
-efit
-> > from
-> > > > > > using this information (E.g., DPDK cache stashing RFC [2] or an=
- HPC
-> > > > > > application running in a VM).
-> > > > > >
-> > > > > > This patch enables configuring of TPH from the user space via
-> > > > > > VFIO_DEVICE_FEATURE IOCLT. It provides an interface to user spa=
-ce
-> > > > > > drivers and VMMs to enable/disable the TPH feature on PCIe devi=
-ces
-> > and
-> > > > > > set steering tags in MSI-X or steering-tag table entries using
-> > > > > > VFIO_DEVICE_FEATURE_SET flag or read steering tags from the ker=
-nel
-> > using
-> > > > > > VFIO_DEVICE_FEATURE_GET to operate in device-specific mode.
-> > > > >
-> > > > > What level of protection do we expect to have here? Is it OK for
-> > > > > userspace to make up any old tag value or is there some security
-> > > > > concern with that?
-> > > > >
-> > > > Shouldn't be allowed from within a container.
-> > > > A hypervisor should have its own STs and map them to platform STs f=
-or
-> > > > the cores the VM is pinned to and verify any old ST is not written =
-to the
-> > > > device MSI-X, ST table or device specific locations.
-> > >
-> > > And how exactly are we mediating device specific steering tags when w=
-e
-> > > don't know where/how they're written to the device.  An API that
-> > > returns a valid ST to userspace doesn't provide any guarantees relati=
-ve
-> > > to what userspace later writes.  MSI-X tables are also writable by
-> >
-> > By not enabling TPH in device-specific mode, hypervisors can ensure tha=
-t
-> > setting an ST in a device-specific location (like queue contexts) will =
-have no
-> > effect. VMs should also not be allowed to enable TPH. I believe this co=
-uld
-> > be enforced by trapping (causing VM exits) on MSI-X/ST table writes.
->=20
-> Probably we should not allow device-specific mode unless the user is
-> capable of CAP_SYS_RAWIO? It allows an user to pollute caches on
+On 2/8/2025 12:36 AM, Davidlohr Bueso wrote:
+> On Sun, 26 Jan 2025, Huang, Ying wrote:
+> 
+>> Hi, Raghavendra,
+>>
+>> Raghavendra K T <raghavendra.kt@amd.com> writes:
+>>
+>>> Bharata and I would like to propose the following topic for LSFMM.
+>>>
+>>> Topic: Overhauling hot page detection and promotion based on PTE A 
+>>> bit scanning.
+>>>
+>>> In the Linux kernel, hot page information can potentially be obtained 
+>>> from
+>>> multiple sources:
+>>>
+>>> a. PROT_NONE faults (NUMA balancing)
+>>> b. PTE Access bit (LRU scanning)
+>>> c. Hardware provided page hotness info (like AMD IBS)
+>>>
+>>> This information is further used to migrate (or promote) pages from 
+>>> slow memory
+>>> tier to top tier to increase performance.
+>>>
+>>> In the current hot page promotion mechanism, all the activities 
+>>> including the
+>>> process address space scanning, NUMA hint fault handling and page 
+>>> migration are
+>>> performed in the process context. i.e., scanning overhead is borne by 
+>>> the
+>>> applications.
+>>>
+>>> I had recently posted a patch [1] to improve this in the context of 
+>>> slow-tier
+>>> page promotion. Here, Scanning is done by a global kernel thread 
+>>> which routinely
+>>> scans all the processes' address spaces and checks for accesses by 
+>>> reading the
+>>> PTE A bit. The hot pages thus identified are maintained in list and 
+>>> subsequently
+>>> are promoted to a default top-tier node. Thus, the approach pushes 
+>>> overhead of
+>>> scanning, NUMA hint faults and migrations off from process context.
+> 
+> It seems that overall having a global view of hot memory is where folks 
+> are leaning
+> towards. In the past we have discussed an external thread to harvest 
+> information
+> from different sources and do the corresponding migration. I think your 
+> work is a
+> step in this direction (and shows promising numbers), but I'm not sure 
+> if it should
+> be doing the scanning part, as opposed to just receive the information 
+> and migrate
+> (according to some policy based on a wider system view of what is hot; 
+> ie: what CHMU
+> says is hot might not be so hot to the rest of the system, or as is 
+> pointed out
+> below, workload based, as priorities).
+> 
+>>
+>> This has been discussed before too.  For example, in the following thread
+>>
+>> https://lore.kernel.org/ 
+>> all/20200417100633.GU20730@hirez.programming.kicks-ass.net/T/
+>>
+>> The drawbacks of asynchronous scanning including
+>>
+>> - The CPU cycles used are not charged properly
+>>
+>> - There may be no idle CPU cycles to use
+>>
+>> - The scanning CPU may be not near the workload CPUs enough
+> 
+> One approach we experimented with was doing only the page migration 
+> asynchronously,
+> leaving the scanning to the task context, which also knows the dest numa 
+> node.
+> Results showed that page fault latencies were reduced without affecting 
+> benchmark
+> performance. Of course busy systems are an issue, as the window between 
+> servicing
+> the fault and actually making it available to the user in fast memory is 
+> enlarged.
+> 
+>> It's better to involve Mel and Peter in the discussion for this.
+>>
+>>> The topic was presented in the MM alignment session hosted by David 
+>>> Rientjes [2].
+>>> The topic also finds a mention in S J Park's LSFMM proposal [3].
+>>>
+>>> Here is the list of potential discussion points:
+>>> 1. Other improvements and enhancements to PTE A bit scanning 
+>>> approach. Use of
+>>> multiple kernel threads, throttling improvements, promotion policies, 
+>>> per-process
+>>> opt-in via prctl, virtual vs physical address based scanning, tuning 
+>>> hot page
+>>> detection algorithm etc.
+>>
+>> One drawback of physical address based scanning is that it's hard to
+>> apply some workload specific policy.  For example, if a low priority
+>> workload has many relatively hot pages, while a high priority workload
+>> has many relative warm (not so hot) pages.  We need to promote the warm
+>> pages in the high priority workload, while physcial address based
+>> scanning may report the hot pages in the low priority workload.  Right?
+>>
+>>> 2. Possibility of maintaining single source of truth for page hotness 
+>>> that would
+>>> maintain hot page information from multiple sources and let other 
+>>> sub-systems
+>>> use that info.
+>>>
+>>> 3. Discuss how hardware provided hotness info (like AMD IBS) can 
+>>> further aid
+>>> promotion. Bharata had posted an RFC [4] on this a while back.
+>>>
+>>> 4. Overlap with DAMON and potential reuse.
+>>>
+>>> Links:
+>>>
+>>> [1] https://lore.kernel.org/all/20241201153818.2633616-1- 
+>>> raghavendra.kt@amd.com/
+>>> [2] https://lore.kernel.org/linux- 
+>>> mm/20241226012833.rmmbkws4wdhzdht6@ed.ac.uk/T/
+>>> [3] https://lore.kernel.org/lkml/Z4XUoWlU-UgRik18@gourry-fedora- 
+>>> PF4VCD3F/T/
+>>> [4] https://lore.kernel.org/lkml/20230208073533.715-2-bharata@amd.com/
 
-Sounds plausible.=20
 
-> CPUs which its processes are not affined to, hence could easily break
-> SLAs which CSPs try to achieve...
->
-> Interrupt vector mode sounds safer as it only needs to provide an
-> enable/disable cmd to the user and it's the kernel VFIO driver
-> managing the steering table, e.g. also in irq affinity handler.
->=20
-> >
-> > Having said that, regardless of this proposal or the availability of ke=
-rnel
-> > TPH support, a VFIO driver could enable TPH and set an arbitrary ST on =
-the
-> > MSI-X/ST table or a device-specific location on supported platforms. If=
- the
-> > driver doesn't have a list of valid STs, it can enumerate 8- or 16-bit =
-STs and
-> > measure access latencies to determine valid ones.
-> >
->=20
-> PCI capabilities are managed by the kernel VFIO driver. So w/o this
-> patch no userspace driver can enable TPH to try that trick?
+Hello All,
+Sorry to comeback late on this. But after "Unifying source of page
+temperature discussion",
+I was trying to get one step closer towards that. (along with Bharata).
+(also sometime spent on failed muti-threaded scanning that perhaps needs
+more time if it is needed).
 
-Yes, it's possible. It's just a matter of setting the right bits in the PCI=
- config
-space to enable TPH on the device.
+I am posting a single patch which is still in "raw" state (as reply to
+this email). I will cleanup, split the patch and post early next week.
 
-Thanks=20
---wathsala
+Sending this so to have a gist of what is coming atleast before LSFMM.
+
+So here are the list of implemented feedback that we can build further
+(depending on the consensus).
+
+1. Scanning and migration is separated. A separate migration thread is
+created.
+
+Potential improvements that can be done here:
+  - Have one instance of migration thread per node.
+  - API to accept hot pages for promotion from different sources
+	(for e.g., IBS / LRU as Bharata already mentioned)
+  - Controlling throttling similar to what Huang has done in NUMAB=2 case
+  - Take both PFN and folio as argument for migration
+  - Make use of batch migration enhancements
+  - usage of per mm migration list to have a easy lookup and control
+(using  mmslot, This also helps build upon identifying actual hot pages 
+(2 subsequent access) than single access.)
+
+2. Implemented David's (Rientjes) suggestion of having a prctl approach.
+Currently prctl values can range from 0..10.
+	0 is for disabling
+	>1 for enabling. But in the future idea is to use this as controlling 
+scan rate further.
+
+3. Steves' comment on tracing incorporated
+
+4. Davidlohr's reported issue on the path series is fixed
+
+5. Very importantly,
+I do have a basic algorithm that detects "target node for migration"
+which was the main pain point for PTE A bit scanning.
+
+Algorithm:
+As part of our scanning we are doing, scan of top tier pages also.
+During the scan, How many pages
+    - scanned/accessed that belongs to particular toptier/slowtier node
+is also recorded.
+Currently my algorithm chooses the toptier node that had the maximum
+pages scanned.
+
+But we can really build complex algorithm using scanned/accessed recently.
+(for e.g. decay last scanned/accessed info, if current topteir node
+becomes nearly becomes full find next preferred node, thus using
+nodemask/or preferred list instead of single node etc).
+
+Potential improvements on scanning part can be use of complex data 
+structures to maintain area of hotpages similar to what DAMON is doing
+or reuse some infrastructure from DAMON.
+
+Thanks and Regards
+- Raghu
+
 
 
