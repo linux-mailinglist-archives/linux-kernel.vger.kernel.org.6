@@ -1,260 +1,273 @@
-Return-Path: <linux-kernel+bounces-560724-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560725-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5559A608BF
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 07:01:33 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09205A608C0
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 07:01:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 47B2519C3F02
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 06:01:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C7CB17F5CA
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 06:01:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0DE318A922;
-	Fri, 14 Mar 2025 06:00:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="F9ZB6mEM"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 653971624D9
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 06:00:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F40A2B67F;
+	Fri, 14 Mar 2025 06:01:08 +0000 (UTC)
+Received: from invmail4.hynix.com (exvmail4.skhynix.com [166.125.252.92])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC2852E3363;
+	Fri, 14 Mar 2025 06:01:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741932021; cv=none; b=WGO8zM4KkXe79TxTHtGyJq6f2he0/T6uTcBHYIPTEwOArgdo+/ljE/KcekZYlR+AS9p66Z2rIYkxCsDBkkt7y8iYGuczHu3GqySxxod5DkKFTcGV72iGIUbQ2OCpdSGY/seRozROGZU8Z3GHZSULerXiGa+kooOda+/i6UTLFbg=
+	t=1741932068; cv=none; b=fWVAV39asqNoV/6cJkFY2814VWoe27OJ0Z+fPXcqaS4iXaVKx8RtNUc59YH93vYm51b8KfB+iHTuTy8uJmy+lVHFAxASEACo/WyQM+9WdaLO2VLcTiw9kM5Cf2vSI5nhFXFHACg8+pkMW3BlldqHOXFRUnSnXYHylpYeGfNVH8I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741932021; c=relaxed/simple;
-	bh=KL01593/zSX4Xb5hwQBCHJDAckIJ37QdEuF5jXeWgJ8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ICG2fL3WDp4dizFZXd/IqYPyiP461tb7Z3mzDR27GEVTsgQFaVdt+7EQnX5V/6jojqcpLYaEA1cQF3RI/JgaPDKX3nzSnOIGceH2sR2Ph3lWwmZxKd1VicilByAA63/JCr/Ce3z4WGxEKR52uJYD+SAoEmVA9Zxd5dZdRu/fgmc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=F9ZB6mEM; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52E2ei8j008320
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 06:00:19 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	YD6Z7HGd6RWZSqIPuwEoc3ezQjdyPxL3+GL3fga18Fk=; b=F9ZB6mEMvQNwJykH
-	MrOciWlfhPF8gc6CrJXLfBq6ksxP5I8HK9A04+R9PUhWfPJwCVv8BL0flzdy29AI
-	eMEcparMp0Y8s3nwWzXN2Qz/07jcVo9fw40wbZ79dkOHIpPJXZKBLwh0EPiDKdkB
-	mF7Gagr/+b3kLvLCU9PcpLZkLyNrIwovXGZN2QhD9SZj71u/ABBGyJst4jmag2kg
-	Gs/9yzmzKr3kq5EeXX0YuHMn2IU4FEJlmWQAqpbweVhZHwKeKCIFBhCtLU/b+mWI
-	/NiV+EIbFm87IQZvcBnmfGw09vKbyX2bP7W7iXYV840EQmKLmwa34xMDrEED99SE
-	siG8LA==
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com [209.85.219.70])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45bpg8bw3v-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 06:00:18 +0000 (GMT)
-Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-6e1b8065ed4so39447046d6.0
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Mar 2025 23:00:18 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741932017; x=1742536817;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YD6Z7HGd6RWZSqIPuwEoc3ezQjdyPxL3+GL3fga18Fk=;
-        b=U8+VF3rndr4af6z5uu7b6qj4lAPn9uenHnke5r3PLf8BlM9Qg4zgvzn4DZXSu0hE9t
-         ev/BmyKQ5dTO3FqziDm+O8fNIw7TIaey7cNZz5TvpTzPPLy915AR/AH8J0A5XPuPcGZ7
-         DCoUoJjAo07JclMIZd1T+7ZYHUeGQluwmX4Ecv4u/n/7UXQaVL1enLIaxK3J70GbmgAq
-         OmGMiqKnIFdm0eC83Y90Peh+14km+SY5YZbraxMR92av/cU3gXxvsaoaHSQ+Xh+lbgfh
-         q4p17XSJr9GczEtWM+ePZi+pEzD6FCEI4M0Rgmeyd+qD4vhHEKQOQ0dD0f+ryJ9KKnQA
-         7S5g==
-X-Forwarded-Encrypted: i=1; AJvYcCWwTPh7yKWRq6yYK+ccoFII1K/+1RWb0MMr3QmNf1nBYH/sf5WodnYrtsuBZvNtaJGys++DuQvonKT8ZTQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YztI54buKBr9BHiDRLHyuqrZ6N84yjwYUEbwyPotGWqVezS00j/
-	vk4kU72M5XMmeQi++jKPsaLh3smlVsvI4xeyv7Iw9EFDDTRmiSmWj65529VTab3cJQAW74vTXMK
-	MGrrI4ovkbqqY/5wXYhZ2Bn8Ts0QXcYPPg9mN2WB3SzQG592Z0FtJiCHTTjl7e8k=
-X-Gm-Gg: ASbGncujhoLRZJQS9CL/KPY+/ua8F8+d/R0Ho3vlh+ewGlBqzqt0lRXFZ5jY3C/QLhL
-	6Q/KnnG0jP6NrCj7Si5IYslxzwKE1aKw2aFd3Aj0pizgHu38Dfe8ndZ7CynptLgfzPMd7TumKJL
-	inFVYVmLlU5Uhh8LwRPZxfBJZJHcqPAMIFetn7lhrms4Ve40fOzFkUI789p3iy8sSff32bILXNw
-	E96sVV8iAZfzwMR8wDcRHvDhUflLkdfsIeH+AnaTWmiSU6qRC1gtCnqHM10r7Bj3XO5hTG/Gi2/
-	gLCI6qDd5lU6GZJ4xz6ZoXmR0dg+C5FhmhYuSn9A5+Stwm4fPCnOusLb67tDTJa9RENKPINh1aO
-	zo2ND3fqiovjz/89t8ZG1/zkOqsT4
-X-Received: by 2002:a05:6214:27e5:b0:6e6:6c39:cb71 with SMTP id 6a1803df08f44-6eaeab0fbbfmr16506316d6.45.1741932017328;
-        Thu, 13 Mar 2025 23:00:17 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IELJcylmUiJ4JEURtcZ0pb2cGp+YTibCxqJbDGjU39ccIquuLoPHTNuJjmGgKfn3GK+0NkRrQ==
-X-Received: by 2002:a05:6214:27e5:b0:6e6:6c39:cb71 with SMTP id 6a1803df08f44-6eaeab0fbbfmr16506016d6.45.1741932016982;
-        Thu, 13 Mar 2025 23:00:16 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-549ba88332dsm416136e87.181.2025.03.13.23.00.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Mar 2025 23:00:14 -0700 (PDT)
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Date: Fri, 14 Mar 2025 07:59:47 +0200
-Subject: [PATCH RFC v4 6/6] drm/display: dp-tunnel: use new DCPD access
- helpers
+	s=arc-20240116; t=1741932068; c=relaxed/simple;
+	bh=p+jj2rRYNfCf6vPrlvYROsT9imZ6sghTkLF4L48tBSQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=AvbKMAo8h/90SwJn7s++faIuS9jlk3OE2KAA8LebqqFI73I/UW1ra6SMy/zgBR1nrw2BCdgsydjrkl9JKaCV0CwlyROEvXz5NnW1L+ZVQZ+Nu8HDFFoghoPTPqpu7I+H+woAnsCFTnz0eUvLI7fFRT8f+7S4WSxt3yaSiCf0b0A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
+X-AuditID: a67dfc5b-669ff7000002311f-0a-67d3c61a2f75
+From: Rakie Kim <rakie.kim@sk.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: akpm@linux-foundation.org,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	linux-cxl@vger.kernel.org,
+	joshua.hahnjy@gmail.com,
+	dan.j.williams@intel.com,
+	ying.huang@linux.alibaba.com,
+	kernel_team@skhynix.com,
+	honggyu.kim@sk.com,
+	yunjeong.mun@sk.com,
+	Gregory Price <gourry@gourry.net>,
+	Rakie Kim <rakie.kim@sk.com>
+Subject: Re: [PATCH v2 2/4] mm/mempolicy: Support memory hotplug in weighted interleave
+Date: Fri, 14 Mar 2025 15:00:45 +0900
+Message-ID: <20250314060053.743-1-rakie.kim@sk.com>
+X-Mailer: git-send-email 2.48.1.windows.1
+In-Reply-To: <713b6924-a653-453e-8fde-8c966638386b@redhat.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250314-drm-rework-dpcd-access-v4-6-e86ef6fc6d76@oss.qualcomm.com>
-References: <20250314-drm-rework-dpcd-access-v4-0-e86ef6fc6d76@oss.qualcomm.com>
-In-Reply-To: <20250314-drm-rework-dpcd-access-v4-0-e86ef6fc6d76@oss.qualcomm.com>
-To: Lyude Paul <lyude@redhat.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Rob Clark <robdclark@gmail.com>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        =?utf-8?q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
-        Andrzej Hajda <andrzej.hajda@intel.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Robert Foss <rfoss@kernel.org>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Xinliang Liu <xinliang.liu@linaro.org>,
-        Tian Tao <tiantao6@hisilicon.com>,
-        Xinwei Kong <kong.kongxinwei@hisilicon.com>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        Yongqin Liu <yongqin.liu@linaro.org>, John Stultz <jstultz@google.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
-        intel-gfx@lists.freedesktop.org, intel-xe@lists.freedesktop.org,
-        amd-gfx@lists.freedesktop.org,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Jani Nikula <jani.nikula@intel.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4082;
- i=dmitry.baryshkov@oss.qualcomm.com; h=from:subject:message-id;
- bh=AezDpTs9i2rYRC6AeDwZvqAV87zlWZZG2GdTd51PPFs=;
- b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBn08XZFN6uPDdiX1R7XmfB1vXISASqSFYGN569O
- I6KV6qdI3WJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZ9PF2QAKCRCLPIo+Aiko
- 1eM5B/9jhOE9nI9V6mDRKubJu0/SPcbZoi/lHs71XyG/da3UMGC32Qt16u66xFuLg4inRbB79MC
- lZllWHwPgl1Q5/YeMrd7mbZ4SMoiH9evqV5y0/FTvifqU6zwgcpJ6ZCMWGixnm3Ezlb0aiz5nI9
- XYnzCZ3lNXvh8AkwMZMgXNfGOA71gEm/MhhXwmgqXHN48nVlgfkYc1J84RrrNot9sLmiQgfQHzR
- F4KZYvVt5YGhuR97yx5BeXuJOeT2S6L6rAfmV5RybP6JJdi6id/B10zo5H3f/e3tm+QFyIddeuv
- fYEScrVe2IVsan3JCnn6Al2YeCZugz0rJLJveu4Idywf2rlt
-X-Developer-Key: i=dmitry.baryshkov@oss.qualcomm.com; a=openpgp;
- fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
-X-Authority-Analysis: v=2.4 cv=PtWTbxM3 c=1 sm=1 tr=0 ts=67d3c5f2 cx=c_pps a=oc9J++0uMp73DTRD5QyR2A==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=KKAkSRfTAAAA:8 a=20KFwNOVAAAA:8 a=QyXUC8HyAAAA:8 a=VzZmvmfVK_LU_xpdqU4A:9 a=QEXdDO2ut3YA:10
- a=iYH6xdkBrDN1Jqds4HTS:22 a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-GUID: O0IZLgAIxoIMlqn2ctTKMS9gqkoDmB1U
-X-Proofpoint-ORIG-GUID: O0IZLgAIxoIMlqn2ctTKMS9gqkoDmB1U
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-14_02,2025-03-13_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- lowpriorityscore=0 mlxscore=0 mlxlogscore=999 impostorscore=0 spamscore=0
- adultscore=0 phishscore=0 bulkscore=0 clxscore=1015 malwarescore=0
- suspectscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503140045
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrKLMWRmVeSWpSXmKPExsXC9ZZnka70scvpBleXs1jMWb+GzWL61AuM
+	Fl/X/2K2+Hn3OLvF8a3z2C3OzzrFYnF51xw2i3tr/rNarF6T4cDpsXPWXXaP7rbL7B6L97xk
+	8tj0aRK7x4kZv1k8dj609Hi/7yqbx+dNcgEcUVw2Kak5mWWpRfp2CVwZ75s6mAvajCu6W84z
+	NTBuVe9i5OSQEDCRmLN+DhuM/bblE2sXIwcHm4CSxLG9MSBhEQENiU1tG5i7GLk4mAWuMEm0
+	XAVxODiEBcIljr+tAjFZBFQlXq4XACnnFTCW2PfyBivERE2Jhkv3mEBsTgE7if8b9jCD2EIC
+	PBKvNuxnhKgXlDg58wkLiM0sIC/RvHU22CoJgftsEvs6OlkgBklKHFxxg2UCI/8sJD2zkPQs
+	YGRaxSiUmVeWm5iZY6KXUZmXWaGXnJ+7iREY2Mtq/0TvYPx0IfgQowAHoxIP74Zdl9KFWBPL
+	iitzDzFKcDArifCutr2QLsSbklhZlVqUH19UmpNafIhRmoNFSZzX6Ft5ipBAemJJanZqakFq
+	EUyWiYNTqoHRK3KhVvYl96+cbXt40vb8/nrqx+MNd622OLkvXL7+6uP4Or2jXvyeUdtyqzpX
+	VKyRuXLOselJ78oC2xQry5dFF8/uePh+l58ry8r1TrMifj95tsh6QTnD6ybV3Ws/PPL0DhSN
+	FM9Q5m1YXBRkqtkVXeIfla72wMtf56qG19vMaYmKJUUBM72UWIozEg21mIuKEwExiI3EaAIA
+	AA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrPLMWRmVeSWpSXmKPExsXCNUNNS1fq2OV0g65/5hZz1q9hs5g+9QKj
+	xdf1v5gtft49zm7x+dlrZovjW+exWxyee5LV4vysUywWl3fNYbO4t+Y/q8Wha89ZLVavybD4
+	vW0FmwOvx85Zd9k9utsus3ss3vOSyWPTp0nsHidm/Gbx2PnQ0uP9vqtsHt9ue3gsfvGByePz
+	JrkArigum5TUnMyy1CJ9uwSujPdNHcwFbcYV3S3nmRoYt6p3MXJySAiYSLxt+cTaxcjBwSag
+	JHFsbwxIWERAQ2JT2wbmLkYuDmaBK0wSLVdBHA4OYYFwieNvq0BMFgFViZfrBUDKeQWMJfa9
+	vMEKMVFTouHSPSYQm1PATuL/hj3MILaQAI/Eqw37GSHqBSVOznzCAmIzC8hLNG+dzTyBkWcW
+	ktQsJKkFjEyrGEUy88pyEzNzTPWKszMq8zIr9JLzczcxAoN5We2fiTsYv1x2P8QowMGoxMO7
+	YdeldCHWxLLiytxDjBIczEoivKttL6QL8aYkVlalFuXHF5XmpBYfYpTmYFES5/UKT00QEkhP
+	LEnNTk0tSC2CyTJxcEo1MGYn1V3fpTD5BHdYVpvJvWddWzr6n/FbRQv+077GZlka2ecqzti3
+	/9F2w5TbU6tXT92U+Lj5xusp3+dFrW+Vedz+7EieSO6M22ccct9OPaO5TXnBTL5VfBv7JzT3
+	5q+efFM4vnbXDtOfa2/s7Dh/cJ4Oe9QFmQQnx+/VOwojqqO9GU5NM1yyrVKJpTgj0VCLuag4
+	EQCQXnLiYgIAAA==
+X-CFilter-Loop: Reflected
 
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+On Thu, 13 Mar 2025 23:36:47 +0100 David Hildenbrand <david@redhat.com> wrote:
+> On 13.03.25 17:23, Gregory Price wrote:
+> > On Thu, Mar 13, 2025 at 03:33:37PM +0900, Rakie Kim wrote:
+> >>> I'm fairly certain this logic is wrong.  If I add two memory blocks and
+> >>> then remove one, would this logic not remove the sysfs entries despite
+> >>> there being a block remaining?
+> >>
+> >> Regarding the assumption about node configuration:
+> >> Are you assuming that a node has two memory blocks and that
+> >> MEM_OFFLINE is triggered when one of them is offlined? If so, then
+> >> you are correct that this logic would need modification.
+> >>
+> >> I performed a simple test by offlining a single memory block:
+> >> # echo 0 > /sys/devices/system/node/node2/memory100/online
+> >>
+> >> In this case, MEM_OFFLINE was not triggered. However, I need to
+> >> conduct further analysis to confirm this behavior under different
+> >> conditions. I will review this in more detail and share my
+> >> findings, including the test methodology and results.
+> >>
+> > 
+> > +David - might have a quick answer to this.  I would have expected a
+> > single memory block going offline to cause a notification.
+> 
+> Yes. Unless offlining failed, or the block was already offline :)
+> 
+> If it doesn't happen for an actual online memory block that is offline 
+> after the call, we would have a bug.
+> 
+> 
+> -- 
+> Cheers,
+> 
+> David / dhildenb
+>
 
-Switch drm_dp_tunnel.c to use new set of DPCD read / write helpers.
+Hi David,
 
-Reviewed-by: Lyude Paul <lyude@redhat.com>
-Acked-by: Jani Nikula <jani.nikula@intel.com>
-Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
----
- drivers/gpu/drm/display/drm_dp_tunnel.c | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+I am currently working on adding memory hotplug-related functionality
+to the weighted interleave feature. While discussing this with Gregory,
+a question came up. If you happen to know the answer to the following,
+I would greatly appreciate your input.
 
-diff --git a/drivers/gpu/drm/display/drm_dp_tunnel.c b/drivers/gpu/drm/display/drm_dp_tunnel.c
-index 90fe07a89260e21e78f2db7f57a90602be921a11..076edf1610480275c62395334ab0536befa42f15 100644
---- a/drivers/gpu/drm/display/drm_dp_tunnel.c
-+++ b/drivers/gpu/drm/display/drm_dp_tunnel.c
-@@ -222,7 +222,7 @@ static int read_tunnel_regs(struct drm_dp_aux *aux, struct drm_dp_tunnel_regs *r
- 	while ((len = next_reg_area(&offset))) {
- 		int address = DP_TUNNELING_BASE + offset;
- 
--		if (drm_dp_dpcd_read(aux, address, tunnel_reg_ptr(regs, address), len) < 0)
-+		if (drm_dp_dpcd_read_data(aux, address, tunnel_reg_ptr(regs, address), len) < 0)
- 			return -EIO;
- 
- 		offset += len;
-@@ -913,7 +913,7 @@ static int set_bw_alloc_mode(struct drm_dp_tunnel *tunnel, bool enable)
- 	u8 mask = DP_DISPLAY_DRIVER_BW_ALLOCATION_MODE_ENABLE | DP_UNMASK_BW_ALLOCATION_IRQ;
- 	u8 val;
- 
--	if (drm_dp_dpcd_readb(tunnel->aux, DP_DPTX_BW_ALLOCATION_MODE_CONTROL, &val) < 0)
-+	if (drm_dp_dpcd_read_byte(tunnel->aux, DP_DPTX_BW_ALLOCATION_MODE_CONTROL, &val) < 0)
- 		goto out_err;
- 
- 	if (enable)
-@@ -921,7 +921,7 @@ static int set_bw_alloc_mode(struct drm_dp_tunnel *tunnel, bool enable)
- 	else
- 		val &= ~mask;
- 
--	if (drm_dp_dpcd_writeb(tunnel->aux, DP_DPTX_BW_ALLOCATION_MODE_CONTROL, val) < 0)
-+	if (drm_dp_dpcd_write_byte(tunnel->aux, DP_DPTX_BW_ALLOCATION_MODE_CONTROL, val) < 0)
- 		goto out_err;
- 
- 	tunnel->bw_alloc_enabled = enable;
-@@ -1039,7 +1039,7 @@ static int clear_bw_req_state(struct drm_dp_aux *aux)
- {
- 	u8 bw_req_mask = DP_BW_REQUEST_SUCCEEDED | DP_BW_REQUEST_FAILED;
- 
--	if (drm_dp_dpcd_writeb(aux, DP_TUNNELING_STATUS, bw_req_mask) < 0)
-+	if (drm_dp_dpcd_write_byte(aux, DP_TUNNELING_STATUS, bw_req_mask) < 0)
- 		return -EIO;
- 
- 	return 0;
-@@ -1052,7 +1052,7 @@ static int bw_req_complete(struct drm_dp_aux *aux, bool *status_changed)
- 	u8 val;
- 	int err;
- 
--	if (drm_dp_dpcd_readb(aux, DP_TUNNELING_STATUS, &val) < 0)
-+	if (drm_dp_dpcd_read_byte(aux, DP_TUNNELING_STATUS, &val) < 0)
- 		return -EIO;
- 
- 	*status_changed = val & status_change_mask;
-@@ -1095,7 +1095,7 @@ static int allocate_tunnel_bw(struct drm_dp_tunnel *tunnel, int bw)
- 	if (err)
- 		goto out;
- 
--	if (drm_dp_dpcd_writeb(tunnel->aux, DP_REQUEST_BW, request_bw) < 0) {
-+	if (drm_dp_dpcd_write_byte(tunnel->aux, DP_REQUEST_BW, request_bw) < 0) {
- 		err = -EIO;
- 		goto out;
- 	}
-@@ -1196,13 +1196,13 @@ static int check_and_clear_status_change(struct drm_dp_tunnel *tunnel)
- 	u8 mask = DP_BW_ALLOCATION_CAPABILITY_CHANGED | DP_ESTIMATED_BW_CHANGED;
- 	u8 val;
- 
--	if (drm_dp_dpcd_readb(tunnel->aux, DP_TUNNELING_STATUS, &val) < 0)
-+	if (drm_dp_dpcd_read_byte(tunnel->aux, DP_TUNNELING_STATUS, &val) < 0)
- 		goto out_err;
- 
- 	val &= mask;
- 
- 	if (val) {
--		if (drm_dp_dpcd_writeb(tunnel->aux, DP_TUNNELING_STATUS, val) < 0)
-+		if (drm_dp_dpcd_write_byte(tunnel->aux, DP_TUNNELING_STATUS, val) < 0)
- 			goto out_err;
- 
- 		return 1;
-@@ -1215,7 +1215,7 @@ static int check_and_clear_status_change(struct drm_dp_tunnel *tunnel)
- 	 * Check for estimated BW changes explicitly to account for lost
- 	 * BW change notifications.
- 	 */
--	if (drm_dp_dpcd_readb(tunnel->aux, DP_ESTIMATED_BW, &val) < 0)
-+	if (drm_dp_dpcd_read_byte(tunnel->aux, DP_ESTIMATED_BW, &val) < 0)
- 		goto out_err;
- 
- 	if (val * tunnel->bw_granularity != tunnel->estimated_bw)
-@@ -1300,7 +1300,7 @@ int drm_dp_tunnel_handle_irq(struct drm_dp_tunnel_mgr *mgr, struct drm_dp_aux *a
- {
- 	u8 val;
- 
--	if (drm_dp_dpcd_readb(aux, DP_TUNNELING_STATUS, &val) < 0)
-+	if (drm_dp_dpcd_read_byte(aux, DP_TUNNELING_STATUS, &val) < 0)
- 		return -EIO;
- 
- 	if (val & (DP_BW_REQUEST_SUCCEEDED | DP_BW_REQUEST_FAILED))
+I have added the following logic to call add_weight_node when a node
+transitions to the N_MEMORY state to create a sysfs entry. Conversely,
+when all memory blocks of a node go offline (!N_MEMORY),
+I call sysfs_wi_node_release to remove the corresponding sysfs entry.
 
--- 
-2.39.5
++static int wi_node_notifier(struct notifier_block *nb,
++                              unsigned long action, void *data)
++{
++       int err;
++       struct memory_notify *arg = data;
++       int nid = arg->status_change_nid;
++
++       if (nid < 0)
++               goto notifier_end;
++
++       switch(action) {
++       case MEM_ONLINE:
++               err = add_weight_node(nid, wi_kobj);
++               if (err) {
++                       pr_err("failed to add sysfs [node%d]\n", nid);
++                       kobject_put(wi_kobj);
++                       return NOTIFY_BAD;
++               }
++               break;
++       case MEM_OFFLINE:
++               sysfs_wi_node_release(node_attrs[nid], wi_kobj);
++               break;
++       }
++
++notifier_end:
++       return NOTIFY_OK;
++}
 
+One question I have is whether the MEM_OFFLINE action in the code
+below will be triggered when a node that consists of multiple memory
+blocks has only one of its memory blocks transitioning to the offline state.
+
++       int nid = arg->status_change_nid;
++
++       if (nid < 0)
++               goto notifier_end;
+
+Based on my analysis, wi_node_notifier should function as expected
+because arg->status_change_nid only holds a non-negative value
+under the following conditions:
+
+1) !N_MEMORY -> N_MEMORY
+   When the first memory block of a node transitions to the online state,
+   it holds a non-negative value.
+   In all other cases, it remains -1 (NUMA_NO_NODE).
+
+2) N_MEMORY -> !N_MEMORY
+   When all memory blocks of a node transition to the offline state,
+   it holds a non-negative value.
+   In all other cases, it remains -1 (NUMA_NO_NODE).
+
+I would truly appreciate it if you could confirm whether this analysis is correct.
+Below is a more detailed explanation of my findings.
+
+<memory block online>
+- The callback function registered in hotplug_memory_notifier
+  receives the MEM_ONLINE action in online_pages.
+int online_pages(unsigned long pfn, unsigned long nr_pages,
+		       struct zone *zone, struct memory_group *group)
+{
+	struct memory_notify arg;
+...
+	node_states_check_changes_online(nr_pages, zone, &arg);
+	ret = memory_notify(MEM_GOING_ONLINE, &arg);
+...
+	node_states_set_node(nid, &arg);
+...
+	memory_notify(MEM_ONLINE, &arg);
+}
+
+- If the node is in the !N_MEMORY state,
+  arg->status_change_nid is set to the node ID.
+static void node_states_check_changes_online(unsigned long nr_pages,
+	struct zone *zone, struct memory_notify *arg)
+{
+	int nid = zone_to_nid(zone);
+
+	arg->status_change_nid = NUMA_NO_NODE;
+	arg->status_change_nid_normal = NUMA_NO_NODE;
+
+	if (!node_state(nid, N_MEMORY))
+		arg->status_change_nid = nid;
+...
+}
+- If arg->status_change_nid >= 0, the node transitions to the N_MEMORY state.
+static void node_states_set_node(int node, struct memory_notify *arg)
+{
+...
+	if (arg->status_change_nid >= 0)
+		node_set_state(node, N_MEMORY);
+}
+
+
+<memory block offline>
+- The callback function registered in hotplug_memory_notifier
+  receives the MEM_OFFLINE action in offline_pages.
+int offline_pages(unsigned long start_pfn, unsigned long nr_pages,
+			struct zone *zone, struct memory_group *group)
+{
+	struct memory_notify arg;
+...
+	node_states_check_changes_offline(nr_pages, zone, &arg);
+	ret = memory_notify(MEM_GOING_OFFLINE, &arg);
+...
+	node_states_clear_node(node, &arg);
+...
+	memory_notify(MEM_OFFLINE, &arg);
+}
+
+- If the node becomes empty,
+  arg->status_change_nid is set to the node ID.
+static void node_states_check_changes_offline(unsigned long nr_pages,
+		struct zone *zone, struct memory_notify *arg)
+{
+...
+	/*
+	 * We have accounted the pages from [0..ZONE_NORMAL); ZONE_HIGHMEM
+	 * does not apply as we don't support 32bit.
+	 * Here we count the possible pages from ZONE_MOVABLE.
+	 * If after having accounted all the pages, we see that the nr_pages
+	 * to be offlined is over or equal to the accounted pages,
+	 * we know that the node will become empty, and so, we can clear
+	 * it for N_MEMORY as well.
+	 */
+	present_pages += pgdat->node_zones[ZONE_MOVABLE].present_pages;
+
+	if (nr_pages >= present_pages)
+		arg->status_change_nid = zone_to_nid(zone);
+}
+
+- If arg->status_change_nid >= 0,
+  the node transitions to the !N_MEMORY state.
+static void node_states_clear_node(int node, struct memory_notify *arg)
+{
+...
+	if (arg->status_change_nid >= 0)
+		node_clear_state(node, N_MEMORY);
+}
+
+Thank you very much for taking the time to read this lengthy email.
+
+Rakie
 
