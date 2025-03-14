@@ -1,161 +1,319 @@
-Return-Path: <linux-kernel+bounces-560639-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560640-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E2C5A60796
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 03:42:56 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7074EA6079A
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 03:45:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2978C3B87B1
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 02:42:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B758B7ADEFE
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 02:44:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2D6A7080E;
-	Fri, 14 Mar 2025 02:42:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E161D2AF19;
+	Fri, 14 Mar 2025 02:45:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iNJSIRIR"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="EQNhBkng"
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34AA02E3364;
-	Fri, 14 Mar 2025 02:42:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9DED8837
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 02:45:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741920168; cv=none; b=ugdI4JgjrJFtxdmnacDnV9gDt1H1izhscM8xCZ5knrTru+TrHiiroVmQv3Z8Q1FoW3ZvxqVdlWUKGvisinMFZzqGl6UtdI0CZpGh9+1HHw3yOn1/jknnhzOK8SOvIgG7ng1ENxQVTLRmqOmP5JZuHOCqGP6txfEpCdSz+CeRVh8=
+	t=1741920351; cv=none; b=VUKY6PtaLmiYTRF3SYIsRIRvN4jW/5UnsOSF6d9NMY0KyaLHIeaeDBEsaEBMGDqDsPdgp4tPfH8G45Q0BLJuo1WLxG0Ql9bwN4EUMjZDTJC/ZZVuzENZS1RvxpagRpZHym03KkD+2LJp010W8+SiWxL+24U6Udwtvfvuv4M+ba4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741920168; c=relaxed/simple;
-	bh=IHnkLmOiLY3MQ7jD5itWUipEQMKkVCo+vJ9rLn/FtWA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=d+/+QYk1im+e6FBK/y4t318vEcqDd/svv6t5th9kKBW2l51/FT7Z1tsiH1dHG8xqvhfklFcBAGDgCoBVSH9iq0/Yshll5jEK2d2A7wM8OZGXiPLdGvJHatnAbmJNvMoz1YG/V8gO5zsHHs9SkArOpFiFJ10U/fMzb1VHG2dxCow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iNJSIRIR; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741920167; x=1773456167;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=IHnkLmOiLY3MQ7jD5itWUipEQMKkVCo+vJ9rLn/FtWA=;
-  b=iNJSIRIRHN6p75lSfYRnsVAFzTlGEutwvISczHye/53wiDjZorSYH+V8
-   lK7b+Tg7pyuVm5MLTWtJ0TsI+zs0pbjDtj7m46Km7MAZGeu4nBcoubd2M
-   uaHheY/fzbd/65HEjwGxPZO0vjMbfjUVwaWE1wZf5YEgZv8kM/ETe+uVc
-   Mj3eCZCVUkZz3V8gLxSEnaBAN7113aXlV0jfRZlK1ifl9dLao+z7QH3lI
-   K8yuJ39tQKPSn3h/B+JJYtAqFV4ZhFr4bO5Jkn3tV4KYO0ZEWWpbHoRnv
-   bU+lFN7xWW298A2KoaWVJvt72NLj6EZo2zB5ffW+DLpUifacBTlrRBXsU
-   A==;
-X-CSE-ConnectionGUID: 6z14DKQxQl+DwdiPzxPMbA==
-X-CSE-MsgGUID: 5kWp/787RtatmVZyyT7bUw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11372"; a="54441853"
-X-IronPort-AV: E=Sophos;i="6.14,246,1736841600"; 
-   d="scan'208";a="54441853"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Mar 2025 19:42:46 -0700
-X-CSE-ConnectionGUID: /fBGos3pRraA3qEmRRAnxQ==
-X-CSE-MsgGUID: eklPN9yvSoGwGSLZPfu0xg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,246,1736841600"; 
-   d="scan'208";a="120858659"
-Received: from binbinwu-mobl.ccr.corp.intel.com (HELO [10.124.240.54]) ([10.124.240.54])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Mar 2025 19:42:44 -0700
-Message-ID: <d4c19589-baa4-47a8-8d3d-bff10ba6aa64@linux.intel.com>
-Date: Fri, 14 Mar 2025 10:42:41 +0800
+	s=arc-20240116; t=1741920351; c=relaxed/simple;
+	bh=ziJruGjMI0GA4eymHWA8v/F48RLTPRiahyI8/UJGQ3w=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:In-Reply-To:
+	 Content-Type:References; b=pVeo0w61HmSxhl+N6MGgONbCdHCDuNZw24uE5iBEhCFxpNk4jQq+bpKMh+m6GP0xbVCde64y1s/aDjSz2Ah6gDzytOQB80ohLvW16Voyj8rppZDrKT5ukb7/wPx6szhj+PjDGh7H6yS/wpNhvUaLRSL7NklYUMVAtizFf+4zRuM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=EQNhBkng; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas2p3.samsung.com (unknown [182.195.41.55])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250314024547epoutp03c9b36300df70f904d638bb738e16eb7a~si1O9_rsr2595425954epoutp03w
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 02:45:47 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250314024547epoutp03c9b36300df70f904d638bb738e16eb7a~si1O9_rsr2595425954epoutp03w
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1741920347;
+	bh=2fQnOpR9cCRSIu8ZWpB8PZJwa+Sv/G9ybgLzo4FmFMY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=EQNhBkngB/Z2KN6xscRg48Cpe1JlyJThi10DxZlkdiwe+RjRul7XYybkrHKJCg5eD
+	 XCiU6AwKeRSGsnZZjz7P+ZnEwczOX99XGXCYJnneCvcm7O+2bYt1p171fFtyQqzLPp
+	 4wn5L3NQMTWGyh1gg5rMGNpjCYJo62d4rs+F27Pg=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+	epcas2p3.samsung.com (KnoxPortal) with ESMTP id
+	20250314024542epcas2p3c9dfa3fba2cc4e352b2227ff9855f67d~si1KWuKuu2636126361epcas2p3G;
+	Fri, 14 Mar 2025 02:45:42 +0000 (GMT)
+Received: from epsmges2p1.samsung.com (unknown [182.195.36.69]) by
+	epsnrtp1.localdomain (Postfix) with ESMTP id 4ZDTJ60VXfz4x9Py; Fri, 14 Mar
+	2025 02:45:42 +0000 (GMT)
+Received: from epcas2p4.samsung.com ( [182.195.41.56]) by
+	epsmges2p1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	7C.C3.23368.55893D76; Fri, 14 Mar 2025 11:45:41 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas2p4.samsung.com (KnoxPortal) with ESMTPA id
+	20250314024541epcas2p4e2c2a3477cce44495c9df098eb6fde9e~si1JUwANy1721217212epcas2p43;
+	Fri, 14 Mar 2025 02:45:41 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20250314024541epsmtrp1e681038ce3bdbddffa1c101c892b2905~si1JThh5-3173131731epsmtrp1o;
+	Fri, 14 Mar 2025 02:45:41 +0000 (GMT)
+X-AuditID: b6c32a45-dc9f070000005b48-7e-67d398553655
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	54.5E.18729.55893D76; Fri, 14 Mar 2025 11:45:41 +0900 (KST)
+Received: from perf (unknown [10.229.95.91]) by epsmtip2.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250314024541epsmtip2b79e900afffc7caa7cac857f6c89c4e5~si1I_pJL32412924129epsmtip2m;
+	Fri, 14 Mar 2025 02:45:41 +0000 (GMT)
+Date: Fri, 14 Mar 2025 11:49:47 +0900
+From: Youngmin Nam <youngmin.nam@samsung.com>
+To: Neal Cardwell <ncardwell@google.com>
+Cc: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+	davem@davemloft.net, dsahern@kernel.org, pabeni@redhat.com,
+	horms@kernel.org, guo88.liu@samsung.com, yiwang.cai@samsung.com,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	joonki.min@samsung.com, hajun.sung@samsung.com, d7271.choe@samsung.com,
+	sw.ju@samsung.com, "Dujeong.lee" <dujeong.lee@samsung.com>, Yuchung Cheng
+	<ycheng@google.com>, Kevin Yang <yyd@google.com>, Xueming Feng
+	<kuro@kuroa.me>, Youngmin Nam <youngmin.nam@samsung.com>,
+	cmllamas@google.com, willdeacon@google.com, maennich@google.com
+Subject: Re: [PATCH] tcp: check socket state before calling WARN_ON
+Message-ID: <Z9OZS/hc+v5og6/U@perf>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/4] KVM: VMX: Move x86_ops wrappers under
- CONFIG_KVM_INTEL_TDX
-To: Vishal Verma <vishal.l.verma@intel.com>,
- Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
- Rick Edgecombe <rick.p.edgecombe@intel.com>
-References: <20250313-vverma7-cleanup_x86_ops-v1-0-0346c8211a0c@intel.com>
- <20250313-vverma7-cleanup_x86_ops-v1-2-0346c8211a0c@intel.com>
-Content-Language: en-US
-From: Binbin Wu <binbin.wu@linux.intel.com>
-In-Reply-To: <20250313-vverma7-cleanup_x86_ops-v1-2-0346c8211a0c@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <Z8KcXQhdRId1S6w8@perf>
+X-Brightmail-Tracker: H4sIAAAAAAAAA01Te0xTVxzm9F56C1vZXXmddIR11TplA9sO6AHpZpRhF10EN7O4ZGJDL4VR
+	2q63NTxMRKhIQQqCE0GyFdiGsg0NQ8YQlBQjMOZACSMQHxMRZIDj7cakW8vFhf++3/f7vnO+
+	33lwMN4Um89J1hopg1apEbI98aaOLSh4/9l+tfjebCRaaL9NoN/aThGosteMo/qW4yw0ZjuL
+	o0c3RghUehqg7Gu3MTRS1MVGA1eeYKivyeqO7B3jBOpvqWSjpbYpAuXdacPRDZsfWuqZAuj4
+	w3kCnfh7EkcLDwfYaLYzm0A17XMEyqmqx7f7KxovDLEUtgaToqHOwlbYrITiz6sDbIW1sQ4o
+	5hsCY4mPU6KSKKWKMggobYJOlaxVy4W7P4jfGR8WLpYESyKQTCjQKlMpuTB6T2xwTLLGOZxQ
+	cFipMTmpWCVNC7e+HWXQmYyUIElHG+VCSq/S6GX6EFqZSpu06hAtZYyUiMXSMKfwUErS7NNP
+	9K2StKlHZUQWcIjygQcHkqFwxHKZnQ88OTyyGUDzcAnBFHMAXsvNXussAVg7PcJ6brFW57KY
+	RhuAPZasNcsDAMtaVwiXCidFcLFnGXdhNhkMm7ocwIV9yM3wbvXvwGXAyEEcTg7POAsOx5vc
+	CVfuyF0aLrkBFjy+gDP4ZdhdPrqKPciNcHnxPubyQjLHA5q/uwqYSNHwWWerO4O94R+djQSD
+	+XCiKHcN0zDr/vCa2Qzgz4OPMabxFqwYO7G6EEaqYe8XE6uBoDPF9WGcob1gXodrMBfNhXm5
+	PMa5CS6fvrQWIQBeqTmPMRIFnC9UMWdShMPx7CVWMQisWDdOxbrNKpwWjNwCL7ZsZehXYc7l
+	cxhDvwJrHZx1Chtg1wE/Sk+nqilaqpf8f9cJutQGsPrsg95tBqXTMyF2wOIAO4AcTOjD/Vbe
+	p+ZxVcr0DMqgizeYNBRtB2HOazqF8X0TdM5/ozXGS0IjxKHh4RKZNEwsE/pzM5vNah6pVhqp
+	FIrSU4bnPhbHg5/FunmGpp5s27t7z1fS0WLbg/IjCwUFgy/d+8FfnpFbeVPhVy665BY9HndM
+	7s7r/dCyuK8y4N9zjszrEtnRnr8m8i3vHMxPqwKvZ1j60S/GicTG/Mk53+nSCLDpJ+PEGXaU
+	u8gW19186I0h6+EDNaOl2qqmj6IHs038u4le427fey/lhGz/Mqgu76JbkCbzBUEZKjnZVtxa
+	MqNqvxV30LR50Sy1B4S/Zq3e9WLgm0OJv3YVNH/zXoy98WuRtLQvpunZgU85G0WR58d80nXT
+	T3etdBful/H2+rrVepQ7jtZUFB4pqv/MEzeg9/tydvwj2JbAT4usztjXwEosuzVaueHz9B93
+	eB1zCHE6SSkJwgy08j9tP6w8fwQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrAIsWRmVeSWpSXmKPExsWy7bCSvG7ojMvpBvc2SVp8OXCJ3eLa3ons
+	FnPOt7BYrNvVymTxbMEMFounxx6xW0yewmjRtP8Ss8Wj/hNsFld3v2O2uLCtj9Xi0OHn7BaX
+	d81hs/i29w27RcedvSwWxxaIWXw7/YbRovXxZ3aL9p+vWSy+PL7KZvHxeBO7xeIDn9gtmheu
+	Y3EQ99iy8iaTx4JNpR6bVnWyeSzoY/d4v+8qm0ffllWMHp83yQWwR3HZpKTmZJalFunbJXBl
+	XJz1ib3goV7F4kMPWBsY9yt3MXJySAiYSPQtamPqYuTiEBLYzSixctkDZoiEjMTtlZdZIWxh
+	ifstR1ghiu4zSryc95YRJMEioCrx9fQvFhCbTUBXYtuJf2BxEQENibuLHjCCNDAL3GaR2HDg
+	NtBUDg5hAWeJv3dsQWp4BZQlul+sZIEYOpFF4kPTW3aIhKDEyZlPwIYyC6hL/Jl3CayXWUBa
+	Yvk/DoiwvETz1tlgh3IKqEj8+nqfeQKj4Cwk3bOQdM9C6J6FpHsBI8sqRsnUguLc9NxiwwLD
+	vNRyveLE3OLSvHS95PzcTYzgSNbS3MG4fdUHvUOMTByMhxglOJiVRHhX215IF+JNSaysSi3K
+	jy8qzUktPsQozcGiJM4r/qI3RUggPbEkNTs1tSC1CCbLxMEp1cC046GbXPqmLRVLL87iWWGd
+	d0v69Z9tj7Zu0HvCohAjbephwXLgL9+79RHrtV6Lve38zrXX6EPeV5GfRloixzLrfKZ1z9kR
+	xC2zwuhL9sXK2J6N4hMCVy3cdYH3vu6D/ownL17xHnPcdGle3oOcac49uclbd5kdX3VtqaNJ
+	ZMbtxeFv7337WW5YV+rjE5AvuGHeU2Y/d3Hn6PatS0XzF5VLtKqfve3LtsXgd3T7BtMmuZOK
+	8qY/vk7euvaop1yl/dmPt7aenigjdsL5U/D2M1lLu79uT70nGbHujfNC1+dcZy1djAMTmfnt
+	q7fNXdqRqvvnkugzr+ZTp/V7P0nc+NhZKfdGJPdZvxSn1sQriYfjlViKMxINtZiLihMByR5a
+	dVMDAAA=
+X-CMS-MailID: 20250314024541epcas2p4e2c2a3477cce44495c9df098eb6fde9e
+X-Msg-Generator: CA
+Content-Type: multipart/mixed;
+	boundary="----8zSljUDO-7Nv_mPFAu0GqydQxERUpglxPdU54vW1CIyD1lhE=_7c9b_"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250120001504epcas2p1d766c193256b4b7f79d19f61d76d697d
+References: <009e01db4620$f08f42e0$d1adc8a0$@samsung.com>
+	<CADVnQykPo35mQ1y16WD3zppENCeOi+2Ea_2m-AjUQVPc9SXm4g@mail.gmail.com>
+	<Z4nl0h1IZ5R/KDEc@perf>
+	<CADVnQykZYT+CTWD3Ss46aGHPp5KtKMYqKjLxEmd5DDgdG3gfDA@mail.gmail.com>
+	<CGME20250120001504epcas2p1d766c193256b4b7f79d19f61d76d697d@epcas2p1.samsung.com>
+	<Z42WaFf9+oNkoBKJ@perf> <Z6BSXCRw/9Ne1eO1@perf>
+	<CADVnQykpHsN1rPJobKVfFGwtAJ9qwPrwG21HiunHqfykxyPD1g@mail.gmail.com>
+	<CADVnQymr=sst5foNOF7ydr-fUyAK6XLvRyNvnTVBV=wgPLpBBQ@mail.gmail.com>
+	<Z8KcXQhdRId1S6w8@perf>
+
+------8zSljUDO-7Nv_mPFAu0GqydQxERUpglxPdU54vW1CIyD1lhE=_7c9b_
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Content-Disposition: inline
+
+On Sat, Mar 01, 2025 at 02:37:23PM +0900, Youngmin Nam wrote:
+> On Tue, Feb 25, 2025 at 12:24:47PM -0500, Neal Cardwell wrote:
+> > On Mon, Feb 24, 2025 at 4:13 PM Neal Cardwell <ncardwell@google.com> wrote:
+> > >
+> > > On Mon, Feb 3, 2025 at 12:17 AM Youngmin Nam <youngmin.nam@samsung.com> wrote:
+> > > >
+> > > > > Hi Neal,
+> > > > > Thank you for looking into this issue.
+> > > > > When we first encountered this issue, we also suspected that tcp_write_queue_purge() was being called.
+> > > > > We can provide any information you would like to inspect.
+> > >
+> > > Thanks again for raising this issue, and providing all that data!
+> > >
+> > > I've come up with a reproducer for this issue, and an explanation for
+> > > why this has only been seen on Android so far, and a theory about a
+> > > related socket leak issue, and a proposed fix for the WARN and the
+> > > socket leak.
+> > >
+> > > Here is the scenario:
+> > >
+> > > + user process A has a socket in TCP_ESTABLISHED
+> > >
+> > > + user process A calls close(fd)
+> > >
+> > > + socket calls __tcp_close() and tcp_close_state() decides to enter
+> > > TCP_FIN_WAIT1 and send a FIN
+> > >
+> > > + FIN is lost and retransmitted, making the state:
+> > > ---
+> > >  tp->packets_out = 1
+> > >  tp->sacked_out = 0
+> > >  tp->lost_out = 1
+> > >  tp->retrans_out = 1
+> > > ---
+> > >
+> > > + someone invokes "ss" to --kill the socket using the functionality in
+> > > (1e64e298b8 "net: diag: Support destroying TCP sockets")
+> > >
+> > >   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=c1e64e298b8cad309091b95d8436a0255c84f54a
+> > >
+> > >  (note: this was added for Android, so would not be surprising to have
+> > > this inet_diag --kill run on Android)
+> > >
+> > > + the ss --kill causes a call to tcp_abort()
+> > >
+> > > + tcp_abort() calls tcp_write_queue_purge()
+> > >
+> > > + tcp_write_queue_purge() sets packets_out=0 but leaves lost_out=1,
+> > > retrans_out=1
+> > >
+> > > + tcp_sock still exists in TCP_FIN_WAIT1 but now with an inconsistent state
+> > >
+> > > + ACK arrives and causes a WARN_ON from tcp_verify_left_out():
+> > >
+> > > #define tcp_verify_left_out(tp) WARN_ON(tcp_left_out(tp) > tp->packets_out)
+> > >
+> > > because the state has:
+> > >
+> > >  ---
+> > >  tcp_left_out(tp) = sacked_out + lost_out = 1
+> > >   tp->packets_out = 0
+> > > ---
+> > >
+> > > because the state is:
+> > >
+> > > ---
+> > >  tp->packets_out = 0
+> > >  tp->sacked_out = 0
+> > >  tp->lost_out = 1
+> > >  tp->retrans_out = 1
+> > > ---
+> > >
+> > > I guess perhaps one fix would be to just have tcp_write_queue_purge()
+> > > zero out those other fields:
+> > >
+> > > ---
+> > >  tp->sacked_out = 0
+> > >  tp->lost_out = 0
+> > >  tp->retrans_out = 0
+> > > ---
+> > >
+> > > However, there is a related and worse problem. Because this killed
+> > > socket has tp->packets_out, the next time the RTO timer fires,
+> > > tcp_retransmit_timer() notices !tp->packets_out is true, so it short
+> > > circuits and returns without setting another RTO timer or checking to
+> > > see if the socket should be deleted. So the tcp_sock is now sitting in
+> > > memory with no timer set to delete it. So we could leak a socket this
+> > > way. So AFAICT to fix this socket leak problem, perhaps we want a
+> > > patch like the following (not tested yet), so that we delete all
+> > > killed sockets immediately, whether they are SOCK_DEAD (orphans for
+> > > which the user already called close() or not) :
+> > >
+> > > diff --git a/net/ipv4/tcp.c b/net/ipv4/tcp.c
+> > > index 28cf19317b6c2..a266078b8ec8c 100644
+> > > --- a/net/ipv4/tcp.c
+> > > +++ b/net/ipv4/tcp.c
+> > > @@ -5563,15 +5563,12 @@ int tcp_abort(struct sock *sk, int err)
+> > >         local_bh_disable();
+> > >         bh_lock_sock(sk);
+> > >
+> > > -       if (!sock_flag(sk, SOCK_DEAD)) {
+> > > -               if (tcp_need_reset(sk->sk_state))
+> > > -                       tcp_send_active_reset(sk, GFP_ATOMIC);
+> > > -               tcp_done_with_error(sk, err);
+> > > -       }
+> > > +       if (tcp_need_reset(sk->sk_state))
+> > > +               tcp_send_active_reset(sk, GFP_ATOMIC);
+> > > +       tcp_done_with_error(sk, err);
+> > >
+> > >         bh_unlock_sock(sk);
+> > >         local_bh_enable();
+> > > -       tcp_write_queue_purge(sk);
+> > >         release_sock(sk);
+> > >         return 0;
+> > >  }
+> > > ---
+> > 
+> > Actually, it seems like a similar fix was already merged into Linux v6.11:
+> > 
+> > bac76cf89816b tcp: fix forever orphan socket caused by tcp_abort
+> > 
+> > Details below.
+> > 
+> > Youngmin, does your kernel have this bac76cf89816b fix? If not, can
+> > you please cherry-pick this fix and retest?
+> > 
+> > Thanks!
+> > neal
+> 
+> Hi Neal.
+> 
+> Thank you for your effort in debugging this issue with me.
+> I also appreciate your detailed explanation and for finding the patch related to the issue.
+> 
+> Our kernel(an Android kernel based on 6.6 LTS) does not have the patch you mentioned.(bac76cf89816b)
+> 
+> I'll let you know the test results after applying the patch.
+> 
+> Thank you.
+> 
+
+Hi Neal.
+
+There were confilcts when I cherry-picked the patch
+"bac76cf89816b tcp: fix forever orphan socket caused by tcp_abort"
+and it also has a dependency.
+
+I believe we need a total of two patches,
+which exist in the latest upstream for 6.6 LTS and earlier LTS trees.
+
+5ce4645c23cf tcp: fix races in tcp_abort()
+bac76cf89816 tcp: fix forever orphan socket caused by tcp_abort
+
+So, I uploaded CLs for this to android kernel gerrit.
+
+https://android-review.googlesource.com/c/kernel/common/+/3530435 BACKPORT: tcp: fix races in tcp_abort()
+https://android-review.googlesource.com/c/kernel/common/+/3530436 BACKPORT: tcp: fix forever orphan socket caused by tcp_abort
+
+After applying these patches, we conducted a total of three rounds of testing with 200 devices,
+and all tests passed.
+
+Thanks.
+
+------8zSljUDO-7Nv_mPFAu0GqydQxERUpglxPdU54vW1CIyD1lhE=_7c9b_
+Content-Type: text/plain; charset="utf-8"
 
 
-
-On 3/14/2025 3:30 AM, Vishal Verma wrote:
-> Rather than have a lot of stubs for x86_ops helpers, simply omit the
-> wrappers when CONFIG_KVM_INTEL_TDX=n.  This allows nearly all of
-> vmx/main.c to go under a single #ifdef.  That eliminates all the
-> trampolines in the generated code, and almost all of the stubs.
-
-In this patch, these vt_xxx() functions still are common code.
-Move these functions inside CONFIG_KVM_INTEL_TDX will break the build for
-kvm-intel when CONFIG_KVM_INTEL_TDX=n.
-
-Maybe just squash this patch into 4/4?
-
->
-> Based on a patch by Sean Christopherson <seanjc@google.com>
->
-> Link: https://lore.kernel.org/kvm/Z6v9yjWLNTU6X90d@google.com/
-> Cc: Sean Christopherson <seanjc@google.com>
-> Cc: Rick Edgecombe <rick.p.edgecombe@intel.com>
-> Signed-off-by: Vishal Verma <vishal.l.verma@intel.com>
-> ---
->   arch/x86/kvm/vmx/tdx.h     | 2 +-
->   arch/x86/kvm/vmx/x86_ops.h | 2 +-
->   arch/x86/kvm/vmx/main.c    | 4 ++--
->   3 files changed, 4 insertions(+), 4 deletions(-)
->
-> diff --git a/arch/x86/kvm/vmx/tdx.h b/arch/x86/kvm/vmx/tdx.h
-> index 8f8070d0f55e..b43d7a7c8f1c 100644
-> --- a/arch/x86/kvm/vmx/tdx.h
-> +++ b/arch/x86/kvm/vmx/tdx.h
-> @@ -5,7 +5,7 @@
->   #include "tdx_arch.h"
->   #include "tdx_errno.h"
->   
-> -#ifdef CONFIG_INTEL_TDX_HOST
-> +#ifdef CONFIG_KVM_INTEL_TDX
->   #include "common.h"
->   
->   int tdx_bringup(void);
-> diff --git a/arch/x86/kvm/vmx/x86_ops.h b/arch/x86/kvm/vmx/x86_ops.h
-> index 19f770b0fc81..4704bed033b1 100644
-> --- a/arch/x86/kvm/vmx/x86_ops.h
-> +++ b/arch/x86/kvm/vmx/x86_ops.h
-> @@ -121,7 +121,7 @@ void vmx_cancel_hv_timer(struct kvm_vcpu *vcpu);
->   #endif
->   void vmx_setup_mce(struct kvm_vcpu *vcpu);
->   
-> -#ifdef CONFIG_INTEL_TDX_HOST
-> +#ifdef CONFIG_KVM_INTEL_TDX
->   void tdx_disable_virtualization_cpu(void);
->   int tdx_vm_init(struct kvm *kvm);
->   void tdx_mmu_release_hkid(struct kvm *kvm);
-> diff --git a/arch/x86/kvm/vmx/main.c b/arch/x86/kvm/vmx/main.c
-> index 9d201ddb794a..ccb81a8b73f7 100644
-> --- a/arch/x86/kvm/vmx/main.c
-> +++ b/arch/x86/kvm/vmx/main.c
-> @@ -10,9 +10,8 @@
->   #include "tdx.h"
->   #include "tdx_arch.h"
->   
-> -#ifdef CONFIG_INTEL_TDX_HOST
-> +#ifdef CONFIG_KVM_INTEL_TDX
->   static_assert(offsetof(struct vcpu_vmx, vt) == offsetof(struct vcpu_tdx, vt));
-> -#endif
->   
->   static void vt_disable_virtualization_cpu(void)
->   {
-> @@ -879,6 +878,7 @@ static int vt_gmem_private_max_mapping_level(struct kvm *kvm, kvm_pfn_t pfn)
->   
->   	return 0;
->   }
-> +#endif
->   
->   #define VMX_REQUIRED_APICV_INHIBITS				\
->   	(BIT(APICV_INHIBIT_REASON_DISABLED) |			\
->
-
+------8zSljUDO-7Nv_mPFAu0GqydQxERUpglxPdU54vW1CIyD1lhE=_7c9b_--
 
