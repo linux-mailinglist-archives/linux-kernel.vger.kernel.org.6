@@ -1,89 +1,56 @@
-Return-Path: <linux-kernel+bounces-561828-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561829-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B017A616E7
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 17:57:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08A68A616EA
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 17:58:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8165B17D548
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 16:57:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C64AA19C65D1
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 16:58:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40BB1204098;
-	Fri, 14 Mar 2025 16:57:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45A992040AE;
+	Fri, 14 Mar 2025 16:58:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="JGv9RUJS"
-Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M21f8F4O"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 057D118B494
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 16:57:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F9A318B494;
+	Fri, 14 Mar 2025 16:57:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741971469; cv=none; b=MVw54+XMfj1SPf+h7e71csYV8A694O3+4xIy3kqSTO70Nss3nvU4p0Hjdt1Kdu7+t4DsDQOoQPG2V8t8ig6CMNobQ6dijb68oGMmmp6Jwaf0/DBUUWTGw37tO3C2e2darMmOh5IRrD+YQCygoYPuHbCDHa8tRmZMAu6PKiVR0Kg=
+	t=1741971479; cv=none; b=OFFsTZTreWBXVK/vwMldl7hcQGeFdBzDyIm5VJ43HIGuQzETIKx4eawjyIUdHAx/0FGgsZfjDhzk1V8XtF5Y6kLJFp0CWDb1ZrO/2apnf2+FLdLUEzW6qFhbroI1zDQTfbsX+LX0txv1VGFAEoeAt7RYmUA0waqkdZhYZNgGmRo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741971469; c=relaxed/simple;
-	bh=iAzF9u+HY2kWX0aOrmwyvAyeoOPyHcnPC1du2Is0Z7c=;
+	s=arc-20240116; t=1741971479; c=relaxed/simple;
+	bh=cPt7SdV0PHnGhuw/+jo6rBbvEgxfEdHwGV+fCLCMuHo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LMLD/oDDk6aQDWx991fDucB2ItQRewzCZyZjkgw+xXouGlpxgFcpA72gyOvJQji7QiDBQla29u0wB5VuyxkC6tjgQBhw5/tIFf5EoA5ssVE1QD0WZ04248PJTSuvj7xEYPvS6Mp8E4xBNlrp1Sr0zo4W0T3wKOzMlFegpxWpGx0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=JGv9RUJS; arc=none smtp.client-ip=209.85.160.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
-Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-4769bbc21b0so23378021cf.2
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 09:57:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1741971464; x=1742576264; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=2bVU7xRz9+BuoJ0Omh1aw8MsUvRzQCT7HAyopIIXQUc=;
-        b=JGv9RUJStXJD6t55Ujroc81w3VhVTXUfbZeL/TcT8yx2fO96jIq4QCjIzv4yitJCH/
-         gXnEyNL3O8PUFiqus+ymz6HrpC1srQXnjm3KOSEqKMcUfYI+V5pXpAl2SFmvKizh0gCO
-         4VJvmm/FtrNuRLQJSsDMxLGya4jHb+Av964awct04PxthoYqJqjrc8Rvgbsbj1UCDXp+
-         otw1Z0vRP97ihOv790NPcKg/PON2iqbppGuQqui97z9GLi1RiOMrVeg96Ip7UmLjLA35
-         6kw85P8hpj8cOaZWHGstdfuz7P6w+uDtS/R341JdM29jFZINqtV2vEzpG+pZRrI4uU5Y
-         WJog==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741971464; x=1742576264;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2bVU7xRz9+BuoJ0Omh1aw8MsUvRzQCT7HAyopIIXQUc=;
-        b=q0NY5omUBEiVNNE/UFZ+D36aulTwtw3kffGO2j2qKITz38eroKu7hSJ1rWXYqJBaBz
-         I5esRfrQUMYITzM7ii16BkiaXl58vHb9zYBh6U2n88uLRDxD0A05Px9WVZDAbtoWnkkC
-         LXfJMM3vt7BFGXVjc3/WNinNwhvGJPWuGIhgmhN5YwYxKFr7Fg1ifFbOeYRIbdhZp39w
-         vcMojZdh9buXEtTV3Sssqt8c3j641Gm4l7GkygenLQhfdV/X+BP835x11xob2y+X39FS
-         b38VwCrK+QMdNlIS4yueCPz2sqxOGf+oSUrmFkAkkdLbduTMO7W3pzSIXRs2KwxSXY3l
-         AovA==
-X-Forwarded-Encrypted: i=1; AJvYcCWBgm6uE9ZWQDIzQzUTYegjqnDdK5HISaqJwqHms51DfUHJUFSNWsDuB8fYuZxEQbgdHBp5bS9e7d6cEQ0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YweDVhUg4yqztrKzjCH4BIqgekrpa1/sgD30qze6SAXGzDiRyPI
-	dNdM56gNq7kR+dF4ym8skZQZuB9msGQplrHOxM7KLhX0ebgAPcw0yeea7qP6IW0=
-X-Gm-Gg: ASbGncuQ0VKJ3zRPBPYs3ixQTBs0VsewzFUQyFwyR2kH7SO4UvNvy2lLWxtwauqCrPb
-	U2I6JCw6uPuVZS82RO3iVnIXFRzorVGsgL7rNnkijFjMyuENpNsTS0/IxW2OZ7PoWChFKY1s6iA
-	NP7PIg3qS9gXR/jcaL1x+vd9vVAr/9LdDQNCKlpjDSIiSTUvcvU+JMMAM0akQE/ZK33ijHgQenJ
-	16CklmLH1toFnX2AzreH96YzFXy/g/Fgkq2QuB0mOZtb4sAAmGJlHE7O30oH0rhha/68xx3lbhM
-	R+kqcjWHLocFy42ikhiB9lqhMV6rm+LqO6OAiETl868lc88tHR4ltw==
-X-Google-Smtp-Source: AGHT+IGRjUQU+0AC9eIw4hobeKQ9HxQMqF5ruqdLJhpFMzyfDl2DBx9fQrFgm3nT4YDNxDk/2xCZAg==
-X-Received: by 2002:a05:622a:11d4:b0:476:b956:c5b9 with SMTP id d75a77b69052e-476c8152ccemr45548701cf.27.1741971464531;
-        Fri, 14 Mar 2025 09:57:44 -0700 (PDT)
-Received: from localhost ([2603:7000:c01:2716:da5e:d3ff:fee7:26e7])
-        by smtp.gmail.com with UTF8SMTPSA id d75a77b69052e-476bb63baabsm25428341cf.28.2025.03.14.09.57.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Mar 2025 09:57:43 -0700 (PDT)
-Date: Fri, 14 Mar 2025 12:57:39 -0400
-From: Johannes Weiner <hannes@cmpxchg.org>
-To: Michal Hocko <mhocko@suse.com>
-Cc: Zhongkun He <hezhongkun.hzk@bytedance.com>, akpm@linux-foundation.org,
-	muchun.song@linux.dev, yosry.ahmed@linux.dev, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V2] mm: vmscan: skip the file folios in proactive reclaim
- if swappiness is MAX
-Message-ID: <20250314165739.GB1316033@cmpxchg.org>
-References: <20250314033350.1156370-1-hezhongkun.hzk@bytedance.com>
- <Z9PuXMlHycL6Gco0@tiehlicka>
- <Z9P2nZ6b75FRMhCp@tiehlicka>
- <20250314141833.GA1316033@cmpxchg.org>
- <Z9RB-gHgtXRc86ro@tiehlicka>
+	 Content-Type:Content-Disposition:In-Reply-To; b=dtVfvoMD2Ou0kbYLemurgxYBHg4shW1xt4d/XywJK+PCcrKlzKLyUEuovekEU3hg3I5YOu3eO8TTebayAczIg67sm3h1ya/KeQrXpGDlgnLCzq7eCs1FPBUNmZJSAAs4duHck5BEC9hZSgvRaPz4+t5IJPssBsjzxHiCSz/hf00=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M21f8F4O; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B26A5C4CEE3;
+	Fri, 14 Mar 2025 16:57:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741971478;
+	bh=cPt7SdV0PHnGhuw/+jo6rBbvEgxfEdHwGV+fCLCMuHo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=M21f8F4OGQuLss/KtVs5aqgiBFY3Dc4UT8uR9MR6CsmWm2MBYc+dNdnUYnZl3HrhU
+	 hbKhicKHqG9hTXjsDY7jDy6FEdAhySLRM0/gcShMY632oyaTC0F2TjPomJu4RYAdQZ
+	 /BOH6tRHnjMqoQl6u14iNh85u4J4KoVlxn26lXVC+0j+kJ0Wm6rbvQBOEH/YOv5HJG
+	 1PGJLosr8R822ntZcLt4s72Gixb4OQx+VpkD4LlikNeNd66OqCTKotYSye+zYK+u/1
+	 OTOBWy+y15XLTwr7wrEnmaPMluXH4AfNOfwyORzId5CtB0yAz+PjbIKDFfmfh04JXD
+	 wrMW89stSMc/w==
+Date: Fri, 14 Mar 2025 11:57:55 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+Cc: konradybcio@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, quic_srichara@quicinc.com, quic_varada@quicinc.com
+Subject: Re: [PATCH v5 1/2] arm64: dts: qcom: ipq5424: Add PCIe PHYs and
+ controller nodes
+Message-ID: <vfwoxjrfhakkkunl4wktn4muzj46vunjzc75j7zeu4wvpwbkkg@sh6d7zlp52ea>
+References: <20250306111610.3313495-1-quic_mmanikan@quicinc.com>
+ <20250306111610.3313495-2-quic_mmanikan@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,80 +59,588 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Z9RB-gHgtXRc86ro@tiehlicka>
+In-Reply-To: <20250306111610.3313495-2-quic_mmanikan@quicinc.com>
 
-On Fri, Mar 14, 2025 at 03:49:30PM +0100, Michal Hocko wrote:
-> On Fri 14-03-25 10:18:33, Johannes Weiner wrote:
-> > On Fri, Mar 14, 2025 at 10:27:57AM +0100, Michal Hocko wrote:
-> [...]
-> > > I have just noticed that you have followed up [1] with a concern that
-> > > using swappiness in the whole min-max range without any heuristics turns
-> > > out to be harder than just relying on the min and max as extremes.
-> > > What seems to be still missing (or maybe it is just me not seeing that)
-> > > is why should we only enforce those extreme ends of the range and still
-> > > preserve under-defined semantic for all other swappiness values in the
-> > > pro-active reclaim.
-> > 
-> > I'm guess I'm not seeing the "under-defined" part.
+On Thu, Mar 06, 2025 at 04:46:09PM +0530, Manikanta Mylavarapu wrote:
+> Add PCIe0, PCIe1, PCIe2, PCIe3 (and corresponding PHY) devices
+> found on IPQ5424 platform. The PCIe0 & PCIe1 are 1-lane Gen3
+> host whereas PCIe2 & PCIe3 are 2-lane Gen3 host.
 > 
-> What I meant here is that any other value than both ends of swappiness
-> doesn't have generally predictable behavior unless you know specific
-> details of the current memory reclaim heuristics in get_scan_count.
+> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+
+When validating this against linux-next DT bindings I get:
+
+arch/arm64/boot/dts/qcom/ipq5424-rdp466.dtb: pcie@f8000: reg: [[0, 1015808, 0, 12288], [0, 1073741824, 0, 3868], [0, 1073745696, 0, 168], [0, 1073745920, 0, 4096], [0, 1074790400, 0, 4096], [0, 1040384, 0, 4096]] is too long
+arch/arm64/boot/dts/qcom/ipq5424-rdp466.dtb: pcie@f8000: reg-names:0: 'dbi' was expected
+arch/arm64/boot/dts/qcom/ipq5424-rdp466.dtb: pcie@f8000: reg-names:1: 'elbi' was expected
+arch/arm64/boot/dts/qcom/ipq5424-rdp466.dtb: pcie@f8000: reg-names:2: 'atu' was expected
+arch/arm64/boot/dts/qcom/ipq5424-rdp466.dtb: pcie@f8000: reg-names:3: 'parf' was expected
+arch/arm64/boot/dts/qcom/ipq5424-rdp466.dtb: pcie@f8000: reg-names: ['parf', 'dbi', 'elbi', 'atu', 'config', 'mhi'] is too long
+
+Are we still missing something?
+
+Regards,
+Bjorn
+
+> ---
+> Changes in V5:
+> 	- Pick up R-b tag.
+> 	- Updated pcie node order based on unit address.
+> 	- Updated the dbi address space size from 0xf1d to 0xf1c
+> 	  in all pcie controller nodes.
+> 	- Rebased on linux-next tip.
 > 
-> > cache_trim_mode is
-> > there to make sure a streaming file access pattern doesn't cause
-> > swapping.
+>  arch/arm64/boot/dts/qcom/ipq5424.dtsi | 514 +++++++++++++++++++++++++-
+>  1 file changed, 510 insertions(+), 4 deletions(-)
 > 
-> Yes, I am aware of the purpose.
+> diff --git a/arch/arm64/boot/dts/qcom/ipq5424.dtsi b/arch/arm64/boot/dts/qcom/ipq5424.dtsi
+> index 7a7ad700a382..ff6faffc3b48 100644
+> --- a/arch/arm64/boot/dts/qcom/ipq5424.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/ipq5424.dtsi
+> @@ -9,6 +9,7 @@
+>  #include <dt-bindings/interrupt-controller/arm-gic.h>
+>  #include <dt-bindings/clock/qcom,ipq5424-gcc.h>
+>  #include <dt-bindings/reset/qcom,ipq5424-gcc.h>
+> +#include <dt-bindings/interconnect/qcom,ipq5424.h>
+>  #include <dt-bindings/gpio/gpio.h>
+>  
+>  / {
+> @@ -152,6 +153,258 @@ soc@0 {
+>  		#size-cells = <2>;
+>  		ranges = <0 0 0 0 0x10 0>;
+>  
+> +		pcie0: pcie@80000 {
+> +			compatible = "qcom,pcie-ipq5424", "qcom,pcie-ipq9574";
+> +			reg = <0x0 0x00080000 0x0 0x3000>,
+> +			      <0x0 0x70000000 0x0 0xf1c>,
+> +			      <0x0 0x70000f20 0x0 0xa8>,
+> +			      <0x0 0x70001000 0x0 0x1000>,
+> +			      <0x0 0x70100000 0x0 0x1000>,
+> +			      <0x0 0x00086000 0x0 0x1000>;
+> +			reg-names = "parf",
+> +				    "dbi",
+> +				    "elbi",
+> +				    "atu",
+> +				    "config",
+> +				    "mhi";
+> +			device_type = "pci";
+> +			linux,pci-domain = <0>;
+> +			num-lanes = <1>;
+> +			#address-cells = <3>;
+> +			#size-cells = <2>;
+> +
+> +			ranges = <0x01000000 0x0 0x00000000 0x0 0x70200000 0x0 0x00100000>,
+> +				 <0x02000000 0x0 0x70300000 0x0 0x70300000 0x0 0x0fd00000>;
+> +
+> +			msi-map = <0x0 &intc 0x0 0x1000>;
+> +
+> +			interrupts = <GIC_SPI 425 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 426 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 427 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 428 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 429 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 430 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 431 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 432 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 433 IRQ_TYPE_LEVEL_HIGH>;
+> +			interrupt-names = "msi0",
+> +					  "msi1",
+> +					  "msi2",
+> +					  "msi3",
+> +					  "msi4",
+> +					  "msi5",
+> +					  "msi6",
+> +					  "msi7",
+> +					  "global";
+> +
+> +			#interrupt-cells = <1>;
+> +			interrupt-map-mask = <0x0 0x0 0x0 0x7>;
+> +			interrupt-map = <0 0 0 1 &intc 0 434 IRQ_TYPE_LEVEL_HIGH>,
+> +					<0 0 0 2 &intc 0 435 IRQ_TYPE_LEVEL_HIGH>,
+> +					<0 0 0 3 &intc 0 436 IRQ_TYPE_LEVEL_HIGH>,
+> +					<0 0 0 4 &intc 0 437 IRQ_TYPE_LEVEL_HIGH>;
+> +
+> +			clocks = <&gcc GCC_PCIE0_AXI_M_CLK>,
+> +				 <&gcc GCC_PCIE0_AXI_S_CLK>,
+> +				 <&gcc GCC_PCIE0_AXI_S_BRIDGE_CLK>,
+> +				 <&gcc GCC_PCIE0_RCHNG_CLK>,
+> +				 <&gcc GCC_PCIE0_AHB_CLK>,
+> +				 <&gcc GCC_PCIE0_AUX_CLK>;
+> +			clock-names = "axi_m",
+> +				      "axi_s",
+> +				      "axi_bridge",
+> +				      "rchng",
+> +				      "ahb",
+> +				      "aux";
+> +
+> +			assigned-clocks = <&gcc GCC_PCIE0_RCHNG_CLK>;
+> +			assigned-clock-rates = <100000000>;
+> +
+> +			resets = <&gcc GCC_PCIE0_PIPE_ARES>,
+> +				 <&gcc GCC_PCIE0_CORE_STICKY_RESET>,
+> +				 <&gcc GCC_PCIE0_AXI_S_STICKY_RESET>,
+> +				 <&gcc GCC_PCIE0_AXI_S_ARES>,
+> +				 <&gcc GCC_PCIE0_AXI_M_STICKY_RESET>,
+> +				 <&gcc GCC_PCIE0_AXI_M_ARES>,
+> +				 <&gcc GCC_PCIE0_AUX_ARES>,
+> +				 <&gcc GCC_PCIE0_AHB_ARES>;
+> +			reset-names = "pipe",
+> +				      "sticky",
+> +				      "axi_s_sticky",
+> +				      "axi_s",
+> +				      "axi_m_sticky",
+> +				      "axi_m",
+> +				      "aux",
+> +				      "ahb";
+> +
+> +			phys = <&pcie0_phy>;
+> +			phy-names = "pciephy";
+> +			interconnects = <&gcc MASTER_ANOC_PCIE0 &gcc SLAVE_ANOC_PCIE0>,
+> +					<&gcc MASTER_CNOC_PCIE0	&gcc SLAVE_CNOC_PCIE0>;
+> +			interconnect-names = "pcie-mem", "cpu-pcie";
+> +
+> +			status = "disabled";
+> +
+> +			pcie@0 {
+> +				device_type = "pci";
+> +				reg = <0x0 0x0 0x0 0x0 0x0>;
+> +				bus-range = <0x01 0xff>;
+> +
+> +				#address-cells = <3>;
+> +				#size-cells = <2>;
+> +				ranges;
+> +			};
+> +		};
+> +
+> +		pcie0_phy: phy@84000 {
+> +			compatible = "qcom,ipq5424-qmp-gen3x1-pcie-phy",
+> +				     "qcom,ipq9574-qmp-gen3x1-pcie-phy";
+> +			reg = <0x0 0x00084000 0x0 0x2000>;
+> +			clocks = <&gcc GCC_PCIE0_AUX_CLK>,
+> +				 <&gcc GCC_PCIE0_AHB_CLK>,
+> +				 <&gcc GCC_PCIE0_PIPE_CLK>;
+> +			clock-names = "aux", "cfg_ahb", "pipe";
+> +
+> +			assigned-clocks = <&gcc GCC_PCIE0_AUX_CLK>;
+> +			assigned-clock-rates = <20000000>;
+> +
+> +			resets = <&gcc GCC_PCIE0_PHY_BCR>,
+> +				 <&gcc GCC_PCIE0PHY_PHY_BCR>;
+> +			reset-names = "phy", "common";
+> +
+> +			#clock-cells = <0>;
+> +			clock-output-names = "gcc_pcie0_pipe_clk_src";
+> +
+> +			#phy-cells = <0>;
+> +			status = "disabled";
+> +		};
+> +
+> +		pcie1: pcie@88000 {
+> +			compatible = "qcom,pcie-ipq5424", "qcom,pcie-ipq9574";
+> +			reg = <0x0 0x00088000 0x0 0x3000>,
+> +			      <0x0 0x60000000 0x0 0xf1c>,
+> +			      <0x0 0x60000f20 0x0 0xa8>,
+> +			      <0x0 0x60001000 0x0 0x1000>,
+> +			      <0x0 0x60100000 0x0 0x1000>,
+> +			      <0x0 0x0008e000 0x0 0x1000>;
+> +			reg-names = "parf",
+> +				    "dbi",
+> +				    "elbi",
+> +				    "atu",
+> +				    "config",
+> +				    "mhi";
+> +			device_type = "pci";
+> +			linux,pci-domain = <1>;
+> +			num-lanes = <1>;
+> +			#address-cells = <3>;
+> +			#size-cells = <2>;
+> +
+> +			ranges = <0x01000000 0x0 0x00000000 0x0 0x60200000 0x0 0x00100000>,
+> +				 <0x02000000 0x0 0x60300000 0x0 0x60300000 0x0 0x0fd00000>;
+> +
+> +			msi-map = <0x0 &intc 0x0 0x1000>;
+> +
+> +			interrupts = <GIC_SPI 440 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 441 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 442 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 443 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 444 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 445 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 446 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 447 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 448 IRQ_TYPE_LEVEL_HIGH>;
+> +			interrupt-names = "msi0",
+> +					  "msi1",
+> +					  "msi2",
+> +					  "msi3",
+> +					  "msi4",
+> +					  "msi5",
+> +					  "msi6",
+> +					  "msi7",
+> +					  "global";
+> +
+> +			#interrupt-cells = <1>;
+> +			interrupt-map-mask = <0x0 0x0 0x0 0x7>;
+> +			interrupt-map = <0 0 0 1 &intc 0 449 IRQ_TYPE_LEVEL_HIGH>,
+> +					<0 0 0 2 &intc 0 450 IRQ_TYPE_LEVEL_HIGH>,
+> +					<0 0 0 3 &intc 0 451 IRQ_TYPE_LEVEL_HIGH>,
+> +					<0 0 0 4 &intc 0 452 IRQ_TYPE_LEVEL_HIGH>;
+> +
+> +			clocks = <&gcc GCC_PCIE1_AXI_M_CLK>,
+> +				 <&gcc GCC_PCIE1_AXI_S_CLK>,
+> +				 <&gcc GCC_PCIE1_AXI_S_BRIDGE_CLK>,
+> +				 <&gcc GCC_PCIE1_RCHNG_CLK>,
+> +				 <&gcc GCC_PCIE1_AHB_CLK>,
+> +				 <&gcc GCC_PCIE1_AUX_CLK>;
+> +			clock-names = "axi_m",
+> +				      "axi_s",
+> +				      "axi_bridge",
+> +				      "rchng",
+> +				      "ahb",
+> +				      "aux";
+> +
+> +			assigned-clocks = <&gcc GCC_PCIE1_RCHNG_CLK>;
+> +			assigned-clock-rates = <100000000>;
+> +
+> +			resets = <&gcc GCC_PCIE1_PIPE_ARES>,
+> +				 <&gcc GCC_PCIE1_CORE_STICKY_RESET>,
+> +				 <&gcc GCC_PCIE1_AXI_S_STICKY_RESET>,
+> +				 <&gcc GCC_PCIE1_AXI_S_ARES>,
+> +				 <&gcc GCC_PCIE1_AXI_M_STICKY_RESET>,
+> +				 <&gcc GCC_PCIE1_AXI_M_ARES>,
+> +				 <&gcc GCC_PCIE1_AUX_ARES>,
+> +				 <&gcc GCC_PCIE1_AHB_ARES>;
+> +			reset-names = "pipe",
+> +				      "sticky",
+> +				      "axi_s_sticky",
+> +				      "axi_s",
+> +				      "axi_m_sticky",
+> +				      "axi_m",
+> +				      "aux",
+> +				      "ahb";
+> +
+> +			phys = <&pcie1_phy>;
+> +			phy-names = "pciephy";
+> +			interconnects = <&gcc MASTER_ANOC_PCIE1	&gcc SLAVE_ANOC_PCIE1>,
+> +					<&gcc MASTER_CNOC_PCIE1	&gcc SLAVE_CNOC_PCIE1>;
+> +			interconnect-names = "pcie-mem", "cpu-pcie";
+> +
+> +			status = "disabled";
+> +
+> +			pcie@0 {
+> +				device_type = "pci";
+> +				reg = <0x0 0x0 0x0 0x0 0x0>;
+> +				bus-range = <0x01 0xff>;
+> +
+> +				#address-cells = <3>;
+> +				#size-cells = <2>;
+> +				ranges;
+> +			};
+> +		};
+> +
+> +		pcie1_phy: phy@8c000 {
+> +			compatible = "qcom,ipq5424-qmp-gen3x1-pcie-phy",
+> +				     "qcom,ipq9574-qmp-gen3x1-pcie-phy";
+> +			reg = <0x0 0x0008c000 0x0 0x2000>;
+> +			clocks = <&gcc GCC_PCIE1_AUX_CLK>,
+> +				 <&gcc GCC_PCIE1_AHB_CLK>,
+> +				 <&gcc GCC_PCIE1_PIPE_CLK>;
+> +			clock-names = "aux", "cfg_ahb", "pipe";
+> +
+> +			assigned-clocks = <&gcc GCC_PCIE1_AUX_CLK>;
+> +			assigned-clock-rates = <20000000>;
+> +
+> +			resets = <&gcc GCC_PCIE1_PHY_BCR>,
+> +				 <&gcc GCC_PCIE1PHY_PHY_BCR>;
+> +			reset-names = "phy", "common";
+> +
+> +			#clock-cells = <0>;
+> +			clock-output-names = "gcc_pcie1_pipe_clk_src";
+> +
+> +			#phy-cells = <0>;
+> +			status = "disabled";
+> +		};
+> +
+>  		efuse@a4000 {
+>  			compatible = "qcom,ipq5424-qfprom", "qcom,qfprom";
+>  			reg = <0 0x000a4000 0 0x741>;
+> @@ -209,6 +462,259 @@ tsens_base1: base1@41a {
+>  			};
+>  		};
+>  
+> +		pcie2: pcie@f0000 {
+> +			compatible = "qcom,pcie-ipq5424", "qcom,pcie-ipq9574";
+> +			reg = <0x0 0x000f0000 0x0 0x3000>,
+> +			      <0x0 0x50000000 0x0 0xf1c>,
+> +			      <0x0 0x50000f20 0x0 0xa8>,
+> +			      <0x0 0x50001000 0x0 0x1000>,
+> +			      <0x0 0x50100000 0x0 0x1000>,
+> +			      <0x0 0x000f6000 0x0 0x1000>;
+> +			reg-names = "parf",
+> +				    "dbi",
+> +				    "elbi",
+> +				    "atu",
+> +				    "config",
+> +				    "mhi";
+> +			device_type = "pci";
+> +			linux,pci-domain = <2>;
+> +			num-lanes = <2>;
+> +			#address-cells = <3>;
+> +			#size-cells = <2>;
+> +
+> +			ranges = <0x01000000 0x0 0x00000000 0x0 0x50200000 0x0 0x00100000>,
+> +				 <0x02000000 0x0 0x50300000 0x0 0x50300000 0x0 0x0fd00000>;
+> +
+> +			msi-map = <0x0 &intc 0x0 0x1000>;
+> +
+> +			interrupts = <GIC_SPI 455 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 456 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 457 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 458 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 459 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 460 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 461 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 462 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 463 IRQ_TYPE_LEVEL_HIGH>;
+> +			interrupt-names = "msi0",
+> +					  "msi1",
+> +					  "msi2",
+> +					  "msi3",
+> +					  "msi4",
+> +					  "msi5",
+> +					  "msi6",
+> +					  "msi7",
+> +					  "global";
+> +
+> +			#interrupt-cells = <1>;
+> +			interrupt-map-mask = <0x0 0x0 0x0 0x7>;
+> +			interrupt-map = <0 0 0 1 &intc 0 464 IRQ_TYPE_LEVEL_HIGH>,
+> +					<0 0 0 2 &intc 0 465 IRQ_TYPE_LEVEL_HIGH>,
+> +					<0 0 0 3 &intc 0 466 IRQ_TYPE_LEVEL_HIGH>,
+> +					<0 0 0 4 &intc 0 467 IRQ_TYPE_LEVEL_HIGH>;
+> +
+> +			clocks = <&gcc GCC_PCIE2_AXI_M_CLK>,
+> +				 <&gcc GCC_PCIE2_AXI_S_CLK>,
+> +				 <&gcc GCC_PCIE2_AXI_S_BRIDGE_CLK>,
+> +				 <&gcc GCC_PCIE2_RCHNG_CLK>,
+> +				 <&gcc GCC_PCIE2_AHB_CLK>,
+> +				 <&gcc GCC_PCIE2_AUX_CLK>;
+> +			clock-names = "axi_m",
+> +				      "axi_s",
+> +				      "axi_bridge",
+> +				      "rchng",
+> +				      "ahb",
+> +				      "aux";
+> +
+> +			assigned-clocks = <&gcc GCC_PCIE2_RCHNG_CLK>;
+> +			assigned-clock-rates = <100000000>;
+> +
+> +			resets = <&gcc GCC_PCIE2_PIPE_ARES>,
+> +				 <&gcc GCC_PCIE2_CORE_STICKY_RESET>,
+> +				 <&gcc GCC_PCIE2_AXI_S_STICKY_RESET>,
+> +				 <&gcc GCC_PCIE2_AXI_S_ARES>,
+> +				 <&gcc GCC_PCIE2_AXI_M_STICKY_RESET>,
+> +				 <&gcc GCC_PCIE2_AXI_M_ARES>,
+> +				 <&gcc GCC_PCIE2_AUX_ARES>,
+> +				 <&gcc GCC_PCIE2_AHB_ARES>;
+> +			reset-names = "pipe",
+> +				      "sticky",
+> +				      "axi_s_sticky",
+> +				      "axi_s",
+> +				      "axi_m_sticky",
+> +				      "axi_m",
+> +				      "aux",
+> +				      "ahb";
+> +
+> +			phys = <&pcie2_phy>;
+> +			phy-names = "pciephy";
+> +			interconnects = <&gcc MASTER_ANOC_PCIE2 &gcc SLAVE_ANOC_PCIE2>,
+> +					<&gcc MASTER_CNOC_PCIE2 &gcc SLAVE_CNOC_PCIE2>;
+> +			interconnect-names = "pcie-mem", "cpu-pcie";
+> +
+> +			status = "disabled";
+> +
+> +			pcie@0 {
+> +				device_type = "pci";
+> +				reg = <0x0 0x0 0x0 0x0 0x0>;
+> +				bus-range = <0x01 0xff>;
+> +
+> +				#address-cells = <3>;
+> +				#size-cells = <2>;
+> +				ranges;
+> +			};
+> +		};
+> +
+> +		pcie2_phy: phy@f4000 {
+> +			compatible = "qcom,ipq5424-qmp-gen3x2-pcie-phy",
+> +				     "qcom,ipq9574-qmp-gen3x2-pcie-phy";
+> +			reg = <0x0 0x000f4000 0x0 0x2000>;
+> +			clocks = <&gcc GCC_PCIE2_AUX_CLK>,
+> +				 <&gcc GCC_PCIE2_AHB_CLK>,
+> +				 <&gcc GCC_PCIE2_PIPE_CLK>;
+> +			clock-names = "aux", "cfg_ahb", "pipe";
+> +
+> +			assigned-clocks = <&gcc GCC_PCIE2_AUX_CLK>;
+> +			assigned-clock-rates = <20000000>;
+> +
+> +			resets = <&gcc GCC_PCIE2_PHY_BCR>,
+> +				 <&gcc GCC_PCIE2PHY_PHY_BCR>;
+> +			reset-names = "phy", "common";
+> +
+> +			#clock-cells = <0>;
+> +			clock-output-names = "gcc_pcie2_pipe_clk_src";
+> +
+> +			#phy-cells = <0>;
+> +			status = "disabled";
+> +		};
+> +
+> +		pcie3: pcie@f8000 {
+> +			compatible = "qcom,pcie-ipq5424", "qcom,pcie-ipq9574";
+> +			reg = <0x0 0x000f8000 0x0 0x3000>,
+> +			      <0x0 0x40000000 0x0 0xf1c>,
+> +			      <0x0 0x40000f20 0x0 0xa8>,
+> +			      <0x0 0x40001000 0x0 0x1000>,
+> +			      <0x0 0x40100000 0x0 0x1000>,
+> +			      <0x0 0x000fe000 0x0 0x1000>;
+> +			reg-names = "parf",
+> +				    "dbi",
+> +				    "elbi",
+> +				    "atu",
+> +				    "config",
+> +				    "mhi";
+> +			device_type = "pci";
+> +			linux,pci-domain = <3>;
+> +			num-lanes = <2>;
+> +			#address-cells = <3>;
+> +			#size-cells = <2>;
+> +
+> +			ranges = <0x01000000 0x0 0x00000000 0x0 0x40200000 0x0 0x00100000>,
+> +				 <0x02000000 0x0 0x40300000 0x0 0x40300000 0x0 0x0fd00000>;
+> +
+> +			msi-map = <0x0 &intc 0x0 0x1000>;
+> +
+> +			interrupts = <GIC_SPI 470 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 471 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 472 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 473 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 474 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 475 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 476 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 477 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 478 IRQ_TYPE_LEVEL_HIGH>;
+> +
+> +			interrupt-names = "msi0",
+> +					  "msi1",
+> +					  "msi2",
+> +					  "msi3",
+> +					  "msi4",
+> +					  "msi5",
+> +					  "msi6",
+> +					  "msi7",
+> +					  "global";
+> +
+> +			#interrupt-cells = <1>;
+> +			interrupt-map-mask = <0x0 0x0 0x0 0x7>;
+> +			interrupt-map = <0 0 0 1 &intc 0 479 IRQ_TYPE_LEVEL_HIGH>,
+> +					<0 0 0 2 &intc 0 480 IRQ_TYPE_LEVEL_HIGH>,
+> +					<0 0 0 3 &intc 0 481 IRQ_TYPE_LEVEL_HIGH>,
+> +					<0 0 0 4 &intc 0 482 IRQ_TYPE_LEVEL_HIGH>;
+> +
+> +			clocks = <&gcc GCC_PCIE3_AXI_M_CLK>,
+> +				 <&gcc GCC_PCIE3_AXI_S_CLK>,
+> +				 <&gcc GCC_PCIE3_AXI_S_BRIDGE_CLK>,
+> +				 <&gcc GCC_PCIE3_RCHNG_CLK>,
+> +				 <&gcc GCC_PCIE3_AHB_CLK>,
+> +				 <&gcc GCC_PCIE3_AUX_CLK>;
+> +			clock-names = "axi_m",
+> +				      "axi_s",
+> +				      "axi_bridge",
+> +				      "rchng",
+> +				      "ahb",
+> +				      "aux";
+> +
+> +			assigned-clocks = <&gcc GCC_PCIE3_RCHNG_CLK>;
+> +			assigned-clock-rates = <100000000>;
+> +
+> +			resets = <&gcc GCC_PCIE3_PIPE_ARES>,
+> +				 <&gcc GCC_PCIE3_CORE_STICKY_RESET>,
+> +				 <&gcc GCC_PCIE3_AXI_S_STICKY_RESET>,
+> +				 <&gcc GCC_PCIE3_AXI_S_ARES>,
+> +				 <&gcc GCC_PCIE3_AXI_M_STICKY_RESET>,
+> +				 <&gcc GCC_PCIE3_AXI_M_ARES>,
+> +				 <&gcc GCC_PCIE3_AUX_ARES>,
+> +				 <&gcc GCC_PCIE3_AHB_ARES>;
+> +			reset-names = "pipe",
+> +				      "sticky",
+> +				      "axi_s_sticky",
+> +				      "axi_s",
+> +				      "axi_m_sticky",
+> +				      "axi_m",
+> +				      "aux",
+> +				      "ahb";
+> +
+> +			phys = <&pcie3_phy>;
+> +			phy-names = "pciephy";
+> +			interconnects = <&gcc MASTER_ANOC_PCIE3 &gcc SLAVE_ANOC_PCIE3>,
+> +					<&gcc MASTER_CNOC_PCIE3 &gcc SLAVE_CNOC_PCIE3>;
+> +			interconnect-names = "pcie-mem", "cpu-pcie";
+> +
+> +			status = "disabled";
+> +
+> +			pcie@0 {
+> +				device_type = "pci";
+> +				reg = <0x0 0x0 0x0 0x0 0x0>;
+> +				bus-range = <0x01 0xff>;
+> +
+> +				#address-cells = <3>;
+> +				#size-cells = <2>;
+> +				ranges;
+> +			};
+> +		};
+> +
+> +		pcie3_phy: phy@fc000 {
+> +			compatible = "qcom,ipq5424-qmp-gen3x2-pcie-phy",
+> +				     "qcom,ipq9574-qmp-gen3x2-pcie-phy";
+> +			reg = <0x0 0x000fc000 0x0 0x2000>;
+> +			clocks = <&gcc GCC_PCIE3_AUX_CLK>,
+> +				 <&gcc GCC_PCIE3_AHB_CLK>,
+> +				 <&gcc GCC_PCIE3_PIPE_CLK>;
+> +			clock-names = "aux", "cfg_ahb", "pipe";
+> +
+> +			assigned-clocks = <&gcc GCC_PCIE3_AUX_CLK>;
+> +			assigned-clock-rates = <20000000>;
+> +
+> +			resets = <&gcc GCC_PCIE3_PHY_BCR>,
+> +				 <&gcc GCC_PCIE3PHY_PHY_BCR>;
+> +			reset-names = "phy", "common";
+> +
+> +			#clock-cells = <0>;
+> +			clock-output-names = "gcc_pcie3_pipe_clk_src";
+> +
+> +			#phy-cells = <0>;
+> +			status = "disabled";
+> +		};
+> +
+>  		tsens: thermal-sensor@4a9000 {
+>  			compatible = "qcom,ipq5424-tsens";
+>  			reg = <0 0x004a9000 0 0x1000>,
+> @@ -276,10 +782,10 @@ gcc: clock-controller@1800000 {
+>  			reg = <0 0x01800000 0 0x40000>;
+>  			clocks = <&xo_board>,
+>  				 <&sleep_clk>,
+> -				 <0>,
+> -				 <0>,
+> -				 <0>,
+> -				 <0>,
+> +				 <&pcie0_phy>,
+> +				 <&pcie1_phy>,
+> +				 <&pcie2_phy>,
+> +				 <&pcie3_phy>,
+>  				 <0>;
+>  			#clock-cells = <1>;
+>  			#reset-cells = <1>;
+> -- 
+> 2.34.1
 > 
-> > He has a special usecase to override cache_trim_mode when he
-> > knows a large amount of anon is going cold. There is no way we can
-> > generally remove it from proactive reclaim.
-> 
-> I believe I do understand the requirement here. The patch offers
-> counterpart to noswap pro-active reclaim and I do not have objections to
-> that.
-> 
-> The reason I brought this up is that everything in between 0..200 is
-> kinda gray area. We've had several queries why swappiness=N doesn't work
-> as expected and the usual answer was because of heuristics. Most people
-> just learned to live with that and stopped fine tuning vm_swappiness.
-> Which is good I guess.
-
-You're still oversimplifying and then dismissing. The heuristics don't
-make swappiness meaningless, they make it useful in the first place.
-
-  This control is used to define the rough relative IO cost of swapping
-  and filesystem paging, as a value between 0 and 200.
-
-This is clearly defined, and implemented as such. cache_trim_mode is
-predicated on the *absence* of paging and caching benefits: A linear,
-use-once file access pattern that *does not* benefit from additional
-cache space. Kicking out anon for that purpose would be wrong under
-pretty much any circumstance. That's why it "overrides" swappiness:
-swappiness cannot apply when swapping at all would be nonsense.
-
-Proactive reclaimers like ours rely on this. We use swappiness to
-express exactly what it says on the tin: the relative cost between
-thrashing file vs anon. We use it quite effectively to manage anon
-write rates for flash wear management e.g. Obviously that doesn't mean
-we want to swap when somebody streams through a large file set.
-
-Zhongkun's case is a significant exception. He just wants to get rid
-of known-cold anon set. This level of insight into userspace access
-patterns is rare in practice. You could argue that MADV_PAGEOUT might
-be more suitable for that. But I also don't necessarily see a problem
-with making swappiness=200 do it; although we might have to teach our
-proactive reclaimer to auto-tune between 1 and 199 then.
-
-> Pro-active reclaim is slightly different in a sense that it gives a much
-> better control on how much to reclaim and since we have addes swappiness
-> extension then even the balancing. So why not make that balancing work
-> for real and always follow the given proportion? To prevent any
-> unintended regressions this would be the case only with swappiness was
-> explicitly given to the reclaim request. Does that make any sense?
-
-That would require the proactive reclaimer always knowing enough about
-the access patterns to implement cache_trim_mode manually. This isn't
-practical. And removing the heuristics would be a massive regression.
 
