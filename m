@@ -1,57 +1,61 @@
-Return-Path: <linux-kernel+bounces-561725-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561726-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1923A61544
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 16:49:33 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D192A61546
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 16:50:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 49F007AD102
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 15:48:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E1B346096D
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 15:50:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D21F0202992;
-	Fri, 14 Mar 2025 15:49:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 417E920298D;
+	Fri, 14 Mar 2025 15:50:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="py5QLb+C"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RcyzSwVf"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C82B1FF7DB;
-	Fri, 14 Mar 2025 15:49:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FD331FE450;
+	Fri, 14 Mar 2025 15:50:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741967360; cv=none; b=Xe3x2mEoP7Im6xrxC7i3tQct0ur1YKAJQbaAge1ioXnnPcuBQ6Ipj5sj6d6pcTgbVqMuft8pASwpOLBq9F0mfHfcUf7Xw4nxNqZuVauFjxTAFL2jFMAfWccoxm/H9GvQm7SHD2DR+V7hCB2JErki8JRm1lWJcUBL9P1/UG+2hlo=
+	t=1741967415; cv=none; b=LJVkeqKqjfWKpuC+as5wD+IV7yDwGdUJA3srzZx/wx1gScwb2LjGil7Y4E74i+nm5/LfiObyBVmWocC0+9iMpre7tAIs4JpXlTKd96ccdU+Ea5i+r5dNd60l8KvSM4+q5SRJFiajv2wmcastD43CSK/5V9mXneatJJI+dSwut40=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741967360; c=relaxed/simple;
-	bh=e64LI0/mup3NBwa2RJNj7g9YaxvNeqQ+qUtFG2l3n3w=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=vB834stTyXufSHTwfLxyLrPAlzjB6lpAZebOD8e3GZpmglfNBZhzH9IPdRVS4izkUe1C4VOHftnNzYd54w2or0eIojEiZQfX/DX8+YGIiHp7P0SjBnemnyK0AUBotK5Co85ej7jcWQPlySu71x8z+i+0b7xL+rh0UVLfWIPYuO0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=py5QLb+C; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6487C4CEE3;
-	Fri, 14 Mar 2025 15:49:17 +0000 (UTC)
+	s=arc-20240116; t=1741967415; c=relaxed/simple;
+	bh=yd6hd/BIcy+u7PxvBdVNuloLY1tbTq52bYWAIn5DalA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=IwKZtIhdr+nF+OWivSOsd4VA+Rov38PZKaKTHW9I6eOiHrNVudBXWecvGXDs4T1Vdia4sh7JD/i/1Fixmk1sXZa6837If+sBsoEr5JGbfmk21Vt+PX5/USrFSwrbnZgBWlQXncllltO85HjZjmg8qNbd4ZhyZHuCKamPneNbnrA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RcyzSwVf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99CDFC4CEE3;
+	Fri, 14 Mar 2025 15:50:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741967359;
-	bh=e64LI0/mup3NBwa2RJNj7g9YaxvNeqQ+qUtFG2l3n3w=;
+	s=k20201202; t=1741967415;
+	bh=yd6hd/BIcy+u7PxvBdVNuloLY1tbTq52bYWAIn5DalA=;
 	h=From:To:Cc:Subject:Date:From;
-	b=py5QLb+CLk4medUOo+JzWJJ2YV3/unJHmckso8pvdUlOw6vdcuUeabSb3hV4GK/+2
-	 0jcgt/aLVyFiYue0yvkG10/2gdWKn3/NnkLfHq/aiVrFgJpSZFnTXYf3wTHkgzMrTF
-	 4z0DvHUXUgI3rsJWkwp9Hh1+db3Ff+/wwzyFPDR98oV7BHmT/vFuhyDr/nE7gSK7Iu
-	 RBk8yjgMiOSnPUgvUf1doURvdYzzRe/yYsaE5cygge2fwvJxdgKWtOR5zMD8JjIotB
-	 ItKAGuNMFlBBtKUffJJGdW8kY2AZlqN62a0gJidcDkgpPaUMBQ/4uPmZsUVcm+v9rk
-	 s/rDG0LSEz5bw==
+	b=RcyzSwVfNUARNiBeEW1oLINmdQnOb3bKeLpd+DiRptcO3R8BSB2uMDYYrxqcBdSEz
+	 9hSbhEUg2dCFoKOQPs3NXhS2EJAfQMxXZcMgKGWCi8MtSEP0cNpi4HUN7jCLYRggNj
+	 xVr5Vz6GH995FIValA497TwC9j1ZpcLqH7Ud0tZhK35Ysa+zIHMp4yE8FCzaWVBDwf
+	 o4qBSg2eQdF4HxTGUhGqPumQQpU7mf4np2DK9Qf6aoot/HTyhihVga1isV4UdKQCWe
+	 sJsqzB67HopEghFtRaFz2C3mBJnqqxdZqB5XDEYlm6d5gRTbrwU/mDrfZ0Q1fDQh4w
+	 FG19YajDekBdg==
 From: Arnd Bergmann <arnd@kernel.org>
-To: Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Nitheesh Sekar <quic_nsekar@quicinc.com>,
-	Dmitry Baryshkov <lumag@kernel.org>,
-	Varadarajan Narayanan <quic_varada@quicinc.com>
+To: Lorenzo Bianconi <lorenzo@kernel.org>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
 Cc: Arnd Bergmann <arnd@arndb.de>,
-	linux-arm-msm@vger.kernel.org,
-	linux-phy@lists.infradead.org,
+	Simon Horman <horms@kernel.org>,
+	Christian Marangi <ansuelsmth@gmail.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	netdev@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH] phy: qcom: uniphy-28lp: add COMMON_CLK dependency
-Date: Fri, 14 Mar 2025 16:49:10 +0100
-Message-Id: <20250314154915.4074980-1-arnd@kernel.org>
+Subject: [PATCH] net: airoha: fix CONFIG_DEBUG_FS check
+Date: Fri, 14 Mar 2025 16:49:59 +0100
+Message-Id: <20250314155009.4114308-1-arnd@kernel.org>
 X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -63,35 +67,35 @@ Content-Transfer-Encoding: 8bit
 
 From: Arnd Bergmann <arnd@arndb.de>
 
-In configurations without CONFIG_COMMON_CLK, the driver fails to build:
+The #if check causes a build failure when CONFIG_DEBUG_FS is turned
+off:
 
-aarch64-linux-ld: drivers/phy/qualcomm/phy-qcom-uniphy-pcie-28lp.o: in function `qcom_uniphy_pcie_probe':
-phy-qcom-uniphy-pcie-28lp.c:(.text+0x200): undefined reference to `__clk_hw_register_fixed_rate'
-aarch64-linux-ld: phy-qcom-uniphy-pcie-28lp.c:(.text+0x238): undefined reference to `of_clk_hw_simple_get'
-phy-qcom-uniphy-pcie-28lp.c:(.text+0x238): dangerous relocation: unsupported relocation
-aarch64-linux-ld: phy-qcom-uniphy-pcie-28lp.c:(.text+0x240): undefined reference to `of_clk_hw_simple_get'
-aarch64-linux-ld: phy-qcom-uniphy-pcie-28lp.c:(.text+0x248): undefined reference to `devm_of_clk_add_hw_provider'
+In file included from drivers/net/ethernet/airoha/airoha_eth.c:17:
+drivers/net/ethernet/airoha/airoha_eth.h:543:5: error: "CONFIG_DEBUG_FS" is not defined, evaluates to 0 [-Werror=undef]
+  543 | #if CONFIG_DEBUG_FS
+      |     ^~~~~~~~~~~~~~~
 
-Add that as a Kconfig dependencies.
+Replace it with the correct #ifdef.
 
-Fixes: 74badb8b0b14 ("phy: qcom: Introduce PCIe UNIPHY 28LP driver")
+Fixes: 3fe15c640f38 ("net: airoha: Introduce PPE debugfs support")
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/phy/qualcomm/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/ethernet/airoha/airoha_eth.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/phy/qualcomm/Kconfig b/drivers/phy/qualcomm/Kconfig
-index a6b71fda1b9c..c1e0a11ddd76 100644
---- a/drivers/phy/qualcomm/Kconfig
-+++ b/drivers/phy/qualcomm/Kconfig
-@@ -157,6 +157,7 @@ config PHY_QCOM_M31_USB
- config PHY_QCOM_UNIPHY_PCIE_28LP
- 	bool "PCIE UNIPHY 28LP PHY driver"
- 	depends on ARCH_QCOM
-+	depends on COMMON_CLK
- 	depends on HAS_IOMEM
- 	depends on OF
- 	select GENERIC_PHY
+diff --git a/drivers/net/ethernet/airoha/airoha_eth.h b/drivers/net/ethernet/airoha/airoha_eth.h
+index f66b9b736b94..60690b685710 100644
+--- a/drivers/net/ethernet/airoha/airoha_eth.h
++++ b/drivers/net/ethernet/airoha/airoha_eth.h
+@@ -540,7 +540,7 @@ void airoha_ppe_deinit(struct airoha_eth *eth);
+ struct airoha_foe_entry *airoha_ppe_foe_get_entry(struct airoha_ppe *ppe,
+ 						  u32 hash);
+ 
+-#if CONFIG_DEBUG_FS
++#ifdef CONFIG_DEBUG_FS
+ int airoha_ppe_debugfs_init(struct airoha_ppe *ppe);
+ #else
+ static inline int airoha_ppe_debugfs_init(struct airoha_ppe *ppe)
 -- 
 2.39.5
 
