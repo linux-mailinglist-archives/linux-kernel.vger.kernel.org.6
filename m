@@ -1,239 +1,81 @@
-Return-Path: <linux-kernel+bounces-560905-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560907-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41C5FA60AD7
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 09:10:52 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4A5BA60ADE
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 09:11:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 085241895AB1
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 08:11:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F3831747C3
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 08:11:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E81271991C1;
-	Fri, 14 Mar 2025 08:10:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BA9D19C569;
+	Fri, 14 Mar 2025 08:11:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="fe0OlAGT"
-Received: from mail-il1-f171.google.com (mail-il1-f171.google.com [209.85.166.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="kFiYHKvF"
+Received: from out-182.mta0.migadu.com (out-182.mta0.migadu.com [91.218.175.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C40B194137
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 08:10:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF39019C542
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 08:11:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741939841; cv=none; b=YKzUxxlpROZ7Q35j+YtIjKnkouwGgwCITamnog7Hap93r6GN5TH86uA9lqlIxOOn2m/UP3b2dh2/08n0eXao9hC1oihMDE+EuBfU6HrCmVHD+C0HhhS61OB7A/ioPGRGD3t43/yX26czRdbpi5cqsMnj5L6Q443P+yfcdQSsVmg=
+	t=1741939872; cv=none; b=goPDtciMeoAGMCsT67nQjj5su13CKmCIAaCxUXqQ5POkzx1SHchFEkTNI10eVEqHZOfXhTaHSKEnuPG7pGnH7EIi0yvLEy1rqxdwI1OHAe0HRR5ZBesGiZHbBz8e0Ls48CtMC3qUSwCHOQZ+sRvQdHyYHDY/xcATQ9mNFP1+lYU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741939841; c=relaxed/simple;
-	bh=J9W/tM13EIIllauoi40EROSVBNfzNEqDPKfRn8QEwgY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qpJf3T3aPAqhUVgHUhGUP/Kj1cmTPnSrhbTskNOKc3M0OS/v8iUURc8YF5kv8nUOxygFcqfTKmeNxh5iqP1yrCqcHj9eTlp7+Gh6d+sKyd/CxAOH0SdA6gNYV3RO/4ggEyjEQ7QFepEwDvJrEDcN1y28IAPDaBeHPYWrHCUu9fA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=fe0OlAGT; arc=none smtp.client-ip=209.85.166.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
-Received: by mail-il1-f171.google.com with SMTP id e9e14a558f8ab-3d2a869d016so5634525ab.0
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 01:10:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google; t=1741939837; x=1742544637; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=maat8Z8CQlIo/YQgvM5joGb0bwlzNNQQ5lvrvmfPTnE=;
-        b=fe0OlAGTebdWN4bzy2YgTdfPZeIIO7KNRRYxxCOviK0+S0bjWrvi7Ut9dJn8EcRxGn
-         RueVgr5L3kwoz/uvFocUPLqjthpmyiBRA8saSc5DWE3/kfEhG8xafDoilDdLj5Uga8VV
-         A+Ge32/bvLiH2w1hOeU8lgHYWveVoAi+Kj91NHwf37glXcWf/nAVXxoVp70tdxOySLCB
-         JS97qcCQXwDZ/uTjuNx5A6+8ej6FTElh+isMqXjM/U5WMLYfGGK6VsRJbUeUSDthOf74
-         NZMj+QApaQpMOmHHpiv8QZg0gvrV/DdTr0ToV7Mqk6v7Ip+A88sZZzxt8IdQahf9CIA9
-         +bWA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741939837; x=1742544637;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=maat8Z8CQlIo/YQgvM5joGb0bwlzNNQQ5lvrvmfPTnE=;
-        b=LfsQDc4brVdNwnmc2N9jvwZwfgBkpRqn9rXISIhcZ1tAcNB7vvdkEUz7cVOVERBMUa
-         z+QxZ7doYiaLc1VF8WI4DnPlbh4UllpYorqaEtAC1JrG2HXQaUNfcoZrbGXjiRjfl/+O
-         OaWWIAfxzCNAlIESwr5fTfXg+McnclPFxNY19Sg6dWfYxPUg9VgQR4Acm53K4uL/XHX/
-         2SV1NbU16fadnat0XzruxMsz+SKxIEAfoOWQWgXJpTh9cocPG1OZkwcDRn34dTq4zlo4
-         wq0YlJRiNIC0cDpAWeMzLzfEUI5t+hye0l7q4w3Wrq1yJtRaPD0yTBCTMkqkq5xU18II
-         AS2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXDfEcI6PYzESH2n6oqxSna+aIp/ZaE8F1sfRe+B1Dj3QOdnkQbrR0NUe76iq7CCJ/b+Emg0PrsWguZqPI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzW0ZFwGLABFgymwEIbTqjh5M+Q6rskW6rY0sm4HnYFW9duxG1B
-	NrheCZRHedD8iXOAL/ZglplhITQ7KOS+RRHZ+Pou5tnL//k5aNnOOHRMvfoHMg+JIXAaRxn0LZu
-	tr3VLal9vtPYVqrcl19bPK64+/rDlmdseE0pdeQ==
-X-Gm-Gg: ASbGncuLsmxss7dw168vwR9waw3smpfiRjBUivFb8gAdPyXrwYdxb+h3j1YP+Y7VLT6
-	YZQGIPhXJDkLT63QrtxXw39fOtp9BoP1Y+0ExHmYVWZh1LUlxdHDHnGHCMkFTBjzzjGJ04uZagb
-	Hv1fBWDmEkrVYVCHCe36Gqjotz1+2rmDMeZNoAnQU=
-X-Google-Smtp-Source: AGHT+IEr06JJWPIe++RWZprx7+sk0G4gmp805oxABOzSJgVtajhlGN2WM+TyYd1zsyGazHwiZ0K31rleVVMRVGbr6R4=
-X-Received: by 2002:a92:c246:0:b0:3d4:3ab3:5574 with SMTP id
- e9e14a558f8ab-3d4839feb6emr12608625ab.3.1741939837275; Fri, 14 Mar 2025
- 01:10:37 -0700 (PDT)
+	s=arc-20240116; t=1741939872; c=relaxed/simple;
+	bh=pO7tTO1rV95NIoQMWhWLdGMcS+ijoaLqtx251avqfLs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dFfYrw6OQr9K8jg8882rWQ4eDJHo6y0u9S/8RlPEOCS/L0eXj0MpITseo1HBoZU9kRO5zCCZDgGR/7ZBobIQCBzM1PgBkuSs2gfNhrwFT1y7GTNaPWMks4jCQeMPoTXDrxHn4vng1yTyo7iRUyAQZro+wBaSTo6Xj+J7vfzLV90=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=kFiYHKvF; arc=none smtp.client-ip=91.218.175.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Fri, 14 Mar 2025 01:10:49 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1741939858;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pO7tTO1rV95NIoQMWhWLdGMcS+ijoaLqtx251avqfLs=;
+	b=kFiYHKvFgG2Jjgo9l3Rdp1qidd2k9Mv7b/wF/TKi73ClvF+zfwzJn3EIbeGIuVKkuoOjHJ
+	uZhkeU9N0XONZQDPvyXiJxn1Ce4rR6QlheSzBz/g1OXa9P6wgVN2ciaZ70+MYt2q+o5Zxh
+	zvp3pp+6WtTaaAP4I8APYTnMXLq3I5A=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Oliver Upton <oliver.upton@linux.dev>
+To: Akihiko Odaki <akihiko.odaki@daynix.com>
+Cc: Marc Zyngier <maz@kernel.org>, Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Andrew Jones <andrew.jones@linux.dev>,
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org, devel@daynix.com,
+	stable@vger.kernel.org
+Subject: Re: [PATCH v4 0/7] KVM: arm64: PMU: Fix SET_ONE_REG for vPMC regs
+Message-ID: <Z9PkchMNGN1cdLgJ@linux.dev>
+References: <20250313-pmc-v4-0-2c976827118c@daynix.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250310-v5_user_cfi_series-v11-0-86b36cbfb910@rivosinc.com> <20250310-v5_user_cfi_series-v11-3-86b36cbfb910@rivosinc.com>
-In-Reply-To: <20250310-v5_user_cfi_series-v11-3-86b36cbfb910@rivosinc.com>
-From: Zong Li <zong.li@sifive.com>
-Date: Fri, 14 Mar 2025 16:10:24 +0800
-X-Gm-Features: AQ5f1JpIIk67nxD8XYVlg0yQoGLERm_fNClgnrJ71NE6nAneEkcJbes_9dfQWtA
-Message-ID: <CANXhq0p22tsMUBffV4rTu+Txf0ugmpUmUQZWf2EX00Qxhvq2_Q@mail.gmail.com>
-Subject: Re: [PATCH v11 03/27] riscv: zicfiss / zicfilp enumeration
-To: Deepak Gupta <debug@rivosinc.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Christian Brauner <brauner@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Oleg Nesterov <oleg@redhat.com>, Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>, 
-	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>, Jann Horn <jannh@google.com>, 
-	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-arch@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, alistair.francis@wdc.com, 
-	richard.henderson@linaro.org, jim.shu@sifive.com, andybnac@gmail.com, 
-	kito.cheng@sifive.com, charlie@rivosinc.com, atishp@rivosinc.com, 
-	evan@rivosinc.com, cleger@rivosinc.com, alexghiti@rivosinc.com, 
-	samitolvanen@google.com, broonie@kernel.org, rick.p.edgecombe@intel.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250313-pmc-v4-0-2c976827118c@daynix.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, Mar 10, 2025 at 11:42=E2=80=AFPM Deepak Gupta <debug@rivosinc.com> =
-wrote:
->
-> This patch adds support for detecting zicfiss and zicfilp. zicfiss and
-> zicfilp stands for unprivleged integer spec extension for shadow stack
-> and branch tracking on indirect branches, respectively.
->
-> This patch looks for zicfiss and zicfilp in device tree and accordinlgy
-> lights up bit in cpu feature bitmap. Furthermore this patch adds detectio=
-n
-> utility functions to return whether shadow stack or landing pads are
-> supported by cpu.
->
-> Signed-off-by: Deepak Gupta <debug@rivosinc.com>
-> ---
->  arch/riscv/include/asm/cpufeature.h | 13 +++++++++++++
->  arch/riscv/include/asm/hwcap.h      |  2 ++
->  arch/riscv/include/asm/processor.h  |  1 +
->  arch/riscv/kernel/cpufeature.c      | 13 +++++++++++++
->  4 files changed, 29 insertions(+)
->
-> diff --git a/arch/riscv/include/asm/cpufeature.h b/arch/riscv/include/asm=
-/cpufeature.h
-> index 569140d6e639..69007b8100ca 100644
-> --- a/arch/riscv/include/asm/cpufeature.h
-> +++ b/arch/riscv/include/asm/cpufeature.h
-> @@ -12,6 +12,7 @@
->  #include <linux/kconfig.h>
->  #include <linux/percpu-defs.h>
->  #include <linux/threads.h>
-> +#include <linux/smp.h>
->  #include <asm/hwcap.h>
->  #include <asm/cpufeature-macros.h>
->
-> @@ -137,4 +138,16 @@ static __always_inline bool riscv_cpu_has_extension_=
-unlikely(int cpu, const unsi
->         return __riscv_isa_extension_available(hart_isa[cpu].isa, ext);
->  }
->
-> +static inline bool cpu_supports_shadow_stack(void)
-> +{
-> +       return (IS_ENABLED(CONFIG_RISCV_USER_CFI) &&
-> +               riscv_cpu_has_extension_unlikely(smp_processor_id(), RISC=
-V_ISA_EXT_ZICFISS));
-> +}
-> +
-> +static inline bool cpu_supports_indirect_br_lp_instr(void)
-> +{
-> +       return (IS_ENABLED(CONFIG_RISCV_USER_CFI) &&
-> +               riscv_cpu_has_extension_unlikely(smp_processor_id(), RISC=
-V_ISA_EXT_ZICFILP));
-> +}
-> +
->  #endif
-> diff --git a/arch/riscv/include/asm/hwcap.h b/arch/riscv/include/asm/hwca=
-p.h
-> index 869da082252a..2dc4232bdb3e 100644
-> --- a/arch/riscv/include/asm/hwcap.h
-> +++ b/arch/riscv/include/asm/hwcap.h
-> @@ -100,6 +100,8 @@
->  #define RISCV_ISA_EXT_ZICCRSE          91
->  #define RISCV_ISA_EXT_SVADE            92
->  #define RISCV_ISA_EXT_SVADU            93
-> +#define RISCV_ISA_EXT_ZICFILP          94
-> +#define RISCV_ISA_EXT_ZICFISS          95
->
->  #define RISCV_ISA_EXT_XLINUXENVCFG     127
->
-> diff --git a/arch/riscv/include/asm/processor.h b/arch/riscv/include/asm/=
-processor.h
-> index 5f56eb9d114a..e3aba3336e63 100644
-> --- a/arch/riscv/include/asm/processor.h
-> +++ b/arch/riscv/include/asm/processor.h
-> @@ -13,6 +13,7 @@
->  #include <vdso/processor.h>
->
->  #include <asm/ptrace.h>
-> +#include <asm/hwcap.h>
->
->  #define arch_get_mmap_end(addr, len, flags)                    \
->  ({                                                             \
-> diff --git a/arch/riscv/kernel/cpufeature.c b/arch/riscv/kernel/cpufeatur=
-e.c
-> index c6ba750536c3..82065cc55822 100644
-> --- a/arch/riscv/kernel/cpufeature.c
-> +++ b/arch/riscv/kernel/cpufeature.c
-> @@ -150,6 +150,15 @@ static int riscv_ext_svadu_validate(const struct ris=
-cv_isa_ext_data *data,
->         return 0;
->  }
->
-> +static int riscv_cfi_validate(const struct riscv_isa_ext_data *data,
-> +                             const unsigned long *isa_bitmap)
-> +{
-> +       if (!IS_ENABLED(CONFIG_RISCV_USER_CFI))
-> +               return -EINVAL;
-> +
-> +       return 0;
-> +}
-> +
->  static const unsigned int riscv_zk_bundled_exts[] =3D {
->         RISCV_ISA_EXT_ZBKB,
->         RISCV_ISA_EXT_ZBKC,
-> @@ -333,6 +342,10 @@ const struct riscv_isa_ext_data riscv_isa_ext[] =3D =
-{
->         __RISCV_ISA_EXT_SUPERSET_VALIDATE(zicboz, RISCV_ISA_EXT_ZICBOZ, r=
-iscv_xlinuxenvcfg_exts,
->                                           riscv_ext_zicboz_validate),
->         __RISCV_ISA_EXT_DATA(ziccrse, RISCV_ISA_EXT_ZICCRSE),
-> +       __RISCV_ISA_EXT_SUPERSET_VALIDATE(zicfilp, RISCV_ISA_EXT_ZICFILP,=
- riscv_xlinuxenvcfg_exts,
-> +                                         riscv_cfi_validate),
-> +       __RISCV_ISA_EXT_SUPERSET_VALIDATE(zicfiss, RISCV_ISA_EXT_ZICFISS,=
- riscv_xlinuxenvcfg_exts,
-> +                                         riscv_cfi_validate),
->         __RISCV_ISA_EXT_DATA(zicntr, RISCV_ISA_EXT_ZICNTR),
->         __RISCV_ISA_EXT_DATA(zicond, RISCV_ISA_EXT_ZICOND),
->         __RISCV_ISA_EXT_DATA(zicsr, RISCV_ISA_EXT_ZICSR),
->
+Hi Akihiko,
 
-LGTM.
+On Thu, Mar 13, 2025 at 03:57:41PM +0900, Akihiko Odaki wrote:
+> base-commit: da2f480cb24d39d480b1e235eda0dd2d01f8765b
 
-Reviewed-by: Zong Li <zong.li@sifive.com>
+I don't have this commit, what did you base this series on?
 
-> --
-> 2.34.1
->
->
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
+FWIW, the patches do not apply to a 6.14-rc* and seem to use something
+older.
+
+Thanks,
+Oliver
 
