@@ -1,122 +1,101 @@
-Return-Path: <linux-kernel+bounces-560690-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-560691-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8967DA6084C
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 06:28:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86FCFA60851
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 06:32:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 14A4117DF67
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 05:28:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E8B9B3BB922
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 05:32:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A810415A850;
-	Fri, 14 Mar 2025 05:27:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27743142624;
+	Fri, 14 Mar 2025 05:32:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="DARLe5rP"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="RfQoWP7U"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D47921547FE;
-	Fri, 14 Mar 2025 05:27:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 539C61E86E;
+	Fri, 14 Mar 2025 05:32:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741930069; cv=none; b=E8gpKPQ4yXwTj2eOhfH//c4RtCZeBQNKaxV6Dzw4/u8MpsnrPG6wupaVwd+BgWLZbQiWJy2AHjDauVmwnXJcf4Mx0MVCo0wa/AlG/8K8uUeZHzl7+9ZcymXhqcDzh9z85PW0yE/FM6T1hEoZyL0O3kmguR416t+IkC4vgdDl2uw=
+	t=1741930369; cv=none; b=oAq5LbL/XvXAE7exWKk9Gzv0BdLckShlDm9SaGHrFYjITIsOer/Vnk8/HLYZfakaDOB4h7iKr458ultMGtFiK+xEJ9PCNcNLgIdX1Lh5TOYozD3ctzTWumw3srjXr6zGb4J0WafgOOSUvsozBcLeeoFdmlOsU5OxiDyaeDAPqqc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741930069; c=relaxed/simple;
-	bh=/RlrgyOfTR9+lV8sqDAKYIlgXMAjGP1oaBB2knBVdIg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=T2JDv1e/Kq0vfLrF//A/0p2p0rd/y7bxtz59X3utXaK0RMyIMt0LprdFNFP7eLYlvKCLmFlbYLDq7CT1ds0G+Nf4cJtuLWqpBCM6xZ9yp4xueVdcDnv/8eY/RG6Oo3rYMhRAxUNR8kWt+36PXrtU6yBHLh5+owHJC3eA+7jMf7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=DARLe5rP; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
-	Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=XHQX/r89tdEu/+r44z9pTYBcRICBqpqFI1LW+VGUlMs=; b=DARLe5rPwlxbVJWHqGFXJL6op5
-	Q+ourTWSJkYma8Y3Kvnc3Dm9a++q4HQbgIXVFaodRqnamxthAZzp9hTDdwEOHWFrNs3f5O7KQMKTm
-	KAeYLNAh8c8YDFC73Dypyy3Dcw57bBem0cydTklfHLyA+V2LWPY9JZl0zEukeV8R11cynF3c+kUFY
-	6hRI6CEqiITS29einh3KhyAD+rfidSyLtzdWhG8UpCFwtO+7K9EpA2PVbUeCNNnESfEwZ0+qILYrc
-	6+yvFjmkRZvFVdmalFLtHxlbuHRxZIYHZfMio/KKS69qbumHVa8xM2ws4RBWOQ5YCOqAvBPRoSjA6
-	/S1LYekw==;
-Received: from [223.233.77.29] (helo=localhost.localdomain)
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1tsxa5-008TWs-Hx; Fri, 14 Mar 2025 06:27:43 +0100
-From: Bhupesh <bhupesh@igalia.com>
-To: akpm@linux-foundation.org
-Cc: bhupesh@igalia.com,
-	kernel-dev@igalia.com,
-	linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org,
-	linux-perf-users@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org,
-	oliver.sang@intel.com,
-	lkp@intel.com,
-	laoar.shao@gmail.com,
-	pmladek@suse.com,
-	rostedt@goodmis.org,
-	mathieu.desnoyers@efficios.com,
-	arnaldo.melo@gmail.com,
-	alexei.starovoitov@gmail.com,
-	andrii.nakryiko@gmail.com,
-	mirq-linux@rere.qmqm.pl,
-	peterz@infradead.org,
-	willy@infradead.org,
-	david@redhat.com,
-	viro@zeniv.linux.org.uk,
-	keescook@chromium.org,
-	ebiederm@xmission.com,
-	brauner@kernel.org,
-	jack@suse.cz,
-	mingo@redhat.com,
-	juri.lelli@redhat.com,
-	bsegall@google.com,
-	mgorman@suse.de,
-	vschneid@redhat.com
-Subject: [PATCH RFC 2/2] fs/proc: Pass 'task->full_name' via 'proc_task_name()'
-Date: Fri, 14 Mar 2025 10:57:15 +0530
-Message-Id: <20250314052715.610377-3-bhupesh@igalia.com>
-X-Mailer: git-send-email 2.38.1
-In-Reply-To: <20250314052715.610377-1-bhupesh@igalia.com>
-References: <20250314052715.610377-1-bhupesh@igalia.com>
+	s=arc-20240116; t=1741930369; c=relaxed/simple;
+	bh=Gqip2u1dKZM5ihrffxMctAlWaVDbG4jUMPKuit18Zpk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Cfp7Cj2EXUJRCTihtpYTGON6k+HrlIf5BuKp00yi5+dml6iSWzWDie+xUhUuhVLzP+5W+uYw14FfG0azqH2JFZq2a69ctREbNyJZwtxn7IHcpbt0r9pfp5PtBiDdtPAp/NVgs7wWPNfBjojY7qbhbJ012nbuOofHAlFAyatb4y8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=RfQoWP7U; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D9B6C4CEE3;
+	Fri, 14 Mar 2025 05:32:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1741930368;
+	bh=Gqip2u1dKZM5ihrffxMctAlWaVDbG4jUMPKuit18Zpk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RfQoWP7UNXyhVa14p9u5HeB1t3Ss4Pk8U9FROmk/VakXRN9O8U43W9QH75Ya2wT0P
+	 oecQf01nK6rnaGaQBWjE1efeNDTDt4CZkqvC+mG6/7Jwo+l78UF6rMpxXT11zZYTZP
+	 wSz3x4mxwDPsCW/CP1BR6Xhh9H/pvZdF/Tcpkl4Q=
+Date: Fri, 14 Mar 2025 06:32:45 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
+	Fuad Tabba <tabba@google.com>
+Subject: Re: [PATCH 6.12 3/8] KVM: arm64: Remove host FPSIMD saving for
+ non-protected KVM
+Message-ID: <2025031427-yiddish-unrented-2bc2@gregkh>
+References: <20250314-stable-sve-6-12-v1-0-ddc16609d9ba@kernel.org>
+ <20250314-stable-sve-6-12-v1-3-ddc16609d9ba@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250314-stable-sve-6-12-v1-3-ddc16609d9ba@kernel.org>
 
-Now that we have the get_task_full_name() implementation which allows
-the dynamically allocated and filled in task's full name to be passed
-to interested users, use it in proc_task_name() by default for
-task names so that user-land can see them through appropriate tools
-(such as 'ps').
+On Fri, Mar 14, 2025 at 12:35:15AM +0000, Mark Brown wrote:
+> From: Mark Rutland <mark.rutland@arm.com>
+> 
+> Now that the host eagerly saves its own FPSIMD/SVE/SME state,
+> non-protected KVM never needs to save the host FPSIMD/SVE/SME state,
+> and the code to do this is never used. Protected KVM still needs to
+> save/restore the host FPSIMD/SVE state to avoid leaking guest state to
+> the host (and to avoid revealing to the host whether the guest used
+> FPSIMD/SVE/SME), and that code needs to be retained.
+> 
+> Remove the unused code and data structures.
+> 
+> To avoid the need for a stub copy of kvm_hyp_save_fpsimd_host() in the
+> VHE hyp code, the nVHE/hVHE version is moved into the shared switch
+> header, where it is only invoked when KVM is in protected mode.
+> 
+> Signed-off-by: Mark Rutland <mark.rutland@arm.com>
+> Reviewed-by: Mark Brown <broonie@kernel.org>
+> Tested-by: Mark Brown <broonie@kernel.org>
+> Acked-by: Will Deacon <will@kernel.org>
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Fuad Tabba <tabba@google.com>
+> Cc: Marc Zyngier <maz@kernel.org>
+> Cc: Oliver Upton <oliver.upton@linux.dev>
+> Reviewed-by: Oliver Upton <oliver.upton@linux.dev>
+> Link: https://lore.kernel.org/r/20250210195226.1215254-3-mark.rutland@arm.com
+> Signed-off-by: Marc Zyngier <maz@kernel.org>
+> Signed-off-by: Mark Brown <broonie@kernel.org>
+> ---
 
-Signed-off-by: Bhupesh <bhupesh@igalia.com>
----
- fs/proc/array.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+What is the upstream git id for this on?
 
-diff --git a/fs/proc/array.c b/fs/proc/array.c
-index d6a0369caa931..2cbeb1584f8a4 100644
---- a/fs/proc/array.c
-+++ b/fs/proc/array.c
-@@ -109,7 +109,7 @@ void proc_task_name(struct seq_file *m, struct task_struct *p, bool escape)
- 	else if (p->flags & PF_KTHREAD)
- 		get_kthread_comm(tcomm, sizeof(tcomm), p);
- 	else
--		get_task_comm(tcomm, p);
-+		get_task_full_name(tcomm, sizeof(tcomm), p);
- 
- 	if (escape)
- 		seq_escape_str(m, tcomm, ESCAPE_SPACE | ESCAPE_SPECIAL, "\n\\");
--- 
-2.38.1
+thanks,
 
+greg k-h
 
