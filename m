@@ -1,119 +1,206 @@
-Return-Path: <linux-kernel+bounces-561079-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561080-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7693A60D50
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 10:30:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1325A60D52
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 10:30:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96DCA3A9FB9
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 09:30:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8326E19C3A2D
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 09:30:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7A061F1508;
-	Fri, 14 Mar 2025 09:30:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8E0C19DF61;
+	Fri, 14 Mar 2025 09:30:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IPZL8LzS"
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="lczH0/RB"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E6CD1EE7C0
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 09:30:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6E4B126BF9
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 09:30:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741944607; cv=none; b=IajKatKU4EiMKJsLux7vz4p5qO6Nhmzzm879bjZIGwDURp9Y2cRkYqJfuyrUfrjPOxHzJ3RKPmDsthlsaZQNmV+rgdO3dMam3ZsjD5n8jZ+4yVQw/ZCTQk70y4lP0UYDy2mCkDpiNl6LigtU7659vPBmd8W5JAJCez7KBx8ztv8=
+	t=1741944643; cv=none; b=Ci682MRBBcZOyS0f4F30PeujkzXFQRF/JnSWWlMBGmS/zKmYttwNp/T5UA1dH2+wlkOC8CjcMj73KOkyobYT5O53wz2rBlvLFTrh1BShES1VTTRKxbgq50n4kWBvM4yNDZiJjtk+0Puebc31glzCDgwd+ODD/DCKc1byu1OcwhE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741944607; c=relaxed/simple;
-	bh=7B240d6j4OExyYUlEP6p1T29DEbvNYI/esoZe1OK7gk=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=jzSelB3Du4M5yGP1Z4+f4hE98UgAq/XCK40ZDHjtS+Ck2RrrcmVIFNJjDu9/p9vxdZJmJ0vws2/mokoIBFLKhSKxg8t0h8qD+VEdv6XZcwH4V8eWGcVlcLTetBCdiEEt//0OfDGvS2jWxlQbZAt8kOWCVpagKcHLJzBQZg4V3xA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IPZL8LzS; arc=none smtp.client-ip=209.85.128.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-43cf446681cso11405095e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 02:30:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1741944604; x=1742549404; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Vx9uDZ+QhqTeL0tFVgUFI0Mccb4hWoxO0D5VjPF0f/8=;
-        b=IPZL8LzS9tOCQ0S+AH4kPiVCGnlVWSESVv5zBy9gSpbikcedFza/jF9wy4h9xd2i8R
-         Rt3KAAbqa+4qKGiFqtBFfcXb7d1x14w8DVh8P69n/mfbRdiTRtFhzj71aUPw3acWxIe2
-         p3rNID1l4xZmVPmDMgUGpmazPqx7oXS1ClVfZce7Fk1SMxFOYRlgmwxBEYu/ZnF3vviE
-         WdqDZfrnHsHqwnfCe6p/Le6+DTsnxXy8OTxeIpwTqbDu6xx2mJoqeP+ic7H5Q5NR6K0/
-         jEflLvmHJYRmjB4A5nSWSKu2qiybo6CXziaCp6z34HVFkgj1JGMwJvdaw+T4bTymdYkP
-         rsCg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741944604; x=1742549404;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Vx9uDZ+QhqTeL0tFVgUFI0Mccb4hWoxO0D5VjPF0f/8=;
-        b=A+Avhtl0kkSIHTTKWuLdNVrhb/xKqBf5rhyFGJ2RlvKEFUthslrucb5LhYwjSuYMxf
-         BbkSebyKeNty94ExaqeKYb8BXHZR7y2U5ZfnMc4J0sSYLppzK2ImSPrbtL8khSFwehXb
-         GRkWpAq6RHufp7aB018r6+xeG273r87FbCVuN9lvisSM7Xslv90K2dqeMt8bG1X9nL0Q
-         gbhGwv5qb4eiHWPgtyLaWx9TYBX+pBsc+JSBHxrhtkaBYVY/CfeFGiW1VYd9ezJhI5a4
-         EOXl7sJ50d63JWj//WY8iGcv1cWPYMba+XGXemq/dhKIFVxRmIQZV5VoTRoHNdTnJq77
-         IcJQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVEBuwd+WgssrXUbeU1f8dXUWgM3ARoozNFBsnkuHuP6jSHNUmgjHARI+IuWftQHigD1qKC4EP4c5UqTAM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YydJmzfco3duqZI7rLQdgyJj/bAeLBzxX7xMpk42MEFVwliQSo6
-	4Cf1W4oBmY34ncWKspcaZpioVcsUW9YrsND38n1XtQOCSIgaEHrb5utpluxTVRH5AytYUwRw4g/
-	14i4WfhNd7WXBHw==
-X-Google-Smtp-Source: AGHT+IGDsrKK697tTln1RD7AuELwm2Txn2iyfq75zdHGM/J4mNu5ImB/Z+SRHD/kqQ29qRrXLQhTzZpkycOOh54=
-X-Received: from wmbay4.prod.google.com ([2002:a05:600c:1e04:b0:43c:ef7b:ffac])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:4708:b0:43c:f050:fed3 with SMTP id 5b1f17b1804b1-43d1ec78842mr25457025e9.11.1741944603897;
- Fri, 14 Mar 2025 02:30:03 -0700 (PDT)
-Date: Fri, 14 Mar 2025 09:30:01 +0000
-In-Reply-To: <20250311-inline-c-wrappers-v2-1-72c99d35ff33@posteo.net>
+	s=arc-20240116; t=1741944643; c=relaxed/simple;
+	bh=CpCHinGXPXa+xJsSfA/4BlUzu7FAdnL8SVZ+x2ezFHo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Eb8+FEvq1MLbaihDNXXeNcVcCmN182mF0jCtCKR/L7E6OvRyE8w6iL3leum24zlza2bNO98C7gB/u+YecvPkN6JrPUFUqNe+YPAKekmldDRxevkCA8ypS6cgytxxKqKdDzeALtWxNn4vEqV8yyyRE2tHB+b3GM2mFAXZQwHJjVo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=lczH0/RB; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52E3joJe019686;
+	Fri, 14 Mar 2025 09:30:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=0z9Fz6
+	11KVkxjRCjoMRWDKqzm00u/P597760U7VRVFc=; b=lczH0/RBAoP3ow5/eGx7Wh
+	vFl6rjx/VeV2hLnBTUzXiksLl6Eqb7hsX1IgnYKxTzU3JWnKEl8Wvt7RM+YSbxhM
+	D3E/9B4xFNwcMs/7SYhcGEvZE1k5DeW5sZc4TpOP/Qpnzv0VwgsoIvcAklzRGmZI
+	PYV3DbgcdbNn81rbE6utg0twiX8/c1iIGkCyMQkYaLB6PQBw7VKVjA9maeDE5bAH
+	H2M7ZgV1C+Bg/Bnj6LLY/2RM/8Y+uvxUJ39g9c/IKTxP3hN56b6+6cv6GmLQmU60
+	lsa3d1LCoH8Ec6MKiV5ybEIbAQSlh2bmvQj2FVKXf2xmYmE7jNh4ECK0xl67fJkA
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45ccu99d8e-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 14 Mar 2025 09:30:26 +0000 (GMT)
+Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 52E9R3KJ021389;
+	Fri, 14 Mar 2025 09:30:25 GMT
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45ccu99d89-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 14 Mar 2025 09:30:25 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52E8F9at026047;
+	Fri, 14 Mar 2025 09:30:24 GMT
+Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 45atspp9g5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 14 Mar 2025 09:30:24 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52E9UKuu33882844
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 14 Mar 2025 09:30:20 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id ADB372004E;
+	Fri, 14 Mar 2025 09:30:20 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id DB27C2004B;
+	Fri, 14 Mar 2025 09:30:17 +0000 (GMT)
+Received: from [9.39.22.126] (unknown [9.39.22.126])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Fri, 14 Mar 2025 09:30:17 +0000 (GMT)
+Message-ID: <d6999d74-45f6-413a-8881-90473b322dfa@linux.ibm.com>
+Date: Fri, 14 Mar 2025 15:00:17 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250311-inline-c-wrappers-v2-1-72c99d35ff33@posteo.net>
-Message-ID: <Z9P3GcZ-pstV2Y1p@google.com>
-Subject: Re: [PATCH v2] rust: task: mark Task methods inline
-From: Alice Ryhl <aliceryhl@google.com>
-To: Panagiotis Foliadis <pfoliadis@posteo.net>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
-	Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, 
-	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	llvm@lists.linux.dev
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5/6] powerpc: powenv: oxcl: use lock guard for mutex
+To: ajd@linux.ibm.com
+Cc: npiggin@gmail.com, christophe.leroy@csgroup.eu, mpe@ellerman.id.au,
+        peterz@infradead.org, fbarrat@linux.ibm.com, mahesh@linux.ibm.com,
+        oohall@gmail.com, hbathini@linux.ibm.com, dhowells@redhat.com,
+        haren@linux.ibm.com, linux-kernel@vger.kernel.org, maddy@linux.ibm.com,
+        linuxppc-dev@lists.ozlabs.org
+References: <20250314054544.1998928-1-sshegde@linux.ibm.com>
+ <20250314054544.1998928-6-sshegde@linux.ibm.com>
+From: Shrikanth Hegde <sshegde@linux.ibm.com>
+Content-Language: en-US
+In-Reply-To: <20250314054544.1998928-6-sshegde@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: h0Cja2C6vajM78wzlm82GdfRq8oqmFfd
+X-Proofpoint-GUID: ZvhqgWL-NRe9f7ZJNClqRDnR7vkRLAgP
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-14_03,2025-03-13_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 phishscore=0
+ mlxlogscore=852 mlxscore=0 adultscore=0 impostorscore=0 lowpriorityscore=0
+ suspectscore=0 spamscore=0 priorityscore=1501 bulkscore=0 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503140071
 
-On Tue, Mar 11, 2025 at 03:05:52PM +0000, Panagiotis Foliadis wrote:
-> When you build the kernel using the llvm-18.1.3-rust-1.85.0-x86_64
-> toolchain provided by kernel.org, the following symbols are generated:
+
+
+On 3/14/25 11:15, Shrikanth Hegde wrote:
+> use guard(mutex) for scope based resource management of mutex.
+> This would make the code simpler and easier to maintain.
 > 
-> $ nm vmlinux | grep ' _R'.*Task | rustfilt
-> ffffffff817b2d30 T <kernel::task::Task>::get_pid_ns
-> ffffffff817b2d50 T <kernel::task::Task>::tgid_nr_ns
-> ffffffff817b2c90 T <kernel::task::Task>::current_pid_ns
-> ffffffff817b2d00 T <kernel::task::Task>::signal_pending
-> ffffffff817b2cc0 T <kernel::task::Task>::uid
-> ffffffff817b2ce0 T <kernel::task::Task>::euid
-> ffffffff817b2c70 T <kernel::task::Task>::current
-> ffffffff817b2d70 T <kernel::task::Task>::wake_up
-> ffffffff817b2db0 T <kernel::task::Task as kernel::types::AlwaysRefCounted>::dec_ref
-> ffffffff817b2d90 T <kernel::task::Task as kernel::types::AlwaysRefCounted>::inc_ref
+> More details on lock guards can be found at
+> https://lore.kernel.org/all/20230612093537.614161713@infradead.org/T/#u
 > 
-> These Rust symbols are trivial wrappers around the C functions
-> get_pid_ns, task_tgid_nr_ns, task_active_pid_ns, signal_pending, uid,
-> euid, get_current, wake_up, get_task_struct and put_task_struct.It
-> doesn't make sense to go through a trivial wrapper for these
-> functions, so mark them inline.
-
-Typo: "put_task_struct.It"
-
-> After applying this patch, the above command will produce no output.
+> Signed-off-by: Shrikanth Hegde <sshegde@linux.ibm.com>
+> ---
+>   arch/powerpc/platforms/powernv/ocxl.c | 12 +++---------
+>   1 file changed, 3 insertions(+), 9 deletions(-)
 > 
-> Link: https://github.com/Rust-for-Linux/linux/issues/1145
-> Signed-off-by: Panagiotis Foliadis <pfoliadis@posteo.net>
+> diff --git a/arch/powerpc/platforms/powernv/ocxl.c b/arch/powerpc/platforms/powernv/ocxl.c
+> index 64a9c7125c29..f8139948348e 100644
+> --- a/arch/powerpc/platforms/powernv/ocxl.c
+> +++ b/arch/powerpc/platforms/powernv/ocxl.c
+> @@ -172,12 +172,11 @@ static void pnv_ocxl_fixup_actag(struct pci_dev *dev)
+>   	if (phb->type != PNV_PHB_NPU_OCAPI)
+>   		return;
+>   
+> -	mutex_lock(&links_list_lock);
+> +	guard(mutex)(&links_list_lock);
+>   
+>   	link = find_link(dev);
+>   	if (!link) {
+>   		dev_warn(&dev->dev, "couldn't update actag information\n");
+> -		mutex_unlock(&links_list_lock);
+>   		return;
+>   	}
+>   
+> @@ -206,7 +205,6 @@ static void pnv_ocxl_fixup_actag(struct pci_dev *dev)
+>   	dev_dbg(&dev->dev, "total actags for function: %d\n",
+>   		link->fn_desired_actags[PCI_FUNC(dev->devfn)]);
+>   
+> -	mutex_unlock(&links_list_lock);
+>   }
+>   DECLARE_PCI_FIXUP_HEADER(PCI_ANY_ID, PCI_ANY_ID, pnv_ocxl_fixup_actag);
+>   
+> @@ -253,12 +251,11 @@ int pnv_ocxl_get_actag(struct pci_dev *dev, u16 *base, u16 *enabled,
+>   {
+>   	struct npu_link *link;
+>   
+> -	mutex_lock(&links_list_lock);
+> +	guard(mutex)(&links_list_lock);
+>   
+>   	link = find_link(dev);
+>   	if (!link) {
+>   		dev_err(&dev->dev, "actag information not found\n");
+> -		mutex_unlock(&links_list_lock);
+>   		return -ENODEV;
+>   	}
+>   	/*
+> @@ -274,7 +271,6 @@ int pnv_ocxl_get_actag(struct pci_dev *dev, u16 *base, u16 *enabled,
+>   	*enabled   = link->fn_actags[PCI_FUNC(dev->devfn)].count;
+>   	*supported = link->fn_desired_actags[PCI_FUNC(dev->devfn)];
+>   
+> -	mutex_unlock(&links_list_lock);
+>   	return 0;
+>   }
+>   EXPORT_SYMBOL_GPL(pnv_ocxl_get_actag);
+> @@ -293,12 +289,11 @@ int pnv_ocxl_get_pasid_count(struct pci_dev *dev, int *count)
+>   	 *
+>   	 * We only support one AFU-carrying function for now.
+>   	 */
+> -	mutex_lock(&links_list_lock);
+> +	guard(mutex)(&links_list_lock);
+>   
+>   	link = find_link(dev);
+>   	if (!link) {
+>   		dev_err(&dev->dev, "actag information not found\n");
+> -		mutex_unlock(&links_list_lock);
+>   		return -ENODEV;
+>   	}
+>   
+> @@ -309,7 +304,6 @@ int pnv_ocxl_get_pasid_count(struct pci_dev *dev, int *count)
+>   			break;
+>   		}
+>   
+> -	mutex_unlock(&links_list_lock);
 
-Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+Hi. Andrew,
+
+After this change below dev_dbg will be called with mutex held still. Is 
+that a concern? I don't see the mutex being used in that path.
+
+Since using scoped_guard cause more code churn here, I would prefer not 
+use it.
+
+>   	dev_dbg(&dev->dev, "%d PASIDs available for function\n",
+>   		rc ? 0 : *count);
+>   	return rc;
+
 
