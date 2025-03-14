@@ -1,147 +1,166 @@
-Return-Path: <linux-kernel+bounces-561799-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561803-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70C44A61664
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 17:37:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57EA5A6166D
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 17:39:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5DC2119C3509
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 16:37:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 975AF3AA7CE
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 16:39:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF51D2046A1;
-	Fri, 14 Mar 2025 16:36:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6F8E2036ED;
+	Fri, 14 Mar 2025 16:39:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="dlt1JDhL"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="hDbiAUy1"
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62EAC2045AB
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 16:36:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3071C156C79
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 16:39:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741970188; cv=none; b=pLK5ZxBHXiNbLAFVoFsoJ1baBJloVobYREYERCbnDa2Fm06yPdQuyi8lQ35hItIEtGC/JpkvlVKdyFE2fd6ct22QbHuCYnrxxrGqy/szml2Wzajn3BVqvFUW4tmwifajPJYrvVBOlPTiLaX6AbWxnYc8Aat8atiojq79Gko8XYo=
+	t=1741970367; cv=none; b=Mn6NTKL3h5Om1LMdhS0DO+SKtC2MMsLji1/zgoChq+Pg3tg+9bM099GGRR1uphY/lXxWGEaJjq1QQ2XbE3xUyHpJXIk2BB3faJxb5CFWXDdKY/GgubSfci3T0iw6YpN9v9iBOXUUtAz/smLGFHFwr5j1mx3ExlICamlsb4GUbdE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741970188; c=relaxed/simple;
-	bh=HL2qrnqP6m2SJjIgrryOgrdGWPC/DqOKAlmK3yLxVLI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S2mSMqbsKGx9bj6sRyETvnwjy3T343Uk1qzmhOJOO5iBSiG5YrRa+IXSKQN49e95FmpVIugjiBqUe5eQe37QXdW/d6tT7VN77yYeBv7xOPJCf2APXDafiK0xw1ZOJ4JzDQWP7xLS1PooFQ6uM4wtlnGNvaAK9yl8knOe+NeE1HE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=dlt1JDhL; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52EDu5os024812
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 16:36:25 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=dwRYAMlQoWB7Kdu76G96hqJd
-	qDT3vaRt4pY8/dRjDDw=; b=dlt1JDhLB3SF5k1enjXmPQ+CY5/Jc0SXLOy8zj/j
-	uDBrJIPmf0wDjctB15xSX7YkTsOAEhjm0YhizvjywwKAs4AeMsK1gMAyCkdz/hmv
-	7Gx8Jjj/I1GpU+piLuO5mmC/PhDsKVo+aOXmNgMUIiMTxkaAvlxPrVUuKeCUlotS
-	9ZgUHJFml/qIAql8oo2MoFD6bI5mJnbPgvqUKja4pggtsfo90ih0h7d7my/1gt7/
-	BLU1b+Gnq7pHHvjpPloiDRspdQGFhl7IcE+odoH3OogqNSLq4x2aCNz4sgz/qo2W
-	1q28TTeMZ3aVBxfgQoZZqrCr+2PYYNSohu9ghO3HSf4RdA==
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45cnscrdyh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 16:36:25 +0000 (GMT)
-Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-476664bffbeso40584751cf.3
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 09:36:25 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741970184; x=1742574984;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dwRYAMlQoWB7Kdu76G96hqJdqDT3vaRt4pY8/dRjDDw=;
-        b=A1CS2Xa8mAqy76JXYxL8+bFiyTvxRJ0pF7xC/usy4d1rtEw8ihw7bCXkTW2b6iurQc
-         70UameLHBzlaUcKLNWucMI6wedITyIq/acw59tchkIU/2abqW2Ejg4gXxuvyaS7ak9PP
-         zJfasR5m+5dxvUsy8UPDjLCJradvIsJKicDOI/26Hb2mQban9rROxn9dg2MyUvpES+y0
-         LbD9s6vp4wSNPpubsheLOOT6TKM01PXJMW71uRfSWAEzQUCW7RLwd1ka7/ydE3jDgF39
-         hBhmUeWolpA26h3/pMi1ebLHILz7dRNYeF4Zgyl1Yntv3SjzJLAMG4aUFz6pSrUt6tJJ
-         bFig==
-X-Forwarded-Encrypted: i=1; AJvYcCVjvzrzjfrzXkKbFD6qzae9XpTnBxkpap0uupERr/42sqK1FfeGdPo+rxCovxMamY/9LUbzevE7dnfSXnI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywkqz36WZkOeE9SKMBuapk9BfBipfrArHFWlzl0iyVL3+sOdARc
-	JOZZtFCUeegyHoKYhZvAxIOwuTtYTtZe3D7jnNo7qhXM6hZSRKynNFu4b3rtOZpFA9x/n+GX8St
-	IIaZqybP1SWEND6qv5dQqhWqQjcjE9tWQXHL22sOyXf2FRNnHHTwFfQws7OXkdP8=
-X-Gm-Gg: ASbGncswmSNWNUt0vBCyLcel560cokxnYSAB/T7MszYiGxa6gdY/Fg4MG9EA+7vSSOu
-	vhMW8ICbV9HC8E1EWNOzv6FdLpA15SudPc9iQYSYp806EhzRJKL1oLhDVAzWqwnEvCErxgNFnJE
-	TDtAb97rtbla+Ow925UoyJ7xIs/+MMzVaIL1N2DsHW13uZcqwlmIPvl3U5cWwwkiuW0yJ9rzuNq
-	31tH9RxZ5qZroNOdXrjWfKL3zpU7349ueCK4FInqLN+kvWH0w23AmXQD+pj1vafIbykN9PVJ7OL
-	Dc1yov40MPiiHNsPlJkBmfIfhHmpgekDwVIa/T9cta8izbqSFyJRMaXqBB7035jPsNLC/Sz6yg8
-	hI90=
-X-Received: by 2002:a05:6214:5097:b0:6e8:ddaf:6422 with SMTP id 6a1803df08f44-6eaeab00312mr28706726d6.43.1741970184415;
-        Fri, 14 Mar 2025 09:36:24 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHJb4x2fMIyGfk5ixR2DwoFRga6e8xcjQATKUUg0Rfaz32txxfwF6NxY3A0ZD5xbJ0//+/kjw==
-X-Received: by 2002:a05:6214:5097:b0:6e8:ddaf:6422 with SMTP id 6a1803df08f44-6eaeab00312mr28706456d6.43.1741970184127;
-        Fri, 14 Mar 2025 09:36:24 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-549ba88598dsm562471e87.188.2025.03.14.09.36.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Mar 2025 09:36:22 -0700 (PDT)
-Date: Fri, 14 Mar 2025 18:36:19 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Johan Hovold <johan+linaro@kernel.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org, Abel Vesa <abel.vesa@linaro.org>,
-        Rajendra Nayak <quic_rjendra@quicinc.com>,
-        Sibi Sankar <quic_sibis@quicinc.com>,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: Re: [PATCH v2 1/8] arm64: dts: qcom: x1e80100-crd: mark l12b and
- l15b always-on
-Message-ID: <zhiunl3doj3d5rc2m3w2isnwloyyvtbbgiiuzbg3dxy342vnhy@n27ioyo2mhvm>
-References: <20250314145440.11371-1-johan+linaro@kernel.org>
- <20250314145440.11371-2-johan+linaro@kernel.org>
+	s=arc-20240116; t=1741970367; c=relaxed/simple;
+	bh=b2CDGTHEdr5TqAfo7dRyPvR+VI//VpkqVSraMSMASI8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=YYANci7G8E+qe2WYFr/q1OYUusQw6NyJeWX23Llk4pnj1yq26ua5TbZsFmhlpYew6dqVd9gHOOv8Y8HTouuL7UbvHc0o5ZU7afk4jjzxK9zKzCZdl9L+Vq2cxBygMDKruhBPxr3xDflfVWYd34H1067tgFmwt/ele/s/ypyj4mY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=hDbiAUy1; arc=none smtp.client-ip=210.118.77.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20250314163922euoutp01c4db5bdfa79a43e7ec9bf60ddbcfbfe4~suNCpajsB1096110961euoutp01M
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 16:39:22 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20250314163922euoutp01c4db5bdfa79a43e7ec9bf60ddbcfbfe4~suNCpajsB1096110961euoutp01M
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1741970362;
+	bh=dzOCOe3jSYGQUYrbxXDJcmvsZO+JY8Q+Bt4sctrFBbQ=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=hDbiAUy15byHcEO5qZWfpygu715rJ2NeEFcoXkAc/Z8tukH3ZZS2ltQfmOA+88dbQ
+	 +OJgzuBOrPABYUF6DKJNu60QyNPa+a9cDgNxZaGyxF9unnjPrmahbgQF14LkeURKp4
+	 eS3ywUy0Wxm1ZfB4S6mXDhv1Y01GRq4XhsinG8ew=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+	20250314163921eucas1p1316e47fdbbbdec736e4d586d6cc6d740~suNCWW1BS2043720437eucas1p1Q;
+	Fri, 14 Mar 2025 16:39:21 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+	eusmges2new.samsung.com (EUCPMTA) with SMTP id 0B.6E.20409.9BB54D76; Fri, 14
+	Mar 2025 16:39:21 +0000 (GMT)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20250314163920eucas1p262769c736d910231bd8ec798578b99be~suNBabrkU1864618646eucas1p2h;
+	Fri, 14 Mar 2025 16:39:20 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20250314163920eusmtrp23292ba24cbbd8ba914e4b41076e8c141~suNBYj6tf1144611446eusmtrp2m;
+	Fri, 14 Mar 2025 16:39:20 +0000 (GMT)
+X-AuditID: cbfec7f4-c39fa70000004fb9-29-67d45bb90057
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+	eusmgms2.samsung.com (EUCPMTA) with SMTP id 29.AB.19654.8BB54D76; Fri, 14
+	Mar 2025 16:39:20 +0000 (GMT)
+Received: from [192.168.1.44] (unknown [106.210.136.40]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20250314163920eusmtip29bead9a32087e6d3e1013b8809a8762f~suNA0eaom0371903719eusmtip2b;
+	Fri, 14 Mar 2025 16:39:20 +0000 (GMT)
+Message-ID: <d9f3b44e-a1f7-4441-a731-ea99990de871@samsung.com>
+Date: Fri, 14 Mar 2025 17:39:19 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250314145440.11371-2-johan+linaro@kernel.org>
-X-Authority-Analysis: v=2.4 cv=Qbxmvtbv c=1 sm=1 tr=0 ts=67d45b09 cx=c_pps a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=Vs1iUdzkB0EA:10 a=VwQbUJbxAAAA:8 a=KKAkSRfTAAAA:8 a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8 a=z4ldfGPc2qRxCRB1vwoA:9
- a=CjuIK1q_8ugA:10 a=dawVfQjAaf238kedN5IG:22 a=cvBusfyB2V15izCimMoJ:22 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: Or-c6V_FzEeuW2XcVDr-UXVtSaOduUA_
-X-Proofpoint-GUID: Or-c6V_FzEeuW2XcVDr-UXVtSaOduUA_
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-14_06,2025-03-14_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 spamscore=0
- lowpriorityscore=0 adultscore=0 mlxlogscore=517 mlxscore=0 phishscore=0
- impostorscore=0 suspectscore=0 clxscore=1015 priorityscore=1501
- bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503140130
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] firmware: thead: add CONFIG_MAILBOX dependency
+To: Arnd Bergmann <arnd@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>,
+	Drew Fustini <drew@pdp7.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Guillaume La Roque
+	<glaroque@baylibre.com>, Krzysztof Kozlowski
+	<krzysztof.kozlowski@linaro.org>, Tudor Ambarus <tudor.ambarus@linaro.org>,
+	Prasad Pandit <pjp@fedoraproject.org>, linux-kernel@vger.kernel.org
+Content-Language: en-US
+From: Michal Wilczynski <m.wilczynski@samsung.com>
+In-Reply-To: <20250314154816.4045334-1-arnd@kernel.org>
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrDKsWRmVeSWpSXmKPExsWy7djPc7o7o6+kG7TNN7D4O+kYu8W2LZtY
+	Le5d2sJksXDyXDaLva+3sltc3jWHzeLzr4usFp9uxVkcXxvuwOnx+9ckRo/3N1rZPabca2Hz
+	2LSqk83jzrU9bB4ta48xeXzeJBfAHsVlk5Kak1mWWqRvl8CVsbtVvmA/d8W2nUkNjPc4uxg5
+	OCQETCS+3g/pYuTiEBJYwSjx8N0VNgjnC6PEkn/b2LsYOYGcz4wSZ+4KgtggDd+eHGeGKFrO
+	KPF/zToo5y2jRPed5ywgVbwCdhJNM34zgdgsAqoS907eYoSIC0qcnPkErEZUQF7i/q0ZYBuE
+	BZwlmu+tZgWxRQQyJRYfb2EEGcos8INRYvv+HWANzALiEreezAcbyiZgJPFg+XywBk4Bc4kd
+	e7ezQtTIS2x/OwfsIgmBHxwS827MZYW420Vix5d1bBC2sMSr41vYIWwZif87IYZKCORLPNj6
+	iRnCrpHY2XMcyraWuHPuFxsowJgFNCXW79KHCDtKvP05kx0SjnwSN94KQpzAJzFp23RmiDCv
+	REebEES1msTUnl64pedWbGOawKg0CylUZiF5chaSZ2Yh7F3AyLKKUTy1tDg3PbXYKC+1XK84
+	Mbe4NC9dLzk/dxMjMEGd/nf8yw7G5a8+6h1iZOJgPMQowcGsJMK7R+VKuhBvSmJlVWpRfnxR
+	aU5q8SFGaQ4WJXHeRftb04UE0hNLUrNTUwtSi2CyTBycUg1MnRwKcYFirSt6lGqC4lqtr326
+	+XTamSWMDLzPyn4HhBXnrPfsrTN/77M07kLsVqvQj6uqJbY8kPtles899H2lYamaqHvGrbV/
+	lK/t/S05QyR1get3UZVjm7g4TvZ8ajhuKJy8+5ZlByfnU8VXflMWnL0hu+DRsr74Wz++NHE8
+	4BdI//AypvdO/sd5k07xnlDMy9klJPv1vo47z5HKKW+05P/svDFxfvC+Tt5lj9flq+TWPTjS
+	nqd4+93kR20N0ScWXFUPPfDkBqN+oTWrc2xbU2/z2U1MO39nVc5s+LvouNiOCQUGIZK16fcu
+	rloZFXi2OyOk3KUkR0Pj0NovOrM3ndZx7k59p75kz4VmAS5RJZbijERDLeai4kQAjdLjsL8D
+	AAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrAIsWRmVeSWpSXmKPExsVy+t/xe7o7oq+kGyzdrmfxd9IxdottWzax
+	Wty7tIXJYuHkuWwWe19vZbe4vGsOm8XnXxdZLT7dirM4vjbcgdPj969JjB7vb7Sye0y518Lm
+	sWlVJ5vHnWt72Dxa1h5j8vi8SS6APUrPpii/tCRVISO/uMRWKdrQwkjP0NJCz8jEUs/Q2DzW
+	yshUSd/OJiU1J7MstUjfLkEvY3erfMF+7optO5MaGO9xdjFyckgImEh8e3KcuYuRi0NIYCmj
+	xLb1bUwQCRmJa90vWSBsYYk/17rYIIpeM0p86P/OBpLgFbCTaJrxG6yBRUBV4t7JW4wQcUGJ
+	kzOfgDWLCshL3L81gx3EFhZwlmi+t5oVxBYRyJSYcv4NC8hQZoEfjBKX57RBbehilJjRfZUZ
+	pIpZQFzi1pP5YBvYBIwkHiyfD9bNKWAusWPvdiCbA6hGXWL9PCGIcnmJ7W/nME9gFJqF5I5Z
+	SCbNQuiYhaRjASPLKkaR1NLi3PTcYiO94sTc4tK8dL3k/NxNjMCo3Hbs55YdjCtffdQ7xMjE
+	wXiIUYKDWUmEd4/KlXQh3pTEyqrUovz4otKc1OJDjKbAsJjILCWanA9MC3kl8YZmBqaGJmaW
+	BqaWZsZK4rxsV86nCQmkJ5akZqemFqQWwfQxcXBKNTB5tHM5a/SXm8qkmcfG71JYqN0icWj2
+	wgm+s2adMrl2osQgufXq+mW9/EfKzyy4pX3PYe/kxbmFFszfN4cb15rZ6lTpfr17oVRzvnex
+	wtxcxuDlP1enl5W+Xft5v5f7Hs5FNWFzVr7cGuDHsDD/8ZO8qScnFM7/dcjIjnvL/NtCB1zP
+	MH5Y6NLocm317uJ1Jtv6n7z922Kqdnv+crOQS05pUU+T954UKCkXW2d4ppZbYqnuneD+TfMb
+	Xycda4tdF3uZNaF9ao7mrakC+9srrd3Nv04w79tm794yZ8GK/rUfmdK5o1hr5h6Pn3F2/81m
+	nboP+UkJv2MOLl9WU1n2qdDjRl9HUY6l2M6GXxJX45crsRRnJBpqMRcVJwIALnpjBVMDAAA=
+X-CMS-MailID: 20250314163920eucas1p262769c736d910231bd8ec798578b99be
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20250314154826eucas1p20139736cab789432ed0884b020eec244
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20250314154826eucas1p20139736cab789432ed0884b020eec244
+References: <CGME20250314154826eucas1p20139736cab789432ed0884b020eec244@eucas1p2.samsung.com>
+	<20250314154816.4045334-1-arnd@kernel.org>
 
-On Fri, Mar 14, 2025 at 03:54:33PM +0100, Johan Hovold wrote:
-> The l12b and l15b supplies are used by components that are not (fully)
-> described (and some never will be) and must never be disabled.
 
-Which components?
 
+On 3/14/25 16:48, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
 > 
-> Mark the regulators as always-on to prevent them from being disabled,
-> for example, when consumers probe defer or suspend.
+> Without this, the driver fails to build:
 > 
-> Fixes: bd50b1f5b6f3 ("arm64: dts: qcom: x1e80100: Add Compute Reference Device")
-> Cc: stable@vger.kernel.org	# 6.8
-> Cc: Abel Vesa <abel.vesa@linaro.org>
-> Cc: Rajendra Nayak <quic_rjendra@quicinc.com>
-> Cc: Sibi Sankar <quic_sibis@quicinc.com>
-> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
+> ld: drivers/firmware/thead,th1520-aon.o: in function `th1520_aon_call_rpc':
+> thead,th1520-aon.c:(.text+0x28): undefined reference to `mbox_send_message'
+> ld: drivers/firmware/thead,th1520-aon.o: in function `th1520_aon_deinit':
+> thead,th1520-aon.c:(.text+0x17e): undefined reference to `mbox_free_channel'
+> ld: drivers/firmware/thead,th1520-aon.o: in function `th1520_aon_init':
+> thead,th1520-aon.c:(.text+0x1d9): undefined reference to `mbox_request_channel_byname'
+> 
+> Fixes: e4b3cbd840e5 ("firmware: thead: Add AON firmware protocol driver")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 > ---
->  arch/arm64/boot/dts/qcom/x1-crd.dtsi | 2 ++
->  1 file changed, 2 insertions(+)
+>  drivers/firmware/Kconfig | 1 +
+>  1 file changed, 1 insertion(+)
 > 
+> diff --git a/drivers/firmware/Kconfig b/drivers/firmware/Kconfig
+> index 42e3dd1c387a..6ab9f7ca7ff1 100644
+> --- a/drivers/firmware/Kconfig
+> +++ b/drivers/firmware/Kconfig
+> @@ -239,6 +239,7 @@ config SYSFB_SIMPLEFB
+>  config TH1520_AON_PROTOCOL
+>  	tristate "Always-On firmware protocol"
+>  	depends on ARCH_THEAD || COMPILE_TEST
+> +	depends on MAILBOX
+>  	help
+>  	  Power, clock, and resource management capabilities on the TH1520 SoC are
+>  	  managed by the E902 core. Firmware running on this core communicates with
 
--- 
-With best wishes
-Dmitry
+Thanks, looks good shouldn't have missed that.
+
+Reviewed-by: Michal Wilczynski <m.wilczynski@samsung.com>
+
 
