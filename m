@@ -1,143 +1,144 @@
-Return-Path: <linux-kernel+bounces-561768-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561769-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA735A615E1
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 17:10:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFFFCA615F0
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 17:12:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 983E47AEB29
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 16:09:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F2A24188345D
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 16:11:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBA462046BA;
-	Fri, 14 Mar 2025 16:08:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75CAB20409B;
+	Fri, 14 Mar 2025 16:08:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="fvn3jhaW"
-Received: from out-178.mta1.migadu.com (out-178.mta1.migadu.com [95.215.58.178])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ZEg4Jipu"
+Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 069B92054EF
-	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 16:08:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4B9F202C49;
+	Fri, 14 Mar 2025 16:08:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741968507; cv=none; b=HFKWy2mVqWO8BW0R1ipjOGIRmqIl0L5L3wxs72+rD/cjNEv3CQjo496JC3rWJx9/DMV57l8ACCwkbK7salwfxUvd1i+Xs03VD3vfsHkEudnmOMzJOlODwKXLjfOzS/g3xt+f123Kpf5xoDOeor4TCZCS5Qdjoc3+uUVvFboUj+8=
+	t=1741968523; cv=none; b=TRozUtDC970tPPoccpyHeftudpYI52CJfHuaswNs2nshTI2ssMn810NQeIOpfyW5erVv24Nzv+sfCrChWfbZ4sYjKo93Tbdc40ZnHmzFegCBQbKklh3OaR+rZx9/PSTL4bdo/LE1djZh48SD+uik0S2IFCZ4KY6HVM6nTY1M4ew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741968507; c=relaxed/simple;
-	bh=Gdtm/ZFzFHmNDH+zYXX/URlTgeHJuw4bEaQLs3cOBkY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=siCurxux2WQSpyHFIxtCq5WChr7UcAcLFnASTPtYf0cGUUblKDT1Tcv1YdxfTz8a6XCio9+8Je2uZWfftswstb/U40TC821dE/tv0R8CsgaMGJ8dbVIG1i8iQWzFw9TzNgSrSm0IsDSsnpbwQ7EsTcx2G0YAGh2tw51yLxeOQxk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=fvn3jhaW; arc=none smtp.client-ip=95.215.58.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Fri, 14 Mar 2025 17:08:16 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1741968503;
+	s=arc-20240116; t=1741968523; c=relaxed/simple;
+	bh=ow/xM2BzJY15oFxKt4B5fKNXKa5WQC08GFensnmTqlk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ayxa0EgIUAIAvKM0AZbqAc+6ZTEMw9r/eRVRpZg/93+0azvVPeYOv+uqiVQgcqSbg+ZRIzBQSDFp0FwAXgnB/iknqCykalp37BBmEzNGIjoPbrDoIadc7eFimvueX0sk4u/fiwmCrZPghXbG1hf9dlufsRLa9seMRLuXIaKTttk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ZEg4Jipu; arc=none smtp.client-ip=217.70.183.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 8623744287;
+	Fri, 14 Mar 2025 16:08:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1741968513;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=b6F73qFo7dhlEvHBdRvalkfpkuBt+veVvf8M0VIHnfg=;
-	b=fvn3jhaWGCUIhKZ8Bw+Hxv7I1K00R3L7Fm27ApIu9GJjsQvNf1MlMoV+jOY6BKlkNgwGa8
-	wXpu7caTy06VAt+6BS3IGCjhewNy6eXJbIjulDaz7wf98uZEl2YscAIZd2+iDJpXCoR2Z3
-	GUnBxNMdtvGj0eXba7Aiy9ujMbbxP/A=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Richard Leitner <richard.leitner@linux.dev>
-To: Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: Dave Stevenson <dave.stevenson@raspberrypi.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-leds@vger.kernel.org
-Subject: Re: [PATCH v2 1/8] media: v4l: ctrls: add a control for flash/strobe
- duration
-Message-ID: <3dkwhfqxjhu3w4hpcl4gfsi22kwauo6s5urxrorezaw323yygq@nujmlkie5rpd>
-References: <20250314-ov9282-flash-strobe-v2-0-14d7a281342d@linux.dev>
- <20250314-ov9282-flash-strobe-v2-1-14d7a281342d@linux.dev>
- <Z9P01zU_Kg0U62wa@kekkonen.localdomain>
- <bx4p2hycva2rqywgglqluus6o7jbmfa2jjbc4k5d6aw6wsfkxd@zrtckmwtphuq>
- <Z9QwT7n7D09BEfqa@kekkonen.localdomain>
+	bh=Bc5lGmMpmWaulKCgFmVYIGp/S0/wgDgZkGe6mPR+/0w=;
+	b=ZEg4Jipu4DRz6VRl88DhD8Pbqq2RVPR4SJqaKqAGCMWDDtk0SPmWJWpzRl5v55zdrTgJyF
+	PG9Dm9yyQcFXRFhGD6NvHNrAOPaxlZD/1IeNhA5aj/mYVR2ZJHMgAC05z70rAvPGCaHWDx
+	pQvu/ESRIT2rPtl/glUZwLJ25qgX/jYv/Itqe+s+Sp4PwAQGB5agKr6tR9adFOYTCb88jE
+	0cMGwZeQNPHh0QGxkV0cd9zEADQuRK4npdhppBsfRMygbQpOue50xkxIJHUrbxGQ1D1i7X
+	4uYYKMGSUKXllUfwcnPZdVB871JKGDol68DQ5i9FN2NEys8CHSESOYMsOIE99w==
+Message-ID: <a8c7e353-2e5f-4cdc-99fb-0937b8121b38@bootlin.com>
+Date: Fri, 14 Mar 2025 17:08:31 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z9QwT7n7D09BEfqa@kekkonen.localdomain>
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 00/13] selftests/bpf: Integrate test_xsk.c to test_progs
+ framework
+To: Maciej Fijalkowski <maciej.fijalkowski@intel.com>
+Cc: =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>,
+ Magnus Karlsson <magnus.karlsson@intel.com>,
+ Jonathan Lemon <jonathan.lemon@gmail.com>,
+ Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
+ Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau
+ <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>,
+ Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, Mykola Lysenko <mykolal@fb.com>,
+ Shuah Khan <shuah@kernel.org>, "David S. Miller" <davem@davemloft.net>,
+ Jakub Kicinski <kuba@kernel.org>, Jesper Dangaard Brouer <hawk@kernel.org>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ Alexis Lothore <alexis.lothore@bootlin.com>, netdev@vger.kernel.org,
+ bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250313-xsk-v1-0-7374729a93b9@bootlin.com>
+ <Z9RPNzJtBgheiTeS@boxer>
+Content-Language: en-US
+From: Bastien Curutchet <bastien.curutchet@bootlin.com>
+In-Reply-To: <Z9RPNzJtBgheiTeS@boxer>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddufeduvdejucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthejredttddvjeenucfhrhhomhepuegrshhtihgvnhcuvehurhhuthgthhgvthcuoegsrghsthhivghnrdgtuhhruhhttghhvghtsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpefhheeggfetffekheevuedvkedvvdeufeegjeevgfelveevveetffevfefgheeijeenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghloheplgduledvrdduieekrddtrddugegnpdhmrghilhhfrhhomhepsggrshhtihgvnhdrtghurhhuthgthhgvthessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepvdejpdhrtghpthhtohepmhgrtghivghjrdhfihhjrghlkhhofihskhhisehinhhtvghlrdgtohhmpdhrtghpthhtohepsghjohhrnheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepmhgrghhnuhhsrdhkrghrlhhsshhonhesihhnthgvlhdrtghomhdprhgtphhtthhopehjohhnrghthhgrnhdrlhgvmhhonhesghhmrghilhdrtghomhdprhgtphhtthhop
+ egrshhtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegurghnihgvlhesihhoghgvrghrsghogidrnhgvthdprhgtphhtthhopegrnhgurhhiiheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepmhgrrhhtihhnrdhlrghusehlihhnuhigrdguvghv
+X-GND-Sasl: bastien.curutchet@bootlin.com
 
-Hi Sakari,
+Hi Maciej
 
-On Fri, Mar 14, 2025 at 01:34:07PM +0000, Sakari Ailus wrote:
-> Hi Richard,
+On 3/14/25 4:45 PM, Maciej Fijalkowski wrote:
+> On Thu, Mar 13, 2025 at 11:47:58AM +0100, Bastien Curutchet (eBPF Foundation) wrote:
+>> Hi all,
+>>
+>> This patch series continues the work to migrate the script tests into
+>> prog_tests.
 > 
-> On Fri, Mar 14, 2025 at 11:25:09AM +0100, Richard Leitner wrote:
-> > On Fri, Mar 14, 2025 at 09:20:23AM +0000, Sakari Ailus wrote:
-[...]
-> > > On Fri, Mar 14, 2025 at 09:49:55AM +0100, Richard Leitner wrote:
-> > > > Add a control V4L2_CID_FLASH_DURATION to set the duration of a
-> > > > flash/strobe pulse. This is different to the V4L2_CID_FLASH_TIMEOUT
-> > > > control, as the timeout defines a limit after which the flash is
-> > > > "forcefully" turned off again.
-> > > > 
-> > > > On the other hand the new V4L2_CID_FLASH_DURATION is the desired length
-> > > > of the flash/strobe pulse
-> > > 
-> > > What's the actual difference between the two? To me they appear the same,
-> > > just expressed in a different way.
-> > 
-> > According to FLASH_TIMEOUT documentation:
-> > 
-> > 	Hardware timeout for flash. The flash strobe is stopped after this
-> > 	period of time has passed from the start of the strobe. [1]
-> > 
-> > This is a little bit unspecific, but as also discussed with Dave [2]
-> > according to the documentation of V4L2_FLASH_FAULT_TIMEOUT it seems to
-> > be targeted at providing a "real timeout" control, not settings the
-> > desired duration:
-> > 
-> > 	The flash strobe was still on when the timeout set by the user
-> > 	--- V4L2_CID_FLASH_TIMEOUT control --- has expired. Not all flash
-> > 	controllers may set this in all such conditions. [1]
-> > 
-> > If I understood that wrong, I'm also happy to use FLASH_TIMEOUT for this
-> > use-case. But tbh I think FLASH_DURATION would be more specific.
-> > 
-> > As this still seems unclear: Should the documentation be
-> > changed/rewritten if we stick with the FLASH_DURATION approach?
-> > 
-> > [1] https://www.kernel.org/doc/html/latest/userspace-api/media/v4l/ext-ctrls-flash.html
-> > [2] https://lore.kernel.org/lkml/CAPY8ntB8i4OyUWAL8k899yUd5QsRifJXiOfWXKceGQ7TNZ4OUw@mail.gmail.com/
+> Hi Bastien,
 > 
-> Right, I think I can see what you're after.
+> the sole purpose of this is a cleanup of some sort?
 > 
-> How does the sensor determine when to start the strobe, i.e. on which frame
-> and which part of the exposure of that frame?
 
-In general I think it's not part of V4L2_CID_FLASH_DURATION to take any
-assumptions on that, as that's sensor/flash specific IMHO.
+The goal is to have more tests run by the CI and fewer standalone 
+scripts so that regressions are spotted more efficiently.
 
-In case of the ov9282 sensor driver (which is also part of this series)
-the strobe is started synchronously with the exposure on each frame
-start.
-Being even more specific on the ov9292, the sensor also offers the
-possibility to shift that strobe start in in either direction using a
-register. Implementing this "flash shift" (as it's called in the sensors
-datasheet) is currently under test on my side. I will likely send a
-series for that in the coming weeks.
-
-> > > > Signed-off-by: Richard Leitner <richard.leitner@linux.dev>
-> > > > ---
-> > > >  drivers/media/v4l2-core/v4l2-ctrls-defs.c | 1 +
-> > > >  include/uapi/linux/v4l2-controls.h        | 1 +
-> > > >  2 files changed, 2 insertions(+)
-[...]
+>>
+>> The test_xsk.sh script tests lots of AF_XDP use cases. The tests it uses
+>> are defined in xksxceiver.c. As this script is used to test real
+>> hardware, the goal here is to keep it as is and only integrate the
+>> tests on veth peers into the test_progs framework.
 > 
-> -- 
-> Regards,
+> We're doubling the functionality for no additional benefits? Or the
+> benefit of this set would be the veth xsk tests execution within BPF CI?
 > 
-> Sakari Ailus
 
-Thanks!
-Richard
+Yes the benefit would be the tests execution within BPF CI.
+
+>> Three tests are flaky on s390 so they won't be integrated to test_progs
+>> yet (I'm currently trying to make them more robust).
+>>
+>> PATCH 1 & 2 fix some small issues xskxceiver.c
+>> PATCH 3 to 9 rework the xskxceiver to ease the integration in the
+>> test_progs framework. Two main points are addressed in them :
+>>   - wrap kselftest calls behind macros to ease their replacement later
+>>   - handle all errors to release resources instead of calling exit() when
+>>     any error occurs.
+>> PATCH 10 extracts test_xsk[.c/.h] from xskxceiver[.c/.h] to make the
+>> tests available to test_progs
+>> PATCH 11 enables kselftest de-activation
+>> PATCH 12 isolates the flaky tests
+>> PATCH 13 integrate the non-flaky tests to the test_progs framework
+> 
+> I didn't bisect but this set breaks the HW tests for me which *is* what we
+> care about. I'll dig onto that on monday and will get back to you.
+> 
+
+Ok, thank you. Can you tell me what hardware you use please ? If by any 
+chance I have the same HW somewhere in my office, I can try to reproduce 
+on my side.
+
+
+Best regards,
+Bastien
+
 
