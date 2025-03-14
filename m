@@ -1,157 +1,172 @@
-Return-Path: <linux-kernel+bounces-561072-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-561074-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21FABA60D3C
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 10:27:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82565A60D43
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 10:27:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5800A46096B
-	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 09:27:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5624719C5E97
+	for <lists+linux-kernel@lfdr.de>; Fri, 14 Mar 2025 09:27:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43B4B1EEA4E;
-	Fri, 14 Mar 2025 09:27:11 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23BEC1EF09A;
+	Fri, 14 Mar 2025 09:27:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="SnWVPt2a"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E99AE1C861D;
-	Fri, 14 Mar 2025 09:27:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0CC01E633C
+	for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 09:27:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741944430; cv=none; b=dIhz7GSeoJ9fWJPYCXSzAS9eEB6xZuDBhClLag+YhqYQ0hDZBqwk0N9moUgD2PIZEzFNZj1gEq9c7LScZUQ598vM7DXPuhcXUJsIrU9a9uHSbtmHuwyGgTcXc1dZA4ZbHtpEw1n98Wig8CqzbRn4bKTH5g2EUmtlF+TIMCW+7QM=
+	t=1741944459; cv=none; b=SmQUh/lAmXjTv4mt30lPCdR8z5QslYtmxRh18zjeFJ1uEVOyPnlNUTh/HqJapDPJ6EZmeDq6uxDAOXbv5P+rKiTWoITnSf70X6T+zAmqWip90GZS4NGaEyhBux3mWOiH+XUbq8SUqJNPABoC9LAELWUGxTid3bI+s0tcxdb7AZw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741944430; c=relaxed/simple;
-	bh=PqUbDXVDaiUum+Dew0MC5ziN5yYPu9hhy423HzIFiWY=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CpH3ng9OjSGhIUyBVPk4RrPwi3/dFN01eRzl/X9FisMb/vlhrgz2yeiewhcoQuveBQkqN1qzZnf/MQ1oPdkmuojTWlPRR03KqiwvBRP7W5daBdCsfbW2cH0AlpjkiVIWMkfoTz5tZk4vEezlz1LQ5foFCh37hTHBsLvfnqoNZpA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4ZDf7b3c1Yz6J7qr;
-	Fri, 14 Mar 2025 17:23:55 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 7F87C1400CD;
-	Fri, 14 Mar 2025 17:27:06 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 14 Mar
- 2025 10:27:05 +0100
-Date: Fri, 14 Mar 2025 09:27:04 +0000
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: Zaid Alali <zaidal@os.amperecomputing.com>
-CC: <rafael@kernel.org>, <lenb@kernel.org>, <james.morse@arm.com>,
-	<tony.luck@intel.com>, <bp@alien8.de>, <robert.moore@intel.com>,
-	<dan.j.williams@intel.com>, <Benjamin.Cheatham@amd.com>,
-	<Avadhut.Naik@amd.com>, <viro@zeniv.linux.org.uk>, <arnd@arndb.de>,
-	<ira.weiny@intel.com>, <dave.jiang@intel.com>,
-	<sthanneeru.opensrc@micron.com>, <linux-acpi@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <acpica-devel@lists.linux.dev>
-Subject: Re: [PATCH v4 6/9] ACPI: APEI: EINJ: Add einjv2 extension struct
-Message-ID: <20250314092704.00006ffe@huawei.com>
-In-Reply-To: <Z9M6ryapTGlBWA3Q@zaid-VirtualBox>
-References: <20250306234810.75511-1-zaidal@os.amperecomputing.com>
-	<20250306234810.75511-7-zaidal@os.amperecomputing.com>
-	<20250313094230.00004696@huawei.com>
-	<Z9M6ryapTGlBWA3Q@zaid-VirtualBox>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1741944459; c=relaxed/simple;
+	bh=jQDsQqTY0ANjlYPW3RrZ5yBUcoXhcrCjKyE6V9LyOFo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KA4b/npCRcJDjx2NZJca4OZtr+lPa3Q9gEYhCek9F7JR5TCBp/Qw5CxlC/Gd01LKmb4x5oppw2h8bS6IVYLC+j0mSNhZcFEypAdWnMZnOD5Vz8h8u+aormgiFxfDjlxpxTtvBxAfQGRhNiHS5rPJn9f9t4+WLR5LypVUlvPDFqM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=SnWVPt2a; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52DNPn0w031989;
+	Fri, 14 Mar 2025 09:27:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=zaxcah
+	9quOMJZnravjPwqR6x4fcDjYrPpq1b73P4XP4=; b=SnWVPt2a+xZd9eS8IiCLy3
+	CEsjfIgPxBCVrdag18O2vvXXTU64VgKWBKBzl7PZYdPQboQd91Id8CKThpKYIpRU
+	X/fymQS3sPiZM7UeGMpqgJ2LlZD8sO4VvTg91bDfm/LreW2IudzYYKakDXztEb7O
+	AEIyxs91mPHPCZ/BRPiC4xeEpscPPhRFCtAiizAubjWY19orkPlQTAEY59IKQ45G
+	2D93vCDvg53sznKMwq2vkAQ0ilNXQ871yqGjJJ3e4bfuj1ti38O7HPEZXWh14mao
+	2eEXxnaioJ9cbrzgvR70e3Hut0HcTsIOgSMKszmWb2orSaskPVVD+VqIvDdoLeRg
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45byd8wes1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 14 Mar 2025 09:27:22 +0000 (GMT)
+Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 52E9RLr6027634;
+	Fri, 14 Mar 2025 09:27:21 GMT
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45byd8werx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 14 Mar 2025 09:27:21 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52E8F9aD026047;
+	Fri, 14 Mar 2025 09:27:20 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 45atspp96d-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 14 Mar 2025 09:27:20 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52E9RGKA17301806
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 14 Mar 2025 09:27:17 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id E033C20040;
+	Fri, 14 Mar 2025 09:27:16 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 239AE2004E;
+	Fri, 14 Mar 2025 09:27:14 +0000 (GMT)
+Received: from [9.39.22.126] (unknown [9.39.22.126])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Fri, 14 Mar 2025 09:27:13 +0000 (GMT)
+Message-ID: <333198fd-e028-42cb-8847-bd5ddd2a623b@linux.ibm.com>
+Date: Fri, 14 Mar 2025 14:57:13 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/6] powerpc: book3s: vas: use lock guard for mutex
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: maddy@linux.ibm.com, linuxppc-dev@lists.ozlabs.org, npiggin@gmail.com,
+        christophe.leroy@csgroup.eu, mpe@ellerman.id.au, fbarrat@linux.ibm.com,
+        ajd@linux.ibm.com, mahesh@linux.ibm.com, oohall@gmail.com,
+        hbathini@linux.ibm.com, dhowells@redhat.com, haren@linux.ibm.com,
+        linux-kernel@vger.kernel.org
+References: <20250314054544.1998928-1-sshegde@linux.ibm.com>
+ <20250314054544.1998928-5-sshegde@linux.ibm.com>
+ <20250314082527.GU5880@noisy.programming.kicks-ass.net>
+From: Shrikanth Hegde <sshegde@linux.ibm.com>
+Content-Language: en-US
+In-Reply-To: <20250314082527.GU5880@noisy.programming.kicks-ass.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100006.china.huawei.com (7.191.160.224) To
- frapeml500008.china.huawei.com (7.182.85.71)
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: bhqGI1arLrSR6zhLyvrGoDlQ2tlLnGbB
+X-Proofpoint-ORIG-GUID: Pq9BzbBph-GplGKCkLgSvvH7E4Ys25bm
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-14_03,2025-03-13_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 spamscore=0
+ malwarescore=0 impostorscore=0 priorityscore=1501 bulkscore=0 phishscore=0
+ lowpriorityscore=0 suspectscore=0 mlxlogscore=896 clxscore=1015 mlxscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503140075
 
-On Thu, 13 Mar 2025 13:06:07 -0700
-Zaid Alali <zaidal@os.amperecomputing.com> wrote:
 
-> On Thu, Mar 13, 2025 at 09:42:30AM +0000, Jonathan Cameron wrote:
-> > On Thu,  6 Mar 2025 15:48:07 -0800
-> > Zaid Alali <zaidal@os.amperecomputing.com> wrote:
-> >   
-> > > Add einjv2 extension struct and EINJv2 error types to prepare
-> > > the driver for EINJv2 support. ACPI specifications(1) enables
-> > > EINJv2 by extending set_error_type_with_address struct.
-> > > 
-> > > (1) https://bugzilla.tianocore.org/show_bug.cgi?id=4615  
-> > Still seems to be down.
-> > Also, we have tag for this.  
-> > > 
-> > > Signed-off-by: Zaid Alali <zaidal@os.amperecomputing.com>  
-> > 
-> > Link: https://bugzilla.tianocore.org/show_bug.cgi?id=4615 # [1]
-> > 
-> > 
-> > One additional request inline.
-> > Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>  
-> > > ---
-> > >  drivers/acpi/apei/einj-core.c | 23 +++++++++++++++++++++++
-> > >  1 file changed, 23 insertions(+)
-> > > 
-> > > diff --git a/drivers/acpi/apei/einj-core.c b/drivers/acpi/apei/einj-core.c
-> > > index aee9a7b17313..32b8d102f399 100644
-> > > --- a/drivers/acpi/apei/einj-core.c
-> > > +++ b/drivers/acpi/apei/einj-core.c
-> > > @@ -50,6 +50,28 @@
-> > >   */
-> > >  static int acpi5;
-> > >  
-> > > +struct syndrome_array {
-> > > +	union {
-> > > +		u32	acpi_id;
-> > > +		u32	device_id;
-> > > +		u32	pcie_sbdf;
-> > > +		u8	vendor_id[16];
-> > > +	} comp_id;
-> > > +	union {
-> > > +		u32	proc_synd;
-> > > +		u32	mem_synd;
-> > > +		u32	pcie_synd;
-> > > +		u8	vendor_synd[16];
-> > > +	} comp_synd;
-> > > +};
-> > > +
-> > > +struct einjv2_extension_struct {
-> > > +	u32 length;
-> > > +	u16 revision;
-> > > +	u16 component_arr_count;
-> > > +	struct syndrome_array component_arr[];  
-> > 
-> > __counted_by(component_arr_count);
-> > should be fine and marking these is always good to do in
-> > new code (and old code if you have time!)  
+
+On 3/14/25 13:55, Peter Zijlstra wrote:
+> On Fri, Mar 14, 2025 at 11:15:42AM +0530, Shrikanth Hegde wrote:
+>> use guard(mutex) for scope based resource management of mutex.
+>> This would make the code simpler and easier to maintain.
+>>
+>> More details on lock guards can be found at
+>> https://lore.kernel.org/all/20230612093537.614161713@infradead.org/T/#u
+>>
+>> There is also an example of using scoped_guard.
+>>
+>> Signed-off-by: Shrikanth Hegde <sshegde@linux.ibm.com>
+>> ---
+>>   arch/powerpc/platforms/book3s/vas-api.c | 19 ++++++-------------
+>>   1 file changed, 6 insertions(+), 13 deletions(-)
+>>
+>> diff --git a/arch/powerpc/platforms/book3s/vas-api.c b/arch/powerpc/platforms/book3s/vas-api.c
+>> index 0b6365d85d11..eb1a97271afb 100644
+>> --- a/arch/powerpc/platforms/book3s/vas-api.c
+>> +++ b/arch/powerpc/platforms/book3s/vas-api.c
+>> @@ -425,7 +425,7 @@ static vm_fault_t vas_mmap_fault(struct vm_fault *vmf)
+>>   		return VM_FAULT_SIGBUS;
+>>   	}
+>>   
+>> -	mutex_lock(&txwin->task_ref.mmap_mutex);
+>> +	guard(mutex)(&txwin->task_ref.mmap_mutex);
+>>   	/*
+>>   	 * The window may be inactive due to lost credit (Ex: core
+>>   	 * removal with DLPAR). If the window is active again when
+>> @@ -437,11 +437,9 @@ static vm_fault_t vas_mmap_fault(struct vm_fault *vmf)
+>>   		if (paste_addr) {
+>>   			fault = vmf_insert_pfn(vma, vma->vm_start,
+>>   					(paste_addr >> PAGE_SHIFT));
+>> -			mutex_unlock(&txwin->task_ref.mmap_mutex);
+>>   			return fault;
+>>   		}
+>>   	}
+>> -	mutex_unlock(&txwin->task_ref.mmap_mutex);
 > 
-> I am not sure if __counted_by is appropriate here. Please note that component_arr_count
-> is set by the user and does NOT represent the size of the component_arr[].
+> I had to open up this file to check, but this seems incorrect since you
+> now also run do_fail_paste() with the lock held, where previously you
+> did not.
+> 
 
-Does it represent the length that should ever be accessed (which is what
-the __counted_by() stuff will help us find bugs around).
+Yes. Got it. let me use scoped_guard for it as well. There is get_user 
+and other things in the fail parse and having it with mutex will not be 
+good.
 
-If not that wins an award for misleading naming :)
+I went through the rest of the patches too. It is mostly return after 
+mutex.
 
-Jonathan
+Only in Patch 5/6 there is additional debug statement. Let me put a 
+comment there.
 
-
-> > 
-> >   
-> > > +};
-> > > +
-> > >  struct set_error_type_with_address {
-> > >  	u32	type;
-> > >  	u32	vendor_extension;
-> > > @@ -58,6 +80,7 @@ struct set_error_type_with_address {
-> > >  	u64	memory_address;
-> > >  	u64	memory_address_range;
-> > >  	u32	pcie_sbdf;
-> > > +	struct	einjv2_extension_struct einjv2_struct;
-> > >  };
-> > >  enum {
-> > >  	SETWA_FLAGS_APICID = 1,  
-> >   
+> 
+>>   	/*
+>>   	 * Received this fault due to closing the actual window.
 
 
