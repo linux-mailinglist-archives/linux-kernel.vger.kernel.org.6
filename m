@@ -1,237 +1,123 @@
-Return-Path: <linux-kernel+bounces-562617-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562625-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B62D1A62E8E
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 15:58:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED1D6A62ECB
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 16:00:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E487189B4AB
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 14:58:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0BF723BC5C9
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 15:00:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEF46202F62;
-	Sat, 15 Mar 2025 14:57:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FB792040B2;
+	Sat, 15 Mar 2025 14:58:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b/s6USe4"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ThWrk6DE"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2BD91B4234;
-	Sat, 15 Mar 2025 14:57:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D30E22040B3;
+	Sat, 15 Mar 2025 14:58:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742050674; cv=none; b=GRB6WmcbF5ox1DJVtVmmlL+2DRUJNcSD+7f+KoX1ULeydmSPF4TcDAb63CRgMs/dNiqtmtd7U+0Ci++p5112dvvfZ+PWWxBqo0Vs1hPx1yImKrH2n746wfHZ4/IMN1dAwHnB7FtDAxdFyztLHKDY1/MhljKnnHJfm94dhGzHyLc=
+	t=1742050718; cv=none; b=nqceFQveh2job0vF4FcIl6Xw4I15KNzVgSnmxp11DIptgnBO2gZIHVcTn+nDHmEGs7J/um/9US4tU+M4O3k/OAG+6G8NcYCiAJsfqXue5FSoPE7ITdppcVZs8gXNvKY+pyl87FLTGxWzIKEYFORWzrurm4XhxAnSR7Zjk5TXnto=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742050674; c=relaxed/simple;
-	bh=VAGcEkTA21upuXvwr1kQ3PnByIORGCDbW++j3x8AWAs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CtnJ8BCDcm3AEAAW5RqaPvvqL1vktOHOG3aDkd5bK9uJEMRxsH2QwVbzhtXJJeIG8GnStMurkFVNIlcFMsKuMs9+mj9S74pp+zO0CEBja9fvbhi2m4L3QIuVhLiQNuw0J0nPadXP7JkYgHLtnf42Z7dVT45kpGZ3gJHEc1DPVUc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b/s6USe4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5AED6C4AF09;
-	Sat, 15 Mar 2025 14:57:53 +0000 (UTC)
+	s=arc-20240116; t=1742050718; c=relaxed/simple;
+	bh=RAeAVhJmU92U3yF+8U1vMhCGpToAH8k8bD3rXfIhF4A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZIRjLgR37plCu90HO4cjkJMDtuv9GIuH+a5R3bb/MwH1xbQGEO7l8nLd+tv23QVfYP0ChWtQWgpEy9RnnM9G160/vdeoGr8tgmOnFCNvLvP1HskeKa7Iek6c4TBy93zolZ9hxJiObHmmWYHbf93OtXuKc6sflDKJKKMMzUtEHeg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ThWrk6DE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B560C4CEE5;
+	Sat, 15 Mar 2025 14:58:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742050673;
-	bh=VAGcEkTA21upuXvwr1kQ3PnByIORGCDbW++j3x8AWAs=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=b/s6USe4OK1g6LB5sM8h4Q9/0T0IB568pRk6PYnh1BksfPxI7Gup0YMkIqpL1zr0f
-	 3NFxJx89KTKhl2MkV/tTxDIvHovLc0hKByDQrQRU4AjAI92FvSsBUUkPNZ7xfodOiA
-	 79hZr5h4sz2DXBXy9WKDUDvud0fvGDylDdqBq36zxF0CNeYJ8UMExUqsLxQhNHfAdz
-	 Hnzn2LBxR0f9kj7UPtYpwfIs7T6pDd0ILy2tSp9QlufUO2pGM7AL9vFxnpKyU4QgLK
-	 lT3j8BzxALSOeRT2dQ7n4pEtgWRPcJ2ZzdOi8LtexqwOQbp0cQuuNp0V2igjL+L0mM
-	 M0AXemjOgdOrg==
-Received: by mail-oi1-f177.google.com with SMTP id 5614622812f47-3f3f4890596so1707963b6e.2;
-        Sat, 15 Mar 2025 07:57:53 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWLfWcN6Dx7V+jwGcvxKVmFRgb70EhIMDRMvImnRqE6H5GvnKlANXxemDdAYFJP0KISJs8/hxe8fX5gnCk=@vger.kernel.org, AJvYcCXfjRIbOKnZ2ZuqLP47spoDjhIK+NDuJAmKKfs69u/5nu7i0UL9ezWyCEYr+VfQuvyjPAf+8YQ/ETs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxO5IS/s+5xzixnyARxJQSYOZdrVjVEhWV5vB1AjipTWtGZv8MY
-	WiI6oceJ6QpU7Hho1YYq4doPRUSGTiLU7ydRvAxU1RhezCiswdj2FAe2yjud+puNfvF7kfQzp+g
-	jd1W5HahrMZcnPIvxt3vK6+ggyvo=
-X-Google-Smtp-Source: AGHT+IFtXlaQXRcbAUeBvfSA61J2gCJBOg1KbzrYBRTUvUPkIHmIZSDLtXFewyEXlGxqdUuAtBKd4BcGlUCIQ8LflRc=
-X-Received: by 2002:a05:6808:1828:b0:3fa:53b5:6f87 with SMTP id
- 5614622812f47-3fdf04592c0mr3568765b6e.34.1742050672591; Sat, 15 Mar 2025
- 07:57:52 -0700 (PDT)
+	s=k20201202; t=1742050718;
+	bh=RAeAVhJmU92U3yF+8U1vMhCGpToAH8k8bD3rXfIhF4A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ThWrk6DExab+UNESD77yz99cy3ckjADVyJxnz2jMAh9lALCsgIHqc0F/d+TFWvRxA
+	 1OfEtqMhMnNpdSDd455c3xHLHgxc4jLVNlrhw0jwa9gMWgwx6J5U8G/9pTI17iIP8h
+	 AYZZZbz38Z+aNWxtJKmdPAcappLSA9xZx2Xvj3JnmJ50VlqRO371Uz8EK8StzoI6D9
+	 EN7PL8h059EjEFYBnAy28eTaFnk/LJxAhMNoEhDB0F8KaKyzMRVLuaJnBaCZkMfmJp
+	 YrS1pvMjuTpyxtsG747d5BjAP4FdeTnBWSvA8tsXbtYAMYKir5crpPBVdiIj2tYQSl
+	 FYO+CkdJqmqJw==
+Date: Sat, 15 Mar 2025 15:58:31 +0100
+From: Danilo Krummrich <dakr@kernel.org>
+To: Andrew Ballance <andrewjballance@gmail.com>
+Cc: airlied@gmail.com, simona@ffwll.ch, maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org, tzimmermann@suse.de, corbet@lwn.net,
+	ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com,
+	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
+	a.hindborg@kernel.org, aliceryhl@google.com, tmgross@umich.edu,
+	acourbot@nvidia.com, nouveau@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH 2/3] rust: alloc: add Vec::resize method
+Message-ID: <Z9WVl9ExWznVAhtY@cassiopeiae>
+References: <20250315024235.5282-1-andrewjballance@gmail.com>
+ <20250315024235.5282-3-andrewjballance@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <10629535.nUPlyArG6x@rjwysocki.net> <CAGETcx8VmzU9xy39=_QAQ0pf5fZY=EbGOKrdy0_wLEW1pQ2oKw@mail.gmail.com>
-In-Reply-To: <CAGETcx8VmzU9xy39=_QAQ0pf5fZY=EbGOKrdy0_wLEW1pQ2oKw@mail.gmail.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Sat, 15 Mar 2025 15:57:41 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0gXG+0CgBZTcxzenxHO-ah3YwFaQm6GHCeuyZT9CR=-zg@mail.gmail.com>
-X-Gm-Features: AQ5f1Jp0w9Tt0hvqJR7f0AX3YESUHYoYmItiba8gNUcvlIrCClt9FmqhkoQwQM0
-Message-ID: <CAJZ5v0gXG+0CgBZTcxzenxHO-ah3YwFaQm6GHCeuyZT9CR=-zg@mail.gmail.com>
-Subject: Re: [PATCH v3 0/5] PM: sleep: Improvements of async suspend and
- resume of devices
-To: Saravana Kannan <saravanak@google.com>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux PM <linux-pm@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, Alan Stern <stern@rowland.harvard.edu>, 
-	Ulf Hansson <ulf.hansson@linaro.org>, Johan Hovold <johan@kernel.org>, 
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Jon Hunter <jonathanh@nvidia.com>
-Content-Type: multipart/mixed; boundary="000000000000857917063062c7f4"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250315024235.5282-3-andrewjballance@gmail.com>
 
---000000000000857917063062c7f4
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+On Fri, Mar 14, 2025 at 09:42:34PM -0500, Andrew Ballance wrote:
+> implemnts the equivalent of the rust std's Vec::resize
+> on the kernel's Vec type.
 
-On Fri, Mar 14, 2025 at 10:06=E2=80=AFPM Saravana Kannan <saravanak@google.=
-com> wrote:
->
-> On Fri, Mar 14, 2025 at 6:24=E2=80=AFAM Rafael J. Wysocki <rjw@rjwysocki.=
-net> wrote:
-> >
-> > Hi Everyone,
-> >
-> > This is a new iteration of the async suspend/resume improvements work:
-> >
-> > https://lore.kernel.org/linux-pm/1915694.tdWV9SEqCh@rjwysocki.net/
-> >
-> > which includes some rework and fixes of the patches in the series linke=
-d
-> > above.  The most significant differences are splitting the second patch
-> > into two patches and adding a change to treat consumers like children
-> > during resume.
-> >
-> > This new iteration is based on linux-pm.git/linux-next and on the recen=
-t
-> > fix related to direct-complete:
-> >
-> > https://lore.kernel.org/linux-pm/12627587.O9o76ZdvQC@rjwysocki.net/
-> >
-> > The overall idea is still to start async processing for devices that ha=
-ve
-> > at least some dependencies met, but not necessarily all of them, to avo=
-id
-> > overhead related to queuing too many async work items that will have to
-> > wait for the processing of other devices before they can make progress.
-> >
-> > Patch [1/5] does this in all resume phases, but it just takes children
-> > into account (that is, async processing is started upfront for devices
-> > without parents and then, after resuming each device, it is started for
-> > the device's children).
-> >
-> > Patches [2/5] does this in the suspend phase of system suspend and only
-> > takes parents into account (that is, async processing is started upfron=
-t
-> > for devices without any children and then, after suspending each device=
-,
-> > it is started for the device's parent).
-> >
-> > Patch [3/5] extends it to the "late" and "noirq" suspend phases.
-> >
-> > Patch [4/5] adds changes to treat suppliers like parents during suspend=
-.
-> > That is, async processing is started upfront for devices without any
-> > children or consumers and then, after suspending each device, it is
-> > started for the device's parent and suppliers.
-> >
-> > Patch [5/5] adds changes to treat consumers like children during resume=
-.
-> > That is, async processing is started upfront for devices without a pare=
-nt
-> > or any suppliers and then, after resuming each device, it is started fo=
-r
-> > the device's children and consumers.
-> >
-> > Preliminary test results from one sample system are below.
-> >
-> > "Baseline" is the linux-pm.git/testing branch, "Parent/child"
-> > is that branch with patches [1-3/5] applied and "Device links"
-> > is that branch with patches [1-5/5] applied.
-> >
-> > "s/r" means "regular" suspend/resume, noRPM is "late" suspend
-> > and "early" resume, and noIRQ means the "noirq" phases of
-> > suspend and resume, respectively.  The numbers are suspend
-> > and resume times for each phase, in milliseconds.
-> >
-> >          Baseline       Parent/child    Device links
-> >
-> >        Suspend Resume  Suspend Resume  Suspend Resume
-> >
-> > s/r    427     449     298     450     294     442
-> > noRPM  13      1       13      1       13      1
-> > noIRQ  31      25      28      24      28      26
-> >
-> > s/r    408     442     298     443     301     447
-> > noRPM  13      1       13      1       13      1
-> > noIRQ  32      25      30      25      28      25
-> >
-> > s/r    408     444     310     450     298     439
-> > noRPM  13      1       13      1       13      1
-> > noIRQ  31      24      31      26      31      24
-> >
-> > It clearly shows an improvement in the suspend path after
-> > applying patches [1-3/5], easily attributable to patch [2/5],
-> > and clear difference after updating the async processing of
-> > suppliers and consumers.
+Nit: It is preferred to use the imperative form, i.e. "Implement the equivalent
+[...]".
 
-A "no" is missing above, it should be "and no clear difference after
-updating ...".
+> 
+> Signed-off-by: Andrew Ballance <andrewjballance@gmail.com>
+> ---
+>  rust/kernel/alloc/kvec.rs | 25 +++++++++++++++++++++++++
+>  1 file changed, 25 insertions(+)
+> 
+> diff --git a/rust/kernel/alloc/kvec.rs b/rust/kernel/alloc/kvec.rs
+> index 75e9feebb81f..cbfef2e56f9c 100644
+> --- a/rust/kernel/alloc/kvec.rs
+> +++ b/rust/kernel/alloc/kvec.rs
+> @@ -554,6 +554,31 @@ pub fn from_elem(value: T, n: usize, flags: Flags) -> Result<Self, AllocError> {
+>  
+>          Ok(v)
+>      }
+> +
+> +    /// Resizes the [`Vec`] so that `len` is equal to `new_len`.
+> +    ///
+> +    /// If `new_len` is smaller than `len`, the `Vec` is [`Vec::truncate`]d.
+> +    /// If `new_len` is larger, each new slot is filled with clones of `value`.
+> +    ///
+> +    /// # Example
 
-Also, please find attached a text file with sample results from 3
-different systems (including the one above), not for drawing any
-conclusions (the number of samples is too low), but to illustrate what
-can happen.
+Nit: Please add an empty line after the heading.
 
-While both Dell XPS13 systems show a consistent improvement after
-applying the first three patches, everything else is essentially a
-wash (particularly on the desktop machine that seems to suspend and
-resume as fast as it gets already).
-
-> >
-> > Note that there are systems where resume times are shorter after
-> > patches [1-3/5] too, but more testing is necessary.
-> >
-> > I do realize that this code can be optimized further, but it is not
-> > particularly clear to me that any further optimizations would make
-> > a significant difference and the changes in this series are deep
-> > enough to do in one go.
->
-> Thanks for adding patches 4 and 5!
-
-No problem.
-
-> Let me try to test them early next week and compare your patches 1-3,
-> 1-5 and my series (which does additional checks to make sure
-> suppliers/consumers are done). I do about 100 suspend/resume runs for
-> each kernel, so please bear with me while I get it.
-
-Thanks and no worries, please take as much time as needed.  I will be
-traveling next week, so I'll be a bit slow to respond anyway.
-
-Since I've got a confirmation from internal testing (carried out on a
-much wider range of machines and much more extensively that I can do
-it myself) that patches [1-3/5] are overall improvement, I'm planning
-to queue them up during the 6.16 cycle and other improvements can be
-done on top of them, including patches [4-5/5].  I also think that
-adding explicit status tracking (if it turns out to make things faster
-measurably with respect to this series) on top of patches [4-5/5]
-would be rather straightforward.
-
---000000000000857917063062c7f4
-Content-Type: text/plain; charset="US-ASCII"; name="async-suspend-resume.txt"
-Content-Disposition: attachment; filename="async-suspend-resume.txt"
-Content-Transfer-Encoding: base64
-Content-ID: <f_m8abl42g0>
-X-Attachment-Id: f_m8abl42g0
-
-CUJhc2VsaW5lCQlQYXJlbnRzL2NoaWxkcmVuCURldmljZSBsaW5rcwoKCVN1c3BlbmQJUmVzdW1l
-CQlTdXNwZW5kCVJlc3VtZQkJU3VzcGVuZAlSZXN1bWUKCkRlbGwgWFBTMTMgOTM2MAoKcy9yCTQy
-Nwk0NDkJCTI5OAk0NTAJCTI5NAk0NDIKbm9SUE0JMTMJMQkJMTMJMQkJMTMJMQpub0lSUQkzMQky
-NQkJMjgJMjQJCTI4CTI2CgpzL3IJNDA4CTQ0MgkJMjk4CTQ0MwkJMzAxCTQ0Nwpub1JQTQkxMwkx
-CQkxMwkxCQkxMwkxCm5vSVJRCTMyCTI1CQkzMAkyNQkJMjgJMjUKCnMvcgk0MDgJNDQ0CQkzMTAJ
-NDUwCQkyOTgJNDM5Cm5vUlBNCTEzCTEJCTEzCTEJCTEzCTEKbm9JUlEJMzEJMjQJCTMxCTI2CQkz
-MQkyNAoKRGVsbCBYUFMxMyA5MzgwCgpzL3IJNDM5CTI4MwkJMzE4CTI5MAkJMzE5CTI5MApub1JQ
-TQkxNQkyCQkxNQkxCQkxNQkyCm5vSVJRCTE5OAkxNzY2CQkyMDIJMTc0MwkJMjA0CTE3NjYKCnMv
-cgk0MzkJMjgxCQkzMTgJMjgwCQkzMjAJMjgwCm5vUlBNCTE1CTIJCTE1CTEJCTE1CTEKbm9JUlEJ
-MTk5CTE3ODEJCTIwMwkxNzgzCQkyMDUJMTc3MAoKcy9yCTQ0MAkyNzkJCTMxOQkyODEJCTMyMAky
-ODMKbm9SUE0JMTQJMgkJMTUJMQkJMTUJMQpub0lSUQkxOTcJMTc3NwkJMjAyCTE3NjUJCTIwMwkx
-NzI0CgpDb2ZmZWUgTGFrZSBEZXNrdG9wCgpzL3IJMTM4CTM0NwkJMTMwCTM0NQkJMTMyCTM0NApu
-b1JQTQkxNQkyCQkyMAkyCQkxNQkyCm5vSVJRCTE1CTI1CQkyMwkyNQkJMTYJMjYKCnMvcgkxMzMJ
-MzQ1CQkxMjQJMzQzCQkxMzEJMzQ2Cm5vUlBNCTE0CTEJCTEzCTEJCTEzCTEKbm9JUlEJMTUJMjUJ
-CTE0CTI1CQkxNAkyNQoKcy9yCTEyNAkzNDMJCTEyNgkzNDUJCTEyOAkzNDUKbm9SUE0JMTMJMQkJ
-MTMJMQkJMTMJMQpub0lSUQkxNAkyNQkJMTQJMjUJCTE0CTI2Cg==
---000000000000857917063062c7f4--
+> +    /// ```
+> +    /// let mut v = kernel::kvec![1, 2, 3]?;
+> +    /// v.resize(1, 42, GFP_KERNEL)?;
+> +    /// assert_eq!(&v, &[1]);
+> +    ///
+> +    /// v.resize(3, 42, GFP_KERNEL)?;
+> +    /// assert_eq!(&v, &[1, 42, 42]);
+> +    ///
+> +    /// # Ok::<(), Error>(())
+> +    /// ```
+> +    pub fn resize(&mut self, new_len: usize, value: T, flags: Flags) -> Result<(), AllocError> {
+> +        if new_len > self.len() {
+> +            self.extend_with(new_len - self.len(), value, flags)
+> +        } else {
+> +            self.truncate(new_len);
+> +            Ok(())
+> +        }
+> +    }
+>  }
+>  
+>  impl<T, A> Drop for Vec<T, A>
+> -- 
+> 2.48.1
+> 
 
