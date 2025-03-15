@@ -1,106 +1,138 @@
-Return-Path: <linux-kernel+bounces-562733-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562734-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7041A63208
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 20:09:08 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A195A6320E
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 20:23:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA5033B0215
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 19:08:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D2DB16B924
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 19:23:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F0FF19AD70;
-	Sat, 15 Mar 2025 19:09:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BB4319CC36;
+	Sat, 15 Mar 2025 19:23:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="J7Ca6JSo"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="VWiCjKq3";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="W2gIlOn/"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C078B192D9A
-	for <linux-kernel@vger.kernel.org>; Sat, 15 Mar 2025 19:09:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8B1E199E8D;
+	Sat, 15 Mar 2025 19:23:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742065743; cv=none; b=dyzNEeNOjg50GxzufOS6nph6xRKuH3YK1PAzuiU6xvrSH0YIls1t9JZndvxzQ9oJtDYcQhE1W/pW72jPlBcwQ6Mo8bF/zqd9SCIJkDww3iOAtwJe9Oo2PcrNpgD2bGMf/TFyrpSJAN6YtGRTIKRGK+fiyzLKKziivv9QszHcMsE=
+	t=1742066612; cv=none; b=X6/NHRg6OnpxrqD4WJrrVPaw8BD8XsgqqgGgWpsIxQoleNOPoWuMNr2yUksUqB15sJeWI/290ucp0nh7UYklf5xa8/C43VtnryF4+WNPN7uEyQ8ahTSfXQZYekVDv1ifCZBUFJrzv6G4ZGp030qmeWhqrE99zxoWqqpf+/fEdqE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742065743; c=relaxed/simple;
-	bh=57IlnoCoyLChABV6cG0m5KbTyy1ckfvW8clNzV0da70=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=kn6KUbunCJt+b3cAuRVjTL7+UXVEiJejKwQad3FdDqNiAy0qRR5oBtDFXQG0KOL+PRg3QoQjVbpDkV/MkX+EorsrDekXzfl/RqYVQaQkK0SS51Wa8yBbQUTWhV/XzMDLH1ZzTqipElwVUB+G3dm9yBGN6FlA+kgfvKNxoy8ivXo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=J7Ca6JSo; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [127.0.0.1] ([76.133.66.138])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 52FJ83b83955090
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Sat, 15 Mar 2025 12:08:04 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 52FJ83b83955090
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025021701; t=1742065684;
-	bh=vDFAjiFlM+4DBIJ/4z6nRlQwnDaAdTjiJHI2yVg+WRU=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=J7Ca6JSoFztlouWk0xqap5ZmegDJGlsFhZJEs5pvLBMcvAsVzfLwa5H67HACcOvwF
-	 N21lD66gwEs81b7Fw98TEB+jqG1TA0t07D3innrue00A80VaTfzhJi9gzuSF3OUmnc
-	 kDdkQ1DvO5MLrwDkJiR3gjFmO0z0+8FqmZCXmY0sUCnHQfaqGJiiiJQ9vLdYDLwdyu
-	 RroQ05wIXcPo26q3/FBIbYlIokxUsOIzASY07sHmFbDTMm4Z7oBfUE1NmPVY0VOl5j
-	 0ttghkrqIl8hTgyHt4k3KCBTkDsWXc59oJ1ETFHzKi9vsFNUy8p6U9BbDDizkzl8sd
-	 yi1C+CpgllgMQ==
-Date: Sat, 15 Mar 2025 12:08:02 -0700
-From: "H. Peter Anvin" <hpa@zytor.com>
-To: Uros Bizjak <ubizjak@gmail.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-CC: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>
-Subject: Re: [PATCH] x86/asm: Use alternative_input() in amd_clear_divider()
-User-Agent: K-9 Mail for Android
-In-Reply-To: <20250314081453.565859-1-ubizjak@gmail.com>
-References: <20250314081453.565859-1-ubizjak@gmail.com>
-Message-ID: <B0BAC00B-2FF4-40C4-9034-68EAB51341B1@zytor.com>
+	s=arc-20240116; t=1742066612; c=relaxed/simple;
+	bh=V2GjZ+Wme+82fiO8P+KF6QQrrM8s9f4K2x2lxB+XAh4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=q46wqfdGo9u/wQpQ/HEewBXQNsLjKfRBn+QHCjmqdE99pyUOx3MOOrJvKv0aSEelCQCH5Z8ikFulg98SRNayggeFP4aUn25XF2kwBxRKC6Vi4OBv2W5mtYnq7v66ym040A/YYL9qhcUOzVK8N/ndIXELIXnrGAyuhBDCxnBcdUE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=VWiCjKq3; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=W2gIlOn/; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1742066602;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ed91DmtJ8+cC57ZeKK493iuWEPzr9T903d0c/Mk88VU=;
+	b=VWiCjKq3ZQ4oGq4eTFP610BP8zXYSNNgPdynEO5zj+Mp3sXVYb6ewL/vSSmBHovETU9a15
+	wr5NVQXv4YkQvdUgpeL+7rkmyepeG+IcOrv1SoMFr/SZkoU5o8NeZxuRHVQj7ShqlSIO6+
+	C73Dv35nqaaoBGibQk71jOip4k4OpD9dSfskYEv3yeEs9jYbv0Fq5r5GWRhomU+qv2QOvt
+	pvnULCkPzZNJoMyZW1Daj0NbhfOyLC2D3FgkJIkWLmIutG7azGy4/eB8PrW3nMw0LX3niF
+	0GKa0hv0aF2WF2lv7sqH5oOVFFTeOPmMfzQtq00HQOvr7BXl4/8VDJQEPgyv4A==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1742066602;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ed91DmtJ8+cC57ZeKK493iuWEPzr9T903d0c/Mk88VU=;
+	b=W2gIlOn/bbcHamghmjgEj7N+41Anp9ccjkAeg/2bDVF0bNNdSaDW+KWmppnhCbHHWunahS
+	FYotzAFoFlXPMFAA==
+To: John Stultz <jstultz@google.com>, LKML <linux-kernel@vger.kernel.org>
+Cc: John Stultz <jstultz@google.com>, Stephen Boyd <sboyd@kernel.org>,
+ Anna-Maria Behnsen <anna-maria@linutronix.de>, Frederic Weisbecker
+ <frederic@kernel.org>, Shuah Khan <shuah@kernel.org>, Miroslav Lichvar
+ <mlichvar@redhat.com>, linux-kselftest@vger.kernel.org,
+ kernel-team@android.com, Lei Chen <lei.chen@smartx.com>
+Subject: Re: [RFC PATCH 1/2] time/timekeeping: Fix possible inconsistencies
+ in _COARSE clockids
+In-Reply-To: <20250315003800.3054684-1-jstultz@google.com>
+References: <CANDhNCoueki=keYNcNr4eXqgLFPh3VupDJC0hFqxm4FNKfGzYg@mail.gmail.com>
+ <20250315003800.3054684-1-jstultz@google.com>
+Date: Sat, 15 Mar 2025 20:23:21 +0100
+Message-ID: <877c4q5c9i.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-On March 14, 2025 1:14:38 AM PDT, Uros Bizjak <ubizjak@gmail=2Ecom> wrote:
->Use higher-level API to declare assembly with alternatives=2E
->
->bloat-o-meter reports no code size changes=2E
->
->Signed-off-by: Uros Bizjak <ubizjak@gmail=2Ecom>
->Cc: Thomas Gleixner <tglx@linutronix=2Ede>
->Cc: Ingo Molnar <mingo@kernel=2Eorg>
->Cc: Borislav Petkov <bp@alien8=2Ede>
->Cc: Dave Hansen <dave=2Ehansen@linux=2Eintel=2Ecom>
->Cc: "H=2E Peter Anvin" <hpa@zytor=2Ecom>
->---
-> arch/x86/include/asm/processor=2Eh | 5 +++--
-> 1 file changed, 3 insertions(+), 2 deletions(-)
->
->diff --git a/arch/x86/include/asm/processor=2Eh b/arch/x86/include/asm/pr=
-ocessor=2Eh
->index 5d2f7e5aff26=2E=2Eb4b5aa46f68b 100644
->--- a/arch/x86/include/asm/processor=2Eh
->+++ b/arch/x86/include/asm/processor=2Eh
->@@ -707,8 +707,9 @@ static inline u32 per_cpu_l2c_id(unsigned int cpu)
->  */
-> static __always_inline void amd_clear_divider(void)
-> {
->-	asm volatile(ALTERNATIVE("", "div %2\n\t", X86_BUG_DIV0)
->-		     :: "a" (0), "d" (0), "r" (1));
->+	alternative_input("", "div %[den]",
->+			  X86_BUG_DIV0,
->+			  "a" (0), "d" (0), [den] "r" (1));
-> }
->=20
-> extern void amd_check_microcode(void);
+On Fri, Mar 14 2025 at 17:37, John Stultz wrote:
+> Now, by design, this negative adjustment should be fine, because
+> the logic run from timekeeping_adjust() is done after we
+> accumulate approx mult*interval_cycles into xtime_nsec.
+> The accumulated (mult*interval_cycles) will be larger then the
+> (mult_adj*offset) value subtracted from xtime_nsec, and both
+> operations are done together under the tk_core.lock, so the net
+> change to xtime_nsec should always be positive.
 
-I realize I'm probably in the minority, but I find these "higher-level API=
-s" for alternatives much harder to read and understand=2E
+/should/is/
+
+We better are confident about that :)
+
+> However, do_adjtimex() calls into timekeeping_advance() as well,
+> since we want to apply the ntp freq adjustment immediately.
+> In this case, we don't return early when the offset is smaller
+> then interval_cycles, so we don't end up accumulating any time
+> into xtime_nsec. But we do go on to call timekeeping_adjust(),
+> which modifies the mult value, and subtracts from xtime_nsec
+> to correct for the new mult value.
+
+We don't do anything. :)
+
+> Here because we did not accumulate anything, we have a window
+> where the _COARSE clockids that don't utilize the mult*offset
+> value, can see an inconsistency.
+>
+> So to fix this, rework the timekeeping_advance() logic a bit
+> so that when we are called from do_adjtimex() and the offset
+> is smaller then cycle_interval, that we call
+> timekeeping_forward(), to first accumulate the sub-interval
+> time into xtime_nsec. Then with no unaccumulated cycles in
+> offset, we can do the mult adjustment without worry of the
+> subtraction having an impact.
+
+It's a smart solution. I briefly pondered something similar, but I'm not
+really fond of the fact, that it causes a clock_was_set() event for no
+good reason.
+
+clock_was_set() means that there is a time jump. But that's absolutely
+not the case with do_adjtimex() changing the frequency for quick
+adjustments. That does not affect continuity at all.
+
+That event causes avoidable overhead in the kernel, but it's also
+exposed to user space via timerfd TFD_TIMER_CANCEL_ON_SET.
+
+I have no really strong opinion about that, but the route through
+clock_was_set() triggers my semantical mismatch sensors :)
+
+> NOTE: This was implemented as a potential alternative to
+> Thomas' approach here:
+>    https://lore.kernel.org/lkml/87cyej5rid.ffs@tglx/
+>
+> And similarly, it needs some additional review and testing,
+> as it was developed while packing for conference travel.
+
+We can debate that next week over your favourite beverage :)
+
+Have a safe trip!
+
+Thanks,
+
+        tglx
 
