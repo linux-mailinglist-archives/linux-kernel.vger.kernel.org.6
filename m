@@ -1,123 +1,103 @@
-Return-Path: <linux-kernel+bounces-562524-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562525-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 755F2A62A81
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 10:52:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 12F9CA62A8E
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 10:58:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF3173AE9F8
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 09:52:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3ED463B54D7
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 09:58:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15C461F4E38;
-	Sat, 15 Mar 2025 09:52:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1EE71F76A5;
+	Sat, 15 Mar 2025 09:58:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H8/06oT5"
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="bNzQlWKF"
+Received: from mail-40134.protonmail.ch (mail-40134.protonmail.ch [185.70.40.134])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D76CA15098F
-	for <linux-kernel@vger.kernel.org>; Sat, 15 Mar 2025 09:52:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDDEE2F3B
+	for <linux-kernel@vger.kernel.org>; Sat, 15 Mar 2025 09:58:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742032355; cv=none; b=AfM2ABCoB9uX2ypDxP6ndo6kp21bGhHKyKktuk4ZcVuZrhYK9pCkPw4bKHwsEvnNn4k/Z2KcJKS63pRQgNNV4GcaLHId/nDtZkTdirYLf2lZJzYsB+hSK7kZs3FVG+czkt6zfQHpwQUDyyDFjwnxP+h0uvchwiNbLkKPvszlYCk=
+	t=1742032702; cv=none; b=CpIRjz3kQcIKUSyoAb8Z4wSViiZmjZT0bUFBaw/OxJOQTOnhdWdF0wJEcb/GZpXNXDXGctZle7MKvBLjJ4nCX1T5T0TWs+oWMuEgqqQz7vDBZAUVXpeXo0H22dm0mMY0w5CGBDeb5v3373acNEIvxrLRsVCiDF0Tv8DDlKvOn3U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742032355; c=relaxed/simple;
-	bh=xTGvF3Ir9tZ2m5SS31fb9uKV5JmrGPMCnhfRcKQITeQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UBKmLVE5QiMAg9jlvNunaqlYZgKWeG/qkSk9x7hSOgaCdQNNobdlfgxTajCEKHd/5Gjs+4o30imXGmUG0SreFVgByZJyJgqXxXIfj0cYtRvYHce/V2G3VgcaoghNIS+3F3IVZVsVEFwlz/y2hrem7LTZ7DOOGtXwde9m8rd/pC0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H8/06oT5; arc=none smtp.client-ip=209.85.208.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-30bae572157so29494931fa.3
-        for <linux-kernel@vger.kernel.org>; Sat, 15 Mar 2025 02:52:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742032352; x=1742637152; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RAFDPR5P5AoiJc8yKYq7TWHB5cRXWpXtC1zcY3B02KI=;
-        b=H8/06oT5cTlu13qk9PS1ZTUeP2NZQEVm43c8AQgVotf89HdN80+1uoQWmlY74kz8j6
-         EFgSdDSFC/kiczNjNoMKqEaqA5Cm1V/Z2srShk7+FDJe7wE+aWRplVzEH3f+NVywAjv+
-         IgSlX4I+HvLSvqxZ+JBGeJJE08IgjF9lPKZCoHE5cwGKOdh9uLPEc2zYopRGa6NDMu8n
-         kRX7L3YP9K2YliWzTEEmWWTXpxX+AlXJE1qq1NeaR2JBmU0INu8cw5v9dotkry/iUOEf
-         IAn6yXo4GMgwSobZ6jjj1l1twjkyGtKceRjHxVk72Ex6X+hKj7JRrvRr9bVh60OySdU8
-         b8gg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742032352; x=1742637152;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RAFDPR5P5AoiJc8yKYq7TWHB5cRXWpXtC1zcY3B02KI=;
-        b=XebKJwU8bzNuMun78b6gPpxpVzAe0DuiGTTFKqq8zMd5KxIvmdjSIesFDBPruFiPIe
-         PYhrGFW8s6utemmDgvzUFoIyksk6aRwM2gnNhuJtiOZlbwOw2lVrkXOv7yGZd6/Af42o
-         7+meogTK4UA2mL4ySXcIXX3q8n1D4TTV/MN5KuTAznvBfa8UZ7NqajGxIWIDmLEidR17
-         BdipsA6mbblM2C/JI1iFu2Cqw2v1/SwZvvWwKaA+A/43G3mQl2VU7Exq6kt6/IP6cnX2
-         9kkvgMh8M8JdwhxuxZXD6oek5qYklXElL2tG9HiOLfdu8MjQuvORL1dq/yM8GxN/lsE0
-         x5Jw==
-X-Forwarded-Encrypted: i=1; AJvYcCXqdf71mMiWVSgBY3GnE0X+fRjqNRpznPiT2QSvGaWlikm/31ml9YylVzMok5HLo4hHvayIe09aXJOQjUw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YynecZD+Z7PMDoic0vRBeb5GDP+I6mb5C2uuLqMLhoMIF28tYwr
-	p7y8TC+tdcMg5y/A4a/Cv3OmbTQagFQX1oKlf7/PlPeF3X/IH9Kt3wTRKIbKCMJeaQh359zfshW
-	W3KsCJQlqHkv7dWjpjZWrdubGC54=
-X-Gm-Gg: ASbGncuFVegT3XPbUI8w4/wK2SC/QSPdNqa+t0fUsc6lanjI6MfQrQHLXcVgacbdVOm
-	hi0IJvjaD/M/jrOEFZ/eQwkmYFXzon9PCviTv9dhTYrfIJ9uYMVW2gDDueXYUlTerfTyBnl5p5Y
-	coWzUuQ5Cxi9mhfC9SA2iiuGLWQg==
-X-Google-Smtp-Source: AGHT+IHULw3O+TXkTRct7wV9eNc4lkNGhkw5ireDGy/w5V3vOJtUhiT5KkDPWZpf/cDAdkex7t3m+3I8HdYLPto/9Lw=
-X-Received: by 2002:a05:651c:b0d:b0:30b:8f60:cdb7 with SMTP id
- 38308e7fff4ca-30c4a8c3cdcmr22387131fa.24.1742032351769; Sat, 15 Mar 2025
- 02:52:31 -0700 (PDT)
+	s=arc-20240116; t=1742032702; c=relaxed/simple;
+	bh=wn09jwc2pBQvduyxyPV+H5IbnwLWYqsOUtLidwfnmGk=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=AAu4HdR4p2nSge2yTtjkhZY0H58TMLGjWBPFSb6XMJjrWU9f2YDg0+PRHEJ+HnBc/VNlAtXw1gxMtxNqiL9kykvQDj7TPLQgEGRLuxm4xS2zpu+cEKjl3hMw6/QBCPH2pFrx3VrGSR9ohapRqHoN7KbXK+yUyPmI0d2Z8RfPVes=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=bNzQlWKF; arc=none smtp.client-ip=185.70.40.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1742032699; x=1742291899;
+	bh=TafzxovLbJfIiyPOpoOK0R8B3/B2rBQqxlLBlZOQQFg=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
+	b=bNzQlWKFQOr5ggqj3s+k51vZAIABzZKOV0oLqg/kr+zsfPqTbaFd9/czExISgzYyq
+	 /YOSfzbiRm1T/8+M+mIA70Cl1brniXLT894gORZkpaX+gHSj5BOK4/lz2oKQ9OcqiW
+	 kv1GTPmNZfiQMPgUvrgRLpdvYLrOtu/RsfozjisFXwAZGzvp+Z8GiTqTDuhaXJbamE
+	 DU+yFkHkLgv1UxQpOnINMSuvf3iuf8YLT2eYi6Jq4+vuOEibAxH2xuB5wJAQ3Rw+4r
+	 soBOaA7Q/IHww2q+s1ep2rUjFVWPKTuosEDvzxLEE1ckMNgG4zm0NTPnshhT0iWYWS
+	 46SSqozNPvf9g==
+Date: Sat, 15 Mar 2025 09:58:11 +0000
+To: Antonio Hickey <contact@antoniohickey.com>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: Benno Lossin <y86-dev@protonmai.com>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/3] rust: enable `raw_ref_op` feature
+Message-ID: <D8GR1RC32370.2EJN57V2ZYA7R@proton.me>
+In-Reply-To: <0100019597091f92-cb55b6cd-4d06-4d14-8d9c-1a1314949a00-000000@email.amazonses.com>
+References: <20250314234148.599196-1-contact@antoniohickey.com> <0100019597091f92-cb55b6cd-4d06-4d14-8d9c-1a1314949a00-000000@email.amazonses.com>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: c8e8ddaef7ed051886a41c3dc5bd2993a44271c4
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1741988314.git.jpoimboe@kernel.org> <tcizy2pikr4nonjo3bi74fr63kctbh6333rxdkoeb4bnnnwffn@qpd7igl33f2e>
-In-Reply-To: <tcizy2pikr4nonjo3bi74fr63kctbh6333rxdkoeb4bnnnwffn@qpd7igl33f2e>
-From: Uros Bizjak <ubizjak@gmail.com>
-Date: Sat, 15 Mar 2025 10:52:25 +0100
-X-Gm-Features: AQ5f1JoXpaDgsi6sMbl0SnmUGE_70BSjxpfdRmHzzeb96xqZuL8JThpiShYgNTY
-Message-ID: <CAFULd4YXYSFN+0KnmU0G0gx0rHrGKR_X58ZOhUVbWDd9cTJfuQ@mail.gmail.com>
-Subject: Re: [PATCH 00/20] x86: Cleanup alternative_io() and friends, prep for asm_call()
-To: Josh Poimboeuf <jpoimboe@kernel.org>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Borislav Petkov <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>, Andrew Cooper <andrew.cooper3@citrix.com>, 
-	Ingo Molnar <mingo@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Mar 14, 2025 at 11:25=E2=80=AFPM Josh Poimboeuf <jpoimboe@kernel.or=
-g> wrote:
+On Sat Mar 15, 2025 at 12:41 AM CET, Antonio Hickey wrote:
+> Since Rust 1.82.0 the `raw_ref_op` feature is stable.
 >
-> On Fri, Mar 14, 2025 at 02:41:13PM -0700, Josh Poimboeuf wrote:
-> > Make the alternative_io() interface more straightforward and flexible,
-> > and get rid of alternative_input().
-> >
-> > These patches are a prereq for another set[1] which will get rid of
-> > ASM_CALL_CONSTRAINT[2] in favor of a much more flexible asm_call()
-> > interface similar to the new alternative_io().
-> >
-> > [1] Additional 20+ patches not posted yet to avoid flooding inboxes
+> By enabling this feature we can use `&raw place` and `&raw mut place`
+> instead of using `addr_of!(place)` and `addr_of_mut!(place)` macros.
 >
-> The rest of the patches are here if anybody wants to see where this is
-> going:
+> This will allow us to reduce macro complexity, and improve consistency
+> with existing reference syntax as `&raw`, `&raw mut` is very similar to
+> `&`, `&mut` making it fit more naturally with other existing code.
 >
->   git://git.kernel.org/pub/scm/linux/kernel/git/jpoimboe/linux.git asm-ca=
-ll
+> Suggested-by: Benno Lossin <y86-dev@protonmai.com>
 
-FYI, you missed one conversion of asm involving ALTERNATIVE in
-arch/x86/include/asm/nospec-branch.h:
+This still has my old email, please use <benno.lossin@proton.me>.
 
-void alternative_msr_write(unsigned int msr, u64 val, unsigned int feature)
-{
-asm volatile(ALTERNATIVE("", "wrmsr", %c[feature])
-: : "c" (msr),
-   "a" ((u32)val),
-   "d" ((u32)(val >> 32)),
-   [feature] "i" (feature)
-: "memory");
+---
+Cheers,
+Benno
 
-Uros.
+> Link: https://github.com/Rust-for-Linux/linux/issues/1148
+> Signed-off-by: Antonio Hickey <contact@antoniohickey.com>
+> ---
+>  rust/kernel/lib.rs | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
+> index 398242f92a96..1d078f69bb19 100644
+> --- a/rust/kernel/lib.rs
+> +++ b/rust/kernel/lib.rs
+> @@ -19,6 +19,8 @@
+>  #![cfg_attr(not(CONFIG_RUSTC_HAS_COERCE_POINTEE), feature(unsize))]
+>  #![feature(inline_const)]
+>  #![feature(lint_reasons)]
+> +// Stable in Rust 1.82
+> +#![feature(raw_ref_op)]
+>  // Stable in Rust 1.83
+>  #![feature(const_maybe_uninit_as_mut_ptr)]
+>  #![feature(const_mut_refs)]
+
+
 
