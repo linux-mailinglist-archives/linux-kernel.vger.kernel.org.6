@@ -1,76 +1,180 @@
-Return-Path: <linux-kernel+bounces-562722-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562723-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D54AA631CD
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 19:43:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 798CFA631D9
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 19:45:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9693D3B35EF
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 18:42:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 61B44189750A
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 18:45:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71A21205E00;
-	Sat, 15 Mar 2025 18:42:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49D1C195808;
+	Sat, 15 Mar 2025 18:45:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hvMvwA1B"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ekYYnoCN"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE1C8188734;
-	Sat, 15 Mar 2025 18:42:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9672A1F5FD;
+	Sat, 15 Mar 2025 18:45:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742064178; cv=none; b=t9olhIEheKSpYlhA+GKWBqie6iyhjyKXeZSxTTxLvavLYla3d92E5hMbZhGJ5BYEzIddXa//2JNeyMHvfFnf4lMaYPeWMBsKWmLpKKky/UZAZHh/s7TMg/TAGJ4dBGvR4JPWOCSJeeotYLYnpAo+Cf4bWLz70SeFQotLG5ewKO4=
+	t=1742064325; cv=none; b=X8Hkt3KY+LuWdg8JiWmkcLsgfdgCrqAhrmTDkrxcppgM396/Bl+om3LgVdb8yeIAhzdxereXxRRCiFryA99ZZI3LVYSG8Do0sQWhnwJS65lgPWUWG8JGGix/xrW11HHReZRAts8QK53ibUDiIutWTGHmYJ9c/lxtxTj5mRSn81k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742064178; c=relaxed/simple;
-	bh=CF3N/y/h6IoYkrV7l5KyVShMcxg8+vrteyJbwryMFE8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=G88PDJfpG7Gusr2vdV7McJqmQ55z7NImy7xgXbBpqLnVduNxYeBXV2H++f+BD9Y03CfoNP1UkX44pO9B4RJ1TrFegP9JSLEOoN9CV2f6hfF6iglT1cRY6E1LVIM74eww3jnv0lsaV+SX+PgJEFCXzyGa3cRXA9qeVpR7M6HMbZo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hvMvwA1B; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF5B9C4CEE5;
-	Sat, 15 Mar 2025 18:42:54 +0000 (UTC)
+	s=arc-20240116; t=1742064325; c=relaxed/simple;
+	bh=4MhnkjWg/sUNC8gItCM/jiir8SJBGG2nGEGqhQyt2oM=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=lK9XxtSDeh/AUSoUhqtiUU50FCN/OzJ5yZv8+masGY8rmyf2BNO+xAmTfBk1AbjfDRMa6Pys//xFWuVgKnqcabnS4hLxYZM6JwDSPgSjLJU3S1Mxwfrwqi39mkUBx59XqAlt7iE/sAh2/vVziZHE1kmjZMggNrd+2n2+mqc/Z/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ekYYnoCN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF6E9C4CEE5;
+	Sat, 15 Mar 2025 18:45:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742064177;
-	bh=CF3N/y/h6IoYkrV7l5KyVShMcxg8+vrteyJbwryMFE8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=hvMvwA1BBlZ+K6XDgGoB5lvqv0h6iEv8eeKYLsxgW4BJg9u3R6SiIchUGbyL/GjR5
-	 7ldOaN5gmO4hXeBWhuNZgBDSOEwIvvYpuNYKq7SyRLmJluUwqqRbjnpyjCe6FM+9m/
-	 X7HF82p7CGd/aZyAh1VSLy7AY7cWdw649I3wjoguqotihYTjFN+PCA/FG7CB6e2bl6
-	 UV9GyEs3ZtG9HZwUg4pd4w1ueR48P/8dv8x8KZl7WaYpzC88sBwjnePw6T6f7bs90K
-	 Pr7uHwC+L3PnWFWQV09jJj8qCPUqWzs9ErXyb2kocV76oy0ivkmGbhMvjOfFyBkVxG
-	 GgdcNO/m7Rwfw==
-Date: Sat, 15 Mar 2025 18:42:49 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Tobias Sperling via B4 Relay
- <devnull+tobias.sperling.softing.com@kernel.org>
-Cc: tobias.sperling@softing.com, Lars-Peter Clausen <lars@metafoo.de>,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] iio: adc: sort TI drivers alphanumerical
-Message-ID: <20250315184249.075566a7@jic23-huawei>
-In-Reply-To: <20250312-sort_ti_drivers-v1-1-4e8813e662d2@softing.com>
-References: <20250312-sort_ti_drivers-v1-1-4e8813e662d2@softing.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
+	s=k20201202; t=1742064325;
+	bh=4MhnkjWg/sUNC8gItCM/jiir8SJBGG2nGEGqhQyt2oM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=ekYYnoCNuNGq8GKgAHkJLE8+/WhianniML9ojpkV7NZIPXHS3fhqp4CCkOSBn3gQA
+	 ZuHm8JMr9eVigUhkdFponK9pava0p8RDgb4Z+lkwOStZiGlX39vdHOpg93tQaNP2gh
+	 iW4fFeOxiJy24BUtSlZ5xalyDL6VUSPTlF7LrqzipEmq7Tp1RWxSIV9JjJ7ZVYutXs
+	 8mqnsU49tYj9HwhPetAjLwFEMCgOTca6Y9mA1UeSIpyoMWn3BgrWWKdq7hv/IQwqpH
+	 gmEH59mi5/Zro2o7LAv991Gw7iEwkFRBxek7djhIgywcvQUxyJuEBxLukwkBWoLru9
+	 Dm57qYb49gWOw==
+Date: Sat, 15 Mar 2025 13:45:23 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Zhangfei Gao <zhangfei.gao@linaro.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+	Baolu Lu <baolu.lu@linux.intel.com>,
+	Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	iommu@lists.linux.dev, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] PCI: Declare quirk_huawei_pcie_sva() as
+ pci_fixup_header
+Message-ID: <20250315184523.GA848225@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250315101319.5269-1-zhangfei.gao@linaro.org>
 
-On Wed, 12 Mar 2025 16:29:40 +0100
-Tobias Sperling via B4 Relay <devnull+tobias.sperling.softing.com@kernel.org> wrote:
+On Sat, Mar 15, 2025 at 10:13:19AM +0000, Zhangfei Gao wrote:
+> The commit bcb81ac6ae3c ("iommu: Get DT/ACPI parsing into the proper
+> probe path") changes the arm_smmu_probe_device() sequence.
 
-> From: Tobias Sperling <tobias.sperling@softing.com>
+> The arm_smmu_probe_device() is now called earlier via pci_device_add(),
+> which calls pci_fixup_device() at the "pci_fixup_header" phase, while
+> originally it was called from the pci_bus_add_device(), which called
+> pci_fixup_device() at the "pci_fixup_final" phase.
 > 
-> Sort TI drivers again in an alphanumerical manner.
+> The callstack before:
+> [ 1121.314405]  arm_smmu_probe_device+0x48/0x450
+> [ 1121.314410]  __iommu_probe_device+0xc4/0x3c8
+> [ 1121.314412]  iommu_probe_device+0x40/0x90
+> [ 1121.314414]  acpi_dma_configure_id+0xb4/0x100
+> [ 1121.314417]  pci_dma_configure+0xf8/0x108
+> [ 1121.314421]  really_probe+0x78/0x278
+> [ 1121.314425]  __driver_probe_device+0x80/0x140
+> [ 1121.314427]  driver_probe_device+0x48/0x130
+> [ 1121.314430]  __device_attach_driver+0xc0/0x108
+> [ 1121.314432]  bus_for_each_drv+0x8c/0xf8
+> [ 1121.314435]  __device_attach+0x104/0x1a0
+> [ 1121.314437]  device_attach+0x1c/0x30
+> [ 1121.314440]  pci_bus_add_device+0xb8/0x1f0
+> [ 1121.314442]  pci_iov_add_virtfn+0x2ac/0x300
 > 
-> Signed-off-by: Tobias Sperling <tobias.sperling@softing.com>
-Thanks,
+> And after:
+> [  215.072859]  arm_smmu_probe_device+0x48/0x450
+> [  215.072871]  __iommu_probe_device+0xc0/0x468
+> [  215.072875]  iommu_probe_device+0x40/0x90
+> [  215.072877]  iommu_bus_notifier+0x38/0x68
+> [  215.072879]  notifier_call_chain+0x80/0x148
+> [  215.072886]  blocking_notifier_call_chain+0x50/0x80
+> [  215.072889]  bus_notify+0x44/0x68
+> [  215.072896]  device_add+0x580/0x768
+> [  215.072898]  pci_device_add+0x1e8/0x568
+> [  215.072906]  pci_iov_add_virtfn+0x198/0x300
 
-Applied.
+The stacktraces definitely help connect the dots but don't integrate
+the fixup phases and the timestamps are unnecessary distraction.
 
-Jonathan
+I would omit all the above except the first paragraph and include
+something like this instead, which shows how arm_smmu_probe_device()
+was previously after final fixups and is now between header and final
+fixups:
+
+  pci_iov_add_virtfn
+    pci_device_add
+      pci_fixup_device(pci_fixup_header)      <--
+      device_add
+        bus_notify
+          iommu_bus_notifier
+  +         iommu_probe_device
+  +           arm_smmu_probe_device
+    pci_bus_add_device
+      pci_fixup_device(pci_fixup_final)       <--
+      device_attach
+        driver_probe_device
+          really_probe
+            pci_dma_configure
+              acpi_dma_configure_id
+  -             iommu_probe_device
+  -               arm_smmu_probe_device
+
+This is the pci_iov_add_virtfn().  The non-SR-IOV case is similar in
+that pci_device_add() is called from pci_scan_single_device() in the
+generic enumeration path, and pci_bus_add_device() is called later,
+after all a host bridge has been enumerated.
+
+> Fixes: bcb81ac6ae3c ("iommu: Get DT/ACPI parsing into the proper probe path")
+> Signed-off-by: Zhangfei Gao <zhangfei.gao@linaro.org>
+> [kwilczynski: commit log]
+> Signed-off-by: Krzysztof Wilczyński <kwilczynski@kernel.org>
+
+You should never include somebody else's Signed-off-by below yours.
+You should only add *your own* Signed-off-by:
+
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?id=v6.13#n396
+
+Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+
+> ---
+> 
+> v2: Modify commit log
+> 
+>  drivers/pci/quirks.c | 12 ++++++------
+>  1 file changed, 6 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
+> index f840d611c450..a9759889ff5e 100644
+> --- a/drivers/pci/quirks.c
+> +++ b/drivers/pci/quirks.c
+> @@ -1991,12 +1991,12 @@ static void quirk_huawei_pcie_sva(struct pci_dev *pdev)
+>  	    device_create_managed_software_node(&pdev->dev, properties, NULL))
+>  		pci_warn(pdev, "could not add stall property");
+>  }
+> -DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_HUAWEI, 0xa250, quirk_huawei_pcie_sva);
+> -DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_HUAWEI, 0xa251, quirk_huawei_pcie_sva);
+> -DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_HUAWEI, 0xa255, quirk_huawei_pcie_sva);
+> -DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_HUAWEI, 0xa256, quirk_huawei_pcie_sva);
+> -DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_HUAWEI, 0xa258, quirk_huawei_pcie_sva);
+> -DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_HUAWEI, 0xa259, quirk_huawei_pcie_sva);
+> +DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_HUAWEI, 0xa250, quirk_huawei_pcie_sva);
+> +DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_HUAWEI, 0xa251, quirk_huawei_pcie_sva);
+> +DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_HUAWEI, 0xa255, quirk_huawei_pcie_sva);
+> +DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_HUAWEI, 0xa256, quirk_huawei_pcie_sva);
+> +DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_HUAWEI, 0xa258, quirk_huawei_pcie_sva);
+> +DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_HUAWEI, 0xa259, quirk_huawei_pcie_sva);
+>  
+>  /*
+>   * It's possible for the MSI to get corrupted if SHPC and ACPI are used
+> -- 
+> 2.25.1
+> 
 
