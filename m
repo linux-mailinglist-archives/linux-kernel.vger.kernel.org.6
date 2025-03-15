@@ -1,154 +1,119 @@
-Return-Path: <linux-kernel+bounces-562407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CCF6A6262C
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 05:54:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6595DA62643
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 06:01:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F30F3BE673
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 04:53:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A739A8816E3
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 05:00:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B759618FDAA;
-	Sat, 15 Mar 2025 04:54:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACD5118CC1C;
+	Sat, 15 Mar 2025 05:01:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="mqtd67zN"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fK4QFioK"
+Received: from mail-oo1-f51.google.com (mail-oo1-f51.google.com [209.85.161.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D0F8178CF8;
-	Sat, 15 Mar 2025 04:54:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B64725228;
+	Sat, 15 Mar 2025 05:00:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742014444; cv=none; b=DWw/seYC4E7sWiMwA/kdTM0nWfPp842i4e281ZUEsoD9BUxpnbD5kIn1m1z1onk31tPmWWAqNhYmqaYDm7vVCIaT874+10X1eeKXujP2LyIqrRL7g1cCV3Uy2qYXJmDuPGc2g5W4Dy0ohteRMuhu/U1NAZGQHytltjdC5RoCncs=
+	t=1742014861; cv=none; b=apwNRe9tF/Ycf4TvbKa/1IaMMUWXetvS1ASvGeg6wjeHa3V1tyCOZqrBCFONXFgW+XDkeDjIWtWaf8OpoH7n+RM89DTMuKbkf2fFj6QGoid4dVgNj3a0PbGKwSryogvMKfeurXp7N/QIELxnw4hM4ChWg2BlF+mCgDMsvVHfv3A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742014444; c=relaxed/simple;
-	bh=/FDqs1pCJojhK5Llb/7LM7tQKfHwOZ5rzRm+N/z2LRc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=d0CPsWioDTpd7e54xbrfmrjElQ8igIrdsXMEVTJ1jXMEiHNUPKw1ePOMjFkpiI+UxfYKnwQzjEpJRnXRvby9t51FHBkQwiFrEWtT7tt4HZ9n6/T+ctf7sUoWEzAnhgHOChPNoxnV2t1Go9O5DfzXM0OFqDObBttq+SFhUUcvjtI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=mqtd67zN; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=Content-Transfer-Encoding:Content-Type
-	:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=mQhJm5J645ymleMXzmsLIqdcp5cZsngAWaCVY5IJcSs=; b=mqtd67zNyJUoUFSs7XIGr5xFoJ
-	mscSRcTffByeTyIAvzLMxBfoOfWy7K5r3StiTmBZ1Arbty+J7EGX+I0onfk7rxJfjd2Ut6WtZsjVc
-	jE8X4+ML4TKxY5UXsXA4J4chq+AgGvkNgKm7czCQ9ZSVIKNXhiklRwUjiTCbP2CGQp++vmBxiXZ+U
-	yqGAF98jhSOvpcYlzc9/i//rvH51voF9nO+HBq6nY/MOdiYrDmaAZXufutswWt92Orf9JnL78CZEk
-	j+4WDLiz96mKNT/Ow2Frfj5NZhJ1AQAxOA7P2qxk2fy7fpDpkiUwbxRxiGTtRSDWi26lcOaFwIc07
-	v0WfOg6A==;
-Received: from [50.53.2.24] (helo=[192.168.254.17])
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1ttJWw-0000000338B-2bOV;
-	Sat, 15 Mar 2025 04:53:51 +0000
-Message-ID: <03d69156-1cee-43bc-901b-5f85f3aa7575@infradead.org>
-Date: Fri, 14 Mar 2025 21:53:41 -0700
+	s=arc-20240116; t=1742014861; c=relaxed/simple;
+	bh=ufCbX4wDhYfEKmDJ7X2B/vgP/oog7w8CSCvAEkWvnr4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FlpoL7fJI8hvr7tIjX3mg9daSqvNVjqDCTeRtjg3BHsnsKWB+9N8BDHiLpJU/hDlvTSgKi96+lFkR0IPUuNcnGcZGIzdsmEWzdwwok/jSwv09BU3CsM4wSrpvowTC3GMB2poxTMZ8wsfJof3+ILFqS/F2M17Va6rY0qbBjrj/I0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fK4QFioK; arc=none smtp.client-ip=209.85.161.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f51.google.com with SMTP id 006d021491bc7-5fe9c1c14baso1570644eaf.0;
+        Fri, 14 Mar 2025 22:00:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742014859; x=1742619659; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=S7a5ZrbTklH/cZhoNtA/q7i5fBAs3LP0PvXI1WH8nm0=;
+        b=fK4QFioKN/W4ucd67Unzvr5qAnLDIwOChGuF78ilN+UXHT/VzXtYZCUaOQEcSiUoe6
+         WWyvigSnCYhSXZYWZK0kUpBs63oJ/rqBCuGipP1M6SvOXmkhXxfowja2/nL5kVHMoUqg
+         W9sdjDqqtONvSIUuPjTloQ/gUdGW4FGNEYlnghREMIiIoRy5yofX85z/GVn+peIT9Cm3
+         vSfajPi5qyabOemfZe4BkpLd8pU5R8cBMXY/qWKU6YncnQR/nrZldCk3sJqY5iFAnCcz
+         BuvJL1FmM+a9/IoIt4jHyQFvw4n8/YhHcu8uLncWOiFlx+ZGJcZHizDtrETZBY1tk5fA
+         l2iQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742014859; x=1742619659;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=S7a5ZrbTklH/cZhoNtA/q7i5fBAs3LP0PvXI1WH8nm0=;
+        b=G61fH8PQpfcMy4ufbqlO3um0obyoqevG1XkqClO+cRjilW2LKW3euoc4JEFtLvCElo
+         jGltWjHHV5SUP0RJDKY6hwT10gBz87QUwfNeHwq4N/QVUBcc/Z+bi+mgTvRkmtOpPG8l
+         VEU62yj6L3YrTtFmRR+d7UQqkjjTlSVJ1Y8R/H7+ufpvXrP7i6M2e7/xwl3dsE541z1a
+         HTz2V9418KwnG1IkEgqw3W82TjJjEX8TbzC6Uqun6zYEvKrPwJWnuRPxJeddykEOvJV/
+         3eU6IjIoha+qdEjdVtlsqerjgg/JDl0Z3ZjQoMU9xvNjSFAEioEGvXEf+atLDOuDVSSB
+         mslg==
+X-Forwarded-Encrypted: i=1; AJvYcCXTXbJlupQcuHlxImZeHn4qHwqqQ+6gpuMKWCFEMifaQvY79oKXf4dsZOmn2Xgy3HKM71ija0TmY896aPg=@vger.kernel.org, AJvYcCXaPHvdWVV3LVkjT6bFRnYY/RVFJAW+uiJuhAT0ZOOeSiPXx0EncL8IfKIno5wTdXMCT344XLukU/bW@vger.kernel.org
+X-Gm-Message-State: AOJu0YzYB3ASbrDdeX2wOzfKaqtNi5b3QZqS4k0xRdC8nfsXj7F6+tB0
+	9y5EA/Se9uRVfFv/KbCpGM7YZqbGyEpMv+AZCAP71Peq+vqFrKTN
+X-Gm-Gg: ASbGncsQqqc2ZYgdHb7S46EuWo7A73qF/0Cf+fgfZZ99Apax9Y1wancawIqGybFhpKN
+	CQ/ZZQHb3jNSvbWIFZLOCqWjoXkhm5aLudiWEmUMqIoKFxnthE12Yo9HOSAdwEyQngYCV/uSN0d
+	muD3ISKZ7F8LLD4mW9ZbY9QVHBq/uYGbuPuUJ1HdR/IX24RQNfAPrT+tWBfiBSmS0/xuzCweTvk
+	JvAuLfMKg98tWVGzloYh7EKjIMp8Uq3A5iwsVSdad3sqrhV6OycO5Jvb23kwmEBKeIS0d6FGMxN
+	6mC1k4wgmNeedAFXOYKlDZRm23odWzGPuidC3ai+rUxKaw==
+X-Google-Smtp-Source: AGHT+IG8gQM5ZIlrT1QhC0UHYeZZ8AHDFWhL8amMXKDr5ttcSgilM0pTiFSBppMBAYCbtT0hRryC7w==
+X-Received: by 2002:a05:6820:2781:b0:601:a5d8:6a9e with SMTP id 006d021491bc7-601e44835e3mr2316066eaf.0.1742014858690;
+        Fri, 14 Mar 2025 22:00:58 -0700 (PDT)
+Received: from s-machine2.. ([2806:2f0:5501:d07c:e7c:e504:c0b1:f8be])
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-601db6598aesm869578eaf.5.2025.03.14.22.00.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Mar 2025 22:00:58 -0700 (PDT)
+From: Sergio Perez Gonzalez <sperezglz@gmail.com>
+To: broonie@kernel.org,
+	skhan@linuxfoundation.org
+Cc: Sergio Perez Gonzalez <sperezglz@gmail.com>,
+	linux-spi@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] spi: spi-mux: Fix coverity issue, unchecked return value
+Date: Fri, 14 Mar 2025 22:59:22 -0600
+Message-ID: <20250315045936.27421-1-sperezglz@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/2] compiler_types: Introduce __flex_counter() and
- family
-To: Kees Cook <kees@kernel.org>, Vlastimil Babka <vbabka@suse.cz>
-Cc: Miguel Ojeda <ojeda@kernel.org>,
- "Gustavo A. R. Silva" <gustavoars@kernel.org>,
- Nathan Chancellor <nathan@kernel.org>, Peter Zijlstra
- <peterz@infradead.org>, Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
- Marco Elver <elver@google.com>,
- Przemek Kitszel <przemyslaw.kitszel@intel.com>,
- linux-hardening@vger.kernel.org, Christoph Lameter <cl@linux.com>,
- Pekka Enberg <penberg@kernel.org>, David Rientjes <rientjes@google.com>,
- Joonsoo Kim <iamjoonsoo.kim@lge.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Roman Gushchin <roman.gushchin@linux.dev>,
- Hyeonggon Yoo <42.hyeyoo@gmail.com>, Bill Wendling <morbo@google.com>,
- Justin Stitt <justinstitt@google.com>, Jann Horn <jannh@google.com>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Sasha Levin <sashal@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
- Jakub Kicinski <kuba@kernel.org>, Yafang Shao <laoar.shao@gmail.com>,
- Tony Ambardar <tony.ambardar@gmail.com>,
- Alexander Lobakin <aleksander.lobakin@intel.com>,
- Jan Hendrik Farr <kernel@jfarr.cc>, Alexander Potapenko <glider@google.com>,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-doc@vger.kernel.org,
- llvm@lists.linux.dev
-References: <20250315025852.it.568-kees@kernel.org>
- <20250315031550.473587-1-kees@kernel.org>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20250315031550.473587-1-kees@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi Kees,
+The return value of spi_setup() is not captured within
+spi_mux_select() and it is assumed to be always success.
 
+CID: 1638374
 
-On 3/14/25 8:15 PM, Kees Cook wrote:
+Signed-off-by: Sergio Perez Gonzalez <sperezglz@gmail.com>
+---
+ drivers/spi/spi-mux.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-
-> diff --git a/include/linux/overflow.h b/include/linux/overflow.h
-> index 0c7e3dcfe867..e2b81cb5576e 100644
-> --- a/include/linux/overflow.h
-> +++ b/include/linux/overflow.h
-> @@ -440,4 +440,40 @@ static inline size_t __must_check size_sub(size_t minuend, size_t subtrahend)
->  #define DEFINE_FLEX(TYPE, NAME, MEMBER, COUNTER, COUNT)	\
->  	_DEFINE_FLEX(TYPE, NAME, MEMBER, COUNT, = { .obj.COUNTER = COUNT, })
->  
-> +/**
-> + * typeof_flex_counter() - Return the type of the counter variable of a given
-> + *                         flexible array member annotated by __counted_by().
-> + * @FAM: Pointer to the flexible array member within a given struct.
-> + *
-> + * Returns "size_t" if no annotation exists.
-
-Please use
- * Returns: <text>
-instead so that kernel-doc can make a special doc section for it.
-
-Same for patch 2/2.
-
-> + */
-> +#define typeof_flex_counter(FAM)				\
-> +	typeof(_Generic(__flex_counter(FAM),			\
-> +			void *: (size_t)0,			\
-> +			default: *__flex_counter(FAM)))
-> +
-> +/** can_set_flex_counter() - Check if the counter associated with the given
-
-Needs a newline between /** and the function name, as in set_flex_counter() below.
-
-> + *                           flexible array member can represent a value.
-> + * @FAM: Pointer to the flexible array member within a given struct.
-> + * @COUNT: Value to check against the __counted_by annotated @FAM's counter.
-> + */
-> +#define can_set_flex_counter(FAM, COUNT)			\
-> +	(!overflows_type(COUNT, typeof_flex_counter(FAM)))
-> +
-> +/**
-> + * set_flex_counter() - Set the counter associated with the given flexible
-> + *                      array member that has been annoated by __counted_by().
-> + * @FAM: Pointer to the flexible array member within a given struct.
-> + * @COUNT: Value to store to the __counted_by annotated @FAM's counter.
-> + *
-> + * This is a no-op if no annotation exists. Count needs to be checked with
-> + * can_set_flex_counter(FAM, COUNT) before using this function.
-> + */
-> +#define set_flex_counter(FAM, COUNT)				\
-> +({								\
-> +	*_Generic(__flex_counter(FAM),				\
-> +		  void *:  &(size_t){ 0 },			\
-> +		  default: __flex_counter(FAM)) = (COUNT);	\
-> +})
-> +
->  #endif /* __LINUX_OVERFLOW_H */
-
+diff --git a/drivers/spi/spi-mux.c b/drivers/spi/spi-mux.c
+index c02c4204442f..0f45a88bfbe7 100644
+--- a/drivers/spi/spi-mux.c
++++ b/drivers/spi/spi-mux.c
+@@ -68,9 +68,9 @@ static int spi_mux_select(struct spi_device *spi)
+ 
+ 	priv->current_cs = spi_get_chipselect(spi, 0);
+ 
+-	spi_setup(priv->spi);
++	ret = spi_setup(priv->spi);
+ 
+-	return 0;
++	return ret;
+ }
+ 
+ static int spi_mux_setup(struct spi_device *spi)
 -- 
-~Randy
+2.43.0
 
 
