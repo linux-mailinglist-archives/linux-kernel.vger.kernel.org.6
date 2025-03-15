@@ -1,125 +1,111 @@
-Return-Path: <linux-kernel+bounces-562535-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562536-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AC23A62AE4
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 11:30:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 782E9A62AED
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 11:30:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CED6A17C8D4
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 10:30:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD002178A05
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 10:30:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 791B01F8676;
-	Sat, 15 Mar 2025 10:29:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55DF22629F;
+	Sat, 15 Mar 2025 10:30:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=nppct.ru header.i=@nppct.ru header.b="DVaCmVgb"
-Received: from mail.nppct.ru (mail.nppct.ru [195.133.245.4])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="c2A+r5ec"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF7931F4169
-	for <linux-kernel@vger.kernel.org>; Sat, 15 Mar 2025 10:29:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.133.245.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 273A21F5420
+	for <linux-kernel@vger.kernel.org>; Sat, 15 Mar 2025 10:30:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742034593; cv=none; b=U6IoF2CFuiUSpVc7S3gdf6hpAAd2tgFb46OF4aNSxdOtMPQIm4drWHrXCNWNoa5+bHwRYWA22LRvOE3d55ZXaAf9+j4kbloFFNNYROkuV9lWYjrPM0X4sRo71roS6ts2VIPtfxIpL7saHujbvMvfw/iJcUREXinAgcnCRpchM5s=
+	t=1742034620; cv=none; b=c/1thSsI9max6ScncGnLhWTKcd8l8y5stVRSn7ACaykBo8efZmnGrQiQGQPTnUtf1o9E3I2sAB6hBBK/iVMQf5OBeVmHPBDSoEgRqWy4wqfArkYocX5EZw98T07ufg+iy6uZOpwD8AZbOin9wE1aS/VfySCQPl+AutoufN+2q2Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742034593; c=relaxed/simple;
-	bh=3BroxUqixAB8gXUImb1vjnpxBW+vzrQRIfMr2CxrOfo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=STAPCZqtBuLbW1/peWMYjdQ42AfyN1FptT83uM2ZzQxwblXBTZjcbfAzR8muCfuIvduuX10tRkGzKNl4/KoVPGYorKIa5lvGBiKsSumyDrR+C/U6Ip0DPEvi+ezOsoiaXuB6UztR2vxpSiW7oqIzSP3Hlske0ZeTwftz2RVoMNA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nppct.ru; spf=pass smtp.mailfrom=nppct.ru; dkim=pass (1024-bit key) header.d=nppct.ru header.i=@nppct.ru header.b=DVaCmVgb; arc=none smtp.client-ip=195.133.245.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nppct.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nppct.ru
-Received: from mail.nppct.ru (localhost [127.0.0.1])
-	by mail.nppct.ru (Postfix) with ESMTP id E49321C2436
-	for <linux-kernel@vger.kernel.org>; Sat, 15 Mar 2025 13:29:37 +0300 (MSK)
-Authentication-Results: mail.nppct.ru (amavisd-new); dkim=pass (1024-bit key)
-	reason="pass (just generated, assumed good)" header.d=nppct.ru
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=nppct.ru; h=
-	content-transfer-encoding:mime-version:x-mailer:message-id:date
-	:date:subject:subject:to:from:from; s=dkim; t=1742034574; x=
-	1742898575; bh=3BroxUqixAB8gXUImb1vjnpxBW+vzrQRIfMr2CxrOfo=; b=D
-	VaCmVgb8jMMwQ4Equ8S8ziqnQd0rOya7xfQsNGlIgbSjf+0GD9RdZ4jx20p6gLvf
-	6L77hhdmEIQ6SdX80/sCUzotay7L+ELiQJ7LjZvjigUOu88Lu46skRzw4HgRG+Zr
-	9sRqmAZdHuhhLWtq0W1YVFhxl7ze/kuGkOPvZw7U+M=
-X-Virus-Scanned: Debian amavisd-new at mail.nppct.ru
-Received: from mail.nppct.ru ([127.0.0.1])
-	by mail.nppct.ru (mail.nppct.ru [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id Db9Hxe9nj7kW for <linux-kernel@vger.kernel.org>;
-	Sat, 15 Mar 2025 13:29:34 +0300 (MSK)
-Received: from localhost.localdomain (unknown [87.249.24.51])
-	by mail.nppct.ru (Postfix) with ESMTPSA id CFB551C0879;
-	Sat, 15 Mar 2025 13:29:29 +0300 (MSK)
-From: Alexey Nepomnyashih <sdl@nppct.ru>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: Alexey Nepomnyashih <sdl@nppct.ru>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-	Yunfei Dong <yunfei.dong@mediatek.com>,
-	Nicolas Dufresne <nicolas.dufresne@collabora.com>,
-	linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	lvc-project@linuxtesting.org,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Sebastian Fricke <sebastian.fricke@collabora.com>
-Subject: [PATCH 6.1] media: mediatek: vcodec: Fix VP8 stateless decoder smatch warning
-Date: Sat, 15 Mar 2025 10:29:01 +0000
-Message-ID: <20250315102903.3634639-1-sdl@nppct.ru>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1742034620; c=relaxed/simple;
+	bh=AS5DGfZQc+/rQQqIwJXY4GCb3aw85Ld05fWMIbC/8ao=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=cL3PUttUT8hzJjx5povbTvvIom/Jf2ZuyfwkmoDu1Sqo+I7snrJnB1RQwn4fUbbqhVfWGi/I4sCF5dDdFOf5oq40Fe44scR9aDfaSZGOaVV4Bf/giUSkBGVDIO3tDLR8hxsBP9mP+x8JcBSLnUTqcg6npRoMpeliIDFeMzckFB0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=c2A+r5ec; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742034619; x=1773570619;
+  h=date:from:to:cc:subject:message-id;
+  bh=AS5DGfZQc+/rQQqIwJXY4GCb3aw85Ld05fWMIbC/8ao=;
+  b=c2A+r5ecN4fwboXRx6Cnb3DPefoZ1n8YZkdHgVpzumtXXT5N91r0THdi
+   gmhaHdG89ddVV9d44SGP9eaI85xikTDUGoYXdOMGIepzlWpjH3be47MAq
+   v82VAFVIYT2CN+SAyvitUNjk/XKH4lmWQ9blv7fgrI47ETm0n2QO4Nj16
+   I+VhocXtrzjCBHTi/wejqylb1jIDH6i/iQQJqOoFnNjT5VXOzTfXAmqpn
+   Y5DiwKTdeNrVUfTgSx2J/b19EAxxOhmy28ySNmEuyOLEfGfm8+8B9TS56
+   21i4MEup2CEFw/rgb+KG45U92WKX+rw9fnOIwKnaW0bKk8Xas43//fyXl
+   g==;
+X-CSE-ConnectionGUID: Z8eH3cQESBap3raYxmCgAQ==
+X-CSE-MsgGUID: AYj0MAs3TuOq+Xde5R3Z4w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11373"; a="43392197"
+X-IronPort-AV: E=Sophos;i="6.14,250,1736841600"; 
+   d="scan'208";a="43392197"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Mar 2025 03:30:17 -0700
+X-CSE-ConnectionGUID: vIFR9xpnTdmQJ1QJp9X99Q==
+X-CSE-MsgGUID: kasP1rUtQO+jVnFbdZjWFA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,250,1736841600"; 
+   d="scan'208";a="126555037"
+Received: from lkp-server02.sh.intel.com (HELO a4747d147074) ([10.239.97.151])
+  by orviesa004.jf.intel.com with ESMTP; 15 Mar 2025 03:30:17 -0700
+Received: from kbuild by a4747d147074 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1ttOmU-000BFm-1D;
+	Sat, 15 Mar 2025 10:30:14 +0000
+Date: Sat, 15 Mar 2025 18:29:34 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:x86/boot] BUILD SUCCESS
+ b25eb5f5e419b81f124d5ba2abaaacf1948fb97e
+Message-ID: <202503151828.xOMbCknv-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-From: Yunfei Dong <yunfei.dong@mediatek.com>
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/boot
+branch HEAD: b25eb5f5e419b81f124d5ba2abaaacf1948fb97e  x86/kexec: Add relocate_kernel() debugging support: Load a GDT
 
-commit b113bc7c0e83b32f4dd2d291a2b6c4803e0a2c44 upstream.
+elapsed time: 1445m
 
-Fix a smatch static checker warning on vdec_vp8_req_if.c.
-Which leads to a kernel crash when fb is NULL.
+configs tested: 19
+configs skipped: 127
 
-Fixes: 7a7ae26fd458 ("media: mediatek: vcodec: support stateless VP8 decoding")
-Signed-off-by: Yunfei Dong <yunfei.dong@mediatek.com>
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Signed-off-by: Sebastian Fricke <sebastian.fricke@collabora.com>
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-[ Alexey Nepomnyashih: changed mtk_vdec_err() to mtk_vcodec_err. ]
-Signed-off-by: Alexey Nepomnyashih <sdl@nppct.ru>
----
- .../platform/mediatek/vcodec/vdec/vdec_vp8_req_if.c    | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-diff --git a/drivers/media/platform/mediatek/vcodec/vdec/vdec_vp8_req_if.c b/drivers/media/platform/mediatek/vcodec/vdec/vdec_vp8_req_if.c
-index e1fe2603e92e..22d8f178b04d 100644
---- a/drivers/media/platform/mediatek/vcodec/vdec/vdec_vp8_req_if.c
-+++ b/drivers/media/platform/mediatek/vcodec/vdec/vdec_vp8_req_if.c
-@@ -336,14 +336,18 @@ static int vdec_vp8_slice_decode(void *h_vdec, struct mtk_vcodec_mem *bs,
- 	src_buf_info = container_of(bs, struct mtk_video_dec_buf, bs_buffer);
- 
- 	fb = inst->ctx->dev->vdec_pdata->get_cap_buffer(inst->ctx);
--	dst_buf_info = container_of(fb, struct mtk_video_dec_buf, frame_buffer);
-+	if (!fb) {
-+		mtk_vcodec_err(inst, "fb buffer is NULL");
-+		return -ENOMEM;
-+	}
- 
--	y_fb_dma = fb ? (u64)fb->base_y.dma_addr : 0;
-+	dst_buf_info = container_of(fb, struct mtk_video_dec_buf, frame_buffer);
-+	y_fb_dma = fb->base_y.dma_addr;
- 	if (inst->ctx->q_data[MTK_Q_DATA_DST].fmt->num_planes == 1)
- 		c_fb_dma = y_fb_dma +
- 			inst->ctx->picinfo.buf_w * inst->ctx->picinfo.buf_h;
- 	else
--		c_fb_dma = fb ? (u64)fb->base_c.dma_addr : 0;
-+		c_fb_dma = fb->base_c.dma_addr;
- 
- 	inst->vsi->dec.bs_dma = (u64)bs->dma_addr;
- 	inst->vsi->dec.bs_sz = bs->size;
--- 
-2.43.0
+tested configs:
+i386                         allmodconfig    gcc-12
+i386                          allnoconfig    gcc-12
+i386                         allyesconfig    gcc-12
+i386    buildonly-randconfig-001-20250314    clang-19
+i386    buildonly-randconfig-002-20250314    clang-19
+i386    buildonly-randconfig-003-20250314    gcc-12
+i386    buildonly-randconfig-004-20250314    gcc-12
+i386    buildonly-randconfig-005-20250314    gcc-12
+i386    buildonly-randconfig-006-20250314    gcc-12
+i386                            defconfig    clang-19
+x86_64                        allnoconfig    clang-19
+x86_64                       allyesconfig    clang-19
+x86_64  buildonly-randconfig-001-20250314    clang-19
+x86_64  buildonly-randconfig-002-20250314    clang-19
+x86_64  buildonly-randconfig-003-20250314    gcc-12
+x86_64  buildonly-randconfig-004-20250314    clang-19
+x86_64  buildonly-randconfig-005-20250314    gcc-12
+x86_64  buildonly-randconfig-006-20250314    gcc-12
+x86_64                          defconfig    gcc-11
 
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
