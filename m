@@ -1,533 +1,237 @@
-Return-Path: <linux-kernel+bounces-562624-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48645A62EC0
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 15:59:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B62D1A62E8E
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 15:58:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8D0027AA362
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 14:58:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E487189B4AB
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 14:58:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E93A205AAF;
-	Sat, 15 Mar 2025 14:58:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEF46202F62;
+	Sat, 15 Mar 2025 14:57:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="j8zaOfYU"
-Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b/s6USe4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6949C2054EC;
-	Sat, 15 Mar 2025 14:58:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2BD91B4234;
+	Sat, 15 Mar 2025 14:57:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742050706; cv=none; b=FfsXoE+6JYJU0ZhPPgXya5vFOyGAOYKIgptZKQb+DhxHGWmocjszXNYBz+WeotDytRYA6eq2C67Hn40RWK8yPezKZf8St0LEERLieWrL6RB8K/eCzl5/6ydSxNc66MdJ8AQevYOlwDyMzXQwqqKbJz8P1XzR1eJI+AWSuxmKV4s=
+	t=1742050674; cv=none; b=GRB6WmcbF5ox1DJVtVmmlL+2DRUJNcSD+7f+KoX1ULeydmSPF4TcDAb63CRgMs/dNiqtmtd7U+0Ci++p5112dvvfZ+PWWxBqo0Vs1hPx1yImKrH2n746wfHZ4/IMN1dAwHnB7FtDAxdFyztLHKDY1/MhljKnnHJfm94dhGzHyLc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742050706; c=relaxed/simple;
-	bh=+HuoQ7+khvt8Q/9RqKy8lO27A0aQwJDpBzU6owbO4To=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=KJGtfif4xQbCyJBYvwdY53VViVBCDjqK8HlTbZSBWjPfX35EITZpNL+bqDQL60B4YvRgwFpk8784wBswIM6lfVKWeMR+Z2HEqDlMxcUToNRIjwwyCZg2NdvvMdjipx5gcExrsBSfrRXdGeAAzAPA4M5Phv9G5F5QZIdAr1P4aJk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=j8zaOfYU; arc=none smtp.client-ip=5.75.144.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
-Received: from [192.168.183.162] (254C339A.nat.pool.telekom.hu [37.76.51.154])
-	by mail.mainlining.org (Postfix) with ESMTPSA id EA20EBBAF3;
-	Sat, 15 Mar 2025 14:58:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mainlining.org;
-	s=psm; t=1742050702;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9nJ3LhLv08i7DTY7aOh17kaASTibwNqm+QEAGMT6JMM=;
-	b=j8zaOfYUjCfPep7SOQhNsP4gTSHWqKD+d/RJKR6b3FvpFGFmEBgEEieRFsBWuUMt+SL8gF
-	kQpYXkbpHubpfhYnuIvR6mIlXAiOjGkHTWI9M+wE9pcPoi1JToA7lB3j7IM0rEDR+s2eam
-	ByOsQmUQrnlBHe93b4QGkSkPzVVT9dbs6D2S/Yhc4o2KDXSUfaFWIXh4E4+KeIir21hgWu
-	OdCSnCBd1aODh+Luq1Vz6r9UbHhVy201dr1TzWu5mG1FzgvTFHmuhRS1S2QHOMyFIAjpyZ
-	Bcn9KsdVDJcdJ0rcptnnjRC31TfRj9gAbtRCVIhUR0wKY59+PQjdGvOfPgrwAA==
-From: =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>
-Date: Sat, 15 Mar 2025 15:57:40 +0100
-Subject: [PATCH v4 6/6] arm64: dts: qcom: Add Xiaomi Redmi 3S
+	s=arc-20240116; t=1742050674; c=relaxed/simple;
+	bh=VAGcEkTA21upuXvwr1kQ3PnByIORGCDbW++j3x8AWAs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CtnJ8BCDcm3AEAAW5RqaPvvqL1vktOHOG3aDkd5bK9uJEMRxsH2QwVbzhtXJJeIG8GnStMurkFVNIlcFMsKuMs9+mj9S74pp+zO0CEBja9fvbhi2m4L3QIuVhLiQNuw0J0nPadXP7JkYgHLtnf42Z7dVT45kpGZ3gJHEc1DPVUc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b/s6USe4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5AED6C4AF09;
+	Sat, 15 Mar 2025 14:57:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742050673;
+	bh=VAGcEkTA21upuXvwr1kQ3PnByIORGCDbW++j3x8AWAs=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=b/s6USe4OK1g6LB5sM8h4Q9/0T0IB568pRk6PYnh1BksfPxI7Gup0YMkIqpL1zr0f
+	 3NFxJx89KTKhl2MkV/tTxDIvHovLc0hKByDQrQRU4AjAI92FvSsBUUkPNZ7xfodOiA
+	 79hZr5h4sz2DXBXy9WKDUDvud0fvGDylDdqBq36zxF0CNeYJ8UMExUqsLxQhNHfAdz
+	 Hnzn2LBxR0f9kj7UPtYpwfIs7T6pDd0ILy2tSp9QlufUO2pGM7AL9vFxnpKyU4QgLK
+	 lT3j8BzxALSOeRT2dQ7n4pEtgWRPcJ2ZzdOi8LtexqwOQbp0cQuuNp0V2igjL+L0mM
+	 M0AXemjOgdOrg==
+Received: by mail-oi1-f177.google.com with SMTP id 5614622812f47-3f3f4890596so1707963b6e.2;
+        Sat, 15 Mar 2025 07:57:53 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWLfWcN6Dx7V+jwGcvxKVmFRgb70EhIMDRMvImnRqE6H5GvnKlANXxemDdAYFJP0KISJs8/hxe8fX5gnCk=@vger.kernel.org, AJvYcCXfjRIbOKnZ2ZuqLP47spoDjhIK+NDuJAmKKfs69u/5nu7i0UL9ezWyCEYr+VfQuvyjPAf+8YQ/ETs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxO5IS/s+5xzixnyARxJQSYOZdrVjVEhWV5vB1AjipTWtGZv8MY
+	WiI6oceJ6QpU7Hho1YYq4doPRUSGTiLU7ydRvAxU1RhezCiswdj2FAe2yjud+puNfvF7kfQzp+g
+	jd1W5HahrMZcnPIvxt3vK6+ggyvo=
+X-Google-Smtp-Source: AGHT+IFtXlaQXRcbAUeBvfSA61J2gCJBOg1KbzrYBRTUvUPkIHmIZSDLtXFewyEXlGxqdUuAtBKd4BcGlUCIQ8LflRc=
+X-Received: by 2002:a05:6808:1828:b0:3fa:53b5:6f87 with SMTP id
+ 5614622812f47-3fdf04592c0mr3568765b6e.34.1742050672591; Sat, 15 Mar 2025
+ 07:57:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250315-msm8937-v4-6-1f132e870a49@mainlining.org>
-References: <20250315-msm8937-v4-0-1f132e870a49@mainlining.org>
-In-Reply-To: <20250315-msm8937-v4-0-1f132e870a49@mainlining.org>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Stephan Gerhold <stephan@gerhold.net>, 
- =?utf-8?q?Otto_Pfl=C3=BCger?= <otto.pflueger@abscue.de>, 
- Linus Walleij <linus.walleij@linaro.org>, Lee Jones <lee@kernel.org>, 
- Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
- Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
- Robin Murphy <robin.murphy@arm.com>, Konrad Dybcio <konradybcio@kernel.org>, 
- Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
- Abhinav Kumar <quic_abhinavk@quicinc.com>, 
- Marijn Suijten <marijn.suijten@somainline.org>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- Dmitry Baryshkov <lumag@kernel.org>, Dmitry Baryshkov <lumag@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-gpio@vger.kernel.org, iommu@lists.linux.dev, 
- dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
- phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht, 
- linux@mainlining.org, 
- =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1742050685; l=10374;
- i=barnabas.czeman@mainlining.org; s=20240730; h=from:subject:message-id;
- bh=+HuoQ7+khvt8Q/9RqKy8lO27A0aQwJDpBzU6owbO4To=;
- b=LAPf9RGhLW3PKABIGdUHuZ1MENg91FXqQocEg6s2VC6wDffKs+AWSEn07g76jIxYiAL0gow68
- RfX/n+t32g2DVcziUNigsr2hK1BMqW7rzmmx2Ps22mQTSBMyeVPSU4B
-X-Developer-Key: i=barnabas.czeman@mainlining.org; a=ed25519;
- pk=TWUSIGgwW/Sn4xnX25nw+lszj1AT/A3bzkahn7EhOFc=
+References: <10629535.nUPlyArG6x@rjwysocki.net> <CAGETcx8VmzU9xy39=_QAQ0pf5fZY=EbGOKrdy0_wLEW1pQ2oKw@mail.gmail.com>
+In-Reply-To: <CAGETcx8VmzU9xy39=_QAQ0pf5fZY=EbGOKrdy0_wLEW1pQ2oKw@mail.gmail.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Sat, 15 Mar 2025 15:57:41 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0gXG+0CgBZTcxzenxHO-ah3YwFaQm6GHCeuyZT9CR=-zg@mail.gmail.com>
+X-Gm-Features: AQ5f1Jp0w9Tt0hvqJR7f0AX3YESUHYoYmItiba8gNUcvlIrCClt9FmqhkoQwQM0
+Message-ID: <CAJZ5v0gXG+0CgBZTcxzenxHO-ah3YwFaQm6GHCeuyZT9CR=-zg@mail.gmail.com>
+Subject: Re: [PATCH v3 0/5] PM: sleep: Improvements of async suspend and
+ resume of devices
+To: Saravana Kannan <saravanak@google.com>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux PM <linux-pm@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, Alan Stern <stern@rowland.harvard.edu>, 
+	Ulf Hansson <ulf.hansson@linaro.org>, Johan Hovold <johan@kernel.org>, 
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Jon Hunter <jonathanh@nvidia.com>
+Content-Type: multipart/mixed; boundary="000000000000857917063062c7f4"
 
-Add initial support for Xiaomi Redmi 3S (land).
+--000000000000857917063062c7f4
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
----
- arch/arm64/boot/dts/qcom/Makefile                |   1 +
- arch/arm64/boot/dts/qcom/msm8937-xiaomi-land.dts | 408 +++++++++++++++++++++++
- 2 files changed, 409 insertions(+)
+On Fri, Mar 14, 2025 at 10:06=E2=80=AFPM Saravana Kannan <saravanak@google.=
+com> wrote:
+>
+> On Fri, Mar 14, 2025 at 6:24=E2=80=AFAM Rafael J. Wysocki <rjw@rjwysocki.=
+net> wrote:
+> >
+> > Hi Everyone,
+> >
+> > This is a new iteration of the async suspend/resume improvements work:
+> >
+> > https://lore.kernel.org/linux-pm/1915694.tdWV9SEqCh@rjwysocki.net/
+> >
+> > which includes some rework and fixes of the patches in the series linke=
+d
+> > above.  The most significant differences are splitting the second patch
+> > into two patches and adding a change to treat consumers like children
+> > during resume.
+> >
+> > This new iteration is based on linux-pm.git/linux-next and on the recen=
+t
+> > fix related to direct-complete:
+> >
+> > https://lore.kernel.org/linux-pm/12627587.O9o76ZdvQC@rjwysocki.net/
+> >
+> > The overall idea is still to start async processing for devices that ha=
+ve
+> > at least some dependencies met, but not necessarily all of them, to avo=
+id
+> > overhead related to queuing too many async work items that will have to
+> > wait for the processing of other devices before they can make progress.
+> >
+> > Patch [1/5] does this in all resume phases, but it just takes children
+> > into account (that is, async processing is started upfront for devices
+> > without parents and then, after resuming each device, it is started for
+> > the device's children).
+> >
+> > Patches [2/5] does this in the suspend phase of system suspend and only
+> > takes parents into account (that is, async processing is started upfron=
+t
+> > for devices without any children and then, after suspending each device=
+,
+> > it is started for the device's parent).
+> >
+> > Patch [3/5] extends it to the "late" and "noirq" suspend phases.
+> >
+> > Patch [4/5] adds changes to treat suppliers like parents during suspend=
+.
+> > That is, async processing is started upfront for devices without any
+> > children or consumers and then, after suspending each device, it is
+> > started for the device's parent and suppliers.
+> >
+> > Patch [5/5] adds changes to treat consumers like children during resume=
+.
+> > That is, async processing is started upfront for devices without a pare=
+nt
+> > or any suppliers and then, after resuming each device, it is started fo=
+r
+> > the device's children and consumers.
+> >
+> > Preliminary test results from one sample system are below.
+> >
+> > "Baseline" is the linux-pm.git/testing branch, "Parent/child"
+> > is that branch with patches [1-3/5] applied and "Device links"
+> > is that branch with patches [1-5/5] applied.
+> >
+> > "s/r" means "regular" suspend/resume, noRPM is "late" suspend
+> > and "early" resume, and noIRQ means the "noirq" phases of
+> > suspend and resume, respectively.  The numbers are suspend
+> > and resume times for each phase, in milliseconds.
+> >
+> >          Baseline       Parent/child    Device links
+> >
+> >        Suspend Resume  Suspend Resume  Suspend Resume
+> >
+> > s/r    427     449     298     450     294     442
+> > noRPM  13      1       13      1       13      1
+> > noIRQ  31      25      28      24      28      26
+> >
+> > s/r    408     442     298     443     301     447
+> > noRPM  13      1       13      1       13      1
+> > noIRQ  32      25      30      25      28      25
+> >
+> > s/r    408     444     310     450     298     439
+> > noRPM  13      1       13      1       13      1
+> > noIRQ  31      24      31      26      31      24
+> >
+> > It clearly shows an improvement in the suspend path after
+> > applying patches [1-3/5], easily attributable to patch [2/5],
+> > and clear difference after updating the async processing of
+> > suppliers and consumers.
 
-diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
-index b54f45b3bec812f4f029c5a991ad3ea30585d4e5..52fdfef605de2dc0d1e5538f4358be0b5afab21e 100644
---- a/arch/arm64/boot/dts/qcom/Makefile
-+++ b/arch/arm64/boot/dts/qcom/Makefile
-@@ -64,6 +64,7 @@ dtb-$(CONFIG_ARCH_QCOM)	+= msm8916-wingtech-wt88047.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= msm8916-yiming-uz801v3.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= msm8917-xiaomi-riva.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= msm8929-wingtech-wt82918hd.dtb
-+dtb-$(CONFIG_ARCH_QCOM)	+= msm8937-xiaomi-land.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= msm8939-huawei-kiwi.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= msm8939-longcheer-l9100.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= msm8939-samsung-a7.dtb
-diff --git a/arch/arm64/boot/dts/qcom/msm8937-xiaomi-land.dts b/arch/arm64/boot/dts/qcom/msm8937-xiaomi-land.dts
-new file mode 100644
-index 0000000000000000000000000000000000000000..a68b8cd23a6c97c80e2cbd9c39f3817f5b6f8a2b
---- /dev/null
-+++ b/arch/arm64/boot/dts/qcom/msm8937-xiaomi-land.dts
-@@ -0,0 +1,408 @@
-+// SPDX-License-Identifier: BSD-3-Clause
-+/*
-+ * Copyright (c) 2024, Barnabas Czeman
-+ */
-+/dts-v1/;
-+
-+#include <dt-bindings/arm/qcom,ids.h>
-+#include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/leds/common.h>
-+
-+#include "msm8937.dtsi"
-+#include "pm8937.dtsi"
-+#include "pmi8950.dtsi"
-+
-+/delete-node/ &qseecom_mem;
-+
-+/ {
-+	model = "Xiaomi Redmi 3S (land)";
-+	compatible = "xiaomi,land", "qcom,msm8937";
-+	chassis-type = "handset";
-+
-+	qcom,msm-id = <QCOM_ID_MSM8937 0x0>;
-+	qcom,board-id = <0x1000b 1>, <0x2000b 1>;
-+
-+	aliases {
-+		mmc0 = &sdhc_1;
-+		mmc1 = &sdhc_2;
-+	};
-+
-+	speaker_amp: audio-amplifier {
-+		compatible = "awinic,aw8738";
-+		mode-gpios = <&tlmm 124 GPIO_ACTIVE_HIGH>;
-+		awinic,mode = <5>;
-+		sound-name-prefix = "Speaker Amp";
-+		pinctrl-0 = <&speaker_amp_default>;
-+		pinctrl-names = "default";
-+	};
-+
-+	headphones_switch: audio-switch {
-+		compatible = "simple-audio-amplifier";
-+		enable-gpios = <&tlmm 129 GPIO_ACTIVE_HIGH>;
-+		sound-name-prefix = "Headphones Switch";
-+		pinctrl-0 = <&headphones_switch_default>;
-+		pinctrl-names = "default";
-+	};
-+
-+	battery: battery {
-+		compatible = "simple-battery";
-+
-+		charge-full-design-microamp-hours = <4100000>;
-+		constant-charge-current-max-microamp = <1000000>;
-+		voltage-min-design-microvolt = <3400000>;
-+		voltage-max-design-microvolt = <4400000>;
-+	};
-+
-+	chosen {
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		ranges;
-+
-+		stdout-path = "framebuffer0";
-+
-+		framebuffer0: framebuffer@8dd01000 {
-+			compatible = "simple-framebuffer";
-+			reg = <0x0 0x8dd01000 0x0 (720 * 1280 * 3)>;
-+			width = <720>;
-+			height = <1280>;
-+			stride = <(720 * 3)>;
-+			format = "r8g8b8";
-+
-+			clocks = <&gcc GCC_MDSS_AHB_CLK>,
-+				 <&gcc GCC_MDSS_AXI_CLK>,
-+				 <&gcc GCC_MDSS_VSYNC_CLK>,
-+				 <&gcc GCC_MDSS_MDP_CLK>,
-+				 <&gcc GCC_MDSS_BYTE0_CLK>,
-+				 <&gcc GCC_MDSS_PCLK0_CLK>,
-+				 <&gcc GCC_MDSS_ESC0_CLK>;
-+			power-domains = <&gcc MDSS_GDSC>;
-+		};
-+	};
-+
-+	gpio-keys {
-+		compatible = "gpio-keys";
-+
-+		pinctrl-0 = <&gpio_keys_default>;
-+		pinctrl-names = "default";
-+
-+		key-volup {
-+			label = "Volume Up";
-+			linux,code = <KEY_VOLUMEUP>;
-+			gpios = <&tlmm 91 GPIO_ACTIVE_LOW>;
-+			debounce-interval = <15>;
-+		};
-+	};
-+
-+	irled {
-+		compatible = "gpio-ir-tx";
-+		gpios = <&tlmm 45 GPIO_ACTIVE_HIGH>;
-+	};
-+
-+	reserved-memory {
-+		reserved@84a00000 {
-+			reg = <0x0 0x84a00000 0x0 0x1900000>;
-+			no-map;
-+		};
-+
-+		framebuffer: memory@8dd01000 {
-+			reg = <0x0 0x8dd01000 0x0 (720 * 1280 * 3)>;
-+			no-map;
-+		};
-+	};
-+
-+	vph_pwr: vph-pwr-regulator {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vph_pwr";
-+		regulator-min-microvolt = <3700000>;
-+		regulator-max-microvolt = <3700000>;
-+		regulator-always-on;
-+		regulator-boot-on;
-+	};
-+};
-+
-+&blsp1_i2c2 {
-+	status = "okay";
-+
-+	led-controller@45 {
-+		compatible = "awinic,aw2013";
-+		reg = <0x45>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		vcc-supply = <&pm8937_l10>;
-+		vio-supply = <&pm8937_l5>;
-+
-+		led@0 {
-+			reg = <0>;
-+			function = LED_FUNCTION_STATUS;
-+			led-max-microamp = <5000>;
-+			color = <LED_COLOR_ID_RED>;
-+		};
-+
-+		led@1 {
-+			reg = <1>;
-+			function = LED_FUNCTION_STATUS;
-+			led-max-microamp = <5000>;
-+			color = <LED_COLOR_ID_GREEN>;
-+		};
-+
-+		led@2 {
-+			reg = <2>;
-+			function = LED_FUNCTION_STATUS;
-+			led-max-microamp = <5000>;
-+			color = <LED_COLOR_ID_BLUE>;
-+		};
-+	};
-+};
-+
-+&blsp1_i2c3 {
-+	status = "okay";
-+
-+	touchscreen@3e {
-+		compatible = "edt,edt-ft5306";
-+		reg = <0x3e>;
-+
-+		interrupts-extended = <&tlmm 65 IRQ_TYPE_LEVEL_LOW>;
-+		reset-gpios = <&tlmm 64 GPIO_ACTIVE_LOW>;
-+		vcc-supply = <&pm8937_l10>;
-+		iovcc-supply = <&pm8937_l5>;
-+
-+		pinctrl-0 = <&tsp_int_rst_default>;
-+		pinctrl-names = "default";
-+
-+		touchscreen-size-x = <720>;
-+		touchscreen-size-y = <1280>;
-+	};
-+};
-+
-+&pm8937_resin {
-+	linux,code = <KEY_VOLUMEDOWN>;
-+	status = "okay";
-+};
-+
-+&pm8937_spmi_regulators {
-+	/* APC */
-+	pm8937_s5: s5 {
-+		regulator-min-microvolt = <1050000>;
-+		regulator-max-microvolt = <1350000>;
-+		regulator-always-on;
-+		regulator-boot-on;
-+	};
-+};
-+
-+&pmi8950_wled {
-+	qcom,num-strings = <2>;
-+	qcom,external-pfet;
-+	qcom,current-limit-microamp = <20000>;
-+	qcom,ovp-millivolt = <29600>;
-+
-+	status = "okay";
-+};
-+
-+&rpm_requests {
-+	regulators-0 {
-+		compatible = "qcom,rpm-pm8937-regulators";
-+
-+		vdd_s1-supply = <&vph_pwr>;
-+		vdd_s2-supply = <&vph_pwr>;
-+		vdd_s3-supply = <&vph_pwr>;
-+		vdd_s4-supply = <&vph_pwr>;
-+
-+		vdd_l1_l19-supply = <&pm8937_s3>;
-+		vdd_l2_l23-supply = <&pm8937_s3>;
-+		vdd_l3-supply = <&pm8937_s3>;
-+		vdd_l4_l5_l6_l7_l16-supply = <&pm8937_s4>;
-+		vdd_l8_l11_l12_l17_l22-supply = <&vph_pwr>;
-+		vdd_l9_l10_l13_l14_l15_l18-supply = <&vph_pwr>;
-+
-+		pm8937_s1: s1 {
-+			regulator-min-microvolt = <1000000>;
-+			regulator-max-microvolt = <1225000>;
-+		};
-+
-+		pm8937_s3: s3 {
-+			regulator-min-microvolt = <1300000>;
-+			regulator-max-microvolt = <1300000>;
-+		};
-+
-+		pm8937_s4: s4 {
-+			regulator-min-microvolt = <2050000>;
-+			regulator-max-microvolt = <2050000>;
-+		};
-+
-+		pm8937_l2: l2 {
-+			regulator-min-microvolt = <1200000>;
-+			regulator-max-microvolt = <1200000>;
-+		};
-+
-+		pm8937_l5: l5 {
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <1800000>;
-+		};
-+
-+		pm8937_l6: l6 {
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <1800000>;
-+		};
-+
-+		pm8937_l7: l7 {
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <1800000>;
-+		};
-+
-+		pm8937_l8: l8 {
-+			regulator-min-microvolt = <2850000>;
-+			regulator-max-microvolt = <2900000>;
-+		};
-+
-+		pm8937_l9: l9 {
-+			regulator-min-microvolt = <3000000>;
-+			regulator-max-microvolt = <3300000>;
-+		};
-+
-+		pm8937_l10: l10 {
-+			regulator-min-microvolt = <2800000>;
-+			regulator-max-microvolt = <3000000>;
-+		};
-+
-+		pm8937_l11: l11 {
-+			regulator-min-microvolt = <2950000>;
-+			regulator-max-microvolt = <2950000>;
-+			regulator-allow-set-load;
-+			regulator-system-load = <200000>;
-+		};
-+
-+		pm8937_l12: l12 {
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <2950000>;
-+		};
-+
-+		pm8937_l13: l13 {
-+			regulator-min-microvolt = <3075000>;
-+			regulator-max-microvolt = <3075000>;
-+		};
-+
-+		pm8937_l14: l14 {
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <3300000>;
-+		};
-+
-+		pm8937_l15: l15 {
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <3300000>;
-+		};
-+
-+		pm8937_l16: l16 {
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <1800000>;
-+		};
-+
-+		pm8937_l17: l17 {
-+			regulator-min-microvolt = <2800000>;
-+			regulator-max-microvolt = <2900000>;
-+		};
-+
-+		pm8937_l19: l19 {
-+			regulator-min-microvolt = <1225000>;
-+			regulator-max-microvolt = <1350000>;
-+		};
-+
-+		pm8937_l22: l22 {
-+			regulator-min-microvolt = <2800000>;
-+			regulator-max-microvolt = <2800000>;
-+		};
-+
-+		pm8937_l23: l23 {
-+			regulator-min-microvolt = <1200000>;
-+			regulator-max-microvolt = <1200000>;
-+		};
-+	};
-+};
-+
-+&sdc2_cmd_default {
-+	drive-strength = <12>;
-+};
-+
-+&sdc2_data_default {
-+	drive-strength = <12>;
-+};
-+
-+&sdhc_1 {
-+	vmmc-supply = <&pm8937_l8>;
-+	vqmmc-supply = <&pm8937_l5>;
-+	status = "okay";
-+};
-+
-+&sdhc_2 {
-+	cd-gpios = <&tlmm 67 GPIO_ACTIVE_LOW>;
-+	vmmc-supply = <&pm8937_l11>;
-+	vqmmc-supply = <&pm8937_l12>;
-+	pinctrl-0 = <&sdc2_default &sdc2_cd_default>;
-+	pinctrl-1 = <&sdc2_sleep &sdc2_cd_default>;
-+	pinctrl-names = "default", "sleep";
-+	status = "okay";
-+};
-+
-+&sleep_clk {
-+	clock-frequency = <32768>;
-+};
-+
-+&tlmm {
-+	gpio-reserved-ranges = <0 4>, <20 4>;
-+
-+	gpio_keys_default: gpio-keys-default-state {
-+		pins = "gpio91";
-+		function = "gpio";
-+		drive-strength = <2>;
-+		bias-pull-up;
-+	};
-+
-+	headphones_switch_default: headphones-switch-default-state {
-+		pins = "gpio129";
-+		function = "gpio";
-+		drive-strength = <2>;
-+		bias-disable;
-+	};
-+
-+	sdc2_cd_default: sdc2-cd-default-state {
-+		pins = "gpio67";
-+		function = "gpio";
-+		drive-strength = <2>;
-+		bias-disable;
-+	};
-+
-+	speaker_amp_default: speaker-amp-default-state {
-+		pins = "gpio124";
-+		function = "gpio";
-+		drive-strength = <2>;
-+		bias-disable;
-+	};
-+
-+	tsp_int_rst_default: tsp-int-rst-default-state {
-+		pins = "gpio64", "gpio65";
-+		function = "gpio";
-+		drive-strength = <8>;
-+		bias-pull-up;
-+	};
-+};
-+
-+&wcnss {
-+	vddpx-supply = <&pm8937_l5>;
-+	status = "okay";
-+};
-+
-+&wcnss_iris {
-+	compatible = "qcom,wcn3620";
-+	vddxo-supply = <&pm8937_l7>;
-+	vddrfa-supply = <&pm8937_l19>;
-+	vddpa-supply = <&pm8937_l9>;
-+	vdddig-supply = <&pm8937_l5>;
-+};
-+
-+&wcnss_mem {
-+	status = "okay";
-+};
-+
-+&xo_board {
-+	clock-frequency = <19200000>;
-+};
+A "no" is missing above, it should be "and no clear difference after
+updating ...".
 
--- 
-2.48.1
+Also, please find attached a text file with sample results from 3
+different systems (including the one above), not for drawing any
+conclusions (the number of samples is too low), but to illustrate what
+can happen.
 
+While both Dell XPS13 systems show a consistent improvement after
+applying the first three patches, everything else is essentially a
+wash (particularly on the desktop machine that seems to suspend and
+resume as fast as it gets already).
+
+> >
+> > Note that there are systems where resume times are shorter after
+> > patches [1-3/5] too, but more testing is necessary.
+> >
+> > I do realize that this code can be optimized further, but it is not
+> > particularly clear to me that any further optimizations would make
+> > a significant difference and the changes in this series are deep
+> > enough to do in one go.
+>
+> Thanks for adding patches 4 and 5!
+
+No problem.
+
+> Let me try to test them early next week and compare your patches 1-3,
+> 1-5 and my series (which does additional checks to make sure
+> suppliers/consumers are done). I do about 100 suspend/resume runs for
+> each kernel, so please bear with me while I get it.
+
+Thanks and no worries, please take as much time as needed.  I will be
+traveling next week, so I'll be a bit slow to respond anyway.
+
+Since I've got a confirmation from internal testing (carried out on a
+much wider range of machines and much more extensively that I can do
+it myself) that patches [1-3/5] are overall improvement, I'm planning
+to queue them up during the 6.16 cycle and other improvements can be
+done on top of them, including patches [4-5/5].  I also think that
+adding explicit status tracking (if it turns out to make things faster
+measurably with respect to this series) on top of patches [4-5/5]
+would be rather straightforward.
+
+--000000000000857917063062c7f4
+Content-Type: text/plain; charset="US-ASCII"; name="async-suspend-resume.txt"
+Content-Disposition: attachment; filename="async-suspend-resume.txt"
+Content-Transfer-Encoding: base64
+Content-ID: <f_m8abl42g0>
+X-Attachment-Id: f_m8abl42g0
+
+CUJhc2VsaW5lCQlQYXJlbnRzL2NoaWxkcmVuCURldmljZSBsaW5rcwoKCVN1c3BlbmQJUmVzdW1l
+CQlTdXNwZW5kCVJlc3VtZQkJU3VzcGVuZAlSZXN1bWUKCkRlbGwgWFBTMTMgOTM2MAoKcy9yCTQy
+Nwk0NDkJCTI5OAk0NTAJCTI5NAk0NDIKbm9SUE0JMTMJMQkJMTMJMQkJMTMJMQpub0lSUQkzMQky
+NQkJMjgJMjQJCTI4CTI2CgpzL3IJNDA4CTQ0MgkJMjk4CTQ0MwkJMzAxCTQ0Nwpub1JQTQkxMwkx
+CQkxMwkxCQkxMwkxCm5vSVJRCTMyCTI1CQkzMAkyNQkJMjgJMjUKCnMvcgk0MDgJNDQ0CQkzMTAJ
+NDUwCQkyOTgJNDM5Cm5vUlBNCTEzCTEJCTEzCTEJCTEzCTEKbm9JUlEJMzEJMjQJCTMxCTI2CQkz
+MQkyNAoKRGVsbCBYUFMxMyA5MzgwCgpzL3IJNDM5CTI4MwkJMzE4CTI5MAkJMzE5CTI5MApub1JQ
+TQkxNQkyCQkxNQkxCQkxNQkyCm5vSVJRCTE5OAkxNzY2CQkyMDIJMTc0MwkJMjA0CTE3NjYKCnMv
+cgk0MzkJMjgxCQkzMTgJMjgwCQkzMjAJMjgwCm5vUlBNCTE1CTIJCTE1CTEJCTE1CTEKbm9JUlEJ
+MTk5CTE3ODEJCTIwMwkxNzgzCQkyMDUJMTc3MAoKcy9yCTQ0MAkyNzkJCTMxOQkyODEJCTMyMAky
+ODMKbm9SUE0JMTQJMgkJMTUJMQkJMTUJMQpub0lSUQkxOTcJMTc3NwkJMjAyCTE3NjUJCTIwMwkx
+NzI0CgpDb2ZmZWUgTGFrZSBEZXNrdG9wCgpzL3IJMTM4CTM0NwkJMTMwCTM0NQkJMTMyCTM0NApu
+b1JQTQkxNQkyCQkyMAkyCQkxNQkyCm5vSVJRCTE1CTI1CQkyMwkyNQkJMTYJMjYKCnMvcgkxMzMJ
+MzQ1CQkxMjQJMzQzCQkxMzEJMzQ2Cm5vUlBNCTE0CTEJCTEzCTEJCTEzCTEKbm9JUlEJMTUJMjUJ
+CTE0CTI1CQkxNAkyNQoKcy9yCTEyNAkzNDMJCTEyNgkzNDUJCTEyOAkzNDUKbm9SUE0JMTMJMQkJ
+MTMJMQkJMTMJMQpub0lSUQkxNAkyNQkJMTQJMjUJCTE0CTI2Cg==
+--000000000000857917063062c7f4--
 
