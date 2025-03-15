@@ -1,53 +1,60 @@
-Return-Path: <linux-kernel+bounces-562651-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562652-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C273A62F9D
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 16:50:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 47589A62FA1
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 16:50:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2E2D3BFBAE
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 15:48:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 316F83B884E
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 15:49:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D762204F8E;
-	Sat, 15 Mar 2025 15:46:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 003A3202F9A;
+	Sat, 15 Mar 2025 15:49:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q0CFswUd"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m5ov9XE2"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 040E9204C27
-	for <linux-kernel@vger.kernel.org>; Sat, 15 Mar 2025 15:46:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 534571CD1F;
+	Sat, 15 Mar 2025 15:49:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742053568; cv=none; b=NXA2RKfieRrFHau5n9k1ZjzR2efJFz2Ze+X79lNHZcgfbNASmPMnuPFdcRSzOyCU0jYK/kHPxjO3hgPLHsSr58vqrvvUrnVx8qr7sJQ0TG60GC7GTjA3lW0zu4ZyCTkK6ZSFu8lcbtkhIkTMNSc3wbLiyJriQZ6UDoWys7Rl7Gs=
+	t=1742053794; cv=none; b=CECHEllW8f2Yr2cSNfzV8A5Qwri9Age7EGiuQeemB5TfawpgyGCQ6eu51t30WojDGHNp2bHeRbBhcGU7Afp1D4q3HV6jPpQzc4Zh9lzuqvUaoafa0UJ7y9Zwv7rUcARM27TQr3Y6OSjzjeAd+W+CTSEHy7pkerEtO4VIFZZ08gI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742053568; c=relaxed/simple;
-	bh=kz73YBVQfpSiUgqd7459ZI0e5TbEl4pLYaiBSKt0Q+Y=;
+	s=arc-20240116; t=1742053794; c=relaxed/simple;
+	bh=//VI9Ejxt3BysY3bBXysrBbAfxCY7XJI4CQgc51yUmc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XAXomxj2/gim85FzzJNKfWyAjJwcobgNcqq7WT6n2/9gjLvGFQY2Dmx4Kfed+WGQCm/Li0LgnZUulTTV7RXjHxD2VGr2A8CynHNfT4yNqM9BPEGB2aGDfbu0jZxx7t4v3K1u1etfG5WRl2nQp5sV2HavXk0oBNQDwPwtOPYfy+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q0CFswUd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D7E7C4CEE5;
-	Sat, 15 Mar 2025 15:46:07 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=M33KCCJoBQfBNsPf/IDKWR5chPXDuysthl41R8rVtRdgPTJUw9gD9atL1NIGedXGwqh0e1ekRP5cjleu3+Fr/5Cjj/4IN21tuMR0UHu7o11pFdgThpt/NAueRPu+yxXdsNtdwwtRyygGx6UrASvTBQsdX23e4uFSMXVrNx68qYw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m5ov9XE2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC78AC4CEE5;
+	Sat, 15 Mar 2025 15:49:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742053567;
-	bh=kz73YBVQfpSiUgqd7459ZI0e5TbEl4pLYaiBSKt0Q+Y=;
+	s=k20201202; t=1742053793;
+	bh=//VI9Ejxt3BysY3bBXysrBbAfxCY7XJI4CQgc51yUmc=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Q0CFswUdcZzk+WnlFwu88MaAYx5XWjP9TuZGc5gYBK4HJLVgkkehqTok70yj9ggVu
-	 oWs+2VWoc8HJoOn6+34RlRNJsH5sdwK6Ddz6M1zg9CxWSYXtC60PmrLuzjwyRz7PGS
-	 kgTlGYt8PP0xbtDpZ9MOJu/HotmTNEh1+kGSdwDVlx9uHdQceKspZvGzXvsSTx9YYs
-	 awTP8FweC+Jlo/SuZa3L0kcNPrj0gTHPI4xhbnQS1k0+Tn6mulyVOHXjUXlEEnkiHq
-	 QFXg9p47u6ZMlovYerGRuuQvtYDhzr3LfZLA2eb5or1IuTifgwLkVbWHhd1aIY7zBb
-	 rxv5RnXWV/1RQ==
-Date: Sat, 15 Mar 2025 05:46:06 -1000
-From: Tejun Heo <tj@kernel.org>
-To: xie.ludan@zte.com.cn
-Cc: jiangshanlai@gmail.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH linux-next] workqueue: use sysfs_emit() instead of
- scnprintf().
-Message-ID: <Z9WgvgHYr1A6S3K6@slm.duckdns.org>
-References: <20250315141758672YYVCK97SOzH7bky44hoBe@zte.com.cn>
+	b=m5ov9XE2YyrA++4prSzQ7wQsF4OyCJztO3HJFlvwrvgFKdEbYU+hRxDc/0gjFMi6D
+	 ZSsc17tBd6HhqsJQUe+ymMjrT3aAnvhuriYVNsX/0KML/TfhemJUlx/mvHKfDDAiip
+	 2dGgM00BWbcYjgnbPPX1hfkU2OMh18PX+JAyxpBzplAOEP3Oja994fpUcRQ+GM38M0
+	 Ju38U18/eQp62jo93PzWM8TtRPAPtBx24r2UsoRZzXSAnDMmPcPZ/tMnV9lwY7fE+6
+	 15ZK5b867+B/zIpyqmVUlHNPpgiUJhfqvjSoeqAIfr/y2IzqOD8Isq+SRADN2LE7ks
+	 0dlyKpEl8xhWA==
+Date: Sat, 15 Mar 2025 16:49:47 +0100
+From: Danilo Krummrich <dakr@kernel.org>
+To: Andrew Ballance <andrewjballance@gmail.com>
+Cc: airlied@gmail.com, simona@ffwll.ch, maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org, tzimmermann@suse.de, corbet@lwn.net,
+	ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com,
+	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
+	a.hindborg@kernel.org, aliceryhl@google.com, tmgross@umich.edu,
+	acourbot@nvidia.com, nouveau@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH 1/3] rust: alloc: add Vec::truncate method
+Message-ID: <Z9Whm43kUWaiTETX@cassiopeiae>
+References: <20250315024235.5282-1-andrewjballance@gmail.com>
+ <20250315024235.5282-2-andrewjballance@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,44 +63,64 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250315141758672YYVCK97SOzH7bky44hoBe@zte.com.cn>
+In-Reply-To: <20250315024235.5282-2-andrewjballance@gmail.com>
 
-On Sat, Mar 15, 2025 at 02:17:58PM +0800, xie.ludan@zte.com.cn wrote:
-> From: XieLudan <xie.ludan@zte.com.cn>
+On Fri, Mar 14, 2025 at 09:42:33PM -0500, Andrew Ballance wrote:
+> implements the equivalent to the std's Vec::truncate
+> on the kernel's Vec type.
 > 
-> Follow the advice in Documentation/filesystems/sysfs.rst:
-> show() should only use sysfs_emit() or sysfs_emit_at() when formatting
-> the value to be returned to user space.
-> 
-> Signed-off-by: XieLudan <xie.ludan@zte.com.cn>
+> Signed-off-by: Andrew Ballance <andrewjballance@gmail.com>
 > ---
->  kernel/workqueue.c | 22 +++++++++++-----------
->  1 file changed, 11 insertions(+), 11 deletions(-)
+>  rust/kernel/alloc/kvec.rs | 36 ++++++++++++++++++++++++++++++++++++
+>  1 file changed, 36 insertions(+)
 > 
-> diff --git a/kernel/workqueue.c b/kernel/workqueue.c
-> index bfe030b443e2..648e89dd3ef1 100644
-> --- a/kernel/workqueue.c
-> +++ b/kernel/workqueue.c
-> @@ -6463,10 +6463,10 @@ void wq_worker_comm(char *buf, size_t size, struct task_struct *task)
->  			 */
->  			if (worker->desc[0] != '\0') {
->  				if (worker->current_work)
-> -					scnprintf(buf + off, size - off, "+%s",
-> +					sysfs_emit(buf + off, "+%s",
->  						  worker->desc);
->  				else
-> -					scnprintf(buf + off, size - off, "-%s",
-> +					sysfs_emit(buf + off, "-%s",
->  						  worker->desc);
->  			}
->  			raw_spin_unlock_irq(&pool->lock);
+> diff --git a/rust/kernel/alloc/kvec.rs b/rust/kernel/alloc/kvec.rs
+> index ae9d072741ce..75e9feebb81f 100644
+> --- a/rust/kernel/alloc/kvec.rs
+> +++ b/rust/kernel/alloc/kvec.rs
+> @@ -452,6 +452,42 @@ pub fn reserve(&mut self, additional: usize, flags: Flags) -> Result<(), AllocEr
+>  
+>          Ok(())
+>      }
+> +
+> +    /// Shortens the vector, setting the length to `len` and drops the removed values.
+> +    /// If `len` is greater than or equal to the current length, this does nothing.
+> +    ///
+> +    /// This has no effect on the capacity and will not allocate.
 
-How did you verify your changes? wq_worker_comm() is used from procfs not
-sysfs. @buf is on-stack 64byte buffer from proc_task_name() which is not
-page aligned and will most likely trigger WARN() path in sysfs_emit().
+Nit: Please also add an empty line here.
 
-Thanks.
+> +    /// # Examples
+> +    /// ```
+> +    /// let mut v = kernel::kvec![1, 2, 3]?;
+> +    /// v.truncate(1);
+> +    /// assert_eq!(v.len(), 1);
+> +    /// assert_eq!(&v, &[1]);
+> +    ///
+> +    /// # Ok::<(), Error>(())
+> +    /// ```
+> +    pub fn truncate(&mut self, len: usize) {
+> +        if len >= self.len() {
+> +            return;
+> +        }
+> +
+> +        // [new_len, len) is guaranteed to be valid because [0, len) is guaranteed to be valid
 
--- 
-tejun
+We typically use markdown for comments.
+
+> +        let drop_range = len..self.len();
+> +
+> +        // SAFETY:
+> +        // we can safely ignore the bounds check because we already did our own check
+> +        let ptr: *mut [T] = unsafe { self.get_unchecked_mut(drop_range) };
+> +
+> +        // SAFETY:
+> +        // it is safe to shrink the length because the new length is
+> +        // guaranteed to be less than the old length
+> +        unsafe { self.set_len(len) };
+
+I just sent out a fix [1] for the safety requirements of set_len() in [1], which
+I think would be good to consider.
+
+[1] https://lore.kernel.org/rust-for-linux/20250315154436.65065-1-dakr@kernel.org/
 
