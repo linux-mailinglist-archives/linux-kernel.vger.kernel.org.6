@@ -1,98 +1,119 @@
-Return-Path: <linux-kernel+bounces-562348-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562349-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 904B1A62423
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 02:39:36 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95800A6244D
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 02:55:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C84A93BDB39
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 01:39:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C903E17E6B7
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 01:55:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C70F217BED0;
-	Sat, 15 Mar 2025 01:39:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26D9B151990;
+	Sat, 15 Mar 2025 01:55:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IfF8+zAN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FO1iVHpf"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2503D78F5F;
-	Sat, 15 Mar 2025 01:39:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1A76EC0;
+	Sat, 15 Mar 2025 01:55:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742002767; cv=none; b=EIExNeNGBdJOFng5JaVqJmINug7DQ+yrn0z9DAyNimOhjyT7XdcwdcM9e4XyeOoZhbGnBa0kWMJAA+yNAJyk3un7qam9TXVQYv+N8XtH9XUBxKTYEzl4f1OGo1iSui5UrwlvfZoYqAhZ7n4t2u9P3ZE2BPIQqHFRzSt3BUhb2x0=
+	t=1742003752; cv=none; b=WmGF3z5gAXhUPKETgsO6wl3IfZD5VrQ1cZFLNpu3rLG5KRakK6e+JWA66dg7YqyIjJco0Y7VBImTq8Cm5le912vR8WW8BYhPDwgqhpW9gs8E5pzVqF6AIX7yrJHUztK6Ejn0aA4yC8znK6e/31fLMZ0g9UtK8ukMW4+Hg6yUP2I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742002767; c=relaxed/simple;
-	bh=TYDriDV6Hem3RlevujvNnrbRBOPfoqUXzyBsIJLgED4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JoPzTRly6lkhWa1aIKnNYv5AtROxDbF6HIaX2PiAteG9XJUPJg1xQW9aC76FcurU0WGQsFApmV3+pMCOzaC5ea3/MAh+nQv3nIRc06jVhb7mfBUi2VfEBEBdqNLRhCQM97ER8ZnMhMWaTLFoMtChk+VDUPHG6Qc0DGpX2IQFozk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IfF8+zAN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55B3FC4CEE3;
-	Sat, 15 Mar 2025 01:39:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742002766;
-	bh=TYDriDV6Hem3RlevujvNnrbRBOPfoqUXzyBsIJLgED4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IfF8+zANYFf8oHoOttF68SUoCZzc8543Af8DuwNHwv23B58sjOZbdlFdyAye/EuNj
-	 EPe8Gv/JhbVbX1cHuNXkvRn+XemIVEuwrwn20TCbdDJR45KjVTdR/JVv1HzvaNQC+D
-	 YglmvMWy/cPsD4wXQiQwlDAFiqEW9T1ja4LTFg15QOQPVrZdBqzC065l1eEzvB9PAr
-	 rVzy6LohogEJqwIuw9r6t1yKsHyxmqXzgwGskPUw3Fb48L/fKlAZGia/byl2CoZF1F
-	 Es69gSdqqmvJjWW8aAQbmx67fxdRD7+plt9D+qj9DTQhJybJf0a6POvcg0zVmcVSNy
-	 UQqfOS2Uub7cg==
-Date: Fri, 14 Mar 2025 21:39:25 -0400
-From: Sasha Levin <sashal@kernel.org>
-To: Matthieu Baerts <matttbe@kernel.org>
-Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-	Paolo Abeni <pabeni@redhat.com>, Jakub Kicinski <kuba@kernel.org>,
-	martineau@kernel.org, davem@davemloft.net, edumazet@google.com,
-	netdev@vger.kernel.org, mptcp@lists.linux.dev
-Subject: Re: [PATCH AUTOSEL 6.13 13/17] mptcp: safety check before fallback
-Message-ID: <Z9TaTcOL1ZkccXr7@lappy>
-References: <20250303162951.3763346-1-sashal@kernel.org>
- <20250303162951.3763346-13-sashal@kernel.org>
- <262b5990-47e8-44f9-a2af-ca9c389e34fd@kernel.org>
+	s=arc-20240116; t=1742003752; c=relaxed/simple;
+	bh=tZ+LdPW/9zBCe2fdf1wszE5UMK5AfZQL2/ciE1QjnnE=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=Gylec1OXwy4mBtRY9Zb+QsoVRkPW4gidhmqfFsly2FxOndKg4aQTk7vCdLte/aiUe4uEaLpPdDPiyiuOQCUHDny255ps5XXxGxHyZ4vKsgyxhjEJrDRAaAEaoDrQHBhUk9abmZsJTkR4+ZvFWjkhc7KauZ0FyDEP+vU0NXaKQ9E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FO1iVHpf; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-30c2d427194so28749331fa.0;
+        Fri, 14 Mar 2025 18:55:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742003749; x=1742608549; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=MpuyzVi711r61vqlrwtMxn3Epnkwyrhrdj/bz/ZWnGo=;
+        b=FO1iVHpfhhPMMKlPWB5xOboBg25EYG2wjmey7ChpQOpeAb21+uunidosXD2HoXqONr
+         rhvQte4c5dCdBNjUgN+YULYoIKJQyaQkm89wPFYqOvOlFHObXulhza4o/sJv+anXS0Pg
+         wjaGTsbC2I3oZLkHK8UtVa7yMlvyMHUO4NyDEuQyBzjxdsnHVXCw4FnCSYZdPUzMOfZr
+         DQhhkeLgxtpel52hPRcb0KqBN7XhjvtCBwK+V65YQG/VWbMRyM1yWpIKSAsilyTupJ+6
+         lqE93I+4zeJXAz5F3HjroS7UVYOf3tvnWknr+9dVUAe835HvYRe/4sgf3m/Zm6uJbKAs
+         fg+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742003749; x=1742608549;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=MpuyzVi711r61vqlrwtMxn3Epnkwyrhrdj/bz/ZWnGo=;
+        b=tAxUHCjVcjH1sSHTqsQ7lAdRNqQHKQDWKuNzL90TXJhiHIF5WO45ZHPTiPTq5ig89v
+         MvxZbd1efDr1HIf1nByfPmr88fMeKVKO+yXLfhHaW3BqXVMtQzqM2Z9nT+dnl648hld1
+         yjHjdYpRN2c7kCEVRZM3WmQMUx5K1GJ9UZ0MIHvwKFx3OI0Sdv5nJ9f7R6MiOg15fE2P
+         v88G3feYoDqfJ/BgpLwvggCU5kBCvA+6QbIJ28wb7suimcok6HvBKBg9FsQwJcZc74e8
+         cbRFf8eFXtBU/bP6gNwrKH9mBw7qFS5qSev5Wk5Fvs+x5ZF9ZzJmBqoKuq4Xy0rkUul4
+         oe9w==
+X-Forwarded-Encrypted: i=1; AJvYcCXEagnySe7OquV0/m/P/rm9cC4A+LN3AvJ7JGk8GsevaCfl5Q7K5Uk/VCKW3Q0WdQdB7a6Mjq7rosSF49E2@vger.kernel.org, AJvYcCXT/RqdogtR1lHqfKysn51PirDz8ZHlrXDnEGUW6YGo8XtETFpjVHWxdyYn9EGR2m39hHOPiE7bOmps@vger.kernel.org
+X-Gm-Message-State: AOJu0YxiYTjLTgw9rBe9pUepAlrcRc9y1jhppWCOjTQt6mLpeAmoM7zQ
+	KQXg5WaUqIZdHgpqmrOchzoRfI7RrRyMrEvVwr1Nn1L0LDb7H9gomE24hQoGGDV7Ky+ok0yknIH
+	o6vzuPegowxeaDwsmq74P/IQZ7WUbYbHN
+X-Gm-Gg: ASbGncvd6Ro1DDoMp/00uWF2r9Bnp9v4RSdSrEC9wB2QwrRQycwtktGMfMNl+ZuWJWR
+	KCFIOlrtmvuU19BOtm9AfDpFYaXbqJL3oeRBeuP5JB3Qz4G7OCFpEERJhKsTlYYa2OrKBL7GLLH
+	6so3lsINzHwAMiiCXEx5Lb7zA1P3meVNZw/aLrJ+M0zroRlarFVCvWlQUQFKAM
+X-Google-Smtp-Source: AGHT+IHU3P17vt6eomiqX+nXneZuHzkGIisD190iL8kyNKnWPsiC6zUnjZFP3Br7qqpCm0RG6Mtu6db5ZZxv2E2ZcQM=
+X-Received: by 2002:a05:6512:2823:b0:548:794f:f9dd with SMTP id
+ 2adb3069b0e04-549c38f1d97mr1486470e87.10.1742003748512; Fri, 14 Mar 2025
+ 18:55:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <262b5990-47e8-44f9-a2af-ca9c389e34fd@kernel.org>
+From: Steve French <smfrench@gmail.com>
+Date: Fri, 14 Mar 2025 20:55:37 -0500
+X-Gm-Features: AQ5f1JrbOHHJF-tZFXPE2qmpbQC4hCL1BZboQGmA2Y1tuebbR0ruezrPmtMycP8
+Message-ID: <CAH2r5msyWMiGJi2VK50A=h3dD9F06eS9M5c51oY0DiSTe0Av_w@mail.gmail.com>
+Subject: [GIT PULL] ksmbd server fixes
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Namjae Jeon <linkinjeon@kernel.org>, CIFS <linux-cifs@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Mar 03, 2025 at 06:05:12PM +0100, Matthieu Baerts wrote:
->Hi Sasha,
->
->On 03/03/2025 17:29, Sasha Levin wrote:
->> From: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
->>
->> [ Upstream commit db75a16813aabae3b78c06b1b99f5e314c1f55d3 ]
->>
->> Recently, some fallback have been initiated, while the connection was
->> not supposed to fallback.
->>
->> Add a safety check with a warning to detect when an wrong attempt to
->> fallback is being done. This should help detecting any future issues
->> quicker.
->>
->> Acked-by: Paolo Abeni <pabeni@redhat.com>
->> Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
->> Link: https://patch.msgid.link/20250224-net-mptcp-misc-fixes-v1-3-f550f636b435@kernel.org
->> Signed-off-by: Jakub Kicinski <kuba@kernel.org>
->> Signed-off-by: Sasha Levin <sashal@kernel.org>
->
->Thank you for backporting this patch, but is it OK to delay it a bit on
->v6.13 and older please?
->
->This patch depends on its parent commit, commit 8668860b0ad3 ("mptcp:
->reset when MPTCP opts are dropped after join"), on kernels >=v5.19, to
->avoid a WARN().
+Please pull the following changes since commit
+80e54e84911a923c40d7bee33a34c1b4be148d7a:
 
-Waited a bit, looks ok to pull in now :)
+  Linux 6.14-rc6 (2025-03-09 13:45:25 -1000)
+
+are available in the Git repository at:
+
+  git://git.samba.org/ksmbd.git tags/v6.14-rc6-smb3-server-fixes
+
+for you to fetch changes up to 3aa660c059240e0c795217182cf7df32909dd917:
+
+  ksmbd: prevent connection release during oplock break notification
+(2025-03-10 12:54:32 -0500)
+
+----------------------------------------------------------------
+Two SMB server fixes
+- Two fixes for oplock break/lease races
+
+----------------------------------------------------------------
+Namjae Jeon (2):
+      ksmbd: fix use-after-free in ksmbd_free_work_struct
+      ksmbd: prevent connection release during oplock break notification
+
+ fs/smb/server/connection.c | 20 ++++++++++++++++++++
+ fs/smb/server/connection.h |  2 ++
+ fs/smb/server/ksmbd_work.c |  3 ---
+ fs/smb/server/ksmbd_work.h |  1 -
+ fs/smb/server/oplock.c     | 43 +++++++++++++++++++++----------------------
+ fs/smb/server/oplock.h     |  1 -
+ fs/smb/server/server.c     | 14 ++------------
+ 7 files changed, 45 insertions(+), 39 deletions(-)
 
 -- 
 Thanks,
-Sasha
+
+Steve
 
