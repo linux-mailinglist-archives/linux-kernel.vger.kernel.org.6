@@ -1,103 +1,119 @@
-Return-Path: <linux-kernel+bounces-562771-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562772-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E93BA632A0
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 22:56:15 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80608A632AD
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 23:26:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 213A61892D13
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 21:56:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8BA3D189323C
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 22:26:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF8C51A5BA1;
-	Sat, 15 Mar 2025 21:56:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9725A1A2567;
+	Sat, 15 Mar 2025 22:26:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dUyMT9gt"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IVsETmf8"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46B65197A8E;
-	Sat, 15 Mar 2025 21:56:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFA574A06;
+	Sat, 15 Mar 2025 22:26:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742075767; cv=none; b=K792J5u9EQkreUyDA3pr3zqdJG80kQ3yrlo6gKJXcFOJrseRETXffv/5Nnk+oLupFcRDZqVWZt9Vq/8kQebU0el/Q8m1SJpqibhXcnUZwngr9Y3F0+vqu5z+oyCPNtchpSbku1WEn4i9BZKU6R/45S9H2ihL4aiWgfH5ClDHook=
+	t=1742077574; cv=none; b=BNPMuKmLf7fNrDLZTO351LHVDvBR0EnaTZNoKy297JA1fHnWBssB9l4p/MQmr7BXmgFgUsyg4+IB8ARK87recSvLE1bwZPAGiRo7DyUG1Xd2WV3yvGSiu7llr5fkTpbqyehjTQ5TyMbyxDHGZdYeppqASLfoeqqLcCj2MJ8kQoo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742075767; c=relaxed/simple;
-	bh=zEP1AsJWOjAINPoMS205umleYb+VbBnUqXVLudVGoZM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pMBmzeib7hdGRGIdDnujijVR/v0HTvGJ+NKNxikPQqKOa2W6NYZaXHz+7iPTX+t0NPkQ/EcDWasJcYchLNWO9/P8PmgB+DJ0Dogi3ZGQKRH3ynA1pgecHJFNm/yqgzU6sp6+dHqEf94XXrqvxbzIfJnV19wpJyD7SdKvqEyF2YI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dUyMT9gt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2F3DC4CEE5;
-	Sat, 15 Mar 2025 21:56:05 +0000 (UTC)
+	s=arc-20240116; t=1742077574; c=relaxed/simple;
+	bh=IZ7hQqeuHwLTEWeBLXMbvbomiMzODFwSXk5X/rK2CMA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ltIMr7oWxc1Yuxiwm9nUff/mSTzh2drCAGnXaIyZLyOnNwkue7OnWzxvc118uO9/6Y8h9akCQ9i4jeiTwcF7G8Zr2syaNxSpNFthhzT5xEO6KY/MKpCIptDeSFeu/MixDydiPUY2tL09+qTi0kVpZdfUHAfxckX6UFKPgCBmKtc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IVsETmf8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2DB96C4CEE5;
+	Sat, 15 Mar 2025 22:26:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742075765;
-	bh=zEP1AsJWOjAINPoMS205umleYb+VbBnUqXVLudVGoZM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dUyMT9gtTl45VUvStCjjZOTVc7vEwcPEdZXIpk1iFimk4gJv9KxAAFVLiLGhzBjG5
-	 dNNoZUHSg+Vr3FMPa3XafkRsaSEB6zR3eIvmiqtQ6U91aPPpmrTCDtEObXJXedwVHt
-	 i/3P4DA5bE6P4W1arIRkUj4oLQvkJhy1ZPkDbL1EiG7mYZusY71p+n/jC9cjtPL0WK
-	 aO+EVa4cMaZ8mXFfjD8Pl+u+H3tT74krUzrKZLGodmn+UbiltSE3bvSOoH4yfo/9sq
-	 uDrBi4gzIz7o6TeWcnrkEOQ36iT1huN1gYgHIerK30Z3sJQBkOxFewPzNJlefZT5uo
-	 Aw85g2/QugGAQ==
-Date: Sat, 15 Mar 2025 14:56:02 -0700
-From: Kees Cook <kees@kernel.org>
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Lars-Peter Clausen <lars@metafoo.de>, linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH] iio: magnetometer: ak8974: Add __nonstring annotations
- for unterminated strings
-Message-ID: <202503151455.B8E9F6F1@keescook>
-References: <20250310222346.work.810-kees@kernel.org>
- <CACRpkdbUk8bVWLPwVRq0qzaKRC80=bV1Wd01h+5xfH1O7-BVaQ@mail.gmail.com>
- <20250315183125.40f9c566@jic23-huawei>
+	s=k20201202; t=1742077573;
+	bh=IZ7hQqeuHwLTEWeBLXMbvbomiMzODFwSXk5X/rK2CMA=;
+	h=From:To:Cc:Subject:Date:From;
+	b=IVsETmf8VXTNv10R1QyakcVyZ0QyqiDn17KQ7av61sPG/+ZuURXTIB4VP+wGFEBQ9
+	 YMOy84MrD/eRJqKiY29TY2AklMco5VtKGqPwpAn14mHq8LhtozaIcai5r7Uj+sNlU9
+	 ITut/M5SaQwmxHenFNit57E84kDeChrjkQNDz1q2/XHS4gbB/Wb9vKGqXvf9vDATs8
+	 g0dz+r3U52XVWmuIUxcaA4AjlBYF4PsyqBQee1Oh+T14MduW3rUY78E4fCkRaSUDaB
+	 4HgbproOICNJz/GdzNzON83XzBKavX2rWa/9qZ85q6vYvXZnlm1B8rfu9c07Zvi4r7
+	 gDGmJj3I7FRbA==
+From: SeongJae Park <sj@kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: SeongJae Park <sj@kernel.org>,
+	damon@lists.linux.dev,
+	kernel-team@meta.com,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: [PATCH mm-unstable] mm/damon/core: setup damos->{core,ops}_filters_default_reject for initial start
+Date: Sat, 15 Mar 2025 15:26:10 -0700
+Message-Id: <20250315222610.35245-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250315183125.40f9c566@jic23-huawei>
 
-On Sat, Mar 15, 2025 at 06:31:25PM +0000, Jonathan Cameron wrote:
-> On Fri, 14 Mar 2025 11:31:09 +0100
-> Linus Walleij <linus.walleij@linaro.org> wrote:
-> 
-> > On Mon, Mar 10, 2025 at 11:23 PM Kees Cook <kees@kernel.org> wrote:
-> > 
-> > > When a character array without a terminating NUL character has a static
-> > > initializer, GCC 15's -Wunterminated-string-initialization will only
-> > > warn if the array lacks the "nonstring" attribute[1]. Mark the arrays
-> > > with __nonstring to and correctly identify the char array as "not a C
-> > > string" and thereby eliminate the warning.
-> > >
-> > > Link: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=117178 [1]
-> > > Cc: Linus Walleij <linus.walleij@linaro.org>
-> > > Cc: Jonathan Cameron <jic23@kernel.org>
-> > > Cc: Lars-Peter Clausen <lars@metafoo.de>
-> > > Cc: linux-iio@vger.kernel.org
-> > > Signed-off-by: Kees Cook <kees@kernel.org>  
-> > 
-> > Fair enough,
-> > Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-> > 
-> Kees,
-> 
-> I've currently queued this for next cycle as it doesn't feel like a fix
-> as such and I've already sent my pull request for the merge window.
-> 
-> Is it worth rushing it in, or is a fully cycle delay an issue? (6.16)
-> 
-> If slow is fine, applied to the testing branch of iio.git which gets
-> 0-day bot exposure.
+Commit 6a0f07289bc7 ("mm/damon/core: set damos_filter default allowance
+behavior based on installed filters") on mm-unstable sets
+damos->{core,ops}_filters_default_reject fields on only
+damon_commit_ctx() code path, which is called for only online parameters
+update.  Hence, users who set filters from the beginning could set it
+not properly initialized.  As a result, unnnecessarily DAMOS target
+regions can be rejected.  Set the fields at the beginning of DAMON
+worker thread execution, too.
 
-No rush needed at all. This is just for cleaning up warnings for the
-coming releases of GCC 15 in couple months. Thanks for picking it up!
+Fixes: 6a0f07289bc7 ("mm/damon/core: set damos_filter default allowance behavior based on installed filters") # mm-unstable
+Signed-off-by: SeongJae Park <sj@kernel.org>
+---
+ mm/damon/core.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
+diff --git a/mm/damon/core.c b/mm/damon/core.c
+index db357892da74..fc1eba3da419 100644
+--- a/mm/damon/core.c
++++ b/mm/damon/core.c
+@@ -525,7 +525,7 @@ struct damon_ctx *damon_new_ctx(void)
+ 	ctx->attrs.ops_update_interval = 60 * 1000 * 1000;
+ 
+ 	ctx->passed_sample_intervals = 0;
+-	/* These will be set from kdamond_init_intervals_sis() */
++	/* These will be set from kdamond_init_ctx() */
+ 	ctx->next_aggregation_sis = 0;
+ 	ctx->next_ops_update_sis = 0;
+ 
+@@ -2363,7 +2363,7 @@ static int kdamond_wait_activation(struct damon_ctx *ctx)
+ 	return -EBUSY;
+ }
+ 
+-static void kdamond_init_intervals_sis(struct damon_ctx *ctx)
++static void kdamond_init_ctx(struct damon_ctx *ctx)
+ {
+ 	unsigned long sample_interval = ctx->attrs.sample_interval ?
+ 		ctx->attrs.sample_interval : 1;
+@@ -2381,6 +2381,7 @@ static void kdamond_init_intervals_sis(struct damon_ctx *ctx)
+ 		apply_interval = scheme->apply_interval_us ?
+ 			scheme->apply_interval_us : ctx->attrs.aggr_interval;
+ 		scheme->next_apply_sis = apply_interval / sample_interval;
++		damos_set_filters_default_reject(scheme);
+ 	}
+ }
+ 
+@@ -2398,7 +2399,7 @@ static int kdamond_fn(void *data)
+ 	pr_debug("kdamond (%d) starts\n", current->pid);
+ 
+ 	complete(&ctx->kdamond_started);
+-	kdamond_init_intervals_sis(ctx);
++	kdamond_init_ctx(ctx);
+ 
+ 	if (ctx->ops.init)
+ 		ctx->ops.init(ctx);
+
+base-commit: dba212acaa779ea422b1c0653951af5fdf837314
 -- 
-Kees Cook
+2.39.5
 
