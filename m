@@ -1,119 +1,137 @@
-Return-Path: <linux-kernel+bounces-562715-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562716-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01A9CA631A3
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 19:34:27 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CAF0A631A4
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 19:34:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 267123ADDF4
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 18:34:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 534CB173A3D
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 18:34:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F5A51F462A;
-	Sat, 15 Mar 2025 18:34:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68A7A205AD5;
+	Sat, 15 Mar 2025 18:34:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="TJ9rU9HO"
-Received: from sonic309-27.consmr.mail.ne1.yahoo.com (sonic309-27.consmr.mail.ne1.yahoo.com [66.163.184.153])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PDoNB7Dz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD92818FDC6
-	for <linux-kernel@vger.kernel.org>; Sat, 15 Mar 2025 18:34:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.184.153
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCA8B1F8901;
+	Sat, 15 Mar 2025 18:34:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742063656; cv=none; b=TAV9E/DMIycohZosMSNkNAOcu7Y5cdDA/ZO2GNAy91Yi1Jo70exit3RatWTXKzsLprR2O5MRbNj+0eza8nwTRW7hl3fpofd5vpRFUueC3+3L7DBW73pwi6Sus0rYH5rZ62Q1nYRmVOQdqHBGNjMal75sZ0xx5sDIFY51KWdDgNM=
+	t=1742063673; cv=none; b=YSkfJ1+r/Zkfkpbu+alldXej0mT9eNl81aEPQnx1Ke1oJiCMLmSL0QUq9mk0SG1OJz0Z4383B2dU2eIF7qThmYEahvQu7ylauS0JkHunPuFXVnwKuDo6ankkjp1AH2n9K1Sfx6Vz5Vn4A2FpEuYvKKi4LCO9PVvgwdDsanp2jJw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742063656; c=relaxed/simple;
-	bh=4YycN95OJkamhCuKvuQErsHI/SBw9V/Fcva1DYpLOZ4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GsfVOjMNzPCDEzr7RHT/DNS4uorVM4JdYt0rZ38ed2YlccdpjBcBjjOGMJOXUBocc4q9ExUSbKQXPjzYB3bRSnuJY6Xpi3KoOxBmm7pXJcxeg93X9tfg+ACSvdQUmQu1mz2vDckFREyKHUId/VDsVKu2oV0ZjmRYuer1lfGZfX4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=TJ9rU9HO; arc=none smtp.client-ip=66.163.184.153
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1742063648; bh=ycScJLAHyCubQSnNZRe/MVran4EmIZ66AunH3Rg7OEM=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=TJ9rU9HODEEr1B5+S3e3543mprI4vcXtWIrS1Fn6CRjAu3njIRmaHicK9sKXX6V/56ckvzwiC4VauE3rLnM/EtNDmZA0aXt6G8RmH6ug3Bl/6qR/PfADqkc2l5tPXBSw0dkH9ymESX/ceSJPq/93bH8qeP+Ppoq3/f6wdPb92ED8scigqiOVEBLk8zyT2zejSGw4qaR2iFLnmEvtSnTcnT5Jx3kGu0y0vBNOaVwYl1YCvhqJ4ORO1VsbHchJlQiR6io58f0WjMR+J/3H1Cmb/Y8S2U1bYv+U8Xow4F4ikGYo7ZK4C9kcr6NOFou84OKQOOozxs6JH1httOlKBWZ+sA==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1742063648; bh=/LwL3AVbhgAZsYm4RUmbPPEHkRkyDi293XMpBDV4Iw9=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=I67UjaZXCwe9kplt1XnG2QUnVLj652Z023KIMod5YAarMcprkwcXYwmHlZOgmIhx0a8H3yR06WDwHDoHU/hiuo1uqx+aKuhRlTSASRFPzAM7B/rKoMb/P5oPcw2Z98oN5/hW1LO4URj9unwU5K4gUO8O2larw9VxeNxCnydlwdK9pzzTaibmSTjC8yncMnWdEaAecWrjn+Kiwv080IIYbdYSYbe+zqpTMZVMnu1hYzkn9T6iTUB6NZWn699Zl2lpDml8S4IwV17YHYGvWgEv4tnNjQEgmpCbMp8sRVFbt2fpBSZihTG1ukKP3Cj+eG5d889zvrsNCP6E9zc3OVYCBg==
-X-YMail-OSG: Gq8EvboVM1kViBJomir3BQXJajZ9sZply8q729wVqw6z1bpuFK4_58BGC_KONGv
- NlBR03SB6RTdV1H1uVAnlyg7ppBCcSRC_Ztn0V0ojXbqEOT3jiVBW2LqHSLlqZfiTJzJBuy_bZUo
- bSYvi3FztXr1guou0sQqQkZhDSLIOVxjmFNsQcAP8N_J7.823ax7UFLMFes0FZUOAcQVxrHeio_4
- Io06OZWLiRauC7B.iZPIpKV1Wppw1sZ6400B95JOO.GyXaOb0c5G4Hq2IkMniNTqRnEtP7G5CMS7
- UaqWm4B0OpmxUVNDg6NHeGycAl6lxirFq8CfcYPnwz5idLYpt538g2MmIi0n1aBc5a3so4xwdM5M
- kFuQrz52KqDnwGJuzMz4nTpfpp.w3LwA7z7ZB0igEe6DuH8kicv2JCfob_Lc2OO1xG0WnT5FoevN
- vOXaozz4BjEn4tGDjbozFE.2EC.GovmIsvp6.SFhJe1JoZaC7AedyfdFFH46hvIql4Xiyv_4FbFZ
- n5.0c2uM9T5yfpFpvpCj3i19zhvzJsVVY9tTw8gy8d0qEPsW58Bh04dZZc_KZsBwZ7w6KV.zfh2x
- ePYskf3hFMVslEF6_YL31xWELUhrpmZHC3DMU8iqLuIdJcTNBgBJprRt8bHUh0GlJctp9JJGdK0x
- ZcWMWXrNJlbRqe_fY.ufk4ret3lfDDkRxYWNdJ4VsuiIbRn8pvTLDeafKT99P893Gui7cGGka3JN
- EmK4_6C_lzdKJh7cfnOgQboQFlXFXlMs3FiYYqQfOG.McxMx9UCkPs0X4DSdvHKzKBw0GRc9yW8U
- N6d8ERow1mficWCZ2tTXZ_fzgylkTKKDppO3CbMglWhKzK01sqIvqBIA2hFmpW6ydmh3jK655TGF
- e2SjpXSPoaMvZTpCGQ0DKimp8.7ZTIj00WDW12BVyHnWOM5ZzPQ.lrkPm9.MEelbvwn5arlrT88p
- X3rQhQOWzRG4BW2.CclwzEUUx.7RJNbuMSftCYJHKUjFC4jIx.vKMRK.x.VALbZW_A58pi5bAIlv
- Xo3XkYKmmovMnvAFlQdtd1TTKZhBPdLk0e3hanwpKfdQGuMZSxrbp4yOZqJmRFdHlBbq7.4.WlVW
- 0KG4XZqtZIKYigU7G1OQgOpx75OIwYffa8Fqcg_noby4aBJs.Azur.rSduWacxB8xWk_WhrpY4Uz
- kWZCLn2r6MlnKInJW5SncsFN0D10C9L0IOEdsq4YnZOkhUktNUFCIDDYuD8synhZwc6G5gEDPev4
- BSdkyMaNVVIMtzV93Q9IavoXn2ny9rUXdw2ZCrfqteDNDzNOujCo_gZ2RF9PaEhtRnHm2sBu6crP
- 4pO8YlwiI5JQ1vNqo1kQrWOBdjH5L6LPQjf84M7Tsik6vg9Cwquaz9TBZGtMyz00hN5XVoEmnA0B
- tXTk5zFXvoZu567t7Er5vnrt30NkW5ljbP6_wlVVsVz0DhWawNscExLIXyCZ4i_WimGIWV0Qv8RZ
- I8FozmWA4nHFZwkW90Awqy1tm7OJJkTUdtEZWtMMPNadREFB3DmnmzoaQA0idfHUSkfF0xDpX8rZ
- IoRpAFhqUomCsTNV8c6BTPy0qoatfAkXPlt4mCMehIp4YHjDrAG.4fBfKYk98w4c66KTlVCmGrbe
- evLmz_RPqhPyG_RW856uVc9Cs0qt5q1TJMDO0dnSseOUzjn8A6b9LGR7p6vs2FPclmpoa3yLY7vX
- FKlTXzaz7npknEit9JzGq72IuyPZx_Qv3t7ifGegYHvOWp7x17jo0qAjz7Rmu7LgWvd9VCyIoT0p
- PZTfWI_vIJPTVCYjfQO2wkb5l_2gyL06f2O0xJghBMDPyzE.XBr5.7ZR_lthjZzfwAlCdRN1UiIu
- 9fFLoCQqht.PG.1.4chYbwIcsMd0diXX3BNc64vZm2Ks26Ak_bXF.DMbQDjMmhL92IeVgZ3uLbzI
- vxd85wUQJF0nHldHurSCuts2KPdxOPcA3S645hrJJ33NhTG82BtQ6J8j8xjuLJi6n1_LsfLiz2su
- MCUNtaXeKsdkwPqdEltmndUEjul2RcNYF.MCyIM1XqJJTosV0lS081K0qJhNQu7ypwt4Ao.aNNsK
- Mw6dZBZ4t7g9wm3lyBGxPuRYiNL3h..YIf0lG.zvY24FH8KtREiVtyPcPHzeTJjL.nK97omXq8uw
- z7QPLdHSyFqD6ywdRi1u0Jwz0wECf8o1hUCSVHm6WpowrCMqCpYb.q3.fzPyXJQyefPLEQwtnUEz
- YNRfB8dNJvRl36UaXrUEciQDauwOkKpvn5SV34V.nB6m0k6GEndCiLhYHN8Niriu0vaUHS8UKiIT
- 9tVuqy3QF
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 4814970b-22ef-40e1-a254-33f9b8f2534c
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic309.consmr.mail.ne1.yahoo.com with HTTP; Sat, 15 Mar 2025 18:34:08 +0000
-Received: by hermes--production-gq1-7d5f4447dd-ffpct (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 257f5b639ab999d25609c2475f769a3b;
-          Sat, 15 Mar 2025 18:34:02 +0000 (UTC)
-Message-ID: <4fd9d7c1-a66c-4281-9e7b-0c3f5fc748f4@schaufler-ca.com>
-Date: Sat, 15 Mar 2025 11:34:01 -0700
+	s=arc-20240116; t=1742063673; c=relaxed/simple;
+	bh=X4xpNZ8s/sLlkBevw/itk2vfx1DtriwGopjBQDhHUlk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ECnX6CQSj9qCLpnn3/i9vSEIUMedF2NBAia8SCCTyDX4/Rh+8n9x1WYNIL5jYdidBfFRTJIXNffrSAc6i8J9743NUD5SqVEvgvmDRK/qre4e5Yv9Ibjz/tLcwK6qgWKq/8wK6JJQliracX/Ilgk3Bjog5udlpg+1bT6ywIUqK/M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PDoNB7Dz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A38DC4CEE5;
+	Sat, 15 Mar 2025 18:34:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742063673;
+	bh=X4xpNZ8s/sLlkBevw/itk2vfx1DtriwGopjBQDhHUlk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PDoNB7DzA9Waok4Oz0gdSnJmuGJvm+LFo0WJ6WFGPyGHM6uPTy82o13K5gjCZPPZg
+	 pX4v/5/QL+pdLvPQb4aTmjjK0yhu2FrFWvAHMsaLdWwlaiUDgGBY2/Ys4dthN/BZWM
+	 vtTlvLY6dWn8a8lm89kCObmxMFyL1Fq289hdcj/j6rPyy6huex/JAHIt2wBvoypqYK
+	 3Ka9NZDENVsrASqFqZumU2REmTbbul8+mTQ/3ihRLHHXDmKst+fGdeKhVNETK/fn9j
+	 E6lHMRFqfhQ/Rfthh4hWxx8p0VSXirdabbR2UkvwIO1BLrHkiASgsWyb5MqNd/XL2L
+	 F9h7+7zTM/cvg==
+Date: Sat, 15 Mar 2025 11:34:28 -0700
+From: Kees Cook <kees@kernel.org>
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: Vlastimil Babka <vbabka@suse.cz>, Miguel Ojeda <ojeda@kernel.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Marco Elver <elver@google.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	linux-hardening@vger.kernel.org, Christoph Lameter <cl@linux.com>,
+	Pekka Enberg <penberg@kernel.org>,
+	David Rientjes <rientjes@google.com>,
+	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Hyeonggon Yoo <42.hyeyoo@gmail.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>, Jann Horn <jannh@google.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Sasha Levin <sashal@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Yafang Shao <laoar.shao@gmail.com>,
+	Tony Ambardar <tony.ambardar@gmail.com>,
+	Alexander Lobakin <aleksander.lobakin@intel.com>,
+	Jan Hendrik Farr <kernel@jfarr.cc>,
+	Alexander Potapenko <glider@google.com>,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	linux-doc@vger.kernel.org, llvm@lists.linux.dev
+Subject: Re: [PATCH v4 1/2] compiler_types: Introduce __flex_counter() and
+ family
+Message-ID: <202503151133.3FCFCB70@keescook>
+References: <20250315025852.it.568-kees@kernel.org>
+ <20250315031550.473587-1-kees@kernel.org>
+ <03d69156-1cee-43bc-901b-5f85f3aa7575@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] net: Initialize ctx to avoid memory allocation error
-To: Florian Westphal <fw@strlen.de>
-Cc: Chenyuan Yang <chenyuan0y@gmail.com>, netfilter-devel@vger.kernel.org,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- Casey Schaufler <casey@schaufler-ca.com>
-References: <20250313195441.515267-1-chenyuan0y@gmail.com>
- <20250313201007.GA26103@breakpoint.cc>
- <42e5bb33-1826-43df-940d-ec80774fc65b@schaufler-ca.com>
- <20250314164708.GA1542@breakpoint.cc>
- <d2019823-4500-499a-8368-76c50a582f47@schaufler-ca.com>
- <20250314203044.GA9537@breakpoint.cc>
-Content-Language: en-US
-From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <20250314203044.GA9537@breakpoint.cc>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.23435 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <03d69156-1cee-43bc-901b-5f85f3aa7575@infradead.org>
 
-On 3/14/2025 1:30 PM, Florian Westphal wrote:
-> Casey Schaufler <casey@schaufler-ca.com> wrote:
->>>>> seclen needs to be > 0 or no secinfo is passed to userland,
->>>>> yet the secctx release function is called anyway.
->>>> That is correct. The security module is responsible for handling
->>>> the release of secctx correctly.
->>>>
->>>>> Should seclen be initialised to -1?  Or we need the change below too?
->>>> No. The security modules handle secctx their own way.
->>> Well, as-is security_release_secctx() can be called with garbage ctx;
->>> seclen is inited to 0, but ctx is not initialized unconditionally.
->> Which isn't an issue for any existing security module.
-> The splat quoted in
-> 35fcac7a7c25 ("audit: Initialize lsmctx to avoid memory allocation error")
->
-> seems to disagree.  I see no difference to what nfnetlink_queue is
-> doing.
+On Fri, Mar 14, 2025 at 09:53:41PM -0700, Randy Dunlap wrote:
+> Hi Kees,
+> 
+> 
+> On 3/14/25 8:15 PM, Kees Cook wrote:
+> 
+> 
+> > diff --git a/include/linux/overflow.h b/include/linux/overflow.h
+> > index 0c7e3dcfe867..e2b81cb5576e 100644
+> > --- a/include/linux/overflow.h
+> > +++ b/include/linux/overflow.h
+> > @@ -440,4 +440,40 @@ static inline size_t __must_check size_sub(size_t minuend, size_t subtrahend)
+> >  #define DEFINE_FLEX(TYPE, NAME, MEMBER, COUNTER, COUNT)	\
+> >  	_DEFINE_FLEX(TYPE, NAME, MEMBER, COUNT, = { .obj.COUNTER = COUNT, })
+> >  
+> > +/**
+> > + * typeof_flex_counter() - Return the type of the counter variable of a given
+> > + *                         flexible array member annotated by __counted_by().
+> > + * @FAM: Pointer to the flexible array member within a given struct.
+> > + *
+> > + * Returns "size_t" if no annotation exists.
+> 
+> Please use
+>  * Returns: <text>
+> instead so that kernel-doc can make a special doc section for it.
 
-Point. I see no harm in initializing the lsmctx = { } or seclen = 0;
+Ah! Thanks -- I hadn't realized that the ":" induced special sections. I
+think I have a bunch of other kern-doc clean-ups to do as well.
 
+> 
+> Same for patch 2/2.
+> 
+> > + */
+> > +#define typeof_flex_counter(FAM)				\
+> > +	typeof(_Generic(__flex_counter(FAM),			\
+> > +			void *: (size_t)0,			\
+> > +			default: *__flex_counter(FAM)))
+> > +
+> > +/** can_set_flex_counter() - Check if the counter associated with the given
+> 
+> Needs a newline between /** and the function name, as in set_flex_counter() below.
+
+Whoops, thanks!
+
+-Kees
+
+-- 
+Kees Cook
 
