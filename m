@@ -1,110 +1,156 @@
-Return-Path: <linux-kernel+bounces-562586-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562587-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F249A62D3A
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 14:09:33 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65B76A62D4A
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 14:13:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 83D44178192
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 13:09:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9CC1E1784C7
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 13:13:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81C711F8BA5;
-	Sat, 15 Mar 2025 13:09:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91D4F1FBC86;
+	Sat, 15 Mar 2025 13:12:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rosa.ru header.i=@rosa.ru header.b="T3hfxvQS"
-Received: from forward203b.mail.yandex.net (forward203b.mail.yandex.net [178.154.239.154])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="lZ2/HmJ4";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="H5fbJXZv"
+Received: from flow-b7-smtp.messagingengine.com (flow-b7-smtp.messagingengine.com [202.12.124.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 212461862;
-	Sat, 15 Mar 2025 13:09:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23B411DF24E;
+	Sat, 15 Mar 2025 13:12:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742044164; cv=none; b=PTWtmcyd573roCvHYYBrfFCe7q9qFHjq+mzLyvSXbA1r4FPyigNITB56usXt3/+svxW5g3RcrfzEHul6TJEWtIf3slaReDh55PBs7GfGAJqRaYsa/WUe79v4FyDqTyZBzB7reV3arbF/8JkXtqcgc9Oy4a2Jeytth3C8qumHHOk=
+	t=1742044371; cv=none; b=Hrm4bmqdNsRO9FP01HUQXCMjIL2S4Ks+IOalJoc70vZCcKBY5msadBrNQ6UliYbj0cDCnJV+m6hELozGnsaBNzQcwqOm9LWZ4EkKcFdoktUqs4rTDTy2/PVeSgEeJLvHG2XaKRKXu5zZJ8cw+N9f/pB2dF4wpEUq1JYKVRspT+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742044164; c=relaxed/simple;
-	bh=ka/9HjQteP+lsd/qliHZFPqBYpxHTM8lQfKFAIpmTVE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XXzMdpiAhTb4UQoTMSUG6UwgJI7iqhPJRW39WUSo8aGTkjWGAi16N8t88o8NIuq/zhiXou+p2s3nsu8L2CJ8J4r+8Ae7FiCyKcD45Pfp9KSlufbz/Dd4pTt8TMmt0kpRs/8e9k+ub/Iwe2dvShK7EU/UGXndvlEniwmGz+tv7ZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rosa.ru; spf=pass smtp.mailfrom=rosa.ru; dkim=pass (1024-bit key) header.d=rosa.ru header.i=@rosa.ru header.b=T3hfxvQS; arc=none smtp.client-ip=178.154.239.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rosa.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rosa.ru
-Received: from forward103b.mail.yandex.net (forward103b.mail.yandex.net [IPv6:2a02:6b8:c02:900:1:45:d181:d103])
-	by forward203b.mail.yandex.net (Yandex) with ESMTPS id C280363449;
-	Sat, 15 Mar 2025 16:01:45 +0300 (MSK)
-Received: from mail-nwsmtp-smtp-production-canary-88.sas.yp-c.yandex.net (mail-nwsmtp-smtp-production-canary-88.sas.yp-c.yandex.net [IPv6:2a02:6b8:c28:7d5:0:640:285a:0])
-	by forward103b.mail.yandex.net (Yandex) with ESMTPS id F34DB60AD1;
-	Sat, 15 Mar 2025 16:01:37 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-canary-88.sas.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id T1FSYvMLouQ0-acRp91rH;
-	Sat, 15 Mar 2025 16:01:37 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rosa.ru; s=mail;
-	t=1742043697; bh=re3pHChC+mQHbRAssqFb1hdzEHJMrzvzoEtkuNzfrNo=;
-	h=Message-ID:Date:Cc:Subject:To:From;
-	b=T3hfxvQSn8Y94kNXoMdFBRMuyqLYdNiaHP0PyjPdhPiYUCNaBoGZwUu4lHh/V4SMs
-	 FVAe7ha3WQMbUL8Mwxnzv02b6CZL5ZJTxIugzxn5e351Qdadxg0LXXxXCVFCSxiWKR
-	 +nkpGz+x/Ed6tG6d9h6JpGCKLUhJM0yzYMz/dbCM=
-Authentication-Results: mail-nwsmtp-smtp-production-canary-88.sas.yp-c.yandex.net; dkim=pass header.i=@rosa.ru
-From: Mikhail Lobanov <m.lobanov@rosa.ru>
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: Mikhail Lobanov <m.lobanov@rosa.ru>,
-	Shaul Triebitz <shaul.triebitz@intel.com>,
-	linux-wireless@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	lvc-project@linuxtesting.org
-Subject: [PATCH v2] wifi: mac80211: check basic rates validity in sta_link_apply_parameters
-Date: Sat, 15 Mar 2025 16:01:16 +0300
-Message-ID: <20250315130119.75937-1-m.lobanov@rosa.ru>
-X-Mailer: git-send-email 2.47.2
+	s=arc-20240116; t=1742044371; c=relaxed/simple;
+	bh=Ir7gaVJJx081V4ur1/3ISg9vasrkT0sEwxI357Klsss=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=fqICufFMBWHKmb/XVWg1CtAH941RMQtR9zJZ8AQoAIiFdSj47+pfpXn70b1kkIZ02Zi/9MnC/p/fedWLIM1DZyGulnhTdrUA5RC6JKCEa+emcHXCSOHeHwixVIbDF+oP0p/lcn58y0WEK4Jx8Ef/oqrIR2+Sc1ye/SA2xYAlstM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=lZ2/HmJ4; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=H5fbJXZv; arc=none smtp.client-ip=202.12.124.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-07.internal (phl-compute-07.phl.internal [10.202.2.47])
+	by mailflow.stl.internal (Postfix) with ESMTP id E9D261D41476;
+	Sat, 15 Mar 2025 09:12:46 -0400 (EDT)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-07.internal (MEProxy); Sat, 15 Mar 2025 09:12:48 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1742044366;
+	 x=1742051566; bh=zjpqPzRFbrMWa9s0+G/5KdhXuFCxnkj7sVYO/d8vBxQ=; b=
+	lZ2/HmJ4Luof3h0jM9GjUUFV2YpYFeD7OGy2kLNvpLkJjviGMki9XUyLU2U/0OMB
+	CkwvIYIhidWAd1GKRWdV6TEbefX53lV5jKtRRfa23y2b9ef4wcfx6yUlJ/FJmy9o
+	fIWWzZNpLG9eT9hCRQGMUVkJ4jPTjeKEnKU1uTIz4UKNdqytzIe+pGxQ/59IZDiQ
+	l6uMIJOcPnk4WZpTL9cJdkidWOcgJJuOqXi1sJkWQ8RwVEMtHtVZJxE9vq8CyRLI
+	228k4aXecExrqxH4IPg6EpqxBGqmpaQA6RlGidCe7aM1NNTb8gkVO03iTGcdDykQ
+	n2HMhtm5wnKClR7xeIEezA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1742044366; x=
+	1742051566; bh=zjpqPzRFbrMWa9s0+G/5KdhXuFCxnkj7sVYO/d8vBxQ=; b=H
+	5fbJXZv8JDZz2yet9pCdXyzltbiv1u7lorfHdCFab6j/MODdd1FrsTK19ZypetAO
+	OBwVbn0H+RdYm34vJZnCxfkiutdnBBXHhTAv1I4KUjUAMMVBnWS3Zx4JpN4OdteV
+	lgEstOBROYSojsFLGIq8AApnm2XyHoFjjjYwFRY224P0YanLHjQRCMq0taH/p2M0
+	fXj2+HZYDWFZF0KDTmo3JWNNVX5+fwfKTvAoZ1jIsCOac0rwSMZO6GQzG4NXNWEV
+	VWzYg4UcwWlsN/Ms5mThJrs3x1evFn6Fg43gWYM2onHPKw6vPmDGidNAxsioUKhz
+	tIyTTW25KsI/qgII9GrPA==
+X-ME-Sender: <xms:zHzVZ5e5bbccQ71eoT8MsSnlXos6dj6O4LkQW_sKfOjBwJN9ga_7XQ>
+    <xme:zHzVZ3PLn__o3phvppzjPnaRYNaigd1xifdYMmPHdAtgA2EfSEDm-96xVIk_mpwIH
+    N52W5V-y9tAcT1cwxE>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddufeefkeduucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+    gvnhhtshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertder
+    tddtnecuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnug
+    gsrdguvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeet
+    fefggfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
+    hmpehmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohep
+    geefpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegsphesrghlihgvnhekrdguvg
+    dprhgtphhtthhopegtrghtrghlihhnrdhmrghrihhnrghssegrrhhmrdgtohhmpdhrtghp
+    thhtohepjhhovgihrdhgohhulhihsegrrhhmrdgtohhmpdhrtghpthhtohepmhgrrhhkrd
+    hruhhtlhgrnhgusegrrhhmrdgtohhmpdhrtghpthhtohepshhuuggvvghprdhhohhllhgr
+    segrrhhmrdgtohhmpdhrtghpthhtohepshhuiihukhhirdhpohhulhhoshgvsegrrhhmrd
+    gtohhmpdhrtghpthhtohepsghhvghlghgrrghssehgohhoghhlvgdrtghomhdprhgtphht
+    thhopeihuhiivghnghhhuhhisehhuhgrfigvihdrtghomhdprhgtphhtthhopegtohhnoh
+    hrodgutheskhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:zHzVZyhKN6cMRS4T7Hyae4tpIeUndwwkmU8hurEs_dOE89UDlPVf6Q>
+    <xmx:zHzVZy_v7TD1PtrsgQplvuTn8Rk60LqhHhFGQUaeKuGzNK7CLnbYHg>
+    <xmx:zHzVZ1vVyhc3jQx09MJdCmVEumffhYKMcs14uJ8B14nC6wN-yqYSHQ>
+    <xmx:zHzVZxE213fSgpsEbMo0wfDUAThAM6CnHsoTjCTY9GC3DBJyiy-zsw>
+    <xmx:znzVZztE_URjpvPiI1QQu-wngtUYNO6vdD-kx2_N6EFnVyHS0jhLgu_A>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 6EB5A2220072; Sat, 15 Mar 2025 09:12:44 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Date: Sat, 15 Mar 2025 14:12:24 +0100
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Roman Kisel" <romank@linux.microsoft.com>, bhelgaas@google.com,
+ "Borislav Petkov" <bp@alien8.de>,
+ "Catalin Marinas" <catalin.marinas@arm.com>,
+ "Conor Dooley" <conor+dt@kernel.org>,
+ "Dan Carpenter" <dan.carpenter@linaro.org>,
+ "Dave Hansen" <dave.hansen@linux.intel.com>,
+ "Dexuan Cui" <decui@microsoft.com>,
+ "Haiyang Zhang" <haiyangz@microsoft.com>,
+ "H. Peter Anvin" <hpa@zytor.com>, "Joey Gouly" <joey.gouly@arm.com>,
+ krzk+dt@kernel.org, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
+ "K. Y. Srinivasan" <kys@microsoft.com>, "Len Brown" <lenb@kernel.org>,
+ "Lorenzo Pieralisi" <lpieralisi@kernel.org>,
+ "Manivannan Sadhasivam" <manivannan.sadhasivam@linaro.org>,
+ "Mark Rutland" <mark.rutland@arm.com>, "Marc Zyngier" <maz@kernel.org>,
+ "Ingo Molnar" <mingo@redhat.com>,
+ "Oliver Upton" <oliver.upton@linux.dev>,
+ "Rafael J . Wysocki" <rafael@kernel.org>,
+ "Rob Herring" <robh@kernel.org>, ssengar@linux.microsoft.com,
+ "Sudeep Holla" <sudeep.holla@arm.com>,
+ "Suzuki K Poulose" <suzuki.poulose@arm.com>,
+ "Thomas Gleixner" <tglx@linutronix.de>, "Wei Liu" <wei.liu@kernel.org>,
+ "Will Deacon" <will@kernel.org>, "Zenghui Yu" <yuzenghui@huawei.com>,
+ devicetree@vger.kernel.org, kvmarm@lists.linux.dev,
+ linux-acpi@vger.kernel.org, Linux-Arch <linux-arch@vger.kernel.org>,
+ linux-arm-kernel@lists.infradead.org, linux-hyperv@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, x86@kernel.org
+Cc: apais@microsoft.com, benhill@microsoft.com, bperkins@microsoft.com,
+ sunilmut@microsoft.com
+Message-Id: <50ec2615-97cf-423d-bfe6-f65092a14348@app.fastmail.com>
+In-Reply-To: <96bc4caf-b79a-4111-bafa-a7662260f4be@linux.microsoft.com>
+References: <20250315001931.631210-1-romank@linux.microsoft.com>
+ <20250315001931.631210-2-romank@linux.microsoft.com>
+ <96bc4caf-b79a-4111-bafa-a7662260f4be@linux.microsoft.com>
+Subject: Re: [PATCH hyperv-next v6 01/11] arm64: kvm, smccc: Introduce and use API for
+ detecting hypervisor presence
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-When userspace sets supported rates for a new station via
-NL80211_CMD_NEW_STATION, it might send a list that's empty
-or contains only invalid values. Currently, we process these
-values in sta_link_apply_parameters() without checking the result of
-ieee80211_parse_bitrates(), which can lead to an empty rates bitmap.
+On Sat, Mar 15, 2025, at 01:27, Roman Kisel wrote:
+> On 3/14/2025 5:19 PM, Roman Kisel wrote:
+>
+> While the change is Acked, here is the caveat maybe.
+>
+> This patch produces warnings wtih sparse and CHECK_ENDING.
+> That said, the kernel build produces a whole lot more other warnings
+> from building with sparse by itself and/or with CHECK_ENDING.
+>
+> I am not sure how to proceed with that, thinking I should
+> not add warnings yet at the same time there are many others.
+> Not certain if folks take these signals as fyi or blockers.
 
-A similar issue was addressed for NL80211_CMD_SET_BSS in commit
-ce04abc3fcc6 ("wifi: mac80211: check basic rates validity").
-This patch applies the same approach in sta_link_apply_parameters()
-for NL80211_CMD_NEW_STATION, ensuring there is at least one valid
-rate by inspecting the result of ieee80211_parse_bitrates().
+It would be best not to add warnigns. There is slow progress on
+fixing all the endianess warnings and I hope this can eventually
+complete, so even if there are many existing ones please try to
+keep new code clean.
 
-Found by Linux Verification Center (linuxtesting.org) with Syzkaller.
-
-Fixes: b95eb7f0eee4 ("wifi: cfg80211/mac80211: separate link params from station params")
-Signed-off-by: Mikhail Lobanov <m.lobanov@rosa.ru>
----
-v2: Fixed the patch subject to provide a complete description.
-
- net/mac80211/cfg.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/net/mac80211/cfg.c b/net/mac80211/cfg.c
-index 9351c64608a9..e7c429aef980 100644
---- a/net/mac80211/cfg.c
-+++ b/net/mac80211/cfg.c
-@@ -1909,10 +1909,11 @@ static int sta_link_apply_parameters(struct ieee80211_local *local,
- 
- 	if (params->supported_rates &&
- 	    params->supported_rates_len) {
--		ieee80211_parse_bitrates(link->conf->chanreq.oper.width,
-+		(!ieee80211_parse_bitrates(link->conf->chanreq.oper.width,
- 					 sband, params->supported_rates,
- 					 params->supported_rates_len,
--					 &link_sta->pub->supp_rates[sband->band]);
-+					 &link_sta->pub->supp_rates[sband->band]))
-+		return -EINVAL;
- 	}
- 
- 	if (params->ht_capa)
--- 
-2.47.2
-
+     Arnd
 
