@@ -1,111 +1,102 @@
-Return-Path: <linux-kernel+bounces-562711-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562712-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 940D7A63197
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 19:31:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27545A63198
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 19:31:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D08A5172642
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE1083B8AFA
 	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 18:31:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A7F0204C26;
-	Sat, 15 Mar 2025 18:31:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A594204F86;
+	Sat, 15 Mar 2025 18:31:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NYHEAY/M"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MLyVyfmB"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE76718C930;
-	Sat, 15 Mar 2025 18:31:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D38241CD1F;
+	Sat, 15 Mar 2025 18:31:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742063483; cv=none; b=BaMgO1MANmBtFWyxiaWT2lreJmXBZpVV1h0sWJWcol5T14kX8o+JVTUuY7dgHAZhy7nS5XtYiaJpiSau7G+edFMQPSoYk2hEKQ6BHdax0VNF7h78WAcQHnBLUqxOlAJk2VZgBetNT+vqjdZd50iBlGgrtBpDgeR5UQoDd7qt/tI=
+	t=1742063493; cv=none; b=UwzLT6vplCgtOEOEu8yVfs1Pn+M1oA4HjoXQ5nY4vGAhtvGyoLdjRln45xSWlwg+bRmij1PPvVHkEwa1q2ubfkrS/hrd/QqyLua9N11PFi/46hfGqw+LLZCSkyUajqY7JZiUPXKT7IzNw78S1v8XlwR2nDLJDQprzwKmnNUgQ2M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742063483; c=relaxed/simple;
-	bh=0vfRuOck6enEATJsxwnNJ97w8R1LMXCI2iLptXnQIU0=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=cjKLIF7BmkoRdQXEXHpF+GIk96kje2DKAHyiFtCFW5qUyyrrBbKHpfXhLrXfALzNk2Pdza6Adf8NvmC9z4w++8KnzvexkZfyHEiHFbnbwRWTDdbL6A4FVYdNkK9m3y00Sa4n30Y8d4fSHUeHoLge5lscylOpd5UzZ6jGzgayM08=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NYHEAY/M; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38DE0C4CEE5;
-	Sat, 15 Mar 2025 18:31:22 +0000 (UTC)
+	s=arc-20240116; t=1742063493; c=relaxed/simple;
+	bh=1eCl0H/Io7JBG9hn06zddztdlZ4zO0KVqLIi4Be0JpI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=DVE7vMXq6fsVBi9uoTRHMkWe/4F+oc0SxD/g3D7QNP1/2d+w4ITYOkCz+yrLEjbr8d3ahHuwjIiI4bOVhxDOOGFH5zHBZaOAsx+KnkRTjq/lRcR7WCcLIVB8HMQQ/7QBUtkM8xYrf+XPOUhOP6PzKNjqQQ0eEbok7JHYWrCo0yc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MLyVyfmB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ACEC0C4CEE5;
+	Sat, 15 Mar 2025 18:31:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742063482;
-	bh=0vfRuOck6enEATJsxwnNJ97w8R1LMXCI2iLptXnQIU0=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=NYHEAY/MlCKSqP3IBOlMPfNYkjroro5RKtI3W7/xGpH4ak32s3UztdI7UqFLOEKr5
-	 VYnlEw6gUkiP2DcpIHMgscMlL50A84eTecOIy+sMi3B0NkLhQCzSMfhH5adzm5V64s
-	 in6+RuKSPJ7ATi7kQz9a9WVR7C19T7A6Y+SR+1UNQLLSDXlYrBsxvfbim8P79IRrMy
-	 CSb0iOjc0S0pXBw1fYyjH7oTqSmpgwvF3qiCSjZ7fgORRQeQfsM5zEInfePjpnmjR4
-	 eF3R877fUET0tUeWkysztKsL6DkB/Fdl9GkunMyFo+Gf+GALvu5vQmNesSrjqwcDMV
-	 if4uWd9d4MNKQ==
-Date: Sat, 15 Mar 2025 13:31:21 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=k20201202; t=1742063493;
+	bh=1eCl0H/Io7JBG9hn06zddztdlZ4zO0KVqLIi4Be0JpI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=MLyVyfmBepCfcP2wJK8aYnwApctOP/XRbPz5ja0sHQQz/ttnl7VxK03OLhq8z7WiI
+	 eef1lcQek6otutCWRCj2SHEuWWUTvy00uaG5UoCpLAM+5G/fPeTuJ/NDyDbVVeO7C8
+	 fWF+tCiMxaUzb1GLZd3Z5ZHpxMMtRR2XC8KRtLZjILA8nDMGzn1HxAT3+TgM3RT3eA
+	 3NNklnaALiDnNOSupS3VOOl+iZM6+8MeJ2bOQRoFGeOLkfOnJT9MEEzskNbx45fPdd
+	 TZmcjMXJJidkg3p2TAoAhY5JE2hvFUpl8RxP+mmZ4ynbLhpYI1wcsFKfgEfe18N6/H
+	 UqMwpvlGkKGoQ==
+Date: Sat, 15 Mar 2025 18:31:25 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Kees Cook <kees@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-hardening@vger.kernel.org
+Subject: Re: [PATCH] iio: magnetometer: ak8974: Add __nonstring annotations
+ for unterminated strings
+Message-ID: <20250315183125.40f9c566@jic23-huawei>
+In-Reply-To: <CACRpkdbUk8bVWLPwVRq0qzaKRC80=bV1Wd01h+5xfH1O7-BVaQ@mail.gmail.com>
+References: <20250310222346.work.810-kees@kernel.org>
+	<CACRpkdbUk8bVWLPwVRq0qzaKRC80=bV1Wd01h+5xfH1O7-BVaQ@mail.gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Naveen N Rao <naveen@kernel.org>, 
- Madhavan Srinivasan <maddy@linux.ibm.com>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, devicetree@vger.kernel.org, 
- Conor Dooley <conor+dt@kernel.org>, Nicholas Piggin <npiggin@gmail.com>, 
- Michael Ellerman <mpe@ellerman.id.au>, Crystal Wood <oss@buserror.net>, 
- linuxppc-dev@lists.ozlabs.org, 
- Christophe Leroy <christophe.leroy@csgroup.eu>, 
- linux-kernel@vger.kernel.org
-To: =?utf-8?q?J=2E_Neusch=C3=A4fer?= <j.ne@posteo.net>
-In-Reply-To: <20250315-fslpmc-yaml-v1-1-10ba354a85c2@posteo.net>
-References: <20250315-fslpmc-yaml-v1-1-10ba354a85c2@posteo.net>
-Message-Id: <174206348097.159805.1044453003821020231.robh@kernel.org>
-Subject: Re: [PATCH] dt-bindings: powerpc: Convert fsl/pmc.txt to YAML
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
+On Fri, 14 Mar 2025 11:31:09 +0100
+Linus Walleij <linus.walleij@linaro.org> wrote:
 
-On Sat, 15 Mar 2025 18:27:05 +0100, J. Neuschäfer wrote:
-> This patch rewrites pmc.txt into YAML format. Descriptive texts are
-> expanded or shortened in a few places to better fit today's conventions.
-> 
-> The list of compatible strings (and combinations of them) is based on
-> existing device trees in arch/powerpc as well as compatible strings
-> already mentioned in the plain-text version of the binding.
-> 
-> One thing I didn't handle are soc-clk@... nodes as seen in
-> Documentation/devicetree/bindings/powerpc/fsl/pmc.yaml.
-> 
-> Signed-off-by: J. Neuschäfer <j.ne@posteo.net>
-> ---
->  .../devicetree/bindings/powerpc/fsl/pmc.txt        |  63 --------
->  .../devicetree/bindings/powerpc/fsl/pmc.yaml       | 159 +++++++++++++++++++++
->  2 files changed, 159 insertions(+), 63 deletions(-)
-> 
+> On Mon, Mar 10, 2025 at 11:23=E2=80=AFPM Kees Cook <kees@kernel.org> wrot=
+e:
+>=20
+> > When a character array without a terminating NUL character has a static
+> > initializer, GCC 15's -Wunterminated-string-initialization will only
+> > warn if the array lacks the "nonstring" attribute[1]. Mark the arrays
+> > with __nonstring to and correctly identify the char array as "not a C
+> > string" and thereby eliminate the warning.
+> >
+> > Link: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=3D117178 [1]
+> > Cc: Linus Walleij <linus.walleij@linaro.org>
+> > Cc: Jonathan Cameron <jic23@kernel.org>
+> > Cc: Lars-Peter Clausen <lars@metafoo.de>
+> > Cc: linux-iio@vger.kernel.org
+> > Signed-off-by: Kees Cook <kees@kernel.org> =20
+>=20
+> Fair enough,
+> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+>=20
+Kees,
 
-My bot found errors running 'make dt_binding_check' on your patch:
+I've currently queued this for next cycle as it doesn't feel like a fix
+as such and I've already sent my pull request for the merge window.
 
-yamllint warnings/errors:
+Is it worth rushing it in, or is a fully cycle delay an issue? (6.16)
 
-dtschema/dtc warnings/errors:
-Documentation/devicetree/bindings/powerpc/fsl/pmc.example.dtb: /example-0/sata@19000: failed to match any schema with compatible: ['fsl,mpc8377-sata', 'fsl,pq-sata']
-Documentation/devicetree/bindings/powerpc/fsl/pmc.example.dtb: /example-0/sata@19000: failed to match any schema with compatible: ['fsl,mpc8377-sata', 'fsl,pq-sata']
+If slow is fine, applied to the testing branch of iio.git which gets
+0-day bot exposure.
 
-doc reference errors (make refcheckdocs):
+Jonathan
 
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250315-fslpmc-yaml-v1-1-10ba354a85c2@posteo.net
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
+> Yours,
+> Linus Walleij
 
 
