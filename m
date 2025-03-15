@@ -1,414 +1,206 @@
-Return-Path: <linux-kernel+bounces-562779-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562780-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3408DA632C6
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 23:50:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B750A632D2
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 00:00:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9DA723B08CA
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 22:49:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A69A3AFC88
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 23:00:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E36A1F03E0;
-	Sat, 15 Mar 2025 22:49:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33E2B1A5BA8;
+	Sat, 15 Mar 2025 23:00:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J0n6oDkX"
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="S1HpQUZz"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8972718DB14;
-	Sat, 15 Mar 2025 22:49:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6068719ABD4
+	for <linux-kernel@vger.kernel.org>; Sat, 15 Mar 2025 23:00:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742078972; cv=none; b=k0Uveo9FjbpWl6lOfN5WfCkKlej8xRYnVUkRvzxoiVNGnBfGTE/WgjBoJNBweSWrKY8cWYdBmxo0FBQ1Baz69jYmopQbB1jJo6gU3c2tl68fb+ubTayoavGZPuJF/QkKvvoNk9TQTB8762fMQ+HKGC5bTXYTFloJs2R4EsB+zjY=
+	t=1742079619; cv=none; b=LNl+vIYSVvgy7W3RhJu98ilHKZDWuoRpjW+dt0ku5Rm0BO0Otg1Ws0o39xTERfV9RrqMps2YCNANqDObyVAnSxjNlW1N+ce2Vr4iVm/7eA5ZPaVsp+uk8AkGeJMlInnbfKRCTL6PffwK4K+JHt6rtOgUD1rIHaEqcOss1A+4IjI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742078972; c=relaxed/simple;
-	bh=oS+A21CqpbHi83qqju0Ckxo3lDxx7aiZasMCS2B1M1Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=dIqxVqjgU7WRLnEtHdKi8Nu7beCbpa4nN5o3uO1GZ2oq7rvixQ7OShpQIJKMHnBvr/rvw5y06fqr9a9ScTIa1AunbZYyNiqa0Kf8ag2jv5eD0son9B4kcl4gv6SFSw2wj2pWU1fYDINL9aDEa7jIvndrvtTsay6rSjAs45ss7Pk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J0n6oDkX; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5e66407963fso5612583a12.2;
-        Sat, 15 Mar 2025 15:49:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742078969; x=1742683769; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8UcVAwRAcemdwpCRZ82WPfa0AEl99sHRDg4LltkoHRQ=;
-        b=J0n6oDkXhxXRBZVKiskY2vIlTNBB5UtfJbPETOuC8aFsvU0FoXxGnOB0j8LBNuHbYX
-         HLE/gnhJzhDxXN6DjCQVxNSyxBEhxTJq5BwyUfiK9hD2GpVlGvSqdVdtcbySD5Yn8PIq
-         vi6FpVtJfHtKL0GANu9RfJd2z7rkW60v/Ou11lp4xAjOAckVdzBJms0LdgH/yF8fmghX
-         SqY36rICwseN/IHms9ijlX9kzR3KSsyb2zBdqTJpr2QBvPRSxhlkkFsvkFUleAEwkJZt
-         9td1LATTJo6Vyy6exHeK6ClKuBNnu9nu8LjbSoJM7HvsOPnUFIb9RqWgxoEbdonc9AbB
-         AU1w==
+	s=arc-20240116; t=1742079619; c=relaxed/simple;
+	bh=xhRFpzk4rzdLvCilNXA/yVnrnYAhopE2nHKm/Q5UY+g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pV9mENgC1iRvci0RaadKWqqH7ICdu+28twlnbhLapK1Bbkaztt/CqqGuF8UMlFSyNdXlg0vqIxPyc+WPHcpZDFSjETA/kqw0rgiUxTUKDWeMm95V3ySvon5YMc5di8Xw/+VpjI4pr+ZcR1hkrVSheS4Is1OhPE+OqmzpZY4ojIk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=S1HpQUZz; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1742079615;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=xEY/qgIubnuvaxvPQIcCtmjl0Q+JZGksygczEmSgHEg=;
+	b=S1HpQUZz4aXU2QIsWVeUsaMxOrOG1WCd3rpYuCWDYwt06vlOChXjzrRKo6wucNaOCG3HA/
+	ctJ205nNUI2MysqybvhbOZeUk7e9vI6XAZ7ewDOx4ItqQZzVCqvSY/iIbNmv08e7QHIGoD
+	xynnVdjHrTCBgnqU4HLbsvmmB8XJrq8=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-318-1dbZQRnoPUChvkfSVh84cg-1; Sat, 15 Mar 2025 19:00:13 -0400
+X-MC-Unique: 1dbZQRnoPUChvkfSVh84cg-1
+X-Mimecast-MFC-AGG-ID: 1dbZQRnoPUChvkfSVh84cg_1742079612
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-43d209dc2d3so5187005e9.3
+        for <linux-kernel@vger.kernel.org>; Sat, 15 Mar 2025 16:00:13 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742078969; x=1742683769;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8UcVAwRAcemdwpCRZ82WPfa0AEl99sHRDg4LltkoHRQ=;
-        b=qhkVajarZz14CE4U4JjTgxSYF+WMlTmMyCQv/tVePJIpfmShNec8QjCJtjz0iodEgd
-         2aBHtrHOMTeQVMve9FeO1ubrAwLC2HsvJPE/ksvy9KQCrD4HlyeGO17r9tiHYriMT40H
-         tjemf5XJMqZnPLkToKoRt3B3uuPzjdXlyTnxZ3XDF2nVhxyNdxN1aTHLjmdZ572VVXOt
-         EZKWYOuMcH2ornLj66jQwo8C4sUEfS+9XSAH48kpg/jB164inOLKsljtLVm5LeYXzR0u
-         ONlCJC8FOS2LEjxmvh1wxPFGxb9S09fs9B757fp+uP1+wiPMRBd7+rn8oGxy/mArjtHp
-         POlQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVUSJ1bMJFMMeQJvqyJh2F+ZvCDJpK7K+tkDKww1Vm0M45HMLLGduraNpIGTSUWd0GrupzrXkrGDtNDAtaO@vger.kernel.org, AJvYcCVtyncC0yKpPhdohIkt+hKrt2tPiJZFQG29kDMnU3ryQ1b1/ePW/Rf4MiN+w90x5xuJ6hirAE+V+mne@vger.kernel.org, AJvYcCWg/I4t7OE7Z/S+tnL/iTlJxnoOD98DdZAk6igsfaMz0BR9TgyWcX4p4KhWXSipkrRBj5fH6/DoHRTw@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyu6LS3/36I0nu1BvxBtglwNP/nS9YVWdYIZyMPJzSLRNg0eE7o
-	6MTSD87zR7s/hutHsyK6LhcC9O5iqAbOZfXzt2rBR9diLavr7YJ0
-X-Gm-Gg: ASbGncvnfbuAAKWbO41GypF1b0iTReIZkecYVCpTlJ3Lqu2WdHtkVOhFbT/rnzf9wcf
-	Q/0W4NBDr+KvwgnlhaLOY4SNvczG7I+IPwqYtX5sI6r+ZLZavnEM97ry7w6fQHIOoSOY9gIYzm1
-	N4Gbmg3rmHwM9hf3B8aTqA2UZOJWMCxs6L9yLhDeb9uq3KNvXKWpF9Oxl2FLNSMKThuX4MIFPjb
-	ytIUmynMlujFkoWFRnTEK4Pa2PHOIU+lMjbm+pRuJGrAp+sq4FtAc/db3vTcbZrQpRaVihQPtkE
-	jDlNTPN0ILJcOYc94ja6KJiE5EcsUexJzct5aB9YABWeZfhKkwfvd97VC1xtMNzz+I7L
-X-Google-Smtp-Source: AGHT+IFwu2TqlG66JtANrHgr/I2uxuT26/JvpzerAr0zsgeG9FQmxu+kAXLZsWKb2WwSzayRxoPW/Q==
-X-Received: by 2002:a05:6402:1d4b:b0:5e0:9254:c10e with SMTP id 4fb4d7f45d1cf-5e89f1547f1mr8407803a12.11.1742078968485;
-        Sat, 15 Mar 2025 15:49:28 -0700 (PDT)
-Received: from giga-mm.. ([2a02:1210:861b:6f00:82ee:73ff:feb8:99e3])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e8169b160dsm3775586a12.41.2025.03.15.15.49.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 15 Mar 2025 15:49:28 -0700 (PDT)
-From: Alexander Sverdlin <alexander.sverdlin@gmail.com>
-To: sophgo@lists.linux.dev,
-	devicetree@vger.kernel.org,
-	linux-rtc@vger.kernel.org
-Cc: Jingbao Qiu <qiujingbao.dlmu@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Chen Wang <unicorn_wang@outlook.com>,
-	Inochi Amaoto <inochiama@gmail.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Yangyu Chen <cyy@cyyself.name>,
-	linux-kernel@vger.kernel.org,
-	Alexander Sverdlin <alexander.sverdlin@gmail.com>
-Subject: [PATCH v14 3/3] rtc: sophgo: add rtc support for Sophgo CV1800 SoC
-Date: Sat, 15 Mar 2025 23:49:14 +0100
-Message-ID: <20250315224921.3627852-4-alexander.sverdlin@gmail.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250315224921.3627852-1-alexander.sverdlin@gmail.com>
-References: <20250315224921.3627852-1-alexander.sverdlin@gmail.com>
+        d=1e100.net; s=20230601; t=1742079612; x=1742684412;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=xEY/qgIubnuvaxvPQIcCtmjl0Q+JZGksygczEmSgHEg=;
+        b=t341Rm8xweDx/H9FBkIf0Vh9icvo2QNcKBor+xhrnfaCSdGNwfBxU7VFr7CvwCwjwa
+         njFSDF15Qaq72BlvQS6M1JI8IrzRsAHeZ7d36FVVmRLg1doDXozeSr4zGwCsnXKOvSPv
+         ZwAk3rMFD0C2ajLTy4+EbKk1lB23SmgEjbb2US1Ym9jTccZsADMxnTjzTyv4yahty2KT
+         68jwE71PRxoBlvlqUCCu//tbMHm9EGJqR1JPUmIVHSocE1bt5cHnuip0DPBnr+QCAH7H
+         qab8gWBDAfXVSF3yAxdjPyOlbR/DwX6LBJuDjy+mGBOEugByEmuo25gmlGM9X30W+JCz
+         Tpvg==
+X-Forwarded-Encrypted: i=1; AJvYcCUCNk/v/gHIwmf+EYUPhjVF+i81V9SpDVugKo7xgn3QpkuoFrGp4Lz2y034bwXV72pDP7PrjF7RXiXCL1E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyKsDij1ZiK/VmYLMsykuIL/G+1w8SfLwiNAYAhQn0jxHpFUhYa
+	/JjyIJjywrlMtQTFnwJi5sYG71xWds5Md6i2oj6uE1yZavaEk6r/lEitpVaSfFrV2+LbRFg5AOB
+	+HKz9cQHXQuCeUGq8JlUkmrjqSFPx8vBkTo+7fhswlm/g3uJiyfxXq6SLjEOISEF9nNzY/9cJ
+X-Gm-Gg: ASbGncvon0Qsf3r/HLIKiWRW8hbV+fbtxLH7YsJBQuq/Y2fLQJ3vNFzXbtz62vj8Y/p
+	mMA69jDjLaipKlpdqceMOxqIWk+Z90vB6Gf8eCphXN/fBpeXOCJ9PTMC9EWVCD9J/XD5xT+sJq1
+	GpxXwela4X2NMaRqIHMZF1iXDwpYCe0fEkyz9s4ft7v03KAl0MebUsuDyg1OXKS2nhjd/LUl95z
+	Kd4/9yJUnVnlpEdamW7ui1+bpT+GkC/SxWpuw4wpGws0rbaYloZROOG44HhAZVnH+bfFIARVtn5
+	Tfb6056MOnRqeGbybbRcNGwOTx3nKirnJUBoFjd9GgMrtHkftQ7X6h3tRiGZ7ZN7S7nOYJGm2td
+	hVUw6yE0fhB9aq3Q3igDfekwQc8zKXCYBvIa9fkeLWp0=
+X-Received: by 2002:a05:600c:470e:b0:43c:ee62:33f5 with SMTP id 5b1f17b1804b1-43d1eccf8c6mr75685265e9.27.1742079612055;
+        Sat, 15 Mar 2025 16:00:12 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEreElSctv6SPEP2MEyJ/xqWLJMSiduPZhNsHlrl2TaHlt7HW8aHG5+4LO9QNQdz+JntA2e3g==
+X-Received: by 2002:a05:600c:470e:b0:43c:ee62:33f5 with SMTP id 5b1f17b1804b1-43d1eccf8c6mr75685125e9.27.1742079611635;
+        Sat, 15 Mar 2025 16:00:11 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f1a:7c00:4ac1:c2c4:4167:8a0f? (p200300d82f1a7c004ac1c2c441678a0f.dip0.t-ipconnect.de. [2003:d8:2f1a:7c00:4ac1:c2c4:4167:8a0f])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-395cb7eb8c2sm10072152f8f.85.2025.03.15.16.00.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 15 Mar 2025 16:00:10 -0700 (PDT)
+Message-ID: <e8996592-f7ba-4926-8556-1fe7534038dc@redhat.com>
+Date: Sun, 16 Mar 2025 00:00:09 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH] block, fs: use FOLL_LONGTERM as gup_flags for direct
+ IO
+To: John Hubbard <jhubbard@nvidia.com>, Christoph Hellwig
+ <hch@infradead.org>, Matthew Wilcox <willy@infradead.org>,
+ Jason Gunthorpe <jgg@nvidia.com>
+Cc: Sooyong Suk <s.suk@samsung.com>, viro@zeniv.linux.org.uk,
+ linux-kernel@vger.kernel.org, akpm@linux-foundation.org, linux-mm@kvack.org,
+ jaewon31.kim@gmail.com, spssyr@gmail.com, Zi Yan <ziy@nvidia.com>
+References: <CGME20250306074101epcas1p4b24ac546f93df2c7fe3176607b20e47f@epcas1p4.samsung.com>
+ <20250306074056.246582-1-s.suk@samsung.com> <Z8m-vJ6mP1Sh2pt3@infradead.org>
+ <Z8tVrOezU2q_0ded@casper.infradead.org> <Z9GmYe-bdOZ8LQV5@infradead.org>
+ <cd013218-7735-4bc1-b6b6-80d1129e2b76@redhat.com>
+ <c45e1bf8-f91b-4383-8c1a-7e11be02743b@nvidia.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <c45e1bf8-f91b-4383-8c1a-7e11be02743b@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Jingbao Qiu <qiujingbao.dlmu@gmail.com>
+On 15.03.25 02:04, John Hubbard wrote:
+> On 3/13/25 3:49 PM, David Hildenbrand wrote:
+>> On 12.03.25 16:21, Christoph Hellwig wrote:
+>>> On Fri, Mar 07, 2025 at 08:23:08PM +0000, Matthew Wilcox wrote:
+>>>> Howver, the problem is real.
+>>>
+>>> What is the problem?
+>>
+>> I think the problem is the CMA allocation failure, not the latency.
+>>
+>> "if a large amount of direct IO is requested constantly, this can make
+>> pages in CMA pageblocks pinned and unable to migrate outside of the
+>> pageblock"
+>>
+>> We'd need a more reliable way to make CMA allocation -> page migration
+>> make progress. For example, after we isolated the pageblocks and
+>> migration starts doing its thing, we could disallow any further GUP
+>> pins. (e.g., make GUP spin or wait for migration to end)
+>>
+>> We could detect in GUP code that a folio is soon expected to be migrated
+>> by checking the pageblock (isolated) and/or whether the folio is locked.
+>>
+> 
+> Jason Gunthorpe and Matthew both had some ideas about how to fix this [1],
+> which were very close (maybe the same) to what you're saying here: sleep
+> and spin in an killable loop.
+> 
+> It turns out to be a little difficult to do this--I had trouble making
+> the folio's "has waiters" bit work for this, for example. And then...squirrel!
+> 
+> However, I still believe, so far, this is the right approach. I'm just not
+> sure which thing to wait on, exactly.
 
-Implement the RTC driver for CV1800, which able to provide time alarm.
+Zi Yan has a series to convert the "isolate" state of pageblocks to a 
+separate pageblock bit; it could be considered a lock-bit. Currently, 
+it's essentially the migratetype being MIGRATE_ISOLATE.
 
-Signed-off-by: Jingbao Qiu <qiujingbao.dlmu@gmail.com>
-Signed-off-by: Alexander Sverdlin <alexander.sverdlin@gmail.com>
----
-Changelog:
-v14:
-- platform device name "cv1800-rtc" -> "cv1800b-rtc"
-v13:
-- Change in the Kconfig dependency caused by the move of the previous
-  patch from MFD into SOC
-v12:
-- added MAINTAINERS entry
-- depends on cv1800-rtcsys MFD driver
-- use syscon for regmap
-- get named clock from parent MFD
-- corresponding platform device is expected to be instantiated by MFD stub
-Changes since v10:
-- only start RTC on set_time;
-Changes since v9:
-- further simplified bitmask macros;
-- unconditional RTC start (rtc_enable_sec_counter()), otherwise
-didn't start on SG2000;
-- dropped ANA_CALIB modification (has been forgotten in v8 with
-the drop of SW calibration to switch to HW calibration);
-- successfully tested on SG2000;
+As soon as a pageblock is isolated, one must be prepared for contained 
+pages/folios to get migrated. The folio lock will only be grabbed once 
+actually trying to migrate a folio IIRC, so it might not be the best 
+choice: especially considering allocations that span many pageblocks.
 
+So maybe one would need a "has waiters" bit per pageblock, so relevant 
+users (e.g., GUP) could wait on the isolate bit getting cleared.
 
- MAINTAINERS              |   1 +
- drivers/rtc/Kconfig      |  12 +++
- drivers/rtc/Makefile     |   1 +
- drivers/rtc/rtc-cv1800.c | 218 +++++++++++++++++++++++++++++++++++++++
- 4 files changed, 232 insertions(+)
- create mode 100644 drivers/rtc/rtc-cv1800.c
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index ac15e448fffb..be8fee50a49c 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -22354,6 +22354,7 @@ L:	sophgo@lists.linux.dev
- W:	https://github.com/sophgo/linux/wiki
- T:	git https://github.com/sophgo/linux.git
- S:	Maintained
-+F:	drivers/rtc/rtc-cv1800.c
- N:	sophgo
- K:	sophgo
- 
-diff --git a/drivers/rtc/Kconfig b/drivers/rtc/Kconfig
-index 0bbbf778ecfa..46593103db11 100644
---- a/drivers/rtc/Kconfig
-+++ b/drivers/rtc/Kconfig
-@@ -1395,6 +1395,18 @@ config RTC_DRV_ASM9260
- 	  This driver can also be built as a module. If so, the module
- 	  will be called rtc-asm9260.
- 
-+config RTC_DRV_CV1800
-+	tristate "Sophgo CV1800 RTC"
-+	depends on SOPHGO_CV1800_RTCSYS || COMPILE_TEST
-+	select MFD_SYSCON
-+	select REGMAP
-+	help
-+	  If you say yes here you get support the RTC driver for Sophgo CV1800
-+	  series SoC.
-+
-+	  This driver can also be built as a module. If so, the module will be
-+	  called rtc-cv1800.
-+
- config RTC_DRV_DIGICOLOR
- 	tristate "Conexant Digicolor RTC"
- 	depends on ARCH_DIGICOLOR || COMPILE_TEST
-diff --git a/drivers/rtc/Makefile b/drivers/rtc/Makefile
-index 489b4ab07068..621b30a33dda 100644
---- a/drivers/rtc/Makefile
-+++ b/drivers/rtc/Makefile
-@@ -44,6 +44,7 @@ obj-$(CONFIG_RTC_DRV_CADENCE)	+= rtc-cadence.o
- obj-$(CONFIG_RTC_DRV_CMOS)	+= rtc-cmos.o
- obj-$(CONFIG_RTC_DRV_CPCAP)	+= rtc-cpcap.o
- obj-$(CONFIG_RTC_DRV_CROS_EC)	+= rtc-cros-ec.o
-+obj-$(CONFIG_RTC_DRV_CV1800)	+= rtc-cv1800.o
- obj-$(CONFIG_RTC_DRV_DA9052)	+= rtc-da9052.o
- obj-$(CONFIG_RTC_DRV_DA9055)	+= rtc-da9055.o
- obj-$(CONFIG_RTC_DRV_DA9063)	+= rtc-da9063.o
-diff --git a/drivers/rtc/rtc-cv1800.c b/drivers/rtc/rtc-cv1800.c
-new file mode 100644
-index 000000000000..18bc542bbdb8
---- /dev/null
-+++ b/drivers/rtc/rtc-cv1800.c
-@@ -0,0 +1,218 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * rtc-cv1800.c: RTC driver for Sophgo cv1800 RTC
-+ *
-+ * Author: Jingbao Qiu <qiujingbao.dlmu@gmail.com>
-+ */
-+
-+#include <linux/clk.h>
-+#include <linux/irq.h>
-+#include <linux/kernel.h>
-+#include <linux/mfd/syscon.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/regmap.h>
-+#include <linux/rtc.h>
-+
-+#define SEC_PULSE_GEN          0x1004
-+#define ALARM_TIME             0x1008
-+#define ALARM_ENABLE           0x100C
-+#define SET_SEC_CNTR_VAL       0x1010
-+#define SET_SEC_CNTR_TRIG      0x1014
-+#define SEC_CNTR_VAL           0x1018
-+
-+/*
-+ * When in VDDBKUP domain, this MACRO register
-+ * does not power down
-+ */
-+#define MACRO_RO_T             0x14A8
-+#define MACRO_RG_SET_T         0x1498
-+
-+#define ALARM_ENABLE_MASK      BIT(0)
-+#define SEL_SEC_PULSE          BIT(31)
-+
-+struct cv1800_rtc_priv {
-+	struct rtc_device *rtc_dev;
-+	struct regmap *rtc_map;
-+	struct clk *clk;
-+	int irq;
-+};
-+
-+static bool cv1800_rtc_enabled(struct device *dev)
-+{
-+	struct cv1800_rtc_priv *info = dev_get_drvdata(dev);
-+	u32 reg;
-+
-+	regmap_read(info->rtc_map, SEC_PULSE_GEN, &reg);
-+
-+	return (reg & SEL_SEC_PULSE) == 0;
-+}
-+
-+static void cv1800_rtc_enable(struct device *dev)
-+{
-+	struct cv1800_rtc_priv *info = dev_get_drvdata(dev);
-+
-+	/* Sec pulse generated internally */
-+	regmap_update_bits(info->rtc_map, SEC_PULSE_GEN, SEL_SEC_PULSE, 0);
-+}
-+
-+static int cv1800_rtc_alarm_irq_enable(struct device *dev, unsigned int enabled)
-+{
-+	struct cv1800_rtc_priv *info = dev_get_drvdata(dev);
-+
-+	regmap_write(info->rtc_map, ALARM_ENABLE, enabled);
-+
-+	return 0;
-+}
-+
-+static int cv1800_rtc_set_alarm(struct device *dev, struct rtc_wkalrm *alrm)
-+{
-+	struct cv1800_rtc_priv *info = dev_get_drvdata(dev);
-+	unsigned long alarm_time;
-+
-+	alarm_time = rtc_tm_to_time64(&alrm->time);
-+
-+	cv1800_rtc_alarm_irq_enable(dev, 0);
-+
-+	regmap_write(info->rtc_map, ALARM_TIME, alarm_time);
-+
-+	cv1800_rtc_alarm_irq_enable(dev, alrm->enabled);
-+
-+	return 0;
-+}
-+
-+static int cv1800_rtc_read_alarm(struct device *dev, struct rtc_wkalrm *alarm)
-+{
-+	struct cv1800_rtc_priv *info = dev_get_drvdata(dev);
-+	u32 enabled;
-+	u32 time;
-+
-+	if (!cv1800_rtc_enabled(dev)) {
-+		alarm->enabled = 0;
-+		return 0;
-+	}
-+
-+	regmap_read(info->rtc_map, ALARM_ENABLE, &enabled);
-+
-+	alarm->enabled = enabled & ALARM_ENABLE_MASK;
-+
-+	regmap_read(info->rtc_map, ALARM_TIME, &time);
-+
-+	rtc_time64_to_tm(time, &alarm->time);
-+
-+	return 0;
-+}
-+
-+static int cv1800_rtc_read_time(struct device *dev, struct rtc_time *tm)
-+{
-+	struct cv1800_rtc_priv *info = dev_get_drvdata(dev);
-+	u32 sec;
-+
-+	if (!cv1800_rtc_enabled(dev))
-+		return -EINVAL;
-+
-+	regmap_read(info->rtc_map, SEC_CNTR_VAL, &sec);
-+
-+	rtc_time64_to_tm(sec, tm);
-+
-+	return 0;
-+}
-+
-+static int cv1800_rtc_set_time(struct device *dev, struct rtc_time *tm)
-+{
-+	struct cv1800_rtc_priv *info = dev_get_drvdata(dev);
-+	unsigned long sec;
-+
-+	sec = rtc_tm_to_time64(tm);
-+
-+	regmap_write(info->rtc_map, SET_SEC_CNTR_VAL, sec);
-+	regmap_write(info->rtc_map, SET_SEC_CNTR_TRIG, 1);
-+
-+	regmap_write(info->rtc_map, MACRO_RG_SET_T, sec);
-+
-+	cv1800_rtc_enable(dev);
-+
-+	return 0;
-+}
-+
-+static irqreturn_t cv1800_rtc_irq_handler(int irq, void *dev_id)
-+{
-+	struct cv1800_rtc_priv *info = dev_id;
-+
-+	rtc_update_irq(info->rtc_dev, 1, RTC_IRQF | RTC_AF);
-+
-+	regmap_write(info->rtc_map, ALARM_ENABLE, 0);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static const struct rtc_class_ops cv1800_rtc_ops = {
-+	.read_time = cv1800_rtc_read_time,
-+	.set_time = cv1800_rtc_set_time,
-+	.read_alarm = cv1800_rtc_read_alarm,
-+	.set_alarm = cv1800_rtc_set_alarm,
-+	.alarm_irq_enable = cv1800_rtc_alarm_irq_enable,
-+};
-+
-+static int cv1800_rtc_probe(struct platform_device *pdev)
-+{
-+	struct cv1800_rtc_priv *rtc;
-+	int ret;
-+
-+	rtc = devm_kzalloc(&pdev->dev, sizeof(*rtc), GFP_KERNEL);
-+	if (!rtc)
-+		return -ENOMEM;
-+
-+	rtc->rtc_map = device_node_to_regmap(pdev->dev.parent->of_node);
-+	if (IS_ERR(rtc->rtc_map))
-+		return dev_err_probe(&pdev->dev, PTR_ERR(rtc->rtc_map),
-+				     "cannot get parent regmap\n");
-+
-+	rtc->irq = platform_get_irq(pdev, 0);
-+	if (rtc->irq < 0)
-+		return rtc->irq;
-+
-+	rtc->clk = devm_clk_get_enabled(pdev->dev.parent, "rtc");
-+	if (IS_ERR(rtc->clk))
-+		return dev_err_probe(&pdev->dev, PTR_ERR(rtc->clk),
-+				     "rtc clk not found\n");
-+
-+	platform_set_drvdata(pdev, rtc);
-+
-+	device_init_wakeup(&pdev->dev, 1);
-+
-+	rtc->rtc_dev = devm_rtc_allocate_device(&pdev->dev);
-+	if (IS_ERR(rtc->rtc_dev))
-+		return PTR_ERR(rtc->rtc_dev);
-+
-+	rtc->rtc_dev->ops = &cv1800_rtc_ops;
-+	rtc->rtc_dev->range_max = U32_MAX;
-+
-+	ret = devm_request_irq(&pdev->dev, rtc->irq, cv1800_rtc_irq_handler,
-+			       IRQF_TRIGGER_HIGH, "rtc alarm", rtc);
-+	if (ret)
-+		return dev_err_probe(&pdev->dev, ret,
-+				     "cannot register interrupt handler\n");
-+
-+	return devm_rtc_register_device(rtc->rtc_dev);
-+}
-+
-+static const struct platform_device_id cv1800_rtc_id[] = {
-+	{ .name = "cv1800b-rtc" },
-+	{ /* sentinel */ },
-+};
-+MODULE_DEVICE_TABLE(platform, cv1800_rtc_id);
-+
-+static struct platform_driver cv1800_rtc_driver = {
-+	.driver = {
-+		.name = "sophgo-cv1800-rtc",
-+	},
-+	.probe = cv1800_rtc_probe,
-+	.id_table = cv1800_rtc_id,
-+};
-+
-+module_platform_driver(cv1800_rtc_driver);
-+MODULE_AUTHOR("Jingbao Qiu");
-+MODULE_DESCRIPTION("Sophgo cv1800 RTC Driver");
-+MODULE_LICENSE("GPL");
 -- 
-2.48.1
+Cheers,
+
+David / dhildenb
 
 
