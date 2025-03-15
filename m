@@ -1,54 +1,59 @@
-Return-Path: <linux-kernel+bounces-562473-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562474-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB185A62923
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 09:35:47 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6F7DA6292F
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 09:42:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 917D27AC963
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 08:34:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA1013B1B0F
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 08:42:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B90AC1EEA5D;
-	Sat, 15 Mar 2025 08:35:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1E8B1EA7C5;
+	Sat, 15 Mar 2025 08:42:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="aTj4j7Ci"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u3GjbRMF"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDBA563D;
-	Sat, 15 Mar 2025 08:35:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 304AD178CF8
+	for <linux-kernel@vger.kernel.org>; Sat, 15 Mar 2025 08:42:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742027736; cv=none; b=P8Y0ZiimZ2ygrEqzMCJIL+ZW84fmeBhJTyjR1AdWw0OEcmLQZxm/jA7H0vBObXTwRkW3n25+KTy1TvAL8SeCVFzh6JYisM0KSosf3CkHkW/fE2ZUFO1PJe02QGWD9iJ2HsCIwqIAJhqEqGKrYNIdgVWHPNbA6CuQnQFodfhL5bA=
+	t=1742028163; cv=none; b=IA+wI1Jg/uBEtv5eagDPvErV6KWEo8fPEOfM92pR5vHmFz8sj/F3ngc3EE1jXFxaV44LjHlL/WPPRVjr/0cngdmsDuN8mlMZyiDjwCUuJ2vP0tRUsKt83yX8bznRh0U/kT+A1BCm6Dl8vENsfnmmmjZTC/9EM+8bzW7NGdJjIH4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742027736; c=relaxed/simple;
-	bh=gGvj+RQikv/qve5a0SnbR24cW69tZEUx8IeMxKXguXc=;
+	s=arc-20240116; t=1742028163; c=relaxed/simple;
+	bh=hhrXCzurGah/jPHhVsTGdVJGG6pYNJnQK3jHmKSM8l0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YgDJSvZ4dHVZMPR86uVOKFmLpHzhbRd7dIZOF9qiahzlSSBGxRpE4OJtawAoPbsZXvJvkkIXlD3ZngeX/ygZMUAAZNIfQr2C7q9qZWRdSjDnrcLGxjx3gxzt6NZv8X+q+zwru9IuECV0TdheEUfRDYQjdorN+sqdmjZ0rMP47+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=aTj4j7Ci; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE5C3C4CEE5;
-	Sat, 15 Mar 2025 08:35:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1742027735;
-	bh=gGvj+RQikv/qve5a0SnbR24cW69tZEUx8IeMxKXguXc=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=j9GPAsan33ok+6QQsX2ji9SSn+jfRJgc6QpfIfnYVbqNt3oDnti3rdDzmwGSPVa4wVye9sD2okC64JFQCOVwbyAvLLogrA+ypHsnVN3m4PQetEUusiQK9TFPIsUDSnMCn7FkN6sgKeg3m7c8j6ugHTAJidrbFJ4jPXB5kamOBB4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u3GjbRMF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72E3BC4CEE5;
+	Sat, 15 Mar 2025 08:42:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742028161;
+	bh=hhrXCzurGah/jPHhVsTGdVJGG6pYNJnQK3jHmKSM8l0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=aTj4j7Cisry+Rzb4/p0JV5+7AdBCFvOHHx1vLOHQFuA8nf4A4MpdkCvEZVUCYMr+X
-	 +CPmjq9LkJ4U8pyGX6J5e0URJJ/bOrbFd6VFI09RVkXKflhabY/tW2bA32oJRX+8Sl
-	 Sw6kdoVeIXwEYh9x5qzhBiGEFkLrewgkvj6GideU=
-Date: Sat, 15 Mar 2025 09:34:17 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: rafael@kernel.org, bhelgaas@google.com, ojeda@kernel.org,
-	alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net,
-	bjorn3_gh@protonmail.com, benno.lossin@proton.me,
-	a.hindborg@kernel.org, aliceryhl@google.com, tmgross@umich.edu,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH v2 0/4] Improve soundness of bus device abstractions
-Message-ID: <2025031542-starry-finally-1a2c@gregkh>
-References: <20250314160932.100165-1-dakr@kernel.org>
+	b=u3GjbRMF71hYXxj2HtXnXx17CdPFtplkoDfPL68fEgoGiDkRrjTWhzF4RLk3m2FSE
+	 sGpqAZdmwU6GPXXgJMSFosHARLX+J6ankon2wNz5rR3XVKTC8aC4jTsHT31elwJ0mb
+	 N5xpPxfoHld6WW4pDpGGqah7Qn6Bd8P24h+4Pgm7zeVYFVxf7GrnaI4nGpUsi3CX21
+	 uiyIjPkzC8w83DLiKg4wgCg0Xk2ZiLY6VmJ8rkXA4faTdfvV7kvdapYKqB6FjMrwVb
+	 LczZ+HNIz+0rFLIZIlIxPIqatbZoXFn0x0R8GepM17S3bsGH2/FdBTjJko7tUKpd6K
+	 eNu2W5yFxGe0g==
+Date: Sat, 15 Mar 2025 09:42:36 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, x86@kernel.org,
+	linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
+	Borislav Petkov <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>,
+	Uros Bizjak <ubizjak@gmail.com>,
+	Andrew Cooper <andrew.cooper3@citrix.com>
+Subject: Re: [PATCH 04/20] x86/cpu: Use named asm operands in clflushopt()
+Message-ID: <Z9U9fAUr3O-pr9QT@gmail.com>
+References: <cover.1741988314.git.jpoimboe@kernel.org>
+ <c007f4ddbfdfe92777a7df35bc121cf9bf0d0682.1741988314.git.jpoimboe@kernel.org>
+ <CAHk-=wjBjq6u+r9KGTHQ5nOA1L2TDhz0JPL_+eE07un9y9Qm-w@mail.gmail.com>
+ <gor6hi6lzohdo6hfcffmxdzc4fiqdn2itncxatw4zkhouzmm6l@obz43xcfcl2i>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,58 +62,31 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250314160932.100165-1-dakr@kernel.org>
+In-Reply-To: <gor6hi6lzohdo6hfcffmxdzc4fiqdn2itncxatw4zkhouzmm6l@obz43xcfcl2i>
 
-On Fri, Mar 14, 2025 at 05:09:03PM +0100, Danilo Krummrich wrote:
-> Currently, when sharing references of bus devices (e.g. ARef<pci::Device>), we
-> do not have a way to restrict which functions of a bus device can be called.
-> 
-> Consequently, it is possible to call all bus device functions concurrently from
-> any context. This includes functions, which access fields of the (bus) device,
-> which are not protected against concurrent access.
-> 
-> This is improved by applying an execution context to the bus device in form of a
-> generic type.
-> 
-> For instance, the PCI device reference that is passed to probe() has the type
-> pci::Device<Core>, which implements all functions that are only allowed to be
-> called from bus callbacks.
-> 
-> The implementation for the default context (pci::Device) contains all functions
-> that are safe to call from any context concurrently.
-> 
-> The context types can be extended as required, e.g. to limit availability  of
-> certain (bus) device functions to probe().
-> 
-> A branch containing the patches can be found in [1].
-> 
-> [1] https://web.git.kernel.org/pub/scm/linux/kernel/git/dakr/linux.git/log/?h=rust/device
-> 
-> Changes in v2:
->   - make `DeviceContext` trait sealed
->   - impl From<&pci::Device<device::Core>> for ARef<pci::Device>
->   - impl From<&platform::Device<device::Core>> for ARef<platform::Device>
->   - rebase onto v6.14-rc6
->   - apply RBs
-> 
-> Danilo Krummrich (4):
->   rust: pci: use to_result() in enable_device_mem()
->   rust: device: implement device context marker
->   rust: pci: fix unrestricted &mut pci::Device
->   rust: platform: fix unrestricted &mut platform::Device
-> 
->  rust/kernel/device.rs                |  26 +++++
->  rust/kernel/pci.rs                   | 137 +++++++++++++++++----------
->  rust/kernel/platform.rs              |  95 +++++++++++++------
->  samples/rust/rust_driver_pci.rs      |   8 +-
->  samples/rust/rust_driver_platform.rs |  11 ++-
->  5 files changed, 187 insertions(+), 90 deletions(-)
 
-Thanks for doing this work, looks good to me.  Mind if I suck it into
-the driver-core tree now?  Or do you want it to go through a different
-tree?
+* Josh Poimboeuf <jpoimboe@kernel.org> wrote:
 
-thanks,
+> On Fri, Mar 14, 2025 at 01:46:00PM -1000, Linus Torvalds wrote:
+> > On Fri, 14 Mar 2025 at 11:42, Josh Poimboeuf <jpoimboe@kernel.org> wrote:
+> > >
+> > > +       alternative_io(".byte 0x3e; clflush %[val]",
+> > > +                      ".byte 0x66; clflush %[val]", X86_FEATURE_CLFLUSHOPT,
+> > > +                      [val] "+m" (*(volatile char __force *)__p));
+> > 
+> > Hmm. I think we could just use 'clflushopt', it looks like it exists
+> > in binutils-2.25, which is our minimal version requirement.
+> > 
+> > But maybe that's a separate cleanup.
+> 
+> You appear to be correct, I'll add a patch for that.
 
-greg k-h
+Please base your series on tip:master or tip:x86/asm, we already 
+cleaned this up recently:
+
+   cc2e9e09d1a3 ("x86/asm: Use CLFLUSHOPT and CLWB mnemonics in <asm/special_insns.h>")
+
+Thanks,
+
+	Ingo
 
