@@ -1,145 +1,197 @@
-Return-Path: <linux-kernel+bounces-562373-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562374-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED3EBA624D5
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 03:44:11 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59E9AA624D6
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 03:44:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 83C49883047
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 02:43:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C5128422100
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 02:44:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5642818B499;
-	Sat, 15 Mar 2025 02:43:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA92C17C208;
+	Sat, 15 Mar 2025 02:44:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZPqmGaGm"
-Received: from mail-ot1-f46.google.com (mail-ot1-f46.google.com [209.85.210.46])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Nj77oJSr"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5288111713;
-	Sat, 15 Mar 2025 02:43:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B66C195
+	for <linux-kernel@vger.kernel.org>; Sat, 15 Mar 2025 02:44:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742006615; cv=none; b=oMsfZUMYHxf9p3tmwSb0nkst68Dvteytlgtd4hNLtOKsaaYhgyg+9WoT+6tXpum+1glfnenUiFXaNYIt4nkqWEmbwUT12cQ/komQfJkC4QSbkw5f8trLmSfkBd8t+hORW2tAol3QGnOZI/AbbXff4CG9mCeOCjbOBYrYBYS4x5Y=
+	t=1742006648; cv=none; b=g9zeKXJ4GX7usdLxPOWz9o4RU9tskmTGjQovBeyAGHmimnn+oz9aCtj+5ZNFg/iJlZxfbTE9Id8Ae4lCtLRiTA2sVbPIyA4+aez1Q9rQ+sm4FF73CIsu/J41dfTdaCsxJT+lpBd1dfZnW9hWwCBvwf1Y3yblI8jatisOMg5eA1k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742006615; c=relaxed/simple;
-	bh=GlntjgU3Lxdii6DqpKNjs6+MaX1eRLZ0d3LBMTa28eY=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Z6h59vC1B7lCRpX3Q1sA03LdoFuftbyy4eScpVIjvlUi4xkpv3vGQvBiujrJqxKxqslrVfC7/klya9VkQAwoJZlZ/tgV6bmqNOXVFtGUcoexFa7/+m/hBUfz9aiKOtkwsno1ZjMw1uQEqagQjQmbZYrGp5OSOm5X+gh7xms4tg8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZPqmGaGm; arc=none smtp.client-ip=209.85.210.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f46.google.com with SMTP id 46e09a7af769-72a145521d6so1908736a34.3;
-        Fri, 14 Mar 2025 19:43:34 -0700 (PDT)
+	s=arc-20240116; t=1742006648; c=relaxed/simple;
+	bh=Q9GhAZbLUgE7P+QE7UyBDJ6RvNUgtdG9IcwaRMI1BWg=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=oOfbCbCcpG2cVgH+ulCOHVTnNmwB0ddemmLs1VEOCnce2N6Xoh8pKY2DhUgZHJkghux7MktAFm19aS9EaH5346+eRCG+bGtJxDO+4BvyuRgqdSA4+rEgaJBuh25oV6N/63WV9tYxXxF3qRvHzdjMtkhf5B5L6ahLv46Ashho8iE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Nj77oJSr; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-300fefb8e25so449553a91.3
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 19:44:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742006613; x=1742611413; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=MibvrQXj2P5QnlDxX5YbYon7Ne8dH6XMjJsYnk+RzkY=;
-        b=ZPqmGaGmoYNJAtfzfsci1WDuJQd9Fh0XCGGImHJILodVGZRd3kjf1NZIrsZHGsEkG3
-         Q0W2E0vAqCmdKDBU3bg9ncLzaGO0mOkmeF9bqLOSdu46/Zl/uecnaddy2bmjzhKoD7wu
-         +3MuUWKSvAs2pc0WnqssGEaXfBwYImE/FYVy5NSjdgFpstuTSJrvaXN4GY6KaPujvrEj
-         tJrHaLudL4RagYjOCtmZ2vxhfMxA3SMzp7LSeF6k2zxZrPYpaJIaOuginSAdEmKFdrIR
-         WiLtrZeXIBHyIX5oK7zhAF9Q9sSKIrrZbOcoNf6n1zqb3on0ic5zX8AijmD8JsZgmyOq
-         9zoQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742006613; x=1742611413;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
+        d=google.com; s=20230601; t=1742006645; x=1742611445; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=MibvrQXj2P5QnlDxX5YbYon7Ne8dH6XMjJsYnk+RzkY=;
-        b=lwcbv8TydL7O8th/jUUi7CFchzRWJEjiq/vgnvj+ewOnzl4bPOxgyyQWqyRlUtPXGm
-         j0kLnaOUpblmhcGyJ3BVYYPvHGfS1jr8z3JHXRAql2WDPJ4LLwGk5IHytbsmB5OlekrR
-         Sd2BddZ6cZ68uXNbClUNFWKSi6FsEjCl6N2GcL5ut+xWHiWT39Tnrpr08kp4Xs6NT6j6
-         2feoQjAEx1Oz4lbFtx+TjBi61kJ1660ymv7vDOP48ZkvYc7o+LF7J0p9UQWK9fDlMREs
-         aP0ejvgp9jCzTAvaJwg4QUMmfFhwntqr8HGLx1P44OnLaxs5E61UT0fDN4Q1d+cxHPXq
-         EckQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXVROctpK9/v6+2nFIqOcuokZkRd/JnnJiu052T0jm3AqNCupTl8cOeVsPUyc0gw48zx6GxAkF89ZJvoJeQFdM=@vger.kernel.org, AJvYcCXXJz4hbiEB1/qp22unM2aLXnzs3Dm9oZ13IlJ2gB8K6Jx5QCYvVri7/Q//wC9KxtQkpJNK8D1VYb0=@vger.kernel.org, AJvYcCXzfLDsHXKjwGbVwlOVHY+yRiJf8U5il6S6gOXAv/K1DL8RWd8rI9In3DpNmuaOLRDENO5DCnP10daOsmkV@vger.kernel.org
-X-Gm-Message-State: AOJu0YywOnbToJ6rj9rkrqs0G8bUl+nQhaiPu3bz6ZvZT5S/XITR9620
-	MOJg9CmgNzvlCO1s/fBA2ZHZ7/Cikjv2cGdT1fETvnOGKtcPqW47
-X-Gm-Gg: ASbGnct2GphkIdn2Gbv7gbtyJjTEEv3akBf/XCmiOOQaS1GxBUxrSkaQrFLuZkvRmaW
-	wx+XvwpnhR+TVKliQsLcz/irMmSQ/PjOy3xfaIE17nEvhMz+J2DRs3KsKnDG8Nqa5jtAJMfLcZZ
-	Lk2BKk1vfYLPw407klOTnnevROI8l2AyJJ8YJUsa+OvcUgxbrsbf8YqdGky1V9TTo2WfoX37iga
-	Xt+ZDTuopJ1EMYzPsYWSuUV6MJCXtXc622rmvx7yZB4PLY+Lx62wHbbQD6rgDk1w0Upee6+O7kv
-	OxG/0gF6efMj8cRLn2Rl13lHS3RNAnrh5Q75U91wsAl4LC4dOArBxI3zYCwW8d9b73bRmUoAvo4
-	vPeOaMUivFuJMfbxV
-X-Google-Smtp-Source: AGHT+IH81UySJfquqqsqib4YT+37awiURcsJmKDQnrwiT5WTPoR6EFhWOtsz2pC9Fb1W+uChntifMg==
-X-Received: by 2002:a05:6830:3c86:b0:72b:992b:e50 with SMTP id 46e09a7af769-72bbc4ea2a6mr3535769a34.21.1742006613460;
-        Fri, 14 Mar 2025 19:43:33 -0700 (PDT)
-Received: from my-computer.lan (c-73-76-29-249.hsd1.tx.comcast.net. [73.76.29.249])
-        by smtp.googlemail.com with ESMTPSA id 46e09a7af769-72bb26bb82dsm882990a34.32.2025.03.14.19.43.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Mar 2025 19:43:33 -0700 (PDT)
-From: Andrew Ballance <andrewjballance@gmail.com>
-To: dakr@kernel.org,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	corbet@lwn.net,
-	ojeda@kernel.org,
-	alex.gaynor@gmail.com,
-	boqun.feng@gmail.com,
-	gary@garyguo.net,
-	bjorn3_gh@protonmail.com,
-	benno.lossin@proton.me,
-	a.hindborg@kernel.org,
-	aliceryhl@google.com,
-	tmgross@umich.edu,
-	andrewjballance@gmail.com,
-	acourbot@nvidia.com,
-	nouveau@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org
-Subject: [PATCH 3/3] gpu: nova-core: remove completed Vec extentions from task list
-Date: Fri, 14 Mar 2025 21:42:35 -0500
-Message-ID: <20250315024235.5282-4-andrewjballance@gmail.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250315024235.5282-1-andrewjballance@gmail.com>
-References: <20250315024235.5282-1-andrewjballance@gmail.com>
+        bh=ZnnXdp56AgiA6BzKaPpHQxKIs/38n2t0PPH76FwESSg=;
+        b=Nj77oJSrNeoVZPDPlnqVd/N1o/7ZkpJj0auI/IVFKuV8OK8z/iRZTe2pMaomu+e2Zr
+         ipUuWoN/TCC/68H7uIgMLitu4h7knJ575Vfi8l3riJtvqSP80EyNp+YsjBoKGis8RVGN
+         QujrEI1RZBMqb3YnoVQ4xSThY8Qtw141ShLLGYmYWL19EpqGO+mYKRkZAcpZyx/SMZ2I
+         PB4LK25dEMzkFo+ifdJhCXPNuB3la+RrSa6EpoQPZfF/9nroL0QgMbi+69uxZJRFgwpL
+         NY8mHyyNnS/nRGOsNDSbiaJTkyIQ1NYx8T9fsiAUQJfWTYT24hRMYU1rJJ/EaFU/iEWv
+         jCrw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742006645; x=1742611445;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZnnXdp56AgiA6BzKaPpHQxKIs/38n2t0PPH76FwESSg=;
+        b=B/eIyXzrV0u339pSq4Kc5YruzJcQQ1nHDbm9V/c+DJStDmC8aok0twGNhlzPA5P7lA
+         fUrfo9LZDp+ms81PfWeluqvbZGxL4BqqWFiwKWVF8I27suHqhPwxWyCx2oasHFkPawu8
+         6fT/bgrAQXxS9ayJ/0Dg8bWeO6o92dhGhIPP/S6imsMFI/C3Paa9IGLRsGuWgIPrlx81
+         SstaCMxGLanBXbyav4G7kFke4YFes1QfoH2F2G6Wq7rMNjC2cCX2MQfpz20szJZjR3Nl
+         x4mXA3Ai9uXtf35nHiH8MDSnvKZy8tWKTZt1xuBVJEdM8OkClMV87DYUWxlJXV8Ghj8z
+         5aYw==
+X-Forwarded-Encrypted: i=1; AJvYcCVLU1KgKP0rBVAK94vcCNUCzEF0VGFWzZKYQzSEfIMLC/jxQHX3ufYbyOOWIfbaL9Ovi90Jy/6O0O9zVZA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywo68f8HDdjCWHre5EPruQ9LidFGdL5HHun6Ew51wrEaP2OvtOV
+	3Inxy/tWk+yZMY+vvPm3uUzHB8+tH8PwP+0tdMGFk1DeNWtmFutm3zmmedj/rykLaeEK1PwklqX
+	q9w==
+X-Google-Smtp-Source: AGHT+IFd1lC1TQ7LNalTj2sS1eTmECizA8gtNAKxH7sy8aLsEb70foFSXFExtje6PNEdm5ZMeBgM5iGOZIs=
+X-Received: from pjbov13.prod.google.com ([2002:a17:90b:258d:b0:2e0:915d:d594])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:5143:b0:2f7:4cce:ae37
+ with SMTP id 98e67ed59e1d1-30151d03d08mr6864864a91.18.1742006644910; Fri, 14
+ Mar 2025 19:44:04 -0700 (PDT)
+Reply-To: Sean Christopherson <seanjc@google.com>
+Date: Fri, 14 Mar 2025 19:44:02 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.49.0.rc1.451.g8f38331e32-goog
+Message-ID: <20250315024402.2363098-1-seanjc@google.com>
+Subject: [PATCH] KVM: nVMX: Check MSR load/store list counts during VM-Enter
+ consistency checks
+From: Sean Christopherson <seanjc@google.com>
+To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Dan Carpenter <dan.carpenter@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 
-The requested Vec methods have been implemented thus, removes
-the completed item from the nova task list
+Explicitly verify the MSR load/store list counts are below the advertised
+limit as part of the initial consistency checks on the lists, so that code
+that consumes the count doesn't need to worry about extreme edge cases.
+Enforcing the limit during the initial checks fixes a flaw on 32-bit KVM
+where a sufficiently high @count could lead to overflow:
 
-Signed-off-by: Andrew Ballance <andrewjballance@gmail.com>
+	arch/x86/kvm/vmx/nested.c:834 nested_vmx_check_msr_switch()
+	warn: potential user controlled sizeof overflow 'addr + count * 16' '0-u64max + 16-68719476720'
+
+arch/x86/kvm/vmx/nested.c
+    827 static int nested_vmx_check_msr_switch(struct kvm_vcpu *vcpu,
+    828                                        u32 count, u64 addr)
+    829 {
+    830         if (count == 0)
+    831                 return 0;
+    832
+    833         if (!kvm_vcpu_is_legal_aligned_gpa(vcpu, addr, 16) ||
+--> 834             !kvm_vcpu_is_legal_gpa(vcpu, (addr + count * sizeof(struct vmx_msr_entry) - 1)))
+                                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+While the SDM doesn't explicitly state an illegal count results in VM-Fail,
+the SDM states that exceeding the limit may result in undefined behavior.
+I.e. the SDM gives hardware, and thus KVM, carte blanche to do literally
+anything in response to a count that exceeds the "recommended" limit.
+
+  If the limit is exceeded, undefined processor behavior may result
+  (including a machine check during the VMX transition).
+
+KVM already enforces the limit when processing the MSRs, i.e. already
+signals a late VM-Exit Consistency Check for VM-Enter, and generates a
+VMX Abort for VM-Exit.  I.e. explicitly checking the limits simply means
+KVM will signal VM-Fail instead of VM-Exit or VMX Abort.
+
+Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+Closes: https://lore.kernel.org/all/44961459-2759-4164-b604-f6bd43da8ce9@stanley.mountain
+Signed-off-by: Sean Christopherson <seanjc@google.com>
 ---
- Documentation/gpu/nova/core/todo.rst | 10 ----------
- 1 file changed, 10 deletions(-)
+ arch/x86/kvm/vmx/nested.c | 31 ++++++++++++++++++++-----------
+ 1 file changed, 20 insertions(+), 11 deletions(-)
 
-diff --git a/Documentation/gpu/nova/core/todo.rst b/Documentation/gpu/nova/core/todo.rst
-index ca08377d3b73..234d753d3eac 100644
---- a/Documentation/gpu/nova/core/todo.rst
-+++ b/Documentation/gpu/nova/core/todo.rst
-@@ -190,16 +190,6 @@ Rust abstraction for debugfs APIs.
- | Reference: Export GSP log buffers
- | Complexity: Intermediate
+diff --git a/arch/x86/kvm/vmx/nested.c b/arch/x86/kvm/vmx/nested.c
+index d06e50d9c0e7..64ea387a14a1 100644
+--- a/arch/x86/kvm/vmx/nested.c
++++ b/arch/x86/kvm/vmx/nested.c
+@@ -824,12 +824,30 @@ static int nested_vmx_check_apicv_controls(struct kvm_vcpu *vcpu,
+ 	return 0;
+ }
  
--Vec extensions
----------------
--
--Implement ``Vec::truncate`` and ``Vec::resize``.
--
--Currently this is used for some experimental code to parse the vBIOS.
--
--| Reference vBIOS support
--| Complexity: Beginner
--
- GPU (general)
- =============
++static u32 nested_vmx_max_atomic_switch_msrs(struct kvm_vcpu *vcpu)
++{
++	struct vcpu_vmx *vmx = to_vmx(vcpu);
++	u64 vmx_misc = vmx_control_msr(vmx->nested.msrs.misc_low,
++				       vmx->nested.msrs.misc_high);
++
++	return (vmx_misc_max_msr(vmx_misc) + 1) * VMX_MISC_MSR_LIST_MULTIPLIER;
++}
++
+ static int nested_vmx_check_msr_switch(struct kvm_vcpu *vcpu,
+ 				       u32 count, u64 addr)
+ {
+ 	if (count == 0)
+ 		return 0;
  
++	/*
++	 * Exceeding the limit results in architecturally _undefined_ behavior,
++	 * i.e. KVM is allowed to do literally anything in response to a bad
++	 * limit.  Immediately generate a consistency check so that code that
++	 * consumes the count doesn't need to worry about extreme edge cases.
++	 */
++	if (count > nested_vmx_max_atomic_switch_msrs(vcpu))
++		return -EINVAL;
++
+ 	if (!kvm_vcpu_is_legal_aligned_gpa(vcpu, addr, 16) ||
+ 	    !kvm_vcpu_is_legal_gpa(vcpu, (addr + count * sizeof(struct vmx_msr_entry) - 1)))
+ 		return -EINVAL;
+@@ -940,15 +958,6 @@ static int nested_vmx_store_msr_check(struct kvm_vcpu *vcpu,
+ 	return 0;
+ }
+ 
+-static u32 nested_vmx_max_atomic_switch_msrs(struct kvm_vcpu *vcpu)
+-{
+-	struct vcpu_vmx *vmx = to_vmx(vcpu);
+-	u64 vmx_misc = vmx_control_msr(vmx->nested.msrs.misc_low,
+-				       vmx->nested.msrs.misc_high);
+-
+-	return (vmx_misc_max_msr(vmx_misc) + 1) * VMX_MISC_MSR_LIST_MULTIPLIER;
+-}
+-
+ /*
+  * Load guest's/host's msr at nested entry/exit.
+  * return 0 for success, entry index for failure.
+@@ -965,7 +974,7 @@ static u32 nested_vmx_load_msr(struct kvm_vcpu *vcpu, u64 gpa, u32 count)
+ 	u32 max_msr_list_size = nested_vmx_max_atomic_switch_msrs(vcpu);
+ 
+ 	for (i = 0; i < count; i++) {
+-		if (unlikely(i >= max_msr_list_size))
++		if (WARN_ON_ONCE(i >= max_msr_list_size))
+ 			goto fail;
+ 
+ 		if (kvm_vcpu_read_guest(vcpu, gpa + i * sizeof(e),
+@@ -1053,7 +1062,7 @@ static int nested_vmx_store_msr(struct kvm_vcpu *vcpu, u64 gpa, u32 count)
+ 	u32 max_msr_list_size = nested_vmx_max_atomic_switch_msrs(vcpu);
+ 
+ 	for (i = 0; i < count; i++) {
+-		if (unlikely(i >= max_msr_list_size))
++		if (WARN_ON_ONCE(i >= max_msr_list_size))
+ 			return -EINVAL;
+ 
+ 		if (!read_and_check_msr_entry(vcpu, gpa, i, &e))
+
+base-commit: c9ea48bb6ee6b28bbc956c1e8af98044618fed5e
 -- 
-2.48.1
+2.49.0.rc1.451.g8f38331e32-goog
 
 
