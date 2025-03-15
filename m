@@ -1,269 +1,299 @@
-Return-Path: <linux-kernel+bounces-562331-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562332-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19217A6231E
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 01:28:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F143A6233A
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 01:38:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E37E719C7497
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 00:28:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2A123BFA26
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 00:38:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E518FBA3F;
-	Sat, 15 Mar 2025 00:28:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB87C9450;
+	Sat, 15 Mar 2025 00:38:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="l0H9xAW0"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0374539A;
-	Sat, 15 Mar 2025 00:28:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JFyvJJqo"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C439139D
+	for <linux-kernel@vger.kernel.org>; Sat, 15 Mar 2025 00:38:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741998482; cv=none; b=hHi4GjFC13s1OTSe7PWFLvmIXGCHyQmVnvEKzTJyBuSHyFHrFIPOM2xRrU6vgSzGKj9LiCcLi+VMylTN/HrlUG+JLtyoOQieLC9SPy7XIgHXNH6hrToMrQ1GfRZakKY1wtixwHC90UW/0F5t+Qa0kRpMwjFGA9mjoWVxJwNRj3s=
+	t=1741999094; cv=none; b=fR+9oXqHGUl4+ewvcnCeScUAQeARpKwDqJjRv7Y5SGatQ8f7tdQc3nCB6sFwnG7WGZKgUYnkMuFsDyxoCbPFN7zoJYrbsuOL2WACWQH5BhurMjSSpbmHGdk6PAEHbjTfRyXUktS7E2R7atsWigJxSTrgXKqN7uA2XOd9ms4ZJVo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741998482; c=relaxed/simple;
-	bh=jU9jCfXFTYFmG75GwuttCZ8jX2jORoC9uCSpLpHC3as=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=rQh+mLpHsTSI2fuTa2A9KZboIiaPYROmhahmR4n+g5Wq6pGl2GkRjR5VnqM3b0w3GEbyO4f7mzksdw7NEO3z7HJcLY4FuQSIGA94ssF1A+MPLAJEeeIO/t7udJj1Dh+VAoCpOG6qZXcIRjbQe1tVZ3UuAidnWH7UFsMsitRbH4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=l0H9xAW0; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [10.137.184.60] (unknown [131.107.160.188])
-	by linux.microsoft.com (Postfix) with ESMTPSA id E241C2033459;
-	Fri, 14 Mar 2025 17:27:59 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com E241C2033459
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1741998480;
-	bh=VNEN1PUmudLlgwlIXoK+DSpK44+ltl2xOPzZ+xDbo5U=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=l0H9xAW0nIQ9TnJPChXqQVZcmuTNMzDlpB/M2rKyu/JVGhk2zCvkd4fjPGmzS3CAf
-	 Uiu5dDiS4rJNiMczVVGeWqFnLbZubL+omoTiQRre9JKVz2WKagzzhCM3EhFhvlcoUQ
-	 5kfzeCf4qYdbK/bZao2St06jIy6Oqqxk98+QAxK0=
-Message-ID: <96bc4caf-b79a-4111-bafa-a7662260f4be@linux.microsoft.com>
-Date: Fri, 14 Mar 2025 17:27:59 -0700
+	s=arc-20240116; t=1741999094; c=relaxed/simple;
+	bh=yMmQ0fFi3IbgqATEYGssWRnBGKGBiiA+nNhLjqFPIRA=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=s6xJYqfUZCCj4w6+BRYdoe7VXs9gs1tv9WpeoSLn+/vdw8sSlQT6rbiTXxN3FErYJQtwlFChPRUxuGf6AuLSfIlnFawI1kx4TJ41BaBkU6QXcoC76Wp/2hv+w4u2h6THotPZFTzygnxp/4EyIe7UcdZTL1fVmWm8oK4R69xT+jM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jstultz.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=JFyvJJqo; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jstultz.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2ff69646218so614489a91.3
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 17:38:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1741999092; x=1742603892; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=JBBbvvIvDC/mHmEen0xNd6Oduzl1KFskcxJhYdjd5B8=;
+        b=JFyvJJqodnI1Ig/eRK8dhPHmDsQ5W2cbOHFDhClRMhiCepsEX/M3nPqP1i5dkOfGA2
+         7lsTuZDCAEo4fX47fb98b/uvziIE7mrntAXuDyWkU9piFBCxbFPXyWg3bdvT7/Ltlvln
+         rDUpVxRCMPrmgyjG+PEsV+YWqUXIQMHTJ1Pz+Zqm+TvDypEl0LRSm6aGOO7lH1smV+Uw
+         woZtm4x8nmv1zlZb2ncWJffFMO7rxe5BsukWid/+Y4RUWYKkK3WVpkhlyrRDpYIMh9fR
+         JtkCl/LZk5/AKsVKQyoKPaQMNuW7kRD70iNUQEYbw1YO7rj6MSUHe8tImybK2k9+PljQ
+         YqxQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741999092; x=1742603892;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=JBBbvvIvDC/mHmEen0xNd6Oduzl1KFskcxJhYdjd5B8=;
+        b=HkRSCA4Q/Fd6ISSE/pTXgyUfYS15ohecBpEjTbDbFjv9wsp1uJzqtJXz/1xRPFy+hG
+         7lzu9QP6TueAPj14Eyxxu4XYs2xBai79JqHTR5hb/la5RKj94VBFpFojw1e6V+zOiklM
+         k07xiey7q3JqsYfFG6wYn+VWwZhUyOHW0Mnmzuh4Th7DzoTFj2EYk1BWEEbekM3kQQ0E
+         BsEuVSmpQu+WguYeFs/AV57NsJUWcbAFN7reC368h9kB/3QT7DUF2xroS19VW+ujcUe9
+         cO0lkGXOfnmqIax0noOtyOEK+zhmazDtiHDDZMWg9AszvWC7VfE2lO9Dk1vWm5aTRnCW
+         0Lxw==
+X-Gm-Message-State: AOJu0Ywn1tv2sAKjg9pUFjkDWXonZPOuLiO6p+ncnbdYNiLzb2nlKjNg
+	uREQXgUnkngXyObyFzBwhAysGNkYOIjcnZTkKh0MCZVka4fHG2K0P/YNX8uy2PGKH1Gx1aL3EYi
+	hDIleGOslBno7iJCRBaHflrZUEPQlAV/LIyOvwJI3GbQsIVyA9b8q6c3thZVzmTHko62+rkow0v
+	fvd/yoIBSIUR0x7M+qvhMsiio1xoDj4onZpesNuu7TPqgO
+X-Google-Smtp-Source: AGHT+IG0APvZyb2F77PT2c/bLlGOMV+AySLZafrEoG5BY10GJjPWxGCDmuiKnBb39piS9qNWpRt4Q5zhiRaN
+X-Received: from pjbsg17.prod.google.com ([2002:a17:90b:5211:b0:2ef:973a:3caf])
+ (user=jstultz job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90a:fc4f:b0:2f2:a664:df20
+ with SMTP id 98e67ed59e1d1-30151c5f303mr5922074a91.7.1741999091663; Fri, 14
+ Mar 2025 17:38:11 -0700 (PDT)
+Date: Fri, 14 Mar 2025 17:37:41 -0700
+In-Reply-To: <CANDhNCoueki=keYNcNr4eXqgLFPh3VupDJC0hFqxm4FNKfGzYg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH hyperv-next v6 01/11] arm64: kvm, smccc: Introduce and use
- API for detecting hypervisor presence
-From: Roman Kisel <romank@linux.microsoft.com>
-To: arnd@arndb.de, bhelgaas@google.com, bp@alien8.de,
- catalin.marinas@arm.com, conor+dt@kernel.org, dan.carpenter@linaro.org,
- dave.hansen@linux.intel.com, decui@microsoft.com, haiyangz@microsoft.com,
- hpa@zytor.com, joey.gouly@arm.com, krzk+dt@kernel.org, kw@linux.com,
- kys@microsoft.com, lenb@kernel.org, lpieralisi@kernel.org,
- manivannan.sadhasivam@linaro.org, mark.rutland@arm.com, maz@kernel.org,
- mingo@redhat.com, oliver.upton@linux.dev, rafael@kernel.org,
- robh@kernel.org, ssengar@linux.microsoft.com, sudeep.holla@arm.com,
- suzuki.poulose@arm.com, tglx@linutronix.de, wei.liu@kernel.org,
- will@kernel.org, yuzenghui@huawei.com, devicetree@vger.kernel.org,
- kvmarm@lists.linux.dev, linux-acpi@vger.kernel.org,
- linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-pci@vger.kernel.org, x86@kernel.org
-Cc: apais@microsoft.com, benhill@microsoft.com, bperkins@microsoft.com,
- sunilmut@microsoft.com
-References: <20250315001931.631210-1-romank@linux.microsoft.com>
- <20250315001931.631210-2-romank@linux.microsoft.com>
-Content-Language: en-US
-In-Reply-To: <20250315001931.631210-2-romank@linux.microsoft.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+References: <CANDhNCoueki=keYNcNr4eXqgLFPh3VupDJC0hFqxm4FNKfGzYg@mail.gmail.com>
+X-Mailer: git-send-email 2.49.0.rc1.451.g8f38331e32-goog
+Message-ID: <20250315003800.3054684-1-jstultz@google.com>
+Subject: [RFC PATCH 1/2] time/timekeeping: Fix possible inconsistencies in
+ _COARSE clockids
+From: John Stultz <jstultz@google.com>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: John Stultz <jstultz@google.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Stephen Boyd <sboyd@kernel.org>, Anna-Maria Behnsen <anna-maria@linutronix.de>, 
+	Frederic Weisbecker <frederic@kernel.org>, Shuah Khan <shuah@kernel.org>, 
+	Miroslav Lichvar <mlichvar@redhat.com>, linux-kselftest@vger.kernel.org, 
+	kernel-team@android.com, Lei Chen <lei.chen@smartx.com>
+Content-Type: text/plain; charset="UTF-8"
 
+Lei Chen raised an issue with CLOCK_MONOTONIC_COARSE seeing
+time inconsistencies.
 
+Lei tracked down that this was being caused by the adjustment
+  tk->tkr_mono.xtime_nsec -= offset;
 
-On 3/14/2025 5:19 PM, Roman Kisel wrote:
-> The KVM/arm64 uses SMCCC to detect hypervisor presence. That code is
-> private, and it follows the SMCCC specification. Other existing and
-> emerging hypervisor guest implementations can and should use that
-> standard approach as well.
-> 
-> Factor out a common infrastructure that the guests can use, update KVM
-> to employ the new API. The central notion of the SMCCC method is the
-> UUID of the hypervisor, and the API follows that.
-> 
-> No functional changes. Validated with a KVM/arm64 guest.
-> 
-> Signed-off-by: Roman Kisel <romank@linux.microsoft.com>
-> Acked-by: Arnd Bergmann <arnd@arndb.de>
+which is made to compensate for the unaccumulated cycles in
+offset when the mult value is adjusted forward, so that
+the non-_COARSE clockids don't see inconsistencies.
 
-While the change is Acked, here is the caveat maybe.
+However, the _COARSE clockids don't use the mult*offset value
+in their calculations, so this subtraction can cause the
+_COARSE clock ids to jump back a bit.
 
-This patch produces warnings wtih sparse and CHECK_ENDING.
-That said, the kernel build produces a whole lot more other warnings
-from building with sparse by itself and/or with CHECK_ENDING.
+Now, by design, this negative adjustment should be fine, because
+the logic run from timekeeping_adjust() is done after we
+accumulate approx mult*interval_cycles into xtime_nsec.
+The accumulated (mult*interval_cycles) will be larger then the
+(mult_adj*offset) value subtracted from xtime_nsec, and both
+operations are done together under the tk_core.lock, so the net
+change to xtime_nsec should always be positive.
 
-I am not sure how to proceed with that, thinking I should
-not add warnings yet at the same time there are many others.
-Not certain if folks take these signals as fyi or blockers.
+However, do_adjtimex() calls into timekeeping_advance() as well,
+since we want to apply the ntp freq adjustment immediately.
+In this case, we don't return early when the offset is smaller
+then interval_cycles, so we don't end up accumulating any time
+into xtime_nsec. But we do go on to call timekeeping_adjust(),
+which modifies the mult value, and subtracts from xtime_nsec
+to correct for the new mult value.
 
-Decided to send V6 to trim the V5 discussion threads by implementing
-suggestions and fixes.
+Here because we did not accumulate anything, we have a window
+where the _COARSE clockids that don't utilize the mult*offset
+value, can see an inconsistency.
 
-> ---
->   arch/arm64/kvm/hypercalls.c        |  5 +--
->   drivers/firmware/smccc/kvm_guest.c | 10 ++----
->   drivers/firmware/smccc/smccc.c     | 19 +++++++++++
->   include/linux/arm-smccc.h          | 55 +++++++++++++++++++++++++++---
->   4 files changed, 73 insertions(+), 16 deletions(-)
-> 
-> diff --git a/arch/arm64/kvm/hypercalls.c b/arch/arm64/kvm/hypercalls.c
-> index 27ce4cb44904..92b9bc1ea8e8 100644
-> --- a/arch/arm64/kvm/hypercalls.c
-> +++ b/arch/arm64/kvm/hypercalls.c
-> @@ -353,10 +353,7 @@ int kvm_smccc_call_handler(struct kvm_vcpu *vcpu)
->   			val[0] = gpa;
->   		break;
->   	case ARM_SMCCC_VENDOR_HYP_CALL_UID_FUNC_ID:
-> -		val[0] = ARM_SMCCC_VENDOR_HYP_UID_KVM_REG_0;
-> -		val[1] = ARM_SMCCC_VENDOR_HYP_UID_KVM_REG_1;
-> -		val[2] = ARM_SMCCC_VENDOR_HYP_UID_KVM_REG_2;
-> -		val[3] = ARM_SMCCC_VENDOR_HYP_UID_KVM_REG_3;
-> +		UUID_TO_SMCCC_RES(ARM_SMCCC_VENDOR_HYP_UID_KVM, val);
->   		break;
->   	case ARM_SMCCC_VENDOR_HYP_KVM_FEATURES_FUNC_ID:
->   		val[0] = smccc_feat->vendor_hyp_bmap;
-> diff --git a/drivers/firmware/smccc/kvm_guest.c b/drivers/firmware/smccc/kvm_guest.c
-> index f3319be20b36..b5084b309ea0 100644
-> --- a/drivers/firmware/smccc/kvm_guest.c
-> +++ b/drivers/firmware/smccc/kvm_guest.c
-> @@ -14,17 +14,11 @@ static DECLARE_BITMAP(__kvm_arm_hyp_services, ARM_SMCCC_KVM_NUM_FUNCS) __ro_afte
->   
->   void __init kvm_init_hyp_services(void)
->   {
-> +	uuid_t kvm_uuid = ARM_SMCCC_VENDOR_HYP_UID_KVM;
->   	struct arm_smccc_res res;
->   	u32 val[4];
->   
-> -	if (arm_smccc_1_1_get_conduit() != SMCCC_CONDUIT_HVC)
-> -		return;
-> -
-> -	arm_smccc_1_1_invoke(ARM_SMCCC_VENDOR_HYP_CALL_UID_FUNC_ID, &res);
-> -	if (res.a0 != ARM_SMCCC_VENDOR_HYP_UID_KVM_REG_0 ||
-> -	    res.a1 != ARM_SMCCC_VENDOR_HYP_UID_KVM_REG_1 ||
-> -	    res.a2 != ARM_SMCCC_VENDOR_HYP_UID_KVM_REG_2 ||
-> -	    res.a3 != ARM_SMCCC_VENDOR_HYP_UID_KVM_REG_3)
-> +	if (!arm_smccc_hyp_present(&kvm_uuid))
->   		return;
->   
->   	memset(&res, 0, sizeof(res));
-> diff --git a/drivers/firmware/smccc/smccc.c b/drivers/firmware/smccc/smccc.c
-> index a74600d9f2d7..7399f27d58e5 100644
-> --- a/drivers/firmware/smccc/smccc.c
-> +++ b/drivers/firmware/smccc/smccc.c
-> @@ -67,6 +67,25 @@ s32 arm_smccc_get_soc_id_revision(void)
->   }
->   EXPORT_SYMBOL_GPL(arm_smccc_get_soc_id_revision);
->   
-> +bool arm_smccc_hyp_present(const uuid_t *hyp_uuid)
-> +{
-> +	struct arm_smccc_res res = {};
-> +
-> +	if (arm_smccc_1_1_get_conduit() != SMCCC_CONDUIT_HVC)
-> +		return false;
-> +	arm_smccc_1_1_hvc(ARM_SMCCC_VENDOR_HYP_CALL_UID_FUNC_ID, &res);
-> +	if (res.a0 == SMCCC_RET_NOT_SUPPORTED)
-> +		return false;
-> +
-> +	return ({
-> +		const uuid_t uuid = SMCCC_RES_TO_UUID(res.a0, res.a1, res.a2, res.a3);
-> +		const bool present = uuid_equal(&uuid, hyp_uuid);
-> +
-> +		present;
-> +	});
-> +}
-> +EXPORT_SYMBOL_GPL(arm_smccc_hyp_present);
-> +
->   static int __init smccc_devices_init(void)
->   {
->   	struct platform_device *pdev;
-> diff --git a/include/linux/arm-smccc.h b/include/linux/arm-smccc.h
-> index 67f6fdf2e7cd..726f18221f1c 100644
-> --- a/include/linux/arm-smccc.h
-> +++ b/include/linux/arm-smccc.h
-> @@ -7,6 +7,11 @@
->   
->   #include <linux/args.h>
->   #include <linux/init.h>
-> +
-> +#ifndef __ASSEMBLER__
-> +#include <linux/uuid.h>
-> +#endif
-> +
->   #include <uapi/linux/const.h>
->   
->   /*
-> @@ -107,10 +112,10 @@
->   			   ARM_SMCCC_FUNC_QUERY_CALL_UID)
->   
->   /* KVM UID value: 28b46fb6-2ec5-11e9-a9ca-4b564d003a74 */
-> -#define ARM_SMCCC_VENDOR_HYP_UID_KVM_REG_0	0xb66fb428U
-> -#define ARM_SMCCC_VENDOR_HYP_UID_KVM_REG_1	0xe911c52eU
-> -#define ARM_SMCCC_VENDOR_HYP_UID_KVM_REG_2	0x564bcaa9U
-> -#define ARM_SMCCC_VENDOR_HYP_UID_KVM_REG_3	0x743a004dU
-> +#define ARM_SMCCC_VENDOR_HYP_UID_KVM UUID_INIT(\
-> +	0xb66fb428, 0xc52e, 0xe911, \
-> +	0xa9, 0xca, 0x4b, 0x56, \
-> +	0x4d, 0x00, 0x3a, 0x74)
->   
->   /* KVM "vendor specific" services */
->   #define ARM_SMCCC_KVM_FUNC_FEATURES		0
-> @@ -333,6 +338,48 @@ s32 arm_smccc_get_soc_id_version(void);
->    */
->   s32 arm_smccc_get_soc_id_revision(void);
->   
-> +#ifndef __ASSEMBLER__
-> +
-> +/**
-> + * arm_smccc_hyp_present(const uuid_t *hyp_uuid)
-> + *
-> + * Returns `true` if the hypervisor advertises its presence via SMCCC.
-> + *
-> + * When the function returns `false`, the caller shall not assume that
-> + * there is no hypervisor running. Instead, the caller must fall back to
-> + * other approaches if any are available.
-> + */
-> +bool arm_smccc_hyp_present(const uuid_t *hyp_uuid);
-> +
-> +#define SMCCC_RES_TO_UUID(r0, r1, r2, r3) \
-> +	UUID_INIT( \
-> +		cpu_to_le32(lower_32_bits(r0)), \
-> +		cpu_to_le32(lower_32_bits(r1)) & 0xffff, \
-> +		cpu_to_le32(lower_32_bits(r1)) >> 16, \
-> +		cpu_to_le32(lower_32_bits(r2)) & 0xff, \
-> +		(cpu_to_le32(lower_32_bits(r2)) >> 8) & 0xff, \
-> +		(cpu_to_le32(lower_32_bits(r2)) >> 16) & 0xff, \
-> +		(cpu_to_le32(lower_32_bits(r2)) >> 24) & 0xff, \
-> +		cpu_to_le32(lower_32_bits(r3)) & 0xff, \
-> +		(cpu_to_le32(lower_32_bits(r3)) >> 8) & 0xff, \
-> +		(cpu_to_le32(lower_32_bits(r3)) >> 16) & 0xff, \
-> +		(cpu_to_le32(lower_32_bits(r3)) >> 24) & 0xff \
-> +	)
-> +
-> +#define UUID_TO_SMCCC_RES(uuid_init, regs) do { \
-> +		const uuid_t uuid = uuid_init; \
-> +		(regs)[0] = le32_to_cpu((u32)uuid.b[0] | (uuid.b[1] << 8) | \
-> +						((uuid.b[2]) << 16) | ((uuid.b[3]) << 24)); \
-> +		(regs)[1] = le32_to_cpu((u32)uuid.b[4] | (uuid.b[5] << 8) | \
-> +						((uuid.b[6]) << 16) | ((uuid.b[7]) << 24)); \
-> +		(regs)[2] = le32_to_cpu((u32)uuid.b[8] | (uuid.b[9] << 8) | \
-> +						((uuid.b[10]) << 16) | ((uuid.b[11]) << 24)); \
-> +		(regs)[3] = le32_to_cpu((u32)uuid.b[12] | (uuid.b[13] << 8) | \
-> +						((uuid.b[14]) << 16) | ((uuid.b[15]) << 24)); \
-> +	} while (0)
-> +
-> +#endif /* !__ASSEMBLER__ */
-> +
->   /**
->    * struct arm_smccc_res - Result from SMC/HVC call
->    * @a0-a3 result values from registers 0 to 3
+So to fix this, rework the timekeeping_advance() logic a bit
+so that when we are called from do_adjtimex() and the offset
+is smaller then cycle_interval, that we call
+timekeeping_forward(), to first accumulate the sub-interval
+time into xtime_nsec. Then with no unaccumulated cycles in
+offset, we can do the mult adjustment without worry of the
+subtraction having an impact.
 
+NOTE: This was implemented as a potential alternative to
+Thomas' approach here:
+   https://lore.kernel.org/lkml/87cyej5rid.ffs@tglx/
+
+And similarly, it needs some additional review and testing,
+as it was developed while packing for conference travel.
+
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: Anna-Maria Behnsen <anna-maria@linutronix.de>
+Cc: Frederic Weisbecker <frederic@kernel.org>
+Cc: Shuah Khan <shuah@kernel.org>
+Cc: Miroslav Lichvar <mlichvar@redhat.com>
+Cc: linux-kselftest@vger.kernel.org
+Cc: kernel-team@android.com
+Cc: Lei Chen <lei.chen@smartx.com>
+Fixes: da15cfdae033 ("time: Introduce CLOCK_REALTIME_COARSE")
+Reported-by: Lei Chen <lei.chen@smartx.com>
+Closes: https://lore.kernel.org/lkml/20250310030004.3705801-1-lei.chen@smartx.com/
+Diagnosed-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: John Stultz <jstultz@google.com>
+---
+ kernel/time/timekeeping.c | 87 ++++++++++++++++++++++++++++-----------
+ 1 file changed, 62 insertions(+), 25 deletions(-)
+
+diff --git a/kernel/time/timekeeping.c b/kernel/time/timekeeping.c
+index 1e67d076f1955..6f3a145e7b113 100644
+--- a/kernel/time/timekeeping.c
++++ b/kernel/time/timekeeping.c
+@@ -682,18 +682,18 @@ static void timekeeping_update_from_shadow(struct tk_data *tkd, unsigned int act
+ }
+ 
+ /**
+- * timekeeping_forward_now - update clock to the current time
++ * timekeeping_forward - update clock to given cycle now value
+  * @tk:		Pointer to the timekeeper to update
++ * @cycle_now:  Current clocksource read value
+  *
+  * Forward the current clock to update its state since the last call to
+  * update_wall_time(). This is useful before significant clock changes,
+  * as it avoids having to deal with this time offset explicitly.
+  */
+-static void timekeeping_forward_now(struct timekeeper *tk)
++static void timekeeping_forward(struct timekeeper *tk, u64 cycle_now)
+ {
+-	u64 cycle_now, delta;
++	u64 delta;
+ 
+-	cycle_now = tk_clock_read(&tk->tkr_mono);
+ 	delta = clocksource_delta(cycle_now, tk->tkr_mono.cycle_last, tk->tkr_mono.mask,
+ 				  tk->tkr_mono.clock->max_raw_delta);
+ 	tk->tkr_mono.cycle_last = cycle_now;
+@@ -710,6 +710,21 @@ static void timekeeping_forward_now(struct timekeeper *tk)
+ 	}
+ }
+ 
++/**
++ * timekeeping_forward_now - update clock to the current time
++ * @tk:		Pointer to the timekeeper to update
++ *
++ * Forward the current clock to update its state since the last call to
++ * update_wall_time(). This is useful before significant clock changes,
++ * as it avoids having to deal with this time offset explicitly.
++ */
++static void timekeeping_forward_now(struct timekeeper *tk)
++{
++	u64 cycle_now = tk_clock_read(&tk->tkr_mono);
++
++	timekeeping_forward(tk, cycle_now);
++}
++
+ /**
+  * ktime_get_real_ts64 - Returns the time of day in a timespec64.
+  * @ts:		pointer to the timespec to be set
+@@ -2151,6 +2166,45 @@ static u64 logarithmic_accumulation(struct timekeeper *tk, u64 offset,
+ 	return offset;
+ }
+ 
++static u64 timekeeping_accumulate(struct timekeeper *tk, u64 now, u64 offset,
++				  unsigned int *clock_set)
++{
++	struct timekeeper *real_tk = &tk_core.timekeeper;
++	int shift = 0, maxshift;
++
++	/*
++	 * If we have a sub-cycle_interval offset, we
++	 * are likely doing a TK_FREQ_ADJ, so accumulate
++	 * everything so we don't have a remainder offset
++	 * when later adjusting the multiplier
++	 */
++	if (offset < real_tk->cycle_interval) {
++		timekeeping_forward(tk, now);
++		*clock_set = 1;
++		return 0;
++	}
++
++	/*
++	 * With NO_HZ we may have to accumulate many cycle_intervals
++	 * (think "ticks") worth of time at once. To do this efficiently,
++	 * we calculate the largest doubling multiple of cycle_intervals
++	 * that is smaller than the offset.  We then accumulate that
++	 * chunk in one go, and then try to consume the next smaller
++	 * doubled multiple.
++	 */
++	shift = ilog2(offset) - ilog2(tk->cycle_interval);
++	shift = max(0, shift);
++	/* Bound shift to one less than what overflows tick_length */
++	maxshift = (64 - (ilog2(ntp_tick_length()) + 1)) - 1;
++	shift = min(shift, maxshift);
++	while (offset >= tk->cycle_interval) {
++		offset = logarithmic_accumulation(tk, offset, shift, clock_set);
++		if (offset < tk->cycle_interval << shift)
++			shift--;
++	}
++	return offset;
++}
++
+ /*
+  * timekeeping_advance - Updates the timekeeper to the current time and
+  * current NTP tick length
+@@ -2160,8 +2214,7 @@ static bool timekeeping_advance(enum timekeeping_adv_mode mode)
+ 	struct timekeeper *tk = &tk_core.shadow_timekeeper;
+ 	struct timekeeper *real_tk = &tk_core.timekeeper;
+ 	unsigned int clock_set = 0;
+-	int shift = 0, maxshift;
+-	u64 offset;
++	u64 cycle_now, offset;
+ 
+ 	guard(raw_spinlock_irqsave)(&tk_core.lock);
+ 
+@@ -2169,7 +2222,8 @@ static bool timekeeping_advance(enum timekeeping_adv_mode mode)
+ 	if (unlikely(timekeeping_suspended))
+ 		return false;
+ 
+-	offset = clocksource_delta(tk_clock_read(&tk->tkr_mono),
++	cycle_now = tk_clock_read(&tk->tkr_mono);
++	offset = clocksource_delta(cycle_now,
+ 				   tk->tkr_mono.cycle_last, tk->tkr_mono.mask,
+ 				   tk->tkr_mono.clock->max_raw_delta);
+ 
+@@ -2177,24 +2231,7 @@ static bool timekeeping_advance(enum timekeeping_adv_mode mode)
+ 	if (offset < real_tk->cycle_interval && mode == TK_ADV_TICK)
+ 		return false;
+ 
+-	/*
+-	 * With NO_HZ we may have to accumulate many cycle_intervals
+-	 * (think "ticks") worth of time at once. To do this efficiently,
+-	 * we calculate the largest doubling multiple of cycle_intervals
+-	 * that is smaller than the offset.  We then accumulate that
+-	 * chunk in one go, and then try to consume the next smaller
+-	 * doubled multiple.
+-	 */
+-	shift = ilog2(offset) - ilog2(tk->cycle_interval);
+-	shift = max(0, shift);
+-	/* Bound shift to one less than what overflows tick_length */
+-	maxshift = (64 - (ilog2(ntp_tick_length())+1)) - 1;
+-	shift = min(shift, maxshift);
+-	while (offset >= tk->cycle_interval) {
+-		offset = logarithmic_accumulation(tk, offset, shift, &clock_set);
+-		if (offset < tk->cycle_interval<<shift)
+-			shift--;
+-	}
++	offset = timekeeping_accumulate(tk, cycle_now, offset, &clock_set);
+ 
+ 	/* Adjust the multiplier to correct NTP error */
+ 	timekeeping_adjust(tk, offset);
 -- 
-Thank you,
-Roman
+2.49.0.rc1.451.g8f38331e32-goog
 
 
