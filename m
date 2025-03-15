@@ -1,91 +1,133 @@
-Return-Path: <linux-kernel+bounces-562433-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562434-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59FD2A62750
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 07:27:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17D40A6275F
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 07:30:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EAE3A7A5771
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 06:26:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1535219C38CB
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 06:30:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA82619F461;
-	Sat, 15 Mar 2025 06:27:05 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96E9E19F42C;
+	Sat, 15 Mar 2025 06:29:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DUn/T8II"
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02D2A19F116
-	for <linux-kernel@vger.kernel.org>; Sat, 15 Mar 2025 06:27:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B017A17BED0;
+	Sat, 15 Mar 2025 06:29:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742020025; cv=none; b=liJ4KE64X0j8uXWpH+fUZLnTRqBqapxEEJnl9y61Kajil7tgjWvTovET1NzhqoYJPos/aDEPrv8a+SBnQmdVGs9jH0otjamSemRHgVqgiNhbJYWfCZMHC/TjXZNmfEfBl0ARvIgDh2IuaMkhkNQsRJtW0fiuToVeezBtMDwNzUY=
+	t=1742020196; cv=none; b=gutxSJAWtsVtmuqhibbae23cRZhlG60KZ9JMIea+sJCykn9H88MAly/mhfazfnAfpel38B+rHFX53BViUbFgIC3+3S114krhHJuoqWjZ0jhiLti9h1S4EaJrwsYcE4pC1OUNxnYTQiZ4ig35JVJuvKC3JMVn280MRtNe+xqLKS0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742020025; c=relaxed/simple;
-	bh=8c8BP0ZMGpck2i/dkvXUZ8GUM3AehfiBO2W2XuuOlrs=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=obZCGXP7vnO4vtYwF4J4MRdGqpIZ4Gw6+nbkAfkrm56JtdjwNHU+C4287SLhkmnjeYWynbRufEBriRfMLgxmH1Wri9Co91tKV6aTMLwtwVqqjAYOOh3r6Oufhv3PxOug1LL7qUvlrmy94B0G886aiheKA/XPEpKKZikCXtUvDTk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-85dad593342so289926839f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 23:27:03 -0700 (PDT)
+	s=arc-20240116; t=1742020196; c=relaxed/simple;
+	bh=2HPC4NQ90xLggdKKKcJPiPY/4SPFxfrjKCH1FgSkKGA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cOMqabryJEItQg0F79hmHyetG7oS0ZtIWCbeG3V9tiwFT542xEUiU4Oub7c2yJSifdihODAB410tzyc3udW788UC6nbirKXOKZy3PMlaN8JUyfoW1PQemnGtP7LzmzIVPuuOwu6/lbK/3+edGRG1Lc4Myz7UeKhlI5/HypGuxVY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DUn/T8II; arc=none smtp.client-ip=209.85.216.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-30155bbbeaeso508088a91.2;
+        Fri, 14 Mar 2025 23:29:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742020194; x=1742624994; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=tmfpLD0wSy9YLuamDc1npCFGqgQISAxicSJiRUT7xoY=;
+        b=DUn/T8II/5ujFAYXlG7DL9kx/Vbf9hKVIh14i68Z8BfNXrr8kwhzxg4FRxmOHgqVyV
+         4SwhJ1P3ydpaORiADotnsVET2uO/SPNMDgsJypDYXQWI5HtqruZWMDoTc7teD+5tjy9M
+         ij+DlxpqM+ChnljIL1GhArMQqCB8iqLDGcq6MYS7hV+EWGIjFcEv+MGPb20XsNIrTOO3
+         UXmaxNxnGgAdLG5EvgE9VV3kRFErtxU+on1jW1p/u+3NXrR0qEZIlkyZG9GK7ljUDBkF
+         0Pa+4di+ukEmyaBMTKlIYaj6yUSlPjzZSV0b4ACkgIyg+tLmETX0eMsme7SQYTf7JYSn
+         GMww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742020023; x=1742624823;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
+        d=1e100.net; s=20230601; t=1742020194; x=1742624994;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=iVtpvCBBSFNWY2hi10N0rrWtsxl0Zv5MnCY1nXMRHOg=;
-        b=gZKppznu/NnUrIuZi62m26MlcecvTAn35NlOXpzj70NxaY52FzUpiUCwjDUtT4wpIZ
-         NIfCj6BH/VkI9E4pkhtCUGNy159s/KMQWn2p34OrFUp0D/92FykRXG5h7NQZZtNYXOjx
-         XlMyvNP1SX+hpqARxERK+/5UbZw2q5dq0cNsIAcJF8XkkKS0pI8Jsez/5hStatI5BDzQ
-         xfytHFQT+jyuM1Bo7iW5ublgrhNz8DyFFMaTxSm8mqAP3rscmeNHWyODxusJmt9DggRz
-         v5sI8oj05tvqdLzaJkSXIVkc+8W4uZKWsm208KFnzfAOBxG1ShPbv8DtfV+Bh7JOp/eA
-         xySA==
-X-Forwarded-Encrypted: i=1; AJvYcCVLF01juO5dsQzNrC31taa476g/Vry8LYnXaYVIuTC0kz39zul0vWAdDQ1e/5Q3C4fWrI6nVo7NX9z5IjU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyUYYV6YDWZczUfcvTZw1J4iooyG6/ZX0vIiY71RUdngRTFpmwx
-	6QoolaQXx0qO8/i7FJTDbolpCOFTUqKmcFueG/laMJhguUtscAagdSBqGFLRZCFKq3UIEaiD0GV
-	cKcgfoHYGYLL3tNNiX4QDXxyIsdJhJXaESZwFUYAhbr351Il+3N+OE+0=
-X-Google-Smtp-Source: AGHT+IHc/Hlt9d/2Xcr2kHdqr9oeeMai8KZOoyvDaGLKjBOLJUUUPVjAKnMWCJKX9sd5n0l/KK74b5/g18o59nKXQM7eSaHz3zM5
+        bh=tmfpLD0wSy9YLuamDc1npCFGqgQISAxicSJiRUT7xoY=;
+        b=UrlzTu/cDvszQ558NPTRMbDY9b0uWzMsdFuauXZkmG92tpPYHeyxDYIiajc9PIGMJH
+         UmsgZxgELiBybn4MfGYikk8zhCYtJi86ArnJBlYefBgIYYzUlbiNEQ2S+ZnBHQElozoY
+         GPH0PE7qNYscTDXx5rIuf8NB9yU09mUsWZ6ks6g2BbtfTfkhtyEnqiULpH5tFjtC5GB1
+         vQrWEbiwhxr3NDrWRG48krA8SS2J0+YLPw10nDIbZbQwjjnVQl6uw3ZinBICx641Hoav
+         DJVUqBc1nnsyrhrtETw/s74GDhsNjTB7pva0gvV3NCiubtzmlq0pl3igeKYMJlpzCtta
+         cmBg==
+X-Forwarded-Encrypted: i=1; AJvYcCUEL5YJkuAM0qX5QiCPf5QbhYWkXJC+G2CDF4QZ2mXnzKjbIFvdATH3hu+tRDRAM9Fmi3ERavXz0nWIHjU=@vger.kernel.org, AJvYcCVjph+UV09aK83BVNEL+chViZUb/BYINFV04DKJ3bXYnWUtiRts0xcKDTtk1iSDyCf7L0P1@vger.kernel.org, AJvYcCVzuCI4iGT9/2UYBcWrbV+CIMEPrQcr7rS/xyzT5SuDEWfpZjXjG5/gSmIknFB6JcdjbdHSx6fHe9b7qoRpFdw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/xs+mgYJmLStaTO4cIR+hamR7/xZVOOLLfXLqjAWP40GQZWah
+	pzzl4W0LS5EOoD58sl4o6MGZO2thAHqPArJfG/tIbtEindNOTzBz
+X-Gm-Gg: ASbGnctyAXi/jHORf6QZ06ig72zcxPmtK6L505xciYOgdJxq6Wd+XFfdTo1o+chOWEw
+	gpBMgK2dVQx8NUyX5cNF0gI4cNkiNVKRNjJDLLMSSAt6OeFKUNUITsod8FRlkjCMZNaedtgmiaH
+	8rb5baECY7cfy1+b72Vf9s1Eq0NLHYVsZAcBNbaMP+AcPhM/A+z1IkbzDNXvmbl14U2RydaoKVp
+	/zxaYW4q3cB7z8x7wO8N6gMMw6Lg+UTapzdp5GHDmSChCCX6cwcJ/s89KH/PVaoZ3WhnPqwuWqI
+	LnEjRCho/ba4v3XHEeT2W5I60vet4my25sFKJ3hHmkJD91VQUq/EFoTXpJJhfw==
+X-Google-Smtp-Source: AGHT+IGEcLAhPjis5DBeTEtDbcfTF37HVEoGh0kLkHJ4BZpXiObeLfEaIXG7pBvmWdz4S7hygKD7Ug==
+X-Received: by 2002:a05:6300:14d:b0:1f5:a577:dd1b with SMTP id adf61e73a8af0-1f5c1126db5mr7478656637.1.1742020193858;
+        Fri, 14 Mar 2025 23:29:53 -0700 (PDT)
+Received: from vaxr-BM6660-BM6360 ([2001:288:7001:2703:c5e6:ccb8:a191:9f7d])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-737116b2bfasm3955892b3a.177.2025.03.14.23.29.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Mar 2025 23:29:53 -0700 (PDT)
+Date: Sat, 15 Mar 2025 14:29:47 +0800
+From: I Hsin Cheng <richard120310@gmail.com>
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: Joel Fernandes <joelagnelf@nvidia.com>, rostedt@goodmis.org,
+	paulmck@kernel.org, frederic@kernel.org, neeraj.upadhyay@kernel.org,
+	joel@joelfernandes.org, josh@joshtriplett.org, boqun.feng@gmail.com,
+	urezki@gmail.com, mathieu.desnoyers@efficios.com,
+	jiangshanlai@gmail.com, qiang.zhang1211@gmail.com, ojeda@kernel.org,
+	alex.gaynor@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
+	benno.lossin@proton.me, a.hindborg@kernel.org, aliceryhl@google.com,
+	tmgross@umich.edu, dakr@kernel.org, rcu@vger.kernel.org,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+	skhan@linuxfoundation.org, jserv@ccns.ncku.edu.tw
+Subject: Re: [PATCH] rust: sync: rcu: Mark Guard methods as inline
+Message-ID: <Z9UeWyrcK1t27SQV@vaxr-BM6660-BM6360>
+References: <20250312101723.149135-1-richard120310@gmail.com>
+ <20250313043006.GA1396688@joelnvbox>
+ <CANiq72m3pDny0fUkg4XAFsuA72ku0BKcoj5+zKza=o6Ek_QASQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1d06:b0:3d3:fcff:edae with SMTP id
- e9e14a558f8ab-3d4839f5d33mr41770635ab.3.1742020023054; Fri, 14 Mar 2025
- 23:27:03 -0700 (PDT)
-Date: Fri, 14 Mar 2025 23:27:03 -0700
-In-Reply-To: <20250315055941.10487-2-enjuk@amazon.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67d51db7.050a0220.1dc86f.0002.GAE@google.com>
-Subject: Re: [syzbot] [bpf?] KASAN: slab-out-of-bounds Read in atomic_ptr_type_ok
-From: syzbot <syzbot+a5964227adc0f904549c@syzkaller.appspotmail.com>
-To: andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org, 
-	daniel@iogearbox.net, eddyz87@gmail.com, enjuk@amazon.com, haoluo@google.com, 
-	iii@linux.ibm.com, john.fastabend@gmail.com, jolsa@kernel.org, 
-	kpsingh@kernel.org, linux-kernel@vger.kernel.org, martin.lau@linux.dev, 
-	netdev@vger.kernel.org, sdf@fomichev.me, song@kernel.org, 
-	syzkaller-bugs@googlegroups.com, yepeilin@google.com, yonghong.song@linux.dev
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CANiq72m3pDny0fUkg4XAFsuA72ku0BKcoj5+zKza=o6Ek_QASQ@mail.gmail.com>
 
-Hello,
+On Fri, Mar 14, 2025 at 03:43:23PM +0100, Miguel Ojeda wrote:
+> On Thu, Mar 13, 2025 at 5:30 AM Joel Fernandes <joelagnelf@nvidia.com> wrote:
+> >
+> > Reviewed-by: Joel Fernandes <joelagnelf@nvidia.com>
+> >
+> > If no objections, I can queue it for 6.16 but let me know if Rust maintainers
+> > prefer to take it.
+> 
+> Thanks! That would be great -- FWIW:
+> 
+> Acked-by: Miguel Ojeda <ojeda@kernel.org>
+> 
+> By the way, should `read_lock()` be marked too? It just calls another
+> (now `#[inline]` one).
+> 
+> Cheers,
+> Miguel
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Hi all,
 
-Reported-by: syzbot+a5964227adc0f904549c@syzkaller.appspotmail.com
-Tested-by: syzbot+a5964227adc0f904549c@syzkaller.appspotmail.com
+Thanks for your kindly review and comments!
 
-Tested on:
+> By the way, should `read_lock()` be marked too? It just calls another
+> (now `#[inline]` one).
 
-commit:         2d7597d6 selftests/bpf: Fix sockopt selftest failure o..
-git tree:       bpf-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=1397704c580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=b7bde34acd8f53b1
-dashboard link: https://syzkaller.appspot.com/bug?extid=a5964227adc0f904549c
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=1188ae54580000
+I'll do it and fix the typo mentioned by Charalampos. I'll send v2 to
+you ASAP. Thanks !
 
-Note: testing is done by a robot and is best-effort only.
+Best regards,
+I Hsin Cheng
 
