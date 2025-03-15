@@ -1,95 +1,95 @@
-Return-Path: <linux-kernel+bounces-562685-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562688-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D047CA630FA
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 18:48:22 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC6D8A63104
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 18:50:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CFCF91688E6
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 17:48:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8675B7A4123
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 17:49:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB3E9204C06;
-	Sat, 15 Mar 2025 17:48:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96935205AA8;
+	Sat, 15 Mar 2025 17:49:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="BwEMJi2P"
-Received: from mail-10630.protonmail.ch (mail-10630.protonmail.ch [79.135.106.30])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ed6qPZeI"
+Received: from out-174.mta0.migadu.com (out-174.mta0.migadu.com [91.218.175.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDFA31F5847;
-	Sat, 15 Mar 2025 17:48:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D1F62054FD
+	for <linux-kernel@vger.kernel.org>; Sat, 15 Mar 2025 17:49:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742060893; cv=none; b=KmJjm1bOW1SoF3/E38JIYYi0dPVL5sPWKmFnUmzjHVuTrKJGlxNOIQQQOWaAHg/FfbAhNodsRhm70XldhbWaq3jONlqrWwZ2W4Bqn6tguRnnS/bGkQTPgILHz8WQF9EzJwQ44FqbNgrG9qT7ahgbok+A/9OokeGfFrxUifRPy0I=
+	t=1742060992; cv=none; b=H58vKZGi6cD4dGv6Umh3rWgHT46ydQmkxoFNMCO6ryylK9A9UMODWWLYLFcxLB04Hvu0Kbm81OW24klZlIz8MmUGoAL/jvWLVBNuIA5akamYcwRhRCUmEIlZrUUXDc/8Z5g5UJjKR9/EgTQgi9MAOh9Hr7g7LzFHLkYaoTjsEC4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742060893; c=relaxed/simple;
-	bh=RfWdd+iWooQft/JQ8SdLIg0TGNmFGd3defhv4cFGeYc=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jULRHH/nJ2kISp7T5VU3mqWQaN2hpIqqgXKxffFZmFyiDfDQ0ouwgn8KBSTMVlA3Ib7t3kLnFIKr6HsE2NWViAFvIwQ/1qR/p330euPU701zYrWCzk52nzgq0keOZ793Sq5em5sY85AyNL8g61OoON6/iHEIymafKdTcDpySbmo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=BwEMJi2P; arc=none smtp.client-ip=79.135.106.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1742060889; x=1742320089;
-	bh=VtOFGapc7Hrt2pxDRBLYPcGygqLzAZFo+RD/jsMgI5k=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
-	b=BwEMJi2PL1DFvKgfMGsoGkUljR2PXCB+/15LBqPuAVGcYIEl0IEwJ7E5LuR03qGaH
-	 P9Quh9kdfw0SWeDmrz+SkoV5BfBQI1lJxwgFWVTebuEdf96koZttypj/dRgQAXISAb
-	 KUhmFO6xznZxxCZyaALTfmq4sun2/UpREH8Do0i9eLfLKJtiV+kaPdPT1uRumOPTRx
-	 TzJmMC03p92EUED0Id4iUpj2FH0ume1bhloTuWZIj1WdXRFPPRiioIlfEfNh0Wh1/w
-	 mTYGpUtetGLFIu1GOF2yZ6Xod8zyykE5m/wfRYHmspLihDOfpP4FAYyxg5AELEIEYA
-	 wpg3XwU87NaBw==
-Date: Sat, 15 Mar 2025 17:48:03 +0000
-To: Alexandre Courbot <acourbot@nvidia.com>, Danilo Krummrich <dakr@kernel.org>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] rust/revocable: add try_with() convenience method
-Message-ID: <D8H11HOL93UD.31F853PYJA9U2@proton.me>
-In-Reply-To: <D8GWQXK312SX.2RI3EOHM1QGG3@nvidia.com>
-References: <20250313-try_with-v1-1-adcae7ed98a9@nvidia.com> <D8F7D2RPRVAO.2EF39MZXM6FPR@proton.me> <D8F8E4PBHK7O.399Y83M1L3XK3@nvidia.com> <D8F91L51P2EA.2FBHGJYSV06HY@proton.me> <Z9L-Z4Aw64Hi5Lj8@pollux> <D8FBUHBNPIEL.5A8GOEMPJSEA@proton.me> <D8GWCWYM15WI.3II7R71LIAEI9@nvidia.com> <Z9WL-95sJ0DCpaPa@pollux> <D8GWQXK312SX.2RI3EOHM1QGG3@nvidia.com>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: 3c6b8247cf645c614ea56d9a7e76be0677e8c9d1
+	s=arc-20240116; t=1742060992; c=relaxed/simple;
+	bh=8cNdWdSYzMhrZrBVVbo1LE44oP+rPuUJujztZ+GXkGI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JiKSs/215u0SpEHao3pfuSgMXoMwXOUULAiDMcLhtVt6ef0QOgcBheINVDUpH7b1qCi2634w2q6PGnrjvJdHlevsxxYCqLUVRV4q1OxrYiySg+D0JlfR5slanxBZtXTHYsGadicavaDVGtKNP9qVlG+udI0SeCwlBZ+LqPZVgy0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ed6qPZeI; arc=none smtp.client-ip=91.218.175.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1742060978;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=ejPqcS6XBEDW+h9V+Y9XW4HLbyin3ylhe+1eBvNG0us=;
+	b=ed6qPZeIiPSadtsqQbti2BDAvMuGVp+62JrK8640TmWLwWGFfew+bL/75pqV9ke0yiBbXS
+	Fo+ndr5s/72UPECrjGjiTRietDubx7nZAtVIxRb0edimC5YSM1+foZr/mmQBiUBOhuJnV8
+	hkDYkWeeSM59NTfVL3C1eQlUo3DIIEg=
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Johannes Weiner <hannes@cmpxchg.org>,
+	Michal Hocko <mhocko@kernel.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Muchun Song <muchun.song@linux.dev>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	linux-mm@kvack.org,
+	cgroups@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Meta kernel team <kernel-team@meta.com>
+Subject: [PATCH 0/9] memcg: cleanup per-cpu stock
+Date: Sat, 15 Mar 2025 10:49:21 -0700
+Message-ID: <20250315174930.1769599-1-shakeel.butt@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Sat Mar 15, 2025 at 3:26 PM CET, Alexandre Courbot wrote:
-> On Sat Mar 15, 2025 at 11:17 PM JST, Danilo Krummrich wrote:
->> On Sat, Mar 15, 2025 at 11:07:44PM +0900, Alexandre Courbot wrote:
->>> I suppose drivers could add their own macros to do that automatically
->>> and reduce code verbosity, at the cost of less cohesion across drivers.
->>> Guess I'll go with that if I cannot come with anything better.
->>
->> Maybe we could do something more specific but yet generic on top (for th=
-e
->> use-case above), but we still can't assume the exact error code a driver=
- wants
->> to derive from failing try_access(). So, maybe a driver specific wrapper=
- is
->> indeed what you want on top of what this patch provides.
->
-> So be it! It's not that bad and more flexible in the end.
+This is a cleanup series which is trying to simplify the memcg per-cpu
+stock code, particularly it tries to remove unnecessary dependencies on
+local_lock of per-cpu memcg stock. The eight patch from Vlastimil
+optimizes the charge path by combining the charging and accounting.
 
-You could have the following signature:
+This series is based on next-20250314 plus two following patches:
 
-    fn try_access_with<R>(&self, on_vacant: Error, f: impl FnOnce(&T) -> Re=
-sult<R>) -> Result<R>;
+Link: https://lore.kernel.org/all/20250312222552.3284173-1-shakeel.butt@linux.dev/
+Link: https://lore.kernel.org/all/20250313054812.2185900-1-shakeel.butt@linux.dev/
 
-That will use the `on_vacant` error instead of hard coding ENXIO. But
-maybe it's better to just have such a wrapper in drivers that actually
-need it (ie even with the concrete error specified and not a parameter).
-You'll know better through actually trying to write a driver.
+Shakeel Butt (8):
+  memcg: remove root memcg check from refill_stock
+  memcg: decouple drain_obj_stock from local stock
+  memcg: introduce memcg_uncharge
+  memcg: manually inline __refill_stock
+  memcg: no refilling stock from obj_cgroup_release
+  memcg: do obj_cgroup_put inside drain_obj_stock
+  memcg: use __mod_memcg_state in drain_obj_stock
+  memcg: manually inline replace_stock_objcg
 
----
-Cheers,
-Benno
+Vlastimil Babka (1):
+  memcg: combine slab obj stock charging and accounting
+
+ mm/memcontrol.c | 195 +++++++++++++++++++++++-------------------------
+ 1 file changed, 95 insertions(+), 100 deletions(-)
+
+-- 
+2.47.1
 
 
