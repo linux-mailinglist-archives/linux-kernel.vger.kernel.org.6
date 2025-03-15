@@ -1,106 +1,117 @@
-Return-Path: <linux-kernel+bounces-562763-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C1DDA6328C
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 22:06:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46971A63292
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 22:13:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8393B3B4E41
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 21:06:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C44F83B5984
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 21:12:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB8841A23A1;
-	Sat, 15 Mar 2025 21:06:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H7OUHnKi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8977F1A316E;
+	Sat, 15 Mar 2025 21:13:00 +0000 (UTC)
+Received: from bmailout3.hostsharing.net (bmailout3.hostsharing.net [176.9.242.62])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BEC5197A8B;
-	Sat, 15 Mar 2025 21:06:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80EE1197A8E;
+	Sat, 15 Mar 2025 21:12:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=176.9.242.62
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742072793; cv=none; b=YPvidTE4WKPq+AtIfZ8JHXwscgjKz6nS0O+RNqy6M1Gdd+G4FU++bw8Xv0XsuVI4j4eovREDbQEo2c/S0mgUy3dmMHPNSqFJkFYMpXxow3QThcta4MwESif2pperoiVtcuvPQf0rqh9G9urasBZCNZjTUBdXNiBZ39vrvFU57iE=
+	t=1742073180; cv=none; b=q5VDmYCnlUoVWb4klJCLGtPSe8MxgHO9bTRIB5B7ofsNW6vPeT3mV5AJB6+hu8tOHHOtxP9MKLbXR3adk1WsQjWcKi0yMjY+d1JFNgo9+jBJQPCO2opWyaa2S373IqR9AteeLy+ZN9/Z3DhFRtRA79kmlI+GBZ6aV8xSAINectM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742072793; c=relaxed/simple;
-	bh=FlVJ5imhiRn5VNO/DGLrnhEKpXT0naJJHp+CyhtqAnc=;
+	s=arc-20240116; t=1742073180; c=relaxed/simple;
+	bh=DgGL/JgFUQpUq9OIXVfSqWVLaGTnhUc8MCtaagt/zX4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hxzGhn8nQKQ663hKCQxRSTwtOxx8mHkc0Srlg1VZoCwf9xEg3uPFhEkvhtVZgKnUrmC6d3I8EFvfrg0f4fwXikGooZsk8jAt8dU2yxqv9hODG1SwBELRpLLD/8G6G32IYhuzLjPOU14dFz+fwVjnPK2w48Ph0ANffVMqlzTjE5k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H7OUHnKi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B742C4CEE5;
-	Sat, 15 Mar 2025 21:06:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742072792;
-	bh=FlVJ5imhiRn5VNO/DGLrnhEKpXT0naJJHp+CyhtqAnc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=H7OUHnKiyKxWr0I5xGDO00+zloOUoQb89kqHTzRB/UHC9H4fwDtdAQrjnn6KRMZBi
-	 NJ7nzhBNwcc3OK+0DZcl9bTt3PN4WRcYlXrEf9m4MPx+20B8QGr0vPtvn3fiJxACUt
-	 o4iBTl6yuBFZYYcn3NkzCVAQd7bC4jVnOJ3GfpaoSWRmNukbz9iBdTUdIK8ZwIIqIW
-	 FxgyYwmNYwG+P75RvFXpCZp8OnQQVCZiQsgd7nhjcKLa/k9kt87L5X+1UIR+L003MJ
-	 AZNxCoUT97vK6iSUOSU0d/JYxe9dviOpL6UGaANvPg6YZ6JLTED3e1BP4+u6u4+TlK
-	 RH0Q9AdZL2ThQ==
-Date: Sat, 15 Mar 2025 14:06:29 -0700
-From: Kees Cook <kees@kernel.org>
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: Vlastimil Babka <vbabka@suse.cz>, Miguel Ojeda <ojeda@kernel.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Marco Elver <elver@google.com>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	linux-hardening@vger.kernel.org, Christoph Lameter <cl@linux.com>,
-	Pekka Enberg <penberg@kernel.org>,
-	David Rientjes <rientjes@google.com>,
-	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Hyeonggon Yoo <42.hyeyoo@gmail.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>, Jann Horn <jannh@google.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Sasha Levin <sashal@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Yafang Shao <laoar.shao@gmail.com>,
-	Tony Ambardar <tony.ambardar@gmail.com>,
-	Alexander Lobakin <aleksander.lobakin@intel.com>,
-	Jan Hendrik Farr <kernel@jfarr.cc>,
-	Alexander Potapenko <glider@google.com>,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	linux-doc@vger.kernel.org, llvm@lists.linux.dev
-Subject: Re: [PATCH v4 1/2] compiler_types: Introduce __flex_counter() and
- family
-Message-ID: <202503151406.19A299AF@keescook>
-References: <20250315025852.it.568-kees@kernel.org>
- <20250315031550.473587-1-kees@kernel.org>
- <CANiq72ki=h4YWBWpoTpZz6525Cdt38aFN0kFwW7dJNPcVi_m2Q@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=UlBGem9h9BrPpuUWV2VhJBObORKOMFy9hIlztCTSfAMxbnGZ+z4tG2pfExB1xoEpj7iVzHWdSIX283ibNkD+2nT61CkZSj/b7PPz/ljdD+13HpnbJ8yvTGVeiWjWtHIKX0t1/LVa9n1piWI8TlPikKz/+5qb2uujw32vczxEFH4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=176.9.242.62
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
+Received: from h08.hostsharing.net (h08.hostsharing.net [IPv6:2a01:37:1000::53df:5f1c:0])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
+	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
+	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
+	by bmailout3.hostsharing.net (Postfix) with ESMTPS id 6E713100DA1BC;
+	Sat, 15 Mar 2025 22:12:48 +0100 (CET)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+	id 39DF711229; Sat, 15 Mar 2025 22:12:48 +0100 (CET)
+Date: Sat, 15 Mar 2025 22:12:48 +0100
+From: Lukas Wunner <lukas@wunner.de>
+To: proxy0@tutamail.com
+Cc: Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Linux Pci <linux-pci@vger.kernel.org>,
+	Guenter Roeck <groeck@juniper.net>,
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+	Rajat Jain <rajatxjain@gmail.com>,
+	Linux Kernel <linux-kernel@vger.kernel.org>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Stable <stable@vger.kernel.org>
+Subject: Re: [PATCH 1/4] PCI/hotplug: Disable HPIE over reset
+Message-ID: <Z9XtUH55s9OZAPvK@wunner.de>
+References: <20250313142333.5792-1-ilpo.jarvinen@linux.intel.com>
+ <20250313142333.5792-2-ilpo.jarvinen@linux.intel.com>
+ <Z9Wjk2GzrSURZoTG@wunner.de>
+ <OLQ9qyD--F-9@tutamail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CANiq72ki=h4YWBWpoTpZz6525Cdt38aFN0kFwW7dJNPcVi_m2Q@mail.gmail.com>
+In-Reply-To: <OLQ9qyD--F-9@tutamail.com>
 
-On Sat, Mar 15, 2025 at 08:47:46PM +0100, Miguel Ojeda wrote:
-> On Sat, Mar 15, 2025 at 4:15 AM Kees Cook <kees@kernel.org> wrote:
+On Sat, Mar 15, 2025 at 07:57:55PM +0100, proxy0@tutamail.com wrote:
+> Mar 15, 2025, 9:28 PM by lukas@wunner.de:
+> > After dwelling on this for a while, I'm thinking that it may re-introduce
+> > the issue fixed by commit f5eff5591b8f ("PCI: pciehp: Fix AB-BA deadlock
+> > between reset_lock and device_lock"):
 > >
-> > + * clang: https://github.com/llvm/llvm-project/pull/102549
+> > Looking at the second and third stack trace in its commit message,
+> > down_write(reset_lock) in pciehp_reset_slot() is basically equivalent
+> > to synchronize_irq() and we're holding device_lock() at that point,
+> > hindering progress of pciehp_ist().
+> >
+> > So I think I have guided you in the wrong direction and I apologize
+> > for that.
+> >
+> > However it seems to me that this should be solvable with the small
+> > patch below.  Am I missing something?
+> >
+> > @Joel Mathew Thomas, could you give the below patch a spin and see
+> > if it helps?
 > 
-> That is an unmerged PR -- should we link to the merged one?
+> I've tested the patch series along with the additional patch provided.
 > 
-> Or, better, to the docs, since they seem to exist:
+> Kernel: 6.14.0-rc6-00043-g3571e8b091f4-dirty-pci-hotplug-reset-fixes-eventmask-fix
 > 
->     https://clang.llvm.org/docs/LanguageExtensions.html#builtin-counted-by-ref
+> Patches applied:
+> - [PATCH 1/4] PCI/hotplug: Disable HPIE over reset
+> - [PATCH 2/4] PCI/hotplug: Clearing HPIE for the duration of reset is enough
+> - [PATCH 3/4] PCI/hotplug: reset_lock is not required synchronizing with irq thread
+> - [PATCH 4/4] PCI/hotplug: Don't enable HPIE in poll mode
+> - The latest patch from you:
+> +	/* Ignore events masked by pciehp_reset_slot(). */
+> +	events &= ctrl->slot_ctrl;
+> +	if (!events)
+> +		return IRQ_HANDLED;
 
-Ah! Perfect. I was looking under builtins and couldn't find it. :) I
-will update the link.
+Could you test *only* the quoted diff, i.e. without patches [1/4] - [4/4],
+on top of a recent kernel?
 
--- 
-Kees Cook
+Sorry for not having been clear about this.
+
+I believe that patch [1/4] will re-introduce a deadlock we've
+already fixed two years ago, so the small diff above seeks to
+replace it with a simpler approach that will hopefully avoid
+the issue as well.
+
+Thanks,
+
+Lukas
 
