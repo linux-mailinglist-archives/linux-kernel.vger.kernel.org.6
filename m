@@ -1,130 +1,117 @@
-Return-Path: <linux-kernel+bounces-562628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562633-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 700FDA62EFA
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 16:20:18 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87E21A62F33
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 16:29:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9CD0C179611
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 15:20:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB5843B683C
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 15:29:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 493F4202F9F;
-	Sat, 15 Mar 2025 15:20:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72863204685;
+	Sat, 15 Mar 2025 15:29:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="XljJRAP4"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="etUPQ6q1"
+Received: from smtp.smtpout.orange.fr (smtp-22.smtpout.orange.fr [80.12.242.22])
+	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2AE517995E;
-	Sat, 15 Mar 2025 15:20:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1A8019049B;
+	Sat, 15 Mar 2025 15:29:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742052012; cv=none; b=EzJYA/+vHdaTNJZLSt4UMxwSzhvnic01pQtXmu0sDRQu7vo3j+65qjG6Zuqm1Ev9m0Pc4YpLK3XB5JPldiAyfeACWsXUURjM20CZ+/KRngy78IcbLT1jHVz416hikftxNZwTnKyuYHHwCoZhgWdtoPWH84RY5+rVlcFHVfYzzNI=
+	t=1742052579; cv=none; b=C6xZ0v8khAj1Ch8Ha8muqT0TUdkLBGGF3MA/wMYSgaOZiQgeYLTzIi16kNAhJoo3nWPjmAQW1rVahpZAmLuy9QYEG2MOseAAV6Qh4zLAS5SrfVxrioSNxubtYs5EjE14mnrD5OA8Lri9fyIh/u7ViMs16wuz1od1mPCB+vpewhg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742052012; c=relaxed/simple;
-	bh=BLyaZUHseqZRKVrYZFgpsHIaBAuyrPcaGkIm0az2Pfc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QcGN8jf86YrtVAImukaP3rxJCKfyHZkXkB1EMcjpBmPhep8Dxjxm0jGHnRsuFEpuoc8o3vf+C7mzkSD2fl3sebl7PG0H8SCcvrAL7aG0OsUULFTkQTYNUCAr9HZcHrkj4PqAobMmA+pFNNa7MNi0ZsjgEIO+ZaMrjiX77blusyM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=XljJRAP4; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1742052007;
-	bh=BLyaZUHseqZRKVrYZFgpsHIaBAuyrPcaGkIm0az2Pfc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XljJRAP47ZCovRdeQRQACh8MrqcP1vXA5w1A40LOg/j0KHCxGuSH4H+9b0IorhTpy
-	 nnaiTCINCl3K8kNnSvueijsluH0bwI0LzGJNT2xAZ4yiENz/vy7blkbCO3lcb2T/25
-	 86U0p6pbicEvQXDg62esKEcQITbRx/hcn7UMpIic=
-Date: Sat, 15 Mar 2025 16:20:06 +0100
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Christian Heusel <christian@heusel.eu>, Nathan Chancellor <nathan@kernel.org>, 
-	Nicolas Schier <nicolas@fjasle.eu>
-Subject: Re: [PATCH] kbuild: pacman-pkg: hardcode module installation path
-Message-ID: <82730f15-67af-4425-9320-13e8fa286159@t-8ch.de>
-References: <20250315151522.2766939-1-masahiroy@kernel.org>
+	s=arc-20240116; t=1742052579; c=relaxed/simple;
+	bh=t3Ud3bOuPundm90xIOsFE9Q5XrJOj0wTImWIRDm5/BA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gmMixTep6SoWyc4kSOSdv9+rMgga3qKrEA6ycp5JDrlS4FQFjCUFU5RE4jsvofi1MIUss8o8xl1KUz+Ptp61XI1kn+LWKLGd3A5ADfs2dWFsypxUFa+QqU44Cp2vxvEWjOLzczxKLFIyODwZi2rrJYbMKH0pymO7PKOJ6Ord6pk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=etUPQ6q1; arc=none smtp.client-ip=80.12.242.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [192.168.1.37] ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id tTJNtsJ0HtsZCtTJRtOle1; Sat, 15 Mar 2025 16:20:35 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1742052035;
+	bh=b3ARRYc1xIjRJmTM2Xw3fYywDOajj6cXs8QeBu+g8Jc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=etUPQ6q1HR8RFWvQI5hugo8wAhN5EBw82VRkpgLbJ9Iu+MQgVouU6jc7g+P0L4pIA
+	 x4owaUciYxrf5ZzY9lfaqmSUXCGSPrt3JizEWlaTOp0nBwFJqeJtyTnRSL15BbE9St
+	 lMsxqODATfmFdl+fSyoUx1j3t420Z2UeOC/aZb5LAvF+ZYHD4ID/vLL6yIfG+250Cw
+	 7YYS+Shc/PnOHJOuKt2p2uyGWr1626LOJ4KIJnI07haWF6fA4WQv8mNih0CzOtwZlU
+	 pav3DOm/pDD7NvO4cEZsQhk+ssWNPO8UdnJ8jt8eOcqKNL50+gHwnjYRVXrqt0g04C
+	 8XEJGg/SldFqg==
+X-ME-Helo: [192.168.1.37]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Sat, 15 Mar 2025 16:20:35 +0100
+X-ME-IP: 90.11.132.44
+Message-ID: <d1c6d869-d4ed-41d1-97e2-c73f87864bda@wanadoo.fr>
+Date: Sat, 15 Mar 2025 16:20:29 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] wifi: mac80211: check basic rates validity in
+ sta_link_apply_parameters
+To: m.lobanov@rosa.ru
+Cc: johannes@sipsolutions.net, linux-kernel@vger.kernel.org,
+ linux-wireless@vger.kernel.org, lvc-project@linuxtesting.org,
+ shaul.triebitz@intel.com
+References: <20250315130119.75937-1-m.lobanov@rosa.ru>
+Content-Language: en-US, fr-FR
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20250315130119.75937-1-m.lobanov@rosa.ru>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250315151522.2766939-1-masahiroy@kernel.org>
 
-On 2025-03-16 00:15:20+0900, Masahiro Yamada wrote:
-> 'make pacman-pkg' for architectures with device tree support (i.e., arm,
-> arm64, etc.) shows logs like follows:
+Le 15/03/2025 à 14:01, Mikhail Lobanov a écrit :
+> When userspace sets supported rates for a new station via
+> NL80211_CMD_NEW_STATION, it might send a list that's empty
+> or contains only invalid values. Currently, we process these
+> values in sta_link_apply_parameters() without checking the result of
+> ieee80211_parse_bitrates(), which can lead to an empty rates bitmap.
 > 
->   Installing dtbs...
->     INSTALL /home/masahiro/linux/pacman/linux-upstream/pkg/linux-upstream/usr//lib/modules/6.14.0-rc6+/dtb/actions/s700-cubieboard7.dtb
->     INSTALL /home/masahiro/linux/pacman/linux-upstream/pkg/linux-upstream/usr//lib/modules/6.14.0-rc6+/dtb/actions/s900-bubblegum-96.dtb
->     INSTALL /home/masahiro/linux/pacman/linux-upstream/pkg/linux-upstream/usr//lib/modules/6.14.0-rc6+/dtb/airoha/en7581-evb.dtb
->       ...
+> A similar issue was addressed for NL80211_CMD_SET_BSS in commit
+> ce04abc3fcc6 ("wifi: mac80211: check basic rates validity").
+> This patch applies the same approach in sta_link_apply_parameters()
+> for NL80211_CMD_NEW_STATION, ensuring there is at least one valid
+> rate by inspecting the result of ieee80211_parse_bitrates().
 > 
-> The double slashes ('//') between 'usr' and 'lib' are somewhat ugly.
+> Found by Linux Verification Center (linuxtesting.org) with Syzkaller.
 > 
-> Let's hardcode the module installation path because the package contents
-> should remain unaffected even if ${MODLIB} is overridden. Please note that
-> scripts/packages/{builddeb,kernel.spec} also hardcode the module
-> installation path.
-> 
-> With this change, the log will look better, as follows:
-> 
->   Installing dtbs...
->     INSTALL /home/masahiro/linux/pacman/linux-upstream/pkg/linux-upstream/usr/lib/modules/6.14.0-rc6+/dtb/actions/s700-cubieboard7.dtb
->     INSTALL /home/masahiro/linux/pacman/linux-upstream/pkg/linux-upstream/usr/lib/modules/6.14.0-rc6+/dtb/actions/s900-bubblegum-96.dtb
->     INSTALL /home/masahiro/linux/pacman/linux-upstream/pkg/linux-upstream/usr/lib/modules/6.14.0-rc6+/dtb/airoha/en7581-evb.dtb
->       ...
-> 
-> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
-
-Thanks!
-
-Acked-by: Thomas Weißschuh <linux@weissschuh.net>
-
+> Fixes: b95eb7f0eee4 ("wifi: cfg80211/mac80211: separate link params from station params")
+> Signed-off-by: Mikhail Lobanov <m.lobanov-kcSV9N6+iMo@public.gmane.org>
 > ---
+> v2: Fixed the patch subject to provide a complete description.
 > 
->  scripts/package/PKGBUILD | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
+>   net/mac80211/cfg.c | 5 +++--
+>   1 file changed, 3 insertions(+), 2 deletions(-)
 > 
-> diff --git a/scripts/package/PKGBUILD b/scripts/package/PKGBUILD
-> index 0cf3a55b05e1..452374d63c24 100644
-> --- a/scripts/package/PKGBUILD
-> +++ b/scripts/package/PKGBUILD
-> @@ -53,7 +53,7 @@ build() {
->  _package() {
->  	pkgdesc="The ${pkgdesc} kernel and modules"
->  
-> -	local modulesdir="${pkgdir}/usr/${MODLIB}"
-> +	local modulesdir="${pkgdir}/usr/lib/modules/${KERNELRELEASE}"
->  
->  	_prologue
->  
-> @@ -81,7 +81,7 @@ _package() {
->  _package-headers() {
->  	pkgdesc="Headers and scripts for building modules for the ${pkgdesc} kernel"
->  
-> -	local builddir="${pkgdir}/usr/${MODLIB}/build"
-> +	local builddir="${pkgdir}/usr/lib/modules/${KERNELRELEASE}/build"
->  
->  	_prologue
->  
-> @@ -114,7 +114,7 @@ _package-debug(){
->  	pkgdesc="Non-stripped vmlinux file for the ${pkgdesc} kernel"
->  
->  	local debugdir="${pkgdir}/usr/src/debug/${pkgbase}"
-> -	local builddir="${pkgdir}/usr/${MODLIB}/build"
-> +	local builddir="${pkgdir}/usr/lib/modules/${KERNELRELEASE}/build"
->  
->  	_prologue
->  
-> -- 
-> 2.43.0
-> 
+> diff --git a/net/mac80211/cfg.c b/net/mac80211/cfg.c
+> index 9351c64608a9..e7c429aef980 100644
+> --- a/net/mac80211/cfg.c
+> +++ b/net/mac80211/cfg.c
+> @@ -1909,10 +1909,11 @@ static int sta_link_apply_parameters(struct ieee80211_local *local,
+>   
+>   	if (params->supported_rates &&
+>   	    params->supported_rates_len) {
+> -		ieee80211_parse_bitrates(link->conf->chanreq.oper.width,
+> +		(!ieee80211_parse_bitrates(link->conf->chanreq.oper.width,
+
+'if" missing?
+
+>   					 sband, params->supported_rates,
+>   					 params->supported_rates_len,
+> -					 &link_sta->pub->supp_rates[sband->band]);
+> +					 &link_sta->pub->supp_rates[sband->band]))
+> +		return -EINVAL;
+>   	}
+>   
+>   	if (params->ht_capa)
+
 
