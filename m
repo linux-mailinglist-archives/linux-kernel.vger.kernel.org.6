@@ -1,142 +1,143 @@
-Return-Path: <linux-kernel+bounces-562411-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 450E9A62660
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 06:11:26 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EDE7A62675
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 06:19:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7FDD617E6F4
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 05:11:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2273C189E502
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 05:19:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AD941917F0;
-	Sat, 15 Mar 2025 05:11:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B38EA191F6D;
+	Sat, 15 Mar 2025 05:19:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="aswVEg7H"
-Received: from smtp-fw-9102.amazon.com (smtp-fw-9102.amazon.com [207.171.184.29])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="Yr4eOeb1"
+Received: from omta36.uswest2.a.cloudfilter.net (omta36.uswest2.a.cloudfilter.net [35.89.44.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6FF42E3387;
-	Sat, 15 Mar 2025 05:11:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.171.184.29
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC1C418C031
+	for <linux-kernel@vger.kernel.org>; Sat, 15 Mar 2025 05:19:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742015476; cv=none; b=FOHP4H+HV70au7osKRroj/55FoeF5A00SwIHLN75a3dH6lmhrHXKXh0ZzyVxL7Exk71y5rZSv9AQchCSy+/DY+RpUI4DeyEnh5Svx004Y3zAgQhicSYXcoSTNa2e+UstkMuyJiC1bh3hiArkZmUYD7Da1p4OKNV/xXrfG3uHFY0=
+	t=1742015944; cv=none; b=W0I5XWq+617bNC6zh0ChDtuV6MiDa5mWD33IC/WqKeCFrMNrJriS7lHxil5tpRMfPytUr0dUJRmcnMxOYPe/G1nexIbUdEg5YqHr6mEEz5lrtxDRaRPIpPdWT7MtzgaG8d6U8lkDryhxeSHmvnix29rmJjJG0zsVP+HynDtFMCg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742015476; c=relaxed/simple;
-	bh=NqKwFgpKi816zRiQPxPI7LUxFYDCz/3da+AyDCXBcLs=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WJ07qkNpYdfDIsR+YkLuXOwxqQ20i4zaBU5TiVNpEs0rLMo66JLJnbp4SV0lHQHsaa4f4YmbHXa+o6NmqBGSusWWp8QwhXCSY2IILE97AH+HE8DtU9dklmnTVGY7giQnCwgY2zEhU7iPe881I3lctBev8IcWv/mnTwf5np35u8s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=aswVEg7H; arc=none smtp.client-ip=207.171.184.29
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1742015475; x=1773551475;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=JfjgqpY7tQ6WrFEhDQ4MyqDUhRzWEFQO9NC3rzmEyLY=;
-  b=aswVEg7HQ6MgV1K6R2SiC2MAUo2xnIJVchH5SPWTk26jK3kxXQIMDldY
-   GDsupGLtS6Gf3m5hTY9vAIm7JJnH8zXk+xTOLX7tBhUuG7aVSuchUgCkA
-   Oveq/n2PbH/XYaeSCWW2ed80VSl2fAPBukGFZYlNnT7rD9cKoFyXEZiDe
-   A=;
-X-IronPort-AV: E=Sophos;i="6.14,249,1736812800"; 
-   d="scan'208";a="503000956"
-Received: from pdx4-co-svc-p1-lb2-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.214])
-  by smtp-border-fw-9102.sea19.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Mar 2025 05:11:09 +0000
-Received: from EX19MTAUWC001.ant.amazon.com [10.0.21.151:52533]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.52.235:2525] with esmtp (Farcaster)
- id 4fc01230-8a0c-43d5-8f2c-450cbf6d679e; Sat, 15 Mar 2025 05:11:08 +0000 (UTC)
-X-Farcaster-Flow-ID: 4fc01230-8a0c-43d5-8f2c-450cbf6d679e
-Received: from EX19D003ANC003.ant.amazon.com (10.37.240.197) by
- EX19MTAUWC001.ant.amazon.com (10.250.64.174) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Sat, 15 Mar 2025 05:11:06 +0000
-Received: from b0be8375a521.amazon.com (10.118.246.93) by
- EX19D003ANC003.ant.amazon.com (10.37.240.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Sat, 15 Mar 2025 05:11:00 +0000
-From: Kohei Enju <enjuk@amazon.com>
-To: <syzbot+a5964227adc0f904549c@syzkaller.appspotmail.com>
-CC: <andrii@kernel.org>, <ast@kernel.org>, <bpf@vger.kernel.org>,
-	<daniel@iogearbox.net>, <eddyz87@gmail.com>, <enjuk@amazon.com>,
-	<haoluo@google.com>, <iii@linux.ibm.com>, <john.fastabend@gmail.com>,
-	<jolsa@kernel.org>, <kpsingh@kernel.org>, <linux-kernel@vger.kernel.org>,
-	<martin.lau@linux.dev>, <netdev@vger.kernel.org>, <sdf@fomichev.me>,
-	<song@kernel.org>, <syzkaller-bugs@googlegroups.com>, <yepeilin@google.com>,
-	<yonghong.song@linux.dev>
-Subject: Re: [syzbot] [bpf?] KASAN: slab-out-of-bounds Read in atomic_ptr_type_ok
-Date: Sat, 15 Mar 2025 14:10:21 +0900
-Message-ID: <20250315051051.1532-1-enjuk@amazon.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <67d479a8.050a0220.1939a6.004e.GAE@google.com>
-References: <67d479a8.050a0220.1939a6.004e.GAE@google.com>
+	s=arc-20240116; t=1742015944; c=relaxed/simple;
+	bh=gCKOMTSR7SFGeALdClJ4oeqAp32aiNNdltbx70uY+l0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Hj2aPfWWBOuLJs+l3el8h9ooKhtTXtF4MUa08zccDGNN7JOQ8Fn0XGEd1ZfdesIpeFfmfptEJRFUzJHnvgf05jnzw3vtXSZbgaZeBovJLW9wu2CX9Ug+lvuwLdUoPT3BEU5kTkU5xfY72jtAY0PmWcwrCR6MmzTv9YZBewVUrj4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=Yr4eOeb1; arc=none smtp.client-ip=35.89.44.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
+Received: from eig-obgw-6007a.ext.cloudfilter.net ([10.0.30.247])
+	by cmsmtp with ESMTPS
+	id tJl2tG4wKMETltJvEtLAsS; Sat, 15 Mar 2025 05:18:56 +0000
+Received: from gator4166.hostgator.com ([108.167.133.22])
+	by cmsmtp with ESMTPS
+	id tJvDtQQUVPlg1tJvDt8igx; Sat, 15 Mar 2025 05:18:56 +0000
+X-Authority-Analysis: v=2.4 cv=StaW6uO0 c=1 sm=1 tr=0 ts=67d50dc0
+ a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=6Vi/Wpy7sgpXGMLew8oZcg==:17
+ a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=7T7KSl7uo7wA:10
+ a=ZeKeiZ7te2ZlWvWP_YkA:9 a=QEXdDO2ut3YA:10 a=Xt_RvD8W3m28Mn_h3AK8:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=Z9CV7YjZm2q81+e0gd2CqFBpJBtXFWEm4J6h1AlGC2s=; b=Yr4eOeb1ZdZrGAUExLuwFtBdA0
+	nLqdok3y8dnsk+9TMsOUiAau/LeIdzsleTe+RsXaC+eKo7WA2vw9O+ZDoCobJc71qNEP3yBDJqSY8
+	V33x6N2YcTNMGeKjinas8zekF6sFG+m3BTqfBGYwID5FBalv6TkQt89yt5QjZxYfJvLzeb7cVW6ad
+	iDiThwZY6Y4mI/m8APdvW+VOiiQ8w8ndJJqtPNQrZKWVVAZHkKeYbJpAOgmqYWHlwES/MB4nUP7OI
+	aXp9T9KRlrJXlq2+RWizYEnzljWrMOMf7yOCuk7ti2bDMNa4xfFfBRwFmlSw3bYfcjxB/e4kNbaZl
+	k6L/kZiQ==;
+Received: from [45.124.203.140] (port=53524 helo=[192.168.0.160])
+	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.98.1)
+	(envelope-from <gustavo@embeddedor.com>)
+	id 1ttJv8-00000003Ac1-2JPJ;
+	Sat, 15 Mar 2025 00:18:50 -0500
+Message-ID: <17076519-33fd-4fac-a718-784b9597c9e6@embeddedor.com>
+Date: Sat, 15 Mar 2025 15:48:30 +1030
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EX19D032UWB003.ant.amazon.com (10.13.139.165) To
- EX19D003ANC003.ant.amazon.com (10.37.240.197)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/2] slab: Introduce kmalloc_obj() and family
+To: Kees Cook <kees@kernel.org>, Vlastimil Babka <vbabka@suse.cz>
+Cc: Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
+ David Rientjes <rientjes@google.com>, Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Roman Gushchin <roman.gushchin@linux.dev>,
+ Hyeonggon Yoo <42.hyeyoo@gmail.com>,
+ "Gustavo A . R . Silva" <gustavoars@kernel.org>,
+ Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
+ Jann Horn <jannh@google.com>, Przemek Kitszel
+ <przemyslaw.kitszel@intel.com>, Marco Elver <elver@google.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Sasha Levin <sashal@kernel.org>, linux-mm@kvack.org,
+ Miguel Ojeda <ojeda@kernel.org>, Nathan Chancellor <nathan@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>,
+ Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+ Jonathan Corbet <corbet@lwn.net>, Jakub Kicinski <kuba@kernel.org>,
+ Yafang Shao <laoar.shao@gmail.com>, Tony Ambardar <tony.ambardar@gmail.com>,
+ Alexander Lobakin <aleksander.lobakin@intel.com>,
+ Jan Hendrik Farr <kernel@jfarr.cc>, Alexander Potapenko <glider@google.com>,
+ linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
+ linux-doc@vger.kernel.org, llvm@lists.linux.dev
+References: <20250315025852.it.568-kees@kernel.org>
+ <20250315031550.473587-2-kees@kernel.org>
+Content-Language: en-US
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+In-Reply-To: <20250315031550.473587-2-kees@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 45.124.203.140
+X-Source-L: No
+X-Exim-ID: 1ttJv8-00000003Ac1-2JPJ
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.0.160]) [45.124.203.140]:53524
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 4
+X-Org: HG=hgshared;ORG=hostgator;
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfG3wVo0igaQCSbAdxgyuEqxwUXgAwZc0+ruCCa03fDyw8el8o675VJErwhltJpNo1JRGupaSAf/5ud2ZuSnP26cPwE+N/Hs8J8h+nBg2KSoBho/YP8Gi
+ yjD0sNe/7JzCNa6v4U1fSWhKhShoLKQy4DjJhNVpeGiZa8UyhD+Gr4+ab/WxmY1ehMtsaVRWX2mIIcH+MYgyAIAHJiABbMHSLoHlqpd8xJT/fjoC/A7c2+12
 
-> syzbot found the following issue on:
+
+> These each return the assigned value of ptr (which may be NULL on
+> failure). For cases where the total size of the allocation is needed,
+> the kmalloc_obj_sz(), kmalloc_objs_sz(), and kmalloc_flex_sz() family
+> of macros can be used. For example:
 > 
-> HEAD commit:    f28214603dc6 Merge branch 'selftests-bpf-move-test_lwt_seg..
-> git tree:       bpf-next
-> console+strace: https://syzkaller.appspot.com/x/log.txt?x=15f84664580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=b7bde34acd8f53b1
-> dashboard link: https://syzkaller.appspot.com/bug?extid=a5964227adc0f904549c
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16450ba8580000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11f5fa54580000
+> 	info->size = struct_size(ptr, flex_member, count);
+> 	ptr = kmalloc(info->size, gfp);
+> 
+> becomes:
+> 
+> 	kmalloc_flex_sz(ptr, flex_member, count, gfp, &info->size);
 
-#syz test
+I wonder if it'd be better to keep the gfp flags as the last argument
+for all these `*_sz()` cases:
 
---- a/kernel/bpf/verifier.c
-+++ b/kernel/bpf/verifier.c
-@@ -7788,6 +7788,12 @@ static int check_atomic_rmw(struct bpf_verifier_env *env,
- static int check_atomic_load(struct bpf_verifier_env *env,
-                             struct bpf_insn *insn)
- {
-+       int err;
-+
-+       err = check_load_mem(env, insn, true, false, false, "atomic_load");
-+       if (err)
-+               return err;
-+
-        if (!atomic_ptr_type_ok(env, insn->src_reg, insn)) {
-                verbose(env, "BPF_ATOMIC loads from R%d %s is not allowed\n",
-                        insn->src_reg,
-@@ -7795,12 +7801,18 @@ static int check_atomic_load(struct bpf_verifier_env *env,
-                return -EACCES;
-        }
+	kmalloc_flex_sz(ptr, flex_member, count, &info->size, gpf);
 
--       return check_load_mem(env, insn, true, false, false, "atomic_load");
-+       return 0;
- }
+Probably, even for __alloc_objs()
 
- static int check_atomic_store(struct bpf_verifier_env *env,
-                              struct bpf_insn *insn)
- {
-+       int err;
-+
-+       err = check_store_reg(env, insn, true);
-+       if (err)
-+               return err;
-+
-        if (!atomic_ptr_type_ok(env, insn->dst_reg, insn)) {
-                verbose(env, "BPF_ATOMIC stores into R%d %s is not allowed\n",
-                        insn->dst_reg,
-@@ -7808,7 +7820,7 @@ static int check_atomic_store(struct bpf_verifier_env *env,
-                return -EACCES;
-        }
-
--       return check_store_reg(env, insn, true);
-+       return 0;
- }
-
- static int check_atomic(struct bpf_verifier_env *env, struct bpf_insn *insn)
+--
+Gustavo
 
