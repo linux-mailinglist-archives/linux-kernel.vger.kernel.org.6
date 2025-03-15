@@ -1,144 +1,201 @@
-Return-Path: <linux-kernel+bounces-562415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562416-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64E00A626DC
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 07:00:13 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56988A626F0
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 07:06:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0EF917F3B6
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 06:00:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 94DB117AE6A
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 06:06:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F2F4198A08;
-	Sat, 15 Mar 2025 06:00:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 515FB18DB2A;
+	Sat, 15 Mar 2025 06:05:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="veJqE6dH"
-Received: from smtp-fw-80006.amazon.com (smtp-fw-80006.amazon.com [99.78.197.217])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="C/nvyL6Q"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37197193402;
-	Sat, 15 Mar 2025 06:00:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.217
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6A4741A8F
+	for <linux-kernel@vger.kernel.org>; Sat, 15 Mar 2025 06:05:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742018403; cv=none; b=CRdEu/Ps2eM2/FyDtDo1RN8Ub4KWWlk3zXkaLEjqy+KNjWhM8JQFPctNZnEdM29iaHbiGzj+I1zHKnk8pwuuKlnxcTeqUeqdyoUvqsE2bUZJ/L+1URVEKQacuh4GGm/fsBbrUzo424XQrV5AdXi40rC8NYFf6ZPdkkNSm9mNdTY=
+	t=1742018754; cv=none; b=VPCu4IECNxoEpQEwu4hc9y7OXMkYHYpEMCUZ/hxTbYkXb4845CYdjf5lv8teYgBYMzQNm1hGJ4+JDgKxGYTRkwmis/RH2DnDZgNxwICzdlcCaStpa6mQHwRAH80SmUpo//2aw/0/JKAZgki4BGWzM6kgMXuy3RmmXLXzu79JPlI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742018403; c=relaxed/simple;
-	bh=ryJGWDuUDRwXa8qdcev1UD3SLAbz7to/QUTh+YXVg98=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=V89s1nqCeIeeJv86IZ0j2VWkJonJ9cNReFfxK4p2GHdh7PteN02akZ950eTbfe1ybXioEg4h1Sl4+mVP5QCZiiUzz6MB8v3Dd2qc2w8F1AU+QOQ4vCqBxW55v1gL+uhNzj28XDcauURwlGLChEdFsyMr4amwFLNZeS7VQBFAEQE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=veJqE6dH; arc=none smtp.client-ip=99.78.197.217
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
+	s=arc-20240116; t=1742018754; c=relaxed/simple;
+	bh=qQ1RR4wxEIvdd0phppqiFLlf6BtvmTpMSoAs9H7RWf8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CJB/JXU1f6+0/V0ba30QSH1O8P8rRn67o9aC1XFCPKWSYblZQYLA4K1ryLYF6QUf5IVJdQJ+Il8vRo2BaxiIIl6gcSVJx0U6VWGuEWVDYwKYH+Xy60jylLjfpXuVPjNpEfOVXMXe3081uSVkMqrd/AxXFWZ1vhKfwGGLpG9U6Hk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=C/nvyL6Q; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-54957f0c657so2800176e87.0
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 23:05:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1742018402; x=1773554402;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=vv/VRE0LYhUW8Flr0gIv0j5jFwRlGze9RKBLm6vaAlo=;
-  b=veJqE6dHKdHyZ3K31qBF69Zc2u6jF5Nuvv8e/eWj7gnHhCPG8TLCpvNU
-   b9n6uGA3e6N7tUPzuXKGRnbXlgCu5IwcJ8zz2ACVBhw7X7EsBC3HE+o/v
-   RZf02KnuJofVjpUeru8SUwiik8X404FypWkt0tou6HAi3uARY8qZmRwbs
-   A=;
-X-IronPort-AV: E=Sophos;i="6.14,249,1736812800"; 
-   d="scan'208";a="32116866"
-Received: from pdx4-co-svc-p1-lb2-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.214])
-  by smtp-border-fw-80006.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Mar 2025 06:00:00 +0000
-Received: from EX19MTAUWA002.ant.amazon.com [10.0.21.151:24538]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.18.34:2525] with esmtp (Farcaster)
- id 399d2c3d-ff63-4df3-9920-f5b60fd27ed1; Sat, 15 Mar 2025 06:00:00 +0000 (UTC)
-X-Farcaster-Flow-ID: 399d2c3d-ff63-4df3-9920-f5b60fd27ed1
-Received: from EX19D003ANC003.ant.amazon.com (10.37.240.197) by
- EX19MTAUWA002.ant.amazon.com (10.250.64.202) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Sat, 15 Mar 2025 05:59:56 +0000
-Received: from b0be8375a521.amazon.com (10.118.246.93) by
- EX19D003ANC003.ant.amazon.com (10.37.240.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Sat, 15 Mar 2025 05:59:50 +0000
-From: Kohei Enju <enjuk@amazon.com>
-To: <syzbot+a5964227adc0f904549c@syzkaller.appspotmail.com>
-CC: <andrii@kernel.org>, <ast@kernel.org>, <bpf@vger.kernel.org>,
-	<daniel@iogearbox.net>, <eddyz87@gmail.com>, <enjuk@amazon.com>,
-	<haoluo@google.com>, <iii@linux.ibm.com>, <john.fastabend@gmail.com>,
-	<jolsa@kernel.org>, <kpsingh@kernel.org>, <linux-kernel@vger.kernel.org>,
-	<martin.lau@linux.dev>, <netdev@vger.kernel.org>, <sdf@fomichev.me>,
-	<song@kernel.org>, <syzkaller-bugs@googlegroups.com>, <yepeilin@google.com>,
-	<yonghong.song@linux.dev>
-Subject: [syzbot] [bpf?] KASAN: slab-out-of-bounds Read in atomic_ptr_type_ok
-Date: Sat, 15 Mar 2025 14:59:33 +0900
-Message-ID: <20250315055941.10487-2-enjuk@amazon.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <67d51240.050a0220.14e108.0050.GAE@google.com>
-References: <67d51240.050a0220.14e108.0050.GAE@google.com>
+        d=google.com; s=20230601; t=1742018751; x=1742623551; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qTsScUxWRtRUkDimhRHcaz5oETpTene5HZr2tQmNyJ0=;
+        b=C/nvyL6Q9EKC1Exhm+ZcJWyRHKeQTbP736MtCP5mAMNSaOFrODWmS8y13dnGne4+yk
+         Pe5b/8fijjvfLHPVCnPEGd/8W2ZFr7nx4FkyN2jbOMXTuhy5ynvHIfqm+bBPP48T5hig
+         Xg9JRs68JrXc/SU7bGOzvXd5+chtgtazuQ5f+wGdrRtF6aDF5LcRUUjwCqWd8NrLNh66
+         n5JnHw5i3ZoSJzfuGPIX2wEyfxlYXyuXJCF+zotJ4xz+o196oBNKh7YFoNI/Th8gRpuD
+         xtTHyqNF/YeQTSVzwxqWyjsdVh6KkijbYRf8MHtSk9/WNIfDzLmXi98DSlPWY5lMQ8C7
+         G5jQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742018751; x=1742623551;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qTsScUxWRtRUkDimhRHcaz5oETpTene5HZr2tQmNyJ0=;
+        b=ALmJS/QRgOwI4QfhyavfDB2g4NMCE9CzvfR2Si3QH1Nkos1nf2IxtPyXnLaMNMomLR
+         uIzh2LgDV9IfK64oMaW+1XupxsGe0JzUtz8XdB3paLt/kujA8QtnAJ9K+Kz8hi42YlBM
+         K29s+Gti5X+yKI0cqn3v53ekTd6OrgVvYqVlRaDyNOCZSXqyWMbwV/NSytsycRQ2z+2Z
+         CzgvTWD1jBAVXk2maziC8o/YYXlyE7pwue1Eqbm0zRAWiUFEqVBHLPoK4U+TBASMxEIX
+         HS6JxfgWz8/WB7Rq8I/p3TAOlb7dK9jr/6HW4w17upAHQpRXIehrvQsqbfGYTBX9tJoe
+         u45A==
+X-Gm-Message-State: AOJu0YzPgAgVEDt0tAigr6J2fowJmTnq1ZOWn6S4sIM/2NSTrkPvCCAv
+	NeyfPOi2YJBmmTgmDHLkxC2J97+VsZD6fibxzhYVIOOvBCzVm3WOgZQ+KPQ1Z6NZWH8++i+tyS9
+	TqWdYLC0HxnVXG258wzw6z1ZOCUWQ4euiDmI=
+X-Gm-Gg: ASbGncux5y0wa+o13IkGotljU/pi9q4zL97nhl38Gjm4qqSlwqFULqfct9z1IpI4gTs
+	xNKMN+VkodALn/STRdZHwT+TjXxLSv5WvdnbTGISRHY6wTx6q6tA1PkieC6saPaldTNSpaplAq6
+	vTxL336tkvrUCwCVT0gLSGulrnDSqc0jgOk7+aDiSAicXHRKrTZbxLSA==
+X-Google-Smtp-Source: AGHT+IGI3izsbixM4QYzjZYGoy7JjNJh8iTm0ej3lr78zNJHzylffW2mRy/a4Pz9+XAdla/fwjtioV6OCKI9zxT2b+o=
+X-Received: by 2002:a05:6512:2203:b0:545:2474:2c9b with SMTP id
+ 2adb3069b0e04-549c3fca13emr1951994e87.22.1742018750710; Fri, 14 Mar 2025
+ 23:05:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EX19D043UWA004.ant.amazon.com (10.13.139.41) To
- EX19D003ANC003.ant.amazon.com (10.37.240.197)
+References: <20250312221147.1865364-1-jstultz@google.com> <20250312221147.1865364-5-jstultz@google.com>
+ <20250313062607.5fd9052e@batman.local.home>
+In-Reply-To: <20250313062607.5fd9052e@batman.local.home>
+From: John Stultz <jstultz@google.com>
+Date: Fri, 14 Mar 2025 23:05:38 -0700
+X-Gm-Features: AQ5f1JqrttwOggFlMrSViXR_dTtAXJ7ciHdCwj6HRtWg8EiGn0zbou0YxyxJ6_0
+Message-ID: <CANDhNCpicgh_ZB45Ndf6tnngJ4gd1UUTYKtPP+SpfGXqr2G_1g@mail.gmail.com>
+Subject: Re: [RFC PATCH v15 4/7] sched: Fix runtime accounting w/ split exec &
+ sched contexts
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Joel Fernandes <joelagnelf@nvidia.com>, 
+	Qais Yousef <qyousef@layalina.io>, Ingo Molnar <mingo@redhat.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, 
+	Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
+	Valentin Schneider <vschneid@redhat.com>, Ben Segall <bsegall@google.com>, 
+	Zimuzo Ezeozue <zezeozue@google.com>, Mel Gorman <mgorman@suse.de>, Will Deacon <will@kernel.org>, 
+	Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	"Paul E. McKenney" <paulmck@kernel.org>, Metin Kaya <Metin.Kaya@arm.com>, 
+	Xuewen Yan <xuewen.yan94@gmail.com>, K Prateek Nayak <kprateek.nayak@amd.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
+	Suleiman Souhlal <suleiman@google.com>, kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> syzbot tried to test the proposed patch but the build/boot failed:
-> 
-> failed to apply patch:
-> checking file kernel/bpf/verifier.c
-> patch: **** unexpected end of file in patch
+On Thu, Mar 13, 2025 at 3:26=E2=80=AFAM Steven Rostedt <rostedt@goodmis.org=
+> wrote:
+>
+> On Wed, 12 Mar 2025 15:11:34 -0700
+> John Stultz <jstultz@google.com> wrote:
+>
+> > The idea here is we want to charge the scheduler-context task's
+> > vruntime but charge the execution-context task's sum_exec_runtime.
+>
+> The "but" is confusing me. Do you mean, "and also"? The sentence
+> doesn't make sense with "but" unless it was:
+>
+>   "The idea here is we DON'T want to charge the scheduler-context
+>   task's vruntime but charge the execution-context task's
+>   sum_exec_runtime INSTEAD."
+>
+> >
+> > This way cputime accounting goes against the task actually running
+> > but vruntime accounting goes against the rq->donor task so we get
+> > proper fairness.
+>
+> But this shows that you want to do both, although, I would remove the
+> "but" here too. Replace it with "while".
+>
+> Or maybe I'm just confused.
 
-Oh, something wrong with format, such as trailing space...?
+Apologies for beingconfusing. I know I can tangle my words sometimes. :)
 
-#syz test
+Hrmm. I think maybe it's a bit more clear if I switch the order. ie:
 
-diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-index 3303a3605ee8..0120cc325078 100644
---- a/kernel/bpf/verifier.c
-+++ b/kernel/bpf/verifier.c
-@@ -7788,6 +7788,12 @@ static int check_atomic_rmw(struct bpf_verifier_env *env,
- static int check_atomic_load(struct bpf_verifier_env *env,
- 			     struct bpf_insn *insn)
- {
-+	int err;
-+
-+	err = check_load_mem(env, insn, true, false, false, "atomic_load");
-+	if (err)
-+		return err;
-+
- 	if (!atomic_ptr_type_ok(env, insn->src_reg, insn)) {
- 		verbose(env, "BPF_ATOMIC loads from R%d %s is not allowed\n",
- 			insn->src_reg,
-@@ -7795,12 +7801,18 @@ static int check_atomic_load(struct bpf_verifier_env *env,
- 		return -EACCES;
- 	}
- 
--	return check_load_mem(env, insn, true, false, false, "atomic_load");
-+	return 0;
- }
- 
- static int check_atomic_store(struct bpf_verifier_env *env,
- 			      struct bpf_insn *insn)
- {
-+	int err;
-+
-+	err = check_store_reg(env, insn, true);
-+	if (err)
-+		return err;
-+
- 	if (!atomic_ptr_type_ok(env, insn->dst_reg, insn)) {
- 		verbose(env, "BPF_ATOMIC stores into R%d %s is not allowed\n",
- 			insn->dst_reg,
-@@ -7808,7 +7820,7 @@ static int check_atomic_store(struct bpf_verifier_env *env,
- 		return -EACCES;
- 	}
- 
--	return check_store_reg(env, insn, true);
-+	return 0;
- }
- 
- static int check_atomic(struct bpf_verifier_env *env, struct bpf_insn *insn)
--- 
-2.48.1
+Without proxy-exec, we normally charge the "current" task for both its
+vruntime as well as its sum_exec_runtime.
 
+With proxy, we want to charge the rq->curr (proxy/lock holder) time to
+its sum_exec_runtime (so it's clear to userland the rq->curr task *is*
+running).
+
+*But*, instead of charging rq->curr for the vruntime, that is charged
+against the rq->donor(lock waiter) task, because that is what it is
+donating when it is used as the scheduler-context.
+
+If the donor and curr tasks are the same, then it's the same as without pro=
+xy.
+
+Your suggestion of "while" is good as well. I'll try to reword this.
+
+
+> > diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> > index c798d27952431..f8ad3a44b3771 100644
+> > --- a/kernel/sched/fair.c
+> > +++ b/kernel/sched/fair.c
+> > @@ -1129,22 +1129,33 @@ static void update_tg_load_avg(struct cfs_rq *c=
+fs_rq)
+> >  }
+> >  #endif /* CONFIG_SMP */
+> >
+> > -static s64 update_curr_se(struct rq *rq, struct sched_entity *curr)
+> > +static s64 update_curr_se(struct rq *rq, struct sched_entity *se)
+>
+> Should this be renamed to "update_se()" as it no longer appears to be
+> updating "curr_se".
+>
+> >  {
+> >       u64 now =3D rq_clock_task(rq);
+> >       s64 delta_exec;
+> >
+> > -     delta_exec =3D now - curr->exec_start;
+> > +     delta_exec =3D now - se->exec_start;
+> >       if (unlikely(delta_exec <=3D 0))
+> >               return delta_exec;
+> >
+> > -     curr->exec_start =3D now;
+> > -     curr->sum_exec_runtime +=3D delta_exec;
+> > +     se->exec_start =3D now;
+> > +     if (entity_is_task(se)) {
+> > +             struct task_struct *running =3D rq->curr;
+> > +             /*
+> > +              * If se is a task, we account the time against the runni=
+ng
+> > +              * task, as w/ proxy-exec they may not be the same.
+> > +              */
+> > +             running->se.exec_start =3D now;
+> > +             running->se.sum_exec_runtime +=3D delta_exec;
+> > +     } else {
+> > +             /* If not task, account the time against se */
+> > +             se->sum_exec_runtime +=3D delta_exec;
+> > +     }
+>
+> Or maybe: update_proxy_se() ?
+
+I'm hesitant to call it update_proxy_se() since it's still used even
+when proxy-exec isn't enabled.
+
+update_se() could work, but also feels a little generic.
+
+Maybe update_se_times()? or account_time_se()?
+
+
+Appreciate the review and feedback!
+
+thanks
+-john
 
