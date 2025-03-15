@@ -1,114 +1,105 @@
-Return-Path: <linux-kernel+bounces-562629-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38C3DA62F05
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 16:21:03 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95B72A62F13
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 16:26:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D6943BD203
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 15:20:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9B13A7AB0EB
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 15:25:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F7682045A0;
-	Sat, 15 Mar 2025 15:20:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 360282045B2;
+	Sat, 15 Mar 2025 15:26:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fau.de header.i=@fau.de header.b="mznAtxiI"
-Received: from mx-rz-1.rrze.uni-erlangen.de (mx-rz-1.rrze.uni-erlangen.de [131.188.11.20])
+	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="YkWVBihr"
+Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD1D917995E;
-	Sat, 15 Mar 2025 15:20:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=131.188.11.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1889019049B;
+	Sat, 15 Mar 2025 15:26:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742052054; cv=none; b=VDH/BjF+sCpWMd/74WeIm8etwG5nrIzDvq1d2cozm4wfnjR6eIuOWJ11P1pWLNuOIckVBQ7jabgabPuw1KwqoASXNXcM7p/Pd/gRLaByaLYew0DN0Y7kfl411gSNUl9iLLsXfJQGOzSXDHH/Uq86BfUL/4Sm26AK3lZP27de5rY=
+	t=1742052383; cv=none; b=OVlduvrRouskGejzPyk5EWmkh0/se9RxH63HuYU2IQvhNGgUgFTMG1NQdYkMTw3WyTP4rT8YKdT7oRRZj9JoHuVpMK08KY8EXDylcn0rKibUvuJySxZeF7jMaxqbmoSFTih/rguHRzMmn0CEuuU/KrkcOOzamfEqoo073zKrFKk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742052054; c=relaxed/simple;
-	bh=08eKfAUvxdmkmUvYQ9Z9AT/EYdDCAc7pdtIm2LqpGzA=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=D1tYg7RndnSlMX6vvdB13F3a5TIozHsrKXkEsGCRJZw63K2SWfHcMbR3plZVh8S6CuS0GmY22/aijF7o2kbJN9P+ShQyDCrfGiHj3qkxn6VWAGhIdPwvKUSbHhmaPMK1dvL3biI7f6hxwJ7893KObXELZtHp5jALRI40TJIw7OQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fau.de; spf=pass smtp.mailfrom=fau.de; dkim=pass (2048-bit key) header.d=fau.de header.i=@fau.de header.b=mznAtxiI; arc=none smtp.client-ip=131.188.11.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fau.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fau.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fau.de; s=fau-2021;
-	t=1742052044; bh=08eKfAUvxdmkmUvYQ9Z9AT/EYdDCAc7pdtIm2LqpGzA=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From:To:CC:
-	 Subject;
-	b=mznAtxiI1kJuIBGKAbfrHe6w8x8MA9DVTQPXk3d0my5iXVoXYyYABprKtB8tsWFBP
-	 IkwTRc8+ap+WYBbwmrQWhSV0m9CL4aXTKUwg+EgWYk7H2Q9v6S26SmWQmn3h0tVjKP
-	 PW4Hjph9jWSGlvjfSp3NqEYZMytJJebnCfFwlyQ8ItHpvN4IJwIJDGSJJj5nlIG8oB
-	 f4y7PpcYRkrZFk59ynAPhYK+hN15mdRnsw+QqcsHbs4b5jq0Ljql5F3KPCtWe0TtvX
-	 KOr+N2VQNrjSOSmQLSHS85rICmx9EfETv2j5XneoH+uB+VGhSTk9d7F9MyrYqRj2pR
-	 UEDCDnkIFd04Q==
-Received: from mx-rz-smart.rrze.uni-erlangen.de (mx-rz-smart.rrze.uni-erlangen.de [IPv6:2001:638:a000:1025::1e])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-rz-1.rrze.uni-erlangen.de (Postfix) with ESMTPS id 4ZFQ0q6mX6z8tyl;
-	Sat, 15 Mar 2025 16:20:43 +0100 (CET)
-X-Virus-Scanned: amavisd-new at boeck1.rrze.uni-erlangen.de (RRZE)
-X-RRZE-Flag: Not-Spam
-X-RRZE-Submit-IP: 2001:9e8:361f:c600:5210:4b80:a502:1f98
-Received: from localhost (unknown [IPv6:2001:9e8:361f:c600:5210:4b80:a502:1f98])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: U2FsdGVkX1/OU7HXrel01HL8JhXs/U6F2fHJ1Gpb/vM=)
-	by smtp-auth.uni-erlangen.de (Postfix) with ESMTPSA id 4ZFQ0m590Xz8sYS;
-	Sat, 15 Mar 2025 16:20:40 +0100 (CET)
-From: Luis Gerhorst <luis.gerhorst@fau.de>
-To: Eduard Zingerman <eddyz87@gmail.com>
-Cc: Alexei Starovoitov <ast@kernel.org>,  Daniel Borkmann
- <daniel@iogearbox.net>,  Andrii Nakryiko <andrii@kernel.org>,  Martin
- KaFai Lau <martin.lau@linux.dev>,  Song Liu <song@kernel.org>,  Yonghong
- Song <yonghong.song@linux.dev>,  John Fastabend
- <john.fastabend@gmail.com>,  KP Singh <kpsingh@kernel.org>,  Stanislav
- Fomichev <sdf@fomichev.me>,  Hao Luo <haoluo@google.com>,  Jiri Olsa
- <jolsa@kernel.org>,  Puranjay Mohan <puranjay@kernel.org>,  Xu Kuohai
- <xukuohai@huaweicloud.com>,  Catalin Marinas <catalin.marinas@arm.com>,
-  Will Deacon <will@kernel.org>,  Hari Bathini <hbathini@linux.ibm.com>,
-  Christophe Leroy <christophe.leroy@csgroup.eu>,  Naveen N Rao
- <naveen@kernel.org>,  Madhavan Srinivasan <maddy@linux.ibm.com>,  Michael
- Ellerman <mpe@ellerman.id.au>,  Nicholas Piggin <npiggin@gmail.com>,
-  Mykola Lysenko <mykolal@fb.com>,  Shuah Khan <shuah@kernel.org>,
-  Henriette Herzog <henriette.herzog@rub.de>,  Cupertino Miranda
- <cupertino.miranda@oracle.com>,  Matan Shachnai <m.shachnai@gmail.com>,
-  Dimitar Kanaliev <dimitar.kanaliev@siteground.com>,  Shung-Hsi Yu
- <shung-hsi.yu@suse.com>,  Daniel Xu <dxu@dxuuu.xyz>,  bpf@vger.kernel.org,
-  linux-arm-kernel@lists.infradead.org,  linux-kernel@vger.kernel.org,
-  linuxppc-dev@lists.ozlabs.org,  linux-kselftest@vger.kernel.org,  George
- Guo <guodongtai@kylinos.cn>,  WANG Xuerui <git@xen0n.name>,  Tiezhu Yang
- <yangtiezhu@loongson.cn>
-Subject: Re: [PATCH bpf-next 00/11] bpf: Mitigate Spectre v1 using barriers
-In-Reply-To: <f6f08d64c777a6022771ab0adf96cefb6b631d75.camel@gmail.com>
-	(Eduard Zingerman's message of "Fri, 14 Mar 2025 16:40:08 -0700")
-References: <20250313172127.1098195-1-luis.gerhorst@fau.de>
-	<f6f08d64c777a6022771ab0adf96cefb6b631d75.camel@gmail.com>
-User-Agent: mu4e 1.12.8; emacs 29.4
-Date: Sat, 15 Mar 2025 16:20:39 +0100
-Message-ID: <87seneqq0o.fsf@fau.de>
+	s=arc-20240116; t=1742052383; c=relaxed/simple;
+	bh=ZRgihp2HxWgGaHTKbjNjtRc3dPDXREH7xMWjqg3t3ZE=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=B3dU0/HsPwrd6F+N0cvXB4WIpDLEUfQ0+PxhbdTs1W5Lm48BXJMDZ3DeC2F/hY3VlA/4LAtWBOfgqPGWyAoDTleMFjq9h2fHxR9uT7+6Dc1ZDD19pzTB3ZD8abDm7qOpRdTU1IwSM3FnTFuJZx3TMVuJG5sCKZvPYYwGVBaYdMo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=YkWVBihr; arc=none smtp.client-ip=5.75.144.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
+Received: from [192.168.183.162] (254C339A.nat.pool.telekom.hu [37.76.51.154])
+	by mail.mainlining.org (Postfix) with ESMTPSA id 57F93BBAC0;
+	Sat, 15 Mar 2025 15:26:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mainlining.org;
+	s=psm; t=1742052380;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=ZeQm8+FhNPyVRvUsK+uCissE24j6EUlv1M8Ckqr5ApM=;
+	b=YkWVBihrX76DGQJbcyQ0T7/hCbmwXyMncvuiPEMhmfRBCFgdSO611zDsFtRTN/acbIpCYy
+	Jbzqj5owaA0jmc410iTdGX0hLgUbKQd38V2Q//W9yb1+iIcqOcM8JFO/W4/PEzGWTqeS89
+	QaxGlH6IG3cDDHnSFR5hL9gf3AIifbNEqzxJkMTErwwu3KlDE1C/OHL/H7D+NJHyvm0J73
+	j2BIsUbkT19iXVqr5BsevwD5wIKW0P8/mOPt2xJ6bnUFGSUyFgvYcg4HDqtqcE0pNbipJ1
+	9+jb4F+9GOxOTBKSTrqWkG10s4ksDY9Ls++pGRU+42QlRpmnFA6DReUt/0I+rg==
+From: =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>
+Subject: [PATCH 0/2] SDM660/MSM8953 Fix video core clock status stuck
+Date: Sat, 15 Mar 2025 16:26:16 +0100
+Message-Id: <20250315-clock-fix-v1-0-2efdc4920dda@mainlining.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIABic1WcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDY0NT3eSc/ORs3bTMCt1E0zRzo5Qk00QTQzMloPqColSgMNis6NjaWgC
+ MfpPAWwAAAA==
+X-Change-ID: 20250315-clock-fix-a5f72db5a416
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Martin Botka <martin.botka@somainline.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@somainline.org>, 
+ Adam Skladowski <a_skl39@protonmail.com>, 
+ Sireesh Kodali <sireeshkodali@protonmail.com>, 
+ Vladimir Lypak <junak.pub@gmail.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>, 
+ Vladimir Lypak <vladimir.lypak@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1742052379; l=668;
+ i=barnabas.czeman@mainlining.org; s=20240730; h=from:subject:message-id;
+ bh=ZRgihp2HxWgGaHTKbjNjtRc3dPDXREH7xMWjqg3t3ZE=;
+ b=qLgPYhswUqpxBiMzO5Z0f5/z1nbziZGimgI74fVwXoGmCGrZ7MT+WR43+BKe21XyCkak+imBk
+ MCdVgMo3MTUD6MqGSRWyG2GS10jblK8h2GJSMU6rvO5e2EeYfemx+Wt
+X-Developer-Key: i=barnabas.czeman@mainlining.org; a=ed25519;
+ pk=TWUSIGgwW/Sn4xnX25nw+lszj1AT/A3bzkahn7EhOFc=
 
-Eduard Zingerman <eddyz87@gmail.com> writes:
-> I think it would be good to have some tests checking that nospec
-> instructions are inserted in expected locations.
-> Could you please take look at use of __xlated tag in e.g.
-> tools/testing/selftests/bpf/progs/verifier_sdiv.c ?
+On SDM660 and MSM8953 video_subcore0 and venus0_core0 clocks are stuck
+at off. This patch series fixes them.
 
-That looks very promising, I will look into it for v2. Thanks for the
-pointer.
+Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
+---
+Barnabás Czémán (1):
+      clk: qcom: mmcc-sdm660: fix stuck video_subcore0 clock
 
-I guess it might be worth it to add __xlated to at least on test per
-nospec-related code path. If there are other rewrites at play that will
-make it harder to adapt the tests when the other rewrite is ever
-changed, but it might also help in catching interactions between the
-other rewrites and the nospec.
+Vladimir Lypak (1):
+      clk: qcom: gcc-msm8953: fix stuck venus0_core0 clock
 
-Also, thanks for the review of patches 2 and 3.
+ drivers/clk/qcom/gcc-msm8953.c | 2 +-
+ drivers/clk/qcom/mmcc-sdm660.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+---
+base-commit: da920b7df701770e006928053672147075587fb2
+change-id: 20250315-clock-fix-a5f72db5a416
+
+Best regards,
+-- 
+Barnabás Czémán <barnabas.czeman@mainlining.org>
+
 
