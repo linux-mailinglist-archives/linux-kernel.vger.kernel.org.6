@@ -1,85 +1,85 @@
-Return-Path: <linux-kernel+bounces-562482-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562483-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E844BA62976
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 10:01:44 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B991A6297A
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 10:03:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E6118189D191
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 09:01:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 23DEA7AA3F3
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 09:02:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25DED1917D4;
-	Sat, 15 Mar 2025 09:01:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBBC81EDA34;
+	Sat, 15 Mar 2025 09:03:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mHUkSdVX"
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i3i00fgF"
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC2DDA41
-	for <linux-kernel@vger.kernel.org>; Sat, 15 Mar 2025 09:01:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A393D8828
+	for <linux-kernel@vger.kernel.org>; Sat, 15 Mar 2025 09:03:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742029299; cv=none; b=btwLkHQoptrFE548+t+wLu8FNMWwvbmyUlDrMxAcGouStHHMpz+6vl9bZD8rkwKxjIb9q6dhDIG+CJLvXt4QIWXneHXHhXcRkqoQVaviVJA4J0G6OtPL7wJ+Kr4AOTaEtdzZbwZdxHpCOKsCGketPhSY8KZ1h4OUUDYwsaxnc0s=
+	t=1742029417; cv=none; b=CSgbxf8y+kpctVYh2zm1hicVVUduw83/9yEAYwPt61NYmpNGVJc4dURRBAnrAskh7NKLqIp1VRumgl++l2MXdnnC+Qn6VqSY8K1qnuCrpyUz/275pdMZ/TuY+5A+kWUMgbQY3M82+1IsQfI3Qw0BlywK8IaYRaou/YNJ5HdjLkU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742029299; c=relaxed/simple;
-	bh=cSFTTOjbYdVNYK0JfH1qkYCNQiMpi0iWfDMWirbkpOE=;
+	s=arc-20240116; t=1742029417; c=relaxed/simple;
+	bh=8eeFHDG5+exkdrnwU8tHnBtYcTONcJiRUl7Y7TmVLd4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GJJlI/elKSV8UVEWinTAGKz17k8818VzUaqu0cftFdP9fHrp1Ej/zGNBODpvbDlSpYkg4qESylGqU/X21S5yu99juZ4tY8VRn/3FT5NaGj92HXDMtgy6begzpbfHy0keQfKjbaxcUG+k9Ybp8I+l6PM+FMgrWC4vIeKlUiejBDM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mHUkSdVX; arc=none smtp.client-ip=209.85.208.179
+	 To:Cc:Content-Type; b=aYzBahWHlyfxvVNr9IbpxpY80rN15p0t0xbdghgscLf9g6HOsrti5mXiZ+X2ki40/A1uS8VJ7CRjCzLS8DGsFCzvbbwoOTGynR9q+gOvx90goNkJ5Y8s54Jii0jvC/E2873MJJyVtUCYYUzsVMKaSBCjMmJ6rCPHZuGvKjNT+pU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i3i00fgF; arc=none smtp.client-ip=209.85.208.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-30bef9b04adso29835871fa.1
-        for <linux-kernel@vger.kernel.org>; Sat, 15 Mar 2025 02:01:37 -0700 (PDT)
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-30c0517142bso25579201fa.1
+        for <linux-kernel@vger.kernel.org>; Sat, 15 Mar 2025 02:03:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742029296; x=1742634096; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1742029414; x=1742634214; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=21wPShANmhNvm76IeYV1KCOiJZbvajbAk20cnHEunU0=;
-        b=mHUkSdVXqDT+8i/D1alouTDZm6XDRidS9L3KQdkFpvPhlLGe/RQsAcJSxjLL8VoT0Z
-         aRbgtpI9eMYdOH2XLwrPrlBTUFTljfgGB4VzIvgRxGBw2VLhlbdwvbdCshFz6pWhJc4J
-         dgGW6SLnmPiJ05Rv+5VPE5KNkDc8kdIrCek4Nt4mpfJfzQObi8+v3C3nc30TjtwSu/NW
-         ldYWqR9GEnuz0wUOaEUmq1ejZUNC5ZudEvJb7RStR1u0rBf5sbykkJa45ufi27bjZgx9
-         stRa3Ly/sHSnnvIlpiQgNzSP1Wrx1EtCt5r/k2rWI5Cm8rpPLUq262GV37ieCFtAv4fE
-         DAfA==
+        bh=uGHR7bTnW3nvanflLwagJdjs7My0Z7nMlfED2l7fwUk=;
+        b=i3i00fgFuK/lzxVAQQ2pf8DTLUAETB69pg4T+N+OHOPl+Fd+hh5nXgE1IsZNCklUsk
+         pwsAsZbgnvkouXuHOGbVfaGYPK74IY9uZ5WcZ/TRHCjYnmDus6e/p3h5Y1yUm2j1eAGe
+         hWhKiPtAMks7siT19/n0yLGs//BVOcnUo8mTrsP+cuIhjEj8xmirJKUCN5NxcUooSzRv
+         qERq6qYdjOWSi4W3SRthhOrUgbfhMZAlNsriUB3SoMK/dM43mtRuEU5O67fzfDR1RDPJ
+         IjaRllLITRYixGV/eDmABloW08otAb7Hf2+ku57tJJCQY+C3ViFnDeyNmM0C9BLhvNSX
+         ArbQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742029296; x=1742634096;
+        d=1e100.net; s=20230601; t=1742029414; x=1742634214;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=21wPShANmhNvm76IeYV1KCOiJZbvajbAk20cnHEunU0=;
-        b=de3n1M0ZSVEb7N+uwifahd1oMU6bOZN1LB7S3ktn+215uv/9xsiwUt2JIDAiEEY/4A
-         V/rt0ZpJxYo8Kk0P0/yHp85goyKTWB/x56J611xYIoOub6BSA0QxqyHhgi+6sD2rQvL5
-         AnlxIjXYbMe/7qDBHjhwlwjbEe9Sq3Z+s25+uSUf0ro1y1DmVp3ZKHttNLbKJfM5o4dU
-         1jPa6zahVakzJB67a2mj5bcHgfIBqeDm5SNk9uwTzPsSVRUUuQ9jwTMKL1P4sg9qjMOG
-         4GyDJxHfQ+V49+vmPNxB+EjzGguKBsknd+eHXDuLvaMWkSRhuYn0wY+ZexEnD1yIntKe
-         dF+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUqw2rCckO4nEuUYH0jw/ZTlgLCmC0EdXWedUN+FWY+htdnuqEablHWziXjYdjG0myBFJacJLIGYV5hw6Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YynrkCIYwcCs8z226pCdWzNEN5eAjOJKpu9VBMkrkkEWqOxzyis
-	twO5byFZqjAC7JydHaX0wBaRykG234wR6tbIQ3vtCSKVPWCOzym57Kd+RZJtjSxqQGOGkCX9eDA
-	EfNFhdok0klg5dL2EWTWQl4XUAZhMJjMI
-X-Gm-Gg: ASbGnctSMfKuVVWrE1bmCh+N6TDpMO9jm3OhRXV2IM23vKJt653/Tia3LAAtGE09M2a
-	MyOk107jLOBnVBGB3xQzf3d7yqIHXykaVnZPTeI8+PmGRaEyxTxMPYdqEAHvtg0oWAeWM3kHOkX
-	pVa9Pr25sb1aMWC8EGx29EHmgoQA==
-X-Google-Smtp-Source: AGHT+IG96znldB36QyK1UWtg4W9G/PUGj2Qw75cBAsY3pZ5ouzxdgdDb0JMULNZ80R/6pLehCquUPU6gLH/0KNBrZFQ=
-X-Received: by 2002:a2e:9805:0:b0:30b:d073:9e7d with SMTP id
- 38308e7fff4ca-30c4a8fb0d2mr18963141fa.37.1742029295593; Sat, 15 Mar 2025
- 02:01:35 -0700 (PDT)
+        bh=uGHR7bTnW3nvanflLwagJdjs7My0Z7nMlfED2l7fwUk=;
+        b=nn9Qy/vbGDz9gB2H/g7hVrIa3Cwcc4rmEexNq4oOoRigD9Drp2cVGFv46Y35n8cXoK
+         dgqjxRAI3HilakyiDQuZhjkkTjxLv51znxwBUUlMay9I0svvi4W85PUo6n1auBy+J0GR
+         dPO9MT94SLGCN7MIv+m6LEC9b8uWCdHnGPcorjEWO8jjcC8gdfpONrS9h1NHvlmL8kmx
+         virfitQrhVN0nNlrieO8el9VG2+GTY5GqrxViZ2RVAnwQKV3u6+VXoFkTsQezmlpNmLh
+         Wt9Ozijh1BNAleD5YhHhAKbfnT+pHZiiom6fn9Ly6SyIzwUVVBEgix0mQrKHphO+o5yZ
+         WCCg==
+X-Forwarded-Encrypted: i=1; AJvYcCXnO/rts2hAPZJEU+d99rvYoHO+eiskKbGHWvIdZSZQedAi98wHLBxSdhdfayoRY8ZWghfR/XB+Ej9ri/M=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyq/kK/lS1arWzjg3MgyqONeiXLIUG9T33qBdu1bQubUb8f1IdP
+	BgGZ1w4EceIKzLoJqxEIeDovuROKioilC7+ld0BFnjshs+2Q2WM85cMOhhJrsxJzZ4G7CohVJmD
+	HZPC9qgdjs+Beta1Jhz/Y8zBWtMo=
+X-Gm-Gg: ASbGnctS/ecRq/vkuKRXRUYCkRTaF2w4HypCK5a/YUW98bRuK9R1m2qXVcENPGQwkyS
+	1SOxqojAAa2TQQYhglw7og39Pbl7NXXe67I2Ak4I8CNZWOCS4L5MRX9gHOtBY5StXsumCptCQgj
+	n/S+FKnh+gJDOatJtEZ1tR3N8szA==
+X-Google-Smtp-Source: AGHT+IGHQbVa4wxP+O3ej0/Df0xaMpCObqNzTEpdmZM7dLnLwn06taNku6R7x4Jtb/juH8AM+8WtIocd4NjlhRiOlPw=
+X-Received: by 2002:a2e:9214:0:b0:30b:f52d:148f with SMTP id
+ 38308e7fff4ca-30c4a8726camr19595781fa.18.1742029413467; Sat, 15 Mar 2025
+ 02:03:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1741988314.git.jpoimboe@kernel.org> <ced9352a854e896e00f57ab2b062526d688a5b8a.1741988314.git.jpoimboe@kernel.org>
-In-Reply-To: <ced9352a854e896e00f57ab2b062526d688a5b8a.1741988314.git.jpoimboe@kernel.org>
+References: <cover.1741988314.git.jpoimboe@kernel.org> <5f79d7213503c426cf4abc8292ae6d240cacb712.1741988314.git.jpoimboe@kernel.org>
+In-Reply-To: <5f79d7213503c426cf4abc8292ae6d240cacb712.1741988314.git.jpoimboe@kernel.org>
 From: Uros Bizjak <ubizjak@gmail.com>
-Date: Sat, 15 Mar 2025 10:01:29 +0100
-X-Gm-Features: AQ5f1Jp-1Rx-FUdAFj6pzXqjXfZpwD4Am4VnS0bzEDVtJgk0UT7LG3plYfir9zs
-Message-ID: <CAFULd4ZK4F+BNPb=W8iYFXoCc=JzXyxWH5tqJ--HS7fD997HHQ@mail.gmail.com>
-Subject: Re: [PATCH 15/20] x86/cpu/amd: Use named asm operands in asm_clear_divider()
+Date: Sat, 15 Mar 2025 10:03:27 +0100
+X-Gm-Features: AQ5f1JqJMVHc_c8gCLzoCRvjLvsB78n356UodA4Z7knzb9RFBdQQX0jO-hgFZNQ
+Message-ID: <CAFULd4ZJiYyaAJPm0Dg1VeF1q9uw54CCzz2WQ4ufPhJ46PXfkA@mail.gmail.com>
+Subject: Re: [PATCH 16/20] x86/cpu: Use alternative_io() in amd_clear_divider()
 To: Josh Poimboeuf <jpoimboe@kernel.org>
 Cc: x86@kernel.org, linux-kernel@vger.kernel.org, 
 	Linus Torvalds <torvalds@linux-foundation.org>, Peter Zijlstra <peterz@infradead.org>, 
@@ -91,28 +91,28 @@ Content-Transfer-Encoding: quoted-printable
 On Fri, Mar 14, 2025 at 10:42=E2=80=AFPM Josh Poimboeuf <jpoimboe@kernel.or=
 g> wrote:
 >
-> Use named inline asm operands in preparation for using alternative_io().
+> Use the standard alternative_io() interface.
 >
 > Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
 > ---
->  arch/x86/include/asm/processor.h | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+>  arch/x86/include/asm/processor.h | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
 >
 > diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/proc=
 essor.h
-> index a1baf2fc5f9b..b458ff0e4c79 100644
+> index b458ff0e4c79..d7f3f03594a2 100644
 > --- a/arch/x86/include/asm/processor.h
 > +++ b/arch/x86/include/asm/processor.h
-> @@ -709,8 +709,8 @@ static inline u32 per_cpu_l2c_id(unsigned int cpu)
+> @@ -709,8 +709,10 @@ static inline u32 per_cpu_l2c_id(unsigned int cpu)
 >   */
 >  static __always_inline void amd_clear_divider(void)
 >  {
-> -       asm volatile(ALTERNATIVE("", "div %2\n\t", X86_BUG_DIV0)
-> -                    :: "a" (0), "d" (0), "r" (1));
-> +       asm volatile(ALTERNATIVE("", "div %[one]\n\t", X86_BUG_DIV0)
-> +                    :: "a" (0), "d" (0), [one] "r" (1));
+> -       asm volatile(ALTERNATIVE("", "div %[one]\n\t", X86_BUG_DIV0)
+> -                    :: "a" (0), "d" (0), [one] "r" (1));
+> +       alternative_io("",
+> +                      "div %[one]\n\t", X86_BUG_DIV0,
 
-Please remove trailing "\n\t" here and elsewhere.
+A nit - can the above be in one line? Also no need for a trailing \n\t.
 
 Thanks,
 Uros.
