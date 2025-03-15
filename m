@@ -1,120 +1,110 @@
-Return-Path: <linux-kernel+bounces-562479-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562480-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FD14A62944
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 09:49:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D730AA62951
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 09:52:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E8763B2194
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 08:48:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DEDDC3B6BA5
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 08:52:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0EE91EA7C5;
-	Sat, 15 Mar 2025 08:48:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECBF81E04AC;
+	Sat, 15 Mar 2025 08:52:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZEi9k/5t"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YVdxdjvs"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EFA5192B8F;
-	Sat, 15 Mar 2025 08:48:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59114192B8F
+	for <linux-kernel@vger.kernel.org>; Sat, 15 Mar 2025 08:52:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742028538; cv=none; b=d6nWaoOHvVKnopZmB7mseKuGm7e+qxz7ypP8Z0/a4ZxQ++aDurF2a4k203lfEaTl5BxEpgsXNuUIYrqiGQF9/+UzG4rtC8jqWKET/5EnfJW7RBGslAjEc9TS5GjJK2o3AvLM0ik6dJYIu3Og969PZUMhG+ZseQIolHKnaavOscY=
+	t=1742028752; cv=none; b=EeDIt4nX3ZCx3XHaMcgDpHAgmoqpEJRxa7QFiChI46807EqUV+XbVHdz1spy25gGxnMIo6Bty9Sfezb+LuAodbIoYzZ+zNXaS+8ogmuVwO0WVhSQ/Cxf3S9EO+Vd67qCqjGBbhhXNRqfpCxheTCOjZnJBY/3jpFmML+OoDoJ7fI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742028538; c=relaxed/simple;
-	bh=cnjylHAJmZ101OxlO5ZN/g0D/KVAb26KvZRSU01F7d4=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=lSj/njvL6xXSAS0MpJCYqrzj8gos+Om4PBbYWsCjS0NTjshrY1ouAApKUTcdjI5AXqxDmmN/4lgGN8oWeJVow2kjNu4SjbAVqZ9G780bw5bOuDmKQ1X3ds53hJBGvcvJXV1HPTGwtkrWSYP9//g664sH9wQ39lC3cumZtBgnp74=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZEi9k/5t; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-43cf0d787eeso5069505e9.3;
-        Sat, 15 Mar 2025 01:48:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742028535; x=1742633335; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=9XirSlC1lJUy9SGiwMwdj8q+6uR507R65gB4++UBGzQ=;
-        b=ZEi9k/5tucAELDDh5m+f/eiPoBRKoRMKxP8Ix2ZH9gfzgLvKwRK5FTgXXleCdtwuVJ
-         UuUAPTiVeTfTP5YGjjyAtcYf9pJWhQehJ/bBZqkzo55hzbN6Xvi+WaQ5wpLNhxb1jWMG
-         0FnxRPzb/kfugcuWIlxsCvajBuaf4io8+dj87A/r4IaP+fSX8KEqF3V6ypUTFbDEjy6r
-         KSFuamys2ppGKx2ryRkaYLmGX/ja2In83UzhuWnpMZnTHOppGM2Tb9fwEcGtpzLBUwEY
-         9D1PiVGksDjAhd3fkCvU94TIY/uBV7wyNFElWx1m/WOjersL6He5K4EHW+HuEO+0LQYT
-         ChjA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742028535; x=1742633335;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=9XirSlC1lJUy9SGiwMwdj8q+6uR507R65gB4++UBGzQ=;
-        b=IR8Hqt8NdrcNh8j4QMGmpii+3x1fkrfClaAW83X1i3YeqtoHs4z95Gc8rp7aHbjA0g
-         Ohh6bj1W81DnLd9z3BqXIZPPkBZkX19qzfd6eV4E+I/VaxhuGhbeTYIErsNdKhzqcwHE
-         nteEwD9vk9xO9+L1H1TPyMQlCMp3Q5PyvJI2wNgL29mpKFPP52P9CWD7oVx5SAcUv+60
-         DfD4LS2pNDDA/CHUDcmLLEsGOKJYwb4mDI2AeHtRPELzkBhROSkW5ni6ie8b1y8q2tu4
-         ZmP83IxHtDXsIGv1EcOjXwFtlklUlu4CjJl6KnJJllMQ6Y4sqcEtv3af+YTC1n23Am3g
-         ZbQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVPVjZMotPyWu5LhbUuX88/kY4tBpeMPuLFtpzWc9lcxhwKTxfwDSDf9k6TWu489AUdWhjVLvtLMU6X@vger.kernel.org, AJvYcCWeoWiYYSvz6tHIvhKYlkrTXALnK7VIEeLS7FA877ipmN8k+x7qE5H3f4e6C/TCqGQ/rGWHkaAwbtVw@vger.kernel.org
-X-Gm-Message-State: AOJu0YxarK2QEMu5WbSMP+vgfrMR7QIOuMxs1D5DhNhCUqxZ1K0MBp8K
-	OrDiq86/7x+RUEV89QeRAAo8UvET4Fl3E3W8tknkFaGbhoksWOe3
-X-Gm-Gg: ASbGnctqeCaJB3inG6QVKh00mBmaUFai9GY6L7TNXneQ+6IrVMnEpYd6/IWa6QnodGA
-	WvCQkUFCjSb3rYuFW6EMEASD3xm2RCpIJHsh0FP2m3HoyNuTt3zpBVcyCgH9+zBsiLMoYCFxxVF
-	tT8xk1J+LZ1DgspN4r2Si9ins/K3xn5QPLATDmxGQkB3T+MKVlA4ReD1riElgHcdYP2QiDy6I/O
-	Lm9NuPGsfKLwzNRjqK1H63rORqDeU7VAU/M3Vp5kIc4m/Q55KtYWU30KRmAS6RG2BqTGd8zawu5
-	dg52IMrjvenCTxByN8r/HQwBs+0XfwB27MiyxhLya9q7w1RAv/2bQGpblmPtvA==
-X-Google-Smtp-Source: AGHT+IEnlh0fk8XAAJTsh3EgMusKIJ4eBIzMXzyjrW7ZWcsRwEFBnmtJMkoF/+jsIlyvCz+lDXZWkg==
-X-Received: by 2002:a05:600c:4f46:b0:43c:f6b0:e807 with SMTP id 5b1f17b1804b1-43d1ed0ea8dmr74052935e9.31.1742028534404;
-        Sat, 15 Mar 2025 01:48:54 -0700 (PDT)
-Received: from giga-mm.home ([2a02:1210:861b:6f00:82ee:73ff:feb8:99e3])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d1fe2a263sm43114995e9.22.2025.03.15.01.48.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 15 Mar 2025 01:48:53 -0700 (PDT)
-Message-ID: <fa218150facca3f1756b7df055f6e0e67130ebe2.camel@gmail.com>
-Subject: Re: [PATCH v13 2/3] soc: sophgo: cv1800: rtcsys: New driver
- (handling RTC only)
-From: Alexander Sverdlin <alexander.sverdlin@gmail.com>
-To: Chen Wang <unicorn_wang@outlook.com>, Inochi Amaoto
- <inochiama@gmail.com>, 	sophgo@lists.linux.dev, devicetree@vger.kernel.org,
- linux-rtc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Date: Sat, 15 Mar 2025 09:48:52 +0100
-In-Reply-To: <PN0PR01MB10393BB0FDD18288E5FB18E92FEDD2@PN0PR01MB10393.INDPRD01.PROD.OUTLOOK.COM>
-References: <20250309202629.3516822-1-alexander.sverdlin@gmail.com>
-	 <20250309202629.3516822-3-alexander.sverdlin@gmail.com>
-	 <fuc5zzq3izowktmafrhy5vkjddydxg5673ggr64ukh7v5knjmi@r6xozjxcw7r2>
-	 <PN0PR01MB10393BB0FDD18288E5FB18E92FEDD2@PN0PR01MB10393.INDPRD01.PROD.OUTLOOK.COM>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.2 
+	s=arc-20240116; t=1742028752; c=relaxed/simple;
+	bh=v2aCjcS7m8Yxfge/9AjWsbQWtu//kBpYjcxARrJgsHg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JRRW5lnuPGe3SU710JnW43N2G+Hlgn+4nHYlwkzv9wP0uzuk18VjhTFoo7boZQkzosgfinTyY90lmzKWWOUTiH2pPuVkSdliXP1iZxSx+VkpWJnSNVdBfSCPXupUmN/1MJrCLmqUOqNXLr4iO/oTLlnTPAtz83xdUaWTCcbJ4gs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YVdxdjvs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 971CEC4CEE5;
+	Sat, 15 Mar 2025 08:52:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742028751;
+	bh=v2aCjcS7m8Yxfge/9AjWsbQWtu//kBpYjcxARrJgsHg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YVdxdjvsTpOWursYHEkbMPCg/cBgXw1jlyx1j6yr0pbSa1PPZaoDorCteB/SyviBT
+	 NKbS8ZaiZ7DtGEwU1v4H3G5BvTTQRWd7+oorjQ8trMU+WE9X5Q+oeTx7zH/YBUQr6w
+	 WwI1UAYZ4Qvy86aiB5BBS7VoW4WPK6wINKi3dR++nQXKS39W91BlzXgXA/JFdMb4gM
+	 FJzrQgb78kmrT2v13HRbOSwo97zPzmmsk0BVJHASjTQg74kgZ9Gmb9yY+PIk5p9Qzi
+	 kUk+gkVPAcNXpgznT8QLDXmnkGjZCjUO553f+qodcRyYARADqQH5clp2PdZVRTA8wN
+	 RO5+mHpItaocA==
+Date: Sat, 15 Mar 2025 09:52:26 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Josh Poimboeuf <jpoimboe@kernel.org>, x86@kernel.org,
+	linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
+	Borislav Petkov <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>,
+	Uros Bizjak <ubizjak@gmail.com>,
+	Andrew Cooper <andrew.cooper3@citrix.com>
+Subject: Re: [PATCH 14/20] x86/barrier: Use alternative_io() in 32-bit
+ barrier functions
+Message-ID: <Z9U_yvs8Cl0IEAQd@gmail.com>
+References: <cover.1741988314.git.jpoimboe@kernel.org>
+ <1c2fe7f93c4dd8a87c2e1fa8b780a8a2968be445.1741988314.git.jpoimboe@kernel.org>
+ <CAHk-=wjtvTPERDdrok2kDrSSFBjqHCCNVff95VVxhvP6wCC6jg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wjtvTPERDdrok2kDrSSFBjqHCCNVff95VVxhvP6wCC6jg@mail.gmail.com>
 
-Hi Chen!
 
-On Sat, 2025-03-15 at 09:11 +0800, Chen Wang wrote:
-> > > --- a/MAINTAINERS
-> > > +++ b/MAINTAINERS
-> > > @@ -22354,6 +22354,7 @@ L:	sophgo@lists.linux.dev
-> > > =C2=A0=C2=A0 W:	https://github.com/sophgo/linux/wiki
-> > > =C2=A0=C2=A0 T:	git https://github.com/sophgo/linux.git
-> > > =C2=A0=C2=A0 S:	Maintained
-> > > +F:	drivers/soc/sophgo/cv1800-rtcsys.c
-> > Please change to the drivers/soc/sophgo/.
-> > We should maintain all files under this.
->=20
-> In addition to what Inochi mentioned, please add the following line:
->=20
-> F:=C2=A0=C2=A0=C2=A0 Documentation/devicetree/bindings/soc/sophgo/
+* Linus Torvalds <torvalds@linux-foundation.org> wrote:
 
-Isn't it already covered by the existing "N:	sophgo" entry?
+> On Fri, 14 Mar 2025 at 11:42, Josh Poimboeuf <jpoimboe@kernel.org> wrote:
+> >
+> > +#define mb() alternative_io("lock addl $0,-4(%%esp)",                  \
+> > +                           "mfence", X86_FEATURE_XMM2,                 \
+> > +                           ARG(),                                      \
+> > +                           ARG(),                                      \
+> > +                           ARG("memory", "cc"))
+> 
+> So all of these patches look like good cleanups to me, but I do wonder
+> if we should
+> 
+>  (a) not use some naming *quite* as generic as 'ARG()'
+> 
+>  (b) make the asms use ARG_OUT/ARG_IN/ARG_CLOBBER() to clarify
+> 
+> because that ARG(), ARG(), ARGC() pattern looks odd to me.
+> 
+> Maybe it's just me.
 
---=20
-Alexander Sverdlin.
+Not just you, and I think the ARG_ prefix still looks a bit too 
+generic-C to me, it should be something more specific and unambiguously 
+asm() related, like:
 
+	ASM_ARGS_IN(),
+	ASM_ARGS_OUT(),
+	ASM_ARGS_CLOBBER(),
+
+or maybe even:
+
+	ASM_CONSTRAINT_IN(),
+	ASM_CONSTRAINT_OUT(),
+	ASM_CONSTRAINT_CLOBBER(),
+
+Because these asm()-ish syntactic constructs look better in separate 
+lines anyway, and it's not like we are at risk of running out of 
+letters in the kernel anytime soon.
+
+Thanks,
+
+	Ingo
 
