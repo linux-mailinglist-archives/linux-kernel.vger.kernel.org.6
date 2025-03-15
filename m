@@ -1,79 +1,53 @@
-Return-Path: <linux-kernel+bounces-562346-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562347-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79FDBA62413
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 02:34:44 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B296EA62420
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 02:35:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 837EB88364D
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 01:34:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B7DBD422925
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 01:35:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A54E158520;
-	Sat, 15 Mar 2025 01:34:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 100C7174EF0;
+	Sat, 15 Mar 2025 01:35:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qsipS0Dv"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="J7GsQtMe"
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10B04B666
-	for <linux-kernel@vger.kernel.org>; Sat, 15 Mar 2025 01:34:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80006B666;
+	Sat, 15 Mar 2025 01:35:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742002477; cv=none; b=IDYT3zpaxb6bqV0pjglHLa+VDA/tyKbNgkyo/mZX6SoTVZYOsT9LsrXdOSvh2hvfbD8DQcjh08ygueXde+39ihfqafuipsZLgjQjt2g6x5sGvaRMrhyl/ssxK/SCUM0n2POYw8aCua/AVxp48mHazE4sKX8H4jnL8tNG/SM86U0=
+	t=1742002530; cv=none; b=RnVoFmUn4/DnG8uNASnghWV7wmQ75iAWLf/x+xXMYPN5yRNhcKVi5COqf491Ablc+2CRj6ZXvbAut9tBNaFjJ3n4/VVbmJqRjuWKleeh94cQFB6uk/stSbGYicZuTEau5VgsrFGftltggGiejzzf/Z2jIW6ZxJ91GU64WgpT7J4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742002477; c=relaxed/simple;
-	bh=rqMz50M9H3yFzreuyediMHQhfMZFiLl0qZcUoOUte4E=;
+	s=arc-20240116; t=1742002530; c=relaxed/simple;
+	bh=OSyCfk62Q/Tt8SviwkVOUVxjviFBPntvvrxDDA/hZbI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=L0+1+ebHlvDDGPCVlo3oVNTrgtINGQo0ldMSoQegOzbVygsKRfiPROB6C6bDlJubrksaJ/TcOe0yLMiWxQoCcNTK6QkO/pa6vneZzTW0A9DqKz2LZ634ggYq1g1H2DQnsF5Zz/gqRAIBhxTRVa8jO0/FlEaMHXliI97TKpWnVuI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=qsipS0Dv; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-2240aad70f2so100745ad.0
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 18:34:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1742002475; x=1742607275; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=hvIL3fKVMU4+5xbZi0gtfEp1oSKzKEUDT0T+fM5EEa8=;
-        b=qsipS0DvEm8/HNQ/WmePhcZd1gLMZLCDiKyJU6hYFnteiTpYLo0n1g92EKoZrZ02av
-         1+cUOQHCLuBeBWyjBaJBlqaVDKKHrHoX0Mk3luKVeHOBRODiEVKN/Xt5tYwesj35/C4q
-         7STmAizNI8gck4VafbavnVhfoow2dkglIR04WWX32ppwGXxfIK0RzsqrzmdRVCHxn+et
-         Mvua5F1XodGvyXrrf61Y+IYM2aj31PHUkPuLg95mxddSUcA95zmYNsM0TCP+7cjIQ481
-         zu3oh9sCKN8NQDP1WEaFPte4FXIXXk4r59iU+4hcFjnLQj/+ofOkAjNMeApHEr+9w4lM
-         zw2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742002475; x=1742607275;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hvIL3fKVMU4+5xbZi0gtfEp1oSKzKEUDT0T+fM5EEa8=;
-        b=cATA3FYjqO55IQYgn2iZ0rZhPV/kZmczolcGgvnO00Rzp5iHR4CM5kl9bDueOPvKok
-         vt1ZjEQTuxdu4oBGYhhZPYtQ5lR772ANfwZNzdQLSkCb11BHSB4vvLV0VY+PbihlWUGE
-         v/ZVVXumfpWDP0ozwa5kMvr4buxLRPi6JRG+7V2ShaepUI12qHotjDDyY95KT/M6A9lw
-         4oJO7/XLPyiz5b5Rcr4QLPSueYOWAs9Swnhr2yBY116C9iqwqURSxzwbvXvV3a8435qn
-         fnZZ/C4g9zEzKTcDC1/AhPg3Ro9l1IkwMutAa0DmIp3kFtEQDpJ8UbwePjOkyvUT5WKj
-         wFeg==
-X-Forwarded-Encrypted: i=1; AJvYcCWrQesb9B4+dJ6+0UpE7Gx0BRw0+sWbE4bQYSzY3NkTo8vd0XhrOJND1fBXkBedKm25Aza7VG+LNI3t+zw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxBf6JqjugdF3V8EGbbLnW4LO/K9cS8kDggiWyxMC6CuSN7FgSw
-	0gKcg8ce72XgxHablq7xtReDbOjcGCf4y0s3yJFGYDUmKg8qR7ZPuxApVfjpSg==
-X-Gm-Gg: ASbGnctS1qntdb9taUI0Fqwn+3JbbuRqbw72lme5cHxfsRlOoVVD0MbamupfwS/YcHo
-	0xSVSBIrKno1pNpA4n6yhq8xHfB+KEdkInlNfLhxUa09pf57FHhXRelEm0rAdl9c+bH2/ADmQBX
-	TiDLJziMz03DG6rbvMXwYTaUCnhm9MckbQHFU9NSVBeNbmgeWp2AqIsA474bGl3XlqZHOADwiBO
-	iuWKjQ9uYjFCF8Imo9UnKLwIYP9Tim3HzUI3yyGob9KqZmiYCDUNwhNMK/x97fikZxSSErrBino
-	pKh7AWfH4rbin3w5MZqiSZA8kCPGNkP6dvX2KG3QY3N7agfypJpSisjQwDP/TZJAXO5NkvJbfw7
-	+PSYTkpxPXKXKhQZlkQ==
-X-Google-Smtp-Source: AGHT+IGtQWEpjfINSgs1H4vMHK6YoCgbTmxFs82ZqbvJLldcI2qhAcTUK9ygq9RBHTYJszRC0D1L4A==
-X-Received: by 2002:a17:903:2441:b0:20c:f40e:6ec3 with SMTP id d9443c01a7336-225f3eb1adbmr1168425ad.22.1742002474719;
-        Fri, 14 Mar 2025 18:34:34 -0700 (PDT)
-Received: from ?IPV6:2600:1700:38d4:55d0:5a27:ba32:f0cd:cc20? ([2600:1700:38d4:55d0:5a27:ba32:f0cd:cc20])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-737116b1ed7sm3638401b3a.176.2025.03.14.18.34.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 14 Mar 2025 18:34:33 -0700 (PDT)
-Message-ID: <5aa114f7-3efb-4dab-8579-cb9af4abd3c0@google.com>
-Date: Fri, 14 Mar 2025 18:34:32 -0700
+	 In-Reply-To:Content-Type; b=ccf3GNbrDUEyDsnj1AqJpb7Bxac/8eQspRW+qO8SIcdJlv7ktsnhKDWbw5R00pHnIz3yTTNQcDUhaBsvtqWhQEUrrFZQ8+5XypW2T7G4hbv3S3LQehsoDdhtzM/qwHRn0vbdKrm1Br9y+Ry972m3cp86GSaZZzRCd1DgAda+dFc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=J7GsQtMe; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=nx9gejWr4WDG8cfylnB9SzitCw/zhVSBrt3k6GSezok=; b=J7GsQtMedzUPTbtM3or32iQTZe
+	g8K8xl2K5Y5FL1IKdfNJnGTQO6GgGMHg8gGOD3jqD5jzo/Sdci50/IBeOoEcDiMVPgKeWbR1nfkaq
+	pPIbA0p09Y9hv7fihGGvPlGEdS8l3p2GIxQ6ttdHCgoQlLJyiZc07y1LA6w8QRVwaKlilcUbTqkee
+	RkhcJAIch9gUGaB57AlBv2tc0nTisPTQ5Joqj3JsgkisCOoOKcy3d0QxSXIu7iW+a7Lf49rVo0bsI
+	yCbvUT5+HXqOtI4BHiowyjAvi9BjtR6KfyNyE6HlmN76PygW/clcUlyLKz9TfH7RJURfHgo3/Pmzj
+	GvBcxcFg==;
+Received: from [116.84.110.107] (helo=[10.56.180.219])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1ttGQg-000JCb-JG; Sat, 15 Mar 2025 02:35:10 +0100
+Message-ID: <b350d05c-3279-4d62-86fe-555ef0985f03@igalia.com>
+Date: Sat, 15 Mar 2025 10:35:03 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,60 +55,182 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v2 03/29] mm: asi: Introduce ASI core API
-To: Borislav Petkov <bp@alien8.de>, Brendan Jackman <jackmanb@google.com>
-Cc: akpm@linux-foundation.org, dave.hansen@linux.intel.com,
- yosryahmed@google.com, kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, peterz@infradead.org, seanjc@google.com,
- tglx@linutronix.de, x86@kernel.org
-References: <20250227120607.GPZ8BVL2762we1j3uE@fat_crate.local>
- <20250228084355.2061899-1-jackmanb@google.com>
- <20250314131419.GJZ9Qrq8scAtDyBUcg@fat_crate.local>
-Content-Language: en-US
-From: Junaid Shahid <junaids@google.com>
-In-Reply-To: <20250314131419.GJZ9Qrq8scAtDyBUcg@fat_crate.local>
+Subject: Re: [PATCH 6/8] sched_ext: idle: Introduce scx_bpf_select_cpu_and()
+To: Andrea Righi <arighi@nvidia.com>, Tejun Heo <tj@kernel.org>,
+ David Vernet <void@manifault.com>
+Cc: bpf@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250314094827.167563-1-arighi@nvidia.com>
+ <20250314094827.167563-7-arighi@nvidia.com>
+From: Changwoo Min <changwoo@igalia.com>
+Content-Language: en-US, ko-KR, en-US-large, ko
+In-Reply-To: <20250314094827.167563-7-arighi@nvidia.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 3/14/25 6:14 AM, Borislav Petkov wrote:
-> On Fri, Feb 28, 2025 at 08:43:55AM +0000, Brendan Jackman wrote:
->> (otherwise if we get an NMI between asi_enter() and
->> asi_start_critical(), and that causes a #PF, we will start the
->> critical section in the wrong address space and ASI won't do its job).
->> So, we are somewhat forced to mix up a. and b. from above.
+Hi Andrea,
+
+Thank you for the great work! I like it.
+
+On 3/14/25 18:45, Andrea Righi wrote:
+> Provide a new kfunc, scx_bpf_select_cpu_and(), that can be used to apply
+> the built-in idle CPU selection policy to a subset of allowed CPU.
 > 
-> I don't understand: asi_enter() can be interrupted by an NMI at any random
-> point. How is the current, imbalanced interface not vulnerable to this
-> scenario?
+> This new helper is basically an extension of scx_bpf_select_cpu_dfl().
+> However, when an idle CPU can't be found, it returns a negative value
+> instead of @prev_cpu, aligning its behavior more closely with
+> scx_bpf_pick_idle_cpu().
 > 
+> It also accepts %SCX_PICK_IDLE_* flags, which can be used to enforce
+> strict selection to @prev_cpu's node (%SCX_PICK_IDLE_IN_NODE), or to
+> request only a full-idle SMT core (%SCX_PICK_IDLE_CORE), while applying
+> the built-in selection logic.
+> 
+> With this helper, BPF schedulers can apply the built-in idle CPU
+> selection policy restricted to any arbitrary subset of CPUs.
+> 
+> Example usage
+> =============
+> 
+> Possible usage in ops.select_cpu():
+> 
+> s32 BPF_STRUCT_OPS(foo_select_cpu, struct task_struct *p,
+> 		   s32 prev_cpu, u64 wake_flags)
+> {
+> 	const struct cpumask *cpus = task_allowed_cpus(p) ?: p->cpus_ptr;
+> 	s32 cpu;
+> 
+> 	cpu = scx_bpf_select_cpu_and(p, prev_cpu, wake_flags, cpus, 0);
+> 	if (cpu >= 0) {
+> 		scx_bpf_dsq_insert(p, SCX_DSQ_LOCAL, SCX_SLICE_DFL, 0);
+> 		return cpu;
+> 	}
+> 
+> 	return prev_cpu;
+> }
+> 
+> Results
+> =======
+> 
+> Load distribution on a 4 sockets, 4 cores per socket system, simulated
+> using virtme-ng, running a modified version of scx_bpfland that uses
+> scx_bpf_select_cpu_and() with 0xff00 as the allowed subset of CPUs:
+> 
+>   $ vng --cpu 16,sockets=4,cores=4,threads=1
+>   ...
+>   $ stress-ng -c 16
+>   ...
+>   $ htop
+>   ...
+>     0[                         0.0%]   8[||||||||||||||||||||||||100.0%]
+>     1[                         0.0%]   9[||||||||||||||||||||||||100.0%]
+>     2[                         0.0%]  10[||||||||||||||||||||||||100.0%]
+>     3[                         0.0%]  11[||||||||||||||||||||||||100.0%]
+>     4[                         0.0%]  12[||||||||||||||||||||||||100.0%]
+>     5[                         0.0%]  13[||||||||||||||||||||||||100.0%]
+>     6[                         0.0%]  14[||||||||||||||||||||||||100.0%]
+>     7[                         0.0%]  15[||||||||||||||||||||||||100.0%]
+> 
+> With scx_bpf_select_cpu_dfl() tasks would be distributed evenly across
+> all the available CPUs.
+> 
+> Signed-off-by: Andrea Righi <arighi@nvidia.com>
+> ---
+>   kernel/sched/ext.c                       |  1 +
+>   kernel/sched/ext_idle.c                  | 41 ++++++++++++++++++++++++
+>   tools/sched_ext/include/scx/common.bpf.h |  2 ++
+>   3 files changed, 44 insertions(+)
+> 
+> diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
+> index f42352e8d889e..343f066c1185d 100644
+> --- a/kernel/sched/ext.c
+> +++ b/kernel/sched/ext.c
+> @@ -465,6 +465,7 @@ struct sched_ext_ops {
+>   	 * idle CPU tracking and the following helpers become unavailable:
+>   	 *
+>   	 * - scx_bpf_select_cpu_dfl()
+> +	 * - scx_bpf_select_cpu_and()
+>   	 * - scx_bpf_test_and_clear_cpu_idle()
+>   	 * - scx_bpf_pick_idle_cpu()
+>   	 *
+> diff --git a/kernel/sched/ext_idle.c b/kernel/sched/ext_idle.c
+> index 549551bc97a7b..c0de7b64771d4 100644
+> --- a/kernel/sched/ext_idle.c
+> +++ b/kernel/sched/ext_idle.c
+> @@ -914,6 +914,46 @@ __bpf_kfunc s32 scx_bpf_select_cpu_dfl(struct task_struct *p, s32 prev_cpu,
+>   	return prev_cpu;
+>   }
+>   
+> +/**
+> + * scx_bpf_select_cpu_and - Pick an idle CPU usable by task @p,
+> + *			    prioritizing those in @cpus_allowed
+> + * @p: task_struct to select a CPU for
+> + * @prev_cpu: CPU @p was on previously
+> + * @wake_flags: %SCX_WAKE_* flags
+> + * @cpus_allowed: cpumask of allowed CPUs
+> + * @flags: %SCX_PICK_IDLE* flags
+> + *
+> + * Can only be called from ops.select_cpu() if the built-in CPU selection is
+> + * enabled - ops.update_idle() is missing or %SCX_OPS_KEEP_BUILTIN_IDLE is set.
+> + * @p, @prev_cpu and @wake_flags match ops.select_cpu().
 
-The reason this isn't a problem with the current asi_enter() is because there 
-the equivalent of asi_start_critical() happens _before_ the address space 
-switch. That ensures that even if an NMI arrives in the middle of asi_enter(), 
-the NMI epilog will switch to the restricted address space and there is no 
-window where an NMI (or any other interrupt/exception for that matter) would 
-result in going into vmenter with an unrestricted address space.
+I think that scx_bpf_select_cpu_and () needs to be allowed to
+call from ops.enqueue(). That is because many scx schedulers have
+some logic similar to scx_bpf_select_cpu_dfl() to kick an idle
+CPU proactively.
 
-So
-	asi_enter();
-	asi_start_critical();
-	vmenter();
-	asi_end_critical();
+> + *
+> + * Returns the selected idle CPU, which will be automatically awakened upon
+> + * returning from ops.select_cpu() and can be used for direct dispatch, or
+> + * a negative value if no idle CPU is available.
+> + */
+> +__bpf_kfunc s32 scx_bpf_select_cpu_and(struct task_struct *p, s32 prev_cpu, u64 wake_flags,
+> +				       const struct cpumask *cpus_allowed, u64 flags)
+> +{
+> +	s32 cpu;
+> +
+> +	if (!ops_cpu_valid(prev_cpu, NULL))
+> +		return -EINVAL;
+> +
+> +	if (!check_builtin_idle_enabled())
+> +		return -EBUSY;
+> +
+> +	if (!scx_kf_allowed(SCX_KF_SELECT_CPU))
+> +		return -EPERM;
+> +
+> +#ifdef CONFIG_SMP
+> +	cpu = scx_select_cpu_dfl(p, prev_cpu, wake_flags, cpus_allowed, flags);
+> +#else
+> +	cpu = -EBUSY;
+> +#endif
+> +
+> +	return cpu;
+> +}
+> +
+>   /**
+>    * scx_bpf_get_idle_cpumask_node - Get a referenced kptr to the
+>    * idle-tracking per-CPU cpumask of a target NUMA node.
+> @@ -1222,6 +1262,7 @@ static const struct btf_kfunc_id_set scx_kfunc_set_idle = {
+>   
+>   BTF_KFUNCS_START(scx_kfunc_ids_select_cpu)
+>   BTF_ID_FLAGS(func, scx_bpf_select_cpu_dfl, KF_RCU)
+> +BTF_ID_FLAGS(func, scx_bpf_select_cpu_and, KF_RCU)
+>   BTF_KFUNCS_END(scx_kfunc_ids_select_cpu)
+>   
+>   static const struct btf_kfunc_id_set scx_kfunc_set_select_cpu = {
+> diff --git a/tools/sched_ext/include/scx/common.bpf.h b/tools/sched_ext/include/scx/common.bpf.h
+> index dc4333d23189f..6f1da61cf7f17 100644
+> --- a/tools/sched_ext/include/scx/common.bpf.h
+> +++ b/tools/sched_ext/include/scx/common.bpf.h
+> @@ -48,6 +48,8 @@ static inline void ___vmlinux_h_sanity_check___(void)
+>   
+>   s32 scx_bpf_create_dsq(u64 dsq_id, s32 node) __ksym;
+>   s32 scx_bpf_select_cpu_dfl(struct task_struct *p, s32 prev_cpu, u64 wake_flags, bool *is_idle) __ksym;
+> +s32 scx_bpf_select_cpu_and(struct task_struct *p, s32 prev_cpu, u64 wake_flags,
+> +			   const struct cpumask *cpus_allowed, u64 flags) __ksym __weak;
+>   void scx_bpf_dsq_insert(struct task_struct *p, u64 dsq_id, u64 slice, u64 enq_flags) __ksym __weak;
+>   void scx_bpf_dsq_insert_vtime(struct task_struct *p, u64 dsq_id, u64 slice, u64 vtime, u64 enq_flags) __ksym __weak;
+>   u32 scx_bpf_dispatch_nr_slots(void) __ksym;
 
-is broken as there is a problematic window between asi_enter() and 
-asi_start_critical() as Brendan pointed out.
-
-However,
-	asi_start_critical();
-	asi_enter();
-	vmenter();
-	asi_end_critical();
-
-would work perfectly fine.
-
-Perhaps that might be the way to refactor the API?
-
-Thanks,
-Junaid
-
+Regards,
+Changwoo Min
 
