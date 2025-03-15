@@ -1,109 +1,117 @@
-Return-Path: <linux-kernel+bounces-562717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562718-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C73D0A631B1
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 19:36:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63A2FA631B3
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 19:39:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 19219173963
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 18:36:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C8DE3B296C
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 18:39:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96632205AC2;
-	Sat, 15 Mar 2025 18:36:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFC99205AD5;
+	Sat, 15 Mar 2025 18:39:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KPhXcnWF"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bHt+C34V"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F26221F8901;
-	Sat, 15 Mar 2025 18:36:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F36F1F8901;
+	Sat, 15 Mar 2025 18:39:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742063812; cv=none; b=R+Iw7c0Qrt4lvilKfin0l3hHMkgvtdyGXohWOAxl4tDlv75xtG5A6YdypB9O+Hnu0aO6gS0VskTCZ4wV5e2nC6EiyJWTHedCOCuJAqfWHXKfxMTJACRZ7lBUOjxsHG7gGb/vwD/TSvVBmTW3dhR2NTmNQ843s89lYoFW4zYcMJQ=
+	t=1742063956; cv=none; b=dfvZERqJUKt7IqFM2d24zD6SwMF2UNAdfS13sQvn7WxNi3wieF+5+MPUaymvwfcfGDP2tjccp0/cvfa0K3Igu41j/OIa7HdjClb2rijdcToMZ9PmI76kud5wklyebP6Td7HX+6l2Ix1s7xVpmVWg++lrCWi66FTcuyDSfA5Ih88=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742063812; c=relaxed/simple;
-	bh=K/WeHyYe88JhtenDvvSoJGOFF2LZ+hiyvYhppLQkWEw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QIkhkIxdskQ9GnK5i3gt6sc71+eDNRSQrXDZAZyMz2SptQjDTThLGMyNI4ArA6r6GXuQM5ARCrpQwdojCvlGIIgJ8oLhaNFz0iZAIlG8solPoHfRD6zQGkYHZuT6v1TSBk+5jpyh5YuMHCw33BDxcVt57F0mbp2CwHXE1b4E8rA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KPhXcnWF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A27EBC4CEE5;
-	Sat, 15 Mar 2025 18:36:48 +0000 (UTC)
+	s=arc-20240116; t=1742063956; c=relaxed/simple;
+	bh=2JrTR70esOK5zGWVnspLubUzr2Qx3iJY8knG+uUwLAE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RDbor59o+NHw38DwWs/OzsCarnpW/oXerpVFTCsu7U0CVjLSlzc/GRkrCVAA9Lg6yxFDyuR7HWpNt8z8RB2PZfwwE0AiAchJC1WhQ/Cj6uZJIDo0+lp3gLIcdYMz0h1TNN5+o+bZ0LxF2E3ePRNN5wLf40pLMHfI7IIpZdl7uCc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bHt+C34V; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84CCAC4CEE5;
+	Sat, 15 Mar 2025 18:39:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742063811;
-	bh=K/WeHyYe88JhtenDvvSoJGOFF2LZ+hiyvYhppLQkWEw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=KPhXcnWFhfUOtQaR8LE0DzjlEIm5GSsvI28Ef+ClHtM18dX/X8WdPyb2pAyo01Awv
-	 pXh+bSy5W0iffxHW7OzLnmRKJP0JyZRFYfgWwg/6WwiAdOJZZGsgZtMxBWNg340b7K
-	 molZa4X2MkIAWFFvaOlGhBShnWKNwsYHQ0ANwuijBeAQsPeEDgOI6cf+03jsulZIVb
-	 liNlthu2+BVxWj4JSCnA28aVYfpEDxtl7BWbMcSbtrwk8BQvCR/W833Ob5RVRGKi+T
-	 6BJnAczkEpZYgnAxaIsdFpSFPPjttSvRwoOdXXnex6pD3NYPOvHqtqnq73nEYN1IQ8
-	 CrJ3BYrUX+pqg==
-Date: Sat, 15 Mar 2025 18:36:44 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Silvano Seva <s.seva@4sigma.it>
-Cc: a.greco@4sigma.it, Lorenzo Bianconi <lorenzo@kernel.org>, Lars-Peter
- Clausen <lars@metafoo.de>, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/2] iio: imu: st_lsm6dsx: fix possible lockup in
- st_lsm6dsx_read_fifo
-Message-ID: <20250315183644.04fd688b@jic23-huawei>
-In-Reply-To: <20250311085030.3593-2-s.seva@4sigma.it>
-References: <20250311085030.3593-2-s.seva@4sigma.it>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
+	s=k20201202; t=1742063954;
+	bh=2JrTR70esOK5zGWVnspLubUzr2Qx3iJY8knG+uUwLAE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bHt+C34V1chKfmMKRkxrpxwm/Cdh5e9nRpXvV9BH/I9MK3LhQfviQAiL6v2BSJwzK
+	 nupIG83rrP/oXzqf6KIgo1LfQTrBd4Od2G4yvKvvcCy0IBprSXed2H+AMBiJv5HefF
+	 k6aSLX/IP+UY/RYHDUfZzZoIt3aPtSKr3g9c9p8d1jJK7EE1swSh2WqqZ5z4CxNJIR
+	 o0uViE0R6A66KpfwcChTj93bfMLM2AsUIj1endUTXYgjdanwo8l5LCrPdiAJE/BlE3
+	 /XEwVeeRzB5v8cX2weGcM6S+RZrV2vSZyIrNJLJ7smrXjZRUPbRjze7Kn6Lhd/rN1p
+	 gqlJNg7riEStw==
+Date: Sat, 15 Mar 2025 11:39:08 -0700
+From: Kees Cook <kees@kernel.org>
+To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc: Vlastimil Babka <vbabka@suse.cz>, Christoph Lameter <cl@linux.com>,
+	Pekka Enberg <penberg@kernel.org>,
+	David Rientjes <rientjes@google.com>,
+	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Hyeonggon Yoo <42.hyeyoo@gmail.com>,
+	"Gustavo A . R . Silva" <gustavoars@kernel.org>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>, Jann Horn <jannh@google.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Marco Elver <elver@google.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Sasha Levin <sashal@kernel.org>, linux-mm@kvack.org,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Jonathan Corbet <corbet@lwn.net>, Jakub Kicinski <kuba@kernel.org>,
+	Yafang Shao <laoar.shao@gmail.com>,
+	Tony Ambardar <tony.ambardar@gmail.com>,
+	Alexander Lobakin <aleksander.lobakin@intel.com>,
+	Jan Hendrik Farr <kernel@jfarr.cc>,
+	Alexander Potapenko <glider@google.com>,
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
+	linux-doc@vger.kernel.org, llvm@lists.linux.dev
+Subject: Re: [PATCH v4 2/2] slab: Introduce kmalloc_obj() and family
+Message-ID: <202503151137.CA3D422F3@keescook>
+References: <20250315025852.it.568-kees@kernel.org>
+ <20250315031550.473587-2-kees@kernel.org>
+ <17076519-33fd-4fac-a718-784b9597c9e6@embeddedor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <17076519-33fd-4fac-a718-784b9597c9e6@embeddedor.com>
 
-On Tue, 11 Mar 2025 09:49:47 +0100
-Silvano Seva <s.seva@4sigma.it> wrote:
-
-> Prevent st_lsm6dsx_read_fifo from falling in an infinite loop in case
-> pattern_len is equal to zero and the device FIFO is not empty.
+On Sat, Mar 15, 2025 at 03:48:30PM +1030, Gustavo A. R. Silva wrote:
 > 
-> Fixes: 290a6ce11d93 ("iio: imu: add support to lsm6dsx driver")
-> Signed-off-by: Silvano Seva <s.seva@4sigma.it>
-I think you could validly have kept Lorenzo's ack given this was
-just breaking the patch into two parts. I put it back and applied
-these with them marked for stable to the fixes-togreg branch of iio.git
-
-Thanks,
-
-Jonathan
-
-> ---
+> > These each return the assigned value of ptr (which may be NULL on
+> > failure). For cases where the total size of the allocation is needed,
+> > the kmalloc_obj_sz(), kmalloc_objs_sz(), and kmalloc_flex_sz() family
+> > of macros can be used. For example:
+> > 
+> > 	info->size = struct_size(ptr, flex_member, count);
+> > 	ptr = kmalloc(info->size, gfp);
+> > 
+> > becomes:
+> > 
+> > 	kmalloc_flex_sz(ptr, flex_member, count, gfp, &info->size);
 > 
-> Changes since v1:
-> * st_lsm6dsx_read_fifo: moved check for zero pattern_len before fifo_len assignment
-> * st_lsm6dsx_read_fifo: dropped check for zero fifo_len
-> * added Fixes tags in commit message
+> I wonder if it'd be better to keep the gfp flags as the last argument
+> for all these `*_sz()` cases:
 > 
-> Changes since v2:
-> * split patch in two parts, one fixing st_lsm6dsx_read_fifo and one fixing
-> st_lsm6dsx_read_tagged_fifo
+> 	kmalloc_flex_sz(ptr, flex_member, count, &info->size, gpf);
 > 
->  drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_buffer.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_buffer.c b/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_buffer.c
-> index 0a7cd8c1aa33..480a9b31065c 100644
-> --- a/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_buffer.c
-> +++ b/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_buffer.c
-> @@ -392,6 +392,9 @@ int st_lsm6dsx_read_fifo(struct st_lsm6dsx_hw *hw)
->  	if (fifo_status & cpu_to_le16(ST_LSM6DSX_FIFO_EMPTY_MASK))
->  		return 0;
->  
-> +	if (!pattern_len)
-> +		pattern_len = ST_LSM6DSX_SAMPLE_SIZE;
-> +
->  	fifo_len = (le16_to_cpu(fifo_status) & fifo_diff_mask) *
->  		   ST_LSM6DSX_CHAN_SIZE;
->  	fifo_len = (fifo_len / pattern_len) * pattern_len;
+> Probably, even for __alloc_objs()
 
+I was following the pattern of the other "alternative helpers", like
+kmalloc_node(), which adds the additional argument to the end. I have no
+real opinion about it, so I defer to the slab developers. :)
+
+-Kees
+
+-- 
+Kees Cook
 
