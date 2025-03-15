@@ -1,128 +1,103 @@
-Return-Path: <linux-kernel+bounces-562770-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562771-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9540FA6329D
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 22:48:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E93BA632A0
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 22:56:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C7CC716D6A4
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 21:48:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 213A61892D13
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 21:56:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 887591A0BE0;
-	Sat, 15 Mar 2025 21:48:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF8C51A5BA1;
+	Sat, 15 Mar 2025 21:56:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=posteo.net header.i=@posteo.net header.b="e2qyhJAi"
-Received: from mout01.posteo.de (mout01.posteo.de [185.67.36.65])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dUyMT9gt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6A3D19CCFC
-	for <linux-kernel@vger.kernel.org>; Sat, 15 Mar 2025 21:48:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46B65197A8E;
+	Sat, 15 Mar 2025 21:56:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742075313; cv=none; b=G1gaviPz/9s/PeAzHAOZUPvuAgcZ4QEBPE8IVmLsaHDGvmAnQaJeEjV7oSeOhRelzfEYTKpBxQn/3w76cikSbfxGyhTVvmDrHcz+vASEDzRtWQDyAYxV6BJEaPoXCPsO1p7R9pEgI2wMJSBe8X4rdoa6LUClprisBHuLOqNVx7c=
+	t=1742075767; cv=none; b=K792J5u9EQkreUyDA3pr3zqdJG80kQ3yrlo6gKJXcFOJrseRETXffv/5Nnk+oLupFcRDZqVWZt9Vq/8kQebU0el/Q8m1SJpqibhXcnUZwngr9Y3F0+vqu5z+oyCPNtchpSbku1WEn4i9BZKU6R/45S9H2ihL4aiWgfH5ClDHook=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742075313; c=relaxed/simple;
-	bh=DPEr7dKBqwOvfdAJaiq7ssYD2lRbnJRZa052tQbVmm0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=gAi8PkG+4lRZ/M3ljm0UNN5ejmIZALHS/6wthk1KzpSnb6hieUNQ0vnR5nUA0SRjlS+nIx3QsK9IWswqK/3J6M9zT0wSbs7OfOG9OuOH/4LqJXi8kUXAoenBwKg3/mHCEt/HA7kpNDsqCQQC7WsfUiMdBik/pKAaiLOpRd1SJL4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.net; spf=pass smtp.mailfrom=posteo.net; dkim=pass (2048-bit key) header.d=posteo.net header.i=@posteo.net header.b=e2qyhJAi; arc=none smtp.client-ip=185.67.36.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=posteo.net
-Received: from submission (posteo.de [185.67.36.169]) 
-	by mout01.posteo.de (Postfix) with ESMTPS id 24894240029
-	for <linux-kernel@vger.kernel.org>; Sat, 15 Mar 2025 22:48:29 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=posteo.net; s=2017;
-	t=1742075309; bh=DPEr7dKBqwOvfdAJaiq7ssYD2lRbnJRZa052tQbVmm0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding:Message-Id:To:Cc:From;
-	b=e2qyhJAiGZQa79pWE3A5QEmm8cebE7GxWqDafr/9ijWfOmUWPH7rLjPBy6V20t1wm
-	 i+fk26vSR2R0NyGQ4ks9ff+6SYF/yLWb718/IbXsqtvE58JWUtvEz+9ZC6oTcZOpLG
-	 M5bd3fyhRq6d2uEucuO02EFt9FG78a2d9IZXLYg3yBQTQT/YpBdzpQP9Zf6jGgdm/G
-	 e0liACJ4gBFL1gvIVhrwRyQCpPhgUk4Tp+kXRAtyBkgMXgSjFta2UrJz0yJyk5DkA1
-	 nzng+OoDrWO30SIXq4oRlnzsg3+5b9EAlexzHLbnOM13EdZPDo4kmXnKHWNgOHxe2j
-	 87KB3aH6wAVcA==
-Received: from customer (localhost [127.0.0.1])
-	by submission (posteo.de) with ESMTPSA id 4ZFZcC4NzJz6tw3;
-	Sat, 15 Mar 2025 22:48:27 +0100 (CET)
-From: Charalampos Mitrodimas <charmitro@posteo.net>
-Date: Sat, 15 Mar 2025 21:48:11 +0000
-Subject: [PATCH] rust: rbtree: fix comments referring to Box instead of
- KBox
+	s=arc-20240116; t=1742075767; c=relaxed/simple;
+	bh=zEP1AsJWOjAINPoMS205umleYb+VbBnUqXVLudVGoZM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pMBmzeib7hdGRGIdDnujijVR/v0HTvGJ+NKNxikPQqKOa2W6NYZaXHz+7iPTX+t0NPkQ/EcDWasJcYchLNWO9/P8PmgB+DJ0Dogi3ZGQKRH3ynA1pgecHJFNm/yqgzU6sp6+dHqEf94XXrqvxbzIfJnV19wpJyD7SdKvqEyF2YI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dUyMT9gt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2F3DC4CEE5;
+	Sat, 15 Mar 2025 21:56:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742075765;
+	bh=zEP1AsJWOjAINPoMS205umleYb+VbBnUqXVLudVGoZM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dUyMT9gtTl45VUvStCjjZOTVc7vEwcPEdZXIpk1iFimk4gJv9KxAAFVLiLGhzBjG5
+	 dNNoZUHSg+Vr3FMPa3XafkRsaSEB6zR3eIvmiqtQ6U91aPPpmrTCDtEObXJXedwVHt
+	 i/3P4DA5bE6P4W1arIRkUj4oLQvkJhy1ZPkDbL1EiG7mYZusY71p+n/jC9cjtPL0WK
+	 aO+EVa4cMaZ8mXFfjD8Pl+u+H3tT74krUzrKZLGodmn+UbiltSE3bvSOoH4yfo/9sq
+	 uDrBi4gzIz7o6TeWcnrkEOQ36iT1huN1gYgHIerK30Z3sJQBkOxFewPzNJlefZT5uo
+	 Aw85g2/QugGAQ==
+Date: Sat, 15 Mar 2025 14:56:02 -0700
+From: Kees Cook <kees@kernel.org>
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	Lars-Peter Clausen <lars@metafoo.de>, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH] iio: magnetometer: ak8974: Add __nonstring annotations
+ for unterminated strings
+Message-ID: <202503151455.B8E9F6F1@keescook>
+References: <20250310222346.work.810-kees@kernel.org>
+ <CACRpkdbUk8bVWLPwVRq0qzaKRC80=bV1Wd01h+5xfH1O7-BVaQ@mail.gmail.com>
+ <20250315183125.40f9c566@jic23-huawei>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250315-rbtree-comment-fixes-v1-1-51f72c420ff0@posteo.net>
-X-B4-Tracking: v=1; b=H4sIAJr11WcC/x3L3QpAQBCG4VvRHJuyWFq3Igd+PsyBpVlJyb3bH
- D69vQ8FqCBQkzykuCTI7iNMmtC49n4ByxRNeZbbrDCWdTgV4HHfNviTZ7kR2DnYqi5LZ5yluB6
- KP8Sz7d73Ay3qz9VmAAAA
-X-Change-ID: 20250315-rbtree-comment-fixes-99e567449195
-To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
- Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
- Benno Lossin <benno.lossin@proton.me>, 
- Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
- Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>
-Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1742075307; l=2266;
- i=charmitro@posteo.net; s=20250315; h=from:subject:message-id;
- bh=DPEr7dKBqwOvfdAJaiq7ssYD2lRbnJRZa052tQbVmm0=;
- b=fcxvFHIeD8d3XYKp+WqpDbt3Mr9dhKWKPBhf9CZCcPUcHUZc6iotwfJhQ/ysJMbIsYzc1Ub3A
- Zp80Iq/RAy8AzUeaTahdv4bmsLnNPusOIHXjyrvGIgqlK7XOSvIF2fP
-X-Developer-Key: i=charmitro@posteo.net; a=ed25519;
- pk=eTrChwENwXKiDOuJzxQN7RY0l7JF3/rO9B/pauP0ecw=
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250315183125.40f9c566@jic23-huawei>
 
-Several safety comments in the RBTree implementation still refer to
-"Box::from_raw" and "Box::into_raw", but the code actually uses KBox.
-These comments were not updated when the implementation transitioned
-from using Box to KBox.
+On Sat, Mar 15, 2025 at 06:31:25PM +0000, Jonathan Cameron wrote:
+> On Fri, 14 Mar 2025 11:31:09 +0100
+> Linus Walleij <linus.walleij@linaro.org> wrote:
+> 
+> > On Mon, Mar 10, 2025 at 11:23 PM Kees Cook <kees@kernel.org> wrote:
+> > 
+> > > When a character array without a terminating NUL character has a static
+> > > initializer, GCC 15's -Wunterminated-string-initialization will only
+> > > warn if the array lacks the "nonstring" attribute[1]. Mark the arrays
+> > > with __nonstring to and correctly identify the char array as "not a C
+> > > string" and thereby eliminate the warning.
+> > >
+> > > Link: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=117178 [1]
+> > > Cc: Linus Walleij <linus.walleij@linaro.org>
+> > > Cc: Jonathan Cameron <jic23@kernel.org>
+> > > Cc: Lars-Peter Clausen <lars@metafoo.de>
+> > > Cc: linux-iio@vger.kernel.org
+> > > Signed-off-by: Kees Cook <kees@kernel.org>  
+> > 
+> > Fair enough,
+> > Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+> > 
+> Kees,
+> 
+> I've currently queued this for next cycle as it doesn't feel like a fix
+> as such and I've already sent my pull request for the merge window.
+> 
+> Is it worth rushing it in, or is a fully cycle delay an issue? (6.16)
+> 
+> If slow is fine, applied to the testing branch of iio.git which gets
+> 0-day bot exposure.
 
-Fixes: 8373147ce496 ("rust: treewide: switch to our kernel `Box` type")
-Signed-off-by: Charalampos Mitrodimas <charmitro@posteo.net>
----
- rust/kernel/rbtree.rs | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+No rush needed at all. This is just for cleaning up warnings for the
+coming releases of GCC 15 in couple months. Thanks for picking it up!
 
-diff --git a/rust/kernel/rbtree.rs b/rust/kernel/rbtree.rs
-index 0d1e75810664e18c0abe851ece2223d203721f79..a7ce512773563150fc2c290c544f20baad6509bf 100644
---- a/rust/kernel/rbtree.rs
-+++ b/rust/kernel/rbtree.rs
-@@ -1168,12 +1168,12 @@ impl<'a, K, V> RawVacantEntry<'a, K, V> {
-     fn insert(self, node: RBTreeNode<K, V>) -> &'a mut V {
-         let node = KBox::into_raw(node.node);
- 
--        // SAFETY: `node` is valid at least until we call `Box::from_raw`, which only happens when
-+        // SAFETY: `node` is valid at least until we call `KBox::from_raw`, which only happens when
-         // the node is removed or replaced.
-         let node_links = unsafe { addr_of_mut!((*node).links) };
- 
-         // INVARIANT: We are linking in a new node, which is valid. It remains valid because we
--        // "forgot" it with `Box::into_raw`.
-+        // "forgot" it with `KBox::into_raw`.
-         // SAFETY: The type invariants of `RawVacantEntry` are exactly the safety requirements of `rb_link_node`.
-         unsafe { bindings::rb_link_node(node_links, self.parent, self.child_field_of_parent) };
- 
-@@ -1259,7 +1259,7 @@ pub fn remove(self) -> V {
-     fn replace(self, node: RBTreeNode<K, V>) -> RBTreeNode<K, V> {
-         let node = KBox::into_raw(node.node);
- 
--        // SAFETY: `node` is valid at least until we call `Box::from_raw`, which only happens when
-+        // SAFETY: `node` is valid at least until we call `KBox::from_raw`, which only happens when
-         // the node is removed or replaced.
-         let new_node_links = unsafe { addr_of_mut!((*node).links) };
- 
-
----
-base-commit: eb88e6bfbc0a975e08a18c39d1138d3e6cdc00a5
-change-id: 20250315-rbtree-comment-fixes-99e567449195
-
-Best regards,
 -- 
-Charalampos Mitrodimas <charmitro@posteo.net>
-
+Kees Cook
 
