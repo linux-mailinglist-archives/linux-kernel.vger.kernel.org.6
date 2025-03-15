@@ -1,180 +1,152 @@
-Return-Path: <linux-kernel+bounces-562723-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562724-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 798CFA631D9
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 19:45:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 74BF0A631DC
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 19:47:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 61B44189750A
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 18:45:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62F711897522
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 18:47:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49D1C195808;
-	Sat, 15 Mar 2025 18:45:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34034189916;
+	Sat, 15 Mar 2025 18:47:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ekYYnoCN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="PnzTrLOQ"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9672A1F5FD;
-	Sat, 15 Mar 2025 18:45:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 064822F3B
+	for <linux-kernel@vger.kernel.org>; Sat, 15 Mar 2025 18:46:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742064325; cv=none; b=X8Hkt3KY+LuWdg8JiWmkcLsgfdgCrqAhrmTDkrxcppgM396/Bl+om3LgVdb8yeIAhzdxereXxRRCiFryA99ZZI3LVYSG8Do0sQWhnwJS65lgPWUWG8JGGix/xrW11HHReZRAts8QK53ibUDiIutWTGHmYJ9c/lxtxTj5mRSn81k=
+	t=1742064420; cv=none; b=ICO6I1S+zCJEhPuZnpC0yZ4+dENUWeQa3R7pJLoVTutfD0ysJEMMkGTFwWxBSX91k3W0OsMQ4P1B5yPStUcyuQaeRytGy6jbSjsYPnMEPLp5ELRDPdsiZ3P+Pg8Hz61W3LMs/wZ/nznj25obaN+3s8FN2sKA5DmVYOm48GrI/p4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742064325; c=relaxed/simple;
-	bh=4MhnkjWg/sUNC8gItCM/jiir8SJBGG2nGEGqhQyt2oM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=lK9XxtSDeh/AUSoUhqtiUU50FCN/OzJ5yZv8+masGY8rmyf2BNO+xAmTfBk1AbjfDRMa6Pys//xFWuVgKnqcabnS4hLxYZM6JwDSPgSjLJU3S1Mxwfrwqi39mkUBx59XqAlt7iE/sAh2/vVziZHE1kmjZMggNrd+2n2+mqc/Z/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ekYYnoCN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF6E9C4CEE5;
-	Sat, 15 Mar 2025 18:45:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742064325;
-	bh=4MhnkjWg/sUNC8gItCM/jiir8SJBGG2nGEGqhQyt2oM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=ekYYnoCNuNGq8GKgAHkJLE8+/WhianniML9ojpkV7NZIPXHS3fhqp4CCkOSBn3gQA
-	 ZuHm8JMr9eVigUhkdFponK9pava0p8RDgb4Z+lkwOStZiGlX39vdHOpg93tQaNP2gh
-	 iW4fFeOxiJy24BUtSlZ5xalyDL6VUSPTlF7LrqzipEmq7Tp1RWxSIV9JjJ7ZVYutXs
-	 8mqnsU49tYj9HwhPetAjLwFEMCgOTca6Y9mA1UeSIpyoMWn3BgrWWKdq7hv/IQwqpH
-	 gmEH59mi5/Zro2o7LAv991Gw7iEwkFRBxek7djhIgywcvQUxyJuEBxLukwkBWoLru9
-	 Dm57qYb49gWOw==
-Date: Sat, 15 Mar 2025 13:45:23 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Zhangfei Gao <zhangfei.gao@linaro.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-	Baolu Lu <baolu.lu@linux.intel.com>,
-	Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	iommu@lists.linux.dev, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] PCI: Declare quirk_huawei_pcie_sva() as
- pci_fixup_header
-Message-ID: <20250315184523.GA848225@bhelgaas>
+	s=arc-20240116; t=1742064420; c=relaxed/simple;
+	bh=FG+MSnJUMNKihNcXbFoYUsyKgXGlOzLpZG1qqTaQLe8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sjXg7e/ITRlLE5BO7u8PuY1PIir33s2RRPT3mBiO1UHrTp0g7XqFHTamsdmUBSjbSrv2Vy+YJOqvE0Nv1Je1FUsR/tvOAKH61yFZXzS2Btbl4u7NkYq8OywkoWZqEHNMtikc2qfGnZerJSF/ZOP4xzY0aSekLve545RdOyTQTNg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=PnzTrLOQ; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52FIX1l5028099
+	for <linux-kernel@vger.kernel.org>; Sat, 15 Mar 2025 18:46:57 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=cW7zBq2vG9Kq4RtRp00LNhyk
+	wIwKr7TZJvVXzuqO9uY=; b=PnzTrLOQ6ybulUf+7XRklfe9qzLZDrZzUe+JZ+jF
+	fTubIoy87x8eImo3B6LFzcrkAalcv2y4ftTGTTa6XLQqxnAXB5EjoB6KgAjJ0so6
+	88hWJHTphJY1WrhxbJmewuYxCGotnbzwMw8UGMptz/GGnUP1OPjDPyawmOLcE3du
+	yT5fXoaR8lbSoX91CjJ/OOIPGNCZh3fklGm5Y8XJzfRNDTXEwRf+OnSJMBdOF3fx
+	wzjfz+FGp+xre0+stAyvRFGWA3neqgOh4L/F8z7ggVr7BqfN0zpX+36z6gop1k8I
+	akOS2aNq85koyBYebCtelqAj6qEIua57YxOpjhhlHN+aVg==
+Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com [209.85.219.69])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45d1r113kj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Sat, 15 Mar 2025 18:46:57 +0000 (GMT)
+Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-6e8f184b916so95095116d6.3
+        for <linux-kernel@vger.kernel.org>; Sat, 15 Mar 2025 11:46:57 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742064417; x=1742669217;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cW7zBq2vG9Kq4RtRp00LNhykwIwKr7TZJvVXzuqO9uY=;
+        b=H1YkV59v8+LjHDPHZ123xzwsWu3lKek5Mvq39mqXMV5fYxuhPnVzDtNn77dQDXqE/C
+         4VxKoi8G+QQK5mZinxb6xCSI3vI/xRR0uavgNwcnnvWqQFAmZRYjgZPCifDh5XKlAu9p
+         6F2xBFb40JnL3bARtdg6u+JFf+XqP0xsKlRPgrdubNPoP6nKS0WykGfSqX+UF+lyVNeD
+         PlQ8qJJOv0t1euEckx5PrgN+b4IKz534t6zRSrzDSyFwZIPqPbnTWHu/WUE28i9ELVk9
+         PcSBlEWEWP0CQrVbZxEAaYk1mMcc0eoHgkMjTMUOuJmcAXe9f3qiLPr48+lfmm/f9VOT
+         4TJA==
+X-Forwarded-Encrypted: i=1; AJvYcCVdTCMYaW9Yx7aRkA/TerKsxcdIGtHrgBXBqp11g98uN2gby1gHvftmFd2F1q4iMQl/mNtdMXh15bFjJ9o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzfF6LQEmhUJiExfet8YccooBUWKNzWwcMfJNCQdhL5dcxz2w4w
+	IkauMFmZee5RuP3u9JKLEoWoChS2p1EXe5BpPS0w0XiO/2moRkTQKZcZlAxkdmMAxGLbPoY6cF2
+	kqBZdAFoUqMBBRiDQL0+JXM4409XJcG9Wd2xwqasHKWJ1W7D/WJUrmLBiV8Cw2qA=
+X-Gm-Gg: ASbGnctaD/BTGd37RBgIdVU/f2iFWvmN+0hz+3RFCwK1qGijIpooXLgReUBPfI0XxnD
+	hzntdJyIG7AypgMn3jWXXVvP+6PqXpEqxByGGYw1n4TfCApl1UIn1QjkN0IceqoYUdNv4OJx2yh
+	S/V4xnzSdt697LBcuC7Aaszhg/r0tRPLgMyrn3tzdC4bZoeUnPmvFisC73THIFb+EbdHRTcMJ9E
+	qV6sOKMAY4zlo6JDnHaJaazzTVT0LxP3QPb1WOxmli4GGy75kp0ObFzvCozx5VUweuIJd7f6SFO
+	hHvBJDaVyWWPpUa+XEJgPzSiwrjUGHSK7ZgwJjqP2OTz1uAIpp0IOuU6Ja0jTpdyHP8GQrTw+s9
+	B28s=
+X-Received: by 2002:a05:6214:e46:b0:6e6:6a82:4989 with SMTP id 6a1803df08f44-6eaeaaf7679mr80369896d6.44.1742064417035;
+        Sat, 15 Mar 2025 11:46:57 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH2k3woza25edkuOd6aOfh3Rheo47eOG6FJ5IAksq5indYFamjN7H0zk6nHe/RdyRLppcJ9Og==
+X-Received: by 2002:a05:6214:e46:b0:6e6:6a82:4989 with SMTP id 6a1803df08f44-6eaeaaf7679mr80369596d6.44.1742064416623;
+        Sat, 15 Mar 2025 11:46:56 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30c3f1c217dsm10225061fa.65.2025.03.15.11.46.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 15 Mar 2025 11:46:54 -0700 (PDT)
+Date: Sat, 15 Mar 2025 20:46:51 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Tejas Vipin <tejasvipin76@gmail.com>
+Cc: neil.armstrong@linaro.org, maarten.lankhorst@linux.intel.com,
+        mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com,
+        simona@ffwll.ch, lujianhua000@gmail.com, quic_jesszhan@quicinc.com,
+        dianders@chromium.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, asrivats@redhat.com
+Subject: Re: [PATCH v4] drm/panel: novatek-nt36523: transition to mipi_dsi
+ wrapped functions
+Message-ID: <yxy6dfmvckthcbrnojnsvxy5g7jp274axk4eh76rdezazub5af@s7nb72ufr7io>
+References: <20250315182522.628187-1-tejasvipin76@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250315101319.5269-1-zhangfei.gao@linaro.org>
+In-Reply-To: <20250315182522.628187-1-tejasvipin76@gmail.com>
+X-Authority-Analysis: v=2.4 cv=LuaSymdc c=1 sm=1 tr=0 ts=67d5cb21 cx=c_pps a=wEM5vcRIz55oU/E2lInRtA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=Vs1iUdzkB0EA:10 a=VwQbUJbxAAAA:8 a=pGLkceISAAAA:8 a=cm27Pg_UAAAA:8 a=EUspDBNiAAAA:8 a=Ajo0Ny0948vakP_J2TsA:9
+ a=CjuIK1q_8ugA:10 a=OIgjcC2v60KrkQgK7BGD:22
+X-Proofpoint-GUID: qpDQ8I7xBzv5VLcWDv8M1kd7BHkPMP79
+X-Proofpoint-ORIG-GUID: qpDQ8I7xBzv5VLcWDv8M1kd7BHkPMP79
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-15_07,2025-03-14_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 bulkscore=0
+ mlxscore=0 suspectscore=0 priorityscore=1501 phishscore=0 adultscore=0
+ clxscore=1015 lowpriorityscore=0 spamscore=0 mlxlogscore=573
+ malwarescore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503150135
 
-On Sat, Mar 15, 2025 at 10:13:19AM +0000, Zhangfei Gao wrote:
-> The commit bcb81ac6ae3c ("iommu: Get DT/ACPI parsing into the proper
-> probe path") changes the arm_smmu_probe_device() sequence.
-
-> The arm_smmu_probe_device() is now called earlier via pci_device_add(),
-> which calls pci_fixup_device() at the "pci_fixup_header" phase, while
-> originally it was called from the pci_bus_add_device(), which called
-> pci_fixup_device() at the "pci_fixup_final" phase.
+On Sat, Mar 15, 2025 at 11:55:22PM +0530, Tejas Vipin wrote:
+> Changes the novatek-nt36523 panel to use multi style functions for
+> improved error handling.
 > 
-> The callstack before:
-> [ 1121.314405]  arm_smmu_probe_device+0x48/0x450
-> [ 1121.314410]  __iommu_probe_device+0xc4/0x3c8
-> [ 1121.314412]  iommu_probe_device+0x40/0x90
-> [ 1121.314414]  acpi_dma_configure_id+0xb4/0x100
-> [ 1121.314417]  pci_dma_configure+0xf8/0x108
-> [ 1121.314421]  really_probe+0x78/0x278
-> [ 1121.314425]  __driver_probe_device+0x80/0x140
-> [ 1121.314427]  driver_probe_device+0x48/0x130
-> [ 1121.314430]  __device_attach_driver+0xc0/0x108
-> [ 1121.314432]  bus_for_each_drv+0x8c/0xf8
-> [ 1121.314435]  __device_attach+0x104/0x1a0
-> [ 1121.314437]  device_attach+0x1c/0x30
-> [ 1121.314440]  pci_bus_add_device+0xb8/0x1f0
-> [ 1121.314442]  pci_iov_add_virtfn+0x2ac/0x300
-> 
-> And after:
-> [  215.072859]  arm_smmu_probe_device+0x48/0x450
-> [  215.072871]  __iommu_probe_device+0xc0/0x468
-> [  215.072875]  iommu_probe_device+0x40/0x90
-> [  215.072877]  iommu_bus_notifier+0x38/0x68
-> [  215.072879]  notifier_call_chain+0x80/0x148
-> [  215.072886]  blocking_notifier_call_chain+0x50/0x80
-> [  215.072889]  bus_notify+0x44/0x68
-> [  215.072896]  device_add+0x580/0x768
-> [  215.072898]  pci_device_add+0x1e8/0x568
-> [  215.072906]  pci_iov_add_virtfn+0x198/0x300
-
-The stacktraces definitely help connect the dots but don't integrate
-the fixup phases and the timestamps are unnecessary distraction.
-
-I would omit all the above except the first paragraph and include
-something like this instead, which shows how arm_smmu_probe_device()
-was previously after final fixups and is now between header and final
-fixups:
-
-  pci_iov_add_virtfn
-    pci_device_add
-      pci_fixup_device(pci_fixup_header)      <--
-      device_add
-        bus_notify
-          iommu_bus_notifier
-  +         iommu_probe_device
-  +           arm_smmu_probe_device
-    pci_bus_add_device
-      pci_fixup_device(pci_fixup_final)       <--
-      device_attach
-        driver_probe_device
-          really_probe
-            pci_dma_configure
-              acpi_dma_configure_id
-  -             iommu_probe_device
-  -               arm_smmu_probe_device
-
-This is the pci_iov_add_virtfn().  The non-SR-IOV case is similar in
-that pci_device_add() is called from pci_scan_single_device() in the
-generic enumeration path, and pci_bus_add_device() is called later,
-after all a host bridge has been enumerated.
-
-> Fixes: bcb81ac6ae3c ("iommu: Get DT/ACPI parsing into the proper probe path")
-> Signed-off-by: Zhangfei Gao <zhangfei.gao@linaro.org>
-> [kwilczynski: commit log]
-> Signed-off-by: Krzysztof Wilczyński <kwilczynski@kernel.org>
-
-You should never include somebody else's Signed-off-by below yours.
-You should only add *your own* Signed-off-by:
-
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?id=v6.13#n396
-
-Acked-by: Bjorn Helgaas <bhelgaas@google.com>
-
+> Reviewed-by: Douglas Anderson <dianders@chromium.org>
+> Signed-off-by: Tejas Vipin <tejasvipin76@gmail.com>
 > ---
+> Changes in v4:
+>     - Cleanup nt36523_prepare
 > 
-> v2: Modify commit log
+> Link to v3: https://lore.kernel.org/all/20250309040355.381386-1-tejasvipin76@gmail.com/
 > 
->  drivers/pci/quirks.c | 12 ++++++------
->  1 file changed, 6 insertions(+), 6 deletions(-)
+> Changes in v3:
+>     - Remove mipi_dsi_dual_msleep
+>     - Change mipi_dsi_dual_dcs_write_seq_multi to use the same dsi_ctx
+>       by swapping the dsi accordingly.
 > 
-> diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
-> index f840d611c450..a9759889ff5e 100644
-> --- a/drivers/pci/quirks.c
-> +++ b/drivers/pci/quirks.c
-> @@ -1991,12 +1991,12 @@ static void quirk_huawei_pcie_sva(struct pci_dev *pdev)
->  	    device_create_managed_software_node(&pdev->dev, properties, NULL))
->  		pci_warn(pdev, "could not add stall property");
->  }
-> -DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_HUAWEI, 0xa250, quirk_huawei_pcie_sva);
-> -DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_HUAWEI, 0xa251, quirk_huawei_pcie_sva);
-> -DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_HUAWEI, 0xa255, quirk_huawei_pcie_sva);
-> -DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_HUAWEI, 0xa256, quirk_huawei_pcie_sva);
-> -DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_HUAWEI, 0xa258, quirk_huawei_pcie_sva);
-> -DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_HUAWEI, 0xa259, quirk_huawei_pcie_sva);
-> +DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_HUAWEI, 0xa250, quirk_huawei_pcie_sva);
-> +DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_HUAWEI, 0xa251, quirk_huawei_pcie_sva);
-> +DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_HUAWEI, 0xa255, quirk_huawei_pcie_sva);
-> +DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_HUAWEI, 0xa256, quirk_huawei_pcie_sva);
-> +DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_HUAWEI, 0xa258, quirk_huawei_pcie_sva);
-> +DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_HUAWEI, 0xa259, quirk_huawei_pcie_sva);
->  
->  /*
->   * It's possible for the MSI to get corrupted if SHPC and ACPI are used
-> -- 
-> 2.25.1
+> Link to v2: https://lore.kernel.org/all/20250307091519.245889-1-tejasvipin76@gmail.com/
 > 
+> Changes in v2:
+>     - Uses mipi_dsi_dual_msleep
+>     - Changed mipi_dsi_dual_dcs_write_seq_multi to not equate accum_err
+>       of either dsi_ctx.
+> 
+> Link to v1: https://lore.kernel.org/all/20250306134350.139792-1-tejasvipin76@gmail.com/
+> ---
+>  drivers/gpu/drm/panel/panel-novatek-nt36523.c | 1683 ++++++++---------
+>  1 file changed, 823 insertions(+), 860 deletions(-)
+> 
+
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+
+-- 
+With best wishes
+Dmitry
 
