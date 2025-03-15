@@ -1,78 +1,154 @@
-Return-Path: <linux-kernel+bounces-562406-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562407-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9F50A62620
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 05:49:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CCF6A6262C
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 05:54:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D58CF1899915
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 04:49:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F30F3BE673
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 04:53:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 938AD18DB34;
-	Sat, 15 Mar 2025 04:49:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B759618FDAA;
+	Sat, 15 Mar 2025 04:54:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C4J1X7h/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="mqtd67zN"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1970376;
-	Sat, 15 Mar 2025 04:49:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D0F8178CF8;
+	Sat, 15 Mar 2025 04:54:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742014165; cv=none; b=ph3wZGEyNo4xOmUcFreyJwNoaSULPRUTu3sZ2GFEGvZoBIBdhqsL61yeAVJQCag6l/hkWM8M7y3RaKxGv0I48aHS6TMnkXqht01P2RQ2CumxGbLdeZmBKILYhpKgtGzSe7quUzLkGQjJIJWzcyDlsHALSx2av1NYFOTxY+EshJ4=
+	t=1742014444; cv=none; b=DWw/seYC4E7sWiMwA/kdTM0nWfPp842i4e281ZUEsoD9BUxpnbD5kIn1m1z1onk31tPmWWAqNhYmqaYDm7vVCIaT874+10X1eeKXujP2LyIqrRL7g1cCV3Uy2qYXJmDuPGc2g5W4Dy0ohteRMuhu/U1NAZGQHytltjdC5RoCncs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742014165; c=relaxed/simple;
-	bh=t2OIMGy8jJqpkQEODWNrk37SZ7s2+o4ugUUBdcZ5/94=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=FUcVRYNu1lmJONih8U3o2Sc7jsnANVT0jMa41CRzKCSxXdKeVq6LoPStYmZwhTPiTTGimjXcPkGH+fSFbFOH9TDyiml52RSV5ZfGhhGGWiawIwqEcMpwmQ0hM1t4dLhyWiPOmIQWhrGLFRCGExep86LG9ryz7gQd0srJlqL8n70=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C4J1X7h/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62104C4CEE5;
-	Sat, 15 Mar 2025 04:49:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742014164;
-	bh=t2OIMGy8jJqpkQEODWNrk37SZ7s2+o4ugUUBdcZ5/94=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=C4J1X7h/W9vq4KOP/+DrouM+OK8p5xXgCl1EkmyoF827JitZQvgVtb1LYPOODSs2w
-	 2qfEtjqcKi0MTZvBrwpjzWVfEwpQ7qdjKwd9G3aniWlLyaEfbJRHBRT922JyX1y9Vx
-	 b4kCEoGfFiNjsv4CRhNlxDYZUKKtnDmz1xUL3HW2YZcjAKVedNXYVelZJpxkV+62Qy
-	 KyXtQ/EYVdp9pkGYE7ljKX+yrW07yMOkDHNqP7QOc5dOVQbR2pn6SqQI4UMELV7u4l
-	 PwQ1wblFWXrQy1p2R4LeTj9uNoZR+QCgmdz8Vk3wfem+jSZP3QHZvCix0mlPRecpE5
-	 oU/galjZUKR3g==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70F32380CFE8;
-	Sat, 15 Mar 2025 04:50:00 +0000 (UTC)
-Subject: Re: [GIT PULL] ksmbd server fixes
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <CAH2r5msyWMiGJi2VK50A=h3dD9F06eS9M5c51oY0DiSTe0Av_w@mail.gmail.com>
-References: <CAH2r5msyWMiGJi2VK50A=h3dD9F06eS9M5c51oY0DiSTe0Av_w@mail.gmail.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <CAH2r5msyWMiGJi2VK50A=h3dD9F06eS9M5c51oY0DiSTe0Av_w@mail.gmail.com>
-X-PR-Tracked-Remote: git://git.samba.org/ksmbd.git tags/v6.14-rc6-smb3-server-fixes
-X-PR-Tracked-Commit-Id: 3aa660c059240e0c795217182cf7df32909dd917
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 3571e8b091f4270d869dda7a6cc43616c6ad6897
-Message-Id: <174201419918.2481821.10021090562761702486.pr-tracker-bot@kernel.org>
-Date: Sat, 15 Mar 2025 04:49:59 +0000
-To: Steve French <smfrench@gmail.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Namjae Jeon <linkinjeon@kernel.org>, CIFS <linux-cifs@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+	s=arc-20240116; t=1742014444; c=relaxed/simple;
+	bh=/FDqs1pCJojhK5Llb/7LM7tQKfHwOZ5rzRm+N/z2LRc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=d0CPsWioDTpd7e54xbrfmrjElQ8igIrdsXMEVTJ1jXMEiHNUPKw1ePOMjFkpiI+UxfYKnwQzjEpJRnXRvby9t51FHBkQwiFrEWtT7tt4HZ9n6/T+ctf7sUoWEzAnhgHOChPNoxnV2t1Go9O5DfzXM0OFqDObBttq+SFhUUcvjtI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=mqtd67zN; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=Content-Transfer-Encoding:Content-Type
+	:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=mQhJm5J645ymleMXzmsLIqdcp5cZsngAWaCVY5IJcSs=; b=mqtd67zNyJUoUFSs7XIGr5xFoJ
+	mscSRcTffByeTyIAvzLMxBfoOfWy7K5r3StiTmBZ1Arbty+J7EGX+I0onfk7rxJfjd2Ut6WtZsjVc
+	jE8X4+ML4TKxY5UXsXA4J4chq+AgGvkNgKm7czCQ9ZSVIKNXhiklRwUjiTCbP2CGQp++vmBxiXZ+U
+	yqGAF98jhSOvpcYlzc9/i//rvH51voF9nO+HBq6nY/MOdiYrDmaAZXufutswWt92Orf9JnL78CZEk
+	j+4WDLiz96mKNT/Ow2Frfj5NZhJ1AQAxOA7P2qxk2fy7fpDpkiUwbxRxiGTtRSDWi26lcOaFwIc07
+	v0WfOg6A==;
+Received: from [50.53.2.24] (helo=[192.168.254.17])
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1ttJWw-0000000338B-2bOV;
+	Sat, 15 Mar 2025 04:53:51 +0000
+Message-ID: <03d69156-1cee-43bc-901b-5f85f3aa7575@infradead.org>
+Date: Fri, 14 Mar 2025 21:53:41 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/2] compiler_types: Introduce __flex_counter() and
+ family
+To: Kees Cook <kees@kernel.org>, Vlastimil Babka <vbabka@suse.cz>
+Cc: Miguel Ojeda <ojeda@kernel.org>,
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+ Nathan Chancellor <nathan@kernel.org>, Peter Zijlstra
+ <peterz@infradead.org>, Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+ Marco Elver <elver@google.com>,
+ Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+ linux-hardening@vger.kernel.org, Christoph Lameter <cl@linux.com>,
+ Pekka Enberg <penberg@kernel.org>, David Rientjes <rientjes@google.com>,
+ Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Roman Gushchin <roman.gushchin@linux.dev>,
+ Hyeonggon Yoo <42.hyeyoo@gmail.com>, Bill Wendling <morbo@google.com>,
+ Justin Stitt <justinstitt@google.com>, Jann Horn <jannh@google.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Sasha Levin <sashal@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+ Jakub Kicinski <kuba@kernel.org>, Yafang Shao <laoar.shao@gmail.com>,
+ Tony Ambardar <tony.ambardar@gmail.com>,
+ Alexander Lobakin <aleksander.lobakin@intel.com>,
+ Jan Hendrik Farr <kernel@jfarr.cc>, Alexander Potapenko <glider@google.com>,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-doc@vger.kernel.org,
+ llvm@lists.linux.dev
+References: <20250315025852.it.568-kees@kernel.org>
+ <20250315031550.473587-1-kees@kernel.org>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20250315031550.473587-1-kees@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-The pull request you sent on Fri, 14 Mar 2025 20:55:37 -0500:
+Hi Kees,
 
-> git://git.samba.org/ksmbd.git tags/v6.14-rc6-smb3-server-fixes
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/3571e8b091f4270d869dda7a6cc43616c6ad6897
+On 3/14/25 8:15 PM, Kees Cook wrote:
 
-Thank you!
+
+> diff --git a/include/linux/overflow.h b/include/linux/overflow.h
+> index 0c7e3dcfe867..e2b81cb5576e 100644
+> --- a/include/linux/overflow.h
+> +++ b/include/linux/overflow.h
+> @@ -440,4 +440,40 @@ static inline size_t __must_check size_sub(size_t minuend, size_t subtrahend)
+>  #define DEFINE_FLEX(TYPE, NAME, MEMBER, COUNTER, COUNT)	\
+>  	_DEFINE_FLEX(TYPE, NAME, MEMBER, COUNT, = { .obj.COUNTER = COUNT, })
+>  
+> +/**
+> + * typeof_flex_counter() - Return the type of the counter variable of a given
+> + *                         flexible array member annotated by __counted_by().
+> + * @FAM: Pointer to the flexible array member within a given struct.
+> + *
+> + * Returns "size_t" if no annotation exists.
+
+Please use
+ * Returns: <text>
+instead so that kernel-doc can make a special doc section for it.
+
+Same for patch 2/2.
+
+> + */
+> +#define typeof_flex_counter(FAM)				\
+> +	typeof(_Generic(__flex_counter(FAM),			\
+> +			void *: (size_t)0,			\
+> +			default: *__flex_counter(FAM)))
+> +
+> +/** can_set_flex_counter() - Check if the counter associated with the given
+
+Needs a newline between /** and the function name, as in set_flex_counter() below.
+
+> + *                           flexible array member can represent a value.
+> + * @FAM: Pointer to the flexible array member within a given struct.
+> + * @COUNT: Value to check against the __counted_by annotated @FAM's counter.
+> + */
+> +#define can_set_flex_counter(FAM, COUNT)			\
+> +	(!overflows_type(COUNT, typeof_flex_counter(FAM)))
+> +
+> +/**
+> + * set_flex_counter() - Set the counter associated with the given flexible
+> + *                      array member that has been annoated by __counted_by().
+> + * @FAM: Pointer to the flexible array member within a given struct.
+> + * @COUNT: Value to store to the __counted_by annotated @FAM's counter.
+> + *
+> + * This is a no-op if no annotation exists. Count needs to be checked with
+> + * can_set_flex_counter(FAM, COUNT) before using this function.
+> + */
+> +#define set_flex_counter(FAM, COUNT)				\
+> +({								\
+> +	*_Generic(__flex_counter(FAM),				\
+> +		  void *:  &(size_t){ 0 },			\
+> +		  default: __flex_counter(FAM)) = (COUNT);	\
+> +})
+> +
+>  #endif /* __LINUX_OVERFLOW_H */
 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+~Randy
+
 
