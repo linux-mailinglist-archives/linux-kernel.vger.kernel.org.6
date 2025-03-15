@@ -1,153 +1,177 @@
-Return-Path: <linux-kernel+bounces-562702-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562703-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF3E5A63155
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 19:13:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4061BA6315A
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 19:15:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 601AE18926C2
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 18:13:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 409083B202B
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 18:15:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 387EC20550A;
-	Sat, 15 Mar 2025 18:13:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE7C3205511;
+	Sat, 15 Mar 2025 18:15:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kJeNttz5"
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OQWGdM26"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E08701FECAD;
-	Sat, 15 Mar 2025 18:13:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13B10204F8C;
+	Sat, 15 Mar 2025 18:15:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742062408; cv=none; b=KCBTNkis2iHORf2z9tp0yO67onX5lMDyvHNO8c1DM2gicjF2M+ITfIPskX3Vcnt0gdCDJSd3A2+4HAOfVn3b+Hbttk5Jb0FWQ70biPw1Td1Zli9w46/a96sZ2ecNpoEnVIi9brFS8thycSQhd8cchdfypXiThcMGcQtPD5RZ5XU=
+	t=1742062509; cv=none; b=msRsg0/282Te9SQ/ErY32VCqOFDX0y8cLS5H/LoZ3AJWt/uDsHDVRTkeugA4gnvrqezTcGvvy/S7y8Nm5o+1NXK/Iq9gwMyVcnpLgT8Y4vxMbwLqWlAs7Ctatnu3GT3jjQDnX2ZrapjEgyGQqBV0k4wHCjr8UhpS9ARbjwzpC58=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742062408; c=relaxed/simple;
-	bh=j3l0CwRAA7jzKYQesrIbEeXl2+YGefTcqALSuRxhtJE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=g0Q5tf0HlqTytRZEZZJaXhVprLxBpbLvbI2SK+zNEIUTB9KDK6UVaBb5EFdWb1KnkKa/QOYosx5F368ggdX70+UkCoJ8PBgXbKMWf2knZDRr0+xZDjvcWynh72NQ9q0dHF6Mvx05g04pYpBPsgJIdkoVCSg7lRuRAimhOc4QDp4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kJeNttz5; arc=none smtp.client-ip=209.85.208.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-307c13298eeso36054631fa.0;
-        Sat, 15 Mar 2025 11:13:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742062405; x=1742667205; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Fw7G1r38bDsOV/Hp+FePWmAtnNh1LoMrSS/+4/QiIfA=;
-        b=kJeNttz5/Az//QSyIn1onLfEzNw7Z6ajsRfBtX1KYGFySqF3p8+nYyL01pcyKWNmIU
-         KqbG5ZZYTnntc9iYOaCzGy2X+/p5MMS/r16YImeYOZh7Zm+IXNvPfO2+IrHbWLF2VyhR
-         kvJUJ76N5MzH1zdOMY2WyI6KZKdlRTdHFmzzmAaOvNKRwm1F4VOLau03AMBNnFu+PAbI
-         QUNlisPBtSRi8eweO4zW9EdoWRfaNb3JoxiL7+LamU7uOgcYlSbYXrZ/9k0sSdpDBbyr
-         q7Gj8I4JUNcrpwJElvjDRjaLuerp8gYG6+QDRWLI28OzPhT68ab9Z3Dul/IkMpMB+gO0
-         tACg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742062405; x=1742667205;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Fw7G1r38bDsOV/Hp+FePWmAtnNh1LoMrSS/+4/QiIfA=;
-        b=etQFM2W8bUEf+jZi1xtjivkV9omYjxgyatq35AGKJ9PYYsSLiOWF/joR5fzCC+M3FS
-         u1ORa1D3HCJnhQRBVeAxJAwNJ6sO0TlI7ux/X46DCwSfg+DaWVZ//0vXasOtmhh+ueI+
-         Zcqd5M57Nb15w5tkIzCNTf4HGy4vY/bFro8xE4nbwNPrV88pjKw6DAqhlBjccv8sjYEH
-         99xBHbbYcP3vvNDWA1bjcavwbqNC2rslg6BtAMPTI/N1BvUC90zv9EO1b+d3W/ZPlZKh
-         vFzjJB6BKvFarv1vJZl6gCxdHzGAmurH2KdayfmV4QnSYmtRETclvGtlbT9Vb6S/7A9m
-         P3ow==
-X-Forwarded-Encrypted: i=1; AJvYcCUEas5RSaatlburOehfNU9bqw/XoI0Z0Lj+x0+INpeIj5SqX2jIo+hss8ci++MHFdwDhoQgk5vAGqWndbyU3SU=@vger.kernel.org, AJvYcCUkPfRKF+cEXla2WaCfglCpTq+udQSWuQupV2tK4n1gTG0aiEdcfGFY+8L/SmSWqWOabMaC7qFYYq4o@vger.kernel.org, AJvYcCVz3LEkLG97tNNp44w7leVU636rIFa68p+t6xGilppq3hMW2yDKHd/iv5E2TpnVIPoBgYvYJ/RqirTE7jY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxWZU+Q4v/H5Ae+nxRUXTYlOUwYeHyWiUdYSC8XaAwO6YpEFFGi
-	QVRjEwtcDrvIPe22RfkU/q8vo9vuLV6TvEwFuvfcV6fdGZrZF6mmkqhp2FgUD4Gj41RVS+vh85H
-	B0kCZ+R3Ij5ePV4vEvKzbFyML7Ps=
-X-Gm-Gg: ASbGncvw9YYc+QO3qblTYKsHL9genC0kFmSmkhXucI1GP+p+Jn60orEhNajxI+TmcVS
-	6X/gKTWVy2TAGf5HOt5114ZIN4l0Zf3fuAXPdGn/SyWbkfmxc6uhzT/MJVeDNTVK5x2/I0Nfg6m
-	g6yrOZZlsh+9Lw4BD2oviebAsjIK4ifTuZKFcKJyB+TTa+zoIyo3+MeGD2c3Vb
-X-Google-Smtp-Source: AGHT+IE0KAjbxCNTic2NO46G6ymGqtVgtOfyw7GNav0dyFztDRa2jv5OYpU6S/JmdNaLeStQlEXiGai7YwJdGALS1bo=
-X-Received: by 2002:a2e:8310:0:b0:30b:e73e:e472 with SMTP id
- 38308e7fff4ca-30c3de17df1mr38383941fa.14.1742062404658; Sat, 15 Mar 2025
- 11:13:24 -0700 (PDT)
+	s=arc-20240116; t=1742062509; c=relaxed/simple;
+	bh=0rV5Mefa2Roe82MtrfOgwhXvRd/JrjMahcExnemSFno=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=i7hBxk0gTkdZelCd2Rwqqv7NM/GFXhzbTLqorqnbO6HWofn87uhFbbQ3XGXQB8FJrIGfSkyT26k9zVnCziTeMWJcCeXRBs3pV+uquza5rhkhavJHSoRVI/qXOtX0Yeesp6YuSCkswzoNpCXXWNcLTaWzqfP5hWIRjvVQ2M5Pzs8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OQWGdM26; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4D5EC4CEE5;
+	Sat, 15 Mar 2025 18:15:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742062508;
+	bh=0rV5Mefa2Roe82MtrfOgwhXvRd/JrjMahcExnemSFno=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=OQWGdM26thnDsFacwa0gai8PBvRQQ7YNxIPkBQaWRhOCDBUG4X8srE6/KB4FraDzu
+	 /s+FExoZ8mOScMjsXCQKspmmdbuO7A20WDFqdhwcY6zikHl2yyOTWPyJhw7KkZaG4C
+	 uyHux4qT3LTyW0k6r0T6p5RLTOIxg2cMXwmhLHTNwlF/JWWxaQ6J38Wor362y+t6wp
+	 pdSHK8uzrhyFk5l0pG/vu/OxuoN8WudFjZHcK3MAtLapehz2s5LKBD0BQLQQqeyeEK
+	 Oh/QPXPGpQzWKjsCC58K/XqdxL+43734ePro+XYKljEuxdz5StwNa+LAhJy0dAY9Tz
+	 eBmBpu9kadN5A==
+Date: Sat, 15 Mar 2025 18:15:00 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Angelo Dureghello <adureghello@baylibre.com>, Lars-Peter Clausen
+ <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, Nuno
+ =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] iio: ad7380: add support for SPI offload
+Message-ID: <20250315181500.588512ea@jic23-huawei>
+In-Reply-To: <177eb738-fe13-43ae-a02a-7c6b026536ef@baylibre.com>
+References: <20250220-wip-bl-spi-offload-ad7380-v1-1-838aa873e62a@baylibre.com>
+	<7b64c6a9-0606-45ba-be45-7ae11c4fdf39@baylibre.com>
+	<177eb738-fe13-43ae-a02a-7c6b026536ef@baylibre.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250307-no-offset-v1-0-0c728f63b69c@gmail.com>
- <20250307-no-offset-v1-2-0c728f63b69c@gmail.com> <D8G8DV3PX8VX.2WHSM0TWH8JWV@proton.me>
- <CAJ-ks9m2ZHguB9N9-WM0EsO5MjaZ9yRamo_9NytAdzaDdb9aWQ@mail.gmail.com>
- <D8GQGCVTK0IL.16YO67C0IKLHA@proton.me> <CAJ-ks9mUPkP=QDGekbi1PRfpKKigXj87-_a25JBGHVRSiEe_AA@mail.gmail.com>
- <D8H1FFDMNLR3.STRVYQI7J496@proton.me>
-In-Reply-To: <D8H1FFDMNLR3.STRVYQI7J496@proton.me>
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Sat, 15 Mar 2025 14:12:48 -0400
-X-Gm-Features: AQ5f1JpCmV5HSBwmMBPR0tcNsqUNJYUMxZ9jOJqxNmNvCYCRpdj1FogTkOAVT1s
-Message-ID: <CAJ-ks9m-ab9Y5RD01higxZxbowZi_0tsSmCCw2umJLxBLH4dEw@mail.gmail.com>
-Subject: Re: [PATCH 2/2] rust: workqueue: remove HasWork::OFFSET
-To: Benno Lossin <benno.lossin@proton.me>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
-	Trevor Gross <tmgross@umich.edu>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Sat, Mar 15, 2025 at 2:06=E2=80=AFPM Benno Lossin <benno.lossin@proton.m=
-e> wrote:
->
-> On Sat Mar 15, 2025 at 4:37 PM CET, Tamir Duberstein wrote:
-> > On Sat, Mar 15, 2025 at 5:30=E2=80=AFAM Benno Lossin <benno.lossin@prot=
-on.me> wrote:
-> >>
-> >> On Fri Mar 14, 2025 at 9:44 PM CET, Tamir Duberstein wrote:
-> >> > On Fri, Mar 14, 2025 at 3:20=E2=80=AFPM Benno Lossin <benno.lossin@p=
-roton.me> wrote:
-> >> >>
-> >> >> On Fri Mar 7, 2025 at 10:58 PM CET, Tamir Duberstein wrote:
-> >> >> >      /// Returns a pointer to the struct containing the [`Work<T,=
- ID>`] field.
-> >> >> >      ///
-> >> >> >      /// # Safety
-> >> >> >      ///
-> >> >> >      /// The pointer must point at a [`Work<T, ID>`] field in a s=
-truct of type `Self`.
-> >> >> > -    #[inline]
-> >> >> > -    unsafe fn work_container_of(ptr: *mut Work<T, ID>) -> *mut S=
-elf
-> >> >> > -    where
-> >> >> > -        Self: Sized,
-> >> >>
-> >> >> This bound is required in order to allow the usage of `dyn HasWork`=
- (ie
-> >> >> object safety), so it should stay.
-> >> >>
-> >> >> Maybe add a comment explaining why it's there.
-> >> >
-> >> > I guess a doctest would be better, but I still don't understand why
-> >> > the bound is needed. Sorry, can you cite something or explain in mor=
-e
-> >> > detail please?
-> >>
-> >> Here is a link: https://doc.rust-lang.org/reference/items/traits.html#=
-dyn-compatibility
-> >>
-> >> But I realized that the trait wasn't object safe to begin with due to
-> >> the `OFFSET` associated constant. So I'm not sure we need this. Alice,
-> >> do you need `dyn HasWork`?
-> >
-> > I wrote a simple test:
->
-> [...]
->
-> > so I don't think adding the Sized bound makes sense - we'd end up
-> > adding it on every item in the trait.
->
-> Yeah the `Sized` bound was probably to make the cast work, so let's
-> remove it.
+On Fri, 14 Mar 2025 15:03:43 -0500
+David Lechner <dlechner@baylibre.com> wrote:
 
-It's already removed, right?
+> On 2/22/25 11:31 AM, David Lechner wrote:
+> > On 2/20/25 12:03 PM, Angelo Dureghello wrote:  
+> >> From: Angelo Dureghello <adureghello@baylibre.com>
+> >>
+> >> Add support for SPI offload to the ad7380 driver. SPI offload allows
+> >> sampling data at the max sample rate (2MSPS with one SDO line).
+> >>
+> >> This is developed and tested against the ADI example FPGA design for
+> >> this family of ADCs [1].
+> >>
+> >> [1]: http://analogdevicesinc.github.io/hdl/projects/ad738x_fmc/index.html
+> >>
+> >> Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
+> >> ---  
+> >   
+> 
+> ...
+> 
+> >> +#define _AD7380_OFFLOAD_CHANNEL(index, bits, diff, sign, gain) {		\
+> >> +	.type = IIO_VOLTAGE,							\
+> >> +	.info_mask_separate = BIT(IIO_CHAN_INFO_RAW) |                          \
+> >> +		((gain) ? BIT(IIO_CHAN_INFO_SCALE) : 0) |			\
+> >> +		((diff) ? 0 : BIT(IIO_CHAN_INFO_OFFSET)),			\
+> >> +	.info_mask_shared_by_type = ((gain) ? 0 : BIT(IIO_CHAN_INFO_SCALE)) |   \
+> >> +		BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO) |				\
+> >> +		BIT(IIO_CHAN_INFO_SAMP_FREQ),					\  
+> > 
+> > Not sure if this is worth troubling with, but it might make more sense to make
+> > IIO_CHAN_INFO_SAMP_FREQ info_mask_separate instead of info_mask_shared_by_type,
+> > at least in the case of the single-ended chips.
+> > 
+> > This family of chips does simultaneous conversions so shared_by_type (or shared_by_all)
+> > would typically be the right thing to do here. However, the single-ended versions
+> > of these chips also have a multiplexer, so there are 2 banks of simultaneously
+> > sampled inputs. So the effective sample rate as far as IIO is concerned would
+> > actually be 1/2 of the sampling_frequency attribute value.
+> > 
+> > Since we have a channel mask restriction where we force all channels in a bank
+> > to be enabled at once, I think it would work to make IIO_CHAN_INFO_SAMP_FREQ
+> > info_mask_separate where the reported sampling frequency is the conversion rate
+> > divided by the number of channels in a bank.
+
+
+> >   
+> 
+> Hi Jonathan,
+> 
+> You might have missed this since v2 was sent before you had a chance to review
+> v1. I am testing the chip with the mux now, so I was curious if you had any
+> wisdom to add here. The way we implemented it feels a little odd to me with
+> sampling_frequency as info_mask_shared_by_type instead of info_mask_separate
+> or info_mask_shared_by_all like on most other chips I've worked with so far.
+
+I saw the message and decided not to comment as I'd not really had
+time to think about it.
+
+There is a messy corner here with the forced enabling that might bite us in
+future that I've not really thought about before.  It would give a non-intuitive
+result.
+
+If we had that situation for a non SPI offload case (i.e. going through the
+iio_push_to_buffers* path (not sure if we do) then the driver might enable multiple
+channels when only one is turned on by userspace and where userspace then
+mysteriously sees half the frequency of what it expects. In that case the
+only scheme that I think works is to do shared_by_all and have it update depending
+on underlying enabled channels.
+
+Not sure that applies here or not though.  It is definitely always valid to
+do a single attribute sampling_frequency, if that reflects how often we get
+a full scan.  It may not provide as much information or fine grained enough
+control in some cases though.  We have support for more complex sequencers that
+leave gaps where this is the only option. I.e. they take all N channels in
+a burst then sleep for P usecs before doing it again.  
+
+I've wondered a few times if we should describe the sampling points in
+a scan in some fashion. Would anything use that info?  It wouldn't help
+for control though as the constraints would be too hard to describe
+for anything other than read only report of what is configured.
+
+There are really fun devices with say 2 simultaneous sampling ADCs that can
+measure any of X channels (including in theory the same one). When a complex
+sequencer is present or we have software based sequencing, then that gets
+really hard to describe.
+
+Jonathan
+
+> 
+> I found a bug in this series that I need to send a fix for, so if we decide
+> there is a better way here, now would be a good time to do it.
+> 
+> >> +	.info_mask_shared_by_type_available =					\
+> >> +		BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO) |				\
+> >> +		BIT(IIO_CHAN_INFO_SAMP_FREQ),					\
+> >> +	.indexed = 1,                                                           \
+> >> +	.differential = (diff),                                                 \
+> >> +	.channel = (diff) ? (2 * (index)) : (index),                            \
+> >> +	.channel2 = (diff) ? (2 * (index) + 1) : 0,                             \
+> >> +	.scan_index = (index),                                                  \
+> >> +	.has_ext_scan_type = 1,                                                 \
+> >> +	.ext_scan_type = ad7380_scan_type_##bits##_##sign##_offload,            \
+> >> +	.num_ext_scan_type =                                                    \
+> >> +		ARRAY_SIZE(ad7380_scan_type_##bits##_##sign##_offload),		\
+> >> +	.event_spec = ad7380_events,                                            \
+> >> +	.num_event_specs = ARRAY_SIZE(ad7380_events),                           \
+> >> +}
+> >> +  
+> 
+
 
