@@ -1,115 +1,127 @@
-Return-Path: <linux-kernel+bounces-562526-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562527-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89E4EA62A8F
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 10:59:38 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B154A62A9A
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 11:00:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 433DB7AD0AF
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 09:58:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BFBC9170F77
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 10:00:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AA211F76CA;
-	Sat, 15 Mar 2025 09:59:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 074441EDA1E;
+	Sat, 15 Mar 2025 10:00:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="PwFmLOnI"
-Received: from mail-24418.protonmail.ch (mail-24418.protonmail.ch [109.224.244.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bgUeAakc"
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FA1615098F
-	for <linux-kernel@vger.kernel.org>; Sat, 15 Mar 2025 09:59:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.224.244.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C55041DFED
+	for <linux-kernel@vger.kernel.org>; Sat, 15 Mar 2025 10:00:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742032769; cv=none; b=CTIAv3UnrAB1AbxgkfIfZbmfvqrtaphivuBt3fsW5rr0GxHDQbPdDMzG4oAuzqN0CnhEf6Sl8pcBU6H84gims9bj7u75FcmBvkxsubBVo3Ul3hUPxC64xZ8lv4KL/hdPqUuq21XOdYwIiR+U3ChRzIEM2FgV4W377uleb2Lv1PE=
+	t=1742032833; cv=none; b=dY/rj7bI8YrBTIs06LbrmxmiDLqgKe6mHzeBu1ibW48cneHEN+PlE41WGaEFZi/FTGIALIO6ebHzZvOZmSlGB6pAwrLtBsX7lX8Eo2WsvBpKuECM8EcYyrOSXc33CCke//L6XANj2xXMJiMNMFjfrcphq1q+Ggvp/ot72S4ak+c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742032769; c=relaxed/simple;
-	bh=ceK+2LHucScSesExkMNpKWtYIeHc8VxmKVdHDkRAwmM=;
-	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=hwEzxQRa7dOpPeSeeF/rf8T98+bnjlPhrmpxr0IuZwi6jtyl8zHewbwJWSzHc1o6AbtJTUoZT52W83ZAeYOwio11TfWVKSR3tvtspB/Jc2B3RQDYB/oq4823aKJJqIblC53zZPTyULQfmuDhFOMNlNPSwoI3TXzCQVgfW8XzfCA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=PwFmLOnI; arc=none smtp.client-ip=109.224.244.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1742032765; x=1742291965;
-	bh=umMDDdD/DyhUTEkQ9Mzw36CyII6AjHon398barZQATU=;
-	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
-	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector:
-	 List-Unsubscribe:List-Unsubscribe-Post;
-	b=PwFmLOnIk1oLvtD/s1l/Z0z6/DrlDDLrcETg8uo5OyVQlz4ESsVTGuUG+xmqd2JyM
-	 HzHJVEGcekIEqix1HAHzqBCrKmVjfz2lsDADWR5RCepL4fldxdOsrXvNjUMDWeDrRF
-	 Bf40rIYx9LvL/U6fgp6eR/OB8FsetJOcoddEEUFeI8dgvgPShAFfgOR4x4dRRSuh1o
-	 5MfanuoUWsPzbH2MA3Tl0PoK/DJ+zEuTwK4V0eG9vo47Qa4juZvqMZPbaxIix19cIc
-	 zvES/yTOHthPmj6m5ARzQ5XC/n4I2EQjmM4OYzIZSSslOm2xm8dU3m+E+6KinK8C8P
-	 IL1dQgxW7N3cg==
-Date: Sat, 15 Mar 2025 09:59:19 +0000
-To: Antonio Hickey <contact@antoniohickey.com>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: Benno Lossin <y86-dev@protonmail.com>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 3/3] rust: clippy: disable `addr_of!` and `addr_of_mut` macros
-Message-ID: <D8GR2N2YKX3C.OCX0JXEJ5T@proton.me>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: e5ce109781cd7969ba316c8197dad415ad27a8ba
+	s=arc-20240116; t=1742032833; c=relaxed/simple;
+	bh=qlXezZfEPEzxR3zAYUit6h5DQQaBFi+GSdRF226QNLo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CXSDfHjJGSe2xZRMVQIMBtrVLd2sOu4FIkjORrqneIsu3Sn3m3n3SD3Gm3mP3obiBcRvCJrS6XleYFDkLMR2tL2Dz8nQcXGc5l1OM5QZaG8pdbaZQ6zZc4G+X72nHuqzP3dd5tguPS9KnPyfrdEtaOfBOBiN7+9rN7ajxQENG2Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bgUeAakc; arc=none smtp.client-ip=209.85.208.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-30bfb6ab47cso28359131fa.3
+        for <linux-kernel@vger.kernel.org>; Sat, 15 Mar 2025 03:00:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742032830; x=1742637630; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5SKOb4s7UJ+CRqLv0uuos0ZHyY2OXZUFISjmyYeG7aM=;
+        b=bgUeAakcEIch2avu7fV60KCpj85wyxs7cTHlbo33T4bNOJUbOYYx9lyHL6p6PyA5ko
+         HkBTVdLaFF7R/jzxNW/ZQdqizZ9UdsJ3vEzFpkXIFax2pD4H7xx9nB/1abEvuxXox3ko
+         N0GO9Ho7wAh4lYOo4rHRJ4oIv8RljBqLWu2EVIU+Wn9LmaXC/vPXANLQbhH5bM81sjmR
+         fsuMPq53nf2M1jA5gUfS2B5XMtWHKRinRxvpRv8a4vnoCOGB9QglQya0elsBSsFyK7K7
+         pvseVQsMLmohKTY7cx86uONvswpJFsv/Mft4O4nJgvWO9JCYKfdhi/DOVovZAMuisDrk
+         KYTg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742032830; x=1742637630;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5SKOb4s7UJ+CRqLv0uuos0ZHyY2OXZUFISjmyYeG7aM=;
+        b=M4nwMPppxFFn03p2Dczbxbr/riP3/ho7+Cer4cZLrfr6nf5xd+tsCutnSSVYZ9h9ah
+         leL4Q2mVa6Dg2ejD33zG5/pyJoOA/NZlleoFmckVeSXLSUmRS034W1dRitwT+Kuvxzl4
+         KDYhu2GTruhR+a7/Y2u5USaSeVqjbYPrOERiiuUku1M5fjQ0hEcNM9QQms2FHJOyc/ae
+         PtaNZS3h23QbfUFItw1MCerUu1zO+/8pyq/ef+TYUEhAQ/q2zNB942YxG+vPWdcnypvq
+         yUap/fJt9KNDqw6pk9mpmVvsSppRhOorQOw20qYPUNWBe3aPvRei783w3bNApqK3X/yw
+         uvIg==
+X-Forwarded-Encrypted: i=1; AJvYcCVx9vVQ9YHEMT5lRtAN2jEvYD8PCB1whwgnJ3pbQUvYSh7s0nqFbXaLM8YbDKzplNIlppm7pnemPSXlDCo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwgUpaL2UJwzsq9CK7oQrOBvRFHK/eoCOfit9ou//ARPYhfVlbS
+	xb3OP6k6N/uqJjqwteYzl8IastUvQiRRgkGxNY0E97lYmyvsaroQ9znLSTzuIK96a+yrLmL17gq
+	EZYVNdDBEgsxBUUogxtWk1fIwngc=
+X-Gm-Gg: ASbGncuqBmZomfrGNUFzYEHNiLOFYfq8ZxkN5toQqX+Ah2Rv8gmy9yMyUFYo7mooPr0
+	jfsAIRULEGab3Pl/hZccW1obQrBCvjG6d311Bl5A19FEZN3YtKUiFaPWWZwGjvJGpR29Qgnymkz
+	KngoJsE6xRQsYzCdfbaaAS93aH0A==
+X-Google-Smtp-Source: AGHT+IFgzYN6zVs6fza4G/1aCf4HuEJWF+HHPMqLQmJhYLVCXwOdi4oMKLeRP1NjFkFSVQK6166tlIMzJIAc8WDnvQI=
+X-Received: by 2002:a2e:a7c1:0:b0:30b:ca48:1089 with SMTP id
+ 38308e7fff4ca-30c4a7547b6mr21238091fa.2.1742032829627; Sat, 15 Mar 2025
+ 03:00:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+References: <cover.1741988314.git.jpoimboe@kernel.org> <ced9352a854e896e00f57ab2b062526d688a5b8a.1741988314.git.jpoimboe@kernel.org>
+ <CAFULd4ZK4F+BNPb=W8iYFXoCc=JzXyxWH5tqJ--HS7fD997HHQ@mail.gmail.com>
+In-Reply-To: <CAFULd4ZK4F+BNPb=W8iYFXoCc=JzXyxWH5tqJ--HS7fD997HHQ@mail.gmail.com>
+From: Uros Bizjak <ubizjak@gmail.com>
+Date: Sat, 15 Mar 2025 11:00:23 +0100
+X-Gm-Features: AQ5f1JqajY6iCWcUa-iLZWy2CDdp_iTYb8BzwCmi_c5Svp4it1PIWTOLqWEq9ps
+Message-ID: <CAFULd4bO6BKimOQgm8b1iBn4-fU59ZpH22WM_5whTuPDuv+sgg@mail.gmail.com>
+Subject: Re: [PATCH 15/20] x86/cpu/amd: Use named asm operands in asm_clear_divider()
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org, 
+	Linus Torvalds <torvalds@linux-foundation.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Borislav Petkov <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>, Andrew Cooper <andrew.cooper3@citrix.com>, 
+	Ingo Molnar <mingo@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sat Mar 15, 2025 at 12:41 AM CET, Antonio Hickey wrote:
-> With the `raw_ref_op` feature enabled we no longer want to
-> allow use of `addr_of!` and `addr_of_mut!` macros.
+On Sat, Mar 15, 2025 at 10:01=E2=80=AFAM Uros Bizjak <ubizjak@gmail.com> wr=
+ote:
 >
-> We instead want to use `&raw` and `&raw mut` to get raw
-> pointers to a place.
-
-To what line length are you wrapping this commit message? I usually do
-72 (and I think checkpatch also checks for that?).
-
-Also it would be useful if you could link to
-https://github.com/rust-lang/rust-clippy/issues/11431
-and note that the lint isn't currently reliable, but we enable it
-nevertheless to 1) document that one shouldn't use the `addr_of!` macros
-and 2) when the lint becomes useful, we already have it enabled.
-
-> Suggested-by: Benno Lossin <y86-dev@protonmail.com>
-
-Please change my email to <benno.lossin@proton.me>.
-
-> Link: https://github.com/Rust-for-Linux/linux/issues/1148
-> Signed-off-by: Antonio Hickey <contact@antoniohickey.com>
-> ---
->  .clippy.toml | 4 ++++
->  1 file changed, 4 insertions(+)
+> On Fri, Mar 14, 2025 at 10:42=E2=80=AFPM Josh Poimboeuf <jpoimboe@kernel.=
+org> wrote:
+> >
+> > Use named inline asm operands in preparation for using alternative_io()=
+.
+> >
+> > Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
+> > ---
+> >  arch/x86/include/asm/processor.h | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/pr=
+ocessor.h
+> > index a1baf2fc5f9b..b458ff0e4c79 100644
+> > --- a/arch/x86/include/asm/processor.h
+> > +++ b/arch/x86/include/asm/processor.h
+> > @@ -709,8 +709,8 @@ static inline u32 per_cpu_l2c_id(unsigned int cpu)
+> >   */
+> >  static __always_inline void amd_clear_divider(void)
+> >  {
+> > -       asm volatile(ALTERNATIVE("", "div %2\n\t", X86_BUG_DIV0)
+> > -                    :: "a" (0), "d" (0), "r" (1));
+> > +       asm volatile(ALTERNATIVE("", "div %[one]\n\t", X86_BUG_DIV0)
+> > +                    :: "a" (0), "d" (0), [one] "r" (1));
 >
-> diff --git a/.clippy.toml b/.clippy.toml
-> index 815c94732ed7..95c73959f039 100644
-> --- a/.clippy.toml
-> +++ b/.clippy.toml
-> @@ -8,4 +8,8 @@ disallowed-macros =3D [
->      # The `clippy::dbg_macro` lint only works with `std::dbg!`, thus we =
-simulate
->      # it here, see: https://github.com/rust-lang/rust-clippy/issues/1130=
-3.
->      { path =3D "kernel::dbg", reason =3D "the `dbg!` macro is intended a=
-s a debugging tool" },
-> +    # With `raw_ref_op` feature enabled we no longer want to allow use o=
-f `addr_of!`
-> +    # and `addr_of_mut!` macros, but instead use `&raw` or `&raw mut`.
-> +    { path =3D "core::ptr::addr_of_mut", reason =3D "use `&raw mut` inst=
-ead `addr_of_mut!`" },
-> +    { path =3D "core::ptr::addr_of", reason =3D "use `&raw` instead `add=
-r_of!`" },
+> Please remove trailing "\n\t" here and elsewhere.
 
-This should be `&raw const`. With this and the above changes done, you
-may add:
+Also, please change $subject to mention "amd_clear_divider", not
+"asm_clear_divider".
 
-Reviewed-by: Benno Lossin <benno.lossin@proton.me>
-
----
-Cheers,
-Benno
-
+Thanks,
+Uros.
 
