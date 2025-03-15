@@ -1,202 +1,306 @@
-Return-Path: <linux-kernel+bounces-562696-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562697-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A29D1A63124
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 18:57:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E3BF0A63131
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 19:00:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D10ED175B45
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 17:57:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 26EC01749FB
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 18:00:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69178204C13;
-	Sat, 15 Mar 2025 17:56:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0571F204F63;
+	Sat, 15 Mar 2025 18:00:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="PSf0DNEm"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2073.outbound.protection.outlook.com [40.107.223.73])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TAzKfViX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1CFE14900B
-	for <linux-kernel@vger.kernel.org>; Sat, 15 Mar 2025 17:56:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.73
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742061413; cv=fail; b=OfpD/Q8GM8Ugz52qhVt6UJHyqEFv/xU7M5YSXQ/6ExUd6OcDUhLOV5kCw46xcX3RwgPr2VPe7W0ztcgiMu8YL8i5iBgIBPA1+FMo8Ygm9mHTlU6NrMU7pRxZUalKG1yz9wjMMdRWiC27j2ojHEJSSMdNWvvvmUKagkz0P07uh44=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742061413; c=relaxed/simple;
-	bh=Mrm6oFh0ClUTGi3NDN1rAyTHwQTgZLEQXi3n3FJy6tQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=tDMLfpHF+IKxy1w8JcuCWr3tni+kprWqRxl1Fnqp2HevjMfa3nLUTGj0OG+Q3XyWWKyuu8yfxmYOpbyKqujv6oQKqGp3hQGIRtkZSIc8eIcZxeA3Zph4UgtlrlS+TNiUNekpRyaZ09ghF6a5zfosL91mDYm5TKZMebWU3rTfuS8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=PSf0DNEm; arc=fail smtp.client-ip=40.107.223.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=EOv2SaG2v2CcysQ2rRG1XxUDktvzCrV87vb71PW57n/AS/v+LVG6U88m9aZbR9Fv+fYUflYNbbpnQcKz+6CtqGQlhLSzv/UCW7nHm++5uiy+yDErAs7rMHff3wENfYE1Y6BzVaf23xgPNZ+m2gTfth1CN5lN9dXmh5gS7naPmMy/8QQHUs70rtIbturcmMxVLK/BYKNjtyaj4GVmSnDK3Q9EsaVXsrACezSioFP5LbCJcmZS+zvHaN2umxQkm1YVrFLrxV69djOB1JKYYJaLq8ArVtA9OPYVDgKXHhWfqU2TzFZTaHeU2A+gtGdzbU8X8Pzt4l+REt0vITqKfevFVA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=se0qYmdsPGqef75iQofgdH5/OX5WopEIb86SMpAkOYY=;
- b=CUPCMnw4lnxFDqmoWIfY9IiAfKVvinMGgIQzzinnzJR4OMTH6o7rrCdgcJ8rOhd7oBNwjYi4h8ZELDsSA/pjWyzX5yd4faPkYfdnQbQf9Nmi1u8a/S/LdS84lK7utzFUc89o/tCWMTiwFcQEyoVZNX9FacG5ZDqPCT6HFh8AcrRvb/x17+SOoJqdiPN0UXTZfksKBnf7OhfU7wEVHpQvVpPvQS1RciI7E4qkmryaJyCSVGNro2y5Bubhhc9YglwYh1SM37COXMhyE4CcIFFoheB37njjSBQ6W6mvBboL70bpiz6eyOVZclibJ8qhtlzvjw66nlURrMeL/xgiSbpofQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=se0qYmdsPGqef75iQofgdH5/OX5WopEIb86SMpAkOYY=;
- b=PSf0DNEmu7Na8cTZfy0x+QFASUFfOlvoMuqkvbxhjjQFx3BGd24yKS8rk5AZ8jncTaW7g4G9VqW/q5oXofzFzWNIdIjFbHhJq4KNtIm240fh0zQ0RdMzCGWe4Ph7ILhvmz0RyetgH18S5+8e9fqVGHZLxddEBK9zVPqr9KIjJ9WP3mOdxOp/lh82SvfFHBKJgj8WRmv0+OkaUrxZmH0QYBnnsgA5oFe9XgWnrJgE18dbWqm+rNaGVIwG4jgECMx4l4cctxF8KnuyDDvyr8pT7DHKsyEcuZrKMSR5wA2Rf2Dki8skve3maAHDgLDdrFh5nONnhf7p2pGix5AAuz7JgQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CY5PR12MB6405.namprd12.prod.outlook.com (2603:10b6:930:3e::17)
- by CYXPR12MB9317.namprd12.prod.outlook.com (2603:10b6:930:e2::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.28; Sat, 15 Mar
- 2025 17:56:48 +0000
-Received: from CY5PR12MB6405.namprd12.prod.outlook.com
- ([fe80::2119:c96c:b455:53b5]) by CY5PR12MB6405.namprd12.prod.outlook.com
- ([fe80::2119:c96c:b455:53b5%5]) with mapi id 15.20.8511.031; Sat, 15 Mar 2025
- 17:56:48 +0000
-Date: Sat, 15 Mar 2025 18:56:33 +0100
-From: Andrea Righi <arighi@nvidia.com>
-To: Joel Fernandes <joelagnelf@nvidia.com>
-Cc: linux-kernel@vger.kernel.org, Tejun Heo <tj@kernel.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	David Vernet <void@manifault.com>,
-	Changwoo Min <changwoo@igalia.com>,
-	Luigi De Matteis <ldematteis123@gmail.com>, paulmck@kernel.org,
-	boqun.feng@gmail.com
-Subject: Re: [PATCH RFC 3/8] sched/ext: Add a DL server for sched_ext tasks
-Message-ID: <Z9W_UbeDXUok4D6R@gpd3>
-References: <20250315022158.2354454-1-joelagnelf@nvidia.com>
- <20250315022158.2354454-4-joelagnelf@nvidia.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250315022158.2354454-4-joelagnelf@nvidia.com>
-X-ClientProxiedBy: BE1P281CA0325.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:b10:87::14) To CY5PR12MB6405.namprd12.prod.outlook.com
- (2603:10b6:930:3e::17)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D48E18EFD4;
+	Sat, 15 Mar 2025 18:00:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742061632; cv=none; b=HZu0FbWi4+H9WBWJiA9Qo7/4vYVn0PPjtFr9iwGrId/z/I++4WTc+tu8u6VE5ItE4pYFxHoPIeZRo12azfDNXArw2LLWQkwOF0dJfKPw8+XJca9XwiT3BtF/u7cnP5iqHFMVj7EP/8Bv70EHPkEPqAfnYtCnSnm0XxhDvER5/8s=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742061632; c=relaxed/simple;
+	bh=H4Yv5J6hJp30ADoy8oRhvkcQAAWsSyg+yNsIit/vcJc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=OjnSO71r81xNmnoA7eC+kV+OAOwM0AKb5CfacDR5tpCoD1b0/Mku3WPKGoUghe9jCskm9SOFjLXVd+UPg/4/FZtk/3cf/YXVMte4bkEPKu5lQBOc0C/NoxFK/CTjrUTVjB5pswp4WJkgf7R9b8rrYcPEST9uK1CM9QOA5xFEYZ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TAzKfViX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2990C4CEE9;
+	Sat, 15 Mar 2025 18:00:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742061631;
+	bh=H4Yv5J6hJp30ADoy8oRhvkcQAAWsSyg+yNsIit/vcJc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=TAzKfViXjCrB3JRvRLOwHEI88fkqynuHWKVcQTkL3rAe3robTYzHQW3ptp8rEUkgS
+	 wnjm8GtRudFwvFBamOmZcLCzruuLHjRRUmQE8qzP0VL5yknPDLXq8yyt1qDDOetBRX
+	 8oORgOVKEc/8w/Qfmfcrdm7j6Lx2bWtUJc2jOrpSJvJJAiLTTre6uokov5X85rLD+P
+	 JafNRPv8oEWbJqP+g6dkkBfH19S5GFnzywIaFVtpWFjZ974xsZL+VbzK1hHLzBOoiP
+	 31yXh3RYnL5r29ivGxZaFt91OvkAGvFQ0NzlpI119C2UlE1IHbhCbfKd+umdyZ7bKZ
+	 zZqwIryaYoktQ==
+Date: Sat, 15 Mar 2025 18:00:23 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Lothar Rubusch <l.rubusch@gmail.com>
+Cc: lars@metafoo.de, Michael.Hennerich@analog.com,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ eraretuya@gmail.com
+Subject: Re: [PATCH v3 12/15] iio: accel: adxl345: add activity event
+ feature
+Message-ID: <20250315180023.3a0f0113@jic23-huawei>
+In-Reply-To: <CAFXKEHZF4bW=rvbJDkrs04XtGo5rV3Y4HR0fBgOR_03ZTpc-Cg@mail.gmail.com>
+References: <20250220104234.40958-1-l.rubusch@gmail.com>
+	<20250220104234.40958-13-l.rubusch@gmail.com>
+	<20250304134918.797e6386@jic23-huawei>
+	<CAFXKEHZF4bW=rvbJDkrs04XtGo5rV3Y4HR0fBgOR_03ZTpc-Cg@mail.gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY5PR12MB6405:EE_|CYXPR12MB9317:EE_
-X-MS-Office365-Filtering-Correlation-Id: 55de24bb-a3b8-4024-930e-08dd63eac1a8
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|7416014|376014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?gi+swcJAciO880stZxauUV9b3QxKt6NkzxgRsrquJFu12MUWgnHFzb8+bYKS?=
- =?us-ascii?Q?DDyhtl7k28SKhQow3/Zj6PX4B2rSWvCJsxpxTBVQzZf926nUHhNariLSKP9G?=
- =?us-ascii?Q?Brz2Vfv97G71TpCaKed7pv2pXoh0qGc8nJ8G+qlXXfMkzZuC0x+PRE8HIKlR?=
- =?us-ascii?Q?c5UTnSCjmwozk70Iseqzo4ME6Ha3/Puz+FqESaVhzqBGFxMerDW0csbBoIbW?=
- =?us-ascii?Q?RK65fMqzoOECLeoTrjzCdCV8Inmx1nUMRLtF2FJJS4TRvKXfac8chqM8ofco?=
- =?us-ascii?Q?NjdkXG1M3XiL1NsHiPLj1AGPFtRhqYUbuYdIUFD07JI2V/JbYRQIoc+0MRWb?=
- =?us-ascii?Q?Qx7COsV8OaH98vL6R8lC/DsB4WaY3zaIPZEDHGLNgZwKXGHiHscrTcG+YXRc?=
- =?us-ascii?Q?SVMoTFJmRCItbBN/oWJ+z3drYWySlh9WTv2ovu9zc3soBt6HSrSlBfk4PRDH?=
- =?us-ascii?Q?ZtCIJC8n90ny38Hp5eDDU7vB9qFh/bK3Ff0zKf10JOmmGKHz54egkt9RK1Yb?=
- =?us-ascii?Q?vbk+1GD/YrbK7oDPeYwjTbRKq4qMcyvRjRVI0s/OhUPGFW3ie1LA5VCZBghj?=
- =?us-ascii?Q?544pRSpuq8rFd7fOQZUlxa6lQMiKz37RlrITlAkXNQFzKhZadFcj5EAHSfUl?=
- =?us-ascii?Q?Jd6xBuqfM+WaK+oY2AFgF27IDzVqleNHuk26pveQ5RWuFdBW9gIc2+19H9L+?=
- =?us-ascii?Q?sL8lZAMf4kl1Cey+3xQuzmGqUr2ukTH2iP9EFNq8d8SWA7PL9KRgWSHHQQ8q?=
- =?us-ascii?Q?U2zTkY0mGLeKxU/bCvW7SIlAh8/PJs4dfmIXQ1tKLhgLXJ21hFDFFl/jHdlI?=
- =?us-ascii?Q?iFF0V1FZLMTp6FqSp9rzD49b86Lb6lPiUepxOGDR5n7Filum+7MEYN1/6GZi?=
- =?us-ascii?Q?v54v/D6F9lSOgg1CJEBrKoni0F1h+ttuMZ7G3EfrMFhdtfTbZ1oXO5XspdYz?=
- =?us-ascii?Q?g5TWyDsYgf+UdrECmy6W6y0UPyDx1VV82NPyAaYloC8C9qYNR3PG7x/+LFXw?=
- =?us-ascii?Q?PQRQSZJCYjGk8Zcbd6WA/rfI8YiQlMvYO0YqXRiKSxLXUV41+cBrQK6z6W2l?=
- =?us-ascii?Q?r9V4vpdqqovfWCEFNe3iRO98hMDWni8XTADSzpp0UFF4u8irsB88+jwHrr5l?=
- =?us-ascii?Q?hw8aVbZKFh6hk/Oe5xPMKXCbLOAYl5ZxjQ9aqDvKfvf/wTAB/tZhWGb24DZk?=
- =?us-ascii?Q?VGTtk7PfNROAZcp0c9tkCsDnauHR0e0wDPc8tSmIxrMK0FHK7fdD+sMn4no2?=
- =?us-ascii?Q?SUtAlcPlxZjCb8Xz+fcFbEBcTl+fI0mGuXgCqdxZm33DKjArZUT75Z5yl8Cw?=
- =?us-ascii?Q?MbqoZIL5Vw1wdSdef7ZHBSes9owzGbLEtN1F/6Z1HpoExP4JMGHYJ98KuRU6?=
- =?us-ascii?Q?GhU6mj8ZSD/Bvvu9btOEb1yYRSoK?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY5PR12MB6405.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?M8u+pV0/9teFtR1VyzkB7pdTr5DkWkVudinPoZSUrQ3lQEDsNFngXYJUaPb0?=
- =?us-ascii?Q?zfbsfl84YRNX6V/FMece18ecBvZQkweldsiwc2lRnoR/A1+pHfNwW5qqy2yy?=
- =?us-ascii?Q?p5k3D9QIehII7Srx2z28VwelOknLfBe5cdKFPUgJueQEunroUXLfC2AOThyD?=
- =?us-ascii?Q?bGjObpGDeMkG6fE/pp0bg1cwGM1k8uuA6qNJqPtrVYfMxd5J1vWmEzng3gej?=
- =?us-ascii?Q?X+4YcAqTlI/Hke28DsVFYkjJ7Y6TXoiG2tb6Wt2gaogmIDwoGaPe4PI4uLb/?=
- =?us-ascii?Q?KvjwR0oyxdGzaqH3smJwUoh52NQjHjHPrS1CV3NacWEa9wiLqU5C2KLIpxhX?=
- =?us-ascii?Q?rA6dMoqchhpgXg6D8SPfRH4IrCaoEF84xVoqgn6DaIaEFuqCBHZGqU3ubFVr?=
- =?us-ascii?Q?4nTg4CAcZNRLagZvFZj6/JCdHFWuoNzur2mNcmFXhW3abrKVj/XwuYZUDeCi?=
- =?us-ascii?Q?7CWPZODAFeHcKvv2wopCaLcNo8zOsMsgGlVq6ZYGjspEVL5dIUNP6eJSIihP?=
- =?us-ascii?Q?oiuBihIcckl2OnGoj1fpLyqLL1HJ/oAD49hgx1eOrny6xSODcPxWSTg562AM?=
- =?us-ascii?Q?XFrcMtbOunDpezt8G9N46juAw0gg1kJ3Yy/txZr0rCMs0lzv4kq1Kgwt1b+R?=
- =?us-ascii?Q?GEVYYTgaGEY4RenBqOVOn0Pm+2lTbFkecinJAwHlhT70C+eZekuy16KRMQzx?=
- =?us-ascii?Q?6V+GDj/N6kpwm1BEb49ue6J7b1OdaVYZmB4DG12FUWmDOAPTDrjd8tyn8kUi?=
- =?us-ascii?Q?ig8PaZzcm1DciZlr5iafQsfCWatqfpx4TEDtYUtdiJVi5LM/H4lEyGgWZEVq?=
- =?us-ascii?Q?SfL38zKkz/lKyBfJOguPa9+NuqpprexqofwYyGhdybgDUCES6Hhmon9HfKyF?=
- =?us-ascii?Q?9m9dm1OLxyJR0fa5XLpII0IdXhuYjR/tUMMmQiaOs3zn+jJePfDvh/w7P1G5?=
- =?us-ascii?Q?ls/Bz0gaDRNDPYNT2e/IlZpQh0U02cp4LI9ILP/hysrUFyjmycoo/dW5MFre?=
- =?us-ascii?Q?dBFBLY+cUtHOqHQiL/jcLG2NoWJreLehUnpogJQgaRPZIQNnpZMle4RV7OzT?=
- =?us-ascii?Q?mhNnc6qfq+SlMQ8ILPeL6eHHNKKuclYBhasBqcFH14/Snlgiyl3h0tYaR2aZ?=
- =?us-ascii?Q?LLAoCkojnLftQIFnDMmQnLjdw+oXJD6P6FttdzNTAR4YxkpsUHA4v9ICpmv7?=
- =?us-ascii?Q?GLbOTmb/XLkEt+2oyM8f8k4N37g6eYy9pc2bUk7RGlD9GPTjCTlfENAXM5zW?=
- =?us-ascii?Q?PMOmG+z3Rb/NAGIuaNnH7Plh5jGpr3FgvQSk0EivgSqdYBsTsTpoKAFM7l0E?=
- =?us-ascii?Q?GwT4LSTsWRu8c2i9APnvWkN1Hg0c+xWcfGTSZcnv6UHKIeQyRxlGh3MOvtwH?=
- =?us-ascii?Q?kcOJCMRfi9u1HxrWnW106CzQhIdRnewg2lQ9lF8rwcYVvo/e9fdxdgzKp0K6?=
- =?us-ascii?Q?dly8Kbnxw0qPzm0p5RpY6VsoAJO2vzJGDK8YI+GqmRFzso+7nIW2aEC2Ab8U?=
- =?us-ascii?Q?BsOjLxXsa7FTQU3Ut4wuUm+sn/6Hbzftv4TKUu5Bz9DxLPjRFz/28QT2UMe6?=
- =?us-ascii?Q?aHFYZi/0ot44PJgi7XI9jglBuqSEKikNBnSoJijm?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 55de24bb-a3b8-4024-930e-08dd63eac1a8
-X-MS-Exchange-CrossTenant-AuthSource: CY5PR12MB6405.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Mar 2025 17:56:48.3327
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: fHqkHr4M222GMVc7/1pnfTjb74H7ysX5fnJ4wyAJbHq28l8GCWpZQhhNHmI/x7g7/Qc+cmadzIYuAfA1QI4e/g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CYXPR12MB9317
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-Hi Joel,
+On Tue, 11 Mar 2025 11:55:05 +0100
+Lothar Rubusch <l.rubusch@gmail.com> wrote:
 
-On Fri, Mar 14, 2025 at 10:21:50PM -0400, Joel Fernandes wrote:
-...
-> @@ -7793,6 +7819,38 @@ BTF_ID_FLAGS(func, scx_bpf_task_cgroup, KF_RCU | KF_ACQUIRE)
->  BTF_ID_FLAGS(func, scx_bpf_now)
->  BTF_KFUNCS_END(scx_kfunc_ids_any)
->  
-> +/*
-> + * Check if ext scheduler has tasks ready to run.
-> + */
-> +static bool ext_server_has_tasks(struct sched_dl_entity *dl_se)
-> +{
-> +	return !!dl_se->rq->scx.nr_running;
-> +}
-> +
-> +/*
-> + * Select the next task to run from the ext scheduling class.
-> + */
-> +static struct task_struct *ext_server_pick_task(struct sched_dl_entity *dl_se,
-> +						void *flags)
-> +{
-> +	struct rq_flags *rf = flags;
-> +
+> Hi Jonathan,
+>=20
+> I'm currently about to update the series and like to answer some of
+> your review comments directly when submitting. Nevertheless, here I'll
+> anticipate this one. Pls, find my questions inlined down below.
+>=20
+> On Tue, Mar 4, 2025 at 2:49=E2=80=AFPM Jonathan Cameron <jic23@kernel.org=
+> wrote:
+> >
+> > On Thu, 20 Feb 2025 10:42:31 +0000
+> > Lothar Rubusch <l.rubusch@gmail.com> wrote:
+> > =20
+> > > Make the sensor detect and issue interrupts at activity. Activity
+> > > events are configured by a threshold stored in regmap cache.
+> > >
+> > > Activity, together with ODR and range setting are preparing a setup
+> > > together with inactivity coming in a follow up patch.
+> > >
+> > > Signed-off-by: Lothar Rubusch <l.rubusch@gmail.com> =20
+> > Some questions / comments inline.
+> >
+> > This review is has been at random moments whilst travelling (hence
+> > over several days!) so it may be less than thorough or consistent!
+> > I should be back to normal sometime next week.
+> > =20
+>=20
+> No problem, no hurry!
+>=20
+> > > @@ -258,6 +284,73 @@ static int adxl345_set_measure_en(struct adxl345=
+_state *st, bool en)
+> > >       return regmap_write(st->regmap, ADXL345_REG_POWER_CTL, val);
+> > >  }
+> > >
+> > > +/* act/inact */
+> > > +
+> > > +static int adxl345_write_act_axis(struct adxl345_state *st,
+> > > +                               enum adxl345_activity_type type, bool=
+ en)
+> > > +{
+> > > +     int ret;
+> > > +
+> > > +     /*
+> > > +      * The ADXL345 allows for individually enabling/disabling axis =
+for
+> > > +      * activity and inactivity detection, respectively. Here both a=
+xis are
+> > > +      * kept in sync, i.e. an axis will be generally enabled or disa=
+bled for
+> > > +      * both equally, activity and inactivity detection. =20
+> >
+> > Why?  Can definitely see people only being interested in one case
+> > and not the other.  What advantage is there in always having both
+> > or neither over separate controls? =20
+>=20
+> Ugh! This happens when I mix writing code and writing English texts,
+> w/o re-reading it.
+>=20
+> Situation: The sensor allows to individually enable / disable x,y and
+> z axis for r activity and for inactivity. I don't offer this in the
+> driver. When activity is selected, I always enable all three axis or
+> disable them. Similar, for inactivity.
 
-It'd be nice to add a comment here to clarify that we need to call
-balance_scx() before pick_task_scx(), so that we can trigger ops.dispatch()
-and consume tasks that may be pending in the BPF scheduler's DSQs,
-otherwise pick_task_scx() may not find any scx task to run, reducing the
-effectiveness of the dl_server.
+Ah. All axis together, not always both inactivty and activity.
 
-> +	balance_scx(dl_se->rq, dl_se->rq->curr, rf);
-> +	return pick_task_scx(dl_se->rq, rf);
-> +}
+> The question is then actually,
+> if this is legitimate, or should I really implement enabling/disabling
+> of each axis individually for activity and similar then for
+> inactivity? I mean, when not interested in one or the other axis,
+> someone can fiilter the result.
 
-Thanks,
--Andrea
+For some sensors there is no way to distinguish which threshold was hit
+(they just provide 1 bit for activity in the status register)
+Here it seems we get a single bit that indicates first act or inact
+triggering axis (in ACT_TAP_STATUS).  Assuming I read that
+text correcty only one bit is set. That's not exactly useful as
+it doesn't tell use other axis would have triggered it.
+
+So I think here your approach of all axis enable is perhaps the
+right approach. Also report it as an X_OR_Y_OR_Z event and ignore
+the indication of which axis perhaps?
+
+> On the other side I can imagine a
+> small impact in power consumption, when only one axis is used instead
+> of three axis (?). Since the ADXL345 is [was] one of Analog's fancy
+> acme-ultra-low-power-sensors, power is definitvely a topic here IMHO.
+> I can't really estimate the importance.
+
+I doubt it would make a measurable difference to power usage.
+
+>=20
+> I guess I'll try to implement it and see how ugly it gets. At least
+> it's a good exercise. As also, I'll try to bring regmap cache and
+> clear_bits / set_bits more in here for activity and inactivity in the
+> next version.
+>=20
+
+> > > @@ -842,6 +972,23 @@ static int adxl345_write_event_value(struct iio_=
+dev *indio_dev,
+> > >               return ret;
+> > >
+> > >       switch (type) {
+> > > +     case IIO_EV_TYPE_THRESH:
+> > > +             switch (info) {
+> > > +             case IIO_EV_INFO_VALUE:
+> > > +                     switch (dir) {
+> > > +                     case IIO_EV_DIR_RISING:
+> > > +                             ret =3D regmap_write(st->regmap,
+> > > +                                                adxl345_act_thresh_r=
+eg[ADXL345_ACTIVITY],
+> > > +                                                val);
+> > > +                             break; =20
+> > This collection of breaks and nested functions suggests maybe we can ei=
+ther
+> > return directly (I've lost track of what happens after this) or that
+> > we should factor out some of this code to allow direct returns in the
+> > function we put that code in.  Chasing the breaks is not great if it
+> > doesn't lead to anything interesting. =20
+>=20
+> I understand, but since I'm using quite a bit configuration for the
+> sensor, I'm taking advantage
+> of type, info and dir here. It won't get more complex than that. I'm
+> [actually] pretty sure, since this
+> then is almost feature complete.
+>=20
+> I don't see a different way how to do it. I mean, I could still
+> separate handling the "dir" entirely in
+> a called function. Or, say, implement IIO_EV_TYPE_THRESH handling in a
+> separate function?
+> Pls, let me know what you think.
+
+Maybe factor everything out between the set_measure_en and it's counterpart.
+Then you can just return in all paths in the factored out function.
+That's nice because anyone reading it doesn't have to chase down to
+see what else happens.
+
+It might make sense to break it up further but probably not.
+>=20
+> > > +                     default:
+> > > +                             ret =3D -EINVAL;
+> > > +                     }
+> > > +                     break;
+> > > +             default:
+> > > +                     ret =3D -EINVAL;
+> > > +             }
+> > > +             break;
+> > >       case IIO_EV_TYPE_GESTURE:
+> > >               switch (info) {
+> > >               case IIO_EV_INFO_VALUE:
+> > > @@ -1124,6 +1271,17 @@ static int adxl345_push_event(struct iio_dev *=
+indio_dev, int int_stat,
+> > >                       return ret;
+> > >       }
+> > >
+> > > +     if (FIELD_GET(ADXL345_INT_ACTIVITY, int_stat)) {
+> > > +             ret =3D iio_push_event(indio_dev,
+> > > +                                  IIO_MOD_EVENT_CODE(IIO_ACCEL, 0,
+> > > +                                                     act_tap_dir,
+> > > +                                                     IIO_EV_TYPE_THR=
+ESH,
+> > > +                                                     IIO_EV_DIR_RISI=
+NG),
+> > > +                                  ts);
+> > > +             if (ret)
+> > > +                     return ret;
+> > > +     }
+> > > +
+> > >       if (FIELD_GET(ADXL345_INT_FREE_FALL, int_stat)) {
+> > >               ret =3D iio_push_event(indio_dev,
+> > >                                    IIO_MOD_EVENT_CODE(IIO_ACCEL, 0,
+> > > @@ -1157,6 +1315,7 @@ static irqreturn_t adxl345_irq_handler(int irq,=
+ void *p)
+> > >               ret =3D regmap_read(st->regmap, ADXL345_REG_ACT_TAP_STA=
+TUS, &regval);
+> > >               if (ret)
+> > >                       return ret;
+> > > +             /* tap direction */ =20
+> >
+> > Belongs in earlier patch?
+> > =20
+> > >               if (FIELD_GET(ADXL345_Z_EN, regval) > 0)
+> > >                       act_tap_dir =3D IIO_MOD_Z;
+> > >               else if (FIELD_GET(ADXL345_Y_EN, regval) > 0)
+> > > @@ -1165,6 +1324,19 @@ static irqreturn_t adxl345_irq_handler(int irq=
+, void *p)
+> > >                       act_tap_dir =3D IIO_MOD_X;
+> > >       }
+> > >
+> > > +     if (FIELD_GET(ADXL345_REG_ACT_AXIS_MSK, st->act_axis_ctrl) > 0)=
+ {
+> > > +             ret =3D regmap_read(st->regmap, ADXL345_REG_ACT_TAP_STA=
+TUS, &regval);
+> > > +             if (ret)
+> > > +                     return ret;
+> > > +             /* activity direction */
+> > > +             if (FIELD_GET(ADXL345_Z_EN, regval >> 4) > 0) =20
+> >
+> > I'm not following the shifts here.   That looks like we don't have
+> > defines that we should but instead use the ones for the lower fields. =
+=20
+>=20
+> The 8-bit register is split as follows:
+>=20
+> | 7                |  6         |  5          |  4         |  3
+>           |  2              |  1             |  0             |
+> -------------------------------------------------------------------------=
+---------------------------------------------
+> | ACT ac/dc | ACT_X | ACT_Y | ACT_Z | INACT ac/dc | INACT_X | INACT_Y
+> | INACT_Z |
+>=20
+> I thought here, either I shift the ACT_* directions by 4 then use the
+> general mask for axis (lower 4 bits). Or I introduce an axis enum for
+> ACT_* and a separate one for INACT_*. Thus, I kept the shift and use
+> the same ADXL345_*_EN mask. How can I improve this, or can this stay?
+I'd not use enums here at all unless you actually use the enum
+type directly somewhere to enforce allowed values.
+
+Separate defines for inact and act make sense though.  Saves the reader
+of this bit of the code having to care about the layout of the fields,
+
+Jonathan
+
+
+>=20
+> > =20
+> > > +                     act_tap_dir =3D IIO_MOD_Z;
+> > > +             else if (FIELD_GET(ADXL345_Y_EN, regval >> 4) > 0)
+> > > +                     act_tap_dir =3D IIO_MOD_Y;
+> > > +             else if (FIELD_GET(ADXL345_X_EN, regval >> 4) > 0)
+> > > +                     act_tap_dir =3D IIO_MOD_X;
+> > > +     } =20
+> >
+> > =20
+>=20
+> Best,
+> L
+
 
