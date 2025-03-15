@@ -1,117 +1,134 @@
-Return-Path: <linux-kernel+bounces-562718-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63A2FA631B3
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 19:39:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 673B9A631C1
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 19:40:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C8DE3B296C
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 18:39:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90E4F3B2927
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 18:40:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFC99205AD5;
-	Sat, 15 Mar 2025 18:39:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EB8C205AD5;
+	Sat, 15 Mar 2025 18:40:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bHt+C34V"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qYKTwSu+"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F36F1F8901;
-	Sat, 15 Mar 2025 18:39:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA3A01F8901;
+	Sat, 15 Mar 2025 18:40:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742063956; cv=none; b=dfvZERqJUKt7IqFM2d24zD6SwMF2UNAdfS13sQvn7WxNi3wieF+5+MPUaymvwfcfGDP2tjccp0/cvfa0K3Igu41j/OIa7HdjClb2rijdcToMZ9PmI76kud5wklyebP6Td7HX+6l2Ix1s7xVpmVWg++lrCWi66FTcuyDSfA5Ih88=
+	t=1742064036; cv=none; b=gcMDf70iuJl9vivoNUcIGQSN5PcBrVN3dMYLsxjNEbx+lARsSSnXi+1kHPJW/UeLaIu2Z+eX5xP2D/HItJCvRNxVRm7BO644iUuliyxi+i+w9xsPf48vJubtFAakDhO7j3UR54aqEVMlrRFLrhYsaQ3RD2QdO15UwDfUCG8JDVc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742063956; c=relaxed/simple;
-	bh=2JrTR70esOK5zGWVnspLubUzr2Qx3iJY8knG+uUwLAE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RDbor59o+NHw38DwWs/OzsCarnpW/oXerpVFTCsu7U0CVjLSlzc/GRkrCVAA9Lg6yxFDyuR7HWpNt8z8RB2PZfwwE0AiAchJC1WhQ/Cj6uZJIDo0+lp3gLIcdYMz0h1TNN5+o+bZ0LxF2E3ePRNN5wLf40pLMHfI7IIpZdl7uCc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bHt+C34V; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84CCAC4CEE5;
-	Sat, 15 Mar 2025 18:39:14 +0000 (UTC)
+	s=arc-20240116; t=1742064036; c=relaxed/simple;
+	bh=00RmH4uBlvkSbz6rfOkjFvbEmq2n+WwmAs6qZnlIY2E=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=eMHzn+Y28fqzVNxYkLf4vW4CQ2G1edm6EOdev9V24ZxXO++5W+0XXKYSvHkjO8DdoWUvFhkBU6/w+WubZITFYNirsLsLPAPW+hgKndONKVgCZD2euVgGXZ/AlurKsaifn6/4a9skgnxqZKErL6HN9hKRymCbkFDsh3z7EMVFSQw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qYKTwSu+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E57AC4CEE5;
+	Sat, 15 Mar 2025 18:40:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742063954;
-	bh=2JrTR70esOK5zGWVnspLubUzr2Qx3iJY8knG+uUwLAE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bHt+C34V1chKfmMKRkxrpxwm/Cdh5e9nRpXvV9BH/I9MK3LhQfviQAiL6v2BSJwzK
-	 nupIG83rrP/oXzqf6KIgo1LfQTrBd4Od2G4yvKvvcCy0IBprSXed2H+AMBiJv5HefF
-	 k6aSLX/IP+UY/RYHDUfZzZoIt3aPtSKr3g9c9p8d1jJK7EE1swSh2WqqZ5z4CxNJIR
-	 o0uViE0R6A66KpfwcChTj93bfMLM2AsUIj1endUTXYgjdanwo8l5LCrPdiAJE/BlE3
-	 /XEwVeeRzB5v8cX2weGcM6S+RZrV2vSZyIrNJLJ7smrXjZRUPbRjze7Kn6Lhd/rN1p
-	 gqlJNg7riEStw==
-Date: Sat, 15 Mar 2025 11:39:08 -0700
-From: Kees Cook <kees@kernel.org>
-To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc: Vlastimil Babka <vbabka@suse.cz>, Christoph Lameter <cl@linux.com>,
-	Pekka Enberg <penberg@kernel.org>,
-	David Rientjes <rientjes@google.com>,
-	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Hyeonggon Yoo <42.hyeyoo@gmail.com>,
-	"Gustavo A . R . Silva" <gustavoars@kernel.org>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>, Jann Horn <jannh@google.com>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	Marco Elver <elver@google.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Sasha Levin <sashal@kernel.org>, linux-mm@kvack.org,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Jonathan Corbet <corbet@lwn.net>, Jakub Kicinski <kuba@kernel.org>,
-	Yafang Shao <laoar.shao@gmail.com>,
-	Tony Ambardar <tony.ambardar@gmail.com>,
-	Alexander Lobakin <aleksander.lobakin@intel.com>,
-	Jan Hendrik Farr <kernel@jfarr.cc>,
-	Alexander Potapenko <glider@google.com>,
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
-	linux-doc@vger.kernel.org, llvm@lists.linux.dev
-Subject: Re: [PATCH v4 2/2] slab: Introduce kmalloc_obj() and family
-Message-ID: <202503151137.CA3D422F3@keescook>
-References: <20250315025852.it.568-kees@kernel.org>
- <20250315031550.473587-2-kees@kernel.org>
- <17076519-33fd-4fac-a718-784b9597c9e6@embeddedor.com>
+	s=k20201202; t=1742064036;
+	bh=00RmH4uBlvkSbz6rfOkjFvbEmq2n+WwmAs6qZnlIY2E=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=qYKTwSu+jSfZi4orffYnERK0ro+MZCC0aG9Ccz6itSm5oeGfBdat6ovAVDBtyfOVE
+	 kNyMg8vS7cl0TAlVD4aXWOq+qlX9kZLGhfggeTQMfqpDYLps3E2+gpSVEge6rI1ki0
+	 VZ6S4+vxVXVOI6CGOr0iuqi9vDd23lcOyARxOoGVlewz7RU/kToieksHnvPD3cEP4S
+	 znpU2Oo4YkLJuAT4aev1rsB0g2TmGJvjDUZp7JKjmUN4LKcMFVmWVAaFCAEjTYTmND
+	 FXP5K6wrEiKmS3m4hzH3NrPKRvY1k5OXVlKbrKGAgXQzdmVzirvxoGJLrOWqRl8/Pu
+	 TlnQ0FKNps/XA==
+Date: Sat, 15 Mar 2025 18:40:28 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Heiko Stuebner <heiko@sntech.de>
+Cc: Simon Xue <xxm@rock-chips.com>, Lars-Peter Clausen <lars@metafoo.de>,
+ Andy Shevchenko <andy.shevchenko@gmail.com>, Shreeya Patel
+ <shreeya.patel@collabora.com>, linux-iio@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] iio: adc: rockchip: Fix clock initialization sequence
+Message-ID: <20250315184028.46053659@jic23-huawei>
+In-Reply-To: <10623626.nUPlyArG6x@phil>
+References: <20250312062016.137821-1-xxm@rock-chips.com>
+	<10623626.nUPlyArG6x@phil>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <17076519-33fd-4fac-a718-784b9597c9e6@embeddedor.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, Mar 15, 2025 at 03:48:30PM +1030, Gustavo A. R. Silva wrote:
-> 
-> > These each return the assigned value of ptr (which may be NULL on
-> > failure). For cases where the total size of the allocation is needed,
-> > the kmalloc_obj_sz(), kmalloc_objs_sz(), and kmalloc_flex_sz() family
-> > of macros can be used. For example:
-> > 
-> > 	info->size = struct_size(ptr, flex_member, count);
-> > 	ptr = kmalloc(info->size, gfp);
-> > 
-> > becomes:
-> > 
-> > 	kmalloc_flex_sz(ptr, flex_member, count, gfp, &info->size);
-> 
-> I wonder if it'd be better to keep the gfp flags as the last argument
-> for all these `*_sz()` cases:
-> 
-> 	kmalloc_flex_sz(ptr, flex_member, count, &info->size, gpf);
-> 
-> Probably, even for __alloc_objs()
+On Wed, 12 Mar 2025 08:00:54 +0100
+Heiko Stuebner <heiko@sntech.de> wrote:
 
-I was following the pattern of the other "alternative helpers", like
-kmalloc_node(), which adds the additional argument to the end. I have no
-real opinion about it, so I defer to the slab developers. :)
+> Am Mittwoch, 12. M=C3=A4rz 2025, 07:20:16 MEZ schrieb Simon Xue:
+> > clock_set_rate should be executed after devm_clk_get_enabled.
+> >=20
+> > Fixes: 97ad10bb2901 ("iio: adc: rockchip_saradc: Make use of devm_clk_g=
+et_enabled")
+> > Signed-off-by: Simon Xue <xxm@rock-chips.com> =20
+>=20
+> Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+ouch.
 
--Kees
+Applied and marked for stable.
 
--- 
-Kees Cook
+Thanks,
+
+Jonathan
+
+>=20
+> > ---
+> >  drivers/iio/adc/rockchip_saradc.c | 17 ++++++++---------
+> >  1 file changed, 8 insertions(+), 9 deletions(-)
+> >=20
+> > diff --git a/drivers/iio/adc/rockchip_saradc.c b/drivers/iio/adc/rockch=
+ip_saradc.c
+> > index a29e54754c8f..ab4de67fb135 100644
+> > --- a/drivers/iio/adc/rockchip_saradc.c
+> > +++ b/drivers/iio/adc/rockchip_saradc.c
+> > @@ -480,15 +480,6 @@ static int rockchip_saradc_probe(struct platform_d=
+evice *pdev)
+> >  	if (info->reset)
+> >  		rockchip_saradc_reset_controller(info->reset);
+> > =20
+> > -	/*
+> > -	 * Use a default value for the converter clock.
+> > -	 * This may become user-configurable in the future.
+> > -	 */
+> > -	ret =3D clk_set_rate(info->clk, info->data->clk_rate);
+> > -	if (ret < 0)
+> > -		return dev_err_probe(&pdev->dev, ret,
+> > -				     "failed to set adc clk rate\n");
+> > -
+> >  	ret =3D regulator_enable(info->vref);
+> >  	if (ret < 0)
+> >  		return dev_err_probe(&pdev->dev, ret,
+> > @@ -515,6 +506,14 @@ static int rockchip_saradc_probe(struct platform_d=
+evice *pdev)
+> >  	if (IS_ERR(info->clk))
+> >  		return dev_err_probe(&pdev->dev, PTR_ERR(info->clk),
+> >  				     "failed to get adc clock\n");
+> > +	/*
+> > +	 * Use a default value for the converter clock.
+> > +	 * This may become user-configurable in the future.
+> > +	 */
+> > +	ret =3D clk_set_rate(info->clk, info->data->clk_rate);
+> > +	if (ret < 0)
+> > +		return dev_err_probe(&pdev->dev, ret,
+> > +				     "failed to set adc clk rate\n");
+> > =20
+> >  	platform_set_drvdata(pdev, indio_dev);
+> > =20
+> >  =20
+>=20
+>=20
+>=20
+>=20
+
 
