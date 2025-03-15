@@ -1,85 +1,85 @@
-Return-Path: <linux-kernel+bounces-562669-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562670-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DE72A63032
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 17:43:32 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C133A63035
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 17:43:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A32FC3AE687
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 16:43:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A12FE165005
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 16:43:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 793112063FA;
-	Sat, 15 Mar 2025 16:41:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADCF62066E9;
+	Sat, 15 Mar 2025 16:42:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="HWI1g2br"
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="jo1Kveol"
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DC552063C7
-	for <linux-kernel@vger.kernel.org>; Sat, 15 Mar 2025 16:41:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 748792066D9
+	for <linux-kernel@vger.kernel.org>; Sat, 15 Mar 2025 16:41:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742056916; cv=none; b=XkDAS0RMCIz/0RBIYUi2Wr9lL0/5mLyJugRDBUHtqgn6Veh17AG+Uk+5vi/Y6Krp4J7Dj3tfh8WbVNpYkApSuYfmKKNxDrGNV/yN8TMk3F05eqnhfmzL8Quo8/iQN8JR+qeCEE9IBNuo91IkW09PrxlQzMyBORkyxX0gAfbfxPM=
+	t=1742056922; cv=none; b=Slcc+ZziBy1ZdCEl8iEunZtFsVaL4GLvsuNyg9Y+rB4+nxaO9CkNbKywsLWEW0y+Gqw17CpzJZs1JVxJqtcPVK2ObqeCymo64EbD7NzHrPAoReDxoL/ErrMNUdlxGF0JkiwWzbJ0EKZNSt2A4W1JZEHC1v2AjBc+01Q6WZYeEnM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742056916; c=relaxed/simple;
-	bh=5z75klJulPBK3euVFo5jCw9QXY35/qZ4NCunDCR/9Jo=;
+	s=arc-20240116; t=1742056922; c=relaxed/simple;
+	bh=vrVAGSgxNANrEDlAUI4hvwiL+VnhDEgL6Y/zsKBMygU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=fXbY2BHF1B8xYd0YflndiFzmmYQhYwO/O6X2uOAmGddYRKS+KZ/bDHrb6lsatqhWdpU/+OCUjz6gvwKaTnxRWIugutXBNRGYA8E2u4zOW8WEfnw0bgS0ZE4kpnmMtDrlkmOPM7QkkwYOhR57CxtvGKiqS/a4Pg+gpHGdhssvRZc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=HWI1g2br; arc=none smtp.client-ip=185.125.188.123
+	 MIME-Version; b=JQ2ogknSs8+1bZGKyW9qRwfm4y63PW5IkaFJBBeFJdyfgBbo1o0W8tqZ00c9Bp1peIs7hc4Qc33wyD9Goooh2zEAzdjdJFbHKW1ujnlVuICF8yTz7LM5JauQ8QvbzLKVjZa4A8Yun2l24ZBk/jnd3xFgw6ozBl6RsZWG+uJPT38=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=jo1Kveol; arc=none smtp.client-ip=185.125.188.122
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com [209.85.214.198])
+Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com [209.85.216.71])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 874983F129
-	for <linux-kernel@vger.kernel.org>; Sat, 15 Mar 2025 16:41:53 +0000 (UTC)
+	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 849993F2B1
+	for <linux-kernel@vger.kernel.org>; Sat, 15 Mar 2025 16:41:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1742056913;
-	bh=VbN0B6Oenuw6+py3+N6wdefqtqSm9CuUWAW6b8DJ97M=;
+	s=20210705; t=1742056916;
+	bh=unE8r5bz7y+LtS0Ck6ChgHm8lSL9zhWWp92j38DBeMA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
 	 MIME-Version;
-	b=HWI1g2brrc4J1vRFF0L32zcIhwxrBpGpmZKKzEihfi6aaX+d4+96oCzP6zaIeZROK
-	 yECDXyhSgHn44aGXt3ZeU/SllSE6+rtRO272nMlzPMTbEba8ZER3TVMZk2fLpnbMUM
-	 /F9Ac2jz+lt5dGnRX0W5+o0uDm+rg8xTGB2QHU/kethZtpk+9GO7tbS6FdFAoggHZT
-	 4C5MPpC4nIkdQGWaTPn5Q8LJHt8pUq4wrmQiR1qTISMGYWYUmLHeywR8zhfQqIRSE8
-	 1p381aMn27wZbfGUaUgxjMDvwqp7EzkZ8NUsnVyBe5kWLTa/m3eQ/k4up06R0Mf/gh
-	 1YmaXrrfGvedQ==
-Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-2235a1f8aadso46886615ad.2
-        for <linux-kernel@vger.kernel.org>; Sat, 15 Mar 2025 09:41:53 -0700 (PDT)
+	b=jo1KveolHiOGO76RAto2TxNCVc3vtxMGvU1ynC2Y8zrAYhjPeZmh7YdkU5rdq9WX0
+	 Z2YdfMwqy9uiDs5Z/GjiWwF++SBmuNcVswYw7/ri1jyyH4013eYsjRHlqLItg26hvA
+	 APO4sYgIf2aGM/+WgYPnV67wJA9KXhhM2J/PHqRShHV9mTZLaims3hLD/Yyezqz1Ru
+	 QzlDvmEsU2Y5Wht0rmm6zg60Uhl+/F43VvGi2aCBDVdQQz73IZq+wFLbKEMSPAF7Gp
+	 XO4Oaf9gvuiZLen2N7/Fpys5KaF+ZvkahmVRLSNaKdC+hCFzg8wGr4Vk3a9gIJk27B
+	 2+dsrjRx4ZhpA==
+Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-2ff605a7a43so1923871a91.3
+        for <linux-kernel@vger.kernel.org>; Sat, 15 Mar 2025 09:41:56 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742056912; x=1742661712;
+        d=1e100.net; s=20230601; t=1742056915; x=1742661715;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=VbN0B6Oenuw6+py3+N6wdefqtqSm9CuUWAW6b8DJ97M=;
-        b=DsAe1U9rlDpQcqmigBOk78u2qmHV6lXg5ScmEfwrV2crMRqoKmm2rIVyvNZEycK8hU
-         Ns0C5PEUv6ImD7ElLnppMK7upvraqVBUCcGCHpHcCySftfpf2KHkJQ6UZxeO58+ZJAg2
-         iPgoMa4fLzYr2OuIzXaLov0C6WdHARHOI1ZEvTvCzo1HRineozQ1ytgcD7yYrJ+0BRmW
-         a7lO4mpRc+dX5ZENDkQVz8uYNx9Fm5yW9o5dhpxq4FshOyidWHTpLKESiaqUb1VH9gy6
-         VxuT6fONvb6vggbuRTOTpigv9sYRR4iIStRye6qWCY/F4lflQVk3VPx68sY60gGyIfyG
-         tcpg==
-X-Forwarded-Encrypted: i=1; AJvYcCV+2m4sXN+04RQwqC+RAdd5cUD2xz8pV2GxhsZWeACR8Av6B7//78thByPms+/tb7avY+jvGJ3x6ig72CI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxGjry/IEIcr/0CS2DgTG72pPJ1PkmmE0GqI69Heri2Y1BD0NbS
-	09wUupz547kpwY/Dl5vbMEzPMCjCOyogp3TGx3NlykUd6sQrMXoC631ZeOv8l9XIfQaiJSFGP4z
-	Ta4HAu/mDTboo7R/CIBwrZoIwFJnDHp+hmiAlpdOxb2jf3vA3bwCliBp5Mb3/G7l9OWe1TwFvfq
-	jQ0g==
-X-Gm-Gg: ASbGncspmVdsuHPXEhaE67vOcrFVI8BoMdPYdojkDRdMvG2+2lw+XX/7qpChcaIEatg
-	iWJafJlp9lr2wHraj5Lxn4yrZCKjx1FXCrUe14+8+iHclqEeyVfkSrDT/SIho8Pd6HatVO9P2F1
-	DS0eWp1S8I3kL4REJrMAQd0I7gd4df3KkHmkuMqHTT0SqajmrJB5Lg8gyIETO6stBwJAacU6oVS
-	FNAkp4M96H2gMi6h7ibzL1te4EZKq23sXFdTFphSNU4CX+S8oJgokw54L16ThonlF015+Sn5PrN
-	6iiD7EZdgzRGwofI
-X-Received: by 2002:a05:6a00:464f:b0:736:5f75:4a44 with SMTP id d2e1a72fcca58-737223fd0ecmr6839071b3a.22.1742056912028;
-        Sat, 15 Mar 2025 09:41:52 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGZPiPSqUBXWonM+1wni5zrfFyY061fEIcUx8VfreIK0Dp+klWcEbYSYn7e4dG+W0ARwHPvpQ==
-X-Received: by 2002:a05:6a00:464f:b0:736:5f75:4a44 with SMTP id d2e1a72fcca58-737223fd0ecmr6839052b3a.22.1742056911569;
-        Sat, 15 Mar 2025 09:41:51 -0700 (PDT)
+        bh=unE8r5bz7y+LtS0Ck6ChgHm8lSL9zhWWp92j38DBeMA=;
+        b=ZEhE4iS7hG97LKMoC89BKOYv+gi1EUCE5i38o7W7AbRGfQOL/AFV7ssCwsIAowz5wd
+         XJFTfksltm6StaGuAOXAHlT4DwuD08Fa0GbowX74gxZueYxjyHgg1gEk9hHnZLVwsi4p
+         YIyyyTI5XZEb/RARfnxdclqDrp+/yYsqpJP2hC52KgiMJgx1Bnm4WNf/U2IDKWchDG6w
+         ZKvojzqf23zGo3/YTtLIVTfWvlPL1p0PrklOicpIq5ANJNimJ429hkJk2F2EEZjd+nax
+         +n/2efer6f9TsR0tPj6EQJwAH4ZI7aIBr6VbJW83+AVxuitITVmbzsCBK/FANYUvuRXk
+         kKHA==
+X-Forwarded-Encrypted: i=1; AJvYcCVrLl79GSN7QyIJaRkeCDw0Pl75WOiI9Lo/766pRIUnosRcBW5BAGIBK28Thk5CPQ2X8uT8aVTMCmWT0qo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwRSSbfS2AEHoI9Xucc6Ij5N8PRC5joSMJlTBeZQ3QylGVukOMU
+	4xQyqA4ezm6Sg4z5NY7sPD/WD0FkVpeDEYY3/TzeTpsRDJ+W+QIOHkmz7qKthVqHbh+x9lJcERs
+	rFSNpIggB92eDIKE6E4SHD0+ETALNkCHRy81sr8GGgdpope3tegoQALUONYofGeooZdTZ8Ts+IY
+	BK0nL/Ag/tew==
+X-Gm-Gg: ASbGncvsBTH9I5BnTp8x/1MPd26Bqj26b3v7p/zgbwSK1t5Xf+RXKyG3MTVC/AMsgmn
+	ttQCwi0Ud/QxFxqRqd2U8L6xTUoVW7h1B/7w/Do+LYqBbDolaFtKff+2k4ytG0FlazF2kKH2d3F
+	qTjC3T7rzPAKCFIcLt5x889JoCnCx44vfpDtG516f4OCDUX6VW59/Aji/0yEG7toA411WqV2S6K
+	q2IKxiW41OaqwplC3/q8l7A9DqFXDsz/Gs5u1IpQ9Fv8PDjk2eEfojVQEtg0KhpIKeRrCnjXAtO
+	8YI2TRi8STngiykL
+X-Received: by 2002:a05:6a21:2d88:b0:1f5:80eb:8481 with SMTP id adf61e73a8af0-1f5c1183d83mr9738452637.13.1742056914351;
+        Sat, 15 Mar 2025 09:41:54 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHCEZ+jCNfkggEZRE2XA8z/q0f4hP43Uiof7JH5pG0+MQxfwoXLZQT+QTzoV2rZZ4l14PcTHg==
+X-Received: by 2002:a05:6a21:2d88:b0:1f5:80eb:8481 with SMTP id adf61e73a8af0-1f5c1183d83mr9738427637.13.1742056913902;
+        Sat, 15 Mar 2025 09:41:53 -0700 (PDT)
 Received: from z790sl.. ([240f:74:7be:1:83e6:3590:3498:db44])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7371155e3a9sm4637104b3a.71.2025.03.15.09.41.49
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7371155e3a9sm4637104b3a.71.2025.03.15.09.41.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 15 Mar 2025 09:41:51 -0700 (PDT)
+        Sat, 15 Mar 2025 09:41:53 -0700 (PDT)
 From: Koichiro Den <koichiro.den@canonical.com>
 To: linux-gpio@vger.kernel.org
 Cc: brgl@bgdev.pl,
@@ -87,9 +87,9 @@ Cc: brgl@bgdev.pl,
 	linus.walleij@linaro.org,
 	maciej.borzecki@canonical.com,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v6 8/9] Documentation: gpio: document configfs interface for gpio-aggregator
-Date: Sun, 16 Mar 2025 01:41:22 +0900
-Message-ID: <20250315164123.1855142-9-koichiro.den@canonical.com>
+Subject: [PATCH v6 9/9] selftests: gpio: add test cases for gpio-aggregator
+Date: Sun, 16 Mar 2025 01:41:23 +0900
+Message-ID: <20250315164123.1855142-10-koichiro.den@canonical.com>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20250315164123.1855142-1-koichiro.den@canonical.com>
 References: <20250315164123.1855142-1-koichiro.den@canonical.com>
@@ -101,132 +101,768 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add documentation for the newly added configfs-based interface for GPIO
-aggregator.
+Add a set of tests for gpio-aggregator module. This test covers both
+pre-existing new_device/delete_device interface and new configfs-based
+interface.
 
 Signed-off-by: Koichiro Den <koichiro.den@canonical.com>
 ---
- .../admin-guide/gpio/gpio-aggregator.rst      | 107 ++++++++++++++++++
- 1 file changed, 107 insertions(+)
+ tools/testing/selftests/gpio/Makefile         |   2 +-
+ tools/testing/selftests/gpio/config           |   1 +
+ .../testing/selftests/gpio/gpio-aggregator.sh | 723 ++++++++++++++++++
+ 3 files changed, 725 insertions(+), 1 deletion(-)
+ create mode 100755 tools/testing/selftests/gpio/gpio-aggregator.sh
 
-diff --git a/Documentation/admin-guide/gpio/gpio-aggregator.rst b/Documentation/admin-guide/gpio/gpio-aggregator.rst
-index 5cd1e7221756..8374a9df9105 100644
---- a/Documentation/admin-guide/gpio/gpio-aggregator.rst
-+++ b/Documentation/admin-guide/gpio/gpio-aggregator.rst
-@@ -69,6 +69,113 @@ write-only attribute files in sysfs.
- 		    $ echo gpio-aggregator.0 > delete_device
+diff --git a/tools/testing/selftests/gpio/Makefile b/tools/testing/selftests/gpio/Makefile
+index e0884390447d..7bfe315f7001 100644
+--- a/tools/testing/selftests/gpio/Makefile
++++ b/tools/testing/selftests/gpio/Makefile
+@@ -1,6 +1,6 @@
+ # SPDX-License-Identifier: GPL-2.0
  
- 
-+Aggregating GPIOs using Configfs
-+--------------------------------
+-TEST_PROGS := gpio-mockup.sh gpio-sim.sh
++TEST_PROGS := gpio-mockup.sh gpio-sim.sh gpio-aggregator.sh
+ TEST_FILES := gpio-mockup-sysfs.sh
+ TEST_GEN_PROGS_EXTENDED := gpio-mockup-cdev gpio-chip-info gpio-line-name
+ CFLAGS += -O2 -g -Wall $(KHDR_INCLUDES)
+diff --git a/tools/testing/selftests/gpio/config b/tools/testing/selftests/gpio/config
+index 409a8532facc..1287abeaac7e 100644
+--- a/tools/testing/selftests/gpio/config
++++ b/tools/testing/selftests/gpio/config
+@@ -2,3 +2,4 @@ CONFIG_GPIOLIB=y
+ CONFIG_GPIO_CDEV=y
+ CONFIG_GPIO_MOCKUP=m
+ CONFIG_GPIO_SIM=m
++CONFIG_GPIO_AGGREGATOR=m
+diff --git a/tools/testing/selftests/gpio/gpio-aggregator.sh b/tools/testing/selftests/gpio/gpio-aggregator.sh
+new file mode 100755
+index 000000000000..f1bab62c4cd2
+--- /dev/null
++++ b/tools/testing/selftests/gpio/gpio-aggregator.sh
+@@ -0,0 +1,723 @@
++#!/bin/sh
++# SPDX-License-Identifier: GPL-2.0
++# Copyright (C) 2025 Bartosz Golaszewski <brgl@bgdev.pl>
++# Copyright (C) 2025 Koichiro Den <koichiro.den@canonical.com>
 +
-+**Group:** ``/config/gpio-aggregator``
++BASE_DIR=$(dirname "$0")
++CONFIGFS_SIM_DIR="/sys/kernel/config/gpio-sim"
++CONFIGFS_AGG_DIR="/sys/kernel/config/gpio-aggregator"
++SYSFS_AGG_DIR="/sys/bus/platform/drivers/gpio-aggregator"
++MODULE="gpio-aggregator"
 +
-+    This is the root directory of the gpio-aggregator configfs tree.
++fail() {
++	echo "$*" >&2
++	echo "GPIO $MODULE test FAIL"
++	exit 1
++}
 +
-+**Group:** ``/config/gpio-aggregator/<example-name>``
++skip() {
++	echo "$*" >&2
++	echo "GPIO $MODULE test SKIP"
++	exit 4
++}
 +
-+    This directory represents a GPIO aggregator device. You can assign any
-+    name to ``<example-name>`` (e.g. ``agg0``), except names starting with
-+    ``_sysfs`` prefix, which are reserved for auto-generated configfs
-+    entries corresponding to devices created via Sysfs.
++# gpio-sim
++sim_enable_chip() {
++	local CHIP=$1
 +
-+**Attribute:** ``/config/gpio-aggregator/<example-name>/live``
++	echo 1 > "$CONFIGFS_SIM_DIR/$CHIP/live" || fail "Unable to enable the chip"
++}
 +
-+    The ``live`` attribute allows to trigger the actual creation of the device
-+    once it's fully configured. Accepted values are:
++sim_disable_chip() {
++	local CHIP=$1
 +
-+    * ``1``, ``yes``, ``true`` : enable the virtual device
-+    * ``0``, ``no``, ``false`` : disable the virtual device
++	echo 0 > "$CONFIGFS_SIM_DIR/$CHIP/live" || fail "Unable to disable the chip"
++}
 +
-+**Attribute:** ``/config/gpio-aggregator/<example-name>/dev_name``
++sim_configfs_cleanup() {
++	local NOCHECK=${1:-0}
 +
-+    The read-only ``dev_name`` attribute exposes the name of the device as it
-+    will appear in the system on the platform bus (e.g. ``gpio-aggregator.0``).
-+    This is useful for identifying a character device for the newly created
-+    aggregator. If it's ``gpio-aggregator.0``,
-+    ``/sys/devices/platform/gpio-aggregator.0/gpiochipX`` path tells you that the
-+    GPIO device id is ``X``.
++	for CHIP_DIR in "$CONFIGFS_SIM_DIR"/*; do
++		[ -d "$CHIP_DIR" ] || continue
++		echo 0 > "$CHIP_DIR/live"
++		find "$CHIP_DIR" -depth -type d -exec rmdir {} \;
++	done
++	[ "$NOCHECK" -eq 1 ] && return;
++	remaining=$(find "$CONFIGFS_SIM_DIR" -mindepth 1 -type d 2> /dev/null)
++	if [ -n "$remaining" ]; then
++		fail "Directories remain in $CONFIGFS_SIM_DIR: $remaining"
++	fi
++}
 +
-+You must create subdirectories for each virtual line you want to
-+instantiate, named exactly as ``line0``, ``line1``, ..., ``lineY``, when
-+you want to instantiate ``Y+1`` (Y >= 0) lines.  Configure all lines before
-+activating the device by setting ``live`` to 1.
++sim_get_chip_label() {
++	local CHIP=$1
++	local BANK=$2
++	local CHIP_NAME=$(cat "$CONFIGFS_SIM_DIR/$CHIP/$BANK/chip_name" 2> /dev/null) || \
++		fail "Unable to read the chip name from configfs"
 +
-+**Group:** ``/config/gpio-aggregator/<example-name>/<lineY>/``
++	$BASE_DIR/gpio-chip-info "/dev/$CHIP_NAME" label || \
++		fail "Unable to read the chip label from the character device"
++}
 +
-+    This directory represents a GPIO line to include in the aggregator.
++# gpio-aggregator
++agg_create_chip() {
++	local CHIP=$1
 +
-+**Attribute:** ``/config/gpio-aggregator/<example-name>/<lineY>/key``
++	mkdir "$CONFIGFS_AGG_DIR/$CHIP"
++}
 +
-+**Attribute:** ``/config/gpio-aggregator/<example-name>/<lineY>/offset``
++agg_remove_chip() {
++	local CHIP=$1
 +
-+    The default values after creating the ``<lineY>`` directory are:
++	find "$CONFIGFS_AGG_DIR/$CHIP/" -depth -type d -exec rmdir {} \; || \
++		fail "Unable to remove $CONFIGFS_AGG_DIR/$CHIP"
++}
 +
-+    * ``key`` : <empty>
-+    * ``offset`` : -1
++agg_create_line() {
++	local CHIP=$1
++	local LINE=$2
 +
-+    ``key`` must always be explicitly configured, while ``offset`` depends.
-+    Two configuration patterns exist for each ``<lineY>``:
++	mkdir "$CONFIGFS_AGG_DIR/$CHIP/$LINE"
++}
 +
-+    (a). For lookup by GPIO line name:
++agg_remove_line() {
++	local CHIP=$1
++	local LINE=$2
 +
-+         * Set ``key`` to the line name.
-+         * Ensure ``offset`` remains -1 (the default).
++	rmdir "$CONFIGFS_AGG_DIR/$CHIP/$LINE"
++}
 +
-+    (b). For lookup by GPIO chip name and the line offset within the chip:
++agg_set_key() {
++	local CHIP=$1
++	local LINE=$2
++	local KEY=$3
 +
-+         * Set ``key`` to the chip name.
-+         * Set ``offset`` to the line offset (0 <= ``offset`` < 65535).
++	echo "$KEY" > "$CONFIGFS_AGG_DIR/$CHIP/$LINE/key" || fail "Unable to set the lookup key"
++}
 +
-+**Attribute:** ``/config/gpio-aggregator/<example-name>/<lineY>/name``
++agg_set_offset() {
++	local CHIP=$1
++	local LINE=$2
++	local OFFSET=$3
 +
-+    The ``name`` attribute sets a custom name for lineY. If left unset, the
-+    line will remain unnamed.
++	echo "$OFFSET" > "$CONFIGFS_AGG_DIR/$CHIP/$LINE/offset" || \
++		fail "Unable to set the lookup offset"
++}
 +
-+Once the configuration is done, the ``'live'`` attribute must be set to 1
-+in order to instantiate the aggregator device. It can be set back to 0 to
-+destroy the virtual device. The module will synchronously wait for the new
-+aggregator device to be successfully probed and if this doesn't happen, writing
-+to ``'live'`` will result in an error. This is a different behaviour from the
-+case when you create it using sysfs ``new_device`` interface.
++agg_set_line_name() {
++	local CHIP=$1
++	local LINE=$2
++	local NAME=$3
 +
-+.. note::
++	echo "$NAME" > "$CONFIGFS_AGG_DIR/$CHIP/$LINE/name" || fail "Unable to set the line name"
++}
 +
-+   For aggregators created via Sysfs, the configfs entries are
-+   auto-generated and appear as ``/config/gpio-aggregator/_sysfs.<N>/``. You
-+   cannot add or remove line directories with mkdir(2)/rmdir(2). To modify
-+   lines, you must use the "delete_device" interface to tear down the
-+   existing device and reconfigure it from scratch. However, you can still
-+   toggle the aggregator with the ``live`` attribute and adjust the
-+   ``key``, ``offset``, and ``name`` attributes for each line when ``live``
-+   is set to 0 by hand (i.e. it's not waiting for deferred probe).
++agg_enable_chip() {
++	local CHIP=$1
 +
-+Sample configuration commands
-+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++	echo 1 > "$CONFIGFS_AGG_DIR/$CHIP/live" || fail "Unable to enable the chip"
++}
 +
-+.. code-block:: sh
++agg_disable_chip() {
++	local CHIP=$1
 +
-+    # Create a directory for an aggregator device
-+    $ mkdir /sys/kernel/config/gpio-aggregator/agg0
++	echo 0 > "$CONFIGFS_AGG_DIR/$CHIP/live" || fail "Unable to disable the chip"
++}
 +
-+    # Configure each line
-+    $ mkdir /sys/kernel/config/gpio-aggregator/agg0/line0
-+    $ echo gpiochip0 > /sys/kernel/config/gpio-aggregator/agg0/line0/key
-+    $ echo 6         > /sys/kernel/config/gpio-aggregator/agg0/line0/offset
-+    $ echo test0     > /sys/kernel/config/gpio-aggregator/agg0/line0/name
-+    $ mkdir /sys/kernel/config/gpio-aggregator/agg0/line1
-+    $ echo gpiochip0 > /sys/kernel/config/gpio-aggregator/agg0/line1/key
-+    $ echo 7         > /sys/kernel/config/gpio-aggregator/agg0/line1/offset
-+    $ echo test1     > /sys/kernel/config/gpio-aggregator/agg0/line1/name
++agg_configfs_cleanup() {
++	local NOCHECK=${1:-0}
 +
-+    # Activate the aggregator device
-+    $ echo 1         > /sys/kernel/config/gpio-aggregator/agg0/live
++	for CHIP_DIR in "$CONFIGFS_AGG_DIR"/*; do
++		[ -d "$CHIP_DIR" ] || continue
++		echo 0 > "$CHIP_DIR/live" 2> /dev/null
++		find "$CHIP_DIR" -depth -type d -exec rmdir {} \;
++	done
++	[ "$NOCHECK" -eq 1 ] && return;
++	remaining=$(find "$CONFIGFS_AGG_DIR" -mindepth 1 -type d 2> /dev/null)
++	if [ -n "$remaining" ]; then
++		fail "Directories remain in $CONFIGFS_AGG_DIR: $remaining"
++	fi
++}
++
++agg_configfs_dev_name() {
++	local CHIP=$1
++
++	cat "$CONFIGFS_AGG_DIR/$CHIP/dev_name" 2> /dev/null || \
++		fail "Unable to read the device name from configfs"
++}
++
++agg_configfs_chip_name() {
++	local CHIP=$1
++	local DEV_NAME=$(agg_configfs_dev_name "$CHIP")
++	local CHIP_LIST=$(find "/sys/devices/platform/$DEV_NAME" \
++		-maxdepth 1 -type d -name "gpiochip[0-9]*" 2> /dev/null)
++	local CHIP_COUNT=$(echo "$CHIP_LIST" | wc -l)
++
++	if [ -z "$CHIP_LIST" ]; then
++		fail "No gpiochip in /sys/devices/platform/$DEV_NAME/"
++	elif [ "$CHIP_COUNT" -ne 1 ]; then
++		fail "Multiple gpiochips unexpectedly found: $CHIP_LIST"
++	fi
++	basename "$CHIP_LIST"
++}
++
++agg_get_chip_num_lines() {
++	local CHIP=$1
++	local N_DIR=$(ls -d $CONFIGFS_AGG_DIR/$CHIP/line[0-9]* 2> /dev/null | wc -l)
++	local N_LINES
++
++	if [ "$(cat $CONFIGFS_AGG_DIR/$CHIP/live)" = 0 ]; then
++		echo "$N_DIR"
++	else
++		N_LINES=$(
++			$BASE_DIR/gpio-chip-info \
++				"/dev/$(agg_configfs_chip_name "$CHIP")" num-lines
++		) || fail "Unable to read the number of lines from the character device"
++		if [ $N_DIR != $N_LINES ]; then
++			fail "Discrepancy between two sources for the number of lines"
++		fi
++		echo "$N_LINES"
++	fi
++}
++
++agg_get_chip_label() {
++	local CHIP=$1
++
++	$BASE_DIR/gpio-chip-info "/dev/$(agg_configfs_chip_name "$CHIP")" label || \
++		fail "Unable to read the chip label from the character device"
++}
++
++agg_get_line_name() {
++	local CHIP=$1
++	local OFFSET=$2
++	local NAME_CONFIGFS=$(cat "$CONFIGFS_AGG_DIR/$CHIP/line${OFFSET}/name")
++	local NAME_CDEV
++
++	if [ "$(cat "$CONFIGFS_AGG_DIR/$CHIP/live")" = 0 ]; then
++		echo "$NAME_CONFIGFS"
++	else
++		NAME_CDEV=$(
++			$BASE_DIR/gpio-line-name \
++				"/dev/$(agg_configfs_chip_name "$CHIP")" "$OFFSET"
++		) || fail "Unable to read the line name from the character device"
++		if [ "$NAME_CONFIGFS" != "$NAME_CDEV" ]; then
++			fail "Discrepancy between two sources for the name of line"
++		fi
++		echo "$NAME_CDEV"
++	fi
++}
 +
 +
- Generic GPIO Driver
- -------------------
- 
++# Load the modules. This will pull in configfs if needed too.
++modprobe gpio-sim || skip "unable to load the gpio-sim module"
++modprobe gpio-aggregator || skip "unable to load the gpio-aggregator module"
++
++# Make sure configfs is mounted at /sys/kernel/config. Wait a bit if needed.
++for IDX in $(seq 5); do
++	if [ "$IDX" -eq "5" ]; then
++		skip "configfs not mounted at /sys/kernel/config"
++	fi
++
++	mountpoint -q /sys/kernel/config && break
++	sleep 0.1
++done
++
++# If the module was already loaded: remove all previous chips
++agg_configfs_cleanup
++sim_configfs_cleanup
++
++trap "exit 1" SIGTERM SIGINT
++trap "agg_configfs_cleanup 1; sim_configfs_cleanup 1" EXIT
++
++# Use gpio-sim chips as the test backend
++for CHIP in $(seq -f "chip%g" 0 1); do
++	mkdir $CONFIGFS_SIM_DIR/$CHIP
++	for BANK in $(seq -f "bank%g" 0 1); do
++		mkdir -p "$CONFIGFS_SIM_DIR/$CHIP/$BANK"
++		echo "${CHIP}_${BANK}" > "$CONFIGFS_SIM_DIR/$CHIP/$BANK/label" || \
++			fail "unable to set the chip label"
++		echo 16 > "$CONFIGFS_SIM_DIR/$CHIP/$BANK/num_lines" || \
++			fail "unable to set the number of lines"
++		for IDX in $(seq 0 15); do
++			LINE_NAME="${CHIP}${BANK}_${IDX}"
++			LINE_DIR="$CONFIGFS_SIM_DIR/$CHIP/$BANK/line$IDX"
++			mkdir -p $LINE_DIR
++			echo "$LINE_NAME" > "$LINE_DIR/name" || fail "unable to set the line name"
++		done
++	done
++	sim_enable_chip "$CHIP"
++done
++
++echo "1. GPIO aggregator creation/deletion"
++
++echo "1.1. Creation/deletion via configfs"
++
++echo "1.1.1. Minimum creation/deletion"
++agg_create_chip   agg0
++agg_create_line   agg0 line0
++agg_set_key       agg0 line0 "$(sim_get_chip_label chip0 bank0)"
++agg_set_offset    agg0 line0 5
++agg_set_line_name agg0 line0 test0
++agg_enable_chip   agg0
++test "$(cat "$CONFIGFS_AGG_DIR/agg0/live")" = 1 || fail "chip unexpectedly dead"
++test "$(agg_get_chip_label agg0)" = "$(agg_configfs_dev_name agg0)" || \
++	fail "label is inconsistent"
++test "$(agg_get_chip_num_lines agg0)" = "1" || fail "number of lines is not 1"
++test "$(agg_get_line_name agg0 0)" = "test0" || fail "line name is unset"
++agg_disable_chip  agg0
++agg_remove_line   agg0 line0
++agg_remove_chip   agg0
++
++echo "1.1.2. Complex creation/deletion"
++agg_create_chip   agg0
++agg_create_line   agg0 line0
++agg_create_line   agg0 line1
++agg_create_line   agg0 line2
++agg_create_line   agg0 line3
++agg_set_key       agg0 line0 "$(sim_get_chip_label chip0 bank0)"
++agg_set_key       agg0 line1 "$(sim_get_chip_label chip0 bank1)"
++agg_set_key       agg0 line2 "$(sim_get_chip_label chip1 bank0)"
++agg_set_key       agg0 line3 "$(sim_get_chip_label chip1 bank1)"
++agg_set_offset    agg0 line0 1
++agg_set_offset    agg0 line1 3
++agg_set_offset    agg0 line2 5
++agg_set_offset    agg0 line3 7
++agg_set_line_name agg0 line0 test0
++agg_set_line_name agg0 line1 test1
++agg_set_line_name agg0 line2 test2
++agg_set_line_name agg0 line3 test3
++agg_enable_chip   agg0
++test "$(cat "$CONFIGFS_AGG_DIR/agg0/live")" = 1 || fail "chip unexpectedly dead"
++test "$(agg_get_chip_label agg0)" = "$(agg_configfs_dev_name agg0)" || \
++	fail "label is inconsistent"
++test "$(agg_get_chip_num_lines agg0)" = "4" || fail "number of lines is not 1"
++test "$(agg_get_line_name agg0 0)" = "test0" || fail "line name is unset"
++test "$(agg_get_line_name agg0 1)" = "test1" || fail "line name is unset"
++test "$(agg_get_line_name agg0 2)" = "test2" || fail "line name is unset"
++test "$(agg_get_line_name agg0 3)" = "test3" || fail "line name is unset"
++agg_disable_chip  agg0
++agg_remove_line   agg0 line0
++agg_remove_line   agg0 line1
++agg_remove_line   agg0 line2
++agg_remove_line   agg0 line3
++agg_remove_chip   agg0
++
++echo "1.1.3. Can't instantiate a chip without any line"
++agg_create_chip   agg0
++echo 1 > "$CONFIGFS_AGG_DIR/agg0/live" 2> /dev/null && fail "chip unexpectedly enabled"
++test "$(cat "$CONFIGFS_AGG_DIR/agg0/live")" = 0 || fail "chip unexpectedly alive"
++agg_remove_chip   agg0
++
++echo "1.1.4. Can't instantiate a chip with invalid configuration"
++agg_create_chip   agg0
++agg_create_line   agg0 line0
++agg_set_key       agg0 line0 "chipX_bankX"
++agg_set_offset    agg0 line0 99
++agg_set_line_name agg0 line0 test0
++echo 1 > "$CONFIGFS_AGG_DIR/agg0/live" 2> /dev/null && fail "chip unexpectedly enabled"
++test "$(cat "$CONFIGFS_AGG_DIR/agg0/live")" = 0 || fail "chip unexpectedly alive"
++agg_remove_line   agg0 line0
++agg_remove_chip   agg0
++
++echo "1.1.5. Can't instantiate a chip asynchronously via deferred probe"
++agg_create_chip   agg0
++agg_create_line   agg0 line0
++agg_set_key       agg0 line0 "chip0_bank0"
++agg_set_offset    agg0 line0 5
++agg_set_line_name agg0 line0 test0
++sim_disable_chip  chip0
++echo 1 > "$CONFIGFS_AGG_DIR/agg0/live" 2> /dev/null && fail "chip unexpectedly enabled"
++test "$(cat "$CONFIGFS_AGG_DIR/agg0/live")" = 0 || fail "chip unexpectedly alive"
++sim_enable_chip   chip0
++sleep 1
++test "$(cat "$CONFIGFS_AGG_DIR/agg0/live")" = 0 || \
++	fail "chip unexpectedly transitioned to 'live' state"
++agg_remove_line   agg0 line0
++agg_remove_chip   agg0
++
++echo "1.2. Creation/deletion via sysfs"
++
++echo "1.2.1. Minimum creation/deletion"
++echo "chip0_bank0 0" > "$SYSFS_AGG_DIR/new_device"
++CHIPNAME=$(agg_configfs_chip_name _sysfs.0)
++test "$(cat "$CONFIGFS_AGG_DIR/_sysfs.0/live")" = 1 || fail "chip unexpectedly dead"
++test "$(agg_get_chip_label _sysfs.0)" = "$(agg_configfs_dev_name _sysfs.0)" || \
++	fail "label is inconsistent"
++test "$(agg_get_chip_num_lines _sysfs.0)" = "1" || fail "number of lines is not 1"
++test "$(agg_get_line_name _sysfs.0 0)" = "" || fail "line name is unset"
++echo "$(agg_configfs_dev_name _sysfs.0)" > "$SYSFS_AGG_DIR/delete_device"
++test -d $CONFIGFS_AGG_DIR/_sysfs.0 && fail "_sysfs.0 unexpectedly remains"
++test -d /dev/${CHIPNAME} && fail "/dev/${CHIPNAME} unexpectedly remains"
++
++echo "1.2.2. Complex creation/deletion"
++echo "chip0bank0_0 chip1_bank1 10-11" > "$SYSFS_AGG_DIR/new_device"
++CHIPNAME=$(agg_configfs_chip_name _sysfs.0)
++test "$(cat "$CONFIGFS_AGG_DIR/_sysfs.0/live")" = 1 || fail "chip unexpectedly dead"
++test "$(agg_get_chip_label _sysfs.0)" = "$(agg_configfs_dev_name _sysfs.0)" || \
++	fail "label is inconsistent"
++test "$(agg_get_chip_num_lines _sysfs.0)" = "3" || fail "number of lines is not 3"
++test "$(agg_get_line_name _sysfs.0 0)" = "" || fail "line name is unset"
++test "$(agg_get_line_name _sysfs.0 1)" = "" || fail "line name is unset"
++test "$(agg_get_line_name _sysfs.0 2)" = "" || fail "line name is unset"
++echo "$(agg_configfs_dev_name _sysfs.0)" > "$SYSFS_AGG_DIR/delete_device"
++test -d $CONFIGFS_AGG_DIR/_sysfs.0 && fail "_sysfs.0 unexpectedly remains"
++test -d /dev/${CHIPNAME} && fail "/dev/${CHIPNAME} unexpectedly remains"
++
++echo "1.2.3. Asynchronous creation with deferred probe"
++sim_disable_chip  chip0
++echo 'chip0_bank0 0' > $SYSFS_AGG_DIR/new_device
++sleep 1
++test "$(cat "$CONFIGFS_AGG_DIR/_sysfs.0/live")" = 0 || fail "chip unexpectedly alive"
++sim_enable_chip  chip0
++sleep 1
++CHIPNAME=$(agg_configfs_chip_name _sysfs.0)
++test "$(cat "$CONFIGFS_AGG_DIR/_sysfs.0/live")" = 1 || fail "chip unexpectedly remains dead"
++test "$(agg_get_chip_label _sysfs.0)" = "$(agg_configfs_dev_name _sysfs.0)" || \
++	fail "label is inconsistent"
++test "$(agg_get_chip_num_lines _sysfs.0)" = "1" || fail "number of lines is not 1"
++test "$(agg_get_line_name _sysfs.0 0)" = "" || fail "line name unexpectedly set"
++echo "$(agg_configfs_dev_name _sysfs.0)" > "$SYSFS_AGG_DIR/delete_device"
++test -d $CONFIGFS_AGG_DIR/_sysfs.0 && fail "_sysfs.0 unexpectedly remains"
++test -d /dev/${CHIPNAME} && fail "/dev/${CHIPNAME} unexpectedly remains"
++
++echo "1.2.4. Can't instantiate a chip with invalid configuration"
++echo "xyz 0" > "$SYSFS_AGG_DIR/new_device"
++test "$(cat $CONFIGFS_AGG_DIR/_sysfs.0/live)" = 0 || fail "chip unexpectedly alive"
++echo "$(agg_configfs_dev_name _sysfs.0)" > "$SYSFS_AGG_DIR/delete_device"
++
++echo "2. GPIO aggregator configuration"
++
++echo "2.1. Configuring aggregators instantiated via configfs"
++setup_2_1() {
++	agg_create_chip   agg0
++	agg_create_line   agg0 line0
++	agg_create_line   agg0 line1
++	agg_set_key       agg0 line0 "$(sim_get_chip_label chip0 bank0)"
++	agg_set_key       agg0 line1 "$(sim_get_chip_label chip1 bank0)"
++	agg_set_offset    agg0 line0 1
++	agg_set_offset    agg0 line1 3
++	agg_set_line_name agg0 line0 test0
++	agg_set_line_name agg0 line1 test1
++	agg_enable_chip   agg0
++}
++teardown_2_1() {
++	agg_configfs_cleanup
++}
++
++echo "2.1.1. While offline"
++
++echo "2.1.1.1. Line can be added/removed"
++setup_2_1
++agg_disable_chip  agg0
++agg_create_line   agg0 line2
++agg_set_key       agg0 line2 "$(sim_get_chip_label chip0 bank1)"
++agg_set_offset    agg0 line2 5
++agg_enable_chip   agg0
++test "$(agg_get_chip_num_lines agg0)" = "3" || fail "number of lines is not 1"
++teardown_2_1
++
++echo "2.1.1.2. Line key can be modified"
++setup_2_1
++agg_disable_chip  agg0
++agg_set_key       agg0 line0 "$(sim_get_chip_label chip0 bank1)"
++agg_set_key       agg0 line1 "$(sim_get_chip_label chip1 bank1)"
++agg_enable_chip   agg0
++teardown_2_1
++
++echo "2.1.1.3. Line name can be modified"
++setup_2_1
++agg_disable_chip  agg0
++agg_set_line_name agg0 line0 new0
++agg_set_line_name agg0 line1 new1
++agg_enable_chip   agg0
++test "$(agg_get_line_name agg0 0)" = "new0" || fail "line name is unset"
++test "$(agg_get_line_name agg0 1)" = "new1" || fail "line name is unset"
++teardown_2_1
++
++echo "2.1.1.4. Line offset can be modified"
++setup_2_1
++agg_disable_chip  agg0
++agg_set_offset    agg0 line0 5
++agg_set_offset    agg0 line1 7
++agg_enable_chip   agg0
++teardown_2_1
++
++echo "2.1.1.5. Can re-enable a chip after valid reconfiguration"
++setup_2_1
++agg_disable_chip  agg0
++agg_set_key       agg0 line0 "$(sim_get_chip_label chip1 bank1)"
++agg_set_offset    agg0 line0 15
++agg_set_key       agg0 line1 "$(sim_get_chip_label chip0 bank1)"
++agg_set_offset    agg0 line0 14
++agg_create_line   agg0 line2
++agg_set_key       agg0 line2 "$(sim_get_chip_label chip0 bank1)"
++agg_set_offset    agg0 line2 13
++agg_enable_chip   agg0
++test "$(agg_get_chip_num_lines agg0)" = "3" || fail "number of lines is not 1"
++teardown_2_1
++
++echo "2.1.1.7. Can't re-enable a chip with invalid reconfiguration"
++setup_2_1
++agg_disable_chip  agg0
++agg_set_key       agg0 line0 invalidkey
++echo 1 > "$CONFIGFS_AGG_DIR/agg0/live" 2> /dev/null && fail "chip unexpectedly enabled"
++teardown_2_1
++setup_2_1
++agg_disable_chip  agg0
++agg_set_offset    agg0 line0 99
++echo 1 > "$CONFIGFS_AGG_DIR/agg0/live" 2> /dev/null && fail "chip unexpectedly enabled"
++teardown_2_1
++
++echo "2.1.2. While online"
++
++echo "2.1.2.1. Can't add/remove line"
++setup_2_1
++mkdir "$CONFIGFS_AGG_DIR/agg0/line2" 2> /dev/null && fail "line unexpectedly added"
++rmdir "$CONFIGFS_AGG_DIR/agg0/line1" 2> /dev/null && fail "line unexpectedly removed"
++teardown_2_1
++
++echo "2.1.2.2. Can't modify line key"
++setup_2_1
++echo "chip1_bank1" > "$CONFIGFS_AGG_DIR/agg0/line0/key" 2> /dev/null && \
++	fail "lookup key unexpectedly updated"
++teardown_2_1
++
++echo "2.1.2.3. Can't modify line name"
++setup_2_1
++echo "new0" > "$CONFIGFS_AGG_DIR/agg0/line0/name" 2> /dev/null && \
++	fail "name unexpectedly updated"
++teardown_2_1
++
++echo "2.1.2.4. Can't modify line offset"
++setup_2_1
++echo "5" > "$CONFIGFS_AGG_DIR/agg0/line0/offset" 2> /dev/null && \
++	fail "offset unexpectedly updated"
++teardown_2_1
++
++echo "2.2. Configuring aggregators instantiated via sysfs"
++setup_2_2() {
++	echo "chip0_bank0 1 chip1_bank0 3" > "$SYSFS_AGG_DIR/new_device"
++}
++teardown_2_2() {
++	echo "$(agg_configfs_dev_name _sysfs.0)" > "$SYSFS_AGG_DIR/delete_device"
++}
++
++echo "2.2.1. While online"
++
++echo "2.2.1.1. Can toggle live"
++setup_2_2
++agg_disable_chip  _sysfs.0
++agg_enable_chip   _sysfs.0
++teardown_2_2
++
++echo "2.2.1.2. Can't add/remove line"
++setup_2_2
++mkdir "$CONFIGFS_AGG_DIR/_sysfs.0/line2" 2> /dev/null && fail "line unexpectedly added"
++rmdir "$CONFIGFS_AGG_DIR/_sysfs.0/line1" 2> /dev/null && fail "line unexpectedly removed"
++teardown_2_2
++
++echo "2.2.1.3. Can't modify line key"
++setup_2_2
++echo "chip1_bank1" > "$CONFIGFS_AGG_DIR/_sysfs.0/line0/key" 2> /dev/null && \
++	fail "lookup key unexpectedly updated"
++teardown_2_2
++
++echo "2.2.1.4. Can't modify line name"
++setup_2_2
++echo "new0" > "$CONFIGFS_AGG_DIR/_sysfs.0/line0/name" 2> /dev/null && \
++	fail "name unexpectedly updated"
++teardown_2_2
++
++echo "2.2.1.5. Can't modify line offset"
++setup_2_2
++echo "5" > "$CONFIGFS_AGG_DIR/_sysfs.0/line0/offset" 2> /dev/null && \
++	fail "offset unexpectedly updated"
++teardown_2_2
++
++echo "2.2.2. While waiting for deferred probe"
++
++echo "2.2.2.1. Can't add/remove line despite live = 0"
++sim_disable_chip chip0
++setup_2_2
++mkdir "$CONFIGFS_AGG_DIR/_sysfs.0/line2" 2> /dev/null && fail "line unexpectedly added"
++rmdir "$CONFIGFS_AGG_DIR/_sysfs.0/line1" 2> /dev/null && fail "line unexpectedly removed"
++teardown_2_2
++sim_enable_chip chip0
++
++echo "2.2.2.2. Can't modify line key"
++sim_disable_chip chip0
++setup_2_2
++echo "chip1_bank1" > "$CONFIGFS_AGG_DIR/_sysfs.0/line0/key" 2> /dev/null && \
++	fail "lookup key unexpectedly updated"
++teardown_2_2
++sim_enable_chip chip0
++
++echo "2.2.2.3. Can't modify line name"
++sim_disable_chip chip0
++setup_2_2
++echo "new0" > "$CONFIGFS_AGG_DIR/_sysfs.0/line0/name" 2> /dev/null && \
++	fail "name unexpectedly updated"
++teardown_2_2
++sim_enable_chip chip0
++
++echo "2.2.2.4. Can't modify line offset"
++sim_disable_chip chip0
++setup_2_2
++echo 5 > "$CONFIGFS_AGG_DIR/_sysfs.0/line0/offset" 2> /dev/null && \
++	fail "offset unexpectedly updated"
++teardown_2_2
++sim_enable_chip chip0
++
++echo "2.2.2.5. Can't toggle live"
++sim_disable_chip chip0
++setup_2_2
++test "$(cat "$CONFIGFS_AGG_DIR/_sysfs.0/live")" = 0 || fail "chip unexpectedly alive"
++echo 1 > "$CONFIGFS_AGG_DIR/_sysfs.0/live" 2> /dev/null && fail "chip unexpectedly enabled"
++teardown_2_2
++sim_enable_chip chip0
++
++echo "2.2.3. While offline"
++
++echo "2.2.3.1. Can't add/remove line despite live = 0"
++setup_2_2
++agg_disable_chip _sysfs.0
++mkdir "$CONFIGFS_AGG_DIR/_sysfs.0/line2" 2> /dev/null && fail "line unexpectedly added"
++rmdir "$CONFIGFS_AGG_DIR/_sysfs.0/line1" 2> /dev/null && fail "line unexpectedly removed"
++teardown_2_2
++
++echo "2.2.3.2. Line key can be modified"
++setup_2_2
++agg_disable_chip  _sysfs.0
++agg_set_key       _sysfs.0 line0 "$(sim_get_chip_label chip0 bank1)"
++agg_set_key       _sysfs.0 line1 "$(sim_get_chip_label chip1 bank1)"
++agg_enable_chip   _sysfs.0
++teardown_2_2
++
++echo "2.2.3.3. Line name can be modified"
++setup_2_2
++agg_disable_chip  _sysfs.0
++agg_set_line_name _sysfs.0 line0 new0
++agg_set_line_name _sysfs.0 line1 new1
++agg_enable_chip   _sysfs.0
++test "$(agg_get_line_name _sysfs.0 0)" = "new0" || fail "line name is unset"
++test "$(agg_get_line_name _sysfs.0 1)" = "new1" || fail "line name is unset"
++teardown_2_2
++
++echo "2.2.3.4. Line offset can be modified"
++setup_2_2
++agg_disable_chip  _sysfs.0
++agg_set_offset    _sysfs.0 line0 5
++agg_set_offset    _sysfs.0 line1 7
++agg_enable_chip   _sysfs.0
++teardown_2_2
++
++echo "2.2.3.5. Can re-enable a chip with valid reconfiguration"
++setup_2_2
++agg_disable_chip  _sysfs.0
++agg_set_key       _sysfs.0 line0 "$(sim_get_chip_label chip1 bank1)"
++agg_set_offset    _sysfs.0 line0 15
++agg_set_key       _sysfs.0 line1 "$(sim_get_chip_label chip0 bank1)"
++agg_set_offset    _sysfs.0 line0 14
++agg_enable_chip   _sysfs.0
++teardown_2_2
++
++echo "2.2.3.6. Can't re-enable a chip with invalid reconfiguration"
++setup_2_2
++agg_disable_chip  _sysfs.0
++agg_set_key       _sysfs.0 line0 invalidkey
++echo 1 > "$CONFIGFS_AGG_DIR/_sysfs.0/live" 2> /dev/null && fail "chip unexpectedly enabled"
++teardown_2_2
++setup_2_2
++agg_disable_chip  _sysfs.0
++agg_set_offset    _sysfs.0 line0 99
++echo 1 > "$CONFIGFS_AGG_DIR/_sysfs.0/live" 2> /dev/null && fail "chip unexpectedly enabled"
++teardown_2_2
++
++echo "3. Module unload"
++
++echo "3.1. Can't unload module if there is at least one device created via configfs"
++agg_create_chip agg0
++modprobe -r gpio-aggregator 2> /dev/null
++test -d /sys/module/gpio_aggregator || fail "module unexpectedly unloaded"
++agg_remove_chip agg0
++
++echo "3.2. Can unload module if there is no device created via configfs"
++echo "chip0_bank0 1 chip1_bank0 3" > "$SYSFS_AGG_DIR/new_device"
++modprobe -r gpio-aggregator 2> /dev/null
++test -d /sys/module/gpio_aggregator && fail "module unexpectedly remains to be loaded"
++modprobe gpio-aggregator 2> /dev/null
++
++echo "4. GPIO forwarder functional"
++SETTINGS="chip0:bank0:2 chip0:bank1:4 chip1:bank0:6 chip1:bank1:8"
++setup_4() {
++	local OFFSET=0
++	agg_create_chip agg0
++	for SETTING in $SETTINGS; do
++		CHIP=$(echo "$SETTING" | cut -d: -f1)
++		BANK=$(echo "$SETTING" | cut -d: -f2)
++		LINE=$(echo "$SETTING" | cut -d: -f3)
++		agg_create_line agg0 "line${OFFSET}"
++		agg_set_key     agg0 "line${OFFSET}" "$(sim_get_chip_label "$CHIP" "$BANK")"
++		agg_set_offset  agg0 "line${OFFSET}" "$LINE"
++		OFFSET=$(expr $OFFSET + 1)
++	done
++	agg_enable_chip agg0
++}
++teardown_4() {
++	agg_configfs_cleanup
++}
++
++echo "4.1. Forwarding set values"
++setup_4
++OFFSET=0
++for SETTING in $SETTINGS; do
++	CHIP=$(echo "$SETTING" | cut -d: -f1)
++	BANK=$(echo "$SETTING" | cut -d: -f2)
++	LINE=$(echo "$SETTING" | cut -d: -f3)
++	DEVNAME=$(cat "$CONFIGFS_SIM_DIR/$CHIP/dev_name")
++	CHIPNAME=$(cat "$CONFIGFS_SIM_DIR/$CHIP/$BANK/chip_name")
++	VAL_PATH="/sys/devices/platform/$DEVNAME/$CHIPNAME/sim_gpio${LINE}/value"
++	test $(cat $VAL_PATH) = "0" || fail "incorrect value read from sysfs"
++	$BASE_DIR/gpio-mockup-cdev -s 1 "/dev/$(agg_configfs_chip_name agg0)" "$OFFSET" &
++	mock_pid=$!
++	sleep 0.1 # FIXME Any better way?
++	test "$(cat $VAL_PATH)" = "1" || fail "incorrect value read from sysfs"
++	kill "$mock_pid"
++	OFFSET=$(expr $OFFSET + 1)
++done
++teardown_4
++
++echo "4.2. Forwarding set config"
++setup_4
++OFFSET=0
++for SETTING in $SETTINGS; do
++	CHIP=$(echo "$SETTING" | cut -d: -f1)
++	BANK=$(echo "$SETTING" | cut -d: -f2)
++	LINE=$(echo "$SETTING" | cut -d: -f3)
++	DEVNAME=$(cat "$CONFIGFS_SIM_DIR/$CHIP/dev_name")
++	CHIPNAME=$(cat "$CONFIGFS_SIM_DIR/$CHIP/$BANK/chip_name")
++	VAL_PATH="/sys/devices/platform/$DEVNAME/$CHIPNAME/sim_gpio${LINE}/value"
++	$BASE_DIR/gpio-mockup-cdev -b pull-up "/dev/$(agg_configfs_chip_name agg0)" "$OFFSET"
++	test $(cat "$VAL_PATH") = "1" || fail "incorrect value read from sysfs"
++	OFFSET=$(expr $OFFSET + 1)
++done
++teardown_4
++
++echo "5. Race condition verification"
++
++echo "5.1. Stress test of new_device/delete_device and module load/unload"
++for _ in $(seq 1000); do
++	{
++		echo "dummy 0" > "$SYSFS_AGG_DIR/new_device"
++		cat "$CONFIGFS_AGG_DIR/_sysfs.0/dev_name" > "$SYSFS_AGG_DIR/delete_device"
++	} 2> /dev/null
++done &
++writer_pid=$!
++while kill -0 "$writer_pid" 2> /dev/null; do
++	{
++		modprobe gpio-aggregator
++		modprobe -r gpio-aggregator
++	} 2> /dev/null
++done
++
++echo "GPIO $MODULE test PASS"
 -- 
 2.45.2
 
