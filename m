@@ -1,133 +1,130 @@
-Return-Path: <linux-kernel+bounces-562336-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562337-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 247ACA62361
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 01:49:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2616A62375
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 01:55:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 088E119C612A
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 00:49:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A850F19C6938
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 00:55:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F0AEBE4A;
-	Sat, 15 Mar 2025 00:49:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E40FE567;
+	Sat, 15 Mar 2025 00:55:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ahpWgTdZ"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jQrFvPT5"
+Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com [209.85.222.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 777582E3370
-	for <linux-kernel@vger.kernel.org>; Sat, 15 Mar 2025 00:49:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08C6E10F1;
+	Sat, 15 Mar 2025 00:55:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741999783; cv=none; b=ROU5qxXkubFLjNP5sxPIczTDRmSKdPuehXo1Glmap5SH0CN5dR2LD8heFvGtXE5DQI5mf3fADJrhqEV4hOqg8/ESepX1CfDmcV+fPlT5CmxIiFdyuOhgyGb0H8Alf/0Nm+GrqW+8tfzOSN8joyQTc48381HwdEnKAkN8idDdYlY=
+	t=1742000108; cv=none; b=TaZJg274zIYDTGo0PF30tpuX0rAae54okqZElUbvg9w2RuZA6dxwpPdbDsVANCqa9GVJo/F0eUnx9ikc6pl6OXZ3Cmpst3VijDTfjDFqPrH8Cumkue8qyExfAe6oIOD+sXskuWbUUwOP5LgBya0567mbS55qHL80ocRQZ1Ge/9k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741999783; c=relaxed/simple;
-	bh=EVcLkRoYjzPskNvsgLUC1U6E5af0qrbR6gcf9LQ/UQM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hhYBTLyeFXGHPQ1jZyagIVHMS0r7aH2R7axQXqhc0hFx6PqXXsQLzzKVaIzwH9DT9Bevgfl5zJxYaIsEuI4Ayu7yiFLMh9Xb7CeXeM2UBOujUXTDoTEGEtGu8qsAKCco+Op1MO9SdFiI27tS/H6NCKYmoMYdBd+zPSvna/ygy7w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ahpWgTdZ; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-22398e09e39so57618775ad.3
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 17:49:42 -0700 (PDT)
+	s=arc-20240116; t=1742000108; c=relaxed/simple;
+	bh=AAp65SLb8YaaV88shcTUByEjooxQ3eHmU2isGxo+w7I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=u0vkuLI9nMW07CFGNqNH+dGUhQ6OgcVn0KXWA8vGK1xHRd0lAnJhLe+M4OLwZ5ws7e+gTM3/mwP5L1bGRx+AH03OG+iu9lGGkJIfqaYX1ghrMFOzbPC2LrlJldJRelyid70V/FDf2tIwJDwJ4lSXZ9dEEdexCan17FczQBJ7I6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jQrFvPT5; arc=none smtp.client-ip=209.85.222.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f172.google.com with SMTP id af79cd13be357-7c0a159ded2so333264185a.0;
+        Fri, 14 Mar 2025 17:55:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1741999782; x=1742604582; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=D1jM8RpZtcKZIilOJqvJ3/LMYhzoydClew6e4ccobUM=;
-        b=ahpWgTdZrxepaLdjwWi6FGIjFOmg2quhTaWPIl3GLik9D8p7eQC65Hwif+AMlp1T4H
-         hrrQhXL1guNdjxHtbsp7pNBAuOxpQzkHTEyp5oXXeMp6Zdwr5LxHedxoneCBfeD2WFP+
-         7W5EIJ/gQzsqwYfUx9528D6z/uZvEPhcXZ2OtaYoI8KTa1XA74QKUpUVQ1XhFDRRKBdY
-         vZV+Ux1HrrD0ZIqrsrNtWa4NgujnTfc3r62Ic/lhmrhz+/d71EUZXDwk1sxn24WVdlQq
-         moP8q4eIG0kPCrIZeCOLBwz6dAveCcy1/fzznRJFUXZroT03Q2OhQD8w/VsGcb5pdmqc
-         GtcQ==
+        d=gmail.com; s=20230601; t=1742000106; x=1742604906; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=E8qvkRDVRdv9qBia2/dOTQyKzNJ34jMIIljDmJe7gzU=;
+        b=jQrFvPT5Qx71z70QPZJ333tvY+bW5V13ZltTYlM7vWhH2LkDbt5caRrk7w2ueGVLEV
+         ATB0g/E/otyJRcHpm6j9ENUP75v30pSmZBqY2jGBfYW8ikxqdO9kc1O5ezao4xHKX81o
+         ciPUNZMxD+iXIYm1nGlyELKNLmSHF2a+VXBJQjjcQL5+N9yZ4SGsqCqso/ITD2EmwEtn
+         2m1cMheuyNpSRvoGXbI9erfYUs+2OTRnJtcn3qb+uAZJMBojfg5osBaxwpdgowDckR6m
+         Xh47N+86SnQ8b88tSXYOuuH7v3IDIJlqDAv8NunMhbGaksQayqvNQlKMBMOT2TlyjFUE
+         GVyg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741999782; x=1742604582;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=D1jM8RpZtcKZIilOJqvJ3/LMYhzoydClew6e4ccobUM=;
-        b=sqd22jPZqImRTbU9ENuI0DyzhadwDSqQJ8dxKU6JL7omeOsBaM2QUw/1WRlz4kld12
-         9xjoB0Fllfy9UmDQTo15e19vJpPTTdbWP++JFS80EllQya1OFFkSvtwWHfRj0aM8XEhI
-         TdXfgALv+bpVvyrmxUNLO6oW/jwhtxYQHWEya547MyyQvmcD1gFPQuS1M/EQ845gfwBg
-         IfbyS/a3WZVL7kyt8OU5J2Khqgs0FSUUlTp/ZUgeR0dS/I1UqB2JKYCgkGMGJ44vRi9d
-         Dtc1LfbLpi/e/CNjotJgkoedUSNHJaH9f8red3erh3xkjYLqJON6z7/+4eBq+BgdLOTK
-         zGEw==
-X-Forwarded-Encrypted: i=1; AJvYcCUm5MpJe3A1RLg0G9YI/efJ2bJsbrX0j0jpPnSxol9F+VoGD3H+Oe2MmRISvHTfMD6ESXTLoWzP4wLLoy4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwuM7x0+JznL0oOpgvy6qGJNgM8NxSRZAGx+pnNVei/GRVOwuOS
-	hTjzipqb+G2RdLBBwxi14kN9JivVO1SFVhgSHSqIcH1EE0Ofvp2KUp4R8mRUMg==
-X-Gm-Gg: ASbGncvoDeF7SR+u+Dzy5raN9So1NNv6gZmzxK9Sr2HG7kRxr8tudmAcfBEXVbKsjJT
-	FRsH0unmwkTHopHVZT6Hc/80BVO4IBGQtoEtdI6gydrYL2bm21C43rIyIKpHjprrK3SYnceREiC
-	y/cXvBNEUS2lis3o12fzYvURSTAllcMRVKfEja83ul4+ounvJbDaXs6qlqP0S68N1zVRTCJT1bH
-	+eVjw7paZqVtc8Iyb+4lED7ewrRr16YFuTFyTrZroElUPLrgUSG/Rkar5dA20NTibXE2MtvNsZw
-	i9E6pVqqS7j7o7IcrmZ7VnrVsmJ7OQP4/ySrU8AFjKleqehRSuDGAdMNFCAUcputIJTYELhMCi7
-	bs8KIcWFAJCZFYwNOVOYpWJeRIT6MUo3Qgq6dNF02HBGDMaDzSgA1fg==
-X-Google-Smtp-Source: AGHT+IEmHc6dXkowj/KC6TLkI13gyY8Emlnd81lhhSStCWu+Bw/F/Vpl30+Ts5hmEGYnRZqPPjqDcw==
-X-Received: by 2002:a05:6a00:3d0c:b0:736:6151:c6ca with SMTP id d2e1a72fcca58-7372234b8f3mr5799632b3a.4.1741999781372;
-        Fri, 14 Mar 2025 17:49:41 -0700 (PDT)
-Received: from ?IPV6:2a00:79e0:2e14:7:1790:6e62:92ba:cb2b? ([2a00:79e0:2e14:7:1790:6e62:92ba:cb2b])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73711529397sm3501714b3a.22.2025.03.14.17.49.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 14 Mar 2025 17:49:40 -0700 (PDT)
-Message-ID: <914a0df4-96d0-4cd4-ac87-3826fa9c1440@google.com>
-Date: Fri, 14 Mar 2025 17:49:38 -0700
+        d=1e100.net; s=20230601; t=1742000106; x=1742604906;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=E8qvkRDVRdv9qBia2/dOTQyKzNJ34jMIIljDmJe7gzU=;
+        b=Ho2jy5DVbP8giK92qG3zHnBha+S1xmoEcWyPWonuTxskoigm+XrcFstL7OKTlolAza
+         JwKuxvi5kIW8DVcwhhlCqYQZ/JV+ZamDZg1guzh8z3m6pzSXrSLW5Hc9piBal6IzL5qk
+         CPC1aM9BXvUsJvj6pAzwwo72ffFMmx+WudNyGdqUZFEOJKPsiOlGdgeGuZ4dqJzdvkFa
+         U2HkYtr3UgKIOWg8AHsdqAaqWBTodY2LzgEAPwcd63tzrTvPsN2petQCRAL3wmRclPXl
+         nEu0ZRCCvr9zvJ0/1rKqLUVYhiOKpDmUqrKuIHC2lpzaHXKzCg5p1IKtuU6n/NfaGkJI
+         qRkQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWJL1oAdslmDWxIoScRAVJp8FnPPt28tUBfzjyvAl5+CN8qu4wI5EO7Vr4KNw8MUcydBiVWFrpslTDw@vger.kernel.org, AJvYcCWdVsYInQV0kMlLWNEvHbGY270CtLtHqUmqhMtWRH0gesReQbtdS32jLANpZzGtP0UCbX84ANZ9hEkx2oSQ@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz17NZ4fzcLjemktF7DnQF+lzNIHTQo3uavL4PCdy8R5wh98Sto
+	bD+kmGpZ0xG+gjEd/Iozs19hW0kfb76nm6Mnd/symBb9bWOHJIV+
+X-Gm-Gg: ASbGncvNMrr3MTj98YU1rSuZ55uQVGHLbtFEwxaCi9JsRTFfpuLoaekB+4o59/Gk8JP
+	yOzNaDF8whJSg7n4xe99rt3Fu6x3QV6xOzfD5p/pU/0Ry2Ic44fFYPRTfn+f80qfbrHcv5z3d7f
+	OAD+b5CJkG7PRFK/zhdSyd27ffvfBdHpq158TGbP7GwabKYgff1OdWKQ1hTNL06jS/7OrPUy6Is
+	+EcHd4+xiOjnMiUAv7jk+AJzHNmErxX9lwiVuXo7pW/D59bkgd5k/Zy9tijgFdedxsp6ld8DCQB
+	UejitrP35ArqlIFljHNx
+X-Google-Smtp-Source: AGHT+IGgp1uiZq2qFqYPbOYD3pGMfDQvx5aQCCNWvl6mUfYQooAN1cww4ZHEMX/4ZqxQFR+1JE6iMg==
+X-Received: by 2002:a05:620a:1a91:b0:7c5:5003:81b0 with SMTP id af79cd13be357-7c57c7e4c4bmr607862185a.23.1742000105668;
+        Fri, 14 Mar 2025 17:55:05 -0700 (PDT)
+Received: from localhost ([2001:da8:7001:11::cb])
+        by smtp.gmail.com with UTF8SMTPSA id af79cd13be357-7c573c52246sm320780885a.11.2025.03.14.17.55.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Mar 2025 17:55:04 -0700 (PDT)
+Date: Sat, 15 Mar 2025 08:54:53 +0800
+From: Inochi Amaoto <inochiama@gmail.com>
+To: Linus Walleij <linus.walleij@linaro.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Chen Wang <unicorn_wang@outlook.com>, 
+	Inochi Amaoto <inochiama@outlook.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, Guo Ren <guoren@kernel.org>, 
+	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>, Thomas Bonnefille <thomas.bonnefille@bootlin.com>, 
+	Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>, Inochi Amaoto <inochiama@gmail.com>
+Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, Yixun Lan <dlan@gentoo.org>, 
+	Longbin Li <looong.bin@gmail.com>
+Subject: Re: (subset) [PATCH v2 0/8] riscv: sophgo: Add pinctrl support for
+ SG2042
+Message-ID: <f5nsx7xaf4hzmtj7zd5yuxbh53e6u6qqze6zhczrvwujt76ccy@3xtjhwtl6uzl>
+References: <20250211051801.470800-1-inochiama@gmail.com>
+ <174070346793.192886.6076012325463673162.b4-ty@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/5] Add support for Battery Status & Battery Caps AMS in
- TCPM
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Badhri Jagan Sridharan <badhri@google.com>,
- Sebastian Reichel <sre@kernel.org>,
- Heikki Krogerus <heikki.krogerus@linux.intel.com>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <len.brown@intel.com>,
- Pavel Machek <pavel@kernel.org>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
- linux-pm@vger.kernel.org, RD Babiera <rdbabiera@google.com>,
- Kyle Tso <kyletso@google.com>
-References: <20250312-batt_ops-v1-0-88e0bb3129fd@google.com>
- <20250313-determined-wild-seahorse-f7871a@krzk-bin>
-Content-Language: en-US
-From: Amit Sunil Dhamne <amitsd@google.com>
-In-Reply-To: <20250313-determined-wild-seahorse-f7871a@krzk-bin>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <174070346793.192886.6076012325463673162.b4-ty@gmail.com>
 
-Hi Krzysztof,
+On Fri, Feb 28, 2025 at 08:44:32AM +0800, Inochi Amaoto wrote:
+> On Tue, 11 Feb 2025 13:17:48 +0800, Inochi Amaoto wrote:
+> > SG2042 has a simple pinctrl device for all configurable pins.
+> > It supports setting pull up/down, drive strength and input schmitt
+> > trigger.
+> > 
+> > Add support for SG2042 and SG2044 pinctrl device.
+> > 
+> > Changed from v1:
+> > - https://lore.kernel.org/all/20241024064356.865055-1-inochiama@gmail.com/
+> > 1. Fix the binding documentation error.
+> > 2. Refactor the cv18xx code so SG2042 can uses the same code.
+> > 3. Add SG2044 pinctrl support as it has the same layout.
+> > 
+> > [...]
+> 
+> Applied to for-next, thanks!
+> 
+> [8/8] riscv: dts: sophgo: sg2042: add pinctrl support
+>       https://github.com/sophgo/linux/commit/5277657d53834cfbdbb9444088c1448b29bdfe98
+> 
+> Thanks,
+> Inochi
+> 
 
-Thanks for the review!
+This patch is unapplied temporarily for dependency issue.
+I will repick it in the next cycle.
 
-On 3/13/25 1:50 AM, Krzysztof Kozlowski wrote:
-> On Wed, Mar 12, 2025 at 04:42:00PM -0700, Amit Sunil Dhamne wrote:
->> Support for Battery Status & Battery Caps messages in response to
->> Get_Battery_Status & Get_Battery_Cap request is required by USB PD devices
->> powered by battery, as per "USB PD R3.1 V1.8 Spec", "6.13 Message
->> Applicability" section. This patchset adds support for these AMSes
->> to achieve greater compliance with the spec.
-> Which board uses it? I would be happy to see that connection between
-> batteries and USB connector on the schematics of some real device. How
-> does it look like?
-Any board that uses a USB Type-C connector that supplies power into or 
-out of a battery while operating in sink or source mode respectively. 
-The VBUS is connected to the (battery + buck boost IC's CHGin/Vin) or a 
-companion IFPMIC connected to a battery.  In our board we have USB 
-Connector <-> IFPMIC <-> Battery.
-
-Thanks,
-
-Amit
-
-> Best regards,
-> Krzysztof
->
+Regards,
+Inochi
 
