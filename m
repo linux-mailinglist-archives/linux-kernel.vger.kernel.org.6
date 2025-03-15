@@ -1,125 +1,176 @@
-Return-Path: <linux-kernel+bounces-562656-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562655-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EE29A62FC6
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 17:04:28 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BD38A62FC2
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 17:02:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D5F01899133
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 16:04:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C90F616F984
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 16:02:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0741C204697;
-	Sat, 15 Mar 2025 16:04:18 +0000 (UTC)
-Received: from bmailout2.hostsharing.net (bmailout2.hostsharing.net [83.223.78.240])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8066204090;
+	Sat, 15 Mar 2025 16:02:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oXpQBWj4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D1CA17995E;
-	Sat, 15 Mar 2025 16:04:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.78.240
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C7EEA95D;
+	Sat, 15 Mar 2025 16:02:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742054657; cv=none; b=pOo8HShUWWaehZ4j+Sw5hfnNUdOaykOAAHF/3ytgYkLDXWs+r4dgK8iYO2ZyzilXXnoPQtTIxAuZUst4sW52FESmPxvXtc7GmngmYLWsaeZ1wAJ3K8sAtu8ky5xWYzqBpj257qrQJTBhXKr8XiHJYuFHbO6969tpUrD3k6VD85U=
+	t=1742054551; cv=none; b=KSrL17l/xHnHXn+KTcF2mR4qj0+0NH38Ns+HjW3vxDOUxHuAa9BelP/bwTEkzLl+xzlmryb/vg1IAgarFW3AQf8+k6YStJ9uABDt/AYc83289Vuw7udaskVZrbb8zTP9e9hOkiggLLStwW+WAvwNgVQHcjsivl+TRUTW4H1cHcE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742054657; c=relaxed/simple;
-	bh=jCLcEAKOk+ffm3F5QK/1pdIOC2FtZ2xLKeqPv2n00MU=;
+	s=arc-20240116; t=1742054551; c=relaxed/simple;
+	bh=qtl5AjnqARyOJj1pkFXL9QYbeb0Yr975nxxzZ6glj0k=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jc3lv0wsIGwYTKLwOTtmkUOH1ZpuGdqBCTkcmVh+0l95CSxJDVgxsmO6NlKAIRpGJvF9DH85kvJ19/EZme7PpJpp63WkB9j3PuqXuNQmcJz651o9rO1sTIxsMf//VT7is01pQAsG/E5cm3LTGTmvqMxs0C63y346yM0I2qZ3SnE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=83.223.78.240
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
-Received: from h08.hostsharing.net (h08.hostsharing.net [IPv6:2a01:37:1000::53df:5f1c:0])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
-	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
-	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
-	by bmailout2.hostsharing.net (Postfix) with ESMTPS id B71622800B4B2;
-	Sat, 15 Mar 2025 16:58:11 +0100 (CET)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-	id A15C916BB0D; Sat, 15 Mar 2025 16:58:11 +0100 (CET)
-Date: Sat, 15 Mar 2025 16:58:11 +0100
-From: Lukas Wunner <lukas@wunner.de>
-To: Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-	Guenter Roeck <groeck@juniper.net>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-	Rajat Jain <rajatxjain@gmail.com>,
-	Joel Mathew Thomas <proxy0@tutamail.com>,
-	linux-kernel@vger.kernel.org,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	stable@vger.kernel.org
-Subject: Re: [PATCH 1/4] PCI/hotplug: Disable HPIE over reset
-Message-ID: <Z9Wjk2GzrSURZoTG@wunner.de>
-References: <20250313142333.5792-1-ilpo.jarvinen@linux.intel.com>
- <20250313142333.5792-2-ilpo.jarvinen@linux.intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=I8U5FQbolkMnSPTogndTW8FjP1erQO3KtvYTOFP7wmiY4F1MtMRC6bIxEx1z0w/2gGVgLx97508c15usy3mwz5UjO+2+oqEbuMIVXlnaUUyXDN0DLdboaWJuMBbfsHXK+xhMSxWCzf5zLTmj1lRAj7KiI7m2MIA3SUpn0ANreho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oXpQBWj4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DEA9BC4CEE5;
+	Sat, 15 Mar 2025 16:02:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742054550;
+	bh=qtl5AjnqARyOJj1pkFXL9QYbeb0Yr975nxxzZ6glj0k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oXpQBWj48xsce/ksUL3+pGVteTAcFsUGsuif/VCnorTFV9LpdUvaqmKmpif3L8lPz
+	 orVLZ3abz0wTcgN9bor8M+J0w8GO1YLQ6DbXdY8A0PkaSyZjBVFXu2CgNlukKhfvrt
+	 7oJtFk1GFJgMk5hIBDSFI813s0QSKNCrGugU6uEAORxn5wE8DYdtKjGZh44vLYHsNS
+	 FyA4a2SJ52VXKdTATHeZk1lBvZkwIKs24Z1jKaMNzsQFxOux99v6x4xvhP0yxxJs46
+	 sAPOOx5un11Gx8QsWF52yvcbwfuoJZpEcfbi2tSG1DaMJ7jrw0EK/1+4IpkxuB2hx0
+	 kpwViS0OC4mpQ==
+Date: Sat, 15 Mar 2025 17:02:26 +0100
+From: Alejandro Colomar <alx@kernel.org>
+To: Alex Elder <elder@riscstar.com>, Kees Cook <kees@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Azeem Shaikh <azeemshaikh38@gmail.com>, Alex Elder <elder@kernel.org>, 
+	Sumit Garg <sumit.garg@kernel.org>, linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH] EISA: Increase length of device names
+Message-ID: <y5hkfx6tld2khsv2rb7w3k5hlkhfjfn7ndwwj5g75hkdebvjat@mypbmvg5brfi>
+References: <20250310222424.work.107-kees@kernel.org>
+ <3c6bc732-bd90-4a29-bcbc-f545b0ed79ad@riscstar.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="2lmt4x4w65wae6rm"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250313142333.5792-2-ilpo.jarvinen@linux.intel.com>
+In-Reply-To: <3c6bc732-bd90-4a29-bcbc-f545b0ed79ad@riscstar.com>
 
-On Thu, Mar 13, 2025 at 04:23:30PM +0200, Ilpo Järvinen wrote:
-> pciehp_reset_slot() disables PDCE (Presence Detect Changed Enable) and
-> DLLSCE (Data Link Layer State Changed Enable) for the duration of reset
-> and clears the related status bits PDC and DLLSC from the Slot Status
-> register after the reset to avoid hotplug incorrectly assuming the card
-> was removed.
-> 
-> However, hotplug shares interrupt with PME and BW notifications both of
-> which can make pciehp_isr() to run despite PDCE and DLLSCE bits being
-> off. pciehp_isr() then picks PDC or DLLSC bits from the Slot Status
-> register due to the events that occur during reset and caches them into
-> ->pending_events. Later, the IRQ thread in pciehp_ist() will process
-> the ->pending_events and will assume the Link went Down due to a card
-> change (in pciehp_handle_presence_or_link_change()).
-> 
-> Change pciehp_reset_slot() to also clear HPIE (Hot-Plug Interrupt
-> Enable) as pciehp_isr() will first check HPIE to see if the interrupt
-> is not for it. Then synchronize with the IRQ handling to ensure no
-> events are pending, before invoking the reset.
 
-After dwelling on this for a while, I'm thinking that it may re-introduce
-the issue fixed by commit f5eff5591b8f ("PCI: pciehp: Fix AB-BA deadlock
-between reset_lock and device_lock"):
+--2lmt4x4w65wae6rm
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+From: Alejandro Colomar <alx@kernel.org>
+To: Alex Elder <elder@riscstar.com>, Kees Cook <kees@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Azeem Shaikh <azeemshaikh38@gmail.com>, Alex Elder <elder@kernel.org>, 
+	Sumit Garg <sumit.garg@kernel.org>, linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH] EISA: Increase length of device names
+References: <20250310222424.work.107-kees@kernel.org>
+ <3c6bc732-bd90-4a29-bcbc-f545b0ed79ad@riscstar.com>
+MIME-Version: 1.0
+In-Reply-To: <3c6bc732-bd90-4a29-bcbc-f545b0ed79ad@riscstar.com>
 
-Looking at the second and third stack trace in its commit message,
-down_write(reset_lock) in pciehp_reset_slot() is basically equivalent
-to synchronize_irq() and we're holding device_lock() at that point,
-hindering progress of pciehp_ist().
+Hi Kees, Alex,
 
-So I think I have guided you in the wrong direction and I apologize
-for that.
+On Sat, Mar 15, 2025 at 09:27:36AM -0500, Alex Elder wrote:
+> On 3/10/25 5:24 PM, Kees Cook wrote:
+> > GCC 15's -Wunterminated-string-initialization warned about truncated
+> > name strings. Instead of marking them with the "nonstring" attribute[1],
+> > increase their length to correctly include enough space for the
+> > terminating NUL character, as they are used with %s format specifiers.
 
-However it seems to me that this should be solvable with the small
-patch below.  Am I missing something?
+It might be interesting to mention where they are used with %s.
 
-@Joel Mathew Thomas, could you give the below patch a spin and see
-if it helps?
+> > Link: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=3D117178 [1]
+> > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > Cc: Azeem Shaikh <azeemshaikh38@gmail.com>
+> > Cc: Alex Elder <elder@kernel.org>
+>=20
+> This was interesting, but based on the bug text I suspect you
+> meant to address this to Alejandro Colomar, <alx@kernel.org>.
 
 Thanks!
 
--- >8 --
+> For what it's worth, it looks fine to me.
 
-diff --git a/drivers/pci/hotplug/pciehp_hpc.c b/drivers/pci/hotplug/pciehp_hpc.c
-index bb5a8d9f03ad..99a2ac13a3d1 100644
---- a/drivers/pci/hotplug/pciehp_hpc.c
-+++ b/drivers/pci/hotplug/pciehp_hpc.c
-@@ -688,6 +688,11 @@ static irqreturn_t pciehp_isr(int irq, void *dev_id)
- 		return IRQ_HANDLED;
- 	}
- 
-+	/* Ignore events masked by pciehp_reset_slot(). */
-+	events &= ctrl->slot_ctrl;
-+	if (!events)
-+		return IRQ_HANDLED;
-+
- 	/* Save pending events for consumption by IRQ thread. */
- 	atomic_or(events, &ctrl->pending_events);
- 	return IRQ_WAKE_THREAD;
+LGTM too.  Assuming that changing the size of the arrays doesn't break
+something else, it looks good.
+
+
+Have a lovely day!
+Alex
+
+> 					-Alex
+>=20
+> > Cc: Sumit Garg <sumit.garg@kernel.org>
+> > Signed-off-by: Kees Cook <kees@kernel.org>
+> > ---
+> >   drivers/eisa/eisa-bus.c | 2 +-
+> >   include/linux/eisa.h    | 4 +++-
+> >   2 files changed, 4 insertions(+), 2 deletions(-)
+> >=20
+> > diff --git a/drivers/eisa/eisa-bus.c b/drivers/eisa/eisa-bus.c
+> > index cb586a362944..edceea083b98 100644
+> > --- a/drivers/eisa/eisa-bus.c
+> > +++ b/drivers/eisa/eisa-bus.c
+> > @@ -21,7 +21,7 @@
+> >   struct eisa_device_info {
+> >   	struct eisa_device_id id;
+> > -	char name[50];
+> > +	char name[EISA_DEVICE_INFO_NAME_SIZE];
+> >   };
+> >   #ifdef CONFIG_EISA_NAMES
+> > diff --git a/include/linux/eisa.h b/include/linux/eisa.h
+> > index f98200cae637..c73a410bf88f 100644
+> > --- a/include/linux/eisa.h
+> > +++ b/include/linux/eisa.h
+> > @@ -28,6 +28,8 @@
+> >   #define EISA_CONFIG_ENABLED         1
+> >   #define EISA_CONFIG_FORCED          2
+> > +#define EISA_DEVICE_INFO_NAME_SIZE	51
+> > +
+> >   /* There is not much we can say about an EISA device, apart from
+> >    * signature, slot number, and base address. dma_mask is set by
+> >    * default to parent device mask..*/
+> > @@ -41,7 +43,7 @@ struct eisa_device {
+> >   	u64                   dma_mask;
+> >   	struct device         dev; /* generic device */
+> >   #ifdef CONFIG_EISA_NAMES
+> > -	char		      pretty_name[50];
+> > +	char		      pretty_name[EISA_DEVICE_INFO_NAME_SIZE];
+> >   #endif
+> >   };
+>=20
+
+--=20
+<https://www.alejandro-colomar.es/>
+
+--2lmt4x4w65wae6rm
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmfVpIsACgkQ64mZXMKQ
+wqnRRQ/+NlEKzkhK5BB+hw4aSas+IA7ih+NEusuImQm7F8R7OAayOYPrFWv6et0n
+ZCW8LC4+qtUOUL6e6kgWXkAFigwlxt+y4/EaX6PI6Gs4zr9NNq/bgA2IgTi2pTo7
+J+UhRAh9nZnPYXcv+ggME4CtfJTuWoikuIrNYOVNbIPYn9Nz4YnKPm+PDQIBa5w6
+h804yhi4rBtV1Mir1TfzYvYfCgaipSJ71nvHcKv/56clnPVUG78LOP+QV/wtWVxc
+e0sW5jQwEqTBOq11GG+YF7f7zpILd5cs1YOOsVpUhV6w74eCOYK0XVmzLtDJGpli
+n4SBPMVXNRju46DAQfTSXtY+uFSBkrS4XrCqjSLHHRtSN0qOuOlUtJCVstAHY+wI
+Bc+s2jzslhmd+XdNbGy4RuoW1x0p68/A7KfBRCpIthaPuPPQHotX1hErfp9cclwG
+yAFQ7Kh+11MJQOo7JGNCPXN6YR/bQuMfqhIVXpMO3Wxy0U3b7PmRqw+/oBLniC1G
+vbUmPD+rKZogVa91v6wEjRu9VCqron8Oci81FX4yfHRU4r8qDSSiYxBK731LGVnc
+MvQfE1t7eE1vF8AKfRXeAWipfY35Tiu3DQ97OhZcg3PU7BVTvG+lBLAdhfyqSNvc
+D7W/er0m+07WL/p1Nyf3PT/B5m5CE25t4jzLzeTb4OUsKG/QwXY=
+=cawG
+-----END PGP SIGNATURE-----
+
+--2lmt4x4w65wae6rm--
 
