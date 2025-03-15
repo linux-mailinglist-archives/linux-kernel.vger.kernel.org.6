@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-562366-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562367-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24555A624C5
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 03:40:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DC0BA624C7
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 03:41:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68DF24218A5
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 02:40:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A2E2042185F
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 02:40:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E52318DF81;
-	Sat, 15 Mar 2025 02:40:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 044641F5EA;
+	Sat, 15 Mar 2025 02:40:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="36b36eS+"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NKh5F7OZ"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 543F618B47C
-	for <linux-kernel@vger.kernel.org>; Sat, 15 Mar 2025 02:40:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDE4618DB26
+	for <linux-kernel@vger.kernel.org>; Sat, 15 Mar 2025 02:40:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742006417; cv=none; b=XknOOkhHUi+wvFQCuxT+lYvVkW8pmyeleHtQkWzJw7XVvh/uo4CdH+w2uYzzCMkFeT7OD98ndDHVpEt7TKJXsGUNLzBua4CHvmXSQn9qibVGb7XY7lpZR/CtWl42Fpb93ZbSZkznuCWSFFpTSo+2ijNZYPxrJnJilfewxJxrDVo=
+	t=1742006419; cv=none; b=pGvsQR+5hslOdfX9bY2as7eUsqwMeGV2udmgGaaw6nsKKwG1jEHcdY+F5XgtT1aBaG6yRGPXTx+pv2/d3F1Ve1/ll5tpJfrW6rXa2XilYdS0woxOH7nrvnlS0Z1fzfX/0BxNLzhobNs2E5yV1ydKrVh0BJjcMpjpFlbKaK15JIA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742006417; c=relaxed/simple;
-	bh=U84p6SZxKcFGqIOb3edMWdKOJC3NG2/MOklZXIgpKbI=;
+	s=arc-20240116; t=1742006419; c=relaxed/simple;
+	bh=csXcvVUGODyh39WQeJCJvvBrtei4rk6c+z8kvW6MpJM=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=qyXVcE7GqJJbt/4/3A39QcXRJD9KR6lIAsgy/98KXVWqOrbiPWFWDIGRVSAVum0PCZmhIfczbafAZHkhqxtiNjz2pZZKuNsU4oV4izGYMb5pp4KFEpojGnaaH/to7duWc2VhSKjCMttfcXC42oPMfqeqF94iqGEtbQEARpASnCs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=36b36eS+; arc=none smtp.client-ip=209.85.216.74
+	 To:Cc:Content-Type; b=gV6DhlfpeEMmxrHF6sqURLl5g+jFpkKpcezlGtjhA0/XBlcC0rvmeAmY75x3G+oZTsqyk4SLKpaL3rTrFuLDAErUBgT7JSKZbcjoX3ppeMu0EGQWoUnMWtQnYKSUsZMALTy7+aKx9GQ5r8Uhhh0W0MDysOLLB3S/fPnKjJSg+uA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=NKh5F7OZ; arc=none smtp.client-ip=209.85.216.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2ff854a2541so472762a91.0
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 19:40:16 -0700 (PDT)
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2ff82dd6de0so439438a91.0
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 19:40:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1742006415; x=1742611215; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1742006417; x=1742611217; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=bMQrAPcfd3nTq7FKRl/uWgH64wo3Ilzhc0co1/LF5U0=;
-        b=36b36eS+Wrm1W4zM1fRaS094HChbvPEUTq/Y+5Iez9EN6HGpBwTIY/20ADlhOpVCDT
-         DN+fbeKBBglsM4OOaZ893t/VuhdyvlHhI+Yr68II9Hhm1teyhIAoMU/RRqr/Xg++nMr4
-         FbqFnFAn5jEktuYJbHLX3BO1jEw8/ZpMfg1PapU8uh97z1D7VSgW/I/HiJp9qHcaZbat
-         ezWmTnphzb9UpKL3T7WLF/0EXYOUmmgzUmIm1KCrPAQLzZO7KAuiDy5R1Y+alrMZwvcU
-         8gowYILrflgLSWpFoBtWIbOIgkWN6cl4XUJalzssDw4yoYjMq1fkq8rOtgBWic6LRKxN
-         e9Xg==
+        bh=Sy3DZMUWr7rSQ3fTWMshpO7vJyF2FiO+hW5xt0RQaio=;
+        b=NKh5F7OZDDAXwedLK+UNsDYfqXSvmn07JTm0jfMyFG7y107zu7l/2Zm51EVBI7xDoe
+         R4+lcZnGSGbrR5lBw9fe+qDpqLOSgIF7Lm0mmwir8LHXje7A2K1i72TSXYLLHevWROEA
+         wR53lByQ+fCj8eHMcOwAAe9GgO9B9HqfmDVQCnRpQO+CpRJT0L1ZmgTghT0oI6x+ggm+
+         DJd7pRPhy6TnHVtYKm4TfDJCN+sSS7Sgd0Yseh2d94Mx8IpdsISuYwKO8oXewZNsd87F
+         KHFPt5mzJlAaaqF9597rOCGrq7Jiv8O/fAIWm4WmcZbFaolEqfpicPkJ03GIgyPQvd5b
+         Nybg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742006415; x=1742611215;
+        d=1e100.net; s=20230601; t=1742006417; x=1742611217;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=bMQrAPcfd3nTq7FKRl/uWgH64wo3Ilzhc0co1/LF5U0=;
-        b=sRyqb0S3t6aouIRh2hmVRqR2IQnDGp1agE9HuGkjXsl7rTpHeQXYM8wm/SCn0H6Edb
-         KfuXiM2UeDQFN0EXtC/ZTctk0Vfo2qtdbVz5zm54Gq79NVFB6/u44Dbis169PksOyDQI
-         QEMKZO3cX/1/jKBumPWKYNWlv5RjIBONGNqE9nimeHmdbNIBjIxSkxGKzwX62Ni43ObI
-         2lgLRoP+oDBc5J4CooBa+LKu0nCN0qnSnwP89/93RfGHpcJ6V9wB70KJkh4zNKJLzG3I
-         oQDVKSAYHuYok6vvAZy+OgDSbwej+skOhnAVhCon8wjBZQGpLpCtzs7/zhvQutMCMr/5
-         TLhQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUw2pAtNlwselVquLfYpNqNYks7i4kopDRy3GSsrkR/mHvIS883NRn85Ev/ijrwSAVt6jVu8iG5c/tWB1o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YytBamesAhl3wMXYY39vSFrC03RAhwLo/gyGv6KjATG1KTYMeSx
-	bvcDk7QcjeMU/Ivpnae5zaXOgTSjF365tcjaKewNvgGAYcxGAAYumUXBLDwBImrhVmv8dBgesMd
-	qbw==
-X-Google-Smtp-Source: AGHT+IFb6MPgfB+uXSTMtqja083E/Cm6ACXuiGQKGyeJpKw+4RppFmo0v95KG0xwXnNHJcF8PwFt1kR+4Ms=
-X-Received: from pjbok3.prod.google.com ([2002:a17:90b:1d43:b0:2fb:fac8:f45b])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:3a10:b0:301:1bce:c26f
- with SMTP id 98e67ed59e1d1-30151c7a17dmr5547488a91.3.1742006415689; Fri, 14
- Mar 2025 19:40:15 -0700 (PDT)
+        bh=Sy3DZMUWr7rSQ3fTWMshpO7vJyF2FiO+hW5xt0RQaio=;
+        b=Ig8qszBDMpRWpvjRUssCuzJKu5etxOUfqRC0Hi3fSg3X6PnEsKobhiDLSELIDkWi/n
+         HQtrhI0qXTitJ/EE/IbBRAdOh7ObUeVsyBk8YMr4CPwgUtyBgpjr13ANEp64JQAwBF03
+         NwDHsPye6TXTwD4DJ/B8C03pfrm5n9lVF6A8sUVOnC3BsqS32GtwplVdtYqfsC/GLbP8
+         +OjPorm8d174FrNccPM6EroXSvbVYkysQ1JuJ8KiItwTrcIdbZ7Iz6grnpmGi1zOO+p5
+         jHVB8opyJILTllAoFAcIv2va5H/gO9G0eQn+sLsO1PMmEn0Y3yrCq/yX7Ll+5maGVZLu
+         GnoQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWCjQji/BbaVgPE4VYEQKdpBY4mV+NDYLYS0SQikT8JM7NCOsNanUo7/G8mwaflfBsnfRmdhEkXmszwvLk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwsXudiOLpCgeG0t4X2PAez+emmwot7KVsoo5hgK0odIYd87col
+	x5lqREStZ+2g/vlqqf+ltmk9AkmiamSDcYOMptzkorrmHhvLzpptxCYpJ8VZXgSnmH8vuFyCUKi
+	g6A==
+X-Google-Smtp-Source: AGHT+IG+EY2vHoY9F8/B8pXlSFd1fbS2p5geTEG1LvjxFKSZnZyvPp3RwszbiRtlmWwsDlNu/jnAcshVEQg=
+X-Received: from pjbph6.prod.google.com ([2002:a17:90b:3bc6:b0:2fc:11a0:c549])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:180f:b0:2ee:f22a:61dd
+ with SMTP id 98e67ed59e1d1-30151dd2784mr5391135a91.32.1742006417396; Fri, 14
+ Mar 2025 19:40:17 -0700 (PDT)
 Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Fri, 14 Mar 2025 19:40:09 -0700
+Date: Fri, 14 Mar 2025 19:40:10 -0700
 In-Reply-To: <20250315024010.2360884-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -75,62 +75,95 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250315024010.2360884-1-seanjc@google.com>
 X-Mailer: git-send-email 2.49.0.rc1.451.g8f38331e32-goog
-Message-ID: <20250315024010.2360884-3-seanjc@google.com>
-Subject: [PATCH 2/3] KVM: x86: Allocate kvm_vmx/kvm_svm structures using kzalloc()
+Message-ID: <20250315024010.2360884-4-seanjc@google.com>
+Subject: [PATCH 3/3] KVM: x86/mmu: Defer allocation of shadow MMU's hashed
+ page list
 From: Sean Christopherson <seanjc@google.com>
 To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
 Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-Now that the size of "struct kvm" is less than 2KiB, switch back to using
-kzalloc() to allocate the VM structures.  Add compile-time assertions in
-vendor code to ensure the size is an order-0 allocation, i.e. to prevent
-unknowingly letting the size balloon in the future.
+When the TDP MMU is enabled, i.e. when the shadow MMU isn't used until a
+nested TDP VM is run, defer allocation of the array of hashed lists used
+to track shadow MMU pages until the first shadow root is allocated.
 
 Signed-off-by: Sean Christopherson <seanjc@google.com>
 ---
- arch/x86/include/asm/kvm_host.h | 2 +-
- arch/x86/kvm/svm/svm.c          | 1 +
- arch/x86/kvm/vmx/vmx.c          | 1 +
- 3 files changed, 3 insertions(+), 1 deletion(-)
+ arch/x86/kvm/mmu/mmu.c | 29 ++++++++++++++++++++++++-----
+ 1 file changed, 24 insertions(+), 5 deletions(-)
 
-diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-index 6ead9e57446a..04e6c5604bc3 100644
---- a/arch/x86/include/asm/kvm_host.h
-+++ b/arch/x86/include/asm/kvm_host.h
-@@ -1939,7 +1939,7 @@ void kvm_x86_vendor_exit(void);
- #define __KVM_HAVE_ARCH_VM_ALLOC
- static inline struct kvm *kvm_arch_alloc_vm(void)
- {
--	return __vmalloc(kvm_x86_ops.vm_size, GFP_KERNEL_ACCOUNT | __GFP_ZERO);
-+	return kzalloc(kvm_x86_ops.vm_size, GFP_KERNEL_ACCOUNT);
+diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
+index b878f2e89dec..3765d7abc2cc 100644
+--- a/arch/x86/kvm/mmu/mmu.c
++++ b/arch/x86/kvm/mmu/mmu.c
+@@ -1982,14 +1982,25 @@ static bool sp_has_gptes(struct kvm_mmu_page *sp)
+ 	return true;
  }
  
- #define __KVM_HAVE_ARCH_VM_FREE
-diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
-index 8abeab91d329..589adc5f92e0 100644
---- a/arch/x86/kvm/svm/svm.c
-+++ b/arch/x86/kvm/svm/svm.c
-@@ -5536,6 +5536,7 @@ static int __init svm_init(void)
- 	if (r)
- 		goto err_kvm_init;
++static __ro_after_init HLIST_HEAD(empty_page_hash);
++
++static struct hlist_head *kvm_get_mmu_page_hash(struct kvm *kvm, gfn_t gfn)
++{
++	struct hlist_head *page_hash = READ_ONCE(kvm->arch.mmu_page_hash);
++
++	if (!page_hash)
++		return &empty_page_hash;
++
++	return &page_hash[kvm_page_table_hashfn(gfn)];
++}
++
+ #define for_each_valid_sp(_kvm, _sp, _list)				\
+ 	hlist_for_each_entry(_sp, _list, hash_link)			\
+ 		if (is_obsolete_sp((_kvm), (_sp))) {			\
+ 		} else
  
-+	BUILD_BUG_ON(get_order(sizeof(struct kvm_svm) != 0));
+ #define for_each_gfn_valid_sp_with_gptes(_kvm, _sp, _gfn)		\
+-	for_each_valid_sp(_kvm, _sp,					\
+-	  &(_kvm)->arch.mmu_page_hash[kvm_page_table_hashfn(_gfn)])	\
++	for_each_valid_sp(_kvm, _sp, kvm_get_mmu_page_hash(_kvm, _gfn))	\
+ 		if ((_sp)->gfn != (_gfn) || !sp_has_gptes(_sp)) {} else
+ 
+ static bool kvm_sync_page_check(struct kvm_vcpu *vcpu, struct kvm_mmu_page *sp)
+@@ -2357,6 +2368,7 @@ static struct kvm_mmu_page *__kvm_mmu_get_shadow_page(struct kvm *kvm,
+ 	struct kvm_mmu_page *sp;
+ 	bool created = false;
+ 
++	BUG_ON(!kvm->arch.mmu_page_hash);
+ 	sp_list = &kvm->arch.mmu_page_hash[kvm_page_table_hashfn(gfn)];
+ 
+ 	sp = kvm_mmu_find_shadow_page(kvm, vcpu, gfn, sp_list, role);
+@@ -3884,11 +3896,14 @@ static int kvm_mmu_alloc_page_hash(struct kvm *kvm)
+ {
+ 	typeof(kvm->arch.mmu_page_hash) h;
+ 
++	if (kvm->arch.mmu_page_hash)
++		return 0;
++
+ 	h = kcalloc(KVM_NUM_MMU_PAGES, sizeof(*h), GFP_KERNEL_ACCOUNT);
+ 	if (!h)
+ 		return -ENOMEM;
+ 
+-	kvm->arch.mmu_page_hash = h;
++	WRITE_ONCE(kvm->arch.mmu_page_hash, h);
  	return 0;
+ }
  
- err_kvm_init:
-diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-index b70ed72c1783..01264842bf45 100644
---- a/arch/x86/kvm/vmx/vmx.c
-+++ b/arch/x86/kvm/vmx/vmx.c
-@@ -8755,6 +8755,7 @@ static int __init vmx_init(void)
- 	if (r)
- 		goto err_kvm_init;
+@@ -3911,9 +3926,13 @@ static int mmu_first_shadow_root_alloc(struct kvm *kvm)
+ 	if (kvm_shadow_root_allocated(kvm))
+ 		goto out_unlock;
  
-+	BUILD_BUG_ON(get_order(sizeof(struct kvm_vmx) != 0));
- 	return 0;
- 
- err_kvm_init:
++	r = kvm_mmu_alloc_page_hash(kvm);
++	if (r)
++		goto out_unlock;
++
+ 	/*
+-	 * Check if anything actually needs to be allocated, e.g. all metadata
+-	 * will be allocated upfront if TDP is disabled.
++	 * Check if memslot metadata actually needs to be allocated, e.g. all
++	 * metadata will be allocated upfront if TDP is disabled.
+ 	 */
+ 	if (kvm_memslots_have_rmaps(kvm) &&
+ 	    kvm_page_track_write_tracking_enabled(kvm))
 -- 
 2.49.0.rc1.451.g8f38331e32-goog
 
