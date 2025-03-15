@@ -1,372 +1,116 @@
-Return-Path: <linux-kernel+bounces-562307-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562306-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 263A3A62284
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 01:06:22 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F497A62282
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 01:05:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5806D3BC30A
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 00:06:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3CBF97A97EE
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 00:04:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25BA1A2D;
-	Sat, 15 Mar 2025 00:06:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68DF8383;
+	Sat, 15 Mar 2025 00:05:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="USRKyyiH"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5869B1362;
-	Sat, 15 Mar 2025 00:06:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qmqtxevp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC589184
+	for <linux-kernel@vger.kernel.org>; Sat, 15 Mar 2025 00:05:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741997173; cv=none; b=kqqRJJ4emuuPu+se6tgLr6x7sxBR3wJJpR9eS4TnFIwb9r2jHqj4Q/cPD8Nmt9C7KHd9IgQyGeY2dGfw5PTe2oZqcvTY9wUtu4jBqgyO7B1+HWmlJOTRGknyWG2WRcD9T+8eHr8FS2191AtWcVTujt3vUkh6tHB6p92o5MagYu4=
+	t=1741997137; cv=none; b=JhgX2ZCiJsapzETgFH8VZ8yRmwjG5vjb1o5hWttjGhyf5oHnXivl5dHjEMA1g82wuEeMggFgYbhQsH9PYad/5Zfprl3RRy8Er7yG/Lzc4E3h+LjW7pqpwZMqI+cW/70PtBw4ev3H5cTeufvZbDFpawhTPXIPL4DX89tmhAlaHko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741997173; c=relaxed/simple;
-	bh=c+oJ5tUDjiRPX27O0pSaL1fRF9yu1mgP4Jz9TcxlRNk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rbIZgTNDnueVkT5B+ncb2jvAzN7tiY8o50nkMHthZ9Jv25Qeg1bkEvQqhjCZ9GpuX+egac6emK1CJqEnp+EhXMJLPxb4QzgJOK3H+/c4JygCMQHOB7+pSeruaTNQb02AK2pPpQ7S/9fIXIu0fLFSYrv9mJiepUj8fE5QVQ1zkuw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=USRKyyiH; arc=none smtp.client-ip=117.135.210.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:
-	Content-Type; bh=wvC+85Y9b2oXoCXqZi463erf/m81eVV7oHxrRDuEYc4=;
-	b=USRKyyiHTUjdN+fyKKR5kHWBUdg5vQGOAIJlMHPOH9TLN/sfStcvYXapkkgqsO
-	rJ0W4UYkOjvdPjNDWr7m9XuxzesEQMW2mJvifcCPeKlxtgrLnsEcXSe5enM585G2
-	8i2clj6Fa/wASBSjlsw8SYl6IUUZTpApgydfxtstknQUI=
-Received: from [192.168.71.45] (unknown [])
-	by gzsmtp1 (Coremail) with SMTP id PCgvCgAHBGI+xNRnpNs0BA--.32353S2;
-	Sat, 15 Mar 2025 08:05:20 +0800 (CST)
-Message-ID: <3cadf8d5-c4d8-4941-ae2e-8b00ceb83a8f@163.com>
-Date: Sat, 15 Mar 2025 08:05:18 +0800
+	s=arc-20240116; t=1741997137; c=relaxed/simple;
+	bh=M/snCJZcOTzV0RZogI1SxmL2NWqUOAdHzcd3g7E6NN0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gC7fGloVCSsg5upkIji2bSPI5hL8vPrX5aoLaxzorKKJF0U2cf8P6bobnHqNfJGVrkAx/G0VLoSRfb3CwwhHKBNjB59de2mRfo8LyGVLvgVhGI+cctKAEbqoLE0IPa8tEmQQDgP/9ltZLoCfKD5Kch4++jpCl6dIlwKBgxGaoDQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qmqtxevp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74CA9C4CEE3;
+	Sat, 15 Mar 2025 00:05:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741997137;
+	bh=M/snCJZcOTzV0RZogI1SxmL2NWqUOAdHzcd3g7E6NN0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Qmqtxevp4xo6njHI43QoCbEc5bUWxfqZTr1zrHnuO8XRC2I+qeNPj9MdAjAyhcvHe
+	 9e1MRlK1c5rkM1LhfpkUWNt6ouNqFd1RyawqBB+KhXdBIDgxI64l+uXMdv79cEJO1M
+	 TE/FZOm3Vkqsw7S6+SVPQ2CqpN3T81nFqjXthvPbkHe80fIOCdUx48XVaq9xXCv1eL
+	 zPkPNscALE/hvki/SfODm9JTgofrx40uBNwUiFnAwIWrj5BAtefB+qPNqyUsJ9mfTt
+	 AvNy3xrmfDXoA/M+g9Nf/WW87jTojXOXONF8f1yiRZPMgNCpCoRU0rb1Pi31Ok2LES
+	 DbPq7rVdIkj6Q==
+Date: Fri, 14 Mar 2025 17:05:34 -0700
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org, 
+	Peter Zijlstra <peterz@infradead.org>, Borislav Petkov <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>, 
+	Uros Bizjak <ubizjak@gmail.com>, Andrew Cooper <andrew.cooper3@citrix.com>, 
+	Ingo Molnar <mingo@kernel.org>
+Subject: Re: [PATCH 14/20] x86/barrier: Use alternative_io() in 32-bit
+ barrier functions
+Message-ID: <zfabhk7c3fucov7lpfsqf5bj7iie5324ccgn4ingzzakoyhl4u@fzg364keuphn>
+References: <cover.1741988314.git.jpoimboe@kernel.org>
+ <1c2fe7f93c4dd8a87c2e1fa8b780a8a2968be445.1741988314.git.jpoimboe@kernel.org>
+ <CAHk-=wjtvTPERDdrok2kDrSSFBjqHCCNVff95VVxhvP6wCC6jg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [v2] PCI: cadence: Add configuration space capability search API
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: Siddharth Vadapalli <s-vadapalli@ti.com>, lpieralisi@kernel.org,
- kw@linux.com, robh@kernel.org, bhelgaas@google.com, bwawrzyn@cisco.com,
- thomas.richard@bootlin.com, wojciech.jasko-EXT@continental-corporation.com,
- linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250308133903.322216-1-18255117159@163.com>
- <20250309023839.2cakdpmsbzn6pm7g@uda0492258>
- <3e6645a8-6de9-4125-8444-fa1a4f526881@163.com>
- <20250309054835.4ydiq4xpguxtbvkf@uda0492258>
- <bf9fc865-58b9-45ed-a346-ce82899d838c@163.com>
- <20250309100243.ihrxe6vfdugzpzsn@uda0492258>
- <9eee0ab5-d870-451d-bf38-41578f487854@163.com>
- <20250314130511.hmceagpx5oq5gvrr@thinkpad>
-Content-Language: en-US
-From: Hans Zhang <18255117159@163.com>
-In-Reply-To: <20250314130511.hmceagpx5oq5gvrr@thinkpad>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:PCgvCgAHBGI+xNRnpNs0BA--.32353S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW3Kw48ur18AryxKFW8CFyrCrg_yoWDWF47pF
-	W8AFyxCan5JF42vr4qva1DAr13JF9IvFyxGFWkC34SvrnFkw1kKFyI9a45KFnxKrs2gF1a
-	qrWDtFZ5Crn8ta7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UBKZXUUUUU=
-X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/1tbiWxQQo2fUkDA6xAABsQ
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wjtvTPERDdrok2kDrSSFBjqHCCNVff95VVxhvP6wCC6jg@mail.gmail.com>
 
-
-
-On 2025/3/14 21:05, Manivannan Sadhasivam wrote:
-> On Mon, Mar 10, 2025 at 11:09:54PM +0800, Hans Zhang wrote:
->>
->>
->> On 2025/3/9 18:02, Siddharth Vadapalli wrote:
->>>> Hi Siddharth,
->>>>
->>>> Prior to this patch, I don't think hard-coded is that reasonable. Because
->>>> the SOC design of each company does not guarantee that the offset of each
->>>> capability is the same. This parameter can be configured when selecting PCIe
->>>> configuration options. The current code that just happens to hit the offset
->>>> address is the same.
->>>
->>> 1. You are modifying the driver for the Cadence PCIe Controller IP and
->>> not the one for your SoC (a.k.a the application/glue/wrapper driver).
->>> 2. The offsets are tied to the Controller IP and not to your SoC. Any
->>> differences that arise due to IP Integration into your SoC should be
->>> handled in the Glue driver (the one which you haven't upstreamed yet).
->>> 3. If the offsets in the Controller IP itself have changed, this
->>> indicates a different IP version which has nothing to do with the SoC
->>> that you are using.
->>>
->>> Please clarify whether you are facing problems with the offsets due to a
->>> difference in the IP Controller Version, or due to the way in which the IP
->>> was integrated into your SoC.
->>>
->>
->> Hi Siddharth,
->>
->> I have consulted several PCIe RTL designers in the past two days. They told
->> me that the controller IP of Synopsys or Cadence can be configured with the
->> offset address of the capability. I don't think it has anything to do with
->> SOC, it's just a feature of PCIe controller IP. In particular, the number of
->> extended capability is relatively large. When RTL is generated, one more
->> configuration may cause the offset addresses of extended capability to be
->> different. Therefore, it is unreasonable to assign all the offset addresses
->> in advance.
->>
->> Here, I want to make Cadence PCIe common driver more general. When we keep
->> developing new SoCs, the capability or extended capability offset address
->> may eventually be inconsistent.
->>
->> Thank you very much Siddharth for discussing this patch with me. I would
->> like to know what other maintainers have to say about this.
->>
+On Fri, Mar 14, 2025 at 01:49:48PM -1000, Linus Torvalds wrote:
+> So all of these patches look like good cleanups to me, but I do wonder
+> if we should
 > 
-> Even though this patch is mostly for an out of tree controller driver which is
-> not going to be upstreamed, the patch itself is serving some purpose. I really
-> like to avoid the hardcoded offsets wherever possible. So I'm in favor of this
-> patch.
+>  (a) not use some naming *quite* as generic as 'ARG()'
 > 
-> However, these newly introduced functions are a duplicated version of DWC
-> functions. So we will end up with duplicated functions in multiple places. I'd
-> like them to be moved (both this and DWC) to drivers/pci/pci.c if possible. The
-> generic function *_find_capability() can accept the controller specific readl/
-> readw APIs and the controller specific private data.
+>  (b) make the asms use ARG_OUT/ARG_IN/ARG_CLOBBER() to clarify
+> 
+> because that ARG(), ARG(), ARGC() pattern looks odd to me.
+> 
+> Maybe it's just me.
+> 
+> Regardless, I do think the series looks like a nice improvement even
+> in the current form, even if that particular repeated pattern feels
+> strange.
+
+So originally I had ASM_OUTPUT/ASM_INPUT/ASM_CLOBBER, but I ended up
+going with ARG() due to its nice vertical alignment and conciseness:
 
 
-Hi Mani,
-
-Thanks Mani for the idea. Please check whether the following patches are 
-OK. If yes, I will submit a series of patches again.
-
-I have tested on RK3588 development board, as well as cdns platform is OK.
-
-diff --git a/drivers/pci/controller/cadence/pcie-cadence.c 
-b/drivers/pci/controller/cadence/pcie-cadence.c
-index 204e045aed8c..e1ce3ad612c9 100644
---- a/drivers/pci/controller/cadence/pcie-cadence.c
-+++ b/drivers/pci/controller/cadence/pcie-cadence.c
-@@ -8,6 +8,31 @@
-
-  #include "pcie-cadence.h"
-
-+static u32 cdns_pcie_read_cfg(void *priv, int where, int size)
-+{
-+	struct cdns_pcie *pcie = priv;
-+	u32 val;
-+
-+	if (size == 4)
-+		val = readl(pcie->reg_base + where);
-+	else if (size == 2)
-+		val = readw(pcie->reg_base + where);
-+	else if (size == 1)
-+		val = readb(pcie->reg_base + where);
-+
-+	return val;
-+}
-+
-+u8 cdns_find_cap(struct cdns_pcie *pcie, int cap)
-+{
-+	return pci_generic_find_capability(pcie, cdns_pcie_read_cfg, cap);
-+}
-+
-+u16 cdns_find_ext_cap(struct cdns_pcie *pcie, int cap)
-+{
-+	return pci_generic_find_ext_capability(pcie, cdns_pcie_read_cfg, cap);
-+}
-+
-  void cdns_pcie_detect_quiet_min_delay_set(struct cdns_pcie *pcie)
-  {
-  	u32 delay = 0x3;
-diff --git a/drivers/pci/controller/cadence/pcie-cadence.h 
-b/drivers/pci/controller/cadence/pcie-cadence.h
-index f5eeff834ec1..e90464c4a660 100644
---- a/drivers/pci/controller/cadence/pcie-cadence.h
-+++ b/drivers/pci/controller/cadence/pcie-cadence.h
-@@ -557,6 +557,9 @@ static inline int cdns_pcie_ep_setup(struct 
-cdns_pcie_ep *ep)
-  }
-  #endif
-
-+u8 cdns_find_cap(struct cdns_pcie *pcie, int cap);
-+u16 cdns_find_ext_cap(struct cdns_pcie *pcie, int cap);
-+
-  void cdns_pcie_detect_quiet_min_delay_set(struct cdns_pcie *pcie);
-
-  void cdns_pcie_set_outbound_region(struct cdns_pcie *pcie, u8 busnr, 
-u8 fn,
-diff --git a/drivers/pci/controller/dwc/pcie-designware.c 
-b/drivers/pci/controller/dwc/pcie-designware.c
-index 145e7f579072..4b645ad58b35 100644
---- a/drivers/pci/controller/dwc/pcie-designware.c
-+++ b/drivers/pci/controller/dwc/pcie-designware.c
-@@ -283,6 +283,22 @@ u16 dw_pcie_find_ext_capability(struct dw_pcie 
-*pci, u8 cap)
-  }
-  EXPORT_SYMBOL_GPL(dw_pcie_find_ext_capability);
-
-+static u32 dwc_pcie_read_cfg(void *priv, int where, int size)
-+{
-+	struct dw_pcie *pcie = priv;
-+	return dw_pcie_read_dbi(pcie, where, size);
-+}
-+
-+u8 dwc_find_cap(struct dw_pcie *pcie, int cap)
-+{
-+	return pci_generic_find_capability(pcie, dwc_pcie_read_cfg, cap);
-+}
-+
-+u16 dwc_find_ext_cap(struct dw_pcie *pcie, int cap)
-+{
-+	return pci_generic_find_ext_capability(pcie, dwc_pcie_read_cfg, cap);
-+}
-+
-  int dw_pcie_read(void __iomem *addr, int size, u32 *val)
-  {
-  	if (!IS_ALIGNED((uintptr_t)addr, size)) {
-diff --git a/drivers/pci/controller/dwc/pcie-designware.h 
-b/drivers/pci/controller/dwc/pcie-designware.h
-index 501d9ddfea16..260c6672a4f5 100644
---- a/drivers/pci/controller/dwc/pcie-designware.h
-+++ b/drivers/pci/controller/dwc/pcie-designware.h
-@@ -479,6 +479,9 @@ void dw_pcie_version_detect(struct dw_pcie *pci);
-  u8 dw_pcie_find_capability(struct dw_pcie *pci, u8 cap);
-  u16 dw_pcie_find_ext_capability(struct dw_pcie *pci, u8 cap);
-
-+u8 dwc_find_cap(struct dw_pcie *pcie, int cap);
-+u16 dwc_find_ext_cap(struct dw_pcie *pcie, int cap);
-+
-  int dw_pcie_read(void __iomem *addr, int size, u32 *val);
-  int dw_pcie_write(void __iomem *addr, int size, u32 val);
-
-diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-index 869d204a70a3..4376bee65cc6 100644
---- a/drivers/pci/pci.c
-+++ b/drivers/pci/pci.c
-@@ -612,6 +612,84 @@ u16 pci_find_ext_capability(struct pci_dev *dev, 
-int cap)
-  }
-  EXPORT_SYMBOL_GPL(pci_find_ext_capability);
-
-+static u8 __pci_generic_find_next_cap(void *priv, pci_generic_read_cfg 
-read_cfg,
-+				      u8 cap_ptr, int cap)
-+{
-+	u8 cap_id, next_cap_ptr;
-+	u16 reg;
-+
-+	if (!cap_ptr)
-+		return 0;
-+
-+	reg = read_cfg(priv, cap_ptr, 2);
-+	cap_id = (reg & 0x00ff);
-+
-+	if (cap_id > PCI_CAP_ID_MAX)
-+		return 0;
-+
-+	if (cap_id == cap)
-+		return cap_ptr;
-+
-+	next_cap_ptr = (reg & 0xff00) >> 8;
-+	return __pci_generic_find_next_cap(priv, read_cfg, next_cap_ptr, cap);
-+}
-+
-+u8 pci_generic_find_capability(void *priv, pci_generic_read_cfg read_cfg,
-+			       int cap)
-+{
-+	u8 next_cap_ptr;
-+	u16 reg;
-+
-+	reg = read_cfg(priv, PCI_CAPABILITY_LIST, 2);
-+	next_cap_ptr = (reg & 0x00ff);
-+
-+	return __pci_generic_find_next_cap(priv, read_cfg, next_cap_ptr, cap);
-+}
-+EXPORT_SYMBOL_GPL(pci_generic_find_capability);
-+
-+static u16 pci_generic_find_next_ext_capability(void *priv,
-+						pci_generic_read_cfg read_cfg,
-+						u16 start, u8 cap)
-+{
-+	u32 header;
-+	int ttl;
-+	int pos = PCI_CFG_SPACE_SIZE;
-+
-+	/* minimum 8 bytes per capability */
-+	ttl = (PCI_CFG_SPACE_EXP_SIZE - PCI_CFG_SPACE_SIZE) / 8;
-+
-+	if (start)
-+		pos = start;
-+
-+	header = read_cfg(priv, pos, 4);
-+	/*
-+	 * If we have no capabilities, this is indicated by cap ID,
-+	 * cap version and next pointer all being 0.
-+	 */
-+	if (header == 0)
-+		return 0;
-+
-+	while (ttl-- > 0) {
-+		if (PCI_EXT_CAP_ID(header) == cap && pos != start)
-+			return pos;
-+
-+		pos = PCI_EXT_CAP_NEXT(header);
-+		if (pos < PCI_CFG_SPACE_SIZE)
-+			break;
-+
-+		header = read_cfg(priv, pos, 4);
-+	}
-+
-+	return 0;
-+}
-+
-+u16 pci_generic_find_ext_capability(void *priv, pci_generic_read_cfg 
-read_cfg,
-+				    int cap)
-+{
-+	return pci_generic_find_next_ext_capability(priv, read_cfg, 0, cap);
-+}
-+EXPORT_SYMBOL_GPL(pci_generic_find_ext_capability);
-+
-  /**
-   * pci_get_dsn - Read and return the 8-byte Device Serial Number
-   * @dev: PCI device to query
-diff --git a/include/linux/pci.h b/include/linux/pci.h
-index 47b31ad724fa..63744f3de3a4 100644
---- a/include/linux/pci.h
-+++ b/include/linux/pci.h
-@@ -1205,6 +1205,11 @@ u8 pci_find_ht_capability(struct pci_dev *dev, 
-int ht_cap);
-  u8 pci_find_next_ht_capability(struct pci_dev *dev, u8 pos, int ht_cap);
-  u16 pci_find_ext_capability(struct pci_dev *dev, int cap);
-  u16 pci_find_next_ext_capability(struct pci_dev *dev, u16 pos, int cap);
-+typedef u32 (*pci_generic_read_cfg)(void *priv, int where, int size);
-+u8 pci_generic_find_capability(void *priv, pci_generic_read_cfg read_cfg,
-+			       int cap);
-+u16 pci_generic_find_ext_capability(void *priv, pci_generic_read_cfg 
-read_cfg,
-+				    int cap);
-  struct pci_bus *pci_find_next_bus(const struct pci_bus *from);
-  u16 pci_find_vsec_capability(struct pci_dev *dev, u16 vendor, int cap);
-  u16 pci_find_dvsec_capability(struct pci_dev *dev, u16 vendor, u16 dvsec);
-@@ -2012,7 +2017,13 @@ static inline u8 pci_find_next_capability(struct 
-pci_dev *dev, u8 post, int cap)
-  { return 0; }
-  static inline u16 pci_find_ext_capability(struct pci_dev *dev, int cap)
-  { return 0; }
--
-+typedef u32 (*pci_generic_read_cfg)(void *priv, int where, int size);
-+u8 pci_generic_find_capability(void *priv, pci_generic_read_cfg read_cfg,
-+			       int cap)
-+{ return 0; }
-+u16 pci_generic_find_ext_capability(void *priv, pci_generic_read_cfg 
-read_cfg,
-+				    int cap)
-+{ return 0; }
-  static inline u64 pci_get_dsn(struct pci_dev *dev)
-  { return 0; }
+	__asm_call(qual,						\
+		ALTERNATIVE("call this_cpu_cmpxchg8b_emu",		\
+			    "cmpxchg8b " __percpu_arg([var]),		\
+			    X86_FEATURE_CX8),				\
+		ARG([var] "+m" (__my_cpu_var(_var)), "+a" (old__.low),	\
+		    "+d" (old__.high)),					\
+		ARG("b" (new__.low), "c" (new__.high), "S" (&(_var))),	\
+		ARG("memory"));						\
 
 
-Best regards,
-Hans
+Though ASM_OUTPUT/ASM_INPUT/ASM_CLOBBER isn't so bad either:
+
+	__asm_call(qual,						\
+		ALTERNATIVE("call this_cpu_cmpxchg8b_emu",		\
+			    "cmpxchg8b " __percpu_arg([var]),		\
+			    X86_FEATURE_CX8),				\
+		ASM_OUTPUT([var] "+m" (__my_cpu_var(_var)),		\
+			   "+a" (old__.low), "+d" (old__.high)),	\
+		ASM_INPUT("b" (new__.low), "c" (new__.high),		\
+			  "S" (&(_var))),				\
+		ASM_CLOBBER("memory"));					\
 
 
+That has the nice benefit of being more self-documenting, albeit more
+verbose and less vertically aligned.
+
+So I could go either way, really.
+
+-- 
+Josh
 
