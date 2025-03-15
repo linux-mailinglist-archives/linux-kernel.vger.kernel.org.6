@@ -1,346 +1,163 @@
-Return-Path: <linux-kernel+bounces-562680-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562681-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF673A630BB
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 18:28:04 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AD35A630CC
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 18:31:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3AE7917957F
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 17:28:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 31CED16E86C
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 17:31:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81F55202984;
-	Sat, 15 Mar 2025 17:27:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA418204F81;
+	Sat, 15 Mar 2025 17:31:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PDitWXFE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WlL1aS2/"
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C9A417995E;
-	Sat, 15 Mar 2025 17:27:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CB874A06;
+	Sat, 15 Mar 2025 17:31:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742059678; cv=none; b=OV9tRhSpGsZSCAsrEpgepoB6OScyoabO5g2uIAweIvm4FXwPAx+f/VbCgrUis5vSSIqlbr5u6wDw8j+aCiGtgIbG2garsbjmnp+DslzvyB9snKqD9VCtJxESpFARBR+QynDHDj8KOg1JuHkdIkvddZPItXWN8/nICBQyCO6hToE=
+	t=1742059908; cv=none; b=sljsO61C/EnjVUwwj1Ix/RxWUKu+hVtIZmlk/PJ38cl1MiH5fBAkVnhbxoQ0FUugBZC7WILvGn4VPUfmO1Ukj9jtmSDYwPQx2mAYU1zXQ0u9rJOofRt/7zhvWpRC7vppeAXMGpdzI38NypA79u05jYFQ7/Uq3SD/wE7oJ08pHX0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742059678; c=relaxed/simple;
-	bh=GF1FhuTL5Pb94Xq+7+UmAZGhmNzvM4UZn3qZ8ohIkzY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=KEz45fQMKqGWTyL7bOMPw6jhMi+4tCvLngvaDjHxLBgagv3Mvy7WUBilDAa5bZdeThA66kULQF88/kbnfGAOAz+NPNFk6fWCJXKwVT1MO8oZTnB4Eb35DHuaoVqDY1tEBB71nUgsalPGD+DCyII3BlVroiTkHLLBzhXjW4ps2zk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PDitWXFE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id F2B42C4CEE5;
-	Sat, 15 Mar 2025 17:27:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742059678;
-	bh=GF1FhuTL5Pb94Xq+7+UmAZGhmNzvM4UZn3qZ8ohIkzY=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=PDitWXFEKCIghC1ijLCktzxKVVaZQlboMHo0cEAp3HkXRVqmvi8dkAVlU0Q1V1OYO
-	 64+D7BPRDruJ9/FBxajsdPskOYLZVc5XdZoNqRDHZDv3B+uElLy2i478sIQM+AcZA9
-	 nWe5hr1bGXRaB0VFHWB//QIxm+VrnEKNh9gilLb/y0Gq4mW3ve1UTrfjz8KrG8jOpF
-	 VBz3lHOTMOeDRlCDXhcnlf7P4CykpSBetu82p0lyj5N1rAM01v3hPFKL+Xho5/Iu19
-	 J1RQP9gWIsahKWTyBeJ5y6/eb7B1egwpD4HoWoKHZ6BpHvlrwFI6tvQGFQXi2ICbam
-	 o6gitlJYtXbmA==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D442AC28B28;
-	Sat, 15 Mar 2025 17:27:57 +0000 (UTC)
-From: =?utf-8?q?J=2E_Neusch=C3=A4fer_via_B4_Relay?= <devnull+j.ne.posteo.net@kernel.org>
-Date: Sat, 15 Mar 2025 18:27:05 +0100
-Subject: [PATCH] dt-bindings: powerpc: Convert fsl/pmc.txt to YAML
+	s=arc-20240116; t=1742059908; c=relaxed/simple;
+	bh=8tcoUL902QFT5ZU4stKypQOleAO7xUF1yXjGPSxqvhM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WtEZfwaeWUqkxPgDXTg5BQhmDjB0CDqY52zTvKgsNKSKacveYhwC94xW0Fd+JYqan82eVr7MZnB0S5QCSo9cM0XtwpvhbGfkXeb/ZnsSnu68DvCdX/p3vkZMlxoiXX/o2TA1d/1im33l3j0Bf4NCPvLoFPhhWtH67D1D/JjhHsQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WlL1aS2/; arc=none smtp.client-ip=209.85.208.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-30761be8fcfso34554911fa.0;
+        Sat, 15 Mar 2025 10:31:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742059904; x=1742664704; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Orv6YEosr3AYZhDZSWaMjOw3nf0XdOGhhUKMHwOlli8=;
+        b=WlL1aS2/3Z+im3Z11lWp8Q17tcNV7Nn/CZmHvsNYa4n/xkykedpo3FFQwrByFJu1p9
+         g/gLr1qODEfLV3dposrLKI1/0MbVAesNKGdsWy0ToLly2DBVFNIP3Lb3+9rmRGFyBKen
+         DLj3wsnDzfpmTKT0xUX9TjCx8wNiNjSkQJSHmFq8LDCRY8Rc+HbQFrNbsq2dM2KAJnTG
+         1+1v2xoPJWEIZ54nzf4wl9GPhpxDdvrQ2AqczwzYfLfBtcDUcT48LpnFVwDYJh35JF3V
+         x7ZW+tgeVA6MvXPbcUfWzjleOOFZZ8QpLcvC+NPTKX/WpRl30jh4YPdqZGHP6cglhTbz
+         PPjg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742059904; x=1742664704;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Orv6YEosr3AYZhDZSWaMjOw3nf0XdOGhhUKMHwOlli8=;
+        b=M+5cBH1M1bRGeSgxpM8KS2nyHIE/YVcLhKfyy/llk/yN9Ev0HGm5zU1ZrwIEoFolNl
+         kQO4JdDNfRb14z/3UxMirOZWInY7S4wlRWhOC2pwJKuHr6iq7IlBSyWkmi6nbCFTFPVU
+         bEl+0k9b7SMA+bMsSzRA9EDzuYHdvR6ZpFArySxMvDeSmdp28x9xZI2G5fM8vzahA4KP
+         za+DogtoXjaRoGQWCA3NePscmY/7cL95fo9z0R2zrig4P0B8GDd41GfR+DSHLpeHV365
+         o3/g+Q6Xp2vxo8A9VygjiWFSucv2WRo+x8zLwEtNiSknj/Ln1HN6Pl2xJvFAnWfNUF7f
+         LigQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVTyB6ms1JFZTlBeb8vFOaG96AEEPOFvXN95sdHnHJM6A1v9u6MJIw+UDQPC2SbFVaajwy9NB6bKJ/C7oqg@vger.kernel.org, AJvYcCVpLkXMLxLOqkB7CA0BSmmhrf5Sybg9UMT1fSBBsvRwx4ZT2pNzcSz/eHPK9Mpe83CApec+7Ni+qGkC@vger.kernel.org, AJvYcCWf3AJHjapYMeQ+02orfv8FnEoES88Qa613+sTjGclxhWEbTDxlHM5zDadjJyb7whH4G2iM@vger.kernel.org, AJvYcCXfoYZptthx9+OL6JYI2B59ZcdQDDYR3J+P2saMspzNQc/bu87PJYF1Ety3HHQAJFV/1j6AgwrZCi6n7dNONRw=@vger.kernel.org, AJvYcCXpXf0yKxH70tTRRMJPsm7d4ZKaowYyiUJYLEYLpdvWeqKxFzQAqRExT/ScvW9oZIVpmkBzygIhFybd@vger.kernel.org
+X-Gm-Message-State: AOJu0YwxTCtHcBSvD8tT9M/VWC/rmfTQr/dhYiPy5zDC1t+60ZVi3LvC
+	ayuJRvGSX4QBZML0L8rPieoc4uNVKLyqoHucfPr1I/5sMS7mCloVhSvVk296EmfcFJK/3/5BRX8
+	ZaIHuBvOlBGyP3x0LDU9xTHVFmrw=
+X-Gm-Gg: ASbGncv/Wo5hzs68eucb4Fhvf8tNKvr7MV/1PX67eGKRIj9IuwX4J2CeJ2RlRPkrfey
+	u7fRSD+Bxwa8mBJJkgjIkznPYtyYOAMiMa2suwwiFJ8IxwgzyRgTCG6PrMKRBOjdc0YpgFguB3A
+	VfvUymHYhMtAfr3O/F6nk4dlSZYUpVARtaKnLz2sl9VyrNWXa0OKas1CT3YpfX
+X-Google-Smtp-Source: AGHT+IEb0Cej4ABZBlp0purrTkZq2uroGZ83nzzW9Ef8zA8wIcZNdCr8wuQavsc3pt2rTRmaGANVPLtpRHigWqs4HI0=
+X-Received: by 2002:a05:651c:1541:b0:30b:efa5:69a2 with SMTP id
+ 38308e7fff4ca-30c4a876bd6mr24351061fa.19.1742059904122; Sat, 15 Mar 2025
+ 10:31:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250315-fslpmc-yaml-v1-1-10ba354a85c2@posteo.net>
-X-B4-Tracking: v=1; b=H4sIAGi41WcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI1MDIyMz3bTinILcZN3KxNwcXUuDlGQzy7Qk8xSjRCWgjoKi1LTMCrBp0bG
- 1tQDeCcXEXQAAAA==
-X-Change-ID: 20250226-fslpmc-yaml-90dc69fb7d2a
-To: Crystal Wood <oss@buserror.net>, 
- Madhavan Srinivasan <maddy@linux.ibm.com>, 
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
- Christophe Leroy <christophe.leroy@csgroup.eu>, 
- Naveen N Rao <naveen@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linuxppc-dev@lists.ozlabs.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- =?utf-8?q?J=2E_Neusch=C3=A4fer?= <j.ne@posteo.net>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1742059676; l=9266;
- i=j.ne@posteo.net; s=20240329; h=from:subject:message-id;
- bh=ROIgCsvPCxP9IhicDa1mF/HFY+gVpx3zheGzT7ids68=;
- b=qlQ/n8SdxdHzpS9rxj0aXvH2NXuUrSUKoiuualvgGlUdFbIS2GU4AHLLE5t7E1jFr541mwkdM
- bFI0PBQ0gG5B+Tcvr3rqnsWQrnnWHeYwsVLMSX7tYEFcox0PJxk7x9O
-X-Developer-Key: i=j.ne@posteo.net; a=ed25519;
- pk=NIe0bK42wNaX/C4bi6ezm7NJK0IQE+8MKBm7igFMIS4=
-X-Endpoint-Received: by B4 Relay for j.ne@posteo.net/20240329 with
- auth_id=156
-X-Original-From: =?utf-8?q?J=2E_Neusch=C3=A4fer?= <j.ne@posteo.net>
-Reply-To: j.ne@posteo.net
+References: <20241219170425.12036-1-dakr@kernel.org> <20241219170425.12036-4-dakr@kernel.org>
+ <CAJ-ks9nnQU4ryR1mbaWqNqcH+b=-s8Y0xKxTF-TQvfNGsWO7+w@mail.gmail.com> <Z9Wx53fSQw39nHpx@pollux>
+In-Reply-To: <Z9Wx53fSQw39nHpx@pollux>
+From: Tamir Duberstein <tamird@gmail.com>
+Date: Sat, 15 Mar 2025 13:31:07 -0400
+X-Gm-Features: AQ5f1JpkLN1T1jVY6VYw9mpuL87fUuUWklFGBf2j7crPWlF-zdPyfsXFJtHjK48
+Message-ID: <CAJ-ks9kodrpkG=CE7BCGaHZDv6YfSpEUAWTM=NhyEp0hSNi4TQ@mail.gmail.com>
+Subject: Re: [PATCH v7 03/16] rust: implement `IdArray`, `IdTable` and `RawDeviceId`
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: gregkh@linuxfoundation.org, rafael@kernel.org, bhelgaas@google.com, 
+	ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com, 
+	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me, 
+	tmgross@umich.edu, a.hindborg@samsung.com, aliceryhl@google.com, 
+	airlied@gmail.com, fujita.tomonori@gmail.com, lina@asahilina.net, 
+	pstanner@redhat.com, ajanulgu@redhat.com, lyude@redhat.com, robh@kernel.org, 
+	daniel.almeida@collabora.com, saravanak@google.com, dirk.behme@de.bosch.com, 
+	j@jannau.net, fabien.parent@linaro.org, chrisi.schrefl@gmail.com, 
+	paulmck@kernel.org, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, 
+	devicetree@vger.kernel.org, rcu@vger.kernel.org, 
+	Wedson Almeida Filho <wedsonaf@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: "J. Neuschäfer" <j.ne@posteo.net>
+On Sat, Mar 15, 2025 at 12:59=E2=80=AFPM Danilo Krummrich <dakr@kernel.org>=
+ wrote:
+>
+> On Sat, Mar 15, 2025 at 12:52:27PM -0400, Tamir Duberstein wrote:
+> > On Thu, Dec 19, 2024 at 12:08=E2=80=AFPM Danilo Krummrich <dakr@kernel.=
+org> wrote:
+> > >
+> > > +/// Marker trait to indicate a Rust device ID type represents a corr=
+esponding C device ID type.
+> > > +///
+> > > +/// This is meant to be implemented by buses/subsystems so that they=
+ can use [`IdTable`] to
+> > > +/// guarantee (at compile-time) zero-termination of device id tables=
+ provided by drivers.
+> > > +///
+> > > +/// # Safety
+> > > +///
+> > > +/// Implementers must ensure that:
+> > > +///   - `Self` is layout-compatible with [`RawDeviceId::RawType`]; i=
+.e. it's safe to transmute to
+> > > +///     `RawDeviceId`.
+> > > +///
+> > > +///     This requirement is needed so `IdArray::new` can convert `Se=
+lf` to `RawType` when building
+> > > +///     the ID table.
+> > > +///
+> > > +///     Ideally, this should be achieved using a const function that=
+ does conversion instead of
+> > > +///     transmute; however, const trait functions relies on `const_t=
+rait_impl` unstable feature,
+> > > +///     which is broken/gone in Rust 1.73.
+> > > +///
+> > > +///   - `DRIVER_DATA_OFFSET` is the offset of context/data field of =
+the device ID (usually named
+> > > +///     `driver_data`) of the device ID, the field is suitable sized=
+ to write a `usize` value.
+> > > +///
+> > > +///     Similar to the previous requirement, the data should ideally=
+ be added during `Self` to
+> > > +///     `RawType` conversion, but there's currently no way to do it =
+when using traits in const.
+> > > +pub unsafe trait RawDeviceId {
+> > > +    /// The raw type that holds the device id.
+> > > +    ///
+> > > +    /// Id tables created from [`Self`] are going to hold this type =
+in its zero-terminated array.
+> > > +    type RawType: Copy;
+> > > +
+> > > +    /// The offset to the context/data field.
+> > > +    const DRIVER_DATA_OFFSET: usize;
+> > > +
+> > > +    /// The index stored at `DRIVER_DATA_OFFSET` of the implementor =
+of the [`RawDeviceId`] trait.
+> > > +    fn index(&self) -> usize;
+> > > +}
+> >
+> > Very late to the game here, but have a question about the use of
+> > OFFSET here. Why is this preferred to a method that returns a pointer
+> > to the field?
+>
+> We need it from const context, trait methods can't be const (yet).
 
-This patch rewrites pmc.txt into YAML format. Descriptive texts are
-expanded or shortened in a few places to better fit today's conventions.
-
-The list of compatible strings (and combinations of them) is based on
-existing device trees in arch/powerpc as well as compatible strings
-already mentioned in the plain-text version of the binding.
-
-One thing I didn't handle are soc-clk@... nodes as seen in
-Documentation/devicetree/bindings/powerpc/fsl/pmc.yaml.
-
-Signed-off-by: J. Neuschäfer <j.ne@posteo.net>
----
- .../devicetree/bindings/powerpc/fsl/pmc.txt        |  63 --------
- .../devicetree/bindings/powerpc/fsl/pmc.yaml       | 159 +++++++++++++++++++++
- 2 files changed, 159 insertions(+), 63 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/powerpc/fsl/pmc.txt b/Documentation/devicetree/bindings/powerpc/fsl/pmc.txt
-deleted file mode 100644
-index 07256b7ffcaab2ba57b33cf279df45d830ce33b3..0000000000000000000000000000000000000000
---- a/Documentation/devicetree/bindings/powerpc/fsl/pmc.txt
-+++ /dev/null
-@@ -1,63 +0,0 @@
--* Power Management Controller
--
--Properties:
--- compatible: "fsl,<chip>-pmc".
--
--  "fsl,mpc8349-pmc" should be listed for any chip whose PMC is
--  compatible.  "fsl,mpc8313-pmc" should also be listed for any chip
--  whose PMC is compatible, and implies deep-sleep capability.
--
--  "fsl,mpc8548-pmc" should be listed for any chip whose PMC is
--  compatible.  "fsl,mpc8536-pmc" should also be listed for any chip
--  whose PMC is compatible, and implies deep-sleep capability.
--
--  "fsl,mpc8641d-pmc" should be listed for any chip whose PMC is
--  compatible; all statements below that apply to "fsl,mpc8548-pmc" also
--  apply to "fsl,mpc8641d-pmc".
--
--  Compatibility does not include bit assignments in SCCR/PMCDR/DEVDISR; these
--  bit assignments are indicated via the sleep specifier in each device's
--  sleep property.
--
--- reg: For devices compatible with "fsl,mpc8349-pmc", the first resource
--  is the PMC block, and the second resource is the Clock Configuration
--  block.
--
--  For devices compatible with "fsl,mpc8548-pmc", the first resource
--  is a 32-byte block beginning with DEVDISR.
--
--- interrupts: For "fsl,mpc8349-pmc"-compatible devices, the first
--  resource is the PMC block interrupt.
--
--- fsl,mpc8313-wakeup-timer: For "fsl,mpc8313-pmc"-compatible devices,
--  this is a phandle to an "fsl,gtm" node on which timer 4 can be used as
--  a wakeup source from deep sleep.
--
--Sleep specifiers:
--
--  fsl,mpc8349-pmc: Sleep specifiers consist of one cell.  For each bit
--  that is set in the cell, the corresponding bit in SCCR will be saved
--  and cleared on suspend, and restored on resume.  This sleep controller
--  supports disabling and resuming devices at any time.
--
--  fsl,mpc8536-pmc: Sleep specifiers consist of three cells, the third of
--  which will be ORed into PMCDR upon suspend, and cleared from PMCDR
--  upon resume.  The first two cells are as described for fsl,mpc8578-pmc.
--  This sleep controller only supports disabling devices during system
--  sleep, or permanently.
--
--  fsl,mpc8548-pmc: Sleep specifiers consist of one or two cells, the
--  first of which will be ORed into DEVDISR (and the second into
--  DEVDISR2, if present -- this cell should be zero or absent if the
--  hardware does not have DEVDISR2) upon a request for permanent device
--  disabling.  This sleep controller does not support configuring devices
--  to disable during system sleep (unless supported by another compatible
--  match), or dynamically.
--
--Example:
--
--	power@b00 {
--		compatible = "fsl,mpc8313-pmc", "fsl,mpc8349-pmc";
--		reg = <0xb00 0x100 0xa00 0x100>;
--		interrupts = <80 8>;
--	};
-diff --git a/Documentation/devicetree/bindings/powerpc/fsl/pmc.yaml b/Documentation/devicetree/bindings/powerpc/fsl/pmc.yaml
-new file mode 100644
-index 0000000000000000000000000000000000000000..bb2db8adb74c54fec5d07393573f156c63a9e886
---- /dev/null
-+++ b/Documentation/devicetree/bindings/powerpc/fsl/pmc.yaml
-@@ -0,0 +1,159 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/powerpc/fsl/pmc.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Power Management Controller
-+
-+maintainers:
-+  - J. Neuschäfer <j.ne@posteo.net>
-+
-+description: |
-+  The Power Management Controller in several MPC8xxx SoCs helps save power by
-+  controlling chip-wide low-power states as well as peripheral clock gating.
-+
-+  Sleep of peripheral devices is configured by the `sleep` property, for
-+  example `sleep = <&pmc 0x00000030>`. Any cells after the &pmc phandle are
-+  called a sleep specifier.
-+
-+  For "fsl,mpc8349-pmc", sleep specifiers consist of one cell.  For each bit that
-+  is set in the cell, the corresponding bit in SCCR will be saved and cleared
-+  on suspend, and restored on resume.  This sleep controller supports disabling
-+  and resuming devices at any time.
-+
-+  For "fsl,mpc8536-pmc", sleep specifiers consist of three cells, the third of
-+  which will be ORed into PMCDR upon suspend, and cleared from PMCDR upon
-+  resume.  The first two cells are as described for fsl,mpc8548-pmc.  This
-+  sleep controller only supports disabling devices during system sleep, or
-+  permanently.
-+
-+  For "fsl,mpc8548-pmc" or "fsl,mpc8641d-pmc", Sleep specifiers consist of one
-+  or two cells, the first of which will be ORed into DEVDISR (and the second
-+  into DEVDISR2, if present -- this cell should be zero or absent if the
-+  hardware does not have DEVDISR2) upon a request for permanent device
-+  disabling.  This sleep controller does not support configuring devices to
-+  disable during system sleep (unless supported by another compatible match),
-+  or dynamically.
-+
-+properties:
-+  compatible:
-+    oneOf:
-+      - items:
-+          - const: fsl,mpc8315-pmc
-+          - const: fsl,mpc8313-pmc
-+          - const: fsl,mpc8349-pmc
-+
-+      - items:
-+          - enum:
-+              - fsl,mpc8313-pmc
-+              - fsl,mpc8323-pmc
-+              - fsl,mpc8360-pmc
-+              - fsl,mpc8377-pmc
-+              - fsl,mpc8378-pmc
-+              - fsl,mpc8379-pmc
-+          - const: fsl,mpc8349-pmc
-+
-+      - items:
-+          - const: fsl,p1022-pmc
-+          - const: fsl,mpc8536-pmc
-+          - const: fsl,mpc8548-pmc
-+
-+      - items:
-+          - enum:
-+              - fsl,mpc8536-pmc
-+              - fsl,mpc8568-pmc
-+              - fsl,mpc8569-pmc
-+          - const: fsl,mpc8548-pmc
-+
-+      - const: fsl,mpc8548-pmc
-+
-+      - const: fsl,mpc8641d-pmc
-+
-+    description: |
-+      "fsl,mpc8349-pmc" should be listed for any chip whose PMC is
-+      compatible.  "fsl,mpc8313-pmc" should also be listed for any chip
-+      whose PMC is compatible, and implies deep-sleep capability.
-+
-+      "fsl,mpc8548-pmc" should be listed for any chip whose PMC is
-+      compatible.  "fsl,mpc8536-pmc" should also be listed for any chip
-+      whose PMC is compatible, and implies deep-sleep capability.
-+
-+      "fsl,mpc8641d-pmc" should be listed for any chip whose PMC is
-+      compatible; all statements below that apply to "fsl,mpc8548-pmc" also
-+      apply to "fsl,mpc8641d-pmc".
-+
-+      Compatibility does not include bit assignments in SCCR/PMCDR/DEVDISR; these
-+      bit assignments are indicated via the sleep specifier in each device's
-+      sleep property.
-+
-+  reg:
-+    minItems: 1
-+    maxItems: 2
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  fsl,mpc8313-wakeup-timer:
-+    $ref: /schemas/types.yaml#/definitions/phandle
-+    description:
-+      For "fsl,mpc8313-pmc"-compatible devices, this is a phandle to an
-+      "fsl,gtm" node on which timer 4 can be used as a wakeup source from deep
-+      sleep.
-+
-+allOf:
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: fsl,mpc8349-pmc
-+    then:
-+      properties:
-+        reg:
-+          items:
-+            - description: PMC block
-+            - description: Clock Configuration block
-+
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            enum:
-+              - fsl,mpc8548-pmc
-+              - fsl,mpc8641d-pmc
-+    then:
-+      properties:
-+        reg:
-+          items:
-+            - description: 32-byte block beginning with DEVDISR
-+
-+required:
-+  - compatible
-+  - reg
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/interrupt-controller/irq.h>
-+
-+    pmc: power@b00 {
-+        compatible = "fsl,mpc8377-pmc", "fsl,mpc8349-pmc";
-+        reg = <0xb00 0x100>, <0xa00 0x100>;
-+        interrupts = <80 IRQ_TYPE_LEVEL_LOW>;
-+    };
-+
-+    sata@19000 {
-+        compatible = "fsl,mpc8377-sata", "fsl,pq-sata";
-+        reg = <0x19000 0x1000>;
-+        interrupts = <45 IRQ_TYPE_LEVEL_LOW>;
-+        sleep = <&pmc 0x00000030>;
-+    };
-+
-+  - |
-+    power@e0070 {
-+        compatible = "fsl,mpc8548-pmc";
-+        reg = <0xe0070 0x20>;
-+    };
-+
-+...
-
----
-base-commit: 2014c95afecee3e76ca4a56956a936e23283f05b
-change-id: 20250226-fslpmc-yaml-90dc69fb7d2a
-
-Best regards,
--- 
-J. Neuschäfer <j.ne@posteo.net>
-
-
+Thanks for explaining!
 
