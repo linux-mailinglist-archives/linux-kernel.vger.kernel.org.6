@@ -1,206 +1,267 @@
-Return-Path: <linux-kernel+bounces-562780-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562781-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B750A632D2
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 00:00:26 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 327E6A632E5
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 00:02:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A69A3AFC88
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 23:00:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8F7147A31F6
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 23:01:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33E2B1A5BA8;
-	Sat, 15 Mar 2025 23:00:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F626199935;
+	Sat, 15 Mar 2025 23:02:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="S1HpQUZz"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bj7Di1nj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6068719ABD4
-	for <linux-kernel@vger.kernel.org>; Sat, 15 Mar 2025 23:00:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE51519D09C;
+	Sat, 15 Mar 2025 23:02:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742079619; cv=none; b=LNl+vIYSVvgy7W3RhJu98ilHKZDWuoRpjW+dt0ku5Rm0BO0Otg1Ws0o39xTERfV9RrqMps2YCNANqDObyVAnSxjNlW1N+ce2Vr4iVm/7eA5ZPaVsp+uk8AkGeJMlInnbfKRCTL6PffwK4K+JHt6rtOgUD1rIHaEqcOss1A+4IjI=
+	t=1742079758; cv=none; b=okE0UkAUN9KKqVfhCpgNJUZ/Qt7jQLsjyytPKkKRyBLiqghxTD6I+rH3Ftfi6C8DG66uqXlhpEF7vQ8HjONaR7uUaiWmH5+JVHHSNVAbThMHKNDzQt4qfQd4x+GboozsOvwPXgseZ578GSSAUfgs0PvgJKzgOwQHNKWSMBVDeyI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742079619; c=relaxed/simple;
-	bh=xhRFpzk4rzdLvCilNXA/yVnrnYAhopE2nHKm/Q5UY+g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pV9mENgC1iRvci0RaadKWqqH7ICdu+28twlnbhLapK1Bbkaztt/CqqGuF8UMlFSyNdXlg0vqIxPyc+WPHcpZDFSjETA/kqw0rgiUxTUKDWeMm95V3ySvon5YMc5di8Xw/+VpjI4pr+ZcR1hkrVSheS4Is1OhPE+OqmzpZY4ojIk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=S1HpQUZz; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1742079615;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=xEY/qgIubnuvaxvPQIcCtmjl0Q+JZGksygczEmSgHEg=;
-	b=S1HpQUZz4aXU2QIsWVeUsaMxOrOG1WCd3rpYuCWDYwt06vlOChXjzrRKo6wucNaOCG3HA/
-	ctJ205nNUI2MysqybvhbOZeUk7e9vI6XAZ7ewDOx4ItqQZzVCqvSY/iIbNmv08e7QHIGoD
-	xynnVdjHrTCBgnqU4HLbsvmmB8XJrq8=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-318-1dbZQRnoPUChvkfSVh84cg-1; Sat, 15 Mar 2025 19:00:13 -0400
-X-MC-Unique: 1dbZQRnoPUChvkfSVh84cg-1
-X-Mimecast-MFC-AGG-ID: 1dbZQRnoPUChvkfSVh84cg_1742079612
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-43d209dc2d3so5187005e9.3
-        for <linux-kernel@vger.kernel.org>; Sat, 15 Mar 2025 16:00:13 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742079612; x=1742684412;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=xEY/qgIubnuvaxvPQIcCtmjl0Q+JZGksygczEmSgHEg=;
-        b=t341Rm8xweDx/H9FBkIf0Vh9icvo2QNcKBor+xhrnfaCSdGNwfBxU7VFr7CvwCwjwa
-         njFSDF15Qaq72BlvQS6M1JI8IrzRsAHeZ7d36FVVmRLg1doDXozeSr4zGwCsnXKOvSPv
-         ZwAk3rMFD0C2ajLTy4+EbKk1lB23SmgEjbb2US1Ym9jTccZsADMxnTjzTyv4yahty2KT
-         68jwE71PRxoBlvlqUCCu//tbMHm9EGJqR1JPUmIVHSocE1bt5cHnuip0DPBnr+QCAH7H
-         qab8gWBDAfXVSF3yAxdjPyOlbR/DwX6LBJuDjy+mGBOEugByEmuo25gmlGM9X30W+JCz
-         Tpvg==
-X-Forwarded-Encrypted: i=1; AJvYcCUCNk/v/gHIwmf+EYUPhjVF+i81V9SpDVugKo7xgn3QpkuoFrGp4Lz2y034bwXV72pDP7PrjF7RXiXCL1E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyKsDij1ZiK/VmYLMsykuIL/G+1w8SfLwiNAYAhQn0jxHpFUhYa
-	/JjyIJjywrlMtQTFnwJi5sYG71xWds5Md6i2oj6uE1yZavaEk6r/lEitpVaSfFrV2+LbRFg5AOB
-	+HKz9cQHXQuCeUGq8JlUkmrjqSFPx8vBkTo+7fhswlm/g3uJiyfxXq6SLjEOISEF9nNzY/9cJ
-X-Gm-Gg: ASbGncvon0Qsf3r/HLIKiWRW8hbV+fbtxLH7YsJBQuq/Y2fLQJ3vNFzXbtz62vj8Y/p
-	mMA69jDjLaipKlpdqceMOxqIWk+Z90vB6Gf8eCphXN/fBpeXOCJ9PTMC9EWVCD9J/XD5xT+sJq1
-	GpxXwela4X2NMaRqIHMZF1iXDwpYCe0fEkyz9s4ft7v03KAl0MebUsuDyg1OXKS2nhjd/LUl95z
-	Kd4/9yJUnVnlpEdamW7ui1+bpT+GkC/SxWpuw4wpGws0rbaYloZROOG44HhAZVnH+bfFIARVtn5
-	Tfb6056MOnRqeGbybbRcNGwOTx3nKirnJUBoFjd9GgMrtHkftQ7X6h3tRiGZ7ZN7S7nOYJGm2td
-	hVUw6yE0fhB9aq3Q3igDfekwQc8zKXCYBvIa9fkeLWp0=
-X-Received: by 2002:a05:600c:470e:b0:43c:ee62:33f5 with SMTP id 5b1f17b1804b1-43d1eccf8c6mr75685265e9.27.1742079612055;
-        Sat, 15 Mar 2025 16:00:12 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEreElSctv6SPEP2MEyJ/xqWLJMSiduPZhNsHlrl2TaHlt7HW8aHG5+4LO9QNQdz+JntA2e3g==
-X-Received: by 2002:a05:600c:470e:b0:43c:ee62:33f5 with SMTP id 5b1f17b1804b1-43d1eccf8c6mr75685125e9.27.1742079611635;
-        Sat, 15 Mar 2025 16:00:11 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f1a:7c00:4ac1:c2c4:4167:8a0f? (p200300d82f1a7c004ac1c2c441678a0f.dip0.t-ipconnect.de. [2003:d8:2f1a:7c00:4ac1:c2c4:4167:8a0f])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-395cb7eb8c2sm10072152f8f.85.2025.03.15.16.00.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 15 Mar 2025 16:00:10 -0700 (PDT)
-Message-ID: <e8996592-f7ba-4926-8556-1fe7534038dc@redhat.com>
-Date: Sun, 16 Mar 2025 00:00:09 +0100
+	s=arc-20240116; t=1742079758; c=relaxed/simple;
+	bh=8XxuyM3rSXd31IYIv534Hq8h4Bllxjj9SAfhpY0z5zA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nxeCcjTygWp5jfjFccOW/thCaNa0pv5nz70G+i2bdQo8+soyHwO4zRZxRPJEeyOFoWa3VR0TE4rGQ7Y5UnIKkcEolqlK/D1xLRKvAAXtDN0+e5BlP+wjB7bktMxcQr72RCx+zAWFadJAMHT5aQNcqeMflVY0E2hFFOeIBzmir6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bj7Di1nj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21B62C4CEE5;
+	Sat, 15 Mar 2025 23:02:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742079758;
+	bh=8XxuyM3rSXd31IYIv534Hq8h4Bllxjj9SAfhpY0z5zA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Bj7Di1njZVjpy/0Z52Tb50Gk3d6lh4HTnDSUTCsGBYIs1wS6mKBiWq96kFuJUFw0p
+	 yGblIEs1YuxFZkW0isR0z6Lgu4m0+XyYM639dyGvwzvVXGz80ny3yPAARlcpESzzen
+	 P+RKfVlW2Qn/filHuFtMeg/2MjgfFso2dpnrf+gjwVij0yrwBlHbvVsIpW1ISpdA/j
+	 iUfazW87RiSB3UEpLWUqTesR2F7UlQGQwbYbs8pxQB65L5ofbeukzbnVOY9ni7PARm
+	 ZgQ0SHiOT1cLht/iB3jbrcQJNWvo46UoNo/uoUHeiJBkDYeda+WoxQFqjy2GIdE8Iq
+	 GGQjIIks1wvEA==
+Date: Sat, 15 Mar 2025 16:02:35 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Ian Rogers <irogers@google.com>, Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
+	James Clark <james.clark@linaro.org>,
+	Mike Leach <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>,
+	guoren <guoren@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Charlie Jenkins <charlie@rivosinc.com>,
+	Bibo Mao <maobibo@loongson.cn>, Huacai Chen <chenhuacai@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	=?utf-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@rivosinc.com>,
+	Howard Chu <howardchu95@gmail.com>, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	"linux-csky@vger.kernel.org" <linux-csky@vger.kernel.org>,
+	linux-riscv@lists.infradead.org, Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH v5 00/11] perf: Support multiple system call tables in
+ the build
+Message-ID: <Z9YHCzINiu4uBQ8B@google.com>
+References: <20250308003209.234114-1-irogers@google.com>
+ <Z9KFLGpenwOP32q3@google.com>
+ <Z9M24AJzui9lFbGo@x1>
+ <Z9M9-YhDJg3NgiUy@x1>
+ <Z9NEX3j_1RUvaFI0@x1>
+ <Z9PCjQ8PhOadVGQ8@google.com>
+ <Z9RjHpEJGWtj8PAM@x1>
+ <Z9Rm0W6YLpxKIcI1@x1>
+ <Z9SWDGsdgagMr8PV@x1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH] block, fs: use FOLL_LONGTERM as gup_flags for direct
- IO
-To: John Hubbard <jhubbard@nvidia.com>, Christoph Hellwig
- <hch@infradead.org>, Matthew Wilcox <willy@infradead.org>,
- Jason Gunthorpe <jgg@nvidia.com>
-Cc: Sooyong Suk <s.suk@samsung.com>, viro@zeniv.linux.org.uk,
- linux-kernel@vger.kernel.org, akpm@linux-foundation.org, linux-mm@kvack.org,
- jaewon31.kim@gmail.com, spssyr@gmail.com, Zi Yan <ziy@nvidia.com>
-References: <CGME20250306074101epcas1p4b24ac546f93df2c7fe3176607b20e47f@epcas1p4.samsung.com>
- <20250306074056.246582-1-s.suk@samsung.com> <Z8m-vJ6mP1Sh2pt3@infradead.org>
- <Z8tVrOezU2q_0ded@casper.infradead.org> <Z9GmYe-bdOZ8LQV5@infradead.org>
- <cd013218-7735-4bc1-b6b6-80d1129e2b76@redhat.com>
- <c45e1bf8-f91b-4383-8c1a-7e11be02743b@nvidia.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <c45e1bf8-f91b-4383-8c1a-7e11be02743b@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <Z9SWDGsdgagMr8PV@x1>
 
-On 15.03.25 02:04, John Hubbard wrote:
-> On 3/13/25 3:49 PM, David Hildenbrand wrote:
->> On 12.03.25 16:21, Christoph Hellwig wrote:
->>> On Fri, Mar 07, 2025 at 08:23:08PM +0000, Matthew Wilcox wrote:
->>>> Howver, the problem is real.
->>>
->>> What is the problem?
->>
->> I think the problem is the CMA allocation failure, not the latency.
->>
->> "if a large amount of direct IO is requested constantly, this can make
->> pages in CMA pageblocks pinned and unable to migrate outside of the
->> pageblock"
->>
->> We'd need a more reliable way to make CMA allocation -> page migration
->> make progress. For example, after we isolated the pageblocks and
->> migration starts doing its thing, we could disallow any further GUP
->> pins. (e.g., make GUP spin or wait for migration to end)
->>
->> We could detect in GUP code that a folio is soon expected to be migrated
->> by checking the pageblock (isolated) and/or whether the folio is locked.
->>
+On Fri, Mar 14, 2025 at 05:48:12PM -0300, Arnaldo Carvalho de Melo wrote:
+> On Fri, Mar 14, 2025 at 02:26:41PM -0300, Arnaldo Carvalho de Melo wrote:
+> > it finds the pair, but then its sc->args has a bogus pointer... I'll see
+> > where this isn't being initialized...
 > 
-> Jason Gunthorpe and Matthew both had some ideas about how to fix this [1],
-> which were very close (maybe the same) to what you're saying here: sleep
-> and spin in an killable loop.
+> Breakpoint 4, trace__find_usable_bpf_prog_entry (trace=0x7fffffffa510, sc=0x1046f10) at builtin-trace.c:3874
+> 3874			bool is_candidate = false;
+> (gdb) n
+> 3876			if (pair == NULL || pair == sc ||
+> (gdb) p pair
+> $7 = (struct syscall *) 0x1083c50
+> (gdb) p pair->name
+> $8 = 0x81478e "accept4"
+> (gdb) n
+> 3877			    pair->bpf_prog.sys_enter == trace->skel->progs.syscall_unaugmented)
+> (gdb) p i
+> $9 = 1
+> (gdb) n
+> 3876			if (pair == NULL || pair == sc ||
+> (gdb) n
+> 3880			printf("sc=%p\n", sc); fflush(stdout);
+> (gdb) n
+> sc=0x1046f10
+> 3881			printf("sc->name=%p\n", sc->name); fflush(stdout);
+> (gdb) n
+> sc->name=0x6c66202c786c3830
+> 3882			printf("sc->nr_args=%d, sc->args=%p\n", sc->nr_args, sc->args); fflush(stdout);
+> (gdb) p sc->nr_args
+> $10 = 1935635045
+> (gdb) p sc->args
+> $11 = (struct tep_format_field *) 0x257830203a6e656c
+> (gdb) p *sc
+> $12 = {e_machine = 540697702, id = 807761968, tp_format = 0x657075202c786c38, nr_args = 1935635045, args_size = 1634427759, bpf_prog = {sys_enter = 0x257830203a726464, 
+>     sys_exit = 0x7075202c786c3830}, is_exit = 101, is_open = 101, nonexistent = 114, use_btf = 95, args = 0x257830203a6e656c, 
+>   name = 0x6c66202c786c3830 <error: Cannot access memory at address 0x6c66202c786c3830>, fmt = 0x257830203a736761, arg_fmt = 0x786c3830}
+> (gdb) 
 > 
-> It turns out to be a little difficult to do this--I had trouble making
-> the folio's "has waiters" bit work for this, for example. And then...squirrel!
+> Ok, ran out of time, but if I simple avoid the second loop in:
 > 
-> However, I still believe, so far, this is the right approach. I'm just not
-> sure which thing to wait on, exactly.
+> static int trace__init_syscalls_bpf_prog_array_maps(struct trace *trace, int e_machine)
+> 
+> 
+> I.e. the one that starts with:
+> 
+>         /*
+>          * Now lets do a second pass looking for enabled syscalls without
+>          * an augmenter that have a signature that is a superset of another
+>          * syscall with an augmenter so that we can auto-reuse it.
+> 
+> This:
+> 
+> diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
+> index e0434f7dc67cb988..3664bb512c70cabf 100644
+> --- a/tools/perf/builtin-trace.c
+> +++ b/tools/perf/builtin-trace.c
+> @@ -3989,6 +3989,8 @@ static int trace__init_syscalls_bpf_prog_array_maps(struct trace *trace, int e_m
+>                         goto out;
+>         }
+>  
+> +       return 0;
+> +
+>         /*
+>          * Now lets do a second pass looking for enabled syscalls without
+>          * an augmenter that have a signature that is a superset of another
+> ⬢ [acme@toolbox perf-tools-next]$ 
+> 
+> 
+> Then all works, we don't reuse any BPF program, but then that is an
+> heuristic anyway, that is tried becuase landlock_add_rule has a pointer
+> argument:
+> 
+> root@number:~# perf trace -e landlock_add_rule perf test -w landlock
+>      0.000 ( 0.003 ms): perf/71034 landlock_add_rule(ruleset_fd: 11, rule_type: LANDLOCK_RULE_PATH_BENEATH, rule_attr: 0x7fff6f2bb550, flags: 45) = -1 EINVAL (Invalid argument)
+>      0.004 ( 0.001 ms): perf/71034 landlock_add_rule(ruleset_fd: 11, rule_type: LANDLOCK_RULE_NET_PORT, rule_attr: 0x7fff6f2bb540, flags: 45) = -1 EINVAL (Invalid argument)
+> root@number:~# perf test enum
+> 105: perf trace enum augmentation tests                              : Ok
+> root@number:~#
+> 
+> So its some sort of syncronization on the various new tables, sorted by
+> name, etc that then when iterating over the syscalls ends up using a sc
+> that is not initialized.
 
-Zi Yan has a series to convert the "isolate" state of pageblocks to a 
-separate pageblock bit; it could be considered a lock-bit. Currently, 
-it's essentially the migratetype being MIGRATE_ISOLATE.
+Right, I've realized that calling trace__syscall_info() can invalidate
+the existing sc since it calls trace__find_syscall() which reallocates
+and resorts the syscall table.  That's why it was ok when no filter was
+used since it'd allocate the whole table in the first pass.  Otherwise
+it looks for a pair syscall while holding the original sc but calling
+the function would invalidate the sc.
 
-As soon as a pageblock is isolated, one must be prepared for contained 
-pages/folios to get migrated. The folio lock will only be grabbed once 
-actually trying to migrate a folio IIRC, so it might not be the best 
-choice: especially considering allocations that span many pageblocks.
+What about this (on top of my earlier fix)?
 
-So maybe one would need a "has waiters" bit per pageblock, so relevant 
-users (e.g., GUP) could wait on the isolate bit getting cleared.
+Thanks,
+Namhyung
 
--- 
-Cheers,
 
-David / dhildenb
+---8<---
+diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
+index 49199d753b7cafbf..da0ddc713e6b35da 100644
+--- a/tools/perf/builtin-trace.c
++++ b/tools/perf/builtin-trace.c
+@@ -2506,10 +2506,12 @@ static struct syscall *trace__find_syscall(struct trace *trace, int e_machine, i
+ 	};
+ 	struct syscall *sc, *tmp;
+ 
+-	sc = bsearch(&key, trace->syscalls.table, trace->syscalls.table_size,
+-		     sizeof(struct syscall), syscall__cmp);
+-	if (sc)
+-		return sc;
++	if (trace->syscalls.table) {
++		sc = bsearch(&key, trace->syscalls.table, trace->syscalls.table_size,
++			     sizeof(struct syscall), syscall__cmp);
++		if (sc)
++			return sc;
++	}
+ 
+ 	tmp = reallocarray(trace->syscalls.table, trace->syscalls.table_size + 1,
+ 			   sizeof(struct syscall));
+@@ -3855,6 +3857,10 @@ static int trace__bpf_sys_enter_beauty_map(struct trace *trace, int e_machine, i
+ 
+ static struct bpf_program *trace__find_usable_bpf_prog_entry(struct trace *trace, struct syscall *sc)
+ {
++	int orig_id = sc->id;
++	const char *orig_name = sc->name;
++	int e_machine = sc->e_machine;
++	struct tep_format_field *args = sc->args;
+ 	struct tep_format_field *field, *candidate_field;
+ 	/*
+ 	 * We're only interested in syscalls that have a pointer:
+@@ -3866,18 +3872,19 @@ static struct bpf_program *trace__find_usable_bpf_prog_entry(struct trace *trace
+ 
+ 	return NULL;
+ 
++	/* calling trace__syscall_info() may invalidate 'sc' */
+ try_to_find_pair:
+-	for (int i = 0, num_idx = syscalltbl__num_idx(sc->e_machine); i < num_idx; ++i) {
+-		int id = syscalltbl__id_at_idx(sc->e_machine, i);
+-		struct syscall *pair = trace__syscall_info(trace, NULL, sc->e_machine, id);
++	for (int i = 0, num_idx = syscalltbl__num_idx(e_machine); i < num_idx; ++i) {
++		int id = syscalltbl__id_at_idx(e_machine, i);
++		struct syscall *pair = trace__syscall_info(trace, NULL, e_machine, id);
+ 		struct bpf_program *pair_prog;
+ 		bool is_candidate = false;
+ 
+-		if (pair == NULL || pair == sc ||
++		if (pair == NULL || pair->id == orig_id ||
+ 		    pair->bpf_prog.sys_enter == trace->skel->progs.syscall_unaugmented)
+ 			continue;
+ 
+-		for (field = sc->args, candidate_field = pair->args;
++		for (field = args, candidate_field = pair->args;
+ 		     field && candidate_field; field = field->next, candidate_field = candidate_field->next) {
+ 			bool is_pointer = field->flags & TEP_FIELD_IS_POINTER,
+ 			     candidate_is_pointer = candidate_field->flags & TEP_FIELD_IS_POINTER;
+@@ -3944,7 +3951,7 @@ static struct bpf_program *trace__find_usable_bpf_prog_entry(struct trace *trace
+ 				goto next_candidate;
+ 		}
+ 
+-		pr_debug("Reusing \"%s\" BPF sys_enter augmenter for \"%s\"\n", pair->name, sc->name);
++		pr_debug("Reusing \"%s\" BPF sys_enter augmenter for \"%s\"\n", pair->name, orig_name);
+ 		return pair_prog;
+ 	next_candidate:
+ 		continue;
+@@ -4041,6 +4048,11 @@ static int trace__init_syscalls_bpf_prog_array_maps(struct trace *trace, int e_m
+ 		if (pair_prog == NULL)
+ 			continue;
+ 
++		/*
++		 * Get syscall info again as find usable entry above might
++		 * modify the syscall table and shuffle it.
++		 */
++		sc = trace__syscall_info(trace, NULL, e_machine, key);
+ 		sc->bpf_prog.sys_enter = pair_prog;
+ 
+ 		/*
 
 
