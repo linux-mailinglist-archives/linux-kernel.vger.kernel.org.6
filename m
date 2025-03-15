@@ -1,160 +1,185 @@
-Return-Path: <linux-kernel+bounces-562588-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562589-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84122A62D58
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 14:19:10 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E9F6A62D66
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 14:20:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA0AD177E45
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 13:19:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4E6EC7A91D5
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 13:19:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D4AD1F9A8B;
-	Sat, 15 Mar 2025 13:18:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE7581F76A8;
+	Sat, 15 Mar 2025 13:20:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b="Ib6d9Epq"
-Received: from ixit.cz (ip-89-177-23-149.bb.vodafone.cz [89.177.23.149])
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="JNEWAJLP"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18267C8E0;
-	Sat, 15 Mar 2025 13:18:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.177.23.149
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD49B188012;
+	Sat, 15 Mar 2025 13:20:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742044738; cv=none; b=VP0ck/0LVc2Ny8ctykJLhWEjg/Hqjp24lJQI2z28vz3lXs2bszbIhN2H0r8PxYpwTO+KZkO6OdJejOtj6kAz2CcnJ7HSztgq81dlRVZCf14Okz3NLU+abzIPt57LK32uVth/B49t1ShCxu3Hi95kNBkiMPttHiU2BplJGfUSlEg=
+	t=1742044828; cv=none; b=g6Sx1h0xxpAViDKD1jEY4mJxxh9YKxaIK0c/APOZGpg/nXvBVFWZgIvLDIUz5ySPPCSUS/JbWTCVKXflkdp92c40+9kF7kXO5CDo90JBXxIOE9Cv1pW6VM/i2SLwvFhGylUJkTPJg6qcmaOIfwYhlK2xLWAdU5nZbfI3wRioosE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742044738; c=relaxed/simple;
-	bh=FfYaPvZBMfo0yQhaHir/c42SQ/yTNLFYyCj9PcGWAkE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ge8GvXOQI5HiwEbKdx0zoeUbaAlXZy5fhW38ggaJy0b3fOLYXeihc8iCBaInOU7w3vxUz6/2Fk1TJ9aBgR32fr07Ranneu+3COWTsx9SVzTtmYTn3Uo7R4vdhlgWHEF4D17fgjjUyC35QhkjYNL73cXdTWZEo1mTTtsFpoViOlU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz; spf=pass smtp.mailfrom=ixit.cz; dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b=Ib6d9Epq; arc=none smtp.client-ip=89.177.23.149
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ixit.cz
-Received: from [10.0.73.83] (aruba2.felk.cvut.cz [147.32.82.9])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ixit.cz (Postfix) with ESMTPSA id 79B75166874;
-	Sat, 15 Mar 2025 14:18:46 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ixit.cz; s=dkim;
-	t=1742044726;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=vhnFeAgfmUJGpaHl5Es/j9o1e6tYH/Y1e4bZaQrVfhA=;
-	b=Ib6d9EpqYGGBzNryC9cU7TF9q5b93+4sc+BwS3A0L4jaAd58oVaUTpurEy2FGhylLcDDmG
-	P5qpma5+btms6Zs8OK6qXcYzA4Ec7f2z3B6Hru+SKKtghnwq/GXugEhXZ3SMe6LaOc3AbF
-	B3uFVAfPAqPCLGqo4jhe2QZFB7YAsIU=
-Message-ID: <ec820dbf-5a37-4477-a99d-f3fbe338c198@ixit.cz>
-Date: Sat, 15 Mar 2025 14:18:40 +0100
+	s=arc-20240116; t=1742044828; c=relaxed/simple;
+	bh=5aAd5kxEgpNv9jP73xNPFCtdSg1gvVxKex9LF+vIYYw=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=YWYYhct9xrUNsL6SAxEk7mlYb0PldU4BoFbiUkSOmHPX4WmuJSQtEKyhyyYYlKK/K4TW8XWJO8vzcumWeWU6GtVHEA3Gg1CoQkCxkiE341UdI12NgzM/NOaMjDjKt1n6+68/W+j8vpq8ygRt2NzI2ADi3ArIGXLn8WfaNUQpLZc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=JNEWAJLP; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1742044815;
+	bh=5aAd5kxEgpNv9jP73xNPFCtdSg1gvVxKex9LF+vIYYw=;
+	h=From:Date:Subject:To:Cc:From;
+	b=JNEWAJLPlUzVtGxCp29wNfCDRhMalaQWu+6aecq00TgXZ+l9MhyLECCR2qrjWiqVa
+	 DT+Q0B3YDmcLwbR8QBqnoE0ZJ4NAvHasZcfwt0x5/ugfaem+JflYOacAxfcbKQU7LQ
+	 /65g5Nb3YksnKV+IHn638Ayf8ue6tronYP8KLjHw=
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Date: Sat, 15 Mar 2025 14:20:14 +0100
+Subject: [PATCH v2] kbuild: make all file references relative to source
+ root
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] media: dt-bindings: Convert Analog Devices ad5820 to
- DT schema
-To: Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Pavel Machek <pavel@kernel.org>,
- Pavel Machek <pavel@ucw.cz>, linux-media@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250314-b4-ad5820-dt-yaml-v2-1-287958c3c07c@ixit.cz>
- <Z9SYOCVxt70u_bad@kekkonen.localdomain>
-Content-Language: en-US
-From: David Heidelberg <david@ixit.cz>
-Autocrypt: addr=david@ixit.cz; keydata=
- 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
-In-Reply-To: <Z9SYOCVxt70u_bad@kekkonen.localdomain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20250315-kbuild-prefix-map-v2-1-00e1983b2a23@weissschuh.net>
+X-B4-Tracking: v=1; b=H4sIAI1+1WcC/22NwQ6CMBBEf4Xs2TWlgKAn/8NwqGWxG7WQLqCG8
+ O9WjDePbybzZgahwCRwSGYINLFw5yPoTQLWGX8h5CYyaKULlaUar+eRbw32gVp+4t30WBgqd1a
+ rPZUG4u5brc5THdmxDF14rRdT+kl/tuyPbUpRYVZZMlWeV7Zojw9iEbFudFtPA9TLsrwBhu/yR
+ bcAAAA=
+X-Change-ID: 20250312-kbuild-prefix-map-5ae76c209e7a
+To: Masahiro Yamada <masahiroy@kernel.org>, 
+ Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
+ Jonathan Corbet <corbet@lwn.net>, Thomas Gleixner <tglx@linutronix.de>, 
+ Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+ Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+ "H. Peter Anvin" <hpa@zytor.com>, Ben Hutchings <ben@decadent.org.uk>
+Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-doc@vger.kernel.org, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1742044815; l=4983;
+ i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
+ bh=5aAd5kxEgpNv9jP73xNPFCtdSg1gvVxKex9LF+vIYYw=;
+ b=poDRjIhb/G41s9ptBZZyGL7Io6BzUYTI2xwX2fLZnHNV98APDZltVsyMujL4CeZ8EJU1iSOvX
+ Nb9yOhd8/OuB9OPa5cbcmpvkynmaPdMCqqVeeIyaLcQSBUSdPf0geKK
+X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
+ pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
+-fmacro-prefix-map only affects __FILE__ and __BASE_FILE__.
+Other references, for example in debug information, are not affected.
+This makes handling of file references in the compiler outputs harder to
+use and creates problems for reproducible builds.
 
+Switch to -ffile-prefix map which affects all references.
 
-On 14/03/2025 21:57, Sakari Ailus wrote:
-> Hi David,
-> 
-> Thanks for converting this to YAML.
-> 
-> On Fri, Mar 14, 2025 at 08:58:27PM +0100, David Heidelberg via B4 Relay wrote:
->> From: David Heidelberg <david@ixit.cz>
->>
->> Convert the Analog Devices ad5820 to DT schema format.
->>
->> Add the previously undocumented io-channel-cells property,
->> which can be omitted. If present, it must be set to 0,
->> as the device provides only one channel.
-> 
-> What's the purpose of this property? The driver doesn't use it nor I think
-> it provides any information on the hardware either. The above description
-> also appears to be saying it's redundant.
+Also drop the documentation section advising manual specification of
+-fdebug-prefix-map for reproducible builds, as it is not necessary
+anymore.
 
-Hello Sakari,
+Suggested-by: Ben Hutchings <ben@decadent.org.uk>
+Link: https://lore.kernel.org/lkml/c49cc967294f9a3a4a34f69b6a8727a6d3959ed8.camel@decadent.org.uk/
+Acked-by: Borislav Petkov (AMD) <bp@alien8.de> # arch/x86/
+Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+---
+Changes in v2:
+- Pick up Ack from Borislav
+- Merge all changes into single patch
+- Also drop link to KCFLAGS from docs
+- Link to v1: https://lore.kernel.org/r/20250313-kbuild-prefix-map-v1-0-38cea8448c5f@weissschuh.net
+---
+ Documentation/kbuild/reproducible-builds.rst | 17 -----------------
+ Makefile                                     |  2 +-
+ arch/x86/boot/Makefile                       |  2 +-
+ arch/x86/boot/compressed/Makefile            |  2 +-
+ 4 files changed, 3 insertions(+), 20 deletions(-)
 
-from my understanding, you're right.
+diff --git a/Documentation/kbuild/reproducible-builds.rst b/Documentation/kbuild/reproducible-builds.rst
+index f2dcc39044e66ddd165646e0b51ccb0209aca7dd..a7762486c93fcd3eba08b836bed622a41e829e41 100644
+--- a/Documentation/kbuild/reproducible-builds.rst
++++ b/Documentation/kbuild/reproducible-builds.rst
+@@ -46,21 +46,6 @@ The kernel embeds the building user and host names in
+ `KBUILD_BUILD_USER and KBUILD_BUILD_HOST`_ variables.  If you are
+ building from a git commit, you could use its committer address.
+ 
+-Absolute filenames
+-------------------
+-
+-When the kernel is built out-of-tree, debug information may include
+-absolute filenames for the source files.  This must be overridden by
+-including the ``-fdebug-prefix-map`` option in the `KCFLAGS`_ variable.
+-
+-Depending on the compiler used, the ``__FILE__`` macro may also expand
+-to an absolute filename in an out-of-tree build.  Kbuild automatically
+-uses the ``-fmacro-prefix-map`` option to prevent this, if it is
+-supported.
+-
+-The Reproducible Builds web site has more information about these
+-`prefix-map options`_.
+-
+ Generated files in source packages
+ ----------------------------------
+ 
+@@ -131,7 +116,5 @@ See ``scripts/setlocalversion`` for details.
+ 
+ .. _KBUILD_BUILD_TIMESTAMP: kbuild.html#kbuild-build-timestamp
+ .. _KBUILD_BUILD_USER and KBUILD_BUILD_HOST: kbuild.html#kbuild-build-user-kbuild-build-host
+-.. _KCFLAGS: kbuild.html#kcflags
+-.. _prefix-map options: https://reproducible-builds.org/docs/build-path/
+ .. _Reproducible Builds project: https://reproducible-builds.org/
+ .. _SOURCE_DATE_EPOCH: https://reproducible-builds.org/docs/source-date-epoch/
+diff --git a/Makefile b/Makefile
+index 5c333682dc9142b1aacfe454a5c77f5923554b7d..4f920187cee658ae4d1b807fca365f6994274828 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1067,7 +1067,7 @@ endif
+ 
+ # change __FILE__ to the relative path to the source directory
+ ifdef building_out_of_srctree
+-KBUILD_CPPFLAGS += $(call cc-option,-fmacro-prefix-map=$(srcroot)/=)
++KBUILD_CPPFLAGS += $(call cc-option,-ffile-prefix-map=$(srcroot)/=)
+ KBUILD_RUSTFLAGS += --remap-path-prefix=$(srcroot)/=
+ endif
+ 
+diff --git a/arch/x86/boot/Makefile b/arch/x86/boot/Makefile
+index 9cc0ff6e9067d574488a35573eff4d0f8449e398..f500f82864aae80deb74faa3df9a8b6333d6c4ca 100644
+--- a/arch/x86/boot/Makefile
++++ b/arch/x86/boot/Makefile
+@@ -54,7 +54,7 @@ targets += cpustr.h
+ 
+ KBUILD_CFLAGS	:= $(REALMODE_CFLAGS) -D_SETUP
+ KBUILD_AFLAGS	:= $(KBUILD_CFLAGS) -D__ASSEMBLY__
+-KBUILD_CFLAGS	+= $(call cc-option,-fmacro-prefix-map=$(srctree)/=)
++KBUILD_CFLAGS	+= $(call cc-option,-ffile-prefix-map=$(srctree)/=)
+ KBUILD_CFLAGS	+= -fno-asynchronous-unwind-tables
+ KBUILD_CFLAGS	+= $(CONFIG_CC_IMPLICIT_FALLTHROUGH)
+ 
+diff --git a/arch/x86/boot/compressed/Makefile b/arch/x86/boot/compressed/Makefile
+index 5edee7a9786c67e13c295473751b82387bcbd67e..ad324978b2e5b1b6f8be82647769c99db8257ac7 100644
+--- a/arch/x86/boot/compressed/Makefile
++++ b/arch/x86/boot/compressed/Makefile
+@@ -38,7 +38,7 @@ KBUILD_CFLAGS += -fno-stack-protector
+ KBUILD_CFLAGS += $(call cc-disable-warning, address-of-packed-member)
+ KBUILD_CFLAGS += $(call cc-disable-warning, gnu)
+ KBUILD_CFLAGS += -Wno-pointer-sign
+-KBUILD_CFLAGS += $(call cc-option,-fmacro-prefix-map=$(srctree)/=)
++KBUILD_CFLAGS += $(call cc-option,-ffile-prefix-map=$(srctree)/=)
+ KBUILD_CFLAGS += -fno-asynchronous-unwind-tables
+ KBUILD_CFLAGS += -D__DISABLE_EXPORTS
+ # Disable relocation relaxation in case the link is not PIE.
 
-I would prefer to drop it, see [1].
+---
+base-commit: a57512d6cd88eba04cdc1fb83832c00d248bd0d1
+change-id: 20250312-kbuild-prefix-map-5ae76c209e7a
 
-Anyway from reading of documentation I understood it may be right to 
-have the property empty, but also may be omitted. I saw both approaches 
-in the code.
-
-If you choose not liking this redudancy, I push [1] and drop the 
-property here.
-
-David
-
-
-
-[1] 
-https://patchwork.kernel.org/project/linux-omap/patch/20250213203208.93316-1-david@ixit.cz/
-
+Best regards,
 -- 
-David Heidelberg
+Thomas Weißschuh <linux@weissschuh.net>
 
 
