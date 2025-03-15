@@ -1,217 +1,89 @@
-Return-Path: <linux-kernel+bounces-562404-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562405-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE1F8A6261D
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 05:46:19 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D06BA6261E
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 05:48:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DBAA8881CE6
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 04:46:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D4C242029D
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 04:48:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CE5918DB1D;
-	Sat, 15 Mar 2025 04:46:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gb7aXj55"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFB4318B484;
+	Sat, 15 Mar 2025 04:48:10 +0000 (UTC)
+Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [63.216.63.40])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96778376;
-	Sat, 15 Mar 2025 04:46:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33D4A376
+	for <linux-kernel@vger.kernel.org>; Sat, 15 Mar 2025 04:48:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.216.63.40
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742013972; cv=none; b=cP6GGo5CnVj5uKxpM3Ce62KBuO/elWC+51loYJlWYB041l6McJYkdQBKGbHWm6HYCWVLRZ90s37tluYi4K6J2QABCOMSi+EMlKcf56wVRsto6MKuhc9rEaJp8UrGdmcl1zcZCOIoLBKe3iz2VIGo3UagdTv6dq8CzCQeM2bNZHc=
+	t=1742014090; cv=none; b=byT5llYROmRNZazlil5bm+9XjxI6doykV8b1g5w40TJ3vf5c0b6eLxiJxqKibI5xBB1NRbJo7zj+gk5sp6dd0oU2WDFQJAp4itIefT9w/v+vAsCkAxWP1de2tVbF4nFRNMAZqKWSfKcYAfMepyGWE74tNyPcalFasbRMi+PrdOk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742013972; c=relaxed/simple;
-	bh=z7iP+K9DJHedpsOd1jCC4SkqUlvgguw3DEY82hCkWnc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qkPLG/LQpv6IbeZNOimx2yzzY8kdbVWqIiNHpcCO7V8SxBfTER4NiTq1K+ktAG8Dv3QJlVZk84WRvmf37bv/e5BtMx+ooW1POsaOeNM7G8s/kBHGPUZIbpfcruypTlyXSbPsmEEUaOnDmILe4eZir4w1PcG0hQKPQEtzNkfEthI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gb7aXj55; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0CFDAC4CEE5;
-	Sat, 15 Mar 2025 04:46:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742013972;
-	bh=z7iP+K9DJHedpsOd1jCC4SkqUlvgguw3DEY82hCkWnc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Gb7aXj558TTdn9u9OF2IVpgaGT35NT8njJa0Hql6PShFxp/8FBijw2lSGOjCRMOFm
-	 /QGH5nFrb3/5Kp6CIqqvlm2Y0357BwZ/9TZLwxXIeQzy2seAA45AUIhV9g/YArfNoF
-	 auLs3naJw/O4jqYwY+wlk512e2iySnpmACCxJD1TxLi1ygqXvMYj/Edic96uLAdTpK
-	 g77PupOoh0KN0NfwT73yZdHxzXj3psJluLohTX16zTxczxElLvWBx4IGDBeorKMlma
-	 daLiyfZNcGeig9Noj0T5SKGx1rLdLn4PKbpQFhCDCKvKAnsAw4WTNz8Tab9iltzaMp
-	 LBNmbH0RmuRXg==
-Date: Fri, 14 Mar 2025 21:46:09 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Swapnil Sapkal <swapnil.sapkal@amd.com>
-Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
-	irogers@google.com, james.clark@arm.com, ravi.bangoria@amd.com,
-	yu.c.chen@intel.com, mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-	rostedt@goodmis.org, vincent.guittot@linaro.org,
-	adrian.hunter@intel.com, kan.liang@linux.intel.com,
-	gautham.shenoy@amd.com, kprateek.nayak@amd.com,
-	juri.lelli@redhat.com, yangjihong@bytedance.com, void@manifault.com,
-	tj@kernel.org, sshegde@linux.ibm.com, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org, santosh.shukla@amd.com,
-	ananth.narayan@amd.com, sandipan.das@amd.com,
-	James Clark <james.clark@linaro.org>
-Subject: Re: [PATCH v3 5/8] perf sched stats: Add support for live mode
-Message-ID: <Z9UGEaypiEbOuhHv@google.com>
-References: <20250311120230.61774-1-swapnil.sapkal@amd.com>
- <20250311120230.61774-6-swapnil.sapkal@amd.com>
+	s=arc-20240116; t=1742014090; c=relaxed/simple;
+	bh=slZqHKRCXbTLW55e2hzu9MhyzSWZgXax1voMKAKaSQE=;
+	h=Date:Message-ID:Mime-Version:From:To:Cc:Subject:Content-Type; b=iG70TPJtODTHyAN4417QT+XS67F9ZLRGLm5Biur2qcHyVtqGRFISW20HCNDAXdJjBz0IMBAWLrZ5suUjJPZn/j6R0xbcFeS5CxhFaAUyi0NUROwpgIoUx4KdPlRI1DmYH/YBc32lpmQ43SyLluAj99v8qr1dmhlCqrxrnPtV2uA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=63.216.63.40
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
+Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4ZF7yn5sVnz8R03d;
+	Sat, 15 Mar 2025 12:48:01 +0800 (CST)
+Received: from xaxapp05.zte.com.cn ([10.99.98.109])
+	by mse-fl1.zte.com.cn with SMTP id 52F4lul3079032;
+	Sat, 15 Mar 2025 12:47:56 +0800 (+08)
+	(envelope-from feng.wei8@zte.com.cn)
+Received: from mapi (xaxapp05[null])
+	by mapi (Zmail) with MAPI id mid32;
+	Sat, 15 Mar 2025 12:47:56 +0800 (CST)
+Date: Sat, 15 Mar 2025 12:47:56 +0800 (CST)
+X-Zmail-TransId: 2afc67d5067c64c-14494
+X-Mailer: Zmail v1.0
+Message-ID: <20250315124756851v6UQVu4NRD-RV62eoG0va@zte.com.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250311120230.61774-6-swapnil.sapkal@amd.com>
+Mime-Version: 1.0
+From: <feng.wei8@zte.com.cn>
+To: <mripard@kernel.org>
+Cc: <maarten.lankhorst@linux.intel.com>, <tzimmermann@suse.de>,
+        <airlied@gmail.com>, <simona@ffwll.ch>,
+        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
+Subject: =?UTF-8?B?W1BBVENIXSBkcm06IFJlcGxhY2UgbmVzdGVkIG1heCgpIHdpdGggc2luZ2xlIG1heDMoKQ==?=
+Content-Type: text/plain;
+	charset="UTF-8"
+X-MAIL:mse-fl1.zte.com.cn 52F4lul3079032
+X-Fangmail-Anti-Spam-Filtered: true
+X-Fangmail-MID-QID: 67D50681.000/4ZF7yn5sVnz8R03d
 
-On Tue, Mar 11, 2025 at 12:02:27PM +0000, Swapnil Sapkal wrote:
-> The live mode works similar to simple `perf stat` command, by profiling
-> the target and printing results on the terminal as soon as the target
-> finishes.
-> 
-> Example usage:
-> 
->   # perf sched stats -- sleep 10
-> 
-> Co-developed-by: Ravi Bangoria <ravi.bangoria@amd.com>
-> Signed-off-by: Ravi Bangoria <ravi.bangoria@amd.com>
-> Tested-by: James Clark <james.clark@linaro.org>
-> Signed-off-by: Swapnil Sapkal <swapnil.sapkal@amd.com>
-> ---
->  tools/perf/builtin-sched.c | 87 +++++++++++++++++++++++++++++++++++++-
->  1 file changed, 86 insertions(+), 1 deletion(-)
-> 
-> diff --git a/tools/perf/builtin-sched.c b/tools/perf/builtin-sched.c
-> index e2e7dbc4f0aa..9813e25b54b8 100644
-> --- a/tools/perf/builtin-sched.c
-> +++ b/tools/perf/builtin-sched.c
-> @@ -4364,6 +4364,91 @@ static int perf_sched__schedstat_report(struct perf_sched *sched)
->  	return err;
->  }
->  
-> +static int process_synthesized_event_live(const struct perf_tool *tool __maybe_unused,
-> +					  union perf_event *event,
-> +					  struct perf_sample *sample __maybe_unused,
-> +					  struct machine *machine __maybe_unused)
-> +{
-> +	return perf_sched__process_schedstat(NULL, event);
-> +}
-> +
-> +static int perf_sched__schedstat_live(struct perf_sched *sched,
-> +				      int argc, const char **argv)
-> +{
-> +	struct evlist *evlist;
-> +	struct target *target;
-> +	int reset = 0;
-> +	int err = 0;
-> +
-> +	signal(SIGINT, sighandler);
-> +	signal(SIGCHLD, sighandler);
-> +	signal(SIGTERM, sighandler);
-> +
-> +	evlist = evlist__new();
-> +	if (!evlist)
-> +		return -ENOMEM;
-> +
-> +	/*
-> +	 * `perf sched schedstat` does not support workload profiling (-p pid)
-> +	 * since /proc/schedstat file contains cpu specific data only. Hence, a
-> +	 * profile target is either set of cpus or systemwide, never a process.
-> +	 * Note that, although `-- <workload>` is supported, profile data are
-> +	 * still cpu/systemwide.
-> +	 */
-> +	target = zalloc(sizeof(struct target));
+From: FengWei <feng.wei8@zte.com.cn>
 
-As I said, you can put it on stack.
+Use max3() macro instead of nesting max() to simplify the return
+statement.
 
+Signed-off-by: FengWei <feng.wei8@zte.com.cn>
+---
+ drivers/gpu/drm/drm_ioctl.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> +	if (cpu_list)
-> +		target->cpu_list = cpu_list;
-> +	else
-> +		target->system_wide = true;
-> +
-> +	if (argc) {
-> +		err = evlist__prepare_workload(evlist, target, argv, false, NULL);
-> +		if (err)
-> +			goto out_target;
-> +	}
-> +
-> +	if (cpu_list) {
-> +		user_requested_cpus = perf_cpu_map__new(cpu_list);
-> +		if (!user_requested_cpus)
-> +			goto out_target;
-> +	}
+diff --git a/drivers/gpu/drm/drm_ioctl.c b/drivers/gpu/drm/drm_ioctl.c
+index f593dc569d31..115a8eb0d8a5 100644
+--- a/drivers/gpu/drm/drm_ioctl.c
++++ b/drivers/gpu/drm/drm_ioctl.c
+@@ -856,7 +856,7 @@ long drm_ioctl(struct file *filp,
+ 		in_size = 0;
+ 	if ((cmd & ioctl->cmd & IOC_OUT) == 0)
+ 		out_size = 0;
+-	ksize = max(max(in_size, out_size), drv_size);
++	ksize = max3(in_size, out_size, drv_size);
 
-How about this instead?
-
-	evlist__create_maps(evlist, target);
-
-> +
-> +	err = perf_event__synthesize_schedstat(&(sched->tool),
-> +					       process_synthesized_event_live,
-> +					       user_requested_cpus);
-> +	if (err < 0)
-> +		goto out_target;
-> +
-> +	err = enable_sched_schedstats(&reset);
-> +	if (err < 0)
-> +		goto out_target;
-> +
-> +	if (argc)
-> +		evlist__start_workload(evlist);
-> +
-> +	/* wait for signal */
-> +	pause();
-> +
-> +	if (reset) {
-> +		err = disable_sched_schedstat();
-> +		if (err < 0)
-> +			goto out_target;
-> +	}
-> +
-> +	err = perf_event__synthesize_schedstat(&(sched->tool),
-> +					       process_synthesized_event_live,
-> +					       user_requested_cpus);
-> +	if (err)
-> +		goto out_target;
-> +
-> +	setup_pager();
-> +	show_schedstat_data(cpu_head);
-> +	free_schedstat(cpu_head);
-> +out_target:
-> +	free(target);
-
-	evlist__delete(evlist);
-
-and unless you use evlist__create_maps().
-
-	perf_cpu_map__put(user_requested_cpus);
-
-Thanks,
-Namhyung
-
-
-> +	return err;
-> +}
-> +
->  static bool schedstat_events_exposed(void)
->  {
->  	/*
-> @@ -4686,7 +4771,7 @@ int cmd_sched(int argc, const char **argv)
->  						     stats_usage, 0);
->  			return perf_sched__schedstat_report(&sched);
->  		}
-> -		usage_with_options(stats_usage, stats_options);
-> +		return perf_sched__schedstat_live(&sched, argc, argv);
->  	} else {
->  		usage_with_options(sched_usage, sched_options);
->  	}
-> -- 
-> 2.43.0
-> 
+ 	drm_dbg_core(dev, "comm=\"%s\" pid=%d, dev=0x%lx, auth=%d, %s\n",
+ 		     current->comm, task_pid_nr(current),
+-- 
+2.25.1
 
