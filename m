@@ -1,141 +1,98 @@
-Return-Path: <linux-kernel+bounces-562709-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6D49A63189
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 19:28:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B87D2A63195
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 19:30:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C74847A8154
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 18:27:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA6DB1892B1D
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 18:30:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55502205ADC;
-	Sat, 15 Mar 2025 18:28:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 794D7202F88;
+	Sat, 15 Mar 2025 18:30:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="snXASOq1"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TEku9Lf7"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D4AE1FECAD;
-	Sat, 15 Mar 2025 18:28:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D49F633DB;
+	Sat, 15 Mar 2025 18:30:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742063309; cv=none; b=LY7WwhbgVQtHx4DvtiOkOzSjkVwFEuOqxNRl9jtsQJJAKTdFmzDn5jOJnz6kNGiSTR4Cp8s6ZWRQwvV0wbqO2CoW/+ZN+t09pf2j+3wO+tsEuwgm6ZCjSpoqzA7cmHiz4AiTt9+I7kVVr+Bw5uX0ovhdh58RsZxk4yNVyy9ZpsY=
+	t=1742063435; cv=none; b=HcV9IrlJ4bGkrnLWbMM2PZGEnrQO+NQ6Z36QCvl1OZRmW0D6E83Mdl5hReJxYDNU7tEcXxCX7NRKmezhEwUtNXozSfeTeCfJ/tlVbjg0SlMW+mRZmCbgMZz6ysDfyiLtkOovkCpzrdkxdD3oZET5QDLEwjnLNMYKut2BQTOkm4g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742063309; c=relaxed/simple;
-	bh=sMKrjH62WoD/khslIsrraD1DRdosmW6hiDuN4h1CExc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CUf8smIi0xU5ENXm8xVRmddyY6gIYsa9PbLPlX1M8A7bHJes2t3xDmfIYxS+AEqXc5D7THT6PwkeeENeNXjvRnncYrIYwCSFxp81NYhN5C0tiAHTh2jxzj4wg3as4SMXd3Er4xqv54ZpUN216UrzMM6NXnBgZjAAWudhuiNrisI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=snXASOq1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C9C5C4CEE5;
-	Sat, 15 Mar 2025 18:28:12 +0000 (UTC)
+	s=arc-20240116; t=1742063435; c=relaxed/simple;
+	bh=n0VZr42FD5sIJ161uouF9eSw//32TJ5ZIYjRsCS9nkU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KDA9+joGf+aCCZAr5gUGmbDH9GLrbwIjqN6KE0eP1TqqCG7uIAi9dVJQYzEBTaEDpOZoNiUplftEtsMiO+23kcoHrIUTw+FlMYHKH8N8Psw81il442eDHsq4WOoudvpDp7wiyunWELxM1zixkxzxjczH7r9vOG1d88+VfOFw5ZI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TEku9Lf7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A34C4C4CEE5;
+	Sat, 15 Mar 2025 18:30:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742063309;
-	bh=sMKrjH62WoD/khslIsrraD1DRdosmW6hiDuN4h1CExc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=snXASOq1cllJq1YTzDr4qDVX4xo/lxUHFZy5n9suL0QxsZkZAUZM1i5zZk7uoKn7T
-	 eignihiclaj4hs8EJ/v/qppGcHX1leERoUdOm5BnAe9COVUk4TU1nIOxfVikm3jJXU
-	 cI3Z65HXbPpPiiO0hOr6iK+tqdnelXHSD+UtsANAzhNECjS0JeNnMsw01WeDCX6G88
-	 swbZ/gbJerFL1k7OXCVQT4mB/8nD5xZ+19cgx4+r2Ml+M8WU5KmcOB49pBvjQheG5s
-	 vB9stQQLN3SggAUGmT3zLZ+Gu5LpJpFodH/523FaWEeSGqSa3yDhi4aOGRr5Eiv6As
-	 DDxjAIvVTxcbw==
-Date: Sat, 15 Mar 2025 18:28:06 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, Javier Carrasco
- <javier.carrasco.cruz@gmail.com>, linux-arm-kernel@lists.infradead.org,
- Samuel Holland <samuel@sholland.org>, Sakari Ailus
- <sakari.ailus@linux.intel.com>, netdev@vger.kernel.org, Rob Herring
- <robh@kernel.org>, Herve Codina <herve.codina@bootlin.com>, Thomas
- Bonnefille <thomas.bonnefille@bootlin.com>, Jernej Skrabec
- <jernej.skrabec@gmail.com>, Nuno Sa <nuno.sa@analog.com>, Laurent Pinchart
- <laurent.pinchart@ideasonboard.com>, linux-media@vger.kernel.org, Claudiu
- Manoil <claudiu.manoil@nxp.com>, devicetree@vger.kernel.org, Marcelo
- Schmitt <marcelo.schmitt@analog.com>, Lad Prabhakar
- <prabhakar.mahadev-lad.rj@bp.renesas.com>, Mauro Carvalho Chehab
- <mchehab@kernel.org>, Heikki Krogerus <heikki.krogerus@linux.intel.com>,
- "David S. Miller" <davem@davemloft.net>, Lars-Peter Clausen
- <lars@metafoo.de>, linux-acpi@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org, linux-iio@vger.kernel.org, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, linux-kernel@vger.kernel.org,
- linux-sunxi@lists.linux.dev, Eric Dumazet <edumazet@google.com>, Conor
- Dooley <conor+dt@kernel.org>, Danilo Krummrich <dakr@kernel.org>, Olivier
- Moysan <olivier.moysan@foss.st.com>, Trevor Gamblin
- <tgamblin@baylibre.com>, Ramona Alexandra Nechita
- <ramona.nechita@analog.com>, Paul Elder <paul.elder@ideasonboard.com>, Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>, Matteo Martelli
- <matteomartelli3@gmail.com>, Guillaume Stols <gstols@baylibre.com>,
- Alisa-Dariana Roman <alisadariana@gmail.com>, Jakub Kicinski
- <kuba@kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Dumitru Ceclan <mitrutzceclan@gmail.com>, Paolo Abeni <pabeni@redhat.com>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Andrew Lunn
- <andrew+netdev@lunn.ch>, David Lechner <dlechner@baylibre.com>, Chen-Yu
- Tsai <wens@csie.org>, Daniel Scally <djrscally@gmail.com>
-Subject: Re: [PATCH v6 00/10] Support ROHM BD79124 ADC
-Message-ID: <20250315182806.653bd71c@jic23-huawei>
-In-Reply-To: <e685d31c-8cdc-4732-b3a8-8e70a6f82578@gmail.com>
-References: <cover.1741610847.git.mazziesaccount@gmail.com>
-	<20250310202738.13301548@jic23-huawei>
-	<e685d31c-8cdc-4732-b3a8-8e70a6f82578@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
+	s=k20201202; t=1742063435;
+	bh=n0VZr42FD5sIJ161uouF9eSw//32TJ5ZIYjRsCS9nkU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TEku9Lf7PVEsgamRVNhDlXlC5UHh9MO0CMQUrrt+EFkmqs0kZBpJlXGZctr1qeqap
+	 LMkdSzBNTMNBa3wJOU4Nrx3yofjxOB4iDo9Lg0yQ5sRhE+EM2snVwq00iry6upRHIS
+	 gsez3De5kyhUpdRLOv4HcM/Ml1V59cwMN6w6TqEeUEhGeqHtDNeKNMlWalX2rB3C4t
+	 S3rO7eJObbPZUPfRbjXoEO7dwSGXn5dHEYTZ5J1t//Hjmq8D+HG3j+8yYWtVMRc5rg
+	 x0Chxz7923mXHhIQbcSpIxgbNoqYwkJSlC5wLIB47hwtgl47k1CH4VP0nNdcuadgNd
+	 vYtIkyklbz+pQ==
+Date: Sat, 15 Mar 2025 11:30:35 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: long.yunjian@zte.com.cn
+Cc: linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+	mou.yi@zte.com.cn, zhang.xianwei8@zte.com.cn,
+	ouyang.maochun@zte.com.cn, jiang.xuexin@zte.com.cn,
+	lv.mengzhao@zte.com.cn, xu.lifeng1@zte.com.cn,
+	yang.yang29@zte.com.cn
+Subject: Re: [PATCH v2] xfs: Fix spelling mistake "drity" -> "dirty"
+Message-ID: <20250315183035.GA2803749@frogsfrogsfrogs>
+References: <20250315143216175uf7xlZ4jkOfP5o3oxuM4z@zte.com.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250315143216175uf7xlZ4jkOfP5o3oxuM4z@zte.com.cn>
 
-On Tue, 11 Mar 2025 07:49:35 +0200
-Matti Vaittinen <mazziesaccount@gmail.com> wrote:
-
-> On 10/03/2025 22:27, Jonathan Cameron wrote:
-> > On Mon, 10 Mar 2025 14:53:50 +0200
-> > Matti Vaittinen <mazziesaccount@gmail.com> wrote:
-> >   
-> >> Support ROHM BD79124 ADC.
-> >>
-> >> This series adds also couple of IIO ADC helper functions for parsing the
-> >> channel information from the device tree. There are also new helpers
-> >> included for iterating and counting firmware child nodes with a specific
-> >> name.
-> >>
-> >> Series does also convert couple of drivers to use these helpers. The
-> >> rzg2l_adc and the sun20i-gpadc are converted to use the new ADC helper.
-> >>
-> >> The gianfar driver under net and the thp7312 under media/i2c are added as
-> >> first users of the newly added "named child node" -helpers.
-> >>
-> >> There has been some discussion about how useful these ADC helpers are,
-> >> and whether they should support also differential and single ended channel
-> >> configurations. This version does not include support for those - with the
-> >> benefit of reduced complexity and easier to use API.
-> >>
-> >> NOTE: Patches 4,5,9 and 10 are untested as I lack of relevant HW.
-> >> They have been compile tested only.  
-> > This probably wants an update.  Also, 00/10? There are only 8 that I can see.  
+On Sat, Mar 15, 2025 at 02:32:16PM +0800, long.yunjian@zte.com.cn wrote:
+> From: Zhang Xianwei <zhang.xianwei8@zte.com.cn>
 > 
-> That's odd.
-> There should be 10 in total. And the 4, 5, 9 and 10 was updated.
+> There is a spelling mistake in fs/xfs/xfs_log.c. Fix it.
 > 
-> 9/10:
-> https://lore.kernel.org/all/1c4b9b4ceb1995bce76a0ddef0e04ad0d1d81190.1741610847.git.mazziesaccount@gmail.com/
+> Signed-off-by: Zhang Xianwei <zhang.xianwei8@zte.com.cn>
+
+Looks ok,
+Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
+
+--D
+
+> ---
+> v1 -> v2
+> fix the format of this patch
+>  fs/xfs/xfs_log.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> 10/10:
-> https://lore.kernel.org/all/ab79cf4415d21ff2854fee4f4189fac555c30b7a.1741610847.git.mazziesaccount@gmail.com/
+> diff --git a/fs/xfs/xfs_log.c b/fs/xfs/xfs_log.c
+> index f8851ff835de..ba700785759a 100644
+> --- a/fs/xfs/xfs_log.c
+> +++ b/fs/xfs/xfs_log.c
+> @@ -2887,7 +2887,7 @@ xlog_force_and_check_iclog(
+>   *
+>   *	1. the current iclog is active and has no data; the previous iclog
+>   *		is in the active or dirty state.
+> - *	2. the current iclog is drity, and the previous iclog is in the
+> + *	2. the current iclog is dirty, and the previous iclog is in the
+>   *		active or dirty state.
+>   *
+>   * We may sleep if:
+> -- 
+> 2.27.0
 > 
-> Perhaps it's because of the "net-next" in subject?
-> 
-Nope. My filters broke the series up into different directories.
-
-Thanks,
-
-Jonathan
-
-> Yours,
-> 	-- Matti
-
 
