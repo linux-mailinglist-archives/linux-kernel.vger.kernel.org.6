@@ -1,173 +1,142 @@
-Return-Path: <linux-kernel+bounces-562410-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562411-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95418A6265B
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 06:10:26 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 450E9A62660
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 06:11:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CAB753B78FD
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 05:10:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7FDD617E6F4
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 05:11:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A1B718DF81;
-	Sat, 15 Mar 2025 05:10:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AD941917F0;
+	Sat, 15 Mar 2025 05:11:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qwDgo2KF"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="aswVEg7H"
+Received: from smtp-fw-9102.amazon.com (smtp-fw-9102.amazon.com [207.171.184.29])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C66062E3387
-	for <linux-kernel@vger.kernel.org>; Sat, 15 Mar 2025 05:10:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6FF42E3387;
+	Sat, 15 Mar 2025 05:11:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.171.184.29
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742015419; cv=none; b=qGVz8QwcbKQOktP96ESRl1P4lua6cmf5jmNht+vJ6Pj+hjVTP2GiNJvfnWZ1T+uM6Cc7WGTyPxJUJJFwK2L9mvnNdsxPsIzanCNiKkksnnaBo1iXB5nZKO26RABguiTURW6WjgWaMRWyNitkh0saEL+KzR86B+mjxogsnoTM9BE=
+	t=1742015476; cv=none; b=FOHP4H+HV70au7osKRroj/55FoeF5A00SwIHLN75a3dH6lmhrHXKXh0ZzyVxL7Exk71y5rZSv9AQchCSy+/DY+RpUI4DeyEnh5Svx004Y3zAgQhicSYXcoSTNa2e+UstkMuyJiC1bh3hiArkZmUYD7Da1p4OKNV/xXrfG3uHFY0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742015419; c=relaxed/simple;
-	bh=k+Bt+k0/BHzLVg5JFkRIkBjfl2c6+AU0K1DPtFme5Kg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=d52/5ASAlQh4Rz4q95gH2YTvtxVrbbq/PJ+q6cWkn/nYvkzOEp1VKVxSwpafeZZd7H58wCnkVFkQOEW2MIpY5xPfQQjK7S4llr1ohBrjzkxAw9SVUtklXrVcuXv+q9Z/sTfufcESkiXxpI71Igd3F2+vmXPeNl3Hi1XUd3q7BYw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=qwDgo2KF; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-5499614d3d2so2880219e87.3
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 22:10:16 -0700 (PDT)
+	s=arc-20240116; t=1742015476; c=relaxed/simple;
+	bh=NqKwFgpKi816zRiQPxPI7LUxFYDCz/3da+AyDCXBcLs=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=WJ07qkNpYdfDIsR+YkLuXOwxqQ20i4zaBU5TiVNpEs0rLMo66JLJnbp4SV0lHQHsaa4f4YmbHXa+o6NmqBGSusWWp8QwhXCSY2IILE97AH+HE8DtU9dklmnTVGY7giQnCwgY2zEhU7iPe881I3lctBev8IcWv/mnTwf5np35u8s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=aswVEg7H; arc=none smtp.client-ip=207.171.184.29
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1742015415; x=1742620215; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JGPXaqFTefv/Hn4UDPwMpRlXpkb+LLM3INGf+5EorVU=;
-        b=qwDgo2KFSkgt3L4xybU0UEHdLeW5vbaw9vC6I6V0zVUmaRSCe+rcKI7zSE7zx67z5s
-         Rbj0pZtTwdrpvJX3lrhxVfVa1xgg4i5BW1L4a02YiApFvkgBUbRlS/kGUG6kj3VGM0qd
-         5aWYd9v30Xo+ZjmrqYzL7yR6M3FvdhODuDFKApBbm5gGCCMXeeUi4M/nbQVPZLkjOKDM
-         IWUTC6p2nc6NyauGunSHefcWoJ8JMzCrJ3LxpbFdF2oUHEtwlqzVndYvOhH9XEfNfzSJ
-         5OvwNO1aLSzHzQeXAovxU3ciZbxEsMtUHGRh8sYwf1kV7hJTs9+8heVrg1qInuxtAkdr
-         jTsQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742015415; x=1742620215;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JGPXaqFTefv/Hn4UDPwMpRlXpkb+LLM3INGf+5EorVU=;
-        b=C1ofullKY8DtKZ+ao8z9uQ+4THTs0vFICb8WxZwVxvkK865F0l+45vUMyzt7RkFhLs
-         zJprH64fwTB8HPeHMTaxE03GLlf0XqvS+pNXwp1osRmYYtcYOB9JVbK+wlopJzVKI/Cp
-         jI4o9NZGdsGAJHoA7ks5RpxNPisxTdYdY0OCI7c9gGgGFvIqh1TgVArr4bCVhuGIVCOl
-         JvY3oc7ejk254tvNXmBSa7uPxOhG+RJ7VcyNskKBwFC3oLS40T19WEriBHeA/IbJMtR1
-         BkRslwnUqTdQlZgmkEZdH82+Coq6cLk7t9a4GG2rkoJGejasqvP1k3VPxkrsgTv/KwTB
-         MyVg==
-X-Gm-Message-State: AOJu0YzKQBBggUclclfu4wpLP9WB+yYKPFoXDedatVt4Wsw0Lrh+TuLx
-	AgbDVDPsDrm1EZs8IDtUB3axLuw8meo/G3ALJn9uemPUDN3pVWJI1Iu60KY8Cp9BnLqj5YATxAX
-	1RZT2uej11NkBZBwPpeS8ZQch6nmqfdI4KJw=
-X-Gm-Gg: ASbGncv/m1Etm2sdX60P7vd5MDCsJrHyv6UNiJfTXLtvxEIHcd7ruSLEYuz26tHhEum
-	BhTME+qCoXlyg8sHEnT2fZXK6XI1dTgvr3rbpv+dOwUx7jFIGbtclYeISueC8INPo6QaV4UUFNf
-	LycpNXv2xGj7VPNMMA8xdk5Tq4M127xJUmdqaWsXi1k9+NKp4XpLh2gTtTLs/FXJy+
-X-Google-Smtp-Source: AGHT+IHAuiaA4rjsx6l9MCL+KTh4C9tNoBSB4RZ7x654nukzK9Rph9OPplTli0VYagIzjVpKPiJg1yvcwutFt6ehIoA=
-X-Received: by 2002:a05:6512:31cc:b0:549:7145:5d28 with SMTP id
- 2adb3069b0e04-549c3914159mr1513563e87.25.1742015414467; Fri, 14 Mar 2025
- 22:10:14 -0700 (PDT)
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1742015475; x=1773551475;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=JfjgqpY7tQ6WrFEhDQ4MyqDUhRzWEFQO9NC3rzmEyLY=;
+  b=aswVEg7HQ6MgV1K6R2SiC2MAUo2xnIJVchH5SPWTk26jK3kxXQIMDldY
+   GDsupGLtS6Gf3m5hTY9vAIm7JJnH8zXk+xTOLX7tBhUuG7aVSuchUgCkA
+   Oveq/n2PbH/XYaeSCWW2ed80VSl2fAPBukGFZYlNnT7rD9cKoFyXEZiDe
+   A=;
+X-IronPort-AV: E=Sophos;i="6.14,249,1736812800"; 
+   d="scan'208";a="503000956"
+Received: from pdx4-co-svc-p1-lb2-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.214])
+  by smtp-border-fw-9102.sea19.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Mar 2025 05:11:09 +0000
+Received: from EX19MTAUWC001.ant.amazon.com [10.0.21.151:52533]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.52.235:2525] with esmtp (Farcaster)
+ id 4fc01230-8a0c-43d5-8f2c-450cbf6d679e; Sat, 15 Mar 2025 05:11:08 +0000 (UTC)
+X-Farcaster-Flow-ID: 4fc01230-8a0c-43d5-8f2c-450cbf6d679e
+Received: from EX19D003ANC003.ant.amazon.com (10.37.240.197) by
+ EX19MTAUWC001.ant.amazon.com (10.250.64.174) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Sat, 15 Mar 2025 05:11:06 +0000
+Received: from b0be8375a521.amazon.com (10.118.246.93) by
+ EX19D003ANC003.ant.amazon.com (10.37.240.197) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Sat, 15 Mar 2025 05:11:00 +0000
+From: Kohei Enju <enjuk@amazon.com>
+To: <syzbot+a5964227adc0f904549c@syzkaller.appspotmail.com>
+CC: <andrii@kernel.org>, <ast@kernel.org>, <bpf@vger.kernel.org>,
+	<daniel@iogearbox.net>, <eddyz87@gmail.com>, <enjuk@amazon.com>,
+	<haoluo@google.com>, <iii@linux.ibm.com>, <john.fastabend@gmail.com>,
+	<jolsa@kernel.org>, <kpsingh@kernel.org>, <linux-kernel@vger.kernel.org>,
+	<martin.lau@linux.dev>, <netdev@vger.kernel.org>, <sdf@fomichev.me>,
+	<song@kernel.org>, <syzkaller-bugs@googlegroups.com>, <yepeilin@google.com>,
+	<yonghong.song@linux.dev>
+Subject: Re: [syzbot] [bpf?] KASAN: slab-out-of-bounds Read in atomic_ptr_type_ok
+Date: Sat, 15 Mar 2025 14:10:21 +0900
+Message-ID: <20250315051051.1532-1-enjuk@amazon.com>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <67d479a8.050a0220.1939a6.004e.GAE@google.com>
+References: <67d479a8.050a0220.1939a6.004e.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250312221147.1865364-1-jstultz@google.com> <20250312221147.1865364-7-jstultz@google.com>
- <931db71f-a13c-48ab-a315-f04d671bdddb@amd.com>
-In-Reply-To: <931db71f-a13c-48ab-a315-f04d671bdddb@amd.com>
-From: John Stultz <jstultz@google.com>
-Date: Fri, 14 Mar 2025 22:10:00 -0700
-X-Gm-Features: AQ5f1JpfL2sDeW1DtZNCdg26iUM90c2wUFNH6uDr83JMVri81JDlZJWuCLXMlhw
-Message-ID: <CANDhNCr24WBBhvSQQEmgL8EmC8e9og_LQ8=EEE5DXtY6Twth0A@mail.gmail.com>
-Subject: Re: [RFC PATCH v15 6/7] sched: Fix proxy/current (push,pull)ability
-To: K Prateek Nayak <kprateek.nayak@amd.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, 
-	Valentin Schneider <valentin.schneider@arm.com>, Joel Fernandes <joelagnelf@nvidia.com>, 
-	Qais Yousef <qyousef@layalina.io>, Ingo Molnar <mingo@redhat.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, 
-	Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
-	Valentin Schneider <vschneid@redhat.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Ben Segall <bsegall@google.com>, Zimuzo Ezeozue <zezeozue@google.com>, Mel Gorman <mgorman@suse.de>, 
-	Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	"Paul E. McKenney" <paulmck@kernel.org>, Metin Kaya <Metin.Kaya@arm.com>, 
-	Xuewen Yan <xuewen.yan94@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Daniel Lezcano <daniel.lezcano@linaro.org>, Suleiman Souhlal <suleiman@google.com>, kernel-team@android.com, 
-	"Connor O'Brien" <connoro@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EX19D032UWB003.ant.amazon.com (10.13.139.165) To
+ EX19D003ANC003.ant.amazon.com (10.37.240.197)
 
-On Fri, Mar 14, 2025 at 1:40=E2=80=AFAM K Prateek Nayak <kprateek.nayak@amd=
-.com> wrote:
-> On 3/13/2025 3:41 AM, John Stultz wrote:
-> > diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-> > index b4f7b14f62a24..3596244f613f8 100644
-> > --- a/kernel/sched/core.c
-> > +++ b/kernel/sched/core.c
-> > @@ -6722,6 +6722,23 @@ find_proxy_task(struct rq *rq, struct task_struc=
-t *donor, struct rq_flags *rf)
-> >   }
-> >   #endif /* SCHED_PROXY_EXEC */
-> >
-> > +static inline void proxy_tag_curr(struct rq *rq, struct task_struct *o=
-wner)
-> > +{
-> > +     if (!sched_proxy_exec())
-> > +             return;
-> > +     /*
-> > +      * pick_next_task() calls set_next_task() on the chosen task
-> > +      * at some point, which ensures it is not push/pullable.
-> > +      * However, the chosen/donor task *and* the mutex owner form an
-> > +      * atomic pair wrt push/pull.
-> > +      *
-> > +      * Make sure owner we run is not pushable. Unfortunately we can
-> > +      * only deal with that by means of a dequeue/enqueue cycle. :-/
-> > +      */
-> > +     dequeue_task(rq, owner, DEQUEUE_NOCLOCK | DEQUEUE_SAVE);
-> > +     enqueue_task(rq, owner, ENQUEUE_NOCLOCK | ENQUEUE_RESTORE);
-> > +}
-> > +
-> >   /*
-> >    * __schedule() is the main scheduler function.
-> >    *
-> > @@ -6856,6 +6873,10 @@ static void __sched notrace __schedule(int sched=
-_mode)
-> >                * changes to task_struct made by pick_next_task().
-> >                */
-> >               RCU_INIT_POINTER(rq->curr, next);
-> > +
-> > +             if (!task_current_donor(rq, next))
-> > +                     proxy_tag_curr(rq, next);
->
-> I don't see any dependency on rq->curr for task_current_donor() check.
-> Could this check be moved outside of the if-else block to avoid
-> duplicating in both places since rq_set_donor() was called just after
-> pick_next_task() or am I missing something?
+> syzbot found the following issue on:
+> 
+> HEAD commit:    f28214603dc6 Merge branch 'selftests-bpf-move-test_lwt_seg..
+> git tree:       bpf-next
+> console+strace: https://syzkaller.appspot.com/x/log.txt?x=15f84664580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=b7bde34acd8f53b1
+> dashboard link: https://syzkaller.appspot.com/bug?extid=a5964227adc0f904549c
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16450ba8580000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11f5fa54580000
 
-So this check is just looking to see if next is the same as the
-selected rq->donor (what pick_next_task() chose).
+#syz test
 
-If so, nothing to do, same as always.
+--- a/kernel/bpf/verifier.c
++++ b/kernel/bpf/verifier.c
+@@ -7788,6 +7788,12 @@ static int check_atomic_rmw(struct bpf_verifier_env *env,
+ static int check_atomic_load(struct bpf_verifier_env *env,
+                             struct bpf_insn *insn)
+ {
++       int err;
++
++       err = check_load_mem(env, insn, true, false, false, "atomic_load");
++       if (err)
++               return err;
++
+        if (!atomic_ptr_type_ok(env, insn->src_reg, insn)) {
+                verbose(env, "BPF_ATOMIC loads from R%d %s is not allowed\n",
+                        insn->src_reg,
+@@ -7795,12 +7801,18 @@ static int check_atomic_load(struct bpf_verifier_env *env,
+                return -EACCES;
+        }
 
-But If not (so we are proxying in this case), we need to call
-proxy_tag_curr() because we have to make sure both the donor and the
-proxy are not on a sched-classes pushable list.
+-       return check_load_mem(env, insn, true, false, false, "atomic_load");
++       return 0;
+ }
 
-This is because the logic around pick_next_task() calls
-set_next_task() on the returned donor task, and in the sched-class
-code, (for example RT) that logic will remove the chosen donor task
-from the pushable list.
+ static int check_atomic_store(struct bpf_verifier_env *env,
+                              struct bpf_insn *insn)
+ {
++       int err;
++
++       err = check_store_reg(env, insn, true);
++       if (err)
++               return err;
++
+        if (!atomic_ptr_type_ok(env, insn->dst_reg, insn)) {
+                verbose(env, "BPF_ATOMIC stores into R%d %s is not allowed\n",
+                        insn->dst_reg,
+@@ -7808,7 +7820,7 @@ static int check_atomic_store(struct bpf_verifier_env *env,
+                return -EACCES;
+        }
 
-But when we find a proxy task to run on behalf of the donor, the
-problem is that the proxy might be on the sched-class' pushable list.
-So if we are proxying, we do a dequeue and enqueue pair, which allows
-us to re-evaluate if the task is rq->curr, which will prevent it from
-being added to any such pushable list.   This avoids the potential of
-the balance callbacks trying to migrate the rq->curr under us.
+-       return check_store_reg(env, insn, true);
++       return 0;
+ }
 
-Thanks so much for the review and the question! Let me know if that
-makes any more sense, or if you have suggestions on how I could better
-explain it in the commit message to help.
-
-Appreciate it!
--john
+ static int check_atomic(struct bpf_verifier_env *env, struct bpf_insn *insn)
 
