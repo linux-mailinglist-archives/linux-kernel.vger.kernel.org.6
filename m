@@ -1,62 +1,57 @@
-Return-Path: <linux-kernel+bounces-562508-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562509-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B0E4A62A07
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 10:26:15 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 343A0A62A1E
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 10:30:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 27BA77A679F
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 09:25:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8EA767AC0BA
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 09:29:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 035E31F4E37;
-	Sat, 15 Mar 2025 09:26:10 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F4D31F4611;
+	Sat, 15 Mar 2025 09:30:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="A0CgfKPH"
+Received: from mail-24417.protonmail.ch (mail-24417.protonmail.ch [109.224.244.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0844A1F4CBA
-	for <linux-kernel@vger.kernel.org>; Sat, 15 Mar 2025 09:26:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75F8B193429
+	for <linux-kernel@vger.kernel.org>; Sat, 15 Mar 2025 09:30:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.224.244.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742030769; cv=none; b=MvTV/UP1KJgL3UzPuz8uf+wh8Hg7hLm8Lkul2WDf6wPMdXqgN6VDCfDdjKQQxh02WE0xOH692IHS42KlZO3ri4UnKVFIw4nBDO+TY6Qa6TB/cFk3DPXdYHZEdhk3oS1OSiQ/FF0rj5kDFnh823fonWplij8sxApbqHYNedmd7Pk=
+	t=1742031032; cv=none; b=qBA+8anr/5n4Q+e4Rne/wZLaBgoYnv0Ar/JcoCeOPzm75TwUyfjC1BE17+ZjSsoM9bJ+BYbZEEfb1DRTjA8IeMI3js4gwBePiZyQbkYDMyAvPtyRwYsHG2Bw9yQUHI8hYjLGDOlLKlbaxonWdMSxkkdILUodCxUB6fCCL/N9LtU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742030769; c=relaxed/simple;
-	bh=7dP1gemwU1OOl+2ffb6QpZFJ60y5VCO/omQBJL5t6Kg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jT34IlpdZPm+ix1kFoZjmcqJw7UyCysm5oB4u44WFd0VsWgImtGSA/vrLtOxVcfwd0oWUOtl49wxuZEMvzOEThSVVXRXQWTYWb1es0P7O/4kYH63gMG1J7fa+1sq1GPW7vuZCs4wh+Z2Zqqf2t+Y0EU2QaiDziumMHqIpim2Jj8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1ttNm1-00047n-9c; Sat, 15 Mar 2025 10:25:41 +0100
-Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1ttNm0-005qTX-1t;
-	Sat, 15 Mar 2025 10:25:40 +0100
-Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1ttNm0-00EwMG-1T;
-	Sat, 15 Mar 2025 10:25:40 +0100
-Date: Sat, 15 Mar 2025 10:25:40 +0100
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: =?utf-8?Q?S=C3=A9bastien?= Szymanski <sebastien.szymanski@armadeus.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
-	imx@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Julien Boibessot <julien.boibessot@armadeus.com>,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] ARM: dts: opos6ul: add ksz8081 phy properties
-Message-ID: <Z9VHlE-5lvtoYFYb@pengutronix.de>
-References: <20250314-opos6ul-fix-ethernet-v1-1-1c0172949b40@armadeus.com>
+	s=arc-20240116; t=1742031032; c=relaxed/simple;
+	bh=97kGKNN5hQbr04or/PK2XNq/0J/Oc6yIvn3Fz2Ytif0=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Wl/073OHVAHSugMRwIVsSdLqpShXuyKTJg5cL02FjL0rf5hWurowaZY/EgXrYJqrSrEqVRZjheCJDzXPtR+lRg8sTF6otNakd+CGK84UkdiCwiKEFgsksglIDOzZ6cLpfDpq7eZ/9UBbcvPwgTae2Fqwd0fByKdrbBSB9Ooh1nY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=A0CgfKPH; arc=none smtp.client-ip=109.224.244.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1742031021; x=1742290221;
+	bh=9N+3i6PB6m15+3SqKPg5OJJzxL52G/8lBjymGMBlRHE=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
+	b=A0CgfKPHxzKRVkLYzcYywyC7IC/PMmsiRHRDd8W/Wi6RMGXP34ILn/wHmsVjvIDGy
+	 BoZLtAo4x4DTxd/L/Xi+8bwEMCLwITVL9i2NuAcfh44GspvnEInonm1XckH2MEVmuY
+	 0j9EiqLhRRJGOZVfIx60PcMLG4cnamNHWb7sADlgp9EWeINpS4xR5GgINXB45Gxv5P
+	 3wg/C4WkOpdxtNoagJRbMM8HhOe3kFrtK7hwQ9bKbI0Ppt71dRl7ZlNcigXqs/djwZ
+	 8eATJ3VGyaOstsYIZfZ2emqulBgBXjPhEDEKeiJWzkaB8Zm+MQeD8PoAOn25+X8HYk
+	 U/pk4+WaxuOPQ==
+Date: Sat, 15 Mar 2025 09:30:14 +0000
+To: Tamir Duberstein <tamird@gmail.com>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Bjorn Helgaas <bhelgaas@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
+Subject: Re: [PATCH 2/2] rust: workqueue: remove HasWork::OFFSET
+Message-ID: <D8GQGCVTK0IL.16YO67C0IKLHA@proton.me>
+In-Reply-To: <CAJ-ks9m2ZHguB9N9-WM0EsO5MjaZ9yRamo_9NytAdzaDdb9aWQ@mail.gmail.com>
+References: <20250307-no-offset-v1-0-0c728f63b69c@gmail.com> <20250307-no-offset-v1-2-0c728f63b69c@gmail.com> <D8G8DV3PX8VX.2WHSM0TWH8JWV@proton.me> <CAJ-ks9m2ZHguB9N9-WM0EsO5MjaZ9yRamo_9NytAdzaDdb9aWQ@mail.gmail.com>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: 9f88381a8e82266ee6b415dd7cb86d51df4e7f89
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,34 +59,118 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250314-opos6ul-fix-ethernet-v1-1-1c0172949b40@armadeus.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Mar 14, 2025 at 05:20:38PM +0100, Sébastien Szymanski wrote:
-> Commit c7e73b5051d6 ("ARM: imx: mach-imx6ul: remove 14x14 EVK specific
-> PHY fixup") removed a PHY fixup that setted the clock mode and the LED
-> mode.
-> Make the Ethernet interface work again by doing as advised in the
-> commit's log, set clock mode and the LED mode in the device tree.
-> 
-> Fixes: c7e73b5051d6 ("ARM: imx: mach-imx6ul: remove 14x14 EVK specific PHY fixup")
-> Signed-off-by: Sébastien Szymanski <sebastien.szymanski@armadeus.com>
+On Fri Mar 14, 2025 at 9:44 PM CET, Tamir Duberstein wrote:
+> On Fri, Mar 14, 2025 at 3:20=E2=80=AFPM Benno Lossin <benno.lossin@proton=
+.me> wrote:
+>>
+>> On Fri Mar 7, 2025 at 10:58 PM CET, Tamir Duberstein wrote:
+>> > Implement `HasWork::work_container_of` in `impl_has_work!`, narrowing
+>> > the interface of `HasWork` and replacing pointer arithmetic with
+>> > `container_of!`. Remove the provided implementation of
+>> > `HasWork::get_work_offset` without replacement; an implementation is
+>> > already generated in `impl_has_work!`. Remove the `Self: Sized` bound =
+on
+>> > `HasWork::work_container_of` which was apparently necessary to access
+>> > `OFFSET` as `OFFSET` no longer exists.
+>> >
+>> > A similar API change was discussed on the hrtimer series[1].
+>> >
+>> > Link: https://lore.kernel.org/all/20250224-hrtimer-v3-v6-12-rc2-v9-1-5=
+bd3bf0ce6cc@kernel.org/ [1]
+>> > Signed-off-by: Tamir Duberstein <tamird@gmail.com>
+>> > ---
+>> >  rust/kernel/workqueue.rs | 45 ++++++++++++---------------------------=
+------
+>> >  1 file changed, 12 insertions(+), 33 deletions(-)
+>>
+>> What is the motivation of this change? I didn't follow the discussion,
+>> so if you explained it there, it would be nice if you could also add it
+>> to this commit message.
+>
+> The motivation is right at the top: it narrows the interface and
+> replaces pointer arithmetic with an existing macro, and then deletes
+> unnecessary code.
+>
+>> > diff --git a/rust/kernel/workqueue.rs b/rust/kernel/workqueue.rs
+>> > index 0cd100d2aefb..0e2e0ecc58a6 100644
+>> > --- a/rust/kernel/workqueue.rs
+>> > +++ b/rust/kernel/workqueue.rs
+>> > @@ -429,51 +429,23 @@ pub unsafe fn raw_get(ptr: *const Self) -> *mut =
+bindings::work_struct {
+>> >  ///
+>> >  /// # Safety
+>> >  ///
+>> > -/// The [`OFFSET`] constant must be the offset of a field in `Self` o=
+f type [`Work<T, ID>`]. The
+>> > -/// methods on this trait must have exactly the behavior that the def=
+initions given below have.
+>> > +/// The methods on this trait must have exactly the behavior that the=
+ definitions given below have.
+>> >  ///
+>> >  /// [`impl_has_work!`]: crate::impl_has_work
+>> > -/// [`OFFSET`]: HasWork::OFFSET
+>> >  pub unsafe trait HasWork<T, const ID: u64 =3D 0> {
+>> > -    /// The offset of the [`Work<T, ID>`] field.
+>> > -    const OFFSET: usize;
+>> > -
+>> > -    /// Returns the offset of the [`Work<T, ID>`] field.
+>> > -    ///
+>> > -    /// This method exists because the [`OFFSET`] constant cannot be =
+accessed if the type is not
+>> > -    /// [`Sized`].
+>> > -    ///
+>> > -    /// [`OFFSET`]: HasWork::OFFSET
+>> > -    #[inline]
+>> > -    fn get_work_offset(&self) -> usize {
+>> > -        Self::OFFSET
+>> > -    }
+>> > -
+>> >      /// Returns a pointer to the [`Work<T, ID>`] field.
+>> >      ///
+>> >      /// # Safety
+>> >      ///
+>> >      /// The provided pointer must point at a valid struct of type `Se=
+lf`.
+>> > -    #[inline]
+>> > -    unsafe fn raw_get_work(ptr: *mut Self) -> *mut Work<T, ID> {
+>> > -        // SAFETY: The caller promises that the pointer is valid.
+>> > -        unsafe { (ptr as *mut u8).add(Self::OFFSET) as *mut Work<T, I=
+D> }
+>> > -    }
+>> > +    unsafe fn raw_get_work(ptr: *mut Self) -> *mut Work<T, ID>;
+>> >
+>> >      /// Returns a pointer to the struct containing the [`Work<T, ID>`=
+] field.
+>> >      ///
+>> >      /// # Safety
+>> >      ///
+>> >      /// The pointer must point at a [`Work<T, ID>`] field in a struct=
+ of type `Self`.
+>> > -    #[inline]
+>> > -    unsafe fn work_container_of(ptr: *mut Work<T, ID>) -> *mut Self
+>> > -    where
+>> > -        Self: Sized,
+>>
+>> This bound is required in order to allow the usage of `dyn HasWork` (ie
+>> object safety), so it should stay.
+>>
+>> Maybe add a comment explaining why it's there.
+>
+> I guess a doctest would be better, but I still don't understand why
+> the bound is needed. Sorry, can you cite something or explain in more
+> detail please?
 
-Looks good to me. Thank you!
-Reviewed by: Oleksij Rempel <o.rempel@pengutronix.de>
+Here is a link: https://doc.rust-lang.org/reference/items/traits.html#dyn-c=
+ompatibility
 
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+But I realized that the trait wasn't object safe to begin with due to
+the `OFFSET` associated constant. So I'm not sure we need this. Alice,
+do you need `dyn HasWork`?
+
+---
+Cheers,
+Benno
+
 
