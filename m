@@ -1,89 +1,78 @@
-Return-Path: <linux-kernel+bounces-562405-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562406-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D06BA6261E
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 05:48:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9F50A62620
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 05:49:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D4C242029D
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 04:48:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D58CF1899915
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 04:49:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFB4318B484;
-	Sat, 15 Mar 2025 04:48:10 +0000 (UTC)
-Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [63.216.63.40])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 938AD18DB34;
+	Sat, 15 Mar 2025 04:49:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C4J1X7h/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33D4A376
-	for <linux-kernel@vger.kernel.org>; Sat, 15 Mar 2025 04:48:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.216.63.40
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1970376;
+	Sat, 15 Mar 2025 04:49:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742014090; cv=none; b=byT5llYROmRNZazlil5bm+9XjxI6doykV8b1g5w40TJ3vf5c0b6eLxiJxqKibI5xBB1NRbJo7zj+gk5sp6dd0oU2WDFQJAp4itIefT9w/v+vAsCkAxWP1de2tVbF4nFRNMAZqKWSfKcYAfMepyGWE74tNyPcalFasbRMi+PrdOk=
+	t=1742014165; cv=none; b=ph3wZGEyNo4xOmUcFreyJwNoaSULPRUTu3sZ2GFEGvZoBIBdhqsL61yeAVJQCag6l/hkWM8M7y3RaKxGv0I48aHS6TMnkXqht01P2RQ2CumxGbLdeZmBKILYhpKgtGzSe7quUzLkGQjJIJWzcyDlsHALSx2av1NYFOTxY+EshJ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742014090; c=relaxed/simple;
-	bh=slZqHKRCXbTLW55e2hzu9MhyzSWZgXax1voMKAKaSQE=;
-	h=Date:Message-ID:Mime-Version:From:To:Cc:Subject:Content-Type; b=iG70TPJtODTHyAN4417QT+XS67F9ZLRGLm5Biur2qcHyVtqGRFISW20HCNDAXdJjBz0IMBAWLrZ5suUjJPZn/j6R0xbcFeS5CxhFaAUyi0NUROwpgIoUx4KdPlRI1DmYH/YBc32lpmQ43SyLluAj99v8qr1dmhlCqrxrnPtV2uA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=63.216.63.40
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
-Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4ZF7yn5sVnz8R03d;
-	Sat, 15 Mar 2025 12:48:01 +0800 (CST)
-Received: from xaxapp05.zte.com.cn ([10.99.98.109])
-	by mse-fl1.zte.com.cn with SMTP id 52F4lul3079032;
-	Sat, 15 Mar 2025 12:47:56 +0800 (+08)
-	(envelope-from feng.wei8@zte.com.cn)
-Received: from mapi (xaxapp05[null])
-	by mapi (Zmail) with MAPI id mid32;
-	Sat, 15 Mar 2025 12:47:56 +0800 (CST)
-Date: Sat, 15 Mar 2025 12:47:56 +0800 (CST)
-X-Zmail-TransId: 2afc67d5067c64c-14494
-X-Mailer: Zmail v1.0
-Message-ID: <20250315124756851v6UQVu4NRD-RV62eoG0va@zte.com.cn>
+	s=arc-20240116; t=1742014165; c=relaxed/simple;
+	bh=t2OIMGy8jJqpkQEODWNrk37SZ7s2+o4ugUUBdcZ5/94=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=FUcVRYNu1lmJONih8U3o2Sc7jsnANVT0jMa41CRzKCSxXdKeVq6LoPStYmZwhTPiTTGimjXcPkGH+fSFbFOH9TDyiml52RSV5ZfGhhGGWiawIwqEcMpwmQ0hM1t4dLhyWiPOmIQWhrGLFRCGExep86LG9ryz7gQd0srJlqL8n70=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C4J1X7h/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62104C4CEE5;
+	Sat, 15 Mar 2025 04:49:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742014164;
+	bh=t2OIMGy8jJqpkQEODWNrk37SZ7s2+o4ugUUBdcZ5/94=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=C4J1X7h/W9vq4KOP/+DrouM+OK8p5xXgCl1EkmyoF827JitZQvgVtb1LYPOODSs2w
+	 2qfEtjqcKi0MTZvBrwpjzWVfEwpQ7qdjKwd9G3aniWlLyaEfbJRHBRT922JyX1y9Vx
+	 b4kCEoGfFiNjsv4CRhNlxDYZUKKtnDmz1xUL3HW2YZcjAKVedNXYVelZJpxkV+62Qy
+	 KyXtQ/EYVdp9pkGYE7ljKX+yrW07yMOkDHNqP7QOc5dOVQbR2pn6SqQI4UMELV7u4l
+	 PwQ1wblFWXrQy1p2R4LeTj9uNoZR+QCgmdz8Vk3wfem+jSZP3QHZvCix0mlPRecpE5
+	 oU/galjZUKR3g==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70F32380CFE8;
+	Sat, 15 Mar 2025 04:50:00 +0000 (UTC)
+Subject: Re: [GIT PULL] ksmbd server fixes
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <CAH2r5msyWMiGJi2VK50A=h3dD9F06eS9M5c51oY0DiSTe0Av_w@mail.gmail.com>
+References: <CAH2r5msyWMiGJi2VK50A=h3dD9F06eS9M5c51oY0DiSTe0Av_w@mail.gmail.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <CAH2r5msyWMiGJi2VK50A=h3dD9F06eS9M5c51oY0DiSTe0Av_w@mail.gmail.com>
+X-PR-Tracked-Remote: git://git.samba.org/ksmbd.git tags/v6.14-rc6-smb3-server-fixes
+X-PR-Tracked-Commit-Id: 3aa660c059240e0c795217182cf7df32909dd917
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 3571e8b091f4270d869dda7a6cc43616c6ad6897
+Message-Id: <174201419918.2481821.10021090562761702486.pr-tracker-bot@kernel.org>
+Date: Sat, 15 Mar 2025 04:49:59 +0000
+To: Steve French <smfrench@gmail.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Namjae Jeon <linkinjeon@kernel.org>, CIFS <linux-cifs@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-From: <feng.wei8@zte.com.cn>
-To: <mripard@kernel.org>
-Cc: <maarten.lankhorst@linux.intel.com>, <tzimmermann@suse.de>,
-        <airlied@gmail.com>, <simona@ffwll.ch>,
-        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
-Subject: =?UTF-8?B?W1BBVENIXSBkcm06IFJlcGxhY2UgbmVzdGVkIG1heCgpIHdpdGggc2luZ2xlIG1heDMoKQ==?=
-Content-Type: text/plain;
-	charset="UTF-8"
-X-MAIL:mse-fl1.zte.com.cn 52F4lul3079032
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 67D50681.000/4ZF7yn5sVnz8R03d
 
-From: FengWei <feng.wei8@zte.com.cn>
+The pull request you sent on Fri, 14 Mar 2025 20:55:37 -0500:
 
-Use max3() macro instead of nesting max() to simplify the return
-statement.
+> git://git.samba.org/ksmbd.git tags/v6.14-rc6-smb3-server-fixes
 
-Signed-off-by: FengWei <feng.wei8@zte.com.cn>
----
- drivers/gpu/drm/drm_ioctl.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/3571e8b091f4270d869dda7a6cc43616c6ad6897
 
-diff --git a/drivers/gpu/drm/drm_ioctl.c b/drivers/gpu/drm/drm_ioctl.c
-index f593dc569d31..115a8eb0d8a5 100644
---- a/drivers/gpu/drm/drm_ioctl.c
-+++ b/drivers/gpu/drm/drm_ioctl.c
-@@ -856,7 +856,7 @@ long drm_ioctl(struct file *filp,
- 		in_size = 0;
- 	if ((cmd & ioctl->cmd & IOC_OUT) == 0)
- 		out_size = 0;
--	ksize = max(max(in_size, out_size), drv_size);
-+	ksize = max3(in_size, out_size, drv_size);
+Thank you!
 
- 	drm_dbg_core(dev, "comm=\"%s\" pid=%d, dev=0x%lx, auth=%d, %s\n",
- 		     current->comm, task_pid_nr(current),
 -- 
-2.25.1
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
