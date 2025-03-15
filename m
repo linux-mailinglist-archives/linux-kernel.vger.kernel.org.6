@@ -1,119 +1,106 @@
-Return-Path: <linux-kernel+bounces-562768-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562769-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C824A6329B
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 22:32:58 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49385A6329C
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 22:37:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B298F3AB6B0
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 21:32:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 05D357A34E9
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 21:36:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 754B7197A7A;
-	Sat, 15 Mar 2025 21:32:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2397B199935;
+	Sat, 15 Mar 2025 21:37:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="j81BZ2W3"
-Received: from out-173.mta0.migadu.com (out-173.mta0.migadu.com [91.218.175.173])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Aj8jBUq2"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B52863D
-	for <linux-kernel@vger.kernel.org>; Sat, 15 Mar 2025 21:32:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDF1863D
+	for <linux-kernel@vger.kernel.org>; Sat, 15 Mar 2025 21:37:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742074372; cv=none; b=O537IvYL1Jit3Y6GR9WK4l0V0PIE6S7cPn9XjxXG8zU5xJu6TRUCGJRv+CXkoAGTq1TmEEsBtgDnfhA7Pdoit94ZzcrHovx5hp5vHOoPP0zj4svmhNRFyy6FXcGyshK4wsoAKychUtWeGLgTzCUAr4W2J035bi42hjBxOHWS2HU=
+	t=1742074639; cv=none; b=KPYg6Kzt3rVDYs/UUWDpAjtjq4PEN3OP5jP5XnyGiQLrJWs+Er/Pr495q0aZyWfGJR0K3D+8HatIahmm7jAAgHFW+iA25bfk35fnoSuc94wcZSGqVj8KjJ8GMqZGu7niMfnricVL04CLb58F+qTZomEz6qY54XkBXnAGfp2/gZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742074372; c=relaxed/simple;
-	bh=YMsycZTf1sZBDRojULuAjbtuXXkm2cKLjgcE+aLOlD8=;
+	s=arc-20240116; t=1742074639; c=relaxed/simple;
+	bh=NY8vbyCKlVsEq74R6YYfAHqecEmthAsvxwBcPXyfYPI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BrOg0mJq2MrAmusx19mUeW09muvG/MdhlN8gTqDLbEaEj9ymwfa4h/TkjYwheVG0gnI/rapjLBwurRnJrd6wopROHZQkX+FLatk3Nk2pEYf/9RnMXfldrIkKQ66+xTd8nyuL0IPzuz7qf5JlQX+8HJhXNKEk189okxPsoGExlk4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=j81BZ2W3; arc=none smtp.client-ip=91.218.175.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Sat, 15 Mar 2025 17:32:38 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1742074362;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uCfnrpnGg5/zaEOTvXR+A55okyUosFX4hHyaDSJs95g=;
-	b=j81BZ2W3bcDGHLUvkHlnge58PDF66akAokecX4BFCDEin9xTq7y2TbBGGoAeIBdFLb/POz
-	kC2g1gpympTG+OY2Jjji6p0hHeQOe0+Yxlzbo/92VM5ZNscpanwEEXromwXN6QT1k4TZsw
-	RJ3yCb3njoH0kt2K1WRemyZIQMXGrHo=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: David Laight <david.laight.linux@gmail.com>
-Cc: linux-kernel@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>, 
-	"Jason A. Donenfeld" <Jason@zx2c4.com>
-Subject: Re: [PATCH] random: get_random_u64_below()
-Message-ID: <2ekh7esfcxnqdnjxufybel5kkpazjvwadwnb7zok5ske4vmptr@573764kocoga>
-References: <20250313163810.60564-1-kent.overstreet@linux.dev>
- <20250315135234.65423e07@pumpkin>
- <olt5s7scbosagj4fpq25xun4kdvi6puwqdocgsvhpzguvpt7jt@dyy37p4uturh>
- <20250315205532.6815f2c5@pumpkin>
+	 Content-Type:Content-Disposition:In-Reply-To; b=JrwtVCnmAhxuG8854dZpKfgAObF7UJRvVyx2H2f1TM/6808PzuUkNXFn9+cxh4JRDTSjWR66GgCpmpfMzErtAselSJY4bDIWl57NRzZDxhnigUj2PMeH/5+sxpEzx9QC65qmKjvWl/7Ftmzdf54eTTKQ2FcBRsovELmHI8FuC2Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Aj8jBUq2; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 6E28040E01AD;
+	Sat, 15 Mar 2025 21:37:12 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id cZ6DHpAqc7Pa; Sat, 15 Mar 2025 21:37:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1742074628; bh=r8Y+i7BAyP/Aiugn4EWtzpB5XheB/doWKXmLKsr+72s=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Aj8jBUq2a5g45jDtsmZOu6pDzHNFOyPuqp/EGNROQxatPD0agE8inB3g8of8NBI6b
+	 +lyJOhf1cbJiegSzpF5quP4y+AqYgainb1lE/XNzQQt7s2f3kfpLWo2K9la6FOYqif
+	 9gUEi7BSEujj42ScVqmHX4LVxl6HWV4oydwAOhnd9frEHDBvOLdh1LPHs1kmWYePlE
+	 TKzd0NzIv5dcz0h2LisYth6N0+8cKxec5gFe8niUxpUBdp8nXbqEusuPFPbY5VAOu7
+	 2MBfAqubwO4UlwtWMho8Pyjx/aCecW6K+XERXYin+MRPprM02H74f6FarQrL6Dib73
+	 8F0sEarSWhivxONpOUtClSjCZPIwL3FUBNuQ2vwDnm7lxfW0MM7Vls/vtQmq36zLjG
+	 QPxolUBmaAq75DG5Ja8rDKJTxHS0l95casHI9Zz3dbFnGokZcB6Ki+AAsn2b//U3PE
+	 MQTViB/oLcbictqT6f3yr5bnFxxo3VkzLqoIEVaWerKAbV8JeGE77L9UrA2at++IBG
+	 1wVP9ybbIoF2s6b/EXr6uYKzeeR7SOfeia8hXVnCtUDX5RwiasN4/X+oxKoXwfS/gE
+	 QK+X+wCvvPZhd1CCQEDRO3WQWSwbPRwD4LCRUyPODw3FJix19hm+DHC0gPO1YOWs4T
+	 dv5aftdkKQwK2uy5s6CxIvFQ=
+Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 1F40240E01A5;
+	Sat, 15 Mar 2025 21:37:01 +0000 (UTC)
+Date: Sat, 15 Mar 2025 22:36:55 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: Uros Bizjak <ubizjak@gmail.com>, x86@kernel.org,
+	linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>
+Subject: Re: [PATCH] x86/asm: Use alternative_input() in amd_clear_divider()
+Message-ID: <20250315213655.GFZ9Xy986YQZCeK4iX@fat_crate.local>
+References: <20250314081453.565859-1-ubizjak@gmail.com>
+ <20250314112018.GAZ9QQ8hPXt2Mk22cG@fat_crate.local>
+ <Z9XxNbdLCZFiK1NG@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250315205532.6815f2c5@pumpkin>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <Z9XxNbdLCZFiK1NG@gmail.com>
 
-On Sat, Mar 15, 2025 at 08:55:32PM +0000, David Laight wrote:
-> On Sat, 15 Mar 2025 14:20:46 -0400
-> Kent Overstreet <kent.overstreet@linux.dev> wrote:
+On Sat, Mar 15, 2025 at 10:29:25PM +0100, Ingo Molnar wrote:
+> So why does the higher level alternative_input() API exist? If it 
+> shouldn't exist then we should remove it. If it exists, we should use 
+> it consistently instead of open-coding its equivalent.
 > 
-> > On Sat, Mar 15, 2025 at 01:52:34PM +0000, David Laight wrote:
-> > > On Thu, 13 Mar 2025 12:38:10 -0400
-> > > Kent Overstreet <kent.overstreet@linux.dev> wrote:
-> > >   
-> > > > bcachefs needs this, for sampling devices to read from based on squared
-> > > > device latencies.
-> > > > 
-> > > > this uses the same algorithm as get_random_u32_below: since the multiply
-> > > > uses the top and bottom halves separately, it works out fairly well.  
-> > > 
-> > > Adding two separate copies of much the same code is silly.
-> > > Given what the code is doing, does it ever make any sense to inline it.
-> > > 
-> > > Inlining the original get_random_u32_below(ceil) that did
-> > > 	(random_u32() * ((1ull << 32) / ceil) >> 32
-> > > (for constant ceil) made sense.
-> > > While good enough for most purposes it was replaced by the much more
-> > > expensive function that guarantees that all the output values are
-> > > equally likely - rather than just evenly distributed.  
-> > 
-> > Expensive!? It adds a multiply.
-> 
-> I make it two multiplies and a loop.
-> Have you looked at what happens on 32bit systems?
+> Cleanups like this, especially if they are clearly part of an effort to 
+> improve x86 code generation in this area, are not 'code churn', why 
+> would they be?
 
-Not many people run 32 bit anymore.
+Because this is not improving anything, IMO. It is simply writing it
+differently, perhaps obscuring it more in the process.
 
-Have you looked at get_random_bytes()?
+And I, just like hpa, would need to go look at alternative_input() to figure
+out what really happens there.
 
-> > That % gets constant folded, in the inlined case, and in the non-inline
-> > case it's hit only a small fraction of the, time, for typical ceil.
-> 
-> If the % is only a small fraction on the cost for the non-inline case
-> (and it is over 100 clocks on many cpu that people still use) then
-> why inline anything?
-> A quick look shows divide being 'only moderately slow' on zen3 and coffee lake.
-> 
-> What you might want to do is pass -ceil % ceil through to a real function
-> (especially if constant).
+Dunno, maybe we should really remove alternative_input() instead...
 
-David, the way get_random_u32_below is optimized now is just fine.
+-- 
+Regards/Gruss,
+    Boris.
 
-I'm not going to completely redo the inlining just for this, nor am I
-going to do get_random_u64_below() differently from
-get_random_u32_below().
-
-> Oh I guess you haven't actually tested the version you submitted.
-> Time to play 'spot the silly error'.
-
-Please do share what you think you've found.
+https://people.kernel.org/tglx/notes-about-netiquette
 
