@@ -1,169 +1,128 @@
-Return-Path: <linux-kernel+bounces-562367-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562368-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DC0BA624C7
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 03:41:00 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5F51A624CA
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 03:41:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A2E2042185F
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 02:40:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A922B19C4212
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 02:41:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 044641F5EA;
-	Sat, 15 Mar 2025 02:40:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 988D7189BB5;
+	Sat, 15 Mar 2025 02:41:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NKh5F7OZ"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="AZ+ZzfDx"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDE4618DB26
-	for <linux-kernel@vger.kernel.org>; Sat, 15 Mar 2025 02:40:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7612B1885A1
+	for <linux-kernel@vger.kernel.org>; Sat, 15 Mar 2025 02:41:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742006419; cv=none; b=pGvsQR+5hslOdfX9bY2as7eUsqwMeGV2udmgGaaw6nsKKwG1jEHcdY+F5XgtT1aBaG6yRGPXTx+pv2/d3F1Ve1/ll5tpJfrW6rXa2XilYdS0woxOH7nrvnlS0Z1fzfX/0BxNLzhobNs2E5yV1ydKrVh0BJjcMpjpFlbKaK15JIA=
+	t=1742006467; cv=none; b=CWECQwfehsuHtLi0eJxiV4arIkchurbnSSwucSpr/1Ujf51gRCZxodN2AtniLyQS8bvDHNw9l4F2w6C8adIcDOo8PzNTZBtPoLlWYaRoT2u7zksVlF6vq9WT1gsMBmBxNVsOA+fr2lSOESL5rBsoOgOLDzZOwdxJsCVF2Fnw188=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742006419; c=relaxed/simple;
-	bh=csXcvVUGODyh39WQeJCJvvBrtei4rk6c+z8kvW6MpJM=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=gV6DhlfpeEMmxrHF6sqURLl5g+jFpkKpcezlGtjhA0/XBlcC0rvmeAmY75x3G+oZTsqyk4SLKpaL3rTrFuLDAErUBgT7JSKZbcjoX3ppeMu0EGQWoUnMWtQnYKSUsZMALTy7+aKx9GQ5r8Uhhh0W0MDysOLLB3S/fPnKjJSg+uA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=NKh5F7OZ; arc=none smtp.client-ip=209.85.216.73
+	s=arc-20240116; t=1742006467; c=relaxed/simple;
+	bh=gvsLlj9bc8Y/r9hbCjuUIcoMB8ZWIq1plW/QuzquFqc=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=hB6wY3J/VWaQVkYAhFKwfLk2pCyzlWleJuHyHUSCvo8fAPKIbuGz4S4jVB3vRzObr9NMgUA/OmJY8Y4zuWQXoLjtBkUvRW1b+AzZX7vIdklcQO+sWhRtxLqQPwGDYpeq+gQs7Devzd8IYl8vfFQGl4pAa8nIBiOpaCOh0mATTmI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=AZ+ZzfDx; arc=none smtp.client-ip=209.85.214.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2ff82dd6de0so439438a91.0
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 19:40:17 -0700 (PDT)
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-224347aef79so46268795ad.2
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 19:41:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1742006417; x=1742611217; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=Sy3DZMUWr7rSQ3fTWMshpO7vJyF2FiO+hW5xt0RQaio=;
-        b=NKh5F7OZDDAXwedLK+UNsDYfqXSvmn07JTm0jfMyFG7y107zu7l/2Zm51EVBI7xDoe
-         R4+lcZnGSGbrR5lBw9fe+qDpqLOSgIF7Lm0mmwir8LHXje7A2K1i72TSXYLLHevWROEA
-         wR53lByQ+fCj8eHMcOwAAe9GgO9B9HqfmDVQCnRpQO+CpRJT0L1ZmgTghT0oI6x+ggm+
-         DJd7pRPhy6TnHVtYKm4TfDJCN+sSS7Sgd0Yseh2d94Mx8IpdsISuYwKO8oXewZNsd87F
-         KHFPt5mzJlAaaqF9597rOCGrq7Jiv8O/fAIWm4WmcZbFaolEqfpicPkJ03GIgyPQvd5b
-         Nybg==
+        d=google.com; s=20230601; t=1742006465; x=1742611265; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QiP10EQ5oII7sHIYrQJinL/4J0tbjHxSuA2R3IlRhwA=;
+        b=AZ+ZzfDx+SjcarfNXzmZTGIuSjpcJPxjvoKZgSv8cmgUGSpyT6EOk5O3uSgOAB0gE7
+         r6QIs84oxttGbcjE4xw/fk3x8X9mQq+pn4BOcahL0fyOvmPAFOkNptM3ZIE6fgWakhn+
+         PX1Ncfo/XLT0TZB0aLJHZA7CZKmTatKji7Oe5wVUftGiROqNtEvnlNebD5roEHRF9dps
+         rvd7kImis4hhcY/dKYDtBqmK5GQW1hhYptRiFRsDTjibyGDji4DsDFrOKNfq0GQb6G1V
+         J2ot5m46/111rjU4cAeNesEe5Dho+jTT4FzG+1zYrsu9re4ghuZw3463WZ3ZXZxSLt1x
+         N/xg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742006417; x=1742611217;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Sy3DZMUWr7rSQ3fTWMshpO7vJyF2FiO+hW5xt0RQaio=;
-        b=Ig8qszBDMpRWpvjRUssCuzJKu5etxOUfqRC0Hi3fSg3X6PnEsKobhiDLSELIDkWi/n
-         HQtrhI0qXTitJ/EE/IbBRAdOh7ObUeVsyBk8YMr4CPwgUtyBgpjr13ANEp64JQAwBF03
-         NwDHsPye6TXTwD4DJ/B8C03pfrm5n9lVF6A8sUVOnC3BsqS32GtwplVdtYqfsC/GLbP8
-         +OjPorm8d174FrNccPM6EroXSvbVYkysQ1JuJ8KiItwTrcIdbZ7Iz6grnpmGi1zOO+p5
-         jHVB8opyJILTllAoFAcIv2va5H/gO9G0eQn+sLsO1PMmEn0Y3yrCq/yX7Ll+5maGVZLu
-         GnoQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWCjQji/BbaVgPE4VYEQKdpBY4mV+NDYLYS0SQikT8JM7NCOsNanUo7/G8mwaflfBsnfRmdhEkXmszwvLk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwsXudiOLpCgeG0t4X2PAez+emmwot7KVsoo5hgK0odIYd87col
-	x5lqREStZ+2g/vlqqf+ltmk9AkmiamSDcYOMptzkorrmHhvLzpptxCYpJ8VZXgSnmH8vuFyCUKi
-	g6A==
-X-Google-Smtp-Source: AGHT+IG+EY2vHoY9F8/B8pXlSFd1fbS2p5geTEG1LvjxFKSZnZyvPp3RwszbiRtlmWwsDlNu/jnAcshVEQg=
-X-Received: from pjbph6.prod.google.com ([2002:a17:90b:3bc6:b0:2fc:11a0:c549])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:180f:b0:2ee:f22a:61dd
- with SMTP id 98e67ed59e1d1-30151dd2784mr5391135a91.32.1742006417396; Fri, 14
- Mar 2025 19:40:17 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1742006465; x=1742611265;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=QiP10EQ5oII7sHIYrQJinL/4J0tbjHxSuA2R3IlRhwA=;
+        b=D+okrWYmrofFDlvhNu3OvlvPBQnjCQV+ijl0UBbyaOUdKHRv18sgpQk2MCwyeglHEM
+         V/dpajH5QvMV9ffJM/bbzYYzZjDmUrSWqtn41GiyTpicoEE4L2GaJsTUfKLRSjFnyLoW
+         x4FoZ5V0Fq4dmZpqA1H9xxC9QBkiibSNKSU7dgV3SCghGT3zVRYP4jgXcneEtGWQN9Iv
+         sXdMdsMUi092/fJNF9VG6F4qH6Mrd70xCZ8UoSRJYEcS8EGTprB+s2yrjLKh8Zhel6vC
+         QG8oCNkya4jwCYcY0My/5EvF+MMhJY48KFSbR0mOVVojJzapK3RENZ9HI04fmug5CBeO
+         JBLA==
+X-Forwarded-Encrypted: i=1; AJvYcCV0DqUy2xeTqxvpIH1rd+AKXvUNwEiY/RqCzHO9zPFgFAqzElstDbSYkmdpTiFu+wMIWA/nH9+G1CCbC6Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx40PBsxGrQzanjUpIUiX+VCSDUz+hAFXLjZ8ZWlD2kdJAxfVnw
+	YRo80c2y0jx+eFGAStkS+DIFAc0PVKUakkmliLf/owEW9ZzdN+4buaYxSupLAbwL8OnNMTGoqEa
+	ONg==
+X-Google-Smtp-Source: AGHT+IEMI0xUsGGPOON5xErQpH0hhzK7pxW1UAww271VxpwLNReHuRNE5EZwjkA9vyJADWk8JYlj/7Hjo2E=
+X-Received: from pjbok3.prod.google.com ([2002:a17:90b:1d43:b0:2fb:fac8:f45b])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:da85:b0:224:910:23f0
+ with SMTP id d9443c01a7336-225e0b11989mr57074235ad.49.1742006464811; Fri, 14
+ Mar 2025 19:41:04 -0700 (PDT)
 Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Fri, 14 Mar 2025 19:40:10 -0700
-In-Reply-To: <20250315024010.2360884-1-seanjc@google.com>
+Date: Fri, 14 Mar 2025 19:41:02 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-References: <20250315024010.2360884-1-seanjc@google.com>
 X-Mailer: git-send-email 2.49.0.rc1.451.g8f38331e32-goog
-Message-ID: <20250315024010.2360884-4-seanjc@google.com>
-Subject: [PATCH 3/3] KVM: x86/mmu: Defer allocation of shadow MMU's hashed
- page list
+Message-ID: <20250315024102.2361628-1-seanjc@google.com>
+Subject: [PATCH] KVM: x86: Explicitly zero-initialize on-stack CPUID unions
 From: Sean Christopherson <seanjc@google.com>
 To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
 Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-When the TDP MMU is enabled, i.e. when the shadow MMU isn't used until a
-nested TDP VM is run, defer allocation of the array of hashed lists used
-to track shadow MMU pages until the first shadow root is allocated.
+Explicitly zero/empty-initialize the unions used for PMU related CPUID
+entries, instead of manually zeroing all fields (hopefully), or in the
+case of 0x80000022, relying on the compiler to clobber the uninitialized
+bitfields.
 
 Signed-off-by: Sean Christopherson <seanjc@google.com>
 ---
- arch/x86/kvm/mmu/mmu.c | 29 ++++++++++++++++++++++++-----
- 1 file changed, 24 insertions(+), 5 deletions(-)
+ arch/x86/kvm/cpuid.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
-diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
-index b878f2e89dec..3765d7abc2cc 100644
---- a/arch/x86/kvm/mmu/mmu.c
-+++ b/arch/x86/kvm/mmu/mmu.c
-@@ -1982,14 +1982,25 @@ static bool sp_has_gptes(struct kvm_mmu_page *sp)
- 	return true;
- }
+diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
+index 5e4d4934c0d3..571c906ffcbf 100644
+--- a/arch/x86/kvm/cpuid.c
++++ b/arch/x86/kvm/cpuid.c
+@@ -1427,8 +1427,8 @@ static inline int __do_cpuid_func(struct kvm_cpuid_array *array, u32 function)
+ 		}
+ 		break;
+ 	case 0xa: { /* Architectural Performance Monitoring */
+-		union cpuid10_eax eax;
+-		union cpuid10_edx edx;
++		union cpuid10_eax eax = { };
++		union cpuid10_edx edx = { };
  
-+static __ro_after_init HLIST_HEAD(empty_page_hash);
-+
-+static struct hlist_head *kvm_get_mmu_page_hash(struct kvm *kvm, gfn_t gfn)
-+{
-+	struct hlist_head *page_hash = READ_ONCE(kvm->arch.mmu_page_hash);
-+
-+	if (!page_hash)
-+		return &empty_page_hash;
-+
-+	return &page_hash[kvm_page_table_hashfn(gfn)];
-+}
-+
- #define for_each_valid_sp(_kvm, _sp, _list)				\
- 	hlist_for_each_entry(_sp, _list, hash_link)			\
- 		if (is_obsolete_sp((_kvm), (_sp))) {			\
- 		} else
+ 		if (!enable_pmu || !static_cpu_has(X86_FEATURE_ARCH_PERFMON)) {
+ 			entry->eax = entry->ebx = entry->ecx = entry->edx = 0;
+@@ -1444,8 +1444,6 @@ static inline int __do_cpuid_func(struct kvm_cpuid_array *array, u32 function)
  
- #define for_each_gfn_valid_sp_with_gptes(_kvm, _sp, _gfn)		\
--	for_each_valid_sp(_kvm, _sp,					\
--	  &(_kvm)->arch.mmu_page_hash[kvm_page_table_hashfn(_gfn)])	\
-+	for_each_valid_sp(_kvm, _sp, kvm_get_mmu_page_hash(_kvm, _gfn))	\
- 		if ((_sp)->gfn != (_gfn) || !sp_has_gptes(_sp)) {} else
+ 		if (kvm_pmu_cap.version)
+ 			edx.split.anythread_deprecated = 1;
+-		edx.split.reserved1 = 0;
+-		edx.split.reserved2 = 0;
  
- static bool kvm_sync_page_check(struct kvm_vcpu *vcpu, struct kvm_mmu_page *sp)
-@@ -2357,6 +2368,7 @@ static struct kvm_mmu_page *__kvm_mmu_get_shadow_page(struct kvm *kvm,
- 	struct kvm_mmu_page *sp;
- 	bool created = false;
+ 		entry->eax = eax.full;
+ 		entry->ebx = kvm_pmu_cap.events_mask;
+@@ -1763,7 +1761,7 @@ static inline int __do_cpuid_func(struct kvm_cpuid_array *array, u32 function)
+ 		break;
+ 	/* AMD Extended Performance Monitoring and Debug */
+ 	case 0x80000022: {
+-		union cpuid_0x80000022_ebx ebx;
++		union cpuid_0x80000022_ebx ebx = { };
  
-+	BUG_ON(!kvm->arch.mmu_page_hash);
- 	sp_list = &kvm->arch.mmu_page_hash[kvm_page_table_hashfn(gfn)];
- 
- 	sp = kvm_mmu_find_shadow_page(kvm, vcpu, gfn, sp_list, role);
-@@ -3884,11 +3896,14 @@ static int kvm_mmu_alloc_page_hash(struct kvm *kvm)
- {
- 	typeof(kvm->arch.mmu_page_hash) h;
- 
-+	if (kvm->arch.mmu_page_hash)
-+		return 0;
-+
- 	h = kcalloc(KVM_NUM_MMU_PAGES, sizeof(*h), GFP_KERNEL_ACCOUNT);
- 	if (!h)
- 		return -ENOMEM;
- 
--	kvm->arch.mmu_page_hash = h;
-+	WRITE_ONCE(kvm->arch.mmu_page_hash, h);
- 	return 0;
- }
- 
-@@ -3911,9 +3926,13 @@ static int mmu_first_shadow_root_alloc(struct kvm *kvm)
- 	if (kvm_shadow_root_allocated(kvm))
- 		goto out_unlock;
- 
-+	r = kvm_mmu_alloc_page_hash(kvm);
-+	if (r)
-+		goto out_unlock;
-+
- 	/*
--	 * Check if anything actually needs to be allocated, e.g. all metadata
--	 * will be allocated upfront if TDP is disabled.
-+	 * Check if memslot metadata actually needs to be allocated, e.g. all
-+	 * metadata will be allocated upfront if TDP is disabled.
- 	 */
- 	if (kvm_memslots_have_rmaps(kvm) &&
- 	    kvm_page_track_write_tracking_enabled(kvm))
+ 		entry->ecx = entry->edx = 0;
+ 		if (!enable_pmu || !kvm_cpu_cap_has(X86_FEATURE_PERFMON_V2)) {
+
+base-commit: c9ea48bb6ee6b28bbc956c1e8af98044618fed5e
 -- 
 2.49.0.rc1.451.g8f38331e32-goog
 
