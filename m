@@ -1,138 +1,140 @@
-Return-Path: <linux-kernel+bounces-562734-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562735-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A195A6320E
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 20:23:38 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79A14A63210
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 20:40:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D2DB16B924
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 19:23:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B2DE917243E
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 19:40:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BB4319CC36;
-	Sat, 15 Mar 2025 19:23:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 741BE199EB0;
+	Sat, 15 Mar 2025 19:40:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="VWiCjKq3";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="W2gIlOn/"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="DKNWfG5x"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8B1E199E8D;
-	Sat, 15 Mar 2025 19:23:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B2F61DDE9
+	for <linux-kernel@vger.kernel.org>; Sat, 15 Mar 2025 19:40:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742066612; cv=none; b=X6/NHRg6OnpxrqD4WJrrVPaw8BD8XsgqqgGgWpsIxQoleNOPoWuMNr2yUksUqB15sJeWI/290ucp0nh7UYklf5xa8/C43VtnryF4+WNPN7uEyQ8ahTSfXQZYekVDv1ifCZBUFJrzv6G4ZGp030qmeWhqrE99zxoWqqpf+/fEdqE=
+	t=1742067619; cv=none; b=ViQdwfliHaoHkLOiGYRW6oXPYiNLsRAA2K90Lhlj5s7vQiXdXEG13AQPuY7yWgmkn/qeibKzfD+zR8APRza98F+bBh5eHm1DgEslRlNRJlEPsRIELkaghJ+skC3l7o+3PUm2K/okPuiOhqLBivit7qbBhuYEdu8yuTpn/MJpGLY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742066612; c=relaxed/simple;
-	bh=V2GjZ+Wme+82fiO8P+KF6QQrrM8s9f4K2x2lxB+XAh4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=q46wqfdGo9u/wQpQ/HEewBXQNsLjKfRBn+QHCjmqdE99pyUOx3MOOrJvKv0aSEelCQCH5Z8ikFulg98SRNayggeFP4aUn25XF2kwBxRKC6Vi4OBv2W5mtYnq7v66ym040A/YYL9qhcUOzVK8N/ndIXELIXnrGAyuhBDCxnBcdUE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=VWiCjKq3; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=W2gIlOn/; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1742066602;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ed91DmtJ8+cC57ZeKK493iuWEPzr9T903d0c/Mk88VU=;
-	b=VWiCjKq3ZQ4oGq4eTFP610BP8zXYSNNgPdynEO5zj+Mp3sXVYb6ewL/vSSmBHovETU9a15
-	wr5NVQXv4YkQvdUgpeL+7rkmyepeG+IcOrv1SoMFr/SZkoU5o8NeZxuRHVQj7ShqlSIO6+
-	C73Dv35nqaaoBGibQk71jOip4k4OpD9dSfskYEv3yeEs9jYbv0Fq5r5GWRhomU+qv2QOvt
-	pvnULCkPzZNJoMyZW1Daj0NbhfOyLC2D3FgkJIkWLmIutG7azGy4/eB8PrW3nMw0LX3niF
-	0GKa0hv0aF2WF2lv7sqH5oOVFFTeOPmMfzQtq00HQOvr7BXl4/8VDJQEPgyv4A==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1742066602;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ed91DmtJ8+cC57ZeKK493iuWEPzr9T903d0c/Mk88VU=;
-	b=W2gIlOn/bbcHamghmjgEj7N+41Anp9ccjkAeg/2bDVF0bNNdSaDW+KWmppnhCbHHWunahS
-	FYotzAFoFlXPMFAA==
-To: John Stultz <jstultz@google.com>, LKML <linux-kernel@vger.kernel.org>
-Cc: John Stultz <jstultz@google.com>, Stephen Boyd <sboyd@kernel.org>,
- Anna-Maria Behnsen <anna-maria@linutronix.de>, Frederic Weisbecker
- <frederic@kernel.org>, Shuah Khan <shuah@kernel.org>, Miroslav Lichvar
- <mlichvar@redhat.com>, linux-kselftest@vger.kernel.org,
- kernel-team@android.com, Lei Chen <lei.chen@smartx.com>
-Subject: Re: [RFC PATCH 1/2] time/timekeeping: Fix possible inconsistencies
- in _COARSE clockids
-In-Reply-To: <20250315003800.3054684-1-jstultz@google.com>
-References: <CANDhNCoueki=keYNcNr4eXqgLFPh3VupDJC0hFqxm4FNKfGzYg@mail.gmail.com>
- <20250315003800.3054684-1-jstultz@google.com>
-Date: Sat, 15 Mar 2025 20:23:21 +0100
-Message-ID: <877c4q5c9i.ffs@tglx>
+	s=arc-20240116; t=1742067619; c=relaxed/simple;
+	bh=r5Stmtgpk8Wi9fduQ+/G2v1eHh9gD3FMDC6RMsg9odM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SIvZWynpPTIn9orOhCCGTye7VFobjUaRhCpJtHHzxH8AM450N5Vi+E88xBeast0LrSMt/BBkrnXS06G3iCpVIpxOf5D18WIYAtgTIOYlUFHGTM/J3kLvuW6VX2MW3rZrfA0A27ZnG4gffPvW9I8htEyQlVg0LfrTOkCnsSE3sOw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=DKNWfG5x; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-43cf628cb14so4293405e9.1
+        for <linux-kernel@vger.kernel.org>; Sat, 15 Mar 2025 12:40:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1742067615; x=1742672415; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=FzVQsvyb6KHejLLGQLOiEXPwh6+yupfMj+KbGcnKHsU=;
+        b=DKNWfG5xPFBQuCdmnqT4G5rK/sEbP4k7WsdKEpSWGETq7P/QnXIOo3kM3e2WhLvbEf
+         DMUfjO+OADK3vlRBAK349a3tkeXI+DwvP0POU3c+19OHPi7yh6u7loy29/QvMevU65xR
+         9KBscPs0CY1VBj9lkwE1+AFIj0uNEHFJglGPiQo8w9N1bqmazIdIkFeVO+T9hQxsv91N
+         e8gPxcGXxO7SxDkh7osaeLH7owKuwFsi/rMiZdRtTLYF8nzpUEFakjwcIdQDrnY3qYBs
+         gejHCXk1ViG+dZ6/YZkU0ZxyPNWYDrVmROpzZJKrMV7FyTclsjfxJblDkSASIrkTBnLD
+         J2xw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742067615; x=1742672415;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FzVQsvyb6KHejLLGQLOiEXPwh6+yupfMj+KbGcnKHsU=;
+        b=U1wUY0fboy516uu/wXJqEMzVZt247DMI0KmQZSpBm07KueSbOtn/gmQZ8IJnOgXEKJ
+         vhnm97A0qoxHYCLTwQBsPS6acZCy5ad6b3Un0D1bvyI2bQ+NszKSxexs0HJ3zEd/KQl5
+         PgQtrgOVKG/GbeQYiJMMBBtPcndHFGhhzggo8kl3TozI6a7uiWUGF/kGJTMNLjBPjhwJ
+         /vrAHMgAmnCOhHSk5tlcGZIkv7UMWbVmeCACgEUV2GdGOKaLxzWSc4NKh8c8ighM07eK
+         Iv90GTmD9LLt+S50DpyLSujC802KSHxZ81roCyS/V3/KMo+qIhmld6xPvgXqUQF3XCoK
+         0KSg==
+X-Forwarded-Encrypted: i=1; AJvYcCUgOV+U7slLGUYszU05ooRau0P4N8DxGtoQCNHIc6B/kr3m3acP5KaPFLIAYNFzcOdcynrI9NvPG4vcoGg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJdFYUpTqK2I+hVM4Z0BvQXRWw2+M7x0x9L706YQbpo/TsksaG
+	FDjqGjin6UEsiE5nPe+nlfVMzytHax+d+qnKKereP+Q0F29K4GahDQGn+QsH1e8=
+X-Gm-Gg: ASbGncuDBKbDcgVIzVAn/Nka8EeZtQQFRpqqkv7tVUYz1PVXwJvA6+R5EYbpBBDsSXZ
+	Ts5wV0q+BfUsGEV2MpxlYLM7+hdnsiz7EDVz/KsjgKjTO4/ilUu0r9c3L8tihUJ3uKGdFDoeFjA
+	YGJx6/+Q93vZBOqmjDNJdR+8wb0E/wyX09via+trG8+fPDjpcGv8YnQjRxmlwthdrihKlF6Q3JY
+	4xJZC/NsQfdYCryCxPiQgXhdCqjPx9lfysNuNlIiEnmIR7e5X+mfHBe/OgxsY98+ymGpxWvFc+I
+	QWIIrwuDgDPpkGdUxOm4jqucBh8kDh6xlauKnbO8R+81hdqLiFveSEli5O4tNJovo5hi
+X-Google-Smtp-Source: AGHT+IHJGwse9XKFAh4SKGf4ahJOahoAldZedJFtSXR1JqmikUsc8hiwm713P4tUDi+iNRZkQyeaig==
+X-Received: by 2002:a05:600c:4587:b0:43b:baf7:76e4 with SMTP id 5b1f17b1804b1-43d1805a2d2mr122934525e9.1.1742067615151;
+        Sat, 15 Mar 2025 12:40:15 -0700 (PDT)
+Received: from localhost.localdomain ([2a00:6d43:105:c401:e307:1a37:2e76:ce91])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-395c83b6e92sm10067447f8f.38.2025.03.15.12.40.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 15 Mar 2025 12:40:14 -0700 (PDT)
+From: Marco Crivellari <marco.crivellari@suse.com>
+To: linux-mips@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Marco Crivellari <marco.crivellari@suse.com>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Anna-Maria Behnsen <anna-maria@linutronix.de>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Huacai Chen <chenhuacai@kernel.org>,
+	"Maciej W . Rozycki" <macro@orcam.me.uk>
+Subject: [PATCH v6 0/1] MIPS: Fix idle VS timer enqueue
+Date: Sat, 15 Mar 2025 20:40:01 +0100
+Message-ID: <20250315194002.13778-1-marco.crivellari@suse.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-On Fri, Mar 14 2025 at 17:37, John Stultz wrote:
-> Now, by design, this negative adjustment should be fine, because
-> the logic run from timekeeping_adjust() is done after we
-> accumulate approx mult*interval_cycles into xtime_nsec.
-> The accumulated (mult*interval_cycles) will be larger then the
-> (mult_adj*offset) value subtracted from xtime_nsec, and both
-> operations are done together under the tk_core.lock, so the net
-> change to xtime_nsec should always be positive.
+This patch aims to fix idle routine while the CPU receive an interrupt,
+because __r4k_wait() only checks if TIF_NEED_RESCHED is set before
+going to sleep.
+The same behavior has been changed in LoongArch [1].
 
-/should/is/
+Code (cross) compiled successfully and I manage to test it on a VM
+emulating a malta board. I ran QEMU with:
 
-We better are confident about that :)
+qemu-system-mips64el -M malta -m 2G -kernel vmlinux -serial stdio -drive \
+file=rootfs.ext2,format=raw -append "rootwait root=/dev/sda" -cpu 5Kc
 
-> However, do_adjtimex() calls into timekeeping_advance() as well,
-> since we want to apply the ntp freq adjustment immediately.
-> In this case, we don't return early when the offset is smaller
-> then interval_cycles, so we don't end up accumulating any time
-> into xtime_nsec. But we do go on to call timekeeping_adjust(),
-> which modifies the mult value, and subtracts from xtime_nsec
-> to correct for the new mult value.
+rootfs generated using buildroot (malta default configuration).
 
-We don't do anything. :)
+- [1] https://github.com/chenhuacai/linux/commit/a8aa673ea46c03b3f62992ffa4ffe810ac84f6e3
 
-> Here because we did not accumulate anything, we have a window
-> where the _COARSE clockids that don't utilize the mult*offset
-> value, can see an inconsistency.
->
-> So to fix this, rework the timekeeping_advance() logic a bit
-> so that when we are called from do_adjtimex() and the offset
-> is smaller then cycle_interval, that we call
-> timekeeping_forward(), to first accumulate the sub-interval
-> time into xtime_nsec. Then with no unaccumulated cycles in
-> offset, we can do the mult adjustment without worry of the
-> subtraction having an impact.
+---
+Changes in v6:
+ - typo in comment, capitalise sentences and full stops
 
-It's a smart solution. I briefly pondered something similar, but I'm not
-really fond of the fact, that it causes a clock_was_set() event for no
-good reason.
+Changes in v5:
+ - comment: idle interrupt region, instead of rollback region
 
-clock_was_set() means that there is a time jump. But that's absolutely
-not the case with do_adjtimex() changing the frequency for quick
-adjustments. That does not affect continuity at all.
+Changes in v4:
+ - comments: 36 byte region
 
-That event causes avoidable overhead in the kernel, but it's also
-exposed to user space via timerfd TFD_TIMER_CANCEL_ON_SET.
+Changes in v3:
+ - changed "daddiu k0, 1" with PTR_ADDIU k0, 5
+ - replaced CONFIG_CPU_MICROMIPS with 3 _ssnop followed by _ehb
+ - integrated the commit message with explanation about
+   CONFIG_CPU_MICROMIPS replacement
 
-I have no really strong opinion about that, but the route through
-clock_was_set() triggers my semantical mismatch sensors :)
+Changes in v2:
+ - Changes introduced by Huacai:
+    https://lore.kernel.org/linux-mips/20250214105047.150835-1-marco.crivellari@suse.com/T/#m75d9c587829e15e0d7baec13078be4e65c936408
 
-> NOTE: This was implemented as a potential alternative to
-> Thomas' approach here:
->    https://lore.kernel.org/lkml/87cyej5rid.ffs@tglx/
->
-> And similarly, it needs some additional review and testing,
-> as it was developed while packing for conference travel.
+Marco Crivellari (1):
+  MIPS: Fix idle VS timer enqueue
 
-We can debate that next week over your favourite beverage :)
+ arch/mips/kernel/genex.S | 42 ++++++++++++++++++++++------------------
+ arch/mips/kernel/idle.c  |  1 -
+ 2 files changed, 23 insertions(+), 20 deletions(-)
 
-Have a safe trip!
+-- 
+2.48.1
 
-Thanks,
-
-        tglx
 
