@@ -1,99 +1,107 @@
-Return-Path: <linux-kernel+bounces-562572-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562573-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4C18A62CA7
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 13:25:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3C8AA62CBD
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 13:36:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E488C3B6D26
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 12:25:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D9606189C4C5
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 12:36:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A56F1F9EC1;
-	Sat, 15 Mar 2025 12:25:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B99FA1F8676;
+	Sat, 15 Mar 2025 12:36:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C0XYL6lX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=rosa.ru header.i=@rosa.ru header.b="FcQHHpN6"
+Received: from forward206b.mail.yandex.net (forward206b.mail.yandex.net [178.154.239.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 954F41D63C3;
-	Sat, 15 Mar 2025 12:25:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FC6B15C140;
+	Sat, 15 Mar 2025 12:36:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742041529; cv=none; b=ZTJgBBV2qeA8jBH14ONWbflKWeUVa8h5FNn2C8IDZuGAsCj3/8lZx+FZxgj+mC4oQ9y4Sk7tYOgBHZAvUlQCTwMGcwyaMrmEfkJWiqZzRGNIwr8Pdyd724JJzyOz/lnWrgW2o62IWuUXVX2t7dafX90fWTeCGdS/MjqwWNaFkok=
+	t=1742042173; cv=none; b=OsYQ2e2Pyd0CRsgU/TScum+bi0uiWU4LHT6d+qay783oSLRqE9SzsBdC3YAYCapllUZd5DHJLGfFTmF66B4tppmnJ9j60BatZMeeWiRBIgQDIZjywoZJ1KxZtsJY8OAehA2HHOKH1G+x9ExVxRK3wvnILLRZSbKHTsExFokm05A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742041529; c=relaxed/simple;
-	bh=Fj+vIwF5HHqitIIswIKPOmK2iAZbwb8SLogFMsruDo8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LrZ64YXrEo/OdCR4FkX2g3WmGMmwTyqlCZRuOgXGywwIHmVlWOpnVUOAxXjlJyBoQ8v0FVpKnqOZQ40K5Yidftjf0NU6Cf5zOstHYNhAhX7mR0YNaA6vwnA9Z0BSz1eSUIcb2v6SaZw8QwvGre0AG5wquMALRY1ntqEz37D/z84=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C0XYL6lX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00DFAC4CEE5;
-	Sat, 15 Mar 2025 12:25:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742041529;
-	bh=Fj+vIwF5HHqitIIswIKPOmK2iAZbwb8SLogFMsruDo8=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=C0XYL6lXQDH4/TCGTRXfolGqDF/tPyEoAAHVzPXx1k5PVHxnLdcm+KAP3mlvEaERC
-	 xxQo5p229Y5ZIx3hbssoxBeoCXYOMl5mCA5B/vZPxZBfdlH2gR1q4tOgF4yuo3LLJm
-	 ljbSZKwrH6Nx6vdZET9Dv7KN+l3sPlCVxMl/fV+C80Zf/pIjxxdmO77EXLZOy+7yZB
-	 V/fKRMW70DYyjAIU9ahEMtU6Zk7F5Aujjq7LpYFi+rkP1KPh4WNwfZmPmOI3ASgWz8
-	 //ysT/PuoP8zYTZVic/KV2wdbL0FivWpPXfkUx+hDbt7MnosipBBfdB0O1cfscyJDP
-	 jOXLlD8tDmv1Q==
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-5499bd3084aso2978695e87.0;
-        Sat, 15 Mar 2025 05:25:28 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCW1aKFR515KR8pZRMSySi11AYo/i/MSnICKR46VssTVVG5Vcff06HFuqZqVuWeR/o83n9gBZMEFn5N2@vger.kernel.org
-X-Gm-Message-State: AOJu0YxOStk+vOu0XmA164K8eUlN04lYDI2pj9/7QSvURyd6JLUk1aNZ
-	vutaniwQhdjyjB2XYd4yuf9KxxhIDy2cMg3HEsAjj9Ev748tpeckwLIs345tTv+Jc8vw3b+yiI5
-	mG+bU4Ej7KEwBeRrVrj0L7NjW4TA=
-X-Google-Smtp-Source: AGHT+IGgdR3X73Y5kOcNy46zEchZIi2iM+5xuE/oJRwNAGQE3cTkXDIYdJchk1GoSpma7micKyc6ZPJZk2D90ItZUMs=
-X-Received: by 2002:ac2:4e04:0:b0:549:39d8:51ef with SMTP id
- 2adb3069b0e04-549c38cf317mr1812164e87.6.1742041527689; Sat, 15 Mar 2025
- 05:25:27 -0700 (PDT)
+	s=arc-20240116; t=1742042173; c=relaxed/simple;
+	bh=oN9HWcuh4F8+f9HPJdYxr/wST9imw7WuzHDngWGt0N0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=c2mTXWZ75/lpvIk2BbCN43mIVXZhvGLkyjuOWSDAr8kNaLVpqI4gWLfpS204O+7cBx+oXv8L1vX72zEupsL1YmRWXuX1x8IBPybvAPCETZnrT2tnfMSJa2i2AYaT3eGp8RDlzcM6kGAujiju4ElrX6ADlJzLIil3rLO1CqhxnLw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rosa.ru; spf=pass smtp.mailfrom=rosa.ru; dkim=pass (1024-bit key) header.d=rosa.ru header.i=@rosa.ru header.b=FcQHHpN6; arc=none smtp.client-ip=178.154.239.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rosa.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rosa.ru
+Received: from forward100b.mail.yandex.net (forward100b.mail.yandex.net [IPv6:2a02:6b8:c02:900:1:45:d181:d100])
+	by forward206b.mail.yandex.net (Yandex) with ESMTPS id BA76763143;
+	Sat, 15 Mar 2025 15:30:49 +0300 (MSK)
+Received: from mail-nwsmtp-smtp-production-main-60.sas.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-60.sas.yp-c.yandex.net [IPv6:2a02:6b8:c27:153f:0:640:5e4f:0])
+	by forward100b.mail.yandex.net (Yandex) with ESMTPS id 291F960B61;
+	Sat, 15 Mar 2025 15:30:42 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-60.sas.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id YUEkhaMLnKo0-HtcZrsFh;
+	Sat, 15 Mar 2025 15:30:41 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rosa.ru; s=mail;
+	t=1742041841; bh=9J6oKvW6KDTaSvr9oja02aRy6UsaDX0Qo0S3KNyGeBw=;
+	h=Message-ID:Date:Cc:Subject:To:From;
+	b=FcQHHpN6PFybtcR7mMztZxxU36eVyMuMPHUCAy8XSzByrXQHo/aQ4xkjpNklc4rSo
+	 tEB01dqzOJOwDTHhr8aN5HqWO51GZil3jkkRloIaV2TmGQaRq31ONMiIJ4ULydHpPM
+	 KUnFrGWdATYuXrqgu7kIXnxLyoyUM+m7l3z7/I1k=
+Authentication-Results: mail-nwsmtp-smtp-production-main-60.sas.yp-c.yandex.net; dkim=pass header.i=@rosa.ru
+From: Mikhail Lobanov <m.lobanov@rosa.ru>
+To: Johannes Berg <johannes@sipsolutions.net>
+Cc: Mikhail Lobanov <m.lobanov@rosa.ru>,
+	Shaul Triebitz <shaul.triebitz@intel.com>,
+	linux-wireless@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] wifi: mac80211: check basic rates validity in
+Date: Sat, 15 Mar 2025 15:29:26 +0300
+Message-ID: <20250315123001.58020-1-m.lobanov@rosa.ru>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250313002650.135e6383@canb.auug.org.au>
-In-Reply-To: <20250313002650.135e6383@canb.auug.org.au>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Sat, 15 Mar 2025 21:24:51 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQWB__3BAfmJQYrXYsBa1D2=v355x12q4Rmoyro7LgiQw@mail.gmail.com>
-X-Gm-Features: AQ5f1Jopy9Wed2bjnWGz573Ch-8ADcVE8ZxJIzxCdFZ9J0XXmY2XUCRrTT-om34
-Message-ID: <CAK7LNAQWB__3BAfmJQYrXYsBa1D2=v355x12q4Rmoyro7LgiQw@mail.gmail.com>
-Subject: Re: linux-next: Signed-off-by missing for commit in the kbuild tree
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, Mar 12, 2025 at 10:26=E2=80=AFPM Stephen Rothwell <sfr@canb.auug.or=
-g.au> wrote:
->
-> Hi all,
->
-> Commits
->
->   bc5431693696 ("kbuild: exclude .rodata.(cst|str)* when building ranges"=
-)
->   dafbec3f520b ("docs: kconfig: Mention IS_REACHABLE as way for optional =
-dependency")
->   8ee44bd75bce ("scripts: make python shebangs specific about desired ver=
-sion")
->   e6a2507c8d3c ("kbuild: rust: add rustc-min-version support function")
->   73d602eb38c3 ("gendwarfksyms: Add a separate pass to resolve FQNs")
->
-> are missing a Signed-off-by from their committers.
+When userspace sets supported rates for a new station via
+NL80211_CMD_NEW_STATION, it might send a list that's empty or contains
+only invalid values. Currently, we process these values in
+sta_link_apply_parameters() without checking the result of
+ieee80211_parse_bitrates(), which can lead to an empty rates bitmap.
 
+A similar issue was addressed for NL80211_CMD_SET_BSS in commit
+ce04abc3fcc6 ("wifi: mac80211: check basic rates validity").
+This patch applies the same approach in sta_link_apply_parameters()
+for NL80211_CMD_NEW_STATION, ensuring there is at least one valid
+rate by inspecting the result of ieee80211_parse_bitrates().
 
-Sorry, I made lots of mistakes.
-Fixed now. Thanks.
+Found by Linux Verification Center (linuxtesting.org) with Syzkaller.
 
+Fixes: b95eb7f0eee4 ("wifi: cfg80211/mac80211: separate link params from station params")
+Signed-off-by: Mikhail Lobanov <m.lobanov@rosa.ru>
+---
+ net/mac80211/cfg.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
---=20
-Best Regards
-Masahiro Yamada
+diff --git a/net/mac80211/cfg.c b/net/mac80211/cfg.c
+index 9351c64608a9..e7c429aef980 100644
+--- a/net/mac80211/cfg.c
++++ b/net/mac80211/cfg.c
+@@ -1909,10 +1909,11 @@ static int sta_link_apply_parameters(struct ieee80211_local *local,
+ 
+ 	if (params->supported_rates &&
+ 	    params->supported_rates_len) {
+-		ieee80211_parse_bitrates(link->conf->chanreq.oper.width,
++		(!ieee80211_parse_bitrates(link->conf->chanreq.oper.width,
+ 					 sband, params->supported_rates,
+ 					 params->supported_rates_len,
+-					 &link_sta->pub->supp_rates[sband->band]);
++					 &link_sta->pub->supp_rates[sband->band]))
++		return -EINVAL;
+ 	}
+ 
+ 	if (params->ht_capa)
+-- 
+2.47.2
+
 
