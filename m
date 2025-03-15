@@ -1,104 +1,129 @@
-Return-Path: <linux-kernel+bounces-562459-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562460-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92FA1A628AB
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 09:06:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D35AEA628AF
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 09:07:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 590C77AB8E3
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 08:05:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF018189F685
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 08:07:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1DEF1DED5F;
-	Sat, 15 Mar 2025 08:06:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC3E91E1C1A;
+	Sat, 15 Mar 2025 08:07:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="re353uBn"
-Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jevAfS+c"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28C941DA61D;
-	Sat, 15 Mar 2025 08:06:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE4991DC98B;
+	Sat, 15 Mar 2025 08:07:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742025995; cv=none; b=VvUrAJHxB4jQFg7h79rhfAoJKgYyXqRS6VSowTKYBxoxDgeNh7fJd7qhSr88PDUCERc8Ogkdcw5kns3ykdLL75eTMhBwxWgollU92ZSgQoQFFYh6UzIfULWjpCbPfxuTdIVqy/rYVHpRWGItrcQshp2MPLZ6K0wbwS0kGUJW5EE=
+	t=1742026028; cv=none; b=C11uz6IdVQG6s9Aui2s40p1Ma8qUHd4eWgNPb+PWZ+pfkBkUTg0//HnFLpdhPu6Yd0M793cjWv/HH96kFbtjHcn3VB53krAd9toFSvmG27t/c7BMTfyz6iitppe9b1ySgZMK4qRfIev6eH7F+n7aK3LZwFCEWUIwTy+5otvEq90=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742025995; c=relaxed/simple;
-	bh=frRL2RC728hrryZnr7gE9zXLqjd3ejjeTLlr1AE9sF0=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=fSrSaiul431hoHVGhAl52vpHShdyaZBR0kKhaGmwmbGw+rg+wD5aoCf72H4OgE7J8afuqMV43I1B9DPqr05ysSK32+PVkk4Gq6dpdlR11a/h5R+XD4+mzqmvUERsXzp82ATJ47n1AGajwdTrcA/Nk1F2syACjDG2HcJyN2dlq0k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=re353uBn; arc=none smtp.client-ip=144.6.53.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
-	s=formenos; h=Content-Type:MIME-Version:Message-ID:Subject:To:From:Date:
-	Sender:Reply-To:Cc:Content-Transfer-Encoding:Content-ID:Content-Description:
-	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=4+S15xdn2sIBMlFNTDKRwmCQsng7JkFjfLx0QlHmzUc=; b=re353uBnMsmOddNoIVfUBLHXee
-	Llu2ynpUY0hP5KcNLMcxV54LGhKrP08gFN/Ztz9ZTI9CDZEJk3oIzbx5yULKLE7DgqCeO1XtukPPY
-	8D7zAi3JUr5eM0N4SbY5E6R7Y548gaYpaVkRtLqvVHhZYK+oRuDJuxquQ9OHYD9N7SwEMq+4XUdKN
-	lCdy34Ax8s5qO5C0EpPHd4KtxlOgEPvhjMeZSlu6ANC+4SO9TBjUHjaxg16e4HDsV6WK3cxJ+v5+G
-	cp3no4SNTUhj6TSNAiFSrAoMvAIyl4/zh0vWsoHcDsjGgO12MzUkjgZRYfPuKNnXTr+TCwUzfAVK+
-	NPYQ9Nzw==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1ttMXG-006nMw-0p;
-	Sat, 15 Mar 2025 16:06:23 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Sat, 15 Mar 2025 16:06:22 +0800
-Date: Sat, 15 Mar 2025 16:06:22 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Song Liu <song@kernel.org>, Yu Kuai <yukuai3@huawei.com>,
-	linux-raid@vger.kernel.org
-Subject: [PATCH] lib/raid6: Replace custom zero page with ZERO_PAGE
-Message-ID: <Z9U0_uj1E2MlYhGx@gondor.apana.org.au>
+	s=arc-20240116; t=1742026028; c=relaxed/simple;
+	bh=C5tWsuLYebqW+3y76WtKrIdRf2XYwkMQtn4K8NAAL+Q=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=c4BhsphjSmbQPW1p8eLmj9gy8eHyfCYu+BTuX78BS4ZnuHfj4qnQ4AHKp07Qn+1Dig2CdY6CsKEbslimJtL648weG8tgeem1G4TIgdehBnN1z/YNfVdFix/4qW5vSrez+xp4SJJb6tjckQGfVg/0FsppS+tAyDac4XFG4o9kGeU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jevAfS+c; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-22409077c06so73144955ad.1;
+        Sat, 15 Mar 2025 01:07:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742026026; x=1742630826; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=C5tWsuLYebqW+3y76WtKrIdRf2XYwkMQtn4K8NAAL+Q=;
+        b=jevAfS+c8N7Dy10wzETqOe52ZG1Iye6B/AIiqxBtEEQ4nbJzXPrbkTPqjYXinZeXyz
+         7kTzsCJtzhyht2yYnCllYFfCmOkG0ajGvAUNAhjz6lbNqr5MmDQ3Oq47A0ypSiwpZkJB
+         H4xVren0tDeFLxhAOxdDotyG69oQWFawFCd08ShnkH4XlbMCfH5CNPg8PDUVQC2Lub7z
+         SpBIJcjz8k6QqfEfmj29ZYfxFeYFEUtqQt8Ah/7pn/TiqC/R/S1BoE9MatdQwkw/Rz5B
+         rsLmtRQVOeZRPdvxsbRfc8v8gs3c2KwwphNGwwSgLRcaS+gnZJsZ24qoz0iZkT9tH6mw
+         UURw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742026026; x=1742630826;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=C5tWsuLYebqW+3y76WtKrIdRf2XYwkMQtn4K8NAAL+Q=;
+        b=JIjG1OlY/zbQvnZSSW3U1QPLWaTchm2VUlk4yOzLTzxEeGObHg+/WeXiEpbNbDvB2X
+         d6FpB0u0Wk8esqpy+oPbEwV+lnMaSmxPzVmh86mqZMRwVGTFsoq6UGQ38Ntx6EQgYT/i
+         OEDJ4Cj3dpo89eWYMCfb7qCRq/7xTIsdsG2HhwpdtX5kXxUgVV4oqasJ/H0EpNkTMjDQ
+         6Z4t9s1DyCK+2xprGZsPuAGVupYbhar6/9Ywo2mVFcrmXgb5MUCj3udceZBqR4Vy63bN
+         yooADZfsxcXrxkhoOq5z+cYOaqmti8Hwk7O2SJL0m6sXubvWjHXXWkMx24nKj+yOU5uu
+         ZT6A==
+X-Forwarded-Encrypted: i=1; AJvYcCVnGi1vK0kGCGSHvYUnNTFNdzcJlwlav6d1IYC4d7hr+gakNDq5nY/HEOHWN9JbyUPj6GH1EfU2V9fokdgQ@vger.kernel.org, AJvYcCWzPBVdHEWzG8Tkxi/d+huE06EbyGL6sIW64RDxhyRPkoLR02Xn+bniGJQ788QgWFkz8QYgOC/ctp2bwFNOS+T0@vger.kernel.org, AJvYcCXwuDHci425dim4JmLUy/l1/dopm4wDtMDVo2usdCEnbmhJ4swYvsP8IlbLJ5KQv/ie9OU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz67gd6hQ7hfK1RHGUcVeiCfdTnCmThMjCbKGAWF4n5ozQvDkOG
+	NKNSsHZYoUYiiduqVn1U/cpwd/bZgX67yV6NoUbELBlTVAicc8I2
+X-Gm-Gg: ASbGnctSUw31Z5u4dJ/HXMM8KsvPM717Bewrzd+x3vUkf3IEePh5o4pia6Lsx4/CaU+
+	theqamTY95h0EMVQUMxKE9wMoSnXkqQ+39tqZRpz14xEJSTVHms2wY0p8zndNhpto+YTDEWuVXW
+	vkflrO5tXKvQ8OaQAMKdDN3cnD7JK0rmrOEC60j+6iYVodVfHz6vqqVg1WcGWMua+Ftgr+S5N1N
+	VZiqvw9E6QyPBU/8/YTkGtqgxN4awRo38/CTlOqxE2mdTLcgggDLTuMDgusJVOLnMVOVTt/mIEe
+	b6hORZwxEAaqKNamAbMXF1+KQij2uHBxzpP7cojR
+X-Google-Smtp-Source: AGHT+IGkNV2xTO9dQHlWSeyy/i0XrYakerLhhNGAIMLNT4Ti+wVWJjCGhEhKRAxcpm1P6DPPcR4EQQ==
+X-Received: by 2002:a17:902:ce0b:b0:223:668d:eba9 with SMTP id d9443c01a7336-225e0a15945mr71542395ad.10.1742026026102;
+        Sat, 15 Mar 2025 01:07:06 -0700 (PDT)
+Received: from [192.168.0.56] ([38.34.87.7])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-225c68a80e3sm40085605ad.83.2025.03.15.01.07.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 15 Mar 2025 01:07:05 -0700 (PDT)
+Message-ID: <46a0770582be4f8f80701aca4eb17b1706609033.camel@gmail.com>
+Subject: Re: [PATCH bpf-next 03/11] bpf: Return -EFAULT on internal errors
+From: Eduard Zingerman <eddyz87@gmail.com>
+To: Luis Gerhorst <luis.gerhorst@fau.de>, Alexei Starovoitov
+ <ast@kernel.org>,  Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko
+ <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>,  Song Liu
+ <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>, John Fastabend	
+ <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, Stanislav
+ Fomichev	 <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa
+ <jolsa@kernel.org>,  Puranjay Mohan <puranjay@kernel.org>, Xu Kuohai
+ <xukuohai@huaweicloud.com>, Catalin Marinas	 <catalin.marinas@arm.com>,
+ Will Deacon <will@kernel.org>, Hari Bathini	 <hbathini@linux.ibm.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,  Naveen N Rao
+ <naveen@kernel.org>, Madhavan Srinivasan <maddy@linux.ibm.com>, Michael
+ Ellerman	 <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, Mykola
+ Lysenko	 <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>, Henriette Herzog	
+ <henriette.herzog@rub.de>, Cupertino Miranda
+ <cupertino.miranda@oracle.com>,  Matan Shachnai <m.shachnai@gmail.com>,
+ Dimitar Kanaliev <dimitar.kanaliev@siteground.com>, Shung-Hsi Yu	
+ <shung-hsi.yu@suse.com>, Daniel Xu <dxu@dxuuu.xyz>, bpf@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linuxppc-dev@lists.ozlabs.org, linux-kselftest@vger.kernel.org, George Guo	
+ <guodongtai@kylinos.cn>, WANG Xuerui <git@xen0n.name>, Tiezhu Yang	
+ <yangtiezhu@loongson.cn>
+Cc: Maximilian Ott <ott@cs.fau.de>, Milan Stephan <milan.stephan@fau.de>
+Date: Sat, 15 Mar 2025 01:07:01 -0700
+In-Reply-To: <20250313172919.1103397-1-luis.gerhorst@fau.de>
+References: <20250313172127.1098195-1-luis.gerhorst@fau.de>
+	 <20250313172919.1103397-1-luis.gerhorst@fau.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
-Use the system-wide zero page instead of a custom zero page.
+On Thu, 2025-03-13 at 18:29 +0100, Luis Gerhorst wrote:
+> This prevents us from trying to recover from these on speculative paths
+> in the future.
+>=20
+> Signed-off-by: Luis Gerhorst <luis.gerhorst@fau.de>
+> Acked-by: Henriette Herzog <henriette.herzog@rub.de>
+> Cc: Maximilian Ott <ott@cs.fau.de>
+> Cc: Milan Stephan <milan.stephan@fau.de>
+> ---
 
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Same as for previous patch.
 
-diff --git a/include/linux/raid/pq.h b/include/linux/raid/pq.h
-index 98030accf641..1460c15dea63 100644
---- a/include/linux/raid/pq.h
-+++ b/include/linux/raid/pq.h
-@@ -11,8 +11,9 @@
- #ifdef __KERNEL__
- 
- #include <linux/blkdev.h>
-+#include <linux/mm.h>
- 
--extern const char raid6_empty_zero_page[PAGE_SIZE];
-+#define raid6_empty_zero_page ((const char *)page_address(ZERO_PAGE(0)))
- 
- #else /* ! __KERNEL__ */
- /* Used for testing in user space */
-diff --git a/lib/raid6/algos.c b/lib/raid6/algos.c
-index cd2e88ee1f14..03f1a8c179f7 100644
---- a/lib/raid6/algos.c
-+++ b/lib/raid6/algos.c
-@@ -18,9 +18,6 @@
- #else
- #include <linux/module.h>
- #include <linux/gfp.h>
--/* In .bss so it's zeroed */
--const char raid6_empty_zero_page[PAGE_SIZE] __attribute__((aligned(256)));
--EXPORT_SYMBOL(raid6_empty_zero_page);
- #endif
- 
- struct raid6_calls raid6_call;
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Reviewed-by: Eduard Zingerman <eddyz87@gmail.com>
+
+[...]
+
 
