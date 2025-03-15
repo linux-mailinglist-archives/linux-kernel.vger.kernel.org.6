@@ -1,137 +1,109 @@
-Return-Path: <linux-kernel+bounces-562716-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562717-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CAF0A631A4
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 19:34:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C73D0A631B1
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 19:36:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 534CB173A3D
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 18:34:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 19219173963
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 18:36:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68A7A205AD5;
-	Sat, 15 Mar 2025 18:34:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96632205AC2;
+	Sat, 15 Mar 2025 18:36:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PDoNB7Dz"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KPhXcnWF"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCA8B1F8901;
-	Sat, 15 Mar 2025 18:34:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F26221F8901;
+	Sat, 15 Mar 2025 18:36:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742063673; cv=none; b=YSkfJ1+r/Zkfkpbu+alldXej0mT9eNl81aEPQnx1Ke1oJiCMLmSL0QUq9mk0SG1OJz0Z4383B2dU2eIF7qThmYEahvQu7ylauS0JkHunPuFXVnwKuDo6ankkjp1AH2n9K1Sfx6Vz5Vn4A2FpEuYvKKi4LCO9PVvgwdDsanp2jJw=
+	t=1742063812; cv=none; b=R+Iw7c0Qrt4lvilKfin0l3hHMkgvtdyGXohWOAxl4tDlv75xtG5A6YdypB9O+Hnu0aO6gS0VskTCZ4wV5e2nC6EiyJWTHedCOCuJAqfWHXKfxMTJACRZ7lBUOjxsHG7gGb/vwD/TSvVBmTW3dhR2NTmNQ843s89lYoFW4zYcMJQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742063673; c=relaxed/simple;
-	bh=X4xpNZ8s/sLlkBevw/itk2vfx1DtriwGopjBQDhHUlk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ECnX6CQSj9qCLpnn3/i9vSEIUMedF2NBAia8SCCTyDX4/Rh+8n9x1WYNIL5jYdidBfFRTJIXNffrSAc6i8J9743NUD5SqVEvgvmDRK/qre4e5Yv9Ibjz/tLcwK6qgWKq/8wK6JJQliracX/Ilgk3Bjog5udlpg+1bT6ywIUqK/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PDoNB7Dz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A38DC4CEE5;
-	Sat, 15 Mar 2025 18:34:33 +0000 (UTC)
+	s=arc-20240116; t=1742063812; c=relaxed/simple;
+	bh=K/WeHyYe88JhtenDvvSoJGOFF2LZ+hiyvYhppLQkWEw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QIkhkIxdskQ9GnK5i3gt6sc71+eDNRSQrXDZAZyMz2SptQjDTThLGMyNI4ArA6r6GXuQM5ARCrpQwdojCvlGIIgJ8oLhaNFz0iZAIlG8solPoHfRD6zQGkYHZuT6v1TSBk+5jpyh5YuMHCw33BDxcVt57F0mbp2CwHXE1b4E8rA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KPhXcnWF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A27EBC4CEE5;
+	Sat, 15 Mar 2025 18:36:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742063673;
-	bh=X4xpNZ8s/sLlkBevw/itk2vfx1DtriwGopjBQDhHUlk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PDoNB7DzA9Waok4Oz0gdSnJmuGJvm+LFo0WJ6WFGPyGHM6uPTy82o13K5gjCZPPZg
-	 pX4v/5/QL+pdLvPQb4aTmjjK0yhu2FrFWvAHMsaLdWwlaiUDgGBY2/Ys4dthN/BZWM
-	 vtTlvLY6dWn8a8lm89kCObmxMFyL1Fq289hdcj/j6rPyy6huex/JAHIt2wBvoypqYK
-	 3Ka9NZDENVsrASqFqZumU2REmTbbul8+mTQ/3ihRLHHXDmKst+fGdeKhVNETK/fn9j
-	 E6lHMRFqfhQ/Rfthh4hWxx8p0VSXirdabbR2UkvwIO1BLrHkiASgsWyb5MqNd/XL2L
-	 F9h7+7zTM/cvg==
-Date: Sat, 15 Mar 2025 11:34:28 -0700
-From: Kees Cook <kees@kernel.org>
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Vlastimil Babka <vbabka@suse.cz>, Miguel Ojeda <ojeda@kernel.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Marco Elver <elver@google.com>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	linux-hardening@vger.kernel.org, Christoph Lameter <cl@linux.com>,
-	Pekka Enberg <penberg@kernel.org>,
-	David Rientjes <rientjes@google.com>,
-	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Hyeonggon Yoo <42.hyeyoo@gmail.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>, Jann Horn <jannh@google.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Sasha Levin <sashal@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Yafang Shao <laoar.shao@gmail.com>,
-	Tony Ambardar <tony.ambardar@gmail.com>,
-	Alexander Lobakin <aleksander.lobakin@intel.com>,
-	Jan Hendrik Farr <kernel@jfarr.cc>,
-	Alexander Potapenko <glider@google.com>,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	linux-doc@vger.kernel.org, llvm@lists.linux.dev
-Subject: Re: [PATCH v4 1/2] compiler_types: Introduce __flex_counter() and
- family
-Message-ID: <202503151133.3FCFCB70@keescook>
-References: <20250315025852.it.568-kees@kernel.org>
- <20250315031550.473587-1-kees@kernel.org>
- <03d69156-1cee-43bc-901b-5f85f3aa7575@infradead.org>
+	s=k20201202; t=1742063811;
+	bh=K/WeHyYe88JhtenDvvSoJGOFF2LZ+hiyvYhppLQkWEw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=KPhXcnWFhfUOtQaR8LE0DzjlEIm5GSsvI28Ef+ClHtM18dX/X8WdPyb2pAyo01Awv
+	 pXh+bSy5W0iffxHW7OzLnmRKJP0JyZRFYfgWwg/6WwiAdOJZZGsgZtMxBWNg340b7K
+	 molZa4X2MkIAWFFvaOlGhBShnWKNwsYHQ0ANwuijBeAQsPeEDgOI6cf+03jsulZIVb
+	 liNlthu2+BVxWj4JSCnA28aVYfpEDxtl7BWbMcSbtrwk8BQvCR/W833Ob5RVRGKi+T
+	 6BJnAczkEpZYgnAxaIsdFpSFPPjttSvRwoOdXXnex6pD3NYPOvHqtqnq73nEYN1IQ8
+	 CrJ3BYrUX+pqg==
+Date: Sat, 15 Mar 2025 18:36:44 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Silvano Seva <s.seva@4sigma.it>
+Cc: a.greco@4sigma.it, Lorenzo Bianconi <lorenzo@kernel.org>, Lars-Peter
+ Clausen <lars@metafoo.de>, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] iio: imu: st_lsm6dsx: fix possible lockup in
+ st_lsm6dsx_read_fifo
+Message-ID: <20250315183644.04fd688b@jic23-huawei>
+In-Reply-To: <20250311085030.3593-2-s.seva@4sigma.it>
+References: <20250311085030.3593-2-s.seva@4sigma.it>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <03d69156-1cee-43bc-901b-5f85f3aa7575@infradead.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, Mar 14, 2025 at 09:53:41PM -0700, Randy Dunlap wrote:
-> Hi Kees,
-> 
-> 
-> On 3/14/25 8:15 PM, Kees Cook wrote:
-> 
-> 
-> > diff --git a/include/linux/overflow.h b/include/linux/overflow.h
-> > index 0c7e3dcfe867..e2b81cb5576e 100644
-> > --- a/include/linux/overflow.h
-> > +++ b/include/linux/overflow.h
-> > @@ -440,4 +440,40 @@ static inline size_t __must_check size_sub(size_t minuend, size_t subtrahend)
-> >  #define DEFINE_FLEX(TYPE, NAME, MEMBER, COUNTER, COUNT)	\
-> >  	_DEFINE_FLEX(TYPE, NAME, MEMBER, COUNT, = { .obj.COUNTER = COUNT, })
-> >  
-> > +/**
-> > + * typeof_flex_counter() - Return the type of the counter variable of a given
-> > + *                         flexible array member annotated by __counted_by().
-> > + * @FAM: Pointer to the flexible array member within a given struct.
-> > + *
-> > + * Returns "size_t" if no annotation exists.
-> 
-> Please use
->  * Returns: <text>
-> instead so that kernel-doc can make a special doc section for it.
+On Tue, 11 Mar 2025 09:49:47 +0100
+Silvano Seva <s.seva@4sigma.it> wrote:
 
-Ah! Thanks -- I hadn't realized that the ":" induced special sections. I
-think I have a bunch of other kern-doc clean-ups to do as well.
-
+> Prevent st_lsm6dsx_read_fifo from falling in an infinite loop in case
+> pattern_len is equal to zero and the device FIFO is not empty.
 > 
-> Same for patch 2/2.
+> Fixes: 290a6ce11d93 ("iio: imu: add support to lsm6dsx driver")
+> Signed-off-by: Silvano Seva <s.seva@4sigma.it>
+I think you could validly have kept Lorenzo's ack given this was
+just breaking the patch into two parts. I put it back and applied
+these with them marked for stable to the fixes-togreg branch of iio.git
+
+Thanks,
+
+Jonathan
+
+> ---
 > 
-> > + */
-> > +#define typeof_flex_counter(FAM)				\
-> > +	typeof(_Generic(__flex_counter(FAM),			\
-> > +			void *: (size_t)0,			\
-> > +			default: *__flex_counter(FAM)))
-> > +
-> > +/** can_set_flex_counter() - Check if the counter associated with the given
+> Changes since v1:
+> * st_lsm6dsx_read_fifo: moved check for zero pattern_len before fifo_len assignment
+> * st_lsm6dsx_read_fifo: dropped check for zero fifo_len
+> * added Fixes tags in commit message
 > 
-> Needs a newline between /** and the function name, as in set_flex_counter() below.
+> Changes since v2:
+> * split patch in two parts, one fixing st_lsm6dsx_read_fifo and one fixing
+> st_lsm6dsx_read_tagged_fifo
+> 
+>  drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_buffer.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_buffer.c b/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_buffer.c
+> index 0a7cd8c1aa33..480a9b31065c 100644
+> --- a/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_buffer.c
+> +++ b/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_buffer.c
+> @@ -392,6 +392,9 @@ int st_lsm6dsx_read_fifo(struct st_lsm6dsx_hw *hw)
+>  	if (fifo_status & cpu_to_le16(ST_LSM6DSX_FIFO_EMPTY_MASK))
+>  		return 0;
+>  
+> +	if (!pattern_len)
+> +		pattern_len = ST_LSM6DSX_SAMPLE_SIZE;
+> +
+>  	fifo_len = (le16_to_cpu(fifo_status) & fifo_diff_mask) *
+>  		   ST_LSM6DSX_CHAN_SIZE;
+>  	fifo_len = (fifo_len / pattern_len) * pattern_len;
 
-Whoops, thanks!
-
--Kees
-
--- 
-Kees Cook
 
