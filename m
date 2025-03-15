@@ -1,110 +1,154 @@
-Return-Path: <linux-kernel+bounces-562671-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562672-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A671A6304D
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 17:52:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB232A63053
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 17:53:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92C063B2D97
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 16:51:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB753189B22C
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 16:53:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB87A20468A;
-	Sat, 15 Mar 2025 16:52:02 +0000 (UTC)
-Received: from azure-sdnproxy.icoremail.net (azure-sdnproxy.icoremail.net [52.237.72.81])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9FB12F3B;
-	Sat, 15 Mar 2025 16:51:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.237.72.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B130204C1D;
+	Sat, 15 Mar 2025 16:53:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RHDMyUoH"
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3F8E13AD22;
+	Sat, 15 Mar 2025 16:53:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742057522; cv=none; b=MIQvislGf+jflZjEnJZ6kVsubvNCkAAsc2ZVrsh0SElLMSHkYEdMjY1jU849+PR5VC2LrDoLj/mcFNxUcWiVntWPX79tlHwa1UOd7rCuesaYj7MuI9BsoX5qMnKPQIlq/qKkF8p/vLpzK+dnIASffCMsBO4fB9m2KSJCwX6+CuA=
+	t=1742057587; cv=none; b=EnRJtbCTMZCxc2ev1qJhCRZr+XMpyNs/4KCJ/0CW3iOTWTCq/DYZsjJvhrKX8YTsS7lJAw6+TeagZum5nelXa9F7mv2IDFj/j1rydVulRkajNZfWd2IxXz78GfFcICDF/5i0y4te0hLGp3u/pajwWJQZJn84ONk0dp5SbzRj8s8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742057522; c=relaxed/simple;
-	bh=8T+np47owgnigutCHYOzKjuo3Ga5K1nLZb10k6JA44w=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=H2EU5SFlgdRB8m/eJ9XIZZ7NOJoAzTxgofCR70vZ3/kid76AT5K8eWWvVr/zTkeT4Pk5GWlWIitdztrfmPnZzIQGIJLapPDDhHAxU1zhBFVGq9sAV9JUiXIL2taid1o5eAKF6+qDPh301QWHTaMg9Jb/Q6Gv7eOnka1xFlC4vAo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zju.edu.cn; spf=pass smtp.mailfrom=zju.edu.cn; arc=none smtp.client-ip=52.237.72.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zju.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zju.edu.cn
-Received: from zju.edu.cn (unknown [10.193.170.58])
-	by mtasvr (Coremail) with SMTP id _____wB3YQ8GsNVnxHspAA--.260S3;
-	Sun, 16 Mar 2025 00:51:19 +0800 (CST)
-Received: from localhost (unknown [10.193.170.58])
-	by mail-app3 (Coremail) with SMTP id zS_KCgDHA3cGsNVnwdcnAA--.23963S2;
-	Sun, 16 Mar 2025 00:51:18 +0800 (CST)
-From: Lin Ma <linma@zju.edu.cn>
-To: davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	horms@kernel.org,
-	kuniyu@amazon.com,
-	gnaaman@drivenets.com,
-	joel.granados@kernel.org,
-	lizetao1@huawei.com,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Lin Ma <linma@zju.edu.cn>
-Subject: [PATCH net v2] net/neighbor: add missing policy for NDTPA_QUEUE_LENBYTES
-Date: Sun, 16 Mar 2025 00:51:13 +0800
-Message-Id: <20250315165113.37600-1-linma@zju.edu.cn>
-X-Mailer: git-send-email 2.39.0
+	s=arc-20240116; t=1742057587; c=relaxed/simple;
+	bh=zjOSu9/dnsAEMjfIozr3ojYdoi0Fs9oyyhaZpqVgY3w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SUixlBQhEGl5ZhzIFHU1u9VBY1e+z3c9YMgalU0N1uoPEisPk5JAS/mFLL3Q5HuO3aTawkrAmNHdU1XkjmWTG9XC3F/4Y3lOTnesLEOfbD1UupPZJbWhfzzkEnb9dIaOKNwlZ938vT2SuslgfGf5/zbJ2cqmyGT5600G4yVMkWg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RHDMyUoH; arc=none smtp.client-ip=209.85.208.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-30613802a59so34362771fa.0;
+        Sat, 15 Mar 2025 09:53:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742057584; x=1742662384; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=j98XjoqRqS//TK0dhh02Y1wC/XiTzmRNvGvaHw/U+9E=;
+        b=RHDMyUoHIcv7hGOpMeoqZXZlO13zNMJLPrnbDpWbSATz2od/pHEXPVoUyHK7Kuhydi
+         HrC4mwB1uy/ZMBJ60JW0MxH+mghSGgatxuRfuw5tvbDcBoh8uwGipea+oqX4nkmiaAqQ
+         C+z57IWzSCAxseZwVUj/WSM7h7nxaBYvO6wv7l58VXVbmCDFF4SDap4BEAA8b1GR6GaA
+         2P161SljPGcjYbivGLrWmt6wxTEG5AcaqN5Zkeqmvh3oDk6Xtr5nVEPP46jjRS79sK6f
+         6Z2g/dJAHiFmX004U+mORftKsKg4azIe5d05LuaYKOC7K/toaJ3kBTFSlkjtuDPtHwmf
+         2hBg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742057584; x=1742662384;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=j98XjoqRqS//TK0dhh02Y1wC/XiTzmRNvGvaHw/U+9E=;
+        b=ZKL6QZuBMq1Ugbp9onKdyoRUqrdpmDcgwDJej08sIp3qs1q+eo0bFlgsYBohOVOsxk
+         D3KADF9H1B4k4L8rwBwUMf6UCu1dNefnZ5xWX0ARdJU7Ip1tjD+al1lrkydOgP/BKfxI
+         C0uMcDKCoI6uRQXSMgFRao3168/KI9P/zR8eKQkHI5aRGSecgzsEIjTVAb6Nka0k5PrX
+         iuooEXOwQiZH3qYxeHYTPNhEX7i54lluiQHrasqZgSKveEnbNBHWHAPer8guOcuFfgmb
+         0PymACqGf3/2ozqDZ4n/NP2y/o5Av8vZ4rRVo3HtqxmVbJI08pCxx3ZByV8dajri0MSA
+         fm9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUesFFnAqMaraLRP2didkEfIqk91RVtB0COQcTYWzl5ZUwLHvltJW5G2ThNfl7/QnRTNCra@vger.kernel.org, AJvYcCV6kGgkVtLSAsJmgIMZNKCUCQjXs5febhgZXmr/c3aQarzbkjYth6bJx0rJFF+Q904TLizgcc7qnCjiXZsAatU=@vger.kernel.org, AJvYcCVUokwQoBfw+ARN9XQaBmoilgHyZ6vx9tlbUuupv1T1gl6bw2SvKFOZfGfbKtfz8x8j2gZj9X5jo8Bs@vger.kernel.org, AJvYcCWPdq8ed+bhUZhZ8eRu/i6v1wilZW0BpEwN6BF+96Otl+GrdOnRZ8vd7LDSe4txjCgx55nSiR/c4YPG@vger.kernel.org, AJvYcCXULiAbj1iTpmw0RLRIucCTrH6b+R5YTFThRVR3Kg5q7KBAIW2aCBzMxHP+IhmD88iaDNRMpKcNKWwnH6a2@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy3sWvnRPkW5zxATc8YsrN+v7kvEsGJdCIT31YV0pTMDYRxzz21
+	C9cIa0GhGitAdVmSxsP5pOQ276ti+bgCWXLA9iQenDrHVSsbgYhUpyTYiXErj+AfrCrUJnSDvER
+	+3E9uXp1fjJQIB6iqVI/phVPKHpk=
+X-Gm-Gg: ASbGncs7p91bJCp8HBCLysuk9u0Rm5CkSnSeV+Rjjb9S6tn9o08548PO1yU7xEr/lhl
+	vObPRPO0aRwHNG5+lk2ut9hY5yJ5SdZZCsn7ZI4VMGO1R+C46+T4z7kR+UN5QPiGBgcrtFsCUK5
+	UrjOoSz2p12TXfX8FpaXrWXu4XqfRZ7OJaYMhEm9QYcse6NoLrJdp1re2kMwFk
+X-Google-Smtp-Source: AGHT+IE6nJLBDig190G3azOZOlfsw3kVizlD3XnA7F8SdKwqqWHAB/0dKbxRfepfM+ueRq00y/aoSc2PeAtrf/Ekzy4=
+X-Received: by 2002:a2e:97d8:0:b0:30b:b852:2f85 with SMTP id
+ 38308e7fff4ca-30c4a85fd06mr19914131fa.13.1742057583484; Sat, 15 Mar 2025
+ 09:53:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:zS_KCgDHA3cGsNVnwdcnAA--.23963S2
-X-CM-SenderInfo: qtrwiiyqvtljo62m3hxhgxhubq/
-X-CM-DELIVERINFO: =?B?ccMXkQXKKxbFmtjJiESix3B1w3tPqcowV1L23Bze5QtIr9Db75bEBiiEybVhThS0pI
-	APHkyPSxI2Xdeyd3ul0ToYuubMXDNQRyrdFbJY3tTDqaw5woA2x6JcZHja/9e2zpiPcgL1
-	dESBEk/L4HN0QWYZ4ES7IioAAjnOAt8rYZw12Biq
-X-Coremail-Antispam: 1Uk129KBj9xXoWrZFyftr17GF1xWFy5CF4rWFX_yoWkuwbEgw
-	13ZFnak3W5GF1I93WrZwsayFn5Xw1UKas5JFyIgF9rAa4Dtwnavr18XrZrJFZrCr4UWFn8
-	Ar1xGF1UCFs8tosvyTuYvTs0mTUanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUj1kv1TuYvT
-	s0mT0YCTnIWjqI5I8CrVACY4xI64kE6c02F40Ex7xfYxn0WfASr-VFAUDa7-sFnT9fnUUI
-	cSsGvfJTRUUUbTAYFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20EY4v20x
-	vaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
-	w2x7M28EF7xvwVC0I7IYx2IY67AKxVW7JVWDJwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxV
-	WxJVW8Jr1l84ACjcxK6I8E87Iv67AKxVWUJVW8JwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
-	Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2x26I8E6xACxx1l5I
-	8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AK
-	xVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7xvr2IYc2Ij64
-	vIr40E4x8a64kEw24lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2Ij64vIr41l4I8I
-	3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxV
-	WUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAF
-	wI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcI
-	k0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j
-	6r4UJbIYCTnIWIevJa73UjIFyTuYvjxU7xwIDUUUU
+References: <20241219170425.12036-1-dakr@kernel.org> <20241219170425.12036-4-dakr@kernel.org>
+In-Reply-To: <20241219170425.12036-4-dakr@kernel.org>
+From: Tamir Duberstein <tamird@gmail.com>
+Date: Sat, 15 Mar 2025 12:52:27 -0400
+X-Gm-Features: AQ5f1Jr3qW4JM43WfoNMs9V0OgzKr9fN_4HpoGcmMxFqsIJ2AosKUujuVF5CQVY
+Message-ID: <CAJ-ks9nnQU4ryR1mbaWqNqcH+b=-s8Y0xKxTF-TQvfNGsWO7+w@mail.gmail.com>
+Subject: Re: [PATCH v7 03/16] rust: implement `IdArray`, `IdTable` and `RawDeviceId`
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: gregkh@linuxfoundation.org, rafael@kernel.org, bhelgaas@google.com, 
+	ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com, 
+	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me, 
+	tmgross@umich.edu, a.hindborg@samsung.com, aliceryhl@google.com, 
+	airlied@gmail.com, fujita.tomonori@gmail.com, lina@asahilina.net, 
+	pstanner@redhat.com, ajanulgu@redhat.com, lyude@redhat.com, robh@kernel.org, 
+	daniel.almeida@collabora.com, saravanak@google.com, dirk.behme@de.bosch.com, 
+	j@jannau.net, fabien.parent@linaro.org, chrisi.schrefl@gmail.com, 
+	paulmck@kernel.org, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, 
+	devicetree@vger.kernel.org, rcu@vger.kernel.org, 
+	Wedson Almeida Filho <wedsonaf@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Previous commit 8b5c171bb3dc ("neigh: new unresolved queue limits")
-introduces new netlink attribute NDTPA_QUEUE_LENBYTES to represent
-approximative value for deprecated QUEUE_LEN. However, it forgot to add
-the associated nla_policy in nl_ntbl_parm_policy array. Fix it with one
-simple NLA_U32 type policy.
+On Thu, Dec 19, 2024 at 12:08=E2=80=AFPM Danilo Krummrich <dakr@kernel.org>=
+ wrote:
+>
+> +/// Marker trait to indicate a Rust device ID type represents a correspo=
+nding C device ID type.
+> +///
+> +/// This is meant to be implemented by buses/subsystems so that they can=
+ use [`IdTable`] to
+> +/// guarantee (at compile-time) zero-termination of device id tables pro=
+vided by drivers.
+> +///
+> +/// # Safety
+> +///
+> +/// Implementers must ensure that:
+> +///   - `Self` is layout-compatible with [`RawDeviceId::RawType`]; i.e. =
+it's safe to transmute to
+> +///     `RawDeviceId`.
+> +///
+> +///     This requirement is needed so `IdArray::new` can convert `Self` =
+to `RawType` when building
+> +///     the ID table.
+> +///
+> +///     Ideally, this should be achieved using a const function that doe=
+s conversion instead of
+> +///     transmute; however, const trait functions relies on `const_trait=
+_impl` unstable feature,
+> +///     which is broken/gone in Rust 1.73.
+> +///
+> +///   - `DRIVER_DATA_OFFSET` is the offset of context/data field of the =
+device ID (usually named
+> +///     `driver_data`) of the device ID, the field is suitable sized to =
+write a `usize` value.
+> +///
+> +///     Similar to the previous requirement, the data should ideally be =
+added during `Self` to
+> +///     `RawType` conversion, but there's currently no way to do it when=
+ using traits in const.
+> +pub unsafe trait RawDeviceId {
+> +    /// The raw type that holds the device id.
+> +    ///
+> +    /// Id tables created from [`Self`] are going to hold this type in i=
+ts zero-terminated array.
+> +    type RawType: Copy;
+> +
+> +    /// The offset to the context/data field.
+> +    const DRIVER_DATA_OFFSET: usize;
+> +
+> +    /// The index stored at `DRIVER_DATA_OFFSET` of the implementor of t=
+he [`RawDeviceId`] trait.
+> +    fn index(&self) -> usize;
+> +}
 
-Fixes: 8b5c171bb3dc ("neigh: new unresolved queue limits")
-Signed-off-by: Lin Ma <linma@zju.edu.cn>
----
-v1 -> v2: add one extra tab as suggested by Kuniyuki <kuniyu@amazon.com>
-
- net/core/neighbour.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/net/core/neighbour.c b/net/core/neighbour.c
-index bd0251bd74a1..b4f89fbb59df 100644
---- a/net/core/neighbour.c
-+++ b/net/core/neighbour.c
-@@ -2250,6 +2250,7 @@ static const struct nla_policy nl_neightbl_policy[NDTA_MAX+1] = {
- static const struct nla_policy nl_ntbl_parm_policy[NDTPA_MAX+1] = {
- 	[NDTPA_IFINDEX]			= { .type = NLA_U32 },
- 	[NDTPA_QUEUE_LEN]		= { .type = NLA_U32 },
-+	[NDTPA_QUEUE_LENBYTES]		= { .type = NLA_U32 },
- 	[NDTPA_PROXY_QLEN]		= { .type = NLA_U32 },
- 	[NDTPA_APP_PROBES]		= { .type = NLA_U32 },
- 	[NDTPA_UCAST_PROBES]		= { .type = NLA_U32 },
--- 
-2.39.0
-
+Very late to the game here, but have a question about the use of
+OFFSET here. Why is this preferred to a method that returns a pointer
+to the field?
 
