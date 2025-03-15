@@ -1,116 +1,110 @@
-Return-Path: <linux-kernel+bounces-562306-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562328-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F497A62282
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 01:05:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC891A62308
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 01:23:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3CBF97A97EE
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 00:04:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA6E3883B9A
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 00:23:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68DF8383;
-	Sat, 15 Mar 2025 00:05:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 047AC5C96;
+	Sat, 15 Mar 2025 00:22:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qmqtxevp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC589184
-	for <linux-kernel@vger.kernel.org>; Sat, 15 Mar 2025 00:05:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="fUEXWE0Z"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C3756AA7;
+	Sat, 15 Mar 2025 00:22:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741997137; cv=none; b=JhgX2ZCiJsapzETgFH8VZ8yRmwjG5vjb1o5hWttjGhyf5oHnXivl5dHjEMA1g82wuEeMggFgYbhQsH9PYad/5Zfprl3RRy8Er7yG/Lzc4E3h+LjW7pqpwZMqI+cW/70PtBw4ev3H5cTeufvZbDFpawhTPXIPL4DX89tmhAlaHko=
+	t=1741998165; cv=none; b=YBb9OzTpVgsgzPwZ+62Vv7e++yRfaVrBBj4kpPahoXXAzk9uyX1ysA3EhDoYtnmKtvpi8JGSTC46BoOe60XvzCaYwy5ZIkFrAQr+isPX7zKrdg7e+6Y/ZKK6abyeg2C7ct8vdu2ciZn82OYPseziSHp+oqiDNi90MwadHJX3cqw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741997137; c=relaxed/simple;
-	bh=M/snCJZcOTzV0RZogI1SxmL2NWqUOAdHzcd3g7E6NN0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gC7fGloVCSsg5upkIji2bSPI5hL8vPrX5aoLaxzorKKJF0U2cf8P6bobnHqNfJGVrkAx/G0VLoSRfb3CwwhHKBNjB59de2mRfo8LyGVLvgVhGI+cctKAEbqoLE0IPa8tEmQQDgP/9ltZLoCfKD5Kch4++jpCl6dIlwKBgxGaoDQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qmqtxevp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74CA9C4CEE3;
-	Sat, 15 Mar 2025 00:05:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741997137;
-	bh=M/snCJZcOTzV0RZogI1SxmL2NWqUOAdHzcd3g7E6NN0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Qmqtxevp4xo6njHI43QoCbEc5bUWxfqZTr1zrHnuO8XRC2I+qeNPj9MdAjAyhcvHe
-	 9e1MRlK1c5rkM1LhfpkUWNt6ouNqFd1RyawqBB+KhXdBIDgxI64l+uXMdv79cEJO1M
-	 TE/FZOm3Vkqsw7S6+SVPQ2CqpN3T81nFqjXthvPbkHe80fIOCdUx48XVaq9xXCv1eL
-	 zPkPNscALE/hvki/SfODm9JTgofrx40uBNwUiFnAwIWrj5BAtefB+qPNqyUsJ9mfTt
-	 AvNy3xrmfDXoA/M+g9Nf/WW87jTojXOXONF8f1yiRZPMgNCpCoRU0rb1Pi31Ok2LES
-	 DbPq7rVdIkj6Q==
-Date: Fri, 14 Mar 2025 17:05:34 -0700
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org, 
-	Peter Zijlstra <peterz@infradead.org>, Borislav Petkov <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>, 
-	Uros Bizjak <ubizjak@gmail.com>, Andrew Cooper <andrew.cooper3@citrix.com>, 
-	Ingo Molnar <mingo@kernel.org>
-Subject: Re: [PATCH 14/20] x86/barrier: Use alternative_io() in 32-bit
- barrier functions
-Message-ID: <zfabhk7c3fucov7lpfsqf5bj7iie5324ccgn4ingzzakoyhl4u@fzg364keuphn>
-References: <cover.1741988314.git.jpoimboe@kernel.org>
- <1c2fe7f93c4dd8a87c2e1fa8b780a8a2968be445.1741988314.git.jpoimboe@kernel.org>
- <CAHk-=wjtvTPERDdrok2kDrSSFBjqHCCNVff95VVxhvP6wCC6jg@mail.gmail.com>
+	s=arc-20240116; t=1741998165; c=relaxed/simple;
+	bh=u8l3PPVo1Iiwb1ppHvpxF+S0AOUWGysoAo1JGL6uZZs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AqY7/BxdsaaxfCtgZjfZdVpZa4Bsg9Uv2eQMYLjhfd33FtZFKYbg7fEJYgMlUJRvs3RKg+YQB8moPptSzpKpZTUS/vSyGB+D4Ns+NFiYFErPLFQo6uv7UB4iqTH8JhUCXYhOqKyKSB572gepZbwWctcpN0nZIuqzYOgP0HO5qxA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=fUEXWE0Z; arc=none smtp.client-ip=220.197.31.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:
+	Content-Type; bh=109cFpcIHKvu71FujjmyGI5jYN6yUHpbo8pR6s+BNkA=;
+	b=fUEXWE0Z09WGc3M4wIMUbUjVKHU3sXa5Bon5RARqBp8quXhrJclZdTDB6Q2u3F
+	GA65sPiqd5eSghFK8+VIItlm1EB3Q8MQ2L5y72iCcvI7G7YHwf83TkVibukw2YF6
+	/u02GfCuD/BMf3H8OSowNMCX3PyuzB7B4nVMo1obPx+XU=
+Received: from [192.168.71.45] (unknown [])
+	by gzsmtp2 (Coremail) with SMTP id PSgvCgD3VwCcxNRnRjVaLA--.1942S2;
+	Sat, 15 Mar 2025 08:06:53 +0800 (CST)
+Message-ID: <88a44822-9b1a-4d59-a4ce-926d12f73147@163.com>
+Date: Sat, 15 Mar 2025 08:06:52 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wjtvTPERDdrok2kDrSSFBjqHCCNVff95VVxhvP6wCC6jg@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [v2] PCI: cadence: Add configuration space capability search API
+To: Bjorn Helgaas <helgaas@kernel.org>,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: Siddharth Vadapalli <s-vadapalli@ti.com>, lpieralisi@kernel.org,
+ kw@linux.com, robh@kernel.org, bhelgaas@google.com, bwawrzyn@cisco.com,
+ thomas.richard@bootlin.com, wojciech.jasko-EXT@continental-corporation.com,
+ linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250314203157.GA793598@bhelgaas>
+Content-Language: en-US
+From: Hans Zhang <18255117159@163.com>
+In-Reply-To: <20250314203157.GA793598@bhelgaas>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:PSgvCgD3VwCcxNRnRjVaLA--.1942S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7uryUuFW8Wr4UZF1xGFW3Wrg_yoW8Xry8pr
+	W2qry3tF48JF43CFn7tay8tFySgwsrXasrtan5CrWDZws8W3saqFWvy345tFZrJr1rZr4Y
+	vFWUWa4kJ3s0vaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07U9vtZUUUUU=
+X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/1tbiWxQRo2fUwmM+BQAAsU
 
-On Fri, Mar 14, 2025 at 01:49:48PM -1000, Linus Torvalds wrote:
-> So all of these patches look like good cleanups to me, but I do wonder
-> if we should
+
+
+On 2025/3/15 04:31, Bjorn Helgaas wrote:
+> On Fri, Mar 14, 2025 at 06:35:11PM +0530, Manivannan Sadhasivam wrote:
+>> ...
 > 
->  (a) not use some naming *quite* as generic as 'ARG()'
+>> Even though this patch is mostly for an out of tree controller
+>> driver which is not going to be upstreamed, the patch itself is
+>> serving some purpose. I really like to avoid the hardcoded offsets
+>> wherever possible. So I'm in favor of this patch.
+>>
+>> However, these newly introduced functions are a duplicated version
+>> of DWC functions. So we will end up with duplicated functions in
+>> multiple places. I'd like them to be moved (both this and DWC) to
+>> drivers/pci/pci.c if possible. The generic function
+>> *_find_capability() can accept the controller specific readl/ readw
+>> APIs and the controller specific private data.
 > 
->  (b) make the asms use ARG_OUT/ARG_IN/ARG_CLOBBER() to clarify
+> I agree, it would be really nice to share this code.
 > 
-> because that ARG(), ARG(), ARGC() pattern looks odd to me.
+> It looks a little messy to deal with passing around pointers to
+> controller read ops, and we'll still end up with a lot of duplicated
+> code between __pci_find_next_cap() and __cdns_pcie_find_next_cap(),
+> etc.
 > 
-> Maybe it's just me.
+> Maybe someday we'll make a generic way to access non-PCI "config"
+> space like this host controller space and PCIe RCRBs.
 > 
-> Regardless, I do think the series looks like a nice improvement even
-> in the current form, even if that particular repeated pattern feels
-> strange.
+> Or if you add interfaces that accept read/write ops, maybe the
+> existing pci_find_capability() etc could be refactored on top of them
+> by passing in pci_bus_read_config_word() as the accessor.
+> 
 
-So originally I had ASM_OUTPUT/ASM_INPUT/ASM_CLOBBER, but I ended up
-going with ARG() due to its nice vertical alignment and conciseness:
+Hi Bjorn,
 
+I have already replied to an email, please help review whether it is 
+appropriate.
 
-	__asm_call(qual,						\
-		ALTERNATIVE("call this_cpu_cmpxchg8b_emu",		\
-			    "cmpxchg8b " __percpu_arg([var]),		\
-			    X86_FEATURE_CX8),				\
-		ARG([var] "+m" (__my_cpu_var(_var)), "+a" (old__.low),	\
-		    "+d" (old__.high)),					\
-		ARG("b" (new__.low), "c" (new__.high), "S" (&(_var))),	\
-		ARG("memory"));						\
+Best regards,
+Hans
 
-
-Though ASM_OUTPUT/ASM_INPUT/ASM_CLOBBER isn't so bad either:
-
-	__asm_call(qual,						\
-		ALTERNATIVE("call this_cpu_cmpxchg8b_emu",		\
-			    "cmpxchg8b " __percpu_arg([var]),		\
-			    X86_FEATURE_CX8),				\
-		ASM_OUTPUT([var] "+m" (__my_cpu_var(_var)),		\
-			   "+a" (old__.low), "+d" (old__.high)),	\
-		ASM_INPUT("b" (new__.low), "c" (new__.high),		\
-			  "S" (&(_var))),				\
-		ASM_CLOBBER("memory"));					\
-
-
-That has the nice benefit of being more self-documenting, albeit more
-verbose and less vertically aligned.
-
-So I could go either way, really.
-
--- 
-Josh
 
