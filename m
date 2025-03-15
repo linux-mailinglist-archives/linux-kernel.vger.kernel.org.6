@@ -1,115 +1,138 @@
-Return-Path: <linux-kernel+bounces-562391-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562392-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4B6BA62534
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 04:11:07 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03939A62535
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 04:12:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9B6DD7A9C35
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 03:09:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 08F3119C560B
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 03:12:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C31D18B484;
-	Sat, 15 Mar 2025 03:10:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KOi42XZ2"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C6FE1898E9;
+	Sat, 15 Mar 2025 03:12:08 +0000 (UTC)
+Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [63.216.63.40])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25EAD178CF8
-	for <linux-kernel@vger.kernel.org>; Sat, 15 Mar 2025 03:10:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9D5B178CF8
+	for <linux-kernel@vger.kernel.org>; Sat, 15 Mar 2025 03:12:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.216.63.40
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742008252; cv=none; b=gTJnaXRSlbvMy+n1PpUil+zxbOvcd/EjHEBc/Fh4+OlTQH+MekL5GmCBG8xH2bKa/Q2fERMjqbQvMfoXZEXRgTcIKDbKdGtlcX9ieJDHqeD9xt1c6iwvtqyWnYygzUr2tTWIHJX1wKV84PEOzbXP8IqWWNO6ww/rrBmzyyX5Z98=
+	t=1742008328; cv=none; b=oDY2hhs4qBD/XJbkUZn0VK4yjwuWhGx9TnrqWF1Roaui5t2RoOJ05Fw01EeiRtZCx/N6qjix7S1fyEnwU33wmDh94J3l1aKO+lNEglVhLLPpGxk3/9FPDtLLKRbmmIkjObkyEWKQwY5SqI9PbI9xlri99B+xZhws4OmkzUprf0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742008252; c=relaxed/simple;
-	bh=OLizbiH//ZIur3H0hcedWvPa4Ex9i8tuAXKdIf0Ss7w=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=jZLlIC4r/6vpkqlzU0eUp3bMZ1RIaFPwj0ipC+c0KBVXPdLgOoSNTNwVC5nc4Y5P26MrXg/1WwPGc6U23LGCSuhwiN8DGyZ5jupA4rZW1m7UvZhYX07hj2kUgYSPk9blJ0R/XaIx8eSW9s42eHl39Ue5J6xmJb/dLAYJTuvTGQY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=KOi42XZ2; arc=none smtp.client-ip=209.85.214.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-223d86b4df0so52422335ad.3
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 20:10:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1742008250; x=1742613050; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:reply-to:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=y7gds+58q6+VRF9HZlaEhINqjYzInTmh9/a/W9pln2U=;
-        b=KOi42XZ2u5uvi6nqRmvHASR8zDrMWjF7LB+fhH/t49jA5PgvZ5cvzFR/gk4vOwZn8b
-         I50xzl6J4rEWzz41uH7sdmmy/ItKlOtt12h0zMGUNLmB7T2V5AsMLwPgIRkgRIntJpF+
-         O1OpWzHsKfdvw5palZxxoWjWraZDiQD9Q+nkWBvxtkoqF/x+PqrrfNfZKJ+hLBXEDe8K
-         RRzv2MF8DPsPdc3OO4cNEb9WK6i9ZYDiU3ODsw0ni81crkaq0+Sa403Hiaonip9lR9lW
-         iYCtAEiLUZjKELvSNhxfUI275B6PaEWzpnV1YrRn8FsOlfaPY1v5olcbYXGPt1jTvFqD
-         whNA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742008250; x=1742613050;
-        h=cc:to:from:subject:message-id:mime-version:date:reply-to
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=y7gds+58q6+VRF9HZlaEhINqjYzInTmh9/a/W9pln2U=;
-        b=diaWk3jCHq72Zl/iEVYUl1UIduGznx/bHzNF05R3/QXyI4LGF0RHkrnkLDe5wu1YwB
-         jPpG091LsPeNdKUtHqRP56+sOMN1NUwL0iheEawFytYsz0WRzdC05MiyMUR9vArQCpRt
-         SfJd5KpwPReqbezP0TDwm/WO/3fafvqI353a8VhNIo4R260MRffxZUU50oXZ5zL4MKxr
-         xBxiCE3JWUdxi+Y1LZPZCF5ZEu40e94iXsJkvg+BRdeHSaWy3HCI/leEFfzWnOhDitHL
-         4c25HjjeDaTxJdTIOtGoxAjoUOnMgq04zcIHdfYaAkwos+hkGyXP2HpJdv0TThQPih8Y
-         XI8A==
-X-Forwarded-Encrypted: i=1; AJvYcCXeR3H+PgU+rYn4S+a4lXMkosjFF8JYl6bd1G43fPMvEyOEoSGtCOdToi1UDveLwUDJezzzBGES9lT2CKE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyaFcS3ohQKbIwLrqsU+o5rW35Nf42N62Qkrq+y/vjDWSstGdxL
-	is5KMNx4lNjfsjBD3FCgenlF6AycqxXQwKfxpT+Tn5s+CAf4bE1c+KDLK5eFVhfNqj1jpVIsiaw
-	GIw==
-X-Google-Smtp-Source: AGHT+IH7AfjlFM7Z9PNPtzJaUSCYK7f83WWLXt8NM7UXP61+YAys7SZHeLCK+pprtrBAnSdJ0yquC3LZQhQ=
-X-Received: from pjwx4.prod.google.com ([2002:a17:90a:c2c4:b0:2f5:63a:4513])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:1b6d:b0:223:fd7f:2752
- with SMTP id d9443c01a7336-225e0a954abmr60595725ad.29.1742008250480; Fri, 14
- Mar 2025 20:10:50 -0700 (PDT)
-Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Fri, 14 Mar 2025 20:10:48 -0700
+	s=arc-20240116; t=1742008328; c=relaxed/simple;
+	bh=Bc0/NYe34crgTMtDQs2p8Qnh6lkzTZtRuifwdVXzd98=;
+	h=Date:Message-ID:Mime-Version:From:To:Cc:Subject:Content-Type; b=Pdj/ApYmYT0BifxBMxcBsFURtohG89RTGyyDUoy6CpCu66fVUvQXmc3lSUIKNBfFZdyUef8JV0jDf9hWA0/tMKMbHkjAWxAW25f9TQS8mvsKMkfudwFPsQSvxIEF9jOd0SfAPHgtVBTj2EMwgPqRVwGUy6sKQXJkilrqnCDL0k8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=63.216.63.40
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
+Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4ZF5qv6lNyz8QrkZ;
+	Sat, 15 Mar 2025 11:11:55 +0800 (CST)
+Received: from xaxapp04.zte.com.cn ([10.99.98.157])
+	by mse-fl1.zte.com.cn with SMTP id 52F3Bi9W043131;
+	Sat, 15 Mar 2025 11:11:44 +0800 (+08)
+	(envelope-from feng.wei8@zte.com.cn)
+Received: from mapi (xaxapp02[null])
+	by mapi (Zmail) with MAPI id mid32;
+	Sat, 15 Mar 2025 11:11:45 +0800 (CST)
+Date: Sat, 15 Mar 2025 11:11:45 +0800 (CST)
+X-Zmail-TransId: 2afa67d4eff1359-b71fd
+X-Mailer: Zmail v1.0
+Message-ID: <20250315111145865z64IAaowsh-ET7-jNitd9@zte.com.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-X-Mailer: git-send-email 2.49.0.rc1.451.g8f38331e32-goog
-Message-ID: <20250315031048.2374109-1-seanjc@google.com>
-Subject: [PATCH] iommu/amd: Ensure GA log notifier callbacks finish running
- before module unload
-From: Sean Christopherson <seanjc@google.com>
-To: Joerg Roedel <joro@8bytes.org>
-Cc: iommu@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	Sean Christopherson <seanjc@google.com>
-Content-Type: text/plain; charset="UTF-8"
+From: <feng.wei8@zte.com.cn>
+To: <kbusch@kernel.org>
+Cc: <james.smart@broadcom.com>, <axboe@kernel.dk>, <hch@lst.de>,
+        <sagi@grimberg.me>, <linux-nvme@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: =?UTF-8?B?W1BBVENIXSBudm1lLWZjOiBSZXBsYWNlIG5lc3RlZCBtaW4oKSB3aXRoIHNpbmdsZSBtaW4zKCk=?=
+Content-Type: multipart/mixed;
+	boundary="=====_001_next====="
+X-MAIL:mse-fl1.zte.com.cn 52F3Bi9W043131
+X-Fangmail-Anti-Spam-Filtered: true
+X-Fangmail-MID-QID: 67D4EFFB.003/4ZF5qv6lNyz8QrkZ
 
-Synchronize RCU when unregistering KVM's GA log notifier to ensure all
-in-flight interrupt handlers complete before KVM-the module is unloaded.
 
-Signed-off-by: Sean Christopherson <seanjc@google.com>
----
- drivers/iommu/amd/iommu.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
 
-diff --git a/drivers/iommu/amd/iommu.c b/drivers/iommu/amd/iommu.c
-index b48a72bd7b23..b314523d9194 100644
---- a/drivers/iommu/amd/iommu.c
-+++ b/drivers/iommu/amd/iommu.c
-@@ -982,6 +982,14 @@ int amd_iommu_register_ga_log_notifier(int (*notifier)(u32))
- {
- 	iommu_ga_log_notifier = notifier;
- 
-+	/*
-+	 * Ensure all in-flight IRQ handlers run to completion before returning
-+	 * to the caller, e.g. to ensure module code isn't unloaded while it's
-+	 * being executed in the IRQ handler.
-+	 */
-+	if (!notifier)
-+		synchronize_rcu();
-+
- 	return 0;
- }
- EXPORT_SYMBOL(amd_iommu_register_ga_log_notifier);
+--=====_001_next=====
+Content-Type: multipart/related;
+	boundary="=====_002_next====="
 
-base-commit: ea9bd29a9c0d757b3384ae3e633e6bbaddf00725
--- 
-2.49.0.rc1.451.g8f38331e32-goog
+
+--=====_002_next=====
+Content-Type: multipart/alternative;
+	boundary="=====_003_next====="
+
+
+--=====_003_next=====
+Content-Type: text/plain;
+	charset="UTF-8"
+Content-Transfer-Encoding: base64
+
+RnJvbTogRmVuZ1dlaSA8ZmVuZy53ZWk4QHp0ZS5jb20uY24+DQoNClVzZSBtaW4zKCkgbWFjcm8g
+aW5zdGVhZCBvZiBuZXN0aW5nIG1pbigpDQoNClNpZ25lZC1vZmYtYnk6IEZlbmdXZWkgPGZlbmcu
+d2VpOEB6dGUuY29tLmNuPg0KLS0tDQogZHJpdmVycy9udm1lL2hvc3QvZmMuYyB8IDIgKy0NCiAx
+IGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKyksIDEgZGVsZXRpb24oLSkNCg0KZGlmZiAtLWdp
+dCBhL2RyaXZlcnMvbnZtZS9ob3N0L2ZjLmMgYi9kcml2ZXJzL252bWUvaG9zdC9mYy5jDQppbmRl
+eCBiOTkyOWE1YTdmNGUuLmI1YmQ1ODYzOTE1NCAxMDA2NDQNCi0tLSBhL2RyaXZlcnMvbnZtZS9o
+b3N0L2ZjLmMNCisrKyBiL2RyaXZlcnMvbnZtZS9ob3N0L2ZjLmMNCkBAIC0yOTEyLDcgKzI5MTIs
+NyBAQCBudm1lX2ZjX3JlY3JlYXRlX2lvX3F1ZXVlcyhzdHJ1Y3QgbnZtZV9mY19jdHJsICpjdHJs
+KQ0KIAl1bnNpZ25lZCBpbnQgbnJfaW9fcXVldWVzOw0KIAlpbnQgcmV0Ow0KIA0KLQlucl9pb19x
+dWV1ZXMgPSBtaW4obWluKG9wdHMtPm5yX2lvX3F1ZXVlcywgbnVtX29ubGluZV9jcHVzKCkpLA0K
+Kwlucl9pb19xdWV1ZXMgPSBtaW4zKG9wdHMtPm5yX2lvX3F1ZXVlcywgbnVtX29ubGluZV9jcHVz
+KCksDQogCQkJCWN0cmwtPmxwb3J0LT5vcHMtPm1heF9od19xdWV1ZXMpOw0KIAlyZXQgPSBudm1l
+X3NldF9xdWV1ZV9jb3VudCgmY3RybC0+Y3RybCwgJm5yX2lvX3F1ZXVlcyk7DQogCWlmIChyZXQp
+IHsNCi0tIA0KMi4yNS4x
+
+
+--=====_003_next=====
+Content-Type: text/html ;
+	charset="UTF-8"
+Content-Transfer-Encoding: base64
+
+PGRpdiBjbGFzcz0iemNvbnRlbnRSb3ciPjxwPkZyb206IEZlbmdXZWkgJmx0O2Zlbmcud2VpOEB6
+dGUuY29tLmNuJmd0Ozxicj48L3A+PHA+PGJyPjwvcD48cD5Vc2UgbWluMygpIG1hY3JvIGluc3Rl
+YWQgb2YgbmVzdGluZyBtaW4oKTwvcD48cD48YnI+PC9wPjxwPlNpZ25lZC1vZmYtYnk6IEZlbmdX
+ZWkgJmx0O2Zlbmcud2VpOEB6dGUuY29tLmNuJmd0OzwvcD48cD4tLS08L3A+PHA+Jm5ic3A7ZHJp
+dmVycy9udm1lL2hvc3QvZmMuYyB8IDIgKy08L3A+PHA+Jm5ic3A7MSBmaWxlIGNoYW5nZWQsIDEg
+aW5zZXJ0aW9uKCspLCAxIGRlbGV0aW9uKC0pPC9wPjxwPjxicj48L3A+PHA+ZGlmZiAtLWdpdCBh
+L2RyaXZlcnMvbnZtZS9ob3N0L2ZjLmMgYi9kcml2ZXJzL252bWUvaG9zdC9mYy5jPC9wPjxwPmlu
+ZGV4IGI5OTI5YTVhN2Y0ZS4uYjViZDU4NjM5MTU0IDEwMDY0NDwvcD48cD4tLS0gYS9kcml2ZXJz
+L252bWUvaG9zdC9mYy5jPC9wPjxwPisrKyBiL2RyaXZlcnMvbnZtZS9ob3N0L2ZjLmM8L3A+PHA+
+QEAgLTI5MTIsNyArMjkxMiw3IEBAIG52bWVfZmNfcmVjcmVhdGVfaW9fcXVldWVzKHN0cnVjdCBu
+dm1lX2ZjX2N0cmwgKmN0cmwpPC9wPjxwPiZuYnNwOzxzcGFuIHN0eWxlPSJ3aGl0ZS1zcGFjZTpw
+cmUiPgk8L3NwYW4+dW5zaWduZWQgaW50IG5yX2lvX3F1ZXVlczs8L3A+PHA+Jm5ic3A7PHNwYW4g
+c3R5bGU9IndoaXRlLXNwYWNlOnByZSI+CTwvc3Bhbj5pbnQgcmV0OzwvcD48cD4mbmJzcDs8L3A+
+PHA+LTxzcGFuIHN0eWxlPSJ3aGl0ZS1zcGFjZTpwcmUiPgk8L3NwYW4+bnJfaW9fcXVldWVzID0g
+bWluKG1pbihvcHRzLSZndDtucl9pb19xdWV1ZXMsIG51bV9vbmxpbmVfY3B1cygpKSw8L3A+PHA+
+KzxzcGFuIHN0eWxlPSJ3aGl0ZS1zcGFjZTpwcmUiPgk8L3NwYW4+bnJfaW9fcXVldWVzID0gbWlu
+MyhvcHRzLSZndDtucl9pb19xdWV1ZXMsIG51bV9vbmxpbmVfY3B1cygpLDwvcD48cD4mbmJzcDs8
+c3BhbiBzdHlsZT0id2hpdGUtc3BhY2U6cHJlIj4JCQkJPC9zcGFuPmN0cmwtJmd0O2xwb3J0LSZn
+dDtvcHMtJmd0O21heF9od19xdWV1ZXMpOzwvcD48cD4mbmJzcDs8c3BhbiBzdHlsZT0id2hpdGUt
+c3BhY2U6cHJlIj4JPC9zcGFuPnJldCA9IG52bWVfc2V0X3F1ZXVlX2NvdW50KCZhbXA7Y3RybC0m
+Z3Q7Y3RybCwgJmFtcDtucl9pb19xdWV1ZXMpOzwvcD48cD4mbmJzcDs8c3BhbiBzdHlsZT0id2hp
+dGUtc3BhY2U6cHJlIj4JPC9zcGFuPmlmIChyZXQpIHs8L3A+PHA+LS0mbmJzcDs8L3A+PHA+Mi4y
+NS4xPC9wPjxwIHN0eWxlPSJmb250LXNpemU6MTRweDtmb250LWZhbWlseTrlvq7ova/pm4Xpu5Es
+TWljcm9zb2Z0IFlhSGVpOyI+PGJyPjwvcD48cCBzdHlsZT0iZm9udC1zaXplOjE0cHg7Zm9udC1m
+YW1pbHk65b6u6L2v6ZuF6buRLE1pY3Jvc29mdCBZYUhlaTsiPjxicj48L3A+PHAgc3R5bGU9ImZv
+bnQtc2l6ZToxNHB4O2ZvbnQtZmFtaWx5OuW+rui9r+mbhem7kSxNaWNyb3NvZnQgWWFIZWk7Ij48
+YnI+PC9wPjxwIHN0eWxlPSJmb250LXNpemU6MTRweDtmb250LWZhbWlseTrlvq7ova/pm4Xpu5Es
+TWljcm9zb2Z0IFlhSGVpOyI+PGJyPjwvcD48L2Rpdj4=
+
+
+--=====_003_next=====--
+
+--=====_002_next=====--
+
+--=====_001_next=====--
 
 
