@@ -1,117 +1,153 @@
-Return-Path: <linux-kernel+bounces-562764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46971A63292
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 22:13:08 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C84BA63296
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 22:22:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C44F83B5984
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 21:12:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9BB03172CE8
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 21:22:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8977F1A316E;
-	Sat, 15 Mar 2025 21:13:00 +0000 (UTC)
-Received: from bmailout3.hostsharing.net (bmailout3.hostsharing.net [176.9.242.62])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E07B71A2545;
+	Sat, 15 Mar 2025 21:22:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lNk1et1n"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80EE1197A8E;
-	Sat, 15 Mar 2025 21:12:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=176.9.242.62
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 462F819CC06;
+	Sat, 15 Mar 2025 21:22:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742073180; cv=none; b=q5VDmYCnlUoVWb4klJCLGtPSe8MxgHO9bTRIB5B7ofsNW6vPeT3mV5AJB6+hu8tOHHOtxP9MKLbXR3adk1WsQjWcKi0yMjY+d1JFNgo9+jBJQPCO2opWyaa2S373IqR9AteeLy+ZN9/Z3DhFRtRA79kmlI+GBZ6aV8xSAINectM=
+	t=1742073766; cv=none; b=KHInpcZYDZNpRkbVgasFLhu2GM7eCDppeg7aBd/ehNitDB0NDkniVMwc82GRINnVd3uvjJGjOFbEtY6GCf6ahWeVVtapIVEISzHKair6YHjXlIwoBY72k9zqZdVudAxmdiW+g+owKsCumXEoYXIE+s19W3jP1Ldyn2+Orsa6jMQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742073180; c=relaxed/simple;
-	bh=DgGL/JgFUQpUq9OIXVfSqWVLaGTnhUc8MCtaagt/zX4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UlBGem9h9BrPpuUWV2VhJBObORKOMFy9hIlztCTSfAMxbnGZ+z4tG2pfExB1xoEpj7iVzHWdSIX283ibNkD+2nT61CkZSj/b7PPz/ljdD+13HpnbJ8yvTGVeiWjWtHIKX0t1/LVa9n1piWI8TlPikKz/+5qb2uujw32vczxEFH4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=176.9.242.62
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
-Received: from h08.hostsharing.net (h08.hostsharing.net [IPv6:2a01:37:1000::53df:5f1c:0])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
-	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
-	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
-	by bmailout3.hostsharing.net (Postfix) with ESMTPS id 6E713100DA1BC;
-	Sat, 15 Mar 2025 22:12:48 +0100 (CET)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-	id 39DF711229; Sat, 15 Mar 2025 22:12:48 +0100 (CET)
-Date: Sat, 15 Mar 2025 22:12:48 +0100
-From: Lukas Wunner <lukas@wunner.de>
-To: proxy0@tutamail.com
-Cc: Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Linux Pci <linux-pci@vger.kernel.org>,
-	Guenter Roeck <groeck@juniper.net>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-	Rajat Jain <rajatxjain@gmail.com>,
-	Linux Kernel <linux-kernel@vger.kernel.org>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Stable <stable@vger.kernel.org>
-Subject: Re: [PATCH 1/4] PCI/hotplug: Disable HPIE over reset
-Message-ID: <Z9XtUH55s9OZAPvK@wunner.de>
-References: <20250313142333.5792-1-ilpo.jarvinen@linux.intel.com>
- <20250313142333.5792-2-ilpo.jarvinen@linux.intel.com>
- <Z9Wjk2GzrSURZoTG@wunner.de>
- <OLQ9qyD--F-9@tutamail.com>
+	s=arc-20240116; t=1742073766; c=relaxed/simple;
+	bh=mxAXTV07GI1BxRK/PFQ2TxeRjmjuhs+0fhO3LzDL5C8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pvAT0H4cwtvH5PRnpLNv+OnUusKCco3JSRwk6o3q2u6l87qrijbTSxgekKGyOAUvNFwHsZSmKA2KsWSd/p/8UKPOZ7l2+J9FA4jm3pw734YFmn3Yl5j43Tum8X5XkkKovwk0eyCNRYabxIN3+XYvEkXoy0q2ZUjRzJ4oO7QVOjA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lNk1et1n; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9E9EC4CEE5;
+	Sat, 15 Mar 2025 21:22:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742073765;
+	bh=mxAXTV07GI1BxRK/PFQ2TxeRjmjuhs+0fhO3LzDL5C8=;
+	h=From:To:Cc:Subject:Date:From;
+	b=lNk1et1ny/JjqGvrXTCgEH22Ux2mMbwccn4MNEAMAO4c4JEwk2xdpR7xyXWhpaZoV
+	 bpHqz3kiFKE5puA/7IF40kOV9jD9AXEyTBt38sO7lxGXDSLPAEXJ1SglhSmgnjNtGm
+	 SM3dVQuKqdnHDDS8UZzJOjY5lyAJNHF5Od8aWNv1e8kf0AVxNafDO0lV8/GZ/L2iw7
+	 uTp8zXhvOEtKmOd2DIAhdd3UGEOby3/1J35ap6Z4j4lVpMLsuFPwczIJlHf+9Jd5b1
+	 92pJaLCVQtTQUTw9XUbkTuLW8LvuQ95zMVQMxCFuGul58d5LOyrZ8VUSLknPDn+F+/
+	 12v0qCXzKgGqw==
+From: Miguel Ojeda <ojeda@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>,
+	rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] Rust fixes for 6.14 (3rd)
+Date: Sat, 15 Mar 2025 22:22:32 +0100
+Message-ID: <20250315212232.2360641-1-ojeda@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <OLQ9qyD--F-9@tutamail.com>
+Content-Transfer-Encoding: 8bit
 
-On Sat, Mar 15, 2025 at 07:57:55PM +0100, proxy0@tutamail.com wrote:
-> Mar 15, 2025, 9:28 PM by lukas@wunner.de:
-> > After dwelling on this for a while, I'm thinking that it may re-introduce
-> > the issue fixed by commit f5eff5591b8f ("PCI: pciehp: Fix AB-BA deadlock
-> > between reset_lock and device_lock"):
-> >
-> > Looking at the second and third stack trace in its commit message,
-> > down_write(reset_lock) in pciehp_reset_slot() is basically equivalent
-> > to synchronize_irq() and we're holding device_lock() at that point,
-> > hindering progress of pciehp_ist().
-> >
-> > So I think I have guided you in the wrong direction and I apologize
-> > for that.
-> >
-> > However it seems to me that this should be solvable with the small
-> > patch below.  Am I missing something?
-> >
-> > @Joel Mathew Thomas, could you give the below patch a spin and see
-> > if it helps?
-> 
-> I've tested the patch series along with the additional patch provided.
-> 
-> Kernel: 6.14.0-rc6-00043-g3571e8b091f4-dirty-pci-hotplug-reset-fixes-eventmask-fix
-> 
-> Patches applied:
-> - [PATCH 1/4] PCI/hotplug: Disable HPIE over reset
-> - [PATCH 2/4] PCI/hotplug: Clearing HPIE for the duration of reset is enough
-> - [PATCH 3/4] PCI/hotplug: reset_lock is not required synchronizing with irq thread
-> - [PATCH 4/4] PCI/hotplug: Don't enable HPIE in poll mode
-> - The latest patch from you:
-> +	/* Ignore events masked by pciehp_reset_slot(). */
-> +	events &= ctrl->slot_ctrl;
-> +	if (!events)
-> +		return IRQ_HANDLED;
+Hi Linus,
 
-Could you test *only* the quoted diff, i.e. without patches [1/4] - [4/4],
-on top of a recent kernel?
+Please pull these fixes for Rust (third round).
 
-Sorry for not having been clear about this.
+All commits have been in linux-next for at least two rounds.
 
-I believe that patch [1/4] will re-introduce a deadlock we've
-already fixed two years ago, so the small diff above seeks to
-replace it with a simpler approach that will hopefully avoid
-the issue as well.
+No conflicts expected.
 
-Thanks,
+Thanks!
 
-Lukas
+Cheers,
+Miguel
+
+The following changes since commit 7eb172143d5508b4da468ed59ee857c6e5e01da6:
+
+  Linux 6.14-rc5 (2025-03-02 11:48:20 -0800)
+
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/ojeda/linux.git tags/rust-fixes-6.14-3
+
+for you to fetch changes up to a1eb95d6b5f4cf5cc7b081e85e374d1dd98a213b:
+
+  scripts: generate_rust_analyzer: add uapi crate (2025-03-12 00:13:07 +0100)
+
+----------------------------------------------------------------
+Rust fixes for v6.14 (3rd)
+
+Toolchain and infrastructure:
+
+ - Disallow BTF generation with Rust + LTO.
+
+ - Improve rust-analyzer support.
+
+'kernel' crate:
+
+ - 'init' module: remove 'Zeroable' implementation for a couple types
+   that should not have it.
+
+ - 'alloc' module: fix macOS failure in host test by satisfying POSIX
+   alignment requirement.
+
+ - Add missing '\n's to 'pr_*!()' calls.
+
+And a couple other minor cleanups.
+
+----------------------------------------------------------------
+Alban Kurti (5):
+      rust: docs: add missing newline to printing macro examples
+      rust: error: add missing newline to pr_warn! calls
+      rust: init: add missing newline to pr_info! calls
+      rust: sync: add missing newline in locked_by log example
+      rust: workqueue: add missing newline to pr_info! examples
+
+Benno Lossin (1):
+      rust: init: fix `Zeroable` implementation for `Option<NonNull<T>>` and `Option<KBox<T>>`
+
+Matthew Maurer (1):
+      rust: Disallow BTF generation with Rust + LTO
+
+Miguel Ojeda (1):
+      rust: remove leftover mentions of the `alloc` crate
+
+Panagiotis Foliadis (1):
+      rust: task: fix `SAFETY` comment in `Task::wake_up`
+
+Tamir Duberstein (4):
+      rust: alloc: satisfy POSIX alignment requirement
+      scripts: generate_rust_analyzer: add missing macros deps
+      scripts: generate_rust_analyzer: add missing include_dirs
+      scripts: generate_rust_analyzer: add uapi crate
+
+ Documentation/rust/quick-start.rst  |  2 +-
+ Documentation/rust/testing.rst      |  2 +-
+ init/Kconfig                        |  2 +-
+ rust/kernel/alloc/allocator_test.rs | 18 ++++++++++
+ rust/kernel/error.rs                |  2 +-
+ rust/kernel/init.rs                 | 23 ++++++------
+ rust/kernel/init/macros.rs          |  6 ++--
+ rust/kernel/lib.rs                  |  2 +-
+ rust/kernel/sync/locked_by.rs       |  2 +-
+ rust/kernel/task.rs                 |  2 +-
+ rust/kernel/workqueue.rs            |  6 ++--
+ scripts/generate_rust_analyzer.py   | 71 ++++++++++++++++++++++---------------
+ scripts/rustdoc_test_gen.rs         |  4 +--
+ 13 files changed, 85 insertions(+), 57 deletions(-)
 
