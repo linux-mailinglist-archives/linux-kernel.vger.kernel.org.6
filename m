@@ -1,316 +1,123 @@
-Return-Path: <linux-kernel+bounces-562361-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562362-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29AC5A6249E
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 03:27:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BAAEEA624A0
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 03:28:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87BD0189D03D
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 02:27:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B218E3BFCB1
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 02:28:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80FA0185B5F;
-	Sat, 15 Mar 2025 02:27:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACB39188012;
+	Sat, 15 Mar 2025 02:28:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QKlw+IyL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="qtmfM4qs"
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5F0C53BE;
-	Sat, 15 Mar 2025 02:27:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE92A53BE;
+	Sat, 15 Mar 2025 02:28:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742005649; cv=none; b=Pa07ewCWP2SyHt80gi8c6+aH8nr6XaUVio8JAW0mLzs3KwhjshaCfjQZWk2BU6srww54tM/DAb8MVtR1dulLwGcWL2QWCShsOQ5E7cPu+qM0mxR6noFyN1O2uonvjpQcp58oJ+3hLosajc7oU7i2pyAeaHRD/oR5qcnELzBqpTc=
+	t=1742005690; cv=none; b=Ynv9AT6RaBbFbJ3U0XbAm7vgaKVg1p2DeZ9NjvHly8xTdRVJCqdYTUAh0zP9KzhLG9LOBwuPI9OapSySZIGFOHenlYFbBly01h0VvIyGwluiFa+ZMpUBplsEtGAzv5lmtKiIoUk4112v5g551HE/nXF2AgjG+rZATI1Y28PLBWE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742005649; c=relaxed/simple;
-	bh=TNSdDBcGM3JyZzxbjoqECyoKrN7mYTergGEKrQjnPxc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Eo9yUNyU9WF9kB4eDUbbHjuFIrlDDhv7uZsV3w/mH0SIrRyg9Ovkp9UMLLIY9nQCxaAPjo1j9e6Vu+spZlDf/34WKT6cKvqy4nOcYG9Cc8quCOezqP9gc1I3rgk63e1QnNNzTPfj+V1a545/XTtHlBkstyIEs41YmQNpjlBmhYs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QKlw+IyL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3BB1DC4CEE3;
-	Sat, 15 Mar 2025 02:27:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742005649;
-	bh=TNSdDBcGM3JyZzxbjoqECyoKrN7mYTergGEKrQjnPxc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QKlw+IyLB+6wXCtVSyExNDCytb6Fi/Hue/AhlffPegicPne4tRygnZZorFTIoR7N1
-	 t3gbvqz5zAKJJQZSKnAVDAfZpm2BWudi4Lb7q+Qo2XTlZDGb0nv8e1FBKoGLYOx1Wc
-	 zZeFYF7MXsR/ynpoet+lCf/kojYa9tFOwcrexINFjBNWBlhIPEs19heTEJnXm5pbUy
-	 1MMN3GKug03Ip8P/xjn0BBZTLX5wMUqV8K9rsIz2e4ZzvTYAQQFl8SX0ayuYpHqtIC
-	 qwhEJcalLx0lvDXJpV04Y0PoZV6LpJtlc20KUHJ2GBUAAZTgqXJr2Vu1kmlT2+dwqk
-	 BqTyKNsZnkPpQ==
-Date: Fri, 14 Mar 2025 19:27:26 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Swapnil Sapkal <swapnil.sapkal@amd.com>
-Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
-	irogers@google.com, james.clark@arm.com, ravi.bangoria@amd.com,
-	yu.c.chen@intel.com, mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-	rostedt@goodmis.org, vincent.guittot@linaro.org,
-	adrian.hunter@intel.com, kan.liang@linux.intel.com,
-	gautham.shenoy@amd.com, kprateek.nayak@amd.com,
-	juri.lelli@redhat.com, yangjihong@bytedance.com, void@manifault.com,
-	tj@kernel.org, sshegde@linux.ibm.com, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org, santosh.shukla@amd.com,
-	ananth.narayan@amd.com, sandipan.das@amd.com
-Subject: Re: [PATCH v3 3/8] perf sched stats: Add schedstat v17 support
-Message-ID: <Z9Tljo_cyid7NCgV@google.com>
-References: <20250311120230.61774-1-swapnil.sapkal@amd.com>
- <20250311120230.61774-4-swapnil.sapkal@amd.com>
+	s=arc-20240116; t=1742005690; c=relaxed/simple;
+	bh=EhWkbqLuC8X0igQXSA1VDU6i6kJ0/K74qi38D76ucfs=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=aKENoeK12zzz2YnN+FFfPyk2slLg7vxxAC/8KODwlhlFvnQ08I/9HOYT8SUgeItx26pT84f1OMzh4vwUpJ14oaXaLkOkXi5T0LCr5QDisV0J0pv5L+9WoKR2vIO2qoLJZBfzYKxRPZXA2hSQXFoLQvKImrChAbMRm0M3YUK+izQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=qtmfM4qs; arc=none smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 1c9b18de014511f0aae1fd9735fae912-20250315
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=oVEwhJkMaE1c0ZR1x2qKeUmBI3T/Dv0dIlW9rft+UUI=;
+	b=qtmfM4qshtKdsRRu9eZaqu4aoAEuKckhW6LuE4p1kRYkVF32ukRTuFGyUiVCBdo8O10FFDLnsvmSQFSn8mm7bm9Buy0xIFIlCbmOA2i6vF/rCc4ldzTmRAO7Q3pcTB7HN28qV6sXv/B5N1swkNDjT1d4NqD3T8pbnFn4MH30PVM=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.2.1,REQID:77e54894-8eac-45fc-b71b-33550392d67e,IP:0,UR
+	L:0,TC:0,Content:-25,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
+	:release,TS:-25
+X-CID-META: VersionHash:0ef645f,CLOUDID:520b214a-a527-43d8-8af6-bc8b32d9f5e9,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|50,EDM:-3,IP:ni
+	l,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
+	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 1c9b18de014511f0aae1fd9735fae912-20250315
+Received: from mtkmbs10n1.mediatek.inc [(172.21.101.34)] by mailgw01.mediatek.com
+	(envelope-from <hao.qin@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 1342875752; Sat, 15 Mar 2025 10:27:59 +0800
+Received: from mtkmbs13n2.mediatek.inc (172.21.101.108) by
+ mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.28; Sat, 15 Mar 2025 10:27:58 +0800
+Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
+ mtkmbs13n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1258.28 via Frontend Transport; Sat, 15 Mar 2025 10:27:57 +0800
+From: Hao Qin <hao.qin@mediatek.com>
+To: Marcel Holtmann <marcel@holtmann.org>, Johan Hedberg
+	<johan.hedberg@gmail.com>, Luiz Von Dentz <luiz.dentz@gmail.com>
+CC: Sean Wang <sean.wang@mediatek.com>, Deren Wu <deren.Wu@mediatek.com>,
+	Aaron Hou <aaron.hou@mediatek.com>, Chris Lu <chris.lu@mediatek.com>, "Steve
+ Lee" <steve.lee@mediatek.com>, linux-bluetooth
+	<linux-bluetooth@vger.kernel.org>, linux-kernel
+	<linux-kernel@vger.kernel.org>, linux-mediatek
+	<linux-mediatek@lists.infradead.org>, Hao Qin <hao.qin@mediatek.com>
+Subject: [PATCH] Bluetooth: btmtk: Remove the resetting step before downloading the fw
+Date: Sat, 15 Mar 2025 10:27:30 +0800
+Message-ID: <20250315022730.11071-1-hao.qin@mediatek.com>
+X-Mailer: git-send-email 2.18.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250311120230.61774-4-swapnil.sapkal@amd.com>
+Content-Type: text/plain
 
-On Tue, Mar 11, 2025 at 12:02:25PM +0000, Swapnil Sapkal wrote:
-> /proc/schedstat file output is standardized with version number.
-> Add support to record and raw dump v17 version layout.
-> 
-> Co-developed-by: Ravi Bangoria <ravi.bangoria@amd.com>
-> Signed-off-by: Ravi Bangoria <ravi.bangoria@amd.com>
-> Signed-off-by: Swapnil Sapkal <swapnil.sapkal@amd.com>
-> ---
->  tools/lib/perf/Makefile                     |  2 +-
->  tools/lib/perf/include/perf/event.h         | 14 +++++
->  tools/lib/perf/include/perf/schedstat-v17.h | 61 +++++++++++++++++++++
->  tools/perf/util/event.c                     |  6 ++
->  tools/perf/util/synthetic-events.c          | 15 +++++
->  5 files changed, 97 insertions(+), 1 deletion(-)
->  create mode 100644 tools/lib/perf/include/perf/schedstat-v17.h
-> 
-> diff --git a/tools/lib/perf/Makefile b/tools/lib/perf/Makefile
-> index d0506a13a97f..30712ce8b6b1 100644
-> --- a/tools/lib/perf/Makefile
-> +++ b/tools/lib/perf/Makefile
-> @@ -174,7 +174,7 @@ install_lib: libs
->  		$(call do_install_mkdir,$(libdir_SQ)); \
->  		cp -fpR $(LIBPERF_ALL) $(DESTDIR)$(libdir_SQ)
->  
-> -HDRS := bpf_perf.h core.h cpumap.h threadmap.h evlist.h evsel.h event.h mmap.h schedstat-v15.h schedstat-v16.h
-> +HDRS := bpf_perf.h core.h cpumap.h threadmap.h evlist.h evsel.h event.h mmap.h schedstat-v15.h schedstat-v16.h schedstat-v17.h
+Remove the resetting step before downloading the fw, as it may cause
+other usb devices to fail to initialise when connected during boot
+on kernels 6.11 and newer.
 
-Please put them in a separate line like
+Signed-off-by: Hao Qin <hao.qin@mediatek.com>
+---
+ drivers/bluetooth/btmtk.c | 10 ----------
+ 1 file changed, 10 deletions(-)
 
-HDRS += schedstat-v15.h schedstat-v16.h schedstat-v17.h
+diff --git a/drivers/bluetooth/btmtk.c b/drivers/bluetooth/btmtk.c
+index 68846c5bd4f7..4390fd571dbd 100644
+--- a/drivers/bluetooth/btmtk.c
++++ b/drivers/bluetooth/btmtk.c
+@@ -1330,13 +1330,6 @@ int btmtk_usb_setup(struct hci_dev *hdev)
+ 		break;
+ 	case 0x7922:
+ 	case 0x7925:
+-		/* Reset the device to ensure it's in the initial state before
+-		 * downloading the firmware to ensure.
+-		 */
+-
+-		if (!test_bit(BTMTK_FIRMWARE_LOADED, &btmtk_data->flags))
+-			btmtk_usb_subsys_reset(hdev, dev_id);
+-		fallthrough;
+ 	case 0x7961:
+ 		btmtk_fw_get_filename(fw_bin_name, sizeof(fw_bin_name), dev_id,
+ 				      fw_version, fw_flavor);
+@@ -1345,12 +1338,9 @@ int btmtk_usb_setup(struct hci_dev *hdev)
+ 						btmtk_usb_hci_wmt_sync);
+ 		if (err < 0) {
+ 			bt_dev_err(hdev, "Failed to set up firmware (%d)", err);
+-			clear_bit(BTMTK_FIRMWARE_LOADED, &btmtk_data->flags);
+ 			return err;
+ 		}
+ 
+-		set_bit(BTMTK_FIRMWARE_LOADED, &btmtk_data->flags);
+-
+ 		/* It's Device EndPoint Reset Option Register */
+ 		err = btmtk_usb_uhw_reg_write(hdev, MTK_EP_RST_OPT,
+ 					      MTK_EP_RST_IN_OUT_OPT);
+-- 
+2.18.0
 
-Thanks,
-Namhyung
-
-
->  INTERNAL_HDRS := cpumap.h evlist.h evsel.h lib.h mmap.h rc_check.h threadmap.h xyarray.h
->  
->  INSTALL_HDRS_PFX := $(DESTDIR)$(prefix)/include/perf
-> diff --git a/tools/lib/perf/include/perf/event.h b/tools/lib/perf/include/perf/event.h
-> index 8ef70799e070..0d1983ad9a41 100644
-> --- a/tools/lib/perf/include/perf/event.h
-> +++ b/tools/lib/perf/include/perf/event.h
-> @@ -469,12 +469,19 @@ struct perf_record_schedstat_cpu_v16 {
->  #undef CPU_FIELD
->  };
->  
-> +struct perf_record_schedstat_cpu_v17 {
-> +#define CPU_FIELD(_type, _name, _ver)		_type _name
-> +#include "schedstat-v17.h"
-> +#undef CPU_FIELD
-> +};
-> +
->  struct perf_record_schedstat_cpu {
->  	struct perf_event_header header;
->  	__u64			 timestamp;
->  	union {
->  		struct perf_record_schedstat_cpu_v15 v15;
->  		struct perf_record_schedstat_cpu_v16 v16;
-> +		struct perf_record_schedstat_cpu_v17 v17;
->  	};
->  	__u32			 cpu;
->  	__u16			 version;
-> @@ -492,6 +499,12 @@ struct perf_record_schedstat_domain_v16 {
->  #undef DOMAIN_FIELD
->  };
->  
-> +struct perf_record_schedstat_domain_v17 {
-> +#define DOMAIN_FIELD(_type, _name, _ver)	_type _name
-> +#include "schedstat-v17.h"
-> +#undef DOMAIN_FIELD
-> +};
-> +
->  #define DOMAIN_NAME_LEN		16
->  
->  struct perf_record_schedstat_domain {
-> @@ -504,6 +517,7 @@ struct perf_record_schedstat_domain {
->  	union {
->  		struct perf_record_schedstat_domain_v15 v15;
->  		struct perf_record_schedstat_domain_v16 v16;
-> +		struct perf_record_schedstat_domain_v17 v17;
->  	};
->  	__u16			 nr_cpus;
->  	__u8			 cpu_mask[];
-> diff --git a/tools/lib/perf/include/perf/schedstat-v17.h b/tools/lib/perf/include/perf/schedstat-v17.h
-> new file mode 100644
-> index 000000000000..851d4f1f4ecb
-> --- /dev/null
-> +++ b/tools/lib/perf/include/perf/schedstat-v17.h
-> @@ -0,0 +1,61 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +
-> +#ifdef CPU_FIELD
-> +CPU_FIELD(__u32, yld_count, v17);
-> +CPU_FIELD(__u32, array_exp, v17);
-> +CPU_FIELD(__u32, sched_count, v17);
-> +CPU_FIELD(__u32, sched_goidle, v17);
-> +CPU_FIELD(__u32, ttwu_count, v17);
-> +CPU_FIELD(__u32, ttwu_local, v17);
-> +CPU_FIELD(__u64, rq_cpu_time, v17);
-> +CPU_FIELD(__u64, run_delay, v17);
-> +CPU_FIELD(__u64, pcount, v17);
-> +#endif
-> +
-> +#ifdef DOMAIN_FIELD
-> +DOMAIN_FIELD(__u32, busy_lb_count, v17);
-> +DOMAIN_FIELD(__u32, busy_lb_balanced, v17);
-> +DOMAIN_FIELD(__u32, busy_lb_failed, v17);
-> +DOMAIN_FIELD(__u32, busy_lb_imbalance_load, v17);
-> +DOMAIN_FIELD(__u32, busy_lb_imbalance_util, v17);
-> +DOMAIN_FIELD(__u32, busy_lb_imbalance_task, v17);
-> +DOMAIN_FIELD(__u32, busy_lb_imbalance_misfit, v17);
-> +DOMAIN_FIELD(__u32, busy_lb_gained, v17);
-> +DOMAIN_FIELD(__u32, busy_lb_hot_gained, v17);
-> +DOMAIN_FIELD(__u32, busy_lb_nobusyq, v17);
-> +DOMAIN_FIELD(__u32, busy_lb_nobusyg, v17);
-> +DOMAIN_FIELD(__u32, idle_lb_count, v17);
-> +DOMAIN_FIELD(__u32, idle_lb_balanced, v17);
-> +DOMAIN_FIELD(__u32, idle_lb_failed, v17);
-> +DOMAIN_FIELD(__u32, idle_lb_imbalance_load, v17);
-> +DOMAIN_FIELD(__u32, idle_lb_imbalance_util, v17);
-> +DOMAIN_FIELD(__u32, idle_lb_imbalance_task, v17);
-> +DOMAIN_FIELD(__u32, idle_lb_imbalance_misfit, v17);
-> +DOMAIN_FIELD(__u32, idle_lb_gained, v17);
-> +DOMAIN_FIELD(__u32, idle_lb_hot_gained, v17);
-> +DOMAIN_FIELD(__u32, idle_lb_nobusyq, v17);
-> +DOMAIN_FIELD(__u32, idle_lb_nobusyg, v17);
-> +DOMAIN_FIELD(__u32, newidle_lb_count, v17);
-> +DOMAIN_FIELD(__u32, newidle_lb_balanced, v17);
-> +DOMAIN_FIELD(__u32, newidle_lb_failed, v17);
-> +DOMAIN_FIELD(__u32, newidle_lb_imbalance_load, v17);
-> +DOMAIN_FIELD(__u32, newidle_lb_imbalance_util, v17);
-> +DOMAIN_FIELD(__u32, newidle_lb_imbalance_task, v17);
-> +DOMAIN_FIELD(__u32, newidle_lb_imbalance_misfit, v17);
-> +DOMAIN_FIELD(__u32, newidle_lb_gained, v17);
-> +DOMAIN_FIELD(__u32, newidle_lb_hot_gained, v17);
-> +DOMAIN_FIELD(__u32, newidle_lb_nobusyq, v17);
-> +DOMAIN_FIELD(__u32, newidle_lb_nobusyg, v17);
-> +DOMAIN_FIELD(__u32, alb_count, v17);
-> +DOMAIN_FIELD(__u32, alb_failed, v17);
-> +DOMAIN_FIELD(__u32, alb_pushed, v17);
-> +DOMAIN_FIELD(__u32, sbe_count, v17);
-> +DOMAIN_FIELD(__u32, sbe_balanced, v17);
-> +DOMAIN_FIELD(__u32, sbe_pushed, v17);
-> +DOMAIN_FIELD(__u32, sbf_count, v17);
-> +DOMAIN_FIELD(__u32, sbf_balanced, v17);
-> +DOMAIN_FIELD(__u32, sbf_pushed, v17);
-> +DOMAIN_FIELD(__u32, ttwu_wake_remote, v17);
-> +DOMAIN_FIELD(__u32, ttwu_move_affine, v17);
-> +DOMAIN_FIELD(__u32, ttwu_move_balance, v17);
-> +#endif
-> diff --git a/tools/perf/util/event.c b/tools/perf/util/event.c
-> index 64f81e7b7f70..d09c3c99ab48 100644
-> --- a/tools/perf/util/event.c
-> +++ b/tools/perf/util/event.c
-> @@ -569,6 +569,9 @@ size_t perf_event__fprintf_schedstat_cpu(union perf_event *event, FILE *fp)
->  	} else if (version == 16) {
->  #include <perf/schedstat-v16.h>
->  		return size;
-> +	} else if (version == 17) {
-> +#include <perf/schedstat-v17.h>
-> +		return size;
->  	}
->  #undef CPU_FIELD
->  
-> @@ -647,6 +650,9 @@ size_t perf_event__fprintf_schedstat_domain(union perf_event *event, FILE *fp)
->  	} else if (version == 16) {
->  #include <perf/schedstat-v16.h>
->  		return size;
-> +	} else if (version == 17) {
-> +#include <perf/schedstat-v17.h>
-> +		return size;
->  	}
->  #undef DOMAIN_FIELD
->  
-> diff --git a/tools/perf/util/synthetic-events.c b/tools/perf/util/synthetic-events.c
-> index e9dc1e14cfea..fad0c472f297 100644
-> --- a/tools/perf/util/synthetic-events.c
-> +++ b/tools/perf/util/synthetic-events.c
-> @@ -2551,6 +2551,8 @@ static union perf_event *__synthesize_schedstat_cpu(struct io *io, __u16 version
->  #include <perf/schedstat-v15.h>
->  	} else if (version == 16) {
->  #include <perf/schedstat-v16.h>
-> +	} else if (version == 17) {
-> +#include <perf/schedstat-v17.h>
->  	}
->  #undef CPU_FIELD
->  
-> @@ -2589,6 +2591,7 @@ static union perf_event *__synthesize_schedstat_domain(struct io *io, __u16 vers
->  	int nr_cpus_avail = perf_env__nr_cpus_avail(&env);
->  	struct perf_record_schedstat_domain *ds;
->  	union perf_event *event;
-> +	size_t d_name_len = 0;
->  	char *d_name = NULL;
->  	size_t cpu_mask_len = 0;
->  	char *cpu_mask = NULL;
-> @@ -2604,6 +2607,12 @@ static union perf_event *__synthesize_schedstat_domain(struct io *io, __u16 vers
->  		return NULL;
->  
->  	ch = io__get_dec(io, &d_num);
-> +	if (version >= 17) {
-> +		if (io__getdelim(io, &d_name, &d_name_len, ' ') < 0 || !d_name_len)
-> +			return NULL;
-> +		d_name[d_name_len - 1] = '\0';
-> +		d_name_len--;
-> +	}
->  
->  	if (io__getdelim(io, &cpu_mask, &cpu_mask_len, ' ') < 0 || !cpu_mask_len)
->  		goto out;
-> @@ -2650,6 +2659,7 @@ static union perf_event *__synthesize_schedstat_domain(struct io *io, __u16 vers
->  		low = !low;
->  	}
->  
-> +	free(d_name);
->  	free(cpu_mask);
->  
->  #define DOMAIN_FIELD(_type, _name, _ver)				\
-> @@ -2665,6 +2675,8 @@ static union perf_event *__synthesize_schedstat_domain(struct io *io, __u16 vers
->  #include <perf/schedstat-v15.h>
->  	} else if (version == 16) {
->  #include <perf/schedstat-v16.h>
-> +	} else if (version == 17) {
-> +#include <perf/schedstat-v17.h>
->  	}
->  #undef DOMAIN_FIELD
->  
-> @@ -2676,6 +2688,7 @@ static union perf_event *__synthesize_schedstat_domain(struct io *io, __u16 vers
->  out_cpu_mask:
->  	free(cpu_mask);
->  out:
-> +	free(d_name);
->  	return NULL;
->  }
->  
-> @@ -2709,6 +2722,8 @@ int perf_event__synthesize_schedstat(const struct perf_tool *tool,
->  		version = 15;
->  	} else if (!strcmp(line, "version 16\n")) {
->  		version = 16;
-> +	} else if (!strcmp(line, "version 17\n")) {
-> +		version = 17;
->  	} else {
->  		pr_err("Unsupported %s version: %s", path, line + 8);
->  		goto out_free_line;
-> -- 
-> 2.43.0
-> 
 
