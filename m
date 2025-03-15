@@ -1,142 +1,125 @@
-Return-Path: <linux-kernel+bounces-562654-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562656-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BB39A62FB6
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 16:56:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EE29A62FC6
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 17:04:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 501F616CEF5
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 15:56:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D5F01899133
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 16:04:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BA99203705;
-	Sat, 15 Mar 2025 15:56:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CLdvhzir"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0741C204697;
+	Sat, 15 Mar 2025 16:04:18 +0000 (UTC)
+Received: from bmailout2.hostsharing.net (bmailout2.hostsharing.net [83.223.78.240])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBB201F790C;
-	Sat, 15 Mar 2025 15:56:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D1CA17995E;
+	Sat, 15 Mar 2025 16:04:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.78.240
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742054162; cv=none; b=uAx9wxlJGSwH4dbUa5xQocViNHSYIUOPlYKFnBnjcqHZVA9uYxVzIwCaR5LC4fTMGJ9pDLONUUUMKGssVkcGBODum04Opx/saLsljqtrfygrHXSXeXmFyP+Q/KzInr95qr6TMOLN/VCrGEot0arf7M0OBghfoYSooAvtaBydch8=
+	t=1742054657; cv=none; b=pOo8HShUWWaehZ4j+Sw5hfnNUdOaykOAAHF/3ytgYkLDXWs+r4dgK8iYO2ZyzilXXnoPQtTIxAuZUst4sW52FESmPxvXtc7GmngmYLWsaeZ1wAJ3K8sAtu8ky5xWYzqBpj257qrQJTBhXKr8XiHJYuFHbO6969tpUrD3k6VD85U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742054162; c=relaxed/simple;
-	bh=MRJjZ5O1bWjVu2eWngnjmrWJQHQGwJx7tix5FKfUILA=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=fyj87/jR0xW39Vk4RgL0nvSViH8b5RIe6PMZZtROCyJQ3yMQJR/Lj03aejkPBIv0ibKqAaKqui61Nn6zyCiSvICppNi3q44eaKcBwDxXmCAOCLYlFXYKiWJ40v+7wf3di5pc8tMzSEpYjGjLQ/6eXGXh8mb6EQik7BWuo8p8nc8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CLdvhzir; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-43cebe06e9eso4846235e9.3;
-        Sat, 15 Mar 2025 08:56:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742054159; x=1742658959; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=qHLhAyyIe2MeT11eZPTmP9X5jZJNkxRaVxiRBPcxsAY=;
-        b=CLdvhzirFJtxuIWyWbf92+Np/Wznl8lkDdCf2dXVabItEGsoFKReWPbyreYzNxbf1A
-         XVlUzitNpZ8LYVFgkyjKjmTLQ9Lxxji7SiOeYzEirqpiQ+kBL513G5nwHpm55+AoUh3r
-         mgTAVxI2VqRkSfixNCODKqvaejjnC+o9ceU7qzflcNrzkeQauDm2ABJmLotBMsaBBJwR
-         geporm2ea6vIWjXhLmW9G78oOeqQpFgSwLcg5f7ojDc/wXoZekdekKLRy/lsmbgxJ0D1
-         0CqqdMv9KlFFWc+uqv2IA/iXjSlRxmnkAt0b6sEdK+W0eCXJcQTKdvgebFJ2KZOqc1x9
-         Bejg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742054159; x=1742658959;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=qHLhAyyIe2MeT11eZPTmP9X5jZJNkxRaVxiRBPcxsAY=;
-        b=MKz8c1V4eKco9G7dc+HZWEQUk9mTb9Wz89BNL9Swofi7QloPyjahFZi7eujlMXAxdS
-         VFoOxqe6AaXNg6F3IjD3t2yvGI0ygZoPZDCdlqeM2xsIrS92Pc5T9UKdEBO7hTwwmLNZ
-         WrFBgRugCsm4VeuZG1WRNlvy/icI0ucNgKcLH9UMG25J0pCpAYvNBlKsJJtc4mFUgLXr
-         36SeEBenJxBHV8DW1o37y12+0gQT3PT5qGpjQ11rL05BN6S46WvWD/jiko161oUZXWTN
-         XotmrbROhcnO61rWJ+eiAalluOf8mXe4Ld95dReqx85kguWwLMHuf3uPv1OVgEQHOaXb
-         hnsg==
-X-Forwarded-Encrypted: i=1; AJvYcCVvuHQjTeqxuKKwvnDqGAL7KmcmmgGABTm3zPhYeMigaJZvMF3+gNGgTnZUr4oQMblR7V4QpdvPeoui@vger.kernel.org, AJvYcCXoODcsKCa0hrzUklN/Z90eb1oios2tZHwjFpPAHRILM5jEF2tXy/EmtqEhXv++1qkLE+rCSRy15vaW@vger.kernel.org
-X-Gm-Message-State: AOJu0YxIgfcuh4X+nqvf5ryvf3Wvp5GXiKeHt4rVsmT/vbFECsQ1vyyt
-	n5+h0f8xSH6Ot4RMGkrRxqDinNoFbPRM8cliR8a8XUbMhb5HuHWsW9tB5w==
-X-Gm-Gg: ASbGncttfSqUL6p+TozzKJRoKNHjGKR43J5v3d9qJhTVbIKwO9Ok3YZPDFUhRSPQjuw
-	KkfdTkuD8kkSXIHYiQNGg5pB7ucIDZVwyczViOL4bw8pkW0PXtCRSckOVrvapBF9kNHColKXvmR
-	05Zjf71gcn9zTYhfkIelSCmaSnENjGHJ8H27idfv6U00vLnNs+EF+vpyHwSkKUFKdfNRZ4ZY+zB
-	lhnokBv5ph3Mgic4vbl1Q2TdWgUdPfdyELAAMf3eTCD3aZAqPvTHoKzzHl7AtHYNATaGwEBpior
-	cHTtgpKJtQFiNdL1v9NeiiN4TS9EH+CkfZbref2Xc3CQ5RXK4+n1p0+h6mCzmdk+70viDgCC
-X-Google-Smtp-Source: AGHT+IHDnn8P0rTvJZGxr/bBa0NVdDYyh7DnEmDOEsVUcOLIyJnBFWm1Zs2TA7EjVueh9oZiZymW1Q==
-X-Received: by 2002:a05:600c:5493:b0:43c:f6c6:578c with SMTP id 5b1f17b1804b1-43d1ecc77f2mr89127045e9.15.1742054158914;
-        Sat, 15 Mar 2025 08:55:58 -0700 (PDT)
-Received: from giga-mm.home ([2a02:1210:861b:6f00:82ee:73ff:feb8:99e3])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d1fe524ccsm53978805e9.0.2025.03.15.08.55.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 15 Mar 2025 08:55:58 -0700 (PDT)
-Message-ID: <99b7f8181abda40c78bab67cb5a4b00b62851b14.camel@gmail.com>
-Subject: Re: [PATCH v13 2/3] soc: sophgo: cv1800: rtcsys: New driver
- (handling RTC only)
-From: Alexander Sverdlin <alexander.sverdlin@gmail.com>
-To: Inochi Amaoto <inochiama@gmail.com>, sophgo@lists.linux.dev, 
-	devicetree@vger.kernel.org, linux-rtc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Date: Sat, 15 Mar 2025 16:55:57 +0100
-In-Reply-To: <fuc5zzq3izowktmafrhy5vkjddydxg5673ggr64ukh7v5knjmi@r6xozjxcw7r2>
-References: <20250309202629.3516822-1-alexander.sverdlin@gmail.com>
-	 <20250309202629.3516822-3-alexander.sverdlin@gmail.com>
-	 <fuc5zzq3izowktmafrhy5vkjddydxg5673ggr64ukh7v5knjmi@r6xozjxcw7r2>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.2 
+	s=arc-20240116; t=1742054657; c=relaxed/simple;
+	bh=jCLcEAKOk+ffm3F5QK/1pdIOC2FtZ2xLKeqPv2n00MU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jc3lv0wsIGwYTKLwOTtmkUOH1ZpuGdqBCTkcmVh+0l95CSxJDVgxsmO6NlKAIRpGJvF9DH85kvJ19/EZme7PpJpp63WkB9j3PuqXuNQmcJz651o9rO1sTIxsMf//VT7is01pQAsG/E5cm3LTGTmvqMxs0C63y346yM0I2qZ3SnE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=83.223.78.240
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
+Received: from h08.hostsharing.net (h08.hostsharing.net [IPv6:2a01:37:1000::53df:5f1c:0])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
+	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
+	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
+	by bmailout2.hostsharing.net (Postfix) with ESMTPS id B71622800B4B2;
+	Sat, 15 Mar 2025 16:58:11 +0100 (CET)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+	id A15C916BB0D; Sat, 15 Mar 2025 16:58:11 +0100 (CET)
+Date: Sat, 15 Mar 2025 16:58:11 +0100
+From: Lukas Wunner <lukas@wunner.de>
+To: Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+	Guenter Roeck <groeck@juniper.net>,
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+	Rajat Jain <rajatxjain@gmail.com>,
+	Joel Mathew Thomas <proxy0@tutamail.com>,
+	linux-kernel@vger.kernel.org,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	stable@vger.kernel.org
+Subject: Re: [PATCH 1/4] PCI/hotplug: Disable HPIE over reset
+Message-ID: <Z9Wjk2GzrSURZoTG@wunner.de>
+References: <20250313142333.5792-1-ilpo.jarvinen@linux.intel.com>
+ <20250313142333.5792-2-ilpo.jarvinen@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250313142333.5792-2-ilpo.jarvinen@linux.intel.com>
 
-Hi Inochi!
+On Thu, Mar 13, 2025 at 04:23:30PM +0200, Ilpo Järvinen wrote:
+> pciehp_reset_slot() disables PDCE (Presence Detect Changed Enable) and
+> DLLSCE (Data Link Layer State Changed Enable) for the duration of reset
+> and clears the related status bits PDC and DLLSC from the Slot Status
+> register after the reset to avoid hotplug incorrectly assuming the card
+> was removed.
+> 
+> However, hotplug shares interrupt with PME and BW notifications both of
+> which can make pciehp_isr() to run despite PDCE and DLLSCE bits being
+> off. pciehp_isr() then picks PDC or DLLSC bits from the Slot Status
+> register due to the events that occur during reset and caches them into
+> ->pending_events. Later, the IRQ thread in pciehp_ist() will process
+> the ->pending_events and will assume the Link went Down due to a card
+> change (in pciehp_handle_presence_or_link_change()).
+> 
+> Change pciehp_reset_slot() to also clear HPIE (Hot-Plug Interrupt
+> Enable) as pciehp_isr() will first check HPIE to see if the interrupt
+> is not for it. Then synchronize with the IRQ handling to ensure no
+> events are pending, before invoking the reset.
 
-On Fri, 2025-03-14 at 08:51 +0800, Inochi Amaoto wrote:
-> On Sun, Mar 09, 2025 at 09:26:24PM +0100, Alexander Sverdlin wrote:
-> > Add driver for Sophgo CV1800 series SoC RTC subsystem. The RTC module
-> > comprises a 32kHz oscillator, Power-on-Reset (PoR) sub-module, HW state
-> > machine to control chip power-on, power-off and reset. Furthermore, the
-> > 8051 subsystem is located within RTCSYS including associated SRAM block=
-.
-> >=20
-> > This patch only populates RTC sub-device.
-> >=20
-> > Signed-off-by: Alexander Sverdlin <alexander.sverdlin@gmail.com>
+After dwelling on this for a while, I'm thinking that it may re-introduce
+the issue fixed by commit f5eff5591b8f ("PCI: pciehp: Fix AB-BA deadlock
+between reset_lock and device_lock"):
 
-...
+Looking at the second and third stack trace in its commit message,
+down_write(reset_lock) in pciehp_reset_slot() is basically equivalent
+to synchronize_irq() and we're holding device_lock() at that point,
+hindering progress of pciehp_ist().
 
-> > +++ b/drivers/soc/sophgo/Kconfig
-> > @@ -0,0 +1,24 @@
-> > +# SPDX-License-Identifier: GPL-2.0-only
-> > +#
-> > +# Sophgo/Cvitek SoC drivers
-> > +#
-> > +
-> > +if ARCH_SOPHGO || COMPILE_TEST
->=20
-> > +menu "Sophgo/Cvitek SoC drivers"
->=20
-> No Cvitek, only left Sophgo here.
->=20
-> > +
-> > +config SOPHGO_CV1800_RTCSYS
-> > +	tristate "Sophgo CV1800 RTC MFD"
->=20
-> > +	default y if COMPILE_TEST
->=20
-> I do not think it is necessary.
+So I think I have guided you in the wrong direction and I apologize
+for that.
 
-Maybe it should have been
+However it seems to me that this should be solvable with the small
+patch below.  Am I missing something?
 
-tristate "Sophgo CV1800 RTC MFD" if COMPILE_TEST
+@Joel Mathew Thomas, could you give the below patch a spin and see
+if it helps?
 
-like others do?
+Thanks!
 
---=20
-Alexander Sverdlin.
+-- >8 --
 
+diff --git a/drivers/pci/hotplug/pciehp_hpc.c b/drivers/pci/hotplug/pciehp_hpc.c
+index bb5a8d9f03ad..99a2ac13a3d1 100644
+--- a/drivers/pci/hotplug/pciehp_hpc.c
++++ b/drivers/pci/hotplug/pciehp_hpc.c
+@@ -688,6 +688,11 @@ static irqreturn_t pciehp_isr(int irq, void *dev_id)
+ 		return IRQ_HANDLED;
+ 	}
+ 
++	/* Ignore events masked by pciehp_reset_slot(). */
++	events &= ctrl->slot_ctrl;
++	if (!events)
++		return IRQ_HANDLED;
++
+ 	/* Save pending events for consumption by IRQ thread. */
+ 	atomic_or(events, &ctrl->pending_events);
+ 	return IRQ_WAKE_THREAD;
 
