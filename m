@@ -1,110 +1,81 @@
-Return-Path: <linux-kernel+bounces-562328-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562308-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC891A62308
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 01:23:28 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDA68A62285
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 01:07:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA6E3883B9A
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 00:23:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2DCC7174F66
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 00:07:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 047AC5C96;
-	Sat, 15 Mar 2025 00:22:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B835963D;
+	Sat, 15 Mar 2025 00:07:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="fUEXWE0Z"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C3756AA7;
-	Sat, 15 Mar 2025 00:22:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AyqmXb9a"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 239AE366
+	for <linux-kernel@vger.kernel.org>; Sat, 15 Mar 2025 00:07:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741998165; cv=none; b=YBb9OzTpVgsgzPwZ+62Vv7e++yRfaVrBBj4kpPahoXXAzk9uyX1ysA3EhDoYtnmKtvpi8JGSTC46BoOe60XvzCaYwy5ZIkFrAQr+isPX7zKrdg7e+6Y/ZKK6abyeg2C7ct8vdu2ciZn82OYPseziSHp+oqiDNi90MwadHJX3cqw=
+	t=1741997223; cv=none; b=Cuj41u+jV6tYXdCEtGEjVe7P0vBw7l1hMgFAzjFlMmOi+qMdOhferEM1x4invgfSAYlWThE0YsMEUavOlqbYii232ZF2yQu2yWyNaZjdzN/3MHewwi62EkZRCAOB2ysrV4u97W+PknCpA+sgbay6I8uvps9i/A/az9j9QGF8YGQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741998165; c=relaxed/simple;
-	bh=u8l3PPVo1Iiwb1ppHvpxF+S0AOUWGysoAo1JGL6uZZs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AqY7/BxdsaaxfCtgZjfZdVpZa4Bsg9Uv2eQMYLjhfd33FtZFKYbg7fEJYgMlUJRvs3RKg+YQB8moPptSzpKpZTUS/vSyGB+D4Ns+NFiYFErPLFQo6uv7UB4iqTH8JhUCXYhOqKyKSB572gepZbwWctcpN0nZIuqzYOgP0HO5qxA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=fUEXWE0Z; arc=none smtp.client-ip=220.197.31.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:
-	Content-Type; bh=109cFpcIHKvu71FujjmyGI5jYN6yUHpbo8pR6s+BNkA=;
-	b=fUEXWE0Z09WGc3M4wIMUbUjVKHU3sXa5Bon5RARqBp8quXhrJclZdTDB6Q2u3F
-	GA65sPiqd5eSghFK8+VIItlm1EB3Q8MQ2L5y72iCcvI7G7YHwf83TkVibukw2YF6
-	/u02GfCuD/BMf3H8OSowNMCX3PyuzB7B4nVMo1obPx+XU=
-Received: from [192.168.71.45] (unknown [])
-	by gzsmtp2 (Coremail) with SMTP id PSgvCgD3VwCcxNRnRjVaLA--.1942S2;
-	Sat, 15 Mar 2025 08:06:53 +0800 (CST)
-Message-ID: <88a44822-9b1a-4d59-a4ce-926d12f73147@163.com>
-Date: Sat, 15 Mar 2025 08:06:52 +0800
+	s=arc-20240116; t=1741997223; c=relaxed/simple;
+	bh=bZ7A4wajyX66jPBK03q5XKQr1foQe3MxppwMvG1y+u8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uqAjdbTt+sTTvUNigRgzUrL8yqTOcHiteTADrpsQNtWn/ej/OXorJXvG/rTN2MGuTfJHWkTll10Ub4ILVtSkVrpHgc/BQQqpGgqQDXeewxpcrfnInEueOXRGBGhl9iWD2mExygAEcVe9LhjHT8H/JRMPD+5uOnic8uN3G+ju4KM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AyqmXb9a; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7767C4CEEB;
+	Sat, 15 Mar 2025 00:07:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741997222;
+	bh=bZ7A4wajyX66jPBK03q5XKQr1foQe3MxppwMvG1y+u8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=AyqmXb9aMuZe2m9YoYIMZ975fO4EQ49ALAg9F3zFuF3rf8TT9kEF7bOsOlt4bxyXz
+	 3Cm64kL0bD8h9EKdK2zCLnzhC3HW005PX0sylVfjy956b635pC5yr3+UFaCXAVjDmz
+	 gr7tKVZ0DlDILVqEVCmOnPPwgq+SryXKl7KwJUELM293nfTetH3zqNJ0A6GSvzjsrQ
+	 3KTv0L9moPNSKM377zgOOxvRNrVkhSugk5al59V6zCtx8bYA1NzQwOgR/evBB1qVBq
+	 Lzhdv0wLsaSUs4+fGJQSBTzejT+zUFFT3ow5XbDne1J//IX+Zu9vG+r+souq8kIBUv
+	 Q+X9Zv+GYVrjQ==
+Date: Fri, 14 Mar 2025 17:07:00 -0700
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org, 
+	Peter Zijlstra <peterz@infradead.org>, Borislav Petkov <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>, 
+	Uros Bizjak <ubizjak@gmail.com>, Andrew Cooper <andrew.cooper3@citrix.com>, 
+	Ingo Molnar <mingo@kernel.org>
+Subject: Re: [PATCH 04/20] x86/cpu: Use named asm operands in clflushopt()
+Message-ID: <gor6hi6lzohdo6hfcffmxdzc4fiqdn2itncxatw4zkhouzmm6l@obz43xcfcl2i>
+References: <cover.1741988314.git.jpoimboe@kernel.org>
+ <c007f4ddbfdfe92777a7df35bc121cf9bf0d0682.1741988314.git.jpoimboe@kernel.org>
+ <CAHk-=wjBjq6u+r9KGTHQ5nOA1L2TDhz0JPL_+eE07un9y9Qm-w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [v2] PCI: cadence: Add configuration space capability search API
-To: Bjorn Helgaas <helgaas@kernel.org>,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: Siddharth Vadapalli <s-vadapalli@ti.com>, lpieralisi@kernel.org,
- kw@linux.com, robh@kernel.org, bhelgaas@google.com, bwawrzyn@cisco.com,
- thomas.richard@bootlin.com, wojciech.jasko-EXT@continental-corporation.com,
- linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250314203157.GA793598@bhelgaas>
-Content-Language: en-US
-From: Hans Zhang <18255117159@163.com>
-In-Reply-To: <20250314203157.GA793598@bhelgaas>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:PSgvCgD3VwCcxNRnRjVaLA--.1942S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7uryUuFW8Wr4UZF1xGFW3Wrg_yoW8Xry8pr
-	W2qry3tF48JF43CFn7tay8tFySgwsrXasrtan5CrWDZws8W3saqFWvy345tFZrJr1rZr4Y
-	vFWUWa4kJ3s0vaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07U9vtZUUUUU=
-X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/1tbiWxQRo2fUwmM+BQAAsU
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wjBjq6u+r9KGTHQ5nOA1L2TDhz0JPL_+eE07un9y9Qm-w@mail.gmail.com>
 
-
-
-On 2025/3/15 04:31, Bjorn Helgaas wrote:
-> On Fri, Mar 14, 2025 at 06:35:11PM +0530, Manivannan Sadhasivam wrote:
->> ...
+On Fri, Mar 14, 2025 at 01:46:00PM -1000, Linus Torvalds wrote:
+> On Fri, 14 Mar 2025 at 11:42, Josh Poimboeuf <jpoimboe@kernel.org> wrote:
+> >
+> > +       alternative_io(".byte 0x3e; clflush %[val]",
+> > +                      ".byte 0x66; clflush %[val]", X86_FEATURE_CLFLUSHOPT,
+> > +                      [val] "+m" (*(volatile char __force *)__p));
 > 
->> Even though this patch is mostly for an out of tree controller
->> driver which is not going to be upstreamed, the patch itself is
->> serving some purpose. I really like to avoid the hardcoded offsets
->> wherever possible. So I'm in favor of this patch.
->>
->> However, these newly introduced functions are a duplicated version
->> of DWC functions. So we will end up with duplicated functions in
->> multiple places. I'd like them to be moved (both this and DWC) to
->> drivers/pci/pci.c if possible. The generic function
->> *_find_capability() can accept the controller specific readl/ readw
->> APIs and the controller specific private data.
+> Hmm. I think we could just use 'clflushopt', it looks like it exists
+> in binutils-2.25, which is our minimal version requirement.
 > 
-> I agree, it would be really nice to share this code.
-> 
-> It looks a little messy to deal with passing around pointers to
-> controller read ops, and we'll still end up with a lot of duplicated
-> code between __pci_find_next_cap() and __cdns_pcie_find_next_cap(),
-> etc.
-> 
-> Maybe someday we'll make a generic way to access non-PCI "config"
-> space like this host controller space and PCIe RCRBs.
-> 
-> Or if you add interfaces that accept read/write ops, maybe the
-> existing pci_find_capability() etc could be refactored on top of them
-> by passing in pci_bus_read_config_word() as the accessor.
-> 
+> But maybe that's a separate cleanup.
 
-Hi Bjorn,
+You appear to be correct, I'll add a patch for that.
 
-I have already replied to an email, please help review whether it is 
-appropriate.
-
-Best regards,
-Hans
-
+-- 
+Josh
 
