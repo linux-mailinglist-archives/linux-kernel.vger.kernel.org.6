@@ -1,128 +1,110 @@
-Return-Path: <linux-kernel+bounces-562585-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562586-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCFCFA62D2D
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 14:04:54 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F249A62D3A
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 14:09:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B9EE0189C4B3
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 13:05:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 83D44178192
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 13:09:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 396801F8BA5;
-	Sat, 15 Mar 2025 13:04:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81C711F8BA5;
+	Sat, 15 Mar 2025 13:09:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Mrk8Pk5F"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=rosa.ru header.i=@rosa.ru header.b="T3hfxvQS"
+Received: from forward203b.mail.yandex.net (forward203b.mail.yandex.net [178.154.239.154])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 962041DF24E;
-	Sat, 15 Mar 2025 13:04:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 212461862;
+	Sat, 15 Mar 2025 13:09:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742043887; cv=none; b=MdOdSeDbMSIHL8g3PDuV6VBrFbBCd73wWY35A6jxNjlLgheLVgUrly/100zR1fzW46mAMo/2yfTIQUi6EfboUF/a9lBYZinaY0GTp9dfelrYEWwZBq5yGsxiDFAqyzy+EMeQC4wnH0alFZEb6+/X9364KfJvGh1B89VzdNTC4Ew=
+	t=1742044164; cv=none; b=PTWtmcyd573roCvHYYBrfFCe7q9qFHjq+mzLyvSXbA1r4FPyigNITB56usXt3/+svxW5g3RcrfzEHul6TJEWtIf3slaReDh55PBs7GfGAJqRaYsa/WUe79v4FyDqTyZBzB7reV3arbF/8JkXtqcgc9Oy4a2Jeytth3C8qumHHOk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742043887; c=relaxed/simple;
-	bh=u6Iel8b2bCzAd8Tww+Qf0dhhEXLDIZmc3KbYsEv1G0g=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=RtjX6g0H2rFOBjujEgNCBJUHGMerekAKZkNemuKMP4E5dyY96vJ1jomJ6MjEmT3qBT+p27mihRUvJmxzQDpg9Gqy20lX4pTFGtjKm0SDmVCUPmDYgiFRui7+L+jDoIxWa0Mwn5iTAYEcVzRlmvOrKDkaNg7sCSHYPvITGx7W+c4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Mrk8Pk5F; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0EFFDC4CEE5;
-	Sat, 15 Mar 2025 13:04:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742043887;
-	bh=u6Iel8b2bCzAd8Tww+Qf0dhhEXLDIZmc3KbYsEv1G0g=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Mrk8Pk5F90SugKmQu1VgwcVBUwJbkoEYfwQx5uKwCiLaVJErq5xNP7M4xfYJ8U/6B
-	 IWiCsb3uegOcbtuhIVvN+GCulIk7yubWRrk3M++t5xQL/CK63UdCGs3kCi26vHGLeh
-	 oSWb6L1kArhgtpaVdKFl8Azf0x0C73iV1W9RRHCcCuAvBwxDJjxKdb/in78763tVo7
-	 u3T5PkuAr37vBD9VzG1C67T8DgYV0pKHLSsdJgr0j/m4wn3ew0+FN1Zl6pAjFP/0tC
-	 xF9jhYYLcKD3W20JNUjSzhae6msANv43HRKJ1TuGC1QFWfgGxVf2zXvdKtn9u69vvw
-	 G2Uv0kRZv1WlQ==
-Date: Sat, 15 Mar 2025 13:04:39 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Nuno =?UTF-8?B?U8Oh?= <noname.nuno@gmail.com>
-Cc: David Lechner <dlechner@baylibre.com>, Lars-Peter Clausen
- <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, Nuno
- =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Esteban Blanc	
- <eblanc@baylibre.com>, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 5/5] iio: adc: ad4030: explain rearranging raw sample
- data
-Message-ID: <20250315130439.63bfa105@jic23-huawei>
-In-Reply-To: <5ee9f7cebe54313dbb4054a7215a5220316bce9c.camel@gmail.com>
-References: <20250310-iio-adc-ad4030-check-scan-type-err-v1-0-589e4ebd9711@baylibre.com>
-	<20250310-iio-adc-ad4030-check-scan-type-err-v1-5-589e4ebd9711@baylibre.com>
-	<5ee9f7cebe54313dbb4054a7215a5220316bce9c.camel@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1742044164; c=relaxed/simple;
+	bh=ka/9HjQteP+lsd/qliHZFPqBYpxHTM8lQfKFAIpmTVE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XXzMdpiAhTb4UQoTMSUG6UwgJI7iqhPJRW39WUSo8aGTkjWGAi16N8t88o8NIuq/zhiXou+p2s3nsu8L2CJ8J4r+8Ae7FiCyKcD45Pfp9KSlufbz/Dd4pTt8TMmt0kpRs/8e9k+ub/Iwe2dvShK7EU/UGXndvlEniwmGz+tv7ZA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rosa.ru; spf=pass smtp.mailfrom=rosa.ru; dkim=pass (1024-bit key) header.d=rosa.ru header.i=@rosa.ru header.b=T3hfxvQS; arc=none smtp.client-ip=178.154.239.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rosa.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rosa.ru
+Received: from forward103b.mail.yandex.net (forward103b.mail.yandex.net [IPv6:2a02:6b8:c02:900:1:45:d181:d103])
+	by forward203b.mail.yandex.net (Yandex) with ESMTPS id C280363449;
+	Sat, 15 Mar 2025 16:01:45 +0300 (MSK)
+Received: from mail-nwsmtp-smtp-production-canary-88.sas.yp-c.yandex.net (mail-nwsmtp-smtp-production-canary-88.sas.yp-c.yandex.net [IPv6:2a02:6b8:c28:7d5:0:640:285a:0])
+	by forward103b.mail.yandex.net (Yandex) with ESMTPS id F34DB60AD1;
+	Sat, 15 Mar 2025 16:01:37 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-canary-88.sas.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id T1FSYvMLouQ0-acRp91rH;
+	Sat, 15 Mar 2025 16:01:37 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rosa.ru; s=mail;
+	t=1742043697; bh=re3pHChC+mQHbRAssqFb1hdzEHJMrzvzoEtkuNzfrNo=;
+	h=Message-ID:Date:Cc:Subject:To:From;
+	b=T3hfxvQSn8Y94kNXoMdFBRMuyqLYdNiaHP0PyjPdhPiYUCNaBoGZwUu4lHh/V4SMs
+	 FVAe7ha3WQMbUL8Mwxnzv02b6CZL5ZJTxIugzxn5e351Qdadxg0LXXxXCVFCSxiWKR
+	 +nkpGz+x/Ed6tG6d9h6JpGCKLUhJM0yzYMz/dbCM=
+Authentication-Results: mail-nwsmtp-smtp-production-canary-88.sas.yp-c.yandex.net; dkim=pass header.i=@rosa.ru
+From: Mikhail Lobanov <m.lobanov@rosa.ru>
+To: Johannes Berg <johannes@sipsolutions.net>
+Cc: Mikhail Lobanov <m.lobanov@rosa.ru>,
+	Shaul Triebitz <shaul.triebitz@intel.com>,
+	linux-wireless@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	lvc-project@linuxtesting.org
+Subject: [PATCH v2] wifi: mac80211: check basic rates validity in sta_link_apply_parameters
+Date: Sat, 15 Mar 2025 16:01:16 +0300
+Message-ID: <20250315130119.75937-1-m.lobanov@rosa.ru>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, 11 Mar 2025 09:30:32 +0000
-Nuno S=C3=A1 <noname.nuno@gmail.com> wrote:
+When userspace sets supported rates for a new station via
+NL80211_CMD_NEW_STATION, it might send a list that's empty
+or contains only invalid values. Currently, we process these
+values in sta_link_apply_parameters() without checking the result of
+ieee80211_parse_bitrates(), which can lead to an empty rates bitmap.
 
-> On Mon, 2025-03-10 at 15:43 -0500, David Lechner wrote:
-> > Add a comment explaining why the raw sample data is rearranged in the
-> > in the ad4030_conversion() function. It is not so obvious from the code
-> > why this is done.
-> >=20
-> > Signed-off-by: David Lechner <dlechner@baylibre.com>
-> > --- =20
->=20
-> Reviewed-by: Nuno S=C3=A1 <nuno.sa@analog.com>
->=20
-> (BTW, for some reason I started to send the tags without first checking t=
-he
-> complete series. So I could have just replied to the cover :facepalm:
+A similar issue was addressed for NL80211_CMD_SET_BSS in commit
+ce04abc3fcc6 ("wifi: mac80211: check basic rates validity").
+This patch applies the same approach in sta_link_apply_parameters()
+for NL80211_CMD_NEW_STATION, ensuring there is at least one valid
+rate by inspecting the result of ieee80211_parse_bitrates().
 
-I do that sometimes when I know I might not get to the end of the series :)
+Found by Linux Verification Center (linuxtesting.org) with Syzkaller.
 
-Just to add to the confusion...
+Fixes: b95eb7f0eee4 ("wifi: cfg80211/mac80211: separate link params from station params")
+Signed-off-by: Mikhail Lobanov <m.lobanov@rosa.ru>
+---
+v2: Fixed the patch subject to provide a complete description.
 
-Series applied to the testing branch of iio.git which I'll rebase after
-rc1 is available.
+ net/mac80211/cfg.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-Thanks
-
-Jonathan
-
->=20
-> - Nuno S=C3=A1
->=20
-> > =C2=A0drivers/iio/adc/ad4030.c | 6 ++++++
-> > =C2=A01 file changed, 6 insertions(+)
-> >=20
-> > diff --git a/drivers/iio/adc/ad4030.c b/drivers/iio/adc/ad4030.c
-> > index
-> > 54ad74b96c9f256a67848330f875379edc828b0b..636f9f33e66af73d102722b984dc1=
-230e141
-> > 7d1e 100644
-> > --- a/drivers/iio/adc/ad4030.c
-> > +++ b/drivers/iio/adc/ad4030.c
-> > @@ -646,6 +646,12 @@ static int ad4030_conversion(struct iio_dev *indio=
-_dev)
-> > =C2=A0					=C2=A0=C2=A0 &st->rx_data.dual.diff[0],
-> > =C2=A0					=C2=A0=C2=A0 &st->rx_data.dual.diff[1]);
-> > =C2=A0
-> > +	/*
-> > +	 * If no common mode voltage channel is enabled, we can use the raw
-> > +	 * data as is. Otherwise, we need to rearrange the data a bit to
-> > match
-> > +	 * the natural alignment of the IIO buffer.
-> > +	 */
-> > +
-> > =C2=A0	if (st->mode !=3D AD4030_OUT_DATA_MD_16_DIFF_8_COM &&
-> > =C2=A0	=C2=A0=C2=A0=C2=A0 st->mode !=3D AD4030_OUT_DATA_MD_24_DIFF_8_CO=
-M)
-> > =C2=A0		return 0;
-> >  =20
->=20
+diff --git a/net/mac80211/cfg.c b/net/mac80211/cfg.c
+index 9351c64608a9..e7c429aef980 100644
+--- a/net/mac80211/cfg.c
++++ b/net/mac80211/cfg.c
+@@ -1909,10 +1909,11 @@ static int sta_link_apply_parameters(struct ieee80211_local *local,
+ 
+ 	if (params->supported_rates &&
+ 	    params->supported_rates_len) {
+-		ieee80211_parse_bitrates(link->conf->chanreq.oper.width,
++		(!ieee80211_parse_bitrates(link->conf->chanreq.oper.width,
+ 					 sband, params->supported_rates,
+ 					 params->supported_rates_len,
+-					 &link_sta->pub->supp_rates[sband->band]);
++					 &link_sta->pub->supp_rates[sband->band]))
++		return -EINVAL;
+ 	}
+ 
+ 	if (params->ht_capa)
+-- 
+2.47.2
 
 
