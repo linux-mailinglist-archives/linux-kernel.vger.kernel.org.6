@@ -1,258 +1,208 @@
-Return-Path: <linux-kernel+bounces-562400-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562401-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4241CA62592
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 04:49:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6D42A625C5
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 05:09:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E3D5917EB43
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 03:49:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 16DEA3BE66F
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 04:09:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B631518DB3C;
-	Sat, 15 Mar 2025 03:49:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2B9E18E34A;
+	Sat, 15 Mar 2025 04:09:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NAw4sguj"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="dmkMH3Mf"
+Received: from BL2PR02CU003.outbound.protection.outlook.com (mail-eastusazolkn19010010.outbound.protection.outlook.com [52.103.11.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54F5863D;
-	Sat, 15 Mar 2025 03:49:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742010547; cv=none; b=bo75qqIfaSMp2gs73GH7dKu/MfjY6SvPewOBDatK7x9uWfUSgZIQOjtnCjfMQ0F3qPlHazSkMagzIwuT6/jGMqeu496OegZb4BuLYEGIb3RM5IYnEm7L6Z7XFnHyxFAs22HwbAvUchnAa7DSupLblqgCeVXS7SoADuUe+0gg48U=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742010547; c=relaxed/simple;
-	bh=mSkbxS1REs4KpYz+KOYutSriJ2uGhjKLTrlxISCSz0Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UnmScZbT1quNwJwVUgdqvkd2unVRSGcQAdaBVWuv2+KLNSMlLwXst5hzJs+zLL5agPw8TTps5p1VByfAPg/NQ6ToQ1k9+EwUgrSRmfDAKc/fj/lxPcA8IvczMANMimoYsLQcasErnlU5g4HXow13SBek1NzVeyT4ER+clAfGuLg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NAw4sguj; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742010545; x=1773546545;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=mSkbxS1REs4KpYz+KOYutSriJ2uGhjKLTrlxISCSz0Q=;
-  b=NAw4sgujbSrQUqYtKUINAHCOCYQhJ12OvX07Gz+kMe6UNAJgOBtLgtiV
-   HpC3h/HipeYqk5RkQHgVEpvwoR1bKgaSMa6eziVq4a7DLYdpJVqQ94qGC
-   G6Cp9WnYzpAKShTgQm0BawAgTQaZSBPUhDLB2jKc8HKpLUtrNAOukIDp8
-   ixGqy/PMMwwqfML27H+yEtb1qpr/i3qxMUxOCwEkIIzOsRLY1EMNnl4FH
-   XhNFqLSv0QF2MkyDUbc3m+yktS+BB76NPLHgokOgA5gTHv4epIIwp/xEk
-   2O07WGp1PSG9D/vNXa+/t23H9mDfV7NzEEGMiUCoK9YXggZIDOMUs2brs
-   A==;
-X-CSE-ConnectionGUID: LatfVJtYQ1yT3gwLs5DPTQ==
-X-CSE-MsgGUID: +GnuEyt1Q8mJXxkH28bSWg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11373"; a="53830395"
-X-IronPort-AV: E=Sophos;i="6.14,249,1736841600"; 
-   d="scan'208";a="53830395"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Mar 2025 20:49:04 -0700
-X-CSE-ConnectionGUID: EXcMqaLgSlCjLJGGirvNDQ==
-X-CSE-MsgGUID: +5L5MzR0Sj+L2cyePPAj2Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,249,1736841600"; 
-   d="scan'208";a="122402691"
-Received: from lkp-server02.sh.intel.com (HELO a4747d147074) ([10.239.97.151])
-  by orviesa008.jf.intel.com with ESMTP; 14 Mar 2025 20:49:00 -0700
-Received: from kbuild by a4747d147074 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1ttIWA-000B2l-13;
-	Sat, 15 Mar 2025 03:48:58 +0000
-Date: Sat, 15 Mar 2025 11:48:15 +0800
-From: kernel test robot <lkp@intel.com>
-To: Oleksij Rempel <o.rempel@pengutronix.de>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Woojung Huh <woojung.huh@microchip.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	Russell King <rmk+kernel@armlinux.org.uk>,
-	Thangaraj Samynathan <Thangaraj.S@microchip.com>,
-	Rengarajan Sundararajan <Rengarajan.S@microchip.com>
-Cc: oe-kbuild-all@lists.linux.dev, netdev@vger.kernel.org,
-	Oleksij Rempel <o.rempel@pengutronix.de>, kernel@pengutronix.de,
-	linux-kernel@vger.kernel.org, UNGLinuxDriver@microchip.com,
-	Phil Elwell <phil@raspberrypi.org>
-Subject: Re: [PATCH net-next v3 1/7] net: usb: lan78xx: Convert to PHYlink
- for improved PHY and MAC management
-Message-ID: <202503151113.AFty2HdH-lkp@intel.com>
-References: <20250310115737.784047-2-o.rempel@pengutronix.de>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 149D318A6B5;
+	Sat, 15 Mar 2025 04:09:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.11.10
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742011771; cv=fail; b=bw8RUjvBdqw+WLNLDP2IpWcYzOqLeulI1qK9j01Abpz3ZaEI95Uo0qbOh41zAWkZuCIvBtYgXqACj9tlbmtzojc4afRkKAJhVTD8nRqs/s0sYnvFTi/pPdAR3L6MfP/3U4vGWAluSxEuWM/VsoROHz+48FoPWGujGQgNmwvM8o0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742011771; c=relaxed/simple;
+	bh=5xGxf7aDhr8h0zdWRw2/FkLNzZUr0huGTdOjNQlc2jI=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=lsheNaE8m67rUMT17ufnb7ySd6tXTVwcwjo5O3KI4MMt4sH0rEEbe5jlCfz3w/y/q0ryKqDR+vU17hqTeJcjephbhgtsFiQ0KTK3ULaiUHtEhvOky+cZYlLQI0pJj8ee7SB5SbJJKMvYXtDNYXii/fgqum/hGjtmh18Mg6fRQbc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=dmkMH3Mf; arc=fail smtp.client-ip=52.103.11.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=uQzpwH+lO9jpic+ItF7Ii44puVZpqFWqXsjSWNtZaUAg6Qb2oF4d4JpQuOrR9d/B+nNFTqYGlQDPNXHMU1+4uWOTqyFCJx4j7jvj7Ew2gW7SOvlnlCiAcvDIk6MvvmhMxzZtmsrM2oIkGLNLpTvrjk/x23pqEYy6hOU3RSzSRI4xPL2F1WPYj0LJIv3uMzHmeZB3RQnSz6493JDyGkvjkmGS8P7V905ICOTq65W47OkXMj9YVOGOnQsYYoosMhfC2U0sLywzyW2qn9J30f0Qr/P2eMzZivSnsx/2WGbPBiorPWoe6Jws5w4hWAl9F1Z+yUborijhAD13TD6Cl34W8A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=64mYpXW+f131fQnCaBygXOJ3YNrUCNaVkPytPqvI030=;
+ b=LewznFo4SQK2O2qXcvtznpeehv6IbEO4LAZG6bh/oSMZlAGjV/xAuXEpA93i+rBBE8GjKb0sINNd3DS2FOgxDgwq8HJrqDe1C3/zQOD62yPKMhmezNipK5H4PREWvbnERD1bO+XFVoXe9jSi3ZnBvNT5QGocOc8gSdSagtUKrYqUHyrsTzCoLkFmNEoJiF1588HH0ITCQ72I04kEgpzqR+42sCixy9Yd3i/4S50BOttt5MgXOxgjXzh9gARXJtZuAp7YHNAEpctNveJ7fL//TIjfhulsuG5ABDPL97OlyvgLZjhnSJkfUMdaY81CT41TOOA+c8/kdKUIy5SpDar9KQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=64mYpXW+f131fQnCaBygXOJ3YNrUCNaVkPytPqvI030=;
+ b=dmkMH3Mf6gOpsbjQIfw63N1BpGauARGZJk0bPAOt9+9M9oJ1iDdWukeciis/rmit41rrw7oFalkGnqF2GjPuYY0mGfEF0AZnBVpE1H5HuJp8pDXiXWpwbfKpsvY5cxEjkVX0mMml2k6q9FLndH1KV4X1/poA2ACNe/8/dr4tYtBwo7GbpVWPiBvFrvXaaedZxmvzvdl48Z52WzVlXf0fmgAUnAMvdr6gNGQ5rHY48KgdAikzfxNXZCSdDjRkbWqdjsF/Jk0nEb1wFFC+W65EztZk7xpr03tl7oD2XeID5d0G0rm8Q/I7f8HzGdZN40IRmIw+80XN7GAwZtWFkElxkQ==
+Received: from SN6PR02MB4157.namprd02.prod.outlook.com (2603:10b6:805:33::23)
+ by MW4PR02MB7153.namprd02.prod.outlook.com (2603:10b6:303:65::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.28; Sat, 15 Mar
+ 2025 04:09:26 +0000
+Received: from SN6PR02MB4157.namprd02.prod.outlook.com
+ ([fe80::cedd:1e64:8f61:b9df]) by SN6PR02MB4157.namprd02.prod.outlook.com
+ ([fe80::cedd:1e64:8f61:b9df%3]) with mapi id 15.20.8511.026; Sat, 15 Mar 2025
+ 04:09:26 +0000
+From: Michael Kelley <mhklinux@outlook.com>
+To: Nico Pache <npache@redhat.com>, "linux-hyperv@vger.kernel.org"
+	<linux-hyperv@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "xen-devel@lists.xenproject.org"
+	<xen-devel@lists.xenproject.org>, "linux-fsdevel@vger.kernel.org"
+	<linux-fsdevel@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>,
+	"virtualization@lists.linux.dev" <virtualization@lists.linux.dev>
+CC: "alexander.atanasov@virtuozzo.com" <alexander.atanasov@virtuozzo.com>,
+	"muchun.song@linux.dev" <muchun.song@linux.dev>, "roman.gushchin@linux.dev"
+	<roman.gushchin@linux.dev>, "mhocko@kernel.org" <mhocko@kernel.org>,
+	"kys@microsoft.com" <kys@microsoft.com>, "haiyangz@microsoft.com"
+	<haiyangz@microsoft.com>, "wei.liu@kernel.org" <wei.liu@kernel.org>,
+	"decui@microsoft.com" <decui@microsoft.com>, "jgross@suse.com"
+	<jgross@suse.com>, "sstabellini@kernel.org" <sstabellini@kernel.org>,
+	"oleksandr_tyshchenko@epam.com" <oleksandr_tyshchenko@epam.com>,
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>, "mst@redhat.com"
+	<mst@redhat.com>, "david@redhat.com" <david@redhat.com>,
+	"yosry.ahmed@linux.dev" <yosry.ahmed@linux.dev>, "hannes@cmpxchg.org"
+	<hannes@cmpxchg.org>, "nphamcs@gmail.com" <nphamcs@gmail.com>,
+	"chengming.zhou@linux.dev" <chengming.zhou@linux.dev>,
+	"kanchana.p.sridhar@intel.com" <kanchana.p.sridhar@intel.com>,
+	"llong@redhat.com" <llong@redhat.com>, "shakeel.butt@linux.dev"
+	<shakeel.butt@linux.dev>
+Subject: RE: [PATCH v2 3/4] hv_balloon: update the NR_BALLOON_PAGES state
+Thread-Topic: [PATCH v2 3/4] hv_balloon: update the NR_BALLOON_PAGES state
+Thread-Index: AQHblSmRG3n+QHZh2UuvvmIQtVK9S7Nzk1Gg
+Date: Sat, 15 Mar 2025 04:09:25 +0000
+Message-ID:
+ <SN6PR02MB4157924B97EF67299E751082D4DD2@SN6PR02MB4157.namprd02.prod.outlook.com>
+References: <20250314213757.244258-1-npache@redhat.com>
+ <20250314213757.244258-4-npache@redhat.com>
+In-Reply-To: <20250314213757.244258-4-npache@redhat.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SN6PR02MB4157:EE_|MW4PR02MB7153:EE_
+x-ms-office365-filtering-correlation-id: 5e196a76-6ccf-4672-aa10-08dd63772cba
+x-microsoft-antispam:
+ BCL:0;ARA:14566002|461199028|15080799006|8060799006|19110799003|8062599003|3412199025|102099032|440099028|21061999003|12071999003|41001999003|12091999003;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?Joa5iZXqQKE7NVUcCzXjSnFMEIgdycBpAyBc8g5GNyArUUVMIhxfohXYA7MT?=
+ =?us-ascii?Q?nVscz1F/GjckkqFqVTRb4sTDvZMrPhuQVFYeYJM1xv0xiJgIFM6+huWTB3Tq?=
+ =?us-ascii?Q?JX4rjbbjpiryUwmssA7NZTzoKf6KuX39c3UqGwmjXax2u4CnEhJplupbXzJE?=
+ =?us-ascii?Q?OCv53VXg/TssJJO2JEVKG9If+OirO6cJ0LIptXWW4tlMZZLBUVMZ8vyH2m60?=
+ =?us-ascii?Q?3Je1xp5z2/IWu1znH6pZBBGJhy8hkjk8ny1yS3VIs0u33jCyTBQHehWbl+pc?=
+ =?us-ascii?Q?jABCzIKG3ZiamgfExxCnI5a5i+QW+BfOM4XCNyIX57NY1EQxzMNddjA6iWz/?=
+ =?us-ascii?Q?oxAdToaXP/0En8wlEyDEpHlFVz+xsdkFemyRubGG17h1EmYNj+zhcKaODvQ2?=
+ =?us-ascii?Q?ShORWOs3MfubnnSDmMhPB/ejD7b9AWkvNvK5bcCnMMD/SV80wlRlou3R/fcP?=
+ =?us-ascii?Q?EQ/EPpHXEB2shhtcS4YzZ3tDNZ1uL//bcKyQcIk+OGzhiI3Qtt2KR4W5OtCg?=
+ =?us-ascii?Q?bsCZdQdsW7MtfVciEsvIsaHT+kHkwlrJXGWfl+m2dC+1cGjQ43485nqXghJM?=
+ =?us-ascii?Q?mN6auZ9JZgZewfhaPu+nDDwUBAuy1OAUziSoVMKRHtb1pq49P2W6S0te9+xX?=
+ =?us-ascii?Q?uyb3BnfPyKqwUcYKruWcATl8OyuI+AiljrN1rUUmS6Vy4IEKBZkii98d22Dm?=
+ =?us-ascii?Q?DI7pT/aY1RFeyF1urZr8F9u6FfWVq4JfX+EzLgm7IpPpTDAFwoBRQenFKAQL?=
+ =?us-ascii?Q?FQ1iS2Q2gp+wI14KVYIBzEteR2tN7/hBbIJy8kLD59gxq+fLAGrVOs7U5WUd?=
+ =?us-ascii?Q?jDJjwWyWwr6Kgmo5QvYTKxh8etMjBKH8jDfnvCjQRo3kQ4xyASNdJqt5TAad?=
+ =?us-ascii?Q?B+b2lsqtlVJMjMbNQ77OBIB6GwQbDtJsnFreL3FIdnsIkKUk3usDNf2w39NQ?=
+ =?us-ascii?Q?eAWP5G/kZUx5QXxMDa0GD9LvuJBjclzsVeOslRzNas5k98hcUEOATSolB1SP?=
+ =?us-ascii?Q?1mK4M8C9Q5fTjkfG2TjE7c8MSImWLUNOp8rYk8DdsFZjk8kt+lcrUYAtPeGJ?=
+ =?us-ascii?Q?dykh+tIi5GNdb4P0H2NlhDOAeZmtyRsIF18Nau128bUVY71ak4M8xm7fjqzF?=
+ =?us-ascii?Q?KKTXVtBsn50qTv/pt0a0GffSoeCJ4O/r7/10hlKW8rlXRiyXkisyjqsAwe5h?=
+ =?us-ascii?Q?VtpIsLxOKIFgTWP8Rzwj74p7dx0QrivHjrQhMQ=3D=3D?=
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?eScN9FUXkCFumpPxKilEpYL3A6pcx2OeV9QVYttctOZtaFitafTQwH/BR9Sm?=
+ =?us-ascii?Q?cQrs4WjbYFhWVZAFnnpSgW6/O0kFUUgKDDVScjJS+9ZOzQgVPFfWV/WAiPsJ?=
+ =?us-ascii?Q?9ACDbtKenrqV0C6eLpjPLb45dwB+9hF7k9iDmd9ohbTvIkt6Ce1BhXOaeV6F?=
+ =?us-ascii?Q?KbRJ6QJUG/S4BBrJIBFow5M6xY/Kr7NnNriWQdJf3Fivwu1tIg2y0Sr1HhM5?=
+ =?us-ascii?Q?aS13crVE/cNy2yHlI7eiyh+XzMGoeTP8lJxfkXTxnlWOKGhorxTGw0wNEK9k?=
+ =?us-ascii?Q?ujrLXAWNaHqPZOM3pQDnaovsX5oVj9uwodKSKX6wsvsMcv8o1nXLp2Z3M4yn?=
+ =?us-ascii?Q?br5+o+Nps5786UQsunf4GBIRQsJaP01AVqF0S3C23e0HQM+His4K+FhTEyJ/?=
+ =?us-ascii?Q?1aYCv9PlMrB0YDTPYYdzydplPWB78ACTwrXGZ44PyiFTMTJZ8lgZ8zoav0O7?=
+ =?us-ascii?Q?PaF8nzH47xjpQs+xp2alSe05e2jf27vMvBeQ7vy76uDwuMfImy7ORvMRN9PO?=
+ =?us-ascii?Q?uFRVR1Vk7pRB8Gqbv/hQHhtO5XW4EmMT6JBPNDHvnjg3/iyWmw9POxTx877g?=
+ =?us-ascii?Q?OlfgBvR+DYJG7axa0cS0ABmHtge75SCfJOHTg6Mb3Nu5NzkbavQfj36Aprx0?=
+ =?us-ascii?Q?aSalBwu+EZnhKr2iwojXjut/9aqJyZ78+6wj0NMp6TDI2bgA/wCWvE+4yW/1?=
+ =?us-ascii?Q?IDAZIB4h4PQ5SlCYmXv5WXlmY89K9X7hGHQrGihegqpz4LFdIlcqXddRO3S8?=
+ =?us-ascii?Q?/26HultOgyKovp6i/dEBGMc7+BGBlvn3xWqd/famkzqlOLTE1QLJ2IYyXCXe?=
+ =?us-ascii?Q?xndnIX2oOzVrIYqqy9v9Y1Wlst0KFdAeAbPtWN/xOXg4j0zWE7oz8axwb1ke?=
+ =?us-ascii?Q?TBG55JqFXh1uzcllR1TcC6e+UXcEhh3aRTYaVgAOzFemfz6tM/kERy4zlKmq?=
+ =?us-ascii?Q?oaBl8WO8YcIXKqp6uJhKR+CAn7xozXulwpEWXIPt1toprBCsnCYblQ7lz7Cy?=
+ =?us-ascii?Q?XNQlpAfN7yEAaBSRj/fG7jFaQLfRB4Ul6U9Abc3x9TviK3XtmjgdH/WRuIiO?=
+ =?us-ascii?Q?0jcN3nT4AFg2pYa8JPBzL/Aoeh79w9hJ54UN89XJ8udKyQKRcQShxvh3IuC8?=
+ =?us-ascii?Q?+Qxv27OQjjmHrj/PgJfwMe5E+7fwJKE0maocY5B1AdrssLa0VYHThfghwar3?=
+ =?us-ascii?Q?EHEv/T/U1QajrdOZ8Ia+5hBiH07HZ4N7MfAyzy+xEMWX0nXouv4tYqT8M18?=
+ =?us-ascii?Q?=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250310115737.784047-2-o.rempel@pengutronix.de>
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SN6PR02MB4157.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5e196a76-6ccf-4672-aa10-08dd63772cba
+X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Mar 2025 04:09:25.8815
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR02MB7153
 
-Hi Oleksij,
+From: Nico Pache <npache@redhat.com> Sent: Friday, March 14, 2025 2:38 PM
+>=20
+> Update the NR_BALLOON_PAGES counter when pages are added to or
+> removed from the Hyper-V balloon.
+>=20
+> Signed-off-by: Nico Pache <npache@redhat.com>
+> ---
+>  drivers/hv/hv_balloon.c | 2 ++
+>  1 file changed, 2 insertions(+)
+>=20
+> diff --git a/drivers/hv/hv_balloon.c b/drivers/hv/hv_balloon.c
+> index fec2f18679e3..2b4080e51f97 100644
+> --- a/drivers/hv/hv_balloon.c
+> +++ b/drivers/hv/hv_balloon.c
+> @@ -1192,6 +1192,7 @@ static void free_balloon_pages(struct hv_dynmem_dev=
+ice *dm,
+>  		__ClearPageOffline(pg);
+>  		__free_page(pg);
+>  		dm->num_pages_ballooned--;
+> +		mod_node_page_state(page_pgdat(pg), NR_BALLOON_PAGES, -1);
+>  		adjust_managed_page_count(pg, 1);
+>  	}
+>  }
+> @@ -1221,6 +1222,7 @@ static unsigned int alloc_balloon_pages(struct hv_d=
+ynmem_device *dm,
+>  			return i * alloc_unit;
+>=20
+>  		dm->num_pages_ballooned +=3D alloc_unit;
+> +		mod_node_page_state(page_pgdat(pg), NR_BALLOON_PAGES, alloc_unit);
+>=20
+>  		/*
+>  		 * If we allocatted 2M pages; split them so we
+> --
+> 2.48.1
+>=20
 
-kernel test robot noticed the following build errors:
+As is evident from the code, the hv_balloon driver already has accounting
+for the number of pages that have been ballooned out of the VM. This
+accounting and other details of the hv_balloon driver state is available in
+/sys/kernel/debug/hv-balloon when CONFIG_DEBUGFS=3Dy. But it seems OK
+to also report the # of pages ballooned through /proc/meminfo, which
+works even if CONFIG_DEBUGFS=3Dn.
 
-[auto build test ERROR on net-next/main]
+Reviewed-by: Michael Kelley <mhklinux@outlook.com>
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Oleksij-Rempel/net-usb-lan78xx-Convert-to-PHYlink-for-improved-PHY-and-MAC-management/20250310-200116
-base:   net-next/main
-patch link:    https://lore.kernel.org/r/20250310115737.784047-2-o.rempel%40pengutronix.de
-patch subject: [PATCH net-next v3 1/7] net: usb: lan78xx: Convert to PHYlink for improved PHY and MAC management
-config: i386-randconfig-006-20250315 (https://download.01.org/0day-ci/archive/20250315/202503151113.AFty2HdH-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250315/202503151113.AFty2HdH-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202503151113.AFty2HdH-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   ld: drivers/net/usb/lan78xx.o: in function `lan78xx_phy_init':
->> drivers/net/usb/lan78xx.c:2683: undefined reference to `phylink_connect_phy'
->> ld: drivers/net/usb/lan78xx.c:2651: undefined reference to `phylink_set_fixed_link'
-   ld: drivers/net/usb/lan78xx.o: in function `lan78xx_open':
->> drivers/net/usb/lan78xx.c:3280: undefined reference to `phylink_start'
-   ld: drivers/net/usb/lan78xx.o: in function `lan78xx_stop':
->> drivers/net/usb/lan78xx.c:3350: undefined reference to `phylink_stop'
-   ld: drivers/net/usb/lan78xx.o: in function `lan78xx_disconnect':
-   drivers/net/usb/lan78xx.c:4375: undefined reference to `phylink_stop'
->> ld: drivers/net/usb/lan78xx.c:4376: undefined reference to `phylink_disconnect_phy'
->> ld: drivers/net/usb/lan78xx.c:4387: undefined reference to `phylink_destroy'
-   ld: drivers/net/usb/lan78xx.o: in function `lan78xx_phylink_setup':
->> drivers/net/usb/lan78xx.c:2621: undefined reference to `phylink_create'
-   ld: drivers/net/usb/lan78xx.o: in function `lan78xx_probe':
->> drivers/net/usb/lan78xx.c:4609: undefined reference to `phylink_disconnect_phy'
-   ld: drivers/net/usb/lan78xx.c:4611: undefined reference to `phylink_destroy'
-   ld: drivers/net/usb/lan78xx.o: in function `lan78xx_reset_resume':
-   drivers/net/usb/lan78xx.c:5173: undefined reference to `phylink_start'
-
-
-vim +2683 drivers/net/usb/lan78xx.c
-
-  2599	
-  2600	static int lan78xx_phylink_setup(struct lan78xx_net *dev)
-  2601	{
-  2602		struct phylink_config *pc = &dev->phylink_config;
-  2603		phy_interface_t link_interface;
-  2604		struct phylink *phylink;
-  2605	
-  2606		pc->dev = &dev->net->dev;
-  2607		pc->type = PHYLINK_NETDEV;
-  2608		pc->mac_capabilities = MAC_SYM_PAUSE | MAC_ASYM_PAUSE | MAC_10 |
-  2609				       MAC_100 | MAC_1000FD;
-  2610		pc->mac_managed_pm = true;
-  2611	
-  2612		if (dev->chipid == ID_REV_CHIP_ID_7801_) {
-  2613			phy_interface_set_rgmii(pc->supported_interfaces);
-  2614			link_interface = PHY_INTERFACE_MODE_RGMII_ID;
-  2615		} else {
-  2616			__set_bit(PHY_INTERFACE_MODE_INTERNAL,
-  2617				  pc->supported_interfaces);
-  2618			link_interface = PHY_INTERFACE_MODE_INTERNAL;
-  2619		}
-  2620	
-> 2621		phylink = phylink_create(pc, dev->net->dev.fwnode,
-  2622					 link_interface, &lan78xx_phylink_mac_ops);
-  2623		if (IS_ERR(phylink))
-  2624			return PTR_ERR(phylink);
-  2625	
-  2626		dev->phylink = phylink;
-  2627	
-  2628		return 0;
-  2629	}
-  2630	
-  2631	static int lan78xx_phy_init(struct lan78xx_net *dev)
-  2632	{
-  2633		struct phy_device *phydev;
-  2634		int ret;
-  2635	
-  2636		switch (dev->chipid) {
-  2637		case ID_REV_CHIP_ID_7801_:
-  2638			phydev = lan7801_phy_init(dev);
-  2639			/* If no PHY found, set fixed link, probably there is no
-  2640			 * device or some kind of different device like switch.
-  2641			 * For example: EVB-KSZ9897-1 (KSZ9897 switch evaluation board
-  2642			 * with LAN7801 & KSZ9031)
-  2643			 */
-  2644			if (!phydev) {
-  2645				struct phylink_link_state state = {
-  2646					.speed = SPEED_1000,
-  2647					.duplex = DUPLEX_FULL,
-  2648					.interface = PHY_INTERFACE_MODE_RGMII,
-  2649				};
-  2650	
-> 2651				ret = phylink_set_fixed_link(dev->phylink, &state);
-  2652				if (ret)
-  2653					netdev_err(dev->net, "Could not set fixed link\n");
-  2654	
-  2655				return ret;
-  2656			}
-  2657	
-  2658			break;
-  2659	
-  2660		case ID_REV_CHIP_ID_7800_:
-  2661		case ID_REV_CHIP_ID_7850_:
-  2662			phydev = phy_find_first(dev->mdiobus);
-  2663			if (!phydev) {
-  2664				netdev_err(dev->net, "no PHY found\n");
-  2665				return -EIO;
-  2666			}
-  2667			phydev->is_internal = true;
-  2668			phydev->interface = PHY_INTERFACE_MODE_GMII;
-  2669			break;
-  2670	
-  2671		default:
-  2672			netdev_err(dev->net, "Unknown CHIP ID found\n");
-  2673			return -EIO;
-  2674		}
-  2675	
-  2676		/* if phyirq is not set, use polling mode in phylib */
-  2677		if (dev->domain_data.phyirq > 0)
-  2678			phydev->irq = dev->domain_data.phyirq;
-  2679		else
-  2680			phydev->irq = PHY_POLL;
-  2681		netdev_dbg(dev->net, "phydev->irq = %d\n", phydev->irq);
-  2682	
-> 2683		ret = phylink_connect_phy(dev->phylink, phydev);
-  2684		if (ret) {
-  2685			netdev_err(dev->net, "can't attach PHY to %s\n",
-  2686				   dev->mdiobus->id);
-  2687			return -EIO;
-  2688		}
-  2689	
-  2690		phy_support_eee(phydev);
-  2691	
-  2692		if (phydev->mdio.dev.of_node) {
-  2693			u32 reg;
-  2694			int len;
-  2695	
-  2696			len = of_property_count_elems_of_size(phydev->mdio.dev.of_node,
-  2697							      "microchip,led-modes",
-  2698							      sizeof(u32));
-  2699			if (len >= 0) {
-  2700				/* Ensure the appropriate LEDs are enabled */
-  2701				lan78xx_read_reg(dev, HW_CFG, &reg);
-  2702				reg &= ~(HW_CFG_LED0_EN_ |
-  2703					 HW_CFG_LED1_EN_ |
-  2704					 HW_CFG_LED2_EN_ |
-  2705					 HW_CFG_LED3_EN_);
-  2706				reg |= (len > 0) * HW_CFG_LED0_EN_ |
-  2707					(len > 1) * HW_CFG_LED1_EN_ |
-  2708					(len > 2) * HW_CFG_LED2_EN_ |
-  2709					(len > 3) * HW_CFG_LED3_EN_;
-  2710				lan78xx_write_reg(dev, HW_CFG, reg);
-  2711			}
-  2712		}
-  2713	
-  2714		return 0;
-  2715	}
-  2716	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
