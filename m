@@ -1,175 +1,241 @@
-Return-Path: <linux-kernel+bounces-562729-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562731-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9002BA63201
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 19:56:47 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC4DBA63205
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 20:02:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 98CB7189701B
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 18:56:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1DBE3AE813
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 19:02:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 013F61991DD;
-	Sat, 15 Mar 2025 18:56:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F178F19ABDE;
+	Sat, 15 Mar 2025 19:02:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OoLBfqcz"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R9GtIkOp"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 520CD189916;
-	Sat, 15 Mar 2025 18:56:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 470141991B2;
+	Sat, 15 Mar 2025 19:02:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742064999; cv=none; b=HZh/k+3VzQIWac+fZ7WMxdoLWWpzWBPxEYsU39LeWQSYCJDtJWPSjDhvbZhgKrefXQDiE51OTzsB5zuBKzGsmTqB2oGL46KgwxTbI+ulcdFgmRrNdH/DH0jTqeQWqJYkND0Z3z0ZR48Fap/zES3Tq2ZZv+QlHawdpcwtccAfEio=
+	t=1742065367; cv=none; b=d6vT0unZVZKeZySTq5uoHOmKiK+Wvx0wiy6gbfSEMd3hqIZX2VI94W1Z03xyp+8VVkS3gTwxOL4RSZy44vC+jVD9++XtRptfTR/wtH8r3wYgNyzTJmQJt/bnOMC8v4TWgqHG/ZVR2KXy9QraXjaSbUyOg85WSlO1FyIVcCkSJI8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742064999; c=relaxed/simple;
-	bh=0cVJbATR2qhQxWDKABbizVxbgFKBOKXwQRb4x0P1LuA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f76v7a98n5Hb7/xbgNAy5bQsBSRIARTbafg7uh1T3ErQytgvw6fpKLoGxeG4DRQZw7CZC2GHpL6zs0Ga0kDsrcavmB19KkRobzbE1CUxeW6U460J8cg1ziQOTyQtjRoBoKllrpPNYH6IbbCWlxeB+a2DICXYlVPB9VYJd5w+7r4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OoLBfqcz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19EF5C4CEE5;
-	Sat, 15 Mar 2025 18:56:39 +0000 (UTC)
+	s=arc-20240116; t=1742065367; c=relaxed/simple;
+	bh=ytOmYookAztqFRX0GfVO/wzv/kZ/N851rmn9d3pXLM0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=XIem6Ib2rdq2TSBg6ALJZKvL0HrGS070vBrADIL4T9WFQL6L5v9a7AUKr7sIq3ueBZOAjdK4b5kUc6WHmwEkQEOgEHbEsZ0Fmrs4l7F6HA64sS6Oo+muiHrCxCqVAd1wj3+GCb0xwpXuPEy9lf3Zr/hnxqUqlpxqN4rIUnS6G8E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R9GtIkOp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82318C4CEE5;
+	Sat, 15 Mar 2025 19:02:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742064999;
-	bh=0cVJbATR2qhQxWDKABbizVxbgFKBOKXwQRb4x0P1LuA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OoLBfqczX8GbTuzhShU9uH41LAx+3ilH+BtIiLpfqkhkV+o4lEIEH48I/aP9dfIfi
-	 kYQfu6IwW0MmnimgscShZs7soXM8mXW4TJRflCP6t2B1MWIAW+5TBQ8ResuiuNjuiG
-	 Caidl8s+1iUpCYFQv8EhUE8L1SZD5Q4p9s3r0jTfHlMQxNM+fqjOm+koEY7e4yrv6o
-	 eTsfKbVs/zsDJcsL9C7gUA8+k7Rn6Ykl/lXfsJ20SyhshPXjkX1nD12n/YeXZ9tPEg
-	 j4SxykaFoSE+iPgJh7SKenYmozEJwcYMHPKkrfA7OAq64DAo/Acaplpe4epTkykv4I
-	 cFEv/78Fd5Hfg==
-Date: Sat, 15 Mar 2025 11:56:35 -0700
-From: Kees Cook <kees@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Vlastimil Babka <vbabka@suse.cz>, Christoph Lameter <cl@linux.com>,
-	Pekka Enberg <penberg@kernel.org>,
-	David Rientjes <rientjes@google.com>,
-	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Hyeonggon Yoo <42.hyeyoo@gmail.com>,
-	"Gustavo A . R . Silva" <gustavoars@kernel.org>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>, Jann Horn <jannh@google.com>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	Marco Elver <elver@google.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Sasha Levin <sashal@kernel.org>, linux-mm@kvack.org,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Jonathan Corbet <corbet@lwn.net>, Jakub Kicinski <kuba@kernel.org>,
-	Yafang Shao <laoar.shao@gmail.com>,
-	Tony Ambardar <tony.ambardar@gmail.com>,
-	Alexander Lobakin <aleksander.lobakin@intel.com>,
-	Jan Hendrik Farr <kernel@jfarr.cc>,
-	Alexander Potapenko <glider@google.com>,
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
-	linux-doc@vger.kernel.org, llvm@lists.linux.dev
-Subject: Re: [PATCH v4 2/2] slab: Introduce kmalloc_obj() and family
-Message-ID: <202503151141.786736B85B@keescook>
-References: <20250315025852.it.568-kees@kernel.org>
- <20250315031550.473587-2-kees@kernel.org>
- <CAHk-=wiFjwOk9knz8i-zAqE=Kc73+3TgkMuj-C_mNB1U=k2W7A@mail.gmail.com>
+	s=k20201202; t=1742065366;
+	bh=ytOmYookAztqFRX0GfVO/wzv/kZ/N851rmn9d3pXLM0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=R9GtIkOp4ZR2os/FCP4vynt9Gy3UVqfTHHF018nuoGjIRt0mBVv/H+VWNx0IJtku3
+	 ry+dBg8jcIkGicg7PFwUCWRJe/6g6jszcZGeDPoHTrrCwS+oXw6Y3vyFBIG/I1dKdU
+	 UaH6MLmIdSHvH0Z4deO/lWo0bOsAxqh380pr5UImNzb9nqBNBNN1Eo75M4f4FQbe1E
+	 SONBXetgFAph8x3ujYabxeE/FTxEazWtu4petlFatGcCdeF1oBtQH/bdc4VucfEGQf
+	 +7bhj29dVmCj81GILxeAmQr9qNV2sZGgsv/Sx7X+KN8mKx0EGVWVO3dQAqQ81iZs3k
+	 JETXavT3iVywA==
+Date: Sat, 15 Mar 2025 19:02:38 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: David Lechner <dlechner@baylibre.com>
+Cc: linux-iio@vger.kernel.org, Michael Hennerich
+ <Michael.Hennerich@analog.com>, Angelo Dureghello
+ <adureghello@baylibre.com>, Alexandru Ardelean <aardelean@baylibre.com>,
+ Beniamin Bia <beniamin.bia@analog.com>, Stefan Popa
+ <stefan.popa@analog.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 10/11] iio: adc: ad7606: dynamically allocate channel
+ info
+Message-ID: <20250315190238.65e9a59d@jic23-huawei>
+In-Reply-To: <20250312-iio-adc-ad7606-improvements-v1-10-d1ec04847aea@baylibre.com>
+References: <20250312-iio-adc-ad7606-improvements-v1-0-d1ec04847aea@baylibre.com>
+	<20250312-iio-adc-ad7606-improvements-v1-10-d1ec04847aea@baylibre.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wiFjwOk9knz8i-zAqE=Kc73+3TgkMuj-C_mNB1U=k2W7A@mail.gmail.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Sat, Mar 15, 2025 at 08:31:21AM -1000, Linus Torvalds wrote:
-> Alternatively, this might be acceptable if the syntax makes mistakes
-> much harder to do. So for example, if it wasn't just an assignment,
-> but also declared the 'ptr' variable, maybe it would become much safer
-> simply because it would make the compiler warn about mis-uses.
+On Wed, 12 Mar 2025 20:15:48 -0500
+David Lechner <dlechner@baylibre.com> wrote:
 
-Yeah, this is the real goal (it just so happens that it's fewer
-characters). We need some way to gain both compile-time and run-time
-sanity checking while making the writing of allocations easier.
-
-> Using visual cues (something that makes it look like it's not a
-> regular function call) might also help. The traditional C way is
-> obviously to use ALL_CAPS() names, which is how we visually show "this
-> is a macro that doesn't necessarily work like the normal stuff". Some
-> variation of that might help the fundamental issue with your
-> horrendous thing.
-
-Yeah, I really didn't like using &ptr, etc. It just make it weirder.
-
-> My suggestion would be to look at some bigger pattern, maybe including
-> that declaration. To take a real example matching that kind of
-> pattern, we have
+> Refactor the ad7606 drivers to dynamically allocate the channel info.
 > 
->         struct mod_unload_taint *mod_taint;
->         ...
->         mod_taint = kmalloc(sizeof(*mod_taint), GFP_KERNEL);
+> The channel info was getting a bit unwieldy. In some cases, the
+> indio_dev->channels field was getting assigned up to 3 different times,
+> each in a different function, making it difficult to see where the info
+> was coming from. This problem stemps from the number of permutations of
+> the channel array needed to support various modes of operation and data
+> buses. We already have 4 per chip (hardware mode, software mode, AXI ADC
+> backend and AXI ADC backend with software mode) and we intend to add two
+> more per chip when adding SPI offload support.
 > 
-> and maybe those *two* lines could be combined into something saner like
+> To make it easier to read and maintain, move all of the channel setup
+> to a single function that dynamically allocates and fills in the channel
+> info.
 > 
->         ALLOC(mod_taint, struct mod_unload_taint, GFP_KERNEL);
+> Additionally, this lets us remove some hacks where we had to compute an
+> offset due to the fact that sometimes there was a soft timestamp channel
+> at the start of the array. Now the timestamp channel is always at the
+> end of the array as is typical in other drivers.
+> 
+> Signed-off-by: David Lechner <dlechner@baylibre.com>
 
-Yeah, this covers a fair bit, but there's still an absolute ton of
-"allocating stuff tracked by pointers in another structure", like:
+whilst I like static const channel arrays it is hard to argue with the logic
+that it got too complex here so fair enough.
 
-	foo->items = kmalloc_array(sizeof(*foo->items), count, GFP_KERNEL)
+A few trivial things inline.
 
-There's no declaration there. :(
+Jonathan
+ 
+> @@ -1289,29 +1193,84 @@ static int ad7606b_sw_mode_setup(struct iio_dev *indio_dev)
+>  	return st->bops->sw_mode_config(indio_dev);
+>  }
+>  
+> -static int ad7606_chan_scales_setup(struct iio_dev *indio_dev)
+> +static int ad7606_probe_channels(struct iio_dev *indio_dev)
+>  {
+>  	struct ad7606_state *st = iio_priv(indio_dev);
+> -	unsigned int offset = indio_dev->num_channels - st->chip_info->num_adc_channels;
+> -	struct iio_chan_spec *chans;
+> -	size_t size;
+> -	int ch, ret;
+> -
+> -	/* Clone IIO channels, since some may be differential */
+> -	size = indio_dev->num_channels * sizeof(*indio_dev->channels);
+> -	chans = devm_kzalloc(st->dev, size, GFP_KERNEL);
+> -	if (!chans)
+> +	struct device *dev = indio_dev->dev.parent;
+> +	struct iio_chan_spec *channels;
+> +	bool slow_bus;
+> +	int ret, i;
+> +
+> +	slow_bus = !st->bops->iio_backend_config;
 
-One thing that I noticed at the tail end of building up the Coccinelle
-script was the pattern of variable-less "return" allocations:
+Maybe inline with declaration?
+	bool slow_bus = !st->...
 
-struct foo *something(...)
-{
-	...
-	return kmalloc(sizeof(struct foo), GFP_KERNEL);
-}
+> +	indio_dev->num_channels = st->chip_info->num_adc_channels;
+> +
+> +	/* Slow buses also get 1 more channel for soft timestamp */
+> +	if (slow_bus)
+> +		indio_dev->num_channels++;
+> +
+> +	channels = devm_kcalloc(dev, indio_dev->num_channels, sizeof(*channels),
+> +				GFP_KERNEL);
+> +	if (!channels)
+>  		return -ENOMEM;
+>  
+> -	memcpy(chans, indio_dev->channels, size);
+> -	indio_dev->channels = chans;
+> +	for (i = 0; i < indio_dev->num_channels; i++) {
+> +		struct iio_chan_spec *chan = &channels[i];
+>  
+> -	for (ch = 0; ch < st->chip_info->num_adc_channels; ch++) {
+> -		ret = st->chip_info->scale_setup_cb(indio_dev, &chans[ch + offset]);
+> +		chan->type = IIO_VOLTAGE;
+> +		chan->indexed = 1;
+> +		chan->channel = i;
+> +		chan->scan_index = i;
+> +		chan->scan_type.sign = 's';
+> +		chan->scan_type.realbits = st->chip_info->bits;
+> +		chan->scan_type.storagebits = st->chip_info->bits > 16 ? 32 : 16;
+> +		chan->scan_type.endianness = IIO_CPU;
+> +
+> +		if (indio_dev->modes & INDIO_DIRECT_MODE)
+> +			chan->info_mask_separate |= BIT(IIO_CHAN_INFO_RAW);
+> +
+> +		if (st->sw_mode_en) {
+> +			chan->info_mask_separate |= BIT(IIO_CHAN_INFO_SCALE);
+> +			chan->info_mask_separate_available |=
+> +				BIT(IIO_CHAN_INFO_SCALE);
+> +
+> +			/**
+/* probably more appropriate here.
 
-And that doesn't fit either my proposal nor the ALLOC() proposal very
-well.
+> +			 * All chips with software mode support oversampling,
+> +			 * so we skip the oversampling_available check. And the
+> +			 * shared_by_type instead of shared_by_all on slow
+> +			 * buses is for backward compatibility.
+> +			 */
+> +			if (slow_bus)
+> +				chan->info_mask_shared_by_type |=
+> +					BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO);
+> +			else
+> +				chan->info_mask_shared_by_all |=
+> +					BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO);
+> +
+> +			chan->info_mask_shared_by_all_available |=
+> +				BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO);
+> +		} else {
+> +			chan->info_mask_shared_by_type |=
+> +				BIT(IIO_CHAN_INFO_SCALE);
+> +
+> +			if (st->chip_info->oversampling_avail)
+> +				chan->info_mask_shared_by_all |=
+> +					BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO);
+> +		}
+> +
+> +		if (!slow_bus)
+> +			chan->info_mask_shared_by_all |=
+> +				BIT(IIO_CHAN_INFO_SAMP_FREQ);
+> +
+> +		ret = st->chip_info->scale_setup_cb(indio_dev, chan);
+>  		if (ret)
+>  			return ret;
+>  	}
+>  
+> +	if (slow_bus)
+> +		channels[i] = (struct iio_chan_spec)IIO_CHAN_SOFT_TIMESTAMP(i);
+> +
+> +	indio_dev->channels = channels;
+> +
+>  	return 0;
+>  }
 
-> We allow declarations in the middle of code these days because we
-> needed it for the guarding macros, so this would be a new kind of
-> interface that dos that.
+> diff --git a/drivers/iio/adc/ad7606.h b/drivers/iio/adc/ad7606.h
+> index fd4c0d615a880ac6fdcaad213d4843329c3bd7fe..b67058cd021a3d00ff0f461766d51e46d7998f32 100644
+> --- a/drivers/iio/adc/ad7606.h
+> +++ b/drivers/iio/adc/ad7606.h
 
-Yeah, that does make part of it easier.
+>  typedef int (*ad7606_scale_setup_cb_t)(struct iio_dev *indio_dev,
+> @@ -118,10 +48,9 @@ typedef int (*ad7606_sw_setup_cb_t)(struct iio_dev *indio_dev);
+>  
+>  /**
+>   * struct ad7606_chip_info - chip specific information
+> - * @channels:		channel specification
+>   * @max_samplerate:	maximum supported sample rate
+>   * @name:		device name
+> - * @num_channels:	number of channels
+> + * @bits:		data width in bits
 
-> And no, I'm not married to that disgusting "ALLOC()" thing. I'm
-> throwing it out not as TheSOlution(tm), but as a "this interface
-> absolutely needs clarity and must stand out syntactically both to
-> humans and the compiler".
+Hmm. Was previously in the wrong order.  Maybe fix that in your
+earlier cleanup then this will look more natural.
 
-What about making the redundant information the type/var itself instead
-of just the size info of the existing API? For example:
+>   * @num_adc_channels:	the number of channels the ADC actually inputs.
+>   * @scale_setup_cb:	callback to setup the scales for each channel
+>   * @sw_setup_cb:	callback to setup the software mode if available.
+> @@ -133,11 +62,10 @@ typedef int (*ad7606_sw_setup_cb_t)(struct iio_dev *indio_dev);
+>   *			after a restart
+>   */
+>  struct ad7606_chip_info {
+> -	const struct iio_chan_spec	*channels;
+>  	unsigned int			max_samplerate;
+>  	const char			*name;
+> +	unsigned int			bits;
+>  	unsigned int			num_adc_channels;
+> -	unsigned int			num_channels;
+>  	ad7606_scale_setup_cb_t		scale_setup_cb;
+>  	ad7606_sw_setup_cb_t		sw_setup_cb;
+>  	const unsigned int		*oversampling_avail;
 
-	ptr = kmalloc_obj(ptr, GFP_KERNEL);
 
-as in, don't pass a size, but pass the variable (or type) that can be
-examined for type, size, alignment, etc info, but still require that the
-assignment happen externally? In other words, at the end of the proposed
-macro, instead of:
-
-	(P) = __obj_ptr;
-
-it just does:
-
-	__obj_ptr;
-
-so that the macro usage can't "drift" towards being used without an
-assignment? And this would work for the "return" case as well:
-
-	return kmalloc_objs(struct foo, count, GFP_KERNEL);
-
-That would be a much smaller shift in the "usage" of the exist API.
-
-Shall I refactor this proposal for that?
-
--- 
-Kees Cook
 
