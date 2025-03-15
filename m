@@ -1,60 +1,86 @@
-Return-Path: <linux-kernel+bounces-562625-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED1D6A62ECB
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 16:00:24 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5627A62ED1
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 16:02:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0BF723BC5C9
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 15:00:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0860516FF48
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 15:02:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FB792040B2;
-	Sat, 15 Mar 2025 14:58:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FF1C2036F5;
+	Sat, 15 Mar 2025 15:02:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ThWrk6DE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iPXwGsKO"
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D30E22040B3;
-	Sat, 15 Mar 2025 14:58:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15AF21FC10C;
+	Sat, 15 Mar 2025 15:02:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742050718; cv=none; b=nqceFQveh2job0vF4FcIl6Xw4I15KNzVgSnmxp11DIptgnBO2gZIHVcTn+nDHmEGs7J/um/9US4tU+M4O3k/OAG+6G8NcYCiAJsfqXue5FSoPE7ITdppcVZs8gXNvKY+pyl87FLTGxWzIKEYFORWzrurm4XhxAnSR7Zjk5TXnto=
+	t=1742050966; cv=none; b=IiMbkCpCn7V5YDPBN77R0YkCZIMGiC2MnUqGb233fcutByGFmT6i8Kv+DlrZx6FwDXYwvi+URLhvTgHGLpfBUOhdH0oU1bKq87YU/X7LBdezljzLAnT9zJ1HcgMf8t75gfh3C7qvNjBz5KG3fuNPbdRAGDtXD59B0atQtRoQT+E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742050718; c=relaxed/simple;
-	bh=RAeAVhJmU92U3yF+8U1vMhCGpToAH8k8bD3rXfIhF4A=;
+	s=arc-20240116; t=1742050966; c=relaxed/simple;
+	bh=XqF3IeZzTFF40J3s4HW9OVwOhxZElMbeqnL/RHeXcqw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZIRjLgR37plCu90HO4cjkJMDtuv9GIuH+a5R3bb/MwH1xbQGEO7l8nLd+tv23QVfYP0ChWtQWgpEy9RnnM9G160/vdeoGr8tgmOnFCNvLvP1HskeKa7Iek6c4TBy93zolZ9hxJiObHmmWYHbf93OtXuKc6sflDKJKKMMzUtEHeg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ThWrk6DE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B560C4CEE5;
-	Sat, 15 Mar 2025 14:58:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742050718;
-	bh=RAeAVhJmU92U3yF+8U1vMhCGpToAH8k8bD3rXfIhF4A=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ThWrk6DExab+UNESD77yz99cy3ckjADVyJxnz2jMAh9lALCsgIHqc0F/d+TFWvRxA
-	 1OfEtqMhMnNpdSDd455c3xHLHgxc4jLVNlrhw0jwa9gMWgwx6J5U8G/9pTI17iIP8h
-	 AYZZZbz38Z+aNWxtJKmdPAcappLSA9xZx2Xvj3JnmJ50VlqRO371Uz8EK8StzoI6D9
-	 EN7PL8h059EjEFYBnAy28eTaFnk/LJxAhMNoEhDB0F8KaKyzMRVLuaJnBaCZkMfmJp
-	 YrS1pvMjuTpyxtsG747d5BjAP4FdeTnBWSvA8tsXbtYAMYKir5crpPBVdiIj2tYQSl
-	 FYO+CkdJqmqJw==
-Date: Sat, 15 Mar 2025 15:58:31 +0100
-From: Danilo Krummrich <dakr@kernel.org>
-To: Andrew Ballance <andrewjballance@gmail.com>
-Cc: airlied@gmail.com, simona@ffwll.ch, maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org, tzimmermann@suse.de, corbet@lwn.net,
-	ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com,
-	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
-	a.hindborg@kernel.org, aliceryhl@google.com, tmgross@umich.edu,
-	acourbot@nvidia.com, nouveau@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH 2/3] rust: alloc: add Vec::resize method
-Message-ID: <Z9WVl9ExWznVAhtY@cassiopeiae>
-References: <20250315024235.5282-1-andrewjballance@gmail.com>
- <20250315024235.5282-3-andrewjballance@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=q4OLsWhcN/wW2DYGhMVnjTwdvPEoYh/kBSw2WfmIVXwn/dRxl3rR6Fn2za5Kwq+pFfwxEEE0Z1OpvNXPB/0lu35lF1/Yd/aEThouYu1MZYIdYR4Zb2WODR3PodrEL7cWj5TZGBcstxdN/SsvUpBmsHX149qv2324fFBd//XWkkE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iPXwGsKO; arc=none smtp.client-ip=209.85.216.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-2f9d3d0f55dso1075642a91.1;
+        Sat, 15 Mar 2025 08:02:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742050964; x=1742655764; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=d36rr9lbrju2jUirQ00gDiMRY8Q66JkPVxj4yJNU2u0=;
+        b=iPXwGsKOCKuNBEYlClZNyF0+Ry4zwsmkgLbW1ifIUWv+9WnnhGU6UKHyCdCXp5IUV+
+         usXeZNrg5yvqXq+NyviS9pIcmp2sRcHGCox9UjtKkPn9OVbq56lGQyUr2ZWwTJn5NlF7
+         1bjJ4Tzj3yoVcPE1F8KctF8K13NE/0MlwE/VbmVk/fsP71y80UgvYSBuAKg8WkoXtHN9
+         GZJqxOVSFJSJgOrCEZ7OtYVQcKfJSt1BMGIL74VuqVc0ig2tXIm0IhicblfbPsHQpWbe
+         YGrm0bdT3tbiRMk04d4VxK21sxPgyb1vm4FN5ZQUUu+UzwBLHKbHlLwZm/fsl7mjbVCZ
+         sSjQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742050964; x=1742655764;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=d36rr9lbrju2jUirQ00gDiMRY8Q66JkPVxj4yJNU2u0=;
+        b=mtZD0I7SygCqEqD/PvgeIg1LAhMHL7rrosxfrUWp3/6sjrb1W5/VoRF638s3VaeAFA
+         MhowAChkE8u7w7/YMl5iTrHSs4xbeVt56AUA6Ga9NdZIh4FQGI4Q6LGNQNtY6s6Ugo2r
+         jKjyPlpI3BZPrG+lqVkwFy2Zs884h/Mi7jzy/t6WyBeedx90pOWm05SJLvyXiGFaw4Zg
+         n5Y67CsjU0dTh0CGRqHL0rMYx0zPVbiEg5mFs9mSxvOOyONaOdi2+b6+5YnxOk/ZaAOv
+         a5RoGnDeI200VFvRN3P8Q4GRhNtZgW1k8OP2bTjIiDKnjesq6B2o17Gu/vuLnD1yf6l2
+         lBAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVGmaaSCP3MnfozppIsADY2c0MCNVOzU/jMyzY65AVmsHR3HIKC0YyztzYbjbL4kcttaoXLOUqcTQc/K+8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyCrMQWb5EA9R7VZx6okodw65lhIiwwocjyZ7BbsCf5+R+PAuWq
+	MUgdriiMaZiaegbHnLVEETGEPnHlHeQ9g4GARV1AbzG20tSUJFlw1Eq4lYdg
+X-Gm-Gg: ASbGncs7PpKSORL9wNeJDEXYnDObohyirDalqfQvb59/3WG9e8HHCl7dMT0LzsV18Vy
+	0DTkX3bTxiEGnZRJwxt30A5LuKpugjSqBQ4rZ8tF4ky0IKWe7x3FNOj9YoVLPpwDnf8trGctymB
+	C0EM/Cpfb2IC7fLnPMiYSUL2R8P6a4feauHnpOXyp3mWfH6EZkGNzI7NXsy9/vX7aYgcVbphLW9
+	r0R6IeV9vROPOpiCwdyS2v0WXiDZ+HYVcuVeS88cyoTzW19buCTeaGQNoXTH6LCJvSjpKt2Ye+9
+	1U3suHIODqjxP/5dubwCiA8h+RZUvC1ldasoRAL1ln48BxFCsOcTKA==
+X-Google-Smtp-Source: AGHT+IHvcEmAdvz4RKtwFUcK1Fgq2J0xP+4bcNXQJl3RwHxm388HFDW0oxHY+0N5ExqvwKIHv7yTkg==
+X-Received: by 2002:a17:90b:2dcc:b0:2ef:31a9:95c6 with SMTP id 98e67ed59e1d1-30151c7a2f4mr9616945a91.14.1742050964191;
+        Sat, 15 Mar 2025 08:02:44 -0700 (PDT)
+Received: from localhost ([2804:30c:b31:2d00:277c:5cbe:7f44:752b])
+        by smtp.gmail.com with UTF8SMTPSA id 98e67ed59e1d1-301539d3f4bsm2834921a91.5.2025.03.15.08.02.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 15 Mar 2025 08:02:43 -0700 (PDT)
+Date: Sat, 15 Mar 2025 12:03:40 -0300
+From: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+To: Siddharth Menon <simeddon@gmail.com>
+Cc: linux-iio@vger.kernel.org, lars@metafoo.de,
+	Michael.Hennerich@analog.com, jic23@kernel.org,
+	gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+	linux-staging@lists.linux.dev
+Subject: Re: [PATCH] iio: frequency: ad9832: Use FIELD_PREP macro to set bit
+ fields
+Message-ID: <Z9WWzMGdBga76zm9@debian-BULLSEYE-live-builder-AMD64>
+References: <20250313195442.30264-1-simeddon@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,61 +89,90 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250315024235.5282-3-andrewjballance@gmail.com>
+In-Reply-To: <20250313195442.30264-1-simeddon@gmail.com>
 
-On Fri, Mar 14, 2025 at 09:42:34PM -0500, Andrew Ballance wrote:
-> implemnts the equivalent of the rust std's Vec::resize
-> on the kernel's Vec type.
+Hi Siddharth,
 
-Nit: It is preferred to use the imperative form, i.e. "Implement the equivalent
-[...]".
+Adding some comments inline. If what Jonathan suggested + what I suggest bellow
+is still insufficient to avoid those lots of shifting to make up a write
+command, then probably not worth it to change those as Jonathan said.
 
+On 03/14, Siddharth Menon wrote:
+> Refactor code to use the FIELD_PREP macro for setting bit fields
+> instead of manual bit manipulation.
 > 
-> Signed-off-by: Andrew Ballance <andrewjballance@gmail.com>
+> Suggested-by: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+> Signed-off-by: Siddharth Menon <simeddon@gmail.com>
 > ---
->  rust/kernel/alloc/kvec.rs | 25 +++++++++++++++++++++++++
->  1 file changed, 25 insertions(+)
+>  drivers/staging/iio/frequency/ad9832.c | 39 ++++++++++++++------------
+>  1 file changed, 21 insertions(+), 18 deletions(-)
 > 
-> diff --git a/rust/kernel/alloc/kvec.rs b/rust/kernel/alloc/kvec.rs
-> index 75e9feebb81f..cbfef2e56f9c 100644
-> --- a/rust/kernel/alloc/kvec.rs
-> +++ b/rust/kernel/alloc/kvec.rs
-> @@ -554,6 +554,31 @@ pub fn from_elem(value: T, n: usize, flags: Flags) -> Result<Self, AllocError> {
->  
->          Ok(v)
->      }
-> +
-> +    /// Resizes the [`Vec`] so that `len` is equal to `new_len`.
-> +    ///
-> +    /// If `new_len` is smaller than `len`, the `Vec` is [`Vec::truncate`]d.
-> +    /// If `new_len` is larger, each new slot is filled with clones of `value`.
-> +    ///
-> +    /// # Example
+> diff --git a/drivers/staging/iio/frequency/ad9832.c b/drivers/staging/iio/frequency/ad9832.c
+> index 140ee4f9c137..bbde1f0e84ff 100644
+> --- a/drivers/staging/iio/frequency/ad9832.c
+> +++ b/drivers/staging/iio/frequency/ad9832.c
+> @@ -70,6 +70,9 @@
+>  #define AD9832_FREQ_BITS	32
+>  #define AD9832_PHASE_BITS	12
+>  #define RES_MASK(bits)		((1 << (bits)) - 1)
+> +#define DATA_MASK       0xFF
+> +#define CMD_MASK        (0xF << CMD_SHIFT)
+> +#define ADD_MASK        (0xF << ADD_SHIFT)
 
-Nit: Please add an empty line after the heading.
+We could have masks for each part of the write command. For example,
 
-> +    /// ```
-> +    /// let mut v = kernel::kvec![1, 2, 3]?;
-> +    /// v.resize(1, 42, GFP_KERNEL)?;
-> +    /// assert_eq!(&v, &[1]);
-> +    ///
-> +    /// v.resize(3, 42, GFP_KERNEL)?;
-> +    /// assert_eq!(&v, &[1, 42, 42]);
-> +    ///
-> +    /// # Ok::<(), Error>(())
-> +    /// ```
-> +    pub fn resize(&mut self, new_len: usize, value: T, flags: Flags) -> Result<(), AllocError> {
-> +        if new_len > self.len() {
-> +            self.extend_with(new_len - self.len(), value, flags)
-> +        } else {
-> +            self.truncate(new_len);
-> +            Ok(())
-> +        }
-> +    }
->  }
+#define CMD_MASK		GENMASK(15, 12)
+#define ADD_MASK		GENMASK(11, 8)
+#define DATA_MASK		GENMASK(7, 0)
+
 >  
->  impl<T, A> Drop for Vec<T, A>
-> -- 
-> 2.48.1
-> 
+>  /**
+>   * struct ad9832_state - driver instance specific data
+> @@ -139,18 +142,18 @@ static int ad9832_write_frequency(struct ad9832_state *st,
+>  
+>  	regval = ad9832_calc_freqreg(clk_freq, fout);
+>  
+> -	st->freq_data[0] = cpu_to_be16((AD9832_CMD_FRE8BITSW << CMD_SHIFT) |
+> -					(addr << ADD_SHIFT) |
+> -					((regval >> 24) & 0xFF));
+> -	st->freq_data[1] = cpu_to_be16((AD9832_CMD_FRE16BITSW << CMD_SHIFT) |
+> -					((addr - 1) << ADD_SHIFT) |
+> -					((regval >> 16) & 0xFF));
+> -	st->freq_data[2] = cpu_to_be16((AD9832_CMD_FRE8BITSW << CMD_SHIFT) |
+> -					((addr - 2) << ADD_SHIFT) |
+> -					((regval >> 8) & 0xFF));
+> -	st->freq_data[3] = cpu_to_be16((AD9832_CMD_FRE16BITSW << CMD_SHIFT) |
+> -					((addr - 3) << ADD_SHIFT) |
+> -					((regval >> 0) & 0xFF));
+> +	st->freq_data[0] = cpu_to_be16(FIELD_PREP(CMD_MASK, AD9832_CMD_FRE8BITSW) |
+> +					FIELD_PREP(ADD_MASK, addr) |
+> +					FIELD_PREP(DATA_MASK, (regval >> 24) & 0xFF));
+
+Then we can use FIELD_PREP() in combination with the masks. Example,
+
+	st->freq_data[0] = cpu_to_be16(FIELD_PREP(CMD_MASK, AD9832_CMD_FRE8BITSW) |
+			   	       FIELD_PREP(ADD_MASK, addr) |
+			   	       FIELD_PREP(DATA_MASK, (regval >> 24));
+
+> +	st->freq_data[1] = cpu_to_be16(FIELD_PREP(CMD_MASK, AD9832_CMD_FRE16BITSW) |
+> +					FIELD_PREP(ADD_MASK, (addr - 1)) |
+> +					FIELD_PREP(DATA_MASK, (regval >> 16) & 0xFF));
+> +	st->freq_data[2] = cpu_to_be16(FIELD_PREP(CMD_MASK, AD9832_CMD_FRE8BITSW) |
+> +					FIELD_PREP(ADD_MASK, (addr - 2)) |
+> +					FIELD_PREP(DATA_MASK, (regval >> 8) & 0xFF));
+> +	st->freq_data[3] = cpu_to_be16(FIELD_PREP(CMD_MASK, AD9832_CMD_FRE16BITSW) |
+> +					FIELD_PREP(ADD_MASK, (addr - 3)) |
+> +					FIELD_PREP(DATA_MASK, (regval >> 0) & 0xFF));
+
+If able to make regval an array as Jonathan suggested, the above may become
+something like
+
+for (i = 0; i < ARRAY_SIZE(st->freq_data); i++)
+	st->freq_data[i] = cpu_to_be16(FIELD_PREP(CMD_MASK, AD9832_CMD_FRE8BITSW) |
+			   	       FIELD_PREP(ADD_MASK, addr) |
+			   	       FIELD_PREP(DATA_MASK, (regval[i])));
+
+Note the command alternates between AD9832_CMD_FRE8BITSW and
+AD9832_CMD_FRE16BITSW so maybe also put the command constants into an array or
+use some ternary operation like i % 2 == 0 ? AD9832_CMD_FRE8BITSW : AD9832_CMD_FRE16BITS.
 
