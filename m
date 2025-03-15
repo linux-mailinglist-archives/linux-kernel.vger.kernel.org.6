@@ -1,58 +1,81 @@
-Return-Path: <linux-kernel+bounces-562553-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562554-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BD19A62BDD
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 12:33:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60416A62BE0
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 12:34:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94AA73BB469
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 11:33:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5FBC6189A382
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 11:34:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 487DC1F868F;
-	Sat, 15 Mar 2025 11:33:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76B441F8BAF;
+	Sat, 15 Mar 2025 11:34:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qzEbg2K/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="NFTaNFnX"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A057B1DF964;
-	Sat, 15 Mar 2025 11:33:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D3701E7C0A;
+	Sat, 15 Mar 2025 11:34:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742038405; cv=none; b=mrJLjdYJ63l+VknBC+4LPoz/cbpen5mEdR3TQ+l2RbX6jbzjvRpIbgYyuDXFt8VuTQc+14us2NiXi9i0txPyMk9KQp+lFK9Wb1T/ftvR93ji3ZZ7DCZAe/HyjcGah7U4TOrjEb8CNaPIHTkVsxrEEailiecyspDaDV0bObhb+DA=
+	t=1742038466; cv=none; b=phewRNmoT/51aOT77qo7IGd/xdfG3swCXLhnbOo64gbjw0L2lzIEu5Cb389gZrNdPc0XDXLF6p6Iv5gCQrJpaR08H6uABFIoamenLDCmFFOJxtOB2k4wuXEttRmdjALm1W1iFXnV4xy0rZZt/IeJAEawx7WFmYo5BTFdyGfOqvw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742038405; c=relaxed/simple;
-	bh=BDQZv8lqGd0hrzPUX9cD3C3T2p2eEFtU7Po6FV9qw9s=;
+	s=arc-20240116; t=1742038466; c=relaxed/simple;
+	bh=rAr/1XOPL6FtqBP7vv5nuWJT+lCTu+U480Yk0OYPEbQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=unTCGZt9GrhS9wPw1gCBGI1giQdPrnKHyEPnDjTb8gRoCd8xEq2RspHxH1Xweg8Rhg2/XnaGFvNQArIxtNEY9bXHnH6yOQuQXyk+5ffkNadEfbPj5j1xdLJZr5++oOqXjlTxN4HEa2kLYe/y82VA+ExkOkXkjd9TIEXX34bKYAY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qzEbg2K/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCBF6C4CEE5;
-	Sat, 15 Mar 2025 11:33:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742038405;
-	bh=BDQZv8lqGd0hrzPUX9cD3C3T2p2eEFtU7Po6FV9qw9s=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=EZSeFXjECuyuTYviJrfBq93aJkjPeD/xOOLAbj/5exootU/LatWhux57nnOHpJQGHhxuDxx4E+rEwqkkJdLjX9Equc701F+ekQCkfYYpSlJ6s8yNRsYscutXqoBBr+mTt4YbwxDysAsdRpaNW0KxLhEE5M8gPfhXJSKP/MpFq8A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=fail (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=NFTaNFnX reason="signature verification failed"; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 4432D40E0196;
+	Sat, 15 Mar 2025 11:34:21 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=fail (4096-bit key)
+	reason="fail (body has been altered)" header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id 8hxDFu0D7Fcd; Sat, 15 Mar 2025 11:34:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1742038456; bh=gSgNTrF/QbgbsMwtMJwfKMFZleoPJK4pQUmP758rID4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qzEbg2K/OtQilABgbv56DY4XMePLhgi85vZyujxGFyAHFw5FONRAM9wd8ZrReatgJ
-	 c06KMQpFqXdqoruiW0SzV4NLVrFIobIuv5SbxLn4ocCTovcJSUAlWaBjdD0wXFAoHe
-	 fW3dvqB+VpME8Y4CPlLPANi864328+b5OuImxVS7Hh2PrIeAfWSS7lDrQ9/hPkFiXL
-	 QLR6HWIdHmnRHMXALrQ/tqvW9MyoENeLLqEsy8rurrV8vucFWmVoxQj4sEfScr0MhR
-	 K4XeFIVlUvJyQHPdOyadx8wekPo5+do9T1dN8kr2So8FqQeBCiq60nK7WVzeKwMkRQ
-	 Jop/2Tv3AXIIA==
-Date: Sat, 15 Mar 2025 20:33:23 +0900
-From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>
-To: Zhangfei Gao <zhangfei.gao@linaro.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-	Baolu Lu <baolu.lu@linux.intel.com>,
-	Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
-	Jason Gunthorpe <jgg@ziepe.ca>, iommu@lists.linux.dev,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] PCI: Declare quirk_huawei_pcie_sva() as
- pci_fixup_header
-Message-ID: <20250315113323.GA3547675@rocinante>
-References: <20250314071058.6713-1-zhangfei.gao@linaro.org>
- <20250315101319.5269-1-zhangfei.gao@linaro.org>
+	b=NFTaNFnXZu8gdd3lmhmwHKKY80bmsVlFIKp8X4xobVPQp/fskNrr3xVJLi4/MIGKF
+	 vpxvmjvjuYWPKBZtAEksOP71kOwnBEHE8OIqKNLuFRhY4h2nOuFcL22EK024MoZjAu
+	 agG66/ZLG30Z3KDAXezZvQkjpsGXEgAvikFdbxxmAH2vU+uiBHHu1hGiwNP/e0lT1y
+	 Yfqw75n6mgteMJEAh/vdElQ1MqeKFiCL4OaokG5FHYRd1JHlrhuuRqSfasatXZz1T+
+	 /vftDQWftmtC38r8FsMA2cuuXUeE9GQdQ9h49O0jpMCPpb4rRGBur+wspujvlBOW3E
+	 kd/DAnnOP8fOtGI4bvv4thxHAH6UqJTYQjdTJ4QVFaF2hz8oUuHvdn0ynzofnnXwAW
+	 hxXrM/9LcYmnuJcjZTpGFKso3CS3RAriU9g2VF0+LgXG2Qh0CFpksqRhseGEQDn4o7
+	 HgRxEnwu/sGKMLAYXmTvLyRFITGXcXNsxV5wg7AUrOhxrJn7kV014tgLovY4pZotpJ
+	 sBMVrXobTawJywQ4NbUVKdkzMRPcSLbKuGlpeVZN8ZXO7piLLnhmqTqfJNwof5ldel
+	 GXGWsgKWw5KaQrwHDl7rCQ2hCUKven6PRsP83BZk8lfJr2wWGvLjoUHsLQURFKBwmp
+	 P4y4JU8BvXlVW3yE9daJKp38=
+Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id E3AC540E0216;
+	Sat, 15 Mar 2025 11:34:01 +0000 (UTC)
+Date: Sat, 15 Mar 2025 12:34:00 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Cc: Masahiro Yamada <masahiroy@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas@fjasle.eu>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Ben Hutchings <ben@decadent.org.uk>, linux-kbuild@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
+Subject: Re: [PATCH 0/4] kbuild: make all file references relative to source
+ root
+Message-ID: <20250315113400.GBZ9VlqIBVsVdzlRAb@fat_crate.local>
+References: <20250313-kbuild-prefix-map-v1-0-38cea8448c5f@weissschuh.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,55 +84,39 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250315101319.5269-1-zhangfei.gao@linaro.org>
+In-Reply-To: <20250313-kbuild-prefix-map-v1-0-38cea8448c5f@weissschuh.net>
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Thu, Mar 13, 2025 at 04:59:08PM +0100, Thomas Wei=C3=9Fschuh wrote:
+> -fmacro-prefix-map only affects __FILE__ and __BASE_FILE__.
+> Other references, for example in debug information, is not affected.
+> This makes handling of file references in the compiler output harder to
+> use and creates problems for reproducible builds.
+>=20
+> Switch to -ffile-prefix map which affects all references.
+>=20
+> Signed-off-by: Thomas Wei=C3=9Fschuh <linux@weissschuh.net>
+> ---
+> Thomas Wei=C3=9Fschuh (4):
+>       kbuild: make all file references relative to source root
+>       kbuild: doc: reproducible-builds: drop section "Absolute filename=
+s"
+>       x86/boot: Switch to -ffile-prefix-map
+>       x86/boot/compressed: Switch to -ffile-prefix-map
 
-> The commit bcb81ac6ae3c ("iommu: Get DT/ACPI parsing into the proper
-> probe path") changes the arm_smmu_probe_device() sequence.
-> 
-> The arm_smmu_probe_device() is now called earlier via pci_device_add(),
-> which calls pci_fixup_device() at the "pci_fixup_header" phase, while
-> originally it was called from the pci_bus_add_device(), which called
-> pci_fixup_device() at the "pci_fixup_final" phase.
-> 
-> The callstack before:
-> [ 1121.314405]  arm_smmu_probe_device+0x48/0x450
-> [ 1121.314410]  __iommu_probe_device+0xc4/0x3c8
-> [ 1121.314412]  iommu_probe_device+0x40/0x90
-> [ 1121.314414]  acpi_dma_configure_id+0xb4/0x100
-> [ 1121.314417]  pci_dma_configure+0xf8/0x108
-> [ 1121.314421]  really_probe+0x78/0x278
-> [ 1121.314425]  __driver_probe_device+0x80/0x140
-> [ 1121.314427]  driver_probe_device+0x48/0x130
-> [ 1121.314430]  __device_attach_driver+0xc0/0x108
-> [ 1121.314432]  bus_for_each_drv+0x8c/0xf8
-> [ 1121.314435]  __device_attach+0x104/0x1a0
-> [ 1121.314437]  device_attach+0x1c/0x30
-> [ 1121.314440]  pci_bus_add_device+0xb8/0x1f0
-> [ 1121.314442]  pci_iov_add_virtfn+0x2ac/0x300
-> 
-> And after:
-> [  215.072859]  arm_smmu_probe_device+0x48/0x450
-> [  215.072871]  __iommu_probe_device+0xc0/0x468
-> [  215.072875]  iommu_probe_device+0x40/0x90
-> [  215.072877]  iommu_bus_notifier+0x38/0x68
-> [  215.072879]  notifier_call_chain+0x80/0x148
-> [  215.072886]  blocking_notifier_call_chain+0x50/0x80
-> [  215.072889]  bus_notify+0x44/0x68
-> [  215.072896]  device_add+0x580/0x768
-> [  215.072898]  pci_device_add+0x1e8/0x568
-> [  215.072906]  pci_iov_add_virtfn+0x198/0x300
-> 
-> Fixes: bcb81ac6ae3c ("iommu: Get DT/ACPI parsing into the proper probe path")
-> Signed-off-by: Zhangfei Gao <zhangfei.gao@linaro.org>
-> [kwilczynski: commit log]
-> Signed-off-by: Krzysztof Wilczyński <kwilczynski@kernel.org>
+Btw, I don't see why those are 4 patches - it is a single logical change =
+that
+converts to this new compiler switch.
 
-So, this will go through the IOMMU three, correct?  Once Bjorn adds his "Acked-by" tag.
+So why are they 4?
 
-Just want to make sure.
+Masahiro, might as well merge them into one...
 
-	Krzysztof
+Thx.
+
+--=20
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
