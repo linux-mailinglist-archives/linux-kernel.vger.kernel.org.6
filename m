@@ -1,88 +1,130 @@
-Return-Path: <linux-kernel+bounces-562389-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562390-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BC03A62527
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 04:09:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7601CA62528
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 04:09:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6453C3AE4E3
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 03:09:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0A5F3A9BE3
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 03:09:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C422C1898E9;
-	Sat, 15 Mar 2025 03:08:10 +0000 (UTC)
-Received: from mxct.zte.com.cn (mxct.zte.com.cn [183.62.165.209])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4AC3188736;
+	Sat, 15 Mar 2025 03:09:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QIGSpBwg"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79419187325
-	for <linux-kernel@vger.kernel.org>; Sat, 15 Mar 2025 03:08:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=183.62.165.209
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B91A3186E54
+	for <linux-kernel@vger.kernel.org>; Sat, 15 Mar 2025 03:09:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742008090; cv=none; b=H8T16fqNHj3ijIgmkqcBeBsvAxKVunWQp1mkMSVmGhj2H6TBndsMcnFC98RTDlcbjrGNN0QdDboikfY85d70dmb1q4WAI+ApTeTOwUHi1QmEzNaVHqyTdRz8Q+tQDAnjI4J0sX6/NKr7IH1EEI5OdtrMdt1FRIReSg5qk8gyqkY=
+	t=1742008173; cv=none; b=fJw3mYTYrnDSpYNDRgZQDl/hNFnUPWADJuy0CZvwplhjaGgMfy+kHxKOLSEDmoSj/7yv8v/luWHmKkqTog/j9DkXjwv43WDlz4Bvi4YUZsTR/wl4hMxT8egSXLtrseufiuwzXqa962rcbAu62jodo/Q5lBR0GnwcvJbAEK9JBT8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742008090; c=relaxed/simple;
-	bh=s7ux8sxTI6I3Cc459xxdcV/btp8jYB6zwKCWwcVuZgQ=;
-	h=Date:Message-ID:Mime-Version:From:To:Cc:Subject:Content-Type; b=DzDm2Mv84Dn5cGuQeubJ8swVZ2+WM5McDoCDAzoyPqsc/dWrU8IdspN7KmzI9IWtrvDn18Q9RqxC59lyK2tob93vGKHoaW/Ba+xx2SfYrPWeGZxXVZG0xjehJls3y5fyAiEcCg74jvIGXAR9oOcABeWmXGRdPAYJqYbs98WnGlY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=183.62.165.209
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
-Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mxct.zte.com.cn (FangMail) with ESMTPS id 4ZF5lR0N6jz501gV;
-	Sat, 15 Mar 2025 11:08:03 +0800 (CST)
-Received: from xaxapp02.zte.com.cn ([10.88.97.241])
-	by mse-fl1.zte.com.cn with SMTP id 52F37wl5041226;
-	Sat, 15 Mar 2025 11:07:58 +0800 (+08)
-	(envelope-from feng.wei8@zte.com.cn)
-Received: from mapi (xaxapp04[null])
-	by mapi (Zmail) with MAPI id mid32;
-	Sat, 15 Mar 2025 11:08:00 +0800 (CST)
-Date: Sat, 15 Mar 2025 11:08:00 +0800 (CST)
-X-Zmail-TransId: 2afb67d4ef10249-a60fe
-X-Mailer: Zmail v1.0
-Message-ID: <20250315110800107off32dfmFxS4oTSqBr20T@zte.com.cn>
+	s=arc-20240116; t=1742008173; c=relaxed/simple;
+	bh=sbIUUtbhKoqaRF1XiCfJiPMT1BQtiAUvE4BMli7XQLM=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=tLcT2sw84nLDbaseQWFpdPHTjOGZMEjQz239ZEp5gVzy/OCa+6aExspqRIT1TfyZHDrbD9vaUnSAFmWvrw9VC4q3150DHVD8FRtP2mRym0BpB+ci1LxKgFGiX6tFy5Mm/jB27WqYx4WAMtZFWPa+R008qash0ZqeUrx1Ooj+xGw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=QIGSpBwg; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2ff8a2c7912so466357a91.1
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Mar 2025 20:09:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1742008171; x=1742612971; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gak29tsjnPuV+z4b5bqPopzZmVyIubK7izsrv5a+gSo=;
+        b=QIGSpBwgnN0pA/TVKscxKz8/isclD8TEJbFylnDZIbGsMcqqlxz1B/L1pMRDNYNS7g
+         pMsBa24e+3iugQ8iW73F8pA+ZiBtTPDYS3vyD8xZfqSEyJvURMqvc6eF+HUZQdCixTvA
+         w3zxJZN0ZkIXQ6sOmH7yCIBwMfMdFDbl/P4BXhdIuPv0cxeabb1b8dvhzVZhkgHKppQ9
+         yl7OBJQp13Na00C2nuykeNpwh/wJ1a8yMwomfCfrPyq6AaKkom0xKip1X8+BTfj9OK/D
+         BajiiI3SYlqtFBFEZYujkfWxZN2iawq9I1XIZyGBz3H6rsHehGIU9ak9sdH822PCxQEl
+         mwyA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742008171; x=1742612971;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=gak29tsjnPuV+z4b5bqPopzZmVyIubK7izsrv5a+gSo=;
+        b=ryEil2OtpW4NZUTd2WkDhbTHRVIgy84hY2eIJ6gW675x7Q7cY2wFRpvdeUrCl3e7vw
+         asyecmUj4JmgzEEJVL30e0CJDK/eXT7KKXZvgqMBe4ypwnyuOSY9+2+iUOrj79GB/NIb
+         gKxEC/1xsLVsTROF8GLqkxkTWIIQRhNWmsObiAFe21YaN1q9riZo5eV2pGkzHLdxw/4+
+         Qnr3gQmZ+5LgcLFkmk+7MEgeAl1075MTEYFIq/NteUAVMWR5Xq3FvxJwCtcEQlPaBtSS
+         tGvGLzDtMRgVwV9PApC7M5QnqZhXqVzvz8NN0tA4AHNXtHM4U0maDWz6iqpFiU4Z0sXI
+         YC1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUJEcfbQ45revmoK0AHAZ79nuejtqtvRHwW9ON+4gWuKwEWsGIxj/2gGW5K0lkOvaPgAokcdyHFnc09NZ0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwG/75kEk91bERu8fLjQx4uZNB1VUlRBZeyi2hKpgmajktvGqDr
+	tHMcTk0i4hruqt7799qk7kSAjJ9bwh4q/VGihnBVpflPB5k+C+cOjskto+8yUAPCGsMbPWslmnu
+	iiw==
+X-Google-Smtp-Source: AGHT+IHARToxIR6VtRmzurSAC1xRmKsv9pkDNgIgaOjeWW+naTGMb+8yOvOGBklnWsF0Q5GPNfNOFHtDSVk=
+X-Received: from pjbdy6.prod.google.com ([2002:a17:90b:6c6:b0:2f8:49ad:406c])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4ec7:b0:2fa:2133:bc87
+ with SMTP id 98e67ed59e1d1-30135eab48emr11511389a91.6.1742008170985; Fri, 14
+ Mar 2025 20:09:30 -0700 (PDT)
+Reply-To: Sean Christopherson <seanjc@google.com>
+Date: Fri, 14 Mar 2025 20:09:28 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-From: <feng.wei8@zte.com.cn>
-To: <james.smart@broadcom.com>
-Cc: <kbusch@kernel.org>, <axboe@kernel.dk>, <hch@lst.de>, <sagi@grimberg.me>,
-        <linux-nvme@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-Subject: =?UTF-8?B?W1BBVENIXSBudm1lLWZjOiBSZXBsYWNlIG5lc3RlZCBtaW4oKSB3aXRoIHNpbmdsZSBtaW4zKCk=?=
-Content-Type: text/plain;
-	charset="UTF-8"
-X-MAIL:mse-fl1.zte.com.cn 52F37wl5041226
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 67D4EF13.000/4ZF5lR0N6jz501gV
+X-Mailer: git-send-email 2.49.0.rc1.451.g8f38331e32-goog
+Message-ID: <20250315030928.2373250-1-seanjc@google.com>
+Subject: [PATCH] iommu/amd: Explicitly bail from enable_iommus_vapic() when in
+ legacy mode
+From: Sean Christopherson <seanjc@google.com>
+To: Joerg Roedel <joro@8bytes.org>
+Cc: iommu@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>, Sean Christopherson <seanjc@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-From: FengWei <feng.wei8@zte.com.cn>
+Bail early from enable_iommus_vapic() if IOMMUs are configured for either
+of the legacy modes, as it's absurdly difficult to see that
+iommu_ga_log_enable() is guaranteed to fail because iommu_init_ga_log()
+skips allocating the ga_log.
 
-Use min3() macro instead of nesting min() to simplify the return
-statement.
+Opportunistically have iommu_ga_log_enable() WARN if it's called without
+IOMMUs being configured to support AVIC/vAPIC.
 
-Signed-off-by: FengWei <feng.wei8@zte.com.cn>
+Cc: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
+Signed-off-by: Sean Christopherson <seanjc@google.com>
 ---
- drivers/nvme/host/fc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/iommu/amd/init.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/nvme/host/fc.c b/drivers/nvme/host/fc.c
-index b9929a5a7f4e..fbb11962894f 100644
---- a/drivers/nvme/host/fc.c
-+++ b/drivers/nvme/host/fc.c
-@@ -2858,7 +2858,7 @@ nvme_fc_create_io_queues(struct nvme_fc_ctrl *ctrl)
- 	unsigned int nr_io_queues;
- 	int ret;
+diff --git a/drivers/iommu/amd/init.c b/drivers/iommu/amd/init.c
+index cb536d372b12..05c568da589a 100644
+--- a/drivers/iommu/amd/init.c
++++ b/drivers/iommu/amd/init.c
+@@ -931,8 +931,8 @@ static int iommu_ga_log_enable(struct amd_iommu *iommu)
+ 
+ static int iommu_init_ga_log(struct amd_iommu *iommu)
+ {
+-	if (!AMD_IOMMU_GUEST_IR_VAPIC(amd_iommu_guest_ir))
+-		return 0;
++	if (WARN_ON_ONCE(!AMD_IOMMU_GUEST_IR_VAPIC(amd_iommu_guest_ir)))
++		return -EINVAL;
+ 
+ 	iommu->ga_log = iommu_alloc_pages(GFP_KERNEL, get_order(GA_LOG_SIZE));
+ 	if (!iommu->ga_log)
+@@ -2863,8 +2863,10 @@ static void enable_iommus_vapic(void)
+ 			return;
+ 	}
+ 
+-	if (AMD_IOMMU_GUEST_IR_VAPIC(amd_iommu_guest_ir) &&
+-	    !check_feature(FEATURE_GAM_VAPIC)) {
++	if (!AMD_IOMMU_GUEST_IR_VAPIC(amd_iommu_guest_ir))
++		return;
++
++	if (!check_feature(FEATURE_GAM_VAPIC)) {
+ 		amd_iommu_guest_ir = AMD_IOMMU_GUEST_IR_LEGACY_GA;
+ 		return;
+ 	}
 
--	nr_io_queues = min(min(opts->nr_io_queues, num_online_cpus()),
-+	nr_io_queues = min3(opts->nr_io_queues, num_online_cpus(),
- 				ctrl->lport->ops->max_hw_queues);
- 	ret = nvme_set_queue_count(&ctrl->ctrl, &nr_io_queues);
- 	if (ret) {
+base-commit: ea9bd29a9c0d757b3384ae3e633e6bbaddf00725
 -- 
-2.25.1
+2.49.0.rc1.451.g8f38331e32-goog
+
 
