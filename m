@@ -1,83 +1,57 @@
-Return-Path: <linux-kernel+bounces-562781-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562782-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 327E6A632E5
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 00:02:49 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0F3BA632E8
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 00:08:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8F7147A31F6
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 23:01:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2AD9F3B2036
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 23:07:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F626199935;
-	Sat, 15 Mar 2025 23:02:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 423981C6FF5;
+	Sat, 15 Mar 2025 23:07:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bj7Di1nj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="wQ57sbG5"
+Received: from mail-4316.protonmail.ch (mail-4316.protonmail.ch [185.70.43.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE51519D09C;
-	Sat, 15 Mar 2025 23:02:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3F2719ABD4;
+	Sat, 15 Mar 2025 23:07:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742079758; cv=none; b=okE0UkAUN9KKqVfhCpgNJUZ/Qt7jQLsjyytPKkKRyBLiqghxTD6I+rH3Ftfi6C8DG66uqXlhpEF7vQ8HjONaR7uUaiWmH5+JVHHSNVAbThMHKNDzQt4qfQd4x+GboozsOvwPXgseZ578GSSAUfgs0PvgJKzgOwQHNKWSMBVDeyI=
+	t=1742080077; cv=none; b=qIOsvhNzV5GSwOSGt0mpszIJjXMiVd/gBHoTLhfQ/MyTcp1h/Bm6SNaAzntRzVysiGnerdAyN3KfP5c/b5KATIeVcdHsXJ9roPjda+AJRpIl021zul8pqTiey9aPLCJdlh4umWA785LcNx7ICS5gocMBLr/qafFAEvdISyE6OSg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742079758; c=relaxed/simple;
-	bh=8XxuyM3rSXd31IYIv534Hq8h4Bllxjj9SAfhpY0z5zA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nxeCcjTygWp5jfjFccOW/thCaNa0pv5nz70G+i2bdQo8+soyHwO4zRZxRPJEeyOFoWa3VR0TE4rGQ7Y5UnIKkcEolqlK/D1xLRKvAAXtDN0+e5BlP+wjB7bktMxcQr72RCx+zAWFadJAMHT5aQNcqeMflVY0E2hFFOeIBzmir6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bj7Di1nj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21B62C4CEE5;
-	Sat, 15 Mar 2025 23:02:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742079758;
-	bh=8XxuyM3rSXd31IYIv534Hq8h4Bllxjj9SAfhpY0z5zA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Bj7Di1njZVjpy/0Z52Tb50Gk3d6lh4HTnDSUTCsGBYIs1wS6mKBiWq96kFuJUFw0p
-	 yGblIEs1YuxFZkW0isR0z6Lgu4m0+XyYM639dyGvwzvVXGz80ny3yPAARlcpESzzen
-	 P+RKfVlW2Qn/filHuFtMeg/2MjgfFso2dpnrf+gjwVij0yrwBlHbvVsIpW1ISpdA/j
-	 iUfazW87RiSB3UEpLWUqTesR2F7UlQGQwbYbs8pxQB65L5ofbeukzbnVOY9ni7PARm
-	 ZgQ0SHiOT1cLht/iB3jbrcQJNWvo46UoNo/uoUHeiJBkDYeda+WoxQFqjy2GIdE8Iq
-	 GGQjIIks1wvEA==
-Date: Sat, 15 Mar 2025 16:02:35 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Ian Rogers <irogers@google.com>, Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
-	James Clark <james.clark@linaro.org>,
-	Mike Leach <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>,
-	guoren <guoren@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Charlie Jenkins <charlie@rivosinc.com>,
-	Bibo Mao <maobibo@loongson.cn>, Huacai Chen <chenhuacai@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	=?utf-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@rivosinc.com>,
-	Howard Chu <howardchu95@gmail.com>, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	"linux-csky@vger.kernel.org" <linux-csky@vger.kernel.org>,
-	linux-riscv@lists.infradead.org, Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH v5 00/11] perf: Support multiple system call tables in
- the build
-Message-ID: <Z9YHCzINiu4uBQ8B@google.com>
-References: <20250308003209.234114-1-irogers@google.com>
- <Z9KFLGpenwOP32q3@google.com>
- <Z9M24AJzui9lFbGo@x1>
- <Z9M9-YhDJg3NgiUy@x1>
- <Z9NEX3j_1RUvaFI0@x1>
- <Z9PCjQ8PhOadVGQ8@google.com>
- <Z9RjHpEJGWtj8PAM@x1>
- <Z9Rm0W6YLpxKIcI1@x1>
- <Z9SWDGsdgagMr8PV@x1>
+	s=arc-20240116; t=1742080077; c=relaxed/simple;
+	bh=1MzmgdITQ4w4FO7Uemo0WSDZnXnbfyMIm6W8uzBT4Vk=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=VwyFRQ9r1FL+wOWqpRc14rxMSDIMykaZJmudqtN8SoGW1N0r5ciXixP4RKhy9JGAJf3wLHsAOZGekZQePlkuHCuOYbFseGbTsQ+9d8yav5OmCn0ttD7U+r2wA24PT+yWNMlAh/srMhFiIlmH8Z8swYXlTlftsAx58Hx9OBstXzg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=wQ57sbG5; arc=none smtp.client-ip=185.70.43.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+	s=protonmail3; t=1742080073; x=1742339273;
+	bh=TijwBr6V5VNMUYReFcqNhHWnkhDeChPquiPiCcW2nVM=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
+	b=wQ57sbG5Z87dQmhS0W/fnZVQBKGKL+4Mob7mWPOTQQFJJDOb064pBi1XFiP4C5efP
+	 P2d5rbGhpHUNr/6BKL8Z1IYLqkUJItWy97K71fSQMAmDV5JXGlLG47VwKVe/+VvDsq
+	 tj0fxX+MIndsM/ivJVVRgGa9DnTcn8gvhJW6iO086ZausteORit4nN5CSsEmfQHUoc
+	 04qQB6Zt8Szp5PYdQagA3T7AiKTl5f6Z435QlZ5D/xHmxfA2S4aZBp4ZGX/qlJPaJ1
+	 8C3Gtzb8eKO30yzPbX4/HsuVjnui5TAlt/xFSehWken6eXVl5WUE9CcA2DX1g9WxD6
+	 iz0TWt/L2USPw==
+Date: Sat, 15 Mar 2025 23:07:50 +0000
+To: Benjamin Tissoires <bentiss@kernel.org>
+From: Rahul Rameshbabu <sergeantsagara@protonmail.com>
+Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-input@vger.kernel.org, dri-devel@lists.freedesktop.org, Jiri Kosina <jikos@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>
+Subject: Re: [PATCH RFC 0/3] Initial work for Rust abstraction for HID device driver development
+Message-ID: <87zfhlhozn.fsf@protonmail.com>
+In-Reply-To: <f6rizzlygznuebh22psrdkzfki7jfjzfaamuolobvpbgxoxjoi@gfu2eyzrm5wl>
+References: <20250313160220.6410-2-sergeantsagara@protonmail.com> <f6rizzlygznuebh22psrdkzfki7jfjzfaamuolobvpbgxoxjoi@gfu2eyzrm5wl>
+Feedback-ID: 26003777:user:proton
+X-Pm-Message-ID: 704b0505bec48ce1339e1a2cf068581e382f0f79
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,183 +59,137 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <Z9SWDGsdgagMr8PV@x1>
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Mar 14, 2025 at 05:48:12PM -0300, Arnaldo Carvalho de Melo wrote:
-> On Fri, Mar 14, 2025 at 02:26:41PM -0300, Arnaldo Carvalho de Melo wrote:
-> > it finds the pair, but then its sc->args has a bogus pointer... I'll see
-> > where this isn't being initialized...
-> 
-> Breakpoint 4, trace__find_usable_bpf_prog_entry (trace=0x7fffffffa510, sc=0x1046f10) at builtin-trace.c:3874
-> 3874			bool is_candidate = false;
-> (gdb) n
-> 3876			if (pair == NULL || pair == sc ||
-> (gdb) p pair
-> $7 = (struct syscall *) 0x1083c50
-> (gdb) p pair->name
-> $8 = 0x81478e "accept4"
-> (gdb) n
-> 3877			    pair->bpf_prog.sys_enter == trace->skel->progs.syscall_unaugmented)
-> (gdb) p i
-> $9 = 1
-> (gdb) n
-> 3876			if (pair == NULL || pair == sc ||
-> (gdb) n
-> 3880			printf("sc=%p\n", sc); fflush(stdout);
-> (gdb) n
-> sc=0x1046f10
-> 3881			printf("sc->name=%p\n", sc->name); fflush(stdout);
-> (gdb) n
-> sc->name=0x6c66202c786c3830
-> 3882			printf("sc->nr_args=%d, sc->args=%p\n", sc->nr_args, sc->args); fflush(stdout);
-> (gdb) p sc->nr_args
-> $10 = 1935635045
-> (gdb) p sc->args
-> $11 = (struct tep_format_field *) 0x257830203a6e656c
-> (gdb) p *sc
-> $12 = {e_machine = 540697702, id = 807761968, tp_format = 0x657075202c786c38, nr_args = 1935635045, args_size = 1634427759, bpf_prog = {sys_enter = 0x257830203a726464, 
->     sys_exit = 0x7075202c786c3830}, is_exit = 101, is_open = 101, nonexistent = 114, use_btf = 95, args = 0x257830203a6e656c, 
->   name = 0x6c66202c786c3830 <error: Cannot access memory at address 0x6c66202c786c3830>, fmt = 0x257830203a736761, arg_fmt = 0x786c3830}
-> (gdb) 
-> 
-> Ok, ran out of time, but if I simple avoid the second loop in:
-> 
-> static int trace__init_syscalls_bpf_prog_array_maps(struct trace *trace, int e_machine)
-> 
-> 
-> I.e. the one that starts with:
-> 
->         /*
->          * Now lets do a second pass looking for enabled syscalls without
->          * an augmenter that have a signature that is a superset of another
->          * syscall with an augmenter so that we can auto-reuse it.
-> 
-> This:
-> 
-> diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-> index e0434f7dc67cb988..3664bb512c70cabf 100644
-> --- a/tools/perf/builtin-trace.c
-> +++ b/tools/perf/builtin-trace.c
-> @@ -3989,6 +3989,8 @@ static int trace__init_syscalls_bpf_prog_array_maps(struct trace *trace, int e_m
->                         goto out;
->         }
->  
-> +       return 0;
-> +
->         /*
->          * Now lets do a second pass looking for enabled syscalls without
->          * an augmenter that have a signature that is a superset of another
-> ⬢ [acme@toolbox perf-tools-next]$ 
-> 
-> 
-> Then all works, we don't reuse any BPF program, but then that is an
-> heuristic anyway, that is tried becuase landlock_add_rule has a pointer
-> argument:
-> 
-> root@number:~# perf trace -e landlock_add_rule perf test -w landlock
->      0.000 ( 0.003 ms): perf/71034 landlock_add_rule(ruleset_fd: 11, rule_type: LANDLOCK_RULE_PATH_BENEATH, rule_attr: 0x7fff6f2bb550, flags: 45) = -1 EINVAL (Invalid argument)
->      0.004 ( 0.001 ms): perf/71034 landlock_add_rule(ruleset_fd: 11, rule_type: LANDLOCK_RULE_NET_PORT, rule_attr: 0x7fff6f2bb540, flags: 45) = -1 EINVAL (Invalid argument)
-> root@number:~# perf test enum
-> 105: perf trace enum augmentation tests                              : Ok
-> root@number:~#
-> 
-> So its some sort of syncronization on the various new tables, sorted by
-> name, etc that then when iterating over the syscalls ends up using a sc
-> that is not initialized.
+On Thu, 13 Mar, 2025 17:31:53 +0100 "Benjamin Tissoires" <bentiss@kernel.or=
+g> wrote:
+> Hi,
+>
+> [quick reply because I am completely under the water for the next 2
+> weeks]
+>
+> On Mar 13 2025, Rahul Rameshbabu wrote:
+>> Hello,
+>>
+>> I am a hobbyist developer who has been working on a project to create a =
+new Rust
+>> HID device driver and the needed core abstractions for writing more HID =
+device
+>> drivers in Rust. My goal is to support the USB Monitor Control Class nee=
+ded for
+>> functionality such as backlight control for monitors like the Apple Stud=
+io
+>> Display and Apple Pro Display XDR. A new backlight API will be required =
+to
+>> support multiple backlight instances and will be mapped per DRM connecto=
+r. The
+>> current backlight API is designed around the assumption of only a single
+>> internal panel being present. I am currently working on making this new =
+API for
+>> DRM in parallel to my work on the HID side of the stack for supporting t=
+hese
+>> displays.
+>
+> Thanks a lot for this work, though I wonder if your goal is not too big,
+> too far from the HID point of view. HID is simple, and there is only a
+> few bindings that you would need to be able to make "simple" HID
+> drivers.
+>
+> My assumption would be to introduce the binding with a functional but
+> small driver (like one that just changes the report descriptor, or does
+> a sime raw event processing). Then we can look at integrating with the
+> DRM interface.
+>
+> Though it's up to you to decide how you want to play ;)
+>
 
-Right, I've realized that calling trace__syscall_info() can invalidate
-the existing sc since it calls trace__find_syscall() which reallocates
-and resorts the syscall table.  That's why it was ok when no filter was
-used since it'd allocate the whole table in the first pass.  Otherwise
-it looks for a pair syscall while holding the original sc but calling
-the function would invalidate the sc.
+Thanks for the suggestion, Benjamin! I think its a great suggestion for
+getting the Rust abstractions for HID cleaned up and integrated before
+taking on this more herculian challenge. I think it would be ideal to
+maybe do the following?
 
-What about this (on top of my earlier fix)?
+1. Focus on the core Rust HID abstractions first to get something merged
+   for supporting "simple" HID drivers.
+2. Build a reference driver to validate the abstrations support "simple"
+   HID devices.
+  - https://rust-for-linux.com/rust-reference-drivers
+3. After getting the first two steps worked out, continue pursuing
+   monitor control as a Rust driver and work on the needed changes for
+   DRM connector backlight control API.
 
-Thanks,
-Namhyung
+Luckily, it seems to me that parts of 3 can be done in parallel to 1 and
+2. However, the advantage of this is that if the Rust HID abstration can
+support "simple" HID drivers initially, it has a path to get merged and
+iterated upon for supporting more complex drivers.
 
+You mention this in the third patch in this series, but it would
+probably be good to find a simple device that requires a report fixup or
+some processing in .raw_event or .event callback.
 
----8<---
-diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-index 49199d753b7cafbf..da0ddc713e6b35da 100644
---- a/tools/perf/builtin-trace.c
-+++ b/tools/perf/builtin-trace.c
-@@ -2506,10 +2506,12 @@ static struct syscall *trace__find_syscall(struct trace *trace, int e_machine, i
- 	};
- 	struct syscall *sc, *tmp;
- 
--	sc = bsearch(&key, trace->syscalls.table, trace->syscalls.table_size,
--		     sizeof(struct syscall), syscall__cmp);
--	if (sc)
--		return sc;
-+	if (trace->syscalls.table) {
-+		sc = bsearch(&key, trace->syscalls.table, trace->syscalls.table_size,
-+			     sizeof(struct syscall), syscall__cmp);
-+		if (sc)
-+			return sc;
-+	}
- 
- 	tmp = reallocarray(trace->syscalls.table, trace->syscalls.table_size + 1,
- 			   sizeof(struct syscall));
-@@ -3855,6 +3857,10 @@ static int trace__bpf_sys_enter_beauty_map(struct trace *trace, int e_machine, i
- 
- static struct bpf_program *trace__find_usable_bpf_prog_entry(struct trace *trace, struct syscall *sc)
- {
-+	int orig_id = sc->id;
-+	const char *orig_name = sc->name;
-+	int e_machine = sc->e_machine;
-+	struct tep_format_field *args = sc->args;
- 	struct tep_format_field *field, *candidate_field;
- 	/*
- 	 * We're only interested in syscalls that have a pointer:
-@@ -3866,18 +3872,19 @@ static struct bpf_program *trace__find_usable_bpf_prog_entry(struct trace *trace
- 
- 	return NULL;
- 
-+	/* calling trace__syscall_info() may invalidate 'sc' */
- try_to_find_pair:
--	for (int i = 0, num_idx = syscalltbl__num_idx(sc->e_machine); i < num_idx; ++i) {
--		int id = syscalltbl__id_at_idx(sc->e_machine, i);
--		struct syscall *pair = trace__syscall_info(trace, NULL, sc->e_machine, id);
-+	for (int i = 0, num_idx = syscalltbl__num_idx(e_machine); i < num_idx; ++i) {
-+		int id = syscalltbl__id_at_idx(e_machine, i);
-+		struct syscall *pair = trace__syscall_info(trace, NULL, e_machine, id);
- 		struct bpf_program *pair_prog;
- 		bool is_candidate = false;
- 
--		if (pair == NULL || pair == sc ||
-+		if (pair == NULL || pair->id == orig_id ||
- 		    pair->bpf_prog.sys_enter == trace->skel->progs.syscall_unaugmented)
- 			continue;
- 
--		for (field = sc->args, candidate_field = pair->args;
-+		for (field = args, candidate_field = pair->args;
- 		     field && candidate_field; field = field->next, candidate_field = candidate_field->next) {
- 			bool is_pointer = field->flags & TEP_FIELD_IS_POINTER,
- 			     candidate_is_pointer = candidate_field->flags & TEP_FIELD_IS_POINTER;
-@@ -3944,7 +3951,7 @@ static struct bpf_program *trace__find_usable_bpf_prog_entry(struct trace *trace
- 				goto next_candidate;
- 		}
- 
--		pr_debug("Reusing \"%s\" BPF sys_enter augmenter for \"%s\"\n", pair->name, sc->name);
-+		pr_debug("Reusing \"%s\" BPF sys_enter augmenter for \"%s\"\n", pair->name, orig_name);
- 		return pair_prog;
- 	next_candidate:
- 		continue;
-@@ -4041,6 +4048,11 @@ static int trace__init_syscalls_bpf_prog_array_maps(struct trace *trace, int e_m
- 		if (pair_prog == NULL)
- 			continue;
- 
-+		/*
-+		 * Get syscall info again as find usable entry above might
-+		 * modify the syscall table and shuffle it.
-+		 */
-+		sc = trace__syscall_info(trace, NULL, e_machine, key);
- 		sc->bpf_prog.sys_enter = pair_prog;
- 
- 		/*
+Making a reference driver for the Glorious PC Gaming Race mice seems
+like a good start. My only concern is the lack of complexity in the C
+driver not needing a .remove callback implementation. I wanted to have
+an example where architecting what device removal with Rust semantics
+would look like. I'll get into more details where you bring this up in
+third patch in this series.
+
+Thanks for the feedback,
+Rahul Rameshbabu
+
+>>
+>>   https://binary-eater.github.io/tags/usb-monitor-control/
+>>
+>> Julius Zint had attempted to do so a year ago with a C HID driver but wa=
+s gated
+>> by the lack of an appropriate backlight API for external displays. I ask=
+ed him
+>> for permission to do the work need in Rust and plan to accredit him for =
+the HID
+>> report handling for backlight in the USB Monitor Control Class standard.
+>>
+>>   https://lore.kernel.org/lkml/f95da7ff-06dd-2c0e-d563-7e5ad61c3bcc@redh=
+at.com/
+>>
+>> I was hoping to get initial feedback on this work to make sure I am on t=
+he right
+>> path for making a Rust HID abstraction that would be acceptable upstream=
+. The
+>> patches compile with WERROR being disabled. This is necessary since Rust=
+ treats
+>> missing documentation comments as warnings (which is a good thing). I al=
+so need
+>> to go in and add more SAFETY comments.
+>
+> K, I'll give you my opinion in the patches as the HID co-maintainer. I
+> do have a very little rust experience, but this is my first in kernel,
+> so I hope the more experience rust people here will chime in as well.
+>
+> Cheers,
+> Benjamin
+>
+>>
+>> Thanks,
+>> Rahul Rameshbabu
+>>
+>> Rahul Rameshbabu (3):
+>>   rust: core abstractions for HID drivers
+>>   rust: hid: USB Monitor Control Class driver
+>>   rust: hid: demo the core abstractions for probe and remove
+>>
+>>  drivers/hid/Kconfig                |  16 ++
+>>  drivers/hid/Makefile               |   1 +
+>>  drivers/hid/hid_monitor_control.rs |  42 +++++
+>>  rust/bindings/bindings_helper.h    |   1 +
+>>  rust/kernel/hid.rs                 | 245 +++++++++++++++++++++++++++++
+>>  rust/kernel/lib.rs                 |   2 +
+>>  6 files changed, 307 insertions(+)
+>>  create mode 100644 drivers/hid/hid_monitor_control.rs
+>>  create mode 100644 rust/kernel/hid.rs
+>>
+>> --
+>> 2.47.2
+>>
+>>
+
 
 
