@@ -1,176 +1,153 @@
-Return-Path: <linux-kernel+bounces-562329-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562330-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70258A6230B
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 01:23:58 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51823A6230E
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 01:24:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7CB73AB8D1
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 00:23:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 071FC1899B33
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 00:25:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30769D299;
-	Sat, 15 Mar 2025 00:23:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83DE54C8E;
+	Sat, 15 Mar 2025 00:24:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VqdMJYfg"
-Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UtNcvTaO"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAA4BC8E0;
-	Sat, 15 Mar 2025 00:23:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0DF78828
+	for <linux-kernel@vger.kernel.org>; Sat, 15 Mar 2025 00:24:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741998220; cv=none; b=uP2k8+kPHdOnyaOUpTuLSs6TUHgr3CciN9T+TcO8QEGqmJw2xQEcR9tzBMUYL3gZKlpVIiyI7JuZMg8WU1m4L/yag0X+z2A79PBspDYZBQT+Tbc1wNuW+U1vtQRS+2t3w9bIccJJ4uHBWW8tVsobC0V7Me2CFG5LZux/6snyigw=
+	t=1741998290; cv=none; b=uSzk/8vl1vACY6RoUnb/FBJ9YC91pJxlxSkFSz1zqoQQYFpw5DTGk/XzEARRrNwPSjD34U+3CMPJe6/czFXpRGDN1hMOx/SWaMG8kFusYQK2n5YpD8gu20Qbmc54tUVbqJ59zF3kDETtUDmMWvs7WC6JwEu0F42G9+mvnh6DhdM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741998220; c=relaxed/simple;
-	bh=4ikv9eyptdMwfYJR5gqj/ftAkhzmPPbyPxILpYgCsx8=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aaoBkEDB7xWTnT6iYlvw1H9mH4/p27/LWRaei1iunvfkj1t3E2mUu5q4dTg0UaUgdMEEZwO/EIWz2RXGTUWwio1TCBmXstFDqpKJo0LSdJxLK0k7KjCya4N16V483ES75RjI3RKD77Mg03xyHrmdjNo9H/44uZQuGp5T2IqJFvE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VqdMJYfg; arc=none smtp.client-ip=209.85.222.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-7c2303a56d6so295392485a.3;
-        Fri, 14 Mar 2025 17:23:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741998217; x=1742603017; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:feedback-id:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KtGUbifaWdCRrexkDNtRNiLhnpL1kbPY2Ei7szaObU8=;
-        b=VqdMJYfgyoNWlaAptxKhuZaU1dzYmL0M5mPgJ0IhPEiTVCqLno/qu/PUaTgVf8ch/c
-         I0lehjQ2/pDhRISVCoKUen05uH7naDN5700IRsszLkfgdxdzp0rw4u3DTDSDcawTCkvm
-         OiblGuCBssmppJ1PJd3w3GnVEEOvQxA31AJMJTh6SF3L3MHMvzLnmvnk6fSWey/7rcut
-         lhUBKtpJYgRZu+9GslxpjZ7hdBsuV2PmVYvJv9oPhqBz4TRO8O/a8q+H7Hv6ANCdmzgn
-         vv6FI2hrcGzzVkLSgjGndvJNagXQdWec0w6RiJH2UPY7h6e4oQC0M2Qk3i7/YMz2Mjug
-         AP9A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741998217; x=1742603017;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:feedback-id:message-id:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KtGUbifaWdCRrexkDNtRNiLhnpL1kbPY2Ei7szaObU8=;
-        b=wU+3Iy77RORf0seBnMkZ3OHeK8RCBxF60za2D9hCpAhqF6oX/QYRdeDhx99yEaagWQ
-         bQosbxcy0VEm1VxbhNKqtBnpp5P1RsWSqUTX1WX4qm95U6AaaAE96xh/tSOF0B8/NdNf
-         7BSdMq9rRU6yQV1ATbDb6b2YyZb7zOIcFeD9MfhV3/LbGBtfbLvozEFpWTYtoiGN2B0k
-         MUX/HDGAnBXaV8fIO4Tm+ZKZ5rNnZopFhpRmDwXBXqBkqUS0DNuWhY/GSXlNT3t7Py0D
-         CgbAESajRUT0odpRZYW1stAUZcWnziK87SOlHhdYnzVYMQRuMJARTPzDYNUQX3JQ7GXP
-         M2cA==
-X-Forwarded-Encrypted: i=1; AJvYcCVc2cJf2/zG09BqdGDY+AIG8el4D8doi2HBHWY4yKGDWc63PAXZ6B6gUreRqWHRenIDQGZrY+psvwAIu+Yj1erl@vger.kernel.org, AJvYcCVdxXIuIpiSxw/Rp5xD61JhvykSQH2tqxeMQPVEmmP7yJMa/K2eluvZEysuiYlhEB4eS5cn7O0P@vger.kernel.org, AJvYcCWBpPCu8zbwZVVh9sFRyXA1CQfku82JB+UNKroXW4MjTero92k7Il3qeY3YDuNEY+jzX4ma7y3IU0W0mu7fS/0=@vger.kernel.org, AJvYcCWg0TiIPz2p7SWnMZIRR7AIcPADRG+ZzQj4S446h3V1dhmA1W13x3Bhj+crQbvUS/O1HPauBeqs70D2@vger.kernel.org, AJvYcCX/WrpPfPTEC/gi1cs9K7+K8xweMJjy/FbztkyUF/dCi+lexV334zWkhUooRZ1lfZvVa/sXbqP+1ANDIX0n@vger.kernel.org, AJvYcCXjVoR+VZMhSu5kkI/qsrU8b27pQCu/q5Xnpmt2IoXgnVJYuvnBqbSdnl2KV0aZFmOvQ25aIXPnGy4Ulw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyz+Uki2BKgOwkxs6PXx2WsQk7Cj48Tu5lUlj3r1i07mNAGI/me
-	eVQw0XRKvByQ/YeaONmg7EDANYypxanEvro5Olqay8Z0hTpmGfWv
-X-Gm-Gg: ASbGncsKK7ZSA8xlEoyPDq9ObnnjykfSU+PRGLFWTI5pbImtH+gpXGPKM52XlraxIxP
-	bWbF6Nvd/SAIlj/jDhWmsMQWXlA+jjEaEypDTwq4p8WcNn4cS8c1z4o/HaJtaNVSHpA+1ST707R
-	Q/Lp4Q8RjrRqDMIZ0JFgC7UWK+p9Qv2LmjGtXTxtQmF6bSoG1YJ21x6mZzPvVthruv3c85HK7PA
-	wz1+bfcELV18TcbnQnP4XIe6YljBSwp6c5GySVb8cH9vjP0KtbUBLGE/pTIza3omE+JAA1aLTdb
-	MDiZJnC/ymd3R6TvKouw968fXiR9EFAiPESL2eVrz5X0Zb/1yBZPYYzqNLBGSAcrSHNX1Kfp2Q5
-	FXNcFfIu9fGG4TgImvlmXmheZKDmbhujXzI7ns0QXhbkcJw==
-X-Google-Smtp-Source: AGHT+IHMpER/JnbkGNCfSySjFX3UEHCHjaZZWgeAljh7oBmyDf8g26BQmTLLo5enSqswp/8nMLGTfg==
-X-Received: by 2002:a05:620a:2b96:b0:7c5:6299:3f4 with SMTP id af79cd13be357-7c57c8f03c6mr831634085a.49.1741998217413;
-        Fri, 14 Mar 2025 17:23:37 -0700 (PDT)
-Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c573c4dd9fsm321259185a.4.2025.03.14.17.23.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Mar 2025 17:23:37 -0700 (PDT)
-Message-ID: <67d4c889.050a0220.35d7ce.b4b0@mx.google.com>
-X-Google-Original-Message-ID: <Z9TIhZlMyLe4eFUJ@winterfell.>
-Received: from phl-compute-07.internal (phl-compute-07.phl.internal [10.202.2.47])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 664981200043;
-	Fri, 14 Mar 2025 20:23:36 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-07.internal (MEProxy); Fri, 14 Mar 2025 20:23:36 -0400
-X-ME-Sender: <xms:h8jUZ74e_UbzhWKyL0vR8GNjvb2XGrNAgk4_VgW40B01hoiXfJ7S3A>
-    <xme:h8jUZw7nggYlYki7_RHh6X1sPlXohGpse0pS_gMHYb534N0k0WOpJ1M4NmwnV44mS
-    NW7GqxwTS_bSV5lNw>
-X-ME-Received: <xmr:h8jUZydNm33FOpPngpMJqlp4sOQc8Bpq5AYx0H28DkOyrsYa1CAjuPPuB7U>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddufedvvdeiucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddt
-    vdenucfhrhhomhepuehoqhhunhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrih
-    hlrdgtohhmqeenucggtffrrghtthgvrhhnpeehudfgudffffetuedtvdehueevledvhfel
-    leeivedtgeeuhfegueevieduffeivdenucevlhhushhtvghrufhiiigvpedtnecurfgrrh
-    grmhepmhgrihhlfhhrohhmpegsohhquhhnodhmvghsmhhtphgruhhthhhpvghrshhonhgr
-    lhhithihqdeiledvgeehtdeigedqudejjeekheehhedvqdgsohhquhhnrdhfvghngheppe
-    hgmhgrihhlrdgtohhmsehfihigmhgvrdhnrghmvgdpnhgspghrtghpthhtohepvdehpdhm
-    ohguvgepshhmthhpohhuthdprhgtphhtthhopegtohhnthgrtghtsegrnhhtohhnihhohh
-    hitghkvgihrdgtohhmpdhrtghpthhtoheprgdrhhhinhgusghorhhgsehkvghrnhgvlhdr
-    ohhrghdprhgtphhtthhopehojhgvuggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhope
-    grlhgvgidrghgrhihnohhrsehgmhgrihhlrdgtohhmpdhrtghpthhtohepghgrrhihsehg
-    rghrhihguhhordhnvghtpdhrtghpthhtohepsghjohhrnhefpghghhesphhrohhtohhnmh
-    grihhlrdgtohhmpdhrtghpthhtohepsggvnhhnohdrlhhoshhsihhnsehprhhothhonhdr
-    mhgvpdhrtghpthhtoheprghlihgtvghrhihhlhesghhoohhglhgvrdgtohhmpdhrtghpth
-    htohepthhmghhrohhsshesuhhmihgthhdrvgguuh
-X-ME-Proxy: <xmx:h8jUZ8JPSDkCkSkVt3RCB0Mk0E6jmS46WfWGUfUJeprU262aCCSJgw>
-    <xmx:h8jUZ_IFjlqJkRvidnGpq-HLbqiAU6cTlhXqLYie0rIDx4roP_n9yQ>
-    <xmx:h8jUZ1yQzv9jBdBC-yTOo02PuZnhEaLzwYnAKPlnZSUXkevoxOb8Nw>
-    <xmx:h8jUZ7KwE9A7UvQLx7IZJeY4skdT-pxzupkpiKa2zZZKJJw8pQCTTw>
-    <xmx:iMjUZ6b06pHFrdh8E5BfHZJQdSCferZ5En_EfIQWlF8tW8bvC1g5ZrXX>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 14 Mar 2025 20:23:34 -0400 (EDT)
-Date: Fri, 14 Mar 2025 17:23:33 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Antonio Hickey <contact@antoniohickey.com>
-Cc: Andreas Hindborg <a.hindborg@kernel.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Brendan Higgins <brendan.higgins@linux.dev>,
-	David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>,
-	FUJITA Tomonori <fujita.tomonori@gmail.com>,
-	Bjorn Helgaas <bhelgaas@google.com>, linux-block@vger.kernel.org,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
-	netdev@vger.kernel.org, linux-pci@vger.kernel.org
-Subject: Re: [PATCH v3 2/3] rust: replace `addr_of[_mut]!` with `&raw [mut]`
-References: <20250314234148.599196-1-contact@antoniohickey.com>
- <0100019597092d67-0da59c6d-9680-413f-bbce-109ef95724cc-000000@email.amazonses.com>
+	s=arc-20240116; t=1741998290; c=relaxed/simple;
+	bh=64a9Fds9FKkf2EcK+lloBIMWnzrTARzBuZXF8DTcqos=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=rd44SQlwvey55uyEChGpNM6NOcTrAJlLroeY6iBS119YjK+imoUiP4mS3lVW95INdVfgSgQo4+f9ojwDw1LL6A/OTLg2gBeKA5V5hYrw3Dp0ARe1Rjl99NHTQL5W2Z384I7U14uR8lzrz18cKJRJY8BQjUKR1Q71hs7EnOs51yI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UtNcvTaO; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741998289; x=1773534289;
+  h=message-id:subject:from:to:cc:date:in-reply-to:
+   references:content-transfer-encoding:mime-version;
+  bh=64a9Fds9FKkf2EcK+lloBIMWnzrTARzBuZXF8DTcqos=;
+  b=UtNcvTaOKgWIOr5vNTdeB73VhrV1R882T6n7pRUCxi+CEr5a3pNmueSs
+   /6148ubDJYSAJVqWCXHryfohF9l4D+GW+9ozOXOHMRCl2+O7FxVa3ImAj
+   xwiymqYf3tvFSQdsYQ0bwjZv60xW7YCJcbD2kc7Kx4dSZKDwRq9WCGr2U
+   13Ym6EwKw8/QUmrcgjo0phOKHSCMZQy6Nu75+FAcb9rASjGL6x7BP2gz5
+   S3KIgSRwPHiOZdO5OoWKw+OsnJ35klZiMsN9/rlwKA4mnI9060fzR3WLw
+   PsCFjuShfirqIWMXn66j7PaRMxdNOTe9QeXtFNWVxcgSCS2ED8DVh14kb
+   g==;
+X-CSE-ConnectionGUID: hxgJCxJ7SiODXHbEb8gy2A==
+X-CSE-MsgGUID: UWYZWiZrQoiSPAkZJvWTpA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11373"; a="65624095"
+X-IronPort-AV: E=Sophos;i="6.14,246,1736841600"; 
+   d="scan'208";a="65624095"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Mar 2025 17:24:48 -0700
+X-CSE-ConnectionGUID: LAy2uxrESyanpHv5FWo50g==
+X-CSE-MsgGUID: PW7BqhysRs+1bdgoueIuUg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,246,1736841600"; 
+   d="scan'208";a="152311962"
+Received: from dnelso2-mobl.amr.corp.intel.com (HELO [10.125.108.212]) ([10.125.108.212])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Mar 2025 17:24:47 -0700
+Message-ID: <b2d809dfff16cebc7d83ca2884b0fa6fe1024797.camel@linux.intel.com>
+Subject: Re: [PATCH 8/9] mm: swap: factor out helper to drop cache of
+ entries within a single cluster
+From: Tim Chen <tim.c.chen@linux.intel.com>
+To: Kemeng Shi <shikemeng@huaweicloud.com>, akpm@linux-foundation.org
+Cc: kasong@tencent.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Date: Fri, 14 Mar 2025 17:24:47 -0700
+In-Reply-To: <20250313210515.9920-9-shikemeng@huaweicloud.com>
+References: <20250313210515.9920-1-shikemeng@huaweicloud.com>
+	 <20250313210515.9920-9-shikemeng@huaweicloud.com>
+Autocrypt: addr=tim.c.chen@linux.intel.com; prefer-encrypt=mutual;
+ keydata=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
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0100019597092d67-0da59c6d-9680-413f-bbce-109ef95724cc-000000@email.amazonses.com>
 
-On Fri, Mar 14, 2025 at 11:41:55PM +0000, Antonio Hickey wrote:
-[...]
-> @@ -541,7 +541,7 @@ macro_rules! stack_try_pin_init {
->  ///
->  /// ```rust
->  /// # use kernel::{macros::{Zeroable, pin_data}, pin_init};
-> -/// # use core::{ptr::addr_of_mut, marker::PhantomPinned};
-> +/// # use core::marker::PhantomPinned;
->  /// #[pin_data]
->  /// #[derive(Zeroable)]
->  /// struct Buf {
-> @@ -554,7 +554,7 @@ macro_rules! stack_try_pin_init {
->  /// pin_init!(&this in Buf {
->  ///     buf: [0; 64],
->  ///     // SAFETY: TODO.
-> -///     ptr: unsafe { addr_of_mut!((*this.as_ptr()).buf).cast() },
-> +///     ptr: unsafe { &raw mut (*this.as_ptr()).buf.cast() },
+On Fri, 2025-03-14 at 05:05 +0800, Kemeng Shi wrote:
+> Factor out helper swap_entries_put_cache() from put_swap_folio() to serve=
+r
+> as a general-purpose routine for dropping cache flag of entries within a
+> single cluster.
+>=20
+> Signed-off-by: Kemeng Shi <shikemeng@huaweicloud.com>
 
-This should be:
+Reviewed-by: Tim Chen <tim.c.chen@linux.intel.com>
 
+> ---
+>  mm/swapfile.c | 25 ++++++++++++++++---------
+>  1 file changed, 16 insertions(+), 9 deletions(-)
+>=20
+> diff --git a/mm/swapfile.c b/mm/swapfile.c
+> index ebac9ff74ba7..343b34eb2a81 100644
+> --- a/mm/swapfile.c
+> +++ b/mm/swapfile.c
+> @@ -1473,6 +1473,21 @@ struct swap_info_struct *get_swap_device(swp_entry=
+_t entry)
+>  	return NULL;
+>  }
+> =20
+> +static void swap_entries_put_cache(struct swap_info_struct *si,
+> +				   swp_entry_t entry, int nr)
+> +{
+> +	unsigned long offset =3D swp_offset(entry);
+> +	struct swap_cluster_info *ci;
+> +
+> +	ci =3D lock_cluster(si, offset);
+> +	if (swap_only_has_cache(si, offset, nr))
+> +		swap_entries_free(si, ci, entry, nr);
+> +	else
+> +		for (int i =3D 0; i < nr; i++, entry.val++)
+> +			swap_entry_put_locked(si, ci, entry, SWAP_HAS_CACHE);
+> +	unlock_cluster(ci);
+> +}
+> +
+>  static bool swap_entries_put_map(struct swap_info_struct *si,
+>  				 swp_entry_t entry, int nr)
+>  {
+> @@ -1597,8 +1612,6 @@ void swap_free_nr(swp_entry_t entry, int nr_pages)
+>   */
+>  void put_swap_folio(struct folio *folio, swp_entry_t entry)
+>  {
+> -	unsigned long offset =3D swp_offset(entry);
+> -	struct swap_cluster_info *ci;
+>  	struct swap_info_struct *si;
+>  	int size =3D 1 << swap_entry_order(folio_order(folio));
+> =20
+> @@ -1606,13 +1619,7 @@ void put_swap_folio(struct folio *folio, swp_entry=
+_t entry)
+>  	if (!si)
+>  		return;
+> =20
+> -	ci =3D lock_cluster(si, offset);
+> -	if (swap_only_has_cache(si, offset, size))
+> -		swap_entries_free(si, ci, entry, size);
+> -	else
+> -		for (int i =3D 0; i < size; i++, entry.val++)
+> -			swap_entry_put_locked(si, ci, entry, SWAP_HAS_CACHE);
+> -	unlock_cluster(ci);
+> +	swap_entries_put_cache(si, entry, size);
+>  }
+> =20
+>  int __swap_count(swp_entry_t entry)
 
-///     ptr: unsafe { &raw mut ((*this.as_ptr()).buf).cast() },
-
-, right?
-
-Regards,
-Boqun
-
->  ///     pin: PhantomPinned,
->  /// });
->  /// pin_init!(Buf {
-[...]
 
