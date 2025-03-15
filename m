@@ -1,210 +1,120 @@
-Return-Path: <linux-kernel+bounces-562726-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66DDFA631E5
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 19:49:18 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A332A631F2
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 19:53:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E6011890EF7
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 18:49:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CD7377A57D9
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 18:52:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 103C41991D2;
-	Sat, 15 Mar 2025 18:49:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 854841990AB;
+	Sat, 15 Mar 2025 18:53:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SC2mtGbh"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dg5fIfn+"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 468F0189916;
-	Sat, 15 Mar 2025 18:49:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1B04189916;
+	Sat, 15 Mar 2025 18:52:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742064546; cv=none; b=on/vNjQsMBtG3fbaWYmRFU1YNGW99tJruuOmfkMTwOs8nL/fBEOZao2TQIhMCR15PFUKvUgPxfZ7pMh3gxtv+dJd0HN+rhzDYrsgEm988tEoWQq+1AqSOqAh2hDRM82LrBdXa4fjO2mqqwEPsSkWd2kUZ5IvFpjdmM48nraBI6s=
+	t=1742064780; cv=none; b=Or148BcmvsfXlFA8caqQv+qFNU9Nv3wk3NnNZR1l3q/6XWtBGsqoeXOSQdcqyf0wuhjnnKOMJwhBSlMVMVwUD3jdUYH3ryhIw1Ie7XD4MhnZ80gWmiQy0ZZJdP09R6vNVekbwAGuU3Pqb1E9WA36ERt8We6U8Ryz1GGyKBu5HS8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742064546; c=relaxed/simple;
-	bh=OnKnsixMsIfR9PWM2GKcKb1NM2Qu2lps2DgKe5a/iVM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=r1BfnLxOBNdRXT3chfqL7LhFiiZsERPdKkpa0tcmdgaXGr2DLnzB6EaLXd0FKAG7Tpk8IE7Nqzpw+dJxld53r6uO4G9kpEQNW63w+sDnetIp9pr3FtIEme38BaSFP/Ex3QQaPiNFGQExwPWC6EhZjqIiWm9EFFihhaxcp/t+i2Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SC2mtGbh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72D6FC4CEE5;
-	Sat, 15 Mar 2025 18:49:04 +0000 (UTC)
+	s=arc-20240116; t=1742064780; c=relaxed/simple;
+	bh=+xH18GuVnLRJ4VD3Xww6nWNy7yq1eF6vOo1Yux6Whlg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=AIB8sfiaVlzVTDtJBzi60WsGhuoJRpt3cPX6tb5yKPEJxm2u+B77qYnIJOKFQvukvGCNIevjSdCC/ZgoJK4DCTIKoeYjrqQHKcHHFC2DLF4lRHh354JQpsZA2loMPVK7OvvewDyZGV+M4WtjD/3oTRnOtwjvWpAj2XZzg5c3zNM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dg5fIfn+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B09BDC4CEE5;
+	Sat, 15 Mar 2025 18:52:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742064544;
-	bh=OnKnsixMsIfR9PWM2GKcKb1NM2Qu2lps2DgKe5a/iVM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=SC2mtGbhf3T7iUSmBYdVeklwCEwI13OQ6a3CqVJG9hdTduV8tMC8viwCK5PQ5svgt
-	 yEFwpbQLSaMovvNo1DNNefn270I4Y9SmAYepdWmGF1MrsZeUpF0i3fAo4inK54pOG0
-	 L1gMGSoCR0of0daaOOodYfCP662k/xMF040MMUZ9NsYjiQXym4MYKxKO7qDvid3sTo
-	 WkOrWCyoYBuXRICkq5ZpEQyirDW90mN0J2qI74H3xxsjoI9IxeZATbGITayZiz9pZQ
-	 AIQvWwR+kA/Me6BczXJbR4gkhcjMt2l5z0GTgKpd4AhA2hUQVs02M2A1EHulV0TXJU
-	 dR2CF94O0F6cw==
-Date: Sat, 15 Mar 2025 13:49:03 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Roman Kisel <romank@linux.microsoft.com>
-Cc: arnd@arndb.de, bhelgaas@google.com, bp@alien8.de,
-	catalin.marinas@arm.com, conor+dt@kernel.org,
-	dan.carpenter@linaro.org, dave.hansen@linux.intel.com,
-	decui@microsoft.com, haiyangz@microsoft.com, hpa@zytor.com,
-	joey.gouly@arm.com, krzk+dt@kernel.org, kw@linux.com,
-	kys@microsoft.com, lenb@kernel.org, lpieralisi@kernel.org,
-	manivannan.sadhasivam@linaro.org, mark.rutland@arm.com,
-	maz@kernel.org, mingo@redhat.com, oliver.upton@linux.dev,
-	rafael@kernel.org, robh@kernel.org, ssengar@linux.microsoft.com,
-	sudeep.holla@arm.com, suzuki.poulose@arm.com, tglx@linutronix.de,
-	wei.liu@kernel.org, will@kernel.org, yuzenghui@huawei.com,
-	devicetree@vger.kernel.org, kvmarm@lists.linux.dev,
-	linux-acpi@vger.kernel.org, linux-arch@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-hyperv@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	x86@kernel.org, apais@microsoft.com, benhill@microsoft.com,
-	bperkins@microsoft.com, sunilmut@microsoft.com
-Subject: Re: [PATCH hyperv-next v6 11/11] PCI: hv: Get vPCI MSI IRQ domain
- from DeviceTree
-Message-ID: <20250315184903.GA848938@bhelgaas>
+	s=k20201202; t=1742064779;
+	bh=+xH18GuVnLRJ4VD3Xww6nWNy7yq1eF6vOo1Yux6Whlg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=dg5fIfn+YAmpgfg4aJmCW1bkuPq8AiP7V9HmH69sCKhFbKSCO8wsTkiui9s6L/QzM
+	 BsUz+HPTmTvmLzPwZjp1U3DkgxllF6FLs01EXRb2hfl2GME4njgVvSR8ljQrHdGMQE
+	 p5JiMOiK8WdVS1dKoMigywPcsr8CJLSbf6+EpIW/jKWnneHxe92brqqFhJbA97rz73
+	 J7X2KxuWW/dCzmAVTll7SfBnTajpFHsjqDJjOhB1yptQOvXs21xuu0sL/JRzFe+9YG
+	 NvKh1jDPfGbrnMmPR1idDse3LksON20GEUAvJPuXh1CnPtY/8M3ZK5E2IQp2uBJyXn
+	 qxcYFupcedP9w==
+Date: Sat, 15 Mar 2025 18:52:51 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: David Lechner <dlechner@baylibre.com>
+Cc: linux-iio@vger.kernel.org, Michael Hennerich
+ <Michael.Hennerich@analog.com>, Angelo Dureghello
+ <adureghello@baylibre.com>, Alexandru Ardelean <aardelean@baylibre.com>,
+ Beniamin Bia <beniamin.bia@analog.com>, Stefan Popa
+ <stefan.popa@analog.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 05/11] iio: adc: ad7606: use devm_mutex_init()
+Message-ID: <20250315185251.63fe37e8@jic23-huawei>
+In-Reply-To: <20250312-iio-adc-ad7606-improvements-v1-5-d1ec04847aea@baylibre.com>
+References: <20250312-iio-adc-ad7606-improvements-v1-0-d1ec04847aea@baylibre.com>
+	<20250312-iio-adc-ad7606-improvements-v1-5-d1ec04847aea@baylibre.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250315001931.631210-12-romank@linux.microsoft.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, Mar 14, 2025 at 05:19:31PM -0700, Roman Kisel wrote:
-> The hyperv-pci driver uses ACPI for MSI IRQ domain configuration on
-> arm64. It won't be able to do that in the VTL mode where only DeviceTree
-> can be used.
+On Wed, 12 Mar 2025 20:15:43 -0500
+David Lechner <dlechner@baylibre.com> wrote:
+
+> Use devm_mutex_init() in ad7606_probe(). Mutexes should be cleaned up
+> on driver removal.
 > 
-> Update the hyperv-pci driver to get vPCI MSI IRQ domain in the DeviceTree
-> case, too.
+> Also add missing include while we are touching this.
 > 
-> Signed-off-by: Roman Kisel <romank@linux.microsoft.com>
+> Signed-off-by: David Lechner <dlechner@baylibre.com>
 
-Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+Just for the record (in case anyone other than us two is watching ;)
+I'm not keen to have large numbers of patches doing this at this
+point as the benefit in debug ability this brings is pretty tiny.
 
-Looks good to me; trivial whitespace comment below.
+I'm absolutely fine with it in a series making other cleanup
+type changes to a driver though - so fine here!
+
+Note I will probably pick up the fixes soon after rc1 given
+some look pretty important. That means stuff like this may have
+to wait a while for the fixes to circulate around to the char-misc-next branch.
+
+Jonathan
 
 > ---
->  drivers/pci/controller/pci-hyperv.c | 73 ++++++++++++++++++++++++++---
->  1 file changed, 67 insertions(+), 6 deletions(-)
+>  drivers/iio/adc/ad7606.c | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
 > 
-> diff --git a/drivers/pci/controller/pci-hyperv.c b/drivers/pci/controller/pci-hyperv.c
-> index 6084b38bdda1..cbff19e8a07c 100644
-> --- a/drivers/pci/controller/pci-hyperv.c
-> +++ b/drivers/pci/controller/pci-hyperv.c
-> @@ -50,6 +50,7 @@
->  #include <linux/irqdomain.h>
->  #include <linux/acpi.h>
->  #include <linux/sizes.h>
-> +#include <linux/of_irq.h>
->  #include <asm/mshyperv.h>
+> diff --git a/drivers/iio/adc/ad7606.c b/drivers/iio/adc/ad7606.c
+> index 440e1e5a9b18570dc6441bff91afbc51d20cbc47..f190269ac8ddd859e94eb24c26f5f010d0951646 100644
+> --- a/drivers/iio/adc/ad7606.c
+> +++ b/drivers/iio/adc/ad7606.c
+> @@ -13,6 +13,7 @@
+>  #include <linux/interrupt.h>
+>  #include <linux/kernel.h>
+>  #include <linux/module.h>
+> +#include <linux/mutex.h>
+>  #include <linux/property.h>
+>  #include <linux/pwm.h>
+>  #include <linux/regulator/consumer.h>
+> @@ -1332,8 +1333,11 @@ int ad7606_probe(struct device *dev, int irq, void __iomem *base_address,
+>  	st = iio_priv(indio_dev);
+>  	dev_set_drvdata(dev, indio_dev);
 >  
->  /*
-> @@ -817,9 +818,17 @@ static int hv_pci_vec_irq_gic_domain_alloc(struct irq_domain *domain,
->  	int ret;
->  
->  	fwspec.fwnode = domain->parent->fwnode;
-> -	fwspec.param_count = 2;
-> -	fwspec.param[0] = hwirq;
-> -	fwspec.param[1] = IRQ_TYPE_EDGE_RISING;
-> +	if (is_of_node(fwspec.fwnode)) {
-> +		/* SPI lines for OF translations start at offset 32 */
-> +		fwspec.param_count = 3;
-> +		fwspec.param[0] = 0;
-> +		fwspec.param[1] = hwirq - 32;
-> +		fwspec.param[2] = IRQ_TYPE_EDGE_RISING;
-> +	} else {
-> +		fwspec.param_count = 2;
-> +		fwspec.param[0] = hwirq;
-> +		fwspec.param[1] = IRQ_TYPE_EDGE_RISING;
-> +	}
->  
->  	ret = irq_domain_alloc_irqs_parent(domain, virq, 1, &fwspec);
->  	if (ret)
-> @@ -887,10 +896,47 @@ static const struct irq_domain_ops hv_pci_domain_ops = {
->  	.activate = hv_pci_vec_irq_domain_activate,
->  };
->  
-> +#ifdef CONFIG_OF
+> +	ret = devm_mutex_init(dev, &st->lock);
+> +	if (ret)
+> +		return ret;
 > +
-> +static struct irq_domain *hv_pci_of_irq_domain_parent(void)
-> +{
-> +	struct device_node *parent;
-> +	struct irq_domain *domain;
-> +
-> +	parent = of_irq_find_parent(hv_get_vmbus_root_device()->of_node);
-> +	if (!parent)
-> +		return NULL;
-> +	domain = irq_find_host(parent);
-> +	of_node_put(parent);
-> +
-> +	return domain;
-> +}
-> +
-> +#endif
-> +
-> +#ifdef CONFIG_ACPI
-> +
-> +static struct irq_domain *hv_pci_acpi_irq_domain_parent(void)
-> +{
-> +	struct irq_domain *domain;
-> +	acpi_gsi_domain_disp_fn gsi_domain_disp_fn;
-> +
-> +	if (acpi_irq_model != ACPI_IRQ_MODEL_GIC)
-> +		return NULL;
-> +	gsi_domain_disp_fn = acpi_get_gsi_dispatcher();
-> +	if (!gsi_domain_disp_fn)
-> +		return NULL;
-> +	return irq_find_matching_fwnode(gsi_domain_disp_fn(0),
-> +				     DOMAIN_BUS_ANY);
-> +}
-> +
-> +#endif
-> +
->  static int hv_pci_irqchip_init(void)
->  {
->  	static struct hv_pci_chip_data *chip_data;
->  	struct fwnode_handle *fn = NULL;
-> +	struct irq_domain *irq_domain_parent = NULL;
->  	int ret = -ENOMEM;
->  
->  	chip_data = kzalloc(sizeof(*chip_data), GFP_KERNEL);
-> @@ -907,9 +953,24 @@ static int hv_pci_irqchip_init(void)
->  	 * way to ensure that all the corresponding devices are also gone and
->  	 * no interrupts will be generated.
->  	 */
-> -	hv_msi_gic_irq_domain = acpi_irq_create_hierarchy(0, HV_PCI_MSI_SPI_NR,
-> -							  fn, &hv_pci_domain_ops,
-> -							  chip_data);
-> +#ifdef CONFIG_ACPI
-> +	if (!acpi_disabled)
-> +		irq_domain_parent = hv_pci_acpi_irq_domain_parent();
-> +#endif
-> +#if defined(CONFIG_OF)
-> +	if (!irq_domain_parent)
-> +		irq_domain_parent = hv_pci_of_irq_domain_parent();
-> +#endif
-> +	if (!irq_domain_parent) {
-> +		WARN_ONCE(1, "Invalid firmware configuration for VMBus interrupts\n");
-> +		ret = -EINVAL;
-> +		goto free_chip;
-> +	}
-> +
-> +	hv_msi_gic_irq_domain = irq_domain_create_hierarchy(
-> +		irq_domain_parent, 0, HV_PCI_MSI_SPI_NR,
-> +		fn, &hv_pci_domain_ops,
-> +		chip_data);
-
-This is a different style of indenting the parameters than other
-similar cases in this file, which line up parameters on subsequent
-lines under the open parenthesis.
-
->  	if (!hv_msi_gic_irq_domain) {
->  		pr_err("Failed to create Hyper-V arm64 vPCI MSI IRQ domain\n");
-> -- 
-> 2.43.0
+>  	st->dev = dev;
+> -	mutex_init(&st->lock);
+>  	st->bops = bops;
+>  	st->base_address = base_address;
+>  	st->oversampling = 1;
 > 
+
 
