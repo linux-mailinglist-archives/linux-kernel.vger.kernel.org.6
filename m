@@ -1,56 +1,58 @@
-Return-Path: <linux-kernel+bounces-562510-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562515-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AD52A62A25
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 10:33:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1430FA62A45
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 10:36:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B60F1797DF
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 09:33:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47D043B43AA
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 09:35:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75F2A1F5826;
-	Sat, 15 Mar 2025 09:33:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDE6A1F63C1;
+	Sat, 15 Mar 2025 09:35:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="SPKjC0wb"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="rXbfcKdG"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B29921DAC81;
-	Sat, 15 Mar 2025 09:33:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2331B1F3FC2;
+	Sat, 15 Mar 2025 09:35:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742031207; cv=none; b=W/RcllQOKgrmkEihj3HlvLqRkxIILG75DQPxw3+zBJ2nOnvr4T/3poUPEWl6wwEVYmXSc25PTxf1YFYclp+Pc8A8grx0+EVBEnOnNw6h147eOoJOglZKTvextX+qQyyHd/2bGcOIeLqBgvVjBjPUnl7hupG2VC9LJdjfJ20pJ+8=
+	t=1742031348; cv=none; b=pHxZPdyhye6EC7Q+4CzPdlF3zt8qJVEJcnB2/cD0detNfa8wI6zJxrkHCFKymC9Boprj0EH01rCCCarEPlf+NbN390sZE81vG3VfM89ca4ggtLtT8IXjwJwQWDcNt6Iv54/+hl+9KHu4qmB710OWUPzsCjma4ujaEYNL80e6Mog=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742031207; c=relaxed/simple;
-	bh=hLe6wa9odyEnA3It722yJ8dVV+PjRiY+JFKH4DQLSBM=;
+	s=arc-20240116; t=1742031348; c=relaxed/simple;
+	bh=ky78TS5sld/MtIdgsOX/Ix4iThb34zSifCYWix80Zd0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d6UYrqVvs1vp92E79greEDyd0OYWPlYqZdbGJoAHs7B8duj6PfeQyJLdVBHNUkaEyZkO4sZrFuICOd5hvnhwXgfuiIDFj4CtxTiCWhwddFZ+G01b2cMMr2VTNfVOuN9H4P5/js81ZFr6EOp11ui6SgcDxFWaM6WXP0P4ZM7uHjg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=SPKjC0wb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7797C4CEE5;
-	Sat, 15 Mar 2025 09:33:26 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=rpuoHQEqLoLFRl5j1ilZlUeUV4/xxnMadYL6uilweH75Ja1hbEtfq0uQnDLBWZ2yvBwlmfaKUZbpsHXPBSiGuO7rSWLhJchefzTu0VLmQlr/rtp5w7UZhNijDOo0YlX52L/63S6SGSqm6oT1Y0D4x2jcTZpbjSTyDt185VuRzpY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=rXbfcKdG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A464C4CEE5;
+	Sat, 15 Mar 2025 09:35:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1742031207;
-	bh=hLe6wa9odyEnA3It722yJ8dVV+PjRiY+JFKH4DQLSBM=;
+	s=korg; t=1742031347;
+	bh=ky78TS5sld/MtIdgsOX/Ix4iThb34zSifCYWix80Zd0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SPKjC0wbTmpKraRwJqd3wvkMsebcccvQfR0nTf1KOtaU7TNHa+sMVOwVrPObPgQo0
-	 7MHBNmljOBX0Vks2HXUZwAp5GWgJ/SAiEuu0uIFpBm2HJvJvRohq1rA4vzrVqjtcIe
-	 nhSRHaBL3+xukaOGXzj1d0HT7eNX2hYDMovC8ZSs=
-Date: Sat, 15 Mar 2025 10:32:08 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Ethan Carter Edwards <ethan@ethancedwards.com>, tytso@mit.edu,
-	ernesto.mnd.fernandez@gmail.com, dan.carpenter@linaro.org,
-	sven@svenpeter.dev, ernesto@corellium.com, gargaditya08@live.com,
-	willy@infradead.org, asahi@lists.linux.dev,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-staging@lists.linux.dev
-Subject: Re: [RFC PATCH 0/8] staging: apfs: init APFS module
-Message-ID: <2025031554-agreeing-ammonium-58aa@gregkh>
-References: <20250314-apfs-v1-0-ddfaa6836b5c@ethancedwards.com>
- <2025031529-greedless-jingle-1f3b@gregkh>
- <20250315-gruft-evidenz-d2054ba2f684@brauner>
+	b=rXbfcKdGerlWztVZPJtMKxS34/VJuZkkdkYZnLAjk/SE3PZnKLlj4SBa47y8lmnmk
+	 tT9i1F2scPccgx8i8cBAqfBSwV61l2SoepS5qE3ggogoSOEan1AGJe4qfqco97gwfL
+	 bBl61103TBQnU7HQJc9IWq7sbFEHPfUnVB9JJXFU=
+Date: Sat, 15 Mar 2025 10:34:29 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: daixin_tkzc <daixin_tkzc@163.com>
+Cc: Alan Stern <stern@rowland.harvard.edu>,
+	matthew dharm <mdharm-usb@one-eyed-alien.net>,
+	linux-usb@vger.kernel.org, usb-storage@lists.one-eyed-alien.net,
+	linux-kernel@vger.kernel.org
+Subject: Re: Re: [usb-storage] Re:Re:[PATCH] usb: storage: Fix `us->iobuf`
+ size for BOT transmission to prevent memory overflow
+Message-ID: <2025031514-sacred-playback-1dd4@gregkh>
+References: <20250311084111.322351-1-daixin_tkzc@163.com>
+ <2b6c4aa7.b165.1958f6b7a3a.Coremail.daixin_tkzc@163.com>
+ <814316b6-013b-4735-995d-b6c0c616c71b@rowland.harvard.edu>
+ <1681f087.2727.195927b7ccb.Coremail.daixin_tkzc@163.com>
+ <516c8f89-45f2-4d3f-b1e7-29aecfc8cd3c@rowland.harvard.edu>
+ <6e125c5c.2541.195990d2daa.Coremail.daixin_tkzc@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,19 +61,12 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250315-gruft-evidenz-d2054ba2f684@brauner>
+In-Reply-To: <6e125c5c.2541.195990d2daa.Coremail.daixin_tkzc@163.com>
 
-On Sat, Mar 15, 2025 at 10:18:23AM +0100, Christian Brauner wrote:
-> > But I'll wait for an ACK from the filesystem developers before doing it
-> > as having filesystem code in drivers/staging/ feels odd, and they kind
-> > of need to know what's going on here for when they change api stuff.
+On Sat, Mar 15, 2025 at 05:05:32PM +0800, daixin_tkzc wrote:
 > 
-> Sorry, I don't want new filesystems going through the generic staging
-> tree. Next week during LSFMM we can discuss a filesystem specific
-> staging tree that is directly maintained as part of fs so it's tightly
-> integrated. We're going to talk about two new filesystems anyway.
 
-Great, then I'll not worry about this patch series at all, thanks!
+Again, please do not send html email, it is rejected by the mailing
+lists.
 
-greg k-h
 
