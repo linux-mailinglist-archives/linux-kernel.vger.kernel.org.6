@@ -1,155 +1,128 @@
-Return-Path: <linux-kernel+bounces-562584-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562583-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0938A62D28
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 14:00:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 85FB2A62D26
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 14:00:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 978687A6A85
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 12:59:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1BA777A5E75
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 12:59:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB6291F8EEC;
-	Sat, 15 Mar 2025 13:00:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FB2A1F8BDC;
+	Sat, 15 Mar 2025 13:00:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="Gwn9DVRn"
-Received: from smtp-fw-9102.amazon.com (smtp-fw-9102.amazon.com [207.171.184.29])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K+qQUJlu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A94571DF964;
-	Sat, 15 Mar 2025 13:00:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.171.184.29
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEAAC1FDD;
+	Sat, 15 Mar 2025 13:00:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742043651; cv=none; b=bUR5WLVvMyJjRwqCzUs2iLC4VzxT4jX81ABYg4w57LduUmjH9Km3eeCAX/uyPNYcxN0lSoxOfKjnggd3uaZ0BUC3tz6vLurkjPF7a7DH4G/IBwKcFrcjAFi6iCxWZBDxA3sxogxXgF7L7n5A0+/dYiN5YFVgFPW+iNKbedkxbuc=
+	t=1742043637; cv=none; b=NsdUzWdY59Zxvufa1DM1bSiDcWlK37nyGHnizb1Q87B7fHRS/yEvKagS4sBD2cy4h1E9SWLvL/KIsiHm4OUPz80kusgpEVxSFLZkojG/KG59mzxH2F3fPONmRdaPz3tC5oC7Sx5iE2zoUkk9eYW+RcMucc59sliKIy8JgEiYEzE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742043651; c=relaxed/simple;
-	bh=WXG3nm9VTQNTwm5ptPPKtK7R9NwVj/dBEI+Nk7wKJRs=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QWMSwtkL7pTKc/krpKcObVuCW4oD5BApYXcC1SI+wkYh/e+rg9tbwEcy9VcZAhkrDoNR87ZY08Qa172LqzhGUlQli7UEsQvVsrRQkcmQk4H/nDdZksRz6IlP9+1vyB6HGEGaU8rET/0FG6ASucsFlTnHjKXNQirXQI5CaSwvM6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=Gwn9DVRn; arc=none smtp.client-ip=207.171.184.29
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1742043650; x=1773579650;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=jqOXkuumBOlYORoc3RdeMLnYb4A6AmoaISyCTe+YEjA=;
-  b=Gwn9DVRnIgMddR7hXVDW+Dbp2T+/CuvMhlIXOswWhjwx+s1F6ZtjwevU
-   /tkY7QRK4fAnWPcLYPSz4UieUzwtT3Vy4EXboyqfY/sGP+ttZGdp8XpiD
-   r8ezTjbDa8skWT5witwTyaFkqZhes82QEgmEjiExy7A5sDbLkwwWc4tV+
-   A=;
-X-IronPort-AV: E=Sophos;i="6.14,250,1736812800"; 
-   d="scan'208";a="503054615"
-Received: from pdx4-co-svc-p1-lb2-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.214])
-  by smtp-border-fw-9102.sea19.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Mar 2025 13:00:44 +0000
-Received: from EX19MTAUWB002.ant.amazon.com [10.0.7.35:47751]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.18.34:2525] with esmtp (Farcaster)
- id 8f32fc71-a378-4960-a103-202bc15e229e; Sat, 15 Mar 2025 13:00:43 +0000 (UTC)
-X-Farcaster-Flow-ID: 8f32fc71-a378-4960-a103-202bc15e229e
-Received: from EX19D003ANC003.ant.amazon.com (10.37.240.197) by
- EX19MTAUWB002.ant.amazon.com (10.250.64.231) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Sat, 15 Mar 2025 13:00:43 +0000
-Received: from b0be8375a521.amazon.com (10.118.246.93) by
- EX19D003ANC003.ant.amazon.com (10.37.240.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Sat, 15 Mar 2025 13:00:37 +0000
-From: Kohei Enju <enjuk@amazon.com>
-To: <enjuk@amazon.com>
-CC: <andrii@kernel.org>, <ast@kernel.org>, <bpf@vger.kernel.org>,
-	<daniel@iogearbox.net>, <eddyz87@gmail.com>, <haoluo@google.com>,
-	<iii@linux.ibm.com>, <john.fastabend@gmail.com>, <jolsa@kernel.org>,
-	<kohei.enju@gmail.com>, <kpsingh@kernel.org>, <kuniyu@amazon.com>,
-	<linux-kernel@vger.kernel.org>, <martin.lau@linux.dev>, <sdf@fomichev.me>,
-	<song@kernel.org>, <syzbot+a5964227adc0f904549c@syzkaller.appspotmail.com>,
-	<yepeilin@google.com>, <yonghong.song@linux.dev>
-Subject: Re: [PATCH bpf-next v1] bpf: Fix out-of-bounds read in check_atomic_load/store()
-Date: Sat, 15 Mar 2025 21:59:39 +0900
-Message-ID: <20250315130028.92105-1-enjuk@amazon.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250315082251.32679-1-enjuk@amazon.com>
-References: <20250315082251.32679-1-enjuk@amazon.com>
+	s=arc-20240116; t=1742043637; c=relaxed/simple;
+	bh=2u/3haK34KXboBV2Ha0iRF1xoQYUJwHiolwLD2dwjOY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=GAKWd1TDaubhfORJvbQJCwUsiZyaOgkB+rx+CaJMm76y4FChI9RJoIKMUjCKS7dSCCHXhUc0Cc9fof9f/hrn2hKRtMl79wvWBQelUKKi+4lesZawsYpRALFAMDFBs8qczdY4zC6MBZyRm0wIdXqavNN3PHZJNRw84yxQRfyou8Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K+qQUJlu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00081C4CEE5;
+	Sat, 15 Mar 2025 13:00:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742043637;
+	bh=2u/3haK34KXboBV2Ha0iRF1xoQYUJwHiolwLD2dwjOY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=K+qQUJluJ0S6V1llmo89P/xrIR0dOzlEFGcMlumOCLVHvg2qKg/9lI/rxEO+LM1k0
+	 ONhWGIRWwEMywG08CtsFfzmSvS0rVc2NADdX7+DlpasCrtDkiRHfnJMTqWrHMKSsAF
+	 FLNmlPe4+MBiPyJAi+X4olarHjGqCC4O37Zda4RQoDnGRu+3q8paPFr006XQPGAHuE
+	 9sX3joSFStshc4EChzHzmYOWHAhZ/zqkMKbV9ykjyMX+E00NWrDVz58sDNKXzTGsVy
+	 fu+sQ3gsDYH+d08NQ37DNgJQmq1BNZHObAMLMQu6/fcH4ElSm8MJbjtZ0mcWjcnA1M
+	 nJdbTXrsg4Bvw==
+Date: Sat, 15 Mar 2025 13:00:30 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Suraj Patil <surajpatil522@gmail.com>
+Cc: lars@metafoo.de, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Suraj Patil <your-email@example.com>
+Subject: Re: [PATCH] iio: industrialio-trigger: Fix typos in comments
+Message-ID: <20250315130030.6db07f89@jic23-huawei>
+In-Reply-To: <20250311155927.467523-1-surajpatil522@gmail.com>
+References: <20250311155927.467523-1-surajpatil522@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EX19D044UWA001.ant.amazon.com (10.13.139.100) To
- EX19D003ANC003.ant.amazon.com (10.37.240.197)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
->> ...
->>>  kernel/bpf/verifier.c | 12 ++++++++++++
->>>  1 file changed, 12 insertions(+)
->>> 
->>> diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
->>> index 3303a3605ee8..6481604ab612 100644
->>> --- a/kernel/bpf/verifier.c
->>> +++ b/kernel/bpf/verifier.c
->>> @@ -7788,6 +7788,12 @@ static int check_atomic_rmw(struct bpf_verifier_env *env,
->>>  static int check_atomic_load(struct bpf_verifier_env *env,
->>>  			     struct bpf_insn *insn)
->>>  {
->>> +	int err;
->>> +
->>> +	err = check_reg_arg(env, insn->src_reg, SRC_OP);
->>> +	if (err)
->>> +		return err;
->>> +
->>
->>I agree with these changes, however, both check_load_mem() and
->>check_store_reg() already do check_reg_arg() first thing.
->>Maybe just swap the atomic_ptr_type_ok() and check_load_mem()?
->
->You're absolutely right. The additional check_reg_arg() introduces some 
->redundancy since check_load_mem() and check_store_reg() do that.
+On Tue, 11 Mar 2025 15:59:27 +0000
+Suraj Patil <surajpatil522@gmail.com> wrote:
 
-IMHO, in this specific case, I believe OOB is caused by invalid register 
-number in reg_state(), so check_reg_arg() is too much and instead just 
-checking register number before atomic_ptr_type_ok() is sufficient.
+> Fixed multiple occurrences of 'reenable' to 're-enable' in comments.
+> 
+> Signed-off-by: Suraj Patil <your-email@example.com>
+> Signed-off-by: Suraj Patil <surajpatil522@gmail.com>
+Please carefully read what your changes are before sending!
+This obviously breaks the code.  
 
-Although it's still somewhat redundant and not a fundamental solution, I 
-think it would be better than doing whole register checking by 
-check_reg_arg().
+Also don't take a code spell checker to literally.
+reenable is fine here.
 
-diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-index 3303a3605ee8..48131839ac26 100644
---- a/kernel/bpf/verifier.c
-+++ b/kernel/bpf/verifier.c
-@@ -7788,6 +7788,11 @@ static int check_atomic_rmw(struct bpf_verifier_env *env,
- static int check_atomic_load(struct bpf_verifier_env *env,
-                 struct bpf_insn *insn)
- {
-+	if (insn->src_reg >= MAX_BPF_REG) {
-+		verbose(env, "R%d is invalid\n", insn->src_reg);
-+		return -EINVAL;
-+	}
-+
-    if (!atomic_ptr_type_ok(env, insn->src_reg, insn)) {
-        verbose(env, "BPF_ATOMIC loads from R%d %s is not allowed\n",
-            insn->src_reg,
-@@ -7801,6 +7806,11 @@ static int check_atomic_load(struct bpf_verifier_env *env,
- static int check_atomic_store(struct bpf_verifier_env *env,
-                  struct bpf_insn *insn)
- {
-+	if (insn->dst_reg >= MAX_BPF_REG) {
-+		verbose(env, "R%d is invalid\n", insn->dst_reg);
-+		return -EINVAL;
-+	}
-+
-    if (!atomic_ptr_type_ok(env, insn->dst_reg, insn)) {
-        verbose(env, "BPF_ATOMIC stores into R%d %s is not allowed\n",
-            insn->dst_reg,
 
->I've revised the patch to simply swap the order and syzbot didn't trigger 
->the issue in this context.
->    https://lore.kernel.org/all/20250315055941.10487-2-enjuk@amazon.com/
-> ...
+> ---
+>  drivers/iio/industrialio-trigger.c | 14 +++++++-------
+>  1 file changed, 7 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/iio/industrialio-trigger.c b/drivers/iio/industrialio-trigger.c
+> index 54416a384232..21688cd348c6 100644
+> --- a/drivers/iio/industrialio-trigger.c
+> +++ b/drivers/iio/industrialio-trigger.c
+> @@ -162,11 +162,11 @@ static void iio_reenable_work_fn(struct work_struct *work)
+>  	 * This 'might' occur after the trigger state is set to disabled -
+>  	 * in that case the driver should skip reenabling.
+>  	 */
+> -	trig->ops->reenable(trig);
+> +	trig->ops->re-enable(trig);
+>  }
+>  
+>  /*
+> - * In general, reenable callbacks may need to sleep and this path is
+> + * In general, re-enable callbacks may need to sleep and this path is
+>   * not performance sensitive, so just queue up a work item
+>   * to reneable the trigger for us.
+>   *
+> @@ -175,14 +175,14 @@ static void iio_reenable_work_fn(struct work_struct *work)
+>   *    the final decrement is still in this interrupt.
+>   * 2) The trigger has been removed, but one last interrupt gets through.
+>   *
+> - * For (1) we must call reenable, but not in atomic context.
+> + * For (1) we must call re-enable, but not in atomic context.
+>   * For (2) it should be safe to call reenanble, if drivers never blindly
+> - * reenable after state is off.
+> + * re-enable after state is off.
+>   */
+>  static void iio_trigger_notify_done_atomic(struct iio_trigger *trig)
+>  {
+>  	if (atomic_dec_and_test(&trig->use_count) && trig->ops &&
+> -	    trig->ops->reenable)
+> +	    trig->ops->re-enable)
+>  		schedule_work(&trig->reenable_work);
+>  }
+>  
+> @@ -243,8 +243,8 @@ EXPORT_SYMBOL(iio_trigger_poll_nested);
+>  void iio_trigger_notify_done(struct iio_trigger *trig)
+>  {
+>  	if (atomic_dec_and_test(&trig->use_count) && trig->ops &&
+> -	    trig->ops->reenable)
+> -		trig->ops->reenable(trig);
+> +	    trig->ops->re-enable)
+> +		trig->ops->re-enable(trig);
+>  }
+>  EXPORT_SYMBOL(iio_trigger_notify_done);
+>  
 
-Regards,
-Kohei
 
