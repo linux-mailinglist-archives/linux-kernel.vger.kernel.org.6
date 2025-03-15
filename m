@@ -1,63 +1,56 @@
-Return-Path: <linux-kernel+bounces-562766-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562767-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AF7DA63299
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 22:25:16 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 740DAA6329A
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 22:29:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 89170170489
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 21:25:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F1383B5964
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 21:29:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40C661A0BE0;
-	Sat, 15 Mar 2025 21:25:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 897AA1A23A1;
+	Sat, 15 Mar 2025 21:29:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bs3UorAg"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XbYyKALW"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 927AC376;
-	Sat, 15 Mar 2025 21:25:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7A21376
+	for <linux-kernel@vger.kernel.org>; Sat, 15 Mar 2025 21:29:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742073909; cv=none; b=ddCwPb5egm6RpHU7OYk8kdyJCDjjg88Ap0gW6P2g7uGfKteVbYxJVp1f9qSJQlx1P3Br0LrtbcQ8lqVzFhSVxmyW4MNm3Chq2Zsj+8+3g5IIREZCBLEFx050NwkbO5V7nPpkp30ustHCZRgLADHY1wrkqmvK8RHYc0rlkm7Qios=
+	t=1742074172; cv=none; b=YGllGS3fm7HDXQkw7zugv/cRf9oRJ3dJDl+bWzYRufUP/o9MK2hrMgpNlrHaeUBplGEQDGpHpq5p3yt2/YzoiRQXGqFngIKvla/B7UaoIuxjfbLuZ9hUvTS9LAJQERor5fFzE4IXF5tPB0nWmR6n3jXnP0wP3XJfY/PKbUaBcWQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742073909; c=relaxed/simple;
-	bh=7/HKPUBJ3JQjXOQkoxJFT9T4hUXjg/lOG1N7gfF6AFo=;
+	s=arc-20240116; t=1742074172; c=relaxed/simple;
+	bh=CUd5Qe+mzYnqZF5hfgXVhMqUIxBGwVT/lW1fPvadvnY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ad3Wx9BX1lCzDcdgrIFrBUDOcsRpxteiOkHND2VsuKGDAIITZot1Jeeo9bPwAQdXm7UQXTaxojqfmHq/67Bf1UiTd2vW0g8KYMvgwxjU/DmIcZ5k1AiXU6ZAWgsBWJo2H+YZWjZf/NTVhtPCxDxG9UiklxbJZFxAKpPui3bRR0E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bs3UorAg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0EAFBC4CEE5;
-	Sat, 15 Mar 2025 21:25:05 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=GGXWScp+l/KLwNwWwCU3l/U0V64e6TT30rn7Yp0Fk8W5lQeIeORJpzYRyPet7RKtmQR02su0p5uPcmLXgdOeVP2iKf5jd7gNMDSR94RXXk+tiuV/sXJOBvIqBwNLXAqRsWFdHJSWdeLKYwjovVEMyzRWTOQikGKYZLldM2s9kUE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XbYyKALW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 971D7C4CEE5;
+	Sat, 15 Mar 2025 21:29:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742073909;
-	bh=7/HKPUBJ3JQjXOQkoxJFT9T4hUXjg/lOG1N7gfF6AFo=;
+	s=k20201202; t=1742074170;
+	bh=CUd5Qe+mzYnqZF5hfgXVhMqUIxBGwVT/lW1fPvadvnY=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Bs3UorAgO+H0EJe0OMNUjsXjt5H8sl6nBw4/vEp2GypIzmeHC9f3u8Bm7fhjEk2CH
-	 3LLbKzPX5/dqZ9OaXzWfCP0nvmisSZPCZmpvAz3VDIb/M/pgdFLQA6K9Px3UpBONNn
-	 +8uOigGdGl4yMx8axC6BzOcEEZm/6zKlFyZl1Jtgz3RlwlvgI3HaWN4MUGZwuwWvva
-	 rqH2VoDuBqHSuUd2Q5rA8r5qe0IIZOVqLzh1k7swM6xSLbPCCTqudShAXNOVIixyXn
-	 qntuK2dMZBgRVr5qUxizhLZ2TPigOR/TwOK2iw6h/1bxXVLX1wLquMUHP2BOL9g6Th
-	 iiegr9oLIG4nQ==
-Date: Sat, 15 Mar 2025 22:25:03 +0100
+	b=XbYyKALW1wgkVTIhAly8AslILMJHmsQkvkfYgm+UHF/Y6wh/Tj9cFzsC2BiGhlaWN
+	 U0Hj/cGHsyLNfT7Mc00As3PnGzNexS+J+tTYgkALwgB23HaVrPpUvr78jGb1+QbO0s
+	 0Jw0ZM3WO1+XHe/v90RYMuq8kh3cdf6I30C2cCncE08cNt0y8Ldph351pkCXiN/RXB
+	 S8ja22Y2pV0A0E/Uh8han6Z7bCuQoQtmzRSHOOAybNMdIkU6MjXRmmpe4J3v1CItzi
+	 xOPNfmLRoMVngXhRRqihGw9+KF9U7kK4gfPzauo3N3DkX4OU2fuuJeetryyHt4IjoC
+	 7vTCgeg0Pvd+w==
+Date: Sat, 15 Mar 2025 22:29:25 +0100
 From: Ingo Molnar <mingo@kernel.org>
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas@fjasle.eu>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Ben Hutchings <ben@decadent.org.uk>, linux-kbuild@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
-Subject: Re: [PATCH 4/4] x86/boot/compressed: Switch to -ffile-prefix-map
-Message-ID: <Z9XwL8v3-nIneMox@gmail.com>
-References: <20250313-kbuild-prefix-map-v1-0-38cea8448c5f@weissschuh.net>
- <20250313-kbuild-prefix-map-v1-4-38cea8448c5f@weissschuh.net>
- <CAK7LNATuGr39YSsr0e6pB6wD7shyZVL12GMuE3HaWfXFXuRd4w@mail.gmail.com>
+To: Borislav Petkov <bp@alien8.de>
+Cc: Uros Bizjak <ubizjak@gmail.com>, x86@kernel.org,
+	linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>
+Subject: Re: [PATCH] x86/asm: Use alternative_input() in amd_clear_divider()
+Message-ID: <Z9XxNbdLCZFiK1NG@gmail.com>
+References: <20250314081453.565859-1-ubizjak@gmail.com>
+ <20250314112018.GAZ9QQ8hPXt2Mk22cG@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,19 +59,38 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAK7LNATuGr39YSsr0e6pB6wD7shyZVL12GMuE3HaWfXFXuRd4w@mail.gmail.com>
+In-Reply-To: <20250314112018.GAZ9QQ8hPXt2Mk22cG@fat_crate.local>
 
 
-* Masahiro Yamada <masahiroy@kernel.org> wrote:
+* Borislav Petkov <bp@alien8.de> wrote:
 
-> Hi X86 maintainers,
+> On Fri, Mar 14, 2025 at 09:14:38AM +0100, Uros Bizjak wrote:
+> > Use higher-level API to declare assembly with alternatives.
+> > 
+> > bloat-o-meter reports no code size changes.
+> > 
+> > Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
+> > Cc: Thomas Gleixner <tglx@linutronix.de>
+> > Cc: Ingo Molnar <mingo@kernel.org>
+> > Cc: Borislav Petkov <bp@alien8.de>
+> > Cc: Dave Hansen <dave.hansen@linux.intel.com>
+> > Cc: "H. Peter Anvin" <hpa@zytor.com>
+> > ---
+> >  arch/x86/include/asm/processor.h | 5 +++--
+> >  1 file changed, 3 insertions(+), 2 deletions(-)
 > 
-> Is it OK to pick up this to kbuild tree?
-> Ack is appreciated.
+> I'm getting tired of patches which cause unnecessary code churn. Please stop
+> this. If it ain't broke, it doesn't need fixing!
 
-Acked-by: Ingo Molnar <mingo@kernel.org>
+So why does the higher level alternative_input() API exist? If it 
+shouldn't exist then we should remove it. If it exists, we should use 
+it consistently instead of open-coding its equivalent.
 
-Thank you for picking up these!
+Cleanups like this, especially if they are clearly part of an effort to 
+improve x86 code generation in this area, are not 'code churn', why 
+would they be?
+
+Thanks,
 
 	Ingo
 
