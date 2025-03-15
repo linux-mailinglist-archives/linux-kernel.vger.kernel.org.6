@@ -1,167 +1,346 @@
-Return-Path: <linux-kernel+bounces-562679-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562680-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA51BA630A9
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 18:24:56 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF673A630BB
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 18:28:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E6753BD377
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 17:24:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3AE7917957F
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 17:28:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBF6F205E18;
-	Sat, 15 Mar 2025 17:24:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81F55202984;
+	Sat, 15 Mar 2025 17:27:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=furiosa-ai.20230601.gappssmtp.com header.i=@furiosa-ai.20230601.gappssmtp.com header.b="SqWGaffJ"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PDitWXFE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD587205AD0
-	for <linux-kernel@vger.kernel.org>; Sat, 15 Mar 2025 17:23:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C9A417995E;
+	Sat, 15 Mar 2025 17:27:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742059441; cv=none; b=T8OXK82ACsW4Eb53QMvLJHHYb8iOrMrbJrVL/3S4nHh+g1bkZkz4FssiKiBt/S24pnV1fTLihbTlFTqZ7URrpzlbEYcSh2mCQ1ASQWdBptrxuw0D4TkV60NgR9+xeXVmEnDZpi0G+tOLl7BsXpJvTajHhKNRkkGSagn/yMWHDpQ=
+	t=1742059678; cv=none; b=OV9tRhSpGsZSCAsrEpgepoB6OScyoabO5g2uIAweIvm4FXwPAx+f/VbCgrUis5vSSIqlbr5u6wDw8j+aCiGtgIbG2garsbjmnp+DslzvyB9snKqD9VCtJxESpFARBR+QynDHDj8KOg1JuHkdIkvddZPItXWN8/nICBQyCO6hToE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742059441; c=relaxed/simple;
-	bh=jjy/ipAsVAjM570PsPj8EFg1BR0qzO1tolMoinZ9Ul8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=uiY4KdERZY2Cc/KNcYRPPZ4vYW/I8JiC8ySbwzlpZE6IkA38CI8jyyw+dQ9910At2fNsHKE28DC39it9a0JQ96z2AG6yxx+Au/vvbSGfroSFIuth2X9sXl1JfJfH8THjHLnZR7asKfSXAqUHRhGqb5S3cQhJl6tny7b+/gZIF4k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=furiosa.ai; spf=none smtp.mailfrom=furiosa.ai; dkim=pass (2048-bit key) header.d=furiosa-ai.20230601.gappssmtp.com header.i=@furiosa-ai.20230601.gappssmtp.com header.b=SqWGaffJ; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=furiosa.ai
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=furiosa.ai
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-22349bb8605so65494485ad.0
-        for <linux-kernel@vger.kernel.org>; Sat, 15 Mar 2025 10:23:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=furiosa-ai.20230601.gappssmtp.com; s=20230601; t=1742059439; x=1742664239; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gA/GFNSLx9g8BrxtQW6nnUtMwtq8vRTEsCNTXthdg1I=;
-        b=SqWGaffJ31cF0n2TnGYhCB3l/Fjtyoyzg4oYOUQod2ilK+ZNwYgZfK3MU+AxByZvHC
-         VU3U5fDjL4ymMK6VpnovNAvbvM8K3uNwCqt2cH6J7xdAUqznHNGe8KV28Gyk9sKs4w0F
-         b6/PaeUVs6rc4BslWUGAFDnrWOl5n03DYCIKniZdXFx/R81LMNj9RmTidvo1SJC0Eokn
-         NREh7W2oMqbdk2rN2lWlouq6Qx/N+2tdTxw3BsrpA3O5HoU3gMmoL6EnLzL97RlwGrpq
-         udBbPbs2vud3YX/HMj1HadMITiYiU8dxlLRaq6vWN/9SkP2ktoc/bu/4wFdDuwEGwuWA
-         4LDQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742059439; x=1742664239;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gA/GFNSLx9g8BrxtQW6nnUtMwtq8vRTEsCNTXthdg1I=;
-        b=We8H4n+xE0TbiPMX4HnVBoalZCsl9xgSkilOnNqEAdMyGYrbniIbkIXwqXxksOgLIV
-         hDnOwIT1zIoje7+B2ppEqynoJs6fkvkBeGL261D/ygaZhKilgw+7DCCUM2oO9OfpYmsN
-         55/MISKzTPvye2/eQAQu1/j/OqDxHf+qGH8tfG44L51rY0uzOF92/FAGFDH7DP0QDnvh
-         w6WdPWLWhJ7s11SQ7UYGVCqu44xwIOtelBGwZG/13EBncNksNxKg2AoFZkZ3k9omdlyj
-         YK+D56eXZF9Gl/BWeAJIAOfQ9OHRGOtMKhr/mbQipzxqKWxZpMOfPppk7IGsNk0G4wN8
-         J4tQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWCj6Vtv94OH/GXgxa6FZnVw2wsD0/IjvSIhzz2w4Cfdzhid7CyfrR/QEjn+3Abs87nCy0Gpr31SqQEHjI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwwM3IyVqMV66tB/9W6fWYjpVbEexoJV430iieebs7SnxHsyh0t
-	8C+nbmHrZRuFefUrhTcSk/P3Vvv82QmtL0WdqUnubOrwnfyngnQpDlW1ZAcj0d8=
-X-Gm-Gg: ASbGncua9obCdjumqoAyWpNmxVW9r9iO5u8eJA6/DuOx7XchivVgsYsJSlKxikL0kIw
-	jNw90UlWvc5YnzaH0ti9b3+g44mfhnjTkJs8vlf0/JNnoLPXs196sdx8yhSF1OkGao59tp0l5J/
-	4R+47+UWdLtdGf1LiLxwCNGUuCI4N8S5Xff06JF+qLgrYfQlaebNm3H6PD8qiNXdOG731s8hxWs
-	nfNtF9jBwvygh8YSeRMnaSxeMUBodIawgXqEgj7c9TsTrWYgz4lR1WQg4H4jOPpoDg3g/58Hm2p
-	nevtMQquAkmtTHi+cvKGtMflOOv4XlPyqgQvEzq8kw==
-X-Google-Smtp-Source: AGHT+IEbj/fYNWZdaI4EPbRWv9fRRPhjL9271b0qlYx3tRQZvXgQkMey08ub5woVXGP3tvnCVG45+g==
-X-Received: by 2002:a05:6a00:3d0c:b0:736:4d05:2e2e with SMTP id d2e1a72fcca58-7372238f6c2mr7905409b3a.6.1742059439198;
-        Sat, 15 Mar 2025 10:23:59 -0700 (PDT)
-Received: from sidong.. ([61.83.209.48])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-737115512f0sm4673013b3a.49.2025.03.15.10.23.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 15 Mar 2025 10:23:58 -0700 (PDT)
-From: Sidong Yang <sidong.yang@furiosa.ai>
-To: Josef Bacik <josef@toxicpanda.com>,
-	David Sterba <dsterba@suse.com>,
-	Jens Axboe <axboe@kernel.dk>,
-	Pavel Begunkov <asml.silence@gmail.com>
-Cc: linux-btrfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	io-uring@vger.kernel.org,
-	Sidong Yang <sidong.yang@furiosa.ai>
-Subject: [RFC PATCH v3 3/3] btrfs: ioctl: introduce btrfs_uring_import_iovec()
-Date: Sat, 15 Mar 2025 17:23:19 +0000
-Message-ID: <20250315172319.16770-4-sidong.yang@furiosa.ai>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250315172319.16770-1-sidong.yang@furiosa.ai>
-References: <20250315172319.16770-1-sidong.yang@furiosa.ai>
+	s=arc-20240116; t=1742059678; c=relaxed/simple;
+	bh=GF1FhuTL5Pb94Xq+7+UmAZGhmNzvM4UZn3qZ8ohIkzY=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=KEz45fQMKqGWTyL7bOMPw6jhMi+4tCvLngvaDjHxLBgagv3Mvy7WUBilDAa5bZdeThA66kULQF88/kbnfGAOAz+NPNFk6fWCJXKwVT1MO8oZTnB4Eb35DHuaoVqDY1tEBB71nUgsalPGD+DCyII3BlVroiTkHLLBzhXjW4ps2zk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PDitWXFE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id F2B42C4CEE5;
+	Sat, 15 Mar 2025 17:27:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742059678;
+	bh=GF1FhuTL5Pb94Xq+7+UmAZGhmNzvM4UZn3qZ8ohIkzY=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=PDitWXFEKCIghC1ijLCktzxKVVaZQlboMHo0cEAp3HkXRVqmvi8dkAVlU0Q1V1OYO
+	 64+D7BPRDruJ9/FBxajsdPskOYLZVc5XdZoNqRDHZDv3B+uElLy2i478sIQM+AcZA9
+	 nWe5hr1bGXRaB0VFHWB//QIxm+VrnEKNh9gilLb/y0Gq4mW3ve1UTrfjz8KrG8jOpF
+	 VBz3lHOTMOeDRlCDXhcnlf7P4CykpSBetu82p0lyj5N1rAM01v3hPFKL+Xho5/Iu19
+	 J1RQP9gWIsahKWTyBeJ5y6/eb7B1egwpD4HoWoKHZ6BpHvlrwFI6tvQGFQXi2ICbam
+	 o6gitlJYtXbmA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D442AC28B28;
+	Sat, 15 Mar 2025 17:27:57 +0000 (UTC)
+From: =?utf-8?q?J=2E_Neusch=C3=A4fer_via_B4_Relay?= <devnull+j.ne.posteo.net@kernel.org>
+Date: Sat, 15 Mar 2025 18:27:05 +0100
+Subject: [PATCH] dt-bindings: powerpc: Convert fsl/pmc.txt to YAML
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+Message-Id: <20250315-fslpmc-yaml-v1-1-10ba354a85c2@posteo.net>
+X-B4-Tracking: v=1; b=H4sIAGi41WcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDIyMz3bTinILcZN3KxNwcXUuDlGQzy7Qk8xSjRCWgjoKi1LTMCrBp0bG
+ 1tQDeCcXEXQAAAA==
+X-Change-ID: 20250226-fslpmc-yaml-90dc69fb7d2a
+To: Crystal Wood <oss@buserror.net>, 
+ Madhavan Srinivasan <maddy@linux.ibm.com>, 
+ Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
+ Christophe Leroy <christophe.leroy@csgroup.eu>, 
+ Naveen N Rao <naveen@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linuxppc-dev@lists.ozlabs.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ =?utf-8?q?J=2E_Neusch=C3=A4fer?= <j.ne@posteo.net>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1742059676; l=9266;
+ i=j.ne@posteo.net; s=20240329; h=from:subject:message-id;
+ bh=ROIgCsvPCxP9IhicDa1mF/HFY+gVpx3zheGzT7ids68=;
+ b=qlQ/n8SdxdHzpS9rxj0aXvH2NXuUrSUKoiuualvgGlUdFbIS2GU4AHLLE5t7E1jFr541mwkdM
+ bFI0PBQ0gG5B+Tcvr3rqnsWQrnnWHeYwsVLMSX7tYEFcox0PJxk7x9O
+X-Developer-Key: i=j.ne@posteo.net; a=ed25519;
+ pk=NIe0bK42wNaX/C4bi6ezm7NJK0IQE+8MKBm7igFMIS4=
+X-Endpoint-Received: by B4 Relay for j.ne@posteo.net/20240329 with
+ auth_id=156
+X-Original-From: =?utf-8?q?J=2E_Neusch=C3=A4fer?= <j.ne@posteo.net>
+Reply-To: j.ne@posteo.net
 
-This patch introduces btrfs_uring_import_iovec(). In encoded read/write
-with uring cmd, it uses import_iovec without supporting fixed buffer.
-btrfs_using_import_iovec() could use fixed buffer if cmd flags has
-IORING_URING_CMD_FIXED.
+From: "J. Neuschäfer" <j.ne@posteo.net>
 
-Signed-off-by: Sidong Yang <sidong.yang@furiosa.ai>
+This patch rewrites pmc.txt into YAML format. Descriptive texts are
+expanded or shortened in a few places to better fit today's conventions.
+
+The list of compatible strings (and combinations of them) is based on
+existing device trees in arch/powerpc as well as compatible strings
+already mentioned in the plain-text version of the binding.
+
+One thing I didn't handle are soc-clk@... nodes as seen in
+Documentation/devicetree/bindings/powerpc/fsl/pmc.yaml.
+
+Signed-off-by: J. Neuschäfer <j.ne@posteo.net>
 ---
- fs/btrfs/ioctl.c | 32 ++++++++++++++++++++++++--------
- 1 file changed, 24 insertions(+), 8 deletions(-)
+ .../devicetree/bindings/powerpc/fsl/pmc.txt        |  63 --------
+ .../devicetree/bindings/powerpc/fsl/pmc.yaml       | 159 +++++++++++++++++++++
+ 2 files changed, 159 insertions(+), 63 deletions(-)
 
-diff --git a/fs/btrfs/ioctl.c b/fs/btrfs/ioctl.c
-index 6c18bad53cd3..a7b52fd99059 100644
---- a/fs/btrfs/ioctl.c
-+++ b/fs/btrfs/ioctl.c
-@@ -4802,6 +4802,28 @@ struct btrfs_uring_encoded_data {
- 	struct iov_iter iter;
- };
- 
-+static int btrfs_uring_import_iovec(struct io_uring_cmd *cmd,
-+				    unsigned int issue_flags, int rw)
-+{
-+	struct btrfs_uring_encoded_data *data =
-+		io_uring_cmd_get_async_data(cmd)->op_data;
-+	int ret;
+diff --git a/Documentation/devicetree/bindings/powerpc/fsl/pmc.txt b/Documentation/devicetree/bindings/powerpc/fsl/pmc.txt
+deleted file mode 100644
+index 07256b7ffcaab2ba57b33cf279df45d830ce33b3..0000000000000000000000000000000000000000
+--- a/Documentation/devicetree/bindings/powerpc/fsl/pmc.txt
++++ /dev/null
+@@ -1,63 +0,0 @@
+-* Power Management Controller
+-
+-Properties:
+-- compatible: "fsl,<chip>-pmc".
+-
+-  "fsl,mpc8349-pmc" should be listed for any chip whose PMC is
+-  compatible.  "fsl,mpc8313-pmc" should also be listed for any chip
+-  whose PMC is compatible, and implies deep-sleep capability.
+-
+-  "fsl,mpc8548-pmc" should be listed for any chip whose PMC is
+-  compatible.  "fsl,mpc8536-pmc" should also be listed for any chip
+-  whose PMC is compatible, and implies deep-sleep capability.
+-
+-  "fsl,mpc8641d-pmc" should be listed for any chip whose PMC is
+-  compatible; all statements below that apply to "fsl,mpc8548-pmc" also
+-  apply to "fsl,mpc8641d-pmc".
+-
+-  Compatibility does not include bit assignments in SCCR/PMCDR/DEVDISR; these
+-  bit assignments are indicated via the sleep specifier in each device's
+-  sleep property.
+-
+-- reg: For devices compatible with "fsl,mpc8349-pmc", the first resource
+-  is the PMC block, and the second resource is the Clock Configuration
+-  block.
+-
+-  For devices compatible with "fsl,mpc8548-pmc", the first resource
+-  is a 32-byte block beginning with DEVDISR.
+-
+-- interrupts: For "fsl,mpc8349-pmc"-compatible devices, the first
+-  resource is the PMC block interrupt.
+-
+-- fsl,mpc8313-wakeup-timer: For "fsl,mpc8313-pmc"-compatible devices,
+-  this is a phandle to an "fsl,gtm" node on which timer 4 can be used as
+-  a wakeup source from deep sleep.
+-
+-Sleep specifiers:
+-
+-  fsl,mpc8349-pmc: Sleep specifiers consist of one cell.  For each bit
+-  that is set in the cell, the corresponding bit in SCCR will be saved
+-  and cleared on suspend, and restored on resume.  This sleep controller
+-  supports disabling and resuming devices at any time.
+-
+-  fsl,mpc8536-pmc: Sleep specifiers consist of three cells, the third of
+-  which will be ORed into PMCDR upon suspend, and cleared from PMCDR
+-  upon resume.  The first two cells are as described for fsl,mpc8578-pmc.
+-  This sleep controller only supports disabling devices during system
+-  sleep, or permanently.
+-
+-  fsl,mpc8548-pmc: Sleep specifiers consist of one or two cells, the
+-  first of which will be ORed into DEVDISR (and the second into
+-  DEVDISR2, if present -- this cell should be zero or absent if the
+-  hardware does not have DEVDISR2) upon a request for permanent device
+-  disabling.  This sleep controller does not support configuring devices
+-  to disable during system sleep (unless supported by another compatible
+-  match), or dynamically.
+-
+-Example:
+-
+-	power@b00 {
+-		compatible = "fsl,mpc8313-pmc", "fsl,mpc8349-pmc";
+-		reg = <0xb00 0x100 0xa00 0x100>;
+-		interrupts = <80 8>;
+-	};
+diff --git a/Documentation/devicetree/bindings/powerpc/fsl/pmc.yaml b/Documentation/devicetree/bindings/powerpc/fsl/pmc.yaml
+new file mode 100644
+index 0000000000000000000000000000000000000000..bb2db8adb74c54fec5d07393573f156c63a9e886
+--- /dev/null
++++ b/Documentation/devicetree/bindings/powerpc/fsl/pmc.yaml
+@@ -0,0 +1,159 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/powerpc/fsl/pmc.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+	if (cmd && (cmd->flags & IORING_URING_CMD_FIXED)) {
-+		data->iov = NULL;
-+		ret = io_uring_cmd_import_fixed_vec(cmd, data->args.iov,
-+						    data->args.iovcnt,
-+						    ITER_DEST, issue_flags,
-+						    &data->iter);
-+	} else {
-+		data->iov = data->iovstack;
-+		ret = import_iovec(rw, data->args.iov, data->args.iovcnt,
-+				   ARRAY_SIZE(data->iovstack), &data->iov,
-+				   &data->iter);
-+	}
-+	return ret;
-+}
++title: Power Management Controller
 +
- static int btrfs_uring_encoded_read(struct io_uring_cmd *cmd, unsigned int issue_flags)
- {
- 	size_t copy_end_kernel = offsetofend(struct btrfs_ioctl_encoded_io_args, flags);
-@@ -4874,10 +4896,7 @@ static int btrfs_uring_encoded_read(struct io_uring_cmd *cmd, unsigned int issue
- 			goto out_acct;
- 		}
- 
--		data->iov = data->iovstack;
--		ret = import_iovec(ITER_DEST, data->args.iov, data->args.iovcnt,
--				   ARRAY_SIZE(data->iovstack), &data->iov,
--				   &data->iter);
-+		ret = btrfs_uring_import_iovec(cmd, issue_flags, ITER_DEST);
- 		if (ret < 0)
- 			goto out_acct;
- 
-@@ -5022,10 +5041,7 @@ static int btrfs_uring_encoded_write(struct io_uring_cmd *cmd, unsigned int issu
- 		if (data->args.len > data->args.unencoded_len - data->args.unencoded_offset)
- 			goto out_acct;
- 
--		data->iov = data->iovstack;
--		ret = import_iovec(ITER_SOURCE, data->args.iov, data->args.iovcnt,
--				   ARRAY_SIZE(data->iovstack), &data->iov,
--				   &data->iter);
-+		ret = btrfs_uring_import_iovec(cmd, issue_flags, ITER_SOURCE);
- 		if (ret < 0)
- 			goto out_acct;
- 
++maintainers:
++  - J. Neuschäfer <j.ne@posteo.net>
++
++description: |
++  The Power Management Controller in several MPC8xxx SoCs helps save power by
++  controlling chip-wide low-power states as well as peripheral clock gating.
++
++  Sleep of peripheral devices is configured by the `sleep` property, for
++  example `sleep = <&pmc 0x00000030>`. Any cells after the &pmc phandle are
++  called a sleep specifier.
++
++  For "fsl,mpc8349-pmc", sleep specifiers consist of one cell.  For each bit that
++  is set in the cell, the corresponding bit in SCCR will be saved and cleared
++  on suspend, and restored on resume.  This sleep controller supports disabling
++  and resuming devices at any time.
++
++  For "fsl,mpc8536-pmc", sleep specifiers consist of three cells, the third of
++  which will be ORed into PMCDR upon suspend, and cleared from PMCDR upon
++  resume.  The first two cells are as described for fsl,mpc8548-pmc.  This
++  sleep controller only supports disabling devices during system sleep, or
++  permanently.
++
++  For "fsl,mpc8548-pmc" or "fsl,mpc8641d-pmc", Sleep specifiers consist of one
++  or two cells, the first of which will be ORed into DEVDISR (and the second
++  into DEVDISR2, if present -- this cell should be zero or absent if the
++  hardware does not have DEVDISR2) upon a request for permanent device
++  disabling.  This sleep controller does not support configuring devices to
++  disable during system sleep (unless supported by another compatible match),
++  or dynamically.
++
++properties:
++  compatible:
++    oneOf:
++      - items:
++          - const: fsl,mpc8315-pmc
++          - const: fsl,mpc8313-pmc
++          - const: fsl,mpc8349-pmc
++
++      - items:
++          - enum:
++              - fsl,mpc8313-pmc
++              - fsl,mpc8323-pmc
++              - fsl,mpc8360-pmc
++              - fsl,mpc8377-pmc
++              - fsl,mpc8378-pmc
++              - fsl,mpc8379-pmc
++          - const: fsl,mpc8349-pmc
++
++      - items:
++          - const: fsl,p1022-pmc
++          - const: fsl,mpc8536-pmc
++          - const: fsl,mpc8548-pmc
++
++      - items:
++          - enum:
++              - fsl,mpc8536-pmc
++              - fsl,mpc8568-pmc
++              - fsl,mpc8569-pmc
++          - const: fsl,mpc8548-pmc
++
++      - const: fsl,mpc8548-pmc
++
++      - const: fsl,mpc8641d-pmc
++
++    description: |
++      "fsl,mpc8349-pmc" should be listed for any chip whose PMC is
++      compatible.  "fsl,mpc8313-pmc" should also be listed for any chip
++      whose PMC is compatible, and implies deep-sleep capability.
++
++      "fsl,mpc8548-pmc" should be listed for any chip whose PMC is
++      compatible.  "fsl,mpc8536-pmc" should also be listed for any chip
++      whose PMC is compatible, and implies deep-sleep capability.
++
++      "fsl,mpc8641d-pmc" should be listed for any chip whose PMC is
++      compatible; all statements below that apply to "fsl,mpc8548-pmc" also
++      apply to "fsl,mpc8641d-pmc".
++
++      Compatibility does not include bit assignments in SCCR/PMCDR/DEVDISR; these
++      bit assignments are indicated via the sleep specifier in each device's
++      sleep property.
++
++  reg:
++    minItems: 1
++    maxItems: 2
++
++  interrupts:
++    maxItems: 1
++
++  fsl,mpc8313-wakeup-timer:
++    $ref: /schemas/types.yaml#/definitions/phandle
++    description:
++      For "fsl,mpc8313-pmc"-compatible devices, this is a phandle to an
++      "fsl,gtm" node on which timer 4 can be used as a wakeup source from deep
++      sleep.
++
++allOf:
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: fsl,mpc8349-pmc
++    then:
++      properties:
++        reg:
++          items:
++            - description: PMC block
++            - description: Clock Configuration block
++
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - fsl,mpc8548-pmc
++              - fsl,mpc8641d-pmc
++    then:
++      properties:
++        reg:
++          items:
++            - description: 32-byte block beginning with DEVDISR
++
++required:
++  - compatible
++  - reg
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/interrupt-controller/irq.h>
++
++    pmc: power@b00 {
++        compatible = "fsl,mpc8377-pmc", "fsl,mpc8349-pmc";
++        reg = <0xb00 0x100>, <0xa00 0x100>;
++        interrupts = <80 IRQ_TYPE_LEVEL_LOW>;
++    };
++
++    sata@19000 {
++        compatible = "fsl,mpc8377-sata", "fsl,pq-sata";
++        reg = <0x19000 0x1000>;
++        interrupts = <45 IRQ_TYPE_LEVEL_LOW>;
++        sleep = <&pmc 0x00000030>;
++    };
++
++  - |
++    power@e0070 {
++        compatible = "fsl,mpc8548-pmc";
++        reg = <0xe0070 0x20>;
++    };
++
++...
+
+---
+base-commit: 2014c95afecee3e76ca4a56956a936e23283f05b
+change-id: 20250226-fslpmc-yaml-90dc69fb7d2a
+
+Best regards,
 -- 
-2.43.0
+J. Neuschäfer <j.ne@posteo.net>
+
 
 
