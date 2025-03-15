@@ -1,221 +1,119 @@
-Return-Path: <linux-kernel+bounces-562714-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562715-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6ED7A6319D
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 19:32:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01A9CA631A3
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 19:34:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 15A957A3E78
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 18:31:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 267123ADDF4
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 18:34:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DB5B205AD8;
-	Sat, 15 Mar 2025 18:32:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F5A51F462A;
+	Sat, 15 Mar 2025 18:34:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="gXepFeoA"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="TJ9rU9HO"
+Received: from sonic309-27.consmr.mail.ne1.yahoo.com (sonic309-27.consmr.mail.ne1.yahoo.com [66.163.184.153])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44C0D1CD1F
-	for <linux-kernel@vger.kernel.org>; Sat, 15 Mar 2025 18:32:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD92818FDC6
+	for <linux-kernel@vger.kernel.org>; Sat, 15 Mar 2025 18:34:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.184.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742063560; cv=none; b=XtGT6xnkAmdBi5aTEtx0pgKrXc/I1btzEWK+DJOfgyLaGpd1fGYZE/QeUNoTlh7yuIZOXq13xNV55yTp/+Sf8+SZjlrT7Jcwd0E5yOpC9og6eK4qQk7i4DAKKBT+tdX9/Zn1Crh05vqmkDqfk/TKlfI0/0DU8hX71ZsinHjeFlI=
+	t=1742063656; cv=none; b=TAV9E/DMIycohZosMSNkNAOcu7Y5cdDA/ZO2GNAy91Yi1Jo70exit3RatWTXKzsLprR2O5MRbNj+0eza8nwTRW7hl3fpofd5vpRFUueC3+3L7DBW73pwi6Sus0rYH5rZ62Q1nYRmVOQdqHBGNjMal75sZ0xx5sDIFY51KWdDgNM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742063560; c=relaxed/simple;
-	bh=Qz0SP3ZdKTuVdUO4kfY74H87AabpIgnIehKa79dB0xc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z0jgxPKlUTmk70Lh7FK8v/3+S20sN2hb0il8J5tCp/ml+eP0tY6eymDAkYLPM4/AbFldKqh/GfJ/MDJpjo1jHrMZ5yJou1ruxsnTSVnP0xvVB1GHTEWrghKUddPXyzu7cj26HvcvMP+Eu6vSj58AjYDqVwj+q4rPxNdos52vxIU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=gXepFeoA; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52FI5f1A008599
-	for <linux-kernel@vger.kernel.org>; Sat, 15 Mar 2025 18:32:38 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=32RSIjRVVwEIwBLtIaLu3T8z
-	Nm/+G/HrvoDwsEK9QoM=; b=gXepFeoAAitTN3P8l/8pkevj8foYKOeq6WQ+H//w
-	WytDWL+phTReBi02tIOdQ5+p2wekXa8pNFd3hDlkmGoaofiFZAQda1xgtcdtkjg1
-	1lIKl6ujo14SWP0P3+o8BQ7WnbkCpSRx9UxlUHaq4mlz3b1StEeZTOlQdNGMbSNq
-	43N/RShTHU/4cRf3L5TFWnA5LsgSTguZHDsc65XXITl/pHUMFn/MSde5ZGgvd5fg
-	3d8eBoFz3OS3FPWfRg+hLGAkGQG+HSC5rTglKuZgX3bZHCTIFtH4SfazP8JKoXTc
-	GKnUKCOjZUaLxiQHb/JZdugxI/H2NugIPnpUKpYN3HG2hg==
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45d1u893bs-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Sat, 15 Mar 2025 18:32:38 +0000 (GMT)
-Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7c0a8583e60so563914785a.2
-        for <linux-kernel@vger.kernel.org>; Sat, 15 Mar 2025 11:32:37 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742063557; x=1742668357;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=32RSIjRVVwEIwBLtIaLu3T8zNm/+G/HrvoDwsEK9QoM=;
-        b=KgMT83bmshDVyJv2AbTap8NCztg0R4CBgnlRphsBgMZfADKfbEvZLMJN5DuCGjBeXP
-         4iPX4PL2UKiOOxjAiCt2iNQSLloBfGOxCqhWZu0rO8z7UOlq0f54oKCRyQl8bb0h7BKj
-         rGf/qGl2Zf3SBw90vKSEcwiTwlbG/wee6AFQhm8xrDMfPN6GttRnWn1XaBKh1+oKniLI
-         JasQSaDgiCDdBslN5XqS/4WTvpP/iLMS0aQhBrrSmZ3AkusanYrEcB4ZEWeA7B+/jUNZ
-         acVLRboQsQolAGhk+qAAyszVvpGNEHqRRYfkFjQwWj1vycp3sjRwA/2mfuv6opE2NSTL
-         OCmw==
-X-Forwarded-Encrypted: i=1; AJvYcCX3uoijz/cYQk0FrwqG+pm4QX64DPca/UojdmxOEoD1HCKEctzXiRXBgWXy3KZZPLlp9FWR05xiSLPbvv0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz6hcM90q5PI6xPGJxR6y5tgyTJ3S87sx7itsAf/cllJISr3zmy
-	gv3EnRpNoWZdUQ4fx6hL2Ng/o4/NaBptBYZEVrVLbHV5E0Lzc1RNJ5bpqaZjBUQY6wkrCOFOxDQ
-	CJCaknpwZWFfKCTKGGg0K30zmnLVvVBu8nOeA2rWFfzasFHfQJJ7JtLjhoqZH9MI=
-X-Gm-Gg: ASbGncv0z4NXTrLxLLOS48ZaWWbjx1Tgvg35gSqYlaHsQ3N2cCPM0fuRPJR1qpIaw2D
-	LxmUJXQFwv4TMjsxCBN/FZP5xXLXmF1nsS6L0YoZUaUrxgJ5kwsdFXbH/Tg+gfrqJkkzq5ijQhJ
-	5QdKQP6nR9K3ZwevS3f62ROzGc0CZg96k2d82JrqL1wreZxEjbZy6TDnBqanV5C80vOv5Q/GEw/
-	nGHhD9K5PRltWQIuNgkmySHBD+y7tZWaUmNJ5A+tgczlFqROD9EPMPDCh5+97oG1rfoHaZGXMxu
-	U8Jmo3Tpq3I31tRdaQFUZegzkhChV+6LEbcBMzIPqxy1pknLAG0yxW6lJ0wV7E3DVnv4ETBs2XL
-	iluQ=
-X-Received: by 2002:a05:620a:410b:b0:7c5:3ca5:58fe with SMTP id af79cd13be357-7c57c7e2c29mr942268285a.22.1742063556762;
-        Sat, 15 Mar 2025 11:32:36 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGieBVVbcXNTR62+9Yck3/rn4e+4r8yK4ALIi002oozcbCr8Az/hV/kPVN/79mSCn4wgy0AVw==
-X-Received: by 2002:a05:620a:410b:b0:7c5:3ca5:58fe with SMTP id af79cd13be357-7c57c7e2c29mr942264885a.22.1742063556403;
-        Sat, 15 Mar 2025 11:32:36 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-549ba880564sm853189e87.173.2025.03.15.11.32.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 15 Mar 2025 11:32:34 -0700 (PDT)
-Date: Sat, 15 Mar 2025 20:32:32 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: Vikash Garodia <quic_vgarodia@quicinc.com>,
-        Dikshita Agarwal <quic_dikshita@quicinc.com>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/4] arm64: dts: qcom: sa8775p: add support for video node
-Message-ID: <5qfe4gnjnttnpezj36rdsdbomghnz5ytj3hiecoingj7622o5a@h4tq4tzliwz4>
-References: <20250311-dtbinding-v1-0-5c807d33f7ae@quicinc.com>
- <20250311-dtbinding-v1-3-5c807d33f7ae@quicinc.com>
- <3ec71075-b1ef-4366-b595-80fe41cd1e13@oss.qualcomm.com>
+	s=arc-20240116; t=1742063656; c=relaxed/simple;
+	bh=4YycN95OJkamhCuKvuQErsHI/SBw9V/Fcva1DYpLOZ4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GsfVOjMNzPCDEzr7RHT/DNS4uorVM4JdYt0rZ38ed2YlccdpjBcBjjOGMJOXUBocc4q9ExUSbKQXPjzYB3bRSnuJY6Xpi3KoOxBmm7pXJcxeg93X9tfg+ACSvdQUmQu1mz2vDckFREyKHUId/VDsVKu2oV0ZjmRYuer1lfGZfX4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=TJ9rU9HO; arc=none smtp.client-ip=66.163.184.153
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1742063648; bh=ycScJLAHyCubQSnNZRe/MVran4EmIZ66AunH3Rg7OEM=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=TJ9rU9HODEEr1B5+S3e3543mprI4vcXtWIrS1Fn6CRjAu3njIRmaHicK9sKXX6V/56ckvzwiC4VauE3rLnM/EtNDmZA0aXt6G8RmH6ug3Bl/6qR/PfADqkc2l5tPXBSw0dkH9ymESX/ceSJPq/93bH8qeP+Ppoq3/f6wdPb92ED8scigqiOVEBLk8zyT2zejSGw4qaR2iFLnmEvtSnTcnT5Jx3kGu0y0vBNOaVwYl1YCvhqJ4ORO1VsbHchJlQiR6io58f0WjMR+J/3H1Cmb/Y8S2U1bYv+U8Xow4F4ikGYo7ZK4C9kcr6NOFou84OKQOOozxs6JH1httOlKBWZ+sA==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1742063648; bh=/LwL3AVbhgAZsYm4RUmbPPEHkRkyDi293XMpBDV4Iw9=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=I67UjaZXCwe9kplt1XnG2QUnVLj652Z023KIMod5YAarMcprkwcXYwmHlZOgmIhx0a8H3yR06WDwHDoHU/hiuo1uqx+aKuhRlTSASRFPzAM7B/rKoMb/P5oPcw2Z98oN5/hW1LO4URj9unwU5K4gUO8O2larw9VxeNxCnydlwdK9pzzTaibmSTjC8yncMnWdEaAecWrjn+Kiwv080IIYbdYSYbe+zqpTMZVMnu1hYzkn9T6iTUB6NZWn699Zl2lpDml8S4IwV17YHYGvWgEv4tnNjQEgmpCbMp8sRVFbt2fpBSZihTG1ukKP3Cj+eG5d889zvrsNCP6E9zc3OVYCBg==
+X-YMail-OSG: Gq8EvboVM1kViBJomir3BQXJajZ9sZply8q729wVqw6z1bpuFK4_58BGC_KONGv
+ NlBR03SB6RTdV1H1uVAnlyg7ppBCcSRC_Ztn0V0ojXbqEOT3jiVBW2LqHSLlqZfiTJzJBuy_bZUo
+ bSYvi3FztXr1guou0sQqQkZhDSLIOVxjmFNsQcAP8N_J7.823ax7UFLMFes0FZUOAcQVxrHeio_4
+ Io06OZWLiRauC7B.iZPIpKV1Wppw1sZ6400B95JOO.GyXaOb0c5G4Hq2IkMniNTqRnEtP7G5CMS7
+ UaqWm4B0OpmxUVNDg6NHeGycAl6lxirFq8CfcYPnwz5idLYpt538g2MmIi0n1aBc5a3so4xwdM5M
+ kFuQrz52KqDnwGJuzMz4nTpfpp.w3LwA7z7ZB0igEe6DuH8kicv2JCfob_Lc2OO1xG0WnT5FoevN
+ vOXaozz4BjEn4tGDjbozFE.2EC.GovmIsvp6.SFhJe1JoZaC7AedyfdFFH46hvIql4Xiyv_4FbFZ
+ n5.0c2uM9T5yfpFpvpCj3i19zhvzJsVVY9tTw8gy8d0qEPsW58Bh04dZZc_KZsBwZ7w6KV.zfh2x
+ ePYskf3hFMVslEF6_YL31xWELUhrpmZHC3DMU8iqLuIdJcTNBgBJprRt8bHUh0GlJctp9JJGdK0x
+ ZcWMWXrNJlbRqe_fY.ufk4ret3lfDDkRxYWNdJ4VsuiIbRn8pvTLDeafKT99P893Gui7cGGka3JN
+ EmK4_6C_lzdKJh7cfnOgQboQFlXFXlMs3FiYYqQfOG.McxMx9UCkPs0X4DSdvHKzKBw0GRc9yW8U
+ N6d8ERow1mficWCZ2tTXZ_fzgylkTKKDppO3CbMglWhKzK01sqIvqBIA2hFmpW6ydmh3jK655TGF
+ e2SjpXSPoaMvZTpCGQ0DKimp8.7ZTIj00WDW12BVyHnWOM5ZzPQ.lrkPm9.MEelbvwn5arlrT88p
+ X3rQhQOWzRG4BW2.CclwzEUUx.7RJNbuMSftCYJHKUjFC4jIx.vKMRK.x.VALbZW_A58pi5bAIlv
+ Xo3XkYKmmovMnvAFlQdtd1TTKZhBPdLk0e3hanwpKfdQGuMZSxrbp4yOZqJmRFdHlBbq7.4.WlVW
+ 0KG4XZqtZIKYigU7G1OQgOpx75OIwYffa8Fqcg_noby4aBJs.Azur.rSduWacxB8xWk_WhrpY4Uz
+ kWZCLn2r6MlnKInJW5SncsFN0D10C9L0IOEdsq4YnZOkhUktNUFCIDDYuD8synhZwc6G5gEDPev4
+ BSdkyMaNVVIMtzV93Q9IavoXn2ny9rUXdw2ZCrfqteDNDzNOujCo_gZ2RF9PaEhtRnHm2sBu6crP
+ 4pO8YlwiI5JQ1vNqo1kQrWOBdjH5L6LPQjf84M7Tsik6vg9Cwquaz9TBZGtMyz00hN5XVoEmnA0B
+ tXTk5zFXvoZu567t7Er5vnrt30NkW5ljbP6_wlVVsVz0DhWawNscExLIXyCZ4i_WimGIWV0Qv8RZ
+ I8FozmWA4nHFZwkW90Awqy1tm7OJJkTUdtEZWtMMPNadREFB3DmnmzoaQA0idfHUSkfF0xDpX8rZ
+ IoRpAFhqUomCsTNV8c6BTPy0qoatfAkXPlt4mCMehIp4YHjDrAG.4fBfKYk98w4c66KTlVCmGrbe
+ evLmz_RPqhPyG_RW856uVc9Cs0qt5q1TJMDO0dnSseOUzjn8A6b9LGR7p6vs2FPclmpoa3yLY7vX
+ FKlTXzaz7npknEit9JzGq72IuyPZx_Qv3t7ifGegYHvOWp7x17jo0qAjz7Rmu7LgWvd9VCyIoT0p
+ PZTfWI_vIJPTVCYjfQO2wkb5l_2gyL06f2O0xJghBMDPyzE.XBr5.7ZR_lthjZzfwAlCdRN1UiIu
+ 9fFLoCQqht.PG.1.4chYbwIcsMd0diXX3BNc64vZm2Ks26Ak_bXF.DMbQDjMmhL92IeVgZ3uLbzI
+ vxd85wUQJF0nHldHurSCuts2KPdxOPcA3S645hrJJ33NhTG82BtQ6J8j8xjuLJi6n1_LsfLiz2su
+ MCUNtaXeKsdkwPqdEltmndUEjul2RcNYF.MCyIM1XqJJTosV0lS081K0qJhNQu7ypwt4Ao.aNNsK
+ Mw6dZBZ4t7g9wm3lyBGxPuRYiNL3h..YIf0lG.zvY24FH8KtREiVtyPcPHzeTJjL.nK97omXq8uw
+ z7QPLdHSyFqD6ywdRi1u0Jwz0wECf8o1hUCSVHm6WpowrCMqCpYb.q3.fzPyXJQyefPLEQwtnUEz
+ YNRfB8dNJvRl36UaXrUEciQDauwOkKpvn5SV34V.nB6m0k6GEndCiLhYHN8Niriu0vaUHS8UKiIT
+ 9tVuqy3QF
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: 4814970b-22ef-40e1-a254-33f9b8f2534c
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic309.consmr.mail.ne1.yahoo.com with HTTP; Sat, 15 Mar 2025 18:34:08 +0000
+Received: by hermes--production-gq1-7d5f4447dd-ffpct (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 257f5b639ab999d25609c2475f769a3b;
+          Sat, 15 Mar 2025 18:34:02 +0000 (UTC)
+Message-ID: <4fd9d7c1-a66c-4281-9e7b-0c3f5fc748f4@schaufler-ca.com>
+Date: Sat, 15 Mar 2025 11:34:01 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3ec71075-b1ef-4366-b595-80fe41cd1e13@oss.qualcomm.com>
-X-Proofpoint-GUID: 219CYeuYC7A-8T_qL7LJBnTH5n4Lf7q6
-X-Authority-Analysis: v=2.4 cv=c42rQQ9l c=1 sm=1 tr=0 ts=67d5c7c6 cx=c_pps a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=Vs1iUdzkB0EA:10 a=COk6AnOGAAAA:8 a=HdOZ2FAD_XOJwypVLEMA:9 a=jzxhZtI-NlRt--t-:21 a=CjuIK1q_8ugA:10
- a=PEH46H7Ffwr30OY-TuGO:22 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: 219CYeuYC7A-8T_qL7LJBnTH5n4Lf7q6
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-15_07,2025-03-14_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 spamscore=0
- bulkscore=0 lowpriorityscore=0 mlxscore=0 adultscore=0 malwarescore=0
- impostorscore=0 mlxlogscore=999 priorityscore=1501 suspectscore=0
- clxscore=1015 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503150134
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] net: Initialize ctx to avoid memory allocation error
+To: Florian Westphal <fw@strlen.de>
+Cc: Chenyuan Yang <chenyuan0y@gmail.com>, netfilter-devel@vger.kernel.org,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Casey Schaufler <casey@schaufler-ca.com>
+References: <20250313195441.515267-1-chenyuan0y@gmail.com>
+ <20250313201007.GA26103@breakpoint.cc>
+ <42e5bb33-1826-43df-940d-ec80774fc65b@schaufler-ca.com>
+ <20250314164708.GA1542@breakpoint.cc>
+ <d2019823-4500-499a-8368-76c50a582f47@schaufler-ca.com>
+ <20250314203044.GA9537@breakpoint.cc>
+Content-Language: en-US
+From: Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <20250314203044.GA9537@breakpoint.cc>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Mailer: WebService/1.1.23435 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-On Sat, Mar 15, 2025 at 02:43:30PM +0100, Konrad Dybcio wrote:
-> On 3/11/25 1:03 PM, Vikash Garodia wrote:
-> > Video node enables video on Qualcomm SA8775P platform.
-> > 
-> > Signed-off-by: Vikash Garodia <quic_vgarodia@quicinc.com>
-> > ---
-> >  arch/arm64/boot/dts/qcom/sa8775p.dtsi | 67 +++++++++++++++++++++++++++++++++++
-> >  1 file changed, 67 insertions(+)
-> > 
-> > diff --git a/arch/arm64/boot/dts/qcom/sa8775p.dtsi b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-> > index 3394ae2d13003417a15e64c9e47833725ec779e6..09db8e2eb578f1cada0f4a15e3f844dc097bd46d 100644
-> > --- a/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-> > +++ b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-> > @@ -10,6 +10,7 @@
-> >  #include <dt-bindings/clock/qcom,sa8775p-dispcc.h>
-> >  #include <dt-bindings/clock/qcom,sa8775p-gcc.h>
-> >  #include <dt-bindings/clock/qcom,sa8775p-gpucc.h>
-> > +#include <dt-bindings/clock/qcom,sa8775p-videocc.h>
-> >  #include <dt-bindings/dma/qcom-gpi.h>
-> >  #include <dt-bindings/interconnect/qcom,sa8775p-rpmh.h>
-> >  #include <dt-bindings/mailbox/qcom-ipcc.h>
-> > @@ -3783,6 +3784,72 @@ llcc: system-cache-controller@9200000 {
-> >  			interrupts = <GIC_SPI 580 IRQ_TYPE_LEVEL_HIGH>;
-> >  		};
-> >  
-> > +		iris: video-codec@aa00000 {
-> > +			compatible = "qcom,sa8775p-iris";
-> > +
-> > +			reg = <0 0x0aa00000 0 0xf0000>;
-> > +			interrupts = <GIC_SPI 174 IRQ_TYPE_LEVEL_HIGH>;
-> > +
-> > +			power-domains = <&videocc VIDEO_CC_MVS0C_GDSC>,
-> > +					<&videocc VIDEO_CC_MVS0_GDSC>,
-> > +					<&rpmhpd SA8775P_MXC>,
-> > +					<&rpmhpd SA8775P_MMCX>;
-> > +			power-domain-names = "venus",
-> > +					     "vcodec0",
-> > +					     "mx",
-> > +					     "mmcx";
-> > +			operating-points-v2 = <&iris_opp_table>;
-> > +
-> > +			clocks = <&gcc GCC_VIDEO_AXI0_CLK>,
-> > +				 <&videocc VIDEO_CC_MVS0C_CLK>,
-> > +				 <&videocc VIDEO_CC_MVS0_CLK>;
-> > +			clock-names = "iface",
-> > +				      "core",
-> > +				      "vcodec0_core";
-> > +
-> > +			interconnects = <&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-> > +					&config_noc SLAVE_VENUS_CFG QCOM_ICC_TAG_ALWAYS>,
-> 
-> This path should use QCOM_ICC_TAG_ACTIVE_ONLY on both endpoints
-> 
-> > +					<&mmss_noc MASTER_VIDEO_P0 QCOM_ICC_TAG_ALWAYS
-> > +					&mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>;
-> > +			interconnect-names = "cpu-cfg",
-> > +					     "video-mem";
-> > +
-> > +			firmware-name = "qcom/vpu/vpu30_p4_s6.mbn";
+On 3/14/2025 1:30 PM, Florian Westphal wrote:
+> Casey Schaufler <casey@schaufler-ca.com> wrote:
+>>>>> seclen needs to be > 0 or no secinfo is passed to userland,
+>>>>> yet the secctx release function is called anyway.
+>>>> That is correct. The security module is responsible for handling
+>>>> the release of secctx correctly.
+>>>>
+>>>>> Should seclen be initialised to -1?  Or we need the change below too?
+>>>> No. The security modules handle secctx their own way.
+>>> Well, as-is security_release_secctx() can be called with garbage ctx;
+>>> seclen is inited to 0, but ctx is not initialized unconditionally.
+>> Which isn't an issue for any existing security module.
+> The splat quoted in
+> 35fcac7a7c25 ("audit: Initialize lsmctx to avoid memory allocation error")
+>
+> seems to disagree.  I see no difference to what nfnetlink_queue is
+> doing.
 
-Firmware-name should be a part of the board DT file rather than the SoC
-DT.
+Point. I see no harm in initializing the lsmctx = { } or seclen = 0;
 
-> 
-> If it needs different firmware, I have my doubts over why 8550's data
-> would be fully reused. Are you sure everything in iris_platform_sm8550.c
-> applies?
-
-If I understand correctly, the firmware is different, because the
-signature profile is different. The Iris core should be compatible.
-
-> 
-> > +			memory-region = <&pil_video_mem>;
-> > +
-> > +			resets = <&gcc GCC_VIDEO_AXI0_CLK_ARES>;
-> > +			reset-names = "bus";
-> > +
-> > +			iommus = <&apps_smmu 0x0880 0x0400>,
-> > +				 <&apps_smmu 0x0887 0x0400>;
-> > +			dma-coherent;
-> > +
-> > +			iris_opp_table: opp-table {
-> > +				compatible = "operating-points-v2";
-> > +
-> > +				opp-366000000 {
-> > +					opp-hz = /bits/ 64 <366000000>;
-> > +					required-opps = <&rpmhpd_opp_svs_l1>,
-> > +							<&rpmhpd_opp_svs_l1>;
-> > +				};
-> 
-> Please add a newline between subsequent subnodes
-> 
-> Konrad
-
--- 
-With best wishes
-Dmitry
 
