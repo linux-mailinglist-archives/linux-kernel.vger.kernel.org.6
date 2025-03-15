@@ -1,72 +1,100 @@
-Return-Path: <linux-kernel+bounces-562515-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562511-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1430FA62A45
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 10:36:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0336BA62A2C
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 10:35:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47D043B43AA
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 09:35:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A8477189F088
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 09:35:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDE6A1F63C1;
-	Sat, 15 Mar 2025 09:35:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9BC01F4734;
+	Sat, 15 Mar 2025 09:34:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="rXbfcKdG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="lLYkVZ7W"
+Received: from mail-10628.protonmail.ch (mail-10628.protonmail.ch [79.135.106.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2331B1F3FC2;
-	Sat, 15 Mar 2025 09:35:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75D221F55EF;
+	Sat, 15 Mar 2025 09:34:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742031348; cv=none; b=pHxZPdyhye6EC7Q+4CzPdlF3zt8qJVEJcnB2/cD0detNfa8wI6zJxrkHCFKymC9Boprj0EH01rCCCarEPlf+NbN390sZE81vG3VfM89ca4ggtLtT8IXjwJwQWDcNt6Iv54/+hl+9KHu4qmB710OWUPzsCjma4ujaEYNL80e6Mog=
+	t=1742031297; cv=none; b=VaWPWVEVH1S6IwYH6lKVZ7sG7XxgZPxtNKzPlnJ2JxvyJVbe3TiXYH3m/YKbX7En/k8x9PQM7L5FhqsdZEkQTnDNQT3CuF02iiTW7s88guyQGL/gZYlRbl4d1J+v3kDDn1yKyvcCZYZ5Ra/JrrCm6e582LGDMkA062qbPRFXujE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742031348; c=relaxed/simple;
-	bh=ky78TS5sld/MtIdgsOX/Ix4iThb34zSifCYWix80Zd0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rpuoHQEqLoLFRl5j1ilZlUeUV4/xxnMadYL6uilweH75Ja1hbEtfq0uQnDLBWZ2yvBwlmfaKUZbpsHXPBSiGuO7rSWLhJchefzTu0VLmQlr/rtp5w7UZhNijDOo0YlX52L/63S6SGSqm6oT1Y0D4x2jcTZpbjSTyDt185VuRzpY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=rXbfcKdG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A464C4CEE5;
-	Sat, 15 Mar 2025 09:35:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1742031347;
-	bh=ky78TS5sld/MtIdgsOX/Ix4iThb34zSifCYWix80Zd0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rXbfcKdGerlWztVZPJtMKxS34/VJuZkkdkYZnLAjk/SE3PZnKLlj4SBa47y8lmnmk
-	 tT9i1F2scPccgx8i8cBAqfBSwV61l2SoepS5qE3ggogoSOEan1AGJe4qfqco97gwfL
-	 bBl61103TBQnU7HQJc9IWq7sbFEHPfUnVB9JJXFU=
-Date: Sat, 15 Mar 2025 10:34:29 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: daixin_tkzc <daixin_tkzc@163.com>
-Cc: Alan Stern <stern@rowland.harvard.edu>,
-	matthew dharm <mdharm-usb@one-eyed-alien.net>,
-	linux-usb@vger.kernel.org, usb-storage@lists.one-eyed-alien.net,
-	linux-kernel@vger.kernel.org
-Subject: Re: Re: [usb-storage] Re:Re:[PATCH] usb: storage: Fix `us->iobuf`
- size for BOT transmission to prevent memory overflow
-Message-ID: <2025031514-sacred-playback-1dd4@gregkh>
-References: <20250311084111.322351-1-daixin_tkzc@163.com>
- <2b6c4aa7.b165.1958f6b7a3a.Coremail.daixin_tkzc@163.com>
- <814316b6-013b-4735-995d-b6c0c616c71b@rowland.harvard.edu>
- <1681f087.2727.195927b7ccb.Coremail.daixin_tkzc@163.com>
- <516c8f89-45f2-4d3f-b1e7-29aecfc8cd3c@rowland.harvard.edu>
- <6e125c5c.2541.195990d2daa.Coremail.daixin_tkzc@163.com>
+	s=arc-20240116; t=1742031297; c=relaxed/simple;
+	bh=hNzSGeM9w6XNPYNUplk+W0RxLfc6Ek9uwsXvUt0eEuQ=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=p3RT39zBDVRHx3akc4TVFvGD+lxVd+dDYZE+8kt9n1R7glaPPQq9aqAYQuTwpjyuXRR0/X+YZIZfcGQWnWyE0T1LHpHornn8d8UfxkeModJi1/Zefpq7MPZLzpGGV2HsKd7pWspVqN9WM8PlAM++nlg3cW63wbsp/rqf21o/N4o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=lLYkVZ7W; arc=none smtp.client-ip=79.135.106.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1742031287; x=1742290487;
+	bh=2YpOaSrR4hSpqfGZqahP1NQlMMYBu1x+CopCGLc8TCw=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
+	b=lLYkVZ7WsxbKWWPw215MDyByXyYk2sMT04se/nnfaXXROFTTQ2IrlSeAE0ztiAqqn
+	 OAJMwAJKmCPp7LzaOH3hgyMk2JpZ5qM7ODp9RHPOETqJBtRgGmfxmM6jSPhWW2dBum
+	 QdU/uZrPPrxz19dkDlwNQyB4lOvKT939syCP5SzdMyrqHac41JwAmDEz0W9IsFOj2u
+	 G/OcKTUAbrQ2BBAKsmalD23hOSXZpRBnaHqNPvE2yLBp7VKj9cXBjPwthnAoQecDmX
+	 qSzdOY1s8MdTQOTACXkRtiPRb/ZJv1Viox8Of0hdoBQlaeVTq6grwpXwBwJu9Bl6oM
+	 1Q/HO8GpE0V+A==
+Date: Sat, 15 Mar 2025 09:34:42 +0000
+To: Boqun Feng <boqun.feng@gmail.com>, Tamir Duberstein <tamird@gmail.com>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, Bjorn Helgaas <bhelgaas@google.com>, Luis Chamberlain <mcgrof@kernel.org>, Russ Weight <russ.weight@linux.dev>, Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, linux-pci@vger.kernel.org,
+	linux-block@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v3 6/6] rust: use strict provenance APIs
+Message-ID: <D8GQJQFGKB8C.DZBUZT4IJIM0@proton.me>
+In-Reply-To: <67d4a57f.c80a0220.16ff45.9cf1@mx.google.com>
+References: <20250314-ptr-as-ptr-v3-0-e7ba61048f4a@gmail.com> <20250314-ptr-as-ptr-v3-6-e7ba61048f4a@gmail.com> <67d4a57f.c80a0220.16ff45.9cf1@mx.google.com>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: 5e603b89734b66f978da35e7885d24202eac65c5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6e125c5c.2541.195990d2daa.Coremail.daixin_tkzc@163.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, Mar 15, 2025 at 05:05:32PM +0800, daixin_tkzc wrote:
-> 
+On Fri Mar 14, 2025 at 10:54 PM CET, Boqun Feng wrote:
+> On Fri, Mar 14, 2025 at 08:28:10AM -0400, Tamir Duberstein wrote:
+> [...]
+>> --- a/rust/kernel/alloc.rs
+>> +++ b/rust/kernel/alloc.rs
+>> @@ -217,7 +217,7 @@ unsafe fn free(ptr: NonNull<u8>, layout: Layout) {
+>> =20
+>>  /// Returns a properly aligned dangling pointer from the given `layout`=
+.
+>>  pub(crate) fn dangling_from_layout(layout: Layout) -> NonNull<u8> {
+>> -    let ptr =3D layout.align() as *mut u8;
+>> +    let ptr =3D crate::with_exposed_provenance_mut(layout.align());
+>
+> Dangling pointers don't have provenance, neither has its provenance been
+> exposed. I think should use `without_provenance_mut()` here:
+>
+> =09https://doc.rust-lang.org/std/ptr/fn.without_provenance_mut.html
+>
+> see also the source of core::ptr::dangling().
 
-Again, please do not send html email, it is rejected by the mailing
-lists.
+Good catch.
+
+> The rest Rust code changes look good to me. Although I would suggest you
+> to split this patch into several patches: you can do the conversion from
+> "as" pattern to provenance API one file by one file, and this make it
+> easier for people to review. And after the conversions are done, you can
+> introduce the Makefile changes.
+
+I think it's fine to do several of the `as` conversions in a single
+patch, but splitting off the makefile changes is a good idea.
+
+---
+Cheers,
+Benno
 
 
