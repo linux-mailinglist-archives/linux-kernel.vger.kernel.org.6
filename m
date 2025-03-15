@@ -1,53 +1,53 @@
-Return-Path: <linux-kernel+bounces-562476-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562477-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69D66A6293E
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 09:47:13 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36D1FA62940
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 09:47:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75966189F9ED
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 08:47:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CC21F7A2FCE
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 08:46:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BC4D193074;
-	Sat, 15 Mar 2025 08:47:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F9051DC9BB;
+	Sat, 15 Mar 2025 08:47:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="mXq+HKz7"
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="LQO04r4q"
 Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF7B82AD25
-	for <linux-kernel@vger.kernel.org>; Sat, 15 Mar 2025 08:47:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2733A192D77
+	for <linux-kernel@vger.kernel.org>; Sat, 15 Mar 2025 08:47:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742028426; cv=none; b=NZp+8rAYgrP5k/LhFnwOVrEPu/8PJH4/b+TuBMhueL3IKZTgQyypWsMpafPwoLeBBsor89yxwWSFYxZG64Cckr4Vn58j+VNumxz/OWAD4e1UJ8AuxapOud8hYB8+wfJcwcFThALIbdCV139S1Me+YUD7DN6nt5gOFmP/nCG3NEY=
+	t=1742028451; cv=none; b=SQRNzg2mufvae4wfwBMFWUvuicH4KxlphflJIwG2ZgtpIZlTkjxtRtAgzBrUk2etFeNfm5zDmiHBwTjQtRcatJUjXbD7F0DBkHInY6HUw+Mlw4ZrzxZFmwLBFqNfCcQkl28G8Xgnweo5i8pVIoJUnoIBLDbOsw+uZLkf4B7WnjE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742028426; c=relaxed/simple;
-	bh=v/k0cq1PYeZ9P+GP2imf/tD1dXH1+3qfgJfx3mmiyXc=;
+	s=arc-20240116; t=1742028451; c=relaxed/simple;
+	bh=G8uYSrifhqywqfMO1IBBhasEEunS+Y3jrko3Aki/XA0=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ueKvBmuhR/NuBHaXoGk2AZhCnIhR4Ox4VAmdTuVHdgcpkIyVnhagB9Z82ew/QLCw6cR1lUcM1fZ+01i2ych3L6I46zPuxwocDIK+lHEchtwUaX9wym8Xk1xS9FLkrSxrBpCFqEYiZ4Cu6edIs0gzYlSJlwwdiXsZBQdKv9mXmkY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=mXq+HKz7; arc=none smtp.client-ip=148.251.105.195
+	 MIME-Version:Content-Type; b=Tk+LDnHYj94T5EeHh1gVQT5Pf8u4ONLAt1mcjjBB0MQ7S7Fya/C/XqdI+feL5YujrS9Oq1LqwaDdscut/4LlHYx+mCgEm7rp4hzpVQtkhhUg7EckIEFYM4dhlcll2M1KJZSvHB9SPxRG9RDlIOyzGfNm8yZ+0eiuZHMhDeuaIR0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=LQO04r4q; arc=none smtp.client-ip=148.251.105.195
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1742028423;
-	bh=v/k0cq1PYeZ9P+GP2imf/tD1dXH1+3qfgJfx3mmiyXc=;
+	s=mail; t=1742028448;
+	bh=G8uYSrifhqywqfMO1IBBhasEEunS+Y3jrko3Aki/XA0=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=mXq+HKz7p3rsapeUpBufJgc0rDhMfIgQy3PhjK3fDoVWzef4tBgKj9mVTdpCIZzSX
-	 YCqOr9CZ4lqTAlyZPMPFkh539dz8Cklfa/YHWCuT9jRut8YrkU9VGleYdqjb6m2Azk
-	 CuW/PRR45wqMC8UlKP5IAv0Qkc99ARprdawb92uuDrlJIUuhYTImw8nO2jdgBo5o/d
-	 kiLZaA4i+8eEwwNAh6WMfVtParc3LOH7OcFWX5+UGtI8zyZf8ZcQr9EXcC9Jy9aqd3
-	 /FW0GO67fZRbYFLsRAgk4Pury50v9FzxgPY1mEfGqQbQ1pa53OQi9o8K3fO05hnWmo
-	 mR05DmGZrakiA==
+	b=LQO04r4q3Sevfv8mmADPojqCSJcQxUVqr4wr2MLx8Y89UPKMJ/9MVD3Ka68IF5d2V
+	 fYWoNfuPE/yl6yzB4kFEUFU5qHLrhdKhuBuFwd1RfDrwkkbACsdMEBPxSty6ki57Qv
+	 hwdp7lNTn0Bit7z2HUoapOazm5azakK1LwI0jFXyxelzE5e/0z3uO+SkZnOLl8x9m2
+	 FPIaialuC/Wp1qsgs/2EiYwo5CYKPsf/VkuTaDuUC8zbgYfWp+0LH7vtssH5L+PWpw
+	 7pu4dbwDbgizk1/LFSBduf/h4FFXinQyo+bIydoS5dF9tqeLGWIDNMQ7ruU9xJHH7z
+	 bLG9gUCBi32qA==
 Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
 	(Authenticated sender: bbrezillon)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 6055317E0848;
-	Sat, 15 Mar 2025 09:47:02 +0100 (CET)
-Date: Sat, 15 Mar 2025 09:46:57 +0100
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id CCFF117E05C8;
+	Sat, 15 Mar 2025 09:47:27 +0100 (CET)
+Date: Sat, 15 Mar 2025 09:47:22 +0100
 From: Boris Brezillon <boris.brezillon@collabora.com>
 To: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
 Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
@@ -56,12 +56,12 @@ Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
  simona@ffwll.ch, kernel@collabora.com, linux-mediatek@lists.infradead.org,
  linux-arm-kernel@lists.infradead.org, sjoerd@collabora.com,
  angelogioacchino.delregno@collabora.com
-Subject: Re: [PATCH v2 5/6] drm/panfrost: Force AARCH64_4K page table format
- on MediaTek MT8188
-Message-ID: <20250315094657.7939e532@collabora.com>
-In-Reply-To: <20250314173858.212264-6-ariel.dalessandro@collabora.com>
+Subject: Re: [PATCH v2 6/6] drm/panfrost: Force AARCH64_4K page table format
+ on MediaTek MT8192
+Message-ID: <20250315094722.4c4804c6@collabora.com>
+In-Reply-To: <20250314173858.212264-7-ariel.dalessandro@collabora.com>
 References: <20250314173858.212264-1-ariel.dalessandro@collabora.com>
-	<20250314173858.212264-6-ariel.dalessandro@collabora.com>
+	<20250314173858.212264-7-ariel.dalessandro@collabora.com>
 Organization: Collabora
 X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
@@ -73,43 +73,20 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On Fri, 14 Mar 2025 14:38:57 -0300
+On Fri, 14 Mar 2025 14:38:58 -0300
 Ariel D'Alessandro <ariel.dalessandro@collabora.com> wrote:
 
-> MediaTek MT8188 SoC has an ARM Mali-G57 MC3 GPU (Valhall-JM), which
-> constantly faults with the current panfrost support.
+> MediaTek MT8192 SoC has an ARM Mali-G57 MC5 GPU (Valhall-JM). Now that
+> Panfrost supports AARCH64_4K page table format, let's enable it on this
+> SoC.
 > 
-> For instance, running `glmark2-es2-drm` benchmark test:
-> ```
-> [   79.617461] panfrost 13000000.gpu: js fault, js=1, status=JOB_BUS_FAULT, head=0xaadc380, tail=0xaadc380
-> [   80.119811] panfrost 13000000.gpu: gpu sched timeout, js=0, config=0x7300, status=0x58, head=0xaaca180, tail=0xaaca180, sched_job=000000002fd03ccc
-> [   80.129083] panfrost 13000000.gpu: Unhandled Page fault in AS0 at VA 0x0000000000000000
-> [   80.129083] Reason: TODO
-> [   80.129083] raw fault status: 0x1C2
-> [   80.129083] decoded fault status: SLAVE FAULT
-> [   80.129083] exception type 0xC2: TRANSLATION_FAULT_2
-> [   80.129083] access type 0x1: EXECUTE
-> [   80.129083] source id 0x0
-> ```
+> Running glmark2-es2-drm [0] benchmark, reported the same performance
+> score on both modes Mali LPAE (LEGACY) vs. AARCH64_4K, before and after
+> this commit. Tested on a Mediatek (MT8395) Genio 1200 EVK board.
 > 
-> Note that current panfrost mode (Mali LPAE - LEGACY) only allows to
-> specify write-cache or implementation-defined as the caching policy,
-> probably not matching the right configuration. As depicted in the source
-> code:
-> 
-> drivers/iommu/io-pgtable-arm.c:
-> ```
-> * MEMATTR: Mali has no actual notion of a non-cacheable type, so the
-> * best we can do is mimic the out-of-tree driver and hope that the
-> * "implementation-defined caching policy" is good enough...
-> ```
-> 
-> Now that Panfrost supports AARCH64_4K page table format, let's enable it
-> on Mediatek MT8188 and configure the cache/shareability policies
-> properly.
+> [0] https://github.com/glmark2/glmark2
 > 
 > Signed-off-by: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
-> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
 Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
 
@@ -118,16 +95,16 @@ Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
 >  1 file changed, 1 insertion(+)
 > 
 > diff --git a/drivers/gpu/drm/panfrost/panfrost_drv.c b/drivers/gpu/drm/panfrost/panfrost_drv.c
-> index 0f3935556ac76..e854f290858f9 100644
+> index e854f290858f9..ef30d314b2281 100644
 > --- a/drivers/gpu/drm/panfrost/panfrost_drv.c
 > +++ b/drivers/gpu/drm/panfrost/panfrost_drv.c
-> @@ -824,6 +824,7 @@ static const struct panfrost_compatible mediatek_mt8188_data = {
->  	.num_pm_domains = ARRAY_SIZE(mediatek_mt8183_pm_domains),
->  	.pm_domain_names = mediatek_mt8183_pm_domains,
+> @@ -836,6 +836,7 @@ static const struct panfrost_compatible mediatek_mt8192_data = {
+>  	.num_pm_domains = ARRAY_SIZE(mediatek_mt8192_pm_domains),
+>  	.pm_domain_names = mediatek_mt8192_pm_domains,
 >  	.pm_features = BIT(GPU_PM_CLK_DIS) | BIT(GPU_PM_VREG_OFF),
 > +	.gpu_quirks = BIT(GPU_QUIRK_FORCE_AARCH64_PGTABLE),
 >  };
 >  
->  static const char * const mediatek_mt8192_supplies[] = { "mali", NULL };
+>  static const struct of_device_id dt_match[] = {
 
 
