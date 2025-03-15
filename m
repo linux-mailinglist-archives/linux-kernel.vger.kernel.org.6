@@ -1,93 +1,78 @@
-Return-Path: <linux-kernel+bounces-562309-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562311-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0A3EA6228A
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 01:09:22 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 502B6A6228C
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 01:09:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 29E638820BA
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 00:09:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF8BC422906
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 00:09:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C1CCA2D;
-	Sat, 15 Mar 2025 00:09:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B8F88460;
+	Sat, 15 Mar 2025 00:09:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Lw8m3b0L"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eD395+RL"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D91E2367
-	for <linux-kernel@vger.kernel.org>; Sat, 15 Mar 2025 00:09:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A63FA4A1D;
+	Sat, 15 Mar 2025 00:09:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741997357; cv=none; b=ORGrZNzGnlSm3VO+UepoZ1yBQ12D5DWjHiTHEU6dhULsU+6NpxXMEmsA14vRfc/8fWjyj/jBc61Q+WF1oLNbhgNRQlx8m8A51N8cUzqpuGhdvwzH6PagYtHrWVph/uQg3mEySMDPQDxFlj+bJygjaVjonSZxVRHrbpv0H/Zl8oI=
+	t=1741997360; cv=none; b=if4Y+p5UwF07jlnsYU3M2vepggcId6IK/KlzmXNrnXqwDR9YmGkCNFp/PDx1Yf2Qqv28s2sS5aqkbzZTbUW8Mzp+OFa3M9j/z9u4XHOmD5b3UanEp3sUmADM2ziHenQj/K5CWLfUun+xDzsJl7oJ727muY/Ww/K3AeDYzrU8Av0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741997357; c=relaxed/simple;
-	bh=1hzQXG5cAVBTHOofZVU8ev8nYzxsc97HHdljY3+t8BE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ojqmCvO9NpamEbGGQOz2a3EV/NJVeobpVMa0JF9UumTxTeMEeBmJsz7Im+I0TIyjMZorRkru+TiQpUykW3HsFQsQQq3T11YHitb264pFXL/vVPfmfSQ23FqxV5Cq4PqJpkl2+i3y2gkbSjbPJBInoNTrawpGXAJnHyfG9JQD1y4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Lw8m3b0L; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76706C4CEE3;
-	Sat, 15 Mar 2025 00:09:16 +0000 (UTC)
+	s=arc-20240116; t=1741997360; c=relaxed/simple;
+	bh=YMaRtcqhj3JqF/HCNhwkehbmKNUZGm2pk043qew3/RY=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=euAgs8M3LTsR1W0wv4C4fLxu4248uD3I8/yApcDZEYXpTPyXkEzCwnj/H8LaLNh6BnAS9HNfXbvq+BELnVUMObUru9lkK3DhmIpUnTZ3gmQxDflqTPCSVx8BVWqX4ZFAzqL4zC0J4kZrMUByiQfNCDZJJj1txdSWLs5xuTvmO0M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eD395+RL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B154C4CEE3;
+	Sat, 15 Mar 2025 00:09:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741997357;
-	bh=1hzQXG5cAVBTHOofZVU8ev8nYzxsc97HHdljY3+t8BE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Lw8m3b0L4PejpOYOOHZFHQw/XP11RU/fABCc2fBve5e1cAX9mK0hFo+IsfRkPY5bz
-	 5e9cRTf34nxigOFZC5swNuQo0CWwWCnFrhMqmYpvkzv7dUngvN4s/MVXwjDVZAwc2+
-	 yjEYLSEDKXWERb3X57vLDnM+Suu6dVTba0yn+5IWyUP0o1wn6+o/250sTvCdDguf+z
-	 bDCJljSs3PBWjZzO87+oBTJZWtDlWOse1xoR6weUqTfCiw39JTwXsuhfEaRiLSs7qE
-	 X/hGLtw9Gk3S/HQsqia7QmPiB0S40RCund9acIdamhuZJ7JP2lqNdbWa4I8w+u6n2t
-	 ZujMcavdGBkZw==
-Date: Fri, 14 Mar 2025 17:09:14 -0700
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org, 
-	Peter Zijlstra <peterz@infradead.org>, Borislav Petkov <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>, 
-	Uros Bizjak <ubizjak@gmail.com>, Andrew Cooper <andrew.cooper3@citrix.com>, 
-	Ingo Molnar <mingo@kernel.org>
-Subject: Re: [PATCH 14/20] x86/barrier: Use alternative_io() in 32-bit
- barrier functions
-Message-ID: <jdcd4zoezsi7beoak43dqzkxnel7hqdhtyqbf4cqr6rvs3qfyf@i2qhxrld5p5l>
-References: <cover.1741988314.git.jpoimboe@kernel.org>
- <1c2fe7f93c4dd8a87c2e1fa8b780a8a2968be445.1741988314.git.jpoimboe@kernel.org>
- <CAHk-=wjtvTPERDdrok2kDrSSFBjqHCCNVff95VVxhvP6wCC6jg@mail.gmail.com>
- <CAHk-=whH5bHRYB12aAcb=nK7erOmOSo6o2FXjHtxObWumFANHA@mail.gmail.com>
+	s=k20201202; t=1741997360;
+	bh=YMaRtcqhj3JqF/HCNhwkehbmKNUZGm2pk043qew3/RY=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=eD395+RLLM2nQ6XCUrzRwrmRvrrRJCa4Nl7ZT7bQv8VT3XLHnepdW6od5//dd47wZ
+	 elL6imi4kI9cfCvRhj0z8hN1NyURF7EWuwYiU+D3uK6Ic2jbnR3TMOAKUwtEbZiZDo
+	 wtTkSOpdlKCLf8oHvzjULOABUJhvsdBib/EFHzCWL+LsoH/vWtI4n1tv8D1WkgeXaQ
+	 sbpqbOrvHcenQIxEqKdWcq1Td3z6kcp5RbSlzzXSuzqC2U9V26MvnXIPyYCx+ihRHo
+	 IMIVBRvXqAOJmZOypTkXjQKDI7NXX+In98wX4NV1O6dpq9ipGXgnPaYyRiaZWrV6YF
+	 izbyJTqoClfNQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 3527D380CFE7;
+	Sat, 15 Mar 2025 00:09:56 +0000 (UTC)
+Subject: Re: [GIT PULL] bcachefs hotfix for 6.14-rc7
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <uueaqqyii2x3zcqdukj3tb35tkeawdwmi3ts65v4hlfdvv6ckx@vqkk7ntyyse7>
+References: <uueaqqyii2x3zcqdukj3tb35tkeawdwmi3ts65v4hlfdvv6ckx@vqkk7ntyyse7>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <uueaqqyii2x3zcqdukj3tb35tkeawdwmi3ts65v4hlfdvv6ckx@vqkk7ntyyse7>
+X-PR-Tracked-Remote: git://evilpiepirate.org/bcachefs.git tags/bcachefs-2025-03-14
+X-PR-Tracked-Commit-Id: 90fd9ad5b0c981693c8512d9da01f14fb6596e9d
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 912ad8b317fafbb5a08fc0d9c23cf46af39ec2a7
+Message-Id: <174199739471.2426393.14394208423988228962.pr-tracker-bot@kernel.org>
+Date: Sat, 15 Mar 2025 00:09:54 +0000
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAHk-=whH5bHRYB12aAcb=nK7erOmOSo6o2FXjHtxObWumFANHA@mail.gmail.com>
 
-On Fri, Mar 14, 2025 at 01:54:00PM -1000, Linus Torvalds wrote:
-> On Fri, 14 Mar 2025 at 13:49, Linus Torvalds
-> <torvalds@linux-foundation.org> wrote:
-> >
-> > because that ARG(), ARG(), ARGC() pattern looks odd to me.
-> >
-> > Maybe it's just me.
-> 
-> Oh, and the other thing I reacted to is that I think the
-> "alternative_io()" thing should be renamed.
-> 
-> The "io" makes me think "actual I/O". As in PCI or disks or whatever.
-> It always read oddly, but now it's *comletely* pointless, because the
-> new macro model actually takes pretty much arbitrary asm arguments, to
-> the "both input and output arguments" no longer makes any real sense.
-> 
-> So I think it would be better to just call this "alternative_asm()",
-> and make naming simpler. Hmm?
+The pull request you sent on Fri, 14 Mar 2025 11:34:55 -0400:
 
-Thing is, we still have alternative(), which is also an asm wrapper, but
-it's for when the caller doesn't care about adding any constraints.
+> git://evilpiepirate.org/bcachefs.git tags/bcachefs-2025-03-14
 
-So the "_io()" distinguishes from that.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/912ad8b317fafbb5a08fc0d9c23cf46af39ec2a7
+
+Thank you!
 
 -- 
-Josh
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
