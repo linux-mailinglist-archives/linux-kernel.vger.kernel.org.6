@@ -1,176 +1,77 @@
-Return-Path: <linux-kernel+bounces-562509-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562510-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 343A0A62A1E
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 10:30:41 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AD52A62A25
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 10:33:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8EA767AC0BA
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 09:29:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B60F1797DF
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 09:33:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F4D31F4611;
-	Sat, 15 Mar 2025 09:30:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75F2A1F5826;
+	Sat, 15 Mar 2025 09:33:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="A0CgfKPH"
-Received: from mail-24417.protonmail.ch (mail-24417.protonmail.ch [109.224.244.17])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="SPKjC0wb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75F8B193429
-	for <linux-kernel@vger.kernel.org>; Sat, 15 Mar 2025 09:30:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.224.244.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B29921DAC81;
+	Sat, 15 Mar 2025 09:33:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742031032; cv=none; b=qBA+8anr/5n4Q+e4Rne/wZLaBgoYnv0Ar/JcoCeOPzm75TwUyfjC1BE17+ZjSsoM9bJ+BYbZEEfb1DRTjA8IeMI3js4gwBePiZyQbkYDMyAvPtyRwYsHG2Bw9yQUHI8hYjLGDOlLKlbaxonWdMSxkkdILUodCxUB6fCCL/N9LtU=
+	t=1742031207; cv=none; b=W/RcllQOKgrmkEihj3HlvLqRkxIILG75DQPxw3+zBJ2nOnvr4T/3poUPEWl6wwEVYmXSc25PTxf1YFYclp+Pc8A8grx0+EVBEnOnNw6h147eOoJOglZKTvextX+qQyyHd/2bGcOIeLqBgvVjBjPUnl7hupG2VC9LJdjfJ20pJ+8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742031032; c=relaxed/simple;
-	bh=97kGKNN5hQbr04or/PK2XNq/0J/Oc6yIvn3Fz2Ytif0=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Wl/073OHVAHSugMRwIVsSdLqpShXuyKTJg5cL02FjL0rf5hWurowaZY/EgXrYJqrSrEqVRZjheCJDzXPtR+lRg8sTF6otNakd+CGK84UkdiCwiKEFgsksglIDOzZ6cLpfDpq7eZ/9UBbcvPwgTae2Fqwd0fByKdrbBSB9Ooh1nY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=A0CgfKPH; arc=none smtp.client-ip=109.224.244.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1742031021; x=1742290221;
-	bh=9N+3i6PB6m15+3SqKPg5OJJzxL52G/8lBjymGMBlRHE=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
-	b=A0CgfKPHxzKRVkLYzcYywyC7IC/PMmsiRHRDd8W/Wi6RMGXP34ILn/wHmsVjvIDGy
-	 BoZLtAo4x4DTxd/L/Xi+8bwEMCLwITVL9i2NuAcfh44GspvnEInonm1XckH2MEVmuY
-	 0j9EiqLhRRJGOZVfIx60PcMLG4cnamNHWb7sADlgp9EWeINpS4xR5GgINXB45Gxv5P
-	 3wg/C4WkOpdxtNoagJRbMM8HhOe3kFrtK7hwQ9bKbI0Ppt71dRl7ZlNcigXqs/djwZ
-	 8eATJ3VGyaOstsYIZfZ2emqulBgBXjPhEDEKeiJWzkaB8Zm+MQeD8PoAOn25+X8HYk
-	 U/pk4+WaxuOPQ==
-Date: Sat, 15 Mar 2025 09:30:14 +0000
-To: Tamir Duberstein <tamird@gmail.com>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Bjorn Helgaas <bhelgaas@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
-Subject: Re: [PATCH 2/2] rust: workqueue: remove HasWork::OFFSET
-Message-ID: <D8GQGCVTK0IL.16YO67C0IKLHA@proton.me>
-In-Reply-To: <CAJ-ks9m2ZHguB9N9-WM0EsO5MjaZ9yRamo_9NytAdzaDdb9aWQ@mail.gmail.com>
-References: <20250307-no-offset-v1-0-0c728f63b69c@gmail.com> <20250307-no-offset-v1-2-0c728f63b69c@gmail.com> <D8G8DV3PX8VX.2WHSM0TWH8JWV@proton.me> <CAJ-ks9m2ZHguB9N9-WM0EsO5MjaZ9yRamo_9NytAdzaDdb9aWQ@mail.gmail.com>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: 9f88381a8e82266ee6b415dd7cb86d51df4e7f89
+	s=arc-20240116; t=1742031207; c=relaxed/simple;
+	bh=hLe6wa9odyEnA3It722yJ8dVV+PjRiY+JFKH4DQLSBM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=d6UYrqVvs1vp92E79greEDyd0OYWPlYqZdbGJoAHs7B8duj6PfeQyJLdVBHNUkaEyZkO4sZrFuICOd5hvnhwXgfuiIDFj4CtxTiCWhwddFZ+G01b2cMMr2VTNfVOuN9H4P5/js81ZFr6EOp11ui6SgcDxFWaM6WXP0P4ZM7uHjg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=SPKjC0wb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7797C4CEE5;
+	Sat, 15 Mar 2025 09:33:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1742031207;
+	bh=hLe6wa9odyEnA3It722yJ8dVV+PjRiY+JFKH4DQLSBM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SPKjC0wbTmpKraRwJqd3wvkMsebcccvQfR0nTf1KOtaU7TNHa+sMVOwVrPObPgQo0
+	 7MHBNmljOBX0Vks2HXUZwAp5GWgJ/SAiEuu0uIFpBm2HJvJvRohq1rA4vzrVqjtcIe
+	 nhSRHaBL3+xukaOGXzj1d0HT7eNX2hYDMovC8ZSs=
+Date: Sat, 15 Mar 2025 10:32:08 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Ethan Carter Edwards <ethan@ethancedwards.com>, tytso@mit.edu,
+	ernesto.mnd.fernandez@gmail.com, dan.carpenter@linaro.org,
+	sven@svenpeter.dev, ernesto@corellium.com, gargaditya08@live.com,
+	willy@infradead.org, asahi@lists.linux.dev,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-staging@lists.linux.dev
+Subject: Re: [RFC PATCH 0/8] staging: apfs: init APFS module
+Message-ID: <2025031554-agreeing-ammonium-58aa@gregkh>
+References: <20250314-apfs-v1-0-ddfaa6836b5c@ethancedwards.com>
+ <2025031529-greedless-jingle-1f3b@gregkh>
+ <20250315-gruft-evidenz-d2054ba2f684@brauner>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250315-gruft-evidenz-d2054ba2f684@brauner>
 
-On Fri Mar 14, 2025 at 9:44 PM CET, Tamir Duberstein wrote:
-> On Fri, Mar 14, 2025 at 3:20=E2=80=AFPM Benno Lossin <benno.lossin@proton=
-.me> wrote:
->>
->> On Fri Mar 7, 2025 at 10:58 PM CET, Tamir Duberstein wrote:
->> > Implement `HasWork::work_container_of` in `impl_has_work!`, narrowing
->> > the interface of `HasWork` and replacing pointer arithmetic with
->> > `container_of!`. Remove the provided implementation of
->> > `HasWork::get_work_offset` without replacement; an implementation is
->> > already generated in `impl_has_work!`. Remove the `Self: Sized` bound =
-on
->> > `HasWork::work_container_of` which was apparently necessary to access
->> > `OFFSET` as `OFFSET` no longer exists.
->> >
->> > A similar API change was discussed on the hrtimer series[1].
->> >
->> > Link: https://lore.kernel.org/all/20250224-hrtimer-v3-v6-12-rc2-v9-1-5=
-bd3bf0ce6cc@kernel.org/ [1]
->> > Signed-off-by: Tamir Duberstein <tamird@gmail.com>
->> > ---
->> >  rust/kernel/workqueue.rs | 45 ++++++++++++---------------------------=
-------
->> >  1 file changed, 12 insertions(+), 33 deletions(-)
->>
->> What is the motivation of this change? I didn't follow the discussion,
->> so if you explained it there, it would be nice if you could also add it
->> to this commit message.
->
-> The motivation is right at the top: it narrows the interface and
-> replaces pointer arithmetic with an existing macro, and then deletes
-> unnecessary code.
->
->> > diff --git a/rust/kernel/workqueue.rs b/rust/kernel/workqueue.rs
->> > index 0cd100d2aefb..0e2e0ecc58a6 100644
->> > --- a/rust/kernel/workqueue.rs
->> > +++ b/rust/kernel/workqueue.rs
->> > @@ -429,51 +429,23 @@ pub unsafe fn raw_get(ptr: *const Self) -> *mut =
-bindings::work_struct {
->> >  ///
->> >  /// # Safety
->> >  ///
->> > -/// The [`OFFSET`] constant must be the offset of a field in `Self` o=
-f type [`Work<T, ID>`]. The
->> > -/// methods on this trait must have exactly the behavior that the def=
-initions given below have.
->> > +/// The methods on this trait must have exactly the behavior that the=
- definitions given below have.
->> >  ///
->> >  /// [`impl_has_work!`]: crate::impl_has_work
->> > -/// [`OFFSET`]: HasWork::OFFSET
->> >  pub unsafe trait HasWork<T, const ID: u64 =3D 0> {
->> > -    /// The offset of the [`Work<T, ID>`] field.
->> > -    const OFFSET: usize;
->> > -
->> > -    /// Returns the offset of the [`Work<T, ID>`] field.
->> > -    ///
->> > -    /// This method exists because the [`OFFSET`] constant cannot be =
-accessed if the type is not
->> > -    /// [`Sized`].
->> > -    ///
->> > -    /// [`OFFSET`]: HasWork::OFFSET
->> > -    #[inline]
->> > -    fn get_work_offset(&self) -> usize {
->> > -        Self::OFFSET
->> > -    }
->> > -
->> >      /// Returns a pointer to the [`Work<T, ID>`] field.
->> >      ///
->> >      /// # Safety
->> >      ///
->> >      /// The provided pointer must point at a valid struct of type `Se=
-lf`.
->> > -    #[inline]
->> > -    unsafe fn raw_get_work(ptr: *mut Self) -> *mut Work<T, ID> {
->> > -        // SAFETY: The caller promises that the pointer is valid.
->> > -        unsafe { (ptr as *mut u8).add(Self::OFFSET) as *mut Work<T, I=
-D> }
->> > -    }
->> > +    unsafe fn raw_get_work(ptr: *mut Self) -> *mut Work<T, ID>;
->> >
->> >      /// Returns a pointer to the struct containing the [`Work<T, ID>`=
-] field.
->> >      ///
->> >      /// # Safety
->> >      ///
->> >      /// The pointer must point at a [`Work<T, ID>`] field in a struct=
- of type `Self`.
->> > -    #[inline]
->> > -    unsafe fn work_container_of(ptr: *mut Work<T, ID>) -> *mut Self
->> > -    where
->> > -        Self: Sized,
->>
->> This bound is required in order to allow the usage of `dyn HasWork` (ie
->> object safety), so it should stay.
->>
->> Maybe add a comment explaining why it's there.
->
-> I guess a doctest would be better, but I still don't understand why
-> the bound is needed. Sorry, can you cite something or explain in more
-> detail please?
+On Sat, Mar 15, 2025 at 10:18:23AM +0100, Christian Brauner wrote:
+> > But I'll wait for an ACK from the filesystem developers before doing it
+> > as having filesystem code in drivers/staging/ feels odd, and they kind
+> > of need to know what's going on here for when they change api stuff.
+> 
+> Sorry, I don't want new filesystems going through the generic staging
+> tree. Next week during LSFMM we can discuss a filesystem specific
+> staging tree that is directly maintained as part of fs so it's tightly
+> integrated. We're going to talk about two new filesystems anyway.
 
-Here is a link: https://doc.rust-lang.org/reference/items/traits.html#dyn-c=
-ompatibility
+Great, then I'll not worry about this patch series at all, thanks!
 
-But I realized that the trait wasn't object safe to begin with due to
-the `OFFSET` associated constant. So I'm not sure we need this. Alice,
-do you need `dyn HasWork`?
-
----
-Cheers,
-Benno
-
+greg k-h
 
