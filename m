@@ -1,74 +1,77 @@
-Return-Path: <linux-kernel+bounces-562370-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562371-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C129A624CF
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 03:43:24 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C460EA624D1
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 03:43:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8784519C4352
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 02:43:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F64016A1DF
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 02:43:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C17E1885B8;
-	Sat, 15 Mar 2025 02:43:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8431F18C01D;
+	Sat, 15 Mar 2025 02:43:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V2V3ZK63"
-Received: from mail-ot1-f42.google.com (mail-ot1-f42.google.com [209.85.210.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DnbTyCqP"
+Received: from mail-ot1-f46.google.com (mail-ot1-f46.google.com [209.85.210.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 819FC195;
-	Sat, 15 Mar 2025 02:43:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C497195;
+	Sat, 15 Mar 2025 02:43:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742006596; cv=none; b=pbUZ46bHWjtLjgtVxW4vNELL/YnNzOZaj4vwVcoiw/idNlBvyE4CfWqcKH+1tCecntDRgxae/l4jVpY/Q5vqiKq65GBuM4XvH3h5MWENrMu96q526Zr0SbSRVff2ihPl1SAZ/K07XCcBooBWe9aa55tTM0l+bG2Txv6YZpNJ+W4=
+	t=1742006602; cv=none; b=VnNcUK+H5c6CORdDMWG8uBqQstMkBvUwxM8UcKWUT0CWe/KxaQSFWKRgLSv9yfTPh+vNTG0jTp/46QhaPsUnu6Wi1uc+mPK4tYRCult4anraNBBX0qO5SH3iBSbxPMa5UIlCgZG/CzozZwCX5+LJFq15SpVxRHitRKiNm8JY7EU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742006596; c=relaxed/simple;
-	bh=4BkVTlSCmwx0Bh3zJofQLJrh0IHzF3b8G7aattxY8mI=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version; b=GkLAJuagJemjI7Mahdl4pSYhenoywtfHqTHWqjtTVvPbdoNGaGgjqFX3TcG9Xijp+/noR6QO8X1ga9utvMtYcJ110mQoAYtUCozpiyZ5E4FKBjLwzlEVeDtMjz4OiOBZgcBiFKmN0sdOEBp4KGYQWzZogKbNq4+cMi30lhVINbc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V2V3ZK63; arc=none smtp.client-ip=209.85.210.42
+	s=arc-20240116; t=1742006602; c=relaxed/simple;
+	bh=+v2Pt//ONosKT8MLepWni5uLUszo5NxXf6D0HgTXmiw=;
+	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=t3r1HrERsFKFsufGs9umhaSiV/1zUIy5a2h7YqXqp8bai2fmlcGV9XzCMMrQ0h2Keyye5ohIjPb2asM7ElcmaSqDGFIsMNfmNJVOmbBi+STmA9rYAPuc44fRyN3p+Ki5PtMfH5tzudWZ4RwZipa/NhO3lp4toEF2aNq6y7QT7hc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DnbTyCqP; arc=none smtp.client-ip=209.85.210.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f42.google.com with SMTP id 46e09a7af769-72726e4f96cso1937601a34.0;
-        Fri, 14 Mar 2025 19:43:15 -0700 (PDT)
+Received: by mail-ot1-f46.google.com with SMTP id 46e09a7af769-728a274632eso1544024a34.3;
+        Fri, 14 Mar 2025 19:43:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742006594; x=1742611394; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=XT8HYn51QyYArt1rrJadjd/k3O2KfE7Vq5w9HaXKeH8=;
-        b=V2V3ZK63cmb+hRRiKCpZGivvJPggw9hV3yCm8xwbFwcZX0W38NvFrHMYWyWatT5J/s
-         HEp4lNWgaOMu6DTxQNK45afvfRC0nFeP0Dgm6aQz4RVh1qjWoDmLyQ+UzogDDicGI7o7
-         qVD6AjV4WU+EVUW8hY9HZuSX+MPwfvkGYuJZz2h6gu+q2TxNpQsU9WyaHg7e2jqcdnY4
-         Sm+PxuJNw5ayDs9WGQRqsUbEmD0R6j2mxbWo9IwmmzkaEFl5b7n1usMY0PeMp7lwFQQO
-         EoYsjhx5HhKdWLXIIDcSkQS8fmNdU4vgrAY/UrpGgp+KwowjAIe8K3PmRtE5eohLs/zg
-         8+BA==
+        d=gmail.com; s=20230601; t=1742006600; x=1742611400; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=AeYqJbrf6I+8xJpb1fpUMZYL3aN7NPBWHbe8L0cMhR4=;
+        b=DnbTyCqPSoZjVHhhd+h+OQJj7HIxbt8aMROZuJKZZi3gVQ0acni3KvefaMVeVrjS7E
+         r94oYX7IBHnLRmbeZKFpFd9I8C/Qy5kHKbE3oHc3c8wsQlFr9muxkjZCl0YOhGZb4P1f
+         +Ya3F0cYf38zrvdwuluda3ufXRgiuaojtLD7ivmc+cv6srkWcoPOb+ZQIhPkhFSqyHXQ
+         hA9ppaQBbhDCsOChDFe2Aruvfu2j2wFDLB7a3hfM/7k1pZtq5h+6EQkM2g/sBbbhMKUe
+         qeGfb7/rrMGVccneTmYwcdULubiYS+l0njLUzVABaBpZrPdWOI1JT5bW6BiWDlqEiAv7
+         NCWQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742006594; x=1742611394;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XT8HYn51QyYArt1rrJadjd/k3O2KfE7Vq5w9HaXKeH8=;
-        b=QKVCRvz+d8xCrKy74EZhFFmXw0Hx8FgS74eOO+KUMsHXLntETZQhvRkHja/NQ5Jw6q
-         RY8nhRL4aZFtFIYGpnNxCIqiA9N1t9FhBboqO2yYhm6bMYf1eTn48lgyoxiH9b1R54hN
-         1NYaqWlOQ3c1/MXVGarqGZeXBXGN6OM8qjMg6ah6On808bIPfE9zAt6GYcFHFxsX2+z+
-         H9/QJPt5z3BQXB+3SlbBbmunN/6IhgfAsjdM3gFpRb83scbBCoTfs85KwJ044lCm7QNs
-         vlqWYbldnH4Z6xrWgDSMP3AVxqGzzu7GeyoLg6xsI8P5rm24WQGi0bQfLXT4X8XLs1AG
-         6g5g==
-X-Forwarded-Encrypted: i=1; AJvYcCVUDJpLEhaAeive3d3AS/qM/1sP3wntUWNuAW5SFgUVyevd7R1zvStaKzsAFcJxXMkHO3Tkphe8xTyRsdzuX2c=@vger.kernel.org, AJvYcCXC0OVcDkakL8nPMbWZpJvtxIxJb0EKVtevuFuMNsL0f4EYTSBHGI5i91a1ZGTQrLh9DngjvapqdNM=@vger.kernel.org, AJvYcCXs+t+LVhgdbJVqbJF/3WewB5do+OhwbM9bVLHVsioZijFrmvcUsc6rXg/1VawS1oCwkIsYiNrFF6tAUl5b@vger.kernel.org
-X-Gm-Message-State: AOJu0YzEwDjCTVm8pC4Gi9gbs4KTOI3gN2/jG4QG8Apnx1ZQuLnDIGlm
-	jnewutVs+q1GpmkcFesp3JpgNrAJaI9IbUAaLdGsKJ0h9uoO9WHB
-X-Gm-Gg: ASbGncvBDVnTIY3DktTx+Aml/q4iPEeyIKN9iPzjKGy1dttnuABrJH72sLV7RNixMsw
-	k2DODcUcj2J/SbiaXXogmgQ11EhNJFH07tVFE5v21FX1RWpMB4wiZj+kz5WiCG72TPw9IOAhWWY
-	d2WmjwVfLehTBKgTjI/vzsDgFplvsBw7yHjyMboDWxmtn1VYH0FXwcUdvmfX4ylQiADVpga2Ct0
-	fTAcAE9ZyWz7WbJOkmCASR1CS98hoVQ9OYMM50jHylfZmNFACBGWfGrbx1Kkfai7xnSApnA3QLQ
-	eaCyd/9uAwOaMGVzZSGACXM2UpXcNn3qsTeLTOOB2uqa+pNM8btRLSdL7KCSwiRyJBPD//nSecz
-	/2pYJB61NJZi7Mn3v
-X-Google-Smtp-Source: AGHT+IGOVE5wyNqOM7/fv6cFlMkko9+hHKdXOnxrJZVF0sr7+N4uWGsQlnAMOYDClGQej5nEuFl4MA==
-X-Received: by 2002:a05:6830:2b28:b0:72b:98f8:5c95 with SMTP id 46e09a7af769-72bbc23c75cmr2905119a34.1.1742006594247;
-        Fri, 14 Mar 2025 19:43:14 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1742006600; x=1742611400;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=AeYqJbrf6I+8xJpb1fpUMZYL3aN7NPBWHbe8L0cMhR4=;
+        b=bRAf5xf8kSXAc/QXs9yRxGyTX55Mfm25r5yPP3OjTvSgt8zeIr/MtVReAKrFmSwFVg
+         5qIgSHtSJY2AF/jTvzolBBKicImJT64QjcOIEcMDGzMifNaPQF/YHROJzfm+rszFwz3P
+         9UDOS80cqHYfcR5OrJKXGVaRQhcVODVINeLJoIiOdrXJ4dNV8P/pLJ49ztq1NaMf/YrY
+         psdSyyAmPfhk5ApaJeQ7gZyn1ImNhl3dddN+PiE0xvZ6YGlXTzIjKqQV4rCENCSYQ0hC
+         7qtXa8fkAT9kpggZUF9AJwI6wgmA0pVb5sLk2yxC6nBXoPNRAgk8QqVF0kigulRV3PuJ
+         zaQg==
+X-Forwarded-Encrypted: i=1; AJvYcCU0F8goj0RkjEqe76i/DRSLpoStjrd53S3s/4iqli6Lb9Fx+KOMttKrlqZgz+Y3wl6w4yeOkJjsg77MrwuERA4=@vger.kernel.org, AJvYcCV+90cAozN+SYsLKyKIAoP9gxKtcDTmdoGGIBhgLFlKtS35CPx4om/bCrltloFPX7vjYlOtGq8b0Zc=@vger.kernel.org, AJvYcCVwuLeGmiUmw9Nnu7VS/5HbS+m1DBySAwPy1f6e7DyLz9Iq7XRJhy5fSrXNlKg8I6s+ZBml7GkIzFPsIsnV@vger.kernel.org
+X-Gm-Message-State: AOJu0YymCYOpGb52ttlViAjFgQURryxNcqO2ROenp9ocMW6NZmr1HRp8
+	1QmQTmpIth2MolPA96uh221o0pFPH6njhvwsEOSV521OlI9ID+mm
+X-Gm-Gg: ASbGncs+fYz4ci1QM25PFzbCsbpUBFNq1JVZr4qAPppXYPFM0lMS3ipXccUbOsKs46q
+	wLzWWzLqHTE3r3e4HMaM7wywzL9l06493wQUpfW3i88RBJbaazhPQdtctrKEwZsrytRm2K6ICPf
+	bgCmybs8rmcoe2GP+nh87BBsH/Kq9YJxDB77f1HaNdG+6focZz4o0+mQwe8giLH8Wb21zb3ET56
+	KE3UqPyml+pBNA7xv7gj40UZxXB46yzh+5CJdh4oXq8zMg7PbZGLXIgYGJimQfpKaY6GmoWGkbX
+	iKE2frHTmk2VJDJ0YJwTeAEMbJaxgM4Izx/hCO2JXE31e+eDaUodqUpcq6yWL4nwTtQYQY8cbCX
+	FV0QfCHGF4+Tn3ug0
+X-Google-Smtp-Source: AGHT+IFyEBBnvYzkXYuE6/AMMpI3VNwP3HqbWsB1HV45tb/drP1bhozEjDZ54crecAv68ZJodxXxoQ==
+X-Received: by 2002:a05:6830:dc9:b0:72b:872f:efca with SMTP id 46e09a7af769-72bbc5423ddmr3120313a34.27.1742006600316;
+        Fri, 14 Mar 2025 19:43:20 -0700 (PDT)
 Received: from my-computer.lan (c-73-76-29-249.hsd1.tx.comcast.net. [73.76.29.249])
-        by smtp.googlemail.com with ESMTPSA id 46e09a7af769-72bb26bb82dsm882990a34.32.2025.03.14.19.43.08
+        by smtp.googlemail.com with ESMTPSA id 46e09a7af769-72bb26bb82dsm882990a34.32.2025.03.14.19.43.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Mar 2025 19:43:13 -0700 (PDT)
+        Fri, 14 Mar 2025 19:43:19 -0700 (PDT)
 From: Andrew Ballance <andrewjballance@gmail.com>
 To: dakr@kernel.org,
 	airlied@gmail.com,
@@ -93,10 +96,12 @@ To: dakr@kernel.org,
 	linux-doc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	rust-for-linux@vger.kernel.org
-Subject: [PATCH 0/3] rust: alloc: add Vec::resize and Vec::truncate
-Date: Fri, 14 Mar 2025 21:42:32 -0500
-Message-ID: <20250315024235.5282-1-andrewjballance@gmail.com>
+Subject: [PATCH 1/3] rust: alloc: add Vec::truncate method
+Date: Fri, 14 Mar 2025 21:42:33 -0500
+Message-ID: <20250315024235.5282-2-andrewjballance@gmail.com>
 X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250315024235.5282-1-andrewjballance@gmail.com>
+References: <20250315024235.5282-1-andrewjballance@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -105,19 +110,61 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This patch series implements the Vec::truncate and Vec::resize methods
-that were needed by the nova driver and removes the corresponding item
-from their task list
+implements the equivalent to the std's Vec::truncate
+on the kernel's Vec type.
 
-Andrew Ballance (3):
-  rust: alloc: add Vec::truncate method
-  rust: alloc: add Vec::resize method
-  gpu: nova-core: remove completed Vec extentions from task list
+Signed-off-by: Andrew Ballance <andrewjballance@gmail.com>
+---
+ rust/kernel/alloc/kvec.rs | 36 ++++++++++++++++++++++++++++++++++++
+ 1 file changed, 36 insertions(+)
 
- Documentation/gpu/nova/core/todo.rst | 10 -----
- rust/kernel/alloc/kvec.rs            | 61 ++++++++++++++++++++++++++++
- 2 files changed, 61 insertions(+), 10 deletions(-)
-
+diff --git a/rust/kernel/alloc/kvec.rs b/rust/kernel/alloc/kvec.rs
+index ae9d072741ce..75e9feebb81f 100644
+--- a/rust/kernel/alloc/kvec.rs
++++ b/rust/kernel/alloc/kvec.rs
+@@ -452,6 +452,42 @@ pub fn reserve(&mut self, additional: usize, flags: Flags) -> Result<(), AllocEr
+ 
+         Ok(())
+     }
++
++    /// Shortens the vector, setting the length to `len` and drops the removed values.
++    /// If `len` is greater than or equal to the current length, this does nothing.
++    ///
++    /// This has no effect on the capacity and will not allocate.
++    /// # Examples
++    /// ```
++    /// let mut v = kernel::kvec![1, 2, 3]?;
++    /// v.truncate(1);
++    /// assert_eq!(v.len(), 1);
++    /// assert_eq!(&v, &[1]);
++    ///
++    /// # Ok::<(), Error>(())
++    /// ```
++    pub fn truncate(&mut self, len: usize) {
++        if len >= self.len() {
++            return;
++        }
++
++        // [new_len, len) is guaranteed to be valid because [0, len) is guaranteed to be valid
++        let drop_range = len..self.len();
++
++        // SAFETY:
++        // we can safely ignore the bounds check because we already did our own check
++        let ptr: *mut [T] = unsafe { self.get_unchecked_mut(drop_range) };
++
++        // SAFETY:
++        // it is safe to shrink the length because the new length is
++        // guaranteed to be less than the old length
++        unsafe { self.set_len(len) };
++
++        // SAFETY:
++        // - the dropped values are valid `T`s
++        // - we are allowed to invalidate [new_len, old_len) because we just changed the len
++        unsafe { ptr::drop_in_place(ptr) };
++    }
+ }
+ 
+ impl<T: Clone, A: Allocator> Vec<T, A> {
 -- 
 2.48.1
 
