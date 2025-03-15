@@ -1,241 +1,223 @@
-Return-Path: <linux-kernel+bounces-562446-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562447-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A241A627F8
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 08:18:00 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BFC0A627FF
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 08:20:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9830D17E13F
-	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 07:17:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EFBA37A3487
+	for <lists+linux-kernel@lfdr.de>; Sat, 15 Mar 2025 07:19:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA3461EA7C5;
-	Sat, 15 Mar 2025 07:17:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PBwhn4uB"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 749E01DC99C;
+	Sat, 15 Mar 2025 07:20:09 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32F6B1DE2DB;
-	Sat, 15 Mar 2025 07:17:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBA0F178CF8;
+	Sat, 15 Mar 2025 07:20:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742023053; cv=none; b=IdAJVFDoMTonoVPs9Fof1ZeGgL1aI+Dw+N2pg6Vfmm1EvKjX37fo2n9qRMOHoZBpcnALPcQsRdpHXQgwMSdx7AM29lLrpefhCtUZWc0jEIatgGO2QBgjwFTiewAgv9jMcI7opOfF8UDrKo01M7iecv/iOJitM/rZXNo+yLGGhDI=
+	t=1742023209; cv=none; b=Axu7pBSXOG688Bmv8J62OLJLqbApMzgzYq28rEHxlIZPB72utALPOMBPRKoyaEuAqOhtTbTdJzFXaNvVPUPPqNaD3DXELTpQLbJE2ZhdCL7Ut2p/LLr8lZdbMQYLLdHMr6jpXxv7SXLz5w8AlmvubbMOpx2bKO1N5kTb4T1UPTE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742023053; c=relaxed/simple;
-	bh=D6dyM5fcK5sfnzdnunmUBGtPiFQ2gHj2jDLotPVsetI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O1UJ9fDU4xwAgAyekV136GylZF7MHOxKo8iUZ7ntOeZMBQSx5y2ZwW3N5ekz0rCHkyrjUJy4McgAD6CdipcF5X0dGahx5DMIpZeOpzGxwP/8+SaU3E3IZMzvcprkkdCZsKbNEMN3vKSoNoDvZItfPSlrWbX/h6YkQeCOYGtBq/g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PBwhn4uB; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742023051; x=1773559051;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=D6dyM5fcK5sfnzdnunmUBGtPiFQ2gHj2jDLotPVsetI=;
-  b=PBwhn4uBbLumsUFXXThK5dL5rz2PTmMmNzHUY0FIDNwL/yF9GSh1iooc
-   ZkOL/KqBoMA1yHhuUaJKy1MDg7R/ynEl4XXmpCho3IX2mTAgznebzN3Ez
-   tH5ilKB9FSvVn8NzyNeVWQEEcWN3QlJ/gVKpqgapAWJXR5CPmpdXgc37I
-   BJAj9uU/atupGJ/uF0qVWkLIcjojL+1DDBsoVcsBnP1HJUboiJS5ZXV4c
-   s8kSj6WYuRZudNHJ1gxAwwu0fRJXwVlxjPPtHe+0nqDRYE9i9g/5nHthQ
-   Dsc/AAjJ2bzrIKah7AyC4oecF6lmz3NGDFyldJmSx+qGwcbDvmkWN8Tw1
-   Q==;
-X-CSE-ConnectionGUID: 1qdPOMgASdy5BJ1+6Nx6Rw==
-X-CSE-MsgGUID: yAeKQXamRv+Ui08CRRk03Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11373"; a="42427589"
-X-IronPort-AV: E=Sophos;i="6.14,249,1736841600"; 
-   d="scan'208";a="42427589"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Mar 2025 00:17:31 -0700
-X-CSE-ConnectionGUID: mbIXekZnRfqWbHnE0G4Uaw==
-X-CSE-MsgGUID: FtpkTt5YQleFCTfAFY66RQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,249,1736841600"; 
-   d="scan'208";a="125685350"
-Received: from lkp-server02.sh.intel.com (HELO a4747d147074) ([10.239.97.151])
-  by fmviesa003.fm.intel.com with ESMTP; 15 Mar 2025 00:17:22 -0700
-Received: from kbuild by a4747d147074 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1ttLln-000B7l-1S;
-	Sat, 15 Mar 2025 07:17:19 +0000
-Date: Sat, 15 Mar 2025 15:16:20 +0800
-From: kernel test robot <lkp@intel.com>
-To: Tamir Duberstein <tamird@gmail.com>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas@fjasle.eu>, Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Brendan Higgins <brendan.higgins@linux.dev>,
-	David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>,
-	Bjorn Helgaas <helgaas@kernel.org>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Russ Weight <russ.weight@linux.dev>, Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	kunit-dev@googlegroups.com, linux-pci@vger.kernel.org,
-	linux-block@vger.kernel.org
-Subject: Re: [PATCH v3 6/6] rust: use strict provenance APIs
-Message-ID: <202503151519.6bGsjUd3-lkp@intel.com>
-References: <20250314-ptr-as-ptr-v3-6-e7ba61048f4a@gmail.com>
+	s=arc-20240116; t=1742023209; c=relaxed/simple;
+	bh=bZVbzLzMwXRKq07V9dGxpI4b7wzaB4Yw3dvbBcPfBFM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sGUBABz4CdiCxv5bSdpKoml8S4DsbNMYiJqYZGm2i9Mq5fpZ2qHMZ3MWEuKFzjGiDFlCNTazSfOv4ZeDOVo9BvnWP8uakUxzrQwhdAJsNdAxZI1WgIvkmvyS9MW9JpOX8ANl3eNuBqcXMIZ0KjCSSIgG6l6hn6fWeq6/Xlbyd44=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4ZFCKk4S02z4f3jdp;
+	Sat, 15 Mar 2025 15:19:38 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 239781A0F17;
+	Sat, 15 Mar 2025 15:20:01 +0800 (CST)
+Received: from [10.174.179.80] (unknown [10.174.179.80])
+	by APP4 (Coremail) with SMTP id gCh0CgDXOl8fKtVnBbsxGg--.15547S3;
+	Sat, 15 Mar 2025 15:20:00 +0800 (CST)
+Message-ID: <134eed9d-7679-4c03-81c0-ec6588ad377b@huaweicloud.com>
+Date: Sat, 15 Mar 2025 15:19:59 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250314-ptr-as-ptr-v3-6-e7ba61048f4a@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ext4: cache es->s_journal_inum in ext4_sb_info
+To: Ojaswin Mujoo <ojaswin@linux.ibm.com>, linux-ext4@vger.kernel.org
+Cc: Jan Kara <jack@suse.cz>, Baokun Li <libaokun1@huawei.com>,
+ Ritesh Harjani <ritesh.list@gmail.com>, linux-kernel@vger.kernel.org,
+ Theodore Ts'o <tytso@mit.edu>
+References: <d1a9328a41029f6210a1924b192a59afcd3c5cee.1741952406.git.ojaswin@linux.ibm.com>
+Content-Language: en-US
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+In-Reply-To: <d1a9328a41029f6210a1924b192a59afcd3c5cee.1741952406.git.ojaswin@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:gCh0CgDXOl8fKtVnBbsxGg--.15547S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxCr4ktr1xury3WFyrGr15urg_yoW7JFW7pr
+	Z8CFyxZryUur1Uur4Iqr47ZFyY9ayIk3yjgrnI9r95trW3K342yFyrtF1DJF1DKrWUG3W8
+	XF1UC3yUCw1UKrDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUylb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAK
+	I48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7
+	xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc40Y0x0EwIxGrwCI42IY6xII
+	jxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw2
+	0EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x02
+	67AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxUwxhLUUUUU
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-Hi Tamir,
+On 2025/3/14 19:41, Ojaswin Mujoo wrote:
+> Currently, we access journal ino through sbi->s_es->s_journal_inum,
+> which directly reads from the ext4 sb buffer head. If someone modifies
+> this underneath us then the s_journal_inum field might get corrupted.
+> 
+> Although direct block device modifications can be expected to cause
+> issues in the FS, let's cache s_journal_inum in sbi->s_journal_ino so
+> our checks can be more resillient.
+> 
+> Suggested-by: Baokun Li <libaokun1@huawei.com>
+> Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+> ---
+>  fs/ext4/block_validity.c | 23 ++++++++++++++++-------
+>  fs/ext4/ext4.h           |  1 +
+>  fs/ext4/inode.c          | 19 +++++++++++++++----
+>  fs/ext4/super.c          |  5 ++++-
+>  4 files changed, 36 insertions(+), 12 deletions(-)
+> 
+> diff --git a/fs/ext4/block_validity.c b/fs/ext4/block_validity.c
+> index 87ee3a17bd29..54e6f3499263 100644
+> --- a/fs/ext4/block_validity.c
+> +++ b/fs/ext4/block_validity.c
+> @@ -247,9 +247,9 @@ int ext4_setup_system_zone(struct super_block *sb)
+>  		if (ret)
+>  			goto err;
+>  	}
+> -	if (ext4_has_feature_journal(sb) && sbi->s_es->s_journal_inum) {
+> +	if (ext4_has_feature_journal(sb) && sbi->s_journal_ino) {
+>  		ret = ext4_protect_reserved_inode(sb, system_blks,
+> -				le32_to_cpu(sbi->s_es->s_journal_inum));
+> +						  sbi->s_journal_ino);
+>  		if (ret)
+>  			goto err;
+>  	}
+> @@ -351,11 +351,20 @@ int ext4_check_blockref(const char *function, unsigned int line,
+>  {
+>  	__le32 *bref = p;
+>  	unsigned int blk;
+> -
+> -	if (ext4_has_feature_journal(inode->i_sb) &&
+> -	    (inode->i_ino ==
+> -	     le32_to_cpu(EXT4_SB(inode->i_sb)->s_es->s_journal_inum)))
+> -		return 0;
+> +	struct ext4_sb_info *sbi = EXT4_SB(inode->i_sb);
+> +
+> +	if (ext4_has_feature_journal(inode->i_sb)) {
+> +		/* If we are called from journal init path then
+> +		 * sbi->s_journal_ino would be 0
+> +		 */
+> +		u32 journal_ino = sbi->s_journal_ino ?
+> +					  sbi->s_journal_ino :
+> +					  sbi->s_es->s_journal_inum;
+> +		WARN_ON_ONCE(journal_ino == 0);
+> +
+> +		if (inode->i_ino == journal_ino)
+> +			return 0;
+> +	}
+>  
 
-kernel test robot noticed the following build errors:
+Hello Ojaswin,
 
-[auto build test ERROR on a1eb95d6b5f4cf5cc7b081e85e374d1dd98a213b]
+I'd suggested to assign s_journal_ino in ext4_open_inode_journal(), so
+that we can drop these two complex code snippets in ext4_check_blockref()
+and __check_block_validity().
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Tamir-Duberstein/rust-retain-pointer-mut-ness-in-container_of/20250315-003150
-base:   a1eb95d6b5f4cf5cc7b081e85e374d1dd98a213b
-patch link:    https://lore.kernel.org/r/20250314-ptr-as-ptr-v3-6-e7ba61048f4a%40gmail.com
-patch subject: [PATCH v3 6/6] rust: use strict provenance APIs
-config: x86_64-randconfig-002-20250315 (https://download.01.org/0day-ci/archive/20250315/202503151519.6bGsjUd3-lkp@intel.com/config)
-compiler: clang version 19.1.7 (https://github.com/llvm/llvm-project cd708029e0b2869e80abe31ddb175f7c35361f90)
-rustc: rustc 1.78.0 (9b00956e5 2024-04-29)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250315/202503151519.6bGsjUd3-lkp@intel.com/reproduce)
+@@ -5856,6 +5856,7 @@ static journal_t *ext4_open_inode_journal(struct super_block *sb,
+                return ERR_CAST(journal);
+        }
+        journal->j_private = sb;
++       EXT4_SB(sb)->s_journal_ino = journal_inum;
+        journal->j_bmap = ext4_journal_bmap;
+        ext4_init_journal_params(sb, journal);
+        return journal;
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202503151519.6bGsjUd3-lkp@intel.com/
+Thanks,
+Yi.
 
-All errors (new ones prefixed by >>):
+>  	while (bref < p+max) {
+>  		blk = le32_to_cpu(*bref++);
+> diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
+> index 2b7d781bfcad..648b0459e9fd 100644
+> --- a/fs/ext4/ext4.h
+> +++ b/fs/ext4/ext4.h
+> @@ -1556,6 +1556,7 @@ struct ext4_sb_info {
+>  	u32 s_max_batch_time;
+>  	u32 s_min_batch_time;
+>  	struct file *s_journal_bdev_file;
+> +	u32 s_journal_ino;
+>  #ifdef CONFIG_QUOTA
+>  	/* Names of quota files with journalled quota */
+>  	char __rcu *s_qf_names[EXT4_MAXQUOTAS];
+> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+> index 365d31004bd0..50961bc0c94d 100644
+> --- a/fs/ext4/inode.c
+> +++ b/fs/ext4/inode.c
+> @@ -384,10 +384,21 @@ static int __check_block_validity(struct inode *inode, const char *func,
+>  				unsigned int line,
+>  				struct ext4_map_blocks *map)
+>  {
+> -	if (ext4_has_feature_journal(inode->i_sb) &&
+> -	    (inode->i_ino ==
+> -	     le32_to_cpu(EXT4_SB(inode->i_sb)->s_es->s_journal_inum)))
+> -		return 0;
+> +	struct ext4_sb_info *sbi = EXT4_SB(inode->i_sb);
+> +
+> +	if (ext4_has_feature_journal(inode->i_sb)) {
+> +		/*
+> +		 * If we are called from journal init path then
+> +		 * sbi->s_journal_ino would be 0
+> +		 */
+> +		u32 journal_ino = sbi->s_journal_ino ?
+> +					  sbi->s_journal_ino :
+> +					  sbi->s_es->s_journal_inum;
+> +		WARN_ON_ONCE(journal_ino == 0);
+> +
+> +		if (inode->i_ino == journal_ino)
+> +			return 0;
+> +	}
+>  	if (!ext4_inode_block_valid(inode, map->m_pblk, map->m_len)) {
+>  		ext4_error_inode(inode, func, line, map->m_pblk,
+>  				 "lblock %lu mapped to illegal pblock %llu "
+> diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+> index a963ffda692a..44e79db7f12a 100644
+> --- a/fs/ext4/super.c
+> +++ b/fs/ext4/super.c
+> @@ -4162,7 +4162,8 @@ int ext4_calculate_overhead(struct super_block *sb)
+>  	struct ext4_sb_info *sbi = EXT4_SB(sb);
+>  	struct ext4_super_block *es = sbi->s_es;
+>  	struct inode *j_inode;
+> -	unsigned int j_blocks, j_inum = le32_to_cpu(es->s_journal_inum);
+> +	unsigned int j_blocks;
+> +	u32 j_inum = sbi->s_journal_ino;
+>  	ext4_group_t i, ngroups = ext4_get_groups_count(sb);
+>  	ext4_fsblk_t overhead = 0;
+>  	char *buf = (char *) get_zeroed_page(GFP_NOFS);
+> @@ -6091,6 +6092,8 @@ static int ext4_load_journal(struct super_block *sb,
+>  		ext4_commit_super(sb);
+>  	}
+>  
+> +	EXT4_SB(sb)->s_journal_ino = le32_to_cpu(es->s_journal_inum);
+> +
+>  	return 0;
+>  
+>  err_out:
 
-   In file included from arch/x86/kernel/asm-offsets.c:14:
-   In file included from include/linux/suspend.h:5:
-   In file included from include/linux/swap.h:9:
-   In file included from include/linux/memcontrol.h:21:
-   In file included from include/linux/mm.h:2224:
-   include/linux/vmstat.h:504:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-   504 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-   |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-   505 |                            item];
-   |                            ~~~~
-   include/linux/vmstat.h:511:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-   511 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-   |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-   512 |                            NR_VM_NUMA_EVENT_ITEMS +
-   |                            ~~~~~~~~~~~~~~~~~~~~~~
-   2 warnings generated.
-   ***
-   *** Rust bindings generator 'bindgen' < 0.69.5 together with libclang >= 19.1
-   *** may not work due to a bug (https://github.com/rust-lang/rust-bindgen/pull/2824),
-   *** unless patched (like Debian's).
-   ***   Your bindgen version:  0.65.1
-   ***   Your libclang version: 19.1.7
-   ***
-   ***
-   *** Please see Documentation/rust/quick-start.rst for details
-   *** on how to set up the Rust support.
-   ***
-   In file included from rust/helpers/helpers.c:10:
-   In file included from rust/helpers/blk.c:3:
-   In file included from include/linux/blk-mq.h:5:
-   In file included from include/linux/blkdev.h:9:
-   In file included from include/linux/blk_types.h:10:
-   In file included from include/linux/bvec.h:10:
-   In file included from include/linux/highmem.h:8:
-   In file included from include/linux/cacheflush.h:5:
-   In file included from arch/x86/include/asm/cacheflush.h:5:
-   In file included from include/linux/mm.h:2224:
-   include/linux/vmstat.h:504:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-   504 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-   |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-   505 |                            item];
-   |                            ~~~~
-   include/linux/vmstat.h:511:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-   511 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-   |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-   512 |                            NR_VM_NUMA_EVENT_ITEMS +
-   |                            ~~~~~~~~~~~~~~~~~~~~~~
-   2 warnings generated.
-   clang diag: include/linux/vmstat.h:504:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-   clang diag: include/linux/vmstat.h:511:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-   clang diag: include/linux/vmstat.h:504:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-   clang diag: include/linux/vmstat.h:511:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-   clang diag: include/linux/vmstat.h:504:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-   clang diag: include/linux/vmstat.h:511:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
->> error[E0425]: cannot find function `with_exposed_provenance` in module `core::ptr`
-   --> rust/kernel/lib.rs:37:20
-   |
-   37  |         core::ptr::with_exposed_provenance(addr)
-   |                    ^^^^^^^^^^^^^^^^^^^^^^^
-   |
-   ::: /opt/cross/rustc-1.78.0-bindgen-0.65.1/rustup/toolchains/1.78.0-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/core/src/ptr/mod.rs:593:1
-   |
-   593 | pub const fn without_provenance<T>(addr: usize) -> *const T {
-   | ----------------------------------------------------------- similarly named function `without_provenance` defined here
-   |
-   help: a function with a similar name exists
-   |
-   37  |         core::ptr::without_provenance(addr)
-   |                    ~~~~~~~~~~~~~~~~~~
-   help: consider importing this function through its public re-export
-   |
-   30  +     use crate::with_exposed_provenance;
-   |
-   help: if you import `with_exposed_provenance`, refer to it directly
-   |
-   37  -         core::ptr::with_exposed_provenance(addr)
-   37  +         with_exposed_provenance(addr)
-   |
---
->> error[E0425]: cannot find function `with_exposed_provenance_mut` in module `core::ptr`
-   --> rust/kernel/lib.rs:42:20
-   |
-   42  |         core::ptr::with_exposed_provenance_mut(addr)
-   |                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
-   |
-   ::: /opt/cross/rustc-1.78.0-bindgen-0.65.1/rustup/toolchains/1.78.0-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/core/src/ptr/mod.rs:637:1
-   |
-   637 | pub const fn without_provenance_mut<T>(addr: usize) -> *mut T {
-   | ------------------------------------------------------------- similarly named function `without_provenance_mut` defined here
-   |
-   help: a function with a similar name exists
-   |
-   42  |         core::ptr::without_provenance_mut(addr)
-   |                    ~~~~~~~~~~~~~~~~~~~~~~
-   help: consider importing this function through its public re-export
-   |
-   30  +     use crate::with_exposed_provenance_mut;
-   |
-   help: if you import `with_exposed_provenance_mut`, refer to it directly
-   |
-   42  -         core::ptr::with_exposed_provenance_mut(addr)
-   42  +         with_exposed_provenance_mut(addr)
-   |
---
->> error[E0599]: no method named `expose_provenance` found for raw pointer `*const T` in the current scope
-   --> rust/kernel/lib.rs:32:14
-   |
-   32 |         addr.expose_provenance()
-   |              ^^^^^^^^^^^^^^^^^ method not found in `*const T`
-   |
-   = note: try using `<*const T>::as_ref()` to get a reference to the type behind the pointer: https://doc.rust-lang.org/std/primitive.pointer.html#method.as_ref
-   = note: using `<*const T>::as_ref()` on a pointer which is unaligned or points to invalid or uninitialized memory is undefined behavior
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
