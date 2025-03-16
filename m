@@ -1,80 +1,81 @@
-Return-Path: <linux-kernel+bounces-563094-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563095-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB6E7A636EE
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 19:20:00 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86EA5A636F0
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 19:20:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 078D516DDDC
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 18:20:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D4C1A16DE37
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 18:20:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B478C1F4720;
-	Sun, 16 Mar 2025 18:19:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E24A81F585B;
+	Sun, 16 Mar 2025 18:19:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CeSYdcH0"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J+DiE7TO"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36FA71EEA5D;
-	Sun, 16 Mar 2025 18:19:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA4F11F4179;
+	Sun, 16 Mar 2025 18:19:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742149165; cv=none; b=mCuDaPGdIJopAIs2r7hMJaTcyQXVKwYSme8k8LoHYvC8LUiQ17gGT+nkMuGDe0w2vHdkjt8RZ5OKY9ep/y0IWLVbJsm0t2V9Vg7Fqt4bUbbqs3Y0ZtpFkSi3xf38DtbKQNJGEEjdxgNRmugjbSdZJsfbEwbR+kvVonA6qMMoL78=
+	t=1742149166; cv=none; b=iaNkH0kTSv6DpVuOBnlhVGiZlqikyhJ7xFg9EWSghaMk1DYukMswGj0WfOc3iXAL3z7Zb59Z4VC2y8+Bvkc5k5ffuPDTzan3vA5UoYQX5ylwMTYpmljlDDwtUqP096FyVHbQlscmNlvmdigfBLo9HmKTct8XdLDCdpm6Ek3C8R0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742149165; c=relaxed/simple;
-	bh=oSsgHxWm93UX4Dr0gTfLMbljoK+SAeJiEhBDHrh1GCg=;
+	s=arc-20240116; t=1742149166; c=relaxed/simple;
+	bh=shsY8picWdauNM7HAi5QIbN1+/obURFOkQY2q4XNRbc=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=J9k/G7SsumqylFScm3edZs9bgConm3zJ9N44sQ93gvLWI6DIDy6Q0cschRk75aDL4tsohQ3IC5dWWxUsnLNHFKQVhyGs/yndZ7xfrIvJHY+bA+pCbHLpx3w2IOMjcOtl3cHhmT+6EB7fAQWM/uskecx29VIY8TaI+vX7ivtl1e8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CeSYdcH0; arc=none smtp.client-ip=209.85.218.53
+	 In-Reply-To:To:Cc; b=qz3N4WGLwISmLXXFX930PDQQnvxClh1T2kp1UL4+SmwCM43vCFG8ucuvQlAIU/Xp8wZfANx1F4WBb2O5hp7exRQ2f9T21KzB4aRmOu6xEPB2Y1k12YRQeFaNnSj5JlWGWdlFaxwVnsEJGlRxACKohNT9/Og4ESnbrFnt3QhWkFs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J+DiE7TO; arc=none smtp.client-ip=209.85.218.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-ac2b10bea16so70094666b.0;
-        Sun, 16 Mar 2025 11:19:22 -0700 (PDT)
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-ac2ed007aacso732042766b.0;
+        Sun, 16 Mar 2025 11:19:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742149161; x=1742753961; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1742149163; x=1742753963; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=97ERf3V/Bpk7MgoHGPJsnvkiQqZJeJp/kSKmJml6+us=;
-        b=CeSYdcH0c2gZQm79AB0b2qb56u3FmBI4AXi0X9clHjHzH/4HHkVJ0xGV+1vUp1XZ9P
-         j3OT/AICgizMpUxWucgqNjwtY7heFVgMxhaBoFX9ufprqDCcS0jdTF9XqhzpIWG4gpcR
-         LZTu1Mi7yXAhQk70Hxj4PPAhPFiklKQaHO0HbzabNmdy1o+up5kS7Q8B9poOEPozUTr0
-         p1Pg5zsIjCidq4bZjJUFvufPmQYTDS9RoBfEZpSkSMR9h2/gJlscg/8EfctWjA0xT/Y3
-         X9tf74v5AtKlVGr5PaMHccLRmcBpHB4sUE4BSLuBSgE1+6jH0JsDripTt+/uLKPBhT09
-         6WMQ==
+        bh=Xva56AKX2brNKS42OhnyZtYq2t1leFGV1oKmYOkZd/E=;
+        b=J+DiE7TOSOGpxIH+zOdU4RykXlyBNYo3KnDJAEPQ0KH6Xz46qvKsf7H37p6+kQ8+a1
+         cDPzQ54HXvjX4mZNiLS2O+th+IgKztkXa4oaUqM52BaEKqA9UtRWpaN/oSr0cmF52zmA
+         DKAnSV3Xd87MzAW88l1JZEwGWsosx8TgwmxczAgWhKSS2zpwivNX4B1/PRasLiif6H6n
+         ItvCaxV46u/ENH3gsJ7euhnXAjOW/kdvIQ0tWdnUY/IC6tS31EG4dJ4GJk1cYoecQkAj
+         pCPumS1PqrHOKZRdFWIIkYApQN5dr4pF/zwMGgO2wNBl6V283GzjQHofaff0vDffVT9u
+         RJTw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742149161; x=1742753961;
+        d=1e100.net; s=20230601; t=1742149163; x=1742753963;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=97ERf3V/Bpk7MgoHGPJsnvkiQqZJeJp/kSKmJml6+us=;
-        b=E9IcBw1nU3s9UAEzQy2XrElvbNCSJWsMG0wpLLvMatwAZwsorWgUmgTH1Dww0wfLgQ
-         rPOcfQCx7Aiqb/shSppQAD39timIwFAOYw/TZ6cncA7lxvpjk5AbIB8ktOFHMyo9BRLo
-         oY5Hq2XLdHAgY49iEPvuzIcC+6EqJAbu0cNOM6SGEdccBhnA/vg9g/Qu9DwWOrDzmJMr
-         s6+i4qf11OE7XoOC6uCd+Jwi6mCKJLeLCQtqTj0OvmdDLqwooMv50+fj/fzkM5U+KU/b
-         K/fKskbGUeizQXu7Hr/vWdyoghdp9pU94088+3ve5qw3BAhQlCViaQlSjlhFItZWUz68
-         7Hwg==
-X-Forwarded-Encrypted: i=1; AJvYcCVP0etmFQanO1A+nF1ZSIDmzQe+TrkIP+oj8Rw3hjrRC5nAt4LuNu2bIViNA0N2XjVf+8wd6pGGHSZm@vger.kernel.org, AJvYcCWp+YdZ7DoOuoi0uvHOfa2gLHPdVJrF/4PSzD44STkw90PSoFhzmRundaNq+TzGNfNCQg2yUVtJxYCOi8jL@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywj4oBw9RWA9czBPYsy2Y3bS3kNPO1IUg2+WxlhZ34LFjDtFq5/
-	z9KPiFN2HKl2pfl/G0ay6UxTS5yHMGUr63gd2DzfU2xJTmXh3Lbf
-X-Gm-Gg: ASbGnct1/VkVrk/SX/WdTANSQINiDLL1Pg6EUQleFzL9k2TCjvjKzFE117AlTs2doOr
-	3/D9gK5oBUlL8fhXkbZFwo6vzMl2eRHFmyvPkRs4HOCaL4t6PjPivjgZTB7Dv7T/x7HCR1HmxBE
-	/g+TX+BaUuc2BeOk3i8f58YxZLtUrtyeJ9EYJd67CUoalhDiKKjIUd0owK59GittBLgUf5h9Yab
-	3EgGvgmD0dvVE675qW0BQ+4PcqOYnHtjYhSnHkEgVIom6no1t+/6H+uP1+RN2sSNPx3mjlzv5LK
-	hee6ZtZYIKtd7BEoulH2ZwoFdHarWl4f3TotXOBgYxMzwVLKh3tfZ9omDVbY8BcSWcga5ckUyyO
-	QfTTLckLdKHLIMpzLqYlf0uk2k2Bx
-X-Google-Smtp-Source: AGHT+IG+83lChTiI1RBzCDIq8j9lOSoKKPoy8P0LCpgfYgJS30USvkARqAJeFOkKxSUjVu6YQZtMmg==
-X-Received: by 2002:a17:906:c10d:b0:ac2:7cf9:7193 with SMTP id a640c23a62f3a-ac3304195a3mr1071132166b.48.1742149161249;
-        Sun, 16 Mar 2025 11:19:21 -0700 (PDT)
+        bh=Xva56AKX2brNKS42OhnyZtYq2t1leFGV1oKmYOkZd/E=;
+        b=mUlfywEVtX6KFG1tLsGuSJJqHuh5W4DiA/jNfdjxEx3vLcVeNFa54fJGw8X3era/R7
+         Ro644Sqye3y3HSHEFQSWnVNfZnFufgK3CnJUFujwKgsv4gcp/Mc//ALvTu5v0qSD+hm6
+         iJzDIl/1uibYd9B/zWSYOYM359+0SSJ46Ulbj5gjGoJdGiLyy4RW0zxFA7wPGNBzP9km
+         2iGbd5WTp1TO0Qhjosc2Ab/5Vw/2cfb+sjOnkp+qBTbkPhk22/6OMdvvO4EOPscNVxjy
+         c201e4vjdkzapRU4yRf6IRCqSeyxADoLpPqVz/TUinBIzZZ3HP7kguAol00bXmFahJFk
+         BNRQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUTURfCS9tnlvTe40Iovt51sZYjgOw/D8vRFI9orOEUZaBlQ2vOtP+IY34efXLm6tPg0mvK8Spg9TfJ6nzO@vger.kernel.org, AJvYcCXERKDHIEIS3GJbCV5WmSnfkuHVTCvnEq77dTBYVDyIpBlx7tiyWYAO/LQFsS+gaSmrsVxs+28l9nbH@vger.kernel.org
+X-Gm-Message-State: AOJu0YyI/Gys+wAYRLlvcMN8TmbXCnZOkISDWKUIPn1R2CfvebMeg7E5
+	H8nBHKNrvmFbqJOCDw0ilRH4QoYOzJYU6qFKLlUJ2bl3l6vZOLLd
+X-Gm-Gg: ASbGncsjPG5FRLgiDBfIUmjH+DhyGijt109RL8SbDyH1YjbfQzwtG8Ik2g7DLdjNeF0
+	drad1NnJMal7C942EsOIN/cgDQ4+13Bpga5L9GAN3acP8H7zhrwLWzMMRGO/XORNiKpEP9uWfRI
+	EOs6lKiAGkX74OPVIPkE9SG+b8aoPik3etMaiy7Tl8YWQfIP/yXrKsx5Ow2Djqv/wXpMKxrusuD
+	S1Pg9faZiA7SntXXEttnQD+8NmWRpziR06GLF8naIi0RPlVWxhGevPva1Az0i0rLeWLj1HGyKA3
+	6X+cVunts2nNMYuqbGePyJeipp6n8cJI+iteZCOmQpEofptCVC/RBmXPfKuMAf/DSfj2fBB0TUr
+	DevBRbDDxoD82rCFymABkfJQbVFc1
+X-Google-Smtp-Source: AGHT+IEW6mwbZ0mIlUOCzUaC2OsZ+OTum5RA4mVckjatFCdtgV+nmDBy9x3IRRsoTUB+6DxdKM96QA==
+X-Received: by 2002:a17:906:5fc1:b0:ac3:3f11:b49c with SMTP id a640c23a62f3a-ac33f1203bcmr672618066b.7.1742149162583;
+        Sun, 16 Mar 2025 11:19:22 -0700 (PDT)
 Received: from hex.my.domain (83.11.178.210.ipv4.supernova.orange.pl. [83.11.178.210])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac314a48b51sm537951266b.149.2025.03.16.11.19.18
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac314a48b51sm537951266b.149.2025.03.16.11.19.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 16 Mar 2025 11:19:20 -0700 (PDT)
+        Sun, 16 Mar 2025 11:19:22 -0700 (PDT)
 From: Artur Weber <aweber.kernel@gmail.com>
-Date: Sun, 16 Mar 2025 19:18:51 +0100
-Subject: [PATCH v7 03/10] ARM: dts: Drop DTS for BCM59056 PMU
+Date: Sun, 16 Mar 2025 19:18:52 +0100
+Subject: [PATCH v7 04/10] mfd: bcm590xx: Drop unused "id" member of
+ bcm590xx MFD struct
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,7 +84,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250316-bcm59054-v7-3-4281126be1b8@gmail.com>
+Message-Id: <20250316-bcm59054-v7-4-4281126be1b8@gmail.com>
 References: <20250316-bcm59054-v7-0-4281126be1b8@gmail.com>
 In-Reply-To: <20250316-bcm59054-v7-0-4281126be1b8@gmail.com>
 To: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
@@ -98,214 +99,38 @@ Cc: Stanislav Jakubek <stano.jakubek@gmail.com>, devicetree@vger.kernel.org,
  ~postmarketos/upstreaming@lists.sr.ht, 
  Artur Weber <aweber.kernel@gmail.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1742149152; l=4265;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1742149152; l=805;
  i=aweber.kernel@gmail.com; s=20231030; h=from:subject:message-id;
- bh=oSsgHxWm93UX4Dr0gTfLMbljoK+SAeJiEhBDHrh1GCg=;
- b=uoPcsxaopSegQjH9DQN9ffpNUBszrF6XR3Yfteih7WnBU+g5Uxpu+0gJ8JZ1h9wWSkHq5IKf6
- sEzCZxVbjVVD8ZkiVSjgHenP5iu/z5HFP8/kOgswtj2KHgqNxsMLRgJ
+ bh=shsY8picWdauNM7HAi5QIbN1+/obURFOkQY2q4XNRbc=;
+ b=rDbh+AGUMQmTqrTWquPXt0bGmiEn//jNa4ylElnxOs5ntrSzd4IpDqsafHt4svb6BYQbXBycJ
+ S4LJMyByqXFC2UnuVmWhYPaos/F4ixaCnRYxz2qv11xVBAMggZd6toO
 X-Developer-Key: i=aweber.kernel@gmail.com; a=ed25519;
  pk=RhDBfWbJEHqDibXbhNEBAnc9FMkyznGxX/hwfhL8bv8=
 
-The BCM59056 PMU has its own separate DTSI, meant to be included
-in a DTS file after defining the pmu node on some I2C bus.
-
-This seems rather unintuitive; drop the DTS in favor of adding the
-BCM59056 PMU node directly into the device DTS files.
-
-If the amount of subdevices supported by the BCM590xx grows, and
-a common device tree turns out to be beneficial, it can be reintroduced
-in the future.
+The "id" member of the bcm590xx struct is unused and will be confusing
+once we add an actual PMU ID storage value. Drop it; a replacement
+will be introduced in a future commit.
 
 Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
 ---
-Changes in v4:
-- PMIC -> PMU in commit message
+Changes in v6:
+- Add this commit
 ---
- arch/arm/boot/dts/broadcom/bcm28155-ap.dts | 68 +++++++++++-----------
- arch/arm/boot/dts/broadcom/bcm59056.dtsi   | 91 ------------------------------
- 2 files changed, 32 insertions(+), 127 deletions(-)
+ include/linux/mfd/bcm590xx.h | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/broadcom/bcm28155-ap.dts b/arch/arm/boot/dts/broadcom/bcm28155-ap.dts
-index 2f3634545e64978888cd0b47fd5647a5e2eb8e07..cefaa9a3c45c9c90bffc08f739161d8ea21d98dd 100644
---- a/arch/arm/boot/dts/broadcom/bcm28155-ap.dts
-+++ b/arch/arm/boot/dts/broadcom/bcm28155-ap.dts
-@@ -37,7 +37,39 @@ &pmu_bsc {
- 	status = "okay";
- 
- 	pmu: pmu@8 {
-+		compatible = "brcm,bcm59056";
-+		interrupts = <GIC_SPI 215 IRQ_TYPE_LEVEL_HIGH>;
- 		reg = <0x08>;
-+
-+		regulators {
-+			camldo1_reg: camldo1 {
-+				regulator-min-microvolt = <3300000>;
-+				regulator-max-microvolt = <3300000>;
-+				regulator-always-on;
-+			};
-+
-+			sdldo_reg: sdldo {
-+				regulator-min-microvolt = <3000000>;
-+				regulator-max-microvolt = <3000000>;
-+			};
-+
-+			sdxldo_reg: sdxldo {
-+				regulator-min-microvolt = <2700000>;
-+				regulator-max-microvolt = <3300000>;
-+			};
-+
-+			usbldo_reg: usbldo {
-+				regulator-min-microvolt = <3300000>;
-+				regulator-max-microvolt = <3300000>;
-+				regulator-always-on;
-+			};
-+
-+			iosr1_reg: iosr1 {
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <1800000>;
-+				regulator-always-on;
-+			};
-+		};
- 	};
+diff --git a/include/linux/mfd/bcm590xx.h b/include/linux/mfd/bcm590xx.h
+index 6b8791da6119b22514447bf1572238b71c8b0e97..c614d1b1d8a217ac2f212908a4c19ae71fa56f63 100644
+--- a/include/linux/mfd/bcm590xx.h
++++ b/include/linux/mfd/bcm590xx.h
+@@ -23,7 +23,6 @@ struct bcm590xx {
+ 	struct i2c_client *i2c_sec;
+ 	struct regmap *regmap_pri;
+ 	struct regmap *regmap_sec;
+-	unsigned int id;
  };
  
-@@ -74,39 +106,3 @@ &usbotg {
- &usbphy {
- 	status = "okay";
- };
--
--#include "bcm59056.dtsi"
--
--&pmu {
--	compatible = "brcm,bcm59056";
--	interrupts = <GIC_SPI 215 IRQ_TYPE_LEVEL_HIGH>;
--	regulators {
--		camldo1_reg: camldo1 {
--			regulator-min-microvolt = <3300000>;
--			regulator-max-microvolt = <3300000>;
--			regulator-always-on;
--		};
--
--		sdldo_reg: sdldo {
--			regulator-min-microvolt = <3000000>;
--			regulator-max-microvolt = <3000000>;
--		};
--
--		sdxldo_reg: sdxldo {
--			regulator-min-microvolt = <2700000>;
--			regulator-max-microvolt = <3300000>;
--		};
--
--		usbldo_reg: usbldo {
--			regulator-min-microvolt = <3300000>;
--			regulator-max-microvolt = <3300000>;
--			regulator-always-on;
--		};
--
--		iosr1_reg: iosr1 {
--			regulator-min-microvolt = <1800000>;
--			regulator-max-microvolt = <1800000>;
--			regulator-always-on;
--		};
--	};
--};
-diff --git a/arch/arm/boot/dts/broadcom/bcm59056.dtsi b/arch/arm/boot/dts/broadcom/bcm59056.dtsi
-deleted file mode 100644
-index a9bb7ad81378d88811c4473763c579d3d2c006a1..0000000000000000000000000000000000000000
---- a/arch/arm/boot/dts/broadcom/bcm59056.dtsi
-+++ /dev/null
-@@ -1,91 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0-or-later
--/*
--* Copyright 2014 Linaro Limited
--* Author: Matt Porter <mporter@linaro.org>
--*/
--
--&pmu {
--	compatible = "brcm,bcm59056";
--	regulators {
--		rfldo_reg: rfldo {
--		};
--
--		camldo1_reg: camldo1 {
--		};
--
--		camldo2_reg: camldo2 {
--		};
--
--		simldo1_reg: simldo1 {
--		};
--
--		simldo2_reg: simldo2 {
--		};
--
--		sdldo_reg: sdldo {
--		};
--
--		sdxldo_reg: sdxldo {
--		};
--
--		mmcldo1_reg: mmcldo1 {
--		};
--
--		mmcldo2_reg: mmcldo2 {
--		};
--
--		audldo_reg: audldo {
--		};
--
--		micldo_reg: micldo {
--		};
--
--		usbldo_reg: usbldo {
--		};
--
--		vibldo_reg: vibldo {
--		};
--
--		csr_reg: csr {
--		};
--
--		iosr1_reg: iosr1 {
--		};
--
--		iosr2_reg: iosr2 {
--		};
--
--		msr_reg: msr {
--		};
--
--		sdsr1_reg: sdsr1 {
--		};
--
--		sdsr2_reg: sdsr2 {
--		};
--
--		vsr_reg: vsr {
--		};
--
--		gpldo1_reg: gpldo1 {
--		};
--
--		gpldo2_reg: gpldo2 {
--		};
--
--		gpldo3_reg: gpldo3 {
--		};
--
--		gpldo4_reg: gpldo4 {
--		};
--
--		gpldo5_reg: gpldo5 {
--		};
--
--		gpldo6_reg: gpldo6 {
--		};
--
--		vbus_reg: vbus {
--		};
--	};
--};
+ #endif /*  __LINUX_MFD_BCM590XX_H */
 
 -- 
 2.48.1
