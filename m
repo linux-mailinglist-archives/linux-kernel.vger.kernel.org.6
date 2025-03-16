@@ -1,97 +1,137 @@
-Return-Path: <linux-kernel+bounces-562997-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA8F4A63586
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 12:57:43 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15C21A6358B
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 13:06:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 345477A2DF1
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 11:56:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E89C3AEC63
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 12:05:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 934741A5B90;
-	Sun, 16 Mar 2025 11:57:31 +0000 (UTC)
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A3DB1A76D4;
+	Sun, 16 Mar 2025 12:05:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="SbW2bn/M"
+Received: from mout.web.de (mout.web.de [212.227.15.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE028156C79;
-	Sun, 16 Mar 2025 11:57:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 941871A5BB4;
+	Sun, 16 Mar 2025 12:05:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742126251; cv=none; b=qVxWL8uA7uHDbEx57A2KBeGyI9rih+Kk4QokkGAJ+goLztnIcuQLz2B/wRIbKv687+/Xc7aMXsSGu1w7/xl/l4xRt3Q/SvVQEAUbk2UoUs+mr6stAZt1fMa/YC28WL12hpmzz6FMsfg1IGcqHAscdofF8m0+VPECwajB8iDKAyg=
+	t=1742126749; cv=none; b=JmuW+rH/1Dd+6ACGp7L4fiqskFRgQYNJace1330PgD9hIggz2Lx+goXDeBpU3WsK2/SAJ0ta4t0NF5gCwSTcvs12WTFNMccyfHIkMBagAWG7YtPaM9+9cvl1eynEggRciV0QjgBVpNb85LZlkO27MOtHALYVcUwv/Z8nPw15PH4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742126251; c=relaxed/simple;
-	bh=2WF/LbKitrWCBqXXi1nhQ7fkqFR9nNo/2lMHL7NRV5o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m3Li7JusO9Na0aiVbSF+iBxTJXNb5ImIeqzyLeXutrZcsUWVA6/JQz0gXwG1aLBXyqSHKwFk+bCyvR3N/z/5Gp1I4wiQTxKMsJ1h/MqgXo+p7OWz0tV3jWk1Ydcey5m5V5PeA62gUeKlB5/sFFDYVmwSW5oSMi6vaBKKVBFLeBk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-2254e0b4b79so83761285ad.2;
-        Sun, 16 Mar 2025 04:57:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742126249; x=1742731049;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=F5ZPUuGLWzPE3DEGuxQdFm1d6rNLeHLFFd3OHs6+QQU=;
-        b=UCA+cZVs/MuzuCgHR8xyoA/JTmFN/qDVrSQd/H9DeQG4UOhyrdQ9XLgSr+innv14zE
-         uBghM5dDuEZaxC117ad7+KIV0JZqP6MnFq/WvLO4d+9cDP5Mc3UxURomf0GwhDwgoWPS
-         KsPCu7cE3ZYSGdJ3G7Z64FtLTSBo8bvVEhKAi2Xfhiw8mN2oqQ4pQNxpxvQyA5dDnr3D
-         nrnPMqXy2W0ByFUsCOo9qWaM0+ZWsyxXxLwsqMrRM0fAo20mAX0ITBuLLfO5N4AvH/as
-         giMPzXA7/d/XkU/hh6SvJoU2rR6OEvU45OpEWJq83GJGhESJw8RHcU0gJMlatGeU3IBV
-         hWvA==
-X-Forwarded-Encrypted: i=1; AJvYcCUsLDN3XCR2OxbLFilXUDR/pg/4YvEflqtP9uppBvm0aZANO7vz5vpdtrMyh+ACwuAwWTfhxODN3HV+AMbk@vger.kernel.org, AJvYcCVY1O1e/7JS8RbDf8u7LSYS1BOwRE94OENjwUbkKuBL+2P/WPaaAA0Zg8Ij40+/12hYn4dd0EnvfGT1iSPON7U=@vger.kernel.org, AJvYcCXVm3+fCHEaVeCjRTIxW0pH/8Q3NqFy0FZUWlsfe7pw4DsjITxbUnGh8oOx0lEuM2A/49oAeJol/YXr@vger.kernel.org
-X-Gm-Message-State: AOJu0YzP6fGcogcvuI7skBQn4MuyfafonQTd3ckH2pOQHv2sDbM2TTt1
-	rv9MsePr82jSvrWSOXqRjjChfCWkbeDVZA0V6vSIGp6vg5Ic7VBL
-X-Gm-Gg: ASbGncsPmIZvs0XN1WuuLW93w0RzfxvPLI6PpIa61jooob0mG5Pi4MFtAA5mMFGKlRN
-	scBNMK7FWhJr76Ik04DJg6yIZaJ5IUCDNiaubUot1Y0R+WTOsvDdFuoSX1cs7NIC4XmqDWax1vS
-	i2/D442jD5OBzyVoK3oN1/AGnKWR02j53eQoVqTeKf8vJesGIQNX3BxUqdX+K61b3hTnAlbfxDk
-	PgUMLmiwwv1s+xvyIUB35iilN625mlmvtpNxFpBLJDNKUzMlBNIfhsEvARJ0FcdByp8nn7YmGAJ
-	x9aAMNiKhxSPosy2yOFRbBveToGGCY6Cj3UOWvdesCAt4dn35cJC/n8UoY/ZL7hgeepVu2abfoo
-	jCoo=
-X-Google-Smtp-Source: AGHT+IEQUgd9b03NsYUaj6vePK7+aFkFyLwaesjtcXEgi2/cqXOUtR6mlOUWm/CB/nd0+pkmYkP/oQ==
-X-Received: by 2002:a17:903:2391:b0:223:619e:71da with SMTP id d9443c01a7336-225e0b23b6dmr122934195ad.49.1742126248842;
-        Sun, 16 Mar 2025 04:57:28 -0700 (PDT)
-Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
-        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-225c68883adsm56844685ad.47.2025.03.16.04.57.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 16 Mar 2025 04:57:28 -0700 (PDT)
-Date: Sun, 16 Mar 2025 20:57:26 +0900
-From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Shawn Guo <shawn.guo@linaro.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	linux-pci@vger.kernel.org
-Subject: Re: [PATCH] PCI: histb: Remove an unneeded NULL test in
- histb_pcie_remove()
-Message-ID: <20250316115726.GA3021602@rocinante>
-References: <c369b5d25e17a44984ae5a889ccc28a59a0737f7.1742058005.git.christophe.jaillet@wanadoo.fr>
+	s=arc-20240116; t=1742126749; c=relaxed/simple;
+	bh=KadRx1xoUSmJtq5YD2SOV+EbxxApkt8GHAPj2ECQ2pc=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=nWeix1rq5GiNwlZcB3K1osMf1sQC016iBq4Qm7Ngc1EgI3PsOIALJUMEBBrjMATuZfu3v+irS41V5dCK6gNSeM/CA8z7evjBALtcUgef71qrdy1GTq+2R/Qi44o73P0ijJ0Pmc3nFu+FnRuwN9JmoInwdX1/x/9iNRmoB491lYU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=SbW2bn/M; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1742126719; x=1742731519; i=markus.elfring@web.de;
+	bh=e9pi42+lpAEfqGuH7ny5kxkJc4GrAO5+Sa0jB/otWFc=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=SbW2bn/MzTWxWSdxkUwBl5Or867gbHNZyWHCLnoPbYDlXDqYcw5keEr8jGxSC3z8
+	 udWlAgeCC+OMT4ED7fiN2j2zVLB54QGET1Lr0/sIBokgg4O6HeqhKG+n3g6k+tzB9
+	 2OzdJKRaL2CiatIwDzrWAJpseag2a8geozR6DVlOCaKWN1CO5EJVHRiSXwxkuzRHx
+	 yY4sYVdtfPjTtKQFN3QPrsUsam3YR2iQlyI63p5lJkrQa3qQV7eBn6KTBzLtllTvo
+	 uxophOwCSCkiCTdE9pOjtTBARdMsZMShPJGB8xMIZpD8KuS53RjxEZK36QkG+eeMP
+	 TsuP3vAUH/DGiHn1Vg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.70.60]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MNwfU-1ta1rT2uMq-00NFqT; Sun, 16
+ Mar 2025 13:05:19 +0100
+Message-ID: <d90c0678-d2ed-4e77-901a-fdbab7dfca71@web.de>
+Date: Sun, 16 Mar 2025 13:05:08 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c369b5d25e17a44984ae5a889ccc28a59a0737f7.1742058005.git.christophe.jaillet@wanadoo.fr>
+User-Agent: Mozilla Thunderbird
+To: Dan Carpenter <dan.carpenter@linaro.org>, linux-riscv@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+ Drew Fustini <drew@pdp7.com>, Fu Wei <wefu@redhat.com>,
+ Guo Ren <guoren@kernel.org>, Michal Wilczynski <m.wilczynski@samsung.com>,
+ Ulf Hansson <ulf.hansson@linaro.org>
+References: <f19be994-d355-48a6-ab45-d0f7e5955daf@stanley.mountain>
+Subject: Re: [PATCH next] firmware: thead,th1520-aon: Fix use after free in
+ th1520_aon_init()
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <f19be994-d355-48a6-ab45-d0f7e5955daf@stanley.mountain>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:N8yi/ML/6ATrEIfjSmcR+ncmpOEGOUb80sVSW2Mp4Ay37YbqHO8
+ 0dpdF55hEC2gXPezuq6AkCihIiKhPba4HX/9RgMgQXH9bKSCavrpAt2wydYUh/yNBvbswSx
+ CUkhQ47nR/vMUouQNwFDVjGT+G0aXehQ4QcKQvEToL6T/+QqsLsEGyVYk3GpYtLFvTaNoYS
+ Ktvr2SAzmzBNeEkFee8AQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:zyghqIrusQ0=;argRggwRiP8xq6mCQKaEC5lAM6M
+ /6k59Ym3joLa1G20HgkaX5LTH3ed0xBI0SbZxMBc7r1SFwfcITYww1kpT/OI5qKuD8ib4pHEX
+ OgWctpRmLfTFj04Z+OdDYKNagZq9AR0nl+oAYgC5kFtDMKqgE6vrQS5rKliYsIRgkeA6z5prN
+ /b0p+/Ar6+M5SYIKSqjtlV7Kv5paxREK/8xmwnWK5eOpiituHSbvcbyCgg9CBH2N8T4BVNM4X
+ wLyjSVA5lULNQm/D1RYbCqOAqtZvBXFysMwuVsUczzbR7KsB3JhUTyByPodm3smO1oxQRUcPc
+ JR/GseSOs84DGGx3IUQhAS6lqXt8J9trpG/GWwUqUg3Lh0cbTGpWVTQbOjrGcsSkHpFbQKJvc
+ K1iaY43M+JvoOF1Pv6w3DfCe5cnzql9c1DzMMPshgepVVlOLIKyH0nqB5vTNSMpgs9vZFO193
+ KnJP0ydgyL4rC/7eICXLBQFHnMXeRfepHav7UxPOaYBLGdjH/PQaYGmQ9GOugikUjxdwaIX1P
+ yI5h8ZOnWMoaHqYambHv9Xj0XyS7FLeXxClHnxf6S0HJPDPl0fX0ZNm5rs2ZNjq7DiqZnuAsl
+ jIyg713uK7gnlvp1bMdP/naZ4Tfc8kgbsSqW+1vlbxdgGXElbVC3JUc+PHzU7rNU7KKMuFDl6
+ zuSd4HrSg2+DijLZXTk6GjEKoMf3+4qWvCGsTQOoAps0T7mjKd9lzwnnjtGBWOeL+554rzeLY
+ ai/kPxbReDGkg0wc8Laioq/C+ktJHhjC55fpesN9kTRRIWEE/7wA12e7lhDJ65lcLCkPawHkS
+ Z24X/0C+H80bq/uyfV+hG5tUy6iDBsLE4TsWuNlyMMMmXnc8eMwSDkpYLsHP+QYe+hZOGdCks
+ SDU502B3odT4PQ2HGGFSCWogS3MZPuJAoTmBxb5UyQ2v4nC66HfLpbtjAo45YXAyhVp8ekgyo
+ 7qojw36hqLRW60WVZx1WNYUgt4UVhvf3rv9oD/OlFBn+ZD/U2zHxYhmE4FZt2nZu9ffusf8EU
+ 3fwh+u2nZogefJWoAvXIO1fTN4bhfHJSZHoP9yHQ32vKP0c12zZ+KYnlNO4XcRbDtByrQZxR+
+ aQDXjf2xpFNAmVs9QG/dMYcniR9TEE4IC72iqx95OHAd5G+DGXHjP/fMbiBXvajdvn0oLVzm/
+ SCZEN40S4h8zfktWnw+ff5cAzbKZJAVEjjOH+5f5uHpI7+MKA1tqHb/JWliyPCrJgDm6H9T9o
+ G5dvSi/QrBEXiqFSvbly7Bi6IlH+Hvi73FFY8S7YHruNGDkiw9CCZ+p3GubRXTpShCa3b/0qz
+ UJL/aB/8Hhdjro3j7S+tViwv40E9SLkQXp1AB5cdJlu68G0V62U+Prb1qls4NEEyYJx0EYfTJ
+ AeCIDNKu5p0zfeepaDjn46Vw98/qru87+/axf4RwDqqkxThjoXIxZR+lpyz52mNgIzXt01sDO
+ hnHJUmovW1PTX8x6C5gflbLDdMOzq4DWxr52cDhZlaA63LQ5LMAXjto+cUIUUC1uX1kq31Q==
 
-Hello,
+> Record the error code before freeing "aon_chan" to avoid a
+> use after free.
 
-> phy_exit() handles NULL as a parameter, so there is no need for an extra
-> test.
-> This makes the code consistent with the error handling path of the probe.
+Would it become helpful to mention which selection of source code
+analysis tools detected such a questionable implementation detail?
 
-Thank you for the due diligence here!  Much appreciated.
 
-I squashed this patch against the changes already on the branch.
+=E2=80=A6
+> +++ b/drivers/firmware/thead,th1520-aon.c
+> @@ -203,6 +203,7 @@ struct th1520_aon_chan *th1520_aon_init(struct devic=
+e *dev)
+>  {
+>  	struct th1520_aon_chan *aon_chan;
+>  	struct mbox_client *cl;
+> +	int ret;
+>
+>  	aon_chan =3D kzalloc(sizeof(*aon_chan), GFP_KERNEL);
+>  	if (!aon_chan)
+> @@ -217,8 +218,9 @@ struct th1520_aon_chan *th1520_aon_init(struct devic=
+e *dev)
+>  	aon_chan->ch =3D mbox_request_channel_byname(cl, "aon");
+>  	if (IS_ERR(aon_chan->ch)) {
+>  		dev_err(dev, "Failed to request aon mbox chan\n");
+> +		ret =3D PTR_ERR(aon_chan->ch);
+>  		kfree(aon_chan);
+> -		return ERR_CAST(aon_chan->ch);
+> +		return ERR_PTR(ret);
+>  	}
+>
+>  	mutex_init(&aon_chan->transaction_lock);
 
-Thank you!
+May the additional variable (for an information) be defined only for
+the affected if branch?
+Would a smaller scope be more appropriate here?
 
-	Krzysztof
+Regards,
+Markus
 
