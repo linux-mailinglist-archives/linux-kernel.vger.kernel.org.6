@@ -1,81 +1,81 @@
-Return-Path: <linux-kernel+bounces-563095-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563096-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86EA5A636F0
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 19:20:09 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2A47A636F2
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 19:20:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D4C1A16DE37
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 18:20:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46077188F4CD
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 18:20:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E24A81F585B;
-	Sun, 16 Mar 2025 18:19:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E6881F8BAC;
+	Sun, 16 Mar 2025 18:19:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J+DiE7TO"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WLE02i59"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA4F11F4179;
-	Sun, 16 Mar 2025 18:19:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA0BA1F4725;
+	Sun, 16 Mar 2025 18:19:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742149166; cv=none; b=iaNkH0kTSv6DpVuOBnlhVGiZlqikyhJ7xFg9EWSghaMk1DYukMswGj0WfOc3iXAL3z7Zb59Z4VC2y8+Bvkc5k5ffuPDTzan3vA5UoYQX5ylwMTYpmljlDDwtUqP096FyVHbQlscmNlvmdigfBLo9HmKTct8XdLDCdpm6Ek3C8R0=
+	t=1742149167; cv=none; b=RRyoJ23v9KUlsHsexY/r8AqdKih0UCZUrTVI7+yVYXGsNRFvotlJHmNJNDLROll/yyIFffkoVp7tM9eHV91Y2a5lGq2C40CCXcy2MmyiDSuKNRyR7M426X8SGfXTKn3aqDaLluSFnVruhYlzdrX3rPNd8UoIqk0bIs6tWLuBI3U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742149166; c=relaxed/simple;
-	bh=shsY8picWdauNM7HAi5QIbN1+/obURFOkQY2q4XNRbc=;
+	s=arc-20240116; t=1742149167; c=relaxed/simple;
+	bh=Vau+qtkiLKbsSAyta7HK/1aydJ9QZlhuWFoLqVhFrJQ=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=qz3N4WGLwISmLXXFX930PDQQnvxClh1T2kp1UL4+SmwCM43vCFG8ucuvQlAIU/Xp8wZfANx1F4WBb2O5hp7exRQ2f9T21KzB4aRmOu6xEPB2Y1k12YRQeFaNnSj5JlWGWdlFaxwVnsEJGlRxACKohNT9/Og4ESnbrFnt3QhWkFs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J+DiE7TO; arc=none smtp.client-ip=209.85.218.50
+	 In-Reply-To:To:Cc; b=L0ZjBweGervUEQiGo0sDhI9VENZgGhjFy95u2oAAM8O1tos3DWXp7wwZgaPlX6a9kVgcuQauSd43JfC1M1JXMaBiLjKHERwCdtU+DMqVd9AkpMRa7Tqw3jaS1o5Pb9Ci5qpUC8WkGWB5Ge7nrQPte/EFQAOtea2kaovhLcc/fHo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WLE02i59; arc=none smtp.client-ip=209.85.218.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-ac2ed007aacso732042766b.0;
-        Sun, 16 Mar 2025 11:19:24 -0700 (PDT)
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-ac297cbe017so875886666b.0;
+        Sun, 16 Mar 2025 11:19:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742149163; x=1742753963; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1742149164; x=1742753964; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Xva56AKX2brNKS42OhnyZtYq2t1leFGV1oKmYOkZd/E=;
-        b=J+DiE7TOSOGpxIH+zOdU4RykXlyBNYo3KnDJAEPQ0KH6Xz46qvKsf7H37p6+kQ8+a1
-         cDPzQ54HXvjX4mZNiLS2O+th+IgKztkXa4oaUqM52BaEKqA9UtRWpaN/oSr0cmF52zmA
-         DKAnSV3Xd87MzAW88l1JZEwGWsosx8TgwmxczAgWhKSS2zpwivNX4B1/PRasLiif6H6n
-         ItvCaxV46u/ENH3gsJ7euhnXAjOW/kdvIQ0tWdnUY/IC6tS31EG4dJ4GJk1cYoecQkAj
-         pCPumS1PqrHOKZRdFWIIkYApQN5dr4pF/zwMGgO2wNBl6V283GzjQHofaff0vDffVT9u
-         RJTw==
+        bh=3+2M+lUouAH0+Jr+nyjeHl+wxA0K/oLUPdCGmVRRMGE=;
+        b=WLE02i59rYg12OVKBwiDxNoTW9/bq5Aieo49e8aTGl8wVVeo5NVuKkL92ent+Z0FWu
+         pph/5bCFL2WsuSblMk1UeW2bkDbH5yyRkYElGuBGoqu/AtYFKlJ5V19yD5rRr8sIRyss
+         pySYF1LCmlEtYH0Qsdzvhugg4fckWmREWV4R+NBmZESJWfkpoSNXs1q79GqzxGC7S/ft
+         KZNO2tQRBT1tIabusqwZom9pjInDfDwe6eprrdwZMX/nL2MpewqH3hKXuvKk4klAnELr
+         xFUL0mwGht8LQ/B1SVkng61Z4PnERCmS3y1fs45qSpBSaR1GhBT4WJMFIm/aFKOM75GU
+         badw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742149163; x=1742753963;
+        d=1e100.net; s=20230601; t=1742149164; x=1742753964;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Xva56AKX2brNKS42OhnyZtYq2t1leFGV1oKmYOkZd/E=;
-        b=mUlfywEVtX6KFG1tLsGuSJJqHuh5W4DiA/jNfdjxEx3vLcVeNFa54fJGw8X3era/R7
-         Ro644Sqye3y3HSHEFQSWnVNfZnFufgK3CnJUFujwKgsv4gcp/Mc//ALvTu5v0qSD+hm6
-         iJzDIl/1uibYd9B/zWSYOYM359+0SSJ46Ulbj5gjGoJdGiLyy4RW0zxFA7wPGNBzP9km
-         2iGbd5WTp1TO0Qhjosc2Ab/5Vw/2cfb+sjOnkp+qBTbkPhk22/6OMdvvO4EOPscNVxjy
-         c201e4vjdkzapRU4yRf6IRCqSeyxADoLpPqVz/TUinBIzZZ3HP7kguAol00bXmFahJFk
-         BNRQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUTURfCS9tnlvTe40Iovt51sZYjgOw/D8vRFI9orOEUZaBlQ2vOtP+IY34efXLm6tPg0mvK8Spg9TfJ6nzO@vger.kernel.org, AJvYcCXERKDHIEIS3GJbCV5WmSnfkuHVTCvnEq77dTBYVDyIpBlx7tiyWYAO/LQFsS+gaSmrsVxs+28l9nbH@vger.kernel.org
-X-Gm-Message-State: AOJu0YyI/Gys+wAYRLlvcMN8TmbXCnZOkISDWKUIPn1R2CfvebMeg7E5
-	H8nBHKNrvmFbqJOCDw0ilRH4QoYOzJYU6qFKLlUJ2bl3l6vZOLLd
-X-Gm-Gg: ASbGncsjPG5FRLgiDBfIUmjH+DhyGijt109RL8SbDyH1YjbfQzwtG8Ik2g7DLdjNeF0
-	drad1NnJMal7C942EsOIN/cgDQ4+13Bpga5L9GAN3acP8H7zhrwLWzMMRGO/XORNiKpEP9uWfRI
-	EOs6lKiAGkX74OPVIPkE9SG+b8aoPik3etMaiy7Tl8YWQfIP/yXrKsx5Ow2Djqv/wXpMKxrusuD
-	S1Pg9faZiA7SntXXEttnQD+8NmWRpziR06GLF8naIi0RPlVWxhGevPva1Az0i0rLeWLj1HGyKA3
-	6X+cVunts2nNMYuqbGePyJeipp6n8cJI+iteZCOmQpEofptCVC/RBmXPfKuMAf/DSfj2fBB0TUr
-	DevBRbDDxoD82rCFymABkfJQbVFc1
-X-Google-Smtp-Source: AGHT+IEW6mwbZ0mIlUOCzUaC2OsZ+OTum5RA4mVckjatFCdtgV+nmDBy9x3IRRsoTUB+6DxdKM96QA==
-X-Received: by 2002:a17:906:5fc1:b0:ac3:3f11:b49c with SMTP id a640c23a62f3a-ac33f1203bcmr672618066b.7.1742149162583;
-        Sun, 16 Mar 2025 11:19:22 -0700 (PDT)
+        bh=3+2M+lUouAH0+Jr+nyjeHl+wxA0K/oLUPdCGmVRRMGE=;
+        b=wMx/EUPBpOsuOiSo0Y5Y8M3Ajyi80cZgt45S9hAD0Cp+v9WHFzNp9XXcXQZAf9dzSs
+         AHRwlQXpO7UlDimbu5voQVkE6cHzQZ1stSHy3bT4u5TY8woztlqhbVSg33MJ3J97qvmE
+         MEfGJKlyDZy1xMT7A0h4rE02MQzOMXnPbOqiRfF4ARQp0HSuGKGZi2sGQdYTvcPDV7ct
+         lTF75kJ/zk5cdhpXhAMbN/Lfb2YYpIYX1UnSPDLXOl05l93wPGmr+jTozyrRMEWbNShx
+         sEFUT7boFyqsfsB2Zua60GzuGTESPPPISTOT8rfbMIViibF484UKOOV9PLGrU15IBMJv
+         gqvQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUW44DqaLiBkHHi4EnfOLpA/1nakdpXpIYq0NAlBcECat4dp0hnbONrhVbd4iSgwApHM7RlrI5+0lOUhBhJ@vger.kernel.org, AJvYcCWlLJ57CtnkOmOXJSQCCCyC30TY9239XFI3OXcSVPX0x42PjqbsdZEHAdEd1s9uc4VzInS3zBkSbmn0@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx9VQzErOAWaqoqjjDOXXH3r5YvrcJ/pYfezsmSSISA11zTRp6i
+	xVHyyiQQ2cnfGbtrfj7UsD+5uEQrdnuF9Km+eAjQecou3h4WUrku1Bebqw==
+X-Gm-Gg: ASbGncu1JWHRpguu1zJwKoW9sPx4CGU3NacjqhDBeRbjX/1xyVh11vi36KRAfGB6BY5
+	mkoztB+ZLtVjQzwtTfUkVfhwFSL1crEN1EfTf+Onpw8udLta2SMylJDM1eMK8YmxqLhL/voj4O1
+	m5qNXQcMcL8BDpSiBfG+V6pOFMmDhuZAGDiIgNM6dRlraSO/UZxDqG+ODCD0XTGA7n7pVoTUxqb
+	aYJrXMAAhRmzPnOhg6be0IdbxN3zFu/sJYCMP50e6oMCAk2xzjiudXVtMYK5KegwLFfKaFHgYld
+	Pga8mBUFjZITxvUzqdjq+m1UbusCh8XX8hT3w+BeVkNaXCVeWyUHt0RC72X6CAIlMJhGH6+xZSd
+	JbzWFoOgNkABOJQyFUQ==
+X-Google-Smtp-Source: AGHT+IFsTvbuptCDYunQGEX3V0GFkwHGo4NapBLiRy6Vd2DahCTU9/K1cdfNQ0FqD/7wqDp8TOiXNw==
+X-Received: by 2002:a17:907:c5c3:b0:abf:6f95:22fc with SMTP id a640c23a62f3a-ac31250d4edmr1435495666b.28.1742149163867;
+        Sun, 16 Mar 2025 11:19:23 -0700 (PDT)
 Received: from hex.my.domain (83.11.178.210.ipv4.supernova.orange.pl. [83.11.178.210])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac314a48b51sm537951266b.149.2025.03.16.11.19.21
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac314a48b51sm537951266b.149.2025.03.16.11.19.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 16 Mar 2025 11:19:22 -0700 (PDT)
+        Sun, 16 Mar 2025 11:19:23 -0700 (PDT)
 From: Artur Weber <aweber.kernel@gmail.com>
-Date: Sun, 16 Mar 2025 19:18:52 +0100
-Subject: [PATCH v7 04/10] mfd: bcm590xx: Drop unused "id" member of
- bcm590xx MFD struct
+Date: Sun, 16 Mar 2025 19:18:53 +0100
+Subject: [PATCH v7 05/10] mfd: bcm590xx: Add support for multiple device
+ types + BCM59054 compatible
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,7 +84,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250316-bcm59054-v7-4-4281126be1b8@gmail.com>
+Message-Id: <20250316-bcm59054-v7-5-4281126be1b8@gmail.com>
 References: <20250316-bcm59054-v7-0-4281126be1b8@gmail.com>
 In-Reply-To: <20250316-bcm59054-v7-0-4281126be1b8@gmail.com>
 To: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
@@ -99,35 +99,103 @@ Cc: Stanislav Jakubek <stano.jakubek@gmail.com>, devicetree@vger.kernel.org,
  ~postmarketos/upstreaming@lists.sr.ht, 
  Artur Weber <aweber.kernel@gmail.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1742149152; l=805;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1742149152; l=3092;
  i=aweber.kernel@gmail.com; s=20231030; h=from:subject:message-id;
- bh=shsY8picWdauNM7HAi5QIbN1+/obURFOkQY2q4XNRbc=;
- b=rDbh+AGUMQmTqrTWquPXt0bGmiEn//jNa4ylElnxOs5ntrSzd4IpDqsafHt4svb6BYQbXBycJ
- S4LJMyByqXFC2UnuVmWhYPaos/F4ixaCnRYxz2qv11xVBAMggZd6toO
+ bh=Vau+qtkiLKbsSAyta7HK/1aydJ9QZlhuWFoLqVhFrJQ=;
+ b=Puz/3rKPW+vwQzNF9UX3IyuvqUyjRTbdWltpxzMJVrt/04G9WW1WaR+0YI8snfqoouVhlGiHZ
+ k8OUNSztcexBGxV73E4xGFmXY1qw2F3+nF0cL/yVTd+++L2hKHw87Ft
 X-Developer-Key: i=aweber.kernel@gmail.com; a=ed25519;
  pk=RhDBfWbJEHqDibXbhNEBAnc9FMkyznGxX/hwfhL8bv8=
 
-The "id" member of the bcm590xx struct is unused and will be confusing
-once we add an actual PMU ID storage value. Drop it; a replacement
-will be introduced in a future commit.
+The BCM59054 is another chip from the BCM590xx line of PMUs, commonly
+used on devices with the BCM21664/BCM23550 chipsets.
+
+Prepare the BCM590xx driver for supporting other devices by adding the
+PMUID register values for supported chip types and store them in the
+MFD data struct as "pmu_id". (These will be checked against the actual
+PMUID register values in a later commit.)
+
+Then, add a DT compatible for the BCM59054, and provide the PMU ID as
+OF match data.
 
 Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
 ---
 Changes in v6:
-- Add this commit
----
- include/linux/mfd/bcm590xx.h | 1 -
- 1 file changed, 1 deletion(-)
+- Move PMUID value to MFD header
+- Use PMUID value as OF data/device type value
+- Add bcm59054 to I2C ID table
 
+Changes in v4:
+- Rewrite commit message description
+- Rename "device_type" member to "dev_type"
+- Drop awkward line break to fit function call
+- Add PMU ID/revision parsing function
+
+Changes in v3:
+- Fix compilation warning about device_type pointer cast type
+- Name the device types enum and use it as the type in the MFD struct
+---
+ drivers/mfd/bcm590xx.c       | 12 +++++++++++-
+ include/linux/mfd/bcm590xx.h |  7 +++++++
+ 2 files changed, 18 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/mfd/bcm590xx.c b/drivers/mfd/bcm590xx.c
+index 8b56786d85d0182acf91da203b5f943556c08422..4620eed0066fbf1dd691a2e392e967747b4d125b 100644
+--- a/drivers/mfd/bcm590xx.c
++++ b/drivers/mfd/bcm590xx.c
+@@ -50,6 +50,8 @@ static int bcm590xx_i2c_probe(struct i2c_client *i2c_pri)
+ 	bcm590xx->dev = &i2c_pri->dev;
+ 	bcm590xx->i2c_pri = i2c_pri;
+ 
++	bcm590xx->pmu_id = (uintptr_t) of_device_get_match_data(bcm590xx->dev);
++
+ 	bcm590xx->regmap_pri = devm_regmap_init_i2c(i2c_pri,
+ 						 &bcm590xx_regmap_config_pri);
+ 	if (IS_ERR(bcm590xx->regmap_pri)) {
+@@ -91,12 +93,20 @@ static int bcm590xx_i2c_probe(struct i2c_client *i2c_pri)
+ }
+ 
+ static const struct of_device_id bcm590xx_of_match[] = {
+-	{ .compatible = "brcm,bcm59056" },
++	{
++		.compatible = "brcm,bcm59054",
++		.data = (void *)BCM590XX_PMUID_BCM59054,
++	},
++	{
++		.compatible = "brcm,bcm59056",
++		.data = (void *)BCM590XX_PMUID_BCM59056,
++	},
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(of, bcm590xx_of_match);
+ 
+ static const struct i2c_device_id bcm590xx_i2c_id[] = {
++	{ "bcm59054" },
+ 	{ "bcm59056" },
+ 	{ }
+ };
 diff --git a/include/linux/mfd/bcm590xx.h b/include/linux/mfd/bcm590xx.h
-index 6b8791da6119b22514447bf1572238b71c8b0e97..c614d1b1d8a217ac2f212908a4c19ae71fa56f63 100644
+index c614d1b1d8a217ac2f212908a4c19ae71fa56f63..8d146e3b102a7dbce6f4dbab9f8ae5a9c4e68c0e 100644
 --- a/include/linux/mfd/bcm590xx.h
 +++ b/include/linux/mfd/bcm590xx.h
-@@ -23,7 +23,6 @@ struct bcm590xx {
+@@ -13,6 +13,10 @@
+ #include <linux/i2c.h>
+ #include <linux/regmap.h>
+ 
++/* PMU ID register values; also used as device type */
++#define BCM590XX_PMUID_BCM59054		0x54
++#define BCM590XX_PMUID_BCM59056		0x56
++
+ /* max register address */
+ #define BCM590XX_MAX_REGISTER_PRI	0xe7
+ #define BCM590XX_MAX_REGISTER_SEC	0xf0
+@@ -23,6 +27,9 @@ struct bcm590xx {
  	struct i2c_client *i2c_sec;
  	struct regmap *regmap_pri;
  	struct regmap *regmap_sec;
--	unsigned int id;
++
++	/* PMU ID value; also used as device type */
++	u8 pmu_id;
  };
  
  #endif /*  __LINUX_MFD_BCM590XX_H */
