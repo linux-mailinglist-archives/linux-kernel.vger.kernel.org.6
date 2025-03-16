@@ -1,141 +1,125 @@
-Return-Path: <linux-kernel+bounces-562957-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562959-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2291A6351E
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 11:58:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D7B20A63524
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 12:01:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 128767A5CB4
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 10:57:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 32E6A7A5FEB
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 11:00:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ABDC19E998;
-	Sun, 16 Mar 2025 10:58:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BDFC1A314D;
+	Sun, 16 Mar 2025 11:01:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="upn6xrqK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="GZ6kdRMB";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="lnXXBAPo"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BD6B35968
-	for <linux-kernel@vger.kernel.org>; Sun, 16 Mar 2025 10:58:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AA9F10F2;
+	Sun, 16 Mar 2025 11:01:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742122721; cv=none; b=F1dMiaNFNNZNFNmPhvsEhMnmbctPJrScm8H72aR64+WjpZrcBdYk0qAV5uLNofc/hnfcsW4FFU8rhVx3iykIBAGuPm6GmSblAXSE7mfVpbra1GdFXgZnko1tiLMi1CiFkYTMvYfJStGULHpB/Uqw/oJGdSDsjNg7q6OreEk+Z/A=
+	t=1742122902; cv=none; b=j6fl94h8Cp7liKA6vDUDPqvn5f2BLNZyciRws01EjJGt8pkWkE1Wf7xL6U0HIHT6VLIrVbGPhPyZJKM5H0j9tP/ZSdOny/djg/r4rTGizLjAMCc6oiJpbzDGLujfdXwDESiCbi5LGHUfQ35fDFLbsJQERovyTfF5qEbiIRePDjk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742122721; c=relaxed/simple;
-	bh=/1fqhAq2zyyFAdfwpCeGQhrYIy72WkUu40u3s9Mni5s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S08RWP/lc7i/H3JIVs5Ojtkmhp9TKs+LbAkckOwwl8Dn2NSa15x4p/eQQxpXbe2HCm+56hWOpl3IpdZD1Qd/+b/c+rPRfIgf2rORFUgOoX3n9UufoYoVNjtqhbMtGkXi9XF6jvF5zaUf6WZSmNzWHAUxjSV+ulHW+XsVLwfyNWY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=upn6xrqK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28968C4CEDD;
-	Sun, 16 Mar 2025 10:58:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742122721;
-	bh=/1fqhAq2zyyFAdfwpCeGQhrYIy72WkUu40u3s9Mni5s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=upn6xrqKJiXGzZ0zNwCK71HUP1cYarUwJw1jmOZsYJRBUFMpyFpy+uVAbND1W47eq
-	 Ecyavdrp7FLwZTYsxCbUG8UJxNwZ2+mHUcY1Eu2NdB9kkx1utSGP/FC18WYNNtfqjs
-	 fqZYlgNc1WIK6gMFmWKQJNnNZ7IA2JvCbzCs4AtyEjxQeB+13a8Q8XXNtJsOkSoHng
-	 oqCeSPoaeEH9QMDa6VvCGMoVx2Ej+MQQDBKGG0eFUQU3UGpj0WPiq+SPSYpgTyYmCB
-	 SjnKkzsJhQs4+MO/UHUFmqqJE2fELoQfqxndCmBDYffgSgAabJzH06JUzbJJ0PGKRZ
-	 0rbT7XR10QREQ==
-Date: Sun, 16 Mar 2025 11:58:35 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: Herton Krzesinski <hkrzesin@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, x86@kernel.org,
-	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-	dave.hansen@linux.intel.com, hpa@zytor.com,
-	linux-kernel@vger.kernel.org, olichtne@redhat.com,
-	atomasov@redhat.com, aokuliar@redhat.com
-Subject: Re: [PATCH] x86: add back the alignment of the destination to 8
- bytes in copy_user_generic()
-Message-ID: <Z9au20vtMSXCbdXu@gmail.com>
-References: <20250314175309.2263997-1-herton@redhat.com>
- <20250314175309.2263997-2-herton@redhat.com>
- <CAHk-=wj2MhDH_zjnyrUhYUf3ZqokC-jKSeRp9G6GnhwFU9z+Hg@mail.gmail.com>
- <CAJmZWFFVL++yU1XJLkXSck=GRQXiim16xVSvdxjq1k=c=Aaiqg@mail.gmail.com>
+	s=arc-20240116; t=1742122902; c=relaxed/simple;
+	bh=kGukX02//m2XNgtylBTQDYGAxHM/n3AQZZFhjIQ4W4o=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=RkRy0Z9pf4sQyMtTnJR5xIHOnp0suS+GywiQmzxyYaAMUgEeNXWMp6uFzxeevD+0QQWWx3VrP4hcKQdf06XIdfiNRXGaVQTnZHuFEVzYKa3Lo+Rkcgc519l246vgr5GqAA9nnUhEBNJKIAd8R+gsofDOmO0EVMIFIjZUS8gLT0U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=GZ6kdRMB; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=lnXXBAPo; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Sun, 16 Mar 2025 11:01:31 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1742122898;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ygwwbycyvOHIZAggJKqAJMubjGfnOvB2VRD+aEf4jao=;
+	b=GZ6kdRMBALA0e1/3JcXccwrhBM4pv6cE18mxtG6KRN7FUNFLHyEJEadaFMnUn4rkdcduKF
+	vfBQvYnLkjdj4eeEsP2O6ViQfjXzFef/R4tXMRtaAzKzyGBP58qkmcrG1YZWYrKZSYSS2p
+	5AQLBIT5esf+fUWMIG/H/sI/P+gdvQim1jOiJuvuI/gnCV9WmuvEpiQV6YwciC4lEhqgqr
+	pfELe3KClwS+5X2sF7lEf043lSJ9HGViyghz2Y7MyWq0qWWsjupWakkdP4os0SzI/OQjc+
+	HIOpb4QySoaZTFifh09SUhoMvdr7JgQuHq+w1ExYExu7T2O7bcyBjbWQnIW4Iw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1742122898;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ygwwbycyvOHIZAggJKqAJMubjGfnOvB2VRD+aEf4jao=;
+	b=lnXXBAPoJWY9i/j3dN5hPc8zQpgf8UmUxtIrX0QTkSbsePVNLvf24SgEsQoVYaUaKRN8kr
+	mRtM74klKUoC2+Ag==
+From: "tip-bot2 for Brian Gerst" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/cpu] x86/syscall/32: Add comment to conditional
+Cc: Sohil Mehta <sohil.mehta@intel.com>, Brian Gerst <brgerst@gmail.com>,
+ Ingo Molnar <mingo@kernel.org>, Andy Lutomirski <luto@kernel.org>,
+ "H. Peter Anvin" <hpa@zytor.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ Josh Poimboeuf <jpoimboe@redhat.com>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250314151220.862768-8-brgerst@gmail.com>
+References: <20250314151220.862768-8-brgerst@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJmZWFFVL++yU1XJLkXSck=GRQXiim16xVSvdxjq1k=c=Aaiqg@mail.gmail.com>
+Message-ID: <174212289213.14745.11904990695632151378.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
+The following commit has been merged into the x86/cpu branch of tip:
 
-* Herton Krzesinski <hkrzesin@redhat.com> wrote:
+Commit-ID:     fe35c87ad8e7795e1ab020ce2023e952806353d0
+Gitweb:        https://git.kernel.org/tip/fe35c87ad8e7795e1ab020ce2023e952806353d0
+Author:        Brian Gerst <brgerst@gmail.com>
+AuthorDate:    Fri, 14 Mar 2025 11:12:20 -04:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Sun, 16 Mar 2025 11:49:42 +01:00
 
-> On Fri, Mar 14, 2025 at 4:06 PM Linus Torvalds
-> <torvalds@linux-foundation.org> wrote:
-> >
-> > On Fri, 14 Mar 2025 at 07:53, Herton R. Krzesinski <herton@redhat.com> wrote:
-> > >
-> > > --- a/arch/x86/include/asm/uaccess_64.h
-> > > +++ b/arch/x86/include/asm/uaccess_64.h
-> > > @@ -130,7 +130,7 @@ copy_user_generic(void *to, const void *from, unsigned long len)
-> > >                 "2:\n"
-> > >                 _ASM_EXTABLE_UA(1b, 2b)
-> > >                 :"+c" (len), "+D" (to), "+S" (from), ASM_CALL_CONSTRAINT
-> > > -               : : "memory", "rax");
-> > > +               : : "memory", "rax", "rdx", "r8");
-> >
-> > Please don't penalize the caller with the extra clobbers.
-> >
-> > Maybe it doesn't matter - these functions are marked always_inline,
-> > but they aren't inlined in very many places and maybe those places
-> > have registers to spare - but let's not penalize the FSRM case anyway.
-> >
-> > And we do call it "rep_movs_alternative", so let's keep it close to
-> > "rep movs" semantics (yes, we already clobber %rax, but let's not make
-> > it worse).
-> >
-> > As to the actual change to rep_movs - that should be done differently
-> > too. In particular, I doubt it makes any sense to try to align the
-> > destination for small writes or for the ERMS case when we use 'rep
-> > movsb', so I think this should all go into just the ".Llarge_movsq"
-> > case.
-> >
-> > .. and then the patch can be further optimized to just do the first -
-> > possibly unaligned - destination word unconditionally, and then
-> > updating the addresses and counts to make the rest be aligned.
-> >
-> > Something ENTIRELY UNTESTED like this, in other words. And I wrote it
-> > so that it doesn't need any new temporary registers, so no need for
-> > clobbers or for some save/restore code.
-> >
-> > NOTE! The patch below is very intentionally whitespace-damaged.
-> > Anybody who applies this needs to look at it very carefully, because I
-> > just threw this together with zero testing and only very limited
-> > thought.
-> >
-> > But if it works, and if it actually improves performance, I think it
-> > might be a fairly minimal approach to "align destination".
-> 
-> It does look good in my testing here, I built same kernel I
-> was using for testing the original patch (based on
-> 6.14-rc6), this is one of the results I got in one of the runs
-> testing on the same machine:
-> 
->              CPU      RATE          SYS          TIME     sender-receiver
-> Server bind   19: 20.8Gbits/sec 14.832313000 20.863476111 75.4%-89.2%
-> Server bind   21: 18.0Gbits/sec 18.705221000 23.996913032 80.8%-89.7%
-> Server bind   23: 20.1Gbits/sec 15.331761000 21.536657212 75.0%-89.7%
-> Server bind none: 24.1Gbits/sec 14.164226000 18.043132731 82.3%-87.1%
-> 
-> There are still some variations between runs, which is
-> expected as was the same when I tested my patch or in
-> the not aligned case, but it's consistently better/higher than
-> the no align case. Looks really it's sufficient to align for the
-> higher than or equal 64 bytes copy case.
+x86/syscall/32: Add comment to conditional
 
-Mind sending a v2 patch with a changelog and these benchmark numbers 
-added in, and perhaps a Co-developed-by tag with Linus or so?
+Add a CONFIG_X86_FRED comment, since this conditional is nested.
 
-Thanks,
+Suggested-by: Sohil Mehta <sohil.mehta@intel.com>
+Signed-off-by: Brian Gerst <brgerst@gmail.com>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Reviewed-by: Sohil Mehta <sohil.mehta@intel.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Link: https://lore.kernel.org/r/20250314151220.862768-8-brgerst@gmail.com
+---
+ arch/x86/entry/syscall_32.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-	Ingo
+diff --git a/arch/x86/entry/syscall_32.c b/arch/x86/entry/syscall_32.c
+index 993d725..2b15ea1 100644
+--- a/arch/x86/entry/syscall_32.c
++++ b/arch/x86/entry/syscall_32.c
+@@ -238,7 +238,8 @@ DEFINE_FREDENTRY_RAW(int80_emulation)
+ 	instrumentation_end();
+ 	syscall_exit_to_user_mode(regs);
+ }
+-#endif
++#endif /* CONFIG_X86_FRED */
++
+ #else /* CONFIG_IA32_EMULATION */
+ 
+ /* Handles int $0x80 on a 32bit kernel */
 
