@@ -1,221 +1,182 @@
-Return-Path: <linux-kernel+bounces-562914-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562915-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F2EAA63499
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 09:02:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6F69A6349E
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 09:15:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D16F3171323
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 08:02:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A86DC3B3745
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 08:14:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6102A18DB1B;
-	Sun, 16 Mar 2025 08:02:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D15A199EB0;
+	Sun, 16 Mar 2025 08:14:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=furiosa-ai.20230601.gappssmtp.com header.i=@furiosa-ai.20230601.gappssmtp.com header.b="H1ImCpV9"
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="DA1eRqry"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2044.outbound.protection.outlook.com [40.107.220.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77DD542A96
-	for <linux-kernel@vger.kernel.org>; Sun, 16 Mar 2025 08:02:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742112141; cv=none; b=akI+M+6tfi/jB5L6eOsmHT9s8jRogGWSFyaEjKxpsBgw0waIhBk9tJNdAnDL3SeTZRm1gsPJiohnXAWCvOqEFNhh5f6nZYK1ZSq9BDxZ9VOKbLOkGGMjRQvohmrL66BhXJlPnhcbxolgPQukFNWl5tjzGbPsqPXh2sAyAgrK+7w=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742112141; c=relaxed/simple;
-	bh=cttLIRELZi6ZZVASfH1p6HGqi2UXsbx/rQAHvxhTxbk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NkhP7hNsyQ/rsK9QIi7oRp+cyWpYc+jY70qa5fj8uVowdUZVLKRON/3i8IWRcRdOeqgdcZ1lvGlbAG18tya/Pu5BRhIioPjepbC7d9OKCNrtmzPnGJsuf2uO/dZDMDxANoO2y1z1nrQDv90+6UWqLgBMHNJI5cJ0TAtrq4XSX5E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=furiosa.ai; spf=none smtp.mailfrom=furiosa.ai; dkim=pass (2048-bit key) header.d=furiosa-ai.20230601.gappssmtp.com header.i=@furiosa-ai.20230601.gappssmtp.com header.b=H1ImCpV9; arc=none smtp.client-ip=209.85.216.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=furiosa.ai
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=furiosa.ai
-Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-300fefb8e06so1631411a91.0
-        for <linux-kernel@vger.kernel.org>; Sun, 16 Mar 2025 01:02:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=furiosa-ai.20230601.gappssmtp.com; s=20230601; t=1742112139; x=1742716939; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=JZnZbUvNHHCM8ClClCv3gAetthjgMYIUsE6wr9GK1bk=;
-        b=H1ImCpV9fArnX6fnn8lkZLDE1s1RCclxhdUb+fJCN7QRE4mW2h1fRGKjpp06YusvhP
-         TyzJppH8R1EQPnGVgeZc2bkFcnIwDGcwTulEImDSASeOpQOj+Cwp5qXco7dY0evGFaji
-         gPvuf5rPCNZv2j/mFfo0vfvWdQ3R6qie2JYS733OpNhXlmluqvW2U9BG6qZlSu/3mIlz
-         oMuX2uGHo6ggrUGG6IBrPRJCd/Us/SMW1df8fxVBmj8IbT4VBSuDmix8BOFzn786OZ1T
-         E71amuBpiHOQxEBJCoPj0YK3b9I8C1X2D+zXvqIpAZXGY2Y+PXh6X9dKM8FgSmVn3mi5
-         IXcA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742112139; x=1742716939;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JZnZbUvNHHCM8ClClCv3gAetthjgMYIUsE6wr9GK1bk=;
-        b=RdTdAnDI0wwKj1J1t7SifHaNa79xhmL1CyuFeQhkjTfYmF0VWMYFSAfPKmo4/n7VFp
-         GJznkhLy/UJu0cVubuemj6LC6L4QJI5HWgvOdCSFevpMU2cWGztykvsvJ9Hv+00e70nT
-         Kb1rt8XeFNlGl7tle4HrXFi08WYJPnZl6cSA7Cm7Wwt9VZZPaPNxBXOOgmhwZb2HY4CG
-         T06txgWQJw96VTsqoNAXstAjCaznENyQ5kfist8M+77kjLYGAPg1EDczHeKpGIrbA261
-         JZLPaK+MhUGGAS6JaXXKxkfblVBOYf6i9KZqTvC/hixMkzS52vIldSOBC5yk+eD8PW7d
-         ersg==
-X-Forwarded-Encrypted: i=1; AJvYcCU7d8nbAd3U0YrL1R/lsEIFalDNdst/v8Vhbv3zhvzOeGGcNg4aaCoNxKmeHZXMvK/ApheZQbEe3vQ28yw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzb9d+kcvMr3fU8er/dm2LPIHottyknZ867lbhUrntQx5opGDnp
-	OoKJ5SU/8+5R+65Jqrsqk4DRAgsxz1yeSqXboAzmZ0f/p82I0YfKG2uDa1bV2w8=
-X-Gm-Gg: ASbGncsMdGx9fzkHp4q/KGP5OlJuUIsetXBZZSFX1M/0/m53VgaHerYiXgAolbuKMq0
-	/TLrv/4Ys2Ol08oUWDYXlcTsvgm0FfTkKMa52uhlqOS+1Igx9i50YJD8nUTXYuBLTzF+m9VE/J4
-	jblwRkLLiQFbtS9vIdZUAWlG+CEnZRpKZ8lTnvPmuLGZ/ccTamm6p19GYRU+z9plRMas4sGoJOD
-	HDNHv8hm3sqrXEdJwbDbvWHSfdB4tZb9UpC3rdEGr7VrMMEBzYcxrzD0K9bFVdCYXZQTHh2hDfu
-	Pb//Ik70rEKBeReV0c6w/XIMyleERYbLcBdaYnbel6UyVXCvVjzYhiis2yYxBisrIz8r8Q2M68U
-	AAW0//Q==
-X-Google-Smtp-Source: AGHT+IED4vymxS4RzWAOC2HBeSb/hVxVF9X0bf6Nh69xJ/x50+RouXKM14v3Fa38OCKl9/YHcz/lKg==
-X-Received: by 2002:a17:90b:514e:b0:2fa:157e:c78e with SMTP id 98e67ed59e1d1-30151cab344mr11117742a91.7.1742112138695;
-        Sun, 16 Mar 2025 01:02:18 -0700 (PDT)
-Received: from sidongui-MacBookPro.local ([61.83.209.48])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-225c688d93esm54326445ad.45.2025.03.16.01.02.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 16 Mar 2025 01:02:17 -0700 (PDT)
-Date: Sun, 16 Mar 2025 17:02:08 +0900
-From: Sidong Yang <sidong.yang@furiosa.ai>
-To: Pavel Begunkov <asml.silence@gmail.com>
-Cc: Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
-	Jens Axboe <axboe@kernel.dk>, linux-btrfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
-Subject: Re: [RFC PATCH v3 1/3] io-uring/cmd: add iou_vec field for
- io_uring_cmd
-Message-ID: <Z9aFgKTUmcx-YCMf@sidongui-MacBookPro.local>
-References: <20250315172319.16770-1-sidong.yang@furiosa.ai>
- <20250315172319.16770-2-sidong.yang@furiosa.ai>
- <da0445a9-1fb4-4b75-b939-b38ce976205f@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 954DB42A96;
+	Sun, 16 Mar 2025 08:14:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.44
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742112895; cv=fail; b=uCF0GL/kMP+9YdSfU6ajXcmUaKWnOjtUdsb+ejp0Hff6Uuccrzh+MlrH+abf/Gqx6g6Gx4nXK/f89qEOZ4bvhawsLEiEbh+eSeAhur35+Dj007Pt1ciwLydfQqGs99hEa25kiJPfBqQ8HaiQjCVoEL6Wcvjse6YZbG32bltthgI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742112895; c=relaxed/simple;
+	bh=c29w1oxLksAQwz4UZAjRlCob/bM6i1pZbdnEsm+S7QU=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=D/H/p7xrwz30MLqqq8bgHIs4YmPblkxcNP0A/KdFa79CyZreUoy85fGhx2XBXJJoJ7CdWuk1Oh+olqkgQvGQnveYC4/jwwJaBTNKvGSq5+k7NNDddIqaWKaEDBHPOh8PKlJdRYJaFPPXss7D2ZITRIe3cYLLbdFM15q/GrhgqG4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=DA1eRqry; arc=fail smtp.client-ip=40.107.220.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=MYRfD56W4yXYMvyoxmmcw8rd2/29OAxUw38GKdc1m2pyIi2dVHalQ6J3Bjd8ub3vKLh6A/ZFVw5KYrjM1vprCTkpZWO5+iMq/JbaKb2yUMEh+aXi/gNuTeygxE6rEk9IWvgFe5AawzUKa5oHwiYDXon/C2faOoI7uqC610u3Yoe+17IKJx6DcUzZTsNGOk9lv9+/bqHk7sRD//P1HCBbUNvfQm3x/5QB9yh1k9z7q5pD4I81UGpI5LnPpKPLIHiWmfM4NyMpq6urQthVUuvasOZFWqaswpRsJUC9Z60NejvkMPBLOuBNwVgrRQQDXp4PAu4LVOxbIP3HMIOGW3x+Jw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=VhgnlpbE2cICD8iTHp8AFJWXcGRWxqRilPIPtabQjIA=;
+ b=C5fWyRVc+F3CoqD/dD36sWIQiCTdBDRJk1zQ27bvN9k/SMM47WK7BgvGWGDWJfNFE3quw1+rdsVG68F+W/Rgife1aLG+yhTXCSLU7Bl2G0sPciBUoq/B1QImwAXmMA1Cf5OUsWjHdE5PpQcPp1FlLgNAfWpjYwQxfK1GvDUS1mdFFsrUOOj8yRsJ/U40v2HXi1K1sbdzBPtjVcjU+ah1sWw3yEPKkUHOo8LgYPe2wInY0o9n27kKcC6HfE8BZ0fcuHoTMRUzAVdhTv4vQY9X8diUp6bpEj+0iU82Pl3hDg3M24ibgoizsf3ElUbYhiRXt/wwYZ0zliaRsiqHVM6Y/w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.232) smtp.rcpttodomain=davemloft.net smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=VhgnlpbE2cICD8iTHp8AFJWXcGRWxqRilPIPtabQjIA=;
+ b=DA1eRqryycXGY1dO4wglz2fA6VxScc9ztjpfEhFuyoIAI6ZHVs1gTNOVQueHj/UWYbhjz+Q3NX7uLAsXqAGJwrRK8HhtSFN8HxZlC2Uxma/DOKXM8MexQJ9l8Rp3rOjOPzelwPnTVURgE1S2999Qe14kuaE1WdNEteXj/WBCMDLxVbqtG9kqLbaFb7r7LAYwa/KYOYy3MjbTchk++SaNnoKiuhyHXZFpc+cQ9slSw9ehySCQbrrMJQzuNR7si1mIOr3a7/LMX+F63c4PPdDkCSZZ6vknefpG8Rfhe0agDkw/UaHl8foX9t17Gb+RTojF9y/zqkOfVtv6/M7y71awqA==
+Received: from DM6PR02CA0054.namprd02.prod.outlook.com (2603:10b6:5:177::31)
+ by SA0PR12MB4381.namprd12.prod.outlook.com (2603:10b6:806:70::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.33; Sun, 16 Mar
+ 2025 08:14:50 +0000
+Received: from CY4PEPF0000EE30.namprd05.prod.outlook.com
+ (2603:10b6:5:177:cafe::7a) by DM6PR02CA0054.outlook.office365.com
+ (2603:10b6:5:177::31) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8534.27 via Frontend Transport; Sun,
+ 16 Mar 2025 08:14:49 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.232) by
+ CY4PEPF0000EE30.mail.protection.outlook.com (10.167.242.36) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8534.20 via Frontend Transport; Sun, 16 Mar 2025 08:14:48 +0000
+Received: from drhqmail202.nvidia.com (10.126.190.181) by mail.nvidia.com
+ (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Sun, 16 Mar
+ 2025 01:14:47 -0700
+Received: from drhqmail203.nvidia.com (10.126.190.182) by
+ drhqmail202.nvidia.com (10.126.190.181) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14; Sun, 16 Mar 2025 01:14:46 -0700
+Received: from vdi.nvidia.com (10.127.8.10) by mail.nvidia.com
+ (10.126.190.182) with Microsoft SMTP Server id 15.2.1544.14 via Frontend
+ Transport; Sun, 16 Mar 2025 01:14:42 -0700
+From: Tariq Toukan <tariqt@nvidia.com>
+To: "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>, Eric Dumazet <edumazet@google.com>, "Andrew
+ Lunn" <andrew+netdev@lunn.ch>
+CC: Gal Pressman <gal@nvidia.com>, Leon Romanovsky <leonro@nvidia.com>, "Yael
+ Chemla" <ychemla@nvidia.com>, Saeed Mahameed <saeedm@nvidia.com>, "Leon
+ Romanovsky" <leon@kernel.org>, Tariq Toukan <tariqt@nvidia.com>, "Jonathan
+ Corbet" <corbet@lwn.net>, <netdev@vger.kernel.org>,
+	<linux-rdma@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Kalesh Anakkur Purayil
+	<kalesh-anakkur.purayil@broadcom.com>, Jacob Keller
+	<jacob.e.keller@intel.com>, Stanislav Fomichev <stfomichev@gmail.com>
+Subject: [PATCH net-next V2 0/4] mlx5e: Support recovery counter in reset
+Date: Sun, 16 Mar 2025 10:14:32 +0200
+Message-ID: <1742112876-2890-1-git-send-email-tariqt@nvidia.com>
+X-Mailer: git-send-email 2.8.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <da0445a9-1fb4-4b75-b939-b38ce976205f@gmail.com>
+Content-Type: text/plain
+X-NV-OnPremToCloud: AnonymousSubmission
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY4PEPF0000EE30:EE_|SA0PR12MB4381:EE_
+X-MS-Office365-Filtering-Correlation-Id: 149c7aaa-843d-4ed3-b459-08dd64629e90
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|1800799024|376014|82310400026|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?rJKOAgYVZNp+I2VH5/61xD08moBxDayzVfrk8Rp6kR1aSM1QkZU4MxWmDM9o?=
+ =?us-ascii?Q?nYokNwgUsd5utQj7hkI1QGm5S52q+rP4Ie3Kn6/9GS88rUOmRpVtz90PVKNG?=
+ =?us-ascii?Q?DApQpLWP7o0ZWa5g0y2VBloDCaI5+j+8MzR9hUfK+dwc3wEuKmRHbloiDPKe?=
+ =?us-ascii?Q?m+rwc4fBr28/BF1vGNKnMD/Jt9hnKsoez8ti07WlCLmIpcV97GDl/G4qh8Sq?=
+ =?us-ascii?Q?q7rJRFhmtLLHBPM28o+aDDXVHEK25aqIuoQW2SjnqpKOOSQrJF4bTM+25Xh/?=
+ =?us-ascii?Q?xtoSkTWbVX5Wvy2TUN2QK3u8f6CM2AqxB83c/0auU1t5UntMADYDvmouDdbP?=
+ =?us-ascii?Q?Har3JqpBAwM9n6G1q62Jfyh1PMjnYAWqvEOQMjg8MlskIRpkklz7+fqPHzWA?=
+ =?us-ascii?Q?QCqEGrAFl0POFS+s/xKqZFMIbCN3zAbfGgjrNeRZTGfCWn4It6KZnvGvTtzi?=
+ =?us-ascii?Q?tA4JSlIeu2ZSXrBQb+KYbZ65RXz79B5yciiaYKBW6SBgR34rjKGESN77yPDm?=
+ =?us-ascii?Q?rIXQWVHepVbYBa6EfNr2ytJqvJQ8Zhr5mhRB73+QzEL/Um/+jeewV4ltHIzh?=
+ =?us-ascii?Q?Lty8QJkZUBZrGQJJanhgAnO09Dt0MfivT5FyKjxghWgoGCAoDdrDtFOMlrx3?=
+ =?us-ascii?Q?EW0d76nnzvD6Yc/GYDq8xqwWvY6Zx4NYcLCodr1wHUCEbMo+UIRwO2+Gpiy4?=
+ =?us-ascii?Q?zT40/AVrqs8DdZfRq12SV7Gainu8FOG+bgzx/t1gbTEmmo4sGUi4L59l36DG?=
+ =?us-ascii?Q?sbrREcX+Xvv1xz+wsggXnXfWAn56ed5GeHiAOhCopmPUrxyzEuRhmAIQEeem?=
+ =?us-ascii?Q?EHyvu9pRfUA/IdMSgxGRkDCQy5Xc4t7RVjFqhaKt3Z6bQi4XmN1uM6LONY2N?=
+ =?us-ascii?Q?RmFMh47007EG96ytKBk8qzsbjId77avQz4aLtvCmJjeTG3NVOQuknY9IZKgT?=
+ =?us-ascii?Q?LKzC9bSGTk93OWPG/PfHKgJHe4LjI7EyoTMMMijMjWfWyPOFDmYDkp6Uz8en?=
+ =?us-ascii?Q?Kh+qAt7YzF77rl4P4hekhsZx0kpx8XK2nuSoR8K8ugazXEERSt6eLlQB8FTl?=
+ =?us-ascii?Q?q6ZKBTBmLbsE1Q7+RM9ZWwdLtar4N4wxD4JQYZpk58bH98Qg/cRsTiRns77H?=
+ =?us-ascii?Q?4gNMTAGgEYOtCOglDuwO4s8gC6qYxYN/wrnfFiItoYspwJsStYMnclUQWFcN?=
+ =?us-ascii?Q?MxNaOrOiTJkosYZDrRRNLqlnT/5KgMIUE29R+xv/9IDE+aNGars0vnKp4iHN?=
+ =?us-ascii?Q?DyaD40yPClms5w43lPZQBY660oU4YaUiiRINtljFxXncRN1jZWJ5d136xrIH?=
+ =?us-ascii?Q?2625W+e146tPKni9gCcyog+GH4/zSUFIAUwJ89kJjtJwArZ92EKhejeKRIZa?=
+ =?us-ascii?Q?vyG/ElNfNAMLPBPcNifvCKbYvEmGEn4VJ0vOW3/FYLwuw4VvltHqS1e4BAgK?=
+ =?us-ascii?Q?2aPh5OwcPbmutLT5IUT6VA9gctvYd0FAQaoDSb5ddEMTEOL8QWE2UB+egNIU?=
+ =?us-ascii?Q?J1hGDTN5abcwR+U=3D?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230040)(7416014)(1800799024)(376014)(82310400026)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Mar 2025 08:14:48.5240
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 149c7aaa-843d-4ed3-b459-08dd64629e90
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CY4PEPF0000EE30.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR12MB4381
 
-On Sun, Mar 16, 2025 at 07:24:32AM +0000, Pavel Begunkov wrote:
-> On 3/15/25 17:23, Sidong Yang wrote:
-> > This patch adds iou_vec field for io_uring_cmd. Also it needs to be
-> > cleanup for cache. It could be used in uring cmd api that imports
-> > multiple fixed buffers.
-> 
-> Sidong, I think you accidentially erased my authorship over the
-> patch. The only difference I see is that you rebased it and dropped
-> prep patches by placing iou_vec into struct io_uring_cmd_data. And
-> the prep patch was mandatory, once something is exported there is
-> a good chance it gets [ab]used, and iou_vec is not ready for it.
+Hi,
 
-Yes, First I thought it's not mandatory for this function. But it seems that
-it's needed. I see that your patch hides all fields in io_uring_cmd_data but
-op_data needed to be accessable for btrfs cmd. And I'll take a look for the
-code referencing sqes in io_uring_cmd_data. Let me add the commit for next
-version v4.
+This series by Yael adds a recovery counter in ethtool, for any recovery
+type during port reset cycle.
+Series starts with some cleanup and refactoring patches.
+New counter is added and exposed to ethtool stats in patch #4.
 
-Thanks,
-Sidong
+Regards,
+Tariq
 
-> 
-> 
-> > Signed-off-by: Sidong Yang <sidong.yang@furiosa.ai>
-> > ---
-> >   include/linux/io_uring/cmd.h |  1 +
-> >   io_uring/io_uring.c          |  2 +-
-> >   io_uring/opdef.c             |  1 +
-> >   io_uring/uring_cmd.c         | 20 ++++++++++++++++++++
-> >   io_uring/uring_cmd.h         |  3 +++
-> >   5 files changed, 26 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/include/linux/io_uring/cmd.h b/include/linux/io_uring/cmd.h
-> > index 598cacda4aa3..74b9f0aec229 100644
-> > --- a/include/linux/io_uring/cmd.h
-> > +++ b/include/linux/io_uring/cmd.h
-> > @@ -22,6 +22,7 @@ struct io_uring_cmd {
-> >   struct io_uring_cmd_data {
-> >   	void			*op_data;
-> >   	struct io_uring_sqe	sqes[2];
-> > +	struct iou_vec		iou_vec;
-> >   };
-> >   static inline const void *io_uring_sqe_cmd(const struct io_uring_sqe *sqe)
-> > diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-> > index 5ff30a7092ed..55334fa53abf 100644
-> > --- a/io_uring/io_uring.c
-> > +++ b/io_uring/io_uring.c
-> > @@ -289,7 +289,7 @@ static void io_free_alloc_caches(struct io_ring_ctx *ctx)
-> >   	io_alloc_cache_free(&ctx->apoll_cache, kfree);
-> >   	io_alloc_cache_free(&ctx->netmsg_cache, io_netmsg_cache_free);
-> >   	io_alloc_cache_free(&ctx->rw_cache, io_rw_cache_free);
-> > -	io_alloc_cache_free(&ctx->uring_cache, kfree);
-> > +	io_alloc_cache_free(&ctx->uring_cache, io_cmd_cache_free);
-> >   	io_alloc_cache_free(&ctx->msg_cache, kfree);
-> >   	io_futex_cache_free(ctx);
-> >   	io_rsrc_cache_free(ctx);
-> > diff --git a/io_uring/opdef.c b/io_uring/opdef.c
-> > index 7fd173197b1e..e275180c2077 100644
-> > --- a/io_uring/opdef.c
-> > +++ b/io_uring/opdef.c
-> > @@ -755,6 +755,7 @@ const struct io_cold_def io_cold_defs[] = {
-> >   	},
-> >   	[IORING_OP_URING_CMD] = {
-> >   		.name			= "URING_CMD",
-> > +		.cleanup		= io_uring_cmd_cleanup,
-> >   	},
-> >   	[IORING_OP_SEND_ZC] = {
-> >   		.name			= "SEND_ZC",
-> > diff --git a/io_uring/uring_cmd.c b/io_uring/uring_cmd.c
-> > index de39b602aa82..315c603cfdd4 100644
-> > --- a/io_uring/uring_cmd.c
-> > +++ b/io_uring/uring_cmd.c
-> > @@ -28,6 +28,13 @@ static void io_req_uring_cleanup(struct io_kiocb *req, unsigned int issue_flags)
-> >   	if (issue_flags & IO_URING_F_UNLOCKED)
-> >   		return;
-> > +
-> > +	req->flags &= ~REQ_F_NEED_CLEANUP;
-> > +
-> > +	io_alloc_cache_vec_kasan(&cache->iou_vec);
-> > +	if (cache->iou_vec.nr > IO_VEC_CACHE_SOFT_CAP)
-> > +		io_vec_free(&cache->iou_vec);
-> > +
-> >   	if (io_alloc_cache_put(&req->ctx->uring_cache, cache)) {
-> >   		ioucmd->sqe = NULL;
-> >   		req->async_data = NULL;
-> > @@ -35,6 +42,11 @@ static void io_req_uring_cleanup(struct io_kiocb *req, unsigned int issue_flags)
-> >   	}
-> >   }
-> > +void io_uring_cmd_cleanup(struct io_kiocb *req)
-> > +{
-> > +	io_req_uring_cleanup(req, 0);
-> > +}
-> > +
-> >   bool io_uring_try_cancel_uring_cmd(struct io_ring_ctx *ctx,
-> >   				   struct io_uring_task *tctx, bool cancel_all)
-> >   {
-> > @@ -339,3 +351,11 @@ int io_uring_cmd_sock(struct io_uring_cmd *cmd, unsigned int issue_flags)
-> >   }
-> >   EXPORT_SYMBOL_GPL(io_uring_cmd_sock);
-> >   #endif
-> > +
-> > +void io_cmd_cache_free(const void *entry)
-> > +{
-> > +	struct io_uring_cmd_data *cache = (struct io_uring_cmd_data *)entry;
-> > +
-> > +	io_vec_free(&cache->iou_vec);
-> > +	kfree(cache);
-> > +}
-> > diff --git a/io_uring/uring_cmd.h b/io_uring/uring_cmd.h
-> > index f6837ee0955b..d2b9c1522e22 100644
-> > --- a/io_uring/uring_cmd.h
-> > +++ b/io_uring/uring_cmd.h
-> > @@ -1,7 +1,10 @@
-> >   // SPDX-License-Identifier: GPL-2.0
-> > +#include <linux/io_uring_types.h>
-> >   int io_uring_cmd(struct io_kiocb *req, unsigned int issue_flags);
-> >   int io_uring_cmd_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe);
-> > +void io_uring_cmd_cleanup(struct io_kiocb *req);
-> >   bool io_uring_try_cancel_uring_cmd(struct io_ring_ctx *ctx,
-> >   				   struct io_uring_task *tctx, bool cancel_all);
-> > +void io_cmd_cache_free(const void *entry);
-> 
-> -- 
-> Pavel Begunkov
-> 
+V2:
+- Fix bad indentation failing the html build. (Stanislav Fomichev).
+- Add review tags.
+
+Yael Chemla (4):
+  net/mlx5e: Ensure each counter group uses its PCAM bit
+  net/mlx5e: Access PHY layer counter group as other counter groups
+  net/mlx5e: Get counter group size by FW capability
+  net/mlx5e: Expose port reset cycle recovery counter via ethtool
+
+ .../ethernet/mellanox/mlx5/counters.rst       |   5 +
+ .../ethernet/mellanox/mlx5/core/en_stats.c    | 119 ++++++++++++------
+ .../ethernet/mellanox/mlx5/core/en_stats.h    |   4 +
+ 3 files changed, 91 insertions(+), 37 deletions(-)
+
+
+base-commit: 89d75c4c67aca1573aff905e72131a10847c5fda
+-- 
+2.31.1
+
 
