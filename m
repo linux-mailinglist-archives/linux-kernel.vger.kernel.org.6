@@ -1,216 +1,154 @@
-Return-Path: <linux-kernel+bounces-562946-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562947-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 936C4A63503
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 11:31:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 986D7A63505
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 11:32:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D1A1E16EEC7
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 10:31:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9F413A6D03
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 10:32:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4310BA933;
-	Sun, 16 Mar 2025 10:31:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C19819E998;
+	Sun, 16 Mar 2025 10:32:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="UnljLX8s"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2063.outbound.protection.outlook.com [40.107.223.63])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VCkn3x9W"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4E3E44C63
-	for <linux-kernel@vger.kernel.org>; Sun, 16 Mar 2025 10:31:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.63
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742121090; cv=fail; b=EQuo6ZzHUREP9HLXHlT2ijbLJeUwIhgYRgPt4tHRw0g8th62A8oMDePu9ukcp9FnCOiQKaaz0RDEKOpZDY4rTjDgn9yXVDSjZHPMJMYkE0qDEgFKFT9QSeuYoiPgHRiZ3Z0l+wD4zVhZUXQnjMHfoVnXVrQU1k/m+7Wt96ZjN88=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742121090; c=relaxed/simple;
-	bh=c8tFBihpZPYwDlU0uDSiHUTpRcnPAu3dlitSQ4pLCLs=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lcTZrW2XZEo5JQjabTfGZcBJcw9sW0kAGrivx4R7BP12zbkepacYbHOLiP9T6xjAdNDdqBKd6Gq+FIdlrzFluwF2buQY2ZqXY2GakKjg6s7EgE7gjOcWQ3YqvZASGgjBYJhdksH/JaKuUkU+/tKZ6+/74QC7u2xVlUhkJzxhWEM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=UnljLX8s; arc=fail smtp.client-ip=40.107.223.63
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=A+IwkiaCNg0F31VG1mqdScjAxaMu8VKHsnzmTTMqn1BC4bUMIJr4kGURAEWXWFOUtx0tOC69gyhtu6M7VB9+A2w+mXLLNMiSnFPo/6ux7ZFv4hkR5khi/2KYXJ2JTKewGx+PQIQk9CbQci3gmuOP1eS5vnmIeIo8cnTXlcDF4csJ9JrmiAyF3ORSFYCr1jUAsMaoFZTCMH++EwX1CruFjW43kQXXvGov9eSTtACzNBcNayRtKRHKvSFneUqbTHSBdG4WtXZcqGR7766aosduHuUbRysFL19Mn9oVKrIU/6oT0IHbjsonDH7vY8xNulSwLw5x5xO/HS4re13EMMkhSQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=BILs3xOKiqaYjA6DD429UlwOfdiL47kGZLs5V0XjnZ4=;
- b=R0NvunVxhx+FckDzLlJ9bJiPLUz2nKAdk4E3wVCjEEzgh2haVIzjsPI6kEPd3wWi+Mg1HnflTWIwQKC7PYAcjNxUkzA/kVKWMfjFq7zU8cCtQneMQCgpq5Eg3r3XqvDSAh58eDVXVYzm7JBIrRj+AC9lZJb6IxScKU/BER4REVME7DnIhAQ1z+GBGctjzf9vFpZx7Q85nbzk7OHr7/17UtlQcTzW8jCUXvZ92gZcshCp7+tvNm5stxO3q3k1I14fL4uAMXIpSve0WRI2VyXvhkaXzHlmGw7inv+LTyjVxMIbfhChnY7lRKnTN0ZpGLERUDKNl2TGuO6hdBLI4jmZUQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=redhat.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=BILs3xOKiqaYjA6DD429UlwOfdiL47kGZLs5V0XjnZ4=;
- b=UnljLX8sHhHdX/Xvcal7YW4GfKmPi82RfwLEPM66F7AyW8YEdlU2ITBovz/+NYPpbM5omnda+QZbcn28bnc716HOoemexrUFXZon7i4SE9QOssGqjgViBYmsiztS0ZwQtwYYXdFxUNK8iQMJmwNUjJByF6JSCTFN3lGjSK93CtM=
-Received: from BLAPR03CA0100.namprd03.prod.outlook.com (2603:10b6:208:32a::15)
- by DS7PR12MB5767.namprd12.prod.outlook.com (2603:10b6:8:76::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.31; Sun, 16 Mar
- 2025 10:31:25 +0000
-Received: from BL02EPF00021F69.namprd02.prod.outlook.com
- (2603:10b6:208:32a:cafe::e) by BLAPR03CA0100.outlook.office365.com
- (2603:10b6:208:32a::15) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8534.29 via Frontend Transport; Sun,
- 16 Mar 2025 10:31:24 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- BL02EPF00021F69.mail.protection.outlook.com (10.167.249.5) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8534.20 via Frontend Transport; Sun, 16 Mar 2025 10:31:24 +0000
-Received: from BLRKPRNAYAK.amd.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Sun, 16 Mar
- 2025 05:31:18 -0500
-From: K Prateek Nayak <kprateek.nayak@amd.com>
-To: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot
-	<vincent.guittot@linaro.org>, Chen Yu <yu.c.chen@intel.com>,
-	<linux-kernel@vger.kernel.org>
-CC: Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt
-	<rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel Gorman
-	<mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>, David Vernet
-	<void@manifault.com>, "Gautham R. Shenoy" <gautham.shenoy@amd.com>, "Swapnil
- Sapkal" <swapnil.sapkal@amd.com>, Shrikanth Hegde <sshegde@linux.ibm.com>, "K
- Prateek Nayak" <kprateek.nayak@amd.com>
-Subject: [RFC PATCH 15/08] [DEBUG] tools/lib/perf: Extend schedstats v17 headers to include the new debug fields
-Date: Sun, 16 Mar 2025 10:29:16 +0000
-Message-ID: <20250316102916.10614-7-kprateek.nayak@amd.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250313093746.6760-1-kprateek.nayak@amd.com>
-References: <20250313093746.6760-1-kprateek.nayak@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B76CEA933
+	for <linux-kernel@vger.kernel.org>; Sun, 16 Mar 2025 10:32:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742121141; cv=none; b=sAIcq+NlImDOpKzbKe7UVZxcsXzA14otyAu9meSwpmrno8ttQgn7FlzuG78sizuPnWGUJ20ccJuzdsuTP6q4pw729J5TNyxpFjI+I72ttPvDyam/9h+DxNTZz33HquZ3gXCoQnLctCe0e+JGtkjPdys/9Cj/+BKexzhC18Meqf8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742121141; c=relaxed/simple;
+	bh=rrZy0viAniqPbhoR+1hQ7ijtZ9CkDKXykVMVhgwnyzA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=oUP9Nh63tIT2Ye/F/cyrSoo1y4zKiPGtOPVDX4wO2ZbgWJQ8BJQrwCjJtrY30QIv2w9+FIqF89SarSH4L1A101w0SUjF/uqAhJArahkqljDrLVSL3ERebU0J0UXpOci1NvVVgbPdntYZLrOf+mOJz4qNW+IITZMXQ196/nPx2qc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VCkn3x9W; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3913b539aabso2212938f8f.2
+        for <linux-kernel@vger.kernel.org>; Sun, 16 Mar 2025 03:32:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1742121137; x=1742725937; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=HbB3Zun3gDrzT2BzlBXVO8tDPzz0kaoZWWFSKmDuYmw=;
+        b=VCkn3x9WOV9Nld35bfal9VJQgKLUdvQISx+UjrioEuyOkI8V/6V4FR/Ug1wP+6yS8P
+         rMfs1uitVSY3WHIJ1hBQXQNtUSYGsupVR++JnDPMT4XyLy6Bajc/u5h6lBHJwFtufqLv
+         c6ugKn6yP9SPfOOsZvVCZD5KHV/Oz8MCNAeiGe9icl5U0nX/lgkGPo70amlQLmxH7AZ8
+         RQtqGdaJ5THD23ONWnAT7K4AW+YwogVGOPPC70zQLDXOBx+880CmEqSCPYAJDWcKx7Ea
+         wQlHSQllWPqkWvV3h2b9e+Luz0L49UkiK1HhUaC0UcrfD5dYVP875J+ZR0yG/lXChgoY
+         pCGw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742121137; x=1742725937;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=HbB3Zun3gDrzT2BzlBXVO8tDPzz0kaoZWWFSKmDuYmw=;
+        b=dKakff4g8Oc493brAeMJlAKWYK1Ch0e+MfsuqkrVgG6K3K9y0duQEfCfq1Bj1bKZkK
+         aHSkIcJiiNBN0c+xy5r/iA+7OsT5l04ufeDpzHmTNduw57xKh+J+Wu9TT4xT8jKez8SY
+         cj68tauDiomjQqTFGkIKjg/hnJ6UC/p+/byTBfZr4F+l10mMjhuic8k5jl43KyrVvRDA
+         GIIH+wtp+iJrjs6pLAFZP/1h70Gr6PwSlmcURYl9p/U2Tn3z+QZEVt7BSJTCyAF14g/1
+         xCawqtlrzoQ40v6iHFsUqpiV6E3MaqRbbz9hVWZoq7VU4TEaJb2YGCF/yF0d2W8FTrv/
+         pSpw==
+X-Forwarded-Encrypted: i=1; AJvYcCWZeNCkm8lS0GXDtAzzmUfhnn3V6TlArbXifNwhbxEhEraFY0I6ooS9IYgN9vh6HY7OK49sHoDq1YNEScE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzxfKlQ0Q9u1rw5zgENAvqqWPCLKMdCLlKaDu2ayaYCrai2Claw
+	7ef/b73ce9B4SWjHceFxQNmsxpsieMEPd6BhNuxDT1QHERtLWU1DfoXb48dd7bA=
+X-Gm-Gg: ASbGnctBBD8VZhvXeRnCpCZ8ihHksK0aVV6ccVHwNCVxH4QJdSg0rNAya8KsjrmRzrt
+	h0E9JrlvCtcKNC1g8eWxv8aXlHey/pwyyOl7kzIAO2p480dgPWk9ER9rGIZYQD1z/0NX1cac7G/
+	ATReEWdXx3lXZV9oo1S2soJj9S5rHj9B9+5keOXfOypsm2YO/tELZnQwq+RRywEusAB9Gy76U0R
+	j2sNFlPcKg4U8rtKLsJa9OFZXY75zof0ivLmkcunjaMET/4Ivp6MZybiXwLBVUXxQyP3BacAYpw
+	J+FyoX+dhohVFZ71Zo4nwqJFRpjS/6zwiPlOH1iB2QLhRhnJlA==
+X-Google-Smtp-Source: AGHT+IGPUH+kPc//pK+nbCVSTVrqoPbY9VyOj+oM6MVV21R+0n68FEr8K6JofP1y8x4JU00kKq6+Og==
+X-Received: by 2002:adf:c790:0:b0:391:41fb:89ff with SMTP id ffacd0b85a97d-3971f60b104mr9360022f8f.27.1742121137018;
+        Sun, 16 Mar 2025 03:32:17 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-395c888152dsm11459147f8f.48.2025.03.16.03.32.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 16 Mar 2025 03:32:16 -0700 (PDT)
+Date: Sun, 16 Mar 2025 13:32:12 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: oe-kbuild@lists.linux.dev, Marcelo Schmitt <marcelo.schmitt@analog.com>,
+	linux-iio@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev, jic23@kernel.org,
+	lars@metafoo.de, Michael.Hennerich@analog.com, corbet@lwn.net,
+	marcelo.schmitt1@gmail.com
+Subject: Re: [PATCH v1 1/4] iio: adc: ad4000: Add support for SPI offload
+Message-ID: <0658073a-059b-417a-aafc-c83651e922cf@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL02EPF00021F69:EE_|DS7PR12MB5767:EE_
-X-MS-Office365-Filtering-Correlation-Id: e0600b0c-1018-48d6-296e-08dd6475b3a5
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|376014|36860700013|1800799024|82310400026|13003099007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?MROUl7FsYt1wLPxKGt/Zj4BYjU9e2fSbl4njsO82RHPsai+49xtE82FAcdYa?=
- =?us-ascii?Q?zsyeDV0rycaNz+4O6yGKWpJ1FC0GNnkXWhVqvFGIuY7erboQ7gd/0MpQ9hpq?=
- =?us-ascii?Q?cS2AgYRja0IIdc9t1Rz8oma0m7MTb1BeCqfes6aUJst3Nh1WD1oz4bqvEv5i?=
- =?us-ascii?Q?z5+j+JFhOPOr2IVXInCg38rVkCxdA0jIUmCVbRzKxk+lesbagUQtM/ApG0Tn?=
- =?us-ascii?Q?nGNqHqZTP0idl0u/eoBmhV+0LvF5tZ2Bnpsj80YKjUu5JvY+Q3SN2sFZUb82?=
- =?us-ascii?Q?QrVboBbX06Y5KfZ83j7bfgDW3opSNJEKzh/oxxX+1IHqyxxV7iJbBRQyuRAY?=
- =?us-ascii?Q?J0iaK8tag2D1jAnjO1hClrb++9GEEz2JNNQQmP/Ab3w3G8GTYLus+J2ah5yU?=
- =?us-ascii?Q?w7RtL0sPymjA9PwNcP4WxAoj3Xny5vxYlIab6iN3I1IkRisCB6rRnfkzjNiP?=
- =?us-ascii?Q?cR9rulIEft9FL65bidd6YjYxV4Prxu7zNbwIZe2ZvCKzFTvJMsQ3kDyplJot?=
- =?us-ascii?Q?uFUElGmt5G7Jc1hT1EWfuNyjc5Z3/GLDrEEzdcI/Ts+mR4MJ2NwO0fbvyVBB?=
- =?us-ascii?Q?7k7sj2/HXCKuagT5uRfNLh8kqRFB3ljv6XsCBg5tHwhIFucZ+UR2O7QG1B3v?=
- =?us-ascii?Q?HLt8r7jUICX+4DG2YGyijqTPdP0Wogni115COgrjQfQQtIQF6qiMRvU+cv40?=
- =?us-ascii?Q?g67CjMbdu0gCEv6cLbLNn0Cz1WVOtb5nzdjKiuSCfEhRBd5+CimDyL6ApXVk?=
- =?us-ascii?Q?ApeqpsbJ06qAGM3Z1glQ3fre2cgUa2C3SFMzaDXX8trt/EUXs9LFsPU8f6y6?=
- =?us-ascii?Q?nnjLeoqgGdBYlHNHUgqZRw+yQ38OnJuS2rpsMGnGCdilTNfwxaUxIlHzzsEc?=
- =?us-ascii?Q?pI5WP07Mn9pKSFti5prRs6EolS54wJkwT8tZAVPYdVb6+ZJxSt6GhU5gNNV8?=
- =?us-ascii?Q?l8O2T7I7Xyhwu3L3u/uMF5utnTH1N4krM0saudxal8rZtgKGfcEtrgxQD0UI?=
- =?us-ascii?Q?0O4o5yl+XnQ0IRcbxvExxcTesjqUJsVl8HdUbZ4/PpI7Gy4a2Exh64KnG4DP?=
- =?us-ascii?Q?9Szc5GaqyQFT0BAlvaUymf1TDvfkZVQFE+1r7bNeYPy+xDodQ1xJRKbU0lfR?=
- =?us-ascii?Q?cML7v3hEHfSUtACfGvsjBFvT8gAMWXAf/6F7sTI1hbzut5OTIfjY8Gpmkz4d?=
- =?us-ascii?Q?crMP6G4uw9uSS943wm0fKlx4qttji67tioiqHnTh3xx9i/CkUkhL0O9Xl3Ez?=
- =?us-ascii?Q?YRkohnw01+0ifx9Xs5or4TbGM1xzMhql9zUC2VnB1mR/hXJWclLvrak6mqMf?=
- =?us-ascii?Q?X6V2lKEI0eeulUvHdMT4TOkyPvpxg+nrQ1V5bmCSNcFahFNiCna1B9r656zL?=
- =?us-ascii?Q?dbrgMmqnggYRYXmKVvdZY4zodMuYZqgirkUPAmhUrmgOpDfhRQTh4Afw1XjO?=
- =?us-ascii?Q?J5Ii6Io0FA2dkQgBSEQ/DmB1yMEPDsJtI6mfAugeWIKfRWUD33MmgcOjchRJ?=
- =?us-ascii?Q?/6lKimcWPa0TqSk=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(7416014)(376014)(36860700013)(1800799024)(82310400026)(13003099007);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Mar 2025 10:31:24.4062
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: e0600b0c-1018-48d6-296e-08dd6475b3a5
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BL02EPF00021F69.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB5767
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <301fc83a961c4a2ef2ac980d0baa83d9d89a88c5.1741970538.git.marcelo.schmitt@analog.com>
 
-The previous commit hacked up schedstats v17 to add more fields.
-Extend the header file for perf sched stats for analysis. These changes
-depend on perf sched stats tools being developed in [1].
+Hi Marcelo,
 
-Link: https://lore.kernel.org/lkml/20250311120230.61774-1-swapnil.sapkal@amd.com/ [1]
-Signed-off-by: K Prateek Nayak <kprateek.nayak@amd.com>
----
- tools/lib/perf/include/perf/schedstat-v17.h | 30 +++++++++++++++++++++
- 1 file changed, 30 insertions(+)
+kernel test robot noticed the following build warnings:
 
-diff --git a/tools/lib/perf/include/perf/schedstat-v17.h b/tools/lib/perf/include/perf/schedstat-v17.h
-index 00009bd5f006..888dfa982a55 100644
---- a/tools/lib/perf/include/perf/schedstat-v17.h
-+++ b/tools/lib/perf/include/perf/schedstat-v17.h
-@@ -47,6 +47,16 @@ DOMAIN_FIELD(__u32, busy_lb_nobusyq,
- 	     "load_balance() failed to find busier queue on cpu busy", "%11u", true, v17);
- DOMAIN_FIELD(__u32, busy_lb_nobusyg,
- 	     "load_balance() failed to find busier group on cpu busy", "%11u", true, v17);
-+DOMAIN_FIELD(__u32, busy_lb_min_time,
-+	     "load_balance() min time to balance on busy", "%11u", true, v17);
-+DOMAIN_FIELD(__u32, busy_lb_max_time,
-+	     "load_balance() max time to balance on busy", "%11u", true, v17);
-+DOMAIN_FIELD(unsigned long, busy_lb_total_time,
-+	     "load_balance() total time to balance on busy", "%11lu", true, v17);
-+DOMAIN_FIELD(__u32, busy_lb_stats_reused,
-+	     "load_balance() stats reused on busy", "%11u", true, v17);
-+DOMAIN_FIELD(__u32, busy_lb_stats_recompute,
-+	     "load_balance() stats recomputed on busy", "%11u", true, v17);
- #ifdef DERIVED_CNT_FIELD
- DERIVED_CNT_FIELD("load_balance() success count on cpu busy", "%11u",
- 		  busy_lb_count, busy_lb_balanced, busy_lb_failed, v17);
-@@ -80,6 +90,16 @@ DOMAIN_FIELD(__u32, idle_lb_nobusyq,
- 	     "load_balance() failed to find busier queue on cpu idle", "%11u", true, v17);
- DOMAIN_FIELD(__u32, idle_lb_nobusyg,
- 	     "load_balance() failed to find busier group on cpu idle", "%11u", true, v17);
-+DOMAIN_FIELD(__u32, idle_lb_min_time,
-+	     "load_balance() min time to balance on idle", "%11u", true, v17);
-+DOMAIN_FIELD(__u32, idle_lb_max_time,
-+	     "load_balance() max time to balance on idle", "%11u", true, v17);
-+DOMAIN_FIELD(unsigned long, idle_lb_total_time,
-+	     "load_balance() total time to balance on idle", "%11lu", true, v17);
-+DOMAIN_FIELD(__u32, idle_lb_stats_reused,
-+	     "load_balance() stats reused on idle", "%11u", true, v17);
-+DOMAIN_FIELD(__u32, idle_lb_stats_recompute,
-+	     "load_balance() stats recomputed on idle", "%11u", true, v17);
- #ifdef DERIVED_CNT_FIELD
- DERIVED_CNT_FIELD("load_balance() success count on cpu idle", "%11u",
- 		  idle_lb_count, idle_lb_balanced, idle_lb_failed, v17);
-@@ -113,6 +133,16 @@ DOMAIN_FIELD(__u32, newidle_lb_nobusyq,
- 	     "load_balance() failed to find busier queue on cpu newly idle", "%11u", true, v17);
- DOMAIN_FIELD(__u32, newidle_lb_nobusyg,
- 	     "load_balance() failed to find busier group on cpu newly idle", "%11u", true, v17);
-+DOMAIN_FIELD(__u32, newidle_lb_min_time,
-+	     "load_balance() min time to balance on newly idle", "%11u", true, v17);
-+DOMAIN_FIELD(__u32, newidle_lb_max_time,
-+	     "load_balance() max time to balance on newly idle", "%11u", true, v17);
-+DOMAIN_FIELD(unsigned long, newidle_lb_total_time,
-+	     "load_balance() total time to balance on newly idle", "%11lu", true, v17);
-+DOMAIN_FIELD(__u32, newidle_lb_stats_reused,
-+	     "load_balance() stats reused on newly idle", "%11u", true, v17);
-+DOMAIN_FIELD(__u32, newidle_lb_stats_recompute,
-+	     "load_balance() stats recomputed on newly idle", "%11u", true, v17);
- #ifdef DERIVED_CNT_FIELD
- DERIVED_CNT_FIELD("load_balance() success count on cpu newly idle", "%11u",
- 		  newidle_lb_count, newidle_lb_balanced, newidle_lb_failed, v17);
+url:    https://github.com/intel-lab-lkp/linux/commits/Marcelo-Schmitt/iio-adc-ad4000-Add-support-for-SPI-offload/20250315-012316
+base:   af94f401e26f686f7391ce79b38a6129417c22dc
+patch link:    https://lore.kernel.org/r/301fc83a961c4a2ef2ac980d0baa83d9d89a88c5.1741970538.git.marcelo.schmitt%40analog.com
+patch subject: [PATCH v1 1/4] iio: adc: ad4000: Add support for SPI offload
+config: parisc-randconfig-r072-20250316 (https://download.01.org/0day-ci/archive/20250316/202503161513.yeRBTxjg-lkp@intel.com/config)
+compiler: hppa-linux-gcc (GCC) 14.2.0
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+| Closes: https://lore.kernel.org/r/202503161513.yeRBTxjg-lkp@intel.com/
+
+New smatch warnings:
+drivers/iio/adc/ad4000.c:862 ad4000_spi_offload_setup() warn: passing zero to 'PTR_ERR'
+
+vim +/PTR_ERR +862 drivers/iio/adc/ad4000.c
+
+e74205e82803041 Marcelo Schmitt 2025-03-14  846  static int ad4000_spi_offload_setup(struct iio_dev *indio_dev,
+e74205e82803041 Marcelo Schmitt 2025-03-14  847  				    struct ad4000_state *st)
+e74205e82803041 Marcelo Schmitt 2025-03-14  848  {
+e74205e82803041 Marcelo Schmitt 2025-03-14  849  	struct spi_device *spi = st->spi;
+e74205e82803041 Marcelo Schmitt 2025-03-14  850  	struct device *dev = &spi->dev;
+e74205e82803041 Marcelo Schmitt 2025-03-14  851  	struct dma_chan *rx_dma;
+e74205e82803041 Marcelo Schmitt 2025-03-14  852  	int ret;
+e74205e82803041 Marcelo Schmitt 2025-03-14  853  
+e74205e82803041 Marcelo Schmitt 2025-03-14  854  	st->offload_trigger = devm_spi_offload_trigger_get(dev, st->offload,
+e74205e82803041 Marcelo Schmitt 2025-03-14  855  							   SPI_OFFLOAD_TRIGGER_PERIODIC);
+e74205e82803041 Marcelo Schmitt 2025-03-14  856  	if (IS_ERR(st->offload_trigger))
+e74205e82803041 Marcelo Schmitt 2025-03-14  857  		return dev_err_probe(dev, PTR_ERR(st->offload_trigger),
+e74205e82803041 Marcelo Schmitt 2025-03-14  858  				     "Failed to get offload trigger\n");
+e74205e82803041 Marcelo Schmitt 2025-03-14  859  
+e74205e82803041 Marcelo Schmitt 2025-03-14  860  	ret = ad4000_set_sampling_freq(st, st->max_rate_hz);
+e74205e82803041 Marcelo Schmitt 2025-03-14  861  	if (ret)
+e74205e82803041 Marcelo Schmitt 2025-03-14 @862  		return dev_err_probe(dev, PTR_ERR(st->offload_trigger),
+
+s/PTR_ERR(st->offload_trigger)/ret/
+
+e74205e82803041 Marcelo Schmitt 2025-03-14  863  				     "Failed to set sampling frequency\n");
+e74205e82803041 Marcelo Schmitt 2025-03-14  864  
+e74205e82803041 Marcelo Schmitt 2025-03-14  865  	rx_dma = devm_spi_offload_rx_stream_request_dma_chan(dev, st->offload);
+e74205e82803041 Marcelo Schmitt 2025-03-14  866  	if (IS_ERR(rx_dma))
+e74205e82803041 Marcelo Schmitt 2025-03-14  867  		return dev_err_probe(dev, PTR_ERR(rx_dma),
+e74205e82803041 Marcelo Schmitt 2025-03-14  868  				     "Failed to get offload RX DMA\n");
+e74205e82803041 Marcelo Schmitt 2025-03-14  869  
+e74205e82803041 Marcelo Schmitt 2025-03-14  870  	ret = devm_iio_dmaengine_buffer_setup_with_handle(dev, indio_dev, rx_dma,
+e74205e82803041 Marcelo Schmitt 2025-03-14  871  							  IIO_BUFFER_DIRECTION_IN);
+e74205e82803041 Marcelo Schmitt 2025-03-14  872  	if (ret)
+e74205e82803041 Marcelo Schmitt 2025-03-14  873  		return dev_err_probe(dev, ret, "Failed to setup DMA buffer\n");
+e74205e82803041 Marcelo Schmitt 2025-03-14  874  
+e74205e82803041 Marcelo Schmitt 2025-03-14  875  	return 0;
+e74205e82803041 Marcelo Schmitt 2025-03-14  876  }
+
 -- 
-2.43.0
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
 
