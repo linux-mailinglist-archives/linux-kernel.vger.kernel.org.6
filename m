@@ -1,269 +1,205 @@
-Return-Path: <linux-kernel+bounces-562867-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562868-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9BCEA633D4
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 05:29:14 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2779A633D5
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 05:30:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 33E437A746D
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 04:28:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2A056170EEF
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 04:30:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E55213D52E;
-	Sun, 16 Mar 2025 04:29:05 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 265E7149DF0;
+	Sun, 16 Mar 2025 04:29:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="a9911XJG"
+Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2050.outbound.protection.outlook.com [40.107.101.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9D327D3F4
-	for <linux-kernel@vger.kernel.org>; Sun, 16 Mar 2025 04:29:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742099344; cv=none; b=gVaFbobBGl9szFkHUaHoiWFZQ7Qe02+AxTe1cyRcj2PHnoiKUXlu3Zq+hkQ0255QyVaD/0DuzD1/xLgCzppZsM9TvwtRMDkXV9XiieD3EQ+d+OUcRMbTbuZrfvr0nORdAVkf+aPqkx8+DZhh4HXNmDC68VCRQL5bSfGxj1v7nk8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742099344; c=relaxed/simple;
-	bh=6AHYlDLDJQxII2Tmx1RTereVLW8JwScJJuW73iSm5Fc=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=YIXYRmU9S3zuctsEy+M6tfQuFgcG019KEwOkh6UCvz3V+nZtEyR32fc0NL0SIB7fYgsyszolaOAGxQLTvKLCwXWivEMYOQl53UZC85Nyl+dnxsmg8wtocMgVmsNicErzDLmU1974n+PiHPTyUM1zS6+O+LiKkolDbV+lDFjWQJc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-85b48bd978cso357345739f.0
-        for <linux-kernel@vger.kernel.org>; Sat, 15 Mar 2025 21:29:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742099342; x=1742704142;
-        h=content-transfer-encoding:to:from:subject:message-id:in-reply-to
-         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qGI1N++pslFJTNcNs4aGl4d3i98UqUP5KrcjO738reY=;
-        b=wTqB6E+ESduuAVgZkptkXpy7rQfFyTzoJ2N6yPBf5NT+49Jo7svtFF4RqdV5djyjpD
-         2Xx3TYpgh+/v9jCSGKFg7uDp7QnCJ/oqvBQN5a3HQcuh8UNxCseirCzg48FiNbIuCrER
-         oqEsNVk636VXSVC9YSSrm91SzVSSobJmfPZzppJ2TsB41MjyAJLOplrb5tdYHwRDZfsw
-         6OFmTGLpIKb6r+UgYjNgxnKtwwldwtLQNb0RygcISQE2UyiQA4x0GfXuTMqduizD4Jbj
-         BN8infPSyFn+7b3HFZfhkpzWprCzjDf3vs7bOlo/AC4YsCksAweoSUTE3G1FCgFR7K27
-         i7Aw==
-X-Forwarded-Encrypted: i=1; AJvYcCWXVo6e05czhQofGJlKESX2ukwiU4gx6r6u5QNwAOfMZM8tdIoF7WquAi3wWo+jEO3l47KxU5XqeDy8Pic=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwoZJe5U/XXFIVPVdSGzKfKC8gcZ/KPetXOb0ZMxbBFLF+Ia6dV
-	K3aqY1+tbJeFK4N8VWkZ7kCRA07pzEn8UPNkyTI9BfR/8MDFniBvro1abH/dUSFeoxPW68bJlPm
-	u++T9WXSDvESzATgeO/+aZrvmNOAgkoPWSawBX4aMYrCqI02xFV5G71s=
-X-Google-Smtp-Source: AGHT+IHWn5T9bFagDAaoYlhnMcn8T9C7pCMkDYUNCz+cm8Ii6d4vI7n8Li2Odq5IVt8JU4Hk+xrbTeKaZ6b8wGwZm/ETO2mMVNrr
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BE15322A;
+	Sun, 16 Mar 2025 04:29:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.101.50
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742099396; cv=fail; b=eS4gY/aYwN7i4fclrA9Bu1hPep1IBW7SISl3TMdDiCetjyTQlqw1kl0wZ7zuy13uIgj4gzXCqQbvqK+SxsFLx4oahOkPknPajDGJjgcKQdNdFdoSKfw5DRNDnsuFOQUB+fDq0n7cXbgRZg+4+8qHe9NAg4gH3NqKR6PCS+398+U=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742099396; c=relaxed/simple;
+	bh=svcEMsntwOAbXvoI5Pz/Uk8WOxxSkW/LXEDlIAnFhgc=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=bDsJX15GXojoMEQDpQ1DiZRTtETOKJm4hAERDGfFWxDmkH17Q8lo2R4rP7HdJ8OFyTslrcILkNl5Mk9gFXws+GjmNzofsjmFQ2azGiam0PZ9CMGle6cy9o9U7YNyEbZCCM+QWJeirRM/WDhmPqxX1NjkoUsY87lO0JFeaqki4Gk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=a9911XJG; arc=fail smtp.client-ip=40.107.101.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=uqcR/O/eLCzZbsgCwLNqXDoBC4dXEJ6b6LNvVDqx/e7WR6WWzAyqQCEzZtTksfKZWF4Yw/Uz/FKKNZwwQ09ixzQNgsmfnmPyApNYzxJSX83ga4/zfawMDe//d32mjcNvy3sLHhU7+MctYCA3xl7ZrxrtooDEuhqDThVHPfOtgprA//35FnT0D/YO4NZ47ajbcXwtCzRZuLJSMYQ2ktcTfGeffxRHGG2bANG9RlxTyc59U/phSYCNjqO230lUsohfw3Dfpvnjg5XFFKi3XqjyzhhbPT0M2bpjbOG93BNnETR5v6ew7j4JrQvd9gS+8IlRCnBrE0MTcYMy+XyWKhhVDg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=JbI4aSkTotSjLOdayxCjWDb4vuQczyU5E5iKOWgXnzE=;
+ b=IzzmzjhIZsitI0vLClzC8fTO1C73Rcns89ZLYeGK9J8Z2Dsi5bjzl02f3zlZt0Blw/ZkUKzC12QUGvSN9wYGRRr44yFxP+RqIXlFMgdaGtVO7gqRjtPlYKUZR7F8z7Wu7QAp90EAOMFCQqOwxVPZEOK8j90LDZnmGdSvsfT1E5TWES84YBLM0WP3BtyKGbq42GY89NqTFm9NLUx7VJETqmeIBUEdayFOQFHnl+gDNCAGPLq6HeOktgp1HqXeYPapSMb6kZvG9SqIymDJD307q6UQbX6LsRuKRCZrnQeMfB0Ejo96CTsqJHr+j6EuUOjqkwIuWomQz1tH+ktlCYxNbA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=JbI4aSkTotSjLOdayxCjWDb4vuQczyU5E5iKOWgXnzE=;
+ b=a9911XJGETsVwHA+sHkcDf2tJeTHBM93A8qubDCgjUKGp8pdk16VpABAmZloHFnL0l4P486orKEezo42mtkVy7kk3rYP+C4XVqqgBC2gXHftj0/TcBjwKEVQVvzeTy99VcQmIU/CgmbP+QjjXe7tC1oP3aJPq1IqlgQ7iCxcrXG1je9x2AUkYCDKTT4nuuq/w+6C2yj6VTFvuz9aXUIC1Vhi4jAhHSh7RVowmsP0uSGY4sAOnwi3yPvapfkR3QaT/oWp5S636AitnkNHqOF6nAEkdzmgmjf/f5JHbIvQu3HxR9QaYsFWjftiWkyLVMTCiaDG21mvm960FrQZ2yLK5Q==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DS0PR12MB7726.namprd12.prod.outlook.com (2603:10b6:8:130::6) by
+ LV3PR12MB9260.namprd12.prod.outlook.com (2603:10b6:408:1b4::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.33; Sun, 16 Mar
+ 2025 04:29:50 +0000
+Received: from DS0PR12MB7726.namprd12.prod.outlook.com
+ ([fe80::953f:2f80:90c5:67fe]) by DS0PR12MB7726.namprd12.prod.outlook.com
+ ([fe80::953f:2f80:90c5:67fe%7]) with mapi id 15.20.8511.031; Sun, 16 Mar 2025
+ 04:29:49 +0000
+From: Alistair Popple <apopple@nvidia.com>
+To: linux-mm@kvack.org
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Alistair Popple <apopple@nvidia.com>
+Subject: [PATCH RFC 0/6] Allow file-backed or shared device private pages
+Date: Sun, 16 Mar 2025 15:29:23 +1100
+Message-ID: <cover.24b48fced909fe1414e83b58aa468d4393dd06de.1742099301.git-series.apopple@nvidia.com>
+X-Mailer: git-send-email 2.45.2
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SY6PR01CA0008.ausprd01.prod.outlook.com
+ (2603:10c6:10:e8::13) To DS0PR12MB7726.namprd12.prod.outlook.com
+ (2603:10b6:8:130::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:d:b0:3d0:4e2b:9bbb with SMTP id
- e9e14a558f8ab-3d483a825c3mr104053115ab.21.1742099341932; Sat, 15 Mar 2025
- 21:29:01 -0700 (PDT)
-Date: Sat, 15 Mar 2025 21:29:01 -0700
-In-Reply-To: <tencent_4C6B86C5F36DA367696783A6A449977BF705@qq.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67d6538d.050a0220.14e108.005e.GAE@google.com>
-Subject: Re: [syzbot] [xfs?] [mm?] WARNING: bad unlock balance in __mm_populate
-From: syzbot <syzbot+8f9f411152c9539f4e59@syzkaller.appspotmail.com>
-To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR12MB7726:EE_|LV3PR12MB9260:EE_
+X-MS-Office365-Filtering-Correlation-Id: 09641212-ebec-49a2-3284-08dd64433084
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?lNS2rGCy6MHZypWRPwZXOCVY5FP2PEq+pCsFrgGag/vh5l/q/u5QOoTgpUy4?=
+ =?us-ascii?Q?YQpV2AlKT0iv1puhQXw5ZaUfOqXAMJ0q034epHX8BlwUsdTa3qZgn8C2C20e?=
+ =?us-ascii?Q?NC2KbkmhJLhCu6ccIFQdjfV6SweHczA7x/pSakt5CbsA5MGwsgYBbO/JoFmD?=
+ =?us-ascii?Q?05s8BlkmQji+TqQ99rgPlOr2YDRrAkLOsuf4Jd3UridKldrL0lqKbZPVebPT?=
+ =?us-ascii?Q?tipp5MFEZ7IePvNJ9oowOy8yNF22z+hF2QJ7uZHXzDA8GMbzghmFw+Cyk0A6?=
+ =?us-ascii?Q?SxXdmZjFlKo02yYw3LgteMZAIZYVx3zYdvZ6ThUuJQiU2Z9adbXYvJNEF4IW?=
+ =?us-ascii?Q?s1LpMdYsEsXCgEBqBREX7c2bP7AKA3A5JcLvakyxzmVx8Prfjm9lIq+QT4EF?=
+ =?us-ascii?Q?vWMkoI/cX4WyoeXUUQ/b/0s+T7IURFnH/lFfSSyLe+6iLb+u7XXYXYjYwpPm?=
+ =?us-ascii?Q?0vPe7LDSnoADNouulajCtltlG0l7zgdPTQbp+i7qWQOeVL+9z8PLooFqk8IE?=
+ =?us-ascii?Q?dAdVZtiAv5efdrV8Giimu8uMPTyYWg1Eu3wgqTNw54Z+Ib2k0pZ17kpxv9Pj?=
+ =?us-ascii?Q?hf80aKz1ivoICoJP7HCT+0kGa/T9ndcqbbsMPw1sx7/uIkuWNRISp6WQb10F?=
+ =?us-ascii?Q?YYDjyLZ2xw9XOkUomvegVv/BXgwbOKleBmTvXCBwy+pDxcUG4ZsOjUop2Ste?=
+ =?us-ascii?Q?+HbNqA8Gj2iTxLpVSis0e+4DsCpSZyWwKUfKHz4DlKm/Ri4qnQ4Wz1areckd?=
+ =?us-ascii?Q?YZlV4Dhu5mTkyXtwwRSSyCn7I9lu+PUBO2VOP4JeJFuku78pTTgikANf+wsO?=
+ =?us-ascii?Q?tDOeP8DbMSgWeuT/0mTxi9o53LsXK3dhN4jqiOJ/1aPy872BUk5n/zrWv/5v?=
+ =?us-ascii?Q?lL85ywFig0ilhCUqufDCSYsOLfkB8IEwtQO6QGbh5ZfRzdKy5dCPnzVItwjt?=
+ =?us-ascii?Q?/iPDBsO4kMJr0GB1Imn10NSwebteM8GMijRivulQF8SZhxFWpVE1fc93KhaR?=
+ =?us-ascii?Q?Mt/LD52t2X2XQwcHk/qMRd4hYq7xwNDncUPYHWXpAx+27+x+5D5Qp1kwiAZi?=
+ =?us-ascii?Q?HsD4KSKMC7ZRECuT9qLiBJsmA2vPyF+hfnE8RVroK27fuCdQJ5yKHXrMlE20?=
+ =?us-ascii?Q?QIzBF0GUfBa8BZUJsU4RJNa07VlA23JckS7OhIIdpqa0+CvLuOT7OMf1OMQW?=
+ =?us-ascii?Q?rFMRSt+R+zficMv1S25As/7ve2szZALOMkFjKAm5C9ZxbdhLBbsO0nGokJ5V?=
+ =?us-ascii?Q?Y58oGlRmHID0H3RPMWbltF28hlNpUKY/U+eIWXvDQtCRhAHBKb0ZBZ7CtNNb?=
+ =?us-ascii?Q?W/4StDPnS++GsJeFk5yuV7eOL3Y6lGUNvxOjzoXF6VjuAWZo5+EXSPykiv+O?=
+ =?us-ascii?Q?0FLVmS5k5Z3lGbDCDeCI7bEqeG/M?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB7726.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?9Zh3JRfjg7X4prbXFmjdb6nzk+1gp6x7JVkZBGaaF8u2G8DfiLMgJAOWg4cy?=
+ =?us-ascii?Q?5qssSmHvLPJIE90/Ahb92GUBsaHLKUvoAiZZNWPBA7Evq6XxDfLn2FduvM13?=
+ =?us-ascii?Q?hiGMLJiUitNajwWgabjoGG7lXfZCSjnjF4razY7k7QfKGCFnQIXFlo3tjizK?=
+ =?us-ascii?Q?K5lDEhIABYvffjaN+UcQs6LCgU2p1cxUWlHFURdqQRZlZO1n7/LOW4IOCRRZ?=
+ =?us-ascii?Q?SHxy6Zyp7tqHhSg9DbQ8WulRuGDAu02ddntO2LG70tjv7BgAStMLcczo0fQy?=
+ =?us-ascii?Q?AUlDOa27fpFosXtp3IgWWYkTRrdpli/FgHuDSk+lCJQr8lPXbF224PheNdxx?=
+ =?us-ascii?Q?KGGIt0OGtdAxeCSXKzsNH1/hT8HiIT/QASVMjtapsHlfqwt3xRQfcvFpnWax?=
+ =?us-ascii?Q?HEu88Am/65MznFxbzXlGzcZ8khtho5gWI1dZqvNqh/wb6TpjNeC78zr7xUdj?=
+ =?us-ascii?Q?8V1UMc+etjpOH2S+Y0ii2Q44Ro1C0pwS8BrEkUBOeT9Mf4DuADBiVrcn40Go?=
+ =?us-ascii?Q?IXqMq58MfU30anrvCF7g8bzGOJr8B56lsPmBRy1Y/lhQLc1MlkP8ecoAxE4W?=
+ =?us-ascii?Q?ky7h7gLrIlx9QsD7SH5gGnyGuW2pGX8ErOGfYqVH9KhfG0GNI/6DFC9T1G7C?=
+ =?us-ascii?Q?0rf6ji1gBCASYaKQFsF8/XpJcBL/RQsI0mR9l4yXCTl7Kx+YADO/eApWndj9?=
+ =?us-ascii?Q?kbeYto3sXcHhMjfa/dltFeNNfx4UV4oqsxA/De3groOUMqMJFbUIXVo8w1cS?=
+ =?us-ascii?Q?BCrHoCnusFcQyirxjCsLwqbpaQhtAI5ctFI3RKIRoxgWuG7Dx0pBnHceIhwE?=
+ =?us-ascii?Q?M/FArL0cgl7M4zsdNCiJAootZT0P/gToq4xGJGvBdNxGoRWmM07VveUI/zaT?=
+ =?us-ascii?Q?oYSpmMISfYR5aKkGk+W5PN2LNg7V/h7RWEuN9yMM5THFtoCSYqCgmHyTyZSS?=
+ =?us-ascii?Q?xlsvm4SXigVB7vTGftHVfmMUWpEN30pzhZ3YMg4Wr4Rv9ilGpI717zc5caO6?=
+ =?us-ascii?Q?1Io7QBZ8/XwM/fetjSyIfMR6Z5tiM9K9NUqtPjIM/ybWCeBRi9YaVH2TMVO9?=
+ =?us-ascii?Q?vsOKA3CtvdXDcheTe46UQ8DaibEq51RsUwKAuIcX/SPv8FBnVMl2bVTufUoJ?=
+ =?us-ascii?Q?m/RLxNrXCTF/V6jjAzwOswg392OVytGMOKYXtni7SQ5sntsACvMjjQ4yDhFo?=
+ =?us-ascii?Q?hjG0lbjNE671IeUD+fC7W3ecoC8FdBStHg04fXPAk4AomdAGxTvBk1ki1aLm?=
+ =?us-ascii?Q?i9exRVhSN+BjGQ/vmysY+jVGfSj/GYvkeAAoC2KXaeAa+RTJ2F5AKBlM9DuO?=
+ =?us-ascii?Q?50ZRJpauw5OCnirD3rMtMkMBgHTfUQwmH2T9aMoTKRoFVUU8c9Vz2SCxF50b?=
+ =?us-ascii?Q?fteoyxK5y+8LrSBK37fpoCbkKxqwL+AKHy62s+a6O9Zp8dhFvbXrtzMmT9/V?=
+ =?us-ascii?Q?V7VWjvi9kuyVtmNii+k7ce7/ArmVtSsMwDZYQSv2bXZDQAdQ5F0GnKKNWbYK?=
+ =?us-ascii?Q?pkxqqO9eR60E42o1WfdbEUxtO4HkeH0VHugI6tfa2QGkomzOkaVIQVLaymVo?=
+ =?us-ascii?Q?BQshdunQ78fWltsM5onqU/4YkgopX9asFOjA65o8?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 09641212-ebec-49a2-3284-08dd64433084
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB7726.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Mar 2025 04:29:49.7542
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: kH2pgEg8WvtZEu6xaH2nhUFrZxjrjtg6EJ/BtRVsM/ZSsTXUBd09DGJMjMi1OIT6I0+trsJKEJiA4VUjfJoQLg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV3PR12MB9260
 
-Hello,
+To simplify the initial implementation device private pages were restricted to
+only being used for private anonymous. This avoided having to deal with issues
+related to shared and/or file-backed pagesi early on.
 
-syzbot tried to test the proposed patch but the build/boot failed:
+This series lifts that restriction by allowing ZONE_DEVICE private pages to
+exist in the pagecache. As the CPU cannot directly access these pages special
+care needs to be taken when looking them up in the page-cache. This series
+solves the problem by always migrating such pages back from device memory when
+looking them up in the pagecache. This is similar to how device private pages
+work for anonymous memory, where a CPU fault on the device memory will always
+trigger a migration back to CPU system memory.
 
-failed to copy syz-execprog to VM: timedout after 1m0s ["scp" "-P" "22" "-F=
-" "/dev/null" "-o" "UserKnownHostsFile=3D/dev/null" "-o" "IdentitiesOnly=3D=
-yes" "-o" "BatchMode=3Dyes" "-o" "StrictHostKeyChecking=3Dno" "-o" "Connect=
-Timeout=3D10" "-v" "/syzkaller/jobs-2/linux/gopath/src/github.com/google/sy=
-zkaller/bin/linux_arm64/syz-execprog" "root@10.128.1.46:./syz-execprog"]
-Executing: program /usr/bin/ssh host 10.128.1.46, user root, command sftp
-OpenSSH_9.2p1 Debian-2+deb12u4, OpenSSL 3.0.15 3 Sep 2024
-debug1: Reading configuration data /dev/null
-debug1: Connecting to 10.128.1.46 [10.128.1.46] port 22.
-debug1: fd 3 clearing O_NONBLOCK
-debug1: Connection established.
-debug1: identity file /root/.ssh/id_rsa type -1
-debug1: identity file /root/.ssh/id_rsa-cert type -1
-debug1: identity file /root/.ssh/id_ecdsa type -1
-debug1: identity file /root/.ssh/id_ecdsa-cert type -1
-debug1: identity file /root/.ssh/id_ecdsa_sk type -1
-debug1: identity file /root/.ssh/id_ecdsa_sk-cert type -1
-debug1: identity file /root/.ssh/id_ed25519 type -1
-debug1: identity file /root/.ssh/id_ed25519-cert type -1
-debug1: identity file /root/.ssh/id_ed25519_sk type -1
-debug1: identity file /root/.ssh/id_ed25519_sk-cert type -1
-debug1: identity file /root/.ssh/id_xmss type -1
-debug1: identity file /root/.ssh/id_xmss-cert type -1
-debug1: identity file /root/.ssh/id_dsa type -1
-debug1: identity file /root/.ssh/id_dsa-cert type -1
-debug1: Local version string SSH-2.0-OpenSSH_9.2p1 Debian-2+deb12u4
-debug1: Remote protocol version 2.0, remote software version OpenSSH_9.1
-debug1: compat_banner: match: OpenSSH_9.1 pat OpenSSH* compat 0x04000000
-debug1: Authenticating to 10.128.1.46:22 as 'root'
-debug1: load_hostkeys: fopen /etc/ssh/ssh_known_hosts: No such file or dire=
-ctory
-debug1: load_hostkeys: fopen /etc/ssh/ssh_known_hosts2: No such file or dir=
-ectory
-debug1: SSH2_MSG_KEXINIT sent
-debug1: SSH2_MSG_KEXINIT received
-debug1: kex: algorithm: sntrup761x25519-sha512@openssh.com
-debug1: kex: host key algorithm: ssh-ed25519
-debug1: kex: server->client cipher: chacha20-poly1305@openssh.com MAC: <imp=
-licit> compression: none
-debug1: kex: client->server cipher: chacha20-poly1305@openssh.com MAC: <imp=
-licit> compression: none
-debug1: expecting SSH2_MSG_KEX_ECDH_REPLY
-debug1: SSH2_MSG_KEX_ECDH_REPLY received
-debug1: Server host key: ssh-ed25519 SHA256:JxoRyAn13fCyQtNtBXvSgkCC2njD9yP=
-7DAIyaauX8OU
-debug1: load_hostkeys: fopen /etc/ssh/ssh_known_hosts: No such file or dire=
-ctory
-debug1: load_hostkeys: fopen /etc/ssh/ssh_known_hosts2: No such file or dir=
-ectory
-Warning: Permanently added '10.128.1.46' (ED25519) to the list of known hos=
-ts.
-debug1: rekey out after 134217728 blocks
-debug1: SSH2_MSG_NEWKEYS sent
-debug1: expecting SSH2_MSG_NEWKEYS
-debug1: SSH2_MSG_NEWKEYS received
-debug1: rekey in after 134217728 blocks
-debug1: Will attempt key: /root/.ssh/id_rsa=20
-debug1: Will attempt key: /root/.ssh/id_ecdsa=20
-debug1: Will attempt key: /root/.ssh/id_ecdsa_sk=20
-debug1: Will attempt key: /root/.ssh/id_ed25519=20
-debug1: Will attempt key: /root/.ssh/id_ed25519_sk=20
-debug1: Will attempt key: /root/.ssh/id_xmss=20
-debug1: Will attempt key: /root/.ssh/id_dsa=20
-debug1: SSH2_MSG_EXT_INFO received
-debug1: kex_input_ext_info: server-sig-algs=3D<ssh-ed25519,sk-ssh-ed25519@o=
-penssh.com,ssh-rsa,rsa-sha2-256,rsa-sha2-512,ssh-dss,ecdsa-sha2-nistp256,ec=
-dsa-sha2-nistp384,ecdsa-sha2-nistp521,sk-ecdsa-sha2-nistp256@openssh.com,we=
-bauthn-sk-ecdsa-sha2-nistp256@openssh.com>
-debug1: kex_input_ext_info: publickey-hostbound@openssh.com=3D<0>
-debug1: SSH2_MSG_SERVICE_ACCEPT received
-Authenticated to 10.128.1.46 ([10.128.1.46]:22) using "none".
-debug1: channel 0: new session [client-session] (inactive timeout: 0)
-debug1: Requesting no-more-sessions@openssh.com
-debug1: Entering interactive session.
-debug1: pledge: network
-debug1: client_input_global_request: rtype hostkeys-00@openssh.com want_rep=
-ly 0
-debug1: Sending subsystem: sftp
-debug1: pledge: fork
-scp: debug1: stat remote: No such file or directory
+Initially this series only allows for read-only migration - this is because the
+call to migrate pages back will always reload the data from backing storage.
+It then introduces a callback that drivers may implement to actually copy any
+modified data back as required.
 
+Drivers are expected to call set_page_dirty() when copying data back to ensure
+it hits the backing store.
 
+This series is an early draft implementation - in particular error handling
+is not dealt with and I'm not sure that the management of PTE write bits is
+entirely correct. Much more testing of all the various filesystem corner cases
+is also required. The aim of this series is to get early feedback on the overall
+concept of putting device private pages in the pagecache before fleshing out the
+implementation further.
 
+Signed-off-by: Alistair Popple <apopple@nvidia.com>
 
-syzkaller build log:
-go env (err=3D<nil>)
-GO111MODULE=3D'auto'
-GOARCH=3D'amd64'
-GOBIN=3D''
-GOCACHE=3D'/syzkaller/.cache/go-build'
-GOENV=3D'/syzkaller/.config/go/env'
-GOEXE=3D''
-GOEXPERIMENT=3D''
-GOFLAGS=3D''
-GOHOSTARCH=3D'amd64'
-GOHOSTOS=3D'linux'
-GOINSECURE=3D''
-GOMODCACHE=3D'/syzkaller/jobs-2/linux/gopath/pkg/mod'
-GONOPROXY=3D''
-GONOSUMDB=3D''
-GOOS=3D'linux'
-GOPATH=3D'/syzkaller/jobs-2/linux/gopath'
-GOPRIVATE=3D''
-GOPROXY=3D'https://proxy.golang.org,direct'
-GOROOT=3D'/syzkaller/jobs-2/linux/gopath/pkg/mod/golang.org/toolchain@v0.0.=
-1-go1.23.6.linux-amd64'
-GOSUMDB=3D'sum.golang.org'
-GOTMPDIR=3D''
-GOTOOLCHAIN=3D'auto'
-GOTOOLDIR=3D'/syzkaller/jobs-2/linux/gopath/pkg/mod/golang.org/toolchain@v0=
-.0.1-go1.23.6.linux-amd64/pkg/tool/linux_amd64'
-GOVCS=3D''
-GOVERSION=3D'go1.23.6'
-GODEBUG=3D''
-GOTELEMETRY=3D'local'
-GOTELEMETRYDIR=3D'/syzkaller/.config/go/telemetry'
-GCCGO=3D'gccgo'
-GOAMD64=3D'v1'
-AR=3D'ar'
-CC=3D'gcc'
-CXX=3D'g++'
-CGO_ENABLED=3D'1'
-GOMOD=3D'/syzkaller/jobs-2/linux/gopath/src/github.com/google/syzkaller/go.=
-mod'
-GOWORK=3D''
-CGO_CFLAGS=3D'-O2 -g'
-CGO_CPPFLAGS=3D''
-CGO_CXXFLAGS=3D'-O2 -g'
-CGO_FFLAGS=3D'-O2 -g'
-CGO_LDFLAGS=3D'-O2 -g'
-PKG_CONFIG=3D'pkg-config'
-GOGCCFLAGS=3D'-fPIC -m64 -pthread -Wl,--no-gc-sections -fmessage-length=3D0=
- -ffile-prefix-map=3D/tmp/go-build1200752111=3D/tmp/go-build -gno-record-gc=
-c-switches'
+Alistair Popple (6):
+  mm/migrate_device.c: Don't read dirty bit of non-present PTEs
+  mm/migrate: Support file-backed pages with migrate_vma
+  mm: Allow device private pages to exist in page cache
+  mm: Implement writeback for share device private pages
+  selftests/hmm: Add file-backed migration tests
+  nouveau: Add SVM support for migrating file-backed pages to the GPU
 
-git status (err=3D<nil>)
-HEAD detached at c390174278
-nothing to commit, working tree clean
+ drivers/gpu/drm/nouveau/nouveau_dmem.c |  24 ++-
+ include/linux/memremap.h               |   2 +-
+ include/linux/migrate.h                |   6 +-
+ lib/test_hmm.c                         |  27 ++-
+ mm/filemap.c                           |  41 ++++-
+ mm/memory.c                            |   9 +-
+ mm/memremap.c                          |   1 +-
+ mm/migrate.c                           |  42 ++--
+ mm/migrate_device.c                    | 114 +++++++++++-
+ mm/rmap.c                              |   2 +-
+ tools/testing/selftests/mm/hmm-tests.c | 252 +++++++++++++++++++++++++-
+ 11 files changed, 489 insertions(+), 31 deletions(-)
 
-
-tput: No value for $TERM and no -T specified
-tput: No value for $TERM and no -T specified
-Makefile:31: run command via tools/syz-env for best compatibility, see:
-Makefile:32: https://github.com/google/syzkaller/blob/master/docs/contribut=
-ing.md#using-syz-env
-go list -f '{{.Stale}}' ./sys/syz-sysgen | grep -q false || go install ./sy=
-s/syz-sysgen
-make .descriptions
-tput: No value for $TERM and no -T specified
-tput: No value for $TERM and no -T specified
-Makefile:31: run command via tools/syz-env for best compatibility, see:
-Makefile:32: https://github.com/google/syzkaller/blob/master/docs/contribut=
-ing.md#using-syz-env
-bin/syz-sysgen
-touch .descriptions
-GOOS=3Dlinux GOARCH=3Darm64 go build "-ldflags=3D-s -w -X github.com/google=
-/syzkaller/prog.GitRevision=3Dc3901742785ff25afdc6f470af7b25b69d7c4f2f -X '=
-github.com/google/syzkaller/prog.gitRevisionDate=3D20250301-144328'" -o ./b=
-in/linux_arm64/syz-execprog github.com/google/syzkaller/tools/syz-execprog
-mkdir -p ./bin/linux_arm64
-aarch64-linux-gnu-g++ -o ./bin/linux_arm64/syz-executor executor/executor.c=
-c \
-	-O2 -pthread -Wall -Werror -Wparentheses -Wunused-const-variable -Wframe-l=
-arger-than=3D16384 -Wno-stringop-overflow -Wno-array-bounds -Wno-format-ove=
-rflow -Wno-unused-but-set-variable -Wno-unused-command-line-argument -stati=
-c-pie -std=3Dc++17 -I. -Iexecutor/_include   -DGOOS_linux=3D1 -DGOARCH_arm6=
-4=3D1 \
-	-DHOSTGOOS_linux=3D1 -DGIT_REVISION=3D\"c3901742785ff25afdc6f470af7b25b69d=
-7c4f2f\"
-/usr/lib/gcc-cross/aarch64-linux-gnu/12/../../../../aarch64-linux-gnu/bin/l=
-d: /tmp/cco8YaUX.o: in function `Connection::Connect(char const*, char cons=
-t*)':
-executor.cc:(.text._ZN10Connection7ConnectEPKcS1_[_ZN10Connection7ConnectEP=
-KcS1_]+0xd8): warning: Using 'gethostbyname' in statically linked applicati=
-ons requires at runtime the shared libraries from the glibc version used fo=
-r linking
-
-
-
-Tested on:
-
-commit:         a5618886 Merge remote-tracking branch 'will/for-next/p..
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.g=
-it for-kernelci
-kernel config:  https://syzkaller.appspot.com/x/.config?x=3D29061e148cfaa3d=
-3
-dashboard link: https://syzkaller.appspot.com/bug?extid=3D8f9f411152c9539f4=
-e59
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debia=
-n) 2.40
-userspace arch: arm64
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=3D15333ff85800=
-00
-
+base-commit: 0ad2507d5d93f39619fc42372c347d6006b64319
+-- 
+git-series 0.9.1
 
