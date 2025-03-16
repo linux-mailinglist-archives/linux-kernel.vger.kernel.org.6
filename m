@@ -1,97 +1,88 @@
-Return-Path: <linux-kernel+bounces-562881-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562882-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9BB6A6342D
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 06:52:10 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34E26A63432
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 07:07:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6F7B17121F
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 05:52:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D77117126C
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 06:07:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94F241624E5;
-	Sun, 16 Mar 2025 05:52:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 013EA171658;
+	Sun, 16 Mar 2025 06:07:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="pM2k5UnL"
-Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="0aBjf7Bl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AA172E339D;
-	Sun, 16 Mar 2025 05:51:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F03756B81;
+	Sun, 16 Mar 2025 06:07:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742104322; cv=none; b=bi91LAGLe4SNueSfB6J+kOfbLQBbKn18OMDAgpHdHOz9RkGbyM8ek1v5XPepQxpGsxCHUSnugbeCbDkENpuKVA/QkGXR6m9ZrzE0zMni5uwv3R4hHTjEc0LIJ6xmYnq/IglbnTm3iUmsCl5dVb0cnzDhAQ80GDE5w8iaoNzGd28=
+	t=1742105262; cv=none; b=AcggmEBuME1yljOxnquW3SvOHRmZWkBpFcsddcXkrj+kBurR198FzE6xOoQaplyyTP7HrWeRy1xVX602qy66369w3vPfwji652jH++3zlf1CzlZsS0a/Ddj4K/xdk1zmBPXcwyA2C5us4i6nBmjeCaP3sJZciLhsmHn+hBnHdzc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742104322; c=relaxed/simple;
-	bh=TY9C0Pv79aB1kyNdfzmaq24tYMm7D6IgwS1kACVC+2M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JC7t9NnCiD8Z/ptO06tMExJEOeR32jid7azFoOHY3cVgkC2uuA379kLMdmzKJ67u1hUwMkH/J9AExdjCOd+OFtiZeE6VkVHf1myUcQLMvVY/OReIP0PlT7/nYqEoCrxesyCMMcPouugZblWo2DE2dR7IwjlVd42q1mepCP0Zbpo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=pM2k5UnL; arc=none smtp.client-ip=144.6.53.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
-	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=q4jWHu1d2pPb7fealiXsY0hC2fptvir263Ji4MGN2Ns=; b=pM2k5UnLec3pB0rImY3Y/+bdQ6
-	6RXuJTK+79i57Xbq4moFaeAhjZntF3N6eGcchItM7CU0AZ/8dbBZ7vF91SuPklEnBE6bDLG8kx8zc
-	dkuKGOem0Gz8Wye+bTiA3mYChfwYaLIJ0LO6lu+Zad+naSvLW7I6YWBUMaeMIVlORSb5eyjP/wtpq
-	G2K5IH0bN15hphr2Tj1RFXnvLv6AwkhoPQXk+MsA982AgdjIR+BF1WyB7sqEcnnMbAzkniRYaZHfv
-	qpqukAfVbnGQyo9ouGsFugBXodNg2dkah6FPI98A4UrEVsRH8wFGo7g/SWr4mHpmD3eQZf38/w33J
-	RQG1I1Kw==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1ttgud-006zQa-01;
-	Sun, 16 Mar 2025 13:51:52 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Sun, 16 Mar 2025 13:51:51 +0800
-Date: Sun, 16 Mar 2025 13:51:50 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Song Liu <song@kernel.org>, Yu Kuai <yukuai3@huawei.com>,
-	linux-raid@vger.kernel.org
-Subject: Re: [PATCH] lib/raid6: Replace custom zero page with ZERO_PAGE
-Message-ID: <Z9Zm9nPjU9kT1lt5@gondor.apana.org.au>
-References: <Z9U0_uj1E2MlYhGx@gondor.apana.org.au>
- <20250315210631.d79637b9c55c7ee3287aa426@linux-foundation.org>
+	s=arc-20240116; t=1742105262; c=relaxed/simple;
+	bh=cg8ZHAwzI1pGdmRt3oMiugzFT+wxmx52sW2J284t/3Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=u2tYJIf8DtDBww/Ntsu+gYTZRZYSh1nh2SBGBPu2NECnDVLEnsOJoKT33D7sY2naxcThJGLWy0qCbtWAdWIzkZfypbux6Qyh+L2bgki8q51J7H3+d/qLIIMUTlktjbpZDOv67kNuID9Oi/UYexD2mrLhI9bZntvTmGlKq65YD7Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=0aBjf7Bl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52E69C4CEDD;
+	Sun, 16 Mar 2025 06:07:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1742105260;
+	bh=cg8ZHAwzI1pGdmRt3oMiugzFT+wxmx52sW2J284t/3Y=;
+	h=From:To:Cc:Subject:Date:From;
+	b=0aBjf7Blb3xkJ1m5hiOQIp4DPvUYYXkTQ6yvY24yD913lblThJu8okgYdsHYVJGE/
+	 YGNOJpyKK9qHwGkWK0fUW9XzFUo+2b49/DfrQB2BU9wpsyNOtAdWwTweesHgnvpRMo
+	 6ZRcIDjUxJBX9vPpBaT43PRcxDvtWi7gaWz0F9OA=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: rust-for-linux@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>
+Subject: [PATCH] MAINTAINERS: driver core: mark Rafael and Danilo as co-maintainers
+Date: Sun, 16 Mar 2025 07:07:35 +0100
+Message-ID: <2025031634-playing-lark-95f9@gregkh>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250315210631.d79637b9c55c7ee3287aa426@linux-foundation.org>
+Lines: 27
+X-Developer-Signature: v=1; a=openpgp-sha256; l=954; i=gregkh@linuxfoundation.org; h=from:subject:message-id; bh=cg8ZHAwzI1pGdmRt3oMiugzFT+wxmx52sW2J284t/3Y=; b=owGbwMvMwCRo6H6F97bub03G02pJDOnXspYxruY7cnhqrMifZ38dpI55F8yx2N9esdLi2ztOr hO/vt+70RHLwiDIxCArpsjyZRvP0f0VhxS9DG1Pw8xhZQIZwsDFKQAT0ZFmmB/jsf97Jm+By4zT 6npi5hkfnridSgCK/tz0fVbcBfG9BhfspPs6eBYVbHAFAA==
+X-Developer-Key: i=gregkh@linuxfoundation.org; a=openpgp; fpr=F4B60CC5BF78C2214A313DCB3147D40DDB2DFB29
+Content-Transfer-Encoding: 8bit
 
-On Sat, Mar 15, 2025 at 09:06:31PM -0700, Andrew Morton wrote:
->
-> I do think it would be nicer to write this as a real inlined C function
-> and to convert usage sites to raid6_empty_zero_page().  IOW, let's tell
-> the truth rather than pretending that raid6_empty_zero_page is a global
-> variable.
+In talking it over with Rafael and Danilo, it makes more sense for
+everyone to be a maintainer here, to share the load where possible.
 
-OK I can do that.
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Danilo Krummrich <dakr@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ MAINTAINERS | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 0427b32b3688..2f6e379547bd 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -7101,8 +7101,8 @@ F:	include/linux/component.h
  
-> Is there any possibility that the MD drivers will point DMA hardware at
-> the global zero page, thereby invalidating that page from CPU caches in
-> some manner?
-
-The only spots that can hand this off to DMA are:
-
-crypto/async_tx/async_pq.c:                     srcs[i] = (void*)raid6_empty_zero_page;
-crypto/async_tx/async_raid6_recov.c:                            ptrs[i] = (void *) raid6_empty_zero_page;
-crypto/async_tx/async_raid6_recov.c:                            ptrs[i] = (void*)raid6_empty_zero_page;
-
-But they all turn out to be synchronous fallback code paths that
-do not involve DMA at all.
-
-Cheers,
+ DRIVER CORE, KOBJECTS, DEBUGFS AND SYSFS
+ M:	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+-R:	"Rafael J. Wysocki" <rafael@kernel.org>
+-R:	Danilo Krummrich <dakr@kernel.org>
++M:	"Rafael J. Wysocki" <rafael@kernel.org>
++M:	Danilo Krummrich <dakr@kernel.org>
+ S:	Supported
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/driver-core.git
+ F:	Documentation/core-api/kobject.rst
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+2.48.1
+
 
