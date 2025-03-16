@@ -1,163 +1,134 @@
-Return-Path: <linux-kernel+bounces-562973-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562974-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 734C4A6353B
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 12:11:28 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A9EDA6353C
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 12:12:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF54316FC7D
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 11:11:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E541416E7D2
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 11:12:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C1251A23B8;
-	Sun, 16 Mar 2025 11:11:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76B491A0BCA;
+	Sun, 16 Mar 2025 11:12:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mxvKjf0D"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zy7Nkshr"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E910F154BFE;
-	Sun, 16 Mar 2025 11:11:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2D1C154BFE;
+	Sun, 16 Mar 2025 11:12:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742123482; cv=none; b=XHeBndnAXdCwsXRUDJ9ICo4DYhD3MfylyvgpucX77f2Ti+7GJ1RVtiTqb7Vx+que0focG+A+/NgXHdLd2RigLIXhLnDMRmMBllNk//eV42YSPT2YywS+Shq+2NzXghUSsnUr19VFXoAAjKUZW8Yu70jZ5I9hIuu/vtGxmVFxLTg=
+	t=1742123540; cv=none; b=P+RjOXmVavdpPvwXRVlTugd6ILAYps0m4rPdual98oHuUGYBG4l+ZuEKXgg28AcKum5uDR3gMxo3iXDeP9AMEPls4bJcp/J9MgXOEH7giHKtV/QypsxOuphyx9qZogKSOL4fRtzGL8k0nKNRanMz0By5W2ZunyVGlB2iu3moJ10=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742123482; c=relaxed/simple;
-	bh=ETh+2NuhKN296ts6b8maoM++LUe3y0VwqjygzWnoSuA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YRIWPp+zpMLC6sjNH8aPgKKD54RqjQ7vy3Zh3uI+skNd3auTnafWFUV9y6MVZ9zuoVE36rM250oA2pcXzIQlDm/3IA5Nd2IcKEu6S1qcenE20ZJpQCS3o2SUNWE8H+e4UOqzr8oLrXbDykQf4lL2eMa/KH2j9AS+ubQqL0RYx80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mxvKjf0D; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D4E2C4CEDD;
-	Sun, 16 Mar 2025 11:11:17 +0000 (UTC)
+	s=arc-20240116; t=1742123540; c=relaxed/simple;
+	bh=4ZEEybcIfeZK2o63kdNPHHfyqeq3KgfN4XgVKPtAg0Y=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=kr0MfiWsPFV0RqsEzQlhrxXlRS2uU5BNdtiqhW1SOuOBIWNqu378FbG4W1qJYfvEzZE2pKVJ/fjPVZPhpYT7J8zTvEztIwjp64hbXtwbMPyZstP8GgfSeagzDF4jow3mDzYEsPT9AO0Eu+5kMhCRmAMdwJOAyCF8d7lBwj3Vs9Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zy7Nkshr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4255AC4CEDD;
+	Sun, 16 Mar 2025 11:12:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742123481;
-	bh=ETh+2NuhKN296ts6b8maoM++LUe3y0VwqjygzWnoSuA=;
+	s=k20201202; t=1742123540;
+	bh=4ZEEybcIfeZK2o63kdNPHHfyqeq3KgfN4XgVKPtAg0Y=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=mxvKjf0DEnEybG0oAuMdW66aeW7ZdF14h2QKKIPZ8WYYPKOWuPc4aVVmuAg1yoq55
-	 E6iHe+87g/RBNX9heiwYAUTgHRRmzh8To87pRJodT5AxIa2BzACWSPX5rNzvBuY1XR
-	 6T+Mf6tIZ4YCl3vzfB229vNO6Eth8AwM+QMAQHQPy4QiNr1X745tzcjvSpHtvpeh9c
-	 SDnSqnF4XAUzjUfY3qncxxXFvDcnkuDq67MDZyP3Mc5ufc+RZkEG4z8PUxYRJgHeSR
-	 OfcJntFtnShqpJliZfhYA0GRlaGib3TACWP+t+ZGpECxV/g/rSuSCsTbVdTWT1HBwM
-	 12yIHl+H8OjPQ==
-Date: Sun, 16 Mar 2025 11:11:12 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Lothar Rubusch <l.rubusch@gmail.com>
-Cc: lars@metafoo.de, Michael.Hennerich@analog.com,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
- eraretuya@gmail.com
-Subject: Re: [PATCH v4 02/14] iio: accel: adxl345: move INT enable to regmap
- cache
-Message-ID: <20250316111105.58598a2e@jic23-huawei>
-In-Reply-To: <20250313165049.48305-3-l.rubusch@gmail.com>
-References: <20250313165049.48305-1-l.rubusch@gmail.com>
-	<20250313165049.48305-3-l.rubusch@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
+	b=Zy7Nkshr5ieGYILWsYa9Uy1Dmp5VshwsyKYM28vQrc8wFDlTacOYyxQQbdpveKe4v
+	 JauafJ9Qas23rkZ27LmBAuSdfS1Xxt6RYxBmgAwbxQ50WfhAgH082JOuLqn+GsVuP8
+	 z3zzwF31HvjREfcOSTg+HjMkJoFG0spfKp3XZdJz9bo1K0JtPlkLCbgUlh2bkELTKF
+	 +rjv+dKl0XvYXRXfJ0pmPhMC5mgjIoksVwUhMZWFqGxfWvuKGGPZVw8ynZRhgyjtfY
+	 lv/6MK8aSLd+Agi+TrY4I3+j5ticC72ayBGrxRTyZLXTOZybK4jJ92VJKPCWj/oW38
+	 e0LCx6VIH1L8w==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1ttluk-00DyUl-1b;
+	Sun, 16 Mar 2025 11:12:18 +0000
+Date: Sun, 16 Mar 2025 11:12:17 +0000
+Message-ID: <864iztnsa6.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Quentin Perret <qperret@google.com>
+Cc: Oliver Upton <oliver.upton@linux.dev>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Vincent Donnefort <vdonnefort@google.com>,
+	linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/6] Move pKVM ownership state to hyp_vmemmap
+In-Reply-To: <20250227003310.367350-1-qperret@google.com>
+References: <20250227003310.367350-1-qperret@google.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: qperret@google.com, oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, catalin.marinas@arm.com, will@kernel.org, vdonnefort@google.com, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Thu, 13 Mar 2025 16:50:37 +0000
-Lothar Rubusch <l.rubusch@gmail.com> wrote:
-
-> Replace the interrupt enable member variable to the regmap cache. This
-> makes the function set_interrupts() obsolete. The interrupt enable
-> register is written when the driver is probed. Thus it is perfectly
-> cacheable.
+On Thu, 27 Feb 2025 00:33:04 +0000,
+Quentin Perret <qperret@google.com> wrote:
 > 
-> Signed-off-by: Lothar Rubusch <l.rubusch@gmail.com>
-Applied with a small tweak. I don't think you touch set_watermark
-again later in the series so this shouldn't cause too much impact.
-
-> ---
->  drivers/iio/accel/adxl345_core.c | 26 +++++++++++---------------
->  1 file changed, 11 insertions(+), 15 deletions(-)
+> Hi all,
 > 
-> diff --git a/drivers/iio/accel/adxl345_core.c b/drivers/iio/accel/adxl345_core.c
-> index 6f337b26999a..10e2da7de17e 100644
-> --- a/drivers/iio/accel/adxl345_core.c
-> +++ b/drivers/iio/accel/adxl345_core.c
-> @@ -36,7 +36,6 @@ struct adxl345_state {
->  	struct regmap *regmap;
->  	bool fifo_delay; /* delay: delay is needed for SPI */
->  	int irq;
-> -	u8 int_map;
->  	u8 watermark;
->  	u8 fifo_mode;
->  	__le16 fifo_buf[ADXL345_DIRS * ADXL345_FIFO_SIZE + 1] __aligned(IIO_DMA_MINALIGN);
-> @@ -114,11 +113,6 @@ static int adxl345_set_measure_en(struct adxl345_state *st, bool en)
->  	return regmap_write(st->regmap, ADXL345_REG_POWER_CTL, val);
->  }
->  
-> -static int adxl345_set_interrupts(struct adxl345_state *st)
-> -{
-> -	return regmap_write(st->regmap, ADXL345_REG_INT_ENABLE, st->int_map);
-> -}
-> -
->  static int adxl345_read_raw(struct iio_dev *indio_dev,
->  			    struct iio_chan_spec const *chan,
->  			    int *val, int *val2, long mask)
-> @@ -217,7 +211,7 @@ static int adxl345_reg_access(struct iio_dev *indio_dev, unsigned int reg,
->  static int adxl345_set_watermark(struct iio_dev *indio_dev, unsigned int value)
->  {
->  	struct adxl345_state *st = iio_priv(indio_dev);
-> -	unsigned int fifo_mask = 0x1F;
-> +	const unsigned int fifo_mask = 0x1F, watermark_mask = 0x02;
->  	int ret;
->  
->  	value = min(value, ADXL345_FIFO_SIZE - 1);
-> @@ -227,7 +221,10 @@ static int adxl345_set_watermark(struct iio_dev *indio_dev, unsigned int value)
->  		return ret;
->  
->  	st->watermark = value;
-> -	st->int_map |= ADXL345_INT_WATERMARK;
-> +	ret = regmap_update_bits(st->regmap, ADXL345_REG_INT_ENABLE, watermark_mask,
-> +				 ADXL345_INT_WATERMARK);
-> +	if (ret)
-> +		return ret;
-tweaked to
-	return regmap.
->  
->  	return 0;
->  }
-> @@ -381,11 +378,6 @@ static void adxl345_fifo_reset(struct adxl345_state *st)
->  static int adxl345_buffer_postenable(struct iio_dev *indio_dev)
->  {
->  	struct adxl345_state *st = iio_priv(indio_dev);
-> -	int ret;
-> -
-> -	ret = adxl345_set_interrupts(st);
-> -	if (ret < 0)
-> -		return ret;
->  
->  	st->fifo_mode = ADXL345_FIFO_STREAM;
->  	return adxl345_set_fifo(st);
-> @@ -401,8 +393,7 @@ static int adxl345_buffer_predisable(struct iio_dev *indio_dev)
->  	if (ret < 0)
->  		return ret;
->  
-> -	st->int_map = 0x00;
-> -	return adxl345_set_interrupts(st);
-> +	return regmap_write(st->regmap, ADXL345_REG_INT_ENABLE, 0x00);
->  }
->  
->  static const struct iio_buffer_setup_ops adxl345_buffer_ops = {
-> @@ -524,6 +515,11 @@ int adxl345_core_probe(struct device *dev, struct regmap *regmap,
->  	indio_dev->num_channels = ARRAY_SIZE(adxl345_channels);
->  	indio_dev->available_scan_masks = adxl345_scan_masks;
->  
-> +	/* Reset interrupts at start up */
-> +	ret = regmap_write(st->regmap, ADXL345_REG_INT_ENABLE, 0x00);
-> +	if (ret)
-> +		return ret;
-> +
->  	if (setup) {
->  		/* Perform optional initial bus specific configuration */
->  		ret = setup(dev, st->regmap);
+> This series moves the hypervisor's ownership state to the hyp_vmemmap,
+> as discussed in [1]. The two main benefits are:
+> 
+>  1. much cheaper hyp state lookups, since we can avoid the hyp stage-1
+>     page-table walk;
+> 
+>  2. de-correlates the hyp state from the presence of a mapping in the
+>     linear map range of the hypervisor; which enables a bunch of
+>     clean-ups in the existing code and will simplify the introduction of
+>     other features in the future (hyp tracing, ...)
+> 
+> Patch 01 is a self-sufficient cleanup that I found thanks to patch 05.
+> Patches 02-04 implement the aforementioned migration of the hyp state
+> to the vmemmap. Patches 05 and 06 are cleanups enabled by that
+> migration.
+> 
+> Patches based on 6.14-rc4, tested on Qemu.
+> 
+> Thanks!
+> Quentin
+> 
+> [1] https://lore.kernel.org/kvmarm/Z79ZJVOHtNu6YsVt@google.com/
+> 
+> Fuad Tabba (1):
+>   KVM: arm64: Track SVE state in the hypervisor vcpu structure
+> 
+> Quentin Perret (5):
+>   KVM: arm64: Use 0b11 for encoding PKVM_NOPAGE
+>   KVM: arm64: Introduce {get,set}_host_state() helpers
+>   KVM: arm64: Move hyp state to hyp_vmemmap
+>   KVM: arm64: Defer EL2 stage-1 mapping on share
+>   KVM: arm64: Unconditionally cross check hyp state
+> 
+>  arch/arm64/include/asm/kvm_host.h        |  12 +--
+>  arch/arm64/kvm/hyp/include/nvhe/memory.h |  35 ++++++--
+>  arch/arm64/kvm/hyp/nvhe/hyp-main.c       |   4 -
+>  arch/arm64/kvm/hyp/nvhe/mem_protect.c    | 106 ++++++++++++-----------
+>  arch/arm64/kvm/hyp/nvhe/pkvm.c           |  54 ++++++++++--
+>  arch/arm64/kvm/hyp/nvhe/setup.c          |  10 ++-
+>  6 files changed, 147 insertions(+), 74 deletions(-)
+> 
 
+Reviewed-by: Marc Zyngier <maz@kernel.org>
+
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
 
