@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-562980-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562981-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEDA9A6354C
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 12:18:00 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28361A6354E
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 12:18:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BEE627A009E
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 11:16:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2C9FF7A3F4A
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 11:17:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EDDF1A5BA0;
-	Sun, 16 Mar 2025 11:17:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 931431A76BC;
+	Sun, 16 Mar 2025 11:17:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DKCBdxE4"
-Received: from mail-oi1-f174.google.com (mail-oi1-f174.google.com [209.85.167.174])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cCJqS5GH"
+Received: from mail-oo1-f42.google.com (mail-oo1-f42.google.com [209.85.161.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C46610F2;
-	Sun, 16 Mar 2025 11:17:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ABA510F2;
+	Sun, 16 Mar 2025 11:17:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742123847; cv=none; b=jLCx4/nv0lo1mdTLHmRjlUWrlpeNQ6+K+NU7Y8dR7U1VuEiKFGqIDQHy9HJm7k5ncICUeWad5FIdeEgVLkRxnWqsXFFW27izsSmPS9IZ+84tOMhnJAPc7Fg2VTCx0jZMXy+ZCqD7z6WXgK1IXhRP0fxq7wM54zre2siBTeZN6RU=
+	t=1742123854; cv=none; b=BnIQC0dehz/yT+nEUTlsS5S/TC7pB40u8fA2T15a4AZgTbuz8Jh9XOcekkGLhcZkHig5rThB2QcFz7owyVSZla7qBnexPxgx6cKfnGyX2XnrKBSVcn6c6Huzk5CICR/JvQyqSegtKIEAUMRmgiG4VwQYldeQ4dmN0vEBsaFSDRk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742123847; c=relaxed/simple;
-	bh=wXrRXSKIgjjqhxlYLUjsJzrzClsQWOXKEjrXfmiVCqU=;
+	s=arc-20240116; t=1742123854; c=relaxed/simple;
+	bh=GlntjgU3Lxdii6DqpKNjs6+MaX1eRLZ0d3LBMTa28eY=;
 	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=rf1aduaptSUXHrOJORT6YTW1Hnslhoa7VD3xAVDX13p5Lv7gg9W7YtFHSdASuAPj02tFt17YQEKiFddF1XmdIlqtR1FB6jvIgETEaYgDbe+KREPdltmyAwik1lMPMpWZFluQZmydm829sGae5XDZHf+FP3MmxShKmmrkX6fSeTw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DKCBdxE4; arc=none smtp.client-ip=209.85.167.174
+	 MIME-Version; b=lCMpu6TJWpoMeecHqbpIQVOQaBmHHbsULt6fOgufpgMEJMnrEUstnvs4U34r5gnxhitj6WH5Ld/eXZA7tnnVljGvP/BzR8ZroaL1H9sZ24LuJEzmOaG+iy33DkCyKmiA6Mrbip4/9ZX84SgtYRUIn7BJxdWHkhUI26vKzrY/Ngg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cCJqS5GH; arc=none smtp.client-ip=209.85.161.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f174.google.com with SMTP id 5614622812f47-3f3f149c334so2227633b6e.1;
-        Sun, 16 Mar 2025 04:17:25 -0700 (PDT)
+Received: by mail-oo1-f42.google.com with SMTP id 006d021491bc7-601c12ac8d0so1597469eaf.2;
+        Sun, 16 Mar 2025 04:17:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742123845; x=1742728645; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1742123851; x=1742728651; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=ekjsEa3df+HXolOxxQjVErHPPoRYP8orqeSGkgsPOaQ=;
-        b=DKCBdxE4YNdjAveDhQRmtqrgu4kFiiSwXcOuk2SCfjMKhrN1r2P73wJgkRmUZWl9+/
-         Z9w+2l/vM+0KGcEoMreRGj8lY9dGbXNsV/pQYKIvGwMtYqyIExx9mdNE2P1FyL6KTysj
-         9Su3YFHZUlseQo+Jt2gRl7/DZpAVRVk2oh5QKHuQ9T+qu3fRNgDcnq8iIkcTAIlDTca6
-         9at0TiMeV1BiJfmXj9mHsM5BAMS5OyrYVxyVzjFH/s4Vg0eApIxI5bBqzh4Znal1A37w
-         zOMUnyEeZq/vab9UgSFyPRNaBwjQsb8vwWhOd1uMlvY5SdM/oOjJz8L1di0e2KzhXttv
-         Ckrg==
+        bh=MibvrQXj2P5QnlDxX5YbYon7Ne8dH6XMjJsYnk+RzkY=;
+        b=cCJqS5GH2H7fEPT8ZKCkHTXxqpfAqyn0gqJc50Rjzdaw1MoVB5pST//rxQ/dQyFpvy
+         OSQwq7JNxIC3tdZ8zXK9eozem5HJjd6KJ7hyFRVmh7hOmTKcQ2F5mCr2fJN3oor+M2MF
+         YtB3zlIg6vL3lMDjJ4gUdC5G5KfCxotAek8BIt+5ygu00PYtVWmnPZ1ksJJfq/mLZECZ
+         sC56IxXRBPsm1mQLmZLcxa9uUeP/MjrKthDssmoARqaVJt8cE8To2DmVIH4P7hs4wL2v
+         +/+WkNR4naCtsGd1DGJHBhG2ZFwZLO/J0Dg+dAPRI7vtReR3PwXfrYKaMiJwliaFBKV1
+         NR7Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742123845; x=1742728645;
+        d=1e100.net; s=20230601; t=1742123851; x=1742728651;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ekjsEa3df+HXolOxxQjVErHPPoRYP8orqeSGkgsPOaQ=;
-        b=ugB/4gYNGeiuiX9YcgYrc+qS1nyLx9Wa9RC1Wfc42GLGBG7oyXx9hqlBTa/4F++wpK
-         6OVTnkulmLDEd5YA7IzK04ubQ1ylEVvn60ePuBfl7n4gILBNo0KFw38yNvtWnNfOwk/E
-         53sIuqTB0pQe5cDeh4n3xs9S29WNr+jfbGDKS7INf1YyoSCpnVn12F4kT9D36Zge4eNt
-         YheYwjo+l0ahv+2z9XqvBn45BVF22Lfd886PNsiU3JBC3qZrcxW/6TS62Sk7CfCSf9zb
-         5pZ2lxZTGluBz1OlQkEtZbXUvbBGYnlwhQIGwDMOsrwWUkvRuRxnwBsZOzPGURi0ZY7a
-         KexQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWwNjQqqZjtilOHTzeph/LVNADgH+uNK6axfhT2douId77k6d/yvZkMcmT75S/7IvziwTn1xQBoDxg=@vger.kernel.org, AJvYcCXe4zYgzZfAQsmtIuU8TNgHcF8ah6X+SHEPNwA5gQlfrC73n29vktRN8zfZAYIaGWsl+o3mycwZK4uN89dSRMM=@vger.kernel.org, AJvYcCXm8fh6AQ1YgoEzfuY3CT8W9zHwSyYNw/tQYZ++r+VF6/p2WJrnLSDKNcrjGHwvoUuCqSPh2YeMedSeZ9Ey@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz7aw7ZhvPDCCZ6ru8oa2t79lJhdVbHD9wYSa9UwUxqaWr0Xx99
-	wdBs8CTEibVe9ZJuf6BlYTmhHGH6nIUk3wvrzHugr7189DptQtzk
-X-Gm-Gg: ASbGncvNW7POlFdxoUrfr11dStHRz1LDinEK2E+RFGkqsrqo4eOsF7HAy71x56P8Lft
-	jgJymDf9c9onqWDaHGttNtQamVA/LjHaXOx6nuePyQxF+ShXrhx3j0pq1Hp/xPh8vb22jVm93Hp
-	qE3+y6J3AeXZzsVV4xvcKG8UD+g71azGkh/u1glXh+vpDDzyqlJoYum0pyfiEs75sBqgw91IO6D
-	RS0StBBnEnGpvhi5AEGSnbsAOQII8f2lgGCTs9/EE/iRh0wq0Wi5hRSRl/xSzGP1ZV0mkzqhyUd
-	/E/EMnsQCS3e6R3ZwJ2IHjapAanCay4HUS10FIv+l5dCBlxSZWi0TFrfYUyZFRXt07kvOmRPb+L
-	A7gL+gha4jZEKMph+WeAFoTEBykE=
-X-Google-Smtp-Source: AGHT+IEjg2xfhvPfXaY/5Cp/9QgKkPC0d1FC1flzt29b+ldjcXyycYr78QYS2iUROkMc5ivHSaEeaw==
-X-Received: by 2002:a05:6808:23c3:b0:3fa:f848:8dfa with SMTP id 5614622812f47-3fdf026db54mr5046847b6e.30.1742123844546;
-        Sun, 16 Mar 2025 04:17:24 -0700 (PDT)
+        bh=MibvrQXj2P5QnlDxX5YbYon7Ne8dH6XMjJsYnk+RzkY=;
+        b=dC7KUT3qdm2k7zzbaab7dVDDVY8qI77UfEj7OfQY5zlpd7YWazsTHKwPe7cKa0PIGT
+         CeX1kGH0v+pbQkeRpG8uVvYfZyBL7jBblEAWbt4nqBrwJzUHP/DSO8dY6Y7WqCpiayZ1
+         tMpEI9mjJMRTqsAGj8Z2eo+QymQRmQpmo44qaWUf2PApLVT/83g1d+OLoDsg8MaUF3dX
+         EMcK9CCl82e+WXxsT8DBHSKXFmkNPU6qoUilUSzbkyVFFTHE8yKkl0fHnj5sz85NEJvZ
+         wYY+Kb+EH+Oj9cAUvYlA+8MOg92lOVmJnPLeTHvKoG7YaazOj9k5ytKENTWg08l3INul
+         o1sg==
+X-Forwarded-Encrypted: i=1; AJvYcCU1pV+p5ZoehDFeF17iQ6EKuij+JxUzM6o0nh0H9c9Mcwc33D4Zk/R2l7HxbPety39+awtjnp/soxM=@vger.kernel.org, AJvYcCULXWNC2aITgXKPR5l2iTLOjECPD4I1lLL53cnOzTQGwV5yQeJyYyIG1SMLXB4n5EjLgX18on8+bT7JUYs/oIo=@vger.kernel.org, AJvYcCVaLYMHI36yrIg4TEVeNaJqg2qDQVsyoWYpTGJw9I5Xdt4BorKsU82mJiBtEEHgBwJHtY8aJ2qRuL7wZBPP@vger.kernel.org
+X-Gm-Message-State: AOJu0YyQhu//g+BtYwBeZm3+6WgrE21xRZVCeyIOYWHgT/DXET4cwz3G
+	8mDgo5Omj5mTLCz8q1+GUj6au/FEmILEk9wc8a5vBvZ3HgMf0E/t
+X-Gm-Gg: ASbGncsZ6W3yE6nT5/Zv0fXmiMgMc7uQfi3X1jvmwLqjphK2yiqMyEf6qk7iv0Oo/Zd
+	cd6qevkn9gG7vF+toMD9eWgPHvCCmOl9QwCSHctb6ip2wLpmFAsRXWlRlzKlODxJjX+HzLhYBGN
+	4RdYhY1XGrr1jzAzTPrAhH07++U4CqiPnpObbfo57ZRjK5comytnrh3H/AbG0+lpzpj1TKkVeMI
+	5c+vPY+sNiZ32/9aFctMBPL9VXRq35TAzg2dOt+ekZxT2GVK0kD+odfxHzF3eHyOK9IpMvrpAMz
+	HUJXfW9Q4pHB17FxzgpidqA3uRyBcWETFb8Jdl29XZ3WJWGHW01kt1oUwJaIwnd0a9eBOKRwT4X
+	clmyuB6LJale0gmTN
+X-Google-Smtp-Source: AGHT+IG0u7JDaDNYIHwPQlqHBQlgmBC+Fo0wrepsC3YNTau6TIWAGIJlcCHjX1uHxt1F9G2iknrsEg==
+X-Received: by 2002:a05:6808:f12:b0:3f4:af3:74a5 with SMTP id 5614622812f47-3fdeed0d78emr5189018b6e.21.1742123851687;
+        Sun, 16 Mar 2025 04:17:31 -0700 (PDT)
 Received: from my-computer.lan (c-73-76-29-249.hsd1.tx.comcast.net. [73.76.29.249])
-        by smtp.googlemail.com with ESMTPSA id 5614622812f47-3fe832ce015sm715978b6e.7.2025.03.16.04.17.19
+        by smtp.googlemail.com with ESMTPSA id 5614622812f47-3fe832ce015sm715978b6e.7.2025.03.16.04.17.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 16 Mar 2025 04:17:23 -0700 (PDT)
+        Sun, 16 Mar 2025 04:17:30 -0700 (PDT)
 From: Andrew Ballance <andrewjballance@gmail.com>
 To: dakr@kernel.org,
 	airlied@gmail.com,
@@ -96,9 +96,9 @@ To: dakr@kernel.org,
 	linux-doc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	rust-for-linux@vger.kernel.org
-Subject: [PATCH v2 2/3] rust: alloc: add Vec::resize method
-Date: Sun, 16 Mar 2025 06:16:43 -0500
-Message-ID: <20250316111644.154602-3-andrewjballance@gmail.com>
+Subject: [PATCH v2 3/3] gpu: nova-core: remove completed Vec extentions from task list
+Date: Sun, 16 Mar 2025 06:16:44 -0500
+Message-ID: <20250316111644.154602-4-andrewjballance@gmail.com>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20250316111644.154602-1-andrewjballance@gmail.com>
 References: <20250316111644.154602-1-andrewjballance@gmail.com>
@@ -110,51 +110,35 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-implement the equivalent of the rust std's Vec::resize
-on the kernel's Vec type.
+The requested Vec methods have been implemented thus, removes
+the completed item from the nova task list
 
 Signed-off-by: Andrew Ballance <andrewjballance@gmail.com>
 ---
- rust/kernel/alloc/kvec.rs | 26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
+ Documentation/gpu/nova/core/todo.rst | 10 ----------
+ 1 file changed, 10 deletions(-)
 
-diff --git a/rust/kernel/alloc/kvec.rs b/rust/kernel/alloc/kvec.rs
-index 18bcc59f0b38..eb6d40a1bf8b 100644
---- a/rust/kernel/alloc/kvec.rs
-+++ b/rust/kernel/alloc/kvec.rs
-@@ -554,6 +554,32 @@ pub fn from_elem(value: T, n: usize, flags: Flags) -> Result<Self, AllocError> {
+diff --git a/Documentation/gpu/nova/core/todo.rst b/Documentation/gpu/nova/core/todo.rst
+index ca08377d3b73..234d753d3eac 100644
+--- a/Documentation/gpu/nova/core/todo.rst
++++ b/Documentation/gpu/nova/core/todo.rst
+@@ -190,16 +190,6 @@ Rust abstraction for debugfs APIs.
+ | Reference: Export GSP log buffers
+ | Complexity: Intermediate
  
-         Ok(v)
-     }
-+
-+    /// Resizes the [`Vec`] so that `len` is equal to `new_len`.
-+    ///
-+    /// If `new_len` is smaller than `len`, the `Vec` is [`Vec::truncate`]d.
-+    /// If `new_len` is larger, each new slot is filled with clones of `value`.
-+    ///
-+    /// # Examples
-+    ///
-+    /// ```
-+    /// let mut v = kernel::kvec![1, 2, 3]?;
-+    /// v.resize(1, 42, GFP_KERNEL)?;
-+    /// assert_eq!(&v, &[1]);
-+    ///
-+    /// v.resize(3, 42, GFP_KERNEL)?;
-+    /// assert_eq!(&v, &[1, 42, 42]);
-+    ///
-+    /// # Ok::<(), Error>(())
-+    /// ```
-+    pub fn resize(&mut self, new_len: usize, value: T, flags: Flags) -> Result<(), AllocError> {
-+        if new_len > self.len() {
-+            self.extend_with(new_len - self.len(), value, flags)
-+        } else {
-+            self.truncate(new_len);
-+            Ok(())
-+        }
-+    }
- }
+-Vec extensions
+---------------
+-
+-Implement ``Vec::truncate`` and ``Vec::resize``.
+-
+-Currently this is used for some experimental code to parse the vBIOS.
+-
+-| Reference vBIOS support
+-| Complexity: Beginner
+-
+ GPU (general)
+ =============
  
- impl<T, A> Drop for Vec<T, A>
 -- 
 2.48.1
 
