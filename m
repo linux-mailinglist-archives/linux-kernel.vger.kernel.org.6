@@ -1,199 +1,206 @@
-Return-Path: <linux-kernel+bounces-563090-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563091-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E8A7A636E4
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 19:05:38 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9CF7A636E8
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 19:19:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 89244188F275
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 18:05:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E08127A6A57
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 18:18:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C66F1DDA15;
-	Sun, 16 Mar 2025 18:05:32 +0000 (UTC)
-Received: from mail-io1-f80.google.com (mail-io1-f80.google.com [209.85.166.80])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82EEA1C8638;
+	Sun, 16 Mar 2025 18:19:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kU7mJr6h"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11ABF14A4F0
-	for <linux-kernel@vger.kernel.org>; Sun, 16 Mar 2025 18:05:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.80
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 113D514A4F0;
+	Sun, 16 Mar 2025 18:19:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742148331; cv=none; b=nM7VRJ4wR14yRHaGWaTlwwJkZojzi0iuBDvnTvWnqs2vgtNN0oKfcgjsQd2ZtwpwPeZ/tW5K2h3IwVAlThWod5JIwKDCuvRtgXVRQrdp2gXJqldhQnxvOPH0jZLxAa29RoY2KZV4EOT+dRx/+IUBohsyAeGCgFuJiSXDyGKLgw4=
+	t=1742149157; cv=none; b=F7zEIcLLE0YkChETWtknIUboxBFQ0ukh4f6R3MC7bmNoqiGNM+BlqUacsfaUuLi4ZoI6E3vMtvWPXhmguXdVE9bJTDhaHjkFepnCwCab2Whe498ERC5Q/3XyOPTrPawN1cn+SFlRl0tEZWFk6Xrwo0KkeUMr40xLCxrvoGDj9HE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742148331; c=relaxed/simple;
-	bh=wSenMd7JE2bKBNwtBWn+AV+6AQ/4QGmL5Kj5woZLk+k=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=rhHNlPp5JV/AOdjXayII/0uaOhOsG8xwsnIVDXTwH3ztNRZVNm7TCW0QPHVn18z3QFOkCFJmfE7xwYZIv7lDwqzhhYlpQf+/TVKTMVh0uzIYOAhQQr4dTIkM/VHBmhJYubXAS+/GT9e3vAn9m0WOIw6l2IYuTE9Um7GIMW2U1Cs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f80.google.com with SMTP id ca18e2360f4ac-85b3b781313so791423439f.1
-        for <linux-kernel@vger.kernel.org>; Sun, 16 Mar 2025 11:05:29 -0700 (PDT)
+	s=arc-20240116; t=1742149157; c=relaxed/simple;
+	bh=/2qC3ys8iqY4ZhnW9xWMTHOrRpd3z4gIdVRcOiTewoI=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=l+6Yi6w5fo10VtFrENgZOEUj+u6owMNSmRlw5Lg3EigSHCDTqBveFmMGbuPwovGzzERzkf73grfhxOcaV27HXGmt6xb3NMd3ycBADFVbykcq+0jiIMHJIs478YTdsLNYV9SN4Jhv4XgAwB7AR1Py9+h5typHUaW1u1vv03RiOfs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kU7mJr6h; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-ac2aeada833so726495266b.0;
+        Sun, 16 Mar 2025 11:19:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742149154; x=1742753954; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=5llhXWaOgn+P9hsoG5ZPqzI/ueY0T33WAdcLaUmMduY=;
+        b=kU7mJr6hKDIFSTywDMhhs0VTslZK/eqhGjhI366HemwK96wUYjqqB8rPk9s0d92Hve
+         tTJ30AfaPYuNc9Wm/AtWhjNBRl3chxu6qBCqOOMvr+7OHx4UqMfaGUxOrZCN7kVWP3Gu
+         eND5/2I4j6D52mHEZ44jDxccCnRWkn3pmA30HHTDe0XpSTclfSNYnYoMnQFB0zqJ6tDl
+         nbwz4XGxwKaiNxetxu0ibWSrg+JJIEwcDA6WEWMfq7y4Tmex3Xguc4shxR14nuSgNxF7
+         9kJNeMqxUvjrANhTa2Qbh0YNYzqjlYrQmT2u5+p/1dWN/98uQspA+mPmD6/c5n7xORy3
+         z4zA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742148329; x=1742753129;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=1KAG5K4bfCIVHIXppjmJThpHWvzF7Fm7+i+OemRn1ng=;
-        b=VPPSqsQexwZalDdGsT2s33LudiTBOy7E0LRT+kCRHg/sV2szidMA02Nk1CG5YmE9KS
-         9IMr3nknZt653K4STt5fM/CIq4b/0eoIpxxMZFl7S476qxK2DnLen2tlwzw24NwWJDys
-         Qo0DQ9rovvIWjnyaEh4eQBZFbs6FoEzlDp3+YtQP1i53jukszM7BANvQtfNaI7Z+w043
-         hHQ0JOsd7jcL4xr2B6pftGVUPZ9OdpVOBboOdryERRAR3txqYy1/cHBvX9MygJIB6jok
-         hXABk0coiyxq+jmq8CxDGtUMawGULssTuIAnfjvzTihtbYfL0L67Ctros9It87gDlTxp
-         86rg==
-X-Forwarded-Encrypted: i=1; AJvYcCWnx3XAI+bkzTOxCvTHg9VCFXDlOvvD0ohVXa7gf/NAFp33K9WvJhR3zXuojI/ZmcUfawCd4PJujHUHbzg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwEKN6+nSOvP3jSdHdlUsw4EzWwEMD/NjiU/HIESmMLFlrDKKjI
-	PnOVj5gc4+Du5Gx3YrN5ShnF7Fg9bbinqxO6dHpUOX+6jlBli9JZtbPJpJn8ivTPpNElncdTl2A
-	72N99OagCN7nWErEP4TlxDjqfddKRNO8/LZqBd1tniS68xY0HxGNC+lM=
-X-Google-Smtp-Source: AGHT+IFcRMN7lXg2XCJXA5zNF34/K2/fxovFLJNrG8asO69HI0vXiJMMDBcs8UkdyuTn59hX91eHZBhXd1PiiLgCOBQoqecMGo1k
+        d=1e100.net; s=20230601; t=1742149154; x=1742753954;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5llhXWaOgn+P9hsoG5ZPqzI/ueY0T33WAdcLaUmMduY=;
+        b=JvIrO34qNkW+kC/+0Xeyt3kaWGEkOaQpAabZOF5WmZMC9S4r2kO28mup2ftVt95kfe
+         TChqqoYJbB8lXrq1SdZOnpgFSPuPfug+Q6ZDMU43anOd4ugXzGaHhbX4I2rNKZJ43kwd
+         EFUq4HNrHoq/hujFyOj4XAYecD0s1NAGAlJRAwfP1y+kHZYCyQ+iYHDHV5jpxou/JTJ0
+         +ShYjRMflCc4SMbjwOPzUQ/eHjYmwEM+Pj6RqWpezW5duJxIUhVBbbi3SAGOUYGhUEtz
+         sRK0fwbZ5IpHoj7ddL1c7SN6a2EUH0TuFmuBq/HSnVdQmEJq9zzRQKOhZ0LvdHJWm82b
+         8Fxw==
+X-Forwarded-Encrypted: i=1; AJvYcCU3UF4s1fy9Nayu7ELn0ehbGUNWc0zi4VL15w8KSvN11s7fJcZEcO0tqhJKtA+2WquBu/qO36bSSzqB@vger.kernel.org, AJvYcCVoPRzJl35lfqyO55OJ7X5ZF7kYwtGqQcfL/8fOwoBwmaGS+bCIM7vWoFUzaCtA00uN1OT6VT/tTQA7Mxla@vger.kernel.org
+X-Gm-Message-State: AOJu0YxBQLBvPhQgubvOYvgb9mkIy5VGvbD5P0gBJqD2RlDWrt3YPvBz
+	pbA/+c+LQZcD8wOJ9syDEBCz5S+tjLgf6/fMsKzyMjc0mNgwmDZi
+X-Gm-Gg: ASbGnctzmzapEiRWmNtUlIig+xTKkCj10vQNJKCd+riU+vA1JOCFrV5EEIRoPBGFayT
+	qxGXnPIKjr943wCOeFowmIQLfwfRRbEcgSAOz1tmnSBqvVLFyYJCUfBkkRwCf/RZGv4/bqjbZqn
+	UJ73rMvmPIeZXgv6xVdFg8GwsC1dHeAB3PSbJxY8GDSY9LtIQ3VOhDAkvejgVNv3CXLUYhOdzUC
+	dW8xaEws1IwrbAubqg7pYvZWOif5M5VTjqQ+1f7WQy6jNTEvOK3mHWhPBvzU+14DbhahCqzv56K
+	5UeHcuNdgnYO9NJULvWswEvTIYHbDtzdI4yizhCt8+yZE6avkAAXVuRT/CACimb1CMJ+kflV96j
+	iw988XX4l/mbroz1ppg==
+X-Google-Smtp-Source: AGHT+IGjBEUa5TpBWQvliNMZG68SgtFyRC14IY8B3fWdscOsontLpBleg5zWcEHDjbOsrk436S97fQ==
+X-Received: by 2002:a17:907:6b88:b0:abf:6a8d:76b8 with SMTP id a640c23a62f3a-ac3122d2166mr1285016666b.11.1742149153915;
+        Sun, 16 Mar 2025 11:19:13 -0700 (PDT)
+Received: from hex.my.domain (83.11.178.210.ipv4.supernova.orange.pl. [83.11.178.210])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac314a48b51sm537951266b.149.2025.03.16.11.19.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 16 Mar 2025 11:19:13 -0700 (PDT)
+From: Artur Weber <aweber.kernel@gmail.com>
+Subject: [PATCH v7 00/10] mfd: bcm590xx: Add support for BCM59054
+Date: Sun, 16 Mar 2025 19:18:48 +0100
+Message-Id: <20250316-bcm59054-v7-0-4281126be1b8@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:3787:b0:3d4:341a:441d with SMTP id
- e9e14a558f8ab-3d483a32c7amr88155445ab.10.1742148329160; Sun, 16 Mar 2025
- 11:05:29 -0700 (PDT)
-Date: Sun, 16 Mar 2025 11:05:29 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67d712e9.050a0220.3d01d1.013d.GAE@google.com>
-Subject: [syzbot] [mm?] [bcachefs?] general protection fault in xas_create
-From: syzbot <syzbot+85a56f124ac1ea0ac0cb@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, hughd@google.com, kent.overstreet@linux.dev, 
-	linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAgW12cC/3XQwWrDMAwG4FcpPs9DsiXH2WnvMXaQHac1LE1JR
+ tgoefc5hREvsOMv/P3Cuqs5TTnN6uV0V1Na8pzHawnN00nFi1zPSeeuZGXAEHh0OsSBW2DS4j2
+ 4lhNh8qo8v02pz1+Pqrf3ki95/hyn70fzgtt0K7EIFvaSBTVoy9j0rYeIyb6eB8kfz3Ec1Faym
+ P+gKZB7IUAU4SBHaH8hA1qsoC0wBIlsxFPjmyOkHRrkClKBXeiD6RonnvkIuYKm3sgFguOe0Uk
+ LZI7Q7dACVdAVKMnb8nv2RH+Os67rD7sxzI29AQAA
+X-Change-ID: 20240816-bcm59054-a880695e41e8
+To: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, 
+ Mark Brown <broonie@kernel.org>, 
+ Florian Fainelli <florian.fainelli@broadcom.com>, 
+ Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, 
+ Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>
+Cc: Stanislav Jakubek <stano.jakubek@gmail.com>, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ ~postmarketos/upstreaming@lists.sr.ht, 
+ Artur Weber <aweber.kernel@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1742149152; l=4285;
+ i=aweber.kernel@gmail.com; s=20231030; h=from:subject:message-id;
+ bh=/2qC3ys8iqY4ZhnW9xWMTHOrRpd3z4gIdVRcOiTewoI=;
+ b=ZNfRtDgIBuMyG/Lbw1yMmSFngKHMU8KfJSYgTTvTpciFnYSzh4e8+9i6kYQPBw/CWqt1bMY2L
+ Bz8HP0QT+0jDMhnal4cAJNilgxZQ9QL64bhGGsuv06TA9H3785fCCYy
+X-Developer-Key: i=aweber.kernel@gmail.com; a=ed25519;
+ pk=RhDBfWbJEHqDibXbhNEBAnc9FMkyznGxX/hwfhL8bv8=
 
-Hello,
+Add support for the BCM59054 MFD to the bcm590xx driver and fix a
+couple of small bugs in it that also affected the already supported
+BCM59056.
 
-syzbot found the following issue on:
+While we're at it - convert the devicetree bindings to YAML format
+and drop the bcm59056 DTS in favor of describing the PMU in users'
+DTS files, as is done for most other MFDs.
 
-HEAD commit:    0fed89a961ea Merge tag 'hyperv-fixes-signed-20250311' of g..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=17ea1874580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=31c94a07ddad0b00
-dashboard link: https://syzkaller.appspot.com/bug?extid=85a56f124ac1ea0ac0cb
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16124c78580000
+The BCM59054 is fairly similar to the BCM59056, with the primary
+difference being the different number and layout of regulators.
+It is primarily used in devices using the BCM21664 and BCM23550
+chipsets.
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-0fed89a9.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/9e4d0fd4258e/vmlinux-0fed89a9.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/ea186f3b1240/bzImage-0fed89a9.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/2c3be83f8b9f/mount_0.gz
+This patchset has been tested on a Samsung Galaxy Grand Neo
+(baffinlite rev02; DTS not in mainline yet) with a BCM59054 PMIC.
+Testing on a BCM59056 would be appreciated.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+85a56f124ac1ea0ac0cb@syzkaller.appspotmail.com
+Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
+---
+Changes in v7:
+- Return -ENODEV on PMU ID mismatch
+- Drop "Check your DT compatible" from ID mismatch error message
+- Pick up Reviewed-by trailers from Rob on DT bindings
+- Link to v6: https://lore.kernel.org/r/20250304-bcm59054-v6-0-ae8302358443@gmail.com
 
-Oops: general protection fault, probably for non-canonical address 0x7d0034f00001880: 0000 [#1] PREEMPT SMP KASAN NOPTI
-CPU: 0 UID: 0 PID: 5719 Comm: syz.4.37 Not tainted 6.14.0-rc6-syzkaller-00016-g0fed89a961ea #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-RIP: 0010:get_freepointer mm/slub.c:504 [inline]
-RIP: 0010:get_freepointer_safe mm/slub.c:532 [inline]
-RIP: 0010:__slab_alloc_node mm/slub.c:3993 [inline]
-RIP: 0010:slab_alloc_node mm/slub.c:4152 [inline]
-RIP: 0010:kmem_cache_alloc_lru_noprof+0xed/0x390 mm/slub.c:4183
-Code: 0f 84 8e 01 00 00 41 83 f8 ff 74 1a 48 8b 03 48 83 f8 ff 0f 84 97 02 00 00 48 c1 e8 3a 41 39 c0 0f 85 6e 01 00 00 41 8b 47 28 <4a> 8b 1c 20 49 8d 4d 08 49 8b 37 4c 89 e0 4c 89 ea 65 48 0f c7 0e
-RSP: 0018:ffffc9000d037478 EFLAGS: 00010046
-RAX: 0000000000000240 RBX: ffffea0000ecb880 RCX: 0000000000043ba0
-RDX: 0000000000000001 RSI: 0000000000000240 RDI: ffffffff8ec54460
-RBP: ffffffff8c06a1c0 R08: 00000000ffffffff R09: fffff52001a06ea8
-R10: dffffc0000000000 R11: fffff52001a06ea8 R12: 07d0034f00001640
-R13: 0000000000016220 R14: 0000000000402800 R15: ffff88801b04fdc0
-FS:  00007fd8409fe6c0(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fa6ac013000 CR3: 0000000012b64000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- xas_alloc lib/xarray.c:377 [inline]
- xas_create+0x10d0/0x1ae0 lib/xarray.c:684
- xas_store+0x96/0x1870 lib/xarray.c:794
- shmem_add_to_page_cache+0x89d/0xcc0 mm/shmem.c:897
- shmem_alloc_and_add_folio+0x968/0x1090 mm/shmem.c:1928
- shmem_get_folio_gfp+0x621/0x1840 mm/shmem.c:2545
- shmem_get_folio mm/shmem.c:2651 [inline]
- shmem_write_begin+0x165/0x350 mm/shmem.c:3301
- generic_perform_write+0x346/0x990 mm/filemap.c:4188
- shmem_file_write_iter+0xf9/0x120 mm/shmem.c:3477
- new_sync_write fs/read_write.c:586 [inline]
- vfs_write+0xacf/0xd10 fs/read_write.c:679
- ksys_write+0x18f/0x2b0 fs/read_write.c:731
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fd84178bc1f
-Code: 89 54 24 18 48 89 74 24 10 89 7c 24 08 e8 f9 92 02 00 48 8b 54 24 18 48 8b 74 24 10 41 89 c0 8b 7c 24 08 b8 01 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 31 44 89 c7 48 89 44 24 08 e8 4c 93 02 00 48
-RSP: 002b:00007fd8409fddf0 EFLAGS: 00000293 ORIG_RAX: 0000000000000001
-RAX: ffffffffffffffda RBX: 0000000001000000 RCX: 00007fd84178bc1f
-RDX: 0000000001000000 RSI: 00007fd838400000 RDI: 0000000000000003
-RBP: 0000000000000000 R08: 0000000000000000 R09: 000000000000590c
-R10: 0000000000000002 R11: 0000000000000293 R12: 0000000000000003
-R13: 00007fd8409fdef0 R14: 00007fd8409fdeb0 R15: 00007fd838400000
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:get_freepointer mm/slub.c:504 [inline]
-RIP: 0010:get_freepointer_safe mm/slub.c:532 [inline]
-RIP: 0010:__slab_alloc_node mm/slub.c:3993 [inline]
-RIP: 0010:slab_alloc_node mm/slub.c:4152 [inline]
-RIP: 0010:kmem_cache_alloc_lru_noprof+0xed/0x390 mm/slub.c:4183
-Code: 0f 84 8e 01 00 00 41 83 f8 ff 74 1a 48 8b 03 48 83 f8 ff 0f 84 97 02 00 00 48 c1 e8 3a 41 39 c0 0f 85 6e 01 00 00 41 8b 47 28 <4a> 8b 1c 20 49 8d 4d 08 49 8b 37 4c 89 e0 4c 89 ea 65 48 0f c7 0e
-RSP: 0018:ffffc9000d037478 EFLAGS: 00010046
-RAX: 0000000000000240 RBX: ffffea0000ecb880 RCX: 0000000000043ba0
-RDX: 0000000000000001 RSI: 0000000000000240 RDI: ffffffff8ec54460
-RBP: ffffffff8c06a1c0 R08: 00000000ffffffff R09: fffff52001a06ea8
-R10: dffffc0000000000 R11: fffff52001a06ea8 R12: 07d0034f00001640
-R13: 0000000000016220 R14: 0000000000402800 R15: ffff88801b04fdc0
-FS:  00007fd8409fe6c0(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fa6ac013000 CR3: 0000000012b64000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-----------------
-Code disassembly (best guess):
-   0:	0f 84 8e 01 00 00    	je     0x194
-   6:	41 83 f8 ff          	cmp    $0xffffffff,%r8d
-   a:	74 1a                	je     0x26
-   c:	48 8b 03             	mov    (%rbx),%rax
-   f:	48 83 f8 ff          	cmp    $0xffffffffffffffff,%rax
-  13:	0f 84 97 02 00 00    	je     0x2b0
-  19:	48 c1 e8 3a          	shr    $0x3a,%rax
-  1d:	41 39 c0             	cmp    %eax,%r8d
-  20:	0f 85 6e 01 00 00    	jne    0x194
-  26:	41 8b 47 28          	mov    0x28(%r15),%eax
-* 2a:	4a 8b 1c 20          	mov    (%rax,%r12,1),%rbx <-- trapping instruction
-  2e:	49 8d 4d 08          	lea    0x8(%r13),%rcx
-  32:	49 8b 37             	mov    (%r15),%rsi
-  35:	4c 89 e0             	mov    %r12,%rax
-  38:	4c 89 ea             	mov    %r13,%rdx
-  3b:	65 48 0f c7 0e       	cmpxchg16b %gs:(%rsi)
+Changes in v6:
+- Rename mfd/brcm,bcm590xx.yaml to mfd/brcm,bcm59056.yaml again
+- Use PMU ID value as device type
+- Rename rev_dig and rev_ana to rev_digital and rev_analog
+- Link to v5: https://lore.kernel.org/r/20250221-bcm59054-v5-0-065f516a9042@gmail.com
 
+Changes in v5:
+- Make regulator binding descriptions reference mfd/brcm,bcm590xx.yaml
+  instead of mfd/brcm,bcm59056.yaml
+- Move regmap type enum to common MFD header
+- Link to v4: https://lore.kernel.org/r/20250215-bcm59054-v4-0-dbfb2d76a855@gmail.com
+
+Changes in v4:
+- Fix yamllint warnings in DT bindings
+- Address miscelaneous review comments related to DT bindings
+  - Note that I did not end up moving the regulator refs from
+    allOf compatible matches; I explained my reasoning in [1].
+    [1] https://lore.kernel.org/lkml/ab853605-859d-44c6-8cbd-44391cd677e6@gmail.com/
+- Add PMU ID/revision parsing to MFD driver
+- Fix instances of regulator data not matching vendor kernel for
+  BCM59054
+- Use different voltage table for BCM59054 VSR reg based on PMU
+  revision
+- Link to v3: https://lore.kernel.org/r/20250131-bcm59054-v3-0-bbac52a84787@gmail.com
+
+Changes in v3:
+- Split out regulator DT bindings into separate YAML
+- Use tables of regulator info instead of get_XXX_register, reg_is_XXX
+  functions
+- Drop "regulator: bcm590xx: Add proper handling for PMMODE registers";
+  it adds unnecessary noise to the series and will be submitted separately
+- Link to v2: https://lore.kernel.org/r/20231030-bcm59054-v2-0-5fa4011aa5ba@gmail.com
+
+Changes in v2:
+- Fixed BCM59054 ID being passed to BCM59056 function in the
+  regulator driver
+- Dropped linux-rpi-kernel from the CC list
+- Link to v1: https://lore.kernel.org/r/20231030-bcm59054-v1-0-3517f980c1e3@gmail.com
 
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Artur Weber (10):
+      dt-bindings: mfd: brcm,bcm59056: Convert to YAML
+      dt-bindings: mfd: brcm,bcm59056: Add compatible for BCM59054
+      ARM: dts: Drop DTS for BCM59056 PMU
+      mfd: bcm590xx: Drop unused "id" member of bcm590xx MFD struct
+      mfd: bcm590xx: Add support for multiple device types + BCM59054 compatible
+      mfd: bcm590xx: Add PMU ID/revision parsing function
+      regulator: bcm590xx: Use dev_err_probe for regulator register error
+      regulator: bcm590xx: Store regulator descriptions in table
+      regulator: bcm590xx: Rename BCM59056-specific data as such
+      regulator: bcm590xx: Add support for BCM59054 regulators
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+ .../devicetree/bindings/mfd/brcm,bcm59056.txt      |   39 -
+ .../devicetree/bindings/mfd/brcm,bcm59056.yaml     |   76 ++
+ .../bindings/regulator/brcm,bcm59054.yaml          |   56 +
+ .../bindings/regulator/brcm,bcm59056.yaml          |   51 +
+ arch/arm/boot/dts/broadcom/bcm28155-ap.dts         |   68 +-
+ arch/arm/boot/dts/broadcom/bcm59056.dtsi           |   91 --
+ drivers/mfd/bcm590xx.c                             |   75 +-
+ drivers/regulator/bcm590xx-regulator.c             | 1289 ++++++++++++++++----
+ include/linux/mfd/bcm590xx.h                       |   28 +-
+ 9 files changed, 1366 insertions(+), 407 deletions(-)
+---
+base-commit: ffd294d346d185b70e28b1a28abe367bbfe53c04
+change-id: 20240816-bcm59054-a880695e41e8
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+Best regards,
+-- 
+Artur Weber <aweber.kernel@gmail.com>
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
