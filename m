@@ -1,134 +1,74 @@
-Return-Path: <linux-kernel+bounces-562974-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562975-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A9EDA6353C
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 12:12:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9758A6353E
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 12:12:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E541416E7D2
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 11:12:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C20773B1635
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 11:12:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76B491A0BCA;
-	Sun, 16 Mar 2025 11:12:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCD951A2C11;
+	Sun, 16 Mar 2025 11:12:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zy7Nkshr"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O2qnjhAj"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2D1C154BFE;
-	Sun, 16 Mar 2025 11:12:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35FD474BE1;
+	Sun, 16 Mar 2025 11:12:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742123540; cv=none; b=P+RjOXmVavdpPvwXRVlTugd6ILAYps0m4rPdual98oHuUGYBG4l+ZuEKXgg28AcKum5uDR3gMxo3iXDeP9AMEPls4bJcp/J9MgXOEH7giHKtV/QypsxOuphyx9qZogKSOL4fRtzGL8k0nKNRanMz0By5W2ZunyVGlB2iu3moJ10=
+	t=1742123564; cv=none; b=OLU98OXtn3hzIxQPsKoOVsYLa3f57wL4WakzR8NvKJNiXgIe9GUwZfsmU7VXXrVtcHvyq3tl3o+M4ehoMuNXn4NZe0EhY0QoCi4caXKhfOUDzgfOpObW+AwgoNsJojLD7ncGeRtmzIW3mtlQJd9mRSQtRUvLADIxnFDaaieZo5E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742123540; c=relaxed/simple;
-	bh=4ZEEybcIfeZK2o63kdNPHHfyqeq3KgfN4XgVKPtAg0Y=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kr0MfiWsPFV0RqsEzQlhrxXlRS2uU5BNdtiqhW1SOuOBIWNqu378FbG4W1qJYfvEzZE2pKVJ/fjPVZPhpYT7J8zTvEztIwjp64hbXtwbMPyZstP8GgfSeagzDF4jow3mDzYEsPT9AO0Eu+5kMhCRmAMdwJOAyCF8d7lBwj3Vs9Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zy7Nkshr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4255AC4CEDD;
-	Sun, 16 Mar 2025 11:12:20 +0000 (UTC)
+	s=arc-20240116; t=1742123564; c=relaxed/simple;
+	bh=8gk3tZfxCd6XuKhUUZVxxKu5Rsl1eLo0xiKdrd6kMvg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=uQKqFjzwcdjyyjHI1wZ5f03SDFox93G8kUnqf7S4Kvnf1K81egHfRVsYq5pvRfllGaSITHC3xIOnYUBYPqSbKZvr99E7XCO9Gaq9k2baNt8KGlP7W7u6y4pEKE2mka/1Y9DNoC6v0xupwapFeyUkECwm/ud4DdKtBiEnPimPoWY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O2qnjhAj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E760C4CEDD;
+	Sun, 16 Mar 2025 11:12:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742123540;
-	bh=4ZEEybcIfeZK2o63kdNPHHfyqeq3KgfN4XgVKPtAg0Y=;
+	s=k20201202; t=1742123563;
+	bh=8gk3tZfxCd6XuKhUUZVxxKu5Rsl1eLo0xiKdrd6kMvg=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Zy7Nkshr5ieGYILWsYa9Uy1Dmp5VshwsyKYM28vQrc8wFDlTacOYyxQQbdpveKe4v
-	 JauafJ9Qas23rkZ27LmBAuSdfS1Xxt6RYxBmgAwbxQ50WfhAgH082JOuLqn+GsVuP8
-	 z3zzwF31HvjREfcOSTg+HjMkJoFG0spfKp3XZdJz9bo1K0JtPlkLCbgUlh2bkELTKF
-	 +rjv+dKl0XvYXRXfJ0pmPhMC5mgjIoksVwUhMZWFqGxfWvuKGGPZVw8ynZRhgyjtfY
-	 lv/6MK8aSLd+Agi+TrY4I3+j5ticC72ayBGrxRTyZLXTOZybK4jJ92VJKPCWj/oW38
-	 e0LCx6VIH1L8w==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1ttluk-00DyUl-1b;
-	Sun, 16 Mar 2025 11:12:18 +0000
-Date: Sun, 16 Mar 2025 11:12:17 +0000
-Message-ID: <864iztnsa6.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Quentin Perret <qperret@google.com>
-Cc: Oliver Upton <oliver.upton@linux.dev>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Vincent Donnefort <vdonnefort@google.com>,
-	linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/6] Move pKVM ownership state to hyp_vmemmap
-In-Reply-To: <20250227003310.367350-1-qperret@google.com>
-References: <20250227003310.367350-1-qperret@google.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	b=O2qnjhAjLJMJqp/+qyNxn7QGWFD2b5LQfPspWg5s7P2Irp00jn1Lwpw/q99gSTgte
+	 z/OWRuJqdeGnPNSdZL6FVyYr96SiQ8i9Pyia1K1jps+diwAdXBfu11dnc21jio21S+
+	 QkNgAoqsa2uYkPm9n8zONrC49lQjqgupcJuW0JGmutgiyQWkgO4HZCNZPFZvdMeF1I
+	 rsYGTJTj0tz6MN7a6/57bjL45FLIQag/ZGXAR0dgohoVyrHCW+gONbZo2ibhs7meMq
+	 qZkcolE2zivkLDhi3n5KwcPRfvMiqv/pulw1IREzqjRJNuy8+mLPHrVkOKNlzAWz71
+	 V31h+kgYRpLrw==
+Date: Sun, 16 Mar 2025 11:12:29 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Lothar Rubusch <l.rubusch@gmail.com>
+Cc: lars@metafoo.de, Michael.Hennerich@analog.com,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ eraretuya@gmail.com
+Subject: Re: [PATCH v4 03/14] iio: accel: adxl345: cleanup regmap return
+ values
+Message-ID: <20250316111229.4863d0c6@jic23-huawei>
+In-Reply-To: <20250313165049.48305-4-l.rubusch@gmail.com>
+References: <20250313165049.48305-1-l.rubusch@gmail.com>
+	<20250313165049.48305-4-l.rubusch@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: qperret@google.com, oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, catalin.marinas@arm.com, will@kernel.org, vdonnefort@google.com, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+Content-Transfer-Encoding: 7bit
 
-On Thu, 27 Feb 2025 00:33:04 +0000,
-Quentin Perret <qperret@google.com> wrote:
-> 
-> Hi all,
-> 
-> This series moves the hypervisor's ownership state to the hyp_vmemmap,
-> as discussed in [1]. The two main benefits are:
-> 
->  1. much cheaper hyp state lookups, since we can avoid the hyp stage-1
->     page-table walk;
-> 
->  2. de-correlates the hyp state from the presence of a mapping in the
->     linear map range of the hypervisor; which enables a bunch of
->     clean-ups in the existing code and will simplify the introduction of
->     other features in the future (hyp tracing, ...)
-> 
-> Patch 01 is a self-sufficient cleanup that I found thanks to patch 05.
-> Patches 02-04 implement the aforementioned migration of the hyp state
-> to the vmemmap. Patches 05 and 06 are cleanups enabled by that
-> migration.
-> 
-> Patches based on 6.14-rc4, tested on Qemu.
-> 
-> Thanks!
-> Quentin
-> 
-> [1] https://lore.kernel.org/kvmarm/Z79ZJVOHtNu6YsVt@google.com/
-> 
-> Fuad Tabba (1):
->   KVM: arm64: Track SVE state in the hypervisor vcpu structure
-> 
-> Quentin Perret (5):
->   KVM: arm64: Use 0b11 for encoding PKVM_NOPAGE
->   KVM: arm64: Introduce {get,set}_host_state() helpers
->   KVM: arm64: Move hyp state to hyp_vmemmap
->   KVM: arm64: Defer EL2 stage-1 mapping on share
->   KVM: arm64: Unconditionally cross check hyp state
-> 
->  arch/arm64/include/asm/kvm_host.h        |  12 +--
->  arch/arm64/kvm/hyp/include/nvhe/memory.h |  35 ++++++--
->  arch/arm64/kvm/hyp/nvhe/hyp-main.c       |   4 -
->  arch/arm64/kvm/hyp/nvhe/mem_protect.c    | 106 ++++++++++++-----------
->  arch/arm64/kvm/hyp/nvhe/pkvm.c           |  54 ++++++++++--
->  arch/arm64/kvm/hyp/nvhe/setup.c          |  10 ++-
->  6 files changed, 147 insertions(+), 74 deletions(-)
-> 
+On Thu, 13 Mar 2025 16:50:38 +0000
+Lothar Rubusch <l.rubusch@gmail.com> wrote:
 
-Reviewed-by: Marc Zyngier <maz@kernel.org>
-
-	M.
-
--- 
-Without deviation from the norm, progress is not possible.
+> Regmap return values sometimes are checked being less than zero
+> to trigger error handling. Sometimes this is checked for being not
+> zero. Unify the situation and check for not being zero.
+> 
+> Signed-off-by: Lothar Rubusch <l.rubusch@gmail.com>
+Applied.
 
