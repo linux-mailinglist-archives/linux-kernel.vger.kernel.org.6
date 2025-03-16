@@ -1,45 +1,46 @@
-Return-Path: <linux-kernel+bounces-562948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562950-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A17CA63509
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 11:32:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 36684A63510
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 11:33:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 504B8189039F
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 10:33:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4273F18908F7
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 10:33:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C1701A23A5;
-	Sun, 16 Mar 2025 10:32:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D8ED1A3162;
+	Sun, 16 Mar 2025 10:32:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="RpkTebEz"
+	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="tvHt1/JH"
 Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
 	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06B0119DFA7;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43FA919D08F;
 	Sun, 16 Mar 2025 10:32:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.149.199.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742121163; cv=none; b=EJnxLAsqEqWsvYU3uePQrzBLa2XvPHVhIyiJcprawOqu0AaGnJKMq5gu2eDmi0Mm3yt4MK320r7eAyoXNOzYWQB96tRgGP6hCa9HPz9cfD2hiwGLlf3d0aTRWAozNh4BXGX7ujcMTAscr+5kWiDKn3CGVRglK0idWeUKQ+H/QG0=
+	t=1742121163; cv=none; b=rop21n5u9MHUzDVWGQgfraityAYWt/8xoyImT5lu7NSxhuEJaQtfl9vSOao+jUBBiODEOH1C2e9LOEVZqckjzfcbVtNVv9/58XLf5vNW/h6sv3toUWRE22pyBWgK/oHhqxEHzaSSOUR2kHcfL7+WSV4ND7oEiQZBfpjdcvCnw0k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1742121163; c=relaxed/simple;
-	bh=NMPLQeRvp17Mk+Yjw0Ym7i5U904LNwzrFSiWvvfOcsg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ffEEuq+j/eU8GFL+g0QMJjEHZjxxD22waN/MViaznT2uoCJ8RGAX2ZgKgXyokY4VZZNbQ6sMmfZQPl+MkL7PSZhRqsuJeM7wdxx5NPo89EFAXhcBVZlWlmYepop00RIusaIS3VLjtB7kgPmaIszas38eZmkHPNKtGUd1PgrrWH8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=RpkTebEz; arc=none smtp.client-ip=83.149.199.84
+	bh=IoZRDSWclLoY0c9HHHU0rFNnEogfw3ECDrvyX7T0Ctw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=YI7c8jgF3hfyedn6wrucEOgbu0XwAb9+gPPpidBe9U3SC4VgVNs7Zk12f8aBZ74/7xyy1MrRS4XgSaOWbVMo03RKP1/cXNCJjZVqrdvOZVMBJnOrYLnajL5HO2N9AFh2uFXsuQk+SlchSSNsUeERrE8A2imHX+X2DML6NYoT8hw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=tvHt1/JH; arc=none smtp.client-ip=83.149.199.84
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
 Received: from fedora.intra.ispras.ru (unknown [10.10.165.7])
-	by mail.ispras.ru (Postfix) with ESMTPSA id 664C846361CB;
-	Sun, 16 Mar 2025 10:27:22 +0000 (UTC)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru 664C846361CB
+	by mail.ispras.ru (Postfix) with ESMTPSA id 262C146361CD;
+	Sun, 16 Mar 2025 10:27:24 +0000 (UTC)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru 262C146361CD
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
-	s=default; t=1742120842;
-	bh=DAFPVgIz17hFI8bUHedfUHl8J8FHc6juaD+ei7zx+wk=;
-	h=From:To:Cc:Subject:Date:From;
-	b=RpkTebEz3IFd8ugfP9npZqvS0rzPExAZ+VASvazmljBkLjnRFQ2qkdxp58EQxHOgz
-	 iiRVCFpMKjS2I6TWW7ubCHyk+Oto8DMyFllmfBGVsvhc7rkkobyLvIGYydeVFiunNH
-	 0V16ziOMUp0s30bZytxFkW5wskVlA9abouCARHlE=
+	s=default; t=1742120844;
+	bh=XnT7h38wk2Tx5Bqn00SrYumy1xtf5pPAUEWMtYlgi4Y=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=tvHt1/JHz0QzZHyftyuT49jk/JWvISlwk66JwW0IuwfdRR+c3apksWD5fjT9QpMnz
+	 8Y7rPyM48hI82bYzt1THPSene62mD7kFVpl+/R6tKbOLfQmF/dxtTvLSgMw6pXEUxs
+	 m2HqMvzK9oh0VpGTRlmFGjc/OuCjPjEhadPMaTvU=
 From: Fedor Pchelkin <pchelkin@ispras.ru>
 To: Peter Chen <peter.chen@kernel.org>,
 	Frank Li <Frank.li@nxp.com>
@@ -56,11 +57,14 @@ Cc: Fedor Pchelkin <pchelkin@ispras.ru>,
 	imx@lists.linux.dev,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	lvc-project@linuxtesting.org
-Subject: [PATCH v2 0/3] usb: chipidea: ci_hdrc_imx: fix some issues in probe/remove
-Date: Sun, 16 Mar 2025 13:26:53 +0300
-Message-ID: <20250316102658.490340-1-pchelkin@ispras.ru>
+	lvc-project@linuxtesting.org,
+	stable@vger.kernel.org
+Subject: [PATCH v2 1/3] usb: chipidea: ci_hdrc_imx: fix usbmisc handling
+Date: Sun, 16 Mar 2025 13:26:54 +0300
+Message-ID: <20250316102658.490340-2-pchelkin@ispras.ru>
 X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250316102658.490340-1-pchelkin@ispras.ru>
+References: <20250316102658.490340-1-pchelkin@ispras.ru>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -69,22 +73,45 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The first patch fixes a rather recently introduced bug leading to the
-driver oopsing on removal in case of non-usbmisc devices.
+usbmisc is an optional device property so it is totally valid for the
+corresponding data->usbmisc_data to have a NULL value.
 
-The other ones perform error path fixes in the probe function.
+Check that before dereferencing the pointer.
 
-Link to v1
-https://lore.kernel.org/linux-usb/20250309175805.661684-1-pchelkin@ispras.ru/t/#u
+Found by Linux Verification Center (linuxtesting.org) with Svace static
+analysis tool.
 
-Fedor Pchelkin (3):
-  usb: chipidea: ci_hdrc_imx: fix usbmisc handling
-  usb: chipidea: ci_hdrc_imx: fix call balance of regulator routines
-  usb: chipidea: ci_hdrc_imx: implement usb_phy_init() error handling
+Fixes: 74adad500346 ("usb: chipidea: ci_hdrc_imx: decrement device's refcount in .remove() and in the error path of .probe()")
+Cc: stable@vger.kernel.org
+Signed-off-by: Fedor Pchelkin <pchelkin@ispras.ru>
+---
+ drivers/usb/chipidea/ci_hdrc_imx.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
- drivers/usb/chipidea/ci_hdrc_imx.c | 44 +++++++++++++++++++++---------
- 1 file changed, 31 insertions(+), 13 deletions(-)
-
+diff --git a/drivers/usb/chipidea/ci_hdrc_imx.c b/drivers/usb/chipidea/ci_hdrc_imx.c
+index 1a7fc638213e..619779eef333 100644
+--- a/drivers/usb/chipidea/ci_hdrc_imx.c
++++ b/drivers/usb/chipidea/ci_hdrc_imx.c
+@@ -534,7 +534,8 @@ static int ci_hdrc_imx_probe(struct platform_device *pdev)
+ 		cpu_latency_qos_remove_request(&data->pm_qos_req);
+ 	data->ci_pdev = NULL;
+ err_put:
+-	put_device(data->usbmisc_data->dev);
++	if (data->usbmisc_data)
++		put_device(data->usbmisc_data->dev);
+ 	return ret;
+ }
+ 
+@@ -559,7 +560,8 @@ static void ci_hdrc_imx_remove(struct platform_device *pdev)
+ 		if (data->hsic_pad_regulator)
+ 			regulator_disable(data->hsic_pad_regulator);
+ 	}
+-	put_device(data->usbmisc_data->dev);
++	if (data->usbmisc_data)
++		put_device(data->usbmisc_data->dev);
+ }
+ 
+ static void ci_hdrc_imx_shutdown(struct platform_device *pdev)
 -- 
 2.48.1
 
