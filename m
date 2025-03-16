@@ -1,145 +1,138 @@
-Return-Path: <linux-kernel+bounces-562981-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562982-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28361A6354E
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 12:18:11 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EE82A63552
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 12:22:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2C9FF7A3F4A
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 11:17:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D14C016F6B4
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 11:22:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 931431A76BC;
-	Sun, 16 Mar 2025 11:17:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 985971A2C11;
+	Sun, 16 Mar 2025 11:22:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cCJqS5GH"
-Received: from mail-oo1-f42.google.com (mail-oo1-f42.google.com [209.85.161.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lBgnJ+wG"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ABA510F2;
-	Sun, 16 Mar 2025 11:17:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 651D48635E;
+	Sun, 16 Mar 2025 11:22:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742123854; cv=none; b=BnIQC0dehz/yT+nEUTlsS5S/TC7pB40u8fA2T15a4AZgTbuz8Jh9XOcekkGLhcZkHig5rThB2QcFz7owyVSZla7qBnexPxgx6cKfnGyX2XnrKBSVcn6c6Huzk5CICR/JvQyqSegtKIEAUMRmgiG4VwQYldeQ4dmN0vEBsaFSDRk=
+	t=1742124124; cv=none; b=tJe7jlrbVCfuEScAiVfUZm+xerzM+r1JMaCeA6ACSjs8kBbflbJmzO0E5DTlx/J/+kwU29CZxzJREHSyvcA8KyQNtbuP/Ad8OxlgO5NLW38cYr7LDp585kfsFcNm7/kYT4wz0VMGMQjf/4ViD16joEc+ieNFIxprAy8nqqtASvs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742123854; c=relaxed/simple;
-	bh=GlntjgU3Lxdii6DqpKNjs6+MaX1eRLZ0d3LBMTa28eY=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=lCMpu6TJWpoMeecHqbpIQVOQaBmHHbsULt6fOgufpgMEJMnrEUstnvs4U34r5gnxhitj6WH5Ld/eXZA7tnnVljGvP/BzR8ZroaL1H9sZ24LuJEzmOaG+iy33DkCyKmiA6Mrbip4/9ZX84SgtYRUIn7BJxdWHkhUI26vKzrY/Ngg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cCJqS5GH; arc=none smtp.client-ip=209.85.161.42
+	s=arc-20240116; t=1742124124; c=relaxed/simple;
+	bh=SmU0h+d2L/ZnLPStnz6nB21B5/N2fkHE3+xO0Ydd7Vo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=atLm2O1TmapA/y/s6aSRXySApRfz4xmMS3cC76p2XPLwhFqR/WtxvFnXBd/KwNZaK2inp+pfNwmWi+YBcJV21FKOX84aBc68iLUbzFCQQsEXN0zLj7gHvQeqjaRty0kHckSOMUh8ZD6bkh1tqjm2fLPm0EX2E4HS5a6p5YQ8mAc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lBgnJ+wG; arc=none smtp.client-ip=209.85.218.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f42.google.com with SMTP id 006d021491bc7-601c12ac8d0so1597469eaf.2;
-        Sun, 16 Mar 2025 04:17:32 -0700 (PDT)
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-ac27cb35309so570318766b.2;
+        Sun, 16 Mar 2025 04:22:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742123851; x=1742728651; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=MibvrQXj2P5QnlDxX5YbYon7Ne8dH6XMjJsYnk+RzkY=;
-        b=cCJqS5GH2H7fEPT8ZKCkHTXxqpfAqyn0gqJc50Rjzdaw1MoVB5pST//rxQ/dQyFpvy
-         OSQwq7JNxIC3tdZ8zXK9eozem5HJjd6KJ7hyFRVmh7hOmTKcQ2F5mCr2fJN3oor+M2MF
-         YtB3zlIg6vL3lMDjJ4gUdC5G5KfCxotAek8BIt+5ygu00PYtVWmnPZ1ksJJfq/mLZECZ
-         sC56IxXRBPsm1mQLmZLcxa9uUeP/MjrKthDssmoARqaVJt8cE8To2DmVIH4P7hs4wL2v
-         +/+WkNR4naCtsGd1DGJHBhG2ZFwZLO/J0Dg+dAPRI7vtReR3PwXfrYKaMiJwliaFBKV1
-         NR7Q==
+        d=gmail.com; s=20230601; t=1742124121; x=1742728921; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=p2FKujD/WDFzQXcV+BlOMXkIXZNzBUdKMFbX2p6VQMU=;
+        b=lBgnJ+wGKoxVShopY/aPvhhpxilaXxkEwCiFO3oNUNLVtUT2yWpNvQgDPImSbn9CRt
+         gL6Bjh/PwVkjyJjoTeNC2jPJELxC9uuNHbgAwTeYBAEzFDZdFvYqyhafG0+Xm6HZmDjN
+         5fgXr+//nHKpqSbMNEV2MIN9pSsDe61quCN4x3sqY3ajA921nSM4Mdl/NcO75Wn5Bi7c
+         0T5omVSQkD3yLC3YBu692UIko/jAsROkI1KR22b3xAO3tGU+05Aoq5jC5FxvdmO8okPt
+         QpGSoeHVsOOiN1lRvdlcISZp2QRJkFE+FsguNNt51Bc4yH6XRmKByOjnF+Mfui3IDprB
+         3BMg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742123851; x=1742728651;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MibvrQXj2P5QnlDxX5YbYon7Ne8dH6XMjJsYnk+RzkY=;
-        b=dC7KUT3qdm2k7zzbaab7dVDDVY8qI77UfEj7OfQY5zlpd7YWazsTHKwPe7cKa0PIGT
-         CeX1kGH0v+pbQkeRpG8uVvYfZyBL7jBblEAWbt4nqBrwJzUHP/DSO8dY6Y7WqCpiayZ1
-         tMpEI9mjJMRTqsAGj8Z2eo+QymQRmQpmo44qaWUf2PApLVT/83g1d+OLoDsg8MaUF3dX
-         EMcK9CCl82e+WXxsT8DBHSKXFmkNPU6qoUilUSzbkyVFFTHE8yKkl0fHnj5sz85NEJvZ
-         wYY+Kb+EH+Oj9cAUvYlA+8MOg92lOVmJnPLeTHvKoG7YaazOj9k5ytKENTWg08l3INul
-         o1sg==
-X-Forwarded-Encrypted: i=1; AJvYcCU1pV+p5ZoehDFeF17iQ6EKuij+JxUzM6o0nh0H9c9Mcwc33D4Zk/R2l7HxbPety39+awtjnp/soxM=@vger.kernel.org, AJvYcCULXWNC2aITgXKPR5l2iTLOjECPD4I1lLL53cnOzTQGwV5yQeJyYyIG1SMLXB4n5EjLgX18on8+bT7JUYs/oIo=@vger.kernel.org, AJvYcCVaLYMHI36yrIg4TEVeNaJqg2qDQVsyoWYpTGJw9I5Xdt4BorKsU82mJiBtEEHgBwJHtY8aJ2qRuL7wZBPP@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQhu//g+BtYwBeZm3+6WgrE21xRZVCeyIOYWHgT/DXET4cwz3G
-	8mDgo5Omj5mTLCz8q1+GUj6au/FEmILEk9wc8a5vBvZ3HgMf0E/t
-X-Gm-Gg: ASbGncsZ6W3yE6nT5/Zv0fXmiMgMc7uQfi3X1jvmwLqjphK2yiqMyEf6qk7iv0Oo/Zd
-	cd6qevkn9gG7vF+toMD9eWgPHvCCmOl9QwCSHctb6ip2wLpmFAsRXWlRlzKlODxJjX+HzLhYBGN
-	4RdYhY1XGrr1jzAzTPrAhH07++U4CqiPnpObbfo57ZRjK5comytnrh3H/AbG0+lpzpj1TKkVeMI
-	5c+vPY+sNiZ32/9aFctMBPL9VXRq35TAzg2dOt+ekZxT2GVK0kD+odfxHzF3eHyOK9IpMvrpAMz
-	HUJXfW9Q4pHB17FxzgpidqA3uRyBcWETFb8Jdl29XZ3WJWGHW01kt1oUwJaIwnd0a9eBOKRwT4X
-	clmyuB6LJale0gmTN
-X-Google-Smtp-Source: AGHT+IG0u7JDaDNYIHwPQlqHBQlgmBC+Fo0wrepsC3YNTau6TIWAGIJlcCHjX1uHxt1F9G2iknrsEg==
-X-Received: by 2002:a05:6808:f12:b0:3f4:af3:74a5 with SMTP id 5614622812f47-3fdeed0d78emr5189018b6e.21.1742123851687;
-        Sun, 16 Mar 2025 04:17:31 -0700 (PDT)
-Received: from my-computer.lan (c-73-76-29-249.hsd1.tx.comcast.net. [73.76.29.249])
-        by smtp.googlemail.com with ESMTPSA id 5614622812f47-3fe832ce015sm715978b6e.7.2025.03.16.04.17.25
+        d=1e100.net; s=20230601; t=1742124121; x=1742728921;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=p2FKujD/WDFzQXcV+BlOMXkIXZNzBUdKMFbX2p6VQMU=;
+        b=SBKAHnuH1AzynGRwBNFLFSCtilou2Uela22ZO8xi9dLzAeLkyZQJtX9nfvhlip7XZn
+         /nwScBoa5CgvMxaKy0qF7dgcNt2m2HwUksd97CjpHztyN8NK6FwT07Cid2YS6JLb5Chh
+         3c0+UMNtYFfm8+HH7t5yxx6fXMjykfWGGzYyDKXg+0EWr3bHFYWlBYgTR3YHFbFfx5as
+         Rjuhnxwi0MttgkMFVEM2Vb8T9Pn22HFOct4UQNb2wTuAKnnR3cViSWxfbp1WO8LpqSzT
+         4VUjddTm79jFG6nSqdj1zccNx8t6+SROTV9PUcJDgxyM8CfO0FkvY5jEI/ObNIMDDFiU
+         Tp9A==
+X-Forwarded-Encrypted: i=1; AJvYcCWqAL6mDSZW5G8P7cwUQbfl/UQ9gdFNbr9Y1f2FqEe27rGSOPAJeptleuLIZx2CXebG7bvJ5G1K@vger.kernel.org, AJvYcCXLf9tjtSREpqYeWBFqAvVqzNJjUrphIQr5mJu3adsuJw1UFa5c/9BlbTI91prnxMUnr4WQ2jlMHtvs0B4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxXXy01gjeXdudtfBnwptsr2tzrg9TcEPHPd5uX4CtDXuiX69jZ
+	PXZcX1svL8OhzXWNlWfPMinxKrSytkdHy11iVBBzaFCD3ataIloQ
+X-Gm-Gg: ASbGncuBISdNJbXFUGMD+qHf0vX9eXTqti7ZKBNRW3Iac1tJQXDXiEbHSulLCOwNacI
+	9uW0WUvFT4WNNTnySJU60XYnzn/DjtNykxxT84T34CuMepjY3rK5ECMLHjvCrabx4fqwUKZOOrw
+	p5f+6tQ382oP/8LEx2I9VRpVIEwaqaLishGz5t9TUSoH8I11hzvIJuQyZwaMefDKTdy5GXcigEL
+	dRkOJ6SHa/5POsh6isc78lNm/Wou3fQctIWdeNpMxXfnwse5f5a62p4+BFaw0sr7Df0w+BKDpnR
+	2rSOF9Kn5iS2wI30n6SF3vttkk0PKujyJOKrtSI87A==
+X-Google-Smtp-Source: AGHT+IH/GWjOJrpmeT0R78wt9LzZ4p7kUJayvibJT5ShbE6GtGJriC+yQqB9quwCCLoTtd6wqbVeQQ==
+X-Received: by 2002:a17:907:d92:b0:ac2:d5e6:dea7 with SMTP id a640c23a62f3a-ac33017710cmr984890166b.13.1742124120501;
+        Sun, 16 Mar 2025 04:22:00 -0700 (PDT)
+Received: from debian ([2a00:79c0:612:2500:45fb:7d1a:5e4d:9727])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac314aa5a24sm488633866b.180.2025.03.16.04.21.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 16 Mar 2025 04:17:30 -0700 (PDT)
-From: Andrew Ballance <andrewjballance@gmail.com>
-To: dakr@kernel.org,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	corbet@lwn.net,
-	ojeda@kernel.org,
-	alex.gaynor@gmail.com,
-	boqun.feng@gmail.com,
-	gary@garyguo.net,
-	bjorn3_gh@protonmail.com,
-	benno.lossin@proton.me,
-	a.hindborg@kernel.org,
-	aliceryhl@google.com,
-	tmgross@umich.edu,
-	andrewjballance@gmail.com,
-	acourbot@nvidia.com,
-	nouveau@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org
-Subject: [PATCH v2 3/3] gpu: nova-core: remove completed Vec extentions from task list
-Date: Sun, 16 Mar 2025 06:16:44 -0500
-Message-ID: <20250316111644.154602-4-andrewjballance@gmail.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250316111644.154602-1-andrewjballance@gmail.com>
-References: <20250316111644.154602-1-andrewjballance@gmail.com>
+        Sun, 16 Mar 2025 04:22:00 -0700 (PDT)
+Date: Sun, 16 Mar 2025 12:21:58 +0100
+From: Dimitri Fedrau <dima.fedrau@gmail.com>
+To: Gerhard Engleder <gerhard@engleder-embedded.com>
+Cc: dimitri.fedrau@liebherr.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Jakub Kicinski <kuba@kernel.org>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Russell King <linux@armlinux.org.uk>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Andrew Lunn <andrew@lunn.ch>
+Subject: Re: [PATCH] net: phy: dp83822: fix transmit amplitude if
+ CONFIG_OF_MDIO not defined
+Message-ID: <20250316112158.GA4035@debian>
+References: <20250312-dp83822-fix-transceiver-mdio-v1-1-7b69103c5ab0@liebherr.com>
+ <b753c0e7-e055-4764-b558-68b7258a6b6f@engleder-embedded.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b753c0e7-e055-4764-b558-68b7258a6b6f@engleder-embedded.com>
 
-The requested Vec methods have been implemented thus, removes
-the completed item from the nova task list
+Am Wed, Mar 12, 2025 at 08:53:29PM +0100 schrieb Gerhard Engleder:
+> On 12.03.25 18:23, Dimitri Fedrau via B4 Relay wrote:
+> > From: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
+> > 
+> > When CONFIG_OF_MDIO is not defined the index for selecting the transmit
+> > amplitude voltage for 100BASE-TX is set to 0, but it should be -1, if there
+> > is no need to modify the transmit amplitude voltage. Add a flag to make
+> > sure there is a need to modify it.
+> > 
+> > Fixes: 4f3735e82d8a ("net: phy: dp83822: Add support for changing the transmit amplitude voltage")
+> > Signed-off-by: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
+> > ---
+> >   drivers/net/phy/dp83822.c | 5 ++++-
+> >   1 file changed, 4 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/net/phy/dp83822.c b/drivers/net/phy/dp83822.c
+> > index 3662f3905d5ade8ad933608fcaeabb714a588418..d69000cb0ceff28e8288ba24e0af1c960ea9cc97 100644
+> > --- a/drivers/net/phy/dp83822.c
+> > +++ b/drivers/net/phy/dp83822.c
+> > @@ -201,6 +201,7 @@ struct dp83822_private {
+> >   	bool set_gpio2_clk_out;
+> >   	u32 gpio2_clk_out;
+> >   	bool led_pin_enable[DP83822_MAX_LED_PINS];
+> > +	bool tx_amplitude_100base_tx_modify;
+> >   	int tx_amplitude_100base_tx_index;
+> >   };
+> 
+> You could instead init tx_amplitude_100base_tx_index in
+> dp8382x_probe() to -1.
+> 
+> But functional it should be ok.
+> 
+> Reviewed-by: Gerhard Engleder <gerhard@engleder-embedded.com>
+>
+Hi Gerhard,
 
-Signed-off-by: Andrew Ballance <andrewjballance@gmail.com>
----
- Documentation/gpu/nova/core/todo.rst | 10 ----------
- 1 file changed, 10 deletions(-)
+will send out an V2 implementing your proposal. Thanks for reviewing.
 
-diff --git a/Documentation/gpu/nova/core/todo.rst b/Documentation/gpu/nova/core/todo.rst
-index ca08377d3b73..234d753d3eac 100644
---- a/Documentation/gpu/nova/core/todo.rst
-+++ b/Documentation/gpu/nova/core/todo.rst
-@@ -190,16 +190,6 @@ Rust abstraction for debugfs APIs.
- | Reference: Export GSP log buffers
- | Complexity: Intermediate
- 
--Vec extensions
----------------
--
--Implement ``Vec::truncate`` and ``Vec::resize``.
--
--Currently this is used for some experimental code to parse the vBIOS.
--
--| Reference vBIOS support
--| Complexity: Beginner
--
- GPU (general)
- =============
- 
--- 
-2.48.1
-
+Best regards,
+Dimitri Fedrau
 
