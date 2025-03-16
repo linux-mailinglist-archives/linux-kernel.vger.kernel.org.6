@@ -1,169 +1,175 @@
-Return-Path: <linux-kernel+bounces-562936-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562937-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10EFFA634E4
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 10:53:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32B6BA634EE
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 11:01:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 003631890732
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 09:53:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 409D03B1A80
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 10:01:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4374819EED7;
-	Sun, 16 Mar 2025 09:53:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAEB019D06B;
+	Sun, 16 Mar 2025 10:01:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="UTlYTmBa"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="No7dn1DT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5747D19D082;
-	Sun, 16 Mar 2025 09:53:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B5C24A06;
+	Sun, 16 Mar 2025 10:01:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742118792; cv=none; b=oFevxF+CM9xQoKIs4AL4a24yPlT0D+TkWA1SxsjO4rzxby8Uzd2PK1wdErGknBmb5YoJsZZdq2WX7Q5mBNTzmqn2zqVYg+rc2lR8PdemzZVhXAJfNbLiRdRxNFv7z51rlz/x7y01rpqgJP3IurDvDvF+L40uEIOdEJBVwTLvwHY=
+	t=1742119296; cv=none; b=HnDNL7VqH9InSK8v/BmSeUd/V9D1HWnUdnBAwHyoUG6vFHNbJ5NYriP90wRAg7UmD44OgnNafhMFBKzl3lZvA0nLhDd2iQCg8OIlg22lZsCqVBsV2Z1VckpUCtYZ19xssukZcVugng7+3VfzfaLepXt76arkrafi8Miti/QsytA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742118792; c=relaxed/simple;
-	bh=GvX4DXkXOVyGXM5iC5+hqvP5Cpidw97YzNo6kd6AN+0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oX9UGURDtBuw0hvt9B+7qX5lUUbgrc711kKhFyGo7WZ8mG9WJcGxy/A7998eyq+W8yfKtpn2jRh+zMJVgv1NTEl9B39QgVlIKl18DV6KM+S/sOxOtmFVgZ9CsD6gLYCXH5JX7Tfm8aLJjZRc2IoSgw+8W1Xlj/XF5RAd50RerQE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=UTlYTmBa; arc=none smtp.client-ip=212.227.15.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
-	s=s31663417; t=1742118783; x=1742723583; i=wahrenst@gmx.net;
-	bh=waqk40he1Aos8eWly4RCtuqg/j6badeXprlfS9WCE6g=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=UTlYTmBaE9UfJMFm0fBosxWdLtUjXglbyF3YhhSElrZh+xdXrxtsP6baRRhMtkSQ
-	 GRrpIHkZwHgd5O0CvNInkBIxNWSPnSTCL1aZM75x/rSbX5j22gqnUed/3mK1sSF55
-	 z3vHYjPFQNpGVFs5ppLzQluxh8vB0/RIoQlet/k81G/5TItwYxBEEEZOKkC7Nez5h
-	 JdBEOAdXSnw6aq//5b6lbixiISXJY0/EPPDL8uerlW0t13RoLvnlVyjiv67DstsMp
-	 FgxuklKwKhbyRH4As7X52oJAvsNylwXyQHgBWP8mkVjwpD9vw+lTbRTbxVNTmBQky
-	 lsO3Fg9Mv4NUl7F2ng==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.1.107] ([37.4.251.153]) by mail.gmx.net (mrgmx004
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1MhD2O-1tFRqH2yRe-00bvvv; Sun, 16
- Mar 2025 10:53:03 +0100
-Message-ID: <9a23c31d-e26f-4bc1-9759-5b6b4340a588@gmx.net>
-Date: Sun, 16 Mar 2025 10:52:58 +0100
+	s=arc-20240116; t=1742119296; c=relaxed/simple;
+	bh=IuRs/vl289XZdaaDijhen/6iBsPovhGvf3hhFnmQhPY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=WLbjZY51J5QtIVdDoLTBpsTFDr+ftN+kFZ/LORjWqvd4C6+kVYesv3WlkKXvLG6UoWsY2aku0osnYN6r2biGY9YstLEaTzgpiaVioes4GIQG/u3JYoO8iqgZP+UFdc3AyioEnvmX1lQUzOtIumoOC/LTejUO4fPe9pjot2fFHR4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=No7dn1DT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 732DBC4CEDD;
+	Sun, 16 Mar 2025 10:01:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742119295;
+	bh=IuRs/vl289XZdaaDijhen/6iBsPovhGvf3hhFnmQhPY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=No7dn1DTMh4dFfzFOGf69q0MGaBWKfFRQjZ5Wo5gMgQgVQetU7TVylg8qrmnwa7JE
+	 oHavRybBvrFRzd2JlzRgtUHHW7EiBl0qgzBvhUCxhanfNERXz42sYuTkzPEjFl0FIQ
+	 MCwmf+90Otrc9kQ/E44OgTtgyW6GGPIZB3mN4JMa0NeeLUI5/mQOhcg0/hPztPKnxf
+	 O85SOz8VzFxRELIhQfkHZlvdiOW4INpQGxEiupOc8SeAAnxEOPj4QQpnRFxHGCYNhH
+	 QFTWAzPXfSL5hzdFNVPhxVWvtyH7SuB/D4S8Qk1BUniufAt45cy17coqYgB54FVRzU
+	 lLp4AF405zk6A==
+Date: Sun, 16 Mar 2025 10:01:23 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Matti Vaittinen <mazziesaccount@gmail.com>, Matti Vaittinen
+ <matti.vaittinen@fi.rohmeurope.com>, Lars-Peter Clausen <lars@metafoo.de>,
+ Nuno Sa <nuno.sa@analog.com>, David Lechner <dlechner@baylibre.com>, Javier
+ Carrasco <javier.carrasco.cruz@gmail.com>, Olivier Moysan
+ <olivier.moysan@foss.st.com>, Guillaume Stols <gstols@baylibre.com>,
+ Dumitru Ceclan <mitrutzceclan@gmail.com>, Trevor Gamblin
+ <tgamblin@baylibre.com>, Matteo Martelli <matteomartelli3@gmail.com>,
+ Alisa-Dariana Roman <alisadariana@gmail.com>, =?UTF-8?B?Sm/Do28=?= Paulo
+ =?UTF-8?B?R29uw6dhbHZlcw==?= <joao.goncalves@toradex.com>, AngeloGioacchino
+ Del Regno <angelogioacchino.delregno@collabora.com>,
+ linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org
+Subject: Re: [PATCH v7 06/10] iio: adc: Support ROHM BD79124 ADC
+Message-ID: <20250316100123.4fa32464@jic23-huawei>
+In-Reply-To: <20250316095233.20d1a134@jic23-huawei>
+References: <cover.1741849323.git.mazziesaccount@gmail.com>
+	<b6c02a5d75a20bbbf8c3370ccee615d269620117.1741849323.git.mazziesaccount@gmail.com>
+	<Z9LbT1BvPEIp7U2N@smile.fi.intel.com>
+	<bb403ddb-5c6f-4286-8d80-3ede40f94dc2@gmail.com>
+	<Z9Q-KcadLHdDLxVc@smile.fi.intel.com>
+	<20250316095233.20d1a134@jic23-huawei>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 5/5] arm: dts: bcm2711-rpi: Add HEVC decoder node
-To: Dave Stevenson <dave.stevenson@raspberrypi.com>,
- Sakari Ailus <sakari.ailus@linux.intel.com>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Florian Fainelli <florian.fainelli@broadcom.com>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>, John Cox
- <john.cox@raspberrypi.com>, Dom Cobley <dom@raspberrypi.com>,
- review list <kernel-list@raspberrypi.com>,
- Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>
-Cc: John Cox <jc@kynesim.co.uk>, linux-media@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org
-References: <20250206-media-rpi-hevc-dec-v2-0-69353c8805b2@raspberrypi.com>
- <20250206-media-rpi-hevc-dec-v2-5-69353c8805b2@raspberrypi.com>
-Content-Language: en-US
-From: Stefan Wahren <wahrenst@gmx.net>
-Autocrypt: addr=wahrenst@gmx.net; keydata=
- xjMEZ1dOJBYJKwYBBAHaRw8BAQdA7H2MMG3q8FV7kAPko5vOAeaa4UA1I0hMgga1j5iYTTvN
- IFN0ZWZhbiBXYWhyZW4gPHdhaHJlbnN0QGdteC5uZXQ+wo8EExYIADcWIQT3FXg+ApsOhPDN
- NNFuwvLLwiAwigUCZ1dOJAUJB4TOAAIbAwQLCQgHBRUICQoLBRYCAwEAAAoJEG7C8svCIDCK
- JQ4BAP4Y9uuHAxbAhHSQf6UZ+hl5BDznsZVBJvH8cZe2dSZ6AQCNgoc1Lxw1tvPscuC1Jd1C
- TZomrGfQI47OiiJ3vGktBc44BGdXTiQSCisGAQQBl1UBBQEBB0B5M0B2E2XxySUQhU6emMYx
- f5QR/BrEK0hs3bLT6Hb9WgMBCAfCfgQYFggAJhYhBPcVeD4Cmw6E8M000W7C8svCIDCKBQJn
- V04kBQkHhM4AAhsMAAoJEG7C8svCIDCKJxoA/i+kqD5bphZEucrJHw77ujnOQbiKY2rLb0pE
- aHMQoiECAQDVbj827W1Yai/0XEABIr8Ci6a+/qZ8Vz6MZzL5GJosAA==
-In-Reply-To: <20250206-media-rpi-hevc-dec-v2-5-69353c8805b2@raspberrypi.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:W2pLMWrKNN8dtTF7L8PthwX1uIuTiOYSHJ9N6pqTNo+4n30bD5F
- llud2RqIz07G4rVMxz5XxgahMcXaq7qE2YaPepJ1LxKCvK/5rSTb4rNY7JGzbqSK6CPM0l2
- GbENGZCekzGiRSFbEv4+kNy/FmVTHMJMii9KQb9c2PCDveNBxHZT2XCrFkcyWAGyWxpAg2x
- a6HS9rhO8qHbeLyHho6sA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:aTOBw0LTolI=;JbWdY10KwOeKZNbXmN8ynmnfgna
- KLDq8pSkz9JsOn+QNMZV70MZpCzEJL1KeBK6Mbk5mEb6uCXl1MLEHiN7pgOX/sExk4GMUqKmA
- Rr/HnvTC3dhsTwzAVmGkbtgWiLcskjtoHDp9ftXySaPKUkXv7lG3Qr7pk1QnFMYTDXBPSyt8d
- mzYI/YxteOQxdZ0sT8PgNsMbAU16xdDLClJ44lfBfTqeAjNUB0B/1kbVQf6SktWiZyARWXi1/
- pBicjOC41z20t06GeQATe4GZFTBk/Pkzgnp+510Wg6oq85bnspuYDsFgy7EQgiMr0cAP5LFJD
- It7R14rVAEmsLKcwo2rSDj35zMvd15kNE6ebw9Eu6HTPgtp5YirQ0N/EF5twF11DkjEGlT4Am
- BY0Et7GnNMqa5a3bzX8cE4dKwGBuzoE2ZHpW6E5hVEyaGHxG0ppdHqf2h2dogU7DbrrTv1U3q
- 04p/9BC3yO3Z2kM/SwbLlMPYN2oN/P2xAkEqEOWEmmG8IDGWqiK4hxzGriJCju8QIQpsNod1G
- 7wtvUZyWHG4PATIv+k7xSKuV8x0QM2X2E9UQSjXb5co1H0BTHtIUmmV/g+JeOiTs5kItjqjJr
- O1szBTBBSN8SIKaCApYUOYtijlus5Vp+HkwC4jYjd+VMXZI7etxCLcQDb048/Kt+uEwv2IT7Z
- YIvX+tFNILBPYGXGBUnbzDMNdJkNank1Kuz5YvXRpqfPqoMczXy1+CqEBRMnVhzU7F3TzB5vj
- ZJGj8F3tCbsJGFetfV3Ivre2qQE7/PBerpAdfdiVmK1ZJIOyKRCvbuneWQrjqSYtm+APt2O/z
- LPPTruRyyvbyxKXIGPWsIuLXEtPiffDyMmE04MFnj1K1lFqDnONAg7zpgKa4+tY5ILLE0rFmv
- 5cG0SdG1geaP2oaKkbv+GDyHzU/7bTj39AgNfdoQ+1SQSIDtlCrzv4EJUk8dMgOuSGZy77WsO
- 1yi3qxrYuxI7b2hcNcP2PBDp0UMdThV7YHuq3Ifl6kfmBLWdk92K5BOzaQ9b5tsrzVtzu1qkt
- Kz5RniDCa7ZrJA5C2VOBSSqINx0En6gIQIWCmbVouZaXtHk7hOKMmBbObc5A6LQOPBDTEbsNJ
- SYW/GlpQlqCzLrzo18wKJoZNfSDOjgUgqZcqaM4q2IxophDgzY50FCilzS3QwJwkg/tIgB3q8
- xEZTpVLmGngXeu6/wi5nnwlVNQh/BiBpLwqYAagK+8pRGfnMyUhJ2xfbDeSkB0dIzekYkaj93
- I/T14flkmyxhIBGxeNqxXY3WnUAU/TosvVcC3C9HeAqyJqBfWXpDMfb3L9CfFBTQF2vyALLVV
- vCrgqaJLzRxZFJl0omfyrsX7kOpklsY61s0cX6Lh0f4QOiHfTL28ez332iZkjIVHKy2e/rHxU
- p7NMKH0S5M9bYcy3g1sgsEXleEirqZV9uYh7uR7chejXK2RJPTd5vK7bee3+we8gypFrAz3wO
- +YtzF0vUycY3ixxmGtiur9HE/LUg=
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi Dave,
+On Sun, 16 Mar 2025 09:52:33 +0000
+Jonathan Cameron <jic23@kernel.org> wrote:
 
-Am 06.02.25 um 19:02 schrieb Dave Stevenson:
-> Add the configuration information for the HEVC decoder.
->
-> Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
-> ---
->   arch/arm/boot/dts/broadcom/bcm2711-rpi.dtsi | 4 ++++
->   arch/arm/boot/dts/broadcom/bcm2711.dtsi     | 9 +++++++++
->   2 files changed, 13 insertions(+)
->
-> diff --git a/arch/arm/boot/dts/broadcom/bcm2711-rpi.dtsi b/arch/arm/boot=
-/dts/broadcom/bcm2711-rpi.dtsi
-> index 6bf4241fe3b7..56c633005941 100644
-> --- a/arch/arm/boot/dts/broadcom/bcm2711-rpi.dtsi
-> +++ b/arch/arm/boot/dts/broadcom/bcm2711-rpi.dtsi
-> @@ -105,3 +105,7 @@ &vchiq {
->   &xhci {
->   	power-domains =3D <&power RPI_POWER_DOMAIN_USB>;
->   };
-> +
-> +&hevc_dec {
-> +	clocks =3D <&firmware_clocks 11>;
-> +};
-the node ref should be in alphabetical order, so please add after hdmi1.
-> diff --git a/arch/arm/boot/dts/broadcom/bcm2711.dtsi b/arch/arm/boot/dts=
-/broadcom/bcm2711.dtsi
-> index e4e42af21ef3..2931d93ba184 100644
-> --- a/arch/arm/boot/dts/broadcom/bcm2711.dtsi
-> +++ b/arch/arm/boot/dts/broadcom/bcm2711.dtsi
-> @@ -628,6 +628,15 @@ v3d: gpu@7ec00000 {
->   			resets =3D <&pm BCM2835_RESET_V3D>;
->   			interrupts =3D <GIC_SPI 74 IRQ_TYPE_LEVEL_HIGH>;
->   		};
-> +
-> +		hevc_dec: codec@7eb10000 {
-Please put the node before V3D to keep the register order.
-> +			compatible =3D "raspberrypi,hevc-dec";
-> +			reg =3D <0x0 0x7eb00000  0x10000>, /* HEVC */
-> +			      <0x0 0x7eb10000  0x1000>;  /* INTC */
-Since the reg-names are provided, there is no need for these comments.
-> +			reg-names =3D "hevc",
-> +				    "intc";
-> +			interrupts =3D <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>;
-> +		};
->   	};
->   };
->
->
+> On Fri, 14 Mar 2025 16:33:13 +0200
+> Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
+> 
+> > On Fri, Mar 14, 2025 at 09:31:58AM +0200, Matti Vaittinen wrote:  
+> > > On 13/03/2025 15:19, Andy Shevchenko wrote:    
+> > > > On Thu, Mar 13, 2025 at 09:19:03AM +0200, Matti Vaittinen wrote:    
+> > 
+> > ...  
+> Picking out a few things to comment on...
+> >   
+> > > > > +#define BD79124_MASK_HYSTERESIS GENMASK(3, 0)
+> > > > > +#define BD79124_LOW_LIMIT_MIN 0
+> > > > > +#define BD79124_HIGH_LIMIT_MAX GENMASK(11, 0)    
+> > > > 
+> > > > These masks are not named after registers (or I don't see it clearly),    
+> > > 
+> > > Naming is hard. I usually try to make a balance between:
+> > > 
+> > > 1) using names which explain the purpose when seen in the code (at call
+> > > site)
+> > > 2) keeping names short enough
+> > > 3) following the naming convention in the data sheet
+> > > 4) maintain relation to the register.
+> > > 
+> > > I put most emphasis to the 1, while 2 is important to me as well. 3 is
+> > > _very_ nice to have, but it is often somehow contradicting with 1 and 2. 4
+> > > is IMO just nice to have. The register is usually clearly visible at call
+> > > site, and if someone adds new functionality (or checks the correctness of
+> > > the masks/registers), then 3 is way more important.
+> > > 
+> > > I am open to any concrete suggestions though.    
+> > 
+> > From my point of view the starting point is 3, then one may apply 2 and 4,
+> > the 1 may mangle the name so much that register data field name becomes quite
+> > abstract.
+> >   
+> > > > it's
+> > > > hard to understand which one relates to which register. Also, why not using
+> > > > bitfield.h?    
+> > > 
+> > > I saw no need for it?    
+> > 
+> > Hmm... Okay, I think Jonathan will ask that if really needed.
+> >   
+> 
+> I won't as I'm not a huge fan of bitfield.h. In many cases they bloat the code
+
+Oops. You weren't talking about the regmap bitfields.  Ignore this.
+This driver is using FIELD_PREP / FIELD_GET.  Maybe should be more extensive?
+
+> and increase the writes that go over the bus.  Don't get me wrong, there
+> are good usecases, but it's not a universal thing (unlike PREP_FIELD()
+> etc which I love :)
+> 
+> I do favour burning a few characters to make field / register relationship
+> clear though.  A few things can help I think.
+> 
+> Structuring defines and naming:
+> I like using whitespace in subtle ways for this.
+> 
+> #define PREFIX_REGNAME_REG				0x00
+> #define  PREFIX_REGNAME_FIELDNAME_MSK			GENMASK(X, Y)
+> #define  PREFIX_REGNAME_FIELDNAME_FILEVALNAME  		0x3
+> etc
+> 
+> Makes it easy to see if we have a mismatch going on
+> 
+> However, I don't insist on this in all cases as it is one of those
+> "don't let perfect be the enemy of good" cases I think.
+> 
+> So Matti, good to have one last look at the defines and see if they
+> can be wrangled into a slightly better form.
+> 
+> 
+> .
+> > ...
+> >   
+> > > > > +static void bd79124gpo_set_multiple(struct gpio_chip *gc, unsigned long *mask,
+> > > > > +				    unsigned long *bits)    
+> > > > 
+> > > > Ditto, .set_multiple_rv().    
+> > > 
+> > > As you know, this started at v6.14 cycle which is still ongoing. I don't
+> > > think .set_rv() and .set_multiple_rv() are available?    
+> > 
+> > You mean that you are still hope to have this series to be squeezed for
+> > v6.15-rc1? That's not me who decides, but if not, those APIs will be part of
+> > the v6.15-rc1 (at least they are pending in GPIO subsystem).
+> >   
+> I'd vote for a rebase on rc1 that should be really easy to for me to pick
+> up.   I'd accept a follow up series though.   Ultimately won't affect
+> when this series lands as very unlikely Linus will delay the release
+> long enough for me to do another pull request this cycle,
+> 
+> Jonathan
 
 
