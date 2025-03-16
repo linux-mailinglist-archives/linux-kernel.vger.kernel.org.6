@@ -1,117 +1,269 @@
-Return-Path: <linux-kernel+bounces-562866-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562867-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AF16A633D3
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 05:28:40 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9BCEA633D4
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 05:29:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 695C13B01A1
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 04:28:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 33E437A746D
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 04:28:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DE5D143748;
-	Sun, 16 Mar 2025 04:28:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ybcTjqnH"
-Received: from mail-ot1-f51.google.com (mail-ot1-f51.google.com [209.85.210.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E55213D52E;
+	Sun, 16 Mar 2025 04:29:05 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7543B13632B
-	for <linux-kernel@vger.kernel.org>; Sun, 16 Mar 2025 04:28:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9D327D3F4
+	for <linux-kernel@vger.kernel.org>; Sun, 16 Mar 2025 04:29:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742099312; cv=none; b=Urk2sKcAb3JverLMpSEqvOEtzbRjPPuTKJUQvYjEzTXtP7dsJzWvpK93Bs6Je1Wquf5nsLFcMRWuTY9yLYSYc8/RsME/5FMFJEJx50LlKsH/M6QCt+tO0Mo31H/GtIVuPiGwa5gQTYkor5q937acDG2MgBtzEazPpEyIBaKp9S8=
+	t=1742099344; cv=none; b=gVaFbobBGl9szFkHUaHoiWFZQ7Qe02+AxTe1cyRcj2PHnoiKUXlu3Zq+hkQ0255QyVaD/0DuzD1/xLgCzppZsM9TvwtRMDkXV9XiieD3EQ+d+OUcRMbTbuZrfvr0nORdAVkf+aPqkx8+DZhh4HXNmDC68VCRQL5bSfGxj1v7nk8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742099312; c=relaxed/simple;
-	bh=FZSJWiZLXjqC6y47npzUT1f4iHsKu36HldeTTvNpvO8=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=He3cULqS2fOAqMuYKglbyr0iaPppoXgSVBOzeR45+HX0JWbTDnNf3ct/U8a5iH94tdmR3u9W1HuUk6m6uhWf+CgIZv8+uLYfPLRSPQdpyGHwdDSelXVDtZm5A8LATs2nGf22THQJsFIKDE/PaAZZCMLw32LheIMqJQsPfX+udIs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ybcTjqnH; arc=none smtp.client-ip=209.85.210.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ot1-f51.google.com with SMTP id 46e09a7af769-7273f35b201so2092535a34.1
-        for <linux-kernel@vger.kernel.org>; Sat, 15 Mar 2025 21:28:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1742099309; x=1742704109; darn=vger.kernel.org;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=zn/hFEmYVNTaOoS0zsULqiyCkDZvvdFkC8aMRGGcsM8=;
-        b=ybcTjqnHV7MZTRVIeCBs+BZ7aG5ZZwJtV9x9gBWOm6Vr+HWslR/hqhikey8661q4BL
-         VGfRlqZUGMmm9fBPCk21dbhhe6Ly4vWtL/slLjD7p5L417DD79R4m5dEsoyQ6YS5r3Gu
-         RdIgdwuCX7PIWgDOztFRaxxThkp81xfYxJAkA8xbTw1alZiuu+ClQxOcFxxnPq2PlpVE
-         YryFRAAGz3L5aLxIrzjwXzFjnU1KMOV7FP5NOI4oXsMVBmcelv/6833kocZuCVaL3KZu
-         tu+vwgpOw0LBT3jZWttKZSUjeEiQSdgphEu9jdiReRGCgWtY6+GxqOXKXbCGzAwPj1vZ
-         gLDw==
+	s=arc-20240116; t=1742099344; c=relaxed/simple;
+	bh=6AHYlDLDJQxII2Tmx1RTereVLW8JwScJJuW73iSm5Fc=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=YIXYRmU9S3zuctsEy+M6tfQuFgcG019KEwOkh6UCvz3V+nZtEyR32fc0NL0SIB7fYgsyszolaOAGxQLTvKLCwXWivEMYOQl53UZC85Nyl+dnxsmg8wtocMgVmsNicErzDLmU1974n+PiHPTyUM1zS6+O+LiKkolDbV+lDFjWQJc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-85b48bd978cso357345739f.0
+        for <linux-kernel@vger.kernel.org>; Sat, 15 Mar 2025 21:29:02 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742099309; x=1742704109;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zn/hFEmYVNTaOoS0zsULqiyCkDZvvdFkC8aMRGGcsM8=;
-        b=ugk4BZu9izWL9qmGIM+AawfQdpIBiXkHSuh00nJz4yLXA20Ta8r+dwyg/xN4SGLwVT
-         fmmmKv/9OhG2w2+u+cSSuVAa/KROcXpxxTof2XDCPsvWEUKvOjGFQ7wexQ5EwKdb6jJr
-         tc0cXi8RrXxN25fTzeEko7fQIIHlVFNbJKgwcc3gcEwUeBL9pLdKMMR3LOjFjqkq8ohW
-         6SS4T1GxCkTHocAVLNaYs+li+cxfkgIHHAwXrjthWxLOIf9d2JOJaTud4C8TnP84Xtk/
-         YMJtdY2Pn+CY9L2WjF6R0gcdy7xtZ4pFeDqWBULTYigtYTFIXxKHWEDF0pj3emUAO6uz
-         gHVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVEVW908Ai+31j1gp0S9Xmhbdl1MeDzTvW3NeL4cg10Tpn7z25U5Po+L9nM6YDPxcF/S+Y0WW6x9tS0c8o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxbNv57TrfALhrnIrzrxPMN7/mwl2e9Xef63ljleov7Ox4KEqdG
-	heoYzT1pESM9zOiHZJiuUaeiouUyH/Xtj98ofXBxCvnh8DkY/jKJicu6IS0q8Q==
-X-Gm-Gg: ASbGncshZ82PMCOf+DMEi+vL6On4NuPc0pl4maSUUNoVVRynvFWao0s/WJynH7a5lz2
-	A8lE7lITQVmmWP9/wgr1bE+GjxDLI6Fx7rJz+UMMHheJMKa6sO3CxgP+PeYIZfzwmUJHACx4LPK
-	Iy/G9ngyzhWEgHndEpZ4Q996WGKcY35RmDRhAMSzQg2H5dXlNqdp8ZFvd4ADrokOXNyM64NS0+q
-	xq/+luA+ZURTx/KJk2tK4i4j9V2hHJ2mIZWsYeCdgbNXx0iYlMyP/4ectG+r5cLq0Bne3hUmGhG
-	Vdxh4a0wSecoWUZK0Wbz9EpHUYMw7Ss3yQ2N3nAU+PFHyrrhTbwTW/cZ0vig6AjS24ucb45TNQq
-	mL7zM4ePz0y4zJFMFCiwmbeBrJiUn
-X-Google-Smtp-Source: AGHT+IFK+fYuCkkcOcDXAF8C7bDOskY1oi3b1lZCxddFTu9Fs37o6wimSvL0D05uusubWvgWsWaWjg==
-X-Received: by 2002:a05:6830:43a3:b0:72b:9d8d:5881 with SMTP id 46e09a7af769-72bbc661152mr4342091a34.28.1742099309294;
-        Sat, 15 Mar 2025 21:28:29 -0700 (PDT)
-Received: from darker.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2c6713586e1sm1603777fac.47.2025.03.15.21.28.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 15 Mar 2025 21:28:28 -0700 (PDT)
-Date: Sat, 15 Mar 2025 21:28:16 -0700 (PDT)
-From: Hugh Dickins <hughd@google.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-cc: Johannes Weiner <hannes@compxchg.org>, Vlastimil Babka <vbabka@suse.cz>, 
-    Mel Gorman <mgorman@techsingularity.net>, Zi Yan <ziy@nvidia.com>, 
-    linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/5] mm: compaction: push watermark into compaction_suitable()
- callers
-In-Reply-To: <20250313210647.1314586-2-hannes@cmpxchg.org>
-Message-ID: <005ace8b-07fa-01d4-b54b-394a3e029c07@google.com>
-References: <20250313210647.1314586-1-hannes@cmpxchg.org> <20250313210647.1314586-2-hannes@cmpxchg.org>
+        d=1e100.net; s=20230601; t=1742099342; x=1742704142;
+        h=content-transfer-encoding:to:from:subject:message-id:in-reply-to
+         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qGI1N++pslFJTNcNs4aGl4d3i98UqUP5KrcjO738reY=;
+        b=wTqB6E+ESduuAVgZkptkXpy7rQfFyTzoJ2N6yPBf5NT+49Jo7svtFF4RqdV5djyjpD
+         2Xx3TYpgh+/v9jCSGKFg7uDp7QnCJ/oqvBQN5a3HQcuh8UNxCseirCzg48FiNbIuCrER
+         oqEsNVk636VXSVC9YSSrm91SzVSSobJmfPZzppJ2TsB41MjyAJLOplrb5tdYHwRDZfsw
+         6OFmTGLpIKb6r+UgYjNgxnKtwwldwtLQNb0RygcISQE2UyiQA4x0GfXuTMqduizD4Jbj
+         BN8infPSyFn+7b3HFZfhkpzWprCzjDf3vs7bOlo/AC4YsCksAweoSUTE3G1FCgFR7K27
+         i7Aw==
+X-Forwarded-Encrypted: i=1; AJvYcCWXVo6e05czhQofGJlKESX2ukwiU4gx6r6u5QNwAOfMZM8tdIoF7WquAi3wWo+jEO3l47KxU5XqeDy8Pic=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwoZJe5U/XXFIVPVdSGzKfKC8gcZ/KPetXOb0ZMxbBFLF+Ia6dV
+	K3aqY1+tbJeFK4N8VWkZ7kCRA07pzEn8UPNkyTI9BfR/8MDFniBvro1abH/dUSFeoxPW68bJlPm
+	u++T9WXSDvESzATgeO/+aZrvmNOAgkoPWSawBX4aMYrCqI02xFV5G71s=
+X-Google-Smtp-Source: AGHT+IHWn5T9bFagDAaoYlhnMcn8T9C7pCMkDYUNCz+cm8Ii6d4vI7n8Li2Odq5IVt8JU4Hk+xrbTeKaZ6b8wGwZm/ETO2mMVNrr
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+X-Received: by 2002:a05:6e02:d:b0:3d0:4e2b:9bbb with SMTP id
+ e9e14a558f8ab-3d483a825c3mr104053115ab.21.1742099341932; Sat, 15 Mar 2025
+ 21:29:01 -0700 (PDT)
+Date: Sat, 15 Mar 2025 21:29:01 -0700
+In-Reply-To: <tencent_4C6B86C5F36DA367696783A6A449977BF705@qq.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67d6538d.050a0220.14e108.005e.GAE@google.com>
+Subject: Re: [syzbot] [xfs?] [mm?] WARNING: bad unlock balance in __mm_populate
+From: syzbot <syzbot+8f9f411152c9539f4e59@syzkaller.appspotmail.com>
+To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-[PATCH] mm: compaction: push watermark into compaction_suitable() callers fix
+Hello,
 
-Stop oops on out-of-range highest_zoneidx: compaction_suitable() pass
-args to __compaction_suitable() in the order which it is expecting.
+syzbot tried to test the proposed patch but the build/boot failed:
 
-Signed-off-by: Hugh Dickins <hughd@google.com>
----
- mm/compaction.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+failed to copy syz-execprog to VM: timedout after 1m0s ["scp" "-P" "22" "-F=
+" "/dev/null" "-o" "UserKnownHostsFile=3D/dev/null" "-o" "IdentitiesOnly=3D=
+yes" "-o" "BatchMode=3Dyes" "-o" "StrictHostKeyChecking=3Dno" "-o" "Connect=
+Timeout=3D10" "-v" "/syzkaller/jobs-2/linux/gopath/src/github.com/google/sy=
+zkaller/bin/linux_arm64/syz-execprog" "root@10.128.1.46:./syz-execprog"]
+Executing: program /usr/bin/ssh host 10.128.1.46, user root, command sftp
+OpenSSH_9.2p1 Debian-2+deb12u4, OpenSSL 3.0.15 3 Sep 2024
+debug1: Reading configuration data /dev/null
+debug1: Connecting to 10.128.1.46 [10.128.1.46] port 22.
+debug1: fd 3 clearing O_NONBLOCK
+debug1: Connection established.
+debug1: identity file /root/.ssh/id_rsa type -1
+debug1: identity file /root/.ssh/id_rsa-cert type -1
+debug1: identity file /root/.ssh/id_ecdsa type -1
+debug1: identity file /root/.ssh/id_ecdsa-cert type -1
+debug1: identity file /root/.ssh/id_ecdsa_sk type -1
+debug1: identity file /root/.ssh/id_ecdsa_sk-cert type -1
+debug1: identity file /root/.ssh/id_ed25519 type -1
+debug1: identity file /root/.ssh/id_ed25519-cert type -1
+debug1: identity file /root/.ssh/id_ed25519_sk type -1
+debug1: identity file /root/.ssh/id_ed25519_sk-cert type -1
+debug1: identity file /root/.ssh/id_xmss type -1
+debug1: identity file /root/.ssh/id_xmss-cert type -1
+debug1: identity file /root/.ssh/id_dsa type -1
+debug1: identity file /root/.ssh/id_dsa-cert type -1
+debug1: Local version string SSH-2.0-OpenSSH_9.2p1 Debian-2+deb12u4
+debug1: Remote protocol version 2.0, remote software version OpenSSH_9.1
+debug1: compat_banner: match: OpenSSH_9.1 pat OpenSSH* compat 0x04000000
+debug1: Authenticating to 10.128.1.46:22 as 'root'
+debug1: load_hostkeys: fopen /etc/ssh/ssh_known_hosts: No such file or dire=
+ctory
+debug1: load_hostkeys: fopen /etc/ssh/ssh_known_hosts2: No such file or dir=
+ectory
+debug1: SSH2_MSG_KEXINIT sent
+debug1: SSH2_MSG_KEXINIT received
+debug1: kex: algorithm: sntrup761x25519-sha512@openssh.com
+debug1: kex: host key algorithm: ssh-ed25519
+debug1: kex: server->client cipher: chacha20-poly1305@openssh.com MAC: <imp=
+licit> compression: none
+debug1: kex: client->server cipher: chacha20-poly1305@openssh.com MAC: <imp=
+licit> compression: none
+debug1: expecting SSH2_MSG_KEX_ECDH_REPLY
+debug1: SSH2_MSG_KEX_ECDH_REPLY received
+debug1: Server host key: ssh-ed25519 SHA256:JxoRyAn13fCyQtNtBXvSgkCC2njD9yP=
+7DAIyaauX8OU
+debug1: load_hostkeys: fopen /etc/ssh/ssh_known_hosts: No such file or dire=
+ctory
+debug1: load_hostkeys: fopen /etc/ssh/ssh_known_hosts2: No such file or dir=
+ectory
+Warning: Permanently added '10.128.1.46' (ED25519) to the list of known hos=
+ts.
+debug1: rekey out after 134217728 blocks
+debug1: SSH2_MSG_NEWKEYS sent
+debug1: expecting SSH2_MSG_NEWKEYS
+debug1: SSH2_MSG_NEWKEYS received
+debug1: rekey in after 134217728 blocks
+debug1: Will attempt key: /root/.ssh/id_rsa=20
+debug1: Will attempt key: /root/.ssh/id_ecdsa=20
+debug1: Will attempt key: /root/.ssh/id_ecdsa_sk=20
+debug1: Will attempt key: /root/.ssh/id_ed25519=20
+debug1: Will attempt key: /root/.ssh/id_ed25519_sk=20
+debug1: Will attempt key: /root/.ssh/id_xmss=20
+debug1: Will attempt key: /root/.ssh/id_dsa=20
+debug1: SSH2_MSG_EXT_INFO received
+debug1: kex_input_ext_info: server-sig-algs=3D<ssh-ed25519,sk-ssh-ed25519@o=
+penssh.com,ssh-rsa,rsa-sha2-256,rsa-sha2-512,ssh-dss,ecdsa-sha2-nistp256,ec=
+dsa-sha2-nistp384,ecdsa-sha2-nistp521,sk-ecdsa-sha2-nistp256@openssh.com,we=
+bauthn-sk-ecdsa-sha2-nistp256@openssh.com>
+debug1: kex_input_ext_info: publickey-hostbound@openssh.com=3D<0>
+debug1: SSH2_MSG_SERVICE_ACCEPT received
+Authenticated to 10.128.1.46 ([10.128.1.46]:22) using "none".
+debug1: channel 0: new session [client-session] (inactive timeout: 0)
+debug1: Requesting no-more-sessions@openssh.com
+debug1: Entering interactive session.
+debug1: pledge: network
+debug1: client_input_global_request: rtype hostkeys-00@openssh.com want_rep=
+ly 0
+debug1: Sending subsystem: sftp
+debug1: pledge: fork
+scp: debug1: stat remote: No such file or directory
 
-diff --git a/mm/compaction.c b/mm/compaction.c
-index 4a2ccb82d0b2..b5c9e8fd39f1 100644
---- a/mm/compaction.c
-+++ b/mm/compaction.c
-@@ -2433,7 +2433,7 @@ bool compaction_suitable(struct zone *zone, int order, unsigned long watermark,
- 	enum compact_result compact_result;
- 	bool suitable;
- 
--	suitable = __compaction_suitable(zone, order, highest_zoneidx, watermark,
-+	suitable = __compaction_suitable(zone, order, watermark, highest_zoneidx,
- 					 zone_page_state(zone, NR_FREE_PAGES));
- 	/*
- 	 * fragmentation index determines if allocation failures are due to
--- 
-2.43.0
+
+
+
+syzkaller build log:
+go env (err=3D<nil>)
+GO111MODULE=3D'auto'
+GOARCH=3D'amd64'
+GOBIN=3D''
+GOCACHE=3D'/syzkaller/.cache/go-build'
+GOENV=3D'/syzkaller/.config/go/env'
+GOEXE=3D''
+GOEXPERIMENT=3D''
+GOFLAGS=3D''
+GOHOSTARCH=3D'amd64'
+GOHOSTOS=3D'linux'
+GOINSECURE=3D''
+GOMODCACHE=3D'/syzkaller/jobs-2/linux/gopath/pkg/mod'
+GONOPROXY=3D''
+GONOSUMDB=3D''
+GOOS=3D'linux'
+GOPATH=3D'/syzkaller/jobs-2/linux/gopath'
+GOPRIVATE=3D''
+GOPROXY=3D'https://proxy.golang.org,direct'
+GOROOT=3D'/syzkaller/jobs-2/linux/gopath/pkg/mod/golang.org/toolchain@v0.0.=
+1-go1.23.6.linux-amd64'
+GOSUMDB=3D'sum.golang.org'
+GOTMPDIR=3D''
+GOTOOLCHAIN=3D'auto'
+GOTOOLDIR=3D'/syzkaller/jobs-2/linux/gopath/pkg/mod/golang.org/toolchain@v0=
+.0.1-go1.23.6.linux-amd64/pkg/tool/linux_amd64'
+GOVCS=3D''
+GOVERSION=3D'go1.23.6'
+GODEBUG=3D''
+GOTELEMETRY=3D'local'
+GOTELEMETRYDIR=3D'/syzkaller/.config/go/telemetry'
+GCCGO=3D'gccgo'
+GOAMD64=3D'v1'
+AR=3D'ar'
+CC=3D'gcc'
+CXX=3D'g++'
+CGO_ENABLED=3D'1'
+GOMOD=3D'/syzkaller/jobs-2/linux/gopath/src/github.com/google/syzkaller/go.=
+mod'
+GOWORK=3D''
+CGO_CFLAGS=3D'-O2 -g'
+CGO_CPPFLAGS=3D''
+CGO_CXXFLAGS=3D'-O2 -g'
+CGO_FFLAGS=3D'-O2 -g'
+CGO_LDFLAGS=3D'-O2 -g'
+PKG_CONFIG=3D'pkg-config'
+GOGCCFLAGS=3D'-fPIC -m64 -pthread -Wl,--no-gc-sections -fmessage-length=3D0=
+ -ffile-prefix-map=3D/tmp/go-build1200752111=3D/tmp/go-build -gno-record-gc=
+c-switches'
+
+git status (err=3D<nil>)
+HEAD detached at c390174278
+nothing to commit, working tree clean
+
+
+tput: No value for $TERM and no -T specified
+tput: No value for $TERM and no -T specified
+Makefile:31: run command via tools/syz-env for best compatibility, see:
+Makefile:32: https://github.com/google/syzkaller/blob/master/docs/contribut=
+ing.md#using-syz-env
+go list -f '{{.Stale}}' ./sys/syz-sysgen | grep -q false || go install ./sy=
+s/syz-sysgen
+make .descriptions
+tput: No value for $TERM and no -T specified
+tput: No value for $TERM and no -T specified
+Makefile:31: run command via tools/syz-env for best compatibility, see:
+Makefile:32: https://github.com/google/syzkaller/blob/master/docs/contribut=
+ing.md#using-syz-env
+bin/syz-sysgen
+touch .descriptions
+GOOS=3Dlinux GOARCH=3Darm64 go build "-ldflags=3D-s -w -X github.com/google=
+/syzkaller/prog.GitRevision=3Dc3901742785ff25afdc6f470af7b25b69d7c4f2f -X '=
+github.com/google/syzkaller/prog.gitRevisionDate=3D20250301-144328'" -o ./b=
+in/linux_arm64/syz-execprog github.com/google/syzkaller/tools/syz-execprog
+mkdir -p ./bin/linux_arm64
+aarch64-linux-gnu-g++ -o ./bin/linux_arm64/syz-executor executor/executor.c=
+c \
+	-O2 -pthread -Wall -Werror -Wparentheses -Wunused-const-variable -Wframe-l=
+arger-than=3D16384 -Wno-stringop-overflow -Wno-array-bounds -Wno-format-ove=
+rflow -Wno-unused-but-set-variable -Wno-unused-command-line-argument -stati=
+c-pie -std=3Dc++17 -I. -Iexecutor/_include   -DGOOS_linux=3D1 -DGOARCH_arm6=
+4=3D1 \
+	-DHOSTGOOS_linux=3D1 -DGIT_REVISION=3D\"c3901742785ff25afdc6f470af7b25b69d=
+7c4f2f\"
+/usr/lib/gcc-cross/aarch64-linux-gnu/12/../../../../aarch64-linux-gnu/bin/l=
+d: /tmp/cco8YaUX.o: in function `Connection::Connect(char const*, char cons=
+t*)':
+executor.cc:(.text._ZN10Connection7ConnectEPKcS1_[_ZN10Connection7ConnectEP=
+KcS1_]+0xd8): warning: Using 'gethostbyname' in statically linked applicati=
+ons requires at runtime the shared libraries from the glibc version used fo=
+r linking
+
+
+
+Tested on:
+
+commit:         a5618886 Merge remote-tracking branch 'will/for-next/p..
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.g=
+it for-kernelci
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3D29061e148cfaa3d=
+3
+dashboard link: https://syzkaller.appspot.com/bug?extid=3D8f9f411152c9539f4=
+e59
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debia=
+n) 2.40
+userspace arch: arm64
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=3D15333ff85800=
+00
+
 
