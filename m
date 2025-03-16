@@ -1,138 +1,187 @@
-Return-Path: <linux-kernel+bounces-562982-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562983-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EE82A63552
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 12:22:11 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88D6DA63554
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 12:22:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D14C016F6B4
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 11:22:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D54E816F8DD
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 11:22:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 985971A2C11;
-	Sun, 16 Mar 2025 11:22:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E9E04A06;
+	Sun, 16 Mar 2025 11:22:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lBgnJ+wG"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rx2QcL7h"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 651D48635E;
-	Sun, 16 Mar 2025 11:22:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA86519E997;
+	Sun, 16 Mar 2025 11:22:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742124124; cv=none; b=tJe7jlrbVCfuEScAiVfUZm+xerzM+r1JMaCeA6ACSjs8kBbflbJmzO0E5DTlx/J/+kwU29CZxzJREHSyvcA8KyQNtbuP/Ad8OxlgO5NLW38cYr7LDp585kfsFcNm7/kYT4wz0VMGMQjf/4ViD16joEc+ieNFIxprAy8nqqtASvs=
+	t=1742124167; cv=none; b=Zgrd6sPEYgw7HHUlSP8nyPJnOK7QOh9WgkioVqRwNYiKRStGV8cKRelHUYGSS0NDZtNJMjZUYemd7AvXN3NUg4JX7kzIRyxnc5blBjHXyN6OXIic6Y3dzMFxXXXlizqiSdm+cu1l1tS/c9hecvfvM7IK7vtuEJ5VhjOxoTLds3Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742124124; c=relaxed/simple;
-	bh=SmU0h+d2L/ZnLPStnz6nB21B5/N2fkHE3+xO0Ydd7Vo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=atLm2O1TmapA/y/s6aSRXySApRfz4xmMS3cC76p2XPLwhFqR/WtxvFnXBd/KwNZaK2inp+pfNwmWi+YBcJV21FKOX84aBc68iLUbzFCQQsEXN0zLj7gHvQeqjaRty0kHckSOMUh8ZD6bkh1tqjm2fLPm0EX2E4HS5a6p5YQ8mAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lBgnJ+wG; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-ac27cb35309so570318766b.2;
-        Sun, 16 Mar 2025 04:22:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742124121; x=1742728921; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=p2FKujD/WDFzQXcV+BlOMXkIXZNzBUdKMFbX2p6VQMU=;
-        b=lBgnJ+wGKoxVShopY/aPvhhpxilaXxkEwCiFO3oNUNLVtUT2yWpNvQgDPImSbn9CRt
-         gL6Bjh/PwVkjyJjoTeNC2jPJELxC9uuNHbgAwTeYBAEzFDZdFvYqyhafG0+Xm6HZmDjN
-         5fgXr+//nHKpqSbMNEV2MIN9pSsDe61quCN4x3sqY3ajA921nSM4Mdl/NcO75Wn5Bi7c
-         0T5omVSQkD3yLC3YBu692UIko/jAsROkI1KR22b3xAO3tGU+05Aoq5jC5FxvdmO8okPt
-         QpGSoeHVsOOiN1lRvdlcISZp2QRJkFE+FsguNNt51Bc4yH6XRmKByOjnF+Mfui3IDprB
-         3BMg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742124121; x=1742728921;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=p2FKujD/WDFzQXcV+BlOMXkIXZNzBUdKMFbX2p6VQMU=;
-        b=SBKAHnuH1AzynGRwBNFLFSCtilou2Uela22ZO8xi9dLzAeLkyZQJtX9nfvhlip7XZn
-         /nwScBoa5CgvMxaKy0qF7dgcNt2m2HwUksd97CjpHztyN8NK6FwT07Cid2YS6JLb5Chh
-         3c0+UMNtYFfm8+HH7t5yxx6fXMjykfWGGzYyDKXg+0EWr3bHFYWlBYgTR3YHFbFfx5as
-         Rjuhnxwi0MttgkMFVEM2Vb8T9Pn22HFOct4UQNb2wTuAKnnR3cViSWxfbp1WO8LpqSzT
-         4VUjddTm79jFG6nSqdj1zccNx8t6+SROTV9PUcJDgxyM8CfO0FkvY5jEI/ObNIMDDFiU
-         Tp9A==
-X-Forwarded-Encrypted: i=1; AJvYcCWqAL6mDSZW5G8P7cwUQbfl/UQ9gdFNbr9Y1f2FqEe27rGSOPAJeptleuLIZx2CXebG7bvJ5G1K@vger.kernel.org, AJvYcCXLf9tjtSREpqYeWBFqAvVqzNJjUrphIQr5mJu3adsuJw1UFa5c/9BlbTI91prnxMUnr4WQ2jlMHtvs0B4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxXXy01gjeXdudtfBnwptsr2tzrg9TcEPHPd5uX4CtDXuiX69jZ
-	PXZcX1svL8OhzXWNlWfPMinxKrSytkdHy11iVBBzaFCD3ataIloQ
-X-Gm-Gg: ASbGncuBISdNJbXFUGMD+qHf0vX9eXTqti7ZKBNRW3Iac1tJQXDXiEbHSulLCOwNacI
-	9uW0WUvFT4WNNTnySJU60XYnzn/DjtNykxxT84T34CuMepjY3rK5ECMLHjvCrabx4fqwUKZOOrw
-	p5f+6tQ382oP/8LEx2I9VRpVIEwaqaLishGz5t9TUSoH8I11hzvIJuQyZwaMefDKTdy5GXcigEL
-	dRkOJ6SHa/5POsh6isc78lNm/Wou3fQctIWdeNpMxXfnwse5f5a62p4+BFaw0sr7Df0w+BKDpnR
-	2rSOF9Kn5iS2wI30n6SF3vttkk0PKujyJOKrtSI87A==
-X-Google-Smtp-Source: AGHT+IH/GWjOJrpmeT0R78wt9LzZ4p7kUJayvibJT5ShbE6GtGJriC+yQqB9quwCCLoTtd6wqbVeQQ==
-X-Received: by 2002:a17:907:d92:b0:ac2:d5e6:dea7 with SMTP id a640c23a62f3a-ac33017710cmr984890166b.13.1742124120501;
-        Sun, 16 Mar 2025 04:22:00 -0700 (PDT)
-Received: from debian ([2a00:79c0:612:2500:45fb:7d1a:5e4d:9727])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac314aa5a24sm488633866b.180.2025.03.16.04.21.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 16 Mar 2025 04:22:00 -0700 (PDT)
-Date: Sun, 16 Mar 2025 12:21:58 +0100
-From: Dimitri Fedrau <dima.fedrau@gmail.com>
-To: Gerhard Engleder <gerhard@engleder-embedded.com>
-Cc: dimitri.fedrau@liebherr.com, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Jakub Kicinski <kuba@kernel.org>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Russell King <linux@armlinux.org.uk>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Andrew Lunn <andrew@lunn.ch>
-Subject: Re: [PATCH] net: phy: dp83822: fix transmit amplitude if
- CONFIG_OF_MDIO not defined
-Message-ID: <20250316112158.GA4035@debian>
-References: <20250312-dp83822-fix-transceiver-mdio-v1-1-7b69103c5ab0@liebherr.com>
- <b753c0e7-e055-4764-b558-68b7258a6b6f@engleder-embedded.com>
+	s=arc-20240116; t=1742124167; c=relaxed/simple;
+	bh=R9W3cFQ9XueTg/Y/8vuQmPZTaWSWiUkWlorI9h8XGac=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=oW8zBzikPbna/8Iu8LKSbA1guWTG4H3RWgHsAsSJnzLH1kfS98U8+LT4+lgPZ4RL8/tOkaKrDSwKROmfsUjObC2OBTeuYAD9WfQah2o1WQNnue2d8U0hapX/R84w79DEViWu7l9aavJEyn7PFM126lpSoC3T0zFsWv3mMgnF2TM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rx2QcL7h; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 640D7C4CEDD;
+	Sun, 16 Mar 2025 11:22:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742124166;
+	bh=R9W3cFQ9XueTg/Y/8vuQmPZTaWSWiUkWlorI9h8XGac=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=rx2QcL7hgEFe1QluOrkxsuicQUbmNRkjbUTpRHZWxiWVeNJ5VtZlm30g9nuOw7KPd
+	 IeZH1Tz0ZGtqCHGlLmnCfqKAMCVkTMUig+iuJYrCLz9GnjDthtuVWLTUTF296X1B6g
+	 vxntZVWgaoOysktEPjIrDXEmTepTsqfC7WUDNwv3G1N42b/PAllgXSJYT3Cx8RjV/g
+	 rc4rGWK72Zq6j6QMnfhzGinTOBeFLanOIVPJrm46QgK0FnZDU9hcTrkzBdRAgYlXZ5
+	 SZlK8KiJ64OZ9rbgCsV4GnBX9UA/tSUP26qudMI6iN+w3d5ufMy3kSR4qc9Mq7AOeH
+	 Rb5pqYDVaN9MQ==
+Date: Sun, 16 Mar 2025 11:22:33 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Lothar Rubusch <l.rubusch@gmail.com>
+Cc: lars@metafoo.de, Michael.Hennerich@analog.com,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ eraretuya@gmail.com
+Subject: Re: [PATCH v4 05/14] iio: accel: adxl345: add single tap feature
+Message-ID: <20250316112057.638626bd@jic23-huawei>
+In-Reply-To: <20250313165049.48305-6-l.rubusch@gmail.com>
+References: <20250313165049.48305-1-l.rubusch@gmail.com>
+	<20250313165049.48305-6-l.rubusch@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b753c0e7-e055-4764-b558-68b7258a6b6f@engleder-embedded.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Am Wed, Mar 12, 2025 at 08:53:29PM +0100 schrieb Gerhard Engleder:
-> On 12.03.25 18:23, Dimitri Fedrau via B4 Relay wrote:
-> > From: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
-> > 
-> > When CONFIG_OF_MDIO is not defined the index for selecting the transmit
-> > amplitude voltage for 100BASE-TX is set to 0, but it should be -1, if there
-> > is no need to modify the transmit amplitude voltage. Add a flag to make
-> > sure there is a need to modify it.
-> > 
-> > Fixes: 4f3735e82d8a ("net: phy: dp83822: Add support for changing the transmit amplitude voltage")
-> > Signed-off-by: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
-> > ---
-> >   drivers/net/phy/dp83822.c | 5 ++++-
-> >   1 file changed, 4 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/net/phy/dp83822.c b/drivers/net/phy/dp83822.c
-> > index 3662f3905d5ade8ad933608fcaeabb714a588418..d69000cb0ceff28e8288ba24e0af1c960ea9cc97 100644
-> > --- a/drivers/net/phy/dp83822.c
-> > +++ b/drivers/net/phy/dp83822.c
-> > @@ -201,6 +201,7 @@ struct dp83822_private {
-> >   	bool set_gpio2_clk_out;
-> >   	u32 gpio2_clk_out;
-> >   	bool led_pin_enable[DP83822_MAX_LED_PINS];
-> > +	bool tx_amplitude_100base_tx_modify;
-> >   	int tx_amplitude_100base_tx_index;
-> >   };
-> 
-> You could instead init tx_amplitude_100base_tx_index in
-> dp8382x_probe() to -1.
-> 
-> But functional it should be ok.
-> 
-> Reviewed-by: Gerhard Engleder <gerhard@engleder-embedded.com>
->
-Hi Gerhard,
+On Thu, 13 Mar 2025 16:50:40 +0000
+Lothar Rubusch <l.rubusch@gmail.com> wrote:
 
-will send out an V2 implementing your proposal. Thanks for reviewing.
+> Add the single tap feature with a threshold in 62.5mg/LSB points and a
+> scaled duration in us. Keep singletap threshold in regmap cache but
+> the scaled value of duration in us as member variable.
+> 
+> Both use IIO channels for individual enable of the x/y/z axis. Initializes
+> threshold and duration with reasonable content. When an interrupt is
+> caught it will be pushed to the according IIO channel.
+> 
 
-Best regards,
-Dimitri Fedrau
+> Signed-off-by: Lothar Rubusch <l.rubusch@gmail.com>
+
+Hi Lothar,
+
+A few things in here are from the discussion that was continuing
+on v3 so I may have said more replying to that.
+
+Anyhow, for now I'll hold off on applying from this point on as
+a few more things to respond to inline.
+
+Jonathan
+
+>  
+>  #include "adxl345.h"
+> @@ -31,6 +33,33 @@
+>  #define ADXL345_INT1			0
+>  #define ADXL345_INT2			1
+>  
+> +#define ADXL345_REG_TAP_AXIS_MSK	GENMASK(2, 0)
+> +
+> +enum adxl345_axis {
+> +	ADXL345_Z_EN = BIT(0),
+> +	ADXL345_Y_EN = BIT(1),
+> +	ADXL345_X_EN = BIT(2),
+> +	/* Suppress double tap detection if value > tap threshold */
+> +	ADXL345_TAP_SUPPRESS = BIT(3),
+> +};
+As per feedback (after you sent this!) on v3, I'd drop
+the last value out of the enum, or just use defines and a u8 for
+the one place this is used for local variable storage.
+
+
+> @@ -198,6 +387,132 @@ static int adxl345_write_raw(struct iio_dev *indio_dev,
+>  	return -EINVAL;
+>  }
+>  
+> +static int adxl345_read_event_config(struct iio_dev *indio_dev,
+> +				     const struct iio_chan_spec *chan,
+> +				     enum iio_event_type type,
+> +				     enum iio_event_direction dir)
+> +{
+> +	struct adxl345_state *st = iio_priv(indio_dev);
+> +	bool int_en;
+> +	int ret = -EFAULT;
+Not used?
+
+> +
+> +	switch (type) {
+> +	case IIO_EV_TYPE_GESTURE:
+> +		switch (dir) {
+> +		case IIO_EV_DIR_SINGLETAP:
+> +			ret = adxl345_is_tap_en(st, chan->channel2,
+> +						ADXL345_SINGLE_TAP, &int_en);
+> +			if (ret)
+> +				return ret;
+> +			return int_en;
+> +		default:
+> +			return -EINVAL;
+> +		}
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +}
+
+> +static int adxl345_write_event_value(struct iio_dev *indio_dev,
+> +				     const struct iio_chan_spec *chan,
+> +				     enum iio_event_type type,
+> +				     enum iio_event_direction dir,
+> +				     enum iio_event_info info,
+> +				     int val, int val2)
+> +{
+> +	struct adxl345_state *st = iio_priv(indio_dev);
+> +	int ret;
+> +
+> +	ret = adxl345_set_measure_en(st, false);
+> +	if (ret)
+> +		return ret;
+> +
+So in my brief reply to the v3 discussion I suggested perhaps
+factoring out everything from here...
+> +	switch (type) {
+> +	case IIO_EV_TYPE_GESTURE:
+> +		switch (info) {
+> +		case IIO_EV_INFO_VALUE:
+> +			ret = regmap_write(st->regmap, ADXL345_REG_THRESH_TAP,
+> +					   min(val, 0xFF));
+> +			break;
+> +		case IIO_EV_INFO_TIMEOUT:
+> +			ret = adxl345_set_tap_duration(st, val, val2);
+> +			break;
+> +		default:
+> +			ret = -EINVAL;
+> +			break;
+> +		}
+> +		break;
+> +	default:
+> +		ret = -EINVAL;
+> +		break;
+> +	}
+to here, so as to allow simple direct returns.
+
+I think that will make the code more readable given the need to reenable
+measurements and that you want to leave it off on error.
+
+> +
+> +	if (ret)
+> +		return ret; /* measurement stays off */
+> +
+> +	return adxl345_set_measure_en(st, true);
+> +}
+
 
