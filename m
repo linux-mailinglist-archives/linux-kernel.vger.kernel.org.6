@@ -1,319 +1,108 @@
-Return-Path: <linux-kernel+bounces-563010-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563003-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B5A5A635A2
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 13:33:11 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4373A63598
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 13:19:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F374C3A5C2D
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 12:32:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C776165BA9
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 12:19:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D74F41A5BA8;
-	Sun, 16 Mar 2025 12:33:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20DBC1A5B86;
+	Sun, 16 Mar 2025 12:19:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fossekall.de header.i=@fossekall.de header.b="A7jl/cK+";
-	dkim=permerror (0-bit key) header.d=fossekall.de header.i=@fossekall.de header.b="dUKG0S1k"
-Received: from mo4-p02-ob.smtp.rzone.de (mo4-p02-ob.smtp.rzone.de [81.169.146.170])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lNVZaGZc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E40E7139B;
-	Sun, 16 Mar 2025 12:32:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=81.169.146.170
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742128382; cv=pass; b=IP8+gHZd4M/rl0mQKdfKee90LDYmpd9o2eggWOxgqDh0F8++w6ReiEvZvDbOd0xySUzBvbHA2R4unOxDCiL/65whFF91h3t2mDGlQkoyzAFXXIpwIK9DNcu12A0n3m95WOCpZvr/5Q1qU0KUYvUJTqDZGSFCvUK0U0ouEZ3Om+k=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742128382; c=relaxed/simple;
-	bh=1lx0C0o0Q3p5xR9vdXO6vFBVmVl8HKlVFgqskmGfRec=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=IQlCFxwENjd8UVdU4b2Zde7+3OcApAVoCmXlCdbmU+kaua7n3TgazGf2VA/PcAPrdCeQdAq5L6Wir95nf/920pr8AieCimGoP7eJnmE6ivTsEDVIHp8AqOa6Sk8XndjORueYJgcye7Sw0Pa6uq5AkTJHv8V48FkbZE0aVQKLiPs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fossekall.de; spf=pass smtp.mailfrom=a98shuttle.de; dkim=pass (2048-bit key) header.d=fossekall.de header.i=@fossekall.de header.b=A7jl/cK+; dkim=permerror (0-bit key) header.d=fossekall.de header.i=@fossekall.de header.b=dUKG0S1k; arc=pass smtp.client-ip=81.169.146.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fossekall.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=a98shuttle.de
-ARC-Seal: i=1; a=rsa-sha256; t=1742127292; cv=none;
-    d=strato.com; s=strato-dkim-0002;
-    b=q1qJqMe8MejSiIwIlHJvbryKO+xzdfeTMYScZaqQ9xkTnp6qEkpQcNTKoVqd723e8z
-    XR15EYUJGRcBAZ+1Nd/3UjfUTkILHIYQumfyrWw7LiHw1pn66kQiLDvtG7dCfZqWExbf
-    pJTwb7fLAif9YWnA4TvqdLgrKpbjq5Dw4PxRk5myuSxfdcLvgEmbkxNOIfIfJ1Se3nzc
-    LiGf/mzJOMTIriPjbgxrbzYtgotb/wjAnj2Va2C63cnm3DsS3CmurYvJumHxn/3nF1gb
-    C7V+I0kmiI9vUzZ1QT6bRWzXCPrzsFiAiuFnE11gKOX/rDpAdO6Pd6k8sIAjVErV3bHy
-    zeEA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1742127292;
-    s=strato-dkim-0002; d=strato.com;
-    h=References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Cc:Date:
-    From:Subject:Sender;
-    bh=Y0fPPefo3VE1rlwdDTsnqrt+0qOpqPytvBs83tQ7kxo=;
-    b=Vb+TSRsTmByh4oOFtDrDdMvyK1mmvr9Muba0pxoIR/evx5/gFaO1EMXah6mn3cVl4A
-    1VRfI9BKZVJxu+8fZO5vSwYu7FANaG78PVJw3MN2yMeAOKMOp2on9Eg86oF9p7msBFEA
-    3KcLAIgykC5Tm36OfgFDeEjbiqQDvKf60SUqZujqT28XCih6vi1bPqx+JxMbDqODu1F8
-    uZ1rStMdi3AfEjyUPZNB1dwg96rS0XrmzcHTmlnfRXLNQtacwoIO8XRLO9wl+KaMTghf
-    SagzrNUdFNNMAKXQwZweAokqPsVhi07gqc41wrVQrDGIhmrqoU3GnbIetTHhdeW18y/k
-    mbUQ==
-ARC-Authentication-Results: i=1; strato.com;
-    arc=none;
-    dkim=none
-X-RZG-CLASS-ID: mo02
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1742127292;
-    s=strato-dkim-0002; d=fossekall.de;
-    h=References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Cc:Date:
-    From:Subject:Sender;
-    bh=Y0fPPefo3VE1rlwdDTsnqrt+0qOpqPytvBs83tQ7kxo=;
-    b=A7jl/cK+VOvr6vPHt/LOVEl5pGJKMJkzSVxE0PU0V22D9o6PcBmAaDcy5pK8vYqNmw
-    bvcU4IsO+ZrezWUtqPBBLjA3X/6gdiyEyJkYZAbi53d7FwQYbnCgk2ZoyUeSsijbFfHr
-    DNlzb1jkUlEOnO+FXb3Swyb3XEXwCdEXtqrFRrmHr8YJZtmHpdi3PV/sVLJ+e7CqFng/
-    uGz4O/1mTIEe14OKkic5aBZWV2LaxMUthXauvoJGa6HRbWLFKQKC5VqMoEOqAdrMY4Yx
-    M7P2ITiC79BSLtECBhKTzG5F2wGZJ90vrBsCysLHqPmTrumjjUTnHHdjzRm0ZHIzp24d
-    FGHA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1742127292;
-    s=strato-dkim-0003; d=fossekall.de;
-    h=References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Cc:Date:
-    From:Subject:Sender;
-    bh=Y0fPPefo3VE1rlwdDTsnqrt+0qOpqPytvBs83tQ7kxo=;
-    b=dUKG0S1kmMX18FaF2TD+4kB1+P0PhDTOk/FrVtkTy90aubabcXA1U2OY3adpPBeZrI
-    U+vqKuYs/2cNAqyDmFCg==
-X-RZG-AUTH: ":O2kGeEG7b/pS1EzgE2y7nF0STYsSLflpbjNKxx7cGrBdao6FTL4AJcMdm+lap4JEHkzok9eyEg=="
-Received: from aerfugl
-    by smtp.strato.de (RZmta 51.3.0 AUTH)
-    with ESMTPSA id f28b3512GCEq8gu
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
-	(Client did not present a certificate);
-    Sun, 16 Mar 2025 13:14:52 +0100 (CET)
-Received: from koltrast.home ([192.168.1.27] helo=a98shuttle.de)
-	by aerfugl with smtp (Exim 4.96)
-	(envelope-from <michael@a98shuttle.de>)
-	id 1ttmtG-00062L-2t;
-	Sun, 16 Mar 2025 13:14:50 +0100
-Received: (nullmailer pid 82569 invoked by uid 502);
-	Sun, 16 Mar 2025 12:14:50 -0000
-From: Michael Klein <michael@fossekall.de>
-To: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>, "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Cc: Michael Klein <michael@fossekall.de>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [net-next,v3,2/2] net: phy: realtek: Add support for PHY LEDs on RTL8211E
-Date: Sun, 16 Mar 2025 13:14:23 +0100
-Message-Id: <20250316121424.82511-3-michael@fossekall.de>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250316121424.82511-1-michael@fossekall.de>
-References: <20250316121424.82511-1-michael@fossekall.de>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7401718B47C;
+	Sun, 16 Mar 2025 12:19:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742127550; cv=none; b=onesSbxZ5NlFXQDPdHmafLqe5VEUonVyI4ts0hAD6xUVZm708VLs0VOEdDbvH7alnrJiD/RnXCopy1hywX72MPMNhfHqPha3vYsPHJba3On939wZ84LIluPO8uf/unE1ZZf09G8KSj1n6DBGBgIzf8MTPtq70RFLY0N4+0Epw10=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742127550; c=relaxed/simple;
+	bh=WDOxL/RE2tl9pVb3nTkLv25ewYOD88rCDJFDv51Rt60=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=arIKmrpB6oAte5LL1kBg2rnUTExTRvPrSaqqlnul33ncIn4cJnDDsbKbIefjpwJnL2K+JYlE2/FeF0VCDiLdMyJHG3er+PedTVMM1wolQPpGCny6wYU0TGbzikCkMzBkJqh4CjdzBo8mkrWfy3OgWErvC5E9pBE7gsO0n4UCUcQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lNVZaGZc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ADDF0C4CEDD;
+	Sun, 16 Mar 2025 12:19:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742127549;
+	bh=WDOxL/RE2tl9pVb3nTkLv25ewYOD88rCDJFDv51Rt60=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=lNVZaGZcnDmKWO0/IM62w4eJ9ac/Bx23UxURPi0RwrfgtlIbCL6/iDUqHTbnSKAYa
+	 4oCXzcIqnXy6HCYJV6CQC9jVemEys/C9HDMCXewSTFwFJUYKAzhpGhE+eaGYX3QvPg
+	 OF3JH4JZhnu1DgvevbtrrbAObUjKSRTC8dAXcmkDhZtY0c7Ik5hsujsUWZp9YKlxxk
+	 PEPRNbjARhbpKGeEuAPmR1ZSWzT+EDOCw041838kZmUxHgy2FbES8tQxrKbQM901Xi
+	 HQHnvabhDfd4Iho/oRE5G3sKo+1lIidJl+MLXYPdkoO5xru9pS/fExQbxJ+Uwt0MSf
+	 qG8ZpNqXzL2yA==
+Date: Sun, 16 Mar 2025 07:19:08 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset="us-ascii"
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: mazziesaccount@gmail.com, arthur.becker@sentec.com, 
+ subhajit.ghosh@tweaklogic.com, linux-iio@vger.kernel.org, 
+ conor+dt@kernel.org, linux-kernel@vger.kernel.org, 
+ javier.carrasco.cruz@gmail.com, muditsharma.info@gmail.com, 
+ devicetree@vger.kernel.org, ivan.orlov0322@gmail.com, lars@metafoo.de, 
+ jic23@kernel.org, krzk+dt@kernel.org
+To: Andreas Klinger <ak@it-klinger.de>
+In-Reply-To: <20250316113131.62884-2-ak@it-klinger.de>
+References: <20250316113131.62884-1-ak@it-klinger.de>
+ <20250316113131.62884-2-ak@it-klinger.de>
+Message-Id: <174212754864.1517319.13796050097130379689.robh@kernel.org>
+Subject: Re: [PATCH 1/3] dt-bindings: iio: light: veml6046x00: add color
+ sensor
 
-Like the RTL8211F, the RTL8211E PHY supports up to three LEDs.
-Add netdev trigger support for them, too.
 
-Signed-off-by: Michael Klein <michael@fossekall.de>
----
- drivers/net/phy/realtek/realtek_main.c | 125 +++++++++++++++++++++++--
- 1 file changed, 119 insertions(+), 6 deletions(-)
+On Sun, 16 Mar 2025 12:31:29 +0100, Andreas Klinger wrote:
+> Add a new compatible for Vishay high accuracy RGBIR color sensor
+> veml6046x00.
+> 
+> Signed-off-by: Andreas Klinger <ak@it-klinger.de>
+> ---
+>  .../iio/light/vishay,veml6046x00.yaml         | 49 +++++++++++++++++++
+>  1 file changed, 49 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/iio/light/vishay,veml6046x00.yaml
+> 
 
-diff --git a/drivers/net/phy/realtek/realtek_main.c b/drivers/net/phy/realtek/realtek_main.c
-index f4ce6457d0ef..2abc1c4c8b9f 100644
---- a/drivers/net/phy/realtek/realtek_main.c
-+++ b/drivers/net/phy/realtek/realtek_main.c
-@@ -37,6 +37,20 @@
- #define RTL8211E_TX_DELAY			BIT(12)
- #define RTL8211E_RX_DELAY			BIT(11)
- 
-+#define RTL8211E_LEDCR_EXT_PAGE			0x2c
-+
-+#define RTL8211E_LEDCR1				0x1a
-+#define RTL8211E_LEDCR1_ACT_TXRX		BIT(4)
-+#define RTL8211E_LEDCR1_MASK			BIT(4)
-+#define RTL8211E_LEDCR1_SHIFT			1
-+
-+#define RTL8211E_LEDCR2				0x1c
-+#define RTL8211E_LEDCR2_LINK_1000		BIT(2)
-+#define RTL8211E_LEDCR2_LINK_100		BIT(1)
-+#define RTL8211E_LEDCR2_LINK_10			BIT(0)
-+#define RTL8211E_LEDCR2_MASK			GENMASK(2, 0)
-+#define RTL8211E_LEDCR2_SHIFT			4
-+
- #define RTL8211F_PHYCR1				0x18
- #define RTL8211F_PHYCR2				0x19
- #define RTL8211F_INSR				0x1d
-@@ -113,7 +127,8 @@
- #define RTL_8221B_VN_CG				0x001cc84a
- #define RTL_8251B				0x001cc862
- 
--#define RTL8211F_LED_COUNT			3
-+/* RTL8211E and RTL8211F support up to three LEDs */
-+#define RTL8211x_LED_COUNT			3
- 
- MODULE_DESCRIPTION("Realtek PHY driver");
- MODULE_AUTHOR("Johnson Leung");
-@@ -136,6 +151,21 @@ static int rtl821x_write_page(struct phy_device *phydev, int page)
- 	return __phy_write(phydev, RTL821x_PAGE_SELECT, page);
- }
- 
-+static int rtl8211e_read_ext_page(struct phy_device *phydev, u16 ext_page,
-+				  u32 regnum)
-+{
-+	int oldpage, ret = 0;
-+
-+	oldpage = phy_select_page(phydev, RTL8211E_SET_EXT_PAGE);
-+	if (oldpage >= 0) {
-+		ret = __phy_write(phydev, RTL8211E_EXT_PAGE_SELECT, ext_page);
-+		if (!ret)
-+			ret = __phy_read(phydev, regnum);
-+	}
-+
-+	return phy_restore_page(phydev, oldpage, ret);
-+}
-+
- static int rtl8211e_modify_ext_page(struct phy_device *phydev, u16 ext_page,
- 				    u32 regnum, u16 mask, u16 set)
- {
-@@ -519,7 +549,7 @@ static int rtl821x_resume(struct phy_device *phydev)
- 	return 0;
- }
- 
--static int rtl8211f_led_hw_is_supported(struct phy_device *phydev, u8 index,
-+static int rtl8211x_led_hw_is_supported(struct phy_device *phydev, u8 index,
- 					unsigned long rules)
- {
- 	const unsigned long mask = BIT(TRIGGER_NETDEV_LINK_10) |
-@@ -538,9 +568,11 @@ static int rtl8211f_led_hw_is_supported(struct phy_device *phydev, u8 index,
- 	 *      rates and Active indication always at all three 10+100+1000
- 	 *      link rates.
- 	 * This code currently uses mode B only.
-+	 *
-+	 * RTL8211E PHY LED has one mode, which works like RTL8211F mode B.
- 	 */
- 
--	if (index >= RTL8211F_LED_COUNT)
-+	if (index >= RTL8211x_LED_COUNT)
- 		return -EINVAL;
- 
- 	/* Filter out any other unsupported triggers. */
-@@ -559,7 +591,7 @@ static int rtl8211f_led_hw_control_get(struct phy_device *phydev, u8 index,
- {
- 	int val;
- 
--	if (index >= RTL8211F_LED_COUNT)
-+	if (index >= RTL8211x_LED_COUNT)
- 		return -EINVAL;
- 
- 	val = phy_read_paged(phydev, 0xd04, RTL8211F_LEDCR);
-@@ -592,7 +624,7 @@ static int rtl8211f_led_hw_control_set(struct phy_device *phydev, u8 index,
- 	const u16 mask = RTL8211F_LEDCR_MASK << (RTL8211F_LEDCR_SHIFT * index);
- 	u16 reg = 0;
- 
--	if (index >= RTL8211F_LED_COUNT)
-+	if (index >= RTL8211x_LED_COUNT)
- 		return -EINVAL;
- 
- 	if (test_bit(TRIGGER_NETDEV_LINK_10, &rules))
-@@ -615,6 +647,84 @@ static int rtl8211f_led_hw_control_set(struct phy_device *phydev, u8 index,
- 	return phy_modify_paged(phydev, 0xd04, RTL8211F_LEDCR, mask, reg);
- }
- 
-+static int rtl8211e_led_hw_control_get(struct phy_device *phydev, u8 index,
-+				       unsigned long *rules)
-+{
-+	int ret;
-+	u16 cr1, cr2;
-+
-+	if (index >= RTL8211x_LED_COUNT)
-+		return -EINVAL;
-+
-+	ret = rtl8211e_read_ext_page(phydev, RTL8211E_LEDCR_EXT_PAGE,
-+				     RTL8211E_LEDCR1);
-+	if (ret < 0)
-+		return ret;
-+
-+	cr1 = ret >> RTL8211E_LEDCR1_SHIFT * index;
-+	if (cr1 & RTL8211E_LEDCR1_ACT_TXRX) {
-+		set_bit(TRIGGER_NETDEV_RX, rules);
-+		set_bit(TRIGGER_NETDEV_TX, rules);
-+	}
-+
-+	ret = rtl8211e_read_ext_page(phydev, RTL8211E_LEDCR_EXT_PAGE,
-+				     RTL8211E_LEDCR2);
-+	if (ret < 0)
-+		return ret;
-+
-+	cr2 = ret >> RTL8211E_LEDCR2_SHIFT * index;
-+	if (cr2 & RTL8211E_LEDCR2_LINK_10)
-+		set_bit(TRIGGER_NETDEV_LINK_10, rules);
-+
-+	if (cr2 & RTL8211E_LEDCR2_LINK_100)
-+		set_bit(TRIGGER_NETDEV_LINK_100, rules);
-+
-+	if (cr2 & RTL8211E_LEDCR2_LINK_1000)
-+		set_bit(TRIGGER_NETDEV_LINK_1000, rules);
-+
-+	return ret;
-+}
-+
-+static int rtl8211e_led_hw_control_set(struct phy_device *phydev, u8 index,
-+				       unsigned long rules)
-+{
-+	const u16 cr1mask =
-+		RTL8211E_LEDCR1_MASK << (RTL8211E_LEDCR1_SHIFT * index);
-+	const u16 cr2mask =
-+		RTL8211E_LEDCR2_MASK << (RTL8211E_LEDCR2_SHIFT * index);
-+	u16 cr1 = 0, cr2 = 0;
-+	int ret;
-+
-+	if (index >= RTL8211x_LED_COUNT)
-+		return -EINVAL;
-+
-+	if (test_bit(TRIGGER_NETDEV_RX, &rules) ||
-+	    test_bit(TRIGGER_NETDEV_TX, &rules)) {
-+		cr1 |= RTL8211E_LEDCR1_ACT_TXRX;
-+	}
-+
-+	cr1 <<= RTL8211E_LEDCR1_SHIFT * index;
-+	ret = rtl8211e_modify_ext_page(phydev, RTL8211E_LEDCR_EXT_PAGE,
-+				       RTL8211E_LEDCR1, cr1mask, cr1);
-+	if (ret < 0)
-+		return ret;
-+
-+	if (test_bit(TRIGGER_NETDEV_LINK_10, &rules))
-+		cr2 |= RTL8211E_LEDCR2_LINK_10;
-+
-+	if (test_bit(TRIGGER_NETDEV_LINK_100, &rules))
-+		cr2 |= RTL8211E_LEDCR2_LINK_100;
-+
-+	if (test_bit(TRIGGER_NETDEV_LINK_1000, &rules))
-+		cr2 |= RTL8211E_LEDCR2_LINK_1000;
-+
-+	cr2 <<= RTL8211E_LEDCR2_SHIFT * index;
-+	ret = rtl8211e_modify_ext_page(phydev, RTL8211E_LEDCR_EXT_PAGE,
-+				       RTL8211E_LEDCR2, cr2mask, cr2);
-+
-+	return ret;
-+}
-+
- static int rtl8211e_config_init(struct phy_device *phydev)
- {
- 	const u16 delay_mask = RTL8211E_CTRL_DELAY |
-@@ -1390,6 +1500,9 @@ static struct phy_driver realtek_drvs[] = {
- 		.resume		= genphy_resume,
- 		.read_page	= rtl821x_read_page,
- 		.write_page	= rtl821x_write_page,
-+		.led_hw_is_supported = rtl8211x_led_hw_is_supported,
-+		.led_hw_control_get = rtl8211e_led_hw_control_get,
-+		.led_hw_control_set = rtl8211e_led_hw_control_set,
- 	}, {
- 		PHY_ID_MATCH_EXACT(0x001cc916),
- 		.name		= "RTL8211F Gigabit Ethernet",
-@@ -1403,7 +1516,7 @@ static struct phy_driver realtek_drvs[] = {
- 		.read_page	= rtl821x_read_page,
- 		.write_page	= rtl821x_write_page,
- 		.flags		= PHY_ALWAYS_CALL_SUSPEND,
--		.led_hw_is_supported = rtl8211f_led_hw_is_supported,
-+		.led_hw_is_supported = rtl8211x_led_hw_is_supported,
- 		.led_hw_control_get = rtl8211f_led_hw_control_get,
- 		.led_hw_control_set = rtl8211f_led_hw_control_set,
- 	}, {
--- 
-2.39.5
+My bot found errors running 'make dt_binding_check' on your patch:
+
+yamllint warnings/errors:
+
+dtschema/dtc warnings/errors:
+Error: Documentation/devicetree/bindings/iio/light/vishay,veml6046x00.example.dts:33.33-34 syntax error
+FATAL ERROR: Unable to parse input tree
+make[2]: *** [scripts/Makefile.dtbs:131: Documentation/devicetree/bindings/iio/light/vishay,veml6046x00.example.dtb] Error 1
+make[2]: *** Waiting for unfinished jobs....
+make[1]: *** [/builds/robherring/dt-review-ci/linux/Makefile:1518: dt_binding_check] Error 2
+make: *** [Makefile:248: __sub-make] Error 2
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250316113131.62884-2-ak@it-klinger.de
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
 
 
