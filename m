@@ -1,244 +1,146 @@
-Return-Path: <linux-kernel+bounces-563115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563116-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B27CA6371E
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 20:00:56 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F40DAA63721
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 20:01:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 302003A8536
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 19:00:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E0A816AD0E
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 19:01:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 594101EBFE6;
-	Sun, 16 Mar 2025 19:00:38 +0000 (UTC)
-Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F32F918801A;
+	Sun, 16 Mar 2025 19:01:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jPxTuTcc"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 240C21E1E0E
-	for <linux-kernel@vger.kernel.org>; Sun, 16 Mar 2025 19:00:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAAEF3FE4;
+	Sun, 16 Mar 2025 19:01:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742151637; cv=none; b=t1ze6WrmmLzyRrgcoUfEAa52G/KEkAvplJ/ywhJK6JGT/R9g+DQ/vM8bGImvpipnCG0uppvqhunwsFIqbLELwHqbVawSv4SbkG71qX6DinCCObEMI/LGmjcqd4cA0sm9hVd7JcTxG7gGUBy/Hp5L/yOws/bO2QSl62xlPbKs6x8=
+	t=1742151707; cv=none; b=NWApNtHYW4JjIzt01qhsrEXYWbwMwKWYpmK6lWJs0kB4L/sOyKoLW56+/wTI0FDiVAPQbS9uvF0hZKjxjBz9MAClxI9h2n4dYPh/XcUSgBnvzlFYRog9OHC8EcB0sitcfyAZXtLe8tSrAFocBxLnJbXOGBctmZU5UBcXKxcpwDQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742151637; c=relaxed/simple;
-	bh=hxhcxjzlgkH2HaRHW3cwp0rMhB9w/VzYprzuwm8IR1U=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=r9zZiDSdrLCZGiUnNko6Tr+lKEKKsKqSZAQznVtjJBp+EL6Mj4i5KO4WinCZzglvt2ozw2joQE6bitFWcbMjQ4+JG3t7bJTUrQB0ZuHviiv0relpa9jC9u1tcm/LRVMf4oMMJ1rcVGowoFvUg/qo5OsRCoerbnDK2OmjXNNtLsg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-3d434c328dbso71946045ab.3
-        for <linux-kernel@vger.kernel.org>; Sun, 16 Mar 2025 12:00:35 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742151635; x=1742756435;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+	s=arc-20240116; t=1742151707; c=relaxed/simple;
+	bh=ekmzAmP8Y8iH5QY/PxjyugTDakULmRUAQEXxogkFKnc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Yk1dvQo0oN+KGeJ7a0j852XZfU2zOzU9IPvatHd4einvR8wtRU83n25UHNph8destUfrGEe9+MOvIHGpiGyf4cw3aTwpmE5xO26nmmLFGizFS90pZNCrwOjtb4bDhZvbNLZnAPtph8T+fTvxQOLkTTE3QUT8NgvigA4J0W1zEvQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jPxTuTcc; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-ac25d2b2354so641323766b.1;
+        Sun, 16 Mar 2025 12:01:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742151704; x=1742756504; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=zxbhjTrMG45wUnXDZLEI8AwhrNmeEk2XCaJR/1Yozy4=;
-        b=K9Mteh0Y6C7eUusRbd/BNV1jQqcDzvk4WrNDW+2XlPe45zYec0r/Hhd55JfQzxMSWS
-         5lSy9BBNAD3tuIBTv6ciusiDevL74cSFfEpjqfBJI62lp2HwNbWjym2e/FGktw8SD5Pv
-         OuqoKpRFFNSVYiFIkxtbAHz8vChKM1rKEE86PHCtrn14KDW+B2bw+wBNPAt4ooOe14/T
-         8dX3nBt6h2qbZ6mKdfD+mrCFhqAL14S3vhSdoG9QfDrq2KfHh/js7anBL/qbL+QwsxRl
-         2fhxGMw5DIq7vNBd+pj62S+hNXmI6HnCsX/3ci1EBCUDWpNLiZmZIm9ZC1LIMwUP19rY
-         /nBA==
-X-Forwarded-Encrypted: i=1; AJvYcCW8Xdqs+IWNQ7G1hzHpRTo3jwHzT6abKh2a56ruR7bG9mxxzc29xivpN/uhfutmBn8H+1albiXBQtFJ9iA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzbypgfPY5RXZIQmKcrEijXKQahIfxtn8i+0JQIPde2upDK5ojh
-	tStW167WxEFiJX67/hI2xlc68QF3H2cQ9noPqEDnGV+xkaZ348iBr8PoQLNIR3W7oWjBBg1FO7s
-	09bDmOlRbkTF1RV8JT9g5ikvu7hfonBVR2HCKJ0bL035QsPHgh56lkr0=
-X-Google-Smtp-Source: AGHT+IFNA8UYDFO+pCuEz4LKNUB0dm0nCyUAq4KQEjTKLUh/3EH+VXqVy9eTupRmqxOCJCksABpUsI1NZAzsZuulJ3ebhSMmC819
+        bh=VaARcnuSuLuxpai/InAGA0xtSCdbGWktXfe+Ii7D/U4=;
+        b=jPxTuTccNW9ZDqqDtTSDob5npX+ueDz+Dv9r0u19YWHFqp8C5a/O1K5+dW1l/BFiKx
+         ZGzvA4p6AzoWVJSKt+Z1MVoFqAPFNxHxWdaOb1FYHZnSSBKjgdqG5FyLnPCJhxOJZLxG
+         KGykkVm2zhskq9y0bJUt9AHe0VdeahWSpxtcOV+fwLXG8WNnsqLvNmuuhvqOyxU1J/ls
+         j7+qmlO9plPs6F8qbqmX58QT7wUymWnKgLTvj7hB8FkSxuXy9TfL1gbFvngs2TgnjiRK
+         NYX6723JU0JZPtdW8q87xUyTRvc1pNkhYFqcv1Vow5FActQPsupZXIg7MrTja/hs9PnY
+         E7dQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742151704; x=1742756504;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=VaARcnuSuLuxpai/InAGA0xtSCdbGWktXfe+Ii7D/U4=;
+        b=ownR68o4Jp3fu2tXSBAa+a+DLUOXGvcYKu13Aa3sjeTdN1CNsEcyxxWDsXruws8YSz
+         Hcy+kkIvWh+hCKDz0ex03fVWY9VDeP/OBreFujiRjhh4hDAxaJTMgr3393CNsXmYE35b
+         +ItZFONTp+c0APaSsWgwSzbI5o4x1FItsvliAnZWt8aoBIrdDSkEQnlPDSN+Vjpkt93x
+         /cMpkNnCjeJkW0T4BtBTbp22OgGbmFzwkD2YLoe5UQsd5b5fW7JzB7EJqa3qx88jyhiC
+         TFfyeHz2dYzfXvdh4qOsPja7COUiAyWURCA6/r7593CoT0yUeN/XAqOthan4NHt3QSsm
+         6V3w==
+X-Forwarded-Encrypted: i=1; AJvYcCV6ORnuR4JWsPHPDaMUr2wRHfLriS8h5hSun8DDr4UBmaMWk0BytHJBgz0+8as15PXDKkqaB8efnmbfoFwy@vger.kernel.org, AJvYcCWl4PlvYJvjIJjPrqBL21y8JsUVB2a3S3SByIWJR5MpgPLIO+ucEe4NxuHQ+EVrgc0FcK9+DXrTCzgh@vger.kernel.org, AJvYcCXXsHnZBusoxtmFA0VEFzUEFgRjngy47hsFG7I+uhvBG+QNRtv4Vqvc2diUjN4AoaFC7NnguSHdAsij@vger.kernel.org
+X-Gm-Message-State: AOJu0YyyiNoFzzPfs1Ij6uU/hiFsVz8SSE8wq4Hz31ghuo3ks7fxs0FW
+	UnNEfcjjKNWTpzrBncD504LCGBTZvITUkGNs9GDRa+o4PitK07h8
+X-Gm-Gg: ASbGnctQ0N18ICPcZ5u+tYzHJLVRuHV1THUs9fwWl8PMowtqi3eZo1gK+2ABazuREdK
+	+J6ieZkkaeuutYgGS/fgDZBoJtNni1TJSlXE3UmVIwPgu9u6QelNv5Yow+h6YcCqK+UnogJQL6o
+	Or6kDzymv0tP+jQ4cVunTyx59vN+BwgkVxrGJ8VKn0FIYBdObZSAWtOTO/oEjwEW3A7gZ2Knf8Y
+	cOQvTtJXdwih/Fw1tsRji2k+AAwfkA5yDjsqnZueilFHDJs2A799SnBlprF408ctK7tGplQdn+r
+	q21gv5u2QUArwN5KBl1XyZJJ7u5s9kXgcjOEAXaXQ8ipPyCTHOl2faFDlSV27liPO9GHBACCIdB
+	4xeyXbD5+xsp+zJs9f8DIDA==
+X-Google-Smtp-Source: AGHT+IHgXXtMhyuLsuMBCutEq5j1h8RgZgLKJgXD8Pc87mm4FhtnDm/alvyi1kWX2iTdBEa+bID4kw==
+X-Received: by 2002:a17:907:7fa6:b0:abc:4b7:e3d3 with SMTP id a640c23a62f3a-ac3302f1068mr1042069866b.27.1742151703874;
+        Sun, 16 Mar 2025 12:01:43 -0700 (PDT)
+Received: from [192.168.50.244] (83.11.178.210.ipv4.supernova.orange.pl. [83.11.178.210])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac314a4094dsm527846366b.126.2025.03.16.12.01.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 16 Mar 2025 12:01:42 -0700 (PDT)
+Message-ID: <fffe0118-6235-446c-a9c5-93f5d1f5ed04@gmail.com>
+Date: Sun, 16 Mar 2025 20:01:41 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:3397:b0:3d3:dd60:bc37 with SMTP id
- e9e14a558f8ab-3d483a90667mr131245585ab.22.1742151635223; Sun, 16 Mar 2025
- 12:00:35 -0700 (PDT)
-Date: Sun, 16 Mar 2025 12:00:35 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67d71fd3.050a0220.3657bb.0003.GAE@google.com>
-Subject: [syzbot] [kernel?] upstream test error: KASAN: slab-use-after-free
- Write in binder_add_device (2)
-From: syzbot <syzbot+35a5dd7a84685f5f9844@syzkaller.appspotmail.com>
-To: arve@android.com, brauner@kernel.org, cmllamas@google.com, 
-	gregkh@linuxfoundation.org, joel@joelfernandes.org, 
-	linux-kernel@vger.kernel.org, maco@android.com, surenb@google.com, 
-	syzkaller-bugs@googlegroups.com, tkjos@android.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/9] clk: bcm: kona: Move CLOCK_COUNT defines into the
+ driver
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>,
+ Florian Fainelli <florian.fainelli@broadcom.com>, Ray Jui
+ <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Alex Elder <elder@kernel.org>,
+ Stanislav Jakubek <stano.jakubek@gmail.com>, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ ~postmarketos/upstreaming@lists.sr.ht
+References: <20250308-kona-bus-clock-v3-0-d6fb5bfc3b67@gmail.com>
+ <20250308-kona-bus-clock-v3-1-d6fb5bfc3b67@gmail.com>
+ <20250310-proficient-free-antelope-abb6b7@krzk-bin>
+From: Artur Weber <aweber.kernel@gmail.com>
+Content-Language: en-US
+In-Reply-To: <20250310-proficient-free-antelope-abb6b7@krzk-bin>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On 10.03.2025 09:40, Krzysztof Kozlowski wrote:
+> On Sat, Mar 08, 2025 at 08:50:39AM +0100, Artur Weber wrote:
+>> CLOCK_COUNT defines for each CCU are stored in the DT binding header.
+>> This is not correct - they are not used by device trees, only internally
+>> by the driver.
+>>
+>> Move the CLOCK_COUNT defines directly into the driver in preparation
+>> for dropping them from the DT binding include.
+>>
+>> Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
+>> ---
+>>   drivers/clk/bcm/clk-bcm21664.c |  8 ++++++++
+>>   drivers/clk/bcm/clk-bcm281xx.c | 10 ++++++++++
+>>   2 files changed, 18 insertions(+)
+>>
+>> diff --git a/drivers/clk/bcm/clk-bcm21664.c b/drivers/clk/bcm/clk-bcm21664.c
+>> index 520c3aeb4ea9c4a431512c0909f9545c1761d17a..fa6e1649d6f5f459b63026109caea9e2f72e22dd 100644
+>> --- a/drivers/clk/bcm/clk-bcm21664.c
+>> +++ b/drivers/clk/bcm/clk-bcm21664.c
+>> @@ -17,6 +17,8 @@ static struct peri_clk_data frac_1m_data = {
+>>   	.clocks		= CLOCKS("ref_crystal"),
+>>   };
+>>   
+>> +#define BCM21664_ROOT_CCU_CLOCK_COUNT	(BCM21664_ROOT_CCU_FRAC_1M + 1)
+> 
+> I hit that wall too, no worries. It might surprise you but 0+1 != 1 :),
 
-syzbot found the following issue on:
+Do you mean that I should specify the clock count directly rather than
+incrementing the last ID? Some other drivers seem to do this the way I
+did here (samsung/clk-exynos*, renesas/r9a06g032-clocks.c).
 
-HEAD commit:    29281a76709c Merge tag 'kvmarm-fixes-6.14-2' into kvmarm-m..
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/kvmarm/kvmarm.git fuzzme
-console output: https://syzkaller.appspot.com/x/log.txt?x=1155cfa8580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=ab4d8c35f4d2e97
-dashboard link: https://syzkaller.appspot.com/bug?extid=35a5dd7a84685f5f9844
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: arm64
+> so you redefine a define. You need to test this patch bisectability.
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/384ffdcca292/non_bootable_disk-29281a76.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/c1ca228f9e75/vmlinux-29281a76.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/22c8671002d3/Image-29281a76.gz.xz
+I assume renaming the define to not collide with the old name is the way
+to go?
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+35a5dd7a84685f5f9844@syzkaller.appspotmail.com
+Best regards
+Artur
 
-==================================================================
-BUG: KASAN: slab-use-after-free in hlist_add_head include/linux/list.h:1026 [inline]
-BUG: KASAN: slab-use-after-free in binder_add_device+0x54/0x8c drivers/android/binder.c:6932
-Write of size 8 at addr 81f00000124ffa08 by task syz-executor/3323
-Pointer tag: [81], memory tag: [84]
-
-CPU: 0 UID: 0 PID: 3323 Comm: syz-executor Not tainted 6.14.0-rc2-syzkaller-g29281a76709c #0
-Hardware name: linux,dummy-virt (DT)
-Call trace:
- show_stack+0x2c/0x3c arch/arm64/kernel/stacktrace.c:466 (C)
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0xe4/0x150 lib/dump_stack.c:120
- print_address_description mm/kasan/report.c:378 [inline]
- print_report+0x1b4/0x500 mm/kasan/report.c:489
- kasan_report+0xd8/0x138 mm/kasan/report.c:602
- kasan_tag_mismatch+0x28/0x3c mm/kasan/sw_tags.c:175
- __hwasan_tag_mismatch+0x30/0x60 arch/arm64/lib/kasan_sw_tags.S:55
- hlist_add_head include/linux/list.h:1026 [inline]
- binder_add_device+0x54/0x8c drivers/android/binder.c:6932
- binderfs_binder_device_create+0x64c/0x6a0 drivers/android/binderfs.c:210
- binderfs_fill_super+0x5d4/0x814 drivers/android/binderfs.c:729
- vfs_get_super fs/super.c:1280 [inline]
- get_tree_nodev+0x98/0x110 fs/super.c:1299
- binderfs_fs_context_get_tree+0x28/0x38 drivers/android/binderfs.c:749
- vfs_get_tree+0x68/0x1e4 fs/super.c:1814
- do_new_mount+0x218/0x5d8 fs/namespace.c:3560
- path_mount+0x428/0xa64 fs/namespace.c:3887
- do_mount fs/namespace.c:3900 [inline]
- __do_sys_mount fs/namespace.c:4111 [inline]
- __se_sys_mount fs/namespace.c:4088 [inline]
- __arm64_sys_mount+0x3dc/0x48c fs/namespace.c:4088
- __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
- invoke_syscall+0x78/0x1b8 arch/arm64/kernel/syscall.c:49
- el0_svc_common+0xe8/0x1b0 arch/arm64/kernel/syscall.c:132
- do_el0_svc+0x40/0x50 arch/arm64/kernel/syscall.c:151
- el0_svc+0x54/0x14c arch/arm64/kernel/entry-common.c:744
- el0t_64_sync_handler+0x84/0x108 arch/arm64/kernel/entry-common.c:762
- el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:600
-
-Allocated by task 3311:
- kasan_save_stack+0x40/0x6c mm/kasan/common.c:47
- save_stack_info+0x34/0x144 mm/kasan/tags.c:106
- kasan_save_alloc_info+0x14/0x20 mm/kasan/tags.c:142
- poison_kmalloc_redzone mm/kasan/common.c:377 [inline]
- __kasan_kmalloc+0x98/0x9c mm/kasan/common.c:394
- kasan_kmalloc include/linux/kasan.h:260 [inline]
- __kmalloc_cache_noprof+0x2cc/0x434 mm/slub.c:4325
- kmalloc_noprof include/linux/slab.h:901 [inline]
- kzalloc_noprof include/linux/slab.h:1037 [inline]
- binderfs_binder_device_create+0x124/0x6a0 drivers/android/binderfs.c:147
- binderfs_fill_super+0x5d4/0x814 drivers/android/binderfs.c:729
- vfs_get_super fs/super.c:1280 [inline]
- get_tree_nodev+0x98/0x110 fs/super.c:1299
- binderfs_fs_context_get_tree+0x28/0x38 drivers/android/binderfs.c:749
- vfs_get_tree+0x68/0x1e4 fs/super.c:1814
- do_new_mount+0x218/0x5d8 fs/namespace.c:3560
- path_mount+0x428/0xa64 fs/namespace.c:3887
- do_mount fs/namespace.c:3900 [inline]
- __do_sys_mount fs/namespace.c:4111 [inline]
- __se_sys_mount fs/namespace.c:4088 [inline]
- __arm64_sys_mount+0x3dc/0x48c fs/namespace.c:4088
- __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
- invoke_syscall+0x78/0x1b8 arch/arm64/kernel/syscall.c:49
- el0_svc_common+0xe8/0x1b0 arch/arm64/kernel/syscall.c:132
- do_el0_svc+0x40/0x50 arch/arm64/kernel/syscall.c:151
- el0_svc+0x54/0x14c arch/arm64/kernel/entry-common.c:744
- el0t_64_sync_handler+0x84/0x108 arch/arm64/kernel/entry-common.c:762
- el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:600
-
-Freed by task 3311:
- kasan_save_stack+0x40/0x6c mm/kasan/common.c:47
- save_stack_info+0x34/0x144 mm/kasan/tags.c:106
- kasan_save_free_info+0x18/0x24 mm/kasan/tags.c:147
- poison_slab_object mm/kasan/common.c:247 [inline]
- __kasan_slab_free+0x64/0x68 mm/kasan/common.c:264
- kasan_slab_free include/linux/kasan.h:233 [inline]
- slab_free_hook mm/slub.c:2353 [inline]
- slab_free mm/slub.c:4609 [inline]
- kfree+0x14c/0x450 mm/slub.c:4757
- binderfs_evict_inode+0x124/0x194 drivers/android/binderfs.c:278
- evict+0x2e4/0x610 fs/inode.c:796
- iput_final fs/inode.c:1946 [inline]
- iput+0x564/0x5d8 fs/inode.c:1972
- dentry_unlink_inode+0x2e0/0x310 fs/dcache.c:440
- __dentry_kill+0x130/0x3e8 fs/dcache.c:643
- shrink_kill+0xf8/0x324 fs/dcache.c:1088
- shrink_dentry_list+0x280/0x4ec fs/dcache.c:1115
- shrink_dcache_parent+0x88/0x21c
- do_one_tree+0x2c/0xc0 fs/dcache.c:1578
- shrink_dcache_for_umount+0x90/0x118 fs/dcache.c:1595
- generic_shutdown_super+0x50/0x214 fs/super.c:620
- kill_anon_super fs/super.c:1237 [inline]
- kill_litter_super+0x64/0x90 fs/super.c:1247
- binderfs_kill_super+0x3c/0x88 drivers/android/binderfs.c:791
- deactivate_locked_super+0xa8/0x110 fs/super.c:473
- deactivate_super+0xdc/0xe0 fs/super.c:506
- cleanup_mnt+0x228/0x298 fs/namespace.c:1413
- __cleanup_mnt+0x20/0x30 fs/namespace.c:1420
- task_work_run+0x154/0x1c4 kernel/task_work.c:227
- exit_task_work include/linux/task_work.h:40 [inline]
- do_exit+0x3b8/0x10dc kernel/exit.c:938
- do_group_exit+0xfc/0x13c kernel/exit.c:1087
- get_signal+0xd1c/0xd94 kernel/signal.c:3036
- do_signal+0x17c/0x29a4 arch/arm64/kernel/signal.c:1658
- do_notify_resume+0x7c/0x1b8 arch/arm64/kernel/entry-common.c:148
- exit_to_user_mode_prepare arch/arm64/kernel/entry-common.c:169 [inline]
- exit_to_user_mode arch/arm64/kernel/entry-common.c:178 [inline]
- el0_svc+0xac/0x14c arch/arm64/kernel/entry-common.c:745
- el0t_64_sync_handler+0x84/0x108 arch/arm64/kernel/entry-common.c:762
- el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:600
-
-The buggy address belongs to the object at fff00000124ffa00
- which belongs to the cache kmalloc-512 of size 512
-The buggy address is located 8 bytes inside of
- 288-byte region [fff00000124ffa00, fff00000124ffb20)
-
-The buggy address belongs to the physical page:
-page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x524ff
-anon flags: 0x1ffc00000000000(node=0|zone=0|lastcpupid=0x7ff|kasantag=0x0)
-page_type: f5(slab)
-raw: 01ffc00000000000 28f000000a001900 0000000000000000 0000000000000001
-raw: 0000000000000000 0000000080080008 00000000f5000000 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
- fff00000124ff800: 01 01 01 01 01 01 01 01 01 01 01 01 01 01 01 01
- fff00000124ff900: 01 01 01 01 fe fe fe fe fe fe fe fe fe fe fe fe
->fff00000124ffa00: 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84 84
-                   ^
- fff00000124ffb00: 84 84 fe fe fe fe fe fe fe fe fe fe fe fe fe fe
- fff00000124ffc00: fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe
-==================================================================
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
