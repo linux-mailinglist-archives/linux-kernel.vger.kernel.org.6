@@ -1,252 +1,126 @@
-Return-Path: <linux-kernel+bounces-563012-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563015-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4CB9A635A8
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 13:49:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12E53A635B4
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 13:55:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 989183AC131
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 12:48:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A5B40188D721
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 12:55:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E90991A38E4;
-	Sun, 16 Mar 2025 12:49:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 777CD1A9B32;
+	Sun, 16 Mar 2025 12:54:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=permerror (0-bit key) header.d=sapience.com header.i=@sapience.com header.b="73JS9hj4";
-	dkim=pass (2048-bit key) header.d=sapience.com header.i=@sapience.com header.b="IBtYtlkx"
-Received: from s1.sapience.com (s1.sapience.com [72.84.236.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LzJ1ozKn"
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4383139B;
-	Sun, 16 Mar 2025 12:49:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=72.84.236.66
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742129343; cv=fail; b=eQceoa+SsM46QYoaW5b2j27J+pRCruqTMfXelwGhihOIfgBnqfJfjkfnmzAPfTd+eDxJBu/bs14yV8Ylyr1aZgeUHPJGUuMA+7/tVHGVpQb3uakXY7mGWk3qUkOJKIMCUafMw0ADeKn0+vpmeNWG1HVpMgsVWTahdh5vXwU1W9M=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742129343; c=relaxed/simple;
-	bh=vi91Pt6QOlfTXCKzKhBDCHcsLTlHmjFi2TZT8TbnHl0=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=HFMksBzy5I15fORP3H10mFHLlAKXXhQtsJFVyUcOTwb2wrcwF0K4oYUppzboU/fC69XBTP3fvQ5HqCr2Sq2z0gqw70GAo29yeIrKeWvheFEvJLMzDcdnxPWj3EddmpZzzmvDasm9fG077r87p0C2ZJ8P0Ig2fh7rAXmJx7hdEps=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sapience.com; spf=pass smtp.mailfrom=sapience.com; dkim=permerror (0-bit key) header.d=sapience.com header.i=@sapience.com header.b=73JS9hj4; dkim=pass (2048-bit key) header.d=sapience.com header.i=@sapience.com header.b=IBtYtlkx; arc=fail smtp.client-ip=72.84.236.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sapience.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sapience.com
-Authentication-Results: dkim-srvy7; dkim=pass (Good ed25519-sha256 
-   signature) header.d=sapience.com header.i=@sapience.com 
-   header.a=ed25519-sha256; dkim=pass (Good 2048 bit rsa-sha256 signature) 
-   header.d=sapience.com header.i=@sapience.com header.a=rsa-sha256
-Received: from srv8.sapience.com (srv8.sapience.com [x.x.x.x])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature ECDSA (secp384r1) server-digest SHA384)
-	(No client certificate requested)
-	by s1.sapience.com (Postfix) with ESMTPS id 3AE25480AAB;
-	Sun, 16 Mar 2025 08:48:55 -0400 (EDT)
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=sapience.com;
- i=@sapience.com; q=dns/txt; s=dk-ed25519-220413; t=1742129335;
- h=message-id : subject : from : to : cc : date : in-reply-to :
- references : content-type : mime-version : from;
- bh=6JIvjo9kK9/oJ+fTBwgiA9gSpZyKTHfI7J4Jg/hitwE=;
- b=73JS9hj4mXsProHbP9DbtOORksf1Im1JzcmXMy8RVNgq1ON+W4gROeYXokqyGgCtKzqfx
- dd60Zk3lPvz/6SzBw==
-ARC-Seal: i=1; a=rsa-sha256; d=sapience.com; s=arc6-rsa-220412; t=1742129335;
-	cv=none; b=b4F5mEWMqVXoDMfUa71c9qs8BHFFmVVeiHpj5s1eRsb78aFHQWrwucoB4iTKsNsdmsW7sfzImWmklQ3QAKCS1keKxqFm+L5wyW+q3ezYd3foa50u01VU8Z3RJ2gD8P63ZsAnkLqjzXdJWdYYDC30abFUDSw/87lk916I1RiYQHC8OV+hRvL6azLUhprUSJlYU5BrxZpBh6O/NOqz/D4D11BrGBm4Fo03THeZY75RkQYDPl+kqE6E4TSxa3/cO6+732rDm0OcSaotbsrmvx0WSALQru1ybaSgaWgDOcNCfe2wJXgrEqIDXBH522CJCiAc5XcvKTRio1W0z/owLK8WuQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; d=sapience.com; s=arc6-rsa-220412;
-	t=1742129335; c=relaxed/simple;
-	bh=vi91Pt6QOlfTXCKzKhBDCHcsLTlHmjFi2TZT8TbnHl0=;
-	h=DKIM-Signature:DKIM-Signature:Message-ID:Subject:From:To:Cc:Date:
-	 In-Reply-To:References:Autocrypt:Content-Type:User-Agent:
-	 MIME-Version; b=OQeEYNrocHh0UGzhClux2+PZwjtLTGJiDwQF1AP6XfeSkav95y2RsPpSZUY603PSD2Qp2V5MNE3/RSY403TBvz5A8kfcd2wfEyymfeLWtXER5qXzSGHribk5gKjFejvPbz8mDIXkj9zKn48VZr4Y183BbL8SLoLRpuNkUDKfENZ+f5Pwe/R9U3Sx74l/GTF/Nb4C7BphC79Swe3dakH4CgPKOYLxwkhA2DQzuNelGoaDko1qo2C4KQLHBSnFeYOr4RjXdeI6f3y24kkl1dcoTb/MXvywgEmdZyIryUHQg9XgfhA9C+JGN82msKcgGft40Zp7AEtiZzpSDxyArjKudw==
-ARC-Authentication-Results: i=1; arc-srv8.sapience.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sapience.com;
- i=@sapience.com; q=dns/txt; s=dk-rsa-220413; t=1742129335;
- h=message-id : subject : from : to : cc : date : in-reply-to :
- references : content-type : mime-version : from;
- bh=6JIvjo9kK9/oJ+fTBwgiA9gSpZyKTHfI7J4Jg/hitwE=;
- b=IBtYtlkxXiTGa30nX7uqsrgKJZAJY3PQPwV3CRAyVBfUAShOjOpffKYu+0CSRTnW6l45+
- sSmdb8J5is27Kv0y4uVxufCOi9SvTKRZtWp2oox2BY09hSme4Po5cj0O4nS0jtiY+VCbSI+
- KBSwDa2udM6vFAozwa3oCCYIJNlM08eSfT2FPwQZyojfnkF9SKZygQy+WHLsd9/lZOLjnde
- mWx97icbCzil+hMcPNig38cQB+gONmG/BRTGnfafwhmwPirod9svB+JKdFHnxg9PgOzBaNA
- H8k2nmEp4JVTSgRxUB9GCAOAmsxKiPgaEKrhK6F7C3Q/ziZifV5OvxsCUjwg==
-Received: by srv8.prv.sapience.com (Postfix) id 082E428001B;
-	Sun, 16 Mar 2025 08:48:55 -0400 (EDT)
-Message-ID: <76e77de144a51d345c3542dd77dd0bdd86e4d5e5.camel@sapience.com>
-Subject: Re: rc4 and later log message: gpiochip_add_data_with_key:
- get_direction failed
-From: Genes Lists <lists@sapience.com>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Date: Sun, 16 Mar 2025 08:48:47 -0400
-In-Reply-To: <CAMRc=Mc6Tn9CZJA6EN_a0i=hiiz6jTr9oYLHdJ8iyrtsw+LmZw@mail.gmail.com>
-References: <579283e5c832d77aeed531e8680961c815557613.camel@sapience.com>
-	 <1d8bf01be50646bb7b36abfc1ecb25eb997598dd.camel@sapience.com>
-	 <CAMRc=Mc6Tn9CZJA6EN_a0i=hiiz6jTr9oYLHdJ8iyrtsw+LmZw@mail.gmail.com>
-Autocrypt: addr=lists@sapience.com; prefer-encrypt=mutual;
- keydata=mDMEXSY9GRYJKwYBBAHaRw8BAQdAwzFfmp+m0ldl2vgmbtPC/XN7/k5vscpADq3BmRy5R
- 7y0LU1haWwgTGlzdHMgKEwwIDIwMTkwNzEwKSA8bGlzdHNAc2FwaWVuY2UuY29tPoiWBBMWCAA+Ah
- sBBQsJCAcCBhUKCQgLAgQWAgMBAh4BAheAFiEE5YMoUxcbEgQOvOMKc+dlCv6PxQAFAmPJfooFCRl
- vRHEACgkQc+dlCv6PxQAc/wEA/Dbmg91DOGXll0OW1GKaZQGQDl7fHibMOKRGC6X/emoA+wQR5FIz
- BnV/PrXbao8LS/h0tSkeXgPsYxrzvfZInIAC
-Content-Type: multipart/signed; micalg="pgp-sha384";
-	protocol="application/pgp-signature"; boundary="=-qGmPose2pqDUpsQBP6jG"
-User-Agent: Evolution 3.54.3 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11A581A3166;
+	Sun, 16 Mar 2025 12:54:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742129687; cv=none; b=ZxuiMdypxbs/nQPX0Jxx4td7FWOyrZ+pdwMq+44cxnwVGJ8bRIaenTH2vJPDADjgjU4QnwonXO33StdQ/SzA8uPi11bJjkWz01rxp4Mdwk/qDiOzvxXTyc+4xgOtYbnW1ZfjYDgaa+V4TC0oGQiEMyiYUrcqJF7PGaJgJDDWRxY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742129687; c=relaxed/simple;
+	bh=la8iWv4aKLDOW0r7llYW7xIb+W8ddGrURAKkkeCgcDE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rBzYuUnF0zwciAfol2TuLr5ae7KTemmsk6LnurUkY0+jrGi2rYrbJ3DBYmCoawDkL0jHm5ecssn+7crO7UB4DcuSl5Au2E0AwuDJSPn8zNfO2WNljVhMVW1EdR3IXypm+A598d0bAWeA3I35jK5MUPdCaMKoYezzFEyGg50sofI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LzJ1ozKn; arc=none smtp.client-ip=209.85.208.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-30bae572157so36825201fa.3;
+        Sun, 16 Mar 2025 05:54:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742129683; x=1742734483; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=m72Ysl4ko4hY5HZYX4qrB+VwpHKR3dQw5Vbh4xYJNfA=;
+        b=LzJ1ozKnTBK3Nuks3YCvLJW7/Z/EgJgIT+3DVVjlxG0cEo3AjIIqyITHuNZcgCvdNG
+         ckvoPbVH7s4LIV+Eb8W42Y0RmHfkOOQrgDG7eH4m5REbTCfONTLexr77qTPXjBT0X2uK
+         C8tNEWxvNiWNIIsL1FYCr1FVPeTbabcOsEzbqkCe/KofTBJlpObvczW5n8gCbQAqbXYA
+         ni1gAVBY6EiwWvYD8SUTOyyUTfnLnUSb/4byMTJOl+yJKGzzbtD7G6yDHRKR3cbannAI
+         tYpMNrEyuHng7ezK4ZbMPndMnNYgKyY8D3dwdt2H7fe+zUTSCZTfLKTIGtg/6rrjXJ51
+         eXuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742129683; x=1742734483;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=m72Ysl4ko4hY5HZYX4qrB+VwpHKR3dQw5Vbh4xYJNfA=;
+        b=gv99bfCGwAGJvDkbgP26SE+bgfjfIlIBiWAk4lA7pto2km5SXytDRbzz2cgvIWVZg3
+         mortDva990284TCukzWVZqbC6UA6J9eujJxQe4UUmamZ5T6c2DwL3X6s59MxmqpFnyCK
+         +5fFqA9U0rURglxrQyNnG22fLpMebPbqf1SxJtW7AQVMeV/7wyLh7iZeLlMD5muGFGwy
+         f68WXrtx0UMsC9/vB/+Q81RmrfR2WmVJq3+ZHI0JirmOEr4NQyf80gEqxwXregLK4uE4
+         VzOnFI2esBGU7/vfYlZsbzRhxkBBzVAhEqx9DOWiAN5l9tXIhQ5sp/yjFkCaDdjn2uDS
+         p6Rw==
+X-Forwarded-Encrypted: i=1; AJvYcCU2dhLCV85wGtXu3yEePIZK4bNWZvQxnPh7dq8U/gHcndt/CliEvlUUjNCUhshx37/KElPv/pI/LA98Vi4=@vger.kernel.org, AJvYcCV/U53Oo/PSiZEmtbzR/nK5raK8kyocbCWtZjLSLRFjh51qO/FpKtRt2ZmXOZssHRlNKuOkBpzypY5G@vger.kernel.org, AJvYcCV6pxQlOQzoiEB53tuH+MlSNik8GKAQmhyjRYJnDyqOkvuia3x6olG6EpTNdm30Q0ee3Nx6fHYUborDlkb5GUeQ@vger.kernel.org, AJvYcCVID1K3veLYfT7XuVDwnywSuxbs3rcH4z59WP4InNShqnwi9Fg2O3XHhJtBNUchF5uGoOf7ueITjqjcpYNN@vger.kernel.org, AJvYcCXLk2pifFd39Im7duj+7xtz+Y30iLga6qVyU+OYs5aEZlbO8AuCofT+v+SwiEOy6UgwmUzcxf+2MVf4@vger.kernel.org, AJvYcCXVfAkKd75cOvtRCJPaW3d+dGAwIFhMTlnppWRoWZwGOHtgG0v+Hzrjan2AVHTyIz+Fl223DGJbtyQWPsIOBXo=@vger.kernel.org, AJvYcCXaS39X6QebQQr7K6IGzJgLEY6n6/ZkKygkXmym4LPwBtbV2WYxj6aPMrhbJNNRBf2I5n/JVgYfh0LM2Mi2@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxy521CC1DqjXoztkQSjYqGM8frgwcgske38ps3FBv1OsbgBDDo
+	T7mTmhYAov8aq0WlPE9/Xe9hrn0BSLQFJn6S/ESvA+xGflocp8PtkAhwWLslq7hmQ7tKbprg49t
+	0C0cx5qUEeJQ0r+6rzjOFr0jtOPI=
+X-Gm-Gg: ASbGnctES8i5UEnZ4poeOrMM8Kk7QcpYB3zmDMCjL63nAD7esNbwhzWMEM1xx2kMDjD
+	5sAOwTdW2jpQ6bPSTyFk87z/rp/1jR07aVq2PFWX9TJW2nzmQGV2VfZyupIcwIww3qT6BbXhrtz
+	EqhoI01rDkxNgc2dnBzLsB+fxtVZzPYaCuZGFci2KuwmNIihMex9HpyKpy+lmF
+X-Google-Smtp-Source: AGHT+IE6iBXWS50nKSAYwo5FCXBdnhbNHVXtxORgs/RwlrM4JXF7GGDHtXE0EnpBEkJ1e6Y0/wbpMEdDeSo/iTCQCcY=
+X-Received: by 2002:a2e:a98e:0:b0:30b:d17b:269a with SMTP id
+ 38308e7fff4ca-30c4a749070mr42282761fa.7.1742129682837; Sun, 16 Mar 2025
+ 05:54:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-
-
---=-qGmPose2pqDUpsQBP6jG
-Content-Type: multipart/alternative; boundary="=-CDzcXSjZE21TrESpJjPk"
-
---=-CDzcXSjZE21TrESpJjPk
+References: <20250315-ptr-as-ptr-v4-0-b2d72c14dc26@gmail.com>
+ <20250315-ptr-as-ptr-v4-6-b2d72c14dc26@gmail.com> <Z9ZbNY2XR10vt3Ro@Mac.home>
+In-Reply-To: <Z9ZbNY2XR10vt3Ro@Mac.home>
+From: Tamir Duberstein <tamird@gmail.com>
+Date: Sun, 16 Mar 2025 08:54:06 -0400
+X-Gm-Features: AQ5f1Jq4oEInzEsIP6AyCUxxntLRsaKIunWuOaZj1h8pyzZQkrJrV4gfLymNygE
+Message-ID: <CAJ-ks9ntUhnD2D1qUCosrKk2bEYHXFDLEanznpNn51d6CbD6aw@mail.gmail.com>
+Subject: Re: [PATCH v4 6/6] rust: use strict provenance APIs
+To: Boqun Feng <boqun.feng@gmail.com>
+Cc: Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
+	Nicolas Schier <nicolas@fjasle.eu>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Brendan Higgins <brendan.higgins@linux.dev>, 
+	David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Luis Chamberlain <mcgrof@kernel.org>, 
+	Russ Weight <russ.weight@linux.dev>, Rob Herring <robh@kernel.org>, 
+	Saravana Kannan <saravanak@google.com>, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, 
+	linux-pci@vger.kernel.org, linux-block@vger.kernel.org, 
+	devicetree@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, 2025-03-11 at 10:40 -0700, Bartosz Golaszewski wrote:
-> On Tue, 11 Mar 2025 15:03:59 +0100, Genes Lists <lists@sapience.com>
-> said:
-> > On Sat, 2025-03-08 at 15:45 -0500, Genes Lists wrote:
-> > > ......
+On Sun, Mar 16, 2025 at 1:01=E2=80=AFAM Boqun Feng <boqun.feng@gmail.com> w=
+rote:
+>
+> On Sat, Mar 15, 2025 at 08:17:30AM -0400, Tamir Duberstein wrote:
+> [...]
+> > diff --git a/rust/kernel/of.rs b/rust/kernel/of.rs
+> > index 40d1bd13682c..f9459694cbdc 100644
+> > --- a/rust/kernel/of.rs
+> > +++ b/rust/kernel/of.rs
+> > @@ -22,7 +22,7 @@ unsafe impl RawDeviceId for DeviceId {
+> >      const DRIVER_DATA_OFFSET: usize =3D core::mem::offset_of!(bindings=
+::of_device_id, data);
+> >
+> >      fn index(&self) -> usize {
+> > -        self.0.data as usize
+> > +        crate::expose_provenance(self.0.data)
+>
+> Even though of_device_id::data was defined as `void *`, but in Rust we
+> use it to store index, see kernel::device_id::{IdTable::info(),
+> IdArray::new()}. Hence we should use self.0.data.addr() here.
 
-> >=20
->=20
-> There are two problems here. The issue you're seeing is fixed in next
-> but
-> not in mainline due to my omission. I will send a patch for that.
->=20
-> On the other hand, the pinctrl driver in question should be fixed
-> too.
-> Can you try the following change:
->=20
-> diff --git a/drivers/pinctrl/intel/pinctrl-intel.c
-> b/drivers/pinctrl/intel/pinctrl-intel.c
-> index d889c7c878e2..0c6925b53d9f 100644
-> --- a/drivers/pinctrl/intel/pinctrl-intel.c
-> +++ b/drivers/pinctrl/intel/pinctrl-intel.c
-> @@ -1068,7 +1068,11 @@ static int intel_gpio_get_direction(struct
-> gpio_chip *chip, unsigned int offset)
->=20
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 pin =3D intel_gpio_to_pin(pctr=
-l, offset, NULL, NULL);
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (pin < 0)
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 return -EINVAL;
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 /*
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 * For pins configured to functions other than GPIO,
-> default
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 * to the safe INPUT value.
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 */
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 return GPIO_LINE_DIRECTION_IN;
->=20
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 reg =3D intel_get_padcfg(pctrl=
-, pin, PADCFG0);
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (!reg)
->=20
-> ?
->=20
-> FYI: This was uncovered by commit 9d846b1aebbe ("gpiolib: check the
-> return value of gpio_chip::get_direction()").
->=20
-> Bart
-
-Hi Bart - I don't see this pincntrl patch in mainline yet - =C2=A0what's
-your thinking on this?
-
-thanks!
-
-
---=20
-Gene
-
-
---=-CDzcXSjZE21TrESpJjPk
-Content-Type: text/html; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-
-<html><head><style>pre,code,address {
-  margin: 0px;
-}
-h1,h2,h3,h4,h5,h6 {
-  margin-top: 0.2em;
-  margin-bottom: 0.2em;
-}
-ol,ul {
-  margin-top: 0em;
-  margin-bottom: 0em;
-}
-blockquote {
-  margin-top: 0em;
-  margin-bottom: 0em;
-}
-</style></head><body><div>On Tue, 2025-03-11 at 10:40 -0700, Bartosz Golasz=
-ewski wrote:</div><blockquote type=3D"cite" style=3D"margin:0 0 0 .8ex; bor=
-der-left:2px #729fcf solid;padding-left:1ex"><div>On Tue, 11 Mar 2025 15:03=
-:59 +0100, Genes Lists &lt;<a href=3D"mailto:lists@sapience.com">lists@sapi=
-ence.com</a>&gt; said:<br></div><blockquote type=3D"cite" style=3D"margin:0=
- 0 0 .8ex; border-left:2px #729fcf solid;padding-left:1ex"><div>On Sat, 202=
-5-03-08 at 15:45 -0500, Genes Lists wrote:<br></div><blockquote type=3D"cit=
-e" style=3D"margin:0 0 0 .8ex; border-left:2px #729fcf solid;padding-left:1=
-ex"><div>......<br></div></blockquote></blockquote></blockquote><div><br></=
-div><blockquote type=3D"cite" style=3D"margin:0 0 0 .8ex; border-left:2px #=
-729fcf solid;padding-left:1ex"><blockquote type=3D"cite" style=3D"margin:0 =
-0 0 .8ex; border-left:2px #729fcf solid;padding-left:1ex"><blockquote type=
-=3D"cite" style=3D"margin:0 0 0 .8ex; border-left:2px #729fcf solid;padding=
--left:1ex"></blockquote></blockquote><div><br></div><div>There are two prob=
-lems here. The issue you're seeing is fixed in next but<br></div><div>not i=
-n mainline due to my omission. I will send a patch for that.<br></div><div>=
-<br></div><div>On the other hand, the pinctrl driver in question should be =
-fixed too.<br></div><div>Can you try the following change:<br></div><div><b=
-r></div><div>diff --git a/drivers/pinctrl/intel/pinctrl-intel.c<br></div><d=
-iv>b/drivers/pinctrl/intel/pinctrl-intel.c<br></div><div>index d889c7c878e2=
-..0c6925b53d9f 100644<br></div><div>--- a/drivers/pinctrl/intel/pinctrl-int=
-el.c<br></div><div>+++ b/drivers/pinctrl/intel/pinctrl-intel.c<br></div><di=
-v>@@ -1068,7 +1068,11 @@ static int intel_gpio_get_direction(struct<br></di=
-v><div>gpio_chip *chip, unsigned int offset)<br></div><div><br></div><div>&=
-nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; pin =3D intel_gpio_to_pin(pctrl, =
-offset, NULL, NULL);<br></div><div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
-p; if (pin &lt; 0)<br></div><div>-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
-;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return -EINVAL;<br></div><div>+=
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp; /*<br></div><div>+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
-;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; * For pins configured to functi=
-ons other than GPIO, default<br></div><div>+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
-nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; * to the safe I=
-NPUT value.<br></div><div>+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; */<br></div><div>+&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; retu=
-rn GPIO_LINE_DIRECTION_IN;<br></div><div><br></div><div>&nbsp;&nbsp;&nbsp;&=
-nbsp;&nbsp;&nbsp;&nbsp; reg =3D intel_get_padcfg(pctrl, pin, PADCFG0);<br><=
-/div><div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (!reg)<br></div><di=
-v><br></div><div>?<br></div><div><br></div><div>FYI: This was uncovered by =
-commit 9d846b1aebbe ("gpiolib: check the<br></div><div>return value of gpio=
-_chip::get_direction()").<br></div><div><br></div><div>Bart</div></blockquo=
-te><div><br></div><div>Hi Bart - I don't see this pincntrl patch in mainlin=
-e yet - &nbsp;what's your thinking on this?</div><div><br></div><div>thanks=
-!</div><div><br></div><div><br></div><div><span><pre>-- <br></pre><div><spa=
-n style=3D"background-color: inherit;">Gene</span></div><div><br></div></sp=
-an></div></body></html>
-
---=-CDzcXSjZE21TrESpJjPk--
-
---=-qGmPose2pqDUpsQBP6jG
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYJAB0WIQRByXNdQO2KDRJ2iXo5BdB0L6Ze2wUCZ9bIrwAKCRA5BdB0L6Ze
-21NwAQCarHY4VslF4jX67Wf+kfjL45aw+eXxg6zNdxv1KToe5QEAtcwhE9IEPalm
-t7K+9zTEffx5ap73NWj19IqYOZd9xwk=
-=9Ya9
------END PGP SIGNATURE-----
-
---=-qGmPose2pqDUpsQBP6jG--
+Good point, thanks.
 
