@@ -1,103 +1,157 @@
-Return-Path: <linux-kernel+bounces-563191-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563192-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0A9AA63808
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 00:27:09 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0B51A63809
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 00:27:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E66BC188D66A
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 23:27:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 178A9188D4FC
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 23:27:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E3661A23B7;
-	Sun, 16 Mar 2025 23:27:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DDBF1A3146;
+	Sun, 16 Mar 2025 23:27:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="h7VCvoBy"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WPtsxNEp"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D74BA1624E9;
-	Sun, 16 Mar 2025 23:26:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6B671624E9;
+	Sun, 16 Mar 2025 23:27:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742167622; cv=none; b=Ja8T1JF8xzAv5k2PKQ2obkgGNdf4+KnaMmL/7nPr7S3ocLsc1xCq+QkN6Qy29CJrFUXrtbzrVm+WXvGwXRjBXFHZQ3hPdz2dbUSxio2uZ7WXM9Nalmw8z5Be6FhRBXLOiV02ZGdmGsg9FeU1sjZtZ+6Yo4pRjGxa5rt4CTUeTL0=
+	t=1742167645; cv=none; b=kEm9Gg/HUI9ihWG3XU8qYDIfD0rMts/PGloFyxioxC+ytO2p6pb/o7e0M7zLHbq4/X36YVS+vquN2hGPhbbf2ny0JQJ7uOwRlfjb2ckDK5gc62risqL/lX6W9dy2VhabPQhpnhIZmF2zRoeP8vP86NF4GkDq9FBVEoYYM4QjNL0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742167622; c=relaxed/simple;
-	bh=otIfGeh0p14BkcIdhlfG4PdkQsddX2Hy+nvvNM4gfOM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=ILBvIhbONsE6Efjmdch5EPLZXZwwm997VP8wnFuVhC0PaR3CcBsBrlg/V5RvW4pcMv3azcFbnIeCe4QxfeTAAUvZDE1NYcOd/kYnXmb0vHzlo/zWuzbe8H7DEY0hapAvFvBf18GBu33jMSCLk2i9ahh8TsxECstQ9xP+4VDTGxo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=h7VCvoBy; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1742167613;
-	bh=tlZ6DSNgDKIfcL+uxKhjn0E0cjYFmBYfcKaYiLOkozM=;
-	h=Date:From:To:Cc:Subject:From;
-	b=h7VCvoBySJJ8T5bqCG2Hhm8xPDDqyQAnyuBwaog02dxZHdqXe3bXSMFG9o20u/yWC
-	 VctkxdUu+k+rtchQBlXeeR9ArPvajDkLwyJS/kByMK8ggtzLRf2vgGuE/rAmvvuW3/
-	 /ejcMM+b0J0xqpfalXh94rGd8pVDuCHXsZFec4IWXAfKzY+CkRvxbndRvBXYFjm8H1
-	 y9M28sIzytsfG3Yq8ckgb2Vzm4VtJPJC+Y89LT7oxOb168LxIDJGNcasX2I75H/o7K
-	 wjvXFe41DxvJa+9CW62pTkafpi/WqLAY8BJRv+W8u1kFv7bErrGBupDXBCR49j/48V
-	 xuK0e7ZlMB5rA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZGDlJ0pk6z4wnp;
-	Mon, 17 Mar 2025 10:26:52 +1100 (AEDT)
-Date: Mon, 17 Mar 2025 10:26:51 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Krzysztof Kozlowski <krzk@kernel.org>, Arnd Bergmann <arnd@arndb.de>
-Cc: ARM <linux-arm-kernel@lists.infradead.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: duplicate patch in the drivers-memory-fixes tree
-Message-ID: <20250317102651.37c64e42@canb.auug.org.au>
+	s=arc-20240116; t=1742167645; c=relaxed/simple;
+	bh=twOmPjp8ilCeZBg9Tm3485xw4BSQ+RnJ/JsEEeY7SiU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fw4HCnbxvZXxcTAEIGlLq6nm+2AbTkpl9pEvwSVkKbKYl5usAwP/pTRNaCNxT7Jxlrxe3gPt1Ug5zvnLuod0eqMX7DQUvB/tHV85QiAWtPB0nbfFxK52Phlh/sKh4Q6H3uFeAGAKioIqkMI8ytdlkbems4Xzy9ZHkqFL+kfWC54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WPtsxNEp; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5e6167d0536so7087371a12.1;
+        Sun, 16 Mar 2025 16:27:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742167642; x=1742772442; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QWPSKGjAfVrfT1ipdycZ9fBlNnI1+tgTL63vXBqWhME=;
+        b=WPtsxNEpThMSmS9UjQGxq5RwH/P2VN2GDh0fsJXhMbM7Y9u+NYhYYIoglBY+sorpbl
+         hWnjEbSlB50CITS+6IghK4etmGPOKkoB2tFrtDypv2T9cFmuJ97S/e34ox392/RebGwK
+         ipwZvCI+zzmPJtLvZD9YxVo0zP0jW3zYPmqGdQRf/jjJvEFXrbtlvzE9TcF28nFENm/H
+         v9IrCKdQNYKKBjDh5/FGzGHYyAPKaJumvhdXVjMS6KvMnKMiWMnX2f7Tr2U/Zs/Bh5kR
+         8nEXjhzz0dCY5if4aQKRnhVnZ2rphlP7qYJCnzLfozDhUq6Wkd9UAJxDYXiQqJDeUHvm
+         q7Mg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742167642; x=1742772442;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QWPSKGjAfVrfT1ipdycZ9fBlNnI1+tgTL63vXBqWhME=;
+        b=YYfBAcT5VssvtNjXxgRctKWkCMV3lMUFfWVHIbwICtCVLdy6dWaxeZ25CLCxeZ8RzR
+         5JXIIUfib7MAK5PA7Eiy7dbUULJ/He+Y7sKSIXnbZDcrhC345smP6sMrrXM4i4dQcYF9
+         4XI9m1hX/h6fkrwC80vnSg9CKjYUCPGX+UsXw2p8GKbbUhW7TlNKZDSwwHxfMeHji2qc
+         MBl784CZmgDsDDoaW2ZiTG4qF04x5Nw9DqEA63EoiRj+bpWgQsauYkeaq8QMZ4mWPic4
+         wE+dwax4f336uHQk0WMMSjppunbO4+JILK9jgIv0QcDSjXiB2B5mM8uTdCz9tt1qtid5
+         YWwA==
+X-Forwarded-Encrypted: i=1; AJvYcCVkh+5qdBV8CoAWhNFRfeOKjvGSavTeCZNUT0pmJT9xq0ww1fDPXvsvgiPPike3SBHMr+6ZmzvjafqFi7ro@vger.kernel.org, AJvYcCWZcYpMon+W0v2xIZJ20r1QSETS25t43xIonpeoKmGs5fvXFSJvSx1d9eJOKB7oGTElT1EFKx+Wu7nHVX4Z@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx39Dk6RjkdiioN9hWzE5xnZUEdNqnIeGsvBJ+FCPruSpHo6vF/
+	qi7YawPXVQml/5ecN9HNs2DSy1aKlHACiNOthvRP+z7Ii+stRwc2Zdw3YS5eKm2AuFfGjCHR2Ro
+	MUcwbDIATdxX915ULC9vHuG8LGOM=
+X-Gm-Gg: ASbGncsJ0HEzSZ1Z9CUmOZCkhQIDtKHY3sVqS5cYiPhGsHbLfJkMbxHLZDHOtDnG8D+
+	giW5VfKezcFDvFr69+mHnr8Y4gB2WQhNqNmTd+5Zao13Xs8sK9abOXM+9WrmBDtNJzTSTo4uPne
+	7xT+ugeV6z2w2KFwf6zTqT9K8thQ==
+X-Google-Smtp-Source: AGHT+IHaKUv0NbWOy1eqkHfnNiVKas+OfE8EoFTFRBgoVQg9vYa5GRZ/l2hXZfpk09QwUbAMeKEfHbUh3wD/YmJtzoM=
+X-Received: by 2002:a05:6402:1d53:b0:5e7:f728:5812 with SMTP id
+ 4fb4d7f45d1cf-5e89f646e18mr10742561a12.19.1742167642014; Sun, 16 Mar 2025
+ 16:27:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/9gKmwGkEWS0FApJI.JfhCsM";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-
---Sig_/9gKmwGkEWS0FApJI.JfhCsM
-Content-Type: text/plain; charset=US-ASCII
+References: <20250316232421.1642758-1-mjguzik@gmail.com>
+In-Reply-To: <20250316232421.1642758-1-mjguzik@gmail.com>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Mon, 17 Mar 2025 00:27:09 +0100
+X-Gm-Features: AQ5f1JqNHYNdTjcNcsJjZ2Z9Mdc2iY9PM62CQC097tOLduT_vPuy7aYmbTyk0Ow
+Message-ID: <CAGudoHFOPkPGQzcuymrW17uf9NksfL2PLA_BDzfDezNoAyfnLQ@mail.gmail.com>
+Subject: Re: [PATCH] fs: use wq_has_sleeper() in end_dir_add()
+To: brauner@kernel.org
+Cc: viro@zeniv.linux.org.uk, jack@suse.cz, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+On Mon, Mar 17, 2025 at 12:24=E2=80=AFAM Mateusz Guzik <mjguzik@gmail.com> =
+wrote:
+>
+> The routine is used a lot, while the wakeup almost never has anyone to
+> deal with.
+>
+> wake_up_all() takes an irq-protected spinlock, wq_has_sleeper() "only"
+> contains a full fence -- not free by any means, but still cheaper.
+>
+> Sample result tracing waiters using a custom probe during -j 20 kernel
+> build (0 - no waiters, 1 - waiters):
+>
+> @[
+>     wakeprobe+5
+>     __wake_up_common+63
+>     __wake_up+54
+>     __d_add+234
+>     d_splice_alias+146
+>     ext4_lookup+439
+>     path_openat+1746
+>     do_filp_open+195
+>     do_sys_openat2+153
+>     __x64_sys_openat+86
+>     do_syscall_64+82
+>     entry_SYSCALL_64_after_hwframe+118
+> ]:
+> [0, 1)             13999 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@=
+@@@@@|
+> [1, ...)               1 |                                               =
+     |
+>
+> So that 14000 calls in total from this backtrace, where only one time
+> had a waiter.
 
-The following commit is also in the arm-soc-fixes tree as a different
-commit (but the same patch):
+I noticed unusually weird engrish after sending.
 
-  304e6c02b76f ("memory: omap-gpmc: drop no compatible check")
+how about this sentence instead:
+> Only 1 call out of 14000 with this backtrace had waiters.
 
-This is commit
 
-  edcccc6892f6 ("memory: omap-gpmc: drop no compatible check")
+>
+> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+> ---
+>  fs/dcache.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/fs/dcache.c b/fs/dcache.c
+> index df8833fe9986..bd5aa136153a 100644
+> --- a/fs/dcache.c
+> +++ b/fs/dcache.c
+> @@ -2497,7 +2497,8 @@ static inline void end_dir_add(struct inode *dir, u=
+nsigned int n,
+>  {
+>         smp_store_release(&dir->i_dir_seq, n + 2);
+>         preempt_enable_nested();
+> -       wake_up_all(d_wait);
+> +       if (wq_has_sleeper(d_wait))
+> +               wake_up_all(d_wait);
+>  }
+>
+>  static void d_wait_lookup(struct dentry *dentry)
+> --
+> 2.43.0
+>
 
-in the arm-soc-fixes tree.
 
 --=20
-Cheers,
-Stephen Rothwell
-
---Sig_/9gKmwGkEWS0FApJI.JfhCsM
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfXXjsACgkQAVBC80lX
-0GyxCgf+Ps9FrIvUG8t7s7gXc4DaITlZQTKtYmBdkbXerx7v+r6q6am0qRKHZ5h2
-S2pEibEUIyNy8Ycp1IcVVbEU/VyDjETaoL5mFqrX3NIKgRvOc92B+m0TUIYnTd5v
-wzw1rPiQAwmTDX/yE550Q07cx5WKhQOyfalZoKglkALMwikQYN037JhOTw/QxYhq
-U2VjotpkGUYPMqDD7EpI7hq20O0zUMpc9uFHGy8SqmEKiz6Qvxbv/aklgn2n5exJ
-K+y3wsGq2Nd87++Hmbwa9FrnLcagmbmNTmecjfDbZiDVubOJgFT6Gtl6KIYd6IsU
-FUs8nDaOaEQdt5Bh/Pzh2xLjyJw10Q==
-=gm35
------END PGP SIGNATURE-----
-
---Sig_/9gKmwGkEWS0FApJI.JfhCsM--
+Mateusz Guzik <mjguzik gmail.com>
 
