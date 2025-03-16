@@ -1,146 +1,134 @@
-Return-Path: <linux-kernel+bounces-563116-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563117-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F40DAA63721
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 20:01:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 205D4A63727
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 20:09:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E0A816AD0E
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 19:01:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2AA0D188B937
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 19:09:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F32F918801A;
-	Sun, 16 Mar 2025 19:01:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jPxTuTcc"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33D461DBB03;
+	Sun, 16 Mar 2025 19:09:22 +0000 (UTC)
+Received: from maynard.decadent.org.uk (maynard.decadent.org.uk [65.21.191.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAAEF3FE4;
-	Sun, 16 Mar 2025 19:01:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8E0F1A840A;
+	Sun, 16 Mar 2025 19:09:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.21.191.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742151707; cv=none; b=NWApNtHYW4JjIzt01qhsrEXYWbwMwKWYpmK6lWJs0kB4L/sOyKoLW56+/wTI0FDiVAPQbS9uvF0hZKjxjBz9MAClxI9h2n4dYPh/XcUSgBnvzlFYRog9OHC8EcB0sitcfyAZXtLe8tSrAFocBxLnJbXOGBctmZU5UBcXKxcpwDQ=
+	t=1742152161; cv=none; b=VrYFY6o83052eRFM7TB+wdmXriAcwH7WtonIZDILBakz+2gwTTh4a0xd8FdsxbrybRG2cmuJ1k95VYxr8nU5sIYrbgf2NFvQeNIigz5Ao+owdRQdWOpvO1KU2qPJIWuwx5lMZeZDYFRiNd4zK5X5XRcIMHSSM0J3b3igTi2YqQg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742151707; c=relaxed/simple;
-	bh=ekmzAmP8Y8iH5QY/PxjyugTDakULmRUAQEXxogkFKnc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Yk1dvQo0oN+KGeJ7a0j852XZfU2zOzU9IPvatHd4einvR8wtRU83n25UHNph8destUfrGEe9+MOvIHGpiGyf4cw3aTwpmE5xO26nmmLFGizFS90pZNCrwOjtb4bDhZvbNLZnAPtph8T+fTvxQOLkTTE3QUT8NgvigA4J0W1zEvQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jPxTuTcc; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-ac25d2b2354so641323766b.1;
-        Sun, 16 Mar 2025 12:01:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742151704; x=1742756504; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=VaARcnuSuLuxpai/InAGA0xtSCdbGWktXfe+Ii7D/U4=;
-        b=jPxTuTccNW9ZDqqDtTSDob5npX+ueDz+Dv9r0u19YWHFqp8C5a/O1K5+dW1l/BFiKx
-         ZGzvA4p6AzoWVJSKt+Z1MVoFqAPFNxHxWdaOb1FYHZnSSBKjgdqG5FyLnPCJhxOJZLxG
-         KGykkVm2zhskq9y0bJUt9AHe0VdeahWSpxtcOV+fwLXG8WNnsqLvNmuuhvqOyxU1J/ls
-         j7+qmlO9plPs6F8qbqmX58QT7wUymWnKgLTvj7hB8FkSxuXy9TfL1gbFvngs2TgnjiRK
-         NYX6723JU0JZPtdW8q87xUyTRvc1pNkhYFqcv1Vow5FActQPsupZXIg7MrTja/hs9PnY
-         E7dQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742151704; x=1742756504;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=VaARcnuSuLuxpai/InAGA0xtSCdbGWktXfe+Ii7D/U4=;
-        b=ownR68o4Jp3fu2tXSBAa+a+DLUOXGvcYKu13Aa3sjeTdN1CNsEcyxxWDsXruws8YSz
-         Hcy+kkIvWh+hCKDz0ex03fVWY9VDeP/OBreFujiRjhh4hDAxaJTMgr3393CNsXmYE35b
-         +ItZFONTp+c0APaSsWgwSzbI5o4x1FItsvliAnZWt8aoBIrdDSkEQnlPDSN+Vjpkt93x
-         /cMpkNnCjeJkW0T4BtBTbp22OgGbmFzwkD2YLoe5UQsd5b5fW7JzB7EJqa3qx88jyhiC
-         TFfyeHz2dYzfXvdh4qOsPja7COUiAyWURCA6/r7593CoT0yUeN/XAqOthan4NHt3QSsm
-         6V3w==
-X-Forwarded-Encrypted: i=1; AJvYcCV6ORnuR4JWsPHPDaMUr2wRHfLriS8h5hSun8DDr4UBmaMWk0BytHJBgz0+8as15PXDKkqaB8efnmbfoFwy@vger.kernel.org, AJvYcCWl4PlvYJvjIJjPrqBL21y8JsUVB2a3S3SByIWJR5MpgPLIO+ucEe4NxuHQ+EVrgc0FcK9+DXrTCzgh@vger.kernel.org, AJvYcCXXsHnZBusoxtmFA0VEFzUEFgRjngy47hsFG7I+uhvBG+QNRtv4Vqvc2diUjN4AoaFC7NnguSHdAsij@vger.kernel.org
-X-Gm-Message-State: AOJu0YyyiNoFzzPfs1Ij6uU/hiFsVz8SSE8wq4Hz31ghuo3ks7fxs0FW
-	UnNEfcjjKNWTpzrBncD504LCGBTZvITUkGNs9GDRa+o4PitK07h8
-X-Gm-Gg: ASbGnctQ0N18ICPcZ5u+tYzHJLVRuHV1THUs9fwWl8PMowtqi3eZo1gK+2ABazuREdK
-	+J6ieZkkaeuutYgGS/fgDZBoJtNni1TJSlXE3UmVIwPgu9u6QelNv5Yow+h6YcCqK+UnogJQL6o
-	Or6kDzymv0tP+jQ4cVunTyx59vN+BwgkVxrGJ8VKn0FIYBdObZSAWtOTO/oEjwEW3A7gZ2Knf8Y
-	cOQvTtJXdwih/Fw1tsRji2k+AAwfkA5yDjsqnZueilFHDJs2A799SnBlprF408ctK7tGplQdn+r
-	q21gv5u2QUArwN5KBl1XyZJJ7u5s9kXgcjOEAXaXQ8ipPyCTHOl2faFDlSV27liPO9GHBACCIdB
-	4xeyXbD5+xsp+zJs9f8DIDA==
-X-Google-Smtp-Source: AGHT+IHgXXtMhyuLsuMBCutEq5j1h8RgZgLKJgXD8Pc87mm4FhtnDm/alvyi1kWX2iTdBEa+bID4kw==
-X-Received: by 2002:a17:907:7fa6:b0:abc:4b7:e3d3 with SMTP id a640c23a62f3a-ac3302f1068mr1042069866b.27.1742151703874;
-        Sun, 16 Mar 2025 12:01:43 -0700 (PDT)
-Received: from [192.168.50.244] (83.11.178.210.ipv4.supernova.orange.pl. [83.11.178.210])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac314a4094dsm527846366b.126.2025.03.16.12.01.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 16 Mar 2025 12:01:42 -0700 (PDT)
-Message-ID: <fffe0118-6235-446c-a9c5-93f5d1f5ed04@gmail.com>
-Date: Sun, 16 Mar 2025 20:01:41 +0100
+	s=arc-20240116; t=1742152161; c=relaxed/simple;
+	bh=7K0CKKSEQCj2Z31ffJIY+LQcS/jTWa6MowDTW+qfLiI=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=BN4rjwvnDAkXG607Wh/YoslLLannK58lqMzHqi2WgSsXtBIX3W9CvzvD91A2WEEQ9mDgUPgLnNC8REyBbHKkBhvyr63ZjSyKFCGKOQBC9TZhqqrZXlFNayLmgyFjJeTPrLwGb8ZPIG7L3oOAhaqNejCXhof3vn/6hi4LJTkrf9o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk; spf=pass smtp.mailfrom=decadent.org.uk; arc=none smtp.client-ip=65.21.191.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=decadent.org.uk
+Received: from [2a02:578:851f:1502:391e:c5f5:10e2:b9a3] (helo=deadeye)
+	by maynard with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <ben@decadent.org.uk>)
+	id 1tttLn-009DD6-1E;
+	Sun, 16 Mar 2025 19:08:43 +0000
+Received: from ben by deadeye with local (Exim 4.98)
+	(envelope-from <ben@decadent.org.uk>)
+	id 1tttLm-00000002R5p-12M0;
+	Sun, 16 Mar 2025 20:08:42 +0100
+Message-ID: <d250e864d6d81cc02e2599f710872f72d58a3c29.camel@decadent.org.uk>
+Subject: Re: [PATCH v2] kbuild: make all file references relative to source
+ root
+From: Ben Hutchings <ben@decadent.org.uk>
+To: Thomas =?ISO-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>, Masahiro
+ Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>,
+ Nicolas Schier	 <nicolas@fjasle.eu>, Jonathan Corbet <corbet@lwn.net>,
+ Thomas Gleixner	 <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov	 <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ x86@kernel.org, "H. Peter Anvin"	 <hpa@zytor.com>
+Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-doc@vger.kernel.org
+Date: Sun, 16 Mar 2025 20:08:37 +0100
+In-Reply-To: <20250315-kbuild-prefix-map-v2-1-00e1983b2a23@weissschuh.net>
+References: <20250315-kbuild-prefix-map-v2-1-00e1983b2a23@weissschuh.net>
+Content-Type: multipart/signed; micalg="pgp-sha512";
+	protocol="application/pgp-signature"; boundary="=-CLWj+1c9T7wgjA6qpkHc"
+User-Agent: Evolution 3.55.3-1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/9] clk: bcm: kona: Move CLOCK_COUNT defines into the
- driver
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>,
- Florian Fainelli <florian.fainelli@broadcom.com>, Ray Jui
- <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Alex Elder <elder@kernel.org>,
- Stanislav Jakubek <stano.jakubek@gmail.com>, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- ~postmarketos/upstreaming@lists.sr.ht
-References: <20250308-kona-bus-clock-v3-0-d6fb5bfc3b67@gmail.com>
- <20250308-kona-bus-clock-v3-1-d6fb5bfc3b67@gmail.com>
- <20250310-proficient-free-antelope-abb6b7@krzk-bin>
-From: Artur Weber <aweber.kernel@gmail.com>
-Content-Language: en-US
-In-Reply-To: <20250310-proficient-free-antelope-abb6b7@krzk-bin>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2a02:578:851f:1502:391e:c5f5:10e2:b9a3
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on maynard); SAEximRunCond expanded to false
 
-On 10.03.2025 09:40, Krzysztof Kozlowski wrote:
-> On Sat, Mar 08, 2025 at 08:50:39AM +0100, Artur Weber wrote:
->> CLOCK_COUNT defines for each CCU are stored in the DT binding header.
->> This is not correct - they are not used by device trees, only internally
->> by the driver.
->>
->> Move the CLOCK_COUNT defines directly into the driver in preparation
->> for dropping them from the DT binding include.
->>
->> Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
->> ---
->>   drivers/clk/bcm/clk-bcm21664.c |  8 ++++++++
->>   drivers/clk/bcm/clk-bcm281xx.c | 10 ++++++++++
->>   2 files changed, 18 insertions(+)
->>
->> diff --git a/drivers/clk/bcm/clk-bcm21664.c b/drivers/clk/bcm/clk-bcm21664.c
->> index 520c3aeb4ea9c4a431512c0909f9545c1761d17a..fa6e1649d6f5f459b63026109caea9e2f72e22dd 100644
->> --- a/drivers/clk/bcm/clk-bcm21664.c
->> +++ b/drivers/clk/bcm/clk-bcm21664.c
->> @@ -17,6 +17,8 @@ static struct peri_clk_data frac_1m_data = {
->>   	.clocks		= CLOCKS("ref_crystal"),
->>   };
->>   
->> +#define BCM21664_ROOT_CCU_CLOCK_COUNT	(BCM21664_ROOT_CCU_FRAC_1M + 1)
-> 
-> I hit that wall too, no worries. It might surprise you but 0+1 != 1 :),
 
-Do you mean that I should specify the clock count directly rather than
-incrementing the last ID? Some other drivers seem to do this the way I
-did here (samsung/clk-exynos*, renesas/r9a06g032-clocks.c).
+--=-CLWj+1c9T7wgjA6qpkHc
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> so you redefine a define. You need to test this patch bisectability.
+On Sat, 2025-03-15 at 14:20 +0100, Thomas Wei=C3=9Fschuh wrote:
+> -fmacro-prefix-map only affects __FILE__ and __BASE_FILE__.
+> Other references, for example in debug information, are not affected.
+> This makes handling of file references in the compiler outputs harder to
+> use and creates problems for reproducible builds.
+>=20
+> Switch to -ffile-prefix map which affects all references.
 
-I assume renaming the define to not collide with the old name is the way
-to go?
+This appears to cover all the C sources, but not quite all the assembly
+sources:
 
-Best regards
-Artur
+[...]
 
+> --- a/arch/x86/boot/Makefile
+> +++ b/arch/x86/boot/Makefile
+> @@ -54,7 +54,7 @@ targets +=3D cpustr.h
+> =20
+>  KBUILD_CFLAGS	:=3D $(REALMODE_CFLAGS) -D_SETUP
+>  KBUILD_AFLAGS	:=3D $(KBUILD_CFLAGS) -D__ASSEMBLY__
+> -KBUILD_CFLAGS	+=3D $(call cc-option,-fmacro-prefix-map=3D$(srctree)/=3D)
+> +KBUILD_CFLAGS	+=3D $(call cc-option,-ffile-prefix-map=3D$(srctree)/=3D)
+[...]
+
+I think this addition to KBUILD_CFLAGS needs to be done before the
+assignment to KBUILD_AFLAGS.
+
+Also, in some older versions of gcc the -ffile-prefix-map option didn't
+affect assembly sources - gas only understands --debug-prefix-map and
+gcc did not do the necessary conversion.  But this works properly since
+at least gcc 12, so I wouldn't worry too much about it.
+
+Ben.
+
+--=20
+Ben Hutchings
+Lowery's Law:
+        If it jams, force it. If it breaks, it needed replacing anyway.
+
+--=-CLWj+1c9T7wgjA6qpkHc
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEErCspvTSmr92z9o8157/I7JWGEQkFAmfXIbUACgkQ57/I7JWG
+EQk/QxAAp1QI6wF/LXIDuaISL+X/2y+Le4q0YYynsOz3YXaov9KeE4yBzGl40w2Y
+eEtVRYpDF1v8q3ZI/0fNDNm2xiQVZGmQwrNhGNvxb3eSd3ISkaKid4vMYCo1s/+i
+ON2CWMxAO9JUQBTekvTSF8swzxHgHXoLZS4jgZdd8MKhTsrBHiUMLqNY1HVmkIEf
+utkrapxDtB63Qw8y0O8nXTtqvDmoyhPl4+Rzra9IjWu8f9v+Dni3h5CVGhLm8xXX
+rgb5MgT/pkGURqbJKAMsT2KqTuIqdg0iwFOjUko/Qg3hXNP/a1Fp6z04/UtWjmJj
+KVYLAD9NuagraWlNMqT/1ekfBUergLpphCnHeeT5wdvgkWFfWcdz+UZbhN6GGaOU
+KLYgjkH7/Szs8Fl7+Qu2IYImSNDMFzaYrVQV8DttRjbGHajHHHDj73EHxADCXFXu
+9zh02iX1MWvLR27lAr8INlLVuQSwoloSqm5FCmmkaZHRG1GzhrhtTtYMDm/XB/4/
+fj1Q0uNDkoy0hBieu/qsXb/Q8tiBDj2FY1rC0ksAgX/cd6VHKunwUAWl8cCqE6Wn
+CjMLkq+4axSgdjp/46uzePRgD0RzdfdEo4bq/b8A4/Nw07Sxr0uzVybDodwdY4Sh
+aekBTPuTDDEKnY50M3WAlD52ONd1PNOQl5WfmTh+1X4S5b4jXE0=
+=mQGT
+-----END PGP SIGNATURE-----
+
+--=-CLWj+1c9T7wgjA6qpkHc--
 
