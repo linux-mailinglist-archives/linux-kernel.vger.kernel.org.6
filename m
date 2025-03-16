@@ -1,295 +1,186 @@
-Return-Path: <linux-kernel+bounces-562964-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562965-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43EEBA6352C
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 12:02:40 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3393BA6352F
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 12:03:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 88E4716E826
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 11:02:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5260E7A83E4
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 11:02:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7AB11A9B28;
-	Sun, 16 Mar 2025 11:01:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 037BD1A3161;
+	Sun, 16 Mar 2025 11:02:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Upu4KY+Q";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="NzdeTXGW"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fB05gxOU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38F2E1A5BA6;
-	Sun, 16 Mar 2025 11:01:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 526CA10F2;
+	Sun, 16 Mar 2025 11:02:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742122907; cv=none; b=NJqP1cvoEh93z9uj6+65bjYecfPsm8tA/oym8zb6R30jfngHlbj+oUBSzXhcDqh8NjZ0nDiM6M94sx/RfbyyIxQSQx3JVaFgVgQm+LHGzyF0Xh4DklDu3bz/fkcuatche/8OvKpZxymAl+DvKVXoepYjLvSPUVqKDfYtLgg7VuA=
+	t=1742122969; cv=none; b=lVWrbm6JtlmEP8hAncMGU9FgcqEExQJVXwDcIh/OCukvdGfjvqHaWu1Madx6+m4mrWp0LWTQ8Kz63xfT4a+NyfsprUGb+FBaoYakpz9LhFDzBX/iy/sQfdRlZ2khzKN1jDeRHnPqhfqHgJX21QwzZlY9SImkhvbS5id/UX3HWuA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742122907; c=relaxed/simple;
-	bh=tdjek+HZaLUzkjUfsn+t6pJy+43x2LG2dAvd8ESa5gg=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=OA445+l5KMhSRgSt5BkpZni73eYcpEWNMmwjXTRs21TFUBg48LejEdZreZIHhCY6JkQh5AzaBInhvVrusZ1+GOPdDMt5NcxxAxvXAPz1QOc57GtPUESGlGu8h/5SFUNoNowUXDzDqVQGSPtaOPvuENRMsGI7VTmaMdKN+BQtXWk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Upu4KY+Q; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=NzdeTXGW; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Sun, 16 Mar 2025 11:01:42 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1742122903;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QGYn0KjoqjBQEbolbD382HTMfrBCQXd1FS1WlBGNI6w=;
-	b=Upu4KY+Qx6BIvbss56qiza9B9J6fbscMrQ4/uZqmOfxEhoDFACfmdmvl2Lfa6f2PbkeTQK
-	a07T9nrCnnsj3R5VshHWhZ43HURcEOIXrQUYVN0/Hh3ImnvAwaUpDBdnFjoD0o20g1oW60
-	Co6TWc4+p287baDVd46t4b6FhTlMp8A7LT/Dn1MYUsVdq8EkQ7hOxfFhYynf2QCELimPH7
-	hvWa60IeahFKvnKG+k/IG5hLyQ91bNinOwg94B9Zh/Y6jhnnWjin/5Wy/54DxpT08byNFv
-	1AhkRr3b9i05EDijFAh1UnxzlAP+J07oNxzRzAER93lvVM2F9uy5wc1MsUrqTw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1742122903;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QGYn0KjoqjBQEbolbD382HTMfrBCQXd1FS1WlBGNI6w=;
-	b=NzdeTXGWNo991Zq0bt6GRMQvMwZScyA5HKD8Jz/6vvCWrXYeb8p5zXlikEP0DpE1V8yLEN
-	ATX0FSGyrlwYLRDA==
-From: "tip-bot2 for Brian Gerst" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/cpu] x86/xen: Move Xen upcall handler
-Cc: Brian Gerst <brgerst@gmail.com>, Ingo Molnar <mingo@kernel.org>,
- Juergen Gross <jgross@suse.com>, Sohil Mehta <sohil.mehta@intel.com>,
- Andy Lutomirski <luto@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Josh Poimboeuf <jpoimboe@redhat.com>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250314151220.862768-2-brgerst@gmail.com>
-References: <20250314151220.862768-2-brgerst@gmail.com>
+	s=arc-20240116; t=1742122969; c=relaxed/simple;
+	bh=GjgXFuSkKYCqC5gatyBw2YKekvHRrwOiavBqOKQJTaU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=bHPcOoFwNOCLR20jPcNi+w+xTT5CQ6YD1PWsu0GtA6X4mrlPYa/wMrKSi/j0zgn/m5NFsFtbPHF2ezd7/STK4DZAExONlplxSXyzX/ZiLifOziAonjdvz3wn3DJIGrbfBkGBiMhEDCnE1stQQNEnhJ3l7eA7AFoShbxMBSEtuDs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fB05gxOU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3DA39C4CEDD;
+	Sun, 16 Mar 2025 11:02:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742122968;
+	bh=GjgXFuSkKYCqC5gatyBw2YKekvHRrwOiavBqOKQJTaU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=fB05gxOU49v7IQc0PCoUUGf0Kjmojj3J21rynhXI+MYlqiAs3Yh22DPcCsZtVVhxw
+	 j6Qt8ChWfdGLjdy+F15FhDEjHZNUpBHBkRp+q6ED9xmTiiWnP0v77BFh7VWUjpRlSq
+	 QXvGgdteLavRpwtf7JTfn8Iz1xbSTPsKIOfCJpFhesMfHGE5xBmzEFJmuIlTfiHr4c
+	 remWOJ9bL0EtpDXDygrt+d3kundI3G7m2gpD8KGEz1V8BubI/GKSwOrlOfJQfNgP1T
+	 OOYYIKfSgYKRcDGfbrJOWVlw/RwNuGC7MoT1J9b+9Wdv/H708LGlrWbbnP827kjF0k
+	 8MeA6mB9klGTw==
+Date: Sun, 16 Mar 2025 11:02:37 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, Lars-Peter Clausen
+ <lars@metafoo.de>, Nuno Sa <nuno.sa@analog.com>, David Lechner
+ <dlechner@baylibre.com>, Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+ Olivier Moysan <olivier.moysan@foss.st.com>, Guillaume Stols
+ <gstols@baylibre.com>, Dumitru Ceclan <mitrutzceclan@gmail.com>, Trevor
+ Gamblin <tgamblin@baylibre.com>, Matteo Martelli
+ <matteomartelli3@gmail.com>, Alisa-Dariana Roman <alisadariana@gmail.com>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>, =?UTF-8?B?Sm/Do28=?=
+ Paulo =?UTF-8?B?R29uw6dhbHZlcw==?= <joao.goncalves@toradex.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org
+Subject: Re: [PATCH v7 06/10] iio: adc: Support ROHM BD79124 ADC
+Message-ID: <20250316110237.0b558248@jic23-huawei>
+In-Reply-To: <b6c02a5d75a20bbbf8c3370ccee615d269620117.1741849323.git.mazziesaccount@gmail.com>
+References: <cover.1741849323.git.mazziesaccount@gmail.com>
+	<b6c02a5d75a20bbbf8c3370ccee615d269620117.1741849323.git.mazziesaccount@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174212290285.14745.14526090013838699465.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-The following commit has been merged into the x86/cpu branch of tip:
+On Thu, 13 Mar 2025 09:19:03 +0200
+Matti Vaittinen <mazziesaccount@gmail.com> wrote:
 
-Commit-ID:     82d829091f62721166d3f1af93c4c94fc9afa13e
-Gitweb:        https://git.kernel.org/tip/82d829091f62721166d3f1af93c4c94fc9afa13e
-Author:        Brian Gerst <brgerst@gmail.com>
-AuthorDate:    Fri, 14 Mar 2025 11:12:14 -04:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Sun, 16 Mar 2025 11:49:41 +01:00
+> The ROHM BD79124 is a 12-bit, 8-channel, SAR ADC. The ADC supports
+> an automatic measurement mode, with an alarm interrupt for out-of-window
+> measurements. The window is configurable for each channel.
+> 
+> The I2C protocol for manual start of the measurement and data reading is
+> somewhat peculiar. It requires the master to do clock stretching after
+> sending the I2C slave-address until the slave has captured the data.
+> Needless to say this is not well suopported by the I2C controllers.
+> 
+> Thus the driver does not support the BD79124's manual measurement mode
+Given you are going to be doing a v8 and I'm bored on a train, so utterly
+trivial comments that you get as a frequent contributor as things to
+consider for future patches. (I'm sure it's just what you always wanted
+:)
 
-x86/xen: Move Xen upcall handler
 
-Move the upcall handler to Xen-specific files.
+In theory should be imperative though I don't care as much as some.
 
-No functional changes.
+Hence, do not support the....
 
-Signed-off-by: Brian Gerst <brgerst@gmail.com>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Reviewed-by: Juergen Gross <jgross@suse.com>
-Reviewed-by: Sohil Mehta <sohil.mehta@intel.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Link: https://lore.kernel.org/r/20250314151220.862768-2-brgerst@gmail.com
----
- arch/x86/entry/common.c     | 72 +------------------------------------
- arch/x86/xen/enlighten_pv.c | 69 +++++++++++++++++++++++++++++++++++-
- 2 files changed, 69 insertions(+), 72 deletions(-)
+> but implements the measurements using automatic measurement mode relying
+> on the BD79124's ability of storing latest measurements into register.
+> 
+> The driver does also support configuring the threshold events for
+> detecting the out-of-window events.
+Trivial editorial comment: that 'does' is not providing anything use
+in modern English (might have done in the past, no idea!)
 
-diff --git a/arch/x86/entry/common.c b/arch/x86/entry/common.c
-index 3514bf2..ce4d88e 100644
---- a/arch/x86/entry/common.c
-+++ b/arch/x86/entry/common.c
-@@ -21,11 +21,6 @@
- #include <linux/uaccess.h>
- #include <linux/init.h>
- 
--#ifdef CONFIG_XEN_PV
--#include <xen/xen-ops.h>
--#include <xen/events.h>
--#endif
--
- #include <asm/apic.h>
- #include <asm/desc.h>
- #include <asm/traps.h>
-@@ -455,70 +450,3 @@ SYSCALL_DEFINE0(ni_syscall)
- {
- 	return -ENOSYS;
- }
--
--#ifdef CONFIG_XEN_PV
--#ifndef CONFIG_PREEMPTION
--/*
-- * Some hypercalls issued by the toolstack can take many 10s of
-- * seconds. Allow tasks running hypercalls via the privcmd driver to
-- * be voluntarily preempted even if full kernel preemption is
-- * disabled.
-- *
-- * Such preemptible hypercalls are bracketed by
-- * xen_preemptible_hcall_begin() and xen_preemptible_hcall_end()
-- * calls.
-- */
--DEFINE_PER_CPU(bool, xen_in_preemptible_hcall);
--EXPORT_SYMBOL_GPL(xen_in_preemptible_hcall);
--
--/*
-- * In case of scheduling the flag must be cleared and restored after
-- * returning from schedule as the task might move to a different CPU.
-- */
--static __always_inline bool get_and_clear_inhcall(void)
--{
--	bool inhcall = __this_cpu_read(xen_in_preemptible_hcall);
--
--	__this_cpu_write(xen_in_preemptible_hcall, false);
--	return inhcall;
--}
--
--static __always_inline void restore_inhcall(bool inhcall)
--{
--	__this_cpu_write(xen_in_preemptible_hcall, inhcall);
--}
--#else
--static __always_inline bool get_and_clear_inhcall(void) { return false; }
--static __always_inline void restore_inhcall(bool inhcall) { }
--#endif
--
--static void __xen_pv_evtchn_do_upcall(struct pt_regs *regs)
--{
--	struct pt_regs *old_regs = set_irq_regs(regs);
--
--	inc_irq_stat(irq_hv_callback_count);
--
--	xen_evtchn_do_upcall();
--
--	set_irq_regs(old_regs);
--}
--
--__visible noinstr void xen_pv_evtchn_do_upcall(struct pt_regs *regs)
--{
--	irqentry_state_t state = irqentry_enter(regs);
--	bool inhcall;
--
--	instrumentation_begin();
--	run_sysvec_on_irqstack_cond(__xen_pv_evtchn_do_upcall, regs);
--
--	inhcall = get_and_clear_inhcall();
--	if (inhcall && !WARN_ON_ONCE(state.exit_rcu)) {
--		irqentry_exit_cond_resched();
--		instrumentation_end();
--		restore_inhcall(inhcall);
--	} else {
--		instrumentation_end();
--		irqentry_exit(regs, state);
--	}
--}
--#endif /* CONFIG_XEN_PV */
-diff --git a/arch/x86/xen/enlighten_pv.c b/arch/x86/xen/enlighten_pv.c
-index 5e57835..dcc2041 100644
---- a/arch/x86/xen/enlighten_pv.c
-+++ b/arch/x86/xen/enlighten_pv.c
-@@ -73,6 +73,7 @@
- #include <asm/mwait.h>
- #include <asm/pci_x86.h>
- #include <asm/cpu.h>
-+#include <asm/irq_stack.h>
- #ifdef CONFIG_X86_IOPL_IOPERM
- #include <asm/io_bitmap.h>
- #endif
-@@ -94,6 +95,44 @@ void *xen_initial_gdt;
- static int xen_cpu_up_prepare_pv(unsigned int cpu);
- static int xen_cpu_dead_pv(unsigned int cpu);
- 
-+#ifndef CONFIG_PREEMPTION
-+/*
-+ * Some hypercalls issued by the toolstack can take many 10s of
-+ * seconds. Allow tasks running hypercalls via the privcmd driver to
-+ * be voluntarily preempted even if full kernel preemption is
-+ * disabled.
-+ *
-+ * Such preemptible hypercalls are bracketed by
-+ * xen_preemptible_hcall_begin() and xen_preemptible_hcall_end()
-+ * calls.
-+ */
-+DEFINE_PER_CPU(bool, xen_in_preemptible_hcall);
-+EXPORT_SYMBOL_GPL(xen_in_preemptible_hcall);
-+
-+/*
-+ * In case of scheduling the flag must be cleared and restored after
-+ * returning from schedule as the task might move to a different CPU.
-+ */
-+static __always_inline bool get_and_clear_inhcall(void)
-+{
-+	bool inhcall = __this_cpu_read(xen_in_preemptible_hcall);
-+
-+	__this_cpu_write(xen_in_preemptible_hcall, false);
-+	return inhcall;
-+}
-+
-+static __always_inline void restore_inhcall(bool inhcall)
-+{
-+	__this_cpu_write(xen_in_preemptible_hcall, inhcall);
-+}
-+
-+#else
-+
-+static __always_inline bool get_and_clear_inhcall(void) { return false; }
-+static __always_inline void restore_inhcall(bool inhcall) { }
-+
-+#endif
-+
- struct tls_descs {
- 	struct desc_struct desc[3];
- };
-@@ -687,6 +726,36 @@ DEFINE_IDTENTRY_RAW(xenpv_exc_machine_check)
- }
- #endif
- 
-+static void __xen_pv_evtchn_do_upcall(struct pt_regs *regs)
-+{
-+	struct pt_regs *old_regs = set_irq_regs(regs);
-+
-+	inc_irq_stat(irq_hv_callback_count);
-+
-+	xen_evtchn_do_upcall();
-+
-+	set_irq_regs(old_regs);
-+}
-+
-+__visible noinstr void xen_pv_evtchn_do_upcall(struct pt_regs *regs)
-+{
-+	irqentry_state_t state = irqentry_enter(regs);
-+	bool inhcall;
-+
-+	instrumentation_begin();
-+	run_sysvec_on_irqstack_cond(__xen_pv_evtchn_do_upcall, regs);
-+
-+	inhcall = get_and_clear_inhcall();
-+	if (inhcall && !WARN_ON_ONCE(state.exit_rcu)) {
-+		irqentry_exit_cond_resched();
-+		instrumentation_end();
-+		restore_inhcall(inhcall);
-+	} else {
-+		instrumentation_end();
-+		irqentry_exit(regs, state);
-+	}
-+}
-+
- struct trap_array_entry {
- 	void (*orig)(void);
- 	void (*xen)(void);
+"Also support configure the threshold..."
+
+> 
+> The BD79124 keeps asserting IRQ for as long as the measured voltage is
+> out of the configured window. Thus the driver masks the received event
+> for a fixed duration (1 second) when an event is handled. This prevents
+> the user-space from choking on the events
+> 
+> The ADC input pins can be also configured as general purpose outputs.
+> Those pins which don't have corresponding ADC channel node in the
+> device-tree will be controllable as GPO.
+> 
+> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+
+A few trivial things inline.
+
+Jonathan
+
+> +/*
+> + * The high and low limits as well as the recent result values are stored in
+> + * the same way in 2 consequent registers. The first register contains 4 bits
+> + * of the value. These bits are stored in the high bits [7:4] of register, but
+> + * they represent the low bits [3:0] of the value.
+> + * The value bits [11:4] are stored in the next regoster.
+> + *
+> + * Conver the integer to register format and write it using rmw cycle.
+Convert?
+
+> + */
+> +static int bd79124_write_int_to_reg(struct bd79124_data *data, int reg,
+> +				    unsigned int val)
+..
+> +static int bd79124_read_event_config(struct iio_dev *iio_dev,
+> +				     const struct iio_chan_spec *chan,
+> +				     enum iio_event_type type,
+> +				     enum iio_event_direction dir)
+> +{
+> +	struct bd79124_data *data = iio_priv(iio_dev);
+> +
+> +	if (chan->channel >= BD79124_MAX_NUM_CHANNELS)
+> +		return -EINVAL;
+> +
+> +	return (data->alarm_monitored[chan->channel] & BIT(dir));
+
+Drop the outer brackets as not adding anything.
+
+> +}
+
+
+
+> +static int bd79124_probe(struct i2c_client *i2c)
+> +{
+...
+
+> +	data->gpio_valid_mask = gpio_pins;
+> +	data->gc = bd79124gpo_chip;
+> +	data->gc.parent = dev;
+> +	devm_mutex_init(dev, &data->mutex);
+
+ret = devm_mutex_init(dev, &data->mutex);
+if (ret)
+	return ret;
+
+It is very unlikely to fail so no point in papering over failing
+to register the cleanup.
+
+> +
+> +	ret = devm_gpiochip_add_data(dev, &data->gc, data);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "gpio init Failed\n");
+> +
+> +	if (i2c->irq > 0) {
+> +		ret = devm_request_threaded_irq(dev, i2c->irq,
+> +			bd79124_irq_handler, &bd79124_event_handler,
+> +			IRQF_ONESHOT, "adc-thresh-alert", iio_dev);
+> +		if (ret)
+> +			return dev_err_probe(data->dev, ret,
+> +					     "Failed to register IRQ\n");
+> +	}
+> +
+> +	return devm_iio_device_register(data->dev, iio_dev);
+> +}
+
 
