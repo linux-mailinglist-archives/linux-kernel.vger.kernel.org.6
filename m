@@ -1,306 +1,280 @@
-Return-Path: <linux-kernel+bounces-563023-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563024-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB1B9A635CF
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 14:38:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55656A635D3
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 14:40:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E0903B04CE
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 13:38:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A3C51890CB0
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 13:40:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DF031A840A;
-	Sun, 16 Mar 2025 13:38:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D69CA1AAE13;
+	Sun, 16 Mar 2025 13:40:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="Uo/gdvum"
-Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UyDP/fEA"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31DCB1DFF8;
-	Sun, 16 Mar 2025 13:38:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D279A32;
+	Sun, 16 Mar 2025 13:40:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742132303; cv=none; b=La9KlDGu9p4Ip1NpZi0qSBzcM/Q0OXhfB/Le1w+dWA/Ysjcv9NyzwZSOXbiT19nrHdUFUQDUqGS8uZhtpMtEtU7OhpzkihHZL5nj5/uaU5dbSeS4fI6EczoqkK+dCJ/2RcK7KNH78rWyiGhD5G+pdsuLOR1qU2WfsmYLbosvKQI=
+	t=1742132434; cv=none; b=JrfcD2huPMFnRDTsSoOSjmsoWysrWvGCPGBtUd81/lRVya9ZUDJzMH1xUXm+9QEwgoCd8MNDiN6ZlcVWETfE+sg865LmG+gzgdEFbA6DIR+IzdIPyNsdg5PfYKnaMmrSNWVHWutoXjDR3uxQA15k5NlLROEbcDKcALhTmxvbMk4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742132303; c=relaxed/simple;
-	bh=cD/MUYKo+nkfjChKS+hZUIC9o+gMpql+CqyRcsBaPkc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bKvAuf0C9SgzBnwu4RT5eFmuhPX6deVmTvAmMFTjaE0dXoOH5I/BAXTvgY6JVMw39YogdGfb4yYLEDUqMknCU6bPnI7LhPbAYBDJUeWQIhX1w0GuQo9F30qZAAmZ+MpJBT6ZIZNUX3P0wzhgSijluBOzYmSgN4G+OeHs7gy7Wt4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=Uo/gdvum; arc=none smtp.client-ip=209.85.128.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
-Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-6ff4faf858cso12715937b3.2;
-        Sun, 16 Mar 2025 06:38:20 -0700 (PDT)
+	s=arc-20240116; t=1742132434; c=relaxed/simple;
+	bh=+eP3COHMGSILG+3VCh2zSSWR05FiQeElPNL6B3fjFgg=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References; b=tAPVDdA21nHL2kZl6Ci+XbNblsN74Mt2jK+Xa7g4gbq4lY+5wjAV7YvcTDzVvMXdsb6zm8KD73PamfsvdiHk0+ww/g/nZHkYw6Ymwgiiy8oV69tbgsL8KBGXCN83eZSAB9r4LIefAN8Sie50/r0zjoVLX35HR85QdhkoZSnjA58=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UyDP/fEA; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-224100e9a5cso66786965ad.2;
+        Sun, 16 Mar 2025 06:40:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20230601; t=1742132300; x=1742737100; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=W20b2Jn5U/X/Wgd5KSlyToeOXghhFnrA40a9Zj/VnpI=;
-        b=Uo/gdvumLAhwsIpKvPryUMkqSTw75LMbYa8x1RDAE6YT0gyAC20aHbFS8kFn/KmtXJ
-         PZCxko3YhG/cPbCAoi6EtibbYGjCMWWY/CPDzDcIe+62tsF3gLxlEze/hnTd0mY7Byd6
-         a1asUQn6EM8q5AghDZ9Xp4ym9w+WbZYzU2RVTttPIR2I+D6JpRWBLnORzijLhVZtHkzv
-         1U7Wr0kTFpx79IIJbB5zkT8QyQfih7yw5BkGOlK99DsBKH91pjXdeXVLkAoDAV7hll3S
-         9sK3C/Q48DwkBK0YFSS1fwOpEQzDFI8YeGOaktw27Zjhgl3TaD1rLjZNm/t4cvbTOMCz
-         jx6A==
+        d=gmail.com; s=20230601; t=1742132431; x=1742737231; darn=vger.kernel.org;
+        h=references:message-id:date:in-reply-to:subject:cc:to:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=VdLYDQ9fmoN/8PBxziQo7P+nVlZR+8JRc9oB0auVypw=;
+        b=UyDP/fEAqiicfNLY/OHjqXBIZROZhPkQMJmWQacIyna7CFAVoBwz9UYEAZwfVNCQUC
+         zfwjCP4IQq9RUGff8o3eDB3gpjFHm85PRbZjX8ghxBBdHvL/4KqYk6vI9B70wv08TJcu
+         LmsTA9X/MS7sCLps/IrD1oWRnmHsBrWxnE/zZUThBGBDxo6vakF5ltwqd1BO3bykkrKX
+         CpMhP6kXDLnVqZpMoWlv4XSeCYFvf3dTHPbR3bJlau5wr8Ij5V6Uxacnn1ydwTvJ4OZI
+         tNPnaX7xeDBDLYKgtHB2Nh/HeA8Jghhszrx9k0fwnZhjAj1wObzxdBKGkReW4hcrr8pm
+         bxZg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742132300; x=1742737100;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=W20b2Jn5U/X/Wgd5KSlyToeOXghhFnrA40a9Zj/VnpI=;
-        b=dROE0L6zyubw6ynw/SYspEMDkSfsPugd0R9g8NLYrsALIGElF+BE0Pnbd95EL+QsIW
-         ZZOgjBV4zsChN6zMUJJ+oSGld+KS/OU4yc4Ixs1qDNOEcnOvt4Qe2Fwz9otL5dPeNuWQ
-         Q4UPZxgJS40heOlhn84OSJJnbIObEamnRH5QzZYIxkpO7Oq3WbtyGgRS8xn8XNPRZGX4
-         QuxxywtO6r9af7bxs45rvk9Tb4G9OqG8kQOQNzcqlKcAwHQK0wz0DmrmtbudySv5KMmq
-         /7Wn/Tv5fn05zaHSz7GNTKHQNMXUfx/8hQUTNy+OIZBz+IjuDNxMg7csInLtL1gOEBZb
-         zRoQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVA6E82/sU+IkVY+uxmPXyG8N4QfVDd9A+vAxTRffvr56moq5A/F2wkh29GuIOqoozOI4876yD88MT5lGM=@vger.kernel.org, AJvYcCWA2r7aiLGi0x7p5xNYdnnWWona2TgR1n+GB4/rH2MJ4x+6L4Bagznde4Z5AWfzRP/7T0lbfjm3Sw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJsF/n/+W0njehFpZYlo7gB728eTQRgqLfEs2MVcx/lXtVdp35
-	PaUman5KFZEiPVutNImSzAa1pS2KmCJMGScSLmEu29Uj292py8Fzg/9oKLUUjGvYObmVZVWhs/k
-	XK8nhHIcXv3eqptdFmZTEbDugqWTyit8V9MA=
-X-Gm-Gg: ASbGncthXpFBZfHBcydn8ywrC1d0V+Gmwott5vo6s5L7fXMUFfGJwxUnUvBYAgz63E8
-	YbRAefidVAiH/uNxF6eMRnuiyjLaoaiGMyHCjkACU9dithDAnvH4cVEIZjeO91oQSEC/QjZeKzj
-	2n+zfiZkKEh4KBKsv/NpOZYbyBZs8HrghIkZWR
-X-Google-Smtp-Source: AGHT+IFfzRFS2Ow1XYtDZDeAnwvNabEogKNsbdvqjn6ta4vDOy7z8+baBWJecwjpgg4LKcjYKWcoWsqlRBBByYsmw7A=
-X-Received: by 2002:a05:690c:6f04:b0:6fd:4521:f9d7 with SMTP id
- 00721157ae682-6ff45ff5be5mr110610097b3.24.1742132299976; Sun, 16 Mar 2025
- 06:38:19 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1742132431; x=1742737231;
+        h=references:message-id:date:in-reply-to:subject:cc:to:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=VdLYDQ9fmoN/8PBxziQo7P+nVlZR+8JRc9oB0auVypw=;
+        b=dF0IJl9kvm+jGKbq8c4Q+nMdWMefaDmEt5xWJgq7yb2HnbD31VDmy/zReH5Nh3zzbv
+         tOV02rENvxnwhgTuI0asKVrtrHzOxZdk6V2BB0g+G1RcpQyM2IdwnpGHVdeM4iJsBVkQ
+         EyNGM2fRRVL8Ahf3fjQ7cBXUtdUUwGw/Faj2RKUMp2e9LWZMHeSW2PMHHzOJDSSATN91
+         EPvNzobIbvyRqZuYyyqWie92aqap2RQxEL+1/+CdsXQwsgcSjzoitiF3ugPBb4xoywDv
+         7BtYhioeRcCOD/HKWhrxZ4dv6CGhaNohRuFz0reXMnwzFYzXNm7UVMesgFtwwrLnEEft
+         Vc+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVmBNyPxljPBEHO0+afo4gNA6DBQW1MafVW3NlGxViZQtkAZ9U5pvIwSRByMP5dBViZmAuChgA13gAIOdqM@vger.kernel.org, AJvYcCW8UlRatNyQHPtwdTy+uAzdd7fQN//28TbCjCu1RyETg1V02/bhoa0l3tqcsOrW/ffyavTnDF67lByv@vger.kernel.org, AJvYcCWS/9R2xlgvetBVx3Nbglql38SaZxoV2cc2Xy0dgaxfEDd18UtYkNXHbMyQG/sr18FrqR2HapvLBfU1MLd5lg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxVuWZReBferxWVjS6OOupuJaNiK9a90mZyIZqnwFdBKSjbJw0y
+	O+SFt/vOqvzGVgTZkoB8g5mPtVGliSgz2JN3WmUw0ok7Hd6xR+a9
+X-Gm-Gg: ASbGncvj2X0XCLK/knUmTlp9SEcXzrDnNdjc/DYK7ct+VB32unaDuhqJUh0+KWqywd0
+	U6s/pu+lNMI7Ky3uXFFnaUC3d1eW5znobkeBHqU5ZRceenrVy9wLwC8+TH+NMFv5JT7hbFOXiOV
+	pR/GyBTIkjGfLVo7hx26NlpgpP/kWcPXzr0vcMlZxsIzBhKw9CXzHleg7+a68QwhVzEzpjd3NGU
+	c620Kw0K9kivfvHWB+HMrnEqxODXrP4QJrs2lPAkdpQCZGVDeEnt4eeZziJLUgagpAqvB1Yjgey
+	fKnm13/Rex1B45dgACnhjGs2/0ANRMaTf4tQjw==
+X-Google-Smtp-Source: AGHT+IGhz7Ue+ZLyG8VUmXRsrEHkfX2BRwH78PG4XyOl+NG2xSpQf6wEawvh82ePN1A6+gBd5ewDVg==
+X-Received: by 2002:a17:903:41cd:b0:21f:1549:a563 with SMTP id d9443c01a7336-225e0a19b8cmr111256885ad.2.1742132431486;
+        Sun, 16 Mar 2025 06:40:31 -0700 (PDT)
+Received: from dw-tp ([171.76.81.247])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-225c6ba6f09sm57950155ad.133.2025.03.16.06.40.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 16 Mar 2025 06:40:30 -0700 (PDT)
+From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+To: John Garry <john.g.garry@oracle.com>, brauner@kernel.org, djwong@kernel.org, cem@kernel.org, dchinner@redhat.com, hch@lst.de
+Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, ojaswin@linux.ibm.com, martin.petersen@oracle.com, tytso@mit.edu, linux-ext4@vger.kernel.org, John Garry <john.g.garry@oracle.com>
+Subject: Re: [PATCH v6 01/13] iomap: inline iomap_dio_bio_opflags()
+In-Reply-To: <20250313171310.1886394-2-john.g.garry@oracle.com>
+Date: Sun, 16 Mar 2025 19:10:06 +0530
+Message-ID: <87cyeh5c21.fsf@gmail.com>
+References: <20250313171310.1886394-1-john.g.garry@oracle.com> <20250313171310.1886394-2-john.g.garry@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250315141136817waFGT5DFhPs9QMwybNwb5@zte.com.cn>
-In-Reply-To: <20250315141136817waFGT5DFhPs9QMwybNwb5@zte.com.cn>
-From: =?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgzones@googlemail.com>
-Date: Sun, 16 Mar 2025 14:38:09 +0100
-X-Gm-Features: AQ5f1Joz-UfQG0y_YMiJxmrQ7GmwIv9lHE9Ov9j-GFiZ3izo0wL6FeN0sHLXKUY
-Message-ID: <CAJ2a_Df3QmeteqHVJ3hp7X-t3UsBNwgzu-utfTq1rDMJdwEz0A@mail.gmail.com>
-Subject: Re: [PATCH linux-next] selinux: use sysfs_emit() instead of scnprintf()
-To: xie.ludan@zte.com.cn
-Cc: stephen.smalley.work@gmail.com, paul@paul-moore.com, omosnace@redhat.com, 
-	selinux@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
 
-On Sat, 15 Mar 2025 at 07:11, <xie.ludan@zte.com.cn> wrote:
+John Garry <john.g.garry@oracle.com> writes:
+
+> It is neater to build blk_opf_t fully in one place, so inline
+> iomap_dio_bio_opflags() in iomap_dio_bio_iter().
 >
-> From: XieLudan <xie.ludan@zte.com.cn>
+> Also tidy up the logic in dealing with IOMAP_DIO_CALLER_COMP, in generally
+> separate the logic in dealing with flags associated with reads and writes.
 >
->
-> Follow the advice in Documentation/filesystems/sysfs.rst:
->
-> show() should only use sysfs_emit() or sysfs_emit_at() when formatting
->
-> the value to be returned to user space.
->
->
-> Signed-off-by: XieLudan <xie.ludan@zte.com.cn>
->
+
+Indeed it clean things up and separates the logic required for
+IOMAP_DIO_WRITE v/s reads.
+
+The change looks good to me. Please feel free to add -
+Reviewed-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+
+
+> Originally-from: Christoph Hellwig <hch@lst.de>
+> Signed-off-by: John Garry <john.g.garry@oracle.com>
 > ---
+> Should I change author?
+>  fs/iomap/direct-io.c | 112 +++++++++++++++++++------------------------
+>  1 file changed, 49 insertions(+), 63 deletions(-)
 >
->  security/selinux/selinuxfs.c | 20 ++++++++++----------
->
->  1 file changed, 10 insertions(+), 10 deletions(-)
->
->
-> diff --git a/security/selinux/selinuxfs.c b/security/selinux/selinuxfs.c
->
-> index 47480eb2189b..17c56fc87d98 100644
->
-> --- a/security/selinux/selinuxfs.c
->
-> +++ b/security/selinux/selinuxfs.c
->
-> @@ -126,7 +126,7 @@ static ssize_t sel_read_enforce(struct file *filp, char __user *buf,
->
->   char tmpbuf[TMPBUFLEN];
->
->   ssize_t length;
->
->
->
-> - length = scnprintf(tmpbuf, TMPBUFLEN, "%d",
->
-> + length = sysfs_emit(tmpbuf, "%d",
-
-That would be dangerous since the target buffer is of size TMPBUFLEN
-(12) and not PAGE_SIZE (4096).
-
->      enforcing_enabled());
->
->   return simple_read_from_buffer(buf, count, ppos, tmpbuf, length);
->
+> diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
+> index 5299f70428ef..8c1bec473586 100644
+> --- a/fs/iomap/direct-io.c
+> +++ b/fs/iomap/direct-io.c
+> @@ -312,27 +312,20 @@ static int iomap_dio_zero(const struct iomap_iter *iter, struct iomap_dio *dio,
 >  }
->
-> @@ -206,7 +206,7 @@ static ssize_t sel_read_handle_unknown(struct file *filp, char __user *buf,
->
->   security_get_reject_unknown() :
->
->   !security_get_allow_unknown();
->
->
->
-> - length = scnprintf(tmpbuf, TMPBUFLEN, "%d", handle_unknown);
->
-> + length = sysfs_emit(tmpbuf, "%d", handle_unknown);
->
->   return simple_read_from_buffer(buf, count, ppos, tmpbuf, length);
->
->  }
->
->
->
-> @@ -314,7 +314,7 @@ static ssize_t sel_read_policyvers(struct file *filp, char __user *buf,
->
->   char tmpbuf[TMPBUFLEN];
->
->   ssize_t length;
->
->
->
-> - length = scnprintf(tmpbuf, TMPBUFLEN, "%u", POLICYDB_VERSION_MAX);
->
-> + length = sysfs_emit(tmpbuf, "%u", POLICYDB_VERSION_MAX);
->
->   return simple_read_from_buffer(buf, count, ppos, tmpbuf, length);
->
->  }
->
->
->
-> @@ -345,7 +345,7 @@ static ssize_t sel_read_mls(struct file *filp, char __user *buf,
->
->   char tmpbuf[TMPBUFLEN];
->
->   ssize_t length;
->
->
->
-> - length = scnprintf(tmpbuf, TMPBUFLEN, "%d",
->
-> + length = sysfs_emit(tmpbuf, "%d",
->
->      security_mls_enabled());
->
->   return simple_read_from_buffer(buf, count, ppos, tmpbuf, length);
->
->  }
->
-> @@ -670,7 +670,7 @@ static ssize_t sel_read_checkreqprot(struct file *filp, char __user *buf,
->
->   char tmpbuf[TMPBUFLEN];
->
->   ssize_t length;
->
->
->
-> - length = scnprintf(tmpbuf, TMPBUFLEN, "%u",
->
-> + length = sysfs_emit(tmpbuf, "%u",
->
->      checkreqprot_get());
->
->   return simple_read_from_buffer(buf, count, ppos, tmpbuf, length);
->
->  }
->
-> @@ -1226,7 +1226,7 @@ static ssize_t sel_read_bool(struct file *filep, char __user *buf,
->
->   ret = cur_enforcing;
->
->   goto out_unlock;
->
->   }
->
-> - length = scnprintf(page, PAGE_SIZE, "%d %d", cur_enforcing,
->
-> + length = sysfs_emit(page, "%d %d", cur_enforcing,
->
->     fsi->bool_pending_values[index]);
->
->   mutex_unlock(&selinux_state.policy_mutex);
->
->   ret = simple_read_from_buffer(buf, count, ppos, page, length);
->
-> @@ -1416,7 +1416,7 @@ static ssize_t sel_read_avc_cache_threshold(struct file *filp, char __user *buf,
->
->   char tmpbuf[TMPBUFLEN];
->
->   ssize_t length;
->
->
->
-> - length = scnprintf(tmpbuf, TMPBUFLEN, "%u",
->
-> + length = sysfs_emit(tmpbuf, "%u",
->
->      avc_get_cache_threshold());
->
->   return simple_read_from_buffer(buf, count, ppos, tmpbuf, length);
->
->  }
->
-> @@ -1726,7 +1726,7 @@ static ssize_t sel_read_class(struct file *file, char __user *buf,
->
+>  
+>  /*
+> - * Figure out the bio's operation flags from the dio request, the
+> - * mapping, and whether or not we want FUA.  Note that we can end up
+> - * clearing the WRITE_THROUGH flag in the dio request.
+> + * Use a FUA write if we need datasync semantics and this is a pure data I/O
+> + * that doesn't require any metadata updates (including after I/O completion
+> + * such as unwritten extent conversion) and the underlying device either
+> + * doesn't have a volatile write cache or supports FUA.
+> + * This allows us to avoid cache flushes on I/O completion.
+>   */
+> -static inline blk_opf_t iomap_dio_bio_opflags(struct iomap_dio *dio,
+> -		const struct iomap *iomap, bool use_fua, bool atomic_hw)
+> +static inline bool iomap_dio_can_use_fua(const struct iomap *iomap,
+> +		struct iomap_dio *dio)
 >  {
->
->   unsigned long ino = file_inode(file)->i_ino;
->
->   char res[TMPBUFLEN];
->
-> - ssize_t len = scnprintf(res, sizeof(res), "%d", sel_ino_to_class(ino));
->
-> + ssize_t len = sysfs_emit(res, "%d", sel_ino_to_class(ino));
->
->   return simple_read_from_buffer(buf, count, ppos, res, len);
->
+> -	blk_opf_t opflags = REQ_SYNC | REQ_IDLE;
+> -
+> -	if (!(dio->flags & IOMAP_DIO_WRITE))
+> -		return REQ_OP_READ;
+> -
+> -	opflags |= REQ_OP_WRITE;
+> -	if (use_fua)
+> -		opflags |= REQ_FUA;
+> -	else
+> -		dio->flags &= ~IOMAP_DIO_WRITE_THROUGH;
+> -	if (atomic_hw)
+> -		opflags |= REQ_ATOMIC;
+> -
+> -	return opflags;
+> +	if (iomap->flags & (IOMAP_F_SHARED | IOMAP_F_DIRTY))
+> +		return false;
+> +	if (!(dio->flags & IOMAP_DIO_WRITE_THROUGH))
+> +		return false;
+> +	return !bdev_write_cache(iomap->bdev) || bdev_fua(iomap->bdev);
 >  }
->
->
->
-> @@ -1740,7 +1740,7 @@ static ssize_t sel_read_perm(struct file *file, char __user *buf,
->
->  {
->
->   unsigned long ino = file_inode(file)->i_ino;
->
->   char res[TMPBUFLEN];
->
-> - ssize_t len = scnprintf(res, sizeof(res), "%d", sel_ino_to_perm(ino));
->
-> + ssize_t len = sysfs_emit(res, "%d", sel_ino_to_perm(ino));
->
->   return simple_read_from_buffer(buf, count, ppos, res, len);
->
->  }
->
->
->
-> @@ -1758,7 +1758,7 @@ static ssize_t sel_read_policycap(struct file *file, char __user *buf,
->
->   unsigned long i_ino = file_inode(file)->i_ino;
->
->
->
->   value = security_policycap_supported(i_ino & SEL_INO_MASK);
->
-> - length = scnprintf(tmpbuf, TMPBUFLEN, "%d", value);
->
-> + length = sysfs_emit(tmpbuf, "%d", value);
->
->
->
->   return simple_read_from_buffer(buf, count, ppos, tmpbuf, length);
->
->  }
->
-> --
->
-> 2.25.1
->
->
->
->
+>  
+>  static int iomap_dio_bio_iter(struct iomap_iter *iter, struct iomap_dio *dio)
+> @@ -340,52 +333,59 @@ static int iomap_dio_bio_iter(struct iomap_iter *iter, struct iomap_dio *dio)
+>  	const struct iomap *iomap = &iter->iomap;
+>  	struct inode *inode = iter->inode;
+>  	unsigned int fs_block_size = i_blocksize(inode), pad;
+> -	bool atomic_hw = iter->flags & IOMAP_ATOMIC_HW;
+>  	const loff_t length = iomap_length(iter);
+>  	loff_t pos = iter->pos;
+> -	blk_opf_t bio_opf;
+> +	blk_opf_t bio_opf = REQ_SYNC | REQ_IDLE;
+>  	struct bio *bio;
+>  	bool need_zeroout = false;
+> -	bool use_fua = false;
+>  	int nr_pages, ret = 0;
+>  	u64 copied = 0;
+>  	size_t orig_count;
+>  
+> -	if (atomic_hw && length != iter->len)
+> -		return -EINVAL;
+> -
+>  	if ((pos | length) & (bdev_logical_block_size(iomap->bdev) - 1) ||
+>  	    !bdev_iter_is_aligned(iomap->bdev, dio->submit.iter))
+>  		return -EINVAL;
+>  
+> -	if (iomap->type == IOMAP_UNWRITTEN) {
+> -		dio->flags |= IOMAP_DIO_UNWRITTEN;
+> -		need_zeroout = true;
+> -	}
+> +	if (dio->flags & IOMAP_DIO_WRITE) {
+> +		bio_opf |= REQ_OP_WRITE;
+> +
+> +		if (iter->flags & IOMAP_ATOMIC_HW) {
+> +			if (length != iter->len)
+> +				return -EINVAL;
+> +			bio_opf |= REQ_ATOMIC;
+> +		}
+> +
+> +		if (iomap->type == IOMAP_UNWRITTEN) {
+> +			dio->flags |= IOMAP_DIO_UNWRITTEN;
+> +			need_zeroout = true;
+> +		}
+>  
+> -	if (iomap->flags & IOMAP_F_SHARED)
+> -		dio->flags |= IOMAP_DIO_COW;
+> +		if (iomap->flags & IOMAP_F_SHARED)
+> +			dio->flags |= IOMAP_DIO_COW;
+> +
+> +		if (iomap->flags & IOMAP_F_NEW) {
+> +			need_zeroout = true;
+> +		} else if (iomap->type == IOMAP_MAPPED) {
+> +			if (iomap_dio_can_use_fua(iomap, dio))
+> +				bio_opf |= REQ_FUA;
+> +			else
+> +				dio->flags &= ~IOMAP_DIO_WRITE_THROUGH;
+> +		}
+>  
+> -	if (iomap->flags & IOMAP_F_NEW) {
+> -		need_zeroout = true;
+> -	} else if (iomap->type == IOMAP_MAPPED) {
+>  		/*
+> -		 * Use a FUA write if we need datasync semantics, this is a pure
+> -		 * data IO that doesn't require any metadata updates (including
+> -		 * after IO completion such as unwritten extent conversion) and
+> -		 * the underlying device either supports FUA or doesn't have
+> -		 * a volatile write cache. This allows us to avoid cache flushes
+> -		 * on IO completion. If we can't use writethrough and need to
+> -		 * sync, disable in-task completions as dio completion will
+> -		 * need to call generic_write_sync() which will do a blocking
+> -		 * fsync / cache flush call.
+> +		 * We can only do deferred completion for pure overwrites that
+> +		 * don't require additional I/O at completion time.
+> +		 *
+> +		 * This rules out writes that need zeroing or extent conversion,
+> +		 * extend the file size, or issue metadata I/O or cache flushes
+> +		 * during completion processing.
+>  		 */
+> -		if (!(iomap->flags & (IOMAP_F_SHARED|IOMAP_F_DIRTY)) &&
+> -		    (dio->flags & IOMAP_DIO_WRITE_THROUGH) &&
+> -		    (bdev_fua(iomap->bdev) || !bdev_write_cache(iomap->bdev)))
+> -			use_fua = true;
+> -		else if (dio->flags & IOMAP_DIO_NEED_SYNC)
+> +		if (need_zeroout || (pos >= i_size_read(inode)) ||
+> +		    ((dio->flags & IOMAP_DIO_NEED_SYNC) &&
+> +		     !(bio_opf & REQ_FUA)))
+>  			dio->flags &= ~IOMAP_DIO_CALLER_COMP;
+> +	} else {
+> +		bio_opf |= REQ_OP_READ;
+>  	}
+>  
+>  	/*
+> @@ -399,18 +399,6 @@ static int iomap_dio_bio_iter(struct iomap_iter *iter, struct iomap_dio *dio)
+>  	if (!iov_iter_count(dio->submit.iter))
+>  		goto out;
+>  
+> -	/*
+> -	 * We can only do deferred completion for pure overwrites that
+> -	 * don't require additional IO at completion. This rules out
+> -	 * writes that need zeroing or extent conversion, extend
+> -	 * the file size, or issue journal IO or cache flushes
+> -	 * during completion processing.
+> -	 */
+> -	if (need_zeroout ||
+> -	    ((dio->flags & IOMAP_DIO_NEED_SYNC) && !use_fua) ||
+> -	    ((dio->flags & IOMAP_DIO_WRITE) && pos >= i_size_read(inode)))
+> -		dio->flags &= ~IOMAP_DIO_CALLER_COMP;
+> -
+>  	/*
+>  	 * The rules for polled IO completions follow the guidelines as the
+>  	 * ones we set for inline and deferred completions. If none of those
+> @@ -428,8 +416,6 @@ static int iomap_dio_bio_iter(struct iomap_iter *iter, struct iomap_dio *dio)
+>  			goto out;
+>  	}
+>  
+> -	bio_opf = iomap_dio_bio_opflags(dio, iomap, use_fua, atomic_hw);
+> -
+>  	nr_pages = bio_iov_vecs_to_alloc(dio->submit.iter, BIO_MAX_VECS);
+>  	do {
+>  		size_t n;
+> @@ -461,7 +447,7 @@ static int iomap_dio_bio_iter(struct iomap_iter *iter, struct iomap_dio *dio)
+>  		}
+>  
+>  		n = bio->bi_iter.bi_size;
+> -		if (WARN_ON_ONCE(atomic_hw && n != length)) {
+> +		if (WARN_ON_ONCE((bio_opf & REQ_ATOMIC) && n != length)) {
+>  			/*
+>  			 * This bio should have covered the complete length,
+>  			 * which it doesn't, so error. We may need to zero out
+> -- 
+> 2.31.1
 
