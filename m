@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-562886-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562887-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34C2FA63439
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 07:20:49 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7565EA6343A
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 07:21:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7105116D6D9
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 06:20:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68C7E3B0F95
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 06:20:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48D8218BC26;
-	Sun, 16 Mar 2025 06:20:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7163718DB0F;
+	Sun, 16 Mar 2025 06:20:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=byte-forge-io.20230601.gappssmtp.com header.i=@byte-forge-io.20230601.gappssmtp.com header.b="phNIalKj"
-Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
+	dkim=pass (2048-bit key) header.d=byte-forge-io.20230601.gappssmtp.com header.i=@byte-forge-io.20230601.gappssmtp.com header.b="HmARq8rR"
+Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09461188CD8
-	for <linux-kernel@vger.kernel.org>; Sun, 16 Mar 2025 06:20:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53F4418BC3B
+	for <linux-kernel@vger.kernel.org>; Sun, 16 Mar 2025 06:20:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742106031; cv=none; b=it/7vxCzYUp8yoCFZ/5zSBMJJ5oIsLshYXQODAhZvxQy3OzeNj2+BxWcfq7i2IDL0FPq0CiqMT7i9/sa5u6bh4JbKHQq3ExArr0uu/3Yct+YXFEJnVIEvUtJGEtlqjN+y6eCwkb9+bT274XKSzh/qBw3l+2qPVCayjzAy0y/ZUc=
+	t=1742106033; cv=none; b=GIxXWhHfB9wqGvZGRdGh+1HHO/Gpj8lx3NhnHnEQTn7JNaCA9VjWMISo+t4aLw0f6uobYRvVGAVVO6qbknVMZlGMKPAzFDw0y3J5EvBl6lFtxVw6gCPF1uHbKBlCUd5r1k/QAt3x7P3PS1fkbT1m2oYKrG/1UCofUihzmSIWFkM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742106031; c=relaxed/simple;
-	bh=KO/exQTkLkwfgTltyUZcd5X/7Yfmi3eV0OM4DoSLRS0=;
+	s=arc-20240116; t=1742106033; c=relaxed/simple;
+	bh=eIYHcWBEiFLknY3tj9cmC1cIpl6ZvopmPvDITgdtRJU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ti2Ax4pE4an6Pi22MVChzDC3K0ujqRA0p5/upsFcGssniysAm6EisyERJkoHmY9AVoRwPn8B8TUbbYIj20c1pk3QucpEZF3xQ0fnGPjWvEhyXFxOhuBqT509KaA987p+5TTD0TzUpV3GtDAu0vW3uCqbWXAvmFDNPONoOgqC2oE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=byte-forge.io; spf=pass smtp.mailfrom=byte-forge.io; dkim=pass (2048-bit key) header.d=byte-forge-io.20230601.gappssmtp.com header.i=@byte-forge-io.20230601.gappssmtp.com header.b=phNIalKj; arc=none smtp.client-ip=209.85.219.182
+	 MIME-Version; b=VEjSIXaWAmjtvspjgdsfYWYctzT6uwqSmzwV/gJ8ZTWFWf3KdQkaVqOX7cUsU909Ui8PLbrJbEeuJfQtSFm6ZcdG6reWrNItmikpJVyyl4a/PuA0P/XjZO7lHQA7i3Yu1jf1C19rImAxcnKZJRxiGpzJSZ5ocOH+6FyNj7aiLSs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=byte-forge.io; spf=pass smtp.mailfrom=byte-forge.io; dkim=pass (2048-bit key) header.d=byte-forge-io.20230601.gappssmtp.com header.i=@byte-forge-io.20230601.gappssmtp.com header.b=HmARq8rR; arc=none smtp.client-ip=209.85.219.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=byte-forge.io
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=byte-forge.io
-Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-e6405b5cd9bso1207130276.1
-        for <linux-kernel@vger.kernel.org>; Sat, 15 Mar 2025 23:20:29 -0700 (PDT)
+Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-e609cff9927so2387917276.3
+        for <linux-kernel@vger.kernel.org>; Sat, 15 Mar 2025 23:20:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=byte-forge-io.20230601.gappssmtp.com; s=20230601; t=1742106029; x=1742710829; darn=vger.kernel.org;
+        d=byte-forge-io.20230601.gappssmtp.com; s=20230601; t=1742106031; x=1742710831; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Rcfcg5qMvVtXh9IImUjR+2DN3oiPNoX80yC/n4rfVko=;
-        b=phNIalKj6EQQBIfMEJ9vZZBv6Dc1GpccKzq8ReRbL329l9cR20mIhqoq1pHleUewfz
-         pqxoLobasAMZgWbVPkZ/Vgm+ve2KLU/Bjmhvk3qYuMKQtwoFZtyPmDbwxcZyhdQXTziV
-         Eno7T0Lvheg7iytiU2jYk4M/AOJmByF1teD7tsL9zCgwZioRZKwKcqescNuCKqG3nTti
-         MTp/McirE6iogOIbcFy654mqpaYvIlRaZSy1ZUR2O9ODAfLeY/egYFVnSV9x0ZE9P+T0
-         cNg6vKek/Fl3TO23es8dJ23fHt4UR+IUE6sex8EnssXW7jZ212CoLIf1wQfFvYqq2W9K
-         bgvw==
+        bh=aHOnw6NNknF40lG6JQUFbNKg4/fZPxuep0oOWgNFQIc=;
+        b=HmARq8rRTDYFHOsFSrBSVn4Kzlo3aYsoQluyJ5qmsJtEH2jr8DgJCBG27SZmECt1OB
+         t8VC9y3ARpLx2hzUMLiXaFn5KEOmCIySWDhkJCf+ti9Ztps4S5PltpqCesjj5qSyiSGh
+         uA3XUSgLEEBoOOi1CgJtxd4Idk6ALIW++dBNYC5uDSRiXrnD4nhIDofbZuiZGM55OBq8
+         njD1eYwpK0aYly9gtOpxxJkzPL2wxV/GuHERCKoRfHXBhEbdga4XdxdqSxBqMnPkhOMA
+         f9OFdWhrbeWVgLteNU4mQkcec4W9cqazPg2DyyoMLAUYwgzxSqQ8sczBhoTNBW9Jq72p
+         dC7A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742106029; x=1742710829;
+        d=1e100.net; s=20230601; t=1742106031; x=1742710831;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Rcfcg5qMvVtXh9IImUjR+2DN3oiPNoX80yC/n4rfVko=;
-        b=fePnYfQ1odkNgeLhMuZpEmKFcENYvLiEDpdK+RvWeAikUYIEaIW0UtsFSccZo0w3Ni
-         3NXTy6p+L+rLnbJ+UXbWKkbTr79pQ5wWVRhRZIVFE1r0I0sheZshpgtUh+7mAvSQ91DA
-         K8RNEKnZbi1ILYgVRwxBC0/de59iYEfV7pwmYv2IIPkMfCjIhmDQWScZ9lyF41BkjokN
-         rdBtIWC4zVKKfIEZ5DEZaBV2vOVKi83dJB4TxDMF8dNuaAEN0Deb1H2ha0VBqzZu/OKS
-         u9SBX5n5mXInDSbSoTvbpDGvJZZItN4E+0JkkEOhf7vlGExkXvhsB966lvHOSzGj22hi
-         xSHg==
-X-Forwarded-Encrypted: i=1; AJvYcCVy+V24btynY/TYjpfAKu3f5ytKC72QeSSBcGXyfWUnMQdQumrJ2kqqKKxCoMJEaTUDeXG/1+3qGkDnljE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy2BRwXMH9p3VbT/XabNVAvmF2ccEnhD23dldQhwqXGLLPAivvV
-	1ig60Z6ZQ5iIy2wcWy2jJ5ibiDZDAxJFivcZdR6HmAZrG+RLrCUdAsE3JG5dSSk=
-X-Gm-Gg: ASbGnct6cjLuB//D3boS4T05FNNxHIJKNRpmFd66LtlCGFWh35WyrVmzGPGmHVeZu00
-	Z974MZd+3eH+Yn0m7oWE+5gLs686QRRpdXnYul+y6CUVRDHA5PO0GkH9O0Kr1veuQBdMWga2b72
-	mDAqqC2rBb4j9yyOYwxdfdaiXaLjc0l/yF8BqtOBdWCThfg0QVaHsgx9fzO0wOWvyS0MZg9qNuG
-	Hh4+jl6ggSTXXWpaMOpu5UAPIEghOATaTp9pKDk8ZXLXZ0L13Jo9ZaWWBXys/a5MwIAr9tT+LPk
-	bgApE60pJvla5+LTsVWNJ5/+TmBeVde/jRnBJO9YgCxidX3EqsPtWYdIGmK8Bv0ImTgtemUTJMG
-	SyYsrxGeyMVumXW10QubYQ/hCx5Oi7A==
-X-Google-Smtp-Source: AGHT+IEvZZyoqiXSlITd7yKQJu0HCSC2ILJh0e5MXsUBSIAaDO1pIE7sYxekJt1DHrP97nJnv13TdA==
-X-Received: by 2002:a05:6902:727:b0:e5b:4651:b5c6 with SMTP id 3f1490d57ef6-e63f8927a3amr11125910276.23.1742106028911;
-        Sat, 15 Mar 2025 23:20:28 -0700 (PDT)
+        bh=aHOnw6NNknF40lG6JQUFbNKg4/fZPxuep0oOWgNFQIc=;
+        b=hUJeaGnJUzxD3sBR5ijcXkbVY1GTJtLLmmV61kBd2vRRJC8USd+xpJTrGhjmJPT5a2
+         S3bZPNAbRL+AwhpncDu3bZycfiAESMrv2z1BtI2uDKdbwWjyG/0Ml/98rsdQl09puPE3
+         ci0NjG8GmDpQvnSTo8WWhivrOF88K3b3KYNkcgWvc6R0RfBliWzJRtIhwVwPadWKf4kc
+         6QJCgI69/gxEGYnvEI9G3OwecKXU2YvLCnGxDEHj9Xpexg2G9cFA7UjOjLpYO3F/kA6G
+         6rU3XexLPooulhhWBbmb360aPVCphiJgSRTEMdpyU6t7+XbOO+XkdjbykPT9jM8DN1ts
+         WRJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVcL7HM/W/r/8V646TCesuAYAG2lKeCndWUu710kunq37ioFo7b2EjcJLgbepgRO812XtOmO/zMxBYlreo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwgkleBHMc3LaDRruwsgSXDEKvBMbszoypvQwmlU2iU8jwgMAJz
+	lbVj1H7GYcAUf9smKMOCnim0z9xNv2d6wd2GPleXmoH216MB7iH/9GZsVH0QoKo=
+X-Gm-Gg: ASbGnctLhqsH4tAICi0qCg4empn1jZZhfyvulzY6Xaf57PGHa0N96KnSgbUxFKCCwlQ
+	8Mcq+YwsX5eQrKw0Znz2EqBSQlTPiBaQiGwUETgnQ75gNme9rsBeh9RnIdRmsmwNqBVgR3l/Evw
+	2r05S1itXVxVKIytowZoclcs2HvIdmyxRb4SBsCBdW+oReQWyuWGMtn+g28NQdSRpRRsp4/55tP
+	Dm7Z5qIIdb+jO+Me/GYI5W0/q1+3LCzHPXRXVKJTThky9oLADrt3IXyNh+bdonbF1h+OBvmmMXi
+	279rT4LM5MFWsy49uWLgdSEjya1cXlBPHmlr2rXf05FyhXHw+PipTZWk2ztfvpt2tU/WC0f39fM
+	9jWHT7xxER4A4wAqedSZD5GlVR8WQLg==
+X-Google-Smtp-Source: AGHT+IEr4DfWkNRilwLYG+bm/FQhMCTQPQVmmtd6gIv3USMmxFzqn/38j/vsTorOQl3q/a2PlV56DA==
+X-Received: by 2002:a05:6902:2742:b0:e60:5d76:f79d with SMTP id 3f1490d57ef6-e63f65e07dcmr9891498276.43.1742106031254;
+        Sat, 15 Mar 2025 23:20:31 -0700 (PDT)
 Received: from Machine.lan (107-219-75-226.lightspeed.wepbfl.sbcglobal.net. [107.219.75.226])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e63e53fd277sm1618673276.11.2025.03.15.23.20.28
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e63e53fd277sm1618673276.11.2025.03.15.23.20.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 15 Mar 2025 23:20:28 -0700 (PDT)
+        Sat, 15 Mar 2025 23:20:30 -0700 (PDT)
 From: Antonio Hickey <contact@byte-forge.io>
 X-Google-Original-From: Antonio Hickey <contact@antoniohickey.com>
 To: Miguel Ojeda <ojeda@kernel.org>,
@@ -87,9 +87,9 @@ To: Miguel Ojeda <ojeda@kernel.org>,
 Cc: Antonio Hickey <contact@antoniohickey.com>,
 	rust-for-linux@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v4 03/16] rust: list: refactor to use `&raw [const|mut]`
-Date: Sun, 16 Mar 2025 02:14:12 -0400
-Message-ID: <20250316061429.817126-4-contact@antoniohickey.com>
+Subject: [PATCH v4 04/16] rust: task: refactor to use `&raw [const|mut]`
+Date: Sun, 16 Mar 2025 02:14:13 -0400
+Message-ID: <20250316061429.817126-5-contact@antoniohickey.com>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20250316061429.817126-1-contact@antoniohickey.com>
 References: <20250316061429.817126-1-contact@antoniohickey.com>
@@ -112,54 +112,31 @@ Suggested-by: Benno Lossin <benno.lossin@proton.me>
 Link: https://github.com/Rust-for-Linux/linux/issues/1148
 Signed-off-by: Antonio Hickey <contact@antoniohickey.com>
 ---
- rust/kernel/list.rs                    | 2 +-
- rust/kernel/list/impl_list_item_mod.rs | 6 +++---
- 2 files changed, 4 insertions(+), 4 deletions(-)
+ rust/kernel/task.rs | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/rust/kernel/list.rs b/rust/kernel/list.rs
-index c0ed227b8a4f..e98f0820f002 100644
---- a/rust/kernel/list.rs
-+++ b/rust/kernel/list.rs
-@@ -176,7 +176,7 @@ pub fn new() -> impl PinInit<Self> {
-     #[inline]
-     unsafe fn fields(me: *mut Self) -> *mut ListLinksFields {
-         // SAFETY: The caller promises that the pointer is valid.
--        unsafe { Opaque::raw_get(ptr::addr_of!((*me).inner)) }
-+        unsafe { Opaque::raw_get(&raw const (*me).inner) }
+diff --git a/rust/kernel/task.rs b/rust/kernel/task.rs
+index 49012e711942..568b528e2cc4 100644
+--- a/rust/kernel/task.rs
++++ b/rust/kernel/task.rs
+@@ -257,7 +257,7 @@ pub fn as_ptr(&self) -> *mut bindings::task_struct {
+     pub fn group_leader(&self) -> &Task {
+         // SAFETY: The group leader of a task never changes after initialization, so reading this
+         // field is not a data race.
+-        let ptr = unsafe { *ptr::addr_of!((*self.as_ptr()).group_leader) };
++        let ptr = unsafe { (*self.as_ptr()).group_leader };
+ 
+         // SAFETY: The lifetime of the returned task reference is tied to the lifetime of `self`,
+         // and given that a task has a reference to its group leader, we know it must be valid for
+@@ -269,7 +269,7 @@ pub fn group_leader(&self) -> &Task {
+     pub fn pid(&self) -> Pid {
+         // SAFETY: The pid of a task never changes after initialization, so reading this field is
+         // not a data race.
+-        unsafe { *ptr::addr_of!((*self.as_ptr()).pid) }
++        unsafe { (*self.as_ptr()).pid }
      }
  
-     /// # Safety
-diff --git a/rust/kernel/list/impl_list_item_mod.rs b/rust/kernel/list/impl_list_item_mod.rs
-index a0438537cee1..014b6713d59d 100644
---- a/rust/kernel/list/impl_list_item_mod.rs
-+++ b/rust/kernel/list/impl_list_item_mod.rs
-@@ -49,7 +49,7 @@ macro_rules! impl_has_list_links {
-         // SAFETY: The implementation of `raw_get_list_links` only compiles if the field has the
-         // right type.
-         //
--        // The behavior of `raw_get_list_links` is not changed since the `addr_of_mut!` macro is
-+        // The behavior of `raw_get_list_links` is not changed since the `&raw mut` op is
-         // equivalent to the pointer offset operation in the trait definition.
-         unsafe impl$(<$($implarg),*>)? $crate::list::HasListLinks$(<$id>)? for
-             $self $(<$($selfarg),*>)?
-@@ -61,7 +61,7 @@ unsafe fn raw_get_list_links(ptr: *mut Self) -> *mut $crate::list::ListLinks$(<$
-                 // SAFETY: The caller promises that the pointer is not dangling. We know that this
-                 // expression doesn't follow any pointers, as the `offset_of!` invocation above
-                 // would otherwise not compile.
--                unsafe { ::core::ptr::addr_of_mut!((*ptr)$(.$field)*) }
-+                unsafe { &raw mut (*ptr)$(.$field)* }
-             }
-         }
-     )*};
-@@ -103,7 +103,7 @@ macro_rules! impl_has_list_links_self_ptr {
-             unsafe fn raw_get_list_links(ptr: *mut Self) -> *mut $crate::list::ListLinks$(<$id>)? {
-                 // SAFETY: The caller promises that the pointer is not dangling.
-                 let ptr: *mut $crate::list::ListLinksSelfPtr<$item_type $(, $id)?> =
--                    unsafe { ::core::ptr::addr_of_mut!((*ptr).$field) };
-+                    unsafe { &raw mut (*ptr).$field };
-                 ptr.cast()
-             }
-         }
+     /// Returns the UID of the given task.
 -- 
 2.48.1
 
