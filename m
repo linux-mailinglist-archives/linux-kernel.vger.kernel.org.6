@@ -1,224 +1,117 @@
-Return-Path: <linux-kernel+bounces-562865-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562866-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAB64A633CF
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 05:20:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AF16A633D3
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 05:28:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 175817A51D1
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 04:19:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 695C13B01A1
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 04:28:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2274F143748;
-	Sun, 16 Mar 2025 04:20:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DE5D143748;
+	Sun, 16 Mar 2025 04:28:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="HHSWp+aA"
-Received: from mail-10629.protonmail.ch (mail-10629.protonmail.ch [79.135.106.29])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ybcTjqnH"
+Received: from mail-ot1-f51.google.com (mail-ot1-f51.google.com [209.85.210.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A38C77D3F4
-	for <linux-kernel@vger.kernel.org>; Sun, 16 Mar 2025 04:20:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.29
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7543B13632B
+	for <linux-kernel@vger.kernel.org>; Sun, 16 Mar 2025 04:28:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742098843; cv=none; b=YpzXYpm5r38UizfwfbAhomasCE+ex3i1HIl7WfjgBwR3W3it49X8l+aIStf3bS8gkNdfNmwT/Nj4CU21kQRicPAaP3eEXs6DWpmidjtPLIEU886TjWMAzfJR6Cm1fkZphFI6MCRkCMgE43RkNTvxma7q0f/3nQDFRpJKo7sKHgg=
+	t=1742099312; cv=none; b=Urk2sKcAb3JverLMpSEqvOEtzbRjPPuTKJUQvYjEzTXtP7dsJzWvpK93Bs6Je1Wquf5nsLFcMRWuTY9yLYSYc8/RsME/5FMFJEJx50LlKsH/M6QCt+tO0Mo31H/GtIVuPiGwa5gQTYkor5q937acDG2MgBtzEazPpEyIBaKp9S8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742098843; c=relaxed/simple;
-	bh=76LcCISZoiU10fClL5qA7YwZd36UqCpbjjau7BlGO+k=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QKXECooAO4GwU/rQX6sLuBBlzt1TNCD/ulLpJ3EmWNTXbzmrQloBytJdzrySae1Tqkp0Ics3JCahsai9SUVFHXC7ynqsFXHzNhyuzVFcFG+QQlP1YXVc08usF97aiAoWkIQ1xwqslVa3okvEzdJWNnMNo3ZrRwNw8CLN6igoTWs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=HHSWp+aA; arc=none smtp.client-ip=79.135.106.29
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-	s=protonmail3; t=1742098839; x=1742358039;
-	bh=vxWKNyTjKz9Zo+/oSESrfgugwQ/3Qi4ce/xUleXcD5k=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
-	b=HHSWp+aAkObyPf+WNlDq3aMvoHY3NIpAZvcN3qy3tZv2hJumSNx4mX1tMXlyUe7jA
-	 Fl06Fs0CWJ3N/1DRJZ8mapIWBhtyr1ClWjuXcUi9wb22bsrUw9Co6qy88uIDw9y88G
-	 p9mTcGfM3DjQ+9yrjlhUPj3Z16iztfIMr/E1n239Q14p4I7hJWaomjAdskbnYJ5hbV
-	 74pZ8G6XO/tzbiC3v3w+Ly76nrxsZoXC/977X+aFgdolnFem7F8VH6wII0cmd72OaV
-	 6Vu1olF1kQbgvKlgd+pY4yMBBtduyshd0s/k/wYy/ytk9p3K7cwVJxf2g/yi4ewqy5
-	 hiCIWrk2BkRIA==
-Date: Sun, 16 Mar 2025 04:20:35 +0000
-To: Benjamin Tissoires <bentiss@kernel.org>
-From: Rahul Rameshbabu <sergeantsagara@protonmail.com>
-Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-input@vger.kernel.org, dri-devel@lists.freedesktop.org, Jiri Kosina <jikos@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>
-Subject: Re: [PATCH RFC 3/3] rust: hid: demo the core abstractions for probe and remove
-Message-ID: <87frjdhaii.fsf@protonmail.com>
-In-Reply-To: <m2cm4c4m7teaca3tog774tl25ynngicg4eav4i7xiqyrxsqwju@leh5og5d6uba>
-References: <20250313160220.6410-2-sergeantsagara@protonmail.com> <20250313160220.6410-6-sergeantsagara@protonmail.com> <m2cm4c4m7teaca3tog774tl25ynngicg4eav4i7xiqyrxsqwju@leh5og5d6uba>
-Feedback-ID: 26003777:user:proton
-X-Pm-Message-ID: e7fc38772a099e3f17b7e79d87181ac9b498a011
+	s=arc-20240116; t=1742099312; c=relaxed/simple;
+	bh=FZSJWiZLXjqC6y47npzUT1f4iHsKu36HldeTTvNpvO8=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=He3cULqS2fOAqMuYKglbyr0iaPppoXgSVBOzeR45+HX0JWbTDnNf3ct/U8a5iH94tdmR3u9W1HuUk6m6uhWf+CgIZv8+uLYfPLRSPQdpyGHwdDSelXVDtZm5A8LATs2nGf22THQJsFIKDE/PaAZZCMLw32LheIMqJQsPfX+udIs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ybcTjqnH; arc=none smtp.client-ip=209.85.210.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ot1-f51.google.com with SMTP id 46e09a7af769-7273f35b201so2092535a34.1
+        for <linux-kernel@vger.kernel.org>; Sat, 15 Mar 2025 21:28:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1742099309; x=1742704109; darn=vger.kernel.org;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=zn/hFEmYVNTaOoS0zsULqiyCkDZvvdFkC8aMRGGcsM8=;
+        b=ybcTjqnHV7MZTRVIeCBs+BZ7aG5ZZwJtV9x9gBWOm6Vr+HWslR/hqhikey8661q4BL
+         VGfRlqZUGMmm9fBPCk21dbhhe6Ly4vWtL/slLjD7p5L417DD79R4m5dEsoyQ6YS5r3Gu
+         RdIgdwuCX7PIWgDOztFRaxxThkp81xfYxJAkA8xbTw1alZiuu+ClQxOcFxxnPq2PlpVE
+         YryFRAAGz3L5aLxIrzjwXzFjnU1KMOV7FP5NOI4oXsMVBmcelv/6833kocZuCVaL3KZu
+         tu+vwgpOw0LBT3jZWttKZSUjeEiQSdgphEu9jdiReRGCgWtY6+GxqOXKXbCGzAwPj1vZ
+         gLDw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742099309; x=1742704109;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=zn/hFEmYVNTaOoS0zsULqiyCkDZvvdFkC8aMRGGcsM8=;
+        b=ugk4BZu9izWL9qmGIM+AawfQdpIBiXkHSuh00nJz4yLXA20Ta8r+dwyg/xN4SGLwVT
+         fmmmKv/9OhG2w2+u+cSSuVAa/KROcXpxxTof2XDCPsvWEUKvOjGFQ7wexQ5EwKdb6jJr
+         tc0cXi8RrXxN25fTzeEko7fQIIHlVFNbJKgwcc3gcEwUeBL9pLdKMMR3LOjFjqkq8ohW
+         6SS4T1GxCkTHocAVLNaYs+li+cxfkgIHHAwXrjthWxLOIf9d2JOJaTud4C8TnP84Xtk/
+         YMJtdY2Pn+CY9L2WjF6R0gcdy7xtZ4pFeDqWBULTYigtYTFIXxKHWEDF0pj3emUAO6uz
+         gHVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVEVW908Ai+31j1gp0S9Xmhbdl1MeDzTvW3NeL4cg10Tpn7z25U5Po+L9nM6YDPxcF/S+Y0WW6x9tS0c8o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxbNv57TrfALhrnIrzrxPMN7/mwl2e9Xef63ljleov7Ox4KEqdG
+	heoYzT1pESM9zOiHZJiuUaeiouUyH/Xtj98ofXBxCvnh8DkY/jKJicu6IS0q8Q==
+X-Gm-Gg: ASbGncshZ82PMCOf+DMEi+vL6On4NuPc0pl4maSUUNoVVRynvFWao0s/WJynH7a5lz2
+	A8lE7lITQVmmWP9/wgr1bE+GjxDLI6Fx7rJz+UMMHheJMKa6sO3CxgP+PeYIZfzwmUJHACx4LPK
+	Iy/G9ngyzhWEgHndEpZ4Q996WGKcY35RmDRhAMSzQg2H5dXlNqdp8ZFvd4ADrokOXNyM64NS0+q
+	xq/+luA+ZURTx/KJk2tK4i4j9V2hHJ2mIZWsYeCdgbNXx0iYlMyP/4ectG+r5cLq0Bne3hUmGhG
+	Vdxh4a0wSecoWUZK0Wbz9EpHUYMw7Ss3yQ2N3nAU+PFHyrrhTbwTW/cZ0vig6AjS24ucb45TNQq
+	mL7zM4ePz0y4zJFMFCiwmbeBrJiUn
+X-Google-Smtp-Source: AGHT+IFK+fYuCkkcOcDXAF8C7bDOskY1oi3b1lZCxddFTu9Fs37o6wimSvL0D05uusubWvgWsWaWjg==
+X-Received: by 2002:a05:6830:43a3:b0:72b:9d8d:5881 with SMTP id 46e09a7af769-72bbc661152mr4342091a34.28.1742099309294;
+        Sat, 15 Mar 2025 21:28:29 -0700 (PDT)
+Received: from darker.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2c6713586e1sm1603777fac.47.2025.03.15.21.28.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 15 Mar 2025 21:28:28 -0700 (PDT)
+Date: Sat, 15 Mar 2025 21:28:16 -0700 (PDT)
+From: Hugh Dickins <hughd@google.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+cc: Johannes Weiner <hannes@compxchg.org>, Vlastimil Babka <vbabka@suse.cz>, 
+    Mel Gorman <mgorman@techsingularity.net>, Zi Yan <ziy@nvidia.com>, 
+    linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/5] mm: compaction: push watermark into compaction_suitable()
+ callers
+In-Reply-To: <20250313210647.1314586-2-hannes@cmpxchg.org>
+Message-ID: <005ace8b-07fa-01d4-b54b-394a3e029c07@google.com>
+References: <20250313210647.1314586-1-hannes@cmpxchg.org> <20250313210647.1314586-2-hannes@cmpxchg.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
 
-On Thu, 13 Mar, 2025 18:05:36 +0100 "Benjamin Tissoires" <bentiss@kernel.or=
-g> wrote:
-> On Mar 13 2025, Rahul Rameshbabu wrote:
->> This is a very basic "hello, world!" implementation to illustrate that t=
-he
->> probe and remove callbacks are working as expected. I chose an arbitrary
->> device I had on hand for populating in the HID device id table.
->
-> Nice to see this live :)
->
-> Though as I mentioned in the previous patch, I'd prefer having one full
-> driver in a single patch and one separate patch with the skeleton in the
-> docs.
->
-> Do you have any meaningful processing that needs to be done in the
-> report fixup or in the .raw_event or .event callbacks?
->
-> It would be much more interesting to show how this works together on a
-> minimalistic driver.
+[PATCH] mm: compaction: push watermark into compaction_suitable() callers fix
 
-Agreed. Have a discussion about a device to potentially use for such a
-reference driver in another thread[1].
+Stop oops on out-of-range highest_zoneidx: compaction_suitable() pass
+args to __compaction_suitable() in the order which it is expecting.
 
->
-> FWIW, the driver in itself, though incomplete, looks familiar, which is
-> a good thing: we've got a probe and a remove. This is common with all
-> the other HID drivers, so it's not a brand new thing.
->
-> I wonder however how and if we could enforce the remove() to be
-> automated by the binding or rust, to not have to deal with resource
-> leaking. Because the removal part, especially on failure, is the hardest
-> part.
+Signed-off-by: Hugh Dickins <hughd@google.com>
+---
+ mm/compaction.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-One issue with the device I proposed in [1] is that it would not require
-the implementation of remove() or automation through Rust since the
-device is so "simple".
-
-Rust has the Drop trait[2]. If my understanding is correct, contained
-data that also implement the Drop trait cannot be enforced in terms of
-the order they are dropped/provide any kind of dependency management
-here. It's worth exploring. My concern is some very tricky ordering
-requirements on removal. I extracted the below from
-drivers/hid/hid-nvidia-shield.c.
-
-  static void shield_remove(struct hid_device *hdev)
-  {
-  =09struct shield_device *dev =3D hid_get_drvdata(hdev);
-  =09struct thunderstrike *ts;
-
-  =09ts =3D container_of(dev, struct thunderstrike, base);
-
-  =09hid_hw_close(hdev);
-  =09thunderstrike_destroy(ts);
-  =09del_timer_sync(&ts->psy_stats_timer);
-  =09cancel_work_sync(&ts->hostcmd_req_work);
-  =09hid_hw_stop(hdev);
-  }
-
-Here, we need to explicitly stop the timer before cancelling any work.
-
-The problem here is Rust's Drop trait does not gaurantee ordering for
-the teardown of members.
-
-Lets pretend I have the following and its functional in Rust.
-
-  // In hid_nvidia_shield.rs
-
-  struct Thunderstrike {
-      // Rest of my thunderstrike members from the C equivalent
-      psyStatsTimer: TimerList, // TimerList implements Drop
-      hostcmdReqWork: Work, // Work implements Drop
-  }
-
-  // hid.rs
-
-  struct Device<T> {
-      // Details omitted
-      privateData: T,
-  }
-
-  impl<T> Drop for Device<T> {
-      fn drop(&mut self) {
-          // Implementation here
-      }
-  }
-
-The problem here is when the Device instance is dropped, we cannot
-guarantee the order of the Drop::drop calls for the psyStatsTimer or
-hostcmdReqWork members as-is. There might be some clever trick to solve
-this problem that I am not aware of.
-
-[1] https://lore.kernel.org/rust-for-linux/Z9MxI0u2yCfSzTvD@cassiopeiae/T/#=
-m87f121ec72ba159071b20dccb4071cd7d2398050
-[2] https://doc.rust-lang.org/std/ops/trait.Drop.html
-
-Thanks for the review,
-Rahul Rameshbabu
-
->
-> Cheers,
-> Benjamin
->
->>
->>   [  +0.012968] monitor_control: Probing HID device vendor: 2389 product=
-: 29204 using Rust!
->>   [  +0.000108] monitor_control: Removing HID device vendor: 2389 produc=
-t: 29204 using Rust!
->>
->> Signed-off-by: Rahul Rameshbabu <sergeantsagara@protonmail.com>
->> ---
->>  drivers/hid/hid_monitor_control.rs | 9 +++++++--
->>  1 file changed, 7 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/hid/hid_monitor_control.rs b/drivers/hid/hid_monito=
-r_control.rs
->> index 18afd69a56d5..aeb6e4058a6b 100644
->> --- a/drivers/hid/hid_monitor_control.rs
->> +++ b/drivers/hid/hid_monitor_control.rs
->> @@ -8,17 +8,22 @@
->>      Driver,
->>  };
->>
->> +const USB_VENDOR_ID_NVIDIA: u32 =3D 0x0955;
->> +const USB_DEVICE_ID_NVIDIA_THUNDERSTRIKE_CONTROLLER: u32 =3D 0x7214;
->> +
->>  struct HidMonitorControl;
->>
->>  #[vtable]
->>  impl Driver for HidMonitorControl {
->>      fn probe(dev: &mut hid::Device, id: &hid::DeviceId) -> Result<()> {
->>          /* TODO implement */
->> +        pr_info!("Probing HID device vendor: {} product: {} using Rust!=
-\n", id.vendor(), id.product());
->>          Ok(())
->>      }
->>
->>      fn remove(dev: &mut hid::Device) {
->>          /* TODO implement */
->> +        pr_info!("Removing HID device vendor: {} product: {} using Rust=
-!\n", dev.vendor(), dev.product());
->>      }
->>  }
->>
->> @@ -26,8 +31,8 @@ fn remove(dev: &mut hid::Device) {
->>      driver: HidMonitorControl,
->>      id_table: [
->>          kernel::usb_device! {
->> -            vendor: /* TODO fill in */,
->> -            product: /* TODO fill in */,
->> +            vendor: USB_VENDOR_ID_NVIDIA,
->> +            product: USB_DEVICE_ID_NVIDIA_THUNDERSTRIKE_CONTROLLER,
->>          },
->>      ],
->>      name: "monitor_control",
->> --
->> 2.47.2
->>
->>
-
-
+diff --git a/mm/compaction.c b/mm/compaction.c
+index 4a2ccb82d0b2..b5c9e8fd39f1 100644
+--- a/mm/compaction.c
++++ b/mm/compaction.c
+@@ -2433,7 +2433,7 @@ bool compaction_suitable(struct zone *zone, int order, unsigned long watermark,
+ 	enum compact_result compact_result;
+ 	bool suitable;
+ 
+-	suitable = __compaction_suitable(zone, order, highest_zoneidx, watermark,
++	suitable = __compaction_suitable(zone, order, watermark, highest_zoneidx,
+ 					 zone_page_state(zone, NR_FREE_PAGES));
+ 	/*
+ 	 * fragmentation index determines if allocation failures are due to
+-- 
+2.43.0
 
