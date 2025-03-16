@@ -1,159 +1,106 @@
-Return-Path: <linux-kernel+bounces-563151-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563153-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76131A63791
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 22:51:21 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1BB4A63798
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 22:53:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 548053ADEE0
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 21:51:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 445E816D706
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 21:53:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 245E419ABCE;
-	Sun, 16 Mar 2025 21:51:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ACD81A0BF1;
+	Sun, 16 Mar 2025 21:53:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="M6dsYWQC"
-Received: from submarine.notk.org (submarine.notk.org [62.210.214.84])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DB991624D2
-	for <linux-kernel@vger.kernel.org>; Sun, 16 Mar 2025 21:51:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742161875; cv=none; b=Up1Rf+fhLEGlLCilnLY3u5agfLI/ZF0lAl2bujztRiCmjvfmq7CuW3WbwtXyCp7trWrtupOlvMoMJAgoO1Fq0+miU6qtvywFfjqGquAy56enDqF0kdKmXSZNoF/S8rbTQt3QvNdEBsp3VyAQYBtnq8QQbEFSqzuieQrCgZjQEys=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742161875; c=relaxed/simple;
-	bh=KwSTIINjek4C6NcWfA3eWqBn2q80cIra1CDyfVwYgYw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Ao3FIb7ZDtSLq+aY+HPf1ErJ/wVhQPtvY8wuU/xFbjLkU0J/vqhDZVeL6BDH/KM6I5Y6kiwgOkFvN+PDNq1hSLEQY2uoGoyQQzzp88D5eNICKXxJg7Pegj1ghmbAMJs+s+Lc8edOtPOVUnM5s5x1Mv1t4FIyEFySh/CIOGI3Y3Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=M6dsYWQC; arc=none smtp.client-ip=62.210.214.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
-Received: from gaia.codewreck.org (localhost [127.0.0.1])
-	by submarine.notk.org (Postfix) with ESMTPS id 2D1AA14C2D3;
-	Sun, 16 Mar 2025 22:51:10 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
-	s=2; t=1742161873;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=YimY1Bf+igN/ThVHO6TRhNXFBUxdzqU4A52j7oKmUks=;
-	b=M6dsYWQCzMnGfYox5OXAS77HbwB3tTOfKvRRP4JeSdL5KiYgKF5GV0HAiM4IPs1o8ZHNsT
-	OBz0RrRqAWQMzs7+tRbjjsRMKni/yio87VRK9893e54bI848piKWvV99NkGrwH9xXK496o
-	cYotI/Y/PoqJjs8cMZlRS1HUIU32oSxhHmoH1JCyhjepIAW5m6EAPJJrhu0+t6PJtvx1Oq
-	1U+iVhkCfmi+wKhen7xsEA8KoY3k2G99ytGpdKeQI+bhCDIOs17h+G3iWwcQLS4WkgTXOE
-	+WrjXRFP+1KwmrkCeQhZklPjAAK93N7p4P8/9JayC9MJq9mzhYenG7wBJsQfFw==
-Received: from [127.0.0.1] (localhost.lan [::1])
-	by gaia.codewreck.org (OpenSMTPD) with ESMTP id 7b78d06c;
-	Sun, 16 Mar 2025 21:51:09 +0000 (UTC)
-From: Dominique Martinet <asmadeus@codewreck.org>
-Date: Mon, 17 Mar 2025 06:51:06 +0900
-Subject: [PATCH] 9p/net: return error on bogus (longer than requested)
- replies
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b="Gmakg9V2"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37F6E1922FD
+	for <linux-kernel@vger.kernel.org>; Sun, 16 Mar 2025 21:52:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742161979; cv=pass; b=Rrzko3+j+ZDpNpjflaIHs+OHcCJ1ruK7aQ016XuCu2CoFqIS10k877zaBPsD6iF5aM14Bln132/7GcC0SjkGLIwt3X2QNca75FHHkoyqs6M/yrZXqVhyfllNQAWpkjwGnE4yahdRibvV2AKxfkhlD6C2W7KmIDosPb8py1MCBws=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742161979; c=relaxed/simple;
+	bh=gOtEsb6HSERcxDboCRZ7luxxDc9oP7IfI+1tCC2E3LI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=jG1fqBBKLNQprYmUG43JVoPfMYQeRSBE1k0t7b2in+bGeCLr+fkW82YNr/cXZfUTsEFcRIkmmmrOx9tsO9qoxKASLCfogbeuljX8nmYkFXw7ygaMT8YtU0HrTO5AjgVMlgxsP9FFE8cfE+BsR7kf6OoIfDI8bHM+mw1SKv09M9Y=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b=Gmakg9V2; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1742161946; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=JowPB6SIVkG4fTsYXcWiZOcFNiOP+d/ysK9ktZeLTZN95vLDS7o3MWOByno/J7vWNdhsA/WW5NimYnanClM6nUo/FHbEPM85qkyfZdV5moU4ANkAci7dI4YSnjWLLTw3o6pe3+mpREjnZYuyUtj2+ZlEnd392ylfb/GLuRvB0M0=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1742161946; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=aAicki8o0dcPGsCDGnk1JMD1P/KiyJERoLKGn0P0zSQ=; 
+	b=JFYv28ixUE6Wb9DiogMSrhR1oNqNgdTXEhYTgPJHsWMXONEyOEECaDP1z+DCeBuDUZCbr3I8iQRCFzGXhXIxApqUH/UQSBG66q2guaJ3tXThRDxzOyAb1pZaauyXqWkkvt1FCmpDk5/ZAf7oOgKTYgjM6hc8jhubNHeVxAM1rEA=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=adrian.larumbe@collabora.com;
+	dmarc=pass header.from=<adrian.larumbe@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1742161946;
+	s=zohomail; d=collabora.com; i=adrian.larumbe@collabora.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=aAicki8o0dcPGsCDGnk1JMD1P/KiyJERoLKGn0P0zSQ=;
+	b=Gmakg9V2GZDEiyYvzE35WtJ3yXYfXZ6Xl0ETCPkClguUeSXqooWlRTQcsfcRyJhI
+	teejeRY3XNdH4VoP8kwGhHqOfNSIPZmkztnhY8BiCrF45mr+RcAJMXdLTgBOXSRQLcS
+	kTUy4nPErkA6R0JdmrU/ZjjFye1VajqY06popXzU=
+Received: by mx.zohomail.com with SMTPS id 1742161944404241.90075270214368;
+	Sun, 16 Mar 2025 14:52:24 -0700 (PDT)
+From: =?UTF-8?q?Adri=C3=A1n=20Larumbe?= <adrian.larumbe@collabora.com>
+To: Boris Brezillon <boris.brezillon@collabora.com>,
+	Steven Price <steven.price@arm.com>,
+	Liviu Dudau <liviu.dudau@arm.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>
+Cc: kernel@collabora.com,
+	=?UTF-8?q?Adri=C3=A1n=20Larumbe?= <adrian.larumbe@collabora.com>,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/4] Panthor BO tagging and GEMS debug display
+Date: Sun, 16 Mar 2025 21:51:31 +0000
+Message-ID: <20250316215139.3940623-1-adrian.larumbe@collabora.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250317-p9_bogus_io_error-v1-1-9639f6d1561f@codewreck.org>
-X-B4-Tracking: v=1; b=H4sIAMlH12cC/y3MSwqFMBBE0a1Ijw0kikjcikjwU2pPjHb08UDcu
- 0EdnoK6JwUII1CVnCT4cWC/RJg0oX5ulwmKh2jKdFbo3JRqta7z0xEcewcRL6qANa2xHXLdU/y
- tgpH/T7NuXgu2I6b3b7yuG/XizKB4AAAA
-To: Eric Van Hensbergen <ericvh@kernel.org>, 
- Latchesar Ionkov <lucho@ionkov.net>, 
- Christian Schoenebeck <linux_oss@crudebyte.com>
-Cc: v9fs@lists.linux.dev, linux-kernel@vger.kernel.org, 
- Dominique Martinet <asmadeus@codewreck.org>
-X-Mailer: b4 0.14-dev-87f09
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2270;
- i=asmadeus@codewreck.org; h=from:subject:message-id;
- bh=KwSTIINjek4C6NcWfA3eWqBn2q80cIra1CDyfVwYgYw=;
- b=owEBbQKS/ZANAwAIAatOm+xqmOZwAcsmYgBn10fNdo/Q7bqDGxDs238ulpF8UAZ/3Ku9Qxul6
- 3YcWqzDSk2JAjMEAAEIAB0WIQT8g9txgG5a3TOhiE6rTpvsapjmcAUCZ9dHzQAKCRCrTpvsapjm
- cO/ND/sFGDsmMG1kXFbFmQ5eUTUm6xQy46PFnGVhfl+5mPw01AtF0guhax0k92+5VefchoWtrF5
- kEykfrXSb+c7suxawLKbbPJGpIb7G2Lk0lBsLKJtBZ7fvqzdaMdoOFbJYKeoo61TUhxs58acTbg
- 8JItcVEzDtAb3YcpD9kStznkG2mhYh2Z8qj48vUlbgZMKuAaLssZ3/Me8oEo61w5XhmEjELWIbg
- yqnmx5gK6HThfDyxS/gD+H1n5eElnW8y2yPTrjFA8IMwOzM9eRBUtpYgnAwq/sBipAV3ySi+FIf
- dkjBoWeXHjteL6zbD67Itlz3PAIc0es+8YRTDek/zUUmnS3kTy3tB5ZmqxYJrBHE2I8Vp9XkR/p
- bUzKl8n2bjRK6y9Jy2zsKuG220wmzFUEFHBLApcND1CChvSIp96jwd3h1SvyqYM5elfPaC8Q7Bb
- 8s4qRCyKBnE/TEP00xWTV5KRGGm5bk6iQuhFok1F017XMOGQiwErXBNCeCRcPYcn9//vrVvEK8I
- cSiqVSxSJ8wCm8HEBCznrOrTHr76/swT5KsPSD1TNhmVS15Ex7kI1hC30WB6NeP378mWTeVR8LC
- JHYXcLDkZyDmGt1exIhXSZjXPwHKxt7fYgPMqJx0IQ1RhE6/XnuMnxk5dT1s0CsUnF6zvOnEQR5
- J6glgeTAuBcQIZA==
-X-Developer-Key: i=asmadeus@codewreck.org; a=openpgp;
- fpr=B894379F662089525B3FB1B9333F1F391BBBB00A
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Up until now we've been considering longer than requested replies as
-acceptable, printing a message and just truncating the data,
-but it makes more sense to consider these an error.
+This patch series is aimed at providing UM with detailed memory profiling
+information in debug builds. It is achieved through a device-wide list of
+DRM GEM objects, and also implementing the ability to label BO's from UM
+through a new IOCTL.
 
-Make these fail with EIO instead.
+The new debugfs file shows a list of driver DRM GEM objects in tabular mode.
+To visualise it, cat sudo cat /sys/kernel/debug/dri/*.gpu/gems.
+To test this functionality from UM, please refer to this Mesa patch series:
 
-Suggested-by: Christian Schoenebeck <linux_oss@crudebyte.com>
-Signed-off-by: Dominique Martinet <asmadeus@codewreck.org>
----
-As suggested in https://lkml.kernel.org/r/4171850.H1WhmIdAfj@silver
+https://gitlab.collabora.com/alarumbe/mesa/-/commits/bo-tagging-panthor-gl
 
-Not tested as I haven't taken the time to make a bogus server...
-I'm sure syzbot will come bit us on that :|
----
- net/9p/client.c | 14 ++++++++++----
- 1 file changed, 10 insertions(+), 4 deletions(-)
+Adrián Larumbe (4):
+  drm/panthor: Introduce BO labeling
+  drm/panthor: Add driver IOCTL for setting BO labels
+  drm/panthor: show device-wide list of DRM GEM objects over DebugFS
+  drm/panthor: Display heap chunk entries in DebugFS GEMS file
 
-diff --git a/net/9p/client.c b/net/9p/client.c
-index 99e9a55199e8..a2e5ff161562 100644
---- a/net/9p/client.c
-+++ b/net/9p/client.c
-@@ -1594,7 +1594,9 @@ p9_client_read_once(struct p9_fid *fid, u64 offset, struct iov_iter *to,
- 	}
- 	if (rsize < received) {
- 		pr_err("bogus RREAD count (%u > %u)\n", received, rsize);
--		received = rsize;
-+		*err = -EIO;
-+		p9_req_put(clnt, req);
-+		return 0;
- 	}
- 
- 	p9_debug(P9_DEBUG_9P, "<<< RREAD count %u\n", received);
-@@ -1661,7 +1663,10 @@ p9_client_write(struct p9_fid *fid, u64 offset, struct iov_iter *from, int *err)
- 		}
- 		if (rsize < written) {
- 			pr_err("bogus RWRITE count (%u > %u)\n", written, rsize);
--			written = rsize;
-+			*err = -EIO;
-+			iov_iter_revert(from, count - iov_iter_count(from));
-+			p9_req_put(clnt, req);
-+			break;
- 		}
- 
- 		p9_debug(P9_DEBUG_9P, "<<< RWRITE count %u\n", written);
-@@ -1713,7 +1718,7 @@ p9_client_write_subreq(struct netfs_io_subrequest *subreq)
- 
- 	if (written > len) {
- 		pr_err("bogus RWRITE count (%d > %u)\n", written, len);
--		written = len;
-+		written = -EIO;
- 	}
- 
- 	p9_debug(P9_DEBUG_9P, "<<< RWRITE count %d\n", len);
-@@ -2145,7 +2150,8 @@ int p9_client_readdir(struct p9_fid *fid, char *data, u32 count, u64 offset)
- 	}
- 	if (rsize < count) {
- 		pr_err("bogus RREADDIR count (%u > %u)\n", count, rsize);
--		count = rsize;
-+		err = -EIO;
-+		goto free_and_error;
- 	}
- 
- 	p9_debug(P9_DEBUG_9P, "<<< RREADDIR count %u\n", count);
+ drivers/gpu/drm/panthor/panthor_device.c |   5 +
+ drivers/gpu/drm/panthor/panthor_device.h |   8 ++
+ drivers/gpu/drm/panthor/panthor_drv.c    |  57 +++++++++++
+ drivers/gpu/drm/panthor/panthor_gem.c    | 119 +++++++++++++++++++++++
+ drivers/gpu/drm/panthor/panthor_gem.h    |  34 +++++++
+ drivers/gpu/drm/panthor/panthor_heap.c   |  15 +++
+ include/uapi/drm/panthor_drm.h           |  14 +++
+ 7 files changed, 252 insertions(+)
 
----
-base-commit: a08cea93bd00497bdf3ff09527d378e2e928ed3a
-change-id: 20250317-p9_bogus_io_error-5e91a19be30c
-
-Best regards,
--- 
-Dominique Martinet | Asmadeus
-
+--
+2.48.1
 
