@@ -1,229 +1,122 @@
-Return-Path: <linux-kernel+bounces-562924-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562925-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69749A634BC
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 09:50:11 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F87CA634BF
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 09:51:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D39F3B2054
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 08:49:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A9F39170772
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 08:51:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8F58191461;
-	Sun, 16 Mar 2025 08:50:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD8B619AA56;
+	Sun, 16 Mar 2025 08:51:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=furiosa-ai.20230601.gappssmtp.com header.i=@furiosa-ai.20230601.gappssmtp.com header.b="FrU5Z/Ve"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="kFF1x8+K"
+Received: from mout.web.de (mout.web.de [217.72.192.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD9E511185
-	for <linux-kernel@vger.kernel.org>; Sun, 16 Mar 2025 08:50:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEB3F11185;
+	Sun, 16 Mar 2025 08:51:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742115004; cv=none; b=O7Mq22+wb8OIZE0a73/8Or0QGLBhWUFfulU+U70Id/ctk0mdoxrydb4NDV2CH52pSo0FHV0briKP3GYbNTW+g9VtXZPFBM3Q07gWoUS4jpBHGeaadJnF9WF5Qxkc6sRCUnd29Dz7ZR56PTqHXS6lJ1Mf3ek7d4JH4WtLzWmi2qo=
+	t=1742115093; cv=none; b=mKXV51gmoTK8aVQ5Jy9WGZAhVOF73WLaZThdQ7SpgJD45qw5gggl9WRr8NlwBIxS88HkQs2KbVFGD8C+H3GLvfcIxSeGpP/qUC2tRZbJfL7C3ZzFFkLUnzX+39k30+D9HpKr14d6mQ7kaeVe4eXvyeekfHTXWj5mAgr3hZnc9LQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742115004; c=relaxed/simple;
-	bh=MlPySl3ACm5OC8MT1lGjuC4BtV8C3P3CkbQqd9j9HqI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KDkzpBfwOtM5MHWbrpDp/BA2bA+1gIXum5BVqqMv3tyunQxMR+N5G7dic95vQ52APgtLFoSiyCIDVbBZTH6rDfnhfTHB9Ywz/im4HG35yTYkwtekZ7Wprq7ukyx4zO2RPLZ4aJ0rBEqCLvgRTpyWIoLM7XHtHOO8Vf4E2C/rK6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=furiosa.ai; spf=none smtp.mailfrom=furiosa.ai; dkim=pass (2048-bit key) header.d=furiosa-ai.20230601.gappssmtp.com header.i=@furiosa-ai.20230601.gappssmtp.com header.b=FrU5Z/Ve; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=furiosa.ai
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=furiosa.ai
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-224171d6826so10879455ad.3
-        for <linux-kernel@vger.kernel.org>; Sun, 16 Mar 2025 01:50:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=furiosa-ai.20230601.gappssmtp.com; s=20230601; t=1742115002; x=1742719802; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=soOsMjUDX0L3z68pN83CLYXGQKPqqXJHBRzUH/+iQu4=;
-        b=FrU5Z/Ve4KI2EJ5dpYWsk+rRaYpNJii8NKRM/FOkVFL56m5v4V/LXT6hZ7Z/5jmH7b
-         CqWGqqRIymLu+1lUIFkJ7+tkUm3maYzbsjN8VGcmxSFhWq5Y5LlRfN4/Pa2+emh3Bf2I
-         6arc1LUM6ABEzHBev6naLyPISV3l4hqRXpM7uDLX3dvCwBrynGgihqc91EW5ImUR8kgf
-         iM4Z4Rm5wsvGTm2ylupZjwKLcGZGoRNFfAZXaM7GVXIUFVD8mTAlW2y8mJ2QwsE26m8y
-         cdOBkwN88PGyXHtHXjid/joZGEnLqiyUSFfs8sKHcwyRfUYHwnRKxP86PIoOEPWtvG4M
-         LNtQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742115002; x=1742719802;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=soOsMjUDX0L3z68pN83CLYXGQKPqqXJHBRzUH/+iQu4=;
-        b=rPmSEr9dAAks2Qx2/0u5pKm7255WOZjU+8+LUOjtWp7u7v7Ok+vhtJRVB7I1RATg1p
-         t2+JzKbkbNuH2slYUPTlICjuS47NOHwZpK0CF9XOjXP2uCVSnl5A61Xwh2ZTIt/4IKBI
-         b81DsgnYxsSUMmSXDVxxGZGBrI3NXyfCQTSn5vs9NaRGwaMgqcJ3wJiVARkIqpiTj33E
-         uH80bEPC9Mul+Ec9QZPKrV8EcKzuPncDAV5XvuOJMViA2ri/C7gN2U9hnAB9eShQt79n
-         T4BIfxNt5A5g9Q03lMTVm5c0CJurqNOzZsU2pePYnsrj7liqYNbK260I5SWHPsHzgdyn
-         YSAw==
-X-Forwarded-Encrypted: i=1; AJvYcCX4ArpVJRnmjz8K2ZaiskENednNl6+G2Ocio2aOxfULFtjMbJRH/nRPYjMLpA11Zw2e06rldEUviincZHw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzCwC+C2psWUjtGnYQDbS5/gx6R0OS+PFarrDh3gtxjbrkcsj7Q
-	zWU4egiksN/BSZRH7hke1KwReKBKeg5DAial8LOFEhM5JjGOFbZ3yWmdTMDKuQM=
-X-Gm-Gg: ASbGncupLqM9c4UMMxegbuScWOKG7FKqgVmpCNW7LtxeJU2tvGto+mQ6Ce7QJkJVWtr
-	7Hy8neQhF8Fsa6tmqrlcuhD0tF/+OFxbPrFr+0yC6l0I2PqMg7XtRlp0P0KPlnMovqRfYn+qcec
-	/cktrapKj3L/okoZqKh07pfCrixEW4b0rHgmnzrtwyeg7p+otROQE0t+JTBzkwOP6iDaMVBD/0Q
-	Kg91mBsitAfd2lar3p0fVs0fRxytzFzMjLP5P9WjufWETlpascQsc7og41MAI5M1lv9+bcyCwI9
-	aeL5SIgv6ZGZQYUD7H6tj1OAe76+MoKfl2mqyXb1V12DqiEuXuS7sQXALF9E/deUzIQiE5YpNB6
-	5h9HLvA==
-X-Google-Smtp-Source: AGHT+IEzVK5LsPCPJLOxGzZJMLs0Hpz7cAwlexEXo204aa6yKZYCWEHtDLdFcGmAFiv30Ov47TIhNg==
-X-Received: by 2002:a17:902:f693:b0:21d:3bd7:afdd with SMTP id d9443c01a7336-225e0868050mr111601535ad.0.1742115001911;
-        Sun, 16 Mar 2025 01:50:01 -0700 (PDT)
-Received: from sidongui-MacBookPro.local ([61.83.209.48])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-301539ed069sm3896109a91.17.2025.03.16.01.49.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 16 Mar 2025 01:50:01 -0700 (PDT)
-Date: Sun, 16 Mar 2025 17:49:51 +0900
-From: Sidong Yang <sidong.yang@furiosa.ai>
-To: Pavel Begunkov <asml.silence@gmail.com>
-Cc: Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
-	Jens Axboe <axboe@kernel.dk>, linux-btrfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
-Subject: Re: [RFC PATCH v3 1/3] io-uring/cmd: add iou_vec field for
- io_uring_cmd
-Message-ID: <Z9aQr9iUJecNdPQ4@sidongui-MacBookPro.local>
-References: <20250315172319.16770-1-sidong.yang@furiosa.ai>
- <20250315172319.16770-2-sidong.yang@furiosa.ai>
- <da0445a9-1fb4-4b75-b939-b38ce976205f@gmail.com>
- <Z9aFgKTUmcx-YCMf@sidongui-MacBookPro.local>
+	s=arc-20240116; t=1742115093; c=relaxed/simple;
+	bh=vAff0aee3rul/N7q848YKkFuTPRfb8ln1tKjMsKXO74=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=aMs6dEcr/y0AfPF2Bbav2SFf61yKT33YTneAo1EH5YomQAHamIw3BDNOIu7zMKKLUiu8ufaO8btn7nC+t3cULxi7wiYjlkvaLbaN49e03teHR5OWLw1ueiDHb547MmH8QUseZhLcTLIbE8ntlpICKbrQ2KCR/y6jWRVxsEKXNSo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=kFF1x8+K; arc=none smtp.client-ip=217.72.192.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1742115052; x=1742719852; i=markus.elfring@web.de;
+	bh=vAff0aee3rul/N7q848YKkFuTPRfb8ln1tKjMsKXO74=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=kFF1x8+K7f1TIYXk0J+TiVaWSoeXR/8crYCPBZT7nQqSx+9n/KRHGSaflWlhV3SL
+	 rF0raJ2ppRNwHcmqeoJXyh/GP1iyajQfaWxBN0nRBgpsySmexLFXUG2yU4iGVfwmc
+	 hwo8kVkskaKkZ4GzOj72GjBlLK+lrT1fTg2ebchAPk0OpOQ4m/UJq3zX0B3apz7Lo
+	 pza84namq0tJ5k/hKW0c+1w9YoMMqhN9r913vl38cJ84eoL7YnQiJTvCle73jfXM3
+	 oI5sDjFOUZGWg/R+X5A5V3cwQomhe89YjU3rpgrB6rZD2yE893yyMXmItS0c7qH9r
+	 y3/22mPeosHnm9NYyg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.70.60]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MPrLN-1tXW870xxT-00MepM; Sun, 16
+ Mar 2025 09:50:52 +0100
+Message-ID: <aa403b90-5479-4beb-92f5-d8f33773b923@web.de>
+Date: Sun, 16 Mar 2025 09:50:28 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z9aFgKTUmcx-YCMf@sidongui-MacBookPro.local>
+User-Agent: Mozilla Thunderbird
+To: Thomas Gleixner <tglx@linutronix.de>, cocci@inria.fr
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>, Andrew Lunn
+ <andrew@lunn.ch>, Bartosz Golaszewski <brgl@bgdev.pl>,
+ Chen-Yu Tsai <wens@csie.org>, Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+ Florian Fainelli <florian.fainelli@broadcom.com>,
+ Gregory Clement <gregory.clement@bootlin.com>, Guo Ren <guoren@kernel.org>,
+ Herve Codina <herve.codina@bootlin.com>, Huacai Chen
+ <chenhuacai@kernel.org>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Jiaxun Yang <jiaxun.yang@flygoat.com>, Jiri Slaby <jirislaby@kernel.org>,
+ Linus Walleij <linus.walleij@linaro.org>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Nicolas Ferre <nicolas.ferre@microchip.com>,
+ Samuel Holland <samuel@sholland.org>,
+ Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+ Talel Shenhar <talel@amazon.com>, =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?=
+ <ukleinek@kernel.org>
+References: <20250313142404.896902416@linutronix.de>
+Subject: Re: [patch 0/7] genirq/generic_chip: Convert locking to guards
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20250313142404.896902416@linutronix.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:xy3Yson5TdObRf0N/SURy+6vxAvi28ZaIz75v4YI+eFy9jMgCnf
+ Nzzrrbxs9TbdI8aNEkVBN0pm/+AjvKzYWB35d3jBTmQCen2t/NcOLq74GfuHRBR5kInFWYF
+ /BY7ks2CCn5+dNXw9Lxc1g42YDcW3mTycO4d+sHuwHv0GjKRzUd/gz9q6ar+IY/nlbPY+ia
+ TH3mSFg1etUtX5E8SV8VQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:51w44oArk1o=;k+F4f3IFOUW1k/lwqjQc2MCr+q5
+ A7JWSZqr9NWA3sEmtLYW67m4maYYgRRtB7g/jcYBfDm7ATQJ0eeR387AIrXQZ3yzW7c0oYfkL
+ lJ2bEKewl0Cs3JCXcS6PvkORhnIt0dYXnBdyeZigCCy3GLDnqtHp/dQG1leoyTeq0nQrKogdc
+ WZUlAwux3ZMVD9rNRPNDaO+MmczK0ZQZFOysIWd6Vzd/MlmOUtP7WY6I+qoV1U0DACjEjyhEE
+ 4kiC/3vVW80/iszCy2hnCXoGuh9v4aTPaa627iFeOMd0fz8KNoTlIOd5tOCrSvW0QMlTFoJ+p
+ FpVfzq9gqDUKxhFQ3p5HHdGDaeQf5OODQcFC/84lxCVA1KlzNDhyb6N4mWvJQ3QJ43zYqQb3/
+ 8E+SsMWc/yWB6XrhXLqjvAGy6SdjD7zYXqZJ8I0D0Us6V+YIVsIo+srYTz18+m59zQW2jSsIa
+ 1iHC+MCEYo9+FyM+C1al50f4JqH+BOg/kuJQnilpoNZ+S8Wc0J1Gxb65YDAswG9u3S7Z+YEay
+ MA20Roj3WrvPdHC/HcRGi221ctojkkC/Tix8geBr7mfHN7KA0RowqLyPtaSl5abuvNtzzTYjH
+ +brQRKH/BwcRWoqaOpiFDCnkHJ9XB9n+CpSsJSjWvYVDWxAYfacmz42XHL9vvxZa8x6Trmvgv
+ iwR+u/5g/AdrCQwXgCetoftuB/gAC3I2qY0BtDqwxebA6aliwipsu/qLn+GKLdmH0xBwLs4hE
+ +QkNlZkbNlLcGBbxZCjx0UWx13lMpIrDUx/L6eiSWDuei1vUhP0gpLnS6ecML5n+5IBJLj12L
+ yymOc3QXUwmnzQJvdReDmBhcc/ucOtl8NPzkDQZdn0yh3netXZ/2//9OwMH9+1YCMWK85ECUO
+ MV8At6h0JQYzIKRwyY21aVa9lqCQuHUc+2ASib2DxOQg58/VTImbYAqahEK6HU0a7Ve44Alyy
+ bM7iyP2oT2XwfxJCgKMOJ4IktJ3L5cdCzI/8n1eB9je5LvLDJFSWLI+Tf6Ic/hQhnr8NlB+7b
+ Zu4FYw5vjdGCr73mj8h7eQKBCyvAMZn5aWWryYFVrGvGZXTjNLrCd6jpYJL15TqcVy8Xtmxe+
+ ZPKKoRL97+bdWl2LRcEECsyGreOtln9dFvpcF4M/n4ZP8WgahtAszgWsM4PWdjkbQ8yRtO4dW
+ CyhAIJPXmbXN2nsgltIqTlDJ7z8LmGD8uBKHws6/EXGw3xMlm5MP6Hteq22+AXcOoTKO8Ytao
+ KTkaZRtTJQT+ysvHSKLi6xwueOIjLblW5nmkAkg76NulgrG+dS/MpB6vURfOSj//XRGHOtFK9
+ T0XBTi5HwFwesqkrthpC253M+vKLSwL6Z2y95OIE8qTlbD+I2R4SOMBPTNMrkp5ebYjFAZcy8
+ P1RPI3UAMfmvn5nzPN47C6Q9xdWGvPTTyoj8zYJ0zv+Fa+bNZYfLjnhuQ9/OTxlEGjE/ooQ50
+ xtRwWaun4IFJ3FNJUZLFHpiiKYZTOVrJuxRlg9mkxQuwi8/Bp
 
-On Sun, Mar 16, 2025 at 05:02:19PM +0900, Sidong Yang wrote:
-> On Sun, Mar 16, 2025 at 07:24:32AM +0000, Pavel Begunkov wrote:
-> > On 3/15/25 17:23, Sidong Yang wrote:
-> > > This patch adds iou_vec field for io_uring_cmd. Also it needs to be
-> > > cleanup for cache. It could be used in uring cmd api that imports
-> > > multiple fixed buffers.
-> > 
-> > Sidong, I think you accidentially erased my authorship over the
-> > patch. The only difference I see is that you rebased it and dropped
-> > prep patches by placing iou_vec into struct io_uring_cmd_data. And
-> > the prep patch was mandatory, once something is exported there is
-> > a good chance it gets [ab]used, and iou_vec is not ready for it.
-> 
-> Yes, First I thought it's not mandatory for this function. But it seems that
-> it's needed. I see that your patch hides all fields in io_uring_cmd_data but
-> op_data needed to be accessable for btrfs cmd. And I'll take a look for the
-> code referencing sqes in io_uring_cmd_data. Let me add the commit for next
-> version v4.
+> The following series converts the generic chip locking to lock guards,
+> which reduces code size and improves readability.
+>
+> The conversion was largely done with Coccinelle.
 
-I've just realized that your commit don't need to be modified. It's okay to
-cast async_data to io_uring_cmd_data. 
+Would you like to share any more from your evolving collection of scripts
+for the semantic patch language?
 
-Thanks,
-Sidong
-> 
-> Thanks,
-> Sidong
-> 
-> > 
-> > 
-> > > Signed-off-by: Sidong Yang <sidong.yang@furiosa.ai>
-> > > ---
-> > >   include/linux/io_uring/cmd.h |  1 +
-> > >   io_uring/io_uring.c          |  2 +-
-> > >   io_uring/opdef.c             |  1 +
-> > >   io_uring/uring_cmd.c         | 20 ++++++++++++++++++++
-> > >   io_uring/uring_cmd.h         |  3 +++
-> > >   5 files changed, 26 insertions(+), 1 deletion(-)
-> > > 
-> > > diff --git a/include/linux/io_uring/cmd.h b/include/linux/io_uring/cmd.h
-> > > index 598cacda4aa3..74b9f0aec229 100644
-> > > --- a/include/linux/io_uring/cmd.h
-> > > +++ b/include/linux/io_uring/cmd.h
-> > > @@ -22,6 +22,7 @@ struct io_uring_cmd {
-> > >   struct io_uring_cmd_data {
-> > >   	void			*op_data;
-> > >   	struct io_uring_sqe	sqes[2];
-> > > +	struct iou_vec		iou_vec;
-> > >   };
-> > >   static inline const void *io_uring_sqe_cmd(const struct io_uring_sqe *sqe)
-> > > diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-> > > index 5ff30a7092ed..55334fa53abf 100644
-> > > --- a/io_uring/io_uring.c
-> > > +++ b/io_uring/io_uring.c
-> > > @@ -289,7 +289,7 @@ static void io_free_alloc_caches(struct io_ring_ctx *ctx)
-> > >   	io_alloc_cache_free(&ctx->apoll_cache, kfree);
-> > >   	io_alloc_cache_free(&ctx->netmsg_cache, io_netmsg_cache_free);
-> > >   	io_alloc_cache_free(&ctx->rw_cache, io_rw_cache_free);
-> > > -	io_alloc_cache_free(&ctx->uring_cache, kfree);
-> > > +	io_alloc_cache_free(&ctx->uring_cache, io_cmd_cache_free);
-> > >   	io_alloc_cache_free(&ctx->msg_cache, kfree);
-> > >   	io_futex_cache_free(ctx);
-> > >   	io_rsrc_cache_free(ctx);
-> > > diff --git a/io_uring/opdef.c b/io_uring/opdef.c
-> > > index 7fd173197b1e..e275180c2077 100644
-> > > --- a/io_uring/opdef.c
-> > > +++ b/io_uring/opdef.c
-> > > @@ -755,6 +755,7 @@ const struct io_cold_def io_cold_defs[] = {
-> > >   	},
-> > >   	[IORING_OP_URING_CMD] = {
-> > >   		.name			= "URING_CMD",
-> > > +		.cleanup		= io_uring_cmd_cleanup,
-> > >   	},
-> > >   	[IORING_OP_SEND_ZC] = {
-> > >   		.name			= "SEND_ZC",
-> > > diff --git a/io_uring/uring_cmd.c b/io_uring/uring_cmd.c
-> > > index de39b602aa82..315c603cfdd4 100644
-> > > --- a/io_uring/uring_cmd.c
-> > > +++ b/io_uring/uring_cmd.c
-> > > @@ -28,6 +28,13 @@ static void io_req_uring_cleanup(struct io_kiocb *req, unsigned int issue_flags)
-> > >   	if (issue_flags & IO_URING_F_UNLOCKED)
-> > >   		return;
-> > > +
-> > > +	req->flags &= ~REQ_F_NEED_CLEANUP;
-> > > +
-> > > +	io_alloc_cache_vec_kasan(&cache->iou_vec);
-> > > +	if (cache->iou_vec.nr > IO_VEC_CACHE_SOFT_CAP)
-> > > +		io_vec_free(&cache->iou_vec);
-> > > +
-> > >   	if (io_alloc_cache_put(&req->ctx->uring_cache, cache)) {
-> > >   		ioucmd->sqe = NULL;
-> > >   		req->async_data = NULL;
-> > > @@ -35,6 +42,11 @@ static void io_req_uring_cleanup(struct io_kiocb *req, unsigned int issue_flags)
-> > >   	}
-> > >   }
-> > > +void io_uring_cmd_cleanup(struct io_kiocb *req)
-> > > +{
-> > > +	io_req_uring_cleanup(req, 0);
-> > > +}
-> > > +
-> > >   bool io_uring_try_cancel_uring_cmd(struct io_ring_ctx *ctx,
-> > >   				   struct io_uring_task *tctx, bool cancel_all)
-> > >   {
-> > > @@ -339,3 +351,11 @@ int io_uring_cmd_sock(struct io_uring_cmd *cmd, unsigned int issue_flags)
-> > >   }
-> > >   EXPORT_SYMBOL_GPL(io_uring_cmd_sock);
-> > >   #endif
-> > > +
-> > > +void io_cmd_cache_free(const void *entry)
-> > > +{
-> > > +	struct io_uring_cmd_data *cache = (struct io_uring_cmd_data *)entry;
-> > > +
-> > > +	io_vec_free(&cache->iou_vec);
-> > > +	kfree(cache);
-> > > +}
-> > > diff --git a/io_uring/uring_cmd.h b/io_uring/uring_cmd.h
-> > > index f6837ee0955b..d2b9c1522e22 100644
-> > > --- a/io_uring/uring_cmd.h
-> > > +++ b/io_uring/uring_cmd.h
-> > > @@ -1,7 +1,10 @@
-> > >   // SPDX-License-Identifier: GPL-2.0
-> > > +#include <linux/io_uring_types.h>
-> > >   int io_uring_cmd(struct io_kiocb *req, unsigned int issue_flags);
-> > >   int io_uring_cmd_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe);
-> > > +void io_uring_cmd_cleanup(struct io_kiocb *req);
-> > >   bool io_uring_try_cancel_uring_cmd(struct io_ring_ctx *ctx,
-> > >   				   struct io_uring_task *tctx, bool cancel_all);
-> > > +void io_cmd_cache_free(const void *entry);
-> > 
-> > -- 
-> > Pavel Begunkov
-> > 
+Regards,
+Markus
 
