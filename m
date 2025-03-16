@@ -1,532 +1,184 @@
-Return-Path: <linux-kernel+bounces-562794-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562796-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53FC6A6330A
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 02:09:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69688A6330E
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 02:17:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E0EE3AFECF
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 01:09:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D7261890C63
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 01:17:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FC2517C79;
-	Sun, 16 Mar 2025 01:09:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 115C6DDA9;
+	Sun, 16 Mar 2025 01:17:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="Q051WPht"
-Received: from mail-4316.protonmail.ch (mail-4316.protonmail.ch [185.70.43.16])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="huafWbJi"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28E1FBE46;
-	Sun, 16 Mar 2025 01:09:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DC9B63CF
+	for <linux-kernel@vger.kernel.org>; Sun, 16 Mar 2025 01:16:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742087377; cv=none; b=MNuYl/juD+FGy3m0OTCTx83STm9D0m4wklv1bMQ9P9z/F4VLTmrwqU95QOPG40Jq//ty580vCoF8mxmpJiNy3WMV2Rqx6GYxk4IVHO0zGYJ9pS2TwrSoVIUWQXs2VMrQDRU4G4VE+RgtQO4Xifbwyc7t0PnJSMZPj+wwmNxEGNs=
+	t=1742087821; cv=none; b=FG5dYeB8IFh+x/5qpwskZJD5CACqVW3XhH7Dq4hLvtxDZhkdLMjr0T3W+gmYcWFasd7CQm/dawsn6ZtiMW4OjeI9bY8TeYenM3LZMyDNvB8orr8dGBA+PSF9ejOv4Cn8gOPB/zXB6ImLV7edmWulHpdpz594KkRVUMievF3f2Po=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742087377; c=relaxed/simple;
-	bh=WwZ45oimIxQTSx72HxQmlkPmKM4lzGRqnZ/POQF8leo=;
-	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=j+RKbJBcxOgoPjaWcqeo7TZAc8hHzIQ3Llm5T9mQFDdUf3eJtgt6lkBJI5tKkg3yCNDAfnxBkgboV8BIs0JuboC4SteAphm3Hrg0nYbwPBMHBJemebeOFR5z6gk5ASwYOSqjkyvYTz6MI6QrW0og5QV+4JyoI5nD+Pq9q/WdXvk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=Q051WPht; arc=none smtp.client-ip=185.70.43.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-	s=protonmail3; t=1742087372; x=1742346572;
-	bh=MqmS0orb2WnUl2paHYYKtX6297b3GG+ztGyGpJUohpU=;
-	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
-	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector:
-	 List-Unsubscribe:List-Unsubscribe-Post;
-	b=Q051WPhtp2O0j1ZA1aNGhOakQJhGFb3efJhsoJ68TIwCbOYc+8JvfwoMrWBQBwZbM
-	 J0sl8xC7pUvkNdI5RGYJXRKVzuTzPNO09Dsggabg4C6ZIeLYXx3RadCi8/JVh8qUwM
-	 zJ7zG+opIm5M0zH3mOLAjueHSZ8SRv1knw4MElnY68KMwGcmPhTsYHqJGqgEAGS29g
-	 lgi0WH5YwyYXEsZIzrSBmuTs9RHn/qRkFk7xLhJ7R0HuPrEb9pYIVoaKhTWI4NNkco
-	 TWCgHLJf8ZmZkWCA6G+jazc5rHLHQlMBFplIRw+ULFQuNaQ9x3XWXtRirX2Smjf5Z0
-	 kgoc+NYrTV+Hg==
-Date: Sun, 16 Mar 2025 01:09:27 +0000
-To: Benjamin Tissoires <bentiss@kernel.org>
-From: Rahul Rameshbabu <sergeantsagara@protonmail.com>
-Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-input@vger.kernel.org, Jiri Kosina <jikos@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH RFC 1/3] rust: core abstractions for HID drivers
-Message-ID: <87v7s9hjcy.fsf@protonmail.com>
-Feedback-ID: 26003777:user:proton
-X-Pm-Message-ID: f342f64941e007e2a1ca4b858f36b51900ebc90e
+	s=arc-20240116; t=1742087821; c=relaxed/simple;
+	bh=SSAZS0Aw8X7I+lmtlf1UTRPtQEiv9h3mzLxk5QChPPc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Lq6c+KFcAJiowAqgVWGEd0D8qvRsf9NmZ2f6XndK0xISShV1U3braYDKgjx6loI1b3jWxY3C5sBARlock1sQv/99end9VTlmLzztrk7ZVSnxfj8FPIWlTp7zFPWjhK9/O8eH8AtAhq148rgnOU3PP67wnYFQ2p/1GCyEyCz2PxM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=huafWbJi; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742087819; x=1773623819;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=SSAZS0Aw8X7I+lmtlf1UTRPtQEiv9h3mzLxk5QChPPc=;
+  b=huafWbJiIl0MHwUkZG6/VvkXDnDVpE6B2Y1Cew9YszNqIQPCS3H0NLwo
+   3r4eFEikPzZ3rmORK/YXF2okpxBrc+MtO4NLhF/Hl6X6z7muRVRV2t6/i
+   7d8CD6ZFEcNeAKfosfPB3ey/4Bx4dWNjo3xY35N4gDsQSEzKw/nnBLnv9
+   zyOX/3RN1FwsgFWXQeV1hAB+KaacanPXkZ8SEMOJfBytD8prrKUJaBj/2
+   zQK7GmgIoLY/JPuVrAQf8FNRvF3uf5Ue8tfADkZBCUnAnfv+gyqeGltiL
+   82cKy905uRjfob/fwqZbzUUhN5pn8VF60PrFojbCNNZyncPeDMy5dGpo8
+   w==;
+X-CSE-ConnectionGUID: M6CtuvcdRw+wFM1YtPgNFQ==
+X-CSE-MsgGUID: OqtYIlsMQWiUH9zcGNLDTg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11374"; a="45977538"
+X-IronPort-AV: E=Sophos;i="6.14,251,1736841600"; 
+   d="scan'208";a="45977538"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Mar 2025 18:16:58 -0700
+X-CSE-ConnectionGUID: cWRnzUJ5QriF7b36Uq0b9A==
+X-CSE-MsgGUID: ESDT0N2/SLCTX94sQwGBXw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,251,1736841600"; 
+   d="scan'208";a="144792764"
+Received: from lkp-server02.sh.intel.com (HELO a4747d147074) ([10.239.97.151])
+  by fmviesa002.fm.intel.com with ESMTP; 15 Mar 2025 18:16:56 -0700
+Received: from kbuild by a4747d147074 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1ttccX-000Bkh-1F;
+	Sun, 16 Mar 2025 01:16:53 +0000
+Date: Sun, 16 Mar 2025 09:16:41 +0800
+From: kernel test robot <lkp@intel.com>
+To: Pu Lehui <pulehui@huaweicloud.com>, linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Alexandre Ghiti <alex@ghiti.fr>,
+	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
+	"Steven Rostedt (Google)" <rostedt@goodmis.org>,
+	Naresh Kamboju <naresh.kamboju@linaro.org>,
+	Pu Lehui <pulehui@huawei.com>
+Subject: Re: [PATCH] riscv: fgraph: Fix stack layout to match
+ __arch_ftrace_regs argument of ftrace_return_to_handler
+Message-ID: <202503160820.dvqMpH0g-lkp@intel.com>
+References: <20250311132243.2178271-1-pulehui@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250311132243.2178271-1-pulehui@huaweicloud.com>
 
-On Thu, 13 Mar, 2025 17:54:57 +0100 "Benjamin Tissoires" <bentiss@kernel.or=
-g> wrote:
-> On Mar 13 2025, Rahul Rameshbabu wrote:
->> These abstractions enable the development of HID drivers in Rust by bind=
-ing
->> with the HID core C API. They provide Rust types that map to the
->> equivalents in C. In this initial draft, only hid_device and hid_device_=
-id
->> are provided direct Rust type equivalents. hid_driver is specially wrapp=
-ed
->> with a custom Driver type. The module_hid_driver! macro provides analogo=
-us
->> functionality to its C equivalent.
->>
->> Future work for these abstractions would include more bindings for commo=
-n
->> HID-related types, such as hid_field, hid_report_enum, and hid_report.
->
-> Yes, but you can also bypass this as a first step in the same way we do
-> for HID-BPF: we just consider everything to be a stream of bytes, and
-> we only care about .report_fixup() and .raw_event().
->
+Hi Pu,
 
-Thanks, I took a look at struct hid_bpf_ops and how it is used in
-drivers/hid/bpf/hid_bpf_dispatch.c. Would you then suggest doing this
-for the C-Rust layer and just having pure Rust code for handling the
-stream of bytes, instead of doing more C-Rust bindings? This is
-something that can be discussed after implementing a Rust abstraction
-with a "simple" reference HID driver.
+kernel test robot noticed the following build errors:
 
->> Providing Rust equivalents to useful core HID functions will also be
->> necessary for HID driver development in Rust.
->
-> Yeah, you'll need the back and forth communication with the HID device,
-> but this can come in later.
->
->>
->> Some concerns with this initial draft
->>   - The need for a DeviceId and DeviceIdShallow type.
->>     + DeviceIdShallow is used to guarantee the safety requirement for th=
-e
->>       Sync trait.
->>   - The create_hid_driver call in the module_hid_driver! macro does not =
-use
->>     Pin semantics for passing the ID_TABLE. I could not get Pin semantic=
-s
->>     to work in a const fn. I get a feeling this might be safe but need h=
-elp
->>     reviewing this.
->>
->> Signed-off-by: Rahul Rameshbabu <sergeantsagara@protonmail.com>
->> ---
->>  drivers/hid/Kconfig             |   8 ++
->>  rust/bindings/bindings_helper.h |   1 +
->>  rust/kernel/hid.rs              | 245 ++++++++++++++++++++++++++++++++
->>  rust/kernel/lib.rs              |   2 +
->>  4 files changed, 256 insertions(+)
->>  create mode 100644 rust/kernel/hid.rs
->>
->> diff --git a/drivers/hid/Kconfig b/drivers/hid/Kconfig
->> index b53eb569bd49..e085964c7ffc 100644
->> --- a/drivers/hid/Kconfig
->> +++ b/drivers/hid/Kconfig
->> @@ -714,6 +714,14 @@ config HID_MEGAWORLD_FF
->>  =09Say Y here if you have a Mega World based game controller and want
->>  =09to have force feedback support for it.
->>
->> +config RUST_HID_ABSTRACTIONS
->> +=09bool "Rust HID abstractions support"
->> +=09depends on RUST
->> +=09depends on HID=3Dy
->
-> naive question: does it has to be 'y', some distributions are using 'm'.
->
+[auto build test ERROR on linus/master]
+[also build test ERROR on v6.14-rc6 next-20250314]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-My distribution of choice uses 'm' as well. I probably should double
-check how the #[cfg(CONFIG_RUST_HID_ABSTRACTIONS)] Rust attribute works.
-I think the problem here is that all the Rust abstrations today get
-compiled into the kernel image, so if the HID Rust abstrations depend on
-a module, that sort of breaks the abstration that components compiled
-into the kernel as built-in do not depend on symbols from a module.
+url:    https://github.com/intel-lab-lkp/linux/commits/Pu-Lehui/riscv-fgraph-Fix-stack-layout-to-match-__arch_ftrace_regs-argument-of-ftrace_return_to_handler/20250311-212440
+base:   linus/master
+patch link:    https://lore.kernel.org/r/20250311132243.2178271-1-pulehui%40huaweicloud.com
+patch subject: [PATCH] riscv: fgraph: Fix stack layout to match __arch_ftrace_regs argument of ftrace_return_to_handler
+config: riscv-randconfig-001-20250316 (https://download.01.org/0day-ci/archive/20250316/202503160820.dvqMpH0g-lkp@intel.com/config)
+compiler: clang version 21.0.0git (https://github.com/llvm/llvm-project 87916f8c32ebd8e284091db9b70339df57fd1e90)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250316/202503160820.dvqMpH0g-lkp@intel.com/reproduce)
 
-I believe there are a number of other Rust abstractions that fall into
-this problem. CONFIG_RUST_FW_LOADER_ABSTRACTIONS is one such example. I
-would definitely be interested in discussion on how to solve this
-problem in general for the Rust abstractions.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202503160820.dvqMpH0g-lkp@intel.com/
 
->> +=09help
->> +=09Adds support needed for HID drivers written in Rust. It provides a
->> +=09wrapper around the C hid core.
->> +
->>  config HID_REDRAGON
->>  =09tristate "Redragon keyboards"
->>  =09default !EXPERT
->> diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings_he=
-lper.h
->> index 55354e4dec14..e2e95afe9f4a 100644
->> --- a/rust/bindings/bindings_helper.h
->> +++ b/rust/bindings/bindings_helper.h
->> @@ -16,6 +16,7 @@
->>  #include <linux/file.h>
->>  #include <linux/firmware.h>
->>  #include <linux/fs.h>
->> +#include <linux/hid.h>
->>  #include <linux/jiffies.h>
->>  #include <linux/jump_label.h>
->>  #include <linux/mdio.h>
->> diff --git a/rust/kernel/hid.rs b/rust/kernel/hid.rs
->> new file mode 100644
->> index 000000000000..f13476b49e7d
->> --- /dev/null
->> +++ b/rust/kernel/hid.rs
->> @@ -0,0 +1,245 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +
->> +// Copyright (C) 2025 Rahul Rameshbabu <sergeantsagara@protonmail.com>
->> +
->> +use crate::{error::*, prelude::*, types::Opaque};
->> +use core::marker::PhantomData;
->> +
->> +#[repr(transparent)]
->> +pub struct Device(Opaque<bindings::hid_device>);
->> +
->> +impl Device {
->> +    unsafe fn from_ptr<'a>(ptr: *mut bindings::hid_device) -> &'a mut S=
-elf {
->> +        let ptr =3D ptr.cast::<Self>();
->> +
->> +        unsafe { &mut *ptr }
->> +    }
->> +
->> +    pub fn vendor(&self) -> u32 {
->> +        let hdev =3D self.0.get();
->> +
->> +        unsafe { (*hdev).vendor }
->> +    }
->> +
->> +    pub fn product(&self) -> u32 {
->> +        let hdev =3D self.0.get();
->> +
->> +        unsafe { (*hdev).product }
->> +    }
->
-> I know this is a RFC, but there are a lot more of interesting fields
-> you'll want to export.
->
-> Can/Should this be automated somehow?
->
+All errors (new ones prefixed by >>):
 
-That would be interesting. I am not sure there is a path for automation
-of this right now. This is a similar problem to C++ with
-setters/getters. I would be interested if someone from the Rust for
-Linux side has any commentary on this topic.
+>> <instantiation>:1:14: error: operand must be a symbol with %lo/%pcrel_lo/%tprel_lo modifier or an integer in the range [-2048, 2047]
+   addi sp, sp, -FREGS_SIZE_ON_STACK
+                ^
+   arch/riscv/kernel/mcount.S:73:2: note: while in macro instantiation
+    SAVE_RET_ABI_STATE
+    ^
+>> <instantiation>:2:17: error: unexpected token
+    sw ra, FREGS_RA(sp)
+                   ^
+   arch/riscv/kernel/mcount.S:73:2: note: while in macro instantiation
+    SAVE_RET_ABI_STATE
+    ^
+   <instantiation>:3:17: error: unexpected token
+    sw s0, FREGS_S0(sp)
+                   ^
+   arch/riscv/kernel/mcount.S:73:2: note: while in macro instantiation
+    SAVE_RET_ABI_STATE
+    ^
+   <instantiation>:4:17: error: unexpected token
+    sw a0, FREGS_A0(sp)
+                   ^
+   arch/riscv/kernel/mcount.S:73:2: note: while in macro instantiation
+    SAVE_RET_ABI_STATE
+    ^
+   <instantiation>:5:17: error: unexpected token
+    sw a1, FREGS_A1(sp)
+                   ^
+   arch/riscv/kernel/mcount.S:73:2: note: while in macro instantiation
+    SAVE_RET_ABI_STATE
+    ^
+   <instantiation>:6:15: error: operand must be a symbol with %lo/%pcrel_lo/%tprel_lo modifier or an integer in the range [-2048, 2047]
+    addi s0, sp, FREGS_SIZE_ON_STACK
+                 ^
+   arch/riscv/kernel/mcount.S:73:2: note: while in macro instantiation
+    SAVE_RET_ABI_STATE
+    ^
+   <instantiation>:1:16: error: unexpected token
+   lw ra, FREGS_RA(sp)
+                  ^
+   arch/riscv/kernel/mcount.S:77:2: note: while in macro instantiation
+    RESTORE_RET_ABI_STATE
+    ^
+>> <instantiation>:2:17: error: unexpected token
+    lw s0, FREGS_S0(sp)
+                   ^
+   arch/riscv/kernel/mcount.S:77:2: note: while in macro instantiation
+    RESTORE_RET_ABI_STATE
+    ^
+   <instantiation>:3:17: error: unexpected token
+    lw a0, FREGS_A0(sp)
+                   ^
+   arch/riscv/kernel/mcount.S:77:2: note: while in macro instantiation
+    RESTORE_RET_ABI_STATE
+    ^
+   <instantiation>:4:17: error: unexpected token
+    lw a1, FREGS_A1(sp)
+                   ^
+   arch/riscv/kernel/mcount.S:77:2: note: while in macro instantiation
+    RESTORE_RET_ABI_STATE
+    ^
+   <instantiation>:5:15: error: operand must be a symbol with %lo/%pcrel_lo/%tprel_lo modifier or an integer in the range [-2048, 2047]
+    addi sp, sp, FREGS_SIZE_ON_STACK
+                 ^
+   arch/riscv/kernel/mcount.S:77:2: note: while in macro instantiation
+    RESTORE_RET_ABI_STATE
+    ^
 
->> +}
->> +
->> +#[repr(transparent)]
->> +pub struct DeviceIdShallow(Opaque<bindings::hid_device_id>);
->> +
->> +// SAFETY: `DeviceIdShallow` doesn't expose any &self method to access =
-internal data, so it's safe to
->> +// share `&DriverVTable` across execution context boundaries.
->> +unsafe impl Sync for DeviceIdShallow {}
->> +
->> +impl DeviceIdShallow {
->
-> I have a hard time understanding the "DeviceId" part.
->
-> In struct hid_device, we have a .id field which is incremented for every
-> new device. I assume this is different, but this still confuses me.
->
-> If that's the rust way of doing it that's fine of course.
->
-> [few minutes later] Oh, so you are mapping struct hid_device_id :)
-> Why dropping the 'HID' in front?
-
-This has to do with module scoping in Rust (similar to namespaces in C++
-as an analogy). The way I would reference this in HID drivers would be
-hid::DeviceId vs hid::HidDeviceId. I think, because of this, its more
-common among the Rust abstraction to drop the name of the subsystem in
-the type name prefixes.
-
->
-> I guess the docs would explain that in the actual submission.
->
-
-I'll work an adding proper documentation in my next RFC revision. I
-wanted to get this initial RFC out just to make sure I am on the right
-path.
-
->
->> +    pub const fn new() -> Self {
->> +        DeviceIdShallow(Opaque::new(bindings::hid_device_id {
->> +            // SAFETY: The rest is zeroed out to initialize `struct hid=
-_device_id`,
->> +            // sets `Option<&F>` to be `None`.
->> +            ..unsafe { ::core::mem::MaybeUninit::<bindings::hid_device_=
-id>::zeroed().assume_init() }
->> +        }))
->> +    }
->> +
->> +    pub const fn new_usb(vendor: u32, product: u32) -> Self {
->
-> We probably need the group here as well.
->
-
-  #define HID_USB_DEVICE(ven, prod)=09=09=09=09\
-    .bus =3D BUS_USB, .vendor =3D (ven), .product =3D (prod)
-
-When we use HID_USB_DEVICE to instantiate a hid_device_id element in the
-.id_table, the C macro does not populate the .group field. Is the ideal
-for anything new in the HID subsystem to explicitly specify groups?
-Through git blaming, I found 070748ed0b52 ("HID: Create a generic device
-group"). The commit description was very useful.
-
-  Devices that do not have a special driver are handled by the generic
-  driver. This patch does the same thing using device groups; Instead of
-  forcing a particular driver, the appropriate driver is picked up by
-  udev. As a consequence, one can now move a device from generic to
-  specific handling by a simple rebind.
-
-I assume we want to explicitly specify group going forward for matching
-with the generic driver or not and for rebinding purposes with udev?
-
->> +        DeviceIdShallow(Opaque::new(bindings::hid_device_id {
->> +            bus: 0x3, /* BUS_USB */
->
-> group???
->
->> +            vendor: vendor,
->> +            product: product,
->> +            // SAFETY: The rest is zeroed out to initialize `struct hid=
-_device_id`,
->> +            // sets `Option<&F>` to be `None`.
->> +            ..unsafe { ::core::mem::MaybeUninit::<bindings::hid_device_=
-id>::zeroed().assume_init() }
->> +        }))
->> +    }
->> +
->> +    const unsafe fn as_ptr(&self) -> *const bindings::hid_device_id {
->> +        self.0.get()
->> +    }
->> +}
->> +
->> +#[repr(transparent)]
->> +pub struct DeviceId(Opaque<bindings::hid_device_id>);
->> +
->> +impl DeviceId {
->> +    unsafe fn from_ptr<'a>(ptr: *mut bindings::hid_device_id) -> &'a mu=
-t Self {
->> +        let ptr =3D ptr.cast::<Self>();
->> +
->> +        unsafe { &mut *ptr }
->> +    }
->> +
->> +    unsafe fn from_const_ptr<'a>(ptr: *const bindings::hid_device_id) -=
-> &'a Self {
->> +        let ptr =3D ptr.cast::<Self>();
->> +
->> +        unsafe { &(*ptr) }
->> +    }
->> +
->> +    pub fn vendor(&self) -> u32 {
->> +        let hdev_id =3D self.0.get();
->> +
->> +        unsafe { (*hdev_id).vendor }
->> +    }
->> +
->> +    pub fn product(&self) -> u32 {
->> +        let hdev_id =3D self.0.get();
->> +
->> +        unsafe { (*hdev_id).product }
->> +    }
->
-> Again, you need the group and the bus at least.
->
-
-Will add throw those and more in my next revision.
-
->> +}
->> +
->> +/*
->> +#[repr(transparent)]
->> +pub struct Field(Opaque<bindings::hid_field>);
->> +
->> +#[repr(transparent)]
->> +pub struct ReportEnum(Opaque<bindings::hid_report_enum>);
->> +
->> +#[repr(transparent)]
->> +pub struct Report(Opaque<bindings::hid_report>);
->> +*/
->> +
->> +#[vtable]
->> +pub trait Driver {
->> +    fn probe(_dev: &mut Device, _id: &DeviceId) -> Result {
->> +        build_error!(VTABLE_DEFAULT_ERROR)
->> +    }
->> +
->> +    fn remove(_dev: &mut Device) {
->> +    }
->> +}
->> +
->> +struct Adapter<T: Driver> {
->> +    _p: PhantomData<T>,
->> +}
->> +
->> +impl<T: Driver> Adapter<T> {
->> +    unsafe extern "C" fn probe_callback(
->> +        hdev: *mut bindings::hid_device,
->> +        hdev_id: *const bindings::hid_device_id,
->> +    ) -> crate::ffi::c_int {
->> +        from_result(|| {
->> +            let dev =3D unsafe { Device::from_ptr(hdev) };
->> +            let dev_id =3D unsafe { DeviceId::from_const_ptr(hdev_id) }=
-;
->> +            T::probe(dev, dev_id)?;
->> +            Ok(0)
->> +        })
->> +    }
->> +
->> +    unsafe extern "C" fn remove_callback(hdev: *mut bindings::hid_devic=
-e) {
->> +        let dev =3D unsafe { Device::from_ptr(hdev) };
->> +        T::remove(dev);
->> +    }
->> +}
->> +
->> +#[repr(transparent)]
->> +pub struct DriverVTable(Opaque<bindings::hid_driver>);
->> +
->> +// SAFETY: `DriverVTable` doesn't expose any &self method to access int=
-ernal data, so it's safe to
->> +// share `&DriverVTable` across execution context boundaries.
->> +unsafe impl Sync for DriverVTable {}
->> +
->> +pub const fn create_hid_driver<T: Driver>(
->> +    name: &'static CStr,
->> +    id_table: &'static DeviceIdShallow,
->> +) -> DriverVTable {
->> +    DriverVTable(Opaque::new(bindings::hid_driver {
->> +        name: name.as_char_ptr().cast_mut(),
->> +        id_table: unsafe { id_table.as_ptr() },
->> +        probe: if T::HAS_PROBE {
->> +            Some(Adapter::<T>::probe_callback)
->> +        } else {
->> +            None
->> +        },
->> +        remove: if T::HAS_REMOVE {
->> +            Some(Adapter::<T>::remove_callback)
->> +        } else {
->> +            None
->> +        },
->> +        // SAFETY: The rest is zeroed out to initialize `struct hid_dri=
-ver`,
->> +        // sets `Option<&F>` to be `None`.
->> +        ..unsafe { core::mem::MaybeUninit::<bindings::hid_driver>::zero=
-ed().assume_init() }
->> +    }))
->> +}
->> +
->> +pub struct Registration {
->> +    driver: Pin<&'static mut DriverVTable>,
->> +}
->> +
->> +unsafe impl Send for Registration {}
->> +
->> +impl Registration {
->> +    pub fn register(
->> +        module: &'static crate::ThisModule,
->> +        driver: Pin<&'static mut DriverVTable>,
->> +        name: &'static CStr,
->> +    ) -> Result<Self> {
->> +        to_result(unsafe {
->> +            bindings::__hid_register_driver(driver.0.get(), module.0, n=
-ame.as_char_ptr())
->> +        })?;
->> +
->> +        Ok(Registration { driver })
->> +    }
->> +}
->> +
->> +impl Drop for Registration {
->> +    fn drop(&mut self) {
->> +        unsafe {
->> +            bindings::hid_unregister_driver(self.driver.0.get())
->> +        };
->> +    }
->> +}
->> +
->> +#[macro_export]
->> +macro_rules! usb_device {
->> +    (vendor: $vendor:expr, product: $product:expr $(,)?) =3D> {
->> +        $crate::hid::DeviceIdShallow::new_usb($vendor, $product)
->> +    }
->> +}
->> +
->> +#[macro_export]
->> +macro_rules! module_hid_driver {
->> +    (@replace_expr $_t:tt $sub:expr) =3D> {$sub};
->> +
->> +    (@count_devices $($x:expr),*) =3D> {
->> +        0usize $(+ $crate::module_hid_driver!(@replace_expr $x 1usize))=
-*
->> +    };
->> +
->> +    (driver: $driver:ident, id_table: [$($dev_id:expr),+ $(,)?], name: =
-$name:tt, $($f:tt)*) =3D> {
->> +        struct Module {
->> +            _reg: $crate::hid::Registration,
->> +        }
->> +
->> +        $crate::prelude::module! {
->> +            type: Module,
->> +            name: $name,
->> +            $($f)*
->> +        }
->> +
->> +        const _: () =3D {
->> +            static NAME: &$crate::str::CStr =3D $crate::c_str!($name);
->> +
->> +            static ID_TABLE: [$crate::hid::DeviceIdShallow;
->> +                $crate::module_hid_driver!(@count_devices $($dev_id),+)=
- + 1] =3D [
->> +                $($dev_id),+,
->> +                $crate::hid::DeviceIdShallow::new(),
->> +            ];
->> +
->> +            static mut DRIVER: $crate::hid::DriverVTable =3D
->> +                $crate::hid::create_hid_driver::<$driver>(NAME, unsafe =
-{ &ID_TABLE[0] });
->> +
->> +            impl $crate::Module for Module {
->> +                fn init(module: &'static $crate::ThisModule) -> Result<=
-Self> {
->> +                    let driver =3D unsafe { &mut DRIVER };
->> +                    let mut reg =3D $crate::hid::Registration::register=
-(
->> +                        module,
->> +                        ::core::pin::Pin::static_mut(driver),
->> +                        NAME,
->> +                    )?;
->> +                    Ok(Module { _reg: reg })
->> +                }
->> +            }
->> +        };
->> +    }
->> +}
->> diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
->> index 496ed32b0911..51b8c2689264 100644
->> --- a/rust/kernel/lib.rs
->> +++ b/rust/kernel/lib.rs
->> @@ -49,6 +49,8 @@
->>  #[cfg(CONFIG_RUST_FW_LOADER_ABSTRACTIONS)]
->>  pub mod firmware;
->>  pub mod fs;
->> +#[cfg(CONFIG_RUST_HID_ABSTRACTIONS)]
->> +pub mod hid;
->>  pub mod init;
->>  pub mod io;
->>  pub mod ioctl;
->> --
->> 2.47.2
->>
->>
->
-> Cheers,
-> Benjamin
-
-Thanks so much for the review,
-Rahul Rameshbabu
-
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
