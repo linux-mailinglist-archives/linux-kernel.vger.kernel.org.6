@@ -1,115 +1,166 @@
-Return-Path: <linux-kernel+bounces-562934-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562935-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C528A634DF
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 10:51:13 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AE1AA634E1
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 10:52:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 925AF1890201
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 09:51:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DFBA216EC8D
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 09:52:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA57019E96A;
-	Sun, 16 Mar 2025 09:51:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53EC619DF75;
+	Sun, 16 Mar 2025 09:52:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="FQ8oIfsE"
-Received: from mail-4316.protonmail.ch (mail-4316.protonmail.ch [185.70.43.16])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IjfobbrH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B2B639ACC
-	for <linux-kernel@vger.kernel.org>; Sun, 16 Mar 2025 09:51:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD49739ACC;
+	Sun, 16 Mar 2025 09:52:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742118667; cv=none; b=LBQTUQPkLVsGLXYgXv0T0o7AqtKzEXN9sIh87Of90Xj9JvL+QZ2HKQUYTflxVmlVBy+0t0caJw/Aw5hIAuZIlf7Zh/xreeuJuPdgnbDAbmDycNyECZHUq4Lfv+XJVkQTGOuYMjUYtlj6djVcALSt7vKteWPT2SWAX9GU3MxWoBk=
+	t=1742118764; cv=none; b=f6+I8ZoaTyzS9SgnVf8kYGdd4vkrcrX2l9IlOxT6Br+r2fbE1Hvtp9dJEGYJfUstTG1w8Q+mkK7odrVPtvhWq18GbhcHWH6Olrq6KTS63M3ZFu1GcbAo7ZXfr+FRcMiaX+wyOi/FHIOSA6I+3jkqkKOJE4kdBtXt2Yx0REOkSgw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742118667; c=relaxed/simple;
-	bh=6kayc2r8eJVIEoEew7NeuDUXed7Dx09O1AhD97Wu7tc=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mIFOdy+CmNfKHpbleRWLWYpcBzgZoZCb7bfE5f8A5YQE19BKhT12SOPPSiEytyEDixdnhNV1NcogCyWNutBmJu3qp2GniFmYEP/WYwgA1kApNNppv7bNJs6QLTR9brmNBHpt4s6RhO+Nxay2shjrPNw/iHlcv0lNCKIKbJoBI1A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=FQ8oIfsE; arc=none smtp.client-ip=185.70.43.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1742118662; x=1742377862;
-	bh=AdWXIraUGutx1L6OwpS74BqKCyD2D2IKT8sz7HNyUxw=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
-	b=FQ8oIfsE+1C3dHh0cloLbCrOHKtONy6S7fDBrzJoVsd+i500udlPR1jH4Lh/WDLqH
-	 ShrzDnbHBadDorujbNmiEptB514Hf5PgFwpQv9i+R7lWLcHZzW6GXJSJnSqScbOhKI
-	 sCiaSyzgGBorRqn17sF7J970AxEaF3wTwnUZFJrrzBqxCse0X80VFbD1kM0tKxQj8h
-	 4PX0dqdEuXkyRzGQnPBQ/IagkFok9AicSzXXKHdqSbgWPrKlSqSE29G9gBtg6huu6Z
-	 valIs+nrTYtxHRhWiLfR/MBSZ4PJA8uo+BviTXZa171CgQRyXVIy+d9W22yoCWUXMj
-	 SOwEUn/sPbPhQ==
-Date: Sun, 16 Mar 2025 09:50:55 +0000
-To: Antonio Hickey <contact@byte-forge.io>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: Antonio Hickey <contact@antoniohickey.com>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 16/16] rust: clippy: disable `addr_of[_mut]!` macros
-Message-ID: <D8HLIR6LSOYB.1RC5ESP2Y0HWG@proton.me>
-In-Reply-To: <20250316061429.817126-17-contact@antoniohickey.com>
-References: <20250316061429.817126-1-contact@antoniohickey.com> <20250316061429.817126-17-contact@antoniohickey.com>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: 845761705b6e8bce4c2d3d60a940b717accc5672
+	s=arc-20240116; t=1742118764; c=relaxed/simple;
+	bh=9Aj1RfBAi8t/f93C+aSgagstTgV2xhkQ6oHtR1PzL/E=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Nfn6PJ3kidSyCe3kUZR1L0gIX2P70zYHO7DG2nt9xjD1mKbuqhv0VUrdQIo6rmyCRebatEnXSbXyzv+cmRux+AQeH2tBruIy1T7+/FHdhzqiaeVXp2Sgn3603wh0faE1+MH7lpUPlNTdav958I8pg2CGQB10aqqpk0EUJ3t+QI8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IjfobbrH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C271C4CEDD;
+	Sun, 16 Mar 2025 09:52:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742118764;
+	bh=9Aj1RfBAi8t/f93C+aSgagstTgV2xhkQ6oHtR1PzL/E=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=IjfobbrHzETYxUSD5FABCQbDjNu45n2vi4KD2fceWoE5L7kzOpIn0db0ZPimbcpJ4
+	 Og8jBuzYNEk/XBaMtLRrCwske7zsa18wAhjdbEeFGojJOK7+gXrf8y/tPkWDr5Elpu
+	 fVNbA499qzfzM2LDbTPq89n+MvRdg8pGutWB2/hdhZPwi1gkbYJqizlrjHOccuObAZ
+	 5is4Ku9RohcjgL6+iWm0HR0WaXA+VV89fkVTHpG4Ynu2GpMqnRaCE20BHhxkn1X5/Z
+	 gwgxR+a1Z1EnpSv5GIXduBAb0cfbkx93p144abZtIemCaSq/WSPgtuYzpkku0AqUR6
+	 nB1vCJYJJRy3g==
+Date: Sun, 16 Mar 2025 09:52:33 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Matti Vaittinen <mazziesaccount@gmail.com>, Matti Vaittinen
+ <matti.vaittinen@fi.rohmeurope.com>, Lars-Peter Clausen <lars@metafoo.de>,
+ Nuno Sa <nuno.sa@analog.com>, David Lechner <dlechner@baylibre.com>, Javier
+ Carrasco <javier.carrasco.cruz@gmail.com>, Olivier Moysan
+ <olivier.moysan@foss.st.com>, Guillaume Stols <gstols@baylibre.com>,
+ Dumitru Ceclan <mitrutzceclan@gmail.com>, Trevor Gamblin
+ <tgamblin@baylibre.com>, Matteo Martelli <matteomartelli3@gmail.com>,
+ Alisa-Dariana Roman <alisadariana@gmail.com>, =?UTF-8?B?Sm/Do28=?= Paulo
+ =?UTF-8?B?R29uw6dhbHZlcw==?= <joao.goncalves@toradex.com>, AngeloGioacchino
+ Del Regno <angelogioacchino.delregno@collabora.com>,
+ linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org
+Subject: Re: [PATCH v7 06/10] iio: adc: Support ROHM BD79124 ADC
+Message-ID: <20250316095233.20d1a134@jic23-huawei>
+In-Reply-To: <Z9Q-KcadLHdDLxVc@smile.fi.intel.com>
+References: <cover.1741849323.git.mazziesaccount@gmail.com>
+	<b6c02a5d75a20bbbf8c3370ccee615d269620117.1741849323.git.mazziesaccount@gmail.com>
+	<Z9LbT1BvPEIp7U2N@smile.fi.intel.com>
+	<bb403ddb-5c6f-4286-8d80-3ede40f94dc2@gmail.com>
+	<Z9Q-KcadLHdDLxVc@smile.fi.intel.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Sun Mar 16, 2025 at 7:14 AM CET, Antonio Hickey wrote:
-> With the `raw_ref_op` feature enabled we no longer want to
-> allow use of `addr_of!` and `addr_of_mut!` macros.
->
-> We instead want to use `&raw` and `&raw mut` to get raw
+On Fri, 14 Mar 2025 16:33:13 +0200
+Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
 
-`&raw const`
+> On Fri, Mar 14, 2025 at 09:31:58AM +0200, Matti Vaittinen wrote:
+> > On 13/03/2025 15:19, Andy Shevchenko wrote:  
+> > > On Thu, Mar 13, 2025 at 09:19:03AM +0200, Matti Vaittinen wrote:  
+> 
+> ...
+Picking out a few things to comment on...
+> 
+> > > > +#define BD79124_MASK_HYSTERESIS GENMASK(3, 0)
+> > > > +#define BD79124_LOW_LIMIT_MIN 0
+> > > > +#define BD79124_HIGH_LIMIT_MAX GENMASK(11, 0)  
+> > > 
+> > > These masks are not named after registers (or I don't see it clearly),  
+> > 
+> > Naming is hard. I usually try to make a balance between:
+> > 
+> > 1) using names which explain the purpose when seen in the code (at call
+> > site)
+> > 2) keeping names short enough
+> > 3) following the naming convention in the data sheet
+> > 4) maintain relation to the register.
+> > 
+> > I put most emphasis to the 1, while 2 is important to me as well. 3 is
+> > _very_ nice to have, but it is often somehow contradicting with 1 and 2. 4
+> > is IMO just nice to have. The register is usually clearly visible at call
+> > site, and if someone adds new functionality (or checks the correctness of
+> > the masks/registers), then 3 is way more important.
+> > 
+> > I am open to any concrete suggestions though.  
+> 
+> From my point of view the starting point is 3, then one may apply 2 and 4,
+> the 1 may mangle the name so much that register data field name becomes quite
+> abstract.
+> 
+> > > it's
+> > > hard to understand which one relates to which register. Also, why not using
+> > > bitfield.h?  
+> > 
+> > I saw no need for it?  
+> 
+> Hmm... Okay, I think Jonathan will ask that if really needed.
+> 
 
-> pointers to a place.
->
-> Note that this lint isn't currently reliable, but we enable
-> it nevertheless because:
-> 1. Document that one shouldn't use the `addr_of[_mut]!` macros.
-> 2. When the lint becomes useful we will already have it enabled.
->
-> Suggested-by: Benno Lossin <benno.lossin@proton.me>
-> Link: https://github.com/Rust-for-Linux/linux/issues/1148
-> Link: https://github.com/rust-lang/rust-clippy/issues/11431
-> Signed-off-by: Antonio Hickey <contact@antoniohickey.com>
-> ---
->  .clippy.toml | 4 ++++
->  1 file changed, 4 insertions(+)
->
-> diff --git a/.clippy.toml b/.clippy.toml
-> index 815c94732ed7..95c73959f039 100644
-> --- a/.clippy.toml
-> +++ b/.clippy.toml
-> @@ -8,4 +8,8 @@ disallowed-macros =3D [
->      # The `clippy::dbg_macro` lint only works with `std::dbg!`, thus we =
-simulate
->      # it here, see: https://github.com/rust-lang/rust-clippy/issues/1130=
-3.
->      { path =3D "kernel::dbg", reason =3D "the `dbg!` macro is intended a=
-s a debugging tool" },
-> +    # With `raw_ref_op` feature enabled we no longer want to allow use o=
-f `addr_of!`
-> +    # and `addr_of_mut!` macros, but instead use `&raw` or `&raw mut`.
-> +    { path =3D "core::ptr::addr_of_mut", reason =3D "use `&raw mut` inst=
-ead `addr_of_mut!`" },
-> +    { path =3D "core::ptr::addr_of", reason =3D "use `&raw` instead `add=
-r_of!`" },
+I won't as I'm not a huge fan of bitfield.h. In many cases they bloat the code
+and increase the writes that go over the bus.  Don't get me wrong, there
+are good usecases, but it's not a universal thing (unlike PREP_FIELD()
+etc which I love :)
 
-`&raw const`
+I do favour burning a few characters to make field / register relationship
+clear though.  A few things can help I think.
 
----
-Cheers,
-Benno
+Structuring defines and naming:
+I like using whitespace in subtle ways for this.
 
->  ]
+#define PREFIX_REGNAME_REG				0x00
+#define  PREFIX_REGNAME_FIELDNAME_MSK			GENMASK(X, Y)
+#define  PREFIX_REGNAME_FIELDNAME_FILEVALNAME  		0x3
+etc
+
+Makes it easy to see if we have a mismatch going on
+
+However, I don't insist on this in all cases as it is one of those
+"don't let perfect be the enemy of good" cases I think.
+
+So Matti, good to have one last look at the defines and see if they
+can be wrangled into a slightly better form.
 
 
+.
+> ...
+> 
+> > > > +static void bd79124gpo_set_multiple(struct gpio_chip *gc, unsigned long *mask,
+> > > > +				    unsigned long *bits)  
+> > > 
+> > > Ditto, .set_multiple_rv().  
+> > 
+> > As you know, this started at v6.14 cycle which is still ongoing. I don't
+> > think .set_rv() and .set_multiple_rv() are available?  
+> 
+> You mean that you are still hope to have this series to be squeezed for
+> v6.15-rc1? That's not me who decides, but if not, those APIs will be part of
+> the v6.15-rc1 (at least they are pending in GPIO subsystem).
+> 
+I'd vote for a rebase on rc1 that should be really easy to for me to pick
+up.   I'd accept a follow up series though.   Ultimately won't affect
+when this series lands as very unlikely Linus will delay the release
+long enough for me to do another pull request this cycle,
+
+Jonathan
 
