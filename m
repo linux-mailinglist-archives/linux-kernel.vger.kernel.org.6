@@ -1,57 +1,56 @@
-Return-Path: <linux-kernel+bounces-563088-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563089-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 718AAA636DA
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 18:47:58 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C02FA636E2
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 19:01:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A01423ADCED
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 17:47:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 42EF9188EDD5
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 18:01:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A9821DDA15;
-	Sun, 16 Mar 2025 17:47:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A49341DACB8;
+	Sun, 16 Mar 2025 18:01:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="g3xkZXDX"
-Received: from mail-40131.protonmail.ch (mail-40131.protonmail.ch [185.70.40.131])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="br+hPYt9"
+Received: from mail-40133.protonmail.ch (mail-40133.protonmail.ch [185.70.40.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 355141A238D;
-	Sun, 16 Mar 2025 17:47:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58A601C862A
+	for <linux-kernel@vger.kernel.org>; Sun, 16 Mar 2025 18:01:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742147270; cv=none; b=JekoDbHpzREmW12dKojC5RZzK6UW6wGOtNQlLElRgS1Z04P/3n7tdc0x0r0fWb7TGRKUOvxy2Hclitl1UiX5HxSDdTFPMaBSEwBDKcsXEeRnuSVH5yd/YbLVKW9A2FHw7DtOT0lDYUAoX+Iu/FQWeAlgbgdGd5zJF0K+25IX+0c=
+	t=1742148098; cv=none; b=gDItpmF7s2G7CbA4etiQMv1W9m9XVU6KOKGZHAFGwIYsZ860esX5KCtjXWe8/JX/P6nJubMPitKOH7o9tIzMFZxQZZoPXdIMKLdY9FoG3EbjwI8kAr6Ho3V68AF3uHn+KtoUmB4g/HmoY4UC4M72eBbSv25a/HahQNZ6mUKfgSo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742147270; c=relaxed/simple;
-	bh=oKk+mNkr7TImnO+pZms2+BwrQ4/orsyoRd0HOVQxBic=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dkXJLvi5kQkKgLWhAxvrjwC3OcgswMjK8atV6X5EYjqgyPB5BN6JzeRVTZTSLLRCXTxlYpxZ/BeJtB3QklsvMWB9nTKo+fubTNSwEpOp5Cgc/jqwx+WaLjfQg26dBVAyvqQ8NJG7a7vrDUQkRlQmpOeWhBw5f0OZc+3BG4X1Ges=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=g3xkZXDX; arc=none smtp.client-ip=185.70.40.131
+	s=arc-20240116; t=1742148098; c=relaxed/simple;
+	bh=QXR00CS8QUxl5UcLkdVT8Wo7n+Glksoub62YlpafMVE=;
+	h=Date:To:From:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=B/gV/omMDapW3NCpL97Tf/vF2R5pfSAAZCsLgYCa6WjwanD39p6tHOd5jqyUdxAGUr3GgIkfpFvODaffEfd6kmrGIXOhgNCKrkZFc07REeOhTOLEc1jO5UZ9fa4A91fDy8nhn6dxMUaYtEg15iiUATtVPjE3qKH9dP8GzDlNw4o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=br+hPYt9; arc=none smtp.client-ip=185.70.40.133
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1742147266; x=1742406466;
-	bh=oKk+mNkr7TImnO+pZms2+BwrQ4/orsyoRd0HOVQxBic=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	s=protonmail; t=1742148087; x=1742407287;
+	bh=tAOyqqzV3U1doRz6F+tF1ZAeoLpn6CDfC6jWDliUrEo=;
+	h=Date:To:From:Subject:Message-ID:In-Reply-To:References:
 	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
 	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
-	b=g3xkZXDXTk5WQKjuHAdYt9KRAQl0q5TQYYKI1ohng0cYo+itwmQObd8zT1+IeUNuW
-	 FSYp8SVw7Oxy8cY+Pj/V/nQmAWr+AtgrNIlNwUb3/eUbky7pBp7Qcwwy6aFTDQnT+K
-	 W2mtTxeNQ3b8XiQS29FXGGjLqb58pIWClsP8ZO+LYvmOo+PDIcUujAlqDMI8HHU9Qf
-	 rpJXALeShbR1Xab1jk9JRiovJeBDErTs/ePyIKfgXm9lhTvJm5TwybCbKcdkRN9NfB
-	 8ziq2TJUUTfK+JBBbJeWH4y66s50gh/Sn/+zTp6i7tHcBUMYLlyXsQj051ASNVWAJM
-	 50MmS6gGEaihQ==
-Date: Sun, 16 Mar 2025 17:47:40 +0000
-To: Antonio Hickey <contact@antoniohickey.com>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>
+	b=br+hPYt9Gnwa7o6IBCW88llVLpCKrhm1GWAa2kho4+eWWTBZS+6S+ubbKlEWppETU
+	 RAw9A5p1vS8w3QiwmwAkDMufLI12hL6tdt3JVJNO4c9T/OskCpr/dealfBc7Vf7w7Z
+	 AcMQpB3mxJRdx7/zzZ6AyphoU3rvhuaUAZ5zgM2f3Oaueb4+JimxwN0mIOpMtcOhfN
+	 dip7LuZI88MW7P4jIdzFCMmtLWD2Um/0oIXMwQEDrAETEIdXnI+zKCoxt+Vvini2Mq
+	 +VhEZC/9B8C5JHR+jk2qxrJaZEWcCff2YaPaqVJna4WLKcsVlefSZJ4UOcvuhKerlX
+	 uiiFEnDxfCqcg==
+Date: Sun, 16 Mar 2025 18:01:21 +0000
+To: Andrew Ballance <andrewjballance@gmail.com>, dakr@kernel.org, airlied@gmail.com, simona@ffwll.ch, maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, corbet@lwn.net, ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, a.hindborg@kernel.org, aliceryhl@google.com, tmgross@umich.edu, acourbot@nvidia.com, nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
 From: Benno Lossin <benno.lossin@proton.me>
-Cc: linux-kernel@vger.kernel.org, llvm@lists.linux.dev, rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH v2] rust: uaccess: mark UserSliceWriter method inline
-Message-ID: <D8HVNR3Q3UL8.1007IZIZTQ0XB@proton.me>
-In-Reply-To: <010001958d6f36b2-fb0a1710-a581-4002-889e-e489004bb72d-000000@email.amazonses.com>
-References: <010001958d69ed91-0ccd9e4f-cd18-4451-a982-426b951d2e0c-000000@email.amazonses.com> <010001958d6f36b2-fb0a1710-a581-4002-889e-e489004bb72d-000000@email.amazonses.com>
+Subject: Re: [PATCH v2 2/3] rust: alloc: add Vec::resize method
+Message-ID: <D8HVY5KSXNRL.YPQRJFX9R8XQ@proton.me>
+In-Reply-To: <20250316111644.154602-3-andrewjballance@gmail.com>
+References: <20250316111644.154602-1-andrewjballance@gmail.com> <20250316111644.154602-3-andrewjballance@gmail.com>
 Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: 6b724233661c78c865ac9c2b86a9dc05d801c517
+X-Pm-Message-ID: 6851ab4816f7ad4e9864ac4c422a20a36671b293
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,28 +60,20 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On Thu Mar 13, 2025 at 3:57 AM CET, Antonio Hickey wrote:
-> When you build the kernel using the llvm-19.1.4-rust-1.83.0-x86_64
-> toolchain provided by kernel.org with ARCH=3Dx86_64, the following symbol
-> is generated:
+On Sun Mar 16, 2025 at 12:16 PM CET, Andrew Ballance wrote:
+> implement the equivalent of the rust std's Vec::resize
+> on the kernel's Vec type.
 >
-> $nm vmlinux | grep ' _R' | rustfilt | rg UserSliceWriter
-> ffffffff817c3390 T <kernel::uaccess::UserSliceWriter>::write_slice
->
-> However, this Rust symbol is a trivial wrapper around the function
-> copy_to_user. It doesn't make sense to go through a trivial wrapper
-> for this function, so mark it inline.
->
-> After applying this patch, the above command will produce no output.
->
-> Suggested-by: Alice Ryhl <aliceryhl@google.com>
-> Link: https://github.com/Rust-for-Linux/linux/issues/1145
-> Signed-off-by: Antonio Hickey <contact@antoniohickey.com>
+> Signed-off-by: Andrew Ballance <andrewjballance@gmail.com>
 
-What about the other methods (like `write` and `read`?) in this file?
+Reviewed-by: Benno Lossin <benno.lossin@proton.me>
 
 ---
 Cheers,
 Benno
+
+> ---
+>  rust/kernel/alloc/kvec.rs | 26 ++++++++++++++++++++++++++
+>  1 file changed, 26 insertions(+)
 
 
