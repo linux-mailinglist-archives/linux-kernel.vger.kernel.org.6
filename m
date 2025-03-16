@@ -1,121 +1,97 @@
-Return-Path: <linux-kernel+bounces-562880-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562881-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BBECA6342A
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 06:47:36 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9BB6A6342D
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 06:52:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4901B18903A6
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 05:47:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6F7B17121F
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 05:52:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A493315C140;
-	Sun, 16 Mar 2025 05:47:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94F241624E5;
+	Sun, 16 Mar 2025 05:52:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J9q2Dv5C"
-Received: from mail-oo1-f51.google.com (mail-oo1-f51.google.com [209.85.161.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="pM2k5UnL"
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC12D224D7;
-	Sun, 16 Mar 2025 05:47:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AA172E339D;
+	Sun, 16 Mar 2025 05:51:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742104049; cv=none; b=beE1+UNwk4vtwUWUaIhzUyvQG0gQxHe9XiSIp9FjmZ6kj9AKsrwAcHGKCSBjZrKJdATtWA4KfVTrsAA8rCnsq2Acrthg0AknYTmV9WKV0+1nJKR+p77y0DSM9f7r9PXux5R/ypFV6MVCbrHMzHNP3l9+2Sq6PV4OWsAFsJwUUPg=
+	t=1742104322; cv=none; b=bi91LAGLe4SNueSfB6J+kOfbLQBbKn18OMDAgpHdHOz9RkGbyM8ek1v5XPepQxpGsxCHUSnugbeCbDkENpuKVA/QkGXR6m9ZrzE0zMni5uwv3R4hHTjEc0LIJ6xmYnq/IglbnTm3iUmsCl5dVb0cnzDhAQ80GDE5w8iaoNzGd28=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742104049; c=relaxed/simple;
-	bh=R9WyEag2fAaVXiqd8h54TmccUs60zbahWxAdfBqPXOE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OqW5J6CSY27xlW3Eim3zVIHvAg9zKyNm7FVwFk5aMVBnM0nIWOORaUvEPia0UXUved91dAuaRZEHqG38vN/gPmnzEVhYPLHq4UBRi/KNOHQLH4nXhQID8cwrmIu7H0IpqNyqa4lFuIfHPH/i6GDxGjGa1/1on27q78WwZ5MnF0o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J9q2Dv5C; arc=none smtp.client-ip=209.85.161.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f51.google.com with SMTP id 006d021491bc7-601e049d92dso1592957eaf.3;
-        Sat, 15 Mar 2025 22:47:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742104046; x=1742708846; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=WnS2hA1QVsIRAdP98on27uAAcMA+rniLvABdXS/dMUQ=;
-        b=J9q2Dv5ChPGKtATUPW9dqUuvBKYCHFthiSHJ8//r9IcUglf+nfj7IbIMqIDokxVvKQ
-         Tri4yUfffCzxSu+NCzLOFHzpjipiHzIXC2/nfIKpirTmliRlZCclu/pG0p6rwWXaWZHi
-         ShHXoxQhNb5B9KGDpVohqRYYov478H4K++FNMxhArsvo30pqWpCrM2w0DA+ayVHRv9jl
-         U2YQokLLmKqRalLy1YZHwp0l+aRz6BKupkRb/4NpsLLmnsdrbqQQPed5nu0IyH99wVHE
-         q6dPtty3chMkDAiJPImkJnWw7yc+gs+mBvC0UulyddNxvX9upYsxojx11X6euTt5MD9T
-         7V5Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742104046; x=1742708846;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=WnS2hA1QVsIRAdP98on27uAAcMA+rniLvABdXS/dMUQ=;
-        b=F1qkWa2JxKJvqsUSop+HkU2u/EtZw5dSanW9Q4zrK1bHGgEClp9lSZ9DH7lEpd0k1A
-         nbRWb5wwXwn9IPSC3/Uv9JUiyN0kUrsQWApoP3jTOqQpQ7ZOkQ6xq0IReF4Poo/db73z
-         7GEoY4da41jJXJrrZs4xw97tG3mVaHdlSsRRLg3x7egEKpjxZ9NRigzfzIC3wUpzOybk
-         BNO9h4JS/egqrXbW1OBD8KyVMB9LvnAgsMil/1qSaoZ0T/YNPJ8/i9tQsGUQZP77ksvH
-         Z4n7fENlNbor4CZSgTj/0MSpMYy73PbwOoF+WoXtrZ7DmXA51+Lj/oo9gK7FCcB3BRb4
-         gsNg==
-X-Forwarded-Encrypted: i=1; AJvYcCVh+XtmyZAsdlsbFQTCdU8exsHCu+GOlg8BIHQAygNVd3RC+fET7MTFPMuePrBikbcbgj6V1cenXiRQ93o=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz6WNwQCvlMUJ53iahIIFCMFVWsM7qACeIwbx6xGUvGfsH1NE9/
-	anEpok5pnWvwz407FH/eqpvqdphXhZd4N1cAptpelrPjPv7Yv029
-X-Gm-Gg: ASbGncvZ47RD/CIjXDMYEGBmda8emNk3reNkaRyXi4U/M3KdYXTYjfPqxTH5bNjmLRV
-	Ur19Z0VGc6QTjFwwsYEKzvWrPARjLizy7YhXBQMj1JIbnm5lucV8DB8A7n723wBG+vpWnb043hy
-	YR7iv+EBKooqe0ShS3qfZUycDHjVZwuNGQ+t8qOHBilj0WkahhYA/fIrV0HfRyx/F5OY+Veam36
-	5n/2N/6UaUgnIzPwFTNe8zdQme3bjBudZtigH966pA+2a5vqB7MBeVunTxZOoNmQ++HpD+Gz98r
-	nlzI+yd3VfnbF951bShsaMkiJSkG0fHoeAluZQZ13r1Cv3uwlmjEuHza+Q==
-X-Google-Smtp-Source: AGHT+IF1ahK4c+PQGcBeLFIQnE/pV/CUYE+MbmGfFxq8K4vTdYU7igxqAGQA9aBBMlLxdj++y0uRYA==
-X-Received: by 2002:a05:6820:1e11:b0:601:a677:d126 with SMTP id 006d021491bc7-601e45692bcmr4018566eaf.2.1742104046602;
-        Sat, 15 Mar 2025 22:47:26 -0700 (PDT)
-Received: from s-machine2.. ([2806:2f0:5501:d07c:ab45:2491:585a:53b7])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-601db7a240dsm1211347eaf.30.2025.03.15.22.47.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 15 Mar 2025 22:47:26 -0700 (PDT)
-From: Sergio Perez Gonzalez <sperezglz@gmail.com>
-To: broonie@kernel.org,
-	skhan@linuxfoundation.org
-Cc: linux-spi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Sergio Perez Gonzalez <sperezglz@gmail.com>
-Subject: [PATCH v2] spi: spi-mux: Fix coverity issue, unchecked return value
-Date: Sat, 15 Mar 2025 23:46:06 -0600
-Message-ID: <20250316054651.13242-1-sperezglz@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1742104322; c=relaxed/simple;
+	bh=TY9C0Pv79aB1kyNdfzmaq24tYMm7D6IgwS1kACVC+2M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JC7t9NnCiD8Z/ptO06tMExJEOeR32jid7azFoOHY3cVgkC2uuA379kLMdmzKJ67u1hUwMkH/J9AExdjCOd+OFtiZeE6VkVHf1myUcQLMvVY/OReIP0PlT7/nYqEoCrxesyCMMcPouugZblWo2DE2dR7IwjlVd42q1mepCP0Zbpo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=pM2k5UnL; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
+	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=q4jWHu1d2pPb7fealiXsY0hC2fptvir263Ji4MGN2Ns=; b=pM2k5UnLec3pB0rImY3Y/+bdQ6
+	6RXuJTK+79i57Xbq4moFaeAhjZntF3N6eGcchItM7CU0AZ/8dbBZ7vF91SuPklEnBE6bDLG8kx8zc
+	dkuKGOem0Gz8Wye+bTiA3mYChfwYaLIJ0LO6lu+Zad+naSvLW7I6YWBUMaeMIVlORSb5eyjP/wtpq
+	G2K5IH0bN15hphr2Tj1RFXnvLv6AwkhoPQXk+MsA982AgdjIR+BF1WyB7sqEcnnMbAzkniRYaZHfv
+	qpqukAfVbnGQyo9ouGsFugBXodNg2dkah6FPI98A4UrEVsRH8wFGo7g/SWr4mHpmD3eQZf38/w33J
+	RQG1I1Kw==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1ttgud-006zQa-01;
+	Sun, 16 Mar 2025 13:51:52 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Sun, 16 Mar 2025 13:51:51 +0800
+Date: Sun, 16 Mar 2025 13:51:50 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Song Liu <song@kernel.org>, Yu Kuai <yukuai3@huawei.com>,
+	linux-raid@vger.kernel.org
+Subject: Re: [PATCH] lib/raid6: Replace custom zero page with ZERO_PAGE
+Message-ID: <Z9Zm9nPjU9kT1lt5@gondor.apana.org.au>
+References: <Z9U0_uj1E2MlYhGx@gondor.apana.org.au>
+ <20250315210631.d79637b9c55c7ee3287aa426@linux-foundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250315210631.d79637b9c55c7ee3287aa426@linux-foundation.org>
 
-The return value of spi_setup() is not captured within
-spi_mux_select() and it is assumed to be always success.
+On Sat, Mar 15, 2025 at 09:06:31PM -0700, Andrew Morton wrote:
+>
+> I do think it would be nicer to write this as a real inlined C function
+> and to convert usage sites to raid6_empty_zero_page().  IOW, let's tell
+> the truth rather than pretending that raid6_empty_zero_page is a global
+> variable.
 
-CID: 1638374
-
-Signed-off-by: Sergio Perez Gonzalez <sperezglz@gmail.com>
----
-v2: Return spi_setup() directly instead of using ret variable.
-
----
- drivers/spi/spi-mux.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/drivers/spi/spi-mux.c b/drivers/spi/spi-mux.c
-index c02c4204442f..0eb35c4e3987 100644
---- a/drivers/spi/spi-mux.c
-+++ b/drivers/spi/spi-mux.c
-@@ -68,9 +68,7 @@ static int spi_mux_select(struct spi_device *spi)
+OK I can do that.
  
- 	priv->current_cs = spi_get_chipselect(spi, 0);
- 
--	spi_setup(priv->spi);
--
--	return 0;
-+	return spi_setup(priv->spi);
- }
- 
- static int spi_mux_setup(struct spi_device *spi)
+> Is there any possibility that the MD drivers will point DMA hardware at
+> the global zero page, thereby invalidating that page from CPU caches in
+> some manner?
+
+The only spots that can hand this off to DMA are:
+
+crypto/async_tx/async_pq.c:                     srcs[i] = (void*)raid6_empty_zero_page;
+crypto/async_tx/async_raid6_recov.c:                            ptrs[i] = (void *) raid6_empty_zero_page;
+crypto/async_tx/async_raid6_recov.c:                            ptrs[i] = (void*)raid6_empty_zero_page;
+
+But they all turn out to be synchronous fallback code paths that
+do not involve DMA at all.
+
+Cheers,
 -- 
-2.43.0
-
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
