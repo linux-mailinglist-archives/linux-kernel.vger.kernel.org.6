@@ -1,210 +1,197 @@
-Return-Path: <linux-kernel+bounces-562822-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1569A6335D
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 03:36:52 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50662A63360
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 03:52:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B4183B14A4
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 02:36:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3245318917E8
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 02:52:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7C0839ACC;
-	Sun, 16 Mar 2025 02:36:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD11655897;
+	Sun, 16 Mar 2025 02:52:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EGSuo9jL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dn9BW6Ov"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35619376
-	for <linux-kernel@vger.kernel.org>; Sun, 16 Mar 2025 02:36:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 216783398B
+	for <linux-kernel@vger.kernel.org>; Sun, 16 Mar 2025 02:52:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742092607; cv=none; b=RX7fko3apj4rDd/pxjpWvvDca52s4hYk9Bcmts08JNG3URj7lMmXN1MykBViH4HAxTHCgN7RMNMZrY9PgHATLRNuR/IX+9EItHgzqE7PpGwYulz9NwivitAwgiSb8yw63VB+09MUr79d/tRG5H4Q4KATrlUXXnZccynnkny3ofM=
+	t=1742093540; cv=none; b=lXTNMmM5nfxzokJGZqd5hQMkbx2Vg+l1SdysvzaIIDEPg/CL1Hsc3MxmauQIRlH0GlIBCJO8w+BIQ/eoOoXOuSGqEKBK1rpuBNPWJcpCwQAnIEyTe4aRDJuPYuXXrFFuPDLI00jeIaw6JLi0sYvSjSJM03P5iL2FWvLW/ANWhPU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742092607; c=relaxed/simple;
-	bh=rgsohwfd76T3iZ6/taL0SEHla+2AjE/cv/Q5/d2KtRg=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=cOaE8LNgSkoNeEsQgoQ5Z7CA3tmXYa0bAP4V65zNBsA/p4MGh0QQgEDYRyGdKCqI3Pw6sPXrLHEIigrE5Tzw7Z0JT7ZG7b2gSafVFWCnWiJb61104yz53Yxi2FgXicXa01MKO3nHS0zExxNcp+zSklR7dwZwEvG43Qa89NYjbes=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EGSuo9jL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0EA4C4CEE5;
-	Sun, 16 Mar 2025 02:36:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742092605;
-	bh=rgsohwfd76T3iZ6/taL0SEHla+2AjE/cv/Q5/d2KtRg=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=EGSuo9jLl8CKjvcyN6/wLezqmR2YfvsbvYWCqZQ0IWtOxDczGQjQP3BMOUo/C7UgL
-	 dJEowcCVYoNuDvPWSN/8Xjx/0uYKpa8zQKIUl4WXs9/kOybnCISHH3KUzdemv8XUjm
-	 YHM1w4Jw2aisBJRewkLN01F3+iTZx+6+kIQ140/hGy0sVAmj48iC392d+h4BMHlkjL
-	 wIA/1NyatH0OdJSfMMkSH26t3abiQ7Bp229MCxPz8DHagihNw0xDFfFd4KhcG4QN03
-	 wgtFLMXDSgP2rc5N23TgJoqrCLeFt8d/HJn9J/QmSXNgGb5j6+JnDA0b5HPDwxGde8
-	 3ClILjaLY5bxg==
-Message-ID: <511c5fd9-307e-4c56-9d20-796dd06f775c@kernel.org>
-Date: Sun, 16 Mar 2025 10:36:44 +0800
+	s=arc-20240116; t=1742093540; c=relaxed/simple;
+	bh=mbygglv071lbx3F1zj3bJcWppbkHDWaN8Wlg/CRh29k=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=QuEUaubhDiQmynQOO8V7lan1yvqMkQhsMjhgF9dLHQYF3Y7PrESPAIy6RiKJ2nWAV+kURPz+qoZNKLanjZzLJm2rJWkF0qWFz56xj+mUBl0u5fewgvZlfxG1dVyixftGj2737NgiSws0zbG5sRlGdbDUV+mr/ya6drFkLFbqpHM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dn9BW6Ov; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742093538; x=1773629538;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=mbygglv071lbx3F1zj3bJcWppbkHDWaN8Wlg/CRh29k=;
+  b=dn9BW6Ov4Gd4dwBOm2WeVzZK/NW2tzCjnyHhnbE/FYW8WLmdS2qZbOT4
+   tkFAgMWfGzOdaX3nS8/DvsGZik6BEoAk2WhY2COmJxyhN8ac1MFSLJ5tV
+   OiYstH2hGfYqglmhvlBTykOqYKnwNcY7LA00conPoxh2f48mKLJnPPs8U
+   tq1oLHjTHZ+/zeThGhQXFNkJD47+BbhcjsmI7eOwthlWtt6qAWvdsoSAJ
+   HYBOHdgKGWQSLkWQoEMa/rKnDilSi6XfCaAUam3iOVOk/df81P2pj73sp
+   pNmGUcnStleYEMHuLjrecOSpCxEKa8fM5SL3YAwHWIoBZEy613kCFt71u
+   w==;
+X-CSE-ConnectionGUID: RNlL8rweT2eyv5ZQzh5rNQ==
+X-CSE-MsgGUID: 9DHtJJkzTQi+BUCYLXtyCw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11374"; a="47109148"
+X-IronPort-AV: E=Sophos;i="6.14,251,1736841600"; 
+   d="scan'208";a="47109148"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Mar 2025 19:52:18 -0700
+X-CSE-ConnectionGUID: DmZPFNyiShKQBbU9dEJMFg==
+X-CSE-MsgGUID: JzA70DqIS2eX0dJGPC7vQA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,251,1736841600"; 
+   d="scan'208";a="126486328"
+Received: from lkp-server02.sh.intel.com (HELO a4747d147074) ([10.239.97.151])
+  by orviesa003.jf.intel.com with ESMTP; 15 Mar 2025 19:52:15 -0700
+Received: from kbuild by a4747d147074 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tte6n-000Bnh-1K;
+	Sun, 16 Mar 2025 02:52:13 +0000
+Date: Sun, 16 Mar 2025 10:51:51 +0800
+From: kernel test robot <lkp@intel.com>
+To: Uros Bizjak <ubizjak@gmail.com>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-kernel@vger.kernel.org, x86@kernel.org,
+	Ingo Molnar <mingo@kernel.org>
+Subject: [tip:x86/asm 3/7] lib/test_bitmap.c:1269:2: error: call to
+ '__compiletime_assert_279' declared with 'error' attribute: BUILD_BUG_ON
+ failed: !__builtin_constant_p(res)
+Message-ID: <202503161004.ZmMcxxeB-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: chao@kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5] erofs: use Z_EROFS_LCLUSTER_TYPE_MAX to simplify
- switches
-To: Hongzhen Luo <hongzhen@linux.alibaba.com>, linux-erofs@lists.ozlabs.org
-References: <20250210032923.3382136-1-hongzhen@linux.alibaba.com>
-Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <20250210032923.3382136-1-hongzhen@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 2025/2/10 11:29, Hongzhen Luo wrote:
-> There's no need to enumerate each type.  No logic changes.
-> 
-> Signed-off-by: Hongzhen Luo <hongzhen@linux.alibaba.com>
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/asm
+head:   9628d19e91f1ef9e7b1321e74a88bfa646d2a8d3
+commit: 01ba23bf1b3f9a4035faedc2aa450e251bcc2c7c [3/7] x86/hweight: Use ASM_CALL_CONSTRAINT in inline asm()
+config: x86_64-buildonly-randconfig-003-20250316 (https://download.01.org/0day-ci/archive/20250316/202503161004.ZmMcxxeB-lkp@intel.com/config)
+compiler: clang version 19.1.7 (https://github.com/llvm/llvm-project cd708029e0b2869e80abe31ddb175f7c35361f90)
+rustc: rustc 1.78.0 (9b00956e5 2024-04-29)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250316/202503161004.ZmMcxxeB-lkp@intel.com/reproduce)
 
-Looks good to me, feel free to add:
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202503161004.ZmMcxxeB-lkp@intel.com/
 
-Reviewed-by: Chao Yu <chao@kernel.org>
+All errors (new ones prefixed by >>):
 
-And one minor comment below.
+>> lib/test_bitmap.c:1269:2: error: call to '__compiletime_assert_279' declared with 'error' attribute: BUILD_BUG_ON failed: !__builtin_constant_p(res)
+    1269 |         BUILD_BUG_ON(!__builtin_constant_p(res));
+         |         ^
+   include/linux/build_bug.h:50:2: note: expanded from macro 'BUILD_BUG_ON'
+      50 |         BUILD_BUG_ON_MSG(condition, "BUILD_BUG_ON failed: " #condition)
+         |         ^
+   include/linux/build_bug.h:39:37: note: expanded from macro 'BUILD_BUG_ON_MSG'
+      39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
+         |                                     ^
+   include/linux/compiler_types.h:542:2: note: expanded from macro 'compiletime_assert'
+     542 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+         |         ^
+   include/linux/compiler_types.h:530:2: note: expanded from macro '_compiletime_assert'
+     530 |         __compiletime_assert(condition, msg, prefix, suffix)
+         |         ^
+   include/linux/compiler_types.h:523:4: note: expanded from macro '__compiletime_assert'
+     523 |                         prefix ## suffix();                             \
+         |                         ^
+   <scratch space>:20:1: note: expanded from here
+      20 | __compiletime_assert_279
+         | ^
+   1 error generated.
 
-> diff --git a/fs/erofs/zmap.c b/fs/erofs/zmap.c
-> index 689437e99a5a..d278ebd60281 100644
-> --- a/fs/erofs/zmap.c
-> +++ b/fs/erofs/zmap.c
-> @@ -265,26 +265,22 @@ static int z_erofs_extent_lookback(struct z_erofs_maprecorder *m,
->   		if (err)
->   			return err;
->   
-> -		switch (m->type) {
-> -		case Z_EROFS_LCLUSTER_TYPE_NONHEAD:
-> +		if (m->type >= Z_EROFS_LCLUSTER_TYPE_MAX) {
-> +			erofs_err(sb, "unknown type %u @ lcn %lu of nid %llu",
-> +				  m->type, lcn, vi->nid);
-> +			DBG_BUGON(1);
-> +			return -EOPNOTSUPP;
- > +		} else if (m->type == Z_EROFS_LCLUSTER_TYPE_NONHEAD) {>   			lookback_distance = m->delta[0];
->   			if (!lookback_distance)
-> -				goto err_bogus;
-> +				break;
->   			continue;
-> -		case Z_EROFS_LCLUSTER_TYPE_PLAIN:
-> -		case Z_EROFS_LCLUSTER_TYPE_HEAD1:
-> -		case Z_EROFS_LCLUSTER_TYPE_HEAD2:
-> +		} else {
->   			m->headtype = m->type;
->   			m->map->m_la = (lcn << lclusterbits) | m->clusterofs;
->   			return 0;
-> -		default:
-> -			erofs_err(sb, "unknown type %u @ lcn %lu of nid %llu",
-> -				  m->type, lcn, vi->nid);
-> -			DBG_BUGON(1);
-> -			return -EOPNOTSUPP;
 
-Should return EFSCORRUPTED here? is m->type >= Z_EROFS_LCLUSTER_TYPE_MAX a possible
-case?
+vim +1269 lib/test_bitmap.c
 
-Btw, we'd better to do sanity check for m->type in z_erofs_load_full_lcluster(),
-then we can treat m->type as reliable variable later.
+291f93ca339f5b5 Barry Song        2021-08-06  1227  
+2356d198d2b4dde Yury Norov        2023-07-17  1228  /*
+2356d198d2b4dde Yury Norov        2023-07-17  1229   * FIXME: Clang breaks compile-time evaluations when KASAN and GCOV are enabled.
+2356d198d2b4dde Yury Norov        2023-07-17  1230   * To workaround it, GCOV is force-disabled in Makefile for this configuration.
+2356d198d2b4dde Yury Norov        2023-07-17  1231   */
+dc34d5036692c61 Alexander Lobakin 2022-06-24  1232  static void __init test_bitmap_const_eval(void)
+dc34d5036692c61 Alexander Lobakin 2022-06-24  1233  {
+dc34d5036692c61 Alexander Lobakin 2022-06-24  1234  	DECLARE_BITMAP(bitmap, BITS_PER_LONG);
+dc34d5036692c61 Alexander Lobakin 2022-06-24  1235  	unsigned long initvar = BIT(2);
+dc34d5036692c61 Alexander Lobakin 2022-06-24  1236  	unsigned long bitopvar = 0;
+dc34d5036692c61 Alexander Lobakin 2022-06-24  1237  	unsigned long var = 0;
+dc34d5036692c61 Alexander Lobakin 2022-06-24  1238  	int res;
+dc34d5036692c61 Alexander Lobakin 2022-06-24  1239  
+dc34d5036692c61 Alexander Lobakin 2022-06-24  1240  	/*
+dc34d5036692c61 Alexander Lobakin 2022-06-24  1241  	 * Compilers must be able to optimize all of those to compile-time
+dc34d5036692c61 Alexander Lobakin 2022-06-24  1242  	 * constants on any supported optimization level (-O2, -Os) and any
+dc34d5036692c61 Alexander Lobakin 2022-06-24  1243  	 * architecture. Otherwise, trigger a build bug.
+dc34d5036692c61 Alexander Lobakin 2022-06-24  1244  	 * The whole function gets optimized out then, there's nothing to do
+dc34d5036692c61 Alexander Lobakin 2022-06-24  1245  	 * in runtime.
+dc34d5036692c61 Alexander Lobakin 2022-06-24  1246  	 */
+dc34d5036692c61 Alexander Lobakin 2022-06-24  1247  
+7adaf37f7f104a7 Alexander Lobakin 2024-03-27  1248  	/* Equals to `unsigned long bitmap[1] = { GENMASK(6, 5), }` */
+dc34d5036692c61 Alexander Lobakin 2022-06-24  1249  	bitmap_clear(bitmap, 0, BITS_PER_LONG);
+dc34d5036692c61 Alexander Lobakin 2022-06-24  1250  	if (!test_bit(7, bitmap))
+dc34d5036692c61 Alexander Lobakin 2022-06-24  1251  		bitmap_set(bitmap, 5, 2);
+dc34d5036692c61 Alexander Lobakin 2022-06-24  1252  
+dc34d5036692c61 Alexander Lobakin 2022-06-24  1253  	/* Equals to `unsigned long bitopvar = BIT(20)` */
+dc34d5036692c61 Alexander Lobakin 2022-06-24  1254  	__change_bit(31, &bitopvar);
+dc34d5036692c61 Alexander Lobakin 2022-06-24  1255  	bitmap_shift_right(&bitopvar, &bitopvar, 11, BITS_PER_LONG);
+dc34d5036692c61 Alexander Lobakin 2022-06-24  1256  
+dc34d5036692c61 Alexander Lobakin 2022-06-24  1257  	/* Equals to `unsigned long var = BIT(25)` */
+dc34d5036692c61 Alexander Lobakin 2022-06-24  1258  	var |= BIT(25);
+dc34d5036692c61 Alexander Lobakin 2022-06-24  1259  	if (var & BIT(0))
+dc34d5036692c61 Alexander Lobakin 2022-06-24  1260  		var ^= GENMASK(9, 6);
+dc34d5036692c61 Alexander Lobakin 2022-06-24  1261  
+dc34d5036692c61 Alexander Lobakin 2022-06-24  1262  	/* __const_hweight<32|64>(GENMASK(6, 5)) == 2 */
+dc34d5036692c61 Alexander Lobakin 2022-06-24  1263  	res = bitmap_weight(bitmap, 20);
+dc34d5036692c61 Alexander Lobakin 2022-06-24  1264  	BUILD_BUG_ON(!__builtin_constant_p(res));
+dc34d5036692c61 Alexander Lobakin 2022-06-24  1265  	BUILD_BUG_ON(res != 2);
+dc34d5036692c61 Alexander Lobakin 2022-06-24  1266  
+dc34d5036692c61 Alexander Lobakin 2022-06-24  1267  	/* !(BIT(31) & BIT(18)) == 1 */
+dc34d5036692c61 Alexander Lobakin 2022-06-24  1268  	res = !test_bit(18, &bitopvar);
+dc34d5036692c61 Alexander Lobakin 2022-06-24 @1269  	BUILD_BUG_ON(!__builtin_constant_p(res));
+dc34d5036692c61 Alexander Lobakin 2022-06-24  1270  	BUILD_BUG_ON(!res);
+dc34d5036692c61 Alexander Lobakin 2022-06-24  1271  
+dc34d5036692c61 Alexander Lobakin 2022-06-24  1272  	/* BIT(2) & GENMASK(14, 8) == 0 */
+dc34d5036692c61 Alexander Lobakin 2022-06-24  1273  	res = initvar & GENMASK(14, 8);
+dc34d5036692c61 Alexander Lobakin 2022-06-24  1274  	BUILD_BUG_ON(!__builtin_constant_p(res));
+dc34d5036692c61 Alexander Lobakin 2022-06-24  1275  	BUILD_BUG_ON(res);
+dc34d5036692c61 Alexander Lobakin 2022-06-24  1276  
+dc34d5036692c61 Alexander Lobakin 2022-06-24  1277  	/* ~BIT(25) */
+dc34d5036692c61 Alexander Lobakin 2022-06-24  1278  	BUILD_BUG_ON(!__builtin_constant_p(~var));
+dc34d5036692c61 Alexander Lobakin 2022-06-24  1279  	BUILD_BUG_ON(~var != ~BIT(25));
+7adaf37f7f104a7 Alexander Lobakin 2024-03-27  1280  
+7adaf37f7f104a7 Alexander Lobakin 2024-03-27  1281  	/* ~BIT(25) | BIT(25) == ~0UL */
+7adaf37f7f104a7 Alexander Lobakin 2024-03-27  1282  	bitmap_complement(&var, &var, BITS_PER_LONG);
+7adaf37f7f104a7 Alexander Lobakin 2024-03-27  1283  	__assign_bit(25, &var, true);
+7adaf37f7f104a7 Alexander Lobakin 2024-03-27  1284  
+7adaf37f7f104a7 Alexander Lobakin 2024-03-27  1285  	/* !(~(~0UL)) == 1 */
+7adaf37f7f104a7 Alexander Lobakin 2024-03-27  1286  	res = bitmap_full(&var, BITS_PER_LONG);
+7adaf37f7f104a7 Alexander Lobakin 2024-03-27  1287  	BUILD_BUG_ON(!__builtin_constant_p(res));
+7adaf37f7f104a7 Alexander Lobakin 2024-03-27  1288  	BUILD_BUG_ON(!res);
+dc34d5036692c61 Alexander Lobakin 2022-06-24  1289  }
+dc34d5036692c61 Alexander Lobakin 2022-06-24  1290  
 
-	advise = le16_to_cpu(di->di_advise);
-	m->type = advise & Z_EROFS_LI_LCLUSTER_TYPE_MASK;
-	if (m->type >= Z_EROFS_LCLUSTER_TYPE_MAX) {
-		...
-		DBG_BUGON(1);
-		return -EFSCORRUPTED;
-	}
+:::::: The code at line 1269 was first introduced by commit
+:::::: dc34d5036692c614eef23c1130ee42a201c316bf lib: test_bitmap: add compile-time optimization/evaluations assertions
 
-Thanks,
+:::::: TO: Alexander Lobakin <alexandr.lobakin@intel.com>
+:::::: CC: Yury Norov <yury.norov@gmail.com>
 
->   		}
->   	}
-> -err_bogus:
->   	erofs_err(sb, "bogus lookback distance %u @ lcn %lu of nid %llu",
->   		  lookback_distance, m->lcn, vi->nid);
->   	DBG_BUGON(1);
-> @@ -329,35 +325,28 @@ static int z_erofs_get_extent_compressedlen(struct z_erofs_maprecorder *m,
->   	DBG_BUGON(lcn == initial_lcn &&
->   		  m->type == Z_EROFS_LCLUSTER_TYPE_NONHEAD);
->   
-> -	switch (m->type) {
-> -	case Z_EROFS_LCLUSTER_TYPE_PLAIN:
-> -	case Z_EROFS_LCLUSTER_TYPE_HEAD1:
-> -	case Z_EROFS_LCLUSTER_TYPE_HEAD2:
-> +	if (m->type == Z_EROFS_LCLUSTER_TYPE_NONHEAD) {
-> +		if (m->delta[0] != 1) {
-> +			erofs_err(sb, "bogus CBLKCNT @ lcn %lu of nid %llu", lcn, vi->nid);
-> +			DBG_BUGON(1);
-> +			return -EFSCORRUPTED;
-> +		}
-> +		if (m->compressedblks)
-> +			goto out;
-> +	} else if (m->type < Z_EROFS_LCLUSTER_TYPE_MAX) {
->   		/*
->   		 * if the 1st NONHEAD lcluster is actually PLAIN or HEAD type
->   		 * rather than CBLKCNT, it's a 1 block-sized pcluster.
->   		 */
->   		m->compressedblks = 1;
-> -		break;
-> -	case Z_EROFS_LCLUSTER_TYPE_NONHEAD:
-> -		if (m->delta[0] != 1)
-> -			goto err_bonus_cblkcnt;
-> -		if (m->compressedblks)
-> -			break;
-> -		fallthrough;
-> -	default:
-> -		erofs_err(sb, "cannot found CBLKCNT @ lcn %lu of nid %llu", lcn,
-> -			  vi->nid);
-> -		DBG_BUGON(1);
-> -		return -EFSCORRUPTED;
-> +		goto out;
->   	}
-> +	erofs_err(sb, "cannot found CBLKCNT @ lcn %lu of nid %llu", lcn, vi->nid);
-> +	DBG_BUGON(1);
-> +	return -EFSCORRUPTED;
->   out:
->   	m->map->m_plen = erofs_pos(sb, m->compressedblks);
->   	return 0;
-> -err_bonus_cblkcnt:
-> -	erofs_err(sb, "bogus CBLKCNT @ lcn %lu of nid %llu", lcn, vi->nid);
-> -	DBG_BUGON(1);
-> -	return -EFSCORRUPTED;
->   }
->   
->   static int z_erofs_get_extent_decompressedlen(struct z_erofs_maprecorder *m)
-> @@ -386,9 +375,7 @@ static int z_erofs_get_extent_decompressedlen(struct z_erofs_maprecorder *m)
->   				m->delta[1] = 1;
->   				DBG_BUGON(1);
->   			}
-> -		} else if (m->type == Z_EROFS_LCLUSTER_TYPE_PLAIN ||
-> -			   m->type == Z_EROFS_LCLUSTER_TYPE_HEAD1 ||
-> -			   m->type == Z_EROFS_LCLUSTER_TYPE_HEAD2) {
-> +		} else if (m->type < Z_EROFS_LCLUSTER_TYPE_MAX) {
->   			if (lcn != headlcn)
->   				break;	/* ends at the next HEAD lcluster */
->   			m->delta[1] = 1;
-> @@ -452,8 +439,7 @@ static int z_erofs_do_map_blocks(struct inode *inode,
->   		}
->   		/* m.lcn should be >= 1 if endoff < m.clusterofs */
->   		if (!m.lcn) {
-> -			erofs_err(inode->i_sb,
-> -				  "invalid logical cluster 0 at nid %llu",
-> +			erofs_err(inode->i_sb, "invalid logical cluster 0 at nid %llu",
->   				  vi->nid);
->   			err = -EFSCORRUPTED;
->   			goto unmap_out;
-> @@ -469,8 +455,7 @@ static int z_erofs_do_map_blocks(struct inode *inode,
->   			goto unmap_out;
->   		break;
->   	default:
-> -		erofs_err(inode->i_sb,
-> -			  "unknown type %u @ offset %llu of nid %llu",
-> +		erofs_err(inode->i_sb, "unknown type %u @ offset %llu of nid %llu",
->   			  m.type, ofs, vi->nid);
->   		err = -EOPNOTSUPP;
->   		goto unmap_out;
-
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
