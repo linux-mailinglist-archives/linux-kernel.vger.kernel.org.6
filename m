@@ -1,272 +1,183 @@
-Return-Path: <linux-kernel+bounces-563140-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563165-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 274DAA63778
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 22:04:42 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6ABB3A637B1
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 23:26:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 666DD16C71D
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 21:04:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F359188DE8E
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 22:26:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D99519DF4C;
-	Sun, 16 Mar 2025 21:04:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E83A91C8607;
+	Sun, 16 Mar 2025 22:26:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CBQ+b4sq"
-Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=valla.it header.i=@valla.it header.b="cSrS1k8M"
+Received: from delivery.antispam.mailspamprotection.com (delivery.antispam.mailspamprotection.com [185.56.87.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BC834A1D
-	for <linux-kernel@vger.kernel.org>; Sun, 16 Mar 2025 21:04:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742159075; cv=none; b=oHs2Kdg0G4PWM6PxXcG2J+Uw0LQ/Gadb53F1jdmhHmHAcsLK3itHgdK69YtbhDZpDb+Ip+IAkaFXOD7jN8S0UN9lnNQ8dhiL1aOpImGuecROI+6nWEONv3xP6NuRS2VnYAtYAR8ftJ3UTRDOo6khWBpjOF68kIEds/uHkZHWZJw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742159075; c=relaxed/simple;
-	bh=oIvD7vuTyo+TsqATqIM4EPZr52RHJ2FI71/rALHfDGQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Content-Type; b=PEqxdWZQnaeNfZAq5u9CPKaTcRdN7Ypik9WEST278UQu9VvjclwyWOGIUsWonwEjgbgUloaNBWZMxXdzbS/Y5K+zfxQybDnCAObrxmBljNad5FR4JvRMUe8TaHmYrjZ6+PWQ4/VOzR8AGiMDO+5ADiy7j2de68U8iQcTcAsZ0z0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CBQ+b4sq; arc=none smtp.client-ip=209.85.219.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-e63c966fe37so2595722276.0
-        for <linux-kernel@vger.kernel.org>; Sun, 16 Mar 2025 14:04:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742159073; x=1742763873; darn=vger.kernel.org;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=md11oMIZiDywb0aY7tjjNzmPg1FQkiTZGW/PqfpLY2s=;
-        b=CBQ+b4sqjL8Q0XIzUVkfYjLGeHL7HtAXGltmwJ8Zt28RbTjkI/ThR8o95OaHieTC2A
-         NmQYSwNflFkPwFkgMqiP1TcswbV6N/GYsbqF4Gbjkh8OBrrNChMpyGPmYynmjWPsLJPU
-         oE9D48/hpX9TwfyKxIETYLdyl+DjtdgABeGyzfdS2I+TDsV53cJjJ+OBbkEJn2MNY8EQ
-         W7HFdEG3LDcUFNwxWVkGTMxHo0B7OLspW119c+8W52DCDmLeEBPnHwLuNW58rZ8CCqPj
-         A8M4sC+fv3qILjDVg6Vg5a2sKM2nQSnoUy/p4tAJjy1w06ALWAzU6mBLj4h5NktS+T6w
-         Q9LA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742159073; x=1742763873;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=md11oMIZiDywb0aY7tjjNzmPg1FQkiTZGW/PqfpLY2s=;
-        b=VuQFn3+438JvrzLld1bw15UOvJvF1Ry8zAXE7IHVTmWXdyYsKpGuuaibIkLydSrMaO
-         8K+j7MNvG3ir64h9GdThnzInJsad5aB/1F/Uc6QCwGTywwuIXa8HjssdOkIpHQnvVdU1
-         WN4i3jCzrdOgoS3bP2+i6PPNXh55Wi620x2Ir8gnPibWSgioqZP324Gnm1pmF4sOJxGt
-         pRqEV6I456apxRzWnVY7/OQyWEV65kz2zdO+FucP4u+tzo3MhDX6AFWGrmF2wEeg+XqB
-         FXNyLITydm8xOXYrv9tdaX7eDnom5M41fhEF3ZMWjinXBdZ8kSiGju13af6i70n7O+QE
-         F9Nw==
-X-Forwarded-Encrypted: i=1; AJvYcCUWk6JSjdnLB8B0Q3LFo6HliwGBs8S43MiSaehTZzar+GrSUhjf6hm4fV6qk0o9Fv5nOmlc2E79dRTUFwo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YybXEELOpTvd/CZGb2IEOYLUbeg7nhWJBUQhDPq/69Q8/JarIK7
-	NCL8XCJpQTcVuA5ClcgCr9SSWyZd3VnRob01TuWLAM0ZBcc6m+368DKw4dGzV0T2AmDctAeDAAW
-	tVqbWHjYkTOnTg8ak33tyQPvLTmk=
-X-Gm-Gg: ASbGncuAnAImhl4mvzb36uYRkBk1kA3IFfVJfc8PNMTt5p7fy023VW/vpbgedw6WlMe
-	aY/DsfJcWW9gWGAKq4rzAJDKDMk85e3m/tmSyEIipOzLsLsoOqRmpnZTDhJHcMykKxtO7tOmYI/
-	brc1UvGAY2aE4CjrklSq56B7UlR9W3j92Gt3c=
-X-Google-Smtp-Source: AGHT+IH7NTlevocEsFCUsFAJkBJ8eedsf6LuBGDOgJsThKUoWmcfKtIOiaGA86wc6HMeYJIo6S6O4wjQS49carLMfdY=
-X-Received: by 2002:a05:690c:7408:b0:6fe:bfb9:549c with SMTP id
- 00721157ae682-6ff45eea8a2mr127867937b3.1.1742159073078; Sun, 16 Mar 2025
- 14:04:33 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A1B7199E9A;
+	Sun, 16 Mar 2025 22:25:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=185.56.87.11
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742163960; cv=pass; b=rW17pjJJBviV0x847mXSf0a5sdIbzNs03aIdZyYb446ynjBUaCVNMkgJ4133jJ/wPZc7rEvUdaQUNvsJ7fXWfc/SvgavqBPQckQq7uNb05rl1IHJ33/dbQSTmF4fToyWc/I9HZYQVZNGygKRixMeJ+xOWRc3V6OCfdP9+9XqFBQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742163960; c=relaxed/simple;
+	bh=AchUGpGJPCL+V084QppEVLRoXuTVyPDKqmT8Bw7nVho=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hMVO2D0SbJZ3BqbM4XjG4Y4XpfaGBo9+m9/LOHUJ2SkMNaYPBnMWGCuIZwg8NcF0Zbwxl0LtapPTDD9JJFMDu6xiAlwogCYI6TRlCJXqKLm5OwpGY9k6/dQkRiimh3Mp84TdDb+lFoOUqGB2x23tSoVyEfWLYP7Uf3X2AL26Hzs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=valla.it; spf=pass smtp.mailfrom=valla.it; dkim=pass (1024-bit key) header.d=valla.it header.i=@valla.it header.b=cSrS1k8M; arc=pass smtp.client-ip=185.56.87.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=valla.it
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=valla.it
+ARC-Seal: i=1; cv=none; a=rsa-sha256; d=instance-europe-west4-pdhm.prod.antispam.mailspamprotection.com; s=arckey; t=1742163957;
+	 b=HWx2JE8+N1/0aQ6u4EU/QW0gkiX+NDS7MziKonn/SPetUk1Rl6oKJuOftUhAigP7hK9OE3/0sd
+	  iP1EE7nboAVOp1zQ1M2UPjuEsYf+4j3nJF3d6wC+BDAY3ZxbiWff7yhaMnbudDNhTdvAgpnMC4
+	  g6O/3CtKKWuui/d23/bhHTrDyiJyLMS0fbWI8o3AnMWRIcswpXDhPePCH1Ego6BuhChvnOH0qT
+	  vRRVDsKEoAoj91SOduaG+jxKFciFQHpHFPmPQAZ7Zs/UW+1zYZGtbKJ93wcrlin+PVEWOalqyf
+	  AP5+3SjTKkZjqyIGDkx/1mke/YNDiHnE2ujDyWdoIbBStQ==;
+ARC-Authentication-Results: i=1; instance-europe-west4-pdhm.prod.antispam.mailspamprotection.com; smtp.remote-ip=35.214.173.214;
+	iprev=pass (214.173.214.35.bc.googleusercontent.com) smtp.remote-ip=35.214.173.214;
+	auth=pass (LOGIN) smtp.auth=esm19.siteground.biz;
+	dkim=pass header.d=valla.it header.s=default header.a=rsa-sha256;
+	arc=none
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed; d=instance-europe-west4-pdhm.prod.antispam.mailspamprotection.com; s=arckey; t=1742163957;
+	bh=AchUGpGJPCL+V084QppEVLRoXuTVyPDKqmT8Bw7nVho=;
+	h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From:
+	  DKIM-Signature;
+	b=e3HYoF9/X6lkLKilJo+KqYj7RvTbW2e1syu/8225Vt2WYZz+QXG3UIamhc8zDAUiYLIxwNm1l/
+	  OcEDiYZcqAp5T4Y+G5i2FHFeKTJ8eTFcD9taYiYLug+lXDW582eU5NqLj+RIDdd7xfLCINIqYJ
+	  XjeaD1DX76HkjvFhUg1PW0hqPwDLABBdoX85CB0nbEpToLfjYej1eNhcgN54f9eNberguOjQ78
+	  OopP/Dy4q31HoE1BViS81ci6K1FMioZaDt7tJAGkOFJ88Rt9QXfOdxuwpbv5v0gSjBK0IR08cr
+	  fNPAVyZ3bdRvmfyxLoNyH8m9uuYVmwqAV3tW7Fsnw2vsRQ==;
+Received: from 214.173.214.35.bc.googleusercontent.com ([35.214.173.214] helo=esm19.siteground.biz)
+	by instance-europe-west4-pdhm.prod.antispam.mailspamprotection.com with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.98.1)
+	(envelope-from <francesco@valla.it>)
+	id 1ttuwU-00000004iVz-1jw4;
+	Sun, 16 Mar 2025 20:50:44 +0000
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=valla.it;
+	s=default; h=Date:Subject:Cc:To:From:list-help:list-unsubscribe:
+	list-subscribe:list-post:list-owner:list-archive;
+	bh=v7sjfrgq8lZr0nHx77awpfMZaCLKOjn8gKszKsmGIIs=; b=cSrS1k8M8r3e68y4OrUg3ZHKhv
+	Nw8mirVTQ201BvE5OCpD7yO37ne5L/DdZsVcaYAEsYxEKfPBJ07KI+oC4UH69LOqq7ecly6GiHJ89
+	JAuBQuPTP5m418sPwwMrLl/vbHw8EznR9f44y4EUfQ/oBiJEtnxTouEWqrFp3NcB8h1I=;
+Received: from [95.233.219.167] (port=60583 helo=fedora.fritz.box)
+	by esm19.siteground.biz with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.98.1)
+	(envelope-from <francesco@valla.it>)
+	id 1ttuwQ-00000000GWD-0RVV;
+	Sun, 16 Mar 2025 20:50:38 +0000
+From: Francesco Valla <francesco@valla.it>
+To: linux-kernel@vger.kernel.org,
+	linux-embedded@vger.kernel.org
+Cc: Steven Rostedt <rostedt@goodmis.org>,
+	Tim Bird <Tim.Bird@sony.com>
+Subject: [PATCH] init/main.c: log initcall level when initcall_debug is used
+Date: Sun, 16 Mar 2025 21:50:15 +0100
+Message-ID: <20250316205014.2830071-2-francesco@valla.it>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250125064619.8305-1-jim.cromie@gmail.com> <20250125064619.8305-22-jim.cromie@gmail.com>
- <497016b0-9e72-4374-a19b-967df8ed9b44@bootlin.com>
-In-Reply-To: <497016b0-9e72-4374-a19b-967df8ed9b44@bootlin.com>
-From: jim.cromie@gmail.com
-Date: Sun, 16 Mar 2025 15:04:07 -0600
-X-Gm-Features: AQ5f1JrQW-ChxEX-mDqp_TgiMFS1z1VACJr_say5FF-oBu6y4_4Lr7pMTHi9qhM
-Message-ID: <CAJfuBxxGUk8KdyEuPUoVY3ftWNE8d6GEyG3me85xYetuysFGfQ@mail.gmail.com>
-Subject: Re: [PATCH 21/63] dyndbg: allow ddebug_add_module to fail
-To: Jim Cromie <jim.cromie@gmail.com>, linux-kernel@vger.kernel.org, jbaron@akamai.com, 
-	gregkh@linuxfoundation.org, ukaszb@chromium.org, 
-	intel-gfx-trybot@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
-	amd-gfx@lists.freedesktop.org, intel-gvt-dev@lists.freedesktop.org, 
-	intel-gfx@lists.freedesktop.org, daniel.vetter@ffwll.ch, 
-	tvrtko.ursulin@linux.intel.com, jani.nikula@intel.com, 
-	ville.syrjala@linux.intel.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - esm19.siteground.biz
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - valla.it
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-SGantispam-id: 3b46fe2c4da7b04bca5cf9745b5c5e2b
+AntiSpam-DLS: false
+AntiSpam-DLSP: 
+AntiSpam-DLSRS: 
+AntiSpam-TS: 1.0
+Authentication-Results: instance-europe-west4-pdhm.prod.antispam.mailspamprotection.com;
+	iprev=pass (214.173.214.35.bc.googleusercontent.com) smtp.remote-ip=35.214.173.214;
+	auth=pass (LOGIN) smtp.auth=esm19.siteground.biz;
+	dkim=pass header.d=valla.it header.s=default header.a=rsa-sha256;
+	arc=none
 
-On Tue, Feb 25, 2025 at 7:26=E2=80=AFAM Louis Chauvet <louis.chauvet@bootli=
-n.com> wrote:
->
->
->
-> Le 25/01/2025 =C3=A0 07:45, Jim Cromie a =C3=A9crit :
-> > To prep for failing modprobe on classid conflicts, upgrade the
-> > call-chain around ddebug_add_module(), in 2 ways:
-> >
-> > 1. in ddebug_add_module() add local reserved_ids to accumulate
-> > reservations, pass it by ref to ddebug_attach_{,user_}module_classes()
-> > so they can examine the reservations as they work.
-> >
-> > 2. return int from both ddebug_attach_{,user_}module_classes(), up to
-> > ddebug_add_module(), then to ddebug_module_notify().
-> >
-> > No conflicts are currently detected or returned.
-> >
-> > TBD: This is updated further by hoisting the reservation-check, which
-> > obsoletes part of 2, creating churn, maybe squash it away.
->
+When initcall_debug is specified on the command line, the start and
+return point for each initcall is printed. However, no information on
+the initcall level is reported.
 
-this now done locally as
-05b0eed12dcc dyndbg: hoist classmap-filter-by-modname up to ddebug_add_modu=
-le
-sha will change yet..
+Add to the initcall_debug infrastructure an additional print that
+informs when a new initcall level is entered. This is particularly
+useful when debugging dependency chains and/or working on boot time
+reduction.
 
-Though Ive dropped the fail-on-modprobe,
-I didn't want to open up another failure mode
+Signed-off-by: Francesco Valla <francesco@valla.it>
+---
+ init/main.c | 18 ++++++++++++++++--
+ 1 file changed, 16 insertions(+), 2 deletions(-)
 
-Some WARN or pr_error should suffice for now.
+diff --git a/init/main.c b/init/main.c
+index 2a1757826397..80a07563036d 100644
+--- a/init/main.c
++++ b/init/main.c
+@@ -1214,6 +1214,12 @@ trace_initcall_finish_cb(void *data, initcall_t fn, int ret)
+ 		 fn, ret, (unsigned long long)ktime_us_delta(rettime, *calltime));
+ }
+ 
++static __init_or_module void
++trace_initcall_level_cb(void *data, const char *level)
++{
++	printk(KERN_DEBUG "entering initcall level: %s\n", level);
++}
++
+ static ktime_t initcall_calltime;
+ 
+ #ifdef TRACEPOINTS_ENABLED
+@@ -1225,10 +1231,12 @@ static void __init initcall_debug_enable(void)
+ 					    &initcall_calltime);
+ 	ret |= register_trace_initcall_finish(trace_initcall_finish_cb,
+ 					      &initcall_calltime);
++	ret |= register_trace_initcall_level(trace_initcall_level_cb, NULL);
+ 	WARN(ret, "Failed to register initcall tracepoints\n");
+ }
+ # define do_trace_initcall_start	trace_initcall_start
+ # define do_trace_initcall_finish	trace_initcall_finish
++# define do_trace_initcall_level	trace_initcall_level
+ #else
+ static inline void do_trace_initcall_start(initcall_t fn)
+ {
+@@ -1242,6 +1250,12 @@ static inline void do_trace_initcall_finish(initcall_t fn, int ret)
+ 		return;
+ 	trace_initcall_finish_cb(&initcall_calltime, fn, ret);
+ }
++static inline void do_trace_initcall_level(const char *level)
++{
++	if (!initcall_debug)
++		return;
++	trace_initcall_level_cb(NULL, level);
++}
+ #endif /* !TRACEPOINTS_ENABLED */
+ 
+ int __init_or_module do_one_initcall(initcall_t fn)
+@@ -1314,7 +1328,7 @@ static void __init do_initcall_level(int level, char *command_line)
+ 		   level, level,
+ 		   NULL, ignore_unknown_bootoption);
+ 
+-	trace_initcall_level(initcall_level_names[level]);
++	do_trace_initcall_level(initcall_level_names[level]);
+ 	for (fn = initcall_levels[level]; fn < initcall_levels[level+1]; fn++)
+ 		do_one_initcall(initcall_from_entry(fn));
+ }
+@@ -1358,7 +1372,7 @@ static void __init do_pre_smp_initcalls(void)
+ {
+ 	initcall_entry_t *fn;
+ 
+-	trace_initcall_level("early");
++	do_trace_initcall_level("early");
+ 	for (fn = __initcall_start; fn < __initcall0_start; fn++)
+ 		do_one_initcall(initcall_from_entry(fn));
+ }
+-- 
+2.48.1
 
-
-> Hi Jim,
->
-> It could be very nice to squash when possible yes!
->
-> > Signed-off-by: Jim Cromie <jim.cromie@gmail.com>
->
-> Reviewed-by: Louis Chauvet <louis.chauvet@bootlin.com>
->
-> > ---
-> >   lib/dynamic_debug.c | 40 +++++++++++++++++++++++++++++-----------
-> >   1 file changed, 29 insertions(+), 11 deletions(-)
-> >
-> > diff --git a/lib/dynamic_debug.c b/lib/dynamic_debug.c
-> > index 16c9b752822b..0ef243e30663 100644
-> > --- a/lib/dynamic_debug.c
-> > +++ b/lib/dynamic_debug.c
-> > @@ -1216,8 +1216,9 @@ static void ddebug_apply_params(const struct ddeb=
-ug_class_map *cm, const char *m
-> >    * modular classmap vector/section.  Save the start and length of the
-> >    * subrange at its edges.
-> >    */
-> > -static void ddebug_attach_module_classes(struct ddebug_table *dt,
-> > -                                      const struct _ddebug_info *di)
-> > +static int ddebug_attach_module_classes(struct ddebug_table *dt,
-> > +                                     const struct _ddebug_info *di,
-> > +                                     u64 *reserved_ids)
-> >   {
-> >       struct ddebug_class_map *cm;
-> >       int i, nc =3D 0;
-> > @@ -1230,13 +1231,14 @@ static void ddebug_attach_module_classes(struct=
- ddebug_table *dt,
-> >               }
-> >       }
-> >       if (!nc)
-> > -             return;
-> > +             return 0;
-> >
-> >       vpr_info("module:%s attached %d classes\n", dt->mod_name, nc);
-> >       dt->info.maps.len =3D nc;
-> >
-> >       for_subvec(i, cm, &dt->info, maps)
-> >               ddebug_apply_params(cm, cm->mod_name);
-> > +     return 0;
-> >   }
-> >
-> >   /*
-> > @@ -1244,8 +1246,9 @@ static void ddebug_attach_module_classes(struct d=
-debug_table *dt,
-> >    * means a query against the dt/module, which means it must be on the
-> >    * list to be seen by ddebug_change.
-> >    */
-> > -static void ddebug_attach_user_module_classes(struct ddebug_table *dt,
-> > -                                           const struct _ddebug_info *=
-di)
-> > +static int ddebug_attach_user_module_classes(struct ddebug_table *dt,
-> > +                                           const struct _ddebug_info *=
-di,
-> > +                                           u64 *reserved_ids)
-> >   {
-> >       struct ddebug_class_user *cli;
-> >       int i, nc =3D 0;
-> > @@ -1266,7 +1269,7 @@ static void ddebug_attach_user_module_classes(str=
-uct ddebug_table *dt,
-> >               }
-> >       }
-> >       if (!nc)
-> > -             return;
-> > +             return 0;
-> >
-> >       dt->info.users.len =3D nc;
-> >
-> > @@ -1275,6 +1278,7 @@ static void ddebug_attach_user_module_classes(str=
-uct ddebug_table *dt,
-> >               ddebug_apply_params(cli->map, cli->mod_name);
-> >
-> >       vpr_dt_info(dt, "attach-client-module: ");
-> > +     return 0;
-> >   }
-> >
-> >   /*
-> > @@ -1284,6 +1288,8 @@ static void ddebug_attach_user_module_classes(str=
-uct ddebug_table *dt,
-> >   static int ddebug_add_module(struct _ddebug_info *di, const char *mod=
-name)
-> >   {
-> >       struct ddebug_table *dt;
-> > +     u64 reserved_ids =3D 0;
-> > +     int rc;
-> >
-> >       if (!di->descs.len)
-> >               return 0;
-> > @@ -1306,16 +1312,23 @@ static int ddebug_add_module(struct _ddebug_inf=
-o *di, const char *modname)
-> >
-> >       INIT_LIST_HEAD(&dt->link);
-> >
-> > -     if (di->maps.len)
-> > -             ddebug_attach_module_classes(dt, di);
-> > -
-> > +     if (di->maps.len) {
-> > +             rc =3D ddebug_attach_module_classes(dt, di, &reserved_ids=
-);
-> > +             if (rc) {
-> > +                     kfree(dt);
-> > +                     return rc;
-> > +             }
-> > +     }
-> >       mutex_lock(&ddebug_lock);
-> >       list_add_tail(&dt->link, &ddebug_tables);
-> >       mutex_unlock(&ddebug_lock);
-> >
-> > -     if (di->users.len)
-> > -             ddebug_attach_user_module_classes(dt, di);
-> >
-> > +     if (di->users.len) {
-> > +             rc =3D ddebug_attach_user_module_classes(dt, di, &reserve=
-d_ids);
-> > +             if (rc)
-> > +                     return rc;
-> > +     }
-> >       vpr_info("%3u debug prints in module %s\n", di->descs.len, modnam=
-e);
-> >       return 0;
-> >   }
-> > @@ -1400,6 +1413,11 @@ static int ddebug_module_notify(struct notifier_=
-block *self, unsigned long val,
-> >       switch (val) {
-> >       case MODULE_STATE_COMING:
-> >               ret =3D ddebug_add_module(&mod->dyndbg_info, mod->name);
-> > +             if (ret =3D=3D -EINVAL) {
-> > +                     pr_err("conflicting dyndbg-classmap reservations\=
-n");
-> > +                     ddebug_remove_module(mod->name);
-> > +                     break;
-> > +             }
-> >               if (ret)
-> >                       WARN(1, "Failed to allocate memory: dyndbg may no=
-t work properly.\n");
-> >               break;
->
-> --
-> Louis Chauvet, Bootlin
-> Embedded Linux and Kernel engineering
-> https://bootlin.com
->
 
