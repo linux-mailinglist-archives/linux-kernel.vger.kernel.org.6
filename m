@@ -1,88 +1,52 @@
-Return-Path: <linux-kernel+bounces-563053-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563054-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D63AFA63659
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 16:59:33 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EA09A63663
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 17:32:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 14BF216E5F5
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 15:59:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D61127A6940
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 16:31:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B4781ADC8F;
-	Sun, 16 Mar 2025 15:59:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U9phuXse"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54A171A3150;
+	Sun, 16 Mar 2025 16:32:23 +0000 (UTC)
+Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50BEE381C4;
-	Sun, 16 Mar 2025 15:59:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 066A415C0;
+	Sun, 16 Mar 2025 16:32:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742140766; cv=none; b=lXmF6YJXDeezunCEuBkqZkq5P0YY0DuEKXsPdj+n/pnt0FtAUSdpfumuG8qqzpAfeWM2wHWXSHeDlC55D9SSW06/ZZQV5Fd+4kGs4cjZ2s8Si5hYOQ8fRsLg3N1MYdtl6Qsgyym0+0yyXqQAjk1pgsOgdEJcjgf7ElTCvQg6vx4=
+	t=1742142743; cv=none; b=Y+DAX0dAkXgBfiTHrTRfQcfuY+1oN+l0iXWKZnXN6pTUUNJ+wO9Om8sZR+RBzaTZIAYyNhUMtsXXsKDs3Kta4VCQbgMdiQHooYR/JJu/dyHC619MoX11kmKOxJT3rL7u5Ilr0tAIwWopNjJMMRVSUp36Wctoq8zwyonkiifomOY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742140766; c=relaxed/simple;
-	bh=wKUObvYL/6PIILGbRD1vfUG0vk+Dv9uBdZURz28Gz68=;
+	s=arc-20240116; t=1742142743; c=relaxed/simple;
+	bh=6tNpEgrX2sPS4nyDQI0vX/eclmSY+zcXwfsjcq3Un2g=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tm4kCq0pawhRZmcfmoMQ8/c1topCeANt4W2Vf7f7/3uSdcdqLkJ6QPDLAGsI78N4qpd3MpAL/4pZCcDRjLC1YasJoJKkSDfDD5V3AiOXG4ZWcSY1N1iB65wYzSsi3zchTkAwb8+V6ZZRvRxlB8nmdSWeXZnGXxh6LYtkdI1PaUk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U9phuXse; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-226185948ffso792445ad.0;
-        Sun, 16 Mar 2025 08:59:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742140764; x=1742745564; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=F4bZp2fvqVXmj3CQtnXGqP+MV9d+iqYo2DdHMBvTbsM=;
-        b=U9phuXsefHBnJWHuh/MKUbAFbraxPqKsoH9nj8e1IOkvMTISxYd92AQKYTf7mTHYrd
-         N68wV96pAiIBV0zeXMkJTnIBfEGKYk2oz53YK2ADByX1EGTGBDuJ6+51uPgYD6lavyjc
-         l9BQmjQ5rbxCqLdBaiYHdOFcTjLf5LwzM2hV+g0n1DCg0kXNAZbKB24k6pnDyU1qZbvT
-         SqxNzeT1eH5tIXhj1mXF2JpLhdIxq0XNH8sxYf2fsXGGxilQkH3/X/XTGEyXuZyh6Lgg
-         5b4Hpi7PCGt/zGa34Nt7b1hYtz0zV6YVJJyTjPV376Ezc7VasoV/zSArXRZvETVr7a8L
-         82ew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742140764; x=1742745564;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=F4bZp2fvqVXmj3CQtnXGqP+MV9d+iqYo2DdHMBvTbsM=;
-        b=jCz8vp/NQwmoHimS0RjE7zkG7yPBik/0G7XEccQe+JlOSJlgOYC2rvS0feEQeYSUGY
-         M2HXMMtnXF8IQTs0UZUW9awFOVpOA1t3DHzR/w+L0+mc2y6W+oyiHsgp03dsC7r7iKBT
-         i/GW0np2E4BI5My2z3Btg2FUl4468hzRyNkroGcxFLu3zuHTXd6Rr/ktK/xqpFN+qSi9
-         GfqsVvMqozsdqwS3P8A6hcQPf3w8HQ8oRoqjhXNtw5wOeb1JdN0zb0EiiLeIOSH2z988
-         HiyGPyky9e9Y0JKTKbbCEocIsFOOmnLnzT0E46vYd0/6z6HVEEQLfjkw/5xkDr8TYOYe
-         Lv/g==
-X-Forwarded-Encrypted: i=1; AJvYcCUgO+oPkafankks6rezEsirx1ykA3GQIfB0XcrRIw/BqotB1Hmv4fKZQH/3Ja7w5TlsPVb2mfJK@vger.kernel.org, AJvYcCXQCut6/5PfMSa8oF2mJU6ANdnq4nbacSdTuRtHdzOFoGAGsX/IVgZajpy5IqreKyRfMkF2qSjF7Vhc40Qo@vger.kernel.org
-X-Gm-Message-State: AOJu0YzsDAxn1RfFWGaRWpIFX/HtB0ZmuqmC9+K/fiSTG8tKLMeTgSR/
-	Nydr/IDwuVWMzmzTGxgf7B5ZmgpCF/GQWcIPb0IvE2L1nXqKxwDA
-X-Gm-Gg: ASbGncs6jGfNvLvnnAZuJF/afk/tQIKVu2jZRhJKHS5/JW855phhuDT5Qq/R48bkGEe
-	w/1mJe2+Vb0Y4wnxdORqcHEqv7mE01FVsUCUdr8QYGzE56VdsMLhrwj4XQky8giV0blhtLmoXHY
-	SMSvv3exqUPqwaEpclDhHlgndo7J8vX9lleLokRttw/R39kQRATjKjoiDxxp7EQFNLPEdF5JcLY
-	h+fG4opoBgr5/D7+bU0G1/39cU9NqixF5DEJqscVRCABOVy7YDe9mYTSdqaipR4zlqNjO4Bqo0B
-	Yw0Sp5oz8fz2G/vik6LisyCpn5n2VlmkabmxrP4So1e2oepEAGxv7Ah7fCd7F0i41enHzf0=
-X-Google-Smtp-Source: AGHT+IEQAEZ6ns6hsA7mRZvJHISXdD7LaGEtw+Oe7yAnHpSLVjJcLic04uKzeIOZwjy/qbtI3xODVQ==
-X-Received: by 2002:a17:902:ce02:b0:220:c066:94eb with SMTP id d9443c01a7336-225e0a6b2cdmr125317245ad.25.1742140764417;
-        Sun, 16 Mar 2025 08:59:24 -0700 (PDT)
-Received: from MacBook-Pro-49.local ([2620:10d:c090:400::5:4180])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-225c68aa906sm59447255ad.88.2025.03.16.08.59.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 16 Mar 2025 08:59:23 -0700 (PDT)
-Date: Sun, 16 Mar 2025 08:59:20 -0700
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Shakeel Butt <shakeel.butt@linux.dev>, 
-	Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, Muchun Song <muchun.song@linux.dev>, 
-	Vlastimil Babka <vbabka@suse.cz>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
-	linux-mm@kvack.org, cgroups@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Meta kernel team <kernel-team@meta.com>
-Subject: Re: [PATCH 0/9] memcg: cleanup per-cpu stock
-Message-ID: <tk35wbak4rp4cpz7khnkpwz7ortta26otktb67c5pmt3yan34z@qgyjxc44rvmp>
-References: <20250315174930.1769599-1-shakeel.butt@linux.dev>
- <20250315205759.c9f9cdfc2c20467e4106c41a@linux-foundation.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=DqzVyGFahD5i0bmE7SidhWsV3/F/UWezG5smA6gneXKN6N+2vjZY93FrZFEA6Oc6MAEOcxklEQzB77lGoxAPQ7nLIDvgTIKQuG7N1Uidy+GBhZjPmRCnjBi7G9gWYoGbStNcYrQWpopp+Ar9NQeepEsqpK8/Qt1U+KpiAY0doww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
+Received: from local
+	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
+	 (Exim 4.98)
+	(envelope-from <daniel@makrotopia.org>)
+	id 1ttquA-000000007RN-0YXs;
+	Sun, 16 Mar 2025 16:32:02 +0000
+Date: Sun, 16 Mar 2025 16:31:58 +0000
+From: Daniel Golle <daniel@makrotopia.org>
+To: "Lucien.Jheng" <lucienx123@gmail.com>
+Cc: andrew@lunn.ch, hkallweit1@gmail.com, linux@armlinux.org.uk,
+	kuba@kernel.org, davem@davemloft.net, edumazet@google.com,
+	pabeni@redhat.com, ericwouds@gmail.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, joseph.lin@airoha.com,
+	wenshin.chung@airoha.com
+Subject: Re: [PATCH v3 net-next PATCH 1/1] net: phy: air_en8811h: Add clk
+ provider for CKO pin
+Message-ID: <Z9b8_nz1Qqn8lNFW@makrotopia.org>
+References: <20250316141900.50991-1-lucienX123@gmail.com>
+ <20250316141900.50991-2-lucienX123@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,54 +55,42 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250315205759.c9f9cdfc2c20467e4106c41a@linux-foundation.org>
+In-Reply-To: <20250316141900.50991-2-lucienX123@gmail.com>
 
-On Sat, Mar 15, 2025 at 08:57:59PM -0700, Andrew Morton wrote:
-> On Sat, 15 Mar 2025 10:49:21 -0700 Shakeel Butt <shakeel.butt@linux.dev> wrote:
-> 
-> > 
-> > This is a cleanup series which is trying to simplify the memcg per-cpu
-> > stock code, particularly it tries to remove unnecessary dependencies on
-> > local_lock of per-cpu memcg stock. The eight patch from Vlastimil
-> > optimizes the charge path by combining the charging and accounting.
-> > 
-> > This series is based on next-20250314 plus two following patches:
-> > 
-> > Link: https://lore.kernel.org/all/20250312222552.3284173-1-shakeel.butt@linux.dev/
-> > Link: https://lore.kernel.org/all/20250313054812.2185900-1-shakeel.butt@linux.dev/
-> 
-> Unfortunately the bpf tree has been making changes in the same area of
-> memcontrol.c.  01d37228d331 ("memcg: Use trylock to access memcg
-> stock_lock.")
-> 
-> Sigh.  We're at -rc7 and I don't think it's worth working around that
-> for a cleanup series.  So I'm inclined to just defer this series until
-> the next -rc cycle.
-> 
-> If BPF merges reasonably early in the next merge window then please
-> promptly send this along and I should be able to squeak it into
-> 6.15-rc1.
+Hi Lucien,
 
-Ohh. I didn't realize that try_alloc changes are causing so much trouble.
-Sorry about that.
+nice work, this looks much better already.
 
-Andrew,
+As the PHY now becomes a clk provider, please also include
+linux-clk@vger.kernel.org list among the receivers in Cc for future
+iterations (but allow for at least 24h to pass before resending, so
+others also have time to comment on this version).
 
-could you please instead take bpf-next.git try_alloc_pages branch
-into your tree and resolve two trivial conflicts:
-1. https://lore.kernel.org/bpf/20250311120422.1d9a8f80@canb.auug.org.au/
-2. https://lore.kernel.org/bpf/20250312145247.380c2aa5@canb.auug.org.au/
-There are 7 commits there.
-You can also squash Vlastimil's fix
-"Fix the flipped condition in gfpflags_allow_spinning" into 
-"Introduce try_alloc_pages" patch or keep everything as-is.
+On Sun, Mar 16, 2025 at 10:19:00PM +0800, Lucien.Jheng wrote:
+> The EN8811H generates 25MHz or 50MHz clocks on its CKO pin, selected by GPIO3 hardware trap.
+> Register 0xcf914, read via buckpbus API, shows the frequency with bit 12: 0 for 25MHz, 1 for 50MHz.
+> CKO clock output is active from power-up through md32 firmware loading.
 
-I'll drop it from bpf-next right after.
+Nit: The lines of the patch description body are still too long.
 
-Then Shakeel can rebase/resend his set without conflicts and everything
-will be nicely ready for the merge window.
+> ...
+> +static int en8811h_clk_provider_setup(struct device *dev, struct clk_hw *hw)
+> +{
+> +	struct clk_init_data init;
+> +	int ret;
+> +
+> +	if (!IS_ENABLED(CONFIG_COMMON_CLK))
+> +		return 0;
+> +
+> +	init.name =  devm_kasprintf(dev, GFP_KERNEL, "%s-clk",
+> +				    fwnode_get_name(dev_fwnode(dev)));
+> +	if (!init.name)
+> +		return -ENOMEM;
+> +
+> +	init.ops = &en8811h_clk_ops;
+> +	init.flags = CLK_GET_RATE_NOCACHE;
 
-I'll defer other bpf side things to after merge window when trees converge.
-
-Thanks!
+The rate is fixed by bootstrap pins, so there is reason for not allowing
+to cache the rate (which is always going to be the same). Hence I
+suggest to not set the CLK_GET_RATE_NOCACHE flag.
 
