@@ -1,186 +1,152 @@
-Return-Path: <linux-kernel+bounces-562965-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562966-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3393BA6352F
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 12:03:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E3251A63530
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 12:03:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5260E7A83E4
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 11:02:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 349CE7A888C
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 11:02:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 037BD1A3161;
-	Sun, 16 Mar 2025 11:02:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C7531A5B88;
+	Sun, 16 Mar 2025 11:03:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fB05gxOU"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tZPCW/zI"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 526CA10F2;
-	Sun, 16 Mar 2025 11:02:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C20AA1A00ED;
+	Sun, 16 Mar 2025 11:03:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742122969; cv=none; b=lVWrbm6JtlmEP8hAncMGU9FgcqEExQJVXwDcIh/OCukvdGfjvqHaWu1Madx6+m4mrWp0LWTQ8Kz63xfT4a+NyfsprUGb+FBaoYakpz9LhFDzBX/iy/sQfdRlZ2khzKN1jDeRHnPqhfqHgJX21QwzZlY9SImkhvbS5id/UX3HWuA=
+	t=1742122987; cv=none; b=OBbNKTBeBTyUICcJMFG1riDDRdSfjrNUlzrKfz0248F75AQHeM20nn4h/kUo97EUkDNmQKxJNvEkOih2fkZdkMM5KAjR1d+DNNlEixO+jOoeTj1P2grUyyKiuHbePadFAPX4a92LRPipTnH1bxO8im2aPHZA/kcnHxEKzu7vrGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742122969; c=relaxed/simple;
-	bh=GjgXFuSkKYCqC5gatyBw2YKekvHRrwOiavBqOKQJTaU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bHPcOoFwNOCLR20jPcNi+w+xTT5CQ6YD1PWsu0GtA6X4mrlPYa/wMrKSi/j0zgn/m5NFsFtbPHF2ezd7/STK4DZAExONlplxSXyzX/ZiLifOziAonjdvz3wn3DJIGrbfBkGBiMhEDCnE1stQQNEnhJ3l7eA7AFoShbxMBSEtuDs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fB05gxOU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3DA39C4CEDD;
-	Sun, 16 Mar 2025 11:02:44 +0000 (UTC)
+	s=arc-20240116; t=1742122987; c=relaxed/simple;
+	bh=sVHjaUDH8uCiBrDHHW/8jZXGlx5rWV9vWdbICLdRKLM=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=sJ/3YoYmTvy+nggM2lH9bFlMq662hkfYlj6R/DwA6dTo06TGdYEmpXOJA7mqR28Fj9cHF13kIEE0SNu3h4tLcuYiVEM9wa1slmnjBEvZ0PyOqV+BxLdnvGAluNroRAlfEnyvUsn8noKPu8O8lPecpKQhu3NjIX2HARdBYni5L5w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tZPCW/zI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9109BC4CEDD;
+	Sun, 16 Mar 2025 11:03:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742122968;
-	bh=GjgXFuSkKYCqC5gatyBw2YKekvHRrwOiavBqOKQJTaU=;
+	s=k20201202; t=1742122987;
+	bh=sVHjaUDH8uCiBrDHHW/8jZXGlx5rWV9vWdbICLdRKLM=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=fB05gxOU49v7IQc0PCoUUGf0Kjmojj3J21rynhXI+MYlqiAs3Yh22DPcCsZtVVhxw
-	 j6Qt8ChWfdGLjdy+F15FhDEjHZNUpBHBkRp+q6ED9xmTiiWnP0v77BFh7VWUjpRlSq
-	 QXvGgdteLavRpwtf7JTfn8Iz1xbSTPsKIOfCJpFhesMfHGE5xBmzEFJmuIlTfiHr4c
-	 remWOJ9bL0EtpDXDygrt+d3kundI3G7m2gpD8KGEz1V8BubI/GKSwOrlOfJQfNgP1T
-	 OOYYIKfSgYKRcDGfbrJOWVlw/RwNuGC7MoT1J9b+9Wdv/H708LGlrWbbnP827kjF0k
-	 8MeA6mB9klGTw==
-Date: Sun, 16 Mar 2025 11:02:37 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, Lars-Peter Clausen
- <lars@metafoo.de>, Nuno Sa <nuno.sa@analog.com>, David Lechner
- <dlechner@baylibre.com>, Javier Carrasco <javier.carrasco.cruz@gmail.com>,
- Olivier Moysan <olivier.moysan@foss.st.com>, Guillaume Stols
- <gstols@baylibre.com>, Dumitru Ceclan <mitrutzceclan@gmail.com>, Trevor
- Gamblin <tgamblin@baylibre.com>, Matteo Martelli
- <matteomartelli3@gmail.com>, Alisa-Dariana Roman <alisadariana@gmail.com>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>, =?UTF-8?B?Sm/Do28=?=
- Paulo =?UTF-8?B?R29uw6dhbHZlcw==?= <joao.goncalves@toradex.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org
-Subject: Re: [PATCH v7 06/10] iio: adc: Support ROHM BD79124 ADC
-Message-ID: <20250316110237.0b558248@jic23-huawei>
-In-Reply-To: <b6c02a5d75a20bbbf8c3370ccee615d269620117.1741849323.git.mazziesaccount@gmail.com>
-References: <cover.1741849323.git.mazziesaccount@gmail.com>
-	<b6c02a5d75a20bbbf8c3370ccee615d269620117.1741849323.git.mazziesaccount@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
+	b=tZPCW/zIgzZ56V0kbeNbO+VF17LIyVFRZ6eda4wdDcnJ4djG2xIvzY5ygpX2sfq7Q
+	 Ri4/iI2B6W8Iz7MWtRuaERoJbh/CBI/kXmBitKAGiEJzODK8sFuRfumAx/kZdRXfSD
+	 UvotfrIeGfRsd/BHsfyYMWkn0DdA3wH5eZGVcgdvXsLlmu2chosRNZe3Q4ZaoFO4h5
+	 /NU46HWYUqH9JHQFonwHbZcGIjDuwQJNxfWLt+g7nkaoX87r+RPplMOleeOImEsSmU
+	 BDZngPD4+rAzKKQSPCvt+CckY8mJLgGoRkkDH6Pr7Bc4MFfgAgO2IGLPH03zr3obsq
+	 2x225PDxG8KBA==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1ttllp-00DyMQ-Ag;
+	Sun, 16 Mar 2025 11:03:05 +0000
+Date: Sun, 16 Mar 2025 11:03:05 +0000
+Message-ID: <867c4pnspi.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Quentin Perret <qperret@google.com>
+Cc: Oliver Upton <oliver.upton@linux.dev>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Vincent Donnefort <vdonnefort@google.com>,
+	linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/6] KVM: arm64: Use 0b11 for encoding PKVM_NOPAGE
+In-Reply-To: <Z9Q5k5C50Meeog9q@google.com>
+References: <20250227003310.367350-1-qperret@google.com>
+	<20250227003310.367350-3-qperret@google.com>
+	<86cyejooq2.wl-maz@kernel.org>
+	<Z9Q5k5C50Meeog9q@google.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: qperret@google.com, oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, catalin.marinas@arm.com, will@kernel.org, vdonnefort@google.com, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Thu, 13 Mar 2025 09:19:03 +0200
-Matti Vaittinen <mazziesaccount@gmail.com> wrote:
-
-> The ROHM BD79124 is a 12-bit, 8-channel, SAR ADC. The ADC supports
-> an automatic measurement mode, with an alarm interrupt for out-of-window
-> measurements. The window is configurable for each channel.
+On Fri, 14 Mar 2025 14:13:39 +0000,
+Quentin Perret <qperret@google.com> wrote:
 > 
-> The I2C protocol for manual start of the measurement and data reading is
-> somewhat peculiar. It requires the master to do clock stretching after
-> sending the I2C slave-address until the slave has captured the data.
-> Needless to say this is not well suopported by the I2C controllers.
+> On Friday 14 Mar 2025 at 11:07:01 (+0000), Marc Zyngier wrote:
+> > On Thu, 27 Feb 2025 00:33:06 +0000,
+> > Quentin Perret <qperret@google.com> wrote:
+> > > 
+> > > The page ownership state encoded as 0b11 is currently considered
+> > > reserved for future use, and PKVM_NOPAGE uses bit 2. In order to
+> > > simplify the relocation of the hyp ownership state into the
+> > > vmemmap in later patches, let's use the 'reserved' encoding for
+> > > the PKVM_NOPAGE state. The struct hyp_page layout isn't guaranteed
+> > > stable at all, so there is no real reason to have 'reserved' encodings.
+> > > 
+> > > No functional changes intended.
+> > > 
+> > > Signed-off-by: Quentin Perret <qperret@google.com>
+> > > ---
+> > >  arch/arm64/kvm/hyp/include/nvhe/memory.h | 5 +----
+> > >  1 file changed, 1 insertion(+), 4 deletions(-)
+> > > 
+> > > diff --git a/arch/arm64/kvm/hyp/include/nvhe/memory.h b/arch/arm64/kvm/hyp/include/nvhe/memory.h
+> > > index 34233d586060..642b5e05fe77 100644
+> > > --- a/arch/arm64/kvm/hyp/include/nvhe/memory.h
+> > > +++ b/arch/arm64/kvm/hyp/include/nvhe/memory.h
+> > > @@ -13,18 +13,15 @@
+> > >   *   01: The page is owned by the page-table owner, but is shared
+> > >   *       with another entity.
+> > >   *   10: The page is shared with, but not owned by the page-table owner.
+> > > - *   11: Reserved for future use (lending).
+> > >   */
+> > >  enum pkvm_page_state {
+> > >  	PKVM_PAGE_OWNED			= 0ULL,
+> > >  	PKVM_PAGE_SHARED_OWNED		= BIT(0),
+> > >  	PKVM_PAGE_SHARED_BORROWED	= BIT(1),
+> > > -	__PKVM_PAGE_RESERVED		= BIT(0) | BIT(1),
+> > >  
+> > >  	/* Meta-states which aren't encoded directly in the PTE's SW bits */
+> > > -	PKVM_NOPAGE			= BIT(2),
+> > > +	PKVM_NOPAGE			= BIT(0) | BIT(1),
+> > 
+> > Isn't this comment stale now?
 > 
-> Thus the driver does not support the BD79124's manual measurement mode
-Given you are going to be doing a v8 and I'm bored on a train, so utterly
-trivial comments that you get as a frequent contributor as things to
-consider for future patches. (I'm sure it's just what you always wanted
-:)
+> I believe it still applies to guest stage-2 page-tables as the three
+> other states above are still stored into PTE SW bits (well, sort of,
+> only SHARED_BORROWED is at the moment as we don't supported protected
+> VMs, but OWNED and SHARED_OWNED will be a thing for protected). NOPAGE
+> is still the only one that is a bit different and doesn't go there.
+>
+> With that said, the comment could be made more explicit about that and
+> explain this is now guest s2 only. Happy to spin another version of the
+> series with that changed if that helps.
 
+Right. It is slightly misleading that we end-up with two notions of
+state:
 
-In theory should be imperative though I don't care as much as some.
+- the per-mapping state encoded in the PTs
+- the per-page state encoded in the vmemmap
 
-Hence, do not support the....
+The two are obviously related, but it is all a bit confusing for the
+unsuspecting reader. There is no urgency to address this, but maybe
+it'd be good to clarify this aspect in the future (no need to respin
+on that account).
 
-> but implements the measurements using automatic measurement mode relying
-> on the BD79124's ability of storing latest measurements into register.
-> 
-> The driver does also support configuring the threshold events for
-> detecting the out-of-window events.
-Trivial editorial comment: that 'does' is not providing anything use
-in modern English (might have done in the past, no idea!)
+	M.
 
-"Also support configure the threshold..."
-
-> 
-> The BD79124 keeps asserting IRQ for as long as the measured voltage is
-> out of the configured window. Thus the driver masks the received event
-> for a fixed duration (1 second) when an event is handled. This prevents
-> the user-space from choking on the events
-> 
-> The ADC input pins can be also configured as general purpose outputs.
-> Those pins which don't have corresponding ADC channel node in the
-> device-tree will be controllable as GPO.
-> 
-> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
-
-A few trivial things inline.
-
-Jonathan
-
-> +/*
-> + * The high and low limits as well as the recent result values are stored in
-> + * the same way in 2 consequent registers. The first register contains 4 bits
-> + * of the value. These bits are stored in the high bits [7:4] of register, but
-> + * they represent the low bits [3:0] of the value.
-> + * The value bits [11:4] are stored in the next regoster.
-> + *
-> + * Conver the integer to register format and write it using rmw cycle.
-Convert?
-
-> + */
-> +static int bd79124_write_int_to_reg(struct bd79124_data *data, int reg,
-> +				    unsigned int val)
-..
-> +static int bd79124_read_event_config(struct iio_dev *iio_dev,
-> +				     const struct iio_chan_spec *chan,
-> +				     enum iio_event_type type,
-> +				     enum iio_event_direction dir)
-> +{
-> +	struct bd79124_data *data = iio_priv(iio_dev);
-> +
-> +	if (chan->channel >= BD79124_MAX_NUM_CHANNELS)
-> +		return -EINVAL;
-> +
-> +	return (data->alarm_monitored[chan->channel] & BIT(dir));
-
-Drop the outer brackets as not adding anything.
-
-> +}
-
-
-
-> +static int bd79124_probe(struct i2c_client *i2c)
-> +{
-...
-
-> +	data->gpio_valid_mask = gpio_pins;
-> +	data->gc = bd79124gpo_chip;
-> +	data->gc.parent = dev;
-> +	devm_mutex_init(dev, &data->mutex);
-
-ret = devm_mutex_init(dev, &data->mutex);
-if (ret)
-	return ret;
-
-It is very unlikely to fail so no point in papering over failing
-to register the cleanup.
-
-> +
-> +	ret = devm_gpiochip_add_data(dev, &data->gc, data);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "gpio init Failed\n");
-> +
-> +	if (i2c->irq > 0) {
-> +		ret = devm_request_threaded_irq(dev, i2c->irq,
-> +			bd79124_irq_handler, &bd79124_event_handler,
-> +			IRQF_ONESHOT, "adc-thresh-alert", iio_dev);
-> +		if (ret)
-> +			return dev_err_probe(data->dev, ret,
-> +					     "Failed to register IRQ\n");
-> +	}
-> +
-> +	return devm_iio_device_register(data->dev, iio_dev);
-> +}
-
+-- 
+Without deviation from the norm, progress is not possible.
 
