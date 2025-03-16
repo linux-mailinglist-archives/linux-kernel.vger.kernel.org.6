@@ -1,141 +1,118 @@
-Return-Path: <linux-kernel+bounces-563000-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563001-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65773A6358D
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 13:06:36 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 657D6A63592
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 13:18:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B27A016E0DA
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 12:06:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 357B816FA04
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 12:17:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65D481A3175;
-	Sun, 16 Mar 2025 12:06:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9C461A3154;
+	Sun, 16 Mar 2025 12:17:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="jyh/9KqN";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="LvHRzsjx"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=fossekall.de header.i=@fossekall.de header.b="e/sZv+ZJ";
+	dkim=permerror (0-bit key) header.d=fossekall.de header.i=@fossekall.de header.b="KG0QREhx"
+Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [81.169.146.166])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D70A19E971;
-	Sun, 16 Mar 2025 12:06:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742126790; cv=none; b=PjevEcmC9RJJJmw4pqWUhrCZQn05JSN9KaQj26ANQUzdKD66G5KLrk/ssWw1UQCWSKGuqyk7zHp91XNTwiMBJyCd5YbgvhVNPnhhWgM0SF1CcfBWUplwskirSo47WT2IQ35IFhKfD4u2MmOPdd2FJsAFlU9aA3IoWh+pcLCdzd0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742126790; c=relaxed/simple;
-	bh=0JRQnEypsEBYBrLBpNDmer7L88pYWOaTFd5X3IG7JHY=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=YsYKAyMqRq5pN2OIUTfptlnz8NFikWMWUkixk8b0ccKABhXAa9J+dkTojv9OpMDB7l8IeArybowoE1znwS18F0CoQjE/pNIdjHXH1kWSebNg2394xGk7nCH1rpAHwox9XxHorgC7l9X8KQJ6wwMNlrmfj9aEGYtMqc6s2+tx0zg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=jyh/9KqN; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=LvHRzsjx; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Sun, 16 Mar 2025 12:06:23 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1742126787;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=aHBkBFbyqhKExGSnG3I967hul0QxOts6+lxLyQSSeXk=;
-	b=jyh/9KqNl1rTaSZ5ykD/6V0juJlPE42pOfBjwSAMBTxu5c/+G9S7DTpJ48TWaqP5x4EudT
-	fCjzuYrlQu2ygKSM7d+kbf/+PazE52UuPwKfYFydssOWbjdD436m1OVXrnHsw555Rslz+R
-	5xbGf2Sf3JFOXR6olxZnmPYCrz2vzV47iYwYrdGWc+yby+oWLb1jcIMeBt+WP772OgQPkp
-	0ZIdWKqnYSF+f1dlQe8+NpUgu78Yd2gAmHL5Rfx25GeG05to6IfDqNQfVoBNAr0/ebhnqn
-	nGEmh9pBRu7ecdzC/4m0ipJBlDcYMdz4F4srsWnRP3lukB81klYFiq81KAsd7g==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1742126787;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=aHBkBFbyqhKExGSnG3I967hul0QxOts6+lxLyQSSeXk=;
-	b=LvHRzsjxsCSAgzHW+xT4VHzYp5BJS6LymQL11nBJIbV+nsiq+TSLWvT0WgP2c7AaTtP50J
-	yzn32W3Xajkh/GDw==
-From: "tip-bot2 for XieLudan" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/core] perf/core: Use sysfs_emit() instead of scnprintf()
-Cc: XieLudan <xie.ludan@zte.com.cn>, Ingo Molnar <mingo@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250315141738452lXIH39UJAXlCmcATCzcBv@zte.com.cn>
-References: <20250315141738452lXIH39UJAXlCmcATCzcBv@zte.com.cn>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D7192AD02;
+	Sun, 16 Mar 2025 12:17:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=81.169.146.166
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742127470; cv=pass; b=hZnyG3ppONsQvHmsqcpvFAz05deywRX7REhkoOt+rGwatiz63d+sRBtDH3UEO+6ri4F/t5DWcGuG3m22rdMpAMKjgsL/aE3WuaPvv1pe5/zCWXBKioOIYI2fVSUL/smekulPWKHN1GRr8Psz7m4BgaZI+lVr3BVodRtS9IyA0zs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742127470; c=relaxed/simple;
+	bh=L7+xky7iBDJHO+ZZyfUqZJ3J5cEYq4fNqY8pyONnYA4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=pSfn8gNTybm6xb89wFY6uCIlgQL3klHzVwYgmBJ7IaI/KDJxPJvNn/CBHbGKmyJwuPRY71a3aWJKY1kL6FxbhsNxWvE8uUNoFXRo+sv/Ds3R7UNGeKwX2DwHRy/EEfs3Ei1vkMOBL5xOe/1B9mCW9u8TFdaxWmcbAgG4JlFtUJc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fossekall.de; spf=pass smtp.mailfrom=a98shuttle.de; dkim=pass (2048-bit key) header.d=fossekall.de header.i=@fossekall.de header.b=e/sZv+ZJ; dkim=permerror (0-bit key) header.d=fossekall.de header.i=@fossekall.de header.b=KG0QREhx; arc=pass smtp.client-ip=81.169.146.166
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fossekall.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=a98shuttle.de
+ARC-Seal: i=1; a=rsa-sha256; t=1742127277; cv=none;
+    d=strato.com; s=strato-dkim-0002;
+    b=r8dn29j2ps8PTqLSk0GOECvitYf5PyUkuokQEKsJlK0sZvqdawbaxfF0iVqOwWBS7L
+    By5QRklwnDCdIX7tUeqpiZookGspnZTl4azjzJVtvhrNhzrfqsuPYnPU2IQI1eHVHuPq
+    opjTz8lhJKrODYXvjPBEK/+TuK+TrwJjihTn2Zt9ypgj9er+hcJFkRyP/pZzruwZZddr
+    3KSCojp5ajq4Fm/OjjVKWRBjiy6ijJtpFgXNtw17jIr1swQGSTbtZ40k80gDfbUTYaJK
+    UBfcMaG5AL+fgkhZudVkapJ3Oga5A7QjCw7y019jXoDvjqF2c624n+A3wD4X7Cgc1QBu
+    JtpA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1742127277;
+    s=strato-dkim-0002; d=strato.com;
+    h=Message-Id:Date:Subject:Cc:To:From:Cc:Date:From:Subject:Sender;
+    bh=Q3PPnZYsYDVMqrvC+ImUKBBxiBgnLPhrJkzzrUE7oeU=;
+    b=iRRl79TJaFQio0eX5AbJ4xhVewC7qjJkc4y0/u/WVMXWUmzFB4jDtK0mADNCAnXrSY
+    c7PwKqnPWcWI036fI72QXAYUg2QsbfTYAj8IvUEXnYOSNkqhxdwmvsTYaMQPE8FZLn9q
+    m9yCxRAb7APIF96XXhUHPOHWEy5MUpugXvOLcniBkZJR+thvVVgAZnpF5ubV6BIzOhox
+    zgGxM6ASqvGdqkL3/heHynvBAegviJd7Fp3cJCy2pV1NCubJ39ym3x7juYBm8I7mTYiM
+    voL0oG8ViyE9dFieX/9UttB2BJjcsXd0WlrLrWltgH6jC0+7rNNrbO2NV0C0XPHDpuWi
+    DWRg==
+ARC-Authentication-Results: i=1; strato.com;
+    arc=none;
+    dkim=none
+X-RZG-CLASS-ID: mo01
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1742127277;
+    s=strato-dkim-0002; d=fossekall.de;
+    h=Message-Id:Date:Subject:Cc:To:From:Cc:Date:From:Subject:Sender;
+    bh=Q3PPnZYsYDVMqrvC+ImUKBBxiBgnLPhrJkzzrUE7oeU=;
+    b=e/sZv+ZJTZYNN3VxE6FuhJUjQ2rqG8ST7pRtBIDpolKdXMYflVmJ0NOePFQTJ8fD9V
+    3zTY6ipPp40+whcggdYuc2l8L2ErkbdOMVxknqChVQYJxld+bfkLSQayNhw3I7BBpZFb
+    byjB917AEcRR5kioB5B1MuZbdeuZnSbmM3ECoNFlJenPSbNBwZ8LI6ayeoaXREQFi5pT
+    IkRGHjKGmz1JOgm737w01L4yyviF/leh1kAWv2uTrhGO9X7z6oNIFpos5VSWVUnnNRFQ
+    Kj8wKBYywgP6cX35Nc0VK+k4FPxQdRK6U56U9VrfJzEbSMDkf0QyEQ3XM5FPT5EfaZaK
+    34yg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1742127277;
+    s=strato-dkim-0003; d=fossekall.de;
+    h=Message-Id:Date:Subject:Cc:To:From:Cc:Date:From:Subject:Sender;
+    bh=Q3PPnZYsYDVMqrvC+ImUKBBxiBgnLPhrJkzzrUE7oeU=;
+    b=KG0QREhxknY/KOLMtsHf6XxNrwkqhggo0nl5YRk305yCd3pzAxlY3PRLW5BddxOIy5
+    uNPL/BL5MLomxduGhWDA==
+X-RZG-AUTH: ":O2kGeEG7b/pS1EzgE2y7nF0STYsSLflpbjNKxx7cGrBdao6FTL4AJcMdm+lap4JEHkzok9eyEg=="
+Received: from aerfugl
+    by smtp.strato.de (RZmta 51.3.0 AUTH)
+    with ESMTPSA id f28b3512GCEb8gr
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
+	(Client did not present a certificate);
+    Sun, 16 Mar 2025 13:14:37 +0100 (CET)
+Received: from koltrast.home ([192.168.1.27] helo=a98shuttle.de)
+	by aerfugl with smtp (Exim 4.96)
+	(envelope-from <michael@a98shuttle.de>)
+	id 1ttmt2-00061f-0X;
+	Sun, 16 Mar 2025 13:14:36 +0100
+Received: (nullmailer pid 82540 invoked by uid 502);
+	Sun, 16 Mar 2025 12:14:36 -0000
+From: Michael Klein <michael@fossekall.de>
+To: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>, "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Cc: Michael Klein <michael@fossekall.de>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [net-next,v3,0/2] net: phy: realtek: Add support for PHY LEDs on
+Date: Sun, 16 Mar 2025 13:14:21 +0100
+Message-Id: <20250316121424.82511-1-michael@fossekall.de>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174212678355.14745.11221386085667623478.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
 
-The following commit has been merged into the perf/core branch of tip:
+Changes in V3:
+- move definition of rtl8211e_read_ext_page() to patch 2
+- Wrap overlong lines
+Changes in V2:
+- Designate to net-next
+- Add ExtPage access cleanup patch as suggested by Andrew Lunn
 
-Commit-ID:     b6ecb57f1fec114cfa19b1bf06f25f904ca928f9
-Gitweb:        https://git.kernel.org/tip/b6ecb57f1fec114cfa19b1bf06f25f904ca928f9
-Author:        XieLudan <xie.ludan@zte.com.cn>
-AuthorDate:    Sat, 15 Mar 2025 14:17:38 +08:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Sun, 16 Mar 2025 12:38:27 +01:00
+Michael Klein (2):
+  net: phy: realtek: Clean up RTL8211E ExtPage access
+  net: phy: realtek: Add support for PHY LEDs on RTL8211E
 
-perf/core: Use sysfs_emit() instead of scnprintf()
+ drivers/net/phy/realtek/realtek_main.c | 174 +++++++++++++++++++++----
+ 1 file changed, 146 insertions(+), 28 deletions(-)
 
-Follow the advice in Documentation/filesystems/sysfs.rst:
+-- 
+2.39.5
 
-  "- show() should only use sysfs_emit() or sysfs_emit_at() when formatting
-     the value to be returned to user space."
-
-No change in functionality intended.
-
-[ mingo: Updated the changelog ]
-
-Signed-off-by: XieLudan <xie.ludan@zte.com.cn>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: https://lore.kernel.org/r/20250315141738452lXIH39UJAXlCmcATCzcBv@zte.com.cn
----
- kernel/events/core.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index e7d0b05..2533fc3 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -11713,7 +11713,7 @@ static ssize_t nr_addr_filters_show(struct device *dev,
- {
- 	struct pmu *pmu = dev_get_drvdata(dev);
- 
--	return scnprintf(page, PAGE_SIZE - 1, "%d\n", pmu->nr_addr_filters);
-+	return sysfs_emit(page, "%d\n", pmu->nr_addr_filters);
- }
- DEVICE_ATTR_RO(nr_addr_filters);
- 
-@@ -11724,7 +11724,7 @@ type_show(struct device *dev, struct device_attribute *attr, char *page)
- {
- 	struct pmu *pmu = dev_get_drvdata(dev);
- 
--	return scnprintf(page, PAGE_SIZE - 1, "%d\n", pmu->type);
-+	return sysfs_emit(page, "%d\n", pmu->type);
- }
- static DEVICE_ATTR_RO(type);
- 
-@@ -11735,7 +11735,7 @@ perf_event_mux_interval_ms_show(struct device *dev,
- {
- 	struct pmu *pmu = dev_get_drvdata(dev);
- 
--	return scnprintf(page, PAGE_SIZE - 1, "%d\n", pmu->hrtimer_interval_ms);
-+	return sysfs_emit(page, "%d\n", pmu->hrtimer_interval_ms);
- }
- 
- static DEFINE_MUTEX(mux_interval_mutex);
 
