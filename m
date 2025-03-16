@@ -1,134 +1,154 @@
-Return-Path: <linux-kernel+bounces-563131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563132-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F317A63755
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 21:11:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 220FAA63757
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 21:12:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4E9037A6261
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 20:10:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68F253AE2B8
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 20:11:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63BFA1E1E07;
-	Sun, 16 Mar 2025 20:11:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DB9A1E1DEA;
+	Sun, 16 Mar 2025 20:11:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="CtnrFBzY"
-Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i7bRTc3r"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 213707485
-	for <linux-kernel@vger.kernel.org>; Sun, 16 Mar 2025 20:11:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B43BDC2E0;
+	Sun, 16 Mar 2025 20:11:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742155900; cv=none; b=KK9zqS4bZy8sqfIy6/qttMvrZIZ+X1JVyyTnxI3M1LXoflbEfP78n5xPQrpLji6dYrJX8bE63qFFZMKjM4ClomWAE7+ERMjbrSViwLtkn0ujVZZizGWn6PGsrW7SsyVpxQgYD2Y0YnZGwlCeTbUFBkdMuadnpAdE9Ej7PdMlVYk=
+	t=1742155918; cv=none; b=cSMH1K6f56e0O3h5p6hDAmi6TpAS/4JKGMu3Quo/UgM6UqGArFE+zr8eYH0aj8VmEAPLkUgx+UzS83fe8RQBWAfTXYUgmekOnP3KVwL1LD2qYQJpOdBRs29Ks+Kb26Zm2Xgj1BZJZXWDfEtcvdSX/k+myYQpcPsV7fku0QpIy4c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742155900; c=relaxed/simple;
-	bh=0mUmMxXCX1cpxTz2Mz/moHeklg4+C/Cf9N36sstH51o=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=GIQfDDibJvvJdr39RRChWOLplWn51+2LaSxHeDOWDiAOoM6Ehyvz2gPjvY/oEhXlWvjHoaImKbZKJDnAWLVmGhufLJ3/SbLR60JUYsq2oQPuGwkRKEKpX1XABtCbQgqqpW6KS8tzIb4kmQHqwcJVrHdaep98WuxM8GAXFFM0wBU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=CtnrFBzY; arc=none smtp.client-ip=202.36.163.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
-Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 577972C0308;
-	Mon, 17 Mar 2025 09:11:29 +1300 (NZDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-	s=mail181024; t=1742155889;
-	bh=0mUmMxXCX1cpxTz2Mz/moHeklg4+C/Cf9N36sstH51o=;
-	h=From:To:CC:Subject:Date:References:In-Reply-To:From;
-	b=CtnrFBzY7nvQRscJKjC36bAmd4MtrqDTMnrLNexLtcatatVglzko9AWo5emD/MpEZ
-	 2wENMKBTgHZwFQyFgRzQrrRAuLxWa9bzX6i/xvXypIYHW3Zsg3WmksbmQ5HrxRg+vi
-	 d9CGhBoGaXI3lAZIV23R7ZdnrXX8shTAIhoRYgImwI3vFhMqBy9me2BbBLp06IBSQW
-	 T1EsZPPJ+iSHV9l5SUxgtK5LxApbD+kX4TOYpmkww0Uy0bNi84MvHvccis76NyOIgH
-	 wVg/MegkkHseqx8xbUMFg/1iYlBWViZ9Rf0is8Bh2OYmOTNfa6som2inCbOGMA7oc8
-	 LvpS2OBkb48qw==
-Received: from svr-chch-ex2.atlnz.lc (Not Verified[2001:df5:b000:bc8::76]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
-	id <B67d730710001>; Mon, 17 Mar 2025 09:11:29 +1300
-Received: from svr-chch-ex2.atlnz.lc (2001:df5:b000:bc8:f753:6de:11c0:a008) by
- svr-chch-ex2.atlnz.lc (2001:df5:b000:bc8:f753:6de:11c0:a008) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14; Mon, 17 Mar 2025 09:11:29 +1300
-Received: from svr-chch-ex2.atlnz.lc ([fe80::a9eb:c9b7:8b52:9567]) by
- svr-chch-ex2.atlnz.lc ([fe80::a9eb:c9b7:8b52:9567%15]) with mapi id
- 15.02.1544.014; Mon, 17 Mar 2025 09:11:29 +1300
-From: Chris Packham <Chris.Packham@alliedtelesis.co.nz>
-To: Andrew Lunn <andrew@lunn.ch>
-CC: "hkallweit1@gmail.com" <hkallweit1@gmail.com>, "linux@armlinux.org.uk"
-	<linux@armlinux.org.uk>, "davem@davemloft.net" <davem@davemloft.net>,
-	"edumazet@google.com" <edumazet@google.com>, "kuba@kernel.org"
-	<kuba@kernel.org>, "pabeni@redhat.com" <pabeni@redhat.com>,
-	"sander@svanheule.net" <sander@svanheule.net>, "markus.stockhausen@gmx.de"
-	<markus.stockhausen@gmx.de>, "daniel@makrotopia.org" <daniel@makrotopia.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>
-Subject: Re: [PATCH net-next v11] net: mdio: Add RTL9300 MDIO driver
-Thread-Topic: [PATCH net-next v11] net: mdio: Add RTL9300 MDIO driver
-Thread-Index: AQHblHD+sucKWV4o3UuKUqKx7BHBP7Nx6AeAgAN0XAA=
-Date: Sun, 16 Mar 2025 20:11:29 +0000
-Message-ID: <d260e3d1-20e9-42f6-89b6-e646b8107bc0@alliedtelesis.co.nz>
-References: <20250313233811.3280255-1-chris.packham@alliedtelesis.co.nz>
- <bd1d1cb9-a72b-484b-8cfd-7e91179391d2@lunn.ch>
-In-Reply-To: <bd1d1cb9-a72b-484b-8cfd-7e91179391d2@lunn.ch>
-Accept-Language: en-NZ, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <F0A573F589DFBC45AC03290BDD6EFDCB@alliedtelesis.co.nz>
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1742155918; c=relaxed/simple;
+	bh=kZXHMRu4zP5iEpivVL8TaHoUqAIAUcgeEn6p+2qCtfk=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=BSGQpr9xP2YgLS5d8W8+qA3ujeNCY6zEJTxooBeuwUvZ3OJpqgFw0nz6DDlrUOsVHTPeEFHrfhIogBluWDfObSwKPtGz9n9KAPwhBaWuXZH2ziAGku/YFTrD/uLzIvhb7ccDXm57xxbhQHFB7HOyNTlUB09mJeYyDFbIowqKDXM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i7bRTc3r; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5e6194e9d2cso6591840a12.2;
+        Sun, 16 Mar 2025 13:11:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742155915; x=1742760715; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=8UaSCRpDARPh5PgWTn0PdJWV14xdzaOHwnIlV2JMuNQ=;
+        b=i7bRTc3rbQ3SOeJEcGdmib0hgn8Q3398ZLYHDeNGAxrsJpMadCXrFsnjTluCSsL+hN
+         qFyaV1O5xAXLKjt9oQCj9v40dfB3VkSb+3+4hxEIiMvJmhcmQ+JwDs0r96ACcL1anXnV
+         ufdyC7RpHvzxXGM6rzpaWf+myMP+74io+dX/J/eQ7QVmJxr9qioE9dcQIgbwWtXlWSfA
+         LnbEkKRxpRl/27XXVxCgSmduMtZI+RHF8fHg1a7ctyLURVtedg2NxffskNZ9NKBRzz3N
+         l9ByAGWB4z28I50MCXXX5EAQgQDhkshQdYuRATo+yB1vSvXKB0vd9v3YmGhOeCsWSmPB
+         ZVJw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742155915; x=1742760715;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8UaSCRpDARPh5PgWTn0PdJWV14xdzaOHwnIlV2JMuNQ=;
+        b=iaNxxWS5wp0NeTHCVlsjFRv3iaywgbytltvuUbMLX8fd5WHW/Hr5wfJnuKDED+0TS0
+         JAmhx6CWsl9gMXPPjGtQX/z/8WhDy4KAc3i7lnwhX5PIbTQ0Eq6aOivivaDZb2uLhLQr
+         JXUY3ckl3QKRrtfQmzJ8lI4ze123L5gH0XmqiCc+GJbgnUkoJNrN0Vkxdi3BEI8ssR/j
+         zuxlVlq7nWeAzvuucu0IAwBSzZxz/ohyK+vwvKO8FSbJfIkWuIC8RmAAJ7+uX/VggqNM
+         K8bSEhyGy0lxkd38HF6pZpo73+KDscoHyl4b9EOd+ScHdk84XWtQyYN361SGhe6goA2D
+         WUhQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV36QJdM/ASCCniMfukXSnkycc295A7ICZPDRolcLR+fdbH8iu07V4R59/N4M/R8XdACIidg6pP4M/SMJ0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxvXIBRCbXLbDJDrLDtWclDQV3m19//hVbI51Tkj4GFIfGBn8Rv
+	xrGVPgXlxrFAyGrHlCvGluqsfjESZNHNH78TmnA1XwqnhMlaEbVG
+X-Gm-Gg: ASbGncuFvGfDFeDza73CMhq1qDKbR3wSiCj7nvFPzjDpoNQsCgt3LeNeD7hUKah5ass
+	VqytJNUZ8NnYclOELJ2JhYGQxuObgwIMRpiEDRworFna1Rb541c+YsdqmZLLwd0eoytf91AeDf2
+	vn052IrUX2VG/vno0E/0ZQGqytp3lS040tQUiS46IEickavxtfLwe2kNdNJvFY/meiBm6KYFQmb
+	K4fi8IxCmZJMvw3GckPDSIAO8Or1L6h3G7KRfFpBZBLxEXyZv95B8q0Q0xXlrG8V0tQP/xVdhGA
+	gsOOXTYi7tRkLKgCNYqKR3pjLUyvhOzNeWQss99qsKnW0RiyUbhau3nLtRiZR+LCCpEvIOO5wdW
+	z4vXe9FRjc1wtyRE/4A==
+X-Google-Smtp-Source: AGHT+IH40WcmvqXmMZYwJvZmaB8T0MSIe9rbH2slg2ugRfarihrNwMaiLUL8d+0aJ94vprgCoVcTDg==
+X-Received: by 2002:a05:6402:1e90:b0:5e6:44d9:57f7 with SMTP id 4fb4d7f45d1cf-5e8a09f77abmr9471727a12.26.1742155914667;
+        Sun, 16 Mar 2025 13:11:54 -0700 (PDT)
+Received: from hex.my.domain (83.11.178.210.ipv4.supernova.orange.pl. [83.11.178.210])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e8169b105fsm5059233a12.40.2025.03.16.13.11.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 16 Mar 2025 13:11:53 -0700 (PDT)
+From: Artur Weber <aweber.kernel@gmail.com>
+Date: Sun, 16 Mar 2025 21:11:49 +0100
+Subject: [PATCH] power: supply: max77693: Fix wrong conversion of charge
+ input threshold value
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SEG-SpamProfiler-Analysis: v=2.4 cv=Ko7u2nWN c=1 sm=1 tr=0 ts=67d73071 a=Xf/6aR1Nyvzi7BryhOrcLQ==:117 a=xqWC_Br6kY4A:10 a=75chYTbOgJ0A:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=VwQbUJbxAAAA:8 a=-mZtVxzNVz2t5w4VDjUA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
-X-SEG-SpamProfiler-Score: 0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250316-max77693-charger-input-threshold-fix-v1-1-2b037d0ac722@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAIQw12cC/x2NQQqDMBBFryKz7oAmJDG9SulC6mgGbJRJLIJ49
+ w4u33/w3wmFhKnAszlB6MeF16zQPRr4pCHPhDwqg2mNa23n8TscIfhoUbXMJMh52yvWJFTSuow
+ 48YExmsn50FvXe9CrTUjnO/N6X9cf/KrpBHYAAAA=
+X-Change-ID: 20250316-max77693-charger-input-threshold-fix-992f56783586
+To: Krzysztof Kozlowski <krzk@kernel.org>, 
+ Sebastian Reichel <sre@kernel.org>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ ~postmarketos/upstreaming@lists.sr.ht, 
+ Artur Weber <aweber.kernel@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1742155912; l=2068;
+ i=aweber.kernel@gmail.com; s=20231030; h=from:subject:message-id;
+ bh=kZXHMRu4zP5iEpivVL8TaHoUqAIAUcgeEn6p+2qCtfk=;
+ b=K7HITCJsMpUQKw2T6WNpUERr3ecEeWy/Cz+5Dfw1paNgp+vW/2aARY+wFGjGBFoZhPUkdu2XR
+ /wAik14/lbEBt+ydtqp/994qVar+8eLPkNWn97r3xwI+S7WiLoemj+7
+X-Developer-Key: i=aweber.kernel@gmail.com; a=ed25519;
+ pk=RhDBfWbJEHqDibXbhNEBAnc9FMkyznGxX/hwfhL8bv8=
 
-DQpPbiAxNS8wMy8yMDI1IDA0OjI2LCBBbmRyZXcgTHVubiB3cm90ZToNCj4+ICtzdGF0aWMgaW50
-IHJ0bDkzMDBfbWRpb2J1c19wcm9iZV9vbmUoc3RydWN0IGRldmljZSAqZGV2LCBzdHJ1Y3QgcnRs
-OTMwMF9tZGlvX3ByaXYgKnByaXYsDQo+PiArCQkJCSAgICAgc3RydWN0IGZ3bm9kZV9oYW5kbGUg
-Km5vZGUpDQo+PiArew0KPj4gKwlzdHJ1Y3QgcnRsOTMwMF9tZGlvX2NoYW4gKmNoYW47DQo+PiAr
-CXN0cnVjdCBmd25vZGVfaGFuZGxlICpjaGlsZDsNCj4+ICsJc3RydWN0IG1paV9idXMgKmJ1czsN
-Cj4+ICsJdTMyIG1kaW9fYnVzOw0KPj4gKwlpbnQgZXJyOw0KPj4gKw0KPj4gKwllcnIgPSBmd25v
-ZGVfcHJvcGVydHlfcmVhZF91MzIobm9kZSwgInJlZyIsICZtZGlvX2J1cyk7DQo+PiArCWlmIChl
-cnIpDQo+PiArCQlyZXR1cm4gZXJyOw0KPj4gKw0KPj4gKwkvKiBUaGUgTURJTyBpbnRlcmZhY2Vz
-IGFyZSBlaXRoZXIgaW4gR1BIWSAoaS5lLiBjbGF1c2UgMjIpIG9yIDEwR1BIWQ0KPj4gKwkgKiBt
-b2RlIChpLmUuIGNsYXVzZSA0NSkuDQo+IEkgc3RpbGwgbmVlZCBtb3JlIGNsYXJpZmljYXRpb24g
-YWJvdXQgdGhpcy4gSXMgdGhpcyBzb2xlbHkgYWJvdXQgdGhlDQo+IHBvbGxpbmc/IE9yIGRvZXMg
-YW4gaW50ZXJmYWNlIGluIEMyMiBtb2RlIGdvIGhvcnJpYmx5IHdyb25nIHdoZW4gYXNrZWQNCj4g
-dG8gZG8gYSBDNDUgYnVzIHRyYW5zYWN0aW9uPw0KDQpJdCdzIGp1c3QgdGhlIHBvbGxpbmcuIEkg
-aGF2ZW4ndCBzZWVuIGFueSBzaWduIG9mIHRoZSBidXMgZ2V0dGluZyBpbnRvIGEgDQpiYWQgc3Rh
-dGUgd2hlbiB1c2luZyB0aGUgd3JvbmcgdHJhbnNhY3Rpb24gdHlwZS4NCg0KPj4gKwlidXMtPm5h
-bWUgPSAiUmVhbHRlayBTd2l0Y2ggTURJTyBCdXMiOw0KPj4gKwlidXMtPnJlYWQgPSBydGw5MzAw
-X21kaW9fcmVhZF9jMjI7DQo+PiArCWJ1cy0+d3JpdGUgPSBydGw5MzAwX21kaW9fd3JpdGVfYzIy
-Ow0KPj4gKwlidXMtPnJlYWRfYzQ1ID0gcnRsOTMwMF9tZGlvX3JlYWRfYzQ1Ow0KPj4gKwlidXMt
-PndyaXRlX2M0NSA9ICBydGw5MzAwX21kaW9fd3JpdGVfYzQ1Ow0KPiBZb3UgYXJlIHByb3ZpZGlu
-ZyBDNDUgYnVzIG1ldGhvZHMsIGluZGVwZW5kZW50IG9mIHRoZSBpbnRlcmZhY2UNCj4gbW9kZS4g
-U28gd2hlbiBhY2Nlc3NpbmcgRUVFIHJlZ2lzdGVycyBpbiBDNDUgYWRkcmVzcyBzcGFjZSwgQzQ1
-IGJ1cw0KPiB0cmFuc2FjdGlvbnMgYXJlIGdvaW5nIHRvIGJlIHVzZWQsIGV2ZW4gb24gYW4gTURJ
-TyBpbnRlcmZhY2UgdXNpbmcgQzIyDQo+IG1vZGUuIERvZXMgdGhpcyB3b3JrPyBDYW4geW91IGFj
-dHVhbGx5IGRvIGJvdGggQzIyIGFuZCBDNDUgYnVzDQo+IHRyYW5zYWN0aW9ucyBpbmRlcGVuZGVu
-dCBvZiB0aGUgaW50ZXJmYWNlIG1vZGU/DQpJJ20gbm90IGFjdHVhbGx5IHN1cmUgaWYgSSBjYW4g
-bWl4IHRyYW5zYWN0aW9ucyBidXQgaXQgZG9lc24ndCBzZWVtIHRvIA0KZG8gYW55IGhhcm0uDQoN
-CkluaXRpYWxseSBJIHBsYW5uZWQgdG8gb25seSBzdXBwbHkgb25lIG9mIHRoZSBmdW5jdGlvbiBw
-YWlycyBkZXBlbmRpbmcgDQpvbiB0aGUgbW9kZSBidXQgSSBsZWZ0IHRoaXMgaW4gYmVjYXVzZSBv
-ZiB0aGlzOg0KDQpodHRwczovL3dlYi5naXQua2VybmVsLm9yZy9wdWIvc2NtL2xpbnV4L2tlcm5l
-bC9naXQvdG9ydmFsZHMvbGludXguZ2l0L3RyZWUvZHJpdmVycy9uZXQvcGh5L3BoeS5jI24zMzcN
-Cg0KSSd2ZSB3cml0dGVuIG15c2VsZiBhIGxpdHRsZSB0ZXN0IGFwcCB0aGF0IHVzZXMgU0lPQ0dN
-SUlSRUcvU0lPQ1NNSUlSRUcgDQp0byBleGVyY2lzZSB0aGUgTURJTyBhY2Nlc3Nlcy4gSXQgdXNl
-cyBTSU9DR01JSVBIWSB0byBsb29rIHVwIHRoZSBNRElPIA0KYWRkcmVzcyBvZiB0aGUgUEhZIGF0
-dGFjaGVkIHRvIHRoZSBuZXRkZXYgYnV0IGJlY2F1c2Ugb2YgdGhhdCANCmZhbGx0aHJvdWdoIGxv
-b2tpbmcgdXAgdGhlIFBIWSBhZGRyZXNzIGZvciBhIEM0NSBQSFkgd2lsbCBmYWlsIHdpdGggDQot
-RU9QTk9UU1VQUC4NCg0KSSd2ZSBzcXVpbnRlZCBhdCB0aGF0IGNvZGUgYW5kIGNhbid0IGRlY2lk
-ZSBpZiBpdCdzIGEgYnVnIG9yIGludGVuZGVkLiANCkl0IHNlZW1zIHRvIGJlIHRoZXJlIHRvIHZh
-bGlkYXRlIGlmIHRoZSBQSFkgaXMgYWN0dWFsbHkgcHJlc2VudCBhbmQgd2lsbCANCndvcmtzIGZv
-ciBDMjIgYmVjYXVzZSBtaWlfZGF0YS0+cmVnX251bSB3aWxsIGNvbWUgdGhyb3VnaCB0aGUgaW9j
-dGwgKG9yIA0KYmVjYXVzZSAwIGlzIGEgdmFsaWQgcmVnaXN0ZXIpIC4gSXQgd29uJ3Qgd29yayBm
-b3IgQzQ1IGJlY2F1c2UgDQpTSU9DR01JSVBIWSBoYXMgbm8gd2F5IG9mIHN1cHBseWluZyB0aGUg
-TU1EIGRldmljZS4NCg0KDQo+DQo+IAlBbmRyZXc=
+The charge input threshold voltage register on the MAX77693 PMIC accepts
+four values: 0x0 for 4.3v, 0x1 for 4.7v, 0x2 for 4.8v and 0x3 for 4.9v.
+Due to an oversight, the driver calculated the values for 4.7v and above
+starting from 0x0, rather than from 0x1 ([(4700000 - 4700000) / 100000]
+gives 0).
+
+Add 1 to the calculation to ensure that 4.7v is converted to a register
+value of 0x1 and that the other two voltages are converted correctly as
+well.
+
+Fixes: 87c2d9067893 ("power: max77693: Add charger driver for Maxim 77693")
+Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
+---
+The charge input threshold voltage register on the MAX77693 PMIC accepts
+four values: 0x0 for 4.3v, 0x1 for 4.7v, 0x2 for 4.8v and 0x3 for 4.9v.
+Due to an oversight, the driver calculated the values for 4.7v and above
+starting from 0x0, rather than from 0x1 ([(4700000 - 4700000) / 100000]
+gives 0).
+
+Add 1 to the calculation to ensure that 4.7v is converted to a register
+value of 0x1 and that the other two voltages are converted correctly as
+well.
+
+Fixes: 87c2d9067893 ("power: max77693: Add charger driver for Maxim 77693")
+---
+ drivers/power/supply/max77693_charger.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/power/supply/max77693_charger.c b/drivers/power/supply/max77693_charger.c
+index cdea35c0d1de1111311d198d042bfa5b10da52b7..027d6a539b65a2fe423f90bab27d705a8145f7e7 100644
+--- a/drivers/power/supply/max77693_charger.c
++++ b/drivers/power/supply/max77693_charger.c
+@@ -608,7 +608,7 @@ static int max77693_set_charge_input_threshold_volt(struct max77693_charger *chg
+ 	case 4700000:
+ 	case 4800000:
+ 	case 4900000:
+-		data = (uvolt - 4700000) / 100000;
++		data = ((uvolt - 4700000) / 100000) + 1;
+ 		break;
+ 	default:
+ 		dev_err(chg->dev, "Wrong value for charge input voltage regulation threshold\n");
+
+---
+base-commit: ffd294d346d185b70e28b1a28abe367bbfe53c04
+change-id: 20250316-max77693-charger-input-threshold-fix-992f56783586
+
+Best regards,
+-- 
+Artur Weber <aweber.kernel@gmail.com>
+
 
