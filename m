@@ -1,115 +1,86 @@
-Return-Path: <linux-kernel+bounces-563170-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563171-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC28CA637BA
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 23:42:10 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BA86A637BE
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 23:44:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E13EB7A5E88
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 22:41:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA39C16C6AB
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 22:44:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C9751DB13A;
-	Sun, 16 Mar 2025 22:42:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBF801E1E02;
+	Sun, 16 Mar 2025 22:44:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uTVc0Zg2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="xbhNTQvi"
+Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8333A440C;
-	Sun, 16 Mar 2025 22:42:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C86C4BA3F;
+	Sun, 16 Mar 2025 22:44:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742164920; cv=none; b=KzvXCsL1tWdKGv6BIKMhQYGHI0S66VDFKAmoh0xnbkORe0aHrbFOdTklAvqsaCO/PKwxi/V//iYflkjCtPFzMUGzFg1tFrQKxA5OfZxlqApSrAtkOKBreW7tXMrsPlRlJW4Rbj2MrzC85OHoHEwRkn7vuAXLc8VQpOG7CT6HcYQ=
+	t=1742165070; cv=none; b=D4k96a8eY0inP/m6/V+/JDyjT2EkES6412psQhXQ8LpvCaVvEkaiOLvvaUEulXQ1gKIGwDz4Sq6Ey5ipeO60TDaF/aebWhT3BEKehZ7ZLHQHlt5IY6FkPvsDse1fOWxRBV7SnA1STvYKmMLg1ATN8VF/nXX8dg8gDCTljz1VUM4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742164920; c=relaxed/simple;
-	bh=SyJn0VV3hdTB4MzyZtiLwnmoNW2jWsEMpKEyL8b2yjw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CUsoEnOToTUww8a1dMsRaeZKmnaCdC7xdOd4HXMjR08ox+KdTR36PD4JiU4+j5lAXGQbQQo/gZc491FYcxQeb0DnjNbiUTCwCDVEnkw7zItGSHTLISYtL9aNqiCqcsxh9KyEml6Pywmu/k6KC8esmB7k61o0G/jlhvox3R323Fg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uTVc0Zg2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33848C4CEDD;
-	Sun, 16 Mar 2025 22:41:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742164919;
-	bh=SyJn0VV3hdTB4MzyZtiLwnmoNW2jWsEMpKEyL8b2yjw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uTVc0Zg25rsyZG+fAdP8gbGUr+m2hjjK0y/tgV11r2FY+zEcy2O2Kzoj6RlACpgm9
-	 ZdLl+VkL223XDys22cwG09nyEfP9XK8D1aGCbro03r3gZx1+8cT9TYWvMcJVO0Da5n
-	 3CxbcHIRlHxzVPzem6L6eB0nCWRf/S1s349/VQNKjRBfFM6RjxUtbX/TTaFzC3bIHy
-	 LopOvC7G0/f28N165FXjcwHDG0JlRkknqHp/n5Uai+fETImrhKGWiOPC5JuJFKezm8
-	 sPK/JUeW4oC7K5clcILLjKWyxN4WQUE1W0IJZvCeL+c8Axuy57nmz//e/w9F3YWrz6
-	 zpC/G8oeoyHZA==
-Date: Sun, 16 Mar 2025 23:41:54 +0100
-From: Danilo Krummrich <dakr@kernel.org>
-To: Tamir Duberstein <tamird@gmail.com>
-Cc: Andrew Ballance <andrewjballance@gmail.com>,
-	Alice Ryhl <aliceryhl@google.com>, Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] rust: alloc: add `Vec::dec_len`
-Message-ID: <Z9dTspva0aJRWG3Y@pollux>
-References: <20250316-vec-set-len-v1-0-60f98a28723f@gmail.com>
- <20250316-vec-set-len-v1-2-60f98a28723f@gmail.com>
+	s=arc-20240116; t=1742165070; c=relaxed/simple;
+	bh=xkMYsGth4fo/yygdnibJPcnkNxLeqbJ7eAnF4IBWIM0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Y7LOQuNdlQVwKdA9DL3KxVckBZMxA4kT9viC8EzHYkcUuOK69pVIBOQwpd/7amaUucWszZAS1zc+oEHeC4F0cURNAV/uRsyHz6N8eiKs6RuW50N6rKbEmT02NqOHd5ibGNtOkB67uKqTkyGIi9TaCEr/x1vhZfCviUZfJEQ8Rl0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=xbhNTQvi; arc=none smtp.client-ip=178.238.236.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=9iNukgtNIY9Oqr4zIk27hG4nG9ifAXuFFIDKOsCWexg=; b=xbhNTQvi4qv5AjC8I3zrEjbWN+
+	xIZiQGpP47WcXSnJ7nDtOFSgws5DYop/5WfwVCHvw2SrgBD69Rh/FHveENsVElz6l0DPZmBnZieve
+	cfiep9TBzxUGYDPqwBIqnST16IllRA5MmHCppdBLskpGlneHWcwJdvfseoaOiO8pUq5iD4RuT4JWc
+	SbtacfAWdIHnMA0CMVsANPAUXkFhKYyh10SltXElOBA/B4XOFhU4V990xqwjZ62sXRiQLx24lXCIL
+	u7qqYRikPt69qTXeMbgjlmDHdykMLNVwlUdInGauFDHEVFUuYgaGI5T20s21OK/JebhhGrxwXjDcc
+	jro1fZ3A==;
+Date: Sun, 16 Mar 2025 23:44:14 +0100
+From: Andreas Kemnade <andreas@kemnade.info>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: akemnade@kernel.org, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Tony Lindgren <tony@atomide.com>, Conor Dooley
+ <conor+dt@kernel.org>, linux-omap@vger.kernel.org, khilman@baylibre.com,
+ devicetree@vger.kernel.org, linux-input@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RESEND 1/2] Input: tsc2007 - accept standard properties
+Message-ID: <20250316234414.4bf5ba92@akair>
+In-Reply-To: <Z1cuSxrV-ceaO1k9@google.com>
+References: <20241205204413.2466775-1-akemnade@kernel.org>
+	<20241205204413.2466775-2-akemnade@kernel.org>
+	<Z1cuSxrV-ceaO1k9@google.com>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250316-vec-set-len-v1-2-60f98a28723f@gmail.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Sun, Mar 16, 2025 at 06:32:01PM -0400, Tamir Duberstein wrote:
-> Add `Vec::dec_len` that reduces the length of the receiver. This method
-> is intended to be used from methods that remove elements from `Vec` such
-> as `truncate`, `pop`, `remove`, and others. This method is intentionally
-> not `pub`.
-> 
-> Signed-off-by: Tamir Duberstein <tamird@gmail.com>
-> ---
->  rust/kernel/alloc/kvec.rs | 15 +++++++++++++++
->  1 file changed, 15 insertions(+)
-> 
-> diff --git a/rust/kernel/alloc/kvec.rs b/rust/kernel/alloc/kvec.rs
-> index d43a1d609434..5d604e04b9a5 100644
-> --- a/rust/kernel/alloc/kvec.rs
-> +++ b/rust/kernel/alloc/kvec.rs
-> @@ -195,6 +195,21 @@ pub unsafe fn inc_len(&mut self, additional: usize) {
->          self.len += additional;
->      }
->  
-> +    /// Decreases `self.len` by `count`.
-> +    ///
-> +    /// Returns a mutable reference to the removed elements.
-> +    ///
-> +    /// # Safety
-> +    ///
-> +    /// - `count` must be less than or equal to `self.len`.
+Am Mon, 9 Dec 2024 09:52:11 -0800
+schrieb Dmitry Torokhov <dmitry.torokhov@gmail.com>:
 
-Why? We can catch this, no?
-
-We can keep the debug_assert!(), but use self.len.saturating_sub(count) instead.
-
-> +    unsafe fn dec_len(&mut self, count: usize) -> &mut [T] {
-> +        debug_assert!(count <= self.len());
-> +        self.len -= count;
-> +        // SAFETY: The memory between `self.len` and `self.len + count` is guaranteed to contain
-> +        // `self.len` initialized elements of type `T`.
-> +        unsafe { slice::from_raw_parts_mut(self.as_mut_ptr().add(self.len), count) }
-> +    }
-> +
->      /// Returns a slice of the entire vector.
->      #[inline]
->      pub fn as_slice(&self) -> &[T] {
+> On Thu, Dec 05, 2024 at 09:44:12PM +0100, akemnade@kernel.org wrote:
+> > From: Andreas Kemnade <andreas@kemnade.info>
+> > 
+> > Only some driver-specific properties were accepted, change it
+> > to use the now-available standard properties which are
+> > found in devicetrees containing this chip.
+> > 
+> > Signed-off-by: Andreas Kemnade <andreas@kemnade.info>  
 > 
-> -- 
-> 2.48.1
-> 
+> Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+
+this was in -next but somehow flipped through, so maybe apply it
+directly to input now?
+
+Regards,
+Andreas
 
