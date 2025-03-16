@@ -1,86 +1,129 @@
-Return-Path: <linux-kernel+bounces-563171-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563172-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BA86A637BE
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 23:44:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0883A637C2
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 23:46:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA39C16C6AB
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 22:44:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BBDEC188EA59
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 22:46:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBF801E1E02;
-	Sun, 16 Mar 2025 22:44:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D16B1A23AD;
+	Sun, 16 Mar 2025 22:46:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="xbhNTQvi"
-Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
+	dkim=pass (2048-bit key) header.d=rbox.co header.i=@rbox.co header.b="QAuAOimv"
+Received: from mailtransmit05.runbox.com (mailtransmit05.runbox.com [185.226.149.38])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C86C4BA3F;
-	Sun, 16 Mar 2025 22:44:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4211B2F36;
+	Sun, 16 Mar 2025 22:46:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.226.149.38
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742165070; cv=none; b=D4k96a8eY0inP/m6/V+/JDyjT2EkES6412psQhXQ8LpvCaVvEkaiOLvvaUEulXQ1gKIGwDz4Sq6Ey5ipeO60TDaF/aebWhT3BEKehZ7ZLHQHlt5IY6FkPvsDse1fOWxRBV7SnA1STvYKmMLg1ATN8VF/nXX8dg8gDCTljz1VUM4=
+	t=1742165166; cv=none; b=cKfA9uvJYuLQq3oBU9JJa8lvoGfYiQlo2jz2ewOYucQklxTWT/tSmWGXNDu372JOz1afAVhJjhNVh6V9CQyEGhovY1kcyU9gYQjyp6sC7HUDovyp8GigLsIBr73+dBCWhtP0kJT37DQhoZNdcVp7J3fO8Z0BYZ1A8wSN6FNifl8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742165070; c=relaxed/simple;
-	bh=xkMYsGth4fo/yygdnibJPcnkNxLeqbJ7eAnF4IBWIM0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Y7LOQuNdlQVwKdA9DL3KxVckBZMxA4kT9viC8EzHYkcUuOK69pVIBOQwpd/7amaUucWszZAS1zc+oEHeC4F0cURNAV/uRsyHz6N8eiKs6RuW50N6rKbEmT02NqOHd5ibGNtOkB67uKqTkyGIi9TaCEr/x1vhZfCviUZfJEQ8Rl0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=xbhNTQvi; arc=none smtp.client-ip=178.238.236.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=9iNukgtNIY9Oqr4zIk27hG4nG9ifAXuFFIDKOsCWexg=; b=xbhNTQvi4qv5AjC8I3zrEjbWN+
-	xIZiQGpP47WcXSnJ7nDtOFSgws5DYop/5WfwVCHvw2SrgBD69Rh/FHveENsVElz6l0DPZmBnZieve
-	cfiep9TBzxUGYDPqwBIqnST16IllRA5MmHCppdBLskpGlneHWcwJdvfseoaOiO8pUq5iD4RuT4JWc
-	SbtacfAWdIHnMA0CMVsANPAUXkFhKYyh10SltXElOBA/B4XOFhU4V990xqwjZ62sXRiQLx24lXCIL
-	u7qqYRikPt69qTXeMbgjlmDHdykMLNVwlUdInGauFDHEVFUuYgaGI5T20s21OK/JebhhGrxwXjDcc
-	jro1fZ3A==;
-Date: Sun, 16 Mar 2025 23:44:14 +0100
-From: Andreas Kemnade <andreas@kemnade.info>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: akemnade@kernel.org, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Tony Lindgren <tony@atomide.com>, Conor Dooley
- <conor+dt@kernel.org>, linux-omap@vger.kernel.org, khilman@baylibre.com,
- devicetree@vger.kernel.org, linux-input@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RESEND 1/2] Input: tsc2007 - accept standard properties
-Message-ID: <20250316234414.4bf5ba92@akair>
-In-Reply-To: <Z1cuSxrV-ceaO1k9@google.com>
-References: <20241205204413.2466775-1-akemnade@kernel.org>
-	<20241205204413.2466775-2-akemnade@kernel.org>
-	<Z1cuSxrV-ceaO1k9@google.com>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1742165166; c=relaxed/simple;
+	bh=McSjGIXHh2Av65DgZBMYpMB/ZRpB7P7THV652GDGw5s=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=vAFiQB9qeuIo7yEncMpY6NEK6ZeEDU6DtA0CwpZcKloV52WUTrPFGbtWofv7+zsn2JlVoars+Xvjh2t/2pWe/xJ3iG6Y+ZU2LWg7RNohOu1ZjPqSIrO0epQoFcVWZDRT/ULVMntzkbWX4d9WaDOLXvswotYeJasBI5g7/VyM/z8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rbox.co; spf=pass smtp.mailfrom=rbox.co; dkim=pass (2048-bit key) header.d=rbox.co header.i=@rbox.co header.b=QAuAOimv; arc=none smtp.client-ip=185.226.149.38
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rbox.co
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rbox.co
+Received: from mailtransmit02.runbox ([10.9.9.162] helo=aibo.runbox.com)
+	by mailtransmit05.runbox.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.93)
+	(envelope-from <mhal@rbox.co>)
+	id 1ttwjw-00CYLO-AB; Sun, 16 Mar 2025 23:45:52 +0100
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=rbox.co;
+	s=selector1; h=Cc:To:Content-Transfer-Encoding:Content-Type:MIME-Version:
+	Message-Id:Date:Subject:From; bh=iUCl0YULHWl7vWJvbzTS4dRqJAjTHZgdzbK+wMY/LZc=
+	; b=QAuAOimvOadcMKk1FkrV9MvInc+5xyiaYjQgn8YovY1gLq3AoAEXFnWynWCoH1cnmaEYmYz/J
+	OsvkXpC/62LkGxrq9evoeeq3ixtkFBYh9sCfwRx1XZOWW2B0e1qA27D7QLClVHpNcSJfSvKhOqYZ+
+	wROp5xUOULmbm4qFefjbhtlNmcHrGud3y2eT6BXZI4cmK8ADfRFidIPP7mShJFQZS6oowkHeqRcgw
+	BhenvkxoeS4cRreZbu7nWuqU0fWWSbo1nEGRrOo2o/NxXxkr67l8eFk35UVRNHxYTXeUmXsIGbmMV
+	xU9mY55ifYG3dPLf/IO+WdnAR9MciujoPaaiIw==;
+Received: from [10.9.9.74] (helo=submission03.runbox)
+	by mailtransmit02.runbox with esmtp (Exim 4.86_2)
+	(envelope-from <mhal@rbox.co>)
+	id 1ttwjq-0007fM-GB; Sun, 16 Mar 2025 23:45:46 +0100
+Received: by submission03.runbox with esmtpsa  [Authenticated ID (604044)]  (TLS1.2:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.93)
+	id 1ttwjo-00AYw2-1x; Sun, 16 Mar 2025 23:45:44 +0100
+From: Michal Luczaj <mhal@rbox.co>
+Subject: [PATCH net v3 0/3] vsock/bpf: Handle races between sockmap update
+ and connect() disconnecting
+Date: Sun, 16 Mar 2025 23:45:05 +0100
+Message-Id: <20250316-vsock-trans-signal-race-v3-0-17a6862277c9@rbox.co>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAHFU12cC/3XNywrCMBAF0F8ps3Ykr7bWlf8hLtI82qAkkpRQK
+ f13YxF00+Wdy5y7QDLRmQTnaoFosksu+BL4oQI1Sj8YdLpkYITVhJMacwrqjlOUPmFyg5cPjFI
+ Z1A2zbUtPmnQdlO9nNNbNm3wFbya4lePo0hTia1vLdKu+cLsLZ4oUuVSSf3zb60vsw3xUYRMz+
+ 1Oo2FcYEhSMSkFtQ6xgP2Vd1zdkctakBwEAAA==
+X-Change-ID: 20250305-vsock-trans-signal-race-d62f7718d099
+To: Stefano Garzarella <sgarzare@redhat.com>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Simon Horman <horms@kernel.org>, "Michael S. Tsirkin" <mst@redhat.com>, 
+ Bobby Eshleman <bobby.eshleman@bytedance.com>, 
+ Andrii Nakryiko <andrii@kernel.org>, Eduard Zingerman <eddyz87@gmail.com>, 
+ Mykola Lysenko <mykolal@fb.com>, Alexei Starovoitov <ast@kernel.org>, 
+ Daniel Borkmann <daniel@iogearbox.net>, 
+ Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>, 
+ Yonghong Song <yonghong.song@linux.dev>, 
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+ Jiri Olsa <jolsa@kernel.org>, Shuah Khan <shuah@kernel.org>
+Cc: netdev@vger.kernel.org, bpf@vger.kernel.org, 
+ virtualization@lists.linux.dev, linux-kernel@vger.kernel.org, 
+ linux-kselftest@vger.kernel.org, Michal Luczaj <mhal@rbox.co>
+X-Mailer: b4 0.14.2
 
-Am Mon, 9 Dec 2024 09:52:11 -0800
-schrieb Dmitry Torokhov <dmitry.torokhov@gmail.com>:
+Signal delivery during connect() may disconnect an already established
+socket. Problem is that such socket might have been placed in a sockmap
+before the connection was closed.
 
-> On Thu, Dec 05, 2024 at 09:44:12PM +0100, akemnade@kernel.org wrote:
-> > From: Andreas Kemnade <andreas@kemnade.info>
-> > 
-> > Only some driver-specific properties were accepted, change it
-> > to use the now-available standard properties which are
-> > found in devicetrees containing this chip.
-> > 
-> > Signed-off-by: Andreas Kemnade <andreas@kemnade.info>  
-> 
-> Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+PATCH 1 ensures this race won't lead to an unconnected vsock staying in the
+sockmap. PATCH 2 selftests it. 
 
-this was in -next but somehow flipped through, so maybe apply it
-directly to input now?
+PATCH 3 fixes a related race. Note that selftest in PATCH 2 does test this
+code as well, but winning this race variant may take more than 2 seconds,
+so I'm not advertising it.
 
-Regards,
-Andreas
+Signed-off-by: Michal Luczaj <mhal@rbox.co>
+---
+Changes in v3:
+- Selftest: drop unnecessary variable initialization and reorder the calls
+- Link to v2: https://lore.kernel.org/r/20250314-vsock-trans-signal-race-v2-0-421a41f60f42@rbox.co
+
+Changes in v2:
+- Handle one more path of tripping the warning
+- Add a selftest
+- Collect R-b [Stefano]
+- Link to v1: https://lore.kernel.org/r/20250307-vsock-trans-signal-race-v1-1-3aca3f771fbd@rbox.co
+
+---
+Michal Luczaj (3):
+      vsock/bpf: Fix EINTR connect() racing sockmap update
+      selftest/bpf: Add test for AF_VSOCK connect() racing sockmap update
+      vsock/bpf: Fix bpf recvmsg() racing transport reassignment
+
+ net/vmw_vsock/af_vsock.c                           | 10 ++-
+ net/vmw_vsock/vsock_bpf.c                          | 24 ++++--
+ .../selftests/bpf/prog_tests/sockmap_basic.c       | 97 ++++++++++++++++++++++
+ 3 files changed, 122 insertions(+), 9 deletions(-)
+---
+base-commit: da9e8efe7ee10e8425dc356a9fc593502c8e3933
+change-id: 20250305-vsock-trans-signal-race-d62f7718d099
+
+Best regards,
+-- 
+Michal Luczaj <mhal@rbox.co>
+
 
