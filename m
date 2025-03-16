@@ -1,78 +1,175 @@
-Return-Path: <linux-kernel+bounces-562813-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562814-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43594A63340
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 02:58:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCE05A63342
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 03:01:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A2F2F7A89E5
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 01:57:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D42CC18930DE
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 02:01:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 720FC76035;
-	Sun, 16 Mar 2025 01:58:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F175383A5;
+	Sun, 16 Mar 2025 02:01:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bo7IIcG9"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pa/FB3Ap"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD4B245C18;
-	Sun, 16 Mar 2025 01:58:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB5382F36;
+	Sun, 16 Mar 2025 02:01:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742090307; cv=none; b=SMOceCRWIOZzjudKgYNMIb/GzxIE6I5yzR9LDBmH93J9NrH/NQ+57z6hj5BbhvewNotuKIhg9+kbUWhk8KiPb/gbqJr8gcb5GigvA8LbMclTmviNsZiJXnVv/eSe76phoSzk98DYyyxKrLLZ64XHKQ8n9Oy8DuJzHh4LhUAyOaI=
+	t=1742090500; cv=none; b=TAAf66GS9L7Oz5G0KnGVpKQiTJZoypvOOnQilBQfTGesGNpUvl7uBkYDg3oqVQx1WdbEyj7KmUn6sBhajhZXPP1djx6hya3Ne0GUXEsf/Ll6V8jjHq6TH3DDduk5r7rI7+6qqTTXj3vPQvK5qcL/BZO1uXQGxE0D9iiQLCtfkWE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742090307; c=relaxed/simple;
-	bh=ee3g8qfjI5nuKVpAMRDbFYvRZ/ZWFphZy2P2A8f1cQA=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=cm4ckxW+ANb/K7zyf6mtFwAZielxx9OdHH05VEUMpQqfgHJTYgIyhrJB7fOmlHsYVQlZQsQGplm0EMirIw+Nb6oI//SaQwFOQqiJMNhL22Cqz4gDNm1AUKrDMeocgjmFeE0QPeM6ZSMS87A+HhHxhm9B6Gbi6FghCoO5Iz5BnUU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bo7IIcG9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE7C8C4CEE5;
-	Sun, 16 Mar 2025 01:58:27 +0000 (UTC)
+	s=arc-20240116; t=1742090500; c=relaxed/simple;
+	bh=2Arjfizzb2gSNR+WjTG8lT9cZFk0IOT5NlnWiOw5AcM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LHJdRfG/l9cYgf7RmVVnSbvdL8dlTrpWZOo4gC4yeVjzQRJJe0BSrTjeZ9i417EQXFAkwcU5hiio6O/gDXZZ3fjzCLca5i0ppIupEhlfYYXaKDxfJ/1ms6AwFiQ7QG6vNDkPejlSRPCl22bMRiG6SShZY3+kMm2SwDYCXmjNv4A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pa/FB3Ap; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A87E6C4AF09;
+	Sun, 16 Mar 2025 02:01:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742090307;
-	bh=ee3g8qfjI5nuKVpAMRDbFYvRZ/ZWFphZy2P2A8f1cQA=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=bo7IIcG98eq36obMXe65d6+eRmUTwCHm3tS7D+0xB73pmjwDe8U5nYzmfk1UKDwhu
-	 SC7QY+dnEu1BNQQ31LDjQG4JfwaBxyvYsG3/SyRpmA06RIE5KYlh2fEwLzCc525Jpg
-	 fKamfoMYB8YbzkjixdEPOvriCwOnQxIWvGuUmGJ4KW4C+1ciAmMaVgWK3s9A9rA4AI
-	 Y0pcK1t8XusGnDN4aftTMma1fKTET/gIzC/t+LTk4ybEZpYHpyk8y06sl4F/6NBU1U
-	 /0K/KOWVtVCyN9W6lDLXflNBV3JfryjRFzDcFqehThMJzUzkY+nPvDCOjAUuJd0z4N
-	 PV2t4fabhM09w==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAD64380DBDD;
-	Sun, 16 Mar 2025 01:59:03 +0000 (UTC)
-Subject: Re: [git pull] Input updates for v6.14-rc6
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <Z9Ym1Da9oT9CdxVR@google.com>
-References: <Z9Ym1Da9oT9CdxVR@google.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <Z9Ym1Da9oT9CdxVR@google.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/dtor/input.git tags/input-for-v6.14-rc6
-X-PR-Tracked-Commit-Id: fd10709e28d2fa9015667aee56d92099fc97aa0d
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 31d7109a19f66dbce2ad3dc377343d734cdfa346
-Message-Id: <174209034244.2697047.621009150416853053.pr-tracker-bot@kernel.org>
-Date: Sun, 16 Mar 2025 01:59:02 +0000
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-kernel@vger.kernel.org, linux-input@vger.kernel.org
+	s=k20201202; t=1742090499;
+	bh=2Arjfizzb2gSNR+WjTG8lT9cZFk0IOT5NlnWiOw5AcM=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=pa/FB3Apbu9QlSUxKPWng5A/TGin832UA7TOq+VIVbcrOYf0Rzd6awNSCoqhPlULV
+	 W9gdh/cGCZg2wvf16M47ebiE0IN4axN7mFGwQvIvOa0YtDdnR3sh9uH2LLAOj3GUhR
+	 7gpCzIyqAyF9GTYr0JiSEAFN88a/coyD+LIBxWNFH4TAwWLC5RJpcK5EVs92loEYY3
+	 ZtseYLwww1jVYH75qYfnKSZ1iU+kMQy/5cmfRSHJxCW6f9WAQ5VeZNjpxOJMWDLJbD
+	 fX+twUWZHZkaiByf1Fi3bz0Kt5+z1FP5SMm24MG069ZEX4Psn+U6JUFJ76VPiZvrVG
+	 Xw1VUtkHqNSPQ==
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-549b116321aso3756212e87.3;
+        Sat, 15 Mar 2025 19:01:39 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU5AnLqlDaxfCu9ps70H6/QUP1cB238BuilvQvi+yxDiuUKPsA6KUz6Iva98A5YVAd4AcM/eaFTb56RS7k=@vger.kernel.org, AJvYcCUzFJlaZSV/1RXCfFpLJiMtgXGIPUZU037Mlwndq9EE6XVbM8tSRITBqTv+GXp5lA3ewh/egjUkqe5z0lTam7s=@vger.kernel.org, AJvYcCWVItII7p6bAjpyvedN7phnEyNgxEdSs9weL04sllUoG+tW7J+zeR3WmpSEPB0GhvwRHJ2jcJ7ZT9Q0SLiV@vger.kernel.org
+X-Gm-Message-State: AOJu0YzjaC8s4PIoNETdwI+wJWD0ufokLXu+rhiflvPR4/JD0zshSV1Q
+	d6rdlLC/uSeaOJZRMnPGqhJNWL8Ci9oJert6kHtjQPxBgzoAD09ZPnom363pUMMnWjHhX9x9S3E
+	Ooqf4bBZ+jYHJB4YnVUtozN1ypIE=
+X-Google-Smtp-Source: AGHT+IFxa4d1/tQXHJ1+iZsSL1Rrhqc7WpycIqFFXpi5pz+aSLjYUG5l3bMLK7CtiNadloFwe4WxtjLZLSReotL56FM=
+X-Received: by 2002:a05:6512:31d5:b0:549:39ca:13fc with SMTP id
+ 2adb3069b0e04-549c394fdffmr2992262e87.49.1742090498341; Sat, 15 Mar 2025
+ 19:01:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+References: <20250315194045.2353200-1-ojeda@kernel.org>
+In-Reply-To: <20250315194045.2353200-1-ojeda@kernel.org>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Sun, 16 Mar 2025 11:01:02 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQaXXWCJtrt+wp3jr4GEC4M8QknKouWSOQ-eqpVkak5Pw@mail.gmail.com>
+X-Gm-Features: AQ5f1JreqjeN0HiiGMEIFMWQpGk6bl16687TeIEZofS1RjmgnF6S_TivIYKx2jA
+Message-ID: <CAK7LNAQaXXWCJtrt+wp3jr4GEC4M8QknKouWSOQ-eqpVkak5Pw@mail.gmail.com>
+Subject: Re: [PATCH v2] rust: kbuild: skip `--remap-path-prefix` for `rustdoc`
+To: Miguel Ojeda <ojeda@kernel.org>
+Cc: Alex Gaynor <alex.gaynor@gmail.com>, Nathan Chancellor <nathan@kernel.org>, 
+	Nicolas Schier <nicolas@fjasle.eu>, linux-kbuild@vger.kernel.org, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	patches@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The pull request you sent on Sat, 15 Mar 2025 18:18:12 -0700:
+On Sun, Mar 16, 2025 at 4:40=E2=80=AFAM Miguel Ojeda <ojeda@kernel.org> wro=
+te:
+>
+> `rustdoc` only recognizes `--remap-path-prefix` starting with
+> Rust 1.81.0, which is later than on minimum, so we cannot pass it
+> unconditionally. Otherwise, we get:
+>
+>     error: Unrecognized option: 'remap-path-prefix'
+>
+> Note that `rustc` (the compiler) does recognize the flag since a long
+> time ago (1.26.0).
+>
+> Moreover, `rustdoc` since Rust 1.82.0 ICEs in out-of-tree builds when
+> using `--remap-path-prefix`. The issue has been reduced and reported
+> upstream [1].
+>
+> Thus workaround both issues by simply skipping the flag when generating
+> the docs -- it is not critical there anyway.
+>
+> The ICE does not reproduce under `--test`, but we still need to skip
+> the flag as well for `RUSTDOC TK` since it is not recognized.
+>
+> Fixes: 6b5747d07138 ("kbuild, rust: use -fremap-path-prefix to make paths=
+ relative")
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/dtor/input.git tags/input-for-v6.14-rc6
+Applied to linux-kbuild. Thanks.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/31d7109a19f66dbce2ad3dc377343d734cdfa346
+Please note I locally modified the Fixes tag as follows:
 
-Thank you!
+Fixes: dbdffaf50ff9 ("kbuild, rust: use -fremap-path-prefix to make
+paths relative")
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+I rebased in order to fix my missing Signed-off-by,
+so the commit ID of the former commits changed.
+
+
+
+
+
+
+> Link: https://github.com/rust-lang/rust/issues/138520 [1]
+> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
+> ---
+> v2:
+>   - Skip the flag also in `RUSTDOC TK`. The ICE does not apply there,
+>     but we still need to skip the flag.
+>
+>  rust/Makefile | 8 ++++++--
+>  1 file changed, 6 insertions(+), 2 deletions(-)
+>
+> diff --git a/rust/Makefile b/rust/Makefile
+> index ea3849eb78f6..089473a89d46 100644
+> --- a/rust/Makefile
+> +++ b/rust/Makefile
+> @@ -57,10 +57,14 @@ endif
+>  core-cfgs =3D \
+>      --cfg no_fp_fmt_parse
+>
+> +# `rustc` recognizes `--remap-path-prefix` since 1.26.0, but `rustdoc` o=
+nly
+> +# since Rust 1.81.0. Moreover, `rustdoc` ICEs on out-of-tree builds sinc=
+e Rust
+> +# 1.82.0 (https://github.com/rust-lang/rust/issues/138520). Thus workaro=
+und both
+> +# issues skipping the flag. The former also applies to `RUSTDOC TK`.
+>  quiet_cmd_rustdoc =3D RUSTDOC $(if $(rustdoc_host),H, ) $<
+>        cmd_rustdoc =3D \
+>         OBJTREE=3D$(abspath $(objtree)) \
+> -       $(RUSTDOC) $(filter-out $(skip_flags),$(if $(rustdoc_host),$(rust=
+_common_flags),$(rust_flags))) \
+> +       $(RUSTDOC) $(filter-out $(skip_flags) --remap-path-prefix=3D%,$(i=
+f $(rustdoc_host),$(rust_common_flags),$(rust_flags))) \
+>                 $(rustc_target_flags) -L$(objtree)/$(obj) \
+>                 -Zunstable-options --generate-link-to-definition \
+>                 --output $(rustdoc_output) \
+> @@ -171,7 +175,7 @@ quiet_cmd_rustdoc_test_kernel =3D RUSTDOC TK $<
+>         rm -rf $(objtree)/$(obj)/test/doctests/kernel; \
+>         mkdir -p $(objtree)/$(obj)/test/doctests/kernel; \
+>         OBJTREE=3D$(abspath $(objtree)) \
+> -       $(RUSTDOC) --test $(rust_flags) \
+> +       $(RUSTDOC) --test $(filter-out --remap-path-prefix=3D%,$(rust_fla=
+gs)) \
+>                 -L$(objtree)/$(obj) --extern ffi --extern kernel \
+>                 --extern build_error --extern macros \
+>                 --extern bindings --extern uapi \
+>
+> base-commit: bc5431693696b3f928b0b7acf8d7a120127db7a4
+> --
+> 2.49.0
+
+
+
+--=20
+Best Regards
+Masahiro Yamada
 
