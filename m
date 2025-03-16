@@ -1,96 +1,70 @@
-Return-Path: <linux-kernel+bounces-563076-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563077-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 315ACA636B9
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 18:13:34 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E041A636BA
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 18:14:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D561168B7B
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 17:13:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D857188FE99
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 17:14:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A8461DE2A0;
-	Sun, 16 Mar 2025 17:13:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IA0CsycX"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01EDF1C84C9;
+	Sun, 16 Mar 2025 17:13:56 +0000 (UTC)
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDEBD1A23B8;
-	Sun, 16 Mar 2025 17:13:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A07A18CC1C
+	for <linux-kernel@vger.kernel.org>; Sun, 16 Mar 2025 17:13:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742145197; cv=none; b=dHTkU/oWat8d7s6fM5ly3oxUyNJZ8QiQs6x4jt+uzqNnBN5OQ8aIcYdBzrH4OCom8+COOgq5r5brgi+HrWBMZ5ZjB20GVOgF1k4Q68wcXjypZgWc84D3Yx+tOggAVeiK6BK/ud0xKstY9jqnj1oT8AhnOY86QB6uzoqr4siCvNQ=
+	t=1742145235; cv=none; b=bBsLfH17oFG+rVG0kG9N10bghm8VeDdSRw9HGUTfFqqtYaUXfn5QgF71KfIEL0SUkwu/lQ697xaYorswWYKzAG+5MoOBlCUc3Ks46qWIBM7Nmiwtb3s3ObyRzcwcwOPMqu+8cTB5wBm3bNxggWJYF1PggMDuhgBXPUtH3ojkv9o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742145197; c=relaxed/simple;
-	bh=vBsxJ1biiJKtT4IBunR3eLVJtZ8OZKPt4xbxtLfBH/c=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=o1k80OC6fAZi2a1ZM8cq4yEbVkOMiNLQytGnwl0NR8FRCjwfzK7mOIFJIR0dAm2vwcjznJrJQcRIMHW7W4ogeZ1JOUshzRf7i2X2gyQllkmRQ6OMnly1Hl72JKcEB0RLu7joaSc/PuQifsb1tCp604Q5IaH6Nc2Hvw6KevNOG6Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IA0CsycX; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1742145235; c=relaxed/simple;
+	bh=H3PzNC3xIhl0GKYFcLaLS3yXa7lBJR6UI7k7WiHNrxQ=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=UuLWFdlkV0p0cCaGl80YEsBycyLC572vLlWbgpOcsgOlRITbErEpOGpYt//b8ZRWXqUO8B00qhdjbFlZMYL2hD08SELFxNpTmY9F0CJaY5POIYsWfJ48z0CT9RS25zvyHbxKqUXOSa52LiNiQWROF/6RYdh1usTzogUVpeIRi58=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2240b4de12bso15371045ad.2;
-        Sun, 16 Mar 2025 10:13:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742145195; x=1742749995; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VeuaJLj4d1tbxkJ8unWVbFFLio+tlIRdtkFlEPSaRSw=;
-        b=IA0CsycXWGuk7gEGOy18sYmZIg7i8iihBZBDDnMnwRVmWF8ug7u3C+XxCmVcAnD7/f
-         qc44+obcHhh6/e+NWdSmz7qOVOyoSCaQXekw5IiskUJSBhrXSGFKpzerSHpuu9Zgm0ZW
-         Xw4Ik788JUjf2K1g5CS6+AtZTnZnpclXJU0igQ3Qmc8iYoBGz5Dpbo223tWNEMh25PO3
-         mLNEllLEx+cZO8VhW4gzQyZRPistCbKNU8kIhT3DgNKNzRyZh6qd/cvhLO/OPLq6sALD
-         MydTjyUac+STknHV+CIgKQKOJwjkq+H54J5TcIQEqMFtQPdox4LSVFrb19M8/jmX+SPy
-         5aUQ==
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-43cfa7e7f54so7040165e9.1
+        for <linux-kernel@vger.kernel.org>; Sun, 16 Mar 2025 10:13:53 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742145195; x=1742749995;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VeuaJLj4d1tbxkJ8unWVbFFLio+tlIRdtkFlEPSaRSw=;
-        b=rBgtC91CInLYckMrwEStCjG9McsweImg4+9bnI76Tvwwugl6zPTLrF2AZ0UbeDhOmF
-         7XTSYKm6xaQeY/CPmlBNa/udj46C8N3lEyr2zH4D6JnHa0WWKKI8ikxUI0macB2/C5x6
-         RdMuIcLOJQvL/EJT5WzENGWmyhJrzoVmDL/3ykYzCeE6kG2ihZmv/uwtFXgYv+bN7kFz
-         3QpjjENUmDC46ytRkbRRbgV5s8g517yhn1FCaq/X5NNFGkMK47Vq36LMoVPRwKOd0m2l
-         S9NCmMsNF36tIcIKhQ4moFDg2h3JZVqu4J5VdceCzzGiNjrJ7n8Wz5206/vjvRHzo0M/
-         FcCg==
-X-Forwarded-Encrypted: i=1; AJvYcCUTCsjvyyOPTgpQVAbUKh4oyY1RkrINf+/a2yBA77xZcDxOsNcKFs4TEv6rUKxmBI9cbUh3DsK5YWCI@vger.kernel.org, AJvYcCUgMVIWYFTuzDYoB316Mv1iRtBqfBkTOrGhk4XcF26cMD3mJ6kqk1PbXnZTbmb96Tpx74LNs1OQF0IkoMw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyhYhGTLF2+tQKo86p19SqMZ+D6oGvZrnGob03ncEsOWlLkObEU
-	BvYyCSopAKhqyRAHvqM4MfwOdqYQ3PmW684snrI7alaxx8cku/Hd
-X-Gm-Gg: ASbGncuLCaYC/EZcRovA5UkR8/EvfaTx2hu3AZSeA/w5lKOk5AtWE4viwmthrDCkokQ
-	jbXZDHJMKHkm3DZ5V448GP1izIbM9aw/3QV4UYHUxoeunkWlTUfhRMcr+dS7COIV7MBUkYbY8ek
-	pdUFjhMAVdCQz9QOYvjT7ZHL8NGCRNVc4zLwAvu5kqjBxE2NYIVwskjdu0gFwHKm9k4aDHL5vUW
-	SzxxXpnEAZPoqgWrDnq4dHDWBocj1uQ9AkITbzUytq3CFKLtV+yFFzvysrCEnfXMQjFAR1e35qm
-	l0p7oaW84zRaCfXVMVo4z2XUdCxCR5Pgthq+hF53pDWAhxfVGjuQCxSBU88=
-X-Google-Smtp-Source: AGHT+IHtRKZOHJaTqaMZSKvrVXGVdYFJliq5UYT7x0gQkheb65z8FhDuAJJUZNqiQKIWLSE026TVQQ==
-X-Received: by 2002:a17:903:1a26:b0:220:c86d:d7eb with SMTP id d9443c01a7336-225e0b19478mr126844875ad.36.1742145195217;
-        Sun, 16 Mar 2025 10:13:15 -0700 (PDT)
-Received: from localhost.localdomain ([103.221.69.50])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-225c68a4063sm60189635ad.65.2025.03.16.10.13.11
+        d=1e100.net; s=20230601; t=1742145232; x=1742750032;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ODFreraoz8xwp2joxLm36YvpQAUecMaSczh29u2bx2Q=;
+        b=FAUIoFa2LnlI71KH5W6EPZYB6d+j5kpDyyeUn0V9uxped6blS7tTvoXqVmr3uJvtNN
+         r0bxAyPQ9OUvyjP3v5B24f+rsZxouCOaLgBCi6eR5cBkfFyqaqTNJ+rQwomRMAqpVI2G
+         9catIpLO0367floAt/KBYS+O8R3dfdzwd0kCAZVuncZZkDPiN13HfS8cQfVmtGMZmdEm
+         soD4GZhFjsxP7fMkiZeN0W0cJKTvoVtFH7NG4i8Y6q4F5tcku2qETkqB9gnaPHHNiuvd
+         dJZr9uzRk2tO7M5OIlN02CGY1x4+yooF6lqQO08FwNwGv8pfgK62zVRPyYUTeS7Ese6o
+         HcWg==
+X-Forwarded-Encrypted: i=1; AJvYcCWm6enEWY1ul75uADDCggzGYsz0HJjBctd/+xTmmYayxMZn070x5gzGX+T4gYfDl033KloAhMYmC1UyI/s=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx8j3iohAFKVh/PLQDdm5bHzwp2WU5ytLcPBqykIWiqMCCWJOrP
+	Ewd4mvuwrMgCsBEPfkdFj1yb5OQCZlFUbTm14wpc4QQ0ltp8F7Q4
+X-Gm-Gg: ASbGnctTISwYcfvspzKdvuEs2IxI+9qS5ySthZwDDNB4V1jDxclfMiKhVHWmDMYjbfY
+	04rs8CkVXQg5eE6wCL+AdfgUgStt7VhuBpYhKXARLiUEg0fHMe3GwYMTeGSr7nDoChHqROHMvpd
+	9Phpt0zjVghTjEAg7z8p3rCSDYNRiy0sg+TYxE05PatdmuQhoiq/M7rAQbGoBNQyJD6qj5SNDw0
+	QUAYcWadR1REaSy3gIw5BvAc5dDrpnahxjTnU110Lpt2Dh35IKH3Kpm4Dfu4s0H8JDvD84KTw1+
+	astYc69+9zMKX4IE57bUuXo0egd32wfj8oGhntAS81YISd9guX9DhPamSsaCMtIBZwxWgw==
+X-Google-Smtp-Source: AGHT+IHKuP5+vQc6x4mhDI88FsxmG72BjhDZ4E8pdkihbSnqCpkKlO9BKPY14CWSEUJ2bjCrA5DaDw==
+X-Received: by 2002:a05:600c:2191:b0:43b:bfa7:c7d with SMTP id 5b1f17b1804b1-43d1805a5b1mr139878365e9.2.1742145232088;
+        Sun, 16 Mar 2025 10:13:52 -0700 (PDT)
+Received: from costa-tp.bos2.lab ([2a00:a041:e280:5300:f8dc:acb8:77bb:8cf8])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d1fe6a1c7sm82007445e9.39.2025.03.16.10.13.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 16 Mar 2025 10:13:14 -0700 (PDT)
-From: Anand Moon <linux.amoon@gmail.com>
-To: Daire McNamara <daire.mcnamara@microchip.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Kevin Xie <kevin.xie@starfivetech.com>,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Minda Chen <minda.chen@starfivetech.com>,
-	Mason Huo <mason.huo@starfivetech.com>,
-	linux-pci@vger.kernel.org (open list:PCI DRIVER FOR PLDA PCIE IP),
-	linux-kernel@vger.kernel.org (open list)
-Cc: Anand Moon <linux.amoon@gmail.com>
-Subject: [PATCH v2 2/2] PCI: starfive: Simplify event doorbell bitmap initialization in pcie-starfive
-Date: Sun, 16 Mar 2025 22:42:46 +0530
-Message-ID: <20250316171250.5901-2-linux.amoon@gmail.com>
+        Sun, 16 Mar 2025 10:13:51 -0700 (PDT)
+From: Costa Shulyupin <costa.shul@redhat.com>
+To: Costa Shulyupin <costa.shul@redhat.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v1] scripts/tags.sh: Don't tag usages of DEFINE_...PERCPU_RWSEM
+Date: Sun, 16 Mar 2025 19:13:32 +0200
+Message-ID: <20250316171339.2989591-1-costa.shul@redhat.com>
 X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250316171250.5901-1-linux.amoon@gmail.com>
-References: <20250316171250.5901-1-linux.amoon@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -99,48 +73,36 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The events_bitmap initialization in starfive_pcie_probe() previously
-masked out the PLDA_AXI_DOORBELL and PLDA_PCIE_DOORBELL events.
+For each semaphore declaration like
+DEFINE_PERCPU_RWSEM(x)
+DEFINE_STATIC_PERCPU_RWSEM(x)
+ctags generates multiple DEFINE_PERCPU_RWSEM and
+DEFINE_STATIC_PERCPU_RWSEM tags for each usage because it doesn't expand
+these macros.
 
-These masking has been removed, allowing these events to be included
-in the bitmap. With this change ensures that all interrupt events are
-properly accounted for and may be necessary for handling doorbell
-events in certain use cases.
+Configure ctags to skip generating tags for DEFINE_PERCPU_RWSEM and
+DEFINE_STATIC_PERCPU_RWSEM in such cases.
 
-PCIe Doorbell Events: These are typically used to notify a device about
-an event or to trigger an action. For example, a host system can write
-to a doorbell register on a PCIe device to signal that new data is
-available or that an operation should start12.
+The #define DEFINE_... itself and definitions of semaphores are
+tagged correctly.
 
-AXI-PCIe Bridge: This bridge acts as a protocol converter between AXI
-(Advanced eXtensible Interface) and PCIe (Peripheral Component Interconnect
-Express) domains. It allows transactions to be converted and communicated
-between these two different protocols3.
-
-Fixes: 39b91eb40c6a ("PCI: starfive: Add JH7110 PCIe controller")
-Cc: Minda Chen <minda.chen@starfivetech.com>
-Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+Signed-off-by: Costa Shulyupin <costa.shul@redhat.com>
 ---
-v2: new patch
----
- drivers/pci/controller/plda/pcie-starfive.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ scripts/tags.sh | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/pci/controller/plda/pcie-starfive.c b/drivers/pci/controller/plda/pcie-starfive.c
-index e73c1b7bc8efc..d2c2a8e039e10 100644
---- a/drivers/pci/controller/plda/pcie-starfive.c
-+++ b/drivers/pci/controller/plda/pcie-starfive.c
-@@ -410,9 +410,7 @@ static int starfive_pcie_probe(struct platform_device *pdev)
- 	plda->host_ops = &sf_host_ops;
- 	plda->num_events = PLDA_MAX_EVENT_NUM;
- 	/* mask doorbell event */
--	plda->events_bitmap = GENMASK(PLDA_INT_EVENT_NUM - 1, 0)
--			     & ~BIT(PLDA_AXI_DOORBELL)
--			     & ~BIT(PLDA_PCIE_DOORBELL);
-+	plda->events_bitmap = GENMASK(PLDA_INT_EVENT_NUM - 1, 0);
- 	plda->events_bitmap <<= PLDA_NUM_DMA_EVENTS;
- 	ret = plda_pcie_host_init(&pcie->plda, &starfive_pcie_ops,
- 				  &stf_pcie_event);
+diff --git a/scripts/tags.sh b/scripts/tags.sh
+index 98680e9cd7be3..503371e59e366 100755
+--- a/scripts/tags.sh
++++ b/scripts/tags.sh
+@@ -271,6 +271,7 @@ exuberant()
+ 		ACPI_EXPORT_SYMBOL
+ 		DECLARE_BITMAP
+ 		DEFINE_{TRACE,MUTEX,TIMER}
++		DEFINE_{,STATIC_}PERCPU_RWSEM
+ 		EXPORT_SYMBOL EXPORT_SYMBOL_GPL
+ 		EXPORT_TRACEPOINT_SYMBOL EXPORT_TRACEPOINT_SYMBOL_GPL
+ 		____cacheline_aligned ____cacheline_aligned_in_smp
 -- 
 2.48.1
 
