@@ -1,144 +1,121 @@
-Return-Path: <linux-kernel+bounces-563063-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563064-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49BA4A63689
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 17:57:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A91BA6368B
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 17:57:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6522B188E232
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 16:57:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4790A3A6700
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 16:57:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E17271D79B3;
-	Sun, 16 Mar 2025 16:57:02 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A26DE20322;
+	Sun, 16 Mar 2025 16:57:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="oIW29zEL"
+Received: from linux1587.grserver.gr (linux1587.grserver.gr [185.138.42.100])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AA2B18CC1C
-	for <linux-kernel@vger.kernel.org>; Sun, 16 Mar 2025 16:57:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C89E1D79B3;
+	Sun, 16 Mar 2025 16:57:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.138.42.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742144222; cv=none; b=pptTp2YvupG3QFushx1zkTJfjtYxqee4i2LbQv2n/t/OuQlv5HX5V/qQOUFZ0LsIWnxdLz1C6sL8whYT3M2fmlWyd50bMpM6zJtNgVi3bonxaSqsf/eQsO5ggnyWADe0W4InglmJI/VYYwnpSUjJ1koCX12KuRyBpdA0ndkkBQI=
+	t=1742144245; cv=none; b=IKw/1f04HFXCTKV2oBzGTvEXa4B2kwG6T+439qL1karjWmxpNjrS9nphAXI+v88hki003lihyu/3H+Jg/YGujenYsg3vP83qCgSh6TtQQQ47WETRa4JycS0GdJL16sq5g1bDzF/c3SVQRvw2x7wFA5wnKAPfDFxdDsb4jVg1tOM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742144222; c=relaxed/simple;
-	bh=ZnKT267z5ee5WmZRFx02q0tqr80EHFFnzkQLVXaTqGQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=QgQHANxYJgeyHhZT4JhgASTFCGZjAcUIsMdWNSbrxyRPLzNr5qk4UKUGJ41PWxU9ezQ5CpzwncNnsrNPC+Ax3SzWgXUG+VXv5IqOaUjuNfEhP+2LyN018qRkIGajn1dPC+fut/8ODmq6SgXmNzRx2VI/k0SOacshCMpouanDCnY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA627C4CEDD;
-	Sun, 16 Mar 2025 16:57:00 +0000 (UTC)
-Date: Sun, 16 Mar 2025 12:56:57 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Tengda Wu <wutengda@huaweicloud.com>
-Subject: [for-linus][PATCH] tracing: Correct the refcount if the
- hist/hist_debug file fails to open
-Message-ID: <20250316125657.09ac3ec8@batman.local.home>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1742144245; c=relaxed/simple;
+	bh=/G9fM/rrbP1buGJ75EpOQyBEVLGxqySjujo5URaHW1s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mkzZxXga5G7SjSiPDEnaspIRVHHHn73XS2s10B+qOxbrvHYJlJCQrahdvSe5cldtOPaVhHcdvob7E8Z30IBxw8/3Kx48/m374F3SPAvw+8JTxj0lVe9muakSVX915sKnjVqJWPtOL7PxouDUpaFpNkc8M9EY2pyfoJ5EyTMYMRQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=pass (1024-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=oIW29zEL; arc=none smtp.client-ip=185.138.42.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antheas.dev
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+	by linux1587.grserver.gr (Postfix) with ESMTPSA id 080022E09442;
+	Sun, 16 Mar 2025 18:57:19 +0200 (EET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=antheas.dev;
+	s=default; t=1742144239;
+	bh=kq8pZLX+Ny0SbU2MreWxKEtohSNSFr7XvUB/gKUgfzY=;
+	h=Received:From:Subject:To;
+	b=oIW29zELGZgA4ZKrOuWSdfyQhWoLtZW4EDzKaJqyvJswyXwqxvRpNTkRrLWbPkxTF
+	 Si5qWh7yPq2VYEBUb5NI61jMHqLAaNWLhAfVF/s9YXB5X7/fUDw+2kA5k+TKbjttoF
+	 5AfSCCF8XRDKllhADZq6Ict/cwxjF0HepKsF6UqA=
+Authentication-Results: linux1587.grserver.gr;
+        spf=pass (sender IP is 209.85.208.171) smtp.mailfrom=lkml@antheas.dev smtp.helo=mail-lj1-f171.google.com
+Received-SPF: pass (linux1587.grserver.gr: connection is authenticated)
+Received: by mail-lj1-f171.google.com with SMTP id
+ 38308e7fff4ca-30bf8632052so39587191fa.0;
+        Sun, 16 Mar 2025 09:57:18 -0700 (PDT)
+X-Forwarded-Encrypted: i=1;
+ AJvYcCWfAZ763lOzs0tBsciHNlXlPzvPvaxW8jupGbm4uqNJzKEgKfi1lrh59ZM+ECcFDI5pQyIj83xGi+bAOw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwBb/cr/5l1E422arYNKx6V378+XqQrgY5mJ9aTVl9tfC8lB5Vq
+	3pYErLUDw7+aQdh+xpZXu6z1lC9IMJkLanVOoBC77Ry9NWOQ/DF2i6cp4/o0InDcQoBPUViTqN0
+	hUSGyBOij1zgqTCoO+lojPdEr2XU=
+X-Google-Smtp-Source: 
+ AGHT+IEOCK0iCLibCspqhpr0MBl5XsKfS2sj8C1C0BJ51dxoORCu2i2PnbRd4u/KBCXflGZKkTCo74I2QWMaxTNJOD0=
+X-Received: by 2002:a05:651c:1507:b0:30b:ca48:1095 with SMTP id
+ 38308e7fff4ca-30c4a75e7e0mr44619641fa.7.1742144238418; Sun, 16 Mar 2025
+ 09:57:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20250222164321.181340-1-lkml@antheas.dev>
+In-Reply-To: <20250222164321.181340-1-lkml@antheas.dev>
+From: Antheas Kapenekakis <lkml@antheas.dev>
+Date: Sun, 16 Mar 2025 17:57:06 +0100
+X-Gmail-Original-Message-ID: 
+ <CAGwozwFnd2Qi+0p9mSR9vD3tNB9Bih1SvAO8oOOj9OTTdmeixA@mail.gmail.com>
+X-Gm-Features: AQ5f1JottSL5_vJG_Nb3mJBRPoPflLwnrPlZ0CAuvwnOtHKL-_m6zTs6z_9zCLw
+Message-ID: 
+ <CAGwozwFnd2Qi+0p9mSR9vD3tNB9Bih1SvAO8oOOj9OTTdmeixA@mail.gmail.com>
+Subject: Re: [PATCH 0/5] drm: panel-orientation-quirks: Add 2024 OneXPlayer
+ line & ZOTAC Zone orientation quirks
+To: linux-kernel@vger.kernel.org, linux-input@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>,
+	Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>,
+	Hans de Goede <hdegoede@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+X-PPP-Message-ID: 
+ <174214423940.16005.2026479720786272926@linux1587.grserver.gr>
+X-PPP-Vhost: antheas.dev
+X-Virus-Scanned: clamav-milter 0.103.11 at linux1587.grserver.gr
+X-Virus-Status: Clean
 
+On Sat, 22 Feb 2025 at 17:43, Antheas Kapenekakis <lkml@antheas.dev> wrote:
+>
+> A number of OneXPlayer handhelds have come out with portrait panels.
+> Specifically, those are the X1 AMD and Intel variants, X1 Mini, and F1 Pro.
+> For X1 specifically, they also have spurious battery reporting within their
+> digitizer. The Zotac Gaming Zone also has a portrait OLED panel, so add
+> that as well.
+>
+> Antheas Kapenekakis (5):
+>   drm: panel-orientation-quirks: Add OneXPlayer X1 AMD and Intel quirk
+>   drm: panel-orientation-quirks: Add OneXPlayer X1 Mini (AMD) quirk
+>   drm: panel-orientation-quirks: Add OneXPlayer F1Pro quirk
+>   HID: Add quirk to ignore the touchscreen battery on OneXPlayer X1
+>   drm: panel-orientation-quirks: Add Zotac Gaming Zone quirk
+>
+>  .../gpu/drm/drm_panel_orientation_quirks.c    | 42 +++++++++++++++++++
+>  drivers/hid/hid-ids.h                         |  1 +
+>  drivers/hid/hid-input.c                       |  2 +
+>  3 files changed, 45 insertions(+)
+>
+> --
+> 2.48.1
+>
 
+I'd like to push this along. We already have the ack for HID. Did I
+miss anyone on the list? Full context [1]
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
-trace/fixes
++cc Hans
 
-Head SHA1: 0b4ffbe4888a2c71185eaf5c1a02dd3586a9bc04
-
-
-Tengda Wu (1):
-      tracing: Correct the refcount if the hist/hist_debug file fails to open
-
-----
- kernel/trace/trace_events_hist.c | 24 ++++++++++++++++++------
- 1 file changed, 18 insertions(+), 6 deletions(-)
----------------------------
-commit 0b4ffbe4888a2c71185eaf5c1a02dd3586a9bc04
-Author: Tengda Wu <wutengda@huaweicloud.com>
-Date:   Fri Mar 14 06:53:35 2025 +0000
-
-    tracing: Correct the refcount if the hist/hist_debug file fails to open
-    
-    The function event_{hist,hist_debug}_open() maintains the refcount of
-    'file->tr' and 'file' through tracing_open_file_tr(). However, it does
-    not roll back these counts on subsequent failure paths, resulting in a
-    refcount leak.
-    
-    A very obvious case is that if the hist/hist_debug file belongs to a
-    specific instance, the refcount leak will prevent the deletion of that
-    instance, as it relies on the condition 'tr->ref == 1' within
-    __remove_instance().
-    
-    Fix this by calling tracing_release_file_tr() on all failure paths in
-    event_{hist,hist_debug}_open() to correct the refcount.
-    
-    Cc: stable@vger.kernel.org
-    Cc: Masami Hiramatsu <mhiramat@kernel.org>
-    Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-    Cc: Zheng Yejian <zhengyejian1@huawei.com>
-    Link: https://lore.kernel.org/20250314065335.1202817-1-wutengda@huaweicloud.com
-    Fixes: 1cc111b9cddc ("tracing: Fix uaf issue when open the hist or hist_debug file")
-    Signed-off-by: Tengda Wu <wutengda@huaweicloud.com>
-    Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
-
-diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
-index ad7419e24055..53dc6719181e 100644
---- a/kernel/trace/trace_events_hist.c
-+++ b/kernel/trace/trace_events_hist.c
-@@ -5689,12 +5689,16 @@ static int event_hist_open(struct inode *inode, struct file *file)
- 	guard(mutex)(&event_mutex);
- 
- 	event_file = event_file_data(file);
--	if (!event_file)
--		return -ENODEV;
-+	if (!event_file) {
-+		ret = -ENODEV;
-+		goto err;
-+	}
- 
- 	hist_file = kzalloc(sizeof(*hist_file), GFP_KERNEL);
--	if (!hist_file)
--		return -ENOMEM;
-+	if (!hist_file) {
-+		ret = -ENOMEM;
-+		goto err;
-+	}
- 
- 	hist_file->file = file;
- 	hist_file->last_act = get_hist_hit_count(event_file);
-@@ -5702,9 +5706,14 @@ static int event_hist_open(struct inode *inode, struct file *file)
- 	/* Clear private_data to avoid warning in single_open() */
- 	file->private_data = NULL;
- 	ret = single_open(file, hist_show, hist_file);
--	if (ret)
-+	if (ret) {
- 		kfree(hist_file);
-+		goto err;
-+	}
- 
-+	return 0;
-+err:
-+	tracing_release_file_tr(inode, file);
- 	return ret;
- }
- 
-@@ -5979,7 +5988,10 @@ static int event_hist_debug_open(struct inode *inode, struct file *file)
- 
- 	/* Clear private_data to avoid warning in single_open() */
- 	file->private_data = NULL;
--	return single_open(file, hist_debug_show, file);
-+	ret = single_open(file, hist_debug_show, file);
-+	if (ret)
-+		tracing_release_file_tr(inode, file);
-+	return ret;
- }
- 
- const struct file_operations event_hist_debug_fops = {
+[1] https://lore.kernel.org/all/20250222164321.181340-1-lkml@antheas.dev/
 
