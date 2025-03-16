@@ -1,171 +1,138 @@
-Return-Path: <linux-kernel+bounces-562969-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562970-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7F03A63535
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 12:07:27 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 266C0A63536
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 12:08:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D0DA16ED8D
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 11:07:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9A3FD7A2B17
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 11:07:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA7B51A3162;
-	Sun, 16 Mar 2025 11:07:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22C7E19D083;
+	Sun, 16 Mar 2025 11:08:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EQF3T4Rw"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ULXG1b7T"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A67A1A3152;
-	Sun, 16 Mar 2025 11:07:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FDDD18DB26;
+	Sun, 16 Mar 2025 11:08:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742123231; cv=none; b=umHulqjQ1oWbmz6UPD3TtN6GttfltnZwI27XNwl4o4Rw2ftSIE/xXBXDYGXk41fh3AGHNdqYVXF7bNkskNSLMXtV0nZwNxUtvCwaL+PPWShl8359K9OktiYEjREr9tM6i5VSPjrDEADYRqGHukuXn+g5GcqxGAxQqKFutoacQao=
+	t=1742123290; cv=none; b=SD03f1UgAeD0QOQT+bjqxeL2MhEU3hTZu0UlZKbbXJjAw8j3Pj3wXmY/zz5/zCZep7S2etMI/MJZZWNJCIi4x6BnrVTOlIfZItMhvam0ZEmt1AvCzejJSOF4ThzfbciuuGfxfAkjkSXTXaeOEZVZRTIRIQTwEOVq3ZvDBM1EHNw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742123231; c=relaxed/simple;
-	bh=cGUlrgEhuknEeWgAbBAW1RxANZr/aUFKIeRPUyRg2oA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GqRVTadBKl+mhUlKXP3BGAZy7CnlbanUOV+Z+hef0+Grlq7ge88bwDtXgXSTyDYvgNxW5lrR2b9wDGIDHaqk3JzYiDUzfJtD2ZWN+R2fOT7hxsg9A3kOd1k6VWBtGUVAZLVPpJnAB7pIPai6lTSOeI/lr1LJgpxJRyVhNm/cJJo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EQF3T4Rw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27249C4CEDD;
-	Sun, 16 Mar 2025 11:07:09 +0000 (UTC)
+	s=arc-20240116; t=1742123290; c=relaxed/simple;
+	bh=NBzY1wPmskDl9cnCIedvm7cu6kUE8imKPYGTjUERKcE=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=XrCUxE7eHw9dngmBRaJ6BDfnh8UNPhpEjthphFA6ljSJgMviJhxFVun5tFfmyv1Xw1VasU3IdlABVACocIGLnE2Yx5LAndab+hOVFvvh864KkqXOAlvq6a4cCAwNCWx3aTMBDWD2mbq93DtSyT9jqp0scvF7YWuCvmf2BO6y7/A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ULXG1b7T; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01F91C4CEDD;
+	Sun, 16 Mar 2025 11:08:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742123230;
-	bh=cGUlrgEhuknEeWgAbBAW1RxANZr/aUFKIeRPUyRg2oA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=EQF3T4RwA+4+Emq+2hXPVJeVwO0R2zkWWUSJ4fAz1hhjCU3FhvhhK6PQtoLkaz81T
-	 urN0iPZ/MU8Ad+ixkIv1EQe4eWJ9pda8a73uXvhomp7gjnsC9mACgPbhDoCZ8aeCXf
-	 YzuqMfLGCRHk6qzYeXgCmajvzVP2stMULnR9yfSSbV75sX8QteFzOF0FiCNafsbdHg
-	 AXzHap4iA3aqiSQRUm22KJDh2jFp4ZXzyzbqD/YZqBlm8tiP82LN2PisfhEnS1bzHA
-	 xubg5cruXtODVujgsF0UEC/Xy46JCHpKqTi67NjmDZ03LpVTcAlXTgM9KAgBDv9is0
-	 TkJ2H1+LG+X6g==
-Date: Sun, 16 Mar 2025 12:07:07 +0100
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Joel Fernandes <joelagnelf@nvidia.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
-	Neeraj Upadhyay <neeraj.upadhyay@amd.com>,
-	"Paul E . McKenney" <paulmck@kernel.org>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>, rcu <rcu@vger.kernel.org>
-Subject: Re: [PATCH 1/5] rcu/exp: Protect against early QS report
-Message-ID: <Z9aw252VPvW9K4Wl@pavilion.home>
-References: <20250314143642.72554-1-frederic@kernel.org>
- <20250314143642.72554-2-frederic@kernel.org>
- <20250315235945.GA2634509@joelnvbox>
+	s=k20201202; t=1742123290;
+	bh=NBzY1wPmskDl9cnCIedvm7cu6kUE8imKPYGTjUERKcE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=ULXG1b7TIrcR2/kS1cAnQcp2cr+CTaakEWygYDzP0MoDR5pWybAMDvMrLKnX12gNi
+	 JHRB+l4XPhcfvAYMBBZUBJwLEyS3F7zY9YHObZOa21M04kJTbpOhisbLQ8kRyoABqt
+	 QMudRWLKALfzfoicm0wGfleRXUGugW+RIoIXiLtSY3oDh6rj6LmRcI5zUig5VFAI7n
+	 egyzTvBocHDhpki6AbZh1jCxd7MRRPR6mpCNAo3xTL+5eDU4naD9US41Aw3hRQ+3gE
+	 oyj7v12vels3V9EqmtaSwlkMkqmdtC82XviHesiB7E6mXkz2IFCm6FGHokRJDCQXUw
+	 4SAMa4Ujurfog==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1ttlqh-00DyQJ-Sm;
+	Sun, 16 Mar 2025 11:08:07 +0000
+Date: Sun, 16 Mar 2025 11:08:06 +0000
+Message-ID: <865xk9nsh5.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Quentin Perret <qperret@google.com>
+Cc: Oliver Upton <oliver.upton@linux.dev>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Vincent Donnefort <vdonnefort@google.com>,
+	linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/6] KVM: arm64: Move hyp state to hyp_vmemmap
+In-Reply-To: <Z9Q3-FM-QwiIn9gh@google.com>
+References: <20250227003310.367350-1-qperret@google.com>
+	<20250227003310.367350-5-qperret@google.com>
+	<86bju3onl3.wl-maz@kernel.org>
+	<Z9Q3-FM-QwiIn9gh@google.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250315235945.GA2634509@joelnvbox>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: qperret@google.com, oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, catalin.marinas@arm.com, will@kernel.org, vdonnefort@google.com, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-Le Sat, Mar 15, 2025 at 07:59:45PM -0400, Joel Fernandes a écrit :
-> Hi Frederic,
+On Fri, 14 Mar 2025 14:06:48 +0000,
+Quentin Perret <qperret@google.com> wrote:
 > 
-> On Fri, Mar 14, 2025 at 03:36:38PM +0100, Frederic Weisbecker wrote:
-> > When a grace period is started, the ->expmask of each node is set up
-> > from sync_exp_reset_tree(). Then later on each leaf node also initialize
-> > its ->exp_tasks pointer.
+> On Friday 14 Mar 2025 at 11:31:36 (+0000), Marc Zyngier wrote:
+> > On Thu, 27 Feb 2025 00:33:08 +0000,
+> > Quentin Perret <qperret@google.com> wrote:
+> > > @@ -698,13 +697,13 @@ int __pkvm_host_share_hyp(u64 pfn)
+> > >  	if (ret)
+> > >  		goto unlock;
+> > >  	if (IS_ENABLED(CONFIG_NVHE_EL2_DEBUG)) {
+> > > -		ret = __hyp_check_page_state_range((u64)virt, size, PKVM_NOPAGE);
+> > > +		ret = __hyp_check_page_state_range(phys, size, PKVM_NOPAGE);
 > > 
-> > This means that the initialization of the quiescent state of a node and
-> > the initialization of its blocking tasks happen with an unlocked node
-> > gap in-between.
-> > 
-> > It happens to be fine because nothing is expected to report an exp
-> > quiescent state within this gap, since no IPI have been issued yet and
-> > every rdp's ->cpu_no_qs.b.exp should be false.
-> > 
-> > However if it were to happen by accident, the quiescent state could be
-> > reported and propagated while ignoring tasks that blocked _before_ the
-> > start of the grace period.
-> > 
-> > Prevent such trouble to happen in the future and initialize both the
-> > quiescent states mask to report and the blocked tasks head from the same
-> > node locked block.
-> > 
-> > If a task blocks within an RCU read side critical section before
-> > sync_exp_reset_tree() is called and is then unblocked between
-> > sync_exp_reset_tree() and __sync_rcu_exp_select_node_cpus(), the QS
-> > won't be reported because no RCU exp IPI had been issued to request it
-> > through the setting of srdp->cpu_no_qs.b.exp.
-> > 
-> > Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
-> > ---
-> >  kernel/rcu/tree_exp.h | 14 +++++++-------
-> >  1 file changed, 7 insertions(+), 7 deletions(-)
-> > 
-> > diff --git a/kernel/rcu/tree_exp.h b/kernel/rcu/tree_exp.h
-> > index c36c7d5575ca..2fa7aa9155bd 100644
-> > --- a/kernel/rcu/tree_exp.h
-> > +++ b/kernel/rcu/tree_exp.h
-> > @@ -141,6 +141,13 @@ static void __maybe_unused sync_exp_reset_tree(void)
-> >  		raw_spin_lock_irqsave_rcu_node(rnp, flags);
-> >  		WARN_ON_ONCE(rnp->expmask);
-> >  		WRITE_ONCE(rnp->expmask, rnp->expmaskinit);
-> > +		/*
-> > +		 * Need to wait for any blocked tasks as well.	Note that
-> > +		 * additional blocking tasks will also block the expedited GP
-> > +		 * until such time as the ->expmask bits are cleared.
-> > +		 */
-> > +		if (rcu_is_leaf_node(rnp) && rcu_preempt_has_tasks(rnp))
-> > +			WRITE_ONCE(rnp->exp_tasks, rnp->blkd_tasks.next);
-> >  		raw_spin_unlock_irqrestore_rcu_node(rnp, flags);
-> >  	}
-> >  }
-> > @@ -393,13 +400,6 @@ static void __sync_rcu_exp_select_node_cpus(struct rcu_exp_work *rewp)
-> >  	}
-> >  	mask_ofl_ipi = rnp->expmask & ~mask_ofl_test;
-> >  
-> > -	/*
-> > -	 * Need to wait for any blocked tasks as well.	Note that
-> > -	 * additional blocking tasks will also block the expedited GP
-> > -	 * until such time as the ->expmask bits are cleared.
-> > -	 */
-> > -	if (rcu_preempt_has_tasks(rnp))
-> > -		WRITE_ONCE(rnp->exp_tasks, rnp->blkd_tasks.next);
-> >  	raw_spin_unlock_irqrestore_rcu_node(rnp, flags);
+> > OK, I think I finally clicked here. Does it mean that all the tracking
+> > is now done in terms of PAs instead of VAs?
 > 
-> A small side effect of this patch could be:
-> 
-> In the existing code, if between the sync_exp_reset_tree() and the
-> __sync_rcu_exp_select_node_cpus(), if a pre-existing reader unblocked and
-> completed, then I think it wouldn't be responsible for blocking the GP
-> anymore.
+> Yep, that's exactly that. The hyp_vmemmap is indexed by pfn, so I felt
+> that the conversion to a PA-based tracking made sense. That also make it
+> clear that the 'hyp state' is not a property of a mapping, but really of
+> the underlying physical page.
 
-Hmm, I don't see how that changes after this patch.
+It indeed makes sense. It is just that it took me some time to realise
+the extent of the change.
 
 > 
-> Where as with this patch, it would not get a chance to be removed from the
-> blocked list because it would have to wait on the rnp lock, which after this
-> patch would now be held across the setting of exp_mask and exp_tasks?
-
-So that's sync_exp_reset_tree(). I'm a bit confused. An unblocking task
-contend on rnp lock in any case. But after this patch it is still going
-to remove itself from the blocking task once the rnp lock is released by
-sync_exp_reset_tree().
-
-What am I missing?
-
-Thanks.
-
-> 
-> But I think it is not a big deal either way, and if you feel it is more
-> future proof to do it this way, that sounds good to me.
-> 
-> thanks,
-> 
->  - Joel
-> 
-> 
-> >  
-> >  	/* IPI the remaining CPUs for expedited quiescent state. */
-> > -- 
-> > 2.48.1
+> > >  		if (ret)
+> > >  			goto unlock;
+> > >  	}
+> > >  
+> > > -	prot = pkvm_mkstate(PAGE_HYP, PKVM_PAGE_SHARED_BORROWED);
+> > > -	WARN_ON(pkvm_create_mappings_locked(virt, virt + size, prot));
+> > > +	__hyp_set_page_state_range(phys, size, PKVM_PAGE_SHARED_BORROWED);
+> > > +	WARN_ON(pkvm_create_mappings_locked(virt, virt + size, PAGE_HYP));
 > > 
+> > And this is the split between the state now being kept in the on a PA
+> > base and the actual mapping that is now only takes the page attributes
+> > and no SW bits?
 > 
+> Precisely, and the next patch in this series takes advantage of the
+> fact that we're now de-correlating the hyp state from the presence of a
+> hyp s1 mapping in the linear map range. In the future there'll be more
+> use-cases for this I think (e.g. the hyp allocator where we'll have
+> pages owned by the hypervisor but only mapped in the 'private' range,
+> things like that).
+
+Yup, that's probably the correct direction of travel. The hypervisor
+shouldn't need to map everything -- quite the opposite actually.
+
+Thanks,
+
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
 
