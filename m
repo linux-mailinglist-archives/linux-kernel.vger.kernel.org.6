@@ -1,243 +1,142 @@
-Return-Path: <linux-kernel+bounces-563136-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CCF0A6376A
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 21:51:29 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE893A6376E
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 21:54:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A136A16B070
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 20:51:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1372716AF10
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 20:54:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D338B19DF4C;
-	Sun, 16 Mar 2025 20:51:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E6CC1DB158;
+	Sun, 16 Mar 2025 20:54:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EQhWoSIe"
-Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LJ8DzLWi"
+Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7595E18A6A8
-	for <linux-kernel@vger.kernel.org>; Sun, 16 Mar 2025 20:51:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAF1918A6A8;
+	Sun, 16 Mar 2025 20:54:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742158282; cv=none; b=a5VZrRvXS7tm4RibSa2txdx4pzohGD+BM8aTQgc7cYCSO0ZFqHxtbea9Kb4MRcPNnnT0Eol5G9jMp/B3+k6UejbZihI7jqqGPRhi16WV/HeEGCHfn8PocVzz6ZaGdZEO8szUHrkfI2LfPrFks0L4DobfD2xG0LJqyq3lDVU4z0Y=
+	t=1742158472; cv=none; b=VUeNj16/wKy4zhtwPSSi6hn2GLk7io/JHhtAlEDztd/jQaNO/woDUaK5PZYuPxZfjtmyuSrEn3U+2gQWAhF5+HLuS9qKHkD/84Ro9wcCopOTDnKF+teKGlUvK3vDwCIb3xZjywODnYJA5YXcFpWCdR9Szkee7FSeE65QZVYmja0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742158282; c=relaxed/simple;
-	bh=sE/gYU7yS0Hms1LxtaEHS/kfTqOr+3eccVk50q8v/Xw=;
+	s=arc-20240116; t=1742158472; c=relaxed/simple;
+	bh=es5Aunb5wIZVgC4PxN0F8shzwnFw5ZYU0GFxkgF325c=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Content-Type; b=FurxsMX+0dDWWZUxSDoTpzIwsKB+XDRuk+1AKLyXc/EBM4gtGXvvv5oc18gj4piAkhss57g5icQHs+QWEP/jAqCXZPFLfkIzf8cP+hFfuQuJbECEv69JajokarJZJy+BK3iarjED/9UXYHjrDkKf/Sdhibbbopot+My4YDbMsas=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EQhWoSIe; arc=none smtp.client-ip=209.85.128.178
+	 To:Cc:Content-Type; b=GAIG6BFCwRhHaatdW1s4higGfd9Gv7LBk1gK8zXmUY6UQj6Q8GVpipAirx808QMxgjxa23ueMS84BIpeIB40xwXZv+KYx/IgQCoDtAhQ9JkKVVAU1XvdEvOdhhkwmsMPyOzeNd2V9624VLfZVtzYhYl1JXNYbXFPT84BMWfK1HA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LJ8DzLWi; arc=none smtp.client-ip=209.85.219.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-6fead015247so26589777b3.2
-        for <linux-kernel@vger.kernel.org>; Sun, 16 Mar 2025 13:51:20 -0700 (PDT)
+Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-e60b75f87aaso2861521276.2;
+        Sun, 16 Mar 2025 13:54:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742158279; x=1742763079; darn=vger.kernel.org;
-        h=content-transfer-encoding:to:subject:message-id:date:from
+        d=gmail.com; s=20230601; t=1742158470; x=1742763270; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=11D4pPzLAX9lQnZzbCliu3sFwyUhHgj3Q88AGfEQt30=;
-        b=EQhWoSIeWtpmpbTcXr9AY9CNY1Uui9ZPls70Xnfx5vcFfIMAASfEkK2xi11tu3dok4
-         gwq7wn4c2LQMty/nu/OPg9ZIBJUPQkTXO2sudK9NE9hFBg5VdTiWaUoQfhoRUNiEjVrG
-         Xz0sLSeCy8XyWi5Hgp8ezk6YDtC1CoLIYDqg9fbdoHW1riJy/UP9RA1uEx/a/H7SwqN5
-         6EIO9H6QrOaKxQVvPJBjb5JcQzlAkVw9JVoxrFyn6oqagL6bdykecmMVCJbndMtlqw4p
-         56YKtnyuOPzip/OPva5RHVX6WE/u0g3EextkJ96GuoP10qrnpNP8t+pzWEmsIhPPi/Us
-         F81A==
+        bh=+otTzr3TR+orm8vkPocyniFUBCMP9Xr/+NiYq2jrqpM=;
+        b=LJ8DzLWine0/DC4vDwXa9i4jKGphXtemnZHhD1+DGvYdv8noxPKYIfRJFwaoquj1bR
+         8u7Ekd9QIjmSiOtb+KIlZFMB6WnCTc6algB4T/pM2+qOLpTzvATNvfrJQjJPYD7aqSeH
+         crxh4B2YxoDLZlQEvd6SFZ9tsj3W8VKyvOrXAxSlany4K6YnXOCQDDnMu4Nx++a9Dwzt
+         v8dhA7moM72bKYaXADA+HgtFkT4HsXGG6wEc7rc1D0kC3HRjyQmNgV+Zid+omOeGWaAT
+         s7su8IVOrb39wC4OpHNSe8l02vu5GdIO2X5XsJ2e2x0GqXzkQuxWDwa65D9GbRN4cfPw
+         nuFA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742158279; x=1742763079;
-        h=content-transfer-encoding:to:subject:message-id:date:from
+        d=1e100.net; s=20230601; t=1742158470; x=1742763270;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=11D4pPzLAX9lQnZzbCliu3sFwyUhHgj3Q88AGfEQt30=;
-        b=a8Q3YIziyobDHgaqGghJx5dOJiy3nhCrCX2CpaTemnFLXsDvsCzxOr7vddV7EESH40
-         3HOmpnxjPRPdDF1L8BYUvjyoXZ4iASM5Rd1WZOO5eWZfvRX3oObP7KtxHCcbUvCsqpmx
-         sut8ngwyl5C9uWrz8XNWoyUoKharJirRORf1r34rHc7fzJSOkZPwHdVn4CmZGx6ZUb9k
-         6Ra0GIu08aG8GdZFVhoS+oHrUSCNee5m0ABkwIFDYQp/6dpP+esS5NsM/IRgR36jdOYF
-         VOqG4tCqTsHr2uIA6sNmT8126JPAWfowmO/e+eNg5DOsy5kczlR9Zefvqbd+JwiM+GXv
-         uc8A==
-X-Forwarded-Encrypted: i=1; AJvYcCXMp5XQNEhfuv53G1VGi+GaGfScv2iE3U524cNzMmY0No2BGDsStsW9ON4MXuwMG5W4NxqOaOY02gaXrgU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyjDFcQkmjvoD0KlvuzHgIbUD6NR76EQ5BRkZ3QhyiUcJ9U96EH
-	FiOViP6RhgzLJ4h+E0yDrkuzb+LNj0Qk43VnFB84WDeWB294zBKGFWjt4Dq6ygokDKNrWlrYB5K
-	C68W4mGNJLDB7P/wh0oUpvV+g4wU=
-X-Gm-Gg: ASbGncsiZUUj47Jph72IlnorSaJDDsSLQsVAcJL/pBXORspJbSJXnFUKibgYRhijeME
-	HrOVBoIYRAxFUVCsSynBb7SYR/qxStWtLG2aeDQflDgbswsM4A9d05/qfGbOYSX/s1edV9dYMYa
-	peujEBpWT+cnIbYYfTOLwvdbia
-X-Google-Smtp-Source: AGHT+IG09/hi3MWmZ5hXI5cFNStCtCXVSwoKZTPmX0FpXqU/1r4YevvC42k15kjCrt+L/Qd4ciu27ip6+SLn6v+K42s=
-X-Received: by 2002:a05:690c:3589:b0:6ef:6536:bb6f with SMTP id
- 00721157ae682-6ff45ef8e68mr133675927b3.22.1742158279351; Sun, 16 Mar 2025
- 13:51:19 -0700 (PDT)
+        bh=+otTzr3TR+orm8vkPocyniFUBCMP9Xr/+NiYq2jrqpM=;
+        b=IUqsw/XzpEJ52+Db6LN7maPa5JR2Ff6B5Vy0Y9hdAzPJRzrQmVk0gs3uj+aLiNvA34
+         Ig7GRgCNRkCqOJ7N67+mmqx43HOKIFGvqTUxenJWWieLn/crga3VtX1Zmn9ZSa+u35ii
+         Iri8N+LQ9HhI6zLfNUI9/FNTeJjZNDZh0C76C0uJTiVNWy40GMO4o+abAB1iXxGSHhQV
+         YSk9W1V6jn4LcfFjGS5bHViKaU4eQAQ5duF1F5dNKpwjzBjpoarjSucerRz4cpD3C76T
+         +7RDY62opQ7IV3YSy6cZmHqvdBAhoCheVE6A6kNW83cEN0+4kQUj/VH+fLP52zIQ3Vv5
+         ajgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVHnbvmgwzJAOfjd/ls3BlMuwVVs/iLcc+C3RburwO8OR5N9BbVP0X48xTzf7Qki8JP1lrVzCeUt9IAMA==@vger.kernel.org, AJvYcCVoBNp7Z7tsixMvn8523BSZVaMMQvRyTe7JPsFsy8V+vnx4O+1G+Rkf781vo74sKUeV8LTazm8D@vger.kernel.org, AJvYcCWmuYH78Bv1xFo3nS8/yX6AmxKKZ3YgtIZBTroMFR22/4/zE2igmrn4F91YDJhjSshckwjCKyHJbXQELxs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzHAYheu/Zc76iSIi2zrhuGyWnhJe6dnOfe8VM/YMKZc2tTLZa+
+	V1fUo0cqRp358/LDjvDiP0vqUWCvm9G+CBgExqmfyMq7rCYXNM5l3heviCJfEqF5eTQi4BbLrMs
+	3LSkr9h4oflUsj22L3nZEcgOwchY=
+X-Gm-Gg: ASbGncu9SeJYkIEC/cqiDexd3rVZmmkL8GHV6BHnDNaG3X/vvKpbxzvUpeo0o9q3Vcp
+	sr0ThnfaVH9XVk6oEYhc2OD7YPeRIiI6TbEFr7o7qkCo5E6b4l+vfEVkd+r4X/0Haf7PlbaSpF5
+	lFj6nh89ILYBBZcTi5um5ViX7B1Bo=
+X-Google-Smtp-Source: AGHT+IHFoMlNyy93E9p8PLdKAPmBbY2OXvYrcgOhmgshugONB/leWstGjgJSgPisbLdUzj1QNxLfSMErqx6KuE60UC4=
+X-Received: by 2002:a05:690c:4c06:b0:6ff:1cd7:18e6 with SMTP id
+ 00721157ae682-6ff460fc34dmr131266867b3.37.1742158469595; Sun, 16 Mar 2025
+ 13:54:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250125064619.8305-1-jim.cromie@gmail.com> <20250125064619.8305-19-jim.cromie@gmail.com>
- <1a0034df-292b-49f5-bc90-709bcd5af9a9@bootlin.com>
-In-Reply-To: <1a0034df-292b-49f5-bc90-709bcd5af9a9@bootlin.com>
-From: jim.cromie@gmail.com
-Date: Sun, 16 Mar 2025 14:50:53 -0600
-X-Gm-Features: AQ5f1JpRQbL7Kh3EhTVw1my5Ym8uTbp3MrpYCs-8HOghT6Dic3lqwx4ocejIakU
-Message-ID: <CAJfuBxwwcXPuaievcJ6Hg0JhS2vraoTV8=r=rrh9X7XiM9tcNw@mail.gmail.com>
-Subject: Re: [PATCH 18/63] dyndbg: add/use for_subvec() to reduce boilerplate
-To: Jim Cromie <jim.cromie@gmail.com>, linux-kernel@vger.kernel.org, jbaron@akamai.com, 
-	gregkh@linuxfoundation.org, ukaszb@chromium.org, 
-	intel-gfx-trybot@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
-	amd-gfx@lists.freedesktop.org, intel-gvt-dev@lists.freedesktop.org, 
-	intel-gfx@lists.freedesktop.org, daniel.vetter@ffwll.ch, 
-	tvrtko.ursulin@linux.intel.com, jani.nikula@intel.com, 
-	ville.syrjala@linux.intel.com
+References: <20250312121712.1168007-1-ulf.hansson@linaro.org>
+In-Reply-To: <20250312121712.1168007-1-ulf.hansson@linaro.org>
+From: Robert Nelson <robertcnelson@gmail.com>
+Date: Sun, 16 Mar 2025 15:54:03 -0500
+X-Gm-Features: AQ5f1JrC9arSKQQ_w0K5E-UGcgYKsF8QY-ZaOf_sn7pbfBAYKIZT1xZPxn2TesI
+Message-ID: <CAOCHtYjGuw9szeChihrDZ39_2+w5xOverbp6mAjjLjR=QkK1zg@mail.gmail.com>
+Subject: Re: [PATCH] mmc: sdhci-omap: Disable MMC_CAP_AGGRESSIVE_PM for eMMC/SD
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: linux-mmc@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>, 
+	Vignesh Raghavendra <vigneshr@ti.com>, Tony Lindgren <tony@atomide.com>, David Owens <daowens01@gmail.com>, 
+	Romain Naour <romain.naour@smile.fr>, Andrei Aldea <andrei@ti.com>, Judith Mendez <jm@ti.com>, 
+	linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	stable@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Feb 25, 2025 at 7:18=E2=80=AFAM Louis Chauvet <louis.chauvet@bootli=
-n.com> wrote:
+On Wed, Mar 12, 2025 at 7:17=E2=80=AFAM Ulf Hansson <ulf.hansson@linaro.org=
+> wrote:
 >
+> We have received reports about cards can become corrupt related to the
+> aggressive PM support. Let's make a partial revert of the change that
+> enabled the feature.
 >
+> Reported-by: David Owens <daowens01@gmail.com>
+> Reported-by: Romain Naour <romain.naour@smile.fr>
+> Reported-by: Robert Nelson <robertcnelson@gmail.com>
+> Tested-by: Robert Nelson <robertcnelson@gmail.com>
+> Fixes: 3edf588e7fe0 ("mmc: sdhci-omap: Allow SDIO card power off and enab=
+le aggressive PM")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+> ---
+>  drivers/mmc/host/sdhci-omap.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 >
-> Le 25/01/2025 =C3=A0 07:45, Jim Cromie a =C3=A9crit :
-> > add for_subvec() macro to encapsulate a for-loop pattern thats used
-> > repeatedly to iterate over a boxed.vector of N elements.
-> >
-> > Signed-off-by: Jim Cromie <jim.cromie@gmail.com>
+> diff --git a/drivers/mmc/host/sdhci-omap.c b/drivers/mmc/host/sdhci-omap.=
+c
+> index 54d795205fb4..26a9a8b5682a 100644
+> --- a/drivers/mmc/host/sdhci-omap.c
+> +++ b/drivers/mmc/host/sdhci-omap.c
+> @@ -1339,8 +1339,8 @@ static int sdhci_omap_probe(struct platform_device =
+*pdev)
+>         /* R1B responses is required to properly manage HW busy detection=
+. */
+>         mmc->caps |=3D MMC_CAP_NEED_RSP_BUSY;
 >
-> Hi Jim,
+> -       /* Allow card power off and runtime PM for eMMC/SD card devices *=
+/
+> -       mmc->caps |=3D MMC_CAP_POWER_OFF_CARD | MMC_CAP_AGGRESSIVE_PM;
+> +       /*  Enable SDIO card power off. */
+> +       mmc->caps |=3D MMC_CAP_POWER_OFF_CARD;
 >
-> Do you think it is possible to move this patch earlier in the series, so
-> you can use it when introducing class_users.
->
-
-Yup. :-)
-
-> Reviewed-by: Louis Chauvet <louis.chauvet@bootlin.com>
->
-> Thanks,
-> Louis Chauvet
->
-> > ---
-> >   lib/dynamic_debug.c | 30 ++++++++++++++++++++++--------
-> >   1 file changed, 22 insertions(+), 8 deletions(-)
-> >
-> > diff --git a/lib/dynamic_debug.c b/lib/dynamic_debug.c
-> > index 6bca0c6727d4..08b6e4e7489f 100644
-> > --- a/lib/dynamic_debug.c
-> > +++ b/lib/dynamic_debug.c
-> > @@ -158,20 +158,34 @@ static void vpr_info_dq(const struct ddebug_query=
- *query, const char *msg)
-> >                 _dt->num_class_users);                                \
-> >       })
-> >
-> > +/*
-> > + * simplify a repeated for-loop pattern walking N steps in a T _vec
-> > + * member inside a struct _box.  It expects int i and T *_sp to be
-> > + * declared in the caller.
-> > + * @_i:  caller provided counter.
-> > + * @_sp: cursor into _vec, to examine each item.
-> > + * @_box: ptr to a struct containing @_vec member
-> > + * @_vec: name of a sub-struct member in _box, with array-ref and leng=
-th
-> > + */
-> > +#define for_subvec(_i, _sp, _box, _vec)                               =
-      \
-> > +     for ((_i) =3D 0, (_sp) =3D (_box)->_vec;                         =
-  \
-> > +          (_i) < (_box)->num_##_vec;                                \
-> > +          (_i)++, (_sp)++)
-> > +
-> >   static int ddebug_find_valid_class(struct ddebug_table const *dt, con=
-st char *class_string)
-> >   {
-> >       struct ddebug_class_map *map;
-> >       struct ddebug_class_user *cli;
-> >       int i, idx;
-> >
-> > -     for (i =3D 0, map =3D dt->classes; i < dt->num_classes; i++, map+=
-+) {
-> > +     for_subvec(i, map, dt, classes) {
-> >               idx =3D match_string(map->class_names, map->length, class=
-_string);
-> >               if (idx >=3D 0) {
-> >                       vpr_dt_info(dt, "good-class: %s.%s ", map->mod_na=
-me, class_string);
-> >                       return idx + map->base;
-> >               }
-> >       }
-> > -     for (i =3D 0, cli =3D dt->class_users; i < dt->num_class_users; i=
-++, cli++) {
-> > +     for_subvec(i, cli, dt, class_users) {
-> >               idx =3D match_string(cli->map->class_names, cli->map->len=
-gth, class_string);
-> >               if (idx >=3D 0) {
-> >                       vpr_dt_info(dt, "class-ref: %s -> %s.%s ",
-> > @@ -1190,7 +1204,7 @@ static void ddebug_apply_params(const struct ddeb=
-ug_class_map *cm, const char *m
-> >       if (cm->mod) {
-> >               vpr_cm_info(cm, "loaded classmap: %s", modnm);
-> >               /* ifdef protects the cm->mod->kp deref */
-> > -             for (i =3D 0, kp =3D cm->mod->kp; i < cm->mod->num_kp; i+=
-+, kp++)
-> > +             for_subvec(i, kp, cm->mod, kp)
-> >                       ddebug_match_apply_kparam(kp, cm, modnm);
-> >       }
-> >   #endif
-> > @@ -1212,7 +1226,7 @@ static void ddebug_attach_module_classes(struct d=
-debug_table *dt,
-> >       struct ddebug_class_map *cm;
-> >       int i, nc =3D 0;
-> >
-> > -     for (i =3D 0, cm =3D di->classes; i < di->num_classes; i++, cm++)=
- {
-> > +     for_subvec(i, cm, di, classes) {
-> >               if (!strcmp(cm->mod_name, dt->mod_name)) {
-> >                       vpr_cm_info(cm, "classes[%d]:", i);
-> >                       if (!nc++)
-> > @@ -1225,7 +1239,7 @@ static void ddebug_attach_module_classes(struct d=
-debug_table *dt,
-> >       vpr_info("module:%s attached %d classes\n", dt->mod_name, nc);
-> >       dt->num_classes =3D nc;
-> >
-> > -     for (i =3D 0, cm =3D dt->classes; i < dt->num_classes; i++, cm++)
-> > +     for_subvec(i, cm, dt, classes)
-> >               ddebug_apply_params(cm, cm->mod_name);
-> >   }
-> >
-> > @@ -1245,7 +1259,7 @@ static void ddebug_attach_user_module_classes(str=
-uct ddebug_table *dt,
-> >        * module's refs, save to dt.  For loadables, this is the
-> >        * whole array.
-> >        */
-> > -     for (i =3D 0, cli =3D di->class_users; i < di->num_class_users; i=
-++, cli++) {
-> > +     for_subvec(i, cli, di, class_users) {
-> >               if (WARN_ON_ONCE(!cli || !cli->map || !cli->mod_name))
-> >                       continue;
-> >               if (!strcmp(cli->mod_name, dt->mod_name)) {
-> > @@ -1261,7 +1275,7 @@ static void ddebug_attach_user_module_classes(str=
-uct ddebug_table *dt,
-> >       dt->num_class_users =3D nc;
-> >
-> >       /* now iterate dt */
-> > -     for (i =3D 0, cli =3D dt->class_users; i < dt->num_class_users; i=
-++, cli++)
-> > +     for_subvec(i, cli, di, class_users)
-> >               ddebug_apply_params(cli->map, cli->mod_name);
-> >
-> >       vpr_dt_info(dt, "attach-client-module: ");
-> > @@ -1299,7 +1313,7 @@ static int ddebug_add_module(struct _ddebug_info =
-*di, const char *modname)
-> >
-> >       INIT_LIST_HEAD(&dt->link);
-> >
-> > -     for (i =3D 0, iter =3D di->descs; i < di->num_descs; i++, iter++)
-> > +     for_subvec(i, iter, di, descs)
-> >               if (iter->class_id !=3D _DPRINTK_CLASS_DFLT)
-> >                       class_ct++;
-> >
->
+>         ret =3D sdhci_setup_host(host);
+>         if (ret)
 > --
-> Louis Chauvet, Bootlin
-> Embedded Linux and Kernel engineering
-> https://bootlin.com
+> 2.43.0
 >
+
+Thanks Ulf, i also have this exact revert running on the target in our
+ci farm, i think we should be good.  But I'll validate it in 4 weeks!
+
+Regards,
+
+--=20
+Robert Nelson
+https://rcn-ee.com/
 
