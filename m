@@ -1,158 +1,84 @@
-Return-Path: <linux-kernel+bounces-562826-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562827-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 835DBA6336A
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 04:26:17 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E30DDA6336C
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 04:30:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B463C1892908
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 03:26:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 403EC17176F
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 03:30:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EB6E6BB5B;
-	Sun, 16 Mar 2025 03:26:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30EE47DA7F;
+	Sun, 16 Mar 2025 03:30:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="R8O/C8gx"
-Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="YC7Yw5dg"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2584DEAE7
-	for <linux-kernel@vger.kernel.org>; Sun, 16 Mar 2025 03:26:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D5BB7DA8C;
+	Sun, 16 Mar 2025 03:30:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742095568; cv=none; b=qcHaXyXrcls5fDhq4ZFfnTFxQPEypsH8BV7qEvYkDlk6kamNCRAnV/dBF9LYrdCBnYsGnnUp0fNMO37CUbDPZCS3lFEIlpxLWxGS1WWEXeszJgYb/LzuwtI1lAWhsbcn3jHXaLxx51D6dN+GDA6SVlhs7gpe1VlSPoU+IY1pMso=
+	t=1742095806; cv=none; b=CxoIATMB5k/6xPifGCfcaw5M6oCM5ck+u8TtREk5hWsfYhcwyJVk5QVhbUlyme7xO7jR6SnzneiyOOX7QsSXtjorh6jeR9cptpuUPod5P0iRUQpWmKs86OO6QfW8k2JMrQaQIwEWNqK8Ayx07jQinjZkZGqsItVnp5saXflCmQY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742095568; c=relaxed/simple;
-	bh=mekDKf9S5kLQUk/7oPM/toKjbBmIyGcb3i4p1vmkiPE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Y8jwLWjVUvtxCvd2pFUkM6CXO/xvHxGh0deREJyHHYZCRyGx6Oj1Jo7y1Cv+0cOLD6QQ3Nlw2gOcQ3XCJUX6V2cA0kVwLUCT0lVdNzBk/Zsr1GLY8WWUeAHnP+zGSU/pkxNy9MVLbXKyiV0K/IRjSD13PRHZWK0gECDw3qi7h2k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=R8O/C8gx; arc=none smtp.client-ip=209.85.160.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-476693c2cc2so304891cf.0
-        for <linux-kernel@vger.kernel.org>; Sat, 15 Mar 2025 20:26:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1742095566; x=1742700366; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=I031H45oHHjrgnbC6qk0p0UOqaWjWPGvi+XZ/FpIMo8=;
-        b=R8O/C8gxxNVTMFC+8vYoHOiwV2PExai5cyiXkDRBHn4uzCTcsabdrlBXMGCXFCWycr
-         YmzOj9yfSLfontGVlyS3ZxQLMPjf96hk2G5GbwFcHrG8M6MZPAfyXmxU2zWE6gRgJR5z
-         r1xBJtDaG15GipUcJW1QDpduXzoXps3RSiX2rLsoPeh4IitgzKW1+7Xw2MQb6CE/vR0V
-         7tVX0nJ7NPYKOGcT8N6wMp3o/Bevwh/oMBHPCDMkW7FRx1i1/oE2oxyyjMimY831bHW3
-         IOe0mC5mC+QbrK1r0R4RHgLMjE0+4e9+vObA8bz2PSOttqmhfjpYyJZXtESlDzDOG01f
-         wGpw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742095566; x=1742700366;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=I031H45oHHjrgnbC6qk0p0UOqaWjWPGvi+XZ/FpIMo8=;
-        b=kUGNcaDUqROhWthmJEZPzaoMyvCZSrpJj7e3BztEXpAb1vnUGZ00S0b2WHvynyRjR1
-         RCx4qEQ80Z4UqYfJ8rz0jA904dySA4rLI+bQHaFV9yEWjXf0Adf2FrP1oLOAsXrqYa9K
-         jF3cM0RKMuwrHnsSrcrTkKryOa51nzoMgZ4hlZIFjh2U2FxDdi5+U04fDKGr9c8fLAhE
-         W+X8W4GUwtDsRXGdAWdF0ayBOivrcZwOHxRrwKqS2ggjFAepCCnsoySPpRKpN00wDAMl
-         q/pk2zxndJ5ZVw8pLY8zGW9GlcBRoAw1R1zWVIgBjJHcwE1kglBd8UFV94Qq23Og2M57
-         Bevw==
-X-Forwarded-Encrypted: i=1; AJvYcCX5bkfrRxUMa9g+MHWjcYJEfIXJvdnAl3AAAZ4++4R473Z/0AMp0VePsM0j4K51GMgfJ8r2WZBpy2qGa0A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxPvbfhZMjZt6Aq+gc4mbR+iDq2NscVpa075E4KQnJ4dJvzjVMu
-	ohMhm35GXy+tWX7Ke/ZsBhtrMWiOkATAJycgwX7aptKqQFJDz2NF0T9gdsl0S3fUEoPM4PezLqC
-	X3oq5jB2Z2DY/SR0DEtfSWUlQXRSse5QLuHte
-X-Gm-Gg: ASbGnct8buTwK/9VegTGekhQRVftCGjVZs654qg3Shs8IGtw5IMA9Wr0Nt9vjlol/PE
-	xyESyTlruIQkkzehi58f/SlgXoP7DOiv1LRrpB491HZ6mgOY9R/gdp6Vb2KivVRvVq+4n+kXLfC
-	jgNsti3CyYHIaTdPoc/vTX6gL5YRs=
-X-Google-Smtp-Source: AGHT+IFrqUQXyl1Pn1EaIiL+ZTOOQoB0Pn52TLnAqKlkpCBgguZcVlYaAvSK/jLyL0iXMLjUrUwueiH9z9r3yhRNyzY=
-X-Received: by 2002:a05:622a:424a:b0:476:861d:10ec with SMTP id
- d75a77b69052e-476d6464a94mr2961381cf.15.1742095565487; Sat, 15 Mar 2025
- 20:26:05 -0700 (PDT)
+	s=arc-20240116; t=1742095806; c=relaxed/simple;
+	bh=HPlN6EQ4TqhduOGC6gbXQx2ti+IJ2nJLaoZfd3YbLSY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZzGFgHKKdQHnvvtj+P9QTdHbIQN2RNeRckp+yMi6qai8JDqFU0aUQ3kbErhtUkIaoq+HOimD22NCrUzy5G5oTqS6603GX1CSePwHrvhX7tgKrYeP5drVlG8ERnwvZyCKV6ZgDHKFTdITHqTXa9Z5vrcTQKjPDaHuUEgBy2ij4Jc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=YC7Yw5dg; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=FSu43IEnd9G6UVWlhy9qpwM+6c8I+Yb5z7euF1j53zk=; b=YC7Yw5dg3Mmiti9+u/w5zC4Srm
+	5dm75T8uBuzXeTRAPjy+DUOjznvY761c2sQHlRGN8+rrLT04U8r4Om8ova9UHSY1CbxRGul6DqMSs
+	8AApvWDNdOfl9OA6yK1IvHFcyCO0v7TBQlPOXxgFG3g/w2HzWFtKqrGdE5gK5kFKOXXVP7R7mkOUJ
+	kLlJy8+F9Sg488czTSEjIePzDNgCUIFhFlDDjsWMG1ZzuO4fES1G36APrb5jlsmDZ7zKgf4OUZOxW
+	LEy/w6LgnIRhZT/HlBLKNUo6EfVbPedHyP0T1HaWarX59GUVwcAUvlcd/AyadKGpqSmrHi8s9WQMQ
+	wCvpJTWA==;
+Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tteg5-0000000Gefo-2SuV;
+	Sun, 16 Mar 2025 03:29:35 +0000
+Date: Sun, 16 Mar 2025 03:28:41 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Ethan Carter Edwards <ethan@ethancedwards.com>
+Cc: Theodore Ts'o <tytso@mit.edu>,
+	Andreas Dilger <adilger.kernel@dilger.ca>,
+	linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH] ext4: hash: change kzalloc(n * sizeof, ...) to
+ kcalloc(n, sizeof, ...)
+Message-ID: <Z9ZFabmQuSLiwfE5@casper.infradead.org>
+References: <20250315-ext4-hash-kcalloc-v1-1-a9132cb49276@ethancedwards.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250313072030.1032893-1-ziqianlu@bytedance.com> <CANCG0GcFF7cnR4rCbU5MmY1Gq3M+r4gPXv39QPXXC=Cdr6sRww@mail.gmail.com>
-In-Reply-To: <CANCG0GcFF7cnR4rCbU5MmY1Gq3M+r4gPXv39QPXXC=Cdr6sRww@mail.gmail.com>
-From: Josh Don <joshdon@google.com>
-Date: Sat, 15 Mar 2025 20:25:53 -0700
-X-Gm-Features: AQ5f1JokS5KIu90bXzb2JRcu-FHIAYwb4q7wMRxrEzOEl-iXUB454l52aysMBcA
-Message-ID: <CABk29Nuuq6s1+FBftOPAcMkYU+F1n2nebcP5tDK9dH4_KXA2cw@mail.gmail.com>
-Subject: Re: [RFC PATCH 2/7] sched/fair: Handle throttle path for task based throttle
-To: Aaron Lu <ziqianlu@bytedance.com>
-Cc: Valentin Schneider <vschneid@redhat.com>, Ben Segall <bsegall@google.com>, 
-	K Prateek Nayak <kprateek.nayak@amd.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Ingo Molnar <mingo@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, 
-	linux-kernel@vger.kernel.org, Juri Lelli <juri.lelli@redhat.com>, 
-	Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Mel Gorman <mgorman@suse.de>, Chengming Zhou <chengming.zhou@linux.dev>, 
-	Chuyi Zhou <zhouchuyi@bytedance.com>, Xi Wang <xii@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250315-ext4-hash-kcalloc-v1-1-a9132cb49276@ethancedwards.com>
 
-Hi Aaron,
+On Sat, Mar 15, 2025 at 12:29:34PM -0400, Ethan Carter Edwards wrote:
+> Open coded arithmetic in allocator arguments is discouraged. Helper
+> functions like kcalloc are preferred.
 
->  static int tg_throttle_down(struct task_group *tg, void *data)
->  {
->         struct rq *rq = data;
->         struct cfs_rq *cfs_rq = tg->cfs_rq[cpu_of(rq)];
-> +       struct task_struct *p;
-> +       struct rb_node *node;
-> +
-> +       cfs_rq->throttle_count++;
-> +       if (cfs_rq->throttle_count > 1)
-> +               return 0;
->
->         /* group is entering throttled state, stop time */
-> -       if (!cfs_rq->throttle_count) {
-> -               cfs_rq->throttled_clock_pelt = rq_clock_pelt(rq);
-> -               list_del_leaf_cfs_rq(cfs_rq);
-> +       cfs_rq->throttled_clock_pelt = rq_clock_pelt(rq);
-> +       list_del_leaf_cfs_rq(cfs_rq);
->
-> -               SCHED_WARN_ON(cfs_rq->throttled_clock_self);
-> -               if (cfs_rq->nr_queued)
-> -                       cfs_rq->throttled_clock_self = rq_clock(rq);
-> +       SCHED_WARN_ON(cfs_rq->throttled_clock_self);
-> +       if (cfs_rq->nr_queued)
-> +               cfs_rq->throttled_clock_self = rq_clock(rq);
-> +
-> +       WARN_ON_ONCE(!list_empty(&cfs_rq->throttled_limbo_list));
-> +       /*
-> +        * rq_lock is held, current is (obviously) executing this in kernelspace.
-> +        *
-> +        * All other tasks enqueued on this rq have their saved PC at the
-> +        * context switch, so they will go through the kernel before returning
-> +        * to userspace. Thus, there are no tasks-in-userspace to handle, just
-> +        * install the task_work on all of them.
-> +        */
-> +       node = rb_first(&cfs_rq->tasks_timeline.rb_root);
-> +       while (node) {
-> +               struct sched_entity *se = __node_2_se(node);
-> +
-> +               if (!entity_is_task(se))
-> +                       goto next;
-> +
-> +               p = task_of(se);
-> +               task_throttle_setup_work(p);
-> +next:
-> +               node = rb_next(node);
-> +       }
+Well, yes, but ...
 
-I'd like to strongly push back on this approach. This adds quite a lot
-of extra computation to an already expensive path
-(throttle/unthrottle). e.g. this function is part of the cgroup walk
-and so it is already O(cgroups) for the number of cgroups in the
-hierarchy being throttled. This gets even worse when you consider that
-we repeat this separately across all the cpus that the
-bandwidth-constrained group is running on. Keep in mind that
-throttle/unthrottle is done with rq lock held and IRQ disabled.
+> +++ b/fs/ext4/hash.c
+> @@ -302,7 +302,7 @@ int ext4fs_dirhash(const struct inode *dir, const char *name, int len,
+>  
+>  	if (len && IS_CASEFOLDED(dir) &&
+>  	   (!IS_ENCRYPTED(dir) || fscrypt_has_encryption_key(dir))) {
+> -		buff = kzalloc(sizeof(char) * PATH_MAX, GFP_KERNEL);
+> +		buff = kcalloc(PATH_MAX, sizeof(char), GFP_KERNEL);
 
-In K Prateek's last RFC, there was discussion of using context
-tracking; did you consider that approach any further? We could keep
-track of the number of threads within a cgroup hierarchy currently in
-kernel mode (similar to h_nr_runnable), and thus simplify down the
-throttling code here.
+sizeof(char) is defined to be 1.  So this should just be
+kzalloc(PATH_MAX, GFP_KERNEL).
 
-Best,
-Josh
 
