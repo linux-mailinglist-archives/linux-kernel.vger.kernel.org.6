@@ -1,141 +1,139 @@
-Return-Path: <linux-kernel+bounces-563017-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563018-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E01CA635B7
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 13:57:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7A72A635B9
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 13:58:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7DEBB3ABB0A
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 12:57:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 077163AC1CE
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 12:58:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FEF21A83FF;
-	Sun, 16 Mar 2025 12:57:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC6EB1A83F5;
+	Sun, 16 Mar 2025 12:58:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZMCKlgFm"
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SKwbp6ot"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E09D019CD17;
-	Sun, 16 Mar 2025 12:57:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31BD71A3166;
+	Sun, 16 Mar 2025 12:58:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742129864; cv=none; b=k5Gqld7EbuPzfM0YCQIMI1daxwVWJlNfnyk502HW9D/BiYfHMEOm1KXaSQlvRcHJWlN6nK6/V/p09WI/k6VNqtyK3nljac/+PV74R58aERHToFjAvnT2ea1oaGWjY8rLeCsAY+lt/h7gjw3rouAoL8NKTyBuqJY5pPOV2tQqgNI=
+	t=1742129892; cv=none; b=mcSh1ZAW1wIGkU8o4F6G4qORJOzOhM6oUQzFJcATHx03jJNvd19KnPs2Vtu45/UrcjmlCypqaskMG/kEQDZWTK0pl3rr0fk8BAphBBgl29Vx+2jG15EPqMaURE5+kHkfTBrJMJuS17VMRHY/A5F9hnwu2KZwRvB1PJbwCU5tm38=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742129864; c=relaxed/simple;
-	bh=qyO49BsrB+oWu2FE3bZEmtR4e4T5f7YS5toUZHn3w8E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lj2PW9ip7Q6LuUUNPOsIpUYmhN/StWRpL+RBa/VgVK1WoluEYRnCOMP5J6VL6fX9A2c6r4jzJ5VawsGdZHsLMBpr3JaiTTHdyK6IS9TRmbJP3/oxdf2P+0A0hVpElfDjHGetT4UX7C9h1MQfDDjCh5ByNOKAtMS9LOr9rThQT/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZMCKlgFm; arc=none smtp.client-ip=209.85.208.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-30613802a59so39637121fa.0;
-        Sun, 16 Mar 2025 05:57:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742129861; x=1742734661; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1JY3+gZvsQCAKPjn/35sGgpLKMuRQJgJmL55nCwysRs=;
-        b=ZMCKlgFmm4O+zWICNqIFQcgtAnAPVVfAKOweOgDjVp7t805zM9mu2YhZV5HNrTT5W4
-         XzUxnsJMSIyuKJ/q0MVg6vwG7YLqC530Iu8hx6eYZrDKwXLLdvS41ChaU9iit3O32q62
-         9UrGMqam3V9GE3gL1R1acfYRYrLzyouonsvWxJJd+f5tahlG5SpwMekX/gqG2HOV9BuG
-         IiEbazPNJUUGNFp2u0JWLqsHgtGRZzMAq/FLoN3MbH9uSsbxXpawZxcjWQsFMok5IRPB
-         vv8Mtz8/b/R0/f09IWamuWXNqO9D3zxoYUTfwirGBE3A+D8BWGaCIrIuGOeZLSG5JAf0
-         Evfg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742129861; x=1742734661;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1JY3+gZvsQCAKPjn/35sGgpLKMuRQJgJmL55nCwysRs=;
-        b=HrCYMG0FWQkAwA0OvWqiBP4GuMjLFL9h6Gm8WFYSw6EBTdYpL8kbZ07xd7HqsVfbPK
-         /GnXJqfSRoIrtHvpjt5RpS4PRMoa4OAQJ7sJl1YQllBYrp9puAWfqUtdT4ro88iMjy6z
-         Yc7ToVpGhuRzpHnTl/1wcLdP0zDdjLmZmzl2CkLMArKGZvf9K8vCFHyOmN8uIuoGS4KR
-         u/K2xqRA1qcAkl6SeQHFPF3ybU9fuUlphNHBvS7aGpwxGq/+GtA7fQHtUyDSVTcOqWne
-         gdvz8qRD8YChrG/1/blnQJSBjW5M5XOdy4QdHKqmWTi0NhhMG87rkOb2/5s5m7UD8EjN
-         uy1w==
-X-Forwarded-Encrypted: i=1; AJvYcCUOfHer0eSNnIfn/MFVuvcuyigLU4lEqT4HB7y6Fbp0ToLwJ7DcLHUd5gtO5LBSM5uuQpw/Pl7UqdBucCI=@vger.kernel.org, AJvYcCWcKLF518PEzMXzzH/+sDRkPCxerGeThrb60Ai1rJsx0xm7UBgJGbSZE2eDcSos7h4Sg7BPzLhOmT99FjAfn3I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFJ/E129v4sx4+I/C55o8QOdKgDtGK3nvHsxzMGmVcE/fo1wsP
-	q/zFeA9sXbKGfVhNijdrhHvpc9NZV/mSrmWG8Dd1P7OGjW1OF7+CPcZHcKgPpmATECXnkeEcs7z
-	DaGtn1fVifKIi8jgioWAc0J+C81s=
-X-Gm-Gg: ASbGncvnjlK8tcxRIwXK9F56fz8NZmRl6Z+gCjy1IvUoNvvzNZSICoJzc8oBAxQGV4w
-	Gbnziyd7GkFbPmwoNq89DaeLiWldh0328nbaJpHroUJ3tP6Cc7fcNy21nMU2PoyrnE0v+7+41gt
-	BTBcerWr0sDoZbMcqmztCkqKCwOBfy4vD5q6pIr483d0ikkk2Cx+QjlQAw/+Xs
-X-Google-Smtp-Source: AGHT+IFTL5w+to2vvj7wboKx55x/7iOZBQbyy0jqpqrGkj+hkmPD1Sq0AwcDFIImS2z5PzdSCWpEK5G9N7GDEBZag0Q=
-X-Received: by 2002:a05:6512:4029:b0:545:2d4d:36de with SMTP id
- 2adb3069b0e04-549c3922a93mr3691443e87.31.1742129860905; Sun, 16 Mar 2025
- 05:57:40 -0700 (PDT)
+	s=arc-20240116; t=1742129892; c=relaxed/simple;
+	bh=slk6SNqASVJFkyV2UtBmNroGAFov8Es/i9bevw4AiDc=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=aBBGCvg9nMsmuy9qpxw5ne7cq4DqZU4IxjDyHtsNgvhB7OUI3Phq7aRiT5l4WY+ktYxIm7gvLn4OerfyJRo2LjvgWvFnYlIozZMDEaf5S4GPS6Kjioykr9iAOp6hgu8BYrK0KlTTMb/AKxGMj+d/i9Z2MJ5HiqdxVAIF4CB+pEc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SKwbp6ot; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24AD3C4CEDD;
+	Sun, 16 Mar 2025 12:58:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742129891;
+	bh=slk6SNqASVJFkyV2UtBmNroGAFov8Es/i9bevw4AiDc=;
+	h=Date:From:To:Cc:Subject:From;
+	b=SKwbp6otHWJXwLvTYdi6xlLVOBGc1b9AXMe23XNK+I5xUrZeKUtzdN75AU8E2L/Wt
+	 qybR82GfXByS5Uu0siS8LXqFkncWedOmFrcQYGus5eccfrOOixZaWAFpu65UZB5aWC
+	 OJqf4sXA73PlN5GkyctVYt7YsrIzsaQ/tBbbmMv7PsfXiAuJAFpOjpIpQwxrqbGKlM
+	 O2pSGb/vvmMAMAaHa4xqZCqD09Eq4L6UVi2HBWnLbL7WBG+4g6JkdhJKQlEpJD3pZY
+	 YM+vaC0Q0VYANy5HvmPW1ds7mAoF6xEg3ZN6/A42+OI6wbo1Tw5gKJ7+ZwmXtCqrrM
+	 S14+qTtrHRaxg==
+Date: Sun, 16 Mar 2025 13:58:08 +0100
+From: Wolfram Sang <wsa@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Andi Shyti <andi.shyti@kernel.org>
+Subject: [PULL REQUEST] i2c-for-6.14-rc7
+Message-ID: <Z9bK4PAANPoIcMbm@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Andi Shyti <andi.shyti@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250316061429.817126-1-contact@antoniohickey.com> <20250316061429.817126-17-contact@antoniohickey.com>
-In-Reply-To: <20250316061429.817126-17-contact@antoniohickey.com>
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Sun, 16 Mar 2025 08:57:04 -0400
-X-Gm-Features: AQ5f1JppUsEbWsUorvGmyhZZ80Nk2uVHUVqf2xCQCmDZIU7XuhyuJYf6g7hD4OM
-Message-ID: <CAJ-ks9kMeb2xFaUOu=L3JYq7V7FsFjmDkbJieiUN0cdK9hhWnw@mail.gmail.com>
-Subject: Re: [PATCH v4 16/16] rust: clippy: disable `addr_of[_mut]!` macros
-To: Antonio Hickey <contact@byte-forge.io>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, Antonio Hickey <contact@antoniohickey.com>, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="C+nvCH/Ykt2cjQhF"
+Content-Disposition: inline
 
-On Sun, Mar 16, 2025 at 2:38=E2=80=AFAM Antonio Hickey <contact@byte-forge.=
-io> wrote:
->
-> With the `raw_ref_op` feature enabled we no longer want to
-> allow use of `addr_of!` and `addr_of_mut!` macros.
->
-> We instead want to use `&raw` and `&raw mut` to get raw
-> pointers to a place.
->
-> Note that this lint isn't currently reliable, but we enable
-> it nevertheless because:
-> 1. Document that one shouldn't use the `addr_of[_mut]!` macros.
-> 2. When the lint becomes useful we will already have it enabled.
->
-> Suggested-by: Benno Lossin <benno.lossin@proton.me>
-> Link: https://github.com/Rust-for-Linux/linux/issues/1148
-> Link: https://github.com/rust-lang/rust-clippy/issues/11431
-> Signed-off-by: Antonio Hickey <contact@antoniohickey.com>
-> ---
->  .clippy.toml | 4 ++++
->  1 file changed, 4 insertions(+)
->
-> diff --git a/.clippy.toml b/.clippy.toml
-> index 815c94732ed7..95c73959f039 100644
-> --- a/.clippy.toml
-> +++ b/.clippy.toml
-> @@ -8,4 +8,8 @@ disallowed-macros =3D [
->      # The `clippy::dbg_macro` lint only works with `std::dbg!`, thus we =
-simulate
->      # it here, see: https://github.com/rust-lang/rust-clippy/issues/1130=
-3.
->      { path =3D "kernel::dbg", reason =3D "the `dbg!` macro is intended a=
-s a debugging tool" },
-> +    # With `raw_ref_op` feature enabled we no longer want to allow use o=
-f `addr_of!`
-> +    # and `addr_of_mut!` macros, but instead use `&raw` or `&raw mut`.
-> +    { path =3D "core::ptr::addr_of_mut", reason =3D "use `&raw mut` inst=
-ead `addr_of_mut!`" },
-> +    { path =3D "core::ptr::addr_of", reason =3D "use `&raw` instead `add=
-r_of!`" },
->  ]
-> --
-> 2.48.1
 
-Consider using the word "disallow" rather than "disable" in the
-subject line of this commit, given that this is the word used in the
-clippy config.
+--C+nvCH/Ykt2cjQhF
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+The following changes since commit 80e54e84911a923c40d7bee33a34c1b4be148d7a:
+
+  Linux 6.14-rc6 (2025-03-09 13:45:25 -1000)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git tags/i2c-for-6.14-rc7
+
+for you to fetch changes up to 3ef18b236690af5f6427c5b6d8636881116aa73a:
+
+  Merge tag 'i2c-host-fixes-6.14-rc7' of git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux into i2c/for-current (2025-03-15 09:28:41 +0100)
+
+----------------------------------------------------------------
+i2c-for-6.14-rc7
+
+Driver fixes:
+
+- omap: fixed irq ACKS to avoid irq storming and system hang
+- ali1535, ali15x3, sis630: fixed error path at probe exit
+
+----------------------------------------------------------------
+Andreas Kemnade (1):
+      i2c: omap: fix IRQ storms
+
+Christophe JAILLET (3):
+      i2c: ali1535: Fix an error handling path in ali1535_probe()
+      i2c: ali15x3: Fix an error handling path in ali15x3_probe()
+      i2c: sis630: Fix an error handling path in sis630_probe()
+
+Wolfram Sang (1):
+      Merge tag 'i2c-host-fixes-6.14-rc7' of git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux into i2c/for-current
+
+
+with much appreciated quality assurance from
+----------------------------------------------------------------
+Aniket Limaye (1):
+      (Rev.) i2c: omap: fix IRQ storms
+
+Nishanth Menon (1):
+      (Test) i2c: omap: fix IRQ storms
+
+ drivers/i2c/busses/i2c-ali1535.c | 12 +++++++++++-
+ drivers/i2c/busses/i2c-ali15x3.c | 12 +++++++++++-
+ drivers/i2c/busses/i2c-omap.c    | 26 +++++++-------------------
+ drivers/i2c/busses/i2c-sis630.c  | 12 +++++++++++-
+ 4 files changed, 40 insertions(+), 22 deletions(-)
+
+--C+nvCH/Ykt2cjQhF
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmfWyuAACgkQFA3kzBSg
+KbbSMxAAkBh0czo3ZaAAAlyEkJVYxRekEh+/5Df+1vB8Sj2WA536jmnLow5PjfVp
+qdol99ofMp+ubnEMAy0H8nVgWZBP7TUPyAizObSixQYAXnAXXvN5jA+51K5egzKb
+Se+Y/rrHei1KHaUeg3kvkSaFBdxN07ycHPSiBMbmaffNLQQYTH+A4YsWMcpESZl0
+YnGPcI33RtZP1Kg/OtNSFD/qOoxo14ByA1KRiAj5Giiu9HghbgDIHNvHquX6mX3j
+eConWL+e87BPb7MXt0g1zV351ahBbCU6byCtwBL4SW580cwmXqeip6wkznDBCZwq
+LMd5bYbg45V0hBs6A0IPpL8pbFo6GPjh/eSzZhknm3P+9tHwmhpxmisoKA0WDeQp
+PEcmzn6IqHK5kLw+QF8J0KrYPQAzn7NQTuXgDw2H/kOKG44mmTobO0wba4RijqLr
+R0njOOAj36CvesDx1MnO6mlOrAKINcgoo6ItRl64wQFLSXx0u6IeWsBxQpLCqMab
+6b0UbvEiReeQVEHv2vNzaqwPij1LHs3gcbyeagxijlNszG/SYfNp7w0JJ5JM645g
+eX1iOEv/n0FfPNSpk3IZBZn17EtgX9CKViRQzjPr9CMomeQsGjuARLGDQS1fKHua
+bkc9pozi4jZ7XrZkELJSV9RenwsFzMyZl+2qoCGuh9Upecxurrk=
+=PTAb
+-----END PGP SIGNATURE-----
+
+--C+nvCH/Ykt2cjQhF--
 
