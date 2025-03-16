@@ -1,155 +1,92 @@
-Return-Path: <linux-kernel+bounces-562952-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562953-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DA99A63513
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 11:33:58 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6149CA63515
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 11:37:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A0935188BAD9
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 10:34:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BEFC37A1437
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 10:36:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C553B1A0BE1;
-	Sun, 16 Mar 2025 10:33:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AFE31A08B8;
+	Sun, 16 Mar 2025 10:37:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QAjwDU6f"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KCA9021K"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ECD6166F1A;
-	Sun, 16 Mar 2025 10:33:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6175187FFA;
+	Sun, 16 Mar 2025 10:37:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742121194; cv=none; b=tUvXTq8jyePyFl2tI5D/Xwvhl6TIxyYFvNSRNugAHg0U5YYdPpIHeHRQuGqvsz91bNhYwxMxNIptCv5ASoUuT+6tCN/SNfsWTcQQhaG9IOm5cOfqEz5oX6BlTeppShHJO7M3JjDBuBGaIPN0HQkgoRM8Ox1PFtjh9iF+Cnt1wsY=
+	t=1742121453; cv=none; b=dV6LV/S3HiY1u7An6eo+NmePxqPfPWRqzAMpXUR7f0qE9JyJYHFnAM/NIV0fRh9u2PmFZXGsvzmYPEPcfn4jnWCDBP9PFhuexN3Rw/AJbBA5icpnvwvYLESsSpQMahArKStbmJh92esnKbZBD6Z/ihL42Tr3JsY9xZKneH2tPkk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742121194; c=relaxed/simple;
-	bh=SRVlez7jQA05YlqVbFTK28O6hKORV/BZnhg/jFT8c7g=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MqePlIUzWri8jpBVadcljQfIidbwIgOqs6XhnEE3X3DYDADjZfxBwlL4V495sH/vZ3Jrk1ALDnSLumtM77a7aN3YInjWvB4nVwi3k/gCMAWHF0iWFREye9OVYxhzoFp8aRcPWPk9T5t6cKHEuZStJ27ZsXf1bqu/xQgIyEaX1YM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QAjwDU6f; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7FF78C4CEDD;
-	Sun, 16 Mar 2025 10:33:13 +0000 (UTC)
+	s=arc-20240116; t=1742121453; c=relaxed/simple;
+	bh=hi7v1c0uMrgIy3PMKs6rqd5o61raV4K0vP3IeZk+ed8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=I6wWXWnbJLhEl6GVjOYiG5v1uFikUVPEZchCTp/RFNHr0gQkoCeqQapQ2aWlBcyrH5fHVxWDh621CbrhNMD7OYgG2cUC9MaSWzSRSlv3oe/QXG5INAQ2NAEbG1iKbfE6VCWh/EZJmRqR/1VwfH4TN0p1iHBW5kvAQYQlsyaIWuQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KCA9021K; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1BDCCC4CEEE;
+	Sun, 16 Mar 2025 10:37:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742121193;
-	bh=SRVlez7jQA05YlqVbFTK28O6hKORV/BZnhg/jFT8c7g=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=QAjwDU6f+Pa8HwEv4iSGndES2e7YvkrvUPjECcMnxGLRfemdcbYv33UH6njk8aNWu
-	 Q22BWB7QzwY+MT5F62iLC5npSimS5BmHFlGi1N1cgJ/M4/b1wP6RxpYLY+ggHj0gng
-	 NI8SnFlCi0q3553EzmMmEzQmrderUuQLl6DhvwxjdOXbKNTLvMmAhUdIsENCeQizgZ
-	 1xy6FC0JFThMMOws0YL2ZFFua7qRQjZYT5HYTNjU94IJNCusokvsP4dQpgCW8jF8GM
-	 hp/uN3wLEglgXOrUefpouKEsSz5Bh0SywVC3fl7yTw4eGBmiIv6iV08D0ZpsvvL3C0
-	 uxA46e3hKlQBA==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1ttlIt-00Dy3A-3n;
-	Sun, 16 Mar 2025 10:33:11 +0000
-Date: Sun, 16 Mar 2025 10:33:10 +0000
-Message-ID: <86a59lnu3d.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Akihiko Odaki <akihiko.odaki@daynix.com>
-Cc: Oliver Upton <oliver.upton@linux.dev>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Andrew Jones <andrew.jones@linux.dev>,
-	linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	devel@daynix.com,
-	stable@vger.kernel.org
-Subject: Re: [PATCH v5 0/5] KVM: arm64: PMU: Fix SET_ONE_REG for vPMC regs
-In-Reply-To: <20250315-pmc-v5-0-ecee87dab216@daynix.com>
-References: <20250315-pmc-v5-0-ecee87dab216@daynix.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=k20201202; t=1742121453;
+	bh=hi7v1c0uMrgIy3PMKs6rqd5o61raV4K0vP3IeZk+ed8=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=KCA9021K31M3YZRHWNSPzEobrkf/XCK9ktqo9iijbcFUO9zCLqDzPuX/z+MsStrFM
+	 ql0X6l3FkD7NHKLI9ast/58Bc6eeQ+HviSSh6bZ07qypoqlqL+Cy9GaP99jNzJ+5rd
+	 B4KWL3g1SggEFLUXUu8/lrUs4p9YqJUC7pXFyLg5t84VDmIGovdQLIC6SfLuHzJCvG
+	 KwY7H/BlDlyfphEI0WwIxA86gOTINyzqMNxL+rPtSvgiGqhXyVzaH4kAqx1NcChlFw
+	 SnyyvwvCgELw6KxpOBYqFrF6/0hzCtm2IL7hOb2W9/O4dVZEWbUn0owLnoiXpWJSH6
+	 fAlN8PEqEl0Wg==
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-549963b5551so3403738e87.2;
+        Sun, 16 Mar 2025 03:37:33 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUx8FDnqTiaK9/Jm6VttFYJ30h2xWrGwan/GrRkqL+R1yNNCjq7fR1Q8kJGR21IE7POTn0vYzaR7AXb@vger.kernel.org
+X-Gm-Message-State: AOJu0YwTSVtBbJWLcI2dQApQiMKq2sOdk3/12yiAOyWU6bqQHzXec/uJ
+	8bzZVlib0MNSNw1hoGErnoCi9ESHWQYuPthQTzlP9uD8RYZXa+6rf7mWlJxzW6plxGYSR/WodNs
+	qJoHlgI3SuuNGJswri1NcKJc6foU=
+X-Google-Smtp-Source: AGHT+IHh75vDUS0a9gvdQXKI88w3hBXUxJjdOTfYm//MkDBNaFp3us4W9AMrUC1N9/aoQmRzMnOohwwOUu0I7R3c638=
+X-Received: by 2002:a05:6512:3a8e:b0:549:4d78:2418 with SMTP id
+ 2adb3069b0e04-549c38f7d9cmr3287346e87.27.1742121451784; Sun, 16 Mar 2025
+ 03:37:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: akihiko.odaki@daynix.com, oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, catalin.marinas@arm.com, will@kernel.org, andrew.jones@linux.dev, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, devel@daynix.com, stable@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+References: <20241222002957.2582212-1-masahiroy@kernel.org>
+In-Reply-To: <20241222002957.2582212-1-masahiroy@kernel.org>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Sun, 16 Mar 2025 19:36:54 +0900
+X-Gmail-Original-Message-ID: <CAK7LNATVrJLPQSCVTxKARm_4wk=Piem1ZHMA-8c8CfaZPs0H7Q@mail.gmail.com>
+X-Gm-Features: AQ5f1Jpd_6Uzt1zw_daVm75-F9kKdWblABDGcauM3-BnZ1zbCDLuSQqn5C8Pyqo
+Message-ID: <CAK7LNATVrJLPQSCVTxKARm_4wk=Piem1ZHMA-8c8CfaZPs0H7Q@mail.gmail.com>
+Subject: Re: [PATCH] xtensa: migrate to the generic rule for built-in DTB
+To: Chris Zankel <chris@zankel.net>, Max Filippov <jcmvbkbc@gmail.com>
+Cc: linux-kernel@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, 15 Mar 2025 09:12:09 +0000,
-Akihiko Odaki <akihiko.odaki@daynix.com> wrote:
-> 
-> Prepare vPMC registers for user-initiated changes after first run. This
-> is important specifically for debugging Windows on QEMU with GDB; QEMU
-> tries to write back all visible registers when resuming the VM execution
-> with GDB, corrupting the PMU state. Windows always uses the PMU so this
-> can cause adverse effects on that particular OS.
-> 
-> This series also contains patch "KVM: arm64: PMU: Set raw values from
-> user to PM{C,I}NTEN{SET,CLR}, PMOVS{SET,CLR}", which reverts semantic
-> changes made for the mentioned registers in the past. It is necessary
-> to migrate the PMU state properly on Firecracker, QEMU, and crosvm.
-> 
-> Signed-off-by: Akihiko Odaki <akihiko.odaki@daynix.com>
-> ---
-> Changes in v5:
-> - Rebased.
-> - Link to v4: https://lore.kernel.org/r/20250313-pmc-v4-0-2c976827118c@daynix.com
-> 
-> Changes in v4:
-> - Reverted changes for functions implementing ioctls in patch
->   "KVM: arm64: PMU: Assume PMU presence in pmu-emul.c".
-> - Removed kvm_pmu_vcpu_reset().
-> - Reordered function calls in kvm_vcpu_reload_pmu() for better style.
-> - Link to v3: https://lore.kernel.org/r/20250312-pmc-v3-0-0411cab5dc3d@daynix.com
-> 
-> Changes in v3:
-> - Added patch "KVM: arm64: PMU: Assume PMU presence in pmu-emul.c".
-> - Added an explanation of this path series' motivation to each patch.
-> - Explained why userspace register writes and register reset should be
->   covered in patch "KVM: arm64: PMU: Reload when user modifies
->   registers".
-> - Marked patch "KVM: arm64: PMU: Set raw values from user to
->   PM{C,I}NTEN{SET,CLR}, PMOVS{SET,CLR}" for stable.
-> - Reoreded so that patch "KVM: arm64: PMU: Set raw values from user to
->   PM{C,I}NTEN{SET,CLR}, PMOVS{SET,CLR}" would come first.
-> - Added patch "KVM: arm64: PMU: Call kvm_pmu_handle_pmcr() after masking
->   PMCNTENSET_EL0".
-> - Added patch "KVM: arm64: Reload PMCNTENSET_EL0".
-> - Link to v2: https://lore.kernel.org/r/20250307-pmc-v2-0-6c3375a5f1e4@daynix.com
-> 
-> Changes in v2:
-> - Changed to utilize KVM_REQ_RELOAD_PMU as suggested by Oliver Upton.
-> - Added patch "KVM: arm64: PMU: Reload when user modifies registers"
->   to cover more registers.
-> - Added patch "KVM: arm64: PMU: Set raw values from user to
->   PM{C,I}NTEN{SET,CLR}, PMOVS{SET,CLR}".
-> - Link to v1: https://lore.kernel.org/r/20250302-pmc-v1-1-caff989093dc@daynix.com
-> 
-> ---
-> Akihiko Odaki (5):
->       KVM: arm64: PMU: Set raw values from user to PM{C,I}NTEN{SET,CLR}, PMOVS{SET,CLR}
->       KVM: arm64: PMU: Assume PMU presence in pmu-emul.c
->       KVM: arm64: PMU: Fix SET_ONE_REG for vPMC regs
->       KVM: arm64: PMU: Reload when user modifies registers
->       KVM: arm64: PMU: Reload when resetting
-> 
->  arch/arm64/kvm/arm.c            | 17 ++++++++-----
->  arch/arm64/kvm/emulate-nested.c |  6 +++--
->  arch/arm64/kvm/pmu-emul.c       | 56 +++++++++++------------------------------
->  arch/arm64/kvm/reset.c          |  3 ---
->  arch/arm64/kvm/sys_regs.c       | 52 ++++++++++++++++++++++----------------
->  include/kvm/arm_pmu.h           |  4 +--
->  6 files changed, 62 insertions(+), 76 deletions(-)
+On Sun, Dec 22, 2024 at 9:30=E2=80=AFAM Masahiro Yamada <masahiroy@kernel.o=
+rg> wrote:
+>
+> Commit 654102df2ac2 ("kbuild: add generic support for built-in boot
+> DTBs") introduced generic support for built-in DTBs.
+>
+> Select GENERIC_BUILTIN_DTB to use the generic rule.
+>
+> To keep consistency across architectures, this commit also renames
+> CONFIG_BUILTIN_DTB_SOURCE to CONFIG_BUILTIN_DTB_NAME.
+>
+> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
 
-Reviewed-by: Marc Zyngier <maz@kernel.org>
+Ping?
 
-	M.
 
--- 
-Without deviation from the norm, progress is not possible.
+--=20
+Best Regards
+Masahiro Yamada
 
