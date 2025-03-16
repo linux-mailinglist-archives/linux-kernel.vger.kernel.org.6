@@ -1,107 +1,104 @@
-Return-Path: <linux-kernel+bounces-563159-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563158-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65523A637A4
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 23:00:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D84DCA637A1
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 23:00:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EA1197A313D
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 21:59:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4B523AC475
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 22:00:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4CCB1A5BB1;
-	Sun, 16 Mar 2025 22:00:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A0EF19D8B2;
+	Sun, 16 Mar 2025 22:00:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="F64fGfPf"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Of7IXzZt"
+Received: from out-187.mta1.migadu.com (out-187.mta1.migadu.com [95.215.58.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE7F3E55B;
-	Sun, 16 Mar 2025 22:00:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D68F1E55B
+	for <linux-kernel@vger.kernel.org>; Sun, 16 Mar 2025 22:00:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742162431; cv=none; b=jLWAnV6I0TjpirN+ZQlv9BqX88d8fdNwA8dr7masjkOH0rYJlTztX9xSnjJ2rLOVjX6mv7RiF0MhrTbAoNMD+7SVz+/InFx+OVLkGkG6iusI55e0UVc+gkzgsNUKt4RaX0GRnt0xoqELbrDlPoSSeRtVC6QZX0GPsZsTDGavUVo=
+	t=1742162423; cv=none; b=egPjiat7ZSPgj6TXAH0qz1mb/BVt7ywx0xHmuOh1DVYDF+F2/v9HUFy9Soa7F6ULaHOiuLMkB++tXuGVJ2mZ/0Uzwc+UxYoIp1S/JYX0vnkBKBgdW6gs+J8HeJc2608rl8IYTTCN84sznoMQeEavNLYOrWrE5hW90v5FBRvUlVE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742162431; c=relaxed/simple;
-	bh=o7zpGdGu0Ad4x9pCttu8fl90z7wfztYlivc5mrFbb70=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=YykoH4cDyLMeDWsCbppeGPcdZetgHHK4s9ElmimYg/CLsSXG1n9mjht0qniYdMUHkuIrUbwj0KcYKVb4oi0wVEcpvtp0XR7UZ4bQEYwE+/s7eOyv6QsUKYvvfi/p5yUDzViIfOiWR8Du7ApI8TVDn5wbTGKo8DzLsR5sBLBSb1I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=F64fGfPf; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1742162425;
-	bh=rij+rq8IKVRzSzYf9m7D4yEbFuNkM6glXSwAdilUgso=;
-	h=Date:From:To:Cc:Subject:From;
-	b=F64fGfPfQfuV+Q1RKbjMxeCuoQ4yNhaE2RnjpVa+0I94F0KAGrZidsNCO+hGTBHzB
-	 G3hw59fIC7sHz8BiLdP+qUy9Idi+D+857aoqF1MUYQWe+VXw14JOWitcr+fD8VPjJB
-	 ErHuix8NZJnQoPhnq5M7oVhwEU+znae++C665Wd1z9AsC9B8gRoozRjveD3/W6S5CJ
-	 tbldnoY1ttB0apGhuErHPr5i+tDaitYKn/zDiINOZx9dcQR29BimPUsIQAOVsmNDUt
-	 pxut0LwvtTNHpZCZ5HVkNr9I82fZVaw6HaOLf6YqrfMNjpPz8RVf4gZnPCjuigMH6m
-	 W/634fGzTItXQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZGBqY5lLpz4wcd;
-	Mon, 17 Mar 2025 09:00:25 +1100 (AEDT)
-Date: Mon, 17 Mar 2025 09:00:01 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Dominique Martinet <asmadeus@codewreck.org>
-Cc: Christian Schoenebeck <linux_oss@crudebyte.com>, Linux Kernel Mailing
- List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: Fixes tag needs some work in the v9fs tree
-Message-ID: <20250317090001.2e111aeb@canb.auug.org.au>
+	s=arc-20240116; t=1742162423; c=relaxed/simple;
+	bh=LxbpImp9+fAa7a2gzuLuT0uenEc57/7pMm3uefW/RIc=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=UUGo2Smf2Rmtlcza7qrPRxCuC5M2w1h26ImMJ2O57e3Ic7gGeYk9nFJEeT//Yn8q9cCpb9wkLkmsQVCydjsTvXtC9gMx7WNXEkrHFhLnzpdcXFjXNhZ8NqlkGRl05Dl6+RL3N23l4S0p7iZPKm6mlcPs8zkOn6LwCHKPHsXJQyU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Of7IXzZt; arc=none smtp.client-ip=95.215.58.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <dfe1d14f-1488-4a6b-b864-2b9c23ae16df@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1742162409;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=tDcwEC9Hm/pamSwL5uTliXHBCVufdMY1FDJGGf3nZSY=;
+	b=Of7IXzZtO5BQC2KJ9e4nVhyLrQUpfemzpZDlzQH+WrJoQbXX9jRiqRTOA1MFQELQz9gOeC
+	7/bVpxAswWilO+5UcH/VeoB/fKHnZfIkq1W7KgGOSngKszgKxb4jVINe3kuN7g/Lt8D1SA
+	tgMCuJo2wMfRTubywMApni5OLUVGqxk=
+Date: Sun, 16 Mar 2025 23:00:04 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/OAD929wpWqfNYJqEP9nUb0c";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Marco Pagani <marco.pagani@linux.dev>
+Subject: Re: [PATCH] fpga: fix potential null pointer deref in
+ fpga_mgr_test_img_load_sgt()
+To: Qasim Ijaz <qasdev00@gmail.com>, mdf@kernel.org, hao.wu@intel.com,
+ yilun.xu@intel.com, trix@redhat.com, marpagan@redhat.com,
+ russ.weight@linux.dev
+Cc: linux-fpga@vger.kernel.org, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org
+References: <20250311234509.15523-1-qasdev00@gmail.com>
+Content-Language: en-US
+In-Reply-To: <20250311234509.15523-1-qasdev00@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
---Sig_/OAD929wpWqfNYJqEP9nUb0c
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+On 2025-03-12 00:45, Qasim Ijaz wrote:
+> fpga_mgr_test_img_load_sgt() allocates memory for sgt using
+> kunit_kzalloc() however it does not check if the allocation failed. 
+> It then passes sgt to sg_alloc_table(), which passes it to
+> __sg_alloc_table(). This function calls memset() on sgt in an attempt to
+> zero it out. If the allocation fails then sgt will be NULL and the
+> memset will trigger a NULL pointer dereference.
+> 
+> Fix this by checking the allocation with KUNIT_ASSERT_NOT_ERR_OR_NULL().
+> 
+> Fixes: ccbc1c302115 ("fpga: add an initial KUnit suite for the FPGA Manager")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Qasim Ijaz <qasdev00@gmail.com>
 
-In commit
+Reviewed-by: Marco Pagani <marco.pagani@linux.dev>
 
-  ab63870a22b5 ("fs/9p: fix NULL pointer dereference on mkdir")
+> ---
+>  drivers/fpga/tests/fpga-mgr-test.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/fpga/tests/fpga-mgr-test.c b/drivers/fpga/tests/fpga-mgr-test.c
+> index 9cb37aefbac4..1902ebf5a298 100644
+> --- a/drivers/fpga/tests/fpga-mgr-test.c
+> +++ b/drivers/fpga/tests/fpga-mgr-test.c
+> @@ -263,6 +263,7 @@ static void fpga_mgr_test_img_load_sgt(struct kunit *test)
+>  	img_buf = init_test_buffer(test, IMAGE_SIZE);
+>  
+>  	sgt = kunit_kzalloc(test, sizeof(*sgt), GFP_KERNEL);
+> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, sgt);
+>  	ret = sg_alloc_table(sgt, 1, GFP_KERNEL);
+>  	KUNIT_ASSERT_EQ(test, ret, 0);
+>  	sg_init_one(sgt->sgl, img_buf, IMAGE_SIZE);
 
-Fixes tag
+Thanks,
+Marco
 
-  Fixes: dafbe689736 ('9p fid refcount: cleanup p9_fid_put calls')
-
-has these problem(s):
-
-  - SHA1 should be at least 12 digits long
-    This can be fixed for the future by setting core.abbrev to 12 (or
-    more) or (for git v2.11 or later) just making sure it is not set
-    (or set to "auto").
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/OAD929wpWqfNYJqEP9nUb0c
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfXSeEACgkQAVBC80lX
-0Gyhegf+O1+5l1iG/GDuRjwPQALGbu6TBxFXuie25SdQDAPifas9+4QaTp163Da8
-UgvcCVJDqISJGzFqXbdcqM1rxyP1JKmyotpoI33Ka/uf4h9zCgebLPQWSdKUO9CO
-AkOkURV2Bkqg7HPZUdfsNOClbGklwpLvYecr1We0/fVFpqvTeVcFGJDNuThiEzba
-8ZYY645DoTkEvb8Ap5DeMQWNFy/cVYiqrtpNrAxAKoXZL4nH8zyPVek6qJYMPrpn
-7xKgli0YWVaDXfAJIkCq8dGuV9RjesLd4UxLgHDS7nIhrY5h1S9RZagNCPVFWM1G
-R9jkn4UX7hmZsZuZA6CjRxxVQwgeUw==
-=XjFt
------END PGP SIGNATURE-----
-
---Sig_/OAD929wpWqfNYJqEP9nUb0c--
 
