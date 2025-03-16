@@ -1,78 +1,76 @@
-Return-Path: <linux-kernel+bounces-562954-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562955-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCD23A63518
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 11:39:44 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 966ECA6351C
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 11:47:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F30793AB295
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 10:39:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D637C7A5619
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 10:46:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2155E1A0BE1;
-	Sun, 16 Mar 2025 10:39:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 274C41A23BD;
+	Sun, 16 Mar 2025 10:47:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fjim71t8"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Feyu6Kxi"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7976D19047A;
-	Sun, 16 Mar 2025 10:39:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 825101863E;
+	Sun, 16 Mar 2025 10:47:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742121578; cv=none; b=RktCS9CPlJMFx2QT7GBdSlJXshuxA1aVNmfzaXt2efxyKzdHjB8a05qPlbxYCMPq5/pBGf3Ewk/oeb2Z9OSz8fippl+t64OhX5nn/0g8xq6Xdo8BcUuibt5PLCv8Ei+/h71aHJzrCZ8u+fYJ6+WbJ0YL4C5B3sdtSozx8C/baQU=
+	t=1742122045; cv=none; b=japk8dOF+jQh/fbz9jRQiGZruBoGvpwSfUOLmac/d8bOPvqPruKpJRqJgtb+x3xN0vcjwDOyhiQOMFTFXmT3z5zdHwckus94jgpAD8Fsg/GRVvp8Iz3ub4MGtGPtFHIdH2vnS0oZB7TLE8U3Kwj5xwoUaPwuDh8tMvMXi7ys21E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742121578; c=relaxed/simple;
-	bh=WRJSfItq61nSL1uaK/VCriAnVMB4K0dxbrf6ZjynqHo=;
+	s=arc-20240116; t=1742122045; c=relaxed/simple;
+	bh=g40wBC/fXKGvRF2rw0eGFoa5DqIIeLqIPu1es6A+atI=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rb+WhYUHR8rE9+n35FnOwJyN3aC3ODwmUMrXtsz8O/ULFh6SBPrjUQpXnyJH4LbWc9fXcbxmDQ3xWF9A9oeBEseT3zXjBquYWaQjV/0+HG+TxQWrFyrw9OEEzICqihlC9OmZWuSQFcBRHSqDcKWTkyXLXhdAnForf1XZCX8J0n4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fjim71t8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4DD4BC4CEEA;
-	Sun, 16 Mar 2025 10:39:38 +0000 (UTC)
+	 To:Cc:Content-Type; b=hk/2PMSzvkHgiKkVgzbn8sSULwThFOSa6CaJ1x70fHHf6cBnuz1BtYJndhec1ZvHGsDH1JXG8R7DIpR98Nw03V2qHgYsQiy/JCXmwq/0GJEf+BC4W87LkqM9Gm59cfcy+okO/5VVtV2lg0YWnxCVm/5WrFUyLpL06BF+k/Jh3Lo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Feyu6Kxi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F19DCC4CEDD;
+	Sun, 16 Mar 2025 10:47:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742121578;
-	bh=WRJSfItq61nSL1uaK/VCriAnVMB4K0dxbrf6ZjynqHo=;
+	s=k20201202; t=1742122045;
+	bh=g40wBC/fXKGvRF2rw0eGFoa5DqIIeLqIPu1es6A+atI=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=fjim71t8HPk5uBOq6wbL6gdL2udv+om6C27EvlLbpKtP/SUm5YQ2AWNeQADbyUMhv
-	 GIJogonxHqIg46c2LAUJqDQn9IrKaHALrqqrsreuEJOXmfAAg5gJigXloSN6KxOk+P
-	 YW2ce78ZEFlZoRPSbhpfZsxp27ZGBWZOqbpwN8HmzxPeN5Qj7pt1XAPgbEurPpuLnr
-	 ykMwIhQPJzgznblvQYNm1Wlz/XmzfZ+HGBaIQnfvroA47vamoVrD3GgPFokcLEBfKZ
-	 gSaNMil8kPzwCh0ItLw1nWFFejSBmt+zChDNY0GYAWpcpEQidU268Bmrrf3oMHEmva
-	 y5knBqbF8j1GA==
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-543e4bbcd86so3793834e87.1;
-        Sun, 16 Mar 2025 03:39:38 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWyDhUWWZqfPDb5BHsXcUrfOOqLwnMAIGZYZWcSW+DzVip6JMN/42S0p+jmm72v4ilLp9KULTtAfubK@vger.kernel.org
-X-Gm-Message-State: AOJu0YzgKJoOdNA2StVbgnKkz0yN0DeF17HG0CgcWQjXztqaMHNwd/UW
-	Xtu5c+2m8tLLn2N8rKpcGmg/r23iS1x0t64fgryp/cVctgLfGxZpBuSEl2SHG5lakWTFRkkeQU5
-	75iL9Uav7F0Uh6jpgmVro26fa/is=
-X-Google-Smtp-Source: AGHT+IEB+4diSeexNNNIukQtrloxp6S2TfNrH44RL6u2FM4sGQUkisIda/46HY4MIJsZGhWgkraV5ZpVD2wA2xIY4yE=
-X-Received: by 2002:a05:6512:3c9e:b0:545:22ec:8b6c with SMTP id
- 2adb3069b0e04-549c3989e0bmr3087455e87.35.1742121576996; Sun, 16 Mar 2025
- 03:39:36 -0700 (PDT)
+	b=Feyu6Kxi3Kw/QCYXTp5ZXqIRXN1+vhtQthYJnnBBxZE6eMrJXk6eWRRtxdgmOS7iY
+	 367Lw5FZX7TPwK+lkLsYXAnsrQNhnUPPLtbLqcMPDb947lUFxsRdd0wx/ZrAZywIDJ
+	 qxNAbwyCjrNmymA8tRhasWBKCWHnt6sMKP27ur8fmSXJ2pPOJ8Mqwv5SWOMUuwZWOv
+	 U/5VVyGYV0Xmxyz/r67BXzJzMXSMRu/4o1/naQvtV+mkMtZEeHfX46gp0o4FKA4HO2
+	 PeI9VZqmEFw9a7ofVitgPhi36KN49GTCu0hVCoLxUI3GmC2snSATQoYQtjf6sPFfJm
+	 IjXOmgc0cnKbg==
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-5499d2134e8so4052674e87.0;
+        Sun, 16 Mar 2025 03:47:24 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXFJN9he1ZiHKfYQEWstWC+G4LML3awiMTJoXPcrjsSjArOJKKVlxhv8PDItjZ9NSKKJMJqzCh8WbTC@vger.kernel.org
+X-Gm-Message-State: AOJu0YyAgI+wV8DAx6u803sfgLO5xqn6JcjNJgEdSkRP9w3qUoyNvKEy
+	PVY03ejUpzz8birSVSPKw1KfPTimrYXcLqkPQOiVk9HjgUtRUE7p0TVtUgkoQP9L1JKWssNNDrt
+	VBzazRs1G9ONvXPhgHFiZl8/oX2o=
+X-Google-Smtp-Source: AGHT+IGpE1HVrrNt51l7Ch0DU/040+/i124fZpEgpME/sPck0xr8EQPFkz90zJ8JTmqNGB6wZb5au3VXOWdtsbBf2PY=
+X-Received: by 2002:a05:6512:400c:b0:549:8fd0:b44c with SMTP id
+ 2adb3069b0e04-549c3986cb5mr3069815e87.49.1742122043675; Sun, 16 Mar 2025
+ 03:47:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241222000836.2578171-1-masahiroy@kernel.org>
-In-Reply-To: <20241222000836.2578171-1-masahiroy@kernel.org>
+References: <20241222003057.2582425-1-masahiroy@kernel.org>
+In-Reply-To: <20241222003057.2582425-1-masahiroy@kernel.org>
 From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Sun, 16 Mar 2025 19:39:00 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQMo0R09OcVw77=dyVnUbMv7gxxejHbr=dy4S-SgPT4-g@mail.gmail.com>
-X-Gm-Features: AQ5f1JofVnF26SX2Zmz99VV7kl0SZH5Y8b4vOY2llQA5xgYDjVFvk9kRqjew-ig
-Message-ID: <CAK7LNAQMo0R09OcVw77=dyVnUbMv7gxxejHbr=dy4S-SgPT4-g@mail.gmail.com>
-Subject: Re: [PATCH] riscv: migrate to the generic rule for built-in DTB
-To: Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, linux-riscv@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org, Conor Dooley <conor.dooley@microchip.com>, 
-	Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>, 
-	devicetree@vger.kernel.org
+Date: Sun, 16 Mar 2025 19:46:47 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARbG6ay_O3Go=gze6AA1ZiUCLDuH86bLs=EejpxyDkVgw@mail.gmail.com>
+X-Gm-Features: AQ5f1JrlC2IrFQmw24DxLo6ebUP8bME5ReQdE0msNewCnsczWHLUkxfPbDV-wWE
+Message-ID: <CAK7LNARbG6ay_O3Go=gze6AA1ZiUCLDuH86bLs=EejpxyDkVgw@mail.gmail.com>
+Subject: Re: [PATCH] nios2: migrate to the generic rule for built-in DTB
+To: Dinh Nguyen <dinguyen@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, Dec 22, 2024 at 9:08=E2=80=AFAM Masahiro Yamada <masahiroy@kernel.o=
+On Sun, Dec 22, 2024 at 9:31=E2=80=AFAM Masahiro Yamada <masahiroy@kernel.o=
 rg> wrote:
 >
 > Commit 654102df2ac2 ("kbuild: add generic support for built-in boot
@@ -81,14 +79,13 @@ rg> wrote:
 > Select GENERIC_BUILTIN_DTB when built-in DTB support is enabled.
 >
 > To keep consistency across architectures, this commit also renames
-> CONFIG_BUILTIN_DTB_SOURCE to CONFIG_BUILTIN_DTB_NAME.
+> CONFIG_NIOS2_DTB_SOURCE_BOOL to CONFIG_BUILTIN_DTB, and
+> CONFIG_NIOS2_DTB_SOURCE to CONFIG_BUILTIN_DTB_NAME.
 >
 > Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
-> Acked-by: Conor Dooley <conor.dooley@microchip.com>
 > ---
 
 Ping?
-
 
 
 --=20
