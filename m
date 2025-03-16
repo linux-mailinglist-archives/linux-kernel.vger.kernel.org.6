@@ -1,243 +1,217 @@
-Return-Path: <linux-kernel+bounces-563134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563135-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD9C4A6375B
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 21:22:17 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B12A8A63767
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 21:47:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BFADF7A5C8F
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 20:21:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF34016C191
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 20:47:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C230C1E1DE1;
-	Sun, 16 Mar 2025 20:22:08 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C314E1A08B8
-	for <linux-kernel@vger.kernel.org>; Sun, 16 Mar 2025 20:22:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 567641922DD;
+	Sun, 16 Mar 2025 20:47:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fv/fWxER"
+Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 166FF381C4
+	for <linux-kernel@vger.kernel.org>; Sun, 16 Mar 2025 20:47:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742156528; cv=none; b=fgJLEinx1n6fyaiGC3EIYX/AQp4RMyYn68fdcChSlUORhtvMk9F6YyAaTjd2p1c1gEf+HfBBusMfuCrFCqwTNvyKBN9bJgMlwxN53lF35hzDORYzjNmBToHAoHV9+gjru+bn6rpZr/0Q+t4W5JHiobCKVzdFQZpPopDWwGDTzE8=
+	t=1742158023; cv=none; b=soTM0KOlyqOI831l2vULbtuhaDjqoHZwbyCWtw/OmAVS4NsepCdD9UtLBHgowy7hH51uNQexy/cCNafWideXwr4wccFr2H13J7zQeSXLp76Byj9FoFWOtHYEjlWdtjqw5UPkfPy86+HRieTE6zxnKiLi9I8L6SbkGnelsegxh8A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742156528; c=relaxed/simple;
-	bh=8yOj2yR7LYmL4Pv8j9UTNIDeMexTEJJ+kApyA4aMYL0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BBUg29N4gxmjmvXk3wa3PNFrHBIihf3f/9sh5cRUltAo1vwdRn0SJ6xbgt4nQon/S6oWgAPomM8dx4DVmct1x4cD1xiEpME9YJWS54uXWX2RSnLLgDsXaHI/1eW2Vf0AB8FjuA/JnRdU3zRAhtDx5ED+j+kP5K4tjwwnWRXOeB4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4631B113E;
-	Sun, 16 Mar 2025 13:22:07 -0700 (PDT)
-Received: from [192.168.1.12] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 765153F694;
-	Sun, 16 Mar 2025 13:21:54 -0700 (PDT)
-Message-ID: <b9e0c546-c560-4d84-bc59-6f9f0df53dc1@arm.com>
-Date: Sun, 16 Mar 2025 21:21:42 +0100
+	s=arc-20240116; t=1742158023; c=relaxed/simple;
+	bh=WjOX0W7CUyWm57wp1Ivr70eZeHI8gR9Cum5p2xNGmHI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Content-Type; b=BUo929BsVMI/TmxHiOfRTOdIY14mClv1jR5dR5zIEUCN7I/KjQh8TMhcM3eZJKBLFCtRkKR6J92Gx7fDgejMg+RaBPKI1Lmc2C6tWpF+1mFk/Q5imm/MNqvJwqbRZbDI5rJgBkPc6x2xms3/kH/VhjpOsK6ejAEi8DF8j+yzTDA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fv/fWxER; arc=none smtp.client-ip=209.85.219.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-e5dc299deb4so3540677276.1
+        for <linux-kernel@vger.kernel.org>; Sun, 16 Mar 2025 13:47:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742158021; x=1742762821; darn=vger.kernel.org;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YpQUNmwVK5jHLQezc5R4Z6K7OjXDtGHykFpm0bMm/ps=;
+        b=fv/fWxERmiPul5L3pnIvavj2oIJ+XuGuydow2lrxvUu1M8lHcrTSZIIiPqVoqqK6/8
+         6zT7VD19FkEOnIRcK3SFmBMeHHNXfgohuoSpaB9MjaSvpgpohdGflf6BIC1Ij9mCu1nh
+         QY9Cx1zoEUxN2WqZRzmiHqXO3BooaLLwv2KQp9stken4A7T7bpfRgnxIjob0aqMUonmZ
+         WhJ3uC1YfLdJUPHYeYXdAhBrEbB9pal9+Q4ZpBFPbANlN895w+LdFtdWtyONev/9tDOo
+         FHc50dhKhDzPz5+aDtcrTeo7+8OzDYv6pPKEerq837Z2sd0KFlQEMG7WRlr3M8mZLyk+
+         Ji5g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742158021; x=1742762821;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YpQUNmwVK5jHLQezc5R4Z6K7OjXDtGHykFpm0bMm/ps=;
+        b=X4/Ap3DJtyW+u55+z7x3v61L6f8ZcBbXkMNOdZU7u7jrwn/Ix4pPPc8igEJvBQoube
+         +aIGhubfAsE3enoKzTm1O/vuFSNV2EZcfeUBp5KaAPgEInuIjMlPyVLcTnwa2x823xFp
+         +CL452Vpk+vDFW7TMPVzHKDWRM1j3wLwTaTWfAZRpQqpuxIVSfLVCxy5MZFSFEGn1CyR
+         /1g41b2IpoY64onXAYnokN+7kwqE3wE79Uvq8S+h170MZPHaOZ51qt0QdAUgozmSKsjU
+         T5syOtrp8B4T3LFhJxy0GZOoR7ctXAYdHP6dV+2RroKMOBlO9GAZ8VkZwlRtFpoOndOt
+         fOwg==
+X-Forwarded-Encrypted: i=1; AJvYcCWDDkblOZWrfRpE7qvCkHeEv84D/wzy6wGR8M2wXjLXF7sq0dO3qA9Bf8mwnkgo5Xu3rRg2Xj+TdsHdUSU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8q3QMv1Xvqo9+QpUB/bdndNoE3vQIl50IR9y2Mzb+Ov3pDogD
+	x7zgusIxYUjlzWjEfaa+0iU+//g6xYGD3GS2DYZQfNyezfS8qVWEj8tJXvcYlI7BLteRq5/ethb
+	2FwISkFwgXWG3GZd0hCPR3Qs8HNQ=
+X-Gm-Gg: ASbGncvGEXe5lJahCJ1St9Fdf1EbqS6sg+IMiuCOJaG2qWP6dIMG5J8U6IrcwaDtKec
+	Sv1I3Nsvmb1QiBR91m6cEsA8X5NfYAhqujzpGe1CDuz7egYQRIwvDHDR0ZuEvfBzign9+fuALTp
+	j4iOOPgWJ1OyMbaCCzRnia1Vz7
+X-Google-Smtp-Source: AGHT+IGhYVBn7vR4Knu9i9p1S4VK8hyNoaUSgXFGJfzH1GI7bLCBQBjmUDNC8ud8qNAZI0CQlE/V8lGFiNOUrbF8nOs=
+X-Received: by 2002:a05:6902:490d:b0:e5d:c30f:22ec with SMTP id
+ 3f1490d57ef6-e63f64dcbf3mr14511779276.9.1742158020821; Sun, 16 Mar 2025
+ 13:47:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/7 v5] sched/fair: Rework feec() to use cost instead of
- spare capacity
-To: Vincent Guittot <vincent.guittot@linaro.org>
-Cc: mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
- dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
- mgorman@suse.de, vschneid@redhat.com, lukasz.luba@arm.com,
- rafael.j.wysocki@intel.com, linux-kernel@vger.kernel.org,
- qyousef@layalina.io, hongyan.xia2@arm.com, christian.loehle@arm.com,
- luis.machado@arm.com, qperret@google.com
-References: <20250302210539.1563190-1-vincent.guittot@linaro.org>
- <20250302210539.1563190-4-vincent.guittot@linaro.org>
- <24bc804e-305f-4273-922a-a24070aa3e56@arm.com>
- <CAKfTPtBO_DYM+HK+wWMvunMzDAzHwYghy4ae7GnyQHRe1A8kZg@mail.gmail.com>
-Content-Language: en-US
-From: Pierre Gondois <pierre.gondois@arm.com>
-In-Reply-To: <CAKfTPtBO_DYM+HK+wWMvunMzDAzHwYghy4ae7GnyQHRe1A8kZg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250125064619.8305-1-jim.cromie@gmail.com> <20250125064619.8305-18-jim.cromie@gmail.com>
+ <29ca1dc2-3a21-405f-a9b6-06bea7bd75ae@bootlin.com>
+In-Reply-To: <29ca1dc2-3a21-405f-a9b6-06bea7bd75ae@bootlin.com>
+From: jim.cromie@gmail.com
+Date: Sun, 16 Mar 2025 14:46:35 -0600
+X-Gm-Features: AQ5f1JprR-UJ_0VXd2VsB4dKW3nxrkYe1QDrUeDVJ6N3x3HhjWh_YqIyfWvWlNY
+Message-ID: <CAJfuBxwJ5SgEP15nPpYJbwXi4iDJqVRS9FL8hdkHCkDct=Abrw@mail.gmail.com>
+Subject: Re: [PATCH 17/63] dyndbg: check DYNDBG_CLASSMAP_DEFINE args at compile-time
+To: Louis Chauvet <louis.chauvet@bootlin.com>, Jim Cromie <jim.cromie@gmail.com>, 
+	linux-kernel@vger.kernel.org, jbaron@akamai.com, gregkh@linuxfoundation.org, 
+	ukaszb@chromium.org, intel-gfx-trybot@lists.freedesktop.org, 
+	dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org, 
+	intel-gvt-dev@lists.freedesktop.org, intel-gfx@lists.freedesktop.org, 
+	daniel.vetter@ffwll.ch, tvrtko.ursulin@linux.intel.com, jani.nikula@intel.com, 
+	ville.syrjala@linux.intel.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+On Tue, Feb 25, 2025 at 7:17=E2=80=AFAM Louis Chauvet <louis.chauvet@bootli=
+n.com> wrote:
+>
+>
+>
+> Le 25/01/2025 =C3=A0 07:45, Jim Cromie a =C3=A9crit :
+> > Add __DYNDBG_CLASSMAP_CHECK to implement these arg-checks at compile:
+> >       0 <=3D _base < 63
+> >       class_names is not empty
+> >       class_names[0] is a string
+> >       (class_names.length + _base) < 63
+> >
+> > These compile-time checks will prevent several misuses; 4 such
+> > examples are added to test_dynamic_debug_submod.ko, and will fail
+> > compilation if -DDD_MACRO_ARGCHECK is added to cflags.
+> >
+> > Signed-off-by: Jim Cromie <jim.cromie@gmail.com>
+> > ---
+> > - split static-asserts to __DYNDBG_CLASSMAP_CHECK
+> > - move __DYNDBG_CLASSMAP_CHECK above kdoc for DYNDBG_CLASSMAP_DEFINE
+> >    silences kernel-doc warnings
+> > ---
+> >   include/linux/dynamic_debug.h |  9 +++++++++
+> >   lib/test_dynamic_debug.c      | 11 +++++++++++
+> >   2 files changed, 20 insertions(+)
+> >
+> > diff --git a/include/linux/dynamic_debug.h b/include/linux/dynamic_debu=
+g.h
+> > index dc610a12b91c..2b0c943af330 100644
+> > --- a/include/linux/dynamic_debug.h
+> > +++ b/include/linux/dynamic_debug.h
+> > @@ -99,6 +99,14 @@ struct ddebug_class_map {
+> >       enum ddebug_class_map_type map_type;
+> >   };
+> >
+> > +#define __DYNDBG_CLASSMAP_CHECK(_clnames, _base)                     \
+> > +     static_assert(((_base) >=3D 0 && (_base) < _DPRINTK_CLASS_DFLT), =
+ \
+> > +                   "_base must be in 0..62");                        \
+> > +     static_assert(ARRAY_SIZE(_clnames) > 0,                         \
+> > +                   "classnames array size must be > 0");             \
+> > +     static_assert((ARRAY_SIZE(_clnames) + (_base)) < _DPRINTK_CLASS_D=
+FLT, \
+> > +                   "_base + classnames.length exceeds range")
+> > +
+> >   /**
+> >    * DYNDBG_CLASSMAP_DEFINE - define debug classes used by a module.
+> >    * @_var:   name of the classmap, exported for other modules coordina=
+ted use.
+> > @@ -112,6 +120,7 @@ struct ddebug_class_map {
+> >    */
+> >   #define DYNDBG_CLASSMAP_DEFINE(_var, _mapty, _base, ...)            \
+> >       static const char *_var##_classnames[] =3D { __VA_ARGS__ };      =
+ \
+> > +     __DYNDBG_CLASSMAP_CHECK(_var##_classnames, (_base));            \
+> >       extern struct ddebug_class_map _var;                            \
+> >       struct ddebug_class_map __aligned(8) __used                     \
+> >               __section("__dyndbg_classes") _var =3D {                 =
+ \
+> > diff --git a/lib/test_dynamic_debug.c b/lib/test_dynamic_debug.c
+> > index 1838f62738c4..b1555b0a2bb1 100644
+> > --- a/lib/test_dynamic_debug.c
+> > +++ b/lib/test_dynamic_debug.c
+> > @@ -123,8 +123,19 @@ DYNDBG_CLASSMAP_PARAM(level_num, p);
+> >   DYNDBG_CLASSMAP_USE(map_disjoint_bits);
+> >   DYNDBG_CLASSMAP_USE(map_level_num);
+> >
+> > +#if defined(DD_MACRO_ARGCHECK)
+> > +/*
+> > + * Exersize compile-time arg-checks in DYNDBG_CLASSMAP_DEFINE.
+> > + * These will break compilation.
+> > + */
+> > +DYNDBG_CLASSMAP_DEFINE(fail_base_neg, 0, -1, "NEGATIVE_BASE_ARG");
+> > +DYNDBG_CLASSMAP_DEFINE(fail_base_big, 0, 100, "TOOBIG_BASE_ARG");
+> > +DYNDBG_CLASSMAP_DEFINE(fail_str_type, 0, 0, 1 /* not a string */);
+> > +DYNDBG_CLASSMAP_DEFINE(fail_emptyclass, 0, 0 /* ,empty */);
+>
+> Hi Jim,
+>
+> This test is nice, but can we move it in the *_submod.c directly? They
+> don't need anything from this file.
+>
+
+Hi Louis,
+
+Given my strong preference for continued / justified ifdeffery earlier,
+I will interpret this as move these corner-case tests into the
+submod-only branch.
+
+Im happy to do it, and I see the commit-msg says that specifically,
+but Im not sure what it will improve by moving it.
+I could fix the commit msg instead.
+
+these compile-time tests will break the build,
+so I dont think theyre much good as a CONFIG_ option for example.
+
+So making the breakage submodule specific isnt
+much of a reduction in blast radius, and it only opens the why-submod-only =
+?
+
+Any views or options ?  (both welcomed)
 
 
+> Tested-by: Louis Chauvet <louis.chauvet@bootlin.com>
 
-On 3/14/25 17:24, Vincent Guittot wrote:
-> On Wed, 12 Mar 2025 at 15:09, Pierre Gondois <pierre.gondois@arm.com> wrote:
->>
->> Hello Vincent,
->>
->> On 3/2/25 22:05, Vincent Guittot wrote:
->>> feec() looks for the CPU with highest spare capacity in a PD assuming that
->>> it will be the best CPU from a energy efficiency PoV because it will
->>> require the smallest increase of OPP. Although this is true generally
->>> speaking, this policy also filters some others CPUs which will be as
->>> efficients because of using the same OPP.
->>> In fact, we really care about the cost of the new OPP that will be
->>> selected to handle the waking task. In many cases, several CPUs will end
->>> up selecting the same OPP and as a result using the same energy cost. In
->>> these cases, we can use other metrics to select the best CPU for the same
->>> energy cost.
->>>
->>> Rework feec() to look 1st for the lowest cost in a PD and then the most
->>> performant CPU between CPUs. The cost of the OPP remains the only
->>> comparison criteria between Performance Domains.
->>>
->>> Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
->>> ---
->>>    kernel/sched/fair.c | 466 +++++++++++++++++++++++---------------------
->>>    1 file changed, 246 insertions(+), 220 deletions(-)
->>>
->>> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
->>> index d3d1a2ba6b1a..a9b97bbc085f 100644
->>> --- a/kernel/sched/fair.c
->>> +++ b/kernel/sched/fair.c
->>
->> [...]
->>
->>> +static bool update_best_cpu(struct energy_cpu_stat *target,
->>> +                         struct energy_cpu_stat *min,
->>> +                         int prev, struct sched_domain *sd)
->>>    {
->>> -     unsigned long max_util = eenv_pd_max_util(eenv, pd_cpus, p, dst_cpu);
->>> -     unsigned long busy_time = eenv->pd_busy_time;
->>> -     unsigned long energy;
->>> -
->>> -     if (dst_cpu >= 0)
->>> -             busy_time = min(eenv->pd_cap, busy_time + eenv->task_busy_time);
->>> +     /*  Select the one with the least number of running tasks */
->>> +     if (target->nr_running < min->nr_running)
->>> +             return true;
->>> +     if (target->nr_running > min->nr_running)
->>> +             return false;
->>>
->>> -     energy = em_cpu_energy(pd->em_pd, max_util, busy_time, eenv->cpu_cap);
->>> +     /* Favor previous CPU otherwise */
->>> +     if (target->cpu == prev)
->>> +             return true;
->>> +     if (min->cpu == prev)
->>> +             return false;
->>>
->>> -     trace_sched_compute_energy_tp(p, dst_cpu, energy, max_util, busy_time);
->>> +     /*
->>> +      * Choose CPU with lowest contention. One might want to consider load
->>> +      * instead of runnable but we are supposed to not be overutilized so
->>> +      * there is enough compute capacity for everybody.
->>> +      */
->>
->> I'm not sure I understand the comment. With UCLAMP_MAX tasks, a CPU can lack
->> compute capacity while not being tagged as overutilized. IIUC this is actually
->> the goal of UCLAMP_MAX.
-> 
-> the uclamp_max says that the task doesn't need more than a compute
-> capacity of 1 so there is no lack
+ack!
 
-If UCLAMP_MAX was a bandwidth hint and the task was requesting 1/1024 ~= 0.1%
-of the bandwidth, then effectively there would be no lack.
-However if this is a performance hint, then the CPU will run at the lowest
-available performance level of the CPU. I don't think there is any guarantee
-on the bandwidth in that case.
-
-> 
->>
->> With the following workload:
->> - 2 tasks A with duty_cycle=30%, UCLAMP_MIN/MAX=(0,1), niceness=0
->> - 2 tasks B with duty_cycle=70%, UCLAMP_MIN/MAX=(0,1), niceness=-10
-> 
-> Does the duty cycle make any difference here ? they won't be able to
-> run 30% or 70% anyway because of their uclamp_max, will they ?
-
-No indeed, this will make no difference.
-
-> 
->> The workload runs on a Pixel6 with a reduced cpuset of [1,2,7], i.e. 2 little
->> CPUs (1,2) capa=160 and one big CPU (7) capa=1024.
->> CPU7 is avoided by the tasks as their UCLAMP_MAX setting make them fit on the
->> little CPUs.
->>
->> select_best_cpu() prefers to place tasks based on nr_running. If the 2 tasks A
->> end up being placed on one little CPU, and the 2 tasks B are placed on the
->> other little CPU, feec() is theoretically unable to balance the workload.
-> 
-> They will all have 80 compute capacity which is more than their uclamp_max= 1
-
-Cf. above, if UCLAMP_MAX is a performance hint, then there should be no guarantee
-on the received bandwidth. If we take the same example with UCLAMP_MAX=81, then
-this should still hold. However the received bandwidth will be of 80 util.
-
-(Small note that with UCLAMP_MAX=1, the little CPUs should run at a performance
-level lower than 160. But the example should still hold if the little CPUs only
-have one OPP at 160.)
-
-------
-
-To go further in that direction, balancing with the number of tasks + runnable
-seems like a similar version of the load balancer's group_overloaded case. We're
-trying to share the bandwidth equally among UCLAMP_MAX tasks, but without taking
-into account the niceness of tasks.
-EAS didn't have to handle the case of compute capacity shortage until UCLAMP_MAX
-came in: EAS was only active when there was enough compute capacity due to the
-overutilized threshold.
-
-Doing load balancing among UCLAMP_MAX tasks in feec() seems like a complex
-exercise: what if the pd topology is: 2 little CPUs + 2 little CPUs + 1 big CPU.
-AFAICS, UCLAMP_MAX tasks could all start on one of the little CPUs' pd and never
-be balanced toward the second little CPU's pd as we are looking for the CPU with
-the lowest #tasks inside one pd (assuming that all little CPUs are running at
-the same, lowest OPP).
-
-> 
->> In practice, a kworker ends up spawning on one of these 2 little CPUs and tasks
->> are shuffled, so the pattern breaks after ~30ms.
->>
->> This pattern seems problematic as tasks A are:
->> - smaller (30% < 70%)
->> - nicer (0 > -10)
->> than tasks B. So I assume the correct task placement should be one task of each
->> type on each little CPU.
->>
->> ------
->>
->> There are some comments in the load balancer code:
->> 1.
->> /* Computing avg_load makes sense only when group is overloaded */
->> 2.
->> /*
->> * Computing avg_load makes sense only when group is fully busy or
->> * overloaded
->> */
->>
->> IIUC, the load is only meaningful when there is not enough compute capacity
->> to estimate the task size, otherwise util_avg makes more sense. It seems that
->> when it comes to UCLAMP_MAX task, CPUs are placed in this exact situation:
->> load_avg makes more sense that util_avg.
->> However, in this situation, energy computations also lose sense since they
->> are based on the util_avg values.
->>
->> ------
->>
->> select_best_cpu() could check the CPU load before checking nr_running, but it
->> would be meaningless if there is enough CPU time for all the tasks.
->>
->> Maybe CPU load should then be checked only if the system doesn't have enough
->> CPU time. But this would be equivalent to:
->> - remove UCLAMP_MAX in cpu_overutilized()
->> - when the system is overutilized (no UCLAMP_MAX involved), go back to the
->>     load balancer
->>
->> In other words, I don't really see how it is possible to reconciliate UCLAMP_MAX
->> tasks with EAS as EAS relies on util_avg values, and UCLAMP_MAX forces to
->> rely on load_avg value rather than util_avg.
->>
->> Regards,
->> Pierre
->>
->>
->>> +     if ((target->runnable * min->capa * sd->imbalance_pct) >=
->>> +                     (min->runnable * target->capa * 100))
->>> +             return false;
->>>
->>> -     return energy;
->>> +     return true;
->>>    }
+> Thanks,
+> Louis Chauvet
+>
+> >   #endif
+> >
+> > +#endif /* TEST_DYNAMIC_DEBUG_SUBMOD */
+> > +
+> >   /* stand-in for all pr_debug etc */
+> >   #define prdbg(SYM) __pr_debug_cls(SYM, #SYM " msg\n")
+> >
+>
+> --
+> Louis Chauvet, Bootlin
+> Embedded Linux and Kernel engineering
+> https://bootlin.com
+>
 
