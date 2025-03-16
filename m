@@ -1,138 +1,108 @@
-Return-Path: <linux-kernel+bounces-562970-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562971-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 266C0A63536
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 12:08:20 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D59E3A63537
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 12:10:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9A3FD7A2B17
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 11:07:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C65EC189115A
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 11:10:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22C7E19D083;
-	Sun, 16 Mar 2025 11:08:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2E2A1A00ED;
+	Sun, 16 Mar 2025 11:09:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ULXG1b7T"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lZHCPNnE"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FDDD18DB26;
-	Sun, 16 Mar 2025 11:08:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EB7B18DB26
+	for <linux-kernel@vger.kernel.org>; Sun, 16 Mar 2025 11:09:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742123290; cv=none; b=SD03f1UgAeD0QOQT+bjqxeL2MhEU3hTZu0UlZKbbXJjAw8j3Pj3wXmY/zz5/zCZep7S2etMI/MJZZWNJCIi4x6BnrVTOlIfZItMhvam0ZEmt1AvCzejJSOF4ThzfbciuuGfxfAkjkSXTXaeOEZVZRTIRIQTwEOVq3ZvDBM1EHNw=
+	t=1742123394; cv=none; b=tGohp64hdFFABRcYJ5lQPwSpk9SvrXV4wPRDMNq+GK35nShMxBZXJCPvPdWtw/qbb6Y9adDGOXGuXyrvhuZK+/y0vn8AtH+Jw5Bdna+1ImwhewjpvUPSbrtlFV8Vw/Siz4+QKkDn7UdL/0X+bBAYmmTrOr4GOMzT78sbjUJyXA0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742123290; c=relaxed/simple;
-	bh=NBzY1wPmskDl9cnCIedvm7cu6kUE8imKPYGTjUERKcE=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=XrCUxE7eHw9dngmBRaJ6BDfnh8UNPhpEjthphFA6ljSJgMviJhxFVun5tFfmyv1Xw1VasU3IdlABVACocIGLnE2Yx5LAndab+hOVFvvh864KkqXOAlvq6a4cCAwNCWx3aTMBDWD2mbq93DtSyT9jqp0scvF7YWuCvmf2BO6y7/A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ULXG1b7T; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01F91C4CEDD;
-	Sun, 16 Mar 2025 11:08:10 +0000 (UTC)
+	s=arc-20240116; t=1742123394; c=relaxed/simple;
+	bh=MARhnJAvoJ9ft2vOYGJqq+TRPh81ckz7rOEOOqiojP4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=E0ghfDBBkwc+b6tsN2bN+bcTmI0h/QA0LX5fqjBaoWWCgKHabo6n6OFgwPpDjemF1M1gRuukkK9quQgAPOWu9jLtCa2ZNLx0I5aMKderCs4HtTJ9UvxJ+hmaW6UbhLRgmh27O9ftYzpRiG1Ugb48sNv02RuO96KO9yegImTNHUA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lZHCPNnE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33011C4CEDD;
+	Sun, 16 Mar 2025 11:09:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742123290;
-	bh=NBzY1wPmskDl9cnCIedvm7cu6kUE8imKPYGTjUERKcE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=ULXG1b7TIrcR2/kS1cAnQcp2cr+CTaakEWygYDzP0MoDR5pWybAMDvMrLKnX12gNi
-	 JHRB+l4XPhcfvAYMBBZUBJwLEyS3F7zY9YHObZOa21M04kJTbpOhisbLQ8kRyoABqt
-	 QMudRWLKALfzfoicm0wGfleRXUGugW+RIoIXiLtSY3oDh6rj6LmRcI5zUig5VFAI7n
-	 egyzTvBocHDhpki6AbZh1jCxd7MRRPR6mpCNAo3xTL+5eDU4naD9US41Aw3hRQ+3gE
-	 oyj7v12vels3V9EqmtaSwlkMkqmdtC82XviHesiB7E6mXkz2IFCm6FGHokRJDCQXUw
-	 4SAMa4Ujurfog==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1ttlqh-00DyQJ-Sm;
-	Sun, 16 Mar 2025 11:08:07 +0000
-Date: Sun, 16 Mar 2025 11:08:06 +0000
-Message-ID: <865xk9nsh5.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Quentin Perret <qperret@google.com>
-Cc: Oliver Upton <oliver.upton@linux.dev>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Vincent Donnefort <vdonnefort@google.com>,
-	linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/6] KVM: arm64: Move hyp state to hyp_vmemmap
-In-Reply-To: <Z9Q3-FM-QwiIn9gh@google.com>
-References: <20250227003310.367350-1-qperret@google.com>
-	<20250227003310.367350-5-qperret@google.com>
-	<86bju3onl3.wl-maz@kernel.org>
-	<Z9Q3-FM-QwiIn9gh@google.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=k20201202; t=1742123393;
+	bh=MARhnJAvoJ9ft2vOYGJqq+TRPh81ckz7rOEOOqiojP4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lZHCPNnEReTHtfDTun9LmQt7ovVrkUEHnQ4f06ROidLq/PSKeBt1qjHLU8MoQEHqE
+	 pIMygPEfV1InrpJEzioEcRJoUL3i7Bv1fMbXN/bMs3cWJgFm5o32GB8j3ZEs+Fyt37
+	 bRW33WTrZ9iPXyyG0FdLkgX5opiFcMe8pxWRq0BDd/uPVZIcy22SS9mxxoqHY7q+Uc
+	 WZ8MfL4Nlo+X1VTNvMQB6oylL08cLA0bwqmVfZIkoxq3/6o3Hr1cmGypKR+XAzWkPI
+	 xWrHi8KjiM/fKfoT/bFppLLGG7sw4r4gAn/amEyHqMTmW2DJM64x9nNqEhvkdWrWem
+	 zmiG6SP/z8qTg==
+Date: Sun, 16 Mar 2025 12:09:47 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: Herton Krzesinski <hkrzesin@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, x86@kernel.org,
+	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+	dave.hansen@linux.intel.com, hpa@zytor.com,
+	linux-kernel@vger.kernel.org, olichtne@redhat.com,
+	atomasov@redhat.com, aokuliar@redhat.com
+Subject: Re: [PATCH] x86: add back the alignment of the destination to 8
+ bytes in copy_user_generic()
+Message-ID: <Z9axe9Ac5biyJjCC@gmail.com>
+References: <20250314175309.2263997-1-herton@redhat.com>
+ <20250314175309.2263997-2-herton@redhat.com>
+ <CAHk-=wj2MhDH_zjnyrUhYUf3ZqokC-jKSeRp9G6GnhwFU9z+Hg@mail.gmail.com>
+ <CAJmZWFFVL++yU1XJLkXSck=GRQXiim16xVSvdxjq1k=c=Aaiqg@mail.gmail.com>
+ <Z9au20vtMSXCbdXu@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: qperret@google.com, oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, catalin.marinas@arm.com, will@kernel.org, vdonnefort@google.com, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z9au20vtMSXCbdXu@gmail.com>
 
-On Fri, 14 Mar 2025 14:06:48 +0000,
-Quentin Perret <qperret@google.com> wrote:
-> 
-> On Friday 14 Mar 2025 at 11:31:36 (+0000), Marc Zyngier wrote:
-> > On Thu, 27 Feb 2025 00:33:08 +0000,
-> > Quentin Perret <qperret@google.com> wrote:
-> > > @@ -698,13 +697,13 @@ int __pkvm_host_share_hyp(u64 pfn)
-> > >  	if (ret)
-> > >  		goto unlock;
-> > >  	if (IS_ENABLED(CONFIG_NVHE_EL2_DEBUG)) {
-> > > -		ret = __hyp_check_page_state_range((u64)virt, size, PKVM_NOPAGE);
-> > > +		ret = __hyp_check_page_state_range(phys, size, PKVM_NOPAGE);
+
+* Ingo Molnar <mingo@kernel.org> wrote:
+
+> > It does look good in my testing here, I built same kernel I was 
+> > using for testing the original patch (based on 6.14-rc6), this is 
+> > one of the results I got in one of the runs testing on the same 
+> > machine:
 > > 
-> > OK, I think I finally clicked here. Does it mean that all the tracking
-> > is now done in terms of PAs instead of VAs?
-> 
-> Yep, that's exactly that. The hyp_vmemmap is indexed by pfn, so I felt
-> that the conversion to a PA-based tracking made sense. That also make it
-> clear that the 'hyp state' is not a property of a mapping, but really of
-> the underlying physical page.
-
-It indeed makes sense. It is just that it took me some time to realise
-the extent of the change.
-
-> 
-> > >  		if (ret)
-> > >  			goto unlock;
-> > >  	}
-> > >  
-> > > -	prot = pkvm_mkstate(PAGE_HYP, PKVM_PAGE_SHARED_BORROWED);
-> > > -	WARN_ON(pkvm_create_mappings_locked(virt, virt + size, prot));
-> > > +	__hyp_set_page_state_range(phys, size, PKVM_PAGE_SHARED_BORROWED);
-> > > +	WARN_ON(pkvm_create_mappings_locked(virt, virt + size, PAGE_HYP));
+> >              CPU      RATE          SYS          TIME     sender-receiver
+> > Server bind   19: 20.8Gbits/sec 14.832313000 20.863476111 75.4%-89.2%
+> > Server bind   21: 18.0Gbits/sec 18.705221000 23.996913032 80.8%-89.7%
+> > Server bind   23: 20.1Gbits/sec 15.331761000 21.536657212 75.0%-89.7%
+> > Server bind none: 24.1Gbits/sec 14.164226000 18.043132731 82.3%-87.1%
 > > 
-> > And this is the split between the state now being kept in the on a PA
-> > base and the actual mapping that is now only takes the page attributes
-> > and no SW bits?
+> > There are still some variations between runs, which is expected as 
+> > was the same when I tested my patch or in the not aligned case, but 
+> > it's consistently better/higher than the no align case. Looks 
+> > really it's sufficient to align for the higher than or equal 64 
+> > bytes copy case.
 > 
-> Precisely, and the next patch in this series takes advantage of the
-> fact that we're now de-correlating the hyp state from the presence of a
-> hyp s1 mapping in the linear map range. In the future there'll be more
-> use-cases for this I think (e.g. the hyp allocator where we'll have
-> pages owned by the hypervisor but only mapped in the 'private' range,
-> things like that).
+> Mind sending a v2 patch with a changelog and these benchmark numbers 
+> added in, and perhaps a Co-developed-by tag with Linus or so?
 
-Yup, that's probably the correct direction of travel. The hypervisor
-shouldn't need to map everything -- quite the opposite actually.
+BTW., if you have a test system available, it would be nice to test a 
+server CPU in the Intel spectrum as well. (For completeness mostly, I'd 
+not expect there to be as much alignment sensitivity.)
+
+The CPU you tested, AMD Epyc 7742 was launched ~6 years ago so it's 
+still within the window of microarchitectures we care about. An Intel 
+test would be nice from a similar timeframe as well. Older is probably 
+better in this case, but not too old. :-)
+
+( Note that the Intel test is not required to apply the fix IMO - we 
+  did change alignment patterns ~2 years ago in a5624566431d which 
+  regressed. )
 
 Thanks,
 
-	M.
-
--- 
-Without deviation from the norm, progress is not possible.
+	Ingo
 
