@@ -1,102 +1,114 @@
-Return-Path: <linux-kernel+bounces-563050-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563051-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1D24A6363A
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 16:27:35 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF649A63654
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 16:49:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 135D3188EB6E
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 15:27:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 05C73168957
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 15:49:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C56F1BC07E;
-	Sun, 16 Mar 2025 15:27:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D51A21C8616;
+	Sun, 16 Mar 2025 15:48:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=temperror (0-bit key) header.d=aruba.it header.i=@aruba.it header.b="BrNurQvJ"
-Received: from smtpcmd01-sp1.aruba.it (smtpcmd01-sp1.aruba.it [62.149.158.218])
+	dkim=pass (2048-bit key) header.d=ethancedwards.com header.i=@ethancedwards.com header.b="0YOk6I6d"
+Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F69F170A23
-	for <linux-kernel@vger.kernel.org>; Sun, 16 Mar 2025 15:27:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.149.158.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF9481AC891;
+	Sun, 16 Mar 2025 15:48:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742138849; cv=none; b=MBVhnTulyef9N+oXk6kox9wlLPWm0VnxoKRy2K42uhRzis/udnDZBp17xnJoVoTviMFaTppX5nSq3M3zRai1WwusfBKR09BjCFw2Xsvn+AYndkwPLcc/ZCT6YSDrXsx2EQ+2D5FG9uDvP7GQeyKAiy86rPRNZo1ifG6sy8mejKE=
+	t=1742140133; cv=none; b=Mb+MDv5nLxMAWcwdw/nOwP0dWNJi8yU1nvFslXhvn5EbxxjlzeLoPoVF82RrTC12XFeSD1ePVG7bp6DyfAGx3fyEgQ9lJbTCEYiN5MmoN6GUtn71zaVvYUPgEhLhQmepAmAiPHBY3IjzTfEFSCaEXQgqisuEbPjjiJYVfLWeGvM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742138849; c=relaxed/simple;
-	bh=xIAGR3rTi2VFs5vz6FaMb4UDqr6c1u8chTvVITD6Rbk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PDHSl8tqA3Uu21A42Dul5k+YY+A6JNSU3mBXaA9ssUw7QflfvmEesUwcIgm+cExFl81rGx+kSyhv7emjZygwkCiWbSSb3btzSbFPIcvdK4sY+NghK/eJool5DQkfR3jorBSIzd8YTYNkM7hhZqCyDA4/JoCH6kMfJfmbnMlyuZ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=enneenne.com; spf=pass smtp.mailfrom=enneenne.com; dkim=temperror (0-bit key) header.d=aruba.it header.i=@aruba.it header.b=BrNurQvJ; arc=none smtp.client-ip=62.149.158.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=enneenne.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=enneenne.com
-Received: from [192.168.1.58] ([79.0.204.227])
-	by Aruba SMTP with ESMTPSA
-	id tpqXtGvZHRBkHtpqYtwISJ; Sun, 16 Mar 2025 16:24:14 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=aruba.it; s=a1;
-	t=1742138654; bh=xIAGR3rTi2VFs5vz6FaMb4UDqr6c1u8chTvVITD6Rbk=;
-	h=Date:MIME-Version:Subject:To:From:Content-Type;
-	b=BrNurQvJizAP8V6GaOcxRxujYl+aZmk6563V0x6NNGNZD8Y/H+wB+gt1SLSMfBYam
-	 DMXFrUQArNy440RM1kXnUyVm7Tl7d1wsMG2t0BoTuyffpzs/ODWza3EZeLTpXBZd0O
-	 PT3IAK8Md7wnpZqhqZKpdaACnvtQJwJB6qV9pfSaKvTw+J5QKmqQzwalzh4H5QWP8Z
-	 soM40yy11eMoGNwqXLKmgJ8eO3rOfebhsUDdcJ/bSFDYab1dYp80R/p6TYezYw/zO/
-	 nSIyrYznmOT5AQbwc91i8KkGXks7G3BhjLvkJY652n/qqL2u0Kla3QdPxd8G80+tS6
-	 p8qecIsBRjq2g==
-Message-ID: <6939b245-3ff9-431e-8acb-68fed13d276d@enneenne.com>
-Date: Sun, 16 Mar 2025 16:24:13 +0100
+	s=arc-20240116; t=1742140133; c=relaxed/simple;
+	bh=nVwvsxhqemfhzZHbyu4iQC8Ag3suhWEKRvZ3GIQtyko=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dkP9GW4XvFeoH28vyQA1k8tRIMOq/CoOHK5k+oRoyNKghlaahuEaFdij+CPEeZz9xJp+4X1Cmg4xz2ImW/0r1qfhGSvnELe8kZV2BkyrBPq2kivY3YnWBJHkRDNhLmv8mbZoYGTLQbx/vQ3MPRPIX5wicgVEHpPzD78iwLYvsaU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ethancedwards.com; spf=pass smtp.mailfrom=ethancedwards.com; dkim=pass (2048-bit key) header.d=ethancedwards.com header.i=@ethancedwards.com header.b=0YOk6I6d; arc=none smtp.client-ip=80.241.56.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ethancedwards.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ethancedwards.com
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4ZG2Zd2n8Bz9sDg;
+	Sun, 16 Mar 2025 16:48:41 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ethancedwards.com;
+	s=MBO0001; t=1742140121;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rzQ7h6Xch89+C3wonmv8OV6q+gZlnJyorvZRHbRI6uE=;
+	b=0YOk6I6d6bLuJMQgfGkRqV7DBSP8uOeBYnNyI1cftjFkfnOA8tjMkTU02GBzW52GubZoN0
+	mNi2b3ovxdQVsG6RwJyGfj8NeT1k7HR1HRHfvWIGi8N6Df21a1SK/atmr8dTI/ZmLh8P97
+	huSN9+MrnUIeENoc92xzN2X1JDzJghWvgqvcslzscOOOa9VnYmKVG2y4thfnrrbNHLyRSo
+	6t+NWYr8fCRKDL/5QVTa37QKkMu8mAkDtSj8pERcxsyOznSLHnGAAwMcmox/MMljCNfF1d
+	oK1tBinoZRc5lvL7+64BHWzXbcz38sZrVfd6f45Yy26g+Q8Mt9SFmXoNF+gJJQ==
+Date: Sun, 16 Mar 2025 11:48:36 -0400
+From: Ethan Carter Edwards <ethan@ethancedwards.com>
+To: Aditya Garg <gargaditya08@live.com>
+Cc: Ernesto =?utf-8?Q?A=2E_Fern=C3=A1ndez?= <ernesto.mnd.fernandez@gmail.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "tytso@mit.edu" <tytso@mit.edu>, 
+	"dan.carpenter@linaro.org" <dan.carpenter@linaro.org>, "sven@svenpeter.dev" <sven@svenpeter.dev>, 
+	"ernesto@corellium.com" <ernesto@corellium.com>, "willy@infradead.org" <willy@infradead.org>, 
+	"asahi@lists.linux.dev" <asahi@lists.linux.dev>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, "linux-staging@lists.linux.dev" <linux-staging@lists.linux.dev>
+Subject: Re: [RFC PATCH 0/8] staging: apfs: init APFS module
+Message-ID: <tj47jlgexcqk3uri2l5crvvz6ujr3yfoqaphnrhabkzmzisp4a@upd76hg7dgco>
+References: <20250314-apfs-v1-0-ddfaa6836b5c@ethancedwards.com>
+ <20250316033133.GA4963@eaf>
+ <5EFFE468-D901-4E24-8C17-370DD232C019@live.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] pps: generators: tio: fix platform_set_drvdata()
-Content-Language: en-US
-To: Raag Jadav <raag.jadav@intel.com>, gregkh@linuxfoundation.org,
- andriy.shevchenko@linux.intel.com
-Cc: linux-kernel@vger.kernel.org
-References: <20250315133140.1707949-1-raag.jadav@intel.com>
-From: Rodolfo Giometti <giometti@enneenne.com>
-In-Reply-To: <20250315133140.1707949-1-raag.jadav@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4xfFF9KlROu73GmuCAIeu9k8paF3bO90ei+ggKlOG70X3qYklfv1jeYjNmxwibJ0DC6GVjTL1fukf7Ewb44RC+CgCPiuQPkexLGLu8r6UR8fDKYC6LOBpC
- e0JqTLVf0/oDC8QNHEXOpZSXha9BQthyc/pwbmUdaw1wrJ+RALrkx+BikLeqjX3DmvzRvvAOBmShudnoUwPPa3WGe8YLDmDoIlhEGFx1iFguWGxPXItrrMVG
- CydqtI65y4zW2zK9jH6vX8XKzPs70IIMWXzVbtNlmBGqsApqTtaWQwkkSIfElSdOz/s2BFdNGaP1E9eqalA4Sw==
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <5EFFE468-D901-4E24-8C17-370DD232C019@live.com>
+X-Rspamd-Queue-Id: 4ZG2Zd2n8Bz9sDg
 
-On 15/03/25 14:31, Raag Jadav wrote:
-> Set driver_data correctly and fix illegal memory access on driver reload.
+On 25/03/16 06:31AM, Aditya Garg wrote:
 > 
-> Fixes: c89755d1111f ("pps: generators: Add PPS Generator TIO Driver")
-> Signed-off-by: Raag Jadav <raag.jadav@intel.com>
-
-Acked-by: Rodolfo Giometti <giometti@enneenne.com>
-
-> ---
->   drivers/pps/generators/pps_gen_tio.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/drivers/pps/generators/pps_gen_tio.c b/drivers/pps/generators/pps_gen_tio.c
-> index 6c46b46c66cd..6e4a383957d9 100644
-> --- a/drivers/pps/generators/pps_gen_tio.c
-> +++ b/drivers/pps/generators/pps_gen_tio.c
-> @@ -230,7 +230,7 @@ static int pps_gen_tio_probe(struct platform_device *pdev)
->   	hrtimer_init(&tio->timer, CLOCK_REALTIME, HRTIMER_MODE_ABS);
->   	tio->timer.function = hrtimer_callback;
->   	spin_lock_init(&tio->lock);
-> -	platform_set_drvdata(pdev, &tio);
-> +	platform_set_drvdata(pdev, tio);
->   
->   	return 0;
->   }
+> > On 16 Mar 2025, at 9:01 AM, Ernesto A. Fernández <ernesto.mnd.fernandez@gmail.com> wrote:
+> > 
+> > Hi Ethan,
+> > 
+> > I'm happy to see your enthusiasm for my driver but, if you want to help, I
+> > think you should simply send the changes you have in mind to the out-of-tree
+> > repo. That way you'll start learning the codebase while I can review your
+> > work and run xfstests for you. Filesystems are very dangerous things; I've
+> > probably done a lot of damage myself back in the day trying to help out with
+> > the hfs drivers.
+> > 
+> > As for upstreaming, the driver still has a few rough edges, but I don't
+> > think that's the real reason I never tried to submit. I'm just no longer
+> > confident that filesystem compatibility is a reasonable goal, and I don't
+> > expect much interest from reviewers. There are too many risks, and too many
+> > hardware restrictions these days; regular users have much easier (even if
+> > slower) ways to move their files around. Other uses exist of course (like
+> > Aditya can explain), but they are a bit esoteric. Of course if upstream
+> > people disagree, and they do want the apfs support, I will be glad to
+> > prepare a patch series.
 > 
-> base-commit: 6f119e3da79ce5e586340059403ab77201c1bb45
+> As far as I can tell, in case of upstreaming, making the FS readonly is worth it.
 
--- 
-GNU/Linux Solutions                  e-mail: giometti@enneenne.com
-Linux Device Driver                          giometti@linux.it
-Embedded Systems                     phone:  +39 349 2432127
-UNIX programming
+Definitely. I agree. From my understanding, and Ernesto, correct me if I
+am wrong, but write is not explicity enabled unless mounted as so, unless
+the module is compiled with CONFIG_APFS_RW_ALWAYS. I enabled this by
+default in the previous patch set, but we could definitely add a Kconfig
+/Kbuild option for it.
+
+> 
+> Writes, I won’t comment. Maybe add option to force them, just like it is rn, old just remove
+> the whole code. The second option IMO would require quite a lot of work from your side.
+> 
 
 
