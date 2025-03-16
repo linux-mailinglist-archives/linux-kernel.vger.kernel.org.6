@@ -1,109 +1,129 @@
-Return-Path: <linux-kernel+bounces-563077-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563078-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E041A636BA
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 18:14:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B01EA636BD
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 18:17:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D857188FE99
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 17:14:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B2623A5971
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 17:17:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01EDF1C84C9;
-	Sun, 16 Mar 2025 17:13:56 +0000 (UTC)
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78DC11B4132;
+	Sun, 16 Mar 2025 17:17:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="I8tZ6FN9"
+Received: from out30-119.freemail.mail.aliyun.com (out30-119.freemail.mail.aliyun.com [115.124.30.119])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A07A18CC1C
-	for <linux-kernel@vger.kernel.org>; Sun, 16 Mar 2025 17:13:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6392814293
+	for <linux-kernel@vger.kernel.org>; Sun, 16 Mar 2025 17:17:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.119
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742145235; cv=none; b=bBsLfH17oFG+rVG0kG9N10bghm8VeDdSRw9HGUTfFqqtYaUXfn5QgF71KfIEL0SUkwu/lQ697xaYorswWYKzAG+5MoOBlCUc3Ks46qWIBM7Nmiwtb3s3ObyRzcwcwOPMqu+8cTB5wBm3bNxggWJYF1PggMDuhgBXPUtH3ojkv9o=
+	t=1742145440; cv=none; b=av5pCH1UhMW3xxn0IoluXso2pVQ150Rg5oLyfvJBbWzHxxRQ4RBieBecuaTNDcRixLRHgWTUkct8jiMVD0JXEtCnENldePHbvD7Ef+v1qI41Wyq1W8Yl9F9pTKd4Vq2QCwWYg2YgG8YZKYrNgIAKSUKys+9nLOXnhYWbMHroKko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742145235; c=relaxed/simple;
-	bh=H3PzNC3xIhl0GKYFcLaLS3yXa7lBJR6UI7k7WiHNrxQ=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version; b=UuLWFdlkV0p0cCaGl80YEsBycyLC572vLlWbgpOcsgOlRITbErEpOGpYt//b8ZRWXqUO8B00qhdjbFlZMYL2hD08SELFxNpTmY9F0CJaY5POIYsWfJ48z0CT9RS25zvyHbxKqUXOSa52LiNiQWROF/6RYdh1usTzogUVpeIRi58=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-43cfa7e7f54so7040165e9.1
-        for <linux-kernel@vger.kernel.org>; Sun, 16 Mar 2025 10:13:53 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742145232; x=1742750032;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ODFreraoz8xwp2joxLm36YvpQAUecMaSczh29u2bx2Q=;
-        b=FAUIoFa2LnlI71KH5W6EPZYB6d+j5kpDyyeUn0V9uxped6blS7tTvoXqVmr3uJvtNN
-         r0bxAyPQ9OUvyjP3v5B24f+rsZxouCOaLgBCi6eR5cBkfFyqaqTNJ+rQwomRMAqpVI2G
-         9catIpLO0367floAt/KBYS+O8R3dfdzwd0kCAZVuncZZkDPiN13HfS8cQfVmtGMZmdEm
-         soD4GZhFjsxP7fMkiZeN0W0cJKTvoVtFH7NG4i8Y6q4F5tcku2qETkqB9gnaPHHNiuvd
-         dJZr9uzRk2tO7M5OIlN02CGY1x4+yooF6lqQO08FwNwGv8pfgK62zVRPyYUTeS7Ese6o
-         HcWg==
-X-Forwarded-Encrypted: i=1; AJvYcCWm6enEWY1ul75uADDCggzGYsz0HJjBctd/+xTmmYayxMZn070x5gzGX+T4gYfDl033KloAhMYmC1UyI/s=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx8j3iohAFKVh/PLQDdm5bHzwp2WU5ytLcPBqykIWiqMCCWJOrP
-	Ewd4mvuwrMgCsBEPfkdFj1yb5OQCZlFUbTm14wpc4QQ0ltp8F7Q4
-X-Gm-Gg: ASbGnctTISwYcfvspzKdvuEs2IxI+9qS5ySthZwDDNB4V1jDxclfMiKhVHWmDMYjbfY
-	04rs8CkVXQg5eE6wCL+AdfgUgStt7VhuBpYhKXARLiUEg0fHMe3GwYMTeGSr7nDoChHqROHMvpd
-	9Phpt0zjVghTjEAg7z8p3rCSDYNRiy0sg+TYxE05PatdmuQhoiq/M7rAQbGoBNQyJD6qj5SNDw0
-	QUAYcWadR1REaSy3gIw5BvAc5dDrpnahxjTnU110Lpt2Dh35IKH3Kpm4Dfu4s0H8JDvD84KTw1+
-	astYc69+9zMKX4IE57bUuXo0egd32wfj8oGhntAS81YISd9guX9DhPamSsaCMtIBZwxWgw==
-X-Google-Smtp-Source: AGHT+IHKuP5+vQc6x4mhDI88FsxmG72BjhDZ4E8pdkihbSnqCpkKlO9BKPY14CWSEUJ2bjCrA5DaDw==
-X-Received: by 2002:a05:600c:2191:b0:43b:bfa7:c7d with SMTP id 5b1f17b1804b1-43d1805a5b1mr139878365e9.2.1742145232088;
-        Sun, 16 Mar 2025 10:13:52 -0700 (PDT)
-Received: from costa-tp.bos2.lab ([2a00:a041:e280:5300:f8dc:acb8:77bb:8cf8])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d1fe6a1c7sm82007445e9.39.2025.03.16.10.13.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 16 Mar 2025 10:13:51 -0700 (PDT)
-From: Costa Shulyupin <costa.shul@redhat.com>
-To: Costa Shulyupin <costa.shul@redhat.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v1] scripts/tags.sh: Don't tag usages of DEFINE_...PERCPU_RWSEM
-Date: Sun, 16 Mar 2025 19:13:32 +0200
-Message-ID: <20250316171339.2989591-1-costa.shul@redhat.com>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1742145440; c=relaxed/simple;
+	bh=B6N2SFabrAGmiF2sPKOi9I3I0BbdESWJFUVqVAMXZ7w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PFlSpDwLo5mTtTCUI24+psmf5WelCN1KYRZ41bRqp2FyA25/S0MrMGj9CJEjmXy8BKy0WUkb7o9FJBgTr+V/2lVKL/65K44hfybG0GPMiPSLrfp/9MTGIIzddRbxzgspP1/zJwGu+RIbyHIOcZQKTtSRKg/MVgNc39yptR92AZM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=I8tZ6FN9; arc=none smtp.client-ip=115.124.30.119
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1742145428; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=UUeB2FUt0HAuaRZxXLaie80QjepErNYtIn4MOft9MmI=;
+	b=I8tZ6FN9tjp3oJDmrgsUAh8RcmlULvJHrmAnAZjPs3jh1Zu1eTDqeHOZ4FZ+ihCguGiQX4axVrG0xSkvBDOe5GboXqLcLciur6BNclVOaLrKXzC4EIdq9odlLiDANAC02tJcSabsaitZgW5YNQWOB1dc9hvM/L+Ca1Sxfw9LX94=
+Received: from 30.134.66.95(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WRVc8sJ_1742145427 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Mon, 17 Mar 2025 01:17:08 +0800
+Message-ID: <489be3d1-a755-4756-ba82-a8f5a0dc9156@linux.alibaba.com>
+Date: Mon, 17 Mar 2025 01:17:07 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5] erofs: use Z_EROFS_LCLUSTER_TYPE_MAX to simplify
+ switches
+To: Chao Yu <chao@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Hongzhen Luo <hongzhen@linux.alibaba.com>,
+ linux-erofs mailing list <linux-erofs@lists.ozlabs.org>
+References: <20250210032923.3382136-1-hongzhen@linux.alibaba.com>
+ <511c5fd9-307e-4c56-9d20-796dd06f775c@kernel.org>
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+In-Reply-To: <511c5fd9-307e-4c56-9d20-796dd06f775c@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-For each semaphore declaration like
-DEFINE_PERCPU_RWSEM(x)
-DEFINE_STATIC_PERCPU_RWSEM(x)
-ctags generates multiple DEFINE_PERCPU_RWSEM and
-DEFINE_STATIC_PERCPU_RWSEM tags for each usage because it doesn't expand
-these macros.
+Hi Chao,
 
-Configure ctags to skip generating tags for DEFINE_PERCPU_RWSEM and
-DEFINE_STATIC_PERCPU_RWSEM in such cases.
+On 2025/3/16 10:36, Chao Yu wrote:
+> On 2025/2/10 11:29, Hongzhen Luo wrote:
+>> There's no need to enumerate each type.  No logic changes.
+>>
+>> Signed-off-by: Hongzhen Luo <hongzhen@linux.alibaba.com>
+> 
+> Looks good to me, feel free to add:
+> 
+> Reviewed-by: Chao Yu <chao@kernel.org>
+> 
+> And one minor comment below.
+> 
+>> diff --git a/fs/erofs/zmap.c b/fs/erofs/zmap.c
+>> index 689437e99a5a..d278ebd60281 100644
+>> --- a/fs/erofs/zmap.c
+>> +++ b/fs/erofs/zmap.c
+>> @@ -265,26 +265,22 @@ static int z_erofs_extent_lookback(struct z_erofs_maprecorder *m,
+>>           if (err)
+>>               return err;
+>> -        switch (m->type) {
+>> -        case Z_EROFS_LCLUSTER_TYPE_NONHEAD:
+>> +        if (m->type >= Z_EROFS_LCLUSTER_TYPE_MAX) {
+>> +            erofs_err(sb, "unknown type %u @ lcn %lu of nid %llu",
+>> +                  m->type, lcn, vi->nid);
+>> +            DBG_BUGON(1);
+>> +            return -EOPNOTSUPP;
+>  > +        } else if (m->type == Z_EROFS_LCLUSTER_TYPE_NONHEAD) {>               lookback_distance = m->delta[0];
+>>               if (!lookback_distance)
+>> -                goto err_bogus;
+>> +                break;
+>>               continue;
+>> -        case Z_EROFS_LCLUSTER_TYPE_PLAIN:
+>> -        case Z_EROFS_LCLUSTER_TYPE_HEAD1:
+>> -        case Z_EROFS_LCLUSTER_TYPE_HEAD2:
+>> +        } else {
+>>               m->headtype = m->type;
+>>               m->map->m_la = (lcn << lclusterbits) | m->clusterofs;
+>>               return 0;
+>> -        default:
+>> -            erofs_err(sb, "unknown type %u @ lcn %lu of nid %llu",
+>> -                  m->type, lcn, vi->nid);
+>> -            DBG_BUGON(1);
+>> -            return -EOPNOTSUPP;
+> 
+> Should return EFSCORRUPTED here? is m->type >= Z_EROFS_LCLUSTER_TYPE_MAX a possible
+> case?
 
-The #define DEFINE_... itself and definitions of semaphores are
-tagged correctly.
+It's impossible by the latest on-disk definition, see:
+#define Z_EROFS_LI_LCLUSTER_TYPE_MASK	(Z_EROFS_LCLUSTER_TYPE_MAX - 1)
 
-Signed-off-by: Costa Shulyupin <costa.shul@redhat.com>
----
- scripts/tags.sh | 1 +
- 1 file changed, 1 insertion(+)
+Previously, it was useful before Z_EROFS_LCLUSTER_TYPE_HEAD2 was
+introduced, but the `default:` case is already deadcode now.
 
-diff --git a/scripts/tags.sh b/scripts/tags.sh
-index 98680e9cd7be3..503371e59e366 100755
---- a/scripts/tags.sh
-+++ b/scripts/tags.sh
-@@ -271,6 +271,7 @@ exuberant()
- 		ACPI_EXPORT_SYMBOL
- 		DECLARE_BITMAP
- 		DEFINE_{TRACE,MUTEX,TIMER}
-+		DEFINE_{,STATIC_}PERCPU_RWSEM
- 		EXPORT_SYMBOL EXPORT_SYMBOL_GPL
- 		EXPORT_TRACEPOINT_SYMBOL EXPORT_TRACEPOINT_SYMBOL_GPL
- 		____cacheline_aligned ____cacheline_aligned_in_smp
--- 
-2.48.1
+> 
+> Btw, we'd better to do sanity check for m->type in z_erofs_load_full_lcluster(),
+> then we can treat m->type as reliable variable later.
+> 
+>      advise = le16_to_cpu(di->di_advise);
+>      m->type = advise & Z_EROFS_LI_LCLUSTER_TYPE_MASK;
+>      if (m->type >= Z_EROFS_LCLUSTER_TYPE_MAX) {
 
+It's always false here.
+
+Thanks,
+Gao Xiang
 
