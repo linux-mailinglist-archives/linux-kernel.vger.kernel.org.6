@@ -1,83 +1,108 @@
-Return-Path: <linux-kernel+bounces-563148-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563149-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16089A63789
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 22:38:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 99FEAA6378B
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 22:43:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3EED9188E9B5
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 21:38:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B1AC4188EB83
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 21:43:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50D481A76D4;
-	Sun, 16 Mar 2025 21:38:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3A8A1C8637;
+	Sun, 16 Mar 2025 21:43:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="e8MXZGcy"
-Received: from submarine.notk.org (submarine.notk.org [62.210.214.84])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ADB038382
-	for <linux-kernel@vger.kernel.org>; Sun, 16 Mar 2025 21:38:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Sjsyx40a"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B492C2E0;
+	Sun, 16 Mar 2025 21:43:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742161119; cv=none; b=GkVw66aPXOHmoVvlo0/WtA1L/pkiI2ua/V+XDn8+uR3Vw52KIoSEF3U3ToODLZZlANAakcXBc3Mvs5ylJtoSryLYiiIdRrWuEr4872gOEgwTHZXYFGo6FCXWitB/OTSw+BLUjiAm0XT2R7oAjCq+8GHG9nCPKDFsL0dlnJbx0Vo=
+	t=1742161418; cv=none; b=Szn24bfBX3e2b29Bt6UyiaSaaz/97T6sQzC1dFYJU6CpS55bWhgAlJlD1Jj73e/XxWevbNhGJUEnSGUx+Pu2/sTcshb24Q+B9yYTKMp9X1mclon0PczgUf5n+vnX29IF4ykUIaTq8r0rYoj4pTPwbnV5bDrwJiq6P8gQBmxuYks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742161119; c=relaxed/simple;
-	bh=0QXGS5iVuXHcAvS/0hqCndkzSq1YfD6XQh7mcbPBOf8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hC6vI3FYBZ8PQTWfGGfXZ7tUrWOBeRW34db6+r/sciUUMGeqSOr7yMbB0EgNrvrXtztRDb+f4DoBsfICMcqNV5hCThuiVZkUM+g7idMrfw/v4qaCEQ+HKaFZmwPMJPRUB/wjCSMaBYH55UGwqPOgi6qzTsXZIPB6hOSkc0Hy88g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=e8MXZGcy; arc=none smtp.client-ip=62.210.214.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
-Received: from gaia.codewreck.org (localhost [127.0.0.1])
-	by submarine.notk.org (Postfix) with ESMTPS id AB6CD14C2D3;
-	Sun, 16 Mar 2025 22:38:35 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
-	s=2; t=1742161117;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+RlB1QbSiOnZaKekMAr/vgezkQBYKoxSdFXFD/Ejndw=;
-	b=e8MXZGcyuVrogffYOHRxtKt0mvz9ZgwRa85JJ6G3lsRCcbMwiUD+v5Dps63qnKwNK2zUEv
-	PfLqs8z4brtNSEQ1jXIp3cyKoDzkibzv9O6PL1mbfjIU0xPB9Jv7ggRHvbwF9W3+9MG0fS
-	YfO3dC2V/ojRtPu/itaXWPosmg+h+CAPWJhrpojh2xV0sjBt6VPNqzex5IFbVPXx/vEzvq
-	iNZmwRq4OAFkKJ52UsEmjT2SVz/9pHgwwTMQ6L20PrO90BoNqE6UnxJtwz4DI9eUx2BAsa
-	K3cFbOjZRjc10FHGyNLD/AS/iYhA3OZVzUJRZuuSrflXxnkY8u/F23Z87rbaUw==
-Received: from localhost (gaia.codewreck.org [local])
-	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id 092278d2;
-	Sun, 16 Mar 2025 21:38:33 +0000 (UTC)
-Date: Mon, 17 Mar 2025 06:38:18 +0900
-From: Dominique Martinet <asmadeus@codewreck.org>
-To: Eric Van Hensbergen <ericvh@kernel.org>,
-	Latchesar Ionkov <lucho@ionkov.net>,
-	Christian Schoenebeck <linux_oss@crudebyte.com>
-Cc: v9fs@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Robert Morris <rtm@mit.edu>
-Subject: Re: [PATCH v2] 9p/net: fix improper handling of bogus negative
- read/write replies
-Message-ID: <Z9dEytS7GXL87OVP@codewreck.org>
-References: <20250317-9p_unsigned_rw-v2-1-9d7a94a916ae@codewreck.org>
+	s=arc-20240116; t=1742161418; c=relaxed/simple;
+	bh=9S51nfoBPME8cDhpwIRT6eCL8T6cdRXmMyeURMjXtHY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=IrS4041qVPBVoiuU0M3nqfTp65xQjicSnC+JlhgNmRQp/V08tOocFiStOoXsoPxzifrvOVzBNyDJjEBxK5WWaAxx7vb88i0PewcablhNbUpcJBEN7wRU+w9HRiokNnwc5+7S6EBqP1ypXBRCH3RgFrCO6qjCynYGd9sOuCoF14o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=Sjsyx40a; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1742161412;
+	bh=3o02n+GAJ7QBEzN+urVOQtDCC9Z+Z+7Yz3ixoj9RcC8=;
+	h=Date:From:To:Cc:Subject:From;
+	b=Sjsyx40aZHsT+VDF1Y59w1jspqhi0r1QVASt2O7s/EcH4EsM6e6a5pJUgXYLT0VgE
+	 gmZ1wP/vwxfxoieJYJHE1N3E4/vFb+xYmsL3CRBUZxXC/vVU9WSQVPRvTPs4+WI4nD
+	 dDr8aRvQEGKwb9jcM7UHzx7fJSN4/rCPl7XUafZfyib6CB74jeHsPgKCagOmMkWsgK
+	 0xQF4UDfvZy6jf0+G2s+Tv3QJR58IhbtiwYupCV+Emx76lmWiaF/1FsgKNIk4F6UUD
+	 Wy8GdSHtyeRcaHLRtXYzL2s6cqq1K1e/t27ZWjmf0yGXNrcbwpyc1tbYBCA9hc5D4s
+	 SkUPR//Ff1qrQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZGBS35wGXz4wcd;
+	Mon, 17 Mar 2025 08:43:31 +1100 (AEDT)
+Date: Mon, 17 Mar 2025 08:43:31 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Prathamesh Shete <pshete@nvidia.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: Fixes tag needs some work in the pinctrl tree
+Message-ID: <20250317084331.032c61d9@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250317-9p_unsigned_rw-v2-1-9d7a94a916ae@codewreck.org>
+Content-Type: multipart/signed; boundary="Sig_/0nj3nAS/+IUYLLW_SzoYap6";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Dominique Martinet wrote on Mon, Mar 17, 2025 at 06:32:56AM +0900:
-> @@ -1633,7 +1634,7 @@ p9_client_write(struct p9_fid *fid, u64 offset, struct iov_iter *from, int *err)
->  		if (count < rsize)
->  			rsize = count;
->  
-> -		p9_debug(P9_DEBUG_9P, ">>> TWRITE fid %d offset %llu count %d (/%d)\n",
-> +		p9_debug(P9_DEBUG_9P, ">>> TWRITE fid %d offset %llu count %zu (/%zu)\n",
->  			 fid->fid, offset, rsize, count);
+--Sig_/0nj3nAS/+IUYLLW_SzoYap6
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I obviously ran make W=1 after sending this and noticed I forgot to
-update the format fields, let's pretend this was %u for rsize (same
-below)
--- 
-Dominique
+Hi all,
+
+In commit
+
+  a906b771499a ("pinctrl: tegra: Set SFIO mode to Mux Register")
+
+Fixes tag
+
+  Fixes: 59b67585e242 ("pinctrl: add a driver for NVIDIA Tegra")
+
+has these problem(s):
+
+  - Target SHA1 does not exist
+
+Maybe you meant
+
+Fixes: 971dac7123c7 ("pinctrl: add a driver for NVIDIA Tegra")
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/0nj3nAS/+IUYLLW_SzoYap6
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfXRgMACgkQAVBC80lX
+0GwsSAf6AozeWuk2Ry6i7vEdGz0Tj9wWfIME3/QMyddNP99JuyLDq2nGpq6kNpHU
+0b+lkWdB5w+CwawHtkpd6HMfCU1rpLXPPGUP7scNukCLpH25ukcqHgIsE1DoV1SY
+xGd6RNFtDbzXF9Rt1QyIaAPOFtFRUPQ3tdHIffhzol6iR9OOF9npm51sMWRGbmrB
+VJR2yDWqQ45yGwEjoDfg7QKRdYsAejhkka+oWQLyn7EjiKmMhezfZeReRwqBGC7L
+fOAKL2DpWsgBTJE3LKc4ugx+hUI6bfqDyn4pgxv+Byps1ZaY7QJHJIufjQRBIVIM
+p5jCvcLjLpxZqoPLFT7/70UZ001PGA==
+=H3z1
+-----END PGP SIGNATURE-----
+
+--Sig_/0nj3nAS/+IUYLLW_SzoYap6--
 
