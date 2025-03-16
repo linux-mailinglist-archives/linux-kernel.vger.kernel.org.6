@@ -1,88 +1,94 @@
-Return-Path: <linux-kernel+bounces-562928-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562929-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25E09A634CB
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 10:36:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 998ECA634D0
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 10:38:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 883807A66E4
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 09:35:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38E153AF580
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 09:38:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37D8719D89B;
-	Sun, 16 Mar 2025 09:36:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7D1319E7FA;
+	Sun, 16 Mar 2025 09:38:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="GB7YlObx"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kbEwkAIE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CFD3154BFE;
-	Sun, 16 Mar 2025 09:36:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9652133987;
+	Sun, 16 Mar 2025 09:38:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742117774; cv=none; b=qCD+3Ru2/YUga+ECvnhfEV3litPSe5VwmJP6PahlJk7K0hcZQi3b3nBZbOuITIUT4V1xUNbDDezYSCbZ9xANqsrHwCqBiYZz/wJLMfduJonWe253cRK8GlNGz3KCYASqchSRIWMFHw4qg9Dszu0ZlIhYGSb6vXt2B1sUz/cOEZw=
+	t=1742117908; cv=none; b=n89zCYnHF77w9/XgOdZN1S5/2UoCT2ZNaMlc0f1aI4LEXfBYgWF7kEWVzCjXliIFCikHOg1/01Ro5UbU5Zz4jMjqv+N3VS4rqQvCrIwKYTyJbA8EGXc+YXKwncjm2Ld1rP8JNWlpSmgirDMo5WWmwRL7UBA25TukVmCd7MQZMyA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742117774; c=relaxed/simple;
-	bh=LVekSPC4tbY22UW1dDWAse4ZEgBTOWX4eA/pSifjpIk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=P4MRgDrN37d0tDISpfe7iZsK/N2hEmp6l/V+yY+8aRFV8Q98UthBNMYjawEqtyixNUuGrZMISYgfGLN46ed+xkr5kDVpAsmRO1kwIRdOGIkCpEOsFG7ForoPHVxMU21bs0A0Ysafx2NaG2WicnFUEVnR8s1451JrVQYkP1us81A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=GB7YlObx; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=Lu3jfBowXcNKmWJRvXxOXbWwGK56d3FuE8cYfDCWXoc=; b=GB7YlObxapexaEV8qZh4lDiG+Z
-	uQslsIY2gJcculrRiGb51NrFpvpqwjz+Ckq3lO8OBL1ZixbLpOlsMipYXD+XAG0B09jUZR+uvk91Z
-	xMnZzti96UVkbUfuxORNBwSuVZtGAaL+xnMIigx+8glZ77O37bHDwXUPzC0oAIptSRSCC6Vf464P4
-	H/QsdPN2XZigYldGYEXjwChME9NdpcJqVhb6D5PaA34zhIFNjgLUlhzVI8KciDbk2Zhx+M7ijrBiY
-	Pjf02OPNsgXJCNQnkE+EZKfEWe6ngluAHtIGNJhYMiNMA0TRbxpYLUgRAHSSw8dgXa+qWo/RqD+QI
-	6ZlP0PCQ==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:54080)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1ttkPc-0002KR-2U;
-	Sun, 16 Mar 2025 09:36:05 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1ttkPZ-0002Q3-2Z;
-	Sun, 16 Mar 2025 09:36:01 +0000
-Date: Sun, 16 Mar 2025 09:36:01 +0000
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Ihor Matushchak <ihor.matushchak@foobox.net>
-Cc: andrew@lunn.ch, hkallweit1@gmail.com, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] net: phy: phy_interface_t: Fix RGMII_TXID code comment
-Message-ID: <Z9abgWJRtZ62S8ck@shell.armlinux.org.uk>
-References: <20250316071551.9794-1-ihor.matushchak@foobox.net>
+	s=arc-20240116; t=1742117908; c=relaxed/simple;
+	bh=IfQEydlLkB/SwiGc+oQAak2koasoTaF6BMIlt7gzGgs=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=L7KJ63o3UApjPTPnrBRSzyhTPEEV0vZ3F8L8svxtvPI2K2q6UXh0CVlDVqrEksUwb4PiUJ1fSwfHA7YKTPOm2xLvcrLAffqZtK/YPPFPnVkFVy7iaXl16oRztKOhB/99QrKJ9DDMioUHdGfIPR/2ARHy26FXoe4NMJmWwb9HRhE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kbEwkAIE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F122C4CEDD;
+	Sun, 16 Mar 2025 09:38:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742117907;
+	bh=IfQEydlLkB/SwiGc+oQAak2koasoTaF6BMIlt7gzGgs=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=kbEwkAIESdXZMWtrTIoTAH6bpMFDi0sreEWPRFDN//Vt4pQTw7EVzyyTmktQmC7fz
+	 VHJNELiNsPGlujkXGKfiZfOojPiNz6Clu+Fih36MVubORIJP9FPGhC2VzgGxkeDrF3
+	 +h8dxf0jDeLK9mFWI51D5w8ssRihSjiUmsdPCcKO82u3g9Hadp/O4h2b+fdL4Sz1JP
+	 8ZQtR/aiD9EkxwoH4AgZGiCzIENJdvPzP5BJjqY/UeFbw1r0GFlY3BZC9QVU6NsYT3
+	 7WSNY3ELng4JXyZzlfmKK5mXwhgkW5PkVQJv+pyMCdz9d+vo2ODEFIx41lkkSotpjb
+	 iFjkj6I3SB/XA==
+Date: Sun, 16 Mar 2025 09:38:12 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, Lars-Peter Clausen
+ <lars@metafoo.de>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Lad
+ Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, Chen-Yu Tsai
+ <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland
+ <samuel@sholland.org>, Hugo Villeneuve <hvilleneuve@dimonoff.com>, Nuno Sa
+ <nuno.sa@analog.com>, David Lechner <dlechner@baylibre.com>, Javier
+ Carrasco <javier.carrasco.cruz@gmail.com>, Guillaume Stols
+ <gstols@baylibre.com>, Dumitru Ceclan <mitrutzceclan@gmail.com>, Trevor
+ Gamblin <tgamblin@baylibre.com>, Matteo Martelli
+ <matteomartelli3@gmail.com>, Alisa-Dariana Roman <alisadariana@gmail.com>,
+ Ramona Alexandra Nechita <ramona.nechita@analog.com>, AngeloGioacchino Del
+ Regno <angelogioacchino.delregno@collabora.com>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-acpi@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev
+Subject: Re: [PATCH v7 03/10] iio: adc: add helpers for parsing ADC nodes
+Message-ID: <20250316093752.0eacaa16@jic23-huawei>
+In-Reply-To: <c8899e8c535a1d93cd7588b7c160eb0fae5d26d2.1741849323.git.mazziesaccount@gmail.com>
+References: <cover.1741849323.git.mazziesaccount@gmail.com>
+	<c8899e8c535a1d93cd7588b7c160eb0fae5d26d2.1741849323.git.mazziesaccount@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250316071551.9794-1-ihor.matushchak@foobox.net>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Sun, Mar 16, 2025 at 08:15:51AM +0100, Ihor Matushchak wrote:
-> Fix copy-paste error in the code comment for Interface Mode definitions.
-> The code refers to Internal TX delay, not Internal RX delay. It was likely
-> copied from the line above this one.
+On Thu, 13 Mar 2025 09:18:18 +0200
+Matti Vaittinen <mazziesaccount@gmail.com> wrote:
+
+> There are ADC ICs which may have some of the AIN pins usable for other
+> functions. These ICs may have some of the AIN pins wired so that they
+> should not be used for ADC.
 > 
-> Signed-off-by: Ihor Matushchak <ihor.matushchak@foobox.net>
+> (Preferred?) way for marking pins which can be used as ADC inputs is to
+> add corresponding channels@N nodes in the device tree as described in
+> the ADC binding yaml.
+> 
+> Add couple of helper functions which can be used to retrieve the channel
+> information from the device node.
+I suspect we'll need the addition of an optional trailing timestamp
+channel at somepoint. But we can add that when we need it as only
+matters for drivers doing iio_push_to_buffers_with_timestamp()
 
-Reviewed-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
-
-Thanks!
-
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+Otherwise no additional comments from me.
 
