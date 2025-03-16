@@ -1,88 +1,135 @@
-Return-Path: <linux-kernel+bounces-562882-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562883-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34E26A63432
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 07:07:49 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33CF9A63434
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 07:13:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D77117126C
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 06:07:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49C393AE653
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 06:13:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 013EA171658;
-	Sun, 16 Mar 2025 06:07:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99D30176FB0;
+	Sun, 16 Mar 2025 06:13:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="0aBjf7Bl"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="DVAx48LB"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F03756B81;
-	Sun, 16 Mar 2025 06:07:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E78AF8BE5;
+	Sun, 16 Mar 2025 06:13:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742105262; cv=none; b=AcggmEBuME1yljOxnquW3SvOHRmZWkBpFcsddcXkrj+kBurR198FzE6xOoQaplyyTP7HrWeRy1xVX602qy66369w3vPfwji652jH++3zlf1CzlZsS0a/Ddj4K/xdk1zmBPXcwyA2C5us4i6nBmjeCaP3sJZciLhsmHn+hBnHdzc=
+	t=1742105617; cv=none; b=gs3WPI3JUPp+o5uLdYVfv+q916eKMIf7htPOPtBsNdNpK8yXCjn2w9SO6+vewiKVg1UddXOzG5E3kk+HsNVKUPmyCIzYB7W4bfA7yGC58m9rSRIUHzmFEaUAVhDRIq1wuWCbwTT5bFu2XanjOsHIwG2wcF3aqp/hBNN5l8uXSFo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742105262; c=relaxed/simple;
-	bh=cg8ZHAwzI1pGdmRt3oMiugzFT+wxmx52sW2J284t/3Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=u2tYJIf8DtDBww/Ntsu+gYTZRZYSh1nh2SBGBPu2NECnDVLEnsOJoKT33D7sY2naxcThJGLWy0qCbtWAdWIzkZfypbux6Qyh+L2bgki8q51J7H3+d/qLIIMUTlktjbpZDOv67kNuID9Oi/UYexD2mrLhI9bZntvTmGlKq65YD7Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=0aBjf7Bl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52E69C4CEDD;
-	Sun, 16 Mar 2025 06:07:40 +0000 (UTC)
+	s=arc-20240116; t=1742105617; c=relaxed/simple;
+	bh=6cGBUz5aIol+ICzbCxvIpdgBgF6oR95SvmsvHtIWZGQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RhsW1su2pCrXjVTyhImz/KvDsfKZ/zy9a+Y43wqJ6Ul/KXhXMCne8KWwNPChwgHbyVQ1+dXUgOT+UF1g6kdmzPvBWxvVA3sYmoQD8lXqSsC+u7t4wn641BGT4IM/cJXF6XgRX9cKRGkg0UwhjlivqT7b9IO2PPMdd/HuR0Cz41c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=DVAx48LB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0759C4CEDD;
+	Sun, 16 Mar 2025 06:13:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1742105260;
-	bh=cg8ZHAwzI1pGdmRt3oMiugzFT+wxmx52sW2J284t/3Y=;
-	h=From:To:Cc:Subject:Date:From;
-	b=0aBjf7Blb3xkJ1m5hiOQIp4DPvUYYXkTQ6yvY24yD913lblThJu8okgYdsHYVJGE/
-	 YGNOJpyKK9qHwGkWK0fUW9XzFUo+2b49/DfrQB2BU9wpsyNOtAdWwTweesHgnvpRMo
-	 6ZRcIDjUxJBX9vPpBaT43PRcxDvtWi7gaWz0F9OA=
+	s=korg; t=1742105616;
+	bh=6cGBUz5aIol+ICzbCxvIpdgBgF6oR95SvmsvHtIWZGQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DVAx48LBcbZr2Na7a9Q6+MR6zCrdXcGGNoBNRa653NjHZtAaQ3ohTwCDNiCpF3hlU
+	 SjeUaR96oocKaQ8t7SzejjsGcN40aM1T6NgtlmhktdFShWq2B19uqoKh6aqO/Y2Ij5
+	 z84gScWh0schCEFzmfBF4zNj7jOGwqf7pNETmA/4=
+Date: Sun, 16 Mar 2025 07:13:33 +0100
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: rust-for-linux@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>
-Subject: [PATCH] MAINTAINERS: driver core: mark Rafael and Danilo as co-maintainers
-Date: Sun, 16 Mar 2025 07:07:35 +0100
-Message-ID: <2025031634-playing-lark-95f9@gregkh>
-X-Mailer: git-send-email 2.48.1
+To: Chen Linxuan <chenlinxuan@deepin.org>
+Cc: Andrii Nakryiko <andrii@kernel.org>, Sasha Levin <sashal@kernel.org>,
+	Jiri Olsa <jolsa@kernel.org>, Jann Horn <jannh@google.com>,
+	Alexey Dobriyan <adobriyan@gmail.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
+	Yi Lai <yi1.lai@intel.com>, Daniel Borkmann <daniel@iogearbox.net>,
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org
+Subject: Re: [PATCH stable 6.6] lib/buildid: Handle memfd_secret() files in
+ build_id_parse()
+Message-ID: <2025031645-unsightly-rely-25b3@gregkh>
+References: <6F04B7A95D1A4D64+20250314064039.21110-2-chenlinxuan@deepin.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Lines: 27
-X-Developer-Signature: v=1; a=openpgp-sha256; l=954; i=gregkh@linuxfoundation.org; h=from:subject:message-id; bh=cg8ZHAwzI1pGdmRt3oMiugzFT+wxmx52sW2J284t/3Y=; b=owGbwMvMwCRo6H6F97bub03G02pJDOnXspYxruY7cnhqrMifZ38dpI55F8yx2N9esdLi2ztOr hO/vt+70RHLwiDIxCArpsjyZRvP0f0VhxS9DG1Pw8xhZQIZwsDFKQAT0ZFmmB/jsf97Jm+By4zT 6npi5hkfnridSgCK/tz0fVbcBfG9BhfspPs6eBYVbHAFAA==
-X-Developer-Key: i=gregkh@linuxfoundation.org; a=openpgp; fpr=F4B60CC5BF78C2214A313DCB3147D40DDB2DFB29
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6F04B7A95D1A4D64+20250314064039.21110-2-chenlinxuan@deepin.org>
 
-In talking it over with Rafael and Danilo, it makes more sense for
-everyone to be a maintainer here, to share the load where possible.
+On Fri, Mar 14, 2025 at 02:40:39PM +0800, Chen Linxuan wrote:
+> [ Upstream commit 5ac9b4e935dfc6af41eee2ddc21deb5c36507a9f ]
+> 
+> >>From memfd_secret(2) manpage:
+> 
+>   The memory areas backing the file created with memfd_secret(2) are
+>   visible only to the processes that have access to the file descriptor.
+>   The memory region is removed from the kernel page tables and only the
+>   page tables of the processes holding the file descriptor map the
+>   corresponding physical memory. (Thus, the pages in the region can't be
+>   accessed by the kernel itself, so that, for example, pointers to the
+>   region can't be passed to system calls.)
+> 
+> We need to handle this special case gracefully in build ID fetching
+> code. Return -EFAULT whenever secretmem file is passed to build_id_parse()
+> family of APIs. Original report and repro can be found in [0].
+> 
+>   [0] https://lore.kernel.org/bpf/ZwyG8Uro%2FSyTXAni@ly-workstation/
+> 
+> Fixes: de3ec364c3c3 ("lib/buildid: add single folio-based file reader abstraction")
+> Reported-by: Yi Lai <yi1.lai@intel.com>
+> Suggested-by: Shakeel Butt <shakeel.butt@linux.dev>
+> Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
+> Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+> Acked-by: Shakeel Butt <shakeel.butt@linux.dev>
+> Link: https://lore.kernel.org/bpf/20241017175431.6183-A-hca@linux.ibm.com
+> Link: https://lore.kernel.org/bpf/20241017174713.2157873-1-andrii@kernel.org
+> [ Linxuan: perform an equivalent direct check without folio-based changes ]
+> Fixes: 88a16a130933 ("perf: Add build id data in mmap2 event")
+> Signed-off-by: Chen Linxuan <chenlinxuan@deepin.org>
+> ---
+> 
+> Some previous discussions can be found in the following links:
+> https://lore.kernel.org/stable/05D0A9F7DE394601+20250311100555.310788-2-chenlinxuan@deepin.org/
+> 
+> ---
+>  lib/buildid.c | 7 +++++++
+>  1 file changed, 7 insertions(+)
+> 
+> diff --git a/lib/buildid.c b/lib/buildid.c
+> index 9fc46366597e..6249bd47fb0b 100644
+> --- a/lib/buildid.c
+> +++ b/lib/buildid.c
+> @@ -5,6 +5,7 @@
+>  #include <linux/elf.h>
+>  #include <linux/kernel.h>
+>  #include <linux/pagemap.h>
+> +#include <linux/secretmem.h>
+>  
+>  #define BUILD_ID 3
+>  
+> @@ -157,6 +158,12 @@ int build_id_parse(struct vm_area_struct *vma, unsigned char *build_id,
+>  	if (!vma->vm_file)
+>  		return -EINVAL;
+>  
+> +#ifdef CONFIG_SECRETMEM
+> +       /* reject secretmem folios created with memfd_secret() */
+> +       if (vma->vm_file->f_mapping->a_ops == &secretmem_aops)
+> +               return -EFAULT;
+> +#endif
 
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Danilo Krummrich <dakr@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- MAINTAINERS | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+We really do not like #ifdef in .c files.  Why can't this use much the
+same call it does in the original commit?  Just put that in the correct
+.h file so that the #ifdef is not needed here, to make the backport
+match much more cleanly.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 0427b32b3688..2f6e379547bd 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -7101,8 +7101,8 @@ F:	include/linux/component.h
- 
- DRIVER CORE, KOBJECTS, DEBUGFS AND SYSFS
- M:	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
--R:	"Rafael J. Wysocki" <rafael@kernel.org>
--R:	Danilo Krummrich <dakr@kernel.org>
-+M:	"Rafael J. Wysocki" <rafael@kernel.org>
-+M:	Danilo Krummrich <dakr@kernel.org>
- S:	Supported
- T:	git git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/driver-core.git
- F:	Documentation/core-api/kobject.rst
--- 
-2.48.1
+thanks,
 
+greg k-h
 
