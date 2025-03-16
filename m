@@ -1,197 +1,224 @@
-Return-Path: <linux-kernel+bounces-562864-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-562865-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA67DA633CD
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 05:15:58 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAB64A633CF
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 05:20:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3BF13A9362
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 04:15:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 175817A51D1
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 04:19:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C988A136358;
-	Sun, 16 Mar 2025 04:15:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2274F143748;
+	Sun, 16 Mar 2025 04:20:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HbAmTkhJ"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="HHSWp+aA"
+Received: from mail-10629.protonmail.ch (mail-10629.protonmail.ch [79.135.106.29])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA28E4A06
-	for <linux-kernel@vger.kernel.org>; Sun, 16 Mar 2025 04:15:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A38C77D3F4
+	for <linux-kernel@vger.kernel.org>; Sun, 16 Mar 2025 04:20:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.29
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742098546; cv=none; b=R13BRFeaig/PptxdyGu+qjjQuWk2ic3I+TJtx1QJKcvqYoSgJlhqVvP5NJ2vaum/NlApC0ZEMQyxptUXYgXQEQ2Bt6s6Mj22SdyEHGT4D1wYs8zS7zol89e4rl3hm9liiKAodMIa0trYheHATH6B7F7iJqX80PI7A+KPmjeR8ko=
+	t=1742098843; cv=none; b=YpzXYpm5r38UizfwfbAhomasCE+ex3i1HIl7WfjgBwR3W3it49X8l+aIStf3bS8gkNdfNmwT/Nj4CU21kQRicPAaP3eEXs6DWpmidjtPLIEU886TjWMAzfJR6Cm1fkZphFI6MCRkCMgE43RkNTvxma7q0f/3nQDFRpJKo7sKHgg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742098546; c=relaxed/simple;
-	bh=m7IGz1Su6f3WyaLHo4IduccdGORIbl0HNVhX7LjFWSk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=L5notn3OWUmNZC0Aq24ApxxXNVlUlDB1qCo7rtjZeeBFZVrW2u6Q68Zx8fxwAa/iMAqKtgolZxCfEyYh2y7DhTxDMj10j9KKvqGBKlEQhLVVbn2zedgKaKSH7jnuxcTYi2nREb2nMOMNG7ju7tZGCd944SuVmj8XpP+SuzPLRoo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HbAmTkhJ; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-5499c8fa0f3so3563791e87.2
-        for <linux-kernel@vger.kernel.org>; Sat, 15 Mar 2025 21:15:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1742098541; x=1742703341; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UM1L2R64O8F7JlGmLCnfToZ8ny94Rpb02pePzSUOCDQ=;
-        b=HbAmTkhJ2Dt5ct1pddk+M4XRJk6N86EzpYUVhQMspxT4qa769/h6v3gqTOkC4n71mj
-         ThjDucmxWYLvS/3P1rFAch7+fp8zxR1zdvf6HhSlm8i6DxdwGilBbEyRKH+kyqTFcSNN
-         yZPiNa++y7IYcQAWMVXNVtsH4ExrilemoE7PxhQ9/efbStUCjvBVTyr7nc7NAeuMfAvm
-         h3g3H15k+sUgVsVzv+8Q6++Ssluvt/FqFQYmOvF/cRJPH9TdBDjmxkYU9Pze3MWepnlp
-         UAMbRysWT/rgdPwe7Eug4KGRzUWcCWCCBxL1OvYZlIXwKfEZRbP/y/sr+xEmlI7UX0JG
-         dEOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742098541; x=1742703341;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UM1L2R64O8F7JlGmLCnfToZ8ny94Rpb02pePzSUOCDQ=;
-        b=SoDCSQTe+lNQ/oAvbODH62hronepsPzcjP90B0w5njUkRm0UPtzUQIdHVWjQxAaNim
-         PgiJCqDWvJGm2XYU/4YLpKwhlJEJafbmqV+uyl4A1mHfJXxpRly7sLH/TN4S2394LGGj
-         BO6I4Gp6g3qdkeLOmmvvlSobkQc+5Mgo30S7BsFuHvSXJGoKuenHbNd7+iSeSJDk5dXJ
-         4D8juUAmuf7UJLwpwiPmsxLgujxUfkwGlU8aQj7Wi8qD/oggssUuoEyf8auCOd6lo9M9
-         A+3IPuNBIsNFqoje3SG///UEwmg7BHNQLPzgEVAcx0iyBLL5ObZXoAtPRrvdJABmDFB/
-         RZhA==
-X-Forwarded-Encrypted: i=1; AJvYcCUkaLID0PkehQxLnL38Nmzj5u4JdSTo7dcFpgJhIPePPPpsweEWteSGiBvENgGiDsHAvVqIrOTcezLfcS8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxeOJvkRsZ5NMj1vIIJOLTHNQWTKcxargXHUvq1KWnNbrK2WQP+
-	igDykTCI8ksTNrd0eLh9ql8IiX6iszvGxJtqsApqf94qMEosi+OG3cyavcpCkxtd/kyUF2Lgsut
-	8YFhJXPUkAySnAxQIN7qBdT1Uqy8ChO6sXXicEQ==
-X-Gm-Gg: ASbGnctCwvCS6+r7+/9rSN/Gy0v16oSK2Rq5jRlHeSGW67QjUbbZnvZgRkakvNJwxg7
-	bd86P5tOR36NyIMvwrxbTvyozk4J8O60yyo/AfoMiuPLNkRAWFH6R8l62/Ie4OA3P6jMGIvO9jo
-	IYYpn9dNE9DQ4ldHvs00TjbICUmWWxiVM=
-X-Google-Smtp-Source: AGHT+IH/A1bDu+ZfR2zvqow6IEEeruRcPFjB/u+4/oPSeeNjvl37vt/MG/IPQnpIeLwVaSqEfw8ri/ih3A9wXOYJg1k=
-X-Received: by 2002:a05:6512:6d6:b0:549:4b8c:a118 with SMTP id
- 2adb3069b0e04-549c3900385mr2453886e87.17.1742098540708; Sat, 15 Mar 2025
- 21:15:40 -0700 (PDT)
+	s=arc-20240116; t=1742098843; c=relaxed/simple;
+	bh=76LcCISZoiU10fClL5qA7YwZd36UqCpbjjau7BlGO+k=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QKXECooAO4GwU/rQX6sLuBBlzt1TNCD/ulLpJ3EmWNTXbzmrQloBytJdzrySae1Tqkp0Ics3JCahsai9SUVFHXC7ynqsFXHzNhyuzVFcFG+QQlP1YXVc08usF97aiAoWkIQ1xwqslVa3okvEzdJWNnMNo3ZrRwNw8CLN6igoTWs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=HHSWp+aA; arc=none smtp.client-ip=79.135.106.29
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+	s=protonmail3; t=1742098839; x=1742358039;
+	bh=vxWKNyTjKz9Zo+/oSESrfgugwQ/3Qi4ce/xUleXcD5k=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
+	b=HHSWp+aAkObyPf+WNlDq3aMvoHY3NIpAZvcN3qy3tZv2hJumSNx4mX1tMXlyUe7jA
+	 Fl06Fs0CWJ3N/1DRJZ8mapIWBhtyr1ClWjuXcUi9wb22bsrUw9Co6qy88uIDw9y88G
+	 p9mTcGfM3DjQ+9yrjlhUPj3Z16iztfIMr/E1n239Q14p4I7hJWaomjAdskbnYJ5hbV
+	 74pZ8G6XO/tzbiC3v3w+Ly76nrxsZoXC/977X+aFgdolnFem7F8VH6wII0cmd72OaV
+	 6Vu1olF1kQbgvKlgd+pY4yMBBtduyshd0s/k/wYy/ytk9p3K7cwVJxf2g/yi4ewqy5
+	 hiCIWrk2BkRIA==
+Date: Sun, 16 Mar 2025 04:20:35 +0000
+To: Benjamin Tissoires <bentiss@kernel.org>
+From: Rahul Rameshbabu <sergeantsagara@protonmail.com>
+Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-input@vger.kernel.org, dri-devel@lists.freedesktop.org, Jiri Kosina <jikos@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>
+Subject: Re: [PATCH RFC 3/3] rust: hid: demo the core abstractions for probe and remove
+Message-ID: <87frjdhaii.fsf@protonmail.com>
+In-Reply-To: <m2cm4c4m7teaca3tog774tl25ynngicg4eav4i7xiqyrxsqwju@leh5og5d6uba>
+References: <20250313160220.6410-2-sergeantsagara@protonmail.com> <20250313160220.6410-6-sergeantsagara@protonmail.com> <m2cm4c4m7teaca3tog774tl25ynngicg4eav4i7xiqyrxsqwju@leh5og5d6uba>
+Feedback-ID: 26003777:user:proton
+X-Pm-Message-ID: e7fc38772a099e3f17b7e79d87181ac9b498a011
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250315101319.5269-1-zhangfei.gao@linaro.org> <20250315184523.GA848225@bhelgaas>
-In-Reply-To: <20250315184523.GA848225@bhelgaas>
-From: Zhangfei Gao <zhangfei.gao@linaro.org>
-Date: Sun, 16 Mar 2025 12:15:29 +0800
-X-Gm-Features: AQ5f1JqAU9NOtpVBFyhTYYvnRxSZUPako8sV1dSH2-zJnWm6JJHjU4CXdg9YkTg
-Message-ID: <CABQgh9E=z9SqbbnLfqQrSX8XqGMooz3EvUescpRY1XYQgvnHjA@mail.gmail.com>
-Subject: Re: [PATCH v2] PCI: Declare quirk_huawei_pcie_sva() as pci_fixup_header
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, Baolu Lu <baolu.lu@linux.intel.com>, 
-	Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>, Jason Gunthorpe <jgg@ziepe.ca>, 
-	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
-	iommu@lists.linux.dev, linux-pci@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, 16 Mar 2025 at 02:45, Bjorn Helgaas <helgaas@kernel.org> wrote:
+On Thu, 13 Mar, 2025 18:05:36 +0100 "Benjamin Tissoires" <bentiss@kernel.or=
+g> wrote:
+> On Mar 13 2025, Rahul Rameshbabu wrote:
+>> This is a very basic "hello, world!" implementation to illustrate that t=
+he
+>> probe and remove callbacks are working as expected. I chose an arbitrary
+>> device I had on hand for populating in the HID device id table.
 >
-> On Sat, Mar 15, 2025 at 10:13:19AM +0000, Zhangfei Gao wrote:
-> > The commit bcb81ac6ae3c ("iommu: Get DT/ACPI parsing into the proper
-> > probe path") changes the arm_smmu_probe_device() sequence.
+> Nice to see this live :)
 >
-> > The arm_smmu_probe_device() is now called earlier via pci_device_add(),
-> > which calls pci_fixup_device() at the "pci_fixup_header" phase, while
-> > originally it was called from the pci_bus_add_device(), which called
-> > pci_fixup_device() at the "pci_fixup_final" phase.
-> >
-> > The callstack before:
-> > [ 1121.314405]  arm_smmu_probe_device+0x48/0x450
-> > [ 1121.314410]  __iommu_probe_device+0xc4/0x3c8
-> > [ 1121.314412]  iommu_probe_device+0x40/0x90
-> > [ 1121.314414]  acpi_dma_configure_id+0xb4/0x100
-> > [ 1121.314417]  pci_dma_configure+0xf8/0x108
-> > [ 1121.314421]  really_probe+0x78/0x278
-> > [ 1121.314425]  __driver_probe_device+0x80/0x140
-> > [ 1121.314427]  driver_probe_device+0x48/0x130
-> > [ 1121.314430]  __device_attach_driver+0xc0/0x108
-> > [ 1121.314432]  bus_for_each_drv+0x8c/0xf8
-> > [ 1121.314435]  __device_attach+0x104/0x1a0
-> > [ 1121.314437]  device_attach+0x1c/0x30
-> > [ 1121.314440]  pci_bus_add_device+0xb8/0x1f0
-> > [ 1121.314442]  pci_iov_add_virtfn+0x2ac/0x300
-> >
-> > And after:
-> > [  215.072859]  arm_smmu_probe_device+0x48/0x450
-> > [  215.072871]  __iommu_probe_device+0xc0/0x468
-> > [  215.072875]  iommu_probe_device+0x40/0x90
-> > [  215.072877]  iommu_bus_notifier+0x38/0x68
-> > [  215.072879]  notifier_call_chain+0x80/0x148
-> > [  215.072886]  blocking_notifier_call_chain+0x50/0x80
-> > [  215.072889]  bus_notify+0x44/0x68
-> > [  215.072896]  device_add+0x580/0x768
-> > [  215.072898]  pci_device_add+0x1e8/0x568
-> > [  215.072906]  pci_iov_add_virtfn+0x198/0x300
+> Though as I mentioned in the previous patch, I'd prefer having one full
+> driver in a single patch and one separate patch with the skeleton in the
+> docs.
 >
-> The stacktraces definitely help connect the dots but don't integrate
-> the fixup phases and the timestamps are unnecessary distraction.
+> Do you have any meaningful processing that needs to be done in the
+> report fixup or in the .raw_event or .event callbacks?
 >
-> I would omit all the above except the first paragraph and include
-> something like this instead, which shows how arm_smmu_probe_device()
-> was previously after final fixups and is now between header and final
-> fixups:
->
->   pci_iov_add_virtfn
->     pci_device_add
->       pci_fixup_device(pci_fixup_header)      <--
->       device_add
->         bus_notify
->           iommu_bus_notifier
->   +         iommu_probe_device
->   +           arm_smmu_probe_device
->     pci_bus_add_device
->       pci_fixup_device(pci_fixup_final)       <--
->       device_attach
->         driver_probe_device
->           really_probe
->             pci_dma_configure
->               acpi_dma_configure_id
->   -             iommu_probe_device
->   -               arm_smmu_probe_device
->
-> This is the pci_iov_add_virtfn().  The non-SR-IOV case is similar in
-> that pci_device_add() is called from pci_scan_single_device() in the
-> generic enumeration path, and pci_bus_add_device() is called later,
-> after all a host bridge has been enumerated.
+> It would be much more interesting to show how this works together on a
+> minimalistic driver.
 
-Thanks Bjorn
-
-Will update in v3.
-
-One thing is the probe sequence change is the fixing result, not newly adde=
-d.
-iommu_bus_notifier
-    iommu_probe_device
-        __iommu_probe_device
-            ops =3D iommu_fwspec_ops(dev_iommu_fwspec_get(dev));
-             if (!ops)
-                 return -ENODEV;
-This calling sequence existed before but returned here since ops =3D NULL.
-It is fixed in the commit bcb81ac6ae3c, so arm_smmu_probe_device
-happens earlier and quicker.
+Agreed. Have a discussion about a device to potentially use for such a
+reference driver in another thread[1].
 
 >
-> > Fixes: bcb81ac6ae3c ("iommu: Get DT/ACPI parsing into the proper probe =
-path")
-> > Signed-off-by: Zhangfei Gao <zhangfei.gao@linaro.org>
-> > [kwilczynski: commit log]
-> > Signed-off-by: Krzysztof Wilczy=C5=84ski <kwilczynski@kernel.org>
+> FWIW, the driver in itself, though incomplete, looks familiar, which is
+> a good thing: we've got a probe and a remove. This is common with all
+> the other HID drivers, so it's not a brand new thing.
 >
-> You should never include somebody else's Signed-off-by below yours.
-> You should only add *your own* Signed-off-by:
+> I wonder however how and if we could enforce the remove() to be
+> automated by the binding or rust, to not have to deal with resource
+> leaking. Because the removal part, especially on failure, is the hardest
+> part.
 
-OK
+One issue with the device I proposed in [1] is that it would not require
+the implementation of remove() or automation through Rust since the
+device is so "simple".
+
+Rust has the Drop trait[2]. If my understanding is correct, contained
+data that also implement the Drop trait cannot be enforced in terms of
+the order they are dropped/provide any kind of dependency management
+here. It's worth exploring. My concern is some very tricky ordering
+requirements on removal. I extracted the below from
+drivers/hid/hid-nvidia-shield.c.
+
+  static void shield_remove(struct hid_device *hdev)
+  {
+  =09struct shield_device *dev =3D hid_get_drvdata(hdev);
+  =09struct thunderstrike *ts;
+
+  =09ts =3D container_of(dev, struct thunderstrike, base);
+
+  =09hid_hw_close(hdev);
+  =09thunderstrike_destroy(ts);
+  =09del_timer_sync(&ts->psy_stats_timer);
+  =09cancel_work_sync(&ts->hostcmd_req_work);
+  =09hid_hw_stop(hdev);
+  }
+
+Here, we need to explicitly stop the timer before cancelling any work.
+
+The problem here is Rust's Drop trait does not gaurantee ordering for
+the teardown of members.
+
+Lets pretend I have the following and its functional in Rust.
+
+  // In hid_nvidia_shield.rs
+
+  struct Thunderstrike {
+      // Rest of my thunderstrike members from the C equivalent
+      psyStatsTimer: TimerList, // TimerList implements Drop
+      hostcmdReqWork: Work, // Work implements Drop
+  }
+
+  // hid.rs
+
+  struct Device<T> {
+      // Details omitted
+      privateData: T,
+  }
+
+  impl<T> Drop for Device<T> {
+      fn drop(&mut self) {
+          // Implementation here
+      }
+  }
+
+The problem here is when the Device instance is dropped, we cannot
+guarantee the order of the Drop::drop calls for the psyStatsTimer or
+hostcmdReqWork members as-is. There might be some clever trick to solve
+this problem that I am not aware of.
+
+[1] https://lore.kernel.org/rust-for-linux/Z9MxI0u2yCfSzTvD@cassiopeiae/T/#=
+m87f121ec72ba159071b20dccb4071cd7d2398050
+[2] https://doc.rust-lang.org/std/ops/trait.Drop.html
+
+Thanks for the review,
+Rahul Rameshbabu
 
 >
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/D=
-ocumentation/process/submitting-patches.rst?id=3Dv6.13#n396
+> Cheers,
+> Benjamin
 >
-> Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+>>
+>>   [  +0.012968] monitor_control: Probing HID device vendor: 2389 product=
+: 29204 using Rust!
+>>   [  +0.000108] monitor_control: Removing HID device vendor: 2389 produc=
+t: 29204 using Rust!
+>>
+>> Signed-off-by: Rahul Rameshbabu <sergeantsagara@protonmail.com>
+>> ---
+>>  drivers/hid/hid_monitor_control.rs | 9 +++++++--
+>>  1 file changed, 7 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/hid/hid_monitor_control.rs b/drivers/hid/hid_monito=
+r_control.rs
+>> index 18afd69a56d5..aeb6e4058a6b 100644
+>> --- a/drivers/hid/hid_monitor_control.rs
+>> +++ b/drivers/hid/hid_monitor_control.rs
+>> @@ -8,17 +8,22 @@
+>>      Driver,
+>>  };
+>>
+>> +const USB_VENDOR_ID_NVIDIA: u32 =3D 0x0955;
+>> +const USB_DEVICE_ID_NVIDIA_THUNDERSTRIKE_CONTROLLER: u32 =3D 0x7214;
+>> +
+>>  struct HidMonitorControl;
+>>
+>>  #[vtable]
+>>  impl Driver for HidMonitorControl {
+>>      fn probe(dev: &mut hid::Device, id: &hid::DeviceId) -> Result<()> {
+>>          /* TODO implement */
+>> +        pr_info!("Probing HID device vendor: {} product: {} using Rust!=
+\n", id.vendor(), id.product());
+>>          Ok(())
+>>      }
+>>
+>>      fn remove(dev: &mut hid::Device) {
+>>          /* TODO implement */
+>> +        pr_info!("Removing HID device vendor: {} product: {} using Rust=
+!\n", dev.vendor(), dev.product());
+>>      }
+>>  }
+>>
+>> @@ -26,8 +31,8 @@ fn remove(dev: &mut hid::Device) {
+>>      driver: HidMonitorControl,
+>>      id_table: [
+>>          kernel::usb_device! {
+>> -            vendor: /* TODO fill in */,
+>> -            product: /* TODO fill in */,
+>> +            vendor: USB_VENDOR_ID_NVIDIA,
+>> +            product: USB_DEVICE_ID_NVIDIA_THUNDERSTRIKE_CONTROLLER,
+>>          },
+>>      ],
+>>      name: "monitor_control",
+>> --
+>> 2.47.2
+>>
+>>
 
-Thanks
+
 
