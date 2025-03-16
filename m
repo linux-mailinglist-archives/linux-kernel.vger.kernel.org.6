@@ -1,242 +1,132 @@
-Return-Path: <linux-kernel+bounces-563118-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563119-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7284A63729
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 20:19:35 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2AC8A6372E
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 20:20:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 521533AE1E1
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 19:19:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C87D9188E814
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 19:20:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7058A1C84B1;
-	Sun, 16 Mar 2025 19:19:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60CA71E1E13;
+	Sun, 16 Mar 2025 19:20:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="p1TUYhix"
-Received: from smtp.forwardemail.net (smtp.forwardemail.net [121.127.44.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WJdidqDD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 088F01448E0
-	for <linux-kernel@vger.kernel.org>; Sun, 16 Mar 2025 19:19:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=121.127.44.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6F1B15F306;
+	Sun, 16 Mar 2025 19:20:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742152764; cv=none; b=DoJRF6rMxCQwYdvfhp5H7Fv/6BgACCXyWNDI9wUndGrd+VIUK7kWqGFfwxUNDQsTgtFwtcxCpf5QcnDaAUj1ny8wb+siqMT9gqVB+PTf+mXThbN+Zrnm8XWbhfIKRNiEHjvwOu7BH844evKwlW9xEDN2Jgc6kvUhnh18C3x4InU=
+	t=1742152801; cv=none; b=IMdvVf8zZPanCYnfJsWN1kJZ4f7JCCFDZmXxnY6SSA4L7xS7Y4xj3PpXpz4Bkju1NRKy+DtfmQJpVWaHI3oUA9mTawhhI4eymAGUMF9z31Ta891GOuYLHXBvZq644mZxdgRmBMoqgcXk9uIB7xOMkyvOWONYkGoDp6qX14HibzU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742152764; c=relaxed/simple;
-	bh=KaiyJ1AyKDQKx6Fxx0En5UnEuH4YiUWhxm3tULyQ05A=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IcsfFWTNO9b9wgJ/NDMn3k0tvfpZ+a38Bn7VXOriEK/3CuHO2j4x19HcFyRQRLTevgDONC89GeOXMzt06Vzq4TipMp/jNR5UYxWORv7eTkgy1Me3I5555QAyyJxNi08qhhK3frTcOhb3vCR4h/s0vG7czNYQbAdfSQqsyVOkqKI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=p1TUYhix; arc=none smtp.client-ip=121.127.44.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
- h=Content-Transfer-Encoding: MIME-Version: Message-ID: Date: Subject: Cc:
- To: From; q=dns/txt; s=fe-e1b5cab7be; t=1742152750;
- bh=KKiT+5efbIUlHhEE1qhOdYjXJu1nfrYjC1bFfsz31As=;
- b=p1TUYhix1nEhQM9KVp7509FWe5H+WI8E87xUwQ9VKeYdM7l9yhfcdPe7shgZN0MjyJMsr4ebn
- K6+KjhXhvpxBZQUcnEmqIQmwgFTjzXVKAkUXSEbGhqxGK6bSvOB+vYbKqcB+NZFnXpD3I0249z5
- iIofSp1Z0u5qGmi3PfQoqYwENu+KP2jXkRrKkTtg4lYZY2wxclF8qiXwBH4Q4WXNwSnB2QOG2ZC
- dQZi2PAtNwms4ernf2evGzFnZ/IL2jiX3CbruSX0ZaLYL50TK4eTEySZypncSgliko34q987km6
- Io3pqOC69ZUWZ2pRrLfMuiIftj7oAoKDOUVspJ0UPsaA==
-X-Forward-Email-ID: 67d7242a63cc912a5bbae3ed
-X-Forward-Email-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
- 121.127.44.73
-X-Forward-Email-Version: 0.4.40
-X-Forward-Email-Website: https://forwardemail.net
-X-Complaints-To: abuse@forwardemail.net
-X-Report-Abuse: abuse@forwardemail.net
-X-Report-Abuse-To: abuse@forwardemail.net
-From: Jonas Karlman <jonas@kwiboo.se>
-To: Heiko Stuebner <heiko@sntech.de>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc: linux-rockchip@lists.infradead.org,
-	Jonas Karlman <jonas@kwiboo.se>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] nvmem: rockchip-otp: Handle internal word_size in main reg_read op
-Date: Sun, 16 Mar 2025 19:18:58 +0000
-Message-ID: <20250316191900.1858944-1-jonas@kwiboo.se>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1742152801; c=relaxed/simple;
+	bh=Qs48kSaF/rFe+8NfU92PP5vQtEx0UzxhcUOSBSvxEDQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Nh2PL+TjJxESBNC69FjHYu+tHmIw4WOHrPHJmK5P7dhnEQj4Bb4gbeYtSq7p9RZJ0GAw75F30De1w+1NWMkSAUn3OPXY1LAW9i4QSXK+fX/bm2cF+ArgBvC7MFPaMDIGl6XtcFY9bJHqsnYbQhwBAF4QgEVju1KJuHuHmzWpFNA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WJdidqDD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F366DC4CEDD;
+	Sun, 16 Mar 2025 19:19:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742152801;
+	bh=Qs48kSaF/rFe+8NfU92PP5vQtEx0UzxhcUOSBSvxEDQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WJdidqDDOv7uWe12OaeqnPPha7scvUBMk+l6gdylCwvV/zT9cMOQ6+xZ21CHNOIwn
+	 aD9inRyiQDkSwzZYldkIG8H4qck6e4osY8jPmPNSlW8C5/Dk55/utuoRXn4GtsklGX
+	 Y30RWzdQchRAFb+5LLJVGu1XzrNgME8tMt1c9eiJlSL7TeBVKBiz3oYTi37Ga0RGZ7
+	 AG3GyNhmhQTW1zIsn2qip28yvN/AHvx7RWVMZcfBPIEjp7KsLG4kEQWtkS4npkhg9B
+	 Atcczprp7hl05p4QBj8kX+Tbk8Ygg4cyWYOT+/SuCylYTPZuJbQn2A3+hVwfPc+9uT
+	 b5UeyzqmBL+KA==
+Date: Sun, 16 Mar 2025 20:19:54 +0100
+From: Danilo Krummrich <dakr@kernel.org>
+To: Andrew Ballance <andrewjballance@gmail.com>
+Cc: airlied@gmail.com, simona@ffwll.ch, maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org, tzimmermann@suse.de, corbet@lwn.net,
+	ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com,
+	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
+	a.hindborg@kernel.org, aliceryhl@google.com, tmgross@umich.edu,
+	acourbot@nvidia.com, nouveau@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH v2 1/3] rust: alloc: add Vec::truncate method
+Message-ID: <Z9ckWiW7X0hX5Wvt@pollux>
+References: <20250316111644.154602-1-andrewjballance@gmail.com>
+ <20250316111644.154602-2-andrewjballance@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250316111644.154602-2-andrewjballance@gmail.com>
 
-Rockchip SoCs RK3576 and RK3588 read data from the OTP using 32-bit
-words instead of normal 8-bit bytes. Similar RK3506, RK3528, RK3562 and
-RK3568 will read data from OTP using 16-bit words.
+On Sun, Mar 16, 2025 at 06:16:42AM -0500, Andrew Ballance wrote:
+> implement the equivalent to the std's Vec::truncate
+> on the kernel's Vec type.
+> 
+> Signed-off-by: Andrew Ballance <andrewjballance@gmail.com>
+> ---
+>  rust/kernel/alloc/kvec.rs | 36 ++++++++++++++++++++++++++++++++++++
+>  1 file changed, 36 insertions(+)
+> 
+> diff --git a/rust/kernel/alloc/kvec.rs b/rust/kernel/alloc/kvec.rs
+> index ae9d072741ce..18bcc59f0b38 100644
+> --- a/rust/kernel/alloc/kvec.rs
+> +++ b/rust/kernel/alloc/kvec.rs
+> @@ -452,6 +452,42 @@ pub fn reserve(&mut self, additional: usize, flags: Flags) -> Result<(), AllocEr
+>  
+>          Ok(())
+>      }
+> +
+> +    /// Shortens the vector, setting the length to `len` and drops the removed values.
+> +    /// If `len` is greater than or equal to the current length, this does nothing.
+> +    ///
+> +    /// This has no effect on the capacity and will not allocate.
+> +    /// # Examples
+> +    ///
+> +    /// ```
+> +    /// let mut v = kernel::kvec![1, 2, 3]?;
+> +    /// v.truncate(1);
+> +    /// assert_eq!(v.len(), 1);
+> +    /// assert_eq!(&v, &[1]);
+> +    ///
+> +    /// # Ok::<(), Error>(())
+> +    /// ```
+> +    pub fn truncate(&mut self, len: usize) {
+> +        if len >= self.len() {
+> +            return;
+> +        }
+> +
+> +        let drop_range = len..self.len();
+> +
+> +        // SAFETY: `drop_range` is a subrange of `[0, len)` by the bounds check above.
+> +        let ptr: *mut [T] = unsafe { self.get_unchecked_mut(drop_range) };
+> +
+> +        // SAFETY:
+> +        // - this will always shrink the vector because of the above bounds check
+> +        // - [`new_len`, `self.len`) will be dropped through the call to `drop_in_place` below
 
-The nvmem core stride and word_size cannot fully be used as cells is not
-always aligned. Continue to report a stride=1 and word_size=1 in
-nvmem_config and instead handle use of SoC specific word_size internally
-in the driver.
+We've just figured out that this part is not needed after all, sorry for the
+inconvenience. No need to resend for this though, I can remove this line when
+applying the patch.
 
-Move current SoC specific word_size handling from the RK3588 read_reg
-operation to the main read_reg operation to help simplify the SoC
-specific read_reg operation and allow code reuse in a future RK3568
-reg_read operation.
-
-Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
----
-This closely matches how I refactored the Rockchip eFUSE and OTP driver
-in mainline U-Boot to handle word/block reads back in 2023, see [1].
-
-[1] http://lore.kernel.org/r/20230222224436.1570224-3-jonas@kwiboo.se/
----
- drivers/nvmem/rockchip-otp.c | 72 ++++++++++++++++++++----------------
- 1 file changed, 40 insertions(+), 32 deletions(-)
-
-diff --git a/drivers/nvmem/rockchip-otp.c b/drivers/nvmem/rockchip-otp.c
-index d88f12c53242..45bbb6147fb7 100644
---- a/drivers/nvmem/rockchip-otp.c
-+++ b/drivers/nvmem/rockchip-otp.c
-@@ -59,7 +59,6 @@
- #define RK3588_OTPC_AUTO_EN		0x08
- #define RK3588_OTPC_INT_ST		0x84
- #define RK3588_OTPC_DOUT0		0x20
--#define RK3588_NBYTES			4
- #define RK3588_BURST_NUM		1
- #define RK3588_BURST_SHIFT		8
- #define RK3588_ADDR_SHIFT		16
-@@ -69,6 +68,7 @@
- struct rockchip_data {
- 	int size;
- 	int read_offset;
-+	int word_size;
- 	const char * const *clks;
- 	int num_clks;
- 	nvmem_reg_read_t reg_read;
-@@ -185,48 +185,28 @@ static int px30_otp_read(void *context, unsigned int offset,
- }
- 
- static int rk3588_otp_read(void *context, unsigned int offset,
--			   void *val, size_t bytes)
-+			   void *val, size_t count)
- {
- 	struct rockchip_otp *otp = context;
--	unsigned int addr_start, addr_end, addr_len;
--	int ret, i = 0;
--	u32 data;
--	u8 *buf;
--
--	addr_start = round_down(offset, RK3588_NBYTES) / RK3588_NBYTES;
--	addr_end = round_up(offset + bytes, RK3588_NBYTES) / RK3588_NBYTES;
--	addr_len = addr_end - addr_start;
--	addr_start += otp->data->read_offset / RK3588_NBYTES;
--
--	buf = kzalloc(array_size(addr_len, RK3588_NBYTES), GFP_KERNEL);
--	if (!buf)
--		return -ENOMEM;
-+	u32 *buf = val;
-+	int ret;
- 
--	while (addr_len--) {
--		writel((addr_start << RK3588_ADDR_SHIFT) |
-+	while (count--) {
-+		writel((offset++ << RK3588_ADDR_SHIFT) |
- 		       (RK3588_BURST_NUM << RK3588_BURST_SHIFT),
- 		       otp->base + RK3588_OTPC_AUTO_CTRL);
- 		writel(RK3588_AUTO_EN, otp->base + RK3588_OTPC_AUTO_EN);
- 
- 		ret = rockchip_otp_wait_status(otp, RK3588_OTPC_INT_ST,
- 					       RK3588_RD_DONE);
--		if (ret < 0) {
-+		if (ret) {
- 			dev_err(otp->dev, "timeout during read setup\n");
--			goto read_end;
-+			return ret;
- 		}
- 
--		data = readl(otp->base + RK3588_OTPC_DOUT0);
--		memcpy(&buf[i], &data, RK3588_NBYTES);
--
--		i += RK3588_NBYTES;
--		addr_start++;
-+		*buf++ = readl(otp->base + RK3588_OTPC_DOUT0);
- 	}
- 
--	memcpy(val, buf + offset % RK3588_NBYTES, bytes);
--
--read_end:
--	kfree(buf);
--
- 	return ret;
- }
- 
-@@ -234,7 +214,7 @@ static int rockchip_otp_read(void *context, unsigned int offset,
- 			     void *val, size_t bytes)
- {
- 	struct rockchip_otp *otp = context;
--	int ret;
-+	int ret, word_size;
- 
- 	if (!otp->data || !otp->data->reg_read)
- 		return -EINVAL;
-@@ -245,8 +225,34 @@ static int rockchip_otp_read(void *context, unsigned int offset,
- 		return ret;
- 	}
- 
--	ret = otp->data->reg_read(context, offset, val, bytes);
-+	offset += otp->data->read_offset;
-+	word_size = otp->data->word_size;
-+
-+	if (word_size > 1) {
-+		unsigned int addr_start, addr_end;
-+		size_t count;
-+		u8 *buf;
-+
-+		addr_start = offset / word_size;
-+		addr_end = DIV_ROUND_UP(offset + bytes, word_size);
-+		count = addr_end - addr_start;
-+
-+		buf = kzalloc(array_size(count, word_size), GFP_KERNEL);
-+		if (!buf) {
-+			ret = -ENOMEM;
-+			goto err;
-+		}
-+
-+		ret = otp->data->reg_read(context, addr_start, buf, count);
-+		if (!ret)
-+			memcpy(val, buf + (offset % word_size), bytes);
-+
-+		kfree(buf);
-+	} else {
-+		ret = otp->data->reg_read(context, offset, val, bytes);
-+	}
- 
-+err:
- 	clk_bulk_disable_unprepare(otp->data->num_clks, otp->clks);
- 
- 	return ret;
-@@ -259,7 +265,7 @@ static struct nvmem_config otp_config = {
- 	.type = NVMEM_TYPE_OTP,
- 	.read_only = true,
- 	.stride = 1,
--	.word_size = 1,
-+	.word_size = sizeof(u8),
- 	.reg_read = rockchip_otp_read,
- };
- 
-@@ -277,6 +283,7 @@ static const struct rockchip_data px30_data = {
- static const struct rockchip_data rk3576_data = {
- 	.size = 0x100,
- 	.read_offset = 0x700,
-+	.word_size = sizeof(u32),
- 	.clks = px30_otp_clocks,
- 	.num_clks = ARRAY_SIZE(px30_otp_clocks),
- 	.reg_read = rk3588_otp_read,
-@@ -289,6 +296,7 @@ static const char * const rk3588_otp_clocks[] = {
- static const struct rockchip_data rk3588_data = {
- 	.size = 0x400,
- 	.read_offset = 0xc00,
-+	.word_size = sizeof(u32),
- 	.clks = rk3588_otp_clocks,
- 	.num_clks = ARRAY_SIZE(rk3588_otp_clocks),
- 	.reg_read = rk3588_otp_read,
--- 
-2.48.1
-
+> +        unsafe { self.set_len(len) };
+> +
+> +        // SAFETY:
+> +        // - the dropped values are valid `T`s by the type invariant
+> +        // - we are allowed to invalidate [`new_len`, `old_len`) because we just changed the
+> +        //   len, therefore we have exclusive access to [`new_len`, `old_len`)
+> +        unsafe { ptr::drop_in_place(ptr) };
+> +    }
+>  }
+>  
+>  impl<T: Clone, A: Allocator> Vec<T, A> {
+> -- 
+> 2.48.1
+> 
 
