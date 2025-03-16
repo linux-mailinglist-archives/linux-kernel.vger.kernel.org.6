@@ -1,151 +1,108 @@
-Return-Path: <linux-kernel+bounces-563060-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563061-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9FB4A63682
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 17:52:33 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 782A9A63684
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 17:54:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 021E07A536A
-	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 16:51:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C154116DB7A
+	for <lists+linux-kernel@lfdr.de>; Sun, 16 Mar 2025 16:54:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2CD31D932F;
-	Sun, 16 Mar 2025 16:52:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E44EB1D7E47;
+	Sun, 16 Mar 2025 16:54:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K9Ars1DB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RzFmAlsK"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0768E8F4A;
-	Sun, 16 Mar 2025 16:52:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A3B14A06;
+	Sun, 16 Mar 2025 16:54:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742143940; cv=none; b=Uc5i5+H79CgMkwtIgPw/c5hv3B9LEeklAhrw3qS9NcmO4OJcK/kVHFrrAE2lacBJ3mZn8Msg2ZlZZrS6CewM2cKgfdypufnAvP4VP0/8BOOr6bUriGEO5GNvsFH3snWmCi+9E8Ubjcn/V1gcS1uaRNgCfGhtRCoDe5w05BuWxuk=
+	t=1742144070; cv=none; b=KI/wisVYO4EWm0k0+f4cjyZwopCExzaU7Ysf4jH2O31mR8PybvdAngxxa+7soRZrpV+tUFzvy5VlmOoq/7u4jmfh/YGjZWsXB+578rTt07iLQS5Zhi6mzn49zY12wxbEQfvwt6sqFQFvl56WyPaAKbW1KBjg+azYYACU6uI8umQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742143940; c=relaxed/simple;
-	bh=n78V4zbV/mHZlM5dXRpGh/gJ3GsjHWJsb+aVY10033g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fxOvSc6StmAOGgAwosf5mplbbHkXXmasw+Ri1Um0Rdn5v0n191Dbdp/BCQzVfW7XsY6ZMahN5s0ShP1MYD14LHAj0eAzH5Ss0KDAvnXD/ziRmc6m10QlQPlFd3Q5SYZ7spPkoePrKsPUgUPknUaxSkcTLPDOHp9Jvih4KCbGOZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K9Ars1DB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7068CC4CEDD;
-	Sun, 16 Mar 2025 16:52:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742143939;
-	bh=n78V4zbV/mHZlM5dXRpGh/gJ3GsjHWJsb+aVY10033g=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=K9Ars1DBR870pJQUowUaiSR6+yE+luhEXbCDG4wiSyOBv6Ube2qmCtZNlJQDkKeDh
-	 /mjlL93scVn2D6WW0iiTOqr6qLqrbaargt1HnOz+1mXfBWzFU1N3hQFk4B9wc9XYJh
-	 Xv6QouSZBKT/uqKnAz9NEWskZgEs3H4gI6iXG3STQy47YDcZ/8B176DIgmVS3z/eR4
-	 GW7KFcnfwWYBK5Q/pbd/40FtL1Oh/XStZGVsIVc4KnFate3fz+5DxfuyY3bhyGAPUm
-	 LmSjwJR5SXFdkdlRK9yc/qci/cR7dGk21iwXaBehbWpCbqu5JjDdwiA6a1KAUHH4xt
-	 x9huWv09kt3AQ==
-Message-ID: <3f65fe16-56f8-4887-bb91-994b181ce5a9@kernel.org>
-Date: Sun, 16 Mar 2025 17:52:10 +0100
+	s=arc-20240116; t=1742144070; c=relaxed/simple;
+	bh=JlASOQO15Ulr4Y5cQITauMXKzdFZOa3S7PjaBPCjIpk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nQ+pp/EHtXh/5ZfRQAKfO5aGhkRc0DPMcm3OzYlTGZieIlOQdY61o7Y026HONlpbNdg4v28eSgFsowkxDtMMUTnzTw7EGA/W/U1TEmp+l7bFHtKzQsXyYLIT1rGWyBVTUgGg4d0EQEG+kVy8Mzv4P7iHm5GLKqa9CxSsOuLsZvA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RzFmAlsK; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-22349bb8605so74012925ad.0;
+        Sun, 16 Mar 2025 09:54:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742144068; x=1742748868; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=zmB4pBX+mqAyrHQpY1rR5NkKyc/9Lvpj/pi06A1TjWc=;
+        b=RzFmAlsKczCowCTzEM/HxgvpouM8IFlxHLo6+fPip+NDqzPpPY6OHdqE4NXv0KeDeX
+         TQNFH/q5RESbNbR6yQU7mfNRnGEx/mNJv1rtFswUXSaanf7uEd6hKcfJdxIdyi7y20/U
+         Fq0K1I4huYYgU+AVDZxFpJGuaM4dqnEhFTk8XNldBRcjWd6o5A6PLnAa4/YzDXOBUcOa
+         3CMsLoXqZKLd/hddDJpJMNKfgO4miLaWUnp6MFpF2l7s3NmiifBcPOK9qlo4Z/48IyQl
+         3lSM4WIBNppHxWLpdTaOto7vi4HUOAwablxjRUyBHup3Fu1Szc6qQ12Df5JYrQkkr7D4
+         C04g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742144068; x=1742748868;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zmB4pBX+mqAyrHQpY1rR5NkKyc/9Lvpj/pi06A1TjWc=;
+        b=mZJz35e2Axgw6Vqf01R+vq8a03u8EB6jhAFkbpZeKLfM+im2mRUd/JtdWwCa5xOGEx
+         IwbjnX5qpz07/C9RujurgazFK4pNLWPnnTpZOCAAM4ombbu6uI1EpKdcoLcrCV4HL2Yo
+         Sq41ozD4n/eUxzqQ5lEguLQhcfkgqJ6HP0+rkC1eYQW+nqEpFjbZjiArWaQWg2CvMpj9
+         +OtodJfixRK0/I3FzXy1WgE5ygpBml4FWKpwx6tvlgB114SuPNzrcbjvHQh0ohP861td
+         YJR49bOexnkyoMb9kaK148YdAmPxsHCNBefLqyrD3G+/gsm+kZuq9rjuslUNGVUtrKhs
+         zSag==
+X-Forwarded-Encrypted: i=1; AJvYcCUnsI3cMPA6SS2vuwE0jiLz5hDTEGejksuY59bCJax9BVlFLfbnV5mjFA2iuqvjweTrg9ac1DRlMQJ3WCE=@vger.kernel.org, AJvYcCX6bPZovqAuXwuJ0IzizetCIqM6TIii/Y8Wh1mwW0zzBQHwYFGwPctPkB25Y924RKq2gp4ujrYV@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5s3LW+LhT5ExWy7yfs5rtPLdsbsA4PolGrwKvVn9AZUw2cgVo
+	Kzu2W9UGgptkGH54toRpNL84o3M0U6AHKOsuQN2Myj9dOKPCvSY=
+X-Gm-Gg: ASbGncsrlbu33iSDtAWeRVdihoIgpzpHIL6Lzk02Tyb460/94VA5VggzslwYG+Q37C0
+	z+FkuMGnFN1vYAkUsV4IN0dpxBds4AZ8w+isCrMCHdPYA8mRV6PS01mYNE9cXR9hoiLoMnL/VF+
+	jLl8EJj+B8CmVSRzPGrDBc/hK77Bmoi8WYv9cKLL89G3LT1rdl4u/aOGNuNIjfH6sfBn/9AXPo9
+	ffDYNyFOyefVEfJtBSZtrzHeLSuyn0sqM+HzmTFpLuXIoJq3OpFsrE0vPRBQjSS5jaBQNk7BpkB
+	DY2XP5a1AdIz2HzRrwF/BfhPPsniVExZWvDaRFYtcnoa
+X-Google-Smtp-Source: AGHT+IGX8C0nPVF0W8WqK0u22KEPUn24VYYthBMVkO42IK9gD5SG+C9xofe1+9ak6aE0gcQqWG6TYA==
+X-Received: by 2002:a17:902:e5cb:b0:223:569d:9a8b with SMTP id d9443c01a7336-225e0a64a03mr118181805ad.18.1742144068194;
+        Sun, 16 Mar 2025 09:54:28 -0700 (PDT)
+Received: from localhost ([2601:646:9e00:f56e:2844:3d8f:bf3e:12cc])
+        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-737116944f5sm5970967b3a.124.2025.03.16.09.54.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 16 Mar 2025 09:54:27 -0700 (PDT)
+Date: Sun, 16 Mar 2025 09:54:27 -0700
+From: Stanislav Fomichev <stfomichev@gmail.com>
+To: ffhgfv <xnxc22xnxc22@qq.com>
+Cc: davem <davem@davemloft.net>, edumazet <edumazet@google.com>,
+	kuba <kuba@kernel.org>, pabeni <pabeni@redhat.com>,
+	horms <horms@kernel.org>, kuniyu <kuniyu@amazon.com>,
+	bigeasy <bigeasy@linutronix.de>, jdamato <jdamato@fastly.com>,
+	"aleksander.lobakin" <aleksander.lobakin@intel.com>,
+	netdev <netdev@vger.kernel.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: Linux6.14-rc5:  INFO: task hung in
+ register_netdevice_notifier_net
+Message-ID: <Z9cCQ1huViMjZkvS@mini-arch>
+References: <tencent_A3FB41E607B2126D163C5D4C87DC196E0707@qq.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/5] Add support for Battery Status & Battery Caps AMS in
- TCPM
-To: Amit Sunil Dhamne <amitsd@google.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Badhri Jagan Sridharan <badhri@google.com>,
- Sebastian Reichel <sre@kernel.org>,
- Heikki Krogerus <heikki.krogerus@linux.intel.com>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <len.brown@intel.com>,
- Pavel Machek <pavel@kernel.org>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
- linux-pm@vger.kernel.org, RD Babiera <rdbabiera@google.com>,
- Kyle Tso <kyletso@google.com>
-References: <20250312-batt_ops-v1-0-88e0bb3129fd@google.com>
- <20250313-determined-wild-seahorse-f7871a@krzk-bin>
- <914a0df4-96d0-4cd4-ac87-3826fa9c1440@google.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <914a0df4-96d0-4cd4-ac87-3826fa9c1440@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <tencent_A3FB41E607B2126D163C5D4C87DC196E0707@qq.com>
 
-On 15/03/2025 01:49, Amit Sunil Dhamne wrote:
-> Hi Krzysztof,
-> 
-> Thanks for the review!
-> 
-> On 3/13/25 1:50 AM, Krzysztof Kozlowski wrote:
->> On Wed, Mar 12, 2025 at 04:42:00PM -0700, Amit Sunil Dhamne wrote:
->>> Support for Battery Status & Battery Caps messages in response to
->>> Get_Battery_Status & Get_Battery_Cap request is required by USB PD devices
->>> powered by battery, as per "USB PD R3.1 V1.8 Spec", "6.13 Message
->>> Applicability" section. This patchset adds support for these AMSes
->>> to achieve greater compliance with the spec.
->> Which board uses it? I would be happy to see that connection between
->> batteries and USB connector on the schematics of some real device. How
->> does it look like?
-> Any board that uses a USB Type-C connector that supplies power into or 
+On 03/16, ffhgfv wrote:
+> Hello, I found a bug titled "   INFO: task hung in register_netdevice_notifier_net  " with modified syzkaller in the Linux6.14-rc5.
+> If you fix this issue, please add the following tag to the commit:  Reported-by: Jianzhou Zhao <xnxc22xnxc22@qq.com>,    xingwei lee <xrivendell7@gmail.com>, Zhizhuo Tang <strforexctzzchange@foxmail.com>
 
-If you keep responding like this, you will got nowhere, so let me
-re-iterate:
+Haven't looked that deep, but it seems to involve a tunneling device,
+so I wonder whether it's gonna be fixed by:
+- https://patchwork.kernel.org/project/netdevbpf/patch/20250312190513.1252045-2-sdf@fomichev.me/
+- https://patchwork.kernel.org/project/netdevbpf/patch/20250312190513.1252045-3-sdf@fomichev.me/
 
-Which upstream DTS (or upstream supported hardware) is going to use this
-binding, so I can see how you are going to implement it there in the
-entire system?
-
-> out of a battery while operating in sink or source mode respectively. 
-> The VBUS is connected to the (battery + buck boost IC's CHGin/Vin) or a 
-> companion IFPMIC connected to a battery.  In our board we have USB 
-> Connector <-> IFPMIC <-> Battery.
-
-Which board is that?
-
-Best regards,
-Krzysztof
+Do you have a repro? Can you rerun with the above fixes and enable
+lockdep?
 
