@@ -1,216 +1,667 @@
-Return-Path: <linux-kernel+bounces-563259-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563260-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90837A63B93
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 03:28:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F7E2A63B95
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 03:29:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B1273AD321
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 02:28:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E70F2188D168
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 02:29:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 403DE15573F;
-	Mon, 17 Mar 2025 02:28:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C1AF86331;
+	Mon, 17 Mar 2025 02:29:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nutanix.com header.i=@nutanix.com header.b="KkNJKd/M";
-	dkim=pass (2048-bit key) header.d=nutanix.com header.i=@nutanix.com header.b="yzgGyORN"
-Received: from mx0b-002c1b01.pphosted.com (mx0b-002c1b01.pphosted.com [148.163.155.12])
+	dkim=pass (1024-bit key) header.d=mcqueen.au header.i=craig@mcqueen.au header.b="XfZk3M5S"
+Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E527E182CD;
-	Mon, 17 Mar 2025 02:28:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=148.163.155.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC2B69475;
+	Mon, 17 Mar 2025 02:29:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742178532; cv=fail; b=XWX7z7KEy8NZaiT7VC/1SNrjM/5xdXTvwCpHcw5yyes3RfDqZNAEEvrGqBluWgnJyG4qO27HBm2/oShyG2h99r3ng3VeylYc66UwvzILW3EZ+PUS/C1hvX2lUaMA3SwHnV3wxAFY5+MP/kMkAMQ/wHekl5EAz87f7Vg/+ZhcDNI=
+	t=1742178548; cv=pass; b=bxNki6qR9t47mXM4Nvlu+UVYb2G5aqAfd4iCdbeZpzx9F/bWzOkvJ/GnQmrzG9e7TmVkz7tQ8aqJI7kYF2DEf4yCjQIwfaBsct+WhGCi4aKkNjtfk+I7UK2F1jKSpEOQ2t0o15QWb1zcV9S9EkJ9+WwkgTzj9pchzkTgXVlMop4=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742178532; c=relaxed/simple;
-	bh=roDIzAK/zzHOP/hTPx7Z6E4C2A1Cf91Di12vUtOSwFM=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=ICxT5xbgvYiK117BWdZ6XQVTjVl9cM4DdCd8kpwCzz2VMLYLwIenUwmkVwLoFB5JPmmD4Jw0TW5tOUwYFjLOReGWK2obzCfA21/HPDCv8bQN3DOvImmLJLsoNUUI7slWhGq0ku7OR+r14aRLg4whth4SDyTcp/hj6IQAywNGjFI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nutanix.com; spf=pass smtp.mailfrom=nutanix.com; dkim=pass (2048-bit key) header.d=nutanix.com header.i=@nutanix.com header.b=KkNJKd/M; dkim=pass (2048-bit key) header.d=nutanix.com header.i=@nutanix.com header.b=yzgGyORN; arc=fail smtp.client-ip=148.163.155.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nutanix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nutanix.com
-Received: from pps.filterd (m0127841.ppops.net [127.0.0.1])
-	by mx0b-002c1b01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52GHw8ZJ007320;
-	Sun, 16 Mar 2025 19:28:38 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nutanix.com; h=
-	cc:content-id:content-transfer-encoding:content-type:date:from
-	:in-reply-to:message-id:mime-version:references:subject:to; s=
-	proofpoint20171006; bh=roDIzAK/zzHOP/hTPx7Z6E4C2A1Cf91Di12vUtOSw
-	FM=; b=KkNJKd/MIFatzpOYgTjyK1a2vDLewhVLCJCQqHSUaplA9E5V98jzN16Dv
-	V8ie9QM/Vl39w/3hVCeAJnsapXqWwp/7jvm63AZ4iXZekGlyYVgiR1Hwu1WRdHPh
-	7p7xSjrm79ei7VGr0SwV8V4x5DMjTSNOuL6UfGm2Y1Fg8bg1YlYFjhs+AxlCgbfZ
-	sDBKwgPB12cAoySIuTCQgEBBUo5BSSPSpl7QZxc2b8fb9rRDgH0lm4P8e3zIhnR6
-	9zS4bH8MR2GXfIp/MZ27JZH2Qd1G7yE7l1qalVXgbNvbA2no3smr31Hl+jyklfXx
-	asCfZNvckAlM+iAPEx/Pm0zIkqrRQ==
-Received: from sj2pr03cu001.outbound.protection.outlook.com (mail-westusazlp17012032.outbound.protection.outlook.com [40.93.1.32])
-	by mx0b-002c1b01.pphosted.com (PPS) with ESMTPS id 45d737a329-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 16 Mar 2025 19:28:37 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=govIsoP9gEGUuuH1u826Xqd4D5hjngmPeM1eTDQQmOM9m3Dl4aDAog4RC7nYCbBOCTXhVVNi8Sf9nA4o9tFpIemrn5k09Rd1vi9pvKQPcAwZDJ1DRj9PCFuW3AZ5V5WnrzlNjqtsL2qSnVVKHTHJL1gfcDLeEjxNz1dEfiBXIWOzwmtV0K/twKakpXwvzzZW7BIJEVv4WzpKsN3PkeUKxz5kEyU7Tr6BsUfE0KsujUAI7co5sHfV+W23/eHuPO1IxKF0h1P3l3pX+nBRHUYyeBfn2V5ZjZ8nR+GIqbe0nT/tpTKlLJlZRlCLl8P5tDjzb5NRm1vnm1/jPDykwvA4DQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=roDIzAK/zzHOP/hTPx7Z6E4C2A1Cf91Di12vUtOSwFM=;
- b=ZAlL3XTL+e4cjLu1pL8KfgXvDeJt2w2B31xWERKxRATmDeEiYiCvNHP9Wr0CdSMYf26q/9jhSRA1l2eHHWNwCV7IFaR2xckn7aAzzh3Nu9IAwZFIJ0TNkMJfpfoLDkkkcVkCaHo0/ZFFyq+AsaH0bleRIQAJ9lw99TNZCkeCBmcGsxSBFRzS4EM8+5nQDKoo1qHV4/9sJOVLmihZedJE1OIpOcN4RkhxbsLis1u3vVqeA0h9Phjwf1Y2z53RZr2o6LnEBzYMvCIC0qSt/z890d4iuX/jp+qG0zUR31ySt0KOZFqBJqThE8PGniQ5n/r5TsaqfrJiTzN/5z36xzAEQw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nutanix.com; dmarc=pass action=none header.from=nutanix.com;
- dkim=pass header.d=nutanix.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nutanix.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=roDIzAK/zzHOP/hTPx7Z6E4C2A1Cf91Di12vUtOSwFM=;
- b=yzgGyORN48+VqrOBH4K1gTuLKnvPWKvQjOk8BzegGUQsZI+arS9WTbt+CXGnmLX23T+kDjYJOaxUxcgdsK7Kbz4geTrhpxymAImm3W/tFks0jGy0o0VWWCL8HFgQxAAeEC6TzlSnz6mPkxqIKbwqHX87/IKnek3z3jZ0Rn+qAkml77lom1lkox07a1Vd/gIhhkZ6ILRQ3As/nvueDA4sJ4iNLDcMSvb1maLYz9mDVaHQDY0Fw+ycKDkR+/a2wBUxoF/SSGZYXmAottmAcYnJR0i6Wiof0Wgd7rUc9hb29VsZzpdX+OhdAlPi1BjaXEESNerJUJhe94ND/YIjY2vsSQ==
-Received: from SJ0PR02MB8861.namprd02.prod.outlook.com (2603:10b6:a03:3f4::5)
- by SJ0PR02MB8466.namprd02.prod.outlook.com (2603:10b6:a03:3f6::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.33; Mon, 17 Mar
- 2025 02:28:35 +0000
-Received: from SJ0PR02MB8861.namprd02.prod.outlook.com
- ([fe80::a4b8:321f:2a92:bc42]) by SJ0PR02MB8861.namprd02.prod.outlook.com
- ([fe80::a4b8:321f:2a92:bc42%3]) with mapi id 15.20.8534.031; Mon, 17 Mar 2025
- 02:28:35 +0000
-From: Harshit Agarwal <harshit@nutanix.com>
-To: Juri Lelli <juri.lelli@redhat.com>
-CC: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann
-	<dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>, Ben Segall
-	<bsegall@google.com>,
-        Mel Gorman <mgorman@suse.de>,
-        Valentin Schneider
-	<vschneid@redhat.com>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>,
-        "stable@vger.kernel.org"
-	<stable@vger.kernel.org>
-Subject: Re: [PATCH] sched/deadline: Fix race in push_dl_task
-Thread-Topic: [PATCH] sched/deadline: Fix race in push_dl_task
-Thread-Index:
- AQHbj6GHm67dhCATrkil96yyudrYd7NvRueAgACX3YCAATetgIAAaUmAgADokICABED3gA==
-Date: Mon, 17 Mar 2025 02:28:35 +0000
-Message-ID: <71A41F54-E3B6-4D47-A8DA-4BA7075D949E@nutanix.com>
-References: <20250307204255.60640-1-harshit@nutanix.com>
- <Z9FXC7NMaGxJ6ai6@jlelli-thinkpadt14gen4.remote.csb>
- <8B627F86-EF5F-4EA2-96F4-E47B0B3CAD38@nutanix.com>
- <Z9Lb496DoMcu9hk_@jlelli-thinkpadt14gen4.remote.csb>
- <59E10428-6359-4E0A-BBB2-C98DF01F79BA@nutanix.com>
- <Z9P3S_GjAQPSedbI@jlelli-thinkpadt14gen4.remote.csb>
-In-Reply-To: <Z9P3S_GjAQPSedbI@jlelli-thinkpadt14gen4.remote.csb>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SJ0PR02MB8861:EE_|SJ0PR02MB8466:EE_
-x-ms-office365-filtering-correlation-id: 4f1070dc-044a-47ed-2edc-08dd64fb6b69
-x-proofpoint-crosstenant: true
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|1800799024|10070799003|7416014|376014|366016|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?mn3yrI0c3AYfgqaN252txq8E7k6rBbDYQ3DhAO6YO2eenouIG65f4wx8WMkP?=
- =?us-ascii?Q?XMFBjwX/PaeQUCJvYKrCwFaKDDD1MHMx1ohjOHOw0+MhdL/j4c2n7YBTNgPF?=
- =?us-ascii?Q?jv1yYizq/QCnCpr/iR4I9an1vuW1bBKc0EWwodIwCVWfQtSYR6LMrR6d6Y51?=
- =?us-ascii?Q?Z3ZkYsRlZI8eG1iYEt/W58LA1cgLFJ/ZLXDB0sPmPzup7DfIZ7uEshy3kUKU?=
- =?us-ascii?Q?xoR/346JxV8ctlTAk8hnVemCRus367jFPkEKQYR//9+qq/v3XtrUx9RhRJD/?=
- =?us-ascii?Q?FWqUGfXMlVOm/Ph9q45Ha6gG1Ebp0prqCo8HmZJTg2oC6/C/g4YzjVLUhdR9?=
- =?us-ascii?Q?3+Hz3LKbYwSgaIYLOl+f446DHJya8TIxzEvVqHDg4wR/X6dIekE8iGM0aSPL?=
- =?us-ascii?Q?RhDgXIerk26842IN7MiJpekL0BrV8b5/pwUELDz58MLhFnBifYhfzUoYkica?=
- =?us-ascii?Q?GPNFSldhNFmxYGcT8t7vEZUc5XoVs0NWPH+Ffz1YQWHxQTFt8SLtonw2KIEI?=
- =?us-ascii?Q?2owAho8CLfWEtT3SbipIKoASfB7WXn32D/B+fslHHWteiKoMv5Y9KZBFAc+Q?=
- =?us-ascii?Q?sqP8Nf2QRuH4aAbHuIAFbqeYxDqo9GLfPUbylEYMz3C1vSphe8TCWDC81tR8?=
- =?us-ascii?Q?yG5Cq0faUL5EIz2rpHeOEGPcEGUXZbp/WMfmGcmYYUceq0uK+lQfZEb7QK8H?=
- =?us-ascii?Q?0wxS+S6k48pjJcDnC/lRxv4s6/nkVOjRR2q+wesgTTAKkCVNAZYtuvaYlO6k?=
- =?us-ascii?Q?JA8V37NXQqRa5GdXj7c6IMcDxHn8tZBsfJy8vph9m/EBUeb6djNjj+D2h0PJ?=
- =?us-ascii?Q?cOd+TqBH5O3seQE2g3FmMdWbJQBYbvDqY5ZtLjDldBAna5ZbsG1fSlCcQtgz?=
- =?us-ascii?Q?EMCy9HtbLq3FDmLMn9h9bHHxFmgYXZNxcmv+73lZh0dd9ZPkiFQvfxtHHHKE?=
- =?us-ascii?Q?o4IVpSJPPGd5qsBnFEa/LoUbtC2tcyNKhVwjpTxuGdgz9ojezcXybPyvHC+t?=
- =?us-ascii?Q?V6R5bMjgSZJPIRJG9TZKIF4wW7CAGbuiUvhq0OwMEqt9J3Vj9THHUWD5yM8s?=
- =?us-ascii?Q?xrLlA3rotC+LeTBCBQVo0Bs+LL+0l+V3eGzMFR9G05DgnRDzLXuy2nMZcsMq?=
- =?us-ascii?Q?ne7tetg233hqLMgKkD76UHI6+jtG+4GqR5HiNkY3FTnuP4PrjL1tu7ptlaeU?=
- =?us-ascii?Q?4aOhScerxEv9LiWmNj8sJEFebpt2LmPS7/uis1vdJ3sBNimz0aH36NXeTYgG?=
- =?us-ascii?Q?96NZ5JMcEPveDNHiYTCzmRNEmBGQfWj/AFMm3ngD82OQIDXHjNlFORji/dsx?=
- =?us-ascii?Q?+TEs1Tn9dj6a/yOlx7btBkkR3URuNlSP7DOikocuHTihrMTbRIFPG9dmw/fk?=
- =?us-ascii?Q?e8NM0ae+2LYCqsPAEiUKv1ZPR1nw?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR02MB8861.namprd02.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(10070799003)(7416014)(376014)(366016)(38070700018);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?Ty3ya+FI9yKKTJOg+IPOV4pMhCatwXEDXkMJCCLVJNei16FaTSxcfrFNP4B2?=
- =?us-ascii?Q?izN3CumNxtp3FgTD05b+ItMie9nfW02EI16abjywV/QAro+i7t0570rhxu/j?=
- =?us-ascii?Q?TpFWk4Wkpd0y8KCCyfVHWMrXFHS9x7pEUV5gYGO4v+eKA642aW/QrAEGfp6T?=
- =?us-ascii?Q?m9Igth8MA5a8yj6pLfGZgy1jYYR8REDBcPeW3wqg7VLZqUAT5Mn+30AEE6Ve?=
- =?us-ascii?Q?RIq2llijFIsKEc21IgnigWrahZSaK1AYEFM3hhxuRJPbL+u7p5fk5KYDBTZg?=
- =?us-ascii?Q?ag34TrvsWZeAVs1dw5XKNwPDcq4VnrnvXqCbDFid1G9cfKZI5Fy/12yMkYy1?=
- =?us-ascii?Q?mkO+mcgFR0ORTE+SZx5Xn5NC5uRZw9WFnWGeHCF/3hMEG6MB7m+QJhoqCY1P?=
- =?us-ascii?Q?0pB8zSPHIRFJHflbg6ARA/6e3+y/FHmbH1ngs5QzOyBbaYH196mI9NUMmr2j?=
- =?us-ascii?Q?CmtvsueZ87EcNOPiVhLLV/68r9AbQOlIQBOgNdrouuNzlXnPijWegv60HAoA?=
- =?us-ascii?Q?yZ1L2dDP5fx6fPZNgc4233queFJyYYNwWtLuAKGXYpeyqramfweQz7g0p9aZ?=
- =?us-ascii?Q?CZTabHTEmgitrcZ0cl9knMKEQQ4Akd5xhxG8Ls+1Pfnckhm0Q9kKfeUUW5M2?=
- =?us-ascii?Q?0VBifoNcmNGKPRE0i8kvwj6kjHBpkJvs1Mb8+SvS2eQWzx6y11xEsIH2qM5S?=
- =?us-ascii?Q?pryUtNNnNPQHLq0f+SxTsC416RT4fC/tuITYNWm8ARGRszZnv9QvnhaxUWVH?=
- =?us-ascii?Q?ET+DHQ3muz1+oT99Xu8CWmtuSVUA3krcTTUZm3DztcDzpG1KrR7FpxrMoUQ8?=
- =?us-ascii?Q?swFybRPwzXqaeyzoIR6thQ7BwzESmnRLlZIHLfnKN3kLzsSaNgTO2YvdV4Nf?=
- =?us-ascii?Q?IchgGdXP9jiLyDyLgsXSjjPVd+YnBGN+ita4HiITLLSsSyNT39Y58U5pyGn1?=
- =?us-ascii?Q?IvD2rnlRElkirKwiBreUoCBwXMPLGy1RggvX7PwiekkNu0AYulC/tG9OX4da?=
- =?us-ascii?Q?/DX7R94BC9L9JPkPALbZtQLSKDcTcj5MqN1UP2Nhe/6Z/ycOut8qZm9JG/dp?=
- =?us-ascii?Q?R4n0SJGCZgp+61DZZg0Aa8BDCyRV3NklIoZEqpC5DrbaPaYO7dyOv6u/Fvb6?=
- =?us-ascii?Q?CCr3yHcCMRUnhDjAthVhkfp5w6e2m3ElPH2SN5auKeqNgRslxUg7Euo4+dR2?=
- =?us-ascii?Q?jpwBzBO0BEWVwNjMFzJohhQAgNZOqTH2Fvm32CTS3iUQbWipjZYupMpWdSIc?=
- =?us-ascii?Q?eciBwkvXDgO6+ycG0R1Eef9fMeXgEEhAzn43WJL1qDOCt8vHstkktWsF8R5V?=
- =?us-ascii?Q?L8YOWxfk4Qwzaq7XfLDiKNwcNpOqSuoLmhwacLQINfpDlzAAVT3B2gWr+I7u?=
- =?us-ascii?Q?EQyZMLiDeecRhSeW10Wew1S3A3YDXcE7yPLSR33/KacX+8ZIeB0+C5u/I+YK?=
- =?us-ascii?Q?e4y5bvOpcS5jwW3bcNekBr//Z0o1sl7Dgsho3uMMZC7+XYSo2fbLkbkkndUT?=
- =?us-ascii?Q?aOj0G8XI8KK6e5tNy8goXnYinlGqbzAqMC3DJf94BK3Rpa8Wd9YGm4UGSgxC?=
- =?us-ascii?Q?GqvTyhb3Lse6kVf3jRnXXKPB6gxHDFbPcDKnNdUNnDjk2o9c4MdJLIZybd1L?=
- =?us-ascii?Q?AkGF3pBVGl57lb7DJmOTyF0x5gi9tb1GDpPTg+/S0IS7?=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <4505914222669D4B9614F5ED9DEB1736@namprd02.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1742178548; c=relaxed/simple;
+	bh=yleLHvmqWC6bkwMlGEvMZueOUcUr0AFHvrXTDlkhORQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IB0ZHQ6xYAs32xCCbLt0ndNie26ccMwSxH+oZeu3n506mFCDF/kLAyLi80TaiLvV7B9sRnAFqhsDR5+1PfKUfG+PxdqQ7eFoqCKDU8aNC2CQVUyD2ecOTNhJ8nx20/U7Vzhpa+lTG5piwOfCSInnJEZBELpIWWoYaA8gZD1XKEU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mcqueen.au; spf=pass smtp.mailfrom=mcqueen.au; dkim=pass (1024-bit key) header.d=mcqueen.au header.i=craig@mcqueen.au header.b=XfZk3M5S; arc=pass smtp.client-ip=136.143.188.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mcqueen.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mcqueen.au
+ARC-Seal: i=1; a=rsa-sha256; t=1742178542; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=K4GfqVKxCmrpXDR/k+LP7pIYdcNoGvRIE3w/p0kdrBNLB8kBVk7q5Qs5K76K5C0FJD/0mcOPlt+lbewI2v8smWYmhplnY+kGELGjWzPxZZSefvPWfecTqH94rH3Nn1QZFKg8S0JnBO5lUhpdo+YGUKUuzX5Pq3OiG8umFtGTLGo=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1742178542; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=r4xjBVmkI9WWXsikdWSTXvy/pSHhI4Cbtq8y/+m6/bY=; 
+	b=di4Ib4UmffaAvtIQoqeoFjewduiuhH5wjtIbLTehkD+HImFnv2K9CiYqPI2nfOLiKiIXPexHotlMRYNALeWT/r1Rn4hCe11WVoV9odigs5yeKQT4uFDGF7Oc8OXj7KionwnRfHQ/4ZIGz242gmUFV33VH/a5LlY/jZAB9qP7Eao=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=mcqueen.au;
+	spf=pass  smtp.mailfrom=craig@mcqueen.au;
+	dmarc=pass header.from=<craig@mcqueen.au>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1742178542;
+	s=zmail; d=mcqueen.au; i=craig@mcqueen.au;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=r4xjBVmkI9WWXsikdWSTXvy/pSHhI4Cbtq8y/+m6/bY=;
+	b=XfZk3M5SwbVqwaOwX2ET5ecHpcqOGC3mEAxF5DrtaSk4zE54MaH1Tvgp5Ntz0wTT
+	GYwB34ozhLtMhQBhCToprU7OpVXsN+4VbF2OSA0RCj0YZYi6PJ8yB/KOY8hY476SK5t
+	CzcXcpWZz2T1n+aLZZ50i9zWe9iF05e/WkF2ey4w=
+Received: by mx.zohomail.com with SMTPS id 1742178539566162.7930063584206;
+	Sun, 16 Mar 2025 19:28:59 -0700 (PDT)
+From: Craig McQueen <craig@mcqueen.au>
+To: linux-leds@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Craig McQueen <craig@mcqueen.au>
+Subject: [PATCH v3] leds: Introduce userspace LED triggers driver
+Date: Mon, 17 Mar 2025 13:28:41 +1100
+Message-ID: <20250317022841.424038-1-craig@mcqueen.au>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: nutanix.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SJ0PR02MB8861.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4f1070dc-044a-47ed-2edc-08dd64fb6b69
-X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Mar 2025 02:28:35.7626
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: bb047546-786f-4de1-bd75-24e5b6f79043
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: gHSePbNH/g0uZRDFIyNcqxAnusQvUB9KIFNY4RV/NPFsTihvAs95WHgdnaBxmaePnSzYwQpgDoE7y4woAyKhHRhTvov5/P1OF9WYXzFDpbA=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR02MB8466
-X-Authority-Analysis: v=2.4 cv=CLsqXQrD c=1 sm=1 tr=0 ts=67d788d5 cx=c_pps a=fM4bIjZpJamw6RFag0UgWw==:117 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=Vs1iUdzkB0EA:10 a=H5OGdu5hBBwA:10 a=0kUYKlekyDsA:10 a=VwQbUJbxAAAA:8 a=64Cc0HZtAAAA:8 a=63L2ifQmVesAtp_6NBsA:9 a=CjuIK1q_8ugA:10
-X-Proofpoint-ORIG-GUID: g6ThbIkNiqBrVcDkzWygwjHymFEE4UZt
-X-Proofpoint-GUID: g6ThbIkNiqBrVcDkzWygwjHymFEE4UZt
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-16_08,2025-03-14_01,2024-11-22_01
-X-Proofpoint-Spam-Reason: safe
+Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 
+This driver creates a userspace LED triggers driver similar to
+uleds and uinput.
 
->=20
-> So, it looks definitely more complicated (and fragile?), but I think I
-> still like it better. Maybe you could add a comment in the code
-> documenting the two different paths and the associated checks, so that we
-> don't forget. :)
+New LED triggers are created by opening /dev/uledtriggers and writing
+a uledtriggers_user_dev struct. A new LED trigger is registered with the
+name given in the struct.
 
-Sent the v2 with this approach:=20
-https://lore.kernel.org/lkml/20250317022325.52791-1-harshit@nutanix.com/T/#=
-u
+After the initial setup, writing an int value will set the trigger's
+brightness, equivalent to calling led_trigger_event().
 
-Please take a look.
+Alternatively, there are ioctls for setup, changing trigger brightness,
+or doing blinking.
 
-Thanks,
-Harshit
+Closing the file handle to /dev/uledtriggers will remove the LED
+trigger.
+
+Signed-off-by: Craig McQueen <craig@mcqueen.au>
+---
+ Documentation/leds/index.rst        |   1 +
+ Documentation/leds/ledtrig-user.rst |  38 +++
+ drivers/leds/trigger/Kconfig        |  10 +
+ drivers/leds/trigger/Makefile       |   1 +
+ drivers/leds/trigger/ledtrig-user.c | 347 ++++++++++++++++++++++++++++
+ include/uapi/linux/uledtriggers.h   | 123 ++++++++++
+ 6 files changed, 520 insertions(+)
+ create mode 100644 Documentation/leds/ledtrig-user.rst
+ create mode 100644 drivers/leds/trigger/ledtrig-user.c
+ create mode 100644 include/uapi/linux/uledtriggers.h
+
+diff --git a/Documentation/leds/index.rst b/Documentation/leds/index.rst
+index 0ab0a2128a11..6139b9fc0b41 100644
+--- a/Documentation/leds/index.rst
++++ b/Documentation/leds/index.rst
+@@ -13,6 +13,7 @@ LEDs
+    ledtrig-oneshot
+    ledtrig-transient
+    ledtrig-usbport
++   ledtrig-user
+ 
+    uleds
+ 
+diff --git a/Documentation/leds/ledtrig-user.rst b/Documentation/leds/ledtrig-user.rst
+new file mode 100644
+index 000000000000..f94e3ce60ce4
+--- /dev/null
++++ b/Documentation/leds/ledtrig-user.rst
+@@ -0,0 +1,38 @@
++.. SPDX-License-Identifier: GPL-2.0
++
++======================
++Userspace LED Triggers
++======================
++
++The uledtriggers driver supports userspace LED triggers. This can be useful
++to create a more flexible architecture for applications to control LEDs.
++
++
++Usage
++=====
++
++When the driver is loaded, a character device is created at /dev/uledtriggers.
++To create a new LED trigger, open /dev/uledtriggers and write a
++uledtriggers_user_dev structure to it (found in kernel public header file
++linux/uledtriggers.h)::
++
++    #define LED_TRIGGER_MAX_NAME_SIZE 64
++
++    struct uledtriggers_user_dev {
++	char name[LED_TRIGGER_MAX_NAME_SIZE];
++    };
++
++A new LED trigger will be created with the name given. The name can consist of
++alphanumeric, hyphen and underscore characters.
++
++After the initial setup, writing an int value will set the trigger's
++brightness, equivalent to calling led_trigger_event().
++
++Alternatively, there are ioctls (defined in the public header file) for setup,
++changing trigger brightness, or doing blinking.
++
++The LED trigger will be removed when the open file handle to /dev/uledtriggers
++is closed.
++
++Multiple LED triggers are created by opening additional file handles to
++/dev/uledtriggers.
+diff --git a/drivers/leds/trigger/Kconfig b/drivers/leds/trigger/Kconfig
+index c11282a74b5a..f8d05dbb5367 100644
+--- a/drivers/leds/trigger/Kconfig
++++ b/drivers/leds/trigger/Kconfig
+@@ -161,4 +161,14 @@ config LEDS_TRIGGER_INPUT_EVENTS
+ 
+ 	  When build as a module this driver will be called ledtrig-input-events.
+ 
++config LEDS_TRIGGER_USER
++	tristate "Userspace LED triggers"
++	help
++	  This option enables support for userspace LED triggers.
++
++	  Userspace programs can create triggers via an interface at the char
++	  device /dev/uledtriggers.
++
++	  When build as a module this driver will be called ledtrig-user.
++
+ endif # LEDS_TRIGGERS
+diff --git a/drivers/leds/trigger/Makefile b/drivers/leds/trigger/Makefile
+index 3b3628889f68..352cd3c5f9db 100644
+--- a/drivers/leds/trigger/Makefile
++++ b/drivers/leds/trigger/Makefile
+@@ -16,3 +16,4 @@ obj-$(CONFIG_LEDS_TRIGGER_NETDEV)	+= ledtrig-netdev.o
+ obj-$(CONFIG_LEDS_TRIGGER_PATTERN)	+= ledtrig-pattern.o
+ obj-$(CONFIG_LEDS_TRIGGER_TTY)		+= ledtrig-tty.o
+ obj-$(CONFIG_LEDS_TRIGGER_INPUT_EVENTS)	+= ledtrig-input-events.o
++obj-$(CONFIG_LEDS_TRIGGER_USER)		+= ledtrig-user.o
+diff --git a/drivers/leds/trigger/ledtrig-user.c b/drivers/leds/trigger/ledtrig-user.c
+new file mode 100644
+index 000000000000..9cecba409c4f
+--- /dev/null
++++ b/drivers/leds/trigger/ledtrig-user.c
+@@ -0,0 +1,347 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++/*
++ * Userspace LED triggers driver
++ *
++ * Copyright (C) 2025 Craig McQueen <craig@mcqueen.au>
++ */
++#include <linux/ctype.h>
++#include <linux/fs.h>
++#include <linux/init.h>
++#include <linux/leds.h>
++#include <linux/miscdevice.h>
++#include <linux/module.h>
++
++#include <uapi/linux/uledtriggers.h>
++
++#define ULEDTRIGGERS_NAME	"uledtriggers"
++
++enum uledtriggers_state {
++	ULEDTRIGGERS_STATE_UNKNOWN,
++	ULEDTRIGGERS_STATE_REGISTERED,
++};
++
++enum uledtriggers_trig_state {
++	TRIG_STATE_EVENT,
++	TRIG_STATE_BLINK,
++};
++
++struct uledtriggers_device {
++	struct uledtriggers_user_dev	user_dev;
++	struct led_trigger	led_trigger;
++	struct mutex		mutex;
++	enum uledtriggers_state	state;
++	enum uledtriggers_trig_state	trig_state;
++	int			brightness;
++	unsigned long		trig_delay_on;
++	unsigned long		trig_delay_off;
++};
++
++static struct miscdevice uledtriggers_misc;
++
++/*
++ * When an LED is connected to the trigger, this 'activate' function runs and
++ * sets the initial state of the LED.
++ */
++static int uledtriggers_trig_activate(struct led_classdev *led_cdev)
++{
++	struct led_trigger		*trig;
++	struct uledtriggers_device	*udev;
++	enum uledtriggers_trig_state	trig_state;
++	unsigned long			delay_on;
++	unsigned long			delay_off;
++	int				retval = 0;
++
++	trig = led_cdev->trigger;
++	udev = container_of(trig, struct uledtriggers_device, led_trigger);
++
++	retval = mutex_lock_interruptible(&udev->mutex);
++	if (retval)
++		return retval;
++
++	trig_state = udev->trig_state;
++	switch (trig_state) {
++	default:
++	case TRIG_STATE_EVENT:
++		led_set_brightness(led_cdev, udev->brightness);
++		break;
++	case TRIG_STATE_BLINK:
++		delay_on = udev->trig_delay_on;
++		delay_off = udev->trig_delay_off;
++		led_blink_set(led_cdev, &delay_on, &delay_off);
++		break;
++	}
++	mutex_unlock(&udev->mutex);
++	return retval;
++}
++
++static int uledtriggers_open(struct inode *inode, struct file *file)
++{
++	struct uledtriggers_device *udev;
++
++	udev = kzalloc(sizeof(*udev), GFP_KERNEL);
++	if (!udev)
++		return -ENOMEM;
++
++	mutex_init(&udev->mutex);
++	udev->state = ULEDTRIGGERS_STATE_UNKNOWN;
++
++	file->private_data = udev;
++	stream_open(inode, file);
++
++	return 0;
++}
++
++/*
++ * Name validation: Allow only alphanumeric, hyphen or underscore.
++ */
++static bool is_trigger_name_valid(const char *name)
++{
++	size_t i;
++
++	if (name[0] == '\0')
++		return false;
++
++	for (i = 0; i < TRIG_NAME_MAX; i++) {
++		if (name[i] == '\0')
++			break;
++		if (!isalnum(name[i]) && name[i] != '-' && name[i] != '_')
++			return false;
++	}
++	/* Length check. */
++	return (i < TRIG_NAME_MAX);
++}
++
++/*
++ * Common setup code that can be called from either the write function or the
++ * ioctl ULEDTRIGGERS_IOC_DEV_SETUP.
++ */
++static int dev_setup(struct uledtriggers_device *udev, const char __user *buffer)
++{
++	int retval;
++
++	retval = mutex_lock_interruptible(&udev->mutex);
++	if (retval)
++		return retval;
++
++	if (udev->state == ULEDTRIGGERS_STATE_REGISTERED) {
++		retval = -EBUSY;
++		goto out;
++	}
++
++	if (copy_from_user(&udev->user_dev, buffer,
++			   sizeof(struct uledtriggers_user_dev))) {
++		retval = -EFAULT;
++		goto out;
++	}
++
++	if (!is_trigger_name_valid(udev->user_dev.name)) {
++		retval = -EINVAL;
++		goto out;
++	}
++
++	udev->led_trigger.name = udev->user_dev.name;
++	retval = led_trigger_register(&udev->led_trigger);
++	if (retval < 0) {
++		udev->led_trigger.name = NULL;
++		goto out;
++	}
++	/* To avoid mutex recursion, set _after_ led_trigger_register().
++	 * led_trigger_register() will immediately connect any LEDs that specify
++	 * this trigger as the default trigger, _and_ call the activate function
++	 * if set. But uledtriggers_trig_activate() will lock the mutex, but
++	 * we're already holding it. Kernel doesn't support mutex recursion.
++	 */
++	udev->led_trigger.activate = uledtriggers_trig_activate;
++
++	udev->state = ULEDTRIGGERS_STATE_REGISTERED;
++
++out:
++	mutex_unlock(&udev->mutex);
++
++	return retval;
++}
++
++/*
++ * Common code to set brightness.
++ * It's called via write_user_buf_brightness() for the case of a brightness
++ * value in a userspace buffer (write function or ioctl ULEDTRIGGERS_IOC_EVENT).
++ * It's called directly for ioctl ULEDTRIGGERS_IOC_OFF and ULEDTRIGGERS_IOC_ON.
++ */
++static int write_brightness(struct uledtriggers_device *udev, int brightness)
++{
++	int retval;
++
++	retval = mutex_lock_interruptible(&udev->mutex);
++	if (retval)
++		return retval;
++
++	if (udev->state != ULEDTRIGGERS_STATE_REGISTERED) {
++		retval = -EINVAL;
++		goto out;
++	}
++
++	udev->trig_delay_on = 0u;
++	udev->trig_delay_off = 0u;
++	udev->brightness = brightness;
++	udev->trig_state = TRIG_STATE_EVENT;
++	led_trigger_event(&udev->led_trigger, brightness);
++
++out:
++	mutex_unlock(&udev->mutex);
++
++	return retval;
++}
++
++/*
++ * Common code to set brightness from a value stored in a userspace buffer.
++ * This can be called from either the write function or the
++ * ioctl ULEDTRIGGERS_IOC_EVENT.
++ */
++static int write_user_buf_brightness(struct uledtriggers_device *udev, const char __user *buffer)
++{
++	int brightness;
++
++	if (copy_from_user(&brightness, buffer, sizeof(brightness)))
++		return -EFAULT;
++
++	return write_brightness(udev, brightness);
++}
++
++static ssize_t uledtriggers_write(struct file *file, const char __user *buffer,
++	size_t count, loff_t *ppos)
++{
++	struct uledtriggers_device *udev = file->private_data;
++	int retval;
++
++	if (count == 0)
++		return 0;
++
++	switch (udev->state) {
++	case ULEDTRIGGERS_STATE_UNKNOWN:
++		if (count != sizeof(struct uledtriggers_user_dev))
++			return -EINVAL;
++		retval = dev_setup(udev, buffer);
++		if (retval < 0)
++			return retval;
++		return count;
++	case ULEDTRIGGERS_STATE_REGISTERED:
++		if (count != sizeof(int))
++			return -EINVAL;
++		retval = write_user_buf_brightness(udev, buffer);
++		if (retval < 0)
++			return retval;
++		return count;
++	default:
++		return -EBADFD;
++	}
++}
++
++static long uledtriggers_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
++{
++	struct uledtriggers_device *udev = file->private_data;
++	struct uledtriggers_blink blink;
++	struct uledtriggers_blink_oneshot blink_oneshot;
++	int retval = 0;
++
++	switch (cmd) {
++	case ULEDTRIGGERS_IOC_DEV_SETUP:
++		retval = dev_setup(udev, (const char __user *)arg);
++		break;
++
++	case ULEDTRIGGERS_IOC_OFF:
++		retval = write_brightness(udev, LED_OFF);
++		break;
++
++	case ULEDTRIGGERS_IOC_ON:
++		retval = write_brightness(udev, LED_FULL);
++		break;
++
++	case ULEDTRIGGERS_IOC_EVENT:
++		retval = write_user_buf_brightness(udev, (const char __user *)arg);
++		break;
++
++	case ULEDTRIGGERS_IOC_BLINK:
++		retval = copy_from_user(&blink,
++			(struct uledtriggers_blink __user *)arg,
++			sizeof(blink));
++		if (retval)
++			return retval;
++		retval = mutex_lock_interruptible(&udev->mutex);
++		if (retval)
++			return retval;
++		if (udev->state != ULEDTRIGGERS_STATE_REGISTERED) {
++			mutex_unlock(&udev->mutex);
++			return -EINVAL;
++		}
++		udev->trig_delay_on = blink.delay_on;
++		udev->trig_delay_off = blink.delay_off;
++		udev->brightness = LED_FULL;
++		udev->trig_state = TRIG_STATE_BLINK;
++		led_trigger_blink(&udev->led_trigger, blink.delay_on, blink.delay_off);
++		mutex_unlock(&udev->mutex);
++		break;
++
++	case ULEDTRIGGERS_IOC_BLINK_ONESHOT:
++		retval = copy_from_user(&blink_oneshot,
++			(struct uledtriggers_blink_oneshot __user *)arg,
++			sizeof(blink_oneshot));
++		if (retval)
++			return retval;
++		if (blink_oneshot.__unused)
++			return -EINVAL;
++		retval = mutex_lock_interruptible(&udev->mutex);
++		if (retval)
++			return retval;
++		if (udev->state != ULEDTRIGGERS_STATE_REGISTERED) {
++			mutex_unlock(&udev->mutex);
++			return -EINVAL;
++		}
++		udev->trig_delay_on = 0u;
++		udev->trig_delay_off = 0u;
++		udev->brightness = blink_oneshot.invert ? LED_FULL : LED_OFF;
++		udev->trig_state = TRIG_STATE_EVENT;
++		led_trigger_blink_oneshot(&udev->led_trigger,
++			blink_oneshot.delay_on, blink_oneshot.delay_off, blink_oneshot.invert);
++		mutex_unlock(&udev->mutex);
++		break;
++
++	default:
++		retval = -ENOIOCTLCMD;
++		break;
++	}
++
++	return retval;
++}
++
++static int uledtriggers_release(struct inode *inode, struct file *file)
++{
++	struct uledtriggers_device *udev = file->private_data;
++
++	if (udev->state == ULEDTRIGGERS_STATE_REGISTERED) {
++		udev->state = ULEDTRIGGERS_STATE_UNKNOWN;
++		led_trigger_unregister(&udev->led_trigger);
++	}
++	kfree(udev);
++
++	return 0;
++}
++
++static const struct file_operations uledtriggers_fops = {
++	.owner		= THIS_MODULE,
++	.open		= uledtriggers_open,
++	.release	= uledtriggers_release,
++	.write		= uledtriggers_write,
++	.unlocked_ioctl	= uledtriggers_ioctl,
++};
++
++static struct miscdevice uledtriggers_misc = {
++	.fops		= &uledtriggers_fops,
++	.minor		= MISC_DYNAMIC_MINOR,
++	.name		= ULEDTRIGGERS_NAME,
++};
++
++module_misc_device(uledtriggers_misc);
++
++MODULE_AUTHOR("Craig McQueen <craig@mcqueen.au>");
++MODULE_DESCRIPTION("Userspace LED triggers driver");
++MODULE_LICENSE("GPL");
+diff --git a/include/uapi/linux/uledtriggers.h b/include/uapi/linux/uledtriggers.h
+new file mode 100644
+index 000000000000..beb859dc4edc
+--- /dev/null
++++ b/include/uapi/linux/uledtriggers.h
+@@ -0,0 +1,123 @@
++/* SPDX-License-Identifier: GPL-2.0+ WITH Linux-syscall-note */
++/*
++ * Userspace LED triggers driver support
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++#ifndef _UAPI__ULEDTRIGGERS_H_
++#define _UAPI__ULEDTRIGGERS_H_
++
++/* See TRIG_NAME_MAX in linux/leds.h */
++#define LED_TRIGGER_MAX_NAME_SIZE	64
++
++/*
++ * Struct for initial write to setup, or ioctl ULEDTREGGERS_IOC_DEV_SETUP.
++ */
++struct uledtriggers_user_dev {
++	char name[LED_TRIGGER_MAX_NAME_SIZE];
++};
++
++/*
++ * Brightness levels for writes of int values, or for use with ULEDTRIGGERS_IOC_EVENT.
++ * These correspond to Linux kernel internal enum led_brightness in linux/leds.h.
++ */
++enum uledtriggers_brightness {
++	ULEDTRIGGERS_OFF		= 0,
++	ULEDTRIGGERS_ON			= 1,
++	ULEDTRIGGERS_HALF		= 127,
++	ULEDTRIGGERS_FULL		= 255,
++};
++
++/*
++ * Struct for ioctl ULEDTRIGGERS_IOC_BLINK.
++ */
++struct uledtriggers_blink {
++	unsigned long delay_on;
++	unsigned long delay_off;
++};
++
++/*
++ * Struct for ioctl ULEDTRIGGERS_IOC_BLINK_ONESHOT.
++ * Note padding at the end due to alignment (for 64-bit kernels). Ensure it's set to 0.
++ */
++struct uledtriggers_blink_oneshot {
++	unsigned long delay_on;
++	unsigned long delay_off;
++	int invert;
++	int __unused;
++};
++
++
++/* ioctl commands */
++
++#define ULEDTRIGGERS_IOC_MAGIC			't'
++
++/*
++ * Initial setup.
++ * E.g.:
++ *	int retval;
++ *	struct uledtriggers_user_dev dev_setup = { "transmogrifier" };
++ *	retval = ioctl(fd, ULEDTRIGGERS_IOC_DEV_SETUP, &dev_setup);
++ */
++#define ULEDTRIGGERS_IOC_DEV_SETUP	_IOW(ULEDTRIGGERS_IOC_MAGIC, 0x01, struct uledtriggers_user_dev)
++
++/*
++ * Turn the trigger off.
++ * E.g.:
++ *	int retval;
++ *	retval = ioctl(fd, ULEDTRIGGERS_IOC_OFF);
++ */
++#define ULEDTRIGGERS_IOC_OFF		_IO(ULEDTRIGGERS_IOC_MAGIC, 0x10)
++
++/*
++ * Turn the trigger on.
++ * E.g.:
++ *	int retval;
++ *	retval = ioctl(fd, ULEDTRIGGERS_IOC_ON);
++ */
++#define ULEDTRIGGERS_IOC_ON		_IO(ULEDTRIGGERS_IOC_MAGIC, 0x11)
++
++/*
++ * Set the LED trigger to a specified brightness.
++ * Refer to enum uledtriggers_brightness.
++ * E.g.:
++ *	int retval;
++ *	int brightness = ULEDTRIGGERS_FULL;
++ *	retval = ioctl(fd, ULEDTRIGGERS_IOC_EVENT, &brightness);
++ */
++#define ULEDTRIGGERS_IOC_EVENT		_IOW(ULEDTRIGGERS_IOC_MAGIC, 0x12, int)
++
++/*
++ * Set the LED trigger to blink continuously.
++ * E.g.:
++ *	int retval;
++ *	struct uledtriggers_blink blink;
++ *      blink.delay_on = 100;
++ *      blink.delay_off = 400;
++ *	retval = ioctl(fd, ULEDTRIGGERS_IOC_BLINK, &blink);
++ */
++#define ULEDTRIGGERS_IOC_BLINK		_IOW(ULEDTRIGGERS_IOC_MAGIC, 0x20, struct uledtriggers_blink)
++
++/*
++ * Set the LED trigger to blink once.
++ * E.g.:
++ *	int retval;
++ *	struct uledtriggers_blink_oneshot blink_oneshot;
++ *      blink_oneshot.delay_on = 100;
++ *      blink_oneshot.delay_off = 400;
++ *      blink_oneshot.invert = false;
++ *      blink_oneshot.__unused = 0;
++ *	retval = ioctl(fd, ULEDTRIGGERS_IOC_BLINK_ONESHOT, &blink_oneshot);
++ */
++#define ULEDTRIGGERS_IOC_BLINK_ONESHOT	_IOW(ULEDTRIGGERS_IOC_MAGIC, 0x21, struct uledtriggers_blink_oneshot)
++
++
++#endif /* _UAPI__ULEDTRIGGERS_H_ */
+-- 
+2.48.1
+
 
