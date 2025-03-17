@@ -1,127 +1,110 @@
-Return-Path: <linux-kernel+bounces-565085-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565086-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6542A66087
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 22:29:46 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48881A66089
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 22:30:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB4733B3A6A
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 21:29:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D006175D65
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 21:29:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9ADB203710;
-	Mon, 17 Mar 2025 21:29:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7879202C47;
+	Mon, 17 Mar 2025 21:29:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A3hZmg3T"
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LI1gYGAQ"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C5151F583E;
-	Mon, 17 Mar 2025 21:29:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97EEA1F583E
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 21:29:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742246975; cv=none; b=AjaD07hVh6a8fBjV0ll1KHhXiqGya16c64r1zqJ/qAtZOJ6MqVga6ehEkqyfOiM1QX2Tp5gY8+rEOBSS1zMb4+6zOpuhIs/iG6wgumM27sSr5QM6O7vW/y7qwFPiFV4z1H6E5advGYRYP6cV5Fz/56B2hYlTQQCk+YvWVNkzvMs=
+	t=1742246995; cv=none; b=cxzkpnjK87GXjfzCUvDuPxKvpeS/STwTvoWtbDhJAcMEDUrNmr6CGZdOISEC0EGZlL588thlsW7UdqyqQAMgf6J73qIoxcY4aC2gkzTIfgfK2TP3eQR+U8YbrnFfRhex1oP9Ryf6qPjKhrmQ+uOv5CuU60IedeX994H3MZ5O+0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742246975; c=relaxed/simple;
-	bh=Qa8QoEh9bDo7NtQBpICcdHs0hz6i/1qhN7Icv/uqqS8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=Hz0qvLOj1cjk6o7ZR4zzOp9QtxybyXl/ESK+RwGBgt9Sc4UK1PtiGOFdJ/8PAZnrk3MdLmdtnUeYowtG+QkhyH1scFNMiDxKeF/vQ1uSMVMjTfEHYdUv/jZIN3L5fOHcJWi32nKiC5olKwFDx3caFjMlYu4dsLyc6jdbAWqWujk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A3hZmg3T; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-30c44a87b9cso42457761fa.3;
-        Mon, 17 Mar 2025 14:29:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742246971; x=1742851771; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:subject:cc:to
-         :from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=M2DvdMulhD2lWgMBe7TR4sBlPK2uKT9yFU9Bypz2sH4=;
-        b=A3hZmg3TfjTiDOdEsUUWz/+WZKYb4X9LvemIfOsv3vAS3T3YTpPRjRsm5yAmHhUCpB
-         eMz/TfrV0VL0Y2i79UAZWD26rKq2xpgKE2l2SYmKYzZD/YmQhGInN879tGFc/y3T0ut8
-         rcmfW98Wh8IDIYdafoRiTOk9rggN/Nh+eLtb10N8HUmsFGM2y01f+2MjXBT/aJR7A1Nz
-         u8/xINE4pe/Qws7KjNOumRMsdR/AS4jRdnnhbbChCvjYveXsGp77sJf1GHhULHi2HVVW
-         sykEV09Zt5cMcg468zwpRj8Vgrjf/JyAUt7J3gu0Ql99aAdqSVqdzy9XaquWccrxoPz3
-         cCOg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742246971; x=1742851771;
-        h=content-transfer-encoding:mime-version:message-id:subject:cc:to
-         :from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=M2DvdMulhD2lWgMBe7TR4sBlPK2uKT9yFU9Bypz2sH4=;
-        b=j7/2F6kxKPuC8qJVbn2ReWj7GRY/24/LEZn2vECkXEoOF/x3ANjd4i31HQ63zjfPUE
-         rnyMpD5U+xRgBDaPuDaHV9pk5eODmQSaXrDByBTodr3sWAujPDFXz6tnZln9TK0U/Bho
-         O2eEw7Xma+XgT/plkrDi2Ojb9zHNiq22mcHJXMhN8Waext6F7IVicBqweiXWvMnJwg2b
-         12YTTZ8VPGD6RJGlI2h2ZNu0zVkxSGY1404aRutKFy7FbHIYEAOAOVbdhRvewBm756/e
-         /O+9RIXpuNLvh3lFmzpjlc/65M07vfb1zfAYnVRB8vZuepuYQDXhwcA/yZZ2yt2jYwht
-         rUjg==
-X-Forwarded-Encrypted: i=1; AJvYcCUl73AFN30rN68TVL9Jlm6vyifGvHoZB1OP1zdLcXPZ67uDeNz+1kwYkub5luu0gVkyW7EEJ6jzKXqC@vger.kernel.org, AJvYcCXkaUm6aR6Qctzn+Np2YEDvd9llVnEd2Sm2Q7PoPhVzWE3gpsSA4gVrdNVEywlO6Q5VoOFZy6mJ7MQtTCc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz9NaIm14dbIfLet8PjX+Ucb7DhExme0/Qf4HDmvUt5nACOGSxu
-	0DVb8S4YFCVsvQX1kj6bsjILN+RuRo0MgTZsHCai6LVGeWodKMz5
-X-Gm-Gg: ASbGnctTfkmKZthUInZtTwnVQRgkZnj0Rl29y+5TBTYlPfsS83UF/301NcEFt4VC0YV
-	b5TT1rZML4T+XuS61VwbCoPC20XsfkkqQ/1/fbzDej049D72NFDXZEd6P4u/rkUzOYgNwgkRTEs
-	sO7VLvuvEVYcroPa/BYGymxLXBwjolQFYIv3DcuRfIXYbr2+YFjaxb5pxAdrGdmR05X07zC4clm
-	vR5/ZwTz3UsNnMvYoiX/3X91ycY12Qiw73dqDJqq3nWjcelwqWkFjf5KMo5rvImqju6wBm+pgDv
-	dbuNctHuXjK+853xvJwgochKRImzMLcukQUtckcgqhYhm3o3Pm+4eMtvkl0=
-X-Google-Smtp-Source: AGHT+IFrJZNMGWxmAGxKGz9lAPn9PjgEvHeGtZ1KxH3uJc86HN7GLtVV2llhcIYOyL+IV64mjm5wrA==
-X-Received: by 2002:a2e:3516:0:b0:30c:7a7:e841 with SMTP id 38308e7fff4ca-30c4a8edceamr84492411fa.34.1742246971136;
-        Mon, 17 Mar 2025 14:29:31 -0700 (PDT)
-Received: from foxbook (adqh54.neoplus.adsl.tpnet.pl. [79.185.141.54])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30c3f1dbf23sm17564911fa.106.2025.03.17.14.29.30
-        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
-        Mon, 17 Mar 2025 14:29:30 -0700 (PDT)
-Date: Mon, 17 Mar 2025 22:29:27 +0100
-From: Michal Pecio <michal.pecio@gmail.com>
-To: Mathias Nyman <mathias.nyman@intel.com>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>
-Cc: Kuangyi Chiang <ki.chiang65@gmail.com>, linux-usb@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: [PATCH] usb: xhci: Fix invalid pointer dereference in Etron
- workaround
-Message-ID: <20250317222927.5b76518e@foxbook>
+	s=arc-20240116; t=1742246995; c=relaxed/simple;
+	bh=t6gpFWlqxVlr56aYj3GwChyjcKy0WmrAhR9H5mEFpV8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=T/AZdmA2sZTpakhAJaSnBA1bZwIKBQFHrNBAlpjUUaxIQfzmC+0zFelcebfb5KIaKnqvccd1CLrdNvHDFQn+yMWxS1+DbloNQpr/1bwtaDvuKAwyBxBvWQm2mGRej1ZmdaIdVBr2rGU7QAKEP3DWYzSTA/VXuHZuxBTpU6Nl8LA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LI1gYGAQ; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742246994; x=1773782994;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=t6gpFWlqxVlr56aYj3GwChyjcKy0WmrAhR9H5mEFpV8=;
+  b=LI1gYGAQmgguJaa329gAfkJ7m55+UzOVPiI+MehYkidhw0JsMkbNRA2X
+   ZisefQqSGCcidNnA8fXnPeDN5Xm9j9JJ4FeNa6Y1elzP9x2FM9QOGTdy1
+   TKLQpRYxaTFgQQSrCUQwRehHxpISI7nKZ5uk4OYsNOb3NB18quIoZlg27
+   uiIooBjEZKfBdw68cA67r5hIZSx4DL/Enxmz82KE6pGlP2Ri2NVqW/PVd
+   umkL7HrMv3y09ur88a7cj9ftH+0Q0ExVY1QLl/VBQa+VW3xG4oJmmrg66
+   mEoXVJkG8yYpiZfqfIIX2DDBVTNYEUzOoDqm3ErGVK9zm+csdJBc4fdZI
+   Q==;
+X-CSE-ConnectionGUID: sD4ytUU3SzONpICpOzl0/g==
+X-CSE-MsgGUID: gNZVD70mQ3SaSaeizPyDoQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11376"; a="42539287"
+X-IronPort-AV: E=Sophos;i="6.14,255,1736841600"; 
+   d="scan'208";a="42539287"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Mar 2025 14:29:53 -0700
+X-CSE-ConnectionGUID: sSZI6okoTTqFdliDh02G9w==
+X-CSE-MsgGUID: O3YVh+OPQoyuAhnF85l7Hw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,255,1736841600"; 
+   d="scan'208";a="122235121"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa008.fm.intel.com with ESMTP; 17 Mar 2025 14:29:52 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 99163194; Mon, 17 Mar 2025 23:29:50 +0200 (EET)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	linux-kernel@vger.kernel.org
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Subject: [PATCH, resend v1 1/1] relay: Use kasprintf() instead of fixed buffer formatting
+Date: Mon, 17 Mar 2025 23:29:47 +0200
+Message-ID: <20250317212948.1811176-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-This check is performed before prepare_transfer() and prepare_ring(), so
-enqueue can already point at the final link TRB of a segment. And indeed
-it will, some 0.4% of times this code is called.
+Improve readability and maintainability by replacing a hard coded
+string allocation and formatting by using the kasprintf() helper.
 
-Then enqueue + 1 is an invalid pointer. It will crash the kernel right
-away or load some junk which may look like a link TRB and cause the real
-link TRB to be replaced with a NOOP. This wouldn't end well.
+It also eliminates the GCC compiler warning (with CONFIG_WERROR=y,
+which is default, it becomes an error:
 
-Use a functionally equivalent test which doesn't dereference the pointer
-and always gives correct result.
+kernel/relay.c:357:42: error: ‘snprintf’ output may be truncated before the last format character [-Werror=format-truncation=]
 
-Something has crashed my machine twice in recent days while playing with
-an Etron HC, and a control transfer stress test ran for confirmation has
-just crashed it again. The same test passes with this patch applied.
-
-Fixes: 5e1c67abc930 ("xhci: Fix control transfer error on Etron xHCI host")
-Cc: stable@vger.kernel.org
-Signed-off-by: Michal Pecio <michal.pecio@gmail.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/usb/host/xhci-ring.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/relay.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/usb/host/xhci-ring.c b/drivers/usb/host/xhci-ring.c
-index 60d89cf418da..dc674bc24a89 100644
---- a/drivers/usb/host/xhci-ring.c
-+++ b/drivers/usb/host/xhci-ring.c
-@@ -3786,7 +3786,7 @@ int xhci_queue_ctrl_tx(struct xhci_hcd *xhci, gfp_t mem_flags,
- 		 * enqueue a No Op TRB, this can prevent the Setup and Data Stage
- 		 * TRB to be breaked by the Link TRB.
- 		 */
--		if (trb_is_link(ep_ring->enqueue + 1)) {
-+		if (last_trb_on_seg(ep_ring->enq_seg, ep_ring->enqueue + 1)) {
- 			field = TRB_TYPE(TRB_TR_NOOP) | ep_ring->cycle_state;
- 			queue_trb(xhci, ep_ring, false, 0, 0,
- 					TRB_INTR_TARGET(0), field);
+diff --git a/kernel/relay.c b/kernel/relay.c
+index a8ae436dc77e..5ac7e711e4b6 100644
+--- a/kernel/relay.c
++++ b/kernel/relay.c
+@@ -351,10 +351,9 @@ static struct dentry *relay_create_buf_file(struct rchan *chan,
+ 	struct dentry *dentry;
+ 	char *tmpname;
+ 
+-	tmpname = kzalloc(NAME_MAX + 1, GFP_KERNEL);
++	tmpname = kasprintf(GFP_KERNEL, "%s%d", chan->base_filename, cpu);
+ 	if (!tmpname)
+ 		return NULL;
+-	snprintf(tmpname, NAME_MAX, "%s%d", chan->base_filename, cpu);
+ 
+ 	/* Create file in fs */
+ 	dentry = chan->cb->create_buf_file(tmpname, chan->parent,
 -- 
-2.48.1
+2.47.2
+
 
