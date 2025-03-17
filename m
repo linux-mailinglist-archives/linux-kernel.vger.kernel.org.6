@@ -1,59 +1,88 @@
-Return-Path: <linux-kernel+bounces-564157-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564158-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E525FA64EE8
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 13:32:42 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DC96A64EF1
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 13:33:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF8FB188CC45
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 12:32:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B261B170C11
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 12:33:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E0EF23A990;
-	Mon, 17 Mar 2025 12:32:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CADC23A563;
+	Mon, 17 Mar 2025 12:33:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V2n+5v0l"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="wXT873LF";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="43KRfg33";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="wXT873LF";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="43KRfg33"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E286F22257F;
-	Mon, 17 Mar 2025 12:32:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27E9E18C002
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 12:33:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742214754; cv=none; b=phDPhFupe+Bkgwv3WyDVr6xEqgcEM/LKVWLpqhwxCSLEiWR9I+GBp1BH5VJ9p3D3oPgk4soZKTIvtsw0oM88aeLyKTeH+Ot/Nr/SfNNIwTwDovwYLcEp/G+R0djgwTq+nVtXMn567AXLomsmjiVvSW9KXKowKd7wdpW360Lnv7A=
+	t=1742214787; cv=none; b=Fi0dKv0udCbsedO0QBwTQsRsxt7XPSjn5tI1gHKM4u6/IgMdr0uuiMndUmxki2zTd2Y0jtohe1UgBKULnF+odwA8WgY6LcK+InCW7HFRtM1CUcDbvpmmFoN8vIcyTZwmjL2Aqbzisbn9jmlmjGk9j5Dc+vWJuYugBvtLPy/fJ5o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742214754; c=relaxed/simple;
-	bh=mpj0eN0ZSj2hePIuckNxCH5q4VA4XGLe8rJAIVpQJUY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=C9UXpWEoE5Ytdc774Ipw3f8kz62sZOylA7TcbQrN+el3IqNaHwyQk5ILTXuu6C9qxktsRG0QaeyuVFK90L5oB7ejkR9jEYXGSns+mlTJ9JwNVafKrDrHdHs+Kogx7jdCIIYQOXLB6OgaEXTT9FvmAtgR9lYs38F15pqsDH+jjyk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V2n+5v0l; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A0C5C4CEE3;
-	Mon, 17 Mar 2025 12:32:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742214753;
-	bh=mpj0eN0ZSj2hePIuckNxCH5q4VA4XGLe8rJAIVpQJUY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=V2n+5v0lo0ugDAJNnonNI/LS0hPWcwjIclVlv7fm9E4XxKWldEvumLnziEmTvRv9d
-	 J9EkCdRKZTN9MVybBmgoz1GM5yjJ01qygdA6yBMda90KcZ8DsMANdwZnHWQGHCkxzh
-	 F245TDS1QLGcU+YYT22mdHLujci/YRLF2TABKizDoDiJvPNgCkiBqkGfUpAJdBTg5U
-	 FBN57FIENTQtT2YX4NP4KhKOiAXFFDl0D4qeMigoYAi1yb/VxbJX3UFGzEtfGZOYzz
-	 rQubcIKRuf+JD2vb9A8FAgT6Q0sMqH1Fxc/coOouPei8HHP/1eZ9fosJi5L0BIK3O2
-	 IpC/is1zg5wuQ==
-Date: Mon, 17 Mar 2025 12:32:22 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: <marius.cristea@microchip.com>
-Cc: <lars@metafoo.de>, <robh@kernel.org>, <krzk+dt@kernel.org>,
- <conor+dt@kernel.org>, <oskar.andero@gmail.com>,
- <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 1/2] dt-bindings: iio: adc: adding support for
- PAC194X
-Message-ID: <20250317123222.1d2a6efd@jic23-huawei>
-In-Reply-To: <20250317090803.30003-2-marius.cristea@microchip.com>
-References: <20250317090803.30003-1-marius.cristea@microchip.com>
-	<20250317090803.30003-2-marius.cristea@microchip.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1742214787; c=relaxed/simple;
+	bh=P+YoDSdqDvrq1tETf6z4vkTYi1i4G7JrGe1IOvzPqdo=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=t8b1Q/wEtbM+GyGZLr8JQPl1vPM+e138PCjOn9aP7DAJsFGCxCP21w6uroK4bIo4VTVKw9YYQmgwAF4HtOXDHPXqgYI4MJDBdQq3FmyeEH8T2m4bYIsHqnR8oCQ4yB4DBPySy6pBlqT0ZeLe8wmaVmvpYKhPLJpq8Su4qxq0YG8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=wXT873LF; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=43KRfg33; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=wXT873LF; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=43KRfg33; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from pobox.suse.cz (unknown [10.100.2.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 4BDCF21B47;
+	Mon, 17 Mar 2025 12:33:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1742214784; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ycHquCnIY5AaDYBOlHhXiAT5JfebgNBVE4+4dfz5mxI=;
+	b=wXT873LFxwgyrWKzBqQuhYXOJ/0/frtA8KzY5ce4oE56iK1DjrYSTM9yvM0b+ljPPn56AG
+	6UkdJGNkEWO2Rw8fb3311TsjlLSj/dD635m34FFnmD86LJh7Tx4Wb9IZsO0K2lAk81IbTg
+	YLC6aD43QrwxYEzlwICieWLSR0f1yE8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1742214784;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ycHquCnIY5AaDYBOlHhXiAT5JfebgNBVE4+4dfz5mxI=;
+	b=43KRfg331pTG/BwO7yGXqhbo9OMvW72NwdpZXVpfk+JMAZbu480M2l4K4HaAXpbJ8EXeqm
+	MA0NjV1jqJySSRAA==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1742214784; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ycHquCnIY5AaDYBOlHhXiAT5JfebgNBVE4+4dfz5mxI=;
+	b=wXT873LFxwgyrWKzBqQuhYXOJ/0/frtA8KzY5ce4oE56iK1DjrYSTM9yvM0b+ljPPn56AG
+	6UkdJGNkEWO2Rw8fb3311TsjlLSj/dD635m34FFnmD86LJh7Tx4Wb9IZsO0K2lAk81IbTg
+	YLC6aD43QrwxYEzlwICieWLSR0f1yE8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1742214784;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ycHquCnIY5AaDYBOlHhXiAT5JfebgNBVE4+4dfz5mxI=;
+	b=43KRfg331pTG/BwO7yGXqhbo9OMvW72NwdpZXVpfk+JMAZbu480M2l4K4HaAXpbJ8EXeqm
+	MA0NjV1jqJySSRAA==
+Date: Mon, 17 Mar 2025 13:33:04 +0100 (CET)
+From: Miroslav Benes <mbenes@suse.cz>
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+cc: Peter Zijlstra <peterz@infradead.org>, x86@kernel.org, 
+    linux-kernel@vger.kernel.org, Brendan Jackman <jackmanb@google.com>, 
+    Nathan Chancellor <nathan@kernel.org>
+Subject: Re: [PATCH 06/13] objtool: Remove --unret dependency on --rethunk
+In-Reply-To: <naxuqdzhtcbtq7jdc3wiee2fawjzozhhfiztldin7bnl2mhk4h@eimhmkrc6kgs>
+Message-ID: <alpine.LSU.2.21.2503171332120.4236@pobox.suse.cz>
+References: <cover.1741975349.git.jpoimboe@kernel.org> <c6f5635784a28ed4b10ac4307b1858e015e6eff0.1741975349.git.jpoimboe@kernel.org> <20250314193848.GE36322@noisy.programming.kicks-ass.net> <naxuqdzhtcbtq7jdc3wiee2fawjzozhhfiztldin7bnl2mhk4h@eimhmkrc6kgs>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,118 +90,67 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_COUNT_ZERO(0.00)[0];
+	ARC_NA(0.00)[];
+	MID_RHS_MATCH_FROMTLD(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCPT_COUNT_FIVE(0.00)[6]
+X-Spam-Score: -4.30
+X-Spam-Flag: NO
 
-On Mon, 17 Mar 2025 11:08:02 +0200
-<marius.cristea@microchip.com> wrote:
+Hi,
 
-> From: Marius Cristea <marius.cristea@microchip.com>
+On Fri, 14 Mar 2025, Josh Poimboeuf wrote:
+
+> On Fri, Mar 14, 2025 at 08:38:48PM +0100, Peter Zijlstra wrote:
+> > On Fri, Mar 14, 2025 at 12:29:04PM -0700, Josh Poimboeuf wrote:
+> > > With unret validation enabled and IBT/LTO disabled, objtool runs on TUs
+> > > with --rethunk and on vmlinux.o with --unret.  So this dependency isn't
+> > > valid as they don't always run on the same object.
+> > > 
+> > > This error never triggered before because --unret is always coupled with
+> > > --noinstr, so the first conditional in opts_valid() returns early due to
+> > > opts.noinstr being true.
+> > > 
+> > > Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
+> > > ---
+> > >  tools/objtool/builtin-check.c | 5 -----
+> > >  1 file changed, 5 deletions(-)
+> > > 
+> > > diff --git a/tools/objtool/builtin-check.c b/tools/objtool/builtin-check.c
+> > > index 387d56a7f5fb..c7275cf7641b 100644
+> > > --- a/tools/objtool/builtin-check.c
+> > > +++ b/tools/objtool/builtin-check.c
+> > > @@ -151,11 +151,6 @@ static bool opts_valid(void)
+> > >  		return true;
+> > >  	}
+> > >  
+> > > -	if (opts.unret && !opts.rethunk) {
+> > > -		ERROR("--unret requires --rethunk");
+> > > -		return false;
+> > > -	}
+> > 
+> > But but but, the whole UNTRAIN_RET stuff relies on return thunks. Even
+> > though objtool can do that VALUDATE_UNRET_BEGIN -> VALIDATE_UNRET_END
+> > check without there being return thunks, it simply doesn't make sense.
 > 
-> This is the device tree schema for iio driver for Microchip PAC194X and
-> PAC195X series of Power Monitors with Accumulator.
+> That's at least enforced by kconfig dependencies as
+> MITIGATION_UNRET_ENTRY depends on MITIGATION_RETHUNK.
 
-Wrapping of commit message is a little messy.  Either just have one paragraph
-or add some bland lines to make the paragraph breaks look more intentional.
+could you add it to the changelog, please? My future self would definitely 
+welcome it.
 
-> The PAC194X family supports 9V Full-Scale Range and the PAC195X supports
-> 32V Full-Scale Range.
-> There are two versions of the PAC194X/5X: the PAC194X/5X-1 devices are
-> for high-side current sensing and the PAC194X/5X-2 devices are for
-> low-side current sensing or floating VBUS applications.
-> The PAC194X/5X-1 is named shortly PAC194X/5X.
-> 
-> Signed-off-by: Marius Cristea <marius.cristea@microchip.com>
-> ---
->  .../bindings/iio/adc/microchip,pac1944.yaml   | 195 ++++++++++++++++++
->  1 file changed, 195 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/iio/adc/microchip,pac1944.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/iio/adc/microchip,pac1944.yaml b/Documentation/devicetree/bindings/iio/adc/microchip,pac1944.yaml
-> new file mode 100644
-> index 000000000000..1997e889e3f6
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/iio/adc/microchip,pac1944.yaml
-
-> +
-> +      microchip,vbus-mode:
-> +        $ref: /schemas/types.yaml#/definitions/uint32
-> +        description:
-> +          In order to increase measurement resolution and keeping the same
-> +          number the of bits the device has a configurable VBUS full range
-> +          scale (FSR). The range should be set by hardware design and it should
-> +          not be changed during runtime. The bipolar capability for VBUS enables
-> +          accurate offset measurement and correction.
-> +          The VBUS could be configured into the following full scale range
-> +            <0>  -  VBUS has unipolar +32V to 0V FSR (default) for PAC195X
-> +                    or +9V to 0V (default) for PAC194X
-> +            <1>  -  VBUS has bipolar +32V to -32V FSR for PAC195X
-> +                    or +9V to -9V for PAC194X. The actual range is limited to
-> +                    about -200 mV due to the impact of the ESD structures.
-> +            <2>  -  VBUS has bipolar +16V to -16V FSR for PAC195X
-> +                    or +4.5V to -4.5V for PAC194X. The actual range is limited
-> +                    to about -200 mV due to the impact of the ESD structures.
-> +        maximum: 2
-
-There are examples in tree of multirange devices where we specify the pair
-of negative and positive limits.  That makes for easy to read DT by
-avoiding the use of enums.
-
-> +
-> +      microchip,vsense-mode:
-> +        $ref: /schemas/types.yaml#/definitions/uint32
-> +        description:
-> +          In order to decrease the power dissipation on the shunt resistor and
-> +          in the same time to increase measurement resolution by keeping the
-> +          same number the of bits the device has a configurable VSENSE full
-> +          range scale (FSR). The range should be set by hardware design and it
-> +          should not be changed during runtime. 
-> +          The VSENSE could be configured into the following full scale range
-> +            <0>  -  VSENSE has unipolar +100 mV to 0V FSR (default)
-> +            <1>  -  VSENSE has bipolar +100 mV to -100 mV FSR
-> +            <2>  -  VSENSE has bipolar +50 mV to -50 mV FSR
-> +        maximum: 2
-
-Similar to above. Consider allowing <0, 100>, <-100, 100>. <-50, 50>
-I'm curious why you've documented them as positive to negative above.
- 
-> +
-> +      microchip,accumulation-mode:
-> +        $ref: /schemas/types.yaml#/definitions/uint32
-> +        description:
-> +          The Hardware Accumulator may be used to accumulate VPOWER, VSENSE or
-> +          VBUS values for any channel. By setting the accumulator for a channel
-> +          to accumulate the VPOWER values gives a measure of accumulated power
-> +          into a time period, which is equivalent to energy. Setting the
-> +          accumulator for a channel to accumulate VSENSE values gives a measure
-> +          of accumulated current, which is equivalent to charge. This allows the
-> +          accumulator to be used as a coulomb counter. For either VSENSE or
-> +          VBUS, many samples may be accumulated on chip and the result collected
-> +          by the host and divided by the accumulator counter count value to
-> +          yield an average value with a very long integration time to reduce
-> +          noise. This feature is also very useful for system calibration,
-> +          allowing many averages to be accumulated for fast averaging/noise
-> +          reduction.
-> +          This functionality needs to be setup once and must not be changed
-> +          during the runtime, just in case the user wants to measure the charge
-> +          or the energy consumed from board power up till the user has control
-> +          or during a reboot of the system.    
-This one feels like it really isn't a one time thing.
-
-For a few somewhat similarly behaving things (step counts on pedometers for example)
-we have explicit channel enabled attributes.  Here you could just prevent
-any other actions that would break the accumulation after the software has opted
-in to enable a particular energy channel. If you need to fake a reset of similar
-just check the counter and subtract it in software after a channel change.
-      
-> +          The Hardware Accumulator could be configured to accumulate
-> +          VPOWER, VSENSE or VBUS
-> +            <0>  -  Accumulator accumulates VPOWER (default)
-> +            <1>  -  Accumulator accumulates VSENSE
-> +            <2>  -  Accumulator accumulates VBUS
-> +        maximum: 2
-If we do keep it in here then have
-default: 0 and don't specify it in the examples below.
-
-Jonathan
-
+Miroslav
 
