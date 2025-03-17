@@ -1,137 +1,116 @@
-Return-Path: <linux-kernel+bounces-563765-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563766-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C393A647E8
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:45:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4949A647EE
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:45:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF583169978
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 09:45:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 67D9C3B30BE
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 09:45:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24DB122422C;
-	Mon, 17 Mar 2025 09:45:18 +0000 (UTC)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 754A722ACD3;
+	Mon, 17 Mar 2025 09:45:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vc5R1QmP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BBD11AAA32;
-	Mon, 17 Mar 2025 09:45:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDAA61AAA32;
+	Mon, 17 Mar 2025 09:45:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742204717; cv=none; b=lErpP8/ULMeVrORsz/mcLTH/7sVH1hpte/n9FuJVnW602YNNlMKEhGnCcPUM24VhUWxOHwnMGJOP0dp3xPZreAfClGJlkPl5zkJ68IiEIH0wvuQQ7Z4TdUSBknbQym3xdT+VmADDOw38Roj/ij9DaSrr1UOACis0kGriTYEgIO4=
+	t=1742204719; cv=none; b=JbYXAkoYpnft99qeVP3Cdo+prehtAl6VeWijJnqur5GvMAejd/0OR7Q+MCP1WgCH3EW5kF5Rxw+ktC4VhWpnE31tMDQKW/oQdA2r6ycEagGWAH/EjaAST8OspJ2k8RJ4Qrfq41k0J5GajR3zRhHZpttlF8aES10qMc5S9e1bSTw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742204717; c=relaxed/simple;
-	bh=mB6FFkRcdfw5WyFfQba6zYpw2u1nYuK208JXEazRhs4=;
+	s=arc-20240116; t=1742204719; c=relaxed/simple;
+	bh=IDfEO9ixbAv5kWVNwF8BvMXACU0glZwpuOKgM/NINyM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jVv9GFAPJre05SQs1lDYbhjac08/P8TTmLHfy99ESCsWoS9zgbOI7rP/Mw8NVCOOUJP1g7/NNUhud6FxGtT685FgFSvQhOAWSPZvBKvztmZgnxUBy3qjqco+Gni/Syier+4LQGe9p7OwhnIBrY+cE110ikOplJJTk2LpdlgOtU4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=fail smtp.mailfrom=kernel.org; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=kernel.org
-X-CSE-ConnectionGUID: DXOfXw2cR2uDqrMHjy4dyA==
-X-CSE-MsgGUID: LwQrO/kMQICluomH1Gh21g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11375"; a="46057270"
-X-IronPort-AV: E=Sophos;i="6.14,253,1736841600"; 
-   d="scan'208";a="46057270"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Mar 2025 02:45:16 -0700
-X-CSE-ConnectionGUID: PQ4ErtDmSoepdDYa+4k0+Q==
-X-CSE-MsgGUID: 8bSHPyIaT7OTvLP20X4Amw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,253,1736841600"; 
-   d="scan'208";a="152762423"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Mar 2025 02:45:12 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andy@kernel.org>)
-	id 1tu71x-00000003Gnp-27La;
-	Mon, 17 Mar 2025 11:45:09 +0200
-Date: Mon, 17 Mar 2025 11:45:09 +0200
-From: Andy Shevchenko <andy@kernel.org>
-To: Francesco Dolcini <francesco@dolcini.it>
-Cc: Emanuele Ghidoli <ghidoliemanuele@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Francesco Dolcini <francesco.dolcini@toradex.com>,
-	Emanuele Ghidoli <emanuele.ghidoli@toradex.com>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-i2c@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-	soc@kernel.org, Hans de Goede <hdegoede@redhat.com>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Subject: Re: [RFC PATCH v1 0/2] platform: toradex: Add toradex embedded
- controller
-Message-ID: <Z9fvJVyOs7BxLa5T@smile.fi.intel.com>
-References: <20250313144331.70591-1-francesco@dolcini.it>
- <Z9Lxw4qVApejzeAE@smile.fi.intel.com>
- <20250317093127.GB17428@francesco-nb>
+	 Content-Type:Content-Disposition:In-Reply-To; b=nYcQFKa3IjG4UOmYswWoGGSVnKqi7q2AJ8g1lSN3pDn64r/j7I36w8j2eW6kA52gBZWhUWE+0FyfPdwYeCTFhaiSUjSCUIhSgLdO4k8e2cuXWTd7SU1TlhwQtSyekxFZxighth7aTguMpXsi3tQnbucR11kbZ10EHCCDjp1wWaA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Vc5R1QmP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9377C4CEF0;
+	Mon, 17 Mar 2025 09:45:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742204719;
+	bh=IDfEO9ixbAv5kWVNwF8BvMXACU0glZwpuOKgM/NINyM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Vc5R1QmPHOTrhSdJtjbXjn3Q/pVsWLlIO/2wjHWiT71fsu3wrrUDlsbP/CPZXw+mc
+	 xysGjRvhtSwfdQA7HGJt+RsKNKcxEBhM6/R8SmwI47z5/kKsgxaSoneE4b6337Kx/S
+	 q29zb4BgGaWy9Qun1/SXXBOv4DEQWAk0xS038Xs+ce/2+w3rg3YTC20kityrcogz6z
+	 YP6/VILT5UbbeNCTguFiYnXZ2Tpaqa/ZbTBIEViVGHFSJqOudQTjAM6x9yYNcJPurG
+	 VLYLFVMq+ZIaNNcvvUNSE6050QM1p9nJenFIgDe2tf1Qp4VUnagqewQiw3BvpA4WHx
+	 uGNkNd+wpqZVA==
+Date: Mon, 17 Mar 2025 10:45:16 +0100
+From: Maxime Ripard <mripard@kernel.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Abhinav Kumar <quic_abhinavk@quicinc.com>, Andrzej Hajda <andrzej.hajda@intel.com>, 
+	David Airlie <airlied@gmail.com>, Dmitry Baryshkov <lumag@kernel.org>, 
+	Hermes Wu <Hermes.wu@ite.com.tw>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Jonas Karlman <jonas@kwiboo.se>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Marijn Suijten <marijn.suijten@somainline.org>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Rob Clark <robdclark@gmail.com>, Robert Foss <rfoss@kernel.org>, 
+	Sean Paul <sean@poorly.run>, Simona Vetter <simona@ffwll.ch>, 
+	Thomas Zimmermann <tzimmermann@suse.de>
+Subject: Re: [PATCH v6 2/4] drm/bridge: add function interface for
+ DisplayPort audio implementation
+Message-ID: <20250317-dancing-loyal-malkoha-ad5a36@houat>
+References: <20250314-dp-hdmi-audio-v6-2-dbd228fa73d7@oss.qualcomm.com>
+ <d5b8a7fa506ed3026c19b383edf160d6@kernel.org>
+ <otidtln4pjb47azr7zhllxkqmwocdnbdiay6xcg6psphz3436i@fn5hxgaflgv6>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="ixvl3eaawni5mk5e"
 Content-Disposition: inline
-In-Reply-To: <20250317093127.GB17428@francesco-nb>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-
-On Mon, Mar 17, 2025 at 10:31:27AM +0100, Francesco Dolcini wrote:
-> On Thu, Mar 13, 2025 at 04:54:59PM +0200, Andy Shevchenko wrote:
-> > On Thu, Mar 13, 2025 at 03:43:29PM +0100, Francesco Dolcini wrote:
-> > > From: Francesco Dolcini <francesco.dolcini@toradex.com>
-> > > 
-> > > This series adds support for the Toradex Embedded Controller, currently used
-> > > on Toradex SMARC iMX95 and iMX8MP boards, with more to come in the future.
-> > 
-> > How many do you have that will come with like 99% guarantee?
-> 
-> None? What I know is that
-> 
->  - Toradex is building SoM since 20 years and not planning to stop any
->    time soon
->  - Recently we decided to get into the SMARC market
->  - From an engineering side we decided that it was the best decision to
->    have a small microcontroller to act as an embedded controller, sitting
->    between the SoC and the PMIC, handling reset, power-up/down sequence,
->    strapping options, I/Os and potentially more
->  - In our roadmap we have more SMARC based products planned
->  - The firmware interface is designed to be generic and handle future
->    boards
->  - We expect to use the same driver for any upcoming board using such
->    embedded controller, the EC firmware and the DT will be the only
->    differences.
-> 
-> But, I do not have a third product in my hands now, so, I have no such a
-> thing as 99% guarantee. Honestly I have only one thing in my future with
-> such a high probability ;-)
-
-So, perhaps it is not a good start for a brand new folder right now
-as we might not see any new products.
-
-> > > The EC provides board power-off, reset and GPIO expander functionalities.
-> > > 
-> > > Sending it as an RFC to gather initial feedback on it before investing more
-> > > time in testing and adding the remaining functionalities, with that said both
-> > > the code and the binding are in condition to be wholly reviewed.
-> > 
-> > This doesn't explain why you need a separate folder.
-> 
-> Can you be more specific here? You mean the `toradex` directory, within
-> `drivers/platform`? The only reason is that maybe we'll break the driver
-> in multiple files, but we can as well just get rid of it. We did not
-> think much at it.
-
-Yes, kinda. I mean the folder in par of, e.g., Chrome OS related HW.
-
-> BTW, the idea to have this driver in such a way was partially inspired
-> by drivers/platform/cznic/, that was merged a few months ago.
-
-Ah, I see. They have already 3 devices on the market.
-
--- 
-With Best Regards,
-Andy Shevchenko
+In-Reply-To: <otidtln4pjb47azr7zhllxkqmwocdnbdiay6xcg6psphz3436i@fn5hxgaflgv6>
 
 
+--ixvl3eaawni5mk5e
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v6 2/4] drm/bridge: add function interface for
+ DisplayPort audio implementation
+MIME-Version: 1.0
+
+On Fri, Mar 14, 2025 at 08:55:05PM +0200, Dmitry Baryshkov wrote:
+> On Fri, Mar 14, 2025 at 05:54:14PM +0000, Maxime Ripard wrote:
+> > On Fri, 14 Mar 2025 11:36:49 +0200, Dmitry Baryshkov wrote:
+> > > It is common for the DisplayPort bridges to implement audio support. =
+In
+> > > preparation to providing a generic framework for DP audio, add
+> > > corresponding interface to struct drm_bridge. As suggested by Maxime
+> > > for now this is mostly c&p of the corresponding HDMI audio API.
+> > >=20
+> > >=20
+> > > [ ... ]
+> >=20
+> > Reviewed-by: Maxime Ripard <mripard@kernel.org>
+>=20
+> You've sent two r-b's for patch 2. Is there a chance that one of those
+> was for patch 3?
+
+Did I? Sorry, it was indeed meant for patch 3
+
+Maxime
+
+--ixvl3eaawni5mk5e
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZ9fvJwAKCRAnX84Zoj2+
+dnNVAYDhZWYDGXn7oAB0Fo0Lf64zRQfKXIpnqEHJYJiwjUC3bU8WN/EHUFxqFVpX
+epcnHMkBf1TqVVJjt8AS9ICP0MFlT1pGgiaFWa2B8bah6LI77fyFdkT67q5xD9JQ
+oz5+buRd4w==
+=mQjr
+-----END PGP SIGNATURE-----
+
+--ixvl3eaawni5mk5e--
 
