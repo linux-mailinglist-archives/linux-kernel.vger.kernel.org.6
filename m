@@ -1,208 +1,252 @@
-Return-Path: <linux-kernel+bounces-563787-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563792-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F247A64875
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:00:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E9051A6489D
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:02:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CCB943B420D
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 09:59:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E0F43B0097
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:01:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEFC6230274;
-	Mon, 17 Mar 2025 09:59:29 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C768233141;
+	Mon, 17 Mar 2025 10:01:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Utl92kOC"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84F28230242
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 09:59:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6EE71DA53;
+	Mon, 17 Mar 2025 10:01:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742205569; cv=none; b=r79wi1cuTjaj3isf6L/BqKv8m6X6bsrYOo4ibLHLGxHNrtX/b1BJe9t6GQ4InNQ13vEEfD4+PfKsM8pBB1SX50CtTSyH2gRjAZJkKLr1E/4ycBO/FN26KHdBxwCbk953Y+oT0FiDPEknlWq7LpRjCmMfxV4ugD0oeztOdE11pj8=
+	t=1742205681; cv=none; b=pt+p580QcqXGwhzG4RExxUhFrd7QIXKmve88k4lGmi/Wj9xbFZdiXeCxri+vjE26PjQX3WaOX8HT0I89Qz8hP3QqHY7da3u/W2q3d/hpFNgP4rhMlJNdVw9Lu917GAyciKCzJNwdmZdG4Wgr+jZWzuyr+yO3egAaKlZrBc3HuIw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742205569; c=relaxed/simple;
-	bh=eLTZeaMW6RqboQrRfMoLdJ3QLbgZhIQQ6M3lPH/kUsg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Zd7r1hDmonq1c2HrlaRXbiu6KGutDHq0EpKsX+8qFaCUAqGybjjecuG1hJiD5BC7462GYk89ZuLESyBuuO4puJa1V41hBHAC88wdbdX9ejHnkIepn6+zIZc49SPvgTl3FWctsVaw/DbPLiDk5FuRz6CIeI43SGh3Rl2Fox44gP4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1tu7FP-0006dd-GS; Mon, 17 Mar 2025 10:59:03 +0100
-Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1tu7FO-000Dti-1d;
-	Mon, 17 Mar 2025 10:59:02 +0100
-Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1tu7FO-0018Rw-2T;
-	Mon, 17 Mar 2025 10:59:02 +0100
-Date: Mon, 17 Mar 2025 10:59:02 +0100
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Kory Maincent <kory.maincent@bootlin.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Donald Hunter <donald.hunter@gmail.com>,
-	Rob Herring <robh@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
-	Simon Horman <horms@kernel.org>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	netdev@vger.kernel.org, linux-doc@vger.kernel.org,
-	Kyle Swenson <kyle.swenson@est.tech>,
-	Dent Project <dentproject@linuxfoundation.org>,
-	kernel@pengutronix.de,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v6 04/12] net: pse-pd: Add support for PSE power
- domains
-Message-ID: <Z9fyZkAOB602cFJY@pengutronix.de>
-References: <20250304-feature_poe_port_prio-v6-0-3dc0c5ebaf32@bootlin.com>
- <20250304-feature_poe_port_prio-v6-4-3dc0c5ebaf32@bootlin.com>
+	s=arc-20240116; t=1742205681; c=relaxed/simple;
+	bh=g3TScb67Wqot26oruS+UjOhbLWjEbO3oQxd3CMAGUqs=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=gKCM94i/Tq+yeRtu7Ia76ptZgujGKGcIl4XgN1xYHg64eMwNsD7j7lEjPu5Ozx+hRgnflGxF++aYSZrFvSopt3SV+Qd2X4YuYrlnJyqx6Mq8f32pz/Xg0UL+Qgc3TM+vxCqI8GVVQ+tx4QoaaOvHFL9sKihDIi6f1cv6rBIlAhk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Utl92kOC; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52H00gRV008255;
+	Mon, 17 Mar 2025 10:01:12 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=Nsy4a7TPZ56uAG1WvZA+r/
+	j8O7Lx3jwLPMVHovMzFqU=; b=Utl92kOCeudcxotW7IRTrZxztyseSdiGng6DzJ
+	pFwgjqyuw7J55bsakd9ojZhtQu2IjY/gyCV4Tr2qlSt2+PV+9ffg6jkQReaRJk+O
+	qbnVkcFfvRC73B/YcAVRsY7tXZR9i6tM2V6c/jqZE+dyIUSiMf6ea1lEOMIWqIn3
+	HOEJj2P8PxEPReCvJccp7EfXZM/iOjmPAeTPHKHqtrZmFEjXyFBMaJ5RdhDLl4b0
+	Z0tlJqahbgk3fu3JVVSR7jeivZePwDm08YtyGxDBJZFqvvcGhvPXqP2PgO8fk2Nf
+	cSdVupCKVdDAbPY7NcxZNCRIG7NW5JvfaxUkHeL+Ll81Z92w==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45d2u9v67y-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 17 Mar 2025 10:01:11 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52HA1BTQ028818
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 17 Mar 2025 10:01:11 GMT
+Received: from hu-varada-blr.qualcomm.com (10.80.80.8) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Mon, 17 Mar 2025 03:01:07 -0700
+From: Varadarajan Narayanan <quic_varada@quicinc.com>
+To: <bhelgaas@google.com>, <lpieralisi@kernel.org>, <kw@linux.com>,
+        <manivannan.sadhasivam@linaro.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <andersson@kernel.org>,
+        <konradybcio@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC: Varadarajan Narayanan <quic_varada@quicinc.com>
+Subject: [PATCH v14 0/4] Add PCIe support for Qualcomm IPQ5332
+Date: Mon, 17 Mar 2025 15:30:25 +0530
+Message-ID: <20250317100029.881286-1-quic_varada@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250304-feature_poe_port_prio-v6-4-3dc0c5ebaf32@bootlin.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=JsfxrN4C c=1 sm=1 tr=0 ts=67d7f2e7 cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=Vs1iUdzkB0EA:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=wWAAX9LI6ptjq62IaZgA:9
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: 5S1wAxKUJkQwkF5WoXBGVHnawTSBfFf3
+X-Proofpoint-ORIG-GUID: 5S1wAxKUJkQwkF5WoXBGVHnawTSBfFf3
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-17_03,2025-03-17_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 adultscore=0
+ mlxlogscore=999 impostorscore=0 suspectscore=0 phishscore=0
+ priorityscore=1501 bulkscore=0 malwarescore=0 spamscore=0
+ lowpriorityscore=0 clxscore=1015 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502280000 definitions=main-2503170072
 
-On Tue, Mar 04, 2025 at 11:18:53AM +0100, Kory Maincent wrote:
-> +/**
-> + * pse_flush_pw_ds - flush all PSE power domains of a PSE
-> + * @pcdev: a pointer to the initialized PSE controller device
-> + */
-> +static void pse_flush_pw_ds(struct pse_controller_dev *pcdev)
-> +{
-> +	struct pse_power_domain *pw_d;
-> +	int i;
-> +
-> +	for (i = 0; i < pcdev->nr_lines; i++) {
-> +		if (!pcdev->pi[i].pw_d)
-> +			continue;
-> +
-> +		pw_d = xa_load(&pse_pw_d_map, pcdev->pi[i].pw_d->id);
-> +		if (pw_d) {
-> +			regulator_put(pw_d->supply);
-> +			xa_erase(&pse_pw_d_map, pw_d->id);
-> +		}
-> +	}
-> +}
-> +
-> +/**
-> + * devm_pse_alloc_pw_d - allocate a new PSE power domain for a device
-> + * @dev: device that is registering this PSE power domain
-> + *
-> + * Return: Pointer to the newly allocated PSE power domain or error pointers
-> + */
-> +static struct pse_power_domain *devm_pse_alloc_pw_d(struct device *dev)
-> +{
-> +	struct pse_power_domain *pw_d;
-> +	int index, ret;
-> +
-> +	pw_d = devm_kzalloc(dev, sizeof(*pw_d), GFP_KERNEL);
-> +	if (!pw_d)
-> +		return ERR_PTR(-ENOMEM);
-> +
-> +	ret = xa_alloc(&pse_pw_d_map, &index, pw_d, XA_LIMIT(1, INT_MAX), GFP_KERNEL);
+Patch series adds support for enabling the PCIe controller and
+UNIPHY found on Qualcomm IPQ5332 platform. PCIe0 is Gen3 X1 and
+PCIe1 is Gen3 X2 are added.
 
-#define PSE_PW_D_LIMIT INT_MAX
+This series combines [1] and [2]. [1] introduces IPQ5018 PCIe
+support and [2] depends on [1] to introduce IPQ5332 PCIe support.
+Since the community was interested in [2] (please see [3]), tried
+to revive IPQ5332's PCIe support with v2 of this patch series.
 
-XA_LIMIT(1, PSE_PW_D_LIMIT)
+v2 of this series pulled in the phy driver from [1] tried to
+address comments/feedback given in both [1] and [2].
 
-> +	if (ret)
-> +		return ERR_PTR(ret);
-> +
-> +	pw_d->id = index;
-> +	return pw_d;
-> +}
-> +
-> +/**
-> + * pse_register_pw_ds - register the PSE power domains for a PSE
-> + * @pcdev: a pointer to the PSE controller device
-> + *
-> + * Return: 0 on success and failure value on error
-> + */
-> +static int pse_register_pw_ds(struct pse_controller_dev *pcdev)
-> +{
-> +	int i;
-> +
-> +	for (i = 0; i < pcdev->nr_lines; i++) {
-> +		struct regulator_dev *rdev = pcdev->pi[i].rdev;
-> +		struct pse_power_domain *pw_d;
-> +		struct regulator *supply;
-> +		bool present = false;
-> +		unsigned long index;
-> +
-> +		/* No regulator or regulator parent supply registered.
-> +		 * We need a regulator parent to register a PSE power domain
-> +		 */
-> +		if (!rdev || !rdev->supply)
-> +			continue;
-> +
+1. Enable IPQ5018 PCI support (Nitheesh Sekar) - https://lore.kernel.org/all/20231003120846.28626-1-quic_nsekar@quicinc.com/
+2. Add PCIe support for Qualcomm IPQ5332 (Praveenkumar I) - https://lore.kernel.org/linux-arm-msm/20231214062847.2215542-1-quic_ipkumar@quicinc.com/
+3. Community interest - https://lore.kernel.org/linux-arm-msm/20240310132915.GE3390@thinkpad/
 
-Should we use xa_lock() before iteration over the map?
+v14: * Rebase on top of tree
+     * Change commit log to include impacted SoCs and why this is added
 
-> +		xa_for_each(&pse_pw_d_map, index, pw_d) {
-> +			/* Power supply already registered as a PSE power
-> +			 * domain.
-> +			 */
-> +			if (regulator_is_equal(pw_d->supply, rdev->supply)) {
-> +				present = true;
-> +				pcdev->pi[i].pw_d = pw_d;
-> +				break;
-> +			}
-> +		}
-> +		if (present)
-> +			continue;
-> +
-> +		pw_d = devm_pse_alloc_pw_d(pcdev->dev);
-> +		if (IS_ERR_OR_NULL(pw_d))
-> +			return PTR_ERR(pw_d);
+v13: * Update commit log
+     * Fix ipq6018 related error
+	arch/arm64/boot/dts/qcom/ipq6018-cp01-c1.dtb: pcie@20000000: reg-names: ['dbi', 'elbi', 'atu', 'parf', 'config'] is too short
+     * Remove fixes tag
 
-It is better to break the loop and roll back previous allocations.
+v12: * Skipped the following (Vinod Koul has picked them)
+		dt-bindings: phy: qcom,uniphy-pcie: Document PCIe uniphy
+		phy: qcom: Introduce PCIe UNIPHY 28LP driver
 
-> +
-> +		supply = regulator_get(&rdev->dev, rdev->supply_name);
-> +		if (IS_ERR(supply)) {
-> +			xa_erase(&pse_pw_d_map, pw_d->id);
-> +			return PTR_ERR(supply);
+     * Skipped this (merged)
+		dt-bindings: PCI: qcom: Document the IPQ5332 PCIe controller
 
-same here.
+     * Undo combining sdx55 & ipq9574. Discard the following
+		dt-bindings: PCI: qcom: Use sdx55 reg description for ipq9574
+		arm64: dts: qcom: ipq9574: Reorder reg and reg-names
 
-> +		}
-> +
-> +		pw_d->supply = supply;
-> +		pcdev->pi[i].pw_d = pw_d;
-> +	}
-> +
-> +	return 0;
-> +}
+     * Append MHI registers to ipq9574 dt-bindings and dts
+		dt-bindings: PCI: qcom: Add MHI registers for IPQ9574
+		arm64: dts: qcom: ipq9574: Add MHI to pcie nodes
+
+     * ipq5332.dtsi:
+		Align reg-names order with ipq9574
+		Dropped R-b tag per feedback
+
+     * No new warnings/errors with dt_binding_check and dtbs_check
+
+v11: * phy-qcom-uniphy-pcie-28lp.c
+	 * Remove unused #define
+	 * Use "250 * MEGA" instead of 250000000
+
+v10: * ipq5332.dtsi: Trim down the list of assigned clocks
+
+     * ipq9574 and ipq5332 DT
+	 * Fix 'simple-bus unit address format error' in ipq9574 and
+	   ipq5332 DTS
+         * Rearrange nodes w.r.t. address sort order
+
+     * Have spoken with 'Manikanta Mylavarapu' [1] for omitting similar
+       changes in qcom,pcie.yaml that are handled in this series.
+
+     * Reformat commit messages to 75 character limit
+
+     * controller bindings:
+       Fix maxItems for interrupts constraint of sdm845
+
+     1 - https://lore.kernel.org/linux-arm-msm/20250125035920.2651972-2-quic_mmanikan@quicinc.com/
+
+v9: Dont have fallback for num-lanes in driver and return error
+    Remove superfluous ipq5332 constraint as the fallback is present
+
+v8: Add reviewed by
+    Remove duplication in bindings due to ipq5424 code getting merged
+
+v7: phy bindings:
+    * Include data type definition to 'num-lanes'
+
+    controller bindings:
+    * Split the ipq9574 and ipq5332 changes into separate patches
+
+    dtsi:
+    * Add root port definitions
+
+v6: phy bindings:
+    * Fix num-lanes definition
+
+    phy driver:
+    * Fix num-lanes handling in probe to use generally followed pattern
+
+    controller bindings:
+    * Give more info in commit log
+
+    dtsi:
+    * Add assigned-clocks & assigned-clock-rates to controller nodes
+    * Add num-lanes to pcie0_phy
+
+v5: phy bindings:
+    * Drop '3x1' & '3x2' from compatible string
+    * Use 'num-lanes' to differentiate instead of '3x1' or '3x2'
+      in compatible string
+    * Describe clocks and resets instead of just maxItems
+
+    phy driver:
+    * Get num-lanes from DTS
+    * Drop compatible specific init data as there is only one
+      compatible string
+
+    controller bindings:
+    * Re-arrange 5332 and 9574 compatibles to handle fallback usage in dts
+
+    dtsi:
+    * Add 'num-lanes' to "pcie1_phy: phy@4b1000"
+    * Make ipq5332 as main and ipq9574 as fallback compatible
+    * Sort controller nodes per address
+
+    misc:
+    Add R-B tag from Konrad to dts and dtsi patches
+
+v4: * phy bindings - Create ipq5332 compatible instead of reusing ipq9574 for bindings
+    * phy bindings - Remove reset-names as the resets are handled with bulk APIs
+    * phy bindings - Fix order in the 'required' section
+    * phy bindings - Remove clock-output-names
+    * dtsi - Add missing reset for pcie1_phy
+    * dtsi - Convert 'reg-names' to a vertical list
+    * dts - Fix nodes sort order
+    * dts - Use property-n followed by property-names
+
+v3: * Update the cover letter with the sources of the patches
+    * Rename the dt-bindings yaml file similar to other phys
+    * Drop ipq5332 specific pcie controller bindings and reuse
+      ipq9574 pcie controller bindings for ipq5332
+    * Please see patches for specific changes
+    * Set GPL license for phy-qcom-uniphy-pcie-28lp.c
+
+v2: Address review comments from V1
+    Drop the 'required clocks' change that would break ABI (in dt-binding, dts, gcc-ipq5332.c)
+    Include phy driver from the dependent series
+
+v1: https://lore.kernel.org/linux-arm-msm/20231214062847.2215542-1-quic_ipkumar@quicinc.com/
+
+
+Praveenkumar I (2):
+  arm64: dts: qcom: ipq5332: Add PCIe related nodes
+  arm64: dts: qcom: ipq5332-rdp441: Enable PCIe phys and controllers
+
+Varadarajan Narayanan (2):
+  dt-bindings: PCI: qcom: Add MHI registers for IPQ9574
+  arm64: dts: qcom: ipq9574: Add MHI to pcie nodes
+
+ .../devicetree/bindings/pci/qcom,pcie.yaml    |   4 +-
+ arch/arm64/boot/dts/qcom/ipq5332-rdp441.dts   |  76 ++++++
+ arch/arm64/boot/dts/qcom/ipq5332.dtsi         | 252 +++++++++++++++++-
+ arch/arm64/boot/dts/qcom/ipq9574.dtsi         |  40 ++-
+ 4 files changed, 361 insertions(+), 11 deletions(-)
+
+
+base-commit: da920b7df701770e006928053672147075587fb2
 -- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+2.34.1
+
 
