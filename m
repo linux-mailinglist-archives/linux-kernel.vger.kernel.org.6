@@ -1,206 +1,165 @@
-Return-Path: <linux-kernel+bounces-564102-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563985-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CE1FA64DC6
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 13:03:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A0EFA64BB1
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 12:06:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20BD9174D21
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 12:03:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 540A13A4804
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:01:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F347B23A563;
-	Mon, 17 Mar 2025 12:02:05 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62DCF23F285;
+	Mon, 17 Mar 2025 10:58:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=daynix-com.20230601.gappssmtp.com header.i=@daynix-com.20230601.gappssmtp.com header.b="glPhiQEb"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E422423958B
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 12:02:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24B312376F7
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 10:58:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742212925; cv=none; b=MA+T6Q1W7f4DhoECHq98zbgfjgrUGwMgFuxUPvnz4hCnBFudK3N8vs5QUTvfSCTUBf5rOX6GRWRyLAeZUYXwRfgSYmBr3GiwuFgkWXyruN4MMUHBDSpPgdV5ZnCdxYuUw5c7iKLSQF6gXGwGaS5MT8jnCBGlh3EpGyjxZ4cJYVs=
+	t=1742209133; cv=none; b=qwLp9BRZ6Okud0vmo361o48R3ymhYzOseA7GC9OKdOew1syJFPepg0mpxyUMNP6aqMK8cLuC5EmB6lP5ekoXfRyVkFTJo5K0prVOLCzhQSUE6BTHW96z/UUHpFTn5PAn9lQPzs85FkOpLKSrcHxAyS3ix1S+FD8+TYQt4PY4IqM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742212925; c=relaxed/simple;
-	bh=PlMEiEJDam59+aty2oFc2pESN+enaEybP02730+FEq8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JvLnhyTu+BSutsm2DtfvlZ1OxWR8cuRk+4EXGAYfJARssTG3Y3bEJSfyLEjvZZk//iiw6EFBoBQQ8zb2vGdxIvrBcp32BjCsmGZAD6LEwcH77leFiVepb/uyfEK7tdDeuCLU18nL8ivY0cJRc8qJ0tB0K7AzsirvdOJ4paQB5hU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1tu99w-00020y-0U; Mon, 17 Mar 2025 13:01:32 +0100
-Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1tu99t-000EuM-0g;
-	Mon, 17 Mar 2025 13:01:29 +0100
-Received: from pengutronix.de (p5b1645f7.dip0.t-ipconnect.de [91.22.69.247])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id A87EC3DE480;
-	Mon, 17 Mar 2025 10:41:48 +0000 (UTC)
-Date: Mon, 17 Mar 2025 11:41:48 +0100
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Ming Yu <a0282524688@gmail.com>
-Cc: tmyu0@nuvoton.com, lee@kernel.org, linus.walleij@linaro.org, 
-	brgl@bgdev.pl, andi.shyti@kernel.org, mailhol.vincent@wanadoo.fr, 
-	andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
-	pabeni@redhat.com, wim@linux-watchdog.org, linux@roeck-us.net, jdelvare@suse.com, 
-	alexandre.belloni@bootlin.com, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-i2c@vger.kernel.org, linux-can@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-watchdog@vger.kernel.org, linux-hwmon@vger.kernel.org, linux-rtc@vger.kernel.org, 
-	linux-usb@vger.kernel.org
-Subject: Re: [PATCH v8 4/7] can: Add Nuvoton NCT6694 CANFD support
-Message-ID: <20250317-outrageous-helpful-agama-39476f-mkl@pengutronix.de>
-References: <20250225081644.3524915-1-a0282524688@gmail.com>
- <20250225081644.3524915-5-a0282524688@gmail.com>
+	s=arc-20240116; t=1742209133; c=relaxed/simple;
+	bh=GneHmk/qL//iBdk3HQU3hkToakkrBvwUGgglHdEvMAI=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To; b=utGAAc9HZxhNKrug7LAm5ldiUkMY1jUdhbKippqX1h6gV7e6/dCOnOV0UMq/YWdPiB+cFnR6aU5XVBhhI0xaKx7cdspLQFdajYrqn+zF1nk+GPq5QwC0PPDSu3xhHBzwu3pb+WwlBH2xI951cSNnYRj3sNKYDEmi7KbvpU/SJiI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=daynix.com; spf=pass smtp.mailfrom=daynix.com; dkim=pass (2048-bit key) header.d=daynix-com.20230601.gappssmtp.com header.i=@daynix-com.20230601.gappssmtp.com header.b=glPhiQEb; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=daynix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=daynix.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-22401f4d35aso75368265ad.2
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 03:58:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=daynix-com.20230601.gappssmtp.com; s=20230601; t=1742209131; x=1742813931; darn=vger.kernel.org;
+        h=to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Tr9XV/m9Yn0vfZS8el5Q1nXWgm/+NfgkMX4LFmMiC1g=;
+        b=glPhiQEbgprPRJIAaiPPvdrEwy1JnHyYY/PfrZ1UIgFW6PYWjiCN+VgwzUkIeZeQo2
+         oiBCFqtQ///+RLLqhC7bp6SOd0h+dteZdvIehfwMmI1ZJW5VsTPpPd6AMGFap+XTJEol
+         8mrzc9YV88uSmHx5Y3kjCJhtyvS2vqE01jMQx72ZPzxWJuHNA9T2OxU1mB5LdWWkyDRi
+         NP28ThgMdDZmaUpB/7DWGV0cRgj4XWXRN5qZGN2ljs6NpyRzq9dAVKSzMjMznNRvy4dD
+         xIe3vopWjWCCAW9lPw/h7zqJYQtrpbaEjhJYyA1378KFroxAv/9Km4bFY3vSCeqBdGQg
+         VsWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742209131; x=1742813931;
+        h=to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Tr9XV/m9Yn0vfZS8el5Q1nXWgm/+NfgkMX4LFmMiC1g=;
+        b=F1y+hdBlmQf/gutymMlJUXJue0ZOMNWq0880PfQrSKT99rpOs4rShTwdqBe5B0RKl9
+         Jhc9mf4FcUdYBseZusH92jfV/uW33+v546zzpRm0YHX0GgpvOgGXAGL6WuR2cqQS92ST
+         WgVt5Pb2ulCWjRzp/SiqzA/PquUUGdciXbnZjVO+9OTf31+uG+uIpW3R04LHvLTgC6tT
+         JJoeu7t5XQsIEe1UOm6ZYPhXffp6CUUZdf2YbOE5JRbX63MgBLY3hSvPb7us769Olcu+
+         hV0uexxphBNtYSSXHS5yU+PGmBNh0ZJ1uraBsjMpvlSxA2fvppqZmcva4+hFSJqyjgcu
+         eb/w==
+X-Forwarded-Encrypted: i=1; AJvYcCXeH+WYBeS/8OzMrMKX5H3ZysoKDUfAN8RhEDxjzVY5fVo/+YEPY2tnyrKsOwtj3Qg/d94i/hrdqNWXHe8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxSpPYx9AilvbA0L8r7HVBDOPMnjyab/SPWQnveUYl8pfJRgD36
+	4xK6Cc07dBXIwJuYwgtiybVTKsiJ5eJwIOHRRpKskKUFGAZ53tIDsvd3ECh2yOQ=
+X-Gm-Gg: ASbGncs2ARniRuZkQjpB7lwm7+3hBxtDpCo2F7hxytGdKHN3xfJzySPMWta2mfXPT/I
+	YuDZ897AexdK7ffZb9AsJIZ9Bh8eG/xrGrIAVs8xdLkFkQyZT22Itlv6IhHor+HMpMfdwpDJ+5o
+	CxIap2niH4GRSLF7VOwdVp6S8HYo6GSMEO0CX5ONqZ89XL8GO//rO0mNXlGYHArns4Dp4iY5w+0
+	g+Lw5sxZq9OnsaLeUGIiNfu+cMf1wtOCxc5agKlXi7slGGP1JnRbNEahYKpt6sCLZcc/QMJXWbl
+	Ova4yJW923fghbHTMrKLTQ2aStdD0qmUcnflzRhtla2XeLGy
+X-Google-Smtp-Source: AGHT+IG+ei/lg8cM5wfrSZJXqZa9osmFd7Sc/z8/9LCogmJrZABRCUzflnBMKqILkfW838r3yRiXfA==
+X-Received: by 2002:a05:6a00:2e25:b0:730:9801:d3e2 with SMTP id d2e1a72fcca58-7372238e7d9mr16744723b3a.8.1742209131380;
+        Mon, 17 Mar 2025 03:58:51 -0700 (PDT)
+Received: from localhost ([157.82.207.107])
+        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-7371167dfa2sm7533712b3a.107.2025.03.17.03.58.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 17 Mar 2025 03:58:51 -0700 (PDT)
+From: Akihiko Odaki <akihiko.odaki@daynix.com>
+Date: Mon, 17 Mar 2025 19:57:57 +0900
+Subject: [PATCH net-next v11 07/10] selftest: tun: Test vnet ioctls without
+ device
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="vzg54m2aeg5i4qkb"
-Content-Disposition: inline
-In-Reply-To: <20250225081644.3524915-5-a0282524688@gmail.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250317-rss-v11-7-4cacca92f31f@daynix.com>
+References: <20250317-rss-v11-0-4cacca92f31f@daynix.com>
+In-Reply-To: <20250317-rss-v11-0-4cacca92f31f@daynix.com>
+To: Jonathan Corbet <corbet@lwn.net>, 
+ Willem de Bruijn <willemdebruijn.kernel@gmail.com>, 
+ Jason Wang <jasowang@redhat.com>, "David S. Miller" <davem@davemloft.net>, 
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+ Paolo Abeni <pabeni@redhat.com>, "Michael S. Tsirkin" <mst@redhat.com>, 
+ Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Shuah Khan <shuah@kernel.org>, 
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ netdev@vger.kernel.org, kvm@vger.kernel.org, 
+ virtualization@lists.linux-foundation.org, linux-kselftest@vger.kernel.org, 
+ Yuri Benditovich <yuri.benditovich@daynix.com>, 
+ Andrew Melnychenko <andrew@daynix.com>, 
+ Stephen Hemminger <stephen@networkplumber.org>, gur.stavi@huawei.com, 
+ Lei Yang <leiyang@redhat.com>, Simon Horman <horms@kernel.org>, 
+ Akihiko Odaki <akihiko.odaki@daynix.com>
+X-Mailer: b4 0.15-dev-edae6
 
+Ensure that vnet ioctls result in EBADFD when the underlying device is
+deleted.
 
---vzg54m2aeg5i4qkb
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v8 4/7] can: Add Nuvoton NCT6694 CANFD support
-MIME-Version: 1.0
+Signed-off-by: Akihiko Odaki <akihiko.odaki@daynix.com>
+Tested-by: Lei Yang <leiyang@redhat.com>
+---
+ tools/testing/selftests/net/tun.c | 38 ++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 38 insertions(+)
 
-On 25.02.2025 16:16:41, Ming Yu wrote:
-[...]
+diff --git a/tools/testing/selftests/net/tun.c b/tools/testing/selftests/net/tun.c
+index fa83918b62d1..ad168c15c02d 100644
+--- a/tools/testing/selftests/net/tun.c
++++ b/tools/testing/selftests/net/tun.c
+@@ -159,4 +159,42 @@ TEST_F(tun, reattach_close_delete) {
+ 	EXPECT_EQ(tun_delete(self->ifname), 0);
+ }
+ 
++FIXTURE(tun_deleted)
++{
++	char ifname[IFNAMSIZ];
++	int fd;
++};
++
++FIXTURE_SETUP(tun_deleted)
++{
++	self->ifname[0] = 0;
++	self->fd = tun_alloc(self->ifname);
++	ASSERT_LE(0, self->fd);
++
++	ASSERT_EQ(0, tun_delete(self->ifname))
++		EXPECT_EQ(0, close(self->fd));
++}
++
++FIXTURE_TEARDOWN(tun_deleted)
++{
++	EXPECT_EQ(0, close(self->fd));
++}
++
++TEST_F(tun_deleted, getvnethdrsz)
++{
++	ASSERT_EQ(-1, ioctl(self->fd, TUNGETVNETHDRSZ));
++	EXPECT_EQ(EBADFD, errno);
++}
++
++TEST_F(tun_deleted, getvnethashcap)
++{
++	struct tun_vnet_hash cap;
++	int i = ioctl(self->fd, TUNGETVNETHASHCAP, &cap);
++
++	if (i == -1 && errno == EBADFD)
++		SKIP(return, "TUNGETVNETHASHCAP not supported");
++
++	EXPECT_EQ(0, i);
++}
++
+ TEST_HARNESS_MAIN
 
-> diff --git a/drivers/net/can/usb/nct6694_canfd.c b/drivers/net/can/usb/nc=
-t6694_canfd.c
-> new file mode 100644
-> index 000000000000..d97fce5cdf32
-> --- /dev/null
-> +++ b/drivers/net/can/usb/nct6694_canfd.c
+-- 
+2.48.1
 
-[...]
-
-> +static const struct can_bittiming_const nct6694_can_bittiming_nominal_co=
-nst =3D {
-> +	.name =3D DRVNAME,
-> +	.tseg1_min =3D 2,
-> +	.tseg1_max =3D 256,
-> +	.tseg2_min =3D 2,
-> +	.tseg2_max =3D 128,
-> +	.sjw_max =3D 128,
-> +	.brp_min =3D 1,
-> +	.brp_max =3D 511,
-> +	.brp_inc =3D 1,
-> +};
-> +
-> +static const struct can_bittiming_const nct6694_can_bittiming_data_const=
- =3D {
-> +	.name =3D DRVNAME,
-> +	.tseg1_min =3D 1,
-> +	.tseg1_max =3D 32,
-> +	.tseg2_min =3D 1,
-> +	.tseg2_max =3D 16,
-> +	.sjw_max =3D 16,
-> +	.brp_min =3D 1,
-> +	.brp_max =3D 31,
-> +	.brp_inc =3D 1,
-> +};
-
-[...]
-
-> +static int nct6694_can_start(struct net_device *ndev)
-> +{
-> +	struct nct6694_can_priv *priv =3D netdev_priv(ndev);
-> +	const struct can_bittiming *d_bt =3D &priv->can.data_bittiming;
-> +	const struct can_bittiming *n_bt =3D &priv->can.bittiming;
-> +	struct nct6694_can_setting *setting __free(kfree) =3D NULL;
-> +	const struct nct6694_cmd_header cmd_hd =3D {
-> +		.mod =3D NCT6694_CAN_MOD,
-> +		.cmd =3D NCT6694_CAN_SETTING,
-> +		.sel =3D ndev->dev_port,
-> +		.len =3D cpu_to_le16(sizeof(*setting))
-> +	};
-> +	int ret;
-> +
-> +	setting =3D kzalloc(sizeof(*setting), GFP_KERNEL);
-> +	if (!setting)
-> +		return -ENOMEM;
-> +
-> +	setting->nbr =3D cpu_to_le32(n_bt->bitrate);
-> +	setting->dbr =3D cpu_to_le32(d_bt->bitrate);
-
-I just noticed one thing that needs clarification/documentation.
-
-You have nct6694_can_bittiming_nominal_const and
-nct6694_can_bittiming_data_const, but only pass the bit rates to your
-device.
-
-Do the bit timing const really reflect the HW limitations of your
-device?
-
-Are you sure your device uses the same algorithm as the kernel and
-calculates the same bit timing parameters as the kernel, so that the
-values given to the user space reflects the bit timing parameter chosen
-by your device?
-
-> +
-> +	if (priv->can.ctrlmode & CAN_CTRLMODE_LISTENONLY)
-> +		setting->ctrl1 |=3D cpu_to_le16(NCT6694_CAN_SETTING_CTRL1_MON);
-> +
-> +	if (priv->can.ctrlmode & CAN_CTRLMODE_FD_NON_ISO)
-> +		setting->ctrl1 |=3D cpu_to_le16(NCT6694_CAN_SETTING_CTRL1_NISO);
-> +
-> +	if (priv->can.ctrlmode & CAN_CTRLMODE_LOOPBACK)
-> +		setting->ctrl1 |=3D cpu_to_le16(NCT6694_CAN_SETTING_CTRL1_LBCK);
-> +
-> +	ret =3D nct6694_write_msg(priv->nct6694, &cmd_hd, setting);
-> +	if (ret)
-> +		return ret;
-> +
-> +	priv->can.state =3D CAN_STATE_ERROR_ACTIVE;
-> +
-> +	return 0;
-> +}
-
-regards,
-Marc
-
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
-
---vzg54m2aeg5i4qkb
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAmfX/GkACgkQDHRl3/mQ
-kZzJDgf8DgOIcr0MWwz7wlhWys5Fxw4Vtn5MszTN3NLbf2p+jPRy/TQKbi3A7p+B
-PZFdTyo+sYOdG9csQChfdGGqWEA5cd6vIMYmIbUO1401s5U+bYudq1+h68pyfOhf
-XOKXDxnSWXlzFLw2vu2SsZ3M4svT1cU0S6NRSxPx/o4QuFfsG7KLFqwdMK+MEc8P
-CcqcJKo47KwOEcWuQm/eTq4LQFvmmKz8/6PCcrY2P99PQ9bqTkoiC7R+KMONa1p3
-f2/q875xuTHckepTB7slLcXA9K7ikoT7T865z4jHsZt5ClD3+L/j5pSa82E1kcxN
-nv4xvBHXTSmzW8wtGa6VrUWOif5cYg==
-=GQzc
------END PGP SIGNATURE-----
-
---vzg54m2aeg5i4qkb--
 
