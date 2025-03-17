@@ -1,510 +1,351 @@
-Return-Path: <linux-kernel+bounces-564351-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564352-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA2ABA6536C
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 15:29:22 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26CA1A65351
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 15:27:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A01517A0D8
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 14:26:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0E5187AB8B9
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 14:26:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39A4B24C068;
-	Mon, 17 Mar 2025 14:24:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 682622417E6;
+	Mon, 17 Mar 2025 14:25:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XgQboESw"
-Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="oo/3F07G";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="j40e2/cS"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 713D924BBFA;
-	Mon, 17 Mar 2025 14:24:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742221447; cv=none; b=dSIFs0OJVHAb84ee1KCUxScYxjawdsUvDqw1nVO2APVZt5j+K1AAG0wO2GAhkrgfhRIRORq4oTQEQinD5btdv7vdLRfewZxLvl05VQhlvfXFJ7gCLs2ROi8G0GmrOeRR60GrIMQcuC40Vj3MNG1guVo0eGwmpH8bIphmEseezPM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742221447; c=relaxed/simple;
-	bh=987TtpkPPaoRHA6crXpHFcJAOt/VWj29CNmz2SRJV7s=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=WlvKhwtdAXAoCddnZxhIaSn+Bh/J2jSXDNCKJKL0c7ZCPSSDECJA9GSHinDn1Dh6HmoU/pJlDiJ60nmOisCyIvKfBbEHFToAL6NR6PxLTW1qZkxEmvHt/wlcWNoYI7H7mYWLdDM2VhhVBOuRz0ZrqqsYK5uoKFQr0HhMPC/iu08=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XgQboESw; arc=none smtp.client-ip=209.85.160.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-47688ae873fso43244551cf.0;
-        Mon, 17 Mar 2025 07:24:05 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51E6623DE95;
+	Mon, 17 Mar 2025 14:25:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742221553; cv=fail; b=ClnzuUKnK9bfnwPSRFZHxC5PlyKUU/sR9hrCLjxQOcwdj6GW95DKNA8KuY70qX2XTglfzEXsIGEeijpsKewOsQkHI22SN2IZUUuY1w4aaYnE8XgMXpMUSF9g+LYj2SSKT8aWdqbEKei0G9+EO58XTthlP+6FWn7qeTSxyil30iE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742221553; c=relaxed/simple;
+	bh=vTZVyiJvdeWFizs2LvMSjbp7mdd9cHho3N6IpxQWImc=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=SQ51P66d2ECyS8S1r7xU2py/fNfwJQpI5aUhO/8vo87CM5R5AAe12QHQiVElh0gbiY/jHqUFo8uJTqD+fLnwk7L+HvFcNlED+txiaDqEk3TEV7O05ecYU5lCMxgL/q8v0kXvpTZj7CTnnoohLsXy5K7zEX33AE/A0/KSVA8RdS4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=oo/3F07G; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=j40e2/cS; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52H7QmTf026943;
+	Mon, 17 Mar 2025 14:25:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=
+	corp-2023-11-20; bh=L1tNz6hwyXOs19UU03LaRQTTAPr4LUWhB5TQ8GiGQhY=; b=
+	oo/3F07GvSe8F0cEUuRBjXZxWBUbUEb8ra1h3Pfo2gOHwfr/XPOaeF/P3cUMvXPe
+	ySDl5y7EeA7QbDbA8891qBdIETNsjNeBT23poYLJwKXtyEp5XNKJvtESziqAYfT2
+	Xwg0SrZgqA1YzxAaIvWE3nc+ACjB4Od7W/97etHMCP3w9UXRCEju2rJ9MrN+9UCP
+	jFIMcAFGPwEXRRPHyNegvmxMi+kQFvjpAKYsq+Jk7+zS+U9m5pVxi83P5Mlx9MKn
+	Q0RWQmKTQj/PUEy9dVOaem+OMpeMzy37m1y/dyhJd8T+gM6FAQlTVPiAcdF9486j
+	q0uEBH1wZr3psF2J4eRfwA==
+Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 45d1n8auwt-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 17 Mar 2025 14:25:38 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 52HEK7cB022510;
+	Mon, 17 Mar 2025 14:25:37 GMT
+Received: from nam12-dm6-obe.outbound.protection.outlook.com (mail-dm6nam12lp2168.outbound.protection.outlook.com [104.47.59.168])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 45dxc488by-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 17 Mar 2025 14:25:36 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=djgWANeZ85ZpI8fo6olnK9ykUZtV9G1PIurz1QEMMt77nnD83T7EPkhhtVLql7fjwGGQu1uf21OdbC4j7nVZo//oZGJnKw0mFIxuOl51T0wAbC4eVzMn81gtbO1zeFbWLv3hwqJyqjXKSns1hl3MvOD3xECnQtGBSrg1gKBgsFiPAz22SGcIbjTDgszWbUVomkovaVE1eeYTsOZql7QIr/9tZtG+hS71wRHo+gGejeizstxRTAWgm1J28pedv78w1fIzPSE23sWGGFkCPFk0NCOsMCxpNjB66B8NAoy7U1bWHePu+hTDWwmBTbdG94JSGYAtXNAtYnpPQOjGPJLk9Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=L1tNz6hwyXOs19UU03LaRQTTAPr4LUWhB5TQ8GiGQhY=;
+ b=Gw0xfUjKCm6lqXvASoNvVWYQw2W80php11U/ybRoVdbF9Yycwun+mH+JXNpH3RC2XWUCriOnIu11PRMsdh8dN+yHp3hJCDUxce4zuA+x4QG5Nuyj+LfNtUwbRIYzm465bAXOKWXjxS43eTkG2LPwGL3/flRTCUsnTqnen0SktCP7idg24jA299H4aAcDzb+gyVYgaM/uZbMvVdExe+lZbqP26+WIlq12vDKaIixVkhu7jRn+GEyl9j9AxNceuLJyeE19NbMN1+EFbRgF05srYmcxUFM0SAZpR796HBe4XW+Zxmu7/nfdK3+FEKmELWBqrgVAWG4V4sfo3iJ0x3y8Qw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742221444; x=1742826244; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=3AoPgamZTGw+bLyE66VJT+0+YBBvA1ZVLa2NjT4B3rE=;
-        b=XgQboESwWpO3/ZTLwe90iaKpkrKBiBoQXI7624HdgL89ivAZNL3TJnq1gML7fygt7L
-         cDnZiIz58iTmkzPW6Qr3d3yVH6ZX042DBys3lFiQpmmVurmhRRN1xcc9PAFJotRzBqQ0
-         iXIBd7RgDRcnSGPFZqqexv+FyBLQXrsG0dZ7oUxuLprE80Am71XRUvG6Hbfo7xkzf5+Q
-         gn1IRMc1vj7O7+JIp1VoU3V0K/q0gEJtn+TRdIIq2M0fpESmH2msbu6p8ybiTQJNQj/c
-         Pm+FaHP1qfvAvQZ6iMfmRaZ9WXgi+YD4WXfetloRdz4O3rEo4YcZxkBABmmInXkLFBTz
-         cviA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742221444; x=1742826244;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3AoPgamZTGw+bLyE66VJT+0+YBBvA1ZVLa2NjT4B3rE=;
-        b=xFTlVSUUjaIld1WoqicJAHwFuCHatnwcL1gbVl6mwa62ubaOYBxtTVyZbGl31i8jSG
-         Vgdiwq/FPjBAViBX+HLBAa0ooKGNJdafMXix0B/5nwUFMEJOQDc2srJpf1ABC0Ta2a2K
-         WiJyt1ehTGOJqSpR4QM5NoFYShdOVgHhTD76FJq019+Axfy5AZwd8tsACDzu2lQW8HMz
-         k/WXm82EmZJ+Iyz8+U7Ba6j2vgC2ZEUAekI9fu0ore94Km55ROWn4+GOdcP68P6kX2rQ
-         LWuvtOhNOB9UChYY4MKDU5dASiRg6yE2rfdI5/0a/1YD1v62ilQyk75AvJv9BKS/0qev
-         HtPA==
-X-Forwarded-Encrypted: i=1; AJvYcCV2NSUAOEAsWaHaTUUfaNqiPEhouXwsj8RCZZmCbQszSLWS+/L9mgXrJyT73/Il2eQzspGosOfZFwbj@vger.kernel.org, AJvYcCV3+qg89VknENCySsn8NGZ0HW4EBlK74tH22+cnSrXx2ycaAoICdQWcRgxY3drS+4ePNwSw+fvl8Ar+@vger.kernel.org, AJvYcCVWApQkjJFTs92nM0aaUodYmOskwlRnJOSvDlQolfhSGl4XViGhIo3qhRVN5roft2cFliGf3cQtj3w0pFg=@vger.kernel.org, AJvYcCVZMhmMUS5m3LT/lItkKYqIAeug0QWjrsZg0Uuzj/dLL10tic86bK4oaEObfJg5PVjvxx3BbNBhwp0TaAEP@vger.kernel.org, AJvYcCXYh9Qkj/xWmzuaDwywMamrxQLuWZE2f5DidK6H/7hu/bXjVckFRdX56bZwcfVmPtLRmp+N5kIrzWrhiePrhA/H@vger.kernel.org, AJvYcCXol4F/xsOlgdYfszHcfnpeu+iXZMvUgwZ2dC4Epm3AUa2OXTcmHlLhVe9+13F/IApJipO9cf486dxjwzlNx5o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxSHjDacf59h6CUfQssCm44zUTmZnjAleDWa7ZlIodM2+xn1a3g
-	c0XY9dIlCHw4yA+1ENPkWWKORYJH+2Y0zlHvUN1HdialOIzSyXWK
-X-Gm-Gg: ASbGncsC0Z90ZpdcabG7v5J8us6Bqx+Ln+nCx/hkbRvpTP8CklBl/zXroUDtHn47fC0
-	dhtZ7xuYsBjjUxgB62phZrqVlvj6J4+Z2aE94mtwp/RtwtQXlkkbGWuQiTs75eg/3qcE+oZvP0D
-	1MZ04YrmIw50yhlerKlBybc2TOFNh9CuKbJpV4HVhsXkjlCmI6Zl+wdXkMfGvbAc6Hqi6m4J43Q
-	DxHcBygW9I126PURve02ieNlf75hx8tWGzRY3DFkUbCd3RhnmsRSOB0kky6p5058l6Z9cAmTLW6
-	xMWmKrnWAsk/nqzv6FW7hVLJGSt5JcZ/vj+4KLwEbRG+AcBGTOnFGFJH8RP1l0WF2zCLaAaa5g=
-	=
-X-Google-Smtp-Source: AGHT+IEOcZaAErVkrTUiISs/oSWF4CNXcbc1QPv9pQ6mWesRhgejS3Ggisnz7nL3giOYmSt+NZV5+Q==
-X-Received: by 2002:ac8:5d13:0:b0:476:884e:52f4 with SMTP id d75a77b69052e-476c812c79cmr189000251cf.12.1742221444046;
-        Mon, 17 Mar 2025 07:24:04 -0700 (PDT)
-Received: from tamird-mac.local ([2600:4041:5be7:7c00:6895:24c6:e898:e320])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-476bb60b13esm54601011cf.6.2025.03.17.07.24.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Mar 2025 07:24:03 -0700 (PDT)
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Mon, 17 Mar 2025 10:23:56 -0400
-Subject: [PATCH v5 6/6] rust: use strict provenance APIs
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=L1tNz6hwyXOs19UU03LaRQTTAPr4LUWhB5TQ8GiGQhY=;
+ b=j40e2/cSuKIYUret54g5pO22iUJ82yuxQD3A6JBas5eicYP1XP3E7ao4fHOrr1QqJKe4eRXuncJ0JYnMTZ07iLxqpPNnxl1GtaLLMjcU1hzQJ5hiAelTttHh7Z6wl6fRoWtxn0Ybe+ivEt9TB6Bx50XjYU92okn3IlzufENn/3c=
+Received: from DM6PR10MB4313.namprd10.prod.outlook.com (2603:10b6:5:212::20)
+ by IA1PR10MB7166.namprd10.prod.outlook.com (2603:10b6:208:3f4::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.33; Mon, 17 Mar
+ 2025 14:25:34 +0000
+Received: from DM6PR10MB4313.namprd10.prod.outlook.com
+ ([fe80::4f45:f4ab:121:e088]) by DM6PR10MB4313.namprd10.prod.outlook.com
+ ([fe80::4f45:f4ab:121:e088%6]) with mapi id 15.20.8534.031; Mon, 17 Mar 2025
+ 14:25:34 +0000
+Message-ID: <99208409-87d4-4ed2-8294-665eafd60b47@oracle.com>
+Date: Mon, 17 Mar 2025 14:25:30 +0000
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 03/13] iomap: rework IOMAP atomic flags
+To: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>, brauner@kernel.org,
+        djwong@kernel.org, cem@kernel.org, dchinner@redhat.com, hch@lst.de
+Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, ojaswin@linux.ibm.com,
+        martin.petersen@oracle.com, tytso@mit.edu, linux-ext4@vger.kernel.org
+References: <20250313171310.1886394-1-john.g.garry@oracle.com>
+ <20250313171310.1886394-4-john.g.garry@oracle.com> <87tt7rsreu.fsf@gmail.com>
+Content-Language: en-US
+From: John Garry <john.g.garry@oracle.com>
+Organization: Oracle Corporation
+In-Reply-To: <87tt7rsreu.fsf@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: LO2P265CA0211.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:9e::31) To DM6PR10MB4313.namprd10.prod.outlook.com
+ (2603:10b6:5:212::20)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250317-ptr-as-ptr-v5-6-5b5f21fa230a@gmail.com>
-References: <20250317-ptr-as-ptr-v5-0-5b5f21fa230a@gmail.com>
-In-Reply-To: <20250317-ptr-as-ptr-v5-0-5b5f21fa230a@gmail.com>
-To: Masahiro Yamada <masahiroy@kernel.org>, 
- Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
- Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
- Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
- Benno Lossin <benno.lossin@proton.me>, 
- Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
- Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- "Rafael J. Wysocki" <rafael@kernel.org>, 
- Brendan Higgins <brendan.higgins@linux.dev>, 
- David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, 
- Bjorn Helgaas <bhelgaas@google.com>, Luis Chamberlain <mcgrof@kernel.org>, 
- Russ Weight <russ.weight@linux.dev>, Rob Herring <robh@kernel.org>, 
- Saravana Kannan <saravanak@google.com>
-Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
- rust-for-linux@vger.kernel.org, linux-kselftest@vger.kernel.org, 
- kunit-dev@googlegroups.com, linux-pci@vger.kernel.org, 
- linux-block@vger.kernel.org, devicetree@vger.kernel.org, 
- Tamir Duberstein <tamird@gmail.com>
-X-Mailer: b4 0.15-dev
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM6PR10MB4313:EE_|IA1PR10MB7166:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3a9b6785-def3-4e92-5de5-08dd655f944b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?bDhHUXVYbHJudExidnhJSVVZSFVSYldaRXFnLzdIL21TUlkyV2hkUDBqWjkx?=
+ =?utf-8?B?TU14MUdXSUorQS91T0ZBMnJYOEozKytDdWtmeDl2dWJWK2ZoL3BPQnpmRmhx?=
+ =?utf-8?B?S3Nqd01aRUFqRU1TNldFNG40aW9RZk0wS0J6WVlKSXJzSnRmU2NMNWs5TWc3?=
+ =?utf-8?B?eUtQcjlLV2hhYUFCeDBNb25GbzBZdmM3a2ZQY3prejZ6a1dGZ1JJYkRnb2Jn?=
+ =?utf-8?B?UE9pYi9YT2srNk8wTFZ3dTNJODMvUllVeGUrM3FsZDBaM3hWdXZ6YkNlS2Q4?=
+ =?utf-8?B?QnhWQURCTXZkendOTlZCODJldEVZK2tIb3lhOTV6WU05RzB1ZjNVTlBMR1Fx?=
+ =?utf-8?B?NWRvVmJvRHZWS0NOOXdlcktZZzI1VXZNUEhlako5KzhEOWszWDlhR1JiR0ZR?=
+ =?utf-8?B?cWZhQ2g3VGdzcnFpd1pEKzNva0E4OURaRGloZ1FxVkxIS0VOOUNRZmVWVVdt?=
+ =?utf-8?B?MlNZOENDUG8yTUpCaWE0Z1RQVFY5Y2tyWnpvQ2xkME1PdzJmb3BSS0R0SkhV?=
+ =?utf-8?B?M2tMRkY1b3pRb1ZBdXBCM1hKYldFdEhVbTZId1RVSTA2TDQ0SCtSS3gvMllY?=
+ =?utf-8?B?MVBVY3NzUnZpZTRlbnB3OCswWFVNdG9kb2lNOEpGMG9ydTI2dXpET1ZCNlZP?=
+ =?utf-8?B?WGY2clNYT2pKTERhdHRhR3M1YVFVM2tmUGVmb0JJUUZRdUFnWWZhSFloQ1NC?=
+ =?utf-8?B?VFVYSkRvUWk3Y1hyK1FzTGlCWEJBQ3AxWjZIcGVGSEkvVWcwcXE3S1JlaDhx?=
+ =?utf-8?B?ZVJwbCtJWlB0M1lUN0prUnoxeTVHYmQxUmUvOFk3cVdvQ01iaU93VmJjdi90?=
+ =?utf-8?B?TUN4OHVlOFk3UERSMzdVTDM2TFNXMUtlWUVDSGQ0eXVoRm1sLyszQm9KR3Nu?=
+ =?utf-8?B?SURma2lCN2M5YTNoZUdpQWJzVWd3LzBteDcvbk0xaTRUL3ZMUzRiYms1YmRP?=
+ =?utf-8?B?YjBpNkdncW5MWjNoQ091RnJYWHFES0R2TmlkRndMQTlYWXVCMUR3emNWQnRv?=
+ =?utf-8?B?U08wS0tuY0ZGREQ3WVhUell5WUVCVHFzK0pDZ3BnKzFkT3hRRmVTSlp1VElR?=
+ =?utf-8?B?V3I1VVkyOEFCZHJyMGFnYzdyMkNERWxpcjM2RGNKUTFSYVRRNjlHYUFFZlNG?=
+ =?utf-8?B?eENlNUJEdE1SV3l3amFSOHZwN2p1Y0VtakQrZTFLMlBHOFNvM1RmNE9aaXNa?=
+ =?utf-8?B?WWF3ejNwaFBHdW5Cdk0vbU1GWWlocVpqbzRpV1JCUTU4eHp3ZVZGWDc3MVJ4?=
+ =?utf-8?B?dy95Vk1yd3NCd0dEeXgrSldpYXAxdmJoTkkrWXA1a1hNYjZpNEhRSHlndi93?=
+ =?utf-8?B?UWNLZ0dmbHcyOTNDdWdNRlZFeGtsYUFqU0tLVkpWNGVVTzZrb3E5a29uSW1L?=
+ =?utf-8?B?Yk9BR05kNko2cFlBendNOEVLV3J4aGFDNDZpeHh0emlIMi81eW4xVmlTclJn?=
+ =?utf-8?B?aHlBTjcxcktLcUtyK0N6NS8zS0JEbkpySWgwYnpTVFB2U3lMaGM4eUp5czV0?=
+ =?utf-8?B?YWF4VUc3YkYzU21tRXZud1ZUVWhhQ3dwZEErSGdhazRYYUh4R3huaDdWSVRu?=
+ =?utf-8?B?QThDQzU4YVMvQU02VDNZSlFzdHR4VkIvNmxZSGZOU1BLa3NQdDBsa1hDTjFK?=
+ =?utf-8?B?TzFQYVl5MHpBdmE2TlhCZEZldzQ2cEFISzJPUDBmSTZUd0ZWTTZNamZ1V1lV?=
+ =?utf-8?B?UjRGTEp4SkFGNVJNanZENUFvZnZ0SlYzakdKR0E1bHZIS0dGdHdoQUc5WnRU?=
+ =?utf-8?B?N2Y3aXN6aE5meTlVTTZFcVpLL0JITU5KU214ci9QYlBuOXBYcDFEMUhTQTRY?=
+ =?utf-8?B?eHFCSWk3dUhpY3gvUzlXbXcyRW9ZMENvbDcxbXdzckRPOTJ2ZlhxRkdTMGlG?=
+ =?utf-8?Q?zZXYubqfbl0f3?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR10MB4313.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?QlBLWklLbDc5bjZtamt2SllORjNGZ0luUGkvWDcxRWFYcldVek52cFA0NlZp?=
+ =?utf-8?B?UDd1QlRrRDVxbmJnem9OMldnR3lQRDViVVdYK24zM3cvd3dnRHZHVXh4a1V5?=
+ =?utf-8?B?TnNHSXVUZXd1N1h4UUwzVmRqQXBhOCtsemYzeHFiM3UxK2dZMDVwNnY3Umx5?=
+ =?utf-8?B?OEhFRjhlOTVzaTYzRUVaaFpXT0M1Qy9LUDBMZ3JZTloxQmxBbU9rZkkxUVFU?=
+ =?utf-8?B?d2NqR2l3MzBxU3IwVHB3V0NURGNmZDdBL3QreXExeXJheEhiM2tad1QwRTZM?=
+ =?utf-8?B?eHUxU3d0SURGWEdwUXlaTjAxbTMwcmNQc2pPNGZ1M0ZpM2l0Q0ltU2tSMVB4?=
+ =?utf-8?B?ekhqNktwWXNwVlM1N1Z0ejZmSDhYdXUwYVBpRFcvYk9adVRtTldiYXBrMmIz?=
+ =?utf-8?B?U1dnTUlXTnY0dnd3UEd6cmw3NjllNzBkY0VqRWJVTFY5cEpMeCt2cXpaTkVH?=
+ =?utf-8?B?bUxPNFlzdGcwam9CL29Ed2FhVVZkSEpaTDd4MzQ5QjFsUlFaMjhrb0dIb0xD?=
+ =?utf-8?B?bjFTaVdsa2J6Sm1ZRmJRNjlteTRFbWVmdkF0L0xsSWg1TnBoS01BajlocldJ?=
+ =?utf-8?B?T0RyRm44WkowaG1ZTEVLVTlWblJIOWFYems5V2Z4b0ZUalZsa040QWNBazUy?=
+ =?utf-8?B?ek9lL25sWXlnWElDeEkzeEEzUS95dkdzb2RIVVFxcHBTSU00YklCSFJ6bmhq?=
+ =?utf-8?B?dTBYZ3NaSFpvdE0vcE9ObkxPUFFFamZ6SDFjaUk4ZHk1SWNlSk5yK2NMamoy?=
+ =?utf-8?B?b3NzNFQvRyt5b0tqM2lQQXBiRWQ3eDJONnpkbUZhNG84OG1STXdlUnBjTUty?=
+ =?utf-8?B?cHVoQkFkdkpMTUVWRG9YUmp1eEI0V1hmQXdjRE1RZkdaUlFRVEt2bko3WVJ1?=
+ =?utf-8?B?aEp2ZjJBc2lQcnVTcjlTQnlQZlRHSGlDdXh6ZXp5UDgxOWswU1hDSy9xNWZr?=
+ =?utf-8?B?N25CZzYyalgzQktNR01MTEpIMFpMTWF1ZStHc0NzVG5idUprVlhuSHRxRTFM?=
+ =?utf-8?B?dGlPa2J1bVE0VVBFZ0t3b3ZveUdnQUNMSkJpTG9sSmJlYUZLa0VnUlhHa0JV?=
+ =?utf-8?B?cTY0NjgwbUhDT2Rqc3k0VnE4c205UFhSOVdsYURTN1laYmVIVTg4dU40NG5W?=
+ =?utf-8?B?UXh6Yml2LzZGVVVGTmlzTENQVlg5RldnMUtGQUo0Ny9kSmpKTm01U2RHVmF6?=
+ =?utf-8?B?cm80QmR1a0FWc1FuMndHMzhHWmVJM0dRMU0rVTdGVzBWbVVRNll1emw1Zncv?=
+ =?utf-8?B?TzJDMnlZVWthTjkyTVVSS09KZm95dUpDNFFhd3p6bmdpNjI5b3pRbFdNeFZi?=
+ =?utf-8?B?UkpoenlOM1BqNS9LT3J0WnhIQkUzaFU2dWU5MmRwaS8wTXdSQ1lwUkphM2Nv?=
+ =?utf-8?B?UWF1TEg4MHdtNWxCVzNYSFUxV3Uxa0VaZGxFYzROQmpxMzRpbDdHc1FaT0du?=
+ =?utf-8?B?eVNxYVZiOU1Pbk01Q3c0RDV1cHNEZ3ZIZDhXR3Q5Qk51QnVwaDVBbnJ2cE03?=
+ =?utf-8?B?RmhleklQZFVXVmw3cXhxZHFVVitSUzNkS2RKM2V0V2NRSGNOSnBjaUtpT2tP?=
+ =?utf-8?B?NTdKUjYrK2tRUEt1ZGlIWGRDcUdZbkpjWEg2cUJVZko2L0djMm4venZzWU5X?=
+ =?utf-8?B?ZVl0d09JOExMd0w4Y1N0cm45dU4xdmd3eGZra2dXdGx3aDJmQlhobjJ6VTQ2?=
+ =?utf-8?B?NUFoSmkyYnNhTWh1Qnp4T0ZMN1VTMDR2NHgyUEVOZXR3ZUYxeW5YSEx4bE1z?=
+ =?utf-8?B?cTY4SUZGRWdxZjc4bllaZmx4UTVsL3lUM0hOcTVlUldmNTRKcHpKczR1NWtC?=
+ =?utf-8?B?MVpxb3BVSWNlaGtpUTl4NE9vYVUyQk0wTDNvSGcwZDFtdEJyeWRYK2Z1UXVF?=
+ =?utf-8?B?c0dRakFlTkFrblFaZU5HZm5vZFYxSjMwTmNkTjlteGdFUVlvOHpQZFJKM2dt?=
+ =?utf-8?B?aTR3T0t2dWlrbUxYQzFFdDhTZ0prRXYrRnJocCtDMEthU2RoZGEwWE9nWDRz?=
+ =?utf-8?B?c1Zabys2U2lreGc3THNhSTVoSmhhYUVoRCthRkt0ZzZMNWc5ZUhyczkxekp6?=
+ =?utf-8?B?RjRzQlJ1TkF2VGc2Qll5ZmtRaEFocEJqOGs1UTF0L0Jmd1R3YzRVaWEyNlZi?=
+ =?utf-8?B?MjdxRDh0VzZ0QStFZ1kvemN0RTJtbGd2ODNTY1ZGYXRVM0F4R3lVdmovbVBa?=
+ =?utf-8?B?dEE9PQ==?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	63HQaM9YfvtGmFBRM5KDIL/wSEkUurzG1BqS3/hVaPxZz+98//ruSVs1qnez0AXbZWwAC8GEgtDbishb1MjzAlhASnHdyHq7GykIR6uSYJPFl+1irbQGEJt6KBu6rn3IuBCedykzsqEHF6swvxoYxiL1/D6D8EyK7SZjXcLNjQSrXABJPHBYL5iLTIvm0/8Kdm70On+/wV3iwpVE/oy2W+4nsrDM86CGnjuWFCotzepxNlWrwyfygCN/LiIUfEwcSPRiuI1tKR5TOVgPE3AVOZEqLOqPh/qItItUhJlqOai2sKQC0D/FMSGiehwjRyiAP67qAii9luMsWRiIobQ06cWSiMs0jzlgit0Pm30b2ljgR+Jd8HgiCcA7IeQYgrkJ+l6lxgIIGGmv58OWT4OHgRJLQeubjD/nA7WqQpbHZPzSvl1+H3QMaaF437DQmVGufYmBiCuPBmMUvVYEuy43rp4wHzSqUMx/CHRJws9TSd8bximHBqyJsIJyZ92T0OOyjxQLUVcPVfzgTeRHlm1QlPX2JPtMP9Cw3sDmB2cuK/YWIWW89ZO2sSd0OM1ayWa9PYHzDUXhBYlCqpI1qD/YlkfnjZK5tGNWur28A2KeG1g=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3a9b6785-def3-4e92-5de5-08dd655f944b
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR10MB4313.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Mar 2025 14:25:34.3138
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: BDGwULm/Efaxk2LliqktlabTf5sVqclpQLEqcgO5KYap1iJnjBMZEVpPPinZbUzGPN6qQg5Dd6Rt28s+szJBPQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR10MB7166
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-17_05,2025-03-17_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 phishscore=0 bulkscore=0
+ malwarescore=0 adultscore=0 mlxscore=0 spamscore=0 mlxlogscore=999
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2502280000
+ definitions=main-2503170105
+X-Proofpoint-ORIG-GUID: Giqow4LL4WC9OAqaaJJj5STz-gJrkcIh
+X-Proofpoint-GUID: Giqow4LL4WC9OAqaaJJj5STz-gJrkcIh
 
-Throughout the tree, use the strict provenance APIs stabilized in Rust
-1.84.0[1]. Retain backwards-compatibility by introducing forwarding
-functions at the `kernel` crate root along with polyfills for rustc <
-1.84.0.
+On 17/03/2025 13:44, Ritesh Harjani (IBM) wrote:
+>>   	if (flags & IOMAP_DAX)
+>>   		iomap->dax_dev = EXT4_SB(inode->i_sb)->s_daxdev;
+>>   	else
+>> @@ -3467,7 +3470,7 @@ static inline bool ext4_want_directio_fallback(unsigned flags, ssize_t written)
+>>   		return false;
+>>   
+>>   	/* atomic writes are all-or-nothing */
+>> -	if (flags & IOMAP_ATOMIC_HW)
+>> +	if (flags & IOMAP_ATOMIC)
+>>   		return false;
+>>   
+> The changes in ext4 is mostly straight forward. Essentially for
+> an IOMAP_ATOMIC write requests we are always setting IOMAP_F_ATOMIC_BIO in
+> the ->iomap_begin() routine. This is done to inform the iomap that this
+> write request needs to issue an atomic bio, so iomap then goes and sets
+> REQ_ATOMIC flag in the bio.
 
-Use `#[allow(clippy::incompatible_msrv)]` to avoid warnings on rustc <
-1.84.0 as our MSRV is 1.78.0.
+Right
 
-In the `kernel` crate, enable the strict provenance lints on rustc >=
-1.84.0; do this in `lib.rs` rather than `Makefile` to avoid introducing
-compiler flags that are dependent on the rustc version in use.
+> 
+> 
+>>   	/* can only try again if we wrote nothing */
+>> diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
+>> index 9d72b99cb447..c28685fd3362 100644
+>> --- a/fs/iomap/direct-io.c
+>> +++ b/fs/iomap/direct-io.c
+>> @@ -349,7 +349,7 @@ static int iomap_dio_bio_iter(struct iomap_iter *iter, struct iomap_dio *dio)
+>>   	if (dio->flags & IOMAP_DIO_WRITE) {
+>>   		bio_opf |= REQ_OP_WRITE;
+>>   
+>> -		if (iter->flags & IOMAP_ATOMIC_HW) {
+>> +		if (iomap->flags & IOMAP_F_ATOMIC_BIO) {
+>>   			/*
+>>   			* Ensure that the mapping covers the full write length,
+>>   			* otherwise we will submit multiple BIOs, which is
+>> @@ -677,10 +677,8 @@ __iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
+>>   			iomi.flags |= IOMAP_OVERWRITE_ONLY;
+>>   		}
+>>   
+>> -		if (dio_flags & IOMAP_DIO_ATOMIC_SW)
+>> -			iomi.flags |= IOMAP_ATOMIC_SW;
+>> -		else if (iocb->ki_flags & IOCB_ATOMIC)
+>> -			iomi.flags |= IOMAP_ATOMIC_HW;
+>> +		if (iocb->ki_flags & IOCB_ATOMIC)
+>> +			iomi.flags |= IOMAP_ATOMIC;
+>>   
+>>   		/* for data sync or sync, we need sync completion processing */
+>>   		if (iocb_is_dsync(iocb)) {
+>> diff --git a/fs/iomap/trace.h b/fs/iomap/trace.h
+>> index 69af89044ebd..9eab2c8ac3c5 100644
+>> --- a/fs/iomap/trace.h
+>> +++ b/fs/iomap/trace.h
+>> @@ -99,7 +99,7 @@ DEFINE_RANGE_EVENT(iomap_dio_rw_queued);
+>>   	{ IOMAP_FAULT,		"FAULT" }, \
+>>   	{ IOMAP_DIRECT,		"DIRECT" }, \
+>>   	{ IOMAP_NOWAIT,		"NOWAIT" }, \
+>> -	{ IOMAP_ATOMIC_HW,	"ATOMIC_HW" }
+>> +	{ IOMAP_ATOMIC,		"ATOMIC" }
+>>   
+>>   #define IOMAP_F_FLAGS_STRINGS \
+>>   	{ IOMAP_F_NEW,		"NEW" }, \
+>> diff --git a/fs/xfs/xfs_iomap.c b/fs/xfs/xfs_iomap.c
+>> index 30e257f683bb..9a22ecd794eb 100644
+>> --- a/fs/xfs/xfs_iomap.c
+>> +++ b/fs/xfs/xfs_iomap.c
+>> @@ -831,6 +831,9 @@ xfs_direct_write_iomap_begin(
+>>   	if (offset + length > i_size_read(inode))
+>>   		iomap_flags |= IOMAP_F_DIRTY;
+>>   
+>> +	if (flags & IOMAP_ATOMIC)
+>> +		iomap_flags |= IOMAP_F_ATOMIC_BIO;
+>> +
+>>   	/*
+>>   	 * COW writes may allocate delalloc space or convert unwritten COW
+>>   	 * extents, so we need to make sure to take the lock exclusively here.
+>> diff --git a/include/linux/iomap.h b/include/linux/iomap.h
+>> index 9cd93530013c..51f4c13bd17a 100644
+>> --- a/include/linux/iomap.h
+>> +++ b/include/linux/iomap.h
+>> @@ -60,6 +60,9 @@ struct vm_fault;
+>>    * IOMAP_F_ANON_WRITE indicates that (write) I/O does not have a target block
+>>    * assigned to it yet and the file system will do that in the bio submission
+>>    * handler, splitting the I/O as needed.
+>> + *
+>> + * IOMAP_F_ATOMIC_BIO indicates that (write) I/O needs to be issued as an
+>> + * atomic bio, i.e. set REQ_ATOMIC.
+>>    */
+> 
+> Maybe we can be more explicit here?
+> 
+> IOMAP_F_ATOMIC_BIO flag indicates that write I/O must be issued as an
+> atomic bio by setting the REQ_ATOMIC flag. Filesystems need to set this
+> flag to inform iomap that the write I/O operation should be submitted as
+> an atomic bio.
 
-Link: https://blog.rust-lang.org/2025/01/09/Rust-1.84.0.html#strict-provenance-apis [1]
-Suggested-by: Benno Lossin <benno.lossin@proton.me>
-Link: https://lore.kernel.org/all/D8EIXDMRXMJP.36TFCGWZBRS3Y@proton.me/
-Signed-off-by: Tamir Duberstein <tamird@gmail.com>
----
- init/Kconfig           |   3 ++
- rust/kernel/alloc.rs   |   2 +-
- rust/kernel/devres.rs  |   4 +-
- rust/kernel/io.rs      |  14 +++----
- rust/kernel/lib.rs     | 108 +++++++++++++++++++++++++++++++++++++++++++++++++
- rust/kernel/of.rs      |   2 +-
- rust/kernel/pci.rs     |   4 +-
- rust/kernel/str.rs     |  16 +++-----
- rust/kernel/uaccess.rs |  12 ++++--
- 9 files changed, 138 insertions(+), 27 deletions(-)
+The comment for all these flags is that they should be set by the FS:
 
-diff --git a/init/Kconfig b/init/Kconfig
-index d0d021b3fa3b..82e28d6f7c3f 100644
---- a/init/Kconfig
-+++ b/init/Kconfig
-@@ -132,6 +132,9 @@ config CC_HAS_COUNTED_BY
- config RUSTC_HAS_COERCE_POINTEE
- 	def_bool RUSTC_VERSION >= 108400
- 
-+config RUSTC_HAS_STABLE_STRICT_PROVENANCE
-+	def_bool RUSTC_VERSION >= 108400
-+
- config PAHOLE_VERSION
- 	int
- 	default $(shell,$(srctree)/scripts/pahole-version.sh $(PAHOLE))
-diff --git a/rust/kernel/alloc.rs b/rust/kernel/alloc.rs
-index fc9c9c41cd79..a1d282e48249 100644
---- a/rust/kernel/alloc.rs
-+++ b/rust/kernel/alloc.rs
-@@ -217,7 +217,7 @@ unsafe fn free(ptr: NonNull<u8>, layout: Layout) {
- 
- /// Returns a properly aligned dangling pointer from the given `layout`.
- pub(crate) fn dangling_from_layout(layout: Layout) -> NonNull<u8> {
--    let ptr = layout.align() as *mut u8;
-+    let ptr = crate::without_provenance_mut(layout.align());
- 
-     // SAFETY: `layout.align()` (and hence `ptr`) is guaranteed to be non-zero.
-     unsafe { NonNull::new_unchecked(ptr) }
-diff --git a/rust/kernel/devres.rs b/rust/kernel/devres.rs
-index 34571f992f0d..e8232bb771b2 100644
---- a/rust/kernel/devres.rs
-+++ b/rust/kernel/devres.rs
-@@ -64,14 +64,14 @@ struct DevresInner<T> {
- ///             return Err(ENOMEM);
- ///         }
- ///
--///         Ok(IoMem(IoRaw::new(addr as usize, SIZE)?))
-+///         Ok(IoMem(IoRaw::new(kernel::expose_provenance(addr), SIZE)?))
- ///     }
- /// }
- ///
- /// impl<const SIZE: usize> Drop for IoMem<SIZE> {
- ///     fn drop(&mut self) {
- ///         // SAFETY: `self.0.addr()` is guaranteed to be properly mapped by `Self::new`.
--///         unsafe { bindings::iounmap(self.0.addr() as *mut c_void); };
-+///         unsafe { bindings::iounmap(kernel::with_exposed_provenance_mut(self.0.addr())); };
- ///     }
- /// }
- ///
-diff --git a/rust/kernel/io.rs b/rust/kernel/io.rs
-index 9d2aadf40edf..0a018ad7478a 100644
---- a/rust/kernel/io.rs
-+++ b/rust/kernel/io.rs
-@@ -5,7 +5,7 @@
- //! C header: [`include/asm-generic/io.h`](srctree/include/asm-generic/io.h)
- 
- use crate::error::{code::EINVAL, Result};
--use crate::{bindings, build_assert, ffi::c_void};
-+use crate::{bindings, build_assert};
- 
- /// Raw representation of an MMIO region.
- ///
-@@ -75,14 +75,14 @@ pub fn maxsize(&self) -> usize {
- ///             return Err(ENOMEM);
- ///         }
- ///
--///         Ok(IoMem(IoRaw::new(addr as usize, SIZE)?))
-+///         Ok(IoMem(IoRaw::new(kernel::expose_provenance(addr), SIZE)?))
- ///     }
- /// }
- ///
- /// impl<const SIZE: usize> Drop for IoMem<SIZE> {
- ///     fn drop(&mut self) {
- ///         // SAFETY: `self.0.addr()` is guaranteed to be properly mapped by `Self::new`.
--///         unsafe { bindings::iounmap(self.0.addr() as *mut c_void); };
-+///         unsafe { bindings::iounmap(kernel::with_exposed_provenance_mut(self.0.addr())); };
- ///     }
- /// }
- ///
-@@ -119,7 +119,7 @@ pub fn $name(&self, offset: usize) -> $type_name {
-             let addr = self.io_addr_assert::<$type_name>(offset);
- 
-             // SAFETY: By the type invariant `addr` is a valid address for MMIO operations.
--            unsafe { bindings::$name(addr as *const c_void) }
-+            unsafe { bindings::$name(crate::with_exposed_provenance(addr)) }
-         }
- 
-         /// Read IO data from a given offset.
-@@ -131,7 +131,7 @@ pub fn $try_name(&self, offset: usize) -> Result<$type_name> {
-             let addr = self.io_addr::<$type_name>(offset)?;
- 
-             // SAFETY: By the type invariant `addr` is a valid address for MMIO operations.
--            Ok(unsafe { bindings::$name(addr as *const c_void) })
-+            Ok(unsafe { bindings::$name(crate::with_exposed_provenance(addr)) })
-         }
-     };
- }
-@@ -148,7 +148,7 @@ pub fn $name(&self, value: $type_name, offset: usize) {
-             let addr = self.io_addr_assert::<$type_name>(offset);
- 
-             // SAFETY: By the type invariant `addr` is a valid address for MMIO operations.
--            unsafe { bindings::$name(value, addr as *mut c_void) }
-+            unsafe { bindings::$name(value, crate::with_exposed_provenance_mut(addr)) }
-         }
- 
-         /// Write IO data from a given offset.
-@@ -160,7 +160,7 @@ pub fn $try_name(&self, value: $type_name, offset: usize) -> Result {
-             let addr = self.io_addr::<$type_name>(offset)?;
- 
-             // SAFETY: By the type invariant `addr` is a valid address for MMIO operations.
--            unsafe { bindings::$name(value, addr as *mut c_void) }
-+            unsafe { bindings::$name(value, crate::with_exposed_provenance_mut(addr)) }
-             Ok(())
-         }
-     };
-diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
-index fc6835cc36a3..c1b274c04a0f 100644
---- a/rust/kernel/lib.rs
-+++ b/rust/kernel/lib.rs
-@@ -17,6 +17,11 @@
- #![cfg_attr(not(CONFIG_RUSTC_HAS_COERCE_POINTEE), feature(coerce_unsized))]
- #![cfg_attr(not(CONFIG_RUSTC_HAS_COERCE_POINTEE), feature(dispatch_from_dyn))]
- #![cfg_attr(not(CONFIG_RUSTC_HAS_COERCE_POINTEE), feature(unsize))]
-+#![cfg_attr(
-+    CONFIG_RUSTC_HAS_STABLE_STRICT_PROVENANCE,
-+    feature(strict_provenance_lints),
-+    deny(fuzzy_provenance_casts, lossy_provenance_casts)
-+)]
- #![feature(inline_const)]
- #![feature(lint_reasons)]
- // Stable in Rust 1.83
-@@ -25,6 +30,109 @@
- #![feature(const_ptr_write)]
- #![feature(const_refs_to_cell)]
- 
-+#[cfg(CONFIG_RUSTC_HAS_STABLE_STRICT_PROVENANCE)]
-+#[allow(clippy::incompatible_msrv)]
-+mod strict_provenance {
-+    /// Gets the "address" portion of the pointer.
-+    ///
-+    /// See https://doc.rust-lang.org/stable/core/primitive.pointer.html#method.addr.
-+    #[inline]
-+    pub fn addr<T>(ptr: *const T) -> usize {
-+        ptr.addr()
-+    }
-+
-+    /// Exposes the "provenance" part of the pointer for future use in
-+    /// [`with_exposed_provenance`] and returns the "address" portion.
-+    ///
-+    /// See https://doc.rust-lang.org/stable/core/primitive.pointer.html#method.expose_provenance.
-+    #[inline]
-+    pub fn expose_provenance<T>(ptr: *const T) -> usize {
-+        ptr.expose_provenance()
-+    }
-+
-+    /// Converts an address back to a pointer, picking up some previously 'exposed'
-+    /// provenance.
-+    ///
-+    /// See https://doc.rust-lang.org/stable/core/ptr/fn.with_exposed_provenance.html.
-+    #[inline]
-+    pub fn with_exposed_provenance<T>(addr: usize) -> *const T {
-+        core::ptr::with_exposed_provenance(addr)
-+    }
-+
-+    /// Converts an address back to a mutable pointer, picking up some previously 'exposed'
-+    /// provenance.
-+    ///
-+    /// See https://doc.rust-lang.org/stable/core/ptr/fn.with_exposed_provenance_mut.html
-+    #[inline]
-+    pub fn with_exposed_provenance_mut<T>(addr: usize) -> *mut T {
-+        core::ptr::with_exposed_provenance_mut(addr)
-+    }
-+
-+    /// Creates a pointer with the given address and no [provenance][crate::ptr#provenance].
-+    ///
-+    /// See https://doc.rust-lang.org/stable/core/ptr/fn.without_provenance_mut.html.
-+    #[inline]
-+    pub fn without_provenance_mut<T>(addr: usize) -> *mut T {
-+        core::ptr::without_provenance_mut(addr)
-+    }
-+}
-+
-+#[cfg(not(CONFIG_RUSTC_HAS_STABLE_STRICT_PROVENANCE))]
-+mod strict_provenance {
-+    /// Gets the "address" portion of the pointer.
-+    ///
-+    /// See https://doc.rust-lang.org/stable/core/primitive.pointer.html#method.addr.
-+    #[inline]
-+    pub fn addr<T>(ptr: *const T) -> usize {
-+        // This is core's implementation from
-+        // https://github.com/rust-lang/rust/commit/4291332175d12e79e6061cdc3f5dccac2e28b969 through
-+        // https://github.com/rust-lang/rust/blob/1.84.0/library/core/src/ptr/const_ptr.rs#L172
-+        // which is the first version that satisfies `CONFIG_RUSTC_HAS_STABLE_STRICT_PROVENANCE`.
-+        #[allow(clippy::undocumented_unsafe_blocks)]
-+        unsafe {
-+            #[allow(clippy::transmutes_expressible_as_ptr_casts)]
-+            core::mem::transmute(ptr.cast::<()>())
-+        }
-+    }
-+
-+    /// Exposes the "provenance" part of the pointer for future use in
-+    /// [`with_exposed_provenance`] and returns the "address" portion.
-+    ///
-+    /// See https://doc.rust-lang.org/stable/core/primitive.pointer.html#method.expose_provenance.
-+    #[inline]
-+    pub fn expose_provenance<T>(ptr: *const T) -> usize {
-+        ptr.cast::<()>() as usize
-+    }
-+
-+    /// Converts an address back to a pointer, picking up some previously 'exposed'
-+    /// provenance.
-+    ///
-+    /// See https://doc.rust-lang.org/stable/core/ptr/fn.with_exposed_provenance.html.
-+    #[inline]
-+    pub fn with_exposed_provenance<T>(addr: usize) -> *const T {
-+        addr as *const T
-+    }
-+
-+    /// Converts an address back to a mutable pointer, picking up some previously 'exposed'
-+    /// provenance.
-+    ///
-+    /// See https://doc.rust-lang.org/stable/core/ptr/fn.with_exposed_provenance_mut.html
-+    #[inline]
-+    pub fn with_exposed_provenance_mut<T>(addr: usize) -> *mut T {
-+        addr as *mut T
-+    }
-+
-+    /// Creates a pointer with the given address and no [provenance][crate::ptr#provenance].
-+    ///
-+    /// See https://doc.rust-lang.org/stable/core/ptr/fn.without_provenance_mut.html.
-+    #[inline]
-+    pub fn without_provenance_mut<T>(addr: usize) -> *mut T {
-+        addr as *mut T
-+    }
-+}
-+
-+pub use strict_provenance::*;
-+
- // Ensure conditional compilation based on the kernel configuration works;
- // otherwise we may silently break things like initcall handling.
- #[cfg(not(CONFIG_RUST))]
-diff --git a/rust/kernel/of.rs b/rust/kernel/of.rs
-index 40d1bd13682c..b70076d16008 100644
---- a/rust/kernel/of.rs
-+++ b/rust/kernel/of.rs
-@@ -22,7 +22,7 @@ unsafe impl RawDeviceId for DeviceId {
-     const DRIVER_DATA_OFFSET: usize = core::mem::offset_of!(bindings::of_device_id, data);
- 
-     fn index(&self) -> usize {
--        self.0.data as usize
-+        crate::addr(self.0.data)
-     }
- }
- 
-diff --git a/rust/kernel/pci.rs b/rust/kernel/pci.rs
-index a26f154ae1b9..87c9f67b3f0f 100644
---- a/rust/kernel/pci.rs
-+++ b/rust/kernel/pci.rs
-@@ -287,7 +287,7 @@ fn new(pdev: Device, num: u32, name: &CStr) -> Result<Self> {
-         // `pdev` is valid by the invariants of `Device`.
-         // `num` is checked for validity by a previous call to `Device::resource_len`.
-         // `name` is always valid.
--        let ioptr: usize = unsafe { bindings::pci_iomap(pdev.as_raw(), num, 0) } as usize;
-+        let ioptr = crate::expose_provenance(unsafe { bindings::pci_iomap(pdev.as_raw(), num, 0) });
-         if ioptr == 0 {
-             // SAFETY:
-             // `pdev` valid by the invariants of `Device`.
-@@ -320,7 +320,7 @@ unsafe fn do_release(pdev: &Device, ioptr: usize, num: i32) {
-         // `ioptr` is valid by the safety requirements.
-         // `num` is valid by the safety requirements.
-         unsafe {
--            bindings::pci_iounmap(pdev.as_raw(), ioptr as *mut kernel::ffi::c_void);
-+            bindings::pci_iounmap(pdev.as_raw(), crate::with_exposed_provenance_mut(ioptr));
-             bindings::pci_release_region(pdev.as_raw(), num);
-         }
-     }
-diff --git a/rust/kernel/str.rs b/rust/kernel/str.rs
-index 0b80a119d5f0..6bc6357293e4 100644
---- a/rust/kernel/str.rs
-+++ b/rust/kernel/str.rs
-@@ -692,9 +692,9 @@ fn new() -> Self {
-     pub(crate) unsafe fn from_ptrs(pos: *mut u8, end: *mut u8) -> Self {
-         // INVARIANT: The safety requirements guarantee the type invariants.
-         Self {
--            beg: pos as usize,
--            pos: pos as usize,
--            end: end as usize,
-+            beg: crate::expose_provenance(pos),
-+            pos: crate::expose_provenance(pos),
-+            end: crate::expose_provenance(end),
-         }
-     }
- 
-@@ -705,7 +705,7 @@ pub(crate) unsafe fn from_ptrs(pos: *mut u8, end: *mut u8) -> Self {
-     /// The memory region starting at `buf` and extending for `len` bytes must be valid for writes
-     /// for the lifetime of the returned [`RawFormatter`].
-     pub(crate) unsafe fn from_buffer(buf: *mut u8, len: usize) -> Self {
--        let pos = buf as usize;
-+        let pos = crate::expose_provenance(buf);
-         // INVARIANT: We ensure that `end` is never less then `buf`, and the safety requirements
-         // guarantees that the memory region is valid for writes.
-         Self {
-@@ -719,7 +719,7 @@ pub(crate) unsafe fn from_buffer(buf: *mut u8, len: usize) -> Self {
-     ///
-     /// N.B. It may point to invalid memory.
-     pub(crate) fn pos(&self) -> *mut u8 {
--        self.pos as *mut u8
-+        crate::with_exposed_provenance_mut(self.pos)
-     }
- 
-     /// Returns the number of bytes written to the formatter.
-@@ -741,11 +741,7 @@ fn write_str(&mut self, s: &str) -> fmt::Result {
-             // SAFETY: If `len_to_copy` is non-zero, then we know `pos` has not gone past `end`
-             // yet, so it is valid for write per the type invariants.
-             unsafe {
--                core::ptr::copy_nonoverlapping(
--                    s.as_bytes().as_ptr(),
--                    self.pos as *mut u8,
--                    len_to_copy,
--                )
-+                core::ptr::copy_nonoverlapping(s.as_bytes().as_ptr(), self.pos(), len_to_copy)
-             };
-         }
- 
-diff --git a/rust/kernel/uaccess.rs b/rust/kernel/uaccess.rs
-index 719b0a48ff55..96393bcf6bd7 100644
---- a/rust/kernel/uaccess.rs
-+++ b/rust/kernel/uaccess.rs
-@@ -226,7 +226,9 @@ pub fn read_raw(&mut self, out: &mut [MaybeUninit<u8>]) -> Result {
-         }
-         // SAFETY: `out_ptr` points into a mutable slice of length `len`, so we may write
-         // that many bytes to it.
--        let res = unsafe { bindings::copy_from_user(out_ptr, self.ptr as *const c_void, len) };
-+        let res = unsafe {
-+            bindings::copy_from_user(out_ptr, crate::with_exposed_provenance(self.ptr), len)
-+        };
-         if res != 0 {
-             return Err(EFAULT);
-         }
-@@ -264,7 +266,7 @@ pub fn read<T: FromBytes>(&mut self) -> Result<T> {
-         let res = unsafe {
-             bindings::_copy_from_user(
-                 out.as_mut_ptr().cast::<c_void>(),
--                self.ptr as *const c_void,
-+                crate::with_exposed_provenance(self.ptr),
-                 len,
-             )
-         };
-@@ -330,7 +332,9 @@ pub fn write_slice(&mut self, data: &[u8]) -> Result {
-         }
-         // SAFETY: `data_ptr` points into an immutable slice of length `len`, so we may read
-         // that many bytes from it.
--        let res = unsafe { bindings::copy_to_user(self.ptr as *mut c_void, data_ptr, len) };
-+        let res = unsafe {
-+            bindings::copy_to_user(crate::with_exposed_provenance_mut(self.ptr), data_ptr, len)
-+        };
-         if res != 0 {
-             return Err(EFAULT);
-         }
-@@ -357,7 +361,7 @@ pub fn write<T: AsBytes>(&mut self, value: &T) -> Result {
-         // is a compile-time constant.
-         let res = unsafe {
-             bindings::_copy_to_user(
--                self.ptr as *mut c_void,
-+                crate::with_exposed_provenance_mut(self.ptr),
-                 (value as *const T).cast::<c_void>(),
-                 len,
-             )
+"Flags reported by the file system from iomap_begin"
 
--- 
-2.48.1
+So the second sentence seems to just repeat what is already said.
+
+
+> 
+> This definition (or whatever you feel is the better version), should also
+> go in Documentation/filesystems/iomap/design.rst
+
+Yes, I need to update that again
+
+> 
+>>   #define IOMAP_F_NEW		(1U << 0)
+>>   #define IOMAP_F_DIRTY		(1U << 1)
+>> @@ -73,6 +76,7 @@ struct vm_fault;
+>>   #define IOMAP_F_XATTR		(1U << 5)
+>>   #define IOMAP_F_BOUNDARY	(1U << 6)
+>>   #define IOMAP_F_ANON_WRITE	(1U << 7)
+>> +#define IOMAP_F_ATOMIC_BIO	(1U << 8)
+>>   
+>>   /*
+>>    * Flags set by the core iomap code during operations:
+>> @@ -189,9 +193,8 @@ struct iomap_folio_ops {
+>>   #else
+>>   #define IOMAP_DAX		0
+>>   #endif /* CONFIG_FS_DAX */
+>> -#define IOMAP_ATOMIC_HW		(1 << 9) /* HW-based torn-write protection */
+>> +#define IOMAP_ATOMIC		(1 << 9) /* torn-write protection */
+>>   #define IOMAP_DONTCACHE		(1 << 10)
+>> -#define IOMAP_ATOMIC_SW		(1 << 11)/* SW-based torn-write protection */
+> Now that we are killing separate IOMAP_ATOMIC_** names, we may would
+> like to update the iomap design document as well. Otherwise it will
+> carry use of IOMAP_ATOMIC_HW & IOMAP_ATOMIC_SW definitions. Instead we
+> should only keep IOMAP_ATOMIC and update the design info there.
+
+Yes, I will update it.
+
+Thanks for the reminder.
+
+John
 
 
