@@ -1,151 +1,120 @@
-Return-Path: <linux-kernel+bounces-563888-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563889-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C83EA64A1C
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:35:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34502A64A20
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:35:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 229B418878B4
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:32:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10D3C188AE37
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:33:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4201722CBCB;
-	Mon, 17 Mar 2025 10:32:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 832FA22F17B;
+	Mon, 17 Mar 2025 10:33:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="dvFZpt1L";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Qek+TJG3"
-Received: from fhigh-a3-smtp.messagingengine.com (fhigh-a3-smtp.messagingengine.com [103.168.172.154])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="w01TRXCH"
+Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7E2C22257F;
-	Mon, 17 Mar 2025 10:32:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56FB222257F
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 10:33:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742207559; cv=none; b=b2gRMHlz6d6U43lYZi9JTVAJ+osBgskW4/NURz2lcppLYZwbVW/mlPNd/nbCBD+a35mdMn4GE1+F0JZw1eC97PY/CD6EvwkWBHs8NPWWTeIxm9dRtaSzSXNoTQYtxf9QXteB7HZ3V5FBLqGNJuspcmjEm4Boo1Zf2RbGI/jbtZA=
+	t=1742207596; cv=none; b=Qx8V0of/O27dkIcZSXSVNTnC2jIhPFd6Z6pQUNJgRckueqtZdGz70NuQPUIAHLF275972/uWGeyZ+P8DqFvH4ppQEvZf1+nMM7QG/O40gYw0d/gza5+v7Quq9jEMJnZYBe8rhAZcTc43PVtG0XleJ8d1N5evSD7jqpM0EQZSLnQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742207559; c=relaxed/simple;
-	bh=vzZu4WAMRGLL81phSpbjVeXSqk9CuJfl/bKeXURPSsc=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=bLc0h8/PhMyucqTrn5XX41t7oZilEs2uFhLL5Fd8tAaAOEkzXqwwF5CkhM1MJ31MTd9eh8jwwPm3WH0sAN+fvSMnxbiKN/rm5pfCM1WdUYmXEqyI7QtYE4uWZEAJehX2PdldvxPtV8tJ/0FwjdWbTeheMLQTTq645aXR7WzWJR8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=dvFZpt1L; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Qek+TJG3; arc=none smtp.client-ip=103.168.172.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-07.internal (phl-compute-07.phl.internal [10.202.2.47])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 865D111400F8;
-	Mon, 17 Mar 2025 06:32:35 -0400 (EDT)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-07.internal (MEProxy); Mon, 17 Mar 2025 06:32:35 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1742207555;
-	 x=1742293955; bh=Ncty7GAoxEjtI5Chq8+q8RAEiXBbAMmZqpU8NQN71C4=; b=
-	dvFZpt1Lu3qHJeaSOEWrGPAGU0QQPKuTitblZ6YvX+4P7EHrJo2T1DtnKsgmrE+K
-	WGbwyN6kVGtQVSkTHVtpAaLtS5RSpd4PrDVCVK8CC3bFeSxTw0dYkR9TjmywXk5W
-	gGAdpCIBGPgmVi/7z3TOQpIs4LZr6mF0BjBCoNezfprADzgIjRrEEJ3JWXQIqikx
-	xymh6L4aZQ/GIEmZOb+PW2tlMjUGfzck8wowwDs1yTySNK4/EL5bvBETgySc6N9x
-	cqXsl1/rXD2lEV6jeGNdwa51wVCyu+qzVD1BAi0ocbPfD8qwAqNVRFz7+b45YrFO
-	66Ze99fzijiBYyserVVXlw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1742207555; x=
-	1742293955; bh=Ncty7GAoxEjtI5Chq8+q8RAEiXBbAMmZqpU8NQN71C4=; b=Q
-	ek+TJG3qQojbH8tdjEOkUkZn+JTbtMW/m4Ic/eZZbpUX+D/Q9jpol33Sv8j9ol8S
-	jwpU1AByhLd8GYw/oa1/CrrXMUuq3I8eFO3zWUYeOnjB8eYbyZfNsz9dy7cM2d5W
-	tdGdf/Rl+690u1LpcdQVlil/WeoO4ZyF11qqrE3PuWPT9uyYOEn1WjyKN52UM+f4
-	AUrmIzviXyrH2s5cvyMcAuYyX/lZ70vZoPo6bqhusnTITfN+0j3mf2SrN5DZV4Eh
-	nph5+yoZU9o9W0HmjnHGTcdDzdZrY+2EO3mv6lw/gM2cdoOcwfWzFXq2cjO+wxE7
-	HZJ/ZVwbf1+4iPo2bcO/A==
-X-ME-Sender: <xms:Q_rXZ1W39aHhOTfpEuqBvN8z_4geOYp6ZGpZktWCxVLMSTGTIu32wA>
-    <xme:Q_rXZ1mJp7hryMbAWqMaQWFcdV5ndzmT7JXI_Nff_8lBLf8StFJ4fK6h_qBo3TTrz
-    KIAPMpgo2oZtChs_tw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddufeelvdekucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertder
-    tddtnecuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnug
-    gsrdguvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeet
-    fefggfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
-    hmpehmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohep
-    ledpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheplhgruhhrvghnthdrphhinhgthh
-    grrhhtsehiuggvrghsohhnsghorghrugdrtghomhdprhgtphhtthhopehumhgrnhhgrdhj
-    rghinhesihguvggrshhonhgsohgrrhgurdgtohhmpdhrtghpthhtohepughonhhgtghhvg
-    hnghdrhigrnhesihhnthgvlhdrtghomhdprhgtphhtthhopegrrhhnugeskhgvrhhnvghl
-    rdhorhhgpdhrtghpthhtohepmhgthhgvhhgrsgeskhgvrhhnvghlrdhorhhgpdhrtghpth
-    htohepshgrkhgrrhhirdgrihhluhhssehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghp
-    thhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtg
-    hpthhtoheplhhinhhugidqmhgvughirgesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgt
-    phhtthhopehhvhgvrhhkuhhilhesgihsgegrlhhlrdhnlh
-X-ME-Proxy: <xmx:Q_rXZxbJJ-h9TIL7IHZhIZmNJgo0U_tPiC-R-zbEvbvbpo-iEHgpjQ>
-    <xmx:Q_rXZ4XOxVBN1c6539iJp_uPpg6Q9F2DtWq3LBaFYzjFEZ0OpBnIkg>
-    <xmx:Q_rXZ_kwpBDBct4DhN6Z00IDLPl4s8TIBV9wX-fl4nXbIwmfhm_lJg>
-    <xmx:Q_rXZ1csWy48J5PiuhlTGyUvmhuIehvvkNUeaR7QFqRdftz0NmeqDQ>
-    <xmx:Q_rXZx4jU9fSIXf8_1S7l-F9SZKyO-vzGsecnypd7wPsiFmWBaCOs1or>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 1DFBA2220072; Mon, 17 Mar 2025 06:32:34 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1742207596; c=relaxed/simple;
+	bh=wxqfJvAeKGlWHNzYJYtMeNgpJTRM7JG0J2iuiWF/RpA=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=VrP2zizMo2T/EHtuH3ceVnuyt25lhZYANJFjYdrLYLRKUcXF54+c0zHDlcQnTkFpoQh6xiA8xQA5mpXyBukq72BwLzsOEMTijO1TwQOMykS5FkxN1Tfs4DC0nAvjXPfFQCfjMrp7QW/K9CZx2Q2BqM2+NXqG14xuN5+5J64PCGo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=w01TRXCH; arc=none smtp.client-ip=209.85.128.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-43bd0586a73so11836575e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 03:33:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1742207592; x=1742812392; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=IvLoYXAbsczx0XYVJotNCJOKB5QuWZcwFTDWX8BS84g=;
+        b=w01TRXCHBJr7gT9Xscr8FR6hGlfkYBDs9gMKnvu3BwlFjxtqWJEn5sLY+EimuUWIdW
+         z6K37eeTxJMVtE8pXkwnaEYHbyT7pC2Q/3G264VyDwaEHUpSAtNom8nUIVF/aPo7bUx4
+         lyUkEUEv9aacrR4qY8SBxgak4CPc1oQ1T6nxAvqFBmD3F66/CTNDsjE3c+OOCmSD+H1Y
+         nQBS64SKGD/YBwcqfpDdBYxAPIqfVJerve3pIDaBduSZjo2Hp5XyrKYiSzxKoGuNRXGT
+         pWrvY0jcpJzE30fB2vc2ok7T9sFlDuNYMFDFpCj8ZRPWdfN/Rm4Lm1W0frU/yPWiTcs8
+         B4qg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742207592; x=1742812392;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=IvLoYXAbsczx0XYVJotNCJOKB5QuWZcwFTDWX8BS84g=;
+        b=mC4blWikXrjjtQCpzWSjDWt1P766wc9DhT4Muro6gApmAAT+78NPFCeMn9Krm4KhPr
+         G9ilwI63Okt31hrNGHFvDdbKjRpECS7yO/CsCVVqk/OcXqE65xQzVhrvI0Yp2Je3YwMa
+         3KPpZgeCsbT+3rsY0wfrIrkafgkR+WbfxHHvr8z4O50BV4PkHaFUtOeT4580MedR6flw
+         cAuypNuUd9pk08ZkS4GogHlufg21I6te39cCvcapUycvUvIVIXThgiQx66TGJRyl+x9L
+         XVDTzM7Q1Sep5FiFRjsjQFuTGMuUHE4ghc6YM1UvghsM89/BGW+Z3lOmUQt5zDzOW1Lr
+         E78g==
+X-Forwarded-Encrypted: i=1; AJvYcCVC3jdENIMPzcZwzh+EUDsgqfu9Cb5ZSLe/4lax0p4V6no5/Nl9pDk9t9J2GvKEDIumF6dfOKdxlpfWJ3A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyPro/fJewi2aVFjmeMqrEpmr40XKHz9BzGTzLFYSXW+ICHUIag
+	GI3tyguIVUB8I3YeXVSoCw5CjfIG4K44pQ1/pNM9e/5JuS6oPSpRWMO47on8GD0qW/2ah8zEwl/
+	CSpdDy83nxAcFIw==
+X-Google-Smtp-Source: AGHT+IHGHyX+6ByhebHTO9V3LY5GS887qbOd27cikxIO2WguSKFpckY3Ttr8Dc4mg9GMsrlGAQAL0Lzpoi+1cFY=
+X-Received: from wmbgz10.prod.google.com ([2002:a05:600c:888a:b0:43b:d6ca:6dd3])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:35c9:b0:43c:fd72:f039 with SMTP id 5b1f17b1804b1-43d1ec835e8mr138658855e9.11.1742207592764;
+ Mon, 17 Mar 2025 03:33:12 -0700 (PDT)
+Date: Mon, 17 Mar 2025 10:33:10 +0000
+In-Reply-To: <20250317094004.2622640-1-kunwu.chan@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Date: Mon, 17 Mar 2025 11:32:13 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Yan, Dongcheng" <dongcheng.yan@intel.com>,
- "Arnd Bergmann" <arnd@kernel.org>,
- "Mauro Carvalho Chehab" <mchehab@kernel.org>,
- "Hans Verkuil" <hverkuil@xs4all.nl>
-Cc: "Sakari Ailus" <sakari.ailus@linux.intel.com>,
- "laurent.pinchart" <laurent.pinchart@ideasonboard.com>,
- "Umang Jain" <umang.jain@ideasonboard.com>, linux-media@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Message-Id: <3bb730a9-5d8a-41c6-8a27-e099561b5890@app.fastmail.com>
-In-Reply-To: <ecb959fe-69e3-4265-9e4b-326bff421153@intel.com>
-References: <20250314154738.3983798-1-arnd@kernel.org>
- <ecb959fe-69e3-4265-9e4b-326bff421153@intel.com>
-Subject: Re: [PATCH] media: i2c: lt6911uxe: Fix Kconfig dependencies:
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+References: <20250317094004.2622640-1-kunwu.chan@linux.dev>
+Message-ID: <Z9f6Zi2_eZFFY0Q7@google.com>
+Subject: Re: [PATCH] rust: page:: optimize rust symbol generation for Page
+From: Alice Ryhl <aliceryhl@google.com>
+To: Kunwu Chan <kunwu.chan@linux.dev>
+Cc: ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com, 
+	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me, 
+	a.hindborg@kernel.org, tmgross@umich.edu, dakr@kernel.org, nathan@kernel.org, 
+	nick.desaulniers+lkml@gmail.com, morbo@google.com, justinstitt@google.com, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	llvm@lists.linux.dev, Kunwu Chan <kunwu.chan@hotmail.com>, 
+	Grace Deng <Grace.Deng006@gmail.com>
+Content-Type: text/plain; charset="utf-8"
 
-On Mon, Mar 17, 2025, at 11:17, Yan, Dongcheng wrote:
-> On 3/14/2025 11:46 PM, Arnd Bergmann wrote:
->> From: Arnd Bergmann <arnd@arndb.de>
+On Mon, Mar 17, 2025 at 05:40:04PM +0800, Kunwu Chan wrote:
+> From: Kunwu Chan <kunwu.chan@hotmail.com>
+> 
+> When build the kernel using the llvm-18.1.3-rust-1.85.0-x86_64
+> with ARCH=arm64, the following symbols are generated:
+> 
+> $nm vmlinux | grep ' _R'.*Page | rustfilt
+> ffff8000805b6f98 T <kernel::page::Page>::alloc_page
+> ffff8000805b715c T <kernel::page::Page>::fill_zero_raw
+> ffff8000805b720c T <kernel::page::Page>::copy_from_user_slice_raw
+> ffff8000805b6fb4 T <kernel::page::Page>::read_raw
+> ffff8000805b7088 T <kernel::page::Page>::write_raw
+> ffff8000805b72fc T <kernel::page::Page as core::ops::drop::Drop>::drop
+> 
+> These Rust symbols are trivial wrappers around the C functions
+> alloc_pages, kunmap_local and __free_pages.
+> It doesn't make sense to go through a trivial wrapper for these
+> functions, so mark them inline.
+> 
+> Link: https://github.com/Rust-for-Linux/linux/issues/1145
+> Suggested-by: Alice Ryhl <aliceryhl@google.com>
+> Co-developed-by: Grace Deng <Grace.Deng006@Gmail.com>
+> Signed-off-by: Grace Deng <Grace.Deng006@Gmail.com>
+> Signed-off-by: Kunwu Chan <kunwu.chan@hotmail.com>
 
->> @@ -1149,8 +1149,9 @@ config VIDEO_ISL7998X
->>  
->>  config VIDEO_LT6911UXE
->>  	tristate "Lontium LT6911UXE decoder"
->> -	depends on ACPI && VIDEO_DEV
->> +	depends on ACPI && VIDEO_DEV && I2C
->>  	select V4L2_FWNODE
->> +	select V4L2_CCI_I2C
->>  	help
->>  	  This is a Video4Linux2 sensor-level driver for the Lontium
->>  	  LT6911UXE HDMI to MIPI CSI-2 bridge.
->
-> Thanks for your fix.
->
-> Lkp is a bit weird to me, because it tested a warning in patch v6 likes
-> below:
->
->     kismet: WARNING: unmet direct dependencies detected for V4L2_CCI_I2C
-> when selected by VIDEO_LT6911UXE
+For sure `alloc_page` and `drop` should be inline, but the other methods
+are not as simple. It is less clear that they should be inline.
 
-What was the full warning? The only dependency I see in V4L2_CCI_I2C
-is CONFIG_I2C itself, and that is what I add above.
+At the very least, the claim that they are a trivial wrapper around
+"kunmap_local" is false. They don't just call that method.
 
-> So I remove this select flag and passed lkp build test in patch v7.
-> But now it encounters build error again, I'm curious why...
-
-I don't currently get any more build errors with my patch
-added in, and I think this should be sufficient. Can you forward
-me the errors and config you get with my patch?
-
-     Arnd
+Alice
 
