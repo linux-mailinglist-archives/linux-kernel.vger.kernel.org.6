@@ -1,141 +1,172 @@
-Return-Path: <linux-kernel+bounces-564170-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564171-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 925D2A64F73
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 13:41:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05C77A64F76
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 13:42:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A05AB17041D
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 12:41:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D83CA3AFBE9
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 12:41:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CCCD23BD0E;
-	Mon, 17 Mar 2025 12:41:33 +0000 (UTC)
-Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B42B23BD1A;
+	Mon, 17 Mar 2025 12:41:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="e+a00mID"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2065.outbound.protection.outlook.com [40.107.237.65])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B22C923A9AA;
-	Mon, 17 Mar 2025 12:41:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742215293; cv=none; b=N6yr1F/gyk39jHV4w1BfCtpzQGy6z3YPATFb9CSFfOyB2oGsLNC830v0NmVnzyw14sL4vFsbiS/6Utmpd5jP+YrGTF8b0LP6SZltyI1iJTIMxwZnJwNvJubHnc1fpBxMqm6T4NgdQZMgfTbTDx2zH9pvb7wgLutWRxXQkYfjewk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742215293; c=relaxed/simple;
-	bh=NTIMa/JLkLsU+CMNlhQWrTBB6VsnbivcBYfYYl4V/44=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oBHpZooJ+2S1SQ+2jSCu5oVBEWDRDpyPK+6xApWOZRaTke9xVjtf9NXs3m/F5bBtd+hBQQVpFJBAqtxW03ikIPLtwFVOsG20A3h7iyXeqDXtDKckPAjXJxj366xqqO+waxH8bB2lAoQtRtZMDF659/K6UJKoOYUHq+Hmr8ADPOY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
-Received: from localhost (unknown [116.232.18.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: dlan)
-	by smtp.gentoo.org (Postfix) with ESMTPSA id 9FEFE3432D6;
-	Mon, 17 Mar 2025 12:41:30 +0000 (UTC)
-Date: Mon, 17 Mar 2025 12:41:20 +0000
-From: Yixun Lan <dlan@gentoo.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>, Alex Elder <elder@kernel.org>,
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org, spacemit@lists.linux.dev,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Alex Elder <elder@riscstar.com>
-Subject: Re: [PATCH v3] pinctrl: spacemit: enable config option
-Message-ID: <20250317124120-GYA1983@gentoo>
-References: <20250218-k1-pinctrl-option-v3-1-36e031e0da1b@gentoo.org>
- <CAMuHMdV4xWLEuCvCC54GBfCdELE=QSHqaOyUPD-ezE0QLYRnVA@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA2D8239082;
+	Mon, 17 Mar 2025 12:41:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.65
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742215318; cv=fail; b=aZXfdOOmVnD3CHWwXwBRDNwztlx4PCxhAjZozKDuWyQpXhi7CuO+4bpO929AL+2NkPQdIsYVDq+e0Fm0sfVPUDtnCTYxj8XngZ7ZRL2kUENWuVuUMsAkAPa7S7fh0z2jcAww9zWoyUBFto8m5mx2DC2o6emOThYy/FywF6IG+dA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742215318; c=relaxed/simple;
+	bh=3jcDi+CHhRWx8/m1D8RcptT1HprG4uh/FjBz2rV0Gq8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=b7lXamz1jbnK1aMkzJsO9/P+482o65kk4qO331Fqb9iim4mRbxQ1HX4yJdZl3nscKyT9v4EWuus+QdobxMr0+0ADiTtrbjAAhHAI7G098SJx6SJLaqRR5aCVigj6vypaN1kEs8Q0tbtpKm6r5x04tuDCvaUDQ+6TM/k/ewRWWCU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=e+a00mID; arc=fail smtp.client-ip=40.107.237.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=QfaLq6mRLtcy4ybMPD1gnbUSYZXfLaB6cfsIGD/SpGk2X14+o85dT5atjfoI8Beqasl/LL6kDxuThJoiUc8gjbBPNrOAJQsWLAEhKr5N3oYmA3Adjy/OW8eVE5Qld7JhU1WmkbpmAHrGVklB3ZF9shLdRQDHHYhUgAjOdDXEfIKBw0CWnaX3IHx11p2jSzBRWLTobQbYLrAFjMtMHXyVEIxokYTbXpPgDDCabcrKgr/U8NKqRn+TsrnxfFmSPfJLVi2XyfD2QCAfJOse9cCRfJXZGqs7uDQeGvFF4wxJ4Xy4cMnRjQeRvRfpNj2XQ0fEZv7+RdHwIzny351ABOk9OQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=pFVq8gntCpphz6ij/ZXCeQkZ1mfOee0tavIGedNvxJ0=;
+ b=uNMT89lJSFGBcZevf/5w94MteWLXvzkXkohbqsHKkpimFxixcrD7QYCBRpGD2K2Qg6lN9LPIWQtIhitJKh9apbPCas85KidLmM47Bcc9K9+6Yk78yCSwJcJFYCRt5XldgPUzl76sEzXpoBHtLVndUIwZSTRj3Bj3xsOgSzdnO30XdRIScF877JhEZ1Y4wsawdP9ymcxKjZSirbDjsAy3zwizW2idW5MG0I5hZdfE4h4hRjxBJPYKSOWJYXyjR59oKZ2UDGWS+6qA7DmyemK6sh0LPHJK2WOqKab6tjOWiWjfZwPjw2fhZf0yYb7mthQFv+Zmjx0E7vrEaNVBR7/3UA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=google.com smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=pFVq8gntCpphz6ij/ZXCeQkZ1mfOee0tavIGedNvxJ0=;
+ b=e+a00mID6IxuM/DBmIIleqqN9VGXUJpB8Z3kB/yMB+wZUXFlQ1flUoGThPXgRG6Pb9bK/ez7OgTG8je/KikOXpQ+Mb8fsFYR/2LB0nPY85ZmfpsTeaVv7O1OckoACERZPhU68KlpSufiwEWMQyUFPRxgCL/5AsS6ND/595a5dz8=
+Received: from BN0PR04CA0175.namprd04.prod.outlook.com (2603:10b6:408:eb::30)
+ by SA1PR12MB6945.namprd12.prod.outlook.com (2603:10b6:806:24c::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.33; Mon, 17 Mar
+ 2025 12:41:53 +0000
+Received: from MN1PEPF0000F0E4.namprd04.prod.outlook.com
+ (2603:10b6:408:eb:cafe::20) by BN0PR04CA0175.outlook.office365.com
+ (2603:10b6:408:eb::30) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8534.33 via Frontend Transport; Mon,
+ 17 Mar 2025 12:41:53 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ MN1PEPF0000F0E4.mail.protection.outlook.com (10.167.242.42) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8534.20 via Frontend Transport; Mon, 17 Mar 2025 12:41:53 +0000
+Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 17 Mar
+ 2025 07:41:52 -0500
+Received: from xhdthippesw40.xilinx.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
+ Transport; Mon, 17 Mar 2025 07:41:49 -0500
+From: Thippeswamy Havalige <thippeswamy.havalige@amd.com>
+To: <bhelgaas@google.com>, <lpieralisi@kernel.org>, <kw@linux.com>,
+	<manivannan.sadhasivam@linaro.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+	<conor+dt@kernel.org>
+CC: <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <michal.simek@amd.com>,
+	<bharat.kumar.gogada@amd.com>, Thippeswamy Havalige
+	<thippeswamy.havalige@amd.com>
+Subject: [PATCH] PCI: xilinx-cpm: Add cpm5_csr register mapping for CPM5_HOST1 variant
+Date: Mon, 17 Mar 2025 18:11:36 +0530
+Message-ID: <20250317124136.1317723-1-thippeswamy.havalige@amd.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdV4xWLEuCvCC54GBfCdELE=QSHqaOyUPD-ezE0QLYRnVA@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+Received-SPF: None (SATLEXMB04.amd.com: thippeswamy.havalige@amd.com does not
+ designate permitted sender hosts)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN1PEPF0000F0E4:EE_|SA1PR12MB6945:EE_
+X-MS-Office365-Filtering-Correlation-Id: 350c3b69-5488-4f8d-5fb1-08dd6551186a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|36860700013|82310400026|7416014|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?NBFxi4VXtjgZXDlC6tpaLXdv6/ErsUtbhCDeNx+SyTLaQKHcLWILBQ9Hfggr?=
+ =?us-ascii?Q?SvFskzPs1NRDxydh4rDRWS52ZkZVohILPYZ/G0CnIlO/K56yVdolwdBunUcb?=
+ =?us-ascii?Q?nP6zTVzzUXKjvHPNqEz6+VITKi0tiiVZklIkb0BiBr6EPk4b6sW0VubeE2Dh?=
+ =?us-ascii?Q?dnC5zfL60WYzCyBmbUL69RDNdfhmxyozLUtGMrfHtKFpFpKLKt6WBtCyLYBO?=
+ =?us-ascii?Q?GdgKq8+XuKXtm9TWT1RiXF3fDt0eXPO+7TGw7I2cM1ONrAOTGBj1QpCOV3Hw?=
+ =?us-ascii?Q?9Oksp5GTKEX5eKvUUhR+/91wnRSQ+D0kJWAdPBxQLBJNL5MXNnZMg2AAKD52?=
+ =?us-ascii?Q?0lhNai87nmFLhjht/96L8bi1U0G3hxHG6CSHdvIywI759V2eT8ExGoUoWzzJ?=
+ =?us-ascii?Q?VJ70enrbLTqneWSh1NFUE8b7jS21OwUkKcW+ihEycND0VCWTmDcD0k+cloyc?=
+ =?us-ascii?Q?ooGLePQkrrQ487BQx2zI+vdR5iNdgDHZ9hoIiwphU+1vpYao5CK+S2iZ9GrL?=
+ =?us-ascii?Q?b97X6LkZrEYe2/QLR++qQT0r3f31Os9NNf5RkyYgWXK+OL5THySqtWVS/+5I?=
+ =?us-ascii?Q?tEf6aalO/U0U5rEzHHGaHVvQHhHa5n4T9GYwRGlqneTI/aCrMCl+Hv6YZMCm?=
+ =?us-ascii?Q?8GPzSppNn4JlzDg9qKFErIh58s82GTXFoaZHf4ggtHo2+vKxJZmpAhxud4F4?=
+ =?us-ascii?Q?dq0rS1lQbpepvLeRORVBbvalM5Py41QyY/x7J4bGHgoUqqIAW4Jc0vFD2ngC?=
+ =?us-ascii?Q?Jcxxi20VYg4bPj+1TWCHfOv7191v7GeZNmSZ86vGdicSLzyKvNXO1qhB3xhr?=
+ =?us-ascii?Q?hfSwD9E7qvaDzD+5IadcZ0w+1j+u53c8bf8gYGojXI3vvVouTy92l3so6mNK?=
+ =?us-ascii?Q?JblKdDOgQ+J8mGfUnN0WyE7aLBe7JcvqOrvMdXSG3yS0gkviNuWIqT3ZOGGQ?=
+ =?us-ascii?Q?lxZZ2wOcQxmlyHrh3u7g7oOCuDtY3oe2WDHnfUfByA2meo4KqGxw7AjlzXfh?=
+ =?us-ascii?Q?4Z7B+b+H8/7iu9mhbw1BWubOXT0pJ2lNgjtIYIxdf6/NsdQTN883PTZtbB4p?=
+ =?us-ascii?Q?qq6JJRQzZwCngScQTn2h6TCeVcpGKOZWaEuERPPYsCCRiYDbOfqtl+gJ9kwr?=
+ =?us-ascii?Q?QYP8uWFfkkFwwNfJ0GZ7jRD7ouxv9f/PlWvVO0ghiW6tpuwG7431OcVetg4m?=
+ =?us-ascii?Q?zKlx+wwoz0sW5Vi1jPOT6ywCvkinnYHCBN5TPxwXFn2fhiBECUAiHhEtshon?=
+ =?us-ascii?Q?9LAa1Wb57X0nfoTrldxTJKQ02Ve/5TNPVlA2dExQ2lh4TVh69RX0Kd4Tjl5Z?=
+ =?us-ascii?Q?4eUOyd+rn2QnUOVWPMcvNK0ZEOKiH5pEa/P3E+lvNp6KqFbKS41ANzJsGGUn?=
+ =?us-ascii?Q?OW180d0kpXozQy682a5VQ0Qcxc4UvTjQcdcX+Km2N29ModO5PR5+GK5jtBOW?=
+ =?us-ascii?Q?CO3nc0EwtiwOdq49yd/XIvNezItV++floSS+DFUwLfGkjiqaE4jMLA=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(82310400026)(7416014)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Mar 2025 12:41:53.2546
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 350c3b69-5488-4f8d-5fb1-08dd6551186a
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	MN1PEPF0000F0E4.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB6945
 
-Hi Geert:
+This commit updates the CPM5 variant check to include CPM5_HOST1.
+Previously, only CPM5 was considered when mapping the "cpm_csr" register.
 
-On 09:18 Mon 17 Mar     , Geert Uytterhoeven wrote:
-> Hi Yixun,
-> 
-> Thanks for your patch, which is now commit 7ff4faba63571c51
-> ("pinctrl: spacemit: enable config option") in v6.14-rc7.
-> 
-> On Tue, 18 Feb 2025 at 01:32, Yixun Lan <dlan@gentoo.org> wrote:
-> > Pinctrl is an essential driver for SpacemiT's SoC,
-> > The uart driver requires it, same as sd card driver,
-> > so let's enable it by default for this SoC.
-> >
-> > The CONFIG_PINCTRL_SPACEMIT_K1 isn't enabled when using
-> > 'make defconfig' to select kernel configuration options.
-> > This result in a broken uart driver where fail at probe()
-> > stage due to no pins found.
-> 
-> Perhaps this is an issue with the uart driver?
-> I just disabled CONFIG_PINCTRL_RZA2 on RZA2MEVB (which is one of the
-> few Renesas platforms where the pin control driver is not enabled by
-> default, for saving memory), and the system booted fine into a Debian
-> nfsroot.  Probe order of some devices did change, and "Trying to
-> probe devices needed for running init" was printed.
-> 
-my problem was CONFIG_PINCTRL_SPACEMIT_K1 isn't enabled, result as
-# CONFIG_PINCTRL_SPACEMIT_K1 is not set
+With this change, CPM5_HOST1 is also supported, ensuring proper resource
+mapping for this variant.
 
-for your case, is CONFIG_PINCTRL_RZA2 built as module? 
-it should work for uart driver with deferred probe mechanism..
+Signed-off-by: Thippeswamy Havalige <thippeswamy.havalige@amd.com>
+---
+ drivers/pci/controller/pcie-xilinx-cpm.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-> > Fixes: a83c29e1d145 ("pinctrl: spacemit: add support for SpacemiT K1 SoC")
-> > Reported-by: Alex Elder <elder@kernel.org>
-> > Acked-by: Conor Dooley <conor.dooley@microchip.com>
-> > Tested-by: Alex Elder <elder@riscstar.com>
-> > Signed-off-by: Yixun Lan <dlan@gentoo.org>
-> 
-> > --- a/drivers/pinctrl/spacemit/Kconfig
-> > +++ b/drivers/pinctrl/spacemit/Kconfig
-> > @@ -4,9 +4,10 @@
-> >  #
-> >
-> >  config PINCTRL_SPACEMIT_K1
-> > -       tristate "SpacemiT K1 SoC Pinctrl driver"
-> > +       bool "SpacemiT K1 SoC Pinctrl driver"
-> >         depends on ARCH_SPACEMIT || COMPILE_TEST
-> >         depends on OF
-> > +       default y
-> 
-> Ouch, fix sent...
-> "[PATCH] pinctrl: spacemit: PINCTRL_SPACEMIT_K1 should not default to
-> y unconditionally"
-> https://lore.kernel.org/6881b8d1ad74ac780af8a974e604b5ef3f5d4aad.1742198691.git.geert+renesas@glider.be
-> 
-I got suggestion in v1
-https://lore.kernel.org/all/20250211-nature-kilt-9882e53e5a3f@spud/
-
-so for COMPILE_TEST case, ARCH_SPACEMIT config won't be enabled? then neither PINCTRL_SPACEMIT_K1
-anyway, I'm fine with either way, thanks
-
-> >         select GENERIC_PINCTRL_GROUPS
-> >         select GENERIC_PINMUX_FUNCTIONS
-> >         select GENERIC_PINCONF
-> 
-> Gr{oetje,eeting}s,
-> 
->                         Geert
-> 
-> -- 
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-> 
-> In personal conversations with technical people, I call myself a hacker. But
-> when I'm talking to journalists I just say "programmer" or something like that.
->                                 -- Linus Torvalds
-
+diff --git a/drivers/pci/controller/pcie-xilinx-cpm.c b/drivers/pci/controller/pcie-xilinx-cpm.c
+index d0ab187..13ca493 100644
+--- a/drivers/pci/controller/pcie-xilinx-cpm.c
++++ b/drivers/pci/controller/pcie-xilinx-cpm.c
+@@ -542,7 +542,8 @@ static int xilinx_cpm_pcie_parse_dt(struct xilinx_cpm_pcie *port,
+ 	if (IS_ERR(port->cfg))
+ 		return PTR_ERR(port->cfg);
+ 
+-	if (port->variant->version == CPM5) {
++	if (port->variant->version == CPM5 ||
++	    port->variant->version == CPM5_HOST1) {
+ 		port->reg_base = devm_platform_ioremap_resource_byname(pdev,
+ 								    "cpm_csr");
+ 		if (IS_ERR(port->reg_base))
 -- 
-Yixun Lan (dlan)
-Gentoo Linux Developer
-GPG Key ID AABEFD55
+1.8.3.1
+
 
