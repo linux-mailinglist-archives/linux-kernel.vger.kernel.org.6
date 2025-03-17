@@ -1,145 +1,94 @@
-Return-Path: <linux-kernel+bounces-564299-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564302-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 667F6A65235
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 15:03:24 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A83F0A65251
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 15:07:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9588C166501
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 14:03:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E18731894396
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 14:08:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1DC422759C;
-	Mon, 17 Mar 2025 14:03:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A3EA23F400;
+	Mon, 17 Mar 2025 14:07:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="f4zMkm+h"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qoma5/tF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60C0078F43
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 14:03:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6450122E41D;
+	Mon, 17 Mar 2025 14:07:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742220196; cv=none; b=Laf/3hvL2EyuQ4+euvCwL3zwAZRj/qyXlJG1ntRnELOqj5bS49k6K4TSZ/xwpvqkmgAiB4rHT/FgpCIP/FW4zai1SuEUnvV8NLAadhmAafxGcKZn3gAnoNHpjGkzxdXrUNHpTq15CW0NyOvXdVGQtK0EEo8ZxLZi62ibFuajAas=
+	t=1742220466; cv=none; b=FYLATO3yNv7vMRwg7eKiAViQvHlYzhD8038BOzTADbLpftTEcpBfYJ2KE8frvP+rSztfaVXVP9Kw1zd9TRPt187Ro0ReYgvBVjPaXJ855FAdO8SH3uv7z8vhf4leTDKX61jf3babRKOqBZcXCzSBSWhB463mrUlNi7O2DMgsbUA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742220196; c=relaxed/simple;
-	bh=ur+3Ka/ftKOuDkT4T1MQ6Jx5LEwesbX4+q1klExtobU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tPOp+GrNMLG23vUPOD+YwvDKxi9l5XUqA2A8InXLIR5ICtDHFmCdpnyOY7T3DaRX7KwahxfCjJkHkgCeuq0gP7w8mjOSDqyL1sUlHMSph2BjFAKNfTfxiJMl+Ig6eB0BxQ6mqWyRBwf/CZlToHDn0KP27+lTZMOw61x3sYtnXR0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=f4zMkm+h; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742220194; x=1773756194;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=ur+3Ka/ftKOuDkT4T1MQ6Jx5LEwesbX4+q1klExtobU=;
-  b=f4zMkm+hGFS0JC9Zu6V8HEtutEUw4FoYxCXqPPRA0en857N8x7c1tvkN
-   wEV730sPJ5zI6jCVjKmxsYOxEI/j7Lp7luIi9XiBNcu0Pt7Ax4dEoKKCq
-   hRF1CsflzZOQcw7maRhMYwXxGxxXFryQTKLtAQdxkwsdUFw9Zs6nIPYmP
-   k1X9lJIZANcIPSTGGluxtLS5X3pBODxENKoRDAbKCmrzXbXiaeELgrNXh
-   wKf0ECYOBacy+qmyqzXMmIyvE4hdISVVazU8W3L0gsd3qqOyarloMZRBb
-   Fd0oRLjwTYb1Kb9zhDkzSczOp1QzKHOb9LnZLuF5jmPVKqj6hMT4+d5wx
-   Q==;
-X-CSE-ConnectionGUID: LEuB4sejQzK1pj/84OdtsQ==
-X-CSE-MsgGUID: MeewH/E/TLqcqyfudGIPyg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11376"; a="43447018"
-X-IronPort-AV: E=Sophos;i="6.14,254,1736841600"; 
-   d="scan'208";a="43447018"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Mar 2025 07:03:14 -0700
-X-CSE-ConnectionGUID: 7dDuA3tuRKaVKvMF/PytIA==
-X-CSE-MsgGUID: ICsGBP4RT5yVJBvZI8J8Ag==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,254,1736841600"; 
-   d="scan'208";a="152929972"
-Received: from spr.sh.intel.com ([10.239.53.19])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Mar 2025 07:03:10 -0700
-From: Chao Gao <chao.gao@intel.com>
-To: x86@kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Chao Gao <chao.gao@intel.com>,
-	"Chang S. Bae" <chang.seok.bae@intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Uros Bizjak <ubizjak@gmail.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Yang Zhong <yang.zhong@intel.com>,
-	Jing Liu <jing2.liu@intel.com>
-Subject: [PATCH] x86/fpu/xstate: Fix inconsistencies in guest FPU xfeatures
-Date: Mon, 17 Mar 2025 22:06:11 +0800
-Message-ID: <20250317140613.1761633-1-chao.gao@intel.com>
-X-Mailer: git-send-email 2.46.1
+	s=arc-20240116; t=1742220466; c=relaxed/simple;
+	bh=TwByakabURcwGOlpLMaFyoNlbn9/Q64Y4T7QGboNyoM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LAsfQ7Z167wY9dP/o8JzxcnKRKgKnw9n9g+/p3kkFn7EMib6TbxcJvZg9Ua+7GC3szV7J354rRqvINSWzAjSwLyBXoaTlMBLfJRFB0wcIV/LIWLNCKTAbeYYSUrKU8NACQZPlcOBo0zV8fvM3Dd/mP0On4Od/UJv5lcT0M1sCiA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qoma5/tF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ACE9EC4CEE3;
+	Mon, 17 Mar 2025 14:07:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742220465;
+	bh=TwByakabURcwGOlpLMaFyoNlbn9/Q64Y4T7QGboNyoM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qoma5/tF28LhvLalQsmG4UBY7zYrr5I9+GCDf+CSrUrsdMyOIvCZ3cuaDnukKBE+0
+	 6skE7RbpNplo1dNXS+zqleHYkx9m/CFYBw5VMzB7/bSjU7QjS7Y2dW0eskioTUqoQT
+	 yaSoxvj8J/wcoZrSw5enSOzB0FdgQhVjkZ3eurVxzJUJKep8w03uoBtl1el/MRHIvz
+	 cO8QSaA+Xm8wtPS2D1rGUAmnP5jr0K9+7Ri7HueO1ld1n4AmJJReS2quRBIh9ttbFt
+	 3cQJwU01MjWseGTQsueFKc8YZOXrNMNViZkiq8pVHFI0RPMw8t4FIu64DOOK3o1heH
+	 9+5zJczuRruEQ==
+Date: Mon, 17 Mar 2025 14:07:41 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Raju Rangoju <Raju.Rangoju@amd.com>
+Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	krishnamoorthi.m@amd.com, akshata.mukundshetty@amd.com
+Subject: Re: [PATCH 02/10] spi: espi_amd: Add eSPI set config IOCTL command
+Message-ID: <6c09f5e0-d8a2-419c-8813-8a1bb4f39428@sirena.org.uk>
+References: <20250313183440.261872-1-Raju.Rangoju@amd.com>
+ <20250313183440.261872-3-Raju.Rangoju@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="e2tWOeFA4wEelCnd"
+Content-Disposition: inline
+In-Reply-To: <20250313183440.261872-3-Raju.Rangoju@amd.com>
+X-Cookie: I know how to do SPECIAL EFFECTS!!
 
-Guest FPUs manage vCPU FPU states. They are allocated via
-fpu_alloc_guest_fpstate() and are resized in fpstate_realloc() when XFD
-features are enabled.
 
-Since the introduction of guest FPUs, there have been inconsistencies in
-the kernel buffer size and xfeatures:
+--e2tWOeFA4wEelCnd
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-1.fpu_alloc_guest_fpstate() uses fpu_user_cfg since its introduction. See:
+On Fri, Mar 14, 2025 at 12:04:32AM +0530, Raju Rangoju wrote:
 
-  commit 69f6ed1d14c6 ("x86/fpu: Provide infrastructure for KVM FPU cleanup")
-  commit 36487e6228c4 ("x86/fpu: Prepare guest FPU for dynamically enabled FPU features")
+> This patch introduces an IOCTL command to set the configuration of the
+> eSPI controller and eSPI slave0. The configuration options include
+> parameters like frequency, channel, and IO mode. The new IOCTL command
+> allow users to dynamically configure the eSPI controller and slave.
 
-2.__fpstate_reset() references fpu_kernel_cfg to set storage attributes.
+Why?  We have spidev...
 
-3.fpu->guest_perm uses fpu_kernel_cfg, affecting fpstate_realloc().
+--e2tWOeFA4wEelCnd
+Content-Type: application/pgp-signature; name="signature.asc"
 
-A recent commit in the tip-tree [1] partially addressed the inconsistency
-between (1) and (3) by using fpu_kernel_cfg for size calculation in (1),
-but left fpu_guest->xfeatures and fpu_guest->perm still referencing
-fpu_user_cfg.
+-----BEGIN PGP SIGNATURE-----
 
-The inconsistencies within fpu_alloc_guest_fpstate() and across the
-mentioned functions cause confusion.
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmfYLK0ACgkQJNaLcl1U
+h9Cx/Af+JCLinuCLjivkN1a3VwavHrRx9w945iJA/QAD5Q2G3EgxJUw3GzExuYef
+yJ67CtGebt5wGGwyZQGHnTtENt0+O+/7vn7po13ELVFoqZAcRXjA6P6FX3oeJ/bG
+Yjod/HuqW5IebuNxXumgMEGrBstsSun4NDVa/zMSFCR6Ajs1ob/7vC+UiGMY92+Y
+zMYcgB8KJMj+5Qyd1EtufuXI5DWZXqmIxSVs59qlVJ9JGBrsvEf7k7A8haSSrVlg
+z9gVAuBe48H8/6BF3eCuT151U830ptaFYkhmitr8L293HzHKrJvL3Q1gnXMrUXIC
+1cwKzllM69IbLsyXgfbXsBUZCZw50A==
+=kbNb
+-----END PGP SIGNATURE-----
 
-Fix them by using fpu_kernel_cfg consistently in fpu_alloc_guest_fpstate(),
-except for fields related to the UABI buffer. Referencing fpu_kernel_cfg
-won't impact functionalities, as
-1. fpu_guest->perm is overwritten shortly in fpu_init_guest_permissions()
-   with fpstate->guest_perm, which already uses fpu_kernel_cfg.
-2. fpu_guest->xfeatures is solely used to check if XFD features are enabled.
-   Including supervisor xfeatures doesn't affect the check.
-
-Link: https://lore.kernel.org/all/20250218141045.85201-1-stanspas@amazon.de/ [1]
-Fixes: 36487e6228c4 ("x86/fpu: Prepare guest FPU for dynamically enabled FPU features")
-Suggested-by: Chang S. Bae <chang.seok.bae@intel.com>
-Signed-off-by: Chao Gao <chao.gao@intel.com>
----
- arch/x86/kernel/fpu/core.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/arch/x86/kernel/fpu/core.c b/arch/x86/kernel/fpu/core.c
-index 422c98ca6eb8..1b734a9ff088 100644
---- a/arch/x86/kernel/fpu/core.c
-+++ b/arch/x86/kernel/fpu/core.c
-@@ -239,8 +239,8 @@ bool fpu_alloc_guest_fpstate(struct fpu_guest *gfpu)
- 	fpstate->is_guest	= true;
- 
- 	gfpu->fpstate		= fpstate;
--	gfpu->xfeatures		= fpu_user_cfg.default_features;
--	gfpu->perm		= fpu_user_cfg.default_features;
-+	gfpu->xfeatures		= fpu_kernel_cfg.default_features;
-+	gfpu->perm		= fpu_kernel_cfg.default_features;
- 
- 	/*
- 	 * KVM sets the FP+SSE bits in the XSAVE header when copying FPU state
-
-base-commit: d08c0d55110b7cbac186e5fa94b0c6d5f4d7905e
--- 
-2.47.1
-
+--e2tWOeFA4wEelCnd--
 
