@@ -1,186 +1,160 @@
-Return-Path: <linux-kernel+bounces-563345-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563346-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 076C6A63F1C
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 06:05:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 73A03A63F1E
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 06:06:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9CE18188EB36
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 05:05:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E4FC188F059
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 05:06:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C71BA215075;
-	Mon, 17 Mar 2025 05:05:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0751215044;
+	Mon, 17 Mar 2025 05:05:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=deepin.org header.i=@deepin.org header.b="hRYAmMvY"
-Received: from smtpbgbr2.qq.com (smtpbgbr2.qq.com [54.207.22.56])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="lwtWyVX6"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AB611CD2C;
-	Mon, 17 Mar 2025 05:05:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.207.22.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09E94A59;
+	Mon, 17 Mar 2025 05:05:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742187914; cv=none; b=QRRHsY6nwhkThwwZ2Ix3zDQ9CIIGN886hBwPipztj4Yx0ZCQUxHdvHtW3EoQC6etbSDWX++i5g0Y90Cy8WyjNzUqy5pW95oXOI9edbiSLqUaFoFgPDOG8nAEMjz06kfP2Q/JiDP/aMQt4wUTEDw272yf8hKQ659pV7O6fYV8HFM=
+	t=1742187951; cv=none; b=n6lP5gKfvdRJxGv9BzHpWem7vN9OTyvCj2DGl42blfskM4utM4pS9tXSBdYAwF/n0f0I0OoREpHDecT3Dn93rxB2YubMCjgoU1RDdp14Qpwm6HiPlESbn2Xl+KN3D8i9L2JGvT+nBwXoRtKs4Y+sn5Iw6bO8nhb0Cjs13caXKj8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742187914; c=relaxed/simple;
-	bh=2j2cV21FgM/8/ZWuQEAf2CTVTrE95v9rMrKC1HP20ws=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RPQROmG+QKghY9CxvDZldLJn0RyDQFqyb0LZOMi+jZJpRXXNbzP/eyQWyBiC3CRhLl9B2byDqJUr+dz/QSLBRsj5MCFtnC6spayCZnWYTZpYVb+9rYCcTVgXoT9MWQxiXWjtxW7w0BLwfxYXPe7TfeJG5AyWDgOEg1eZjT8LYlE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=deepin.org; spf=pass smtp.mailfrom=deepin.org; dkim=pass (1024-bit key) header.d=deepin.org header.i=@deepin.org header.b=hRYAmMvY; arc=none smtp.client-ip=54.207.22.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=deepin.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=deepin.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=deepin.org;
-	s=ukjg2408; t=1742187899;
-	bh=M2UUyPvJ2y1MZA15wI3jxejuhS+GebCXKcVs2DOBs/Q=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To;
-	b=hRYAmMvYO6VsMN6MSpcC4ECIbLb7hkRcJyF78nYlVGsR4B4Y5erfre2sSAZoPys2n
-	 HU7bTpxHv4jywwhyPmYz1AW1jPuLQOc0MDRFpAcDC3H0LsxciQojKzf3ogkpo0A2jg
-	 uOrs07SaA/frFBAIqa6Y3XVywRBKUVnazBsTuleA=
-X-QQ-mid: bizesmtpsz9t1742187895taj7j1y
-X-QQ-Originating-IP: Z5C9+vlboSe8gW7/MYXuaRljzoEiXeNTh6d8mTpRtTo=
-Received: from mail-yb1-f180.google.com ( [209.85.219.180])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Mon, 17 Mar 2025 13:04:53 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 14577142841368056084
-Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-e60b75f87aaso3027648276.2;
-        Sun, 16 Mar 2025 22:04:54 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVghobj7YH88mE9czZAaN1XSd3qq0g7VamUFN4Jn/Ynk8wZAiQGBZXyDIpwYHzpviCyQIU=@vger.kernel.org, AJvYcCWXV5GG1CUxlYNrr/cEBTxtSDKIDT8UF4OjQvFpeeqHaMwrsdyQGktrx/TuocBr75iXwXzM6vrv@vger.kernel.org, AJvYcCWx26V7GA75d8WSKwAoFJCBLxzCDa+aSkwCg6aks/cU82SnGc5l90ckmG060rP3un1q8eZu2D3vMkBpVBYR@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz2Ao3+D66Euf4f8WifBOmpolm1lmBRuJKw8b/NpDNZQh9dcci/
-	dl55LrvSYk5Uz4S2upJ4XyVrBDhH3oYB46V4eZ1MTf0zmqRHOq+8IQED+wPtTSORp6wm5wTNgS/
-	DPoVhcJkr3Zb3cI0TfJuBqzm6cQ4=
-X-Google-Smtp-Source: AGHT+IEclvi37l+5wwO8UmE2nDEZ7P2yrAPC5bWt1YuMHgdSe08lN5oTlUNdlPZn2kALuCGJK82TUIC2DrHQhJs+K4Y=
-X-Received: by 2002:a05:6902:2504:b0:e63:c2d2:94f2 with SMTP id
- 3f1490d57ef6-e63f64d6613mr12913981276.4.1742187892688; Sun, 16 Mar 2025
- 22:04:52 -0700 (PDT)
+	s=arc-20240116; t=1742187951; c=relaxed/simple;
+	bh=Yx8hA5o3SoSHlUdz3SM2LvdTtkROyxkqOk1dvR+hJZA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=McgRcbOGsViuqj+K8XJymUVTVRZV3uEpcIpWjPqDeOW6Mjd/MXuby/z6GC/IunEeCwdc0BeoVBMCrQtbz7rDqb4Y84b5pW+mScoZgvbReOGPxDR2hmYFIEbdlN47BlnPn/BqaxZy0DwEVZ1NBKyYcM6rjTSskd7f2hZBedHSFbw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=lwtWyVX6; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1742187942;
+	bh=oO90iJBmEYFzHyd2ZTs8x7gFQx2bb/HtnHvLad5EuAY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=lwtWyVX6BoQey99eQkdLxog2E6hplf/zbb9zohe+FDgn3mbSm3hCVub01XFSaL5QG
+	 XhxDOpB+q/vlu2jIqMoIYrJDkaf6K3u/bTCzaqI/as4yKzFtaWtViu78GxHKpfOiFw
+	 3QFtGfLzxx1oLhQ+usWr4bxoC2SakGPLmPVMVu3OiftYAT70ygng+2awXmXg+/KJ3P
+	 tfOnt3ZifXWYfbNDE3nLirGcw8iyehlDkgIIWsY9cpBEbxyf7M6vq4mN4u2jjOXgJj
+	 L+FIm75BpWmlFY60/gmVfyMPUl/x+7vXLemWwmeKct+uVFBR7wZx0DqC8tfGSnfxs+
+	 46yX/ajyCIafA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZGNGF2JKpz4wcZ;
+	Mon, 17 Mar 2025 16:05:41 +1100 (AEDT)
+Date: Mon, 17 Mar 2025 16:05:40 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of the tip tree
+Message-ID: <20250317160540.096f16a4@canb.auug.org.au>
+In-Reply-To: <20250311152429.32d9f824@canb.auug.org.au>
+References: <20250304162402.475eb3bc@canb.auug.org.au>
+	<20250306152516.32df7764@canb.auug.org.au>
+	<20250311152429.32d9f824@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <84B05ADD5527685D+20250317011604.119801-2-chenlinxuan@deepin.org> <2025031759-sacrifice-wreckage-9948@gregkh>
-In-Reply-To: <2025031759-sacrifice-wreckage-9948@gregkh>
-From: Chen Linxuan <chenlinxuan@deepin.org>
-Date: Mon, 17 Mar 2025 13:04:41 +0800
-X-Gmail-Original-Message-ID: <90633147F3110D54+CAC1kPDNNBj3Hd6s72mA3qxwxC0B69aE7qhM+Az5msvjPy41N5w@mail.gmail.com>
-X-Gm-Features: AQ5f1JosL4TAodELERN3orTFlcWSuf3HluXcDHfk5v-mc_DcPgobK1IZuHPieJM
-Message-ID: <CAC1kPDNNBj3Hd6s72mA3qxwxC0B69aE7qhM+Az5msvjPy41N5w@mail.gmail.com>
-Subject: Re: [PATCH stable 6.6 v2] lib/buildid: Handle memfd_secret() files in build_id_parse()
-To: Greg KH <greg@kroah.com>
-Cc: Chen Linxuan <chenlinxuan@deepin.org>, Andrii Nakryiko <andrii@kernel.org>, 
-	Jiri Olsa <jolsa@kernel.org>, Sasha Levin <sashal@kernel.org>, 
-	Eduard Zingerman <eddyz87@gmail.com>, Jann Horn <jannh@google.com>, 
-	Alexey Dobriyan <adobriyan@gmail.com>, Alexei Starovoitov <ast@kernel.org>, 
-	Shakeel Butt <shakeel.butt@linux.dev>, "Peter Zijlstra (Intel)" <peterz@infradead.org>, 
-	Yi Lai <yi1.lai@intel.com>, Daniel Borkmann <daniel@iogearbox.net>, stable@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; boundary="Sig_/45fpgOInwCYqQ+RDA_HKZ2a";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+
+--Sig_/45fpgOInwCYqQ+RDA_HKZ2a
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtpsz:deepin.org:qybglogicsvrgz:qybglogicsvrgz7a-0
-X-QQ-XMAILINFO: OH/oXo99N/TG8mylz+IzWatGYXRibEcyvlAzrNL0VlFXupXGcw66w6a4
-	hCzjgYdXpdWRrEUsgQYqv+yUIdkO7V2KIz5F40/221+0SXNrHAmZd5io45T+DsujC2+enDe
-	mwgfUJDk/Et7jFUZ5qPgyEQRLqOQbpUcl+4gZPlNtOaAx2KiZ39LVrGTUDmqyA0nXKzuSw7
-	Y1+vCpI08n00GP4O1XDFawTZZECo+FV3f7/rz8XobBFwQCzLTQA486QsT3gLSCobhY1RDU0
-	gzqOfAbaeC2B9Tvw0Hba2OVjz12lm1LiQrY4d6sgdaSfwP/AZAJfjCaU9t31UkpXugPQkPV
-	odplmYzsHwlCHVzCadpRvkUIhQ2Rm9FvcjHFRSHvr2unSVdLWPK4vUGpYXaSlyZLDOKBEqi
-	oSEW5+LAcLjmCLlsfhEmWeTDOEtck1axvJCTminWOXBJcAuppNKB8XKIThi1r/rth9l8ZSO
-	eaiUEtXSY4L6ammhsRXaQeTZJqPSb/vwSTRMgOpNwxUaFm4jz5OqIRw3mBeDRJ3Hm2wSAGe
-	5vQ0259CINzYtE4o6Y8G9qQhrp1NxTs+0vm7gjlGK/ouJw61HcTwnYxhf336tQmkwTCvW7n
-	elQ9J3EAqiUbdRn5e/3HW9IbO5ND6vnUMHpINkGtXs/7AcPqnn5Ium6YU2NYAdHpRLcch7K
-	Nart/+Jzo2ViuGMJ+XAreVIgsiC1k+fueKcgeZJqyXtcwrXcpnH1EtmgGSicqbhv3dRrYV4
-	tC2SJPc/GlvTrMjVjdep4uH+CJwFYY8oajvMNUVoyngYRhkaglIYKp1blxZ5WS41vHIGYTj
-	72+aVWaW0mZySFK50z31NyaF3jnrva2N0OmBfTykmynSmWp5lLX17GJsfFMHF+0sg/yzAkl
-	1+kZ4FXWb7AAGA2/HXiVll4PS2oiU+MZOScSs3aqWAyWFFPJeNiv1eu97dJIQnBGL5ZDXrD
-	sPwNNZQFcEdd/+Gbwcok6lF/W1gn3AqHzusgjH150IN8oeSMwesarENz8V1MmzmDUVTAHj1
-	9y6F2CDgt1RIxNmVFqUilwKiwrdIuoLLABILuqqLUqrQ7NQt7Q
-X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
-X-QQ-RECHKSPAM: 0
 
-Greg KH <greg@kroah.com> =E4=BA=8E2025=E5=B9=B43=E6=9C=8817=E6=97=A5=E5=91=
-=A8=E4=B8=80 12:20=E5=86=99=E9=81=93=EF=BC=9A
->
-> On Mon, Mar 17, 2025 at 09:16:04AM +0800, Chen Linxuan wrote:
-> > [ Upstream commit 5ac9b4e935dfc6af41eee2ddc21deb5c36507a9f ]
-> >
-> > >>From memfd_secret(2) manpage:
-> >
-> >   The memory areas backing the file created with memfd_secret(2) are
-> >   visible only to the processes that have access to the file descriptor=
-.
-> >   The memory region is removed from the kernel page tables and only the
-> >   page tables of the processes holding the file descriptor map the
-> >   corresponding physical memory. (Thus, the pages in the region can't b=
-e
-> >   accessed by the kernel itself, so that, for example, pointers to the
-> >   region can't be passed to system calls.)
-> >
-> > We need to handle this special case gracefully in build ID fetching
-> > code. Return -EFAULT whenever secretmem file is passed to build_id_pars=
-e()
-> > family of APIs. Original report and repro can be found in [0].
-> >
-> >   [0] https://lore.kernel.org/bpf/ZwyG8Uro%2FSyTXAni@ly-workstation/
-> >
-> > Fixes: de3ec364c3c3 ("lib/buildid: add single folio-based file reader a=
-bstraction")
-> > Reported-by: Yi Lai <yi1.lai@intel.com>
-> > Suggested-by: Shakeel Butt <shakeel.butt@linux.dev>
-> > Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
-> > Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
-> > Acked-by: Shakeel Butt <shakeel.butt@linux.dev>
-> > Link: https://lore.kernel.org/bpf/20241017175431.6183-A-hca@linux.ibm.c=
-om
-> > Link: https://lore.kernel.org/bpf/20241017174713.2157873-1-andrii@kerne=
-l.org
-> > [ Chen Linxuan: backport same logic without folio-based changes ]
-> > Cc: stable@vger.kernel.org
-> > Fixes: 88a16a130933 ("perf: Add build id data in mmap2 event")
-> > Signed-off-by: Chen Linxuan <chenlinxuan@deepin.org>
-> > ---
-> > v1 -> v2: use vma_is_secretmem() instead of directly checking
-> >           vma->vm_file->f_op =3D=3D &secretmem_fops
-> > ---
-> >  lib/buildid.c | 5 +++++
-> >  1 file changed, 5 insertions(+)
-> >
-> > diff --git a/lib/buildid.c b/lib/buildid.c
-> > index 9fc46366597e..34315d09b544 100644
-> > --- a/lib/buildid.c
-> > +++ b/lib/buildid.c
-> > @@ -5,6 +5,7 @@
-> >  #include <linux/elf.h>
-> >  #include <linux/kernel.h>
-> >  #include <linux/pagemap.h>
-> > +#include <linux/secretmem.h>
-> >
-> >  #define BUILD_ID 3
-> >
-> > @@ -157,6 +158,10 @@ int build_id_parse(struct vm_area_struct *vma, uns=
-igned char *build_id,
-> >       if (!vma->vm_file)
-> >               return -EINVAL;
-> >
-> > +     /* reject secretmem */
->
-> Why is this comment different from what is in the original commit?  Same
-> for your other backports.  Please try to keep it as identical to the
-> original whenever possible as we have to maintain this for a very long
-> time.
->
-> thanks,
->
-> greg k-h
->
->
+Hi all,
 
-Original comment is in a function named freader_get_folio(),
-but folio related changes has not been backported yet.
+On Tue, 11 Mar 2025 15:24:29 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> On Thu, 6 Mar 2025 15:25:16 +1100 Stephen Rothwell <sfr@canb.auug.org.au>=
+ wrote:
+> >
+> > On Tue, 4 Mar 2025 16:25:31 +1100 Stephen Rothwell <sfr@canb.auug.org.a=
+u> wrote: =20
+> > >
+> > > After merging the tip tree, today's linux-next build (x86_64 allmodco=
+nfig)
+> > > failed like this:
+> > >=20
+> > > In file included from include/asm-generic/percpu.h:7,
+> > >                  from arch/x86/include/asm/percpu.h:597,
+> > >                  from arch/x86/include/asm/preempt.h:6,
+> > >                  from include/linux/preempt.h:79,
+> > >                  from include/linux/spinlock.h:56,
+> > >                  from include/linux/wait.h:9,
+> > >                  from include/linux/wait_bit.h:8,
+> > >                  from include/linux/fs.h:7,
+> > >                  from kernel/events/core.c:11:
+> > > kernel/events/core.c: In function 'this_cpc':
+> > > include/linux/percpu-defs.h:220:45: error: initialization from pointe=
+r to non-enclosed address space
+> > >   220 |         const void __percpu *__vpp_verify =3D (typeof((ptr) +=
+ 0))NULL;    \
+> > >       |                                             ^
+> > > include/linux/percpu-defs.h:251:9: note: in expansion of macro '__ver=
+ify_pcpu_ptr'
+> > >   251 |         __verify_pcpu_ptr(ptr);                              =
+           \
+> > >       |         ^~~~~~~~~~~~~~~~~
+> > > kernel/events/core.c:1222:17: note: in expansion of macro 'this_cpu_p=
+tr'
+> > >  1222 |         return *this_cpu_ptr(pmu->cpu_pmu_context);
+> > >       |                 ^~~~~~~~~~~~
+> > >=20
+> > > (and many more similar)
+> > >=20
+> > > Presumably caused by commit
+> > >=20
+> > >   f67d1ffd841f ("perf/core: Detach 'struct perf_cpu_pmu_context' and =
+'struct pmu' lifetimes")
+> > >=20
+> > > I have used the tip tree from next-20250303 for today.   =20
+> >=20
+> > I am still seeing this build failure. =20
+>=20
+> Ditto.  Anything happening with this?
+>=20
+> I am still using the tip tree from next-20250303.
 
-thanks,
+So am I missing something here?  I am still seeing this build failure.
 
-Chen Linxuan
+That commit is now
+
+  4eabf533fb18 ("perf/core: Detach 'struct perf_cpu_pmu_context' and 'struc=
+t pmu' lifetimes")
+
+Is there something in my toolchain?   Or some other difference in our
+build environments?
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/45fpgOInwCYqQ+RDA_HKZ2a
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfXraQACgkQAVBC80lX
+0Gxkmwf/Q61UEUeglj9W4quE3qcjIK+X8aEkhypRfWWqWG/Au3J4VGGUWK69h3nI
+BVN9AXJMyCrJhzNLpdOWr1fMY15KHVwI/8YtQEgCuan10BXSMeG/3d2xUX3unJ+M
+VR/YDQ4V3cOYP4o2oMMdgF4Jhk8wMY8zhnkOYFfnyL7h8LkhKsyUuLpza5DLVa58
+/pHsN5yD+71HyKqEovgBpgct5QaOLevc7egdgP4O3xmUjwScFPg5HhosasjQv9C9
+CP7dAg/mRUPTnlCuEU+94jDuP5yHCa2oc95Q6KjZopowwN6Yo6MGUiZw2tnNowTY
+jSbuEXEBLyHP+NzZS+gyYtqOK4kdvQ==
+=KSB2
+-----END PGP SIGNATURE-----
+
+--Sig_/45fpgOInwCYqQ+RDA_HKZ2a--
 
