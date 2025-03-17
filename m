@@ -1,186 +1,123 @@
-Return-Path: <linux-kernel+bounces-564779-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564783-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5951A65A85
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 18:22:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 096B7A65AA3
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 18:26:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 11BD117F81F
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 17:20:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E53A71880215
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 17:22:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6CC019F40A;
-	Mon, 17 Mar 2025 17:20:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E91B1537CB;
+	Mon, 17 Mar 2025 17:22:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YmLG4a0J"
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="UU87RXA5"
+Received: from mail-40134.protonmail.ch (mail-40134.protonmail.ch [185.70.40.134])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74DB71553A3;
-	Mon, 17 Mar 2025 17:20:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50A6740C03
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 17:22:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742232019; cv=none; b=JFTYu7hDPxJEor1h8jhu0feHAk0qDhNgdgfFJbThb2+hdEEUBI6oYSlasqSWpg1UE4acettrV1/wZx2W5QfRRtfPyiG1o1XrhbxKc6jCZ2oJb9kGbeFDq/vcehz4gcvSrfbWL8aaaFaPO2s+flMY/mTMYeSNf0OFpTtBRwczjHE=
+	t=1742232148; cv=none; b=cKfSuICh5xwANPH85lcEPibmhwPN1oX5d9UCRu9SSjYm81HxUfUq6K5INhzhINo8wt5zTcCpQfm8pS7Kn8n6TqUAShm3fmvPvvJF69ob4dr68mZfvap9eughfUZfeElwXi3XQXUecSfz3zwq9dlAn9GIgzFUvsC/ch6ZuRRZzDI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742232019; c=relaxed/simple;
-	bh=r8Jjyg4N4bX0jkWi1/kQS+nKK6mUoA5S9Z59aKSMcw0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BqFQDEaH2EE9oNhmxNWnga5MAh5V+rmEH3SWbsyZ6Ssg1VuARatmgKzUp/t2G96wQooidgbnWlRZxbs2OkOSudjCv/cI/4QGACOLcShsbF+hPYiOmf84fwRYSNVaQbFvX2WcRlqR/w6mjTD3EX+Zw6Da1CIK75DaoUZjAtHZQvI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YmLG4a0J; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2ff799d99dcso3889692a91.1;
-        Mon, 17 Mar 2025 10:20:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742232017; x=1742836817; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZiIzpFKizdM9xv+6JVtSJnmseZQ1sm302MUd2poCzvo=;
-        b=YmLG4a0JiNua1vfIdxPPzi0VsUW/trevjvQ/i5XQmj1jvFWz5BDuRMfoIZrdfLQAz0
-         LiXifUKo4xMMIHxe4akhFG+rGFFeEhdFgpmXhoEJa3+4YRuZCMARnLcW1WM+rAWNv5br
-         EEsW1XUFZdaoL54FsEBZasj79gA5JR31F9YZI2CK2JWD2uZS8qiHnC3Bv+YwPeqn3RjR
-         ig5/XK+v203dDqm06s+CvCK0gUyTfYGH6JT7QZXOTCv8fSCV2rCcRzI0/EnJCi1Is7BO
-         bknMeF9hC8W+Zhds5ujf5UXfpSWAMOS1G2ODxulQVZqFWtrLQQTAWRw5V70k0fZ+r8YC
-         tATg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742232017; x=1742836817;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZiIzpFKizdM9xv+6JVtSJnmseZQ1sm302MUd2poCzvo=;
-        b=DP/ew8gpz8wiINJYMGOwrOdgU+e9/bSzB293W1zS7i2xAWGjPZcQvUvxV824wAK3BO
-         DGpXxV8vMHSEBtf3rjskSRDJd3j2keRTEd4Ao+hvfcbFcr3lWmnd2wXU1+hcB3ltrKhB
-         t4QG/bDSuzaog64R4I5jh7ynXkZvfLInZ4srn1kzCMLDuffN4kDBpZ24ijpi2gLnX//T
-         BHKfzn+k/p3w5C+udt8bcPpN9sVzglO0QqLpZgNPNb3l/7X29ntYvhA7+wZH5Z49+kyQ
-         RPWC2ZFxlWQdDU3aPWFRWWW5ViPGDhZFaRYOCArsNv9ujDZQLSw/iyNi4TOyy4ne/XVl
-         2unw==
-X-Forwarded-Encrypted: i=1; AJvYcCU5mIkcZJTZIGvHAo1hew0Um66zK/Il55GdPF81ZE5OwIjJNP1N1mTnXvPVHOohA5cOOARI310kzw9dX0QH@vger.kernel.org, AJvYcCUtYTRpmluTKTm8KiMuEiBiNgzSyq22srfP1ZF3T+9dJVtpXVNqJ5buOJOOxujOX7UMLBEJ0cmdsu6C@vger.kernel.org, AJvYcCUyDrMuzL/0s67acANV5+m8vvbV1l0m1GJ7CwetQ4+Gxk6sDTUze4sVAOF1ucYC+nmw0yrTbe7sT58=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw3XwMFO+S5G8PmXgO1j/KTX6ASSlYPwbA1qabConr/Sm0K0coY
-	+5ONPIHqxnpbXjhH01waKttiwZXlcLxz0aQYNowIUmNv1OGzdYE8z7pch+6/ejc=
-X-Gm-Gg: ASbGnctP/lQ4EMk0l2lf0hkAm3V+q2+4lIVBbocmMF+u3ZZcaTT7q3VlRKdS95uPCa8
-	6BIKFIemPU8RMbtS6dkiT6DMe85BYlgTtiqFo7eTY0z4L/mdpgYgWkim/1F0g00H4+EZeV9NugF
-	q1OQkF5W7Su9+LeEH/bVgoaVdnSWgovFqvIwh4bK+3gFETyri41GpoyL1xIpeBXrt2zZIsuDuGP
-	0jeeWEIrEinx1ToLoEUCNZ4WncdtRGFGC/ddUqmSq6SH6W79x4r1u45KvKARfKzB8UYmi1T9219
-	KqEUyYweIB+68aGa93KVQz53JZbTkq51bQQWrjTW8MIDisg2Bmb6CA==
-X-Google-Smtp-Source: AGHT+IEOkCuEJ4y6Pz/ka0G+KJKTZOyC+nCXkEkskAiqb7vP1hG++WLS+FAQG98+YjaTGs0pmzRsBg==
-X-Received: by 2002:a17:90b:2dc4:b0:2f2:a664:df1a with SMTP id 98e67ed59e1d1-30151cad150mr17773701a91.2.1742232016547;
-        Mon, 17 Mar 2025 10:20:16 -0700 (PDT)
-Received: from localhost ([2804:30c:b31:2d00:277c:5cbe:7f44:752b])
-        by smtp.gmail.com with UTF8SMTPSA id 98e67ed59e1d1-30153b994cdsm6328475a91.31.2025.03.17.10.20.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Mar 2025 10:20:15 -0700 (PDT)
-Date: Mon, 17 Mar 2025 14:21:13 -0300
-From: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	Marcelo Schmitt <marcelo.schmitt@analog.com>,
-	linux-iio@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, lars@metafoo.de,
-	Michael.Hennerich@analog.com, corbet@lwn.net
-Subject: Re: [PATCH v1 1/4] iio: adc: ad4000: Add support for SPI offload
-Message-ID: <Z9haCda4yF2SZ6gb@debian-BULLSEYE-live-builder-AMD64>
-References: <cover.1741970538.git.marcelo.schmitt@analog.com>
- <301fc83a961c4a2ef2ac980d0baa83d9d89a88c5.1741970538.git.marcelo.schmitt@analog.com>
- <20250317102751.5702fb82@jic23-huawei>
- <Z9hAUs1wPOIAo2nt@debian-BULLSEYE-live-builder-AMD64>
- <60831e04-52c2-446f-8bc5-b5d3e9e5fd40@baylibre.com>
+	s=arc-20240116; t=1742232148; c=relaxed/simple;
+	bh=B+Up7d0Z8wa56e82ogZrDvmKDPW4RJZVDvjvFFZDNRw=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=NsVaNo7citWdi9oT5/l8Uq/Q9tVDmw+KUfJUawYibeQ4GGTW8NQxMXMG9OTQx8kVomB448iInaRdN9wsj+YtLXLejc8UUt3rPJWgHINcOOV4m2ISCGYmtXkMaCQdSMxmmH13lYgxOIjnyvdi+iNqgKNpIa0d9rc7jjZ3hifrrTc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=UU87RXA5; arc=none smtp.client-ip=185.70.40.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1742232143; x=1742491343;
+	bh=DESxcuoCBw+aq4zHzk9noLj49928I7AbU/o2hoK4cnM=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
+	b=UU87RXA5BRMvneWzmaI8Z8XZj1+ESi5u9or6emtjsj67lXFTS0hWiziPYJINU5p4H
+	 T5iydj69o9KIlYCe2+itcXl5SGbJhdyaK5U31SKO5RZ5xlFrUT22wFqqxKSxKE16ok
+	 f204eaw+S3Nra4ALii6BGP2cPTmics/IP6ge3dFUJ5sw5MibG8/2Xpy6j33lySOmJl
+	 wqguRR5IPzU6qjR64iN3EJXRBquXF5fRMs5IG/NZQTkneEAcFe3+Sqct+xPT25bU/M
+	 +2IHCEEt2sjbmxb3s9g1bscRPeoPfQIrqRhgaMrg2e5O243GOl19VbulBGl8JokbDU
+	 rAq8p1k7vsHcA==
+Date: Mon, 17 Mar 2025 17:22:15 +0000
+To: Danilo Krummrich <dakr@kernel.org>, Tamir Duberstein <tamird@gmail.com>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] rust: alloc: use `spare_capacity_mut` to reduce unsafe
+Message-ID: <D8IPQUN25M12.2CIZR4QHJ201N@proton.me>
+In-Reply-To: <Z9hXMcFVdF8MMusU@cassiopeiae>
+References: <20250317-vec-push-use-spare-v1-1-7e025ef4ae14@gmail.com> <D8IM66U67XBD.28KWYO1XSF8ZQ@proton.me> <CAJ-ks9kq1cQ2-ZNzG9P4SBvk-AjXxT+na-89K33imB4fsCvu4A@mail.gmail.com> <Z9hXMcFVdF8MMusU@cassiopeiae>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: e266c822ec3552c9807e853f5439c912b8c7816c
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <60831e04-52c2-446f-8bc5-b5d3e9e5fd40@baylibre.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Hi, comments inline.
+On Mon Mar 17, 2025 at 6:09 PM CET, Danilo Krummrich wrote:
+> On Mon, Mar 17, 2025 at 10:39:05AM -0400, Tamir Duberstein wrote:
+>> On Mon, Mar 17, 2025 at 10:34=E2=80=AFAM Benno Lossin <benno.lossin@prot=
+on.me> wrote:
+>> > On Mon Mar 17, 2025 at 12:42 PM CET, Tamir Duberstein wrote:
+>> > > Use `spare_capacity_mut` in the implementation of `push` to reduce t=
+he
+>> > > use of `unsafe`. Both methods were added in commit 2aac4cd7dae3 ("ru=
+st:
+>> > > alloc: implement kernel `Vec` type").
+>> > >
+>> > > Signed-off-by: Tamir Duberstein <tamird@gmail.com>
+>> > > ---
+>> > >  rust/kernel/alloc/kvec.rs | 11 ++---------
+>> > >  1 file changed, 2 insertions(+), 9 deletions(-)
+>> > >
+>> > > diff --git a/rust/kernel/alloc/kvec.rs b/rust/kernel/alloc/kvec.rs
+>> > > index ae9d072741ce..d2bc3d02179e 100644
+>> > > --- a/rust/kernel/alloc/kvec.rs
+>> > > +++ b/rust/kernel/alloc/kvec.rs
+>> > > @@ -285,15 +285,8 @@ pub fn spare_capacity_mut(&mut self) -> &mut [M=
+aybeUninit<T>] {
+>> > >      pub fn push(&mut self, v: T, flags: Flags) -> Result<(), AllocE=
+rror> {
+>> > >          self.reserve(1, flags)?;
+>> > >
+>> > > -        // SAFETY:
+>> > > -        // - `self.len` is smaller than `self.capacity` and hence, =
+the resulting pointer is
+>> > > -        //   guaranteed to be part of the same allocated object.
+>> > > -        // - `self.len` can not overflow `isize`.
+>> > > -        let ptr =3D unsafe { self.as_mut_ptr().add(self.len) };
+>> > > -
+>> > > -        // SAFETY:
+>> > > -        // - `ptr` is properly aligned and valid for writes.
+>> > > -        unsafe { core::ptr::write(ptr, v) };
+>> > > +        // The call to `reserve` was successful so the spare capaci=
+ty is at least 1.
+>> > > +        self.spare_capacity_mut()[0].write(v);
+>> >
+>> > I think the code uses unsafe to avoid a bounds check, but I'm not 100%
+>> > sure. Danilo might remember more info.
+>
+> Yes, that was the justification to use unsafe calls instead.
+>
+> (This may also justify keeping dec_len() unsafe, since otherwise it would
+> introduce an additional boundary check for pop().)
 
-On 03/17, David Lechner wrote:
-> On 3/17/25 10:31 AM, Marcelo Schmitt wrote:
-> 
-> 
-> > ...
-> >>> +/*
-> >>> + * This executes a data sample transfer when using SPI offloading for when the
-> >>> + * device connections are in "3-wire" mode, selected when the adi,sdi-pin device
-> >>> + * tree property is set to "high". In this connection mode, the ADC SDI pin is
-> >>> + * connected to VIO and ADC CNV pin is connected to a SPI controller CS (it
-> >>> + * can't be connected to a GPIO).
-> >>> + *
-> >>> + * In order to achieve the maximum sample rate, we only do one transfer per
-> >>> + * SPI offload trigger. This has the effect that the first sample data is not
-> >>> + * valid because it is reading the previous conversion result. We also use
-> >>
-> >> Say what happens to that invalid sample.  Is it dropped or provided to userspace
-> >> as if it were valid?  (I hope dropped!)
-> > 
-> > TL;DR: The invalid sample goes into the buffer as a valid one.
-> > 
-> > In AD4000 '3-wire' mode, data capture has a latency (delay) of one sample.
-> > 
-> > The ADC begins sampling data N at CNV rising edge
-> >           |   +-- CNV (usually SPI CS) is brought low to begin reading the data
-> >           |   |                                +-- Data N + 1 that will be read
-> >           |   |                                |   on the next transfer starts 
-> >           v   v                                v   being sampled at end of transfer N.
-> >            ___                                  ____            
-> > CNV  _____/   \________________________________/    \_____
-> >                     _     _             _
-> > SCLK ______________/ \___/ \_ ...   ___/ \_______________
-> >                    ___   ___           ___
-> > SDO  _____________/___\_/___\ ...   __/___\_______________
-> >                     ^
-> >                     |
-> >              Data from conversion N is output from here on
-> > 
-> > A better drawing can be found in datasheet page 29, Figure 57.
-> > https://www.analog.com/media/en/technical-documentation/data-sheets/ADAQ4003.pdf
-> > 
-> > In sum, we're always reading a conversion that started at the end of the
-> > previous SPI transfer or, in other words, the data comes out with a latency
-> > (delay) of one read.
-> > 
-> > Datasheet somehow mentions that by saying
-> > 	When turbo mode is enabled, the conversion result read on SDO corresponds to
-> > 	the result of the previous conversion.
-> > 
-> > I think I can do a dummy SPI transfer on buffer preenable so at least the
-> > first data is not invalid. Would that be better?
-> 
-> Not really. There will be a relatively long delay between that conversion
-> trigger and when the sample is read. So the data might be slightly less stale
-> in that case, but still not particularly useful, e.g. if you are doing any
-> kind of signal processing that expects equal time between all samples.
-> 
-> On similar chips, like ad7944, we just documented that the first sample does
-> not contain valid data and needs to be discarded.
-> 
-Okay, I'll assume that to be acceptable and do the same for this one.
+If we use saturating_sub then we don't need a bounds check (at least on
+non-debug builds), right?=20
 
-...
+>> We could use `slice::get_unchecked_mut` here to retain the same
+>> guarantee of no bounds check. That would still be one fewer unsafe
+>> blocks.
+>
+> Sounds reasonable.
 
-> > I also didn't expect to find out HDL support for 16-bit data width was removed.
-> > We used to have a build parameter for 16-bit precision ADCs.
-> > https://github.com/analogdevicesinc/hdl/commit/b2dc91b30dae891b6319d88e083f26e726f43ba0#diff-1117c2618353232e5f22aa6a12e8ae976757fa897b3425f470a12123cae26535L13
-> 
-> A while back the HDL engineers mentioned to us that they wanted to standardize
-> on 32-bit data words everywhere. While not the most efficient use of memory,
-> having fewer options does make things simpler across the entire software stack.
-> 
-Ack
++1
 
-> > 
-> > Would something like 'because SPI offloading leads to data being pushed to
-> > memory in CPU endianness' be a reasonable comment?
-> 
-> Another way to say it is that SPI offload reads data in complete words and not
-> in separate 8-bit xfers (bits_per_word = realbits vs. bits_per_word = 8).
-> 
-Ah sure, I recall the effect of setting .bits_per_word now.
-Will add a comment explaining why the difference in endianness.
-
-Thanks,
-Marcelo
 
