@@ -1,182 +1,196 @@
-Return-Path: <linux-kernel+bounces-563385-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563383-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EC69A6409D
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 07:05:03 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 000F3A64097
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 07:04:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7FEDA7A524D
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 06:03:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 523C516C77D
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 06:04:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FD0921A43C;
-	Mon, 17 Mar 2025 06:04:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57B6A219A93;
+	Mon, 17 Mar 2025 06:04:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="N4L9L1zs"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="SIQygUy1"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13B11219A67;
-	Mon, 17 Mar 2025 06:04:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 867E51459F7;
+	Mon, 17 Mar 2025 06:04:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742191465; cv=none; b=spURLh8CMkD1WSVNW86xM/v+i9P0KUHKJ5iR65WerW0kbyWmFPY7NRHfuLyOWOhYxBae5jqJ4gcRRcthgGTM6kW/6gtqiOT68tu/tYxkrxAlQ5GG6lD+u9rWomZUsmiUPkKODQOMZ5AEOdClKMiAJFHwJlsLq/Fdz+TBGLKNWSY=
+	t=1742191452; cv=none; b=f8ME5K9Updl1yiP8LSGJ+ucFfRyLUSX1uyeIt0HMOh76+i/6KqGVcumpTpJbBgJqmEv6037i/l8pHEL7k8x/ZULvqzhjzAcx2yz/7UUAmVNtf1+QTTzYwXQ5/iNFv0E8025nbo9N/SGfw6P32lbeXCkwmHRaQvNzJ+YPwJd9M90=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742191465; c=relaxed/simple;
-	bh=BuLAe+ckD3KglGlKDOe/14ODpCMzOcuTzcAY60aVtB0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=folIYRdheouqCW/VMXcyvAhRyzPbkPVHIC85632K4Aq121sVqkv0oaK79C680YqO9b0nSmBT2KY+Kt75uR1/mClQKA5w/UGdGSpSWwDrqMIbJeYW6GzvtmQ1vRAClMUuwFMgu7dEf/ccKGO81zYOTe37ktl9loHr0CiYI6oW1mM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=N4L9L1zs; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52GKb4iN020117;
-	Mon, 17 Mar 2025 06:04:05 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=pp1; bh=6QyI19WOzYbsyCFPiTCl6pr1yzidgieZZUfeDkCxa
-	8s=; b=N4L9L1zs4+29PXSiFIBitPHYyAzR+uxH5gTbOKAYFC3Q/7IsW0F9QdS8g
-	BS/mEMfIqCdvBjtFVMlFrqURAePeZhxYnGZ/UxoBzSuPktp7CCLvhPAgHsAi0uTt
-	E3CVbEeIy+/9WKjEb7lpMIgyTA9J+V5loyDB8AbJZD22TLMa1aMIy/5ntiy3GSBR
-	3gLmC6JeHiSbnD4hWZIzTIq8zGjozIB+Ar9XnX92kd3gQdMiQ4cLDIS74razrFyS
-	5icjwlkvsRbkvOZ06ijWlyq/tLQHTtaqcAaZ+TSq605MnliJsjEASksp0BaM+Knp
-	xMNurm2As7t6Ih89NoVsRCEQWtn4Q==
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45e5tp9k35-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 17 Mar 2025 06:04:05 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52H3LU65009577;
-	Mon, 17 Mar 2025 06:04:04 GMT
-Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 45dm8ymte0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 17 Mar 2025 06:04:04 +0000
-Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
-	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52H640k747710690
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 17 Mar 2025 06:04:00 GMT
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id B95D620043;
-	Mon, 17 Mar 2025 06:04:00 +0000 (GMT)
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 6210620040;
-	Mon, 17 Mar 2025 06:03:59 +0000 (GMT)
-Received: from li-c18b6acc-24ee-11b2-a85c-81492619bda1.in.ibm.com (unknown [9.109.215.55])
-	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Mon, 17 Mar 2025 06:03:59 +0000 (GMT)
-From: Aboorva Devarajan <aboorvad@linux.ibm.com>
-To: "Rafael J . Wysocki" <rafael@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Christian Loehle <christian.loehle@arm.com>,
-        Gautam Menghani <gautam@linux.ibm.com>,
-        Aboorva Devarajan <aboorvad@linux.ibm.com>, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 1/1] cpuidle: menu: Prefer polling state for short idle durations
-Date: Mon, 17 Mar 2025 11:33:57 +0530
-Message-ID: <20250317060357.29451-1-aboorvad@linux.ibm.com>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1742191452; c=relaxed/simple;
+	bh=MSbgezf+uWKm9OnBadZ4wxifQx2zec1fdEbK61jVGa0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=L1fc0fz6ZkPJ2GmJS5h4CTC46cHCTFV6cd33u9F47Ft97/P70/iB+Lx46G8ptJLOYU23LUJVP1w3DGQWZA8BScoKZqftyEsqcrulL7FTDEfqbXSjRDtSfgT0SPuhJNew4io4VKVuAj8N6JkroGJL9SCxzNiCQcFXgPSuJcv4T/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=SIQygUy1; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1742191446;
+	bh=VRN5xYfpqR4+9fIF8y4DrwFpD1z+sCyIqoqSvaovC/8=;
+	h=Date:From:To:Cc:Subject:From;
+	b=SIQygUy1N3/2BrpBZvuQYtucwAcLw/GugkcDsYSKr8LWsqxuI/3S9rrNENgmxjbif
+	 bvSL6ut4NRc7pja2dQ6OGjlrUgIXHbhRoUpikq3bVEGFFExAFprwJdarx04ZWcf8SY
+	 kOqnbu9fxlRhUrVvHbyCeQwWdPewnPD+55UgLxw7TRj2QkxN88O5UMqhZVbzGNkWwP
+	 VoNa2ITnQ0hTL8qWyd9kI8lMN/SYE/qrPjacP+6456fEYA4IxyA6If/xX9vI+H8R3w
+	 LWU9f9JYfAzOgKWZ58vIIcUg8QdHhSOu+U1qj2pr74okSwXKePZrPo96PfNvgNBJQ5
+	 BoiMBhT2txGdw==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZGPYd3rfgz4wcZ;
+	Mon, 17 Mar 2025 17:04:04 +1100 (AEDT)
+Date: Mon, 17 Mar 2025 17:04:04 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Christoffer Dall <cdall@cs.columbia.edu>, Marc Zyngier <maz@kernel.org>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>, Mark Rutland
+ <mark.rutland@arm.com>, Oliver Upton <oliver.upton@linux.dev>, Shameer
+ Kolothum <shameerali.kolothum.thodi@huawei.com>
+Subject: linux-next: manual merge of the kvm-arm tree with the arm64 tree
+Message-ID: <20250317170404.733b119c@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: tNbJvwSjnEJAJOzgXClmmcDcd8RXCkkI
-X-Proofpoint-ORIG-GUID: tNbJvwSjnEJAJOzgXClmmcDcd8RXCkkI
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-17_01,2025-03-17_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 malwarescore=0
- spamscore=0 clxscore=1015 mlxscore=0 impostorscore=0 phishscore=0
- adultscore=0 priorityscore=1501 mlxlogscore=999 lowpriorityscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502280000 definitions=main-2503170042
+Content-Type: multipart/signed; boundary="Sig_/w07Lwe91=U2TS+49ppJugyt";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Avoid selecting deep idle state when the predicted idle duration is
-shorter than its target residency, as this leads to unnecessary state
-transitions without energy savings.
+--Sig_/w07Lwe91=U2TS+49ppJugyt
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On virtualized PowerPC (pseries) systems, where only one polling state
-(Snooze) and one deep state (CEDE) are available, selecting CEDE when
-its target residency exceeds the predicted idle duration hurts
-performance.
+Hi all,
 
-For example, if the predicted idle duration is 15 us and the first
-non-polling state has a target residency of 120 us, selecting it
-would be suboptimal.
+Today's linux-next merge of the kvm-arm tree got a conflict in:
 
-Remove the condition introduced in commit 69d25870f20c
-("cpuidle: fix the menu governor to boost IO performance") that
-prioritized non-polling states even when their target residency
-exceeded the predicted idle duration and allow polling states to
-be selected when appropriate.
+  arch/arm64/kernel/cpufeature.c
 
-Performance improvement observed with pgbench on PowerPC (pseries)
-system:
-+---------------------------+------------+------------+------------+
-| Metric                    | Baseline   | Patched    | Change (%) |
-+---------------------------+------------+------------+------------+
-| Transactions/sec (TPS)    | 494,834    | 538,707    | +8.85%     |
-| Avg latency (ms)          | 0.162      | 0.149      | -8.02%     |
-+---------------------------+------------+------------+------------+
+between commits:
 
-CPUIdle state usage:
-+--------------+--------------+-------------+
-| Metric       | Baseline     | Patched     |
-+--------------+--------------+-------------+
-| Total usage  | 12,703,630   | 13,941,966  |
-| Above usage  | 11,388,990   | 1,620,474   |
-| Below usage  | 19,973       | 684,708     |
-+--------------+--------------+-------------+
+  f4fe70cd8522 ("arm64: cpufeature: factor out cpu_is_meltdown_safe()")
+  837dfd070e94 ("arm64: cpufeature: mitigate CVE-2024-7881")
 
-Above/Total and Below/Total usage percentages:
-+------------------------+-----------+---------+
-| Metric                 | Baseline  | Patched |
-+------------------------+-----------+---------+
-| Above % (Above/Total)  | 89.67%    | 11.63%  |
-| Below % (Below/Total)  | 0.16%     | 4.91%   |
-| Total cpuidle miss (%) | 89.83%    | 16.54%  |
-+------------------------+-----------+---------+
+from the arm64 tree and commit:
 
-Signed-off-by: Aboorva Devarajan <aboorvad@linux.ibm.com>
+  e3121298c7fc ("arm64: Modify _midr_range() functions to read MIDR/REVIDR =
+internally")
 
----
+from the kvm-arm tree.
 
-v1: https://lore.kernel.org/all/20240809073120.250974-1-aboorvad@linux.ibm.com/
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
-v1 -> v2:
+--=20
+Cheers,
+Stephen Rothwell
 
-- Drop cover letter and improve commit message.
----
- drivers/cpuidle/governors/menu.c | 11 -----------
- 1 file changed, 11 deletions(-)
+diff --cc arch/arm64/kernel/cpufeature.c
+index f5ca9a535eba,9c4d6d552b25..000000000000
+--- a/arch/arm64/kernel/cpufeature.c
++++ b/arch/arm64/kernel/cpufeature.c
+@@@ -1787,63 -1791,15 +1789,63 @@@ static bool cpu_is_meltdown_safe(void
+  		MIDR_ALL_VERSIONS(MIDR_QCOM_KRYO_4XX_SILVER),
+  		{ /* sentinel */ }
+  	};
+ +
+- 	if (is_midr_in_range_list(read_cpuid_id(), meltdown_safe_list))
+++	if (is_midr_in_range_list(meltdown_safe_list))
+ +		return true;
+ +
+ +	/*
+ +	 * ID_AA64PFR0_EL1.CSV3 > 0 indicates that this CPU is not vulnerable
+ +	 * to meltdown.
+ +	 */
+ +	pfr0 =3D __read_sysreg_by_encoding(SYS_ID_AA64PFR0_EL1);
+ +	if (cpuid_feature_extract_unsigned_field(pfr0, ID_AA64PFR0_EL1_CSV3_SHIF=
+T))
+ +		return true;
+ +
+ +	return false;
+ +}
+ +
+ +static bool cpu_has_leaky_prefetcher(void)
+ +{
+ +	struct arm_smccc_res res;
+ +
+ +	/* CPUs which are affected by CVE-2024-7881 */
+ +	static const struct midr_range leaky_prefetcher_list[] =3D {
+ +		MIDR_ALL_VERSIONS(MIDR_CORTEX_X3),
+ +		MIDR_ALL_VERSIONS(MIDR_CORTEX_X4),
+ +		MIDR_ALL_VERSIONS(MIDR_CORTEX_X925),
+ +		MIDR_ALL_VERSIONS(MIDR_NEOVERSE_V2),
+ +		MIDR_ALL_VERSIONS(MIDR_NEOVERSE_V3),
+ +		{ /* sentinel */ }
+ +	};
+ +
+- 	if (!is_midr_in_range_list(read_cpuid_id(), leaky_prefetcher_list))
+++	if (!is_midr_in_range_list(leaky_prefetcher_list))
+ +		return false;
+ +
+ +	/*
+ +	 * If ARCH_WORKAROUND_4 is implemented, then the firmware mitigation is
+ +	 * present. There is no need to call ARCH_WORKAROUND_4 itself.
+ +	 */
+ +	arm_smccc_1_1_invoke(ARM_SMCCC_ARCH_FEATURES_FUNC_ID,
+ +			     ARM_SMCCC_ARCH_WORKAROUND_4, &res);
+ +	if (res.a0 =3D=3D SMCCC_RET_SUCCESS)
+ +		return false;
+ +
+ +	return true;
+ +}
+ +
+ +static bool __meltdown_safe =3D true;
+ +static bool __leaky_prefetch_safe =3D true;
+ +static int __kpti_forced; /* 0: not forced, >0: forced on, <0: forced off=
+ */
+ +
+ +static bool needs_kpti(const struct arm64_cpu_capabilities *entry, int sc=
+ope)
+ +{
+  	char const *str =3D "kpti command line option";
+  	bool meltdown_safe;
+ +	bool prefetcher_safe;
+ =20
+ -	meltdown_safe =3D is_midr_in_range_list(kpti_safe_list);
+ -
+ -	/* Defer to CPU feature registers */
+ -	if (has_cpuid_feature(entry, scope))
+ -		meltdown_safe =3D true;
+ +	WARN_ON(scope !=3D SCOPE_LOCAL_CPU);
+ =20
+ +	meltdown_safe =3D cpu_is_meltdown_safe();
+  	if (!meltdown_safe)
+  		__meltdown_safe =3D false;
+ =20
 
-diff --git a/drivers/cpuidle/governors/menu.c b/drivers/cpuidle/governors/menu.c
-index 28363bfa3e4c..4b199377e4be 100644
---- a/drivers/cpuidle/governors/menu.c
-+++ b/drivers/cpuidle/governors/menu.c
-@@ -296,17 +296,6 @@ static int menu_select(struct cpuidle_driver *drv, struct cpuidle_device *dev,
- 			idx = i; /* first enabled state */
- 
- 		if (s->target_residency_ns > predicted_ns) {
--			/*
--			 * Use a physical idle state, not busy polling, unless
--			 * a timer is going to trigger soon enough.
--			 */
--			if ((drv->states[idx].flags & CPUIDLE_FLAG_POLLING) &&
--			    s->exit_latency_ns <= latency_req &&
--			    s->target_residency_ns <= data->next_timer_ns) {
--				predicted_ns = s->target_residency_ns;
--				idx = i;
--				break;
--			}
- 			if (predicted_ns < TICK_NSEC)
- 				break;
- 
--- 
-2.43.5
+--Sig_/w07Lwe91=U2TS+49ppJugyt
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfXu1QACgkQAVBC80lX
+0GzNfgf9GGeB2uQbbkYuvs2ok5le95utX5Xw2Ho6m1zUdLgD9ntlJfmFdVJulWb9
+ljbY0yVADCtSXaYo2kMORPSyfAP50Q4DFnjzT5E2dl68hDXxb4dZSxTzewGirIIy
+J4NwPRgw17Zg3QOaA09vQA9RSRfXj3twBMU9/VEctL/SBp1SulDg/BPcIWWrDc9l
+ZnZra13SbRtBSIBCJv4e6n8foJQDLIE81cofKscB7LaTB/g+a8L3F5LZhaoLSzPq
+kqx4A3wWZXs6Zr3q5iGfbM1J/ClnCzKSpPejG/F83/JpVblZumI+uFvEGZ73cVIj
+YVdnnIwLeXSDNJfhtPuvqg/K4MpApw==
+=Hcez
+-----END PGP SIGNATURE-----
+
+--Sig_/w07Lwe91=U2TS+49ppJugyt--
 
