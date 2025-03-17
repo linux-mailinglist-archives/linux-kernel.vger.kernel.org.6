@@ -1,88 +1,89 @@
-Return-Path: <linux-kernel+bounces-563950-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563951-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81B91A64B14
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:54:32 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2FADA64AC0
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:49:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2B223B10FF
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:48:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 85C35172C59
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:49:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 940AF236A84;
-	Mon, 17 Mar 2025 10:46:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 807F8233720;
+	Mon, 17 Mar 2025 10:47:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="JUBzfXes";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="RsoP0sTd";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="JUBzfXes";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="RsoP0sTd"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Hhk3kSc7";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="+3D+tPM+";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Hhk3kSc7";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="+3D+tPM+"
 Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E52B23644D
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 10:46:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 663CE1C6FF0
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 10:47:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742208417; cv=none; b=uzhb/Rq82U0YXMCYIg0tEeYCA3Ez0wSbXa96NPYaHlFeRuoQXMfS6MFxH9+Nk/7FemLfR0O+DVinIwLOd2J6F08zjatdc8bclwJSrmFGoSt1Zg4/iy9iqyB0SMiRFQLgoWbGGtx+i9upx36Sk1SpnHWDus6a1HtMesSHplPCeWw=
+	t=1742208450; cv=none; b=LhjlIbO8e5tDQddi0/swMVNHAnIYnC3PpXZrOYf9zOPdV/FmZ/nm6onYx1+q4XSzw6/6c2SysQwc2gLiCRHZ/w574iZ5NpbSMbqqOQjcF/4o7/iNwR7J1qyH7Q3XPwzF/Enk2UxAl3Na2tWkFyClQ0cefhdldwUfYNQ8GUOX50E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742208417; c=relaxed/simple;
-	bh=/jrOmL/K83nlDGJfp0Db7FJSFJf1ozykVQfclRetGxc=;
+	s=arc-20240116; t=1742208450; c=relaxed/simple;
+	bh=/OuUF7rJmyCOHVd//50NuL2eJpKoPuIOA06s+X8Ybzw=;
 	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=WQocmAWiKr/pQdpSBIjIs9/4vUgqGRRUoLXLSwA8Ic2qfbrTpwrVXQ9jdDW2HIlOCmthRhIHl+ABw5zRD0pAWC5y8mqSHfFufT/ydxc1wd3pgGIIIZ1WCHa2p3x/EEFvbWeI2HYwfnSSAAASRB9vwIHliqrYFeYVviqtgUR0+ao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=JUBzfXes; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=RsoP0sTd; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=JUBzfXes; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=RsoP0sTd; arc=none smtp.client-ip=195.135.223.130
+	 MIME-Version:Content-Type; b=sGMvKJpdyubc0KGQOWKeBLintpWebUPm7zQaGV1DMx9bkHvshM9U81T0jQIs6eyWP+iro+7A2xLve/jA59Araz2TSeXChKwKTb/X/gTq5akAIFr+pMQo0TujcIiV/ver6Vy73jDd49oNpk/uyPFZ2LKTELcJx3EnpqZ5dU1hDOk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Hhk3kSc7; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=+3D+tPM+; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Hhk3kSc7; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=+3D+tPM+; arc=none smtp.client-ip=195.135.223.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
 Received: from pobox.suse.cz (unknown [10.100.2.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id A050321EE8;
-	Mon, 17 Mar 2025 10:46:53 +0000 (UTC)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 6523521242;
+	Mon, 17 Mar 2025 10:47:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1742208413; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1742208447; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=aRNUV7K56esT5Ofb17Nf3SuYMTDDFHCFe2TbYCH/MuY=;
-	b=JUBzfXesd3VM7xBkJlAtx2wkA/5Z6Hu0hNNxPwfW7gcdP1ubxgfDzbNvqX0wJL/ESdSVcN
-	+12Et3fAvyMaHgGSeROB1XDJzfbYAMNfKYrZsBXXAIo5zpbyO0n1SVq1MMorblkehCho53
-	skEV5FcLQfN7LG95qSXU3rBa4Zhhiz4=
+	bh=p7eSlEMeY+VEfLS6gjYkEltEQIBcRRAhJM3thCxjM+E=;
+	b=Hhk3kSc7/j34UEDCEwalseHIxcuHNpa+eZFz3tHf+Y5EOU2WH4yHpHQEoTC7ITdhqXRvGE
+	SjntIoaZBC1xIo4tWSWRMPO7UDfK1RabHMKxcr9gX29ggJB1VG7pM7vdHY6WCjUrZDXRMH
+	ZZzZMqaqBdJEn4BPw5vl23uUL4850Ug=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1742208413;
+	s=susede2_ed25519; t=1742208447;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=aRNUV7K56esT5Ofb17Nf3SuYMTDDFHCFe2TbYCH/MuY=;
-	b=RsoP0sTdsZaR2xBN3Eeo3lzFMWh26IpRutnKw5DiGUBZQkYj74wSqyXOExmfeNu0WQYaW+
-	HjIM2qLCA4WMJYBA==
+	bh=p7eSlEMeY+VEfLS6gjYkEltEQIBcRRAhJM3thCxjM+E=;
+	b=+3D+tPM+vE9HP4J8GIMoxDYgjCSgknsIqgffo60K8cfEbPzU+w6LkXUyOSpw5W0yvVNDdJ
+	3awsinsPxRXZHNCg==
 Authentication-Results: smtp-out1.suse.de;
 	none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1742208413; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1742208447; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=aRNUV7K56esT5Ofb17Nf3SuYMTDDFHCFe2TbYCH/MuY=;
-	b=JUBzfXesd3VM7xBkJlAtx2wkA/5Z6Hu0hNNxPwfW7gcdP1ubxgfDzbNvqX0wJL/ESdSVcN
-	+12Et3fAvyMaHgGSeROB1XDJzfbYAMNfKYrZsBXXAIo5zpbyO0n1SVq1MMorblkehCho53
-	skEV5FcLQfN7LG95qSXU3rBa4Zhhiz4=
+	bh=p7eSlEMeY+VEfLS6gjYkEltEQIBcRRAhJM3thCxjM+E=;
+	b=Hhk3kSc7/j34UEDCEwalseHIxcuHNpa+eZFz3tHf+Y5EOU2WH4yHpHQEoTC7ITdhqXRvGE
+	SjntIoaZBC1xIo4tWSWRMPO7UDfK1RabHMKxcr9gX29ggJB1VG7pM7vdHY6WCjUrZDXRMH
+	ZZzZMqaqBdJEn4BPw5vl23uUL4850Ug=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1742208413;
+	s=susede2_ed25519; t=1742208447;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=aRNUV7K56esT5Ofb17Nf3SuYMTDDFHCFe2TbYCH/MuY=;
-	b=RsoP0sTdsZaR2xBN3Eeo3lzFMWh26IpRutnKw5DiGUBZQkYj74wSqyXOExmfeNu0WQYaW+
-	HjIM2qLCA4WMJYBA==
-Date: Mon, 17 Mar 2025 11:46:53 +0100 (CET)
+	bh=p7eSlEMeY+VEfLS6gjYkEltEQIBcRRAhJM3thCxjM+E=;
+	b=+3D+tPM+vE9HP4J8GIMoxDYgjCSgknsIqgffo60K8cfEbPzU+w6LkXUyOSpw5W0yvVNDdJ
+	3awsinsPxRXZHNCg==
+Date: Mon, 17 Mar 2025 11:47:27 +0100 (CET)
 From: Miroslav Benes <mbenes@suse.cz>
 To: Josh Poimboeuf <jpoimboe@kernel.org>
 cc: x86@kernel.org, linux-kernel@vger.kernel.org, 
     Peter Zijlstra <peterz@infradead.org>, 
     Brendan Jackman <jackmanb@google.com>, 
     Nathan Chancellor <nathan@kernel.org>
-Subject: Re: [PATCH 04/13] objtool: Update documentation
-In-Reply-To: <2552ee8b48631127bf269359647a7389edf5f002.1741975349.git.jpoimboe@kernel.org>
-Message-ID: <alpine.LSU.2.21.2503171143290.4236@pobox.suse.cz>
-References: <cover.1741975349.git.jpoimboe@kernel.org> <2552ee8b48631127bf269359647a7389edf5f002.1741975349.git.jpoimboe@kernel.org>
+Subject: Re: [PATCH 01/13] x86/traps: Make exc_double_fault() consistently
+ noreturn
+In-Reply-To: <d1f4026f8dc35d0de6cc61f2684e0cb6484009d1.1741975349.git.jpoimboe@kernel.org>
+Message-ID: <alpine.LSU.2.21.2503171147090.4236@pobox.suse.cz>
+References: <cover.1741975349.git.jpoimboe@kernel.org> <d1f4026f8dc35d0de6cc61f2684e0cb6484009d1.1741975349.git.jpoimboe@kernel.org>
 User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -111,42 +112,31 @@ X-Spamd-Result: default: False [-4.30 / 50.00];
 X-Spam-Flag: NO
 X-Spam-Level: 
 
-Hi,
+On Fri, 14 Mar 2025, Josh Poimboeuf wrote:
 
->  1. Each callable function must be annotated as such with the ELF
->     function type.  In asm code, this is typically done using the
-> -   ENTRY/ENDPROC macros.  If objtool finds a return instruction
-> +   SYM_FUNC_{START,END} macros.  If objtool finds a return instruction
->     outside of a function, it flags an error since that usually indicates
->     callable code which should be annotated accordingly.
+> The CONFIG_X86_ESPFIX64 version of exc_double_fault() can return to its
+> caller, but the !CONFIG_X86_ESPFIX64 version never does.  In the latter
+> case the compiler and/or objtool may consider it to be implicitly
+> noreturn.
+> 
+> However, due to the currently inflexible way objtool detects noreturns,
+> a function's noreturn status needs to be consistent across configs.
+> 
+> The current workaround for this issue is to suppress unreachable
+> warnings for exc_double_fault()'s callers.  Unfortunately that can
+> result in ORC coverage gaps and potentially worse issues like inert
+> static calls and silently disabled CPU mitigations.
+> 
+> Instead, prevent exc_double_fault() from ever being implicitly marked
+> noreturn by forcing a return behind a never-taken conditional.
+> 
+> Until a more integrated noreturn detection method exists, this is likely
+> the least objectionable workaround.
+> 
+> Fixes: 55eeab2a8a11 ("objtool: Ignore exc_double_fault() __noreturn warnings")
+> Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
 
-there is one more occurrence of ENDPROC/END under "1. file.o: warning: 
-objtool: func()+0x128: call without frame pointer save/setup" section 
-which might be nice to update as well.
+Reviewed-by: Miroslav Benes <mbenes@suse.cz>
 
-> @@ -339,23 +351,21 @@ the objtool maintainers.
->  
->     This is a kernel entry/exit instruction like sysenter or iret.  Such
->     instructions aren't allowed in a callable function, and are most
-> -   likely part of the kernel entry code.  They should usually not have
-> -   the callable function annotation (ENDPROC) and should always be
-> -   annotated with the unwind hint macros in asm/unwind_hints.h.
-> +   likely part of the kernel entry code.  Such code should probably be
-> +   placed in a SYM_FUNC_CODE block with unwind hints.
-
-SYM_CODE_{START,END} block?
-
->  7. file: warning: objtool: func()+0x5c: stack state mismatch
-> @@ -371,8 +381,8 @@ the objtool maintainers.
->  
->     Another possibility is that the code has some asm or inline asm which
->     does some unusual things to the stack or the frame pointer.  In such
-> -   cases it's probably appropriate to use the unwind hint macros in
-> -   asm/unwind_hints.h.
-> +   cases it's probably appropriate to use SYM_FUNC_CODE with unwind
-> +   hints.
-
-dtto
-
-Miroslav
+M
 
