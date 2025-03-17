@@ -1,113 +1,312 @@
-Return-Path: <linux-kernel+bounces-564016-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564017-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 129D7A64C16
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 12:16:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE729A64C17
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 12:16:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 66960169B2B
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:16:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E452B3A3630
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:16:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 454E52356D0;
-	Mon, 17 Mar 2025 11:16:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K5l1nkp/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9651C23717D;
+	Mon, 17 Mar 2025 11:16:09 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F3F442069;
-	Mon, 17 Mar 2025 11:16:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27C2C1D79B3
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 11:16:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742210166; cv=none; b=iw3i6AStOwloYmGANdoLcpemurIRoIA1YUl2mtmrXegGPe+8jtRu92zWBs90yFlnPDLU5Z6AFCQQte2VlxEpoqtSXmlWpe1Mxn2kz6QL5kENPufHb5PCVVg0CxF9wNhQ0h2mXLRV8rgFoYmc8h01xABmE2VhveDk3PWCUVKqYzk=
+	t=1742210169; cv=none; b=ZniK/ff/qlwgc+t4Y9rvJ0j19TmRZkoc24hoZauQdK6tmC1aAWP+T7JtKG8+jG+nMUhfg2rRX5yysWW3dPy/ZusPbxJehOVH/OigOdmivPVErAm/QW7kx/D+v46oItTARZeh78QFF5EcCBgOT229alWpE2n9L7vosoFmsHAP+Bw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742210166; c=relaxed/simple;
-	bh=OaMOFq+Tfv3lDS5eZ6Buv2ayrywSEXFmvlYWNCSt1nY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H6trcVpcYowMHDJD5MZaeVWGzznDi9JKxy1qL53R42EOZwIa0f6KIFBoGyYrnwwJ8VJUU4pz0XyD6F2fwbeHW6Vc96BOrAlgrdkJRTsBZk9rDFXSlaO1db3fGUG3v/YAP+4KfBsn+KGzHHbebmRIZchSyALZ49CUON28uSb5IwM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K5l1nkp/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E9D0C4CEE3;
-	Mon, 17 Mar 2025 11:16:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742210166;
-	bh=OaMOFq+Tfv3lDS5eZ6Buv2ayrywSEXFmvlYWNCSt1nY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=K5l1nkp/YS6nGYbNPBoLd12N8u0FdLmg1Hjj4nEUYhx+dRbQQBsppNX9w7tu95Uhp
-	 6On9MvFi0xk8TKRKYA/9ZDzLNwTOTHc2Rq1PSstfu8621eqVWR3wNCyJY/F7GuXzbd
-	 TSI0eSg3Ujr7qXp4amCG/9faawxd9CbaBWlcVy2WV1GEjGHc+0ZSUq3mF1yskyP1Ve
-	 Eb6fyjYCtA2Gm+70zdDT0YDGA1GTbv/FymUA1Uwcwp7gxJ3YEyhOUIYbo5NwJ+qXT6
-	 jC0UKOD03Z9N4qpzNHgKoeaXTaRBKFDwePoiwHIxvSgQYRsquzjBE+B03JInmfXg1H
-	 fB7iMf8ynziLA==
-Date: Mon, 17 Mar 2025 12:16:00 +0100
-From: Danilo Krummrich <dakr@kernel.org>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Tamir Duberstein <tamird@gmail.com>,
-	Andrew Ballance <andrewjballance@gmail.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] rust: alloc: replace `Vec::set_len` with `inc_len`
-Message-ID: <Z9gEcDRDLTd4Svp7@pollux>
-References: <20250316-vec-set-len-v1-0-60f98a28723f@gmail.com>
- <20250316-vec-set-len-v1-1-60f98a28723f@gmail.com>
- <Z9f-Z15bSh8MA1wJ@google.com>
+	s=arc-20240116; t=1742210169; c=relaxed/simple;
+	bh=fjv4AQZkwau5k7p11QuUzqeIb3FE5P+Kcmon5+Vb+8c=;
+	h=Subject:To:References:CC:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=XGBRRkRQbpXclSNM37LfG29BRGF70Ahj4s3yPaALkGqcgwfvG4tOeBVPX4DlRMbbltfNJ0H0ymPQ+djyCy4do61rsah50QfrtFq0ReFyqHfAS7t47fhP9oYhfO+QmOrj0cJeLL7NEE1LoG1CAUFM2rvjEqVGWjkyjsJnKVRD6ng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.105])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4ZGXRt548lztQq3;
+	Mon, 17 Mar 2025 19:14:34 +0800 (CST)
+Received: from dggemv704-chm.china.huawei.com (unknown [10.3.19.47])
+	by mail.maildlp.com (Postfix) with ESMTPS id 0197D140159;
+	Mon, 17 Mar 2025 19:16:03 +0800 (CST)
+Received: from kwepemn500004.china.huawei.com (7.202.194.145) by
+ dggemv704-chm.china.huawei.com (10.3.19.47) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Mon, 17 Mar 2025 19:16:02 +0800
+Received: from [10.67.120.218] (10.67.120.218) by
+ kwepemn500004.china.huawei.com (7.202.194.145) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 17 Mar 2025 19:16:02 +0800
+Subject: Re: [PATCH] coresight: Fixes device's owner field for registered
+ using coresight_init_driver()
+To: Suzuki K Poulose <suzuki.poulose@arm.com>, <james.clark@arm.com>,
+	<anshuman.khandual@arm.com>
+References: <20240918035327.9710-1-hejunhao3@huawei.com>
+ <e2194d2a-0f51-4e59-a1ca-b4563b3389ec@arm.com>
+ <c3744062-f7c1-82df-2fa1-591da3b2dc5e@huawei.com>
+ <1a030491-5bc6-4122-baed-faf123f0f872@arm.com>
+CC: <coresight@lists.linaro.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <linuxarm@huawei.com>,
+	<jonathan.cameron@huawei.com>, <yangyicong@huawei.com>,
+	<prime.zeng@hisilicon.com>
+From: hejunhao <hejunhao3@huawei.com>
+Message-ID: <2a681949-3053-8ae6-597b-49b16e1e87af@huawei.com>
+Date: Mon, 17 Mar 2025 19:16:01 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.7.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z9f-Z15bSh8MA1wJ@google.com>
+In-Reply-To: <1a030491-5bc6-4122-baed-faf123f0f872@arm.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ kwepemn500004.china.huawei.com (7.202.194.145)
 
-On Mon, Mar 17, 2025 at 10:50:15AM +0000, Alice Ryhl wrote:
-> On Sun, Mar 16, 2025 at 06:32:00PM -0400, Tamir Duberstein wrote:
-> > Rename `set_len` to `inc_len` and simplify its safety contract.
-> 
-> You're missing a Signed-off-by tag.
-> 
-> >  rust/kernel/alloc/kvec.rs | 19 +++++++++----------
-> >  rust/kernel/str.rs        |  2 +-
-> >  rust/kernel/uaccess.rs    |  2 +-
-> >  3 files changed, 11 insertions(+), 12 deletions(-)
-> > 
-> > diff --git a/rust/kernel/alloc/kvec.rs b/rust/kernel/alloc/kvec.rs
-> > index ae9d072741ce..d43a1d609434 100644
-> > --- a/rust/kernel/alloc/kvec.rs
-> > +++ b/rust/kernel/alloc/kvec.rs
-> > @@ -183,17 +183,16 @@ pub fn len(&self) -> usize {
-> >          self.len
-> >      }
-> >  
-> > -    /// Forcefully sets `self.len` to `new_len`.
-> > +    /// Increments `self.len` by `additional`.
-> >      ///
-> >      /// # Safety
-> >      ///
-> > -    /// - `new_len` must be less than or equal to [`Self::capacity`].
-> > -    /// - If `new_len` is greater than `self.len`, all elements within the interval
-> > -    ///   [`self.len`,`new_len`) must be initialized.
-> > +    /// - `self.len + additional` must be less than or equal to [`Self::capacity`].
-> > +    /// - All elements within the interval [`self.len`,`self.len + additional`) must be initialized.
-> >      #[inline]
-> > -    pub unsafe fn set_len(&mut self, new_len: usize) {
-> > -        debug_assert!(new_len <= self.capacity());
-> > -        self.len = new_len;
-> > +    pub unsafe fn inc_len(&mut self, additional: usize) {
-> > +        debug_assert!(self.len() + additional <= self.capacity());
-> > +        self.len += additional;
-> 
-> I guess we could use an INVARIANT: comment here.
+Hi Suzuki,
 
-Yeah, I fixed that up in a separate patch. I'm fine with Tamir picking it up or
-doing it himself in a new one, etc. But I think this patch should only focus on
-the rename.
+
+On 2025/3/14 18:38, Suzuki K Poulose wrote:
+> Hi
+>
+> On 14/03/2025 07:44, hejunhao wrote:
+>> Hi Suzuki,
+>>
+>> Could you confirm if this patch was queued in coresight/next or 
+>> upstream of the mainline?
+>>
+>> I couldn't find it in: kernel/git/coresight/linux.git or Kernel 
+>> v6.14.0- rc4.
+>>
+>> Maybe am I missing some information?
+>
+> Apologies, I missed queueing this. That said, I have a minor comment 
+> on the patch below.
+>
+>>
+>> Best regards,
+>> Junhao.
+>>
+>>
+>> On 2024/9/18 16:29, Suzuki K Poulose wrote:
+>>> On 18/09/2024 04:53, Junhao He wrote:
+>>>> The coresight_init_driver() of the coresight-core module is called 
+>>>> from
+>>>> the sub coresgiht device (such as tmc/stm/funnle/...) module. It calls
+>>>> amba_driver_register() and Platform_driver_register(), which are macro
+>>>> functions that use the coresight-core's module to initialize the 
+>>>> caller's
+>>>> owner field.  Therefore, when the sub coresight device calls
+>>>> coresight_init_driver(), an incorrect THIS_MODULE value is captured.
+>>>>
+>>>> The sub coesgiht modules can be removed while their callbacks are
+>>>> running, resulting in a general protection failure.
+>>>>
+>>>> Add module parameter to coresight_init_driver() so can be called
+>>>> with the module of the callback.
+>>>>
+>>>> Fixes: 075b7cd7ad7d ("coresight: Add helpers registering/removing 
+>>>> both AMBA and platform drivers")
+>>>> Signed-off-by: Junhao He <hejunhao3@huawei.com>
+>>>
+>>> Thanks for the fix, looks good to me. I will queue this for v6.13
+>>>
+>>> Suzuki
+>>>
+>>>> ---
+>>>>   drivers/hwtracing/coresight/coresight-catu.c       | 2 +-
+>>>>   drivers/hwtracing/coresight/coresight-core.c       | 6 +++---
+>>>>   drivers/hwtracing/coresight/coresight-cpu-debug.c  | 3 ++-
+>>>>   drivers/hwtracing/coresight/coresight-funnel.c     | 3 ++-
+>>>>   drivers/hwtracing/coresight/coresight-replicator.c | 3 ++-
+>>>>   drivers/hwtracing/coresight/coresight-stm.c        | 2 +-
+>>>>   drivers/hwtracing/coresight/coresight-tmc-core.c   | 2 +-
+>>>>   drivers/hwtracing/coresight/coresight-tpiu.c       | 2 +-
+>>>>   include/linux/coresight.h                          | 2 +-
+>>>>   9 files changed, 14 insertions(+), 11 deletions(-)
+>>>>
+>>>> diff --git a/drivers/hwtracing/coresight/coresight-catu.c 
+>>>> b/drivers/ hwtracing/coresight/coresight-catu.c
+>>>> index bfea880d6dfb..337668f9cfd4 100644
+>>>> --- a/drivers/hwtracing/coresight/coresight-catu.c
+>>>> +++ b/drivers/hwtracing/coresight/coresight-catu.c
+>>>> @@ -702,7 +702,7 @@ static int __init catu_init(void)
+>>>>   {
+>>>>       int ret;
+>>>>   -    ret = coresight_init_driver("catu", &catu_driver, 
+>>>> &catu_platform_driver);
+>>>> +    ret = coresight_init_driver("catu", &catu_driver, 
+>>>> &catu_platform_driver, THIS_MODULE);
+>>>>       tmc_etr_set_catu_ops(&etr_catu_buf_ops);
+>>>>       return ret;
+>>>>   }
+>>>> diff --git a/drivers/hwtracing/coresight/coresight-core.c 
+>>>> b/drivers/ hwtracing/coresight/coresight-core.c
+>>>> index 9fc6f6b863e0..c546a417836c 100644
+>>>> --- a/drivers/hwtracing/coresight/coresight-core.c
+>>>> +++ b/drivers/hwtracing/coresight/coresight-core.c
+>>>> @@ -1399,17 +1399,17 @@ module_init(coresight_init);
+>>>>   module_exit(coresight_exit);
+>>>>     int coresight_init_driver(const char *drv, struct amba_driver 
+>>>> *amba_drv,
+>>>> -              struct platform_driver *pdev_drv)
+>>>> +              struct platform_driver *pdev_drv, struct module *owner)
+>>>>   {
+>>>>       int ret;
+>>>>   -    ret = amba_driver_register(amba_drv);
+>>>> +    ret = __amba_driver_register(amba_drv, owner);
+>>>>       if (ret) {
+>>>>           pr_err("%s: error registering AMBA driver\n", drv);
+>>>>           return ret;
+>>>>       }
+>>>>   -    ret = platform_driver_register(pdev_drv);
+>>>> +    ret = __platform_driver_register(pdev_drv, owner);
+>>>>       if (!ret)
+>>>>           return 0;
+>>>>   diff --git a/drivers/hwtracing/coresight/coresight-cpu-debug.c b/ 
+>>>> drivers/hwtracing/coresight/coresight-cpu-debug.c
+>>>> index 75962dae9aa1..cc599c5ef4b2 100644
+>>>> --- a/drivers/hwtracing/coresight/coresight-cpu-debug.c
+>>>> +++ b/drivers/hwtracing/coresight/coresight-cpu-debug.c
+>>>> @@ -774,7 +774,8 @@ static struct platform_driver 
+>>>> debug_platform_driver = {
+>>>>     static int __init debug_init(void)
+>>>>   {
+>>>> -    return coresight_init_driver("debug", &debug_driver, 
+>>>> &debug_platform_driver);
+>>>> +    return coresight_init_driver("debug", &debug_driver, 
+>>>> &debug_platform_driver,
+>>>> +                     THIS_MODULE);
+>
+> minor nit:
+>
+> Could we make the coresight_init_driver() a static inline or even a
+> macro to automatically add the THIS_MODULE param ?
+>
+> Something like:
+>
+> #define coresight_init_driver(name, amba_drv, pdev_drv)
+>     coresight_init_driver_owner(name, amba_drv, pdev_drv, THIS_MODULE)
+>
+> I could respin this and queue the change.
+>
+>
+
+Yes, thanks for the review.  Will fix in next version.
+
+
+
+>
+>
+>>>>   }
+>>>>     static void __exit debug_exit(void)
+>>>> diff --git a/drivers/hwtracing/coresight/coresight-funnel.c b/ 
+>>>> drivers/hwtracing/coresight/coresight-funnel.c
+>>>> index 5a819c8970fb..8f451b051ddc 100644
+>>>> --- a/drivers/hwtracing/coresight/coresight-funnel.c
+>>>> +++ b/drivers/hwtracing/coresight/coresight-funnel.c
+>>>> @@ -433,7 +433,8 @@ static struct amba_driver dynamic_funnel_driver 
+>>>> = {
+>>>>     static int __init funnel_init(void)
+>>>>   {
+>>>> -    return coresight_init_driver("funnel", &dynamic_funnel_driver, 
+>>>> &funnel_driver);
+>>>> +    return coresight_init_driver("funnel", &dynamic_funnel_driver, 
+>>>> &funnel_driver,
+>>>> +                     THIS_MODULE);
+>>>>   }
+>>>>     static void __exit funnel_exit(void)
+>>>> diff --git a/drivers/hwtracing/coresight/coresight-replicator.c b/ 
+>>>> drivers/hwtracing/coresight/coresight-replicator.c
+>>>> index 3e55be9c8418..f7607c72857c 100644
+>>>> --- a/drivers/hwtracing/coresight/coresight-replicator.c
+>>>> +++ b/drivers/hwtracing/coresight/coresight-replicator.c
+>>>> @@ -438,7 +438,8 @@ static struct amba_driver 
+>>>> dynamic_replicator_driver = {
+>>>>     static int __init replicator_init(void)
+>>>>   {
+>>>> -    return coresight_init_driver("replicator", 
+>>>> &dynamic_replicator_driver, &replicator_driver);
+>>>> +    return coresight_init_driver("replicator", 
+>>>> &dynamic_replicator_driver, &replicator_driver,
+>>>> +                     THIS_MODULE);
+>>>>   }
+>>>>     static void __exit replicator_exit(void)
+>>>> diff --git a/drivers/hwtracing/coresight/coresight-stm.c b/drivers/ 
+>>>> hwtracing/coresight/coresight-stm.c
+>>>> index 117dbb484543..403eea8f95d4 100644
+>>>> --- a/drivers/hwtracing/coresight/coresight-stm.c
+>>>> +++ b/drivers/hwtracing/coresight/coresight-stm.c
+>>>> @@ -1046,7 +1046,7 @@ static struct platform_driver 
+>>>> stm_platform_driver = {
+>>>>     static int __init stm_init(void)
+>>>>   {
+>>>> -    return coresight_init_driver("stm", &stm_driver, 
+>>>> &stm_platform_driver);
+>>>> +    return coresight_init_driver("stm", &stm_driver, 
+>>>> &stm_platform_driver, THIS_MODULE);
+>>>>   }
+>>>>     static void __exit stm_exit(void)
+>>>> diff --git a/drivers/hwtracing/coresight/coresight-tmc-core.c b/ 
+>>>> drivers/hwtracing/coresight/coresight-tmc-core.c
+>>>> index b54562f392f3..e31e36635394 100644
+>>>> --- a/drivers/hwtracing/coresight/coresight-tmc-core.c
+>>>> +++ b/drivers/hwtracing/coresight/coresight-tmc-core.c
+>>>> @@ -742,7 +742,7 @@ static struct platform_driver 
+>>>> tmc_platform_driver = {
+>>>>     static int __init tmc_init(void)
+>>>>   {
+>>>> -    return coresight_init_driver("tmc", &tmc_driver, 
+>>>> &tmc_platform_driver);
+>>>> +    return coresight_init_driver("tmc", &tmc_driver, 
+>>>> &tmc_platform_driver, THIS_MODULE);
+>>>>   }
+>>>>     static void __exit tmc_exit(void)
+>>>> diff --git a/drivers/hwtracing/coresight/coresight-tpiu.c 
+>>>> b/drivers/ hwtracing/coresight/coresight-tpiu.c
+>>>> index b048e146fbb1..f9ecd05cbe5c 100644
+>>>> --- a/drivers/hwtracing/coresight/coresight-tpiu.c
+>>>> +++ b/drivers/hwtracing/coresight/coresight-tpiu.c
+>>>> @@ -318,7 +318,7 @@ static struct platform_driver 
+>>>> tpiu_platform_driver = {
+>>>>     static int __init tpiu_init(void)
+>>>>   {
+>>>> -    return coresight_init_driver("tpiu", &tpiu_driver, 
+>>>> &tpiu_platform_driver);
+>>>> +    return coresight_init_driver("tpiu", &tpiu_driver, 
+>>>> &tpiu_platform_driver, THIS_MODULE);
+>>>>   }
+>>>>     static void __exit tpiu_exit(void)
+>>>> diff --git a/include/linux/coresight.h b/include/linux/coresight.h
+>>>> index f09ace92176e..e6c26952ddc2 100644
+>>>> --- a/include/linux/coresight.h
+>>>> +++ b/include/linux/coresight.h
+>>>> @@ -660,7 +660,7 @@ coresight_find_output_type(struct 
+>>>> coresight_platform_data *pdata,
+>>>>                  union coresight_dev_subtype subtype);
+>>>>     int coresight_init_driver(const char *drv, struct amba_driver 
+>>>> *amba_drv,
+>>>> -              struct platform_driver *pdev_drv);
+>>>> +              struct platform_driver *pdev_drv, struct module 
+>>>> *owner);
+>>>>     void coresight_remove_driver(struct amba_driver *amba_drv,
+>>>>                    struct platform_driver *pdev_drv);
+>>>
+>>>
+>>> .
+>>>
+>>
+>
+>
+> .
+>
+
 
