@@ -1,209 +1,145 @@
-Return-Path: <linux-kernel+bounces-564301-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564299-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F59EA65249
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 15:06:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 667F6A65235
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 15:03:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 91C18168C7B
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 14:06:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9588C166501
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 14:03:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1389323F400;
-	Mon, 17 Mar 2025 14:06:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1DC422759C;
+	Mon, 17 Mar 2025 14:03:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hiE1zWrh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="f4zMkm+h"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AAC322759C;
-	Mon, 17 Mar 2025 14:06:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60C0078F43
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 14:03:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742220366; cv=none; b=HBOjmnP6pwblkyoDdo237bfFMGdtlVnfTLj/B+SybYYuBVuL269tv1K6TkcKOkdz7/XDMAR6uKM18u7U8VTNDFIX+UT4aArAicioYBkkdA3UH/J087OrokcEeENqsb1Ac8t3goVekJ+YdTHzQKxQU1aUlxZCbfWMRV0cJ3Pv2QU=
+	t=1742220196; cv=none; b=Laf/3hvL2EyuQ4+euvCwL3zwAZRj/qyXlJG1ntRnELOqj5bS49k6K4TSZ/xwpvqkmgAiB4rHT/FgpCIP/FW4zai1SuEUnvV8NLAadhmAafxGcKZn3gAnoNHpjGkzxdXrUNHpTq15CW0NyOvXdVGQtK0EEo8ZxLZi62ibFuajAas=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742220366; c=relaxed/simple;
-	bh=eLH32FMzkPLJk3sk0cW1wEKTH92IZIBRoZQnyhh397g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jrwidtuc4Xmo5YCRhO+EP2TAYGgkCl0KNFaG/WIsQAydrslmc2cR6Xro2CO6a2OuOCRqsFHi0vgOu/mlKP5Ti4zsNwl2MXfzhLWlE+qwAMu0u+x1mjmN4LoSltsysxXteSO/VqbP3mi+plzmwPNe6PnV45Ub8lEqKxomNE9DeLU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hiE1zWrh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22BC3C4CEE3;
-	Mon, 17 Mar 2025 14:06:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742220365;
-	bh=eLH32FMzkPLJk3sk0cW1wEKTH92IZIBRoZQnyhh397g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hiE1zWrhqyJl1WfbXiV9GE0f2l8jjNdUXEvSo9+LKCgY/NBqUGRAL1tmjAVuQYKx/
-	 +h66JauWprE0JW4NGqbpfhnvj8/ZzOHaSnnK40zK4TmzakJVVEgMyOcoYB8jBeI5Dl
-	 /lZeF0lFXBQ79fATJn0VAtFLYXSPqLtwcEfQx84yCF8OT0Z5h0oCAiEb+Vg7z0yFLz
-	 BFk7nVrfT4ml3nYZ9U/cSzrwDhvvwtdhNlu2mIULA/3CbIFC4N8MYeGyRfcqUPy9WY
-	 iWq0TFHzThgVb/K889RFCObY4xQfwOQkNN6FlzFn2bjpbOviuJS3XeA37d+TjER7SB
-	 vOEjVQf3Jh47A==
-Date: Mon, 17 Mar 2025 14:06:01 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Raju Rangoju <Raju.Rangoju@amd.com>
-Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	krishnamoorthi.m@amd.com, akshata.mukundshetty@amd.com
-Subject: Re: [PATCH 01/10] spi: espi_amd: Add AMD eSPI controller driver
- support
-Message-ID: <311453e6-c3a0-4976-92aa-e3961485b9ab@sirena.org.uk>
-References: <20250313183440.261872-1-Raju.Rangoju@amd.com>
- <20250313183440.261872-2-Raju.Rangoju@amd.com>
+	s=arc-20240116; t=1742220196; c=relaxed/simple;
+	bh=ur+3Ka/ftKOuDkT4T1MQ6Jx5LEwesbX4+q1klExtobU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tPOp+GrNMLG23vUPOD+YwvDKxi9l5XUqA2A8InXLIR5ICtDHFmCdpnyOY7T3DaRX7KwahxfCjJkHkgCeuq0gP7w8mjOSDqyL1sUlHMSph2BjFAKNfTfxiJMl+Ig6eB0BxQ6mqWyRBwf/CZlToHDn0KP27+lTZMOw61x3sYtnXR0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=f4zMkm+h; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742220194; x=1773756194;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=ur+3Ka/ftKOuDkT4T1MQ6Jx5LEwesbX4+q1klExtobU=;
+  b=f4zMkm+hGFS0JC9Zu6V8HEtutEUw4FoYxCXqPPRA0en857N8x7c1tvkN
+   wEV730sPJ5zI6jCVjKmxsYOxEI/j7Lp7luIi9XiBNcu0Pt7Ax4dEoKKCq
+   hRF1CsflzZOQcw7maRhMYwXxGxxXFryQTKLtAQdxkwsdUFw9Zs6nIPYmP
+   k1X9lJIZANcIPSTGGluxtLS5X3pBODxENKoRDAbKCmrzXbXiaeELgrNXh
+   wKf0ECYOBacy+qmyqzXMmIyvE4hdISVVazU8W3L0gsd3qqOyarloMZRBb
+   Fd0oRLjwTYb1Kb9zhDkzSczOp1QzKHOb9LnZLuF5jmPVKqj6hMT4+d5wx
+   Q==;
+X-CSE-ConnectionGUID: LEuB4sejQzK1pj/84OdtsQ==
+X-CSE-MsgGUID: MeewH/E/TLqcqyfudGIPyg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11376"; a="43447018"
+X-IronPort-AV: E=Sophos;i="6.14,254,1736841600"; 
+   d="scan'208";a="43447018"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Mar 2025 07:03:14 -0700
+X-CSE-ConnectionGUID: 7dDuA3tuRKaVKvMF/PytIA==
+X-CSE-MsgGUID: ICsGBP4RT5yVJBvZI8J8Ag==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,254,1736841600"; 
+   d="scan'208";a="152929972"
+Received: from spr.sh.intel.com ([10.239.53.19])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Mar 2025 07:03:10 -0700
+From: Chao Gao <chao.gao@intel.com>
+To: x86@kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Chao Gao <chao.gao@intel.com>,
+	"Chang S. Bae" <chang.seok.bae@intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Uros Bizjak <ubizjak@gmail.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Yang Zhong <yang.zhong@intel.com>,
+	Jing Liu <jing2.liu@intel.com>
+Subject: [PATCH] x86/fpu/xstate: Fix inconsistencies in guest FPU xfeatures
+Date: Mon, 17 Mar 2025 22:06:11 +0800
+Message-ID: <20250317140613.1761633-1-chao.gao@intel.com>
+X-Mailer: git-send-email 2.46.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="+DVoHDKHv2yRx0ee"
-Content-Disposition: inline
-In-Reply-To: <20250313183440.261872-2-Raju.Rangoju@amd.com>
-X-Cookie: I know how to do SPECIAL EFFECTS!!
+Content-Transfer-Encoding: 8bit
 
+Guest FPUs manage vCPU FPU states. They are allocated via
+fpu_alloc_guest_fpstate() and are resized in fpstate_realloc() when XFD
+features are enabled.
 
---+DVoHDKHv2yRx0ee
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Since the introduction of guest FPUs, there have been inconsistencies in
+the kernel buffer size and xfeatures:
 
-On Fri, Mar 14, 2025 at 12:04:31AM +0530, Raju Rangoju wrote:
+1.fpu_alloc_guest_fpstate() uses fpu_user_cfg since its introduction. See:
 
-> @@ -159,6 +159,8 @@ obj-$(CONFIG_SPI_XTENSA_XTFPGA)		+=3D spi-xtensa-xtfp=
-ga.o
->  obj-$(CONFIG_SPI_ZYNQ_QSPI)		+=3D spi-zynq-qspi.o
->  obj-$(CONFIG_SPI_ZYNQMP_GQSPI)		+=3D spi-zynqmp-gqspi.o
->  obj-$(CONFIG_SPI_AMD)			+=3D spi-amd.o
-> +obj-$(CONFIG_SPI_AMD_ESPI)		+=3D espi-amd.o
-> +espi-amd-objs				:=3D espi-amd-core.o espi-amd-dev.o
-> =20
+  commit 69f6ed1d14c6 ("x86/fpu: Provide infrastructure for KVM FPU cleanup")
+  commit 36487e6228c4 ("x86/fpu: Prepare guest FPU for dynamically enabled FPU features")
 
-Please keep these files sorted.
+2.__fpstate_reset() references fpu_kernel_cfg to set storage attributes.
 
-> @@ -0,0 +1,883 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later
-> +/*
-> + * AMD eSPI controller driver
+3.fpu->guest_perm uses fpu_kernel_cfg, affecting fpstate_realloc().
 
-Please make the entire comment block a C++ one to make things look more
-consistent.
+A recent commit in the tip-tree [1] partially addressed the inconsistency
+between (1) and (3) by using fpu_kernel_cfg for size calculation in (1),
+but left fpu_guest->xfeatures and fpu_guest->perm still referencing
+fpu_user_cfg.
 
-> + *
-> + * Copyright (c) 2025, Advanced Micro Devices, Inc.
-> + * All Rights Reserved.
+The inconsistencies within fpu_alloc_guest_fpstate() and across the
+mentioned functions cause confusion.
 
-Are you sure?
+Fix them by using fpu_kernel_cfg consistently in fpu_alloc_guest_fpstate(),
+except for fields related to the UABI buffer. Referencing fpu_kernel_cfg
+won't impact functionalities, as
+1. fpu_guest->perm is overwritten shortly in fpu_init_guest_permissions()
+   with fpstate->guest_perm, which already uses fpu_kernel_cfg.
+2. fpu_guest->xfeatures is solely used to check if XFD features are enabled.
+   Including supervisor xfeatures doesn't affect the check.
 
-> +static int amd_espi_check_error_status(struct amd_espi *amd_espi, u32 st=
-atus)
-> +{
-> +	int ret =3D CB_SUCCESS;
-> +
-> +	if (!(status & ESPI_DNCMD_INT)) {
-> +		ret =3D  ESPI_DNCMD_INT;
-> +		dev_err(amd_espi->dev, "eSPI downstream command completion failure\n");
-> +	} else if (status & ESPI_BUS_ERR_INT) {
-> +		ret =3D ESPI_BUS_ERR_INT;
-> +		dev_err(amd_espi->dev, "%s\n", espi_error_codes[POS_BUS_TIMING]);
+Link: https://lore.kernel.org/all/20250218141045.85201-1-stanspas@amazon.de/ [1]
+Fixes: 36487e6228c4 ("x86/fpu: Prepare guest FPU for dynamically enabled FPU features")
+Suggested-by: Chang S. Bae <chang.seok.bae@intel.com>
+Signed-off-by: Chao Gao <chao.gao@intel.com>
+---
+ arch/x86/kernel/fpu/core.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Can we really only have one error flagged at once?  The whole
-espi_error_codes thing also seems like unneeded complexity and fagility,
-this function is the only place they're used and there's nothing
-ensuring that the defines for indexing into the array have anything to
-do with the strings in there.
+diff --git a/arch/x86/kernel/fpu/core.c b/arch/x86/kernel/fpu/core.c
+index 422c98ca6eb8..1b734a9ff088 100644
+--- a/arch/x86/kernel/fpu/core.c
++++ b/arch/x86/kernel/fpu/core.c
+@@ -239,8 +239,8 @@ bool fpu_alloc_guest_fpstate(struct fpu_guest *gfpu)
+ 	fpstate->is_guest	= true;
+ 
+ 	gfpu->fpstate		= fpstate;
+-	gfpu->xfeatures		= fpu_user_cfg.default_features;
+-	gfpu->perm		= fpu_user_cfg.default_features;
++	gfpu->xfeatures		= fpu_kernel_cfg.default_features;
++	gfpu->perm		= fpu_kernel_cfg.default_features;
+ 
+ 	/*
+ 	 * KVM sets the FP+SSE bits in the XSAVE header when copying FPU state
 
-> +int amd_espi_set_iomode(struct amd_espi *amd_espi, u32 *slave_config, u3=
-2 *ctrlr_config,
-> +			u8 io_mode)
-> +{
-> +	struct espi_master *master =3D amd_espi->master;
+base-commit: d08c0d55110b7cbac186e5fa94b0c6d5f4d7905e
+-- 
+2.47.1
 
-There's a lot of outdated terminology like this in the driver - while
-sometimes it's unavoidable due to the register map it's better to use
-more modern terms like controller and device when it's just pure
-software things.
-
-> +	ret =3D amd_espi_get_config(amd_espi, ESPI_SLAVE_PERIPH_CFG, &slave_con=
-fig);
-> +	if (ret !=3D CB_SUCCESS)
-> +		return ret;
-> +
-> +	/* Check if PC is already enabled */
-> +	if (slave_config & ESPI_SLAVE_CHANNEL_ENABLE)
-> +		return CB_SUCCESS;
-
-Is there any great reason to use these non-standard CB_ return codes?
-
-> +static int amd_espi_suspend(struct device *dev)
-> +{
-> +	return 0;
-> +}
-
-Remove empty functions, if they can safely be empty the functions will
-be optional.
-
-> +	res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +	if (!res)
-> +		return -EOPNOTSUPP;
-> +
-> +	amd_espi->io_remap_addr =3D devm_ioremap_resource(dev, res);
-
-dev_platform_get_and_ioremap_resource().
-
-> +	amd_espi_control_reg_init(amd_espi);
-> +	ret =3D amd_espi_init_slave(amd_espi);
-> +	if (ret !=3D CB_SUCCESS)
-> +		goto espidev_free;
-> +
-> +	dev_info(dev, "AMD ESPI device initialization completed\n");
-
-This is just noise, remove it.
-
-> +
-> +	return 0;
-> +
-> +espidev_free:
-> +	amd_espi_device_remove(amd_espi);
-> +	return ret;
-
-This will return your non-standard error codes to generic code.
-
-> +static void amd_espi_remove(struct platform_device *pdev)
-> +{
-> +	struct amd_espi *amd_espi =3D platform_get_drvdata(pdev);
-> +
-> +	amd_espi_device_remove(amd_espi);
-> +}
-
-There's no need for this wrapper function, there's exactly one place we
-can call remove from.
-
-> +static int amd_espi_open(struct inode *inode, struct file *filp)
-> +{
-> +	struct amd_espi *espi;
-> +	int status =3D -ENXIO;
-> +
-> +	guard(mutex)(&device_list_lock);
-
-Whatever this userspace ABI is for it should be added in a separate
-patch, most likely it shouldn't be here at all and standard interfaces
-should be used.  Currently it doesn't seem to actually do anything.
-
---+DVoHDKHv2yRx0ee
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmfYLEgACgkQJNaLcl1U
-h9CQMgf+MuVrwpP5VDKerTkKoiMKm4AAh2qTI5SqWPThMS4Y2va74wQv7nj7hc1z
-UtwNZbixn/Ku7IkeIiDN3QZTNetPH6cijzDdhpDj2KXYl0K/MJ4XVbF7FhMn7JAr
-G+nuQsZ6TCaL0IZfDSD86zyHTMUyI3SZQqNwEQzKskS+VkBVk4ZhXexjaGlL1y/Y
-B58kpzdoTrXYC46To67Fq59XoJ7L2wVVysC56tYarYgZlQZxfb46hXzJG44qk+q5
-h1RhdAGqkR/hcQhOg5+q72hI2Ogcu01PQmJdjNAXu2JBmZUTLo10yMaOQgyAuGva
-Wh9OIW1bMKvDPfIl8gh7eQa0hQ/1tg==
-=iHhC
------END PGP SIGNATURE-----
-
---+DVoHDKHv2yRx0ee--
 
