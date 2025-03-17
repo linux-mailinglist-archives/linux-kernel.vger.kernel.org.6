@@ -1,75 +1,62 @@
-Return-Path: <linux-kernel+bounces-565170-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565171-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC494A66222
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 23:59:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 652A6A66250
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 00:01:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4578D16B7A8
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 22:59:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D2050189E895
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 23:01:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B5EE204840;
-	Mon, 17 Mar 2025 22:59:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61C53204C16;
+	Mon, 17 Mar 2025 23:00:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="exeKO5cE"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u9mJQBBX"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB14C1F582A
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 22:59:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5F001B0F17
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 23:00:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742252387; cv=none; b=PQhi/aFjiPmbZV/VR1So9Zni1kDoC90ctlzRZS3F48jJMA6R+CmYGkGrnXGcsZ6xbjgPKdYpkyoaCaAf8RF7mkFoh/5jqo+Iky0NokEKDZZMN1gGpjQjm1Ete9SzTuMDbUlmkKe2I/asKPMSWH3Y39oS3DFQZWKwoOXyiBTyYV4=
+	t=1742252447; cv=none; b=aWp1JJNvEBOH0gbbIDxILy2u8hG7s1WzKLpfRGF4pSh/u3Zjw6Is7AaRiqKN9fW91uFutfeWJ+8mZaOe9tZcLOMVBJbJ/KWuy1MzATmOEG7u4DRacVTFqhbA5UsBYryuQiRFgALXuiyleBeKne3rGK+vUdQLqCBzwk0ei/WGeG4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742252387; c=relaxed/simple;
-	bh=aeXji9EIszH36oJf9mgPjL7JT/8CGzmeM+k/HYB9ddU=;
+	s=arc-20240116; t=1742252447; c=relaxed/simple;
+	bh=POjYshRG5W+ISO8gu4ii0Xj8fY1na8RP0iynC+UVP7M=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FaK66HbHdDZXXHJp7QHN90CQ0t5CErTYZFiD0BKAfa9FXk+WFEvq3j6kWIRb8TQW545eP2wjsk8qknXNifv0dI6LTQ8oq4MC+jTCjzHKMSba/Y9j7Xnmf35D4YyPpb9XZYtFfc5dDyles0N6oH423ZclNWjN3mSg5dmnBXodbk8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=exeKO5cE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0DD61C4CEE3;
-	Mon, 17 Mar 2025 22:59:47 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=jeOij6ZSsvdTcNzCpbY8tcblfuuH6oGE/P2RiIPzNrkW3rcxXmVDo+S3RlQTWWeQjjxAqje7DySPJH76/VkzydAZ26xAO6ly90od/JDIYshx9yY8vmrLkdtLiuBQkekRuJ9gb9JpGDxMKR9U7y7BIfzlxRnyBHUPpAuptZbIGtE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u9mJQBBX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92BA1C4CEE3;
+	Mon, 17 Mar 2025 23:00:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742252387;
-	bh=aeXji9EIszH36oJf9mgPjL7JT/8CGzmeM+k/HYB9ddU=;
+	s=k20201202; t=1742252446;
+	bh=POjYshRG5W+ISO8gu4ii0Xj8fY1na8RP0iynC+UVP7M=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=exeKO5cEwZOFOw6vMinqsw3WD/tplR+kJCYf5Lu7artyhVO7zaissFJk0eNTxWoj7
-	 FOQzviaPq10dzaht/5lwRuqh95o71QAMKLfFeCM0ZS4mmzrKTwz50ABU4Jb5l8ADDK
-	 fdWCcnuRZK1A/8JjOXNleAZDMz0LghnFNgUxC7fYQ8t24Jtt1pEFDU0sJMRTEl24ZQ
-	 VeMm3aMONO00W39s0AAXqNuBeRnk8QyIR1s29AS4kBjht7gbZRZjXfnQ5cKtw7T1+8
-	 B7H0zOJY7+JUSBCWME0vcV+/1n7dDk8frIhEyvCNKRao9wRcGoUkPgZNPkPkrt0yxN
-	 f1F41FQUlecjw==
-Date: Mon, 17 Mar 2025 15:59:43 -0700
-From: Kees Cook <kees@kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-kernel@vger.kernel.org,
-	Bruno Sobreira =?iso-8859-1?Q?Fran=E7a?= <brunofrancadevsec@gmail.com>,
-	Danilo Pereira <dpereira@lkcamp.dev>,
-	David Gow <davidgow@google.com>,
-	Diego Vieira <diego.daniel.professional@gmail.com>,
-	Gabriela Bittencourt <gbittencourt@lkcamp.dev>,
-	Gabriel Krisman Bertazi <krisman@suse.de>,
-	Jakub Kicinski <kuba@kernel.org>,
-	kernel test robot <oliver.sang@intel.com>,
-	Kuan-Wei Chiu <visitorckw@gmail.com>,
-	Luis Felipe Hernandez <luis.hernandez093@gmail.com>,
-	Lukas Bulwahn <lukas.bulwahn@redhat.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Pitre <npitre@baylibre.com>,
-	Pedro Orlando <porlando@lkcamp.dev>, Petr Mladek <pmladek@suse.com>,
-	Rae Moar <rmoar@google.com>, Shuah Khan <skhan@linuxfoundation.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Tamir Duberstein <tamird@gmail.com>,
-	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Yu-Chun Lin <eleanor15x@gmail.com>
-Subject: Re: [GIT PULL] move-lib-kunit for v6.15-rc1
-Message-ID: <202503171559.22F171E113@keescook>
-References: <202503170842.FFEE75351@keescook>
- <20250318084326.7ede18e2@canb.auug.org.au>
+	b=u9mJQBBXIesIxZO6kAotyk7Dm9tb7NovV1AlIW9uPOyrGCzhiTDgZQkLENDpjQ4cF
+	 K8fob+d+SXo48wRvYsJMuj1TMuP4V127AXiSBF2jeWl/TjGH1Qw1utkKYtEONRxpBZ
+	 UtB3mE1AeLNvsfmqh9zuKTWhqixGBm8Y10mIqAZ+KctOElHwAd7cRPSjnwx1ZzzGYO
+	 40V3AO2dzoaA170QzU9eNjam2hZyk3ClxcAdNcBx6nh80YbScwRSTD+C9rOm3t2Q7f
+	 sp4E2fp8LFtZIkJM4PA4w5QfM0CY4cD22kRogS5NaJ6wdL2npCMWkvdWVFMqv/6EPL
+	 KNCx0Vp0BtARQ==
+Date: Tue, 18 Mar 2025 00:00:41 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, Juergen Gross <jgross@suse.com>,
+	Stefano Stabellini <sstabellini@kernel.org>,
+	"Ahmed S . Darwish" <darwi@linutronix.de>,
+	Andrew Cooper <andrew.cooper3@citrix.com>,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	John Ogness <john.ogness@linutronix.de>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Borislav Petkov <bp@alien8.de>,
+	Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH 0/5] x86/cpu: Introduce <asm/cpuid/types.h> and
+ <asm/cpuid/api.h> and clean them up
+Message-ID: <Z9ipmWO5zA5phS1s@gmail.com>
+References: <20250317223039.3741082-1-mingo@kernel.org>
+ <CAHk-=whBoNCepPiOv8V-D8xcBW3O+SG1cs5ARMwvW_n5SEXMxg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,29 +65,58 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250318084326.7ede18e2@canb.auug.org.au>
+In-Reply-To: <CAHk-=whBoNCepPiOv8V-D8xcBW3O+SG1cs5ARMwvW_n5SEXMxg@mail.gmail.com>
 
-On Tue, Mar 18, 2025 at 08:44:10AM +1100, Stephen Rothwell wrote:
-> Hi all,
-> 
-> On Mon, 17 Mar 2025 08:47:13 -0700 Kees Cook <kees@kernel.org> wrote:
+
+* Linus Torvalds <torvalds@linux-foundation.org> wrote:
+
+> On Mon, 17 Mar 2025 at 15:30, <mingo@kernel.org> wrote:
 > >
-> > Please pull the move-lib-kunit tree for v6.15-rc1. This is a one-off tree
-> > to coordinate the move of selftests out of lib/ and into lib/tests/. A
-> > separate tree was used for this to keep the paths sane with all the
-> > work in the same place. Doing this across multiple trees was going to
-> > be very difficult, so any on-going updates were collected here to try to
-> > avoid merge conflicts. I think only one small conflict remains, just
-> > today, detailed here:
-> > https://lore.kernel.org/linux-next/20250317213953.01ca90e9@canb.auug.org.au/
-> > sfr's resolution looks correct.
+> > [ This is a resend with a proper SMTP setup. Apologies for the duplication. ]
 > 
-> There was also
+> Yes, now it looks correct from a DKIM standpoint.
 > 
-> https://lore.kernel.org/linux-next/20250213151927.1674562e@canb.auug.org.au/
+> But please still fix your name. Now your "From" line is just this:
+> 
+>     From: mingo@kernel.org
+> 
+> rather than your previous series, that had a much more legible
+> 
+>     From: Ingo Molnar <mingo@kernel.org>
+> 
+> in it.
+> 
+> No need to re-send, but for next time...
 
-Ah! Yes, thank you. :) This resolution also looks correct.
+Oh, that's probably the result of me copy-pasting the documentation:
 
--- 
-Kees Cook
+    # https://korg.docs.kernel.org/mail.html
+
+    [sendemail]
+            smtpserver     = mail.kernel.org
+            smtpserverport = 465
+            smtpencryption = ssl
+            from           = [username]@kernel.org
+            smtpuser       = [username]
+
+Which I did as:
+
+            from           = mingo@kernel.org
+
+... while it should probably be:
+
+            from           = Ingo Molnar <mingo@kernel.org>
+
+I just did a test-send to myself, and this appears to have done the 
+trick.
+
+So maybe the mail.html documentation should be updated to say:
+
+            from           = "Your Real Name" <[username]@kernel.org>
+
+or so?
+
+Thanks,
+
+	Ingo
 
