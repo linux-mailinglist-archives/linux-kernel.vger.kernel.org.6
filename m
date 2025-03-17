@@ -1,125 +1,237 @@
-Return-Path: <linux-kernel+bounces-563978-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563987-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9C6BA64B7F
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 12:02:52 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9D45A64B82
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 12:03:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66F9C3A6D93
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:58:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 62DCB174B54
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:02:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1D472356C5;
-	Mon, 17 Mar 2025 10:58:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7135B2405E7;
+	Mon, 17 Mar 2025 10:59:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Ndct4Mep"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=daynix-com.20230601.gappssmtp.com header.i=@daynix-com.20230601.gappssmtp.com header.b="c1CDWCed"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4150A38DD8;
-	Mon, 17 Mar 2025 10:57:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00AB623FC59
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 10:59:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742209092; cv=none; b=hiC+iz2UqH4M/vu7q5p2Cv+YpcZ2PuMl85hxKBVtYYoYYOrI/0/jzFR+SB+i5Gp8CRmGbLjYPs52fsTtyuANHuHXp91g6FA45h4nGCwW1HpulNvAC1sF3hGnwfxNyof1Ff0Fregt1f/KJ2pySOmwRCWPNZr+jEUZZeCCRntxaVU=
+	t=1742209145; cv=none; b=JWoFDpeX/FoxmsL77MF4c1XkSghU4CHyUeyTE8vNVLoqWT8k1cuZeqoUcPoUnzGwkxbBNysQY735xWFuZ8+/DaZIA/QJsLSqLMjeSJDoO0lNDDVWYZpPLpPXIp+2wzF2p4Q658lvbso+wEZwM/9aySY+eIx+LWsVaiu1BXl/86s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742209092; c=relaxed/simple;
-	bh=dPw0zLDv7HGOHJw5DeqotAgUuNl5Mx/AgCHmDIdQQ3Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=K1pA3RWxRUCYuf/SX+BbcKk5Ov5BQZGef+jqmI4g+sIwHqntzI8eKUwImOz3gpqgrCYYhrA8EQERQpnPtSnxqItKsabnh+9bOmCP093ZcJRUy39qeGnQC7QcztI82qKTa+zOaqnnkwInpAiBvBECpC46bQWi3WSpDXobVui+Sww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=Ndct4Mep; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1742209078;
-	bh=9QSVy802gxb7lh6NczC8WxOc0sfP+hXK2U6xq0KCwTU=;
-	h=Date:From:To:Cc:Subject:From;
-	b=Ndct4Mep2+W8UJ2JMTj5Q9jlYWRCiLWOx4ECM7DBN50Dbhs8gA9nMd4furL6LF9Qr
-	 M0tTn+PNeljmBl8tcLU+mxbju1NcOJhfQdpI0uTdRHVW05/hxS3zbh0D7difHSm+T6
-	 38xXBgT5/NB2icAuc0UQxx/SL7Cj09env6+oy9K5UbOAZUCeWOuCcs8YfXQ+yEh4qs
-	 Bb/WJQnfbPRXuDC/tOKlqSZY82FNZqjhhecg3rFT+wJQl94IpjlayPT5l8E0g6Biz9
-	 Lcz474WukdjRh2WmydMKHtyoM8liqfyqkuYnM9oK27ISEysYfcZxD36x2CllI0Zb+o
-	 fFalvCf9U/dZA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZGX4k3cctz4x21;
-	Mon, 17 Mar 2025 21:57:58 +1100 (AEDT)
-Date: Mon, 17 Mar 2025 21:57:57 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Miguel Ojeda <ojeda@kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the rust tree
-Message-ID: <20250317215757.2412aef1@canb.auug.org.au>
+	s=arc-20240116; t=1742209145; c=relaxed/simple;
+	bh=ccfXZvxiSAaG5MPb2w/JWrekNXtLfO8PT1kfNykthKs=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To; b=Nu5aKrXJrOtqBoivCYlbYh0VS0gudh4rX0CT4RFBFtSJ4KLU8ashiHCEfYghChl7wJSaOshi5PmBLS0lGbBU5ut3zEBNJmlKupgYQNz2Y59qdZ/mNWHlpeYnMGVV9U7lecaH3NP7n+KV88tlm7aBmkt9KrgQUxj74ehZbUcqyPE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=daynix.com; spf=pass smtp.mailfrom=daynix.com; dkim=pass (2048-bit key) header.d=daynix-com.20230601.gappssmtp.com header.i=@daynix-com.20230601.gappssmtp.com header.b=c1CDWCed; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=daynix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=daynix.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-225e3002dffso36561895ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 03:59:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=daynix-com.20230601.gappssmtp.com; s=20230601; t=1742209143; x=1742813943; darn=vger.kernel.org;
+        h=to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=e3BkVPEmJoa+6yr2vocUy5kvhLH0cmr2yCWFD5W/C7U=;
+        b=c1CDWCedPdAaOwlP1q8hJPZKsmOkK4Xj1sUYqPL8e+3+DLupbzF3zRV6yDcpYPOwaS
+         8VI48468PeJQG6NCjB8pZLV/5kO2mPpURfJZiBLkRhHH+2qQJlQ3TTE5sDHZqUZ5U5TF
+         ZCMBkvEhLW+Cf38uEQiAuh1esJ6DUlOv245Xi7NHTqTJptZFmfMQN4b1LbjjZ4JHLeLY
+         c0faq2d/l4xwY+zORy/sbiRqxU23c12LCgYZBfcmDx3bU2fXniobyukEbSkAODvyzr+S
+         itTOxu+1pOm0BpnQ/RWsFBfH0IT8Z+CnrZz5RwhVN2d3vyTLhoalqkSL47zZ4M2neCQr
+         IeHw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742209143; x=1742813943;
+        h=to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=e3BkVPEmJoa+6yr2vocUy5kvhLH0cmr2yCWFD5W/C7U=;
+        b=IAGod6or5TxA9Lcs2bwKBu0V0k+b6/pZ8lvXPFBpId0TDZrAMRqoxqDFU1SEZbQUHb
+         hlEbP5lh+H583eJj8cM+NF8f5aEcRQZhRoCjbqXG/baD3RNnwo7o5a8UAnTg7RDUMEig
+         QE97O5iyTAV5VpdP0C+l9nRnkgDw/nrde1h4GNHPGM3Fu8BmojayulADNUmAa0nhGRhC
+         9xessQdPBmexr8L+9220Er4KMX74TQjR+uUzcDFE7YABtKaBcAAMKSz0WwNEAneFGhih
+         SdwrpARE6EHEsQzUj+f88RhsoiLLON9o6o8TS6NvyscR9BXV0lDwSUDOVQPWQ9zS7kMR
+         lF8g==
+X-Forwarded-Encrypted: i=1; AJvYcCVIMRX3z7ujNvgEICS0bS6AsB5FcGidnAxW6WQ2Y100Gq3D9gIjuS95ugqdmWb8DOzx+qDyIGDrDeEPXyE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxkRx9w1+w3XRg5yt62C0gmCdsu8OliF7FfDpzwWYE1bJwLbyAw
+	22fPSp+w36inrHyaKDuMtkj7mW0xw7YIFIU4AXHY09smRLoJDDEbwZGDqtwY6Ng=
+X-Gm-Gg: ASbGncvaSOVIOg49xAAiN4UQsHydGjGgFNSOhdZM+cYpsklDfLa83O1wJzA4VXnGEtk
+	yLXyoIcqESYkh128OifAu3w0drUmBT5rVlNS2JBbHQ6h5Mj9L8arz1VNrp1vFy4Objmc3ReL+Zb
+	1qk5YzYIeMa62k79ATMuspcwJZynfv3KAIZ962siGx1pE3JohdLJx426jiPQukrF9jZwYOMoQFS
+	HPiitKRgNreQBr5Pv8p0clRTA/7QB5kcQLvb1cOoB+NHP1TNeguHnigiMeW5OXdFWezreVXPrkA
+	6dI0VK1Z+rqNdOhTG1mbzCMKybAoSyNuIl44VlJ+ZL7NhI37
+X-Google-Smtp-Source: AGHT+IGOao21bnQoF8f7GMJyK43XLi/BXMCK2hiBw4ypcEkYOkj5BsLms/4g5Wmz+GYI5JTnjSMvyg==
+X-Received: by 2002:a17:902:dac3:b0:224:1ec0:8a0c with SMTP id d9443c01a7336-225e0a79f54mr144040315ad.29.1742209143268;
+        Mon, 17 Mar 2025 03:59:03 -0700 (PDT)
+Received: from localhost ([157.82.207.107])
+        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-225c6bbcd4asm72044005ad.164.2025.03.17.03.58.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 17 Mar 2025 03:59:03 -0700 (PDT)
+From: Akihiko Odaki <akihiko.odaki@daynix.com>
+Date: Mon, 17 Mar 2025 19:57:59 +0900
+Subject: [PATCH net-next v11 09/10] selftest: tap: Add tests for virtio-net
+ ioctls
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/wz=gC/Nau+t4BBjrZEWvfEg";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250317-rss-v11-9-4cacca92f31f@daynix.com>
+References: <20250317-rss-v11-0-4cacca92f31f@daynix.com>
+In-Reply-To: <20250317-rss-v11-0-4cacca92f31f@daynix.com>
+To: Jonathan Corbet <corbet@lwn.net>, 
+ Willem de Bruijn <willemdebruijn.kernel@gmail.com>, 
+ Jason Wang <jasowang@redhat.com>, "David S. Miller" <davem@davemloft.net>, 
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+ Paolo Abeni <pabeni@redhat.com>, "Michael S. Tsirkin" <mst@redhat.com>, 
+ Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Shuah Khan <shuah@kernel.org>, 
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ netdev@vger.kernel.org, kvm@vger.kernel.org, 
+ virtualization@lists.linux-foundation.org, linux-kselftest@vger.kernel.org, 
+ Yuri Benditovich <yuri.benditovich@daynix.com>, 
+ Andrew Melnychenko <andrew@daynix.com>, 
+ Stephen Hemminger <stephen@networkplumber.org>, gur.stavi@huawei.com, 
+ Lei Yang <leiyang@redhat.com>, Simon Horman <horms@kernel.org>, 
+ Akihiko Odaki <akihiko.odaki@daynix.com>
+X-Mailer: b4 0.15-dev-edae6
 
---Sig_/wz=gC/Nau+t4BBjrZEWvfEg
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+They only test the ioctls are wired up to the implementation common with
+tun as it is already tested for tun.
 
-Hi all,
+Signed-off-by: Akihiko Odaki <akihiko.odaki@daynix.com>
+---
+ tools/testing/selftests/net/tap.c | 97 ++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 95 insertions(+), 2 deletions(-)
 
-After merging the rust tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+diff --git a/tools/testing/selftests/net/tap.c b/tools/testing/selftests/net/tap.c
+index 247c3b3ac1c9..fbd38b08fdfa 100644
+--- a/tools/testing/selftests/net/tap.c
++++ b/tools/testing/selftests/net/tap.c
+@@ -363,6 +363,7 @@ size_t build_test_packet_crash_tap_invalid_eth_proto(uint8_t *buf,
+ FIXTURE(tap)
+ {
+ 	int fd;
++	bool deleted;
+ };
+ 
+ FIXTURE_SETUP(tap)
+@@ -387,8 +388,10 @@ FIXTURE_TEARDOWN(tap)
+ 	if (self->fd != -1)
+ 		close(self->fd);
+ 
+-	ret = dev_delete(param_dev_tap_name);
+-	EXPECT_EQ(ret, 0);
++	if (!self->deleted) {
++		ret = dev_delete(param_dev_tap_name);
++		EXPECT_EQ(ret, 0);
++	}
+ 
+ 	ret = dev_delete(param_dev_dummy_name);
+ 	EXPECT_EQ(ret, 0);
+@@ -431,4 +434,94 @@ TEST_F(tap, test_packet_crash_tap_invalid_eth_proto)
+ 	ASSERT_EQ(errno, EINVAL);
+ }
+ 
++TEST_F(tap, test_vnethdrsz)
++{
++	int sz = sizeof(struct virtio_net_hdr_v1_hash);
++
++	ASSERT_FALSE(dev_delete(param_dev_tap_name));
++	self->deleted = true;
++
++	ASSERT_FALSE(ioctl(self->fd, TUNSETVNETHDRSZ, &sz));
++	sz = 0;
++	ASSERT_FALSE(ioctl(self->fd, TUNGETVNETHDRSZ, &sz));
++	EXPECT_EQ(sizeof(struct virtio_net_hdr_v1_hash), sz);
++}
++
++TEST_F(tap, test_vnetle)
++{
++	int le = 1;
++
++	ASSERT_FALSE(dev_delete(param_dev_tap_name));
++	self->deleted = true;
++
++	ASSERT_FALSE(ioctl(self->fd, TUNSETVNETLE, &le));
++	le = 0;
++	ASSERT_FALSE(ioctl(self->fd, TUNGETVNETLE, &le));
++	EXPECT_EQ(1, le);
++}
++
++TEST_F(tap, test_vnetbe)
++{
++	int be = 1;
++	int ret;
++
++	ASSERT_FALSE(dev_delete(param_dev_tap_name));
++	self->deleted = true;
++
++	ret = ioctl(self->fd, TUNSETVNETBE, &be);
++	if (ret == -1 && errno == EINVAL)
++		SKIP(return, "TUNSETVNETBE not supported");
++
++	ASSERT_FALSE(ret);
++	be = 0;
++	ASSERT_FALSE(ioctl(self->fd, TUNGETVNETBE, &be));
++	EXPECT_EQ(1, be);
++}
++
++TEST_F(tap, test_getvnethashcap)
++{
++	static const struct tun_vnet_hash expected = {
++		.flags = TUN_VNET_HASH_REPORT | TUN_VNET_HASH_RSS,
++		.types = VIRTIO_NET_RSS_HASH_TYPE_IPv4 |
++			 VIRTIO_NET_RSS_HASH_TYPE_TCPv4 |
++			 VIRTIO_NET_RSS_HASH_TYPE_UDPv4 |
++			 VIRTIO_NET_RSS_HASH_TYPE_IPv6 |
++			 VIRTIO_NET_RSS_HASH_TYPE_TCPv6 |
++			 VIRTIO_NET_RSS_HASH_TYPE_UDPv6
++	};
++	struct tun_vnet_hash seen;
++	int ret;
++
++	ASSERT_FALSE(dev_delete(param_dev_tap_name));
++	self->deleted = true;
++
++	ret = ioctl(self->fd, TUNGETVNETHASHCAP, &seen);
++
++	if (ret == -1 && errno == EINVAL)
++		SKIP(return, "TUNGETVNETHASHCAP not supported");
++
++	EXPECT_FALSE(ret);
++	EXPECT_FALSE(memcmp(&expected, &seen, sizeof(expected)));
++}
++
++TEST_F(tap, test_setvnethash_alive)
++{
++	struct tun_vnet_hash hash = { .flags = 0 };
++
++	EXPECT_FALSE(ioctl(self->fd, TUNSETVNETHASH, &hash));
++}
++
++TEST_F(tap, test_setvnethash_deleted)
++{
++	ASSERT_FALSE(dev_delete(param_dev_tap_name));
++	self->deleted = true;
++
++	ASSERT_EQ(-1, ioctl(self->fd, TUNSETVNETHASH));
++
++	if (errno == EINVAL)
++		SKIP(return, "TUNSETVNETHASH not supported");
++
++	EXPECT_EQ(EBADFD, errno);
++}
++
+ TEST_HARNESS_MAIN
 
-error[E0603]: trait import `PinInit` is private
-   --> rust/kernel/time/hrtimer.rs:71:19
-    |
-71  | use crate::{init::PinInit, prelude::*, time::Ktime, types::Opaque};
-    |                   ^^^^^^^ private trait import
-    |
-note: the trait import `PinInit` is defined here...
-   --> rust/kernel/init.rs:141:64
-    |
-141 | use pin_init::{init_from_closure, pin_init_from_closure, Init, PinIni=
-t};
-    |                                                                ^^^^^^^
-note: ...and refers to the trait `PinInit` which is defined here
-   --> rust/pin-init/src/lib.rs:1003:1
-    |
-    =3D note: you could import this directly
-help: import `PinInit` directly
-    |
-71  | use crate::{pin_init::PinInit, prelude::*, time::Ktime, types::Opaque=
-};
-    |             ~~~~~~~~~~~~~~~~~
+-- 
+2.48.1
 
-error: aborting due to 1 previous error
-
-For more information about this error, try `rustc --explain E0603`.
-
-Presumably this is caused by my merge resolutions :-(  Please have a
-look and let me know what te resolutions should be.
-
-I have used the rust tree from next-20250314 for today.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/wz=gC/Nau+t4BBjrZEWvfEg
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfYADUACgkQAVBC80lX
-0GxJSQgAiOH7umi5/Jj48Q4voyRRjr86TEP+dd5Fa6iXfgG2f17QN/7Gi4efD7El
-5/vFZBWOSY+GAS1HNr/oImMAlvJnwKgEW0fG5sxVaoR0k4AwPfHTKQLU0gzjz9+L
-6xnlrPaCfftu8BuK4r0zf8jqK4obpur2x5vcqHECqpLf3heNJOmR5ELJeteMN9qa
-/+2b+EKiNupR+LP2AtbfNwHK/AWlzS5YZbL7imuAzw+5m8z3WzQYHzOVaRD4aLz8
-ojvSiu6oDG4GeekF61Oo350aTxHWb9wWxmAsCJ0Ll40avoVtS84kn1OrgtZNfNwk
-qRr2onxj54jZW+kxBjXJCFCVuwwGjw==
-=+VQx
------END PGP SIGNATURE-----
-
---Sig_/wz=gC/Nau+t4BBjrZEWvfEg--
 
