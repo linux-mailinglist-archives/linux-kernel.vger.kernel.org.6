@@ -1,158 +1,129 @@
-Return-Path: <linux-kernel+bounces-563411-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEA4BA6414A
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 07:21:09 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22756A6414B
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 07:21:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F7963B06C5
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 06:20:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E2FA516F464
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 06:21:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 317054A32;
-	Mon, 17 Mar 2025 06:20:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1948219A7E;
+	Mon, 17 Mar 2025 06:21:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gOMWfEu7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="VBVWs58v"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E8254430;
-	Mon, 17 Mar 2025 06:20:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC9F721507F;
+	Mon, 17 Mar 2025 06:21:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742192458; cv=none; b=ZIYAVWW9gsJbGMolAkNUnIN+l7TIfktzLqvR6+OPT+1Ynm8xkxsPaNZCu1LpyQvgzFFGLLtJRh4cmPAgpc8q+NFtpCBa9JBsBuhlg7SGNROyu0zRmqKJfOOZUGWW+0eMoh47oIbp5nETeedkLoKrvI9JbOdk4bmu5W/6rSMar5g=
+	t=1742192468; cv=none; b=E/ItV7Pb0LU0ALvVOFnPLKCIPO8hgRZV1YwNHK2Mb52LxGHbvKy6PoYpyOhXEhZN2rRY6FbTnHGWu/tCpwkVWLNWJ1u3ASha19R7Me4WKprTSfq4Ile3x/9HVSUcQyPF58hP49R8fQUsspH81yEpr2T+/ng7lW1Kzft0uORSUjs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742192458; c=relaxed/simple;
-	bh=6avnnkGStpdEgMGZiPC/B0bGMi+/oYvepTgvlfgBaIE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Igu0Z59sOBLVYlqjiNp5x95KqSag/2lHCl6TSGT9B9DdP1K3Rdov4sfVphNgEPTN+9QS/cP8W9Keom2qhRwp9sXw9iJijXjsU7OXOxNisPJZLFg+eKChKBKcV+68bAEslUU0x1UqZRa8F4GuL+tIF5TnnOc/O+CDKSqsdEWJVL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gOMWfEu7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE8D0C4CEE3;
-	Mon, 17 Mar 2025 06:20:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742192457;
-	bh=6avnnkGStpdEgMGZiPC/B0bGMi+/oYvepTgvlfgBaIE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=gOMWfEu76MHTLqDkwpUi0pFmp1MHICZaHMPcOCEdObn4dUEflU2gSxICbcQxSvLj4
-	 vDv17d7O1+EImlwwWF0Zo3Cm1AJjr9KgfGlc5+ts4E58qK5yMyLoajzmyaL00g8sYm
-	 MvimnfktLOv2Sa6foWxubFmVU6YLKevK6Bxo6la27tKhF+uzcoDZ9rWYPh+uO0nVyf
-	 p3BNEBXioWgBS/Syp3xV8wAH6SGFdlDsOABs5M94vV/xr3Y45+1icgD86B/n5r88Ei
-	 Cw9WhRV89lMFUhwn6Hk5bBuGMRFmLt4YYePF3hFq+7Q280sad3CFn2oe2BAvfRBWhW
-	 YBEgp/hfdRxQg==
-Message-ID: <feb009f6-79b9-499e-a909-3d27c4fb9fad@kernel.org>
-Date: Mon, 17 Mar 2025 07:20:54 +0100
+	s=arc-20240116; t=1742192468; c=relaxed/simple;
+	bh=DY65S/eaAe0lSaaJe6wGzBroVX8E0H+aFgkQHZa2Xqc=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=kPh67Ip+gNFmvF67+FmTVjBALMyMbwnEPX6b13qRGHQw2WNdOZEElN5JyUdxeG32b5sj0MrtbmBklqn5Z5P1rxLcGL+q4ERJoVItdMF5wo+fa+k7zxq+6XztW6xso/fZQ5NQhIo7ZPyTAkIWpbOm9EAf6EGOSnHMSKOfp67v1hM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=VBVWs58v; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1742192464;
+	bh=08Bj1pjXMDLtnB6VIdIazoGwkx7T89OS5iY+pYk8VpM=;
+	h=Date:From:To:Cc:Subject:From;
+	b=VBVWs58vqx+z0nbuT+UdVV3x0+h3wJ3/ztYzJbsCKCXN1DNB/0l914NW2WlgXp6t2
+	 UuQyedE/7rSyGcG1BnGJZVzg6c4cPdEr253TMA34Ivd1dLEwxtQyE+/BdUP1F1Pj28
+	 ajd//kASBGZ/ihnyJPmjyOELHkaTV13xcF3MXMtwC6Z1SI6bq7ZhjTa9CjAQm3f5ZW
+	 ZhoifK446J8X67aulaSdjMaTuHiKXW/rC9bQZN4ank+Wc+iTtV+WLmVTG5CoA6waXf
+	 Fx8DiDi84/q1K+X+lU+RKh4Ggm7jL0XyTz3n1njftrS8BeLSLq5cUQgUDMNc7PKMXi
+	 WiCJi7G6aPnIQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZGPxC5b7xz4wcj;
+	Mon, 17 Mar 2025 17:21:03 +1100 (AEDT)
+Date: Mon, 17 Mar 2025 17:21:02 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Christoffer Dall <cdall@cs.columbia.edu>, Marc Zyngier <maz@kernel.org>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>, Mark Rutland
+ <mark.rutland@arm.com>, Oliver Upton <oliver.upton@linux.dev>, Shameer
+ Kolothum <shameerali.kolothum.thodi@huawei.com>
+Subject: linux-next: manual merge of the kvm-arm tree with the arm64 tree
+Message-ID: <20250317172102.55f7c4d9@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH linux-next] ocfs2: use sysfs_emit() instead of
- scnprintf().
-To: xie.ludan@zte.com.cn, mark@fasheh.com
-Cc: jlbec@evilplan.org, joseph.qi@linux.alibaba.com,
- akpm@linux-foundation.org, viro@zeniv.linux.org.uk, brauner@kernel.org,
- danielyangkang@gmail.com, dmantipov@yandex.ru, ocfs2-devel@lists.linux.dev,
- linux-kernel@vger.kernel.org
-References: <20250315141640564lv7R0CwIRPsmittXXjLbB@zte.com.cn>
-Content-Language: en-US
-From: Jiri Slaby <jirislaby@kernel.org>
-Autocrypt: addr=jirislaby@kernel.org; keydata=
- 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
-In-Reply-To: <20250315141640564lv7R0CwIRPsmittXXjLbB@zte.com.cn>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="Sig_/z02MV.EVBK30+_Gr6zIYge9";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On 15. 03. 25, 7:16, xie.ludan@zte.com.cn wrote:
-> From: XieLudan <xie.ludan@zte.com.cn>
-> 
-> 
-> Follow the advice in Documentation/filesystems/sysfs.rst:
-> 
-> show() should only use sysfs_emit() or sysfs_emit_at() when formatting
-> 
-> the value to be returned to user space.
-> 
-> 
-> Signed-off-by: XieLudan <xie.ludan@zte.com.cn>
-> 
-> ---
-> 
->   fs/ocfs2/cluster/heartbeat.c | 10 +++++-----
-> 
->   1 file changed, 5 insertions(+), 5 deletions(-)
-> 
-> 
-> diff --git a/fs/ocfs2/cluster/heartbeat.c b/fs/ocfs2/cluster/heartbeat.c
-> 
-> index 724350925aff..8282fc193906 100644
-> 
-> --- a/fs/ocfs2/cluster/heartbeat.c
-> 
-> +++ b/fs/ocfs2/cluster/heartbeat.c
-> 
-> @@ -1308,7 +1308,7 @@ static int o2hb_debug_open(struct inode *inode, 
-> struct file *file)
-> 
-> case O2HB_DB_TYPE_REGION_NUMBER:
-> 
-> reg = (struct o2hb_region *)db->db_data;
-> 
-> -out += scnprintf(buf + out, PAGE_SIZE - out, "%d\n",
-> 
-> +out += sysfs_emit(buf + out, "%d\n",
+--Sig_/z02MV.EVBK30+_Gr6zIYge9
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
+Hi all,
 
-This is wrong too [1].
+Today's linux-next merge of the kvm-arm tree got a conflict in:
 
-[1] 
-https://lore.kernel.org/all/9c552d9a-2d46-4069-a9c4-35fab857bfc3@kernel.org/
+  arch/arm64/kvm/hypercalls.c
 
-regards,
--- 
-js
-suse labs
+between commit:
 
+  d2c173acbf93 ("KVM: arm64: expose SMCCC_ARCH_WORKAROUND_4 to guests")
+
+from the arm64 tree and commit:
+
+  c0000e58c74e ("KVM: arm64: Introduce KVM_REG_ARM_VENDOR_HYP_BMAP_2")
+
+from the kvm-arm tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc arch/arm64/kvm/hypercalls.c
+index 876e6f29a73e,569941eeb3fe..000000000000
+--- a/arch/arm64/kvm/hypercalls.c
++++ b/arch/arm64/kvm/hypercalls.c
+@@@ -397,7 -391,7 +401,8 @@@ static const u64 kvm_arm_fw_reg_ids[]=20
+  	KVM_REG_ARM_STD_BMAP,
+  	KVM_REG_ARM_STD_HYP_BMAP,
+  	KVM_REG_ARM_VENDOR_HYP_BMAP,
++ 	KVM_REG_ARM_VENDOR_HYP_BMAP_2,
+ +	KVM_REG_ARM_SMCCC_ARCH_WORKAROUND_4,
+  };
+ =20
+  void kvm_arm_init_hypercalls(struct kvm *kvm)
+
+--Sig_/z02MV.EVBK30+_Gr6zIYge9
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfXv04ACgkQAVBC80lX
+0GxgTwf9HpbUNwt5ZTf46Tr9hnSnm//YMmUxHdPjui/lSdIEdyF6zTNCijc32NkK
+56lSXMZGMMzTeOMOQyxbGZo+VJg77s+4aDxmVRoY+KHdlzVVZpkvPZ7UnofXpfon
+tfIK5RojMFJ3KPVNfPOyJHWnbXs2JbzZOkELro+C39aPkZHHKySm7ExpTnYMKQ8H
+TmaBXLyZUepkp402nC6jYiAD1lVXxLqohsu+8wI3rvgG1SNTU5B3gvvhId/RfX2N
+nB0Kc+IEFE9VRGS3ZFXmM5LMzz5hoXPq3B8i4Kk0/07jzx3PncbsbMXDEw93IF5a
+2S3cNvBeONz+G6AeALhxrFyIRFgWig==
+=lYBZ
+-----END PGP SIGNATURE-----
+
+--Sig_/z02MV.EVBK30+_Gr6zIYge9--
 
