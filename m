@@ -1,157 +1,130 @@
-Return-Path: <linux-kernel+bounces-565188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565189-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B24A2A662AF
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 00:26:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 069A2A662C5
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 00:35:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 163BC189F1AE
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 23:26:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7F583B1B4A
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 23:35:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A56D205AC3;
-	Mon, 17 Mar 2025 23:26:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 521F9205AB3;
+	Mon, 17 Mar 2025 23:35:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ffOzYxEz"
-Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="apWNZs+A"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ACDA204C31;
-	Mon, 17 Mar 2025 23:26:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 921441A7249;
+	Mon, 17 Mar 2025 23:35:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742253974; cv=none; b=gvpzBSLUfqbBMy9QlbIJ+LXtXnIS6/SSWo6GMqtLcGqIyn8ciOoK93Q8DSxqOzgUxugtK1csHjjHfI8L6KshVTZLoMLmGyJ0+ZcJprufgdyMuNywaHnD7RrmTtq/MhQZWTUDu1Mg7miAzfvpeDn6RcyrV64Rr9eMzwYb0UEkAoY=
+	t=1742254513; cv=none; b=lANDMxzHN5StjhyP9+eC25p2k7KrjEnT3Oynzmy7K88ACOFu3wvwnH1uGbJE1l+SCdtA7ttujY9kz5MvlHGaqnwH6idNJwGEzct3UsPtLW0z9S8DxUpve1Rhf7VxX4ArBVyP0ytzZB97vWqNag2FvLqv8wX/ZBmGjPEIspWhFjE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742253974; c=relaxed/simple;
-	bh=RWEsdX6wdBbxQwhqTn65Mu4phSo3+GqqCZj8NtfaC2Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=AO1KDFJ34p7GCl6uPPk/KxT0lFwguEq6WniJsKSO94ea5FFwkd/T/iIO47FFx37ou2PMWZqu+tjkPWcgaf/InmkH+7qufdp3axQw+QWTFg858W7wliT8BTvspyzx3mmO0W+2HNMXRpZ2QsjfmI2yjuphwkYcDJpyi5mRKpfQFRM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ffOzYxEz; arc=none smtp.client-ip=209.85.222.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-7c2303a56d6so574116085a.3;
-        Mon, 17 Mar 2025 16:26:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742253971; x=1742858771; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LnM9OF/UJ3vtp/v3zGtmLtQKA8pRcDzu+K7ktZwRW8k=;
-        b=ffOzYxEzWVFMF1kq3n27N3r+PNlNRetguEACqfChxEVma7rGOBhBmREpbf206Faary
-         KtAkaKpoz/NEG67fPJFQoJJW810MEFl4Lzozg/6w452ws1QjN+g82T0KOGiMaCPOaGzr
-         2g1PAbauM3L+7tbtiaJf7rChfkajydhSgTY76EoPHT/lgqIaEt5XUZZns3xJvnNDYwPf
-         Ho3ZLYJcgbEc4ccPXUEthv+BWR4KBGjEY+T+G+oNs7iuvns2O3VsUq1muADzh+TXBMCD
-         QaWKi7Ksg2OPBSiIhZ3mHfqU8vMWR31UOCm9qqVSQoqo1LmtY9PK7MQBpCyV1fs+pJYF
-         CINQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742253971; x=1742858771;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LnM9OF/UJ3vtp/v3zGtmLtQKA8pRcDzu+K7ktZwRW8k=;
-        b=P40tB/zP8aTO+kdLgXEQuMZ9sqQbpI2OTfvPaVLzsG+TgzgVDckd/c9FQLTo4kUBLA
-         huYBj5ktMLG2bY/a/UlijKsO4bkAAvMUXbGXM/UuijSFbWynR+6cdhm2ID+ImLzpRA75
-         U/0sfcuIZAOP3uY4/a5c5rya1qNg/JiDTZ8r4YhVfv2/FfmGoQlenAME1XTEcsN3xAyC
-         drnqjHy7uubzup6TkD376LfX6uQYYpvmdIUE5F3ZrJwDgzweet/N2SBdJ7MhMbzeOZS7
-         IIkL1h3gWSK+ZVQ6xiZ+1cCBhfHvWurAtJqQtekEyikc+aY4ghzy2ft9kBN9dZS7rBmt
-         abhw==
-X-Forwarded-Encrypted: i=1; AJvYcCVVZnoa93FjbiiCdLKQwi7Wi7waY+IXhyyKcOr03D4DUWyURQfWDEHTmJELG1DZHLVZuP2naigzKm0Jo7o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyxxSRsUNUpD4Xm6usxZN6irintUueZpLM5RQSTD3Q1txeSqswZ
-	4Y9mwVkXck8Eih06T6NPh8cs9Wv3XPnMRxqOoxG3Csde3woVGGDB
-X-Gm-Gg: ASbGnctEtvNd9TlyWAiJYiZNNiwgeSjDXbUIL6439HxJccxCoVtDWnqc4wWb7me4vam
-	cPOD2IXdPjEadZCzkr4qbde6mH+zeUvS/ksIFqPPTuKdFFrAJKYigR5Gipf+EGsGys5wPka9XcQ
-	u0RnSHL7yRDA2Pkxj+oHsZ3JnDgSTylxKkIBFfXIL5Y82qoF4qiTx0MqCb3AH41WeNstmunco9w
-	Fw3QDN6BfZrgmjOwLxMBMkKffiGxLts8DdqYJIOzAh4/p5yI3hFbCMYIr3fqpzJdE1a4SNNqVpT
-	NnaKCYkqFfbR6evbC/i2fm1dZyuSGCns+ZhfQSV9kaniy2w5pGRYbrM2LW38BnbCepi1H2x2X+4
-	K
-X-Google-Smtp-Source: AGHT+IHQVBU2VBGGZNQYT49PslVSslozZ7Jcc4/v398qPS5vnwAtP0kkN3aEaVBONGvFvZcboF3L9g==
-X-Received: by 2002:a05:620a:8389:b0:7c5:4d22:2147 with SMTP id af79cd13be357-7c59b2c496amr255523385a.55.1742253971205;
-        Mon, 17 Mar 2025 16:26:11 -0700 (PDT)
-Received: from nerdopolis2.localnet ([2600:4040:5e66:a800:2c79:27d5:fd48:ab84])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c573c4f53csm643095685a.22.2025.03.17.16.26.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Mar 2025 16:26:10 -0700 (PDT)
-From: Adam Simonelli <adamsimonelli@gmail.com>
-To: Petr Mladek <pmladek@suse.com>
-Cc: linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
- Jiri Slaby <jirislaby@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Andy Shevchenko <andy.shevchenko@gmail.com>,
- Steven Rostedt <rostedt@goodmis.org>,
- John Ogness <john.ogness@linutronix.de>,
- Sergey Senozhatsky <senozhatsky@chromium.org>
-Subject:
- Re: [PATCH v12 1/1] printk: Add an option to allow ttynull to be a default
- console device
-Date: Mon, 17 Mar 2025 19:26:08 -0400
-Message-ID: <5112655.tIAgqjz4sF@nerdopolis2>
-In-Reply-To: <Z9hC4Ri39FsyOF0T@pathway.suse.cz>
-References:
- <20250314160749.3286153-1-adamsimonelli@gmail.com>
- <20250314160749.3286153-2-adamsimonelli@gmail.com>
- <Z9hC4Ri39FsyOF0T@pathway.suse.cz>
+	s=arc-20240116; t=1742254513; c=relaxed/simple;
+	bh=7UoWRwyHzqBBehirgFLNvlLP+45LmrF4dy3eicA0GKo=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=AbApUtxHsMYn5rKNQ9zjgPM5DSawOEwrbWCWkfO8X0XgZLOwe4k8Y6JnXVL7H1oQwhBz0dtf4EaRWzJI3y78FrdgOaD9ZX0ATIhkf47JWPAu2My+Cl1R7BVx6z8xsVBmyL2bOjyO3sBakB/IuEuum+/eDgdlVw5m8B3xDy9ZNTs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=apWNZs+A; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1742254505;
+	bh=D7cfFiiScayhlIqzpWBB2VE4W5qnbzK4TlXB83dimwI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=apWNZs+An410bWexLMvKI1PqEU5bKoqoqgzmjQqlKvLalzSqVo2NIr7isDReItup7
+	 OFbrUBiwXs0NXJRZlw19Mdz7x773fxlnq7u8Al2fUb27zeidh3dzwGdYOMzkJ2XZav
+	 IsbVBbADCeaEOymDQNEJS8anIh760QcaierVykwEc7TOpXyLg6EXzvAslx8zcBF/mG
+	 X1QjEbxGxc0K8qy470rBuMOh+ulBdfHVHWzp6tXHNuYiihxD9pQUB/mtEoXNv9o6lh
+	 dtVynLCqZIDwxw78duupYzYGROJ89CApezEo30CEwA4yQKmandPb9odYfq5jixhwBP
+	 YqctC1X65PPwg==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZGrtK0QcRz4wcd;
+	Tue, 18 Mar 2025 10:35:05 +1100 (AEDT)
+Date: Tue, 18 Mar 2025 10:35:04 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of the rust tree
+Message-ID: <20250318103504.4cbfe7e1@canb.auug.org.au>
+In-Reply-To: <CANiq72n05i322FfpSjFX=Wz3-9AgVRKLkKs1CHa-LxzWQ7-pew@mail.gmail.com>
+References: <20250317215757.2412aef1@canb.auug.org.au>
+	<CANiq72n05i322FfpSjFX=Wz3-9AgVRKLkKs1CHa-LxzWQ7-pew@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: multipart/signed; boundary="Sig_/awfpBApde4zvnA23wkvrEX2";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Monday, March 17, 2025 11:42:25 AM EDT Petr Mladek wrote:
-> On Fri 2025-03-14 12:07:49, adamsimonelli@gmail.com wrote:
-> > From: Adam Simonelli <adamsimonelli@gmail.com>
-> > 
-> > The new option is CONFIG_NULL_TTY_DEFAULT_CONSOLE.
-> > 
-> > if enabled, and CONFIG_VT is disabled, ttynull will become the default
-> > primary console device.
-> > 
-> > ttynull will be the only console device usually with this option enabled.
-> > Some architectures do call add_preferred_console() which may add another
-> > console though.
-> > 
-> > Motivation:
-> > 
-> > Many distributions ship with CONFIG_VT enabled. On tested desktop hardware
-> > if CONFIG_VT is disabled, the default console device falls back to
-> > /dev/ttyS0 instead of /dev/tty.
-> > 
-> > This could cause issues in user space, and hardware problems:
-> > 
-> > 1. The user space issues include the case where  /dev/ttyS0 is
-> > disconnected, and the TCGETS ioctl, which some user space libraries use
-> > as a probe to determine if a file is a tty, is called on /dev/console and
-> > fails. Programs that call isatty() on /dev/console and get an incorrect
-> > false value may skip expected logging to /dev/console.
-> > 
-> > 2. The hardware issues include the case if a user has a science instrument
-> > or other device connected to the /dev/ttyS0 port, and they were to upgrade
-> > to a kernel that is disabling the CONFIG_VT option, kernel logs will then be
-> > sent to the device connected to /dev/ttyS0 unless they edit their kernel
-> > command line manually.
-> > 
-> > The new CONFIG_NULL_TTY_DEFAULT_CONSOLE option will give users and
-> > distribution maintainers an option to avoid this. Disabling CONFIG_VT and
-> > enabling CONFIG_NULL_TTY_DEFAULT_CONSOLE will ensure the default kernel
-> > console behavior is not dependent on hardware configuration by default, and
-> > avoid unexpected new behavior on devices connected to the /dev/ttyS0 serial
-> > port.
-> > 
-> > Reviewed-by: Petr Mladek <pmladek@suse.com>
-> > Tested-by: Petr Mladek <pmladek@suse.com>
-> > Signed-off-by: Adam Simonelli <adamsimonelli@gmail.com>
-> 
-> JFYI, the patch have been comitted into printk/linux.git,
-> branch for-6.15.
-> 
-> Best Regards,
-> Petr
-> 
-Oh wow! Thank you so much!
+--Sig_/awfpBApde4zvnA23wkvrEX2
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
+Hi Miguel,
 
+On Mon, 17 Mar 2025 23:35:54 +0100 Miguel Ojeda <miguel.ojeda.sandonis@gmai=
+l.com> wrote:
+>
+> On Mon, Mar 17, 2025 at 11:58=E2=80=AFAM Stephen Rothwell <sfr@canb.auug.=
+org.au> wrote:
+> >
+> > Presumably this is caused by my merge resolutions :-(  Please have a
+> > look and let me know what te resolutions should be. =20
+>=20
+> No, it is due to hrtimer-next, which I still have to merge on my side.
+> I have created an example merge of hrtimer-next into rust-next which
+> should solve you mention error above -- but please feel free to drop
+> hrtimer-next today if you prefer, since I will be pushing to rust-next
+> the proper merge if linux-next goes well, so you will get it:
+>=20
+>     https://github.com/ojeda/linux.git rust-next-merge-hrtimer
+>=20
+> For the other things mentioned in the other threads, I have also
+> created two branches, one merging rust-next into Linus, and another
+> into next-20250317 -- not sure which is the one you usually prefer:
+>=20
+>     https://github.com/ojeda/linux.git linus-merge-rust-next
+>     https://github.com/ojeda/linux.git next-merge-rust-next
+>=20
+> It is a bit subtle because we have to "redo" a fix from mainline in 2
+> different places since the lines of the fix are moved in rust-next.
+>=20
+> I build-tested the branches a bit -- I hope they are all OK.
+>=20
+> I didn't modify anything in rust-next today to avoid further issues
+> and get this part over with.
 
+Thanks, I will see what I can come up with.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/awfpBApde4zvnA23wkvrEX2
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfYsagACgkQAVBC80lX
+0GyFDggAnJI5y/xmdhW+fSnakrNZbJSAtyEClpUNHb+FdbYWROVYKHavH5FdXEDb
+BYTYu/zdelGpYmiWOwIpy9icsC1TiHt0byogLv4f/oPSwr5VNa6G1uJWIq+LhWnf
+c9/pIVUC58gPFkyoSuhDVwKrGnItq1uIFipxuE1xuUp5gDKxtRV+RBIUdcf4nYqf
+/mvDvwkSArp1CpeuN0zBiqNaYzd8fAX7emUSvsqcilf537be74l1LHTpMCh3yant
+a+Q2dLkL59Lp3cllHTA+dQVsPGy9/TDOKk6Z0qC6qx9HPiXQG1s3yH+VmdgO9LVg
+cRqPqLfoGz9mfYed3reM3ya6vUG2QQ==
+=gpVy
+-----END PGP SIGNATURE-----
+
+--Sig_/awfpBApde4zvnA23wkvrEX2--
 
