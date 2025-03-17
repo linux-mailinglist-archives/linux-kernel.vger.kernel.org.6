@@ -1,114 +1,139 @@
-Return-Path: <linux-kernel+bounces-563871-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563872-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8CDFA649BC
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:27:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0CC1A649EE
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:30:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED51E16A39C
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:27:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0AF1A188ECF0
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:27:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 141C023C375;
-	Mon, 17 Mar 2025 10:24:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50CEA23CEF0;
+	Mon, 17 Mar 2025 10:24:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tbXy5sjp"
-Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="J+GbE6C1"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C59A723BD02
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 10:24:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B8AD2376F2;
+	Mon, 17 Mar 2025 10:24:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742207061; cv=none; b=oFoYgJk6cAUBOpCjVEV1xCaSRHyQhLeYCCBaOc/OKSdr4pe6RfOr+5VRwhjxhfzaqwjMgfYprON86SKuu9tpPkIDtYxRimlf3lOXPamZdUx3Ft8HXsLz0NVq7fAGSY1YfaMdyEv/GLf/jPnTz499j+S+xBf/IaE3NjXItrZWyIY=
+	t=1742207085; cv=none; b=J8asXdmgqUKv+DdM2mTOR85V6tr2VgiM9gUiVPIMf3bFGMNJfK8QlvjxY+Vog8lGHuQXFSOSKvO86mukxalXp0tVoeejU+deVBh8YBT5WbxB4YG2lhdbhfpD34bOCrPItUVONiRd6F2Hdx/6Uj7JwkEwQ813U+rqNw9ne3lugcA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742207061; c=relaxed/simple;
-	bh=T0XmXTPHuSifmlk1GQv7S8pl94t1Wv6LlKDhlqctDvU=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=gQ+hAOyA9Pnr7NwHuUkc92v9jX0EOHaD9+/Q9l3+TEmvBCzYsmJl1/FbWLRIVTe62SVrAuoClxPhUuyjrtJWDyB67JW2HUqDG6NFYCL99qXFBQZ2vojeLDX+Ie6wdf3hLNKVsXellX5NEzYgbFgpeXV1qZlIhrx76xS6SPkKXok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tbXy5sjp; arc=none smtp.client-ip=209.85.128.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-43cf327e9a2so15560595e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 03:24:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1742207058; x=1742811858; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=8K4Jrr2cHn05wONB/FH2XsdIcr9ioXUuaymWvPlQBPA=;
-        b=tbXy5sjpD4pVnpMxCVw579Xj25M68VmTzxLgZ1bUIeaZUY+7lP4u+agcaQiT4EVeY+
-         9x7FOKFggZLY8zNqTP3m4bVZZ6Hp2O4jZ6DTyqnFaTKbk/4fzfbE16drDXycgHYQpFqY
-         REr2ifWo5mf4NjrpUT04rSbE2N+/SlEZFlNefEjtK3VR72Oa2D+hyKmbk9VzBdtMwGHS
-         vjwElyx4Zl6qvNzxPTrvR7s9dqptYh5EKosbIBCET5tYlGeR2rPeP/kUQudM/swbbdpk
-         PWUwy4tj4vHkqLsP8qd5I9hdi+U0H/wLuh0jTV/VihUkj4RQD3vZf11Bqg1eAgyJd18X
-         8z8Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742207058; x=1742811858;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8K4Jrr2cHn05wONB/FH2XsdIcr9ioXUuaymWvPlQBPA=;
-        b=cmVO1ifOtTtf5Y9W9XINmueX5mwx9RJb9pHbLIQaTqCVSHd/K2UFgi/3/YbhGY7x4t
-         6kH/UWCdAGvgP91nYLV/RtOsO2gHsPZrnNlnlUrzi5OJ3tCDZ6tvZkV+NJFBLChYuNzZ
-         PK3rXZ2zUR7nnZiRo+64/9NixYz7V0QVSpSGfm5p2WG/DqiSJQvJOa8XgNF9S1d+7zw0
-         Ge55LGJzVAJrptlewV2zW7p+UTg+bOdiK4u6NQqeTpL7Zj59Ne/C69H6jhCSBSS/Tloc
-         Y2do1ZXIPM2ebsaK0aPYDQCbiuDNOWzRQxKH3p0FC7gpNAOOtKMSSwwIKeOcdyEXwt1X
-         zN+w==
-X-Forwarded-Encrypted: i=1; AJvYcCXicx2HW0BYmOO73flm5Snqxbkc6sdLA004mEcw9ggZhas43Axu15G7dynIOsSb2Gq3yKTUiATp3n5xvaI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxge1jJNHI9Yu+4+sQKS77SzgkQc5/5l4DYjWu8bv1YaIMJJXZd
-	p9kXIKzFK5EioiqOWf+8w1Ze+jJ9bCo6iKUS5FmBmo3/YeQGpdBspM2S4mWyQWU1l00EJYMWcm+
-	cnDE1U+WIW6joUw==
-X-Google-Smtp-Source: AGHT+IGHM9Im2dqX3gfz0NV8cc0x3CfI4wJk+09faVb93t75tZtSx537hGUim5yDjXgoSpEfdSGA14kssfoPG70=
-X-Received: from wmgg6.prod.google.com ([2002:a05:600d:6:b0:43b:c450:ea70])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:3b0a:b0:43c:f969:13c2 with SMTP id 5b1f17b1804b1-43d1ece13a4mr114040775e9.28.1742207058149;
- Mon, 17 Mar 2025 03:24:18 -0700 (PDT)
-Date: Mon, 17 Mar 2025 10:24:15 +0000
-In-Reply-To: <20250317023702.2360726-1-kunwu.chan@linux.dev>
+	s=arc-20240116; t=1742207085; c=relaxed/simple;
+	bh=nlCD2AI4xClEigMb987YjLNUYCSZ0DFUEakh+UBVyNM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=V/OAmHhPMUq1ASHDT58vqb/SAIjMODNeHY9/WCQYWWbizJzH18xbXCRuja072Qv+XHqSYG71NiPnFlKhM1qFjAVrMJbRPpoOXtKK5XMnhk7HUcSdWC6jMmPLHj/Q4Z1+80NWo+/fB+Rt+dqi7GCOX5NoWbzk7ndZLoneKjMpI5E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=J+GbE6C1; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=HNSydyEfg2Wb3PXmd93dXABCEL4krGbTEUi5/yWVKPc=; b=J+GbE6C1/4MDpoNoRhujOR86gT
+	siauauWuCKOaoc/NrCZejL1EQR1O+daq3QLE2db+LElog01yIvqh9XKhxCkJ1SQNfXoqur8+cpgLR
+	FSkz3yOVr5LLQvm52nYKJfq6VBWHFc9pfELQQK6rS/BPSO2l600UkGgMUqYv4q4EZXk5dVAzWqRbo
+	5ge+2GIbKdjEkKoia/Ow/O/1hVKawGPTXSRNYKIKzRV4QZX9RrG1OVE+jWGxnFbbUTFPo5CtS7Mv+
+	mpmkXSSoeFv/YK1qN5Zr6o3zBK5xVvpBcDma8iAEWbJa5pugt//E7jUQ/cyuNAgza4CfUGXC3GEAB
+	JLq6kEbg==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:33602)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1tu7e4-0003LE-0t;
+	Mon, 17 Mar 2025 10:24:32 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1tu7dz-0003Tx-2T;
+	Mon, 17 Mar 2025 10:24:27 +0000
+Date: Mon, 17 Mar 2025 10:24:27 +0000
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Jim Liu <jim.t90615@gmail.com>
+Cc: JJLIU0@nuvoton.com, florian.fainelli@broadcom.com, andrew@lunn.ch,
+	hkallweit1@gmail.com, kuba@kernel.org, edumazet@google.com,
+	pabeni@redhat.com, netdev@vger.kernel.org,
+	giulio.benetti+tekvox@benettiengineering.com,
+	bcm-kernel-feedback-list@broadcom.com, linux-kernel@vger.kernel.org
+Subject: Re: [v2,net] net: phy: broadcom: Correct BCM5221 PHY model detection
+ failure
+Message-ID: <Z9f4W86z90PgtkBc@shell.armlinux.org.uk>
+References: <20250317063452.3072784-1-JJLIU0@nuvoton.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250317023702.2360726-1-kunwu.chan@linux.dev>
-Message-ID: <Z9f4Twvl-UaX1NQp@google.com>
-Subject: Re: [PATCH v2] rust: file: optimize rust symbol generation for FileDescriptorReservation
-From: Alice Ryhl <aliceryhl@google.com>
-To: Kunwu Chan <kunwu.chan@linux.dev>, Christian Brauner <brauner@kernel.org>
-Cc: ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com, 
-	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me, 
-	a.hindborg@kernel.org, tmgross@umich.edu, dakr@kernel.org, nathan@kernel.org, 
-	nick.desaulniers+lkml@gmail.com, morbo@google.com, justinstitt@google.com, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	llvm@lists.linux.dev, Kunwu Chan <kunwu.chan@hotmail.com>, 
-	Grace Deng <Grace.Deng006@gmail.com>
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250317063452.3072784-1-JJLIU0@nuvoton.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-Adding Christian Brauner who originally merged the
-rust/kernel/fs/file.rs file.
+On Mon, Mar 17, 2025 at 02:34:52PM +0800, Jim Liu wrote:
+> Use "BRCM_PHY_MODEL" can be applied to the entire 5221 family of PHYs.
+> 
+> Fixes: 3abbd0699b67 ("net: phy: broadcom: add support for BCM5221 phy")
+> Signed-off-by: Jim Liu <jim.t90615@gmail.com>
 
-On Mon, Mar 17, 2025 at 10:37:02AM +0800, Kunwu Chan wrote:
-> From: Kunwu Chan <kunwu.chan@hotmail.com>
-> 
-> When build the kernel using the llvm-18.1.3-rust-1.85.0-x86_64
-> with ARCH=arm64, the following symbols are generated:
-> 
-> $ nm vmlinux | grep ' _R'.*FileDescriptorReservation | rustfilt
-> ... T <kernel::fs::file::FileDescriptorReservation>::fd_install
-> ... T <kernel::fs::file::FileDescriptorReservation>::get_unused_fd_flags
-> ... T <kernel::fs::file::FileDescriptorReservation as core::ops::drop::Drop>::drop
-> 
-> These Rust symbols are trivial wrappers around the C functions
-> fd_install, put_unused_fd and put_task_struct. It
-> doesn't make sense to go through a trivial wrapper for these
-> functions, so mark them inline.
-> 
-> Link: https://github.com/Rust-for-Linux/linux/issues/1145
-> Suggested-by: Alice Ryhl <aliceryhl@google.com>
-> Co-developed-by: Grace Deng <Grace.Deng006@Gmail.com>
-> Signed-off-by: Grace Deng <Grace.Deng006@Gmail.com>
-> Signed-off-by: Kunwu Chan <kunwu.chan@hotmail.com>
+Looking at BRCM_PHY_MODEL() and BRCM_PHY_REV(), I think there's more
+issues with this driver. E.g.:
 
-Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+#define BRCM_PHY_MODEL(phydev) \
+        ((phydev)->drv->phy_id & (phydev)->drv->phy_id_mask)
+
+#define BRCM_PHY_REV(phydev) \
+        ((phydev)->drv->phy_id & ~((phydev)->drv->phy_id_mask))
+
+#define PHY_ID_BCM50610                 0x0143bd60
+#define PHY_ID_BCM50610M                0x0143bd70
+
+        if ((BRCM_PHY_MODEL(phydev) == PHY_ID_BCM50610 ||
+             BRCM_PHY_MODEL(phydev) == PHY_ID_BCM50610M) &&
+            BRCM_PHY_REV(phydev) >= 0x3) {
+
+and from the PHY driver table:
+
+        .phy_id         = PHY_ID_BCM50610,
+        .phy_id_mask    = 0xfffffff0,
+
+        .phy_id         = PHY_ID_BCM50610M,
+        .phy_id_mask    = 0xfffffff0,
+
+BRCM_PHY_REV() looks at _this_ .phy_id in the table, and tries to match
+it against the revision field bits 0-3 being >= 3 - but as we can see,
+this field is set to the defined value which has bits 0-3 always as
+zero. So, this if() statement is always false.
+
+So, BRCM_PHY_REV() should be:
+
+#define BRCM_PHY_REV(phydev) \
+	((phydev)->phy_id & ~(phydev)->drv->phy_id_mask)
+
+
+Next, I question why BRCM_PHY_MODEL() exists in the first place.
+phydev->drv->phy_id is initialised to the defined value(s), and then
+we end up doing:
+
+	(phydev->drv->phy_id & phydev->drv->phy_id_mask) ==
+		one-of-those-defined-values
+
+which is pointless, because we know that what is in phydev->drv->phy_id
+/is/ one-of-those-defined-values.
+
+Therefore, I would suggest:
+
+#define BRCM_PHY_MODEL(phydev) ((phydev)->drv->phy_id)
+
+is entirely sufficient, and with such a simple definition, I question
+the value of BRCM_PHY_MODEL() existing.
+
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
