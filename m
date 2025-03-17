@@ -1,122 +1,99 @@
-Return-Path: <linux-kernel+bounces-564191-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564192-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F3A1A64FED
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 13:56:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CEF4A64FF3
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 13:58:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 710B23B2970
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 12:56:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C455D18899FF
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 12:58:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1704723A9BA;
-	Mon, 17 Mar 2025 12:56:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5775C23C8A7;
+	Mon, 17 Mar 2025 12:58:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dpw8Ef9f"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MJnGlp3Q"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F400323814F
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 12:56:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA48723BCF9;
+	Mon, 17 Mar 2025 12:58:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742216197; cv=none; b=OTvHPbB4+YpDZ/BUXNBKGdndk7gTp4HxlLOHwmNhfDk7hl9ZIz395KGDzrKd/LKb9Wu7OVlle5Gwqe8zRzqSRpy1OpSoeywv2KEYY5fn5WwTAd25nsspInKnc2dNgXqIPK6KzmC5PIpLvhUzyN+0VRtcwJawLjzAZTYfrB0rd6w=
+	t=1742216323; cv=none; b=QoGiuddFiWAjmIAxGkSZwahi4FjLEOqtXDKNfoPZs4ZDVegG8KdMn4lEmye7dDQrDnEms2meiAVcTF6ZAoxBlZHvnGad5vdABQZHWNUmWbmbb4u332lJk+F0UWPFw5R2qq/eOZGlTq/LEFklEUaQpA79M0AkIqvSP8HJtE6N2DA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742216197; c=relaxed/simple;
-	bh=qhR+stvQyKNFKrc3dX73Q0Oj9bJ1GSmvzUPtxWmpD7I=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Uzei5Yl6EglA+XUsFRhJseANb5iOwLg13A9DGXLMSvyHFgoVAOQ+bYr1YDTzb/uulpFmYGzI8yMFb+utEwa3A9dvBvSpBcaE3QF4Ubpnx7QzhmAo4uD6lHpg9W0t23HCkeJh5pptqmeJfNIfmvrSu1Js7diUS1UWohx/GdX5Hlc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dpw8Ef9f; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1742216194;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pLLA8B7Q6RruRJ/SeEP0F06UuUK/GekT/XdbY6Zuva8=;
-	b=dpw8Ef9fZMrNYIlqz5K7dGdJoS+7uFtQcPQgZDId4Sjlk4ccdU2o+aKI6mLF6GB16WjOGR
-	7sZV1nVK/v7xUxmVXZJgcrxb76/F36vdhGBMI6RSGwsaJY55KTKkywRKWAieuveJzA1DAa
-	2xTV0QHrUvMr08QEgNDC+gYP9TSyIe4=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-34-re4lO5VlNM6jA31yTTMKWA-1; Mon, 17 Mar 2025 08:56:33 -0400
-X-MC-Unique: re4lO5VlNM6jA31yTTMKWA-1
-X-Mimecast-MFC-AGG-ID: re4lO5VlNM6jA31yTTMKWA_1742216192
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-43d01024089so17647645e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 05:56:33 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742216192; x=1742820992;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pLLA8B7Q6RruRJ/SeEP0F06UuUK/GekT/XdbY6Zuva8=;
-        b=T23ZUFTDrmHI2UnmoD4PG0AgYq1n8oz38UG3nAZpOMyhANTUgLRvKN01vl3TpPcCO/
-         C5XIq6VibvdnyskoBAxBf4zcL3l5rGbu19XD04ZmJ929/qrKazR5QLkN196qb0OPY+GH
-         aRGKhMbe8N892Uq38G+8feZq5FDZPlWElf7Wgwc2c7DVy9IGmfZbPjCrxz5cyRtkbrSB
-         AZbsMoP3us+4+nHYrAQKhijYiyVn3Vqlu41CJeReC7CkMWP5MUG3GSWqJ0BKF4BEfD2Q
-         s3b7T+P1LPu4Wr9e+SJ9zT+SQefqVDOHQ3+rqTHsKoq4L+inWMjQkdtr+eg5uO0ir18s
-         dYKA==
-X-Forwarded-Encrypted: i=1; AJvYcCVMNlONlYUbev3lL1HGC9Z7GjsmGeeA30pzadkLpvX1aVhBrS3fe59jwxmlvdqhEr5AxHddTg3IalDyNBk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzem1KugeTj5srauBp1FFt3CYfkRTc7dLkmxe6cEt+P0jrpP65C
-	Tn8O/cmt2sVOZPmqCc6PPQqlNK+/6BAlSIUnYdWRgOm9EPKrp4a4iNQKhtsU/9PLkVylxJzqPiN
-	4vYPH9C738gLlfcWvGfGp7xa76om9VN9+6J+DT+LSltIz4edb2xmJwbMiEhvVnA==
-X-Gm-Gg: ASbGncv73JP5eTwindmnK1ezKGCGHgbGvUwBSW+iPFmV6PY/ui6mk1TSSyz3yVd4Ao0
-	xQz7pD0+MWE3jEB/i4zC/kpMi7lsUOfldSQvvKuaAw34tPmjG1KDAk4p2KizqRtTqbTNVlbquff
-	SFypQK7UX9DzrBK/ecmYq6g1/Nwm21bxb0iwjB6hRwc7eB+5jIWamo+rKAKQP8IzyPQ9rxyXEhm
-	y4FMBsoAGJB3SEP6P5oJuVCrgnxmXgO4+jHoYisEqCLgUM2dDjt2b1DfoG1Mbg7QB6JBsxKoYwC
-	AKjCTxtB1T5CSzmTmrJapi6T3wTltCWyjwr9NnZCqa5tAGV6cL8yv7qRP23mjFtjjmyQQxG5ow=
-	=
-X-Received: by 2002:adf:a189:0:b0:391:2a9a:4796 with SMTP id ffacd0b85a97d-3971e2ae2fdmr9145133f8f.18.1742216192259;
-        Mon, 17 Mar 2025 05:56:32 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHIpr8LRCQQZUxAWE1Jo22GeaEAUfQFRwAkofiJzd6KgF5dHT33ZaPc1Wl2+/7G725sqDyAdQ==
-X-Received: by 2002:adf:a189:0:b0:391:2a9a:4796 with SMTP id ffacd0b85a97d-3971e2ae2fdmr9145110f8f.18.1742216191872;
-        Mon, 17 Mar 2025 05:56:31 -0700 (PDT)
-Received: from localhost (62-151-111-63.jazzfree.ya.com. [62.151.111.63])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d1fdda32fsm104214085e9.4.2025.03.17.05.56.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Mar 2025 05:56:31 -0700 (PDT)
-From: Javier Martinez Canillas <javierm@redhat.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij
- <linus.walleij@linaro.org>, Yixun Lan <dlan@gentoo.org>, Conor Dooley
- <conor.dooley@microchip.com>
-Cc: linux-gpio@vger.kernel.org, linux-riscv@lists.infradead.org,
- linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: Re: [PATCH] pinctrl: spacemit: PINCTRL_SPACEMIT_K1 should not
- default to y unconditionally
-In-Reply-To: <6881b8d1ad74ac780af8a974e604b5ef3f5d4aad.1742198691.git.geert+renesas@glider.be>
-References: <6881b8d1ad74ac780af8a974e604b5ef3f5d4aad.1742198691.git.geert+renesas@glider.be>
-Date: Mon, 17 Mar 2025 13:56:29 +0100
-Message-ID: <87msdjdddu.fsf@minerva.mail-host-address-is-not-set>
+	s=arc-20240116; t=1742216323; c=relaxed/simple;
+	bh=apIi+GmSdHpHPkEvnekuCpfR4oYNKEF4st/R+ECvEi8=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=kLkZTaFs0/py+UQMHnGlhrfe9LOWjUsKG3cEl7bf+lkL64NELtFvOzYqM0glwsVsGwVZahLJCE6W0diIx+EUgwlerORHiq/c+ZB13oIXe1YDBUo3AgpIrmYo+lSrpmXPcu44PZK1onHleX6bUlI3GC0DKyWGz2hHTqn7PX7R5mw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MJnGlp3Q; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3942BC4CEE9;
+	Mon, 17 Mar 2025 12:58:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742216323;
+	bh=apIi+GmSdHpHPkEvnekuCpfR4oYNKEF4st/R+ECvEi8=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=MJnGlp3QEm+aQ/YnDc6GeAkwPX+G7IuOeW4PzNKIk7OuZdmzwxws3+HY+xSN2aua0
+	 SBxE9zgLLjDcEI5VYUiGLUjY3Fx60UvV3+DYr7AvtDjDlyz4yfz8wOy10S8dKGT+Ee
+	 8T552ufjGSHTuP0uQZhIrTCf4vCoXQOw62Hd//E9/R7icpcT7919BXvk0UzQW1mgnX
+	 wPG8TT5ZS/W1O+fs51FOBg8barS6J3tkvHWd9HMumFu1s39elb1t4KYQ0wmYfl+IHg
+	 aoJoKPZnp8rxM44w0WRXlhPj5z3TisRMoWAAd226Y+kCHe4+UjUHPo7MgzegRB0sML
+	 SEAGQwpdSCg2w==
+From: Mark Brown <broonie@kernel.org>
+To: Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Shengjiu Wang <shengjiu.wang@nxp.com>, 
+ linux-sound@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Frank Li <Frank.Li@nxp.com>
+Cc: imx@lists.linux.dev
+In-Reply-To: <20250306171013.243332-1-Frank.Li@nxp.com>
+References: <20250306171013.243332-1-Frank.Li@nxp.com>
+Subject: Re: [PATCH] ASoC: dt-bindings: fsl,sai: Add i.MX94 support
+Message-Id: <174221632097.149281.199367388355109922.b4-ty@kernel.org>
+Date: Mon, 17 Mar 2025 12:58:40 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-1b0d6
 
-Geert Uytterhoeven <geert+renesas@glider.be> writes:
+On Thu, 06 Mar 2025 12:10:13 -0500, Frank Li wrote:
+> Add compatible string "fsl,imx94-sai" for the i.MX94 chip, which is
+> backward compatible with i.MX95. Set it to fall back to "fsl,imx95-sai".
+> 
+> 
 
-Hello Geert,
+Applied to
 
-> Merely enabling compile-testing should not enable additional
-> functionality.
->
-> Fixes: 7ff4faba63571c51 ("pinctrl: spacemit: enable config option")
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
-Indeed.
+Thanks!
 
-Reviewed-by: Javier Martinez Canillas <javierm@redhat.com>
+[1/1] ASoC: dt-bindings: fsl,sai: Add i.MX94 support
+      commit: 3c423a68643cceb69c4e4244b5b4d09df2a19c79
 
--- 
-Best regards,
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
 
-Javier Martinez Canillas
-Core Platforms
-Red Hat
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
 
 
