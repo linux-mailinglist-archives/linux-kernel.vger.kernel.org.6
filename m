@@ -1,190 +1,118 @@
-Return-Path: <linux-kernel+bounces-563744-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563747-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DD27A64785
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:34:27 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E4B3A64791
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:35:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 91BB4188C21C
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 09:34:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E2123AD286
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 09:35:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64B44222589;
-	Mon, 17 Mar 2025 09:34:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2792226D05;
+	Mon, 17 Mar 2025 09:35:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="O6yrVXnX"
-Received: from mail-4316.protonmail.ch (mail-4316.protonmail.ch [185.70.43.16])
+	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="bw9ir2Fg"
+Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9B542F30;
-	Mon, 17 Mar 2025 09:34:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2752621D5A2;
+	Mon, 17 Mar 2025 09:35:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742204046; cv=none; b=M0/jU38aoJp3GgL01zfJ2wmXxduoFARbXIfwzdIvia2u619vUD7T37iMrcsCQFCwb1/7Ow6AaHzQ19g/3/9Ulndx/EstZrqB+b3rN2PVLv0vJOzxSEQ/G+xxu7fHTTuMSaHUtR4Hw5pgCebXZNufPRBKT0NP0goz0gOqaII0zeI=
+	t=1742204107; cv=none; b=JT0dlXCoge9FP+xfKEPnrogVZMJBNcXOtC4a+pEcxRgpOnyMG9bt7wGN49nAnFfo97tZj4LCMGut3pY7KMQ9GYSXuoGESqoTbb85YSIWNb1fiRjcg/fRB10hSUhgdoQr2v3HBmY2LdDSt//QSu0AeY2Ue/J1EDGmaoZAeu6m1tI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742204046; c=relaxed/simple;
-	bh=ELzfSEZuhr25sXbSFYa8Pvn+Hzk6Nq+k/X6C4475L78=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ZEWrwwuRrheSUU3gLm9uzOLueiv1brgxRhRy31pZARYsOnHqre7Zm3Vh/0Xrcbb1stPx5z4Ov6kfVzRJSmihUFGwrfYRBa2JW0H8Mq7ROjjSA+SVREYUPRIh7cI2b8qp+LsOYff+toohRys9RlacdOErz1l5hl4IdOFRKp5eg2w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=O6yrVXnX; arc=none smtp.client-ip=185.70.43.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1742204040; x=1742463240;
-	bh=FMpu9u3oj6vcJmcZvMEZn/YisvXXjcOdgQLecCKsTSY=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
-	b=O6yrVXnXOA3zGBPsi58FLNfuNpgVmzRiUQVSt6n2RvDFaScYeNrmXm3L1XRnQzrCB
-	 8YlXNeEvc40Q8ELt8iWYb+KxAyvWpjqulvZgkNYKWJO35Cij+vUrsQ0GE7dUOlk+Jc
-	 rzMvfujAWxXxusZkbpaGYypuRMbU0pOLD+IP4MHj08+imTci+wd6XeRMC5LuYndpni
-	 M9/0EHtFyD89TeUGfSMNoe5XXrjHoXufvS4DgXPkj63oNVXQntmnqx4q3dqLr5UZPP
-	 OuNLW59d65h/ntfWzcGZJHsxtH2V6/1dpPJRMXGxgh4h0t6z0VLLIpNrDRSFWnHQPf
-	 hwkSkhYH00J8Q==
-Date: Mon, 17 Mar 2025 09:33:52 +0000
-To: Tamir Duberstein <tamird@gmail.com>, Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, Bjorn Helgaas <bhelgaas@google.com>, Luis Chamberlain <mcgrof@kernel.org>, Russ Weight <russ.weight@linux.dev>, Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, linux-pci@vger.kernel.org, linux-block@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v4 6/6] rust: use strict provenance APIs
-Message-ID: <D8IFS7175NNQ.3VAP8WA2QC8WF@proton.me>
-In-Reply-To: <20250315-ptr-as-ptr-v4-6-b2d72c14dc26@gmail.com>
-References: <20250315-ptr-as-ptr-v4-0-b2d72c14dc26@gmail.com> <20250315-ptr-as-ptr-v4-6-b2d72c14dc26@gmail.com>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: ae828af5ffc8f596a802aaa8ecc51e4ae679d167
+	s=arc-20240116; t=1742204107; c=relaxed/simple;
+	bh=SdEzEJ2gLHV8h4tgX8aQVVF54sCPHDjOMa8xRrvB/tE=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=lOsvQODV+EHP+oW7Hk1hYCPDps0g9nIx4zprbjedbpModNTH8/msDDnsa+eULtCi/HLpJhlBEiuNxNKYXGkUs0IPPn2af93s3epPdSTqwgq3owfS7a13QU4VpbZY4HttOSwNPOpXGk5HfyitUXpuXPj4vXwylJTeGFMwtfhoJiw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=bw9ir2Fg; arc=none smtp.client-ip=193.68.50.107
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
+Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
+	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id BAC59A00A7;
+	Mon, 17 Mar 2025 10:34:54 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:from:from:message-id:mime-version:reply-to:subject:subject:to
+	:to; s=mail; bh=p9rtY7T/5FbeYUgyuooDTwafPSFIqhxRRsMfKKK+iYw=; b=
+	bw9ir2Fgh04fFvfDrRsG7V1d95pF74h6qNEDoYJvvUhIVj99j7eWFaAUiNQTYUn2
+	TSeUCYPG1V318DVjhhCs2vzT70EUn01MRMkb0LSMZ5qfI56gO0HVSaRHSEA1N/2p
+	kC40GHgH1kfHEWAzeU0UcrBlDfHfHrpdvf/NciXIJ3U1YCbpvV6qkwL+nh1c6D+C
+	tV1DmVcQiWRdszrRdWOLUW/ZVZciRK0CiRfADjPQgmUNaPfVQhfKA3oC1DvslC2N
+	5oLC+lnuU0Kli/L5j8C4V0/hUvv1yaLE+owB47EFQuovJbnxF9wDGJG4S2MSMotI
+	6psW0h7uHQPrzLmDCfv7nVnYRzHdKGEDxudEbGbGFSpRmzgCbNMJt192TWPktU3S
+	Svcof1dY24eRp2ayWY4VmwBb/Fe9V0LV0Nn4csKdbYWdnzcTCHf9NnW50AR/VEBw
+	it+jogzWEeBaHPC4ux0t9JPcKe5LAJEQJexPPSxTwMKdQt8eYV9RdXWmzYoVA349
+	FJyru63cqowMr0lkGOXGMbo4hQ6aBtgJxq8xfu04VGO4KI4/LbeFI8ea51nMl0/h
+	ByXFj4X+6vKRbpayaGspew6NrkV54xQkpyfLvjRH+382PteCnpeGIjbWTF7KmxR8
+	umeoVeC8rLQq1tfWnCNztLlWtAnhP/gwEakE0XbPdQg=
+From: =?UTF-8?q?Bence=20Cs=C3=B3k=C3=A1s?= <csokas.bence@prolan.hu>
+To: <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	=?UTF-8?q?Cs=C3=B3k=C3=A1s=2C=20Bence?= <csokas.bence@prolan.hu>, "Varshini
+ Rajendran" <varshini.rajendran@microchip.com>, Tudor Ambarus
+	<tudor.ambarus@linaro.org>, Mark Brown <broonie@kernel.org>,
+	<linux-spi@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+CC: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <len.brown@intel.com>,
+	Pavel Machek <pavel@ucw.cz>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Danilo Krummrich <dakr@kernel.org>, Alexander Dahl <ada@thorsis.com>,
+	"Nicolas Ferre" <nicolas.ferre@microchip.com>, Alexandre Belloni
+	<alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>
+Subject: [PATCH v5 0/2] Add more devm_ functions to fix PM imbalance in spi/atmel-quadspi.c
+Date: Mon, 17 Mar 2025 10:34:41 +0100
+Message-ID: <20250317093445.361821-1-csokas.bence@prolan.hu>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ESET-AS: R=OK;S=0;OP=CALC;TIME=1742204094;VERSION=7986;MC=881707077;ID=162298;TRN=0;CRV=0;IPC=;SP=0;SIPS=0;PI=3;F=0
+X-ESET-Antispam: OK
+X-EsetResult: clean, is OK
+X-EsetId: 37303A2980D948526D7462
 
-On Sat Mar 15, 2025 at 1:17 PM CET, Tamir Duberstein wrote:
-> Throughout the tree, use the strict provenance APIs stabilized in Rust
-> 1.84.0[1]. Retain backwards-compatibility by introducing forwarding
-> functions at the `kernel` crate root along with polyfills for rustc <
-> 1.84.0.
->
-> Use `#[allow(clippy::incompatible_msrv)]` to avoid warnings on rustc <
-> 1.84.0 as our MSRV is 1.78.0.
+The probe() function of the atmel-quadspi driver got quite convoluted,
+especially since the addition of SAMA7G5 support, that was forward-ported
+from an older vendor kernel. During the port, a bug was introduced, where
+the PM get() and put() calls were imbalanced. To alleivate this - and
+similar problems in the future - an effort was made to migrate as many
+functions as possible, to their devm_ managed counterparts. The few
+functions, which did not yet have a devm_ variant, are added in patch 1 of
+this series. Patch 2 then uses these APIs to fix the probe() function.
 
-This isn't necessary, right?
+Change in v4:
+* the DMA cleanup was split out and will be submitted separately for 6.15
 
-> In the `kernel` crate, enable the strict provenance lints on rustc >=3D
-> 1.84.0; do this in `lib.rs` rather than `Makefile` to avoid introducing
-> compiler flags that are dependent on the rustc version in use.
+Change in v5:
+* rebased to linux-pm/linux-next, will now target 6.15
 
-So it won't be enabled in the doctests, right?
+Links to previous versions:
+pre-series:
+https://lore.kernel.org/linux-kernel/20250114222851.1023194-1-csokas.bence@prolan.hu/
+v1:
+https://lore.kernel.org/linux-kernel/20250115160244.1102881-1-csokas.bence@prolan.hu/
+v2:
+https://lore.kernel.org/linux-kernel/20250124085221.766303-8-csokas.bence@prolan.hu/
+v3:
+https://lore.kernel.org/linux-kernel/20250207124802.165408-1-csokas.bence@prolan.hu/
+v4:
+https://lore.kernel.org/linux-kernel/20250210111008.248929-1-csokas.bence@prolan.hu/
 
-> Link: https://blog.rust-lang.org/2025/01/09/Rust-1.84.0.html#strict-prove=
-nance-apis [1]
-> Suggested-by: Benno Lossin <benno.lossin@proton.me>
-> Link: https://lore.kernel.org/all/D8EIXDMRXMJP.36TFCGWZBRS3Y@proton.me/
-> Signed-off-by: Tamir Duberstein <tamird@gmail.com>
-> ---
->  init/Kconfig           |  3 +++
->  rust/kernel/alloc.rs   |  2 +-
->  rust/kernel/devres.rs  |  4 ++--
->  rust/kernel/io.rs      | 14 +++++++-------
->  rust/kernel/lib.rs     | 52 ++++++++++++++++++++++++++++++++++++++++++++=
-++++++
->  rust/kernel/of.rs      |  2 +-
->  rust/kernel/pci.rs     |  4 ++--
->  rust/kernel/str.rs     | 16 ++++++----------
->  rust/kernel/uaccess.rs | 12 ++++++++----
->  9 files changed, 82 insertions(+), 27 deletions(-)
+Bence Csókás (2):
+  pm: runtime: Add new devm functions
+  spi: atmel-quadspi: Fix unbalanced pm_runtime by using devm_ API
 
+ drivers/base/power/runtime.c | 36 ++++++++++++++++++++++++++++++++++++
+ drivers/spi/atmel-quadspi.c  | 18 +++++-------------
+ include/linux/pm_runtime.h   |  4 ++++
+ 3 files changed, 45 insertions(+), 13 deletions(-)
 
-> diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
-> index 486715528587..84eb2602e79e 100644
-> --- a/rust/kernel/lib.rs
-> +++ b/rust/kernel/lib.rs
-> @@ -17,6 +17,9 @@
->  #![cfg_attr(not(CONFIG_RUSTC_HAS_COERCE_POINTEE), feature(coerce_unsized=
-))]
->  #![cfg_attr(not(CONFIG_RUSTC_HAS_COERCE_POINTEE), feature(dispatch_from_=
-dyn))]
->  #![cfg_attr(not(CONFIG_RUSTC_HAS_COERCE_POINTEE), feature(unsize))]
-> +#![cfg_attr(CONFIG_RUSTC_HAS_STABLE_STRICT_PROVENANCE, feature(strict_pr=
-ovenance_lints))]
-> +#![cfg_attr(CONFIG_RUSTC_HAS_STABLE_STRICT_PROVENANCE, deny(fuzzy_proven=
-ance_casts))]
-> +#![cfg_attr(CONFIG_RUSTC_HAS_STABLE_STRICT_PROVENANCE, deny(lossy_proven=
-ance_casts))]
->  #![feature(inline_const)]
->  #![feature(lint_reasons)]
->  // Stable in Rust 1.83
-> @@ -25,6 +28,55 @@
->  #![feature(const_ptr_write)]
->  #![feature(const_refs_to_cell)]
-> =20
-> +#[cfg(CONFIG_RUSTC_HAS_STABLE_STRICT_PROVENANCE)]
-> +#[allow(clippy::incompatible_msrv)]
+-- 
+2.48.1
 
-Do we still need this allow?
-
-> +mod strict_provenance {
-> +    #[doc(hidden)]
-
-Why make them hidden in docs?
-
-> +    pub fn expose_provenance<T>(addr: *const T) -> usize {
-> +        addr.expose_provenance()
-
-Instead of having these stubs here, you can probably just do
-
-    pub use core::ptr::expose_provenance;
-
-> +    }
-> +
-> +    #[doc(hidden)]
-> +    pub fn without_provenance_mut<T>(addr: usize) -> *mut T {
-> +        core::ptr::without_provenance_mut(addr)
-> +    }
-> +
-> +    #[doc(hidden)]
-> +    pub fn with_exposed_provenance<T>(addr: usize) -> *const T {
-> +        core::ptr::with_exposed_provenance(addr)
-> +    }
-> +
-> +    #[doc(hidden)]
-> +    pub fn with_exposed_provenance_mut<T>(addr: usize) -> *mut T {
-> +        core::ptr::with_exposed_provenance_mut(addr)
-> +    }
-> +}
-> +
-> +#[cfg(not(CONFIG_RUSTC_HAS_STABLE_STRICT_PROVENANCE))]
-> +mod strict_provenance {
-> +    #[doc(hidden)]
-
-I think we should document these.
-
----
-Cheers,
-Benno
-
-> +    pub fn expose_provenance<T>(addr: *const T) -> usize {
-> +        addr.cast::<()>() as usize
-> +    }
-> +
-> +    #[doc(hidden)]
-> +    pub fn without_provenance_mut<T>(addr: usize) -> *mut T {
-> +        addr as *mut T
-> +    }
-> +
-> +    #[doc(hidden)]
-> +    pub fn with_exposed_provenance<T>(addr: usize) -> *const T {
-> +        addr as *const T
-> +    }
-> +
-> +    #[doc(hidden)]
-> +    pub fn with_exposed_provenance_mut<T>(addr: usize) -> *mut T {
-> +        addr as *mut T
-> +    }
-> +}
-> +
-> +pub use strict_provenance::*;
 
 
