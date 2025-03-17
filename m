@@ -1,102 +1,218 @@
-Return-Path: <linux-kernel+bounces-564106-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564121-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3AEBA64DE0
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 13:06:27 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6553CA64E04
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 13:10:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AB3E37A88E3
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 12:05:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B4E13AC982
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 12:09:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DC9B23815B;
-	Mon, 17 Mar 2025 12:06:17 +0000 (UTC)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7DD823A986;
+	Mon, 17 Mar 2025 12:07:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="n6DsbIkx"
+Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5378B2E3373;
-	Mon, 17 Mar 2025 12:06:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62971241131;
+	Mon, 17 Mar 2025 12:07:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742213177; cv=none; b=pbVAvpoGyYBbp3qVqGPk05WaozBlq3GY7jDlvEXjvtDwhS8+HOjLrhOnfSKu4k8KGEoGiRnBwkSdSVkx17O2TDb+AfheyuOE0hB2ecS6cpIQ1h+9aDiuAjsqHvw7CxwM1m+jbIWIQm0AVTipDtOFD9SoWew58bzGst+wTKGomxY=
+	t=1742213251; cv=none; b=FnoCylInzKL6bPhY5JZEOX3gEoAX+PgRkRfTNwKxweZIeV3nJvQgLrFhOs2RUDlzC4KydJ7NKYuwqis0eHFvtUtaKK4ixgta81haplIyakcGaVzXseSV+r1GgZJpDzEscQRTJU8KCsUzn15T/qSrepbwGgPnxBqhnurcayRP1vw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742213177; c=relaxed/simple;
-	bh=3isjYC6z21qtIysFBqMQ/1DQBe0JOMXTX/9T1M/PL54=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u7S7s0LvAv+PrRpDgAISkXpzwu1bVdKuRDZLqVTHIKrtubS1cIDt5VEcEFxxzZEQmf8DMiwDwC0AkkPb90ifEBPc0f4wnV1fcXYaEl50wKX1G8QLUkuxs49cC7FH6jcrSzDe/8WXstoFO6F2fhlzohAPGufhHJ/YWiF0hlaus+E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=fail smtp.mailfrom=kernel.org; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=kernel.org
-X-CSE-ConnectionGUID: msY5yHa2T7iGsERFEjtnCg==
-X-CSE-MsgGUID: IN1WL6myRnyurxc+fuX+EA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11375"; a="46070439"
-X-IronPort-AV: E=Sophos;i="6.14,254,1736841600"; 
-   d="scan'208";a="46070439"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Mar 2025 05:06:14 -0700
-X-CSE-ConnectionGUID: ORlBzQfaR02LBabS5x8ZCA==
-X-CSE-MsgGUID: AjTMDPT9RGu39HVM1pOi1g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,254,1736841600"; 
-   d="scan'208";a="145091378"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Mar 2025 05:06:12 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andy@kernel.org>)
-	id 1tu9EO-00000003Id9-1gT8;
-	Mon, 17 Mar 2025 14:06:08 +0200
-Date: Mon, 17 Mar 2025 14:06:08 +0200
-From: Andy Shevchenko <andy@kernel.org>
-To: Hans de Goede <hdegoede@redhat.com>
-Cc: Francesco Dolcini <francesco@dolcini.it>,
-	Emanuele Ghidoli <ghidoliemanuele@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Francesco Dolcini <francesco.dolcini@toradex.com>,
-	Emanuele Ghidoli <emanuele.ghidoli@toradex.com>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-i2c@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-	soc@kernel.org,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Subject: Re: [RFC PATCH v1 0/2] platform: toradex: Add toradex embedded
- controller
-Message-ID: <Z9gQMPjjCt9Rn4lH@smile.fi.intel.com>
-References: <20250313144331.70591-1-francesco@dolcini.it>
- <4596db59-51fc-4497-9e94-670e9533e7aa@redhat.com>
- <20250317100856.GC17428@francesco-nb>
- <bc3144b7-23c8-4b47-bdd8-c482b1a6d81d@redhat.com>
+	s=arc-20240116; t=1742213251; c=relaxed/simple;
+	bh=lzzZgZEkOiAWPB4ufuINXi6X98kVKrVdAnyrcp19Z2Y=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=nJYV0oVnLPdKJtg+6iyybnzFyNI2GxknvUBnX0HJYRxWfwehlFpfdV5r7Y4+hFFF8TYpKEYvzkRf5zlQRhJ5bbhRV1D6vem8g47t+8sDoovQ6Q9vDusSlQrd+3qzfisBh7ZaojntqArOj4UwhgDHsT1btDNo3otyDMCoDfF2jRE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=n6DsbIkx; arc=none smtp.client-ip=198.47.23.235
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 52HC7K0S2802895
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 17 Mar 2025 07:07:20 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1742213240;
+	bh=tY5l8nx9prH+KWgvUgwULRS9nJ8usFY32vn4hHQj1Q4=;
+	h=From:To:CC:Subject:Date:In-Reply-To:References;
+	b=n6DsbIkxjElh1mT0ANILT/RjpnDAYAvx+RKQgmkLqfRR6zbmMqTyiUmtujdJHXuXM
+	 tg+sIAqx/gC37eGdbqArHiI3iGTxR/wtKtpMWJN/DeoG2W5UkEV1aDitFhW3qyHmC9
+	 EIMMVyGZ04CrE7dVaKsCAknvPYLfyeBAXwAX10zE=
+Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 52HC7KJL108565
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 17 Mar 2025 07:07:20 -0500
+Received: from DFLE113.ent.ti.com (10.64.6.34) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 17
+ Mar 2025 07:07:19 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Mon, 17 Mar 2025 07:07:19 -0500
+Received: from uda0510294.dhcp.ti.com (uda0510294.dhcp.ti.com [172.24.227.151])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 52HC6MKA060901;
+	Mon, 17 Mar 2025 07:07:16 -0500
+From: Beleswar Padhi <b-padhi@ti.com>
+To: <andersson@kernel.org>, <mathieu.poirier@linaro.org>
+CC: <afd@ti.com>, <hnagalla@ti.com>, <u-kumar1@ti.com>, <jm@ti.com>,
+        <jan.kiszka@siemens.com>, <christophe.jaillet@wanadoo.fr>,
+        <jkangas@redhat.com>, <eballetbo@redhat.com>, <b-padhi@ti.com>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v9 13/26] remoteproc: k3: Refactor rproc_release() implementation into common driver
+Date: Mon, 17 Mar 2025 17:36:09 +0530
+Message-ID: <20250317120622.1746415-14-b-padhi@ti.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250317120622.1746415-1-b-padhi@ti.com>
+References: <20250317120622.1746415-1-b-padhi@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <bc3144b7-23c8-4b47-bdd8-c482b1a6d81d@redhat.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Mon, Mar 17, 2025 at 11:39:14AM +0100, Hans de Goede wrote:
-> On 17-Mar-25 11:08, Francesco Dolcini wrote:
+The k3_dsp_rproc_release() function erroneously deasserts the local
+reset even for devices which do not support it. Even though it results
+in a no-operation, Update the logic to explicitly deassert the local
+reset for devices that support it and only the global reset for those
+that do not.
 
-...
+Further, refactor the above function into the ti_k3_common.c driver as
+k3_rproc_release() and use it throughout DSP and M4 drivers for
+releasing the reset from the remote processor.
 
-> But if Andy and Ilpo are happy to take this as a more monolithic
-> driver under drivers/platform/aarch64 I'm not going to nack that
-> approach.
+Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
+---
+ drivers/remoteproc/ti_k3_common.c         | 27 ++++++++++++++++++++
+ drivers/remoteproc/ti_k3_common.h         |  1 +
+ drivers/remoteproc/ti_k3_dsp_remoteproc.c | 30 +----------------------
+ drivers/remoteproc/ti_k3_m4_remoteproc.c  |  8 +++---
+ 4 files changed, 32 insertions(+), 34 deletions(-)
 
-I'm okay with the choice as long as it's suffice the purpose.
-I agree that aarch64 maybe not a good choice after all, but
-we should start from somewhere. Later on we can move to agnostic
-folder if needed. The question here is more about MFD/not-MFD.
-If the former becomes the case, it would need to be under drivers/mfd
-as Lee asked for that (or even required).
-
+diff --git a/drivers/remoteproc/ti_k3_common.c b/drivers/remoteproc/ti_k3_common.c
+index db6a12c89226..3b1d041fec7b 100644
+--- a/drivers/remoteproc/ti_k3_common.c
++++ b/drivers/remoteproc/ti_k3_common.c
+@@ -129,5 +129,32 @@ int k3_rproc_reset(struct k3_rproc *kproc)
+ }
+ EXPORT_SYMBOL_GPL(k3_rproc_reset);
+ 
++/* Release the remote processor from reset */
++int k3_rproc_release(struct k3_rproc *kproc)
++{
++	struct device *dev = kproc->dev;
++	int ret;
++
++	if (kproc->data->uses_lreset) {
++		ret = reset_control_deassert(kproc->reset);
++		if (ret) {
++			dev_err(dev, "local-reset deassert failed, (%pe)\n", ERR_PTR(ret));
++			if (kproc->ti_sci->ops.dev_ops.put_device(kproc->ti_sci,
++								  kproc->ti_sci_id))
++				dev_warn(dev, "module-reset assert back failed\n");
++		}
++
++		return ret;
++	}
++
++	ret = kproc->ti_sci->ops.dev_ops.get_device(kproc->ti_sci,
++						    kproc->ti_sci_id);
++	if (ret)
++		dev_err(dev, "module-reset deassert failed (%pe)\n", ERR_PTR(ret));
++
++	return ret;
++}
++EXPORT_SYMBOL_GPL(k3_rproc_release);
++
+ MODULE_LICENSE("GPL");
+ MODULE_DESCRIPTION("TI K3 common Remoteproc code");
+diff --git a/drivers/remoteproc/ti_k3_common.h b/drivers/remoteproc/ti_k3_common.h
+index f3400fc77476..c1af39cd288c 100644
+--- a/drivers/remoteproc/ti_k3_common.h
++++ b/drivers/remoteproc/ti_k3_common.h
+@@ -91,4 +91,5 @@ struct k3_rproc {
+ void k3_rproc_mbox_callback(struct mbox_client *client, void *data);
+ void k3_rproc_kick(struct rproc *rproc, int vqid);
+ int k3_rproc_reset(struct k3_rproc *kproc);
++int k3_rproc_release(struct k3_rproc *kproc);
+ #endif /* REMOTEPROC_TI_K3_COMMON_H */
+diff --git a/drivers/remoteproc/ti_k3_dsp_remoteproc.c b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
+index f8a5282df5b7..577dcd65093a 100644
+--- a/drivers/remoteproc/ti_k3_dsp_remoteproc.c
++++ b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
+@@ -24,34 +24,6 @@
+ 
+ #define KEYSTONE_RPROC_LOCAL_ADDRESS_MASK	(SZ_16M - 1)
+ 
+-/* Release the DSP processor from reset */
+-static int k3_dsp_rproc_release(struct k3_rproc *kproc)
+-{
+-	struct device *dev = kproc->dev;
+-	int ret;
+-
+-	if (kproc->data->uses_lreset)
+-		goto lreset;
+-
+-	ret = kproc->ti_sci->ops.dev_ops.get_device(kproc->ti_sci,
+-						    kproc->ti_sci_id);
+-	if (ret) {
+-		dev_err(dev, "module-reset deassert failed (%pe)\n", ERR_PTR(ret));
+-		return ret;
+-	}
+-
+-lreset:
+-	ret = reset_control_deassert(kproc->reset);
+-	if (ret) {
+-		dev_err(dev, "local-reset deassert failed, (%pe)\n", ERR_PTR(ret));
+-		if (kproc->ti_sci->ops.dev_ops.put_device(kproc->ti_sci,
+-							  kproc->ti_sci_id))
+-			dev_warn(dev, "module-reset assert back failed\n");
+-	}
+-
+-	return ret;
+-}
+-
+ static int k3_dsp_rproc_request_mbox(struct rproc *rproc)
+ {
+ 	struct k3_rproc *kproc = rproc->priv;
+@@ -160,7 +132,7 @@ static int k3_dsp_rproc_start(struct rproc *rproc)
+ 	if (ret)
+ 		return ret;
+ 
+-	ret = k3_dsp_rproc_release(kproc);
++	ret = k3_rproc_release(kproc);
+ 	if (ret)
+ 		return ret;
+ 
+diff --git a/drivers/remoteproc/ti_k3_m4_remoteproc.c b/drivers/remoteproc/ti_k3_m4_remoteproc.c
+index 7d5b75be2e4f..a8a5211bf0c7 100644
+--- a/drivers/remoteproc/ti_k3_m4_remoteproc.c
++++ b/drivers/remoteproc/ti_k3_m4_remoteproc.c
+@@ -354,13 +354,11 @@ static int k3_m4_rproc_start(struct rproc *rproc)
+ 	if (ret)
+ 		return ret;
+ 
+-	ret = reset_control_deassert(kproc->reset);
+-	if (ret) {
++	ret = k3_rproc_release(kproc);
++	if (ret)
+ 		dev_err(dev, "local-reset deassert failed, ret = %d\n", ret);
+-		return ret;
+-	}
+ 
+-	return 0;
++	return ret;
+ }
+ 
+ /*
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.34.1
 
 
