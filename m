@@ -1,79 +1,79 @@
-Return-Path: <linux-kernel+bounces-564009-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564010-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08AC9A64BFC
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 12:13:01 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C2F1A64BF8
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 12:11:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9257D3A8266
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:10:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F6BE16A0EE
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:11:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 939662356C5;
-	Mon, 17 Mar 2025 11:11:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55D7A23644D;
+	Mon, 17 Mar 2025 11:11:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="R5FOTMtS"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZhY7YsEq"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9C7742069
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 11:11:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FCFA233141
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 11:11:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742209866; cv=none; b=oUu8Bmv7PNsK02qNq6p5C6GkzsZ7G8uqNHZyeb/u9fK/24FSaHNdyFvkqHa2O8fCmIy//NsOhs3G1YvcFsIvkDY9WB4Fgr8fC7lec46PRV1ZCs9ym6Hm+dRAiVjVWDI6x3AoQ0ScLzDv3NdKlV+YyEgAJXfKZ5K4Tz2K/0dk+uE=
+	t=1742209867; cv=none; b=NYb7RnLiFJ9Dd2a8siDazIT0JR7sItMO8qazfWUpsSWappBG3Tf3vuFidnag5PLY+pRrvfEXrhitT42OzU1k2NfYHanplDWdjrNXgy2lRyjc6CPGztlVzqsqy2Rk8fKzzB7VYKELFAMHMrR27Tl2qNolUczgHHJ4WehwNVFINWs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742209866; c=relaxed/simple;
-	bh=jg6joZ76On4Zk98zQcL1bwxylUFIIHw3eHHZ8nAKwZQ=;
+	s=arc-20240116; t=1742209867; c=relaxed/simple;
+	bh=AnrsQLvHijfeZTAeUyDiBdqlQ/V+KuOhDqmhlYfAtDY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fLr0XKEVIEZy5k7mYcKzYonQGjWXDn1aiI8U766XUHNG+GCJuBaEEHCGzA+iazTsIsbyLF5xZJALpE8DCHLuwbS6S7hKJd4VmjkN5TvCL+R/Ler8vCsx/NSkGzu3kcVKn0pnpfYVPByf/89NoCcqhttUyIaNzJ2gUWIBC3B4za8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=R5FOTMtS; arc=none smtp.client-ip=209.85.128.52
+	 In-Reply-To:Content-Type; b=hUO978dcr7UU0i11uff4Is6KlwlvPtJErbbVsQ0ZjK6IybUyRtrGFuTFDhmkIqPS4tZ9A6Ay2n4PUUYWPpN+L5eVzGiQtze9/DP8iFQ6k4lhRSCgWGjw/woQvxEs7lfd4aON3PZBW6msykmL338U3HtI4+WsIQ9py74KtkH20d0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZhY7YsEq; arc=none smtp.client-ip=209.85.221.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-43cf628cb14so11044455e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 04:11:03 -0700 (PDT)
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-390effd3e85so3515487f8f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 04:11:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1742209862; x=1742814662; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1742209863; x=1742814663; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=eDzJ2VOAzEbHd4YJavbMDLDdsevX9sVYERz7dfOZXGw=;
-        b=R5FOTMtS+TGrB8ws/dJYpPPZGz5/PgBB0a3nUXS0wV7OQFdXFav7zE+559ND66fj93
-         Ujdi+GpTLsZra/0jACsFtu7MQIgHNr0/KxoYxlkkui7MWyp37fXMznp/+4qifU2/zwKs
-         YamPWJTSlLJiORcPlWRZ5BgNabzTUtLBp7w2xDMPzJCKcA9NusH6tNCLUY6lwSzmdo6N
-         IStR1SgmXpQXiwtPCRHCDMOUtbR3FpKx+Jg8in+8e2KKWbWmA+ndoiq1OhMX759Ab5KG
-         p9UAf1P2qSWGrthkhcZn+BLIHydadh40xWTl4qvNS3dXrPqlELDTujmAY0QotuAlJZch
-         9wTw==
+        bh=MR6V4/Niwov3dT1lKEaWV6Yp8Zy1voFzaQ1D9zoTY3k=;
+        b=ZhY7YsEqWuYO0n+9UZh0lhWNIrRVuBtA2pDbKrPiX1BIDpSttBPEbrC7IXd40sSDEH
+         b2hSvVQPf2iwBVgGKvfSE99esQABwnJ+u8RfD4gKw7kx9CmWzPXRc82RKkUg+T0EA/o4
+         dAcVIu6ZtwSGMaiULpEaWjwgqUMO7XQXRKCicX3e0XgxBwjfkxdMHr4m0RBNDbTSf8dV
+         C51TK7gWeGCJyCPXN2i7+eCla20fY/zmEhIZJyb3k8WPUmscADeyKJX+CITqJ5HWVP6k
+         bnUmGCWmFwe9+DjsXppUP58wud1Oc60ay7zktoKvNADeSEiQ6W6yOGDQVhegmRbziW8O
+         wKaQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742209862; x=1742814662;
+        d=1e100.net; s=20230601; t=1742209863; x=1742814663;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=eDzJ2VOAzEbHd4YJavbMDLDdsevX9sVYERz7dfOZXGw=;
-        b=bGY3/ckzIGQuTMurkifZomw6RdoRAgJeHgThGBv/K+iQoyPHni/wWab6RfkUg3B5N9
-         v+s95SRMieqQNLzRPc6YpdHfLg43A/2EW7qadDpzUSvEhJM04P+YnVjlH3BAgC6ZfPmA
-         Qa2kAYKWpS3NeDUVlAuviFcqeolHE7To8WyvyEY7x7kcmbfQT9bpBkNdUlDF+9fb8Emk
-         akTGjJQ11allBUFlTdQGeFaS5cDX1VrGpLKKtSuCW52GV1Rm6TSXCqC7baxcjaToatAL
-         V+jwc5uJ+/ziHpMHEk9JKGvUqb0xUWmQogDVDYppDz/guJYtiX5gNCLphYxAuewDeki6
-         3prA==
-X-Forwarded-Encrypted: i=1; AJvYcCXZhvd7ipx87m/UOaB3AIPisUUu+TbwkjLdCyToPr3+NPuO2dU6vxkRAPsX5lQWCjHeP2gRsPhWA9kA1wY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzW3CYM/mtPOOdZZK2jJfYxHC1N898aFBd9QQ7OsPeHhpS44jKD
-	EHPKrN3Oir1mng3FnvJhZDYxM0yUqg/wJBY+FZZwyjhMRfqLj6akQLdUG7KcP8MGgZIEUjUK3c5
-	y
-X-Gm-Gg: ASbGncvriLmeAhfJ+lCDGO7ALgtqN3aa1Kpi8+JiuUVh+NLrq5adLeIJ+WgGOEBV/Rf
-	GttaxB0+t4IHy0LsgrEQStuseNRMAD7JSDnFCmf4+UriyJag1WADxykOby8hVtENbvgb3ZxpaZy
-	aDzVOU9EhbT/49B+rEuYsFdnv8q0pj/DCN0XRp/yolg3zwdikRvQi/k5G7chmJUcpcc6j4GMKOY
-	0vR/2LoKKggB9zZh6ExMd0KO1ceWYY+mjozaGTIJiSKSwmMTxsjqRl32Zs3HqjkL+JIAA0ySC+t
-	b6iGRD41xk8Dibmhkc614G23uq/NjMVorfr1TxXvK7de9W0CVPxRmg==
-X-Google-Smtp-Source: AGHT+IE03/gw38YLSXA2yKf2gnc0bYqatqbU69Cuyezj6/XGCnmhURjlT9yMf7Kvkxg1rjJbu9xTyQ==
-X-Received: by 2002:a05:600c:4ed2:b0:439:4b23:9e8e with SMTP id 5b1f17b1804b1-43d1f1d2bb6mr120674475e9.3.1742209861923;
-        Mon, 17 Mar 2025 04:11:01 -0700 (PDT)
-Received: from [192.168.1.247] ([145.224.67.123])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d1fe294b5sm102277455e9.21.2025.03.17.04.11.00
+        bh=MR6V4/Niwov3dT1lKEaWV6Yp8Zy1voFzaQ1D9zoTY3k=;
+        b=Vuxw0dgRvBRYNf4OJXeCJ8nhmg95IQ8E6vfXfXLZHrUoR7Y6vXzOpAPzP4ErMin24n
+         jJa0vWqqtJgt2mG5AiAi1Jl8f4QyJGUL2cC1AsIFOpEZqbMXeTxCulezAiMIJoF9+3fu
+         UmbB8fvs2Qh56MFMauGH6+9kplP8EK/hqvAsMzMeeJrL2vmLIpFt4w6Nncvfl2Zg3OV1
+         0lKrNOwxT/A89SLPK0MSqYRp+/GAfIj+jA54oSwfA0Y/h0Y7QsK++OYlZqEz+NS0McNo
+         dm+lFVNExvn42fO96GTx6TZ7XOxo1CzxIz9ocLLq7JwKLsOTBi6bHlskrtJx5TSJ6Mwo
+         Rerw==
+X-Forwarded-Encrypted: i=1; AJvYcCWry1+WyzmyRAvtfgsMmIu3mc09Yqt0/6RBGdqlnlqWzTPgyKGuntsb9ITQy0ooHOOopvc78KtFuPOTniY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyEkh0IztK7UbtVINGeE8d0weJREHyBbsz25KUkXQ0I4IR4wc80
+	g1DrrIwPeS6wlvfzonaSkw4zMR1pSj2M4izaO4db0XrSRkIOWfJJGhdD3/KjmG0=
+X-Gm-Gg: ASbGnct1TH1g17M4BnPDGZJAMrXVEptlyuuTsBwlZp9ca0UJb3SXMaPHDLopBbalGNk
+	PkB+jV9mcQPYOQw6ceqVbzfnkFlVJueDZZ/1TKpAshg/IJZTpGdugvx/XPgfdAx6yVGgPtgoT8b
+	LrPg4xrQj9Usk9QVmnzp9RqoTNLSAyNxDXZCwN6BZK+KEObpgG13fwJ8e4tTCdvVMRjMLBMqdhA
+	/d+JmgtnJmcB6vD78ZjWjoN3Ea3nfqVigwl9E0xs+emvwv07FsWDWRlrTqHXyGB0I/ZSvxvZB7t
+	dfXIXNIGpuJWQ08aXoZ0wasn+E8eCddmGY1bkOTyUull7ukZhaVGwcMPvWbKfS51UhVJnJxB0im
+	SzTAmYu7Cr/1l4ttnqB4=
+X-Google-Smtp-Source: AGHT+IE476SO8H91edeKXZBTAyLprfXCwLhm85dorgsKMjTo5H3Yf/EGW9XVvxTRoJ7VcbN4UEacig==
+X-Received: by 2002:a05:6000:1ace:b0:391:41c9:7a87 with SMTP id ffacd0b85a97d-3971fdc6db1mr13823999f8f.51.1742209862843;
+        Mon, 17 Mar 2025 04:11:02 -0700 (PDT)
+Received: from ?IPV6:2a02:2f04:900a:ff00:eb98:2c37:6a77:39? ([2a02:2f04:900a:ff00:eb98:2c37:6a77:39])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-395cb318af0sm14702121f8f.73.2025.03.17.04.11.01
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 17 Mar 2025 04:11:01 -0700 (PDT)
-Message-ID: <4cfcb9d8-3187-4ed7-8951-d54d781b4bd9@linaro.org>
-Date: Mon, 17 Mar 2025 11:11:00 +0000
+        Mon, 17 Mar 2025 04:11:02 -0700 (PDT)
+Message-ID: <75f49e65-5a8a-4a52-bed9-31be4a76d536@linaro.org>
+Date: Mon, 17 Mar 2025 11:11:01 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,80 +81,64 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/4] arm64/sysreg: Sort sysreg by encoding
-To: Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>,
- Mark Brown <broonie@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, robh@kernel.org,
- Catalin Marinas <catalin.marinas@arm.com>,
- Mark Rutland <mark.rutland@arm.com>, Oliver Upton <oliver.upton@linux.dev>,
- Anshuman Khandual <anshuman.khandual@arm.com>,
- James Morse <james.morse@arm.com>, linux-kernel@vger.kernel.org
-References: <20250115162600.2153226-1-james.clark@linaro.org>
- <20250115162600.2153226-4-james.clark@linaro.org>
- <20250313215840.GC8101@willie-the-truck>
+Subject: Re: [PATCH 3/3] firmware: exynos-acpm: convert to dev_err_probe() in
+ client API
+To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
+Cc: Peter Griffin <peter.griffin@linaro.org>,
+ Will McVicker <willmcvicker@google.com>, kernel-team@android.com,
+ linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+References: <20250314-acpm-fixes-v1-0-ab03ca8e723f@linaro.org>
+ <20250314-acpm-fixes-v1-3-ab03ca8e723f@linaro.org>
 Content-Language: en-US
-From: James Clark <james.clark@linaro.org>
-In-Reply-To: <20250313215840.GC8101@willie-the-truck>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <20250314-acpm-fixes-v1-3-ab03ca8e723f@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
 
 
-On 13/03/2025 9:58 pm, Will Deacon wrote:
-> On Wed, Jan 15, 2025 at 04:25:57PM +0000, James Clark wrote:
->> It's mostly been sorted by sysreg encoding, but not 100%. Sort it so
->> new entries can be added without wondering where to put them.
->>
->> The following python script was used to sort, keeping the top level
->> SysregFields and comments next to their current Sysreg entries by
->> splitting on "EndSysreg":
->>
->>    # cat arch/arm64/tools/sysreg | python3 sort.py > sorted-sysreg
->>    import sys, re
->>    def key(block):
->>            reg = r"\w+\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)"
->>            match = re.search(reg, block)
->>            sort_val = ''.join(f"{int(n):02d}" for n in match.groups())
->>            return (sort_val, block)
->>    sysreg = sys.stdin.read().split("\nEndSysreg\n")[:-1]
->>    sysreg = sorted(sysreg, key=key)
->>    print("\nEndSysreg\n".join(sysreg) + "\nEndSysreg")
->>
->> Tested by diffing sorted outputs:
->>
->>    $ diff <(sort arch/arm64/include/generated/asm/sysreg-defs.h)  \
->>           <(sort before-sysreg-defs.h) -s
->>
->>    Files /dev/fd/63 and /dev/fd/62 are identical
->>
->> Signed-off-by: James Clark <james.clark@linaro.org>
->> ---
->>   arch/arm64/tools/sysreg | 1006 +++++++++++++++++++--------------------
->>   1 file changed, 503 insertions(+), 503 deletions(-)
+On 3/14/25 4:40 PM, André Draszik wrote:
+> dev_err_probe() exists to simplify code and unify error messages by
+> using its message template.
 > 
-> This looks like unnecessary pain for backporting...
+> Convert the remaining dev_err() in acpm_get_by_phandle() to
+> dev_err_probe().
 > 
-> What do we gain from sorting this?
+> Signed-off-by: André Draszik <andre.draszik@linaro.org>
+> ---
+>  drivers/firmware/samsung/exynos-acpm.c | 10 ++++++----
+>  1 file changed, 6 insertions(+), 4 deletions(-)
 > 
-> Will
+> diff --git a/drivers/firmware/samsung/exynos-acpm.c b/drivers/firmware/samsung/exynos-acpm.c
+> index 48f1e3cacaa709ae703115169df138b659ddae44..03f907a95c6acd66d89cd8af2f52e7c6dadf492a 100644
+> --- a/drivers/firmware/samsung/exynos-acpm.c
+> +++ b/drivers/firmware/samsung/exynos-acpm.c
+> @@ -701,12 +701,14 @@ static const struct acpm_handle *acpm_get_by_phandle(struct device *dev,
+>  
+>  	link = device_link_add(dev, &pdev->dev, DL_FLAG_AUTOREMOVE_SUPPLIER);
+>  	if (!link) {
+> -		dev_err(&pdev->dev,
+> -			"Failed to create device link to consumer %s.\n",
+> -			dev_name(dev));
+> +		int ret = -EINVAL;
+> +
+> +		dev_err_probe(&pdev->dev, ret,
+> +			      "Failed to create device link to consumer %s.\n",
+> +			      dev_name(dev));
+>  		platform_device_put(pdev);
+>  		module_put(pdev->dev.driver->owner);
+> -		return ERR_PTR(-EINVAL);
+> +		return ERR_PTR(ret);
+>  	}
+>  
+>  	return &acpm->handle;
+> 
 
-It's from the discussion here [1]. But yeah backporting wasn't mentioned 
-as a possible issue, it's something to think about.
-
-The summary is:
-
-  * I added one out of order because it wasn't obvious from the unsorted
-    file that they were supposed to be in order
-  * To avoid more of the same review comments and save time I wanted to
-    put a "keep this file sorted" comment
-  * But the comment wasn't ok because the file wasn't already sorted, so
-    we ended up with sorting it
-
-To be fair adding a "keep it sorted" comment is a bit awkward because 
-there are sometimes multiple places you can insert something if it's not 
-already fully sorted.
-
-[1]: 
-https://lore.kernel.org/all/996c7843-7f51-49a0-9122-e688e37f9902@sirena.org.uk/
-
+The clients are indeed expected to call this method in their probe
+method. Shall we make such assumption? I'm in the middle here, but I
+don't mind if this gets queued:
+Reviewed-by: Tudor Ambarus <tudor.ambarus@linaro.org>
 
