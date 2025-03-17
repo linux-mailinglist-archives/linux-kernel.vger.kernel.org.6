@@ -1,93 +1,124 @@
-Return-Path: <linux-kernel+bounces-563240-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563241-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08907A63AC2
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 02:52:55 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 474A1A63AC5
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 02:54:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A309188F069
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 01:53:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9751A16C406
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 01:54:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FF2B13CA9C;
-	Mon, 17 Mar 2025 01:52:46 +0000 (UTC)
-Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [63.216.63.35])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 060421474D3;
+	Mon, 17 Mar 2025 01:54:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JXGVIMnZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F69628E8;
-	Mon, 17 Mar 2025 01:52:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.216.63.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56299199BC;
+	Mon, 17 Mar 2025 01:54:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742176366; cv=none; b=NraVdJ9h/ZcNjF10xVdlhOY6Hh/agDgoOh2FMYRjhLWRJBIII/Ik7OAPO/i4lSurF8PLJryHHpeQj28ijAL2Y67W6HA/qQkJxHpONRHsfZgaOpbC3Sa9CXhAnXkstPp88nBUHMiP/FmxHDy+5aYldBHSgFZjuRI+b4+cN80SpOA=
+	t=1742176443; cv=none; b=iyKr2I4YOxpTvTWvMLeyV4pOVsrhFtrQIfN5uUSO3JmCX2v45sGZlVZRJclYOjx+lW/g9JcIu+lxU0XolleTkIf+B4D47Qc6nLjdvCsFFVhEDeRvbJeUsqOZyyfDXfqdIQk4e8kMTjJVOp83+/tlqrVkKVd4NYDI/5QDL/u/j3g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742176366; c=relaxed/simple;
-	bh=mw28www5sYVNRslBToVbZ5XjJQmKnalNib1C4C6Gg7s=;
-	h=Date:Message-ID:Mime-Version:From:To:Cc:Subject:Content-Type; b=S1RusLRxEIU6uWKBN8whCUEm5wlf/4u5nr0Q9mK1UOHbpKj5IVCUMoxNN+O7HvEj12fmxqBVzU6Fg2w2zlMXt2yOK13cj/bI50yx8UyZSXOmQ91Vqu7eQsed2axfda9TeAPUXO1axlpdyLvjtvUBnYoGqTPPNnTtJ13zJxD/CvM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=63.216.63.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
-Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4ZGHzQ2Rphz5B1J4;
-	Mon, 17 Mar 2025 09:52:34 +0800 (CST)
-Received: from xaxapp01.zte.com.cn ([10.88.99.176])
-	by mse-fl1.zte.com.cn with SMTP id 52H1qFfp073947;
-	Mon, 17 Mar 2025 09:52:16 +0800 (+08)
-	(envelope-from feng.wei8@zte.com.cn)
-Received: from mapi (xaxapp05[null])
-	by mapi (Zmail) with MAPI id mid32;
-	Mon, 17 Mar 2025 09:52:17 +0800 (CST)
-Date: Mon, 17 Mar 2025 09:52:17 +0800 (CST)
-X-Zmail-TransId: 2afc67d7805153c-f0bae
-X-Mailer: Zmail v1.0
-Message-ID: <20250317095217146xx5rleJV2hlI8ucSypghO@zte.com.cn>
+	s=arc-20240116; t=1742176443; c=relaxed/simple;
+	bh=NrSoCCK1NOd0oAcJL5EcEkPkW3Rredkc6BKA7Ayr8kM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pgspTofKnsVzoMyMluB/UHAAFWSgJhuaOBekFh7XlPqCwsmSppyNNhCxyCCiPYxI8WaVNO2d44F41ZsNliA3TYILufky4laLpvJgBvwWDFuhav4qoQnBczUwai4bfnS+2jO15y+WEZ/zpb0E5XRZ/AU7rYGIhvQ80CRZBq79ebY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JXGVIMnZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EAE1DC4CEDD;
+	Mon, 17 Mar 2025 01:53:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742176442;
+	bh=NrSoCCK1NOd0oAcJL5EcEkPkW3Rredkc6BKA7Ayr8kM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JXGVIMnZ3XkUx+cvH2hEXwshiydvkt14xEy07irr0XVvt8LfOxEp/KWYTFnyioQLP
+	 IID4vpGjQ2M/2yOJDIaSYuijJCOxfEPz98CgfEKGSqrF/iloGz2WCdbCJl+yY51iE8
+	 iHlZw6+MxuSpvsHyBUlV0VjuSn9j6L6oUHBr68PlJvWFw/UzjC7Si/3UfRXTH8hMK+
+	 nJuH9mOGjpGEhpLCX2PuCeW2OC693BDALe/rsWo5wpX6hhH4GTZNUHhj478J6ZVxrr
+	 rRAePlyWcjf79a9po2Uo6fUqfs0xwIMNjNAYAn9H2t5n7QTpj8Nv29LJOhuyXRMULa
+	 kE6nU2yzxC1fw==
+Date: Mon, 17 Mar 2025 09:53:52 +0800
+From: "Peter Chen (CIX)" <peter.chen@kernel.org>
+To: Fedor Pchelkin <pchelkin@ispras.ru>
+Cc: Frank Li <Frank.li@nxp.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Joe Hattori <joe@pf.is.s.u-tokyo.ac.jp>,
+	Sebastian Reichel <sre@kernel.org>,
+	Fabien Lahoudere <fabien.lahoudere@collabora.co.uk>,
+	linux-usb@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	lvc-project@linuxtesting.org, stable@vger.kernel.org
+Subject: Re: [PATCH v2 1/3] usb: chipidea: ci_hdrc_imx: fix usbmisc handling
+Message-ID: <20250317015352.GA218167@nchen-desktop>
+References: <20250316102658.490340-1-pchelkin@ispras.ru>
+ <20250316102658.490340-2-pchelkin@ispras.ru>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-From: <feng.wei8@zte.com.cn>
-To: <sumit.semwal@linaro.org>
-Cc: <benjamin.gaignard@collabora.com>, <brian.starkey@arm.com>,
-        <jstultz@google.com>, <tjmercier@google.com>,
-        <christian.koenig@amd.com>, <linux-media@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>, <linaro-mm-sig@lists.linaro.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: =?UTF-8?B?W1BBVENIIHYyXSBkbWEtYnVmOiBoZWFwczogUmVwbGFjZSBuZXN0ZWQgbWF4KCkgd2l0aCBzaW5nbGUgbWF4Mygp?=
-Content-Type: text/plain;
-	charset="UTF-8"
-X-MAIL:mse-fl1.zte.com.cn 52H1qFfp073947
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 67D78062.001/4ZGHzQ2Rphz5B1J4
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250316102658.490340-2-pchelkin@ispras.ru>
 
-From: FengWei <feng.wei8@zte.com.cn>
+On 25-03-16 13:26:54, Fedor Pchelkin wrote:
+> usbmisc is an optional device property so it is totally valid for the
+> corresponding data->usbmisc_data to have a NULL value.
+> 
+> Check that before dereferencing the pointer.
+> 
+> Found by Linux Verification Center (linuxtesting.org) with Svace static
+> analysis tool.
+> 
+> Fixes: 74adad500346 ("usb: chipidea: ci_hdrc_imx: decrement device's refcount in .remove() and in the error path of .probe()")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Fedor Pchelkin <pchelkin@ispras.ru>
 
-Use max3() macro instead of nesting max() to simplify the return
-statement.
+Acked-by: Peter Chen <peter.chen@kernel.org>
 
-Signed-off-by: FengWei <feng.wei8@zte.com.cn>
----
-v1 -> v2
-perfect the prefix
-drivers/dma-buf/dma-heap.c | 2 +-
-1 file changed, 1 insertion(+), 1 deletion(-)
+Peter
+> ---
+>  drivers/usb/chipidea/ci_hdrc_imx.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/usb/chipidea/ci_hdrc_imx.c b/drivers/usb/chipidea/ci_hdrc_imx.c
+> index 1a7fc638213e..619779eef333 100644
+> --- a/drivers/usb/chipidea/ci_hdrc_imx.c
+> +++ b/drivers/usb/chipidea/ci_hdrc_imx.c
+> @@ -534,7 +534,8 @@ static int ci_hdrc_imx_probe(struct platform_device *pdev)
+>  		cpu_latency_qos_remove_request(&data->pm_qos_req);
+>  	data->ci_pdev = NULL;
+>  err_put:
+> -	put_device(data->usbmisc_data->dev);
+> +	if (data->usbmisc_data)
+> +		put_device(data->usbmisc_data->dev);
+>  	return ret;
+>  }
+>  
+> @@ -559,7 +560,8 @@ static void ci_hdrc_imx_remove(struct platform_device *pdev)
+>  		if (data->hsic_pad_regulator)
+>  			regulator_disable(data->hsic_pad_regulator);
+>  	}
+> -	put_device(data->usbmisc_data->dev);
+> +	if (data->usbmisc_data)
+> +		put_device(data->usbmisc_data->dev);
+>  }
+>  
+>  static void ci_hdrc_imx_shutdown(struct platform_device *pdev)
+> -- 
+> 2.48.1
+> 
 
-diff --git a/drivers/dma-buf/dma-heap.c b/drivers/dma-buf/dma-heap.c
-index 3cbe87d4a464..96cb9ab5731a 100644
---- a/drivers/dma-buf/dma-heap.c
-+++ b/drivers/dma-buf/dma-heap.c
-@@ -147,7 +147,7 @@ static long dma_heap_ioctl(struct file *file, unsigned int ucmd,
-in_size = 0;
-if ((ucmd & kcmd & IOC_OUT) == 0)
-out_size = 0;
-- ksize = max(max(in_size, out_size), drv_size);
-+ ksize = max3(in_size, out_size, drv_size);
+-- 
 
-/* If necessary, allocate buffer for ioctl argument */
-if (ksize > sizeof(stack_kdata)) {
---
-2.25.1
+Best regards,
+Peter
 
