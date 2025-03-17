@@ -1,84 +1,196 @@
-Return-Path: <linux-kernel+bounces-565043-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565044-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A18FBA65FC9
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 21:55:58 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C1D1A65FCC
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 21:56:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F1527188A820
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 20:56:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B9CF2188AD57
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 20:56:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 567761F8BC6;
-	Mon, 17 Mar 2025 20:55:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F1241F8BC5;
+	Mon, 17 Mar 2025 20:56:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iOObdW+R"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ezFSyfRu";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="HZ5bGAT0";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ezFSyfRu";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="HZ5bGAT0"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2D0A3D6A;
-	Mon, 17 Mar 2025 20:55:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FD6D3D6A
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 20:56:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742244950; cv=none; b=W+LkqqhPbsDhi/9Yb2O5fOsdLysWTOtQ3pE6FAGaBDQXTfjVSIRum5whLeHI4QfGwgybzQFIQwKwFT4ww9kv9xKYljlw69T1CmUoK3t+N80cXiWUKxggUQwtTv/hO2zC8+hAAcVrZ7vdiRC+QwCigFFS4kVrMFDWr79KvXWrF4k=
+	t=1742245003; cv=none; b=LeOYIsUYIhlm6AM6n1X7vhNtUiH6WjoSnyctECBv2oEa5d2YPItDkmILrx4G/vmQ8DkEcBE95YWszhwx/q5Fwwv6Wj95lCKc/3e9xiupuKZ3zrCrxv+3nVpBa99FlDHcbIX5gHujitanLJ0jCHBXuRNjJuEZ2aFzII5s9Tt+5cU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742244950; c=relaxed/simple;
-	bh=7iFGYpd72i4icc7AODNgBB6qi9f4b/MTMff+vhitl/o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PCPjJHDWhks9t0k5X+/wf45yeCXVE1fzmiLM8ichssouZw4mLmD3yWr4go87vTOQdoW9wsqaIaKqUZWrhGrmgBqTNH6SqWN0EnWYmu9XhA51Hb+Go+MI80zVvWcpcjiDEPjk+diEUQYS+l3iN/rXAdn88p+AXbuOO4Oj7ioqyPI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iOObdW+R; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C885CC4CEE3;
-	Mon, 17 Mar 2025 20:55:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742244950;
-	bh=7iFGYpd72i4icc7AODNgBB6qi9f4b/MTMff+vhitl/o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iOObdW+R4cjvk6ITIVLHc16pRsLdUn2UAYyQeDSsvDdXRD3Cojl1wb4AVMLeIDmcA
-	 en6v2byKv+kElT+fmPcmJWG6jdhef6K+pDhO3Z0GBEEeyRYcRvdCsFfziatmNsmmOP
-	 w+z+pCivy+z3T6lRd24aAQ5fLXsg7hCh7W2B1yvpQn3JsInpjvvXIlUoEZf+6QHpVa
-	 27ApJZaHM6lb8wxreE2jDEnBFX/eJcATLHTRsNV58wz72PLj4XLPE3V+x4iqy7xKWH
-	 2HLgKFUKwnm+n4C5Y+bD9MBA2WfPlKa1vhlTIRAr3ZVOzzU3RAolHdQkafteZ4LgdC
-	 QdViHCAXtegLw==
-Date: Mon, 17 Mar 2025 21:55:44 +0100
-From: Danilo Krummrich <dakr@kernel.org>
-To: =?iso-8859-1?Q?Beno=EEt?= du Garreau <benoit@dugarreau.fr>
-Cc: gregkh@linuxfoundation.org, rafael@kernel.org, ojeda@kernel.org,
-	alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net,
-	bjorn3_gh@protonmail.com, benno.lossin@proton.me,
-	a.hindborg@kernel.org, aliceryhl@google.com, tmgross@umich.edu,
-	airlied@gmail.com, acourbot@nvidia.com, jhubbard@nvidia.com,
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH v2 3/4] rust: auxiliary: add auxiliary registration
-Message-ID: <Z9iMUHRtzuqcbSm2@cassiopeiae>
-References: <20250313022454.147118-4-dakr@kernel.org>
- <20250317204310.7804-1-benoit@dugarreau.fr>
+	s=arc-20240116; t=1742245003; c=relaxed/simple;
+	bh=0WX8Kx9Flp9jZSzhAn2munAAdf//GhyeZMSOHwMSaas=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AaIohAkq2LA1ORlVrpRRCdW0o7ko9WE9a54iQpL+sCb9y9XoKzuAQ1KHaOraLyjgii7O73Fh2o77je872GQIxENQEQ0RYDHjmc31bei5SCfSk0P3VPnKE/odpbyzQkOt4eU1hHXlbOyLr/m4TBmhCDMBblrbNBQDQ5PsEohGKwQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ezFSyfRu; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=HZ5bGAT0; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ezFSyfRu; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=HZ5bGAT0; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id A5C7021BBE;
+	Mon, 17 Mar 2025 20:56:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1742244999; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RNikvRpXPHVfwQlspximhFbBerhlvWKmLHhDH78muhc=;
+	b=ezFSyfRuYk0BBPaun1XDmrvUmTLDMrWP1d5XHJgTNRScqGnoJHm3DGllz4jel+QBwx21z8
+	BGQjRkbH2bgevWpz1rY8SNVCIxzrvMplOp+PEL/Pn8CkDYyksej3gNfVMx+eKIhJpCT+Ha
+	Demf/Suxr1ZP8/BxR2OM0hdWCk9AI5I=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1742244999;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RNikvRpXPHVfwQlspximhFbBerhlvWKmLHhDH78muhc=;
+	b=HZ5bGAT0fnV3jw1YB/4bctl8RgmJijpdlfBmH2lSCVD3llWlkTVrNrySTN8OymX/DLsLqQ
+	H69GNbgUe6Gsx9Ag==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1742244999; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RNikvRpXPHVfwQlspximhFbBerhlvWKmLHhDH78muhc=;
+	b=ezFSyfRuYk0BBPaun1XDmrvUmTLDMrWP1d5XHJgTNRScqGnoJHm3DGllz4jel+QBwx21z8
+	BGQjRkbH2bgevWpz1rY8SNVCIxzrvMplOp+PEL/Pn8CkDYyksej3gNfVMx+eKIhJpCT+Ha
+	Demf/Suxr1ZP8/BxR2OM0hdWCk9AI5I=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1742244999;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RNikvRpXPHVfwQlspximhFbBerhlvWKmLHhDH78muhc=;
+	b=HZ5bGAT0fnV3jw1YB/4bctl8RgmJijpdlfBmH2lSCVD3llWlkTVrNrySTN8OymX/DLsLqQ
+	H69GNbgUe6Gsx9Ag==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8543C139D2;
+	Mon, 17 Mar 2025 20:56:39 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id TRyVH4eM2GddYQAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Mon, 17 Mar 2025 20:56:39 +0000
+Message-ID: <7d50a14a-edfb-410d-840e-17876806a63b@suse.cz>
+Date: Mon, 17 Mar 2025 21:56:39 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250317204310.7804-1-benoit@dugarreau.fr>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 7/9] memcg: use __mod_memcg_state in drain_obj_stock
+Content-Language: en-US
+To: Shakeel Butt <shakeel.butt@linux.dev>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>,
+ Roman Gushchin <roman.gushchin@linux.dev>,
+ Muchun Song <muchun.song@linux.dev>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>, linux-mm@kvack.org,
+ cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Meta kernel team <kernel-team@meta.com>
+References: <20250315174930.1769599-1-shakeel.butt@linux.dev>
+ <20250315174930.1769599-8-shakeel.butt@linux.dev>
+From: Vlastimil Babka <vbabka@suse.cz>
+In-Reply-To: <20250315174930.1769599-8-shakeel.butt@linux.dev>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.998];
+	MIME_GOOD(-0.10)[text/plain];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_HAS_DN(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_DN_SOME(0.00)[]
+X-Spam-Score: -4.30
+X-Spam-Flag: NO
 
-On Mon, Mar 17, 2025 at 09:42:51PM +0100, Benoît du Garreau wrote:
-> On Thu, 13 Mar 2025 03:23:52 +0100 Danilo Krummrich <dakr@kernel.org> wrote:
+On 3/15/25 18:49, Shakeel Butt wrote:
+> For non-PREEMPT_RT kernels, drain_obj_stock() is always called with irq
+> disabled, so we can use __mod_memcg_state() instead of
+> mod_memcg_state(). For PREEMPT_RT, we need to add memcg_stats_[un]lock
+> in __mod_memcg_state().
 > 
-> > +impl Registration {
-> > +    /// Create and register a new auxiliary device.
-> > +    pub fn new(parent: &device::Device, name: &CStr, id: u32, modname: &CStr) -> Result<Self> {
-> > +        let boxed = KBox::new(Opaque::<bindings::auxiliary_device>::zeroed(), GFP_KERNEL)?;
+> Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
+> Reviewed-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+
+I've asked in the RFC and from Sebastian's answer I think my question was
+misunderstod, so let me try again.
+
+After this patch we'll have from mod_memcg_state():
+
+mod_memcg_state()
+  local_irq_save(flags);
+  __mod_memcg_state()
+    memcg_stats_lock(); <- new and unnecessary?
+
+Instead of modifying __mod_memcg_state() we could be more targetted and just
+do in drain_obj_stock():
+
+memcg_stats_lock();
+__mod_memcg_state();
+memcg_stats_unlock();
+
+Am I missing something?
+
+> ---
+>  mm/memcontrol.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
 > 
-> You can use `KBox::init(kernel::init::zeroed(), GFP_KERNEL)` here. It avoids
-> the need for the first patch.
+> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+> index 3c4de384b5a0..dfe9c2eb7816 100644
+> --- a/mm/memcontrol.c
+> +++ b/mm/memcontrol.c
+> @@ -707,10 +707,12 @@ void __mod_memcg_state(struct mem_cgroup *memcg, enum memcg_stat_item idx,
+>  	if (WARN_ONCE(BAD_STAT_IDX(i), "%s: missing stat item %d\n", __func__, idx))
+>  		return;
+>  
+> +	memcg_stats_lock();
+>  	__this_cpu_add(memcg->vmstats_percpu->state[i], val);
+>  	val = memcg_state_val_in_pages(idx, val);
+>  	memcg_rstat_updated(memcg, val);
+>  	trace_mod_memcg_state(memcg, idx, val);
+> +	memcg_stats_unlock();
+>  }
+>  
+>  #ifdef CONFIG_MEMCG_V1
+> @@ -2845,7 +2847,7 @@ static void drain_obj_stock(struct memcg_stock_pcp *stock)
+>  
+>  			memcg = get_mem_cgroup_from_objcg(old);
+>  
+> -			mod_memcg_state(memcg, MEMCG_KMEM, -nr_pages);
+> +			__mod_memcg_state(memcg, MEMCG_KMEM, -nr_pages);
+>  			memcg1_account_kmem(memcg, -nr_pages);
+>  			if (!mem_cgroup_is_root(memcg))
+>  				memcg_uncharge(memcg, nr_pages);
 
-You're right, that works indeed, the full call looks like this.
-
-	let boxed = KBox::init(kernel::init::zeroed::<Opaque::<bindings::auxiliary_device>>(), GFP_KERNEL)?;
-
-However, I think Opaque::zeroed() reads a bit better. Unless anything speaks
-against adding it, I think I prefer it as it is.
 
