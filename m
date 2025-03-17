@@ -1,111 +1,149 @@
-Return-Path: <linux-kernel+bounces-564003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 489E5A64BBF
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 12:07:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41F6DA64BC7
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 12:08:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6A99B7A39D9
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:06:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D90D9188AF63
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:07:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF49C235371;
-	Mon, 17 Mar 2025 11:07:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C911A233717;
+	Mon, 17 Mar 2025 11:07:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="gdMgFoEZ"
-Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="04Ii0iJr";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="pNgyY4EB"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81C541990B7;
-	Mon, 17 Mar 2025 11:07:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC178230BC9;
+	Mon, 17 Mar 2025 11:07:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742209627; cv=none; b=R8AszpmLex0ZK9yCz/oMtkVdnODFgXtCB/vDfrVUEO56W2RoABiwBiPQZc3hCbCajUdVFhDkrzojiMB8daTDlfS8HKYEeVhabwP7Lc03reC8NefRgr3ySwFnSC73BKPkZCy8x7zLwWV/wEAIA2pK7fgdr14Vb07ozHFMbbZo3AI=
+	t=1742209648; cv=none; b=qBCzOqJHzNM0vIGF9wS9QSnDCqa9PC0KMO+GeJCM22bxPPOUAyVp9CTNQ/QXm6udeojJlbG5cA2+Ak3DZ9+/hyYexGbq0THYNn8k9FWKsj3zGojKdqWCa4Qiv92rg1Bk2f5P2PXQqQZrxtldyaBsisUdlOz8JscqD2YL7K1mr/0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742209627; c=relaxed/simple;
-	bh=WRlevDll+nXln9hTunFagaoK2/y6ZJhbWYGoFtFAlMg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RojBJcpHhUSHbOGdZ6d/rvlSCVIs6nbvDkVTH0cLrnfLde+e7rraHT7f8myLyFzPLbqZ1YId0l/7meMJ0ni9Ax+gT0MW7m+AwLIEd11e2kU4OpTDfCETlDr4IsW6kNb76en91vGw8gn7a/mPgtFek00uKbOG0e5IzhSXgef+qgQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=gdMgFoEZ; arc=none smtp.client-ip=217.70.183.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 5A5074427A;
-	Mon, 17 Mar 2025 11:06:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1742209617;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	s=arc-20240116; t=1742209648; c=relaxed/simple;
+	bh=0Xpwo/Y0UX8dYJiqPFctM7BIYCy3TALEamqou9qX/VY=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=d1htu4O8rw+dKxxqG5IwqVbKXNa8R9ARWLu7LtamkjZNW19eriadhjR/nZqF5jXesPL7Vl1lZx+UMbKsHcxY2KpF1WEmumKqi1NeLkBx6Pvne71yioFFBAwfCaObJjgzZesIw1EZ93+0Ae4try7uDuhHzJfE6QChzcSEhea9ZGs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=04Ii0iJr; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=pNgyY4EB; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 17 Mar 2025 11:07:23 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1742209644;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=TpyWK+ttvgRrtFWn3UpZrvKLnJz5ZbrkNmhS7BJI+xg=;
-	b=gdMgFoEZsEYUQXptv8no5MHZKeGaoKZwY5K4wxMj6+JKBF/rcV2G2Y+SgdNdW/pSqKmhbq
-	e85yTuhmeHapyrtBNkqmOyZzCWzsuMiYqaWn3hiWl7Vwi5WcA6TPgOi9Sa9av+hmmcFD5L
-	JiOt2GHGQijoKDAfYgWO+8OtPDGdFWJOOD9Qu52coqx9Jd6Tz9BuQjKZqU+jxBTLjQZlut
-	gTlTO0kH5Ti8Y4V+4LvZrThVB8A09MPN6fAwsg2NLQM1A5A7gEyEzBnZ7lhqzQw+98UehI
-	dUsTm/hfV6Tt98S/FLFJyLWRiNEOgPMFTKeFZiao0upgmI1FG4ebwZ9EqWusnQ==
-Date: Mon, 17 Mar 2025 12:06:56 +0100
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: Johan Hovold <johan@kernel.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Jonathan Marek <jonathan@marek.ca>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Maximilian Luz <luzmaximilian@gmail.com>,
-	Jens Glathe <jens.glathe@oldschoolsolutions.biz>,
-	Joel Stanley <joel@jms.id.au>, Sebastian Reichel <sre@kernel.org>,
-	Steev Klimaszewski <steev@kali.org>, linux-arm-msm@vger.kernel.org,
-	linux-rtc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/6] arm64: dts: qcom: x1e80100: enable rtc
-Message-ID: <2025031711065662ac4072@mail.local>
-References: <20250219134118.31017-1-johan+linaro@kernel.org>
- <Z87avd83XTYQYIP8@hovoldconsulting.com>
+	bh=cM/W7c+04DZc8h/mlBf+C09lLMYiLYoX4ALWFs9yKms=;
+	b=04Ii0iJrLdvXH+Zlys8VxoCOC3/fxbUvkux0IOnbhs2AUgZsQRZlJqS+steZ2lzqzKhk18
+	TCASGtUpLWA0WdNvMYRl/9tP7u+EbjwrxIF0QRZfspHMAcs7PFMjcUfBkgnKvxqFlTTlhy
+	i5pOJHbihkYQQm5P54jZCHzkF0sXAXg8h2ls6ZAAE2xKzk9ZCHbf0PuDpOoka/QFKU1YLm
+	CXFXrGtnQdNsUXQvXrjemZ2qjh7PcZDSyoUrifYqLNBihLzCE33ka7R5krViP53JonrJf9
+	vC4pbcyphOIV6D5BMdFSGzuiia5CSu39PpunyaembjC/fKQuOAQDbvBj7jIifA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1742209644;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=cM/W7c+04DZc8h/mlBf+C09lLMYiLYoX4ALWFs9yKms=;
+	b=pNgyY4EB/NhT4VeTXqA/19aV04i8ydcTh3IbPxrtSQQH9WMyEYLguPakMwu+NS/S3jvXYS
+	5luM0pFnxjkKhKBQ==
+From: "tip-bot2 for Josh Poimboeuf" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: objtool/core] objtool: Add CONFIG_OBJTOOL_WERROR
+Cc: Josh Poimboeuf <jpoimboe@kernel.org>,
+ "Peter Zijlstra (Intel)" <peterz@infradead.org>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To:
+ <3e7c109313ff15da6c80788965cc7450115b0196.1741975349.git.jpoimboe@kernel.org>
+References:
+ <3e7c109313ff15da6c80788965cc7450115b0196.1741975349.git.jpoimboe@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z87avd83XTYQYIP8@hovoldconsulting.com>
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddufeelfeehucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeetlhgvgigrnhgurhgvuceuvghllhhonhhiuceorghlvgigrghnughrvgdrsggvlhhlohhnihessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepgeeiudeuteehhfekgeejveefhfeiudejuefhgfeljefgjeegkeeujeeugfehgefgnecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppedvrgdtudemtggsudegmeehheeimeejrgdttdemugekjegvmedusgdusgemledtkeegmegttghftgenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemtggsudegmeehheeimeejrgdttdemugekjegvmedusgdusgemledtkeegmegttghftgdphhgvlhhopehlohgtrghlhhhoshhtpdhmrghilhhfrhhomheprghlvgigrghnughrvgdrsggvlhhlohhnihessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudejpdhrtghpthhtohepjhhohhgrnheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghnuggvrhhsshhonheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhhosghhsehkvghrn
- hgvlhdrohhrghdprhgtphhtthhopehkrhiikhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegtohhnohhrodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhhonhhrrgguhigstghioheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepjhhonhgrthhhrghnsehmrghrvghkrdgtrgdprhgtphhtthhopegrrhgusgeskhgvrhhnvghlrdhorhhg
-X-GND-Sasl: alexandre.belloni@bootlin.com
+Message-ID: <174220964327.14745.17925905226268456380.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On 10/03/2025 13:27:41+0100, Johan Hovold wrote:
-> Hi Alexandre,
-> 
-> On Wed, Feb 19, 2025 at 02:41:12PM +0100, Johan Hovold wrote:
-> > This series adds support for utilising the UEFI firmware RTC offset to
-> > the Qualcomm PMIC RTC driver and uses that to enable the RTC on all X
-> > Elite machines.
-> 
-> Do you think you could pick up the driver and binding changes here so
-> that Bjorn can take the DT patches for 6.15?
+The following commit has been merged into the objtool/core branch of tip:
 
-This is taken now but I had to rebase on top of patches I already took,
-please verify.
+Commit-ID:     36799069b48198e5ce92d99310060c4aecb4b3e3
+Gitweb:        https://git.kernel.org/tip/36799069b48198e5ce92d99310060c4aecb4b3e3
+Author:        Josh Poimboeuf <jpoimboe@kernel.org>
+AuthorDate:    Fri, 14 Mar 2025 12:29:11 -07:00
+Committer:     Peter Zijlstra <peterz@infradead.org>
+CommitterDate: Mon, 17 Mar 2025 11:51:44 +01:00
 
-> 
-> > Johan Hovold (4):
-> >   rtc: pm8xxx: add support for uefi offset
-> >   rtc: pm8xxx: mitigate flash wear
-> >   arm64: dts: qcom: sc8280xp-x13s: switch to uefi rtc offset
-> >   arm64: dts: qcom: x1e80100: enable rtc
-> > 
-> > Jonathan Marek (2):
-> >   dt-bindings: rtc: qcom-pm8xxx: document qcom,no-alarm flag
-> >   rtc: pm8xxx: implement qcom,no-alarm flag for non-HLOS owned alarm
-> 
-> Johan
+objtool: Add CONFIG_OBJTOOL_WERROR
 
--- 
-Alexandre Belloni, co-owner and COO, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Objtool warnings can be indicative of crashes, broken live patching, or
+even boot failures.  Ignoring them is not recommended.
+
+Add CONFIG_OBJTOOL_WERROR to upgrade objtool warnings to errors by
+enabling the objtool --Werror option.  Also set --backtrace to print the
+branches leading up to the warning, which can help considerably when
+debugging certain warnings.
+
+To avoid breaking bots too badly for now, make it the default for real
+world builds only (!COMPILE_TEST).
+
+Co-developed-by: Brendan Jackman <jackmanb@google.com>
+Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Link: https://lore.kernel.org/r/3e7c109313ff15da6c80788965cc7450115b0196.1741975349.git.jpoimboe@kernel.org
+---
+ lib/Kconfig.debug    | 11 +++++++++++
+ scripts/Makefile.lib |  1 +
+ 2 files changed, 12 insertions(+)
+
+diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
+index 35796c2..a9709a6 100644
+--- a/lib/Kconfig.debug
++++ b/lib/Kconfig.debug
+@@ -545,6 +545,17 @@ config FRAME_POINTER
+ config OBJTOOL
+ 	bool
+ 
++config OBJTOOL_WERROR
++	bool "Upgrade objtool warnings to errors"
++	depends on OBJTOOL && !COMPILE_TEST
++	help
++	  Fail the build on objtool warnings.
++
++	  Objtool warnings can indicate kernel instability, including boot
++	  failures.  This option is highly recommended.
++
++	  If unsure, say Y.
++
+ config STACK_VALIDATION
+ 	bool "Compile-time stack metadata validation"
+ 	depends on HAVE_STACK_VALIDATION && UNWINDER_FRAME_POINTER
+diff --git a/scripts/Makefile.lib b/scripts/Makefile.lib
+index cad20f0..99e2819 100644
+--- a/scripts/Makefile.lib
++++ b/scripts/Makefile.lib
+@@ -277,6 +277,7 @@ objtool-args-$(CONFIG_HAVE_STATIC_CALL_INLINE)		+= --static-call
+ objtool-args-$(CONFIG_HAVE_UACCESS_VALIDATION)		+= --uaccess
+ objtool-args-$(CONFIG_GCOV_KERNEL)			+= --no-unreachable
+ objtool-args-$(CONFIG_PREFIX_SYMBOLS)			+= --prefix=$(CONFIG_FUNCTION_PADDING_BYTES)
++objtool-args-$(CONFIG_OBJTOOL_WERROR)			+= --Werror --backtrace
+ 
+ objtool-args = $(objtool-args-y)					\
+ 	$(if $(delay-objtool), --link)					\
 
