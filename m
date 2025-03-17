@@ -1,268 +1,242 @@
-Return-Path: <linux-kernel+bounces-564759-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564760-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D93FA65A53
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 18:20:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C2B7A65A5F
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 18:20:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 115231899DA5
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 17:16:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 753561899E95
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 17:16:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D4711B043E;
-	Mon, 17 Mar 2025 17:09:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A82071D9A41;
+	Mon, 17 Mar 2025 17:10:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Q3ta6wTw"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lhzRHRg4"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62C2F1C5D7C;
-	Mon, 17 Mar 2025 17:09:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.13
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742231380; cv=fail; b=n6ENAamYFWtSj5HD5OnDc6LhPY2Hfc4j7Rhk82G/iqCpift3Iam6hA/6AUg1RGCyDsDQ1IkjHq73ZL2VeuU8hqQK14C9uMy3C42MfPMRhhjmYBHCMKnpPDbbouJnuPZOYJRPjBKs2jLyp3akqGac5bK4YZhJxO69Op1ivv73Jy0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742231380; c=relaxed/simple;
-	bh=8LFF8XY2FKesYKaIrhdctoAgfR7e95YljJ64wBr01ec=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=bP+PuMDgb2/x+oh/LA+I41h9u5ePiNX1KWou3/7h6X92Ab31HeupadHOpL64bsqKMPDCw1M6ICLGEDQ89B14esFpl7EaDFsgy2qabaQUM3nkuuPBaVuEIqjQFL8Y0C+vlqzW3r9Jelt17SC4ma0cLBFywsbzCH457X7ZpIRaPEc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Q3ta6wTw; arc=fail smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58A671A255C;
+	Mon, 17 Mar 2025 17:10:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742231418; cv=none; b=k3P+2jYSN45TEZ/MuvdNI4jHN7bw25XX637Eg+Rj/IRUfOe+pArxzXGm9FOfbnHTk4tlZcqdS66XJBSOJTJ5P+n1tmhJcybCgqG8R9gxtkAcVAbQw4vJf3wxr1uLoY79siuAVPWZjpfraeCm8rdosg/nRQ72YbdEA8T7h9+Awjs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742231418; c=relaxed/simple;
+	bh=XemDQhZsfOwWrwHljvfFmLDX3tk2oTPd5CaJUyQ5yuY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JgMfJnpy26ZCs+dCn6yB4VuMVfzwBSTYMtB+2n+2QFN93cPBrrhRjI8Uxouo7HyeVvFljZaXLhEr+nB77m/26Nwz3Hbi3Hplgm2v7UiZwg/x9oKit4dvoO3GLjispUFfIVqb+232UN9dhq+BgR+6+X/DBm2wW+Q/7w/u+IsB2LU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lhzRHRg4; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742231378; x=1773767378;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=8LFF8XY2FKesYKaIrhdctoAgfR7e95YljJ64wBr01ec=;
-  b=Q3ta6wTwI7fod746DydLlFNp+5EsCmgAADTGRyN4dCRms6x4TDglYFhQ
-   eLcx47d5mWIH/2fG9pl0KOWmrk+f+BNsk2bR83mar3T0TAHS91O7B0hzP
-   8IEVH48ExJKWVQnXiahNOXSYzkrfoUc9nNgLHRdM9MCNmuiGCWlh1a8jx
-   2lSn/M3yp35W52tXNxANjlK+QisL1mvx7io1opnqEQt1Ajq49gtcnYx0k
-   Qxkvtt494FinUjuf1drixkYg6YA+k2zwFKWFRGHfngVx0jdlvvp4feFLD
-   eAjAHKE2I5574ENBOUxkXeJ7lyS5xSrsWEI+iXKBLiB1uISjOqaEZ2Cny
-   w==;
-X-CSE-ConnectionGUID: M8OIserDRrymSc+vV41OKg==
-X-CSE-MsgGUID: phCdZkFvRfKrW4vbmoVfmQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11376"; a="54334324"
+  t=1742231416; x=1773767416;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=XemDQhZsfOwWrwHljvfFmLDX3tk2oTPd5CaJUyQ5yuY=;
+  b=lhzRHRg4FCBQ8OqI9QPcmOmH/B+qj1PZTg0GMaHqWUytxjZmjCQxN/Ch
+   tvlHFEjtyi+sxvc5wdJJfAs6djlXI9cRxkSaX/q/EjDPCtUE+1sEb0Aib
+   TfoQyWpGIdafyvPcT+kjYUu8DOP2dYcKdhskcOqvqeSRmvAPExrXhOudv
+   r84zIRbr4Zq2n2B17aCpcmYMw2gcPGrhWfPlw4kGBJ1zNNrgZqq49qpn7
+   td7IdVsQu1m8SYsXCAt+eONL4QyZqBr2e4dwQ8o51OXz0Zj2B7dVs96Fy
+   8Ek9IttxYmOA+D21qiWsUb/XY5aRD4qzsXvrvEitrldSSMDmEXme+vL70
+   A==;
+X-CSE-ConnectionGUID: fSGr9A/JRearKntikVRG8g==
+X-CSE-MsgGUID: LCbItL5kRh67NaB+EsW30A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11376"; a="30920423"
 X-IronPort-AV: E=Sophos;i="6.14,254,1736841600"; 
-   d="scan'208";a="54334324"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Mar 2025 10:09:37 -0700
-X-CSE-ConnectionGUID: FVgz/5OXTFaOJIZyVuVBGg==
-X-CSE-MsgGUID: k58mOCp2TO69b3vhEbb0Aw==
+   d="scan'208";a="30920423"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Mar 2025 10:10:16 -0700
+X-CSE-ConnectionGUID: BdXS/elwRqK7KzJGHgVB0A==
+X-CSE-MsgGUID: ktlOYsTITUqauYqlicKGSQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.14,254,1736841600"; 
-   d="scan'208";a="122736961"
-Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
-  by fmviesa009.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 17 Mar 2025 10:09:37 -0700
-Received: from orsmsx603.amr.corp.intel.com (10.22.229.16) by
- ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44; Mon, 17 Mar 2025 10:09:36 -0700
-Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
- orsmsx603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44 via Frontend Transport; Mon, 17 Mar 2025 10:09:36 -0700
-Received: from NAM02-DM3-obe.outbound.protection.outlook.com (104.47.56.41) by
- edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.44; Mon, 17 Mar 2025 10:09:35 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=KFOJbi83wUiHkXQaDTpMR/PAr5/kunUIm/0YG8+aNhgIEn3AGXnwD4EUqPzgmYoOQ2F73AVDF0XRUHXJDNVd7fyOc8FgeL4VjMk6h6m3KnhhU7tkvrgWVVEhgcdT2uFgjtHnZUSu3Lm1EYLg7ekH9rgyz7wM0Tb4oeDotYAlzaL1cddQmrsSYKWu/tuj3tfBKP1sLBmBGqTfIc1iQLjPu+lTboVi1C9FG5rwDAB+3trrGsCnSMwRYRqf9en4CaBGNFsQR+a6bBsaqBvIhOCJqpEL4rOOxn70oEYS+87cggGOfK4wCS/6G+9ObczJ96DkjCQnulnHUrV3T1xMpRJpFw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=xfU4ccrIbUpgShAsBfxKzWOKHotHfIXejabrSWu9EJc=;
- b=bW4uqT0793rzCt0P1UhCUmVWtLlfNOYKS5MLivaZ8lBFg47U3AM7JrKu3PGg5yQ1FGOf3+Vm+3VKXgJow2uIIjoN2Vv1VdryMnjeJKyWOsOqhMayYfXNEsMbe7Iz5sMmQN5fXjs6yqhf/bArvhAGccZKV5fUBUpGs6KKHEAEh3DX7GvLKmgaPYnhU02gDpmraeZvfs+DVV14vZmP+xUEm+B+tCT2Oqygv4W/6wEsFRWWr8SXD46cBkrNmCNTaidJHV1hmEdvrQkcW1NljjZ+xqYAHuHdT3CofbqYkBhuIO4uW7G7yIG48hBGDkklE2s7UAHzYlR83w+Y2qyJIyd+9g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from BYAPR11MB3320.namprd11.prod.outlook.com (2603:10b6:a03:18::25)
- by IA0PR11MB7840.namprd11.prod.outlook.com (2603:10b6:208:403::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.33; Mon, 17 Mar
- 2025 17:09:33 +0000
-Received: from BYAPR11MB3320.namprd11.prod.outlook.com
- ([fe80::e8c4:59e3:f1d5:af3b]) by BYAPR11MB3320.namprd11.prod.outlook.com
- ([fe80::e8c4:59e3:f1d5:af3b%5]) with mapi id 15.20.8534.031; Mon, 17 Mar 2025
- 17:09:33 +0000
-Message-ID: <df1b95d7-c953-4757-b742-3072f65539f7@intel.com>
-Date: Mon, 17 Mar 2025 10:09:31 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 00/15] Prepare for new Intel Family numbers
-To: <x86@kernel.org>, Dave Hansen <dave.hansen@linux.intel.com>, Ingo Molnar
-	<mingo@redhat.com>
-CC: Peter Zijlstra <peterz@infradead.org>, Arnaldo Carvalho de Melo
-	<acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, Mark Rutland
-	<mark.rutland@arm.com>, Alexander Shishkin
-	<alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, "Ian
- Rogers" <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, "Kan
- Liang" <kan.liang@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>,
-	Borislav Petkov <bp@alien8.de>, "H . Peter Anvin" <hpa@zytor.com>, "Rafael J
- . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, Andy Lutomirski
-	<luto@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, Jean Delvare
-	<jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, Zhang Rui
-	<rui.zhang@intel.com>, Andrew Cooper <andrew.cooper3@citrix.com>, "David
- Laight" <david.laight.linux@gmail.com>, Dapeng Mi
-	<dapeng1.mi@linux.intel.com>, <linux-perf-users@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-acpi@vger.kernel.org>,
-	<linux-pm@vger.kernel.org>, Tony Luck <tony.luck@intel.com>
-References: <20250219184133.816753-1-sohil.mehta@intel.com>
-Content-Language: en-US
-From: Sohil Mehta <sohil.mehta@intel.com>
-In-Reply-To: <20250219184133.816753-1-sohil.mehta@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: BY3PR05CA0010.namprd05.prod.outlook.com
- (2603:10b6:a03:254::15) To BYAPR11MB3320.namprd11.prod.outlook.com
- (2603:10b6:a03:18::25)
+   d="scan'208";a="121816870"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Mar 2025 10:10:13 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tuDyc-00000003MoQ-1UJg;
+	Mon, 17 Mar 2025 19:10:10 +0200
+Date: Mon, 17 Mar 2025 19:10:10 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Thomas Richard <thomas.richard@bootlin.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	thomas.petazzoni@bootlin.com, DanieleCleri@aaeon.eu,
+	GaryWang@aaeon.com.tw
+Subject: Re: [PATCH RFC v2 3/6] gpio: aggregator: export symbols of the
+ gpio-fwd library
+Message-ID: <Z9hXcr_GPhPt_gel@smile.fi.intel.com>
+References: <20250317-aaeon-up-board-pinctrl-support-v2-0-36126e30aa62@bootlin.com>
+ <20250317-aaeon-up-board-pinctrl-support-v2-3-36126e30aa62@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BYAPR11MB3320:EE_|IA0PR11MB7840:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3fd48bb5-0581-43c1-8107-08dd65767cb7
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?ckxaWVNMeDNNWlN5MEVPcHFEWnE5NC85TXpPbGxzTFFZYlI3cGhsdXE4UEZG?=
- =?utf-8?B?cUVxamN3S3dUTnNET2dYMmo1RDd2eWZaU01HSW1EMzNPUWk1dWhtV0FUY0or?=
- =?utf-8?B?SjczOEZKSEFXWWRqOEY5eCtjSEVRdGNmR0J0NHZGRktLV01pTERYTDFNRm5T?=
- =?utf-8?B?K1N3ajhrRVExcWhoZTFNbkpkQUlTVFFIQzZVSEg2RkhaSmJEZW9TNkR1eUhC?=
- =?utf-8?B?LzNOUmRtNHlwZ3UxcEg5YVJrVW5UZ1NLdjZUVysyZDFLNWRTRkpzbGx6OGVs?=
- =?utf-8?B?WXkyRld3bklTeCszbE1tMUZDZjBENzJJOXR2YXY2VDBQRlYrMUVicDhkR1Vo?=
- =?utf-8?B?ZVBaaGVrR0tWQ0V1NlFOZ2JkV2ovS0N3ZkJ6WjJaMFJocm5qK1RnbG15Mm5n?=
- =?utf-8?B?WVdEN3VtbG42b1lpbll2cW9uTHRWRkFyVVlicmhDZ1ZEMmxGUTNnVDVjU2R3?=
- =?utf-8?B?NGZla0ZnMmVZWU5iUDZ1VmRVNWhmTzg5MS9zaUE4dnpQTnVTYSsvdjBQeDBW?=
- =?utf-8?B?V3BpZmJoQjFPR0ZQMnhPWjFKR0ZERUw4ekFpQWZvT3h3b2t4MGhWdzd3WHJI?=
- =?utf-8?B?U2t0MjFlQ2dZbmwweSsrdzBhZTNFUGprMzFyZWk1ai8wbVFrUHJ0ZHhrd2Zu?=
- =?utf-8?B?K2YxSVUyREUrdXR4NWUvVk10RUZQU1M3cTg2ZHBId2ozemEwd29mUlVMeTV6?=
- =?utf-8?B?V2s4cWxJbWxUWjlyNjZGNGJpT29YUnU0WDlTQWgrcys1RWZjbjA2dFhhTTNL?=
- =?utf-8?B?eWRMOGY1VnZkalJPNmwwSHp5di9Id1RlYlY2aHlFYWpKWTFGTnhSWVhVN3Vn?=
- =?utf-8?B?QmJhcE9rQkRlekxkNlZpR1lMYkF0a2d3RXFiaktBekY5aHRPNzlTdzJKQ0hl?=
- =?utf-8?B?ZGtRZjU4b1dWRnp3NXBoYzF5Vk9KNklxNjRKaTZtT0cvWmFhclJhcFNjdDAv?=
- =?utf-8?B?OUJQaHpSMFA4UGJLdXNuNXNNUG5HUUZGVWtOZjZNYnlqb2dacHh5RWY0REZ5?=
- =?utf-8?B?RC9hZEVtVHJ5NWhZSVd1cHhYNlBkenBaL0ZLUnB3RzVtYUt1RTFUMHVsTU1j?=
- =?utf-8?B?b1JGVHpDdXFiaDVwczNXalc4RjdmK2ljYVAvN1kvTGRVUnpiaEE1TThKdUth?=
- =?utf-8?B?T2hhaS9udG04S1NCaXJxWlZWZkJzQndNNThEUjZQREhSekxOajF0cy9CUzJQ?=
- =?utf-8?B?dEQrVkRWQmRKbUhmcFlzZ2JUVGFpVXRSa2NsM21BVDhxNDZ0a0xRNjdyUWp5?=
- =?utf-8?B?ZjNIajdaUE5WMDB1dGhBbkNOZ2VRYnZVYk1lV0NEeUlTRCtMVkJQeFZHb2tq?=
- =?utf-8?B?Z1V4T1pCODZyY3BEUUZDTWhneU02MHhBOVpGTHpPMXBmUUFtT0tXa0s4dCto?=
- =?utf-8?B?QzVxRStGMlRseVBVc2d3UExtazFuY2w4N01CUGZOMnFVemtUMDd1ZzNxY0di?=
- =?utf-8?B?a2NTR1NySEIvelNkaFRiNFhDM0Q2T3ZhdUxCb3JmZ0U4WndQdE12ejdPSzJT?=
- =?utf-8?B?Y01Kb25vRzArakl0R0FuNGxxdlpjQ0pad1FlNzN5N2VOcUsyWlpvaGJCbS9l?=
- =?utf-8?B?d0pzMFMrL1RGYUFJWEIzM3dIcVZybWUwM2ZUWXhyUzVOY1NZVVBlL0ZsYjJI?=
- =?utf-8?B?UXkvWWtjdjJkd2puamhVUzFKMHFqN251TUgzTjcyclBtRkkwK1RzVFpRYUdK?=
- =?utf-8?B?RnRWbHlSMkJRdTRxSE93SlMvdmsxbWx0cUhkcTFUb1dUOTJGS2R3NG1adlVn?=
- =?utf-8?B?N0pxQW9JYkk1V25ZUXBuS1J2aGdKZ2JxVFBsbEc3OFVRR1BnNjRXOU9NZ2Nt?=
- =?utf-8?B?aWFMSXoxNk5Peldub2QvMzBYc3U4Q3M2NTRjUXlqblZyNk1HR0NZTmlCY2ZR?=
- =?utf-8?B?R05HdmFVMy9oQXNBNkhjV1lERERuUG96K2pmRGp1MWlsTlE9PQ==?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR11MB3320.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?N0dmS3YxVG5YalN5bWtaN3NPYXg1VFdPQTZuRjEvYzZaaUxuUFgzeVNrcWto?=
- =?utf-8?B?QXl2Y0JPOVBsUkM3ZC9ZOGNtL2ZlY3FvSWpqNWZaSWxSalBaWnhEZ3JZeHVq?=
- =?utf-8?B?VStKbEpSODdsS3JOQnVKKzkxWHBVSnpJb1ZJeW9sam9zUTZxQXlzZFltMGhW?=
- =?utf-8?B?dXFsWDlTVHVMVEhFRnpMTENYZDhBVjNObUxTS3BWR0NqbGlqcFFXK201blBw?=
- =?utf-8?B?YVl0bXNDZlR6cmtJWjVtdjB4NVg2TFdJSGt0Q0FnVjBJUTc0dWNlem9FT1Vj?=
- =?utf-8?B?dDhmUVNDRlArQ0pFdWNNR0NTQ0tVOFAyR1pqWU8yUFRlTXkyNUkzSEFEd1Nu?=
- =?utf-8?B?K05sTnJlTzVDeTl4bzRTSU0wNFhUVE4vMFU1Zy9BKzROalltNmJENjdrK0R4?=
- =?utf-8?B?aHVBUjdibys4ZG53L1FpMitnZDV0cXFtZjNxOU5OVGEwRGc2RGZaT2trK01X?=
- =?utf-8?B?eVZqMW9tL3RTZ2Z4Znplc1ZWa2RuTGFsN1ovVWpLeVBYbWVZMXNaYjVob2Y3?=
- =?utf-8?B?NnJhaVMzUkhRRzdYcHFtbmZORURMUHhvUzVzUjJ6UzNXYzhyS2d0Zm9LbXZC?=
- =?utf-8?B?T1YwWHM2YklqclJIZDRXeXRQRVc3dmJXNk1tcUY4NjRQbFltdmpvWmlrR296?=
- =?utf-8?B?d2p4OVVpdjlGckl0Tk5TWXVUOVEvSW5TQllLMStRQjZDZWEzMmlTZzNlYjVK?=
- =?utf-8?B?aWpOUUhRNVlRZFhIcFBGSnIyY1dDOW9qMU00VFphbVdzRE5RQnpNNDRNWWVs?=
- =?utf-8?B?WHZiVDZPc0JtN3lFWGVZK1JKMU1SeTBIZ1Bwb05XNUhFMkNFbUd3VHJYaytX?=
- =?utf-8?B?Qld3S0svcmdoSTZIYkNWZTBKaGVteTlnL3IvYi9aa1FqYnhoWE9BOE5GLzFh?=
- =?utf-8?B?YnFaNUhmYzJnb3AyVHpXV3FZKzhwVFFNZ29zMU1qd2g2dWt1c0FvdkR5bTEv?=
- =?utf-8?B?ZzZ0S2NkbUUxdFFNK2x1dE9DRWN3dHYwT1VBRDRrNGtWV1RqN251MzZabFRQ?=
- =?utf-8?B?VUJxV29PaHQrYUdEQmU1OG5tUnREZmxZRk5yaitWRGNldjhUWG5ZTjFidE1O?=
- =?utf-8?B?Mk5La3MxKy84aWtVM1pCalRabkU3ZTBteVQrMEZwYVNJUVpkOVcwaUVPMEYy?=
- =?utf-8?B?UkRabmNyaWswN2dZTDl4UjBZM0VNVlhoWVhwUmc5QmUyd2U5S2Z3ZVVrUkgy?=
- =?utf-8?B?TGdJV3pGbFRad29QNGRUYUhUbHBEMlFsR3Bady9iamJ5SE9pV3JRb05Rc0gz?=
- =?utf-8?B?MDVOeWt2aGhBL2Z4N3puVDlnYmtKZ2pkN3hYMTV3UUpTU3U5TnJSS2FRUEs3?=
- =?utf-8?B?RU1lMUhYS3BtNkY5LzcvT2pybmlMTERWSmx6UnVVSU9raGFjeHpSWFV0d0Rj?=
- =?utf-8?B?SWMySmYvOUJzQWd0T3NoVjkwWCtNK2VZVWRCVjJqTnNhMTFqNGExREUza1pI?=
- =?utf-8?B?aTc3dlRLT3JobDZjYWo3U0Z6Y2pPZHlXdEE1TXgwdXE5QURlS0YzVkRFK0NX?=
- =?utf-8?B?Tm13WWJCVzF6MHlobTlEMG5Fd2lMNFNMelErczh4ajg4NUtGTVFVcVJEcElV?=
- =?utf-8?B?dGZXS0VMdkxQZ2d1Q0w3YU5vNkt3alNCRHM3a2tWcEhZcDArbGo0WnYvTnBq?=
- =?utf-8?B?OFZLTm13ZjRWTFhKZWdLMTF3L3Q2YXd5U0FkMkF6TzN5dE5yK21KRFlKZEZS?=
- =?utf-8?B?TEwrbWRkOTRYWktnUHpDcnFyTHhpU05WZTA5djhFMWZvZDdQUXpHYS9uM2Y2?=
- =?utf-8?B?Q2VJcHhaR250WFVCWWIxSWV1aTNUSjQzaFcrNlMzZENXcW5VYVFYeWhKY3dX?=
- =?utf-8?B?ZjdlWTFRTDlSNlFTa1gzNUpRWVlXdFpJbzJ2K09nY0YwMlAxbC9nVThpVzJV?=
- =?utf-8?B?V0d2Rkp6K1FPVFlpRUdINFphS2ZlNmc5R0pUa0JWb2lLZWNLc2hhdGkrdjdj?=
- =?utf-8?B?cVdhNVZCalhqMHpuUXJnMUhEd3FRSERTMVNBZ3pjZEh5QzZycmI2dWxUYmZ5?=
- =?utf-8?B?QU15M3diNGJxU3d2bjIyN3dJQU5rR3BYejJnQWdERHppL2ZmTmZXeXpoZlEv?=
- =?utf-8?B?QXl2TTRVZHZTc1pjbjNESWIza2hFb2NyZitPR0Z1RklZeEV0TU9NdnZnNnQw?=
- =?utf-8?Q?nHy+s4XwCNbx7gwuJ9yWViWLT?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3fd48bb5-0581-43c1-8107-08dd65767cb7
-X-MS-Exchange-CrossTenant-AuthSource: BYAPR11MB3320.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Mar 2025 17:09:33.1567
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 3g+gL2Q7+yN7/QJc5Z82QNSfGSdeEJqAa+VzLCgaQcMdX/Ql/GysvmP6ph0vNB+CTtoyr/4/aRU0+iF+4MBcfw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR11MB7840
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250317-aaeon-up-board-pinctrl-support-v2-3-36126e30aa62@bootlin.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On 2/19/2025 10:41 AM, Sohil Mehta wrote:
-> ---Summary---
-> Mainstream Intel processors have been using Family 6 for a couple of decades.
-> This series is an audit of all the arch/x86 Intel Family-model checks to get
-> ready for the upcoming Family 18 and 19 models. It also converts the last
-> reamaining Intel x86_model checks to VFM ones.
-> 
-> Patch 1-8 : Include Dave Hansen's Acked-by.
-> Patch 9-15: Almost ready to merge but don't have review tags yet.
-> 
+On Mon, Mar 17, 2025 at 04:38:01PM +0100, Thomas Richard wrote:
+> Export all symbols and create header file for the gpio-fwd library.
 
-Is there any additional feedback?
+...
 
-Most patches have review tags now or are simple enough that they might
-not need one. Patch 11 can probably use another look.
+>  #include <linux/gpio/consumer.h>
+>  #include <linux/gpio/driver.h>
+> +#include <linux/gpio/gpio-fwd.h>
 
-Patch 14 is the only one that has a minor change. Seeking additional
-input before spinning another revision.
+Please, name it forwarder.h.
 
-> ---v3 changes---
-> * Reordered the patches and moved the Acked ones to the front since they are
->   likely to get applied sooner.
-> * Patches 11 and 14 have a slightly different approach now. 
-> * Improved commit messages overall.
-> * Dropped the drivers/ fixes. Will post them separately.
-> 
-> ---Previous versions---
-> Refer the v2 cover letter for more background.
-> 
-> v2: https://lore.kernel.org/lkml/20250211194407.2577252-1-sohil.mehta@intel.com/
-> RFC-v1: https://lore.kernel.org/lkml/20241220213711.1892696-1-sohil.mehta@intel.com/
-> 
-> Sohil Mehta (15):
->   x86/apic: Fix 32-bit APIC initialization for extended Intel Families
->   x86/cpu/intel: Fix the movsl alignment preference for extended
->     Families
->   x86/microcode: Update the Intel processor flag scan check
->   x86/mtrr: Modify a x86_model check to an Intel VFM check
->   x86/cpu/intel: Replace early Family 6 checks with VFM ones
->   x86/cpu/intel: Replace Family 15 checks with VFM ones
->   x86/cpu/intel: Replace Family 5 model checks with VFM ones
->   x86/acpi/cstate: Improve Intel Family model checks
->   x86/smpboot: Remove confusing quirk usage in INIT delay
->   x86/smpboot: Fix INIT delay assignment for extended Intel Families
->   x86/cpu/intel: Fix fast string initialization for extended Families
->   x86/pat: Replace Intel x86_model checks with VFM ones
->   x86/cpu/intel: Bound the non-architectural constant_tsc model checks
->   perf/x86: Simplify Intel PMU initialization
->   perf/x86/p4: Replace Pentium 4 model checks with VFM ones
-> 
+>  #include <linux/gpio/machine.h>
+
+...
+
+> +int gpio_fwd_get_direction(struct gpio_chip *chip, unsigned int offset)
+>  {
+>  	struct gpiochip_fwd *fwd = gpiochip_get_data(chip);
+>  
+>  	return gpiod_get_direction(fwd->descs[offset]);
+>  }
+> +EXPORT_SYMBOL_GPL(gpio_fwd_get_direction);
+
+No namespace? Ditto for all exports.
+
+> -static int gpio_fwd_get_multiple(struct gpiochip_fwd *fwd, unsigned long *mask,
+> -				 unsigned long *bits)
+> +static int gpio_fwd_get_multiple_unlocked(struct gpiochip_fwd *fwd,
+> +					  unsigned long *mask, unsigned long *bits)
+>  {
+>  	struct gpio_desc **descs = fwd_tmp_descs(fwd);
+>  	unsigned long *values = fwd_tmp_values(fwd);
+> @@ -332,8 +320,8 @@ static int gpio_fwd_get_multiple(struct gpiochip_fwd *fwd, unsigned long *mask,
+>  	return 0;
+>  }
+>  
+> -static int gpio_fwd_get_multiple_locked(struct gpio_chip *chip,
+> -					unsigned long *mask, unsigned long *bits)
+> +int gpio_fwd_get_multiple(struct gpio_chip *chip, unsigned long *mask,
+> +			  unsigned long *bits)
+>  {
+>  	struct gpiochip_fwd *fwd = gpiochip_get_data(chip);
+>  	unsigned long flags;
+> @@ -341,16 +329,17 @@ static int gpio_fwd_get_multiple_locked(struct gpio_chip *chip,
+>  
+>  	if (chip->can_sleep) {
+>  		mutex_lock(&fwd->mlock);
+> -		error = gpio_fwd_get_multiple(fwd, mask, bits);
+> +		error = gpio_fwd_get_multiple_unlocked(fwd, mask, bits);
+>  		mutex_unlock(&fwd->mlock);
+>  	} else {
+>  		spin_lock_irqsave(&fwd->slock, flags);
+> -		error = gpio_fwd_get_multiple(fwd, mask, bits);
+> +		error = gpio_fwd_get_multiple_unlocked(fwd, mask, bits);
+>  		spin_unlock_irqrestore(&fwd->slock, flags);
+>  	}
+>  
+>  	return error;
+>  }
+> +EXPORT_SYMBOL_GPL(gpio_fwd_get_multiple);
+
+These two are nicely named. Instead of touching them, just simply add an
+exported wrapper. We can optimize it latter if needed, but it reduces a lot
+the churn in this patch.
+
+...
+
+> -static void gpio_fwd_set_multiple(struct gpiochip_fwd *fwd, unsigned long *mask,
+> -				  unsigned long *bits)
+> +static void gpio_fwd_set_multiple_unlocked(struct gpiochip_fwd *fwd,
+> +					   unsigned long *mask,
+> +					   unsigned long *bits)
+>  {
+>  	struct gpio_desc **descs = fwd_tmp_descs(fwd);
+>  	unsigned long *values = fwd_tmp_values(fwd);
+> @@ -404,37 +395,40 @@ static void gpio_fwd_set_multiple(struct gpiochip_fwd *fwd, unsigned long *mask,
+>  		gpiod_set_array_value(j, descs, NULL, values);
+>  }
+>  
+> -static void gpio_fwd_set_multiple_locked(struct gpio_chip *chip,
+> -					 unsigned long *mask, unsigned long *bits)
+> +void gpio_fwd_set_multiple(struct gpio_chip *chip, unsigned long *mask,
+> +			   unsigned long *bits)
+>  {
+>  	struct gpiochip_fwd *fwd = gpiochip_get_data(chip);
+>  	unsigned long flags;
+>  
+>  	if (chip->can_sleep) {
+>  		mutex_lock(&fwd->mlock);
+> -		gpio_fwd_set_multiple(fwd, mask, bits);
+> +		gpio_fwd_set_multiple_unlocked(fwd, mask, bits);
+>  		mutex_unlock(&fwd->mlock);
+>  	} else {
+>  		spin_lock_irqsave(&fwd->slock, flags);
+> -		gpio_fwd_set_multiple(fwd, mask, bits);
+> +		gpio_fwd_set_multiple_unlocked(fwd, mask, bits);
+>  		spin_unlock_irqrestore(&fwd->slock, flags);
+>  	}
+>  }
+> +EXPORT_SYMBOL_GPL(gpio_fwd_set_multiple);
+
+Ditto.
+
+...
+
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +#ifndef __LINUX_GPIO_FWD_H
+> +#define __LINUX_GPIO_FWD_H
+
+This header uses something that is defined in other headers. Please follow IWYU
+principle.
+
+...
+
+> +struct gpiochip_fwd_timing {
+> +	u32 ramp_up_us;
+> +	u32 ramp_down_us;
+
+types.h
+
+> +};
+
+...
+
+> +struct gpiochip_fwd {
+> +	struct device *dev;
+
+struct device;
+
+// forward declaration is enough.
+
+> +	struct gpio_chip chip;
+
+Where is this being defined?
+
+> +	struct gpio_desc **descs;
+
+> +	union {
+> +		struct mutex mlock;	/* protects tmp[] if can_sleep */
+> +		spinlock_t slock;	/* protects tmp[] if !can_sleep */
+
+And these?
+
+> +	};
+> +	struct gpiochip_fwd_timing *delay_timings;
+> +	unsigned long tmp[];		/* values and descs for multiple ops */
+> +};
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
