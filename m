@@ -1,150 +1,115 @@
-Return-Path: <linux-kernel+bounces-564435-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564437-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4131A654EB
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 16:04:34 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 872EDA654F6
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 16:05:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0546A188E205
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 15:04:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E14721894C76
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 15:05:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38B0524500E;
-	Mon, 17 Mar 2025 15:03:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05AAA248878;
+	Mon, 17 Mar 2025 15:04:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fHcIhep/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G9Ro9bUZ"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 864B424418F;
-	Mon, 17 Mar 2025 15:03:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED0682475CE;
+	Mon, 17 Mar 2025 15:04:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742223838; cv=none; b=Ef1qQ5oO++3h7A0f3ctN+KvAqOIm07B38asR1WH9dwgMpxf3JDtaqdGSppt6HxFa07/G3VnnaaZ8zlFZtgECe1ysicGQ2J8cTSGDywLANMS+4y/SaJg7PMQSa1ik6RJdo78sB2sJX6VaAtWzJMqZQhvyQwHjAwFMOvVsnMqoHTs=
+	t=1742223891; cv=none; b=M71UOsL/pPowirpAfO6AmQhpAGzV/qoTU6NbujwlKytgYJsJC7X7Yxs2QVikRrJyxbv9GoLL2RAm63xLuhqHzmr+EwW7Q44asov2az424jVfhrOurMQ3iyYdjZKyK0RDCM2DWyOrUQmp2GwJBmCKgilJiYx/tWtZo1RxizeUBeA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742223838; c=relaxed/simple;
-	bh=lOTj+aLfLjnSkGWOyTAyxRBbj1txz9yH5T9seX66aeo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mSsEIAQa1zZi4ahR6lIT1MUoZ48jbLIm2OiEESjCi3NqzbrrUuj+IvB1FX176D0t08vqHds4wJg0/vPuZRD1sG922sXdgaaGG1rk8E1m9QxXZMc6q9Dc96LfvxAHtxgq/W6ApwXIf3EOTS+YfQ2rfF9utvmxDDafmeNYJPH1cyA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fHcIhep/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5F4FC4CEE9;
-	Mon, 17 Mar 2025 15:03:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742223838;
-	bh=lOTj+aLfLjnSkGWOyTAyxRBbj1txz9yH5T9seX66aeo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=fHcIhep/wrcfChNHZOvjO+19Mlu6UZJ6+qB794IUpJDd5p4DKQ6YH/PgZM9rKoCvq
-	 OP8EOmfN7TN6doynVZRE5mZ9xuEs4Ss051F3utHu5INXQLeiLi3ZGTaF5gPswHIl0j
-	 RLPgO1oyvWYXo8RVaQTcHRc+qO7UgRyB4becD7efGJxPgQ/CAAZSSY9cZd5XUWxNwT
-	 ljTqoe3tak0urndwyZ3Ln36deD/ySqsupn5UrC1DCkqBcQtfNTQd5lfW/Jd1pQvcu1
-	 4rqfdCXT3WhCLmhsVliTjCh0s8GOgvhSZ+vUPpx4aeBKV3QbFDKhTRjWaHsriP8g2G
-	 1htgjkmOpAKiw==
-Message-ID: <dde3fd48-f5ac-4c82-aff3-8dae255d4cd2@kernel.org>
-Date: Mon, 17 Mar 2025 16:03:50 +0100
+	s=arc-20240116; t=1742223891; c=relaxed/simple;
+	bh=9MD9so6Z8faXWYaIlw81tHAgFelhzE08AGLAxn+LdDE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NQJud9yu8rLuQ0oPGhIQioSQi+uSFg5UVr8YXyOLWWTvbIQAblTKgZlkTwCpuu7UL6V/GRxiaSOehTOFcAsM/ivdFTOPID+avvjH0Jz/IyeqcuHBmV5Pq3kK+Gz1SpKFchMfQS8SxZpeDpyoXcrxzFT3a3JzkqmxczcyeATABJY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G9Ro9bUZ; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-223594b3c6dso91081685ad.2;
+        Mon, 17 Mar 2025 08:04:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742223889; x=1742828689; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ZFDFtvPMucST8cLNpJSyGw+n+YEV7mkaWNYljj+T+9o=;
+        b=G9Ro9bUZHGqzWfNTSAxY3+j5pRW/OyP+5mTsOO6Y7VAmwmkMM3t6u1ohgslPWNsN0M
+         wpGhVNjeAKk35WmrGXrxvUDflpyq1qwU46g+3jZcKzzdyOMTUyFoY3QLoeZDnmrl/VCJ
+         gW3UaxzbbfzVW67x/KHcu8FYeYX9OxDUbHuPIJJWM55BLU86jBnaE3N6jjBE6VV8Wxcn
+         Ry1w4yfUvMY5rzQlTZ2xshq63HXSo0FlInV+IYoCXjiMw5abtHJczwTNyh8YLM8Dzrix
+         RivhDsadpgM1sjWuaYAD/SP3nri8H41AZHklSTPuEwuijQxNRuQFGXi6lT+F5QOsX8vp
+         fDLQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742223889; x=1742828689;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ZFDFtvPMucST8cLNpJSyGw+n+YEV7mkaWNYljj+T+9o=;
+        b=sTPH87lEB2b10L5jra/X7Fc6fj8NDS/oKlg3uuCKD5mq/Dgf2nhaM4s8Cx04Gc7/Gr
+         t/r9WhYvXnTeiuakLAnRjTSn/gO/6EL1DsMMpYCaikXvR50l4JvHCkAkQ8ihPPzREN64
+         MHwernazTUToe0RgrIOX6Q05BCoW0G+S2iiXm0enqS0MbmqDyXWMOZaMtzmPgjeqwJ71
+         +inGlmydA/PmGFKTe76txCPo9GP6KWps0+oC6wghDHTsZzS8/msOdh9b2K3XDPrLf1eW
+         ebimAJVZB7fokgENSnkm76ZrMdu466etOjVDWzxab6y7a8kjQxXwoJOlt/KerZ0NXPJf
+         MNJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU5XtZsLM6Skw0xMe1zPQZuu7cY0UdMJsXK1/4QJze6pfodfwZBFZrkU7dTPYLmT41OhRgzRzxzxlfxojM=@vger.kernel.org, AJvYcCU6/D66qTVktJELl7V2gqZ9QY8w3Xlxt3p1vCaI3oSOzbvqSFo/wYYE6olTbvYNAABA0Pka+EXo7ctN@vger.kernel.org, AJvYcCWuRqi0Hzbg8jOwDNZ5IgzYyFzV+Qt/eW3LMwLXzay1GA28+YwBLSpC2yJz5+0yeyLiGia1rfZzqAiuea+8@vger.kernel.org, AJvYcCXc8UqXV5xqhUUFOHGqURYyyLtd0vGT9n2+zj+h0SOe/e3G9VE2pBVztlIBrGF40HH4NkACx/qLSoRc@vger.kernel.org, AJvYcCXnnKUsTepDwf1wHD4lZ5wzZtXXeeDWxVhXQSBGJVKSLafB/OoYe2o7ZM0qk+gQUKRuhAMiSXO6J+AJ@vger.kernel.org
+X-Gm-Message-State: AOJu0YziuTldj2+kFH6OkKeYJ60Vl3i5JDZ55O/F2JZqG9qDeuVyqWtC
+	JK54TMc5oI0XIt5I9HUKdoYN3n9HjjHM0y2IDEe4qyRyiHw8S/8g
+X-Gm-Gg: ASbGnctmYTjeLrU+9nSoVMAB+1KaoC6LzmsfdlKBvIVM7DihrOqfBL4C1TX/mC3wrvg
+	dKEYF5SWK7QlEVGpMm4ze+ww8hQVEmkrmgMJco58XOYoPy8hzGA5u147tUCKFRUVKpGFMKFUlLp
+	zJ3l/JBRpz2qZyW60Br9QO+R/DVUfrTaIb6MbyYD0fg+paKwJcCYr9pN5W5xBOSg9RzdyfaYQ94
+	ry3oirCQk4Zo3qPSU+OITl+3C1MJ4LrL9SGoeJeVpShyuxlnYTPiVi6/HvqSG1fgSzkQd6WDKlr
+	Xv/5VC4aZnqUfab8+P0ZP4BMEflS/fBiz2SXRKUPYEwH2OaQJPOIoLurLA==
+X-Google-Smtp-Source: AGHT+IFEPUfvrDp0l3aItf2NS+6U8CgQ9woLHEKxzZKI7ELISh0TS+luo6U+BRiOGF3Vib7uEIyQ2g==
+X-Received: by 2002:a17:903:fa6:b0:224:194c:694c with SMTP id d9443c01a7336-225e0a8f166mr156291955ad.28.1742223889332;
+        Mon, 17 Mar 2025 08:04:49 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-737116b102fsm7677834b3a.166.2025.03.17.08.04.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Mar 2025 08:04:48 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Mon, 17 Mar 2025 08:04:47 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: Kim Seer Paller <kimseer.paller@analog.com>
+Cc: Jean Delvare <jdelvare@suse.com>, Jonathan Corbet <corbet@lwn.net>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Frank Li <Frank.Li@nxp.com>,
+	Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>,
+	linux-hwmon@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-i2c@vger.kernel.org,
+	Cherrence Sarip <cherrence.sarip@analog.com>
+Subject: Re: [PATCH 2/3] dt-bindings: hwmon: ltc2978: add support for LT717x
+Message-ID: <8b44144a-568c-4a16-8a63-622d1148f64e@roeck-us.net>
+References: <20250317-hwmon-next-v1-0-da0218c38197@analog.com>
+ <20250317-hwmon-next-v1-2-da0218c38197@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/2] ARM: tegra: Add device-tree for ASUS Transformer
- Pad LTE TF300TL
-To: Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Thierry Reding
- <thierry.reding@gmail.com>, Thierry Reding <treding@nvidia.com>,
- Jonathan Hunter <jonathanh@nvidia.com>,
- Maxim Schwalm <maxim.schwalm@gmail.com>, Brad Griffis <bgriffis@nvidia.com>,
- Dara Stotland <dstotland@nvidia.com>, David Heidelberg <david@ixit.cz>,
- Ion Agorria <ion@agorria.com>, devicetree@vger.kernel.org,
- linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250315074416.8067-1-clamor95@gmail.com>
- <20250315074416.8067-3-clamor95@gmail.com>
- <20250317-enormous-bug-of-triumph-ba274d@krzk-bin>
- <CAPVz0n3o2=6cXh81CwqzASEcz9AbBmaMeU94V4xAyGdzKcUoVQ@mail.gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <CAPVz0n3o2=6cXh81CwqzASEcz9AbBmaMeU94V4xAyGdzKcUoVQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250317-hwmon-next-v1-2-da0218c38197@analog.com>
 
-On 17/03/2025 12:19, Svyatoslav Ryhel wrote:
-> пн, 17 бер. 2025 р. о 13:04 Krzysztof Kozlowski <krzk@kernel.org> пише:
->>
->> On Sat, Mar 15, 2025 at 09:44:16AM +0200, Svyatoslav Ryhel wrote:
->>> +#include "tegra30-asus-transformer-common.dtsi"
->>> +#include "tegra30-asus-lvds-display.dtsi"
->>> +
->>> +/ {
->>> +     model = "Asus Transformer Pad LTE TF300TL";
->>> +     compatible = "asus,tf300tl", "nvidia,tegra30";
->>> +
->>> +     gpio@6000d000 {
->>> +             tf300tl-init-hog {
->>> +                     gpio-hog;
->>> +                     gpios = <TEGRA_GPIO(C, 6) GPIO_ACTIVE_HIGH>;
->>> +                     output-low;
->>> +             };
->>> +     };
->>> +
->>> +     pinmux@70000868 {
->>> +             state_default: pinmux {
->>> +                     lcd_pwr2_pc6 {
->>
->> No underscores in node names.
->>
+On Mon, Mar 17, 2025 at 01:02:26PM +0800, Kim Seer Paller wrote:
+> Add LTC7170 and LT7171 to supported devices of LTC2978. It has similar
+> set of registers to LTC3887, differing only in number of channels and
+> some PMBUS status and functionalities.
 > 
-> These bindings overwrite bindings in the common pinmux configuration
-> which has names with underscores, so underscores are needed for
-> correct configuration.
+> Co-developed-by: Cherrence Sarip <cherrence.sarip@analog.com>
+> Signed-off-by: Cherrence Sarip <cherrence.sarip@analog.com>
+> Signed-off-by: Kim Seer Paller <kimseer.paller@analog.com>
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Ack, this Tegra coding style will make big even such trivial fixup...
+Applied.
 
-Best regards,
-Krzysztof
+Thanks,
+Guenter
 
