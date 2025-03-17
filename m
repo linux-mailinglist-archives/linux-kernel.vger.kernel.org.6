@@ -1,226 +1,209 @@
-Return-Path: <linux-kernel+bounces-564481-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564482-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD420A6560C
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 16:41:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CC50A6560B
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 16:40:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B82A23BB6BC
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 15:39:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB8181899DA7
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 15:40:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B31024889D;
-	Mon, 17 Mar 2025 15:38:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9168524A07D;
+	Mon, 17 Mar 2025 15:39:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="j9lGMruy"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b="vIrmcCRI"
+Received: from ixit.cz (ip-89-177-23-149.bb.vodafone.cz [89.177.23.149])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C423248888
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 15:38:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E937C23FC48;
+	Mon, 17 Mar 2025 15:39:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.177.23.149
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742225937; cv=none; b=OU1fJEHd3gGtOg5pc1UhadArJHmHvEWrx9PKJRNh6MNKBPFhWtl01ZkAWpjIrWdg6bbUwcgCJdqrGPFhZ1vGdWtyDcukNNidk/Y4qrHUVxlF7kptKefMVx5fdKecZV2oYon/a8MImKyK7kFwNonN9sPr1YgSkbToUpMWZlQsoTI=
+	t=1742225962; cv=none; b=j6m6/2ECmpe9i/rbIWSBlf+l2HdOb9FDWlMNFR9IU94UYTLTG9pOVdGkURNGR3WrhvfKtsQaHqwT4dyC/pPonj7kCtEX5RJL0fys1qh8botrUNQkVcc4vNXLGj9Ol62dqcrB8ZiCz/39gzonqWrCjJHVczI+SH37ypW9DH938dA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742225937; c=relaxed/simple;
-	bh=aXdbkkq2W+1zWRXsr9HiUFXu2toowMxmufs/pM82+WA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NpPglYha/IF4y4pL3kzXQNwUkFUdg3DmwCRYLQwzJGFdWPlYBv9UiQ04IuT1fU3Sa6JTVxqSwoFAK+tMhpoC32BWuKYmulM4cbLRcNTpeAEXh0Jo6vi/jLajkC96WvcCvz9hKjX60YotVHsdWFp3o5AyNHaXY6z9tGJbI2D45iA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=j9lGMruy; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2240aad70f2so36705ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 08:38:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1742225935; x=1742830735; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ibewGAo/J2qRa30YAt10KaER6uAGQ3UTarCl0s1LQn8=;
-        b=j9lGMruy3OVVo2lUSg8oEpsJfVlYaWogriZ/QxeO2V03zTyTaJ/hzQWFK4f4JYb2YA
-         46IgEcugmVglxjhnmYpZJuRU4QlfYcNyWo5IJGxouTN5RhUyz7ntcf4k8jQXcH4lzG/0
-         ePTXMziMc6gj0r+5HhNU1IxZSOgNkX5bC4Ma1UhijfXJ2052gvZEyF3rLS0qNVIUnNRT
-         ZWCKwmKM6lBLt458DV5xvd/4KXhJM5NdSUIbJWlzbYNTqsSIPRTSgVW9c5T7hAO1HV/d
-         mlKjZA5daOc1pzbSjjLXJbIFHAY0opboGoqB2riawjAg9UYtLECyMoYXt/YCgOPHbbnm
-         gqQw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742225935; x=1742830735;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ibewGAo/J2qRa30YAt10KaER6uAGQ3UTarCl0s1LQn8=;
-        b=nc12ivh9Xzt1Z7LHDZkbZAJNGP9gIcsh6794Q6MB4pWR+Lh9fKJ2m/tqN/FoVmFCID
-         VRgzKgyn+VgzdsuhNoQGmgO6lYcGxt4Ck1UmCKR47Vjo1NpUkVTln4XAJZCisBqspTa/
-         FuqM8v3wRUgWw4HH/cReXBttm/NJe2wdyN78vvKZDaV3yFVnhK3RPEno5q9GzFQeXEMZ
-         n0z11rGRPvvMa/yJs6vbO4FvFd9e6yaN5nzATAeq09eUSw52MwXidsbRo30Bgh07O5+K
-         OyxzjPQs+mmZzTbqwsVl/8rYr/v+CzaVZlGxY1bN6TTG/0uF4kPX99P2gLed0X7tTUmK
-         eeBQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV1dx2RMOp+lKIaCIsrDvIWeUGXtzy7x+Ov+sTeLm2JrU8g2lBypDmh3zl32mPdgi8XKPMR+3HJsQuQoiM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx8T+4y51v8hVmr3iPNh7fFUZUlY8PYlQk/69m1LFZqO8hen3c2
-	qUx4wWl3wBGmEI1cgKUMyUTXJlu6E6QRVw4rUYIer3RMKY+fDXR477HiGycoE1hViv9VlvvWXV1
-	YD7zVmXRc7JCwRiUNwEN14QMjrswYyz+8hGvi
-X-Gm-Gg: ASbGncscpFfRwlAhIHMucND3eHtZoovzTLKXvjI7Ojt2Zd9SysTALARCrEb+DonjS8A
-	Tno6cfRCDF1tMKli84r9NQcq/G2ev5GVLzV02cQcUjLi2Zcx3jJiyhHNhtzxd2n8kJOzyfTWFDq
-	MtuFydiSnsNnPmiRP5GdJOIz03m32Fh3pOHAYSywy2CNIl70QeSnPYbVI=
-X-Google-Smtp-Source: AGHT+IFmuAire14rm2C35T4pBPTkpwXnhmqypP81Y8wUqO9DVsSx/lXQTrcMGKQYhWRrXY2V7IZoaC+BrdPT5mr0tQI=
-X-Received: by 2002:a17:903:906:b0:21f:631c:7fc9 with SMTP id
- d9443c01a7336-225f374426dmr4632695ad.0.1742225935292; Mon, 17 Mar 2025
- 08:38:55 -0700 (PDT)
+	s=arc-20240116; t=1742225962; c=relaxed/simple;
+	bh=Sh975lz6XsISdagtutDAXsZPtuyfNLljOxdDiELNgRk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=p8a0UGYvCLoDCo9qpmsCtBkIaWN4SvpPXSxg9kxKDHUgytYr0TLrTW/PDKmhVL9Ybnt1vkYkQpUVY4wG4VVRZQXymeKUm7sDJtZDGC0zIe7vMKdOs6HD+GnvBgHbOcESUgubSBF/j/YMyPUO7Z0PPeTJ4I7DOoxRLrbPq79ogkY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz; spf=pass smtp.mailfrom=ixit.cz; dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b=vIrmcCRI; arc=none smtp.client-ip=89.177.23.149
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ixit.cz
+Received: from [192.168.2.71] (office.icewarp.com [82.113.48.146])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ixit.cz (Postfix) with ESMTPSA id 1FD3B1603F9;
+	Mon, 17 Mar 2025 16:39:10 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ixit.cz; s=dkim;
+	t=1742225950;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=HpMXPD7v2TVLhujP/CqwJ0vvCueRnUFka/y/qFcIY/w=;
+	b=vIrmcCRI4IJBe6jTmcXuOmAMIo+iQ1iE+GS1hQhvtvyJ/lxv8z7KDl59AkRPhd5b2NfJRy
+	jRLpVHjZw/RjFtAe7/ToGJRBlU4gLHOu/OqxzmxiO0MzllISd3U/6SJhEZkKo5jw0IExV+
+	97IOuBuwXKzmSqUe7kq6lpLfryrZmzE=
+Message-ID: <4cdb22a5-f21b-4240-afd7-822d4167e982@ixit.cz>
+Date: Mon, 17 Mar 2025 16:39:09 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250312055846.671522-1-irogers@google.com> <20250312105450.GN9682@e132581.arm.com>
- <Z9M9gK4VS199CRKh@google.com> <20250314091314.GV9682@e132581.arm.com>
-In-Reply-To: <20250314091314.GV9682@e132581.arm.com>
-From: Ian Rogers <irogers@google.com>
-Date: Mon, 17 Mar 2025 08:38:44 -0700
-X-Gm-Features: AQ5f1JqqPslmU7qwiaXwbGhMZe0hBOK2_y6dneuYZ8SwG4h2LXyZ6LgALAdOUn0
-Message-ID: <CAP-5=fWM2hqu02nNyBUBgLu01AC=C7mwxayezzs7frCyAsirPg@mail.gmail.com>
-Subject: Re: [PATCH v1] perf tests: Harden branch stack sampling test
-To: Leo Yan <leo.yan@arm.com>
-Cc: Namhyung Kim <namhyung@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	James Clark <james.clark@linaro.org>, Anshuman Khandual <anshuman.khandual@arm.com>, 
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	German Gomez <german.gomez@arm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5] ARM: dts: nexus4: Initial dts
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+ "Rob Herring (Arm)" <robh@kernel.org>
+Cc: devicetree@vger.kernel.org, Bjorn Andersson <andersson@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>,
+ Ivan Belokobylskiy <belokobylskij@gmail.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Tony Luck <tony.luck@intel.com>,
+ linux-hardening@vger.kernel.org, Kees Cook <kees@kernel.org>,
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ "Guilherme G. Piccoli" <gpiccoli@igalia.com>
+References: <20250316-lg-nexus4-mako-v5-1-79feae815a85@ixit.cz>
+ <174221818190.3957236.3364090534153729086.robh@kernel.org>
+ <7z2u2almxk7rnd6cx6nq3ypgbzvttkj3jqawv5jojayjz3foix@zprthr6awbcp>
+Content-Language: en-US
+From: David Heidelberg <david@ixit.cz>
+Autocrypt: addr=david@ixit.cz; keydata=
+ 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
+In-Reply-To: <7z2u2almxk7rnd6cx6nq3ypgbzvttkj3jqawv5jojayjz3foix@zprthr6awbcp>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Mar 14, 2025 at 2:13=E2=80=AFAM Leo Yan <leo.yan@arm.com> wrote:
->
-> Hi Namhyung,
->
-> On Thu, Mar 13, 2025 at 01:18:08PM -0700, Namhyung Kim wrote:
->
-> [...]
->
-> > > >  test_user_branches() {
-> > > >   echo "Testing user branch stack sampling"
-> > > >
-> > > > - perf record -o $TMPDIR/perf.data --branch-filter any,save_type,u =
--- ${TESTPROG} > /dev/null 2>&1
-> > > > - perf script -i $TMPDIR/perf.data --fields brstacksym | tr -s ' ' =
-'\n' > $TMPDIR/perf.script
-> > > > + perf record -o "$TMPDIR/perf.data" --branch-filter any,save_type,=
-u -- ${TESTPROG} > "$TMPDIR/record.txt" 2>&1
-> > > > + perf script -i "$TMPDIR/perf.data" --fields brstacksym > "$TMPDIR=
-/perf.script"
-> > > >
-> > > >   # example of branch entries:
-> > > >   #       brstack_foo+0x14/brstack_bar+0x40/P/-/-/0/CALL
-> > > >
-> > > > - set -x
-> > > > - grep -E -m1 "^brstack_bench\+[^ ]*/brstack_foo\+[^ ]*/IND_CALL/.*=
-$"     $TMPDIR/perf.script
-> > > > - grep -E -m1 "^brstack_foo\+[^ ]*/brstack_bar\+[^ ]*/CALL/.*$"   $=
-TMPDIR/perf.script
-> > > > - grep -E -m1 "^brstack_bench\+[^ ]*/brstack_foo\+[^ ]*/CALL/.*$" $=
-TMPDIR/perf.script
-> > > > - grep -E -m1 "^brstack_bench\+[^ ]*/brstack_bar\+[^ ]*/CALL/.*$" $=
-TMPDIR/perf.script
-> > > > - grep -E -m1 "^brstack_bar\+[^ ]*/brstack_foo\+[^ ]*/RET/.*$"     =
-       $TMPDIR/perf.script
-> > > > - grep -E -m1 "^brstack_foo\+[^ ]*/brstack_bench\+[^ ]*/RET/.*$"  $=
-TMPDIR/perf.script
-> > > > - grep -E -m1 "^brstack_bench\+[^ ]*/brstack_bench\+[^ ]*/COND/.*$"=
-       $TMPDIR/perf.script
-> > > > - grep -E -m1 "^brstack\+[^ ]*/brstack\+[^ ]*/UNCOND/.*$"         $=
-TMPDIR/perf.script
-> > > > - set +x
-> > > > -
-> > > > + expected=3D(
-> > > > +         "^brstack_bench\+[^ ]*/brstack_foo\+[^ ]*/IND_CALL/.*$"
-> > > > +         "^brstack_foo\+[^ ]*/brstack_bar\+[^ ]*/CALL/.*$"
-> > > > +         "^brstack_bench\+[^ ]*/brstack_foo\+[^ ]*/CALL/.*$"
-> > > > +         "^brstack_bench\+[^ ]*/brstack_bar\+[^ ]*/CALL/.*$"
-> > > > +         "^brstack_bar\+[^ ]*/brstack_foo\+[^ ]*/RET/.*$"
-> > > > +         "^brstack_foo\+[^ ]*/brstack_bench\+[^ ]*/RET/.*$"
-> > > > +         "^brstack_bench\+[^ ]*/brstack_bench\+[^ ]*/COND/.*$"
-> > > > +         "^brstack\+[^ ]*/brstack\+[^ ]*/UNCOND/.*$"
-> > > > + )
-> > > > + for x in "${expected[@]}"
-> > > > + do
-> > > > +         if ! tr -s ' ' '\n' < "$TMPDIR/perf.script" | grep -E -m1=
- -q "$x"
-> > > > +         then
-> > > > +                 echo "Branches missing $x"
-> > > > +                 if [ "x$err" =3D=3D "x0" ]
-> > > > +                 then
-> > > > +                         err=3D2
-> > >
-> > > Here it sets "err=3D2", as a result, if any grep command fails, the s=
-cript
-> > > exits while reporting to skip the test.  This seems incorrect to me.
-> > >
-> > > My understanding is the regular expressions above are mandatory to be
-> > > matched, otherwise, it must be something is wrong.  We should not ski=
-p
-> > > the test in this case.
-> > >
-> > > I can understand that 'perf record' cannot record all branch types, i=
-f
-> > > this is the case, maybe we can improve the recording quality rather
-> > > than reporting skip?  E.g.,
-> > >
-> > >   cat <<EOF > "$TMPDIR/loop.sh"
-> > >   for run in {1..5}; do perf test -w brstack; done
-> > >   EOF
-> > >
-> > >   perf record -o "$TMPDIR/perf.data" --branch-filter any,save_type,u
-> > >     -- sh $TMPDIR/loop.sh
-> > >
-> > > If we run the test for 5 times, should this can allow us to ensure th=
-e
-> > > branch samples are recorded?
-> >
-> > The brstack (and other workload programs) can take an argument to
-> > control its duration.  For brstack, it's the number of loop iteration
-> > and default is 999999.
->
-> Sorry I did not dig into the brstack workload program.
->
-> If the workload has run for a large number of loops, the question is:
-> why isn't the test capturing the expected branch stacks?
+> On Mon, Mar 17, 2025 at 09:18:33AM -0500, Rob Herring (Arm) wrote:
+>>
+>> On Sun, 16 Mar 2025 23:16:55 +0100, David Heidelberg wrote:
+>>> From: Ivan Belokobylskiy <belokobylskij@gmail.com>
+>>>
+>>> Add initial support for LG Nexus 4 (mako).
+>>>
+>>> Features currently working: regulators, eMMC, and volume keys.
+>>>
+>>> Signed-off-by: Ivan Belokobylskiy <belokobylskij@gmail.com>
+>>> Co-developed-by: David Heidelberg <david@ixit.cz>
+>>> Signed-off-by: David Heidelberg <david@ixit.cz>
+>>> ---
+>>> Changes in v5:
+>>> - Sorted nodes alphabetically.
+>>> - Link to v4: https://lore.kernel.org/r/20250311-lg-nexus4-mako-v4-1-3916c8ec7edb@ixit.cz
+>>>
+>>> Changes in v4:
+>>> - Sorted regulators and added regulators compatible.
+>>> - Corrected pmic include and references.
+>>> - Moved &rpm outside of / node.
+>>> - Moved and simplify pm8921 keypad.
+>>> - Added chasis-type.
+>>> - Dropped incomplete WiFi node, will be provided in future
+>>>    contributions.
+>>> - Link to v3: https://lore.kernel.org/r/20250309-lg-nexus4-mako-v3-1-1dc2807df296@ixit.cz
+>>>
+>>> Changes in v3:
+>>> - rebased against next-20250307
+>>> - dropped backlight until driver gets converted to DT
+>>>
+>>> Changes in v2:
+>>> - lge vendor doesn't exist anymore, rename to lg
+>>> - sdcc@ to mmc@ to comply with dt-schema
+>>> ---
+>>>   arch/arm/boot/dts/qcom/Makefile                    |   1 +
+>>>   .../boot/dts/qcom/qcom-apq8064-lg-nexus4-mako.dts  | 341 +++++++++++++++++++++
+>>>   2 files changed, 342 insertions(+)
+>>>
+>>
+>>
+>> My bot found new DTB warnings on the .dts files added or changed in this
+>> series.
+>>
+>> Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+>> are fixed by another series. Ultimately, it is up to the platform
+>> maintainer whether these warnings are acceptable or not. No need to reply
+>> unless the platform maintainer has comments.
+>>
+>> If you already ran DT checks and didn't see these error(s), then
+>> make sure dt-schema is up to date:
+>>
+>>    pip3 install dtschema --upgrade
+>>
+>>
+>> New warnings running 'make CHECK_DTBS=y for arch/arm/boot/dts/qcom/' for 20250316-lg-nexus4-mako-v5-1-79feae815a85@ixit.cz:
+>>
+>> arch/arm/boot/dts/qcom/qcom-apq8064-lg-nexus4-mako.dtb: hwmutex: 'reg' is a required property
+>> 	from schema $id: http://devicetree.org/schemas/hwlock/qcom-hwspinlock.yaml#
+>> arch/arm/boot/dts/qcom/qcom-apq8064-lg-nexus4-mako.dtb: hwmutex: 'syscon' does not match any of the regexes: 'pinctrl-[0-9]+'
+>> 	from schema $id: http://devicetree.org/schemas/hwlock/qcom-hwspinlock.yaml#
+>> arch/arm/boot/dts/qcom/qcom-apq8064-lg-nexus4-mako.dtb: soc: replicator: 'ranges' is a required property
+>> 	from schema $id: http://devicetree.org/schemas/simple-bus.yaml#
+>> arch/arm/boot/dts/qcom/qcom-apq8064-lg-nexus4-mako.dtb: syscon@1200000: compatible: ['syscon'] is too short
+>> 	from schema $id: http://devicetree.org/schemas/mfd/syscon-common.yaml#
+>> arch/arm/boot/dts/qcom/qcom-apq8064-lg-nexus4-mako.dtb: timer@200a000: 'clocks' is a required property
+>> 	from schema $id: http://devicetree.org/schemas/watchdog/qcom-wdt.yaml#
+>> arch/arm/boot/dts/qcom/qcom-apq8064-lg-nexus4-mako.dtb: sps-sic-non-secure@12100000: compatible: ['syscon'] is too short
+>> 	from schema $id: http://devicetree.org/schemas/mfd/syscon-common.yaml#
+>> arch/arm/boot/dts/qcom/qcom-apq8064-lg-nexus4-mako.dtb: rpm@108000: 'clock-controller' does not match any of the regexes: '^regulators(-[01])?$', 'pinctrl-[0-9]+'
+>> 	from schema $id: http://devicetree.org/schemas/soc/qcom/qcom,rpm.yaml#
+>> arch/arm/boot/dts/qcom/qcom-apq8064-lg-nexus4-mako.dtb: syscon@5700000: compatible: ['syscon'] is too short
+>> 	from schema $id: http://devicetree.org/schemas/mfd/syscon-common.yaml#
+>> arch/arm/boot/dts/qcom/qcom-apq8064-lg-nexus4-mako.dtb: replicator: 'clock-names', 'clocks' do not match any of the regexes: 'pinctrl-[0-9]+'
+>> 	from schema $id: http://devicetree.org/schemas/arm/arm,coresight-static-replicator.yaml#
+> 
+> As far as I can see, all those are generic rather than being introduced
+> by the new DT. I'll send a set of fixes soon.
+> 
+Yup, as I checked these are coming from apq8064.dtsi. I was thinking to 
+look into them, but if you're going to go trough them, I'll just drop my 
+R-b on your patchset :)
 
-On our testing skipped =3D=3D failed, I can change 2 to 1 above but I'd
-made it 2 as it wasn't clear to me all branch filter types would be
-supported by perf record and skipping/2 was a less terrible error
-message.
-I'm keen to land the pulling apart of the perf command from the
-tr/grep as if we hit say an asan error currently that is hidden by
-code like:
-```
-perf record -o $TMPDIR/perf.data --branch-filter any,save_type,u --
-${TESTPROG} > /dev/null 2>&1
-```
-where all the output is sent to /dev/null but the asan error code will
-cause the "set -e" to fail. If this code fails with asan then
-currently the first thing to do is start pulling apart the
-expressions.
+Thanks
+David
 
-Code like:
-```
-perf script -i $TMPDIR/perf.data --fields brstack | tr -s ' ' '\n' |
-grep '.' > $TMPDIR/perf.script
-```
-is problematic as again we lose the asan like errors. Running the previous:
-```
- if grep -E -vm1 "^[^ ]*/($test_filter_expect|-|( *))/.*$"
-$TMPDIR/perf.script; then
-```
-could fail because of an unexpected branch filter type, but was
-failing for me just because there were blank or similar lines in the
-output. The new code doesn't change this but allows the output to be
-dumped for later diagnostics. The '|| true' in the expression means we
-get to dumping the diagnostics and dump just fail because some
-sub-command mismatched its input.
+-- 
+David Heidelberg
 
-Thanks,
-Ian
 
