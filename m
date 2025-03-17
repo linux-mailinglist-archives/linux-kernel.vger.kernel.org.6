@@ -1,56 +1,51 @@
-Return-Path: <linux-kernel+bounces-564358-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564356-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD06FA6539E
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 15:31:57 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C15DA6539F
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 15:32:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1FB56188C6A0
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 14:31:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68BE7174611
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 14:30:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48C52241C90;
-	Mon, 17 Mar 2025 14:31:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="aUav38EU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A00D02417C7;
-	Mon, 17 Mar 2025 14:31:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 353C12417D2;
+	Mon, 17 Mar 2025 14:30:25 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8002123FC59
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 14:30:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742221899; cv=none; b=RYTgYM08deMeEi4hG/0c/NW7WlGRqQzh2IylM6TpMsQvHbqFkBk8wIMMbznmd5c9aeoQCgotf3w57LguEZjvizjCTU6uwDy9cmi2jXUxB9H998PSiBmHe3ElYk/UNsgsqW/hvoaq8Vmsm6XXPhDtxEhA6m3KNt4Mmw49ddWWBaU=
+	t=1742221824; cv=none; b=fSUv7Fi5MzM6HxXlgm7RQQJXPk20sJAjy3ABik85DRl/ZqvOl131XtCVes+ZK7UA2/Oy/ZQI6DkYJxAPFzbOsB6gDZhvXfxy139MC6H3f/piIB81JIl6Bn19ILBBr2/idBbv5d+tiNAc5jJnmuGlMSK5HViylTXuS8DaUopjpiU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742221899; c=relaxed/simple;
-	bh=LGXVZ3hhL8osdTBzm7kPyXNbARxeGCAupiFiB3aHIqw=;
+	s=arc-20240116; t=1742221824; c=relaxed/simple;
+	bh=D7K/1UfqHYIvv44EIU1iz/IrCoIWaOyxfx5yfPNuOt4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H+AU79XRHwFew22/kEwy6HR1od3VKsZ+Bm9tXueLxevDOOuspe9vu+d2e8/Z5xfHD91vJRf9SL42SBqlMVyFw92aspuQJRYIayT3sba8GBJkrWgsfxd33f+lk2gGuqETM9LEc7iSzMW3g5V7qLrAl8N8vhD9dmWwLK5MR+K/8Xo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=aUav38EU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5EE38C4CEED;
-	Mon, 17 Mar 2025 14:31:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1742221899;
-	bh=LGXVZ3hhL8osdTBzm7kPyXNbARxeGCAupiFiB3aHIqw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=aUav38EUZs4/Ki9zAwRFWm7l5LnnyeJbEJE2gcOmROP0e4OLDXYUVL3CPOwPytCoz
-	 YqdWg1Crn+j0Hkn1/YzfsmwLNbSknnW2FXcAgYE7iey+1rAGajS9OL0OtK1dfG9Mjo
-	 YZ7mrE+JxtxZkCX8XihdDFzaY2EZYqGR10dXeeDI=
-Date: Mon, 17 Mar 2025 15:30:15 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Sudeep Holla <sudeep.holla@arm.com>
-Cc: linux-kernel@vger.kernel.org, Andre Przywara <andre.przywara@arm.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
-	linux-crypto@vger.kernel.org
-Subject: Re: [PATCH 2/9] hwrng: arm-smccc-trng - transition to the faux
- device interface
-Message-ID: <2025031709-unmoved-carton-c130@gregkh>
+	 Content-Type:Content-Disposition:In-Reply-To; b=IJ5+3nH7pDc80UyUs9FPWG+tzu5RaXKGxCBd6xr981pPx8cm0/Vr26IdSB88T21BdE5WZKjHV1SKt1UxQVWmMROJ4Ql3dag0q56S/mkkdp7iC9XM48KloRR6bgHapCB4ZCYJi8HRmZDALf+1bNzjxhMlfaWz05O1bDmrdO+WNEg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com; spf=none smtp.mailfrom=foss.arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=foss.arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E25E313D5;
+	Mon, 17 Mar 2025 07:30:31 -0700 (PDT)
+Received: from bogus (e133711.arm.com [10.1.196.55])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0B2AE3F63F;
+	Mon, 17 Mar 2025 07:30:21 -0700 (PDT)
+Date: Mon, 17 Mar 2025 14:30:19 +0000
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: Re: [PATCH 9/9] regulator: dummy: convert to use the faux device
+ interface
+Message-ID: <Z9gx-4-3RMfTXB0e@bogus>
 References: <20250317-plat2faux_dev-v1-0-5fe67c085ad5@arm.com>
- <20250317-plat2faux_dev-v1-2-5fe67c085ad5@arm.com>
- <2025031748-deface-wasting-b635@gregkh>
- <Z9gwNaUoTmqViPrh@bogus>
+ <20250317-plat2faux_dev-v1-9-5fe67c085ad5@arm.com>
+ <2025031716-decaf-overhead-c56c@gregkh>
+ <Z9guHSE0nwC1-52J@bogus>
+ <2025031742-perfectly-hydrogen-159c@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,74 +54,43 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Z9gwNaUoTmqViPrh@bogus>
+In-Reply-To: <2025031742-perfectly-hydrogen-159c@gregkh>
 
-On Mon, Mar 17, 2025 at 02:22:45PM +0000, Sudeep Holla wrote:
-> On Mon, Mar 17, 2025 at 02:04:27PM +0100, Greg Kroah-Hartman wrote:
-> > On Mon, Mar 17, 2025 at 10:13:14AM +0000, Sudeep Holla wrote:
-> > > +MODULE_ALIAS("faux:smccc_trng");
+On Mon, Mar 17, 2025 at 03:26:00PM +0100, Greg Kroah-Hartman wrote:
+> On Mon, Mar 17, 2025 at 02:13:49PM +0000, Sudeep Holla wrote:
+> > On Mon, Mar 17, 2025 at 02:00:04PM +0100, Greg Kroah-Hartman wrote:
+> > > On Mon, Mar 17, 2025 at 10:13:21AM +0000, Sudeep Holla wrote:
+> > > > From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > > 
+> > > Why are you resending my patch back to me?
+> > > 
+> > > > The dummy regulator driver does not need to create a platform device, it
+> > > > only did so because it was simple to do.  Change it over to use the
+> > > > faux bus instead as this is NOT a real platform device, and it makes
+> > > > the code even smaller than before.
+> > > > 
+> > > > Reviewed-by: Mark Brown <broonie@kernel.org>
+> > > > Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> > > > Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > > > Message-Id: <2025021027-outclass-stress-59dd@gregkh>
+> > > > (sudeep.holla: Made dummy_regulator_driver static)
+> > > 
+> > > So this is a new version?
+> > > 
 > > 
-> > Why do you need a branch new alias you just made up?  Please don't add
-> > that for these types of devices, that's not going to work at all (just
-> > like the platform alias really doesn't work well.
-> > 
+> > Not really, I pulled your patch as I needed that as well to clean out
+> > all faux device out of platform. I just made dummy_regulator_driver
+> > static back again as compiler was warning. Definitely nothing new.
+> > I will drop it when posting v2. You can probably fix up to make
+> > dummy_regulator_driver static.
 > 
-> Sure I will drop all of those alias. One question I have if the idea of
-> creating a macro for this is good or bad ? I need this initial condition
-> flag to make use of such a macro, so I didn't go for it, but it does
-> remove some boiler-plate code.
+> My tree can't be rebased, can you just send a patch to make that change
+> instead?
 > 
-> Let me know what do you think of it ?
-> 
-> Regards,
-> Sudeep
-> 
-> -->8 
-> diff --git i/include/linux/device/faux.h w/include/linux/device/faux.h
-> index 9f43c0e46aa4..8af3eaef281a 100644
-> --- i/include/linux/device/faux.h
-> +++ w/include/linux/device/faux.h
-> @@ -66,4 +66,30 @@ static inline void faux_device_set_drvdata(struct faux_device *faux_dev, void *d
->  	dev_set_drvdata(&faux_dev->dev, data);
->  }
->  
-> +#define module_faux_driver(name, tag, init_cond)			\
-> +static struct faux_device_ops tag##_ops = {				\
-> +	.probe = tag##_probe,						\
-> +	.remove = tag##_remove,						\
-> +};									\
-> +									\
-> +static struct faux_device *tag##_dev;					\
-> +									\
-> +static int __init tag##_init(void)					\
-> +{									\
-> +	if (!(init_cond))						\
-> +		return 0;						\
-> +	tag##_dev = faux_device_create(name, NULL, &tag##_ops);		\
-> +	if (!tag##_dev)							\
-> +		return -ENODEV;						\
-> +									\
-> +	return 0;							\
-> +}									\
-> +module_init(tag##_init);						\
-> +									\
-> +static void __exit tag##_exit(void)					\
-> +{									\
-> +	faux_device_destroy(tag##_dev);					\
-> +}									\
-> +module_exit(tag##_exit);						\
 
-Yes, I see that some of your changes could be moved to use this, so I
-think it is worth it.
+Sure, will do that.
 
-But why can't you use module_driver() here?  Ah, that init_cond?  And
-the device.  Hm, why not put the init_cond in the probe callback?  That
-should make this macro simpler.
-
-And don't use "tag", that's an odd term here, just copy what
-module_driver() does instead please.
-
-thanks,
-
-greg k-h
+-- 
+Regards,
+Sudeep
 
