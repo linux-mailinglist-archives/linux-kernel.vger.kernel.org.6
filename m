@@ -1,123 +1,163 @@
-Return-Path: <linux-kernel+bounces-564783-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564784-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 096B7A65AA3
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 18:26:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 025C6A65AA9
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 18:27:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E53A71880215
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 17:22:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B3DF51887A35
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 17:23:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E91B1537CB;
-	Mon, 17 Mar 2025 17:22:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41EF21A0BF3;
+	Mon, 17 Mar 2025 17:23:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="UU87RXA5"
-Received: from mail-40134.protonmail.ch (mail-40134.protonmail.ch [185.70.40.134])
+	dkim=pass (2048-bit key) header.d=fossekall.de header.i=@fossekall.de header.b="JOYBjSqy";
+	dkim=permerror (0-bit key) header.d=fossekall.de header.i=@fossekall.de header.b="93c4xiqc"
+Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [81.169.146.164])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50A6740C03
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 17:22:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.134
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742232148; cv=none; b=cKfSuICh5xwANPH85lcEPibmhwPN1oX5d9UCRu9SSjYm81HxUfUq6K5INhzhINo8wt5zTcCpQfm8pS7Kn8n6TqUAShm3fmvPvvJF69ob4dr68mZfvap9eughfUZfeElwXi3XQXUecSfz3zwq9dlAn9GIgzFUvsC/ch6ZuRRZzDI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742232148; c=relaxed/simple;
-	bh=B+Up7d0Z8wa56e82ogZrDvmKDPW4RJZVDvjvFFZDNRw=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NsVaNo7citWdi9oT5/l8Uq/Q9tVDmw+KUfJUawYibeQ4GGTW8NQxMXMG9OTQx8kVomB448iInaRdN9wsj+YtLXLejc8UUt3rPJWgHINcOOV4m2ISCGYmtXkMaCQdSMxmmH13lYgxOIjnyvdi+iNqgKNpIa0d9rc7jjZ3hifrrTc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=UU87RXA5; arc=none smtp.client-ip=185.70.40.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1742232143; x=1742491343;
-	bh=DESxcuoCBw+aq4zHzk9noLj49928I7AbU/o2hoK4cnM=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
-	b=UU87RXA5BRMvneWzmaI8Z8XZj1+ESi5u9or6emtjsj67lXFTS0hWiziPYJINU5p4H
-	 T5iydj69o9KIlYCe2+itcXl5SGbJhdyaK5U31SKO5RZ5xlFrUT22wFqqxKSxKE16ok
-	 f204eaw+S3Nra4ALii6BGP2cPTmics/IP6ge3dFUJ5sw5MibG8/2Xpy6j33lySOmJl
-	 wqguRR5IPzU6qjR64iN3EJXRBquXF5fRMs5IG/NZQTkneEAcFe3+Sqct+xPT25bU/M
-	 +2IHCEEt2sjbmxb3s9g1bscRPeoPfQIrqRhgaMrg2e5O243GOl19VbulBGl8JokbDU
-	 rAq8p1k7vsHcA==
-Date: Mon, 17 Mar 2025 17:22:15 +0000
-To: Danilo Krummrich <dakr@kernel.org>, Tamir Duberstein <tamird@gmail.com>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] rust: alloc: use `spare_capacity_mut` to reduce unsafe
-Message-ID: <D8IPQUN25M12.2CIZR4QHJ201N@proton.me>
-In-Reply-To: <Z9hXMcFVdF8MMusU@cassiopeiae>
-References: <20250317-vec-push-use-spare-v1-1-7e025ef4ae14@gmail.com> <D8IM66U67XBD.28KWYO1XSF8ZQ@proton.me> <CAJ-ks9kq1cQ2-ZNzG9P4SBvk-AjXxT+na-89K33imB4fsCvu4A@mail.gmail.com> <Z9hXMcFVdF8MMusU@cassiopeiae>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: e266c822ec3552c9807e853f5439c912b8c7816c
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8821B191F6A;
+	Mon, 17 Mar 2025 17:23:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=81.169.146.164
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742232202; cv=pass; b=o6Bt4YRv0HKrF8Np52Qm/+X1seTiF+5EWwWJSriZisXCpyjEtbg9tP9lTX+sxFFrvE46hj6I11HQ5AH4YWqsvh12rOv5tEtdeLBov39v1oWMyHUIo/lppk6kBZo9S+3PEgTIGQweVnRBfhpygA532w3w3jRS5C5eHxjZXmEDcoA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742232202; c=relaxed/simple;
+	bh=RYIopjR2qgrNYwGQkkxP3+1JQavSU17P1hzaMcAd6jM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=T+yiXrhhEe9HKq/M9hqStcYJSVYzuf7yfCkeCy4Sg+5j3xEvTkRjL5OT3ih+/zTzCS4xTFAPp3kVwfyWy7NhG83y6nEPYwJl14SUS0+1m86bzFbvciVTWaZ/5eR8NUNgOEQRPPG/H/q5Kqhd7QnA2rIvxuSrGX1BNqbVDciGbhU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fossekall.de; spf=pass smtp.mailfrom=fossekall.de; dkim=pass (2048-bit key) header.d=fossekall.de header.i=@fossekall.de header.b=JOYBjSqy; dkim=permerror (0-bit key) header.d=fossekall.de header.i=@fossekall.de header.b=93c4xiqc; arc=pass smtp.client-ip=81.169.146.164
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fossekall.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fossekall.de
+ARC-Seal: i=1; a=rsa-sha256; t=1742232189; cv=none;
+    d=strato.com; s=strato-dkim-0002;
+    b=XfgHVJRnEvFIRyE426AlIuioq0G/tdnxXZyD1uIeuvRaG70EVm4YmEOTfG12a9CMqk
+    mKQG9rE5sqC+em2XEGOV7Fx43T23caf4h+ATilgBqZymOhg7WK6oUyY2PtLRnbwIFFxi
+    NpQaendhS3kOdh/0joT9wFE9RbYZpHnP79hJX+1zbZyNN7CvKBuy9uZXG8s/ghw7zlc0
+    CljQzQ+Zd0RxD7keaquA01I9bZRtnkzX8qqwWhMHaC6iansnUCiz8nh3jU2rRwZFbyiv
+    uSsxVWyO7pDgMOiOuzGnKEjG0Xuu9gAqrgHQ+6SXO6AHM5fQ2Vqb4qANhSiZkaCciEoF
+    PmXw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1742232189;
+    s=strato-dkim-0002; d=strato.com;
+    h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
+    From:Subject:Sender;
+    bh=/F59a+Gyfd7TXHZvd6LrEwh4rqsiLmj2inzcAmSmSFY=;
+    b=L5mD7c4zbZi0t/GUUsXFfdjyd8dykl50izCSuMOUgMDzou0nwW8KbOX293zz92dXVc
+    KaiO7BHteG6NnIPj/9UH/zWeYjQuRaQ/col8GBTY3uzwc398qTrY3UB4j0uiZ+14LZPn
+    DjrYRho1gaoQrJgD+QLvNBkIwwLDpVAfGAEQ5robwIHs1v7yrj6ZcrLPoRidrxmzeXT4
+    jH4sc7CCDdM+t2JDapQn8bLazaq4gsXYbi7uSMUlonMSTsDLB2dN21MTNZePUc4sIXxK
+    VvZMetblZeWmvSNzA4RBR7JE2SbZKidYGqxb7gtcRBtxnM6MlSkDuUv5tPJU469bTHTp
+    nRMA==
+ARC-Authentication-Results: i=1; strato.com;
+    arc=none;
+    dkim=none
+X-RZG-CLASS-ID: mo01
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1742232189;
+    s=strato-dkim-0002; d=fossekall.de;
+    h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
+    From:Subject:Sender;
+    bh=/F59a+Gyfd7TXHZvd6LrEwh4rqsiLmj2inzcAmSmSFY=;
+    b=JOYBjSqyA9/kzFFs1vABkhE6tnNLb5PsVSwja8MDpymu9dO6pimi8x7tE9i8ew9z2b
+    NlWwvlrrlDDHyTm6EFjIb+rP5cc9wwvnf3xBdMX9H5iftS/TyAoOx0ZapDVtOzkXKMDN
+    +guc5IORIAHZldRz1z+Wln3X7GX45hbE8niZJyXOfCHqnOCVtK2maxU8Jk+gtFiMT8Mc
+    8KCylmNmQ5mMO5RuG89YfuIiDkVyqZhnWzCVTkXKGkxWZJenjfQp/D4VT81DKEOlPi4r
+    161cZFtcQO8tgnkHmIKzdWg9W9F2FCg7tuIXAMl77IbkQG6oEgv6KrsERP3Yle+S6m1x
+    QvBg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1742232189;
+    s=strato-dkim-0003; d=fossekall.de;
+    h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
+    From:Subject:Sender;
+    bh=/F59a+Gyfd7TXHZvd6LrEwh4rqsiLmj2inzcAmSmSFY=;
+    b=93c4xiqc27zLBuVEXw12t9TDnq0nVlILl7vHll2Z+fjJgST97i014xdGzX7HWJJWs9
+    57yLVmOW23R+Foi8giAg==
+X-RZG-AUTH: ":O2kGeEG7b/pS1EzgE2y7nF0STYsSLflpbjNKxx7cGrBdao6FTL4AJcMdm+lap4JEHkzok9eyEg=="
+Received: from aerfugl
+    by smtp.strato.de (RZmta 51.3.0 AUTH)
+    with ESMTPSA id f28b3512HHN9FQQ
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
+	(Client did not present a certificate);
+    Mon, 17 Mar 2025 18:23:09 +0100 (CET)
+Received: from koltrast.home ([192.168.1.27] helo=a98shuttle.de)
+	by aerfugl with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <michael@fossekall.de>)
+	id 1tuEBA-00032Q-1G;
+	Mon, 17 Mar 2025 18:23:08 +0100
+Date: Mon, 17 Mar 2025 18:23:07 +0100
+From: Michael Klein <michael@fossekall.de>
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>
+Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [net-next,v3,2/2] net: phy: realtek: Add support for PHY LEDs on
+ RTL8211E
+Message-ID: <Z9haewIdFv4bed3H@a98shuttle.de>
+References: <20250316121424.82511-1-michael@fossekall.de>
+ <20250316121424.82511-3-michael@fossekall.de>
+ <Z9gEP_w6WvuCC_ge@shell.armlinux.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <Z9gEP_w6WvuCC_ge@shell.armlinux.org.uk>
+Content-Transfer-Encoding: 7bit
 
-On Mon Mar 17, 2025 at 6:09 PM CET, Danilo Krummrich wrote:
-> On Mon, Mar 17, 2025 at 10:39:05AM -0400, Tamir Duberstein wrote:
->> On Mon, Mar 17, 2025 at 10:34=E2=80=AFAM Benno Lossin <benno.lossin@prot=
-on.me> wrote:
->> > On Mon Mar 17, 2025 at 12:42 PM CET, Tamir Duberstein wrote:
->> > > Use `spare_capacity_mut` in the implementation of `push` to reduce t=
-he
->> > > use of `unsafe`. Both methods were added in commit 2aac4cd7dae3 ("ru=
-st:
->> > > alloc: implement kernel `Vec` type").
->> > >
->> > > Signed-off-by: Tamir Duberstein <tamird@gmail.com>
->> > > ---
->> > >  rust/kernel/alloc/kvec.rs | 11 ++---------
->> > >  1 file changed, 2 insertions(+), 9 deletions(-)
->> > >
->> > > diff --git a/rust/kernel/alloc/kvec.rs b/rust/kernel/alloc/kvec.rs
->> > > index ae9d072741ce..d2bc3d02179e 100644
->> > > --- a/rust/kernel/alloc/kvec.rs
->> > > +++ b/rust/kernel/alloc/kvec.rs
->> > > @@ -285,15 +285,8 @@ pub fn spare_capacity_mut(&mut self) -> &mut [M=
-aybeUninit<T>] {
->> > >      pub fn push(&mut self, v: T, flags: Flags) -> Result<(), AllocE=
-rror> {
->> > >          self.reserve(1, flags)?;
->> > >
->> > > -        // SAFETY:
->> > > -        // - `self.len` is smaller than `self.capacity` and hence, =
-the resulting pointer is
->> > > -        //   guaranteed to be part of the same allocated object.
->> > > -        // - `self.len` can not overflow `isize`.
->> > > -        let ptr =3D unsafe { self.as_mut_ptr().add(self.len) };
->> > > -
->> > > -        // SAFETY:
->> > > -        // - `ptr` is properly aligned and valid for writes.
->> > > -        unsafe { core::ptr::write(ptr, v) };
->> > > +        // The call to `reserve` was successful so the spare capaci=
-ty is at least 1.
->> > > +        self.spare_capacity_mut()[0].write(v);
->> >
->> > I think the code uses unsafe to avoid a bounds check, but I'm not 100%
->> > sure. Danilo might remember more info.
+Thank you for your insights,
+
+On Mon, Mar 17, 2025 at 11:15:11AM +0000, Russell King (Oracle) wrote:
+>On Sun, Mar 16, 2025 at 01:14:23PM +0100, Michael Klein wrote:
+>> +static int rtl8211e_led_hw_control_get(struct phy_device *phydev, u8 index,
+>> +				       unsigned long *rules)
+>> +{
+>> +	int ret;
+>> +	u16 cr1, cr2;
+>> +
+>> +	if (index >= RTL8211x_LED_COUNT)
+>> +		return -EINVAL;
+>> +
+>> +	ret = rtl8211e_read_ext_page(phydev, RTL8211E_LEDCR_EXT_PAGE,
+>> +				     RTL8211E_LEDCR1);
+>> +	if (ret < 0)
+>> +		return ret;
+>> +
+>> +	cr1 = ret >> RTL8211E_LEDCR1_SHIFT * index;
+>> +	if (cr1 & RTL8211E_LEDCR1_ACT_TXRX) {
+>> +		set_bit(TRIGGER_NETDEV_RX, rules);
+>> +		set_bit(TRIGGER_NETDEV_TX, rules);
+>> +	}
+>> +
+>> +	ret = rtl8211e_read_ext_page(phydev, RTL8211E_LEDCR_EXT_PAGE,
+>> +				     RTL8211E_LEDCR2);
+>> +	if (ret < 0)
+>> +		return ret;
+>> +
+>> +	cr2 = ret >> RTL8211E_LEDCR2_SHIFT * index;
+>> +	if (cr2 & RTL8211E_LEDCR2_LINK_10)
+>> +		set_bit(TRIGGER_NETDEV_LINK_10, rules);
+>> +
+>> +	if (cr2 & RTL8211E_LEDCR2_LINK_100)
+>> +		set_bit(TRIGGER_NETDEV_LINK_100, rules);
+>> +
+>> +	if (cr2 & RTL8211E_LEDCR2_LINK_1000)
+>> +		set_bit(TRIGGER_NETDEV_LINK_1000, rules);
 >
-> Yes, that was the justification to use unsafe calls instead.
->
-> (This may also justify keeping dec_len() unsafe, since otherwise it would
-> introduce an additional boundary check for pop().)
+>Do you need these set_bit()s to be a heavy-weight atomic operation, or
+>will __set_bit() being its lighter-weight non-atomic version be better?
 
-If we use saturating_sub then we don't need a bounds check (at least on
-non-debug builds), right?=20
+I don't think this needs to be atomic at all, as the phydev lock is held 
+by the one and only caller (phy_led_hw_control_get()).
 
->> We could use `slice::get_unchecked_mut` here to retain the same
->> guarantee of no bounds check. That would still be one fewer unsafe
->> blocks.
->
-> Sounds reasonable.
+rtl8211f_led_hw_control_get() also uses set_bit(). Should I change those 
+also to __set_bit() in a separate patch while I'm at it?
 
-+1
-
+-- 
+Michael
 
