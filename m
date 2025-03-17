@@ -1,130 +1,129 @@
-Return-Path: <linux-kernel+bounces-564151-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564152-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 593C5A64EAD
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 13:24:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3466BA64EB7
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 13:27:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E475188BAD1
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 12:24:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3498F188BB4A
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 12:27:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C84CB214A8F;
-	Mon, 17 Mar 2025 12:24:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C940A239586;
+	Mon, 17 Mar 2025 12:27:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ieee.org header.i=@ieee.org header.b="OsmWDs8J"
-Received: from mail-il1-f171.google.com (mail-il1-f171.google.com [209.85.166.171])
+	dkim=pass (2048-bit key) header.d=minyard-net.20230601.gappssmtp.com header.i=@minyard-net.20230601.gappssmtp.com header.b="FxpHM8eN"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F01D1189905
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 12:24:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A07B723909E
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 12:27:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742214251; cv=none; b=Q4IoA0fTyTlgydBECnzDPVFO05BAAcI8QeWOgoMm7dPIHpX9tHnZ0F6hLl5W/gk53CCwvUnNm7dB6G5bQgRWaGP/WJPkQCR5I8HSdSz8rF0Jb/20Q98OJhqhh+ZYx5eira8eo/QGS90s1eGFlSiYvOscSi7Hd4vQXkW9jr6fBKA=
+	t=1742214460; cv=none; b=jsghBmD+OdPz5mB6ICvaKWrPRlLgZ3RTgT1kqjf7FjlBoFne0Xxo3JMb/05E/NF/i17Zwle1gGQpIz3ZCikcOHV/x21sZ/qC6UKE4GY3j+WWQHiNMKXSiHl608T0iPjqUV+U6Ll+tm8Vd4dZYNbOBhnH0xOHCv23d+DIG2PO1s0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742214251; c=relaxed/simple;
-	bh=xyaqfwbTzpcdsojJjDbtOxYgNKN8wS+0MuBFz5lzo3E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=P7r+klAkXOz/fu50itZ5HzRegBC1RmiDhCY9hWWsQV11BflMyW+GnUrp+jf0QxqIRpaOkQzP2m8VEACxCHA0MyXMfi8+pGaCXUY47JwWh7fmjz1g2pFvLQxqgXTMNWP070L3owH7Huksurz8V2bVLMPNLiqfFHuHRFPyg3v1yug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ieee.org; spf=pass smtp.mailfrom=ieee.org; dkim=pass (1024-bit key) header.d=ieee.org header.i=@ieee.org header.b=OsmWDs8J; arc=none smtp.client-ip=209.85.166.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ieee.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ieee.org
-Received: by mail-il1-f171.google.com with SMTP id e9e14a558f8ab-3d57143ee39so6410055ab.1
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 05:24:08 -0700 (PDT)
+	s=arc-20240116; t=1742214460; c=relaxed/simple;
+	bh=G9AGoHxmANB2JPePAOt9Cyel6/BOshX+/IIM/82Kgqc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DZFYwIvErPpgHUE/H2upsULTwk8M7WIhWdo+9MWkFM2m1EFHX61xaDLlZjXVXMm31yWcLTt267XSQ6jP95UIPShn0iXC6V/AiZ98MyONNiaBjbgo10hLPcWsxkVqTVl8AhZ8GGi3jfCFkAPLyy/tcYpJYdyg5lz6WG0RqxgInck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=minyard.net; spf=none smtp.mailfrom=minyard.net; dkim=pass (2048-bit key) header.d=minyard-net.20230601.gappssmtp.com header.i=@minyard-net.20230601.gappssmtp.com header.b=FxpHM8eN; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=minyard.net
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=minyard.net
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-225df540edcso49397215ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 05:27:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ieee.org; s=google; t=1742214248; x=1742819048; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=OVqfhG4Tsr+0S9/jAXd11fujaL7v/Zv49Wi0Dvh6Q0I=;
-        b=OsmWDs8J+z/3UgyqzimApFU91ToJSe16tuWb0TcQBnFsdeGbeVlYwLSCGDNU9IpV6W
-         SiOx/wK0LvJKl77H2d5pnubjCOWx/peWVIcOOrFWnkKCnjCqQOOas8gDwPyNdTYXDihe
-         2n7zqc+LepAAG7Jx3G4yZsJIH23eNeyEHBOmE=
+        d=minyard-net.20230601.gappssmtp.com; s=20230601; t=1742214458; x=1742819258; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ql7cl1jivUxEVgcKx4CnZzoPILXMvLJsMTxxnU4+Wwg=;
+        b=FxpHM8eNHRU77jSNYXSmd52KcvL+Iygc4Rfm/aK22jol04wMshVL92mXlI4jGpgGM6
+         Zov85s9+optEFcgu+Buno7pM+tI1JqmAM85J6ctAzCAo+dh89eZoL5gWmDjVNjSNFm14
+         fsranYG7ngDVgDxDGQSB10IHb/z2XPfMHCOjuuWw4SpcJm0/2B7qPmG76C5UstRD7VPn
+         Pen27LMUa5plito6WrrpA2erYIZzHaHpGacFU8y+gTOovgKrb4lD+52wyhAPv0Zuoz59
+         Gl2hTPKlOpU1QMwa1mKKdGcnDdqVBNitlQyx8IJ1Y0lkdihJnAfr327X2BzrboAz4h+R
+         wEFA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742214248; x=1742819048;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OVqfhG4Tsr+0S9/jAXd11fujaL7v/Zv49Wi0Dvh6Q0I=;
-        b=vY1f9lLMHb2LTU9xJZBa0/0+x7Xjvwcu9TN84fM6eZgm4787kpLw7FA8GXMDMpxoYz
-         CT+v3et8tR672L7HyAWtv4kBo1WJja8jU3ahE8dpmX44elssNKqwhrn7vvpc27ooRsQA
-         8CEazb0LiCtvVS89Rq+8HZoC/mdcdZsPFDQEPxP8TRCB4w+dNJCOqKL6ps+An9u+i9B9
-         rVGiiqUjkrMtsnRr3rvHvd2F7Z/pSSej6W1uNCfA0gDUfMBrVcrySM5QTDx/2Pc3PpSf
-         iq0geo2jbiXP8g4yXW61bA93uKRI2esUxqCsHL1W2m+nSCfDmOvJrNNqqBkCDHuqYXEn
-         xAvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUzbp3huE7GMj761/tlh+gRpoXbzmlhcoR1D/qqH62ceZ5UHcOzXmcxkB15YLxkYek1ySDnbLJaZCwYqGQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzsHX2zYDGwJx/v/SPNw2gyefqvFCxJAwtpRnS9740/DHOQY/a2
-	GrukRnl32rd+d4vUFmkzUUE1UAbG3bADNqtRPuvGAikXB1X3U3ZORx4tQXM/Sg==
-X-Gm-Gg: ASbGncv2A/IO+WK9ZpW9HVbwEooslX+Mr0aGffyIN8BEkZWKeQQpboJykjrnptfI+v2
-	kRMc0d3u6o6TzElPrrQ5MjpHsT55Z3iqUv02s83bOox7UE+lZi40Lw/qaDJBYhmWMGLw4GRlGfU
-	GOoKbQv3vZCJmsgyhWEr1ivhQgWK1GG4y8quwKNJ1BBmJ8gzqSCSkNAEfxlu5t060azmQDl++34
-	vexUishjIj6tm5AFwINogxZXyzo7VdMbTujWVUSB9u6rY4fX/VN/AUfe9JaC4BQJUuKs182itYm
-	9Dhvnj6n1qeQVL0HcgANhWQ5FVURCWNBHhT435yhhX0Kudjb6tguMQrW+KPippbvpxwnzv788YE
-	CHMQ=
-X-Google-Smtp-Source: AGHT+IEGGv1epbomaXX0zbh2byJd5cVeffbSyLLHslAOJ3Sd1NJhrsMaYbtUByrj99ocjeXVsSotaA==
-X-Received: by 2002:a05:6e02:320f:b0:3cf:c9ad:46a1 with SMTP id e9e14a558f8ab-3d483a35280mr135008545ab.13.1742214248021;
-        Mon, 17 Mar 2025 05:24:08 -0700 (PDT)
-Received: from [172.22.22.28] (c-73-228-159-35.hsd1.mn.comcast.net. [73.228.159.35])
-        by smtp.googlemail.com with ESMTPSA id e9e14a558f8ab-3d47a646abbsm26046345ab.11.2025.03.17.05.24.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 17 Mar 2025 05:24:07 -0700 (PDT)
-Message-ID: <4e4b85b1-bb4b-4de2-8780-a22fae6c1b8c@ieee.org>
-Date: Mon, 17 Mar 2025 07:24:06 -0500
+        d=1e100.net; s=20230601; t=1742214458; x=1742819258;
+        h=in-reply-to:content-disposition:mime-version:references:reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Ql7cl1jivUxEVgcKx4CnZzoPILXMvLJsMTxxnU4+Wwg=;
+        b=waZd0M91IBagpGz7XN1KIDgYCeHK7ZbDZEOR165sFqjdQ1PpGzYOeJaml7swFH6Gz9
+         ys0nRZsnjIzNTzOlR8QJoe7XWciPuIe+wUZ1x69n84x0abrY6lv3nIqtxRUlpTNgqHkh
+         G2SK9lJR+Pgri2idgnJPy8tcEhhESuV+X6MR9saW24ycbpY8bbgFO33Iun8Amj3i2yPS
+         /ODgU7B2l1KcYXO4OEQ1FyZ9HsvnR4q0KbImLV+SkLUNoT34hsUy/J0c7OPBcksRdtf3
+         lLnyLExSHH3pxtk390RPm4ZlNhGhw0vRI0SUAxj1E3j+6x9A2Amn8FigxTxNir+sZr8B
+         gl8w==
+X-Forwarded-Encrypted: i=1; AJvYcCUWp2zsEtFTUFU6VEXpLIOEhi/w/aLtotZoPfr8A2z3NDCTkMoBmGRGsPRDPJreX17dl/MLfvgTuy52oBU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxaqV+Bmd4Wpzh4k/EoPm9b8Gsd8tSzXpivsaYds6dMvcj1pquM
+	sWsvO0War8TYGLrkeyFwnUuTHXUCl7uUTpFKJYEntZS0WwR27nSxbSJ8CWBRJKc=
+X-Gm-Gg: ASbGncsaBTFr5TR1+Xyogo/tXq5cH6U4e2KYHin0i5x5qaS2N63vX9ZRpa0WcKAnjLe
+	bjxsDD/9hQHt58xhWVG2fHasTJl8VCemdgTto3kP5cNQUIPD9Hp/uC146n899d5UZ0TTIdJERqJ
+	w9oZqYCxinvu2agkx42ocfF8sZrJEih/Yzh3714VVUlE/Dopfq/BIMG2wLUCE7N7xI9YiWteM+T
+	Xnn4HULCUonGXxKZZ3dTe2j30fw3aesZcKIsdduqOVKoWy1ZVDOtLhd5eu7xdKHkS0JHSQ6s4qj
+	6BbNdduzWNADSL2pcB7FnQXV6YVFXb4xbC59dD04ySU1QiOX
+X-Google-Smtp-Source: AGHT+IGgAd8DQyYluWrfbCBtW7BNHVC6cJ+9kFyNdt5BjTXSIYza/k/RcKCulIQI3qlDd75/UV+Brg==
+X-Received: by 2002:a05:6a00:6993:b0:737:cd8:2484 with SMTP id d2e1a72fcca58-737106f646emr18394790b3a.6.1742214457512;
+        Mon, 17 Mar 2025 05:27:37 -0700 (PDT)
+Received: from mail.minyard.net ([2001:470:b8f6:1b:d417:d7de:22d4:4d1b])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-737116955f1sm7655024b3a.142.2025.03.17.05.27.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Mar 2025 05:27:37 -0700 (PDT)
+Date: Mon, 17 Mar 2025 07:27:30 -0500
+From: Corey Minyard <corey@minyard.net>
+To: Breno Leitao <leitao@debian.org>
+Cc: Rik van Riel <riel@surriel.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	openipmi-developer@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org, kernel-team@meta.com
+Subject: Re: [PATCH] ipmi: fix suspicious RCU usage warning
+Message-ID: <Z9gVMuEMk9yNNL89@mail.minyard.net>
+Reply-To: corey@minyard.net
+References: <20250312131932.44d901f7@fangorn>
+ <20250317-horned-nano-degu-a6e5bc@leitao>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] pinctrl: spacemit: PINCTRL_SPACEMIT_K1 should not default
- to y unconditionally
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
- Linus Walleij <linus.walleij@linaro.org>, Yixun Lan <dlan@gentoo.org>,
- Conor Dooley <conor.dooley@microchip.com>,
- Javier Martinez Canillas <javierm@redhat.com>
-Cc: linux-gpio@vger.kernel.org, linux-riscv@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <6881b8d1ad74ac780af8a974e604b5ef3f5d4aad.1742198691.git.geert+renesas@glider.be>
-Content-Language: en-US
-From: Alex Elder <elder@ieee.org>
-In-Reply-To: <6881b8d1ad74ac780af8a974e604b5ef3f5d4aad.1742198691.git.geert+renesas@glider.be>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250317-horned-nano-degu-a6e5bc@leitao>
 
-On 3/17/25 3:06 AM, Geert Uytterhoeven wrote:
-> Merely enabling compile-testing should not enable additional
-> functionality.
+On Mon, Mar 17, 2025 at 02:33:31AM -0700, Breno Leitao wrote:
+> On Wed, Mar 12, 2025 at 01:19:32PM -0400, Rik van Riel wrote:
+> > On recent kernels this warning fires:
+> > 
+> > drivers/char/ipmi/ipmi_msghandler.c:1238 RCU-list traversed in non-reader section!!
+> > 
+> > This looks like a fairly simple lockdep trigger, where
+> > list_for_each_entry_rcu and list_for_each_entry_srcu are
+> > functionally identical, but the lockdep annotation in
+> > the former has an extra check.
+> > 
+> > That extra check is whether the RCU read lock is held,
+> > which is not true when the code uses srcu_read_lock.
+> > 
+> > Get rid of the warning by using the properly annotated
+> > list traversal macro.
 > 
-> Fixes: 7ff4faba63571c51 ("pinctrl: spacemit: enable config option")
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-This (now) makes sense to me.  Looks good.  I'll look for other
-cases like this from now on.
-
-Tested-by: Alex Elder <elder@riscstar.com>
-
-And if you like:
-
-Reviewed-by: Alex Elder <elder@riscstar.com>
-
-> ---
->   drivers/pinctrl/spacemit/Kconfig | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
+> Thanks for looking at this one.
 > 
-> diff --git a/drivers/pinctrl/spacemit/Kconfig b/drivers/pinctrl/spacemit/Kconfig
-> index a2f98b3f8a75580d..d6f6017fd097d326 100644
-> --- a/drivers/pinctrl/spacemit/Kconfig
-> +++ b/drivers/pinctrl/spacemit/Kconfig
-> @@ -7,7 +7,7 @@ config PINCTRL_SPACEMIT_K1
->   	bool "SpacemiT K1 SoC Pinctrl driver"
->   	depends on ARCH_SPACEMIT || COMPILE_TEST
->   	depends on OF
-> -	default y
-> +	default ARCH_SPACEMIT
->   	select GENERIC_PINCTRL_GROUPS
->   	select GENERIC_PINMUX_FUNCTIONS
->   	select GENERIC_PINCONF
+> There was a discussion about this issue a few years ago, with
+> a different approach that never landed upstream.
+> 
+> 	https://lore.kernel.org/all/20201119123831.GH3710@minyard.net/#r
 
+I thought this looked familiar.
+
+Breno, I believe you suggested a change to the patch that sounded
+reasonable, so I removed the patch, and then nothing happened and I
+didn't follow up.
+
+This is kind of a mess :-(.  Let me look at it.
+
+-corey
 
