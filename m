@@ -1,251 +1,144 @@
-Return-Path: <linux-kernel+bounces-564405-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564406-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD593A65435
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 15:49:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BAFAA65436
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 15:50:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 684A0188943C
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 14:49:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3AE3118887F2
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 14:49:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE8B524337D;
-	Mon, 17 Mar 2025 14:48:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 135DC14A8B;
+	Mon, 17 Mar 2025 14:49:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="frIrh6lK"
-Received: from AS8PR03CU001.outbound.protection.outlook.com (mail-westeuropeazon11012067.outbound.protection.outlook.com [52.101.71.67])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mhuPfWls"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE87954652;
-	Mon, 17 Mar 2025 14:48:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.71.67
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742222931; cv=fail; b=ImHNt81GQ7eVG9v4GN6WQck9iJK3qvUNiA2cRecYGFCAP+yU2TnK7ipge5l5T6w2znS9OgtyWvjJhlMRr6TJIpdl93EoHOzIu00WmqPjsCkkoPN3cafMSmmrSKziJTttwNvuPYI3kznsdhKBtgSxFwO/OsfpLjWql0fkUxNbMWs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742222931; c=relaxed/simple;
-	bh=Zx61BPBcXBJPl6qc1sE193LSivREJ2m3p0btMNnqC7g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=CWozDLiRWyfD+D2y2m2G+V33Nn89PnZ1BeWqkqJckvcIE4vt9yGkks++iK0c2rxJiMV6csrN22TYRpTEgZprHBOUVEzofo2ozvP+TTcKIrfrXRJMBoPZhSiy5xSOMBZWy05bLmduLR9AN1LrlikYGXNBg1/8U+NHFGfJZk3uPio=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=frIrh6lK; arc=fail smtp.client-ip=52.101.71.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Ko3NYBx8nBpmS7T5HuVlLf5AZBt4TotUvRrBH/Fwf3id07+SuF2XFkduszx+sVXDJkfEeOFaNOZHwa3Kz7BzNtpIekaPW7oM+PmlA03wggJOJsXR97aFPWegWHi7dVIRO+LYcrTjHPLY/6Ri8UNnkRoc9C35ue95SZHN7dN80k0EUTJdd681jhei3mmH1/shHwGX8iHz8KtmSKySykOTSEuqdlSOmlSz5W1LKRxPC8utLXzpk5jUko9k579bAm9UPKMRAAFyfpNRnD8ui8vxT+YxssHg5Gi3C70dmOP4L4TLLd5c2CMd9duj2qXUIpIP+furJ9fVSGAuX+GDcORYUQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=kVGYg1Op/a0GV1T1ULU8Vge6xxXF/AbXXXgUYScOq7Y=;
- b=YdP0wXHa2wSKoR8EoZq5vb5WEV9FP/0dwSgn+EGBPJU/JNFwmUog6pJ48W7DxD1r9DYmWZkC7zwZnyxMR8bfjNb4Mh1MymSqjIoooPD9ymXPtkFZwnrtKAgUufgWBBgs3OeEKsNZTLeCPVT8bxFrBALM++WtiIz3MZ3CFR55vlVIwj0tRVDB34+YO+XZogN8Q2G9HR6CPHrWXs4lVSgHt8YZaryOt7sT6+kUoJh608PqBcoUZK+BJ8XnjR75GL0U+oB+U/MM2rTuUeZ6cNIi/ixmkGWkJoex3LasmbbiDya3CX2S0ECEGbI+2dptDH975oj4A6AZtN0PVRaOP5FGKA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=kVGYg1Op/a0GV1T1ULU8Vge6xxXF/AbXXXgUYScOq7Y=;
- b=frIrh6lKhP4TZB5kf09uLACvolm337YGmfksz9OF3ZSyDUI8wS33gc5IlXccX5ypl5HarSqbS9hZma/bu4TwOlSiBDrNuNzto4/8kRyJVhXK8xz9W/idioScdjj1Ie4e4glj66vnkYtd79Q1baaTPnDubiSmjfdSLz8wq1o1hVccZNT77rjP+ND6edBD+NHRJne1KWbTZG4OsnZR9Vgetpfip8OUpxuHHgl1ZwAwB6RgHqK6ZcFA9Aoj7pjq+pMYzuVTRPI4ddnyH+eQiZNBbzfcGcIKwMeOH+zWBbMNlSdi1CFSJliFlnX9BwQhOXKf8cEt2vwfS8GaBcTrH3g8Zg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AM8PR04MB7779.eurprd04.prod.outlook.com (2603:10a6:20b:24b::14)
- by DU0PR04MB9635.eurprd04.prod.outlook.com (2603:10a6:10:31f::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.33; Mon, 17 Mar
- 2025 14:48:46 +0000
-Received: from AM8PR04MB7779.eurprd04.prod.outlook.com
- ([fe80::7417:d17f:8d97:44d2]) by AM8PR04MB7779.eurprd04.prod.outlook.com
- ([fe80::7417:d17f:8d97:44d2%6]) with mapi id 15.20.8534.031; Mon, 17 Mar 2025
- 14:48:46 +0000
-Date: Mon, 17 Mar 2025 16:48:43 +0200
-From: Vladimir Oltean <vladimir.oltean@nxp.com>
-To: Wei Fang <wei.fang@nxp.com>
-Cc: claudiu.manoil@nxp.com, xiaoning.wang@nxp.com, andrew+netdev@lunn.ch,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, christophe.leroy@csgroup.eu,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	imx@lists.linux.dev, linuxppc-dev@lists.ozlabs.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v4 net-next 05/14] net: enetc: add debugfs interface to
- dump MAC filter
-Message-ID: <20250317144843.wp432pgodn4vjejf@skbuf>
-References: <20250311053830.1516523-1-wei.fang@nxp.com>
- <20250311053830.1516523-1-wei.fang@nxp.com>
- <20250311053830.1516523-6-wei.fang@nxp.com>
- <20250311053830.1516523-6-wei.fang@nxp.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250311053830.1516523-6-wei.fang@nxp.com>
- <20250311053830.1516523-6-wei.fang@nxp.com>
-X-ClientProxiedBy: VI1PR0102CA0088.eurprd01.prod.exchangelabs.com
- (2603:10a6:803:15::29) To AM8PR04MB7779.eurprd04.prod.outlook.com
- (2603:10a6:20b:24b::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 674B354652;
+	Mon, 17 Mar 2025 14:49:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742222968; cv=none; b=d80UBc+UPfOTiFkc1laiDCq5WWX+iqzz2f18fK6ayCi79MYNIwUGI9O7QXb35GxifwBvrZ2X3HfUa+GSe861PZ5UPAXaJoLNy6Ptsj9OMYfwOJUEUHCn5F4Hc8IB4RE0sI7erVUppfvLReqy4giJFXoDsSKXMCu32tQJaV+Bo4Y=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742222968; c=relaxed/simple;
+	bh=s8CehdpXkTqOO0ErPHHVLt5yyez+Ks7PrRBqfbCNRVc=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Xybe82/v5fYemLzWDFNwgOh1f7I4NelR3H/Ju7upF13Y3WYvvTj8P1eBYqyCVsdhwBhpWvWK+l+skdit60LhXE4nRAR+1O4bpqWdjNBs0k8zaGbjtSlnRAyTUgPvJ2c7p6pX9VmIFegoWugQOpEzqWqMGO07AXP2CdYerzyeEbg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mhuPfWls; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C92CFC4CEE3;
+	Mon, 17 Mar 2025 14:49:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742222967;
+	bh=s8CehdpXkTqOO0ErPHHVLt5yyez+Ks7PrRBqfbCNRVc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=mhuPfWlsqazTRYpvIDa7gC+hDui8usQNP3ZO8OPLyucvwyE0ZVVFJWHL4ywTVRv57
+	 2Gw0LV8SGvedmVCfNXvGG7KLTPbDqjE6PHeE81IVIylmhCxUUy9G0aWyAQ0c1D25fA
+	 fh52Txl2pW84GIYvEcyAk48V/i7wefc2xxX6XKRDHVXdEiURyBX2dHpMWtuz5r9faj
+	 xiJh6vfra8WmJf51d3wZ1JSlrWN2aBlAcEQK9DIMPOopREGHudRjPcicgJ5XnJJD7A
+	 kl46n5Ta27Jp0zZo3JxLm5PO204jVJ5eaAhepGbPwaneDeX27LLpDXvfM3zVBR/axc
+	 +pXyz7bIKQwAw==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1tuBmP-00EL5V-ET;
+	Mon, 17 Mar 2025 14:49:25 +0000
+Date: Mon, 17 Mar 2025 14:49:24 +0000
+Message-ID: <86y0x3n24r.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: kernel test robot <lkp@intel.com>
+Cc: Akihiko Odaki <akihiko.odaki@daynix.com>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Andrew Jones <andrew.jones@linux.dev>,
+	oe-kbuild-all@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	devel@daynix.com
+Subject: Re: [PATCH v5 3/5] KVM: arm64: PMU: Fix SET_ONE_REG for vPMC regs
+In-Reply-To: <202503172023.fzyJ3TMB-lkp@intel.com>
+References: <20250315-pmc-v5-3-ecee87dab216@daynix.com>
+	<202503172023.fzyJ3TMB-lkp@intel.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM8PR04MB7779:EE_|DU0PR04MB9635:EE_
-X-MS-Office365-Filtering-Correlation-Id: 37714767-1403-469d-be59-08dd6562d21b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?BzEUanxrLUGrWqmpA64U09MV85u2Tb5bAsHOdKnpPpUF6dzMP3uH649r44Tk?=
- =?us-ascii?Q?SI7CThM0+uBM7JdvJ0rQE/9lPHtON1ZHfOdXeb+2Rwa60k2t1RVOAIm4UfnX?=
- =?us-ascii?Q?HsU39xS1hgEYK69Jle/+NMln56APR3jRv3Hn30jk184sdERN+SpZTsj+d1/w?=
- =?us-ascii?Q?T+zFKXDgZcQ2cDAlNatsrXQhp2dk0XnP9k0w+ryHU7gB3haIKfdOzus6aosn?=
- =?us-ascii?Q?NF29ma7t5EoAgWr3jNzAQ+EjbAKMjFhVqz3STXHwx5t9Qh3Q/3bPqCxJLSKI?=
- =?us-ascii?Q?GOcTyhtE5/FmpetuWpXEkOGOdytoApLP3ggnmOyzJnjgLwplRNrd7CG1t7Yw?=
- =?us-ascii?Q?HqpvscPA0rCX8TmB3fma+qqoRMELDgP5b4iNvFAIAjDtBofpl+Lvu0HrGcBz?=
- =?us-ascii?Q?FhAoDtXGwG4AJVYSlQjpaAPIKrMgfM9ZRz5nUuzUr0XP7ejdewlMrcP/IyLU?=
- =?us-ascii?Q?MN4mMAUTVU40ExVS7GPbMRg6QwIzVx6x13B77KtWBBeZ3Ytadh1lNWMbIn2f?=
- =?us-ascii?Q?TrjJ2hJb6PQtEvsw+yrxBh1cIsN79Fwg+dlbHJpbnKXUUHzYOgbZsN7u+2cO?=
- =?us-ascii?Q?IxkRVqrjqnDbY3mkNcxoY/hTXA621AHpASG2xtNlTzbQrxyIiNzho96ni0Nz?=
- =?us-ascii?Q?2cj/ZhVl5YvegCEV4DSqsWDHbh7H/hR5eds1s0Q/j1Ys2gaj4ToPkxkvuHxo?=
- =?us-ascii?Q?FkekCWMjkIALotfO3q+bUUvzwp1BGeTwrNh1S1IpVTPMY51TnOLJ6HPQQTPw?=
- =?us-ascii?Q?T7IZG+QmwFNgdYfszny+IsyR5JrEXlgVi+ZIvwlsyUPTLnIyXsX+oVfhvuWp?=
- =?us-ascii?Q?XPgeGg6EiPJZssMMw8hWlnKW/prUFmDBAOrDEuJa6CS7qzX1O8xxJ2CAQByV?=
- =?us-ascii?Q?/SA/UTOAdYa0N60p/gvzv6Xux4iMS+x7Dgpz757PSvVXKy7ISEDQJ8P1DaBm?=
- =?us-ascii?Q?b1WQQn8OxH6Xl1Dt9s2NPciFIXjoDzwHnFdrH4rYFkMkkcm6Lv/LaycXFByi?=
- =?us-ascii?Q?4y8DvrOR/BwTYokR2lGODxD+J4c7FTYWFEJwzfJZRMkS2MitlinSCJZ2/mK5?=
- =?us-ascii?Q?SI80o25m7xmGoEs8FtjTWOmWHeH8VufEqqT3eyOMM9E787V1TUg/6+AyAoel?=
- =?us-ascii?Q?aYQjBKkZxyqnsjvaHJ951kDHljhEmnvrH2xjuyL9S8UEzhH1jIK8B6fPBZ7l?=
- =?us-ascii?Q?iCvRUU1ihxDMVefUB6dtgKktpRoEU80jdJ3Y41/YV5V9UoJFaSvJ9b1Hv79O?=
- =?us-ascii?Q?iJMU7JNPhmAqFZ6UlhAzt9SbjUdqYJVCzlqV6UUM5gt8rfLIPXN6fQTwTHLJ?=
- =?us-ascii?Q?FJKLiVLu01+i52NSqXKhHMXtpAz3oqop0DKOA3Vb8fgIqeb0BrwyPSXUgdLv?=
- =?us-ascii?Q?lx5uaupKrWA7sfA2YEm4MisRHMxr?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM8PR04MB7779.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?rM+cOxyWFoDcAOl4dGtYJMkzo0hN28khplRPdxpy+WU4+VoqbAkHTsCyWZwg?=
- =?us-ascii?Q?pMj1eX7eXzOfpZtL5jGHCpPfPAKgW5IIIUdw4ULiR0IIjTK9K5aWdwN/hgRa?=
- =?us-ascii?Q?o5PvbilFdBQNHx5b1RsgjZX6TgluTh+R1f05wftYFMTkmIl5q5NnyR6Gthtu?=
- =?us-ascii?Q?VUd+FKp46FU4zzTrVRUtDTc1g1q8GttnD2wwpqCz7V/HPTSaR259Ih54tdBd?=
- =?us-ascii?Q?QhxPHt5xVEP4eMM+8OTNBbkGjgxD1tdnrteE/W+b2x0j/pj7L2PGKCBXHYf7?=
- =?us-ascii?Q?pGqSxuFMLO4f0mGb10us6gR0PGbSB/axzOj+z0xX0ClLSahcJj2yGSacWLrR?=
- =?us-ascii?Q?dc7tJlhO31X+Hjzcpn2HXgUd8LfbUUt++TMeBXNnIgO5fEJ0qSN5tdnt/TFE?=
- =?us-ascii?Q?uo7bL+zSS81e8LP3zX7K/A4WuU3JM32J69f22iyxMIZnHgUCV24Hog0OnPK+?=
- =?us-ascii?Q?C95Sr6AidkHRWNA9b6dIQwGil5ghvBcKbZctPNE6h1I+uRaX6GM1bMX3FZNO?=
- =?us-ascii?Q?YcHbTHt2BRtc91YCmLHheOz78CJewSm5wszawhVnixGZcC4hTCWkEC04foiI?=
- =?us-ascii?Q?P7Lx6/gPJ5O7RMiJHcqqszBv+iVJH5NHhnDxTPttzqhMiecfN47Ua3kJvaMV?=
- =?us-ascii?Q?XpaVC5Nn3UpbfC24/ZwPLhcV7wN/x9FJHp1P4IZLC3Ad878HFI8ybOxAU8jY?=
- =?us-ascii?Q?OG7AhVjgrjviDwYCGhtTDzo2M0wU9qXiCsKMLmMbjJH5m3iyr2PpMYd3LvR6?=
- =?us-ascii?Q?TfzQ2qitISH85Kqt/rRaUUgeTGnFfjXIz7Vc3bkh0x9eLmUYK655nQYxr6D8?=
- =?us-ascii?Q?qAgHHUbdoq2qjfMCXHlQ6S7NXItwJbGU4yXtwxSqY7jsj38xWlu/SY5Pg5+u?=
- =?us-ascii?Q?GCbuZgLOo/MvgyubqtgNsCLr+pv1e2OgFyCl0BOPi6QFRF10alz92/z/qx0V?=
- =?us-ascii?Q?S71RuyRyVHzQW71Hg3dJuxvrXERqZ32jqYbY0uUu6MBBQnM/L6nowTDmtj9W?=
- =?us-ascii?Q?2ynQ7f2ulMmxRWFNz2CUnSXbqsJYNd/dPhY3xIRhjIdXNg6STyZntSu541MS?=
- =?us-ascii?Q?gKfzNxRZVfCEhEtj//cNNHYxJblNeZ6F1v5waWBYtoyW9WvSJMi4I1sHjG1B?=
- =?us-ascii?Q?/h5AszFGbbUvYVV9vv4dcGNh8Dcz7xo82yNE4PO51velvRKRGYZewfFwgR/9?=
- =?us-ascii?Q?mOxQ4j6759LO0fFIsnf38jOWEV3YbY5oT2z5bG2BHZgNv6JTlDS4mchURM0F?=
- =?us-ascii?Q?SwwV4FfB98pjHEJr54++bfQw1Gal7mqKQp5gp4iLeoK4iTXmzzGChH9nvU6U?=
- =?us-ascii?Q?eF1GHonqmJKV4FtgRK/mJ4iCgJRbfbM4cd3dl2mDmdRSrAUZnXN54xoCV0Id?=
- =?us-ascii?Q?XqUeFqZCbyIVCZf9eUgAnC5jDuL4EsMeVMLVuVh+Fe35B7EL7M67j2Uf3Pzu?=
- =?us-ascii?Q?ImgC0bEOSICzFuwCHRb4q5hz/rCDQA3iBaqOYnwUsJS+Dr6sBtuc7TO1UX46?=
- =?us-ascii?Q?bpbJZaQNfMVWMQQ1MP//zj6TbtcmWloF9vBxMu79Xcfk09//c1fvVwYV82wM?=
- =?us-ascii?Q?fs4ccuzjlrQ+cdTTtd9M4taeRRtI/mdhHoO30rr9nh2+Ip2De19mbtChvFF3?=
- =?us-ascii?Q?ew=3D=3D?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 37714767-1403-469d-be59-08dd6562d21b
-X-MS-Exchange-CrossTenant-AuthSource: AM8PR04MB7779.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Mar 2025 14:48:46.4312
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: gGPteDPfowMybgEd8UFakXdOlIcjbI2NoKotwB8FAXAEBiaAInwog9jE7LQXIM495VcobxQggUijBy13oWC67w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU0PR04MB9635
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: lkp@intel.com, akihiko.odaki@daynix.com, oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, catalin.marinas@arm.com, will@kernel.org, andrew.jones@linux.dev, oe-kbuild-all@lists.linux.dev, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, devel@daynix.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Tue, Mar 11, 2025 at 01:38:21PM +0800, Wei Fang wrote:
-> diff --git a/drivers/net/ethernet/freescale/enetc/enetc4_debugfs.c b/drivers/net/ethernet/freescale/enetc/enetc4_debugfs.c
-> new file mode 100644
-> index 000000000000..3a660c80344a
-> --- /dev/null
-> +++ b/drivers/net/ethernet/freescale/enetc/enetc4_debugfs.c
-> @@ -0,0 +1,93 @@
-> +// SPDX-License-Identifier: GPL-2.0+
-> +/* Copyright 2025 NXP */
-> +
-> +#include <linux/device.h>
-> +#include <linux/debugfs.h>
-> +#include <linux/seq_file.h>
-> +
-> +#include "enetc_pf.h"
-> +#include "enetc4_debugfs.h"
-> +
-> +#define is_en(x)	(x) ? "Enabled" : "Disabled"
+On Mon, 17 Mar 2025 13:02:47 +0000,
+kernel test robot <lkp@intel.com> wrote:
+> 
+> Hi Akihiko,
+> 
+> kernel test robot noticed the following build errors:
+> 
+> [auto build test ERROR on 80e54e84911a923c40d7bee33a34c1b4be148d7a]
+> 
+> url:    https://github.com/intel-lab-lkp/linux/commits/Akihiko-Odaki/KVM-arm64-PMU-Set-raw-values-from-user-to-PM-C-I-NTEN-SET-CLR-PMOVS-SET-CLR/20250315-173731
+> base:   80e54e84911a923c40d7bee33a34c1b4be148d7a
+> patch link:    https://lore.kernel.org/r/20250315-pmc-v5-3-ecee87dab216%40daynix.com
+> patch subject: [PATCH v5 3/5] KVM: arm64: PMU: Fix SET_ONE_REG for vPMC regs
+> config: arm64-randconfig-r122-20250317 (https://download.01.org/0day-ci/archive/20250317/202503172023.fzyJ3TMB-lkp@intel.com/config)
+> compiler: aarch64-linux-gcc (GCC) 14.2.0
+> reproduce: (https://download.01.org/0day-ci/archive/20250317/202503172023.fzyJ3TMB-lkp@intel.com/reproduce)
+> 
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202503172023.fzyJ3TMB-lkp@intel.com/
+> 
+> All errors (new ones prefixed by >>):
+> 
+>    arch/arm64/kvm/sys_regs.c: In function 'set_pmu_evcntr':
+> >> arch/arm64/kvm/sys_regs.c:975:9: error: implicit declaration of function 'kvm_pmu_set_counter_value_user'; did you mean 'kvm_pmu_set_counter_value'? [-Wimplicit-function-declaration]
+>      975 |         kvm_pmu_set_counter_value_user(vcpu, idx, val);
+>          |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>          |         kvm_pmu_set_counter_value
+> 
+> 
+> vim +975 arch/arm64/kvm/sys_regs.c
+> 
+>    962	
+>    963	static int set_pmu_evcntr(struct kvm_vcpu *vcpu, const struct sys_reg_desc *r,
+>    964				  u64 val)
+>    965	{
+>    966		u64 idx;
+>    967	
+>    968		if (r->CRn == 9 && r->CRm == 13 && r->Op2 == 0)
+>    969			/* PMCCNTR_EL0 */
+>    970			idx = ARMV8_PMU_CYCLE_IDX;
+>    971		else
+>    972			/* PMEVCNTRn_EL0 */
+>    973			idx = ((r->CRm & 3) << 3) | (r->Op2 & 7);
+>    974	
+>  > 975		kvm_pmu_set_counter_value_user(vcpu, idx, val);
+>    976		return 0;
+>    977	}
+>    978	
+> 
 
-str_enabled_disabled()
+Looks like a case of missing stub definitions when
+CONFIG_HW_PERF_EVENTS isn't selected.
 
-> +
-> +static void enetc_show_si_mac_hash_filter(struct seq_file *s, int i)
-> +{
-> +	struct enetc_si *si = s->private;
-> +	struct enetc_hw *hw = &si->hw;
-> +	u32 hash_h, hash_l;
-> +
-> +	hash_l = enetc_port_rd(hw, ENETC4_PSIUMHFR0(i));
-> +	hash_h = enetc_port_rd(hw, ENETC4_PSIUMHFR1(i));
-> +	seq_printf(s, "SI %d unicast MAC hash filter: 0x%08x%08x\n",
-> +		   i, hash_h, hash_l);
+	M.
 
-Maybe the ":" separator between the high and low 32 bits is clearer than "x".
-
-> +
-> +	hash_l = enetc_port_rd(hw, ENETC4_PSIMMHFR0(i));
-> +	hash_h = enetc_port_rd(hw, ENETC4_PSIMMHFR1(i));
-> +	seq_printf(s, "SI %d multicast MAC hash filter: 0x%08x%08x\n",
-> +		   i, hash_h, hash_l);
-> +}
-> +
-> +static int enetc_mac_filter_show(struct seq_file *s, void *data)
-> +{
-> +	struct maft_entry_data maft_data;
-> +	struct enetc_si *si = s->private;
-> +	struct enetc_hw *hw = &si->hw;
-> +	struct maft_keye_data *keye;
-> +	struct enetc_pf *pf;
-> +	int i, err, num_si;
-> +	u32 val;
-> +
-> +	pf = enetc_si_priv(si);
-> +	num_si = pf->caps.num_vsi + 1;
-> +
-> +	val = enetc_port_rd(hw, ENETC4_PSIPMMR);
-> +	for (i = 0; i < num_si; i++) {
-> +		seq_printf(s, "SI %d Unicast Promiscuous mode: %s\n",
-> +			   i, is_en(PSIPMMR_SI_MAC_UP(i) & val));
-> +		seq_printf(s, "SI %d Multicast Promiscuous mode: %s\n",
-> +			   i, is_en(PSIPMMR_SI_MAC_MP(i) & val));
-> +	}
-> +
-> +	/* MAC hash filter table */
-> +	for (i = 0; i < num_si; i++)
-> +		enetc_show_si_mac_hash_filter(s, i);
-> +
-> +	if (!pf->num_mfe)
-> +		return 0;
-> +
-> +	/* MAC address filter table */
-> +	seq_puts(s, "Show MAC address filter table\n");
-
-The word "show" seems superfluous.
-
-> +	for (i = 0; i < pf->num_mfe; i++) {
-> +		memset(&maft_data, 0, sizeof(maft_data));
-> +		err = ntmp_maft_query_entry(&si->ntmp.cbdrs, i, &maft_data);
-> +		if (err)
-> +			return err;
-> +
-> +		keye = &maft_data.keye;
-> +		seq_printf(s, "Entry %d, MAC: %pM, SI bitmap: 0x%04x\n", i,
-> +			   keye->mac_addr, le16_to_cpu(maft_data.cfge.si_bitmap));
-> +	}
-> +
-> +	return 0;
-> +}
-> +DEFINE_SHOW_ATTRIBUTE(enetc_mac_filter);
+-- 
+Without deviation from the norm, progress is not possible.
 
