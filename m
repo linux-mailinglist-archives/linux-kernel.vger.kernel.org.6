@@ -1,130 +1,142 @@
-Return-Path: <linux-kernel+bounces-565189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565208-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 069A2A662C5
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 00:35:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 546C6A66340
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 01:00:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7F583B1B4A
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 23:35:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B7344188D127
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 00:00:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 521F9205AB3;
-	Mon, 17 Mar 2025 23:35:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08F321C5F0C;
+	Tue, 18 Mar 2025 00:00:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="apWNZs+A"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=atmark-techno.com header.i=@atmark-techno.com header.b="cLt2/jP1"
+Received: from gw2.atmark-techno.com (gw2.atmark-techno.com [35.74.137.57])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 921441A7249;
-	Mon, 17 Mar 2025 23:35:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61F231519B4
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 00:00:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.74.137.57
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742254513; cv=none; b=lANDMxzHN5StjhyP9+eC25p2k7KrjEnT3Oynzmy7K88ACOFu3wvwnH1uGbJE1l+SCdtA7ttujY9kz5MvlHGaqnwH6idNJwGEzct3UsPtLW0z9S8DxUpve1Rhf7VxX4ArBVyP0ytzZB97vWqNag2FvLqv8wX/ZBmGjPEIspWhFjE=
+	t=1742256012; cv=none; b=j94SoT4kGsD3oo5GvEpvPpX1iHY3S/16r58mic2t2/xHlV68EN3aN6ZYyY9hKW6gLFbuZ5FqmtjVaG3vdPUwOZ6yCks/6AtpWwhGuXV29lYUfJ/hLvJGZr52IuA2IieZ5QAfO3d3wgE9LLcFh9GNwyC7YwJwlS+anu12oCTAQLU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742254513; c=relaxed/simple;
-	bh=7UoWRwyHzqBBehirgFLNvlLP+45LmrF4dy3eicA0GKo=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=AbApUtxHsMYn5rKNQ9zjgPM5DSawOEwrbWCWkfO8X0XgZLOwe4k8Y6JnXVL7H1oQwhBz0dtf4EaRWzJI3y78FrdgOaD9ZX0ATIhkf47JWPAu2My+Cl1R7BVx6z8xsVBmyL2bOjyO3sBakB/IuEuum+/eDgdlVw5m8B3xDy9ZNTs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=apWNZs+A; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1742254505;
-	bh=D7cfFiiScayhlIqzpWBB2VE4W5qnbzK4TlXB83dimwI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=apWNZs+An410bWexLMvKI1PqEU5bKoqoqgzmjQqlKvLalzSqVo2NIr7isDReItup7
-	 OFbrUBiwXs0NXJRZlw19Mdz7x773fxlnq7u8Al2fUb27zeidh3dzwGdYOMzkJ2XZav
-	 IsbVBbADCeaEOymDQNEJS8anIh760QcaierVykwEc7TOpXyLg6EXzvAslx8zcBF/mG
-	 X1QjEbxGxc0K8qy470rBuMOh+ulBdfHVHWzp6tXHNuYiihxD9pQUB/mtEoXNv9o6lh
-	 dtVynLCqZIDwxw78duupYzYGROJ89CApezEo30CEwA4yQKmandPb9odYfq5jixhwBP
-	 YqctC1X65PPwg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZGrtK0QcRz4wcd;
-	Tue, 18 Mar 2025 10:35:05 +1100 (AEDT)
-Date: Tue, 18 Mar 2025 10:35:04 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the rust tree
-Message-ID: <20250318103504.4cbfe7e1@canb.auug.org.au>
-In-Reply-To: <CANiq72n05i322FfpSjFX=Wz3-9AgVRKLkKs1CHa-LxzWQ7-pew@mail.gmail.com>
-References: <20250317215757.2412aef1@canb.auug.org.au>
-	<CANiq72n05i322FfpSjFX=Wz3-9AgVRKLkKs1CHa-LxzWQ7-pew@mail.gmail.com>
+	s=arc-20240116; t=1742256012; c=relaxed/simple;
+	bh=5i13wLKTyNDlBKchwfsIXJmrY3fLphQS5cqXHJehJHo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UHbQVq1EK3VUfDw0kdPWZygczeFGwV1FcVV4/traqWz0kT+SzRoEWO3Ynb/cfUswTY0nlUyPnGzgxKUJlrvY96hxX0QE2GZSCZhQJqqmJuESQe/UP9cgJ4liRxhG+Os1M626qI/hFAC+umh7LvAMNaUQBYEoHbUEfeduxBY0os8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=atmark-techno.com; spf=pass smtp.mailfrom=atmark-techno.com; dkim=pass (2048-bit key) header.d=atmark-techno.com header.i=@atmark-techno.com header.b=cLt2/jP1; arc=none smtp.client-ip=35.74.137.57
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=atmark-techno.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=atmark-techno.com
+Authentication-Results: gw2.atmark-techno.com;
+	dkim=pass (2048-bit key; unprotected) header.d=atmark-techno.com header.i=@atmark-techno.com header.a=rsa-sha256 header.s=google header.b=cLt2/jP1;
+	dkim-atps=neutral
+Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com [209.85.216.72])
+	by gw2.atmark-techno.com (Postfix) with ESMTPS id 62B1A687
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 08:51:25 +0900 (JST)
+Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-2ff8340d547so4336782a91.2
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 16:51:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=atmark-techno.com; s=google; t=1742255484; x=1742860284; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=TRQ/GwuEKDlWODVcSQfxpM5Lw2RQXG7ZSKeiwlAjR7g=;
+        b=cLt2/jP1Ko35UMsCHcn3RoLnE+onqkGU8r9tJI2ojX7AyFzEvoRtvjN31csz7VbeBr
+         0TCuZb2gm00ILfaBMv6/B0hp8Rqs0Zbb1PM+5wyHPqCGdfmgS9oIYm1Is9oeCYcdxAVJ
+         UwBcU745Cb8kkj8a4D2y0fKTBX+7aNOwwjMVpjyvk4reUCGmurAranHmmJ1uXpUXXNKZ
+         PKzPfgin97YURnNkOmQ4MbpL6z7v0vgnwkUMfDApVJRGopIuTWYMAmq6PsCDO9uYOhzk
+         FaX+UsM9J8al6Yfz4sq2fNwp7c9b0qkIdXIDlLzwg/bvuEfz+bRc/Zxj1YfyxuYo3Hi4
+         moRA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742255484; x=1742860284;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TRQ/GwuEKDlWODVcSQfxpM5Lw2RQXG7ZSKeiwlAjR7g=;
+        b=KMcnVUaVvJ/WPRTl+TX56rgwgL6ifrDWFNE01utagqi0Gm9uxamtbQ39POGR6Jr1vn
+         pDYP7kDRAkByL9xhl/GExsdzzQaR8u1QAV4SRwlKvKxJKfiu7MzC544EiXP8ZONtyue8
+         soGrHxHzZb4qSuIM5FKD8jvGKslX9FxGJk0bt5IrJsLWOnYsp0kV8UjRa/sFF7HPm6Z1
+         BkjqfHDQy7vBr8D2dZvVyJLjAIjOh57LlI5wxPWnxvBb8phj84Jt7cx6QoD6IjE56Xbh
+         OdtHdZEPRf/j2cPdSdC+Oq/HbPns3ufPuFtxhjQDF9fBmw79UrvOZRl+NvLPaY22KZSC
+         oNMA==
+X-Forwarded-Encrypted: i=1; AJvYcCUyfCMWucOfRDH2L+RqOj4svDy6eFZOY2T2yTNSyJwWP8HpphPu5Jm4udEYNqW4y7eazQxG++L4BtW1pmc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyQQyEcES1S1rkepEVkpEDdawpaBd/XZES0kZFIapkz5t/GQD5W
+	7wrkDv38Prrf+6zR7XW6Ol5jq80VydAniMbrY54k4knSXmHNYqxVPqW3o1b1Upd1PxOFIDGL/Km
+	HzxNc1mgp5qiFS39CjMipS0WNAaNMw1vK0IIpTp3tFrsPUshkMFP3CXSom5lbQ90=
+X-Gm-Gg: ASbGnct3t5+hmIvMPLJIR0DlcTOVkawMC2Gp4Nan4PjSHLWUYQZAeL4CShi/dtHXl0C
+	VfabZHwDj8i7oPapxK0i9HtZsrLx5LarDAAgzzOUAd3Tth+W9tzCT9hqMzTcR8uatj7kmWr2/XQ
+	s0BoqQiz/0xarruYVfia+4BjPHrLJoDV2Ntns6w0Wn5ul4MYFXpHmdYZuuQpGmPKnIBt0Ur+j/K
+	0fiLzWu8lXXTDTkCkYVSj3TulEIdHWWt4EQa9IMePOyXTrOkdvGT5qLe13B+na/vx4wQ/GPJXXK
+	ttdjp1scyPhLz0wYFeOFUt8BSOY0c5XTVKceG+ADzXKn9sCrzZ9PF/lIXfN4HjDnWgQ9keDj9TE
+	=
+X-Received: by 2002:a17:90b:4b92:b0:2ee:af31:a7bd with SMTP id 98e67ed59e1d1-301a5b03f3amr308528a91.5.1742255484406;
+        Mon, 17 Mar 2025 16:51:24 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGk+XPSS97YKPi4vp9oXul8r5wshwMpKmVOIfHLVbaOIyiKLKfsKF4T1efoV0atb9QgEGz0bQ==
+X-Received: by 2002:a17:90b:4b92:b0:2ee:af31:a7bd with SMTP id 98e67ed59e1d1-301a5b03f3amr308500a91.5.1742255484114;
+        Mon, 17 Mar 2025 16:51:24 -0700 (PDT)
+Received: from localhost (162.198.187.35.bc.googleusercontent.com. [35.187.198.162])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-30153519fefsm6734019a91.12.2025.03.17.16.51.22
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 17 Mar 2025 16:51:23 -0700 (PDT)
+Date: Tue, 18 Mar 2025 08:51:11 +0900
+From: Dominique MARTINET <dominique.martinet@atmark-techno.com>
+To: Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>
+Cc: marcel@holtmann.org, luiz.dentz@gmail.com,
+	linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
+	amitkumar.karwar@nxp.com, rohit.fule@nxp.com, sherry.sun@nxp.com,
+	ziniu.wang_1@nxp.com, haibo.chen@nxp.com, LnxRevLi@nxp.com,
+	guillaume.legoupil@nxp.com, salim.chebbo@nxp.com
+Subject: Re: [PATCH v1 1/3] Bluetooth: btnxpuart: Fix Null pointer
+ dereference in btnxpuart_flush()
+Message-ID: <Z9i1b9hzZzwJnIYh@atmark-techno.com>
+References: <20240515070657.85132-1-neeraj.sanjaykale@nxp.com>
+ <20240515070657.85132-2-neeraj.sanjaykale@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/awfpBApde4zvnA23wkvrEX2";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240515070657.85132-2-neeraj.sanjaykale@nxp.com>
 
---Sig_/awfpBApde4zvnA23wkvrEX2
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Hi,
 
-Hi Miguel,
+Neeraj Sanjay Kale wrote on Wed, May 15, 2024 at 12:36:55PM +0530:
+> @@ -1269,8 +1271,10 @@ static int btnxpuart_flush(struct hci_dev *hdev)
+>  
+>  	cancel_work_sync(&nxpdev->tx_work);
+>  
+> -	kfree_skb(nxpdev->rx_skb);
+> -	nxpdev->rx_skb = NULL;
+> +	if (!IS_ERR_OR_NULL(nxpdev->rx_skb)) {
+> +		kfree_skb(nxpdev->rx_skb);
+> +		nxpdev->rx_skb = NULL;
+> +	}
 
-On Mon, 17 Mar 2025 23:35:54 +0100 Miguel Ojeda <miguel.ojeda.sandonis@gmai=
-l.com> wrote:
->
-> On Mon, Mar 17, 2025 at 11:58=E2=80=AFAM Stephen Rothwell <sfr@canb.auug.=
-org.au> wrote:
-> >
-> > Presumably this is caused by my merge resolutions :-(  Please have a
-> > look and let me know what te resolutions should be. =20
->=20
-> No, it is due to hrtimer-next, which I still have to merge on my side.
-> I have created an example merge of hrtimer-next into rust-next which
-> should solve you mention error above -- but please feel free to drop
-> hrtimer-next today if you prefer, since I will be pushing to rust-next
-> the proper merge if linux-next goes well, so you will get it:
->=20
->     https://github.com/ojeda/linux.git rust-next-merge-hrtimer
->=20
-> For the other things mentioned in the other threads, I have also
-> created two branches, one merging rust-next into Linus, and another
-> into next-20250317 -- not sure which is the one you usually prefer:
->=20
->     https://github.com/ojeda/linux.git linus-merge-rust-next
->     https://github.com/ojeda/linux.git next-merge-rust-next
->=20
-> It is a bit subtle because we have to "redo" a fix from mainline in 2
-> different places since the lines of the fix are moved in rust-next.
->=20
-> I build-tested the branches a bit -- I hope they are all OK.
->=20
-> I didn't modify anything in rust-next today to avoid further issues
-> and get this part over with.
+This is an old patch but I hit that on our slightly old tree and was
+wondering about this patch: why does flush() have to free rx at all?
 
-Thanks, I will see what I can come up with.
+I think this either needs a lock or (preferably) just remove this free:
+- This is inherently racy with btnxpuart_receive_buf() which is run in
+another workqueue with no lock involved as far as I understand, so this
+is not just about errors but you could also free something in a weird
+place here.
+As far as I understand, even if we don't do anything, the rx path will
+free the reply if no matching request was found.
+- looking at other drivers, the hdev->flush() call never does anything
+about rx and seems to only be about rx
+(ah, checking again as of master drivers/bluetooth/btmtkuart.c seems to
+have this same problem as of before this patch e.g. they're not checking
+for errors either... This probably needs something akin to this patch or
+removal as well. All other drivers have flush seem to be mostly about
+tx, but I do see some cancel work for rx as well so I'm a bit unclear as
+to what is expected of flush())
 
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/awfpBApde4zvnA23wkvrEX2
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfYsagACgkQAVBC80lX
-0GyFDggAnJI5y/xmdhW+fSnakrNZbJSAtyEClpUNHb+FdbYWROVYKHavH5FdXEDb
-BYTYu/zdelGpYmiWOwIpy9icsC1TiHt0byogLv4f/oPSwr5VNa6G1uJWIq+LhWnf
-c9/pIVUC58gPFkyoSuhDVwKrGnItq1uIFipxuE1xuUp5gDKxtRV+RBIUdcf4nYqf
-/mvDvwkSArp1CpeuN0zBiqNaYzd8fAX7emUSvsqcilf537be74l1LHTpMCh3yant
-a+Q2dLkL59Lp3cllHTA+dQVsPGy9/TDOKk6Z0qC6qx9HPiXQG1s3yH+VmdgO9LVg
-cRqPqLfoGz9mfYed3reM3ya6vUG2QQ==
-=gpVy
------END PGP SIGNATURE-----
-
---Sig_/awfpBApde4zvnA23wkvrEX2--
+Thank you,
+-- 
+Dominique
 
