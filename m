@@ -1,84 +1,64 @@
-Return-Path: <linux-kernel+bounces-564609-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564611-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18A4BA65836
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 17:36:35 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFB3BA6583D
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 17:37:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD0043BE0A4
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 16:36:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F6A116B891
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 16:37:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C2381A314C;
-	Mon, 17 Mar 2025 16:36:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBABE1A23A9;
+	Mon, 17 Mar 2025 16:37:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cBvBe2fi"
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jUdtDrGp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60CC31A23B5
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 16:36:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 426601A00F0;
+	Mon, 17 Mar 2025 16:37:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742229379; cv=none; b=mqROIMwsCf/M0yJkRxyNqmtXweEDANiwl7n4TGd2GRN+z6XdymN8IiynVD9cVtq/xxgeld0HcYfU4+o+UriB81DE2o3OnuWtKmksaVpFhDMjtVXRR4pQxqg5bxnNg+t7jG2ZABxff7FYKRsb7/dU9/jQHGlNUQ5tksKNzEY1tTA=
+	t=1742229449; cv=none; b=cHtZ4/Q/h5jEZVuOCeHLdHsucAbuDPoEKDeb87uTGWxN96y3MPdFO4iLSCTTwQhK9uCCupsDLe14GxoIfJvsSV1+F9wANbalyoPLogY4hH6kBl4cVNZFm8LEGSdqc/QT+JpLjnLzh49kFjkDGqNKoQAFeNN/eF/H5MWGys8YF4w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742229379; c=relaxed/simple;
-	bh=+5qOoiQ9fJgCIchDENR3sXW+cpUgNlPDH1B+xKZEJEs=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=LcFRPRvQ3vxl8h7B8WkIRUvHDW5nTX67O2eyAxzSQfsv1zKd5kQcLNXgF5WFOwkStnPbx2vbgFYNcqwiKxDQR+Ato5Cbs4E8LPYLbZRyq4QiUbgfH1dZdLC/oB0ikK73BbBlcTEIy/4Vrch24MX4B2UGydvu6DilYh8gnoOKbMY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cBvBe2fi; arc=none smtp.client-ip=209.85.208.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-30795988ebeso48143661fa.3
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 09:36:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742229376; x=1742834176; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Fm+Vc8Ft3wj+TdV2Qy7sCZQLNLQL3Vgkfnk4EUOWKbA=;
-        b=cBvBe2fioVkZjKS+HtqMYPn4uhG/KpkRneExZYWyAH/p9YQNnw3njRGEySeZtvrh7T
-         ZCH9Gk0wrRkcrZvJ0Hd+QWPPxyh6AQcXYv7rboONT7hPN2tv6OkWAWvzqUv+QD9vqnB5
-         RwzzX8Q1z/paMNN5I+RFfxBVRPwqWWZHv2q31LjkPjk4TtoBs+usur1oRnSi292p3XPY
-         ku6SXXZYA1GPGBO7+Bt/oDXjfl4G7hByUScmN50GpFcc0LjWUabIYUlskWgSv+bhB+AT
-         w0UMlNRB+yl7M5r1ikE3dZQPdbniLCyKaTzMeYYQG4XM9R+BhdiElND5Ic2fQ1x8IItf
-         FA2A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742229376; x=1742834176;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Fm+Vc8Ft3wj+TdV2Qy7sCZQLNLQL3Vgkfnk4EUOWKbA=;
-        b=iuI8w8N9OmwomqhSIRPf9qnAWVCpbJRiSV79qwVhX/xGdBUkzjuXvW8zy2svLiRmro
-         /B5BzNeHzANnYk99wOmdEg6WaqL6MZv/TIBvMVRiD1CaxEombBRH0bMw76AcJJE77E76
-         dnUm1eE0me4MJZptUkOrYYbk8W9pb7yUdlL3wUlvsF5RFGgQaVf7TKSdFBDlbZpWpumD
-         29Hy3VAGr7vUVMntPsmXi81NN5LhVmP3xuZekHMiDQ5e41SI1zH2RyUwCiZGU3lA+Cs5
-         yRH1UonLswxpiELl7eFdLOH8DyZISTPOl3ytAW9Eswy//ITS9179YG3AXvGlsMT6+o8D
-         cpjw==
-X-Gm-Message-State: AOJu0YyiIeBoMYK3xwlHcejKTqtZsx1rphQRZJLKkvRv6cIhWsm0w+ZK
-	lS0wmnhiywB9oYHIn/58d/aE1wGaCzXbf1r/whE2IAL6R3zxcmw7vJUTUA==
-X-Gm-Gg: ASbGnctRipW4xi4vJwn/1/fm19OEPAGws/d6nhQrFhrCS8BjlnaBL9FlIDwaYpA4tD+
-	DhycKKnB47061vyOhBpoKZyJFTITf6QeBdY3H1/nzG+BX4dyKY6Dt+mtmYQwvhENPrGBrxQrteF
-	P3pdA2VxBf6y4kAAksI+jLohWCyOEZJABbq+P0Ijk/RH2DKatNId8Sdi6/aH4fO7UoceMjIRRLz
-	JhYQWaL81XCq9Hkpvelf9hS9GJfKSs2tFcX9VDkxLqy0nrxjv7nyhqd8sCVu9Y8yWo9LRkqUBGU
-	DYkTRwmxSokiBLc9SJTHyDjrhE+oqVcadJeCIgXU
-X-Google-Smtp-Source: AGHT+IErnjd1NSIMGuhSG/RxgeAIAcxg08vAi/aa0NwoW1lo5isTMHntblkxDcHvV8JQPOGA6bZkHg==
-X-Received: by 2002:a2e:be89:0:b0:30b:bba5:abfc with SMTP id 38308e7fff4ca-30c4a863416mr76221661fa.9.1742229376263;
-        Mon, 17 Mar 2025 09:36:16 -0700 (PDT)
-Received: from pc638.lan ([2001:9b1:d5a0:a500:2d8:61ff:fec9:d743])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30c4012af5dsm16457911fa.15.2025.03.17.09.36.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Mar 2025 09:36:15 -0700 (PDT)
-From: "Uladzislau Rezki (Sony)" <urezki@gmail.com>
-To: LKML <linux-kernel@vger.kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Oleg Nesterov <oleg@redhat.com>,
-	Tejun Heo <tj@kernel.org>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Oleksiy Avramchenko <oleksiy.avramchenko@sony.com>
-Subject: [PATCH] fork: Use __vmalloc_node() for stack allocation
-Date: Mon, 17 Mar 2025 17:36:14 +0100
-Message-Id: <20250317163614.166502-1-urezki@gmail.com>
+	s=arc-20240116; t=1742229449; c=relaxed/simple;
+	bh=N/aRBNxPho1kgMQVdIQBUk7vp1cyQKJPsr48d15Ncd8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=QGNLDq/jyF8XzV48W31OiWkg9Bw+EOUOtPWWKXcyOzgGiFXta4mquc2lQaMkFP5dVHfKF1U6AEjssaN6Ry5+hy/l5KScuM9MovNisQs5FiwNbr1YIopxE5JX+PJnBKT9/Yjjqdjx8+jFf6uSf6Hi6Dj2dZvYxApv1AaDy+KnC3Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jUdtDrGp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 010CAC4CEE3;
+	Mon, 17 Mar 2025 16:37:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742229448;
+	bh=N/aRBNxPho1kgMQVdIQBUk7vp1cyQKJPsr48d15Ncd8=;
+	h=From:To:Cc:Subject:Date:From;
+	b=jUdtDrGpgs/ChDc98BmwBjXLkvgcajah+UEnTjFTd+i+nrJS1xPdHDUg1TYFObOZv
+	 yGNj3X5fl0kVKjfz9gbkQMiqlEv7tMG79KiwDxuVKS08FSBcCq5dXvBLWlq/2hlMAP
+	 N37ly1/tI8Gndvcr3bZtM+Qq0nuhhbYEVw3Y/kuU39pDvj24RhVgew72iEUiTscNlv
+	 pjip3S1PmLu2H84BXVXtwYXFpXf3fqFfWJ2x65Zmg0UWUg8nqi0rUPicG4JmAv5hmv
+	 t2Ofv2m6btpBB2J2crxLF8AF05pvUf/nCtmbQpRSdpJHXEiKKuZl6OQvOl45Ol90M9
+	 OMrlAdpIp13Wg==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Naman Jain <namjain@linux.microsoft.com>,
+	Saurabh Sengar <ssengar@linux.microsoft.com>,
+	Roman Kisel <romank@linux.microsoft.com>,
+	Wei Liu <wei.liu@kernel.org>,
+	Sasha Levin <sashal@kernel.org>,
+	kys@microsoft.com,
+	haiyangz@microsoft.com,
+	decui@microsoft.com,
+	tglx@linutronix.de,
+	mingo@redhat.com,
+	bp@alien8.de,
+	dave.hansen@linux.intel.com,
+	x86@kernel.org,
+	linux-hyperv@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.13 01/16] x86/hyperv/vtl: Stop kernel from probing VTL0 low memory
+Date: Mon, 17 Mar 2025 12:37:10 -0400
+Message-Id: <20250317163725.1892824-1-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -86,39 +66,47 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.13.7
 Content-Transfer-Encoding: 8bit
 
-Replace __vmalloc_node_range() by the __vmalloc_node() function.
-The last variant requires less parameters and it uses exactly the
-same arguments which are partly now hidden inside __vmalloc_node()
-function.
+From: Naman Jain <namjain@linux.microsoft.com>
 
-This change does not change any functionality. It makes the code
-a bit simpler.
+[ Upstream commit 59115e2e25f42924181055ed7cc1d123af7598b7 ]
 
-Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
+For Linux, running in Hyper-V VTL (Virtual Trust Level), kernel in VTL2
+tries to access VTL0 low memory in probe_roms. This memory is not
+described in the e820 map. Initialize probe_roms call to no-ops
+during boot for VTL2 kernel to avoid this. The issue got identified
+in OpenVMM which detects invalid accesses initiated from kernel running
+in VTL2.
+
+Co-developed-by: Saurabh Sengar <ssengar@linux.microsoft.com>
+Signed-off-by: Saurabh Sengar <ssengar@linux.microsoft.com>
+Signed-off-by: Naman Jain <namjain@linux.microsoft.com>
+Tested-by: Roman Kisel <romank@linux.microsoft.com>
+Reviewed-by: Roman Kisel <romank@linux.microsoft.com>
+Link: https://lore.kernel.org/r/20250116061224.1701-1-namjain@linux.microsoft.com
+Signed-off-by: Wei Liu <wei.liu@kernel.org>
+Message-ID: <20250116061224.1701-1-namjain@linux.microsoft.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/fork.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ arch/x86/hyperv/hv_vtl.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/kernel/fork.c b/kernel/fork.c
-index 2fa2a3582925..72d9e7c7639e 100644
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -311,11 +311,9 @@ static int alloc_thread_stack_node(struct task_struct *tsk, int node)
- 	 * so memcg accounting is performed manually on assigning/releasing
- 	 * stacks to tasks. Drop __GFP_ACCOUNT.
- 	 */
--	stack = __vmalloc_node_range(THREAD_SIZE, THREAD_ALIGN,
--				     VMALLOC_START, VMALLOC_END,
-+	stack = __vmalloc_node(THREAD_SIZE, THREAD_ALIGN,
- 				     THREADINFO_GFP & ~__GFP_ACCOUNT,
--				     PAGE_KERNEL,
--				     0, node, __builtin_return_address(0));
-+				     node, __builtin_return_address(0));
- 	if (!stack)
- 		return -ENOMEM;
+diff --git a/arch/x86/hyperv/hv_vtl.c b/arch/x86/hyperv/hv_vtl.c
+index 04775346369c5..d04ccd4b3b4af 100644
+--- a/arch/x86/hyperv/hv_vtl.c
++++ b/arch/x86/hyperv/hv_vtl.c
+@@ -30,6 +30,7 @@ void __init hv_vtl_init_platform(void)
+ 	x86_platform.realmode_init = x86_init_noop;
+ 	x86_init.irqs.pre_vector_init = x86_init_noop;
+ 	x86_init.timers.timer_init = x86_init_noop;
++	x86_init.resources.probe_roms = x86_init_noop;
  
+ 	/* Avoid searching for BIOS MP tables */
+ 	x86_init.mpparse.find_mptable = x86_init_noop;
 -- 
 2.39.5
 
