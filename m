@@ -1,190 +1,124 @@
-Return-Path: <linux-kernel+bounces-564780-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564781-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8211FA65A98
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 18:24:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EAE8A65A9E
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 18:25:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AEFD4189A1C1
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 17:20:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE1DE881057
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 17:21:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EED75199FAF;
-	Mon, 17 Mar 2025 17:20:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 537E919995B;
+	Mon, 17 Mar 2025 17:21:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="M3Y7p70/"
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2043.outbound.protection.outlook.com [40.107.243.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FeJ+abTM"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EC1D17D355;
-	Mon, 17 Mar 2025 17:20:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.43
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742232036; cv=fail; b=B/nUaOFsQkhvqL8nvlE76UiS0bVKio5eRu/gZRW9myk0EZ4UdbZ7ZWheLIBJ419dLJjsBfHPcdsJddGwgrcGeOHY2tYyOORs60+xkDAFH4vQPYrx7A7KuvLjB1CNpPFEedMAzvvTS1bJj7qroRX1U1PmpLKS2AHKxKd+zBG17q8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742232036; c=relaxed/simple;
-	bh=MrA797OUZjv3C2t3Pw+NjfHck/zXJeZS2SpVR/MgZLY=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=vBveB/JuGsIJCp2AhVZ0Pc82xpPxoV/c++JSGum3FknHD2bZ3ow3/kZ+e7sf8PuuD0K4KBL1h2QxtXOqr6ToDo6XwAruYKWzM6hz/mGakOjZ1ipnuRa83VqgDCZX47BnAAbXfu8uoGx8hY8BtDG+qS5fcW4pmXKSGc+M1KnCQ7w=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=M3Y7p70/; arc=fail smtp.client-ip=40.107.243.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=nVG1OoUsr2ExdsgBZeG36p7xl2V1RHycr4zu8HrSyzzyCYwYbOVfo9sQORttWCRyLmvh0mn7xlnhGNjdcZuzWuvqzlGWTRSyZMLvzZgZnVqttnFcO0irj8jALIoknkN75u1kyeIb5t574DY2urIT4busRvx96BKJfzsmv4oIfP5SwOxOJXz3neIGcwm7Cdd+QYLZr5qhx8fzv9qc6b1kQlzJtag/vnKAvSdsbqjnl3leN+1iT6d0zlesDnDMQ5VFAduMH2Dq9xaERvii0+8AghFoL/VzWeWnr8qTq0zxhb9bEfqw5D+SSNhuoqUwIvNAGZ4GVHciM+kmujulZr7lag==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/WoYq0dumOOiuZ2TiiQ7RQyEl9gLE5ha6rA9qG9gFlg=;
- b=EiWoKwsrX+o9zC3+8/6aeuygHUqJ2mpA+HsY4MKNc5DUhrpjOu8Suc8Lc8r47Yauavy+bI5fW+w+nMwTOX0li5ubk9yzZucLEmI7fsFlMy++BErjVVwmIue02d/kMvZXJ3igG00EGUczOVZ0of8EnxnOTqb6lO191Cxbe+eRrm2v9DQi9f4NbzR2WeNxBtUm7NcCnuaY01aoeF0vYr4ooILG0nQj5haAB3VxEmpy4aW71bjZK7zQOaqAnfO1J+WKsGRbUyc4p4S0IyyPE299uyBVt0qnf8FCE78LbPBuvoz14nE1up3/GhrRc4QeNORYV50Rtrs1W2jILRsaAPSaqA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/WoYq0dumOOiuZ2TiiQ7RQyEl9gLE5ha6rA9qG9gFlg=;
- b=M3Y7p70/rL9wioqWv78jkz7sjqKuHBX2p5+FCDpYuZ37RHtHRolsGNsoaF9fXZOXN3m2pme64ssvT4H9RspnQ8hzqPwp+h0YQPg1AI36nuVtfN4C2bEtZjM8xV+6QTvfjp8Pp8A9WUdgvtkitttOCpLp4SOIqQIPyCo9CCvZiPs=
-Received: from BYAPR03CA0027.namprd03.prod.outlook.com (2603:10b6:a02:a8::40)
- by CH2PR12MB4037.namprd12.prod.outlook.com (2603:10b6:610:7a::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.33; Mon, 17 Mar
- 2025 17:20:29 +0000
-Received: from CO1PEPF000066EC.namprd05.prod.outlook.com
- (2603:10b6:a02:a8:cafe::42) by BYAPR03CA0027.outlook.office365.com
- (2603:10b6:a02:a8::40) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8534.33 via Frontend Transport; Mon,
- 17 Mar 2025 17:20:29 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- CO1PEPF000066EC.mail.protection.outlook.com (10.167.249.8) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8534.20 via Frontend Transport; Mon, 17 Mar 2025 17:20:29 +0000
-Received: from tlendack-t1.amd.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 17 Mar
- 2025 12:20:27 -0500
-From: Tom Lendacky <thomas.lendacky@amd.com>
-To: <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>, <x86@kernel.org>
-CC: Paolo Bonzini <pbonzini@redhat.com>, Sean Christopherson
-	<seanjc@google.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
-	<dave.hansen@linux.intel.com>, Ingo Molnar <mingo@redhat.com>, "Thomas
- Gleixner" <tglx@linutronix.de>, Michael Roth <michael.roth@amd.com>
-Subject: [PATCH] KVM: SVM: Fix SNP AP destroy race with VMRUN
-Date: Mon, 17 Mar 2025 12:20:14 -0500
-Message-ID: <6053e8eba1456e4c1bf667f38cc20a0ea05bc72c.1742232014.git.thomas.lendacky@amd.com>
-X-Mailer: git-send-email 2.46.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2166A29CE8;
+	Mon, 17 Mar 2025 17:21:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742232064; cv=none; b=RcCGsRxmGRArMvwjD+f4iF1/ohRyHHODFUL+dbDqZHHwPz3r8A0ZXP9JXr96AstTzwMZ48k5kkaAv8Ecl0t6vdXWSKN1RGCUAbFCr8nfN/3YrzJ0NVQbphgxORg8mnmP6wG4QsshZHj0Yf4UnLLXhi+lrm6GiMlOXeV7tuMAnO8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742232064; c=relaxed/simple;
+	bh=wzAkbOeVP7xqqD0XC950bR9UvHLmFAEmwQJBYHuHHr8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=sX91PV6kn6UyceqatUUuAeUcogzY4Ib/5XdQ0hBcVp9NuXo4+PzYWYXeQfITqu4cu8vdZ+0RIGujAo1+P8/74gtVWo7eK0EebyZpJ6uji5I5i46Lr8KUh7m/B5+7rW4NDW7AdukQ04E19EGTdW94cQenTI/hxWB4fEXTSQpWqVo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FeJ+abTM; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-43948021a45so25307305e9.1;
+        Mon, 17 Mar 2025 10:21:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742232061; x=1742836861; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Pdy+gIcUJozBrDyGWdtSpsvlQR5bKFNfUvrA1WQZkmk=;
+        b=FeJ+abTMu7mGWnCLN6O0XMCmD7Vmir7otz2AC41e5asFlYsj2h9Lh32uogp7gJPR5S
+         CeLsnb2xFJUJ1cr+r8jy/9WIB7fFfTYMvhvZTDdZdaTXzHY81gQfHw28pyAXXxgBUjzm
+         vtEpFjKKmWEeLI4wu3R/surM8xK07+5nxC2c+1zt8kgRNYIR6QFmVL88GF7mRIkxDq9I
+         ByrBdsG/bQVBdTRbE1WH6XCneBnZAK1PqsFQYh0Gw5WbgpSC4dEAchgfvXGvZ3unkXeQ
+         bNvjmOOjwN7vjjU7j47iXFvD3/8hoWB5NRiH9sI4gfJAA9tKqyCqN48DKBbEPyWMndh7
+         proA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742232061; x=1742836861;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Pdy+gIcUJozBrDyGWdtSpsvlQR5bKFNfUvrA1WQZkmk=;
+        b=TaNC2PGDe/QXeEARiLdXxe3LECBiIPdxEG9938vLHmccnQab6C09GR+WDUS0YJZRGQ
+         CnqlsCmD7vxv3tOj9XUA0lNds1//9lfc+RJQQXaepT1n+7XxFG/TWQ8NbtHuQfn2/vGG
+         ZCVozhx6MVoaOITgzaJUUw1vGEry7cGH0k6rGVVUjZdbFBEswD/KH6QcNUgbBKCNaQ4L
+         ZsbDrvPCv8VCYl/MfD8j6sP6do9Z/jxnSbiV4jw3SV0WxCyGABzSPj95B5s3K3tZgOj+
+         Eg/+iae+vTs2YfWHQC0r7dE3B60oJvw+LgtUSiUtAXcjkL+oaKZaZHwV5OZyWHrNNgFf
+         T+aA==
+X-Forwarded-Encrypted: i=1; AJvYcCUXyXKPha6KSwF2f9jQP4/qGSNBQeF9G1wgvtGcgAD841/gm9+iRJPBHfmmJvVPotmKsG7Cyv3LOuXy3q4=@vger.kernel.org, AJvYcCXz0y5eLgMGi0YWWzip0pkVr6xkRK/ZciTAx8LO+G3HGhiwUehePI6DYtjHLqokhVaeJOiIhLVD@vger.kernel.org
+X-Gm-Message-State: AOJu0YzsrjapgfGlNMOIxyF4pElXhqn2FU9rtTOBqdVcCvGZQx9NIYMX
+	eX6jb1agP7hLTFHPHGvgAF5KKOcDls4F7+yhvy25tftdyCGHnvTK
+X-Gm-Gg: ASbGncsYbq70B6GQiyVAJCnjGMEDjhw/PW5hDjXpIwklZKPjtt3xgnzBvmto3ALVI8M
+	PWRWughjMp87eWDe0zS4VzMiGAAn5IYgYwS1eBudLqDtN0Spl4cC6lyHM5Cc+8EP/TT8PFJFXPy
+	jVvxpiikDMfh0j5nPaLG4POYaJzfhEJ18ZEsia+FyzlEofs9dRiVPVkJ+lI8SyEu0LF1qjxaWGP
+	suyo/7ADfAdiMXVJrYCQD1DuN2nCi2hExJPsGtHz8xkiCbg//lro7KzJ/ESIySLKl8MRPKZk0dG
+	Z4+5qdKhGZP7pMVswhcJDNZCPUwjKZEnGAJmlDizuzxKOnTBAU+3J7h2
+X-Google-Smtp-Source: AGHT+IH9v1iH0ZDNn8ib73oFHv+E3KPSpU0dfOiqNhT6bKjdl8ETtAzm/796/PE1D1nATR6iMmssOg==
+X-Received: by 2002:a05:600c:3399:b0:43d:2230:300f with SMTP id 5b1f17b1804b1-43d2230311bmr123291775e9.0.1742232060997;
+        Mon, 17 Mar 2025 10:21:00 -0700 (PDT)
+Received: from localhost ([194.120.133.58])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-43d1fe60965sm110941615e9.25.2025.03.17.10.21.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Mar 2025 10:21:00 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Tony Nguyen <anthony.l.nguyen@intel.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	intel-wired-lan@lists.osuosl.org,
+	netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next][V2] ice: make const read-only array dflt_rules static
+Date: Mon, 17 Mar 2025 17:20:24 +0000
+Message-ID: <20250317172024.526534-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1PEPF000066EC:EE_|CH2PR12MB4037:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9a9a8670-8dc3-4b90-ca54-08dd65780421
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|376014|82310400026|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?TasFgzvcK84cOTNlk9y6ee/aCSbmZ/5eFJVT2gosDknYcw/GPRJw4rfFEQq2?=
- =?us-ascii?Q?pGrusFzZKscRWDrhejrBpy2M2GGWxHHwv11ln1fsIzIIhMrY/yIzSAB4LhNM?=
- =?us-ascii?Q?MrgB2FhVf/lVS8dUqdgZE4DDbX50rHHOxGkpq5q3Lsc+PDqWWhihkk884ScG?=
- =?us-ascii?Q?ElBOfS76rxPg/RtbfWvIlWlDb38cmx1KydrLddA5FveAyctF5SR9Cscev5oT?=
- =?us-ascii?Q?8khSAKgGdyaeEZZnGGU2U+1gvSsWr29tTkuuhJla5Q0p3CcmKvLZBKSyuzgL?=
- =?us-ascii?Q?EgcEGgDsm0taqHCWPAwggKb1YIBMSU30Wp9X+Nzn0x+yODf/m1btI4mSY6mU?=
- =?us-ascii?Q?HKUe3qYSnSxyWdUJIz04BGWk8hoqPat4BsyoVr4IGcit2vfHMRe8UcY18IAF?=
- =?us-ascii?Q?fnZdQ27uHKN4bSwdCB4uhLkh8DxbVlxH0ASWR96FCYMxP9j4tV9CCoNnA5a8?=
- =?us-ascii?Q?KDBmp4e+HgtAM6OvSYEjvlxiwgJriQ0WY4hp6LdLwst0CLJijLTdWeu7J5xL?=
- =?us-ascii?Q?8vAK7xSk4ImwOkJ6uc7PxEJA2DAJD/QUCOR81SW8k6hUAfu/iSjXZYkIy0ax?=
- =?us-ascii?Q?rfZNnztkW7kahjZIGmyMLM00obAXwiLgf2uzlRfwibdfaFIkCvx+E6hqWF3C?=
- =?us-ascii?Q?nRweIm9icWUIg/+NmqvFfvl+bxIAi0gCzxJfYUhf8kl7y9CS0VFYbZVQZFnf?=
- =?us-ascii?Q?PiUYXYiFtvf+zpodEB0LD60qxNIeD2FQ7t5I5Y9RCkMG0YZpmSL26XpvTpQN?=
- =?us-ascii?Q?Lhulev42hTbMyIs2EJ/ZvDWXW0VYrh1JlE/tfaQRAGylUkJQ1j8cxXj0mtjs?=
- =?us-ascii?Q?wwxdwO1GxcxkB7tLZeYcwDDPVq3v86TnDx91/cPEPnNzMhRS43E82JqKKqFA?=
- =?us-ascii?Q?IarqSKlPeqItC1APW07aZZ09lWxtEpE7wF0BXMGnPXHgSwBfpQVsFw//9xH8?=
- =?us-ascii?Q?T1z+7sbHfEPw3s+mli/OoYvWjHvPeHOHN5Vz1yo0uVle9Y9MXZf6q0PCgDgR?=
- =?us-ascii?Q?ULOd0VXitSGQSpOKvPRrbQTxv9VgbssfAYIBPVR36Qh+nAVVv1+HkIbFitKt?=
- =?us-ascii?Q?0BeKawiVCbHdUlgmmk+iRq003DiIJG3u0GpdJJP+hNvfR5Icrk9fXv+gckAn?=
- =?us-ascii?Q?++TMELzOAIs02W57QZO5CfJfM7QrozNlGe8OSy7ViXSYVBL6b7ZnUwboli/y?=
- =?us-ascii?Q?tpApcEyOfeUSRafZVZvdRsqHjVcmehJiqSrcA5g8BgkyPDHJYWEljV0l3vuc?=
- =?us-ascii?Q?L38VeG29/ziFlTWW3Ntuyl6ZVlOuLxgXAjQYD+WyfnDKQQayyCSpabQQNT4h?=
- =?us-ascii?Q?3ek8kkcSmv1PfEG5zYj65KNJQcTaHBqiL238mbGu+V0qRCO6tdZz+UwEhNfP?=
- =?us-ascii?Q?8QY15pzWcoKTMywJwmSQRJUczv1a8Ke9Z8muyiwq52uTgc3xG5SQBdBfDc05?=
- =?us-ascii?Q?pL5TWZqWsUQ9R2cO4FSHQkxlqeX23q5LJco494iUGoRuWL07QeK7Gw=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(376014)(82310400026)(1800799024);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Mar 2025 17:20:29.4876
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9a9a8670-8dc3-4b90-ca54-08dd65780421
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CO1PEPF000066EC.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR12MB4037
 
-An AP destroy request for a target vCPU is typically followed by an
-RMPADJUST to remove the VMSA attribute from the page currently being
-used as the VMSA for the target vCPU. This can result in a vCPU that
-is about to VMRUN to exit with #VMEXIT_INVALID.
+Don't populate the const read-only array dflt_rules on the stack at run
+time, instead make it static.
 
-This usually does not happen as APs are typically sitting in HLT when
-being destroyed and therefore the vCPU thread is not running at the time.
-However, if HLT is allowed inside the VM, then the vCPU could be about to
-VMRUN when the VMSA attribute is removed from the VMSA page, resulting in
-a #VMEXIT_INVALID when the vCPU actually issues the VMRUN and causing the
-guest to crash. An RMPADJUST against an in-use (already running) VMSA
-results in a #NPF for the vCPU issuing the RMPADJUST, so the VMSA
-attribute cannot be changed until the VMRUN for target vCPU exits. The
-Qemu command line option '-overcommit cpu-pm=on' is an example of allowing
-HLT inside the guest.
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
-Use kvm_test_request() to ensure that the target vCPU sees the AP destroy
-request before returning to the initiating vCPU.
-
-Fixes: e366f92ea99e ("KVM: SEV: Support SEV-SNP AP Creation NAE event")
-Signed-off-by: Tom Lendacky <thomas.lendacky@amd.com>
 ---
- arch/x86/kvm/svm/sev.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+V2: Remove additional changes not related to this commit.
+---
+ drivers/net/ethernet/intel/ice/ice_ethtool_fdir.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
-index 0d898d6b697f..a040f29bb07b 100644
---- a/arch/x86/kvm/svm/sev.c
-+++ b/arch/x86/kvm/svm/sev.c
-@@ -4071,6 +4071,16 @@ static int sev_snp_ap_creation(struct vcpu_svm *svm)
- 	if (kick) {
- 		kvm_make_request(KVM_REQ_UPDATE_PROTECTED_GUEST_STATE, target_vcpu);
- 		kvm_vcpu_kick(target_vcpu);
-+
-+		if (request == SVM_VMGEXIT_AP_DESTROY) {
-+			/*
-+			 * A destroy is likely to be followed by an RMPADJUST
-+			 * that will remove the VMSA flag, so be sure the vCPU
-+			 * got the request in case it is on the way to a VMRUN.
-+			 */
-+			while (kvm_test_request(KVM_REQ_UPDATE_PROTECTED_GUEST_STATE, target_vcpu))
-+				cond_resched();
-+		}
- 	}
- 
- 	mutex_unlock(&target_svm->sev_es.snp_vmsa_mutex);
-
-base-commit: f8d892c137f7448d7b49f5e3ad7aa7b5a48a64ed
+diff --git a/drivers/net/ethernet/intel/ice/ice_ethtool_fdir.c b/drivers/net/ethernet/intel/ice/ice_ethtool_fdir.c
+index 1d118171de37..aceec184e89b 100644
+--- a/drivers/net/ethernet/intel/ice/ice_ethtool_fdir.c
++++ b/drivers/net/ethernet/intel/ice/ice_ethtool_fdir.c
+@@ -1605,7 +1605,7 @@ void ice_fdir_replay_fltrs(struct ice_pf *pf)
+  */
+ int ice_fdir_create_dflt_rules(struct ice_pf *pf)
+ {
+-	const enum ice_fltr_ptype dflt_rules[] = {
++	static const enum ice_fltr_ptype dflt_rules[] = {
+ 		ICE_FLTR_PTYPE_NONF_IPV4_TCP, ICE_FLTR_PTYPE_NONF_IPV4_UDP,
+ 		ICE_FLTR_PTYPE_NONF_IPV6_TCP, ICE_FLTR_PTYPE_NONF_IPV6_UDP,
+ 	};
 -- 
-2.46.2
+2.49.0
 
 
