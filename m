@@ -1,128 +1,152 @@
-Return-Path: <linux-kernel+bounces-563420-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563421-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F484A64167
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 07:27:51 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 628EEA64168
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 07:28:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 71FED168D70
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 06:27:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B4E80169352
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 06:28:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64515219A67;
-	Mon, 17 Mar 2025 06:27:46 +0000 (UTC)
-Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [63.216.63.40])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EC06219A7C;
+	Mon, 17 Mar 2025 06:28:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TxgFanU3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A809207E1C
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 06:27:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.216.63.40
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4823218AC7
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 06:28:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742192866; cv=none; b=Q2xebltOwJQDSjaYjr8K5lIWP8wieiNBMlZVH1trvNBq4Ubwl37P22uYU3f7hY24PE7KoAtjuJ1JPh90AoNNQ7bXeu9V0vv83YLUcz55PiF1J+HJPg+Q/fpnq85Gtlz6qCfnljlhnc/00+BDWqDlqfogSz+6eYv31ZFaDWUndcA=
+	t=1742192888; cv=none; b=O4RSP/FMirxB7KiLBQ7mPWIxx3hOZi/WoZCY/v2zSDEhjHOnTZ97kC9m/6mKks6Z5qDjf6rEXcfWW1PhKMVnYwkWEH5/K2nR7XJ+16za2w5qHb3jS2fmcpqJg+P+A3tADR/8+sH64SgWYfdqL0OAKeWyXtPFCH50+TsYJjCc60E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742192866; c=relaxed/simple;
-	bh=lrbStXuhtba/tf2eyBPgbMwjXEqi2WgI8rO58vUZgPY=;
-	h=Date:Message-ID:Mime-Version:From:To:Cc:Subject:Content-Type; b=ue3kR7KsYVbTPxGPjEfbXMatxbzfUvfs6GMIaHPbye4uhJHq1DeMDxqmoD3wXwuL+tXmeh8gIFahICGaHUx6A27msefx/NJpekL3X2d3a7RJCv2a/0jaP7AmRX2cWrYKrG+Fw27R44l0cIXMgZJS0BonPZS4Jd7ZfsyKKszC7J0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=63.216.63.40
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
-Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4ZGQ4n3Mxdz8R03x;
-	Mon, 17 Mar 2025 14:27:37 +0800 (CST)
-Received: from xaxapp02.zte.com.cn ([10.88.97.241])
-	by mse-fl2.zte.com.cn with SMTP id 52H6RSwn016175;
-	Mon, 17 Mar 2025 14:27:29 +0800 (+08)
-	(envelope-from xie.ludan@zte.com.cn)
-Received: from mapi (xaxapp04[null])
-	by mapi (Zmail) with MAPI id mid32;
-	Mon, 17 Mar 2025 14:27:30 +0800 (CST)
-Date: Mon, 17 Mar 2025 14:27:30 +0800 (CST)
-X-Zmail-TransId: 2afb67d7c0d22ff-847df
-X-Mailer: Zmail v1.0
-Message-ID: <20250317142730784jyJNa1DQf10K4kIqtJw3w@zte.com.cn>
+	s=arc-20240116; t=1742192888; c=relaxed/simple;
+	bh=i9fxZ+XI8NYRm51/h6v55WoQ0t5KAqKMb6z+WtDxSDA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pPke0Wqvn7r2a9XQOP1+8Wt+7JMcC2rpFQlhBCzU1cVRl1JunEWI3WuC9N0TXDkcEZAaxv3iG3k4q4ga5RHVrsa90bB3VZmxIcmjGGj3jMSy0XdtzkU++E6VBSvSgZjQpWMhIXzHoITFlQr1J90Wifdj8HE8J8fJhF5u9DPqT1o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TxgFanU3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0193DC4CEE3;
+	Mon, 17 Mar 2025 06:28:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742192888;
+	bh=i9fxZ+XI8NYRm51/h6v55WoQ0t5KAqKMb6z+WtDxSDA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=TxgFanU3n7AaKm6sCSzEfSbUTsNekeYgmNNMWsKZiUWuxnP+tHqkJXbEhJG/x1Orb
+	 XcSkgh5bQXoepoKd+1BZb7irFq8y9kF4luWxdpdImuXKx/Ufwn3IRD5kAawO+egB9L
+	 OMmuRSkRO1Vq2ZQ46wb9mivv+ndZmouGDt45rFcF8kbU+3fSsTuh7AVroeoyOqPqWC
+	 OcjLqtENHHu5CIrtnqvTGXJpUIjQNvziJ2cAOOcyEpxoKhTdKhTwQPZFVTr+xesodY
+	 kewIJ2mbVcO1rWbsRSGIMSTdU5xFN/B6RfseAov1bB+owEIPptLmnPpfZg02lsskuj
+	 2pNQ2vsh8zNgA==
+Message-ID: <242e67a0-0a07-458d-a3ed-e37062d940a3@kernel.org>
+Date: Mon, 17 Mar 2025 07:28:05 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-From: <xie.ludan@zte.com.cn>
-To: <tglx@linutronix.de>
-Cc: <linux-kernel@vger.kernel.org>
-Subject: =?UTF-8?B?W1BBVENIIGxpbnV4LW5leHRdIGdlbmlycTogdXNlIHN5c2ZzX2VtaXQoKSBpbnN0ZWFkIG9mIHNjbnByaW50ZigpLg==?=
-Content-Type: text/plain;
-	charset="UTF-8"
-X-MAIL:mse-fl2.zte.com.cn 52H6RSwn016175
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 67D7C0D9.000/4ZGQ4n3Mxdz8R03x
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH linux-next] params: use sysfs_emit() instead of
+ scnprintf().
+To: xie.ludan@zte.com.cn, petr.pavlu@suse.com
+Cc: linux@weissschuh.net, mcgrof@kernel.org, thorsten.blum@linux.dev,
+ linux-kernel@vger.kernel.org
+References: <202503151417004728U9HCHFf6b_zP5GsZuMdu@zte.com.cn>
+Content-Language: en-US
+From: Jiri Slaby <jirislaby@kernel.org>
+Autocrypt: addr=jirislaby@kernel.org; keydata=
+ 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
+In-Reply-To: <202503151417004728U9HCHFf6b_zP5GsZuMdu@zte.com.cn>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Date: Fri, 14 Mar 2025 12:05:36 +0800
+On 15. 03. 25, 7:17, xie.ludan@zte.com.cn wrote:
+> From: XieLudan <xie.ludan@zte.com.cn>
+> 
+> 
+> Follow the advice in Documentation/filesystems/sysfs.rst:
+> 
+> show() should only use sysfs_emit() or sysfs_emit_at() when formatting
+> 
+> the value to be returned to user space.
+> 
+> 
+> Signed-off-by: XieLudan <xie.ludan@zte.com.cn>
+> 
+> ---
+> 
+>   kernel/params.c | 8 ++++----
+> 
+>   1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> 
+> diff --git a/kernel/params.c b/kernel/params.c
+> 
+> index 2509f216c9f3..89ae571af266 100644
+> 
+> --- a/kernel/params.c
+> 
+> +++ b/kernel/params.c
+> 
+> @@ -219,7 +219,7 @@ char *parse_args(const char *doing,
+> 
+> }\
+> 
+> int param_get_##name(char *buffer, const struct kernel_param *kp) \
+> 
+> {\
+> 
+> -return scnprintf(buffer, PAGE_SIZE, format "\n",\
+> 
+> +return sysfs_emit(buffer, format "\n",\
 
-Follow the advice in Documentation/filesystems/sysfs.rst:
-show() should only use sysfs_emit() or sysfs_emit_at() when formatting
-the value to be returned to user space.
+This has nothing to do with sysfs, right?
 
-Signed-off-by: XieLudan <xie.ludan@zte.com.cn>
----
- kernel/irq/irqdesc.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
-
-diff --git a/kernel/irq/irqdesc.c b/kernel/irq/irqdesc.c
-index 287830739783..8ffe12fe5af6 100644
---- a/kernel/irq/irqdesc.c
-+++ b/kernel/irq/irqdesc.c
-@@ -257,11 +257,11 @@ static ssize_t per_cpu_count_show(struct kobject *kobj,
- 	for_each_possible_cpu(cpu) {
- 		unsigned int c = irq_desc_kstat_cpu(desc, cpu);
-
--		ret += scnprintf(buf + ret, PAGE_SIZE - ret, "%s%u", p, c);
-+		ret += sysfs_emit(buf + ret, "%s%u", p, c);
- 		p = ",";
- 	}
-
--	ret += scnprintf(buf + ret, PAGE_SIZE - ret, "\n");
-+	ret += sysfs_emit(buf + ret, "\n");
- 	return ret;
- }
- IRQ_ATTR_RO(per_cpu_count);
-@@ -274,7 +274,7 @@ static ssize_t chip_name_show(struct kobject *kobj,
-
- 	raw_spin_lock_irq(&desc->lock);
- 	if (desc->irq_data.chip && desc->irq_data.chip->name) {
--		ret = scnprintf(buf, PAGE_SIZE, "%s\n",
-+		ret = sysfs_emit(buf, "%s\n",
- 				desc->irq_data.chip->name);
- 	}
- 	raw_spin_unlock_irq(&desc->lock);
-@@ -337,7 +337,7 @@ static ssize_t name_show(struct kobject *kobj,
-
- 	raw_spin_lock_irq(&desc->lock);
- 	if (desc->name)
--		ret = scnprintf(buf, PAGE_SIZE, "%s\n", desc->name);
-+		ret = sysfs_emit(buf, "%s\n", desc->name);
- 	raw_spin_unlock_irq(&desc->lock);
-
- 	return ret;
-@@ -354,14 +354,14 @@ static ssize_t actions_show(struct kobject *kobj,
-
- 	raw_spin_lock_irq(&desc->lock);
- 	for_each_action_of_desc(desc, action) {
--		ret += scnprintf(buf + ret, PAGE_SIZE - ret, "%s%s",
-+		ret += sysfs_emit(buf + ret, "%s%s",
- 				 p, action->name);
- 		p = ",";
- 	}
- 	raw_spin_unlock_irq(&desc->lock);
-
- 	if (ret)
--		ret += scnprintf(buf + ret, PAGE_SIZE - ret, "\n");
-+		ret += sysfs_emit(buf + ret, "\n");
-
- 	return ret;
- }
 -- 
-2.25.1
+js
+suse labs
+
 
