@@ -1,168 +1,242 @@
-Return-Path: <linux-kernel+bounces-564419-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564420-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43FF8A65491
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 15:57:18 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D230A65498
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 15:58:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22EAB18965CF
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 14:57:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9A8D47AB075
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 14:56:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 722E42376E1;
-	Mon, 17 Mar 2025 14:56:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 701522459E3;
+	Mon, 17 Mar 2025 14:56:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y1zIjvTX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="j6ctwHsD"
+Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D03B2451F1;
-	Mon, 17 Mar 2025 14:55:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ADFC24500E
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 14:56:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742223359; cv=none; b=NKoqAL6aT5twZKmSenExFRPTW86AYqI6aeHL7jlZ2wCbHGx+hWFcFBfMDOSqqGFDllrx4Q+GCd7k/H9K33iwKj3I6WguKsKnit1AAO87x1nPSMZ3AEiT3XlCtLnJGnR63k/faKeV3tdLgk0OPMUtkK1CCiyQixCosW0cetwOjHY=
+	t=1742223376; cv=none; b=isOzlS0J2VSOeuJrjuXizOBl6qpyDZZmVIsR/tmTbWY7YBBK/ibhoycmSWAPf5ZL3Ioy0kSj64TKpbE8Jpel3m11qGHwj2VGu6PhzBDWwf7HE+PGUgD9re1F9DUxlVQS4LEsA4hGtd8s+iMqZO1j68gngj7vKhVi7/bdmzjwFsw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742223359; c=relaxed/simple;
-	bh=dufHt2ZbCtfSlksK/9SNCkEaezP+05PBRfmk1Spyi9M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JzRtQKv3NfTJFcUC4nxtDmqSZV+Sjs/iNBOTfFKU78zFO4a0EvBOcQxn77yfwtJOWNN2/nEJ3EvZodNgkMooVypNCsjrAWs1LzIZJ8zhEsqYd34Aj+5S8jG5xmmiAszxCD5hih1xpcCmhe5O4sPaNITwuHokfXYYwi0a7ie0i3s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y1zIjvTX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43128C4CEE9;
-	Mon, 17 Mar 2025 14:55:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742223359;
-	bh=dufHt2ZbCtfSlksK/9SNCkEaezP+05PBRfmk1Spyi9M=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Y1zIjvTX3LkHV0Wqdi72WtXFqj+qg1TRka/DivNu4W6YzyFR6lnNeaq/sn9yOE9Hf
-	 OS5D2z/ivOJI4ER45vbsyqnAPNBnv/kmLXYxyZ0ZKDu3XO3ERgYMmGB4cDCOvOJySL
-	 bJ9Aa7A3bXWN32No/nk7r7sTuow36H3PUj8zZrr1LA19JBeAaoCeFXnF7Wgw77MMvV
-	 /pt8GEsrCkgRxw9QkBq7C1t/EqrchMSrayHnsXb6s8UmShbBEy4MGIrJwbT5MVerBJ
-	 RYJDVLdrHYNPi3qrBwedKETKtjGV1psa+6E8CwOKcruE4Fi0tV42SxaVdSzNS96VQt
-	 Vy2NgDdTkVFJQ==
-Message-ID: <21de806b-1d25-4feb-bc30-1b5c3adf1bb0@kernel.org>
-Date: Mon, 17 Mar 2025 15:55:50 +0100
+	s=arc-20240116; t=1742223376; c=relaxed/simple;
+	bh=USetMNnLv6mapSao6nJZ+0S4WnyCxb3+G2yIS8ycLJE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=bwS67GYUppJO6ULnxKDk0Q0qG5G9sa9fjOLui5XLr4j9RsnruttEKXrQW9EE0S7ak9yOY3s3/sVV6Js9TzoNwjbngVBP1Ov5X3Hv5yxKxlsqUJC/A1ImNxrchk2+tXCz2rqHh/anXOouYjveuBAvh+lEhjuzxL1eHz+SmxFWabg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=j6ctwHsD; arc=none smtp.client-ip=217.70.183.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id BCFCD44208;
+	Mon, 17 Mar 2025 14:56:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1742223372;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dtpDF4LCM5OBZjUURemHi6I53UMKp/PEczf10l0EmfU=;
+	b=j6ctwHsDmHzyLfcyPxHdOFcwr5JZAU/soF26rObmPq/Yp+oQA16mp4ed8gKJqotQIrdgNC
+	9CVFbl63PpbKUIYjQK40Zw/kqvxrHq4jMGNokctx0KsAGs6PbkOrNs2Dz6s5myBz48fkiq
+	Qs27La7lZQKiO8lGgt+FAK1c7YmM87UW9wptD2IE2kUMHQ9q9S34kQrUNK0V2NdayxTNIE
+	98YvbP2hPlmodfgjFn3XIJdu8q0ziGagVhk6nhv+kHyYxhngWSFg9ZivFDoO1yCZZ254L4
+	b3fW5C6X3FOhqWDmL9sfh/4gbd4Ke7ImLgdBeCpng6FiNKGBA/QpVYB2Bc0KRw==
+Date: Mon, 17 Mar 2025 15:56:07 +0100
+From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+To: Maxime Ripard <mripard@kernel.org>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong
+ <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, Laurent
+ Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman
+ <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten
+ Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann
+ <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter
+ <simona@ffwll.ch>, Marek Vasut <marex@denx.de>, Stefan Agner
+ <stefan@agner.ch>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer
+ <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Inki Dae <inki.dae@samsung.com>, Jagan
+ Teki <jagan@amarulasolutions.com>, Marek Szyprowski
+ <m.szyprowski@samsung.com>, Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>, Anusha Srivatsa <asrivats@redhat.com>, Paul
+ Kocialkowski <paulk@sys-base.io>, Dmitry Baryshkov <lumag@kernel.org>,
+ =?UTF-8?B?SGVydsOp?= Codina <herve.codina@bootlin.com>, Hui Pu
+ <Hui.Pu@gehealthcare.com>, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v7 00/11] drm/bridge: add devm_drm_bridge_alloc() with
+ bridge refcount
+Message-ID: <20250317155607.68cff522@booty>
+In-Reply-To: <20250314-daft-woodoo-cheetah-e029c5@houat>
+References: <20250314-drm-bridge-refcount-v7-0-152571f8c694@bootlin.com>
+ <20250314-daft-woodoo-cheetah-e029c5@houat>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 6/6] arm64: defconfig: Enable RZ/G3E thermal
-To: John Madieu <john.madieu.xa@bp.renesas.com>
-Cc: "geert+renesas@glider.be" <geert+renesas@glider.be>,
- "conor+dt@kernel.org" <conor+dt@kernel.org>,
- "krzk+dt@kernel.org" <krzk+dt@kernel.org>, "robh@kernel.org"
- <robh@kernel.org>, "rafael@kernel.org" <rafael@kernel.org>,
- "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
- "magnus.damm@gmail.com" <magnus.damm@gmail.com>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "john.madieu@gmail.com" <john.madieu@gmail.com>,
- "rui.zhang@intel.com" <rui.zhang@intel.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
- "sboyd@kernel.org" <sboyd@kernel.org>, Biju Das
- <biju.das.jz@bp.renesas.com>,
- "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
- "lukasz.luba@arm.com" <lukasz.luba@arm.com>
-References: <20250315081225.92118-1-john.madieu.xa@bp.renesas.com>
- <20250315081225.92118-7-john.madieu.xa@bp.renesas.com>
- <20250317-bipedal-inchworm-of-poetry-b60fc9@krzk-bin>
- <OSBPR01MB2775B7252468BCE234BFF7D5FFDF2@OSBPR01MB2775.jpnprd01.prod.outlook.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <OSBPR01MB2775B7252468BCE234BFF7D5FFDF2@OSBPR01MB2775.jpnprd01.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddufeelkeduucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtjeertdertddvnecuhfhrohhmpefnuhgtrgcuvegvrhgvshholhhiuceolhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnheptdeljeejuddvudetffdtudelfedugfduledtueffuedufefgudegkeegtdeihedunecuffhomhgrihhnpehkvghrnhgvlhdrohhrghdpsghoohhtlhhinhdrtghomhenucfkphepvdgrtddvmeeijedtmedvtddvtdemvggrtddumegsvgegudemleehvgejmeefgeefmeeludefvgenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtvdemieejtdemvddtvddtmegvrgdtudemsggvgedumeelhegvjeemfeegfeemledufegvpdhhvghlohepsghoohhthidpmhgrihhlfhhrohhmpehluhgtrgdrtggvrhgvshholhhisegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeeftddprhgtphhtthhopehmrhhiphgrrhgusehkvghrnhgvlhdrohhrghdprhgtphhtthhopegrnhgurhiivghjrdhhrghjuggrsehinhhtvghlrdgtohhmpdhrtghpthhtohepnhgvihhlrdgrrhhms
+ hhtrhhonhhgsehlihhnrghrohdrohhrghdprhgtphhtthhopehrfhhoshhssehkvghrnhgvlhdrohhrghdprhgtphhtthhopefnrghurhgvnhhtrdhpihhntghhrghrthesihguvggrshhonhgsohgrrhgurdgtohhmpdhrtghpthhtohepjhhonhgrsheskhifihgsohhordhsvgdprhgtphhtthhopehjvghrnhgvjhdrshhkrhgrsggvtgesghhmrghilhdrtghomhdprhgtphhtthhopehmrggrrhhtvghnrdhlrghnkhhhohhrshhtsehlihhnuhigrdhinhhtvghlrdgtohhm
+X-GND-Sasl: luca.ceresoli@bootlin.com
 
-On 17/03/2025 12:14, John Madieu wrote:
-> Hi Krzysztof,
-> 
-> Thanks for the review!
-> 
->> -----Original Message-----
->> From: Krzysztof Kozlowski <krzk@kernel.org>
->> Sent: Monday, March 17, 2025 10:29 AM
->> To: John Madieu <john.madieu.xa@bp.renesas.com>
->> Subject: Re: [PATCH v3 6/6] arm64: defconfig: Enable RZ/G3E thermal
->>
->> On Sat, Mar 15, 2025 at 09:12:16AM +0100, John Madieu wrote:
->>> Enable the CONFIG_RZG3E_THERMAL flag for the RZ/G3E SoC.
->>
->> s/RZ/Renesas RZ/ and which *upstream* board uses it? This is not your
->> platform defconfig, but all platforms and all users defconfig.
->>
-> 
-> Noted for the fix.
-> 
-> However, most thermal drivers use SOC-specific config options,
-> as we can see in arm64 defconfig:
-> 
-> [...]
-> CONFIG_IMX8MM_THERMAL=m
-> CONFIG_K3_THERMAL=m
-> CONFIG_QORIQ_THERMAL=m
-> CONFIG_SUN8I_THERMAL=y
-> CONFIG_ROCKCHIP_THERMAL=m
-> CONFIG_RCAR_THERMAL=y
-> CONFIG_RCAR_GEN3_THERMAL=y
-> CONFIG_RZG2L_THERMAL=y
-> CONFIG_ARMADA_THERMAL=y
-> CONFIG_MTK_THERMAL=m
-> CONFIG_MTK_LVTS_THERMAL=m
-> CONFIG_BCM2711_THERMAL=m
-> CONFIG_BCM2835_THERMAL=m
-> CONFIG_BRCMSTB_THERMAL=m
-> [...]
-> 
-> Hence my choice for RZG3E_THERMAL, or did I miss something in your comment?
-Your commit msg must explain why do we want it. I gave you idea, if you
-don't want to use it, sure, come with other.
+Hello Maxime,
 
-Best regards,
-Krzysztof
+On Fri, 14 Mar 2025 19:21:01 +0100
+Maxime Ripard <mripard@kernel.org> wrote:
+
+> Hi,
+> 
+> On Fri, Mar 14, 2025 at 11:31:13AM +0100, Luca Ceresoli wrote:
+> > This series improves the way DRM bridges are allocated and
+> > initialized and makes them reference-counted. The goal of reference
+> > counting is to avoid use-after-free by drivers which got a pointer
+> > to a bridge and keep it stored and used even after the bridge has
+> > been deallocated.
+> > 
+> > The overall goal is supporting Linux devices with a DRM pipeline
+> > whose final components can be hot-plugged and hot-unplugged,
+> > including one or more bridges. For more details see the big picture
+> > [0].
+> > 
+> > DRM bridge drivers will have to be adapted to the new API, which is
+> > pretty simple for most cases. Refcounting will have to be adopted
+> > on the two sides: all functions returning a bridge pointer and all
+> > code obtaining such a pointer. This series has just an overview of
+> > some of those conversions, because for now the main goal is to
+> > agree on the API.
+> > 
+> > Series layout:
+> > 
+> >  1. Add the new API and refcounting:
+> > 
+> >     drm/bridge: add devm_drm_bridge_alloc()
+> >     drm/bridge: add support for refcounting
+> > 
+> >  2. get/put the reference in basic operations in the bridge core:
+> > 
+> >     drm/bridge: get/put the bridge reference in
+> > drm_bridge_add/remove() drm/bridge: get/put the bridge reference in
+> > drm_bridge_attach/detach()
+> > 
+> >  3. as an example of changes for bridge consumers, get a reference
+> > for the bridge returned by drm_bridge_chain_get_first_bridge(),
+> > have it put by all callers (all users will be covered later on
+> > separately):
+> > 
+> >     drm/bridge: add a cleanup action for scope-based
+> > drm_bridge_put() invocation drm/bridge: get the bridge returned by
+> > drm_bridge_chain_get_first_bridge() drm/mxsfb: put the bridge
+> > returned by drm_bridge_chain_get_first_bridge() drm/atomic-helper:
+> > put the bridge returned by drm_bridge_chain_get_first_bridge()
+> > drm/probe-helper: put the bridge returned by
+> > drm_bridge_chain_get_first_bridge()
+> > 
+> >  4. convert a few bridge drivers (bridge providers) to the new API:
+> > 
+> >     drm/bridge: ti-sn65dsi83: use dynamic lifetime management
+> >     drm/bridge: samsung-dsim: use dynamic lifetime management
+> > 
+> > This work was formerly a part of my v6 DRM bridge hotplug
+> > series[0], now split as a standalone series with many improvements,
+> > hence the "v7" version number.  
+> 
+> Except for one patch where I had comments, I think the series is in
+> excellent shape. We're still missing a couple of things to close this
+> topic though:
+> 
+>   - Converting the other bridge iterators/accessors to take / put the
+> references
+
+I sent a couple in this series as you had asked, to show how conversion
+looks like. But I have a large part of this conversion partially done
+already, and it is the largest part of the refcounting work in terms of
+touched files due to the large number of drivers using the iterators
+and accessors. Here are the functions to convert:
+
+ A) drm_bridge_chain_get_first_bridge
+ B) drm_bridge_get_prev_bridge
+ C) drm_bridge_get_next_bridge
+ D) drm_for_each_bridge_in_chain
+ E) drm_bridge_connector_init
+ F) of_drm_find_bridge
+
+A) is present in this series as an example but I don't think it should
+be applied until all bridge drivers are converted to
+drm_bridge_alloc(). Otherwise for not-yet-converted bridge drivers we'd
+have drm_bridge_get/put() operating on an uninitialized kref, and
+__drm_bridge_free() called on non-refcounted bridges, so I think we'd
+see fireworks.
+
+In the previous iteration I used drm_bridge_is_refcounted() in
+drm_bridge_get/put() to allow a progressive migration, but if we want
+to convert everything in a single run we need to first convert all
+bridges to drm_bridge_alloc() and then convert all accessors.
+
+The same reasoning applies to patches 3-4 which add get/put to
+drm_bridge_add/remove() and _attach/detach().
+
+B) to E) are ready in my work branch, about 20 patches in total.
+Indeed item E) is a special case but it is handled there too.
+
+Item F) is the beast, because of the reverse call graph of
+of_drm_find_bridge() which includes drm_of_find_panel_or_bridge() and
+then *_of_get_bridge(), each having a few dozen callers, and leading
+to the panel_bridge topic. I have converted maybe half of the users of
+accessors in F), it's 35 patches but it's the easy half and I still need
+to tackle to hardest ones.
+
+>   - Mass converting the drivers to devm_drm_bridge_alloc
+
+Again I sent a couple in this series as you had asked, to show how
+conversion looks like for the typical bridge driver. There are ~70
+drivers to convert in total and I think most will be easy as the two
+examples presented here.
+
+I think this should be merged entirely before merging any accessor
+changes, as explained above.
+
+>   - Documenting somewhere (possibly in drm_bridge_init?) that it
+> really shouldn't be used anymore
+
+I'm afraid there is no drm_bridge_init(), bridge drivers just do
+[devm_]kzalloc and set fields explicitly. So I don't think there is a
+place to document this.
+
+However I used to have a documentation patch until v6 [0], and I think
+it should be revived and resent at some point, after removing the
+"legacy mode" as we are converting all drivers at once. BTW I also have
+a kunittest patch that should be revived. Do you still prefer me to
+resend these two patches as a separate series, waiting after the API in
+this series is applied?
+
+Overall, I think this could be the path forward, let me know if
+youthink it should be done differently:
+
+ A. have patches 1 and 2 of this series applied
+    (why not, even patches 10-11)
+ B. after (A), send series to convert all bridge drivers to new API
+    (includes patches 10-11 of this series if not applied already)
+ C. after (A), send documentation and kunittest patches
+ D. after (B), add get/put to drm_bridge_add/remove() + attach/detech()
+    (patches 3-4 in this series)
+ E. after (B), send series to convert accessors (including patches 5-9
+    in this series which convert drm_bridge_chain_get_first_bridge()
+    and its users)
+
+[0] https://lore.kernel.org/lkml/20250206-hotplug-drm-bridge-v6-18-9d6f2c9c3058@bootlin.com/
+
+Luca
+
+-- 
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
