@@ -1,93 +1,126 @@
-Return-Path: <linux-kernel+bounces-563562-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563564-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1655A64429
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 08:47:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15957A64436
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 08:48:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A533170D83
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 07:47:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B8003AD67C
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 07:47:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2C37664C6;
-	Mon, 17 Mar 2025 07:47:26 +0000 (UTC)
-Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [63.216.63.40])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82BCF21B9C2;
+	Mon, 17 Mar 2025 07:47:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="zMzSt/td";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="pNtLhTZh"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB0498F5C;
-	Mon, 17 Mar 2025 07:47:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.216.63.40
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36A0421ADBC;
+	Mon, 17 Mar 2025 07:47:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742197646; cv=none; b=fTm6/vAAHKF5O4PJlRzBf25T/wJXl3lxKwxttmJY3WoLgwpl4Nn1L2LU8KX2mwxincC+wwBEnjKPHpqNq1yL93J0W6JF4Wf0niWa/zF0uJA+gSzRleVrFCjxnVaGm5ndP5NtJmJRGVH4tY5cLEfH6bAug6Xkoks/aDdYqm75fgw=
+	t=1742197653; cv=none; b=JukYwSQh4sye96SvSDgXdKd5rCia6wjh7a1yGl8+Gjsj1aEeu10UBY4VWG3HjWGunJ7WiQ8XcDPR2epkd3GPnTenOX8C9NJSWXKDDC4yxCNe3ExxKDf+E7Jqb0eYAaKE7dogGoEx/QB/BvxH1bXC+8zqFUQ445jUkHq9viHq2fs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742197646; c=relaxed/simple;
-	bh=gPIajBVKq4rXHmPk+hUGg64doFuZ8TLuMJGnWh797tw=;
-	h=Date:Message-ID:Mime-Version:From:To:Cc:Subject:Content-Type; b=lPOrGd0XM5DdMzaGSO81iu+Loz9f60/uLsImGEYXKqt+rCS3onXVV/s1bkCYcOldFnyH401Gw34wGUEHDOzkH0qhlWR/XgSNhQ4PrPYu1VJluZJXisXlXV0+zEPoYW0cZt4ceojb3T4RtQsCa1XRANNkQVE57Gz34Sr3+ZY8ulc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=63.216.63.40
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
-Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4ZGRrl5Md6z8R049;
-	Mon, 17 Mar 2025 15:47:19 +0800 (CST)
-Received: from xaxapp04.zte.com.cn ([10.99.98.157])
-	by mse-fl1.zte.com.cn with SMTP id 52H7l4Sv022486;
-	Mon, 17 Mar 2025 15:47:04 +0800 (+08)
-	(envelope-from feng.wei8@zte.com.cn)
-Received: from mapi (xaxapp04[null])
-	by mapi (Zmail) with MAPI id mid32;
-	Mon, 17 Mar 2025 15:47:06 +0800 (CST)
-Date: Mon, 17 Mar 2025 15:47:06 +0800 (CST)
-X-Zmail-TransId: 2afb67d7d37a33c-0e793
-X-Mailer: Zmail v1.0
-Message-ID: <20250317154706711RvRh_96VDw-u63cPmkeHk@zte.com.cn>
+	s=arc-20240116; t=1742197653; c=relaxed/simple;
+	bh=ECZn2rFeGecPDKciALnLake9KKRrIgJ7WvgXlpTSIwM=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=WJgRi3BEDl+DjycUBictYAZb20i6FwzdAIKKIEyETuKA2jtwM0wa3D3CVcQSH4cV2yPvJ8K69/zsjzGkePQ4pzZT+dl5YoI/PLP6EgyeS7OcX7uk4BMAet75MBFBxYI9Dxu2tl6l0GtfJouzr19QHOSo2xL/k6zEsNwZCF/DiP0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=zMzSt/td; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=pNtLhTZh; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 17 Mar 2025 07:47:19 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1742197649;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SNm/TAd+vlWb/ETxhMQ3JvGiWKRjqyW/hTJfr3QYNc8=;
+	b=zMzSt/td2sUngJWU11vJh8w/oaXqPE9L+gcpq5fJdT7WK+DUB2O6wcY0a+4JnKdIHAFiRS
+	y4dNtM8SAqc58EUO+cW/iZqnQp4IDzOeKrRUhnaHBtZ4bQ1Mb9Pmku5eWz03GAT5HOzgbb
+	N7Rra9qFwhRb7YoMxxJlZaR5P7K9AqW8ViAFxs/0dCWFL0wp9Z1yRvENvpM8ntEnz+gktz
+	8QhnZ4RW+6rckK5b2jVhavq0NPuwS7gOceLgc4fdIQOhwSvvPxer4l3fVbo9oFzwICjz31
+	b0ElT0eqqGRcy+PC80LXIutxTh37lSEHd8psrP44mTMkJhp9K2r6Rpr3XHp1ew==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1742197649;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SNm/TAd+vlWb/ETxhMQ3JvGiWKRjqyW/hTJfr3QYNc8=;
+	b=pNtLhTZhmi1RvW9peg5trWZytcVUjzyfAJGL/DZP9GQSAU9F/cGOvgY0jOjKVwdcuO2P36
+	zM9tqmJPY2IySJDA==
+From: "tip-bot2 for Tao Chen" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject:
+ [tip: perf/core] perf/ring_buffer: Allow the EPOLLRDNORM flag for poll
+Cc: Tao Chen <chen.dylane@linux.dev>, Ingo Molnar <mingo@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>,
+ Arnaldo Carvalho de Melo <acme@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250314030036.2543180-1-chen.dylane@linux.dev>
+References: <20250314030036.2543180-1-chen.dylane@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-From: <feng.wei8@zte.com.cn>
-To: <andrii@kernel.org>
-Cc: <eddyz87@gmail.com>, <mykolal@fb.com>, <ast@kernel.org>,
-        <daniel@iogearbox.net>, <martin.lau@linux.dev>, <song@kernel.org>,
-        <yonghong.song@linux.dev>, <john.fastabend@gmail.com>,
-        <kpsingh@kernel.org>, <sdf@fomichev.me>, <haoluo@google.com>,
-        <jolsa@kernel.org>, <shuah@kernel.org>, <bpf@vger.kernel.org>,
-        <linux-kselftest@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: =?UTF-8?B?W1BBVENIXSBzZWxmdGVzdHMvYnBmOiBSZXBsYWNlIGRlcHJlY2F0ZWQgc3RybmNweSgpIHdpdGggc3Ryc2NweSgp?=
-Content-Type: text/plain;
-	charset="UTF-8"
-X-MAIL:mse-fl1.zte.com.cn 52H7l4Sv022486
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 67D7D387.005/4ZGRrl5Md6z8R049
+MIME-Version: 1.0
+Message-ID: <174219764114.14745.8810597138506735404.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-From: FengWei <feng.wei8@zte.com.cn>
+The following commit has been merged into the perf/core branch of tip:
 
-strncpy() is deprecated for NUL-terminated destination buffers. Use
-strscpy() instead and remove the manual NUL-termination.
+Commit-ID:     c96fff391c095c11dc87dab35be72dee7d217cde
+Gitweb:        https://git.kernel.org/tip/c96fff391c095c11dc87dab35be72dee7d217cde
+Author:        Tao Chen <chen.dylane@linux.dev>
+AuthorDate:    Fri, 14 Mar 2025 11:00:36 +08:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Mon, 17 Mar 2025 08:31:04 +01:00
 
-Signed-off-by: FengWei <feng.wei8@zte.com.cn>
+perf/ring_buffer: Allow the EPOLLRDNORM flag for poll
+
+The poll man page says POLLRDNORM is equivalent to POLLIN. For poll(),
+it seems that if user sets pollfd with POLLRDNORM in userspace, perf_poll
+will not return until timeout even if perf_output_wakeup called,
+whereas POLLIN returns.
+
+Fixes: 76369139ceb9 ("perf: Split up buffer handling from core code")
+Signed-off-by: Tao Chen <chen.dylane@linux.dev>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Link: https://lore.kernel.org/r/20250314030036.2543180-1-chen.dylane@linux.dev
 ---
- tools/testing/selftests/bpf/test_verifier.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ kernel/events/ring_buffer.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/testing/selftests/bpf/test_verifier.c b/tools/testing/selftests/bpf/test_verifier.c
-index 447b68509d76..dfe64c6d4f87 100644
---- a/tools/testing/selftests/bpf/test_verifier.c
-+++ b/tools/testing/selftests/bpf/test_verifier.c
-@@ -1320,8 +1320,7 @@ static bool cmp_str_seq(const char *log, const char *exp)
- 			printf("FAIL\nTestcase bug\n");
- 			return false;
- 		}
--		strncpy(needle, exp, len);
--		needle[len] = 0;
-+		strscpy(needle, exp, len);
- 		q = strstr(log, needle);
- 		if (!q) {
- 			printf("FAIL\nUnexpected verifier log!\n"
--- 
-2.25.1
+diff --git a/kernel/events/ring_buffer.c b/kernel/events/ring_buffer.c
+index 59a52b1..5130b11 100644
+--- a/kernel/events/ring_buffer.c
++++ b/kernel/events/ring_buffer.c
+@@ -19,7 +19,7 @@
+ 
+ static void perf_output_wakeup(struct perf_output_handle *handle)
+ {
+-	atomic_set(&handle->rb->poll, EPOLLIN);
++	atomic_set(&handle->rb->poll, EPOLLIN | EPOLLRDNORM);
+ 
+ 	handle->event->pending_wakeup = 1;
+ 
 
