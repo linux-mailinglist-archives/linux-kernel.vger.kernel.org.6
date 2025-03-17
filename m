@@ -1,252 +1,309 @@
-Return-Path: <linux-kernel+bounces-564041-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564040-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6332EA64C85
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 12:29:22 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A78FA64C7E
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 12:27:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C30857A3937
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:26:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A17816FDF2
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:27:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EC1A2376E9;
-	Mon, 17 Mar 2025 11:27:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC2C2237186;
+	Mon, 17 Mar 2025 11:27:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="b3xYLOo0"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZyzKq4P9"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA35023536A
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 11:27:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16577230BC7
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 11:27:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742210868; cv=none; b=A1rp3JDadM/x5VCHLR0SdvBG/mM3Ibns2fO80w49WZkCf84jbLjs4mpdMzyj05CylM/HaBiRdUWlGhIKKoMfiTrnIFWUkhHaDRf2cT88lSwIvsEzDCRnT/NGvwz+wZeFhYKLHqNbporZ+lAZ4ue+Vf+J2dQBWE8rC8y6l/7UBdE=
+	t=1742210868; cv=none; b=MPBC7+Dr/Zm3rl2wJBr5YtEVJh90VqqmZM5HQ/V0NZX6NNO9J1Mb/wiZ+RcdjyFR0DkVF+UQfneBJT7yDHqRXVCXzApAmo7OcV3Hhnyqe/CRbvG+BSieC3+G0JmtY4u8tMFiHW+C6hGlganzOW2YvuuPp7Lo6omhvsdY6Lrm/34=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1742210868; c=relaxed/simple;
-	bh=JiU79bmCJxOwRp4oAbETla+RO60mQJSftJKMO9L+DTE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GsJCZt39m21JcHFTXDfV+hK1v4s5tmd8Icf/lTxZfSrDi5M9qJqhQphgTpIOjln+ji4Qb+ZmqJQ8U251ePHMj9uKdrk8tDihMuxUby29dMZWtcCdr1SoSoUtqKTuoAi9DN8gnZNcK1FX5qKvHtL2k8iM6DXKF9GNY4Jypsy/OpA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=b3xYLOo0; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52HAnI6J028624
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 11:27:45 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=Ks6H1Qe4LqVgg5DG9PYOBphr
-	rgmZjuWkDZ+NJuoP5cU=; b=b3xYLOo0wdLbXGQr07iIEukKPKy0hFn8wL0YPyNs
-	nqGjRcsC2lSNX/7+wXy9tzpxJTvOFc3vENEb+dPZ6j7AA0RIU36UN2aPY4kyDilZ
-	Vt8EO1SHDBhS3Uwe5ZSfVSyQhNk5cf5VwQfW+/chuXu+qG0MqZxmwVxnw6NUKy5J
-	xm2fXaKR9cYjoJZ832RaQTauti/YNG1MeRcnwQv0644XuX722m6uky8qTqgQOgIp
-	aFwrZvg+IxUOm4bUJSmY4qbCDDD8ezeJTsI2fzHQieEfP8dxJuKx86cCDtQKtTwv
-	NM/4Ywr/it7G6mJAyGfllLDcYK0/HPOruyuA7uJAl53a8Q==
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45d1sxvg35-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 11:27:45 +0000 (GMT)
-Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7c3b8b95029so623828385a.0
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 04:27:45 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742210858; x=1742815658;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ks6H1Qe4LqVgg5DG9PYOBphrrgmZjuWkDZ+NJuoP5cU=;
-        b=lE7dfLkgJWTnmQExC+KP+GdNRrSI1eRz1Md2PU6GBbeVYbxMpV52pmVfqL2ZgLSTVC
-         Ke9FnAYF10u+RyX9R3pUWy3Kr61klCqUv2wxKoMoylrKRgV1MY8q1B3qQR/y8VPa0MNE
-         VDVEZepVXNzuoXDW/nIz5YWrXEG+WgjmSU+mbAP4sdU3MsvywWNuyUoiPbZ8A76TuDo9
-         uq+8VGLidCACyFYU7zX/IhLrkdHE3DM7zIUtP5ZUVL2C7Can/jtP2DxblbCr7jbfJkIx
-         J1dLuyiFPWxqskwo9ZyjU7lXZu4NI+iaGLNBzyoAAx9fWj+NcDdYZ2da8UAsfKfRButX
-         5ZUw==
-X-Forwarded-Encrypted: i=1; AJvYcCVblr8sSYDFraKwFPQg16xSeLDp5nrtBiE+J6oVCogiy5VeD/j8hnCyDN//Puu7pKGLPC4UH5Yl99fzqu8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzyVkilc5u3736QPqhHwIx1n4Hnh1GypP/QJ9Z5yQ4SQiBBsu0O
-	wlhLUHF19G8jQzwtcWORFCCoQ7a/k2wZhV20yLSDxWhKPjsCJRIOAn1h92rywXMF8LXE+P/AOxA
-	+bxUBWcpmgQEdlWht+JzlUuI4Pdqu+xTxBi+fq2sjsGwIU5A0zSHij01aSxhw8fA=
-X-Gm-Gg: ASbGncuYFmKeW3dFesqpjfMiLD6+6z2cCD+ekbNfX4OxnbhRur88TK4ARZWih/NwLo2
-	qQvvZfhkOmuqobAp74RLnZVx0gsu+V6NqC6PNdUjsrKJGfQGrMpFYBEndX4F28oxew8qkVS+jOZ
-	HRrSkzZRBGCxPsFN1sdbyirmBUZA+AThTZAhvm0vy8wt9/X9zHdvzV4IKYJ2kixgry1DoqKEfv2
-	HN1/Jl8OFTYtKuDKNAXBK7+Dz35ahmNJRacrlRRa6WPcLq3dR81ThUWLhX8u8DxrnN/frRdr88s
-	OZiixF/0boXFZSP6hdG5bgBb7Ccp4/DGnDiQ6cLmUJDm/cWXTZxwbhdX+lWJkQyPN/MnBDBkpbW
-	tQPk=
-X-Received: by 2002:a05:620a:372b:b0:7c5:3df0:48cf with SMTP id af79cd13be357-7c57c7b99edmr1608500985a.3.1742210857637;
-        Mon, 17 Mar 2025 04:27:37 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEgmKbqNlFcHOVK7QmTXPEEAfaypemgHDiFvZ5/SKCUl+uj1n4jhLXU7saD/jBY49l4D08veg==
-X-Received: by 2002:a05:620a:372b:b0:7c5:3df0:48cf with SMTP id af79cd13be357-7c57c7b99edmr1608497685a.3.1742210857270;
-        Mon, 17 Mar 2025 04:27:37 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30c3f1dbb12sm15187661fa.95.2025.03.17.04.27.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Mar 2025 04:27:35 -0700 (PDT)
-Date: Mon, 17 Mar 2025 13:27:33 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Krishna Chaitanya Chundru <quic_krichai@quicinc.com>
-Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        cros-qcom-dts-watchers@chromium.org, Jingoo Han <jingoohan1@gmail.com>,
-        Bartosz Golaszewski <brgl@bgdev.pl>, quic_vbadigan@quicnic.com,
-        amitk@kernel.org, linux-pci@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, jorge.ramirez@oss.qualcomm.com
-Subject: Re: [PATCH v4 02/10] arm64: dts: qcom: qcs6490-rb3gen2: Add TC956x
- PCIe switch node
-Message-ID: <c4ompv3t256tl4qosapvtt5fkk5wwqxikclwwuyffvvbu6noig@y2y3hhf24mtf>
-References: <20250225-qps615_v4_1-v4-0-e08633a7bdf8@oss.qualcomm.com>
- <20250225-qps615_v4_1-v4-2-e08633a7bdf8@oss.qualcomm.com>
- <ciqgmfi4wkvqpvaf4zsqn3k2nrllsaglbx7ve3g2nbecoj35d6@okgcsvfx27z5>
- <6e51e35f-78c3-5d2b-697e-ce4a7da7b15c@quicinc.com>
+	bh=Qmdw44/Y9/OgfNp31AlBCDtokgDg/kGkmfVHIvL4bZM=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=pQVqh2aynukWAg9dAj7T2x94ZqFcJjQylY35TDDO8gw4txzd1OKdipeAeSTFsoxYMB4LKzlW0FxWkb+gOhrMJHa02MT0I3wFg3PZGHIVzs6tyBKlHPvJlq5E0NiaAQ1Jrd6ygHq0PIyVnsLCT1+Qe27PYVjhP5cywVWzyrv1Q0Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZyzKq4P9; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1742210864;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pmb1M6YuJLZPZhb6X3kxk0iHal+/a9cYjzs9Ehglbdg=;
+	b=ZyzKq4P9Da69cbc1kFRFT59ARB+I6473i9PHo2/u2I9oqM3j15gUr4a9ognoMqxjJCE4Kb
+	npVVGishv+szUnLCNKnL9ZMcsp6xJ13C4UtOqiU8HGhj0y8CGoup58mXaJdLPvN7QLkbR0
+	JQgxXapWJbqqrkQv6vPEHJfb88tKFeg=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-639-u8BecNH2NaG6uI5h4Zt1Sg-1; Mon,
+ 17 Mar 2025 07:27:43 -0400
+X-MC-Unique: u8BecNH2NaG6uI5h4Zt1Sg-1
+X-Mimecast-MFC-AGG-ID: u8BecNH2NaG6uI5h4Zt1Sg_1742210862
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A4D221956087;
+	Mon, 17 Mar 2025 11:27:41 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.61])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 5E9371955BE1;
+	Mon, 17 Mar 2025 11:27:38 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <1bab7ad752df6f2fa953fbf8eed8370e10344ff7.camel@ibm.com>
+References: <1bab7ad752df6f2fa953fbf8eed8370e10344ff7.camel@ibm.com> <20250313233341.1675324-1-dhowells@redhat.com> <20250313233341.1675324-4-dhowells@redhat.com>
+To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+Cc: dhowells@redhat.com, Alex Markuze <amarkuze@redhat.com>,
+    "slava@dubeyko.com" <slava@dubeyko.com>,
+    "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+    "idryomov@gmail.com" <idryomov@gmail.com>,
+    "jlayton@kernel.org" <jlayton@kernel.org>,
+    "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+    "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>,
+    "dongsheng.yang@easystack.cn" <dongsheng.yang@easystack.cn>,
+    "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH 03/35] libceph: Add a new data container type, ceph_databuf
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6e51e35f-78c3-5d2b-697e-ce4a7da7b15c@quicinc.com>
-X-Proofpoint-GUID: NTWnP6XQZl37tgp3o2QWphVL4oghxYTW
-X-Proofpoint-ORIG-GUID: NTWnP6XQZl37tgp3o2QWphVL4oghxYTW
-X-Authority-Analysis: v=2.4 cv=XKcwSRhE c=1 sm=1 tr=0 ts=67d80731 cx=c_pps a=qKBjSQ1v91RyAK45QCPf5w==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=Vs1iUdzkB0EA:10 a=EUspDBNiAAAA:8 a=VwQbUJbxAAAA:8 a=KKAkSRfTAAAA:8 a=iBLCvXWk7JtlIUnLWUQA:9 a=CjuIK1q_8ugA:10
- a=NFOGd7dJGGMPyQGDc5-O:22 a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-17_04,2025-03-17_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- mlxlogscore=999 priorityscore=1501 clxscore=1015 phishscore=0
- impostorscore=0 adultscore=0 mlxscore=0 malwarescore=0 suspectscore=0
- spamscore=0 bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503170084
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2160749.1742210857.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date: Mon, 17 Mar 2025 11:27:37 +0000
+Message-ID: <2160750.1742210857@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-On Mon, Mar 17, 2025 at 03:05:17PM +0530, Krishna Chaitanya Chundru wrote:
-> 
-> 
-> On 2/25/2025 5:19 PM, Dmitry Baryshkov wrote:
-> > On Tue, Feb 25, 2025 at 03:03:59PM +0530, Krishna Chaitanya Chundru wrote:
-> > > Add a node for the TC956x PCIe switch, which has three downstream ports.
-> > > Two embedded Ethernet devices are present on one of the downstream ports.
-> > > 
-> > > Power to the TC956x is supplied through two LDO regulators, controlled by
-> > > two GPIOs, which are added as fixed regulators. Configure the TC956x
-> > > through I2C.
-> > > 
-> > > Signed-off-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
-> > > Reviewed-by: Bjorn Andersson <andersson@kernel.org>
-> > > Acked-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> > > ---
-> > >   arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts | 116 +++++++++++++++++++++++++++
-> > >   arch/arm64/boot/dts/qcom/sc7280.dtsi         |   2 +-
-> > >   2 files changed, 117 insertions(+), 1 deletion(-)
-> > > 
-> > > diff --git a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
-> > > index 7a36c90ad4ec..13dbb24a3179 100644
-> > > --- a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
-> > > +++ b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
-> > > @@ -218,6 +218,31 @@ vph_pwr: vph-pwr-regulator {
-> > >   		regulator-min-microvolt = <3700000>;
-> > >   		regulator-max-microvolt = <3700000>;
-> > >   	};
-> > > +
-> > > +	vdd_ntn_0p9: regulator-vdd-ntn-0p9 {
-> > > +		compatible = "regulator-fixed";
-> > > +		regulator-name = "VDD_NTN_0P9";
-> > > +		gpio = <&pm8350c_gpios 2 GPIO_ACTIVE_HIGH>;
-> > > +		regulator-min-microvolt = <899400>;
-> > > +		regulator-max-microvolt = <899400>;
-> > > +		enable-active-high;
-> > > +		pinctrl-0 = <&ntn_0p9_en>;
-> > > +		pinctrl-names = "default";
-> > > +		regulator-enable-ramp-delay = <4300>;
-> > > +	};
-> > > +
-> > > +	vdd_ntn_1p8: regulator-vdd-ntn-1p8 {
-> > > +		compatible = "regulator-fixed";
-> > > +		regulator-name = "VDD_NTN_1P8";
-> > > +		gpio = <&pm8350c_gpios 3 GPIO_ACTIVE_HIGH>;
-> > > +		regulator-min-microvolt = <1800000>;
-> > > +		regulator-max-microvolt = <1800000>;
-> > > +		enable-active-high;
-> > > +		pinctrl-0 = <&ntn_1p8_en>;
-> > > +		pinctrl-names = "default";
-> > > +		regulator-enable-ramp-delay = <10000>;
-> > > +	};
-> > > +
-> > >   };
-> > >   &apps_rsc {
-> > > @@ -735,6 +760,75 @@ &pcie1_phy {
-> > >   	status = "okay";
-> > >   };
-> > > +&pcie1_port {
-> > > +	pcie@0,0 {
-> > > +		compatible = "pci1179,0623", "pciclass,0604";
-> > > +		reg = <0x10000 0x0 0x0 0x0 0x0>;
-> > > +		#address-cells = <3>;
-> > > +		#size-cells = <2>;
-> > > +
-> > > +		device_type = "pci";
-> > > +		ranges;
-> > > +		bus-range = <0x2 0xff>;
-> > > +
-> > > +		vddc-supply = <&vdd_ntn_0p9>;
-> > > +		vdd18-supply = <&vdd_ntn_1p8>;
-> > > +		vdd09-supply = <&vdd_ntn_0p9>;
-> > > +		vddio1-supply = <&vdd_ntn_1p8>;
-> > > +		vddio2-supply = <&vdd_ntn_1p8>;
-> > > +		vddio18-supply = <&vdd_ntn_1p8>;
-> > > +
-> > > +		i2c-parent = <&i2c0 0x77>;
-> > > +
-> > > +		reset-gpios = <&pm8350c_gpios 1 GPIO_ACTIVE_LOW>;
-> > > +
-> > > +		pcie@1,0 {
-> > 
-> > PCIe bus can be autodetected. Is there a reason for describing all the
-> > ports and a full topology? If so, it should be stated in the commit
-> > message.
-> > 
-> As these ports are fixed we are defining them here, I will mention this
-> in the commit message. It is similar to how we added pcieport for all
-> the platforms, I tried to add full topology here. And if we want to
-> configure any ports like l0s entry delay, l1 entry delay etc in future
-> we need these full topology to be present.
+Viacheslav Dubeyko <Slava.Dubeyko@ibm.com> wrote:
 
-Ack
+> > +struct ceph_databuf {
+> > +	struct bio_vec	*bvec;		/* List of pages */
+> =
 
-> 
-> - Krishna Chaitanya.
-> > > +			reg = <0x20800 0x0 0x0 0x0 0x0>;
-> > > +			#address-cells = <3>;
-> > > +			#size-cells = <2>;
-> > > +
-> > > +			device_type = "pci";
-> > > +			ranges;
-> > > +			bus-range = <0x3 0xff>;
-> > > +		};
-> > > +
-> > > +		pcie@2,0 {
-> > > +			reg = <0x21000 0x0 0x0 0x0 0x0>;
-> > > +			#address-cells = <3>;
-> > > +			#size-cells = <2>;
-> > > +
-> > > +			device_type = "pci";
-> > > +			ranges;
-> > > +			bus-range = <0x4 0xff>;
-> > > +		};
-> > > +
-> > > +		pcie@3,0 {
-> > 
+> So, maybe we need to think about folios now?
 
--- 
-With best wishes
-Dmitry
+Yeah, I know...  but struct bio_vec has a page pointer and may point to
+non-folio type pages.  This stuff is still undergoing evolution as Willy w=
+orks
+on reducing struct page.
+
+What I'm pondering is changing struct folio_queue to take a list of { foli=
+o,
+offset, len } rather than using a folio_batch with a simple list of folios=
+.
+It doesn't necessarily help with DIO, though, but there we're given an
+iterator we're required to use.
+
+One of the things I'd like to look at for ceph as well is using the page f=
+rag
+allocator[*] to get small pieces of memory for stashing protocol data in
+rather than allocating full-page buffers.
+
+[*] Memory allocated from the page frag allocator can be used with
+MSG_SPLICE_PAGES as its lifetime is controlled by the refcount.  Now, we c=
+ould
+probably have a page frag allocator that uses folios rather than non-folio
+pages for network filesystem use.  That could be of use to afs and cifs al=
+so.
+
+As I mentioned, in a previous reply, how to better integrate folioq/bvec i=
+s
+hopefully up for discussion at LSF/MM next week.
+
+> > +static inline void ceph_databuf_append_page(struct ceph_databuf *dbuf=
+,
+> > +					    struct page *page,
+> > +					    unsigned int offset,
+> > +					    unsigned int len)
+> > +{
+> > +	BUG_ON(dbuf->nr_bvec >=3D dbuf->max_bvec);
+> > +	bvec_set_page(&dbuf->bvec[dbuf->nr_bvec++], page, len, offset);
+> > +	dbuf->iter.count +=3D len;
+> > +	dbuf->iter.nr_segs++;
+> =
+
+> Why do we assign len to dbuf->iter.count but only increment
+> dbuf->iter.nr_segs?
+
+Um, because it doesn't?  It adds len to dbuf->iter.count.
+
+> >  enum ceph_msg_data_type {
+> >  	CEPH_MSG_DATA_NONE,	/* message contains no data payload */
+> > +	CEPH_MSG_DATA_DATABUF,	/* data source/destination is a data buffer *=
+/
+> >  	CEPH_MSG_DATA_PAGES,	/* data source/destination is a page array */
+> >  	CEPH_MSG_DATA_PAGELIST,	/* data source/destination is a pagelist */
+> =
+
+> So, the final replacement on databuf will be in the future?
+
+The result of each patch has to compile and work, right?  But yes, various=
+ of
+the patches in this series reduce the use of those other data types.  I ha=
+ve
+patches in progress to finally remove PAGES and PAGELIST, but they're not
+quite compiling yet.
+
+> > +	dbuf =3D kzalloc(sizeof(*dbuf), gfp);
+> > +	if (!dbuf)
+> > +		return NULL;
+> =
+
+> I am guessing... Should we return error code here?
+
+The only error this function can return is ENOMEM, so it just returns NULL
+like many other alloc functions.
+
+> > +	} else if (min_bvec) {
+> > +		min_bvec =3D umax(min_bvec, 16);
+> =
+
+> Why 16 here? Maybe, do we need to introduce some well explained constant=
+?
+
+Fair point.
+
+> > +		dbuf->max_bvec =3D min_bvec;
+> =
+
+> Why do we assign min_bvec to max_bvec? I am simply slightly confused why
+> argument of function is named as min_bvec, but finally we are saving min=
+_bvec
+> value into max_bvec.
+
+The 'min_bvec' argument is the minimum number of bvecs that the caller nee=
+ds
+to be allocated.  This may get rounded up to include all of the piece of
+memory we're going to be given by the slab.
+
+'dbuf->max_bvec' is the maximum number of entries that can be used in
+dbuf->bvec[] and is a property of the databuf object.
+
+> > +struct ceph_databuf *ceph_databuf_get(struct ceph_databuf *dbuf)
+> =
+
+> I see the point here. But do we really need to return pointer? Why not s=
+imply:
+> =
+
+> void ceph_databuf_get(struct ceph_databuf *dbuf)
+
+It means I can do:
+
+	foo->databuf =3D ceph_databuf_get(dbuf);
+
+rather than:
+
+	ceph_databuf_get(dbuf);
+	foo->databuf =3D dbuf;
+
+> > +static int ceph_databuf_expand(struct ceph_databuf *dbuf, size_t req_=
+bvec,
+> > +			       gfp_t gfp)
+> > +{
+> > +	struct bio_vec *bvec =3D dbuf->bvec, *old =3D bvec;
+> =
+
+> I think that assigning (*old =3D bvec) looks confusing if we keep it on =
+the same
+> line as bvec declaration and initialization. Why do not declare and not
+> initialize it on the next line?
+> =
+
+> > +	size_t size, max_bvec, off =3D dbuf->iter.bvec - old;
+> =
+
+> I think it's too much declarations on the same line. Why not:
+> =
+
+> size_t size, max_bvec;
+> size_t off =3D dbuf->iter.bvec - old;
+
+A matter of personal preference, I guess.
+
+> > +	bvec =3D dbuf->bvec;
+> > +	while (dbuf->nr_bvec < req_bvec) {
+> > +		struct page *pages[16];
+> =
+
+> Why do we hardcoded 16 here but using some well defined constant?
+
+Because this is only about stack usage.  alloc_pages_bulk() gets an straig=
+ht
+array of page*; we have a bvec[], so we need an intermediate.  Now, I coul=
+d
+actually just overlay the array over the tail of the bvec[] and do a singl=
+e
+bulk allocation since sizeof(struct page*) > sizeof(struct bio_vec).
+
+> And, again, why not folio?
+
+I don't think there's a bulk folio allocator.  Quite possibly there *shoul=
+d*
+be so that readahead can use it - one that allocates different sizes of fo=
+lios
+to fill the space required.
+
+> > +		size_t want =3D min(req_bvec, ARRAY_SIZE(pages)), got;
+> > +
+> > +		memset(pages, 0, sizeof(pages));
+> > +		got =3D alloc_pages_bulk(gfp, want, pages);
+> > +		if (!got)
+> > +			return -ENOMEM;
+> > +		for (i =3D 0; i < got; i++)
+> =
+
+> Why do we use size_t for i and got? Why not int, for example?
+
+alloc_pages_bulk() doesn't return an int.  Now, one could legitimately arg=
+ue
+that I should use "unsigned long" rather than "size_t", but I wouldn't use=
+ int
+here.  int is smaller and signed.  Granted, it's unlikely we'll be asked >=
+2G
+pages, but if we're going to assign it down to an int, it probably needs t=
+o be
+checked first.
+
+> > +			bvec_set_page(&bvec[dbuf->nr_bvec + i], pages[i],
+> > +				      PAGE_SIZE, 0);
+> > +		dbuf->iter.nr_segs +=3D got;
+> > +		dbuf->nr_bvec +=3D got;
+> =
+
+> If I understood correctly, the ceph_databuf_append_page() uses slightly
+> different logic.
+
+Can you elaborate?
+
+> +	dbuf->iter.count +=3D len;
+> +	dbuf->iter.nr_segs++;
+> =
+
+> But here we assign number of allocated pages to nr_segs. It is slightly
+> confusing. I think I am missing something here.
+
+Um - it's an incremement?
+
+I think part of the problem might be that we're mixing two things within t=
+he
+same container: Partial pages that get kmapped and accessed directly
+(e.g. protocol bits) and pages that get accessed indirectly (e.g. data
+buffers).  Maybe this needs to be made more explicit in the API.
+
+David
+
 
