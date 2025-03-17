@@ -1,123 +1,120 @@
-Return-Path: <linux-kernel+bounces-564357-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564359-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 811E3A653A1
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 15:32:24 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CF39A653A4
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 15:33:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 560FE166685
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 14:31:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C711E17440F
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 14:32:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F10323F401;
-	Mon, 17 Mar 2025 14:31:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CE41241694;
+	Mon, 17 Mar 2025 14:32:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=ariel.dalessandro@collabora.com header.b="CiAXpq8N"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OtqO/ofN"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37E1D2940D
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 14:31:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742221897; cv=pass; b=IqzrMzgiSXrdxyM634gdun205v7GLMl070my3o1oHuX0h2Gh//bVn+lTZdqf3nn2q9/yt+fXdoseKOfMwRX1OIZf0LBwkbInEULPXFR6o9yYeINumF+Y4AcmvCh3POmUc35mxcVmTaj4bJ90BcV5KXt61B/jaEl4uKSLg5fo9Ic=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742221897; c=relaxed/simple;
-	bh=+cKkWnVr1coakUMf/WK6R0x3EVXrLJlx4VnLHV8Mp/c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LbXdTQ/oz7J5+HpzLXIr4j0TD3FGKVkRu8vNp9WNtQNDrZjemKXKbYUe58yYM/QkbdcA/XGrL5amJ6/+qfo8Crd+iNM/WPD7SC7HHJiE0Z275GZGdyisxfzcdRJHKHJUshpTBuyuft2ICtmvlHwOqOZXRRwoM9KtllA6xmtLgQc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=ariel.dalessandro@collabora.com header.b=CiAXpq8N; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1742221868; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=BJpEgdkNOnSiwPrSUBLBl5lYM+9hFEOctSz9K9PKKQtT5xnLZulbT4jKlx5w5CyrA7bRjPfUchYlYQNkDIwJ3I8ppedq7Dv1VUg5TyTlG2+HY/vwjLnveGsb3+E7+EoKkbk06OmOsrqbOGSgrmMMWNGes0MRf19ZxaeGjSmMx2U=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1742221868; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=juhBGFrnJEtXmwmWUkOgurD4ow1+cM0JUbcI3gD4F48=; 
-	b=ecgMK9cayVciXKLAu5E0ZSdMZjVvZf7lm927GcnIz1VU3UBjjcCpsJr6CrO7K2f9wtg5uRocgz3DxeRYM18tgoBdiZTywAnL0hqyXDt7roYcgzXKcBYO7FVAEnXnxnPBUWt3hueS0tglURSEXOwtsGM2mod3r3cMkKSr9mVwDrU=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=ariel.dalessandro@collabora.com;
-	dmarc=pass header.from=<ariel.dalessandro@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1742221868;
-	s=zohomail; d=collabora.com; i=ariel.dalessandro@collabora.com;
-	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=juhBGFrnJEtXmwmWUkOgurD4ow1+cM0JUbcI3gD4F48=;
-	b=CiAXpq8Nrl/AHbcs52PL//215ZsdMXGiJpd1bLL0pvgHIbsjUTw4dPW6Xg9FdhHh
-	VyKaKpzY/kQP6q94ru+oCbZfFGzK9UMFu98OW0CsHa8T49RsZCBg6kxjO7W9/aGUXG1
-	zrh0Fz3mtauDQ+mUb70hAcN9IV4RZYToVMNZEumQ=
-Received: by mx.zohomail.com with SMTPS id 1742221866050461.80081265142326;
-	Mon, 17 Mar 2025 07:31:06 -0700 (PDT)
-Message-ID: <992360e3-632c-4a0e-bb84-a72be7d7cd37@collabora.com>
-Date: Mon, 17 Mar 2025 11:30:59 -0300
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 169BC23F401;
+	Mon, 17 Mar 2025 14:32:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742221929; cv=none; b=H8rseNVLNT4pGaeMUExx4m1v/FSKtfEugGa3Tuc9ESxj536REoLt+uP7Sw0BwwR6LzwghCbFxi+Qbe7pdUHxeVxUOHzM0CdamQi1AZcJ0koj20GqVjt3PnlURrP/MMSpQipS0gmtxPyCNw6mjUM+Oeoi2KOgK5tXtUYdnE/9r/s=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742221929; c=relaxed/simple;
+	bh=L6vZViLf/AWBBPqSQRxB9AbJIs22KZEVsuH/wa1qP3E=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=XjNqz++prAiT+kd7qNYYSMDcixE5eXdSHQQncI2spM6eDaIjMRtFWjTxdVJWhGFwHxjs0x8hH3w8Xdj5e/0/An5RxRqG4/eGcN8/tpua+69OPrgy2UbWXk5DGGYNA7hG/utfM5NvN+evMGX/GUxZrXhLYtBrtmc9J/e7Fo6sVn4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OtqO/ofN; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-22423adf751so71496485ad.2;
+        Mon, 17 Mar 2025 07:32:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742221927; x=1742826727; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ObvDKNQs40eT4ahBFyXk+Ns0MX5dau0caAieOzlUfVs=;
+        b=OtqO/ofNN0ozjz+ozyhlUFlCL1LtI6G7X37dJhM/ZTU90BhqVTsS64EKcOCOUxNzfI
+         07zYQaSes7C+k5mgS6L0BKnk5PKXmyZhaos57U6++M+BAFLyAstTI1jhyrvGRduhaljH
+         QUE8As4Noyp7Izs1HImYHRb+89E/91HKmpXvuzuw1jYXYWba1I9o6vsettO6YTx5gRfo
+         WPYUXOu8ySPjEQbZOzI8Oburcb2pWc0TLo7wTFtQURqRocKxfeF1awavA+BD8VfaI6DN
+         j+0leSapALwHTegN613p/qsg5V1vXpWW3IPtdLXPsoDMLn3SLtuw2029NnJDGnKvGG2i
+         q2yw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742221927; x=1742826727;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ObvDKNQs40eT4ahBFyXk+Ns0MX5dau0caAieOzlUfVs=;
+        b=DGEMqE1SvF2qci0aKVjM51k0kuICz1MOdtFpFkhZBKksLoWpvLoFV0GV9pQj8QUJLP
+         dLzbPCOENp0iq05pO2COYP0PrduXS73L/FlG0MlYp0alMKQfNaWSPqhyT1G9iplz9bx2
+         V61b+c9mkRol3zLmpnBj9AO3biwxDhexWV+W3Opyfa+0liX7BfTiD/HFdgEnFtptjwLR
+         aqp4w2CzKB38hu724PLmC2L4oqt2S+fct7jf4AWHKj9aRgm3rxRMPy8YUo3QHI+rE8oN
+         2I2ipUCLpCTb6he6taOb99OxXOhso6gx3Qw2Pi737xklaRujvIP+6+ZAcF5DJsRUMgMa
+         +SDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWcko9ewJLSXVB3csPPcb/i30AkmXvwrHwwRM76srpqTzqTRAhifFGZvFkQ8RQEkCsFRSbirC+hbp3VkFI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZnfLlFkxDZO6GRw+saWciOjt+WnKtByI4pBjWc586/5f3Gp8W
+	LTfcF63kjGSiCWB+gX+LbI5sM5GcvY9deJBPiSGam7nTi1c7luvDAXoc34A=
+X-Gm-Gg: ASbGncshDWY8/400apHm1flZlNJdCoS49yWTwfvt6HRy5463JwehKEQsFWsItIsshZv
+	QBpDe2BvaDPQPnOOhVOM2Ka/8n1qvmkQFepwXAwL1Nw87WFEh+R/egAP/Ox1J7Y77pGa8DvHiq5
+	s3/xSCfA74b8g8a7/WiR4BlQ7RPtmWQpNK9YGvW/X8SRRsEHqYv1Q3CIkaSRiUnkAa+RXqp/Ys7
+	9gUAwl3YwPoJoktFW++LoyHX2GcV9612C+jUaTbZAhvO2JsBMn0KuyXtZio0aD2UBt9hZiiknP/
+	4Bl1pAZLm47k1WHIo1nT1nMHrE7CgI6moWtNZWAU3WCWJzo4xv5aqyb8sTV8/TfZSCBaX3l+7TG
+	ehhBhPcUQfoFHmljva75A//rH9s3mrAmy799Erw==
+X-Google-Smtp-Source: AGHT+IEbqKnI0+Sr8aV2L8te6GQTPyogZQ/TEgsjcdG5GXG2JDBhtZaRB0lNEoehaoBBhGKlqzufzg==
+X-Received: by 2002:a17:903:2cc:b0:224:1c41:a4c0 with SMTP id d9443c01a7336-225e0a34e4fmr136183185ad.9.1742221926687;
+        Mon, 17 Mar 2025 07:32:06 -0700 (PDT)
+Received: from localhost.localdomain (124-218-201-66.cm.dynamic.apol.com.tw. [124.218.201.66])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-225c688856fsm76058925ad.14.2025.03.17.07.32.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Mar 2025 07:32:06 -0700 (PDT)
+From: "Lucien.Jheng" <lucienx123@gmail.com>
+X-Google-Original-From: "Lucien.Jheng" <lucienX123@gmail.com>
+To: linux-clk@vger.kernel.org,
+	andrew@lunn.ch,
+	hkallweit1@gmail.com,
+	linux@armlinux.org.uk,
+	kuba@kernel.org,
+	davem@davemloft.net,
+	edumazet@google.com,
+	pabeni@redhat.com,
+	daniel@makrotopia.org,
+	ericwouds@gmail.com
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	joseph.lin@airoha.com,
+	wenshin.chung@airoha.com,
+	"Lucien.Jheng" <lucienX123@gmail.com>
+Subject: [PATCH v4 net-next 0/1 ] net: phy: air_en8811h: Add clk provider for CKO pin 
+Date: Mon, 17 Mar 2025 22:31:10 +0800
+Message-Id: <20250317143111.28824-1-lucienX123@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 4/6] drm/panfrost: Add support for AARCH64_4K page
- table format
-To: Boris Brezillon <boris.brezillon@collabora.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- robh@kernel.org, steven.price@arm.com, maarten.lankhorst@linux.intel.com,
- mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
- kernel@collabora.com, linux-mediatek@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, sjoerd@collabora.com,
- angelogioacchino.delregno@collabora.com
-References: <20250317124044.16257-1-ariel.dalessandro@collabora.com>
- <20250317124044.16257-5-ariel.dalessandro@collabora.com>
- <20250317144436.2bcc17ed@collabora.com>
-Content-Language: en-US
-From: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
-In-Reply-To: <20250317144436.2bcc17ed@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ZohoMailClient: External
+Content-Transfer-Encoding: 8bit
 
-Boris,
+This patch adds clk provider for the CKO pin of the Airoha en8811h PHY.
 
-On 3/17/25 10:44 AM, Boris Brezillon wrote:
-> On Mon, 17 Mar 2025 09:40:42 -0300
-> Ariel D'Alessandro <ariel.dalessandro@collabora.com> wrote:
-> 
->> +static int panfrost_mmu_cfg_init(struct panfrost_mmu *mmu,
->> +				  enum io_pgtable_fmt fmt)
->> +{
->> +	struct panfrost_device *pfdev = mmu->pfdev;
->> +
->> +	switch (fmt) {
->> +	case ARM_64_LPAE_S1:
->> +		return mmu_cfg_init_aarch64_4k(mmu);
->> +	case ARM_MALI_LPAE:
->> +		return mmu_cfg_init_mali_lpae(mmu);
->> +	default:
->> +		/* This should never happen */
->> +		return drm_WARN_ON(pfdev->ddev, -EINVAL);
-> 
-> This won't return -EINVAL, but !!(-EINVAL), AKA true. We should do
-> 
-> 	default:
-> 		drm_WARN(ptdev->ddev, "Invalid pgtable format");
-> 		return -EINVAL;
-> 
-> instead.
+Change in PATCH v4:
+air_en8811h.c:
+ * Shorten commit messages
+ * Change init.name clk to cko
+ * Change init.flags CLK_GET_RATE_NOCACHE to 0
+ * Rename to_en8811h_priv to clk_hw_to_en8811h_priv
 
-Ah, good catch. I missed that from the WARN_ON definition:
+Lucien.Jheng (1):
+  net: phy: air_en8811h: Add clk provider for CKO pin
 
-         int __ret_warn_on = !!(condition);
-
-Thanks, will fix in v4.
+ drivers/net/phy/air_en8811h.c | 95 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 95 insertions(+)
 
 -- 
-Ariel D'Alessandro
-Software Engineer
-
-Collabora Ltd.
-Platinum Building, St John's Innovation Park, Cambridge CB4 0DS, UK 
-Registered in England & Wales, no. 5513718
+2.34.1
 
 
