@@ -1,249 +1,315 @@
-Return-Path: <linux-kernel+bounces-563967-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563968-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EECDA64B3B
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:59:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F06F3A64B45
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:59:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B74EC3A6302
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:54:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 971833A3E70
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:55:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89CC323315F;
-	Mon, 17 Mar 2025 10:54:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21A592356BF;
+	Mon, 17 Mar 2025 10:55:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MQJtQuoY"
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=mt-integration.ru header.i=@mt-integration.ru header.b="p+VdAfW2"
+Received: from ksmg02.maxima.ru (ksmg02.maxima.ru [81.200.124.39])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C04AF233141;
-	Mon, 17 Mar 2025 10:53:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4753A38DD8;
+	Mon, 17 Mar 2025 10:55:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.200.124.39
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742208840; cv=none; b=XbBXkUuxUTDSYcULXowK1ilLaZ5MFtCnk2NXm1nVyCxQBngEbRQhbMgCCa9Xqd9qE/IMpp38UhnOr0OP4y+isW8dQagHz3q6AP82EuIUAW3KzrKZw6fDzx6TeAA/K2DT8SyLMGStDP0RhoMmwjvrHuoLMaCAsmqq06pDfVhdaHY=
+	t=1742208925; cv=none; b=l0pU0VGptVtC5QjGhZ8PXgq1ttejdFzzaW/TWY6eG90pg5+VxqyuKqrFVEy//gC3bGJN0zCLUnMeP5O+auTdF1d7k4do31ngi1ey/n+A2D0yt//KTbXBO2IuFxDFoWFC5J2S35xwX6YwjfQyYlbXU8QXPbUWilb9HDkTjuhr0yk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742208840; c=relaxed/simple;
-	bh=xQCIvtZ7gkiHiOAfI0sMD7QZtE9jk12bnsX/6xPz/l4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LjC6Xh0WS1Mju5WdOccTMDLbMCpL3mt41lC9QMQqmatV4+7ecfS5iIVxufHQdLYT0IXXek0AbsufHDd1zoV79zqD+DtTutoRF+ve7L04oKBrbxo6+YtJJuskAVo8qCmkSPOfR5Sw6UIaY16L+uZBiY1pfrs29DNKEenJsIAf2pE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MQJtQuoY; arc=none smtp.client-ip=209.85.208.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-30bfb6ab47cso42296281fa.3;
-        Mon, 17 Mar 2025 03:53:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742208836; x=1742813636; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=W2GJ9qJ8OjX1yfsEXuO0p0ppxNDngQ6k8zpz585ECzc=;
-        b=MQJtQuoYOIp0Cog5Vgqd1mpwZt0F1578JzBjV2B5ba7wrchb4cO17BwCSoPWY7fwWa
-         TLZyy6ISpvB1P2jTRN/twILS0SYAh5SeQX7ZGN1o7RthRMP8NxuZOrS8OAxWkIXyGqhH
-         r9VhDPvq2TYiHuGBzto7qmtrefwy2EeyJn4Z2msWoHDsMukinH4rBUkivFrIVJYVm2Ru
-         Z/D9xy1fiD4vz3mOkGhKe14uWI0qJwGBSf77huAUQ9Vdznqbzv4t4i/fytd3RS3J+j53
-         38J/Gs4VqByHm4QEn60Yqp/JRilMfugeMpTLM/kGPIfucBkoKZtquWf3XKaJmm0MUI93
-         o0Tg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742208836; x=1742813636;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=W2GJ9qJ8OjX1yfsEXuO0p0ppxNDngQ6k8zpz585ECzc=;
-        b=WkS4W2MGFxYPUIVey6GJDTFUIDb2+GYJ3BHN/BcUyOiEiE7OAk46m5Rtatz1ylN1qF
-         yjVTkUlYvby/3z3u7dIOX9JR9k7tJqSdAHpRBfgmRtvoBXWyuixERw7OLnnfusJbq1Px
-         hXxqNKQsivjrwgdLzPDj8jqy/lC4/lA8ZgemEr2z8mse8l9qQR4B7gr4kUOk1zNgQ3uB
-         3jWMySW8TDaesrWhXXuXfDAKq9cXe3fiw02XeKQ7mF9w4/pFhBzTg39oh8SN9MgAkDrA
-         +zXLodt92ITzUrvKFCATmRxDNL04UBDWDFlpbSQPiiBCcNgLmrj09+hChrGCsAUkfuLE
-         vBcw==
-X-Forwarded-Encrypted: i=1; AJvYcCUq8f14I1k1UIlQVV1+yeJUQsDpXx6ALD8AGeQ9drlJWE181BLc1SIce+fxwlKkMwd21msQfmNAOjqga9dNBZPb@vger.kernel.org, AJvYcCV0UjchdIGv8VA5Z9thu+TOIzG5Ti+H0mjuvn7QkgqQBpFqClciSYPTerFxw09/CxALxF+9b7X6UNNEE9Pj@vger.kernel.org, AJvYcCVRoHnxpPF8eLNqNZoSDXRu8VcYG/V0RbAQv+mzmQHlSlbjziqMg/k6kWclINlpSUXoWLeDL31TfZtwvig=@vger.kernel.org, AJvYcCVq8cOqd+kvTHwNGSksNPnNJ1cosQTdUaPsyfKqmxppEvbaNh/4/WD9G9A17/oarN1D7ALleV6k7pVH@vger.kernel.org, AJvYcCW10kAxPm8Ns5U3ziW3gxImNT8U+Q+qCO5VIv4PxHr5wegDQVNDl5YErzsFN0E5ui6euSMDoTKFJaMR@vger.kernel.org, AJvYcCWxLRnnLgPFuwmqdci4ebZtxrCD0FpQXo/PH743ZImOJx3sr3OtXgS5Xff9+k7siFls2pyriGv7KdtuUbjY@vger.kernel.org, AJvYcCXXpPdM3/fEcnTTjmMrbM9W/xotclTo+SkYS6N6RjaJJWIbJZO030muX2zT5GyICWSFQT/LUY0MMD6M1vVeXmI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxEbzo4uHWyQnxmok/icIu1jl/35H3XtFYnkXfzQ/k66IQ3oIVs
-	TEOCzP0EfzwvuuLyeZV4H/hq+26TSIpifEKvS48m2G2G9PYA+YGHwGpmqFRtE65ge8V7W/+sY37
-	YrL1geAENWgN4bjcvJ6GHOTZ7bYU=
-X-Gm-Gg: ASbGncsrzBvPKznCiQXic9uSMd/dEsDHTpiUhFeKzAZauN5ycxuAoXa27zycZqzlRKb
-	t1b7YiSuhHhsghtUtR6XqlEMgcMGHrUioK449oqXgiIhJoSEzFoa1Av1fgbTqhkO+RJjZs3MENC
-	WitJPZXlsWkWNNjG2zzP2C7OOA3pg2nQlB60rPLbppO1blaCfX3LbKpWAcHsrO
-X-Google-Smtp-Source: AGHT+IEeubawRlSkpRnGzmVWw22++0Ktqk/MMMgtA5rXFVJr9UoRX1gyCSDhiL2Xi0GL2rblLWjf9DmjfBaJCJzQ7wE=
-X-Received: by 2002:a05:651c:221b:b0:30b:d63c:ad20 with SMTP id
- 38308e7fff4ca-30c4a8ce9dbmr64521931fa.24.1742208835540; Mon, 17 Mar 2025
- 03:53:55 -0700 (PDT)
+	s=arc-20240116; t=1742208925; c=relaxed/simple;
+	bh=iSJkqmvbpB3JMwQgPR0cfXGE9pxa4Is0Ta0HqVFVxTw=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=hSd7cx7k8Jy4BLYJoXRgJw0/bm6Ycygh3zp9+jw4XBlpRXxuaNWT2auX0XL0ycXO6ATAyJGbJ3HOZ5X0ClFwvQ+WyPTX8lJkyHbjNSaxL8inCl+r65llMxpokZDR4Vv2yB0uFMa4uS9BBdHF2TZoXITyqBbIF00Re16ohBzKlQI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mt-integration.ru; spf=pass smtp.mailfrom=mt-integration.ru; dkim=pass (2048-bit key) header.d=mt-integration.ru header.i=@mt-integration.ru header.b=p+VdAfW2; arc=none smtp.client-ip=81.200.124.39
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mt-integration.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mt-integration.ru
+Received: from ksmg02.maxima.ru (localhost [127.0.0.1])
+	by ksmg02.maxima.ru (Postfix) with ESMTP id 36FBF1E0008;
+	Mon, 17 Mar 2025 13:55:12 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 ksmg02.maxima.ru 36FBF1E0008
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mt-integration.ru;
+	s=sl; t=1742208912; bh=d7t7HcGDv3eC8v3jJtrr1V6WrxNJcqQgvMQo8uuswlI=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
+	b=p+VdAfW2oK0Fgl/+ac0tLGZJeuw7L4tw/biEMfQwCn+6rtJvuygB3m4dl/zjs6Vqd
+	 w3BoT36vhFcvzvVee9FzViCPcetQpqXjWYs+BFwlm+en5bd5mYLWDUR3KI4jGnLs7O
+	 ibZrQfVJctzgfLkqp97Jtg/m8HbrkHFAaQhr1X/Y5y5cmWQLWqlwZJoMRKI+2pcDvl
+	 /id0rFUvmN2o7ANri8ktx2tRCiiSvRiRYVG/Kmjw7AjFPkrZpLatWrNvvjv6h/3YN/
+	 E8Mt2zaQHH0x48mDNMZolhfPQXC0yHTkOgSNkkWPp1JvqoL7uZ/mN4Fsxr6luwTEmZ
+	 4bT2K9IudeOpw==
+Received: from ksmg02.maxima.ru (mail.maxima.ru [81.200.124.62])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(Client CN "*.maxima.ru", Issuer "GlobalSign GCC R3 DV TLS CA 2020" (verified OK))
+	by ksmg02.maxima.ru (Postfix) with ESMTPS;
+	Mon, 17 Mar 2025 13:55:12 +0300 (MSK)
+Received: from GS-NOTE-190.mt.ru (10.0.246.183) by mmail-p-exch02.mt.ru
+ (81.200.124.62) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.1544.4; Mon, 17 Mar
+ 2025 13:55:10 +0300
+From: Murad Masimov <m.masimov@mt-integration.ru>
+To: "David S. Miller" <davem@davemloft.net>
+CC: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, Joerg
+ Reuter <jreuter@yaina.de>, Kuniyuki Iwashima <kuniyu@amazon.com>, Murad
+ Masimov <m.masimov@mt-integration.ru>, <linux-hams@vger.kernel.org>,
+	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<lvc-project@linuxtesting.org>,
+	<syzbot+33841dc6aa3e1d86b78a@syzkaller.appspotmail.com>
+Subject: [PATCH] ax25: Remove broken autobind
+Date: Mon, 17 Mar 2025 13:53:52 +0300
+Message-ID: <20250317105352.412-1-m.masimov@mt-integration.ru>
+X-Mailer: git-send-email 2.46.0.windows.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250315-ptr-as-ptr-v4-0-b2d72c14dc26@gmail.com>
- <20250315-ptr-as-ptr-v4-6-b2d72c14dc26@gmail.com> <D8IFS7175NNQ.3VAP8WA2QC8WF@proton.me>
-In-Reply-To: <D8IFS7175NNQ.3VAP8WA2QC8WF@proton.me>
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Mon, 17 Mar 2025 06:53:19 -0400
-X-Gm-Features: AQ5f1JqqKWQmJQtQxcuGwEC9JarpMRPLE1rROZqjJX4KytwdbIBYSIApzB74Pbo
-Message-ID: <CAJ-ks9mXzM6D++vq0QCugaFOS9ES0j7GpeWZqckY0dA3JwpnJw@mail.gmail.com>
-Subject: Re: [PATCH v4 6/6] rust: use strict provenance APIs
-To: Benno Lossin <benno.lossin@proton.me>
-Cc: Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
-	Nicolas Schier <nicolas@fjasle.eu>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
-	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, 
-	Rae Moar <rmoar@google.com>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Luis Chamberlain <mcgrof@kernel.org>, Russ Weight <russ.weight@linux.dev>, Rob Herring <robh@kernel.org>, 
-	Saravana Kannan <saravanak@google.com>, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, 
-	linux-pci@vger.kernel.org, linux-block@vger.kernel.org, 
-	devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: mt-exch-01.mt.ru (91.220.120.210) To mmail-p-exch02.mt.ru
+ (81.200.124.62)
+X-KSMG-AntiPhishing: NotDetected, bases: 2025/03/17 09:30:00
+X-KSMG-AntiSpam-Auth: dmarc=none header.from=mt-integration.ru;spf=none smtp.mailfrom=mt-integration.ru;dkim=none
+X-KSMG-AntiSpam-Envelope-From: m.masimov@mt-integration.ru
+X-KSMG-AntiSpam-Info: LuaCore: 51 0.3.51 68896fb0083a027476849bf400a331a2d5d94398, {rep_avail}, {Tracking_one_url}, {Tracking_uf_ne_domains}, {Tracking_from_domain_doesnt_match_to}, 81.200.124.62:7.1.2;mt-integration.ru:7.1.1;127.0.0.199:7.1.2;ksmg02.maxima.ru:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;syzkaller.appspot.com:5.0.1,7.1.1, FromAlignment: s, ApMailHostAddress: 81.200.124.62
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiSpam-Lua-Profiles: 191835 [Mar 17 2025]
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Version: 6.1.1.11
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.1.1.8310, bases: 2025/03/17 05:57:00 #27790323
+X-KSMG-AntiVirus-Status: NotDetected, skipped
+X-KSMG-LinksScanning: NotDetected, bases: 2025/03/17 09:27:00
+X-KSMG-Message-Action: skipped
+X-KSMG-Rule-ID: 7
 
-On Mon, Mar 17, 2025 at 5:34=E2=80=AFAM Benno Lossin <benno.lossin@proton.m=
-e> wrote:
->
-> On Sat Mar 15, 2025 at 1:17 PM CET, Tamir Duberstein wrote:
-> > Throughout the tree, use the strict provenance APIs stabilized in Rust
-> > 1.84.0[1]. Retain backwards-compatibility by introducing forwarding
-> > functions at the `kernel` crate root along with polyfills for rustc <
-> > 1.84.0.
-> >
-> > Use `#[allow(clippy::incompatible_msrv)]` to avoid warnings on rustc <
-> > 1.84.0 as our MSRV is 1.78.0.
->
-> This isn't necessary, right?
+Binding AX25 socket by using the autobind feature leads to memory leaks
+in ax25_connect() and also refcount leaks in ax25_release(). Memory
+leak was detected with kmemleak:
 
-It is necessary. MSRV is encoded in .clippy.toml, it doesn't matter
-what the *current* rustc version is.
+================================================================
+unreferenced object 0xffff8880253cd680 (size 96):
+backtrace:
+__kmalloc_node_track_caller_noprof (./include/linux/kmemleak.h:43)
+kmemdup_noprof (mm/util.c:136)
+ax25_rt_autobind (net/ax25/ax25_route.c:428)
+ax25_connect (net/ax25/af_ax25.c:1282)
+__sys_connect_file (net/socket.c:2045)
+__sys_connect (net/socket.c:2064)
+__x64_sys_connect (net/socket.c:2067)
+do_syscall_64 (arch/x86/entry/common.c:52 arch/x86/entry/common.c:83)
+entry_SYSCALL_64_after_hwframe (arch/x86/entry/entry_64.S:130)
+================================================================
 
-> > In the `kernel` crate, enable the strict provenance lints on rustc >=3D
-> > 1.84.0; do this in `lib.rs` rather than `Makefile` to avoid introducing
-> > compiler flags that are dependent on the rustc version in use.
->
-> So it won't be enabled in the doctests, right?
+When socket is bound, refcounts must be incremented the way it is done
+in ax25_bind() and ax25_setsockopt() (SO_BINDTODEVICE). In case of
+autobind, the refcounts are not incremented.
 
-Yes, that is correct.
+This bug leads to the following issue reported by Syzkaller:
 
-> > Link: https://blog.rust-lang.org/2025/01/09/Rust-1.84.0.html#strict-pro=
-venance-apis [1]
-> > Suggested-by: Benno Lossin <benno.lossin@proton.me>
-> > Link: https://lore.kernel.org/all/D8EIXDMRXMJP.36TFCGWZBRS3Y@proton.me/
-> > Signed-off-by: Tamir Duberstein <tamird@gmail.com>
-> > ---
-> >  init/Kconfig           |  3 +++
-> >  rust/kernel/alloc.rs   |  2 +-
-> >  rust/kernel/devres.rs  |  4 ++--
-> >  rust/kernel/io.rs      | 14 +++++++-------
-> >  rust/kernel/lib.rs     | 52 ++++++++++++++++++++++++++++++++++++++++++=
-++++++++
-> >  rust/kernel/of.rs      |  2 +-
-> >  rust/kernel/pci.rs     |  4 ++--
-> >  rust/kernel/str.rs     | 16 ++++++----------
-> >  rust/kernel/uaccess.rs | 12 ++++++++----
-> >  9 files changed, 82 insertions(+), 27 deletions(-)
->
->
-> > diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
-> > index 486715528587..84eb2602e79e 100644
-> > --- a/rust/kernel/lib.rs
-> > +++ b/rust/kernel/lib.rs
-> > @@ -17,6 +17,9 @@
-> >  #![cfg_attr(not(CONFIG_RUSTC_HAS_COERCE_POINTEE), feature(coerce_unsiz=
-ed))]
-> >  #![cfg_attr(not(CONFIG_RUSTC_HAS_COERCE_POINTEE), feature(dispatch_fro=
-m_dyn))]
-> >  #![cfg_attr(not(CONFIG_RUSTC_HAS_COERCE_POINTEE), feature(unsize))]
-> > +#![cfg_attr(CONFIG_RUSTC_HAS_STABLE_STRICT_PROVENANCE, feature(strict_=
-provenance_lints))]
-> > +#![cfg_attr(CONFIG_RUSTC_HAS_STABLE_STRICT_PROVENANCE, deny(fuzzy_prov=
-enance_casts))]
-> > +#![cfg_attr(CONFIG_RUSTC_HAS_STABLE_STRICT_PROVENANCE, deny(lossy_prov=
-enance_casts))]
-> >  #![feature(inline_const)]
-> >  #![feature(lint_reasons)]
-> >  // Stable in Rust 1.83
-> > @@ -25,6 +28,55 @@
-> >  #![feature(const_ptr_write)]
-> >  #![feature(const_refs_to_cell)]
-> >
-> > +#[cfg(CONFIG_RUSTC_HAS_STABLE_STRICT_PROVENANCE)]
-> > +#[allow(clippy::incompatible_msrv)]
->
-> Do we still need this allow?
+================================================================
+ax25_connect(): syz-executor318 uses autobind, please contact jreuter@yaina.de
+------------[ cut here ]------------
+refcount_t: decrement hit 0; leaking memory.
+WARNING: CPU: 0 PID: 5317 at lib/refcount.c:31 refcount_warn_saturate+0xfa/0x1d0 lib/refcount.c:31
+Modules linked in:
+CPU: 0 UID: 0 PID: 5317 Comm: syz-executor318 Not tainted 6.14.0-rc4-syzkaller-00278-gece144f151ac #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:refcount_warn_saturate+0xfa/0x1d0 lib/refcount.c:31
+...
+Call Trace:
+ <TASK>
+ __refcount_dec include/linux/refcount.h:336 [inline]
+ refcount_dec include/linux/refcount.h:351 [inline]
+ ref_tracker_free+0x6af/0x7e0 lib/ref_tracker.c:236
+ netdev_tracker_free include/linux/netdevice.h:4302 [inline]
+ netdev_put include/linux/netdevice.h:4319 [inline]
+ ax25_release+0x368/0x960 net/ax25/af_ax25.c:1080
+ __sock_release net/socket.c:647 [inline]
+ sock_close+0xbc/0x240 net/socket.c:1398
+ __fput+0x3e9/0x9f0 fs/file_table.c:464
+ __do_sys_close fs/open.c:1580 [inline]
+ __se_sys_close fs/open.c:1565 [inline]
+ __x64_sys_close+0x7f/0x110 fs/open.c:1565
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+ ...
+ </TASK>
+================================================================
 
-Yes, explained above.
+Considering the issues above and the comments left in the code that say:
+"check if we can remove this feature. It is broken."; "autobinding in this
+may or may not work"; - it is better to completely remove this feature than
+to fix it because it is broken and leads to various kinds of memory bugs.
 
-> > +mod strict_provenance {
-> > +    #[doc(hidden)]
->
-> Why make them hidden in docs?
+Now calling connect() without first binding socket will result in an
+error (-EINVAL). Userspace software that relies on the autobind feature
+might get broken. However, this feature does not seem widely used with
+this specific driver as it was not reliable at any point of time, and it
+is already broken anyway. E.g. ax25-tools and ax25-apps packages for
+popular distributions do not use the autobind feature for AF_AX25.
 
-I've added documentation that defers to the standard library.
+Found by Linux Verification Center (linuxtesting.org) with Syzkaller.
 
->
-> > +    pub fn expose_provenance<T>(addr: *const T) -> usize {
-> > +        addr.expose_provenance()
->
-> Instead of having these stubs here, you can probably just do
->
->     pub use core::ptr::expose_provenance;
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Reported-by: syzbot+33841dc6aa3e1d86b78a@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=33841dc6aa3e1d86b78a
+Signed-off-by: Murad Masimov <m.masimov@mt-integration.ru>
+---
+ include/net/ax25.h    |  1 -
+ net/ax25/af_ax25.c    | 30 ++++++------------
+ net/ax25/ax25_route.c | 74 -------------------------------------------
+ 3 files changed, 10 insertions(+), 95 deletions(-)
 
-This doesn't work for the methods on primitives, but it works for the
-free functions. Done.
+diff --git a/include/net/ax25.h b/include/net/ax25.h
+index 4ee141aae0a2..a7bba42dde15 100644
+--- a/include/net/ax25.h
++++ b/include/net/ax25.h
+@@ -418,7 +418,6 @@ void ax25_rt_device_down(struct net_device *);
+ int ax25_rt_ioctl(unsigned int, void __user *);
+ extern const struct seq_operations ax25_rt_seqops;
+ ax25_route *ax25_get_route(ax25_address *addr, struct net_device *dev);
+-int ax25_rt_autobind(ax25_cb *, ax25_address *);
+ struct sk_buff *ax25_rt_build_path(struct sk_buff *, ax25_address *,
+ 				   ax25_address *, ax25_digi *);
+ void ax25_rt_free(void);
+diff --git a/net/ax25/af_ax25.c b/net/ax25/af_ax25.c
+index 9f3b8b682adb..3ee7dba34310 100644
+--- a/net/ax25/af_ax25.c
++++ b/net/ax25/af_ax25.c
+@@ -1270,28 +1270,18 @@ static int __must_check ax25_connect(struct socket *sock,
+ 		}
+ 	}
 
+-	/*
+-	 *	Must bind first - autobinding in this may or may not work. If
+-	 *	the socket is already bound, check to see if the device has
+-	 *	been filled in, error if it hasn't.
+-	 */
++	/* Must bind first - autobinding does not work. */
+ 	if (sock_flag(sk, SOCK_ZAPPED)) {
+-		/* check if we can remove this feature. It is broken. */
+-		printk(KERN_WARNING "ax25_connect(): %s uses autobind, please contact jreuter@yaina.de\n",
+-			current->comm);
+-		if ((err = ax25_rt_autobind(ax25, &fsa->fsa_ax25.sax25_call)) < 0) {
+-			kfree(digi);
+-			goto out_release;
+-		}
++		kfree(digi);
++		err = -EINVAL;
++		goto out_release;
++	}
 
-> > +    }
-> > +
-> > +    #[doc(hidden)]
-> > +    pub fn without_provenance_mut<T>(addr: usize) -> *mut T {
-> > +        core::ptr::without_provenance_mut(addr)
-> > +    }
-> > +
-> > +    #[doc(hidden)]
-> > +    pub fn with_exposed_provenance<T>(addr: usize) -> *const T {
-> > +        core::ptr::with_exposed_provenance(addr)
-> > +    }
-> > +
-> > +    #[doc(hidden)]
-> > +    pub fn with_exposed_provenance_mut<T>(addr: usize) -> *mut T {
-> > +        core::ptr::with_exposed_provenance_mut(addr)
-> > +    }
-> > +}
-> > +
-> > +#[cfg(not(CONFIG_RUSTC_HAS_STABLE_STRICT_PROVENANCE))]
-> > +mod strict_provenance {
-> > +    #[doc(hidden)]
->
-> I think we should document these.
+-		ax25_fillin_cb(ax25, ax25->ax25_dev);
+-		ax25_cb_add(ax25);
+-	} else {
+-		if (ax25->ax25_dev == NULL) {
+-			kfree(digi);
+-			err = -EHOSTUNREACH;
+-			goto out_release;
+-		}
++	/* Check to see if the device has been filled in, error if it hasn't. */
++	if (ax25->ax25_dev == NULL) {
++		kfree(digi);
++		err = -EHOSTUNREACH;
++		goto out_release;
+ 	}
 
-Done.
+ 	if (sk->sk_type == SOCK_SEQPACKET &&
+diff --git a/net/ax25/ax25_route.c b/net/ax25/ax25_route.c
+index 69de75db0c9c..10577434f40b 100644
+--- a/net/ax25/ax25_route.c
++++ b/net/ax25/ax25_route.c
+@@ -373,80 +373,6 @@ ax25_route *ax25_get_route(ax25_address *addr, struct net_device *dev)
+ 	return ax25_rt;
+ }
 
->
-> ---
-> Cheers,
-> Benno
->
-> > +    pub fn expose_provenance<T>(addr: *const T) -> usize {
-> > +        addr.cast::<()>() as usize
-> > +    }
-> > +
-> > +    #[doc(hidden)]
-> > +    pub fn without_provenance_mut<T>(addr: usize) -> *mut T {
-> > +        addr as *mut T
-> > +    }
-> > +
-> > +    #[doc(hidden)]
-> > +    pub fn with_exposed_provenance<T>(addr: usize) -> *const T {
-> > +        addr as *const T
-> > +    }
-> > +
-> > +    #[doc(hidden)]
-> > +    pub fn with_exposed_provenance_mut<T>(addr: usize) -> *mut T {
-> > +        addr as *mut T
-> > +    }
-> > +}
-> > +
-> > +pub use strict_provenance::*;
->
+-/*
+- *	Adjust path: If you specify a default route and want to connect
+- *      a target on the digipeater path but w/o having a special route
+- *	set before, the path has to be truncated from your target on.
+- */
+-static inline void ax25_adjust_path(ax25_address *addr, ax25_digi *digipeat)
+-{
+-	int k;
+-
+-	for (k = 0; k < digipeat->ndigi; k++) {
+-		if (ax25cmp(addr, &digipeat->calls[k]) == 0)
+-			break;
+-	}
+-
+-	digipeat->ndigi = k;
+-}
+-
+-
+-/*
+- *	Find which interface to use.
+- */
+-int ax25_rt_autobind(ax25_cb *ax25, ax25_address *addr)
+-{
+-	ax25_uid_assoc *user;
+-	ax25_route *ax25_rt;
+-	int err = 0;
+-
+-	ax25_route_lock_use();
+-	ax25_rt = ax25_get_route(addr, NULL);
+-	if (!ax25_rt) {
+-		ax25_route_lock_unuse();
+-		return -EHOSTUNREACH;
+-	}
+-	rcu_read_lock();
+-	if ((ax25->ax25_dev = ax25_dev_ax25dev(ax25_rt->dev)) == NULL) {
+-		err = -EHOSTUNREACH;
+-		goto put;
+-	}
+-
+-	user = ax25_findbyuid(current_euid());
+-	if (user) {
+-		ax25->source_addr = user->call;
+-		ax25_uid_put(user);
+-	} else {
+-		if (ax25_uid_policy && !capable(CAP_NET_BIND_SERVICE)) {
+-			err = -EPERM;
+-			goto put;
+-		}
+-		ax25->source_addr = *(ax25_address *)ax25->ax25_dev->dev->dev_addr;
+-	}
+-
+-	if (ax25_rt->digipeat != NULL) {
+-		ax25->digipeat = kmemdup(ax25_rt->digipeat, sizeof(ax25_digi),
+-					 GFP_ATOMIC);
+-		if (ax25->digipeat == NULL) {
+-			err = -ENOMEM;
+-			goto put;
+-		}
+-		ax25_adjust_path(addr, ax25->digipeat);
+-	}
+-
+-	if (ax25->sk != NULL) {
+-		local_bh_disable();
+-		bh_lock_sock(ax25->sk);
+-		sock_reset_flag(ax25->sk, SOCK_ZAPPED);
+-		bh_unlock_sock(ax25->sk);
+-		local_bh_enable();
+-	}
+-
+-put:
+-	rcu_read_unlock();
+-	ax25_route_lock_unuse();
+-	return err;
+-}
+
+ struct sk_buff *ax25_rt_build_path(struct sk_buff *skb, ax25_address *src,
+ 	ax25_address *dest, ax25_digi *digi)
+--
+2.39.2
+
 
