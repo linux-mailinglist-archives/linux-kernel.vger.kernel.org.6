@@ -1,252 +1,186 @@
-Return-Path: <linux-kernel+bounces-564782-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564779-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA830A65A9F
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 18:25:59 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5951A65A85
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 18:22:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1074B3BB6EE
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 17:21:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 11BD117F81F
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 17:20:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D065A1598F4;
-	Mon, 17 Mar 2025 17:21:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6CC019F40A;
+	Mon, 17 Mar 2025 17:20:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="KbpRxStd"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2053.outbound.protection.outlook.com [40.107.93.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YmLG4a0J"
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6E2019F424
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 17:21:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.53
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742232068; cv=fail; b=kNk4uczmJmJStxICMXu1atd8dc/G8FPocE2MTvmUqeY4yC7QgoCSwEXucmJ65sr9XST/uHSITV5X8qciFh11b9yz7u9qT2oG0IpZcSOR6dkmKX0LuFB1O7L2NvkNr8AvfCPcanw96KdpWFRkp9xn3qDAu7Mz3i6A62eezaGzxg0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742232068; c=relaxed/simple;
-	bh=zB24r5iT/lpQt7xgqTDgDaycte9FpG7X+0LTU9T4obo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=SiMDIfRTeWvaCcscPr7HgW8mdDUYvlnUTqD+kGvW/TzpJnrxHnIhVzhTqOREGmWJxbY1IguzcOTKcP/JSu65KbXKPBDGqM7NpECBhPGB890emE+yk1aop8tybQXNnz4U6o3XzepRqgwGfoQ7FBI/ZK6Tie4DNSWS1aTkmb/N1/g=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=KbpRxStd; arc=fail smtp.client-ip=40.107.93.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Hoc1/cRaew/UXsxnuuO/PhvA3kOnhJPFhyb4tXRsc5Jr/sgjU/igt4/QW5inNjy4WtOxatLyzw/EbfecMIvOZs3/dKYyHBjCwuyEi8hwUISlmHfZtdGr/PITPgHlWG4NLB+HZ5qIDMqamFaBH9ri1+XvsRLahUUt3bMGMteB4LJAhqqn8AO+Ho6OnlALjMUN3GB/IfWASgp5CweCYx4X0l4yKbQ+0GBAA/TCS8mdw57A0qUBFAQ3059DWHa1bLM0Yv4CWJf5gwJ6PU0pnp9hL2/x96Hz54qaSLqGabKEkyx2N53pLwXSHDrE49YscNhArOYtT501QkeeWUSH4rpwsQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=3Q/hxXR63pDGGCpCMZsVPXKM8yNcJftr/bfjab2FerU=;
- b=WPf+Wl6wv1ds41v/4MCLG2q+E6EBxTwMddMdmts0gp8hKV/gUmausC2aSLNXNkV49YLdd8t3k8yGcoX6EqFHoPZAWtnwPP7ZFGakwrf4akTTlKJdTFTco7n2a0Rpi0k0OO9XN5FkaUtA7xCIHL8zLiHld7SjXo+T7RF/KeuIobSyc4FF+vEmfdSrP68Wq+wDrpWaG57zi9sO9J600pfrgDV17gY8HwjTBd+cDenhb6THCDjssAcoxuKyya3FxQnP8XTaC83lm72aAmYBMCsGAS1RaEucVMQlfaZgu6O3xOKqDwR5KocogTFPvZ/ThsLUgWdsJxX4ZX9nLYNT8gEs4g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3Q/hxXR63pDGGCpCMZsVPXKM8yNcJftr/bfjab2FerU=;
- b=KbpRxStdKr9/26qoxfRF+Q/htzldHyvJHYm0tsYovqyDuvY6UT/gaP4CYNsDso/HyuyNlbhPyc2+9GySlz6p6m0gKosOtpO/LI6ZvcrHElUqiji8diEhjAUMV80JAxZ0V/EqdPLDgus7wVk5OwTb4FrUuhuyGm/s51X7pvV70VC8wXymPZSr8fh+vqUL9WtKxmPFEqFjvxeLDVy27uMWd8fOnyY1T9+ng9yCrDxD3UqVoIJP1MjvDmfhLUjZRFctr1ncm3r3MmCzZts/mTeFoDd1wpG6ZHo72iL6e5IYaQY++qhlhzBrcB/L7HzltVh5mIO9zF2MQZQT0z4wBW2USQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CY5PR12MB6405.namprd12.prod.outlook.com (2603:10b6:930:3e::17)
- by PH7PR12MB6467.namprd12.prod.outlook.com (2603:10b6:510:1f5::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.33; Mon, 17 Mar
- 2025 17:21:03 +0000
-Received: from CY5PR12MB6405.namprd12.prod.outlook.com
- ([fe80::2119:c96c:b455:53b5]) by CY5PR12MB6405.namprd12.prod.outlook.com
- ([fe80::2119:c96c:b455:53b5%6]) with mapi id 15.20.8534.031; Mon, 17 Mar 2025
- 17:21:03 +0000
-Date: Mon, 17 Mar 2025 18:20:53 +0100
-From: Andrea Righi <arighi@nvidia.com>
-To: Joel Fernandes <joelagnelf@nvidia.com>
-Cc: linux-kernel@vger.kernel.org, Tejun Heo <tj@kernel.org>,
-	David Vernet <void@manifault.com>,
-	Changwoo Min <changwoo@igalia.com>, Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>
-Subject: Re: [PATCH RFC] sched_ext: Choose prev_cpu if idle and cache affine
- without WF_SYNC
-Message-ID: <Z9hZ9fgtGNd8DeEf@gpd3>
-References: <20250317082803.3071809-1-joelagnelf@nvidia.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250317082803.3071809-1-joelagnelf@nvidia.com>
-X-ClientProxiedBy: FR3P281CA0094.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:a1::9) To CY5PR12MB6405.namprd12.prod.outlook.com
- (2603:10b6:930:3e::17)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74DB71553A3;
+	Mon, 17 Mar 2025 17:20:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742232019; cv=none; b=JFTYu7hDPxJEor1h8jhu0feHAk0qDhNgdgfFJbThb2+hdEEUBI6oYSlasqSWpg1UE4acettrV1/wZx2W5QfRRtfPyiG1o1XrhbxKc6jCZ2oJb9kGbeFDq/vcehz4gcvSrfbWL8aaaFaPO2s+flMY/mTMYeSNf0OFpTtBRwczjHE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742232019; c=relaxed/simple;
+	bh=r8Jjyg4N4bX0jkWi1/kQS+nKK6mUoA5S9Z59aKSMcw0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BqFQDEaH2EE9oNhmxNWnga5MAh5V+rmEH3SWbsyZ6Ssg1VuARatmgKzUp/t2G96wQooidgbnWlRZxbs2OkOSudjCv/cI/4QGACOLcShsbF+hPYiOmf84fwRYSNVaQbFvX2WcRlqR/w6mjTD3EX+Zw6Da1CIK75DaoUZjAtHZQvI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YmLG4a0J; arc=none smtp.client-ip=209.85.216.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2ff799d99dcso3889692a91.1;
+        Mon, 17 Mar 2025 10:20:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742232017; x=1742836817; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZiIzpFKizdM9xv+6JVtSJnmseZQ1sm302MUd2poCzvo=;
+        b=YmLG4a0JiNua1vfIdxPPzi0VsUW/trevjvQ/i5XQmj1jvFWz5BDuRMfoIZrdfLQAz0
+         LiXifUKo4xMMIHxe4akhFG+rGFFeEhdFgpmXhoEJa3+4YRuZCMARnLcW1WM+rAWNv5br
+         EEsW1XUFZdaoL54FsEBZasj79gA5JR31F9YZI2CK2JWD2uZS8qiHnC3Bv+YwPeqn3RjR
+         ig5/XK+v203dDqm06s+CvCK0gUyTfYGH6JT7QZXOTCv8fSCV2rCcRzI0/EnJCi1Is7BO
+         bknMeF9hC8W+Zhds5ujf5UXfpSWAMOS1G2ODxulQVZqFWtrLQQTAWRw5V70k0fZ+r8YC
+         tATg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742232017; x=1742836817;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZiIzpFKizdM9xv+6JVtSJnmseZQ1sm302MUd2poCzvo=;
+        b=DP/ew8gpz8wiINJYMGOwrOdgU+e9/bSzB293W1zS7i2xAWGjPZcQvUvxV824wAK3BO
+         DGpXxV8vMHSEBtf3rjskSRDJd3j2keRTEd4Ao+hvfcbFcr3lWmnd2wXU1+hcB3ltrKhB
+         t4QG/bDSuzaog64R4I5jh7ynXkZvfLInZ4srn1kzCMLDuffN4kDBpZ24ijpi2gLnX//T
+         BHKfzn+k/p3w5C+udt8bcPpN9sVzglO0QqLpZgNPNb3l/7X29ntYvhA7+wZH5Z49+kyQ
+         RPWC2ZFxlWQdDU3aPWFRWWW5ViPGDhZFaRYOCArsNv9ujDZQLSw/iyNi4TOyy4ne/XVl
+         2unw==
+X-Forwarded-Encrypted: i=1; AJvYcCU5mIkcZJTZIGvHAo1hew0Um66zK/Il55GdPF81ZE5OwIjJNP1N1mTnXvPVHOohA5cOOARI310kzw9dX0QH@vger.kernel.org, AJvYcCUtYTRpmluTKTm8KiMuEiBiNgzSyq22srfP1ZF3T+9dJVtpXVNqJ5buOJOOxujOX7UMLBEJ0cmdsu6C@vger.kernel.org, AJvYcCUyDrMuzL/0s67acANV5+m8vvbV1l0m1GJ7CwetQ4+Gxk6sDTUze4sVAOF1ucYC+nmw0yrTbe7sT58=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3XwMFO+S5G8PmXgO1j/KTX6ASSlYPwbA1qabConr/Sm0K0coY
+	+5ONPIHqxnpbXjhH01waKttiwZXlcLxz0aQYNowIUmNv1OGzdYE8z7pch+6/ejc=
+X-Gm-Gg: ASbGnctP/lQ4EMk0l2lf0hkAm3V+q2+4lIVBbocmMF+u3ZZcaTT7q3VlRKdS95uPCa8
+	6BIKFIemPU8RMbtS6dkiT6DMe85BYlgTtiqFo7eTY0z4L/mdpgYgWkim/1F0g00H4+EZeV9NugF
+	q1OQkF5W7Su9+LeEH/bVgoaVdnSWgovFqvIwh4bK+3gFETyri41GpoyL1xIpeBXrt2zZIsuDuGP
+	0jeeWEIrEinx1ToLoEUCNZ4WncdtRGFGC/ddUqmSq6SH6W79x4r1u45KvKARfKzB8UYmi1T9219
+	KqEUyYweIB+68aGa93KVQz53JZbTkq51bQQWrjTW8MIDisg2Bmb6CA==
+X-Google-Smtp-Source: AGHT+IEOkCuEJ4y6Pz/ka0G+KJKTZOyC+nCXkEkskAiqb7vP1hG++WLS+FAQG98+YjaTGs0pmzRsBg==
+X-Received: by 2002:a17:90b:2dc4:b0:2f2:a664:df1a with SMTP id 98e67ed59e1d1-30151cad150mr17773701a91.2.1742232016547;
+        Mon, 17 Mar 2025 10:20:16 -0700 (PDT)
+Received: from localhost ([2804:30c:b31:2d00:277c:5cbe:7f44:752b])
+        by smtp.gmail.com with UTF8SMTPSA id 98e67ed59e1d1-30153b994cdsm6328475a91.31.2025.03.17.10.20.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Mar 2025 10:20:15 -0700 (PDT)
+Date: Mon, 17 Mar 2025 14:21:13 -0300
+From: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Jonathan Cameron <jic23@kernel.org>,
+	Marcelo Schmitt <marcelo.schmitt@analog.com>,
+	linux-iio@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, lars@metafoo.de,
+	Michael.Hennerich@analog.com, corbet@lwn.net
+Subject: Re: [PATCH v1 1/4] iio: adc: ad4000: Add support for SPI offload
+Message-ID: <Z9haCda4yF2SZ6gb@debian-BULLSEYE-live-builder-AMD64>
+References: <cover.1741970538.git.marcelo.schmitt@analog.com>
+ <301fc83a961c4a2ef2ac980d0baa83d9d89a88c5.1741970538.git.marcelo.schmitt@analog.com>
+ <20250317102751.5702fb82@jic23-huawei>
+ <Z9hAUs1wPOIAo2nt@debian-BULLSEYE-live-builder-AMD64>
+ <60831e04-52c2-446f-8bc5-b5d3e9e5fd40@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY5PR12MB6405:EE_|PH7PR12MB6467:EE_
-X-MS-Office365-Filtering-Correlation-Id: 479d8d94-44cf-4c20-6e61-08dd657817d9
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?slffjZQasnd2AdMCg0DPyL/H91bdic565gP6SAHYxHZWcP6e6j66u4ooBj74?=
- =?us-ascii?Q?ThiqH+fP/wd2UhIEV4n1oyfylWX8+7ys4FTKUXRGeX1XOEO8W/KJAbZQ7C93?=
- =?us-ascii?Q?e5Fe5l0W0QXRiIqxDfxSGX5Ih6aH5VFcnLoBM9gS9CjcIau9Nji2SYjckqeA?=
- =?us-ascii?Q?OuGmjoTY1Udjw66glvtU74H2yg8Yi1l+s8zVG0xLoZP/O/MSSUvkpihyidE9?=
- =?us-ascii?Q?fxPGhX24utqUYxP7pAnHG6JQvipk+KsvVGXLxrr9k5AB0rKl1jJqpKDv92vr?=
- =?us-ascii?Q?4KvPD8+293KS0eGhf9GOLyCiuUOwhJf0tR3ILMQW01ew9AI/7q72yHACaghU?=
- =?us-ascii?Q?/OXKqEsbNSbvIs/NH9WH//n9tO3Yl6/qHOPFLIbxQeKtrqYQ9B4pxZk+6y2F?=
- =?us-ascii?Q?7yV+uel1xHWC6CD3lgbGMN7lyeR25nOKmLVwk55oWV/n1R/Dn1o9Pc5Zn168?=
- =?us-ascii?Q?jOxkfRADUf2MGyxa1Sj3lSwO3L/ya4tNtVW1QW/g8tcAIw1FDIZYNjSXzQdV?=
- =?us-ascii?Q?pVDl7LlJmD0y7HLixA1laPnMLUUBSnm1aaFY+x7uZ1ZZSg0AzWkjHuVMcbvF?=
- =?us-ascii?Q?fiNy0UnDmZTa7uf07NMczJqIyTxGymQHcpDXK9H/4QnWEUNHt4XSu/+9qCGo?=
- =?us-ascii?Q?saJ0sixM6FZBWhmIL//hevkOb/hORAki8tj5LPhVupfVc6DX4RkqHZhvdQea?=
- =?us-ascii?Q?6QRVIOKYgzIwI5sD0bG54kHLRkni/dpaBqGbuL6kLlmz1ikFxmFXLOQvtS0s?=
- =?us-ascii?Q?Kc0Zd/oPWMjYlEBaX8Hax3VewSLgKm2jT7sp4ryedEI9WhoZu2Sj8S2DnSkL?=
- =?us-ascii?Q?GTkWeEcUTTQE13iIUfzYGtb5c/chq9eVXbzohw1+hdln5DHRELs+3x6KitfT?=
- =?us-ascii?Q?oBk6b07DzRNpl2ZdzN3XDJCllCijZibEwuo9trriIETtS9NUpo3bK6ABlmvs?=
- =?us-ascii?Q?eUofkQws5n8ZB4I7qapmCHHi1ejc4K3od/zGbeum3uFjUxzIDecLtMiOe3E/?=
- =?us-ascii?Q?1Gb1Jzv7PXC5+mOqzn+6+ZA+fIHnJNsj+LL4TufYpXMJiYS3PDGWJEDMIjWu?=
- =?us-ascii?Q?UMdQVGLGTAtHImM7UVVbCWn/YO0HZWuqvZmRWlJxAO2uRuPe+2dS4k/JWOqJ?=
- =?us-ascii?Q?HzxcMPe0/PGrX89BlIGVgMkve1OasU6+py3Ttz52+SiL11zgGD+fsFc3vVyi?=
- =?us-ascii?Q?xBWEAevrWpfQk3key98vTlbB+VQ6ybMKgnAsvIpoRFn5RG5KP78pRkxEPgSS?=
- =?us-ascii?Q?uY6P/W46KU/oTAHvpGCW1+aqremqV5SDF9vFmburWLGwP6nhPSCB1vL0KM5f?=
- =?us-ascii?Q?Pe/E1mQ+0THtH+prplO+VndoOqlgD9f4t6kOVpHPo3MJ1WMgLhfKGTJfHgUO?=
- =?us-ascii?Q?sR6mY5j8UGm1TAJqhkNY8TnXrRfa?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY5PR12MB6405.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?r8UWd2j65Gj1RsRnmpyHCyLeVoPAbEtj97DPWFLf6HhvJJm1TehIqIdPvUjp?=
- =?us-ascii?Q?GYWBKtsueZx1rRKfpYdZFed9RvjSs2oI40YFAUA0DJ7ihLNLO4mCfqBWglM8?=
- =?us-ascii?Q?8rCsJl6Y8dYNmy4zJ5pEay3vr2gMBxrsr0pNq+O2U5MiTtDHroPmW6dNcVtM?=
- =?us-ascii?Q?4CYBt4ho/b+V49Y4awHXE2hw7sEyvNcVV2Wwx8L/tN3VUQ9gDjeVsNSIzneC?=
- =?us-ascii?Q?rATzkoAe4Kpgxy7Ey5Aso4z5j60z7X9XUS/Anaw3QjA4AIPtd9Cw5RL9R2gr?=
- =?us-ascii?Q?J/6JvdjpwNzN3D+ToACo32I9XvND8BmjHbcVdAxgQQe4CccymRo0YEwZuZqN?=
- =?us-ascii?Q?EkKNbQHX3XEIWfZU4LqJgSVMi1FDdllGSa+ZsGG+NWJF/nW5q9APwtvpmLcd?=
- =?us-ascii?Q?qX81SNEPDql27KlhCsRJsQSQkG/Sh70Q/qB4rD8Iw6p6ig+oTM0WxQZ6dXv2?=
- =?us-ascii?Q?1hYRzHPvTgDWw1TMmUzKxmAwvl/7vyylnwg5w2FU/x7PY+ZLoHh7cw9CeD4w?=
- =?us-ascii?Q?TjDbM425FGHQj9BwXqEviTKXmD11sNtB0sBOYCFKs28SOezEmN0hMOruRp4D?=
- =?us-ascii?Q?ZkqHsCq+kfoS1iSABmH/MaAdG0vabHX2KiYg06boci0kh4Se0u2fYP9SHid+?=
- =?us-ascii?Q?nMG4//NjqPqr7qn9quGf1Fsia1WXBIJX3GaSOcTnyxC7rPEYx/+smuTBH16v?=
- =?us-ascii?Q?mPzThN/QhVGbAxpcsQ0Y4PjWOAiA6AhhfBZ3uEhdFa50J9zkf/yXczypcSIg?=
- =?us-ascii?Q?svfwN9xpJXb6hAdEQBntW6T7dfURoDm44cNkuc6Bkq9dj+99VDlu+AliCmW/?=
- =?us-ascii?Q?93y3J0KC9N2UqeTx22/heFo88LWh4VeKrlZcCgkyMBN9qKqToK1fa/OWRreE?=
- =?us-ascii?Q?T/ndsitJM6lfIS+MSWgfWfh8Xz8+zr/Qqflh52jacTmfI0pis07ty4p3KEAS?=
- =?us-ascii?Q?y/93JwB2Y7dY35fB1Zdv4ffFHwWplvUplUV6yeFsUX64tjyAscJLgz2vSwBm?=
- =?us-ascii?Q?PB7Fz33mlrx1uu7pKU8ecURn9/BFXzt/N3xwVwpRZBZNpjLMdccE87rbVmyY?=
- =?us-ascii?Q?VtDEjcvfrzQfTp+0y3xfObms9+YZKVmpT1LOsBeqct3HU+JfCUom18zwF//G?=
- =?us-ascii?Q?/ryz83pdgBwfSPcgXnBjsTHLX4dNaKPbfr3j7r4AawxMSgyCm3OZsLdGkm/p?=
- =?us-ascii?Q?FRY4BPmCxDI1+aokLQ/aMgcYEWnPzAtKzs0uhf+3LEcJHpBqLYUKNQXn87Il?=
- =?us-ascii?Q?OXdjjEPFm146Xsi1NNEwHIuAiI31BLnyPxJUgBc4Yf40vO+mFvxo6xQXyOue?=
- =?us-ascii?Q?/xxbD2RoeATcGFZ0BQxgMOHzp5y8oZSr984mu6LsXn9syPsAt3GewIEi4NqG?=
- =?us-ascii?Q?J8JU+jcQQAe6UIVK4ZZZGJfFqnTLxcuGLY8S9IJTkq75xK4H7sJFlb6p5h4v?=
- =?us-ascii?Q?hSw14v71VB4iB2FHbcV6vZGvCHZJrXPWudcVMszwSaCveANHu4GqpIbPdwZ1?=
- =?us-ascii?Q?b2HQo4Ad7PBnqtsDje30+SpICnCnBd13zPG+kQa8OV9PBeFjHDKr5hwsrgqS?=
- =?us-ascii?Q?WaUvOouMqtCfN7CGrT5ZD2BIyvTcimrulH926yQV?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 479d8d94-44cf-4c20-6e61-08dd657817d9
-X-MS-Exchange-CrossTenant-AuthSource: CY5PR12MB6405.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Mar 2025 17:21:03.0107
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: DNxtSn/HjV4Cp6pw4osDCos/t4/ZcVx/3jmYKswinLmTc+C18DKiRpOHjMUtjVTVugzhEEnPkdZG0gyomGQ+yA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB6467
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <60831e04-52c2-446f-8bc5-b5d3e9e5fd40@baylibre.com>
 
-Hi Joel,
+Hi, comments inline.
 
-On Mon, Mar 17, 2025 at 04:28:02AM -0400, Joel Fernandes wrote:
-> Consider that the previous CPU is cache affined to the waker's CPU and
-> is idle. Currently, scx's default select function only selects the
-> previous CPU in this case if WF_SYNC request is also made to wakeup on the
-> waker's CPU.
+On 03/17, David Lechner wrote:
+> On 3/17/25 10:31 AM, Marcelo Schmitt wrote:
 > 
-> This means, without WF_SYNC, the previous CPU being cache affined to the
-> waker and is idle is not considered. This seems extreme. WF_SYNC is not
-> normally passed to the wakeup path outside of some IPC drivers but it is
-> very possible that the task is cache hot on previous CPU and shares
-> cache with the waker CPU. Lets avoid too many migrations and select the
-> previous CPU in such cases.
 > 
-> This change is consistent with the fair scheduler's behavior as well. In
-> select_idle_sibling(), the previous CPU is selected if it is cache
-> affined with the target. This is done regardless of WF_SYNC and before
-> any scanning of fully idle cores is done.
+> > ...
+> >>> +/*
+> >>> + * This executes a data sample transfer when using SPI offloading for when the
+> >>> + * device connections are in "3-wire" mode, selected when the adi,sdi-pin device
+> >>> + * tree property is set to "high". In this connection mode, the ADC SDI pin is
+> >>> + * connected to VIO and ADC CNV pin is connected to a SPI controller CS (it
+> >>> + * can't be connected to a GPIO).
+> >>> + *
+> >>> + * In order to achieve the maximum sample rate, we only do one transfer per
+> >>> + * SPI offload trigger. This has the effect that the first sample data is not
+> >>> + * valid because it is reading the previous conversion result. We also use
+> >>
+> >> Say what happens to that invalid sample.  Is it dropped or provided to userspace
+> >> as if it were valid?  (I hope dropped!)
+> > 
+> > TL;DR: The invalid sample goes into the buffer as a valid one.
+> > 
+> > In AD4000 '3-wire' mode, data capture has a latency (delay) of one sample.
+> > 
+> > The ADC begins sampling data N at CNV rising edge
+> >           |   +-- CNV (usually SPI CS) is brought low to begin reading the data
+> >           |   |                                +-- Data N + 1 that will be read
+> >           |   |                                |   on the next transfer starts 
+> >           v   v                                v   being sampled at end of transfer N.
+> >            ___                                  ____            
+> > CNV  _____/   \________________________________/    \_____
+> >                     _     _             _
+> > SCLK ______________/ \___/ \_ ...   ___/ \_______________
+> >                    ___   ___           ___
+> > SDO  _____________/___\_/___\ ...   __/___\_______________
+> >                     ^
+> >                     |
+> >              Data from conversion N is output from here on
+> > 
+> > A better drawing can be found in datasheet page 29, Figure 57.
+> > https://www.analog.com/media/en/technical-documentation/data-sheets/ADAQ4003.pdf
+> > 
+> > In sum, we're always reading a conversion that started at the end of the
+> > previous SPI transfer or, in other words, the data comes out with a latency
+> > (delay) of one read.
+> > 
+> > Datasheet somehow mentions that by saying
+> > 	When turbo mode is enabled, the conversion result read on SDO corresponds to
+> > 	the result of the previous conversion.
+> > 
+> > I think I can do a dummy SPI transfer on buffer preenable so at least the
+> > first data is not invalid. Would that be better?
 > 
-> One difference still exists though between SCX and CFS in this regard, in CFS
-> we first check if the target CPU is idle before checking if the previous CPU is
-> idle. However that could be a matter of choice and in the future, that behavior
-> could also be unified.
+> Not really. There will be a relatively long delay between that conversion
+> trigger and when the sample is read. So the data might be slightly less stale
+> in that case, but still not particularly useful, e.g. if you are doing any
+> kind of signal processing that expects equal time between all samples.
 > 
-> Signed-off-by: Joel Fernandes <joelagnelf@nvidia.com>
-> ---
->  kernel/sched/ext.c | 24 +++++++++++-------------
->  1 file changed, 11 insertions(+), 13 deletions(-)
+> On similar chips, like ad7944, we just documented that the first sample does
+> not contain valid data and needs to be discarded.
 > 
-> diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
-> index 5a81d9a1e31f..3b1a489e2aaf 100644
-> --- a/kernel/sched/ext.c
-> +++ b/kernel/sched/ext.c
-> @@ -3479,7 +3479,7 @@ static s32 scx_select_cpu_dfl(struct task_struct *p, s32 prev_cpu,
->  {
->  	const struct cpumask *llc_cpus = NULL;
->  	const struct cpumask *numa_cpus = NULL;
-> -	s32 cpu;
-> +	s32 cpu = smp_processor_id();
->  
->  	*found = false;
->  
-> @@ -3507,22 +3507,20 @@ static s32 scx_select_cpu_dfl(struct task_struct *p, s32 prev_cpu,
->  			llc_cpus = llc_span(prev_cpu);
->  	}
->  
-> +	/*
-> +	 * If the waker's CPU is cache affine and prev_cpu is idle, then avoid
-> +	 * a migration.
-> +	 */
-> +	if (cpus_share_cache(cpu, prev_cpu) &&
-> +		test_and_clear_cpu_idle(prev_cpu)) {
-> +		cpu = prev_cpu;
-> +		goto cpu_found;
-> +	}
-> +
+Okay, I'll assume that to be acceptable and do the same for this one.
 
-One potential issue that I see is that when SMT is enabled, you may end up
-using prev_cpu also when the other sibling is busy. Maybe we should check
-if prev_cpu is set in the SMT idle cpumask.
+...
 
-Also, last time I tried a similar change I was regressing a lot of
-benchmarks. Maybe we should repeat the tests and get some numbers.
-
->  	/*
->  	 * If WAKE_SYNC, try to migrate the wakee to the waker's CPU.
->  	 */
->  	if (wake_flags & SCX_WAKE_SYNC) {
-> -		cpu = smp_processor_id();
-> -
-> -		/*
-> -		 * If the waker's CPU is cache affine and prev_cpu is idle,
-> -		 * then avoid a migration.
-> -		 */
-> -		if (cpus_share_cache(cpu, prev_cpu) &&
-> -		    test_and_clear_cpu_idle(prev_cpu)) {
-> -			cpu = prev_cpu;
-> -			goto cpu_found;
-> -		}
-> -
->  		/*
->  		 * If the waker's local DSQ is empty, and the system is under
->  		 * utilized, try to wake up @p to the local DSQ of the waker.
-> -- 
-> 2.43.0
+> > I also didn't expect to find out HDL support for 16-bit data width was removed.
+> > We used to have a build parameter for 16-bit precision ADCs.
+> > https://github.com/analogdevicesinc/hdl/commit/b2dc91b30dae891b6319d88e083f26e726f43ba0#diff-1117c2618353232e5f22aa6a12e8ae976757fa897b3425f470a12123cae26535L13
 > 
+> A while back the HDL engineers mentioned to us that they wanted to standardize
+> on 32-bit data words everywhere. While not the most efficient use of memory,
+> having fewer options does make things simpler across the entire software stack.
+> 
+Ack
+
+> > 
+> > Would something like 'because SPI offloading leads to data being pushed to
+> > memory in CPU endianness' be a reasonable comment?
+> 
+> Another way to say it is that SPI offload reads data in complete words and not
+> in separate 8-bit xfers (bits_per_word = realbits vs. bits_per_word = 8).
+> 
+Ah sure, I recall the effect of setting .bits_per_word now.
+Will add a comment explaining why the difference in endianness.
 
 Thanks,
--Andrea
+Marcelo
 
