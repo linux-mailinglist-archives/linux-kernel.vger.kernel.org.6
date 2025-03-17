@@ -1,154 +1,193 @@
-Return-Path: <linux-kernel+bounces-564970-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564972-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14DA0A65E11
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 20:36:16 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FD8BA65E14
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 20:37:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E48317F6AC
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 19:36:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01E9F3AD277
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 19:36:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5586E1EA7F3;
-	Mon, 17 Mar 2025 19:36:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0FE31E833A;
+	Mon, 17 Mar 2025 19:36:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tWr1wIGj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="tPdSUKow"
+Received: from out-188.mta1.migadu.com (out-188.mta1.migadu.com [95.215.58.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A44A91DB13A;
-	Mon, 17 Mar 2025 19:36:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 468DEF9DA
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 19:36:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742240168; cv=none; b=tmuUO4vXzh1xxsusWZhZX4uM04ZH/dd8XnlRxqxDonjbhjzsYPT7EpwrQwY5rPfGzGU63nXCTG90E82ta1ThndX2w+8NK0RZelccNF7WPMKT/0YdVZjGAVYKnWWioOxiT6776g7EcbP8QXH8mkMlDYJsI52I5zOV3GDFF3YuwUA=
+	t=1742240218; cv=none; b=ERlRorJHo0NFeykYTpU1qq2kgoJfzPRSEi+axrA/RecEukAhzgVsEUsh3WRyf8IFVbZeAY7kwsP7OpG2Mh5rjnAlOlsofFEVyjloXFUHyhcSUHd2T4CfbQiRxLTlPBWkTOWPTWKz2bDdoJLIufbslHTRS61W3Ls8bjYF/+0BZCw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742240168; c=relaxed/simple;
-	bh=M1wlGlbiGv47u5JDnyVXRs99VN8PUyBTmLwEJ6Kh0EM=;
+	s=arc-20240116; t=1742240218; c=relaxed/simple;
+	bh=v1voAiCDyTvzcyVK8sp6Jke+j4AGambGH3KffQ71Yng=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K2QxN12c3iGwZbUUh5Us1kdHMORjPhy1hnDrt7iW6mlO5s6visGp5gdQ7ibSaNrDJ2gb1Eq8pnL+O4O5EPds8le4+SJR1KDU8b4A16YlyHUvfpmxLFt9X5179sEkNCuWpVjoD7LVMQ3ZmIztPVRcN5n35j1yEHPEmVSc3+MeMz8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tWr1wIGj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F930C4CEEE;
-	Mon, 17 Mar 2025 19:36:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742240168;
-	bh=M1wlGlbiGv47u5JDnyVXRs99VN8PUyBTmLwEJ6Kh0EM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tWr1wIGj/X9Fb6GOMThPfYUoza9HhNBSpC87+v/RRHlYUSpSrOWzWtbqfgHFSr0wx
-	 KOw+WGcodLslBKNlFwFGqcfhts5DhfQ3cJ12gkc3BNpc44g4JUypBy3QY7Cybf9ncR
-	 Pc79WV+OxfNQrAmUt2+BtUwfL7gYVT67j/O7Zc6IKOEldUh6lVuUIvFj9YAKEL2kpw
-	 BGeWqhBk4yp9uqDKkflcuyoyVSOkeGwkVfppSJi9Fy200D9j76hLIBevASBA/f2zDD
-	 8l7iZmQgVQshTDy0JM7pteYHMhnMFqiSYVKxn73pSiblBXVfi5uTNNqvHQXhr9w2aZ
-	 Ci3q/mqc3mO5A==
-Date: Mon, 17 Mar 2025 16:36:05 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Namhyung Kim <namhyung@kernel.org>, Chun-Tse Shao <ctshao@google.com>,
-	linux-kernel@vger.kernel.org, peterz@infradead.org,
-	mingo@redhat.com, mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-	adrian.hunter@intel.com, kan.liang@linux.intel.com, terrelln@fb.com,
-	leo.yan@arm.com, james.clark@linaro.org,
-	christophe.leroy@csgroup.eu, ben.gainey@arm.com,
-	linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] perf record: Add 8-byte aligned event type
- PERF_RECORD_COMPRESSED2
-Message-ID: <Z9h5pS4DyLaNp3tO@x1>
-References: <20250303183646.327510-1-ctshao@google.com>
- <Z9TXabugl374M3bA@google.com>
- <Z9hFJtEKfsGGUDMg@x1>
- <Z9hLKsZOfouM3K7H@x1>
- <CAP-5=fXOBp1F0eXbgjyjZd0K-=trqugmROttwSWT_M393HxeEQ@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=V+Mn4cl3x53z+LLbMSGh9XM3a50VEj24n0HnPbTOIFE/8HDjXn2Vrt3JdKlj5vK0aJkgNKls96KiSP3rACjhWGPREjGkO9eol1UCrI6wpNONyDGLdP6mcJ/33N5/NcBpJLCVbKgdQDFSvNIy6zD1I1c24GWeOtDLsRKu4PJjMSY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=tPdSUKow; arc=none smtp.client-ip=95.215.58.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Mon, 17 Mar 2025 19:36:47 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1742240213;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Z4UvZuoFe0kXKei7fZcITE45QtORJ/iptjkFwCngTug=;
+	b=tPdSUKowTcUN83Cuhu5F8QouuSgCsfvtulpmTSTs/NtPOkSaAJK7o8WT6dgk7V/h/3mN4Q
+	IL3EeqTIxlTEU+zrxeptks7Cy1dIN347J5gwX9il4/AWKLBXJuYkqd5CY68EEyWzkG+voi
+	AZLDlO2MEZbHKWpnhG2fKBOJXiQiQ58=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yosry Ahmed <yosry.ahmed@linux.dev>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>,
+	Maxim Levitsky <mlevitsk@redhat.com>, x86@kernel.org,
+	kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 7/7] KVM: SVM: Share more code between pre_sev_run() and
+ pre_svm_run()
+Message-ID: <Z9h5z1TkhA7o2eiG@google.com>
+References: <20250313215540.4171762-1-yosry.ahmed@linux.dev>
+ <20250313215540.4171762-8-yosry.ahmed@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAP-5=fXOBp1F0eXbgjyjZd0K-=trqugmROttwSWT_M393HxeEQ@mail.gmail.com>
+In-Reply-To: <20250313215540.4171762-8-yosry.ahmed@linux.dev>
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, Mar 17, 2025 at 09:32:46AM -0700, Ian Rogers wrote:
-> On Mon, Mar 17, 2025 at 9:17 AM Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
-> > On Mon, Mar 17, 2025 at 12:52:09PM -0300, Arnaldo Carvalho de Melo wrote:
-> > > On Fri, Mar 14, 2025 at 06:27:05PM -0700, Namhyung Kim wrote:
-> > > > On Mon, Mar 03, 2025 at 10:32:40AM -0800, Chun-Tse Shao wrote:
-> > > > > The original PERF_RECORD_COMPRESS is not 8-byte aligned, which can cause
-> > > > > asan runtime error:
-> >
-> > > > >   # Build with asan
-> > > > >   $ make -C tools/perf O=/tmp/perf DEBUG=1 EXTRA_CFLAGS="-O0 -g -fno-omit-frame-pointer -fsanitize=undefined"
-> > > > >   # Test success with many asan runtime errors:
-> > > > >   $ /tmp/perf/perf test "Zstd perf.data compression/decompression" -vv
-> > > > >    83: Zstd perf.data compression/decompression:
-> > > > >   ...
-> > > > >   util/session.c:1959:13: runtime error: member access within misaligned address 0x7f69e3f99653 for type 'union perf_event', which requires 13 byte alignment
-> > > > >   0x7f69e3f99653: note: pointer points here
-> > > > >    d0  3a 50 69 44 00 00 00 00  00 08 00 bb 07 00 00 00  00 00 00 44 00 00 00 00  00 00 00 ff 07 00 00
-> > > > >                 ^
-> > > > >   util/session.c:2163:22: runtime error: member access within misaligned address 0x7f69e3f99653 for type 'union perf_event', which requires 8 byte alignment
-> > > > >   0x7f69e3f99653: note: pointer points here
-> > > > >    d0  3a 50 69 44 00 00 00 00  00 08 00 bb 07 00 00 00  00 00 00 44 00 00 00 00  00 00 00 ff 07 00 00
-> > > > >                 ^
-> > > > >   ...
-> >
-> > > > > Since there is no way to align compressed data in zstd compression, this
-> > > > > patch add a new event type `PERF_RECORD_COMPRESSED2`, which adds a field
-> > > > > `data_size` to specify the actual compressed data size. The
-> > > > > `header.size` contains the total record size, including the padding at
-> > > > > the end to make it 8-byte aligned.
-> >
-> > > > > Tested with `Zstd perf.data compression/decompression`
-> >
-> > > > Looks good to me.
-> >
-> > > > Arnaldo, are you ok with adding a new record type for this?
-> >
-> > > Checking the discussion and the patch.
-> >
-> > My first impression yesterday when I saw this on the smartphone was: how
-> > will an old perf binary handle the new PERF_RECORD_COMPRESSED2? Will it
-> > ignore it while emitting a warning, since it can be skipped and then
-> > what we will get a partial view?
-> >
-> > Having some session output showing how an older perf binary handles
-> > PERF_RECORD_COMPRESS2 would be informative.
-> >
-> > I'll try to reproduce/test this all...
+On Thu, Mar 13, 2025 at 09:55:40PM +0000, Yosry Ahmed wrote:
+> pre_svm_run() and pre_sev_run() now do some redundant work, and the
+> control flow is not super clear. Specifically:
+> - Both functions check if the ASID in the VMCB is the expected one.
+> - Both functions check if the vCPU moved to a different physical CPU.
+> - Both functions issue an ASID TLB flush if needed.
 > 
-> I'm not sure we've worried about old perfs being able to read new
-> perf.data files, but we've worried about new perfs being able to read
-> old perf.data files. So if a change is additive, which this change is,
-> then nothing should be impacted.
+> Pass the ASID and whether or not SEV requires a TLB flush from
+> pre_sev_run() to pre_svm_run(), and use the logic there instead.
+> pre_sev_run() now only performs SEV-specific checks.
+> 
+> Note that pre_sev_run() used svm->vcpu.arch.last_vmentry_cpu to check if
+> the vCPU moved to a different physical CPU, while pre_svm_run uses
+> svm->current_vmcb->cpu. The former tracks the CPU per vCPU, while the
+> latter tracks it per VMCB. For SEV, they both should be equivalent since
+> there is a single VMCB per-vCPU (nested is not supported).
+> 
+> Signed-off-by: Yosry Ahmed <yosry.ahmed@linux.dev>
+> ---
+>  arch/x86/kvm/svm/sev.c | 27 ++++++++++-----------------
+>  arch/x86/kvm/svm/svm.c | 10 ++++++----
+>  arch/x86/kvm/svm/svm.h |  2 +-
+>  3 files changed, 17 insertions(+), 22 deletions(-)
+> 
+> diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
+> index 1ee04d6b9356b..607139757f8ff 100644
+> --- a/arch/x86/kvm/svm/sev.c
+> +++ b/arch/x86/kvm/svm/sev.c
+> @@ -3451,11 +3451,11 @@ void sev_es_unmap_ghcb(struct vcpu_svm *svm)
+>  	svm->sev_es.ghcb = NULL;
+>  }
+>  
+> -int pre_sev_run(struct vcpu_svm *svm, int cpu)
+> +int pre_sev_run(struct vcpu_svm *svm, unsigned int *asid, bool *need_flush)
+>  {
+> +	int cpu = svm->vcpu.cpu;
+>  	struct svm_cpu_data *sd = per_cpu_ptr(&svm_data, cpu);
+>  	struct kvm *kvm = svm->vcpu.kvm;
+> -	unsigned int asid = sev_get_asid(kvm);
+>  
+>  	/*
+>  	 * Reject KVM_RUN if userspace attempts to run the vCPU with an invalid
+> @@ -3465,24 +3465,17 @@ int pre_sev_run(struct vcpu_svm *svm, int cpu)
+>  	if (sev_es_guest(kvm) && !VALID_PAGE(svm->vmcb->control.vmsa_pa))
+>  		return -EINVAL;
+>  
+> -	if (WARN_ON_ONCE(svm->vmcb->control.asid != asid)) {
+> -		svm->vmcb->control.asid = asid;
+> -		vmcb_mark_dirty(svm->vmcb, VMCB_ASID);
+> -	}
+> -
+>  	/*
+> -	 * Flush guest TLB:
+> -	 *
+> -	 * 1) when different VMCB for the same ASID is to be run on the same host CPU.
+> -	 * 2) or this VMCB was executed on different host CPU in previous VMRUNs.
+> +	 * Flush the guest TLB when a difference VMCB for the same ASID is to be
+> +	 * run on the same host CPU. The caller will also flush the TLB if the
+> +	 * VMCB was executed on a different host CPU in previous VMRUNs.
+>  	 */
+> -	if (sd->sev_vmcbs[asid] == svm->vmcb &&
+> -	    svm->vcpu.arch.last_vmentry_cpu == cpu)
+> -		return 0;
+> +	*asid = sev_get_asid(kvm);
+> +	if (sd->sev_vmcbs[*asid] != svm->vmcb) {
+> +		sd->sev_vmcbs[*asid] = svm->vmcb;
+> +		*need_flush = true;
+> +	}
+>  
+> -	sd->sev_vmcbs[asid] = svm->vmcb;
+> -	svm_vmcb_set_flush_asid(svm->vmcb);
+> -	vmcb_mark_dirty(svm->vmcb, VMCB_ASID);
+>  	return 0;
+>  }
+>  
+> diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
+> index c5e2733fb856d..6b338d84e7b93 100644
+> --- a/arch/x86/kvm/svm/svm.c
+> +++ b/arch/x86/kvm/svm/svm.c
+> @@ -3615,21 +3615,23 @@ static int pre_svm_run(struct kvm_vcpu *vcpu)
+>  {
+>  	struct kvm_svm *kvm_svm = to_kvm_svm(vcpu->kvm);
+>  	struct vcpu_svm *svm = to_svm(vcpu);
+> +	unsigned int asid = kvm_svm->asid;
+> +	bool sev_need_flush = false;
+> +
+> +	if (sev_guest(vcpu->kvm) && pre_sev_run(svm, &asid, &sev_need_flush))
+> +		return -1;
+>  
+>  	/*
+>  	 * If the previous VMRUN of the VMCB occurred on a different physical
+>  	 * CPU, then mark the VMCB dirty and flush the ASID.  Hardware's
+>  	 * VMCB clean bits are per logical CPU, as are KVM's ASID assignments.
+>  	 */
+> -	if (unlikely(svm->current_vmcb->cpu != vcpu->cpu)) {
+> +	if (unlikely(sev_need_flush || svm->current_vmcb->cpu != vcpu->cpu)) {
+>  		svm_vmcb_set_flush_asid(svm->vmcb);
+>  		vmcb_mark_all_dirty(svm->vmcb);
+>  		svm->current_vmcb->cpu = vcpu->cpu;
+>          }
+>  
+> -	if (sev_guest(vcpu->kvm))
+> -		return pre_sev_run(svm, vcpu->cpu);
+> -
+>  	/* Flush the ASID on every VMRUN if kvm_svm->asid allocation failed */
+>  	if (unlikely(!kvm_svm->asid))
 
-Right, its difficult to make it work both ways, even with testing, but
-by 'work' I mean that new stuff should be ignored by older versions,
-i.e. records skipped and then the results will surely be different.
+This should now check 'asid' instead of 'kvm_svm->asid'.
 
-So I'm just curious how older tools will handle these new files and to,
-if not that super difficult, to improve how we handle unknown records so
-that in the future, when we add new stuff, we mention that this is
-something not handled, please use a new tool.
- 
-> My thoughts are this way as this patch:
-> https://lore.kernel.org/all/20220614143353.1559597-7-irogers@google.com/
-> changed most perf.data cpumap encodings in a way that old perfs won't
-> be able to handle.
- 
-> Perhaps testing/documentation should be present for this kind of thing.
+Same for the WARN below.
 
-Right, but in this specific case it should be a matter of telling the
-user that the header.type PERF_RECORD_COMPRESS2 isn't supported and that
-the user should try and update their tool.
-
-But now back to figuring out how to generate PERF_RECORD_COMPRESS is
-generated, use it, then apply this patch, and then see if how the old
-tool copes.
-
-So documentation is also lacking in suggesting that enumerating the
-steps needed to test before/after is greatly appreciated.
-
-- Arnaldo
+>  		svm_vmcb_set_flush_asid(svm->vmcb);
+> diff --git a/arch/x86/kvm/svm/svm.h b/arch/x86/kvm/svm/svm.h
+> index 4c6664ba4048d..f25e99c79d07d 100644
+> --- a/arch/x86/kvm/svm/svm.h
+> +++ b/arch/x86/kvm/svm/svm.h
+> @@ -754,7 +754,7 @@ void avic_refresh_virtual_apic_mode(struct kvm_vcpu *vcpu);
+>  
+>  /* sev.c */
+>  
+> -int pre_sev_run(struct vcpu_svm *svm, int cpu);
+> +int pre_sev_run(struct vcpu_svm *svm, unsigned int *asid, bool *need_flush);
+>  void sev_init_vmcb(struct vcpu_svm *svm);
+>  void sev_vcpu_after_set_cpuid(struct vcpu_svm *svm);
+>  int sev_es_string_io(struct vcpu_svm *svm, int size, unsigned int port, int in);
+> -- 
+> 2.49.0.rc1.451.g8f38331e32-goog
+> 
 
