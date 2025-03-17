@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-563430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E29AA641A9
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 07:35:25 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03E11A641AC
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 07:35:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C492516DE70
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 06:35:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A70316B40E
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 06:35:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B389219A8D;
-	Mon, 17 Mar 2025 06:34:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEF8A21B9F6;
+	Mon, 17 Mar 2025 06:34:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BG1AFzek"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iPcH7Ten"
 Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57D59219A70;
-	Mon, 17 Mar 2025 06:34:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B765321B191;
+	Mon, 17 Mar 2025 06:34:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742193249; cv=none; b=gxEcVZtn//X8l8kAfNp9MS4+urtCC1F+Su31WkZ5fXtUuYCDA2Ux65/ZeL6WEfnsMnPXVz7wNfXfgy0MAWq4yHFO/pqfYsEmgM5xMkVPVGfNLPZfie397xuqfoYSKzvX+ea+cPNh6yKh0DpeKXKLbp6rofnq0ggXL3J2huW1x60=
+	t=1742193250; cv=none; b=bOz7qvmfJ0cU3OYH776pEUv8Bh30lrwLCa1CxAI3D7m85i2VDEhWdBF+/VBTkGmJAP80ZT31y470yZbH2tvE/i/xZmIoBN3h2TfkvLi98Q8GNE78DvXbsN20g0unSy2F98uU/9lPa14SpzEOFpvdE/1w9USjF44VVTnO9t3MIoE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742193249; c=relaxed/simple;
-	bh=QtJuuApcIxOnqq0q7ztcDfW6m82MqWlyJ0VShXMUOR0=;
+	s=arc-20240116; t=1742193250; c=relaxed/simple;
+	bh=scHLMfjQeuz4T/HjBN4ZhUPoxcuhT+g/H5n+Ru0zf5A=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ICCg9V3WKahF3/kfJhm/QvK/EC0hMZseBaSg0IRTZWvjP2cOiO39X2t/eoNyt6l6Dph+dKUKG3nnZYi6i3J50Dl9/P2in9e2SVThrDCEnjTVGiy7GTy+5dXC+MYFH+GFCH5810ykamHto+qLNlyCfKH6zdw8oTRTGPZxLGOJXxA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BG1AFzek; arc=none smtp.client-ip=209.85.216.51
+	 MIME-Version; b=n7S6pMKwadrMqoZinb2JDBF7GY2Avhr4kB3QkCGqQDOBMTfStxwXUz57bvaHsngNv7/unS1kBfF4ZwVPcmkzEJ1ofUfinkl0PPGrylWyiyfAyMOtH23jOgjD1SucRxbRVgNAhM73QAIv6wOhQABeyhUyDBllIE5b+NWpZZs+644=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iPcH7Ten; arc=none smtp.client-ip=209.85.216.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2ff187f027fso2567807a91.1;
-        Sun, 16 Mar 2025 23:34:07 -0700 (PDT)
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2ff6e91cff5so2186509a91.2;
+        Sun, 16 Mar 2025 23:34:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742193247; x=1742798047; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1742193248; x=1742798048; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Hg3kUIYAZxHueF9SBco9xBAfkg5dY1set7XtTII34e0=;
-        b=BG1AFzek+top/RcR+9FGcie0sQhVlPDphEbfZNu54FShIFgw1Vt1eqF4ilaL+3Zni2
-         fOkYZQIN8jsnrafloF/4PGZeap9hSoyzupEp8EAL1Zkm7B3F+MWGzqsRxF2DX4aXsNqS
-         5HoTIiGLl7sjeNVGJ8bww/TPJ0RDox6DFeik2Wqx/MQS4HjVkcXA4pjhQ6dR7n90cx/q
-         x/wQOHaEKOE5jojGtkllnlL2jGMD6KaIXgcHAA73zuJwRJW7abZhITYeVS9fi90IQn4r
-         tId2kuGHN0Mr+9Vjy9p4RRjxDN+IRBVRHDemxPzP4glCoUxjwwx5hxDoTVKC4CVajWwC
-         A6KA==
+        bh=x6WrkgLRJl8lUocm1cnTSBp25XPoazkPi4ONuRt/VwE=;
+        b=iPcH7TenvgtCIEmyKdXvE7nV15Z/EQD7dOhYzYBTV1hvYsGXpVBXkZJMxw/hNce7Xi
+         GBlGu3E0WdLf0DhCZyX4Le1TKf2IU+WIGOr728scy0eGm0pEclEd+Byl5GO0ds/IBRTj
+         41JD2VgfmChuE665P5ixeTHN0A8EN9/03zTXS/ye2TeUjS3o8hhQmKkgDxTDO0kzR6CY
+         FwQBuq0OXnuBLcHohtJO+pURZDA08c8YhyacPZz+s5MnNccdxEcJYWwZXK9wkLwYRnR2
+         XDDUHr8CAZ9H656zTzCUzbUbyvfhMF3ynLdHFi70zDZN7p9gZjRCdYGUir01Sw1qQ0Ey
+         tHzQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742193247; x=1742798047;
+        d=1e100.net; s=20230601; t=1742193248; x=1742798048;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Hg3kUIYAZxHueF9SBco9xBAfkg5dY1set7XtTII34e0=;
-        b=Uj/oSNGroqX1//XA8Enxo4739+3BrUaGOsrvZBpocKICr3A8gNkpYVZo8PSMEtOTWb
-         zqexlnadJxJ689rjK2Tm6ro8DQMbb0g/lvdaZYwxuzuvrK9/Wpmzb1TQbGPs/FhanLzl
-         yQGe55aR+7HHyubwlgcRk7ZqGzKi8Wj6mVNyTeRbqi8SwQWAKgpBm+RZ1ABuxruXMwsS
-         q4/AnEkuCiY/ibXq2LmR92bDuo1L+XvI2qQpTOetE9+XItSqYaH/BXDmAznUGLIEaQWN
-         bgYYQEr0WGGumkb7aRz8ri1GSG6h/kcIuo+meWlfBnuoSTvUIgmFLP8Jah0WIQCqI5Cp
-         lafA==
-X-Forwarded-Encrypted: i=1; AJvYcCUEHVbmd1w541WVF/gbd315u8pi7ap9M3ouBXPY54UEZePXtgCratQvyAICtiYze78+AwAt8HlAWmc=@vger.kernel.org, AJvYcCUalZf6goonNI2oHTMJ83vdHUyy1VECfufOarVlWWmgpd/sZsRaxq9+bVKAMAmIFntRkElOid92ZLR1EVOSQFLGOBNmGg==@vger.kernel.org, AJvYcCWUBV9MAx02mzylfiXjZe7t2tke1cz8xTqzYz6aGUuYrvexzggvS3h4ag9QcNdCMRupt2dNR6Lq4XBtojWm@vger.kernel.org
-X-Gm-Message-State: AOJu0YyIFDAh+UvhejiMNY7tnUjUbfJfPVtnbj1ZFBMQUeia3sEkAUxU
-	CfGGLZHO9+0OlCi20od/itFeHVbfbkn/pvVx1smLKMHP5iJbwuaS
-X-Gm-Gg: ASbGnctpWrNWpyG7F9Ndzrp2d2EIlkEYnz5VpLlnVsODMazhFYvGh/97LkqgODCOn1w
-	pySOR9e2G0OeAb3+iWP6Xyo7EzG16DsstFhfoqGCMfBPINJQlAkOZ+YmFW4CzTX7LD3eJn5BQPQ
-	08D9ghigV7+Qv77YcKRjEcmc65KqqwJrKmw9QscPVvueWe3uCKGixDfAHU5NIFjOBNoKf9t52H1
-	4Y17vd21Q3e7NzIMG2OQrTPjluTaUjy41JAJZNkzixulAa+Do6TZ0YtX3rn9teLDR3t1n6RB1tq
-	1mF7p2ikplZ/SvPcq3Saonrrxj4lGSFL4xD3ql/rcc9Jrm0A/ulSNsJGrfcvJoz65KV99NHjkRq
-	kgUwiARDfECI+C2fF6vmLP3CKa7by+tnDfKV9mEr0X9HVdLMFA3g9SA==
-X-Google-Smtp-Source: AGHT+IGth3ldPd6INVG7H7hRFPdKq6PwvOCUmeBRF1tGAyGIXRjLDrM3zkhkK2KkNsqCZSYNUzIq7w==
-X-Received: by 2002:a17:90b:264c:b0:2ff:5267:e7da with SMTP id 98e67ed59e1d1-3015211de7dmr12914921a91.3.1742193246548;
-        Sun, 16 Mar 2025 23:34:06 -0700 (PDT)
+        bh=x6WrkgLRJl8lUocm1cnTSBp25XPoazkPi4ONuRt/VwE=;
+        b=I5hY0j8+N75mjlpQMyxAfbEmUGnUZ2Z5FZZf94rPbQWljaiDl3sY5UPEApAIiSC+1J
+         C0hPNtZOdW3B5ykpIplFmonnCzy4iPXQy+2uKNYzJzG5eUax0Je+bb58XkMnjN2JHfFW
+         gzyAK7ViRJX8rvLCm2cARVgEqWCgEMteIWfcH9cbfCnydV8YkxKD8LXs8alSg7Jc7CGC
+         U9TU/sVSee9pD1mSL4xACubN3ydg8UI74oJIN9Pu1WRLrDMLpDar7wgbCKK6ao2XPJpM
+         N1HIXTGI9/qIchkdiJTJAZHGekdSbkc1MkSWnYTWURwAZEknCegUJpik0J0tB5jQMlXr
+         cxAA==
+X-Forwarded-Encrypted: i=1; AJvYcCVnw7lE9MQ0s/HkLQl0C1dp8Wwlj4GtIot+Il4O3PYmtdAkRQCO0h/GcveMpy4ls+PLvKFWi1o646w=@vger.kernel.org, AJvYcCVv077EJMSeZE10cVmHyX1vbGEAlAc2hpeoEx0FWK0vqHvCjIEkLQhjaF4nlVa84KLGNI9QBiXrevQUPMOaOU8LaE1kcw==@vger.kernel.org, AJvYcCXGA6zipQO62CMQ3Mj/HexKNyPwEK0cuwEz4gulYpaIJDR+VhImLnNbTRnTVSd6Y4tc8S+SoAzNHmmNNgr1@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyx8YBCxXfVQVziDpYk6MU0l6p7NFYVu5bpkBJkn5nS/ElKG8Kl
+	8GyQvJ64oHCa1JIuR5E85dHHvAOU3Io2PpeB/N4pPW2nAfIWv3Cu
+X-Gm-Gg: ASbGnctrjAKWa2hwruI0Afa3uCFsczQbTi2e0nub2YrHOY3N6zCOJkDPTtv96C40CxC
+	1bHuBHX/jyucJ1/mgAaY9FpJ5tRiY+OUhjRK1aRNlD6Lisqwyxmy8xicLJDwVK5glUYGdJked+E
+	SJLcm9HzwNtv3G1+rV8Mh3f7/WIIHUfzIi0Rmz9KrvYYmZoV+4MtYE4+EB7rYqh7dz3Wvw7Yt13
+	Q1m38E4t2Hm+L5pod0ARUQ38glL2izsbsZvevefyOOFyMS7VBYh/lg1TE/eYcWj/7BSUHrg04/r
+	fw2Kz0gOiP4PJ484DhG3Qr5Aivau93ioLnk9L9cSGeqW1aZsmYCnZdcAovQQgjddLX7WihhztaQ
+	hf01m/4L2ezdwHwbuoYsZSypR8NnBvwoeMSkb7CY3SLY=
+X-Google-Smtp-Source: AGHT+IE2lkPqce+QOvuGUXkGhja68FmMMAiKYTQ66fN1piqW0Z2kK92kjuSKq/0EjyQVkFi7+P3kFw==
+X-Received: by 2002:a17:90a:d407:b0:2fe:9fd4:58f4 with SMTP id 98e67ed59e1d1-30151c9f4d2mr15063502a91.16.1742193247835;
+        Sun, 16 Mar 2025 23:34:07 -0700 (PDT)
 Received: from localhost.localdomain (108-228-232-20.lightspeed.sndgca.sbcglobal.net. [108.228.232.20])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-30153afee51sm5186555a91.28.2025.03.16.23.34.05
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-30153afee51sm5186555a91.28.2025.03.16.23.34.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 16 Mar 2025 23:34:06 -0700 (PDT)
+        Sun, 16 Mar 2025 23:34:07 -0700 (PDT)
 From: "Derek J. Clark" <derekjohn.clark@gmail.com>
 To: Hans de Goede <hdegoede@redhat.com>,
 	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
@@ -90,9 +90,9 @@ Cc: Armin Wolf <W_Armin@gmx.de>,
 	platform-driver-x86@vger.kernel.org,
 	linux-doc@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v4 4/6] platform/x86: Add Lenovo Capability Data 01 WMI Driver
-Date: Sun, 16 Mar 2025 23:33:34 -0700
-Message-ID: <20250317063337.352966-8-derekjohn.clark@gmail.com>
+Subject: [PATCH v4 4/4] platform/x86: Add Lenovo Gamezone WMI Driver
+Date: Sun, 16 Mar 2025 23:33:35 -0700
+Message-ID: <20250317063337.352966-9-derekjohn.clark@gmail.com>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250317063337.352966-1-derekjohn.clark@gmail.com>
 References: <20250317063337.352966-1-derekjohn.clark@gmail.com>
@@ -104,25 +104,27 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Adds lenovo-wmi-capdata01 driver which provides the
-LENOVO_CAPABILITY_DATA_01 WMI data block that comes on "Other Mode"
-enabled hardware. Provides an interface for querying if a given
-attribute is supported by the hardware, as well as its default_value,
-max_value, min_value, and step increment.
+Adds lenovo-wmi-gamezone driver which provides the Lenovo Gamezone WMI
+interface that comes on Lenovo "Gaming Series" hardware. Provides ACPI
+platform profiles over WMI.
 
 Signed-off-by: Derek J. Clark <derekjohn.clark@gmail.com>
 ---
 v4:
- - Make driver data a private struct, remove references from Other Mode
-   driver.
- - Don't cache data at device initialization. Instead, on component bind,
-   cache the data on a member variable of the Other Mode driver data
-   passed as a void pointer.
- - Add header file for capdata01 structs.
- - Add new struct to pass capdata01 array data and array length to Other
-   Mode.
+- Add notifier blocks for the Events and Other Mode drivers.
+- Remove notifier block chain head and all reference to Thermal Mode
+  Event GUID.
+- Add header for Gamezone specific structs and functions.
+- Various fixes from review.
 v3:
-- Add as component to lenovo-wmi-other driver.
+- Use notifier chain to report platform profile changes to any
+  subscribed drivers.
+- Adds THERMAL_MODE_EVENT GUID and .notify function to trigger notifier
+  chain.
+- Adds support for Extreme Mode profile on supported hardware, as well
+  as a DMI quirk table for some devices that report extreme mode version
+  support but so not have it fully implemented.
+- Update to include recent changes to platform-profile.
 v2:
 - Use devm_kmalloc to ensure driver can be instanced, remove global
   reference.
@@ -131,238 +133,477 @@ v2:
 - Use guard(mutex) in all mutex instances, global mutex.
 - Use pr_fmt instead of adding the driver name to each pr_err.
 - Remove noisy pr_info usage.
-- Rename capdata_wmi to lenovo_wmi_cd01_priv and cd01_wmi to priv.
-- Use list to get the lenovo_wmi_cd01_priv instance in
-  lenovo_wmi_capdata01_get as none of the data provided by the macros
-  that will use it can pass a member of the struct for use in
-  container_of.
+- Rename gamezone_wmi to lenovo_wmi_gz_priv and gz_wmi to priv.
+- Remove GZ_WMI symbol exporting.
 ---
- MAINTAINERS                                 |   2 +
- drivers/platform/x86/Kconfig                |   4 +
- drivers/platform/x86/Makefile               |   1 +
- drivers/platform/x86/lenovo-wmi-capdata01.c | 136 ++++++++++++++++++++
- drivers/platform/x86/lenovo-wmi-capdata01.h |  29 +++++
- 5 files changed, 172 insertions(+)
- create mode 100644 drivers/platform/x86/lenovo-wmi-capdata01.c
- create mode 100644 drivers/platform/x86/lenovo-wmi-capdata01.h
+ MAINTAINERS                                |   2 +
+ drivers/platform/x86/Kconfig               |  13 +
+ drivers/platform/x86/Makefile              |   1 +
+ drivers/platform/x86/lenovo-wmi-gamezone.c | 380 +++++++++++++++++++++
+ drivers/platform/x86/lenovo-wmi-gamezone.h |  18 +
+ 5 files changed, 414 insertions(+)
+ create mode 100644 drivers/platform/x86/lenovo-wmi-gamezone.c
+ create mode 100644 drivers/platform/x86/lenovo-wmi-gamezone.h
 
 diff --git a/MAINTAINERS b/MAINTAINERS
-index 6dde75922aaf..56ead241a053 100644
+index 87daee6075ad..0416afd997a0 100644
 --- a/MAINTAINERS
 +++ b/MAINTAINERS
-@@ -13164,6 +13164,8 @@ L:	platform-driver-x86@vger.kernel.org
- S:	Maintained
- F:	Documentation/wmi/devices/lenovo-wmi-gamezone.rst
- F:	Documentation/wmi/devices/lenovo-wmi-other.rst
-+F:	drivers/platform/x86/lenovo-wmi-capdata01.c
-+F:	drivers/platform/x86/lenovo-wmi-capdata01.h
+@@ -13168,6 +13168,8 @@ F:	drivers/platform/x86/lenovo-wmi-capdata01.c
+ F:	drivers/platform/x86/lenovo-wmi-capdata01.h
  F:	drivers/platform/x86/lenovo-wmi-events.c
  F:	drivers/platform/x86/lenovo-wmi-events.h
++F:	drivers/platform/x86/lenovo-wmi-gamezone.c
++F:	drivers/platform/x86/lenovo-wmi-gamezone.h
  F:	drivers/platform/x86/lenovo-wmi-helpers.c
+ F:	drivers/platform/x86/lenovo-wmi-helpers.h
+ F:	drivers/platform/x86/lenovo-wmi-other.c
 diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
-index 13b8f4ac5dc5..64663667f0cb 100644
+index fc47604e37f7..ecf3246c8fda 100644
 --- a/drivers/platform/x86/Kconfig
 +++ b/drivers/platform/x86/Kconfig
-@@ -467,6 +467,10 @@ config LENOVO_WMI_HELPERS
+@@ -467,6 +467,19 @@ config LENOVO_WMI_HELPERS
  	tristate
  	depends on ACPI_WMI
  
-+config LENOVO_WMI_DATA01
-+	tristate
++config LENOVO_WMI_GAMEZONE
++	tristate "Lenovo GameZone WMI Driver"
 +	depends on ACPI_WMI
++	select ACPI_PLATFORM_PROFILE
++	select LENOVO_WMI_EVENTS
++	select LENOVO_WMI_HELPERS
++	help
++	  Say Y here if you have a WMI aware Lenovo Legion device and would like to use the
++	  platform-profile firmware interface to manage power usage.
 +
- config IDEAPAD_LAPTOP
- 	tristate "Lenovo IdeaPad Laptop Extras"
- 	depends on ACPI
++	  To compile this driver as a module, choose M here: the module will
++	  be called lenovo-wmi-gamezone.
++
+ config LENOVO_WMI_DATA01
+ 	tristate
+ 	depends on ACPI_WMI
 diff --git a/drivers/platform/x86/Makefile b/drivers/platform/x86/Makefile
-index fc039839286a..7a35c77221b7 100644
+index c6ce3c8594b1..f3e64926a96b 100644
 --- a/drivers/platform/x86/Makefile
 +++ b/drivers/platform/x86/Makefile
-@@ -69,6 +69,7 @@ obj-$(CONFIG_THINKPAD_LMI)	+= think-lmi.o
- obj-$(CONFIG_YOGABOOK)		+= lenovo-yogabook.o
- obj-$(CONFIG_YT2_1380)		+= lenovo-yoga-tab2-pro-1380-fastcharger.o
+@@ -71,6 +71,7 @@ obj-$(CONFIG_YT2_1380)		+= lenovo-yoga-tab2-pro-1380-fastcharger.o
  obj-$(CONFIG_LENOVO_WMI_CAMERA)	+= lenovo-wmi-camera.o
-+obj-$(CONFIG_LENOVO_WMI_DATA01)	+= lenovo-wmi-capdata01.o
+ obj-$(CONFIG_LENOVO_WMI_DATA01)	+= lenovo-wmi-capdata01.o
  obj-$(CONFIG_LENOVO_WMI_EVENTS)	+= lenovo-wmi-events.o
++obj-$(CONFIG_LENOVO_WMI_GAMEZONE)	+= lenovo-wmi-gamezone.o
  obj-$(CONFIG_LENOVO_WMI_HELPERS)	+= lenovo-wmi-helpers.o
+ obj-$(CONFIG_LENOVO_WMI_TUNING)	+= lenovo-wmi-other.o
  
-diff --git a/drivers/platform/x86/lenovo-wmi-capdata01.c b/drivers/platform/x86/lenovo-wmi-capdata01.c
+diff --git a/drivers/platform/x86/lenovo-wmi-gamezone.c b/drivers/platform/x86/lenovo-wmi-gamezone.c
 new file mode 100644
-index 000000000000..b6876611ffd9
+index 000000000000..9d453a836227
 --- /dev/null
-+++ b/drivers/platform/x86/lenovo-wmi-capdata01.c
-@@ -0,0 +1,136 @@
++++ b/drivers/platform/x86/lenovo-wmi-gamezone.c
+@@ -0,0 +1,380 @@
 +// SPDX-License-Identifier: GPL-2.0-or-later
 +/*
-+ * LENOVO_CAPABILITY_DATA_01 WMI data block driver. This interface provides
-+ * information on tunable attributes used by the "Other Mode" WMI interface,
-+ * including if it is supported by the hardware, the default_value, max_value,
-+ * min_value, and step increment.
++ * Lenovo GameZone WMI interface driver. The GameZone WMI interface provides
++ * platform profile and fan curve settings for devices that fall under the
++ * "Gaming Series" of Lenovo Legion devices.
 + *
 + * Copyright(C) 2025 Derek J. Clark <derekjohn.clark@gmail.com>
 + */
 +
-+#include <linux/cleanup.h>
-+#include <linux/component.h>
-+#include <linux/container_of.h>
-+#include <linux/device.h>
-+#include <linux/gfp_types.h>
++#include <linux/dmi.h>
++#include <linux/list.h>
++#include <linux/notifier.h>
++#include <linux/platform_profile.h>
 +#include <linux/types.h>
 +#include <linux/wmi.h>
-+#include "lenovo-wmi-capdata01.h"
++
++#include "lenovo-wmi-events.h"
++#include "lenovo-wmi-gamezone.h"
++#include "lenovo-wmi-helpers.h"
++#include "lenovo-wmi-other.h"
 +
 +/* Interface GUIDs */
-+#define LENOVO_CAPABILITY_DATA_01_GUID "7A8F5407-CB67-4D6E-B547-39B3BE018154"
++#define LENOVO_GAMEZONE_GUID "887B54E3-DDDC-4B2C-8B88-68A26A8835D0"
 +
-+struct lwmi_cd01_priv {
++/* Method IDs */
++#define WMI_METHOD_ID_SMARTFAN_SUPP 43 /* IsSupportSmartFan */
++#define WMI_METHOD_ID_SMARTFAN_SET 44 /* SetSmartFanMode */
++#define WMI_METHOD_ID_SMARTFAN_GET 45 /* GetSmartFanMode */
++
++static BLOCKING_NOTIFIER_HEAD(gz_chain_head);
++
++struct lwmi_event_priv {
++	enum thermal_mode current_mode;
 +	struct wmi_device *wdev;
++	bool extreme_supported;
++	struct device *ppdev; /*platform profile device */
++	struct notifier_block event_nb;
++	struct notifier_block mode_nb;
 +};
 +
++struct quirk_entry {
++	bool extreme_supported;
++};
++
++static struct quirk_entry quirk_no_extreme_bug = {
++	.extreme_supported = false,
++};
++
++/* Notifier Methods */
 +/*
-+ * lenovo_cd01_component_bind() - On master bind, caches all capability data on
-+ * the master device.
-+ * @cd01_dev: Pointer to the capability data 01 parent device.
-+ * @om_dev: Pointer to the other mode parent device.
-+ * @data: capdata01_list object pointer to return the capability data with.
++ * lwmi_gz_mode_call() - Call method for lenovo-wmi-other notifier
++ * block call chain. For THERMAL_MODE_EVENT, returns current_mode
++ *
++ * @nb: The notifier_block registered to lenovo-wmi-other
++ * @cmd: The event triggered by lenovo-wmi-other
++ * @data: The data to be returned by the event.
++ *
++ * Returns: notifier_block status.
++ */
++static int lwmi_gz_mode_call(struct notifier_block *nb, unsigned long cmd,
++			     void *data)
++{
++	struct lwmi_event_priv *priv;
++
++	priv = container_of(nb, struct lwmi_event_priv, mode_nb);
++	if (!priv)
++		return NOTIFY_BAD;
++
++	switch (cmd) {
++	case THERMAL_MODE_EVENT:
++		*(enum thermal_mode *)data = priv->current_mode;
++		break;
++	default:
++		return NOTIFY_DONE;
++	}
++
++	return NOTIFY_OK;
++}
++
++/*
++ * lwmi_gz_event_call() - Call method for lenovo-wmi-events notifier
++ * block call chain. For THERMAL_MODE_EVENT, sets current_mode and
++ * notifies platform_profile of a change.
++ *
++ * @nb: The notifier_block registered to lenovo-wmi-events
++ * @cmd: The event triggered by lenovo-wmi-events
++ * @data: The data to be updated by the event.
++ *
++ * Returns: notifier_block status.
++ */
++static int lwmi_gz_event_call(struct notifier_block *nb, unsigned long cmd,
++			      void *data)
++{
++	struct lwmi_event_priv *priv;
++
++	priv = container_of(nb, struct lwmi_event_priv, event_nb);
++	if (!priv)
++		return NOTIFY_BAD;
++
++	switch (cmd) {
++	case THERMAL_MODE_EVENT:
++		priv->current_mode = *((enum thermal_mode *)data);
++		platform_profile_notify(&priv->wdev->dev);
++		break;
++	default:
++		return NOTIFY_DONE;
++	}
++
++	return NOTIFY_OK;
++}
++
++/* Platform Profile Methods & Setup */
++/*
++ * lwmi_gz_platform_profile_supported() - Gets the version of the WMI
++ * interface to determine the support level.
++ *
++ * @wdev: The Gamezone WMI device.
++ * @supported: Pointer to return the support level with.
 + *
 + * Returns: 0, or an error.
 + */
-+static int lenovo_cd01_component_bind(struct device *cd01_dev,
-+				      struct device *om_dev, void *data)
++static int lwmi_gz_platform_profile_supported(struct wmi_device *wdev,
++					      int *supported)
 +{
-+	struct lwmi_cd01_priv *priv = dev_get_drvdata(cd01_dev);
-+	int count, idx;
++	return lwmi_dev_evaluate_method(wdev, 0x0, WMI_METHOD_ID_SMARTFAN_SUPP,
++					0, 0, supported);
++}
 +
-+	if (!priv)
-+		return -ENODEV;
++/*
++ * lwmi_gz_thermal_mode_get() - Gets the currently set thermal mode from
++ * the Gamezone WMI interface.
++ *
++ * @wdev: The Gamezone WMI device.
++ * @mode: Pointer to return the thermal mode with.
++ *
++ * Returns: 0, or an error.
++ */
++static int lwmi_gz_thermal_mode_get(struct wmi_device *wdev,
++				    enum thermal_mode *mode)
++{
++	return lwmi_dev_evaluate_method(wdev, 0x0, WMI_METHOD_ID_SMARTFAN_GET,
++					0, 0, mode);
++}
 +
-+	count = wmidev_instance_count(priv->wdev);
++static int lwmi_gz_profile_get(struct device *dev,
++			       enum platform_profile_option *profile)
++{
++	struct lwmi_event_priv *priv = dev_get_drvdata(dev);
++	enum thermal_mode mode;
++	int ret;
 +
-+	if (count == 0)
++	ret = lwmi_gz_thermal_mode_get(priv->wdev, &mode);
++	if (ret)
++		return ret;
++
++	switch (mode) {
++	case SMARTFAN_MODE_QUIET:
++		*profile = PLATFORM_PROFILE_LOW_POWER;
++		break;
++	case SMARTFAN_MODE_BALANCED:
++		*profile = PLATFORM_PROFILE_BALANCED;
++		break;
++	case SMARTFAN_MODE_PERFORMANCE:
++		if (priv->extreme_supported) {
++			*profile = PLATFORM_PROFILE_BALANCED_PERFORMANCE;
++			break;
++		}
++		*profile = PLATFORM_PROFILE_PERFORMANCE;
++		break;
++	case SMARTFAN_MODE_EXTREME:
++		*profile = PLATFORM_PROFILE_PERFORMANCE;
++		break;
++	case SMARTFAN_MODE_CUSTOM:
++		*profile = PLATFORM_PROFILE_CUSTOM;
++		break;
++	default:
 +		return -EINVAL;
-+
-+	((struct cd01_list *)data)->count = count;
-+	((struct cd01_list *)data)->data = devm_kmalloc_array(om_dev, count,
-+							      sizeof(struct capdata01 *),
-+							      GFP_KERNEL);
-+	if (!data)
-+		return -ENOMEM;
-+
-+	for (idx = 0; idx < count; idx++) {
-+		union acpi_object *ret_obj __free(kfree) = NULL;
-+
-+		ret_obj = wmidev_block_query(priv->wdev, idx);
-+		if (!ret_obj) {
-+			((struct cd01_list *)data)->data[idx] = NULL;
-+			continue;
-+		}
-+		if (ret_obj->type != ACPI_TYPE_BUFFER) {
-+			((struct cd01_list *)data)->data[idx] = NULL;
-+			continue;
-+		}
-+
-+		if (ret_obj->buffer.length != sizeof(struct capdata01)) {
-+			((struct cd01_list *)data)->data[idx] = NULL;
-+			continue;
-+		}
-+
-+		((struct cd01_list *)data)->data[idx] =
-+			devm_kmemdup(om_dev, ret_obj->buffer.pointer,
-+				     ret_obj->buffer.length, GFP_KERNEL);
 +	}
++
++	priv->current_mode = mode;
++
 +	return 0;
 +}
 +
-+static const struct component_ops lenovo_cd01_component_ops = {
-+	.bind = lenovo_cd01_component_bind,
++static int lwmi_gz_profile_set(struct device *dev,
++			       enum platform_profile_option profile)
++{
++	struct lwmi_event_priv *priv = dev_get_drvdata(dev);
++	struct wmi_method_args_32 args;
++	enum thermal_mode mode;
++	int ret;
++
++	switch (profile) {
++	case PLATFORM_PROFILE_LOW_POWER:
++		mode = SMARTFAN_MODE_QUIET;
++		break;
++	case PLATFORM_PROFILE_BALANCED:
++		mode = SMARTFAN_MODE_BALANCED;
++		break;
++	case PLATFORM_PROFILE_BALANCED_PERFORMANCE:
++		mode = SMARTFAN_MODE_PERFORMANCE;
++		break;
++	case PLATFORM_PROFILE_PERFORMANCE:
++		if (priv->extreme_supported) {
++			mode = SMARTFAN_MODE_EXTREME;
++			break;
++		}
++		mode = SMARTFAN_MODE_PERFORMANCE;
++		break;
++	case PLATFORM_PROFILE_CUSTOM:
++		mode = SMARTFAN_MODE_CUSTOM;
++		break;
++	default:
++		return -EOPNOTSUPP;
++	}
++
++	args.arg0 = mode;
++
++	ret = lwmi_dev_evaluate_method(priv->wdev, 0x0,
++				       WMI_METHOD_ID_SMARTFAN_SET,
++				       (unsigned char *)&args, sizeof(args),
++				       NULL);
++	if (ret)
++		return ret;
++
++	priv->current_mode = mode;
++
++	return 0;
++}
++
++static const struct dmi_system_id fwbug_list[] = {
++	{
++		.ident = "Legion Go 8APU1",
++		.matches = {
++			DMI_MATCH(DMI_SYS_VENDOR, "LENOVO"),
++			DMI_MATCH(DMI_PRODUCT_VERSION, "Legion Go 8APU1"),
++		},
++		.driver_data = &quirk_no_extreme_bug,
++	},
++	{
++		.ident = "Legion Go S 8ARP1",
++		.matches = {
++			DMI_MATCH(DMI_SYS_VENDOR, "LENOVO"),
++			DMI_MATCH(DMI_PRODUCT_VERSION, "Legion Go S 8ARP1"),
++		},
++		.driver_data = &quirk_no_extreme_bug,
++	},
++	{
++		.ident = "Legion Go S 8APU1",
++		.matches = {
++			DMI_MATCH(DMI_SYS_VENDOR, "LENOVO"),
++			DMI_MATCH(DMI_PRODUCT_VERSION, "Legion Go S 8APU1"),
++		},
++		.driver_data = &quirk_no_extreme_bug,
++	},
++	{},
++
 +};
 +
-+static int lwmi_cd01_probe(struct wmi_device *wdev, const void *context)
-+
++/*
++ * extreme_supported() - Evaluate if a device supports extreme thermal mode.
++ * For devices that have a profile_support_ver of 6 or greater a DMI check
++ * is done. Some devices report a version that supports extreme mode but
++ * have an incomplete entry in the BIOS. To ensure this cannot be set, they
++ * are quirked to prevent assignment.
++ *
++ * @profile_support_ver: Version of WMI interface provided by
++ * lwmi_gz_platform_profile_supported.
++ *
++ * Returns: bool
++ */
++static bool extreme_supported(int profile_support_ver)
 +{
-+	struct lwmi_cd01_priv *priv;
++	const struct dmi_system_id *dmi_id;
++	struct quirk_entry *quirks;
++
++	if (profile_support_ver < 6)
++		return false;
++
++	dmi_id = dmi_first_match(fwbug_list);
++	if (!dmi_id)
++		return true;
++
++	quirks = dmi_id->driver_data;
++	return quirks->extreme_supported;
++}
++
++static int lwmi_platform_profile_probe(void *drvdata, unsigned long *choices)
++{
++	struct lwmi_event_priv *priv = drvdata;
++	int profile_support_ver;
++	int ret;
++
++	ret = lwmi_gz_platform_profile_supported(priv->wdev,
++						 &profile_support_ver);
++	if (ret)
++		return ret;
++
++	if (profile_support_ver < 1)
++		return -ENODEV;
++
++	priv->extreme_supported = extreme_supported(profile_support_ver);
++
++	set_bit(PLATFORM_PROFILE_LOW_POWER, choices);
++	set_bit(PLATFORM_PROFILE_BALANCED, choices);
++	set_bit(PLATFORM_PROFILE_PERFORMANCE, choices);
++	set_bit(PLATFORM_PROFILE_CUSTOM, choices);
++
++	if (priv->extreme_supported)
++		set_bit(PLATFORM_PROFILE_BALANCED_PERFORMANCE, choices);
++
++	return 0;
++}
++
++static const struct platform_profile_ops lwmi_gz_platform_profile_ops = {
++	.probe = lwmi_platform_profile_probe,
++	.profile_get = lwmi_gz_profile_get,
++	.profile_set = lwmi_gz_profile_set,
++};
++
++/* Driver Methods */
++static int lwmi_gz_probe(struct wmi_device *wdev, const void *context)
++{
++	struct lwmi_event_priv *priv;
 +	int ret;
 +
 +	priv = devm_kzalloc(&wdev->dev, sizeof(*priv), GFP_KERNEL);
 +	if (!priv)
 +		return -ENOMEM;
 +
++	priv->event_nb.notifier_call = lwmi_gz_event_call;
++	ret = devm_lwmi_events_register_notifier(&wdev->dev, &priv->event_nb);
++	if (ret)
++		return ret;
++
++	priv->mode_nb.notifier_call = lwmi_gz_mode_call;
++	ret = devm_lwmi_om_register_notifier(&wdev->dev, &priv->mode_nb);
++	if (ret)
++		return ret;
++
 +	priv->wdev = wdev;
 +	dev_set_drvdata(&wdev->dev, priv);
 +
-+	ret = component_add(&wdev->dev, &lenovo_cd01_component_ops);
++	priv->ppdev = platform_profile_register(&wdev->dev,
++						"lenovo-wmi-gamezone", priv,
++						&lwmi_gz_platform_profile_ops);
 +
-+	return ret;
++	if (IS_ERR(priv->ppdev))
++		return -ENODEV;
++
++	ret = lwmi_gz_thermal_mode_get(wdev, &priv->current_mode);
++	if (ret)
++		return ret;
++
++	return 0;
 +}
 +
-+static void lwmi_cd01_remove(struct wmi_device *wdev)
-+{
-+	component_del(&wdev->dev, &lenovo_cd01_component_ops);
-+}
++static const struct wmi_device_id lwmi_gz_id_table[] = { { LENOVO_GAMEZONE_GUID,
++							   NULL },
++							 {} };
 +
-+static const struct wmi_device_id lwmi_cd01_id_table[] = {
-+	{ LENOVO_CAPABILITY_DATA_01_GUID, NULL },
-+	{}
-+};
-+
-+static struct wmi_driver lwmi_cd01_driver = {
++static struct wmi_driver lwmi_gz_driver = {
 +	.driver = {
-+		.name = "lenovo_wmi_cd01",
++		.name = "lenovo_wmi_gamezone",
 +		.probe_type = PROBE_PREFER_ASYNCHRONOUS,
 +	},
-+	.id_table = lwmi_cd01_id_table,
-+	.probe = lwmi_cd01_probe,
-+	.remove = lwmi_cd01_remove,
++	.id_table = lwmi_gz_id_table,
++	.probe = lwmi_gz_probe,
 +	.no_singleton = true,
 +};
 +
-+int lwmi_cd01_match(struct device *dev, void *data)
-+{
-+	return dev->driver == &lwmi_cd01_driver.driver;
-+}
-+EXPORT_SYMBOL_NS_GPL(lwmi_cd01_match, "LENOVO_WMI_CD01");
++module_wmi_driver(lwmi_gz_driver);
 +
-+module_wmi_driver(lwmi_cd01_driver);
-+
-+MODULE_DEVICE_TABLE(wmi, lwmi_cd01_id_table);
++MODULE_IMPORT_NS("LENOVO_WMI_EVENTS");
++MODULE_IMPORT_NS("LENOVO_WMI_HELPERS");
++MODULE_IMPORT_NS("LENOVO_WMI_OTHER");
++MODULE_DEVICE_TABLE(wmi, lwmi_gz_id_table);
 +MODULE_AUTHOR("Derek J. Clark <derekjohn.clark@gmail.com>");
-+MODULE_DESCRIPTION("Lenovo Capability Data 01 WMI Driver");
++MODULE_DESCRIPTION("Lenovo GameZone WMI Driver");
 +MODULE_LICENSE("GPL");
-diff --git a/drivers/platform/x86/lenovo-wmi-capdata01.h b/drivers/platform/x86/lenovo-wmi-capdata01.h
+diff --git a/drivers/platform/x86/lenovo-wmi-gamezone.h b/drivers/platform/x86/lenovo-wmi-gamezone.h
 new file mode 100644
-index 000000000000..c7067a8d0398
+index 000000000000..ac536803160b
 --- /dev/null
-+++ b/drivers/platform/x86/lenovo-wmi-capdata01.h
-@@ -0,0 +1,29 @@
++++ b/drivers/platform/x86/lenovo-wmi-gamezone.h
+@@ -0,0 +1,18 @@
 +/* SPDX-License-Identifier: GPL-2.0-or-later
 + *
 + * Copyright(C) 2025 Derek J. Clark <derekjohn.clark@gmail.com>
 + *
 + */
 +
-+#ifndef _LENOVO_WMI_CAPDATA01_H_
-+#define _LENOVO_WMI_CAPDATA01_H_
++#ifndef _LENOVO_WMI_GAMEZONE_H_
++#define _LENOVO_WMI_GAMEZONE_H_
 +
-+#include <linux/device.h>
-+#include <linux/types.h>
-+
-+struct capdata01 {
-+	u32 id;
-+	u32 supported;
-+	u32 default_value;
-+	u32 step;
-+	u32 min_value;
-+	u32 max_value;
++enum thermal_mode {
++	SMARTFAN_MODE_QUIET = 0x01,
++	SMARTFAN_MODE_BALANCED = 0x02,
++	SMARTFAN_MODE_PERFORMANCE = 0x03,
++	SMARTFAN_MODE_EXTREME = 0xE0, /* Ver 6+ */
++	SMARTFAN_MODE_CUSTOM = 0xFF,
 +};
 +
-+struct cd01_list {
-+	struct capdata01 **data;
-+	int count;
-+};
-+
-+int lwmi_cd01_match(struct device *dev, void *data);
-+
-+#endif /* !_LENOVO_WMI_CAPDATA01_H_ */
++#endif /* !_LENOVO_WMI_GAMEZONE_H_ */
 -- 
 2.49.0
 
