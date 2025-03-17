@@ -1,231 +1,286 @@
-Return-Path: <linux-kernel+bounces-563875-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563876-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90644A649C9
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:28:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCFA5A64A0C
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:33:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E50E160399
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:28:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EFC373A7251
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:28:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B08862236FD;
-	Mon, 17 Mar 2025 10:27:47 +0000 (UTC)
-Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4076219A67;
-	Mon, 17 Mar 2025 10:27:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BA8838B;
+	Mon, 17 Mar 2025 10:28:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QOfyaZeY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FB5313B7A3;
+	Mon, 17 Mar 2025 10:28:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742207267; cv=none; b=CPcJE6gmDJjHnEer6QfuW3HDNsTE4Tde/b6VGh2Pf6oJN/hfyZELcR9/01Ye4MZ4GXspFGq/pomXWr16byL3SvUkWS87y4XHq+96PlHAd64TT8CXaH4g7hHJ/XenyLi98RM35o01PVAFMaNYUqPYidC6bR+yNvOwnp4JfvB9exI=
+	t=1742207292; cv=none; b=TrRDOyZgJ3yzEPnj94f9U3qc9UcebuuCBsz2saGef47kBYk8ZfPZvJvu63LLOHvRsKFwTshO+VCBOhph/+OESHD3IvqVschv8opfjYIlCsem4QkbwUaz4miO0czZvNZ2eaFTsNufND8z5o/E5DsnTl6xOgxLXCOlIWHat0rCoXE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742207267; c=relaxed/simple;
-	bh=2jv2oNnuMomXh9Kr1t2fb+sIQ5lE6UaVgX/GXBxiVg0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=P0+qBwWQCXGkSKAN1W4Idlb+IUOrRNrYYgm/rJQvbwpoi+IpI18pM5yMbzA/6Wzd4JEXFP5k8pMp03WUM25s0oFpH7sg++jeT41InGdmVCii9MoKRC2p2cFuybVOLOFY2EcfIKFrLSDsXiXaMkzNWtGEA7FIvWyDI7jAVdTJyOA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
-X-CSE-ConnectionGUID: D4GfsnCxQ+6aG0qymhfE/w==
-X-CSE-MsgGUID: rAaiZvVRRKO+OkoXRswZAA==
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 17 Mar 2025 19:27:36 +0900
-Received: from [10.226.93.170] (unknown [10.226.93.170])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id AD8C9402ADFF;
-	Mon, 17 Mar 2025 19:27:33 +0900 (JST)
-Message-ID: <999cb080-ea61-45e5-9ea0-356fb8bc4639@bp.renesas.com>
-Date: Mon, 17 Mar 2025 10:27:32 +0000
+	s=arc-20240116; t=1742207292; c=relaxed/simple;
+	bh=qS18CGlLGP0tpSmU21eSar6JGn73St59+DNZX7wwsqs=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Ppf0cSEf2w6LvDu6UkvzL6T4zJGRQRT+ZF3k7dSTcDK1o1e3nTCjvjjcpwJylhlnQAw08d80W7i1NVtpnAzgvsAbo4Wj74YdMkcLnvfh/XDqjjhujoLEckt5HT6IGyA8zyhvXThAJp5WNZ3dDi3+SoI3eg2KWjBcu9jR7P8Sbbc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QOfyaZeY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7B4FC4CEE3;
+	Mon, 17 Mar 2025 10:28:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742207292;
+	bh=qS18CGlLGP0tpSmU21eSar6JGn73St59+DNZX7wwsqs=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=QOfyaZeYEI/OA3HfCH4/HVVnTYPCdzNiRnk9t3ntUUPQY4QNK9itk93JiwDD5Puxm
+	 Ok4wa+dXq2E1zhK7g55FYRd5x9E+TcyUVaUX6bHhKzk5z7THPCXGZuj1cacUNfnfWx
+	 5TtW6t7i6ym4G4T71RnJs3BXPyd9QR3FHM8HDze/ahDL7wa9osi1oRvHnuO6TWj7dO
+	 ldu8jLFmd305q+7nk0dXE5oVHYh+kvLjUWJ+IrdTeRtLZeceVqYlOYZGuxmLIbyzCM
+	 WZG8ZNqIMKJQjgJFXO6eEZsDDq+BYh6LIxjHiL7Ncle+hk81/7kLDTQ8ET5+0s9N6v
+	 p7pX9GTZtIeUg==
+Date: Mon, 17 Mar 2025 10:27:51 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Marcelo Schmitt <marcelo.schmitt@analog.com>
+Cc: <linux-iio@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <lars@metafoo.de>,
+ <Michael.Hennerich@analog.com>, <corbet@lwn.net>,
+ <marcelo.schmitt1@gmail.com>
+Subject: Re: [PATCH v1 1/4] iio: adc: ad4000: Add support for SPI offload
+Message-ID: <20250317102751.5702fb82@jic23-huawei>
+In-Reply-To: <301fc83a961c4a2ef2ac980d0baa83d9d89a88c5.1741970538.git.marcelo.schmitt@analog.com>
+References: <cover.1741970538.git.marcelo.schmitt@analog.com>
+	<301fc83a961c4a2ef2ac980d0baa83d9d89a88c5.1741970538.git.marcelo.schmitt@analog.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 08/13] serial: sh-sci: Introduced function pointers
-Content-Language: en-GB
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
- Geert Uytterhoeven <geert@linux-m68k.org>,
- Thierry Bultel <thierry.bultel.yh@bp.renesas.com>,
- thierry.bultel@linatsea.fr, linux-renesas-soc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
- Ulrich Hecht <uli@fpond.eu>, Linux-sh list <linux-sh@vger.kernel.org>
-References: <20250306152451.2356762-1-thierry.bultel.yh@bp.renesas.com>
- <20250306152451.2356762-9-thierry.bultel.yh@bp.renesas.com>
- <CAMuHMdVM_ozW4LAA4DstQuDfEcOnOcXZ2QHGv8nYMKDPWJe43Q@mail.gmail.com>
- <Z9fxfV9jAGJ51fcn@shikoro>
-From: Paul Barker <paul.barker.ct@bp.renesas.com>
-In-Reply-To: <Z9fxfV9jAGJ51fcn@shikoro>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="------------GSaVrcKpNAh8KYWgWD9dUaOq"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---------------GSaVrcKpNAh8KYWgWD9dUaOq
-Content-Type: multipart/mixed; boundary="------------O6kgC8qtnfCsHbkVJ7nSz61a";
- protected-headers="v1"
-From: Paul Barker <paul.barker.ct@bp.renesas.com>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
- Geert Uytterhoeven <geert@linux-m68k.org>,
- Thierry Bultel <thierry.bultel.yh@bp.renesas.com>,
- thierry.bultel@linatsea.fr, linux-renesas-soc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
- Ulrich Hecht <uli@fpond.eu>, Linux-sh list <linux-sh@vger.kernel.org>
-Message-ID: <999cb080-ea61-45e5-9ea0-356fb8bc4639@bp.renesas.com>
-Subject: Re: [PATCH v4 08/13] serial: sh-sci: Introduced function pointers
-References: <20250306152451.2356762-1-thierry.bultel.yh@bp.renesas.com>
- <20250306152451.2356762-9-thierry.bultel.yh@bp.renesas.com>
- <CAMuHMdVM_ozW4LAA4DstQuDfEcOnOcXZ2QHGv8nYMKDPWJe43Q@mail.gmail.com>
- <Z9fxfV9jAGJ51fcn@shikoro>
-In-Reply-To: <Z9fxfV9jAGJ51fcn@shikoro>
+On Fri, 14 Mar 2025 14:18:39 -0300
+Marcelo Schmitt <marcelo.schmitt@analog.com> wrote:
 
---------------O6kgC8qtnfCsHbkVJ7nSz61a
-Content-Type: multipart/mixed; boundary="------------Ijb1tC0cLv8GylxNAv6i7gC5"
+> FPGA HDL projects can include a PWM generator in addition to SPI-Engine.
+> The PWM IP is used to trigger SPI-Engine offload modules that in turn set
+> SPI-Engine to execute transfers to poll data from the ADC. That allows data
+> to be read at the maximum sample rates. Also, it is possible to set a
+> specific sample rate by setting the proper PWM duty cycle and related state
+> parameters, thus allowing an adjustable ADC sample rate when a PWM (offload
+> trigger) is used in combination with SPI-Engine.
+> 
+> Add support for SPI offload.
+> 
+> Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
 
---------------Ijb1tC0cLv8GylxNAv6i7gC5
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+A few minor things inline.  
 
-On 17/03/2025 09:55, Wolfram Sang wrote:
-> Hi all,
->=20
-> sorry for missing this series so far and thanks to Geert for pulling me=
+Jonathan
 
-> into the loop.
->=20
->> While most rough edges have been polished by now (thanks!), and the
->> driver seems to still work on a variety of platforms, I am still
->> worried about the impact of this change:
->>   - Maintainability and future bug fixing?
->=20
-> I hate to see development work going to waste, yet I have to say I am
-> also concerned about the maintainability of this driver after this very=
+> diff --git a/drivers/iio/adc/ad4000.c b/drivers/iio/adc/ad4000.c
+> index 4fe8dee48da9..6c9b71e7a2fb 100644
+> --- a/drivers/iio/adc/ad4000.c
+> +++ b/drivers/iio/adc/ad4000.c
 
-> intrusive changeset. The driver is already quite complex. Adding anothe=
-r
-> layer of complexity (function pointers) will make proper bugfixing for
-> all supported instances quite harder, I'd think.
->=20
-> Has it been discussed to have this as a separate driver? Were there
-> reasons against it? This is really an open question. Maybe it is
-> justified to do it like this if we have reasons for it.
->=20
-> Seeing that SCI core needs 800+ lines changed and we still have a
-> seperate driver with 460 lines driver, I do wonder if copying the logic=
+> +
+> +static int ad4000_offload_buffer_postdisable(struct iio_dev *indio_dev)
+> +{
+> +	struct ad4000_state *st = iio_priv(indio_dev);
+> +
+> +	spi_offload_trigger_disable(st->offload, st->offload_trigger);
 
-> from SCI core to a seperate driver would make sense. I am aware that th=
-e
-> core has currently 3500+ lines currently. I'd estimate it would shrink
-> quite a bit when copying because you won't need to handle all the
-> differences to other SCI entries.
->=20
-> Again, this is not a request to follow my suggestion, it is an open
-> question to make sure all paths have been considered.
+Trivial. Prefer a blank line before a 'simple return' like this one.
 
-Hi Geert, Wolfram,
+> +	return 0;
+> +}
 
-Thierry is out of the office this week so we can follow this up next
-week, but I do want to give some input in the meantime.
 
-We discussed both approaches internally and did an initial
-proof-of-concept of a separate driver. The result was over 1,000 lines
-of code copy-pasted from the existing sh-sci driver into the new driver,
-which is generally something maintainers want us to avoid doing. The
-trade off here is whether we want a single more complex driver, or two
-copies of much of the code so that bugfixes/improvements to the common
-sections in the future need to be duplicated.
+> +
+> +/*
+> + * This executes a data sample transfer when using SPI offloading for when the
+> + * device connections are in "3-wire" mode, selected when the adi,sdi-pin device
+> + * tree property is absent. In this connection mode, the ADC SDI pin is
+> + * connected to MOSI or to VIO and ADC CNV pin is connected to a SPI controller
+> + * CS (it can't be connected to a GPIO).
+> + *
+> + * In order to achieve the maximum sample rate, we only do one transfer per
+> + * SPI offload trigger. This has the effect that the first sample data is not
+> + * valid because it is reading the previous conversion result. We also use
 
-The RZ/V2H and RZ/G3E have interfaces of both the existing sh-sci
-register layout ("SCIF" ports in RZ/V2H & RZ/G3E manual) and the RZ/T2H
-style register layout ("RSCI" ports in RZ/V2H manual, "SCI" ports in
-RZ/G3E manual), so keeping things closely aligned as we move forward
-will be beneficial. I expect that this will be easier with a combined
-driver.
+As below. Should mention what happens with that invalid sample.
 
-Thanks,
+> + * bits_per_word to ensure the minimum of SCLK cycles are used. And a delay is
+> + * added to make sure we meet the minimum quiet time before releasing the CS
+> + * line. Plus the CS change delay is set to ensure that we meet the minimum
+> + * quiet time before asserting CS again.
+> + *
+> + * This timing is only valid if turbo mode is enabled (reading during conversion).
+> + */
+> +static int ad4000_prepare_offload_turbo_message(struct ad4000_state *st,
+> +						const struct iio_chan_spec *chan)
+> +{
+> +
+> +/*
+> + * This executes a data sample transfer when using SPI offloading for when the
+> + * device connections are in "3-wire" mode, selected when the adi,sdi-pin device
+> + * tree property is set to "high". In this connection mode, the ADC SDI pin is
+> + * connected to VIO and ADC CNV pin is connected to a SPI controller CS (it
+> + * can't be connected to a GPIO).
+> + *
+> + * In order to achieve the maximum sample rate, we only do one transfer per
+> + * SPI offload trigger. This has the effect that the first sample data is not
+> + * valid because it is reading the previous conversion result. We also use
 
---=20
-Paul Barker
---------------Ijb1tC0cLv8GylxNAv6i7gC5
-Content-Type: application/pgp-keys; name="OpenPGP_0x27F4B3459F002257.asc"
-Content-Disposition: attachment; filename="OpenPGP_0x27F4B3459F002257.asc"
-Content-Description: OpenPGP public key
-Content-Transfer-Encoding: quoted-printable
+Say what happens to that invalid sample.  Is it dropped or provided to userspace
+as if it were valid?  (I hope dropped!)
 
------BEGIN PGP PUBLIC KEY BLOCK-----
+> + * bits_per_word to ensure the minimum of SCLK cycles are used. And a delay is
+> + * added to make sure we meet the minimum quiet time before releasing the CS
+> + * line. Plus the CS change delay is set to ensure that we meet the minimum
+> + * conversion time before asserting CS again.
+> + *
+> + * This timing is only valid if turbo mode is disabled (reading during acquisition).
+> + */
+> +static int ad4000_prepare_offload_message(struct ad4000_state *st,
+> +					  const struct iio_chan_spec *chan)
+> +
 
-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3D
-=3DsIIN
------END PGP PUBLIC KEY BLOCK-----
+...
 
---------------Ijb1tC0cLv8GylxNAv6i7gC5--
+>  /*
+>   * This executes a data sample transfer for when the device connections are
+>   * in "3-wire" mode, selected when the adi,sdi-pin device tree property is
+> @@ -689,7 +975,9 @@ static int ad4000_prepare_3wire_mode_message(struct ad4000_state *st,
+>  	xfers[0].cs_change_delay.unit = SPI_DELAY_UNIT_NSECS;
+>  
+>  	xfers[1].rx_buf = &st->scan.data;
+> -	xfers[1].len = BITS_TO_BYTES(chan->scan_type.storagebits);
+> +	xfers[1].len = chan->scan_type.realbits > 16 ? 4 : 2;
+> +	if (chan->scan_type.endianness != IIO_BE)
 
---------------O6kgC8qtnfCsHbkVJ7nSz61a--
+As below. Endianness being related to bits_per_word is odd. So needs
+explanation.
 
---------------GSaVrcKpNAh8KYWgWD9dUaOq
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature.asc"
+> +		xfers[1].bits_per_word = chan->scan_type.realbits;
+>  	xfers[1].delay.value = st->time_spec->t_quiet2_ns;
+>  	xfers[1].delay.unit = SPI_DELAY_UNIT_NSECS;
+>  
+> @@ -719,7 +1007,9 @@ static int ad4000_prepare_4wire_mode_message(struct ad4000_state *st,
+>  	xfers[0].delay.unit = SPI_DELAY_UNIT_NSECS;
+>  
+>  	xfers[1].rx_buf = &st->scan.data;
+> -	xfers[1].len = BITS_TO_BYTES(chan->scan_type.storagebits);
+> +	xfers[1].len = chan->scan_type.realbits > 16 ? 4 : 2;
+> +	if (chan->scan_type.endianness != IIO_BE)
 
------BEGIN PGP SIGNATURE-----
+This is odd enough to require a comment.  Why is endianness relevant?
 
-wnsEABYIACMWIQSiu8gv1Xr0fIw/aoLbaV4Vf/JGvQUCZ9f5FAUDAAAAAAAKCRDbaV4Vf/JGvc9m
-AP9eGklGc56ll2C1TBfHvkIFUNbW1y9Hzwk00cBLYsy+8QEA+3jtJ2DfsW0bZ6yH9NnzAN46Iay7
-WtqeXOrDyo9qIAo=
-=dKJM
------END PGP SIGNATURE-----
+> +		xfers[1].bits_per_word = chan->scan_type.realbits;
+> @@ -733,6 +1023,9 @@ static int ad4000_config(struct ad4000_state *st)
+>  	if (device_property_present(&st->spi->dev, "adi,high-z-input"))
+>  		reg_val |= FIELD_PREP(AD4000_CFG_HIGHZ, 1);
+>  
+> +	if (st->using_offload)
+> +		reg_val |= FIELD_PREP(AD4000_CFG_TURBO, 1);
+> +
+>  	return ad4000_write_reg(st, reg_val);
+>  }
+>  
 
---------------GSaVrcKpNAh8KYWgWD9dUaOq--
+
+> +		if (st->using_offload) {
+> +			indio_dev->channels = &chip->reg_access_offload_chan_spec;
+Set num_channels here
+> +			ret = ad4000_prepare_offload_turbo_message(st, indio_dev->channels);
+> +			if (ret)
+> +				return dev_err_probe(dev, ret,
+> +						     "Failed to optimize SPI msg\n");
+> +		} else {
+> +			indio_dev->channels = chip->reg_access_chan_spec;
+and here as well. I think you can use ARRAY_SIZE() to make the connection even more
+obvious.
+
+> +		}
+> +
+> +		/*
+> +		 * Call ad4000_prepare_3wire_mode_message() so single-shot read
+> +		 * SPI messages are always initialized.
+> +		 */
+>  		ret = ad4000_prepare_3wire_mode_message(st, &indio_dev->channels[0]);
+>  		if (ret)
+> -			return ret;
+> +			return dev_err_probe(dev, ret,
+> +					     "Failed to optimize SPI msg\n");
+>  
+>  		ret = ad4000_config(st);
+>  		if (ret < 0)
+> @@ -806,19 +1134,36 @@ static int ad4000_probe(struct spi_device *spi)
+>  
+>  		break;
+>  	case AD4000_SDI_VIO:
+> -		indio_dev->info = &ad4000_info;
+> -		indio_dev->channels = chip->chan_spec;
+> +		if (st->using_offload) {
+> +			indio_dev->info = &ad4000_offload_info;
+> +			indio_dev->channels = &chip->offload_chan_spec;
+
+here as well.
+
+> +
+> +			spi->cs_hold.value = AD4000_TCONV_NS;
+> +			spi->cs_hold.unit = SPI_DELAY_UNIT_NSECS;
+> +			ret = ad4000_prepare_offload_message(st, indio_dev->channels);
+> +			if (ret)
+> +				return dev_err_probe(dev, ret,
+> +						     "Failed to optimize SPI msg\n");
+> +		} else {
+> +			indio_dev->info = &ad4000_info;
+> +			indio_dev->channels = chip->chan_spec;
+
+Also set size here.  Obviously this means a little duplication but still good
+to keep them together.
+
+
+> +		}
+
+>  	case AD4000_SDI_GND:
+> @@ -830,7 +1175,10 @@ static int ad4000_probe(struct spi_device *spi)
+>  	}
+>  
+>  	indio_dev->name = chip->dev_name;
+> -	indio_dev->num_channels = 2;
+> +	if (st->using_offload)
+> +		indio_dev->num_channels = 1;
+> +	else
+> +		indio_dev->num_channels = 2;
+
+Move this up to where you set channels so that the array
+and size are set together.
+
+>  
+>  	ret = devm_mutex_init(dev, &st->lock);
+>  	if (ret)
+> @@ -853,12 +1201,6 @@ static int ad4000_probe(struct spi_device *spi)
+>  
+>  	ad4000_fill_scale_tbl(st, &indio_dev->channels[0]);
+>  
+> -	ret = devm_iio_triggered_buffer_setup(dev, indio_dev,
+> -					      &iio_pollfunc_store_time,
+> -					      &ad4000_trigger_handler, NULL);
+> -	if (ret)
+> -		return ret;
+> -
+>  	return devm_iio_device_register(dev, indio_dev);
+>  }
+>  
+> @@ -947,3 +1289,4 @@ module_spi_driver(ad4000_driver);
+>  MODULE_AUTHOR("Marcelo Schmitt <marcelo.schmitt@analog.com>");
+>  MODULE_DESCRIPTION("Analog Devices AD4000 ADC driver");
+>  MODULE_LICENSE("GPL");
+> +MODULE_IMPORT_NS("IIO_DMAENGINE_BUFFER");
+
 
