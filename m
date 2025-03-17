@@ -1,211 +1,139 @@
-Return-Path: <linux-kernel+bounces-563947-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55DBAA64ABD
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:48:52 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F1BDA64ABE
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:48:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3EC06172E06
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:48:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7E6A27A5A21
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:47:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEB8223C8A4;
-	Mon, 17 Mar 2025 10:46:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C48652356DF;
+	Mon, 17 Mar 2025 10:46:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="pz8uK2y3";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="NRpnKuAn"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SjExmyb8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16A642397AA;
-	Mon, 17 Mar 2025 10:46:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B6822356D5;
+	Mon, 17 Mar 2025 10:46:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742208398; cv=none; b=P1/pE2eWlU+gEhS3IIZwKrH/OFzFHlsNj0nGZsyKu2pSm2rjKY5gfNRPycTM3n0sJUDu5c9zTpW/YI93zB6kluz/Lr9wl6CTsJNF7pP9EK5/EvvDJ0GssIgBgPYCFbhl6gwDJvZGI31qwxAEiMWftnFOvFZ1Ft3/N8+dDaKLgfQ=
+	t=1742208413; cv=none; b=r30L1/3DESFZ0rd25G3FhMzKxKOzjtlSClfciwn36Daw24AGSSCYysNONCDW/Qygdydl4kznoglBUkwkxxfLRxNJHqxa+VGUpMpgYw4AlTdLbrmby1nmlm4xVDemh/La60ciZ2uUYlQ8ff7TlOpgBaLMlDWhYvLM8JZEs7K4RJA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742208398; c=relaxed/simple;
-	bh=GOfpq2ZXcOOnDSZPl11WbAx5Yl28saFlR3G5ChKeuGo=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=Ykeap1ASW1XqoAq00mxzdukzKN0Qrt0TCfTgLZv3tMFXGNoMVXM5wrQ5ezl9VREqk2RhszP3csW4WFdadAc3UXImJ2NioIkOuqDkRMv+SYfWEztHMwsmLe8Jj43j7190hrB3e0uCblCnBafLWg7KDug0tV6lWEUZfqprj1Pa4RM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=pz8uK2y3; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=NRpnKuAn; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 17 Mar 2025 10:46:32 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1742208393;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=T9reXYg6N4uoA6vVPFFiA4Owjzv1SqvIyW8Oct/i1Sg=;
-	b=pz8uK2y3NcyZEO95nGYqPyi5NuCU3MKoCu84DDgU/o7FsJkxsHdwvAx5c3Mr8To5n/1Fn3
-	UQXtvrt4zQJBokvrvv3WauOgoerGH3TRYTAJEZQkunOx4q/XFwngEXHNgS/VfaVBOdSm6H
-	2ypt382uWKYEan2RpwSXNFIk550cagWiNh/nSWycaGgGbcvlkMJ77Zqjmtoqn27kWmLLFb
-	CZHfxaxOWgxntuTTipyCchAD4TbLexy9HIcP8lxrjWq1k4QftITLnGjPZNcx79XVEyL6CT
-	b6/kpE3fbnfGzywXQJiwiHa8hFbX52q5IazYevNRD2ne4CQlA4spCCCFZLDEkQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1742208393;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=T9reXYg6N4uoA6vVPFFiA4Owjzv1SqvIyW8Oct/i1Sg=;
-	b=NRpnKuAnm77AdbNFNZ8llHkWreJPXQKz20Qg/Lc9OBb5u6b+Q+NSEn5h0InLJPJs6SrmSC
-	VLkwMdqkEe2gfpAA==
-From: "tip-bot2 for Josh Poimboeuf" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: objtool/core] x86/traps: Make exc_double_fault() consistently noreturn
-Cc: Josh Poimboeuf <jpoimboe@kernel.org>,
- "Peter Zijlstra (Intel)" <peterz@infradead.org>,
- Brendan Jackman <jackmanb@google.com>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To:
- <d1f4026f8dc35d0de6cc61f2684e0cb6484009d1.1741975349.git.jpoimboe@kernel.org>
-References:
- <d1f4026f8dc35d0de6cc61f2684e0cb6484009d1.1741975349.git.jpoimboe@kernel.org>
+	s=arc-20240116; t=1742208413; c=relaxed/simple;
+	bh=ocTFdTc6yd3mJfLws1Cc4o1Y7dxCQqvNycNtrFIYbpM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ET2843aRfqsZz5IQZwU+sPWXOgSL4CaE9IysA4CG6xwNT/ZqnbI7LhDwIl8qU+XynB7UZvyTtTXflnqEW24UJNy78MXhe61XvRboomsWrNR79d190sNyieTEVxBChVSYXB1wU/Y3K+tophR79hBY7rk3vTmq3d2p1wtZZqoDbMc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SjExmyb8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10596C4CEE3;
+	Mon, 17 Mar 2025 10:46:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742208412;
+	bh=ocTFdTc6yd3mJfLws1Cc4o1Y7dxCQqvNycNtrFIYbpM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SjExmyb8HNtxK1o9bnzisOVz5oyUVxcgOOH3ZowkzxncKYxbJp/RlUf7bBrp8EcAD
+	 GREgtyVRl0e+yySX2tm5cih9T6x1LZMdvEfQrgxZnf/YrxDHzim2edK4ZQltMppIvx
+	 zR9JKz1XtzeCHa5y8RBq6TFmjJrj8XmY8FaFj1JPfFGmvNRowhEI/48HmP2eMIkTef
+	 uQ59w3C8sv0OYk9I2pYgkiwrDPUjENZq01wxT29g3ZGtXfnd0kksPKy/OXmyIcddKh
+	 E2mmJAlH9CNr2TsGK0VxlaPz4IGzgmdMvQqWuBTCgJ2NxbBqS+VXOkRAEjTSW6Fahq
+	 Ivw5zMri293yQ==
+Date: Mon, 17 Mar 2025 11:46:46 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev,
+	Ben Segall <bsegall@google.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
+	Mel Gorman <mgorman@suse.de>, Peter Zijlstra <peterz@infradead.org>,
+	Shrikanth Hegde <sshegde@linux.ibm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Will Deacon <will@kernel.org>
+Subject: Re: [PATCH v4 1/9] sched: Add a generic function to return the
+ preemption string.
+Message-ID: <Z9f9ljbTDGOGZUSb@gmail.com>
+References: <20250314160810.2373416-1-bigeasy@linutronix.de>
+ <20250314160810.2373416-2-bigeasy@linutronix.de>
+ <Z9ay49NsoC73dKXe@gmail.com>
+ <20250317083155.9g9ksofZ@linutronix.de>
+ <Z9fnf9g_zmbNXICh@gmail.com>
+ <20250317092526.S1MfZldy@linutronix.de>
+ <Z9f2_exjFEpTpuRr@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174220839265.14745.12573515229084776293.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z9f2_exjFEpTpuRr@gmail.com>
 
-The following commit has been merged into the objtool/core branch of tip:
 
-Commit-ID:     8085fcd78c1a3dbdf2278732579009d41ce0bc4e
-Gitweb:        https://git.kernel.org/tip/8085fcd78c1a3dbdf2278732579009d41ce0bc4e
-Author:        Josh Poimboeuf <jpoimboe@kernel.org>
-AuthorDate:    Fri, 14 Mar 2025 12:28:59 -07:00
-Committer:     Peter Zijlstra <peterz@infradead.org>
-CommitterDate: Mon, 17 Mar 2025 11:35:59 +01:00
+* Ingo Molnar <mingo@kernel.org> wrote:
 
-x86/traps: Make exc_double_fault() consistently noreturn
+> 
+> * Sebastian Andrzej Siewior <bigeasy@linutronix.de> wrote:
+> 
+> > On 2025-03-17 10:12:31 [+0100], Ingo Molnar wrote:
+> > > 
+> > > * Sebastian Andrzej Siewior <bigeasy@linutronix.de> wrote:
+> > > 
+> > > > On 2025-03-16 12:15:47 [+0100], Ingo Molnar wrote:
+> > > > > 
+> > > > > * Sebastian Andrzej Siewior <bigeasy@linutronix.de> wrote:
+> > > > > 
+> > > > > > +const char *preempt_modes[] = {
+> > > > > > +	"none", "voluntary", "full", "lazy", NULL,
+> > > > > > +};
+> > > > > 
+> > > > > > +	/* Count entries in NULL terminated preempt_modes */
+> > > > > > +	for (j = 0; preempt_modes[j]; j++)
+> > > > > > +		;
+> > > > > 
+> > > > > I'm pretty sure the build-time ARRAY_SIZE() primitive is superior here. ;-)
+> > > > 
+> > > > It would be but it is not an option.
+> > > > That array is defined in core.c where it is "always" required while
+> > > > debug.c needs it optionally. core.c is its one compile unit while
+> > > > debug.c is included by build_utility.c. So I don't see how this can work
+> > > > unless we shift things:
+> > > 
+> > > Why not have it all in debug.c?
+> > 
+> > The debug.c include is behind CONFIG_SCHED_DEBUG. This needs to be moved
+> > into debug.c itself so that code can be added regardless of
+> > CONFIG_SCHED_DEBUG. It is not only sched-debug after that.
+> 
+> Yeah, that's a valid concern.
+> 
+> The thing is, CONFIG_SCHED_DEBUG is mostly meaningless these days - all 
+> major distributions enable it because of the statistics are useful for 
+> system administration, tooling and general software development.
+> 
+> So we should enable it permanently and remove the #ifdeffery. I'll send 
+> out a series to do so soon.
 
-The CONFIG_X86_ESPFIX64 version of exc_double_fault() can return to its
-caller, but the !CONFIG_X86_ESPFIX64 version never does.  In the latter
-case the compiler and/or objtool may consider it to be implicitly
-noreturn.
+Here's the series:
 
-However, due to the currently inflexible way objtool detects noreturns,
-a function's noreturn status needs to be consistent across configs.
+  https://lore.kernel.org/r/20250317104257.3496611-1-mingo@kernel.org
 
-The current workaround for this issue is to suppress unreachable
-warnings for exc_double_fault()'s callers.  Unfortunately that can
-result in ORC coverage gaps and potentially worse issues like inert
-static calls and silently disabled CPU mitigations.
+  Ingo Molnar (5):
+      sched/debug: Change SCHED_WARN_ON() to WARN_ON_ONCE()
+      sched/debug: Make 'const_debug' tunables unconditional __read_mostly
+      sched/debug: Make CONFIG_SCHED_DEBUG functionality unconditional
+      sched/debug, Documentation: Remove (most) CONFIG_SCHED_DEBUG references from documentation
+      sched/debug: Remove CONFIG_SCHED_DEBUG
 
-Instead, prevent exc_double_fault() from ever being implicitly marked
-noreturn by forcing a return behind a never-taken conditional.
+Forgot to Cc: you - will do so in future versions.
 
-Until a more integrated noreturn detection method exists, this is likely
-the least objectionable workaround.
+Thanks,
 
-Fixes: 55eeab2a8a11 ("objtool: Ignore exc_double_fault() __noreturn warnings")
-Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Reviewed-by: Brendan Jackman <jackmanb@google.com>
-Link: https://lore.kernel.org/r/d1f4026f8dc35d0de6cc61f2684e0cb6484009d1.1741975349.git.jpoimboe@kernel.org
----
- arch/x86/kernel/traps.c | 18 +++++++++++++++++-
- tools/objtool/check.c   | 31 +------------------------------
- 2 files changed, 18 insertions(+), 31 deletions(-)
-
-diff --git a/arch/x86/kernel/traps.c b/arch/x86/kernel/traps.c
-index 2dbadf3..5e3e036 100644
---- a/arch/x86/kernel/traps.c
-+++ b/arch/x86/kernel/traps.c
-@@ -380,6 +380,21 @@ __visible void __noreturn handle_stack_overflow(struct pt_regs *regs,
- #endif
- 
- /*
-+ * Prevent the compiler and/or objtool from marking the !CONFIG_X86_ESPFIX64
-+ * version of exc_double_fault() as noreturn.  Otherwise the noreturn mismatch
-+ * between configs triggers objtool warnings.
-+ *
-+ * This is a temporary hack until we have compiler or plugin support for
-+ * annotating noreturns.
-+ */
-+#ifdef CONFIG_X86_ESPFIX64
-+#define always_true() true
-+#else
-+bool always_true(void);
-+bool __weak always_true(void) { return true; }
-+#endif
-+
-+/*
-  * Runs on an IST stack for x86_64 and on a special task stack for x86_32.
-  *
-  * On x86_64, this is more or less a normal kernel entry.  Notwithstanding the
-@@ -514,7 +529,8 @@ DEFINE_IDTENTRY_DF(exc_double_fault)
- 
- 	pr_emerg("PANIC: double fault, error_code: 0x%lx\n", error_code);
- 	die("double fault", regs, error_code);
--	panic("Machine halted.");
-+	if (always_true())
-+		panic("Machine halted.");
- 	instrumentation_end();
- }
- 
-diff --git a/tools/objtool/check.c b/tools/objtool/check.c
-index 7dbf22c..12bf6c1 100644
---- a/tools/objtool/check.c
-+++ b/tools/objtool/check.c
-@@ -4460,35 +4460,6 @@ static int validate_sls(struct objtool_file *file)
- 	return warnings;
- }
- 
--static bool ignore_noreturn_call(struct instruction *insn)
--{
--	struct symbol *call_dest = insn_call_dest(insn);
--
--	/*
--	 * FIXME: hack, we need a real noreturn solution
--	 *
--	 * Problem is, exc_double_fault() may or may not return, depending on
--	 * whether CONFIG_X86_ESPFIX64 is set.  But objtool has no visibility
--	 * to the kernel config.
--	 *
--	 * Other potential ways to fix it:
--	 *
--	 *   - have compiler communicate __noreturn functions somehow
--	 *   - remove CONFIG_X86_ESPFIX64
--	 *   - read the .config file
--	 *   - add a cmdline option
--	 *   - create a generic objtool annotation format (vs a bunch of custom
--	 *     formats) and annotate it
--	 */
--	if (!strcmp(call_dest->name, "exc_double_fault")) {
--		/* prevent further unreachable warnings for the caller */
--		insn->sym->warned = 1;
--		return true;
--	}
--
--	return false;
--}
--
- static int validate_reachable_instructions(struct objtool_file *file)
- {
- 	struct instruction *insn, *prev_insn;
-@@ -4505,7 +4476,7 @@ static int validate_reachable_instructions(struct objtool_file *file)
- 		prev_insn = prev_insn_same_sec(file, insn);
- 		if (prev_insn && prev_insn->dead_end) {
- 			call_dest = insn_call_dest(prev_insn);
--			if (call_dest && !ignore_noreturn_call(prev_insn)) {
-+			if (call_dest) {
- 				WARN_INSN(insn, "%s() is missing a __noreturn annotation",
- 					  call_dest->name);
- 				warnings++;
+	Ingo
 
