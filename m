@@ -1,60 +1,51 @@
-Return-Path: <linux-kernel+bounces-564341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564343-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B688FA6533A
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 15:25:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F65CA65334
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 15:25:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E403C3BBD00
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 14:23:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 800201894D9A
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 14:24:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F31424888C;
-	Mon, 17 Mar 2025 14:22:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Lyjx1Bti"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8F9824168E;
-	Mon, 17 Mar 2025 14:22:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0216C2417E6;
+	Mon, 17 Mar 2025 14:22:52 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6641D8F4A;
+	Mon, 17 Mar 2025 14:22:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742221338; cv=none; b=J2XJi0GqnhPh7arV67DqT0YxvgMOEB3JL+j1nhK3AS+dSuuJ2FS5K4nY8p7orIL8LYhAwh9QuX8lacUX7qq2JxL4hjEizla68pLiVM9v0DErDna5keDXZQ3ElOAwd0Heshau62u8nuGRniKDYjzxQ+CEJUfh3HTMB7bjpgX9ZNk=
+	t=1742221371; cv=none; b=HRzVCCm1+Kris0KqJfpLivn4WC5UlGss+gogKk3uHi2goOf7pBicpZMGBU+Nmqupazvk6rKRNksdmaCN2qqx2Dtp0ETS9QtNUZM/ORhwyA/XboPGoBHS1CGIZbQAGC4hQ4QH3U0FhuCvCCFGKLxQrpf4XHYfYNpyqE3I5Dr2Abg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742221338; c=relaxed/simple;
-	bh=OEM5Fxc7NSraJ8ml5LH6qN0QPIHHUpYetShfE0Kt6Js=;
+	s=arc-20240116; t=1742221371; c=relaxed/simple;
+	bh=JML17x1ArQHdjXBR7PRwTnBDDRX4qykPz2U6h/tv+xQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dv9Cq2VjFBX7yocRlENQAIwnShPYA/Zq7nBPweEiLjZdQf3zQRyqUrRjr6KXgDDOgtYtWbcnOwS6pgQCJ7ipwiZsGFAvPPZEyzg71P/J5HNDaEM8qv10tn/AfXxcguB2RaeeiX3cMWrolqwopD+CJnLH/GHwm59vHRFH1N6SuUQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Lyjx1Bti; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81E52C4CEE3;
-	Mon, 17 Mar 2025 14:22:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742221338;
-	bh=OEM5Fxc7NSraJ8ml5LH6qN0QPIHHUpYetShfE0Kt6Js=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Lyjx1BtiEqap28/rQX2S8xv+6dovGeWywMyB9yPDDFjaDeo1dGTSfMEnptyaV0/9z
-	 zP4S4eBsIRTGjGkcf0PHon8T9tQrDPWDt7Cq0Q/IdpjzUEZIPp468Vphq5TqatrG15
-	 cqc63au98oHe80niQeLDPDHLEc7v102c7BZdpIc22fGGMW3fKG7j5JkKr6VeuQbnSm
-	 g7C8bkG2Uih15MrslB64f5mdYJIRKInuMkC5U+7pm3KdSVKHatIcosxWmmbsC+Nguo
-	 2gZdpkfFLhVnNlF4EKjYLRAkRg5qufdxakQHSh8JMbWifDdiit9w5xc5N4mc0v3gww
-	 ICKVdr5ObkQAA==
-Date: Mon, 17 Mar 2025 14:22:13 +0000
-From: Will Deacon <will@kernel.org>
-To: Marc Zyngier <maz@kernel.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Christoffer Dall <cdall@cs.columbia.edu>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
-Subject: Re: linux-next: manual merge of the kvm-arm tree with the arm64 tree
-Message-ID: <20250317142212.GA11776@willie-the-truck>
-References: <20250317172102.55f7c4d9@canb.auug.org.au>
- <86zfhjnccx.wl-maz@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=sWRY/fSPVUmv3ghUdd1ZELweByeVHxw1g5PdMFEK5cWOVcnlUw7NQZs/OnnohoP+Lzxf2U3zsfY/306Avkt4DsSw0zEXRDyaF9FvM8vdZb57gKUuMac4FwFLc65bj8fY2g+H48QIVYQ5KQijRxSx1p/MzSPIrxC6u2CchGfyEs0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com; spf=none smtp.mailfrom=foss.arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=foss.arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EB6A313D5;
+	Mon, 17 Mar 2025 07:22:58 -0700 (PDT)
+Received: from bogus (e133711.arm.com [10.1.196.55])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BFF0A3F63F;
+	Mon, 17 Mar 2025 07:22:48 -0700 (PDT)
+Date: Mon, 17 Mar 2025 14:22:45 +0000
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-kernel@vger.kernel.org, Andre Przywara <andre.przywara@arm.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
+	linux-crypto@vger.kernel.org
+Subject: Re: [PATCH 2/9] hwrng: arm-smccc-trng - transition to the faux
+ device interface
+Message-ID: <Z9gwNaUoTmqViPrh@bogus>
+References: <20250317-plat2faux_dev-v1-0-5fe67c085ad5@arm.com>
+ <20250317-plat2faux_dev-v1-2-5fe67c085ad5@arm.com>
+ <2025031748-deface-wasting-b635@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,51 +54,62 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <86zfhjnccx.wl-maz@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <2025031748-deface-wasting-b635@gregkh>
 
-On Mon, Mar 17, 2025 at 11:08:30AM +0000, Marc Zyngier wrote:
-> Hi Stephen,
+On Mon, Mar 17, 2025 at 02:04:27PM +0100, Greg Kroah-Hartman wrote:
+> On Mon, Mar 17, 2025 at 10:13:14AM +0000, Sudeep Holla wrote:
+> > +MODULE_ALIAS("faux:smccc_trng");
 > 
-> On Mon, 17 Mar 2025 06:21:02 +0000,
-> Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > 
-> > Hi all,
-> > 
-> > Today's linux-next merge of the kvm-arm tree got a conflict in:
-> > 
-> >   arch/arm64/kvm/hypercalls.c
-> > 
-> > between commit:
-> > 
-> >   d2c173acbf93 ("KVM: arm64: expose SMCCC_ARCH_WORKAROUND_4 to guests")
-> > 
-> > from the arm64 tree and commit:
-> > 
-> >   c0000e58c74e ("KVM: arm64: Introduce KVM_REG_ARM_VENDOR_HYP_BMAP_2")
-> > 
-> > from the kvm-arm tree.
-> > 
-> > I fixed it up (see below) and can carry the fix as necessary. This
-> > is now fixed as far as linux-next is concerned, but any non trivial
-> > conflicts should be mentioned to your upstream maintainer when your tree
-> > is submitted for merging.  You may also want to consider cooperating
-> > with the maintainer of the conflicting tree to minimise any particularly
-> > complex conflicts.
+> Why do you need a branch new alias you just made up?  Please don't add
+> that for these types of devices, that's not going to work at all (just
+> like the platform alias really doesn't work well.
 > 
-> Thanks for resolving all 3 conflicts, which look good to me.
-> 
-> Oliver, would you consider picking the following arm64 branches:
-> 
-> - arm64/for-next/leaky-prefetcher
 
-Can you hold fire on this one, please? ^^^
+Sure I will drop all of those alias. One question I have if the idea of
+creating a macro for this is good or bad ? I need this initial condition
+flag to make use of such a macro, so I didn't go for it, but it does
+remove some boiler-plate code.
 
-Catalin asked for comments on Friday and I'm not sure I'm happy with it.
+Let me know what do you think of it ?
 
-https://lore.kernel.org/all/174197730164.734861.6726211221092480832.b4-ty@arm.com/
+Regards,
+Sudeep
 
-Will reply there shortly...
+-->8 
+diff --git i/include/linux/device/faux.h w/include/linux/device/faux.h
+index 9f43c0e46aa4..8af3eaef281a 100644
+--- i/include/linux/device/faux.h
++++ w/include/linux/device/faux.h
+@@ -66,4 +66,30 @@ static inline void faux_device_set_drvdata(struct faux_device *faux_dev, void *d
+ 	dev_set_drvdata(&faux_dev->dev, data);
+ }
+ 
++#define module_faux_driver(name, tag, init_cond)			\
++static struct faux_device_ops tag##_ops = {				\
++	.probe = tag##_probe,						\
++	.remove = tag##_remove,						\
++};									\
++									\
++static struct faux_device *tag##_dev;					\
++									\
++static int __init tag##_init(void)					\
++{									\
++	if (!(init_cond))						\
++		return 0;						\
++	tag##_dev = faux_device_create(name, NULL, &tag##_ops);		\
++	if (!tag##_dev)							\
++		return -ENODEV;						\
++									\
++	return 0;							\
++}									\
++module_init(tag##_init);						\
++									\
++static void __exit tag##_exit(void)					\
++{									\
++	faux_device_destroy(tag##_dev);					\
++}									\
++module_exit(tag##_exit);						\
++
+ #endif /* _FAUX_DEVICE_H_ */
 
-Will
 
