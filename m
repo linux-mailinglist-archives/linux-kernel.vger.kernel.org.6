@@ -1,175 +1,91 @@
-Return-Path: <linux-kernel+bounces-563645-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563646-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8DF4A645F8
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 09:42:21 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 930A6A645FD
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 09:43:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A35E23AC9F6
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 08:42:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9D6B57A3820
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 08:42:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48C42220694;
-	Mon, 17 Mar 2025 08:42:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD30C2206BA;
+	Mon, 17 Mar 2025 08:43:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jiXYk3/U"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b="oc0JjkT8"
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5CE121CC64;
-	Mon, 17 Mar 2025 08:42:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F58621D3F6;
+	Mon, 17 Mar 2025 08:43:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742200933; cv=none; b=GEhVdpeugRRdtkGTN2rpJ34iI98uJpBswErtnwG0bgvqIoNfBByVVUbGwiw3cAJ1gluvMwToScjF2Nz4eJIahh0QXeX3v3fXrVNL0fk3xjW7M8AY/FK7AwdrE9+i6N+XOdqGDdYpmCkBuMlcMiN7joyF+xpO/LwU8sAKJGyiJrE=
+	t=1742201000; cv=none; b=ununAPVbvt+gteK5+QNw2gqC7+qDJOmkYcJ586t6Rge6YNggQM4WYEnEwTOcI/fgmCU9RRITIfN2BSdkQcUUFZuSVupVriGfFx1fQPULgcrJhar8itskxQPT478Y4oBoqbKFiyHFkBMHFT/YmsskRPVj0gjV0JXpEIkiDuhqi0I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742200933; c=relaxed/simple;
-	bh=lKHWj9V8Nq6zT3iZ1PBCgGEfS1g71F1u7pC1RxEH4jU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XRP6aqxoqivMN9Pj3nTO1ESSu414P1f4tS6ZTmLY42cr+1u9HMPvM5f/v/tZIu17ALLBqZyMoI/PQVV1t+v9t5f3gJkpCPO5QGr99BxF61rTp6oTindZYuF83hQnSr3U2aAUjFVaq7Hk13vjoksogPbIIFJ1oSVbkvZoumDX2Os=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jiXYk3/U; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-54996d30bfbso3745388e87.2;
-        Mon, 17 Mar 2025 01:42:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742200930; x=1742805730; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=FpO3HnxuMJXBU+70F/zOGGDYlbCQDeNotNwoR3G8/gw=;
-        b=jiXYk3/ULVWd8KC0GyiPwBmnW9GkQlazLMqyHmJUdQZBMMs5yiQ7ObePPOGR8rwEFA
-         gcKp6nUKUxJh/eqwoKihBRcXhaTI6h+sjPS0vt1SJwbr3eDxLCXeLVcVu7fxBJ2OJXQL
-         VWyhQMZ0BBL5YhqpUwyYl03DCAFALJpTBl+Wynff0qf8QnOAe6b4W7AtH4cT05Em2LO1
-         y/nJY6tFxsyj0JjPbhTcNSkUNNemvoqh7k4+H/iz7jfIH5EBzRNetB/YIJI7cF5bbrQE
-         g3H8zhn0eWdqa9w28yvrb/b6VOEDarLSWMOJgipniI+oCQhhYKbEz1z3t8AXGZmMPijn
-         CW0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742200930; x=1742805730;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FpO3HnxuMJXBU+70F/zOGGDYlbCQDeNotNwoR3G8/gw=;
-        b=s7ThjNSvXQu6MzQui6NLw+xRQVKl+vV5FpKzgjaaAad3D7nttOdSADn30/hg/LLJPG
-         +ZMc6DSb7wYK86OoAxx4+z6s22QpVAC1pGJiDhj53APISVuGtJRG1/9kg7dbl8d/FsMj
-         8Cz9p9KjX/PX3Q7iTsRNtWXHK6qEDjghfq2a8r48bPyeGGgI3/3mpfKas4P8JEuEbrIi
-         J7yvdve3RPoasqX8WjMPLERdvhc9ekkvCV0MrgtRYpY8UHW31btBPgRYlVFrECTqtGXH
-         hd48S7ukhJD45PGplIZjEGvluWreNsP3PVyqhAIe590Y+AU1EBcv00XQIEQjVYy3l6c7
-         J+zg==
-X-Forwarded-Encrypted: i=1; AJvYcCWqFOs6j7/n+b201mdTRXjJjlQM9pvYTv8WLyC9rReMD+dxkZ01BMEMYqizW8do81YF9DuHvn0GTAQ=@vger.kernel.org, AJvYcCX1aBtYPcGZl9quG2JPZnGraHaG5KBxHk/TNNQi3HxhYPLZvGDsFikqEWs+2PK2CQKxsywLUnBTfMPL+MjT@vger.kernel.org
-X-Gm-Message-State: AOJu0YzpJF1Jbz9ubbX7NSzTnb8IZptuUBCPDik54l/2UHfnCgEgCg4+
-	wuh2bN8NgBM1a6y76RMDS3A4soGEQTrJcnVYtUBzUjzm0DKTSkZn
-X-Gm-Gg: ASbGncudPr/hlclj9elqW5IEn108hM7dVPjDkTmgaqSVDTkF8zn/iTxPE7T8T5ZoC6v
-	EAoOxdylJEVGYBe/IzHXZ2dWjqV2NrO6qftJohr4SssonRIQjWJQwsck8tYGs7/DRtlXU61Xsdp
-	gJV2JiY0rAKpn4kZ/wanKCWVK9htNQdGG2pugboNX8fZy+iERpu+f0F59KI4IkMT7Cd2N9wqcTa
-	+4Ysc0KbK2BDsC/k1WPtuKV4xAkMzVH6BjewYNyWHAnVTkKdUY9+u/RfEAG9Jd7ORj8bbXQpiU7
-	bP05dFdQTEbcfg4qCwGTOvcmUzueS0Oo+WWCeM3mnUus0Oih0A7Lu7A95sO2VyeWjhkxIvT+XQ2
-	licVlGw7nXUFtnDxEJyV0KB/OvQ==
-X-Google-Smtp-Source: AGHT+IEaEugzJ+pYBfCBL4Vt0JndH1mF1+5wo43FEa3qzrXwIQyPae9SAqetesylNstTDl/wwv+/dQ==
-X-Received: by 2002:a05:6512:1286:b0:545:10eb:1ab2 with SMTP id 2adb3069b0e04-549c398d167mr5642074e87.33.1742200929794;
-        Mon, 17 Mar 2025 01:42:09 -0700 (PDT)
-Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-549ba7bfea4sm1224769e87.67.2025.03.17.01.42.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 17 Mar 2025 01:42:09 -0700 (PDT)
-Message-ID: <0db2a42f-d393-4e75-afbf-cf30c0e06cce@gmail.com>
-Date: Mon, 17 Mar 2025 10:42:07 +0200
+	s=arc-20240116; t=1742201000; c=relaxed/simple;
+	bh=+C8Il4En+ijPI/k2ogMmSmf5jgTySetUwkY21buzw9o=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=pcFFnwS3NJllB5QS8JhXn012vntN6YA7hGeVkgEg3tk70TIwgwieT+BCQuGBDHUrXQOP2B2SYW1k+Iu+4N0NAPbdx+L8G3NXPzc7uS/o4eQxwBS3pmxD79c/AqJ9EDDKJdrnTqGVaGpFwKnBd9orRZ+AOacVJzUeatT71VPh7dc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b=oc0JjkT8; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 52H8ghkqF225779, This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=realtek.com; s=dkim;
+	t=1742200963; bh=+C8Il4En+ijPI/k2ogMmSmf5jgTySetUwkY21buzw9o=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:
+	 Content-Transfer-Encoding:Content-Type;
+	b=oc0JjkT8kWglWobJKheN04h8kW/xXHCoe/b7LxRRCaX+fLl5tVSjyLgGrsGhJt+zg
+	 LCIFa8YLSvbEDmRU2NhfcsZTLviD1nriIoyF86EA+Sym2+3CRY6N+exJwQftvzH0+f
+	 w9LWpcaK7xB6gUqYLSyAA4q+K4RfmzOMhWu6cyJ6++rR7QVEf7fVH68zhFh97KXi+m
+	 bkihC9XwBTO9X4XsbnpN7uUoYP3MhSNLX9rTeZmpVfYiiATlE2RRqsre1gUoT30mQ/
+	 D8CL5t42K7Eb0ZMvSb2D2orc58YZyMn1zhKN+tz3DOQEI3dT1Re8uwlTnwVx6HX5Ax
+	 hJNgtWadTE9fA==
+Received: from RS-EX-MBS3.realsil.com.cn ([172.29.17.103])
+	by rtits2.realtek.com.tw (8.15.2/3.06/5.92) with ESMTPS id 52H8ghkqF225779
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 17 Mar 2025 16:42:43 +0800
+Received: from RSEXH36502.realsil.com.cn (172.29.17.3) by
+ RS-EX-MBS3.realsil.com.cn (172.29.17.103) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.2.1544.11; Mon, 17 Mar 2025 16:42:43 +0800
+Received: from 172.29.32.27 (172.29.32.27) by RSEXH36502.realsil.com.cn
+ (172.29.17.3) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
+ Transport; Mon, 17 Mar 2025 16:42:43 +0800
+From: ChunHao Lin <hau@realtek.com>
+To: <hkallweit1@gmail.com>, <nic_swsd@realtek.com>, <andrew+netdev@lunn.ch>,
+        <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+        <pabeni@redhat.com>
+CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        ChunHao Lin
+	<hau@realtek.com>
+Subject: [PATCH net-next v2 0/2] r8169: enable more devices ASPM support
+Date: Mon, 17 Mar 2025 16:42:34 +0800
+Message-ID: <20250317084236.4499-1-hau@realtek.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 05/10] iio: adc: sun20i-gpadc: Use adc-helpers
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Jonathan Cameron <jic23@kernel.org>,
- Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
- Lars-Peter Clausen <lars@metafoo.de>, Chen-Yu Tsai <wens@csie.org>,
- Jernej Skrabec <jernej.skrabec@gmail.com>,
- Samuel Holland <samuel@sholland.org>, Nuno Sa <nuno.sa@analog.com>,
- David Lechner <dlechner@baylibre.com>,
- Javier Carrasco <javier.carrasco.cruz@gmail.com>,
- Olivier Moysan <olivier.moysan@foss.st.com>,
- Guillaume Stols <gstols@baylibre.com>,
- Dumitru Ceclan <mitrutzceclan@gmail.com>,
- Trevor Gamblin <tgamblin@baylibre.com>,
- Matteo Martelli <matteomartelli3@gmail.com>,
- Alisa-Dariana Roman <alisadariana@gmail.com>, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-sunxi@lists.linux.dev
-References: <cover.1741849323.git.mazziesaccount@gmail.com>
- <df0b2b53affbef5ccb7219328cc15db3ba843737.1741849323.git.mazziesaccount@gmail.com>
- <Z9LQ0O34EUM8WZku@smile.fi.intel.com> <20250316094112.6731bd01@jic23-huawei>
- <50b126c5-248e-4694-9782-4f28d6db5fce@gmail.com>
- <Z9fUmo5wp3EcNWzm@smile.fi.intel.com>
-Content-Language: en-US, en-AU, en-GB, en-BW
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-In-Reply-To: <Z9fUmo5wp3EcNWzm@smile.fi.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On 17/03/2025 09:51, Andy Shevchenko wrote:
-> On Mon, Mar 17, 2025 at 09:11:08AM +0200, Matti Vaittinen wrote:
->> On 16/03/2025 11:41, Jonathan Cameron wrote:
->>> On Thu, 13 Mar 2025 14:34:24 +0200
->>> Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
->>>> On Thu, Mar 13, 2025 at 09:18:49AM +0200, Matti Vaittinen wrote:
-> 
-> ...
-> 
->>>>> +	num_channels = devm_iio_adc_device_alloc_chaninfo_se(dev,
->>>>> +				&sun20i_gpadc_chan_template, -1, &channels);
->>>>> +	if (num_channels < 0)
->>>>> +		return num_channels;
->>>>> +
->>>>>    	if (num_channels == 0)
->>>>>    		return dev_err_probe(dev, -ENODEV, "no channel children\n");
->>>>
->>>> Note, this what I would expected in your helper to see, i.e. separated cases
->>>> for < 0 (error code) and == 0, no channels.
->>>>
->>>> Also, are all users going to have this check? Usually in other similar APIs
->>>> we return -ENOENT. And user won't need to have an additional check in case of
->>>> 0 being considered as an error case too.
->>> In a few cases we'll need to do the dance the other way in the caller.
->>> So specifically check for -ENOENT and not treat it as an error.
->>>
->>> That stems from channel nodes being optionally added to drivers after
->>> they have been around a while (usually to add more specific configuration)
->>> and needing to maintain old behaviour of presenting all channels with default
->>> settings.
->>>
->>> I agree that returning -ENOENT is a reasonable way to handle this.
->>
->> I agree - but I'm going to use -ENODEV instead of -ENOENT because that's
->> what the current callers return if they find no channels. That way the
->> drivers can return the value directly without converting -ENOENT to -ENODEV.
-> 
-> ENODEV can be easily clashed with other irrelevant cases,
+This series of patches will enable more devices ASPM support.
+It also fix a RTL8126 cannot enter L1 substate issue when ASPM is
+enabled.
 
-Can you please explain what cases?
 
-> ENOENT is the correct
-> error code.
+V1 -> V2: Add name for pcie extended config space 0x890 and bit 0.
 
-I kind of agree if we look this from the fwnode perspective. But, when 
-we look this from the intended user's perspective, I can very well 
-understand the -ENODEV. Returning -ENODEV from ADC driver's probe which 
-can't find any of the channels feels correct to me.
+ChunHao Lin (2):
+  r8169: enable RTL8168H/RTL8168EP/RTL8168FP ASPM support
+  r8169: disable RTL8126 ZRX-DC timeout
 
-> If drivers return this instead of another error code, nothing bad
-> happen, it's not an ABI path, correct?
+ drivers/net/ethernet/realtek/r8169_main.c | 22 +++++++++++++++++++++-
+ 1 file changed, 21 insertions(+), 1 deletion(-)
 
-I don't know if failure returned from a probe is an ABI. I still feel 
--ENODEV is correct value, and I don't want to change it for existing 
-users - and I think also new ADC drivers should use -ENODEV if they find 
-no channels at all.
+--
+2.43.0
 
-Besides that I think -ENODEV to be right, changing it to -ENOENT for 
-existing callers requires a buy-in from Jonathan (and/or) the driver 
-maintainers.
-
-Yours,
-	-- Matti
 
