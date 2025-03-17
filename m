@@ -1,132 +1,94 @@
-Return-Path: <linux-kernel+bounces-563630-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563623-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7998EA64598
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 09:33:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A1EEA64587
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 09:31:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 56A4A1893D7F
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 08:33:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B206918891E1
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 08:32:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BD5B221D90;
-	Mon, 17 Mar 2025 08:33:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8C7621B9E4;
+	Mon, 17 Mar 2025 08:31:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="KIoCnE4J"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="Ogopq2bf"
+Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B919F221D8B
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 08:33:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2A0E2629D;
+	Mon, 17 Mar 2025 08:31:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742200384; cv=none; b=gRFbNXpuktuSLSPGTo2S/QiFPAbkGPXGNf/4VDHNGXZTg4mtabao/5p/aq+/cVnlr7i+/iI3ONgsfc+wlN1zEZef4e/4zNHCG+4EfGZko4oVnrSB8nUZ1CLFXOlbBJN7bRhtXncYVY81FhOb5xL6JdC91EmAIxw21gaRJWStqf4=
+	t=1742200306; cv=none; b=fvWXYfgmQabHPT3cj59aD9VoM6Au0UJfunk+aUaStBLH7ZMAyc5HAFTycwpswqOFC6vQfwaX73LGG0OXK0ELhyWl/T2rrzdiYL6+QMfiqTJcL1T5/irSUFYViGIvf2XqTxX0aNn3Q/m32LtLhq/8uTW+E8qoqS7tm4eNVAvE5uw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742200384; c=relaxed/simple;
-	bh=qvvs0wifU/1wb25vxgMG0iQ4QdxzyHRg0TbZGXsWkYA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ru7kCNE0s5gizYZbWPFetYKlA2ipbCy8pq0xkpM9PnjpVlde6D8uwV2Kh2lDU23ubfsCUdeqztu2vAuDyM6gUSbKCaS/JVefY8CHX2Sabjp+tDK/+XaobPeTh73FJlhtfg2mr4i5wjzfNa87GAjALixRazYqcdZVAWysTJVZUnw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=KIoCnE4J; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1742200380;
-	bh=qvvs0wifU/1wb25vxgMG0iQ4QdxzyHRg0TbZGXsWkYA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=KIoCnE4JQgpk3J05ZVHoC/1bY4G3mEkDsXV13OpRY+cu4Ohqpba1yGSEHTJNC1oXe
-	 oIoL0K9JGVfUuS32vY/RIuHDcfljHmJDUBH4fpzB+iK3C3+clADquYoZavR1zANv98
-	 j2Ir6Ls0WAG0sy0dwGIznIv+Arq21l+1n7zZtuIdVRHZyAZAG53b0j2tPlbIs/Bse1
-	 ykCBR1CCtYP+wzuEeg9jqI+OlElv0HsGP1PHmvGjmfpsJvMS9HOR3u40DsIQZifOjN
-	 vSZZVcLt3sMZVjHNziKD7bUEqSQDwLwvoR77CtEBBkRh1fDaULr6iEHiekTLJ7tJNk
-	 DWJJW491HmM9Q==
-Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bbrezillon)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 37B1317E0848;
-	Mon, 17 Mar 2025 09:33:00 +0100 (CET)
-Date: Mon, 17 Mar 2025 09:31:01 +0100
-From: Boris Brezillon <boris.brezillon@collabora.com>
-To: =?UTF-8?B?QWRyacOhbg==?= Larumbe <adrian.larumbe@collabora.com>
-Cc: Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
- <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, kernel@collabora.com,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/4] drm/panthor: Display heap chunk entries in DebugFS
- GEMS file
-Message-ID: <20250317093101.1784499d@collabora.com>
-In-Reply-To: <20250316215139.3940623-5-adrian.larumbe@collabora.com>
-References: <20250316215139.3940623-1-adrian.larumbe@collabora.com>
-	<20250316215139.3940623-5-adrian.larumbe@collabora.com>
-Organization: Collabora
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1742200306; c=relaxed/simple;
+	bh=mcePzaeHG62fPZF0B5RXx1e8Oc29Vwx9OnkzvKzSyQY=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=eKaf7bjad0oMxr8ohntWJr4RlUk9fket5B5SqXDWcefrlrlOHwMj8U2IUM1blSDGUIb2bd8lChJ9U84H+nXWC5YbeWrSjqgxkz69h+8EMgaKupiUjzkdLwGPA400o5IxyX8QynMYCbu0HZcZv8/bax3eK6UmixUuFfRr9VhIXUs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=Ogopq2bf; arc=none smtp.client-ip=168.119.38.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
+	Resent-Cc:Resent-Message-ID; bh=opEu1g9nkTKwESNSsd8VNcoAAm5+Q5EEa+H9fZ5SvvE=;
+	t=1742200304; x=1743409904; b=Ogopq2bfVSRZZhTIP4x3Pf4X10fGE5ek/yVRCLvE3mpjzLN
+	+MjRIJi0xhByxgYdd4zElR9v52HIVXu7gmadMqTzDItIXDHwK6gHNovsMaLJvFXI3eMHK5URppir3
+	z1O40JSpO+X6U+0vDg/W1gf1P7PfscMsS2+zUJxRrntccfHMg6v3cP/uBzdQe3r6DEzZqnhzENYJG
+	/NMyKr8O5uwh8K7D9RyuurB8N2iiJBEefTPwpAfe3AM+17HHAcFl3ZYyvxQzmSUkI2TUhJzgp4wQ7
+	Zje8TwZrfmJpBIQAKevi33gQUz6x5Atef7QHxSlLpypmkj4770uWvPqah8R6VX0w==;
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.98)
+	(envelope-from <johannes@sipsolutions.net>)
+	id 1tu5sp-0000000E3EF-39Ci;
+	Mon, 17 Mar 2025 09:31:39 +0100
+Message-ID: <8c02c4f7452f2fbb41c8bc0517af9588c25ca7b1.camel@sipsolutions.net>
+Subject: Re: [PATCH] mac80211: minstrel_ht: Replace nested min() with single
+ min3()
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Krzysztof Kozlowski <krzk@kernel.org>, feng.wei8@zte.com.cn, 
+	linux-kernel@vger.kernel.org, tang.dongxing@zte.com.cn,
+ shao.mingyin@zte.com.cn, 	xie.ludan@zte.com.cn, yang.guang5@zte.com.cn,
+ yang.yang29@zte.com.cn, 	ye.xingchen@zte.com.cn, xu.xin16@zte.com.cn
+Cc: linux-wireless@vger.kernel.org
+Date: Mon, 17 Mar 2025 09:31:38 +0100
+In-Reply-To: <f6dfffc0-a9bd-4a5f-9d83-f3a4b7918010@kernel.org>
+References: <20250315111254625RMIKeUh51j1Xk9CWuu2LT@zte.com.cn>
+	 <f6dfffc0-a9bd-4a5f-9d83-f3a4b7918010@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+X-malware-bazaar: not-scanned
 
-On Sun, 16 Mar 2025 21:51:35 +0000
-Adri=C3=A1n Larumbe <adrian.larumbe@collabora.com> wrote:
-
-> Expand the driver's DebugFS GEMS file to display entries for the heap
-> chunks' GEM objects, both those allocated at heap creation time through an
-> ioctl(), or in response to a tiler OOM event.
+On Mon, 2025-03-17 at 09:30 +0100, Krzysztof Kozlowski wrote:
 >=20
-> Signed-off-by: Adri=C3=A1n Larumbe <adrian.larumbe@collabora.com>
-> ---
->  drivers/gpu/drm/panthor/panthor_heap.c | 15 +++++++++++++++
->  1 file changed, 15 insertions(+)
+> > +++ b/net/mac80211/rc80211_minstrel_ht.c
+> > @@ -1010,7 +1010,7 @@ minstrel_ht_refill_sample_rates(struct minstrel_h=
+t_sta *mi)
+> >  	u32 prob_dur =3D minstrel_get_duration(mi->max_prob_rate);
+> >  	u32 tp_dur =3D minstrel_get_duration(mi->max_tp_rate[0]);
+> >  	u32 tp2_dur =3D minstrel_get_duration(mi->max_tp_rate[1]);
+> > -	u32 fast_rate_dur =3D min(tp_dur, tp2_dur, prob_dur);
+> > +	u32 fast_rate_dur =3D min3(tp_dur, tp2_dur, prob_dur);
 >=20
-> diff --git a/drivers/gpu/drm/panthor/panthor_heap.c b/drivers/gpu/drm/pan=
-thor/panthor_heap.c
-> index db0285ce5812..520d1fcf5c36 100644
-> --- a/drivers/gpu/drm/panthor/panthor_heap.c
-> +++ b/drivers/gpu/drm/panthor/panthor_heap.c
-> @@ -139,6 +139,10 @@ static int panthor_alloc_heap_chunk(struct panthor_d=
-evice *ptdev,
->  	struct panthor_heap_chunk *chunk;
->  	struct panthor_heap_chunk_header *hdr;
->  	int ret;
-> +#ifdef CONFIG_DEBUG_FS
-> +	struct panthor_gem_object *obj;
-> +	const char *label;
-> +#endif
-> =20
->  	chunk =3D kmalloc(sizeof(*chunk), GFP_KERNEL);
->  	if (!chunk)
-> @@ -180,6 +184,17 @@ static int panthor_alloc_heap_chunk(struct panthor_d=
-evice *ptdev,
->  	heap->chunk_count++;
->  	mutex_unlock(&heap->lock);
-> =20
-> +#ifdef CONFIG_DEBUG_FS
-> +	obj =3D to_panthor_bo(chunk->bo->obj);
-> +
-> +	mutex_lock(&ptdev->gems_lock);
-> +	list_add_tail(&obj->gems_node, &ptdev->gems);
-> +	mutex_unlock(&ptdev->gems_lock);
-> +
-> +	label =3D kstrdup_const("\"Tiler heap chunk\"", GFP_KERNEL);
+> This is automation-generated junk code. How does it "simplify the
+> statement"?
 
-Do we really need the extra quotes around 'Tiler heap chunk'?
+It's worse. The "minus" code doesn't even exist upstream.
 
-> +	panthor_gem_label_bo(chunk->bo->obj, label);
-> +#endif
+> Can ZTE slow down this flood of automation or research experiment on
+> kernel community?
 
-Let's define a helper to assign a label to a kernel BO instead of
-open-coding it here. BTW, I suspect we'll want to assign labels to
-other kernel BOs too (FW buffers).
+Please.
 
-> +
->  	return 0;
-> =20
->  err_destroy_bo:
-
+johannes
 
