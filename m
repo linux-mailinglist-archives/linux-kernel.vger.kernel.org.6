@@ -1,211 +1,161 @@
-Return-Path: <linux-kernel+bounces-563680-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563681-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BD26A64698
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:08:08 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A98BAA6469B
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:08:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D46B3AEA65
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 09:07:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B88C1893D95
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 09:08:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5F42221F04;
-	Mon, 17 Mar 2025 09:07:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89C3E221F1F;
+	Mon, 17 Mar 2025 09:08:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="YAPbskh2"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="mdmwEFVO";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="34eQYoD0";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="mdmwEFVO";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="34eQYoD0"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77FB521D5AA
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 09:07:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 734A7221F1E
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 09:08:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742202478; cv=none; b=ltJNoTGATamqB9y7Vf5dH90e+i5EIQzII2XWUBk0ekrquyySg2xnKhg+xcxwuc25tN2neGTz2VusYM5gq/bcWbPsAx6blSWlLJLygk2pSox5GP3rm0ZmajeQ+uC0ToAek2yZFz473Epy3n1jRHPFHEZ5t1a02MnwkscKzGsKKDw=
+	t=1742202481; cv=none; b=bYCNETCEp/+wsQnO0GhDdDGfX73n1qiCnD4IwQYZUaq4GEzVjld/GD0RFljgzTnwAjloGDiibueTeHjS3snPrg2Ozj+5xW7IaZ2M+t2TtOtiZxKpU40GXQh/FmEOD9/T9H8cld0eEOPNaSUxynmEQTFI5Cfr3TbqRIdCsw+TnEE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742202478; c=relaxed/simple;
-	bh=+AiPVzF7b1V/vgA2zpvuQUa7wN7Ef6NyFUe8lYcs+os=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eFNqVB14NdEizKFyfsTZgVBylmJ2Ssi+bSUXM6oGSkLNTn5vvO2VrxiuCPnG6hfUnaYsQiqC+taeXty+Ua7T7JHc/OqouI715qF09Q0HgrljeX+LeFcSXRDeTbQ3KIEKly2U/CPzkXjai4bGWPsohzWnEai0+vkQ4dNjP0gyOYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=YAPbskh2; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52H0To4f022723
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 09:07:55 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	YvB5W9+kgBjKeK0p1OnHFcTClNx4sp6hZOaOwkPfr5g=; b=YAPbskh2+wkbluk3
-	5cBVUNQ9k3avEdIeJktk6MZokj4tc+9OjvQUdH+lPkEo2t9Fmje3dhAEDBHfC4Gg
-	r5k3Tn49obaqtFF6wrerRo40/7sxmyDU6bfnDN/i6H6ja1M9NgV4KHb/TyJuGJqo
-	euyfof4BXRLF70ZjGN47P5PuiZoYRNHVEMrd0atI3O7/bZyvojmECKKqGlMHqzjv
-	6+EW7hFtX2axwgy5ZffqGB+LrR4jH1ACBQJkjhp2oAg32rK44yldgj51I7H+m9KY
-	nqh34nrzsLIbgrHAEylUEqxDkIDX01R9N21HBUOobTt5BmPIT1RXnf7RnqI8O5vd
-	jdjI/w==
-Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com [209.85.214.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45d1r142es-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 09:07:55 +0000 (GMT)
-Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-225505d1ca5so68382975ad.2
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 02:07:54 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742202474; x=1742807274;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YvB5W9+kgBjKeK0p1OnHFcTClNx4sp6hZOaOwkPfr5g=;
-        b=Ak7noR83tFBg2d5WdYeL8P+l6K+dH+xjxNIuGvHYKiKaHKfy4if6635ZbSQvPLjSr2
-         4469riVQfmrl42EzZ+mVN6LV6/WWGdET3/LrCBMxoK/aXMxgXTDXW99oG4U/Kf87mtOY
-         RwiF4dWnDo5mss61kjFOYfysad8tabGsG2CQ1BIJ9igWBh6PJOIUu3HA25Oc6zXDrzYh
-         bJIN4MLyxRnxYjQhPd3bSvh86bA2fFyky9jzinLtgb3yHmizbCVx0WtDnhWNjdzjSYY7
-         L0SQusOuB6O7lKygc9dMOaoTfsq99e0d/0r41V0Ov035Q2s4DBgaw8fS6w4K0fX71jre
-         /LVA==
-X-Forwarded-Encrypted: i=1; AJvYcCV3K1zyaZzyHQoy1LZXWi2aD1Mmy5MKhk293GVjwEpZxSTfDTd0hg6w+t8RsSw5NicsZqLoUzgqjKFCjHI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyXDMkU4EZV/FbwOA9C7kcdzNOVdnZrbzCg7rYbOCI9D5esa0gv
-	DUIWbJK+Bnkbtwr2A9RYXJzxRISHSCL7kfhav+89v1YUJVwPB8gQ5Umyh/QgMhV2A/jJHybkiEt
-	yer30ZFyhZ+ZeZQ01gdwPnAl0h237wbeM3EnLAqzW1bQTQqoYfdFrfLElmDSABh0=
-X-Gm-Gg: ASbGncvr08MMu/I7kvxepzhSWORzpdJOMX75BlvJYx2pdAU/g8UPQ4KncYBDBEf60cK
-	OLJD2vt+si/YqBLXtWdlKe8XSkZICsTXKoYz97wlXFMwawvVYlLLVSkaMCAm61ZC/8yEYMWoyu+
-	fW8ZjnVHBRL4eQ8u41EHqiNiBdu0Ipi9CtY1BdMOnzLi+QLuvDCf0Q3AnlNWnZ7xOr0slkC1wzy
-	iQmGGsfVZ/7DoGDnAU7tSax6dCRY6c4v2gniAzEVN90Cp8h5SxvxBVn/dlIcxaUIYMte9Rdsv9t
-	mo4K+UUibBxvilW5RNTMs1H65T/4m83E9NWEtqcOTt2HwQ==
-X-Received: by 2002:a05:6a00:2e15:b0:736:5753:12f7 with SMTP id d2e1a72fcca58-7372236c48amr15633863b3a.3.1742202473720;
-        Mon, 17 Mar 2025 02:07:53 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFb2/5Yz0QBAf85V3J3MJIKQQYTZZtL2r4Zp4gVmTlQYnG653reK868zYsRjio4CbC3TLgJeQ==
-X-Received: by 2002:a05:6a00:2e15:b0:736:5753:12f7 with SMTP id d2e1a72fcca58-7372236c48amr15633816b3a.3.1742202473230;
-        Mon, 17 Mar 2025 02:07:53 -0700 (PDT)
-Received: from [10.92.192.202] ([202.46.23.19])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73711557ee8sm7351197b3a.52.2025.03.17.02.07.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 17 Mar 2025 02:07:52 -0700 (PDT)
-Message-ID: <74ff7b72-94d6-cd19-06c4-09cddc885cb0@oss.qualcomm.com>
-Date: Mon, 17 Mar 2025 14:37:45 +0530
+	s=arc-20240116; t=1742202481; c=relaxed/simple;
+	bh=UgPBZvjsFQmiYNA6znXuMhzjQ271ggAz4JFSOSvqvZ4=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=T8mN6sSB6WpYLcuIbILpPLHEZvxQ8AnRZ35Gia/CtqmVYh9kxaQzkpYM3NY28Ezkm7MdH848QvH+Ou7g1eQ4dDfibLHwCBF26BT9OYupFm3E8eRoF7CzWMkZcakgkwJKMwwTGTZDFkuvnrCpvpVJeuJQBWXquPW0zPm2mkTMggU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=mdmwEFVO; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=34eQYoD0; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=mdmwEFVO; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=34eQYoD0; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from pobox.suse.cz (unknown [10.100.2.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id A9C0321D92;
+	Mon, 17 Mar 2025 09:07:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1742202478; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wnKFNLrLhAN97UeP+wzQU9edyI2DXXEOjOLsBP6B4eQ=;
+	b=mdmwEFVOvZgIbkhQEoa9slH513xeG7AGOURUICIl1Jp1Fdeh6vi5MxfuQG/2/rlt5ZrG4/
+	Tf5ea1HCt/QclEZrMFSWgbmODsbF78/k2BaRnKOZCXfKo9EcPL3WpfEdj7aOUo2BODlNYq
+	7e1qO1IA46lUQlj+Yp1PiVTnVtzAJRA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1742202478;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wnKFNLrLhAN97UeP+wzQU9edyI2DXXEOjOLsBP6B4eQ=;
+	b=34eQYoD0Q40srGmeBJ5kuXok7ZTv2bSKWLuqtLeeouHNL9TsGu4KbnrWwBXioFteWi9ZfU
+	JNZ5yfK6tXPri+Ag==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1742202478; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wnKFNLrLhAN97UeP+wzQU9edyI2DXXEOjOLsBP6B4eQ=;
+	b=mdmwEFVOvZgIbkhQEoa9slH513xeG7AGOURUICIl1Jp1Fdeh6vi5MxfuQG/2/rlt5ZrG4/
+	Tf5ea1HCt/QclEZrMFSWgbmODsbF78/k2BaRnKOZCXfKo9EcPL3WpfEdj7aOUo2BODlNYq
+	7e1qO1IA46lUQlj+Yp1PiVTnVtzAJRA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1742202478;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wnKFNLrLhAN97UeP+wzQU9edyI2DXXEOjOLsBP6B4eQ=;
+	b=34eQYoD0Q40srGmeBJ5kuXok7ZTv2bSKWLuqtLeeouHNL9TsGu4KbnrWwBXioFteWi9ZfU
+	JNZ5yfK6tXPri+Ag==
+Date: Mon, 17 Mar 2025 10:07:58 +0100 (CET)
+From: Miroslav Benes <mbenes@suse.cz>
+To: Filipe Xavier <felipeaggger@gmail.com>
+cc: Josh Poimboeuf <jpoimboe@kernel.org>, Jiri Kosina <jikos@kernel.org>, 
+    Petr Mladek <pmladek@suse.com>, Joe Lawrence <joe.lawrence@redhat.com>, 
+    Shuah Khan <shuah@kernel.org>, Marcos Paulo de Souza <mpdesouza@suse.com>, 
+    live-patching@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+    linux-kernel@vger.kernel.org, felipe_life@live.com
+Subject: Re: [PATCH PATCH 2/2] selftests: livepatch: test if ftrace can trace
+ a livepatched function
+In-Reply-To: <6d9b9394-690b-49a3-b8df-7ef510c96c00@gmail.com>
+Message-ID: <alpine.LSU.2.21.2503171006260.4236@pobox.suse.cz>
+References: <20250306-ftrace-sftest-livepatch-v1-0-a6f1dfc30e17@gmail.com> <20250306-ftrace-sftest-livepatch-v1-2-a6f1dfc30e17@gmail.com> <alpine.LSU.2.21.2503141411010.4442@pobox.suse.cz> <6d9b9394-690b-49a3-b8df-7ef510c96c00@gmail.com>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH v4 08/10] PCI: pwrctrl: Add power control driver for
- tc956x
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        =?UTF-8?Q?Krzysztof_Wilczy=c5=84ski?= <kw@linux.com>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        chaitanya chundru <quic_krichai@quicinc.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        cros-qcom-dts-watchers@chromium.org, Jingoo Han <jingoohan1@gmail.com>,
-        Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: quic_vbadigan@quicnic.com, amitk@kernel.org, dmitry.baryshkov@linaro.org,
-        linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        jorge.ramirez@oss.qualcomm.com,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-References: <20250225-qps615_v4_1-v4-0-e08633a7bdf8@oss.qualcomm.com>
- <20250225-qps615_v4_1-v4-8-e08633a7bdf8@oss.qualcomm.com>
- <d8ef7b67-a31f-4a49-8810-90dfebd2d8e1@oss.qualcomm.com>
-Content-Language: en-US
-From: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
-In-Reply-To: <d8ef7b67-a31f-4a49-8810-90dfebd2d8e1@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=LuaSymdc c=1 sm=1 tr=0 ts=67d7e66b cx=c_pps a=MTSHoo12Qbhz2p7MsH1ifg==:117 a=j4ogTh8yFefVWWEFDRgCtg==:17 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=EUspDBNiAAAA:8 a=VwQbUJbxAAAA:8 a=KKAkSRfTAAAA:8 a=LmMbr2wudRAhekVMzXwA:9
- a=QEXdDO2ut3YA:10 a=GvdueXVYPmCkWapjIL-Q:22 a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-GUID: a1Q1oM3JT-7sZc_7JKLoIUEz-Hxpddta
-X-Proofpoint-ORIG-GUID: a1Q1oM3JT-7sZc_7JKLoIUEz-Hxpddta
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-17_03,2025-03-17_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 bulkscore=0
- mlxscore=0 suspectscore=0 priorityscore=1501 phishscore=0 adultscore=0
- clxscore=1015 lowpriorityscore=0 spamscore=0 mlxlogscore=999
- malwarescore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503170067
+Content-Type: text/plain; charset=US-ASCII
+X-Spam-Score: -4.30
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	ARC_NA(0.00)[];
+	FREEMAIL_TO(0.00)[gmail.com];
+	RCVD_COUNT_ZERO(0.00)[0];
+	MID_RHS_MATCH_FROMTLD(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com,live.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[kernel.org,suse.com,redhat.com,vger.kernel.org,live.com];
+	MIME_TRACE(0.00)[0:+];
+	FROM_EQ_ENVFROM(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	TO_DN_SOME(0.00)[]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
+On Fri, 14 Mar 2025, Filipe Xavier wrote:
 
+> On 3/14/25 10:14 AM, Miroslav Benes wrote:
+> 
+> > Hi,
+> >
+> >> +start_test "trace livepatched function and check that the live patch
+> >> remains in effect"
+> >> +
+> >> +FUNCTION_NAME="livepatch_cmdline_proc_show"
+> >> +
+> >> +load_lp $MOD_LIVEPATCH
+> >> +trace_function "$FUNCTION_NAME"
+> > trace_funtion() calls cleanup_ftrace() to prepare the test. Ok.
+> >
+> >> +if [[ "$(cat /proc/cmdline)" == "$MOD_LIVEPATCH: this has been live
+> >> patched" ]] ; then
+> >> +	log "livepatch: ok"
+> >> +fi
+> >> +
+> >> +check_traced_function "$FUNCTION_NAME"
+> >> +
+> >> +cleanup_tracing
+> > Here, I suppose, cleanup_tracing() is called to clean up after the check
+> > above so that nothing stays and more tests can be added later. Right?
+> > Would it make sense then to call cleanup_tracing() in
+> > check_traced_function()? I think it would less error prone.
+> > If needed, check_traced_function() can always be upgraded so that it
+> > checks for more traced functions.
+> 
+> In cases where we need to check two or more functions with
+> check_traced_function,
+> 
+> if there is cleanup_tracing, it will not be possible, make sense?
+> 
+> e.g: function1 call -> function2 call -> function3.
 
-On 2/25/2025 5:39 PM, Konrad Dybcio wrote:
-> On 25.02.2025 10:34 AM, Krishna Chaitanya Chundru wrote:
->> TC956x is a PCIe switch which has one upstream and three downstream
->> ports. To one of the downstream ports ethernet MAC is connected as endpoint
->> device. Other two downstream ports are supposed to connect to external
->> device. One Host can connect to TC956x by upstream port. TC956x switch
->> needs to be configured after powering on and before PCIe link was up.
->>
->> The PCIe controller driver already enables link training at the host side
->> even before this driver probe happens, due to this when driver enables
->> power to the switch it participates in the link training and PCIe link
->> may come up before configuring the switch through i2c. Once the link is
->> up the configuration done through i2c will not have any affect.To prevent
->> the host from participating in link training, disable link training on the
->> host side to ensure the link does not come up before the switch is
->> configured via I2C.
->>
->> Based up on dt property and type of the port, tc956x is configured
->> through i2c.
->>
->> Signed-off-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
->> Reviewed-by: Bjorn Andersson <andersson@kernel.org>
->> Reviewed-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
->> ---
-> 
-> 
->> +struct tc956x_pwrctrl_cfg {
->> +	u32 l0s_delay;
->> +	u32 l1_delay;
->> +	u32 tx_amp;
->> +	u8 nfts[2]; /* GEN1 & GEN2*/
-> 
-> GEN2 */
-> 
-> [...]
-> 
->> +static int tc956x_pwrctrl_set_l0s_l1_entry_delay(struct tc956x_pwrctrl_ctx *ctx,
->> +						 enum tc956x_pwrctrl_ports port, bool is_l1, u32 ns)
->> +{
->> +	u32 rd_val, units;
->> +	int ret;
->> +
->> +	if (!ns)
->> +		return 0;
->> +
->> +	/* convert to units of 256ns */
->> +	units = ns / 256;
-> 
-> Should we round up here, so that values in 1 <= x < 256 give a delay
-> value of 1 unit? Or maybe such values are never expected?
-> 
-I will add a check above to return if ns < 256 as 0 is not expected
-value.
-> [...]
-> 
->> +static int tc956x_pwrctrl_set_tx_amplitude(struct tc956x_pwrctrl_ctx *ctx,
->> +					   enum tc956x_pwrctrl_ports port, u32 amp)
->> +{
->> +	int port_access;
->> +
->> +	if (amp < TC956X_TX_MARGIN_MIN_VAL)
->> +		return 0;
->> +
->> +	/*  txmargin = (Amp(uV) - 400000) / 3125 */
-> 
-> double space
-> 
->> +	amp = (amp - TC956X_TX_MARGIN_MIN_VAL) / 3125;
-> 
-> similarly here, is 0 an expected value for 1 <= x < 3125?
-> 
-Here 0 is expected value in this case.
+I meant... check_traced_function() (or check_traced_functions() in this 
+case) can have multiple arguments. You would loop over them inside and 
+then clean up. Or did I misunderstood?
 
-- Krishna Chaitanya.
-> Konrad
+Miroslav
 
