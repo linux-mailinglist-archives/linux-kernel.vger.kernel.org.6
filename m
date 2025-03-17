@@ -1,109 +1,77 @@
-Return-Path: <linux-kernel+bounces-563913-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563917-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81FAFA64A8E
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:43:49 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C34EA64A99
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:44:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A99613A9E15
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:38:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E33E3B22E4
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:38:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64623241675;
-	Mon, 17 Mar 2025 10:34:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QsDWmFcu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1E3D236A84;
-	Mon, 17 Mar 2025 10:34:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 460F5242905;
+	Mon, 17 Mar 2025 10:35:00 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70D4B24169F
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 10:34:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742207694; cv=none; b=nkU8tpS48XVnmJBxm7PjPly/RTKy2AtGluqL/qP/yi0TXU3wKrv6u0xQVbVJdTWrxp8EDNdQe4vNfEyWK7cFRPgbkX19Yj6Nnskn7P9aUzPGPLCjY794NV11wN38GzCGRPsEYn8uIJm/4nMNkq6pmq4L7PTQ6WPQGWRPyzfCQuU=
+	t=1742207699; cv=none; b=p7SLqxxugmZqa1ICjHTtaHiF42lP93guzKKfazO39fKv57x1nThNDIYjX6nvvk2rKp4jIqNK2/Z7/TlfaRWLG02M78zfyjHkhP8V89n9NnU1dbn0ExIzZG2QA0fyh9sPh2vC4MYESqUJNz1sTE8BgOmKOnyaW2bufasW4DWtiC4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742207694; c=relaxed/simple;
-	bh=OOWMoUFQ23UHSwIZ8BvygHyrXX9kthpv+6WpnSx7ZNg=;
+	s=arc-20240116; t=1742207699; c=relaxed/simple;
+	bh=mQFvEVDfpGoh5x6uGmbYUYC59z/W4+ikIREVh1XWseU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=q/1P5PRAAEHH/sV/6jwI8S5isnLgedFEb5ZNZ/YDO1LEAaAKR44kIBZxNzq6wH2nW4bZqzB/bBlpgQvy5FhrbcWFfTqMbVUCGOkJzYGp7aNuYZuCQnfqAbi8ISCO9P5dtl71nbuRQR+ziasY2ZSRXTB99BdMxZ94D06RXnO6DlY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QsDWmFcu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B0ECC4CEEE;
-	Mon, 17 Mar 2025 10:34:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742207693;
-	bh=OOWMoUFQ23UHSwIZ8BvygHyrXX9kthpv+6WpnSx7ZNg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QsDWmFcuxcsgFxG+2Q5SuxHmU93c+w9J/18L5YmxK5aviJm9Z4CUyWBrYiSnWqV2e
-	 C7GP8NTC6GV+/vET79P68p6yY4ndZ77nM5Qidg/EocBZRxEpLykxoK52Qq3XaAkOy8
-	 KTPXVZOgV5u7aBCFQwCMzMYJxlcldpTrsKgAJlR/4Ny0tx9C890MZIKAAdjizTMV9L
-	 VrzNMUMRwumMFNEbDQb1XVLR029YxilgVYa3urlPcqLBoCkLCcynRiwEcK+k2UfCEX
-	 T3oAWZCtEW8lZXjXHG9Md0KYqU91/xx4AAldISNUrDm8p8IZVEkSfRfduUQb3z1dPp
-	 B3NA64lusvwwA==
-Date: Mon, 17 Mar 2025 11:34:48 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Maud Spierings | GOcontroll <maudspierings@gocontroll.com>
-Cc: Rob Herring <robh@kernel.org>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Jessica Zhang <quic_jesszhan@quicinc.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, 
-	Sam Ravnborg <sam@ravnborg.org>, Liu Ying <victor.liu@nxp.com>, Shawn Guo <shawnguo@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "imx@lists.linux.dev" <imx@lists.linux.dev>, 
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>
-Subject: Re: [PATCH v2 03/12] dt-bindings: connector: Add the GOcontroll
- Moduline module slot bindings
-Message-ID: <20250317-massive-calm-bat-43ff61@krzk-bin>
-References: <20250226-initial_display-v2-0-23fafa130817@gocontroll.com>
- <20250226-initial_display-v2-3-23fafa130817@gocontroll.com>
- <20250314210652.GA2300828-robh@kernel.org>
- <PA4PR04MB7630094413C8E1F3D715EE23C5DD2@PA4PR04MB7630.eurprd04.prod.outlook.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=So9JKSbFg1Bd8NSTWUwyj4BfmZXZjyGH4n2vzfNGrttmdl8v3vFrYNvLPQUEVPhvxebUJxsX/GAeEdFWZLFunhD7kHylYAArH37OLbVQsBFm5m6z5EWhYWfCzUnelofQZ6x/4Byd3m1vlH37UeDGxrZ6W8Dt+8pR1xihvyyv/Ug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com; spf=none smtp.mailfrom=foss.arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=foss.arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7DD7A13D5;
+	Mon, 17 Mar 2025 03:35:06 -0700 (PDT)
+Received: from bogus (e133711.arm.com [10.1.196.55])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AE39B3F63F;
+	Mon, 17 Mar 2025 03:34:56 -0700 (PDT)
+Date: Mon, 17 Mar 2025 10:34:53 +0000
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: Re: [PATCH 9/9] regulator: dummy: convert to use the faux device
+ interface
+Message-ID: <Z9f6zVGSYNIK2OhW@bogus>
+References: <20250317-plat2faux_dev-v1-0-5fe67c085ad5@arm.com>
+ <20250317-plat2faux_dev-v1-9-5fe67c085ad5@arm.com>
+ <e35ccf12-3959-4ff6-b0fd-ae9374c90de9@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <PA4PR04MB7630094413C8E1F3D715EE23C5DD2@PA4PR04MB7630.eurprd04.prod.outlook.com>
+In-Reply-To: <e35ccf12-3959-4ff6-b0fd-ae9374c90de9@sirena.org.uk>
 
-On Sat, Mar 15, 2025 at 07:32:28AM +0000, Maud Spierings | GOcontroll wrote:
-> >> +required:
-> >> +  - compatible
-> >> +  - reg
-> >> +  - reset-gpios
-> >> +  - interrupts
-> >> +  - sync-gpios
-> >> +  - i2c-bus
-> >> +  - slot-number
-> >> +
-> >> +additionalProperties: false
-> >> +
-> >> +examples:
-> >> +  - |
-> >> +    #include <dt-bindings/gpio/gpio.h>
-> >> +    #include <dt-bindings/interrupt-controller/irq.h>
-> >> +
-> >> +    spi {
-> >> +        #address-cells = <1>;
-> >> +        #size-cells = <0>;
-> >> +
-> >> +        connector@0 {
-> >
-> >I find this being a SPI device a bit strange. Is there a defined SPI
-> >device that every slot is going to have? Or the connector has SPI
-> >interface and *anything* could be attached on it?
+On Mon, Mar 17, 2025 at 10:24:11AM +0000, Mark Brown wrote:
+> On Mon, Mar 17, 2025 at 10:13:21AM +0000, Sudeep Holla wrote:
+> > From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > 
+> > The dummy regulator driver does not need to create a platform device, it
+> > only did so because it was simple to do.  Change it over to use the
+> > faux bus instead as this is NOT a real platform device, and it makes
+> > the code even smaller than before.
 > 
-> So a module slot is like a pcie slot, it can be occupied or not, and when
+> This is already in Greg's tree isn't it, what's going on here? 
 
-But which buses...
+Sorry if it is already queued. I just checked against linux-next and
+posted it as part of this series as I needed it as well to remove all
+the "faux" devices under /sys/devices/platform.
 
-Best regards,
-Krzysztof
+I may be missing to check some other branch Greg has queued perhaps.
 
+-- 
+Regards,
+Sudeep
 
