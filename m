@@ -1,101 +1,159 @@
-Return-Path: <linux-kernel+bounces-564263-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564231-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52FEBA6516F
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 14:40:19 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFCF5A650DE
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 14:29:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A9143A701A
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 13:38:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F1230167DCD
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 13:29:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30E7123959D;
-	Mon, 17 Mar 2025 13:38:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0979C23FC48;
+	Mon, 17 Mar 2025 13:29:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="VTyYtTNs"
-Received: from relay.smtp-ext.broadcom.com (relay.smtp-ext.broadcom.com [192.19.144.207])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ikfuYWB2";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="9YalfP8x"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20B1C23A9BA;
-	Mon, 17 Mar 2025 13:38:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.19.144.207
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6BE622759C;
+	Mon, 17 Mar 2025 13:29:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742218738; cv=none; b=A2cqbK736KljNlSD5SOpUh+5EYUFrFa05Q+gRmBw4cEo99J0Cfc0RZMpUBdox0K0Sz7TFiHVRIyGok9q243JZFxRQfTWyk8r/0BDDYl+fo8aMzjRZS05b6w8Zx9XU1AAOUlv/9pSM7AxSPgXsDLU0cort8kyWM5dzsZuaDsb6wQ=
+	t=1742218167; cv=none; b=Q/4w7KjC3vsXBxv+RZAsGynqIW5QLkmpIl41ooksLmjKcStecYK+N76vjLUHN2SAEviTIHp0rpG1u97Iv9VmDH5Uy0JN1M+vTUJiSaGFjtHu2O6tOB05ppWZalKImDGwzkN65sCjH6uU+kkSE27lDHTYfQfjOcuanBU9MAyJrj4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742218738; c=relaxed/simple;
-	bh=bAPzg4jZ6yCIFwOyTlpOE28lXMU29xomma+LuF2yFQc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=UpgJ/MeTHwu1wBxO4iAy9o0AOb0UMOJZTAupI5bM3beL4K0eHoZeuDYFVNj/YMp3SMMfkJu7xKmf6SCiaZtRZFFSQIfD2J7iAuO5AXx3jpHjvvmIiORutmEy6I4EGsJsi+a81grGw43H42dY/NvDpyOvs2t5iXLqPNDX7KByxfI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=VTyYtTNs; arc=none smtp.client-ip=192.19.144.207
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: from mail-lvn-it-01.broadcom.com (mail-lvn-it-01.lvn.broadcom.net [10.36.132.253])
-	by relay.smtp-ext.broadcom.com (Postfix) with ESMTP id 9C5A1C00151B;
-	Mon, 17 Mar 2025 06:29:53 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 relay.smtp-ext.broadcom.com 9C5A1C00151B
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=broadcom.com;
-	s=dkimrelay; t=1742218193;
-	bh=bAPzg4jZ6yCIFwOyTlpOE28lXMU29xomma+LuF2yFQc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=VTyYtTNsAbfn0v4FGtsHck+XBGa+bf7Vj4qt7NI64d9BWW9TkdmTYzb1UpHrArO5Z
-	 ADSXXSp1nYHIk3sxWXjgKPdI2HT+g0lzFxw1s6N2exu+DD86u6jhszw2PHoIYLjfFU
-	 MUKN/xNQLu7sAc0vVLmCOYFivnXcmumDEsCcclfw=
-Received: from fainelli-desktop.igp.broadcom.net (fainelli-desktop.dhcp.broadcom.net [10.67.48.245])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail-lvn-it-01.broadcom.com (Postfix) with ESMTPSA id 0F8E818000520;
-	Mon, 17 Mar 2025 06:29:23 -0700 (PDT)
-From: Florian Fainelli <florian.fainelli@broadcom.com>
-To: bcm-kernel-feedback-list@broadcom.com,
-	Artur Weber <aweber.kernel@gmail.com>,
-	Lee Jones <lee@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Ray Jui <rjui@broadcom.com>,
-	Scott Branden <sbranden@broadcom.com>
-Cc: Florian Fainelli <f.fainelli@gmail.com>,
-	Stanislav Jakubek <stano.jakubek@gmail.com>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	~postmarketos/upstreaming@lists.sr.ht
-Subject: Re: [PATCH v6 03/10] ARM: dts: Drop DTS for BCM59056 PMU
-Date: Mon, 17 Mar 2025 06:29:22 -0700
-Message-ID: <20250317132922.2698513-1-florian.fainelli@broadcom.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250304-bcm59054-v6-3-ae8302358443@gmail.com>
-References: <20250304-bcm59054-v6-0-ae8302358443@gmail.com> <20250304-bcm59054-v6-3-ae8302358443@gmail.com>
+	s=arc-20240116; t=1742218167; c=relaxed/simple;
+	bh=ho8Pzt9rnRzxEycPk61Hi2KRQSUXlk2Hs9Tw9uulgDA=;
+	h=Message-ID:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type:Date; b=H7d/Eev2HxluH/KiTO7bnDu+kpAwdYDpdD/EUi8h6TruQLdVrBy/JmIpAQqQsipTboMMHDi5SpESWvPrUZjstvKc7pt0LRffIWvmGHVLKD1omYkhYZyCvC4oMiJHXNJ9FYpp9/G4eND/XVgWHYY628DU9AU6/RqnPCX56ztBO2Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ikfuYWB2; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=9YalfP8x; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Message-ID: <20250317092945.764490535@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1742218163;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 references:references; bh=dp0eYeKfrNlzvU3/WMfnQjPzD6qavekPLwUv4OZ2OOs=;
+	b=ikfuYWB22wmHGAZ1ZCYxuHRBkfaFcMntu8Y2Xs5ZKHP20JMm5tpDEfW6mSqnqvIO7/Ajcd
+	T6v6qi7q6R4ILWkgkDOA9Euq/2Zb29uV0VXgMO3S6EOiTvIiTE+3fMRc2bW6TgCzStokN0
+	2qNbE69vg0xjvKiRyG8sm76ROcQAiH7DcvK+2xFh2EUbUaH3RmjIZEbbqrki7c8bXpVgqd
+	r29lTkocOA2rivUwQDjCvDUL23d+Y5cLsrbZNqF9pkBjMX/+mz0WWQ4SK1qFQ2nxUnM/Od
+	+UNYZUNZd4i2O78LP2ilCXUXc58YfEFyuX8tC6NzyGzyPdar813GtKp6JAeFXA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1742218163;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 references:references; bh=dp0eYeKfrNlzvU3/WMfnQjPzD6qavekPLwUv4OZ2OOs=;
+	b=9YalfP8xBbKHQiBQ+hYehlm/nMIPvpPeNa78JCueUr9eWpmBcupHLF1l2sIP1/dDDyvv38
+	onqG0szZCKhD09Cg==
+From: Thomas Gleixner <tglx@linutronix.de>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Marc Zyngier <maz@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ Nishanth Menon <nm@ti.com>,
+ Dhruva Gole <d-gole@ti.com>,
+ Tero Kristo <kristo@kernel.org>,
+ Santosh Shilimkar <ssantosh@kernel.org>,
+ Logan Gunthorpe <logang@deltatee.com>,
+ Dave Jiang <dave.jiang@intel.com>,
+ Jon Mason <jdmason@kudzu.us>,
+ Allen Hubbe <allenbh@gmail.com>,
+ ntb@lists.linux.dev,
+ Bjorn Helgaas <bhelgaas@google.com>,
+ linux-pci@vger.kernel.org,
+ Michael Kelley <mhklinux@outlook.com>,
+ Wei Liu <wei.liu@kernel.org>,
+ Haiyang Zhang <haiyangz@microsoft.com>,
+ linux-hyperv@vger.kernel.org,
+ Wei Huang <wei.huang2@amd.com>,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>,
+ linux-scsi@vger.kernel.org,
+ Jonathan Cameron <Jonathan.Cameron@huwei.com>
+Subject: [patch V3 01/10] cleanup: Provide retain_ptr()
+References: <20250317092919.008573387@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 17 Mar 2025 14:29:22 +0100 (CET)
 
-From: Florian Fainelli <f.fainelli@gmail.com>
+In cases where an allocation is consumed by another function, the
+allocation needs to be retained on success or freed on failure. The code
+pattern is usually:
 
-On Tue, 04 Mar 2025 07:20:34 +0100, Artur Weber <aweber.kernel@gmail.com> wrote:
-> The BCM59056 PMU has its own separate DTSI, meant to be included
-> in a DTS file after defining the pmu node on some I2C bus.
-> 
-> This seems rather unintuitive; drop the DTS in favor of adding the
-> BCM59056 PMU node directly into the device DTS files.
-> 
-> If the amount of subdevices supported by the BCM590xx grows, and
-> a common device tree turns out to be beneficial, it can be reintroduced
-> in the future.
-> 
-> Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
-> ---
+	struct foo *f = kzalloc(sizeof(*f), GFP_KERNEL);
+	struct bar *b;
 
-Applied to https://github.com/Broadcom/stblinux/commits/devicetree/next, thanks!
---
-Florian
+	,,,
+	// Initialize f
+	...
+	if (ret)
+		goto free;
+        ...
+	bar = bar_create(f);
+	if (!bar) {
+		ret = -ENOMEM;
+	   	goto free;
+	}
+	...
+	return 0;
+free:
+	kfree(f);
+	return ret;
+
+This prevents using __free(kfree) on @f because there is no canonical way
+to tell the cleanup code that the allocation should not be freed.
+
+Abusing no_free_ptr() by force ignoring the return value is not really a
+sensible option either.
+
+Provide an explicit macro retain_ptr(), which NULLs the cleanup
+pointer. That makes it easy to analyze and reason about.
+
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+
+---
+ include/linux/cleanup.h |   17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
+
+--- a/include/linux/cleanup.h
++++ b/include/linux/cleanup.h
+@@ -216,6 +216,23 @@ const volatile void * __must_check_fn(co
+ 
+ #define return_ptr(p)	return no_free_ptr(p)
+ 
++/*
++ * Only for situations where an allocation is handed in to another function
++ * and consumed by that function on success.
++ *
++ *	struct foo *f __free(kfree) = kzalloc(sizeof(*f), GFP_KERNEL);
++ *
++ *	setup(f);
++ *	if (some_condition)
++ *		return -EINVAL;
++ *	....
++ *	ret = bar(f);
++ *	if (!ret)
++ *		retain_ptr(f);
++ *	return ret;
++ */
++#define retain_ptr(p)				\
++	__get_and_null(p, NULL)
+ 
+ /*
+  * DEFINE_CLASS(name, type, exit, init, init_args...):
+
+
+
 
