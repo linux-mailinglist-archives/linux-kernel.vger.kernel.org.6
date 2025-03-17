@@ -1,100 +1,54 @@
-Return-Path: <linux-kernel+bounces-565000-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565001-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84617A65EB5
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 21:06:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E123A65EC3
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 21:10:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7EE19173F1D
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 20:06:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 21F8C3B6CF4
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 20:09:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E6931E8355;
-	Mon, 17 Mar 2025 20:05:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF0C71EFF91;
+	Mon, 17 Mar 2025 20:09:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fossekall.de header.i=@fossekall.de header.b="EQHBC3db";
-	dkim=permerror (0-bit key) header.d=fossekall.de header.i=@fossekall.de header.b="iXfLs/m6"
-Received: from mo4-p02-ob.smtp.rzone.de (mo4-p02-ob.smtp.rzone.de [85.215.255.83])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GMYAEv/5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1D721F583E;
-	Mon, 17 Mar 2025 20:05:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=85.215.255.83
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742241951; cv=pass; b=laOZ4HCB9soEVf4tSsF6Xwm1k/E1Ou87Wj5ATUgl3ALGifPKaaTPWxsAQ4NbD2RnwOJZhBRhUl/6hxYC5Pvnv4mKOEAEBCgIBM214AmCCRG81vtbkugCrlkj/XLABAb6nGZ5RJruVaFKSNM/9z/EfOW6fhoxY1yjK8K/2s/58Jo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742241951; c=relaxed/simple;
-	bh=j7KP1PHA4NUdJk5rdZIR8Mmf4Wtmm5IuG6EQoFm9cQc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YGeX/biNIc0V7xRc78vfVZfK5aZKouDUSY7lt/Pt4TFJOFXuP+3cS8NQF9Z6ENOtlxIbW3E0A68SwF1o9e3cTm3M8L3oLPicYGuLs76gOoqyV48LeJqMJbWkLk198UydojuiEN3/hZ3h6chupOi4hyP/zXamwdhGTD57qkUZKXk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fossekall.de; spf=pass smtp.mailfrom=a98shuttle.de; dkim=pass (2048-bit key) header.d=fossekall.de header.i=@fossekall.de header.b=EQHBC3db; dkim=permerror (0-bit key) header.d=fossekall.de header.i=@fossekall.de header.b=iXfLs/m6; arc=pass smtp.client-ip=85.215.255.83
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fossekall.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=a98shuttle.de
-ARC-Seal: i=1; a=rsa-sha256; t=1742241940; cv=none;
-    d=strato.com; s=strato-dkim-0002;
-    b=Jtc6m1y8W/RdTLYTgDqN5SkmTijOAe9ZyevzL8tnDvQOMUwLjqEa8ehNu6BSzkFQNN
-    YqbCLU8VCwSS0vzYv/94ebUUAki8pI0nZDULRdQxwgOcizQQjagPltAktdmUgC7n7EhM
-    qmWsxvrCQlpbqK5wh0IivHCgXRu8r2chTn4UF6art/Pe52g9BjUinmrrzd5cUPvMzhKO
-    qdQQquHbta/YoEr09eUOK9N0q6V6t81naciZh+l+20bl2Q654i5KyVHR2o/sHlruOky4
-    gKrxqqvylFp0/QYD3iN9EQI3wDxnh4JEHIidvLaqBsCgBeyPKQtn7s8KF+iKGdrvLzg2
-    Qtkw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1742241940;
-    s=strato-dkim-0002; d=strato.com;
-    h=References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Cc:Date:
-    From:Subject:Sender;
-    bh=hWqgTBaP+ZomcWG8WO+zlFwfylXLSfH6hkDPg0uRmuw=;
-    b=DmxO8Xx7jj1fCsg9SC2kqcs/Rxvc6Z+jPwXTdj4LbAikkHPu6leWMiWKj3WepgFZEe
-    pwi7hja30kv4FPHVx6OZGtAWYRHijRUDuYF2IKLnImK5oOnF9cCPPRVyqHpIxyyBvHp9
-    7keAHRb9RF4SGImwUbb/o75hBzdZs+CYcgyBqmSGAmIAEudyEJ3n5aDxDFPC1E/l5BWD
-    bWVdiicqWDIO52ho2g34/Vk7MRl9tJAGcy7vh3g/dNYhbb1RvjRWadCAAxUr0JooxVD3
-    rPqBA1efqhCxLNiMYFB0pSgJpMMJPTLEha3NSPi1slx5XzQWFgAm42J2zUteQVGTilY6
-    gIhA==
-ARC-Authentication-Results: i=1; strato.com;
-    arc=none;
-    dkim=none
-X-RZG-CLASS-ID: mo02
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1742241940;
-    s=strato-dkim-0002; d=fossekall.de;
-    h=References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Cc:Date:
-    From:Subject:Sender;
-    bh=hWqgTBaP+ZomcWG8WO+zlFwfylXLSfH6hkDPg0uRmuw=;
-    b=EQHBC3dbz9IaVGQmwRMAVuN1Z08GBcei9t4nxUyVlQ8Pq9SPEg9i6JLcO/KrW4ZZz/
-    ZdEvG6jnrWIstIXgKJHnjKOjRkbp6GRlmrO8XuEbqr4GdXb2jV4jIMc4ONRrPt3lLhhk
-    2FGa+bZkra6yJkmmY5Etn66jDYHe2ltuXF91E+rQ2sdtOKJPhLvEAfZqQXb20LQZA0Jk
-    6jlGHs2cfDN27koET6ttXQGM3S8Dla0fkCjS/QhsLqCTDd9j/lOSEXd+IGSAql8wwahf
-    Dr4NkGn9dOqvQT7skJ5TdC46YYTgfqeljV/NvGst/U/apyE6sdxZUlUSLqx4Mkuq82Yp
-    wlmw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1742241940;
-    s=strato-dkim-0003; d=fossekall.de;
-    h=References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Cc:Date:
-    From:Subject:Sender;
-    bh=hWqgTBaP+ZomcWG8WO+zlFwfylXLSfH6hkDPg0uRmuw=;
-    b=iXfLs/m6PXHvkqXO6p2dG1WmYkcj/HLc4XQXneVPAEh3x1P2NB55xSVf3lc82ttTTp
-    mHthIOqgivTWgdwYEYBw==
-X-RZG-AUTH: ":O2kGeEG7b/pS1EzgE2y7nF0STYsSLflpbjNKxx7cGrBdao6FTL4AJcMdm+lap4JEHkzok9eyEg=="
-Received: from aerfugl
-    by smtp.strato.de (RZmta 51.3.0 AUTH)
-    with ESMTPSA id f28b3512HK5eG01
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
-	(Client did not present a certificate);
-    Mon, 17 Mar 2025 21:05:40 +0100 (CET)
-Received: from koltrast.home ([192.168.1.27] helo=a98shuttle.de)
-	by aerfugl with smtp (Exim 4.96)
-	(envelope-from <michael@a98shuttle.de>)
-	id 1tuGiP-000862-32;
-	Mon, 17 Mar 2025 21:05:37 +0100
-Received: (nullmailer pid 93694 invoked by uid 502);
-	Mon, 17 Mar 2025 20:05:37 -0000
-From: Michael Klein <michael@fossekall.de>
-To: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>, "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Cc: Michael Klein <michael@fossekall.de>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [net-next v4 3/3] net: phy: realtek: Add support for PHY LEDs on RTL8211E
-Date: Mon, 17 Mar 2025 21:05:32 +0100
-Message-Id: <20250317200532.93620-4-michael@fossekall.de>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250317200532.93620-1-michael@fossekall.de>
-References: <20250317200532.93620-1-michael@fossekall.de>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37AABF9DA;
+	Mon, 17 Mar 2025 20:09:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742242190; cv=none; b=JwW7DKAZuFFm8bwV91WeV4BgBPywvewPSHMFNpgFpqy2sXl6NUPnRMJGgmlMljh+Cw36m3G1xQkNM+aVYHjqAIhkDBa07PjWKgvdvE3hhz+E3O+Pu/CRsfnBhyc+2KY1Hl+7/ATzvFi0XEkzIuN4aBr+aTAGzpHXA0iXXbHYK9w=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742242190; c=relaxed/simple;
+	bh=qWnWslSnW4rvCfUDYcmIUVthFW7R0e+Eim2LZ0jR7D0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=msW3xkClWLZS8oo/lNbR7IeU5nszsn7yCSrF7E/G1gOfNmgPKG6oWMRsehPjV1xpsUV4AyaKqPEo1ceEw2PVRR9ufgCqubTBn4ZG6OmtUPRTq9a7cNGu/P/RDLJil6//jBQpJMR2IbKdTTpMhyNYmfFsbuwYxlmxA/16aO3kTKw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GMYAEv/5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 105FEC4CEE3;
+	Mon, 17 Mar 2025 20:09:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742242189;
+	bh=qWnWslSnW4rvCfUDYcmIUVthFW7R0e+Eim2LZ0jR7D0=;
+	h=From:To:Cc:Subject:Date:From;
+	b=GMYAEv/52lzaHV96+LCg5GJY5ZOTGMTF2BFDt5fb2AMxhMpkuoMl5Y8GoGgakH7E6
+	 sKFu1H0laNJLvnaenUiL57+5hkDoLQaQMnabY4oUabgY9sOCqWM/+hF63OnT00oCKe
+	 tcfgyS0Hf5avrWfn01UNBZLRiGMPeoYWtNmmDM0oAfMSERuk0yB0nm4rps2DBcsq2L
+	 HgzM5jX3Jax77mvuwi7EBtscR4TCMckn1VFYYk6pzfSymN9dxTlsw/yo9bym/L1kf8
+	 +/d6PPXccB33oRL4MiaWdGmeJuwRX1BgLkjLvN9eivmTBIIbZ6gMnxKMP3oyTt9hLn
+	 Aj/Z4SgAwL0Qg==
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Lubomir Rintel <lkundrak@v3.sk>,
+	linux-kernel@vger.kernel.org,
+	linux-usb@vger.kernel.org
+Subject: [PATCH] usb: Remove orphaned Marvell UDC drivers
+Date: Mon, 17 Mar 2025 15:09:19 -0500
+Message-ID: <20250317200941.563287-1-robh@kernel.org>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -102,218 +56,6138 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset="us-ascii"
 
-Like the RTL8211F, the RTL8211E PHY supports up to three LEDs.
-Add netdev trigger support for them, too.
+These drivers have no way to probe as there are no match tables nor
+devices created with a matching name in the kernel tree.
 
-Signed-off-by: Michael Klein <michael@fossekall.de>
+UDC was only ever supported by board files which were removed in 2022.
+
+For U3D, which was added in 2012, the PXA2128 aka MMP3 support was
+never upstreamed with board files and only revived in 2019 with DT
+support. No U3D DT support has been added since then.
+
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Lubomir Rintel <lkundrak@v3.sk>
+Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 ---
- drivers/net/phy/realtek/realtek_main.c | 125 +++++++++++++++++++++++--
- 1 file changed, 119 insertions(+), 6 deletions(-)
+ drivers/usb/gadget/udc/Kconfig       |   15 -
+ drivers/usb/gadget/udc/Makefile      |    3 -
+ drivers/usb/gadget/udc/mv_u3d.h      |  317 ----
+ drivers/usb/gadget/udc/mv_u3d_core.c | 2062 ----------------------
+ drivers/usb/gadget/udc/mv_udc.h      |  309 ----
+ drivers/usb/gadget/udc/mv_udc_core.c | 2426 --------------------------
+ drivers/usb/phy/Kconfig              |   12 -
+ drivers/usb/phy/Makefile             |    1 -
+ drivers/usb/phy/phy-mv-usb.c         |  881 ----------
+ 9 files changed, 6026 deletions(-)
+ delete mode 100644 drivers/usb/gadget/udc/mv_u3d.h
+ delete mode 100644 drivers/usb/gadget/udc/mv_u3d_core.c
+ delete mode 100644 drivers/usb/gadget/udc/mv_udc.h
+ delete mode 100644 drivers/usb/gadget/udc/mv_udc_core.c
+ delete mode 100644 drivers/usb/phy/phy-mv-usb.c
 
-diff --git a/drivers/net/phy/realtek/realtek_main.c b/drivers/net/phy/realtek/realtek_main.c
-index ccef7c01ccc4..86dd3e17317b 100644
---- a/drivers/net/phy/realtek/realtek_main.c
-+++ b/drivers/net/phy/realtek/realtek_main.c
-@@ -37,6 +37,20 @@
- #define RTL8211E_TX_DELAY			BIT(12)
- #define RTL8211E_RX_DELAY			BIT(11)
+diff --git a/drivers/usb/gadget/udc/Kconfig b/drivers/usb/gadget/udc/Kconfig
+index aae1787320d4..2171c55ebcdf 100644
+--- a/drivers/usb/gadget/udc/Kconfig
++++ b/drivers/usb/gadget/udc/Kconfig
+@@ -228,21 +228,6 @@ config USB_PXA27X
+ 	   dynamically linked module called "pxa27x_udc" and force all
+ 	   gadget drivers to also be dynamically linked.
  
-+#define RTL8211E_LEDCR_EXT_PAGE			0x2c
-+
-+#define RTL8211E_LEDCR1				0x1a
-+#define RTL8211E_LEDCR1_ACT_TXRX		BIT(4)
-+#define RTL8211E_LEDCR1_MASK			BIT(4)
-+#define RTL8211E_LEDCR1_SHIFT			1
-+
-+#define RTL8211E_LEDCR2				0x1c
-+#define RTL8211E_LEDCR2_LINK_1000		BIT(2)
-+#define RTL8211E_LEDCR2_LINK_100		BIT(1)
-+#define RTL8211E_LEDCR2_LINK_10			BIT(0)
-+#define RTL8211E_LEDCR2_MASK			GENMASK(2, 0)
-+#define RTL8211E_LEDCR2_SHIFT			4
-+
- #define RTL8211F_PHYCR1				0x18
- #define RTL8211F_PHYCR2				0x19
- #define RTL8211F_INSR				0x1d
-@@ -113,7 +127,8 @@
- #define RTL_8221B_VN_CG				0x001cc84a
- #define RTL_8251B				0x001cc862
+-config USB_MV_UDC
+-	tristate "Marvell USB2.0 Device Controller"
+-	depends on HAS_DMA
+-	help
+-	  Marvell Socs (including PXA and MMP series) include a high speed
+-	  USB2.0 OTG controller, which can be configured as high speed or
+-	  full speed USB peripheral.
+-
+-config USB_MV_U3D
+-	depends on HAS_DMA
+-	tristate "MARVELL PXA2128 USB 3.0 controller"
+-	help
+-	  MARVELL PXA2128 Processor series include a super speed USB3.0 device
+-	  controller, which support super speed USB peripheral.
+-
+ config USB_SNP_CORE
+ 	depends on (USB_AMD5536UDC || USB_SNP_UDC_PLAT)
+ 	depends on HAS_DMA
+diff --git a/drivers/usb/gadget/udc/Makefile b/drivers/usb/gadget/udc/Makefile
+index b52f93e9c61d..76a8d93b3b96 100644
+--- a/drivers/usb/gadget/udc/Makefile
++++ b/drivers/usb/gadget/udc/Makefile
+@@ -31,10 +31,7 @@ obj-$(CONFIG_USB_RENESAS_USBF)	+= renesas_usbf.o
+ obj-$(CONFIG_USB_FSL_QE)	+= fsl_qe_udc.o
+ obj-$(CONFIG_USB_LPC32XX)	+= lpc32xx_udc.o
+ obj-$(CONFIG_USB_EG20T)		+= pch_udc.o
+-obj-$(CONFIG_USB_MV_UDC)	+= mv_udc.o
+-mv_udc-y			:= mv_udc_core.o
+ obj-$(CONFIG_USB_FUSB300)	+= fusb300_udc.o
+-obj-$(CONFIG_USB_MV_U3D)	+= mv_u3d_core.o
+ obj-$(CONFIG_USB_GR_UDC)	+= gr_udc.o
+ obj-$(CONFIG_USB_GADGET_XILINX)	+= udc-xilinx.o
+ obj-$(CONFIG_USB_SNP_UDC_PLAT) += snps_udc_plat.o
+diff --git a/drivers/usb/gadget/udc/mv_u3d.h b/drivers/usb/gadget/udc/mv_u3d.h
+deleted file mode 100644
+index 66b84f792f64..000000000000
+--- a/drivers/usb/gadget/udc/mv_u3d.h
++++ /dev/null
+@@ -1,317 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0
+-/*
+- * Copyright (C) 2011 Marvell International Ltd. All rights reserved.
+- */
+-
+-#ifndef __MV_U3D_H
+-#define __MV_U3D_H
+-
+-#define MV_U3D_EP_CONTEXT_ALIGNMENT	32
+-#define MV_U3D_TRB_ALIGNMENT	16
+-#define MV_U3D_DMA_BOUNDARY	4096
+-#define MV_U3D_EP0_MAX_PKT_SIZE	512
+-
+-/* ep0 transfer state */
+-#define MV_U3D_WAIT_FOR_SETUP		0
+-#define MV_U3D_DATA_STATE_XMIT		1
+-#define MV_U3D_DATA_STATE_NEED_ZLP	2
+-#define MV_U3D_WAIT_FOR_OUT_STATUS	3
+-#define MV_U3D_DATA_STATE_RECV		4
+-#define MV_U3D_STATUS_STAGE		5
+-
+-#define MV_U3D_EP_MAX_LENGTH_TRANSFER	0x10000
+-
+-/* USB3 Interrupt Status */
+-#define MV_U3D_USBINT_SETUP		0x00000001
+-#define MV_U3D_USBINT_RX_COMPLETE	0x00000002
+-#define MV_U3D_USBINT_TX_COMPLETE	0x00000004
+-#define MV_U3D_USBINT_UNDER_RUN	0x00000008
+-#define MV_U3D_USBINT_RXDESC_ERR	0x00000010
+-#define MV_U3D_USBINT_TXDESC_ERR	0x00000020
+-#define MV_U3D_USBINT_RX_TRB_COMPLETE	0x00000040
+-#define MV_U3D_USBINT_TX_TRB_COMPLETE	0x00000080
+-#define MV_U3D_USBINT_VBUS_VALID	0x00010000
+-#define MV_U3D_USBINT_STORAGE_CMD_FULL	0x00020000
+-#define MV_U3D_USBINT_LINK_CHG		0x01000000
+-
+-/* USB3 Interrupt Enable */
+-#define MV_U3D_INTR_ENABLE_SETUP		0x00000001
+-#define MV_U3D_INTR_ENABLE_RX_COMPLETE		0x00000002
+-#define MV_U3D_INTR_ENABLE_TX_COMPLETE		0x00000004
+-#define MV_U3D_INTR_ENABLE_UNDER_RUN		0x00000008
+-#define MV_U3D_INTR_ENABLE_RXDESC_ERR		0x00000010
+-#define MV_U3D_INTR_ENABLE_TXDESC_ERR		0x00000020
+-#define MV_U3D_INTR_ENABLE_RX_TRB_COMPLETE	0x00000040
+-#define MV_U3D_INTR_ENABLE_TX_TRB_COMPLETE	0x00000080
+-#define MV_U3D_INTR_ENABLE_RX_BUFFER_ERR	0x00000100
+-#define MV_U3D_INTR_ENABLE_VBUS_VALID		0x00010000
+-#define MV_U3D_INTR_ENABLE_STORAGE_CMD_FULL	0x00020000
+-#define MV_U3D_INTR_ENABLE_LINK_CHG		0x01000000
+-#define MV_U3D_INTR_ENABLE_PRIME_STATUS	0x02000000
+-
+-/* USB3 Link Change */
+-#define MV_U3D_LINK_CHANGE_LINK_UP		0x00000001
+-#define MV_U3D_LINK_CHANGE_SUSPEND		0x00000002
+-#define MV_U3D_LINK_CHANGE_RESUME		0x00000004
+-#define MV_U3D_LINK_CHANGE_WRESET		0x00000008
+-#define MV_U3D_LINK_CHANGE_HRESET		0x00000010
+-#define MV_U3D_LINK_CHANGE_VBUS_INVALID	0x00000020
+-#define MV_U3D_LINK_CHANGE_INACT		0x00000040
+-#define MV_U3D_LINK_CHANGE_DISABLE_AFTER_U0	0x00000080
+-#define MV_U3D_LINK_CHANGE_U1			0x00000100
+-#define MV_U3D_LINK_CHANGE_U2			0x00000200
+-#define MV_U3D_LINK_CHANGE_U3			0x00000400
+-
+-/* bridge setting */
+-#define MV_U3D_BRIDGE_SETTING_VBUS_VALID	(1 << 16)
+-
+-/* Command Register Bit Masks */
+-#define MV_U3D_CMD_RUN_STOP		0x00000001
+-#define MV_U3D_CMD_CTRL_RESET		0x00000002
+-
+-/* ep control register */
+-#define MV_U3D_EPXCR_EP_TYPE_CONTROL		0
+-#define MV_U3D_EPXCR_EP_TYPE_ISOC		1
+-#define MV_U3D_EPXCR_EP_TYPE_BULK		2
+-#define MV_U3D_EPXCR_EP_TYPE_INT		3
+-#define MV_U3D_EPXCR_EP_ENABLE_SHIFT		4
+-#define MV_U3D_EPXCR_MAX_BURST_SIZE_SHIFT	12
+-#define MV_U3D_EPXCR_MAX_PACKET_SIZE_SHIFT	16
+-#define MV_U3D_USB_BULK_BURST_OUT		6
+-#define MV_U3D_USB_BULK_BURST_IN		14
+-
+-#define MV_U3D_EPXCR_EP_FLUSH		(1 << 7)
+-#define MV_U3D_EPXCR_EP_HALT		(1 << 1)
+-#define MV_U3D_EPXCR_EP_INIT		(1)
+-
+-/* TX/RX Status Register */
+-#define MV_U3D_XFERSTATUS_COMPLETE_SHIFT	24
+-#define MV_U3D_COMPLETE_INVALID	0
+-#define MV_U3D_COMPLETE_SUCCESS	1
+-#define MV_U3D_COMPLETE_BUFF_ERR	2
+-#define MV_U3D_COMPLETE_SHORT_PACKET	3
+-#define MV_U3D_COMPLETE_TRB_ERR	5
+-#define MV_U3D_XFERSTATUS_TRB_LENGTH_MASK	(0xFFFFFF)
+-
+-#define MV_U3D_USB_LINK_BYPASS_VBUS	0x8
+-
+-#define MV_U3D_LTSSM_PHY_INIT_DONE		0x80000000
+-#define MV_U3D_LTSSM_NEVER_GO_COMPLIANCE	0x40000000
+-
+-#define MV_U3D_USB3_OP_REGS_OFFSET	0x100
+-#define MV_U3D_USB3_PHY_OFFSET		0xB800
+-
+-#define DCS_ENABLE	0x1
+-
+-/* timeout */
+-#define MV_U3D_RESET_TIMEOUT		10000
+-#define MV_U3D_FLUSH_TIMEOUT		100000
+-#define MV_U3D_OWN_TIMEOUT		10000
+-#define LOOPS_USEC_SHIFT	4
+-#define LOOPS_USEC		(1 << LOOPS_USEC_SHIFT)
+-#define LOOPS(timeout)		((timeout) >> LOOPS_USEC_SHIFT)
+-
+-/* ep direction */
+-#define MV_U3D_EP_DIR_IN		1
+-#define MV_U3D_EP_DIR_OUT		0
+-#define mv_u3d_ep_dir(ep)	(((ep)->ep_num == 0) ? \
+-				((ep)->u3d->ep0_dir) : ((ep)->direction))
+-
+-/* usb capability registers */
+-struct mv_u3d_cap_regs {
+-	u32	rsvd[5];
+-	u32	dboff;	/* doorbell register offset */
+-	u32	rtsoff;	/* runtime register offset */
+-	u32	vuoff;	/* vendor unique register offset */
+-};
+-
+-/* operation registers */
+-struct mv_u3d_op_regs {
+-	u32	usbcmd;		/* Command register */
+-	u32	rsvd1[11];
+-	u32	dcbaapl;	/* Device Context Base Address low register */
+-	u32	dcbaaph;	/* Device Context Base Address high register */
+-	u32	rsvd2[243];
+-	u32	portsc;		/* port status and control register*/
+-	u32	portlinkinfo;	/* port link info register*/
+-	u32	rsvd3[9917];
+-	u32	doorbell;	/* doorbell register */
+-};
+-
+-/* control endpoint enable registers */
+-struct epxcr {
+-	u32	epxoutcr0;	/* ep out control 0 register */
+-	u32	epxoutcr1;	/* ep out control 1 register */
+-	u32	epxincr0;	/* ep in control 0 register */
+-	u32	epxincr1;	/* ep in control 1 register */
+-};
+-
+-/* transfer status registers */
+-struct xferstatus {
+-	u32	curdeqlo;	/* current TRB pointer low */
+-	u32	curdeqhi;	/* current TRB pointer high */
+-	u32	statuslo;	/* transfer status low */
+-	u32	statushi;	/* transfer status high */
+-};
+-
+-/* vendor unique control registers */
+-struct mv_u3d_vuc_regs {
+-	u32	ctrlepenable;	/* control endpoint enable register */
+-	u32	setuplock;	/* setup lock register */
+-	u32	endcomplete;	/* endpoint transfer complete register */
+-	u32	intrcause;	/* interrupt cause register */
+-	u32	intrenable;	/* interrupt enable register */
+-	u32	trbcomplete;	/* TRB complete register */
+-	u32	linkchange;	/* link change register */
+-	u32	rsvd1[5];
+-	u32	trbunderrun;	/* TRB underrun register */
+-	u32	rsvd2[43];
+-	u32	bridgesetting;	/* bridge setting register */
+-	u32	rsvd3[7];
+-	struct xferstatus	txst[16];	/* TX status register */
+-	struct xferstatus	rxst[16];	/* RX status register */
+-	u32	ltssm;		/* LTSSM control register */
+-	u32	pipe;		/* PIPE control register */
+-	u32	linkcr0;	/* link control 0 register */
+-	u32	linkcr1;	/* link control 1 register */
+-	u32	rsvd6[60];
+-	u32	mib0;		/* MIB0 counter register */
+-	u32	usblink;	/* usb link control register */
+-	u32	ltssmstate;	/* LTSSM state register */
+-	u32	linkerrorcause;	/* link error cause register */
+-	u32	rsvd7[60];
+-	u32	devaddrtiebrkr;	/* device address and tie breaker */
+-	u32	itpinfo0;	/* ITP info 0 register */
+-	u32	itpinfo1;	/* ITP info 1 register */
+-	u32	rsvd8[61];
+-	struct epxcr	epcr[16];	/* ep control register */
+-	u32	rsvd9[64];
+-	u32	phyaddr;	/* PHY address register */
+-	u32	phydata;	/* PHY data register */
+-};
+-
+-/* Endpoint context structure */
+-struct mv_u3d_ep_context {
+-	u32	rsvd0;
+-	u32	rsvd1;
+-	u32	trb_addr_lo;		/* TRB address low 32 bit */
+-	u32	trb_addr_hi;		/* TRB address high 32 bit */
+-	u32	rsvd2;
+-	u32	rsvd3;
+-	struct usb_ctrlrequest setup_buffer;	/* setup data buffer */
+-};
+-
+-/* TRB control data structure */
+-struct mv_u3d_trb_ctrl {
+-	u32	own:1;		/* owner of TRB */
+-	u32	rsvd1:3;
+-	u32	chain:1;	/* associate this TRB with the
+-				next TRB on the Ring */
+-	u32	ioc:1;		/* interrupt on complete */
+-	u32	rsvd2:4;
+-	u32	type:6;		/* TRB type */
+-#define TYPE_NORMAL	1
+-#define TYPE_DATA	3
+-#define TYPE_LINK	6
+-	u32	dir:1;		/* Working at data stage of control endpoint
+-				operation. 0 is OUT and 1 is IN. */
+-	u32	rsvd3:15;
+-};
+-
+-/* TRB data structure
+- * For multiple TRB, all the TRBs' physical address should be continuous.
+- */
+-struct mv_u3d_trb_hw {
+-	u32	buf_addr_lo;	/* data buffer address low 32 bit */
+-	u32	buf_addr_hi;	/* data buffer address high 32 bit */
+-	u32	trb_len;	/* transfer length */
+-	struct mv_u3d_trb_ctrl	ctrl;	/* TRB control data */
+-};
+-
+-/* TRB structure */
+-struct mv_u3d_trb {
+-	struct mv_u3d_trb_hw *trb_hw;	/* point to the trb_hw structure */
+-	dma_addr_t trb_dma;		/* dma address for this trb_hw */
+-	struct list_head trb_list;	/* trb list */
+-};
+-
+-/* device data structure */
+-struct mv_u3d {
+-	struct usb_gadget		gadget;
+-	struct usb_gadget_driver	*driver;
+-	spinlock_t			lock;	/* device lock */
+-	struct completion		*done;
+-	struct device			*dev;
+-	int				irq;
+-
+-	/* usb controller registers */
+-	struct mv_u3d_cap_regs __iomem	*cap_regs;
+-	struct mv_u3d_op_regs __iomem	*op_regs;
+-	struct mv_u3d_vuc_regs __iomem	*vuc_regs;
+-	void __iomem			*phy_regs;
+-
+-	unsigned int			max_eps;
+-	struct mv_u3d_ep_context	*ep_context;
+-	size_t				ep_context_size;
+-	dma_addr_t			ep_context_dma;
+-
+-	struct dma_pool			*trb_pool; /* for TRB data structure */
+-	struct mv_u3d_ep		*eps;
+-
+-	struct mv_u3d_req		*status_req; /* ep0 status request */
+-	struct usb_ctrlrequest		local_setup_buff; /* store setup data*/
+-
+-	unsigned int		resume_state;	/* USB state to resume */
+-	unsigned int		usb_state;	/* USB current state */
+-	unsigned int		ep0_state;	/* Endpoint zero state */
+-	unsigned int		ep0_dir;
+-
+-	unsigned int		dev_addr;	/* device address */
+-
+-	unsigned int		errors;
+-
+-	unsigned		softconnect:1;
+-	unsigned		vbus_active:1;	/* vbus is active or not */
+-	unsigned		remote_wakeup:1; /* support remote wakeup */
+-	unsigned		clock_gating:1;	/* clock gating or not */
+-	unsigned		active:1;	/* udc is active or not */
+-	unsigned		vbus_valid_detect:1; /* udc vbus detection */
+-
+-	struct mv_usb_addon_irq *vbus;
+-	unsigned int		power;
+-
+-	struct clk		*clk;
+-};
+-
+-/* endpoint data structure */
+-struct mv_u3d_ep {
+-	struct usb_ep		ep;
+-	struct mv_u3d		*u3d;
+-	struct list_head	queue;	/* ep request queued hardware */
+-	struct list_head	req_list; /* list of ep request */
+-	struct mv_u3d_ep_context	*ep_context; /* ep context */
+-	u32			direction;
+-	char			name[14];
+-	u32			processing; /* there is ep request
+-						queued on haredware */
+-	spinlock_t		req_lock; /* ep lock */
+-	unsigned		wedge:1;
+-	unsigned		enabled:1;
+-	unsigned		ep_type:2;
+-	unsigned		ep_num:8;
+-};
+-
+-/* request data structure */
+-struct mv_u3d_req {
+-	struct usb_request	req;
+-	struct mv_u3d_ep	*ep;
+-	struct list_head	queue;	/* ep requst queued on hardware */
+-	struct list_head	list;	/* ep request list */
+-	struct list_head	trb_list; /* trb list of a request */
+-
+-	struct mv_u3d_trb	*trb_head; /* point to first trb of a request */
+-	unsigned		trb_count; /* TRB number in the chain */
+-	unsigned		chain;	   /* TRB chain or not */
+-};
+-
+-#endif
+diff --git a/drivers/usb/gadget/udc/mv_u3d_core.c b/drivers/usb/gadget/udc/mv_u3d_core.c
+deleted file mode 100644
+index 062f43e146aa..000000000000
+--- a/drivers/usb/gadget/udc/mv_u3d_core.c
++++ /dev/null
+@@ -1,2062 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0
+-/*
+- * Copyright (C) 2011 Marvell International Ltd. All rights reserved.
+- */
+-
+-#include <linux/module.h>
+-#include <linux/dma-mapping.h>
+-#include <linux/dmapool.h>
+-#include <linux/kernel.h>
+-#include <linux/delay.h>
+-#include <linux/ioport.h>
+-#include <linux/sched.h>
+-#include <linux/slab.h>
+-#include <linux/errno.h>
+-#include <linux/timer.h>
+-#include <linux/list.h>
+-#include <linux/notifier.h>
+-#include <linux/interrupt.h>
+-#include <linux/moduleparam.h>
+-#include <linux/device.h>
+-#include <linux/usb/ch9.h>
+-#include <linux/usb/gadget.h>
+-#include <linux/pm.h>
+-#include <linux/io.h>
+-#include <linux/irq.h>
+-#include <linux/platform_device.h>
+-#include <linux/platform_data/mv_usb.h>
+-#include <linux/clk.h>
+-
+-#include "mv_u3d.h"
+-
+-#define DRIVER_DESC		"Marvell PXA USB3.0 Device Controller driver"
+-
+-static const char driver_name[] = "mv_u3d";
+-
+-static void mv_u3d_nuke(struct mv_u3d_ep *ep, int status);
+-static void mv_u3d_stop_activity(struct mv_u3d *u3d,
+-			struct usb_gadget_driver *driver);
+-
+-/* for endpoint 0 operations */
+-static const struct usb_endpoint_descriptor mv_u3d_ep0_desc = {
+-	.bLength =		USB_DT_ENDPOINT_SIZE,
+-	.bDescriptorType =	USB_DT_ENDPOINT,
+-	.bEndpointAddress =	0,
+-	.bmAttributes =		USB_ENDPOINT_XFER_CONTROL,
+-	.wMaxPacketSize =	MV_U3D_EP0_MAX_PKT_SIZE,
+-};
+-
+-static void mv_u3d_ep0_reset(struct mv_u3d *u3d)
+-{
+-	struct mv_u3d_ep *ep;
+-	u32 epxcr;
+-	int i;
+-
+-	for (i = 0; i < 2; i++) {
+-		ep = &u3d->eps[i];
+-		ep->u3d = u3d;
+-
+-		/* ep0 ep context, ep0 in and out share the same ep context */
+-		ep->ep_context = &u3d->ep_context[1];
+-	}
+-
+-	/* reset ep state machine */
+-	/* reset ep0 out */
+-	epxcr = ioread32(&u3d->vuc_regs->epcr[0].epxoutcr0);
+-	epxcr |= MV_U3D_EPXCR_EP_INIT;
+-	iowrite32(epxcr, &u3d->vuc_regs->epcr[0].epxoutcr0);
+-	udelay(5);
+-	epxcr &= ~MV_U3D_EPXCR_EP_INIT;
+-	iowrite32(epxcr, &u3d->vuc_regs->epcr[0].epxoutcr0);
+-
+-	epxcr = ((MV_U3D_EP0_MAX_PKT_SIZE
+-		<< MV_U3D_EPXCR_MAX_PACKET_SIZE_SHIFT)
+-		| (1 << MV_U3D_EPXCR_MAX_BURST_SIZE_SHIFT)
+-		| (1 << MV_U3D_EPXCR_EP_ENABLE_SHIFT)
+-		| MV_U3D_EPXCR_EP_TYPE_CONTROL);
+-	iowrite32(epxcr, &u3d->vuc_regs->epcr[0].epxoutcr1);
+-
+-	/* reset ep0 in */
+-	epxcr = ioread32(&u3d->vuc_regs->epcr[0].epxincr0);
+-	epxcr |= MV_U3D_EPXCR_EP_INIT;
+-	iowrite32(epxcr, &u3d->vuc_regs->epcr[0].epxincr0);
+-	udelay(5);
+-	epxcr &= ~MV_U3D_EPXCR_EP_INIT;
+-	iowrite32(epxcr, &u3d->vuc_regs->epcr[0].epxincr0);
+-
+-	epxcr = ((MV_U3D_EP0_MAX_PKT_SIZE
+-		<< MV_U3D_EPXCR_MAX_PACKET_SIZE_SHIFT)
+-		| (1 << MV_U3D_EPXCR_MAX_BURST_SIZE_SHIFT)
+-		| (1 << MV_U3D_EPXCR_EP_ENABLE_SHIFT)
+-		| MV_U3D_EPXCR_EP_TYPE_CONTROL);
+-	iowrite32(epxcr, &u3d->vuc_regs->epcr[0].epxincr1);
+-}
+-
+-static void mv_u3d_ep0_stall(struct mv_u3d *u3d)
+-{
+-	u32 tmp;
+-	dev_dbg(u3d->dev, "%s\n", __func__);
+-
+-	/* set TX and RX to stall */
+-	tmp = ioread32(&u3d->vuc_regs->epcr[0].epxoutcr0);
+-	tmp |= MV_U3D_EPXCR_EP_HALT;
+-	iowrite32(tmp, &u3d->vuc_regs->epcr[0].epxoutcr0);
+-
+-	tmp = ioread32(&u3d->vuc_regs->epcr[0].epxincr0);
+-	tmp |= MV_U3D_EPXCR_EP_HALT;
+-	iowrite32(tmp, &u3d->vuc_regs->epcr[0].epxincr0);
+-
+-	/* update ep0 state */
+-	u3d->ep0_state = MV_U3D_WAIT_FOR_SETUP;
+-	u3d->ep0_dir = MV_U3D_EP_DIR_OUT;
+-}
+-
+-static int mv_u3d_process_ep_req(struct mv_u3d *u3d, int index,
+-	struct mv_u3d_req *curr_req)
+-{
+-	struct mv_u3d_trb	*curr_trb;
+-	int actual, remaining_length = 0;
+-	int direction, ep_num;
+-	int retval = 0;
+-	u32 tmp, status, length;
+-
+-	direction = index % 2;
+-	ep_num = index / 2;
+-
+-	actual = curr_req->req.length;
+-
+-	while (!list_empty(&curr_req->trb_list)) {
+-		curr_trb = list_entry(curr_req->trb_list.next,
+-					struct mv_u3d_trb, trb_list);
+-		if (!curr_trb->trb_hw->ctrl.own) {
+-			dev_err(u3d->dev, "%s, TRB own error!\n",
+-				u3d->eps[index].name);
+-			return 1;
+-		}
+-
+-		curr_trb->trb_hw->ctrl.own = 0;
+-		if (direction == MV_U3D_EP_DIR_OUT)
+-			tmp = ioread32(&u3d->vuc_regs->rxst[ep_num].statuslo);
+-		else
+-			tmp = ioread32(&u3d->vuc_regs->txst[ep_num].statuslo);
+-
+-		status = tmp >> MV_U3D_XFERSTATUS_COMPLETE_SHIFT;
+-		length = tmp & MV_U3D_XFERSTATUS_TRB_LENGTH_MASK;
+-
+-		if (status == MV_U3D_COMPLETE_SUCCESS ||
+-			(status == MV_U3D_COMPLETE_SHORT_PACKET &&
+-			direction == MV_U3D_EP_DIR_OUT)) {
+-			remaining_length += length;
+-			actual -= remaining_length;
+-		} else {
+-			dev_err(u3d->dev,
+-				"complete_tr error: ep=%d %s: error = 0x%x\n",
+-				index >> 1, direction ? "SEND" : "RECV",
+-				status);
+-			retval = -EPROTO;
+-		}
+-
+-		list_del_init(&curr_trb->trb_list);
+-	}
+-	if (retval)
+-		return retval;
+-
+-	curr_req->req.actual = actual;
+-	return 0;
+-}
+-
+-/*
+- * mv_u3d_done() - retire a request; caller blocked irqs
+- * @status : request status to be set, only works when
+- * request is still in progress.
+- */
+-static
+-void mv_u3d_done(struct mv_u3d_ep *ep, struct mv_u3d_req *req, int status)
+-	__releases(&ep->udc->lock)
+-	__acquires(&ep->udc->lock)
+-{
+-	struct mv_u3d *u3d = (struct mv_u3d *)ep->u3d;
+-
+-	dev_dbg(u3d->dev, "mv_u3d_done: remove req->queue\n");
+-	/* Removed the req from ep queue */
+-	list_del_init(&req->queue);
+-
+-	/* req.status should be set as -EINPROGRESS in ep_queue() */
+-	if (req->req.status == -EINPROGRESS)
+-		req->req.status = status;
+-	else
+-		status = req->req.status;
+-
+-	/* Free trb for the request */
+-	if (!req->chain)
+-		dma_pool_free(u3d->trb_pool,
+-			req->trb_head->trb_hw, req->trb_head->trb_dma);
+-	else {
+-		dma_unmap_single(ep->u3d->gadget.dev.parent,
+-			(dma_addr_t)req->trb_head->trb_dma,
+-			req->trb_count * sizeof(struct mv_u3d_trb_hw),
+-			DMA_BIDIRECTIONAL);
+-		kfree(req->trb_head->trb_hw);
+-	}
+-	kfree(req->trb_head);
+-
+-	usb_gadget_unmap_request(&u3d->gadget, &req->req, mv_u3d_ep_dir(ep));
+-
+-	if (status && (status != -ESHUTDOWN)) {
+-		dev_dbg(u3d->dev, "complete %s req %p stat %d len %u/%u",
+-			ep->ep.name, &req->req, status,
+-			req->req.actual, req->req.length);
+-	}
+-
+-	spin_unlock(&ep->u3d->lock);
+-
+-	usb_gadget_giveback_request(&ep->ep, &req->req);
+-
+-	spin_lock(&ep->u3d->lock);
+-}
+-
+-static int mv_u3d_queue_trb(struct mv_u3d_ep *ep, struct mv_u3d_req *req)
+-{
+-	u32 tmp, direction;
+-	struct mv_u3d *u3d;
+-	struct mv_u3d_ep_context *ep_context;
+-	int retval = 0;
+-
+-	u3d = ep->u3d;
+-	direction = mv_u3d_ep_dir(ep);
+-
+-	/* ep0 in and out share the same ep context slot 1*/
+-	if (ep->ep_num == 0)
+-		ep_context = &(u3d->ep_context[1]);
+-	else
+-		ep_context = &(u3d->ep_context[ep->ep_num * 2 + direction]);
+-
+-	/* check if the pipe is empty or not */
+-	if (!list_empty(&ep->queue)) {
+-		dev_err(u3d->dev, "add trb to non-empty queue!\n");
+-		retval = -ENOMEM;
+-		WARN_ON(1);
+-	} else {
+-		ep_context->rsvd0 = cpu_to_le32(1);
+-		ep_context->rsvd1 = 0;
+-
+-		/* Configure the trb address and set the DCS bit.
+-		 * Both DCS bit and own bit in trb should be set.
+-		 */
+-		ep_context->trb_addr_lo =
+-			cpu_to_le32(req->trb_head->trb_dma | DCS_ENABLE);
+-		ep_context->trb_addr_hi = 0;
+-
+-		/* Ensure that updates to the EP Context will
+-		 * occure before Ring Bell.
+-		 */
+-		wmb();
+-
+-		/* ring bell the ep */
+-		if (ep->ep_num == 0)
+-			tmp = 0x1;
+-		else
+-			tmp = ep->ep_num * 2
+-				+ ((direction == MV_U3D_EP_DIR_OUT) ? 0 : 1);
+-
+-		iowrite32(tmp, &u3d->op_regs->doorbell);
+-	}
+-	return retval;
+-}
+-
+-static struct mv_u3d_trb *mv_u3d_build_trb_one(struct mv_u3d_req *req,
+-				unsigned *length, dma_addr_t *dma)
+-{
+-	u32 temp;
+-	unsigned int direction;
+-	struct mv_u3d_trb *trb;
+-	struct mv_u3d_trb_hw *trb_hw;
+-	struct mv_u3d *u3d;
+-
+-	/* how big will this transfer be? */
+-	*length = req->req.length - req->req.actual;
+-	BUG_ON(*length > (unsigned)MV_U3D_EP_MAX_LENGTH_TRANSFER);
+-
+-	u3d = req->ep->u3d;
+-
+-	trb = kzalloc(sizeof(*trb), GFP_ATOMIC);
+-	if (!trb)
+-		return NULL;
+-
+-	/*
+-	 * Be careful that no _GFP_HIGHMEM is set,
+-	 * or we can not use dma_to_virt
+-	 * cannot use GFP_KERNEL in spin lock
+-	 */
+-	trb_hw = dma_pool_alloc(u3d->trb_pool, GFP_ATOMIC, dma);
+-	if (!trb_hw) {
+-		kfree(trb);
+-		dev_err(u3d->dev,
+-			"%s, dma_pool_alloc fail\n", __func__);
+-		return NULL;
+-	}
+-	trb->trb_dma = *dma;
+-	trb->trb_hw = trb_hw;
+-
+-	/* initialize buffer page pointers */
+-	temp = (u32)(req->req.dma + req->req.actual);
+-
+-	trb_hw->buf_addr_lo = cpu_to_le32(temp);
+-	trb_hw->buf_addr_hi = 0;
+-	trb_hw->trb_len = cpu_to_le32(*length);
+-	trb_hw->ctrl.own = 1;
+-
+-	if (req->ep->ep_num == 0)
+-		trb_hw->ctrl.type = TYPE_DATA;
+-	else
+-		trb_hw->ctrl.type = TYPE_NORMAL;
+-
+-	req->req.actual += *length;
+-
+-	direction = mv_u3d_ep_dir(req->ep);
+-	if (direction == MV_U3D_EP_DIR_IN)
+-		trb_hw->ctrl.dir = 1;
+-	else
+-		trb_hw->ctrl.dir = 0;
+-
+-	/* Enable interrupt for the last trb of a request */
+-	if (!req->req.no_interrupt)
+-		trb_hw->ctrl.ioc = 1;
+-
+-	trb_hw->ctrl.chain = 0;
+-
+-	wmb();
+-	return trb;
+-}
+-
+-static int mv_u3d_build_trb_chain(struct mv_u3d_req *req, unsigned *length,
+-		struct mv_u3d_trb *trb, int *is_last)
+-{
+-	u32 temp;
+-	unsigned int direction;
+-	struct mv_u3d *u3d;
+-
+-	/* how big will this transfer be? */
+-	*length = min(req->req.length - req->req.actual,
+-			(unsigned)MV_U3D_EP_MAX_LENGTH_TRANSFER);
+-
+-	u3d = req->ep->u3d;
+-
+-	trb->trb_dma = 0;
+-
+-	/* initialize buffer page pointers */
+-	temp = (u32)(req->req.dma + req->req.actual);
+-
+-	trb->trb_hw->buf_addr_lo = cpu_to_le32(temp);
+-	trb->trb_hw->buf_addr_hi = 0;
+-	trb->trb_hw->trb_len = cpu_to_le32(*length);
+-	trb->trb_hw->ctrl.own = 1;
+-
+-	if (req->ep->ep_num == 0)
+-		trb->trb_hw->ctrl.type = TYPE_DATA;
+-	else
+-		trb->trb_hw->ctrl.type = TYPE_NORMAL;
+-
+-	req->req.actual += *length;
+-
+-	direction = mv_u3d_ep_dir(req->ep);
+-	if (direction == MV_U3D_EP_DIR_IN)
+-		trb->trb_hw->ctrl.dir = 1;
+-	else
+-		trb->trb_hw->ctrl.dir = 0;
+-
+-	/* zlp is needed if req->req.zero is set */
+-	if (req->req.zero) {
+-		if (*length == 0 || (*length % req->ep->ep.maxpacket) != 0)
+-			*is_last = 1;
+-		else
+-			*is_last = 0;
+-	} else if (req->req.length == req->req.actual)
+-		*is_last = 1;
+-	else
+-		*is_last = 0;
+-
+-	/* Enable interrupt for the last trb of a request */
+-	if (*is_last && !req->req.no_interrupt)
+-		trb->trb_hw->ctrl.ioc = 1;
+-
+-	if (*is_last)
+-		trb->trb_hw->ctrl.chain = 0;
+-	else {
+-		trb->trb_hw->ctrl.chain = 1;
+-		dev_dbg(u3d->dev, "chain trb\n");
+-	}
+-
+-	wmb();
+-
+-	return 0;
+-}
+-
+-/* generate TRB linked list for a request
+- * usb controller only supports continous trb chain,
+- * that trb structure physical address should be continous.
+- */
+-static int mv_u3d_req_to_trb(struct mv_u3d_req *req)
+-{
+-	unsigned count;
+-	int is_last;
+-	struct mv_u3d_trb *trb;
+-	struct mv_u3d_trb_hw *trb_hw;
+-	struct mv_u3d *u3d;
+-	dma_addr_t dma;
+-	unsigned length;
+-	unsigned trb_num;
+-
+-	u3d = req->ep->u3d;
+-
+-	INIT_LIST_HEAD(&req->trb_list);
+-
+-	length = req->req.length - req->req.actual;
+-	/* normally the request transfer length is less than 16KB.
+-	 * we use buil_trb_one() to optimize it.
+-	 */
+-	if (length <= (unsigned)MV_U3D_EP_MAX_LENGTH_TRANSFER) {
+-		trb = mv_u3d_build_trb_one(req, &count, &dma);
+-		list_add_tail(&trb->trb_list, &req->trb_list);
+-		req->trb_head = trb;
+-		req->trb_count = 1;
+-		req->chain = 0;
+-	} else {
+-		trb_num = length / MV_U3D_EP_MAX_LENGTH_TRANSFER;
+-		if (length % MV_U3D_EP_MAX_LENGTH_TRANSFER)
+-			trb_num++;
+-
+-		trb = kcalloc(trb_num, sizeof(*trb), GFP_ATOMIC);
+-		if (!trb)
+-			return -ENOMEM;
+-
+-		trb_hw = kcalloc(trb_num, sizeof(*trb_hw), GFP_ATOMIC);
+-		if (!trb_hw) {
+-			kfree(trb);
+-			return -ENOMEM;
+-		}
+-
+-		do {
+-			trb->trb_hw = trb_hw;
+-			if (mv_u3d_build_trb_chain(req, &count,
+-						trb, &is_last)) {
+-				dev_err(u3d->dev,
+-					"%s, mv_u3d_build_trb_chain fail\n",
+-					__func__);
+-				return -EIO;
+-			}
+-
+-			list_add_tail(&trb->trb_list, &req->trb_list);
+-			req->trb_count++;
+-			trb++;
+-			trb_hw++;
+-		} while (!is_last);
+-
+-		req->trb_head = list_entry(req->trb_list.next,
+-					struct mv_u3d_trb, trb_list);
+-		req->trb_head->trb_dma = dma_map_single(u3d->gadget.dev.parent,
+-					req->trb_head->trb_hw,
+-					trb_num * sizeof(*trb_hw),
+-					DMA_BIDIRECTIONAL);
+-		if (dma_mapping_error(u3d->gadget.dev.parent,
+-					req->trb_head->trb_dma)) {
+-			kfree(req->trb_head->trb_hw);
+-			kfree(req->trb_head);
+-			return -EFAULT;
+-		}
+-
+-		req->chain = 1;
+-	}
+-
+-	return 0;
+-}
+-
+-static int
+-mv_u3d_start_queue(struct mv_u3d_ep *ep)
+-{
+-	struct mv_u3d *u3d = ep->u3d;
+-	struct mv_u3d_req *req;
+-	int ret;
+-
+-	if (!list_empty(&ep->req_list) && !ep->processing)
+-		req = list_entry(ep->req_list.next, struct mv_u3d_req, list);
+-	else
+-		return 0;
+-
+-	ep->processing = 1;
+-
+-	/* set up dma mapping */
+-	ret = usb_gadget_map_request(&u3d->gadget, &req->req,
+-					mv_u3d_ep_dir(ep));
+-	if (ret)
+-		goto break_processing;
+-
+-	req->req.status = -EINPROGRESS;
+-	req->req.actual = 0;
+-	req->trb_count = 0;
+-
+-	/* build trbs */
+-	ret = mv_u3d_req_to_trb(req);
+-	if (ret) {
+-		dev_err(u3d->dev, "%s, mv_u3d_req_to_trb fail\n", __func__);
+-		goto break_processing;
+-	}
+-
+-	/* and push them to device queue */
+-	ret = mv_u3d_queue_trb(ep, req);
+-	if (ret)
+-		goto break_processing;
+-
+-	/* irq handler advances the queue */
+-	list_add_tail(&req->queue, &ep->queue);
+-
+-	return 0;
+-
+-break_processing:
+-	ep->processing = 0;
+-	return ret;
+-}
+-
+-static int mv_u3d_ep_enable(struct usb_ep *_ep,
+-		const struct usb_endpoint_descriptor *desc)
+-{
+-	struct mv_u3d *u3d;
+-	struct mv_u3d_ep *ep;
+-	u16 max = 0;
+-	unsigned maxburst = 0;
+-	u32 epxcr, direction;
+-
+-	if (!_ep || !desc || desc->bDescriptorType != USB_DT_ENDPOINT)
+-		return -EINVAL;
+-
+-	ep = container_of(_ep, struct mv_u3d_ep, ep);
+-	u3d = ep->u3d;
+-
+-	if (!u3d->driver || u3d->gadget.speed == USB_SPEED_UNKNOWN)
+-		return -ESHUTDOWN;
+-
+-	direction = mv_u3d_ep_dir(ep);
+-	max = le16_to_cpu(desc->wMaxPacketSize);
+-
+-	if (!_ep->maxburst)
+-		_ep->maxburst = 1;
+-	maxburst = _ep->maxburst;
+-
+-	/* Set the max burst size */
+-	switch (desc->bmAttributes & USB_ENDPOINT_XFERTYPE_MASK) {
+-	case USB_ENDPOINT_XFER_BULK:
+-		if (maxburst > 16) {
+-			dev_dbg(u3d->dev,
+-				"max burst should not be greater "
+-				"than 16 on bulk ep\n");
+-			maxburst = 1;
+-			_ep->maxburst = maxburst;
+-		}
+-		dev_dbg(u3d->dev,
+-			"maxburst: %d on bulk %s\n", maxburst, ep->name);
+-		break;
+-	case USB_ENDPOINT_XFER_CONTROL:
+-		/* control transfer only supports maxburst as one */
+-		maxburst = 1;
+-		_ep->maxburst = maxburst;
+-		break;
+-	case USB_ENDPOINT_XFER_INT:
+-		if (maxburst != 1) {
+-			dev_dbg(u3d->dev,
+-				"max burst should be 1 on int ep "
+-				"if transfer size is not 1024\n");
+-			maxburst = 1;
+-			_ep->maxburst = maxburst;
+-		}
+-		break;
+-	case USB_ENDPOINT_XFER_ISOC:
+-		if (maxburst != 1) {
+-			dev_dbg(u3d->dev,
+-				"max burst should be 1 on isoc ep "
+-				"if transfer size is not 1024\n");
+-			maxburst = 1;
+-			_ep->maxburst = maxburst;
+-		}
+-		break;
+-	default:
+-		goto en_done;
+-	}
+-
+-	ep->ep.maxpacket = max;
+-	ep->ep.desc = desc;
+-	ep->enabled = 1;
+-
+-	/* Enable the endpoint for Rx or Tx and set the endpoint type */
+-	if (direction == MV_U3D_EP_DIR_OUT) {
+-		epxcr = ioread32(&u3d->vuc_regs->epcr[ep->ep_num].epxoutcr0);
+-		epxcr |= MV_U3D_EPXCR_EP_INIT;
+-		iowrite32(epxcr, &u3d->vuc_regs->epcr[ep->ep_num].epxoutcr0);
+-		udelay(5);
+-		epxcr &= ~MV_U3D_EPXCR_EP_INIT;
+-		iowrite32(epxcr, &u3d->vuc_regs->epcr[ep->ep_num].epxoutcr0);
+-
+-		epxcr = ((max << MV_U3D_EPXCR_MAX_PACKET_SIZE_SHIFT)
+-		      | ((maxburst - 1) << MV_U3D_EPXCR_MAX_BURST_SIZE_SHIFT)
+-		      | (1 << MV_U3D_EPXCR_EP_ENABLE_SHIFT)
+-		      | (desc->bmAttributes & USB_ENDPOINT_XFERTYPE_MASK));
+-		iowrite32(epxcr, &u3d->vuc_regs->epcr[ep->ep_num].epxoutcr1);
+-	} else {
+-		epxcr = ioread32(&u3d->vuc_regs->epcr[ep->ep_num].epxincr0);
+-		epxcr |= MV_U3D_EPXCR_EP_INIT;
+-		iowrite32(epxcr, &u3d->vuc_regs->epcr[ep->ep_num].epxincr0);
+-		udelay(5);
+-		epxcr &= ~MV_U3D_EPXCR_EP_INIT;
+-		iowrite32(epxcr, &u3d->vuc_regs->epcr[ep->ep_num].epxincr0);
+-
+-		epxcr = ((max << MV_U3D_EPXCR_MAX_PACKET_SIZE_SHIFT)
+-		      | ((maxburst - 1) << MV_U3D_EPXCR_MAX_BURST_SIZE_SHIFT)
+-		      | (1 << MV_U3D_EPXCR_EP_ENABLE_SHIFT)
+-		      | (desc->bmAttributes & USB_ENDPOINT_XFERTYPE_MASK));
+-		iowrite32(epxcr, &u3d->vuc_regs->epcr[ep->ep_num].epxincr1);
+-	}
+-
+-	return 0;
+-en_done:
+-	return -EINVAL;
+-}
+-
+-static int  mv_u3d_ep_disable(struct usb_ep *_ep)
+-{
+-	struct mv_u3d *u3d;
+-	struct mv_u3d_ep *ep;
+-	u32 epxcr, direction;
+-	unsigned long flags;
+-
+-	if (!_ep)
+-		return -EINVAL;
+-
+-	ep = container_of(_ep, struct mv_u3d_ep, ep);
+-	if (!ep->ep.desc)
+-		return -EINVAL;
+-
+-	u3d = ep->u3d;
+-
+-	direction = mv_u3d_ep_dir(ep);
+-
+-	/* nuke all pending requests (does flush) */
+-	spin_lock_irqsave(&u3d->lock, flags);
+-	mv_u3d_nuke(ep, -ESHUTDOWN);
+-	spin_unlock_irqrestore(&u3d->lock, flags);
+-
+-	/* Disable the endpoint for Rx or Tx and reset the endpoint type */
+-	if (direction == MV_U3D_EP_DIR_OUT) {
+-		epxcr = ioread32(&u3d->vuc_regs->epcr[ep->ep_num].epxoutcr1);
+-		epxcr &= ~((1 << MV_U3D_EPXCR_EP_ENABLE_SHIFT)
+-		      | USB_ENDPOINT_XFERTYPE_MASK);
+-		iowrite32(epxcr, &u3d->vuc_regs->epcr[ep->ep_num].epxoutcr1);
+-	} else {
+-		epxcr = ioread32(&u3d->vuc_regs->epcr[ep->ep_num].epxincr1);
+-		epxcr &= ~((1 << MV_U3D_EPXCR_EP_ENABLE_SHIFT)
+-		      | USB_ENDPOINT_XFERTYPE_MASK);
+-		iowrite32(epxcr, &u3d->vuc_regs->epcr[ep->ep_num].epxincr1);
+-	}
+-
+-	ep->enabled = 0;
+-
+-	ep->ep.desc = NULL;
+-	return 0;
+-}
+-
+-static struct usb_request *
+-mv_u3d_alloc_request(struct usb_ep *_ep, gfp_t gfp_flags)
+-{
+-	struct mv_u3d_req *req;
+-
+-	req = kzalloc(sizeof *req, gfp_flags);
+-	if (!req)
+-		return NULL;
+-
+-	INIT_LIST_HEAD(&req->queue);
+-
+-	return &req->req;
+-}
+-
+-static void mv_u3d_free_request(struct usb_ep *_ep, struct usb_request *_req)
+-{
+-	struct mv_u3d_req *req = container_of(_req, struct mv_u3d_req, req);
+-
+-	kfree(req);
+-}
+-
+-static void mv_u3d_ep_fifo_flush(struct usb_ep *_ep)
+-{
+-	struct mv_u3d *u3d;
+-	u32 direction;
+-	struct mv_u3d_ep *ep = container_of(_ep, struct mv_u3d_ep, ep);
+-	unsigned int loops;
+-	u32 tmp;
+-
+-	/* if endpoint is not enabled, cannot flush endpoint */
+-	if (!ep->enabled)
+-		return;
+-
+-	u3d = ep->u3d;
+-	direction = mv_u3d_ep_dir(ep);
+-
+-	/* ep0 need clear bit after flushing fifo. */
+-	if (!ep->ep_num) {
+-		if (direction == MV_U3D_EP_DIR_OUT) {
+-			tmp = ioread32(&u3d->vuc_regs->epcr[0].epxoutcr0);
+-			tmp |= MV_U3D_EPXCR_EP_FLUSH;
+-			iowrite32(tmp, &u3d->vuc_regs->epcr[0].epxoutcr0);
+-			udelay(10);
+-			tmp &= ~MV_U3D_EPXCR_EP_FLUSH;
+-			iowrite32(tmp, &u3d->vuc_regs->epcr[0].epxoutcr0);
+-		} else {
+-			tmp = ioread32(&u3d->vuc_regs->epcr[0].epxincr0);
+-			tmp |= MV_U3D_EPXCR_EP_FLUSH;
+-			iowrite32(tmp, &u3d->vuc_regs->epcr[0].epxincr0);
+-			udelay(10);
+-			tmp &= ~MV_U3D_EPXCR_EP_FLUSH;
+-			iowrite32(tmp, &u3d->vuc_regs->epcr[0].epxincr0);
+-		}
+-		return;
+-	}
+-
+-	if (direction == MV_U3D_EP_DIR_OUT) {
+-		tmp = ioread32(&u3d->vuc_regs->epcr[ep->ep_num].epxoutcr0);
+-		tmp |= MV_U3D_EPXCR_EP_FLUSH;
+-		iowrite32(tmp, &u3d->vuc_regs->epcr[ep->ep_num].epxoutcr0);
+-
+-		/* Wait until flushing completed */
+-		loops = LOOPS(MV_U3D_FLUSH_TIMEOUT);
+-		while (ioread32(&u3d->vuc_regs->epcr[ep->ep_num].epxoutcr0) &
+-			MV_U3D_EPXCR_EP_FLUSH) {
+-			/*
+-			 * EP_FLUSH bit should be cleared to indicate this
+-			 * operation is complete
+-			 */
+-			if (loops == 0) {
+-				dev_dbg(u3d->dev,
+-				    "EP FLUSH TIMEOUT for ep%d%s\n", ep->ep_num,
+-				    direction ? "in" : "out");
+-				return;
+-			}
+-			loops--;
+-			udelay(LOOPS_USEC);
+-		}
+-	} else {	/* EP_DIR_IN */
+-		tmp = ioread32(&u3d->vuc_regs->epcr[ep->ep_num].epxincr0);
+-		tmp |= MV_U3D_EPXCR_EP_FLUSH;
+-		iowrite32(tmp, &u3d->vuc_regs->epcr[ep->ep_num].epxincr0);
+-
+-		/* Wait until flushing completed */
+-		loops = LOOPS(MV_U3D_FLUSH_TIMEOUT);
+-		while (ioread32(&u3d->vuc_regs->epcr[ep->ep_num].epxincr0) &
+-			MV_U3D_EPXCR_EP_FLUSH) {
+-			/*
+-			* EP_FLUSH bit should be cleared to indicate this
+-			* operation is complete
+-			*/
+-			if (loops == 0) {
+-				dev_dbg(u3d->dev,
+-				    "EP FLUSH TIMEOUT for ep%d%s\n", ep->ep_num,
+-				    direction ? "in" : "out");
+-				return;
+-			}
+-			loops--;
+-			udelay(LOOPS_USEC);
+-		}
+-	}
+-}
+-
+-/* queues (submits) an I/O request to an endpoint */
+-static int
+-mv_u3d_ep_queue(struct usb_ep *_ep, struct usb_request *_req, gfp_t gfp_flags)
+-{
+-	struct mv_u3d_ep *ep;
+-	struct mv_u3d_req *req;
+-	struct mv_u3d *u3d;
+-	unsigned long flags;
+-	int is_first_req = 0;
+-
+-	if (unlikely(!_ep || !_req))
+-		return -EINVAL;
+-
+-	ep = container_of(_ep, struct mv_u3d_ep, ep);
+-	u3d = ep->u3d;
+-
+-	req = container_of(_req, struct mv_u3d_req, req);
+-
+-	if (!ep->ep_num
+-		&& u3d->ep0_state == MV_U3D_STATUS_STAGE
+-		&& !_req->length) {
+-		dev_dbg(u3d->dev, "ep0 status stage\n");
+-		u3d->ep0_state = MV_U3D_WAIT_FOR_SETUP;
+-		return 0;
+-	}
+-
+-	dev_dbg(u3d->dev, "%s: %s, req: 0x%p\n",
+-			__func__, _ep->name, req);
+-
+-	/* catch various bogus parameters */
+-	if (!req->req.complete || !req->req.buf
+-			|| !list_empty(&req->queue)) {
+-		dev_err(u3d->dev,
+-			"%s, bad params, _req: 0x%p,"
+-			"req->req.complete: 0x%p, req->req.buf: 0x%p,"
+-			"list_empty: 0x%x\n",
+-			__func__, _req,
+-			req->req.complete, req->req.buf,
+-			list_empty(&req->queue));
+-		return -EINVAL;
+-	}
+-	if (unlikely(!ep->ep.desc)) {
+-		dev_err(u3d->dev, "%s, bad ep\n", __func__);
+-		return -EINVAL;
+-	}
+-	if (ep->ep.desc->bmAttributes == USB_ENDPOINT_XFER_ISOC) {
+-		if (req->req.length > ep->ep.maxpacket)
+-			return -EMSGSIZE;
+-	}
+-
+-	if (!u3d->driver || u3d->gadget.speed == USB_SPEED_UNKNOWN) {
+-		dev_err(u3d->dev,
+-			"bad params of driver/speed\n");
+-		return -ESHUTDOWN;
+-	}
+-
+-	req->ep = ep;
+-
+-	/* Software list handles usb request. */
+-	spin_lock_irqsave(&ep->req_lock, flags);
+-	is_first_req = list_empty(&ep->req_list);
+-	list_add_tail(&req->list, &ep->req_list);
+-	spin_unlock_irqrestore(&ep->req_lock, flags);
+-	if (!is_first_req) {
+-		dev_dbg(u3d->dev, "list is not empty\n");
+-		return 0;
+-	}
+-
+-	dev_dbg(u3d->dev, "call mv_u3d_start_queue from usb_ep_queue\n");
+-	spin_lock_irqsave(&u3d->lock, flags);
+-	mv_u3d_start_queue(ep);
+-	spin_unlock_irqrestore(&u3d->lock, flags);
+-	return 0;
+-}
+-
+-/* dequeues (cancels, unlinks) an I/O request from an endpoint */
+-static int mv_u3d_ep_dequeue(struct usb_ep *_ep, struct usb_request *_req)
+-{
+-	struct mv_u3d_ep *ep;
+-	struct mv_u3d_req *req = NULL, *iter;
+-	struct mv_u3d *u3d;
+-	struct mv_u3d_ep_context *ep_context;
+-	struct mv_u3d_req *next_req;
+-
+-	unsigned long flags;
+-	int ret = 0;
+-
+-	if (!_ep || !_req)
+-		return -EINVAL;
+-
+-	ep = container_of(_ep, struct mv_u3d_ep, ep);
+-	u3d = ep->u3d;
+-
+-	spin_lock_irqsave(&ep->u3d->lock, flags);
+-
+-	/* make sure it's actually queued on this endpoint */
+-	list_for_each_entry(iter, &ep->queue, queue) {
+-		if (&iter->req != _req)
+-			continue;
+-		req = iter;
+-		break;
+-	}
+-	if (!req) {
+-		ret = -EINVAL;
+-		goto out;
+-	}
+-
+-	/* The request is in progress, or completed but not dequeued */
+-	if (ep->queue.next == &req->queue) {
+-		_req->status = -ECONNRESET;
+-		mv_u3d_ep_fifo_flush(_ep);
+-
+-		/* The request isn't the last request in this ep queue */
+-		if (req->queue.next != &ep->queue) {
+-			dev_dbg(u3d->dev,
+-				"it is the last request in this ep queue\n");
+-			ep_context = ep->ep_context;
+-			next_req = list_entry(req->queue.next,
+-					struct mv_u3d_req, queue);
+-
+-			/* Point first TRB of next request to the EP context. */
+-			iowrite32((unsigned long) next_req->trb_head,
+-					&ep_context->trb_addr_lo);
+-		} else {
+-			struct mv_u3d_ep_context *ep_context;
+-			ep_context = ep->ep_context;
+-			ep_context->trb_addr_lo = 0;
+-			ep_context->trb_addr_hi = 0;
+-		}
+-
+-	} else
+-		WARN_ON(1);
+-
+-	mv_u3d_done(ep, req, -ECONNRESET);
+-
+-	/* remove the req from the ep req list */
+-	if (!list_empty(&ep->req_list)) {
+-		struct mv_u3d_req *curr_req;
+-		curr_req = list_entry(ep->req_list.next,
+-					struct mv_u3d_req, list);
+-		if (curr_req == req) {
+-			list_del_init(&req->list);
+-			ep->processing = 0;
+-		}
+-	}
+-
+-out:
+-	spin_unlock_irqrestore(&ep->u3d->lock, flags);
+-	return ret;
+-}
+-
+-static void
+-mv_u3d_ep_set_stall(struct mv_u3d *u3d, u8 ep_num, u8 direction, int stall)
+-{
+-	u32 tmp;
+-	struct mv_u3d_ep *ep = u3d->eps;
+-
+-	dev_dbg(u3d->dev, "%s\n", __func__);
+-	if (direction == MV_U3D_EP_DIR_OUT) {
+-		tmp = ioread32(&u3d->vuc_regs->epcr[ep->ep_num].epxoutcr0);
+-		if (stall)
+-			tmp |= MV_U3D_EPXCR_EP_HALT;
+-		else
+-			tmp &= ~MV_U3D_EPXCR_EP_HALT;
+-		iowrite32(tmp, &u3d->vuc_regs->epcr[ep->ep_num].epxoutcr0);
+-	} else {
+-		tmp = ioread32(&u3d->vuc_regs->epcr[ep->ep_num].epxincr0);
+-		if (stall)
+-			tmp |= MV_U3D_EPXCR_EP_HALT;
+-		else
+-			tmp &= ~MV_U3D_EPXCR_EP_HALT;
+-		iowrite32(tmp, &u3d->vuc_regs->epcr[ep->ep_num].epxincr0);
+-	}
+-}
+-
+-static int mv_u3d_ep_set_halt_wedge(struct usb_ep *_ep, int halt, int wedge)
+-{
+-	struct mv_u3d_ep *ep;
+-	unsigned long flags;
+-	int status = 0;
+-	struct mv_u3d *u3d;
+-
+-	ep = container_of(_ep, struct mv_u3d_ep, ep);
+-	u3d = ep->u3d;
+-	if (!ep->ep.desc) {
+-		status = -EINVAL;
+-		goto out;
+-	}
+-
+-	if (ep->ep.desc->bmAttributes == USB_ENDPOINT_XFER_ISOC) {
+-		status = -EOPNOTSUPP;
+-		goto out;
+-	}
+-
+-	/*
+-	 * Attempt to halt IN ep will fail if any transfer requests
+-	 * are still queue
+-	 */
+-	if (halt && (mv_u3d_ep_dir(ep) == MV_U3D_EP_DIR_IN)
+-			&& !list_empty(&ep->queue)) {
+-		status = -EAGAIN;
+-		goto out;
+-	}
+-
+-	spin_lock_irqsave(&ep->u3d->lock, flags);
+-	mv_u3d_ep_set_stall(u3d, ep->ep_num, mv_u3d_ep_dir(ep), halt);
+-	if (halt && wedge)
+-		ep->wedge = 1;
+-	else if (!halt)
+-		ep->wedge = 0;
+-	spin_unlock_irqrestore(&ep->u3d->lock, flags);
+-
+-	if (ep->ep_num == 0)
+-		u3d->ep0_dir = MV_U3D_EP_DIR_OUT;
+-out:
+-	return status;
+-}
+-
+-static int mv_u3d_ep_set_halt(struct usb_ep *_ep, int halt)
+-{
+-	return mv_u3d_ep_set_halt_wedge(_ep, halt, 0);
+-}
+-
+-static int mv_u3d_ep_set_wedge(struct usb_ep *_ep)
+-{
+-	return mv_u3d_ep_set_halt_wedge(_ep, 1, 1);
+-}
+-
+-static const struct usb_ep_ops mv_u3d_ep_ops = {
+-	.enable		= mv_u3d_ep_enable,
+-	.disable	= mv_u3d_ep_disable,
+-
+-	.alloc_request	= mv_u3d_alloc_request,
+-	.free_request	= mv_u3d_free_request,
+-
+-	.queue		= mv_u3d_ep_queue,
+-	.dequeue	= mv_u3d_ep_dequeue,
+-
+-	.set_wedge	= mv_u3d_ep_set_wedge,
+-	.set_halt	= mv_u3d_ep_set_halt,
+-	.fifo_flush	= mv_u3d_ep_fifo_flush,
+-};
+-
+-static void mv_u3d_controller_stop(struct mv_u3d *u3d)
+-{
+-	u32 tmp;
+-
+-	if (!u3d->clock_gating && u3d->vbus_valid_detect)
+-		iowrite32(MV_U3D_INTR_ENABLE_VBUS_VALID,
+-				&u3d->vuc_regs->intrenable);
+-	else
+-		iowrite32(0, &u3d->vuc_regs->intrenable);
+-	iowrite32(~0x0, &u3d->vuc_regs->endcomplete);
+-	iowrite32(~0x0, &u3d->vuc_regs->trbunderrun);
+-	iowrite32(~0x0, &u3d->vuc_regs->trbcomplete);
+-	iowrite32(~0x0, &u3d->vuc_regs->linkchange);
+-	iowrite32(0x1, &u3d->vuc_regs->setuplock);
+-
+-	/* Reset the RUN bit in the command register to stop USB */
+-	tmp = ioread32(&u3d->op_regs->usbcmd);
+-	tmp &= ~MV_U3D_CMD_RUN_STOP;
+-	iowrite32(tmp, &u3d->op_regs->usbcmd);
+-	dev_dbg(u3d->dev, "after u3d_stop, USBCMD 0x%x\n",
+-		ioread32(&u3d->op_regs->usbcmd));
+-}
+-
+-static void mv_u3d_controller_start(struct mv_u3d *u3d)
+-{
+-	u32 usbintr;
+-	u32 temp;
+-
+-	/* enable link LTSSM state machine */
+-	temp = ioread32(&u3d->vuc_regs->ltssm);
+-	temp |= MV_U3D_LTSSM_PHY_INIT_DONE;
+-	iowrite32(temp, &u3d->vuc_regs->ltssm);
+-
+-	/* Enable interrupts */
+-	usbintr = MV_U3D_INTR_ENABLE_LINK_CHG | MV_U3D_INTR_ENABLE_TXDESC_ERR |
+-		MV_U3D_INTR_ENABLE_RXDESC_ERR | MV_U3D_INTR_ENABLE_TX_COMPLETE |
+-		MV_U3D_INTR_ENABLE_RX_COMPLETE | MV_U3D_INTR_ENABLE_SETUP |
+-		(u3d->vbus_valid_detect ? MV_U3D_INTR_ENABLE_VBUS_VALID : 0);
+-	iowrite32(usbintr, &u3d->vuc_regs->intrenable);
+-
+-	/* Enable ctrl ep */
+-	iowrite32(0x1, &u3d->vuc_regs->ctrlepenable);
+-
+-	/* Set the Run bit in the command register */
+-	iowrite32(MV_U3D_CMD_RUN_STOP, &u3d->op_regs->usbcmd);
+-	dev_dbg(u3d->dev, "after u3d_start, USBCMD 0x%x\n",
+-		ioread32(&u3d->op_regs->usbcmd));
+-}
+-
+-static int mv_u3d_controller_reset(struct mv_u3d *u3d)
+-{
+-	unsigned int loops;
+-	u32 tmp;
+-
+-	/* Stop the controller */
+-	tmp = ioread32(&u3d->op_regs->usbcmd);
+-	tmp &= ~MV_U3D_CMD_RUN_STOP;
+-	iowrite32(tmp, &u3d->op_regs->usbcmd);
+-
+-	/* Reset the controller to get default values */
+-	iowrite32(MV_U3D_CMD_CTRL_RESET, &u3d->op_regs->usbcmd);
+-
+-	/* wait for reset to complete */
+-	loops = LOOPS(MV_U3D_RESET_TIMEOUT);
+-	while (ioread32(&u3d->op_regs->usbcmd) & MV_U3D_CMD_CTRL_RESET) {
+-		if (loops == 0) {
+-			dev_err(u3d->dev,
+-				"Wait for RESET completed TIMEOUT\n");
+-			return -ETIMEDOUT;
+-		}
+-		loops--;
+-		udelay(LOOPS_USEC);
+-	}
+-
+-	/* Configure the Endpoint Context Address */
+-	iowrite32(u3d->ep_context_dma, &u3d->op_regs->dcbaapl);
+-	iowrite32(0, &u3d->op_regs->dcbaaph);
+-
+-	return 0;
+-}
+-
+-static int mv_u3d_enable(struct mv_u3d *u3d)
+-{
+-	struct mv_usb_platform_data *pdata = dev_get_platdata(u3d->dev);
+-	int retval;
+-
+-	if (u3d->active)
+-		return 0;
+-
+-	if (!u3d->clock_gating) {
+-		u3d->active = 1;
+-		return 0;
+-	}
+-
+-	dev_dbg(u3d->dev, "enable u3d\n");
+-	clk_enable(u3d->clk);
+-	if (pdata->phy_init) {
+-		retval = pdata->phy_init(u3d->phy_regs);
+-		if (retval) {
+-			dev_err(u3d->dev,
+-				"init phy error %d\n", retval);
+-			clk_disable(u3d->clk);
+-			return retval;
+-		}
+-	}
+-	u3d->active = 1;
+-
+-	return 0;
+-}
+-
+-static void mv_u3d_disable(struct mv_u3d *u3d)
+-{
+-	struct mv_usb_platform_data *pdata = dev_get_platdata(u3d->dev);
+-	if (u3d->clock_gating && u3d->active) {
+-		dev_dbg(u3d->dev, "disable u3d\n");
+-		if (pdata->phy_deinit)
+-			pdata->phy_deinit(u3d->phy_regs);
+-		clk_disable(u3d->clk);
+-		u3d->active = 0;
+-	}
+-}
+-
+-static int mv_u3d_vbus_session(struct usb_gadget *gadget, int is_active)
+-{
+-	struct mv_u3d *u3d;
+-	unsigned long flags;
+-	int retval = 0;
+-
+-	u3d = container_of(gadget, struct mv_u3d, gadget);
+-
+-	spin_lock_irqsave(&u3d->lock, flags);
+-
+-	u3d->vbus_active = (is_active != 0);
+-	dev_dbg(u3d->dev, "%s: softconnect %d, vbus_active %d\n",
+-		__func__, u3d->softconnect, u3d->vbus_active);
+-	/*
+-	 * 1. external VBUS detect: we can disable/enable clock on demand.
+-	 * 2. UDC VBUS detect: we have to enable clock all the time.
+-	 * 3. No VBUS detect: we have to enable clock all the time.
+-	 */
+-	if (u3d->driver && u3d->softconnect && u3d->vbus_active) {
+-		retval = mv_u3d_enable(u3d);
+-		if (retval == 0) {
+-			/*
+-			 * after clock is disabled, we lost all the register
+-			 *  context. We have to re-init registers
+-			 */
+-			mv_u3d_controller_reset(u3d);
+-			mv_u3d_ep0_reset(u3d);
+-			mv_u3d_controller_start(u3d);
+-		}
+-	} else if (u3d->driver && u3d->softconnect) {
+-		if (!u3d->active)
+-			goto out;
+-
+-		/* stop all the transfer in queue*/
+-		mv_u3d_stop_activity(u3d, u3d->driver);
+-		mv_u3d_controller_stop(u3d);
+-		mv_u3d_disable(u3d);
+-	}
+-
+-out:
+-	spin_unlock_irqrestore(&u3d->lock, flags);
+-	return retval;
+-}
+-
+-/* constrain controller's VBUS power usage
+- * This call is used by gadget drivers during SET_CONFIGURATION calls,
+- * reporting how much power the device may consume.  For example, this
+- * could affect how quickly batteries are recharged.
+- *
+- * Returns zero on success, else negative errno.
+- */
+-static int mv_u3d_vbus_draw(struct usb_gadget *gadget, unsigned mA)
+-{
+-	struct mv_u3d *u3d = container_of(gadget, struct mv_u3d, gadget);
+-
+-	u3d->power = mA;
+-
+-	return 0;
+-}
+-
+-static int mv_u3d_pullup(struct usb_gadget *gadget, int is_on)
+-{
+-	struct mv_u3d *u3d = container_of(gadget, struct mv_u3d, gadget);
+-	unsigned long flags;
+-	int retval = 0;
+-
+-	spin_lock_irqsave(&u3d->lock, flags);
+-
+-	dev_dbg(u3d->dev, "%s: softconnect %d, vbus_active %d\n",
+-		__func__, u3d->softconnect, u3d->vbus_active);
+-	u3d->softconnect = (is_on != 0);
+-	if (u3d->driver && u3d->softconnect && u3d->vbus_active) {
+-		retval = mv_u3d_enable(u3d);
+-		if (retval == 0) {
+-			/*
+-			 * after clock is disabled, we lost all the register
+-			 *  context. We have to re-init registers
+-			 */
+-			mv_u3d_controller_reset(u3d);
+-			mv_u3d_ep0_reset(u3d);
+-			mv_u3d_controller_start(u3d);
+-		}
+-	} else if (u3d->driver && u3d->vbus_active) {
+-		/* stop all the transfer in queue*/
+-		mv_u3d_stop_activity(u3d, u3d->driver);
+-		mv_u3d_controller_stop(u3d);
+-		mv_u3d_disable(u3d);
+-	}
+-
+-	spin_unlock_irqrestore(&u3d->lock, flags);
+-
+-	return retval;
+-}
+-
+-static int mv_u3d_start(struct usb_gadget *g,
+-		struct usb_gadget_driver *driver)
+-{
+-	struct mv_u3d *u3d = container_of(g, struct mv_u3d, gadget);
+-	struct mv_usb_platform_data *pdata = dev_get_platdata(u3d->dev);
+-	unsigned long flags;
+-
+-	if (u3d->driver)
+-		return -EBUSY;
+-
+-	spin_lock_irqsave(&u3d->lock, flags);
+-
+-	if (!u3d->clock_gating) {
+-		clk_enable(u3d->clk);
+-		if (pdata->phy_init)
+-			pdata->phy_init(u3d->phy_regs);
+-	}
+-
+-	/* hook up the driver ... */
+-	u3d->driver = driver;
+-
+-	u3d->ep0_dir = USB_DIR_OUT;
+-
+-	spin_unlock_irqrestore(&u3d->lock, flags);
+-
+-	u3d->vbus_valid_detect = 1;
+-
+-	return 0;
+-}
+-
+-static int mv_u3d_stop(struct usb_gadget *g)
+-{
+-	struct mv_u3d *u3d = container_of(g, struct mv_u3d, gadget);
+-	struct mv_usb_platform_data *pdata = dev_get_platdata(u3d->dev);
+-	unsigned long flags;
+-
+-	u3d->vbus_valid_detect = 0;
+-	spin_lock_irqsave(&u3d->lock, flags);
+-
+-	/* enable clock to access controller register */
+-	clk_enable(u3d->clk);
+-	if (pdata->phy_init)
+-		pdata->phy_init(u3d->phy_regs);
+-
+-	mv_u3d_controller_stop(u3d);
+-	/* stop all usb activities */
+-	u3d->gadget.speed = USB_SPEED_UNKNOWN;
+-	mv_u3d_stop_activity(u3d, NULL);
+-	mv_u3d_disable(u3d);
+-
+-	if (pdata->phy_deinit)
+-		pdata->phy_deinit(u3d->phy_regs);
+-	clk_disable(u3d->clk);
+-
+-	spin_unlock_irqrestore(&u3d->lock, flags);
+-
+-	u3d->driver = NULL;
+-
+-	return 0;
+-}
+-
+-/* device controller usb_gadget_ops structure */
+-static const struct usb_gadget_ops mv_u3d_ops = {
+-	/* notify controller that VBUS is powered or not */
+-	.vbus_session	= mv_u3d_vbus_session,
+-
+-	/* constrain controller's VBUS power usage */
+-	.vbus_draw	= mv_u3d_vbus_draw,
+-
+-	.pullup		= mv_u3d_pullup,
+-	.udc_start	= mv_u3d_start,
+-	.udc_stop	= mv_u3d_stop,
+-};
+-
+-static int mv_u3d_eps_init(struct mv_u3d *u3d)
+-{
+-	struct mv_u3d_ep	*ep;
+-	char name[14];
+-	int i;
+-
+-	/* initialize ep0, ep0 in/out use eps[1] */
+-	ep = &u3d->eps[1];
+-	ep->u3d = u3d;
+-	strscpy(ep->name, "ep0");
+-	ep->ep.name = ep->name;
+-	ep->ep.ops = &mv_u3d_ep_ops;
+-	ep->wedge = 0;
+-	usb_ep_set_maxpacket_limit(&ep->ep, MV_U3D_EP0_MAX_PKT_SIZE);
+-	ep->ep.caps.type_control = true;
+-	ep->ep.caps.dir_in = true;
+-	ep->ep.caps.dir_out = true;
+-	ep->ep_num = 0;
+-	ep->ep.desc = &mv_u3d_ep0_desc;
+-	INIT_LIST_HEAD(&ep->queue);
+-	INIT_LIST_HEAD(&ep->req_list);
+-	ep->ep_type = USB_ENDPOINT_XFER_CONTROL;
+-
+-	/* add ep0 ep_context */
+-	ep->ep_context = &u3d->ep_context[1];
+-
+-	/* initialize other endpoints */
+-	for (i = 2; i < u3d->max_eps * 2; i++) {
+-		ep = &u3d->eps[i];
+-		if (i & 1) {
+-			snprintf(name, sizeof(name), "ep%din", i >> 1);
+-			ep->direction = MV_U3D_EP_DIR_IN;
+-			ep->ep.caps.dir_in = true;
+-		} else {
+-			snprintf(name, sizeof(name), "ep%dout", i >> 1);
+-			ep->direction = MV_U3D_EP_DIR_OUT;
+-			ep->ep.caps.dir_out = true;
+-		}
+-		ep->u3d = u3d;
+-		strscpy(ep->name, name);
+-		ep->ep.name = ep->name;
+-
+-		ep->ep.caps.type_iso = true;
+-		ep->ep.caps.type_bulk = true;
+-		ep->ep.caps.type_int = true;
+-
+-		ep->ep.ops = &mv_u3d_ep_ops;
+-		usb_ep_set_maxpacket_limit(&ep->ep, (unsigned short) ~0);
+-		ep->ep_num = i / 2;
+-
+-		INIT_LIST_HEAD(&ep->queue);
+-		list_add_tail(&ep->ep.ep_list, &u3d->gadget.ep_list);
+-
+-		INIT_LIST_HEAD(&ep->req_list);
+-		spin_lock_init(&ep->req_lock);
+-		ep->ep_context = &u3d->ep_context[i];
+-	}
+-
+-	return 0;
+-}
+-
+-/* delete all endpoint requests, called with spinlock held */
+-static void mv_u3d_nuke(struct mv_u3d_ep *ep, int status)
+-{
+-	/* endpoint fifo flush */
+-	mv_u3d_ep_fifo_flush(&ep->ep);
+-
+-	while (!list_empty(&ep->queue)) {
+-		struct mv_u3d_req *req = NULL;
+-		req = list_entry(ep->queue.next, struct mv_u3d_req, queue);
+-		mv_u3d_done(ep, req, status);
+-	}
+-}
+-
+-/* stop all USB activities */
+-static
+-void mv_u3d_stop_activity(struct mv_u3d *u3d, struct usb_gadget_driver *driver)
+-{
+-	struct mv_u3d_ep	*ep;
+-
+-	mv_u3d_nuke(&u3d->eps[1], -ESHUTDOWN);
+-
+-	list_for_each_entry(ep, &u3d->gadget.ep_list, ep.ep_list) {
+-		mv_u3d_nuke(ep, -ESHUTDOWN);
+-	}
+-
+-	/* report disconnect; the driver is already quiesced */
+-	if (driver) {
+-		spin_unlock(&u3d->lock);
+-		driver->disconnect(&u3d->gadget);
+-		spin_lock(&u3d->lock);
+-	}
+-}
+-
+-static void mv_u3d_irq_process_error(struct mv_u3d *u3d)
+-{
+-	/* Increment the error count */
+-	u3d->errors++;
+-	dev_err(u3d->dev, "%s\n", __func__);
+-}
+-
+-static void mv_u3d_irq_process_link_change(struct mv_u3d *u3d)
+-{
+-	u32 linkchange;
+-
+-	linkchange = ioread32(&u3d->vuc_regs->linkchange);
+-	iowrite32(linkchange, &u3d->vuc_regs->linkchange);
+-
+-	dev_dbg(u3d->dev, "linkchange: 0x%x\n", linkchange);
+-
+-	if (linkchange & MV_U3D_LINK_CHANGE_LINK_UP) {
+-		dev_dbg(u3d->dev, "link up: ltssm state: 0x%x\n",
+-			ioread32(&u3d->vuc_regs->ltssmstate));
+-
+-		u3d->usb_state = USB_STATE_DEFAULT;
+-		u3d->ep0_dir = MV_U3D_EP_DIR_OUT;
+-		u3d->ep0_state = MV_U3D_WAIT_FOR_SETUP;
+-
+-		/* set speed */
+-		u3d->gadget.speed = USB_SPEED_SUPER;
+-	}
+-
+-	if (linkchange & MV_U3D_LINK_CHANGE_SUSPEND) {
+-		dev_dbg(u3d->dev, "link suspend\n");
+-		u3d->resume_state = u3d->usb_state;
+-		u3d->usb_state = USB_STATE_SUSPENDED;
+-	}
+-
+-	if (linkchange & MV_U3D_LINK_CHANGE_RESUME) {
+-		dev_dbg(u3d->dev, "link resume\n");
+-		u3d->usb_state = u3d->resume_state;
+-		u3d->resume_state = 0;
+-	}
+-
+-	if (linkchange & MV_U3D_LINK_CHANGE_WRESET) {
+-		dev_dbg(u3d->dev, "warm reset\n");
+-		u3d->usb_state = USB_STATE_POWERED;
+-	}
+-
+-	if (linkchange & MV_U3D_LINK_CHANGE_HRESET) {
+-		dev_dbg(u3d->dev, "hot reset\n");
+-		u3d->usb_state = USB_STATE_DEFAULT;
+-	}
+-
+-	if (linkchange & MV_U3D_LINK_CHANGE_INACT)
+-		dev_dbg(u3d->dev, "inactive\n");
+-
+-	if (linkchange & MV_U3D_LINK_CHANGE_DISABLE_AFTER_U0)
+-		dev_dbg(u3d->dev, "ss.disabled\n");
+-
+-	if (linkchange & MV_U3D_LINK_CHANGE_VBUS_INVALID) {
+-		dev_dbg(u3d->dev, "vbus invalid\n");
+-		u3d->usb_state = USB_STATE_ATTACHED;
+-		u3d->vbus_valid_detect = 1;
+-		/* if external vbus detect is not supported,
+-		 * we handle it here.
+-		 */
+-		if (!u3d->vbus) {
+-			spin_unlock(&u3d->lock);
+-			mv_u3d_vbus_session(&u3d->gadget, 0);
+-			spin_lock(&u3d->lock);
+-		}
+-	}
+-}
+-
+-static void mv_u3d_ch9setaddress(struct mv_u3d *u3d,
+-				struct usb_ctrlrequest *setup)
+-{
+-	u32 tmp;
+-
+-	if (u3d->usb_state != USB_STATE_DEFAULT) {
+-		dev_err(u3d->dev,
+-			"%s, cannot setaddr in this state (%d)\n",
+-			__func__, u3d->usb_state);
+-		goto err;
+-	}
+-
+-	u3d->dev_addr = (u8)setup->wValue;
+-
+-	dev_dbg(u3d->dev, "%s: 0x%x\n", __func__, u3d->dev_addr);
+-
+-	if (u3d->dev_addr > 127) {
+-		dev_err(u3d->dev,
+-			"%s, u3d address is wrong (out of range)\n", __func__);
+-		u3d->dev_addr = 0;
+-		goto err;
+-	}
+-
+-	/* update usb state */
+-	u3d->usb_state = USB_STATE_ADDRESS;
+-
+-	/* set the new address */
+-	tmp = ioread32(&u3d->vuc_regs->devaddrtiebrkr);
+-	tmp &= ~0x7F;
+-	tmp |= (u32)u3d->dev_addr;
+-	iowrite32(tmp, &u3d->vuc_regs->devaddrtiebrkr);
+-
+-	return;
+-err:
+-	mv_u3d_ep0_stall(u3d);
+-}
+-
+-static int mv_u3d_is_set_configuration(struct usb_ctrlrequest *setup)
+-{
+-	if ((setup->bRequestType & USB_TYPE_MASK) == USB_TYPE_STANDARD)
+-		if (setup->bRequest == USB_REQ_SET_CONFIGURATION)
+-			return 1;
+-
+-	return 0;
+-}
+-
+-static void mv_u3d_handle_setup_packet(struct mv_u3d *u3d, u8 ep_num,
+-	struct usb_ctrlrequest *setup)
+-	__releases(&u3c->lock)
+-	__acquires(&u3c->lock)
+-{
+-	bool delegate = false;
+-
+-	mv_u3d_nuke(&u3d->eps[ep_num * 2 + MV_U3D_EP_DIR_IN], -ESHUTDOWN);
+-
+-	dev_dbg(u3d->dev, "SETUP %02x.%02x v%04x i%04x l%04x\n",
+-			setup->bRequestType, setup->bRequest,
+-			setup->wValue, setup->wIndex, setup->wLength);
+-
+-	/* We process some stardard setup requests here */
+-	if ((setup->bRequestType & USB_TYPE_MASK) == USB_TYPE_STANDARD) {
+-		switch (setup->bRequest) {
+-		case USB_REQ_GET_STATUS:
+-			delegate = true;
+-			break;
+-
+-		case USB_REQ_SET_ADDRESS:
+-			mv_u3d_ch9setaddress(u3d, setup);
+-			break;
+-
+-		case USB_REQ_CLEAR_FEATURE:
+-			delegate = true;
+-			break;
+-
+-		case USB_REQ_SET_FEATURE:
+-			delegate = true;
+-			break;
+-
+-		default:
+-			delegate = true;
+-		}
+-	} else
+-		delegate = true;
+-
+-	/* delegate USB standard requests to the gadget driver */
+-	if (delegate) {
+-		/* USB requests handled by gadget */
+-		if (setup->wLength) {
+-			/* DATA phase from gadget, STATUS phase from u3d */
+-			u3d->ep0_dir = (setup->bRequestType & USB_DIR_IN)
+-					? MV_U3D_EP_DIR_IN : MV_U3D_EP_DIR_OUT;
+-			spin_unlock(&u3d->lock);
+-			if (u3d->driver->setup(&u3d->gadget,
+-				&u3d->local_setup_buff) < 0) {
+-				dev_err(u3d->dev, "setup error!\n");
+-				mv_u3d_ep0_stall(u3d);
+-			}
+-			spin_lock(&u3d->lock);
+-		} else {
+-			/* no DATA phase, STATUS phase from gadget */
+-			u3d->ep0_dir = MV_U3D_EP_DIR_IN;
+-			u3d->ep0_state = MV_U3D_STATUS_STAGE;
+-			spin_unlock(&u3d->lock);
+-			if (u3d->driver->setup(&u3d->gadget,
+-				&u3d->local_setup_buff) < 0)
+-				mv_u3d_ep0_stall(u3d);
+-			spin_lock(&u3d->lock);
+-		}
+-
+-		if (mv_u3d_is_set_configuration(setup)) {
+-			dev_dbg(u3d->dev, "u3d configured\n");
+-			u3d->usb_state = USB_STATE_CONFIGURED;
+-		}
+-	}
+-}
+-
+-static void mv_u3d_get_setup_data(struct mv_u3d *u3d, u8 ep_num, u8 *buffer_ptr)
+-{
+-	struct mv_u3d_ep_context *epcontext;
+-
+-	epcontext = &u3d->ep_context[ep_num * 2 + MV_U3D_EP_DIR_IN];
+-
+-	/* Copy the setup packet to local buffer */
+-	memcpy(buffer_ptr, (u8 *) &epcontext->setup_buffer, 8);
+-}
+-
+-static void mv_u3d_irq_process_setup(struct mv_u3d *u3d)
+-{
+-	u32 tmp, i;
+-	/* Process all Setup packet received interrupts */
+-	tmp = ioread32(&u3d->vuc_regs->setuplock);
+-	if (tmp) {
+-		for (i = 0; i < u3d->max_eps; i++) {
+-			if (tmp & (1 << i)) {
+-				mv_u3d_get_setup_data(u3d, i,
+-					(u8 *)(&u3d->local_setup_buff));
+-				mv_u3d_handle_setup_packet(u3d, i,
+-					&u3d->local_setup_buff);
+-			}
+-		}
+-	}
+-
+-	iowrite32(tmp, &u3d->vuc_regs->setuplock);
+-}
+-
+-static void mv_u3d_irq_process_tr_complete(struct mv_u3d *u3d)
+-{
+-	u32 tmp, bit_pos;
+-	int i, ep_num = 0, direction = 0;
+-	struct mv_u3d_ep	*curr_ep;
+-	struct mv_u3d_req *curr_req, *temp_req;
+-	int status;
+-
+-	tmp = ioread32(&u3d->vuc_regs->endcomplete);
+-
+-	dev_dbg(u3d->dev, "tr_complete: ep: 0x%x\n", tmp);
+-	if (!tmp)
+-		return;
+-	iowrite32(tmp, &u3d->vuc_regs->endcomplete);
+-
+-	for (i = 0; i < u3d->max_eps * 2; i++) {
+-		ep_num = i >> 1;
+-		direction = i % 2;
+-
+-		bit_pos = 1 << (ep_num + 16 * direction);
+-
+-		if (!(bit_pos & tmp))
+-			continue;
+-
+-		if (i == 0)
+-			curr_ep = &u3d->eps[1];
+-		else
+-			curr_ep = &u3d->eps[i];
+-
+-		/* remove req out of ep request list after completion */
+-		dev_dbg(u3d->dev, "tr comp: check req_list\n");
+-		spin_lock(&curr_ep->req_lock);
+-		if (!list_empty(&curr_ep->req_list)) {
+-			struct mv_u3d_req *req;
+-			req = list_entry(curr_ep->req_list.next,
+-						struct mv_u3d_req, list);
+-			list_del_init(&req->list);
+-			curr_ep->processing = 0;
+-		}
+-		spin_unlock(&curr_ep->req_lock);
+-
+-		/* process the req queue until an uncomplete request */
+-		list_for_each_entry_safe(curr_req, temp_req,
+-			&curr_ep->queue, queue) {
+-			status = mv_u3d_process_ep_req(u3d, i, curr_req);
+-			if (status)
+-				break;
+-			/* write back status to req */
+-			curr_req->req.status = status;
+-
+-			/* ep0 request completion */
+-			if (ep_num == 0) {
+-				mv_u3d_done(curr_ep, curr_req, 0);
+-				break;
+-			} else {
+-				mv_u3d_done(curr_ep, curr_req, status);
+-			}
+-		}
+-
+-		dev_dbg(u3d->dev, "call mv_u3d_start_queue from ep complete\n");
+-		mv_u3d_start_queue(curr_ep);
+-	}
+-}
+-
+-static irqreturn_t mv_u3d_irq(int irq, void *dev)
+-{
+-	struct mv_u3d *u3d = (struct mv_u3d *)dev;
+-	u32 status, intr;
+-	u32 bridgesetting;
+-	u32 trbunderrun;
+-
+-	spin_lock(&u3d->lock);
+-
+-	status = ioread32(&u3d->vuc_regs->intrcause);
+-	intr = ioread32(&u3d->vuc_regs->intrenable);
+-	status &= intr;
+-
+-	if (status == 0) {
+-		spin_unlock(&u3d->lock);
+-		dev_err(u3d->dev, "irq error!\n");
+-		return IRQ_NONE;
+-	}
+-
+-	if (status & MV_U3D_USBINT_VBUS_VALID) {
+-		bridgesetting = ioread32(&u3d->vuc_regs->bridgesetting);
+-		if (bridgesetting & MV_U3D_BRIDGE_SETTING_VBUS_VALID) {
+-			/* write vbus valid bit of bridge setting to clear */
+-			bridgesetting = MV_U3D_BRIDGE_SETTING_VBUS_VALID;
+-			iowrite32(bridgesetting, &u3d->vuc_regs->bridgesetting);
+-			dev_dbg(u3d->dev, "vbus valid\n");
+-
+-			u3d->usb_state = USB_STATE_POWERED;
+-			u3d->vbus_valid_detect = 0;
+-			/* if external vbus detect is not supported,
+-			 * we handle it here.
+-			 */
+-			if (!u3d->vbus) {
+-				spin_unlock(&u3d->lock);
+-				mv_u3d_vbus_session(&u3d->gadget, 1);
+-				spin_lock(&u3d->lock);
+-			}
+-		} else
+-			dev_err(u3d->dev, "vbus bit is not set\n");
+-	}
+-
+-	/* RX data is already in the 16KB FIFO.*/
+-	if (status & MV_U3D_USBINT_UNDER_RUN) {
+-		trbunderrun = ioread32(&u3d->vuc_regs->trbunderrun);
+-		dev_err(u3d->dev, "under run, ep%d\n", trbunderrun);
+-		iowrite32(trbunderrun, &u3d->vuc_regs->trbunderrun);
+-		mv_u3d_irq_process_error(u3d);
+-	}
+-
+-	if (status & (MV_U3D_USBINT_RXDESC_ERR | MV_U3D_USBINT_TXDESC_ERR)) {
+-		/* write one to clear */
+-		iowrite32(status & (MV_U3D_USBINT_RXDESC_ERR
+-			| MV_U3D_USBINT_TXDESC_ERR),
+-			&u3d->vuc_regs->intrcause);
+-		dev_err(u3d->dev, "desc err 0x%x\n", status);
+-		mv_u3d_irq_process_error(u3d);
+-	}
+-
+-	if (status & MV_U3D_USBINT_LINK_CHG)
+-		mv_u3d_irq_process_link_change(u3d);
+-
+-	if (status & MV_U3D_USBINT_TX_COMPLETE)
+-		mv_u3d_irq_process_tr_complete(u3d);
+-
+-	if (status & MV_U3D_USBINT_RX_COMPLETE)
+-		mv_u3d_irq_process_tr_complete(u3d);
+-
+-	if (status & MV_U3D_USBINT_SETUP)
+-		mv_u3d_irq_process_setup(u3d);
+-
+-	spin_unlock(&u3d->lock);
+-	return IRQ_HANDLED;
+-}
+-
+-static void mv_u3d_remove(struct platform_device *dev)
+-{
+-	struct mv_u3d *u3d = platform_get_drvdata(dev);
+-
+-	BUG_ON(u3d == NULL);
+-
+-	usb_del_gadget_udc(&u3d->gadget);
+-
+-	/* free memory allocated in probe */
+-	dma_pool_destroy(u3d->trb_pool);
+-
+-	if (u3d->ep_context)
+-		dma_free_coherent(&dev->dev, u3d->ep_context_size,
+-			u3d->ep_context, u3d->ep_context_dma);
+-
+-	kfree(u3d->eps);
+-
+-	if (u3d->irq)
+-		free_irq(u3d->irq, u3d);
+-
+-	if (u3d->cap_regs)
+-		iounmap(u3d->cap_regs);
+-	u3d->cap_regs = NULL;
+-
+-	kfree(u3d->status_req);
+-
+-	clk_put(u3d->clk);
+-
+-	kfree(u3d);
+-}
+-
+-static int mv_u3d_probe(struct platform_device *dev)
+-{
+-	struct mv_u3d *u3d;
+-	struct mv_usb_platform_data *pdata = dev_get_platdata(&dev->dev);
+-	int retval = 0;
+-	struct resource *r;
+-	size_t size;
+-
+-	if (!dev_get_platdata(&dev->dev)) {
+-		dev_err(&dev->dev, "missing platform_data\n");
+-		retval = -ENODEV;
+-		goto err_pdata;
+-	}
+-
+-	u3d = kzalloc(sizeof(*u3d), GFP_KERNEL);
+-	if (!u3d) {
+-		retval = -ENOMEM;
+-		goto err_alloc_private;
+-	}
+-
+-	spin_lock_init(&u3d->lock);
+-
+-	platform_set_drvdata(dev, u3d);
+-
+-	u3d->dev = &dev->dev;
+-	u3d->vbus = pdata->vbus;
+-
+-	u3d->clk = clk_get(&dev->dev, NULL);
+-	if (IS_ERR(u3d->clk)) {
+-		retval = PTR_ERR(u3d->clk);
+-		goto err_get_clk;
+-	}
+-
+-	r = platform_get_resource_byname(dev, IORESOURCE_MEM, "capregs");
+-	if (!r) {
+-		dev_err(&dev->dev, "no I/O memory resource defined\n");
+-		retval = -ENODEV;
+-		goto err_get_cap_regs;
+-	}
+-
+-	u3d->cap_regs = (struct mv_u3d_cap_regs __iomem *)
+-		ioremap(r->start, resource_size(r));
+-	if (!u3d->cap_regs) {
+-		dev_err(&dev->dev, "failed to map I/O memory\n");
+-		retval = -EBUSY;
+-		goto err_map_cap_regs;
+-	} else {
+-		dev_dbg(&dev->dev, "cap_regs address: 0x%lx/0x%lx\n",
+-			(unsigned long) r->start,
+-			(unsigned long) u3d->cap_regs);
+-	}
+-
+-	/* we will access controller register, so enable the u3d controller */
+-	retval = clk_enable(u3d->clk);
+-	if (retval) {
+-		dev_err(&dev->dev, "clk_enable error %d\n", retval);
+-		goto err_u3d_enable;
+-	}
+-
+-	if (pdata->phy_init) {
+-		retval = pdata->phy_init(u3d->phy_regs);
+-		if (retval) {
+-			dev_err(&dev->dev, "init phy error %d\n", retval);
+-			clk_disable(u3d->clk);
+-			goto err_phy_init;
+-		}
+-	}
+-
+-	u3d->op_regs = (struct mv_u3d_op_regs __iomem *)(u3d->cap_regs
+-		+ MV_U3D_USB3_OP_REGS_OFFSET);
+-
+-	u3d->vuc_regs = (struct mv_u3d_vuc_regs __iomem *)(u3d->cap_regs
+-		+ ioread32(&u3d->cap_regs->vuoff));
+-
+-	u3d->max_eps = 16;
+-
+-	/*
+-	 * some platform will use usb to download image, it may not disconnect
+-	 * usb gadget before loading kernel. So first stop u3d here.
+-	 */
+-	mv_u3d_controller_stop(u3d);
+-	iowrite32(0xFFFFFFFF, &u3d->vuc_regs->intrcause);
+-
+-	if (pdata->phy_deinit)
+-		pdata->phy_deinit(u3d->phy_regs);
+-	clk_disable(u3d->clk);
+-
+-	size = u3d->max_eps * sizeof(struct mv_u3d_ep_context) * 2;
+-	size = (size + MV_U3D_EP_CONTEXT_ALIGNMENT - 1)
+-		& ~(MV_U3D_EP_CONTEXT_ALIGNMENT - 1);
+-	u3d->ep_context = dma_alloc_coherent(&dev->dev, size,
+-					&u3d->ep_context_dma, GFP_KERNEL);
+-	if (!u3d->ep_context) {
+-		dev_err(&dev->dev, "allocate ep context memory failed\n");
+-		retval = -ENOMEM;
+-		goto err_alloc_ep_context;
+-	}
+-	u3d->ep_context_size = size;
+-
+-	/* create TRB dma_pool resource */
+-	u3d->trb_pool = dma_pool_create("u3d_trb",
+-			&dev->dev,
+-			sizeof(struct mv_u3d_trb_hw),
+-			MV_U3D_TRB_ALIGNMENT,
+-			MV_U3D_DMA_BOUNDARY);
+-
+-	if (!u3d->trb_pool) {
+-		retval = -ENOMEM;
+-		goto err_alloc_trb_pool;
+-	}
+-
+-	size = u3d->max_eps * sizeof(struct mv_u3d_ep) * 2;
+-	u3d->eps = kzalloc(size, GFP_KERNEL);
+-	if (!u3d->eps) {
+-		retval = -ENOMEM;
+-		goto err_alloc_eps;
+-	}
+-
+-	/* initialize ep0 status request structure */
+-	u3d->status_req = kzalloc(sizeof(struct mv_u3d_req) + 8, GFP_KERNEL);
+-	if (!u3d->status_req) {
+-		retval = -ENOMEM;
+-		goto err_alloc_status_req;
+-	}
+-	INIT_LIST_HEAD(&u3d->status_req->queue);
+-
+-	/* allocate a small amount of memory to get valid address */
+-	u3d->status_req->req.buf = (char *)u3d->status_req
+-					+ sizeof(struct mv_u3d_req);
+-	u3d->status_req->req.dma = virt_to_phys(u3d->status_req->req.buf);
+-
+-	u3d->resume_state = USB_STATE_NOTATTACHED;
+-	u3d->usb_state = USB_STATE_ATTACHED;
+-	u3d->ep0_dir = MV_U3D_EP_DIR_OUT;
+-	u3d->remote_wakeup = 0;
+-
+-	r = platform_get_resource(dev, IORESOURCE_IRQ, 0);
+-	if (!r) {
+-		dev_err(&dev->dev, "no IRQ resource defined\n");
+-		retval = -ENODEV;
+-		goto err_get_irq;
+-	}
+-	u3d->irq = r->start;
+-
+-	/* initialize gadget structure */
+-	u3d->gadget.ops = &mv_u3d_ops;	/* usb_gadget_ops */
+-	u3d->gadget.ep0 = &u3d->eps[1].ep;	/* gadget ep0 */
+-	INIT_LIST_HEAD(&u3d->gadget.ep_list);	/* ep_list */
+-	u3d->gadget.speed = USB_SPEED_UNKNOWN;	/* speed */
+-
+-	/* the "gadget" abstracts/virtualizes the controller */
+-	u3d->gadget.name = driver_name;		/* gadget name */
+-
+-	mv_u3d_eps_init(u3d);
+-
+-	if (request_irq(u3d->irq, mv_u3d_irq,
+-		IRQF_SHARED, driver_name, u3d)) {
+-		u3d->irq = 0;
+-		dev_err(&dev->dev, "Request irq %d for u3d failed\n",
+-			u3d->irq);
+-		retval = -ENODEV;
+-		goto err_request_irq;
+-	}
+-
+-	/* external vbus detection */
+-	if (u3d->vbus) {
+-		u3d->clock_gating = 1;
+-		dev_err(&dev->dev, "external vbus detection\n");
+-	}
+-
+-	if (!u3d->clock_gating)
+-		u3d->vbus_active = 1;
+-
+-	/* enable usb3 controller vbus detection */
+-	u3d->vbus_valid_detect = 1;
+-
+-	retval = usb_add_gadget_udc(&dev->dev, &u3d->gadget);
+-	if (retval)
+-		goto err_unregister;
+-
+-	dev_dbg(&dev->dev, "successful probe usb3 device %s clock gating.\n",
+-		u3d->clock_gating ? "with" : "without");
+-
+-	return 0;
+-
+-err_unregister:
+-	free_irq(u3d->irq, u3d);
+-err_get_irq:
+-err_request_irq:
+-	kfree(u3d->status_req);
+-err_alloc_status_req:
+-	kfree(u3d->eps);
+-err_alloc_eps:
+-	dma_pool_destroy(u3d->trb_pool);
+-err_alloc_trb_pool:
+-	dma_free_coherent(&dev->dev, u3d->ep_context_size,
+-		u3d->ep_context, u3d->ep_context_dma);
+-err_alloc_ep_context:
+-err_phy_init:
+-err_u3d_enable:
+-	iounmap(u3d->cap_regs);
+-err_map_cap_regs:
+-err_get_cap_regs:
+-	clk_put(u3d->clk);
+-err_get_clk:
+-	kfree(u3d);
+-err_alloc_private:
+-err_pdata:
+-	return retval;
+-}
+-
+-#ifdef CONFIG_PM_SLEEP
+-static int mv_u3d_suspend(struct device *dev)
+-{
+-	struct mv_u3d *u3d = dev_get_drvdata(dev);
+-
+-	/*
+-	 * only cable is unplugged, usb can suspend.
+-	 * So do not care about clock_gating == 1, it is handled by
+-	 * vbus session.
+-	 */
+-	if (!u3d->clock_gating) {
+-		mv_u3d_controller_stop(u3d);
+-
+-		spin_lock_irq(&u3d->lock);
+-		/* stop all usb activities */
+-		mv_u3d_stop_activity(u3d, u3d->driver);
+-		spin_unlock_irq(&u3d->lock);
+-
+-		mv_u3d_disable(u3d);
+-	}
+-
+-	return 0;
+-}
+-
+-static int mv_u3d_resume(struct device *dev)
+-{
+-	struct mv_u3d *u3d = dev_get_drvdata(dev);
+-	int retval;
+-
+-	if (!u3d->clock_gating) {
+-		retval = mv_u3d_enable(u3d);
+-		if (retval)
+-			return retval;
+-
+-		if (u3d->driver && u3d->softconnect) {
+-			mv_u3d_controller_reset(u3d);
+-			mv_u3d_ep0_reset(u3d);
+-			mv_u3d_controller_start(u3d);
+-		}
+-	}
+-
+-	return 0;
+-}
+-#endif
+-
+-static SIMPLE_DEV_PM_OPS(mv_u3d_pm_ops, mv_u3d_suspend, mv_u3d_resume);
+-
+-static void mv_u3d_shutdown(struct platform_device *dev)
+-{
+-	struct mv_u3d *u3d = platform_get_drvdata(dev);
+-	u32 tmp;
+-
+-	tmp = ioread32(&u3d->op_regs->usbcmd);
+-	tmp &= ~MV_U3D_CMD_RUN_STOP;
+-	iowrite32(tmp, &u3d->op_regs->usbcmd);
+-}
+-
+-static struct platform_driver mv_u3d_driver = {
+-	.probe		= mv_u3d_probe,
+-	.remove		= mv_u3d_remove,
+-	.shutdown	= mv_u3d_shutdown,
+-	.driver		= {
+-		.name	= "mv-u3d",
+-		.pm	= &mv_u3d_pm_ops,
+-	},
+-};
+-
+-module_platform_driver(mv_u3d_driver);
+-MODULE_ALIAS("platform:mv-u3d");
+-MODULE_DESCRIPTION(DRIVER_DESC);
+-MODULE_AUTHOR("Yu Xu <yuxu@marvell.com>");
+-MODULE_LICENSE("GPL");
+diff --git a/drivers/usb/gadget/udc/mv_udc.h b/drivers/usb/gadget/udc/mv_udc.h
+deleted file mode 100644
+index b3f759c0962c..000000000000
+--- a/drivers/usb/gadget/udc/mv_udc.h
++++ /dev/null
+@@ -1,309 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0+
+-/*
+- * Copyright (C) 2011 Marvell International Ltd. All rights reserved.
+- */
+-
+-#ifndef __MV_UDC_H
+-#define __MV_UDC_H
+-
+-#define VUSBHS_MAX_PORTS	8
+-
+-#define DQH_ALIGNMENT		2048
+-#define DTD_ALIGNMENT		64
+-#define DMA_BOUNDARY		4096
+-
+-#define EP_DIR_IN	1
+-#define EP_DIR_OUT	0
+-
+-#define DMA_ADDR_INVALID	(~(dma_addr_t)0)
+-
+-#define EP0_MAX_PKT_SIZE	64
+-/* ep0 transfer state */
+-#define WAIT_FOR_SETUP		0
+-#define DATA_STATE_XMIT		1
+-#define DATA_STATE_NEED_ZLP	2
+-#define WAIT_FOR_OUT_STATUS	3
+-#define DATA_STATE_RECV		4
+-
+-#define CAPLENGTH_MASK		(0xff)
+-#define DCCPARAMS_DEN_MASK	(0x1f)
+-
+-#define HCSPARAMS_PPC		(0x10)
+-
+-/* Frame Index Register Bit Masks */
+-#define USB_FRINDEX_MASKS	0x3fff
+-
+-/* Command Register Bit Masks */
+-#define USBCMD_RUN_STOP				(0x00000001)
+-#define USBCMD_CTRL_RESET			(0x00000002)
+-#define USBCMD_SETUP_TRIPWIRE_SET		(0x00002000)
+-#define USBCMD_SETUP_TRIPWIRE_CLEAR		(~USBCMD_SETUP_TRIPWIRE_SET)
+-
+-#define USBCMD_ATDTW_TRIPWIRE_SET		(0x00004000)
+-#define USBCMD_ATDTW_TRIPWIRE_CLEAR		(~USBCMD_ATDTW_TRIPWIRE_SET)
+-
+-/* bit 15,3,2 are for frame list size */
+-#define USBCMD_FRAME_SIZE_1024			(0x00000000) /* 000 */
+-#define USBCMD_FRAME_SIZE_512			(0x00000004) /* 001 */
+-#define USBCMD_FRAME_SIZE_256			(0x00000008) /* 010 */
+-#define USBCMD_FRAME_SIZE_128			(0x0000000C) /* 011 */
+-#define USBCMD_FRAME_SIZE_64			(0x00008000) /* 100 */
+-#define USBCMD_FRAME_SIZE_32			(0x00008004) /* 101 */
+-#define USBCMD_FRAME_SIZE_16			(0x00008008) /* 110 */
+-#define USBCMD_FRAME_SIZE_8			(0x0000800C) /* 111 */
+-
+-#define EPCTRL_TX_ALL_MASK			(0xFFFF0000)
+-#define EPCTRL_RX_ALL_MASK			(0x0000FFFF)
+-
+-#define EPCTRL_TX_DATA_TOGGLE_RST		(0x00400000)
+-#define EPCTRL_TX_EP_STALL			(0x00010000)
+-#define EPCTRL_RX_EP_STALL			(0x00000001)
+-#define EPCTRL_RX_DATA_TOGGLE_RST		(0x00000040)
+-#define EPCTRL_RX_ENABLE			(0x00000080)
+-#define EPCTRL_TX_ENABLE			(0x00800000)
+-#define EPCTRL_CONTROL				(0x00000000)
+-#define EPCTRL_ISOCHRONOUS			(0x00040000)
+-#define EPCTRL_BULK				(0x00080000)
+-#define EPCTRL_INT				(0x000C0000)
+-#define EPCTRL_TX_TYPE				(0x000C0000)
+-#define EPCTRL_RX_TYPE				(0x0000000C)
+-#define EPCTRL_DATA_TOGGLE_INHIBIT		(0x00000020)
+-#define EPCTRL_TX_EP_TYPE_SHIFT			(18)
+-#define EPCTRL_RX_EP_TYPE_SHIFT			(2)
+-
+-#define EPCOMPLETE_MAX_ENDPOINTS		(16)
+-
+-/* endpoint list address bit masks */
+-#define USB_EP_LIST_ADDRESS_MASK              0xfffff800
+-
+-#define PORTSCX_W1C_BITS			0x2a
+-#define PORTSCX_PORT_RESET			0x00000100
+-#define PORTSCX_PORT_POWER			0x00001000
+-#define PORTSCX_FORCE_FULL_SPEED_CONNECT	0x01000000
+-#define PORTSCX_PAR_XCVR_SELECT			0xC0000000
+-#define PORTSCX_PORT_FORCE_RESUME		0x00000040
+-#define PORTSCX_PORT_SUSPEND			0x00000080
+-#define PORTSCX_PORT_SPEED_FULL			0x00000000
+-#define PORTSCX_PORT_SPEED_LOW			0x04000000
+-#define PORTSCX_PORT_SPEED_HIGH			0x08000000
+-#define PORTSCX_PORT_SPEED_MASK			0x0C000000
+-
+-/* USB MODE Register Bit Masks */
+-#define USBMODE_CTRL_MODE_IDLE			0x00000000
+-#define USBMODE_CTRL_MODE_DEVICE		0x00000002
+-#define USBMODE_CTRL_MODE_HOST			0x00000003
+-#define USBMODE_CTRL_MODE_RSV			0x00000001
+-#define USBMODE_SETUP_LOCK_OFF			0x00000008
+-#define USBMODE_STREAM_DISABLE			0x00000010
+-
+-/* USB STS Register Bit Masks */
+-#define USBSTS_INT			0x00000001
+-#define USBSTS_ERR			0x00000002
+-#define USBSTS_PORT_CHANGE		0x00000004
+-#define USBSTS_FRM_LST_ROLL		0x00000008
+-#define USBSTS_SYS_ERR			0x00000010
+-#define USBSTS_IAA			0x00000020
+-#define USBSTS_RESET			0x00000040
+-#define USBSTS_SOF			0x00000080
+-#define USBSTS_SUSPEND			0x00000100
+-#define USBSTS_HC_HALTED		0x00001000
+-#define USBSTS_RCL			0x00002000
+-#define USBSTS_PERIODIC_SCHEDULE	0x00004000
+-#define USBSTS_ASYNC_SCHEDULE		0x00008000
+-
+-
+-/* Interrupt Enable Register Bit Masks */
+-#define USBINTR_INT_EN                          (0x00000001)
+-#define USBINTR_ERR_INT_EN                      (0x00000002)
+-#define USBINTR_PORT_CHANGE_DETECT_EN           (0x00000004)
+-
+-#define USBINTR_ASYNC_ADV_AAE                   (0x00000020)
+-#define USBINTR_ASYNC_ADV_AAE_ENABLE            (0x00000020)
+-#define USBINTR_ASYNC_ADV_AAE_DISABLE           (0xFFFFFFDF)
+-
+-#define USBINTR_RESET_EN                        (0x00000040)
+-#define USBINTR_SOF_UFRAME_EN                   (0x00000080)
+-#define USBINTR_DEVICE_SUSPEND                  (0x00000100)
+-
+-#define USB_DEVICE_ADDRESS_MASK			(0xfe000000)
+-#define USB_DEVICE_ADDRESS_BIT_SHIFT		(25)
+-
+-struct mv_cap_regs {
+-	u32	caplength_hciversion;
+-	u32	hcsparams;	/* HC structural parameters */
+-	u32	hccparams;	/* HC Capability Parameters*/
+-	u32	reserved[5];
+-	u32	dciversion;	/* DC version number and reserved 16 bits */
+-	u32	dccparams;	/* DC Capability Parameters */
+-};
+-
+-struct mv_op_regs {
+-	u32	usbcmd;		/* Command register */
+-	u32	usbsts;		/* Status register */
+-	u32	usbintr;	/* Interrupt enable */
+-	u32	frindex;	/* Frame index */
+-	u32	reserved1[1];
+-	u32	deviceaddr;	/* Device Address */
+-	u32	eplistaddr;	/* Endpoint List Address */
+-	u32	ttctrl;		/* HOST TT status and control */
+-	u32	burstsize;	/* Programmable Burst Size */
+-	u32	txfilltuning;	/* Host Transmit Pre-Buffer Packet Tuning */
+-	u32	reserved[4];
+-	u32	epnak;		/* Endpoint NAK */
+-	u32	epnaken;	/* Endpoint NAK Enable */
+-	u32	configflag;	/* Configured Flag register */
+-	u32	portsc[VUSBHS_MAX_PORTS]; /* Port Status/Control x, x = 1..8 */
+-	u32	otgsc;
+-	u32	usbmode;	/* USB Host/Device mode */
+-	u32	epsetupstat;	/* Endpoint Setup Status */
+-	u32	epprime;	/* Endpoint Initialize */
+-	u32	epflush;	/* Endpoint De-initialize */
+-	u32	epstatus;	/* Endpoint Status */
+-	u32	epcomplete;	/* Endpoint Interrupt On Complete */
+-	u32	epctrlx[16];	/* Endpoint Control, where x = 0.. 15 */
+-	u32	mcr;		/* Mux Control */
+-	u32	isr;		/* Interrupt Status */
+-	u32	ier;		/* Interrupt Enable */
+-};
+-
+-struct mv_udc {
+-	struct usb_gadget		gadget;
+-	struct usb_gadget_driver	*driver;
+-	spinlock_t			lock;
+-	struct completion		*done;
+-	struct platform_device		*dev;
+-	int				irq;
+-
+-	struct mv_cap_regs __iomem	*cap_regs;
+-	struct mv_op_regs __iomem	*op_regs;
+-	void __iomem                    *phy_regs;
+-	unsigned int			max_eps;
+-	struct mv_dqh			*ep_dqh;
+-	size_t				ep_dqh_size;
+-	dma_addr_t			ep_dqh_dma;
+-
+-	struct dma_pool			*dtd_pool;
+-	struct mv_ep			*eps;
+-
+-	struct mv_dtd			*dtd_head;
+-	struct mv_dtd			*dtd_tail;
+-	unsigned int			dtd_entries;
+-
+-	struct mv_req			*status_req;
+-	struct usb_ctrlrequest		local_setup_buff;
+-
+-	unsigned int		resume_state;	/* USB state to resume */
+-	unsigned int		usb_state;	/* USB current state */
+-	unsigned int		ep0_state;	/* Endpoint zero state */
+-	unsigned int		ep0_dir;
+-
+-	unsigned int		dev_addr;
+-	unsigned int		test_mode;
+-
+-	int			errors;
+-	unsigned		softconnect:1,
+-				vbus_active:1,
+-				remote_wakeup:1,
+-				softconnected:1,
+-				force_fs:1,
+-				clock_gating:1,
+-				active:1,
+-				stopped:1;      /* stop bit is setted */
+-
+-	struct work_struct	vbus_work;
+-	struct workqueue_struct *qwork;
+-
+-	struct usb_phy		*transceiver;
+-
+-	struct mv_usb_platform_data     *pdata;
+-
+-	/* some SOC has mutiple clock sources for USB*/
+-	struct clk      *clk;
+-};
+-
+-/* endpoint data structure */
+-struct mv_ep {
+-	struct usb_ep		ep;
+-	struct mv_udc		*udc;
+-	struct list_head	queue;
+-	struct mv_dqh		*dqh;
+-	u32			direction;
+-	char			name[14];
+-	unsigned		stopped:1,
+-				wedge:1,
+-				ep_type:2,
+-				ep_num:8;
+-};
+-
+-/* request data structure */
+-struct mv_req {
+-	struct usb_request	req;
+-	struct mv_dtd		*dtd, *head, *tail;
+-	struct mv_ep		*ep;
+-	struct list_head	queue;
+-	unsigned int            test_mode;
+-	unsigned		dtd_count;
+-	unsigned		mapped:1;
+-};
+-
+-#define EP_QUEUE_HEAD_MULT_POS			30
+-#define EP_QUEUE_HEAD_ZLT_SEL			0x20000000
+-#define EP_QUEUE_HEAD_MAX_PKT_LEN_POS		16
+-#define EP_QUEUE_HEAD_MAX_PKT_LEN(ep_info)	(((ep_info)>>16)&0x07ff)
+-#define EP_QUEUE_HEAD_IOS			0x00008000
+-#define EP_QUEUE_HEAD_NEXT_TERMINATE		0x00000001
+-#define EP_QUEUE_HEAD_IOC			0x00008000
+-#define EP_QUEUE_HEAD_MULTO			0x00000C00
+-#define EP_QUEUE_HEAD_STATUS_HALT		0x00000040
+-#define EP_QUEUE_HEAD_STATUS_ACTIVE		0x00000080
+-#define EP_QUEUE_CURRENT_OFFSET_MASK		0x00000FFF
+-#define EP_QUEUE_HEAD_NEXT_POINTER_MASK		0xFFFFFFE0
+-#define EP_QUEUE_FRINDEX_MASK			0x000007FF
+-#define EP_MAX_LENGTH_TRANSFER			0x4000
+-
+-struct mv_dqh {
+-	/* Bits 16..26 Bit 15 is Interrupt On Setup */
+-	u32	max_packet_length;
+-	u32	curr_dtd_ptr;		/* Current dTD Pointer */
+-	u32	next_dtd_ptr;		/* Next dTD Pointer */
+-	/* Total bytes (16..30), IOC (15), INT (8), STS (0-7) */
+-	u32	size_ioc_int_sts;
+-	u32	buff_ptr0;		/* Buffer pointer Page 0 (12-31) */
+-	u32	buff_ptr1;		/* Buffer pointer Page 1 (12-31) */
+-	u32	buff_ptr2;		/* Buffer pointer Page 2 (12-31) */
+-	u32	buff_ptr3;		/* Buffer pointer Page 3 (12-31) */
+-	u32	buff_ptr4;		/* Buffer pointer Page 4 (12-31) */
+-	u32	reserved1;
+-	/* 8 bytes of setup data that follows the Setup PID */
+-	u8	setup_buffer[8];
+-	u32	reserved2[4];
+-};
+-
+-
+-#define DTD_NEXT_TERMINATE		(0x00000001)
+-#define DTD_IOC				(0x00008000)
+-#define DTD_STATUS_ACTIVE		(0x00000080)
+-#define DTD_STATUS_HALTED		(0x00000040)
+-#define DTD_STATUS_DATA_BUFF_ERR	(0x00000020)
+-#define DTD_STATUS_TRANSACTION_ERR	(0x00000008)
+-#define DTD_RESERVED_FIELDS		(0x00007F00)
+-#define DTD_ERROR_MASK			(0x68)
+-#define DTD_ADDR_MASK			(0xFFFFFFE0)
+-#define DTD_PACKET_SIZE			0x7FFF0000
+-#define DTD_LENGTH_BIT_POS		(16)
+-
+-struct mv_dtd {
+-	u32	dtd_next;
+-	u32	size_ioc_sts;
+-	u32	buff_ptr0;		/* Buffer pointer Page 0 */
+-	u32	buff_ptr1;		/* Buffer pointer Page 1 */
+-	u32	buff_ptr2;		/* Buffer pointer Page 2 */
+-	u32	buff_ptr3;		/* Buffer pointer Page 3 */
+-	u32	buff_ptr4;		/* Buffer pointer Page 4 */
+-	u32	scratch_ptr;
+-	/* 32 bytes */
+-	dma_addr_t td_dma;		/* dma address for this td */
+-	struct mv_dtd *next_dtd_virt;
+-};
+-
+-#endif
+diff --git a/drivers/usb/gadget/udc/mv_udc_core.c b/drivers/usb/gadget/udc/mv_udc_core.c
+deleted file mode 100644
+index ff103e6b3048..000000000000
+--- a/drivers/usb/gadget/udc/mv_udc_core.c
++++ /dev/null
+@@ -1,2426 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0+
+-/*
+- * Copyright (C) 2011 Marvell International Ltd. All rights reserved.
+- * Author: Chao Xie <chao.xie@marvell.com>
+- *	   Neil Zhang <zhangwm@marvell.com>
+- */
+-
+-#include <linux/module.h>
+-#include <linux/pci.h>
+-#include <linux/dma-mapping.h>
+-#include <linux/dmapool.h>
+-#include <linux/kernel.h>
+-#include <linux/delay.h>
+-#include <linux/ioport.h>
+-#include <linux/sched.h>
+-#include <linux/slab.h>
+-#include <linux/errno.h>
+-#include <linux/err.h>
+-#include <linux/timer.h>
+-#include <linux/list.h>
+-#include <linux/interrupt.h>
+-#include <linux/moduleparam.h>
+-#include <linux/device.h>
+-#include <linux/usb/ch9.h>
+-#include <linux/usb/gadget.h>
+-#include <linux/usb/otg.h>
+-#include <linux/pm.h>
+-#include <linux/io.h>
+-#include <linux/irq.h>
+-#include <linux/platform_device.h>
+-#include <linux/clk.h>
+-#include <linux/platform_data/mv_usb.h>
+-#include <linux/unaligned.h>
+-
+-#include "mv_udc.h"
+-
+-#define DRIVER_DESC		"Marvell PXA USB Device Controller driver"
+-
+-#define ep_dir(ep)	(((ep)->ep_num == 0) ? \
+-				((ep)->udc->ep0_dir) : ((ep)->direction))
+-
+-/* timeout value -- usec */
+-#define RESET_TIMEOUT		10000
+-#define FLUSH_TIMEOUT		10000
+-#define EPSTATUS_TIMEOUT	10000
+-#define PRIME_TIMEOUT		10000
+-#define READSAFE_TIMEOUT	1000
+-
+-#define LOOPS_USEC_SHIFT	1
+-#define LOOPS_USEC		(1 << LOOPS_USEC_SHIFT)
+-#define LOOPS(timeout)		((timeout) >> LOOPS_USEC_SHIFT)
+-
+-static DECLARE_COMPLETION(release_done);
+-
+-static const char driver_name[] = "mv_udc";
+-
+-static void nuke(struct mv_ep *ep, int status);
+-static void stop_activity(struct mv_udc *udc, struct usb_gadget_driver *driver);
+-
+-/* for endpoint 0 operations */
+-static const struct usb_endpoint_descriptor mv_ep0_desc = {
+-	.bLength =		USB_DT_ENDPOINT_SIZE,
+-	.bDescriptorType =	USB_DT_ENDPOINT,
+-	.bEndpointAddress =	0,
+-	.bmAttributes =		USB_ENDPOINT_XFER_CONTROL,
+-	.wMaxPacketSize =	EP0_MAX_PKT_SIZE,
+-};
+-
+-static void ep0_reset(struct mv_udc *udc)
+-{
+-	struct mv_ep *ep;
+-	u32 epctrlx;
+-	int i = 0;
+-
+-	/* ep0 in and out */
+-	for (i = 0; i < 2; i++) {
+-		ep = &udc->eps[i];
+-		ep->udc = udc;
+-
+-		/* ep0 dQH */
+-		ep->dqh = &udc->ep_dqh[i];
+-
+-		/* configure ep0 endpoint capabilities in dQH */
+-		ep->dqh->max_packet_length =
+-			(EP0_MAX_PKT_SIZE << EP_QUEUE_HEAD_MAX_PKT_LEN_POS)
+-			| EP_QUEUE_HEAD_IOS;
+-
+-		ep->dqh->next_dtd_ptr = EP_QUEUE_HEAD_NEXT_TERMINATE;
+-
+-		epctrlx = readl(&udc->op_regs->epctrlx[0]);
+-		if (i) {	/* TX */
+-			epctrlx |= EPCTRL_TX_ENABLE
+-				| (USB_ENDPOINT_XFER_CONTROL
+-					<< EPCTRL_TX_EP_TYPE_SHIFT);
+-
+-		} else {	/* RX */
+-			epctrlx |= EPCTRL_RX_ENABLE
+-				| (USB_ENDPOINT_XFER_CONTROL
+-					<< EPCTRL_RX_EP_TYPE_SHIFT);
+-		}
+-
+-		writel(epctrlx, &udc->op_regs->epctrlx[0]);
+-	}
+-}
+-
+-/* protocol ep0 stall, will automatically be cleared on new transaction */
+-static void ep0_stall(struct mv_udc *udc)
+-{
+-	u32	epctrlx;
+-
+-	/* set TX and RX to stall */
+-	epctrlx = readl(&udc->op_regs->epctrlx[0]);
+-	epctrlx |= EPCTRL_RX_EP_STALL | EPCTRL_TX_EP_STALL;
+-	writel(epctrlx, &udc->op_regs->epctrlx[0]);
+-
+-	/* update ep0 state */
+-	udc->ep0_state = WAIT_FOR_SETUP;
+-	udc->ep0_dir = EP_DIR_OUT;
+-}
+-
+-static int process_ep_req(struct mv_udc *udc, int index,
+-	struct mv_req *curr_req)
+-{
+-	struct mv_dtd	*curr_dtd;
+-	struct mv_dqh	*curr_dqh;
+-	int actual, remaining_length;
+-	int i, direction;
+-	int retval = 0;
+-	u32 errors;
+-	u32 bit_pos;
+-
+-	curr_dqh = &udc->ep_dqh[index];
+-	direction = index % 2;
+-
+-	curr_dtd = curr_req->head;
+-	actual = curr_req->req.length;
+-
+-	for (i = 0; i < curr_req->dtd_count; i++) {
+-		if (curr_dtd->size_ioc_sts & DTD_STATUS_ACTIVE) {
+-			dev_dbg(&udc->dev->dev, "%s, dTD not completed\n",
+-				udc->eps[index].name);
+-			return 1;
+-		}
+-
+-		errors = curr_dtd->size_ioc_sts & DTD_ERROR_MASK;
+-		if (!errors) {
+-			remaining_length =
+-				(curr_dtd->size_ioc_sts	& DTD_PACKET_SIZE)
+-					>> DTD_LENGTH_BIT_POS;
+-			actual -= remaining_length;
+-
+-			if (remaining_length) {
+-				if (direction) {
+-					dev_dbg(&udc->dev->dev,
+-						"TX dTD remains data\n");
+-					retval = -EPROTO;
+-					break;
+-				} else
+-					break;
+-			}
+-		} else {
+-			dev_info(&udc->dev->dev,
+-				"complete_tr error: ep=%d %s: error = 0x%x\n",
+-				index >> 1, direction ? "SEND" : "RECV",
+-				errors);
+-			if (errors & DTD_STATUS_HALTED) {
+-				/* Clear the errors and Halt condition */
+-				curr_dqh->size_ioc_int_sts &= ~errors;
+-				retval = -EPIPE;
+-			} else if (errors & DTD_STATUS_DATA_BUFF_ERR) {
+-				retval = -EPROTO;
+-			} else if (errors & DTD_STATUS_TRANSACTION_ERR) {
+-				retval = -EILSEQ;
+-			}
+-		}
+-		if (i != curr_req->dtd_count - 1)
+-			curr_dtd = (struct mv_dtd *)curr_dtd->next_dtd_virt;
+-	}
+-	if (retval)
+-		return retval;
+-
+-	if (direction == EP_DIR_OUT)
+-		bit_pos = 1 << curr_req->ep->ep_num;
+-	else
+-		bit_pos = 1 << (16 + curr_req->ep->ep_num);
+-
+-	while (curr_dqh->curr_dtd_ptr == curr_dtd->td_dma) {
+-		if (curr_dtd->dtd_next == EP_QUEUE_HEAD_NEXT_TERMINATE) {
+-			while (readl(&udc->op_regs->epstatus) & bit_pos)
+-				udelay(1);
+-			break;
+-		}
+-		udelay(1);
+-	}
+-
+-	curr_req->req.actual = actual;
+-
+-	return 0;
+-}
+-
+-/*
+- * done() - retire a request; caller blocked irqs
+- * @status : request status to be set, only works when
+- * request is still in progress.
+- */
+-static void done(struct mv_ep *ep, struct mv_req *req, int status)
+-	__releases(&ep->udc->lock)
+-	__acquires(&ep->udc->lock)
+-{
+-	struct mv_udc *udc = NULL;
+-	unsigned char stopped = ep->stopped;
+-	struct mv_dtd *curr_td, *next_td;
+-	int j;
+-
+-	udc = (struct mv_udc *)ep->udc;
+-	/* Removed the req from fsl_ep->queue */
+-	list_del_init(&req->queue);
+-
+-	/* req.status should be set as -EINPROGRESS in ep_queue() */
+-	if (req->req.status == -EINPROGRESS)
+-		req->req.status = status;
+-	else
+-		status = req->req.status;
+-
+-	/* Free dtd for the request */
+-	next_td = req->head;
+-	for (j = 0; j < req->dtd_count; j++) {
+-		curr_td = next_td;
+-		if (j != req->dtd_count - 1)
+-			next_td = curr_td->next_dtd_virt;
+-		dma_pool_free(udc->dtd_pool, curr_td, curr_td->td_dma);
+-	}
+-
+-	usb_gadget_unmap_request(&udc->gadget, &req->req, ep_dir(ep));
+-
+-	if (status && (status != -ESHUTDOWN))
+-		dev_info(&udc->dev->dev, "complete %s req %p stat %d len %u/%u",
+-			ep->ep.name, &req->req, status,
+-			req->req.actual, req->req.length);
+-
+-	ep->stopped = 1;
+-
+-	spin_unlock(&ep->udc->lock);
+-
+-	usb_gadget_giveback_request(&ep->ep, &req->req);
+-
+-	spin_lock(&ep->udc->lock);
+-	ep->stopped = stopped;
+-}
+-
+-static int queue_dtd(struct mv_ep *ep, struct mv_req *req)
+-{
+-	struct mv_udc *udc;
+-	struct mv_dqh *dqh;
+-	u32 bit_pos, direction;
+-	u32 usbcmd, epstatus;
+-	unsigned int loops;
+-	int retval = 0;
+-
+-	udc = ep->udc;
+-	direction = ep_dir(ep);
+-	dqh = &(udc->ep_dqh[ep->ep_num * 2 + direction]);
+-	bit_pos = 1 << (((direction == EP_DIR_OUT) ? 0 : 16) + ep->ep_num);
+-
+-	/* check if the pipe is empty */
+-	if (!(list_empty(&ep->queue))) {
+-		struct mv_req *lastreq;
+-		lastreq = list_entry(ep->queue.prev, struct mv_req, queue);
+-		lastreq->tail->dtd_next =
+-			req->head->td_dma & EP_QUEUE_HEAD_NEXT_POINTER_MASK;
+-
+-		wmb();
+-
+-		if (readl(&udc->op_regs->epprime) & bit_pos)
+-			goto done;
+-
+-		loops = LOOPS(READSAFE_TIMEOUT);
+-		while (1) {
+-			/* start with setting the semaphores */
+-			usbcmd = readl(&udc->op_regs->usbcmd);
+-			usbcmd |= USBCMD_ATDTW_TRIPWIRE_SET;
+-			writel(usbcmd, &udc->op_regs->usbcmd);
+-
+-			/* read the endpoint status */
+-			epstatus = readl(&udc->op_regs->epstatus) & bit_pos;
+-
+-			/*
+-			 * Reread the ATDTW semaphore bit to check if it is
+-			 * cleared. When hardware see a hazard, it will clear
+-			 * the bit or else we remain set to 1 and we can
+-			 * proceed with priming of endpoint if not already
+-			 * primed.
+-			 */
+-			if (readl(&udc->op_regs->usbcmd)
+-				& USBCMD_ATDTW_TRIPWIRE_SET)
+-				break;
+-
+-			loops--;
+-			if (loops == 0) {
+-				dev_err(&udc->dev->dev,
+-					"Timeout for ATDTW_TRIPWIRE...\n");
+-				retval = -ETIME;
+-				goto done;
+-			}
+-			udelay(LOOPS_USEC);
+-		}
+-
+-		/* Clear the semaphore */
+-		usbcmd = readl(&udc->op_regs->usbcmd);
+-		usbcmd &= USBCMD_ATDTW_TRIPWIRE_CLEAR;
+-		writel(usbcmd, &udc->op_regs->usbcmd);
+-
+-		if (epstatus)
+-			goto done;
+-	}
+-
+-	/* Write dQH next pointer and terminate bit to 0 */
+-	dqh->next_dtd_ptr = req->head->td_dma
+-				& EP_QUEUE_HEAD_NEXT_POINTER_MASK;
+-
+-	/* clear active and halt bit, in case set from a previous error */
+-	dqh->size_ioc_int_sts &= ~(DTD_STATUS_ACTIVE | DTD_STATUS_HALTED);
+-
+-	/* Ensure that updates to the QH will occur before priming. */
+-	wmb();
+-
+-	/* Prime the Endpoint */
+-	writel(bit_pos, &udc->op_regs->epprime);
+-
+-done:
+-	return retval;
+-}
+-
+-static struct mv_dtd *build_dtd(struct mv_req *req, unsigned *length,
+-		dma_addr_t *dma, int *is_last)
+-{
+-	struct mv_dtd *dtd;
+-	struct mv_udc *udc;
+-	struct mv_dqh *dqh;
+-	u32 temp, mult = 0;
+-
+-	/* how big will this transfer be? */
+-	if (usb_endpoint_xfer_isoc(req->ep->ep.desc)) {
+-		dqh = req->ep->dqh;
+-		mult = (dqh->max_packet_length >> EP_QUEUE_HEAD_MULT_POS)
+-				& 0x3;
+-		*length = min(req->req.length - req->req.actual,
+-				(unsigned)(mult * req->ep->ep.maxpacket));
+-	} else
+-		*length = min(req->req.length - req->req.actual,
+-				(unsigned)EP_MAX_LENGTH_TRANSFER);
+-
+-	udc = req->ep->udc;
+-
+-	/*
+-	 * Be careful that no _GFP_HIGHMEM is set,
+-	 * or we can not use dma_to_virt
+-	 */
+-	dtd = dma_pool_alloc(udc->dtd_pool, GFP_ATOMIC, dma);
+-	if (dtd == NULL)
+-		return dtd;
+-
+-	dtd->td_dma = *dma;
+-	/* initialize buffer page pointers */
+-	temp = (u32)(req->req.dma + req->req.actual);
+-	dtd->buff_ptr0 = cpu_to_le32(temp);
+-	temp &= ~0xFFF;
+-	dtd->buff_ptr1 = cpu_to_le32(temp + 0x1000);
+-	dtd->buff_ptr2 = cpu_to_le32(temp + 0x2000);
+-	dtd->buff_ptr3 = cpu_to_le32(temp + 0x3000);
+-	dtd->buff_ptr4 = cpu_to_le32(temp + 0x4000);
+-
+-	req->req.actual += *length;
+-
+-	/* zlp is needed if req->req.zero is set */
+-	if (req->req.zero) {
+-		if (*length == 0 || (*length % req->ep->ep.maxpacket) != 0)
+-			*is_last = 1;
+-		else
+-			*is_last = 0;
+-	} else if (req->req.length == req->req.actual)
+-		*is_last = 1;
+-	else
+-		*is_last = 0;
+-
+-	/* Fill in the transfer size; set active bit */
+-	temp = ((*length << DTD_LENGTH_BIT_POS) | DTD_STATUS_ACTIVE);
+-
+-	/* Enable interrupt for the last dtd of a request */
+-	if (*is_last && !req->req.no_interrupt)
+-		temp |= DTD_IOC;
+-
+-	temp |= mult << 10;
+-
+-	dtd->size_ioc_sts = temp;
+-
+-	mb();
+-
+-	return dtd;
+-}
+-
+-/* generate dTD linked list for a request */
+-static int req_to_dtd(struct mv_req *req)
+-{
+-	unsigned count;
+-	int is_last, is_first = 1;
+-	struct mv_dtd *dtd, *last_dtd = NULL;
+-	dma_addr_t dma;
+-
+-	do {
+-		dtd = build_dtd(req, &count, &dma, &is_last);
+-		if (dtd == NULL)
+-			return -ENOMEM;
+-
+-		if (is_first) {
+-			is_first = 0;
+-			req->head = dtd;
+-		} else {
+-			last_dtd->dtd_next = dma;
+-			last_dtd->next_dtd_virt = dtd;
+-		}
+-		last_dtd = dtd;
+-		req->dtd_count++;
+-	} while (!is_last);
+-
+-	/* set terminate bit to 1 for the last dTD */
+-	dtd->dtd_next = DTD_NEXT_TERMINATE;
+-
+-	req->tail = dtd;
+-
+-	return 0;
+-}
+-
+-static int mv_ep_enable(struct usb_ep *_ep,
+-		const struct usb_endpoint_descriptor *desc)
+-{
+-	struct mv_udc *udc;
+-	struct mv_ep *ep;
+-	struct mv_dqh *dqh;
+-	u16 max = 0;
+-	u32 bit_pos, epctrlx, direction;
+-	const unsigned char zlt = 1;
+-	unsigned char ios, mult;
+-	unsigned long flags;
+-
+-	ep = container_of(_ep, struct mv_ep, ep);
+-	udc = ep->udc;
+-
+-	if (!_ep || !desc
+-			|| desc->bDescriptorType != USB_DT_ENDPOINT)
+-		return -EINVAL;
+-
+-	if (!udc->driver || udc->gadget.speed == USB_SPEED_UNKNOWN)
+-		return -ESHUTDOWN;
+-
+-	direction = ep_dir(ep);
+-	max = usb_endpoint_maxp(desc);
+-
+-	/*
+-	 * disable HW zero length termination select
+-	 * driver handles zero length packet through req->req.zero
+-	 */
+-	bit_pos = 1 << ((direction == EP_DIR_OUT ? 0 : 16) + ep->ep_num);
+-
+-	/* Check if the Endpoint is Primed */
+-	if ((readl(&udc->op_regs->epprime) & bit_pos)
+-		|| (readl(&udc->op_regs->epstatus) & bit_pos)) {
+-		dev_info(&udc->dev->dev,
+-			"ep=%d %s: Init ERROR: ENDPTPRIME=0x%x,"
+-			" ENDPTSTATUS=0x%x, bit_pos=0x%x\n",
+-			(unsigned)ep->ep_num, direction ? "SEND" : "RECV",
+-			(unsigned)readl(&udc->op_regs->epprime),
+-			(unsigned)readl(&udc->op_regs->epstatus),
+-			(unsigned)bit_pos);
+-		goto en_done;
+-	}
+-
+-	/* Set the max packet length, interrupt on Setup and Mult fields */
+-	ios = 0;
+-	mult = 0;
+-	switch (desc->bmAttributes & USB_ENDPOINT_XFERTYPE_MASK) {
+-	case USB_ENDPOINT_XFER_BULK:
+-	case USB_ENDPOINT_XFER_INT:
+-		break;
+-	case USB_ENDPOINT_XFER_CONTROL:
+-		ios = 1;
+-		break;
+-	case USB_ENDPOINT_XFER_ISOC:
+-		/* Calculate transactions needed for high bandwidth iso */
+-		mult = usb_endpoint_maxp_mult(desc);
+-		/* 3 transactions at most */
+-		if (mult > 3)
+-			goto en_done;
+-		break;
+-	default:
+-		goto en_done;
+-	}
+-
+-	spin_lock_irqsave(&udc->lock, flags);
+-	/* Get the endpoint queue head address */
+-	dqh = ep->dqh;
+-	dqh->max_packet_length = (max << EP_QUEUE_HEAD_MAX_PKT_LEN_POS)
+-		| (mult << EP_QUEUE_HEAD_MULT_POS)
+-		| (zlt ? EP_QUEUE_HEAD_ZLT_SEL : 0)
+-		| (ios ? EP_QUEUE_HEAD_IOS : 0);
+-	dqh->next_dtd_ptr = 1;
+-	dqh->size_ioc_int_sts = 0;
+-
+-	ep->ep.maxpacket = max;
+-	ep->ep.desc = desc;
+-	ep->stopped = 0;
+-
+-	/* Enable the endpoint for Rx or Tx and set the endpoint type */
+-	epctrlx = readl(&udc->op_regs->epctrlx[ep->ep_num]);
+-	if (direction == EP_DIR_IN) {
+-		epctrlx &= ~EPCTRL_TX_ALL_MASK;
+-		epctrlx |= EPCTRL_TX_ENABLE | EPCTRL_TX_DATA_TOGGLE_RST
+-			| ((desc->bmAttributes & USB_ENDPOINT_XFERTYPE_MASK)
+-				<< EPCTRL_TX_EP_TYPE_SHIFT);
+-	} else {
+-		epctrlx &= ~EPCTRL_RX_ALL_MASK;
+-		epctrlx |= EPCTRL_RX_ENABLE | EPCTRL_RX_DATA_TOGGLE_RST
+-			| ((desc->bmAttributes & USB_ENDPOINT_XFERTYPE_MASK)
+-				<< EPCTRL_RX_EP_TYPE_SHIFT);
+-	}
+-	writel(epctrlx, &udc->op_regs->epctrlx[ep->ep_num]);
+-
+-	/*
+-	 * Implement Guideline (GL# USB-7) The unused endpoint type must
+-	 * be programmed to bulk.
+-	 */
+-	epctrlx = readl(&udc->op_regs->epctrlx[ep->ep_num]);
+-	if ((epctrlx & EPCTRL_RX_ENABLE) == 0) {
+-		epctrlx |= (USB_ENDPOINT_XFER_BULK
+-				<< EPCTRL_RX_EP_TYPE_SHIFT);
+-		writel(epctrlx, &udc->op_regs->epctrlx[ep->ep_num]);
+-	}
+-
+-	epctrlx = readl(&udc->op_regs->epctrlx[ep->ep_num]);
+-	if ((epctrlx & EPCTRL_TX_ENABLE) == 0) {
+-		epctrlx |= (USB_ENDPOINT_XFER_BULK
+-				<< EPCTRL_TX_EP_TYPE_SHIFT);
+-		writel(epctrlx, &udc->op_regs->epctrlx[ep->ep_num]);
+-	}
+-
+-	spin_unlock_irqrestore(&udc->lock, flags);
+-
+-	return 0;
+-en_done:
+-	return -EINVAL;
+-}
+-
+-static int  mv_ep_disable(struct usb_ep *_ep)
+-{
+-	struct mv_udc *udc;
+-	struct mv_ep *ep;
+-	struct mv_dqh *dqh;
+-	u32 epctrlx, direction;
+-	unsigned long flags;
+-
+-	ep = container_of(_ep, struct mv_ep, ep);
+-	if ((_ep == NULL) || !ep->ep.desc)
+-		return -EINVAL;
+-
+-	udc = ep->udc;
+-
+-	/* Get the endpoint queue head address */
+-	dqh = ep->dqh;
+-
+-	spin_lock_irqsave(&udc->lock, flags);
+-
+-	direction = ep_dir(ep);
+-
+-	/* Reset the max packet length and the interrupt on Setup */
+-	dqh->max_packet_length = 0;
+-
+-	/* Disable the endpoint for Rx or Tx and reset the endpoint type */
+-	epctrlx = readl(&udc->op_regs->epctrlx[ep->ep_num]);
+-	epctrlx &= ~((direction == EP_DIR_IN)
+-			? (EPCTRL_TX_ENABLE | EPCTRL_TX_TYPE)
+-			: (EPCTRL_RX_ENABLE | EPCTRL_RX_TYPE));
+-	writel(epctrlx, &udc->op_regs->epctrlx[ep->ep_num]);
+-
+-	/* nuke all pending requests (does flush) */
+-	nuke(ep, -ESHUTDOWN);
+-
+-	ep->ep.desc = NULL;
+-	ep->stopped = 1;
+-
+-	spin_unlock_irqrestore(&udc->lock, flags);
+-
+-	return 0;
+-}
+-
+-static struct usb_request *
+-mv_alloc_request(struct usb_ep *_ep, gfp_t gfp_flags)
+-{
+-	struct mv_req *req;
+-
+-	req = kzalloc(sizeof *req, gfp_flags);
+-	if (!req)
+-		return NULL;
+-
+-	req->req.dma = DMA_ADDR_INVALID;
+-	INIT_LIST_HEAD(&req->queue);
+-
+-	return &req->req;
+-}
+-
+-static void mv_free_request(struct usb_ep *_ep, struct usb_request *_req)
+-{
+-	struct mv_req *req = NULL;
+-
+-	req = container_of(_req, struct mv_req, req);
+-
+-	if (_req)
+-		kfree(req);
+-}
+-
+-static void mv_ep_fifo_flush(struct usb_ep *_ep)
+-{
+-	struct mv_udc *udc;
+-	u32 bit_pos, direction;
+-	struct mv_ep *ep;
+-	unsigned int loops;
+-
+-	if (!_ep)
+-		return;
+-
+-	ep = container_of(_ep, struct mv_ep, ep);
+-	if (!ep->ep.desc)
+-		return;
+-
+-	udc = ep->udc;
+-	direction = ep_dir(ep);
+-
+-	if (ep->ep_num == 0)
+-		bit_pos = (1 << 16) | 1;
+-	else if (direction == EP_DIR_OUT)
+-		bit_pos = 1 << ep->ep_num;
+-	else
+-		bit_pos = 1 << (16 + ep->ep_num);
+-
+-	loops = LOOPS(EPSTATUS_TIMEOUT);
+-	do {
+-		unsigned int inter_loops;
+-
+-		if (loops == 0) {
+-			dev_err(&udc->dev->dev,
+-				"TIMEOUT for ENDPTSTATUS=0x%x, bit_pos=0x%x\n",
+-				(unsigned)readl(&udc->op_regs->epstatus),
+-				(unsigned)bit_pos);
+-			return;
+-		}
+-		/* Write 1 to the Flush register */
+-		writel(bit_pos, &udc->op_regs->epflush);
+-
+-		/* Wait until flushing completed */
+-		inter_loops = LOOPS(FLUSH_TIMEOUT);
+-		while (readl(&udc->op_regs->epflush)) {
+-			/*
+-			 * ENDPTFLUSH bit should be cleared to indicate this
+-			 * operation is complete
+-			 */
+-			if (inter_loops == 0) {
+-				dev_err(&udc->dev->dev,
+-					"TIMEOUT for ENDPTFLUSH=0x%x,"
+-					"bit_pos=0x%x\n",
+-					(unsigned)readl(&udc->op_regs->epflush),
+-					(unsigned)bit_pos);
+-				return;
+-			}
+-			inter_loops--;
+-			udelay(LOOPS_USEC);
+-		}
+-		loops--;
+-	} while (readl(&udc->op_regs->epstatus) & bit_pos);
+-}
+-
+-/* queues (submits) an I/O request to an endpoint */
+-static int
+-mv_ep_queue(struct usb_ep *_ep, struct usb_request *_req, gfp_t gfp_flags)
+-{
+-	struct mv_ep *ep = container_of(_ep, struct mv_ep, ep);
+-	struct mv_req *req = container_of(_req, struct mv_req, req);
+-	struct mv_udc *udc = ep->udc;
+-	unsigned long flags;
+-	int retval;
+-
+-	/* catch various bogus parameters */
+-	if (!_req || !req->req.complete || !req->req.buf
+-			|| !list_empty(&req->queue)) {
+-		dev_err(&udc->dev->dev, "%s, bad params", __func__);
+-		return -EINVAL;
+-	}
+-	if (unlikely(!_ep || !ep->ep.desc)) {
+-		dev_err(&udc->dev->dev, "%s, bad ep", __func__);
+-		return -EINVAL;
+-	}
+-
+-	udc = ep->udc;
+-	if (!udc->driver || udc->gadget.speed == USB_SPEED_UNKNOWN)
+-		return -ESHUTDOWN;
+-
+-	req->ep = ep;
+-
+-	/* map virtual address to hardware */
+-	retval = usb_gadget_map_request(&udc->gadget, _req, ep_dir(ep));
+-	if (retval)
+-		return retval;
+-
+-	req->req.status = -EINPROGRESS;
+-	req->req.actual = 0;
+-	req->dtd_count = 0;
+-
+-	spin_lock_irqsave(&udc->lock, flags);
+-
+-	/* build dtds and push them to device queue */
+-	if (!req_to_dtd(req)) {
+-		retval = queue_dtd(ep, req);
+-		if (retval) {
+-			spin_unlock_irqrestore(&udc->lock, flags);
+-			dev_err(&udc->dev->dev, "Failed to queue dtd\n");
+-			goto err_unmap_dma;
+-		}
+-	} else {
+-		spin_unlock_irqrestore(&udc->lock, flags);
+-		dev_err(&udc->dev->dev, "Failed to dma_pool_alloc\n");
+-		retval = -ENOMEM;
+-		goto err_unmap_dma;
+-	}
+-
+-	/* Update ep0 state */
+-	if (ep->ep_num == 0)
+-		udc->ep0_state = DATA_STATE_XMIT;
+-
+-	/* irq handler advances the queue */
+-	list_add_tail(&req->queue, &ep->queue);
+-	spin_unlock_irqrestore(&udc->lock, flags);
+-
+-	return 0;
+-
+-err_unmap_dma:
+-	usb_gadget_unmap_request(&udc->gadget, _req, ep_dir(ep));
+-
+-	return retval;
+-}
+-
+-static void mv_prime_ep(struct mv_ep *ep, struct mv_req *req)
+-{
+-	struct mv_dqh *dqh = ep->dqh;
+-	u32 bit_pos;
+-
+-	/* Write dQH next pointer and terminate bit to 0 */
+-	dqh->next_dtd_ptr = req->head->td_dma
+-		& EP_QUEUE_HEAD_NEXT_POINTER_MASK;
+-
+-	/* clear active and halt bit, in case set from a previous error */
+-	dqh->size_ioc_int_sts &= ~(DTD_STATUS_ACTIVE | DTD_STATUS_HALTED);
+-
+-	/* Ensure that updates to the QH will occure before priming. */
+-	wmb();
+-
+-	bit_pos = 1 << (((ep_dir(ep) == EP_DIR_OUT) ? 0 : 16) + ep->ep_num);
+-
+-	/* Prime the Endpoint */
+-	writel(bit_pos, &ep->udc->op_regs->epprime);
+-}
+-
+-/* dequeues (cancels, unlinks) an I/O request from an endpoint */
+-static int mv_ep_dequeue(struct usb_ep *_ep, struct usb_request *_req)
+-{
+-	struct mv_ep *ep = container_of(_ep, struct mv_ep, ep);
+-	struct mv_req *req = NULL, *iter;
+-	struct mv_udc *udc = ep->udc;
+-	unsigned long flags;
+-	int stopped, ret = 0;
+-	u32 epctrlx;
+-
+-	if (!_ep || !_req)
+-		return -EINVAL;
+-
+-	spin_lock_irqsave(&ep->udc->lock, flags);
+-	stopped = ep->stopped;
+-
+-	/* Stop the ep before we deal with the queue */
+-	ep->stopped = 1;
+-	epctrlx = readl(&udc->op_regs->epctrlx[ep->ep_num]);
+-	if (ep_dir(ep) == EP_DIR_IN)
+-		epctrlx &= ~EPCTRL_TX_ENABLE;
+-	else
+-		epctrlx &= ~EPCTRL_RX_ENABLE;
+-	writel(epctrlx, &udc->op_regs->epctrlx[ep->ep_num]);
+-
+-	/* make sure it's actually queued on this endpoint */
+-	list_for_each_entry(iter, &ep->queue, queue) {
+-		if (&iter->req != _req)
+-			continue;
+-		req = iter;
+-		break;
+-	}
+-	if (!req) {
+-		ret = -EINVAL;
+-		goto out;
+-	}
+-
+-	/* The request is in progress, or completed but not dequeued */
+-	if (ep->queue.next == &req->queue) {
+-		_req->status = -ECONNRESET;
+-		mv_ep_fifo_flush(_ep);	/* flush current transfer */
+-
+-		/* The request isn't the last request in this ep queue */
+-		if (req->queue.next != &ep->queue) {
+-			struct mv_req *next_req;
+-
+-			next_req = list_entry(req->queue.next,
+-				struct mv_req, queue);
+-
+-			/* Point the QH to the first TD of next request */
+-			mv_prime_ep(ep, next_req);
+-		} else {
+-			struct mv_dqh *qh;
+-
+-			qh = ep->dqh;
+-			qh->next_dtd_ptr = 1;
+-			qh->size_ioc_int_sts = 0;
+-		}
+-
+-		/* The request hasn't been processed, patch up the TD chain */
+-	} else {
+-		struct mv_req *prev_req;
+-
+-		prev_req = list_entry(req->queue.prev, struct mv_req, queue);
+-		writel(readl(&req->tail->dtd_next),
+-				&prev_req->tail->dtd_next);
+-
+-	}
+-
+-	done(ep, req, -ECONNRESET);
+-
+-	/* Enable EP */
+-out:
+-	epctrlx = readl(&udc->op_regs->epctrlx[ep->ep_num]);
+-	if (ep_dir(ep) == EP_DIR_IN)
+-		epctrlx |= EPCTRL_TX_ENABLE;
+-	else
+-		epctrlx |= EPCTRL_RX_ENABLE;
+-	writel(epctrlx, &udc->op_regs->epctrlx[ep->ep_num]);
+-	ep->stopped = stopped;
+-
+-	spin_unlock_irqrestore(&ep->udc->lock, flags);
+-	return ret;
+-}
+-
+-static void ep_set_stall(struct mv_udc *udc, u8 ep_num, u8 direction, int stall)
+-{
+-	u32 epctrlx;
+-
+-	epctrlx = readl(&udc->op_regs->epctrlx[ep_num]);
+-
+-	if (stall) {
+-		if (direction == EP_DIR_IN)
+-			epctrlx |= EPCTRL_TX_EP_STALL;
+-		else
+-			epctrlx |= EPCTRL_RX_EP_STALL;
+-	} else {
+-		if (direction == EP_DIR_IN) {
+-			epctrlx &= ~EPCTRL_TX_EP_STALL;
+-			epctrlx |= EPCTRL_TX_DATA_TOGGLE_RST;
+-		} else {
+-			epctrlx &= ~EPCTRL_RX_EP_STALL;
+-			epctrlx |= EPCTRL_RX_DATA_TOGGLE_RST;
+-		}
+-	}
+-	writel(epctrlx, &udc->op_regs->epctrlx[ep_num]);
+-}
+-
+-static int ep_is_stall(struct mv_udc *udc, u8 ep_num, u8 direction)
+-{
+-	u32 epctrlx;
+-
+-	epctrlx = readl(&udc->op_regs->epctrlx[ep_num]);
+-
+-	if (direction == EP_DIR_OUT)
+-		return (epctrlx & EPCTRL_RX_EP_STALL) ? 1 : 0;
+-	else
+-		return (epctrlx & EPCTRL_TX_EP_STALL) ? 1 : 0;
+-}
+-
+-static int mv_ep_set_halt_wedge(struct usb_ep *_ep, int halt, int wedge)
+-{
+-	struct mv_ep *ep;
+-	unsigned long flags;
+-	int status = 0;
+-	struct mv_udc *udc;
+-
+-	ep = container_of(_ep, struct mv_ep, ep);
+-	udc = ep->udc;
+-	if (!_ep || !ep->ep.desc) {
+-		status = -EINVAL;
+-		goto out;
+-	}
+-
+-	if (ep->ep.desc->bmAttributes == USB_ENDPOINT_XFER_ISOC) {
+-		status = -EOPNOTSUPP;
+-		goto out;
+-	}
+-
+-	/*
+-	 * Attempt to halt IN ep will fail if any transfer requests
+-	 * are still queue
+-	 */
+-	if (halt && (ep_dir(ep) == EP_DIR_IN) && !list_empty(&ep->queue)) {
+-		status = -EAGAIN;
+-		goto out;
+-	}
+-
+-	spin_lock_irqsave(&ep->udc->lock, flags);
+-	ep_set_stall(udc, ep->ep_num, ep_dir(ep), halt);
+-	if (halt && wedge)
+-		ep->wedge = 1;
+-	else if (!halt)
+-		ep->wedge = 0;
+-	spin_unlock_irqrestore(&ep->udc->lock, flags);
+-
+-	if (ep->ep_num == 0) {
+-		udc->ep0_state = WAIT_FOR_SETUP;
+-		udc->ep0_dir = EP_DIR_OUT;
+-	}
+-out:
+-	return status;
+-}
+-
+-static int mv_ep_set_halt(struct usb_ep *_ep, int halt)
+-{
+-	return mv_ep_set_halt_wedge(_ep, halt, 0);
+-}
+-
+-static int mv_ep_set_wedge(struct usb_ep *_ep)
+-{
+-	return mv_ep_set_halt_wedge(_ep, 1, 1);
+-}
+-
+-static const struct usb_ep_ops mv_ep_ops = {
+-	.enable		= mv_ep_enable,
+-	.disable	= mv_ep_disable,
+-
+-	.alloc_request	= mv_alloc_request,
+-	.free_request	= mv_free_request,
+-
+-	.queue		= mv_ep_queue,
+-	.dequeue	= mv_ep_dequeue,
+-
+-	.set_wedge	= mv_ep_set_wedge,
+-	.set_halt	= mv_ep_set_halt,
+-	.fifo_flush	= mv_ep_fifo_flush,	/* flush fifo */
+-};
+-
+-static int udc_clock_enable(struct mv_udc *udc)
+-{
+-	return clk_prepare_enable(udc->clk);
+-}
+-
+-static void udc_clock_disable(struct mv_udc *udc)
+-{
+-	clk_disable_unprepare(udc->clk);
+-}
+-
+-static void udc_stop(struct mv_udc *udc)
+-{
+-	u32 tmp;
+-
+-	/* Disable interrupts */
+-	tmp = readl(&udc->op_regs->usbintr);
+-	tmp &= ~(USBINTR_INT_EN | USBINTR_ERR_INT_EN |
+-		USBINTR_PORT_CHANGE_DETECT_EN | USBINTR_RESET_EN);
+-	writel(tmp, &udc->op_regs->usbintr);
+-
+-	udc->stopped = 1;
+-
+-	/* Reset the Run the bit in the command register to stop VUSB */
+-	tmp = readl(&udc->op_regs->usbcmd);
+-	tmp &= ~USBCMD_RUN_STOP;
+-	writel(tmp, &udc->op_regs->usbcmd);
+-}
+-
+-static void udc_start(struct mv_udc *udc)
+-{
+-	u32 usbintr;
+-
+-	usbintr = USBINTR_INT_EN | USBINTR_ERR_INT_EN
+-		| USBINTR_PORT_CHANGE_DETECT_EN
+-		| USBINTR_RESET_EN | USBINTR_DEVICE_SUSPEND;
+-	/* Enable interrupts */
+-	writel(usbintr, &udc->op_regs->usbintr);
+-
+-	udc->stopped = 0;
+-
+-	/* Set the Run bit in the command register */
+-	writel(USBCMD_RUN_STOP, &udc->op_regs->usbcmd);
+-}
+-
+-static int udc_reset(struct mv_udc *udc)
+-{
+-	unsigned int loops;
+-	u32 tmp, portsc;
+-
+-	/* Stop the controller */
+-	tmp = readl(&udc->op_regs->usbcmd);
+-	tmp &= ~USBCMD_RUN_STOP;
+-	writel(tmp, &udc->op_regs->usbcmd);
+-
+-	/* Reset the controller to get default values */
+-	writel(USBCMD_CTRL_RESET, &udc->op_regs->usbcmd);
+-
+-	/* wait for reset to complete */
+-	loops = LOOPS(RESET_TIMEOUT);
+-	while (readl(&udc->op_regs->usbcmd) & USBCMD_CTRL_RESET) {
+-		if (loops == 0) {
+-			dev_err(&udc->dev->dev,
+-				"Wait for RESET completed TIMEOUT\n");
+-			return -ETIMEDOUT;
+-		}
+-		loops--;
+-		udelay(LOOPS_USEC);
+-	}
+-
+-	/* set controller to device mode */
+-	tmp = readl(&udc->op_regs->usbmode);
+-	tmp |= USBMODE_CTRL_MODE_DEVICE;
+-
+-	/* turn setup lockout off, require setup tripwire in usbcmd */
+-	tmp |= USBMODE_SETUP_LOCK_OFF;
+-
+-	writel(tmp, &udc->op_regs->usbmode);
+-
+-	writel(0x0, &udc->op_regs->epsetupstat);
+-
+-	/* Configure the Endpoint List Address */
+-	writel(udc->ep_dqh_dma & USB_EP_LIST_ADDRESS_MASK,
+-		&udc->op_regs->eplistaddr);
+-
+-	portsc = readl(&udc->op_regs->portsc[0]);
+-	if (readl(&udc->cap_regs->hcsparams) & HCSPARAMS_PPC)
+-		portsc &= (~PORTSCX_W1C_BITS | ~PORTSCX_PORT_POWER);
+-
+-	if (udc->force_fs)
+-		portsc |= PORTSCX_FORCE_FULL_SPEED_CONNECT;
+-	else
+-		portsc &= (~PORTSCX_FORCE_FULL_SPEED_CONNECT);
+-
+-	writel(portsc, &udc->op_regs->portsc[0]);
+-
+-	tmp = readl(&udc->op_regs->epctrlx[0]);
+-	tmp &= ~(EPCTRL_TX_EP_STALL | EPCTRL_RX_EP_STALL);
+-	writel(tmp, &udc->op_regs->epctrlx[0]);
+-
+-	return 0;
+-}
+-
+-static int mv_udc_enable_internal(struct mv_udc *udc)
+-{
+-	int retval;
+-
+-	if (udc->active)
+-		return 0;
+-
+-	dev_dbg(&udc->dev->dev, "enable udc\n");
+-	retval = udc_clock_enable(udc);
+-	if (retval)
+-		return retval;
+-
+-	if (udc->pdata->phy_init) {
+-		retval = udc->pdata->phy_init(udc->phy_regs);
+-		if (retval) {
+-			dev_err(&udc->dev->dev,
+-				"init phy error %d\n", retval);
+-			udc_clock_disable(udc);
+-			return retval;
+-		}
+-	}
+-	udc->active = 1;
+-
+-	return 0;
+-}
+-
+-static int mv_udc_enable(struct mv_udc *udc)
+-{
+-	if (udc->clock_gating)
+-		return mv_udc_enable_internal(udc);
+-
+-	return 0;
+-}
+-
+-static void mv_udc_disable_internal(struct mv_udc *udc)
+-{
+-	if (udc->active) {
+-		dev_dbg(&udc->dev->dev, "disable udc\n");
+-		if (udc->pdata->phy_deinit)
+-			udc->pdata->phy_deinit(udc->phy_regs);
+-		udc_clock_disable(udc);
+-		udc->active = 0;
+-	}
+-}
+-
+-static void mv_udc_disable(struct mv_udc *udc)
+-{
+-	if (udc->clock_gating)
+-		mv_udc_disable_internal(udc);
+-}
+-
+-static int mv_udc_get_frame(struct usb_gadget *gadget)
+-{
+-	struct mv_udc *udc;
+-	u16	retval;
+-
+-	if (!gadget)
+-		return -ENODEV;
+-
+-	udc = container_of(gadget, struct mv_udc, gadget);
+-
+-	retval = readl(&udc->op_regs->frindex) & USB_FRINDEX_MASKS;
+-
+-	return retval;
+-}
+-
+-/* Tries to wake up the host connected to this gadget */
+-static int mv_udc_wakeup(struct usb_gadget *gadget)
+-{
+-	struct mv_udc *udc = container_of(gadget, struct mv_udc, gadget);
+-	u32 portsc;
+-
+-	/* Remote wakeup feature not enabled by host */
+-	if (!udc->remote_wakeup)
+-		return -ENOTSUPP;
+-
+-	portsc = readl(&udc->op_regs->portsc);
+-	/* not suspended? */
+-	if (!(portsc & PORTSCX_PORT_SUSPEND))
+-		return 0;
+-	/* trigger force resume */
+-	portsc |= PORTSCX_PORT_FORCE_RESUME;
+-	writel(portsc, &udc->op_regs->portsc[0]);
+-	return 0;
+-}
+-
+-static int mv_udc_vbus_session(struct usb_gadget *gadget, int is_active)
+-{
+-	struct mv_udc *udc;
+-	unsigned long flags;
+-	int retval = 0;
+-
+-	udc = container_of(gadget, struct mv_udc, gadget);
+-	spin_lock_irqsave(&udc->lock, flags);
+-
+-	udc->vbus_active = (is_active != 0);
+-
+-	dev_dbg(&udc->dev->dev, "%s: softconnect %d, vbus_active %d\n",
+-		__func__, udc->softconnect, udc->vbus_active);
+-
+-	if (udc->driver && udc->softconnect && udc->vbus_active) {
+-		retval = mv_udc_enable(udc);
+-		if (retval == 0) {
+-			/* Clock is disabled, need re-init registers */
+-			udc_reset(udc);
+-			ep0_reset(udc);
+-			udc_start(udc);
+-		}
+-	} else if (udc->driver && udc->softconnect) {
+-		if (!udc->active)
+-			goto out;
+-
+-		/* stop all the transfer in queue*/
+-		stop_activity(udc, udc->driver);
+-		udc_stop(udc);
+-		mv_udc_disable(udc);
+-	}
+-
+-out:
+-	spin_unlock_irqrestore(&udc->lock, flags);
+-	return retval;
+-}
+-
+-static int mv_udc_pullup(struct usb_gadget *gadget, int is_on)
+-{
+-	struct mv_udc *udc;
+-	unsigned long flags;
+-	int retval = 0;
+-
+-	udc = container_of(gadget, struct mv_udc, gadget);
+-	spin_lock_irqsave(&udc->lock, flags);
+-
+-	udc->softconnect = (is_on != 0);
+-
+-	dev_dbg(&udc->dev->dev, "%s: softconnect %d, vbus_active %d\n",
+-			__func__, udc->softconnect, udc->vbus_active);
+-
+-	if (udc->driver && udc->softconnect && udc->vbus_active) {
+-		retval = mv_udc_enable(udc);
+-		if (retval == 0) {
+-			/* Clock is disabled, need re-init registers */
+-			udc_reset(udc);
+-			ep0_reset(udc);
+-			udc_start(udc);
+-		}
+-	} else if (udc->driver && udc->vbus_active) {
+-		/* stop all the transfer in queue*/
+-		stop_activity(udc, udc->driver);
+-		udc_stop(udc);
+-		mv_udc_disable(udc);
+-	}
+-
+-	spin_unlock_irqrestore(&udc->lock, flags);
+-	return retval;
+-}
+-
+-static int mv_udc_start(struct usb_gadget *, struct usb_gadget_driver *);
+-static int mv_udc_stop(struct usb_gadget *);
+-/* device controller usb_gadget_ops structure */
+-static const struct usb_gadget_ops mv_ops = {
+-
+-	/* returns the current frame number */
+-	.get_frame	= mv_udc_get_frame,
+-
+-	/* tries to wake up the host connected to this gadget */
+-	.wakeup		= mv_udc_wakeup,
+-
+-	/* notify controller that VBUS is powered or not */
+-	.vbus_session	= mv_udc_vbus_session,
+-
+-	/* D+ pullup, software-controlled connect/disconnect to USB host */
+-	.pullup		= mv_udc_pullup,
+-	.udc_start	= mv_udc_start,
+-	.udc_stop	= mv_udc_stop,
+-};
+-
+-static int eps_init(struct mv_udc *udc)
+-{
+-	struct mv_ep	*ep;
+-	char name[14];
+-	int i;
+-
+-	/* initialize ep0 */
+-	ep = &udc->eps[0];
+-	ep->udc = udc;
+-	strncpy(ep->name, "ep0", sizeof(ep->name));
+-	ep->ep.name = ep->name;
+-	ep->ep.ops = &mv_ep_ops;
+-	ep->wedge = 0;
+-	ep->stopped = 0;
+-	usb_ep_set_maxpacket_limit(&ep->ep, EP0_MAX_PKT_SIZE);
+-	ep->ep.caps.type_control = true;
+-	ep->ep.caps.dir_in = true;
+-	ep->ep.caps.dir_out = true;
+-	ep->ep_num = 0;
+-	ep->ep.desc = &mv_ep0_desc;
+-	INIT_LIST_HEAD(&ep->queue);
+-
+-	ep->ep_type = USB_ENDPOINT_XFER_CONTROL;
+-
+-	/* initialize other endpoints */
+-	for (i = 2; i < udc->max_eps * 2; i++) {
+-		ep = &udc->eps[i];
+-		if (i % 2) {
+-			snprintf(name, sizeof(name), "ep%din", i / 2);
+-			ep->direction = EP_DIR_IN;
+-			ep->ep.caps.dir_in = true;
+-		} else {
+-			snprintf(name, sizeof(name), "ep%dout", i / 2);
+-			ep->direction = EP_DIR_OUT;
+-			ep->ep.caps.dir_out = true;
+-		}
+-		ep->udc = udc;
+-		strncpy(ep->name, name, sizeof(ep->name));
+-		ep->ep.name = ep->name;
+-
+-		ep->ep.caps.type_iso = true;
+-		ep->ep.caps.type_bulk = true;
+-		ep->ep.caps.type_int = true;
+-
+-		ep->ep.ops = &mv_ep_ops;
+-		ep->stopped = 0;
+-		usb_ep_set_maxpacket_limit(&ep->ep, (unsigned short) ~0);
+-		ep->ep_num = i / 2;
+-
+-		INIT_LIST_HEAD(&ep->queue);
+-		list_add_tail(&ep->ep.ep_list, &udc->gadget.ep_list);
+-
+-		ep->dqh = &udc->ep_dqh[i];
+-	}
+-
+-	return 0;
+-}
+-
+-/* delete all endpoint requests, called with spinlock held */
+-static void nuke(struct mv_ep *ep, int status)
+-{
+-	/* called with spinlock held */
+-	ep->stopped = 1;
+-
+-	/* endpoint fifo flush */
+-	mv_ep_fifo_flush(&ep->ep);
+-
+-	while (!list_empty(&ep->queue)) {
+-		struct mv_req *req = NULL;
+-		req = list_entry(ep->queue.next, struct mv_req, queue);
+-		done(ep, req, status);
+-	}
+-}
+-
+-static void gadget_reset(struct mv_udc *udc, struct usb_gadget_driver *driver)
+-{
+-	struct mv_ep	*ep;
+-
+-	nuke(&udc->eps[0], -ESHUTDOWN);
+-
+-	list_for_each_entry(ep, &udc->gadget.ep_list, ep.ep_list) {
+-		nuke(ep, -ESHUTDOWN);
+-	}
+-
+-	/* report reset; the driver is already quiesced */
+-	if (driver) {
+-		spin_unlock(&udc->lock);
+-		usb_gadget_udc_reset(&udc->gadget, driver);
+-		spin_lock(&udc->lock);
+-	}
+-}
+-/* stop all USB activities */
+-static void stop_activity(struct mv_udc *udc, struct usb_gadget_driver *driver)
+-{
+-	struct mv_ep	*ep;
+-
+-	nuke(&udc->eps[0], -ESHUTDOWN);
+-
+-	list_for_each_entry(ep, &udc->gadget.ep_list, ep.ep_list) {
+-		nuke(ep, -ESHUTDOWN);
+-	}
+-
+-	/* report disconnect; the driver is already quiesced */
+-	if (driver) {
+-		spin_unlock(&udc->lock);
+-		driver->disconnect(&udc->gadget);
+-		spin_lock(&udc->lock);
+-	}
+-}
+-
+-static int mv_udc_start(struct usb_gadget *gadget,
+-		struct usb_gadget_driver *driver)
+-{
+-	struct mv_udc *udc;
+-	int retval = 0;
+-	unsigned long flags;
+-
+-	udc = container_of(gadget, struct mv_udc, gadget);
+-
+-	if (udc->driver)
+-		return -EBUSY;
+-
+-	spin_lock_irqsave(&udc->lock, flags);
+-
+-	/* hook up the driver ... */
+-	udc->driver = driver;
+-
+-	udc->usb_state = USB_STATE_ATTACHED;
+-	udc->ep0_state = WAIT_FOR_SETUP;
+-	udc->ep0_dir = EP_DIR_OUT;
+-
+-	spin_unlock_irqrestore(&udc->lock, flags);
+-
+-	if (udc->transceiver) {
+-		retval = otg_set_peripheral(udc->transceiver->otg,
+-					&udc->gadget);
+-		if (retval) {
+-			dev_err(&udc->dev->dev,
+-				"unable to register peripheral to otg\n");
+-			udc->driver = NULL;
+-			return retval;
+-		}
+-	}
+-
+-	/* When boot with cable attached, there will be no vbus irq occurred */
+-	if (udc->qwork)
+-		queue_work(udc->qwork, &udc->vbus_work);
+-
+-	return 0;
+-}
+-
+-static int mv_udc_stop(struct usb_gadget *gadget)
+-{
+-	struct mv_udc *udc;
+-	unsigned long flags;
+-
+-	udc = container_of(gadget, struct mv_udc, gadget);
+-
+-	spin_lock_irqsave(&udc->lock, flags);
+-
+-	mv_udc_enable(udc);
+-	udc_stop(udc);
+-
+-	/* stop all usb activities */
+-	udc->gadget.speed = USB_SPEED_UNKNOWN;
+-	stop_activity(udc, NULL);
+-	mv_udc_disable(udc);
+-
+-	spin_unlock_irqrestore(&udc->lock, flags);
+-
+-	/* unbind gadget driver */
+-	udc->driver = NULL;
+-
+-	return 0;
+-}
+-
+-static void mv_set_ptc(struct mv_udc *udc, u32 mode)
+-{
+-	u32 portsc;
+-
+-	portsc = readl(&udc->op_regs->portsc[0]);
+-	portsc |= mode << 16;
+-	writel(portsc, &udc->op_regs->portsc[0]);
+-}
+-
+-static void prime_status_complete(struct usb_ep *ep, struct usb_request *_req)
+-{
+-	struct mv_ep *mvep = container_of(ep, struct mv_ep, ep);
+-	struct mv_req *req = container_of(_req, struct mv_req, req);
+-	struct mv_udc *udc;
+-	unsigned long flags;
+-
+-	udc = mvep->udc;
+-
+-	dev_info(&udc->dev->dev, "switch to test mode %d\n", req->test_mode);
+-
+-	spin_lock_irqsave(&udc->lock, flags);
+-	if (req->test_mode) {
+-		mv_set_ptc(udc, req->test_mode);
+-		req->test_mode = 0;
+-	}
+-	spin_unlock_irqrestore(&udc->lock, flags);
+-}
+-
+-static int
+-udc_prime_status(struct mv_udc *udc, u8 direction, u16 status, bool empty)
+-{
+-	int retval = 0;
+-	struct mv_req *req;
+-	struct mv_ep *ep;
+-
+-	ep = &udc->eps[0];
+-	udc->ep0_dir = direction;
+-	udc->ep0_state = WAIT_FOR_OUT_STATUS;
+-
+-	req = udc->status_req;
+-
+-	/* fill in the request structure */
+-	if (empty == false) {
+-		*((u16 *) req->req.buf) = cpu_to_le16(status);
+-		req->req.length = 2;
+-	} else
+-		req->req.length = 0;
+-
+-	req->ep = ep;
+-	req->req.status = -EINPROGRESS;
+-	req->req.actual = 0;
+-	if (udc->test_mode) {
+-		req->req.complete = prime_status_complete;
+-		req->test_mode = udc->test_mode;
+-		udc->test_mode = 0;
+-	} else
+-		req->req.complete = NULL;
+-	req->dtd_count = 0;
+-
+-	if (req->req.dma == DMA_ADDR_INVALID) {
+-		req->req.dma = dma_map_single(ep->udc->gadget.dev.parent,
+-				req->req.buf, req->req.length,
+-				ep_dir(ep) ? DMA_TO_DEVICE : DMA_FROM_DEVICE);
+-		req->mapped = 1;
+-	}
+-
+-	/* prime the data phase */
+-	if (!req_to_dtd(req)) {
+-		retval = queue_dtd(ep, req);
+-		if (retval) {
+-			dev_err(&udc->dev->dev,
+-				"Failed to queue dtd when prime status\n");
+-			goto out;
+-		}
+-	} else{	/* no mem */
+-		retval = -ENOMEM;
+-		dev_err(&udc->dev->dev,
+-			"Failed to dma_pool_alloc when prime status\n");
+-		goto out;
+-	}
+-
+-	list_add_tail(&req->queue, &ep->queue);
+-
+-	return 0;
+-out:
+-	usb_gadget_unmap_request(&udc->gadget, &req->req, ep_dir(ep));
+-
+-	return retval;
+-}
+-
+-static void mv_udc_testmode(struct mv_udc *udc, u16 index)
+-{
+-	if (index <= USB_TEST_FORCE_ENABLE) {
+-		udc->test_mode = index;
+-		if (udc_prime_status(udc, EP_DIR_IN, 0, true))
+-			ep0_stall(udc);
+-	} else
+-		dev_err(&udc->dev->dev,
+-			"This test mode(%d) is not supported\n", index);
+-}
+-
+-static void ch9setaddress(struct mv_udc *udc, struct usb_ctrlrequest *setup)
+-{
+-	udc->dev_addr = (u8)setup->wValue;
+-
+-	/* update usb state */
+-	udc->usb_state = USB_STATE_ADDRESS;
+-
+-	if (udc_prime_status(udc, EP_DIR_IN, 0, true))
+-		ep0_stall(udc);
+-}
+-
+-static void ch9getstatus(struct mv_udc *udc, u8 ep_num,
+-	struct usb_ctrlrequest *setup)
+-{
+-	u16 status = 0;
+-	int retval;
+-
+-	if ((setup->bRequestType & (USB_DIR_IN | USB_TYPE_MASK))
+-		!= (USB_DIR_IN | USB_TYPE_STANDARD))
+-		return;
+-
+-	if ((setup->bRequestType & USB_RECIP_MASK) == USB_RECIP_DEVICE) {
+-		status = 1 << USB_DEVICE_SELF_POWERED;
+-		status |= udc->remote_wakeup << USB_DEVICE_REMOTE_WAKEUP;
+-	} else if ((setup->bRequestType & USB_RECIP_MASK)
+-			== USB_RECIP_INTERFACE) {
+-		/* get interface status */
+-		status = 0;
+-	} else if ((setup->bRequestType & USB_RECIP_MASK)
+-			== USB_RECIP_ENDPOINT) {
+-		u8 ep_num, direction;
+-
+-		ep_num = setup->wIndex & USB_ENDPOINT_NUMBER_MASK;
+-		direction = (setup->wIndex & USB_ENDPOINT_DIR_MASK)
+-				? EP_DIR_IN : EP_DIR_OUT;
+-		status = ep_is_stall(udc, ep_num, direction)
+-				<< USB_ENDPOINT_HALT;
+-	}
+-
+-	retval = udc_prime_status(udc, EP_DIR_IN, status, false);
+-	if (retval)
+-		ep0_stall(udc);
+-	else
+-		udc->ep0_state = DATA_STATE_XMIT;
+-}
+-
+-static void ch9clearfeature(struct mv_udc *udc, struct usb_ctrlrequest *setup)
+-{
+-	u8 ep_num;
+-	u8 direction;
+-	struct mv_ep *ep;
+-
+-	if ((setup->bRequestType & (USB_TYPE_MASK | USB_RECIP_MASK))
+-		== ((USB_TYPE_STANDARD | USB_RECIP_DEVICE))) {
+-		switch (setup->wValue) {
+-		case USB_DEVICE_REMOTE_WAKEUP:
+-			udc->remote_wakeup = 0;
+-			break;
+-		default:
+-			goto out;
+-		}
+-	} else if ((setup->bRequestType & (USB_TYPE_MASK | USB_RECIP_MASK))
+-		== ((USB_TYPE_STANDARD | USB_RECIP_ENDPOINT))) {
+-		switch (setup->wValue) {
+-		case USB_ENDPOINT_HALT:
+-			ep_num = setup->wIndex & USB_ENDPOINT_NUMBER_MASK;
+-			direction = (setup->wIndex & USB_ENDPOINT_DIR_MASK)
+-				? EP_DIR_IN : EP_DIR_OUT;
+-			if (setup->wValue != 0 || setup->wLength != 0
+-				|| ep_num > udc->max_eps)
+-				goto out;
+-			ep = &udc->eps[ep_num * 2 + direction];
+-			if (ep->wedge == 1)
+-				break;
+-			spin_unlock(&udc->lock);
+-			ep_set_stall(udc, ep_num, direction, 0);
+-			spin_lock(&udc->lock);
+-			break;
+-		default:
+-			goto out;
+-		}
+-	} else
+-		goto out;
+-
+-	if (udc_prime_status(udc, EP_DIR_IN, 0, true))
+-		ep0_stall(udc);
+-out:
+-	return;
+-}
+-
+-static void ch9setfeature(struct mv_udc *udc, struct usb_ctrlrequest *setup)
+-{
+-	u8 ep_num;
+-	u8 direction;
+-
+-	if ((setup->bRequestType & (USB_TYPE_MASK | USB_RECIP_MASK))
+-		== ((USB_TYPE_STANDARD | USB_RECIP_DEVICE))) {
+-		switch (setup->wValue) {
+-		case USB_DEVICE_REMOTE_WAKEUP:
+-			udc->remote_wakeup = 1;
+-			break;
+-		case USB_DEVICE_TEST_MODE:
+-			if (setup->wIndex & 0xFF
+-				||  udc->gadget.speed != USB_SPEED_HIGH)
+-				ep0_stall(udc);
+-
+-			if (udc->usb_state != USB_STATE_CONFIGURED
+-				&& udc->usb_state != USB_STATE_ADDRESS
+-				&& udc->usb_state != USB_STATE_DEFAULT)
+-				ep0_stall(udc);
+-
+-			mv_udc_testmode(udc, (setup->wIndex >> 8));
+-			goto out;
+-		default:
+-			goto out;
+-		}
+-	} else if ((setup->bRequestType & (USB_TYPE_MASK | USB_RECIP_MASK))
+-		== ((USB_TYPE_STANDARD | USB_RECIP_ENDPOINT))) {
+-		switch (setup->wValue) {
+-		case USB_ENDPOINT_HALT:
+-			ep_num = setup->wIndex & USB_ENDPOINT_NUMBER_MASK;
+-			direction = (setup->wIndex & USB_ENDPOINT_DIR_MASK)
+-				? EP_DIR_IN : EP_DIR_OUT;
+-			if (setup->wValue != 0 || setup->wLength != 0
+-				|| ep_num > udc->max_eps)
+-				goto out;
+-			spin_unlock(&udc->lock);
+-			ep_set_stall(udc, ep_num, direction, 1);
+-			spin_lock(&udc->lock);
+-			break;
+-		default:
+-			goto out;
+-		}
+-	} else
+-		goto out;
+-
+-	if (udc_prime_status(udc, EP_DIR_IN, 0, true))
+-		ep0_stall(udc);
+-out:
+-	return;
+-}
+-
+-static void handle_setup_packet(struct mv_udc *udc, u8 ep_num,
+-	struct usb_ctrlrequest *setup)
+-	__releases(&ep->udc->lock)
+-	__acquires(&ep->udc->lock)
+-{
+-	bool delegate = false;
+-
+-	nuke(&udc->eps[ep_num * 2 + EP_DIR_OUT], -ESHUTDOWN);
+-
+-	dev_dbg(&udc->dev->dev, "SETUP %02x.%02x v%04x i%04x l%04x\n",
+-			setup->bRequestType, setup->bRequest,
+-			setup->wValue, setup->wIndex, setup->wLength);
+-	/* We process some standard setup requests here */
+-	if ((setup->bRequestType & USB_TYPE_MASK) == USB_TYPE_STANDARD) {
+-		switch (setup->bRequest) {
+-		case USB_REQ_GET_STATUS:
+-			ch9getstatus(udc, ep_num, setup);
+-			break;
+-
+-		case USB_REQ_SET_ADDRESS:
+-			ch9setaddress(udc, setup);
+-			break;
+-
+-		case USB_REQ_CLEAR_FEATURE:
+-			ch9clearfeature(udc, setup);
+-			break;
+-
+-		case USB_REQ_SET_FEATURE:
+-			ch9setfeature(udc, setup);
+-			break;
+-
+-		default:
+-			delegate = true;
+-		}
+-	} else
+-		delegate = true;
+-
+-	/* delegate USB standard requests to the gadget driver */
+-	if (delegate == true) {
+-		/* USB requests handled by gadget */
+-		if (setup->wLength) {
+-			/* DATA phase from gadget, STATUS phase from udc */
+-			udc->ep0_dir = (setup->bRequestType & USB_DIR_IN)
+-					?  EP_DIR_IN : EP_DIR_OUT;
+-			spin_unlock(&udc->lock);
+-			if (udc->driver->setup(&udc->gadget,
+-				&udc->local_setup_buff) < 0)
+-				ep0_stall(udc);
+-			spin_lock(&udc->lock);
+-			udc->ep0_state = (setup->bRequestType & USB_DIR_IN)
+-					?  DATA_STATE_XMIT : DATA_STATE_RECV;
+-		} else {
+-			/* no DATA phase, IN STATUS phase from gadget */
+-			udc->ep0_dir = EP_DIR_IN;
+-			spin_unlock(&udc->lock);
+-			if (udc->driver->setup(&udc->gadget,
+-				&udc->local_setup_buff) < 0)
+-				ep0_stall(udc);
+-			spin_lock(&udc->lock);
+-			udc->ep0_state = WAIT_FOR_OUT_STATUS;
+-		}
+-	}
+-}
+-
+-/* complete DATA or STATUS phase of ep0 prime status phase if needed */
+-static void ep0_req_complete(struct mv_udc *udc,
+-	struct mv_ep *ep0, struct mv_req *req)
+-{
+-	u32 new_addr;
+-
+-	if (udc->usb_state == USB_STATE_ADDRESS) {
+-		/* set the new address */
+-		new_addr = (u32)udc->dev_addr;
+-		writel(new_addr << USB_DEVICE_ADDRESS_BIT_SHIFT,
+-			&udc->op_regs->deviceaddr);
+-	}
+-
+-	done(ep0, req, 0);
+-
+-	switch (udc->ep0_state) {
+-	case DATA_STATE_XMIT:
+-		/* receive status phase */
+-		if (udc_prime_status(udc, EP_DIR_OUT, 0, true))
+-			ep0_stall(udc);
+-		break;
+-	case DATA_STATE_RECV:
+-		/* send status phase */
+-		if (udc_prime_status(udc, EP_DIR_IN, 0 , true))
+-			ep0_stall(udc);
+-		break;
+-	case WAIT_FOR_OUT_STATUS:
+-		udc->ep0_state = WAIT_FOR_SETUP;
+-		break;
+-	case WAIT_FOR_SETUP:
+-		dev_err(&udc->dev->dev, "unexpect ep0 packets\n");
+-		break;
+-	default:
+-		ep0_stall(udc);
+-		break;
+-	}
+-}
+-
+-static void get_setup_data(struct mv_udc *udc, u8 ep_num, u8 *buffer_ptr)
+-{
+-	u32 temp;
+-	struct mv_dqh *dqh;
+-
+-	dqh = &udc->ep_dqh[ep_num * 2 + EP_DIR_OUT];
+-
+-	/* Clear bit in ENDPTSETUPSTAT */
+-	writel((1 << ep_num), &udc->op_regs->epsetupstat);
+-
+-	/* while a hazard exists when setup package arrives */
+-	do {
+-		/* Set Setup Tripwire */
+-		temp = readl(&udc->op_regs->usbcmd);
+-		writel(temp | USBCMD_SETUP_TRIPWIRE_SET, &udc->op_regs->usbcmd);
+-
+-		/* Copy the setup packet to local buffer */
+-		memcpy(buffer_ptr, (u8 *) dqh->setup_buffer, 8);
+-	} while (!(readl(&udc->op_regs->usbcmd) & USBCMD_SETUP_TRIPWIRE_SET));
+-
+-	/* Clear Setup Tripwire */
+-	temp = readl(&udc->op_regs->usbcmd);
+-	writel(temp & ~USBCMD_SETUP_TRIPWIRE_SET, &udc->op_regs->usbcmd);
+-}
+-
+-static void irq_process_tr_complete(struct mv_udc *udc)
+-{
+-	u32 tmp, bit_pos;
+-	int i, ep_num = 0, direction = 0;
+-	struct mv_ep	*curr_ep;
+-	struct mv_req *curr_req, *temp_req;
+-	int status;
+-
+-	/*
+-	 * We use separate loops for ENDPTSETUPSTAT and ENDPTCOMPLETE
+-	 * because the setup packets are to be read ASAP
+-	 */
+-
+-	/* Process all Setup packet received interrupts */
+-	tmp = readl(&udc->op_regs->epsetupstat);
+-
+-	if (tmp) {
+-		for (i = 0; i < udc->max_eps; i++) {
+-			if (tmp & (1 << i)) {
+-				get_setup_data(udc, i,
+-					(u8 *)(&udc->local_setup_buff));
+-				handle_setup_packet(udc, i,
+-					&udc->local_setup_buff);
+-			}
+-		}
+-	}
+-
+-	/* Don't clear the endpoint setup status register here.
+-	 * It is cleared as a setup packet is read out of the buffer
+-	 */
+-
+-	/* Process non-setup transaction complete interrupts */
+-	tmp = readl(&udc->op_regs->epcomplete);
+-
+-	if (!tmp)
+-		return;
+-
+-	writel(tmp, &udc->op_regs->epcomplete);
+-
+-	for (i = 0; i < udc->max_eps * 2; i++) {
+-		ep_num = i >> 1;
+-		direction = i % 2;
+-
+-		bit_pos = 1 << (ep_num + 16 * direction);
+-
+-		if (!(bit_pos & tmp))
+-			continue;
+-
+-		if (i == 1)
+-			curr_ep = &udc->eps[0];
+-		else
+-			curr_ep = &udc->eps[i];
+-		/* process the req queue until an uncomplete request */
+-		list_for_each_entry_safe(curr_req, temp_req,
+-			&curr_ep->queue, queue) {
+-			status = process_ep_req(udc, i, curr_req);
+-			if (status)
+-				break;
+-
+-			/* write back status to req */
+-			curr_req->req.status = status;
+-
+-			/* ep0 request completion */
+-			if (ep_num == 0) {
+-				ep0_req_complete(udc, curr_ep, curr_req);
+-				break;
+-			} else {
+-				done(curr_ep, curr_req, status);
+-			}
+-		}
+-	}
+-}
+-
+-static void irq_process_reset(struct mv_udc *udc)
+-{
+-	u32 tmp;
+-	unsigned int loops;
+-
+-	udc->ep0_dir = EP_DIR_OUT;
+-	udc->ep0_state = WAIT_FOR_SETUP;
+-	udc->remote_wakeup = 0;		/* default to 0 on reset */
+-
+-	/* The address bits are past bit 25-31. Set the address */
+-	tmp = readl(&udc->op_regs->deviceaddr);
+-	tmp &= ~(USB_DEVICE_ADDRESS_MASK);
+-	writel(tmp, &udc->op_regs->deviceaddr);
+-
+-	/* Clear all the setup token semaphores */
+-	tmp = readl(&udc->op_regs->epsetupstat);
+-	writel(tmp, &udc->op_regs->epsetupstat);
+-
+-	/* Clear all the endpoint complete status bits */
+-	tmp = readl(&udc->op_regs->epcomplete);
+-	writel(tmp, &udc->op_regs->epcomplete);
+-
+-	/* wait until all endptprime bits cleared */
+-	loops = LOOPS(PRIME_TIMEOUT);
+-	while (readl(&udc->op_regs->epprime) & 0xFFFFFFFF) {
+-		if (loops == 0) {
+-			dev_err(&udc->dev->dev,
+-				"Timeout for ENDPTPRIME = 0x%x\n",
+-				readl(&udc->op_regs->epprime));
+-			break;
+-		}
+-		loops--;
+-		udelay(LOOPS_USEC);
+-	}
+-
+-	/* Write 1s to the Flush register */
+-	writel((u32)~0, &udc->op_regs->epflush);
+-
+-	if (readl(&udc->op_regs->portsc[0]) & PORTSCX_PORT_RESET) {
+-		dev_info(&udc->dev->dev, "usb bus reset\n");
+-		udc->usb_state = USB_STATE_DEFAULT;
+-		/* reset all the queues, stop all USB activities */
+-		gadget_reset(udc, udc->driver);
+-	} else {
+-		dev_info(&udc->dev->dev, "USB reset portsc 0x%x\n",
+-			readl(&udc->op_regs->portsc));
+-
+-		/*
+-		 * re-initialize
+-		 * controller reset
+-		 */
+-		udc_reset(udc);
+-
+-		/* reset all the queues, stop all USB activities */
+-		stop_activity(udc, udc->driver);
+-
+-		/* reset ep0 dQH and endptctrl */
+-		ep0_reset(udc);
+-
+-		/* enable interrupt and set controller to run state */
+-		udc_start(udc);
+-
+-		udc->usb_state = USB_STATE_ATTACHED;
+-	}
+-}
+-
+-static void handle_bus_resume(struct mv_udc *udc)
+-{
+-	udc->usb_state = udc->resume_state;
+-	udc->resume_state = 0;
+-
+-	/* report resume to the driver */
+-	if (udc->driver) {
+-		if (udc->driver->resume) {
+-			spin_unlock(&udc->lock);
+-			udc->driver->resume(&udc->gadget);
+-			spin_lock(&udc->lock);
+-		}
+-	}
+-}
+-
+-static void irq_process_suspend(struct mv_udc *udc)
+-{
+-	udc->resume_state = udc->usb_state;
+-	udc->usb_state = USB_STATE_SUSPENDED;
+-
+-	if (udc->driver->suspend) {
+-		spin_unlock(&udc->lock);
+-		udc->driver->suspend(&udc->gadget);
+-		spin_lock(&udc->lock);
+-	}
+-}
+-
+-static void irq_process_port_change(struct mv_udc *udc)
+-{
+-	u32 portsc;
+-
+-	portsc = readl(&udc->op_regs->portsc[0]);
+-	if (!(portsc & PORTSCX_PORT_RESET)) {
+-		/* Get the speed */
+-		u32 speed = portsc & PORTSCX_PORT_SPEED_MASK;
+-		switch (speed) {
+-		case PORTSCX_PORT_SPEED_HIGH:
+-			udc->gadget.speed = USB_SPEED_HIGH;
+-			break;
+-		case PORTSCX_PORT_SPEED_FULL:
+-			udc->gadget.speed = USB_SPEED_FULL;
+-			break;
+-		case PORTSCX_PORT_SPEED_LOW:
+-			udc->gadget.speed = USB_SPEED_LOW;
+-			break;
+-		default:
+-			udc->gadget.speed = USB_SPEED_UNKNOWN;
+-			break;
+-		}
+-	}
+-
+-	if (portsc & PORTSCX_PORT_SUSPEND) {
+-		udc->resume_state = udc->usb_state;
+-		udc->usb_state = USB_STATE_SUSPENDED;
+-		if (udc->driver->suspend) {
+-			spin_unlock(&udc->lock);
+-			udc->driver->suspend(&udc->gadget);
+-			spin_lock(&udc->lock);
+-		}
+-	}
+-
+-	if (!(portsc & PORTSCX_PORT_SUSPEND)
+-		&& udc->usb_state == USB_STATE_SUSPENDED) {
+-		handle_bus_resume(udc);
+-	}
+-
+-	if (!udc->resume_state)
+-		udc->usb_state = USB_STATE_DEFAULT;
+-}
+-
+-static void irq_process_error(struct mv_udc *udc)
+-{
+-	/* Increment the error count */
+-	udc->errors++;
+-}
+-
+-static irqreturn_t mv_udc_irq(int irq, void *dev)
+-{
+-	struct mv_udc *udc = (struct mv_udc *)dev;
+-	u32 status, intr;
+-
+-	/* Disable ISR when stopped bit is set */
+-	if (udc->stopped)
+-		return IRQ_NONE;
+-
+-	spin_lock(&udc->lock);
+-
+-	status = readl(&udc->op_regs->usbsts);
+-	intr = readl(&udc->op_regs->usbintr);
+-	status &= intr;
+-
+-	if (status == 0) {
+-		spin_unlock(&udc->lock);
+-		return IRQ_NONE;
+-	}
+-
+-	/* Clear all the interrupts occurred */
+-	writel(status, &udc->op_regs->usbsts);
+-
+-	if (status & USBSTS_ERR)
+-		irq_process_error(udc);
+-
+-	if (status & USBSTS_RESET)
+-		irq_process_reset(udc);
+-
+-	if (status & USBSTS_PORT_CHANGE)
+-		irq_process_port_change(udc);
+-
+-	if (status & USBSTS_INT)
+-		irq_process_tr_complete(udc);
+-
+-	if (status & USBSTS_SUSPEND)
+-		irq_process_suspend(udc);
+-
+-	spin_unlock(&udc->lock);
+-
+-	return IRQ_HANDLED;
+-}
+-
+-static irqreturn_t mv_udc_vbus_irq(int irq, void *dev)
+-{
+-	struct mv_udc *udc = (struct mv_udc *)dev;
+-
+-	/* polling VBUS and init phy may cause too much time*/
+-	if (udc->qwork)
+-		queue_work(udc->qwork, &udc->vbus_work);
+-
+-	return IRQ_HANDLED;
+-}
+-
+-static void mv_udc_vbus_work(struct work_struct *work)
+-{
+-	struct mv_udc *udc;
+-	unsigned int vbus;
+-
+-	udc = container_of(work, struct mv_udc, vbus_work);
+-	if (!udc->pdata->vbus)
+-		return;
+-
+-	vbus = udc->pdata->vbus->poll();
+-	dev_info(&udc->dev->dev, "vbus is %d\n", vbus);
+-
+-	if (vbus == VBUS_HIGH)
+-		mv_udc_vbus_session(&udc->gadget, 1);
+-	else if (vbus == VBUS_LOW)
+-		mv_udc_vbus_session(&udc->gadget, 0);
+-}
+-
+-/* release device structure */
+-static void gadget_release(struct device *_dev)
+-{
+-	struct mv_udc *udc;
+-
+-	udc = dev_get_drvdata(_dev);
+-
+-	complete(udc->done);
+-}
+-
+-static void mv_udc_remove(struct platform_device *pdev)
+-{
+-	struct mv_udc *udc;
+-
+-	udc = platform_get_drvdata(pdev);
+-
+-	usb_del_gadget_udc(&udc->gadget);
+-
+-	if (udc->qwork)
+-		destroy_workqueue(udc->qwork);
+-
+-	/* free memory allocated in probe */
+-	dma_pool_destroy(udc->dtd_pool);
+-
+-	if (udc->ep_dqh)
+-		dma_free_coherent(&pdev->dev, udc->ep_dqh_size,
+-			udc->ep_dqh, udc->ep_dqh_dma);
+-
+-	mv_udc_disable(udc);
+-
+-	/* free dev, wait for the release() finished */
+-	wait_for_completion(udc->done);
+-}
+-
+-static int mv_udc_probe(struct platform_device *pdev)
+-{
+-	struct mv_usb_platform_data *pdata = dev_get_platdata(&pdev->dev);
+-	struct mv_udc *udc;
+-	int retval = 0;
+-	struct resource *r;
+-	size_t size;
+-
+-	if (pdata == NULL) {
+-		dev_err(&pdev->dev, "missing platform_data\n");
+-		return -ENODEV;
+-	}
+-
+-	udc = devm_kzalloc(&pdev->dev, sizeof(*udc), GFP_KERNEL);
+-	if (udc == NULL)
+-		return -ENOMEM;
+-
+-	udc->done = &release_done;
+-	udc->pdata = dev_get_platdata(&pdev->dev);
+-	spin_lock_init(&udc->lock);
+-
+-	udc->dev = pdev;
+-
+-	if (pdata->mode == MV_USB_MODE_OTG) {
+-		udc->transceiver = devm_usb_get_phy(&pdev->dev,
+-					USB_PHY_TYPE_USB2);
+-		if (IS_ERR(udc->transceiver)) {
+-			retval = PTR_ERR(udc->transceiver);
+-
+-			if (retval == -ENXIO)
+-				return retval;
+-
+-			udc->transceiver = NULL;
+-			return -EPROBE_DEFER;
+-		}
+-	}
+-
+-	/* udc only have one sysclk. */
+-	udc->clk = devm_clk_get(&pdev->dev, NULL);
+-	if (IS_ERR(udc->clk))
+-		return PTR_ERR(udc->clk);
+-
+-	r = platform_get_resource_byname(udc->dev, IORESOURCE_MEM, "capregs");
+-	if (r == NULL) {
+-		dev_err(&pdev->dev, "no I/O memory resource defined\n");
+-		return -ENODEV;
+-	}
+-
+-	udc->cap_regs = (struct mv_cap_regs __iomem *)
+-		devm_ioremap(&pdev->dev, r->start, resource_size(r));
+-	if (udc->cap_regs == NULL) {
+-		dev_err(&pdev->dev, "failed to map I/O memory\n");
+-		return -EBUSY;
+-	}
+-
+-	r = platform_get_resource_byname(udc->dev, IORESOURCE_MEM, "phyregs");
+-	if (r == NULL) {
+-		dev_err(&pdev->dev, "no phy I/O memory resource defined\n");
+-		return -ENODEV;
+-	}
+-
+-	udc->phy_regs = devm_ioremap(&pdev->dev, r->start, resource_size(r));
+-	if (udc->phy_regs == NULL) {
+-		dev_err(&pdev->dev, "failed to map phy I/O memory\n");
+-		return -EBUSY;
+-	}
+-
+-	/* we will acces controller register, so enable the clk */
+-	retval = mv_udc_enable_internal(udc);
+-	if (retval)
+-		return retval;
+-
+-	udc->op_regs =
+-		(struct mv_op_regs __iomem *)((unsigned long)udc->cap_regs
+-		+ (readl(&udc->cap_regs->caplength_hciversion)
+-			& CAPLENGTH_MASK));
+-	udc->max_eps = readl(&udc->cap_regs->dccparams) & DCCPARAMS_DEN_MASK;
+-
+-	/*
+-	 * some platform will use usb to download image, it may not disconnect
+-	 * usb gadget before loading kernel. So first stop udc here.
+-	 */
+-	udc_stop(udc);
+-	writel(0xFFFFFFFF, &udc->op_regs->usbsts);
+-
+-	size = udc->max_eps * sizeof(struct mv_dqh) *2;
+-	size = (size + DQH_ALIGNMENT - 1) & ~(DQH_ALIGNMENT - 1);
+-	udc->ep_dqh = dma_alloc_coherent(&pdev->dev, size,
+-					&udc->ep_dqh_dma, GFP_KERNEL);
+-
+-	if (udc->ep_dqh == NULL) {
+-		dev_err(&pdev->dev, "allocate dQH memory failed\n");
+-		retval = -ENOMEM;
+-		goto err_disable_clock;
+-	}
+-	udc->ep_dqh_size = size;
+-
+-	/* create dTD dma_pool resource */
+-	udc->dtd_pool = dma_pool_create("mv_dtd",
+-			&pdev->dev,
+-			sizeof(struct mv_dtd),
+-			DTD_ALIGNMENT,
+-			DMA_BOUNDARY);
+-
+-	if (!udc->dtd_pool) {
+-		retval = -ENOMEM;
+-		goto err_free_dma;
+-	}
+-
+-	size = udc->max_eps * sizeof(struct mv_ep) *2;
+-	udc->eps = devm_kzalloc(&pdev->dev, size, GFP_KERNEL);
+-	if (udc->eps == NULL) {
+-		retval = -ENOMEM;
+-		goto err_destroy_dma;
+-	}
+-
+-	/* initialize ep0 status request structure */
+-	udc->status_req = devm_kzalloc(&pdev->dev, sizeof(struct mv_req),
+-					GFP_KERNEL);
+-	if (!udc->status_req) {
+-		retval = -ENOMEM;
+-		goto err_destroy_dma;
+-	}
+-	INIT_LIST_HEAD(&udc->status_req->queue);
+-
+-	/* allocate a small amount of memory to get valid address */
+-	udc->status_req->req.buf = devm_kzalloc(&pdev->dev, 8, GFP_KERNEL);
+-	if (!udc->status_req->req.buf) {
+-		retval = -ENOMEM;
+-		goto err_destroy_dma;
+-	}
+-	udc->status_req->req.dma = DMA_ADDR_INVALID;
+-
+-	udc->resume_state = USB_STATE_NOTATTACHED;
+-	udc->usb_state = USB_STATE_POWERED;
+-	udc->ep0_dir = EP_DIR_OUT;
+-	udc->remote_wakeup = 0;
+-
+-	r = platform_get_resource(udc->dev, IORESOURCE_IRQ, 0);
+-	if (r == NULL) {
+-		dev_err(&pdev->dev, "no IRQ resource defined\n");
+-		retval = -ENODEV;
+-		goto err_destroy_dma;
+-	}
+-	udc->irq = r->start;
+-	if (devm_request_irq(&pdev->dev, udc->irq, mv_udc_irq,
+-		IRQF_SHARED, driver_name, udc)) {
+-		dev_err(&pdev->dev, "Request irq %d for UDC failed\n",
+-			udc->irq);
+-		retval = -ENODEV;
+-		goto err_destroy_dma;
+-	}
+-
+-	/* initialize gadget structure */
+-	udc->gadget.ops = &mv_ops;	/* usb_gadget_ops */
+-	udc->gadget.ep0 = &udc->eps[0].ep;	/* gadget ep0 */
+-	INIT_LIST_HEAD(&udc->gadget.ep_list);	/* ep_list */
+-	udc->gadget.speed = USB_SPEED_UNKNOWN;	/* speed */
+-	udc->gadget.max_speed = USB_SPEED_HIGH;	/* support dual speed */
+-
+-	/* the "gadget" abstracts/virtualizes the controller */
+-	udc->gadget.name = driver_name;		/* gadget name */
+-
+-	eps_init(udc);
+-
+-	/* VBUS detect: we can disable/enable clock on demand.*/
+-	if (udc->transceiver)
+-		udc->clock_gating = 1;
+-	else if (pdata->vbus) {
+-		udc->clock_gating = 1;
+-		retval = devm_request_threaded_irq(&pdev->dev,
+-				pdata->vbus->irq, NULL,
+-				mv_udc_vbus_irq, IRQF_ONESHOT, "vbus", udc);
+-		if (retval) {
+-			dev_info(&pdev->dev,
+-				"Can not request irq for VBUS, "
+-				"disable clock gating\n");
+-			udc->clock_gating = 0;
+-		}
+-
+-		udc->qwork = create_singlethread_workqueue("mv_udc_queue");
+-		if (!udc->qwork) {
+-			dev_err(&pdev->dev, "cannot create workqueue\n");
+-			retval = -ENOMEM;
+-			goto err_destroy_dma;
+-		}
+-
+-		INIT_WORK(&udc->vbus_work, mv_udc_vbus_work);
+-	}
+-
+-	/*
+-	 * When clock gating is supported, we can disable clk and phy.
+-	 * If not, it means that VBUS detection is not supported, we
+-	 * have to enable vbus active all the time to let controller work.
+-	 */
+-	if (udc->clock_gating)
+-		mv_udc_disable_internal(udc);
+-	else
+-		udc->vbus_active = 1;
+-
+-	retval = usb_add_gadget_udc_release(&pdev->dev, &udc->gadget,
+-			gadget_release);
+-	if (retval)
+-		goto err_create_workqueue;
+-
+-	platform_set_drvdata(pdev, udc);
+-	dev_info(&pdev->dev, "successful probe UDC device %s clock gating.\n",
+-		udc->clock_gating ? "with" : "without");
+-
+-	return 0;
+-
+-err_create_workqueue:
+-	if (udc->qwork)
+-		destroy_workqueue(udc->qwork);
+-err_destroy_dma:
+-	dma_pool_destroy(udc->dtd_pool);
+-err_free_dma:
+-	dma_free_coherent(&pdev->dev, udc->ep_dqh_size,
+-			udc->ep_dqh, udc->ep_dqh_dma);
+-err_disable_clock:
+-	mv_udc_disable_internal(udc);
+-
+-	return retval;
+-}
+-
+-#ifdef CONFIG_PM
+-static int mv_udc_suspend(struct device *dev)
+-{
+-	struct mv_udc *udc;
+-
+-	udc = dev_get_drvdata(dev);
+-
+-	/* if OTG is enabled, the following will be done in OTG driver*/
+-	if (udc->transceiver)
+-		return 0;
+-
+-	if (udc->pdata->vbus && udc->pdata->vbus->poll)
+-		if (udc->pdata->vbus->poll() == VBUS_HIGH) {
+-			dev_info(&udc->dev->dev, "USB cable is connected!\n");
+-			return -EAGAIN;
+-		}
+-
+-	/*
+-	 * only cable is unplugged, udc can suspend.
+-	 * So do not care about clock_gating == 1.
+-	 */
+-	if (!udc->clock_gating) {
+-		udc_stop(udc);
+-
+-		spin_lock_irq(&udc->lock);
+-		/* stop all usb activities */
+-		stop_activity(udc, udc->driver);
+-		spin_unlock_irq(&udc->lock);
+-
+-		mv_udc_disable_internal(udc);
+-	}
+-
+-	return 0;
+-}
+-
+-static int mv_udc_resume(struct device *dev)
+-{
+-	struct mv_udc *udc;
+-	int retval;
+-
+-	udc = dev_get_drvdata(dev);
+-
+-	/* if OTG is enabled, the following will be done in OTG driver*/
+-	if (udc->transceiver)
+-		return 0;
+-
+-	if (!udc->clock_gating) {
+-		retval = mv_udc_enable_internal(udc);
+-		if (retval)
+-			return retval;
+-
+-		if (udc->driver && udc->softconnect) {
+-			udc_reset(udc);
+-			ep0_reset(udc);
+-			udc_start(udc);
+-		}
+-	}
+-
+-	return 0;
+-}
+-
+-static const struct dev_pm_ops mv_udc_pm_ops = {
+-	.suspend	= mv_udc_suspend,
+-	.resume		= mv_udc_resume,
+-};
+-#endif
+-
+-static void mv_udc_shutdown(struct platform_device *pdev)
+-{
+-	struct mv_udc *udc;
+-	u32 mode;
+-
+-	udc = platform_get_drvdata(pdev);
+-	/* reset controller mode to IDLE */
+-	mv_udc_enable(udc);
+-	mode = readl(&udc->op_regs->usbmode);
+-	mode &= ~3;
+-	writel(mode, &udc->op_regs->usbmode);
+-	mv_udc_disable(udc);
+-}
+-
+-static struct platform_driver udc_driver = {
+-	.probe		= mv_udc_probe,
+-	.remove		= mv_udc_remove,
+-	.shutdown	= mv_udc_shutdown,
+-	.driver		= {
+-		.name	= "mv-udc",
+-#ifdef CONFIG_PM
+-		.pm	= &mv_udc_pm_ops,
+-#endif
+-	},
+-};
+-
+-module_platform_driver(udc_driver);
+-MODULE_ALIAS("platform:mv-udc");
+-MODULE_DESCRIPTION(DRIVER_DESC);
+-MODULE_AUTHOR("Chao Xie <chao.xie@marvell.com>");
+-MODULE_LICENSE("GPL");
+diff --git a/drivers/usb/phy/Kconfig b/drivers/usb/phy/Kconfig
+index 5f629d7cad64..b7acf3966cd7 100644
+--- a/drivers/usb/phy/Kconfig
++++ b/drivers/usb/phy/Kconfig
+@@ -126,18 +126,6 @@ config USB_ISP1301
+ 	  To compile this driver as a module, choose M here: the
+ 	  module will be called phy-isp1301.
  
--#define RTL8211F_LED_COUNT			3
-+/* RTL8211E and RTL8211F support up to three LEDs */
-+#define RTL8211x_LED_COUNT			3
- 
- MODULE_DESCRIPTION("Realtek PHY driver");
- MODULE_AUTHOR("Johnson Leung");
-@@ -136,6 +151,21 @@ static int rtl821x_write_page(struct phy_device *phydev, int page)
- 	return __phy_write(phydev, RTL821x_PAGE_SELECT, page);
- }
- 
-+static int rtl8211e_read_ext_page(struct phy_device *phydev, u16 ext_page,
-+				  u32 regnum)
-+{
-+	int oldpage, ret = 0;
-+
-+	oldpage = phy_select_page(phydev, RTL8211E_SET_EXT_PAGE);
-+	if (oldpage >= 0) {
-+		ret = __phy_write(phydev, RTL8211E_EXT_PAGE_SELECT, ext_page);
-+		if (ret == 0)
-+			ret = __phy_read(phydev, regnum);
-+	}
-+
-+	return phy_restore_page(phydev, oldpage, ret);
-+}
-+
- static int rtl8211e_modify_ext_page(struct phy_device *phydev, u16 ext_page,
- 				    u32 regnum, u16 mask, u16 set)
- {
-@@ -519,7 +549,7 @@ static int rtl821x_resume(struct phy_device *phydev)
- 	return 0;
- }
- 
--static int rtl8211f_led_hw_is_supported(struct phy_device *phydev, u8 index,
-+static int rtl8211x_led_hw_is_supported(struct phy_device *phydev, u8 index,
- 					unsigned long rules)
- {
- 	const unsigned long mask = BIT(TRIGGER_NETDEV_LINK_10) |
-@@ -538,9 +568,11 @@ static int rtl8211f_led_hw_is_supported(struct phy_device *phydev, u8 index,
- 	 *      rates and Active indication always at all three 10+100+1000
- 	 *      link rates.
- 	 * This code currently uses mode B only.
-+	 *
-+	 * RTL8211E PHY LED has one mode, which works like RTL8211F mode B.
- 	 */
- 
--	if (index >= RTL8211F_LED_COUNT)
-+	if (index >= RTL8211x_LED_COUNT)
- 		return -EINVAL;
- 
- 	/* Filter out any other unsupported triggers. */
-@@ -559,7 +591,7 @@ static int rtl8211f_led_hw_control_get(struct phy_device *phydev, u8 index,
- {
- 	int val;
- 
--	if (index >= RTL8211F_LED_COUNT)
-+	if (index >= RTL8211x_LED_COUNT)
- 		return -EINVAL;
- 
- 	val = phy_read_paged(phydev, 0xd04, RTL8211F_LEDCR);
-@@ -592,7 +624,7 @@ static int rtl8211f_led_hw_control_set(struct phy_device *phydev, u8 index,
- 	const u16 mask = RTL8211F_LEDCR_MASK << (RTL8211F_LEDCR_SHIFT * index);
- 	u16 reg = 0;
- 
--	if (index >= RTL8211F_LED_COUNT)
-+	if (index >= RTL8211x_LED_COUNT)
- 		return -EINVAL;
- 
- 	if (test_bit(TRIGGER_NETDEV_LINK_10, &rules))
-@@ -615,6 +647,84 @@ static int rtl8211f_led_hw_control_set(struct phy_device *phydev, u8 index,
- 	return phy_modify_paged(phydev, 0xd04, RTL8211F_LEDCR, mask, reg);
- }
- 
-+static int rtl8211e_led_hw_control_get(struct phy_device *phydev, u8 index,
-+				       unsigned long *rules)
-+{
-+	int ret;
-+	u16 cr1, cr2;
-+
-+	if (index >= RTL8211x_LED_COUNT)
-+		return -EINVAL;
-+
-+	ret = rtl8211e_read_ext_page(phydev, RTL8211E_LEDCR_EXT_PAGE,
-+				     RTL8211E_LEDCR1);
-+	if (ret < 0)
-+		return ret;
-+
-+	cr1 = ret >> RTL8211E_LEDCR1_SHIFT * index;
-+	if (cr1 & RTL8211E_LEDCR1_ACT_TXRX) {
-+		__set_bit(TRIGGER_NETDEV_RX, rules);
-+		__set_bit(TRIGGER_NETDEV_TX, rules);
-+	}
-+
-+	ret = rtl8211e_read_ext_page(phydev, RTL8211E_LEDCR_EXT_PAGE,
-+				     RTL8211E_LEDCR2);
-+	if (ret < 0)
-+		return ret;
-+
-+	cr2 = ret >> RTL8211E_LEDCR2_SHIFT * index;
-+	if (cr2 & RTL8211E_LEDCR2_LINK_10)
-+		__set_bit(TRIGGER_NETDEV_LINK_10, rules);
-+
-+	if (cr2 & RTL8211E_LEDCR2_LINK_100)
-+		__set_bit(TRIGGER_NETDEV_LINK_100, rules);
-+
-+	if (cr2 & RTL8211E_LEDCR2_LINK_1000)
-+		__set_bit(TRIGGER_NETDEV_LINK_1000, rules);
-+
-+	return ret;
-+}
-+
-+static int rtl8211e_led_hw_control_set(struct phy_device *phydev, u8 index,
-+				       unsigned long rules)
-+{
-+	const u16 cr1mask =
-+		RTL8211E_LEDCR1_MASK << (RTL8211E_LEDCR1_SHIFT * index);
-+	const u16 cr2mask =
-+		RTL8211E_LEDCR2_MASK << (RTL8211E_LEDCR2_SHIFT * index);
-+	u16 cr1 = 0, cr2 = 0;
-+	int ret;
-+
-+	if (index >= RTL8211x_LED_COUNT)
-+		return -EINVAL;
-+
-+	if (test_bit(TRIGGER_NETDEV_RX, &rules) ||
-+	    test_bit(TRIGGER_NETDEV_TX, &rules)) {
-+		cr1 |= RTL8211E_LEDCR1_ACT_TXRX;
-+	}
-+
-+	cr1 <<= RTL8211E_LEDCR1_SHIFT * index;
-+	ret = rtl8211e_modify_ext_page(phydev, RTL8211E_LEDCR_EXT_PAGE,
-+				       RTL8211E_LEDCR1, cr1mask, cr1);
-+	if (ret < 0)
-+		return ret;
-+
-+	if (test_bit(TRIGGER_NETDEV_LINK_10, &rules))
-+		cr2 |= RTL8211E_LEDCR2_LINK_10;
-+
-+	if (test_bit(TRIGGER_NETDEV_LINK_100, &rules))
-+		cr2 |= RTL8211E_LEDCR2_LINK_100;
-+
-+	if (test_bit(TRIGGER_NETDEV_LINK_1000, &rules))
-+		cr2 |= RTL8211E_LEDCR2_LINK_1000;
-+
-+	cr2 <<= RTL8211E_LEDCR2_SHIFT * index;
-+	ret = rtl8211e_modify_ext_page(phydev, RTL8211E_LEDCR_EXT_PAGE,
-+				       RTL8211E_LEDCR2, cr2mask, cr2);
-+
-+	return ret;
-+}
-+
- static int rtl8211e_config_init(struct phy_device *phydev)
- {
- 	const u16 delay_mask = RTL8211E_CTRL_DELAY |
-@@ -1390,6 +1500,9 @@ static struct phy_driver realtek_drvs[] = {
- 		.resume		= genphy_resume,
- 		.read_page	= rtl821x_read_page,
- 		.write_page	= rtl821x_write_page,
-+		.led_hw_is_supported = rtl8211x_led_hw_is_supported,
-+		.led_hw_control_get = rtl8211e_led_hw_control_get,
-+		.led_hw_control_set = rtl8211e_led_hw_control_set,
- 	}, {
- 		PHY_ID_MATCH_EXACT(0x001cc916),
- 		.name		= "RTL8211F Gigabit Ethernet",
-@@ -1403,7 +1516,7 @@ static struct phy_driver realtek_drvs[] = {
- 		.read_page	= rtl821x_read_page,
- 		.write_page	= rtl821x_write_page,
- 		.flags		= PHY_ALWAYS_CALL_SUSPEND,
--		.led_hw_is_supported = rtl8211f_led_hw_is_supported,
-+		.led_hw_is_supported = rtl8211x_led_hw_is_supported,
- 		.led_hw_control_get = rtl8211f_led_hw_control_get,
- 		.led_hw_control_set = rtl8211f_led_hw_control_set,
- 	}, {
+-config USB_MV_OTG
+-	tristate "Marvell USB OTG support"
+-	depends on USB_EHCI_MV && USB_MV_UDC && PM && USB_OTG
+-	depends on USB_GADGET || !USB_GADGET # if USB_GADGET=m, this can't be 'y'
+-	select USB_PHY
+-	help
+-	  Say Y here if you want to build Marvell USB OTG transceiver
+-	  driver in kernel (including PXA and MMP series). This driver
+-	  implements role switch between EHCI host driver and gadget driver.
+-
+-	  To compile this driver as a module, choose M here.
+-
+ config USB_MXS_PHY
+ 	tristate "Freescale MXS USB PHY support"
+ 	depends on ARCH_MXC || ARCH_MXS
+diff --git a/drivers/usb/phy/Makefile b/drivers/usb/phy/Makefile
+index e5d619b4d8f6..ceae46c5341d 100644
+--- a/drivers/usb/phy/Makefile
++++ b/drivers/usb/phy/Makefile
+@@ -18,7 +18,6 @@ obj-$(CONFIG_TWL6030_USB)		+= phy-twl6030-usb.o
+ obj-$(CONFIG_USB_TEGRA_PHY)		+= phy-tegra-usb.o
+ obj-$(CONFIG_USB_GPIO_VBUS)		+= phy-gpio-vbus-usb.o
+ obj-$(CONFIG_USB_ISP1301)		+= phy-isp1301.o
+-obj-$(CONFIG_USB_MV_OTG)		+= phy-mv-usb.o
+ obj-$(CONFIG_USB_MXS_PHY)		+= phy-mxs-usb.o
+ obj-$(CONFIG_USB_ULPI)			+= phy-ulpi.o
+ obj-$(CONFIG_USB_ULPI_VIEWPORT)		+= phy-ulpi-viewport.o
+diff --git a/drivers/usb/phy/phy-mv-usb.c b/drivers/usb/phy/phy-mv-usb.c
+deleted file mode 100644
+index 30d6c8840a5e..000000000000
+--- a/drivers/usb/phy/phy-mv-usb.c
++++ /dev/null
+@@ -1,881 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0+
+-/*
+- * Copyright (C) 2011 Marvell International Ltd. All rights reserved.
+- * Author: Chao Xie <chao.xie@marvell.com>
+- *	   Neil Zhang <zhangwm@marvell.com>
+- */
+-
+-#include <linux/module.h>
+-#include <linux/kernel.h>
+-#include <linux/io.h>
+-#include <linux/iopoll.h>
+-#include <linux/uaccess.h>
+-#include <linux/device.h>
+-#include <linux/proc_fs.h>
+-#include <linux/clk.h>
+-#include <linux/workqueue.h>
+-#include <linux/platform_device.h>
+-#include <linux/string_choices.h>
+-
+-#include <linux/usb.h>
+-#include <linux/usb/ch9.h>
+-#include <linux/usb/otg.h>
+-#include <linux/usb/gadget.h>
+-#include <linux/usb/hcd.h>
+-#include <linux/platform_data/mv_usb.h>
+-
+-#include "phy-mv-usb.h"
+-
+-#define	DRIVER_DESC	"Marvell USB OTG transceiver driver"
+-
+-MODULE_DESCRIPTION(DRIVER_DESC);
+-MODULE_LICENSE("GPL");
+-
+-static const char driver_name[] = "mv-otg";
+-
+-static char *state_string[] = {
+-	"undefined",
+-	"b_idle",
+-	"b_srp_init",
+-	"b_peripheral",
+-	"b_wait_acon",
+-	"b_host",
+-	"a_idle",
+-	"a_wait_vrise",
+-	"a_wait_bcon",
+-	"a_host",
+-	"a_suspend",
+-	"a_peripheral",
+-	"a_wait_vfall",
+-	"a_vbus_err"
+-};
+-
+-static int mv_otg_set_vbus(struct usb_otg *otg, bool on)
+-{
+-	struct mv_otg *mvotg = container_of(otg->usb_phy, struct mv_otg, phy);
+-	if (mvotg->pdata->set_vbus == NULL)
+-		return -ENODEV;
+-
+-	return mvotg->pdata->set_vbus(on);
+-}
+-
+-static int mv_otg_set_host(struct usb_otg *otg,
+-			   struct usb_bus *host)
+-{
+-	otg->host = host;
+-
+-	return 0;
+-}
+-
+-static int mv_otg_set_peripheral(struct usb_otg *otg,
+-				 struct usb_gadget *gadget)
+-{
+-	otg->gadget = gadget;
+-
+-	return 0;
+-}
+-
+-static void mv_otg_run_state_machine(struct mv_otg *mvotg,
+-				     unsigned long delay)
+-{
+-	dev_dbg(&mvotg->pdev->dev, "transceiver is updated\n");
+-	if (!mvotg->qwork)
+-		return;
+-
+-	queue_delayed_work(mvotg->qwork, &mvotg->work, delay);
+-}
+-
+-static void mv_otg_timer_await_bcon(struct timer_list *t)
+-{
+-	struct mv_otg *mvotg = from_timer(mvotg, t,
+-					  otg_ctrl.timer[A_WAIT_BCON_TIMER]);
+-
+-	mvotg->otg_ctrl.a_wait_bcon_timeout = 1;
+-
+-	dev_info(&mvotg->pdev->dev, "B Device No Response!\n");
+-
+-	if (spin_trylock(&mvotg->wq_lock)) {
+-		mv_otg_run_state_machine(mvotg, 0);
+-		spin_unlock(&mvotg->wq_lock);
+-	}
+-}
+-
+-static int mv_otg_cancel_timer(struct mv_otg *mvotg, unsigned int id)
+-{
+-	struct timer_list *timer;
+-
+-	if (id >= OTG_TIMER_NUM)
+-		return -EINVAL;
+-
+-	timer = &mvotg->otg_ctrl.timer[id];
+-
+-	if (timer_pending(timer))
+-		del_timer(timer);
+-
+-	return 0;
+-}
+-
+-static int mv_otg_set_timer(struct mv_otg *mvotg, unsigned int id,
+-			    unsigned long interval)
+-{
+-	struct timer_list *timer;
+-
+-	if (id >= OTG_TIMER_NUM)
+-		return -EINVAL;
+-
+-	timer = &mvotg->otg_ctrl.timer[id];
+-	if (timer_pending(timer)) {
+-		dev_err(&mvotg->pdev->dev, "Timer%d is already running\n", id);
+-		return -EBUSY;
+-	}
+-
+-	timer->expires = jiffies + interval;
+-	add_timer(timer);
+-
+-	return 0;
+-}
+-
+-static int mv_otg_reset(struct mv_otg *mvotg)
+-{
+-	u32 tmp;
+-	int ret;
+-
+-	/* Stop the controller */
+-	tmp = readl(&mvotg->op_regs->usbcmd);
+-	tmp &= ~USBCMD_RUN_STOP;
+-	writel(tmp, &mvotg->op_regs->usbcmd);
+-
+-	/* Reset the controller to get default values */
+-	writel(USBCMD_CTRL_RESET, &mvotg->op_regs->usbcmd);
+-
+-	ret = readl_poll_timeout_atomic(&mvotg->op_regs->usbcmd, tmp,
+-				(tmp & USBCMD_CTRL_RESET), 10, 10000);
+-	if (ret < 0) {
+-		dev_err(&mvotg->pdev->dev,
+-			"Wait for RESET completed TIMEOUT\n");
+-		return ret;
+-	}
+-
+-	writel(0x0, &mvotg->op_regs->usbintr);
+-	tmp = readl(&mvotg->op_regs->usbsts);
+-	writel(tmp, &mvotg->op_regs->usbsts);
+-
+-	return 0;
+-}
+-
+-static void mv_otg_init_irq(struct mv_otg *mvotg)
+-{
+-	u32 otgsc;
+-
+-	mvotg->irq_en = OTGSC_INTR_A_SESSION_VALID
+-	    | OTGSC_INTR_A_VBUS_VALID;
+-	mvotg->irq_status = OTGSC_INTSTS_A_SESSION_VALID
+-	    | OTGSC_INTSTS_A_VBUS_VALID;
+-
+-	if (mvotg->pdata->vbus == NULL) {
+-		mvotg->irq_en |= OTGSC_INTR_B_SESSION_VALID
+-		    | OTGSC_INTR_B_SESSION_END;
+-		mvotg->irq_status |= OTGSC_INTSTS_B_SESSION_VALID
+-		    | OTGSC_INTSTS_B_SESSION_END;
+-	}
+-
+-	if (mvotg->pdata->id == NULL) {
+-		mvotg->irq_en |= OTGSC_INTR_USB_ID;
+-		mvotg->irq_status |= OTGSC_INTSTS_USB_ID;
+-	}
+-
+-	otgsc = readl(&mvotg->op_regs->otgsc);
+-	otgsc |= mvotg->irq_en;
+-	writel(otgsc, &mvotg->op_regs->otgsc);
+-}
+-
+-static void mv_otg_start_host(struct mv_otg *mvotg, int on)
+-{
+-#ifdef CONFIG_USB
+-	struct usb_otg *otg = mvotg->phy.otg;
+-	struct usb_hcd *hcd;
+-
+-	if (!otg->host)
+-		return;
+-
+-	dev_info(&mvotg->pdev->dev, "%s host\n", on ? "start" : "stop");
+-
+-	hcd = bus_to_hcd(otg->host);
+-
+-	if (on) {
+-		usb_add_hcd(hcd, hcd->irq, IRQF_SHARED);
+-		device_wakeup_enable(hcd->self.controller);
+-	} else {
+-		usb_remove_hcd(hcd);
+-	}
+-#endif /* CONFIG_USB */
+-}
+-
+-static void mv_otg_start_periphrals(struct mv_otg *mvotg, int on)
+-{
+-	struct usb_otg *otg = mvotg->phy.otg;
+-
+-	if (!otg->gadget)
+-		return;
+-
+-	dev_info(mvotg->phy.dev, "gadget %s\n", str_on_off(on));
+-
+-	if (on)
+-		usb_gadget_vbus_connect(otg->gadget);
+-	else
+-		usb_gadget_vbus_disconnect(otg->gadget);
+-}
+-
+-static void otg_clock_enable(struct mv_otg *mvotg)
+-{
+-	clk_prepare_enable(mvotg->clk);
+-}
+-
+-static void otg_clock_disable(struct mv_otg *mvotg)
+-{
+-	clk_disable_unprepare(mvotg->clk);
+-}
+-
+-static int mv_otg_enable_internal(struct mv_otg *mvotg)
+-{
+-	int retval = 0;
+-
+-	if (mvotg->active)
+-		return 0;
+-
+-	dev_dbg(&mvotg->pdev->dev, "otg enabled\n");
+-
+-	otg_clock_enable(mvotg);
+-	if (mvotg->pdata->phy_init) {
+-		retval = mvotg->pdata->phy_init(mvotg->phy_regs);
+-		if (retval) {
+-			dev_err(&mvotg->pdev->dev,
+-				"init phy error %d\n", retval);
+-			otg_clock_disable(mvotg);
+-			return retval;
+-		}
+-	}
+-	mvotg->active = 1;
+-
+-	return 0;
+-
+-}
+-
+-static int mv_otg_enable(struct mv_otg *mvotg)
+-{
+-	if (mvotg->clock_gating)
+-		return mv_otg_enable_internal(mvotg);
+-
+-	return 0;
+-}
+-
+-static void mv_otg_disable_internal(struct mv_otg *mvotg)
+-{
+-	if (mvotg->active) {
+-		dev_dbg(&mvotg->pdev->dev, "otg disabled\n");
+-		if (mvotg->pdata->phy_deinit)
+-			mvotg->pdata->phy_deinit(mvotg->phy_regs);
+-		otg_clock_disable(mvotg);
+-		mvotg->active = 0;
+-	}
+-}
+-
+-static void mv_otg_disable(struct mv_otg *mvotg)
+-{
+-	if (mvotg->clock_gating)
+-		mv_otg_disable_internal(mvotg);
+-}
+-
+-static void mv_otg_update_inputs(struct mv_otg *mvotg)
+-{
+-	struct mv_otg_ctrl *otg_ctrl = &mvotg->otg_ctrl;
+-	u32 otgsc;
+-
+-	otgsc = readl(&mvotg->op_regs->otgsc);
+-
+-	if (mvotg->pdata->vbus) {
+-		if (mvotg->pdata->vbus->poll() == VBUS_HIGH) {
+-			otg_ctrl->b_sess_vld = 1;
+-			otg_ctrl->b_sess_end = 0;
+-		} else {
+-			otg_ctrl->b_sess_vld = 0;
+-			otg_ctrl->b_sess_end = 1;
+-		}
+-	} else {
+-		otg_ctrl->b_sess_vld = !!(otgsc & OTGSC_STS_B_SESSION_VALID);
+-		otg_ctrl->b_sess_end = !!(otgsc & OTGSC_STS_B_SESSION_END);
+-	}
+-
+-	if (mvotg->pdata->id)
+-		otg_ctrl->id = !!mvotg->pdata->id->poll();
+-	else
+-		otg_ctrl->id = !!(otgsc & OTGSC_STS_USB_ID);
+-
+-	if (mvotg->pdata->otg_force_a_bus_req && !otg_ctrl->id)
+-		otg_ctrl->a_bus_req = 1;
+-
+-	otg_ctrl->a_sess_vld = !!(otgsc & OTGSC_STS_A_SESSION_VALID);
+-	otg_ctrl->a_vbus_vld = !!(otgsc & OTGSC_STS_A_VBUS_VALID);
+-
+-	dev_dbg(&mvotg->pdev->dev, "%s: ", __func__);
+-	dev_dbg(&mvotg->pdev->dev, "id %d\n", otg_ctrl->id);
+-	dev_dbg(&mvotg->pdev->dev, "b_sess_vld %d\n", otg_ctrl->b_sess_vld);
+-	dev_dbg(&mvotg->pdev->dev, "b_sess_end %d\n", otg_ctrl->b_sess_end);
+-	dev_dbg(&mvotg->pdev->dev, "a_vbus_vld %d\n", otg_ctrl->a_vbus_vld);
+-	dev_dbg(&mvotg->pdev->dev, "a_sess_vld %d\n", otg_ctrl->a_sess_vld);
+-}
+-
+-static void mv_otg_update_state(struct mv_otg *mvotg)
+-{
+-	struct mv_otg_ctrl *otg_ctrl = &mvotg->otg_ctrl;
+-	int old_state = mvotg->phy.otg->state;
+-
+-	switch (old_state) {
+-	case OTG_STATE_UNDEFINED:
+-		mvotg->phy.otg->state = OTG_STATE_B_IDLE;
+-		fallthrough;
+-	case OTG_STATE_B_IDLE:
+-		if (otg_ctrl->id == 0)
+-			mvotg->phy.otg->state = OTG_STATE_A_IDLE;
+-		else if (otg_ctrl->b_sess_vld)
+-			mvotg->phy.otg->state = OTG_STATE_B_PERIPHERAL;
+-		break;
+-	case OTG_STATE_B_PERIPHERAL:
+-		if (!otg_ctrl->b_sess_vld || otg_ctrl->id == 0)
+-			mvotg->phy.otg->state = OTG_STATE_B_IDLE;
+-		break;
+-	case OTG_STATE_A_IDLE:
+-		if (otg_ctrl->id)
+-			mvotg->phy.otg->state = OTG_STATE_B_IDLE;
+-		else if (!(otg_ctrl->a_bus_drop) &&
+-			 (otg_ctrl->a_bus_req || otg_ctrl->a_srp_det))
+-			mvotg->phy.otg->state = OTG_STATE_A_WAIT_VRISE;
+-		break;
+-	case OTG_STATE_A_WAIT_VRISE:
+-		if (otg_ctrl->a_vbus_vld)
+-			mvotg->phy.otg->state = OTG_STATE_A_WAIT_BCON;
+-		break;
+-	case OTG_STATE_A_WAIT_BCON:
+-		if (otg_ctrl->id || otg_ctrl->a_bus_drop
+-		    || otg_ctrl->a_wait_bcon_timeout) {
+-			mv_otg_cancel_timer(mvotg, A_WAIT_BCON_TIMER);
+-			mvotg->otg_ctrl.a_wait_bcon_timeout = 0;
+-			mvotg->phy.otg->state = OTG_STATE_A_WAIT_VFALL;
+-			otg_ctrl->a_bus_req = 0;
+-		} else if (!otg_ctrl->a_vbus_vld) {
+-			mv_otg_cancel_timer(mvotg, A_WAIT_BCON_TIMER);
+-			mvotg->otg_ctrl.a_wait_bcon_timeout = 0;
+-			mvotg->phy.otg->state = OTG_STATE_A_VBUS_ERR;
+-		} else if (otg_ctrl->b_conn) {
+-			mv_otg_cancel_timer(mvotg, A_WAIT_BCON_TIMER);
+-			mvotg->otg_ctrl.a_wait_bcon_timeout = 0;
+-			mvotg->phy.otg->state = OTG_STATE_A_HOST;
+-		}
+-		break;
+-	case OTG_STATE_A_HOST:
+-		if (otg_ctrl->id || !otg_ctrl->b_conn
+-		    || otg_ctrl->a_bus_drop)
+-			mvotg->phy.otg->state = OTG_STATE_A_WAIT_BCON;
+-		else if (!otg_ctrl->a_vbus_vld)
+-			mvotg->phy.otg->state = OTG_STATE_A_VBUS_ERR;
+-		break;
+-	case OTG_STATE_A_WAIT_VFALL:
+-		if (otg_ctrl->id
+-		    || (!otg_ctrl->b_conn && otg_ctrl->a_sess_vld)
+-		    || otg_ctrl->a_bus_req)
+-			mvotg->phy.otg->state = OTG_STATE_A_IDLE;
+-		break;
+-	case OTG_STATE_A_VBUS_ERR:
+-		if (otg_ctrl->id || otg_ctrl->a_clr_err
+-		    || otg_ctrl->a_bus_drop) {
+-			otg_ctrl->a_clr_err = 0;
+-			mvotg->phy.otg->state = OTG_STATE_A_WAIT_VFALL;
+-		}
+-		break;
+-	default:
+-		break;
+-	}
+-}
+-
+-static void mv_otg_work(struct work_struct *work)
+-{
+-	struct mv_otg *mvotg;
+-	struct usb_otg *otg;
+-	int old_state;
+-
+-	mvotg = container_of(to_delayed_work(work), struct mv_otg, work);
+-
+-run:
+-	/* work queue is single thread, or we need spin_lock to protect */
+-	otg = mvotg->phy.otg;
+-	old_state = otg->state;
+-
+-	if (!mvotg->active)
+-		return;
+-
+-	mv_otg_update_inputs(mvotg);
+-	mv_otg_update_state(mvotg);
+-
+-	if (old_state != mvotg->phy.otg->state) {
+-		dev_info(&mvotg->pdev->dev, "change from state %s to %s\n",
+-			 state_string[old_state],
+-			 state_string[mvotg->phy.otg->state]);
+-
+-		switch (mvotg->phy.otg->state) {
+-		case OTG_STATE_B_IDLE:
+-			otg->default_a = 0;
+-			if (old_state == OTG_STATE_B_PERIPHERAL)
+-				mv_otg_start_periphrals(mvotg, 0);
+-			mv_otg_reset(mvotg);
+-			mv_otg_disable(mvotg);
+-			usb_phy_set_event(&mvotg->phy, USB_EVENT_NONE);
+-			break;
+-		case OTG_STATE_B_PERIPHERAL:
+-			mv_otg_enable(mvotg);
+-			mv_otg_start_periphrals(mvotg, 1);
+-			usb_phy_set_event(&mvotg->phy, USB_EVENT_ENUMERATED);
+-			break;
+-		case OTG_STATE_A_IDLE:
+-			otg->default_a = 1;
+-			mv_otg_enable(mvotg);
+-			if (old_state == OTG_STATE_A_WAIT_VFALL)
+-				mv_otg_start_host(mvotg, 0);
+-			mv_otg_reset(mvotg);
+-			break;
+-		case OTG_STATE_A_WAIT_VRISE:
+-			mv_otg_set_vbus(otg, 1);
+-			break;
+-		case OTG_STATE_A_WAIT_BCON:
+-			if (old_state != OTG_STATE_A_HOST)
+-				mv_otg_start_host(mvotg, 1);
+-			mv_otg_set_timer(mvotg, A_WAIT_BCON_TIMER,
+-					 T_A_WAIT_BCON);
+-			/*
+-			 * Now, we directly enter A_HOST. So set b_conn = 1
+-			 * here. In fact, it need host driver to notify us.
+-			 */
+-			mvotg->otg_ctrl.b_conn = 1;
+-			break;
+-		case OTG_STATE_A_HOST:
+-			break;
+-		case OTG_STATE_A_WAIT_VFALL:
+-			/*
+-			 * Now, we has exited A_HOST. So set b_conn = 0
+-			 * here. In fact, it need host driver to notify us.
+-			 */
+-			mvotg->otg_ctrl.b_conn = 0;
+-			mv_otg_set_vbus(otg, 0);
+-			break;
+-		case OTG_STATE_A_VBUS_ERR:
+-			break;
+-		default:
+-			break;
+-		}
+-		goto run;
+-	}
+-}
+-
+-static irqreturn_t mv_otg_irq(int irq, void *dev)
+-{
+-	struct mv_otg *mvotg = dev;
+-	u32 otgsc;
+-
+-	otgsc = readl(&mvotg->op_regs->otgsc);
+-	writel(otgsc, &mvotg->op_regs->otgsc);
+-
+-	/*
+-	 * if we have vbus, then the vbus detection for B-device
+-	 * will be done by mv_otg_inputs_irq().
+-	 */
+-	if (mvotg->pdata->vbus)
+-		if ((otgsc & OTGSC_STS_USB_ID) &&
+-		    !(otgsc & OTGSC_INTSTS_USB_ID))
+-			return IRQ_NONE;
+-
+-	if ((otgsc & mvotg->irq_status) == 0)
+-		return IRQ_NONE;
+-
+-	mv_otg_run_state_machine(mvotg, 0);
+-
+-	return IRQ_HANDLED;
+-}
+-
+-static irqreturn_t mv_otg_inputs_irq(int irq, void *dev)
+-{
+-	struct mv_otg *mvotg = dev;
+-
+-	/* The clock may disabled at this time */
+-	if (!mvotg->active) {
+-		mv_otg_enable(mvotg);
+-		mv_otg_init_irq(mvotg);
+-	}
+-
+-	mv_otg_run_state_machine(mvotg, 0);
+-
+-	return IRQ_HANDLED;
+-}
+-
+-static ssize_t
+-a_bus_req_show(struct device *dev, struct device_attribute *attr, char *buf)
+-{
+-	struct mv_otg *mvotg = dev_get_drvdata(dev);
+-	return scnprintf(buf, PAGE_SIZE, "%d\n",
+-			 mvotg->otg_ctrl.a_bus_req);
+-}
+-
+-static ssize_t
+-a_bus_req_store(struct device *dev, struct device_attribute *attr,
+-	      const char *buf, size_t count)
+-{
+-	struct mv_otg *mvotg = dev_get_drvdata(dev);
+-
+-	if (count > 2)
+-		return -1;
+-
+-	/* We will use this interface to change to A device */
+-	if (mvotg->phy.otg->state != OTG_STATE_B_IDLE
+-	    && mvotg->phy.otg->state != OTG_STATE_A_IDLE)
+-		return -1;
+-
+-	/* The clock may disabled and we need to set irq for ID detected */
+-	mv_otg_enable(mvotg);
+-	mv_otg_init_irq(mvotg);
+-
+-	if (buf[0] == '1') {
+-		mvotg->otg_ctrl.a_bus_req = 1;
+-		mvotg->otg_ctrl.a_bus_drop = 0;
+-		dev_dbg(&mvotg->pdev->dev,
+-			"User request: a_bus_req = 1\n");
+-
+-		if (spin_trylock(&mvotg->wq_lock)) {
+-			mv_otg_run_state_machine(mvotg, 0);
+-			spin_unlock(&mvotg->wq_lock);
+-		}
+-	}
+-
+-	return count;
+-}
+-
+-static DEVICE_ATTR_RW(a_bus_req);
+-
+-static ssize_t
+-a_clr_err_store(struct device *dev, struct device_attribute *attr,
+-	      const char *buf, size_t count)
+-{
+-	struct mv_otg *mvotg = dev_get_drvdata(dev);
+-	if (!mvotg->phy.otg->default_a)
+-		return -1;
+-
+-	if (count > 2)
+-		return -1;
+-
+-	if (buf[0] == '1') {
+-		mvotg->otg_ctrl.a_clr_err = 1;
+-		dev_dbg(&mvotg->pdev->dev,
+-			"User request: a_clr_err = 1\n");
+-	}
+-
+-	if (spin_trylock(&mvotg->wq_lock)) {
+-		mv_otg_run_state_machine(mvotg, 0);
+-		spin_unlock(&mvotg->wq_lock);
+-	}
+-
+-	return count;
+-}
+-
+-static DEVICE_ATTR_WO(a_clr_err);
+-
+-static ssize_t
+-a_bus_drop_show(struct device *dev, struct device_attribute *attr,
+-	       char *buf)
+-{
+-	struct mv_otg *mvotg = dev_get_drvdata(dev);
+-	return scnprintf(buf, PAGE_SIZE, "%d\n",
+-			 mvotg->otg_ctrl.a_bus_drop);
+-}
+-
+-static ssize_t
+-a_bus_drop_store(struct device *dev, struct device_attribute *attr,
+-	       const char *buf, size_t count)
+-{
+-	struct mv_otg *mvotg = dev_get_drvdata(dev);
+-	if (!mvotg->phy.otg->default_a)
+-		return -1;
+-
+-	if (count > 2)
+-		return -1;
+-
+-	if (buf[0] == '0') {
+-		mvotg->otg_ctrl.a_bus_drop = 0;
+-		dev_dbg(&mvotg->pdev->dev,
+-			"User request: a_bus_drop = 0\n");
+-	} else if (buf[0] == '1') {
+-		mvotg->otg_ctrl.a_bus_drop = 1;
+-		mvotg->otg_ctrl.a_bus_req = 0;
+-		dev_dbg(&mvotg->pdev->dev,
+-			"User request: a_bus_drop = 1\n");
+-		dev_dbg(&mvotg->pdev->dev,
+-			"User request: and a_bus_req = 0\n");
+-	}
+-
+-	if (spin_trylock(&mvotg->wq_lock)) {
+-		mv_otg_run_state_machine(mvotg, 0);
+-		spin_unlock(&mvotg->wq_lock);
+-	}
+-
+-	return count;
+-}
+-
+-static DEVICE_ATTR_RW(a_bus_drop);
+-
+-static struct attribute *inputs_attrs[] = {
+-	&dev_attr_a_bus_req.attr,
+-	&dev_attr_a_clr_err.attr,
+-	&dev_attr_a_bus_drop.attr,
+-	NULL,
+-};
+-
+-static const struct attribute_group inputs_attr_group = {
+-	.name = "inputs",
+-	.attrs = inputs_attrs,
+-};
+-
+-static const struct attribute_group *mv_otg_groups[] = {
+-	&inputs_attr_group,
+-	NULL,
+-};
+-
+-static void mv_otg_remove(struct platform_device *pdev)
+-{
+-	struct mv_otg *mvotg = platform_get_drvdata(pdev);
+-
+-	if (mvotg->qwork)
+-		destroy_workqueue(mvotg->qwork);
+-
+-	mv_otg_disable(mvotg);
+-
+-	usb_remove_phy(&mvotg->phy);
+-}
+-
+-static int mv_otg_probe(struct platform_device *pdev)
+-{
+-	struct mv_usb_platform_data *pdata = dev_get_platdata(&pdev->dev);
+-	struct mv_otg *mvotg;
+-	struct usb_otg *otg;
+-	struct resource *r;
+-	int retval = 0, i;
+-
+-	if (pdata == NULL) {
+-		dev_err(&pdev->dev, "failed to get platform data\n");
+-		return -ENODEV;
+-	}
+-
+-	mvotg = devm_kzalloc(&pdev->dev, sizeof(*mvotg), GFP_KERNEL);
+-	if (!mvotg)
+-		return -ENOMEM;
+-
+-	otg = devm_kzalloc(&pdev->dev, sizeof(*otg), GFP_KERNEL);
+-	if (!otg)
+-		return -ENOMEM;
+-
+-	platform_set_drvdata(pdev, mvotg);
+-
+-	mvotg->pdev = pdev;
+-	mvotg->pdata = pdata;
+-
+-	mvotg->clk = devm_clk_get(&pdev->dev, NULL);
+-	if (IS_ERR(mvotg->clk))
+-		return PTR_ERR(mvotg->clk);
+-
+-	mvotg->qwork = create_singlethread_workqueue("mv_otg_queue");
+-	if (!mvotg->qwork) {
+-		dev_dbg(&pdev->dev, "cannot create workqueue for OTG\n");
+-		return -ENOMEM;
+-	}
+-
+-	INIT_DELAYED_WORK(&mvotg->work, mv_otg_work);
+-
+-	/* OTG common part */
+-	mvotg->pdev = pdev;
+-	mvotg->phy.dev = &pdev->dev;
+-	mvotg->phy.otg = otg;
+-	mvotg->phy.label = driver_name;
+-
+-	otg->state = OTG_STATE_UNDEFINED;
+-	otg->usb_phy = &mvotg->phy;
+-	otg->set_host = mv_otg_set_host;
+-	otg->set_peripheral = mv_otg_set_peripheral;
+-	otg->set_vbus = mv_otg_set_vbus;
+-
+-	for (i = 0; i < OTG_TIMER_NUM; i++)
+-		timer_setup(&mvotg->otg_ctrl.timer[i],
+-			    mv_otg_timer_await_bcon, 0);
+-
+-	r = platform_get_resource_byname(mvotg->pdev,
+-					 IORESOURCE_MEM, "phyregs");
+-	if (r == NULL) {
+-		dev_err(&pdev->dev, "no phy I/O memory resource defined\n");
+-		retval = -ENODEV;
+-		goto err_destroy_workqueue;
+-	}
+-
+-	mvotg->phy_regs = devm_ioremap(&pdev->dev, r->start, resource_size(r));
+-	if (mvotg->phy_regs == NULL) {
+-		dev_err(&pdev->dev, "failed to map phy I/O memory\n");
+-		retval = -EFAULT;
+-		goto err_destroy_workqueue;
+-	}
+-
+-	r = platform_get_resource_byname(mvotg->pdev,
+-					 IORESOURCE_MEM, "capregs");
+-	if (r == NULL) {
+-		dev_err(&pdev->dev, "no I/O memory resource defined\n");
+-		retval = -ENODEV;
+-		goto err_destroy_workqueue;
+-	}
+-
+-	mvotg->cap_regs = devm_ioremap(&pdev->dev, r->start, resource_size(r));
+-	if (mvotg->cap_regs == NULL) {
+-		dev_err(&pdev->dev, "failed to map I/O memory\n");
+-		retval = -EFAULT;
+-		goto err_destroy_workqueue;
+-	}
+-
+-	/* we will acces controller register, so enable the udc controller */
+-	retval = mv_otg_enable_internal(mvotg);
+-	if (retval) {
+-		dev_err(&pdev->dev, "mv otg enable error %d\n", retval);
+-		goto err_destroy_workqueue;
+-	}
+-
+-	mvotg->op_regs =
+-		(struct mv_otg_regs __iomem *) ((unsigned long) mvotg->cap_regs
+-			+ (readl(mvotg->cap_regs) & CAPLENGTH_MASK));
+-
+-	if (pdata->id) {
+-		retval = devm_request_threaded_irq(&pdev->dev, pdata->id->irq,
+-						NULL, mv_otg_inputs_irq,
+-						IRQF_ONESHOT, "id", mvotg);
+-		if (retval) {
+-			dev_info(&pdev->dev,
+-				 "Failed to request irq for ID\n");
+-			pdata->id = NULL;
+-		}
+-	}
+-
+-	if (pdata->vbus) {
+-		mvotg->clock_gating = 1;
+-		retval = devm_request_threaded_irq(&pdev->dev, pdata->vbus->irq,
+-						NULL, mv_otg_inputs_irq,
+-						IRQF_ONESHOT, "vbus", mvotg);
+-		if (retval) {
+-			dev_info(&pdev->dev,
+-				 "Failed to request irq for VBUS, "
+-				 "disable clock gating\n");
+-			mvotg->clock_gating = 0;
+-			pdata->vbus = NULL;
+-		}
+-	}
+-
+-	if (pdata->disable_otg_clock_gating)
+-		mvotg->clock_gating = 0;
+-
+-	mv_otg_reset(mvotg);
+-	mv_otg_init_irq(mvotg);
+-
+-	r = platform_get_resource(mvotg->pdev, IORESOURCE_IRQ, 0);
+-	if (r == NULL) {
+-		dev_err(&pdev->dev, "no IRQ resource defined\n");
+-		retval = -ENODEV;
+-		goto err_disable_clk;
+-	}
+-
+-	mvotg->irq = r->start;
+-	if (devm_request_irq(&pdev->dev, mvotg->irq, mv_otg_irq, IRQF_SHARED,
+-			driver_name, mvotg)) {
+-		dev_err(&pdev->dev, "Request irq %d for OTG failed\n",
+-			mvotg->irq);
+-		mvotg->irq = 0;
+-		retval = -ENODEV;
+-		goto err_disable_clk;
+-	}
+-
+-	retval = usb_add_phy(&mvotg->phy, USB_PHY_TYPE_USB2);
+-	if (retval < 0) {
+-		dev_err(&pdev->dev, "can't register transceiver, %d\n",
+-			retval);
+-		goto err_disable_clk;
+-	}
+-
+-	spin_lock_init(&mvotg->wq_lock);
+-	if (spin_trylock(&mvotg->wq_lock)) {
+-		mv_otg_run_state_machine(mvotg, 2 * HZ);
+-		spin_unlock(&mvotg->wq_lock);
+-	}
+-
+-	dev_info(&pdev->dev,
+-		 "successful probe OTG device %s clock gating.\n",
+-		 mvotg->clock_gating ? "with" : "without");
+-
+-	return 0;
+-
+-err_disable_clk:
+-	mv_otg_disable_internal(mvotg);
+-err_destroy_workqueue:
+-	destroy_workqueue(mvotg->qwork);
+-
+-	return retval;
+-}
+-
+-#ifdef CONFIG_PM
+-static int mv_otg_suspend(struct platform_device *pdev, pm_message_t state)
+-{
+-	struct mv_otg *mvotg = platform_get_drvdata(pdev);
+-
+-	if (mvotg->phy.otg->state != OTG_STATE_B_IDLE) {
+-		dev_info(&pdev->dev,
+-			 "OTG state is not B_IDLE, it is %d!\n",
+-			 mvotg->phy.otg->state);
+-		return -EAGAIN;
+-	}
+-
+-	if (!mvotg->clock_gating)
+-		mv_otg_disable_internal(mvotg);
+-
+-	return 0;
+-}
+-
+-static int mv_otg_resume(struct platform_device *pdev)
+-{
+-	struct mv_otg *mvotg = platform_get_drvdata(pdev);
+-	u32 otgsc;
+-
+-	if (!mvotg->clock_gating) {
+-		mv_otg_enable_internal(mvotg);
+-
+-		otgsc = readl(&mvotg->op_regs->otgsc);
+-		otgsc |= mvotg->irq_en;
+-		writel(otgsc, &mvotg->op_regs->otgsc);
+-
+-		if (spin_trylock(&mvotg->wq_lock)) {
+-			mv_otg_run_state_machine(mvotg, 0);
+-			spin_unlock(&mvotg->wq_lock);
+-		}
+-	}
+-	return 0;
+-}
+-#endif
+-
+-static struct platform_driver mv_otg_driver = {
+-	.probe = mv_otg_probe,
+-	.remove = mv_otg_remove,
+-	.driver = {
+-		   .name = driver_name,
+-		   .dev_groups = mv_otg_groups,
+-		   },
+-#ifdef CONFIG_PM
+-	.suspend = mv_otg_suspend,
+-	.resume = mv_otg_resume,
+-#endif
+-};
+-module_platform_driver(mv_otg_driver);
 -- 
-2.39.5
+2.47.2
 
 
