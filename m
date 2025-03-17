@@ -1,127 +1,109 @@
-Return-Path: <linux-kernel+bounces-563914-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563913-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0A01A64A43
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:38:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81FAFA64A8E
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:43:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 10DFC16AE35
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:38:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A99613A9E15
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:38:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6981523716E;
-	Mon, 17 Mar 2025 10:34:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64623241675;
+	Mon, 17 Mar 2025 10:34:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="D0UJ4jv9";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="SWLdo/iV"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QsDWmFcu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52944241684;
-	Mon, 17 Mar 2025 10:34:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1E3D236A84;
+	Mon, 17 Mar 2025 10:34:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742207697; cv=none; b=CZK0dAAXaf1JmNE1Ri2Tn+c6eDvg34LtbEwSI5DmZKSi7utsLyA5Tw/oBdhnljz1jA176mwtLaDd+Rl5Z2H/7QyYsKghEPLzU+PRC+zQDuVKRVS5smguXUxt5uyAX1zDSTMfp3T9v/Sz5sG6fL2RWLynN05Q+z/t27NRNnP2NgQ=
+	t=1742207694; cv=none; b=nkU8tpS48XVnmJBxm7PjPly/RTKy2AtGluqL/qP/yi0TXU3wKrv6u0xQVbVJdTWrxp8EDNdQe4vNfEyWK7cFRPgbkX19Yj6Nnskn7P9aUzPGPLCjY794NV11wN38GzCGRPsEYn8uIJm/4nMNkq6pmq4L7PTQ6WPQGWRPyzfCQuU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742207697; c=relaxed/simple;
-	bh=Dvi7dt8MZ6WpKJKtLSjP+TqCBVrkOjmgQFjMBqkWMuA=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=FD283d52u4ZK24mRH6ymPEnpAFeDclOiiVS3N+oIhEBriQnIqBM9vaW7jzlm3sQm7TyyZTX/RtTF1DJxajrSLpUMJUKiZh1rJ3hA73HPadCdi5Vr7hlsOr8lOm2k8v71gSb7GkMYJYcCLWBZbo1Dz2W9ah5EzPBF5WueU+hHPBw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=D0UJ4jv9; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=SWLdo/iV; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 17 Mar 2025 10:34:48 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1742207694;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=N3pyukO0ZEi78ZhitvxcST1CkBalm4cgXuBBH1Z1Bxk=;
-	b=D0UJ4jv9a8wgSQRRWQI2b1ibzSE2w4+lYKEtWFsIxS9pQ3+tpp7JFxreOzD5Ol5V8o8kcP
-	MV5yzyN1bg8JbZi7k20z6S/qIS8eMtB9WfESQ/wrCjYvnTkeGv6uOgHzr5I4+kOjApD6Tw
-	I45e5mlybJMKGy0PXLhgBFpKEkKPSwcbJhaQumyyOMkuHDp8kHvGKFYkr+vEAqqyT0PJ12
-	qsh2VF6iYq9YDlEyoYjQBMfmqPaQUn5BFC/aekvhugsM1aqHh/nnvEV+/qWa5czGtcKXKz
-	BTmng2CdkVJb9BOrnNvafJt6iETRBqVJvzZcmtgwQ7itf/X43b61ZQzPHkE+Gg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1742207694;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=N3pyukO0ZEi78ZhitvxcST1CkBalm4cgXuBBH1Z1Bxk=;
-	b=SWLdo/iVB1KbmVYYa/sEosDD1+3pAujP+Jjiot3gvHXQqQaPX8MMO29fVcEznnD2i6Rf0Z
-	fQQ8UBIzFd6hsFDg==
-From: "tip-bot2 for Sebastian Andrzej Siewior" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: sched/core] powerpc: Rely on generic printing of preemption model
-Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- "Peter Zijlstra (Intel)" <peterz@infradead.org>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- Shrikanth Hegde <sshegde@linux.ibm.com>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250314160810.2373416-6-bigeasy@linutronix.de>
-References: <20250314160810.2373416-6-bigeasy@linutronix.de>
+	s=arc-20240116; t=1742207694; c=relaxed/simple;
+	bh=OOWMoUFQ23UHSwIZ8BvygHyrXX9kthpv+6WpnSx7ZNg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=q/1P5PRAAEHH/sV/6jwI8S5isnLgedFEb5ZNZ/YDO1LEAaAKR44kIBZxNzq6wH2nW4bZqzB/bBlpgQvy5FhrbcWFfTqMbVUCGOkJzYGp7aNuYZuCQnfqAbi8ISCO9P5dtl71nbuRQR+ziasY2ZSRXTB99BdMxZ94D06RXnO6DlY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QsDWmFcu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B0ECC4CEEE;
+	Mon, 17 Mar 2025 10:34:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742207693;
+	bh=OOWMoUFQ23UHSwIZ8BvygHyrXX9kthpv+6WpnSx7ZNg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QsDWmFcuxcsgFxG+2Q5SuxHmU93c+w9J/18L5YmxK5aviJm9Z4CUyWBrYiSnWqV2e
+	 C7GP8NTC6GV+/vET79P68p6yY4ndZ77nM5Qidg/EocBZRxEpLykxoK52Qq3XaAkOy8
+	 KTPXVZOgV5u7aBCFQwCMzMYJxlcldpTrsKgAJlR/4Ny0tx9C890MZIKAAdjizTMV9L
+	 VrzNMUMRwumMFNEbDQb1XVLR029YxilgVYa3urlPcqLBoCkLCcynRiwEcK+k2UfCEX
+	 T3oAWZCtEW8lZXjXHG9Md0KYqU91/xx4AAldISNUrDm8p8IZVEkSfRfduUQb3z1dPp
+	 B3NA64lusvwwA==
+Date: Mon, 17 Mar 2025 11:34:48 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Maud Spierings | GOcontroll <maudspierings@gocontroll.com>
+Cc: Rob Herring <robh@kernel.org>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Jessica Zhang <quic_jesszhan@quicinc.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, 
+	Sam Ravnborg <sam@ravnborg.org>, Liu Ying <victor.liu@nxp.com>, Shawn Guo <shawnguo@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, Mark Brown <broonie@kernel.org>, 
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "imx@lists.linux.dev" <imx@lists.linux.dev>, 
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>
+Subject: Re: [PATCH v2 03/12] dt-bindings: connector: Add the GOcontroll
+ Moduline module slot bindings
+Message-ID: <20250317-massive-calm-bat-43ff61@krzk-bin>
+References: <20250226-initial_display-v2-0-23fafa130817@gocontroll.com>
+ <20250226-initial_display-v2-3-23fafa130817@gocontroll.com>
+ <20250314210652.GA2300828-robh@kernel.org>
+ <PA4PR04MB7630094413C8E1F3D715EE23C5DD2@PA4PR04MB7630.eurprd04.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174220768834.14745.8118980644677092757.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <PA4PR04MB7630094413C8E1F3D715EE23C5DD2@PA4PR04MB7630.eurprd04.prod.outlook.com>
 
-The following commit has been merged into the sched/core branch of tip:
+On Sat, Mar 15, 2025 at 07:32:28AM +0000, Maud Spierings | GOcontroll wrote:
+> >> +required:
+> >> +  - compatible
+> >> +  - reg
+> >> +  - reset-gpios
+> >> +  - interrupts
+> >> +  - sync-gpios
+> >> +  - i2c-bus
+> >> +  - slot-number
+> >> +
+> >> +additionalProperties: false
+> >> +
+> >> +examples:
+> >> +  - |
+> >> +    #include <dt-bindings/gpio/gpio.h>
+> >> +    #include <dt-bindings/interrupt-controller/irq.h>
+> >> +
+> >> +    spi {
+> >> +        #address-cells = <1>;
+> >> +        #size-cells = <0>;
+> >> +
+> >> +        connector@0 {
+> >
+> >I find this being a SPI device a bit strange. Is there a defined SPI
+> >device that every slot is going to have? Or the connector has SPI
+> >interface and *anything* could be attached on it?
+> 
+> So a module slot is like a pcie slot, it can be occupied or not, and when
 
-Commit-ID:     732ed149f7ac6278e33ccd62d13c604a134e6933
-Gitweb:        https://git.kernel.org/tip/732ed149f7ac6278e33ccd62d13c604a134e6933
-Author:        Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-AuthorDate:    Fri, 14 Mar 2025 17:08:06 +01:00
-Committer:     Peter Zijlstra <peterz@infradead.org>
-CommitterDate: Mon, 17 Mar 2025 11:23:39 +01:00
+But which buses...
 
-powerpc: Rely on generic printing of preemption model
+Best regards,
+Krzysztof
 
-After the first printk in __die() there is show_regs() ->
-show_regs_print_info() which prints the current
-preemption model.
-
-Remove the preempion model from the arch code.
-
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Reviewed-by: Christophe Leroy <christophe.leroy@csgroup.eu>
-Reviewed-by: Shrikanth Hegde <sshegde@linux.ibm.com>
-Link: https://lore.kernel.org/r/20250314160810.2373416-6-bigeasy@linutronix.de
----
- arch/powerpc/kernel/traps.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/arch/powerpc/kernel/traps.c b/arch/powerpc/kernel/traps.c
-index edf5cab..cb8e935 100644
---- a/arch/powerpc/kernel/traps.c
-+++ b/arch/powerpc/kernel/traps.c
-@@ -263,10 +263,9 @@ static int __die(const char *str, struct pt_regs *regs, long err)
- {
- 	printk("Oops: %s, sig: %ld [#%d]\n", str, err, ++die_counter);
- 
--	printk("%s PAGE_SIZE=%luK%s%s%s%s%s%s %s\n",
-+	printk("%s PAGE_SIZE=%luK%s %s%s%s%s %s\n",
- 	       IS_ENABLED(CONFIG_CPU_LITTLE_ENDIAN) ? "LE" : "BE",
- 	       PAGE_SIZE / 1024, get_mmu_str(),
--	       IS_ENABLED(CONFIG_PREEMPT) ? " PREEMPT" : "",
- 	       IS_ENABLED(CONFIG_SMP) ? " SMP" : "",
- 	       IS_ENABLED(CONFIG_SMP) ? (" NR_CPUS=" __stringify(NR_CPUS)) : "",
- 	       debug_pagealloc_enabled() ? " DEBUG_PAGEALLOC" : "",
 
