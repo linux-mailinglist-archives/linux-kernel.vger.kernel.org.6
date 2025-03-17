@@ -1,140 +1,86 @@
-Return-Path: <linux-kernel+bounces-564028-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564029-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FBB9A64C60
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 12:24:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id EED60A64C63
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 12:24:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 54DB77A8A44
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:22:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9809A7A8E84
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:22:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C54CA237163;
-	Mon, 17 Mar 2025 11:23:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFE96237705;
+	Mon, 17 Mar 2025 11:23:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kHLoWAlZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="n7DIt1V4";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="EkB5Bh0m"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E25D22CBCB;
-	Mon, 17 Mar 2025 11:23:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6A51236436;
+	Mon, 17 Mar 2025 11:23:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742210598; cv=none; b=datzq15rB1lQV0TwdZFTz7PpIVs5JHFTUIfTuaL9WJFxb9+RYlueXmAyPVcl9mSmgFmWDhvGnOqgBonrrIg858t8nQsD62w5CzWV8I6/qmK6aax72tnvDxRdyE5162BuhTDi7Wo6wQ1GWetN2NTnwt2k+vJdSI0cNuljqsqK4K8=
+	t=1742210615; cv=none; b=DcqYP41ZYzaAeNgyXPSW55y8XMKIjpZs+tPmXqeqaBRZl7Dg/vMnmErwO0JiDkLHAmSz6mJr4sDQYJ/TQ6DTpi3DZnUw/+9M+SWK+uJUDVf+JiKXo13lyGxOmRURH/OU4tlt/op1laeDszXwFcsuhmhy5eQ4j3J8Wv94q6ousyQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742210598; c=relaxed/simple;
-	bh=c2UFH3jGhzNtOf/2FaiDVr1S6TDplZcWAKpfpWcajsk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nWONY/W97TPRrNpFz3el1KT9zh1soYBU5NjKXJjiaHFCQclUF2eoJTh+XHtOc8XbkY9x+/qMcttXs6Xut76eTl3NTyMwaocjAk9yoHeFfLSavbqWyAMALEnr7GSJo7a/uIEsWa9f3Uo15OzKj/+Zjmn0zQCYaLsuk5V+JRQzpFo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kHLoWAlZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3966EC4CEE3;
-	Mon, 17 Mar 2025 11:23:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742210597;
-	bh=c2UFH3jGhzNtOf/2FaiDVr1S6TDplZcWAKpfpWcajsk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=kHLoWAlZt7qKp84RdpDsC+iBSz9wkEagdZ/FuKljO45a5MgXbOjkoS2GfhRMO1qXl
-	 DvVT+coL7yWHEW12u9vGBtzhRdao9CcGjGZtZSghsmeGwm92xEQenDDOSFJPHnMBK6
-	 5YkgJJdBtstVL2kCAhwmoTRyEllUqT5/W2mVvm3M6eys0ud9eaESiLIbjCChNtAYDv
-	 4uJJlOaYN8QObSiBJ9eAPIP5o94TDsRPHqsDM4TR/3nka46cr2O63sVt5tnLFaD9XT
-	 YYhs8OEbqYdssSgkE5hX+amTPP52LtxOmyJQI4Io6b2JCRLs89+IDGcNGblLK/NJ49
-	 WRCVTYJBecvxw==
-Message-ID: <00667202-73e4-48ee-aa90-dee8c0dd5d43@kernel.org>
-Date: Mon, 17 Mar 2025 12:23:09 +0100
+	s=arc-20240116; t=1742210615; c=relaxed/simple;
+	bh=BskqoZk8kx31z3F+TjpC+yrdOnJ7xrtLK30hCHvlTVM=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=HmKJS5wUegKH93bJfI+k/tM8lpfhISlrdv37grPTigrQ3sx28BZrj+LJ1vmxDDXxV8gXTThYF0CQwjZgTg3siQ7X9WUeS31BKO4LDY+X8lpnKT0niasqaBJMzAqf2wtS7krS15jPQR3JcQDZh4OYrnf3REjfYqrJ7AxAUULBEe8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=n7DIt1V4; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=EkB5Bh0m; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1742210612;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mR5w7dv6V2tvP4+g4T5l4E8xnyxdxPy5bDWWgB5XAtw=;
+	b=n7DIt1V4xqRaUde/afopwCyonOy8midwc1h1yy0Gn+tpyMx0MTJ9Py6imCiaXqo7nHybvK
+	wmRMznZopeIOR6+gJL9tsSkxUPM/On0fdapAeDKxqHJc/ZJNaBt/Z1iWqqmYtbyk5y4C1A
+	fwacVbjNc+Wc47IUDzZi18kiybYgUZPBBOI5p7nVGRmgYBsNNxXqcM12ql1EJY3Gu3HtM7
+	xnGMaufKlLhPBttaqW1pB5C8Qrh0jg+8F1l5bbAf/Ys6KjQWTbsBbcDRPHKntDVKUVyDU7
+	NzaklEtytAjQDmLODneUalIFEhoWqS6qs0dwWX90iO5OBInIoRqSL5HfKQoxlg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1742210612;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mR5w7dv6V2tvP4+g4T5l4E8xnyxdxPy5bDWWgB5XAtw=;
+	b=EkB5Bh0mPncGFsUQu+TjaCGDwf5DQTiUMPytAersokCLfWeFDiAzIon/xhqeLhxriiYaGf
+	gll2Pc9NQYM1mOAQ==
+To: Sean Christopherson <seanjc@google.com>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ x86@kernel.org, Sean Christopherson <seanjc@google.com>, Paolo Bonzini
+ <pbonzini@redhat.com>
+Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org, Jacob Pan
+ <jacob.jun.pan@linux.intel.com>, Jim Mattson <jmattson@google.com>
+Subject: Re: [PATCH 1/8] x86/irq: Ensure initial PIR loads are performed
+ exactly once
+In-Reply-To: <20250315030630.2371712-2-seanjc@google.com>
+References: <20250315030630.2371712-1-seanjc@google.com>
+ <20250315030630.2371712-2-seanjc@google.com>
+Date: Mon, 17 Mar 2025 12:23:31 +0100
+Message-ID: <871puv6guk.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] ARM: dts: apalis/colibri-imx6: Add support for
- v1.2
-To: ernestvanhoecke@gmail.com, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>
-Cc: Ernest Van Hoecke <ernest.vanhoecke@toradex.com>,
- devicetree@vger.kernel.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Francesco Dolcini <francesco.dolcini@toradex.com>
-References: <20250307101758.27943-1-ernest.vanhoecke@toradex.com>
- <20250307101758.27943-3-ernest.vanhoecke@toradex.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20250307101758.27943-3-ernest.vanhoecke@toradex.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-On 07/03/2025 11:17, ernestvanhoecke@gmail.com wrote:
-> diff --git a/arch/arm/boot/dts/nxp/imx/imx6dl-colibri-v1.2-eval-v3.dts b/arch/arm/boot/dts/nxp/imx/imx6dl-colibri-v1.2-eval-v3.dts
-> new file mode 100644
-> index 000000000000..93fd0af53a3c
-> --- /dev/null
-> +++ b/arch/arm/boot/dts/nxp/imx/imx6dl-colibri-v1.2-eval-v3.dts
-> @@ -0,0 +1,11 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
-> +/* Copyright (c) 2025 Toradex */
-> +
-> +/dts-v1/;
-> +
-> +#include "imx6dl-colibri-eval-v3.dts"
-> +#include "imx6qdl-colibri-v1.2.dtsi"
-> +
-> +/ {
-> +	model = "Toradex Colibri iMX6DL/S V1.2+ on Colibri Evaluation Board V3";
-> +};
+On Fri, Mar 14 2025 at 20:06, Sean Christopherson wrote:
+> Ensure the PIR is read exactly once at the start of handle_pending_pir(),
+> to guarantee that checking for an outstanding posted interrupt in a given
+> chuck doesn't reload the chunk from the "real" PIR.  Functionally, a reload
+> is benign, but it would defeat the purpose of pre-loading into a copy.
+>
+> Fixes: 1b03d82ba15e ("x86/irq: Install posted MSI notification handler")
+> Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
 
-
-If devices are the same, you do not need new DTS. There is no benefit in
-creating DTS per every revision.
-
-Best regards,
-Krzysztof
+Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
 
