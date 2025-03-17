@@ -1,137 +1,146 @@
-Return-Path: <linux-kernel+bounces-564671-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564684-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93C94A6590F
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 17:53:34 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E7F7A6592A
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 17:56:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 65D5E1698A1
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 16:52:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5B4AE7AE3A4
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 16:55:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99BAE1DD0D5;
-	Mon, 17 Mar 2025 16:47:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 239431DDA2D;
+	Mon, 17 Mar 2025 16:52:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="afYQVAIq"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="J1viEIcG";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="wOiqMabH"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64F511DD0C7
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 16:47:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3DE61D90D7
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 16:52:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742230050; cv=none; b=swOu+GiRJqHfcVRt+/PBjTY0e+Q9CywnO2/+nV1cHIJIZ69QpXMuhhHgkqLroAeUEPsYYpzoSnSjTnKF2Dhb2lxh/KnP8vm0isydZT8bFV0hU9Xzn81Crf/qAy1XxYCGgyaszu8lSYdDVihBmX9SXSrwY5qr7UDlHzI2Fo10Sfg=
+	t=1742230371; cv=none; b=HIDTuZjWvLVhPMpkwUv53AJMA+ulrQmJiyoJCo3QMUD/pJHGarMV+pU4OkJ+Qn2jVXMw27TWyS/PqoGzh8CBo7ZXdGnlXtDpxwpodL9odpkz+ogqLNSeT6SMjjiqzpo0E8fdh4KFLaAN1dmBFeblhpsuTqG54f9ZRPseUlxid3c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742230050; c=relaxed/simple;
-	bh=bCHSORnW89me9g4PcakXu6c12xa6roHEa5IzL6WKpig=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NORAuWI4EA0glaGY5NToaSG0S9GLJealxM5O/QnU7QQXSyWNRhaIevju/itB5uE5XFuLzV0IRJChn1PO2mMmD6fcWoaoEwHu3TSpbPBr2KNuhGOuWytK/EzFPpG4ETntUaCIMlu+F6p7KRxmI/odGNYcV7jOaCTB6ydsBLkXgY0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=afYQVAIq; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742230049; x=1773766049;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=bCHSORnW89me9g4PcakXu6c12xa6roHEa5IzL6WKpig=;
-  b=afYQVAIq5dr2x5qGQa4eLO0obH1AtBctToMHbVUuSYGTLYxlEXrAM2HD
-   +lJkHDKY3Y8BhARl7SLry8qljHm3JcB/k9Ij4RNOHnQ7tQeXJsJ1W99c3
-   G+xx6NrAlKOJM+jugdME77l4SCaGzWIrf1RQxDOdBj8fNdNP4PMAzfE9F
-   DbrdJY5hCxlE0D4iOsM6EK9KRlYgdmslFffrvDJa3ewFUPwHE6ssuvtAV
-   p0VPBWAS9hoFefZ9zXQ5YZtOEG3pz4C8MXrRMeZYuwHcMM2Gv0ogzwS3G
-   JcNHV+472Mlfa4ep+MQmmGwkecRjtlgoluWkp3bVzJCVHFXLCrTw0keAV
-   g==;
-X-CSE-ConnectionGUID: pybqK6gcQFOAUH650mDM3w==
-X-CSE-MsgGUID: 5pdcES/IQr2onSZwzHxIbQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11376"; a="42582673"
-X-IronPort-AV: E=Sophos;i="6.14,254,1736841600"; 
-   d="scan'208";a="42582673"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Mar 2025 09:47:28 -0700
-X-CSE-ConnectionGUID: P4OUCInFQaC1FzVEY+4Qhw==
-X-CSE-MsgGUID: JJR+wYaoRG+mjtucAabHCQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,254,1736841600"; 
-   d="scan'208";a="127165363"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Mar 2025 09:47:26 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tuDcZ-00000003MWR-0JUm;
-	Mon, 17 Mar 2025 18:47:23 +0200
-Date: Mon, 17 Mar 2025 18:47:22 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Raag Jadav <raag.jadav@intel.com>
-Cc: giometti@enneenne.com, gregkh@linuxfoundation.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] pps: generators: tio: fix platform_set_drvdata()
-Message-ID: <Z9hSGgu1ZHEWLy7x@smile.fi.intel.com>
-References: <20250317155452.2038020-1-raag.jadav@intel.com>
+	s=arc-20240116; t=1742230371; c=relaxed/simple;
+	bh=edpa9U7aIHjjfUkvmwzg7+VcE2XL3xu0KWUiZVUyDF4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=D/Yqd5JF+xZzwSeqf3H01wN4piSUB/mpnj6MCt+DmFBaiB6lGLV+Qvgpy103WBxT2HbMmY1ItilETVY5wXAzMSPEqz+gE8fVkc980ZVmg5yPGozY6pfa/NTBottSrDC1v+jiJ/0IkmGSPYruXwVCYSo/Xy38jlrEz0SPXRJ7vUc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=J1viEIcG; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=wOiqMabH; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: "Ahmed S. Darwish" <darwi@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1742230368;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1QHPm+Y/XNCvn/eR1qnN3OcSq/VP/rkFhSLCT5e3BNA=;
+	b=J1viEIcGjrjuzJDEAJTJN7ccYKqV3uLNIqHJcMbJMA+yKNa6c+9XSqe69U4E2tBkYaoqUF
+	Sg0ja+6CcdqtP+IV6NFUDZ7CRqeDCx8FsDBaBlfsWKo4hMs2gIdr/VJ+/uXWiGpwDCQdFP
+	MCeMFFKsoY0dqJfbMH2Pf+S211HKWCqJjdQ9LkeVNPSYZRZv9XRJfp+8yZmO/nluEhwiiL
+	mPnnYoqPfNJOGigUILEe/YY0/fVlSgVjUVGQMOYHmhykGxVhXT/+yXrf4kt26IKhiFK1ez
+	aTxq275MV/Mj6NKzAqmS9h4pxi2cpbNRYrTDkP6SY48uiSCFswlkKkqr168hwQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1742230368;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1QHPm+Y/XNCvn/eR1qnN3OcSq/VP/rkFhSLCT5e3BNA=;
+	b=wOiqMabHJDXAt6CXN9EumCKoNE8wPps/hLwuo7U8oODMqq7VjNVyF1obGwvn2aZGbaL7tt
+	MlIypwb/5S/uC8BQ==
+To: Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Borislav Petkov <bp@alien8.de>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	Andrew Cooper <andrew.cooper3@citrix.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	John Ogness <john.ogness@linutronix.de>,
+	x86@kernel.org,
+	x86-cpuid@lists.linux.dev,
+	LKML <linux-kernel@vger.kernel.org>,
+	"Ahmed S. Darwish" <darwi@linutronix.de>
+Subject: [PATCH v2 06/29] x86/cacheinfo: Properly name amd_cpuid4()'s first parameter
+Date: Mon, 17 Mar 2025 17:47:22 +0100
+Message-ID: <20250317164745.4754-7-darwi@linutronix.de>
+In-Reply-To: <20250317164745.4754-1-darwi@linutronix.de>
+References: <20250317164745.4754-1-darwi@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250317155452.2038020-1-raag.jadav@intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
 
-On Mon, Mar 17, 2025 at 09:24:52PM +0530, Raag Jadav wrote:
-> Currently driver_data user is expecting a pointer to pps_tio while
+From: Thomas Gleixner <tglx@linutronix.de>
 
-struct pps_tio
+amd_cpuid4()'s first parameter, "leaf", is not a CPUID leaf as the name
+implies.  Rather, it's an index emulating CPUID(4)'s subleaf semantics;
+i.e. an ID for the cache object currently enumerated.  Rename that
+parameter to "index".
 
-> platform_set_drvdata() is setting a double pointer to it.
+Apply minor coding style fixes to the rest of the function as well.
 
-"...which will point to the local stack of the probe function."
+[ darwi: Move into a separate commit and write commit log.
+	 Use "index" instead of "subleaf" for amd_cpuid4() first param,
+	 as that's the name typically used at the whole of cacheinfo.c. ]
 
-> Make them
-> consistent and fix illegal memory access in driver ->remove() path.
-> 
-> [  156.254066] BUG: unable to handle page fault for address: ffffc9000117b738
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Ahmed S. Darwish <darwi@linutronix.de>
+---
+ arch/x86/kernel/cpu/cacheinfo.c | 15 ++++++---------
+ 1 file changed, 6 insertions(+), 9 deletions(-)
 
-> [  156.254099] #PF: supervisor read access in kernel mode
-> [  156.254111] #PF: error_code(0x0000) - not-present page
-
-These lines are not needed...
-
-> [  156.254197] RIP: 0010:hrtimer_active+0x2b/0x60
-> [  156.254367] Call Trace:
-
-> [  156.254375]  <TASK>
-> [  156.254382]  ? show_regs+0x6d/0x80
-> [  156.254393]  ? __die+0x29/0x70
-> [  156.254402]  ? page_fault_oops+0x15f/0x4e0
-> [  156.254415]  ? hrtimer_active+0x2b/0x60
-> [  156.254425]  ? search_exception_tables+0x65/0x70
-> [  156.254437]  ? kernelmode_fixup_or_oops.constprop.0+0x61/0x80
-> [  156.254451]  ? __bad_area_nosemaphore+0x195/0x2c0
-> [  156.254462]  ? __lock_acquire+0xaaf/0x2840
-> [  156.254475]  ? bad_area_nosemaphore+0x16/0x20
-> [  156.254486]  ? do_kern_addr_fault.part.0+0x64/0x80
-> [  156.254498]  ? exc_page_fault+0x190/0x2c0
-> [  156.254511]  ? asm_exc_page_fault+0x2b/0x30
-> [  156.254527]  ? __pfx_pps_gen_tio_remove+0x10/0x10 [pps_gen_tio]
-
-...neither these.
-
-> [  156.254541]  ? hrtimer_active+0x2b/0x60
-> [  156.254551]  hrtimer_cancel+0x19/0x50
-> [  156.254561]  pps_gen_tio_remove+0x1e/0x80 [pps_gen_tio]
-
-As I said, ~3-5, okay maybe 7 lines is enough.
-
-> Fixes: c89755d1111f ("pps: generators: Add PPS Generator TIO Driver")
-> Signed-off-by: Raag Jadav <raag.jadav@intel.com>
-> Acked-by: Rodolfo Giometti <giometti@enneenne.com>
-
+diff --git a/arch/x86/kernel/cpu/cacheinfo.c b/arch/x86/kernel/cpu/cacheinfo.c
+index 44bc044aa9a2..64effa2d7674 100644
+--- a/arch/x86/kernel/cpu/cacheinfo.c
++++ b/arch/x86/kernel/cpu/cacheinfo.c
+@@ -233,12 +233,10 @@ static const enum cache_type cache_type_map[] = {
+ };
+ 
+ static void
+-amd_cpuid4(int leaf, union _cpuid4_leaf_eax *eax,
+-		     union _cpuid4_leaf_ebx *ebx,
+-		     union _cpuid4_leaf_ecx *ecx)
++amd_cpuid4(int index, union _cpuid4_leaf_eax *eax,
++	   union _cpuid4_leaf_ebx *ebx, union _cpuid4_leaf_ecx *ecx)
+ {
+-	unsigned dummy;
+-	unsigned line_size, lines_per_tag, assoc, size_in_kb;
++	unsigned int dummy, line_size, lines_per_tag, assoc, size_in_kb;
+ 	union l1_cache l1i, l1d;
+ 	union l2_cache l2;
+ 	union l3_cache l3;
+@@ -251,7 +249,7 @@ amd_cpuid4(int leaf, union _cpuid4_leaf_eax *eax,
+ 	cpuid(0x80000005, &dummy, &dummy, &l1d.val, &l1i.val);
+ 	cpuid(0x80000006, &dummy, &dummy, &l2.val, &l3.val);
+ 
+-	switch (leaf) {
++	switch (index) {
+ 	case 1:
+ 		l1 = &l1i;
+ 		fallthrough;
+@@ -289,12 +287,11 @@ amd_cpuid4(int leaf, union _cpuid4_leaf_eax *eax,
+ 	}
+ 
+ 	eax->split.is_self_initializing = 1;
+-	eax->split.type = types[leaf];
+-	eax->split.level = levels[leaf];
++	eax->split.type = types[index];
++	eax->split.level = levels[index];
+ 	eax->split.num_threads_sharing = 0;
+ 	eax->split.num_cores_on_die = topology_num_cores_per_package();
+ 
+-
+ 	if (assoc == 0xffff)
+ 		eax->split.is_fully_associative = 1;
+ 	ebx->split.coherency_line_size = line_size - 1;
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.48.1
 
 
