@@ -1,89 +1,90 @@
-Return-Path: <linux-kernel+bounces-564885-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564886-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2646A65C42
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 19:19:23 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DC08A65C43
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 19:19:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A00E17D80B
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 18:19:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3307A17D43E
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 18:19:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26A691C8627;
-	Mon, 17 Mar 2025 18:19:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05F9D1D8DFB;
+	Mon, 17 Mar 2025 18:19:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="yZlwgGe5"
-Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P7l9KZMB"
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E74EE1C6FEA
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 18:18:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E790C14C5AA;
+	Mon, 17 Mar 2025 18:19:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742235541; cv=none; b=r5wl2tojvlvdcxRbFAF7hiWGDzoYHRQ1dJ8dXtPWh4BlTz5m+GbnjQuw4pd3jKRCwcviMzzqbaGWrMYiohXSBYksuiIu7Ra/u+rtEQjCWWfnkmaMgcxnbH/kFRZx6vgQECp6Ck5trQillZBNK1kEIPGfe08CJsyJtIArrfISxqs=
+	t=1742235565; cv=none; b=seS6QCnjMLFJHo+azHEMksoiUUaBV1QH3LULtLJkQe1ECDTQu9xmwtCqseXVr5y/QWW6i8htU70+ZZj80110zwIGEx33a9xZxhFY8PFAZaQTrIACCGuJ2VYMVYS34d/uCt8D6zJ9JdbunrtzbMuOwuH7bSrACCjpzJFMxgEtI/Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742235541; c=relaxed/simple;
-	bh=XY35LuhQF+cA/uKthhJz6fw6a4pFTwgy5cet0LYLh4g=;
+	s=arc-20240116; t=1742235565; c=relaxed/simple;
+	bh=Mtvl/jyJUdtL4QFBo7D0YAZhHSay/PjR0/QIolqsMWU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iZz5EY8cLDVyONmYpq2vGzGg47r8i6D9GBG3s0oxeLEfSZeJz8+25nm8o9v+rQEUosh0hsgSiVf6NKg9OTxgKKRlyD8hCn8jWD1PfRo4gLJnYaJdudJ0MIVJmsb1sj62uE1oADEz0WmAcakZ+tPMWDOGc4A0Wwvtf1xULocKbGA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=yZlwgGe5; arc=none smtp.client-ip=209.85.222.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
-Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-7c04df48a5bso467341785a.2
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 11:18:57 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=ld8kXdxBalqCCUV8WafJtcDphMjBjAPZdBpgseoSWekpBVpMLHfRGNQAPSbt9HpM/TyRyRk2Uv7/rdXq5BO9eOLZUjR7ehlyGRjTN9VbUnuqhqSpV2/etE45oXLdSKqTFWI0oxWcNZYFFbgnid6hlEr+Y2KoeiRBowy2+ldnu3E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P7l9KZMB; arc=none smtp.client-ip=209.85.216.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2ff615a114bso3260547a91.0;
+        Mon, 17 Mar 2025 11:19:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1742235536; x=1742840336; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1742235563; x=1742840363; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Fs5FRMsdqp/BT81c+IUYvUcJpd3cBpM8V6qAiLgpjPs=;
-        b=yZlwgGe5fmZ9wq0fRgXfLtveE+dzXBs8x8G7Eix+lkG3pyfphChQ5u3jD8A3AmFhdr
-         0jRMDt4L7Uc2hhmT2ccehYEY7YaaDvq1mOHh8GK/aJ7roAp9a7e6s/tzV5vhX5UrHo9b
-         yLNOJgAY9mjHGnpWaObyB4yJqjg6AG1w8kkhqVVB8OEGZstpzanouVF9dKAW6SWpfScp
-         CurOLP4Zq5aQp+Q43aYNfLWWJboaAzIFUPp5MMbLK7HyGCV6+5jH+TuEicdbJlMvPkCA
-         z4qDKG9ZcZUlH1Qkubb5jclF4l30QOP/gZDMe0hSf/z08V/cS+swBfGBsSAfOofKu7PT
-         Z2SA==
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1p/vJyLOF8KyVZFp2qeYUDBByhHRPvWe2lPITuY8vOw=;
+        b=P7l9KZMB2Ylt0Sz/QjYBy0SKGTasenhVLI5N8s280TjcJfe4WPivnAizyHfR8aVL3D
+         kyyV1NszRlvOBrSXdX2MiA2BqWNuAfn7M/GtQR3HOSO1+Lq/AL5Hdzw7oJXJ7NNOvn4/
+         ceFw2982ybtN8OuTa+LJi25V4hyiZsrHLPJ4xCPG+X/5eW+BR5tpiKVLcTCiSUrj/7yO
+         3Z7NRrtrIHnAWuOgBS0d5mIZI8Fpv2jjblMYXAKtTRcJnCTCZJ0YLgZFaVnsD7kqhB+g
+         3XCqEuK67j+WYHjzPs7ApG+GSEvZ2u/VHa/5mjZdFNPSw/rJDSZiVQajEl6uMJvv8itV
+         ezRQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742235536; x=1742840336;
+        d=1e100.net; s=20230601; t=1742235563; x=1742840363;
         h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Fs5FRMsdqp/BT81c+IUYvUcJpd3cBpM8V6qAiLgpjPs=;
-        b=p9adea9FwxJL7X7sh/QNSMJRuoJ7zqlh8Ko6UmNPBuNXRjoItFsVoELTsvn1wikOtm
-         kvKEXkKgK6WWLeMhLFEyz9JzUlpjhnsBTxWXc8HqHRFPudIV7I9p0CLMIAOrorlZCY2Z
-         Vvni5cEj8JV1meqnCW9Ilm+eRvs5Tiir4T1Qwka7masy+LIbjbHhWjdFFwBUeFPN0BPf
-         JvJgJ3YpattsJiasqpdyOwjFmgxdDwg64l0c1yHfHdTNR4frdPLWbg8h2kMpfQ7d+TjX
-         uMT87BbCtr2WknOZFEduqN/iJ1LeQKh19lXNcIiujEs8xYm9Cftdat9QuHriQc5WCIGc
-         jk2A==
-X-Forwarded-Encrypted: i=1; AJvYcCXbGPZj/ffyvhrGB11GSHcP0sBVZkBEYZwImhvndXUPlAZQd8ZT6C7hU1iun5qKt3oR0Snt9LznMzUd++c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzH+lkD9M3Xeh8EPXIrDjljjKD+XHnqlPQXrnNdE8Sl1BwrQr7k
-	V7SrHm7enQEDRLIW02BWLUuItIXVXnZUVnNjOFL4x2UFSpwPKP1cHN9s3bzt81s=
-X-Gm-Gg: ASbGncuvCIuvcxjOV4oRn4+QeIUMorOAuR3WRPBIgb0594tKS4pbu48PAvtL0OUIOJV
-	aYF1R0DqeqGhKIi4jDPtdNHz+lNHZm3c7TxreFpNie6PYpkJDgIaLwzecB8pVVRrfz0uHr405Wa
-	N3sW5UdrlqBy4fAQAWp7MTfAcodyc8jO9yrnx2rgnXKv2Hb6yPHGcX1LKe1T+gqia5pc8C5yN3j
-	Y9dKpwEa0a3zhxu+ZS4/JlUS1zbnH9P9ve3f1/1tZME90A8D3a8IcQnnpSWDpFiaVVOA64zgEme
-	p31vcIWwnAgccTw5x36hs6XStyFOncKRFLNplCKAyqwCO6uwwfKhpA==
-X-Google-Smtp-Source: AGHT+IGDO7z/jJycwpThPXWNMRYFlUkK/xin8Ffvpsmfo+RNv6m+nTJPfrYCHQRCo7pCvqqjyD58VQ==
-X-Received: by 2002:a05:6214:1d25:b0:6e8:9086:261 with SMTP id 6a1803df08f44-6eaea996d8dmr195571526d6.3.1742235536659;
-        Mon, 17 Mar 2025 11:18:56 -0700 (PDT)
-Received: from localhost ([2603:7000:c01:2716:da5e:d3ff:fee7:26e7])
-        by smtp.gmail.com with UTF8SMTPSA id 6a1803df08f44-6eade254502sm57587546d6.59.2025.03.17.11.18.55
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1p/vJyLOF8KyVZFp2qeYUDBByhHRPvWe2lPITuY8vOw=;
+        b=dBmrTOP6MgNUmRI5yC5oID7q1KKozOGCZ7cHbc5aSI17/6SWtM2foNmQGWUjlAhqIw
+         MRrWMVLRdt0TRWXhO87Ck+6aZXU91RslUXtK1tHOcjKPM0auEiEgOgH15S6rZAnhAbAf
+         c79eP5Rph9cBuCirTxwG8QdCAf+PnvZyZUEvKNF3HpeOx/0jnxwrCyKCIrA+iDmE5rYD
+         T3cew9cAwdcjr7RfXST5xHkb9SzfiaFQtYMGfhnK6ezCvWNw3/hUf5SfglW206Tv9sOK
+         mitxS4Cy9kl1ydb6O76LWTXuQzp0ButS3XpsyUGVCuIonx5/O4+PzgkRPtLsPSTkAIdR
+         lDQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUULUKl/n4vgWsw/gol2eOUFwYOt1pJ5yszb61VglVojbG3BHoyZ/8N0qrnRgP3p9VTjdN02AhHWNmKNZAM@vger.kernel.org, AJvYcCUtIucSHBIJftbsEhsQjBaidfPXGHGweKQSbe7pNooefKXmf3Gd0Lx5yrSRtx3+7z1d5Fc/bIwp7qmY@vger.kernel.org, AJvYcCWWmzkhpGHH70xBGOqP4HefsOhVtYbRoa+4YBIZzpEfh44E4/oiDKOvVLtUYcvYfHffycCb7aVZYEFv@vger.kernel.org, AJvYcCWhZXQUaf5E7h4oY6PQkeMAUfqwjao2vaakSoco37yA4a7AZoghMm+CDEUAZcIZTjeGMUwMYwbUGghoSBo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YztMy/L7kPVgj7s3CzvBD1vfZ/y6BjCXvvO/52Mv2yRzhunt6RZ
+	aDOWJL7aME+GbLv/VtdM3YHdgVtQ6LRF6wEwVb6n4ZmYdyEQgBKa
+X-Gm-Gg: ASbGncuoTQ3M11z2Yc3Ts5ubELQXaBrzISyTxHUFd+abc85Y4vf8GjiXUJuJaCYNqBU
+	HdBbO7DPIPtq+VSl1shG3k70djtBJ+Ot5GP6v4G9JA7HD/zOaCWNOfbX+uHo8D1ErWmm8q42yEM
+	MnYAqc2le+8n20wp4XKL3IzZuxsxCC1tKYih3VQltYzRwyXBJ6b+WF1qH870tB5dezFHU0pmQT1
+	tKRbC87u8Vp7hfvutC90i5xLZ2qpVhOPzthncGLPlLmABg9izOJcfdt0fVt7wnYa4fOGD+0QNMR
+	pHnr3k4NA+GpIJYFOe6cEOQg4doApZ5i/PmaGs1TzuoZzaUGErOp7BM9Pw==
+X-Google-Smtp-Source: AGHT+IFGsTOd8uYKRb77bxFuXoZw2j0kYHafi/HpYTv7uH6M/4v9MlJQ5+zFAOZhK4Y8uixkSvjS+A==
+X-Received: by 2002:a17:90b:4c12:b0:2fa:562c:c1cf with SMTP id 98e67ed59e1d1-3019f1f1203mr607059a91.1.1742235563180;
+        Mon, 17 Mar 2025 11:19:23 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3015364d849sm6415219a91.41.2025.03.17.11.19.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Mar 2025 11:18:55 -0700 (PDT)
-Date: Mon, 17 Mar 2025 14:18:51 -0400
-From: Johannes Weiner <hannes@cmpxchg.org>
-To: Hugh Dickins <hughd@google.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Johannes Weiner <hannes@compxchg.org>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Mel Gorman <mgorman@techsingularity.net>, Zi Yan <ziy@nvidia.com>,
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/5] mm: compaction: push watermark into
- compaction_suitable() callers
-Message-ID: <20250317181851.GA1694060@cmpxchg.org>
-References: <20250313210647.1314586-1-hannes@cmpxchg.org>
- <20250313210647.1314586-2-hannes@cmpxchg.org>
- <005ace8b-07fa-01d4-b54b-394a3e029c07@google.com>
+        Mon, 17 Mar 2025 11:19:22 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Mon, 17 Mar 2025 11:19:22 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: Leo Yang <leo.yang.sy0@gmail.com>
+Cc: jdelvare@suse.com, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, Leo-Yang@quantatw.com, corbet@lwn.net,
+	Delphine_CC_Chiu@wiwynn.com, linux-hwmon@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org
+Subject: Re: [PATCH v4 2/2] hwmon: Add driver for TI INA233 Current and Power
+ Monitor
+Message-ID: <acd1c18f-780c-40d6-bd00-fcdfce85789e@roeck-us.net>
+References: <20250116085939.1235598-1-leo.yang.sy0@gmail.com>
+ <20250116085939.1235598-3-leo.yang.sy0@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,46 +93,16 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <005ace8b-07fa-01d4-b54b-394a3e029c07@google.com>
+In-Reply-To: <20250116085939.1235598-3-leo.yang.sy0@gmail.com>
 
-On Sat, Mar 15, 2025 at 09:28:16PM -0700, Hugh Dickins wrote:
-> [PATCH] mm: compaction: push watermark into compaction_suitable() callers fix
+On Thu, Jan 16, 2025 at 04:59:42PM +0800, Leo Yang wrote:
+> Driver for Texas Instruments INA233 Current and Power Monitor
+> With I2C-, SMBus-, and PMBus-Compatible Interface
 > 
-> Stop oops on out-of-range highest_zoneidx: compaction_suitable() pass
-> args to __compaction_suitable() in the order which it is expecting.
-> 
-> Signed-off-by: Hugh Dickins <hughd@google.com>
-> ---
->  mm/compaction.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/mm/compaction.c b/mm/compaction.c
-> index 4a2ccb82d0b2..b5c9e8fd39f1 100644
-> --- a/mm/compaction.c
-> +++ b/mm/compaction.c
-> @@ -2433,7 +2433,7 @@ bool compaction_suitable(struct zone *zone, int order, unsigned long watermark,
->  	enum compact_result compact_result;
->  	bool suitable;
->  
-> -	suitable = __compaction_suitable(zone, order, highest_zoneidx, watermark,
-> +	suitable = __compaction_suitable(zone, order, watermark, highest_zoneidx,
->  					 zone_page_state(zone, NR_FREE_PAGES));
+> Signed-off-by: Leo Yang <leo.yang.sy0@gmail.com>
 
-Ouch, thanks for the fix Hugh.
+Applied.
 
-This obviously didn't crash for me, but I re-ran the benchmarks with
-your fix in my test environment.
-
-This affects the direct compaction path, and I indeed see a minor
-uptick in direct compaction, with a larger reduction in daemon work.
-
-Compact daemon scanned migrate        2455570.93 (    +0.00%)   1770142.33 (   -27.91%)
-Compact daemon scanned free           2429309.20 (    +0.00%)   1604744.00 (   -33.94%)
-Compact direct scanned migrate          40136.60 (    +0.00%)     58326.67 (   +45.32%)
-Compact direct scanned free             22127.13 (    +0.00%)     52216.93 (  +135.98%)
-Compact total migrate scanned         2495707.53 (    +0.00%)   1828469.00 (   -26.74%)
-Compact total free scanned            2451436.33 (    +0.00%)   1656960.93 (   -32.41%)
-
-It doesn't change the overall A/B picture between baseline and the
-series, so I'm comfortable keeping the current changelog results.
+Thanks,
+Guenter
 
