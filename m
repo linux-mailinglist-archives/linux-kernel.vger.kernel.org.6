@@ -1,316 +1,84 @@
-Return-Path: <linux-kernel+bounces-563805-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563802-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A7EBA648CD
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:08:47 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 870CBA648C6
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:08:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EFB63169FA9
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:08:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 195D63A8EF5
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:07:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52693230BDB;
-	Mon, 17 Mar 2025 10:08:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F951230BEB;
+	Mon, 17 Mar 2025 10:07:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="d/+Ze295"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 557E6227BB2;
-	Mon, 17 Mar 2025 10:08:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="fzPCVVFd"
+Received: from mail-40133.protonmail.ch (mail-40133.protonmail.ch [185.70.40.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81DF6221F17
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 10:07:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742206112; cv=none; b=EDH+xBSKN7ZcPq6tG/pUDu55TzG2efgGMr3Y9CKq/LF13pF2w1ocQ6kvgctB5rvBTAu/rMa0kyTh6BlIVu5cUzrxvOxRTBdVWvkqZ3MyPJ+tEwM44WvCJLMP9mdDettpRpOVyDV6beoZO1OXn32XKCjfiO889n5ZLRQ+pdHoTuA=
+	t=1742206071; cv=none; b=o2Wqxj/CIN1mhD4tUH93rduf79D9ZeS8WgsoIlx1sw6lg9KM+M7lJM9oxGN/xHE/lEI4RYX4TsmFLIfIjlYId1K+XhM/694ShRk3/ivp+Yyfn8U2AtL1OvXyOdiRDjXS4UoLG7YQbOyDUU+D8FIzgK2RmBpNtxVl8/2FxK1hoXA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742206112; c=relaxed/simple;
-	bh=EoDMSk/uZoc+aBuMdaL+cawQNKJAp0fZlO0qTZlAZs4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=e88pk2OpMjuCr5abFencq70NzV7lK1XB4vv5Bh/z7krQuXTqlCle6dkw+6QgLhiikL0SLfn8SJShA94Xqfe2x+R4aLsNTvnw5Et3KmE8EDytjM4cI5TAzn0cqXLAXqR7+yIy0ngYLa9F+apr2XfyO+mZfu9crm9QIVyS94ROgK8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=d/+Ze295; arc=none smtp.client-ip=117.135.210.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=hSrL7
-	2kyJ4w71tnbQx1PoNgGMbMtpK3UhW5whSP5BrY=; b=d/+Ze295qDG4VDuB552Zh
-	DQG7TJiLNxTCwhCpWSIDuqSOmDau00Z3r5tP1aZiyYW82z89cAK4pskY9CQqfstB
-	VMVYppFDGf5opJ4CJdjz/xOqAxdtI0LxZ5QsmXBzyMdhVkYDMGrFAtCNyhVcvYnd
-	GclFigDOB6BBUksS7olRkw=
-Received: from localhost.localdomain (unknown [])
-	by gzga-smtp-mtada-g1-4 (Coremail) with SMTP id _____wBnZkda9NdnI4yRSQ--.7624S2;
-	Mon, 17 Mar 2025 18:07:24 +0800 (CST)
-From: Liu Ye <liuyerd@163.com>
-To: akpm@linux-foundation.org
-Cc: willy@infradead.org,
-	david@redhat.com,
-	ran.xiaokai@zte.com.cn,
-	dan.carpenter@linaro.org,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	Liu Ye <liuyerd@163.com>,
-	Liu Ye <liuye@kylinos.cn>
-Subject: [PATCH v2] fs/proc/page: Refactoring to reduce code duplication.
-Date: Mon, 17 Mar 2025 18:07:19 +0800
-Message-Id: <20250317100719.134558-1-liuyerd@163.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1742206071; c=relaxed/simple;
+	bh=xOdFdUpJqXs168lzXGK/iu7vViHn0S5IOwWenA0nwVI=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ido8OzEmQDbX1rPMSR7edDgIDZwfJSKGuMofiGnPm4hfriwbrjXUUVb/YCrPLPDWATIV6+hHZXeD+9s15bd/q5RAFfWWOP2nSMzeQUFDZ/HkgROK3FDJ3/ttKXJNrgGD+sxPzFuloYfUFvAj/12vg/y8kk0tChMPVHGgesgf1qU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=fzPCVVFd; arc=none smtp.client-ip=185.70.40.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1742206067; x=1742465267;
+	bh=xOdFdUpJqXs168lzXGK/iu7vViHn0S5IOwWenA0nwVI=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
+	b=fzPCVVFdLnmSWb+djKDx6qAMrYdAsA9lVUQW8H48+r9V3ZP7WWP9eRU6wt+9/h5GW
+	 t41nEA2wUFEhq42aF9+3pDiOkSxb6jvqjLC69pn68mIk1ueLuKkw3oqB+BMqrhBjqv
+	 sLd096O1fJV9EVWK5pU9beMj2/QQjsaP3Cy0yKEgklaL95EfufB/eGwJZOJ8VOFZOG
+	 u6ufFnXAAb3fvPhks+DpDxh9A6/a9R227c1dw1eblqiWPsZpef8sf5HpCPtXxKBtIw
+	 SOlgAnvxGwsL6tiWo0Vnm46lUQBdJaT4Yz8bQX9hLZg+oSw/8KPvSbn4clfrxCshVV
+	 a/fr0I7AXnm8Q==
+Date: Mon, 17 Mar 2025 10:07:43 +0000
+To: Tamir Duberstein <tamird@gmail.com>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Bjorn Helgaas <bhelgaas@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
+Subject: Re: [PATCH 2/2] rust: workqueue: remove HasWork::OFFSET
+Message-ID: <D8IGI57498GK.1NX41N6YMNERZ@proton.me>
+In-Reply-To: <CAJ-ks9nsEMALOFbQEjj69=griW=x_h_irDg4mHdo+hG+ZbGN5g@mail.gmail.com>
+References: <20250307-no-offset-v1-0-0c728f63b69c@gmail.com> <CAJ-ks9m2ZHguB9N9-WM0EsO5MjaZ9yRamo_9NytAdzaDdb9aWQ@mail.gmail.com> <D8GQGCVTK0IL.16YO67C0IKLHA@proton.me> <CAJ-ks9mUPkP=QDGekbi1PRfpKKigXj87-_a25JBGHVRSiEe_AA@mail.gmail.com> <D8H1FFDMNLR3.STRVYQI7J496@proton.me> <CAJ-ks9m-ab9Y5RD01higxZxbowZi_0tsSmCCw2umJLxBLH4dEw@mail.gmail.com> <CAJ-ks9=AKR+LUMBjLNrC9NZst9+18Q3HTrWn4q+baz87BbG6Rw@mail.gmail.com> <D8HVKRW45ESG.3NP8BPWF76RYT@proton.me> <CAJ-ks9nsEMALOFbQEjj69=griW=x_h_irDg4mHdo+hG+ZbGN5g@mail.gmail.com>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: f7d138c90f94a097e803782efe820c024cedaa0f
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wBnZkda9NdnI4yRSQ--.7624S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxKr48XF47XFWDWF4xtrWfAFb_yoW7trWrpF
-	s8WF4jyws3W3sYkw1xJ398Zas8G3s3Aa1Yy3y7G34fZa4UJrnIkFySyFnYvFy7G34UZw1U
-	u3909ry3Ca1UtaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07USeHgUUUUU=
-X-CM-SenderInfo: 5olx5vlug6il2tof0z/1tbiKAoTTGfX4r-onwABsm
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-From: Liu Ye <liuye@kylinos.cn>
+On Sun Mar 16, 2025 at 7:59 PM CET, Tamir Duberstein wrote:
+> On Sun, Mar 16, 2025 at 1:43=E2=80=AFPM Benno Lossin <benno.lossin@proton=
+.me> wrote:
+>>
+>> No change required, with my reply above I intended to take my
+>> complaint away :)
+>
+> Cool :) is there something else to be done to earn your RB, or do you
+> mean to defer to Alice?
 
-The function kpageflags_read and kpagecgroup_read is quite similar
-to kpagecount_read. Consider refactoring common code into a helper
-function to reduce code duplication.
+Ah sorry, I didn't end up adding it (:
 
-Signed-off-by: Liu Ye <liuye@kylinos.cn>
+Reviewed-by: Benno Lossin <benno.lossin@proton.me>
+
+It would be good if Alice could also take a look.
 
 ---
-V2 : Use an enumeration to indicate the operation to be performed
-to avoid passing functions.
----
----
- fs/proc/page.c | 166 +++++++++++++++++--------------------------------
- 1 file changed, 58 insertions(+), 108 deletions(-)
-
-diff --git a/fs/proc/page.c b/fs/proc/page.c
-index a55f5acefa97..66f454330a87 100644
---- a/fs/proc/page.c
-+++ b/fs/proc/page.c
-@@ -22,6 +22,14 @@
- #define KPMMASK (KPMSIZE - 1)
- #define KPMBITS (KPMSIZE * BITS_PER_BYTE)
- 
-+enum kpage_operation {
-+	KPAGE_FLAGS,
-+	KPAGE_COUNT,
-+#ifdef CONFIG_MEMCG
-+	KPAGE_CGROUP,
-+#endif
-+};
-+
- static inline unsigned long get_max_dump_pfn(void)
- {
- #ifdef CONFIG_SPARSEMEM
-@@ -37,19 +45,17 @@ static inline unsigned long get_max_dump_pfn(void)
- #endif
- }
- 
--/* /proc/kpagecount - an array exposing page mapcounts
-- *
-- * Each entry is a u64 representing the corresponding
-- * physical page mapcount.
-- */
--static ssize_t kpagecount_read(struct file *file, char __user *buf,
--			     size_t count, loff_t *ppos)
-+static ssize_t kpage_read(struct file *file, char __user *buf,
-+		size_t count, loff_t *ppos,
-+		enum kpage_operation op)
- {
- 	const unsigned long max_dump_pfn = get_max_dump_pfn();
- 	u64 __user *out = (u64 __user *)buf;
-+	struct page *ppage;
- 	unsigned long src = *ppos;
- 	unsigned long pfn;
- 	ssize_t ret = 0;
-+	u64 info;
- 
- 	pfn = src / KPMSIZE;
- 	if (src & KPMMASK || count & KPMMASK)
-@@ -59,19 +65,29 @@ static ssize_t kpagecount_read(struct file *file, char __user *buf,
- 	count = min_t(unsigned long, count, (max_dump_pfn * KPMSIZE) - src);
- 
- 	while (count > 0) {
--		struct page *page;
--		u64 mapcount = 0;
--
--		/*
--		 * TODO: ZONE_DEVICE support requires to identify
--		 * memmaps that were actually initialized.
--		 */
--		page = pfn_to_online_page(pfn);
--		if (page)
--			mapcount = folio_precise_page_mapcount(page_folio(page),
--							       page);
--
--		if (put_user(mapcount, out)) {
-+		ppage = pfn_to_online_page(pfn);
-+
-+		if (ppage) {
-+			switch (op) {
-+			case KPAGE_FLAGS:
-+				info = stable_page_flags(ppage);
-+				break;
-+			case KPAGE_COUNT:
-+				info = folio_precise_page_mapcount(page_folio(ppage), ppage);
-+				break;
-+#ifdef CONFIG_MEMCG
-+			case KPAGE_CGROUP:
-+				info = page_cgroup_ino(ppage);
-+				break;
-+#endif
-+			default:
-+				info = 0;
-+				break;
-+			}
-+		} else
-+			info = 0;
-+
-+		if (put_user(info, out)) {
- 			ret = -EFAULT;
- 			break;
- 		}
-@@ -89,17 +105,23 @@ static ssize_t kpagecount_read(struct file *file, char __user *buf,
- 	return ret;
- }
- 
-+/* /proc/kpagecount - an array exposing page mapcounts
-+ *
-+ * Each entry is a u64 representing the corresponding
-+ * physical page mapcount.
-+ */
-+static ssize_t kpagecount_read(struct file *file, char __user *buf,
-+		size_t count, loff_t *ppos)
-+{
-+	return kpage_read(file, buf, count, ppos, KPAGE_COUNT);
-+}
-+
- static const struct proc_ops kpagecount_proc_ops = {
- 	.proc_flags	= PROC_ENTRY_PERMANENT,
- 	.proc_lseek	= mem_lseek,
- 	.proc_read	= kpagecount_read,
- };
- 
--/* /proc/kpageflags - an array exposing page flags
-- *
-- * Each entry is a u64 representing the corresponding
-- * physical page flags.
-- */
- 
- static inline u64 kpf_copy_bit(u64 kflags, int ubit, int kbit)
- {
-@@ -220,47 +242,17 @@ u64 stable_page_flags(const struct page *page)
- #endif
- 
- 	return u;
--};
-+}
- 
-+/* /proc/kpageflags - an array exposing page flags
-+ *
-+ * Each entry is a u64 representing the corresponding
-+ * physical page flags.
-+ */
- static ssize_t kpageflags_read(struct file *file, char __user *buf,
--			     size_t count, loff_t *ppos)
-+		size_t count, loff_t *ppos)
- {
--	const unsigned long max_dump_pfn = get_max_dump_pfn();
--	u64 __user *out = (u64 __user *)buf;
--	unsigned long src = *ppos;
--	unsigned long pfn;
--	ssize_t ret = 0;
--
--	pfn = src / KPMSIZE;
--	if (src & KPMMASK || count & KPMMASK)
--		return -EINVAL;
--	if (src >= max_dump_pfn * KPMSIZE)
--		return 0;
--	count = min_t(unsigned long, count, (max_dump_pfn * KPMSIZE) - src);
--
--	while (count > 0) {
--		/*
--		 * TODO: ZONE_DEVICE support requires to identify
--		 * memmaps that were actually initialized.
--		 */
--		struct page *page = pfn_to_online_page(pfn);
--
--		if (put_user(stable_page_flags(page), out)) {
--			ret = -EFAULT;
--			break;
--		}
--
--		pfn++;
--		out++;
--		count -= KPMSIZE;
--
--		cond_resched();
--	}
--
--	*ppos += (char __user *)out - buf;
--	if (!ret)
--		ret = (char __user *)out - buf;
--	return ret;
-+	return kpage_read(file, buf, count, ppos, KPAGE_FLAGS);
- }
- 
- static const struct proc_ops kpageflags_proc_ops = {
-@@ -270,54 +262,12 @@ static const struct proc_ops kpageflags_proc_ops = {
- };
- 
- #ifdef CONFIG_MEMCG
-+
- static ssize_t kpagecgroup_read(struct file *file, char __user *buf,
--				size_t count, loff_t *ppos)
-+		size_t count, loff_t *ppos)
- {
--	const unsigned long max_dump_pfn = get_max_dump_pfn();
--	u64 __user *out = (u64 __user *)buf;
--	struct page *ppage;
--	unsigned long src = *ppos;
--	unsigned long pfn;
--	ssize_t ret = 0;
--	u64 ino;
--
--	pfn = src / KPMSIZE;
--	if (src & KPMMASK || count & KPMMASK)
--		return -EINVAL;
--	if (src >= max_dump_pfn * KPMSIZE)
--		return 0;
--	count = min_t(unsigned long, count, (max_dump_pfn * KPMSIZE) - src);
--
--	while (count > 0) {
--		/*
--		 * TODO: ZONE_DEVICE support requires to identify
--		 * memmaps that were actually initialized.
--		 */
--		ppage = pfn_to_online_page(pfn);
--
--		if (ppage)
--			ino = page_cgroup_ino(ppage);
--		else
--			ino = 0;
--
--		if (put_user(ino, out)) {
--			ret = -EFAULT;
--			break;
--		}
--
--		pfn++;
--		out++;
--		count -= KPMSIZE;
--
--		cond_resched();
--	}
--
--	*ppos += (char __user *)out - buf;
--	if (!ret)
--		ret = (char __user *)out - buf;
--	return ret;
-+	return kpage_read(file, buf, count, ppos, KPAGE_CGROUP);
- }
--
- static const struct proc_ops kpagecgroup_proc_ops = {
- 	.proc_flags	= PROC_ENTRY_PERMANENT,
- 	.proc_lseek	= mem_lseek,
--- 
-2.25.1
+Cheers,
+Benno
 
 
