@@ -1,99 +1,104 @@
-Return-Path: <linux-kernel+bounces-563640-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563641-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77DEAA645C8
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 09:39:34 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 926A6A645CB
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 09:39:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C18E21882D1F
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 08:39:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E564916C3A6
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 08:39:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57681220680;
-	Mon, 17 Mar 2025 08:39:26 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0750D191499;
-	Mon, 17 Mar 2025 08:39:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A71B21D011;
+	Mon, 17 Mar 2025 08:39:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="H+TbMdwG"
+Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 285721DED6D;
+	Mon, 17 Mar 2025 08:39:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742200766; cv=none; b=lEFm/tqhVO4rgkBlpR9Jvehd1fDrJmm7cz0ZQHApeIrgJkb24J1x7BcgdYydrOAGTmH9NBQYvfK0Z8wtNikK4VXAvISXTAlDyfV+w+MNJtzAhqxg4UyJ8HEXBdPru4iY0B0ySmH9z55wV4HRgkdEBoRLKkhKJq6bpEuBn1yJSaY=
+	t=1742200769; cv=none; b=Tphm9Rp7fJhaMx8YkLFSh/XYGgGYfULQF4AliND5kbEaE70RtD19VvYF+9UULPiOgEOGo4lqMny4/pVKgiORG2T3M59s93xgU70J/yKDdFNk0sszAnPzrbnGxVIyCseiN2oW/0S74hixd2/yQmR/IWjvXn5WOhelSbWIGA0OE+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742200766; c=relaxed/simple;
-	bh=+5XmRgA4GrGrjVNj2D9ijBICElrzdke1udcBi+zTG/o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qgyktdl6/vh9qxKrugCtw0opDLdT0HPjQlKpVbGl+tnmKdojl239r2g3IqhfW7ykm/RptpP30sWS7+e3QRhQbCYBMUNR+NIhn2IxBW5c3Wzvr77PFoqbUv2SrzYFFKuepuUEfFgVU4ltShzN7AMGjSsupSSmTZR6BLgT24qixjw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3C79613D5;
-	Mon, 17 Mar 2025 01:39:32 -0700 (PDT)
-Received: from [172.18.154.215] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 761D73F673;
-	Mon, 17 Mar 2025 01:39:16 -0700 (PDT)
-Message-ID: <92a9cb8f-761a-4cc6-82f9-ea66aeecddfe@arm.com>
-Date: Mon, 17 Mar 2025 09:39:04 +0100
+	s=arc-20240116; t=1742200769; c=relaxed/simple;
+	bh=0LWPwkYHb5CwsDkji/iwkvFIS+/rI+FlG0f6Syt76Q8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mDOyq7lfpCni6VhZk+6wfNdr9SQukN0Jrz8p6FUreFgbW98STaVO2/ehkiLXRR0Oma6Wu7XESMhQc06bNL1eNxtkY4TEhx9eUPp7A2JIh2g8QUvJWGM5bVglh/meaeQtregyunR/IZZcdei8Zz01jAWzRvaWSgXjEG2acDqdFIE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=H+TbMdwG; arc=none smtp.client-ip=217.194.8.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
+Received: from francesco-nb (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
+	by mail11.truemail.it (Postfix) with ESMTPA id 7CF0B1F842;
+	Mon, 17 Mar 2025 09:39:16 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
+	s=default; t=1742200757;
+	bh=m+AhiKfws1xc+HMC/G6boZQHJPWKEYM0DxVNwOLDPnI=; h=From:To:Subject;
+	b=H+TbMdwGbPL5QAHuKGVI9Fcqp86xbDrmmM5qZ10uPDDHgKuVtimP7VKoCQMf+ZwHZ
+	 YbublZmlatb7jgl3LjrJtkk5F6XXNcBnXH2BdEln57eA42cPCWh6iAv514SR186rxj
+	 znXYPA8tR3GWgRlmi+WHfuz4bUZnAdfJ+QpZQRppJBoKcljCApwFt7+5ZtQxc/xdKl
+	 ZK0DWmtWneTh0/9kPt2QmxCH4Kiux7DoYF3qzYGNuI3Tw8cj2rc4KeJy22IbyuZDPH
+	 5WUZtUt6rgCanoyXpBCpuvhp/7vNkLuQvOjIyRxnkYZG2knWqwoVyD7XQQHO8C/1Ac
+	 71Sr9VUjUjmOA==
+Date: Mon, 17 Mar 2025 09:39:11 +0100
+From: Francesco Dolcini <francesco@dolcini.it>
+To: Andy Shevchenko <andy@kernel.org>
+Cc: Francesco Dolcini <francesco@dolcini.it>,
+	Emanuele Ghidoli <ghidoliemanuele@gmail.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Emanuele Ghidoli <emanuele.ghidoli@toradex.com>,
+	Francesco Dolcini <francesco.dolcini@toradex.com>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-i2c@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+	soc@kernel.org, Hans de Goede <hdegoede@redhat.com>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Subject: Re: [RFC PATCH v1 2/2] platform: toradex: add preliminary support
+ for Embedded Controller
+Message-ID: <20250317083911.GA17428@francesco-nb>
+References: <20250313144331.70591-1-francesco@dolcini.it>
+ <20250313144331.70591-3-francesco@dolcini.it>
+ <Z9LxbzJ3zf0RT-JS@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 0/8] Fix SCHED_DEADLINE bandwidth accounting during
- suspend
-To: Juri Lelli <juri.lelli@redhat.com>, linux-kernel@vger.kernel.org,
- cgroups@vger.kernel.org
-Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
- Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
- Waiman Long <longman@redhat.com>, Tejun Heo <tj@kernel.org>,
- Johannes Weiner <hannes@cmpxchg.org>, =?UTF-8?Q?Michal_Koutn=C3=BD?=
- <mkoutny@suse.com>, Qais Yousef <qyousef@layalina.io>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- Swapnil Sapkal <swapnil.sapkal@amd.com>,
- Shrikanth Hegde <sshegde@linux.ibm.com>, Phil Auld <pauld@redhat.com>,
- luca.abeni@santannapisa.it, tommaso.cucinotta@santannapisa.it,
- Jon Hunter <jonathanh@nvidia.com>
-References: <20250313170011.357208-1-juri.lelli@redhat.com>
-From: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Content-Language: en-US
-In-Reply-To: <20250313170011.357208-1-juri.lelli@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z9LxbzJ3zf0RT-JS@smile.fi.intel.com>
 
-On 13/03/2025 18:00, Juri Lelli wrote:
-> Hello!
+Hello Andy,
+thanks for the review.
+
+On Thu, Mar 13, 2025 at 04:53:35PM +0200, Andy Shevchenko wrote:
+> On Thu, Mar 13, 2025 at 03:43:31PM +0100, Francesco Dolcini wrote:
 > 
-> Jon reported [1] a suspend regression on a Tegra board configured to
-> boot with isolcpus and bisected it to commit 53916d5fd3c0
-> ("sched/deadline: Check bandwidth overflow earlier for hotplug").
+> > Add new platform driver for the Embedded Controller currently used
+> > in Toradex SMARC iMX8MP and SMARC iMX95.
+> > It currently provides power-off and restart (reset) handlers.
+
+...
+
+> > +	err = regmap_bulk_read(ec->regmap, EC_CHIP_ID_REG, &reg_val, EC_ID_VERSION_LEN);
+> > +	if (err)
+> > +		return dev_err_probe(dev, err,
+> > +				     "Cannot read id and version registers\n");
+> > +
+> > +	dev_info(dev, "Toradex Embedded Controller id %x - Firmware %d.%d\n",
 > 
-> Root cause analysis pointed out that we are currently failing to
-> correctly clear and restore bandwidth accounting on root domains after
-> changes that initiate from partition_sched_domains(), as it is the case
-> for suspend operations on that board.
-> 
-> This is v4 [2] of the proposed approach to fix the issue. With respect
-> to v3 only patch 04 has changed as I have added the wrappers Waiman
-> created to make sure we always call partition_sched_domains() while
-> holding cpuset_mutex (issue pointed out by Dietmar on v3).
-> 
-> Dietmar also pointed out that the issue at hand is not fixed by this set
-> for !CONFIG_CPUSETS configuration. But, given the fact that bandwidth
-> accounting has been broken for such configuration so far (sigh) and that
-> the vast majority (if not all) distributions have CPUSETS enabled, we
-> decided to leave fixing the remaining issue for later. I will soon try
-> to find time to keep looking into it.
+> Specifiers are semirandom. Why signed? Why x and not %u?
 
-Reviewed-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
+The firmware version ("Firmware %d.%d") is two unsigned decimal number,
+so yes, I will change to "Firmware %u.%u".
 
-Tested-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
+The ID is just an identifier that is documented as hex, therefore I
+think that the most convenient way to display it is as a hex number.
 
-Testcase: suspend/resume
+Francesco
 
-on Arm64 big.LITTLE cpumask=[LITTLE][big]=[0,3-5][1-2]
-plus cmd line option 'isolcpus=3,4'.
 
