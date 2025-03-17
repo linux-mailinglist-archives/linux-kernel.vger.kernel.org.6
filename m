@@ -1,134 +1,268 @@
-Return-Path: <linux-kernel+bounces-563661-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563662-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94E60A64645
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 09:52:26 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0D25A64648
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 09:52:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E81FA1893616
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 08:52:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F1CEC1705EA
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 08:52:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AA071B412B;
-	Mon, 17 Mar 2025 08:51:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1C982206B5;
+	Mon, 17 Mar 2025 08:52:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P+mnN1Th"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="hOsgpE75"
+Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85FD821E098
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 08:51:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 028EB1B412B;
+	Mon, 17 Mar 2025 08:52:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742201502; cv=none; b=inb9ikqAapycGBRv5asQbfHJrQeO+/TBfDxa1eWEQsbK1mrOSdBPMVptG3i1hLoy7S/Z7aBVKozIfebFADIyPoxVqcaQ8qMA9pw0VR6kdG6IPefhy+BPNAhatEEMG/OwfpSZ6lgtdVPoHUWIfHN8hyCMDGrbC14gEUYXXjD4r98=
+	t=1742201566; cv=none; b=WrqFJRPQKbyxEj3r4PqnAxykve+y2st5cNa0npqGx2jFJV5K7eAyFzHWEa/2EV4HCM7RQdqaMCo8TGvePZj2jMUCGwBd7V1MRXndDo3aVn0lCdnoV89cYxjux5Pg9i/bSrOouwZHJ5z8cm9P4/LPcDZnvtuk0EGNFLdTVOdYQwc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742201502; c=relaxed/simple;
-	bh=YwXqS6I8ZKF0juTzL4Iw7Hgtz16Th7yyWmbpTxtpbTI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nX+tjv+Gm3d9J/98gezP4v7Ycav3MDO/9XvpU72vk4slDpYOljSU/JWVBWYadEbx2EmBndyxqW3clPfCznY7tb9gdFAAlt9XfKjvrOMsLFt1iS7aEoMujSI8kqdVMe2YYAdKK3wZvFk3B83e9nuKsmTlvXA5tPLMXQm+TjUpoaQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P+mnN1Th; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1DD30C4CEE3;
-	Mon, 17 Mar 2025 08:51:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742201502;
-	bh=YwXqS6I8ZKF0juTzL4Iw7Hgtz16Th7yyWmbpTxtpbTI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=P+mnN1Th8CYlanEj9J8KVgavblQcqEJi872vddiFukOJq3U3wyz/gnNVFAi67DRq6
-	 U9MqcmkmuqEQxEe4XvVau3jec4TwB3pnZS6t16smygSVlPLJ5FqcTZzUQJcKHexcVt
-	 CcUMErttbMxn63D5Er7m7kuUs75UA2WjmbPlUCcfyK1g5vqbrlHCHs7V2R3HeIoYWm
-	 +cCLbmnaBBqrjNEiPa4DGarX0/UwFECRnz4H3ky/XPKx4E4RMwxfDrhce0XD/SpOfK
-	 EfmkcVwfonoseGF5qU02qaaWbSBkKRuXp0/6iJg5rLxxJrvYhYVrDM/Ta1f4TTybIn
-	 tHAL+VYlz8qnQ==
-Message-ID: <27c4a0ab-a311-4d80-951a-b7912661c463@kernel.org>
-Date: Mon, 17 Mar 2025 09:51:39 +0100
+	s=arc-20240116; t=1742201566; c=relaxed/simple;
+	bh=+B5JwbBFivWYCY+UmnrfWnqmPZMn4eiW/HdEXryOz38=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=YPciVA3ZSROELY/3zrgNrqcHK3xxupdbn2HXF7sjSKnBtBoxXmnMi2tgTHFvJTPDBiC/Ko63BYnV1INufnSGmCDGM9RsSie8Dm/RyANbqLhwtMp6CV/sP0W/J3OUYjr7FuA5G1nBkQWIjA+D20qSJ0AgP03jg8HUzxe8FOTWDAI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=hOsgpE75; arc=none smtp.client-ip=217.70.183.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 08C3943277;
+	Mon, 17 Mar 2025 08:52:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1742201555;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=v1BOiXY0pQXsR3DKRb00y3Ktnt4JnMEzNfaWSPKCrJ0=;
+	b=hOsgpE75dFTLaSfPDI/FmtVR8cTYAMKR0TtQSV+ggmI+xHu964BaVmSPMTp/yb9S9Otd+0
+	+lpM7TgSYig1wUepQAEnp316THuGM9IjJjWrR6rzt/YHex+4QYYJld0lrInpZW2kOEc+2e
+	IaqLYKtho9k3+/CD3E0kRudVrd2yjuMSqonD8vSRaUIHiBUxrGI9l37j2sLBfmO5czRla3
+	YY+cScKl/ey/WQzGojqd8PSSI8BlA3lHmdL1tsqayOLfgWe2rS+Xbo6zy0Ct+iXK1QlYGB
+	TkI3JfJMS24H8ii7edgNJJNC0zv0fqMLQgViB3UQ/CmClAZW/7NB10A41p7AKA==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] tools/x86/kcpuid: Replace deprecated strncpy() with
- strscpy()
-To: feng.wei8@zte.com.cn, tglx@linutronix.de
-Cc: darwi@linutronix.de, linux-kernel@vger.kernel.org
-References: <20250317153224647OjWUNNAviyd634961gnCh@zte.com.cn>
-Content-Language: en-US
-From: Jiri Slaby <jirislaby@kernel.org>
-Autocrypt: addr=jirislaby@kernel.org; keydata=
- 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
-In-Reply-To: <20250317153224647OjWUNNAviyd634961gnCh@zte.com.cn>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 17 Mar 2025 09:52:34 +0100
+Message-Id: <D8IEWP78KVOE.1SD29H0S51FZM@bootlin.com>
+Cc: "Thomas Petazzoni" <thomas.petazzoni@bootlin.com>,
+ =?utf-8?q?Miqu=C3=A8l_Raynal?= <miquel.raynal@bootlin.com>,
+ <linux-renesas-soc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, =?utf-8?q?Cl=C3=A9ment_L=C3=A9ger?=
+ <clement.leger@bootlin.com>
+Subject: Re: [PATCH v3] ARM: dts: r9a06g032: add r9a06g032-rzn1d400-eb board
+ device-tree
+From: "Thomas Bonnefille" <thomas.bonnefille@bootlin.com>
+To: "Thomas Bonnefille" <thomas.bonnefille@bootlin.com>, "Geert
+ Uytterhoeven" <geert+renesas@glider.be>, "Magnus Damm"
+ <magnus.damm@gmail.com>, "Rob Herring" <robh@kernel.org>, "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>
+X-Mailer: aerc 0.20.1-0-g2ecb8770224a
+References: <20250314-rzn1d400-eb-v3-1-45c4fd3f6e01@bootlin.com>
+In-Reply-To: <20250314-rzn1d400-eb-v3-1-45c4fd3f6e01@bootlin.com>
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddufeeltdekucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpegggfgtfffkvefuhffvofhfjgesthhqredtredtjeenucfhrhhomhepfdfvhhhomhgrshcuuehonhhnvghfihhllhgvfdcuoehthhhomhgrshdrsghonhhnvghfihhllhgvsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpedvkeelfefftdelleeuvefgleelieeftdfhveduledvhfffveejkefftdegffduheenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghloheplhhotggrlhhhohhsthdpmhgrihhlfhhrohhmpehthhhomhgrshdrsghonhhnvghfihhllhgvsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeduvddprhgtphhtthhopehthhhomhgrshdrsghonhhnvghfihhllhgvsegsohhothhlihhnrdgtohhmpdhrtghpthhtohepghgvvghrthdorhgvnhgvshgrshesghhlihguvghrrdgsvgdprhgtphhtthhopehmrghgnhhushdruggrmhhmsehgmhgrihhlrdgtohhmpdhrtghpthhtoheprhhosghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkrhiikhdoughts
+ ehkvghrnhgvlhdrohhrghdprhgtphhtthhopegtohhnohhrodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepthhhohhmrghsrdhpvghtrgiiiihonhhisegsohhothhlihhnrdgtohhmpdhrtghpthhtohepmhhiqhhuvghlrdhrrgihnhgrlhessghoohhtlhhinhdrtghomh
+X-GND-Sasl: thomas.bonnefille@bootlin.com
 
-On 17. 03. 25, 8:32, feng.wei8@zte.com.cn wrote:
-> From: FengWei <feng.wei8@zte.com.cn>
-> 
-> strncpy() is deprecated for NUL-terminated destination buffers. Use
-> strscpy() instead and remove the manual NUL-termination.
-> 
-> Signed-off-by: FengWei <feng.wei8@zte.com.cn>
+Hello,
+Erratum, there are some trailing whitespaces hiding in this file, it
+seems like I had some checkpatch problems.
+I'll send a v4 soon.
+
+On Fri Mar 14, 2025 at 7:56 PM CET, Thomas Bonnefille wrote:
+> From: Cl=C3=A9ment L=C3=A9ger <clement.leger@bootlin.com>
+>
+> The EB board (Expansion board) supports both RZ/N1D and RZ-N1S. Since thi=
+s
+> configuration targets only the RZ/N1D, it is named r9a06g032-rzn1d400-eb.
+> It adds support for the 2 additional switch ports (port C and D) that are
+> available on that board.
+>
+> Signed-off-by: Cl=C3=A9ment L=C3=A9ger <clement.leger@bootlin.com>
+>
+> [Thomas moved the dts to the renesas directory and declared the leds in
+> each phy]
+>
+> Signed-off-by: Thomas Bonnefille <thomas.bonnefille@bootlin.com>
 > ---
->   tools/arch/x86/kcpuid/kcpuid.c | 3 +--
->   1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/tools/arch/x86/kcpuid/kcpuid.c b/tools/arch/x86/kcpuid/kcpuid.c
-> index 1b25c0a95d3f..23a8fde2e203 100644
-> --- a/tools/arch/x86/kcpuid/kcpuid.c
-> +++ b/tools/arch/x86/kcpuid/kcpuid.c
-> @@ -312,8 +312,7 @@ static int parse_line(char *line)
->   	if (line[0] == '#' || line[0] == '\n')
->   		return 0;
-> 
-> -	strncpy(buffer, line, 511);
-> -	buffer[511] = 0;
-> +	strscpy(buffer, line, 511);
-
-Mind you this is userspace?
-
--- 
-js
-suse labs
+> This short series adds support for the RZ/N1 Expansion Board. This board
+> is a carrier board on which a daughter board (either RZ/N1D or RZ/N1S)
+> can be plugged. The device-tree that is added by this series enables the
+> use to the 2 external switch ports that are present on this board.
+> ---
+> V3:
+>  - Drop bindings commit as it was applied to master
+>  - Move Makefile modification to arch/arm/boot/dts/renesas/Makefile
+>  - Declare LEDs in PHY.
+>  - Use the driver default LED configuration as there was no reason to
+>    use a different one.
+>
+> V2:
+>  - Add "renesas,rzn1d400-db" in list of compatibles for EB board
+>  - Replace '_' with '-' in eth pins node name
+>  - Split some long lines in dts
+> ---
+>  arch/arm/boot/dts/renesas/Makefile                 |   1 +
+>  .../arm/boot/dts/renesas/r9a06g032-rzn1d400-eb.dts | 120 +++++++++++++++=
+++++++
+>  2 files changed, 121 insertions(+)
+>
+> diff --git a/arch/arm/boot/dts/renesas/Makefile b/arch/arm/boot/dts/renes=
+as/Makefile
+> index 833a02447ecf7a02bd2efe70fae15213ede9a6de..947c7fe0280337a3aa6e9a025=
+7f406694892239c 100644
+> --- a/arch/arm/boot/dts/renesas/Makefile
+> +++ b/arch/arm/boot/dts/renesas/Makefile
+> @@ -30,4 +30,5 @@ dtb-$(CONFIG_ARCH_RENESAS) +=3D \
+>  	r8a7794-alt.dtb \
+>  	r8a7794-silk.dtb \
+>  	r9a06g032-rzn1d400-db.dtb \
+> +	r9a06g032-rzn1d400-eb.dtb \
+>  	sh73a0-kzm9g.dtb
+> diff --git a/arch/arm/boot/dts/renesas/r9a06g032-rzn1d400-eb.dts b/arch/a=
+rm/boot/dts/renesas/r9a06g032-rzn1d400-eb.dts
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..20478941170bade197afb5cc9=
+b3d694bd9a30951
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/renesas/r9a06g032-rzn1d400-eb.dts
+> @@ -0,0 +1,120 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Device Tree Source for the RZN1D-EB Board
+> + *
+> + * Copyright (C) 2023 Schneider-Electric
+> + *
+> + */
+> +
+> +#include "r9a06g032-rzn1d400-db.dts"
+> +
+> +/ {
+> +	model =3D "RZN1D-EB Board";
+> +	compatible =3D "renesas,rzn1d400-eb", "renesas,rzn1d400-db",
+> +		     "renesas,r9a06g032";
+> +};
+> +
+> +&mii_conv2 {
+> +	renesas,miic-input =3D <MIIC_SWITCH_PORTD>;
+> +	status =3D "okay";
+> +};
+> +
+> +&mii_conv3 {
+> +	renesas,miic-input =3D <MIIC_SWITCH_PORTC>;
+> +	status =3D "okay";
+> +};
+> +
+> +&pinctrl{
+> +	pins_eth1: pins-eth1 {
+> +		pinmux =3D <RZN1_PINMUX(12, RZN1_FUNC_CLK_ETH_MII_RGMII_RMII)>,
+> +			 <RZN1_PINMUX(13, RZN1_FUNC_CLK_ETH_MII_RGMII_RMII)>,
+> +			 <RZN1_PINMUX(14, RZN1_FUNC_CLK_ETH_MII_RGMII_RMII)>,
+> +			 <RZN1_PINMUX(15, RZN1_FUNC_CLK_ETH_MII_RGMII_RMII)>,
+> +			 <RZN1_PINMUX(16, RZN1_FUNC_CLK_ETH_MII_RGMII_RMII)>,
+> +			 <RZN1_PINMUX(17, RZN1_FUNC_CLK_ETH_MII_RGMII_RMII)>,
+> +			 <RZN1_PINMUX(18, RZN1_FUNC_CLK_ETH_MII_RGMII_RMII)>,
+> +			 <RZN1_PINMUX(19, RZN1_FUNC_CLK_ETH_MII_RGMII_RMII)>,
+> +			 <RZN1_PINMUX(20, RZN1_FUNC_CLK_ETH_MII_RGMII_RMII)>,
+> +			 <RZN1_PINMUX(21, RZN1_FUNC_CLK_ETH_MII_RGMII_RMII)>,
+> +			 <RZN1_PINMUX(22, RZN1_FUNC_CLK_ETH_MII_RGMII_RMII)>,
+> +			 <RZN1_PINMUX(23, RZN1_FUNC_CLK_ETH_MII_RGMII_RMII)>;
+> +		drive-strength =3D <6>;
+> +		bias-disable;
+> +	};
+> +
+> +	pins_eth2: pins-eth2 {
+> +		pinmux =3D <RZN1_PINMUX(24, RZN1_FUNC_CLK_ETH_MII_RGMII_RMII)>,
+> +			 <RZN1_PINMUX(25, RZN1_FUNC_CLK_ETH_MII_RGMII_RMII)>,
+> +			 <RZN1_PINMUX(26, RZN1_FUNC_CLK_ETH_MII_RGMII_RMII)>,
+> +			 <RZN1_PINMUX(27, RZN1_FUNC_CLK_ETH_MII_RGMII_RMII)>,
+> +			 <RZN1_PINMUX(28, RZN1_FUNC_CLK_ETH_MII_RGMII_RMII)>,
+> +			 <RZN1_PINMUX(29, RZN1_FUNC_CLK_ETH_MII_RGMII_RMII)>,
+> +			 <RZN1_PINMUX(30, RZN1_FUNC_CLK_ETH_MII_RGMII_RMII)>,
+> +			 <RZN1_PINMUX(31, RZN1_FUNC_CLK_ETH_MII_RGMII_RMII)>,
+> +			 <RZN1_PINMUX(32, RZN1_FUNC_CLK_ETH_MII_RGMII_RMII)>,
+> +			 <RZN1_PINMUX(33, RZN1_FUNC_CLK_ETH_MII_RGMII_RMII)>,
+> +			 <RZN1_PINMUX(34, RZN1_FUNC_CLK_ETH_MII_RGMII_RMII)>,
+> +			 <RZN1_PINMUX(35, RZN1_FUNC_CLK_ETH_MII_RGMII_RMII)>;
+> +		drive-strength =3D <6>;
+> +		bias-disable;
+> +	};
+> +};
+> +
+> +&switch {
+> +	pinctrl-names =3D "default";
+> +	pinctrl-0 =3D <&pins_eth1>, <&pins_eth2>, <&pins_eth3>, <&pins_eth4>,
+> +		    <&pins_mdio1>;
+> +
+> +	mdio {
+> +		/* CN15 and CN16 switches must be configured in MDIO2 mode */
+> +		switch0phy1: ethernet-phy@1 {
+> +			reg =3D <1>;
+> +			leds {
+> +				#address-cells =3D <1>;
+> +				#size-cells =3D <0>;
+> +
+> +				led@0 {
+> +					reg =3D <0>;
+> +				};
+> +				led@1 {
+> +					reg =3D <1>;
+> +				};
+> +				led@2 {
+> +					reg =3D <2>;
+> +				};
+> +			};=09
+> +		};
+> +
+> +		switch0phy10: ethernet-phy@10 {
+> +			reg =3D <10>;
+> +			leds {
+> +				#address-cells =3D <1>;
+> +				#size-cells =3D <0>;
+> +
+> +				led@0 {
+> +					reg =3D <0>;
+> +				};
+> +				led@1 {
+> +					reg =3D <1>;
+> +				};
+> +				led@2 {
+> +					reg =3D <2>;
+> +				};
+> +			};=09
+> +		};
+> +	};
+> +};
+> +
+> +&switch_port2 {
+> +	label =3D "lan2";
+> +	phy-mode =3D "rgmii-id";
+> +	phy-handle =3D <&switch0phy10>;
+> +	status =3D "okay";
+> +};
+> +
+> +&switch_port3 {
+> +	label =3D "lan3";
+> +	phy-mode =3D "rgmii-id";
+> +	phy-handle =3D <&switch0phy1>;
+> +	status =3D "okay";
+> +};
+>
+> ---
+> base-commit: 9c5968db9e625019a0ee5226c7eebef5519d366a
+> change-id: 20250127-rzn1d400-eb-3fc1479a13e6
+>
+> Best regards,
 
 
