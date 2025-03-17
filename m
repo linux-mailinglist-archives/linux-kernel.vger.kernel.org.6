@@ -1,176 +1,96 @@
-Return-Path: <linux-kernel+bounces-563242-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563243-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09FE0A63AC8
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 02:54:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE471A63ACC
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 02:55:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 28AB57A3F99
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 01:53:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B34E43ABE7E
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 01:55:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4049A1474D3;
-	Mon, 17 Mar 2025 01:54:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 642A213CA9C;
+	Mon, 17 Mar 2025 01:55:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DzUFglXM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="H0ZXvlJ4"
+Received: from out30-124.freemail.mail.aliyun.com (out30-124.freemail.mail.aliyun.com [115.124.30.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93A2079D2;
-	Mon, 17 Mar 2025 01:54:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3129B79D2;
+	Mon, 17 Mar 2025 01:55:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742176487; cv=none; b=WWGRS6jmLiFqUZSdyT21rI2kjKVjp72Qexaj8komZu4twmJCRNaDV+1WL0dTIo/ZT1Q5LbD3iRz3valrzyS0EDSdp01lNYEILuFe0mODv2ND2UAYBCOck3FHMmHzPz8Y5WAitbrt2Z0wGKpY4o3gNBdIBYY1SIrLT7oHeKyAfIU=
+	t=1742176543; cv=none; b=V8pZH44xEUIINa/OZGW6lcAa3MNQFw6T42opBoZSu3WpaHsBHW0oEe2yIQ4eZZsd4M2UQqQqlonbFP8Ukkf3JugfAtxwlSl0LWAarUMsNvEyizSE5gCp0Yb5uRiSVEAUicz/XvmV3MwLQCwOAfd4U/XpIT+uT4JKrC0iQaE7NRM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742176487; c=relaxed/simple;
-	bh=i8Zgs3umIvGH2qQwYjil63u/LJvMP0AVGyrUYdKPEh8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZA3z7dlDRUZKK45Ae0C+/ldkTusEYu1ys4Ze6pT0UMY+GoK1FO7qR4eZCP2mKhbSiVfaK+X4LD3qp2zhy13urF5FEcuSrat/CtJcXYFVosX+xyVMP0EuvjbEQ0yU2x7SKf+9ANlOP3EJpVrrIiiFSXDDI5npxb/1F8Ti/wF1sE4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DzUFglXM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60F3BC4CEDD;
-	Mon, 17 Mar 2025 01:54:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742176487;
-	bh=i8Zgs3umIvGH2qQwYjil63u/LJvMP0AVGyrUYdKPEh8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DzUFglXM3IaoIi+CZRubjx8LO9MQgySMquQ29q/nXWST9VMICxfYxpX7aprmijkRp
-	 IyaOmCZF39L+Of3uSbI79cSE+L+cGC1H+jDCL+jBEu5L/8ghWsVfIe3nhs2tcicz6h
-	 PmHoymoqQzzaTeg3heDCKFyJ4ZLaZmI0YD28HpI4eR618aGnM1p70hLCANded8hKLj
-	 iQ8pieiuXtkWkgidlGT5iKzPP+VRcqoPcPfZVtPHm3E4VpdBzS16DDTDdWzD0CjEng
-	 e5dZ5peRF3H/1j2/dlP6d++Y4GCmtFE8FEIZXgFgkgFBxun2RTBhU/c8xpspvmKP4j
-	 7KwTqaIUoBCYQ==
-Date: Mon, 17 Mar 2025 09:54:37 +0800
-From: "Peter Chen (CIX)" <peter.chen@kernel.org>
-To: Fedor Pchelkin <pchelkin@ispras.ru>
-Cc: Frank Li <Frank.li@nxp.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Joe Hattori <joe@pf.is.s.u-tokyo.ac.jp>,
-	Sebastian Reichel <sre@kernel.org>,
-	Fabien Lahoudere <fabien.lahoudere@collabora.co.uk>,
-	linux-usb@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	lvc-project@linuxtesting.org, stable@vger.kernel.org
-Subject: Re: [PATCH v2 2/3] usb: chipidea: ci_hdrc_imx: fix call balance of
- regulator routines
-Message-ID: <20250317015437.GB218167@nchen-desktop>
-References: <20250316102658.490340-1-pchelkin@ispras.ru>
- <20250316102658.490340-3-pchelkin@ispras.ru>
+	s=arc-20240116; t=1742176543; c=relaxed/simple;
+	bh=7GlVFROGhQYP4W1Es7a2w1q7aJ6QXK6BRS5zZWU3QQc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=YXKK/O8Ksgxt8I4irvxblSoj5wzWXcYIEY0WCyx9BGAik3LTKjBelip824MR8dB+I4msUmdMcGrSA7JwGcHdSlZfRPQ8QLiaIwdL/iDqmlRUMWQ+bPYwg37QqzaQMhEusXOG0idjMgc/O62OehjHIa/92gcGQxUuP7E8lGRA9y8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=H0ZXvlJ4; arc=none smtp.client-ip=115.124.30.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1742176532; h=From:To:Subject:Date:Message-Id:MIME-Version:Content-Type;
+	bh=uoBZcHvTXH4zImpYvULitH9EJk+5AMCPZ8jdSfBBn3Y=;
+	b=H0ZXvlJ4nLA15O8RSaDh3B1fYDg8Q9xjBB9soC776N95v8O6SJISQZgmtOZiPXhQ7OhUhemEf/Wp97l+Pv9oDeu9NwMV42LO7bjAhlRKIlPoBAfcdaaIIYekSdo4fq2MJYvGY60TsbHXDm+vLKMquVq4LuJVta3CqMfsR3lTNmQ=
+Received: from localhost(mailfrom:jiapeng.chong@linux.alibaba.com fp:SMTPD_---0WRXQteu_1742176525 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Mon, 17 Mar 2025 09:55:31 +0800
+From: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+To: rostedt@goodmis.org
+Cc: mhiramat@kernel.org,
+	mathieu.desnoyers@efficios.com,
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	Jiapeng Chong <jiapeng.chong@linux.alibaba.com>,
+	Abaci Robot <abaci@linux.alibaba.com>
+Subject: [PATCH -next] ring-buffer: Remove the unused variable bmeta
+Date: Mon, 17 Mar 2025 09:55:24 +0800
+Message-Id: <20250317015524.3902-1-jiapeng.chong@linux.alibaba.com>
+X-Mailer: git-send-email 2.32.0.3.g01195cf9f
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250316102658.490340-3-pchelkin@ispras.ru>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 25-03-16 13:26:55, Fedor Pchelkin wrote:
-> Upon encountering errors during the HSIC pinctrl handling section the
-> regulator should be disabled.
-> 
-> Use devm_add_action_or_reset() to let the regulator-disabling routine be
-> handled by device resource management stack.
-> 
-> Found by Linux Verification Center (linuxtesting.org).
-> 
-> Fixes: 4d6141288c33 ("usb: chipidea: imx: pinctrl for HSIC is optional")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Fedor Pchelkin <pchelkin@ispras.ru>
+Variable bmeta is not effectively used, so delete it.
 
-Acked-by: Peter Chen <peter.chen@kernel.org>
+kernel/trace/ring_buffer.c:1952:27: warning: variable ‘bmeta’ set but not used.
 
+Reported-by: Abaci Robot <abaci@linux.alibaba.com>
+Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=19524
+Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+---
+ kernel/trace/ring_buffer.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-> ---
-> v2: simplify the patch taking advantage of devm-helper (Frank Li)
-> 
-> It looks like devm_regulator_get_enable_optional() exists for this very
-> use case utilized in the driver but it's not present in old supported
-> stable kernels and I may say those dependency-patches wouldn't apply there
-> cleanly. So fix the problem first, further code simplification is a
-> subject to cleanup patch.
-> 
->  drivers/usb/chipidea/ci_hdrc_imx.c | 25 +++++++++++++++++--------
->  1 file changed, 17 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/usb/chipidea/ci_hdrc_imx.c b/drivers/usb/chipidea/ci_hdrc_imx.c
-> index 619779eef333..d942b3c72640 100644
-> --- a/drivers/usb/chipidea/ci_hdrc_imx.c
-> +++ b/drivers/usb/chipidea/ci_hdrc_imx.c
-> @@ -336,6 +336,13 @@ static int ci_hdrc_imx_notify_event(struct ci_hdrc *ci, unsigned int event)
->  	return ret;
->  }
->  
-> +static void ci_hdrc_imx_disable_regulator(void *arg)
-> +{
-> +	struct ci_hdrc_imx_data *data = arg;
-> +
-> +	regulator_disable(data->hsic_pad_regulator);
-> +}
-> +
->  static int ci_hdrc_imx_probe(struct platform_device *pdev)
->  {
->  	struct ci_hdrc_imx_data *data;
-> @@ -394,6 +401,13 @@ static int ci_hdrc_imx_probe(struct platform_device *pdev)
->  					"Failed to enable HSIC pad regulator\n");
->  				goto err_put;
->  			}
-> +			ret = devm_add_action_or_reset(dev,
-> +					ci_hdrc_imx_disable_regulator, data);
-> +			if (ret) {
-> +				dev_err(dev,
-> +					"Failed to add regulator devm action\n");
-> +				goto err_put;
-> +			}
->  		}
->  	}
->  
-> @@ -432,11 +446,11 @@ static int ci_hdrc_imx_probe(struct platform_device *pdev)
->  
->  	ret = imx_get_clks(dev);
->  	if (ret)
-> -		goto disable_hsic_regulator;
-> +		goto qos_remove_request;
->  
->  	ret = imx_prepare_enable_clks(dev);
->  	if (ret)
-> -		goto disable_hsic_regulator;
-> +		goto qos_remove_request;
->  
->  	ret = clk_prepare_enable(data->clk_wakeup);
->  	if (ret)
-> @@ -526,10 +540,7 @@ static int ci_hdrc_imx_probe(struct platform_device *pdev)
->  	clk_disable_unprepare(data->clk_wakeup);
->  err_wakeup_clk:
->  	imx_disable_unprepare_clks(dev);
-> -disable_hsic_regulator:
-> -	if (data->hsic_pad_regulator)
-> -		/* don't overwrite original ret (cf. EPROBE_DEFER) */
-> -		regulator_disable(data->hsic_pad_regulator);
-> +qos_remove_request:
->  	if (pdata.flags & CI_HDRC_PMQOS)
->  		cpu_latency_qos_remove_request(&data->pm_qos_req);
->  	data->ci_pdev = NULL;
-> @@ -557,8 +568,6 @@ static void ci_hdrc_imx_remove(struct platform_device *pdev)
->  		clk_disable_unprepare(data->clk_wakeup);
->  		if (data->plat_data->flags & CI_HDRC_PMQOS)
->  			cpu_latency_qos_remove_request(&data->pm_qos_req);
-> -		if (data->hsic_pad_regulator)
-> -			regulator_disable(data->hsic_pad_regulator);
->  	}
->  	if (data->usbmisc_data)
->  		put_device(data->usbmisc_data->dev);
-> -- 
-> 2.48.1
-> 
-
+diff --git a/kernel/trace/ring_buffer.c b/kernel/trace/ring_buffer.c
+index 1f9f3fd7e23d..229427fe0c2f 100644
+--- a/kernel/trace/ring_buffer.c
++++ b/kernel/trace/ring_buffer.c
+@@ -1949,7 +1949,6 @@ static void rb_meta_validate_events(struct ring_buffer_per_cpu *cpu_buffer)
+ static void rb_range_meta_init(struct trace_buffer *buffer, int nr_pages, int scratch_size)
+ {
+ 	struct ring_buffer_cpu_meta *meta;
+-	struct ring_buffer_meta *bmeta;
+ 	unsigned long *subbuf_mask;
+ 	unsigned long delta;
+ 	void *subbuf;
+@@ -1964,8 +1963,6 @@ static void rb_range_meta_init(struct trace_buffer *buffer, int nr_pages, int sc
+ 	if (rb_meta_init(buffer, scratch_size))
+ 		valid = true;
+ 
+-	bmeta = buffer->meta;
+-
+ 	for (cpu = 0; cpu < nr_cpu_ids; cpu++) {
+ 		void *next_meta;
+ 
 -- 
+2.32.0.3.g01195cf9f
 
-Best regards,
-Peter
 
