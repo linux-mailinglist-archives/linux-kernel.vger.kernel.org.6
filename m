@@ -1,116 +1,155 @@
-Return-Path: <linux-kernel+bounces-563447-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563448-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20090A641F2
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 07:43:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD4D8A641F4
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 07:44:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F2661891469
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 06:43:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C19473A4CF7
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 06:43:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7024021A421;
-	Mon, 17 Mar 2025 06:43:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 256BA21A422;
+	Mon, 17 Mar 2025 06:43:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xpmxTQMe"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="oLcBLC8P"
+Received: from out30-98.freemail.mail.aliyun.com (out30-98.freemail.mail.aliyun.com [115.124.30.98])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 321EE219E99
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 06:43:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3007815382E
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 06:43:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742193819; cv=none; b=VGSb2WGOX+2SP6RkrDQr7WGhfZEPggQsDulphQyOnmk3zxDbwLpXXf5DLsogPtmd6bDRoUVqEZvBzNlmZR8RaYxxUYcqK3FMKLjjQGm888lXIynXWr3OPBrvWz3bg3koodJZYhzuT+TmQ+8L7FXL584y+3mE4pR9pUEO9bXqWpo=
+	t=1742193836; cv=none; b=FaUuxXtfQZxzhq/2ugxBvHZjFlXlOGb5LmFMLRRn2O5CDMKralkuXkfq6gZHMIWMCn25Hevt/EX5m796fCawXkUACpJjRZgELD1bznvUYbwYOqqMHsknM3kHMFLjGspr221mMN1p08VkAn7Bam1inkiGP7VRSSAODEYmOOCs2jU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742193819; c=relaxed/simple;
-	bh=SAXd+tnqhgdMVTCsrjIAySmhK5q7c0gBaTWPfdUM8o4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=qw0re5i+gM0kAJlrsnYnPq+vvtw+Cv1IwAQsXkOHKfj7Y2CWBL+YQpot0YEN1SDj1Lpn4shFOzZB0uJoBpRVD1qNFbR1CkhQJqKYYOx8oEpmx8sy0+1kCl/n/r1osbWuQMHqzGKQCy1JfGUxfMa5BoI8v6fRI1otISO6yYMyUrk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xpmxTQMe; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3912d2c89ecso3671005f8f.2
-        for <linux-kernel@vger.kernel.org>; Sun, 16 Mar 2025 23:43:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1742193816; x=1742798616; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=N/vwN5dNyCUi97uHAKHSyt9c9XHXLZW11g/S5VxieqU=;
-        b=xpmxTQMedA1hmRyqpUR7nncuexcqLzFdvXcZtDLDTVuRItmuxAHZ8yTASrelKsiUT1
-         bOCb2HzPHzRnCHhXn14nxOMrly5U1XIVoA9IhwECSShWPURN9WzNWGfCRS6JO6EzybZS
-         eFZPkse48mByEgqxDHHOlVW/AlUtwuzxeFrMj+pIR5qDenDgeIK0hSPcrOTlcKQ+4Qq+
-         B59AnsmJFikhjyx5OVUuxXnR4w5452SypfFa1I4E6ffkZXtf9hb6lpK79aJzmMaPrMGx
-         veudJrNEvdaklHI8VGffj7ef9YfIFOXevSXkfSMNMY5oOILqTqhpgRIPa8oJjmwDxvSX
-         wXww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742193816; x=1742798616;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=N/vwN5dNyCUi97uHAKHSyt9c9XHXLZW11g/S5VxieqU=;
-        b=MZtxiwJ2WAzZvlclPKmo9EgpDJ17tprnIYQfK7WRkx5uGKAMjjan55Fk20UkdG1Tu4
-         7egBN9zd1cM662pU8/vB2e0VzaSWlPP+rB5YVYcYgx2Z4qxLnBewzR2a1zBk95IayzOH
-         x3ZW64bj2DPfcwAJhQOv2xx3yC3MWe+N3F9NHENjZJy1RvPw3bz2Gj+YyFuCpSo3fL7f
-         nZzddQniIOBK+sQylxV273qNXSzX9XVaPoZkEfGrXBpD4iaVZzrnHDei+7g5qe+kspFK
-         5cn1h/Gff77zrjaQm5ZldZZKHa0OQewywEFZyB/t87tMmym/J06hGiUGWAk3Q6HZmhFR
-         N2vQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU4eQxZqK+1gfF2e6+1SFky6MAjzerDZLmCHOl6av7XZexg2u4V3+Xd2Aef8YW8FIUX7m4kqj0Vv2obNgA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyt72AjU4iXT70HURn8a4IaKcU2RMKAIsPmrerCH+NFOdwnlyU/
-	FakRRtiz0YggkR1hoQR5oue5QqEDZJ+nV1Ogt2x8wysTRvHb6Og94jJk6GHN3Wo=
-X-Gm-Gg: ASbGnctTwrpZ60LkmDqQK+bDT93jB+/q6525/ZNu1PfSkHq4eawRNPIHE63UJn9GCaT
-	IlaywI6MZsUENDpeGH16qW6i8eBSjguODorl7ryhZ/QOZCuvXpXYGFaxIZdesbWoLj3XdLaWzWR
-	iHoMzPQCvS1WicS1EH6svau0v674wpPkeTGeArVGpOdn6+s+YkbJWJDtJ2nioBNDoiH22MQe6ky
-	6rMpMJUkrpZQqFcglN1YpIWb/SXNKjcALj/+YsTxAQhAQrontiFlpvNdy4CL6RJW89OdXPgtJql
-	2WO/obVVAI9b+tvLEtC+3BOXWrmcZLQpW9XWW5Iu5j+9WJk96Q==
-X-Google-Smtp-Source: AGHT+IHpbojnLnFsF4gaCO7LQYp8D156la7rfBOhhig4+j9+OQo9S59WfIE2bg6beTxHHhT//jo+xw==
-X-Received: by 2002:adf:8b59:0:b0:390:f699:8c27 with SMTP id ffacd0b85a97d-3971d616b99mr8376465f8f.12.1742193816417;
-        Sun, 16 Mar 2025 23:43:36 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-395c7df413esm13717850f8f.20.2025.03.16.23.43.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 16 Mar 2025 23:43:36 -0700 (PDT)
-Date: Mon, 17 Mar 2025 09:43:32 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Joerg Roedel <joro@8bytes.org>
-Cc: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
-	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
-	iommu@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] iommu/amd: Return a literal in init_gcr3_table()
-Message-ID: <faa7edf4-a757-4390-8226-2604ef6476d6@stanley.mountain>
+	s=arc-20240116; t=1742193836; c=relaxed/simple;
+	bh=36XU+XIOvR7E4JpcsQXt4dNNvaUHhARX8J9KFlmF1EQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tzXrpYdSn17ygxkPCdaNsbH4Z4A9EqxrHeqKML8wciQf5UqCHtjmsXcmqgbMPLLcbiB/827yKBOUc+QnP+Zh2qVeEU+EBn57HtbeGQIPJjhPv9JPwW7YeUWt79iXFl43U+Qh7kAmsbUe/bPWf27ZsRYPlfCVyBpoTqwX+lB6L0w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=oLcBLC8P; arc=none smtp.client-ip=115.124.30.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1742193829; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=cToQKYVimXAGyTQXffRJDfzXmpyvPuy5zS8wqsPtAj0=;
+	b=oLcBLC8Pa3BUMdzgqw8dKiNaESvoS56ltiu6j/qwu26li0lyvD8f0H7G81j8MavU4aWnokzyylmKvwAqI4JW5O9HP/2CGiHWq66Xt/0K7qv+2g14t99FE0uNMj1yR77pjualC4Ujb+kGj556fxfNl8h5qxqIVdUepxn69wTKfhE=
+Received: from 30.74.130.1(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WRa37lF_1742193828 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Mon, 17 Mar 2025 14:43:48 +0800
+Message-ID: <7b4a204e-5cb5-411a-bcb6-99e281fdc470@linux.alibaba.com>
+Date: Mon, 17 Mar 2025 14:43:48 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <960a6d1a-63d6-49e8-890c-5e8a66e50c45@stanley.mountain>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5] erofs: use Z_EROFS_LCLUSTER_TYPE_MAX to simplify
+ switches
+To: Chao Yu <chao@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Hongzhen Luo <hongzhen@linux.alibaba.com>,
+ linux-erofs mailing list <linux-erofs@lists.ozlabs.org>
+References: <20250210032923.3382136-1-hongzhen@linux.alibaba.com>
+ <511c5fd9-307e-4c56-9d20-796dd06f775c@kernel.org>
+ <489be3d1-a755-4756-ba82-a8f5a0dc9156@linux.alibaba.com>
+ <04050888-7abf-40fa-98d6-6215b8ba989e@kernel.org>
+ <18767765-53b5-4e78-b50d-9305fe1cb2d0@linux.alibaba.com>
+ <1dd3b2a6-5431-4a2a-bccb-2a3672f5d1bd@kernel.org>
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+In-Reply-To: <1dd3b2a6-5431-4a2a-bccb-2a3672f5d1bd@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-This code intentionally returns zero but it does it as "return ret;"
-Returning ret looks like an error path where return 0 is more
-clear and looks more intentional.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- drivers/iommu/amd/iommu.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/iommu/amd/iommu.c b/drivers/iommu/amd/iommu.c
-index ce2626801ddf..7cbcc4933c8b 100644
---- a/drivers/iommu/amd/iommu.c
-+++ b/drivers/iommu/amd/iommu.c
-@@ -2150,7 +2150,7 @@ static int init_gcr3_table(struct iommu_dev_data *dev_data,
- 
- 	/* Setup GCR3[0] only if domain is setup with v2 page table mode */
- 	if (!pdom_is_v2_pgtbl_mode(pdom))
--		return ret;
-+		return 0;
- 
- 	ret = update_gcr3(dev_data, 0, iommu_virt_to_phys(pdom->iop.pgd), true);
- 	if (ret)
--- 
-2.47.2
+On 2025/3/17 14:42, Chao Yu wrote:
+> On 3/17/25 14:15, Gao Xiang wrote:
+>> Hi Chao,
+>>
+>> On 2025/3/17 14:03, Chao Yu wrote:
+>>> On 3/17/25 01:17, Gao Xiang wrote:
+>>>> Hi Chao,
+>>>>
+>>
+>> ...
+>>
+>>>>
+>>>> Previously, it was useful before Z_EROFS_LCLUSTER_TYPE_HEAD2 was
+>>>> introduced, but the `default:` case is already deadcode now.
+>>>
+>>> Xiang, thanks for the explanation.
+>>>
+>>> So seems it can happen when mounting last image w/ old kernel which can not
+>>> support newly introduced Z_EROFS_LCLUSTER_TYPE_* type, then it makes sense to
+>>> return EOPNOTSUPP.
+>>
+>> Yeah.
+>>
+>>>
+>>>>
+>>>>>
+>>>>> Btw, we'd better to do sanity check for m->type in z_erofs_load_full_lcluster(),
+>>>>> then we can treat m->type as reliable variable later.
+>>>>>
+>>>>>        advise = le16_to_cpu(di->di_advise);
+>>>>>        m->type = advise & Z_EROFS_LI_LCLUSTER_TYPE_MASK;
+>>>>>        if (m->type >= Z_EROFS_LCLUSTER_TYPE_MAX) {
+>>>>
+>>>> It's always false here.
+>>>
+>>> So, what do you think of this?
+>>>
+>>>   From af584b2eacd468f145e9ee31ccdeedb7355d5afd Mon Sep 17 00:00:00 2001
+>>> From: Chao Yu <chao@kernel.org>
+>>> Date: Mon, 17 Mar 2025 13:57:55 +0800
+>>> Subject: [PATCH] erofs: remove dead codes for cleanup
+>>>
+>>> z_erofs_extent_lookback() and z_erofs_get_extent_decompressedlen() tries
+>>> to do sanity check on m->type, however their caller z_erofs_map_blocks_fo()
+>>> has already checked that, so let's remove those dead codes.
+>>
+>> z_erofs_extent_lookback() will (lookback) read new lcn in
+>> z_erofs_load_lcluster_from_disk() so it won't be covered by
+>> the original z_erofs_map_blocks_fo().
+> 
+> Xiang,
+> 
+> Oh, I see, changed here:
+> 
+> - z_erofs_extent_lookback
+>   - z_erofs_load_lcluster_from_disk
+>    - z_erofs_load_full_lcluster
+>    : m->type = advise & Z_EROFS_LI_LCLUSTER_TYPE_MASK;
+>   - z_erofs_load_compact_lcluster
+>   : m->type = type;
+
+Yeah, we'd better to move all checks into
+z_erofs_load_lcluster_from_disk() later.
+
+> 
+>>
+>> I think this check can be resolved in
+>> z_erofs_load_lcluster_from_disk() instead but maybe address
+>> for the next cycle? since there are already enough features
+>> for this cycle and I have to make sure no major issues....
+> 
+> Yeah, it's fine to check the cleanup later, let's keep focusing
+> on improving patches in dev now.
+
+Yes.
+
+Thanks,
+Gao Xiang
+
+> 
+> Thanks,
+> 
+>>
+>> Thanks,
+>> Gao Xiang
+>>
 
 
