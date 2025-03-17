@@ -1,99 +1,163 @@
-Return-Path: <linux-kernel+bounces-564208-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564211-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3691A6503B
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 14:07:20 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21A8AA65042
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 14:08:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 53C381895524
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 13:07:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1F5A77A78D8
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 13:07:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F69423CEF9;
-	Mon, 17 Mar 2025 13:07:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1A1323C8CF;
+	Mon, 17 Mar 2025 13:08:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="oRLYJj/L"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="1e9fQ8VL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4E69239082;
-	Mon, 17 Mar 2025 13:07:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B774238146;
+	Mon, 17 Mar 2025 13:08:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742216825; cv=none; b=fh1JqhCLQR070S8yoEGCo75XDBrvkQeSuvgcIYnKwL4pGO5pQ35Kp8uLo0aITP53orAYjc0A/Eg3ftsgYptjammjr384NjFHasnX5JeVwX9FIeJu7GZedVJWHbphy97m8BKfUG/6X2V48TjPXBvP6DKiQsp+4absQ60GwpYSJ6M=
+	t=1742216920; cv=none; b=PjweWFcKJBarsUBBy+os0dCC0aVtVcxTpjNZ44/C28KDdYix3HrotGfXRi/AJTEsFu2+n+1FxqIMbxLOwx2tM2oJ2h/zJwz6NwfSP5uuHEr6eukHySGPj1IKnoFPWv3bJ1YjNx/9Y5XvmMvvjR66XgIliybKETaEa93CzWxRLOI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742216825; c=relaxed/simple;
-	bh=d9rbuOf6vgt7EmHvbjatGk0egelvFCZkm4hG6GECxxs=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=AR0RFM96uYza7yprWeC+EjuLuFyezOSLotUTmjqVRa/ubO/VcCD+a37pq2lViiVtLsEytUf3W1x7Lz/3fm6M7fAkeaVKrG+ynfn7pNnuIlNNt1vd5lhBs9ytow9oRCQEVkjsXAKOKuEKM2450CHx4dfjt7+3sOWLLfIjTacK3fc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=oRLYJj/L; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1742216819;
-	bh=RDRxYkn4tMYm22xctKdfHFH1VSCxbjgW7pg1DW734Qg=;
-	h=Date:From:To:Cc:Subject:From;
-	b=oRLYJj/L2aT09dIfsp2nSc3m052t+MeH7IwSeNXwOXAhfAx7yhIy0RhY6gsVg4bGy
-	 tC9DOYP+FKJbflIgo69zKjV/Ehy8XnCSRirp1wnEi2Bqvx1FPtc0go5v5g8rWAb/Sx
-	 PKtHwlQ54J1Pk5t0KFm8uCnS3std27Cq5G9taslWoI+JKq2/ZOnpMvxdjr6lEdnOtK
-	 rINVc4mjcHKXvzZCt1CrQo2w1LumXqCgh4oIdxuNc/+DD/kAdZSEcnZhFKAjnjRGOm
-	 zHxAG/tJ28d2lSNHICu6J8HmszzsS6m5Uf9nFCO4ggahEM8rTDh5Z775mrEDVNDq8u
-	 tqFFYsDEQEJ7w==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZGZxb450Lz4wcw;
-	Tue, 18 Mar 2025 00:06:59 +1100 (AEDT)
-Date: Tue, 18 Mar 2025 00:06:58 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Theodore Ts'o <tytso@mit.edu>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: Signed-off-by missing for commit in the ext4 tree
-Message-ID: <20250318000658.29a791b4@canb.auug.org.au>
+	s=arc-20240116; t=1742216920; c=relaxed/simple;
+	bh=A2buZVyCTM/JLx3cksI2FxOC72ZMVKmlADsSnDNR/kk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VUOEAc+Y9BTHWoY/5zIZg8jzLbQcv0z34Rzs1DKIfNc4Z+cCP+b6feg+LZb70j14ond1+UmOJL9v4ipLB8Gyavd1JjnSaIoF3wN85chl+aFctqNGLbhIknq1fIpLHvkMlWvnR2uKEgH/ipjKxgBqAkZXujeSgpHiimjoC+rTgtI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=1e9fQ8VL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77510C4CEE3;
+	Mon, 17 Mar 2025 13:08:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1742216919;
+	bh=A2buZVyCTM/JLx3cksI2FxOC72ZMVKmlADsSnDNR/kk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=1e9fQ8VLMdvG0BUnk8W99h+nfmKSGbOZ4VwsxabWWPiErqHlcAWqjmhN2lyP+gvwp
+	 R8VWYY+QIi+ghpcCVuDIvDDGLjP4k9RMJbEej69VO69kbuc+xPBLr4RuVQZU65TLeT
+	 rE78qf0qIC7NdQc04B+uvDpVXOP5oPff+cDf5qzY=
+Date: Mon, 17 Mar 2025 14:07:00 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Sudeep Holla <sudeep.holla@arm.com>
+Cc: linux-kernel@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	linux-rtc@vger.kernel.org, linux-efi@vger.kernel.org
+Subject: Re: [PATCH 4/9] rtc: efi: Transition to the faux device interface
+Message-ID: <2025031755-simile-landside-e719@gregkh>
+References: <20250317-plat2faux_dev-v1-0-5fe67c085ad5@arm.com>
+ <20250317-plat2faux_dev-v1-4-5fe67c085ad5@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/uyUNYr3_PcyYGgIeJS9cqIi";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250317-plat2faux_dev-v1-4-5fe67c085ad5@arm.com>
 
---Sig_/uyUNYr3_PcyYGgIeJS9cqIi
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Mon, Mar 17, 2025 at 10:13:16AM +0000, Sudeep Holla wrote:
+> The EFI RTC driver does not require the creation of a platform device.
+> Originally, this approach was chosen for simplicity when the driver was
+> first implemented.
+> 
+> With the introduction of the lightweight faux device interface, we now
+> have a more appropriate alternative. Migrate the driver to utilize the
+> faux bus, given that the platform device it previously created was not
+> a real one anyway. This will simplify the code, reducing its footprint
+> while maintaining functionality.
+> 
+> Cc: Ard Biesheuvel <ardb@kernel.org>
+> Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>
+> Cc: linux-rtc@vger.kernel.org
+> Cc: linux-efi@vger.kernel.org
+> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+> ---
+>  drivers/firmware/efi/efi.c |  3 ---
+>  drivers/rtc/rtc-efi.c      | 31 ++++++++++++++++++++++---------
+>  2 files changed, 22 insertions(+), 12 deletions(-)
+> 
+> diff --git a/drivers/firmware/efi/efi.c b/drivers/firmware/efi/efi.c
+> index eec173cb1f398d3b4f28b42c917e50e1728dc277..18deb2d212ce6944927f5e3a9a40bb6754e7ffa9 100644
+> --- a/drivers/firmware/efi/efi.c
+> +++ b/drivers/firmware/efi/efi.c
+> @@ -427,9 +427,6 @@ static int __init efisubsys_init(void)
+>  		}
+>  	}
+>  
+> -	if (efi_rt_services_supported(EFI_RT_SUPPORTED_TIME_SERVICES))
+> -		platform_device_register_simple("rtc-efi", 0, NULL, 0);
+> -
+>  	/* We register the efi directory at /sys/firmware/efi */
+>  	efi_kobj = kobject_create_and_add("efi", firmware_kobj);
+>  	if (!efi_kobj) {
+> diff --git a/drivers/rtc/rtc-efi.c b/drivers/rtc/rtc-efi.c
+> index fa8bf82df9488e7d1c23c058b4a3032dde74bc6e..3d21a470e8ff9777c5eeb991f3aa9170f6351930 100644
+> --- a/drivers/rtc/rtc-efi.c
+> +++ b/drivers/rtc/rtc-efi.c
+> @@ -14,7 +14,7 @@
+>  #include <linux/module.h>
+>  #include <linux/stringify.h>
+>  #include <linux/time.h>
+> -#include <linux/platform_device.h>
+> +#include <linux/device/faux.h>
+>  #include <linux/rtc.h>
+>  #include <linux/efi.h>
+>  
+> @@ -254,7 +254,7 @@ static const struct rtc_class_ops efi_rtc_ops = {
+>  	.proc		= efi_procfs,
+>  };
+>  
+> -static int __init efi_rtc_probe(struct platform_device *dev)
+> +static int __init efi_rtc_probe(struct faux_device *dev)
+>  {
+>  	struct rtc_device *rtc;
+>  	efi_time_t eft;
+> @@ -268,7 +268,7 @@ static int __init efi_rtc_probe(struct platform_device *dev)
+>  	if (IS_ERR(rtc))
+>  		return PTR_ERR(rtc);
+>  
+> -	platform_set_drvdata(dev, rtc);
+> +	faux_device_set_drvdata(dev, rtc);
+>  
+>  	rtc->ops = &efi_rtc_ops;
+>  	clear_bit(RTC_FEATURE_UPDATE_INTERRUPT, rtc->features);
+> @@ -282,15 +282,28 @@ static int __init efi_rtc_probe(struct platform_device *dev)
+>  	return devm_rtc_register_device(rtc);
+>  }
+>  
+> -static struct platform_driver efi_rtc_driver = {
+> -	.driver = {
+> -		.name = "rtc-efi",
+> -	},
+> +static struct faux_device_ops efi_rtc_fdev_ops = {
+> +	.probe = efi_rtc_probe,
+>  };
+>  
+> -module_platform_driver_probe(efi_rtc_driver, efi_rtc_probe);
+> +static int __init rtc_efi_init(void)
+> +{
+> +	struct faux_device *fdev;
+> +
+> +	if (!efi_rt_services_supported(EFI_RT_SUPPORTED_TIME_SERVICES))
+> +		return 0;
+> +
+> +	fdev = faux_device_create("rtc-efi", NULL, &efi_rtc_fdev_ops);
+> +	if (!fdev) {
+> +		pr_err("rtc-efi: could not create the device\n");
+> +		return -ENODEV;
+> +	}
+> +
+> +	return 0;
+> +}
+> +device_initcall(rtc_efi_init);
+>  
+>  MODULE_AUTHOR("dann frazier <dannf@dannf.org>");
+>  MODULE_LICENSE("GPL");
+>  MODULE_DESCRIPTION("EFI RTC driver");
+> -MODULE_ALIAS("platform:rtc-efi");
+> +MODULE_ALIAS("faux:rtc-efi");
 
-Hi all,
-
-Commits
-
-  400bb71a00da ("ext4: fix out-of-bound read in ext4_xattr_inode_dec_ref_al=
-l()")
-  4d6eb75d2364 ("ext4: introduce ITAIL helper")
-
-are missing a Signed-off-by from their committer.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/uyUNYr3_PcyYGgIeJS9cqIi
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfYHnIACgkQAVBC80lX
-0Gxxpwf8CwL6Ep5AsFjDb55/+Z9/ifXNXV4e3AWyYlLRFdbtPO+RHw07VnTtuGks
-8I/NJF8s5E+3sh5ixiQxGlVPpvZdc42Gv86R+jnHTWQ/3jyGlu11fcIAgHy/3P+/
-c3ZfSkGJ/nuK0fRxMcQxKAuLER+bCP8kdlBvwsU2X75nHsMMXIQ2VwpwErmTnw9N
-umxTyleX4X+vHdmDKi8Pj4jNlDmdx/UbUtZ5BFO3k5LA1X26gJuMX9AH1ruEPvFN
-UH+PXb8uMFaq43v7MfcAX1zLnyGQLwefQB8/yMmKnUpxxL4EHaBLsyEbYDT6sgvF
-3dJxTOkcFg2XUqY8s3/Qgas1sxzm+g==
-=y+40
------END PGP SIGNATURE-----
-
---Sig_/uyUNYr3_PcyYGgIeJS9cqIi--
+No alias please.
 
