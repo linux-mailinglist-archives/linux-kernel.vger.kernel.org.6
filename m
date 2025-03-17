@@ -1,169 +1,156 @@
-Return-Path: <linux-kernel+bounces-564571-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564572-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3076A6578D
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 17:10:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CFCEA6579B
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 17:12:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 968A9178470
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 16:07:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D94418880F0
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 16:08:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9084B1E52D;
-	Mon, 17 Mar 2025 16:07:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB66219CD13;
+	Mon, 17 Mar 2025 16:07:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="blgYBjPI"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cTuwUHwm"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E4BC199931;
-	Mon, 17 Mar 2025 16:07:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44B93199931
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 16:07:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742227647; cv=none; b=fo6FSblCk8cAW5zyT3+HsTaP/Frjikb+8zSTsIq+NbW+jyZVsXNVdX85cSHQMlnHzjUXbnxoxO6/j9Q2Kwzupkc0wFEK3P82iDzrR4a5/7r73oMMd5F4ozfVqFzc/1v9CGf5WYvg5ecsufByXxrW4/iW2sQ0qM/ePeQgrJNBaOo=
+	t=1742227652; cv=none; b=KFtKTFc0+PwV7/ruLKQdeBByxQNHN9pGWnlEbvndzoP8Jataxshk0fGdtgx6eiUN5sc3McmVA8QgOtFWKs5tlfBXkz8ipmIAu8EMtI0/p6qKM1ZHLUw2nJ5WlYmDd5D/FdBIScuusyHhpw7VVvhYMqo4q6dAqG3mRfjSINuT91I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742227647; c=relaxed/simple;
-	bh=9GNkcEKj9sgBWueMkXaZ04oaSqcU6vqT0TxpdglAf/I=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=jggiUuSjPG4WUb+CjCBUtaW7FSgfAdToBQHpJBURgJY4qsNglyzpsgx4Yz7P8CNQmXF1I9WLwkvZU9cHG387CuoISrcSFZ2rAlKdXB6B5jW2hGVZHV0+sF+YBoIyfuwL2G3jlQ8QzuCVhLrx8lpkPloyNTnAGBIqg7syH6a+OSo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=blgYBjPI; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742227645; x=1773763645;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version:content-id;
-  bh=9GNkcEKj9sgBWueMkXaZ04oaSqcU6vqT0TxpdglAf/I=;
-  b=blgYBjPI2QgHzB997tm5Bw9gCVwaCg+YnAjarB/0lPY1wmA4sW0racXw
-   cZt8AmKbN8mw4Ppd0uSv6bK/A+m3MekQqrz+3emq6Q2nNZHIN6ESihhTa
-   wzJL2l7GVuBzlFZ/9+VMnKHAkDdjhMZe+uJ8i0wzHY8X52xA3x1pZuQ1y
-   ft3Q9Pv7kQwDEOdYK/Fme+ZDwoQhRUqmJIfdDsotm7NA2VSc1l+j7w9FV
-   Bb+8pl5Um/LmWWVXsQ45gVqoJHhPjJem3wN2QxdBnP88ZmGdyR7gcoEzm
-   S9VgMysRjvFOZMmk7BQNwG3xKRKoVXJF/4WGof9EC7MuhIkwtzXkaOmFA
-   w==;
-X-CSE-ConnectionGUID: PA7Gym3iQH20psODk7bn7Q==
-X-CSE-MsgGUID: QLdcH4VGSt2m8tpUbbWA4Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11376"; a="68688138"
-X-IronPort-AV: E=Sophos;i="6.14,254,1736841600"; 
-   d="scan'208";a="68688138"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Mar 2025 09:07:19 -0700
-X-CSE-ConnectionGUID: nE3KFyJnRGWIHjO8dfqL6A==
-X-CSE-MsgGUID: Ghpa7GUEQaiNLolPKbNTIA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,254,1736841600"; 
-   d="scan'208";a="122711584"
-Received: from smoticic-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.60])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Mar 2025 09:07:17 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Mon, 17 Mar 2025 18:07:13 +0200 (EET)
-To: Chenyuan Yang <chenyuan0y@gmail.com>
-cc: W_Armin@gmx.de, Hans de Goede <hdegoede@redhat.com>, 
-    platform-driver-x86@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] platform/x86: wmi: Add Null check for device
-In-Reply-To: <CALGdzuoWo+sT5ShVRpY6Q0R=5GOBvbOY10hyvUeT8DL9vsSj3w@mail.gmail.com>
-Message-ID: <dcd30b77-a856-3613-6905-79d2de7f7e73@linux.intel.com>
-References: <20250313162820.3688298-1-chenyuan0y@gmail.com> <ff53debd-05bd-3a7f-89a5-2110b8103fad@linux.intel.com> <CALGdzuoWo+sT5ShVRpY6Q0R=5GOBvbOY10hyvUeT8DL9vsSj3w@mail.gmail.com>
+	s=arc-20240116; t=1742227652; c=relaxed/simple;
+	bh=9XuRFGO9jLnurGDGxXbu9n9FnOFT9RbV+4eCVyZvpAg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CPSAuq9T+p4K4j9iAD1idWa5Cg/YHmuRDvIkG1glzO6E/Ki7DHV8Bi2kh9QNGRFw3PHoabL2Iqp13PY3XxNKsHG4sohjEJsJOZ3vdDRNz1S9lSF85FpUKjuM2XbbrVDh5hxYkDH3v3TnX8m3GhIf6P431NEV67gzNDSake5qmq4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cTuwUHwm; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-ac24ec112fcso75729766b.0
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 09:07:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1742227648; x=1742832448; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=UuHbh4MYV3gTJ0X4cZQ8+nBi40Q4Lk1nrGFJC9SvTOQ=;
+        b=cTuwUHwmH1sxwK8Mr5q/vRYXRXXXZs+LNHfMabecOaMjDPPlpor3C8xxnSLZVK411y
+         3V9B7QPRacBUT3XdO0+OS+ji/RX5ACFLtbNsmDVCdEmxko3UrD+ILWuzUTt4sUuw7HDi
+         pCATb+n6zRGYMmyfL4K4bbgS+qneLZKMsJHWlXSDQsrZZ8Nb0zub1/PmP5Zdzc0+yNMd
+         nSHaf+77thrNyoBszxhTCjrj1qTyVPPREyCpIPvRgbY2u0eUoXB8TbGw1ZcpYhQWPk3t
+         WBUKbN7KG255gydp8QBMV9Uc5/myDGbjaLKb4+j6Pd1tARqjxtReOqvZ148yE/OtXFcf
+         GHIg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742227648; x=1742832448;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UuHbh4MYV3gTJ0X4cZQ8+nBi40Q4Lk1nrGFJC9SvTOQ=;
+        b=uY0lSsAmp67cWotFV4SJYliblj6GAs/WpRfbGG+GrZ5YBQ9w40DY0dqVQBVt6S6vAB
+         W0KR4x83l7d0EjFP0w3HyQTUPulUGSCJbB1WiMhYsu4/LkUSkd2icI2KYswnNrHWT+e+
+         DcuqVXIch4ZTvyBbXtrLqyYuzFfjwmCCqlfLOweU6gmIqFqcQFjyLKb0781JHpcAxPjf
+         YSp0J5pZyJ/5gdvPFJc1FBuv6mUbYHmCWNHEnmrEFXEisp8I/zqEy1MsAdlP4yP9kob8
+         eSfRPHmt/gwuBDKBvld6F3hoQxc4osuYC6CQJihx2yXqQ7kq0XgJuE6Sa+bE5P1qw4Cs
+         8QHQ==
+X-Gm-Message-State: AOJu0YwthzpKbP3BIO3Z0BECMBTCioTFUc0qHqHi0wm6XZnY2/IC9JZM
+	CLZUCpZfUVW9Ru+C7khrSeFeDp8wA66f4YnQdI/d/+M4gWah1rB6ZYMh8N4fuHw=
+X-Gm-Gg: ASbGncs5TnllXJBqKauCbvI3StgtZJpoZ9HfVAEri4yfkRMzHDISksXlQCeiwSQKPkv
+	H7f9W5kY1RgMlGAHjLC6iYGBgQw1Y27FNKSjLO47obq+jMIuZEKaNywMOprkLS7h2UGVDGYupwI
+	/ImnSrUohO0U26QaHLcLe7WxkCL7HD2o1bwkrZQV54RGfiDpIcKyBDYIkGUkLg0Hl5gq77Jn6Wl
+	pJb+WECdLJwqS0ZVeLMbce9iiXsCJZsm9ERNHMHBLi483rNWwR7OMtTFEk8KfpGElRQOBrDSlZ9
+	4Tb6eZhS1UCK9gzIbmIeF85GQe0DhSWxR6xwrFxLhq8FfGSdsN+Uid+/+Ia94E8=
+X-Google-Smtp-Source: AGHT+IEUcabQmU7N1TkMij7G556EuNjnPQ9Y37gUtsBadxWZgY7a5v7ADjlBJypctwLLzxgaf83Hgw==
+X-Received: by 2002:a17:907:ec8c:b0:ac3:79ed:7bf0 with SMTP id a640c23a62f3a-ac379ed7c5amr119005866b.0.1742227648257;
+        Mon, 17 Mar 2025 09:07:28 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.198.86])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac31484b234sm684404066b.77.2025.03.17.09.07.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 17 Mar 2025 09:07:27 -0700 (PDT)
+Message-ID: <935028c6-ce56-46e0-96ff-46fa91c8f66a@linaro.org>
+Date: Mon, 17 Mar 2025 17:07:26 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; BOUNDARY="8323328-993793629-1742227572=:944"
-Content-ID: <277831c5-2f93-6670-7039-7be7e1d11df4@linux.intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: OCOTP and DWMAC builtin modules are needed for imx93-11x11-evk
+ kernel dev via TFTP and NFS
+To: Alberto Merciai <alb3rt0.m3rciai@gmail.com>, shawnguo@kernel.org
+Cc: linux-kernel@vger.kernel.org, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org
+References: <Z9fhuVltKwqgHdLp@alb3rt0-ThinkPad-P15-Gen-1>
+Content-Language: en-US
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <Z9fhuVltKwqgHdLp@alb3rt0-ThinkPad-P15-Gen-1>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+On 17/03/2025 09:47, Alberto Merciai wrote:
+> While playing with linux-next and imx93-11x11-evk via NFS and TFTP
+> I found that the dwmac-imx, nvmem-imx-ocotp-ele drivers by default are
+> not builtin then the I was not able to reach userland. 
+> 
+> The following configs were needed to reach my goal:
+> CONFIG_DWMAC_IMX8=y
+> CONFIG_STMMAC_ETH=y
+> CONFIG_NVMEM_IMX_OCOTP_ELE=y
+> 
+> is that something expected?
 
---8323328-993793629-1742227572=:944
-Content-Type: text/plain; CHARSET=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Content-ID: <3a226e0c-01ed-8b74-fa1d-d14c69292990@linux.intel.com>
+You mean they are disabled or you just did not put them inside your
+initramfs?
 
-On Fri, 14 Mar 2025, Chenyuan Yang wrote:
-
-> Hi Ilpo,
->=20
-> Thanks for pointing this out.
-> This was found by our static analyzer.
-> Sorry that the checker didn't make further reasoning.
-
-Hi Chenyuan,
-
-Then you should be the one who does that further reasoning before sending=
-=20
-the patch out. :-) Please don't assume tools couldn't return also false=20
-positives. It's good to study all the code related to the lines and=20
-functions changed beyond just the patch context so you can understand=20
-whether the change makes sense and explain how the problem can manifest=20
-for real.
-
-Please also name the tool in future in the changelog when problems are=20
-found by some code analysis tool (as is also required by the submission=20
-guidelines under Documentation/process/).
-
-
---=20
- i.
-
-
-> On Fri, Mar 14, 2025 at 6:41=E2=80=AFAM Ilpo J=C3=A4rvinen
-> <ilpo.jarvinen@linux.intel.com> wrote:
-> >
-> > On Thu, 13 Mar 2025, Chenyuan Yang wrote:
-> >
-> > Hi,
-> >
-> > Could you please be consistent in style and write "NULL" also in the
-> > shortlog in the subject.
-> >
-> > > Not all devices have an ACPI companion fwnode, so device might be NUL=
-L.
-> > > This is similar to the commit cd2fd6eab480
-> > > ("platform/x86: int3472: Check for adev =3D=3D NULL").
-> >
-> > Please fold the paragraph normally.
-> >
-> > > Add a check for device not being set and return -ENODEV in that case =
-to
-> > > avoid a possible NULL pointer deref in parse_wdg().
-> > >
-> > > Note, acpi_wmi_probe() under the same file has such a check.
-> >
-> > Hmm, is this a bogus fix, as parse_wdg() is only called from
-> > acpi_wmi_probe() so how can ACPI companion turn NULL in between??
-> >
-> > How was this problem found??
-> >
-> > > Signed-off-by: Chenyuan Yang <chenyuan0y@gmail.com>
-> > > ---
-> > >  drivers/platform/x86/wmi.c | 3 +++
-> > >  1 file changed, 3 insertions(+)
-> > >
-> > > diff --git a/drivers/platform/x86/wmi.c b/drivers/platform/x86/wmi.c
-> > > index 646370bd6b03..54e697838c1e 100644
-> > > --- a/drivers/platform/x86/wmi.c
-> > > +++ b/drivers/platform/x86/wmi.c
-> > > @@ -1091,6 +1091,9 @@ static int parse_wdg(struct device *wmi_bus_dev=
-, struct platform_device *pdev)
-> > >       u32 i, total;
-> > >       int retval;
-> > >
-> > > +     if (!device)
-> > > +             return -ENODEV;
-> > > +
-> > >       status =3D acpi_evaluate_object(device->handle, "_WDG", NULL, &=
-out);
-> > >       if (ACPI_FAILURE(status))
-> > >               return -ENXIO;
-> > >
-> >
-> > --
-> >  i.
-> >
->=20
---8323328-993793629-1742227572=:944--
+Best regards,
+Krzysztof
 
