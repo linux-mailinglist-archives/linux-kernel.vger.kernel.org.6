@@ -1,175 +1,567 @@
-Return-Path: <linux-kernel+bounces-564664-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564665-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66605A65917
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 17:54:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D46C1A65916
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 17:54:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F5A83B3AFF
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 16:50:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 925D81896C25
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 16:50:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36BEE1AA1E0;
-	Mon, 17 Mar 2025 16:42:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B18A81B0F0A;
+	Mon, 17 Mar 2025 16:44:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="XVmcnq+p"
-Received: from EUR02-AM0-obe.outbound.protection.outlook.com (mail-am0eur02on2065.outbound.protection.outlook.com [40.107.247.65])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Joaqb2gF"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AD8E1AA795;
-	Mon, 17 Mar 2025 16:42:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.247.65
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742229733; cv=fail; b=Pq0CUUo0Fe0vWtkYbOkOWh6DWVGpjIScX4qTwzLlV8f5doGfNG/uPxgW/mTK9LqA181ns4ugN5mgF5tFdL7BCigZs1xlCUUbqAC97C63EWN/mCj7gIEc+3isAOH1QA0goqZmoo4bxFwYyhFVKqIPftpoIw47+Wuaja2EOeIrvfY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742229733; c=relaxed/simple;
-	bh=RjplOj43JwQhW6BkItngH6ce66UXDT500NzPoVY8ils=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=m27FobJCrz6GlhyCS/EQ2bEwLf49Nf74hQNqaxT4JnONJm1Xe4qQwWpt4ckjQHO6KIiEmp6cBi8y1hdFMoM/D4lDoMi0fPUIphLLJOvc7X0xXiy1IL9qNegD7x0l93x9NMtdJ5i7nPx4FNJavfFjFXemHEQwg30lQOm/MyplRcU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=XVmcnq+p; arc=fail smtp.client-ip=40.107.247.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=wMUtjKjyOom9yrLAVzekUBCMxgkKdiWaIBe1oY9zXrLN9lVZEFou2zrUSr1larhI2P6pkTfOG9KhNBdLxBJuVrGKt+Glyvc+F1PMvB/JF0qLoP6gr/TSMa20AlBwL9OIU5JDXX9RG7esRuONuQYop9AOCVEoeLpU49/35T64yp784Oz2Ctn6qFMmekP5J93enqL4rcZ3TgTChV7oayUZf1g+aFpWs3y9SnnvV+iHNeyfvDQjnsI+r+/GDPKyNW7RwYZtokm02KNtQXmMJZXdEhiZjuR1onbFIjKp3C2fR96n366jrWFumvyvr3YlOUU+eozj4mzficpagd8UCMewwA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=YuxreAdMwOwwNMQyOsXiWG/tBsi4dW/BmxlW0++FCOc=;
- b=Nt0Bd0EqDl1s48Md5KV9jv5/WZJk5Z0QZAZ/HTJJNg37A+imIFyUFRI7zmylp5oCykm2QzLwg6TCKX8tBXj6kb2OTE73of1ATvhbeGthgixIQUwxEfFIWf7vVshUyRrGYPLWg+MNiQV6iqUCUdsJkcIfzRYNdNeQbfXV0iuQ0GhpZ/jDYApJEOrWcxRGx/BzFS4Z60s0Ks7JIxbRTZ5su5Uhb07aLBQvrqpEcc0xnk2YQf9k6nNlNPgvBRLR4aGNDAdBXQutwixMRi7n023d5d4Qh0vMbHlQbwnuM0JtIstWe9fVRao0Stvwfjhl3+WRruCmPXPwoY98o3DD3uRu/w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YuxreAdMwOwwNMQyOsXiWG/tBsi4dW/BmxlW0++FCOc=;
- b=XVmcnq+pt7A5YOXSNskSRbH34tb7EMFcNlUFmMjHS9qFOZRwpDXIibrhTwdvSNjIZco0WuCUBIklOQol4GBXFDAz3EXCDdoa48IrzU+IGuhUfHlH33LITCYdfW9Tz/NRPqb5N1ZluaudhOJ7nAKVfdBsu1Dkhtp6dOmJqu499q71Cwla9gb/JGDthX9vafhnlLeiTHuODzl7J52BAlvOgg0iIFAtnGML3QABxoz9GIWRML0YuF90bBEuOMLulOZKYJpIou0oFT/4u0YG5+Yhi9mBcw7YoHeyLyFtOaPhZG2kDd7r1cQKgOKwhMPueen9zBuDnnTTvFeevtMhV1/7aQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AM8PR04MB7779.eurprd04.prod.outlook.com (2603:10a6:20b:24b::14)
- by VI1PR04MB6976.eurprd04.prod.outlook.com (2603:10a6:803:130::24) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.33; Mon, 17 Mar
- 2025 16:42:08 +0000
-Received: from AM8PR04MB7779.eurprd04.prod.outlook.com
- ([fe80::7417:d17f:8d97:44d2]) by AM8PR04MB7779.eurprd04.prod.outlook.com
- ([fe80::7417:d17f:8d97:44d2%6]) with mapi id 15.20.8534.031; Mon, 17 Mar 2025
- 16:42:08 +0000
-Date: Mon, 17 Mar 2025 18:42:05 +0200
-From: Vladimir Oltean <vladimir.oltean@nxp.com>
-To: Wei Fang <wei.fang@nxp.com>
-Cc: claudiu.manoil@nxp.com, xiaoning.wang@nxp.com, andrew+netdev@lunn.ch,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, christophe.leroy@csgroup.eu,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	imx@lists.linux.dev, linuxppc-dev@lists.ozlabs.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v4 net-next 06/14] net: enetc: add set/get_rss_table() to
- enetc_si_ops
-Message-ID: <20250317164205.bp4vcqarggp3fnf4@skbuf>
-References: <20250311053830.1516523-1-wei.fang@nxp.com>
- <20250311053830.1516523-7-wei.fang@nxp.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250311053830.1516523-7-wei.fang@nxp.com>
-X-ClientProxiedBy: VI1PR07CA0280.eurprd07.prod.outlook.com
- (2603:10a6:803:b4::47) To AM8PR04MB7779.eurprd04.prod.outlook.com
- (2603:10a6:20b:24b::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95AB619F424;
+	Mon, 17 Mar 2025 16:44:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742229842; cv=none; b=pJXcI0oWn4/7+qhitjAvOt/qDUuupaMgLvZvQlu/moz13qAc29uN0JglCCJ9h3RDvmdhOoIlT7vgZDEyr99zQPYNRKnQmcwHIqWg2BX0LAW92Lb1iiv0n7W7mYXp3itRIajPEVS8WGX5MsT33eseZ8+Cy3HHXYvEAHNuWd/e2/I=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742229842; c=relaxed/simple;
+	bh=02M6yFoWMU3JLvlRdZcn0LHN9ibOfknzlPpS43/0MFw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Fr5i/VtQcpkupgXZ3rEtwWfzqdDEbrnX9BDEJSlwLXzfqABt9Wa2EWobKMtcy0GXM8md/8HDX6wQtnjY8ShkWKTfzJY/LVf9SkXvXI5htrQwZO7dzUuNcw2WnF1OPbeAz8te6FapCscrKBo+p94ufvtT618JOwDCbVmLK+liw24=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Joaqb2gF; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742229841; x=1773765841;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=02M6yFoWMU3JLvlRdZcn0LHN9ibOfknzlPpS43/0MFw=;
+  b=Joaqb2gFRAmnMXpoRWJmNFv06bCR8/bDPN2LZkCqyjYJHg4AvVkxtIUt
+   bna/a6tEfdJsQYhigUYILHEYSTq4IMzuuy8eZFBX4EMwtx4aKpwwbStj+
+   FE73gv/1CBb28cX/nV6JXwbYoemnVGf/k7J7W+FCNbl2HFMNmv4n9J0Ww
+   QFenshznF71WGNBzLeMKdAF/F+J9cAycYmV/2c5A8Foz2cChuXhqxN65t
+   293Fin2AJKKz3XdOl4hTqIrq01LuKHH0Aofr7efCKsHO5eaykEE06qg/u
+   S6JvgL0ONdE4eaA3WyWohgWphLlOyuUgRMa+lIWitC1e1zWoyyBvuPMRM
+   A==;
+X-CSE-ConnectionGUID: 66zEry5+SLGhbahJhsDq2g==
+X-CSE-MsgGUID: gP+UKTyZRQ+AHDw4DzCimg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11376"; a="43533993"
+X-IronPort-AV: E=Sophos;i="6.14,254,1736841600"; 
+   d="scan'208";a="43533993"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Mar 2025 09:44:00 -0700
+X-CSE-ConnectionGUID: iG2d1HxuT6edusunPADJZw==
+X-CSE-MsgGUID: 0YyVXoJhSOyyIhNqTapqHA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,254,1736841600"; 
+   d="scan'208";a="122005995"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Mar 2025 09:43:56 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tuDZA-00000003MUS-2G8q;
+	Mon, 17 Mar 2025 18:43:52 +0200
+Date: Mon, 17 Mar 2025 18:43:52 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>, Nuno Sa <nuno.sa@analog.com>,
+	David Lechner <dlechner@baylibre.com>,
+	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+	Olivier Moysan <olivier.moysan@foss.st.com>,
+	Guillaume Stols <gstols@baylibre.com>,
+	Dumitru Ceclan <mitrutzceclan@gmail.com>,
+	Trevor Gamblin <tgamblin@baylibre.com>,
+	Matteo Martelli <matteomartelli3@gmail.com>,
+	Alisa-Dariana Roman <alisadariana@gmail.com>,
+	=?iso-8859-1?Q?Jo=E3o_Paulo_Gon=E7alves?= <joao.goncalves@toradex.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org
+Subject: Re: [PATCH v8 06/10] iio: adc: Support ROHM BD79124 ADC
+Message-ID: <Z9hRSLXCihCGwcT3@smile.fi.intel.com>
+References: <cover.1742225817.git.mazziesaccount@gmail.com>
+ <2b7ebdbeaa163e320b4071c040ee8e24241d693d.1742225817.git.mazziesaccount@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM8PR04MB7779:EE_|VI1PR04MB6976:EE_
-X-MS-Office365-Filtering-Correlation-Id: ea86cc37-e638-4aa6-3dec-08dd6572a836
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|7416014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?rghkkGG+uppfCZNYz/FEUIrrs6nWT9xwkFC7p1tMYK8XE6WxwdK+ztEv1VxO?=
- =?us-ascii?Q?gkYSVCiC2uLU6+n+mLgMjGIv1Hwanawy1NSKMwRrcytU37Pq9dxj77Lmshr5?=
- =?us-ascii?Q?dadDUvGytZP/zB3Ac2GEH7cwF35OWCXAWIl7iWSWeLV58GKHp9EKEvcQLcb2?=
- =?us-ascii?Q?f8DlevTyIHHbf4TokxvadclDqXYtOZd4kiWSxqWTT+kyPjja05amDHnb82g0?=
- =?us-ascii?Q?ZPp3RE/oV+Eac02oppC5lySTJ5hzbgn6pSA9drCqnNrEK8bqoqCAkCQe+ht9?=
- =?us-ascii?Q?dczDbZq0KERknwwIFtD+9FQIR96v/PW3H9bpPmN/sb2e0X2+Urzquqq3IPk/?=
- =?us-ascii?Q?tTuCNMXrQQqUYtCZiD9hHm+Maxag9t4hZCGuC7vmkjOl5sG7U3s4S0EXME2U?=
- =?us-ascii?Q?IA8f6xmH9ct8UJIy/1MFlrWMZu+u9vItfhG7Il6QC5d4yKFqGnzRhOq9yRok?=
- =?us-ascii?Q?mkuRMUFJhPhtCnb4VsOi/zRgGyqRZS8+D3hDCRuPE7a95uqMussRj83jVXl2?=
- =?us-ascii?Q?s1dQ2EhRLz/6JIqdzaM6q+ElyMV5/XEKiQua0imFEj4zoCiPqZBG0XegUXSA?=
- =?us-ascii?Q?xs8lr4p+L6fTlC66qikpkc0QFz+BZDsmWALtExxqjCN4C+8uAs9k++323ksw?=
- =?us-ascii?Q?5fnksEXtcwGB38QeYP+OhTTXHTKx3L0kUqsodG4LJwduYTmKLd3QgCbzn20P?=
- =?us-ascii?Q?M0LcF6eJQmUGkkzO1gyskxNcOXrFqpMDnK0ESAHOgP0TYAEq/Qqtm6PZnTo6?=
- =?us-ascii?Q?9CXbv2rgyBoBhCIwu3Z1cYTr2+jIgJKqYuHKqgBDQ2lRWXtcJ4A4xefhOJ7e?=
- =?us-ascii?Q?Bn0DJIw1WwzOjfi0FMZu64jiGd9g/L+WNEDIs11mcnx1N7fRLNERB0Atubob?=
- =?us-ascii?Q?k1fCfhbVVWKYhbRjiva35M7bg9qgFQC3tb62L+HptyxhabIHKK8Af7wbboOn?=
- =?us-ascii?Q?VXKgXwSjkQNF3zjPXMeLe+eYAkCf5F+mmWsbdu2jkd4Mb5lNFpWdmruMHUan?=
- =?us-ascii?Q?NLaDxIGXQvTopWw9OtTW3QghEhYZtqspFbJLcjN/dpWUX2kSsJPgwBhln2VL?=
- =?us-ascii?Q?xoyjNnQwhIswa4UONemFyO94YgcIjf0eIpLDqK637ZZUvguWMUynCGYTiE6V?=
- =?us-ascii?Q?+wUqaYKJljWSGHQGvDBEhV8vkAkynweun8Zn7JMnNhvoFTPI6C8bkE/+dWKc?=
- =?us-ascii?Q?OpzoZzvmtJWYARH23XEYECnpX9n3iq6DBd0eKk/WTlcMJQGBQkU+4YPEoKsJ?=
- =?us-ascii?Q?7JcGoBbyii01DgzBUtfnN+GXrYZ9ThLBEeJfbNIsgOgmrD+qr6C/yk3KXCDl?=
- =?us-ascii?Q?v7fV+hFfZAB7EUt3zMr3enoIPo0UO8Wzs7cXW03fFLkSoWSfWx7fz06ln9FM?=
- =?us-ascii?Q?MZimMm+w+sltMalj02EeAFDTc6O8?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM8PR04MB7779.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?uD4ST/cXTfjwqdwwkODCVYIpsbCsN+ZuhKHIypHVAVbOmt0910uDO+TW8RNc?=
- =?us-ascii?Q?RKAveG74LqcvViwWNiwrikG/BMTB+oOq/6CDst51bswqcSCRGh7Vftob2ASk?=
- =?us-ascii?Q?A7cHAW2X84DNR9EatEwFBwc58IgR2D6YTJ2LCjDzsWoZ8+b3vRnVxx2oL8xJ?=
- =?us-ascii?Q?ekmm1tv54KXZTloBv5bd4apxp6Dz/I0jk5ZatF+QrzCJbJUxjyFtcIA+qCKX?=
- =?us-ascii?Q?N3qTesjJ9tBBk9BuqucHpWaEk0cVHoSKYimAT6+ZJocCbnvXffjKbIWijtHN?=
- =?us-ascii?Q?z5OBlnZ+H1+p0ofa2EQVwAi4In2vkY+8DmDhJYv0E9gXLXMl/HYNuu/jnW1Q?=
- =?us-ascii?Q?8dZJKs4GAN5WJ3M/8L6SquVMlqfibiY6IZ0qONQqkvlHLtiahNYmJp/zqz8z?=
- =?us-ascii?Q?6fjbQqs+akdGd1ITcPOaX1R8bCHBxwIamyLPmIImKQhDnot8gVp2OG/nxKIo?=
- =?us-ascii?Q?RfB+YZEdnbg4I+B2nySrLMfKPEtgRHvbqgKXbfdbcjQxZnjNlk8AaJUTPkfA?=
- =?us-ascii?Q?XANFGJwZQibe4Y6v02YWx+8Tcw1ArMLvDjAkgI6+I9TFU8hhmDjsnw7OA5UV?=
- =?us-ascii?Q?4I7IWfyBI6I70QZfBId7VBK8MJdE8RtZqjgsJCtl3ifdFGj/kIIZN1a/N8cP?=
- =?us-ascii?Q?t5iFgZiTzqLJFRDf1zx5jcoCOBpwkNj9zbAa8hPDMkyyYHaJcCgGfc66lpOv?=
- =?us-ascii?Q?LlExf4nSdF2/BbTsWvOSs9p47NL0lgaLkbpOVJxy7JF8TU0qD8KLNmWfSwjU?=
- =?us-ascii?Q?LL8XHv3xg2m3M4HwM+ZLjk+s/iwx7fMXrn+Vw1qatRzWpCJtknwvmJZ+zFe/?=
- =?us-ascii?Q?EAQvV5fSSzMDtbY87AMnCBq+XuE137qAS8h9Uuvf34EKMX2PiMx6yz8MXiyl?=
- =?us-ascii?Q?sAMCYnevXQBeLq02xnePEphxEYKmxuszXWuofG7I962xATsJM7QzJw7oHMA1?=
- =?us-ascii?Q?/VQnq+1RKRZgWoUIspyrBS8HOgAk8+GKhUFuxs/u0A15cpkDl2Nrn2VJBLZ6?=
- =?us-ascii?Q?CrYyCM+yNq3KT1s4yAGzmGY4BfmHVhtsAYAI9OAv+/PAkdQPru3VijzXSaPY?=
- =?us-ascii?Q?n+Cz/lkourUL8Ltp8ZgF7OxmuP1KuG5LlR8rNUOhiPNbWvnztYYa5igown/B?=
- =?us-ascii?Q?8kByqj8gfznTiaAguYMusSaKSFI249xh12BmkZpXw1RSuJx6zSS6zjwEk39c?=
- =?us-ascii?Q?G0pSW73ncUzZDBDQuw7cnk/gOk0RMovUSUHhPwluDPI1IKQ6UNEos8D+fUcJ?=
- =?us-ascii?Q?5rqT7H/YptibFzUh10XUVQ44E08JjVsntF8jOzeITP39byBBShtcFoshc2bo?=
- =?us-ascii?Q?uAwXdtTcrCzaZ49I9XUF7QsY35LL/hL3ZPYLpMY0FB2Y8i7cAiUvIucnqLZx?=
- =?us-ascii?Q?uIfbfjrYGGMX5aa1HvFRox466PBcIpVOq5pSTafkhS6GfZpAdoBWhkVcb1CA?=
- =?us-ascii?Q?38RamkDmUfydQmofDBgEH0hBh8Y5ZSkWg85OWeZKGSEQfugsIdtqdkT4i8kt?=
- =?us-ascii?Q?7Du4k/7Xasd7Mn9hlon7zrGyTsPuGJDReGqUcdx7WZsEdBP8SYjdFNGqfmp6?=
- =?us-ascii?Q?YwYU+Bmk9Z4xHw4UcxdS3hkyksWAClaILdfdsBbCjFjFL+eN9dJstE4wynKi?=
- =?us-ascii?Q?IA=3D=3D?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ea86cc37-e638-4aa6-3dec-08dd6572a836
-X-MS-Exchange-CrossTenant-AuthSource: AM8PR04MB7779.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Mar 2025 16:42:08.3346
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: NtMZhm+pA3N9NUX2DcGF0gHhAfY98Um5zHWZ5q/zrssmrxOgBkEALGhkIKiMkT81nMUnIuzYFJZNXeAHzBZKbA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB6976
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2b7ebdbeaa163e320b4071c040ee8e24241d693d.1742225817.git.mazziesaccount@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Tue, Mar 11, 2025 at 01:38:22PM +0800, Wei Fang wrote:
-> diff --git a/drivers/net/ethernet/freescale/enetc/enetc_vf.c b/drivers/net/ethernet/freescale/enetc/enetc_vf.c
-> index d7d9a720069b..072e5b40a199 100644
-> --- a/drivers/net/ethernet/freescale/enetc/enetc_vf.c
-> +++ b/drivers/net/ethernet/freescale/enetc/enetc_vf.c
-> @@ -165,6 +165,8 @@ static void enetc_vf_netdev_setup(struct enetc_si *si, struct net_device *ndev,
->  static const struct enetc_si_ops enetc_vsi_ops = {
->  	.setup_cbdr = enetc_setup_cbdr,
->  	.teardown_cbdr = enetc_teardown_cbdr,
-> +	.get_rss_table = enetc_get_rss_table,
-> +	.set_rss_table = enetc_set_rss_table,
->  };
+On Mon, Mar 17, 2025 at 05:51:25PM +0200, Matti Vaittinen wrote:
+> The ROHM BD79124 is a 12-bit, 8-channel, SAR ADC. The ADC supports
+> an automatic measurement mode, with an alarm interrupt for out-of-window
+> measurements. The window is configurable for each channel.
+> 
+> The I2C protocol for manual start of the measurement and data reading is
+> somewhat peculiar. It requires the master to do clock stretching after
+> sending the I2C slave-address until the slave has captured the data.
+> Needless to say this is not well suopported by the I2C controllers.
+> 
+> Thus do not support the BD79124's manual measurement mode but implement
+> the measurements using automatic measurement mode, relying on the
+> BD79124's ability of storing latest measurements into register.
+> 
+> Support also configuring the threshold events for detecting the
+> out-of-window events.
+> 
+> The BD79124 keeps asserting IRQ for as long as the measured voltage is
+> out of the configured window. Thus, prevent the user-space from choking
+> on the events and mask the received event for a fixed duration (1 second)
+> when an event is handled.
+> 
+> The ADC input pins can be also configured as general purpose outputs.
+> Make those pins which don't have corresponding ADC channel node in the
+> device-tree controllable as GPO.
 
-Are the CBDR-based enetc_get_rss_table() and enetc_set_rss_table()
-the correct implementations for NETC v4 VSIs? (I guess not). Does
-the driver/hardware fail in a civilized way, or does it crash?
+...
+
+> +#include <linux/bitfield.h>
+> +#include <linux/bitmap.h>
+> +#include <linux/bits.h>
+
+bits.h is guaranteed by bitmap.h, but it's up to you to leave
+or remove this line.
+
+> +#include <linux/byteorder/generic.h>
+
+This is incorrect. In some cases it even may produce build failures.
+Should be asm/byteorder.h...
+
+> +#include <linux/device.h>
+> +#include <linux/delay.h>
+> +#include <linux/devm-helpers.h>
+> +#include <linux/err.h>
+> +#include <linux/gpio/driver.h>
+> +#include <linux/i2c.h>
+> +#include <linux/interrupt.h>
+> +#include <linux/irqreturn.h>
+> +#include <linux/module.h>
+> +#include <linux/mod_devicetable.h>
+> +#include <linux/regmap.h>
+> +#include <linux/types.h>
+
+...somewhere here.
+
+> +#include <linux/iio/events.h>
+> +#include <linux/iio/iio.h>
+> +#include <linux/iio/adc-helpers.h>
+
+...
+
+> +#define BD79124_GET_LIMIT_REG(ch, dir) ((dir) == IIO_EV_DIR_RISING ?		\
+> +		BD79124_GET_HIGH_LIMIT_REG(ch) : BD79124_GET_LOW_LIMIT_REG(ch))
+
+It's hard to read, better to split over few lines:
+
+#define BD79124_GET_LIMIT_REG(ch, dir)						\
+	((dir) == IIO_EV_DIR_RISING ?						\
+		BD79124_GET_HIGH_LIMIT_REG(ch) : BD79124_GET_LOW_LIMIT_REG(ch))
+
+or alike.
+
+...
+
+> +	/*
+> +	 * The BD79124 does not allow disabling/enabling limit separately for
+> +	 * one direction only. Hence, we do the disabling by changing the limit
+> +	 * to maximum/minimum measurable value. This means we need to cache
+> +	 * the limit in order to maintain it over the time limit is disabled.
+> +	 */
+> +	u16 alarm_r_limit[BD79124_MAX_NUM_CHANNELS];
+> +	u16 alarm_f_limit[BD79124_MAX_NUM_CHANNELS];
+> +	/* Bitmask of disabled events (for rate limiting) for each channel. */
+> +	int alarm_suppressed[BD79124_MAX_NUM_CHANNELS];
+> +	/*
+> +	 * The BD79124 is configured to run the measurements in the background.
+> +	 * This is done for the event monitoring as well as for the read_raw().
+> +	 * Protect the measurement starting/stopping using a mutex.
+> +	 */
+> +	struct mutex mutex;
+> +	struct delayed_work alm_enable_work;
+
+> +	struct gpio_chip gc;
+
+Hmm... Have you tried to shuffle fields to see if you gain a better code
+generation. Also I don't remember if I asked about struct device *dev to be
+the same as in regmap and would it be worse code without it?
+
+> +	u8 gpio_valid_mask;
+
+...
+
+> +static void bd79124gpo_set(struct gpio_chip *gc, unsigned int offset, int value)
+> +{
+> +	struct bd79124_data *data = gpiochip_get_data(gc);
+> +
+> +	if (value)
+> +		regmap_set_bits(data->map, BD79124_REG_GPO_VAL, BIT(offset));
+> +	else
+> +		regmap_clear_bits(data->map, BD79124_REG_GPO_VAL, BIT(offset));
+
+regmap_assign_bits()
+
+> +}
+
+...
+
+> +static void bd79124gpo_set_multiple(struct gpio_chip *gc, unsigned long *mask,
+> +				    unsigned long *bits)
+> +{
+> +	unsigned int val;
+> +	int ret;
+> +	struct bd79124_data *data = gpiochip_get_data(gc);
+
+> +	/* Ensure all GPIOs in 'mask' are set to be GPIOs */
+
+This sounds like it can utilise valid_mask, but it seems you already have it.
+So the question is what is the practical issue here? I believe the condition
+below will never be the case.
+
+> +	ret = regmap_read(data->map, BD79124_REG_PINCFG, &val);
+> +	if (ret)
+> +		return;
+
+> +	if ((val & *mask) != *mask) {
+> +		dev_dbg(data->dev, "Invalid mux config. Can't set value.\n");
+> +		/* Do not set value for pins configured as ADC inputs */
+> +		*mask &= val;
+> +	}
+> +
+> +	regmap_update_bits(data->map, BD79124_REG_GPO_VAL, *mask, *bits);
+
+Can you rather utilise the respective bitmap APIs?
+
+> +}
+
+...
+
+> +struct bd79124_raw {
+> +	u8 bit0_3; /* Is set in high bits of the byte */
+> +	u8 bit4_11;
+> +};
+> +#define BD79124_RAW_TO_INT(r) ((r.bit4_11 << 4) | (r.bit0_3 >> 4))
+> +#define BD79124_INT_TO_RAW(val) {					\
+> +	.bit4_11 = (val) >> 4,						\
+> +	.bit0_3 = (val) << 4,						\
+> +}
+> +
+> +/*
+> + * The high and low limits as well as the recent result values are stored in
+> + * the same way in 2 consequent registers. The first register contains 4 bits
+> + * of the value. These bits are stored in the high bits [7:4] of register, but
+> + * they represent the low bits [3:0] of the value.
+
+I believe this comment should go on top of the data structure. Also this is
+still confusing as variable name above suggests one bit mapping, while text
+here is referencing to another. Can you elaborate this more, please?
+
+Like
+
+	u8 foo_1; // represents bits 3 2 1 0 x x x x
+	// ? or represents bits 0 1 2 3 x x x x
+
+> + * The value bits [11:4] are stored in the next register.
+> + *
+> + * Read data from register and convert to integer.
+> + */
+
+...
+
+> +static int bd79124_read_reg_to_int(struct bd79124_data *data, int reg,
+> +				   unsigned int *val)
+> +{
+> +	int ret;
+> +	struct bd79124_raw raw;
+> +
+> +	ret = regmap_bulk_read(data->map, reg, &raw, sizeof(raw));
+> +	if (ret) {
+
+> +		dev_dbg(data->dev, "bulk_read failed %d\n", ret);
+
+Do we need this (and alike)? It can be achieved via regmap tracepoints.
+
+> +		return ret;
+> +	}
+> +
+> +	*val = BD79124_RAW_TO_INT(raw);
+> +
+> +	return 0;
+> +}
+
+...
+
+> +/*
+> + * The high and low limits as well as the recent result values are stored in
+> + * the same way in 2 consequent registers. The first register contains 4 bits
+> + * of the value. These bits are stored in the high bits [7:4] of register, but
+> + * they represent the low bits [3:0] of the value.
+> + * The value bits [11:4] are stored in the next register.
+
+Same as above, rather comment once at data type.
+
+> + * Convert the integer to register format and write it using rmw cycle.
+> + */
+
+...
+
+> +	raw.bit0_3 |= (0xf & tmp);
+
+Btw, why Yoda style?
+
+...
+
+> +static int bd79124_stop_measurement(struct bd79124_data *data, int chan)
+> +{
+> +	unsigned int val;
+> +	int ret;
+> +
+> +	/* See if already stopped */
+> +	ret = regmap_read(data->map, BD79124_REG_AUTO_CHANNELS, &val);
+> +	if (!(val & BIT(chan)))
+> +		return 0;
+> +
+> +	ret = regmap_clear_bits(data->map, BD79124_REG_SEQ_CFG,
+> +				BD79124_MSK_SEQ_START);
+> +
+> +	/* Clear the channel from the measured channels */
+> +	ret = regmap_write(data->map, BD79124_REG_AUTO_CHANNELS,
+> +			   ~BIT(chan) & val);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/*
+> +	 * Stop background conversion for power saving if it was the last
+> +	 * channel
+
+Missing period.
+
+> +	 */
+> +	if (!(~BIT(chan) & val)) {
+
+Seems to me as you have the same above, perhaps just update the val?
+
+> +		int regval = FIELD_PREP(BD79124_MSK_CONV_MODE,
+> +					BD79124_CONV_MODE_MANSEQ);
+> +
+> +		ret = regmap_update_bits(data->map, BD79124_REG_OPMODE_CFG,
+> +					 BD79124_MSK_CONV_MODE, regval);
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+> +	return regmap_set_bits(data->map, BD79124_REG_SEQ_CFG,
+> +			       BD79124_MSK_SEQ_START);
+> +}
+
+...
+
+> +	/* Add the channel to the list of monitored channels */
+> +	ret = regmap_set_bits(data->map, BD79124_REG_ALERT_CH_SEL,
+> +			      BIT(channel));
+
+Perfectly one line, and you have similar cases with 82 characters already,
+while here it's just 81.
+
+> +	if (ret)
+> +		return ret;
+
+...
+
+> +	return regmap_set_bits(data->map, BD79124_REG_GEN_CFG,
+> +				      BD79124_MSK_DWC_EN);
+
+Can be done here, as it's only 83 characters.
+
+...
+
+> +{
+> +	struct bd79124_data *data = iio_priv(iio_dev);
+> +	int reg;
+> +
+> +	if (chan->channel >= BD79124_MAX_NUM_CHANNELS)
+> +		return -EINVAL;
+> +
+> +	switch (info) {
+> +	case IIO_EV_INFO_VALUE:
+> +		if (dir == IIO_EV_DIR_RISING) {
+> +			guard(mutex)(&data->mutex);
+
+What does this mutex protect? chan->channel access? I don't think so, then it
+can be scoped_guard().
+
+> +			data->alarm_r_limit[chan->channel] = val;
+> +			reg = BD79124_GET_HIGH_LIMIT_REG(chan->channel);
+> +		} else if (dir == IIO_EV_DIR_FALLING) {
+> +			guard(mutex)(&data->mutex);
+
+Ditto.
+
+> +			data->alarm_f_limit[chan->channel] = val;
+> +			reg = BD79124_GET_LOW_LIMIT_REG(chan->channel);
+> +		} else {
+> +			return -EINVAL;
+> +		}
+> +		/*
+> +		 * We don't want to enable the alarm if it is not enabled or
+> +		 * if it is suppressed. In that case skip writing to the
+> +		 * register.
+> +		 */
+> +		if (!(data->alarm_monitored[chan->channel] & BIT(dir)) ||
+> +		    data->alarm_suppressed[chan->channel] & BIT(dir))
+> +			return 0;
+> +
+> +		return bd79124_write_int_to_reg(data, reg, val);
+> +
+> +	case IIO_EV_INFO_HYSTERESIS:
+> +		reg = BD79124_GET_HYSTERESIS_REG(chan->channel);
+> +		val >>= 3;
+> +
+> +		return regmap_update_bits(data->map, reg, BD79124_MSK_HYSTERESIS,
+> +					  val);
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +}
+
+...
+
+> +static int bd79124_read_raw(struct iio_dev *iio_dev,
+> +			    struct iio_chan_spec const *chan,
+> +			    int *val, int *val2, long m)
+> +{
+> +	struct bd79124_data *data = iio_priv(iio_dev);
+> +	int ret;
+> +
+> +	if (chan->channel >= BD79124_MAX_NUM_CHANNELS)
+> +		return -EINVAL;
+> +
+> +	switch (m) {
+> +	case IIO_CHAN_INFO_RAW:
+> +	{
+> +		unsigned int old_chan_cfg, regval;
+> +		int tmp;
+> +
+> +		guard(mutex)(&data->mutex);
+> +
+> +		/*
+> +		 * Start the automatic conversion. This is needed here if no
+> +		 * events have been enabled.
+> +		 */
+
+> +		regval = FIELD_PREP(BD79124_MSK_CONV_MODE,
+> +				    BD79124_CONV_MODE_AUTO);
+
+Only 83 characters for one line.
+
+> +		ret = regmap_update_bits(data->map, BD79124_REG_OPMODE_CFG,
+> +					 BD79124_MSK_CONV_MODE, regval);
+> +		if (ret)
+> +			return ret;
+> +
+> +		ret = bd79124_single_chan_seq(data, chan->channel, &old_chan_cfg);
+> +		if (ret)
+> +			return ret;
+> +
+> +		/* The maximum conversion time is 6 uS. */
+> +		udelay(6);
+> +
+> +		ret = bd79124_read_reg_to_int(data,
+> +			BD79124_GET_RECENT_RES_REG(chan->channel), val);
+> +		/*
+> +		 * Return the old chan config even if data reading failed in
+> +		 * order to re-enable the event monitoring.
+> +		 */
+> +		tmp = bd79124_single_chan_seq_end(data, old_chan_cfg);
+> +		if (tmp)
+> +			dev_err(data->dev,
+> +				"Failed to return config. Alarms may be disabled\n");
+> +
+> +		if (ret)
+> +			return ret;
+> +
+> +		return IIO_VAL_INT;
+> +	}
+> +	case IIO_CHAN_INFO_SCALE:
+> +		*val = data->vmax / 1000;
+> +		*val2 = BD79124_ADC_BITS;
+> +		return IIO_VAL_FRACTIONAL_LOG2;
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +}
+
+...
+
+> +static int __bd79124_event_ratelimit(struct bd79124_data *data, int reg,
+> +				     unsigned int limit)
+> +{
+> +	int ret;
+> +
+> +	if (limit > BD79124_HIGH_LIMIT_MAX)
+> +		return -EINVAL;
+> +
+> +	ret = bd79124_write_int_to_reg(data, reg, limit);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/*
+> +	 * We use 1 sec 'grace period'. At the moment I see no reason to make
+> +	 * this user configurable. We need an ABI for this if configuration is
+> +	 * needed.
+> +	 */
+> +	schedule_delayed_work(&data->alm_enable_work,
+> +			      msecs_to_jiffies(1000));
+
+Perfectly one line even for the 80 character limit fanatics :-)
+
+> +	return 0;
+> +}
+
+> +static int bd79124_get_gpio_pins(const struct iio_chan_spec *cs, int num_channels)
+> +{
+> +	int i, gpio_channels;
+> +
+> +	/*
+> +	 * Let's initialize the mux config to say that all 8 channels are
+> +	 * GPIOs. Then we can just loop through the iio_chan_spec and clear the
+> +	 * bits for found ADC channels.
+> +	 */
+> +	gpio_channels = GENMASK(7, 0);
+> +	for (i = 0; i < num_channels; i++)
+> +		gpio_channels &= ~BIT(cs[i].channel);
+> +
+> +	return gpio_channels;
+> +}
+
+...
+
+> +	ret = devm_iio_adc_device_alloc_chaninfo_se(dev, template,
+> +		BD79124_MAX_NUM_CHANNELS - 1, &cs);
+> +	if (ret < 0) {
+> +		if (ret == -ENOENT)
+> +			goto register_gpios;
+> +		return ret;
+> +	}
+
+Also can be written as
+
+	ret = devm_iio_adc_device_alloc_chaninfo_se(dev, template,
+		BD79124_MAX_NUM_CHANNELS - 1, &cs);
+	/* Register all channels as GPIOs in case no ADC functionality required */
+	if (ret == -ENOENT)
+		goto register_gpios;
+	if (ret < 0)
+		return ret;
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
