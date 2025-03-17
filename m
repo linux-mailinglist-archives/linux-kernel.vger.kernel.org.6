@@ -1,124 +1,170 @@
-Return-Path: <linux-kernel+bounces-565100-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565101-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A47CBA660DF
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 22:44:38 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E56A8A660E3
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 22:45:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C48C73A52A3
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 21:44:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E1408178C2C
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 21:45:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C693120468E;
-	Mon, 17 Mar 2025 21:44:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A18122046AE;
+	Mon, 17 Mar 2025 21:45:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="RIM8uLs/"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hRtTTPjB"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C05591FFC44
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 21:44:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 389EF20468E
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 21:45:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742247860; cv=none; b=cpQrGMQEzFl9ztSKlHq6o2RJO8r5tB/EVuFRCUqYuI35hq9jG5lY0WZDJEnrqvMd0ZpYWlI2YM2gMbUfBjyaNWxL7ybYvubSxhI3mCgZ8bb9uz0cwZx/JtfqFB8kj+n+OPDq+ektY+38QkhwwsgSMi2T0bvV2dbeRknezvmIhRw=
+	t=1742247910; cv=none; b=YUukviz95JigW/l3B/WrVCRJPiZ1BQ798JqzrIWV4NpeijFmA0+pn23NPtlU0byzG8Acv7413sSaR1yI0Cp4CFOBrKhjGmAv5QFoTC3nSU/mtXRI+K+at5ljLLyWDFv9GBUbUtNIBtqxYHD9Kg8EcKE8t5MA8gulw9PRwJTQdYw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742247860; c=relaxed/simple;
-	bh=kjFMmMJneInhZkEqfeFTWZ2lT3byx21zcfOU1fur+Rc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=N9CqLN36NarMHprPomNjYZt1NM6Ik78MVuwYpCdJ/ARpROq7P0Vo8+gZPn6rc0j/nSmjVkmww1aysXQNDO1z1L3qeOTLc5CEVquxLewQD6tUmfp1PIiHJJTMA1gfCUTeQsdgUbS/ZIqJXFTKojQfxGxL6JNd+0sdobhdMBklXcs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=RIM8uLs/; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1742247853;
-	bh=kjFMmMJneInhZkEqfeFTWZ2lT3byx21zcfOU1fur+Rc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=RIM8uLs/Rx++lH/IkmuW39PTnLkmwdfZsnJUnWeQIwcJuEeXvXGkNpxsYkWwJUi/d
-	 HptH29XqeJBm6uEKBoemTA06VTgsoo35ydB0AC0Xuy2zLYcKwMXPToRfivQpOxT9+d
-	 VyQai7k/XkPADke5bxAC6HR94A0g55MB243ByzXOJF/t0JGGNtD6lwFCAeiABpDhdG
-	 isUYIhKbXeBE32biyWffVk34bqObZw9qweRI4mUvBUlsYKt56VHEgigI6CUuOfQYvc
-	 1/Bo/a0Sk4uz2bjyQ1GXkphFv1AOzGeEQnQaYuc1XkET7DoqCqmViRh+FLGsXHOzwV
-	 DE+BrCeDYr/iQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZGpQL5MMjz4xCW;
-	Tue, 18 Mar 2025 08:44:10 +1100 (AEDT)
-Date: Tue, 18 Mar 2025 08:44:10 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Kees Cook <kees@kernel.org>, linux-kernel@vger.kernel.org, Bruno
- Sobreira =?UTF-8?B?RnJhbsOnYQ==?= <brunofrancadevsec@gmail.com>, Danilo
- Pereira <dpereira@lkcamp.dev>, David Gow <davidgow@google.com>, Diego
- Vieira <diego.daniel.professional@gmail.com>, Gabriela Bittencourt
- <gbittencourt@lkcamp.dev>, Gabriel Krisman Bertazi <krisman@suse.de>, Jakub
- Kicinski <kuba@kernel.org>, kernel test robot <oliver.sang@intel.com>,
- Kuan-Wei Chiu <visitorckw@gmail.com>, Luis Felipe Hernandez
- <luis.hernandez093@gmail.com>, Lukas Bulwahn <lukas.bulwahn@redhat.com>,
- Masami Hiramatsu <mhiramat@kernel.org>, Nathan Chancellor
- <nathan@kernel.org>, Nicolas Pitre <npitre@baylibre.com>, Pedro Orlando
- <porlando@lkcamp.dev>, Petr Mladek <pmladek@suse.com>, Rae Moar
- <rmoar@google.com>, Shuah Khan <skhan@linuxfoundation.org>, Steven Rostedt
- <rostedt@goodmis.org>, Tamir Duberstein <tamird@gmail.com>, Thomas
- =?UTF-8?B?V2Vpw59zY2h1aA==?= <linux@weissschuh.net>, Vlastimil Babka
- <vbabka@suse.cz>, Yu-Chun Lin <eleanor15x@gmail.com>
-Subject: Re: [GIT PULL] move-lib-kunit for v6.15-rc1
-Message-ID: <20250318084326.7ede18e2@canb.auug.org.au>
-In-Reply-To: <202503170842.FFEE75351@keescook>
-References: <202503170842.FFEE75351@keescook>
+	s=arc-20240116; t=1742247910; c=relaxed/simple;
+	bh=qGuBMwUgYPCFmiSnkIp468ARzujFQwB/axZPZKSz35M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hJpW88yLmfR1zdcrwSpT92S7NXT/rNA+bI66VWYMagCX6dUxq7HpCVu4UalfcP7+n9j0BR0IXZEMVJDFv3recJ3C7QZihKYtgG86yU5j4buw/pBSaif6YPySC7D+zfKjZ5l6T850geaY13rgMllOaUBGEHelRI46qHAM3RuZsgc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hRtTTPjB; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5e5cbd8b19bso555a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 14:45:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1742247906; x=1742852706; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=e+UlSbDa+iWfloAv4POenZq5+jJKOwBMLDrwYGGtfog=;
+        b=hRtTTPjB7p28G9snofO+7W4e/TxlzfxXNhbxafImFHVJNXj6bF7k2SAg/5racsqrld
+         wfBhGEyQa58dsNnLvrf5K4LZPmy5tS3cZSODjAHZWHrtffpxR+IM8y+B/jsCLNRqVJSm
+         uYbxHRKWBzzt+ytVJkm3TEvYfzjGkcw00eqe3AcGtpdGub+WY4rEAbDM50bb2psAzowf
+         eEjEQaZtfBSonUrWtAroGH+uWCcnNrDybbbCiUSnyG2RuPDLs5KRsxJzmHB5gqwq8raC
+         9dFQqzE+xDcX4ohhvgQZC5NlR2fin00Rz3Qfjn9mTUbTtbJB0ooPZQcfgBNsH7xwc2Tg
+         /Pvg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742247906; x=1742852706;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=e+UlSbDa+iWfloAv4POenZq5+jJKOwBMLDrwYGGtfog=;
+        b=ZsdgxWcmyro/s8KzF+hBXJwwpMAnM+H5kdzGhwI6bQnKmf5h45HHGIj+duAHavyWLc
+         vywemTtUW9bkEW9Q1kwL07YgExyTBZm902kzzgWnmPp+QX+MFHdWXc9IcdEqWXiRqkMu
+         Hu3uH9ARYq6jq3EBRGf8frLraZc42LAOkAtGj/W6vVgAEaWoF5GamJYyIYIsDmxTF0U3
+         q84aWUQa8Gf444j6HdJe/08lk/578D0rfuVXxC5UGZTmUrdWl28YhstCwC+EGhWtO4mQ
+         0p+J3JZszSnvD8Ljfc0pw9Ca1OSzZlQAa0MQgNr+Y/aU0SdKGJv3L/F05BkMzyAbqLbq
+         bNWQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU6M0bomYFoFBrIIHbeifnG9jtQyz5UB5xlR2t81sx/0wDy2UQwDzITel75xt6rMKtTYdgIcpV4xunqMEc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8SOTYII7KmDaIfJaQHM9NnalJL7ZNWNPwQfs/KBaLCIvGhriC
+	JZSffDfdfMdEGKEGpwgijXwx8Ghg+DvRDKaoaF/EQPLknA4ynNNI/KSAIJ75Z4vindsdG24XRJy
+	pEGqGe0I4j6pMeJapIThm3Y7v2E30ZVwlDlgC
+X-Gm-Gg: ASbGnctvldzszIORad5VG5wcr/seRj25lHCTR7XNBauUcpUcBwYhf5SDZFGplIddhDA
+	GcKW3c+vObPtHv1UGOMO9nYzGsJwhI8hwbuKpXJAOTK+98chpHQ9TsFwNN4ek1EzUOrUaSfvJXP
+	Mo1tbsFJj93TC3oy3Nm9nXEqfqkmgb0Q/7v+KM2ceu44+9gvXYurIiSA==
+X-Google-Smtp-Source: AGHT+IFOuI8zBzdz5P9mZCjAcJ0PGcKiZJJsRoliq8EtccrTzjpgSm8p9NyjvGmxzsx0+qDR8xfeGqrfTkN2y/tRMqY=
+X-Received: by 2002:a05:6402:c88:b0:5dc:5ae8:7e1 with SMTP id
+ 4fb4d7f45d1cf-5eb28167071mr6002a12.6.1742247906374; Mon, 17 Mar 2025 14:45:06
+ -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/veluDy7n/6Q5eiqrUmaphew";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-
---Sig_/veluDy7n/6Q5eiqrUmaphew
-Content-Type: text/plain; charset=US-ASCII
+References: <20250313215540.4171762-1-yosry.ahmed@linux.dev>
+ <20250313215540.4171762-7-yosry.ahmed@linux.dev> <Z9iQEV9SQYjtLT8V@google.com>
+In-Reply-To: <Z9iQEV9SQYjtLT8V@google.com>
+From: Jim Mattson <jmattson@google.com>
+Date: Mon, 17 Mar 2025 14:44:54 -0700
+X-Gm-Features: AQ5f1JpC_Kh2J8nyxlOGHvLujsQp6Fk5jpTE6vjZbph6alUiBCWj5yMX41GaXXo
+Message-ID: <CALMp9eT5ur+g4W60JAwBxYRfBqa4t0w_6OdrAGOha3s+fyhbaA@mail.gmail.com>
+Subject: Re: [PATCH 6/7] KVM: SVM: Use a single ASID per VM
+To: Yosry Ahmed <yosry.ahmed@linux.dev>
+Cc: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, 
+	Maxim Levitsky <mlevitsk@redhat.com>, x86@kernel.org, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
-
-On Mon, 17 Mar 2025 08:47:13 -0700 Kees Cook <kees@kernel.org> wrote:
+On Mon, Mar 17, 2025 at 2:12=E2=80=AFPM Yosry Ahmed <yosry.ahmed@linux.dev>=
+ wrote:
 >
-> Please pull the move-lib-kunit tree for v6.15-rc1. This is a one-off tree
-> to coordinate the move of selftests out of lib/ and into lib/tests/. A
-> separate tree was used for this to keep the paths sane with all the
-> work in the same place. Doing this across multiple trees was going to
-> be very difficult, so any on-going updates were collected here to try to
-> avoid merge conflicts. I think only one small conflict remains, just
-> today, detailed here:
-> https://lore.kernel.org/linux-next/20250317213953.01ca90e9@canb.auug.org.=
-au/
-> sfr's resolution looks correct.
+> On Thu, Mar 13, 2025 at 09:55:39PM +0000, Yosry Ahmed wrote:
+> > The ASID generation and dynamic ASID allocation logic is now only used
+> > by initialization the generation to 0 to trigger a new ASID allocation
+> > per-vCPU on the first VMRUN, so the ASID is more-or-less static
+> > per-vCPU.
+> >
+> > Moreover, having a unique ASID per-vCPU is not required. ASIDs are loca=
+l
+> > to each physical CPU, and the ASID is flushed when a vCPU is migrated t=
+o
+> > a new physical CPU anyway. SEV VMs have been using a single ASID per VM
+> > already for other reasons.
+> >
+> > Use a static ASID per VM and drop the dynamic ASID allocation logic. Th=
+e
+> > ASID is allocated during vCPU reset (SEV allocates its own ASID), and
+> > the ASID is always flushed on first use in case it was used by another
+> > VM previously.
+> >
+> > On VMRUN, WARN if the ASID in the VMCB does not match the VM's ASID, an=
+d
+> > update it accordingly. Also, flush the ASID on every VMRUN if the VM
+> > failed to allocate a unique ASID. This would probably wreck performance
+> > if it happens, but it should be an edge case as most AMD CPUs have over
+> > 32k ASIDs.
+> >
+> > Suggested-by: Sean Christopherson <seanjc@google.com>
+> > Signed-off-by: Yosry Ahmed <yosry.ahmed@linux.dev>
+> > ---
+> [..]
+> > @@ -3622,7 +3613,7 @@ static int svm_handle_exit(struct kvm_vcpu *vcpu,=
+ fastpath_t exit_fastpath)
+> >
+> >  static int pre_svm_run(struct kvm_vcpu *vcpu)
+> >  {
+> > -     struct svm_cpu_data *sd =3D per_cpu_ptr(&svm_data, vcpu->cpu);
+> > +     struct kvm_svm *kvm_svm =3D to_kvm_svm(vcpu->kvm);
+> >       struct vcpu_svm *svm =3D to_svm(vcpu);
+> >
+> >       /*
+> > @@ -3639,9 +3630,15 @@ static int pre_svm_run(struct kvm_vcpu *vcpu)
+> >       if (sev_guest(vcpu->kvm))
+> >               return pre_sev_run(svm, vcpu->cpu);
+> >
+> > -     /* FIXME: handle wraparound of asid_generation */
+> > -     if (svm->current_vmcb->asid_generation !=3D sd->asid_generation)
+> > -             new_asid(svm, sd);
+> > +     /* Flush the ASID on every VMRUN if kvm_svm->asid allocation fail=
+ed */
+> > +     if (unlikely(!kvm_svm->asid))
+> > +             svm_vmcb_set_flush_asid(svm->vmcb);
+>
+> This is wrong. I thought we can handle ASID allocation failures by just
+> reusing ASID=3D0 and flushing it on every VMRUN, but using ASID=3D0 is
+> illegal according to the APM. Also, in this case we also need to flush
+> the ASID on every VM-exit, which I failed to do here.
+>
+> There are two ways to handle running out of ASIDs:
+>
+> (a) Failing to create the VM. This will impose a virtual limit on the
+> number of VMs that can be run concurrently. The number of ASIDs was
+> quite high on the CPUs I checked (2^15 IIRC), so it's probably not
+> an issue, but I am not sure if this is considered breaking userspace.
 
-There was also
+I'm pretty sure AMD had only 6 bits of ASID through at least Family
+12H. At some point, VMCB ASID bits must have become decoupled from
+physical TLB tag bits. 15 TLB tag bits is inconceivable!
 
-https://lore.kernel.org/linux-next/20250213151927.1674562e@canb.auug.org.au/
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/veluDy7n/6Q5eiqrUmaphew
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfYl6oACgkQAVBC80lX
-0GxJyQf/QCWQeZxFohQZc00vwUBme6P9fYQo2rzu0PfrXqyIccYR7zzT1ZHDzES6
-BwHOuz6m0ssr8FAYORcvTHTa8QpzCImzWhpaNyWjeWy4bhy71sY/UHbwu9ly2wpn
-t1D/IbYiQbdvleeESWubcgplsJX0NDKbpbeGTw9CcZbi1NXIZHoaQYrw0DpTCx/h
-zhGHNfBsjxYge/XBSyoXkQg/uj7QpR97Q20B5fIV7gEHHoKeg2VmdP1MgLT26o1m
-L4XpvLPKo5hjqcauVf6B4oh2Vmx8NtUEjpWbe5+kQBPFFTl4t7wMWJjyuWVUFxO+
-Sp+KNCHnaPsZ1W+qF+KlN4cv58atYw==
-=2dE2
------END PGP SIGNATURE-----
-
---Sig_/veluDy7n/6Q5eiqrUmaphew--
+> (b) Designating a specific ASID value as the "fallback ASID". This value
+> would be used by any VMs created after running out of ASIDs, and we
+> flush it on every VMRUN, similar to what I am trying to do here for
+> ASID=3D0.
+>
+> Any thoughts on which way we should take? (a) is simpler if we can get
+> away with it and all AMD CPUs have a sufficiently large number of ASIDs.
+>
 
