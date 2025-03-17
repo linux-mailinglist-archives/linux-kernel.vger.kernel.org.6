@@ -1,208 +1,101 @@
-Return-Path: <linux-kernel+bounces-565015-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565016-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37353A65F1B
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 21:29:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDFADA65F1D
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 21:29:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 63B46189EF4B
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 20:29:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC3B3189EBDF
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 20:29:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F4A31F666B;
-	Mon, 17 Mar 2025 20:28:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC8991F583D;
+	Mon, 17 Mar 2025 20:29:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NgNKsBsu"
-Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com [209.85.219.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=iencinas.com header.i=@iencinas.com header.b="w2FTOwgj"
+Received: from out-174.mta0.migadu.com (out-174.mta0.migadu.com [91.218.175.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D987117BBF;
-	Mon, 17 Mar 2025 20:28:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC21E1F4E47
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 20:29:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742243330; cv=none; b=N445ATkHEmR9LBUEMlIsYyy22xJlIwnqNulsw0Eck+tfR02gvy37G9Sc+XWOqVJL2A0+D0MBa5Ba7zXMpaerIQsKz3ypUziPcGT8F6NdqmSnf/ccN5t6YFdkcNnNLLLZ/sqljBkssEeZfYO+dxSrXV4Ye1bnxr8821WxPCJMHcU=
+	t=1742243369; cv=none; b=JipvwkZdw9meR/inixDur3eExyG6NZhe2B0jS5nONVIZmmVroIMqp6d+rtan1nW69JQzQRAcATTrSoY1+hVkiRsRGA0mOUrwICUMfFhRTxoOFAkpgfLLm/yNib+j9sS7llARfXsghUfdgk/fGIJqRa8M3H8bw668nXtbFMOgg3g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742243330; c=relaxed/simple;
-	bh=lchsoJgRQfVQ7pnAJv0mq2YPdxtDq/QgWfmec9w36mw=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q2fXUnVuHvPdm8E8D7yveArTMVR/zwxphaEQGbU1GJNyHqhrKJwSq1hHkOuCrmb2Y7flP4Lx62Mdy0J1Kx43hleYORpKTWTGw2SUt8cwI698EIZdBkzn/WfDkWIutvVluZyi8pK9SSLiBhHNrvTJnKgb0D6bTlVTcwSNjyRMiDg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NgNKsBsu; arc=none smtp.client-ip=209.85.219.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f46.google.com with SMTP id 6a1803df08f44-6e8f43c1fa0so50988946d6.3;
-        Mon, 17 Mar 2025 13:28:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742243328; x=1742848128; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:subject:cc:to:from:date:feedback-id
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=OgTnoCMML7NG1ectzvNO/tL6qoh3imfTVjxu3to55Yo=;
-        b=NgNKsBsuC9bN19avFypi6zTddaXoAHfkObNLQf/UsymTkS0x5cGhHW3PxImBEAGo1t
-         qfT0vrJM41Ca7gv8InRVIYoUrYQrXuj+hUBTBXkbYxODYDeandKNRzw6XOPysfj6rE1U
-         aHmG9Fs0cw/kFrWjM8pHL3UgWD6IddvhvlDv/TJx4/Nm+xSX3Ml9ZhqZhKPqLnKfsTJF
-         iYT7/uNhd5GjfWoz//b3shOP0RZj3eIY195Q9u7UwlLuXHFHlTNMdfCxujxFiqeufAaK
-         ajptxGxX/pUYC4Ip0AQMNYL1758kjL/fCV7gEmwr29KusUjUxOVHGvhP7V+qNWj1ddD3
-         CxZg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742243328; x=1742848128;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:subject:cc:to:from:date:feedback-id
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=OgTnoCMML7NG1ectzvNO/tL6qoh3imfTVjxu3to55Yo=;
-        b=KDl4hwN0UyzKsxXa50oND8AjLmsEAUFnpO8ENBRgmn4CH6SNk7Vd6lTfTCDvarZmdy
-         fFU2sTZ05JEs19+mukLS5FEIn3DMi5UXbC1GWxUgTgHH6R2N+Zg7PyuGlt/Hbvi0J7UA
-         GQvdYJh6jIwQh4mNDEXXVGxj571Z2LDaDOC7muouFFkhI5fxyyGnmJ584znVFo1uupwM
-         bTccOliyNR4P90zVXZdYisvfePYfXhWd0ni8gxgpE7rsAuxfOYK/u4fuWCQjcvQPzlfx
-         sUpMSNXyLcxwC4yYK/VAjsOLdcm7CFNTOJNmX87XNo/RPiONrZyYRz3UZR+d7esfWn9K
-         jeYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUBUyVYQK/9PTX/KR9SP/CiN6uJkf0LNRDychvDYoye09CzYon9ExOe7zGIvSuoLDNOueawH5ztAxadpMD0OfRq@vger.kernel.org, AJvYcCUtN1XZM4GngE3lBnKJHuNukFZssYPZ+mcN1JR6FN8EgqN05frZlGNMGst8uN7ZD5aM5qpVnpRXE+myJmmk3SQ=@vger.kernel.org, AJvYcCVAKgaqaxo1VMQMHucq3+J8D3Rf3vfyPRAmK7o/uGVVsAE2DBn375dbckR9kPQ8N5FxtHR7RwXDmZdi@vger.kernel.org, AJvYcCVaUTEcexAuFExQPR10bNVpBNbGFOObWPTiyXB/lfCnjTMA4zrmj8uL4zby8qaBvkLTLf9uodQePKY4LDU=@vger.kernel.org, AJvYcCVmkYpAJXcH/l0ORN039Or0TaYkRiQgeFxTPrD0dJJL94KuzdhM4So43ZXhhiObwpa7NA+xpcydNY3QsdfN@vger.kernel.org, AJvYcCX9zONEVU8j3dT4Y+dhnOqnwHwSBDODai2+NtkfFdwcllAoMsxu74mDmwRj0GBkDZKZnN9x3dUCk7RF@vger.kernel.org, AJvYcCXYacWgFEUkzj98TQyHNPEnTPVe/pLzFIpVDynzgYSE6uAugiD84lbK831YXxXAwFNJBgnNJdKxoygONpGZ@vger.kernel.org
-X-Gm-Message-State: AOJu0YzILBFDRS/VwIbY0kCHQNNHFWVwDPT6txiPqAD/hwHC9936d+mn
-	3YJFgIyMIIf8tRDCyGSn+k8uSn74xiMT233lYwIsgLw/HjL2MttC
-X-Gm-Gg: ASbGncuOX+VBw7Wb8SXkyb5NTgprOXZCDL6j2cE+l2QB+QLuAXj+DvsTDo8j5oGRDtE
-	JBNee+8GzWrm5YBYqaJnHH1ZG2XQ9xBDX3MPke+Wjftt75gNQG/tM1GOTKjG1WQSMj1bFR91cLf
-	eq6OsTENAGUodf4aoD1wR+D2cuPDQJFtzGYOFKaSxm7L3MYn9mmbscvoKB5ZN9nF2R58G+0bz3/
-	t6Jp5NLwjUVxPI7jLmTDhOHoA/IP4jq+0gqMt0euKYjBppi3GspA3NLWfMf0sro5/bK9gtNYy7y
-	q+3r9LtONqVaT31hTKVLBxXG1KPVIOMEsb0Bx7ZXUxXxIQ7ukcMESKYwmVnjfAuIkNKs+VSI5mW
-	rTxsVGkp23Peh+Pn03B4mL3BZ+BlKSbRyW9XeQLRKZkG4NQ==
-X-Google-Smtp-Source: AGHT+IG22UCk1wWtKHGuahOdB4N/jHDhl7GdUIABQTTRSKMwZTYkEJZboCMsj9BGDIQnMwF3xDaLwg==
-X-Received: by 2002:ad4:5748:0:b0:6e8:fee2:aadf with SMTP id 6a1803df08f44-6eaeaa9cf9fmr224274316d6.31.1742243327531;
-        Mon, 17 Mar 2025 13:28:47 -0700 (PDT)
-Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6eade231bcbsm58221036d6.36.2025.03.17.13.28.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Mar 2025 13:28:47 -0700 (PDT)
-Message-ID: <67d885ff.0c0a0220.111215.5644@mx.google.com>
-X-Google-Original-Message-ID: <Z9iF-xR9a61rDiAz@winterfell.>
-Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 3232E12000B0;
-	Mon, 17 Mar 2025 16:28:46 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-09.internal (MEProxy); Mon, 17 Mar 2025 16:28:46 -0400
-X-ME-Sender: <xms:_oXYZxmT28nRC8TZWRlWL-X2AWmpGeFR9Wz9pQdpNH8idwsV9nu35w>
-    <xme:_oXYZ80zqMnm85svzwSWNHpxhYUiKD730qds8ApFH6vVqhmqLOWoaW0QIBG1JSeld
-    iDJJeBx_3Ypw7tbUw>
-X-ME-Received: <xmr:_oXYZ3qUhHnSjvL9DkVflSS5nvIWaFB5P-y_Rb4UJowWVUogiFm1Mxu5To8>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddugedtgeelucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggugfgjsehtkeertddt
-    tdejnecuhfhrohhmpeeuohhquhhnucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrg
-    hilhdrtghomheqnecuggftrfgrthhtvghrnhephedthfeukeefuefhteehgedvvdfhleff
-    jeefleevkeeklefhffdvkeefleeuvedtnecuffhomhgrihhnpehgihhthhhusgdrtghomh
-    dprhhushhtqdhlrghnghdrohhrghenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgr
-    mhepmhgrihhlfhhrohhmpegsohhquhhnodhmvghsmhhtphgruhhthhhpvghrshhonhgrlh
-    hithihqdeiledvgeehtdeigedqudejjeekheehhedvqdgsohhquhhnrdhfvghngheppehg
-    mhgrihhlrdgtohhmsehfihigmhgvrdhnrghmvgdpnhgspghrtghpthhtohepfedvpdhmoh
-    guvgepshhmthhpohhuthdprhgtphhtthhopehtrghmihhrugesghhmrghilhdrtghomhdp
-    rhgtphhtthhopehmrghsrghhihhrohihsehkvghrnhgvlhdrohhrghdprhgtphhtthhope
-    hnrghthhgrnheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepnhhitgholhgrshesfhhj
-    rghslhgvrdgvuhdprhgtphhtthhopehojhgvuggrsehkvghrnhgvlhdrohhrghdprhgtph
-    htthhopegrlhgvgidrghgrhihnohhrsehgmhgrihhlrdgtohhmpdhrtghpthhtohepghgr
-    rhihsehgrghrhihguhhordhnvghtpdhrtghpthhtohepsghjohhrnhefpghghhesphhroh
-    htohhnmhgrihhlrdgtohhmpdhrtghpthhtohepsggvnhhnohdrlhhoshhsihhnsehprhho
-    thhonhdrmhgv
-X-ME-Proxy: <xmx:_oXYZxlANMwuNKP6DOD5TBOFjLmRE1W6xYhzD3Dwd8ZbIRuy6xOyig>
-    <xmx:_oXYZ_2EJeXAh6_9vMOF-ARGYLwnMitB_JEetjjhgNPJFhIF1mI2ow>
-    <xmx:_oXYZwuKl8baxiJ2x7FkMMhwnsWQuRwOBnd512TF6iqJsV9YEUFz2Q>
-    <xmx:_oXYZzU6TfNKWU5vvN8twnm0mC3c8x-aG3ih_6qLFdnJXj39vX6sNg>
-    <xmx:_oXYZ20zuqGxVVrfsulmKHmPb990VxojM_28zgMlZR-HuSsn3xd7RkpD>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 17 Mar 2025 16:28:45 -0400 (EDT)
-Date: Mon, 17 Mar 2025 13:28:43 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Tamir Duberstein <tamird@gmail.com>
-Cc: Masahiro Yamada <masahiroy@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas@fjasle.eu>, Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Brendan Higgins <brendan.higgins@linux.dev>,
-	David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Russ Weight <russ.weight@linux.dev>, Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,	linux-kbuild@vger.kernel.org,
- linux-kernel@vger.kernel.org,	rust-for-linux@vger.kernel.org,
- linux-kselftest@vger.kernel.org,	kunit-dev@googlegroups.com,
- linux-pci@vger.kernel.org,	linux-block@vger.kernel.org,
- devicetree@vger.kernel.org
-Subject: Re: [PATCH v5 6/6] rust: use strict provenance APIs
-References: <20250317-ptr-as-ptr-v5-0-5b5f21fa230a@gmail.com>
- <20250317-ptr-as-ptr-v5-6-5b5f21fa230a@gmail.com>
- <67d85e51.050a0220.2a36b.58b3@mx.google.com>
- <CAJ-ks9kBp8zPfaQuZRb0Unms1b13hDb5cRypceO8TWFR0Ty5Ww@mail.gmail.com>
- <67d864b2.0c0a0220.39fb6f.4df4@mx.google.com>
- <CAJ-ks9n8mwt5q9unqfkfSHj9=ELJHtqsXM-xQ8jsbXeJX6Uyfg@mail.gmail.com>
- <67d8671d.050a0220.3305ab.6372@mx.google.com>
- <CAJ-ks9=uHjJrzM0ruvm4v4wr8LygRMP-1orWBy_9OiNNeQr0ow@mail.gmail.com>
- <CAJ-ks9=Qcmvbm=YGJ=jrX_+YdMsftk=FAimszYZB1OUuV4diZw@mail.gmail.com>
+	s=arc-20240116; t=1742243369; c=relaxed/simple;
+	bh=8qPFDh43gwyc/vU6yBECnDYdonjw+7a7Fw9A7q7I1YY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uyOQDCSBnT57l1Hh9apfWVI3afl0UuYYznjhbgrvrqGGxFM2A4WGiHVTGSbfrABvukDx4EwNlBKdHSfkXX+DuvyyMJdmiSUj2mHXRwi1EBnx30Ba6fP9K6LOs7SsvR+KauhEY0K8+a3pNSnauKzkS+psd67GqajUoxVkiCoO+J0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=iencinas.com; spf=pass smtp.mailfrom=iencinas.com; dkim=pass (2048-bit key) header.d=iencinas.com header.i=@iencinas.com header.b=w2FTOwgj; arc=none smtp.client-ip=91.218.175.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=iencinas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iencinas.com
+Message-ID: <8729ccb4-cdd2-48f7-a8d4-f55a24964bc4@iencinas.com>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iencinas.com;
+	s=key1; t=1742243365;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=z2gPp8ZZpEDOPhCSsNGFmD3VmlQ7JFSNt9SswdFFzlU=;
+	b=w2FTOwgjsx7saoQwKyeyBl1fhl0fcyDSJgA2K/1oGFLpnKWZ5PG9HBkeFzaw/4Nlj2e0Hm
+	xhsQRP06Q7vUiB36Y7CRl82oxq+MPGTZuDeFqjBCCH06LBE7qGgW8vSAI/FGdYm7V5Xj+A
+	ww3ri5CC3UIlnHpe+jadeoV5FyUBtMoF860oFlg1/+QZTzbsjZBsu8XThWagzgP9qvCpyW
+	kRzS27lH075qI+yf+CU5VuCp5Ziu+Tw1iWEmaAkL6YPQFxwJUIBhW4VchiL2IW4OjfKrc1
+	lMtS9M3FIYRSltcyxWxu/It/unHJw44S8H3ZJN64e6jWXb7Ok89MIwJDdSGLXA==
+Date: Mon, 17 Mar 2025 21:29:20 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJ-ks9=Qcmvbm=YGJ=jrX_+YdMsftk=FAimszYZB1OUuV4diZw@mail.gmail.com>
+Subject: Re: [PATCH RFC] riscv: introduce asm/swab.h
+To: Alexandre Ghiti <alex@ghiti.fr>, Paul Walmsley
+ <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>
+Cc: Eric Biggers <ebiggers@kernel.org>, linux-riscv@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-kernel-mentees@lists.linux.dev,
+ skhan@linuxfoundation.org, Zhihang Shao <zhihang.shao.iscas@gmail.com>,
+ =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>
+References: <20250310-riscv-swab-v1-1-34652ef1ee96@iencinas.com>
+ <d964bf15-7172-448b-9aa1-72d5bf3e1695@ghiti.fr>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Ignacio Encinas Rubio <ignacio@iencinas.com>
+In-Reply-To: <d964bf15-7172-448b-9aa1-72d5bf3e1695@ghiti.fr>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, Mar 17, 2025 at 03:05:45PM -0400, Tamir Duberstein wrote:
-> On Mon, Mar 17, 2025 at 2:50 PM Tamir Duberstein <tamird@gmail.com> wrote:
-> >
-> > On Mon, Mar 17, 2025 at 2:17 PM Boqun Feng <boqun.feng@gmail.com> wrote:
-> > >
-> > > Then we should fix clippy or how we set msrv rather adding the stub.
-> > > @Miguel?
-> >
-> > I filed https://github.com/rust-lang/rust-clippy/issues/14425.
+On 17/3/25 17:36, Alexandre Ghiti wrote:
+>> We need a default implementation to fall back on, but there isn't any in
+>> `asm-generic/swab.h`. Should I introduce a first patch moving
+>> ___constant_swab<XX> into include/uapi/asm-generic/swab.h?
 > 
-> I don't think we can wait for that to be fixed, though. Usually clippy
-> is distributed with rustc via rustup, so even if this is eventually
-> fixed, all versions between 1.84.0 and the fix will need this
-> workaround until MSRV is >= 1.84.0.
+> Yes, that or something else to avoid the code duplication.
 
-We need to take one step back to evalute this "workaround".
+Thanks for double checking. I figured as much but I ended up getting a
+bit confused with the include directories.
 
-First, expose_provenance() and with_exposed_provenance{,_mut}() API are
-clearly defined as equavilent to `as` operation [1]. Therefore, the
-changes in this patch doing the conversion with expose_provenance() and
-with_exposed_provenance{,_mut}() don't change anything related to
-provenance in practice.
+>> +#if defined(CONFIG_RISCV_ISA_ZBB) && !defined(NO_ALTERNATIVE)
+> 
+> NO_ALTERNATIVE does not exist to my knowledge, and you don't need to check for ALTERNATIVE as alternative-macros.h will do the right thing in that case.
 
-I do agree we want to use the explicit provenance API, but I don't think
-we want to introduce some API that we know we will change them latter
-when we bump the rustc minimal version. So the question is: are these
-stubs what we want even though in the future our minimal rustc version
-stablizes provenance API? If not, then the cost of this patch cannot
-justify its benefits IMO.
+It's a define hardcoded into drivers/firmware/efi/libstub/Makefile. It
+was introduced in [1]. It helps avoid these types of warnings [2]:
 
-Now let's also look into why we choose a msrv for clippy, I would guess
-it's because we need to support all the versions of rustc starting at
-1.78 and we want clippy to report a problem based on 1.78 even though
-we're using a higher version of rustc. But for this particular case, we
-use a feature that has already been stablized in a higher version of
-rustc, which means the problem reported by clippy doesn't help us, nor
-does it provide better code. Frankly speaking, I think we have other
-ways to ensure the support of all rustc versions without a msrv for
-clippy. If I was to choose, I would simply drop the msrv. But maybe I'm
-missing something.
+  riscv64-unknown-linux-gnu-ld: warning: orphan section 
+  `.init.alternative' from `./drivers/firmware/efi/libstub/riscv.stub.o' 
+  being placed in section `.init.alternative'
 
-The point is tools should help us to write good and maintainable code,
-we shouldn't introduce complicated structure of code just because some
-tools fail to do its job.
+Let me know if you think I should drop it.
 
-[1]: https://doc.rust-lang.org/std/ptr/fn.with_exposed_provenance_mut.html
+[1] https://lore.kernel.org/all/20231031064553.2319688-3-xiao.w.wang@intel.com/
+[2] https://lore.kernel.org/all/DM8PR11MB5751DA69DEEAAC9B06623E0BB80FA@DM8PR11MB5751.namprd11.prod.outlook.com/
 
-Regards,
-Boqun
+> It would be nice to have some perf numbers too, maybe Bjorn will chime in :)
+> 
+> Thanks for your patch, looking forward the v2,
+
+Thank you! 
 
