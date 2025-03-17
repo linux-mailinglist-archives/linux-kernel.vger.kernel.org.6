@@ -1,146 +1,134 @@
-Return-Path: <linux-kernel+bounces-563634-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563635-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5ACB7A645B6
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 09:35:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FDAEA645B9
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 09:36:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 593083A53DF
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 08:35:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B8B73A4F9B
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 08:36:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB06821D5B8;
-	Mon, 17 Mar 2025 08:35:46 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFC8B191499;
-	Mon, 17 Mar 2025 08:35:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CF1521E0A8;
+	Mon, 17 Mar 2025 08:36:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="SrJ9y8rU"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26B04191499;
+	Mon, 17 Mar 2025 08:36:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742200546; cv=none; b=Mu3GZSODxN/teM/PHudq0oaNDqP6bbJPuDxaTcd/mxNG0Z82OlkZTwpT76DJ+r1E9Dah4WRCG2kbsUKlfIn7U2zFqlmteWr+tKTuMiu2FtQ6eaCTgevMA+n0aPz/vGN032Tlg6wMWLDVpetcg6qR7xFFiqoISKXrudb8in+fa3U=
+	t=1742200591; cv=none; b=DfzlRDLyxshKzVlUVzesX0anuFPbs2RJzznY5keFXrUbDkHIndxQ/nrV78fgTE/g6EYWysGwJ5C9IXyEuAU8M3+BHtBmz2HJF3hTRTI/IuDFXYPN1F1kLDr/X5aWQ7r5C5K5Zapw3LRQnUyUfBSfPQC2XFfguaNFq4sTyp/N1x4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742200546; c=relaxed/simple;
-	bh=PNCX0IbECCUET8eDzILsETuGYO44sI8lDbE99Xe/R34=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rXo9UM8ooywL+wkUPY6nRbUMQdKcfqXQoo5H+MdGIF+snmgyn1DSSQaqL/18fsu1EFU5Zw8mnGfpTzfmLuWPZ9a6XrDbYKwpzZWrT6CQSxuapyTg1dGi6tTuTiRJ9t5RAug8UU+CNnNMCaQY8nluaBSVQLthQL4LW3762MzG7o8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7EA1C13D5;
-	Mon, 17 Mar 2025 01:35:49 -0700 (PDT)
-Received: from [192.168.188.123] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BC26A3F673;
-	Mon, 17 Mar 2025 01:35:38 -0700 (PDT)
-Message-ID: <525a2352-dc57-45ca-adb2-f7039c37145e@arm.com>
-Date: Mon, 17 Mar 2025 08:35:34 +0000
+	s=arc-20240116; t=1742200591; c=relaxed/simple;
+	bh=UyhuXGln5+ft1pHnigfzjGcRIc5uKiAk+wUegpAjsWU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=TX6y9tpuCe2wt2uZ1Rq+DpQaDyIys8xMImnLV3SgTGrQUn6a//oJxl78ksAvLOKvRwlWBvgaHs/9gFEz2+Zwp7maFlXg+9hQa+CFxw+PMhrtTNn7Mw7Clmm9g4p5zf3YMLA9mS3HRqbNT9uEoUb2oh9g3SWK7OAa3YXCoSrKlhQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=SrJ9y8rU; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1742200583;
+	bh=IlfGdgJfr6ZKNTbJzXvUWKXaP17H/CCBQIKz//mIQUo=;
+	h=Date:From:To:Cc:Subject:From;
+	b=SrJ9y8rUvMqGAYe4zCOIMoEri5bXSJa+ibKim4l+9avRSb4foS9OiLqBxxIKYBOSw
+	 fbt5gY/CUFGbeU0QdV5hXXyTK8eOmdQG5VelBgyWX9l7e7QIycTJfCBUo4b0jqxFxa
+	 NQ5EIj7rZH/shro/c1hf/2byHxDSwm5/Qo23zj9hZHw/mqbiShizkls4hggCz2hVPq
+	 lZqaWT7OKOvly8IAEM33kfgEBm2q/mGCT5FyRsE+4JG9I8gVQtAHyiKNdGmvm7/tgN
+	 HwOM1YaHrvN2GoEGNg5B6mL6D9nTc0+eJQgWMWpTWervwdAvPtMC/CFewyZfOi+z67
+	 H6opdCmvPiZKQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZGSxL4DJCz4wcZ;
+	Mon, 17 Mar 2025 19:36:22 +1100 (AEDT)
+Date: Mon, 17 Mar 2025 19:36:21 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Shuah Khan <skhan@linuxfoundation.org>, Brendan Higgins
+ <brendanhiggins@google.com>, David Miller <davem@davemloft.net>, Jakub
+ Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Cc: Networking <netdev@vger.kernel.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>, Sergio =?UTF-8?B?R29uesOhbGV6?= Collado
+ <sergio.collado@gmail.com>, Shuah Khan <shuah@kernel.org>, Tamir Duberstein
+ <tamird@gmail.com>
+Subject: linux-next: manual merge of the kunit-next tree with the net-next
+ tree
+Message-ID: <20250317193621.4b4db936@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/1] cpuidle: menu: Prefer polling state for short idle
- durations
-To: Aboorva Devarajan <aboorvad@linux.ibm.com>,
- "Rafael J . Wysocki" <rafael@kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Gautam Menghani <gautam@linux.ibm.com>, linux-pm@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250317060357.29451-1-aboorvad@linux.ibm.com>
-Content-Language: en-US
-From: Christian Loehle <christian.loehle@arm.com>
-In-Reply-To: <20250317060357.29451-1-aboorvad@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; boundary="Sig_/076mAxA_l.m86nRuWPP6JiL";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On 3/17/25 06:03, Aboorva Devarajan wrote:
-> Avoid selecting deep idle state when the predicted idle duration is
-> shorter than its target residency, as this leads to unnecessary state
-> transitions without energy savings.
-> 
-> On virtualized PowerPC (pseries) systems, where only one polling state
-> (Snooze) and one deep state (CEDE) are available, selecting CEDE when
-> its target residency exceeds the predicted idle duration hurts
-> performance.
-> 
-> For example, if the predicted idle duration is 15 us and the first
-> non-polling state has a target residency of 120 us, selecting it
-> would be suboptimal.
-> 
-> Remove the condition introduced in commit 69d25870f20c
-> ("cpuidle: fix the menu governor to boost IO performance") that
-> prioritized non-polling states even when their target residency
-> exceeded the predicted idle duration and allow polling states to
-> be selected when appropriate.
-> 
-> Performance improvement observed with pgbench on PowerPC (pseries)
-> system:
-> +---------------------------+------------+------------+------------+
-> | Metric                    | Baseline   | Patched    | Change (%) |
-> +---------------------------+------------+------------+------------+
-> | Transactions/sec (TPS)    | 494,834    | 538,707    | +8.85%     |
-> | Avg latency (ms)          | 0.162      | 0.149      | -8.02%     |
-> +---------------------------+------------+------------+------------+
-> 
-> CPUIdle state usage:
-> +--------------+--------------+-------------+
-> | Metric       | Baseline     | Patched     |
-> +--------------+--------------+-------------+
-> | Total usage  | 12,703,630   | 13,941,966  |
-> | Above usage  | 11,388,990   | 1,620,474   |
-> | Below usage  | 19,973       | 684,708     |
-> +--------------+--------------+-------------+
-> 
-> Above/Total and Below/Total usage percentages:
-> +------------------------+-----------+---------+
-> | Metric                 | Baseline  | Patched |
-> +------------------------+-----------+---------+
-> | Above % (Above/Total)  | 89.67%    | 11.63%  |
-> | Below % (Below/Total)  | 0.16%     | 4.91%   |
-> | Total cpuidle miss (%) | 89.83%    | 16.54%  |
-> +------------------------+-----------+---------+
-> 
-> Signed-off-by: Aboorva Devarajan <aboorvad@linux.ibm.com>
-> 
-> ---
-> 
-> v1: https://lore.kernel.org/all/20240809073120.250974-1-aboorvad@linux.ibm.com/
-> 
-> v1 -> v2:
-> 
-> - Drop cover letter and improve commit message.
-> ---
->  drivers/cpuidle/governors/menu.c | 11 -----------
->  1 file changed, 11 deletions(-)
-> 
-> diff --git a/drivers/cpuidle/governors/menu.c b/drivers/cpuidle/governors/menu.c
-> index 28363bfa3e4c..4b199377e4be 100644
-> --- a/drivers/cpuidle/governors/menu.c
-> +++ b/drivers/cpuidle/governors/menu.c
-> @@ -296,17 +296,6 @@ static int menu_select(struct cpuidle_driver *drv, struct cpuidle_device *dev,
->  			idx = i; /* first enabled state */
->  
->  		if (s->target_residency_ns > predicted_ns) {
-> -			/*
-> -			 * Use a physical idle state, not busy polling, unless
-> -			 * a timer is going to trigger soon enough.
-> -			 */
-> -			if ((drv->states[idx].flags & CPUIDLE_FLAG_POLLING) &&
-> -			    s->exit_latency_ns <= latency_req &&
-> -			    s->target_residency_ns <= data->next_timer_ns) {
-> -				predicted_ns = s->target_residency_ns;
-> -				idx = i;
-> -				break;
-> -			}
->  			if (predicted_ns < TICK_NSEC)
->  				break;
->  
+--Sig_/076mAxA_l.m86nRuWPP6JiL
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I'm still fine with this and don't see a better way to solve the reported
-issue generally, see the discussion on v1.
-Rafael, do you have any objections?
-We could make this conditional on there being a high latency difference between
-polling and non-polling to keep x86 behavior.
+Hi all,
+
+Today's linux-next merge of the kunit-next tree got a conflict in:
+
+  lib/Makefile
+
+between commit:
+
+  b341f6fd45ab ("blackhole_dev: convert self-test to KUnit")
+
+from the net-next tree and commit:
+
+  c104c16073b7 ("Kunit to check the longest symbol length")
+
+from the kunit-next tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc lib/Makefile
+index 66e44569b141,e8fec9defec2..000000000000
+--- a/lib/Makefile
++++ b/lib/Makefile
+@@@ -392,7 -393,8 +392,9 @@@ obj-$(CONFIG_FORTIFY_KUNIT_TEST) +=3D for
+  obj-$(CONFIG_CRC_KUNIT_TEST) +=3D crc_kunit.o
+  obj-$(CONFIG_SIPHASH_KUNIT_TEST) +=3D siphash_kunit.o
+  obj-$(CONFIG_USERCOPY_KUNIT_TEST) +=3D usercopy_kunit.o
+ +obj-$(CONFIG_BLACKHOLE_DEV_KUNIT_TEST) +=3D blackhole_dev_kunit.o
++ obj-$(CONFIG_LONGEST_SYM_KUNIT_TEST) +=3D longest_symbol_kunit.o
++ CFLAGS_longest_symbol_kunit.o +=3D $(call cc-disable-warning, missing-pro=
+totypes)
+ =20
+  obj-$(CONFIG_GENERIC_LIB_DEVMEM_IS_ALLOWED) +=3D devmem_is_allowed.o
+ =20
+
+--Sig_/076mAxA_l.m86nRuWPP6JiL
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfX3wUACgkQAVBC80lX
+0GxZ6Qf/YnRsriB0q7CmcrCIeHwVxkGTJqlm6L6TY0FG9rK3ef3TiQ6ey6zvOQIN
+iwCs0PeK0YT31xf5hqVXyrXcJPj++ikGocTBmRm+OxbSBl1eyeTKoQLggZDmtBLf
+HsJBKVxAmCQ8fH49jknv+OThgC7dcUij3Z5j86i8J2X3fNpbx4vvLQAF5y7eybCh
+xSxzKsU75Io8P+34bG9T00M6DYt04HO3amGbYBBhwQuqDZ74Q2QAAkxKTFGPq/Ct
+mhyS232pNuT1sJ6IXisTHkTkPJ2FBcK5DAY9Ar4ARllIPM7u7tqc2pRz5dQD71lk
+7wZ6IiTHL4OiAoXZrSX2Su+/rWjDbg==
+=Mtze
+-----END PGP SIGNATURE-----
+
+--Sig_/076mAxA_l.m86nRuWPP6JiL--
 
