@@ -1,141 +1,93 @@
-Return-Path: <linux-kernel+bounces-563921-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563922-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DAD66A64AA0
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:45:08 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E225FA64A63
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:40:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6DB6F3BBAC0
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:40:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1C0057A2764
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:39:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6B4D23370C;
-	Mon, 17 Mar 2025 10:36:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AC472356BD;
+	Mon, 17 Mar 2025 10:37:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="z96YLtgw";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="1Vu3a0nN";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="z96YLtgw";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="1Vu3a0nN"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HDAifHEP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B65CA231CB1
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 10:36:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDC34226863;
+	Mon, 17 Mar 2025 10:37:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742207788; cv=none; b=Y4h1+F/CRs7xhOysDD0W6xalkZwQbvDRt+lmGXGVaiPkzK8+deYMGJhJ2SLAKhOS+LVq1Imu7ooCSGXl544et/GX9wOFth+X3qeM9aFZplXnwqTBjYNmBurTDHfOttklPa2zIleWR5PrhV4otsCt2X94wGy3mnOnqP3beAuAvF8=
+	t=1742207836; cv=none; b=P6b23MHA1MiEwZ/kG6/xGLj22Wymnag6oY4DDCm77BCvwXRufFiCVds/YIbjrIumDib7e9VqZBDcrBD/+10sog9JFNehuEGfOslpKDp7bHoU44K5HKX3z1UYDMicPMcwyNtCzDyBYQhwgAMkbZ5D1TKXEz8i5Xhw1gyjXI6z9jk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742207788; c=relaxed/simple;
-	bh=gkiUIHZSrbwtOKaBnJXHaBWnA15oCRxDa0WoWIYXNgE=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=gCLW5UMoaqGxJNX4vRKh515VPmdlrywYDiaKiM62T5RZ8OuZE43dV+eGt2+gWg1Jycm3YBKYJE/4+WVPYLHX6AZlMiUqBNJxNFJfx69zvk9vDMK5HjEg0BYEEr8tZnNdFZKNHvcGJmBCuZrQX1220DNo8s4Dr8AVdFn44JnY364=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=z96YLtgw; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=1Vu3a0nN; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=z96YLtgw; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=1Vu3a0nN; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from pobox.suse.cz (unknown [10.100.2.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id C8C6D21F07;
-	Mon, 17 Mar 2025 10:36:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1742207783; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XCUYw9mWffBz12keC2rcDopauYcvCdOcFRYio6TMRKw=;
-	b=z96YLtgwnVrt3RGyWSmjg/nUdtkQ57gJOgU5csmhlaUQhxd8wg/e6Xx7hdseWfmU/yEzn9
-	7tofOkznS6dkRvAptfOjEP0xrYFnC0IoY+i+6Db9GIN0B2Co63+uheLm5T8zTDJc0IWOlz
-	KBG2wRnOjnnb7lug1cpaDwZKjHSknCk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1742207783;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XCUYw9mWffBz12keC2rcDopauYcvCdOcFRYio6TMRKw=;
-	b=1Vu3a0nNgaFRlOJwEzGPQE9NFqZYaqXXtZazE/z4k0xpME9ZumqOYEyGMxQ776As3uxbyp
-	NP+8kVmLcmXsTWDw==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1742207783; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XCUYw9mWffBz12keC2rcDopauYcvCdOcFRYio6TMRKw=;
-	b=z96YLtgwnVrt3RGyWSmjg/nUdtkQ57gJOgU5csmhlaUQhxd8wg/e6Xx7hdseWfmU/yEzn9
-	7tofOkznS6dkRvAptfOjEP0xrYFnC0IoY+i+6Db9GIN0B2Co63+uheLm5T8zTDJc0IWOlz
-	KBG2wRnOjnnb7lug1cpaDwZKjHSknCk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1742207783;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XCUYw9mWffBz12keC2rcDopauYcvCdOcFRYio6TMRKw=;
-	b=1Vu3a0nNgaFRlOJwEzGPQE9NFqZYaqXXtZazE/z4k0xpME9ZumqOYEyGMxQ776As3uxbyp
-	NP+8kVmLcmXsTWDw==
-Date: Mon, 17 Mar 2025 11:36:23 +0100 (CET)
-From: Miroslav Benes <mbenes@suse.cz>
-To: Brendan Jackman <jackmanb@google.com>
-cc: Josh Poimboeuf <jpoimboe@kernel.org>, x86@kernel.org, 
-    linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>, 
-    Nathan Chancellor <nathan@kernel.org>
-Subject: Re: [PATCH 03/13] objtool: Improve __noreturn annotation warning
-In-Reply-To: <Z9fd82KugPxoGaRS@google.com>
-Message-ID: <alpine.LSU.2.21.2503171135460.4236@pobox.suse.cz>
-References: <cover.1741975349.git.jpoimboe@kernel.org> <ab835a35d00bacf8aff0b56257df93f14fdd8224.1741975349.git.jpoimboe@kernel.org> <Z9fd82KugPxoGaRS@google.com>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+	s=arc-20240116; t=1742207836; c=relaxed/simple;
+	bh=CRYiTBUDTQw22I9Tv5AGp+E55IJtf/rhDGIBsrOK5gI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ltur64kgp86PQ+FZKEx+eEgKwrTuGhiASBtynSqvT9z8nk3PvzR/fl2Z8wCXupxHngrAHf4N2ziJQYJpXxNnhCRBeuCfSsd3E3mWdMY8PpVpUM3KP+//4TS9y8VtukuY7dHPdxycJ7n+n+PbHN4Uh1M6RLJRvLH0wOWMnExU4Xk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HDAifHEP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62E07C4CEE3;
+	Mon, 17 Mar 2025 10:37:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742207836;
+	bh=CRYiTBUDTQw22I9Tv5AGp+E55IJtf/rhDGIBsrOK5gI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HDAifHEP/dyQ+dNW8KRc5PJQJlm7eu2UF3YRvWXzPShZxWs1+EI40saMAfBMAgfUm
+	 L43aJdYDSN865yfuyc3g0C3ZBmTx10RaDR9CiEYceq8CYQPPx9PRbcNd6pKjnf+YkN
+	 Kgjz5P116tGHtM8XYst6iUcgCYAWjtr5JF5K48iVunAjfAPkuNNvyht3E3PjAEulkt
+	 eWuCVzavqPIS2ifxPN9C3bx5lbLVq0Ukl4L+hag9Qp/dMkba6iJ+Fqa0v3vMxl1hzr
+	 p0duDDu2yFkBNFUp8FxnCBiLZkUZfuTvRQE4qN2Zzz01Vxpc4hRwHYgQBjulQluGwq
+	 WrI9RwpCkeQNA==
+Date: Mon, 17 Mar 2025 11:37:11 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: David Heidelberg <david@ixit.cz>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Pavel Machek <pavel@kernel.org>, 
+	Sakari Ailus <sakari.ailus@linux.intel.com>, Pavel Machek <pavel@ucw.cz>, linux-media@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] media: dt-bindings: Convert Analog Devices ad5820 to
+ DT schema
+Message-ID: <20250317-impartial-lobster-of-karma-b38fd0@krzk-bin>
+References: <20250314-b4-ad5820-dt-yaml-v2-1-287958c3c07c@ixit.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Score: -4.28
-X-Spamd-Result: default: False [-4.28 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.18)[-0.918];
-	MIME_GOOD(-0.10)[text/plain];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_COUNT_ZERO(0.00)[0];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	MID_RHS_MATCH_FROMTLD(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6]
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250314-b4-ad5820-dt-yaml-v2-1-287958c3c07c@ixit.cz>
 
-On Mon, 17 Mar 2025, Brendan Jackman wrote:
-
-> On Fri, Mar 14, 2025 at 12:29:01PM -0700, Josh Poimboeuf wrote:
-> > Clarify what needs to be done to resolve the missing __noreturn warning.
-> > 
-> > Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
-> > ---
-> >  tools/objtool/Documentation/objtool.txt | 12 +++++-------
-> >  tools/objtool/check.c                   |  2 +-
-> >  2 files changed, 6 insertions(+), 8 deletions(-)
-> > 
-> > diff --git a/tools/objtool/Documentation/objtool.txt b/tools/objtool/Documentation/objtool.txt
-> > index 7c3ee959b63c..87950a7aaa17 100644
-> > --- a/tools/objtool/Documentation/objtool.txt
-> > +++ b/tools/objtool/Documentation/objtool.txt
-> > @@ -319,14 +319,12 @@ the objtool maintainers.
-> >     a just a bad person, you can tell objtool to ignore it.  See the
-> >     "Adding exceptions" section below.
-> >  
-> > -   If it's not actually in a callable function (e.g. kernel entry code),
-> > -   change ENDPROC to END.
+On Fri, Mar 14, 2025 at 08:58:27PM +0100, David Heidelberg wrote:
+> Convert the Analog Devices ad5820 to DT schema format.
 > 
-> Did you mean to delete that?
- 
-I would say so but it should go to the next patch 4/13 alongside the other 
-doc updates.
+> Add the previously undocumented io-channel-cells property,
 
-Miroslav
+You did not explain here *why* you added this property. Your patch, your
+changes, anything should say why you are doing it.
+
+> which can be omitted. If present, it must be set to 0,
+> as the device provides only one channel.
+
+Also, Please wrap commit message according to Linux coding style / submission
+process (neither too early nor over the limit):
+https://elixir.bootlin.com/linux/v6.4-rc1/source/Documentation/process/submitting-patches.rst#L597
+
+> 
+> Signed-off-by: David Heidelberg <david@ixit.cz>
+> ---
+> Changes in v2:
+> - added MAINTAINERS entry for the binding
+> - documented why io-channel-cells got added into the binding.
+> - dropped io-channel-cells in required properties.
+> - adjusted example indentation to 4 spaces.
+> - Link to v1: https://lore.kernel.org/r/20250209203940.159088-1-david@ixit.cz
+
+Best regards,
+Krzysztof
+
 
