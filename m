@@ -1,126 +1,147 @@
-Return-Path: <linux-kernel+bounces-564824-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564826-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8E06A65B5F
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 18:47:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 29837A65B65
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 18:48:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7295318990F8
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 17:47:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E2275188AE27
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 17:48:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3730D1B21AA;
-	Mon, 17 Mar 2025 17:46:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E37E1AB6DE;
+	Mon, 17 Mar 2025 17:48:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AIRDLMr5"
-Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com [209.85.219.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nCrp7lBT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05A6B165EFC;
-	Mon, 17 Mar 2025 17:46:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BA151A3168;
+	Mon, 17 Mar 2025 17:48:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742233597; cv=none; b=jX8XR1RPDQyccaZoxzzt/eBTWKNXgruPOvBxj2Ky+ZnIbeBhk+FjUlpmWVwpmMUqfI5z83WY6OTIijl0dUNyeKAOspK7dsIVqHrzRvyC48sny1aZMebI5MHC4TeFVowC43vFUoJtt1qnvupACzM6rfqqITRUhpuS6UUEfCU8Fns=
+	t=1742233724; cv=none; b=ZpE93FnBBYJVFdd0P8tt0FEXn0nQ2ekHP9Ku2tQBpO3e2k8BE+u59zMUfZ5/vQ0K71pzWBNsX2av/iuKh0WR64X0PoUyabFMQpQRWI9ZjLQDRcyZGIbYKJMpE6RHG9pjqetcHkWZRa8Emw8P0cCcmWZ081jDjSCX81H+t52YXyE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742233597; c=relaxed/simple;
-	bh=3w54rrT0XKa7mePn43Dqw7SU/w+2DiXmoRrOcz+b9U8=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 Mime-Version:Content-Type; b=S74ty0Y29H5gBNJmfzm0WssjzWq/G5fqBuI3+zEBayrBQoQyA5swBsP2FXq6wbwIwr7Hu2TALvG0YqusQof+N9mIxsC4+wHjJyXQPVJDHK6PIZpXnFcIrRZB+dAW9/2eWvfOqLYylT/x5odYuupgJk5vrkr4qXfE/xWISfjKobM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AIRDLMr5; arc=none smtp.client-ip=209.85.219.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f46.google.com with SMTP id 6a1803df08f44-6e90b8d4686so38996906d6.2;
-        Mon, 17 Mar 2025 10:46:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742233594; x=1742838394; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=T0GCrUm/aSPyWDEWnbUiPadV5q2YuvnsVXl7Ccjn1OM=;
-        b=AIRDLMr53CngtA/rEo3IfLM2hdwntUCEnduRiIlqwwmO579PllLEc2CHZ9D983QVo0
-         od46M16pId6AZjWlaQoRccx4ufsZXa9EOpEDCWGZjq3SXWwU3NZzVakkslfyrVM423z2
-         VDGLfzh7K+EllEiAUxAxfdR2VFdQzQlyDvfEmqJ5ls4axAioHfofxKzmYx1dH2tVdkUs
-         NlOYwvI7msr67A7J3bQpPzDJvgNAVtVR5tey5P+OYCao11N4vLa77UBUf5QmPQ6AgnWZ
-         BnFoBIVcyVzumj4cxPv4QmowGM3Qa514aF4pF3uaORFm+K03o71fEgP4JfnWjHVEwacG
-         U/IA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742233594; x=1742838394;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=T0GCrUm/aSPyWDEWnbUiPadV5q2YuvnsVXl7Ccjn1OM=;
-        b=PFH8BRIC8iP6w6zsD9StlYLMivkaJ/FcUzXPSuwJrwPduy96VO8PmEATh8G/thsiWi
-         /t9iewYet2zOpq5EmV7ar/5xX+EdDupD69WIjrUzqEGLBYQH3QselCVwFwt/JO38cefK
-         H0H9XZrfThVZE7dNTgaq0rCE1NcDXOUp9m4ch92BKZ1kAD++L9oGFwYSRN9Q9Lu5Hsfo
-         ny7/2sJb7Owjcm50amM8Lf1C91LdI9XiSO8IemR2jC3dQRteykEioG2hcf1QLMPDKHyS
-         PXapvVUHFvA2fN6GIMCjmg6VO9rbI1R91TSPh6/jg+SGXkAA8E/+AZXEvGhdL/ySaG9p
-         Y1Hg==
-X-Forwarded-Encrypted: i=1; AJvYcCX3iPvCnqcDBUE1UmUqf6XK/u1FyHfHbtx5Y2PmaHhuvMqlfsgY6jr2MuHWSvm91NGGpJalpNX3@vger.kernel.org, AJvYcCXD1y2TGHaVAZIW1WBU23QojB3l6SgXDOiDUrMvDbN84ZYttejFzWY3oeWzw5m9UfmuCO8DMnmtYg8xyrI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxcPmnZSU3Sp2brCiJYmDwA/VwSPCvGVkN02ywP8ChJQTYTzqV7
-	1pAZHEEMabiyjmNJW0aHJaO2PjhrZYhieWVxyMq5Isl76idd/diXeb1Kjg==
-X-Gm-Gg: ASbGncsrmXTrCLJuQW+ND88+dbGQEM7n83c2FXAHtjipUtgjxOmYzzSFWYBwbQfgJDR
-	3z25ARpjDfIuxP7cWHR4Wm79VWGWZ/kmLzmmrv0iY10XG8hf9GovwQUhTnePrpDD8YlalcCNssY
-	fvWDr8LUyZGJmQBGlIf5rz/F9Aohthl6UMDGJ5hdVANJFzBK32mkizpLGrqacmSVRVlliuewxD1
-	qFOOqj7YZah0JjvowR8MTZsPUiUnvPpSz7+Hz0VHEUG++YskClpO6clmfTW1J9FtLfAUdtvg77C
-	5p9MOehTlh7C711yUg5ayGgeQVkuvNx+Ad9tvodp8Y30GRI6zfIZ72FWX9wlbgumb0NYPsbG9sF
-	qJ5iXUsawtE4f1YDKFclXKw==
-X-Google-Smtp-Source: AGHT+IEZ8ez8ucF+VqjIDPLmMMP6yS4Ntls80LfV30fgk9nmK0SlrdMn7fQNQq2tLqtCx3pRcGIgHg==
-X-Received: by 2002:ad4:5c4c:0:b0:6e8:ea29:fdd1 with SMTP id 6a1803df08f44-6eaea9f4500mr211005816d6.3.1742233593796;
-        Mon, 17 Mar 2025 10:46:33 -0700 (PDT)
-Received: from localhost (234.207.85.34.bc.googleusercontent.com. [34.85.207.234])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6eade24ea1dsm57176006d6.65.2025.03.17.10.46.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Mar 2025 10:46:32 -0700 (PDT)
-Date: Mon, 17 Mar 2025 13:46:32 -0400
-From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-To: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>, 
- kuniyu@amazon.com
-Cc: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>, 
- linux-kernel@vger.kernel.org, 
- netdev@vger.kernel.org, 
- Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, 
- Vadim Fedorenko <vadim.fedorenko@linux.dev>, 
- Willem de Bruijn <willemb@google.com>, 
- Jason Xing <kerneljasonxing@gmail.com>, 
- Anna Emese Nyiri <annaemesenyiri@gmail.com>, 
- Paolo Abeni <pabeni@redhat.com>
-Message-ID: <67d85ff870c78_32b5242949f@willemb.c.googlers.com.notmuch>
-In-Reply-To: <20250314214155.16046-1-aleksandr.mikhalitsyn@canonical.com>
-References: <20250314214155.16046-1-aleksandr.mikhalitsyn@canonical.com>
-Subject: Re: [PATCH net] tools headers: Sync uapi/asm-generic/socket.h with
- the kernel sources
+	s=arc-20240116; t=1742233724; c=relaxed/simple;
+	bh=+ajp6u19uztN9LzhI5yDd7wErjsDqGFizACW7A6xC28=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Fr5kIsbxYRHWlqk0VzbGcvH7oO18tVCwtoUDFHveK/Gbi3au+dHkKuGHhq8oFeoRhfKGK7TjM61QwIXs2OK1p7hWqracLOJXu0Tw0L8OOGlE9w7RbXjXFxek1yLKowSRd4SZGFDFctxuiD59H5WK4ZmUr0Tq1oXNCx63wIUNJME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nCrp7lBT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48BBFC4CEE3;
+	Mon, 17 Mar 2025 17:48:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742233724;
+	bh=+ajp6u19uztN9LzhI5yDd7wErjsDqGFizACW7A6xC28=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nCrp7lBTfGBqEHXP48lS3nqfXNtJcLXmHOLTVKNxn/BVY19ocTZGdVNaB/S3V6Pwv
+	 LV4eJWxg4H7bSJh0ygVFuyxV4RqnMp6iHK6QJAerqlupxFR3VlN7L/i2pQa/bLfj7O
+	 yC+MSAE9n1MCRl4XZ1hFL8f3iM5KI/hDP9Hax2aS4vCUZTTTfczePnoXai42KwFlqm
+	 l92dF/vj8UKz4QRPBqI8uxery3W7Go8XmEhLeltylK0ismLDLNdiRql6S0QymXYYBh
+	 bP/zKaL8oxzwvo8QN9qv2Z2EGBl1vcRsXsmrB+pXtho9Q24dJAiAHw46pcMPBW+ZV+
+	 7jZklMlRKpmFg==
+Date: Mon, 17 Mar 2025 10:48:40 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Kees Cook <kees@kernel.org>
+Cc: linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] kunit/fortify: Replace "volatile" with
+ OPTIMIZER_HIDE_VAR()
+Message-ID: <20250317174840.GA1451320@ax162>
+References: <20250312000439.work.112-kees@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250312000439.work.112-kees@kernel.org>
 
-Alexander Mikhalitsyn wrote:
-> This also fixes a wrong definitions for SCM_TS_OPT_ID & SO_RCVPRIORITY.
-> 
-> Accidentally found while working on another patchset.
-> 
-> Cc: linux-kernel@vger.kernel.org
-> Cc: netdev@vger.kernel.org
-> Cc: Eric Dumazet <edumazet@google.com>
-> Cc: Jakub Kicinski <kuba@kernel.org>
-> Cc: Vadim Fedorenko <vadim.fedorenko@linux.dev>
-> Cc: Willem de Bruijn <willemb@google.com>
-> Cc: Jason Xing <kerneljasonxing@gmail.com>
-> Cc: Anna Emese Nyiri <annaemesenyiri@gmail.com>
-> Cc: Kuniyuki Iwashima <kuniyu@amazon.com>
-> Cc: Paolo Abeni <pabeni@redhat.com>
-> Fixes: a89568e9be75 ("selftests: txtimestamp: add SCM_TS_OPT_ID test")
-> Fixes: e45469e594b2 ("sock: Introduce SO_RCVPRIORITY socket option")
-> Link: https://lore.kernel.org/netdev/20250314195257.34854-1-kuniyu@amazon.com/
-> Reviewed-by: Kuniyuki Iwashima <kuniyu@amazon.com>
-> Signed-off-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+Hi Kees,
 
-Reviewed-by: Willem de Bruijn <willemb@google.com>
+On Tue, Mar 11, 2025 at 05:04:40PM -0700, Kees Cook wrote:
+> It does seem that using "volatile" isn't going to be sane compared to
+> using OPTIMIZER_HIDE_VAR() going forward. Some strange interactions[1]
+> with the sanitizers have been observed in the self-test code, so replace
+> the logic.
+> 
+> Reported-by: Nathan Chancellor <nathan@kernel.org>
+> Closes: https://github.com/ClangBuiltLinux/linux/issues/2075 [1]
+> Signed-off-by: Kees Cook <kees@kernel.org>
+...
+> diff --git a/lib/tests/fortify_kunit.c b/lib/tests/fortify_kunit.c
+> index 18dcdedf777f..29ffc62a71e3 100644
+> --- a/lib/tests/fortify_kunit.c
+> +++ b/lib/tests/fortify_kunit.c
+...
+> @@ -993,8 +1003,11 @@ static void fortify_test_memcmp(struct kunit *test)
+>  {
+>  	char one[] = "My mind is going ...";
+>  	char two[] = "My mind is going ... I can feel it.";
+> -	size_t one_len = sizeof(one) + unconst - 1;
+> -	size_t two_len = sizeof(two) + unconst - 1;
+> +	size_t one_len = sizeof(one) - 1;
+> +	size_t two_len = sizeof(two) - 1;
+> +
+> +	OPTIMIZER_HIDE_VAR(one_len);
+> +	OPTIMIZER_HIDE_VAR(two_len);
+>  
+>  	/* We match the first string (ignoring the %NUL). */
+>  	KUNIT_ASSERT_EQ(test, memcmp(one, two, one_len), 0);
+
+I am sorry for bringing this up some time after you sent this change, as
+I have only now had a chance to actually sit down and understand the
+results of my bisect. I am still seeing a __read_overflow error when
+building lib/tests/fortify_kunit.o with Fedora's configuration + LTO in
+next-20250317, which contains this change. I do not think it is issue
+2075, as I can reproduce it without UBSAN enabled altogether. This is
+with LLVM 20.1.0.
+
+$ cat kernel/configs/repro.config
+CONFIG_FORTIFY_KUNIT_TEST=m
+CONFIG_FORTIFY_SOURCE=y
+CONFIG_KUNIT=y
+# CONFIG_LTO_NONE is not set
+CONFIG_LTO_CLANG_THIN=y
+
+# or x86_64
+$ make -skj"$(nproc)" ARCH=arm64 LLVM=1 mrproper {def,repro.}config lib/tests/fortify_kunit.o
+ld.lld: error: call to __read_overflow marked "dontcall-error": detected read beyond size of object (1st parameter)
+make[6]: *** [scripts/Makefile.build:203: lib/tests/fortify_kunit.o] Error 1
+
+Selectively reverting this avoids the problem, which is definitely
+odd... Maybe issue 2075 is related more to issue 2077 and this patch
+should not be entertained?
+
+Cheers,
+Nathan
+
+diff --git a/lib/tests/fortify_kunit.c b/lib/tests/fortify_kunit.c
+index 29ffc62a71e3..1164223654ac 100644
+--- a/lib/tests/fortify_kunit.c
++++ b/lib/tests/fortify_kunit.c
+@@ -411,6 +411,8 @@ struct fortify_padding {
+ 	char buf[32];
+ 	unsigned long bytes_after;
+ };
++/* Force compiler into not being able to resolve size at compile-time. */
++static volatile int unconst;
+ 
+ static void fortify_test_strlen(struct kunit *test)
+ {
+@@ -1003,11 +1005,8 @@ static void fortify_test_memcmp(struct kunit *test)
+ {
+ 	char one[] = "My mind is going ...";
+ 	char two[] = "My mind is going ... I can feel it.";
+-	size_t one_len = sizeof(one) - 1;
+-	size_t two_len = sizeof(two) - 1;
+-
+-	OPTIMIZER_HIDE_VAR(one_len);
+-	OPTIMIZER_HIDE_VAR(two_len);
++	size_t one_len = sizeof(one) + unconst - 1;
++	size_t two_len = sizeof(two) + unconst - 1;
+ 
+ 	/* We match the first string (ignoring the %NUL). */
+ 	KUNIT_ASSERT_EQ(test, memcmp(one, two, one_len), 0);
 
