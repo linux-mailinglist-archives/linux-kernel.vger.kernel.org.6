@@ -1,82 +1,126 @@
-Return-Path: <linux-kernel+bounces-564757-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564758-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4A33A65A50
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 18:19:41 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3612FA65A20
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 18:15:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B10ED18965E7
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 17:15:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 86687169AC7
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 17:15:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 790861B393C;
-	Mon, 17 Mar 2025 17:09:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E20C1B6D01;
+	Mon, 17 Mar 2025 17:09:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oUOj+Fz4"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mp+fV+xw"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC2B01B043E;
-	Mon, 17 Mar 2025 17:09:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 732E21B043E;
+	Mon, 17 Mar 2025 17:09:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742231357; cv=none; b=V7t1prv+yrsJVb3bgoaAlHpyoC2XlgAZ3Ca8fBFgBY99LQmGet4zJ4nUwhlQTXiZV9ADjs4ZS2E3w/t6kwMqoQzbBQdAx/t72hZlMykVYz95ACSW1WyIsKl9pGzJfj0SSiecF6md3hSVzOzRat7jnUf946cu2G1r6Lz/dEUjfNY=
+	t=1742231371; cv=none; b=GGMl6dNMhxqK5A3T9uM7tdYszqgilorY0SaAqzcy4n3Oh8u0n1u71ISmuU44N9jl5IOWP/4FzAKU+YNdD0iO5FW0Q8z1GIxmGg/1csvwPWXEkEDrvRpKuRxR6TszqW3UHCO4fRTxC3JKqs7V89gO8E6205gLaXwumls2dI8/3jg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742231357; c=relaxed/simple;
-	bh=3LVlLlnoG9tLdeo7FvVmGhItTlSlYVxrMKAUSPQdUuA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rgd1rk7OTBxtDIOl79Gub0tecDaZNIQvzDba56WOiYSFvYobmOP3yJxOBIMb52Za45Mfvn1bhiANwn3IYd1mZjUCTpEnYUf3QVOgXqUgkPtFMQq2wLSAyARJ7X0LBEcsPY+zbxWeAP5L7HuJ/NXCnUTbp5WrvtdHtuuk0yIUufk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oUOj+Fz4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3342C4CEE3;
-	Mon, 17 Mar 2025 17:09:16 +0000 (UTC)
+	s=arc-20240116; t=1742231371; c=relaxed/simple;
+	bh=lzjEQyNrFqiofrWTqg+HjMoyqD6I8IOLRgBp+2jTyso=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mOooJX9e0Uf0erpsOAj0oXygfHTe7Ygwf+INcK2LrFRljJMrCzowgt2QbKpJXrxwSkOZhao9kfDYIxBbutdPU3pKTf6q+eTk3wOVgaLwMJ63Abk+kEJ4FfPNyGoZxAi8H6fJT4G0mqTJKo7rnpxfviki0xobBWIEz1D+xDy0AVg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mp+fV+xw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 533C6C4CEE3;
+	Mon, 17 Mar 2025 17:09:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742231357;
-	bh=3LVlLlnoG9tLdeo7FvVmGhItTlSlYVxrMKAUSPQdUuA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=oUOj+Fz4bsGGbR3y776/086oSpbr2Uc84EZHAc84lpSHtDsxeb0azobOFMBoAFrOZ
-	 Enlk3bRngeIj6ZXjx9p/+JOoAVy94HfWqvCBA2apKmLxPW8V8zmDiynwuXn8F7xCuZ
-	 WkRZVKIHABi8RjpV5qyDrqXj6FZYHiE3cwpYNF4/+h5zN4nbopNenXu4Ik1dNp7Og4
-	 y3ZbU03TVJMpDbXZvHziXuJoXwYymaR0INiKeh8N0wPvihbJ8aC7+yPCW1lofpI31z
-	 E38dwzXLzP4jDg47swZSKsAHayItTGhQ1PRlx36DpkYsaM5za2teSu1JQwdfntU4KM
-	 8sRonZVZoz8ag==
-From: Bjorn Andersson <andersson@kernel.org>
-To: Konrad Dybcio <konradybcio@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Maulik Shah <maulik.shah@oss.qualcomm.com>
-Cc: linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64: dts: qcom: qcs8300: Add RPMh sleep stats
-Date: Mon, 17 Mar 2025 12:09:14 -0500
-Message-ID: <174223135177.2001681.13269933501288643135.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250317-add_qcom_stats-v1-1-016ae05ac4b0@oss.qualcomm.com>
-References: <20250317-add_qcom_stats-v1-1-016ae05ac4b0@oss.qualcomm.com>
+	s=k20201202; t=1742231371;
+	bh=lzjEQyNrFqiofrWTqg+HjMoyqD6I8IOLRgBp+2jTyso=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mp+fV+xwdhZK133qDYGAH1lJlcZeYqEEBOP+TIvxjYbWscyk/SlTbprSzzi7hmflZ
+	 soF/DaOzY2fCUZ7OmqJfKIYl1RXgJ8XgXpsA8mxbVKy9NOJEfvHIOJD4fhP33pJC08
+	 clGMyJL7JjazS3XASZLN3UPbcZTlgfpTdDvDa77vFE7PRtYBiCpHuiuyTTtoEIxqKg
+	 ZojCv6GsSZyI58NWpn+0/0edmGbDcU1pBUyws2a2NLvH0j0mCPlfszPLNIMTJ2tuR3
+	 hsEHn5CmXe2bXpgYgbeGfkypWGx85rkwDKqU8AtVMILPJLvdFoW6gySFBAxa7n28Jg
+	 WyFBDArppcahA==
+Date: Mon, 17 Mar 2025 18:09:25 +0100
+From: Niklas Cassel <cassel@kernel.org>
+To: Hans de Goede <hdegoede@redhat.com>
+Cc: Eric <eric.4.debian@grabatoulnz.fr>,
+	Salvatore Bonaccorso <carnil@debian.org>,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	Christoph Hellwig <hch@infradead.org>,
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	Damien Le Moal <dlemoal@kernel.org>,
+	Jian-Hong Pan <jhp@endlessos.org>, regressions@lists.linux.dev,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+	linux-ide@vger.kernel.org,
+	Dieter Mummenschanz <dmummenschanz@web.de>
+Subject: Re: Regression from 7627a0edef54 ("ata: ahci: Drop low power policy
+ board type") on reboot (but not cold boot)
+Message-ID: <Z9hXRYQw1-fX0_PY@ryzen>
+References: <Z8rCF39n5GjTwfjP@ryzen>
+ <9c4a635a-ce9f-4ed9-9605-002947490c61@redhat.com>
+ <Z88rtGH39C-S8phk@ryzen>
+ <383d5740-7740-4051-b39a-b8c74b035ec2@redhat.com>
+ <Z9BFSM059Wj2cYX5@ryzen>
+ <9ac6e1ab-f2af-4bff-9d50-24df68ca1bb9@redhat.com>
+ <Z9LUH2IkwoMElSDg@ryzen>
+ <d5470665-4fee-432a-9cb7-fff9813b3e97@redhat.com>
+ <Z9L5p6hTp6MATJ80@ryzen>
+ <6d125c69-35b2-45b5-9790-33f3ea06f171@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6d125c69-35b2-45b5-9790-33f3ea06f171@redhat.com>
 
+Hello Hans,
 
-On Mon, 17 Mar 2025 18:08:41 +0530, Maulik Shah wrote:
-> Add RPMh stats to read low power statistics for various subsystem
-> and SoC sleep modes.
+On Thu, Mar 13, 2025 at 07:47:11PM +0100, Hans de Goede wrote:
+> Hi,
 > 
+> On 13-Mar-25 4:28 PM, Niklas Cassel wrote:
+> > Hello Hans,
+> > 
+> > On Thu, Mar 13, 2025 at 04:13:24PM +0100, Hans de Goede wrote:
+> >>>
+> >>> Considering that DIPM seems to work fine on the Maxtor drive, I guess your
+> >>> initial suggestion of a Samsung only quirk which only disables LPM on ATI
+> >>> is the best way?
+> >>
+> >> I have no objections against going that route, except that I guess this
+> >> should then be something like ATA_QUIRK_NO_DIPM_ON_ATI to not loose the
+> >> other LPM modes / savings? AFAIK/IIRC there still is quite some powersaving
+> >> to be had without DIPM.
+> > 
+> > I was thinking like your original suggestion, i.e. setting:
+> > ATA_QUIRK_NO_LPM_ON_ATI
+> > 
+> > for all the Samsung devices that currently have:
+> > ATA_QUIRK_NO_NCQ_ON_ATI
+> > 
+> > Considering that this Samsung device only supports DIPM
+> > (and not HIPM), I'm guessing the same is true for the other
+> > Samsung devices as well.
 > 
+> Ah I see ...
+> 
+> > So we might as well just do:
+> > ATA_QUIRK_NO_LPM_ON_ATI
+> 
+> Yes I agree and that will nicely work as a combination of
+> ATA_QUIRK_NO_LPM + ATA_QUIRK_NO_NCQ_ON_ATI functionality
+> so using tested code-paths in a slightly new way.
 
-Applied, thanks!
+I sent a patch that implements your original suggestion here:
+https://lore.kernel.org/linux-ide/20250317170348.1748671-2-cassel@kernel.org/
 
-[1/1] arm64: dts: qcom: qcs8300: Add RPMh sleep stats
-      commit: bba4e13c0f337df4cab3d65ccdb5524eb81a00bf
+I forgot to add your Suggested-by tag.
+If the patch solves Eric's problem, I could add the tag when applying.
 
-Best regards,
--- 
-Bjorn Andersson <andersson@kernel.org>
+
+Kind regards,
+Niklas
 
