@@ -1,103 +1,94 @@
-Return-Path: <linux-kernel+bounces-564776-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564777-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1D12A65A73
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 18:20:50 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CB5BA65A7D
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 18:21:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 40FD47B0CA9
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 17:18:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A325217E838
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 17:20:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D85631A3A8D;
-	Mon, 17 Mar 2025 17:17:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tqzM8AT6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C81DA48;
-	Mon, 17 Mar 2025 17:17:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E61771A2846;
+	Mon, 17 Mar 2025 17:19:26 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2990C18C337;
+	Mon, 17 Mar 2025 17:19:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742231864; cv=none; b=N4H8HQ91Otsc1ObywTMt/xOSA0QyjSbpx8MNvgkXYrJrK2zLaFmm84B1+ASoGwU0UlYuYxp/iLHES+QjatlfKAkcETu2xx3jokkU3pA//jLPlYPnJ040x3bMz3irN3RVPwJWamBo+qlUpxucAzFctfn8BmdjRm1iGwtMqkYpBek=
+	t=1742231966; cv=none; b=p0oryGuD3MOi0XjPfBg3l+fYEtTM9vJvsxBCQdRAuhHoWMtkilwLFFZEMljq2sQ9Z+zyk5Ve/8VxT9ylHtWIXejJEUHLwtzwmT0y0vlWCaKHXW2FFOaSk7Sz13uh+k39cCaUHX5SHPae+l5zV7bHQChmTIra2lv3zyRC674ORyE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742231864; c=relaxed/simple;
-	bh=PDbGY0+yFN/TsSCp60uaacAZ4qKJrbB58cB10UtXUP4=;
+	s=arc-20240116; t=1742231966; c=relaxed/simple;
+	bh=5jmeB7vnHM3vvmb1jjxtClMgR/j7JV3WOaMlfUmP5Lk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F4YgUM2u1mYvhT4o2q4IadIyAxcGWV0TS2bzBZKS8enHBhrYh/or1HGMU8bz7l/g474oNwIavNJpTn9nuvLJZaaESDFJ4CZbfZ3MdO4cRtM6u3aJDw+5ndb7sh94oNdabHW51ibYM8RVc1xp/r+piyrmKbu15zzztGQxYxMaE48=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tqzM8AT6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5A35C4CEE3;
-	Mon, 17 Mar 2025 17:17:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742231863;
-	bh=PDbGY0+yFN/TsSCp60uaacAZ4qKJrbB58cB10UtXUP4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tqzM8AT67XBjrXKaasp8CMYr313yUBbNYq28nrcszv5BUM4VlzXgEz9cn6C3FrG5d
-	 SDDbP8YNlXMfMGdoLbZLtGq8ay92h1xvuFzflCwKHoERgtVXyG5GuTAlChTGz4Y4iF
-	 JbcJmdRozTGoVjUBd6pJORXkPgMw2yrmb0u92NvPXxiWc55Jpn01CwTeeqkxXYwQEV
-	 Czp5V0qoFosyEEIsXS63/KYha+QMH73zY6fS/p1yOMHdWmlcrfAtJhOCc4eoy2TZm5
-	 L3nUmirWdqchox+H9KKz/fNb1zNL5wPs2a5xIZbb3gf2rYh/LqfficP8o7u/4m1KV2
-	 GzlvopMus0dmg==
-Date: Mon, 17 Mar 2025 10:17:38 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Ben Hutchings <ben@decadent.org.uk>
-Cc: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Nicolas Schier <nicolas@fjasle.eu>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>, linux-kbuild@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
-Subject: Re: [PATCH v2] kbuild: make all file references relative to source
- root
-Message-ID: <20250317171738.GA950672@ax162>
-References: <20250315-kbuild-prefix-map-v2-1-00e1983b2a23@weissschuh.net>
- <d250e864d6d81cc02e2599f710872f72d58a3c29.camel@decadent.org.uk>
+	 Content-Type:Content-Disposition:In-Reply-To; b=dJr1r50491I/hQBld7rJjHhU09dDvMKI3hELagRDcvHCUxvRcBsbrWcXePLvItp/Y7q4dzQLtcG/YxgdZ6+vydC5yCT4bpkth32fTNbND81D+3Zeszi6JSUvJWe633qEKvp9CVVSXv5XytmmRiPGyunD8isYxyqRPtFmbPzg1sw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com; spf=none smtp.mailfrom=foss.arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=foss.arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7465F13D5;
+	Mon, 17 Mar 2025 10:19:33 -0700 (PDT)
+Received: from bogus (e133711.arm.com [10.1.196.55])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 919983F694;
+	Mon, 17 Mar 2025 10:19:23 -0700 (PDT)
+Date: Mon, 17 Mar 2025 17:19:20 +0000
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: Ard Biesheuvel <ardb@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Sudeep Holla <sudeep.holla@arm.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-efi@vger.kernel.org
+Subject: Re: [PATCH 3/9] efi: Remove redundant creation of the "efivars"
+ platform device
+Message-ID: <Z9hZmOiVPUqfqqsY@bogus>
+References: <20250317-plat2faux_dev-v1-0-5fe67c085ad5@arm.com>
+ <20250317-plat2faux_dev-v1-3-5fe67c085ad5@arm.com>
+ <CAMj1kXEejZr2RCUJ59HfLwxQ1zFnWqj7vJ_ObrPTztE5s2UUcQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <d250e864d6d81cc02e2599f710872f72d58a3c29.camel@decadent.org.uk>
+In-Reply-To: <CAMj1kXEejZr2RCUJ59HfLwxQ1zFnWqj7vJ_ObrPTztE5s2UUcQ@mail.gmail.com>
 
-On Sun, Mar 16, 2025 at 08:08:37PM +0100, Ben Hutchings wrote:
-> On Sat, 2025-03-15 at 14:20 +0100, Thomas Weißschuh wrote:
-> > -fmacro-prefix-map only affects __FILE__ and __BASE_FILE__.
-> > Other references, for example in debug information, are not affected.
-> > This makes handling of file references in the compiler outputs harder to
-> > use and creates problems for reproducible builds.
-> > 
-> > Switch to -ffile-prefix map which affects all references.
-> 
-> This appears to cover all the C sources, but not quite all the assembly
-> sources:
-> 
-> [...]
-> 
-> > --- a/arch/x86/boot/Makefile
-> > +++ b/arch/x86/boot/Makefile
-> > @@ -54,7 +54,7 @@ targets += cpustr.h
-> >  
-> >  KBUILD_CFLAGS	:= $(REALMODE_CFLAGS) -D_SETUP
-> >  KBUILD_AFLAGS	:= $(KBUILD_CFLAGS) -D__ASSEMBLY__
-> > -KBUILD_CFLAGS	+= $(call cc-option,-fmacro-prefix-map=$(srctree)/=)
-> > +KBUILD_CFLAGS	+= $(call cc-option,-ffile-prefix-map=$(srctree)/=)
-> [...]
-> 
-> I think this addition to KBUILD_CFLAGS needs to be done before the
-> assignment to KBUILD_AFLAGS.
+On Mon, Mar 17, 2025 at 06:06:24PM +0100, Ard Biesheuvel wrote:
+> On Mon, 17 Mar 2025 at 11:13, Sudeep Holla <sudeep.holla@arm.com> wrote:
+> >
+> > The "efivars" platform device is created but never tracked or used,
+> > as there is no driver associated with it. Since this device serves
+> > no functional purpose, removing its creation without affecting any
+> > functionality.
+> >
+> > Cc: Ard Biesheuvel <ardb@kernel.org>
+> > Cc: linux-efi@vger.kernel.org
+> > Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+> > ---
+> >  drivers/firmware/efi/efi.c | 1 -
+> >  1 file changed, 1 deletion(-)
+> >
+> > diff --git a/drivers/firmware/efi/efi.c b/drivers/firmware/efi/efi.c
+> > index 7309394b8fc98cf7a3424af209b752f0251c8c89..eec173cb1f398d3b4f28b42c917e50e1728dc277 100644
+> > --- a/drivers/firmware/efi/efi.c
+> > +++ b/drivers/firmware/efi/efi.c
+> > @@ -446,7 +446,6 @@ static int __init efisubsys_init(void)
+> >                 error = efivar_ssdt_load();
+> >                 if (error)
+> >                         pr_err("efi: failed to load SSDT, error %d.\n", error);
+> > -               platform_device_register_simple("efivars", 0, NULL, 0);
+> >         }
+> >
+> >         BLOCKING_INIT_NOTIFIER_HEAD(&efivar_ops_nh);
+> >
+>
+> IIRC the efi-pstore module autoloads based on this platform device
 
-This probably belongs in KBUILD_CPPFLAGS then, similar to clang's
-'--target' flag and other options that we always want invoked?
+Indeed I see now, thanks. My bad grep skills didn't work well to catch
+this. I will update accordingly.
 
-Cheers,
-Nathan
+-- 
+Regards,
+Sudeep
 
