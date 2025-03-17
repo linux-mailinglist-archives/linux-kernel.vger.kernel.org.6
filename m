@@ -1,79 +1,58 @@
-Return-Path: <linux-kernel+bounces-564067-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564069-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB116A64D1B
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 12:44:43 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A655BA64D28
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 12:46:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64F5A1894BBD
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:44:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4CAB83B2BB3
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:46:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7306D2376E7;
-	Mon, 17 Mar 2025 11:44:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B18F62376FD;
+	Mon, 17 Mar 2025 11:46:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="K2poXIRh"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W7Ua+Tfq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86FC021A42C
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 11:44:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1154A38DD8;
+	Mon, 17 Mar 2025 11:46:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742211877; cv=none; b=nsRo7ioO0Av3NDBY/fZr4/Q9mlBoXuTjLxcqEmMgmjehbA4kQYQuMV6Nl324L65OOcVSPB6DU5zcSuj6MFdZ9Xt46BOKtPtLblSFiDBOqWFM6mdlknAL7S9l9tLTeqRrkJjZPEsMnaGmuLmNlRW7bYGp/DymnCovYatqdbzNknw=
+	t=1742211968; cv=none; b=rtkubPBo7usOuTWP98u35cxAQzAz4fZMRu0NcWraCRdWBRk9pXpvaOqlsIY9CHxgBSdfQihyj8RHQMD2KVr+htTwR/z7Ooa+fCtflfiFG7SHRsV2u8dmlYrOkxf+vfWqojj08Qf1+t6TES3tIVLCkzEOhPmCTp/50lKk7dWR710=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742211877; c=relaxed/simple;
-	bh=QyYFRxfvyvi/bupKRx3kX9/G+GyhRz3wyKQ6R52ZjU8=;
+	s=arc-20240116; t=1742211968; c=relaxed/simple;
+	bh=IUHSaJFW36Rq/yR/l9vcO9rORQ7Sa11dvwQP2YGMY9w=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FkFHaO88LYIgdpy9/3Wb233YsHWvCr65ZOmERSWypjQLmgxcEIYFVvRIh39AiuZboaMb6SWwVfEjIXc6cpeDCIgIYPbCS/KsTqMiNGezSoCnFikepJTiskr0dkFhQ05Ed5j8qtfP4FSUkSp045EJ3nQvn0Jm8FKUuhDfb2OGNFQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=K2poXIRh; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=D9FtNtoMUf3n11DpseLS4Iblhw8bfIkmo1Ru9I6bARU=; b=K2poXIRheASwJFkLe23w8wnhtf
-	s9rZC83eQOsI5eg6Cfl6/BY0+M/2L1fMek56oTEm8mtJc3StObfrHW5cy/Hz4sGz0VcREttOcc68+
-	pZwWBV8Y+XmD6zCGvOG5ptD8XAJXVZvVSYdIzWb1jmp5EANwr8cDIGtRLj+MaB80PMXVEsapq0Z21
-	pSkqnGIcda+AyQwtdJSCtlNb2xpyju9CoY75j5g9+Xftzo1E+J/fBYUBNj6YFKz74DbgHhcf2DQO+
-	ZT+DggY9YjsSSEiRGT9Dy8kyd9+B3cEK/CJ+ke9xs1Ho6sJVwKCWaMO/Irw82S6uh0nVZA4gN0DrZ
-	3jvQ9a0Q==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tu8tK-00000008cqo-1UdS;
-	Mon, 17 Mar 2025 11:44:22 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id A9D61300783; Mon, 17 Mar 2025 12:44:21 +0100 (CET)
-Date: Mon, 17 Mar 2025 12:44:21 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: John Stultz <jstultz@google.com>, LKML <linux-kernel@vger.kernel.org>,
-	Joel Fernandes <joelagnelf@nvidia.com>,
-	Qais Yousef <qyousef@layalina.io>, Ingo Molnar <mingo@redhat.com>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Ben Segall <bsegall@google.com>,
-	Zimuzo Ezeozue <zezeozue@google.com>, Mel Gorman <mgorman@suse.de>,
-	Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Metin Kaya <Metin.Kaya@arm.com>,
-	Xuewen Yan <xuewen.yan94@gmail.com>,
-	K Prateek Nayak <kprateek.nayak@amd.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Suleiman Souhlal <suleiman@google.com>, kernel-team@android.com,
-	Connor O'Brien <connoro@google.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>
-Subject: Re: [RFC PATCH v15 2/7] locking/mutex: Rework task_struct::blocked_on
-Message-ID: <20250317114421.GB36386@noisy.programming.kicks-ass.net>
-References: <20250312221147.1865364-1-jstultz@google.com>
- <20250312221147.1865364-3-jstultz@google.com>
- <20250313061351.412bc92e@batman.local.home>
+	 Content-Type:Content-Disposition:In-Reply-To; b=NuXVjKbJqUTebxVVqHOW/coIuIvL6Dehm7Y4ylBi3s87sD/Y7faThmNkrSZ+qPObyrTalGSKeAbdi4rYhZl1aV0fpQHKOQCZ2Wy1HJ+H9mDFELyuvVGPfiY7gh+V5i6t8q65OUFOt/+li8PLjgpz7H41JVXd8qP4/7mEG2ZK/xY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W7Ua+Tfq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76328C4CEE3;
+	Mon, 17 Mar 2025 11:46:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742211967;
+	bh=IUHSaJFW36Rq/yR/l9vcO9rORQ7Sa11dvwQP2YGMY9w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=W7Ua+TfqVwTcP6xP05u325439tU+a7NmKr9czDj1VF5fEZr5vkmj2pjNlMn130Jxy
+	 ZNYpNX62FDe1+QVea9RLWxFtnqkdFv47HUpKBUgowSHjYtAeHUib3L3HntEGV6nf74
+	 hG4gXusTGb+aMcvT/B1Q0SEO8qzsFN+h/i19TLLAhif/yPDenrBLlwe/jsdJPraed/
+	 J2xZWTWtbng3dNYK6v0pNr+5AUTlD22at8Se6Ch09u32Af7oNBlImxTgJw7WYsYXMP
+	 JuD983eeXnJc3yOY0XkYOUBCg3+tNTPA7HB9tb3d7n3rVKR/wEgOIOMYdkCNQ5Xmzm
+	 ygFO9Otbl4C7w==
+Date: Mon, 17 Mar 2025 12:46:01 +0100
+From: Danilo Krummrich <dakr@kernel.org>
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: rafael@kernel.org, bhelgaas@google.com, ojeda@kernel.org,
+	alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net,
+	bjorn3_gh@protonmail.com, benno.lossin@proton.me,
+	a.hindborg@kernel.org, aliceryhl@google.com, tmgross@umich.edu,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH v2 0/4] Improve soundness of bus device abstractions
+Message-ID: <Z9gLeaQqZOef0Fqz@pollux>
+References: <20250314160932.100165-1-dakr@kernel.org>
+ <2025031542-starry-finally-1a2c@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,12 +61,80 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250313061351.412bc92e@batman.local.home>
+In-Reply-To: <2025031542-starry-finally-1a2c@gregkh>
 
-On Thu, Mar 13, 2025 at 06:13:51AM -0400, Steven Rostedt wrote:
+On Sat, Mar 15, 2025 at 09:34:17AM +0100, Greg KH wrote:
+> On Fri, Mar 14, 2025 at 05:09:03PM +0100, Danilo Krummrich wrote:
+> > Currently, when sharing references of bus devices (e.g. ARef<pci::Device>), we
+> > do not have a way to restrict which functions of a bus device can be called.
+> > 
+> > Consequently, it is possible to call all bus device functions concurrently from
+> > any context. This includes functions, which access fields of the (bus) device,
+> > which are not protected against concurrent access.
+> > 
+> > This is improved by applying an execution context to the bus device in form of a
+> > generic type.
+> > 
+> > For instance, the PCI device reference that is passed to probe() has the type
+> > pci::Device<Core>, which implements all functions that are only allowed to be
+> > called from bus callbacks.
+> > 
+> > The implementation for the default context (pci::Device) contains all functions
+> > that are safe to call from any context concurrently.
+> > 
+> > The context types can be extended as required, e.g. to limit availability  of
+> > certain (bus) device functions to probe().
+> > 
+> > A branch containing the patches can be found in [1].
+> > 
+> > [1] https://web.git.kernel.org/pub/scm/linux/kernel/git/dakr/linux.git/log/?h=rust/device
+> > 
+> > Changes in v2:
+> >   - make `DeviceContext` trait sealed
+> >   - impl From<&pci::Device<device::Core>> for ARef<pci::Device>
+> >   - impl From<&platform::Device<device::Core>> for ARef<platform::Device>
+> >   - rebase onto v6.14-rc6
+> >   - apply RBs
+> > 
+> > Danilo Krummrich (4):
+> >   rust: pci: use to_result() in enable_device_mem()
+> >   rust: device: implement device context marker
+> >   rust: pci: fix unrestricted &mut pci::Device
+> >   rust: platform: fix unrestricted &mut platform::Device
+> > 
+> >  rust/kernel/device.rs                |  26 +++++
+> >  rust/kernel/pci.rs                   | 137 +++++++++++++++++----------
+> >  rust/kernel/platform.rs              |  95 +++++++++++++------
+> >  samples/rust/rust_driver_pci.rs      |   8 +-
+> >  samples/rust/rust_driver_platform.rs |  11 ++-
+> >  5 files changed, 187 insertions(+), 90 deletions(-)
 > 
-> FYI, this is useful for Masami's "hung task" work that will show what
-> tasks a hung task is blocked on in a crash report.
+> Thanks for doing this work, looks good to me.  Mind if I suck it into
+> the driver-core tree now?  Or do you want it to go through a different
+> tree?
 
-Yeah, but I would really rather not have that interfere.
+This series has a conflict with nova-core, it will require the following fixup
+in -next and Linus' tree when he pulls things.
+
+diff --git a/drivers/gpu/nova-core/driver.rs b/drivers/gpu/nova-core/driver.rs
+index 63c19f140fbd..a08fb6599267 100644
+--- a/drivers/gpu/nova-core/driver.rs
++++ b/drivers/gpu/nova-core/driver.rs
+@@ -1,6 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0
+ 
+-use kernel::{bindings, c_str, pci, prelude::*};
++use kernel::{bindings, c_str, device::Core, pci, prelude::*};
+ 
+ use crate::gpu::Gpu;
+ 
+@@ -27,7 +27,7 @@ impl pci::Driver for NovaCore {
+     type IdInfo = ();
+     const ID_TABLE: pci::IdTable<Self::IdInfo> = &PCI_TABLE;
+ 
+-    fn probe(pdev: &mut pci::Device, _info: &Self::IdInfo) -> Result<Pin<KBox<Self>>> {
++    fn probe(pdev: &pci::Device<Core>, _info: &Self::IdInfo) -> Result<Pin<KBox<Self>>> {
+         dev_dbg!(pdev.as_ref(), "Probe Nova Core GPU driver.\n");
+ 
+         pdev.enable_device_mem()?;
 
