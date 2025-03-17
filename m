@@ -1,99 +1,148 @@
-Return-Path: <linux-kernel+bounces-564143-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 914D2A64E57
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 13:15:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BB2ECA64E49
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 13:13:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B36747A213D
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 12:14:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4F0177A7190
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 12:12:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 031FB23956A;
-	Mon, 17 Mar 2025 12:15:21 +0000 (UTC)
-Received: from smtp-42ab.mail.infomaniak.ch (smtp-42ab.mail.infomaniak.ch [84.16.66.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B06DC23770B;
+	Mon, 17 Mar 2025 12:08:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ND4sN0Kv"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CED021DE2C8
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 12:15:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE9FE238154
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 12:08:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742213720; cv=none; b=U7AJsuyWorxKIV9hijPJcwbimhInWlQns3zXvttbPPTHUOKm4wdSErQTAdq6ciLf1kV/xuczIOCzfZgijBtmIeSlZCOr8LgjFoHin1JRUP210VI+SbFWbg+4DIjbeULVxTnWJT7QkAO2ww5dLtQOOJLnww1+ACcPFETLI3r/CDA=
+	t=1742213331; cv=none; b=oMqNyWizTRaAEReHS792w3ye4ZKeUaPKSXTJWYgyR3XmyIAjLXqTtn4YDKN3fbdqu6BqoZL9NRd6L6XXzyaIqeQeFLegzhsEoJQmFD+DZJPm+pwbTWEgTHKr5DYV4fHxMfp1Ll+yl8c5snngoys666ihrft8bFMyg3HoOoQ/Ig4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742213720; c=relaxed/simple;
-	bh=/oKMHI9YC9MRdlj5nmGBWbuCG0en5++8+L33Q/IxEDA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=VQZMo2vtGd+yeTwA2kq9TrmJKkz/81mAkcgclGZSstIVoDByaZEmG0sVhKz7ixHKl43dDTqpC41cBIM+fNzLsYlN4yiQn+qKNS2+FzVg7opR4JPexfqRtCRpXwNdMBxVAfc1wCLe4Fo186zifTFLSHlwQm14Pm8T2ot+zdSxu4A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=0leil.net; spf=pass smtp.mailfrom=0leil.net; arc=none smtp.client-ip=84.16.66.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=0leil.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=0leil.net
-Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4ZGYd93NZQzLqM;
-	Mon, 17 Mar 2025 13:07:41 +0100 (CET)
-Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4ZGYd86bNTzKxM;
-	Mon, 17 Mar 2025 13:07:40 +0100 (CET)
-From: Quentin Schulz <foss+kernel@0leil.net>
-Date: Mon, 17 Mar 2025 13:07:27 +0100
-Subject: [PATCH 2/2] arm64: dts: rockchip: Enable HDMI audio output for
- RK3588 Tiger Haikou
+	s=arc-20240116; t=1742213331; c=relaxed/simple;
+	bh=9iXfixuSBDIc78RgUMbLHrK4yHUAjQR8XzDPw1h7zFc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=AMH7O74OKkM2eRjNPklJ17IbomNtXtQVqhFXM5VbreMmKu5cxZpeLx3+i5qpqirb2Z8ERFXFyZ4V3DJbgyZQZLGtohgKSO81UbJgAK3O7U3JK3LAHZlBMwaZlAKxgiDzKnazrNUECUzrlcHd7YyLjDU5IQrCQ/K5AdVaZb8FvOM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=ND4sN0Kv; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-54957f0c657so4485109e87.0
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 05:08:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1742213327; x=1742818127; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=U/ODjBc7H+F36djhBChv/kX744H5zY7HbwroUiftCms=;
+        b=ND4sN0KvKt2NO7Udv7yulD0U9AgN6fTlKE6En/a7iQaif0YTVlApTxTTzsI4K5SALc
+         sz1xkLrhqh6F9TOhqXD5as5m3h0A7m42G2bqVY5vuMU9FltSJzCrpL/dLx/DYg9Ls1W4
+         QCgkduJoH9RnmEZJKiDl6AfMiv6cKMr8D6/nc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742213327; x=1742818127;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=U/ODjBc7H+F36djhBChv/kX744H5zY7HbwroUiftCms=;
+        b=sUhHZ3YBZVK1H+HtVE7cf3yYiKBAHDOwYNrHyXYL+CID2WhKitdlirfeRxJz2ecD9/
+         hzUksgpf3GQbbsFGenITHZincQw8+nFjQnwD6QiKCKPfE5zmDY06gTnH99vDg8qsKZbb
+         Y3oMGqlBXIJQ0ixaUZwiTLMCpgpizwBp1tVhoAVzgrq5GKkkALyuLvmRd8SI7zoy34az
+         x26i1S3QGe9VvZNFlnkciIcaLnb0bBXqWenZAPNUn+HhgqeYRIFA62ja56nvaLunERjw
+         +AO75OsjKT7hBYG6y7uarsG5rz6S+Tj1+BfTUfNeFCZmTw+3/QlWo/CMrybSiv5ldtya
+         H00g==
+X-Forwarded-Encrypted: i=1; AJvYcCXC40ZZnBj87Zh3fGMHN5+zU60ZN11hnYV/fuEcKa+xGU4arGZ4GTsM7W5w6enWkpbatkzILQo+cwzuDxQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YysJzSFwb0MPMsZBk4D+FHc+/YBmaQF86yd5N9db5wTJOpjaIxc
+	3A7MBMGYBRiEjdVTP1gDdvHpErLbAQdvpTHie/C078OJTP8HClcUF/mbtvicNnWzrkdnssY1oDQ
+	=
+X-Gm-Gg: ASbGncvOW86iEuIYhgse/Ozag+2BUBB8IX3akxlx9np2PfN0a7c5FO+jpukz05nClFz
+	vM9teZElq/pEKiRCy3tUNcwk/+kZXbK9cyaNyxPCQ4Qbqv6VsKxQw3eJZX11d0BEC8dWkkC5zYa
+	corsFh2fIzsyVBIJ3PKsd3+sBLyIhNuxkxCyeQVEVvAUMo4poCOfZ4zQE9w+OFfu+1owh4fEL55
+	QeE4jO5sbr5KzyP4Aq04Hb8AOkn80VzdYPlW/X4mVxuvi6vX/rOb86emaEugPIzkwRq3UbTqjsT
+	cAgHUDlfe0xlLUjyzCnUP5voQXlu0ayJWC0IEk/H/DHCMzlJgKUvrWIK3yzp3yWL3FB+AcRz3LK
+	R3tEKxH+LkZPLFvxClGrC8w==
+X-Google-Smtp-Source: AGHT+IEkRCkvihwVwM9OOGzq4w18s0KCWhc+AWAqz3MmVu5NKJa8UIsYD0Z7DT+kw8yDv/r36NaFJg==
+X-Received: by 2002:a05:6512:3c8a:b0:549:929c:e896 with SMTP id 2adb3069b0e04-549ba3ee5cdmr8391917e87.11.1742213326844;
+        Mon, 17 Mar 2025 05:08:46 -0700 (PDT)
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com. [209.85.208.177])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-549ba7bef04sm1306366e87.57.2025.03.17.05.08.46
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 17 Mar 2025 05:08:46 -0700 (PDT)
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-30bee278c2aso56733151fa.0
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 05:08:46 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV6xrYZySgYybs/oW+i76XUwfNq2yodToF+1aTjULFwMqPeGG4TomFA/XjDXZmXBMeaFRrx03SScMJgPk4=@vger.kernel.org
+X-Received: by 2002:a05:6512:6ca:b0:549:74a7:12ce with SMTP id
+ 2adb3069b0e04-549ba3ef133mr7614324e87.14.1742213325707; Mon, 17 Mar 2025
+ 05:08:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250317-tsd-rk3588-hdmi-audio-v1-2-0b8ceb9597a6@cherry.de>
-References: <20250317-tsd-rk3588-hdmi-audio-v1-0-0b8ceb9597a6@cherry.de>
-In-Reply-To: <20250317-tsd-rk3588-hdmi-audio-v1-0-0b8ceb9597a6@cherry.de>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Quentin Schulz <quentin.schulz@cherry.de>
-X-Mailer: b4 0.14.2
-X-Infomaniak-Routing: alpha
+References: <20250314213859.3543936-1-arnd@kernel.org>
+In-Reply-To: <20250314213859.3543936-1-arnd@kernel.org>
+From: Ricardo Ribalda <ribalda@chromium.org>
+Date: Mon, 17 Mar 2025 13:08:33 +0100
+X-Gmail-Original-Message-ID: <CANiDSCuqdy2UrhZ8_erFO4kjXwt_bvQgmrqmPZmrw4xaRwJBrA@mail.gmail.com>
+X-Gm-Features: AQ5f1JoUk-w0vqc9PkqG9r76DrJtcTvoYlEAHfsnxS0XUCOOMftIXJoRmJY_6vM
+Message-ID: <CANiDSCuqdy2UrhZ8_erFO4kjXwt_bvQgmrqmPZmrw4xaRwJBrA@mail.gmail.com>
+Subject: Re: [PATCH] media: vivid: fix FB dependency
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: Hans Verkuil <hverkuil@xs4all.nl>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Slawomir Rosek <srosek@google.com>, Arnd Bergmann <arnd@arndb.de>, linux-media@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-From: Quentin Schulz <quentin.schulz@cherry.de>
+Thanks for the patch!
 
-HDMI audio is available on the RK3588 Tiger Haikou HDMI TX port, so
-let's enable it.
+Just out of curiosity, how did you found this? make randconfig?
 
-Signed-off-by: Quentin Schulz <quentin.schulz@cherry.de>
----
- arch/arm64/boot/dts/rockchip/rk3588-tiger-haikou.dts | 8 ++++++++
- 1 file changed, 8 insertions(+)
+Best regards!
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588-tiger-haikou.dts b/arch/arm64/boot/dts/rockchip/rk3588-tiger-haikou.dts
-index a3d8ff647839a900ece2ca9113754c7b20605641..caa43d1abf179365d37a244ea374b0dae39b0433 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588-tiger-haikou.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3588-tiger-haikou.dts
-@@ -189,6 +189,10 @@ hdmi0_out_con: endpoint {
- 	};
- };
- 
-+&hdmi0_sound {
-+	status = "okay";
-+};
-+
- &hdptxphy0 {
- 	status = "okay";
- };
-@@ -228,6 +232,10 @@ &i2s3_2ch {
- 	status = "okay";
- };
- 
-+&i2s5_8ch {
-+	status = "okay";
-+};
-+
- &pcie30phy {
- 	status = "okay";
- };
+On Fri, 14 Mar 2025 at 22:39, Arnd Bergmann <arnd@kernel.org> wrote:
+>
+> From: Arnd Bergmann <arnd@arndb.de>
+>
+> It's not enough to have a dependency on CONFIG_FB, as that can be in
+> a loadable module when vivid itself is builtin:
+>
+> drivers/media/test-drivers/vivid/vivid-osd.o: in function `vivid_fb_init':
+> vivid-osd.c:(.text+0xdc0): undefined reference to `fb_alloc_cmap'
+> vivid-osd.c:(.text+0xe26): undefined reference to `register_framebuffer'
+>
+> Change the dependency to only allow configurations that can be built,
+> but change the FB to FB_CORE so this is also possible when using
+> DRM with FB compatibility rather than full fbdev.
+>
+> Fixes: 20889ddede38 ("media: vivid: Introduce VIDEO_VIVID_OSD")
+Reviewed-by: Ricardo Ribalda <ribalda@chromium.org>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  drivers/media/test-drivers/vivid/Kconfig | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/media/test-drivers/vivid/Kconfig b/drivers/media/test-drivers/vivid/Kconfig
+> index e95edc0f22bf..cc470070a7a5 100644
+> --- a/drivers/media/test-drivers/vivid/Kconfig
+> +++ b/drivers/media/test-drivers/vivid/Kconfig
+> @@ -32,7 +32,8 @@ config VIDEO_VIVID_CEC
+>
+>  config VIDEO_VIVID_OSD
+>         bool "Enable Framebuffer for testing Output Overlay"
+> -       depends on VIDEO_VIVID && FB
+> +       depends on VIDEO_VIVID && FB_CORE
+> +       depends on VIDEO_VIVID=m || FB_CORE=y
+>         default y
+>         select FB_IOMEM_HELPERS
+>         help
+> --
+> 2.39.5
+>
+
 
 -- 
-2.48.1
-
+Ricardo Ribalda
 
