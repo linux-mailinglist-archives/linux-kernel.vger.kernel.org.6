@@ -1,94 +1,162 @@
-Return-Path: <linux-kernel+bounces-564777-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564778-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CB5BA65A7D
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 18:21:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DFACA65A9A
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 18:24:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A325217E838
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 17:20:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51538887898
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 17:20:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E61771A2846;
-	Mon, 17 Mar 2025 17:19:26 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2990C18C337;
-	Mon, 17 Mar 2025 17:19:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 431531ADFE3;
+	Mon, 17 Mar 2025 17:19:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b3mS6RQk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9799F1553A3;
+	Mon, 17 Mar 2025 17:19:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742231966; cv=none; b=p0oryGuD3MOi0XjPfBg3l+fYEtTM9vJvsxBCQdRAuhHoWMtkilwLFFZEMljq2sQ9Z+zyk5Ve/8VxT9ylHtWIXejJEUHLwtzwmT0y0vlWCaKHXW2FFOaSk7Sz13uh+k39cCaUHX5SHPae+l5zV7bHQChmTIra2lv3zyRC674ORyE=
+	t=1742231976; cv=none; b=CrThQh8ad3N6ylzKAAMpSdT3lJr9lkQ7KK3NY4izlZV42xSV6F4vO4XhUozFdT9sf4jpLJKKofUtFHIE2ojpASRPQ2l2ZFhd5BaGhqJNQWb7GngxJrPwUal7KWILnN898OjH7Ma8V+yhpZDHFX4Br1vwK+z6RTBx1c00Qn1Pac0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742231966; c=relaxed/simple;
-	bh=5jmeB7vnHM3vvmb1jjxtClMgR/j7JV3WOaMlfUmP5Lk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dJr1r50491I/hQBld7rJjHhU09dDvMKI3hELagRDcvHCUxvRcBsbrWcXePLvItp/Y7q4dzQLtcG/YxgdZ6+vydC5yCT4bpkth32fTNbND81D+3Zeszi6JSUvJWe633qEKvp9CVVSXv5XytmmRiPGyunD8isYxyqRPtFmbPzg1sw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com; spf=none smtp.mailfrom=foss.arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=foss.arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7465F13D5;
-	Mon, 17 Mar 2025 10:19:33 -0700 (PDT)
-Received: from bogus (e133711.arm.com [10.1.196.55])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 919983F694;
-	Mon, 17 Mar 2025 10:19:23 -0700 (PDT)
-Date: Mon, 17 Mar 2025 17:19:20 +0000
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: Ard Biesheuvel <ardb@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Sudeep Holla <sudeep.holla@arm.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-efi@vger.kernel.org
-Subject: Re: [PATCH 3/9] efi: Remove redundant creation of the "efivars"
- platform device
-Message-ID: <Z9hZmOiVPUqfqqsY@bogus>
-References: <20250317-plat2faux_dev-v1-0-5fe67c085ad5@arm.com>
- <20250317-plat2faux_dev-v1-3-5fe67c085ad5@arm.com>
- <CAMj1kXEejZr2RCUJ59HfLwxQ1zFnWqj7vJ_ObrPTztE5s2UUcQ@mail.gmail.com>
+	s=arc-20240116; t=1742231976; c=relaxed/simple;
+	bh=ZEAT6RFypcPN7L/ki3+46/Vv2kxpEG6Ybgc4eh+vFoo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QtGgay0RFJqrYeFUrtwtNTf7KxPg76i0riomZPf42sbEAYYtinvHbUM+PhFKrIIH3EVJxJJaoxvV8Ai02Xun1zzz1e45fu6tnKETYGm1Sxw00C3NCCzenQHNNCuMKBrsJDL4dgZ5wlQ5mnJ1sJkNLtaW9pr9Ta7JijwGIimZ4og=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b3mS6RQk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1EA0FC4CEEC;
+	Mon, 17 Mar 2025 17:19:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742231976;
+	bh=ZEAT6RFypcPN7L/ki3+46/Vv2kxpEG6Ybgc4eh+vFoo=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=b3mS6RQkrtJGb10kNAUFbhlWCr7o83NPgrxmqdG4GEt9eclcKu/5/TLcZhhasdTf+
+	 4elpQdWsr05S02wW2h2CmXf6SiEp7/XhMh2Lg+9XT4bfKVfyR4s/0brKM0ViR6AgXw
+	 CZuAYwHQiA97ce6tMAPe9QM6J0XpUcRYS4V6Z46NaoISE21+hSrx3lPFSmwprM9D82
+	 zFP/vnmHpfZx+aVrrJW+m1NhNzK2hpSQNhI8G3l5BuZqHO9YNQXvVJOcOhpTzuy6/m
+	 bSLpC7oMTRB5Kt5eO3FfJAsPQfm1LR8NYS+sIQYO4oD2lsDPInaaZhwBlZuMn/U2Pa
+	 stpywV2sloKtg==
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5dc89df7eccso7884657a12.3;
+        Mon, 17 Mar 2025 10:19:36 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWzPCtddxIjYnYGQ73JLtRbeNYSy7zL/eB8ETulWYibjOQJANrrxnhbazy+Pz5ESLse9JBpmbyKOeRFrn/V6NA=@vger.kernel.org, AJvYcCXbKw7nWXbas2myBdRmSznvbFks4izJAGTSpwSZJdW+/ljUVVY3g/wB3GYslNRiVPTnXLy6aEHHWcX9sc4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzCXdmMMejNGq+GGWErPHfj/jNNfjO5dAbVlzN+X93cZR+uP4zY
+	djzscVwNhs1T/6Hmtrn8EKt+q+KqNAv4og0/1siqa5XPuaYew9aYN42r7x5nzaF+aFT80BLNhvl
+	R3pPym3GsMxfpwz50Aw+6V0p24g==
+X-Google-Smtp-Source: AGHT+IHci5hAASurc/lxodNyDclZIUpIuFlvwsFb/ZFbzWYKAntadGtYvqA1Ubo84Yz/rBl32SRf+JP56TiMbCS2Sng=
+X-Received: by 2002:a05:6402:4301:b0:5e5:bcd6:4ad8 with SMTP id
+ 4fb4d7f45d1cf-5e89f24c63fmr12982673a12.9.1742231974609; Mon, 17 Mar 2025
+ 10:19:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMj1kXEejZr2RCUJ59HfLwxQ1zFnWqj7vJ_ObrPTztE5s2UUcQ@mail.gmail.com>
+References: <20250314233831.2535170-1-robh@kernel.org> <CAOiHx=mr+MFE_7Krue4BPrtvtyJW0pWUBXCrqbViVH5oOTT2Hw@mail.gmail.com>
+In-Reply-To: <CAOiHx=mr+MFE_7Krue4BPrtvtyJW0pWUBXCrqbViVH5oOTT2Hw@mail.gmail.com>
+From: Rob Herring <robh@kernel.org>
+Date: Mon, 17 Mar 2025 12:19:23 -0500
+X-Gmail-Original-Message-ID: <CAL_Jsq+L2W-=4m2c2zAKNAP9vsrbZkOBHUYqPevcdM9L_3xHtA@mail.gmail.com>
+X-Gm-Features: AQ5f1Jp7GjAUd9blnwfMaOZafCeEHVPVcCYh5g6hLxjUn1VGcrND5MvV8CKr6T0
+Message-ID: <CAL_Jsq+L2W-=4m2c2zAKNAP9vsrbZkOBHUYqPevcdM9L_3xHtA@mail.gmail.com>
+Subject: Re: [PATCH v2] wifi: ath10k: Drop of_get_property() call
+To: Jonas Gorski <jonas.gorski@gmail.com>
+Cc: Kalle Valo <kvalo@kernel.org>, Jeff Johnson <jjohnson@kernel.org>, 
+	linux-wireless@vger.kernel.org, ath10k@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Mar 17, 2025 at 06:06:24PM +0100, Ard Biesheuvel wrote:
-> On Mon, 17 Mar 2025 at 11:13, Sudeep Holla <sudeep.holla@arm.com> wrote:
+On Sat, Mar 15, 2025 at 5:07=E2=80=AFAM Jonas Gorski <jonas.gorski@gmail.co=
+m> wrote:
+>
+> Hi,
+>
+> On Sat, Mar 15, 2025 at 12:39=E2=80=AFAM Rob Herring (Arm) <robh@kernel.o=
+rg> wrote:
 > >
-> > The "efivars" platform device is created but never tracked or used,
-> > as there is no driver associated with it. Since this device serves
-> > no functional purpose, removing its creation without affecting any
-> > functionality.
+> > There's no need to check the property presence and length before callin=
+g
+> > of_property_read_u8_array() as it will return an error if the property
+> > is missing or the length is too small. The return errno doesn't matter
+> > to the caller, so no change in behavior there.
 > >
-> > Cc: Ard Biesheuvel <ardb@kernel.org>
-> > Cc: linux-efi@vger.kernel.org
-> > Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+> > Change of_property_read_u8_array() to of_property_read_variable_u8_arra=
+y()
+> > as the former allows properties to be longer than the requested length.
+> > Now the property has to be the exact length requested as the removed
+> > check required.
+> >
+> > This part of a larger effort to remove DT functions like
+> > of_get_property() and of_find_property() which return raw DT data
+> > having no reference counting.
+> >
+> > Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 > > ---
-> >  drivers/firmware/efi/efi.c | 1 -
-> >  1 file changed, 1 deletion(-)
+> > v2:
+> >  - Add check that cal_data_len is non-zero
+> > ---
+> >  drivers/net/wireless/ath/ath10k/core.c | 24 +++++++-----------------
+> >  1 file changed, 7 insertions(+), 17 deletions(-)
 > >
-> > diff --git a/drivers/firmware/efi/efi.c b/drivers/firmware/efi/efi.c
-> > index 7309394b8fc98cf7a3424af209b752f0251c8c89..eec173cb1f398d3b4f28b42c917e50e1728dc277 100644
-> > --- a/drivers/firmware/efi/efi.c
-> > +++ b/drivers/firmware/efi/efi.c
-> > @@ -446,7 +446,6 @@ static int __init efisubsys_init(void)
-> >                 error = efivar_ssdt_load();
-> >                 if (error)
-> >                         pr_err("efi: failed to load SSDT, error %d.\n", error);
-> > -               platform_device_register_simple("efivars", 0, NULL, 0);
+> > diff --git a/drivers/net/wireless/ath/ath10k/core.c b/drivers/net/wirel=
+ess/ath/ath10k/core.c
+> > index b3294287bce1..47206b171aa5 100644
+> > --- a/drivers/net/wireless/ath/ath10k/core.c
+> > +++ b/drivers/net/wireless/ath/ath10k/core.c
+> > @@ -1889,39 +1889,29 @@ static int ath10k_download_cal_file(struct ath1=
+0k *ar,
+> >  static int ath10k_download_cal_dt(struct ath10k *ar, const char *dt_na=
+me)
+> >  {
+> >         struct device_node *node;
+> > -       int data_len;
+> > +       int data_len =3D ar->hw_params.cal_data_len;
+> >         void *data;
+> >         int ret;
+> >
+> >         node =3D ar->dev->of_node;
+> > -       if (!node)
+> > +       if (!node || !data_len)
+> >                 /* Device Tree is optional, don't print any warnings if
+> >                  * there's no node for ath10k.
+> >                  */
+> >                 return -ENOENT;
+> >
+> > -       if (!of_get_property(node, dt_name, &data_len)) {
+> > -               /* The calibration data node is optional */
+> > -               return -ENOENT;
+> > -       }
+> > -
+> > -       if (data_len !=3D ar->hw_params.cal_data_len) {
+> > -               ath10k_warn(ar, "invalid calibration data length in DT:=
+ %d\n",
+> > -                           data_len);
+> > -               ret =3D -EMSGSIZE;
+> > -               goto out;
+> > -       }
+> > -
+> >         data =3D kmalloc(data_len, GFP_KERNEL);
+> >         if (!data) {
+> >                 ret =3D -ENOMEM;
+> >                 goto out;
 > >         }
 > >
-> >         BLOCKING_INIT_NOTIFIER_HEAD(&efivar_ops_nh);
-> >
+> > -       ret =3D of_property_read_u8_array(node, dt_name, data, data_len=
+);
+> > +       ret =3D of_property_read_variable_u8_array(node, dt_name, data,=
+ data_len, data_len);
+> >         if (ret) {
 >
-> IIRC the efi-pstore module autoloads based on this platform device
+> of_property_read_u8_array() returns 0 on success, but
+> of_property_read_variable_u8_array() returns the number of elements
+> read on success, so this check needs to be ret < 0 now.
 
-Indeed I see now, thanks. My bad grep skills didn't work well to catch
-this. I will update accordingly.
+Indeed. Thanks for catching that.
 
--- 
-Regards,
-Sudeep
+Rob
 
