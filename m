@@ -1,44 +1,47 @@
-Return-Path: <linux-kernel+bounces-563741-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563739-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5FEAA6477B
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:32:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB8B1A6477D
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:32:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 05C59165355
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 09:32:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38B0E3A9C3E
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 09:31:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A836221712;
-	Mon, 17 Mar 2025 09:32:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF97F167DB7;
+	Mon, 17 Mar 2025 09:31:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="DCdrh+Hw"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA24B199252;
-	Mon, 17 Mar 2025 09:32:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dnOBNE9w"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D2187F9
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 09:31:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742203947; cv=none; b=hb6XCwQ+eKsX6SO0Y17eu0Ncy2ZAOUZS169mGmHgsTQmK0YU8YMN0zH84wwmRmppEYD3DZz9G239+BphEbrJO6un8gSnlc/BA4RhEVl5LYzPVHb+sbtbp3+f8rs78zsfsO5sC/wYdQuLSFXeSBGt3Dg3PIjb6YA9a4ZjXyaaLu4=
+	t=1742203891; cv=none; b=bN47/mM970uc8q++2Q+Bu7x6Y2mIvbwAuoLASCYu/RlCI/kFgQ9z/bJKLLTvUa+gA6tjVwQeFBFzewKmdN7D7pXPt+u88wfRK3jtQVI94on1rNvmiK235qwgG/KZVJ/5vT0C5tX9JpHMUU0Zciw43udQu8+rVtPcaItlTpMVnUU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742203947; c=relaxed/simple;
-	bh=2OBI8WT+HrVc6aiOA/QiP6ctl2nuMkPjt2+k3QVyBHs=;
+	s=arc-20240116; t=1742203891; c=relaxed/simple;
+	bh=Y256Q4jqz8MDGzOVJMX0wIqeLYRaksOtqdyFTcfY/t0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uEbmJlmZCprJJRmgidQMmVQc1sZBn3QIqMYxVHJG9H+NvO9/b9J9yq+E3rI5FU+ktUACrNSR0otF5/h36OnT410OhT0Uh8acx1gEcOSBEakJuefDS+W2BWyq5Mslf63pyhLfwG3U44zamymhjvAuBVbu+tDv54cWd06xBn3xnPU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=DCdrh+Hw; arc=none smtp.client-ip=220.197.31.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:
-	Content-Type; bh=2OBI8WT+HrVc6aiOA/QiP6ctl2nuMkPjt2+k3QVyBHs=;
-	b=DCdrh+Hw9F9cPsK+5KvPxLv49ZrwwoXqkU+WKe33KHAx4vxX020ZKYCqLMwblQ
-	COiB/IxvYw27jHuJmN45BFgSi8+8rXgu6j79mYQC9hqe8osuhSo9W72JqlrqCmut
-	DttHDy5FuALx8+JwomHxcKU5TrxE+cmgz0kjahLFveeMk=
-Received: from [192.168.22.248] (unknown [])
-	by gzga-smtp-mtada-g1-2 (Coremail) with SMTP id _____wDnQvXm69dnxrNHTQ--.29714S2;
-	Mon, 17 Mar 2025 17:31:20 +0800 (CST)
-Message-ID: <38cd7b81-4ca7-409c-bb1f-3c1cddfef0d8@163.com>
-Date: Mon, 17 Mar 2025 17:31:18 +0800
+	 In-Reply-To:Content-Type; b=ZFMXc7JCYW10g0Kfy8sxhpxmmuynrpLf0mQBypKEjj/IQ52kRAQqBjo9mrT4y02x/FT0YZ3FHthiC8SkRdSvndTQtUxmaC+lStwl/fYlc8mX2LQXOrYYYbAdxG7zqp8f6EEqRGjfk0soGpUXJ8853ODnXCcmE7n+HcB9YTVSpK8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dnOBNE9w; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A51A7C4CEE3;
+	Mon, 17 Mar 2025 09:31:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742203890;
+	bh=Y256Q4jqz8MDGzOVJMX0wIqeLYRaksOtqdyFTcfY/t0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=dnOBNE9wdZNa9zaNAVB4AKHNK+tss4bTW82e58N/oJRQEbgHY9gKiSD783Ib72oVk
+	 N2UaKlVBg54O93246mA44WE1qxVLwdwoEYW0g9qonls1FXPJLoHYTxCz6ZpIZGoB5S
+	 cYSj9utw2rrZDSs6zDawQeHGtQsG4JstssnDjHcbtGOO50/vMPqRKOtx4af/PTtKyK
+	 khuhdHoKv77jnaiOltFAVU4MKN/PZ6SgkQ1zE2epXkU9UFnv4gRxXmxZi14tCfEIbG
+	 qF6n9K7maScog4xJFez9oyLs0WUOINf98pvCUoMgDNmanVFHTCAJ7BH/rpCo3VPprN
+	 ZwCey9tdgaPDw==
+Message-ID: <5276ce75-1256-4880-b8fc-fa195309eb25@kernel.org>
+Date: Mon, 17 Mar 2025 10:31:25 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -46,95 +49,68 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] fs/proc/page: Refactoring to reduce code duplication.
-To: David Hildenbrand <david@redhat.com>, akpm@linux-foundation.org
-Cc: willy@infradead.org, ran.xiaokai@zte.com.cn, dan.carpenter@linaro.org,
- linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- Liu Ye <liuye@kylinos.cn>
-References: <20250317080118.95696-1-liuyerd@163.com>
- <1c7018f1-fdc5-4fc6-adc7-fae592851710@redhat.com>
- <2ecdf349-779f-43d5-ae3d-55d973ea50e9@163.com>
- <4a336393-6cf3-4053-8137-c6d724c3cb5f@redhat.com>
+Subject: Re: [PATCH] nvme: replace max(a, min(b, c)) by clamp(b, a, c)
+To: shao.mingyin@zte.com.cn, hch@lst.de
+Cc: sagi@grimberg.me, kch@nvidia.com, linux-nvme@lists.infradead.org,
+ linux-kernel@vger.kernel.org, yang.tao172@zte.com.cn,
+ yang.yang29@zte.com.cn, xu.xin16@zte.com.cn
+References: <20250317170938569jgM2gAWy39rgQQbnOh0Vu@zte.com.cn>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Liu Ye <liuyerd@163.com>
-In-Reply-To: <4a336393-6cf3-4053-8137-c6d724c3cb5f@redhat.com>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
+ QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
+ gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
+ /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
+ iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
+ VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
+ 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
+ xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
+ eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
+ AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
+ MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
+ Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
+ ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
+ vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
+ oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
+ lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
+ t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
+ uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
+ 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
+ 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
+In-Reply-To: <20250317170938569jgM2gAWy39rgQQbnOh0Vu@zte.com.cn>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wDnQvXm69dnxrNHTQ--.29714S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7AF4UZr4DCFWftry8tw1xAFb_yoW8ur15pF
-	43ta17Aw48X3sxCr1xtws5Z3s0y395KF48Xr47Jw1Iqa4qyrn3CFy2yF1F9ry8tryUAr1x
-	Xa1jyF9IkF1YyFUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jBa0PUUUUU=
-X-CM-SenderInfo: 5olx5vlug6il2tof0z/1tbiEAkTTGfX6m0iOAAAsr
+Content-Transfer-Encoding: 7bit
 
+On 17/03/2025 10:09, shao.mingyin@zte.com.cn wrote:
+> Dear best,
+> Please ignore this patch. We will submit a v2 patch instead.
+No. Instead wait, read feedback given to all of your 60 @zte.com.cn
+patches and implement all this feedback. Then send 1, 2 or 3 patches for
+entire zte.com.cn to see how maintainers will respond.
 
-在 2025/3/17 17:18, David Hildenbrand 写道:
-> On 17.03.25 10:13, Liu Ye wrote:
->>
->> 在 2025/3/17 16:56, David Hildenbrand 写道:
->>> On 17.03.25 09:01, Liu Ye wrote:
->>>> From: Liu Ye <liuye@kylinos.cn>
->>>>
->>>> The function kpageflags_read and kpagecgroup_read is quite similar
->>>> to kpagecount_read. Consider refactoring common code into a helper
->>>> function to reduce code duplication.
->>>>
->>>> Signed-off-by: Liu Ye <liuye@kylinos.cn>
->>>> ---
->>>>    fs/proc/page.c | 158 ++++++++++++++++---------------------------------
->>>>    1 file changed, 50 insertions(+), 108 deletions(-)
->>>>
->>>> diff --git a/fs/proc/page.c b/fs/proc/page.c
->>>> index a55f5acefa97..f413016ebe67 100644
->>>> --- a/fs/proc/page.c
->>>> +++ b/fs/proc/page.c
->>>> @@ -37,19 +37,17 @@ static inline unsigned long get_max_dump_pfn(void)
->>>>    #endif
->>>>    }
->>>>    -/* /proc/kpagecount - an array exposing page mapcounts
->>>> - *
->>>> - * Each entry is a u64 representing the corresponding
->>>> - * physical page mapcount.
->>>> - */
->>>> -static ssize_t kpagecount_read(struct file *file, char __user *buf,
->>>> -                 size_t count, loff_t *ppos)
->>>> +static ssize_t kpage_read(struct file *file, char __user *buf,
->>>> +        size_t count, loff_t *ppos,
->>>> +        u64 (*get_page_info)(struct page *))
->>>
->>> Can we just indicate using an enum which operation to perform, so we can avoid having+passing these functions?
->>>
->> Like this? Good idea, I'll send a new patch later.
->>
->> enum kpage_operation {
->>      KPAGE_FLAGS,
->>      KPAGE_COUNT,
->>      KPAGE_CGROUP,
->> };
->>
->> static u64 get_page_info(struct page *page, enum kpage_operation op)
->> {
->>      switch (op) {
->>      case KPAGE_FLAGS:
->>          return stable_page_flags(page);
->>      case KPAGE_COUNT:
->>          return page_count(page);
->>      case KPAGE_CGROUP:
->>          return page_cgroup_ino(page);
->>      default:
->>          return 0;
->>      }
->> }
->
->
-> Likely it's best to inline get_page_info() into kpage_read() to just get rid of it.
->
->
-Thank you for your suggestion. I agree and will make the changes accordingly.
-
-Thanks,
-Liu Ye
-
-
-
+Best regards,
+Krzysztof
 
