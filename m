@@ -1,65 +1,57 @@
-Return-Path: <linux-kernel+bounces-564254-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564256-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CC36A65145
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 14:36:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A9C37A6514B
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 14:36:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A7A4176B78
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 13:35:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 75CC1176D25
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 13:35:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53E872405FC;
-	Mon, 17 Mar 2025 13:34:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AAD423F40A;
+	Mon, 17 Mar 2025 13:34:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OJzEmRXp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="DQssZf42"
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A710D156230;
-	Mon, 17 Mar 2025 13:34:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D64C4156230;
+	Mon, 17 Mar 2025 13:34:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742218454; cv=none; b=fIZA9hxxf1lXkhKBBqXc/uYP7YjqiucX5LrmMC/tEE+dZYSVT+arJPHGrfjK6qZnSJSfNLpY0qRdq9jWh7nrsVQsrHI+/VUWZ7AJQ91LfOoE2bhwBL6nltx6JTmh/mMdDRYLNyKRr4zDBSH3ARmKvke6+qBg/hoDnWjilfiPCmA=
+	t=1742218487; cv=none; b=OGKzYf4yjf3ktF7Cg6HvoQ/mxKPWpaRc9/IYEmsAKjbDAV0juwh8x5zR92+V/CP1MqUyiqF51DB785oKLL3SjH0ZrkbTCp0gNbY+0PivMxh22FVIUFOOvC47SY3JNMU4jovQobpu9Iu5f3BbREQhn+fiD1HYL3TiREdsJgjnipg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742218454; c=relaxed/simple;
-	bh=jKAJx1ca2J5NWV89rvPocdT0rc2DE0dwHLxgOYvhlUQ=;
+	s=arc-20240116; t=1742218487; c=relaxed/simple;
+	bh=CgszdGGeicl8iIr17lfG9jPPwh40ujTfjKZ3ZY6yZvQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I/sVLOg3TDQVk5rkjhwM+BrR20GpCJXaV6Zklvh902ArLt0zDQYUXSpuHIRNqeHGy9hD8z1ATcwD1bs+4+eISnQo05F2pwXP116Tgdi/i+7DW96LANgtuye7cRXn2vgzaT1B7fxgngxPm7xTuxGBMWvo2L1jiZBlHBBoX/NhXaY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OJzEmRXp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94A75C4CEE3;
-	Mon, 17 Mar 2025 13:34:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742218454;
-	bh=jKAJx1ca2J5NWV89rvPocdT0rc2DE0dwHLxgOYvhlUQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OJzEmRXpJzdO+0VOAAtkHB9n/GFpBL6GnbLZt5ZoBeZ9+EQujjHOTypd2n2NzYRO+
-	 09y8qAgg+CdOvTbWsS027tIhNbMit3wRWfqBwXhEOSd2KawEe8+ndd1zyqneNlNtLG
-	 V301MgIxoNN7GuIFw/yT/szIm29ZEMrnnRu/XYIitBDRxAXVReEEb9z9+Za3lEDpYY
-	 vXmMmwdXCsLMhfoUciV6hQD+GW5/9XT63nYY5IhVD2HzCBSRVZBxtxQnLetZ7/sQvf
-	 kLtLTAKkbU3IjgK5o7s/DIKKIjOLOY3roM6tlwaDkHiAcAyXJQ7BDprei+zF30RX30
-	 MXqDHYMvIWwng==
-Date: Mon, 17 Mar 2025 15:34:10 +0200
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: Stefano Garzarella <sgarzare@redhat.com>,
-	Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
-	x86@kernel.org, linux-kernel@vger.kernel.org,
-	Borislav Petkov <bp@alien8.de>, linux-integrity@vger.kernel.org,
-	Dov Murik <dovmurik@linux.ibm.com>,
-	Dionna Glaze <dionnaglaze@google.com>, linux-coco@lists.linux.dev,
-	James Bottomley <James.Bottomley@hansenpartnership.com>,
-	Claudio Carvalho <cclaudio@linux.ibm.com>,
-	Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Joerg Roedel <jroedel@suse.de>
-Subject: Re: [PATCH v3 4/4] x86/sev: register tpm-svsm platform device
-Message-ID: <Z9gk0jg1JLZY4Fk9@kernel.org>
-References: <20250311094225.35129-1-sgarzare@redhat.com>
- <20250311094225.35129-5-sgarzare@redhat.com>
- <7c35f370-f1f2-7100-3b78-b595e977e964@amd.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=g51j6yvOLJbMv0DpE1m97UIFy+RoJLQQNZ8g6pHnPiBE2rE2yrZAq6N5iDCi9YE7lwrZvDqjqG4of4urypQPe29DtsjGLjQiAxkGo8QzG0j2KS/c73MmniZVKoOybpzq9pJZ5MeVsbjbs0iSM3Zl/C5Enzas23iFlzye41QFiqs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=DQssZf42; arc=none smtp.client-ip=217.70.183.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id EE8D9443EE;
+	Mon, 17 Mar 2025 13:34:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1742218483;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=p089Kuapj5i1IJvwDJhMGH1sE+tEgq9pwXD682PKXmE=;
+	b=DQssZf42rNNnb0k6b/qOWY+9eSOCtnoOA+mK0Aaxe0aRB6lc8SBYVe2RZe8CtSp2uxEiID
+	SjI6taDZn1UGTrlrp8b2w2ka+evxeNSi1rGDMN31JSg3y58w3cpObfjQpuW48jvBD4GbAz
+	UFeM6Lk5PBSbnoZshfRIAy5eXhq2jJkfysqQowb5wgwOrrYi7R9IvVcWN9XLZWIF1JvG2G
+	END9hBUYkjpR3di6C6lwva7EkmTRTXxMAHkJvttmyVxT3OJA4Skw9JZvx2t1VnBR++vN5k
+	r5KPkk3CtOsidzazo1X5UrKtqml5DZq9jDn+lDDe1dblx7sjoAYWRcPovpoVLw==
+Date: Mon, 17 Mar 2025 14:34:42 +0100
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Johan Hovold <johan@kernel.org>
+Cc: Johan Hovold <johan+linaro@kernel.org>, linux-arm-msm@vger.kernel.org,
+	linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] rtc: pm8xxx: switch to devm_device_init_wakeup
+Message-ID: <20250317133442c86d4728@mail.local>
+References: <20250317111312.1518349-1-alexandre.belloni@bootlin.com>
+ <Z9gOT5WBaGkBZjl9@hovoldconsulting.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,62 +60,62 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <7c35f370-f1f2-7100-3b78-b595e977e964@amd.com>
+In-Reply-To: <Z9gOT5WBaGkBZjl9@hovoldconsulting.com>
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddufeelieehucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeetlhgvgigrnhgurhgvuceuvghllhhonhhiuceorghlvgigrghnughrvgdrsggvlhhlohhnihessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepgeeiudeuteehhfekgeejveefhfeiudejuefhgfeljefgjeegkeeujeeugfehgefgnecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppedvrgdtudemvgdtrgemvdgumeeifeejtdemjeekvgdtmegttdgvkeemvdektdeimeekrggtieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemvgdtrgemvdgumeeifeejtdemjeekvgdtmegttdgvkeemvdektdeimeekrggtiedphhgvlhhopehlohgtrghlhhhoshhtpdhmrghilhhfrhhomheprghlvgigrghnughrvgdrsggvlhhlohhnihessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohephedprhgtphhtthhopehjohhhrghnsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehjohhhrghnodhlihhnrghroheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqrghrmhdqm
+ hhsmhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhrthgtsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-GND-Sasl: alexandre.belloni@bootlin.com
 
-On Fri, Mar 14, 2025 at 11:56:31AM -0500, Tom Lendacky wrote:
-> On 3/11/25 04:42, Stefano Garzarella wrote:
-> > SNP platform can provide a vTPM device emulated by SVSM.
+On 17/03/2025 12:58:07+0100, Johan Hovold wrote:
+> On Mon, Mar 17, 2025 at 12:13:11PM +0100, alexandre.belloni@bootlin.com wrote:
+> > From: Alexandre Belloni <alexandre.belloni@bootlin.com>
 > > 
-> > The "tpm-svsm" device can be handled by the platform driver added
-> > by the previous commit in drivers/char/tpm/tpm_svsm.c
-> > 
-> > The driver will call snp_svsm_vtpm_probe() to check if SVSM is
-> > present and if it's support the vTPM protocol.
-> > 
-> > Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
+> > Switch to devm_device_init_wakeup to avoid a possible memory leak as wakeup
+> > is never disabled.
+> 
+> You should probably mention that this was due to a bad merge. The
+> no-alarm patch moved the previous call to device_init_wakeup() into the
+> conditional, but you had switched it to use devres so we ended up with
+> two calls when you applied the patch.
+> 
+> Unless you want to and can rebase your tree.
+> 
+> > Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 > > ---
-> >  arch/x86/coco/sev/core.c | 8 ++++++++
-> >  1 file changed, 8 insertions(+)
+> >  drivers/rtc/rtc-pm8xxx.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
 > > 
-> > diff --git a/arch/x86/coco/sev/core.c b/arch/x86/coco/sev/core.c
-> > index 2166bdff88b7..a2383457889e 100644
-> > --- a/arch/x86/coco/sev/core.c
-> > +++ b/arch/x86/coco/sev/core.c
-> > @@ -2664,6 +2664,11 @@ static struct platform_device sev_guest_device = {
-> >  	.id		= -1,
-> >  };
+> > diff --git a/drivers/rtc/rtc-pm8xxx.c b/drivers/rtc/rtc-pm8xxx.c
+> > index c6241a0c26e9..70cbac76147b 100644
+> > --- a/drivers/rtc/rtc-pm8xxx.c
+> > +++ b/drivers/rtc/rtc-pm8xxx.c
+> > @@ -647,7 +647,7 @@ static int pm8xxx_rtc_probe(struct platform_device *pdev)
+> >  		if (rc)
+> >  			return rc;
 > >  
-> > +static struct platform_device tpm_svsm_device = {
-> > +	.name		= "tpm-svsm",
-> > +	.id		= -1,
-> > +};
-> > +
-> >  static int __init snp_init_platform_device(void)
-> >  {
-> >  	if (!cc_platform_has(CC_ATTR_GUEST_SEV_SNP))
-> > @@ -2672,6 +2677,9 @@ static int __init snp_init_platform_device(void)
-> >  	if (platform_device_register(&sev_guest_device))
-> >  		return -ENODEV;
-> >  
-> > +	if (platform_device_register(&tpm_svsm_device))
-> > +		return -ENODEV;
-> > +
+> > -		device_init_wakeup(&pdev->dev, true);
+> > +		devm_device_init_wakeup(&pdev->dev);
 > 
-> You could avoid registering the device if an SVSM isn't present. Not sure
-> if that is desirable or not.
+> So you need to remove the call to devm_device_init_wakeup() above as
+> well (after platform_set_drvdata()) which the no-alarm patch moved here.
+> 
+> With that fixed:
+> 
+> Reviewed-by: Johan Hovold <johan+linaro@kernel.org>
 
-Is there any use for the device if an SVSM isn't present? :-)
-
-I'd judge it based on that...
+Right, I fixed my merge instead, thanks!
 
 > 
-> Thanks,
-> Tom
+> >  	} else {
+> >  		clear_bit(RTC_FEATURE_ALARM, rtc_dd->rtc->features);
+> >  	}
 > 
-> >  	pr_info("SNP guest platform device initialized.\n");
-> >  	return 0;
-> >  }
+> Johan
 > 
 
-BR, Jarkko
+-- 
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
