@@ -1,100 +1,101 @@
-Return-Path: <linux-kernel+bounces-564978-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564979-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 652B0A65E3D
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 20:42:10 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7C50A65E40
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 20:43:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A28A7189A912
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 19:42:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C31A07A365E
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 19:42:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70A971F3B85;
-	Mon, 17 Mar 2025 19:41:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18CA91EB5C0;
+	Mon, 17 Mar 2025 19:42:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hAdHQFpF"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s1wLRMfR"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C71711A3029;
-	Mon, 17 Mar 2025 19:41:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 748491A3029;
+	Mon, 17 Mar 2025 19:42:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742240506; cv=none; b=rX3HOtPH6hbmzIauTiu10+ncW4o49KuBDGbKV/xTOF+mtBgef8cJZ2lFCFcmYzXE0ZS1eODGR+zNFPaQxR+SAb5N1g3k1xESXjWo5Rho+/fCcStKCWfYlELwZu7IDnDvxXX0o0/D5IWnSj6tpfvsbeYybll1BEbaeG7VUXlM42U=
+	t=1742240575; cv=none; b=UOVaytNtfqE9NviRbhCAPhiNNmD8SKFlb26HfWP+3/iIugk1kayTMPcGs/+V3ZXEXhuy5rdM5mdpcsQEAJ3t0e4Oh6YhBtoMYMtmFUS/TvR0fsfL6Df+t1GIh5lZZxm1VM6jhDXjcwfjFq6ISq4hmP9epTYLZ4ORq7VtO22MlvY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742240506; c=relaxed/simple;
-	bh=M5DC/biv/Uhbcd3IaR6CyJL8PiIRugOzZt7y1LxHHSE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m4404MXJlk3/gcS6HMF6S4JVS35JqIBm26NpIXVGUGNTF09j1Dyl4MHHdg42NIwtTlIPw28DelwWa+B7/P/fxgrcRyFTcTZ+jMQ+mfaQ9YcA+X31BO3e10+mMn8xGcY1kVgbAwVKTGDkqGXMKwJD9aryobR4BOgD8tcCuXwtyeE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hAdHQFpF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2ABDC4CEE3;
-	Mon, 17 Mar 2025 19:41:44 +0000 (UTC)
+	s=arc-20240116; t=1742240575; c=relaxed/simple;
+	bh=XiWrz+11kyAWxGygQDy7Vdn4bS1sVJE9smro36D4cec=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=fhpSFRn0FE+ZdavwDBLQ+Yf3CNaOQjlIy0gVxqK2vHGaHMDIpylIp8UnLi6hXcBBlysdfTT80iiL8uRfnbsAicBWlaalvNohmwneFT5s9IihkzfOzRnEdZ1akojDJiFEwTh8nc01ufNhrc7DJFc3GlBZAEKR/Utd1y70gGehd60=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s1wLRMfR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23091C4CEE3;
+	Mon, 17 Mar 2025 19:42:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742240505;
-	bh=M5DC/biv/Uhbcd3IaR6CyJL8PiIRugOzZt7y1LxHHSE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hAdHQFpFtcLF6f9SBZk35QKEAEbtVx01EhXSOBhpfPmK5jx9eZMbnd9B0lPkanT+k
-	 k5GGaqfeip2FSFYLvkTsMrLa587fjLpnY3kJlhiJxzIhHR99ryVVcMSUWreH9hOl7k
-	 WyheSyd4goRIx8ZYc74lZZvYdwwiI8ziweZa6oQx2RRM619qsk6H7JnrcpnmaWs7F+
-	 GIKSc1xxZ7k4MWKNhOQUlcUYJ15holzasL0+Hozso3LxWbllpDRTxx7jy8cfVbRF6X
-	 a+CX9Csx8hMJwDAG62CGZ/TlJxr+ec/wsAiHyaQ1qrXsSKexsXhHs8N9OTM5BTT1yZ
-	 kcSqAMbRcIdUw==
-Date: Mon, 17 Mar 2025 20:41:38 +0100
-From: Joel Granados <joel.granados@kernel.org>
-To: Christian Brauner <brauner@kernel.org>
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, Ruiwu Chen <rwchen404@gmail.com>, 
-	Luis Chamberlain <mcgrof@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH] drop_caches: Allow re-enabling message after disabling
-Message-ID: <uskuzzo47jsebv7estk3vwiidygl3vybwxynwod76dwtbtim5i@4iyavbs3qgsi>
-References: <20250313-jag-drop_caches_msg-v1-1-c2e4e7874b72@kernel.org>
- <20250314-tilgen-dissident-05705fca5e00@brauner>
+	s=k20201202; t=1742240574;
+	bh=XiWrz+11kyAWxGygQDy7Vdn4bS1sVJE9smro36D4cec=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=s1wLRMfRHdqnjPV1a91xMW1CsNU18YTG3jwpMwIQGfzineQsA+Buz4zHxHcWydU+3
+	 WJweCppkEgNjn53q6CP73f+Z5u8OKMCaVeovxhzrh2TgyVovLFOAfo3rbiBUyWZaBG
+	 W/IIlBOkPOhEClWGcwb5WDaqNXzhm1xGYcCBCDxghZPfxz4k69k+Sett4rEIdXeIKQ
+	 aDJiSOOtu040UNOL5MdRYWTGg7x9Iovay14bOziD/rhftRu3/CHpfcwNa3f59TuApm
+	 yC0z9OX3TJJq3GxaX+ZpfUhTXGJ7++SwkGR/NOQMscXGHRi2dRqFdcR9v66VS1VD5y
+	 XvAeyhkaQ3f8g==
+From: Mark Brown <broonie@kernel.org>
+To: looong.bin@gmail.com, Qasim Ijaz <qasdev00@gmail.com>
+Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250313214545.7444-1-qasdev00@gmail.com>
+References: <20250313214545.7444-1-qasdev00@gmail.com>
+Subject: Re: [PATCH] spi: sophgo: fix incorrect type for ret in
+ sg2044_spifmc_write()
+Message-Id: <174224057287.315737.14282458820936385729.b4-ty@kernel.org>
+Date: Mon, 17 Mar 2025 19:42:52 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250314-tilgen-dissident-05705fca5e00@brauner>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-1b0d6
 
-On Fri, Mar 14, 2025 at 11:48:43AM +0100, Christian Brauner wrote:
-> On Thu, 13 Mar 2025 16:46:36 +0100, Joel Granados wrote:
-> > After writing "4" to /proc/sys/vm/drop_caches there was no way to
-> > re-enable the drop_caches kernel message. By removing the "or" logic for
-> > the stfu variable in drop_cache_sysctl_handler, it is now possible to
-> > toggle the message on and off by setting the 4th bit in
-> > /proc/sys/vm/drop_caches.
-> > 
-> > 
-> > [...]
+On Thu, 13 Mar 2025 21:45:45 +0000, Qasim Ijaz wrote:
+> The sg2044_spifmc_write() function uses 'ret' of unsigned type
+> size_t to capture return values from sg2044_spifmc_wait_xfer_size()
+> and sg2044_spifmc_wait_int(). Since these functions may return
+> negative error codes, using an unsigned type prevents proper
+> error detection, as size_t cannot represent negative values.
 > 
-> Applied to the vfs-6.15.misc branch of the vfs/vfs.git tree.
-> Patches in the vfs-6.15.misc branch should appear in linux-next soon.
+> Change 'ret' to type int so that negative values are handled correctly.
 > 
-> Please report any outstanding bugs that were missed during review in a
-> new review to the original patch series allowing us to drop it.
-> 
-> It's encouraged to provide Acked-bys and Reviewed-bys even though the
-> patch has now been applied. If possible patch trailers will be updated.
-> 
-> Note that commit hashes shown below are subject to change due to rebase,
-> trailer updates or similar. If in doubt, please check the listed branch.
-> 
-> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-> branch: vfs-6.15.misc
-> 
-> [1/1] drop_caches: Allow re-enabling message after disabling
->       https://git.kernel.org/vfs/vfs/c/66c4cbae77e2
+> [...]
 
-FYI, Sent out a V2 after discussion in [1]
+Applied to
 
-[1]: https://lore.kernel.org/20250216100514.3948-1-rwchen404@gmail.com
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
 
--- 
+Thanks!
 
-Joel Granados
+[1/1] spi: sophgo: fix incorrect type for ret in sg2044_spifmc_write()
+      commit: 3c9403f150b70d76198e414d53c95e1698e3f99f
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
 
