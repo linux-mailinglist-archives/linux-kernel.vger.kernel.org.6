@@ -1,142 +1,168 @@
-Return-Path: <linux-kernel+bounces-564928-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564930-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9AACA65D3A
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 19:50:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A654EA65D4A
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 19:52:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D65433B96D9
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 18:50:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD2DD189233C
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 18:52:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DBA01DEFEB;
-	Mon, 17 Mar 2025 18:50:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 907D31E1E02;
+	Mon, 17 Mar 2025 18:51:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="W5dmuvfI"
-Received: from mail-oi1-f174.google.com (mail-oi1-f174.google.com [209.85.167.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oVM559R2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B18D199EBB
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 18:50:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC3DE143748;
+	Mon, 17 Mar 2025 18:51:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742237437; cv=none; b=IThjFrxgMuhG0gsBESQFw3zl+uqs16MQfm6WujW/ZhJXjp/7Dd4aMsUQUhXxC4ex4X5Cz5qsCZHXbncOIn5RmOwYdhiZm9+s6nGbM/nfB4bIrIrIPTs0lGmvXa/rYx9+dkDmKh4oAk0BJ1uRN5ovKhEe1UlRHRfH3yxj2JjGLJ0=
+	t=1742237516; cv=none; b=pZK7YU4y2ez52/hDOb3J/JKIrFtJG57GVhKyS9/fpPMVm09UA0yzpA8WNvVMB4AX0pax4pASQBDiQaeWaXKByMPD4hRDLhnVPWbveJbucqtKe7rbQYGqMvGP6EMnNtJ8WChqQo7SViWwbuTB22Qa9OYE+K026TRsHGLV3yVaRiE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742237437; c=relaxed/simple;
-	bh=iWJ4xAGHyAnE6QbuCInfzYRvbLTef5OOVfOJYBo5i+8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tANmSriqd7hT3bZKGjzGFpfCXnoFKjTv9knGdskyLlGdGN6QYVXy1QCZUrRHnRP5EQ5JNM2HVmdG5ube9k3QKNSX2iAx32a0ps7K6i6eHI/FhT67h03MWpfye0qOytf+upH5FL6s4oRwPZLYLetmOOWNDZainfTYbE24FzAsrK4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=W5dmuvfI; arc=none smtp.client-ip=209.85.167.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-oi1-f174.google.com with SMTP id 5614622812f47-3fe83c8cbdbso621874b6e.3
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 11:50:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1742237435; x=1742842235; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=y9YporYfSyQzR9fHjG0FSGyAoboGZe4a/zGZZOFS0qU=;
-        b=W5dmuvfI/IIBtciftBFwehHACOIXudYVpuUFeVXSX7iu1VsU65VuvKOn60qdWydB3N
-         BLFusKmTI+kGWN6jHuGTneG509Y7vm0UH76paHNfgPYkp65KP9fP2GEcFQda3qvlDwrz
-         gAr2q8CUKbEDj0gzoogstJKyX0Udgn9jtlXGk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742237435; x=1742842235;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=y9YporYfSyQzR9fHjG0FSGyAoboGZe4a/zGZZOFS0qU=;
-        b=vOUDi8/u6ChEhasI/N/2/cBPI8tSSsUP5js3JQ9bdML3W91UNes4sm5qC/LhqaY12j
-         Be2ZDfpMhjyTGqAdd+fzfUu8gBNyMAqLFJxcy/Jvd7r50X2kW5bgd4UCZh6n8uG2hxDd
-         3bhU0VrRFbKDv2nqaUPh4LpVnuMTqpnpn003yHQWN9Acg8oPiWk8he5Ups1shNcPqWGw
-         +RASwKQlPJfolKxF5S2aifb6Ac6RUsLL49oiReoZzy8xtDHJL+h9y1rrE+HLouk/kLDq
-         7XxruFHzjy12vRdAdZ3+0A6msAjeGsEVBUe7EAtlDvlJO5VKU1i4f6O6nDu5TgFjNcpq
-         swZw==
-X-Forwarded-Encrypted: i=1; AJvYcCUsVsxhweseEyKzbzgYZXTFfTP9Be5M+uYNDImuL9zzKnQ/kOfoMBXeg82J+/09JVw1apzsHH1ZXnLjvMw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwRkfpM6sW1YLEy+fT2Ydb80JATwdbK2+qr/RoTrsNQ4aoFhk37
-	OCXGNFtElOIUj/NqDy9KWZzybk8yeap5s7TgItHgoC09xS8wtJgr7OqcJLy02Q==
-X-Gm-Gg: ASbGncsZOdphBPCWlWEvlz8UlH9tHHv/MAQSJcFfXoEnebLe60D/NAveUfPpV1TyAD5
-	0l+A8Y9NZ+xsO8/ZAj1MxEvT+3R+l9bUztCJ0/10ul3g2taf45XmKrrf7WcB+MTYMfVzVJiajY6
-	iC8PjgOQgwuBkb3ehn9KtsXqJxJ8mDwkdOA2UT6ZTvKblta6OePdLAr7eniDKP3DAxGBv6m6+j5
-	yX+F9NCqqsqoWXf4sRT0C2CCmovaCA2kzqBb9/8Mf0bRk1xncmv+2Zp8gSPlmfMXZP2A3Bkx1H7
-	DFwL0/3zaLYsQ6SV58zRM/5tdumIeAjXRut7lq0y+zAlRdwoxHaSi5TKMwKDvSwtH9cjPhq+Tru
-	tMArDgBWp
-X-Google-Smtp-Source: AGHT+IGxL8qq8K6CPc1NqDH20ecuw/Yp8JNEr5ICv2xc9Jo0XclrfeIZlq6cbKg4apj7kSkvgGBfPw==
-X-Received: by 2002:a05:6808:2289:b0:3fc:11a6:7433 with SMTP id 5614622812f47-3fdf0646c85mr6999830b6e.36.1742237434979;
-        Mon, 17 Mar 2025 11:50:34 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-3fcd452130fsm1887803b6e.14.2025.03.17.11.50.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 17 Mar 2025 11:50:33 -0700 (PDT)
-Message-ID: <60ee6fd4-1cc6-4d77-8359-9215e1d604c3@broadcom.com>
-Date: Mon, 17 Mar 2025 11:50:31 -0700
+	s=arc-20240116; t=1742237516; c=relaxed/simple;
+	bh=zIs0Y0BVAU9E77z/Zzluoby72K6idCnOcy81f26DbrQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=OjCiQe17wVHnGdZfnZiT8OzQYeA0OMt6LhbS4wDCJp8e92um8+MDW8Xxe32v2JG6Rak4Zqzy46/diknznbPqyFBH+bKb1jcYcAxzRQ1aCE7YBQkdiVm2RTLZdW1KkHkPRgpFAQBa/UHngw66xjnhK3IrkbJ7/KEdSL0cQxVq1nw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oVM559R2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8611C4CEE3;
+	Mon, 17 Mar 2025 18:51:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742237513;
+	bh=zIs0Y0BVAU9E77z/Zzluoby72K6idCnOcy81f26DbrQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=oVM559R2kPO3CO1hH+pgQNvu5hEbnw4/r9xTQr2jmWwM1Po/1nthbIAlZL8eNhhNt
+	 EFeoLu3jachtwwWZd5pDI/ry4RP5BUzRZrojRIMjs0TSN+7vZVb2kMj0AO6gXWJ1i8
+	 tWpNw3nSA5UF1kHJ7Qvnils2vGCBiTLxX134/BAUCIu48gXjOEf+HCOTTqizi8yAbO
+	 yq/s2w2c9wSoUC9OrNkm7EeXMlz3qno06xEbKcjjOjr/8G2Hibu9aoJdoFkSq77VkI
+	 dM8pxb787jkAYJPm6u/3gJZQyzwGwgmaAyshaKEfvSgTY4PkxtAz9XFnBbZvjlLMq8
+	 zONQlopE7k/3g==
+Date: Mon, 17 Mar 2025 18:51:44 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+Cc: David Lechner <dlechner@baylibre.com>, Marcelo Schmitt
+ <marcelo.schmitt@analog.com>, linux-iio@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, lars@metafoo.de,
+ Michael.Hennerich@analog.com, corbet@lwn.net
+Subject: Re: [PATCH v1 1/4] iio: adc: ad4000: Add support for SPI offload
+Message-ID: <20250317185144.68dd564e@jic23-huawei>
+In-Reply-To: <Z9haCda4yF2SZ6gb@debian-BULLSEYE-live-builder-AMD64>
+References: <cover.1741970538.git.marcelo.schmitt@analog.com>
+	<301fc83a961c4a2ef2ac980d0baa83d9d89a88c5.1741970538.git.marcelo.schmitt@analog.com>
+	<20250317102751.5702fb82@jic23-huawei>
+	<Z9hAUs1wPOIAo2nt@debian-BULLSEYE-live-builder-AMD64>
+	<60831e04-52c2-446f-8bc5-b5d3e9e5fd40@baylibre.com>
+	<Z9haCda4yF2SZ6gb@debian-BULLSEYE-live-builder-AMD64>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH][next] PCI: brcmstb: make const read-only arrays static
-To: Colin Ian King <colin.i.king@gmail.com>,
- Jim Quinlan <jim2101024@gmail.com>,
- Nicolas Saenz Julienne <nsaenz@kernel.org>,
- Florian Fainelli <florian.fainelli@broadcom.com>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
- linux-pci@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250317143456.477901-1-colin.i.king@gmail.com>
-Content-Language: en-US
-From: Florian Fainelli <florian.fainelli@broadcom.com>
-Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
- xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
- M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
- JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
- PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
- KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
- AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
- IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
- ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
- bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
- Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
- tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
- TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
- zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
- WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
- IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
- U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
- 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
- pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
- MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
- IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
- gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
- obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
- N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
- CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
- C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
- wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
- EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
- fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
- MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
- 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
- 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
-In-Reply-To: <20250317143456.477901-1-colin.i.king@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On 3/17/25 07:34, Colin Ian King wrote:
-> Don't populate the const read-only arrays data and regs on the stack at
-> run time, instead make them static.
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+On Mon, 17 Mar 2025 14:21:13 -0300
+Marcelo Schmitt <marcelo.schmitt1@gmail.com> wrote:
 
-Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
--- 
-Florian
+> Hi, comments inline.
+> 
+> On 03/17, David Lechner wrote:
+> > On 3/17/25 10:31 AM, Marcelo Schmitt wrote:
+> > 
+> >   
+> > > ...  
+> > >>> +/*
+> > >>> + * This executes a data sample transfer when using SPI offloading for when the
+> > >>> + * device connections are in "3-wire" mode, selected when the adi,sdi-pin device
+> > >>> + * tree property is set to "high". In this connection mode, the ADC SDI pin is
+> > >>> + * connected to VIO and ADC CNV pin is connected to a SPI controller CS (it
+> > >>> + * can't be connected to a GPIO).
+> > >>> + *
+> > >>> + * In order to achieve the maximum sample rate, we only do one transfer per
+> > >>> + * SPI offload trigger. This has the effect that the first sample data is not
+> > >>> + * valid because it is reading the previous conversion result. We also use  
+> > >>
+> > >> Say what happens to that invalid sample.  Is it dropped or provided to userspace
+> > >> as if it were valid?  (I hope dropped!)  
+> > > 
+> > > TL;DR: The invalid sample goes into the buffer as a valid one.
+> > > 
+> > > In AD4000 '3-wire' mode, data capture has a latency (delay) of one sample.
+> > > 
+> > > The ADC begins sampling data N at CNV rising edge
+> > >           |   +-- CNV (usually SPI CS) is brought low to begin reading the data
+> > >           |   |                                +-- Data N + 1 that will be read
+> > >           |   |                                |   on the next transfer starts 
+> > >           v   v                                v   being sampled at end of transfer N.
+> > >            ___                                  ____            
+> > > CNV  _____/   \________________________________/    \_____
+> > >                     _     _             _
+> > > SCLK ______________/ \___/ \_ ...   ___/ \_______________
+> > >                    ___   ___           ___
+> > > SDO  _____________/___\_/___\ ...   __/___\_______________
+> > >                     ^
+> > >                     |
+> > >              Data from conversion N is output from here on
+> > > 
+> > > A better drawing can be found in datasheet page 29, Figure 57.
+> > > https://www.analog.com/media/en/technical-documentation/data-sheets/ADAQ4003.pdf
+> > > 
+> > > In sum, we're always reading a conversion that started at the end of the
+> > > previous SPI transfer or, in other words, the data comes out with a latency
+> > > (delay) of one read.
+> > > 
+> > > Datasheet somehow mentions that by saying
+> > > 	When turbo mode is enabled, the conversion result read on SDO corresponds to
+> > > 	the result of the previous conversion.
+> > > 
+> > > I think I can do a dummy SPI transfer on buffer preenable so at least the
+> > > first data is not invalid. Would that be better?  
+> > 
+> > Not really. There will be a relatively long delay between that conversion
+> > trigger and when the sample is read. So the data might be slightly less stale
+> > in that case, but still not particularly useful, e.g. if you are doing any
+> > kind of signal processing that expects equal time between all samples.
+> > 
+> > On similar chips, like ad7944, we just documented that the first sample does
+> > not contain valid data and needs to be discarded.
+> >   
+> Okay, I'll assume that to be acceptable and do the same for this one.
+
+Hmm. Doesn't really pass the useability 'smell' test but I guess
+if there is precedence and clear docs it should be fine.
+
+> 
+> ...
+> 
+> > > I also didn't expect to find out HDL support for 16-bit data width was removed.
+> > > We used to have a build parameter for 16-bit precision ADCs.
+> > > https://github.com/analogdevicesinc/hdl/commit/b2dc91b30dae891b6319d88e083f26e726f43ba0#diff-1117c2618353232e5f22aa6a12e8ae976757fa897b3425f470a12123cae26535L13  
+> > 
+> > A while back the HDL engineers mentioned to us that they wanted to standardize
+> > on 32-bit data words everywhere. While not the most efficient use of memory,
+> > having fewer options does make things simpler across the entire software stack.
+> >   
+> Ack
+> 
+> > > 
+> > > Would something like 'because SPI offloading leads to data being pushed to
+> > > memory in CPU endianness' be a reasonable comment?  
+> > 
+> > Another way to say it is that SPI offload reads data in complete words and not
+> > in separate 8-bit xfers (bits_per_word = realbits vs. bits_per_word = 8).
+> >   
+> Ah sure, I recall the effect of setting .bits_per_word now.
+> Will add a comment explaining why the difference in endianness.
+
+Great
+
+> 
+> Thanks,
+> Marcelo
 
 
