@@ -1,315 +1,127 @@
-Return-Path: <linux-kernel+bounces-563968-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563969-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F06F3A64B45
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:59:56 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B21FA64B1B
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:55:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 971833A3E70
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:55:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 86D1C170F43
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:55:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21A592356BF;
-	Mon, 17 Mar 2025 10:55:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2BBD236455;
+	Mon, 17 Mar 2025 10:55:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mt-integration.ru header.i=@mt-integration.ru header.b="p+VdAfW2"
-Received: from ksmg02.maxima.ru (ksmg02.maxima.ru [81.200.124.39])
+	dkim=pass (2048-bit key) header.d=siemens.com header.i=diogo.ivo@siemens.com header.b="ZBunS47O"
+Received: from mta-64-228.siemens.flowmailer.net (mta-64-228.siemens.flowmailer.net [185.136.64.228])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4753A38DD8;
-	Mon, 17 Mar 2025 10:55:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.200.124.39
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B2CB232386
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 10:55:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.136.64.228
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742208925; cv=none; b=l0pU0VGptVtC5QjGhZ8PXgq1ttejdFzzaW/TWY6eG90pg5+VxqyuKqrFVEy//gC3bGJN0zCLUnMeP5O+auTdF1d7k4do31ngi1ey/n+A2D0yt//KTbXBO2IuFxDFoWFC5J2S35xwX6YwjfQyYlbXU8QXPbUWilb9HDkTjuhr0yk=
+	t=1742208927; cv=none; b=flcx4VzIvyQCi2rwy1b6Y9kAfDD3tRlv+tVhVogJ4XwBMx+yezbWNi7pg8qJDjcpN+qwMGDusCJWd6MVZgWIBjFIXm5g4yfVWjcVil5nIPEmFRVnIbu2lMFs3ntKaF7WFRKJgJab8Y002u6ySrXKaFGeaGA64Nig6fagVQIqw/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742208925; c=relaxed/simple;
-	bh=iSJkqmvbpB3JMwQgPR0cfXGE9pxa4Is0Ta0HqVFVxTw=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=hSd7cx7k8Jy4BLYJoXRgJw0/bm6Ycygh3zp9+jw4XBlpRXxuaNWT2auX0XL0ycXO6ATAyJGbJ3HOZ5X0ClFwvQ+WyPTX8lJkyHbjNSaxL8inCl+r65llMxpokZDR4Vv2yB0uFMa4uS9BBdHF2TZoXITyqBbIF00Re16ohBzKlQI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mt-integration.ru; spf=pass smtp.mailfrom=mt-integration.ru; dkim=pass (2048-bit key) header.d=mt-integration.ru header.i=@mt-integration.ru header.b=p+VdAfW2; arc=none smtp.client-ip=81.200.124.39
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mt-integration.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mt-integration.ru
-Received: from ksmg02.maxima.ru (localhost [127.0.0.1])
-	by ksmg02.maxima.ru (Postfix) with ESMTP id 36FBF1E0008;
-	Mon, 17 Mar 2025 13:55:12 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 ksmg02.maxima.ru 36FBF1E0008
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mt-integration.ru;
-	s=sl; t=1742208912; bh=d7t7HcGDv3eC8v3jJtrr1V6WrxNJcqQgvMQo8uuswlI=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
-	b=p+VdAfW2oK0Fgl/+ac0tLGZJeuw7L4tw/biEMfQwCn+6rtJvuygB3m4dl/zjs6Vqd
-	 w3BoT36vhFcvzvVee9FzViCPcetQpqXjWYs+BFwlm+en5bd5mYLWDUR3KI4jGnLs7O
-	 ibZrQfVJctzgfLkqp97Jtg/m8HbrkHFAaQhr1X/Y5y5cmWQLWqlwZJoMRKI+2pcDvl
-	 /id0rFUvmN2o7ANri8ktx2tRCiiSvRiRYVG/Kmjw7AjFPkrZpLatWrNvvjv6h/3YN/
-	 E8Mt2zaQHH0x48mDNMZolhfPQXC0yHTkOgSNkkWPp1JvqoL7uZ/mN4Fsxr6luwTEmZ
-	 4bT2K9IudeOpw==
-Received: from ksmg02.maxima.ru (mail.maxima.ru [81.200.124.62])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(Client CN "*.maxima.ru", Issuer "GlobalSign GCC R3 DV TLS CA 2020" (verified OK))
-	by ksmg02.maxima.ru (Postfix) with ESMTPS;
-	Mon, 17 Mar 2025 13:55:12 +0300 (MSK)
-Received: from GS-NOTE-190.mt.ru (10.0.246.183) by mmail-p-exch02.mt.ru
- (81.200.124.62) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.1544.4; Mon, 17 Mar
- 2025 13:55:10 +0300
-From: Murad Masimov <m.masimov@mt-integration.ru>
-To: "David S. Miller" <davem@davemloft.net>
-CC: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, Joerg
- Reuter <jreuter@yaina.de>, Kuniyuki Iwashima <kuniyu@amazon.com>, Murad
- Masimov <m.masimov@mt-integration.ru>, <linux-hams@vger.kernel.org>,
-	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<lvc-project@linuxtesting.org>,
-	<syzbot+33841dc6aa3e1d86b78a@syzkaller.appspotmail.com>
-Subject: [PATCH] ax25: Remove broken autobind
-Date: Mon, 17 Mar 2025 13:53:52 +0300
-Message-ID: <20250317105352.412-1-m.masimov@mt-integration.ru>
-X-Mailer: git-send-email 2.46.0.windows.1
+	s=arc-20240116; t=1742208927; c=relaxed/simple;
+	bh=qzqq/7eO9HlSVpfTbFEf2KxsNWJh4uzOQ4PMMxfymlc=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Wf+N4ghBV24pm2A1bO/1UMRIxzH8Mi5sDW73ybhxoIXfjMRQ7FnA4myKdXrKRcuSRc7YUd3PzIUoOrx+yDFPdKdvCDxMinC+dgY/cImI/lAAjugOogtMbYUf2hqthI2MVZjLvajSm4g2JuBw0btp8snUdb8i6/+WfEEKxsrkb3o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=diogo.ivo@siemens.com header.b=ZBunS47O; arc=none smtp.client-ip=185.136.64.228
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com
+Received: by mta-64-228.siemens.flowmailer.net with ESMTPSA id 20250317105515ef417fc5968ffe9ab5
+        for <linux-kernel@vger.kernel.org>;
+        Mon, 17 Mar 2025 11:55:15 +0100
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
+ d=siemens.com; i=diogo.ivo@siemens.com;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc;
+ bh=iCVYWatVYU36O55+g5B1I8cvGW344XdCB1TdauW5fac=;
+ b=ZBunS47OaZEdtWvOtUCsWohrukHNHzF7VilT7f9MSB5H9zoi5YSt6FUSumoh88h0IkiQpX
+ UFUw3MdKT2Jn0z90hbWpiDWQGyFBcxoyBiTZzc8HwLsvRhdP4MvNbSl3gbPmIkN0VswJSEM6
+ H2eT0ntgg3Xewp5MHQgh5B+bthLpSi/2j4YK0X1usmNMBDp7QRuGQYNd7os9bfxw+p8UsqL8
+ Gioo7edIgdgqD+yEx+PIXjrcd/7bS3thMnGLUCyxkfdfW9ujDxmSPaBvokbZ1i3rSXflFdow
+ Db6zZGqa3n4FZfcmIyFPWKLELtnr4Pec9VF1m5jzo3gc32QASm1dElKg==;
+From: Diogo Ivo <diogo.ivo@siemens.com>
+Subject: [PATCH v3 0/2] Add driver for Intel Over-Clocking Watchdog
+Date: Mon, 17 Mar 2025 10:55:05 +0000
+Message-Id: <20250317-ivo-intel_oc_wdt-v3-0-32c396f4eefd@siemens.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: mt-exch-01.mt.ru (91.220.120.210) To mmail-p-exch02.mt.ru
- (81.200.124.62)
-X-KSMG-AntiPhishing: NotDetected, bases: 2025/03/17 09:30:00
-X-KSMG-AntiSpam-Auth: dmarc=none header.from=mt-integration.ru;spf=none smtp.mailfrom=mt-integration.ru;dkim=none
-X-KSMG-AntiSpam-Envelope-From: m.masimov@mt-integration.ru
-X-KSMG-AntiSpam-Info: LuaCore: 51 0.3.51 68896fb0083a027476849bf400a331a2d5d94398, {rep_avail}, {Tracking_one_url}, {Tracking_uf_ne_domains}, {Tracking_from_domain_doesnt_match_to}, 81.200.124.62:7.1.2;mt-integration.ru:7.1.1;127.0.0.199:7.1.2;ksmg02.maxima.ru:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;syzkaller.appspot.com:5.0.1,7.1.1, FromAlignment: s, ApMailHostAddress: 81.200.124.62
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiSpam-Lua-Profiles: 191835 [Mar 17 2025]
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Version: 6.1.1.11
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.1.1.8310, bases: 2025/03/17 05:57:00 #27790323
-X-KSMG-AntiVirus-Status: NotDetected, skipped
-X-KSMG-LinksScanning: NotDetected, bases: 2025/03/17 09:27:00
-X-KSMG-Message-Action: skipped
-X-KSMG-Rule-ID: 7
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAIn/12cC/23NTQrCMBCG4atI1o7kr03rynuIlJqkdsAmkpSol
+ N7dtG4UXb4fzDMTiTagjWS/mUiwCSN6l0NsN0T3rbtYQJObcMoLyrkCTB7QjfbaeN3czQiqlZV
+ opSlbKkk+uwXb4WMlj6fcPcbRh+f6IbFlfWOCsV8sMWDQGamoLKmpu+IQ0Q7WxZ32A1m4xD8J/
+ ofgQKHghtZKVNrQ8zcxz/MLgY3JA/UAAAA=
+X-Change-ID: 20250227-ivo-intel_oc_wdt-7a483a4d6a04
+To: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, 
+ Wim Van Sebroeck <wim@linux-watchdog.org>, 
+ Guenter Roeck <linux@roeck-us.net>
+Cc: linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org, 
+ linux-watchdog@vger.kernel.org, jan.kiszka@siemens.com, 
+ benedikt.niedermayr@siemens.com, Diogo Ivo <diogo.ivo@siemens.com>
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1742208915; l=2033;
+ i=diogo.ivo@siemens.com; s=20240529; h=from:subject:message-id;
+ bh=qzqq/7eO9HlSVpfTbFEf2KxsNWJh4uzOQ4PMMxfymlc=;
+ b=PnoDLgylyYGseCNwf2Am4PAbQPQHRpam/2bdmMQb1RZCNbD7LSvFTDICIQtMrHu/MMTwmTRU5
+ 3wUkFrx4DX7DFl+lnzoLy5BujClkQRIGGu+Qi+p5V1JEO920kTD+rIQ
+X-Developer-Key: i=diogo.ivo@siemens.com; a=ed25519;
+ pk=BRGXhMh1q5KDlZ9y2B8SodFFY8FGupal+NMtJPwRpUQ=
+X-Flowmailer-Platform: Siemens
+Feedback-ID: 519:519-1328357:519-21489:flowmailer
 
-Binding AX25 socket by using the autobind feature leads to memory leaks
-in ax25_connect() and also refcount leaks in ax25_release(). Memory
-leak was detected with kmemleak:
+This series adds a driver for the Intel Over-Clocking Watchdog found in
+the Intel Platform Controller Hub (PCH).
 
-================================================================
-unreferenced object 0xffff8880253cd680 (size 96):
-backtrace:
-__kmalloc_node_track_caller_noprof (./include/linux/kmemleak.h:43)
-kmemdup_noprof (mm/util.c:136)
-ax25_rt_autobind (net/ax25/ax25_route.c:428)
-ax25_connect (net/ax25/af_ax25.c:1282)
-__sys_connect_file (net/socket.c:2045)
-__sys_connect (net/socket.c:2064)
-__x64_sys_connect (net/socket.c:2067)
-do_syscall_64 (arch/x86/entry/common.c:52 arch/x86/entry/common.c:83)
-entry_SYSCALL_64_after_hwframe (arch/x86/entry/entry_64.S:130)
-================================================================
+This watchdog is controlled via a simple single-register interface and
+would otherwise be standard except for the presence of a LOCK bit that
+can only be set once per power cycle, needing extra handling around it.
 
-When socket is bound, refcounts must be incremented the way it is done
-in ax25_bind() and ax25_setsockopt() (SO_BINDTODEVICE). In case of
-autobind, the refcounts are not incremented.
+Due to the way these devices are described in ACPI tables with both the
+generic PNP0C02 CID and a more detailed ACPI HID we also need to add
+their HIDs to the list of known non-PNP devices. As there are several HIDs
+for what seems to be essentially the same hardware but I don't know all
+the possible HIDs this series does not include an exhaustive list of all
+such HIDs, only those that I could personally test.
 
-This bug leads to the following issue reported by Syzkaller:
-
-================================================================
-ax25_connect(): syz-executor318 uses autobind, please contact jreuter@yaina.de
-------------[ cut here ]------------
-refcount_t: decrement hit 0; leaking memory.
-WARNING: CPU: 0 PID: 5317 at lib/refcount.c:31 refcount_warn_saturate+0xfa/0x1d0 lib/refcount.c:31
-Modules linked in:
-CPU: 0 UID: 0 PID: 5317 Comm: syz-executor318 Not tainted 6.14.0-rc4-syzkaller-00278-gece144f151ac #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-RIP: 0010:refcount_warn_saturate+0xfa/0x1d0 lib/refcount.c:31
-...
-Call Trace:
- <TASK>
- __refcount_dec include/linux/refcount.h:336 [inline]
- refcount_dec include/linux/refcount.h:351 [inline]
- ref_tracker_free+0x6af/0x7e0 lib/ref_tracker.c:236
- netdev_tracker_free include/linux/netdevice.h:4302 [inline]
- netdev_put include/linux/netdevice.h:4319 [inline]
- ax25_release+0x368/0x960 net/ax25/af_ax25.c:1080
- __sock_release net/socket.c:647 [inline]
- sock_close+0xbc/0x240 net/socket.c:1398
- __fput+0x3e9/0x9f0 fs/file_table.c:464
- __do_sys_close fs/open.c:1580 [inline]
- __se_sys_close fs/open.c:1565 [inline]
- __x64_sys_close+0x7f/0x110 fs/open.c:1565
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
- ...
- </TASK>
-================================================================
-
-Considering the issues above and the comments left in the code that say:
-"check if we can remove this feature. It is broken."; "autobinding in this
-may or may not work"; - it is better to completely remove this feature than
-to fix it because it is broken and leads to various kinds of memory bugs.
-
-Now calling connect() without first binding socket will result in an
-error (-EINVAL). Userspace software that relies on the autobind feature
-might get broken. However, this feature does not seem widely used with
-this specific driver as it was not reliable at any point of time, and it
-is already broken anyway. E.g. ax25-tools and ax25-apps packages for
-popular distributions do not use the autobind feature for AF_AX25.
-
-Found by Linux Verification Center (linuxtesting.org) with Syzkaller.
-
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Reported-by: syzbot+33841dc6aa3e1d86b78a@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=33841dc6aa3e1d86b78a
-Signed-off-by: Murad Masimov <m.masimov@mt-integration.ru>
+Signed-off-by: Diogo Ivo <diogo.ivo@siemens.com>
 ---
- include/net/ax25.h    |  1 -
- net/ax25/af_ax25.c    | 30 ++++++------------
- net/ax25/ax25_route.c | 74 -------------------------------------------
- 3 files changed, 10 insertions(+), 95 deletions(-)
+Changes in v3:
+ - PATCH 01:
+  - Collect R-b from Guenter
+ - PATCH 02:
+  - Reword the commit message to clarify purpose of patch
+- Link to v2: https://lore.kernel.org/r/20250312-ivo-intel_oc_wdt-v2-0-52d09738cd0b@siemens.com
 
-diff --git a/include/net/ax25.h b/include/net/ax25.h
-index 4ee141aae0a2..a7bba42dde15 100644
---- a/include/net/ax25.h
-+++ b/include/net/ax25.h
-@@ -418,7 +418,6 @@ void ax25_rt_device_down(struct net_device *);
- int ax25_rt_ioctl(unsigned int, void __user *);
- extern const struct seq_operations ax25_rt_seqops;
- ax25_route *ax25_get_route(ax25_address *addr, struct net_device *dev);
--int ax25_rt_autobind(ax25_cb *, ax25_address *);
- struct sk_buff *ax25_rt_build_path(struct sk_buff *, ax25_address *,
- 				   ax25_address *, ax25_digi *);
- void ax25_rt_free(void);
-diff --git a/net/ax25/af_ax25.c b/net/ax25/af_ax25.c
-index 9f3b8b682adb..3ee7dba34310 100644
---- a/net/ax25/af_ax25.c
-+++ b/net/ax25/af_ax25.c
-@@ -1270,28 +1270,18 @@ static int __must_check ax25_connect(struct socket *sock,
- 		}
- 	}
+Changes in v2:
+- Split v1 into two patches, adding the ACPI IDs in a separate patch
+- Initialize hearbeat module parameter to zero
+- Clarify wording around lock handling
+- Properly print resource with %pR when failing to obtain it
+- Enable compile testing and add dependency on HAS_IOPORT
+- Drop unneeded ACPI_PTR() and MODULE_ALIAS()
+- Link to v1: https://lore.kernel.org/r/20250311-ivo-intel_oc_wdt-v1-1-fd470460d9f5@siemens.com
 
--	/*
--	 *	Must bind first - autobinding in this may or may not work. If
--	 *	the socket is already bound, check to see if the device has
--	 *	been filled in, error if it hasn't.
--	 */
-+	/* Must bind first - autobinding does not work. */
- 	if (sock_flag(sk, SOCK_ZAPPED)) {
--		/* check if we can remove this feature. It is broken. */
--		printk(KERN_WARNING "ax25_connect(): %s uses autobind, please contact jreuter@yaina.de\n",
--			current->comm);
--		if ((err = ax25_rt_autobind(ax25, &fsa->fsa_ax25.sax25_call)) < 0) {
--			kfree(digi);
--			goto out_release;
--		}
-+		kfree(digi);
-+		err = -EINVAL;
-+		goto out_release;
-+	}
+---
+Diogo Ivo (2):
+      watchdog: Add driver for Intel OC WDT
+      ACPI: PNP: Add Intel OC Watchdog IDs to non-PNP device list
 
--		ax25_fillin_cb(ax25, ax25->ax25_dev);
--		ax25_cb_add(ax25);
--	} else {
--		if (ax25->ax25_dev == NULL) {
--			kfree(digi);
--			err = -EHOSTUNREACH;
--			goto out_release;
--		}
-+	/* Check to see if the device has been filled in, error if it hasn't. */
-+	if (ax25->ax25_dev == NULL) {
-+		kfree(digi);
-+		err = -EHOSTUNREACH;
-+		goto out_release;
- 	}
+ drivers/acpi/acpi_pnp.c         |   2 +
+ drivers/watchdog/Kconfig        |  11 ++
+ drivers/watchdog/Makefile       |   1 +
+ drivers/watchdog/intel_oc_wdt.c | 233 ++++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 247 insertions(+)
+---
+base-commit: b7f94fcf55469ad3ef8a74c35b488dbfa314d1bb
+change-id: 20250227-ivo-intel_oc_wdt-7a483a4d6a04
 
- 	if (sk->sk_type == SOCK_SEQPACKET &&
-diff --git a/net/ax25/ax25_route.c b/net/ax25/ax25_route.c
-index 69de75db0c9c..10577434f40b 100644
---- a/net/ax25/ax25_route.c
-+++ b/net/ax25/ax25_route.c
-@@ -373,80 +373,6 @@ ax25_route *ax25_get_route(ax25_address *addr, struct net_device *dev)
- 	return ax25_rt;
- }
-
--/*
-- *	Adjust path: If you specify a default route and want to connect
-- *      a target on the digipeater path but w/o having a special route
-- *	set before, the path has to be truncated from your target on.
-- */
--static inline void ax25_adjust_path(ax25_address *addr, ax25_digi *digipeat)
--{
--	int k;
--
--	for (k = 0; k < digipeat->ndigi; k++) {
--		if (ax25cmp(addr, &digipeat->calls[k]) == 0)
--			break;
--	}
--
--	digipeat->ndigi = k;
--}
--
--
--/*
-- *	Find which interface to use.
-- */
--int ax25_rt_autobind(ax25_cb *ax25, ax25_address *addr)
--{
--	ax25_uid_assoc *user;
--	ax25_route *ax25_rt;
--	int err = 0;
--
--	ax25_route_lock_use();
--	ax25_rt = ax25_get_route(addr, NULL);
--	if (!ax25_rt) {
--		ax25_route_lock_unuse();
--		return -EHOSTUNREACH;
--	}
--	rcu_read_lock();
--	if ((ax25->ax25_dev = ax25_dev_ax25dev(ax25_rt->dev)) == NULL) {
--		err = -EHOSTUNREACH;
--		goto put;
--	}
--
--	user = ax25_findbyuid(current_euid());
--	if (user) {
--		ax25->source_addr = user->call;
--		ax25_uid_put(user);
--	} else {
--		if (ax25_uid_policy && !capable(CAP_NET_BIND_SERVICE)) {
--			err = -EPERM;
--			goto put;
--		}
--		ax25->source_addr = *(ax25_address *)ax25->ax25_dev->dev->dev_addr;
--	}
--
--	if (ax25_rt->digipeat != NULL) {
--		ax25->digipeat = kmemdup(ax25_rt->digipeat, sizeof(ax25_digi),
--					 GFP_ATOMIC);
--		if (ax25->digipeat == NULL) {
--			err = -ENOMEM;
--			goto put;
--		}
--		ax25_adjust_path(addr, ax25->digipeat);
--	}
--
--	if (ax25->sk != NULL) {
--		local_bh_disable();
--		bh_lock_sock(ax25->sk);
--		sock_reset_flag(ax25->sk, SOCK_ZAPPED);
--		bh_unlock_sock(ax25->sk);
--		local_bh_enable();
--	}
--
--put:
--	rcu_read_unlock();
--	ax25_route_lock_unuse();
--	return err;
--}
-
- struct sk_buff *ax25_rt_build_path(struct sk_buff *skb, ax25_address *src,
- 	ax25_address *dest, ax25_digi *digi)
---
-2.39.2
+Best regards,
+-- 
+Diogo Ivo <diogo.ivo@siemens.com>
 
 
