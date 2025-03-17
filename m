@@ -1,122 +1,118 @@
-Return-Path: <linux-kernel+bounces-565013-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565014-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC525A65F12
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 21:26:18 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8BBCA65F14
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 21:27:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BAD857A4B87
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 20:25:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 01FED17B772
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 20:27:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 026361F5825;
-	Mon, 17 Mar 2025 20:26:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A4E71F4E47;
+	Mon, 17 Mar 2025 20:27:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cpm0KBei"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="GiaquPeV"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53EC41EDA19;
-	Mon, 17 Mar 2025 20:26:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDD5F1DE3B5;
+	Mon, 17 Mar 2025 20:27:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742243167; cv=none; b=pQiSaKnCNCDIqUVHWiEYKvtuUjE2E6SmA/CKdDur1IKMIokCbHO4EWvnsPRi9+7FmyN9Lbb7FY+ilzs/SPoti5BW/V8qj1HHjT0sEAIjODNGimYJmWINlosGE/IqS7+gVEi1vZmxHwhfw2L6kC5teN/DGT9H0bd4anp+eyx/cGk=
+	t=1742243232; cv=none; b=mzk+efudhoNus19smEzFhz2zB5UhDu1dwXqYkaampDSsGgE/MfjmHvUbK9wELsSlFys47TzYNDxATdMruq6JhSJt8DOtHvqto9e1Eg6h+dz2Kg2D1SJBKyD+uo28RZP/UtkO49CMHBI2bkS5Vvz5EhGsXi3lTVLhvwUtUCynGCo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742243167; c=relaxed/simple;
-	bh=JiV1Gj9dP5qunVw5aZvk+jHVlEVRhGeoMVCHLphzFk8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=L9vCK0AokuhLP/ABirTpn8fyEnWfs+kVxXhcRv3S8cgdM1ji/U/icXFtyTm7TMGA1/wrm8i/H+YLhCDBweELt7zAxo+4g2qhhDxWp5QnKHb29CMlDI9c84l4GU8CQqrrnRCm86JvfKkorvvt0Oy0tehm/gEwBezgKZSGaFQKdFM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cpm0KBei; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id B12FFC4CEE3;
-	Mon, 17 Mar 2025 20:26:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742243166;
-	bh=JiV1Gj9dP5qunVw5aZvk+jHVlEVRhGeoMVCHLphzFk8=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=cpm0KBeidy7zfL+4ytAxeseAHqht2oTPa+o3PTnqa+2OC52FqrMF6+wFoW4e2y+FH
-	 1LOFzRvcO86G5bVKW85eUHupkjTwcxHFmY/QKuK5pXDUfShljeSUGx1SywcS1gN8MJ
-	 WedFbase2uKg8pqEG4FDY+u5gTYv3edneF7YJx67xDLBKLV+v4bzqoVW3u1BaIFDSr
-	 5sjRp1QIkvuKDDR79n5ah7fzbV8Nl1UtRZPyprHOaLvfgI6ABvIan5DtL0dxATCn96
-	 2AIJ+5CilzqXlTa+95hVRQ/1cYB66Sf2SfimrqH1eyLh6hYHrAfARc/HhaXjg0EQdo
-	 9Rf7d362B1uGg==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A42B7C282EC;
-	Mon, 17 Mar 2025 20:26:06 +0000 (UTC)
-From: David Heidelberg via B4 Relay <devnull+david.ixit.cz@kernel.org>
-Date: Mon, 17 Mar 2025 21:26:05 +0100
-Subject: [PATCH] dt-bindings: soc: qcom,wcnss: Document local-mac-address
+	s=arc-20240116; t=1742243232; c=relaxed/simple;
+	bh=4UrGEzkEmzoSkM/fjn7XyKgiHlQMMSLunK8C6/I4oXA=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=bKuzFDjS2crq0HMYnr80t7kG09By5V1SoopQYsCFMpQ6TPNz8Fhm+ouI1VCzB8Ij92fcCgZSTYuh55NsqiJSdvLMv/kNtYH0ygvyNK4BjSQo4j2ueIp5E6pdovnvnQfkmfIvprNgp21bmJcpvItL2i8KI1TpYmORvKJDkQO2U5E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=GiaquPeV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04D81C4CEE3;
+	Mon, 17 Mar 2025 20:27:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1742243231;
+	bh=4UrGEzkEmzoSkM/fjn7XyKgiHlQMMSLunK8C6/I4oXA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=GiaquPeVeNCWAt6uc6jdvHDZiz93WzrWqIl+q5V4rvijJAYhBulOuBdqIqrxnAZcc
+	 1cUGxm9CDfEufEDL6EK7ZwyrH4HfwIsHk9MR+frqnOONfMEE7SJGcluH3tiK9iMaRz
+	 4IHFHJI7GeXWWbOLBb0V2h/kQ3mR9LPd5uZwJjrY=
+Date: Mon, 17 Mar 2025 13:27:10 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Shakeel Butt <shakeel.butt@linux.dev>, Johannes Weiner
+ <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>, Roman Gushchin
+ <roman.gushchin@linux.dev>, Muchun Song <muchun.song@linux.dev>, Vlastimil
+ Babka <vbabka@suse.cz>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ linux-mm@kvack.org, cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Meta kernel team <kernel-team@meta.com>
+Subject: Re: [PATCH 0/9] memcg: cleanup per-cpu stock
+Message-Id: <20250317132710.fbcde1c8bb66f91f36e78c89@linux-foundation.org>
+In-Reply-To: <tk35wbak4rp4cpz7khnkpwz7ortta26otktb67c5pmt3yan34z@qgyjxc44rvmp>
+References: <20250315174930.1769599-1-shakeel.butt@linux.dev>
+	<20250315205759.c9f9cdfc2c20467e4106c41a@linux-foundation.org>
+	<tk35wbak4rp4cpz7khnkpwz7ortta26otktb67c5pmt3yan34z@qgyjxc44rvmp>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250317-wcnss-local-mac-v1-1-c7c60d4427be@ixit.cz>
-X-B4-Tracking: v=1; b=H4sIAFyF2GcC/x3MwQpAQBCA4VfRnE1Z2sSryGGMwRRLO4WSd7c5f
- of/f8Akqhi02QNRTjXdQ4LLM+CFwiyoYzKURemLytV4cTDDdWdacSNGX4/kmPwkQwOpOqJMev/
- Hrn/fD9ZVHRlhAAAA
-X-Change-ID: 20250317-wcnss-local-mac-57da1ca5feb9
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Andy Gross <agross@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, David Heidelberg <david@ixit.cz>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1056; i=david@ixit.cz;
- h=from:subject:message-id;
- bh=64sSQPZfgn37XpxGWu0nVTKzcKK48ydVmCTjtTudBrE=;
- b=owEBbQKS/ZANAwAIAWACP8TTSSByAcsmYgBn2IVd63X7hhBruXgk6lgCDh0TKdI/EFrqT8FIJ
- wBZgmsEWEyJAjMEAAEIAB0WIQTXegnP7twrvVOnBHRgAj/E00kgcgUCZ9iFXQAKCRBgAj/E00kg
- ckhEEADPwgDK9arSVnTZrdvJTY5lCzFZt/1hucNsAx6gxPUn4bZLtbKK4N2Lgfu0XGFHSS1PiC2
- 41kZo8MqsT/nMTvZyDJYuxKJUJH5VkOytx4d/VT3pyB45Wdcvbpt5C92/odVGEZE6n7YwuEohMj
- QPC+gkWFVUVPhG78/UzhxEmkjFN3qCKmN68AqWdIoEMvaNNkIra9vP6GcljFiUNdHNUMH3H/fpL
- oe48EQCHYIXpUghMtgjj+XGs+Wwgs9znt1Tov//xCpNXGbgCi2IYHJCMRst4BZyaAYL+/jsSKH0
- rWHvaQzuR3tli1JL1BWQf70ZDATJeKjEtiaAcfG9ID8FmD3xmxGv7Kzc7R0aJVx7n38/TQi1mFW
- +AR+gMRTQsbY/Eb/MbHgvFB7pWfNz/VvtAcVmGfekzau7RIkdQl+l+MzUadk+vxTlYFNe+32eKo
- 14VBf25L6iRGOaHW7eQDHqWMImjIfzNn1GGKlUIZ2uuZvRWHQgI991GuwNt5yUGzTwKjSGLtrei
- cwyysB+OKhPLEuZcgVaWMITAigBsJpNDrv2DhLnbYOixRQQlZ1z1NgG61yhF31FEIUKkGVr5yXk
- Db6qGXu0Pa+Yld+Mp/jsGO7PXoZg/kFfEe8hmq9rVRr58N5QA0q9ybDLz7oKA2XsBJ8LOO9n84q
- pFEqeAMxpwbxvJQ==
-X-Developer-Key: i=david@ixit.cz; a=openpgp;
- fpr=D77A09CFEEDC2BBD53A7047460023FC4D3492072
-X-Endpoint-Received: by B4 Relay for david@ixit.cz/default with auth_id=355
-X-Original-From: David Heidelberg <david@ixit.cz>
-Reply-To: david@ixit.cz
 
-From: David Heidelberg <david@ixit.cz>
+On Sun, 16 Mar 2025 08:59:20 -0700 Alexei Starovoitov <alexei.starovoitov@gmail.com> wrote:
 
-The device and driver do support setting a custom MAC address.
+> On Sat, Mar 15, 2025 at 08:57:59PM -0700, Andrew Morton wrote:
+> > On Sat, 15 Mar 2025 10:49:21 -0700 Shakeel Butt <shakeel.butt@linux.dev> wrote:
+> > 
+> > > 
+> > > This is a cleanup series which is trying to simplify the memcg per-cpu
+> > > stock code, particularly it tries to remove unnecessary dependencies on
+> > > local_lock of per-cpu memcg stock. The eight patch from Vlastimil
+> > > optimizes the charge path by combining the charging and accounting.
+> > > 
+> > > This series is based on next-20250314 plus two following patches:
+> > > 
+> > > Link: https://lore.kernel.org/all/20250312222552.3284173-1-shakeel.butt@linux.dev/
+> > > Link: https://lore.kernel.org/all/20250313054812.2185900-1-shakeel.butt@linux.dev/
+> > 
+> > Unfortunately the bpf tree has been making changes in the same area of
+> > memcontrol.c.  01d37228d331 ("memcg: Use trylock to access memcg
+> > stock_lock.")
+> > 
+> > Sigh.  We're at -rc7 and I don't think it's worth working around that
+> > for a cleanup series.  So I'm inclined to just defer this series until
+> > the next -rc cycle.
+> > 
+> > If BPF merges reasonably early in the next merge window then please
+> > promptly send this along and I should be able to squeak it into
+> > 6.15-rc1.
+> 
+> Ohh. I didn't realize that try_alloc changes are causing so much trouble.
+> Sorry about that.
+> 
+> Andrew,
+> 
+> could you please instead take bpf-next.git try_alloc_pages branch
+> into your tree and resolve two trivial conflicts:
+> 1. https://lore.kernel.org/bpf/20250311120422.1d9a8f80@canb.auug.org.au/
+> 2. https://lore.kernel.org/bpf/20250312145247.380c2aa5@canb.auug.org.au/
+> There are 7 commits there.
+> You can also squash Vlastimil's fix
+> "Fix the flipped condition in gfpflags_allow_spinning" into 
+> "Introduce try_alloc_pages" patch or keep everything as-is.
+> 
+> I'll drop it from bpf-next right after.
+> 
+> Then Shakeel can rebase/resend his set without conflicts and everything
+> will be nicely ready for the merge window.
+> 
+> I'll defer other bpf side things to after merge window when trees converge.
 
-Fixes: c49e9e95f4d1 ("dt: binding: Add Qualcomm WCNSS control binding")
-Signed-off-by: David Heidelberg <david@ixit.cz>
----
- Documentation/devicetree/bindings/soc/qcom/qcom,wcnss.yaml | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/soc/qcom/qcom,wcnss.yaml b/Documentation/devicetree/bindings/soc/qcom/qcom,wcnss.yaml
-index fd6db0ca98eb7e56d7399f55c408844d5e782805..6938dc4ccc2175a65f6f53c6d073fb72cf498b2c 100644
---- a/Documentation/devicetree/bindings/soc/qcom/qcom,wcnss.yaml
-+++ b/Documentation/devicetree/bindings/soc/qcom/qcom,wcnss.yaml
-@@ -68,6 +68,8 @@ properties:
-           - const: tx
-           - const: rx
- 
-+      local-mac-address: true
-+
-       qcom,smem-states:
-         $ref: /schemas/types.yaml#/definitions/phandle-array
-         maxItems: 2
-
----
-base-commit: e94bd4ec45ac156616da285a0bf03056cd7430fc
-change-id: 20250317-wcnss-local-mac-57da1ca5feb9
-
-Best regards,
--- 
-David Heidelberg <david@ixit.cz>
-
+Let's just leave things as they are, please.  It's only a cleanup
+series and merging cleanups after -rc7 is rather dubious even without
+issues such as these.
 
 
