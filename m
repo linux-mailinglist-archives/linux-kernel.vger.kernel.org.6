@@ -1,146 +1,105 @@
-Return-Path: <linux-kernel+bounces-565005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 580DEA65EE7
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 21:17:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 059D4A65EEA
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 21:18:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A28893B73A9
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 20:17:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C34C3B739B
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 20:17:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A800A1EB5CD;
-	Mon, 17 Mar 2025 20:17:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C0501F5825;
+	Mon, 17 Mar 2025 20:18:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JgZ37YYv"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PAHSMCqc"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0610B17A311;
-	Mon, 17 Mar 2025 20:17:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AAE81D934D;
+	Mon, 17 Mar 2025 20:17:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742242672; cv=none; b=pfVj+pmLuiRbj7DbGGvNulBZ266cpqTzBGw6GfOd6VWeI6Xc8vsOvBAwadKIn/NlwYiA6PN5+bifWYbInjW/fszDMNNa60ygOm3Ud/TH9lDXW31BBrHhUGBEXdVDf2VVi4pcZZ3BC7fPjTLPX0AQpI3MFrvoc92hAzVjTXBVVow=
+	t=1742242679; cv=none; b=R6m3LCCatk/hKyZYzlNRF9RoUwvTKqYk/aOPzTJm2ZFHubg0I3A+AdW+dPhhH0KqAL685NWUrBS78r7lH9KcT7KWgoIkcUFYqWRXxILbJolUNan2QTAH0Dmf0ymeEpf40EvyYfR17zmogiGfBrooHTXoR96ktFPAkCGIcWJFWzc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742242672; c=relaxed/simple;
-	bh=TnNYcqHv6QX4BquqpBSfitkMvVtoM1gMjxac+41vjmQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Uw7aEsfwcLbnjsK+cP4WiVSGYAMWIuGJd4tI6YkxLhG8WEN2pwwSTr22szBB1KoSsFn0Zhs2FPnYFbOTuSF4BZITxZnd8Dweg9BYeRKJHt0v1c57leInMrPVPiZD2CMBgO+b4JAt6FNGWv/TTjU/kBF5CCHIVDFVP+jRKXEydqM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JgZ37YYv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8824DC4CEE3;
-	Mon, 17 Mar 2025 20:17:46 +0000 (UTC)
+	s=arc-20240116; t=1742242679; c=relaxed/simple;
+	bh=ZVIj1EFEpjvWf1WSOUSjtDqV3snf8Qpcm2sVXUP3zCM=;
+	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=Kq6IgCf9Ax6Y5bL2H3QowKUrFHIMchxcZgWWJDxSJPeX//8cjZ9zvCwhmbxlnAGwwzsmWGECDcN8QKIlT7oAewaUm2P5UptiR/qBmjt9qqnD5hd4H24dcavcbigfCsRBVD/S09jdhqpjW2PW6SmrV6kYGuyqmZguxRojuQfQN2Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PAHSMCqc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E7FAC4CEE3;
+	Mon, 17 Mar 2025 20:17:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742242671;
-	bh=TnNYcqHv6QX4BquqpBSfitkMvVtoM1gMjxac+41vjmQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=JgZ37YYvlsDKr6CTdzVCLczAhn7gDnynNWzsvyUo1rJYrDhCrl1fcauI0PmtEW3Fo
-	 DI1OTPvKKT/CksHCPhUEutZGWO4bO3r310HQGr+i4LYzECeY2AwGOWNd/naV6U1qXc
-	 4IlLEi94W7oLnLoLqUdlS5j0gnB/+sBY44xAufb7NZhUCBN/8xy3qsvisvfRCg11CC
-	 RKjsOuIPhVtbynqTnoL/YxL+StuL+XecqLfkNv8jVwRjr1T+9zZPin/uNP/xHVsIoB
-	 5kZAQeRnTfL7qvb0ffosn9xPOWhoOgg+Bo/ugxM0Ar7fqGp5kEIOpVIpBRQaCHbrIz
-	 zY+8nZ0r00lSA==
-Message-ID: <565d6379-06b8-402f-b567-38515a521658@kernel.org>
-Date: Mon, 17 Mar 2025 21:17:44 +0100
+	s=k20201202; t=1742242678;
+	bh=ZVIj1EFEpjvWf1WSOUSjtDqV3snf8Qpcm2sVXUP3zCM=;
+	h=From:To:In-Reply-To:References:Subject:Date:From;
+	b=PAHSMCqcOijOasQHJXKx1/aiPl2zIbFZ3Vlt8qOMEJVOM5mdZwTyKa7qbuO1BvSS9
+	 /CTAtu4Xs0D12iFlq6+B6iMmOEm1DwvJscWBy51XBr4cmbbBJO2CAbl19NK9ibZ2CT
+	 SkLWB0kxVTtJRefGwuV2pHw1CO+lCPGABIUJnwx59TLSBgTixMD6rWTWR/XKwuZl8n
+	 nYV1Da5r/zpxeqnpWuL5mYMzLfuPl0Cg1kVzpmzCWyvvvsG54jUkBMW7D9uYwCBzZ8
+	 k56mFDgv1B96tGOMAH62/oTBN2tM9YdUGd71F+Cw4Fob+xwzXhi6n3zyyNpaCYrz8/
+	 HziTMTE1svMiA==
+From: Mark Brown <broonie@kernel.org>
+To: Longbin Li <looong.bin@gmail.com>, linux-spi@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+In-Reply-To: <20250313111423.322775-1-andriy.shevchenko@linux.intel.com>
+References: <20250313111423.322775-1-andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH v2 0/2] spi: sg2044-nor: A couple of cleanups
+Message-Id: <174224267778.326890.843249855338998185.b4-ty@kernel.org>
+Date: Mon, 17 Mar 2025 20:17:57 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RESEND] dt-bindings: gpu: arm,mali-midgard: add
- exynos7870-mali compatible
-To: Kaustabh Chakraborty <kauschluss@disroot.org>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: Sergey Lisov <sleirsgoevy@gmail.com>, dri-devel@lists.freedesktop.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250318-exynos7870-gpu-v1-1-084863f28b5c@disroot.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
- QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
- gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
- /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
- iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
- VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
- 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
- xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
- eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
- AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
- MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
- Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
- ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
- vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
- oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
- lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
- t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
- uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
- 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
- 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20250318-exynos7870-gpu-v1-1-084863f28b5c@disroot.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-1b0d6
 
-On 17/03/2025 20:20, Kaustabh Chakraborty wrote:
-> Exynos7870 SoC uses the ARM Mali T830 GPU, document its compatible
-> string with the appropriate fallback. The T830 compatible is already
-> defined in the panfrost driver, but was commented out as it was unused.
+On Thu, 13 Mar 2025 13:12:58 +0200, Andy Shevchenko wrote:
+> The driver has one ordering issue and one missed case for dev_err_probe().
+> Address that in this mini-series.
 > 
-> Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
-> ---
-> This patch series is a part of Exynos7870 upstreaming.
-> ---
+> In v2:
+> - fixed obvious typo (LKP)
+> 
+> Andy Shevchenko (2):
+>   spi: sg2044-nor: Fully convert to device managed resources
+>   spi: sg2044-nor: Convert to dev_err_probe()
+> 
+> [...]
 
+Applied to
 
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
 
-<form letter>
-This is a friendly reminder during the review process.
+Thanks!
 
-It looks like you received a tag and forgot to add it.
+[1/2] spi: sg2044-nor: Fully convert to device managed resources
+      commit: c6d94963333d6377382f26a480e687492f5a9174
+[2/2] spi: sg2044-nor: Convert to dev_err_probe()
+      commit: 085cf53d71b9406d646c9f3f24876a36a68ef4e9
 
-If you do not know the process, here is a short explanation:
-Please add Acked-by/Reviewed-by/Tested-by tags when posting new versions
-of patchset, under or above your Signed-off-by tag, unless patch changed
-significantly (e.g. new properties added to the DT bindings). Tag is
-"received", when provided in a message replied to you on the mailing
-list. Tools like b4 can help here. However, there's no need to repost
-patches *only* to add the tags. The upstream maintainer will do that for
-tags received on the version they apply.
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
 
-Please read:
-https://elixir.bootlin.com/linux/v6.12-rc3/source/Documentation/process/submitting-patches.rst#L577
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-If a tag was not added on purpose, please state why and what changed.
-</form letter>
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
-Best regards,
-Krzysztof
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
 
