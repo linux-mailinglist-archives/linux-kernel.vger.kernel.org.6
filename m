@@ -1,92 +1,88 @@
-Return-Path: <linux-kernel+bounces-563582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563583-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27902A644AE
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 09:05:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A447A644B0
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 09:07:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1923A3AE90C
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 08:05:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6BEC73AEE0C
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 08:06:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA81921B1B9;
-	Mon, 17 Mar 2025 08:05:20 +0000 (UTC)
-Received: from mxct.zte.com.cn (mxct.zte.com.cn [183.62.165.209])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5625921B908;
+	Mon, 17 Mar 2025 08:06:56 +0000 (UTC)
+Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [195.130.132.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D8A221A452;
-	Mon, 17 Mar 2025 08:05:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=183.62.165.209
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CFA521ABCA
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 08:06:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742198720; cv=none; b=H5PttBYgEfCvcR0sYNFxAByFpjK6q1n05LFeUYmWMfJdHuHbW8XfWVq3HGyDsP296c2Y8F8ezGxu8bsF43SKdtYKaRqTA51VbxNjTfhWZKrMBa1yNp/fWi8ynhWngiqyGZlqDMY/Mac2IpESCTW6z0SN57x9r3lwTnhuqJq74dI=
+	t=1742198816; cv=none; b=OD5vgSLGYMMTKVdUeCTHmiWSbql5CXHEJI6BDib+beunIV6+nnsgrwQ6uPNXZsZzWnaKgnycwaDlVpfZpNkHLb2Eq34muArxnZEfBkSFBUiuHQF4SpcQVKyzOYCQrPcf6t4uGbgKH/Bx0P8FNPJh7vKPIZmZe0cOEpyYPAQL38c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742198720; c=relaxed/simple;
-	bh=RwMkeIBIxFJW+tSUCzTJgCIyIdex8yDGlAh6hb/AgeU=;
-	h=Date:Message-ID:Mime-Version:From:To:Cc:Subject:Content-Type; b=lgNeAnRHgptpBamLDgWGXGyKJZomo8zoOX3Swl1g618wyKuBXrH7LXRIf5c4dgjosJnBUfR21ZxHsNrsr6y3stEJ3lECnOGvk54x+uEOibdjfKAVbs6hdD6hg2l5iX3JPX6IJ0iJvGm/A8eUCj/U7kAEfio71o+IWr21rcjtzrg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=183.62.165.209
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
-Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mxct.zte.com.cn (FangMail) with ESMTPS id 4ZGSFN5vXRz501g9;
-	Mon, 17 Mar 2025 16:05:12 +0800 (CST)
-Received: from xaxapp05.zte.com.cn ([10.99.98.109])
-	by mse-fl2.zte.com.cn with SMTP id 52H84sUP096505;
-	Mon, 17 Mar 2025 16:04:54 +0800 (+08)
-	(envelope-from xie.ludan@zte.com.cn)
-Received: from mapi (xaxapp01[null])
-	by mapi (Zmail) with MAPI id mid32;
-	Mon, 17 Mar 2025 16:04:56 +0800 (CST)
-Date: Mon, 17 Mar 2025 16:04:56 +0800 (CST)
-X-Zmail-TransId: 2af967d7d7a8ffffffffe6b-af222
-X-Mailer: Zmail v1.0
-Message-ID: <20250317160456854fAJoK7WQI_J5R7rPeyfxh@zte.com.cn>
+	s=arc-20240116; t=1742198816; c=relaxed/simple;
+	bh=IwS/MRO3FOIdYPaX4ZMyYe07/Je/6V4zjZnn/FeR5C8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=l5pQ73RCvTOphEwsrOvnZMa8k2nLNy+qYdLpUUlrpgxH2abwt/fLLvJKiMATdFOfJoR6sV0RWSwtMttwK5I1heFUgWMY4rBXEnRPPbI/uqFVpKD30gHSBeCguW7GmOt6Jpg2ylkW9SE008sF1/R0pTU3VZYBszEMGgEMFj4pJLE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:2568:e3d1:1e11:17f3])
+	by baptiste.telenet-ops.be with cmsmtp
+	id Rk6k2E00D1Mz0fJ01k6kYv; Mon, 17 Mar 2025 09:06:45 +0100
+Received: from rox.of.borg ([192.168.97.57])
+	by ramsan.of.borg with esmtp (Exim 4.97)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1tu5UI-0000000EHrW-1BDw;
+	Mon, 17 Mar 2025 09:06:44 +0100
+Received: from geert by rox.of.borg with local (Exim 4.97)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1tu5Ui-00000001oK6-1IBv;
+	Mon, 17 Mar 2025 09:06:44 +0100
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Linus Walleij <linus.walleij@linaro.org>,
+	Yixun Lan <dlan@gentoo.org>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Javier Martinez Canillas <javierm@redhat.com>
+Cc: linux-gpio@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] pinctrl: spacemit: PINCTRL_SPACEMIT_K1 should not default to y unconditionally
+Date: Mon, 17 Mar 2025 09:06:42 +0100
+Message-ID: <6881b8d1ad74ac780af8a974e604b5ef3f5d4aad.1742198691.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-From: <xie.ludan@zte.com.cn>
-To: <andreas@gaisler.com>
-Cc: <davem@davemloft.net>, <gregkh@linuxfoundation.org>, <ukleinek@kernel.org>,
-        <jonathan.cameron@huawei.com>, <xie.ludan@zte.com.cn>,
-        <mathieu.poirier@linaro.org>, <quic_zijuhu@quicinc.com>,
-        <sparclinux@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <xu.xin16@zte.com.cn>, <yang.yang29@zte.com.cn>
-Subject: =?UTF-8?B?W1BBVENIIGxpbnV4LW5leHRdIHNwYXJjL3ZpbzogdXNlIHN5c2ZzX2VtaXQoKSBpbnN0ZWFkIG9mIHNjbnByaW50ZigpLg==?=
-Content-Type: text/plain;
-	charset="UTF-8"
-X-MAIL:mse-fl2.zte.com.cn 52H84sUP096505
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 67D7D7B8.003/4ZGSFN5vXRz501g9
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-From: XieLudan <xie.ludan@zte.com.cn>
+Merely enabling compile-testing should not enable additional
+functionality.
 
-Follow the advice in Documentation/filesystems/sysfs.rst:
-show() should only use sysfs_emit() or sysfs_emit_at() when formatting
-the value to be returned to user space.
-
-Signed-off-by: XieLudan <xie.ludan@zte.com.cn>
+Fixes: 7ff4faba63571c51 ("pinctrl: spacemit: enable config option")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/sparc/kernel/vio.c | 2 +-
+ drivers/pinctrl/spacemit/Kconfig | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/sparc/kernel/vio.c b/arch/sparc/kernel/vio.c
-index 1a1a9d6b8f2e..cbf38eca8d83 100644
---- a/arch/sparc/kernel/vio.c
-+++ b/arch/sparc/kernel/vio.c
-@@ -191,7 +191,7 @@ show_pciobppath_attr(struct device *dev, struct device_attribute *attr,
- 	vdev = to_vio_dev(dev);
- 	dp = vdev->dp;
-
--	return scnprintf(buf, PAGE_SIZE, "%pOF\n", dp);
-+	return sysfs_emit(buf, "%pOF\n", dp);
- }
-
- static DEVICE_ATTR(obppath, S_IRUSR | S_IRGRP | S_IROTH,
+diff --git a/drivers/pinctrl/spacemit/Kconfig b/drivers/pinctrl/spacemit/Kconfig
+index a2f98b3f8a75580d..d6f6017fd097d326 100644
+--- a/drivers/pinctrl/spacemit/Kconfig
++++ b/drivers/pinctrl/spacemit/Kconfig
+@@ -7,7 +7,7 @@ config PINCTRL_SPACEMIT_K1
+ 	bool "SpacemiT K1 SoC Pinctrl driver"
+ 	depends on ARCH_SPACEMIT || COMPILE_TEST
+ 	depends on OF
+-	default y
++	default ARCH_SPACEMIT
+ 	select GENERIC_PINCTRL_GROUPS
+ 	select GENERIC_PINMUX_FUNCTIONS
+ 	select GENERIC_PINCONF
 -- 
-2.25.1
+2.43.0
+
 
