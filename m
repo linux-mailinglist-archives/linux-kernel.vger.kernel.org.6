@@ -1,112 +1,106 @@
-Return-Path: <linux-kernel+bounces-565141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7B76A661AF
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 23:32:09 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84399A661B2
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 23:32:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9984D18982A1
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 22:32:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F07351898086
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 22:32:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 570AC2066DA;
-	Mon, 17 Mar 2025 22:31:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 143C51A23BB;
+	Mon, 17 Mar 2025 22:31:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vj4Kqiwj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="HOjnEtto"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EB202066C6
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 22:31:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E80761CEAB2;
+	Mon, 17 Mar 2025 22:31:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742250663; cv=none; b=XRIXBnx2Hsi8XCDm6DRH/mvlGR3DV+wh84hzMErEV6hdby8BFqWTesmLiXlR/rskz6XSATJb2mtGdY7PgJQWuhGy+Wx8JsLgPr6kOfaILOVEMJ1snwP2dQ2is3DHCJzTnBHplXCMtvssPLp4sy12uaAWlHGve5a1nkFHVBk5m4k=
+	t=1742250692; cv=none; b=ussQH3UB2StFdOCGWFwPgiDdtCKLtpnxCycPuMB1RVaC2f2EMQLQN9ZtVRia9kzUnOS4wsw5IyNqH0BEfIuUgc87bxBIKWBa8hUvcInVgEF1nFmU9C8gsHcakhnRG2opr+hgB9AsW72/vpwIhrvCQsjlLUoC9CI2hlaCpEvwp0Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742250663; c=relaxed/simple;
-	bh=CvczkV3kEQ54Jpf2Pd6IPrz8Itw3XX2xRtDAKbNLDZo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=KaiNt7GWkYDXQVuW4S0OU2O/Ki4aeU4+J1Rpbg36vWmBsOjstEdIDYghBCOkhS/FCZeQWEEb2ICvxkFLdLV+QRLtcO56L4vyPEX5fOuu2ciX8rdUHQM/Pka8r96c2+xlW6UYR84PXe8zpr5v9s5VZ9jBRDJBjmQgnED7P2bteJ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Vj4Kqiwj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5E72C4CEF0;
-	Mon, 17 Mar 2025 22:31:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742250663;
-	bh=CvczkV3kEQ54Jpf2Pd6IPrz8Itw3XX2xRtDAKbNLDZo=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Vj4KqiwjI/3ifwWXjmdXvHVNYZHsFOHxWOXMRh9YQDHiecbtj8Fy9ZedcgDgEAm56
-	 QMiK62Uu71rTUUHiNtWux3Ph4yaQHxaMVaAv3/H9lcF6qJPu/jEWyzTAoOziLd8zkB
-	 7r5MlI7WcaNAwz2f+eQxDIEpjWoNmrrG8jqqk24G+HDXcbgBTu+wlWvBAbrKp/Fbis
-	 B+sRrOeTJvRpgyDKrBnZZQWviWRCMZ3AYtCkEZVl6zy1Hd3AbjaHuOgJC5wXQQrT60
-	 HBOhyi8zZa0/0FAjeWmlg5yKTZF7mwDJYENNtxWO7mcmfHBnaAliB0LhDRJPlFCTy6
-	 1L2o1yhfIDPTw==
-From: mingo@kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: Juergen Gross <jgross@suse.com>,
-	Stefano Stabellini <sstabellini@kernel.org>,
-	"Ahmed S . Darwish" <darwi@linutronix.de>,
-	Andrew Cooper <andrew.cooper3@citrix.com>,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	John Ogness <john.ogness@linutronix.de>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Borislav Petkov <bp@alien8.de>,
-	Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH 5/5] x86/cpuid: Use u32 in instead of uint32_t in <asm/cpuid/api.h>
-Date: Mon, 17 Mar 2025 23:30:39 +0100
-Message-ID: <20250317223039.3741082-6-mingo@kernel.org>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250317223039.3741082-1-mingo@kernel.org>
-References: <20250317223039.3741082-1-mingo@kernel.org>
+	s=arc-20240116; t=1742250692; c=relaxed/simple;
+	bh=Id1Rq1dXAeY1PskZAbDnZCCle4xFZLr7+SR32OwvM4U=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=tn9ekwFK4ssqDd2HAuRDUjUYn0s80gaEPARVjMQua6hGIXo7JJVWLixcEqWCbk4kihUAtNERW7w0fG0xsxsWKPqwA6lwTs693JdpehOzCHkFQcyhVm7tgK4w4s7edvirafTHiMkM9EduQDE7hU9w3ewdGmfbbrrpVhMr/EUA+Fg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=HOjnEtto; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1742250685;
+	bh=Id1Rq1dXAeY1PskZAbDnZCCle4xFZLr7+SR32OwvM4U=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=HOjnEtto0XGQWfBnTIJBTbBCaVvQAoydxBIU7HRL05L8TjTuzo2ofHsnCHzhRZIBG
+	 dojwrPIE3M6hDPOC/EJTStgtmorThvq5oTRIJTG77yhZRWqL6KNXd2q3y4S8Pq5nlZ
+	 PTVfJRM0Fgk6kJ6CX80HW2P3CgomKiZ2l6QqWzyUCrl56ZZemVRHOZOlGlKj9C5ZS8
+	 RVFTjun5QKxlCUYpG/cs9+jiuss2agLGbWl/G6n09pXRbbApmzQ1cSSkphcu+p5g9y
+	 omGJNJl+sE7cDDYBeLC6J4wCuCIPskFW8xafmcR7GlX+BNi8rprsMO84HLOntZZhnO
+	 Bz+z9mKxJJQ0w==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZGqSr4ktYz4xCy;
+	Tue, 18 Mar 2025 09:31:24 +1100 (AEDT)
+Date: Tue, 18 Mar 2025 09:31:23 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alban Kurti <kurti@invicto.ai>, Benno
+ Lossin <benno.lossin@proton.me>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: Re: linux-next: manual merge of the rust tree with Linus' tree
+Message-ID: <20250318093123.22f584df@canb.auug.org.au>
+In-Reply-To: <CANiq72nD2ezPVHH_mZhB4+FmD_Un90dGL+q5-Np+zUDj97UWCQ@mail.gmail.com>
+References: <20250317212047.46580935@canb.auug.org.au>
+	<CANiq72nD2ezPVHH_mZhB4+FmD_Un90dGL+q5-Np+zUDj97UWCQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="Sig_/W_07QCzb35HABjsKHsuaR.D";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-From: Ingo Molnar <mingo@kernel.org>
+--Sig_/W_07QCzb35HABjsKHsuaR.D
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Use u32 instead of uint32_t in hypervisor_cpuid_base().
+Hi Miguel,
 
-Yes, I realize uint32_t is used in Xen code et al, but this is
-a core x86 architecture header and we should standardize on the
-type that is being used overwhelmingly in related x86 architecture
-code.
+On Mon, 17 Mar 2025 20:37:14 +0100 Miguel Ojeda <miguel.ojeda.sandonis@gmai=
+l.com> wrote:
+>
+> The part you did here looks OK, though we will need another line fixed
+> elsewhere, since the equivalent to that line is now elsewhere. Please
+> see the resolution in the last message.
 
-The two types are the same so there should be no build warnings.
+I did not receive your "last message" - or is it still on its way?
 
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Cc: Juergen Gross <jgross@suse.com>
-Cc: Stefano Stabellini <sstabellini@kernel.org>
-Cc: Ahmed S. Darwish <darwi@linutronix.de>
-Cc: Andrew Cooper <andrew.cooper3@citrix.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: John Ogness <john.ogness@linutronix.de>
-Cc: x86-cpuid@lists.linux.dev
-Link: https://lore.kernel.org/r/20250317164745.4754-3-darwi@linutronix.de
----
- arch/x86/include/asm/cpuid/api.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+--=20
+Cheers,
+Stephen Rothwell
 
-diff --git a/arch/x86/include/asm/cpuid/api.h b/arch/x86/include/asm/cpuid/api.h
-index 356db1894588..9c180c9cc58e 100644
---- a/arch/x86/include/asm/cpuid/api.h
-+++ b/arch/x86/include/asm/cpuid/api.h
-@@ -187,9 +187,9 @@ static __always_inline bool cpuid_function_is_indexed(u32 function)
- #define for_each_possible_hypervisor_cpuid_base(function) \
- 	for (function = 0x40000000; function < 0x40010000; function += 0x100)
- 
--static inline uint32_t hypervisor_cpuid_base(const char *sig, uint32_t leaves)
-+static inline u32 hypervisor_cpuid_base(const char *sig, u32 leaves)
- {
--	uint32_t base, eax, signature[3];
-+	u32 base, eax, signature[3];
- 
- 	for_each_possible_hypervisor_cpuid_base(base) {
- 		cpuid(base, &eax, &signature[0], &signature[1], &signature[2]);
--- 
-2.45.2
+--Sig_/W_07QCzb35HABjsKHsuaR.D
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfYorsACgkQAVBC80lX
+0GynQQf9HK99qmUBvnmrzemwsgj8e0jBirBM2g3LnVGJldVT5/gyX2GCW5l5FXhm
+PBEM16N1YatH513SWfCRdqWDaZaFO4FDMtEVs6ffGGinPVaeJ0vrMS+N61CFXzwh
+MXCIrYmmr8RxQwo2CUdmUehzibwqn3QmcH/lgeNGNu/YOrBFgPlJWU7uUDMyzMQY
+ljRU8PuD96sZIJZ+bObtX8OR0rtmw+zdSpJL1DDivr7oOpa8GWL3iTwW4s1UVhKQ
++pdNTtFsRRsx8g3bJCt8bVGDdDoWkzB/jupoNiKG6jGDk+gy+/bn4PTNCeXi9t6N
+NI/31NEOKj9jR16lmBV51zCbeau4qw==
+=g9kK
+-----END PGP SIGNATURE-----
+
+--Sig_/W_07QCzb35HABjsKHsuaR.D--
 
