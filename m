@@ -1,79 +1,47 @@
-Return-Path: <linux-kernel+bounces-563501-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563502-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CEF1A642FB
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 08:11:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6154AA642FC
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 08:11:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5EF73A3AB8
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 07:11:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D418A3A39D9
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 07:11:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E54E721ABAE;
-	Mon, 17 Mar 2025 07:11:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 938D621A931;
+	Mon, 17 Mar 2025 07:11:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WqllYVQp"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I2fg9cRy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F9EA207E1F;
-	Mon, 17 Mar 2025 07:11:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9ECD1C6FF3
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 07:11:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742195475; cv=none; b=MAx9Po3kB0TRuWqJ6iDv74PAxW2tnoKfwTPtESnzSxEPthfr9kaZPMn/Av94N42Br3dc9BOYvR4SCrU0FgLuGq6FYS3Z6PDVF+xLX6/WbCE6vfZln6Zy2Jl3kNM1Cfe0dMSXASTribko1K8dt9bMgJo5BKNNwciqOI34wPUg/W0=
+	t=1742195482; cv=none; b=m+jlJxdmAF4RG691nWz8ZDbtH+p3sOz5ZocPuCXfVx/RIGZeoYuwew4jOm5wicd338s8XV4O0HvplceClS9VV7fEsfT2PMfdEASfSmFk1/GlSSUR4ZgN/0QLU6GC4qXqN5Stl0IARxX4++0ZV6ivZr5lZMoFIw3/lftspahD7Cs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742195475; c=relaxed/simple;
-	bh=bxC9ANzFX9uX0dn0RdpNnhuv0Rw4vLPvZggRh2iBFK0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ysuxt37fM38zTdbnCOzhu/BBVUcLCZEwRoKEFeOYupf6fbGrF9rTzkMH8GsXUO7yp9lRmvyJUo/4bLerVyBt6rg9CbtBrIx5WAHFVHjUY1FJLq1/3FQLmLxS6YDw97YjodlY4yqCnHCJQux5LmpWhA7PagN1ak0yz99j1ErjXUg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WqllYVQp; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-54957f0c657so4198147e87.0;
-        Mon, 17 Mar 2025 00:11:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742195471; x=1742800271; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=HalaitR3wNqHBLiZ26kGsVTmgpsmEjHSTSSRfu+eT1s=;
-        b=WqllYVQpsONClsPGWqnm1ycuLzM/kztRJIbXIqz44BIU05hD0vwF4FjrDOAKFOXcj8
-         E1fY2AvgkG5nbI+z5+0H4BVJTNqRLxiVgv2py/Cn37KgFFVFicpfFnnwd/yrN/exQMr1
-         iIKJEkCPx7ZMW3Zh8hsekR2jFz85/la3W2CMTvi8GKeQTo+3bSoqJlSAbBaRx+hwy8K8
-         sgdjvOt2ocoZmxs0hnTNITcBfrJlYBpyYPRnfciH+WBtpCRZmuUVaWgzGpb60bZE+O9k
-         WubHgQ/NQ3WdfYC6MXyesv1CTSGZ8/k9Mm8yT70NGgmkb2uaP0U8ne30VXTdu5FtJfo0
-         Koyw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742195471; x=1742800271;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HalaitR3wNqHBLiZ26kGsVTmgpsmEjHSTSSRfu+eT1s=;
-        b=vbomwccoAHQWmaRGQAK9ybF2OxQhLs8Ysb6MRyVLZdo09H6np9/spSqD/snoGzdiqd
-         NZsRCjzMEjzxjv+BXozAhk24e803eUA161JJSe6x/qJiMwE3rZfF4PihAzSQTnoCRALX
-         yE4eXwlgDA9+0f8P1E8y8WWFimjV0qSlWR/hyeI18/ujrniaKqiWxEhemMV4TEjN/muY
-         GttGkuhQMz5NbE41UhEnNagHR+HLBIhytCClfQXJulZg9X51Y3FEILSV8yiwSrPLAhmp
-         R3JWpfGFteCYQOfBfpzdBQyxAmAE9qvTM64rvHnTjVmsUmvf51FA/q8dYJoEmClQu6BG
-         hWjw==
-X-Forwarded-Encrypted: i=1; AJvYcCUKw/y4KkIOijQWUHpTJHDsAjmOsbQaCsMIgPoGCdqxnyjfkkZab5smMLOa0cORo2TPueY4/ZLmXraEsHXL@vger.kernel.org, AJvYcCWPFuDKk9yX6cYb18Td+VhacoIXVEHuM/lqQP/J10xMA/ISFfRKwiQoJB15+2Rc2fy/7MRzA4rDDMA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz7htM1QLBPSmQVcutuvtl6B+SIhKH3NXzD0w+JEsGOlAmX0Fno
-	L8eXJKZGJPydYklqa4TGe635F1d5J6sGdRDB7iX6G3XmiZxa6DwD
-X-Gm-Gg: ASbGncvJsqco8M2XYK6EtjhBlVHUsNBNd++BpvqzoaYYUcpXeMnCA3P7iAye2xYCM+X
-	oTHJkjUcv7RXd6G5MuDsqnrpv4KpQeeWjqkQ0N0QQA5zvz8Z2pAMafUNNQBNnEltFEhXDp+RsLg
-	GaOnS8vOIXPupWvaNaFMsamGoYikNPC3xqCPcRPxDjz9R1O1nl90I19tatnCyGbpkgdhO8tCGji
-	ZBeunx9K3GXJXKfSpzh3lFj5T6wCc0EOv8Q+PkQqN8ZBiB/Q42dqg0zOGePKxFA/zwYHopcgiVi
-	Lbwc1sfwEVu/PgtclbHbtUFbXmoLTTBwOgIfj5KFtKFW44e6oz6XYno70hqjeATxmMl2jjlug/d
-	aoeAiiDY7TJMbdYCffDFtxy++HQ==
-X-Google-Smtp-Source: AGHT+IGYn0VINpzgzh6MdKG0thylUkI/oz83FeKBKYjY8VACZiA9L37BUf8dAo+M8/olFMTjah+v2A==
-X-Received: by 2002:a05:6512:118a:b0:549:8f14:a839 with SMTP id 2adb3069b0e04-549c3f23817mr5553692e87.11.1742195471393;
-        Mon, 17 Mar 2025 00:11:11 -0700 (PDT)
-Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-549ba8a761asm1220851e87.229.2025.03.17.00.11.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 17 Mar 2025 00:11:09 -0700 (PDT)
-Message-ID: <50b126c5-248e-4694-9782-4f28d6db5fce@gmail.com>
-Date: Mon, 17 Mar 2025 09:11:08 +0200
+	s=arc-20240116; t=1742195482; c=relaxed/simple;
+	bh=BlDhQuCVuSbyyiPlqh5uRtnwin5bxEqTTI5pWG072vM=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=m05FQMvhc1HxwDGw3kF9hVZyj3ljOZ3Dl94awuzcPt8y9wFRzVFBWK0ZnlpN4PHIoseOmvRfRxGVCFRzXlnJQZZAZu3AB9Ih63C8SdGMsShK5qfsF12wxX3Qjl2nyXFcJuZCLHTMYcsj/7WGJw91BzM9CQbo7iDwxHpNdcDr7Ag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I2fg9cRy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64E5FC4CEE3;
+	Mon, 17 Mar 2025 07:11:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742195481;
+	bh=BlDhQuCVuSbyyiPlqh5uRtnwin5bxEqTTI5pWG072vM=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=I2fg9cRy9+Q5lpZPxdRHQFu2n3pJzl1FUFXAqA8A+MPW3H8tCeM009l6/Pe5XVUOK
+	 4ZImmgOc6Ltqbx/eQzAhm2U5C593Pk345W5S1KFIIN637QiBnzl9ZDz2FrFXpGbiMS
+	 EHz1A8U89A5eY5sFv0F35VrwrvehAsuuGdvQoeUVBPjE9n2+8z8ie8jOzSTVe6QYYK
+	 l1bFi4wJh2yJrcHVRag5Yl0MPLknSL54cEpfBKVsPOUk9mSY0sI4HXsKx/9F7iiTmr
+	 2K1HD/25zWkrNOdLC+4nGkRLUZzieCgToXJgN7wBQp8mDwJZFd1KtKsvShLybv5NU5
+	 Dgw6ftTUJY5GQ==
+Message-ID: <610d08c6-fe48-4013-98d0-867d23da506d@kernel.org>
+Date: Mon, 17 Mar 2025 15:11:18 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,86 +49,127 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 05/10] iio: adc: sun20i-gpadc: Use adc-helpers
-To: Jonathan Cameron <jic23@kernel.org>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
- Lars-Peter Clausen <lars@metafoo.de>, Chen-Yu Tsai <wens@csie.org>,
- Jernej Skrabec <jernej.skrabec@gmail.com>,
- Samuel Holland <samuel@sholland.org>, Nuno Sa <nuno.sa@analog.com>,
- David Lechner <dlechner@baylibre.com>,
- Javier Carrasco <javier.carrasco.cruz@gmail.com>,
- Olivier Moysan <olivier.moysan@foss.st.com>,
- Guillaume Stols <gstols@baylibre.com>,
- Dumitru Ceclan <mitrutzceclan@gmail.com>,
- Trevor Gamblin <tgamblin@baylibre.com>,
- Matteo Martelli <matteomartelli3@gmail.com>,
- Alisa-Dariana Roman <alisadariana@gmail.com>, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-sunxi@lists.linux.dev
-References: <cover.1741849323.git.mazziesaccount@gmail.com>
- <df0b2b53affbef5ccb7219328cc15db3ba843737.1741849323.git.mazziesaccount@gmail.com>
- <Z9LQ0O34EUM8WZku@smile.fi.intel.com> <20250316094112.6731bd01@jic23-huawei>
-Content-Language: en-US, en-AU, en-GB, en-BW
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-In-Reply-To: <20250316094112.6731bd01@jic23-huawei>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Cc: chao@kernel.org,
+ "linux-f2fs-devel@lists.sourceforge.net"
+ <linux-f2fs-devel@lists.sourceforge.net>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] f2fs: fix missing discard for active segments
+To: Chunhai Guo <guochunhai@vivo.com>, "jaegeuk@kernel.org"
+ <jaegeuk@kernel.org>
+References: <20250109122755.177926-1-guochunhai@vivo.com>
+ <4270b213-e4f9-46b2-958a-df3dbaaed969@kernel.org>
+ <95b8334a-45e6-496a-8b0b-ab7a7fe180b5@vivo.com>
+Content-Language: en-US
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <95b8334a-45e6-496a-8b0b-ab7a7fe180b5@vivo.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 16/03/2025 11:41, Jonathan Cameron wrote:
-> On Thu, 13 Mar 2025 14:34:24 +0200
-> Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
+On 3/13/25 10:25, Chunhai Guo wrote:
+> 在 1/20/2025 8:25 PM, Chao Yu 写道:
+>> On 1/9/25 20:27, Chunhai Guo wrote:
+>>> During a checkpoint, the current active segment X may not be handled
+>>> properly. This occurs when segment X has 0 valid blocks and a non-zero
+>> How does this happen? Allocator selects a dirty segment w/ SSR? and the
+>> left valid data blocks were deleted later before following checkpoint?
+>>
+>> If so, pending discard count in that segment should be in range of (0, 512)?
 > 
->> On Thu, Mar 13, 2025 at 09:18:49AM +0200, Matti Vaittinen wrote:
->>> The new devm_iio_adc_device_alloc_chaninfo_se() -helper is intended to
->>> help drivers avoid open-coding the for_each_node -loop for getting the
->>> channel IDs. The helper provides standard way to detect the ADC channel
->>> nodes (by the node name), and a standard way to convert the "reg"
->>> -properties to channel identification numbers, used in the struct
->>> iio_chan_spec. Furthermore, the helper can optionally check the found
->>> channel IDs are smaller than given maximum. This is useful for callers
->>> which later use the IDs for example for indexing a channel data array.
+> 
+> This issue is found with LFS rather than SSR. Here's what happens: some
+> data blocks are allocated for a file in the current active segment, and
+> then the file is deleted, resulting in all valid data blocks in the
+> current active segment being deleted before the following checkpoint.
+> This issue is easy to reproduce with the following operations:
+> 
+> 
+> # mkfs.f2fs -f /dev/nvme2n1
+> # mount -t f2fs /dev/nvme2n1 /vtmp/mnt/f2fs
+> # dd if=/dev/nvme0n1 of=/vtmp/mnt/f2fs/1.bin bs=4k count=256
+> # sync
+> # rm /vtmp/mnt/f2fs/1.bin
+> # umount /vtmp/mnt/f2fs
+> # dump.f2fs /dev/nvme2n1 | grep "checkpoint state"
+> Info: checkpoint state = 45 :  crc compacted_summary unmount ----
+> 'trimmed' flag is missing
+
+Chunhai,
+
+Thank you for providing testcase, are you interest in upstream this
+as a f2fs testcase to xfstests?
+
+Thanks,
+
+> 
+> The pending discard count in that segment indeed falls within the range
+> of (0, 512).
+> 
+> Thanks,
+>> Thanks,
+>>
+>>> number of discard blocks, for the following reasons:
 >>>
->>> The original driver treated all found child nodes as channel nodes. The
->>> new helper requires channel nodes to be named channel[@N]. This should
->>> help avoid problems with devices which may contain also other but ADC
->>> child nodes. Quick grep from arch/* with the sun20i-gpadc's compatible
->>> string didn't reveal any in-tree .dts with channel nodes named
->>> otherwise. Also, same grep shows all the in-tree .dts seem to have
->>> channel IDs between 0..num of channels.
+>>> locate_dirty_segment() does not mark any active segment as a prefree
+>>> segment. As a result, segment X is not included in dirty_segmap[PRE], and
+>>> f2fs_clear_prefree_segments() skips it when handling prefree segments.
 >>>
->>> Use the new helper.
->>
->> ...
->>
->>> +	num_channels = devm_iio_adc_device_alloc_chaninfo_se(dev,
->>> +				&sun20i_gpadc_chan_template, -1, &channels);
->>> +	if (num_channels < 0)
->>> +		return num_channels;
->>> +
->>>   	if (num_channels == 0)
->>>   		return dev_err_probe(dev, -ENODEV, "no channel children\n");
->>
->> Note, this what I would expected in your helper to see, i.e. separated cases
->> for < 0 (error code) and == 0, no channels.
->>
->> Also, are all users going to have this check? Usually in other similar APIs
->> we return -ENOENT. And user won't need to have an additional check in case of
->> 0 being considered as an error case too.
-> In a few cases we'll need to do the dance the other way in the caller.
-> So specifically check for -ENOENT and not treat it as an error.
+>>> add_discard_addrs() skips any segment with 0 valid blocks, so segment X is
+>>> also skipped.
+>>>
+>>> Consequently, no `struct discard_cmd` is actually created for segment X.
+>>> However, the ckpt_valid_map and cur_valid_map of segment X are synced by
+>>> seg_info_to_raw_sit() during the current checkpoint process. As a result,
+>>> it cannot find the missing discard bits even in subsequent checkpoints.
+>>> Consequently, the value of sbi->discard_blks remains non-zero. Thus, when
+>>> f2fs is umounted, CP_TRIMMED_FLAG will not be set due to the non-zero
+>>> sbi->discard_blks.
+>>>
+>>> Relevant code process:
+>>>
+>>> f2fs_write_checkpoint()
+>>>       f2fs_flush_sit_entries()
+>>>            list_for_each_entry_safe(ses, tmp, head, set_list) {
+>>>                for_each_set_bit_from(segno, bitmap, end) {
+>>>                    ...
+>>>                    add_discard_addrs(sbi, cpc, false); // skip segment X due to its 0 valid blocks
+>>>                    ...
+>>>                    seg_info_to_raw_sit(); // sync ckpt_valid_map with cur_valid_map for segment X
+>>>                    ...
+>>>                }
+>>>            }
+>>>       f2fs_clear_prefree_segments(); // segment X is not included in dirty_segmap[PRE] and is skipped
+>>>
+>>> Since add_discard_addrs() can handle active segments with non-zero valid
+>>> blocks, it is reasonable to fix this issue by allowing it to also handle
+>>> active segments with 0 valid blocks.
+>>>
+>>> Fixes: b29555505d81 ("f2fs: add key functions for small discards")
+>>> Signed-off-by: Chunhai Guo <guochunhai@vivo.com>
+>>> ---
+>>> v1: https://lore.kernel.org/linux-f2fs-devel/20241203065108.2763436-1-guochunhai@vivo.com/
+>>> v1->v2:
+>>>    - Modify the commit message to make it easier to understand.
+>>>    - Add fixes to the commit.
+>>> ---
+>>>    fs/f2fs/segment.c | 4 +++-
+>>>    1 file changed, 3 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+>>> index 86e547f008f9..13ee73a3c481 100644
+>>> --- a/fs/f2fs/segment.c
+>>> +++ b/fs/f2fs/segment.c
+>>> @@ -2090,7 +2090,9 @@ static bool add_discard_addrs(struct f2fs_sb_info *sbi, struct cp_control *cpc,
+>>>              return false;
+>>>
+>>>      if (!force) {
+>>> -            if (!f2fs_realtime_discard_enable(sbi) || !se->valid_blocks ||
+>>> +            if (!f2fs_realtime_discard_enable(sbi) ||
+>>> +                    (!se->valid_blocks &&
+>>> +                            !IS_CURSEG(sbi, cpc->trim_start)) ||
+>>>                      SM_I(sbi)->dcc_info->nr_discards >=
+>>>                              SM_I(sbi)->dcc_info->max_discards)
+>>>                      return false;
 > 
-> That stems from channel nodes being optionally added to drivers after
-> they have been around a while (usually to add more specific configuration)
-> and needing to maintain old behaviour of presenting all channels with default
-> settings.
 > 
-> I agree that returning -ENOENT is a reasonable way to handle this.
 
-I agree - but I'm going to use -ENODEV instead of -ENOENT because that's 
-what the current callers return if they find no channels. That way the 
-drivers can return the value directly without converting -ENOENT to -ENODEV.
-
-Yours,
-	-- Matti
 
