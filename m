@@ -1,126 +1,114 @@
-Return-Path: <linux-kernel+bounces-563235-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563236-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21C48A63A70
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 02:34:53 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E594CA63A73
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 02:37:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 49D79188AA51
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 01:35:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 11AAF7A2C2B
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 01:36:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE30C145B25;
-	Mon, 17 Mar 2025 01:34:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FA0D13AA2A;
+	Mon, 17 Mar 2025 01:37:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="PapciGaU"
-Received: from out30-132.freemail.mail.aliyun.com (out30-132.freemail.mail.aliyun.com [115.124.30.132])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kECd/zRq"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B52F0405F7;
-	Mon, 17 Mar 2025 01:34:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.132
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D58AA23AD;
+	Mon, 17 Mar 2025 01:36:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742175283; cv=none; b=X1WyzUlizEP47Mb55yqBKXsO7URdPLoFRBN7Sh1SGWD7TTm6wba7Qi0JRJRwCJo4ogZZL3UcVgcsyhX5DZVpO1m9c/2QmU0GencPF9bzVSL6vz3ydhYP5rjTZLgBPR53RYp7porWKWogJXeESmjozk/mayqYhtLfx7z6JQ6xhUk=
+	t=1742175419; cv=none; b=by6dM13SMUilLXsY5H2Rb5Bk1bOXPTi137iGUzEC94PnGhcs6L/DT0AiB2vpgolH2esTVOPPdvjUfSKuYELY4RyIhg/Wdx76lx1Q6ZgXR5697bX1F9MaVGy/a9Y4gbEckFwmXy046CAeycNQ3ecxFZeWu1rF7yUeTzbOIgbcyQE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742175283; c=relaxed/simple;
-	bh=eT6MFakubGkmnBAAqo9NAtgD4qcjFA/LrKjlIPZyI2I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n3yiqxXkwIt0MNOxVdxgg2zvwwXGd+8T2+OCHDUxTw9O2OcfIP7v3zxUQcQFGhrGKO9raE3S9PWB8BUvMsYc6GTO/mpCqVMgmWZhlYYUVR7bzgzP15uf4ZQKBqjOqz59opN4z5hBT1xD99W+j/lePYGfLRmZML/Di7d12N/TknM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=PapciGaU; arc=none smtp.client-ip=115.124.30.132
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1742175271; h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
-	bh=OWGQO/XmAgafV+pvwHl30RyH+rk+S5XjfM5aTrOYSKc=;
-	b=PapciGaUveJuicEJOX20kqEohwePbt3PERnn3y7mWmQ2uE7/M3hHvMrobGL4tJhmParVqN4jE4ZeQ8TBUNOl3zeMKeVSBimFIzu3vQoFRVLkGQ1RIMJGjYS5z2lFv/svy5uEsU5cVTQHrwZOCp4mEwszyq6AxVSdxTRlP4R7+XI=
-Received: from localhost(mailfrom:dust.li@linux.alibaba.com fp:SMTPD_---0WRXPGg2_1742175268 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Mon, 17 Mar 2025 09:34:29 +0800
-Date: Mon, 17 Mar 2025 09:34:28 +0800
-From: Dust Li <dust.li@linux.alibaba.com>
-To: I Hsin Cheng <richard120310@gmail.com>, alibuda@linux.alibaba.com
-Cc: wenjia@linux.ibm.com, jaka@linux.ibm.com, tonylu@linux.alibaba.com,
-	guwen@linux.alibaba.com, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
-	linux-rdma@vger.kernel.org, linux-s390@vger.kernel.org,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	skhan@linuxfoundation.org, jserv@ccns.ncku.edu.tw,
-	linux-kernel-mentees@lists.linux.dev
-Subject: Re: [PATCH] net/smc: Reduce size of smc_wr_tx_tasklet_fn
-Message-ID: <20250317013428.GC56800@linux.alibaba.com>
-Reply-To: dust.li@linux.alibaba.com
-References: <20250315062516.788528-1-richard120310@gmail.com>
+	s=arc-20240116; t=1742175419; c=relaxed/simple;
+	bh=6UZEFdgCJ54WqRAxf9tT/iQiD+Qv6fVPWFP9fDbyJRA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=PX7CbxthEtggEP3OXl/PpXtCsSqlbBK1JTU7eyclb2+LnNn3jZt0IS0IZxqES7LxUAksokdRzEQ44RXYBD7M1apYwTeM9XYCNL8QjLrBrBOzSKipcU0VQGEE+UKGAcsrCqQ2Z8XBISbxG3wTAga70F7iMHGrV6SftgZ57jkFyk0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kECd/zRq; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742175418; x=1773711418;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=6UZEFdgCJ54WqRAxf9tT/iQiD+Qv6fVPWFP9fDbyJRA=;
+  b=kECd/zRqDnGhSgShFy067LYWdIMtTgOt9ByEVIUeBxMQMm/QdrGfpE2h
+   tBeAzSjNPfW/ZHd/VN3sBmOf9th6cu+hR+wzcBxMudp2l8M2sedwmT5IO
+   zf5uYvHZ9GjW7bD4/+xH8vJYx6YCJJo7qc43jcLDwz/4Ko2lEeGmiquZB
+   AndZJw4glusm2BA35jp6yJx9RppQ/kKT0s+0aMFzf1F+yNO7loYeVX+p3
+   ZJwhF0gg0UVMY3kw2OTTDr3OD1h9M8u6wJK/iGQiS3h1/+KHkIRSVh+aV
+   otvwLILA2n+lVXBAbiIU9qDpdTW+exIDNhBTRj3K/M8YQm3qyw12pFBMO
+   g==;
+X-CSE-ConnectionGUID: geEQ5cLxRMSqDZOS2V5olQ==
+X-CSE-MsgGUID: jaYRb5BpSPG143WijSGPEA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11375"; a="54252440"
+X-IronPort-AV: E=Sophos;i="6.14,252,1736841600"; 
+   d="scan'208";a="54252440"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Mar 2025 18:36:56 -0700
+X-CSE-ConnectionGUID: cvy8ZCcWSIS4MMrYXyY53Q==
+X-CSE-MsgGUID: Ed2r1ljBQw+xaRmtb26f4A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,252,1736841600"; 
+   d="scan'208";a="121795588"
+Received: from shsensorbuild.sh.intel.com ([10.239.133.18])
+  by orviesa006.jf.intel.com with ESMTP; 16 Mar 2025 18:36:54 -0700
+From: Zhang Lixu <lixu.zhang@intel.com>
+To: jic23@kernel.org,
+	jikos@kernel.org,
+	srinivas.pandruvada@linux.intel.com,
+	lars@metafoo.de,
+	linux-input@vger.kernel.org,
+	linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: lixu.zhang@intel.com
+Subject: [PATCH] iio: hid-sensor-prox: Add support for 16-bit report size
+Date: Mon, 17 Mar 2025 09:36:34 +0800
+Message-Id: <20250317013634.4117399-1-lixu.zhang@intel.com>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250315062516.788528-1-richard120310@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On 2025-03-15 14:25:16, I Hsin Cheng wrote:
->The variable "polled" in smc_wr_tx_tasklet_fn is a counter to determine
->whether the loop has been executed for the first time. Refactor the type
->of "polled" from "int" to "bool" can reduce the size of generated code
->size by 12 bytes shown with the test below
->
->$ ./scripts/bloat-o-meter vmlinux_old vmlinux_new
->add/remove: 0/0 grow/shrink: 0/1 up/down: 0/-12 (-12)
->Function                                     old     new   delta
->smc_wr_tx_tasklet_fn                        1076    1064     -12
->Total: Before=24795091, After=24795079, chg -0.00%
->
->In some configuration, the compiler will complain this function for
->exceeding 1024 bytes for function stack, this change can at least reduce
->the size by 12 bytes within manner.
->
->Signed-off-by: I Hsin Cheng <richard120310@gmail.com>
+On Intel platforms, the HID_USAGE_SENSOR_HUMAN_PROXIMITY report size is 16
+bits. This patch adds support for handling 16-bit report sizes for the
+HID_USAGE_SENSOR_HUMAN_PROXIMITY usage in the HID sensor proximity driver.
 
-Reviewed-by: Dust Li <dust.li@linux.alibaba.com>
+Previously, the driver only supported 8-bit and 32-bit report sizes. With
+this change, the driver can now correctly process 16-bit proximity data,
+ensuring accurate human presence detection on platforms where this report
+size is used.
 
-Best regards,
-Dust
+Signed-off-by: Zhang Lixu <lixu.zhang@intel.com>
+Acked-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+---
+ drivers/iio/light/hid-sensor-prox.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
->---
-> net/smc/smc_wr.c | 8 ++++----
-> 1 file changed, 4 insertions(+), 4 deletions(-)
->
->diff --git a/net/smc/smc_wr.c b/net/smc/smc_wr.c
->index b04a21b8c511..3cc435ed7fde 100644
->--- a/net/smc/smc_wr.c
->+++ b/net/smc/smc_wr.c
->@@ -138,14 +138,14 @@ static void smc_wr_tx_tasklet_fn(struct tasklet_struct *t)
-> 	struct smc_ib_device *dev = from_tasklet(dev, t, send_tasklet);
-> 	struct ib_wc wc[SMC_WR_MAX_POLL_CQE];
-> 	int i = 0, rc;
->-	int polled = 0;
->+	bool polled = false;
-> 
-> again:
->-	polled++;
->+	polled = !polled;
-> 	do {
-> 		memset(&wc, 0, sizeof(wc));
-> 		rc = ib_poll_cq(dev->roce_cq_send, SMC_WR_MAX_POLL_CQE, wc);
->-		if (polled == 1) {
->+		if (polled) {
-> 			ib_req_notify_cq(dev->roce_cq_send,
-> 					 IB_CQ_NEXT_COMP |
-> 					 IB_CQ_REPORT_MISSED_EVENTS);
->@@ -155,7 +155,7 @@ static void smc_wr_tx_tasklet_fn(struct tasklet_struct *t)
-> 		for (i = 0; i < rc; i++)
-> 			smc_wr_tx_process_cqe(&wc[i]);
-> 	} while (rc > 0);
->-	if (polled == 1)
->+	if (polled)
-> 		goto again;
-> }
-> 
->-- 
->2.43.0
->
+diff --git a/drivers/iio/light/hid-sensor-prox.c b/drivers/iio/light/hid-sensor-prox.c
+index 76b76d12b388..3a7b48803d50 100644
+--- a/drivers/iio/light/hid-sensor-prox.c
++++ b/drivers/iio/light/hid-sensor-prox.c
+@@ -213,6 +213,9 @@ static int prox_capture_sample(struct hid_sensor_hub_device *hsdev,
+ 	case 1:
+ 		prox_state->human_presence[chan] = *(u8 *)raw_data * multiplier;
+ 		return 0;
++	case 2:
++		prox_state->human_presence[chan] = *(u16 *)raw_data * multiplier;
++		return 0;
+ 	case 4:
+ 		prox_state->human_presence[chan] = *(u32 *)raw_data * multiplier;
+ 		return 0;
+
+base-commit: eea255893718268e1ab852fb52f70c613d109b99
+-- 
+2.40.1
+
 
