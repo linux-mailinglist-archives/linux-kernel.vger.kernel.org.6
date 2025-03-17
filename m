@@ -1,171 +1,270 @@
-Return-Path: <linux-kernel+bounces-564597-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00FFEA657FB
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 17:27:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 338F7A65800
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 17:28:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3FC8B163E13
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 16:27:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C817165ECC
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 16:28:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36C5119D09C;
-	Mon, 17 Mar 2025 16:27:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4058119F420;
+	Mon, 17 Mar 2025 16:28:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="OYufZBM8"
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dDM0Tjw0"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C209E17A2E9
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 16:27:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC2F317A2E9
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 16:28:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742228832; cv=none; b=avzlVRoRF1/Y3uIoQn9+RISZIWzluxMV8uMbCuNjn6tr30tHqJ6GkbW+arWozTYoVxmqwR5inrv3wzXht8KEJxgg3vqNkAEGVVO8aFWTThnt7RCSJ2WTVcWUkq6T4OuM3HYDWe21GMW3ETZlqZ+Bg1cf1Coqbr1HIOFjtZ1vmko=
+	t=1742228883; cv=none; b=rR4m5FbsrufkgCMoeeOAip3Fo/VIrzGV37ZYmNPtLoc5kGfzDba9iAk/DCtr96Zop097FBMAdqa67+YkmhobVJrWdXsqYwNJPiDfTkj0u5KNaVCNHJCa6FgXsNqQsTlkYJPhbPPO5KlHLM9nGHzw/9p0NE3Pn3vt4Tg10AbQX10=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742228832; c=relaxed/simple;
-	bh=lBOGSdxpn7jqeZbA3P/MADGdmeM1ewsl4IppL+NykdY=;
+	s=arc-20240116; t=1742228883; c=relaxed/simple;
+	bh=+xbA11YoBCM0APVgE1HmJiBC1pDnDh5yw515L6QByLQ=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gwUt1HRAjD2slh7mWcXWGm6ImqZL1hXYjid1kDFRoBg8UVps4Rhtci85QW7xEC+mrpWwA9ZYGLez5l0Y+VBL0Y/fEsghVciC92PGIiYuNDCtFRmhcj/shrlL45PvG9mYAhF+pcdmWhUI7wVMIRNUB5PBHmZhjAWINLlH1V/IUd8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=OYufZBM8; arc=none smtp.client-ip=209.85.208.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-30bfc79ad97so59093741fa.1
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 09:27:10 -0700 (PDT)
+	 To:Cc:Content-Type; b=EO3l5R3jPVF85MPVn3O2ELBBfQhEkUF9HVGcKUUFd4wFWL2cVRe+BQIhog4AIg1RZBMM6f9aIn2Qifyb/oS4UDja3a5BkFuWTKpW2pS15Cz23zuf5blPKO2Pcr4prRclXpGpJtJstQlTXAxLza4dV5GgKbHwigPmC4335tXJNck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dDM0Tjw0; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5e6c18e2c7dso7905921a12.3
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 09:28:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1742228828; x=1742833628; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1742228880; x=1742833680; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=s9th5vgX4dWb9XCR4ZHNIQSuw33Mm+jd8Ej6CRSdV6U=;
-        b=OYufZBM8quHR3jk3yXVwMWVOsDWg9rOEnfUfzln0rOJN25jK3gClkxUmCNwQ4twXEk
-         NYAJ2x2Bn+5Qw5qvxwCA3LyRjZ3nD4wARQy+MUYjJCJE5V8RUMWciE9jdD8jqLvd/pKT
-         vJCe5cUGoM3Gz0y42SjfbWqP/35zLCNpa9hSY=
+        bh=89fD89Q6T2OKDuYNg82lPgYyR9ous0ateN1XpH9BsoA=;
+        b=dDM0Tjw0N/onVGEaa/V+FpXuChPIpSG36ZiVBEwoSDp3+Birn9bTufYQhi+CkfCmbw
+         jsvK+FxE6vB/JfBooIOw6NbuXuJiF7ulLG5U2nGizQ5wG6PWZvqmnxRG1KaBVnBGWk4+
+         d4MBbX8u0ATQPT+Yq2c1xzkJTQCNuW+TcxvcPlq4PsbWDzXyilJ33uWhM/Tk4SJDX00n
+         FkuEY3/Wm814f7g1BeSe+L7RYanumIIMz+pCx+xRglbOpgvs/ITXUE0OR65JvBDKIJKk
+         KPRImI4sT5wYMokKM0isBgvGozuRBoTMR+1RGGvDKaOFkjOdWLB9Cj8RmVPe+HMtbNZG
+         jg3A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742228828; x=1742833628;
+        d=1e100.net; s=20230601; t=1742228880; x=1742833680;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=s9th5vgX4dWb9XCR4ZHNIQSuw33Mm+jd8Ej6CRSdV6U=;
-        b=K0vXMKuUmvcqV5jEuUzpQUPTeHLcif2TG47vWDCfRx7PjUv3aWeb+kVAS0ZgOKgOBz
-         YfoWFj/jTqUPNVECXVzEElbEbAWCxKMiQhIdntEvhe2fCIu/3FrUIUI+X3yVldCi1kwI
-         1CxPb/Gmguz94DfwVPUSWSIVeleYNBqPF9aFr0jbaAITMvWWCOEu7I1o5SQShGA0HpGP
-         k9IMKTuRcXdie1hz+5SRYZkyLLCPnU4WQiI0IXkzx1gWHgF0LkkrVt2riYCsLuy2Ewar
-         8OSKTLxI5TyCGefwx0oK6eWMzvvInSw8uE2b7Jrs3J27AXqHyxc5Sf0Y+BJL3BKilODm
-         wQFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWGRTPY/ydsiIYqCMqhaBM+lKn7PAWUvWtDbaVtNL53Bdi7TMg5PPr/CwwBYDoRMx3vvLx58gLRsoha5w8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxWoC7WV5iByGX49rDj1OT9Mkhst4BNG+kufcVZBleMrMK2vKoJ
-	+qdb7Ch392gBcD9HSmNR9PfukfmExj0KX7BWB1hjgPu5JA3B8scnriCjneL3EcPGz275DEx8Kce
-	E1w==
-X-Gm-Gg: ASbGnctum1gvRW7Ez6WVoFEv8L7ds6gOIv0k+3U9pMQ8i1JrU19zPbBN2BxZlVgn2/C
-	ntf3WKZA2/6V4cB/vRKEXmwSltMesaSafgwIaq+35/KyB8VIIH2NwYD61J6jgfuUhWlQvkWm+0w
-	6pTIzEpVPb1oZ5XeS5Vk9YT76at1ya7ViMFHAgCj3HVesOI7rSm0BZx6ZtdrwMeyBoxmNgj7e3c
-	wKpidIxRvLPb10rkWkXWRXyX8dkTZeRvOmPu8acNrXWTQOmvY/UhmsPN8Lg3KJ0nmP4kFfww+yQ
-	Ymb7yoBkQjtM9oyv6zV7sC+KAdctsyz76d4E+wJSr3yIHk46GRESV25XqHKVmxkzD9eRtAkk4+n
-	Uq8P5plE0
-X-Google-Smtp-Source: AGHT+IFhLpE4SzKO7ipJyzpUxicdo/Ndqd7bPjt8QPO/rEVMzyGxDaK33et3CxFhysc4409Fy5xk5A==
-X-Received: by 2002:a05:6512:281a:b0:549:4ca4:504a with SMTP id 2adb3069b0e04-54a304713b4mr123460e87.4.1742228827559;
-        Mon, 17 Mar 2025 09:27:07 -0700 (PDT)
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com. [209.85.167.43])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-549ba7c192bsm1349742e87.89.2025.03.17.09.27.06
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 17 Mar 2025 09:27:06 -0700 (PDT)
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-54991d85f99so5855893e87.1
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 09:27:06 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUp4+Jfp1aUPcSEP1XCR7tU2a7Wnnq3byHUbpjX7F+U3HWoVgFeyF8PfxpnVNvZbIezqGIR169Gi1fS0nk=@vger.kernel.org
-X-Received: by 2002:a05:6512:1244:b0:549:903d:b8d8 with SMTP id
- 2adb3069b0e04-54a30475b3emr112201e87.8.1742228826202; Mon, 17 Mar 2025
- 09:27:06 -0700 (PDT)
+        bh=89fD89Q6T2OKDuYNg82lPgYyR9ous0ateN1XpH9BsoA=;
+        b=NVJflf1uNcOyTA3TZU//yrZOs7f5eEX6KuGoWT1yTiOSyWndkQSdid529GqjMhkoP7
+         rKUtgYfjhVT+UEaz9eeve9doetP3vfV3JRRdwxndrkN8eUzPacGEtZbNxNaYYWsHdq8a
+         hLT4TbTSfQ3uNhIukAnhPKGEg2xrQngP3qplYGky3Am4CKc2nkGyIUdOuyo7MHCmCl4h
+         PmKDL+cCnP16nnPLy156vlhidPeUgdsZC38DhUy+L+YTakRDANUvEgpvKaKPX96B/goF
+         mLDM/UeN528SbBs+VxUH4D+WLChXemdcreYmN0Z/6AUzb+5QnWLApwPXZDBhHiVac07a
+         Vy/A==
+X-Forwarded-Encrypted: i=1; AJvYcCUwTPq7YNGQIA8PCHF4qgwnQ+skRVGOy5TFC2hsxjsyVTRVDMe+oBkc0oOisZQ5TysRPElr9OzlVaX1FJA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwYhFLjj+6URQmXFfWIJjgBUy66goh97D7OUaIC3K5HbJX1LLHK
+	KRRBmvr7TKviUMPjcgJ4D7jguR4Oqgwet3MEaGcRyFdrEjnV/CyRs11et1F5rQVqzW43xmJ7/Dh
+	YOvPjtNDSCR6qpQ0tCkPBbDxVu4ZQThf6G3uB
+X-Gm-Gg: ASbGncsuYet7GwS+uJOBS273eoK6NNtiBO5MpuRbG9WWFUimPh0yeCxh9RCALXO55aS
+	Ry64wMxoOdJyVNpEVf0smSNfePr/GLVVrDwd0rKV8XsFraB6jqZlK3GGJipr5QNlQSyR2dKzPQx
+	UiMhvTCpUTuPt5Jxme/6yjgFLfJNJ22LRrH6fwhyq9bxSlOttpqHKgTmQxQEG7mM2w1g==
+X-Google-Smtp-Source: AGHT+IGFFcNVZoBalAn7/3OPYvWx4kWbHEWQNDXbKx96snWH45JMXiSL+Iev2blxLMZFP9U29bNgAZYh4i+cmODElXE=
+X-Received: by 2002:a05:6402:84f:b0:5de:dfd0:9d22 with SMTP id
+ 4fb4d7f45d1cf-5eb1df95fdamr261706a12.22.1742228879633; Mon, 17 Mar 2025
+ 09:27:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250316045024.672167-1-tejasvipin76@gmail.com>
-In-Reply-To: <20250316045024.672167-1-tejasvipin76@gmail.com>
-From: Doug Anderson <dianders@chromium.org>
-Date: Mon, 17 Mar 2025 09:26:54 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=Xk6hYmJGLhW2ruvWwOETfmCAQX000WX4LrC3CPCZJMJQ@mail.gmail.com>
-X-Gm-Features: AQ5f1JrBrTk4sVBXsj3dmm7M114VmKW881GUc4grvUi98QYdB5nlyFUkRHGglwY
-Message-ID: <CAD=FV=Xk6hYmJGLhW2ruvWwOETfmCAQX000WX4LrC3CPCZJMJQ@mail.gmail.com>
-Subject: Re: [PATCH] drm/panel: samsung-s6d7aa0: transition to mipi_dsi
- wrapped functions
-To: Tejas Vipin <tejasvipin76@gmail.com>
-Cc: neil.armstrong@linaro.org, maarten.lankhorst@linux.intel.com, 
-	mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch, 
-	aweber.kernel@gmail.com, quic_jesszhan@quicinc.com, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	asrivats@redhat.com
+References: <fc3a67ee-6e97-4b9f-88d9-c24c6dab20c3@intel.com>
+ <a9078e7d-9ce6-4096-a2da-b2c6aae1e3ed@amd.com> <CALPaoCgN+oGgdp40TOJ9NgF9WYPdN0cG8A8BtOOMXOP6iMVfzw@mail.gmail.com>
+ <f1744c45-9edf-4012-89bc-47393b4c53fc@amd.com> <CALPaoCiii0vXOF06mfV=kVLBzhfNo0SFqt4kQGwGSGVUqvr2Dg@mail.gmail.com>
+ <d1ca9220-1ab7-4a39-819a-03a6069b7ac4@amd.com> <CALPaoChLL8p49eANYgQ0dJiFs7G=223fGae+LJyx3DwEhNeR8A@mail.gmail.com>
+ <a4ab53b5-03be-4299-8853-e86270d46f2e@amd.com> <c1c0a99a-a467-4ae6-80ee-04b6a9cdb6e5@amd.com>
+ <Z890Q2GoP6GecwW4@agluck-desk3> <04e47d0e-6447-451e-98e4-7ea65187d370@amd.com>
+ <6508cf67-3263-432e-892c-9b502b3c6cd4@intel.com> <f8a20ed8-6e30-4cff-a96b-8df89a605081@amd.com>
+ <d07a70f5-b1ca-4766-a1d9-53988dd9164f@intel.com> <14c14b11-5b45-4810-8e46-019c8a67fc90@amd.com>
+ <1db8ad73-5194-4821-844a-8fd7cac72ad4@intel.com> <9b8653a3-c6fd-4748-a4b5-94d5598d180f@amd.com>
+ <20ec195a-c4dd-48d9-89f6-4d48fd438fe8@intel.com> <be6d23c8-3e93-4bdc-8b33-d3af7df7cc94@amd.com>
+ <7f54f9aa-1102-49ed-b830-6facb6f48366@intel.com>
+In-Reply-To: <7f54f9aa-1102-49ed-b830-6facb6f48366@intel.com>
+From: Peter Newman <peternewman@google.com>
+Date: Mon, 17 Mar 2025 17:27:47 +0100
+X-Gm-Features: AQ5f1JoIXqgG0M4QrynyU6Ipgs01SNdbTiTvENC9YJAFCysT9dUjqv8f75ycOjM
+Message-ID: <CALPaoCj7aSVxHisQTdKQ5KN0-aNzN8rRkRPVc7pjGMLSxfPvrA@mail.gmail.com>
+Subject: Re: [PATCH v11 00/23] x86/resctrl : Support AMD Assignable Bandwidth
+ Monitoring Counters (ABMC)
+To: Reinette Chatre <reinette.chatre@intel.com>
+Cc: babu.moger@amd.com, "Moger, Babu" <bmoger@amd.com>, "Luck, Tony" <tony.luck@intel.com>, 
+	Dave Martin <Dave.Martin@arm.com>, corbet@lwn.net, tglx@linutronix.de, mingo@redhat.com, 
+	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
+	paulmck@kernel.org, akpm@linux-foundation.org, thuth@redhat.com, 
+	rostedt@goodmis.org, xiongwei.song@windriver.com, 
+	pawan.kumar.gupta@linux.intel.com, daniel.sneddon@linux.intel.com, 
+	jpoimboe@kernel.org, perry.yuan@amd.com, sandipan.das@amd.com, 
+	kai.huang@intel.com, xiaoyao.li@intel.com, seanjc@google.com, 
+	xin3.li@intel.com, andrew.cooper3@citrix.com, ebiggers@google.com, 
+	mario.limonciello@amd.com, james.morse@arm.com, tan.shaopeng@fujitsu.com, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	maciej.wieczor-retman@intel.com, eranian@google.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi,
+Hi Reinette,
 
-On Sat, Mar 15, 2025 at 9:50=E2=80=AFPM Tejas Vipin <tejasvipin76@gmail.com=
-> wrote:
+On Thu, Mar 13, 2025 at 10:22=E2=80=AFPM Reinette Chatre
+<reinette.chatre@intel.com> wrote:
 >
-> @@ -62,93 +62,66 @@ static void s6d7aa0_reset(struct s6d7aa0 *ctx)
->         msleep(50);
->  }
+> Hi Babu,
 >
-> -static int s6d7aa0_lock(struct s6d7aa0 *ctx, bool lock)
-> +static void s6d7aa0_lock(struct s6d7aa0 *ctx, struct mipi_dsi_multi_cont=
-ext *dsi_ctx, bool lock)
->  {
-> -       struct mipi_dsi_device *dsi =3D ctx->dsi;
-> +       if (dsi_ctx->accum_err)
-> +               return;
-
-nit: I don't think you need this extra check, do you? The entire
-function is "multi" calls so just let them be no-ops. It may seem like
-an optimization to have the extra check at the start of the function,
-but it's better to optimize for the "no error" case and let the
-"error" case be a little slower.
-
-
->  static int s6d7aa0_on(struct s6d7aa0 *ctx)
->  {
->         struct mipi_dsi_device *dsi =3D ctx->dsi;
-> -       struct device *dev =3D &dsi->dev;
-> -       int ret;
-> +       struct mipi_dsi_multi_context dsi_ctx =3D { .dsi =3D dsi };
+> On 3/13/25 1:13 PM, Moger, Babu wrote:
+> > On 3/13/25 11:08, Reinette Chatre wrote:
+> >> On 3/12/25 11:14 AM, Moger, Babu wrote:
+> >>> On 3/12/25 12:14, Reinette Chatre wrote:
+> >>>> On 3/12/25 9:03 AM, Moger, Babu wrote:
+> >>>>> On 3/12/25 10:07, Reinette Chatre wrote:
 >
-> -       ret =3D ctx->desc->init_func(ctx);
-> -       if (ret < 0) {
-> -               dev_err(dev, "Failed to initialize panel: %d\n", ret);
-> +       ctx->desc->init_func(ctx, &dsi_ctx);
-> +       if (dsi_ctx.accum_err < 0)
->                 gpiod_set_value_cansleep(ctx->reset_gpio, 1);
-> -               return ret;
-> -       }
 >
-> -       ret =3D mipi_dsi_dcs_set_display_on(dsi);
-> -       if (ret < 0) {
-> -               dev_err(dev, "Failed to set display on: %d\n", ret);
-> -               return ret;
-> -       }
-> +       mipi_dsi_dcs_set_display_on_multi(&dsi_ctx);
+> > Here are the steps. Just copying steps from Peters proposal.
+> > https://lore.kernel.org/lkml/CALPaoCiii0vXOF06mfV=3DkVLBzhfNo0SFqt4kQGw=
+GSGVUqvr2Dg@mail.gmail.com/
 >
-> -       return 0;
-> +       return dsi_ctx.accum_err;
+> Thank you very much for detailing the steps. It is starting the fall into=
+ place
+> for me.
+>
+> >
+> >
+> > 1. Mount the resctrl
+> >    mount -t resctrl resctrl /sys/fs/resctrl
+>
+> I assume that on ABMC system the plan remains to have ABMC enabled by def=
+ault, which
+> will continue to depend on BMEC.
+>
+> How would the existing BMEC implementation be impacted in this case?
+>
+> Without any changes to BMEC support the mbm_total_bytes_config and mbm_lo=
+cal_bytes_config
+> files will remain and user space may continue to use them to change the e=
+vent
+> configurations with confusing expecations/results on an ABMC system.
+>
+> One possibility may be that a user may see below on ABMC system even if B=
+MEC is supported:
+> # cat /sys/fs/resctrl/info/L3_MON/mon_features
+> llc_occupancy
+> mbm_total_bytes
+> mbm_local_bytes
+>
+> With the above a user cannot be expected to want to interact with mbm_tot=
+al_bytes_config
+> and mbm_local_bytes_config, which may be the simplest to do.
 
-Not something new to your patch, I wonder if the setting of the reset
-GPIO should actually be _below_ the call to turn the display on. Seems
-like if that fails you should also be setting the reset GPIO. That
-would be a change in behavior but seems more correct?
+How about making mbm_local_bytes and mbm_total_bytes always be
+configured using mbm_{local,total}_bytes_config and only allowing the
+full ABMC configurability on user-defined configurations. This could
+resolve the issue of backwards compatibility with the BMEC files and
+remove the need for the user opting-in to ABMC mode.
 
-Given that it's a change in behavior, I'd be OK w/ leaving it as-is or
-changing it (and mentioning it in the commit message). I'd be curious
-if anyone else has opinions here.
+It will be less clean implementation-wise, since there will be two
+classes of event configuration to deal with, but I think it seems
+logical from the user's side.
 
-...oh, actually, you should just delete the reset GPIO stuff from this
-function. The one caller of this function is already setting the reset
-GPIO, right?
+>
+> To follow that, we should also consider how "mon_features" will change wi=
+th this
+> implementation.
+>
+> >
+> > 2. When ABMC is supported two default configurations will be created.
+> >
+> >   a. info/L3_MON/counter_configs/mbm_total_bytes/event_filter
+> >   b. info/L3_MON/counter_configs/mbm_local_bytes/event_filter
+> >
+> >   These files will be populated with default total and local events
+> >   # cat info/L3_MON/counter_configs/mbm_total_bytes/event_filter
+> >     VictimBW
+> >     RmtSlowFill
+> >     RmtNTWr
+> >     RmtFill
+> >     LclFill
+> >     LclNTWr
+> >     LclSlowFill
+>
+> Looks good. Here we could perhaps start nitpicking about naming and line =
+separation.
+> I think it may be easier if the fields are separated by comma, but more o=
+n that
+> below ...
+>
+> >
+> >   # cat info/L3_MON/counter_configs/mbm_local_bytes/event_filter
+> >    LclFill,
+> >    LclNTWr
+> >    LclSlowFill
+> >
+> > 3. Users will have options to update the event configuration.
+> >    echo LclFill > info/L3_MON/counter_configs/mbm_local_bytes/event_fil=
+ter
+>
+> We need to be clear on how user space interacts with this file. For examp=
+le,
+> can user space "append" configurations? Specifically, if the file has
+> contents like your earlier example:
+> # cat info/L3_MON/counter_configs/mbm_local_bytes/event_filter
+>  LclFill
+>  LclNTWr
+>  LclSlowFill
+>
+> Should above be created with (note "append" needed for second and third):
+> echo LclFill > info/L3_MON/counter_configs/mbm_local_bytes/event_filter
+> echo LclNTWr >> info/L3_MON/counter_configs/mbm_local_bytes/event_filter
+> echo LclSlowFill >> info/L3_MON/counter_configs/mbm_local_bytes/event_fil=
+ter
+>
+> Is it possible to set multiple configurations in one write like below?
+> echo "LclFill,LclNTWr,LclSlowFill" > info/L3_MON/counter_configs/mbm_loca=
+l_bytes/event_filter
+>
+> (note above where it may be easier for user space to use comma (or some o=
+ther field separator)
+> when providing multiple configurations at a time, with this, to match, ha=
+ving output in
+> commas may be easier since it makes user interface copy&paste easier)
+>
+> If file has content like:
+> # cat info/L3_MON/counter_configs/mbm_local_bytes/event_filter
+>  LclNTWr
+>  LclSlowFill
+>
+> What is impact of the following:
+> echo LclFill > info/L3_MON/counter_configs/mbm_local_bytes/event_filter
+>
+> Is it (append):
+> # cat info/L3_MON/counter_configs/mbm_local_bytes/event_filter
+>  LclFill
+>  LclNTWr
+>  LclSlowFill
+>
+> or (overwrite):
+> # cat info/L3_MON/counter_configs/mbm_local_bytes/event_filter
+>  LclFill
+>
+> I do think the interface will be more intuitive it if follows regular fil=
+e
+> operations wrt "append" and such. I have not looked into how kernfs suppo=
+rts
+> "append".
 
+I expect specifying counter_configs to be a rare or one-time
+operation, so I think ease-of-use is the only concern. I think
+multiple, appending writes is the most straightforward to implement
+and invoke (for a shell user), but I think commas are easy enough to
+support as well, even though it would look better when reading back to
+see the entries on separate lines.
 
-Everything else looks good to me.
+I believe you can inspect the file descriptor's flags from the
+kernfs_open_file reference: of->file->f_flags & O_APPEND
 
--DOug
+I haven't tried this, though.
+
+-Peter
 
