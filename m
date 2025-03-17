@@ -1,142 +1,221 @@
-Return-Path: <linux-kernel+bounces-565208-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565192-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 546C6A66340
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 01:00:21 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54DCAA66300
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 00:52:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B7344188D127
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 00:00:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3169C7AA378
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 23:51:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08F321C5F0C;
-	Tue, 18 Mar 2025 00:00:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E2EF205E3B;
+	Mon, 17 Mar 2025 23:51:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=atmark-techno.com header.i=@atmark-techno.com header.b="cLt2/jP1"
-Received: from gw2.atmark-techno.com (gw2.atmark-techno.com [35.74.137.57])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Iqtntytc"
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61F231519B4
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 00:00:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.74.137.57
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BBF9205AC1;
+	Mon, 17 Mar 2025 23:51:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742256012; cv=none; b=j94SoT4kGsD3oo5GvEpvPpX1iHY3S/16r58mic2t2/xHlV68EN3aN6ZYyY9hKW6gLFbuZ5FqmtjVaG3vdPUwOZ6yCks/6AtpWwhGuXV29lYUfJ/hLvJGZr52IuA2IieZ5QAfO3d3wgE9LLcFh9GNwyC7YwJwlS+anu12oCTAQLU=
+	t=1742255514; cv=none; b=PYeu+G38D97coPGf6njHOOKCix2KZfyda6tc7apID+S4NTPI6VdvXwRmyIu1+w+887i24Kn7bGTt/J+c9Q7SHJyqb0G5VQ/zlVhmasNL/YcBR6a2uVOiNfdXRs7R2UEQPioiXAhmffWQp0Ibx5qL9QwKqBCyUl3yRUZRY/BLlFk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742256012; c=relaxed/simple;
-	bh=5i13wLKTyNDlBKchwfsIXJmrY3fLphQS5cqXHJehJHo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UHbQVq1EK3VUfDw0kdPWZygczeFGwV1FcVV4/traqWz0kT+SzRoEWO3Ynb/cfUswTY0nlUyPnGzgxKUJlrvY96hxX0QE2GZSCZhQJqqmJuESQe/UP9cgJ4liRxhG+Os1M626qI/hFAC+umh7LvAMNaUQBYEoHbUEfeduxBY0os8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=atmark-techno.com; spf=pass smtp.mailfrom=atmark-techno.com; dkim=pass (2048-bit key) header.d=atmark-techno.com header.i=@atmark-techno.com header.b=cLt2/jP1; arc=none smtp.client-ip=35.74.137.57
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=atmark-techno.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=atmark-techno.com
-Authentication-Results: gw2.atmark-techno.com;
-	dkim=pass (2048-bit key; unprotected) header.d=atmark-techno.com header.i=@atmark-techno.com header.a=rsa-sha256 header.s=google header.b=cLt2/jP1;
-	dkim-atps=neutral
-Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com [209.85.216.72])
-	by gw2.atmark-techno.com (Postfix) with ESMTPS id 62B1A687
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 08:51:25 +0900 (JST)
-Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-2ff8340d547so4336782a91.2
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 16:51:25 -0700 (PDT)
+	s=arc-20240116; t=1742255514; c=relaxed/simple;
+	bh=W7JG7eJ2aWkeYlmK8iu4ChFEzLGDZwbcSCU58SnOqWM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fTXnU3mHcq2ALGZRuA4SUa+wkGRvIqNDGHTNF5S2xih6rnTn5SlRqJ3yDF/HPKGNdV0K/xK2Sed8QNv3lgcNMiTdUH2959i7Wr/Ry/xjegUYWzDJ1avK3pMLVPyYg0SHIhI5izfozLEvOWkSEoR0Wt1IcRW9cNnGibqgJFHHz58=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Iqtntytc; arc=none smtp.client-ip=209.85.208.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-30beedb99c9so45546731fa.3;
+        Mon, 17 Mar 2025 16:51:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=atmark-techno.com; s=google; t=1742255484; x=1742860284; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=TRQ/GwuEKDlWODVcSQfxpM5Lw2RQXG7ZSKeiwlAjR7g=;
-        b=cLt2/jP1Ko35UMsCHcn3RoLnE+onqkGU8r9tJI2ojX7AyFzEvoRtvjN31csz7VbeBr
-         0TCuZb2gm00ILfaBMv6/B0hp8Rqs0Zbb1PM+5wyHPqCGdfmgS9oIYm1Is9oeCYcdxAVJ
-         UwBcU745Cb8kkj8a4D2y0fKTBX+7aNOwwjMVpjyvk4reUCGmurAranHmmJ1uXpUXXNKZ
-         PKzPfgin97YURnNkOmQ4MbpL6z7v0vgnwkUMfDApVJRGopIuTWYMAmq6PsCDO9uYOhzk
-         FaX+UsM9J8al6Yfz4sq2fNwp7c9b0qkIdXIDlLzwg/bvuEfz+bRc/Zxj1YfyxuYo3Hi4
-         moRA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742255484; x=1742860284;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1742255511; x=1742860311; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=TRQ/GwuEKDlWODVcSQfxpM5Lw2RQXG7ZSKeiwlAjR7g=;
-        b=KMcnVUaVvJ/WPRTl+TX56rgwgL6ifrDWFNE01utagqi0Gm9uxamtbQ39POGR6Jr1vn
-         pDYP7kDRAkByL9xhl/GExsdzzQaR8u1QAV4SRwlKvKxJKfiu7MzC544EiXP8ZONtyue8
-         soGrHxHzZb4qSuIM5FKD8jvGKslX9FxGJk0bt5IrJsLWOnYsp0kV8UjRa/sFF7HPm6Z1
-         BkjqfHDQy7vBr8D2dZvVyJLjAIjOh57LlI5wxPWnxvBb8phj84Jt7cx6QoD6IjE56Xbh
-         OdtHdZEPRf/j2cPdSdC+Oq/HbPns3ufPuFtxhjQDF9fBmw79UrvOZRl+NvLPaY22KZSC
-         oNMA==
-X-Forwarded-Encrypted: i=1; AJvYcCUyfCMWucOfRDH2L+RqOj4svDy6eFZOY2T2yTNSyJwWP8HpphPu5Jm4udEYNqW4y7eazQxG++L4BtW1pmc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQQyEcES1S1rkepEVkpEDdawpaBd/XZES0kZFIapkz5t/GQD5W
-	7wrkDv38Prrf+6zR7XW6Ol5jq80VydAniMbrY54k4knSXmHNYqxVPqW3o1b1Upd1PxOFIDGL/Km
-	HzxNc1mgp5qiFS39CjMipS0WNAaNMw1vK0IIpTp3tFrsPUshkMFP3CXSom5lbQ90=
-X-Gm-Gg: ASbGnct3t5+hmIvMPLJIR0DlcTOVkawMC2Gp4Nan4PjSHLWUYQZAeL4CShi/dtHXl0C
-	VfabZHwDj8i7oPapxK0i9HtZsrLx5LarDAAgzzOUAd3Tth+W9tzCT9hqMzTcR8uatj7kmWr2/XQ
-	s0BoqQiz/0xarruYVfia+4BjPHrLJoDV2Ntns6w0Wn5ul4MYFXpHmdYZuuQpGmPKnIBt0Ur+j/K
-	0fiLzWu8lXXTDTkCkYVSj3TulEIdHWWt4EQa9IMePOyXTrOkdvGT5qLe13B+na/vx4wQ/GPJXXK
-	ttdjp1scyPhLz0wYFeOFUt8BSOY0c5XTVKceG+ADzXKn9sCrzZ9PF/lIXfN4HjDnWgQ9keDj9TE
-	=
-X-Received: by 2002:a17:90b:4b92:b0:2ee:af31:a7bd with SMTP id 98e67ed59e1d1-301a5b03f3amr308528a91.5.1742255484406;
-        Mon, 17 Mar 2025 16:51:24 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGk+XPSS97YKPi4vp9oXul8r5wshwMpKmVOIfHLVbaOIyiKLKfsKF4T1efoV0atb9QgEGz0bQ==
-X-Received: by 2002:a17:90b:4b92:b0:2ee:af31:a7bd with SMTP id 98e67ed59e1d1-301a5b03f3amr308500a91.5.1742255484114;
-        Mon, 17 Mar 2025 16:51:24 -0700 (PDT)
-Received: from localhost (162.198.187.35.bc.googleusercontent.com. [35.187.198.162])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-30153519fefsm6734019a91.12.2025.03.17.16.51.22
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 17 Mar 2025 16:51:23 -0700 (PDT)
-Date: Tue, 18 Mar 2025 08:51:11 +0900
-From: Dominique MARTINET <dominique.martinet@atmark-techno.com>
-To: Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>
-Cc: marcel@holtmann.org, luiz.dentz@gmail.com,
-	linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
-	amitkumar.karwar@nxp.com, rohit.fule@nxp.com, sherry.sun@nxp.com,
-	ziniu.wang_1@nxp.com, haibo.chen@nxp.com, LnxRevLi@nxp.com,
-	guillaume.legoupil@nxp.com, salim.chebbo@nxp.com
-Subject: Re: [PATCH v1 1/3] Bluetooth: btnxpuart: Fix Null pointer
- dereference in btnxpuart_flush()
-Message-ID: <Z9i1b9hzZzwJnIYh@atmark-techno.com>
-References: <20240515070657.85132-1-neeraj.sanjaykale@nxp.com>
- <20240515070657.85132-2-neeraj.sanjaykale@nxp.com>
+        bh=jrBORXB5rVNSStbpGpwaCLo3Te5UtqGzW5H6VysXPyw=;
+        b=IqtntytcCQsvAfBEbB6ilmh8t1q+q8I1c47vaIORbX4TIwMdhGPImvILxhBRH9HG3u
+         Ti+2dCdv1BGROq2ObVibG6BUKb957wen+2OOologs88uZzlcOxkLVjHEyAlqGyAxMP3/
+         jZL2NlndyYex/JXade1BOMEIaXzICtb6fvVuvR4bKI6M45f/1FexuqNOEfepwBedE+Yc
+         MypAQajQyFpRGgDGWzcnBVLfg5/WZ8GmbfEjiT/m9tS/t4pcCJQF9JDk/vK6bi/0utIO
+         rdCt3stjLLleOkZUOAy4flQ0DLXeaQiasHOIF36OrTFEETk8zd2kWH/bKRBsT7/SzOoj
+         XQNA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742255511; x=1742860311;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jrBORXB5rVNSStbpGpwaCLo3Te5UtqGzW5H6VysXPyw=;
+        b=XJopc8K0f4m6MSvJ/azdjhZlhpxu8coOcYVGcEwbBejokxq52vNbwncGQdtHE+Kawi
+         KAs4GJK2rsPiYtz5XPAswm9KTwM7Xk3yfaAqJUs96lMKn4DbXmbbCiWJd9VJvuWatCKv
+         MOPMlBKsAxBKN6OVfitddsIULRrwyZcrzDxNCmXleeFto4LmNxtvKxAH9VH28yJcKEBJ
+         e53Mz1k5m00ncLMq+IPws+94Nh+Lc7xsMmlyPKMFEV0Aj8CuSfkLgVe6McgneMcDqAuB
+         t4dElyvpnlpVX/EGHCRslMASV+8OUZ9dB+SdDFafhDJoEMbUTOOx1X/QesnhH90lSkaz
+         NnMQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV1mIjEk/LctFdRm5lky9BxAF1JmFLGixhQAWc1PX5laIenNwy+I0lmaz5DVm4UWvfFSRaqnLouIgO/@vger.kernel.org, AJvYcCXcrxDbNZdCDc/SxOOEhS8DSPF+ZsS/QvMbV5e2BfadGUm2nALTv0dUVUB/Sx9bMxyLPRNsoirooB2VmgA9@vger.kernel.org
+X-Gm-Message-State: AOJu0YybeKIiCfO2W5Gy9VJwd1not81H8U7okMEksUaaKlfk8CuROIle
+	7uD/eEAdEWRfbicCnECnwqks1Zh90I3xiTuWSzrTZEb6w9cHQUPTNEkQwc6uhBBKBY20gPVbm+z
+	TWRp509NZtjNPPozmjy2E6pHaMmQ=
+X-Gm-Gg: ASbGncukTafKhdN7Av3auP6vzN++A8td6S9D1HaZLOnEpSFvK6p/9zCeCY+5G6vErFb
+	V23auBmShg1nzRNnzlKkkgHTHNwov7m84r+eYYren8O7Eo8aKZ7i85dj6WKkS4TWPhZb1wlz5DF
+	HuW2yCjEbT6BC2tZYegl5OFzlZnGGkDtweutzMUJE0y7CLSGNDMHgOcrGKJ8A=
+X-Google-Smtp-Source: AGHT+IFJRlaXuYU5HaNxFuHLK4gwNm8IMoNUdEXbl+RJG0FG4H/1U6jGoe3AvVyP4HOsNboQlvozKZIcYSP5YLWR/28=
+X-Received: by 2002:a05:6512:2345:b0:549:4d7d:b61b with SMTP id
+ 2adb3069b0e04-54a03cf4dddmr1782307e87.35.1742255510341; Mon, 17 Mar 2025
+ 16:51:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240515070657.85132-2-neeraj.sanjaykale@nxp.com>
+References: <20250317083915.20004-1-chunjie.zhu@cloud.com>
+In-Reply-To: <20250317083915.20004-1-chunjie.zhu@cloud.com>
+From: Steve French <smfrench@gmail.com>
+Date: Mon, 17 Mar 2025 18:51:39 -0500
+X-Gm-Features: AQ5f1JrEQ1Pw0sXu7tJidiw44xYb6j4T_MP9tYTExTR0x3vMnxdeX9ZVEj5cUQ8
+Message-ID: <CAH2r5mt4ej2EtMHAc9Vro325XoMA++iktxcx28k1OGte_sxhVg@mail.gmail.com>
+Subject: Re: [PATCH] open hardlink on deferred close file return EINVAL
+To: Chunjie Zhu <chunjie.zhu@cloud.com>
+Cc: Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.com>, 
+	Ronnie Sahlberg <lsahlber@redhat.com>, Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>, 
+	linux-cifs@vger.kernel.org, samba-technical@lists.samba.org, 
+	linux-kernel@vger.kernel.org, ross.lagerwall@cloud.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+I tried out the patch and it does fix getting STATUS_INVALID_PARAMETER
+error from the server, but doesn't fix the issue of getting EINVAL
 
-Neeraj Sanjay Kale wrote on Wed, May 15, 2024 at 12:36:55PM +0530:
-> @@ -1269,8 +1271,10 @@ static int btnxpuart_flush(struct hci_dev *hdev)
->  
->  	cancel_work_sync(&nxpdev->tx_work);
->  
-> -	kfree_skb(nxpdev->rx_skb);
-> -	nxpdev->rx_skb = NULL;
-> +	if (!IS_ERR_OR_NULL(nxpdev->rx_skb)) {
-> +		kfree_skb(nxpdev->rx_skb);
-> +		nxpdev->rx_skb = NULL;
-> +	}
+Traceback (most recent call last):
+  File "/root/hl-test.py", line 15, in <module>
+    newfd =3D os.open('new', os.O_RDONLY|os.O_DIRECT)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+OSError: [Errno 22] Invalid argument: 'new'
 
-This is an old patch but I hit that on our slightly old tree and was
-wondering about this patch: why does flush() have to free rx at all?
+It is fixed by running with leases disable (via mount parm), but
+wouldn't it be better to fix the error so apps don't break.  Ideas?
 
-I think this either needs a lock or (preferably) just remove this free:
-- This is inherently racy with btnxpuart_receive_buf() which is run in
-another workqueue with no lock involved as far as I understand, so this
-is not just about errors but you could also free something in a weird
-place here.
-As far as I understand, even if we don't do anything, the rx path will
-free the reply if no matching request was found.
-- looking at other drivers, the hdev->flush() call never does anything
-about rx and seems to only be about rx
-(ah, checking again as of master drivers/bluetooth/btmtkuart.c seems to
-have this same problem as of before this patch e.g. they're not checking
-for errors either... This probably needs something akin to this patch or
-removal as well. All other drivers have flush seem to be mostly about
-tx, but I do see some cancel work for rx as well so I'm a bit unclear as
-to what is expected of flush())
+On Mon, Mar 17, 2025 at 3:41=E2=80=AFAM Chunjie Zhu <chunjie.zhu@cloud.com>=
+ wrote:
+>
+> The following Python script results in unexpected behaviour when run on
+> a CIFS filesystem against a Windows Server:
+>
+>     # Create file
+>     fd =3D os.open('test', os.O_WRONLY|os.O_CREAT)
+>     os.write(fd, b'foo')
+>     os.close(fd)
+>
+>     # Open and close the file to leave a pending deferred close
+>     fd =3D os.open('test', os.O_RDONLY|os.O_DIRECT)
+>     os.close(fd)
+>
+>     # Try to open the file via a hard link
+>     os.link('test', 'new')
+>     newfd =3D os.open('new', os.O_RDONLY|os.O_DIRECT)
+>
+> The final open returns EINVAL due to the server returning
+> STATUS_INVALID_PARAMETER. The root cause of this is that the client
+> caches lease keys per inode, but the spec requires them to be related to
+> the filename which causes problems when hard links are involved:
+>
+> From MS-SMB2 section 3.3.5.9.11:
+>
+> "The server MUST attempt to locate a Lease by performing a lookup in the
+> LeaseTable.LeaseList using the LeaseKey in the
+> SMB2_CREATE_REQUEST_LEASE_V2 as the lookup key. If a lease is found,
+> Lease.FileDeleteOnClose is FALSE, and Lease.Filename does not match the
+> file name for the incoming request, the request MUST be failed with
+> STATUS_INVALID_PARAMETER"
+>
+> The client side can return EINVAL directly without invoking server
+> operations. This reduces client server network communication overhead.
+>
+> Signed-off-by: Chunjie Zhu <chunjie.zhu@cloud.com>
+> ---
+>  fs/smb/client/cifsproto.h |  2 ++
+>  fs/smb/client/file.c      | 29 +++++++++++++++++++++++++++++
+>  2 files changed, 31 insertions(+)
+>
+> diff --git a/fs/smb/client/cifsproto.h b/fs/smb/client/cifsproto.h
+> index 260a6299bddb..b563c227792e 100644
+> --- a/fs/smb/client/cifsproto.h
+> +++ b/fs/smb/client/cifsproto.h
+> @@ -157,6 +157,8 @@ extern int cifs_get_writable_path(struct cifs_tcon *t=
+con, const char *name,
+>  extern struct cifsFileInfo *find_readable_file(struct cifsInodeInfo *, b=
+ool);
+>  extern int cifs_get_readable_path(struct cifs_tcon *tcon, const char *na=
+me,
+>                                   struct cifsFileInfo **ret_file);
+> +extern int cifs_get_hardlink_path(struct cifs_tcon *tcon, struct inode *=
+inode,
+> +                                 struct file *file);
+>  extern unsigned int smbCalcSize(void *buf);
+>  extern int decode_negTokenInit(unsigned char *security_blob, int length,
+>                         struct TCP_Server_Info *server);
+> diff --git a/fs/smb/client/file.c b/fs/smb/client/file.c
+> index 4cbb5487bd8d..0a66cce6e0ff 100644
+> --- a/fs/smb/client/file.c
+> +++ b/fs/smb/client/file.c
+> @@ -751,6 +751,12 @@ int cifs_open(struct inode *inode, struct file *file=
+)
+>                 } else {
+>                         _cifsFileInfo_put(cfile, true, false);
+>                 }
+> +       } else {
+> +               /* hard link on the defeered close file */
+> +               rc =3D cifs_get_hardlink_path(tcon, inode, file);
+> +               if (rc) {
+> +                       goto out;
+> +               }
+>         }
+>
+>         if (server->oplocks)
+> @@ -2413,6 +2419,29 @@ cifs_get_readable_path(struct cifs_tcon *tcon, con=
+st char *name,
+>         return -ENOENT;
+>  }
+>
+> +int
+> +cifs_get_hardlink_path(struct cifs_tcon *tcon, struct inode *inode,
+> +                               struct file *file)
+> +{
+> +       struct cifsFileInfo *open_file =3D NULL;
+> +       struct cifsInodeInfo *cinode =3D CIFS_I(inode);
+> +       int rc =3D 0;
+> +
+> +       spin_lock(&tcon->open_file_lock);
+> +       spin_lock(&cinode->open_file_lock);
+> +
+> +       list_for_each_entry(open_file, &cinode->openFileList, flist) {
+> +               if (file->f_flags =3D=3D open_file->f_flags) {
+> +                       rc =3D -EINVAL;
+> +                       break;
+> +               }
+> +       }
+> +
+> +       spin_unlock(&cinode->open_file_lock);
+> +       spin_unlock(&tcon->open_file_lock);
+> +       return rc;
+> +}
+> +
+>  void
+>  cifs_writedata_release(struct kref *refcount)
+>  {
+> --
+> 2.34.1
+>
+>
 
-Thank you,
--- 
-Dominique
+
+--=20
+Thanks,
+
+Steve
 
