@@ -1,242 +1,177 @@
-Return-Path: <linux-kernel+bounces-564760-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564761-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C2B7A65A5F
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 18:20:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F5CFA65A6C
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 18:20:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 753561899E95
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 17:16:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F099189F267
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 17:16:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A82071D9A41;
-	Mon, 17 Mar 2025 17:10:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B51401DC9A8;
+	Mon, 17 Mar 2025 17:11:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lhzRHRg4"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hrr2/brR"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58A671A255C;
-	Mon, 17 Mar 2025 17:10:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F7981ABEA5
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 17:11:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742231418; cv=none; b=k3P+2jYSN45TEZ/MuvdNI4jHN7bw25XX637Eg+Rj/IRUfOe+pArxzXGm9FOfbnHTk4tlZcqdS66XJBSOJTJ5P+n1tmhJcybCgqG8R9gxtkAcVAbQw4vJf3wxr1uLoY79siuAVPWZjpfraeCm8rdosg/nRQ72YbdEA8T7h9+Awjs=
+	t=1742231464; cv=none; b=b2cEKuCCdzHMlZzglKK+TtDlApUVnrievCcIeYmQDNooF9YjpE0sP+EjigHCtBgykLhQYHvupIDtVw2LaH9U/NlpVb6RtZhsXNo9miyEWcmOFfNq36oaMF28L8c6NqpdviGz9SQ2yyWPttpu5k6UmJ8gwxmd6L0N6/z5+rhfD5U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742231418; c=relaxed/simple;
-	bh=XemDQhZsfOwWrwHljvfFmLDX3tk2oTPd5CaJUyQ5yuY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JgMfJnpy26ZCs+dCn6yB4VuMVfzwBSTYMtB+2n+2QFN93cPBrrhRjI8Uxouo7HyeVvFljZaXLhEr+nB77m/26Nwz3Hbi3Hplgm2v7UiZwg/x9oKit4dvoO3GLjispUFfIVqb+232UN9dhq+BgR+6+X/DBm2wW+Q/7w/u+IsB2LU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lhzRHRg4; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742231416; x=1773767416;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=XemDQhZsfOwWrwHljvfFmLDX3tk2oTPd5CaJUyQ5yuY=;
-  b=lhzRHRg4FCBQ8OqI9QPcmOmH/B+qj1PZTg0GMaHqWUytxjZmjCQxN/Ch
-   tvlHFEjtyi+sxvc5wdJJfAs6djlXI9cRxkSaX/q/EjDPCtUE+1sEb0Aib
-   TfoQyWpGIdafyvPcT+kjYUu8DOP2dYcKdhskcOqvqeSRmvAPExrXhOudv
-   r84zIRbr4Zq2n2B17aCpcmYMw2gcPGrhWfPlw4kGBJ1zNNrgZqq49qpn7
-   td7IdVsQu1m8SYsXCAt+eONL4QyZqBr2e4dwQ8o51OXz0Zj2B7dVs96Fy
-   8Ek9IttxYmOA+D21qiWsUb/XY5aRD4qzsXvrvEitrldSSMDmEXme+vL70
-   A==;
-X-CSE-ConnectionGUID: fSGr9A/JRearKntikVRG8g==
-X-CSE-MsgGUID: LCbItL5kRh67NaB+EsW30A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11376"; a="30920423"
-X-IronPort-AV: E=Sophos;i="6.14,254,1736841600"; 
-   d="scan'208";a="30920423"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Mar 2025 10:10:16 -0700
-X-CSE-ConnectionGUID: BdXS/elwRqK7KzJGHgVB0A==
-X-CSE-MsgGUID: ktlOYsTITUqauYqlicKGSQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,254,1736841600"; 
-   d="scan'208";a="121816870"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Mar 2025 10:10:13 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tuDyc-00000003MoQ-1UJg;
-	Mon, 17 Mar 2025 19:10:10 +0200
-Date: Mon, 17 Mar 2025 19:10:10 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Thomas Richard <thomas.richard@bootlin.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	thomas.petazzoni@bootlin.com, DanieleCleri@aaeon.eu,
-	GaryWang@aaeon.com.tw
-Subject: Re: [PATCH RFC v2 3/6] gpio: aggregator: export symbols of the
- gpio-fwd library
-Message-ID: <Z9hXcr_GPhPt_gel@smile.fi.intel.com>
-References: <20250317-aaeon-up-board-pinctrl-support-v2-0-36126e30aa62@bootlin.com>
- <20250317-aaeon-up-board-pinctrl-support-v2-3-36126e30aa62@bootlin.com>
+	s=arc-20240116; t=1742231464; c=relaxed/simple;
+	bh=E7NRVoeW6QLMS+MWBGrVvpxiEuhVlHkMez1FQSllQdc=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=efAtc6dgI9ZZ72wghs/ODXU9ePp3JAgQpXLJRhUvELRGmW1Zl3jDbObt1r13VjM4JbIf1WUM/I4VaJHn1xmJbojF1JJAWuYKMLgAx7d+RMv+/yqCN0fa6tpLtr7Eo+kWKZnNjIVfSkPbjA10o44nx7VnP81+VDE33ZW0JiA22MU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hrr2/brR; arc=none smtp.client-ip=209.85.214.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-225505d1ca5so75651675ad.2
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 10:11:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1742231462; x=1742836262; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=T9knZPJpn8PhD+WzxR4XtImTK5+wb3pUib9drnoaFpE=;
+        b=hrr2/brRm1nE8tx86eN1N9bZkUb8/CJwGH2QR22fS+m35YdmwD8MuSXSWnJlnfNIPq
+         s5QD7m14IMKwg9U6YseuMz4NzNdMG2MfjyNpLaOCyZwE4ZPJ7xacT/csBcVudFEPsIEd
+         KBdawP9cFWFNgmv+A1o8lbidWO+espqN0xSA659/KgyiCq/ChMRKMKCx1kzEB4qYP1zX
+         mw9HL2wJnBzmGWTvCdR0jmJj0oM6Y7xafbvf2y9PRyrsuquSMir6K7ZT6stQCVXXXkP0
+         McJsIU+tICgJFolluD0neF0Hygtv9kYvraavrOlDDp3SwvMe7t4AaHu8QjrFW6OWjixO
+         JuGw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742231462; x=1742836262;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=T9knZPJpn8PhD+WzxR4XtImTK5+wb3pUib9drnoaFpE=;
+        b=A0VvbI3EmbIODMTX2mG0OC/0qBw6UGGIKiHm+2RREJjNv2NYXS4d69M1/OdkQrr7V/
+         ma4EotiOAuKGiTvt1ug5Sks4uj2NAtYx8usmgp/Q1SKz08UfB5/SaR1wqQqzxLS9cRg+
+         VmsYmack/jElFPgFvWSPiybwLDCx0KYE6gDsRr5xchNbya7F5WFI3s9amYwwOQhdNLPx
+         wC+YwGF/fILMmxpI41zwVlowsXbIJtuRyAwipNsU/W3pzRMiupgClVNLONr8ZspPrEFC
+         i17YGauOY1hqEbwthklioHwgwtaYeStmQighstyXGw+iTKiqo93O8BJH7Hl3/4y15aSm
+         /AkA==
+X-Forwarded-Encrypted: i=1; AJvYcCX7pX01s3gDJ2ZX/EzILnoNB9F91A/CVZXgw0QATHscMvuGBGl3ifbZ5B/XgCnPMeDsGbpAymqjC/fcot0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyihtLSroS8LnA8nReqLisHGcGhdBoVhgd7q+BXYYTfyuiylBGg
+	Hn4eWFuLYwpESyjcDrL4e3OpIhqsrlXbug+erGRRy0FdLzcJ9zMU8rHQzy2MnBXenjYV3ngD/DX
+	mOQ==
+X-Google-Smtp-Source: AGHT+IH1zZ9W/kpTUJXF2FPrO8JqvpUawmfI5OD8mApbCpcciEbhqh+L5kndo4w5LOOpGmVgZxZq3OOAQTk=
+X-Received: from pgfb2.prod.google.com ([2002:a63:a102:0:b0:af2:7bd1:57e6])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:2d22:b0:1f5:6878:1a43
+ with SMTP id adf61e73a8af0-1f5c1183cdcmr18936810637.14.1742231461786; Mon, 17
+ Mar 2025 10:11:01 -0700 (PDT)
+Date: Mon, 17 Mar 2025 10:11:00 -0700
+In-Reply-To: <20250317163732.GA1863989.vipinsh@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250317-aaeon-up-board-pinctrl-support-v2-3-36126e30aa62@bootlin.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Mime-Version: 1.0
+References: <20250315024010.2360884-1-seanjc@google.com> <20250315024010.2360884-2-seanjc@google.com>
+ <20250317163732.GA1863989.vipinsh@google.com>
+Message-ID: <Z9hXpERDYZX9pj6V@google.com>
+Subject: Re: [PATCH 1/3] KVM: x86/mmu: Dynamically allocate shadow MMU's
+ hashed page list
+From: Sean Christopherson <seanjc@google.com>
+To: Vipin Sharma <vipinsh@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 
-On Mon, Mar 17, 2025 at 04:38:01PM +0100, Thomas Richard wrote:
-> Export all symbols and create header file for the gpio-fwd library.
+On Mon, Mar 17, 2025, Vipin Sharma wrote:
+> On 2025-03-14 19:40:08, Sean Christopherson wrote:
+> > Dynamically allocate the (massive) array of hashed lists used to track
+> > shadow pages, as the array itself is 32KiB, i.e. is an order-3 allocation
+> > all on its own, and is *exactly* an order-3 allocation.  Dynamically
+> > allocating the array will allow allocating "struct kvm" using regular
+> > kmalloc(), and will also allow deferring allocation of the array until
+> > it's actually needed, i.e. until the first shadow root is allocated.
+> > 
+> > Signed-off-by: Sean Christopherson <seanjc@google.com>
+> > ---
+> >  arch/x86/include/asm/kvm_host.h |  4 ++--
+> >  arch/x86/kvm/mmu/mmu.c          | 21 ++++++++++++++++++++-
+> >  arch/x86/kvm/x86.c              |  5 ++++-
+> >  3 files changed, 26 insertions(+), 4 deletions(-)
+> > 
+> > --- a/arch/x86/kvm/mmu/mmu.c
+> > +++ b/arch/x86/kvm/mmu/mmu.c
+> > @@ -6673,13 +6685,19 @@ static void kvm_mmu_zap_all_fast(struct kvm *kvm)
+> >  		kvm_tdp_mmu_zap_invalidated_roots(kvm, true);
+> >  }
+> >  
+> > -void kvm_mmu_init_vm(struct kvm *kvm)
+> > +int kvm_mmu_init_vm(struct kvm *kvm)
+> >  {
+> > +	int r;
+> > +
+> >  	kvm->arch.shadow_mmio_value = shadow_mmio_value;
+> >  	INIT_LIST_HEAD(&kvm->arch.active_mmu_pages);
+> >  	INIT_LIST_HEAD(&kvm->arch.possible_nx_huge_pages);
+> >  	spin_lock_init(&kvm->arch.mmu_unsync_pages_lock);
+> >  
+> > +	r = kvm_mmu_alloc_page_hash(kvm);
+> > +	if (r)
+> > +		return r;
+> > +
+> 
+> In the patch 3, shouldn't this be moved to else part of the below 
+> 'if (tdp_mmu_enabled)' line? Otherwise, this hash array will always get
+> allocated.
 
-...
+Ugh, I botched the rebase, and didn't point test that the allocations actually
+went away.
 
->  #include <linux/gpio/consumer.h>
->  #include <linux/gpio/driver.h>
-> +#include <linux/gpio/gpio-fwd.h>
+Before commit 0df9dab891ff ("KVM: x86/mmu: Stop zapping invalidated TDP MMU roots
+asynchronously"), kvm_mmu_init_tdp_mmu() returned a value and so the code was:
 
-Please, name it forwarder.h.
+	if (tdp_mmu_enabled)
+		r = kvm_mmu_init_tdp_mmu(kvm);
+	else
+		r = kvm_mmu_alloc_page_hash(kvm);
+	if (r < 0)
+		return r;
 
->  #include <linux/gpio/machine.h>
+I suppose the least ugly approach is:
 
-...
+	if (tdp_mmu_enabled) {
+		kvm_mmu_init_tdp_mmu(kvm);
+	} else {
+		r = kvm_mmu_alloc_page_hash(kvm);
+		if (r)
+			return r;
+	}
 
-> +int gpio_fwd_get_direction(struct gpio_chip *chip, unsigned int offset)
->  {
->  	struct gpiochip_fwd *fwd = gpiochip_get_data(chip);
->  
->  	return gpiod_get_direction(fwd->descs[offset]);
->  }
-> +EXPORT_SYMBOL_GPL(gpio_fwd_get_direction);
+> >  	if (tdp_mmu_enabled)
+> >  		kvm_mmu_init_tdp_mmu(kvm);
+> >  
+> > --- a/arch/x86/kvm/x86.c
+> > +++ b/arch/x86/kvm/x86.c
+> > @@ -12704,7 +12704,9 @@ int kvm_arch_init_vm(struct kvm *kvm, unsigned long type)
+> >  	if (ret)
+> >  		goto out;
+> >  
+> > -	kvm_mmu_init_vm(kvm);
+> > +	ret = kvm_mmu_init_vm(kvm);
+> > +	if (ret)
+> > +		goto out_cleanup_page_track;
+> >  
+> >  	ret = kvm_x86_call(vm_init)(kvm);
+> >  	if (ret)
+> > @@ -12757,6 +12759,7 @@ int kvm_arch_init_vm(struct kvm *kvm, unsigned long type)
+> >  
+> >  out_uninit_mmu:
+> >  	kvm_mmu_uninit_vm(kvm);
+> > +out_cleanup_page_track:
+> 
+> I think there is a memory leak in this series.
 
-No namespace? Ditto for all exports.
+/facepalm
 
-> -static int gpio_fwd_get_multiple(struct gpiochip_fwd *fwd, unsigned long *mask,
-> -				 unsigned long *bits)
-> +static int gpio_fwd_get_multiple_unlocked(struct gpiochip_fwd *fwd,
-> +					  unsigned long *mask, unsigned long *bits)
->  {
->  	struct gpio_desc **descs = fwd_tmp_descs(fwd);
->  	unsigned long *values = fwd_tmp_values(fwd);
-> @@ -332,8 +320,8 @@ static int gpio_fwd_get_multiple(struct gpiochip_fwd *fwd, unsigned long *mask,
->  	return 0;
->  }
->  
-> -static int gpio_fwd_get_multiple_locked(struct gpio_chip *chip,
-> -					unsigned long *mask, unsigned long *bits)
-> +int gpio_fwd_get_multiple(struct gpio_chip *chip, unsigned long *mask,
-> +			  unsigned long *bits)
->  {
->  	struct gpiochip_fwd *fwd = gpiochip_get_data(chip);
->  	unsigned long flags;
-> @@ -341,16 +329,17 @@ static int gpio_fwd_get_multiple_locked(struct gpio_chip *chip,
->  
->  	if (chip->can_sleep) {
->  		mutex_lock(&fwd->mlock);
-> -		error = gpio_fwd_get_multiple(fwd, mask, bits);
-> +		error = gpio_fwd_get_multiple_unlocked(fwd, mask, bits);
->  		mutex_unlock(&fwd->mlock);
->  	} else {
->  		spin_lock_irqsave(&fwd->slock, flags);
-> -		error = gpio_fwd_get_multiple(fwd, mask, bits);
-> +		error = gpio_fwd_get_multiple_unlocked(fwd, mask, bits);
->  		spin_unlock_irqrestore(&fwd->slock, flags);
->  	}
->  
->  	return error;
->  }
-> +EXPORT_SYMBOL_GPL(gpio_fwd_get_multiple);
+Good job, me.
 
-These two are nicely named. Instead of touching them, just simply add an
-exported wrapper. We can optimize it latter if needed, but it reduces a lot
-the churn in this patch.
-
-...
-
-> -static void gpio_fwd_set_multiple(struct gpiochip_fwd *fwd, unsigned long *mask,
-> -				  unsigned long *bits)
-> +static void gpio_fwd_set_multiple_unlocked(struct gpiochip_fwd *fwd,
-> +					   unsigned long *mask,
-> +					   unsigned long *bits)
->  {
->  	struct gpio_desc **descs = fwd_tmp_descs(fwd);
->  	unsigned long *values = fwd_tmp_values(fwd);
-> @@ -404,37 +395,40 @@ static void gpio_fwd_set_multiple(struct gpiochip_fwd *fwd, unsigned long *mask,
->  		gpiod_set_array_value(j, descs, NULL, values);
->  }
->  
-> -static void gpio_fwd_set_multiple_locked(struct gpio_chip *chip,
-> -					 unsigned long *mask, unsigned long *bits)
-> +void gpio_fwd_set_multiple(struct gpio_chip *chip, unsigned long *mask,
-> +			   unsigned long *bits)
->  {
->  	struct gpiochip_fwd *fwd = gpiochip_get_data(chip);
->  	unsigned long flags;
->  
->  	if (chip->can_sleep) {
->  		mutex_lock(&fwd->mlock);
-> -		gpio_fwd_set_multiple(fwd, mask, bits);
-> +		gpio_fwd_set_multiple_unlocked(fwd, mask, bits);
->  		mutex_unlock(&fwd->mlock);
->  	} else {
->  		spin_lock_irqsave(&fwd->slock, flags);
-> -		gpio_fwd_set_multiple(fwd, mask, bits);
-> +		gpio_fwd_set_multiple_unlocked(fwd, mask, bits);
->  		spin_unlock_irqrestore(&fwd->slock, flags);
->  	}
->  }
-> +EXPORT_SYMBOL_GPL(gpio_fwd_set_multiple);
-
-Ditto.
-
-...
-
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +#ifndef __LINUX_GPIO_FWD_H
-> +#define __LINUX_GPIO_FWD_H
-
-This header uses something that is defined in other headers. Please follow IWYU
-principle.
-
-...
-
-> +struct gpiochip_fwd_timing {
-> +	u32 ramp_up_us;
-> +	u32 ramp_down_us;
-
-types.h
-
-> +};
-
-...
-
-> +struct gpiochip_fwd {
-> +	struct device *dev;
-
-struct device;
-
-// forward declaration is enough.
-
-> +	struct gpio_chip chip;
-
-Where is this being defined?
-
-> +	struct gpio_desc **descs;
-
-> +	union {
-> +		struct mutex mlock;	/* protects tmp[] if can_sleep */
-> +		spinlock_t slock;	/* protects tmp[] if !can_sleep */
-
-And these?
-
-> +	};
-> +	struct gpiochip_fwd_timing *delay_timings;
-> +	unsigned long tmp[];		/* values and descs for multiple ops */
-> +};
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Thanks for the review!
 
