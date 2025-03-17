@@ -1,244 +1,160 @@
-Return-Path: <linux-kernel+bounces-565206-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB616A6632D
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 00:57:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FB3CA662F9
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 00:52:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F6CE3B130A
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 23:57:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C27C3B5D07
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 23:51:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62713207663;
-	Mon, 17 Mar 2025 23:55:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D547205E34;
+	Mon, 17 Mar 2025 23:51:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b="bNE6HHtH"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="XjmkDS/d"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADAFC1E1E03
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 23:55:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10CA1205505;
+	Mon, 17 Mar 2025 23:51:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742255706; cv=none; b=F5DgCmAdG5Kp/G4/F/stnZo7odq0eslg7Viq+z4V97NfXibXM5sYZWSz1O/AC4vZQ+MwVo3flcjbRCnbOU07cG0WPjnHMrDWhzj0rdZW1AapJ530UppiJJK3ZaaEzz82nOOtJYG6fmQA/oV+3geZwQTy4lS9o76ZDbLzC6b7dL4=
+	t=1742255512; cv=none; b=na7H1+VZHMJ7YHckAgAOo0pkXY2bJSKd99sgH4G1el36O1YrjaovutaKDVo90pto94JZkE6Y5bOQDs0gS5Iwyp0/buInAgrXQUA+RAW5KIj+GoYRLSjJnnzaGcJft6lGk48UmQAuOsBrkVbuuSOKK+mHwtq0RtfWSDi45ApDv7I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742255706; c=relaxed/simple;
-	bh=Bb1xtCjgennkMrbNnKbCzke2aMsPLm65RxApeP/uuHI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ne5grjJ/6DUcUxb5OMLR0MKCJOQA7R2cmZsXctUuk2PofoknV19O5DCYCno4s8YLsH2PCjHFxKQNAMeRlvhh/x0/s2OqjKCgq6tHvH3jn1Te2V+WbLSenmJdt1Z+oQ5C2t7o57M8V/atvX3JIZKzbZExkMayieqHGUiSxATz7vY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tenstorrent.com; spf=pass smtp.mailfrom=tenstorrent.com; dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b=bNE6HHtH; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tenstorrent.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tenstorrent.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-224019ad9edso44682705ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 16:55:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tenstorrent.com; s=google; t=1742255704; x=1742860504; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=2BaEesGZQPxAj4sEFCUyAgXUqotSKFJXiU7Y/LCyccU=;
-        b=bNE6HHtHqTSe/mznDW1Fr6SqY7eN18D7KI/64k2IDubpvMeuE6O1i5l/nY6mpINQyW
-         OR7KHDbWjjWw8H9V9aoHhl1joFfL3fv7Zf8fNpql/RlEUicY31zNTZt2O9xQmd2xJmlq
-         Ihl8oe7eLRh+EQxzgpAj35DbGKpZ99k3XAs5U0X44gcp8tMrhQLNVG5yL4T3cldxr9sg
-         BiHL7HtLYJdJ+y8o+bgnRLeBEzFm165VJoM9KyWH2X9fVjJEQxM+LNh+qQJsW+LO1XiA
-         65cSCZiuENsBVimAO5Tz1Cb/Uj3AMnQE0tc+6fvcAWvNXiuERRgtcDV3uSDnhdnjmYw2
-         Uyzg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742255704; x=1742860504;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2BaEesGZQPxAj4sEFCUyAgXUqotSKFJXiU7Y/LCyccU=;
-        b=D2v5P7xnN+bV0fo7p7eP+wvrsGmeQNRbfwRY9LcC4InHOKqbeWLBYAPWNK99oPehAl
-         aWmIqLY/zZ8wGKScRPteo9W7OCKtEwG+9ylkwCbLhcTIb2pq8a4LeoxKO8cr3KKF0EC8
-         zha/0YOkUWUcrWzhlptEfHtbfiq6zE14Jb4IRLcgO/UO33eKiQ6LwPaxE4AhCesAZumh
-         LaDtBBOUC0RkjD2VO/BksXEof/BxEGFJHArD2vz8mAc0VNAUW83fYD0EE+CMxpkoWQuH
-         KkL+aq1sU9Es/HkpOQ/I846gW9Wd5IJzGo7hrXPZDGbokU8EJDI8a7rvow7zC994+6tV
-         TFdg==
-X-Forwarded-Encrypted: i=1; AJvYcCUGzNh82PVKB3YGfgUAiJTbYmH8AMhXFFaFluRAS9w5yU7r8WkP/tMtBVfWEqaBgqzahHG7UkjkGLFdXS8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyrhPsstXdDMWc8zOo0R7B7e+o1LuhqUZY5NlFNEfYP7hOv+TZ+
-	Y0zcbHiMV6sf4/pqPj0oL9Gxtl5Ozg7kiIKWwfZk+K4xuyBI9q7WAU4e+tad0A==
-X-Gm-Gg: ASbGnctZwyTSYdtJC3y4DXFapcu/LbqSo73pRiZpTBcZSZq8B8xR0RZAG8XaPOMxm9Z
-	qZS97n2lgmg3j97ZiWQSqI21B0IUZrJGC1NU4eFV+pW2UU0MdkHeJLLlSe/cOHfTUdb0Eg3wFgK
-	Uxr9sHiKg1VapuoPRo9sHbKtK46mfSajhHuKbd2k/nk5Ko1582U5mm4Q6iK2PyA9mcuv8y0o26i
-	cpURwOnjDnGvX5CJs3ETla39HqropKaaMMeBu2XoJsAoW55i74xKObzJo8Q8kyrPbEd4iXqG7lP
-	kEC57Pc6Kse1qTpCN21sSkujFBOhL9IbhdCT+Xix7fZ+7d3edNa/X26jv4LAiTSkvw==
-X-Google-Smtp-Source: AGHT+IEal8kGqBORazjLpmbhAyMjWbAph9OrXPa4QlNZhh/T7g7iTF+vSLL4w1ItmIz6KJ2LE1skXg==
-X-Received: by 2002:a05:6a00:a01:b0:736:3c2b:c38e with SMTP id d2e1a72fcca58-73757246dfbmr1533920b3a.13.1742255703849;
-        Mon, 17 Mar 2025 16:55:03 -0700 (PDT)
-Received: from [192.168.50.200] ([202.172.96.87])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-af594eb973dsm4686757a12.19.2025.03.17.16.55.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 17 Mar 2025 16:55:03 -0700 (PDT)
-Message-ID: <e0075d0c-45ae-437a-b873-e892e4e51dc3@tenstorrent.com>
-Date: Tue, 18 Mar 2025 10:54:59 +1100
+	s=arc-20240116; t=1742255512; c=relaxed/simple;
+	bh=XsNjQyivH1Hog8A2iZ+anJbWkZpmM+zPGmHGJX63sTY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=t4n/OHjhi2jP49BaWmkLQhAmeRx/yt/+UWcMnjdXww0++Ni680cMkQhu3Ux7dV+Y0ZolKlScJo4cqa3i0qgt7ynh9aWWOwt8mxMyMO3kfzdTN9czmcHITJ1uqYeCZsqjLz4WDOo/5z8MGqu5LQFvOQHif89Ik+QfAALpq8X2HTA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=XjmkDS/d; arc=none smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52HLuhUO029836;
+	Mon, 17 Mar 2025 23:51:46 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=corp-2023-11-20; bh=2c4Tw6svFVVlMG5F1jrrJOHoil02h
+	jZZOtzQ9FEz1Hc=; b=XjmkDS/degSYOs30P9v6YK8zMDZzuoaBFVKatpuNs34Ex
+	vwCVEEnUF0xK5Aw/3SHHO+AiKKrMSRs5f59rmr/Mvfa8KX812tl9QbMYMlC/lpCz
+	+zmQ77dYUONLOk9ZkIADZtAw+LwrBbao+33/sJfNvuywOhKtARYhwgSxxkpR0fNh
+	hxsTMCjAz+mL2S10CZhRWyz3JVeOZ9ToVCtm/HeCBcdA6leVsRC8Ngy/rVo32xCr
+	0wqG28JCnuMI6G6PHQX+XV3RH6tbbmY3CFdiucUvNVMKW3Gazw561sOS/OXa9W0w
+	+PIU6m6XIlcH0XiK9VDqot7zCVWxPTNgN4r/iZhlw==
+Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 45d23rv2yv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 17 Mar 2025 23:51:45 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 52HLjXp0022498;
+	Mon, 17 Mar 2025 23:51:45 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 45dxeekf77-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 17 Mar 2025 23:51:45 +0000
+Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 52HNpi2f016519;
+	Mon, 17 Mar 2025 23:51:44 GMT
+Received: from localhost.localdomain (ca-dev80.us.oracle.com [10.211.9.80])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 45dxeekf68-1;
+	Mon, 17 Mar 2025 23:51:44 +0000
+From: Dongli Zhang <dongli.zhang@oracle.com>
+To: virtualization@lists.linux.dev, kvm@vger.kernel.org,
+        netdev@vger.kernel.org
+Cc: mst@redhat.com, jasowang@redhat.com, michael.christie@oracle.com,
+        pbonzini@redhat.com, stefanha@redhat.com, eperezma@redhat.com,
+        joao.m.martins@oracle.com, joe.jin@oracle.com, si-wei.liu@oracle.com,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 00/10] vhost-scsi: log write descriptors for live migration (and three bugfix)
+Date: Mon, 17 Mar 2025 16:55:08 -0700
+Message-ID: <20250317235546.4546-1-dongli.zhang@oracle.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [EXT] Re: [PATCH v3 1/4] riscv: implement user_access_begin() and
- families
-To: Alexandre Ghiti <alex@ghiti.fr>, palmer@dabbelt.com,
- aou@eecs.berkeley.edu, paul.walmsley@sifive.com, charlie@rivosinc.com,
- jrtc27@jrtc27.com, ben.dooks@codethink.co.uk
-Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
- jszhang@kernel.org
-References: <20250221000924.734006-1-cyrilbur@tenstorrent.com>
- <20250221000924.734006-2-cyrilbur@tenstorrent.com>
- <9a94c74f-4826-479f-aaa0-e87b3bfd30ff@ghiti.fr>
-Content-Language: en-US
-From: Cyril Bur <cyrilbur@tenstorrent.com>
-In-Reply-To: <9a94c74f-4826-479f-aaa0-e87b3bfd30ff@ghiti.fr>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-17_10,2025-03-17_03,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 phishscore=0 mlxscore=0
+ adultscore=0 mlxlogscore=999 spamscore=0 malwarescore=0 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2502280000
+ definitions=main-2503170173
+X-Proofpoint-GUID: zpUf-Csj4TO_jCYy7QHMXr_QTfgwFaBB
+X-Proofpoint-ORIG-GUID: zpUf-Csj4TO_jCYy7QHMXr_QTfgwFaBB
+
+The live migration with vhost-scsi has been enabled by QEMU commit
+b3e89c941a85 ("vhost-scsi: Allow user to enable migration"), which
+thoroughly explains the workflow that QEMU collaborates with vhost-scsi on
+the live migration.
+
+Although it logs dirty data for the used ring, it doesn't log any write
+descriptor (VRING_DESC_F_WRITE).
+
+In comparison, vhost-net logs write descriptors via vhost_log_write(). The
+SPDK (vhost-user-scsi backend) also logs write descriptors via
+vhost_log_req_desc().
+
+As a result, there is likely data mismatch between memory and vhost-scsi
+disk during the live migration.
+
+1. Suppose there is high workload and high memory usage. Suppose some
+systemd userspace pages are swapped out to the swap disk.
+
+2. Upon request from systemd, the kernel reads some pages from the swap
+disk to the memory via vhost-scsi.
+
+3. Although those userspace pages' data are updated, they are not marked as
+dirty by vhost-scsi (this is the bug). They are not going to migrate to the
+target host during memory transfer iterations.
+
+4. Suppose systemd doesn't write to those pages any longer. Those pages
+never get the chance to be dirty or migrated any longer.
+
+5. Once the guest VM is resumed on the target host, because of the lack of
+those dirty pages' data, the systemd may run into abnormal status, i.e.,
+there may be systemd segfault.
+
+Log all write descriptors to fix the issue.
+
+In addition, the patchset also fixes three bugs in vhost-scsi.
+
+Changed since v1:
+  - Rebase on top of most recent vhost changes.
+  - Don't allocate log buffer during initialization. Allocate during
+    VHOST_SET_FEATURES or VHOST_SCSI_SET_ENDPOINT.
+  - Add bugfix for vhost_scsi_send_status().
+
+Dongli Zhang (vhost-scsi bugfix):
+  vhost-scsi: protect vq->log_used with vq->mutex
+  vhost-scsi: Fix vhost_scsi_send_bad_target()
+  vhost-scsi: Fix vhost_scsi_send_status()
+
+Dongli Zhang (log descriptor, suggested by Joao Martins):
+  vhost: modify vhost_log_write() for broader users
+  vhost-scsi: adjust vhost_scsi_get_desc() to log vring descriptors
+  vhost-scsi: cache log buffer in I/O queue vhost_scsi_cmd
+  vhost-scsi: log I/O queue write descriptors
+  vhost-scsi: log control queue write descriptors
+  vhost-scsi: log event queue write descriptors
+  vhost: add WARNING if log_num is more than limit
+
+ drivers/vhost/net.c   |   2 +-
+ drivers/vhost/scsi.c  | 314 ++++++++++++++++++++++++++++++++++++++++-----
+ drivers/vhost/vhost.c |  46 +++++--
+ drivers/vhost/vhost.h |   2 +-
+ 4 files changed, 322 insertions(+), 42 deletions(-)
 
 
+base-commit: 9d8960672d63db4b3b04542f5622748b345c637a
+branch: remotes/origin/linux-next
+tree: https://git.kernel.org/pub/scm/linux/kernel/git/mst/vhost.git
 
-On 15/3/2025 12:28 am, Alexandre Ghiti wrote:
-> Hi Cyril,
-> 
-> On 21/02/2025 01:09, Cyril Bur wrote:
->> From: Jisheng Zhang<jszhang@kernel.org>
->>
->> Currently, when a function like strncpy_from_user() is called,
->> the userspace access protection is disabled and enabled
->> for every word read.
->>
->> By implementing user_access_begin() and families, the protection
->> is disabled at the beginning of the copy and enabled at the end.
->>
->> The __inttype macro is borrowed from x86 implementation.
->>
->> Signed-off-by: Jisheng Zhang<jszhang@kernel.org>
->> Signed-off-by: Cyril Bur<cyrilbur@tenstorrent.com>
->> ---
->>   arch/riscv/include/asm/uaccess.h | 63 ++++++++++++++++++++++++++++++++
->>   1 file changed, 63 insertions(+)
->>
->> diff --git a/arch/riscv/include/asm/uaccess.h b/arch/riscv/include/ 
->> asm/uaccess.h
->> index fee56b0c8058..43db1d9c2f99 100644
->> --- a/arch/riscv/include/asm/uaccess.h
->> +++ b/arch/riscv/include/asm/uaccess.h
->> @@ -61,6 +61,19 @@ static inline unsigned long 
->> __untagged_addr_remote(struct mm_struct *mm, unsigne
->>   #define __disable_user_access()                            \
->>       __asm__ __volatile__ ("csrc sstatus, %0" : : "r" (SR_SUM) : 
->> "memory")
->> +/*
->> + * This is the smallest unsigned integer type that can fit a value
->> + * (up to 'long long')
->> + */
->> +#define __inttype(x) __typeof__(        \
->> +    __typefits(x,char,            \
->> +      __typefits(x,short,            \
->> +        __typefits(x,int,            \
->> +          __typefits(x,long,0ULL)))))
->> +
->> +#define __typefits(x,type,not) \
->> +    __builtin_choose_expr(sizeof(x)<=sizeof(type),(unsigned type)0,not)
->> +
->>   /*
->>    * The exception table consists of pairs of addresses: the first is the
->>    * address of an instruction that is allowed to fault, and the 
->> second is
->> @@ -368,6 +381,56 @@ do {                                    \
->>           goto err_label;                        \
->>   } while (0)
->> +static __must_check __always_inline bool user_access_begin(const void 
->> __user *ptr, size_t len)
->> +{
->> +    if (unlikely(!access_ok(ptr,len)))
->> +        return 0;
->> +    __enable_user_access();
->> +    return 1;
->> +}
->> +#define user_access_begin(a,b)    user_access_begin(a,b)
-> 
-> 
-> Nit: no need for (a,b) here
-> 
-> 
->> +#define user_access_end()    __disable_user_access()
->> +
->> +static inline unsigned long user_access_save(void) { return 0UL; }
->> +static inline void user_access_restore(unsigned long enabled) { }
->> +
->> +/*
->> + * We want the unsafe accessors to always be inlined and use
->> + * the error labels - thus the macro games.
->> + */
->> +#define unsafe_put_user(x, ptr, label)    do {                \
->> +    long __err = 0;                            \
->> +    __put_user_nocheck(x, (ptr), __err);                \
->> +    if (__err) goto label;                        \
->> +} while (0)
->> +
->> +#define unsafe_get_user(x, ptr, label)    do {                \
->> +    long __err = 0;                            \
->> +    __inttype(*(ptr)) __gu_val;                    \
->> +    __get_user_nocheck(__gu_val, (ptr), __err);            \
->> +    (x) = (__force __typeof__(*(ptr)))__gu_val;            \
->> +    if (__err) goto label;                        \
->> +} while (0)
->> +
->> +#define unsafe_copy_loop(dst, src, len, type, label)                \
->> +    while (len >= sizeof(type)) {                        \
->> +        unsafe_put_user(*(type *)(src),(type __user *)(dst),label);    \
->> +        dst += sizeof(type);                        \
->> +        src += sizeof(type);                        \
->> +        len -= sizeof(type);                        \
->> +    }
->> +
->> +#define unsafe_copy_to_user(_dst,_src,_len,label)            \
->> +do {                                    \
->> +    char __user *__ucu_dst = (_dst);                \
->> +    const char *__ucu_src = (_src);                    \
->> +    size_t __ucu_len = (_len);                    \
->> +    unsafe_copy_loop(__ucu_dst, __ucu_src, __ucu_len, u64, label);    \
->> +    unsafe_copy_loop(__ucu_dst, __ucu_src, __ucu_len, u32, label);    \
->> +    unsafe_copy_loop(__ucu_dst, __ucu_src, __ucu_len, u16, label);    \
->> +    unsafe_copy_loop(__ucu_dst, __ucu_src, __ucu_len, u8, label);    \
->> +} while (0)
->> +
->>   #else /* CONFIG_MMU */
->>   #include <asm-generic/uaccess.h>
->>   #endif /* CONFIG_MMU */
-> 
-> There is a bunch of checkpatch errors to fix, see https:// 
-> gist.github.com/linux-riscv-bot/98f23fd1b04d6da7c23c6cb18245a158
-> 
+Thank you very much!
 
-Oops, yeah will fix.
-
-> Why isn't there an implementation for unsafe_copy_from_user()? Let's 
-> take the following example:
-> 
-> user_access_begin()
-> unsafe_copy_from_user()
-> unsafe_get_user() <==== This one will fail since unsafe_copy_from_user() 
-> -> raw_copy_from_user() -> __asm_vector_usercopy() which enables and 
-> disables the SUM bit.
-> user_access_end()
-
-I'll have to look into that - thanks for the feedback.
-
-> 
-> Another thing is that with this patch, we lose the vectorized user 
-> access functions, can you fix that too?
-
-I'll have a look at this also.
-
-> 
-> Thanks,
-> 
-> Alex
-> 
-> 
-> 
+Dongli Zhang
 
 
