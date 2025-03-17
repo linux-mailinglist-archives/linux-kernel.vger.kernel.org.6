@@ -1,53 +1,53 @@
-Return-Path: <linux-kernel+bounces-563489-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563491-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0B83A642C1
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 08:07:35 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 143F2A642BE
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 08:07:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BDE6F3B0753
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 07:06:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6755E16498D
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 07:07:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD0D2235375;
-	Mon, 17 Mar 2025 07:01:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DCBC235C15;
+	Mon, 17 Mar 2025 07:01:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jwkHSH3U"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JnreIRbv"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 382132343AF;
-	Mon, 17 Mar 2025 07:01:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9344A2356DB;
+	Mon, 17 Mar 2025 07:01:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742194898; cv=none; b=EQnN26gOftsowXIlwmM6aJxwocPKxGN+oe1MzuNC6QK96o3paxVtrJztpG4HjYwWjrkzgu5P9bO2v2/d++jT1h4TpE9Qr8j7qKPTGiQelxeGJt1cAmNU0CZvNQoocyAuUFozbwoHViO+busy8R0Mr+f5EHjt2faEkEeeot0bMF8=
+	t=1742194901; cv=none; b=S34O5RwZa0ZkmtD9SQCKqklq2WX1J1BbVvKekxgHApp5YIFnyOMJU9Av/1t2p1d0eLFHGRIALoJVQYH/5H6CGEnNetf0NGzvQ9mgEEwfSdoFN4cJfcI/BVQ6UL6jdQFY5eI7ZqXL3e/g7wLKpcdZx5os4pP1xBRJSkJ/scjfpNQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742194898; c=relaxed/simple;
-	bh=HpOa6PM92cYj5X2CZarvKMvG/Q3+msQj808muX1qxpM=;
+	s=arc-20240116; t=1742194901; c=relaxed/simple;
+	bh=DNNEffSPT7NpR4ueszPoeFAk+N1pzzZMTLBTDGxrgBQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=hEDp2lw3DttFi3n6colZNY5vsj5KMfxrTjSc5qq2S8tSO9frS9i73R/K2RZLUI+Vkm1AOsk7St12Z0GTVF18qPKuoHquWZDdSUBTgGoMEF+wS0sQktqqtHSBEhGP43HYDixcd48kKD0JEMPpJmbDqTaplvC7WkaPBhXdoyTvpSs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jwkHSH3U; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8095C4CEE3;
-	Mon, 17 Mar 2025 07:01:36 +0000 (UTC)
+	 MIME-Version; b=cpoOgA8n4lOmMU3P8ysHrZLqQ3cI38vw23g2pViC9FpOIdULky5xIdjdve8u00NBIpR+flzSWQA9tPhF5RegKOofkg2CzZ1l/7WdsNRfOT2+OX+i8hO7q9SjUGyH7h5gbxGwdwO7FY7Lv76yifwCT0l6LNuJ3XXWhjzx/yJSPh4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JnreIRbv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF5AAC4CEEC;
+	Mon, 17 Mar 2025 07:01:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742194898;
-	bh=HpOa6PM92cYj5X2CZarvKMvG/Q3+msQj808muX1qxpM=;
+	s=k20201202; t=1742194901;
+	bh=DNNEffSPT7NpR4ueszPoeFAk+N1pzzZMTLBTDGxrgBQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=jwkHSH3Ug9lo/CZnvdG937I09ucLZsHk34n3fWrVInHNUsCffBfvDGu8NGFRAxr7+
-	 lJv/FoOCTtDs70+9xnRbnHgdRXtSnhJ4kY4fZbGXH4H0JQgqW8yW8JNGTwWq1/vEA1
-	 llXLg+8XG1U+G2f9Y0vlGwWykkZ6Kj8Q+b2mc7bNy9kJ38RXP5PN2d4TCHzFp+5IEh
-	 NSi2EfcCtPoTcX7lDUoftFsdtuhv6OY7AhDW/huqLR0AwNJiXQtR7vfcRtxuQx2qJI
-	 WpHs9D6Xle6Iq5SAMbB6bvkkYFMzm7lEhV0bgiQ/WKG6TIRD8zMLgqepdFYsxwbn++
-	 rhV/v8UkdY3gQ==
+	b=JnreIRbvZoMKSKrwHK8GiBm2XFbkvc3FER7xeY8AguLwfkF4KkXTwlUU7nl3xUuBD
+	 AIujIK1Mabgdp5lzg9OsvVj11w79+/msVNYw905cYKms9duLMuTDpjRgdTi2yJA7Om
+	 FCcWjT/3T2szQQzv8mFTD6H1/A1pNYAxX4fq5oHhHunU6uKxr7F1qoALuF3L7MfIpT
+	 kR3+ts0nWKtSGBzgpbLIg/0KYX90jnSXLWJTm/x3GMFJOf6diKsBoooT/YviBc1L/a
+	 CSF03w4F4c4+pzIksmUc0IQO8qRiQ2EDg2efnXWcdvN7tZM+DKPQdJoeiS+ZorgKds
+	 x8E5y9TxcNJCg==
 From: "Jiri Slaby (SUSE)" <jirislaby@kernel.org>
 To: gregkh@linuxfoundation.org
 Cc: linux-serial@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	"Jiri Slaby (SUSE)" <jirislaby@kernel.org>
-Subject: [PATCH v2 29/31] serial: 8250_port: do not use goto for UPQ_NO_TXEN_TEST code flow
-Date: Mon, 17 Mar 2025 08:00:44 +0100
-Message-ID: <20250317070046.24386-30-jirislaby@kernel.org>
+Subject: [PATCH v2 31/31] serial: switch change_irq and change_port to bool in uart_set_info()
+Date: Mon, 17 Mar 2025 08:00:46 +0100
+Message-ID: <20250317070046.24386-32-jirislaby@kernel.org>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250317070046.24386-1-jirislaby@kernel.org>
 References: <20250317070046.24386-1-jirislaby@kernel.org>
@@ -59,63 +59,32 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This is unnecessary here and makes the code harder to follow. Invert the
-condition and drop the goto+label.
+change_irq and change_port are boolean variables. Mark them as such
+(instead of uint).
 
 Signed-off-by: Jiri Slaby (SUSE) <jirislaby@kernel.org>
----
- drivers/tty/serial/8250/8250_port.c | 34 ++++++++++++++---------------
- 1 file changed, 16 insertions(+), 18 deletions(-)
 
-diff --git a/drivers/tty/serial/8250/8250_port.c b/drivers/tty/serial/8250/8250_port.c
-index 3f256e96c722..6466f60416a9 100644
---- a/drivers/tty/serial/8250/8250_port.c
-+++ b/drivers/tty/serial/8250/8250_port.c
-@@ -2406,28 +2406,26 @@ int serial8250_do_startup(struct uart_port *port)
- 	 * test if we receive TX irq.  This way, we'll never enable
- 	 * UART_BUG_TXEN.
- 	 */
--	if (up->port.quirks & UPQ_NO_TXEN_TEST)
--		goto dont_test_tx_en;
--
--	/*
--	 * Do a quick test to see if we receive an interrupt when we enable
--	 * the TX irq.
--	 */
--	serial_port_out(port, UART_IER, UART_IER_THRI);
--	lsr = serial_port_in(port, UART_LSR);
--	iir = serial_port_in(port, UART_IIR);
--	serial_port_out(port, UART_IER, 0);
-+	if (!(up->port.quirks & UPQ_NO_TXEN_TEST)) {
-+		/*
-+		 * Do a quick test to see if we receive an interrupt when we
-+		 * enable the TX irq.
-+		 */
-+		serial_port_out(port, UART_IER, UART_IER_THRI);
-+		lsr = serial_port_in(port, UART_LSR);
-+		iir = serial_port_in(port, UART_IIR);
-+		serial_port_out(port, UART_IER, 0);
+---
+[v2] this is a new patch
+---
+ drivers/tty/serial/serial_core.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/tty/serial/serial_core.c b/drivers/tty/serial/serial_core.c
+index 0dbf75b25ff6..88669972d9a0 100644
+--- a/drivers/tty/serial/serial_core.c
++++ b/drivers/tty/serial/serial_core.c
+@@ -895,8 +895,8 @@ static int uart_set_info(struct tty_struct *tty, struct tty_port *port,
+ {
+ 	struct uart_port *uport = uart_port_check(state);
+ 	unsigned long new_port;
+-	unsigned int change_irq, change_port, closing_wait;
+-	unsigned int old_custom_divisor, close_delay;
++	unsigned int old_custom_divisor, close_delay, closing_wait;
++	bool change_irq, change_port;
+ 	upf_t old_flags, new_flags;
+ 	int retval;
  
--	if (lsr & UART_LSR_TEMT && iir & UART_IIR_NO_INT) {
--		if (!(up->bugs & UART_BUG_TXEN)) {
--			up->bugs |= UART_BUG_TXEN;
--			dev_dbg(port->dev, "enabling bad tx status workarounds\n");
-+		if (lsr & UART_LSR_TEMT && iir & UART_IIR_NO_INT) {
-+			if (!(up->bugs & UART_BUG_TXEN)) {
-+				up->bugs |= UART_BUG_TXEN;
-+				dev_dbg(port->dev, "enabling bad tx status workarounds\n");
-+			}
-+		} else {
-+			up->bugs &= ~UART_BUG_TXEN;
- 		}
--	} else {
--		up->bugs &= ~UART_BUG_TXEN;
- 	}
- 
--dont_test_tx_en:
- 	uart_port_unlock_irqrestore(port, flags);
- 
- 	/*
 -- 
 2.49.0
 
