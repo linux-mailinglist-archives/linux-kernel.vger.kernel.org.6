@@ -1,57 +1,76 @@
-Return-Path: <linux-kernel+bounces-563786-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563787-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C44DA6486A
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:59:10 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F247A64875
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:00:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CFB9518859F5
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 09:59:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CCB943B420D
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 09:59:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 702CB22F388;
-	Mon, 17 Mar 2025 09:58:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="FXd0ialh"
-Received: from mail-24417.protonmail.ch (mail-24417.protonmail.ch [109.224.244.17])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEFC6230274;
+	Mon, 17 Mar 2025 09:59:29 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA99B22DFA8;
-	Mon, 17 Mar 2025 09:58:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.224.244.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84F28230242
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 09:59:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742205527; cv=none; b=YzqY8/GUI9ogJT2FEoD5JCkfTCJ0G4/0CtmzGlNlA2AKIyTd8ugGJjAdZ9kTFuajdlffJDVKPe+IaIf+ELhV5gxBwBTLRYCFVIIAlkyHu36PybxZVcRyJZms3yvT9SymT1q/yRe7Dkdze6i0AGMMXsLSdePfCYcgIcCnvxUWf0E=
+	t=1742205569; cv=none; b=r79wi1cuTjaj3isf6L/BqKv8m6X6bsrYOo4ibLHLGxHNrtX/b1BJe9t6GQ4InNQ13vEEfD4+PfKsM8pBB1SX50CtTSyH2gRjAZJkKLr1E/4ycBO/FN26KHdBxwCbk953Y+oT0FiDPEknlWq7LpRjCmMfxV4ugD0oeztOdE11pj8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742205527; c=relaxed/simple;
-	bh=+aEG912NzRn80rDLZY34hv7e8PyJfpGkE1RJ7xnNKAk=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Aqh+SyWpYc1xXw7KqcQnMPHdNgd59pe+JNhMXlnNQIYtuoK049AsZljaOSupIyUfFsx++fJhzsf+cectz3eseXVSXGLPvKOsbwTnCvATt9AFXqvfl8rMHMJ5IwTc23NCGe786rYdFlMPsWjr58shzC+laMzZvrW1YyvmiabI9sw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=FXd0ialh; arc=none smtp.client-ip=109.224.244.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1742205521; x=1742464721;
-	bh=D2PMVOaORBnfrtdY1U2gZAT+GyRP76w9SUSPSbGMIdY=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
-	b=FXd0ialhNc9Id4+9x1AuNA44/fUIPHmRQoQJHU46zro3dV/D5AwwfFy+qquSDcb1f
-	 RAaQwMOHICWThugK5WNLdTPz8PCNOPcUG96lDYU2wyUJAMCjcgw4gUg5ZtMWujRCP7
-	 A606gEZzw8O1+NbusItOXJOAl4PaIqA07qLQh/bXjmE+k1He12vzsKTbHkSWcXnFwY
-	 wkfZhILOw56yuoWevRK0jC22gthAJGrbRNxbL4zGZ/6HFRVGGnUeJjbtM6P5vpjD4N
-	 6HmC1tjqIV72Pw1sTXG3tfoSH+jtX1/Tk3Wi91HOdaLcWjH0sycwN/V5b2qU9cX6Ge
-	 80FQdwkOmGqsw==
-Date: Mon, 17 Mar 2025 09:58:35 +0000
-To: Tamir Duberstein <tamird@gmail.com>, Danilo Krummrich <dakr@kernel.org>, Andrew Ballance <andrewjballance@gmail.com>, Alice Ryhl <aliceryhl@google.com>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] rust: alloc: replace `Vec::set_len` with `inc_len`
-Message-ID: <D8IGB61NVPBT.1I3IZYPVPIEMU@proton.me>
-In-Reply-To: <20250316-vec-set-len-v1-1-60f98a28723f@gmail.com>
-References: <20250316-vec-set-len-v1-0-60f98a28723f@gmail.com> <20250316-vec-set-len-v1-1-60f98a28723f@gmail.com>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: 02caf5a5828e2c51365c935a1ead55d2314f2be9
+	s=arc-20240116; t=1742205569; c=relaxed/simple;
+	bh=eLTZeaMW6RqboQrRfMoLdJ3QLbgZhIQQ6M3lPH/kUsg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Zd7r1hDmonq1c2HrlaRXbiu6KGutDHq0EpKsX+8qFaCUAqGybjjecuG1hJiD5BC7462GYk89ZuLESyBuuO4puJa1V41hBHAC88wdbdX9ejHnkIepn6+zIZc49SPvgTl3FWctsVaw/DbPLiDk5FuRz6CIeI43SGh3Rl2Fox44gP4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1tu7FP-0006dd-GS; Mon, 17 Mar 2025 10:59:03 +0100
+Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1tu7FO-000Dti-1d;
+	Mon, 17 Mar 2025 10:59:02 +0100
+Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1tu7FO-0018Rw-2T;
+	Mon, 17 Mar 2025 10:59:02 +0100
+Date: Mon, 17 Mar 2025 10:59:02 +0100
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Kory Maincent <kory.maincent@bootlin.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Donald Hunter <donald.hunter@gmail.com>,
+	Rob Herring <robh@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
+	Simon Horman <horms@kernel.org>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	netdev@vger.kernel.org, linux-doc@vger.kernel.org,
+	Kyle Swenson <kyle.swenson@est.tech>,
+	Dent Project <dentproject@linuxfoundation.org>,
+	kernel@pengutronix.de,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v6 04/12] net: pse-pd: Add support for PSE power
+ domains
+Message-ID: <Z9fyZkAOB602cFJY@pengutronix.de>
+References: <20250304-feature_poe_port_prio-v6-0-3dc0c5ebaf32@bootlin.com>
+ <20250304-feature_poe_port_prio-v6-4-3dc0c5ebaf32@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,96 +78,131 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+In-Reply-To: <20250304-feature_poe_port_prio-v6-4-3dc0c5ebaf32@bootlin.com>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Sun Mar 16, 2025 at 11:32 PM CET, Tamir Duberstein wrote:
-> Rename `set_len` to `inc_len` and simplify its safety contract.
-> ---
->  rust/kernel/alloc/kvec.rs | 19 +++++++++----------
->  rust/kernel/str.rs        |  2 +-
->  rust/kernel/uaccess.rs    |  2 +-
->  3 files changed, 11 insertions(+), 12 deletions(-)
->
-> diff --git a/rust/kernel/alloc/kvec.rs b/rust/kernel/alloc/kvec.rs
-> index ae9d072741ce..d43a1d609434 100644
-> --- a/rust/kernel/alloc/kvec.rs
-> +++ b/rust/kernel/alloc/kvec.rs
-> @@ -183,17 +183,16 @@ pub fn len(&self) -> usize {
->          self.len
->      }
-> =20
-> -    /// Forcefully sets `self.len` to `new_len`.
-> +    /// Increments `self.len` by `additional`.
+On Tue, Mar 04, 2025 at 11:18:53AM +0100, Kory Maincent wrote:
+> +/**
+> + * pse_flush_pw_ds - flush all PSE power domains of a PSE
+> + * @pcdev: a pointer to the initialized PSE controller device
+> + */
+> +static void pse_flush_pw_ds(struct pse_controller_dev *pcdev)
+> +{
+> +	struct pse_power_domain *pw_d;
+> +	int i;
+> +
+> +	for (i = 0; i < pcdev->nr_lines; i++) {
+> +		if (!pcdev->pi[i].pw_d)
+> +			continue;
+> +
+> +		pw_d = xa_load(&pse_pw_d_map, pcdev->pi[i].pw_d->id);
+> +		if (pw_d) {
+> +			regulator_put(pw_d->supply);
+> +			xa_erase(&pse_pw_d_map, pw_d->id);
+> +		}
+> +	}
+> +}
+> +
+> +/**
+> + * devm_pse_alloc_pw_d - allocate a new PSE power domain for a device
+> + * @dev: device that is registering this PSE power domain
+> + *
+> + * Return: Pointer to the newly allocated PSE power domain or error pointers
+> + */
+> +static struct pse_power_domain *devm_pse_alloc_pw_d(struct device *dev)
+> +{
+> +	struct pse_power_domain *pw_d;
+> +	int index, ret;
+> +
+> +	pw_d = devm_kzalloc(dev, sizeof(*pw_d), GFP_KERNEL);
+> +	if (!pw_d)
+> +		return ERR_PTR(-ENOMEM);
+> +
+> +	ret = xa_alloc(&pse_pw_d_map, &index, pw_d, XA_LIMIT(1, INT_MAX), GFP_KERNEL);
 
-I would keep the "Forcefully".
+#define PSE_PW_D_LIMIT INT_MAX
 
->      ///
->      /// # Safety
->      ///
-> -    /// - `new_len` must be less than or equal to [`Self::capacity`].
-> -    /// - If `new_len` is greater than `self.len`, all elements within t=
-he interval
-> -    ///   [`self.len`,`new_len`) must be initialized.
-> +    /// - `self.len + additional` must be less than or equal to [`Self::=
-capacity`].
-> +    /// - All elements within the interval [`self.len`,`self.len + addit=
-ional`) must be initialized.
->      #[inline]
-> -    pub unsafe fn set_len(&mut self, new_len: usize) {
-> -        debug_assert!(new_len <=3D self.capacity());
-> -        self.len =3D new_len;
-> +    pub unsafe fn inc_len(&mut self, additional: usize) {
-> +        debug_assert!(self.len() + additional <=3D self.capacity());
+XA_LIMIT(1, PSE_PW_D_LIMIT)
 
-What if this overflows? Do we always have overflow debugging on when
-debug assertions are enabled? If yes, then this is fine.
+> +	if (ret)
+> +		return ERR_PTR(ret);
+> +
+> +	pw_d->id = index;
+> +	return pw_d;
+> +}
+> +
+> +/**
+> + * pse_register_pw_ds - register the PSE power domains for a PSE
+> + * @pcdev: a pointer to the PSE controller device
+> + *
+> + * Return: 0 on success and failure value on error
+> + */
+> +static int pse_register_pw_ds(struct pse_controller_dev *pcdev)
+> +{
+> +	int i;
+> +
+> +	for (i = 0; i < pcdev->nr_lines; i++) {
+> +		struct regulator_dev *rdev = pcdev->pi[i].rdev;
+> +		struct pse_power_domain *pw_d;
+> +		struct regulator *supply;
+> +		bool present = false;
+> +		unsigned long index;
+> +
+> +		/* No regulator or regulator parent supply registered.
+> +		 * We need a regulator parent to register a PSE power domain
+> +		 */
+> +		if (!rdev || !rdev->supply)
+> +			continue;
+> +
 
-> +        self.len +=3D additional;
->      }
-> =20
->      /// Returns a slice of the entire vector.
+Should we use xa_lock() before iteration over the map?
 
-> diff --git a/rust/kernel/str.rs b/rust/kernel/str.rs
-> index 28e2201604d6..005713839e9e 100644
-> --- a/rust/kernel/str.rs
-> +++ b/rust/kernel/str.rs
-> @@ -840,7 +840,7 @@ pub fn try_from_fmt(args: fmt::Arguments<'_>) -> Resu=
-lt<Self, Error> {
-> =20
->          // SAFETY: The number of bytes that can be written to `f` is bou=
-nded by `size`, which is
->          // `buf`'s capacity. The contents of the buffer have been initia=
-lised by writes to `f`.
-> -        unsafe { buf.set_len(f.bytes_written()) };
-> +        unsafe { buf.inc_len(f.bytes_written()) };
+> +		xa_for_each(&pse_pw_d_map, index, pw_d) {
+> +			/* Power supply already registered as a PSE power
+> +			 * domain.
+> +			 */
+> +			if (regulator_is_equal(pw_d->supply, rdev->supply)) {
+> +				present = true;
+> +				pcdev->pi[i].pw_d = pw_d;
+> +				break;
+> +			}
+> +		}
+> +		if (present)
+> +			continue;
+> +
+> +		pw_d = devm_pse_alloc_pw_d(pcdev->dev);
+> +		if (IS_ERR_OR_NULL(pw_d))
+> +			return PTR_ERR(pw_d);
 
-This change seems wrong unless the code was wrong to begin with.
+It is better to break the loop and roll back previous allocations.
 
-Otherwise the change looks good.
+> +
+> +		supply = regulator_get(&rdev->dev, rdev->supply_name);
+> +		if (IS_ERR(supply)) {
+> +			xa_erase(&pse_pw_d_map, pw_d->id);
+> +			return PTR_ERR(supply);
 
----
-Cheers,
-Benno
+same here.
 
-> =20
->          // Check that there are no `NUL` bytes before the end.
->          // SAFETY: The buffer is valid for read because `f.bytes_written=
-()` is bounded by `size`
-> diff --git a/rust/kernel/uaccess.rs b/rust/kernel/uaccess.rs
-> index 719b0a48ff55..0aa5455a18be 100644
-> --- a/rust/kernel/uaccess.rs
-> +++ b/rust/kernel/uaccess.rs
-> @@ -291,7 +291,7 @@ pub fn read_all<A: Allocator>(mut self, buf: &mut Vec=
-<u8, A>, flags: Flags) -> R
-> =20
->          // SAFETY: Since the call to `read_raw` was successful, so the n=
-ext `len` bytes of the
->          // vector have been initialized.
-> -        unsafe { buf.set_len(buf.len() + len) };
-> +        unsafe { buf.inc_len(len) };
->          Ok(())
->      }
->  }
-
-
+> +		}
+> +
+> +		pw_d->supply = supply;
+> +		pcdev->pi[i].pw_d = pw_d;
+> +	}
+> +
+> +	return 0;
+> +}
+-- 
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
