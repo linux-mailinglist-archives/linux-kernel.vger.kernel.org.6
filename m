@@ -1,127 +1,145 @@
-Return-Path: <linux-kernel+bounces-563443-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563444-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BC8BA641ED
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 07:41:26 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDB5FA641EF
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 07:42:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C0A8C16BA9E
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 06:41:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1E8B07A3319
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 06:41:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DD7821A43B;
-	Mon, 17 Mar 2025 06:41:17 +0000 (UTC)
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BC2E219A94;
+	Mon, 17 Mar 2025 06:42:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oNE9lSrJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CF17219A94;
-	Mon, 17 Mar 2025 06:41:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CE1A1B0401
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 06:42:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742193677; cv=none; b=O4p9yTnMYNP7DusIkl6gpgUWY2+VUPHUvDL6h9mujSB0scbus/Q18pb0aP0QJC8diIb5D7pfVmOPOvx+PVwrOdxt/4OUdeC2ssOinrKSTCzNmsxKRsWECHcHWCWGnQZO7MLDFRnEtnVRTF0JYJM+Cfu3EIUbDvh7MWzA8owqy9U=
+	t=1742193742; cv=none; b=dy+jqP94hxW1AWpHkxc9ABjvv2JgT+NvisOWv+ZpeOgwaoQUO8vgOzlnr8Qg4WdHE89fM3jp4gpY6VylfsA4zE3ySjAd0pI+9IhOvt9fGvfL6h/QiGScsKVqKZkuJ+YiH7+atT0MC8WtiwnHmH+A9SoynWlGjI8AvZb6CW+0Q3Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742193677; c=relaxed/simple;
-	bh=UzNG0vduuTIJXJO0fevzcrUf3hXDEWG7g+A54iZTIAE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VSm2IeHoPyQdv8wTcWI4kjUtRimjcBhjK4dd6rmnvm0rHobaimiUv5SfOqfWC7a06B3Tb6QsXNFox0nWuobdNDW6hlGuiR0b5nuSPSAKhdyLWNHQ2l+yhaP6EhYlO435KKAzyXk4UYeTkv3YPpKAq6baguofKkSJDiv/AgAIs94=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 46E9C68AFE; Mon, 17 Mar 2025 07:41:09 +0100 (CET)
-Date: Mon, 17 Mar 2025 07:41:09 +0100
-From: Christoph Hellwig <hch@lst.de>
-To: John Garry <john.g.garry@oracle.com>
-Cc: brauner@kernel.org, djwong@kernel.org, cem@kernel.org,
-	dchinner@redhat.com, hch@lst.de, linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	ojaswin@linux.ibm.com, ritesh.list@gmail.com,
-	martin.petersen@oracle.com, tytso@mit.edu,
-	linux-ext4@vger.kernel.org
-Subject: Re: [PATCH v6 11/13] xfs: add xfs_file_dio_write_atomic()
-Message-ID: <20250317064109.GA27621@lst.de>
-References: <20250313171310.1886394-1-john.g.garry@oracle.com> <20250313171310.1886394-12-john.g.garry@oracle.com>
+	s=arc-20240116; t=1742193742; c=relaxed/simple;
+	bh=FuS8Av9mTTAznTxqWO7qBNNd49jKIqF6PQ5eAuT/Yv8=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=aGMCscd8eRgwhbXRKfuAAVeeHP091Ry6RCsGhfmCPEJKVfDco3rAzQZBiBXTKPAdZzROortz4gyF37w6mVBgBYsEb1aL+mUHKDxgpfNz4eEVBXt8JKdO/UPCNOpKxI050uC6HP1BKX3BY0FW9k7HH0biuIjsJyZnIoowfOrZ2qs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oNE9lSrJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C464C4CEE3;
+	Mon, 17 Mar 2025 06:42:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742193742;
+	bh=FuS8Av9mTTAznTxqWO7qBNNd49jKIqF6PQ5eAuT/Yv8=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=oNE9lSrJI67ImxHG55W0LD2RLYScUWXTrqRCcKIXq6kQqwFfGG7g1+zDQ4xVc+tXn
+	 fB/E+fw2RZuoZgaxMIbSKARV+7hLdK4uTnpujfNQtiykpE7AbJo0KG+Wj6/5CXBxPc
+	 mZscr9XXyDM+Du5DSnM7aI5B0jgEZAJxE0EcjkuXlnWIP9gKtTc4siw+Mvh9KMYbFw
+	 03OwP1+YmrtPI4U3oC5jmGAPZllBJdaSWUJ7nMifFDS4WIoyEN2+8u+Q9iixdJLUUO
+	 IZVqfmILNXmJxK6p9M6q4SqVZO6bvFAirmgW2e6HlfPMzchWG0X5krY4DSYncgr94J
+	 rndBIs/7EXyrQ==
+Message-ID: <1dd3b2a6-5431-4a2a-bccb-2a3672f5d1bd@kernel.org>
+Date: Mon, 17 Mar 2025 14:42:19 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250313171310.1886394-12-john.g.garry@oracle.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+User-Agent: Mozilla Thunderbird
+Cc: chao@kernel.org, linux-kernel@vger.kernel.org,
+ Hongzhen Luo <hongzhen@linux.alibaba.com>,
+ linux-erofs mailing list <linux-erofs@lists.ozlabs.org>
+Subject: Re: [PATCH v5] erofs: use Z_EROFS_LCLUSTER_TYPE_MAX to simplify
+ switches
+To: Gao Xiang <hsiangkao@linux.alibaba.com>
+References: <20250210032923.3382136-1-hongzhen@linux.alibaba.com>
+ <511c5fd9-307e-4c56-9d20-796dd06f775c@kernel.org>
+ <489be3d1-a755-4756-ba82-a8f5a0dc9156@linux.alibaba.com>
+ <04050888-7abf-40fa-98d6-6215b8ba989e@kernel.org>
+ <18767765-53b5-4e78-b50d-9305fe1cb2d0@linux.alibaba.com>
+Content-Language: en-US
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <18767765-53b5-4e78-b50d-9305fe1cb2d0@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, Mar 13, 2025 at 05:13:08PM +0000, John Garry wrote:
-> + * REQ_ATOMIC-based is the preferred method, and is attempted first. If this
-> + * method fails due to REQ_ATOMIC-related constraints, then we retry with the
-> + * COW-based method. The REQ_ATOMIC-based method typically will fail if the
-> + * write spans multiple extents or the disk blocks are misaligned.
+On 3/17/25 14:15, Gao Xiang wrote:
+> Hi Chao,
+> 
+> On 2025/3/17 14:03, Chao Yu wrote:
+>> On 3/17/25 01:17, Gao Xiang wrote:
+>>> Hi Chao,
+>>>
+> 
+> ...
+> 
+>>>
+>>> Previously, it was useful before Z_EROFS_LCLUSTER_TYPE_HEAD2 was
+>>> introduced, but the `default:` case is already deadcode now.
+>>
+>> Xiang, thanks for the explanation.
+>>
+>> So seems it can happen when mounting last image w/ old kernel which can not
+>> support newly introduced Z_EROFS_LCLUSTER_TYPE_* type, then it makes sense to
+>> return EOPNOTSUPP.
+> 
+> Yeah.
+> 
+>>
+>>>
+>>>>
+>>>> Btw, we'd better to do sanity check for m->type in z_erofs_load_full_lcluster(),
+>>>> then we can treat m->type as reliable variable later.
+>>>>
+>>>>       advise = le16_to_cpu(di->di_advise);
+>>>>       m->type = advise & Z_EROFS_LI_LCLUSTER_TYPE_MASK;
+>>>>       if (m->type >= Z_EROFS_LCLUSTER_TYPE_MAX) {
+>>>
+>>> It's always false here.
+>>
+>> So, what do you think of this?
+>>
+>>  From af584b2eacd468f145e9ee31ccdeedb7355d5afd Mon Sep 17 00:00:00 2001
+>> From: Chao Yu <chao@kernel.org>
+>> Date: Mon, 17 Mar 2025 13:57:55 +0800
+>> Subject: [PATCH] erofs: remove dead codes for cleanup
+>>
+>> z_erofs_extent_lookback() and z_erofs_get_extent_decompressedlen() tries
+>> to do sanity check on m->type, however their caller z_erofs_map_blocks_fo()
+>> has already checked that, so let's remove those dead codes.
+> 
+> z_erofs_extent_lookback() will (lookback) read new lcn in
+> z_erofs_load_lcluster_from_disk() so it won't be covered by
+> the original z_erofs_map_blocks_fo().
 
-It is only preferred if actually supported by the underlying hardware.
-If it isn't it really shouldn't even be tried, as that is just a waste
-of cycles.
+Xiang,
 
-Also a lot of comment should probably be near the code not on top
-of the function as that's where people would look for them.
+Oh, I see, changed here:
 
-> +static noinline ssize_t
-> +xfs_file_dio_write_atomic(
-> +	struct xfs_inode	*ip,
-> +	struct kiocb		*iocb,
-> +	struct iov_iter		*from)
-> +{
-> +	unsigned int		iolock = XFS_IOLOCK_SHARED;
-> +	unsigned int		dio_flags = 0;
-> +	const struct iomap_ops	*dops = &xfs_direct_write_iomap_ops;
-> +	ssize_t			ret;
-> +
-> +retry:
-> +	ret = xfs_ilock_iocb_for_write(iocb, &iolock);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = xfs_file_write_checks(iocb, from, &iolock, NULL);
-> +	if (ret)
-> +		goto out_unlock;
-> +
-> +	if (dio_flags & IOMAP_DIO_FORCE_WAIT)
-> +		inode_dio_wait(VFS_I(ip));
-> +
-> +	trace_xfs_file_direct_write(iocb, from);
-> +	ret = iomap_dio_rw(iocb, from, dops, &xfs_dio_write_ops,
-> +			dio_flags, NULL, 0);
+- z_erofs_extent_lookback
+ - z_erofs_load_lcluster_from_disk
+  - z_erofs_load_full_lcluster
+  : m->type = advise & Z_EROFS_LI_LCLUSTER_TYPE_MASK;
+ - z_erofs_load_compact_lcluster
+ : m->type = type;
 
-The normal direct I/O path downgrades the iolock to shared before
-doing the I/O here.  Why isn't that done here?
+> 
+> I think this check can be resolved in
+> z_erofs_load_lcluster_from_disk() instead but maybe address
+> for the next cycle? since there are already enough features
+> for this cycle and I have to make sure no major issues....
 
-> +	if (ret == -EAGAIN && !(iocb->ki_flags & IOCB_NOWAIT) &&
-> +	    dops == &xfs_direct_write_iomap_ops) {
+Yeah, it's fine to check the cleanup later, let's keep focusing
+on improving patches in dev now.
 
-This should probably explain the unusual use of EGAIN.  Although I
-still feel that picking a different error code for the fallback would
-be much more maintainable.
+Thanks,
 
-> +		xfs_iunlock(ip, iolock);
-> +		dio_flags = IOMAP_DIO_FORCE_WAIT;
-
-I notice the top of function comment mentions the IOMAP_DIO_FORCE_WAIT
-flag.  Maybe use the chance to write a full sentence here or where
-it is checked to explain the logic a bit better?
-
->   * Handle block unaligned direct I/O writes
->   *
-> @@ -840,6 +909,10 @@ xfs_file_dio_write(
->  		return xfs_file_dio_write_unaligned(ip, iocb, from);
->  	if (xfs_is_zoned_inode(ip))
->  		return xfs_file_dio_write_zoned(ip, iocb, from);
-> +
-> +	if (iocb->ki_flags & IOCB_ATOMIC)
-> +		return xfs_file_dio_write_atomic(ip, iocb, from);
-> +
-
-Either keep space between all the conditional calls or none.  I doubt
-just stick to the existing style.
+> 
+> Thanks,
+> Gao Xiang
+> 
 
 
