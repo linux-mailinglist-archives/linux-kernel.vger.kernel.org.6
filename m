@@ -1,194 +1,162 @@
-Return-Path: <linux-kernel+bounces-563861-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4036EA649A3
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:24:58 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B02FA649C1
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:27:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 47B227A52A2
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:23:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A9858189626E
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:25:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D2C223370D;
-	Mon, 17 Mar 2025 10:20:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 102B023ED40;
+	Mon, 17 Mar 2025 10:20:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zaav33xT"
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Inc2k5Oo"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C437119995D
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 10:20:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58FE12E3373;
+	Mon, 17 Mar 2025 10:20:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742206853; cv=none; b=jbuy3CcOCwqttzwLVq1JZeZbqqlxyrr1ph7tzxOa5vTSwDdt9lKifBc+bpLU+SfJTFe0u8YPPoXiN8fs1VsNp3kX4hR1GIDFudEhorqFJteY16nYmxPKar5cmPqA+dTCLwSpa69qHf6ZUXmGHi8yan+PyC611wIcwi055k9fsL0=
+	t=1742206854; cv=none; b=HRSLVWYQyR/zRRudD1d1gVTE06NpttYbdp2iN0fBO5jFbpomJ3cn4f7ucHE1OQ3ItAOOSJxBYiu8cYyC9Ct7nZDp32oUDaWbCagZJto5XxvnfL+dj+7USEyFtC1jgWlSRlWtzuR2eB2Dw18dm82erPSIXJnilJKa5I1pd8Fkkn8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742206853; c=relaxed/simple;
-	bh=xK2ZBkUkyt1F/UpRmUx4V+BWA8zhSQC4XnXhnJZY+2Q=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=YrGqrcmh0GAyAMEFnFZZL7KJmgPzfiTn6tAGKDryq5aHrxbB1y9NpA+PJl396ch6tpz0UR8PPXQlzttz2B5HbkC0eV6KYALRJlmO7U3pAKIlMFsxC0JDXwqz2IF5r79P0wjTD24e6+evXM+XqHXRRPb3Hc16C5FxDuIgeM9Lq2Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zaav33xT; arc=none smtp.client-ip=209.85.128.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-43cf5196c25so10306475e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 03:20:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1742206849; x=1742811649; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=kbZ86BA4kdFbqSY9+s8S+XusL7glxmlCPxfcM9oxYBA=;
-        b=zaav33xTjNFCDYSGQOjKZZ+at+Gp6OpDwFcCApT4dAEFRgl3bLNTVvNxzKjZOMclkq
-         mUsllDAvacdUuZIWs/UyVOMhElmf5FxemxfXiKtSvUjArM2AUrzfiFZnQCJNqj9+YKL3
-         2WN7yHOmezs3XvGaroUCYH8jNZWZFoUkp6pEUabdl42tqm+whyRxffPx6tRWdNZ2lMER
-         n77bASU2rsNkTew7Inx7dgAfrqFHieWNnZxtpQ9i3O97/60s1bhl5DVvDI5loWBh7tAI
-         njma+i5yf+TLeeeLh+Blfi69SVsAi4V0tssw/MBz9lF0nx5Zb9Qg+SPEjXFmT6PR6Kf0
-         M0kg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742206849; x=1742811649;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=kbZ86BA4kdFbqSY9+s8S+XusL7glxmlCPxfcM9oxYBA=;
-        b=hf+VHGXk96/aT3/7SvdAXw72aZY9685HJ07lfKKzeBo1MzD2j0cWClDJVz0bXKKpte
-         oMsRseYGFwVHZhcu2bY5y7Rp56Yjqirxb0X6nOCxAP+tZGxybD2Hx032r7vRoSCKzDzR
-         41Sw/45WgRye73/+1N0TNtGDZiXpGDjI12PLEeEsXRnGe6TNdcS2yeTo7Yz4dH5gNPrw
-         ENTTt66fk0gomPt94R2NXYmLgYqZw6F49MUsNgPtzv6O1bCqKxqzuOBz6Oh0aHyk6XUs
-         ipf4656Kzi6p6jtX337qsrabgHKg0s7WyoR41t9TSWpBclZrWMqH0ohWz4C7lJLPPQem
-         gjVA==
-X-Forwarded-Encrypted: i=1; AJvYcCWy9Oj2xjuuol8+OA1/H7LOqGj/bYRqbvmma+or5OkMqxyjOfsW1qmBJzxHQ1Jo/GwbgNCy1PNcv/oKoBc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxOhsYP8lewQAkcH8rgoNgrLrw40Womz7SH8l86cE9La3PLQDa3
-	hM5+ESoeyf4pt4jalaZ1633me0gLGL0LbrgMmhmdwZmV2NTlDY4bAx9kwewWkGaCDhl+OXEW57j
-	gpW2Sx1WGaA==
-X-Google-Smtp-Source: AGHT+IEzYbPI9MyXHYu4Ac9ur08nSh+vGUDuVixK4h8Z9GABnEMfkvbGKDEW4lcqW9eMX+ON+NXpj/wTIp3w+Q==
-X-Received: from wmdd21.prod.google.com ([2002:a05:600c:a215:b0:43b:c914:a2d9])
- (user=jackmanb job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:350a:b0:43c:f70a:2af0 with SMTP id 5b1f17b1804b1-43d1ec8643amr128960045e9.16.1742206849047;
- Mon, 17 Mar 2025 03:20:49 -0700 (PDT)
-Date: Mon, 17 Mar 2025 10:20:34 +0000
+	s=arc-20240116; t=1742206854; c=relaxed/simple;
+	bh=Vfxm/VS6MThIEmj1NooHYgGirDykhwnBgrzXiaYLB2U=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=caLhYFf4iK4Rzijazjf1IkkbqFW8+yTSRpX0TKz+6H4n+LIQWokOQ9xvZaGs+JbhL116RFe1mbnuaJpyCoq/yVRPVtX5XrsTOtIEW76EFrkaLR8EPQopvzpA6SXveqFjlCFbMjdEYl9ITR5QlJi39jGu0gzNPlHfiiUzK/P23Ws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=Inc2k5Oo; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1742206849;
+	bh=vBkrHPBpB5I3CJhiuvURGb6f9Nt1C7x4BoMDG32F5UM=;
+	h=Date:From:To:Cc:Subject:From;
+	b=Inc2k5OoCtFF2szEBd9Q+0pVyCJ/Lswukx3A47XeqJw/Ib8imtg+OKP/HcQ2GwFuT
+	 tScMQmIqYdCWo01KqIc7xCkk1IcMY8QvBUxGie7dqSdK+2mmBzmpmIFToGuAxP98+Y
+	 k9qCAaBxBgszuUIZmFv+luFVE1DLihlm4D1XeBmqPEziP7dFV6LjtAHgHNh7plODLt
+	 MAKEZGlRRy5EMtJzMxCWujTv76l+SekV8vlTnv86EYUnV0gLFTSjbNLjCl8At5M4Bj
+	 jkjIsXf4vxR+Gc27VJ5+2R8kmlACdoxdcgYdNags8ELX4lQmUIJ9ua7WliNB+qbVB7
+	 yB0yRJpGXBGJw==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZGWFr4MB9z4wcD;
+	Mon, 17 Mar 2025 21:20:48 +1100 (AEDT)
+Date: Mon, 17 Mar 2025 21:20:47 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Miguel Ojeda <ojeda@kernel.org>
+Cc: Alban Kurti <kurti@invicto.ai>, Benno Lossin <benno.lossin@proton.me>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: manual merge of the rust tree with Linus' tree
+Message-ID: <20250317212047.46580935@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-B4-Tracking: v=1; b=H4sIAHH312cC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI1MDY0NzXcuCtGLd5Pzc3NS8kmJdI5Mks7REUxND8+QUJaCegqLUtMwKsHn RsbW1ALTkndhfAAAA
-X-Change-Id: 20250317-9pfs-comments-24b6fa5417cd
-X-Mailer: b4 0.14.2
-Message-ID: <20250317-9pfs-comments-v1-1-9ac96043e146@google.com>
-Subject: [PATCH] selftests/mm: Add commentary about 9pfs bugs
-From: Brendan Jackman <jackmanb@google.com>
-To: Andrew Morton <akpm@linux-foundation.org>, Shuah Khan <shuah@kernel.org>
-Cc: linux-mm@kvack.org, linux-kselftest@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Brendan Jackman <jackmanb@google.com>, 
-	David Hildenbrand <david@redhat.com>
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="Sig_/cO5x9zXH8CKLxgbbSVBJH8s";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-As discussed here:
+--Sig_/cO5x9zXH8CKLxgbbSVBJH8s
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-https://lore.kernel.org/lkml/Z9RRkL1hom48z3Tt@google.com/
+Hi all,
 
-This code could benefit from some more commentary.
+Today's linux-next merge of the rust tree got a conflict in:
 
-To avoid needing to comment the same thing in multiple places (I guess
-more of these SKIPs will need to be added over time, for now I am only
-like 20% of the way through Project Run run_vmtests.sh Successfully),
-add a dummy "skip tests for this specific reason" function that
-basically just serves as a hook to hang comments on.
+  rust/kernel/init.rs
+  rust/pin-init/src/macros.rs
 
-Signed-off-by: Brendan Jackman <jackmanb@google.com>
+between commits:
+
+  df27cef15360 ("rust: init: fix `Zeroable` implementation for `Option<NonN=
+ull<T>>` and `Option<KBox<T>>`")
+  6933c1067fe6 ("rust: init: add missing newline to pr_info! calls")
+
+from Linus' tree and commit:
+
+  fbf8fb328d1b ("rust: move pin-init API into its own directory")
+
+and following ones from the rust tree.
+
+I fixed it up (I just used the latter version and applied the following
+patch) and can carry the fix as necessary. This is now fixed as far as
+linux-next is concerned, but any non trivial conflicts should be
+mentioned to your upstream maintainer when your tree is submitted for
+merging.  You may also want to consider cooperating with the maintainer
+of the conflicting tree to minimise any particularly complex conflicts.
+
+More (or less) may be needed :-(
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 17 Mar 2025 21:16:57 +1100
+Subject: [PATCH] fix up for "rust: init: fix `Zeroable` implementation for
+ `Option<NonNull<T>>` and `Option<KBox<T>>`"
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 ---
-To: David Hildenbrand <david@redhat.com>
----
- tools/testing/selftests/mm/gup_longterm.c |  6 +-----
- tools/testing/selftests/mm/map_populate.c |  8 +++-----
- tools/testing/selftests/mm/vm_util.h      | 18 ++++++++++++++++++
- 3 files changed, 22 insertions(+), 10 deletions(-)
+ rust/pin-init/src/lib.rs | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
-diff --git a/tools/testing/selftests/mm/gup_longterm.c b/tools/testing/selftests/mm/gup_longterm.c
-index 03271442aae5aed060fd44010df552a2eedcdafc..21595b20bbc391a0e5d0ab0563ac4ce5e1e0069f 100644
---- a/tools/testing/selftests/mm/gup_longterm.c
-+++ b/tools/testing/selftests/mm/gup_longterm.c
-@@ -97,11 +97,7 @@ static void do_test(int fd, size_t size, enum test_type type, bool shared)
- 
- 	if (ftruncate(fd, size)) {
- 		if (errno == ENOENT) {
--			/*
--			 * This can happen if the file has been unlinked and the
--			 * filesystem doesn't support truncating unlinked files.
--			 */
--			ksft_test_result_skip("ftruncate() failed with ENOENT\n");
-+			skip_test_dodgy_fs("ftruncate()");
- 		} else {
- 			ksft_test_result_fail("ftruncate() failed (%s)\n", strerror(errno));
- 		}
-diff --git a/tools/testing/selftests/mm/map_populate.c b/tools/testing/selftests/mm/map_populate.c
-index 433e54fb634f793f2eb4c53ba6b791045c9f4986..9df2636c829bf34d6d0517e126b3deda1f3ba834 100644
---- a/tools/testing/selftests/mm/map_populate.c
-+++ b/tools/testing/selftests/mm/map_populate.c
-@@ -18,6 +18,8 @@
- #include <unistd.h>
- #include "../kselftest.h"
- 
-+#include "vm_util.h"
-+
- #define MMAP_SZ		4096
- 
- #define BUG_ON(condition, description)						\
-@@ -88,11 +90,7 @@ int main(int argc, char **argv)
- 
- 	ret = ftruncate(fileno(ftmp), MMAP_SZ);
- 	if (ret < 0 && errno == ENOENT) {
--		/*
--		 * This probably means tmpfile() made a file on a filesystem
--		 * that doesn't handle temporary files the way we want.
--		 */
--		ksft_exit_skip("ftruncate(fileno(tmpfile())) gave ENOENT, weird filesystem?\n");
-+		skip_test_dodgy_fs("ftruncate()");
- 	}
- 	BUG_ON(ret, "ftruncate()");
- 
-diff --git a/tools/testing/selftests/mm/vm_util.h b/tools/testing/selftests/mm/vm_util.h
-index 0e629586556b5aae580d8e4ce7491bc93adcc4d6..6effafdc4d8a23f91f0adcb9e43d6196d651ba88 100644
---- a/tools/testing/selftests/mm/vm_util.h
-+++ b/tools/testing/selftests/mm/vm_util.h
-@@ -5,6 +5,7 @@
- #include <err.h>
- #include <strings.h> /* ffsl() */
- #include <unistd.h> /* _SC_PAGESIZE */
-+#include "../kselftest.h"
- 
- #define BIT_ULL(nr)                   (1ULL << (nr))
- #define PM_SOFT_DIRTY                 BIT_ULL(55)
-@@ -32,6 +33,23 @@ static inline unsigned int pshift(void)
- 	return __page_shift;
- }
- 
-+/*
-+ * Plan 9 FS has bugs (at least on QEMU) where certain operations fail with
-+ * ENOENT on unlinked files. See
-+ * https://gitlab.com/qemu-project/qemu/-/issues/103 for some info about such
-+ * bugs. There are rumours of NFS implementations with similar bugs.
-+ *
-+ * Ideally, tests should just detect filesystems known to have such issues and
-+ * bail early. But 9pfs has the additional "feature" that it causes fstatfs to
-+ * pass through the f_type field from the host filesystem. To avoid having to
-+ * scrape /proc/mounts or some other hackery, tests can call this function when
-+ * it seems such a bug might have been encountered.
-+ */
-+static inline void skip_test_dodgy_fs(const char *op_name)
-+{
-+	ksft_test_result_skip("%s failed with ENOENT. Filesystem might be buggy (9pfs?)\n", op_name);
-+}
-+
- uint64_t pagemap_get_entry(int fd, char *start);
- bool pagemap_is_softdirty(int fd, char *start);
- bool pagemap_is_swapped(int fd, char *start);
+diff --git a/rust/pin-init/src/lib.rs b/rust/pin-init/src/lib.rs
+index f36b8f8e8730..9cd822388ba2 100644
+--- a/rust/pin-init/src/lib.rs
++++ b/rust/pin-init/src/lib.rs
+@@ -1446,16 +1446,14 @@ macro_rules! impl_zeroable {
+     // SAFETY: `T: Zeroable` and `UnsafeCell` is `repr(transparent)`.
+     {<T: ?Sized + Zeroable>} UnsafeCell<T>,
+=20
+-    // SAFETY: All zeros is equivalent to `None` (option layout optimizati=
+on guarantee).
++    // SAFETY: All zeros is equivalent to `None` (option layout optimizati=
+on guarantee:
++    // https://doc.rust-lang.org/stable/std/option/index.html#representati=
+on).
+     Option<NonZeroU8>, Option<NonZeroU16>, Option<NonZeroU32>, Option<NonZ=
+eroU64>,
+     Option<NonZeroU128>, Option<NonZeroUsize>,
+     Option<NonZeroI8>, Option<NonZeroI16>, Option<NonZeroI32>, Option<NonZ=
+eroI64>,
+     Option<NonZeroI128>, Option<NonZeroIsize>,
+=20
+-    // SAFETY: All zeros is equivalent to `None` (option layout optimizati=
+on guarantee).
+-    //
+-    // In this case we are allowed to use `T: ?Sized`, since all zeros is =
+the `None` variant.
+-    {<T: ?Sized>} Option<NonNull<T>>,
++    {<T>} Option<NonNull<T>>,
+=20
+     // SAFETY: `null` pointer is valid.
+     //
+--=20
+2.45.2
 
----
-base-commit: a91aaf8dd549dcee9caab227ecaa6cbc243bbc5a
-change-id: 20250317-9pfs-comments-24b6fa5417cd
+--=20
+Cheers,
+Stephen Rothwell
 
-Best regards,
--- 
-Brendan Jackman <jackmanb@google.com>
+--Sig_/cO5x9zXH8CKLxgbbSVBJH8s
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfX938ACgkQAVBC80lX
+0GxnUQf7BCSCxl1e3GF7AI+lxNe5WpKLr14HVCPFiKPwhwBxVyqVvZx1T4AAbP0Q
+PDgFQfxUF9wFE/UTevetK53jDPlM6x1fiTIP3z249yMYnXiY1xQNoOGCQNWsiDA5
+UesM58qbJtXMJm81OpdzpJbfKD0odUF8qanlb+mDUBU9G9R0wQluuERBSQMyrlWQ
+uwa5kg7uNZrA7kP744GiKlrbPzmJDvbwsZsEn05f91K1FzJQcl7itNJ9Z9+4iw4E
+N1XooxSVEp4IZg3QWZXqr20lmXSBf8D2eKIM4GBPyUblpODsc+OSDFm3gxQoWBCU
+ASjAKbw7zDC5SclLaSTiXY+YIHYXaQ==
+=+ka5
+-----END PGP SIGNATURE-----
+
+--Sig_/cO5x9zXH8CKLxgbbSVBJH8s--
 
