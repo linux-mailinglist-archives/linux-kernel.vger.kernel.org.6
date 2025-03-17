@@ -1,132 +1,139 @@
-Return-Path: <linux-kernel+bounces-565078-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565081-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80238A66074
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 22:26:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37991A6607E
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 22:28:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6537617556B
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 21:26:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7581C3AA07A
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 21:27:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D11B5202C47;
-	Mon, 17 Mar 2025 21:26:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9920200120;
+	Mon, 17 Mar 2025 21:27:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wnMhQeaW"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="C46/9sYC"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98716202984
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 21:26:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 466F3202984;
+	Mon, 17 Mar 2025 21:27:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742246773; cv=none; b=lwnnM36MLH+QdXC0QgOE+7euztPhHnEIJpL0uLdGxosV5Nw+I4tdG4MAE2AEPOSmd8RvP5B+mgmlYOFXn7Y+of4crGBRyq6bPLvtyXAOVtwR2w9/NduulId74QxBwpLV67fYueJxEjALxQWrDfOaGMd9MgpoYKbHL/LoJybUv3E=
+	t=1742246849; cv=none; b=TxC5ieXoyzxZIc3xhkfiN71p+5bNzEhXEX98P22ftYKenkpYAaDTBXMdaIyPhennAB5r/iW0RwGw0MfX4WsqQlxgRX5UYN1O1KCePx9dxmjFkYffCaErxqmt3lhQNjtwuY2U2qkoTZX59HU67PQB3Cw5U0dX9q7D8EUxUBqNavk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742246773; c=relaxed/simple;
-	bh=QV6NeSSrSuc1N9LG/u//TUlnETuTUQO6//M4Xzp8orY=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=t4UjHEEYGtOqnobc08WsYJrzkBPJVCZW0toX4S+Pfpjg1zHD4fIgpHGBP497AyRV914SR6wotfgO61Mvjt6/eZl+pf1DN3CHlqI3NU6ElP+kAqsYX4CVvBoEgoxEiKe5PU6pBb8OndC0vr23vCJa9GrkNAP1vA2iWxm7NGCJWu0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wnMhQeaW; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-2242ac37caeso6835ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 14:26:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1742246771; x=1742851571; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=CtcFHptsmprlxPmeOniAk13c6ZRerTHBG0RZgJHM97U=;
-        b=wnMhQeaW8sQMdoVBiQfqwiBdZYdekumE9n0NqBQ7fF5tRK+IZ5O8pZZRC27TH/i+e3
-         dVsQsUw1a/83cGT9g3m6hMRh0O2xl+1ax27YJ1W232MQs+Jr8rRqiMPCS+DfiaJvAepm
-         hKCSupWvmNHpdFJzcgm5jZUN5Bvu+bRWmIGMgdGPktTkSbw3oZB53qHZgUboDHQvcmPc
-         0liK1ZEjzD4mUJwD3AfIxBDhwu+DioT0YQQkMWI8rY0XQHLm9LDp+psYPO/5zmkU+RPl
-         FGtnJQRNtz98CdnRQoNEfDj6dqqab4QxASMibKKH6t+U+m4evJvOO1BlmROvtZdo8Dc9
-         jaRw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742246771; x=1742851571;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=CtcFHptsmprlxPmeOniAk13c6ZRerTHBG0RZgJHM97U=;
-        b=pK3t3m4EqYBGEeMEgivhfot1wnaOKtFS69c6hMM8iq8c1yPczNUg1oF3H3Bsu3Rs64
-         Ui0K8sFB+KL6t0tUWz5wFuij3s0/RdAS4jgR9A4/v+bfey5fWziXrJiPHr768k9e4EHX
-         +ZJsRzfTqJ9Z/eukUC9PU7DUJ+LjRXGRQ/uG0Y8IC2c9pFbM7vlWfWopThjlkKU2GATF
-         urYQiQOSpA7h7rFKoyphlaE/6DR1G/Z54WbMM//kHAxC3W8mKG+gML5i96APjC4k+IkE
-         HvIUICA1HfE1kHTNbdyiIB/OQZ0oQZEPgiEdOE2CKiYMEUcrTekhIL8crKN70crVw3Yy
-         PW5A==
-X-Forwarded-Encrypted: i=1; AJvYcCXqY4b2hyppIXOIDNXySfw/YGewQw5KGRnNsndzghnjApHBQgzUYE2Pdaw8oH4Tz11NUrfrRcbj1fIAU2s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YztFA8QGExjUpmi08Itzgk64pqMeN9/0MuPmnKX48rYsoSeC2EB
-	1XiMZBgWQ6NBTim5LfR9i0yGMoF11SbJ/8YIxBSKSOkIAx81UGq0GmXODR0Powe4TH6V4GgE9DH
-	Kt19Qvpd5jGnX8/XCZuxBWO5A6O4lU3D+IlV6
-X-Gm-Gg: ASbGnctl3u9jN1NvQ8CuL+GzOoLGrJD729zi/vzzjLtmB+hRIo4PrYUBUCGXSNenM3U
-	dfzhRvPWpYrTjKMKZTQ3N6Sh7JWU5LRGeQ6j28oW8DIgExxOzHoclAuHiJ5QVWqqSBon+B3FFdS
-	Y2pHMQjoq54os9tv6U7l1lC5VjyPNTerAP+E95iPezwBkg7AV7nV5VvQ4=
-X-Google-Smtp-Source: AGHT+IGIchyGjZ/inrviM0LUA3al8hizGh73RtGe6gUpvsgk8pAeBXPh8SETEHrVpJdH+kJyF8I9ZH4nKIs7ZG1cmGs=
-X-Received: by 2002:a17:903:40c9:b0:224:6c8:8d84 with SMTP id
- d9443c01a7336-22631018660mr106935ad.4.1742246770603; Mon, 17 Mar 2025
- 14:26:10 -0700 (PDT)
+	s=arc-20240116; t=1742246849; c=relaxed/simple;
+	bh=/aG3gaaMNkYf32kIqVSj+ZGwJxQ/C1OI6VVnj8hdHwE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=F2bHdBcHfqgB3oat/jbTC6nUCZWKQzzdq56qAcFX33M5PpyFin3PfGLaP2U4yuK2Eq7JhEX5/dpLVe92a4MsXPATEVPo1cF0aXKfwFzEOcHABmAtqT/sxx2eZqvUFAk4+eWjmeMl4Jw+Qi1Xspq6QHe7jyTF1GMxp0lkV5t2gic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=C46/9sYC; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=ztEshyV4HD1XiqlL2kwjThuYDQxMDzUwUI/KTugVMmA=; b=C46/9sYCL4zjPlYxtj13Xv6SNi
+	gPHv+P7SOTLjOl18c4Zgm5h7CsseD8hqJE/SnyeVfz1hALsoJTliCze97kY87K3SJRPAcGdjOQUvm
+	uRYh/KFTha7ZH9vR59QnESXk3CCu0/HiwHT5f3asJ4h5ozW4R5hElQJ3hMd/O3BG1qrE=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1tuHzG-006BOe-F6; Mon, 17 Mar 2025 22:27:06 +0100
+Date: Mon, 17 Mar 2025 22:27:06 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Chris Packham <Chris.Packham@alliedtelesis.co.nz>
+Cc: "hkallweit1@gmail.com" <hkallweit1@gmail.com>,
+	"linux@armlinux.org.uk" <linux@armlinux.org.uk>,
+	"davem@davemloft.net" <davem@davemloft.net>,
+	"edumazet@google.com" <edumazet@google.com>,
+	"kuba@kernel.org" <kuba@kernel.org>,
+	"pabeni@redhat.com" <pabeni@redhat.com>,
+	"sander@svanheule.net" <sander@svanheule.net>,
+	"markus.stockhausen@gmx.de" <markus.stockhausen@gmx.de>,
+	"daniel@makrotopia.org" <daniel@makrotopia.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>
+Subject: Re: [PATCH net-next v11] net: mdio: Add RTL9300 MDIO driver
+Message-ID: <1719bd97-e160-488b-bfda-f2a8a639353b@lunn.ch>
+References: <20250313233811.3280255-1-chris.packham@alliedtelesis.co.nz>
+ <bd1d1cb9-a72b-484b-8cfd-7e91179391d2@lunn.ch>
+ <d260e3d1-20e9-42f6-89b6-e646b8107bc0@alliedtelesis.co.nz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Ian Rogers <irogers@google.com>
-Date: Mon, 17 Mar 2025 14:25:59 -0700
-X-Gm-Features: AQ5f1Jqwcxj8BNxx3Vc7N1w_2aDIUnPEv8jRsk7v8wJCPx94S2CeHFS7o1XaXfc
-Message-ID: <CAP-5=fV-t6j9SOSUHLO8H8LWEmB1E4KZtKa3fQWiMx7y12gjhQ@mail.gmail.com>
-Subject: Remove the "perf" hard lock up detector (watchdog) from the kernel?
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, 
-	linux-perf-users <linux-perf-users@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	Doug Anderson <dianders@chromium.org>
-Cc: "Liang, Kan" <kan.liang@linux.intel.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Namhyung Kim <namhyung@kernel.org>, 
-	Stephane Eranian <eranian@google.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Leo Yan <leo.yan@arm.com>, 
-	James Clark <james.clark@linaro.org>, Will Deacon <will@kernel.org>, 
-	Thomas Richter <tmricht@linux.ibm.com>, Vince Weaver <vincent.weaver@maine.edu>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d260e3d1-20e9-42f6-89b6-e646b8107bc0@alliedtelesis.co.nz>
 
-Hi,
+On Sun, Mar 16, 2025 at 08:11:29PM +0000, Chris Packham wrote:
+> 
+> On 15/03/2025 04:26, Andrew Lunn wrote:
+> >> +static int rtl9300_mdiobus_probe_one(struct device *dev, struct rtl9300_mdio_priv *priv,
+> >> +				     struct fwnode_handle *node)
+> >> +{
+> >> +	struct rtl9300_mdio_chan *chan;
+> >> +	struct fwnode_handle *child;
+> >> +	struct mii_bus *bus;
+> >> +	u32 mdio_bus;
+> >> +	int err;
+> >> +
+> >> +	err = fwnode_property_read_u32(node, "reg", &mdio_bus);
+> >> +	if (err)
+> >> +		return err;
+> >> +
+> >> +	/* The MDIO interfaces are either in GPHY (i.e. clause 22) or 10GPHY
+> >> +	 * mode (i.e. clause 45).
+> > I still need more clarification about this. Is this solely about the
+> > polling? Or does an interface in C22 mode go horribly wrong when asked
+> > to do a C45 bus transaction?
+> 
+> It's just the polling. I haven't seen any sign of the bus getting into a 
+> bad state when using the wrong transaction type.
 
-The kernel tree has two hard lockup detectors. The perf one uses a
-perf counter to generate NMI interrupts and detect a lack of forward
-progress, whereas the buddy approach uses the soft lockup hrtimer to
-check the next CPU is progressing. Doug Anderson
-<dianders@chromium.org> recently questioned:
+If it is just polling, the comment should say that. But i also wounder
+if configuring this polling is in the correct place. It has nothing to
+do with the MDIO bus driver. It is a switch thing. So logically it
+should be in the switch driver. Now the address spaces might not allow
+that...
 
-https://lore.kernel.org/all/CAD=FV=WfB6inJPuwfhbw4mtFBYpr+3ot2J+SJAZ3pT3t4fW7cw@mail.gmail.com/
-  ...but I'd also have to ask: is there a reason you're using the "perf"
-  hard-lockup detector instead of the buddy one? In my mind, the "buddy"
-  watchdog is better in almost all ways (I believe it's lower power,
-  doesn't waste a "perf" controller, and doesn't suffer from frequency
-  issues). It's even crossed my mind whether the "perf" lockup detector
-  should be deprecated. ;-)
+I'm also don't particularly like the idea of using the compatible to
+decide this. It is not a PHY property, because you said in another
+email, it sets it for all PHYs on the bus, not just one.
 
-In the perf tool there are warnings associated with the NMI watchdog.
-The metric code also has a flag on metrics where events aren't grouped
-when the NMI watchdog is enabled. For example:
-https://web.git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tree/tools/perf/pmu-events/arch/x86/sapphirerapids/spr-metrics.json?h=perf-tools-next#n1916
+> >> +	bus->name = "Realtek Switch MDIO Bus";
+> >> +	bus->read = rtl9300_mdio_read_c22;
+> >> +	bus->write = rtl9300_mdio_write_c22;
+> >> +	bus->read_c45 = rtl9300_mdio_read_c45;
+> >> +	bus->write_c45 =  rtl9300_mdio_write_c45;
+> > You are providing C45 bus methods, independent of the interface
+> > mode. So when accessing EEE registers in C45 address space, C45 bus
+> > transactions are going to be used, even on an MDIO interface using C22
+> > mode. Does this work? Can you actually do both C22 and C45 bus
+> > transactions independent of the interface mode?
+> I'm not actually sure if I can mix transactions but it doesn't seem to 
+> do any harm.
+> 
+> Initially I planned to only supply one of the function pairs depending 
+> on the mode but I left this in because of this:
+> 
+> https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/net/phy/phy.c#n337
+> 
+> I've written myself a little test app that uses SIOCGMIIREG/SIOCSMIIREG 
+> to exercise the MDIO accesses. It uses SIOCGMIIPHY to look up the MDIO 
+> address of the PHY attached to the netdev but because of that 
+> fallthrough looking up the PHY address for a C45 PHY will fail with 
+> -EOPNOTSUPP.
 
-The warning and breaking of groups is currently inaccurate for the
-buddy hard lockup detector as /proc/sys/kernel/nmi_watchdog is still
-present to enable or disable the buddy detector. That is the perf tool
-is currently warning and breaking event groups stating the NMI
-watchdog is a problem but the kernel is configured to use the buddy
-watchdog.
+A simpler test is to not provide a DT node. Calling mdiobus_register()
+not of_mdiobus_register(). It will then scan the bus looking for
+devices on the bus, doing both C22 and C45 reads. You can add a
+printk() and see if you get sensible values back from the reads,
+e.g. 0xffff or valid looking IDs from registers 2 and 3.
 
-I'm unaware of a way to determine if the buddy or "perf" counter based
-approach is in use and to correct perf's behavior. A patch adding such
-an ability (say a new file in /proc/sys/kernel), and perhaps new
-abilities to switch watchdog at runtime, seem less desirable than just
-deleting the "perf" counter based hard lock up detector. The perf tool
-could make the NMI warnings and breaking of event groups conditional
-on the running kernel version then.
-
-Are there objections to just deleting the "perf" hard lock up detector
-(watchdog) from the kernel tree? Are there reasons to keep it around
-but just not default?
-
-Thanks,
-Ian
+	Andrew
 
