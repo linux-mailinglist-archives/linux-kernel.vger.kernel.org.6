@@ -1,106 +1,213 @@
-Return-Path: <linux-kernel+bounces-564805-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564806-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A59CA65AF4
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 18:38:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2F0CA65AF8
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 18:39:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 212F77A2C24
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 17:37:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E11F73A808F
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 17:39:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B5191ACED5;
-	Mon, 17 Mar 2025 17:38:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE6331ACECE;
+	Mon, 17 Mar 2025 17:39:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="XF9yy9wD"
-Received: from 004.mia.mailroute.net (004.mia.mailroute.net [199.89.3.7])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="JaS2+V42"
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A3AE1A4F21;
-	Mon, 17 Mar 2025 17:38:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C00081A76BB;
+	Mon, 17 Mar 2025 17:39:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742233090; cv=none; b=a1yXllPXlNFTHBC3bzRi4fiZ6Y8M5/YGPWq+dKDQ/g2lYVvcWkdVIsyXqrq9D9cU9NO5V3jvNSiVTXu6urJhH2fjCilnPKzYdvBpt5FZRc6ukak+MIFmGvElYUTi50j52rV0PdzHlralMTPptc9JVV69kAppVr1KWbIc7xZJv1c=
+	t=1742233168; cv=none; b=cmhZd7MpGTF1W0KDwE4JXe3Mi7dkXAD5kgHDpc6Jkjdf2ZflJfXk4BthWEje4po9rRcf4wH+syS2pevkTp1GsdxaLSseM5+wqGkPN4IqcBeGpjsWYBQk5HUcGj1hALHDn0VdpwaB+aRVQa0jVQj8xYe/oKZ/4A57iceyZIHO2U0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742233090; c=relaxed/simple;
-	bh=uMyIM2a3hCj4fo5uDuORTOP5YfPaHIBtJM+ilAprrzM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IxZxiBv4fAOh12F8rlBnmI/JrZOW514Ui7tN1AHat1wFJaL0/cuvT2iVdmrqncVuw4S8WjEqZ+IQSytyXnaXuGd8FWnaSwFBgTYbAMG/kKja80eHZsi0pNSvNjiVkSLwwN2YHekW11GB0ufyVebqT0snHAu5e3YDyve8X0Vn0w0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=XF9yy9wD; arc=none smtp.client-ip=199.89.3.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 004.mia.mailroute.net (Postfix) with ESMTP id 4ZGhyL1jgFzm1HbZ;
-	Mon, 17 Mar 2025 17:38:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1742233081; x=1744825082; bh=bpd9/sYn2lGjFRExHt31Ceh7
-	1iSTR4WLZ5wIQVQq7tM=; b=XF9yy9wDUg7VvISLmpf1rkx8ynVvvTUzi/Ocsg7T
-	J+HhoCVq112cJVLKCET2O5i1pIek9PFQHd66FeBl6jdcZnopjN4+wCNFZBAD9pOf
-	uF2AFtQDCa/CpZmekUlh7WOJNE6Hx3AVnpF/T3Xt/uJh1ITjUdcMxoDO1H64Q7t6
-	aNzH7mDABd1lIZVLY+xwjMtCk3HJOgtzZQTTJ3tH7pTYFgi9bTKj8BOIQdW3hWF8
-	g84HSDtwjnAo2aWtBKJuzzScLySRoDg7L+aFWP4x2BIIHw5ZeblPETUN3PgO5tgH
-	KYfOp3b4ZeTEWZz+eFbf5Gtd1YgLsC5bDSXsmaWRarv8Rw==
-X-Virus-Scanned: by MailRoute
-Received: from 004.mia.mailroute.net ([127.0.0.1])
- by localhost (004.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id cy3Gewyb3M6o; Mon, 17 Mar 2025 17:38:01 +0000 (UTC)
-Received: from [100.66.154.22] (unknown [104.135.204.82])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 004.mia.mailroute.net (Postfix) with ESMTPSA id 4ZGhyG2fwGzm1HbX;
-	Mon, 17 Mar 2025 17:37:57 +0000 (UTC)
-Message-ID: <f46f0286-8052-4a29-9d89-376bf9b48d8a@acm.org>
-Date: Mon, 17 Mar 2025 10:37:55 -0700
+	s=arc-20240116; t=1742233168; c=relaxed/simple;
+	bh=yo+U9za/ELC6Al/URE1mWfwXOp6oTyRM0vjOE02WCtc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dEqFNixc1FKV0618RAehYLZdGQSnDdBAEA23UW6Dt6FNIQyZrQKEQ8tDhWRxsOzON3M6GPgvc4T11PL97zNCflCYuGec9xPh8pCISU+66lf4cuLsGVyqafkiJ2YMnuOQptSyCNvzdPDyLx4k7uv26Lp9MvQayC5HvrvLiGeI0kM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=JaS2+V42; arc=none smtp.client-ip=217.70.183.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id AEF1B4453A;
+	Mon, 17 Mar 2025 17:39:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1742233163;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2aP9JOjwWHmiPktb3zwtlZkjkfIxkDiir2T4v3t/MYY=;
+	b=JaS2+V42vHbaAEt9KhQ0pC7pdk8jC7/iFFjcZr2FQxv/E7C8fRGMHaWicimiCmC3A10MyP
+	AVRf17VDgtxGjGv5RHyzbbEKnxxKiA89geI6BAqQhPji3f/gilLDisQ2VSW+ixyUHz1XZr
+	75GzLn4YGtGA0LMZdmKEb10RaYxo+//ZrqvdXYa9xuqFisrnOgf+92/Pz2EeS6wse/EoSE
+	ueZQ0ehLespuz89f9NO6bB3n5HIUjUMJuSXJGXAU2t5oMJ5kKXYWGtm7BLvCWrKEuL9kY0
+	RGYdCT3kMF7tXfbfuK8UEtyt7gdpVSY01Xv6oUDaa4eoZqSFhbKcJm2cretbhg==
+Date: Mon, 17 Mar 2025 18:39:22 +0100
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Manjunatha Venkatesh <manjunatha.venkatesh@nxp.com>
+Cc: Frank Li <frank.li@nxp.com>,
+	"miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>,
+	"conor.culhane@silvaco.com" <conor.culhane@silvaco.com>,
+	"linux-i3c@lists.infradead.org" <linux-i3c@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"stable@vger.kernel.org" <stable@vger.kernel.org>,
+	"rvmanjumce@gmail.com" <rvmanjumce@gmail.com>
+Subject: Re: [PATCH v4] svc-i3c-master: Fix read from unreadable memory at
+ svc_i3c_master_ibi_work()
+Message-ID: <2025031717392264f19f1a@mail.local>
+References: <20250312135356.2318667-1-manjunatha.venkatesh@nxp.com>
+ <Z9HSdtD1CkdCpGu9@lizhi-Precision-Tower-5810>
+ <VI1PR04MB10049644F3287C378E9CC75EF8FD32@VI1PR04MB10049.eurprd04.prod.outlook.com>
+ <Z9gjGYudiYyl3bSe@lizhi-Precision-Tower-5810>
+ <VI1PR04MB1004979B7D38486FD1E1CC8508FDF2@VI1PR04MB10049.eurprd04.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH] block: Make request_queue lockdep splats show up
- earlier
-To: =?UTF-8?Q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
- Jens Axboe <axboe@kernel.dk>
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- Ming Lei <ming.lei@redhat.com>
-References: <20250317171156.2954-1-thomas.hellstrom@linux.intel.com>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20250317171156.2954-1-thomas.hellstrom@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <VI1PR04MB1004979B7D38486FD1E1CC8508FDF2@VI1PR04MB10049.eurprd04.prod.outlook.com>
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddugedtudegucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeetlhgvgigrnhgurhgvuceuvghllhhonhhiuceorghlvgigrghnughrvgdrsggvlhhlohhnihessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnheptddtgfeuvedtheejtdethfdthfegfeelvdelffdtudevjeehieekgfekheevledunecuffhomhgrihhnpehkvghrnhgvlhdrohhrghdpihhnfhhrrgguvggrugdrohhrghdpsghoohhtlhhinhdrtghomhenucfkphepvdgrtddumegvtdgrmedvugemieefjedtmeejkegvtdemtgdtvgekmedvkedtieemkegrtgeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegvtdgrmedvugemieefjedtmeejkegvtdemtgdtvgekmedvkedtieemkegrtgeipdhhvghloheplhhotggrlhhhohhsthdpmhgrihhlfhhrohhmpegrlhgvgigrnhgurhgvrdgsvghllhhonhhisegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeekpdhrtghpthhtohepmhgrnhhjuhhnrghthhgrrdhvvghnkhgrthgvshhhsehngihprdgtohhmpdhrtghpthhtohepfhhrrghnk
+ hdrlhhisehngihprdgtohhmpdhrtghpthhtohepmhhiqhhuvghlrdhrrgihnhgrlhessghoohhtlhhinhdrtghomhdprhgtphhtthhopegtohhnohhrrdgtuhhlhhgrnhgvsehsihhlvhgrtghordgtohhmpdhrtghpthhtoheplhhinhhugidqiheftgeslhhishhtshdrihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehsthgrsghlvgesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehrvhhmrghnjhhumhgtvgesghhmrghilhdrtghomh
+X-GND-Sasl: alexandre.belloni@bootlin.com
 
-On 3/17/25 10:11 AM, Thomas Hellstr=C3=B6m wrote:
-> diff --git a/block/blk-core.c b/block/blk-core.c
-> index d6c4fa3943b5..4aa439309406 100644
-> --- a/block/blk-core.c
-> +++ b/block/blk-core.c
-> @@ -455,6 +455,12 @@ struct request_queue *blk_alloc_queue(struct queue=
-_limits *lim, int node_id)
->   	lockdep_init_map(&q->q_lockdep_map, "&q->q_usage_counter(queue)",
->   			 &q->q_lock_cls_key, 0);
->  =20
-> +	/* Prime io_lockdep_map as reclaim tainted */
-> +	fs_reclaim_acquire(GFP_KERNEL);
-> +	rwsem_acquire_read(&q->io_lockdep_map, 0, 0, _RET_IP_);
-> +	rwsem_release(&q->io_lockdep_map, _RET_IP_);
-> +	fs_reclaim_release(GFP_KERNEL);
-> +
->   	q->nr_requests =3D BLKDEV_DEFAULT_RQ;
->  =20
->   	return q;
+On 17/03/2025 15:46:52+0000, Manjunatha Venkatesh wrote:
+> 
+> 
+> > -----Original Message-----
+> > From: Frank Li <frank.li@nxp.com>
+> > Sent: Monday, March 17, 2025 6:57 PM
+> > To: Manjunatha Venkatesh <manjunatha.venkatesh@nxp.com>
+> > Cc: miquel.raynal@bootlin.com; conor.culhane@silvaco.com;
+> > alexandre.belloni@bootlin.com; linux-i3c@lists.infradead.org; linux-
+> > kernel@vger.kernel.org; stable@vger.kernel.org; rvmanjumce@gmail.com
+> > Subject: Re: [PATCH v4] svc-i3c-master: Fix read from unreadable memory at
+> > svc_i3c_master_ibi_work()
+> > 
+> > On Thu, Mar 13, 2025 at 05:15:42AM +0000, Manjunatha Venkatesh wrote:
+> > >
+> > >
+> > > > -----Original Message-----
+> > > > From: Frank Li <frank.li@nxp.com>
+> > > > Sent: Wednesday, March 12, 2025 11:59 PM
+> > > > To: Manjunatha Venkatesh <manjunatha.venkatesh@nxp.com>
+> > > > Cc: miquel.raynal@bootlin.com; conor.culhane@silvaco.com;
+> > > > alexandre.belloni@bootlin.com; linux-i3c@lists.infradead.org; linux-
+> > > > kernel@vger.kernel.org; stable@vger.kernel.org; rvmanjumce@gmail.com
+> > > > Subject: Re: [PATCH v4] svc-i3c-master: Fix read from unreadable
+> > > > memory at
+> > > > svc_i3c_master_ibi_work()
+> > > >
+> > > > On Wed, Mar 12, 2025 at 07:23:56PM +0530, Manjunatha Venkatesh
+> > wrote:
+> > > > > As part of I3C driver probing sequence for particular device
+> > > > > instance, While adding to queue it is trying to access ibi
+> > > > > variable of dev which is not yet initialized causing "Unable to
+> > > > > handle kernel read from unreadable memory" resulting in kernel panic.
+> > > > >
+> > > > > Below is the sequence where this issue happened.
+> > > > > 1. During boot up sequence IBI is received at host  from the slave device
+> > > > >    before requesting for IBI, Usually will request IBI by calling
+> > > > >    i3c_device_request_ibi() during probe of slave driver.
+> > > > > 2. Since master code trying to access IBI Variable for the particular
+> > > > >    device instance before actually it initialized by slave driver,
+> > > > >    due to this randomly accessing the address and causing kernel panic.
+> > > > > 3. i3c_device_request_ibi() function invoked by the slave driver where
+> > > > >    dev->ibi = ibi; assigned as part of function call
+> > > > >    i3c_dev_request_ibi_locked().
+> > > > > 4. But when IBI request sent by slave device, master code  trying to
+> > access
+> > > > >    this variable before its initialized due to this race condition
+> > > > >    situation kernel panic happened.
+> > > > >
+> > > > > Fixes: dd3c52846d595 ("i3c: master: svc: Add Silvaco I3C master
+> > > > > driver")
+> > > > > Cc: stable@vger.kernel.org
+> > > > > Signed-off-by: Manjunatha Venkatesh
+> > <manjunatha.venkatesh@nxp.com>
+> > > > > ---
+> > > > > Changes since v3:
+> > > > >   - Description  updated typo "Fixes:"
+> > > > >
+> > > > >  drivers/i3c/master/svc-i3c-master.c | 7 +++++--
+> > > > >  1 file changed, 5 insertions(+), 2 deletions(-)
+> > > > >
+> > > > > diff --git a/drivers/i3c/master/svc-i3c-master.c
+> > > > > b/drivers/i3c/master/svc-i3c-master.c
+> > > > > index d6057d8c7dec..98c4d2e5cd8d 100644
+> > > > > --- a/drivers/i3c/master/svc-i3c-master.c
+> > > > > +++ b/drivers/i3c/master/svc-i3c-master.c
+> > > > > @@ -534,8 +534,11 @@ static void svc_i3c_master_ibi_work(struct
+> > > > work_struct *work)
+> > > > >  	switch (ibitype) {
+> > > > >  	case SVC_I3C_MSTATUS_IBITYPE_IBI:
+> > > > >  		if (dev) {
+> > > > > -			i3c_master_queue_ibi(dev, master->ibi.tbq_slot);
+> > > > > -			master->ibi.tbq_slot = NULL;
+> > > > > +			data = i3c_dev_get_master_data(dev);
+> > > > > +			if (master->ibi.slots[data->ibi]) {
+> > > > > +				i3c_master_queue_ibi(dev, master-
+> > > > >ibi.tbq_slot);
+> > > > > +				master->ibi.tbq_slot = NULL;
+> > > > > +			}
+> > > >
+> > > > You still not reply previous discussion:
+> > > >
+> > > > https://lore.kernel.org/linux-i3c/Z8sOKZSjHeeP2mY5@lizhi-Precision-T
+> > > > ower-
+> > > > 5810/T/#mfd02d6ddca0a4b57bc823dcbfa7571c564800417
+> > > >
+> > > [Manjunatha Venkatesh] : In the last mail answered to this question.
+> > >
+> > > > This is not issue only at svc driver, which should be common problem
+> > > > for other master controller drivers
+> > > >
+> > > [Manjunatha Venkatesh] :Yes, you are right.
+> > > One of my project I3C interface is required, where we have used IMX board
+> > as reference platform.
+> > > As part of boot sequence we come across this issue and tried to fix that
+> > particular controller driver.
+> > >
+> > > What is your conclusion on this? Is it not ok to take patch for SVC alone?
+> > 
+> > I perfer fix at common framwork to avoid every driver copy the similar logic
+> > code.
+> > 
+> [Manjunatha Venkatesh] : As per your suggestion tried the below patch at common framework api i3c_master_queue_ibi()
+>  and looks working fine, didn't see any crash issue.
+> if (!dev->ibi || !slot) {
+>              dev_warning("...");
 
-Hmm ... my understanding is that it is fine if FS code calls block layer
-code but also that block layer code never should call FS code.
+Do we really need a warning, what would be the user action after seeing
+it?
+>              return;
+> }
+> Will commit this change in next patch submission.
+> 
+> > Frank
+> > 
+> > >
+> > > > Frank
+> > > >
+> > > > >  		}
+> > > > >  		svc_i3c_master_emit_stop(master);
+> > > > >  		break;
+> > > > > --
+> > > > > 2.46.1
+> > > > >
+> > >
+> > > --
+> > > linux-i3c mailing list
+> > > linux-i3c@lists.infradead.org
+> > > http://lists.infradead.org/mailman/listinfo/linux-i3c
 
-Thanks,
-
-Bart.
+-- 
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
