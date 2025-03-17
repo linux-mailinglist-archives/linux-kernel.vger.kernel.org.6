@@ -1,275 +1,174 @@
-Return-Path: <linux-kernel+bounces-564101-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564090-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD777A64DC2
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 13:02:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C378A64DA2
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 13:00:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC59A1748B2
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 12:02:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5FE5E171BCE
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 12:00:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5158C19CD19;
-	Mon, 17 Mar 2025 12:01:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC37E23A58B;
+	Mon, 17 Mar 2025 11:59:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="b1fQxT3V"
-Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2077.outbound.protection.outlook.com [40.107.100.77])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="higStgvO"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63D0019D07A
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 12:01:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.77
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742212909; cv=fail; b=BGSr4Xr4a8PxY9Zikalh3RYu6BeojOy7EX/FDpZBDe1nxufvP7hzTsyuUGId7PGH48USHv8owG8T95TJfbgVi978j6VxWlxt6ejGFasjS6qIk+XoNrVO2K2BbYMQNg3oB2uDzPsXnkvuZOLYDoWDo+buK14iyUuX1nOQ9hF5XtY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742212909; c=relaxed/simple;
-	bh=u45gRG09t+Bf/4ArgvzB3OtoJtbd+cwqjoAlha34Yno=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=aN7roXqPO0w0X2e08+V5ggMP4bV8CCn0vTFz0B6pUrQAyE06mxD5QnuaTKVeqTnve0ooTrMypk0zo/yanm26oOG6wNi0qB5Ou5M/qlSAfaU3KHg5NlwVhRTEbhTrfXtwsfvSO0Zx1nL/tDxinyQjTIWZQB/6JLmKAW2k+gV7t1I=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=b1fQxT3V; arc=fail smtp.client-ip=40.107.100.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=QIIVk8ShsqxlwNiuQwob7EpudCcce1y4qE+zOhWyt8gsYKddqKxkwOOYtOT6J9dBJLwi2guTc//oVsruBQqNwAiyDv22JjpDIkEqY1FH7YQ5ZmzdD/oqnnwJJiZPQidw0PcIHEapCbhvhf9minKeRzZChenRWEUb1fqG+roHop3lPagZ58XWt4iLj4PW/YeZQkxDucc3AitRZJxySfXGsc0K0RiU/2ycVfVy1KHqY8aLWOf3DOFM7QQYUDIsQ3JV3CYGz5rUhpk9RSAq7qp2MWn8PCa70BKCiEcYaaQ+hCby44LnQiadsmJMPWwX0svlHIOk0Irbxd6aF+L+AFrmDA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=UhJ3VDC+gV45J0T7wmxQBerr0ApFO0V7MKrknw/L6RY=;
- b=Wn+/P0nshIRWvmonz7PALYdbFYocTYS4yVT8r+o/RJJkUw2vGOgEXtFDA0V2OaS3JMCskOVwcqc5aIbsHRZtCGqTQ5U4Cggr2UN/etZP3/U70ndHeHHxvln66QM2pPncEe8QGeuJTEKcfJ8M3DCb1lVPy/URwq6I7WJBWQgwZk7MGMaHBSbSQGW2d+S3pgZ0ZW8TOS+v0RkrhP1/MZ+dWYFieUwwC0pMGvMhs+DgNO4HqmPtXvpn2xLfCIFDDKZQoOBoJefTbdXp2O8JCiMOgtQX9vI75bvH0osVR6sbFsW9GFOTQz+4ptoY5Le8M0ZpYSevrgW9sU+0Q+pwotyIyA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=8bytes.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=UhJ3VDC+gV45J0T7wmxQBerr0ApFO0V7MKrknw/L6RY=;
- b=b1fQxT3VebbZOQzMmr2i+OQ+6k+2wXXey5tN1v96J/IwVe3J0u/WRCaDDabv0FfcaF9xSsX2W6LmR/T2VqqvKqh0ouSG8EYxfQTHqEA/f5RFj2F3fYWapThjNdZoMynwxEz+AVkDIbWRBOZ585WJLkoyohNuqmHjX6BT9Kd6T7o=
-Received: from BYAPR07CA0028.namprd07.prod.outlook.com (2603:10b6:a02:bc::41)
- by DM4PR12MB6085.namprd12.prod.outlook.com (2603:10b6:8:b3::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.33; Mon, 17 Mar
- 2025 12:01:37 +0000
-Received: from CO1PEPF000066ED.namprd05.prod.outlook.com
- (2603:10b6:a02:bc:cafe::cb) by BYAPR07CA0028.outlook.office365.com
- (2603:10b6:a02:bc::41) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8534.28 via Frontend Transport; Mon,
- 17 Mar 2025 12:01:37 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- CO1PEPF000066ED.mail.protection.outlook.com (10.167.249.10) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8534.20 via Frontend Transport; Mon, 17 Mar 2025 12:01:37 +0000
-Received: from BLRDHSRIVAS.amd.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 17 Mar
- 2025 07:01:33 -0500
-From: Dheeraj Kumar Srivastava <dheerajkumar.srivastava@amd.com>
-To: <joro@8bytes.org>, <will@kernel.org>, <robin.murphy@arm.com>,
-	<linux-kernel@vger.kernel.org>, <iommu@lists.linux.dev>
-CC: <suravee.suthikulpanit@amd.com>, <vasant.hegde@amd.com>, "Dheeraj Kumar
- Srivastava" <dheerajkumar.srivastava@amd.com>
-Subject: [PATCH v4 8/8] iommu/amd: Add documentation for AMD IOMMU debugfs support
-Date: Mon, 17 Mar 2025 17:28:30 +0530
-Message-ID: <20250317115830.3416-9-dheerajkumar.srivastava@amd.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250317115830.3416-1-dheerajkumar.srivastava@amd.com>
-References: <20250317115830.3416-1-dheerajkumar.srivastava@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B620239595
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 11:59:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742212746; cv=none; b=BDBAE8vWlckQsjAOkBrMFKFOiQtLaOjF6JwM5B7x2DJyP4SO4w3JPux8ChVvn47FIKvne1E1wDE12F1uakCejPCujR69kCfKJ3jj1kxnD1YBVeQn1YNJIoUSbL2Xd4nF3uB76jt7XyWpBIWuOw9LkIm7oxCHH/yK+Y4qWpJS4kE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742212746; c=relaxed/simple;
+	bh=kGRTlob9dS4wjrb9wDoE4m44BhOfQUCktnvmrkWM6BQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=e81NX4Y8QnUAkP47u4eF8s4VNwL6GIULm5YA36ArBufADUxkOZ6w1bkHe9H0AoMZl+ogwpDYeOTBt6U9bdfO+WAiHgeSp9t1SHeSwcqIEuAr5x+2OIjWhh1CpJVgWqMljuzcYKiQ9DILYUgmL/Q7nxf9eiQ1ddCKyZC+nCmqBJE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=higStgvO; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1742212741;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ibbLnhe1qBMBBLBfKU3vYef+bv4kMt41HKPTL4S5OPc=;
+	b=higStgvOLtscvtC0pp/UtA7uFuyMfjr7Z4Js/WFFe06yGZsqU+DYy60GSOA/H6EJgcXQ+A
+	CS3maIdmyZx0JvWosYgyggjyEng1Lwly09Rw7G2qViyhPxM9hIPQsruMI5wQLatjbswnjA
+	5Dms6LNo+scaoUMQq5IDtGgefgdPxys=
+Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
+ [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-80-VTZgWde2MfuRja9_o8XZMA-1; Mon, 17 Mar 2025 07:59:00 -0400
+X-MC-Unique: VTZgWde2MfuRja9_o8XZMA-1
+X-Mimecast-MFC-AGG-ID: VTZgWde2MfuRja9_o8XZMA_1742212739
+Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-abb9b2831b7so569950566b.1
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 04:59:00 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742212739; x=1742817539;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ibbLnhe1qBMBBLBfKU3vYef+bv4kMt41HKPTL4S5OPc=;
+        b=n220VwhUPfCDmqfGT1ar8kLgPRUi6k/bC4TRKDID5DgijyMZMFP4ngM2f29tYiRtzu
+         D9Lp9SF5HihwFgvTQTO6pmZUq4CV4in/CiYYFNWlZLB/cdI3tGzo39hgkUFVqSPnOl4q
+         jrPX2+AT563XoiIVeXoC5YF0d8VX2j6YNyMCIjhMkohemVoGYoIf1BmS5Wsb8W05KvpP
+         ERE51N61mEvjsrxlLjTBK6kttjXTHd97OvApi4RXASe2jzgQiCLMevEyhBeuWKXqvMZx
+         xzfX5+NOoFLfkbPoQH9rNT9169+MNVOYHdXgKKwLPs4POop78uUh+2ooX1yHb0wYTZjO
+         gipg==
+X-Forwarded-Encrypted: i=1; AJvYcCXnKlzd2oEd/dbj1Vve5yOJcLFXNyTTdvOw4NUKOpmTCwF43VktCL8kHyDXxY4zikw67diDXcv2wPK5c/M=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw33tP2VyxgtCqQxcCvY7/7+xVg75HbS/z9O8E/dtbDBuNiKwzm
+	3wjjIsgvH9eN4VXRcwieoeFM93EkipgJHLEWp0mTm6i1g+nOr6pZARaGe6Xxso7zufaFNzZwCUT
+	k6KVsYC/jtGrgDblD2TYQEPiDXOO4i0TOBHd85RXyBauFseeFf9F4ucn3j8H/vA==
+X-Gm-Gg: ASbGncvfjwiNd7XebNq08oDj5hWHBYu2u9Vz2g7PcF1UDys748qHu1YEQRdlxYHeluq
+	3khx8VagPwU+u7+NRkIRLcjTbUNosqj7zynb34jS47estjNH6egAX9NH3FtxDsN3F0J8A05LfG1
+	JDGJJWUXEuT1Yj5BxLn//EqsJ1NfLJKB+50y8k0B42QopCUaS389ocus/4GYMo75slBnVjQgG8U
+	XDy93nrBnzsJKDW8R7Hv7s/Lzwg4VqXQGStZPv8lzsH83PEnsFf1n7LO6QKRgCX+DdGJEKU6SMw
+	aJsvYiU84EeY6NHfHCI=
+X-Received: by 2002:a17:907:c292:b0:abf:6e30:c24e with SMTP id a640c23a62f3a-ac3124b2162mr1419638466b.22.1742212739128;
+        Mon, 17 Mar 2025 04:58:59 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHu9L6waIA1+4l5vWezs0/gLYMZtHuW4yfmYTOV7+dgHirrYrXj5zuut4GB6gKN4F/ns2JTjw==
+X-Received: by 2002:a17:907:c292:b0:abf:6e30:c24e with SMTP id a640c23a62f3a-ac3124b2162mr1419637066b.22.1742212738768;
+        Mon, 17 Mar 2025 04:58:58 -0700 (PDT)
+Received: from [10.40.98.122] ([78.108.130.194])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3147f0bd3sm657279066b.67.2025.03.17.04.58.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 17 Mar 2025 04:58:58 -0700 (PDT)
+Message-ID: <76c57b22-04d3-4331-a10c-b210db5f9055@redhat.com>
+Date: Mon, 17 Mar 2025 12:58:57 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1PEPF000066ED:EE_|DM4PR12MB6085:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3d62b52b-ebc7-4d4a-aabc-08dd654b785e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|82310400026|36860700013;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?Vu38RvVgDxxR/23a3FP52SGgczzdKWK1XaCkLe46F9Yw7O7aOB03Ecpfky/W?=
- =?us-ascii?Q?RZ4eom5xVjz11QOEnwxqARCQcVRrJbRNeh4yUXjR9uVIkJrDv6ELz9yRqXzN?=
- =?us-ascii?Q?M65nbJ55ivNWVY0cy/WQSsH0uDVupQojAHmXItXN8VUhpEFYVEfaOBWjp+wO?=
- =?us-ascii?Q?+2sX4ps0EasfqfKqpTNcNejqrrFyrwiiirVOhfekCUt6Wzf9FrgnAuB8l3Fn?=
- =?us-ascii?Q?fA2mdwdiO2R8Hbc0rfUl1QDU6N/yoVETcHlDV2a2Gh3OZW6R2Gz599DZq842?=
- =?us-ascii?Q?m7VijEx7D5MpJ5PkkmIAflGjbUtSHmmRvYpsfC4NYic6jTttgpNKOm9DqlYE?=
- =?us-ascii?Q?pXvrOeBBZMigZrLZTQLzrZIrMbzct+f4pjNak4dRVOtlpYHprNUQWCRBzN3M?=
- =?us-ascii?Q?FK996uwpxcPlRIMod+1fMM4iQfAjU6PeeJnhvBB+gUd0y+wE8kHl49Ll+2Xw?=
- =?us-ascii?Q?R1mJLVqHABpRimrlcbR+eH5sbm7JZdD3AbyMpWeMPQ8Po2ZinrPt8Ld/TUNH?=
- =?us-ascii?Q?kVAU6++EwLwqtyZ9bT87bLxyGgU2g2j5WRwcxTKl6BsxtAV381emW4wL3thZ?=
- =?us-ascii?Q?1QvWdw+Ieyw1yAk6Vs0rmPPNG6+DSdFNlgWfgA4WvJDY4vFV94UT7ZYji215?=
- =?us-ascii?Q?n0NFd60cB2k/pIO9hT1LHbP3CjMJPJ+b0gWmjeTdPQ3xmfyLmD5MfvN+2Mqa?=
- =?us-ascii?Q?75WMXRD+T3UMt0eVDMwtBsC/oD+H+CZjzJLrgWsRIldKK9AuY4Jed4EYSuCC?=
- =?us-ascii?Q?Yu1vuXv+T8kxUCisZcDcmiHeIW2JPNaAnF28nQkGXpv9VyZ6qL5raokvWkXP?=
- =?us-ascii?Q?QCwl9rG4WKBvsKg4MxXksV22cAAn7VrrMcjoPNCSvFo9hCAyFHcbbVGi/jqm?=
- =?us-ascii?Q?XVUGFEqU1HtW05YdRYCQ259hMEpZg/sRs6LKczwwVbVIFdceeZNVyenK3liV?=
- =?us-ascii?Q?+aJwU16JNkmu0FwoDx0sXHc6uhQGRxqo1AI8xT6D6ohMFaGhFoKYwGJ7qesP?=
- =?us-ascii?Q?W9i/uuoO8rS1MJ7kUgCG6oCRGNk3HuUZjDLWnn6BtQlQbALvQ5w2OkdMmrVM?=
- =?us-ascii?Q?RwF64pJyVu/nuDB+LJ950TNO4XdDww5A3+9YHIl0x3DLqToTjhlXSy/XWC8B?=
- =?us-ascii?Q?DpVIt6licBCQaDkB6Yiz9QtKDbc4//qq+JdWGxUtPMgwAdm+JFUYCZHJTPKR?=
- =?us-ascii?Q?jWMZEjwt3b1F70EnO0jq6GrFBtIZOCkLcuSkokZW2NcKwcCe6dgIncuVcOY+?=
- =?us-ascii?Q?IC0hP0hgk7G0ikgky1Vj/zMVIGBfx7sQgyFWisfFhrJ9EDmppFGlIiy5cO3Z?=
- =?us-ascii?Q?142FVtt5iuJrJVcBJAIKn8knV49/ebawn22lXeg189Yc7vQF0Tu/MuLjfxEv?=
- =?us-ascii?Q?Wb0KnFF8AWXHYLywHObrQ8KxloRiVLuaG+6JgEqdLqKSpkHD/2noXxSdPyTR?=
- =?us-ascii?Q?s5nH8ttrDBIFN8wDfZT9ItyNXaSFLW1SQi+vhT+uWg8nJD7X2M5lBzVoEV3p?=
- =?us-ascii?Q?d8tjEe3XlklLlIo=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(376014)(82310400026)(36860700013);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Mar 2025 12:01:37.1494
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3d62b52b-ebc7-4d4a-aabc-08dd654b785e
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CO1PEPF000066ED.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6085
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] Input: atkbd - Correctly map F13 - F24
+To: Werner Sembach <wse@tuxedocomputers.com>,
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250311180643.1107430-1-wse@tuxedocomputers.com>
+ <20250311180643.1107430-2-wse@tuxedocomputers.com>
+Content-Language: en-US, nl
+From: Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <20250311180643.1107430-2-wse@tuxedocomputers.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Add documentation describing how to use AMD IOMMU debugfs support to
-dump IOMMU data structures - IRT table, Device table, Registers (MMIO and
-Capability) and command buffer.
+Hi Werner,
 
-Signed-off-by: Dheeraj Kumar Srivastava <dheerajkumar.srivastava@amd.com>
----
- Documentation/ABI/testing/debugfs-amd-iommu | 114 ++++++++++++++++++++
- 1 file changed, 114 insertions(+)
- create mode 100644 Documentation/ABI/testing/debugfs-amd-iommu
+On 11-Mar-25 19:06, Werner Sembach wrote:
+> Currently only F23 is correctly mapped for PS/2 keyboards.
+> 
+> Following to this table:
+> https://download.microsoft.com/download/1/6/1/161ba512-40e2-4cc9-843a-923143f3456c/translate.pdf
 
-diff --git a/Documentation/ABI/testing/debugfs-amd-iommu b/Documentation/ABI/testing/debugfs-amd-iommu
-new file mode 100644
-index 000000000000..49efc74c8e6f
---- /dev/null
-+++ b/Documentation/ABI/testing/debugfs-amd-iommu
-@@ -0,0 +1,114 @@
-+What:		/sys/kernel/debug/iommu/amd/iommu<x>/mmio
-+Date:		September 2024
-+Contact:	Dheeraj Kumar Srivastava <dheerajkumar.srivastava@amd.com>
-+Description:
-+		This is an input read/write access file. In this file, the user input
-+		mmio register offset for iommu<x> to print corresponding mmio register
-+		of iommu<x>.
-+
-+		Example:
-+		$ echo "0x18" > /sys/kernel/debug/iommu/amd/iommu00/mmio
-+		$ cat /sys/kernel/debug/iommu/amd/iommu00/mmio
-+
-+		Output:
-+		Offset:0x18 Value:0x000c22000003f48d
-+
-+What:		/sys/kernel/debug/iommu/amd/iommu<x>/capability
-+Date:		September 2024
-+Contact:	Dheeraj Kumar Srivastava <dheerajkumar.srivastava@amd.com>
-+Description:
-+		This is an input read/write access file. In this file, the user input
-+                capability register offset for iommu<x> to print corresponding capability
-+		register of iommu<x>.
-+
-+		Example:
-+		$ echo "0x10" > /sys/kernel/debug/iommu/amd/iommu00/capability
-+		$ cat /sys/kernel/debug/iommu/amd/iommu00/capability
-+
-+		Output:
-+		Offset:0x10 Value:0x00203040
-+
-+What:		/sys/kernel/debug/iommu/amd/iommu<x>/cmdbuf
-+Date:		September 2024
-+Contact:	Dheeraj Kumar Srivastava <dheerajkumar.srivastava@amd.com>
-+Description:
-+		This file is an output read only file that contains iommu<x> command
-+		buffer entries.
-+
-+		Examples:
-+		$ cat /sys/kernel/debug/iommu/amd/iommu<x>/cmdbuf
-+
-+		Output:
-+		CMD Buffer Head Offset:339 Tail Offset:339
-+		  0: 00835001 10000001 00003c00 00000000
-+		  1: 00000000 30000005 fffff003 7fffffff
-+		  2: 00835001 10000001 00003c01 00000000
-+		  3: 00000000 30000005 fffff003 7fffffff
-+		  4: 00835001 10000001 00003c02 00000000
-+		  5: 00000000 30000005 fffff003 7fffffff
-+		  6: 00835001 10000001 00003c03 00000000
-+		  7: 00000000 30000005 fffff003 7fffffff
-+		  8: 00835001 10000001 00003c04 00000000
-+		  9: 00000000 30000005 fffff003 7fffffff
-+		 10: 00835001 10000001 00003c05 00000000
-+		 11: 00000000 30000005 fffff003 7fffffff
-+		[...]
-+
-+What:		/sys/kernel/debug/iommu/amd/devid
-+Date:		September 2024
-+Contact:	Dheeraj Kumar Srivastava <dheerajkumar.srivastava@amd.com>
-+Description:
-+		This is an input read/write file that takes device id user input.
-+		This input can be used for dumping iommu data structures like
-+		interrupt remapping table, device table etc.
-+
-+		Example:
-+		1.
-+		$ echo 0000:01:00.0 > /sys/kernel/debug/iommu/amd/devid
-+		$ cat /sys/kernel/debug/iommu/amd/devid
-+
-+		Output:
-+		0000:01:00.0
-+
-+		2.
-+		$ echo 01:00.0 > /sys/kernel/debug/iommu/amd/devid
-+		$ cat /sys/kernel/debug/iommu/amd/devid
-+
-+		Output:
-+		0000:01:00.0
-+
-+What:		/sys/kernel/debug/iommu/amd/devtbl
-+Date:		September 2024
-+Contact:	Dheeraj Kumar Srivastava <dheerajkumar.srivastava@amd.com>
-+Description:
-+		This is an output read only file that contains device table entry for
-+		the device id input given in /sys/kernel/debug/iommu/amd/devid.
-+
-+		Example:
-+		$ cat /sys/kernel/debug/iommu/amd/devtbl
-+
-+		Output:
-+		DeviceId             QWORD[3]         QWORD[2]         QWORD[1]         QWORD[0] iommu
-+		0000:01:00.0 0000000000000000 20000001373b8013 0000000000000038 6000000114d7b603 iommu3
-+
-+What:		/sys/kernel/debug/iommu/amd/irqtbl
-+Date:		September 2024
-+Contact:	Dheeraj Kumar Srivastava <dheerajkumar.srivastava@amd.com>
-+Description:
-+		This is an output read only file that contains IRT table valid entries
-+		for the device id input given in /sys/kernel/debug/iommu/amd/devid.
-+
-+		Example:
-+		$ cat /sys/kernel/debug/iommu/amd/irqtbl
-+
-+		Output:
-+		DeviceId 0000:01:00.0
-+		IRT[0000] 0000000000000020 0000000000000241
-+		IRT[0001] 0000000000000020 0000000000000841
-+		IRT[0002] 0000000000000020 0000000000002041
-+		IRT[0003] 0000000000000020 0000000000008041
-+		IRT[0004] 0000000000000020 0000000000020041
-+		IRT[0005] 0000000000000020 0000000000080041
-+		IRT[0006] 0000000000000020 0000000000200041
-+		IRT[0007] 0000000000000020 0000000000800041
-+		[...]
--- 
-2.25.1
+That is a very interesting document, good find!
+
+> - F24 and Zenkaku/Hankaku share the same scancode, but since in real world
+> Zenkaku/Hankaku keys seem to just use the tilde scancode, this patch binds the
+> scancode to F24. Note that on userspace side the KEY_ZENKAKUHANKAKU keycode is
+> currently not bound in xkeyboard-config, so it is (mostly*) unused anyway.
+> 
+> * Qt on Wayland and therefore KDE on Wayland can see the keypress anyway for
+> some reason and it is actually used in a touchpad toggle shortcut, but this is
+> currently being fixed in both KDE and xkeyboard-config to make this less weird,
+> so it could directly be fixed to correctly handle the F24 keypress instead.
+> 
+> - The scancodes for F13-F22 are currently unmapped so there will probably be no
+> harm in mapping them. This would also fix the issue that some of these keys
+> can't be mapped as the target from userspace using the `setkeycodes` command.
+> 
+> Signed-off-by: Werner Sembach <wse@tuxedocomputers.com>
+
+Thanks, patch looks good to me:
+
+Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+
+It is unfortunate that this changes the scancode 0x5f mapping from 85 to 194
+(from KEY_ZENKAKUHANKAKU to KEY_F24) but as you mention the xkbconfig does
+not even define a keycode-label for 85 + 8 = 93 (xkb shifts all codes up 8) in:
+/usr/share/X11/xkb/keycodes/evdev, 93 is simply not there. So making this changes
+and updating the mapping to match the mappings from the microsoft document from
+above sounds good to me.
+
+Regards,
+
+Hans
+
+
+
+
+> ---
+>  drivers/input/keyboard/atkbd.c | 12 ++++++------
+>  1 file changed, 6 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/input/keyboard/atkbd.c b/drivers/input/keyboard/atkbd.c
+> index 3598a21d9d014..4bd6e6ef0715e 100644
+> --- a/drivers/input/keyboard/atkbd.c
+> +++ b/drivers/input/keyboard/atkbd.c
+> @@ -84,12 +84,12 @@ static const unsigned short atkbd_set2_keycode[ATKBD_KEYMAP_SIZE] = {
+>  #include "hpps2atkbd.h"	/* include the keyboard scancodes */
+>  
+>  #else
+> -	  0, 67, 65, 63, 61, 59, 60, 88,  0, 68, 66, 64, 62, 15, 41,117,
+> -	  0, 56, 42, 93, 29, 16,  2,  0,  0,  0, 44, 31, 30, 17,  3,  0,
+> -	  0, 46, 45, 32, 18,  5,  4, 95,  0, 57, 47, 33, 20, 19,  6,183,
+> -	  0, 49, 48, 35, 34, 21,  7,184,  0,  0, 50, 36, 22,  8,  9,185,
+> -	  0, 51, 37, 23, 24, 11, 10,  0,  0, 52, 53, 38, 39, 25, 12,  0,
+> -	  0, 89, 40,  0, 26, 13,  0,193, 58, 54, 28, 27,  0, 43,  0, 85,
+> +	  0, 67, 65, 63, 61, 59, 60, 88,183, 68, 66, 64, 62, 15, 41,117,
+> +	184, 56, 42, 93, 29, 16,  2,  0,185,  0, 44, 31, 30, 17,  3,  0,
+> +	186, 46, 45, 32, 18,  5,  4, 95,187, 57, 47, 33, 20, 19,  6,183,
+> +	188, 49, 48, 35, 34, 21,  7,184,189,  0, 50, 36, 22,  8,  9,185,
+> +	190, 51, 37, 23, 24, 11, 10,  0,191, 52, 53, 38, 39, 25, 12,  0,
+> +	192, 89, 40,  0, 26, 13,  0,193, 58, 54, 28, 27,  0, 43,  0,194,
+>  	  0, 86, 91, 90, 92,  0, 14, 94,  0, 79,124, 75, 71,121,  0,  0,
+>  	 82, 83, 80, 76, 77, 72,  1, 69, 87, 78, 81, 74, 55, 73, 70, 99,
+>  
 
 
