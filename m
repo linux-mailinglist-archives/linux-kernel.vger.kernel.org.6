@@ -1,148 +1,167 @@
-Return-Path: <linux-kernel+bounces-564327-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564376-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5405A652C7
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 15:20:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 80C2FA653BC
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 15:37:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 410E71898B97
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 14:19:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0BF19188D03F
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 14:37:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98A0C23F27B;
-	Mon, 17 Mar 2025 14:19:03 +0000 (UTC)
-Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E99E01581E5;
+	Mon, 17 Mar 2025 14:36:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jk3hcw8q"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88D46199E8D;
-	Mon, 17 Mar 2025 14:19:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC34FDDA8;
+	Mon, 17 Mar 2025 14:36:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742221143; cv=none; b=sGEqDPlw9JAoZ6xjo+sAXLRjUuuGyxNXa/wjO6do2CsFM+7PJMrQhJJbBJH8dxOKR95XouykIb5251tzKNMWMUegcpml5CVqtEyxnZ6SlE9ln14WEAi/hGVeB3NoxJRL+pnreo5id+rD7aLGcFPJrsVRwsT3eDVEUi1uKNZnvkI=
+	t=1742222205; cv=none; b=EO1xIYU1kNT138ZUNXIUzNGlXX9H/Z757YBtqYyjGkAmCCCJ25SWYnZs/fGgTPc/S8cERPlIbBHCalMdb+7OHyV9g2Etsv9GgI5SSx9lvRO4WAlGcgENoISbh7B+KzCU3tccNr2uGRdEyVUmvlPUXglhOZAXdcqZFchXz0np+sc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742221143; c=relaxed/simple;
-	bh=8PM6QbVEn4s657b1vZBMBsMKFGc8AAH22xuLnz8sw7A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aqobiFhHIxlsf2wk2l5msDgz+7t46U1IgfdtgV2kjvnWHUcbTZ7vnE6fVnp8B7G4BFxvK8iDaHB3k26RFlefMRZDFwk53dBfHnSmw0mX1G6MSdZNdT/qTFCw+Gv9wc092R0vVS70u0SRW1B0qDFWkorAs67MOkoXv8iyGvElhuM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.160.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	s=arc-20240116; t=1742222205; c=relaxed/simple;
+	bh=4TX+lSEn5TaZbpa1TO0GRQ1WwTSTQelGfR2LDjLBtKY=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References; b=ZqJlcDpaghFqt/18av8DIu1CL22VgnoUEwiTeBAruRD1w7DlNJx+g0mgLq4FDLLj7sDWbi2M+MD8h1f2/PUzg5wc+tiYu9kPuZroL9+hcMxyPC5VOuFttthZTO7J8yL0h1B9GrxOppO+wQ0ST8xwd1cirw/c1HzR7h3xbW3gHy0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jk3hcw8q; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-476b89782c3so51321811cf.1;
-        Mon, 17 Mar 2025 07:19:01 -0700 (PDT)
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-2239c066347so90154155ad.2;
+        Mon, 17 Mar 2025 07:36:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742222202; x=1742827002; darn=vger.kernel.org;
+        h=references:message-id:date:in-reply-to:subject:cc:to:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=QihfPZn7yT8b0vOjQdUT1guP8CAMaA7FtKVCMbpLNL4=;
+        b=jk3hcw8qZu23sWpaKbe6kIy8RJIRDxC3kGCgr6xxrfcR8fLlVSp0RzfbGhZTyvsoMR
+         mZ9HuGA3UdErxgh3YoxRI+SKZSnPF4L0kdoGWKg4ofmZdk/TDtQKFn4S0a5nKGYypRmG
+         tuJX1HzFf2wB6A9RZZ1kGtXaWBM+QLOxZksTOJDuIKmw0R2o7IbFlteCzS8HywjzrwtE
+         mGbcksXMd9KlqsJL3FiW3xO/cAO0a9meg6LXEow+ycHVrpK48sCZmQMVdrfsk1J2Hg0z
+         rHjJfbhylciPaVuyV6H6EM6oY+zU98JKQqSxsJimTtmackpxjAqsVtDYGbDmrM2WjVKB
+         Q5TA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742221138; x=1742825938;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=FQzfQJUTkwGhun6W4CYWdgvhWW8H+wpChsA4H5Uf+0w=;
-        b=RMiomOUig6P/dW+aZFTjzklObYVArgfwrXAIqota9L71KRwkJOBRzh4/mtM4aUlSOM
-         83ZXbNze27WOTPWxhvdGbHye/z5v6mUhESA+56foDPcsLl4Z1eglbPQgyhjNpDWjklts
-         aM5TRNfh+A1UialMEssILk3YeotRRKHc4bCWM4T1uetY8k0jbR60NixjYeivp/loMx/1
-         i/sIZr45TUqUvrOAoRHUusxW6V6vs+qq3SSGsdLdx1GodUOuVfhxXcs3nGdJbO40iaAl
-         kns1ORsJ3EHjUgEGXz+2V2zlpfXE9fFug01qg6vZAM8DZPrkwb/5fNag7Z43ZYrzSRYz
-         jYbw==
-X-Forwarded-Encrypted: i=1; AJvYcCWWlvAv5zzbINmCFS9zuFiBCbUUicusHwkAtpnz53/+5RLqEvGRVEK5+gcfysJIBV+XZ86IXiPpC5P8@vger.kernel.org, AJvYcCXpxTl+sDDj7clgVEvrtKID2oNxb//NgUh/ajyZxzQyYt5Yfo0adR0lMKfmDK8wN9ageSDMfSu2E+KNhJpU@vger.kernel.org
-X-Gm-Message-State: AOJu0YwmNXcsNvJu8vC7dGaXtOgp1D0fe/4+p6E7Zwp3M/4P+e2OmnR4
-	PjEii3Ov4ZkNrsYKOcW2ULY8LevHn4gkKjAPx07dXkzDfoEvUbcdcY2wqbBP
-X-Gm-Gg: ASbGncspjmpFCDvqyt3I4V4Rh9fL9f7CQB1cQObpsGamFCbw4Gjfw7mTO6s29g9sBeE
-	AdKw0Q9pKAhUMXchQY53vOU5JyPKjO826UYzUCOxCQOlaTFmMaj80j3chKphuFBlel9fMmenE2k
-	paYXoR2wnqjqHYdulUTzwZ8TbiJZdSQrAPTY90MhJrKLgtSAf1wADQb+QpK/tLvFpFWUvYLHrYp
-	vN8Ygtp2PceC/WT1LyEtjnW/ZDu1GF9F9MPIvIf/7HpHgwIlMAaClWTRdMWvFiAJ08H/rTnFkT0
-	+Y4cy+HKfemnIkocIkku8Y+F8tPSaCWbzSiXWEcVr9bmYxkbCFBIWRQGOk/NFuG9m/esBkTMTIN
-	gUfjT+Gg=
-X-Google-Smtp-Source: AGHT+IEToVfW+W01NFBwwfdMnq1kW7cP1iloXeUfIAwg9GX0Yl48vteBPz4gtemTEqXweZIbii3V0A==
-X-Received: by 2002:a05:622a:438b:b0:476:8f75:b898 with SMTP id d75a77b69052e-476c815c9fcmr156895841cf.25.1742221138312;
-        Mon, 17 Mar 2025 07:18:58 -0700 (PDT)
-Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com. [209.85.219.51])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-476bb63ac46sm54632641cf.17.2025.03.17.07.18.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 17 Mar 2025 07:18:57 -0700 (PDT)
-Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-6e17d3e92d9so31383236d6.1;
-        Mon, 17 Mar 2025 07:18:57 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCURHY0wS6iMqT6owdWAhrHC+bYW9tcoxvlRrqJSeF944nc6zn3MFcZng7BGYBtU7y63basvs6B+M92T@vger.kernel.org, AJvYcCWfzwqobmnCt0WVTCH0DXv5QF4VUezsubvMusnk15LGz/Y/Snvsu4HTve89C2GCD/OfoUp/Sqa4+zX1wlVZ@vger.kernel.org
-X-Received: by 2002:a0c:eb82:0:b0:6e8:feae:929c with SMTP id
- 6a1803df08f44-6eaeaa63b4bmr161375046d6.21.1742221137414; Mon, 17 Mar 2025
- 07:18:57 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1742222202; x=1742827002;
+        h=references:message-id:date:in-reply-to:subject:cc:to:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=QihfPZn7yT8b0vOjQdUT1guP8CAMaA7FtKVCMbpLNL4=;
+        b=piov/8PAZekscmObymllxUXehxUU7DFGzPaCZXK1WdNWDRgEAHNoM0naRYESvsLbWZ
+         YqCzv89fCRSuBR6BnQdxQAeyryRScVEQ5cHjXbUYGh3toDp/2cl0Nhy2aZcCE2dJJcaJ
+         /CguGD5Ht1vIk0SO9FnQWLATLIOgNoIS9/U6XMp1NLVmSQHHNId7ltXSXNWtabfmoIgl
+         ggT3Dy5ON4nv/AqdUjIbfJOGJOSiST/7VxEikvFZ5Q+zzAK6E3AnKr0l8mPNhVUoVu+u
+         DYu5LvD/1CJ1CX4wkXMbCBNp3NNi8DGNwVDo3hx50NVQfd9siXgkMAbepxUSTUnipUjj
+         kcxQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUOmNyobRvc2gpROGlraekTPUyLxZNyhqsruCq+emPJgrT8gUAQn3T4whurJ3niNEwcW/QgYfQRphWIHngiyg==@vger.kernel.org, AJvYcCVKnmIA3KEi9UgLKts+G7WZ8kfbLQN7Strvx5ZL6SxekEZL1se8NRYdxsiUSTqNH/K1L8nCW416p2EOTQXh@vger.kernel.org, AJvYcCVOGxXnbGF1/oh9jzFdhoOTz5zwWX/Rjhcn/gl46WGehirgASHKdj4jNJSTmxa//eZjlbB8zTIUqOIr@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyf0rmz8NcJuYjGBqExy1JNKu1rXic0CmTHFUGGXOPskl6oC0fM
+	1vPWRMkB+o0E3lW5bG97cH2I1yy1V/dFsIX4CGstYHqRmTMeo5audDPqNw==
+X-Gm-Gg: ASbGncu/NiQOIQC0TLHOiNLbmJL2PWHMl1f5jD3LCW3xSwxgIDxsJQ0FfX7BKASjPXd
+	R/SANmFlVNhLtpJshC4Bw80eH0EkrkGgZn76rB9NpSaTX6xLEvcGRmTOTeMq6pKPcIjbLMMzzrV
+	LoIt8vmVhKfIoSLGxvQZRsFwpmr/6KosqvWssYoVE/1JkUri9h/i9ObGerpON7k+Q1T/k4zlBgi
+	MzpW6BCTYlruOMpk+FOZf8LTKRoRI6LU7JMrYxVwWomXYHA5b5TO+ywrwus6ULS6GUJSTMCEKoO
+	fX0QyQDFsCw/AvlTxSe/+9VilIYqrBtbEQ14qA==
+X-Google-Smtp-Source: AGHT+IHAW0CArsr0VInptn5poqQysT00HxenEXl0IjBQeEKz2+8A2xpon7Tdhho4AIV2v7ipEg5Dhg==
+X-Received: by 2002:a05:6a21:394c:b0:1f5:7d57:8309 with SMTP id adf61e73a8af0-1f5c119438dmr17154898637.21.1742222202053;
+        Mon, 17 Mar 2025 07:36:42 -0700 (PDT)
+Received: from dw-tp ([171.76.81.247])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-af56e9fe51asm7219707a12.36.2025.03.17.07.36.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Mar 2025 07:36:41 -0700 (PDT)
+From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+To: John Garry <john.g.garry@oracle.com>, brauner@kernel.org, djwong@kernel.org, cem@kernel.org, dchinner@redhat.com, hch@lst.de
+Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, ojaswin@linux.ibm.com, martin.petersen@oracle.com, tytso@mit.edu, linux-ext4@vger.kernel.org
+Subject: Re: [PATCH v6 10/13] xfs: iomap COW-based atomic write support
+In-Reply-To: <cd05e767-0d30-483a-967f-a92673cdcba8@oracle.com>
+Date: Mon, 17 Mar 2025 19:50:29 +0530
+Message-ID: <87r02vspqq.fsf@gmail.com>
+References: <20250313171310.1886394-1-john.g.garry@oracle.com> <20250313171310.1886394-11-john.g.garry@oracle.com> <8734fd79g1.fsf@gmail.com> <cd05e767-0d30-483a-967f-a92673cdcba8@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250218-k1-pinctrl-option-v3-1-36e031e0da1b@gentoo.org>
- <CAMuHMdV4xWLEuCvCC54GBfCdELE=QSHqaOyUPD-ezE0QLYRnVA@mail.gmail.com>
- <20250317124120-GYA1983@gentoo> <CAMuHMdWM5ymPVRe36+Atr0cDAdRGyw39jFJvE+9PWTUUiiMfCg@mail.gmail.com>
- <20250317132955-GYC1983@gentoo>
-In-Reply-To: <20250317132955-GYC1983@gentoo>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 17 Mar 2025 15:18:45 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdUWUd-xAzhRvazurD-1t3pFb2OUMXqEpeDyTVVbAUG19g@mail.gmail.com>
-X-Gm-Features: AQ5f1JrurBlRutNcrH6Q6idcmvXYK5KPYEnvrshCL60keuYt9BH4Ng3SnCR2u0Y
-Message-ID: <CAMuHMdUWUd-xAzhRvazurD-1t3pFb2OUMXqEpeDyTVVbAUG19g@mail.gmail.com>
-Subject: Re: [PATCH v3] pinctrl: spacemit: enable config option
-To: Yixun Lan <dlan@gentoo.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Alex Elder <elder@kernel.org>, linux-riscv@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	spacemit@lists.linux.dev, Conor Dooley <conor.dooley@microchip.com>, 
-	Alex Elder <elder@riscstar.com>
-Content-Type: text/plain; charset="UTF-8"
 
-Hi Yixun,
+John Garry <john.g.garry@oracle.com> writes:
 
-On Mon, 17 Mar 2025 at 14:30, Yixun Lan <dlan@gentoo.org> wrote:
-> On 13:59 Mon 17 Mar     , Geert Uytterhoeven wrote:
-> > On Mon, 17 Mar 2025 at 13:41, Yixun Lan <dlan@gentoo.org> wrote:
-> > > On 09:18 Mon 17 Mar     , Geert Uytterhoeven wrote:
-> > > > Thanks for your patch, which is now commit 7ff4faba63571c51
-> > > > ("pinctrl: spacemit: enable config option") in v6.14-rc7.
-> > > >
-> > > > On Tue, 18 Feb 2025 at 01:32, Yixun Lan <dlan@gentoo.org> wrote:
-> > > > > Pinctrl is an essential driver for SpacemiT's SoC,
-> > > > > The uart driver requires it, same as sd card driver,
-> > > > > so let's enable it by default for this SoC.
-> > > > >
-> > > > > The CONFIG_PINCTRL_SPACEMIT_K1 isn't enabled when using
-> > > > > 'make defconfig' to select kernel configuration options.
-> > > > > This result in a broken uart driver where fail at probe()
-> > > > > stage due to no pins found.
-> > > >
-> > > > Perhaps this is an issue with the uart driver?
-> > > > I just disabled CONFIG_PINCTRL_RZA2 on RZA2MEVB (which is one of the
-> > > > few Renesas platforms where the pin control driver is not enabled by
-> > > > default, for saving memory), and the system booted fine into a Debian
-> > > > nfsroot.  Probe order of some devices did change, and "Trying to
-> > > > probe devices needed for running init" was printed.
-> > > >
-> > > my problem was CONFIG_PINCTRL_SPACEMIT_K1 isn't enabled, result as
-> > > # CONFIG_PINCTRL_SPACEMIT_K1 is not set
-> > >
-> > > for your case, is CONFIG_PINCTRL_RZA2 built as module?
-> > > it should work for uart driver with deferred probe mechanism..
-> >
-> > No, CONFIG_PINCTRL_RZA2 was disabled in my testing.
-> >
-> emm, this is interesting, there might be problem that uart driver
-> fail to have correct pin settings without pre initialization..
+>>> +		}
+>>>   		end_fsb = imap.br_startoff + imap.br_blockcount;
+>>>   		length = XFS_FSB_TO_B(mp, end_fsb) - offset;
+>>>   	}
+>>>   
+>>> -	if (imap_needs_alloc(inode, flags, &imap, nimaps))
+>>> +	needs_alloc = imap_needs_alloc(inode, flags, &imap, nimaps);
+>>> +
+>>> +	if (flags & IOMAP_ATOMIC) {
+>>> +		error = -EAGAIN;
+>>> +		/*
+>>> +		 * If we allocate less than what is required for the write
+>>> +		 * then we may end up with multiple mappings, which means that
+>>> +		 * REQ_ATOMIC-based cannot be used, so avoid this possibility.
+>>> +		 */
+>>> +		if (needs_alloc && orig_end_fsb - offset_fsb > 1)
+>>> +			goto out_unlock;
+>> 
+>> I have a quick question here. Based on above check it looks like
+>> allocation requests on a hole or the 1st time allocation (append writes)
+>> for a given logical range will always be done using CoW fallback
+>> mechanism, isn't it? 
 >
-> which uart driver is used in RZA2MEVB platform? any pinctrl dts property?
-> different hardware may vary..
+> Right, but...
+>
+>
+>> So that means HW based multi-fsblock atomic write
+>> request will only happen for over writes (non-discontigous extent),
+>> correct?
+>
+> For an unwritten pre-allocated extent, we can use the REQ_ATOMIC method.
+>
+> fallocate (without ZERO RANGE) would give a pre-allocated unwritten 
+> extent, and a write there would not technically be an overwrite.
+>
+>> 
+>> Now, it's not always necessary that if we try to allocate an extent for
+>> the given range, it results into discontiguous extents. e.g. say, if the
+>> entire range being written to is a hole or append writes, then it might
+>> just allocate a single unwritten extent which is valid for doing an
+>> atomic write using HW/BIOs right?
+>
+> Right
+>
+>> And it is valid to write using unwritten extent as long as we don't have
+>> mixed mappings i.e. the entire range should either be unwritten or
+>> written for the atomic write to be untorned, correct?
+>> 
+>
+> We can't write to discontiguous extents, and a mixed mapping would mean 
+> discontiguous extents.
+>
+> And, as mentioned earlier, it is ok to use REQ_ATOMIC method on an 
+> unwritten extent.
+>
+>> I am guessing this is kept intentional?
+>> 
+> Yes
 
-It indeed depends on both hardware and firmware.
-RZA2MEVB uses the sh-sci driver, and its serial console is set up
-by the boot loader.
+Thanks, John for addressing the queries. It would be helpful to include
+this information in the commit message as well then right? Otherwise
+IMO, the original commit message looks incomplete.
 
-Does your serial console work with "earlycon"?
+Maybe we can add this too?
+=========================
+This patch adds CoW based atomic write support which will be used as a
+SW fallback in following scenarios:
 
-Gr{oetje,eeting}s,
+- All append write scenarios.
+- Any new writes on the region containing holes.
+- Writes to any misaligned regions
+- Writes to discontiguous extents.
 
-                        Geert
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+<original commit msg snip>
+=========================
+In cases of an atomic write covering misaligned or discontiguous disk
+blocks, we will use a CoW-based method to issue the atomic write.
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-ritesh
 
