@@ -1,51 +1,52 @@
-Return-Path: <linux-kernel+bounces-563506-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563508-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 039E0A64329
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 08:17:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48ACBA64328
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 08:17:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04E963A8995
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 07:17:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6BA571889C75
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 07:17:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A348A21ADDB;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A326821ADD4;
 	Mon, 17 Mar 2025 07:16:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b2vF/o1R"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cwKLSESh"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9E1A4A35;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9ED078F59;
 	Mon, 17 Mar 2025 07:16:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742195815; cv=none; b=IQnYgNtUdBral6F3H1qluIskJzF5p8NbHUFBZ4zv4IdAuZkY+WTVMV2w++BgbuIX0QJD1cYKgmjvAFtpgKrFz0VspwU4/bBTlAQKVTU39rIySJbFZYF9nWos79EgNbVV/D1dwy59DU1h4rHLlJDz3LVox+CMO6IXXdh8o8ek56M=
+	t=1742195815; cv=none; b=bD+PCbViZQu9AM9wjx1rxnlstWfrxktWznZ65dPZFffCtCPOXoec0LsIoys18FmR52ynxm6CT9itH+YpGOPa5DGJ3umKlSMrPOOws5pGkJECdSPJRzA48qiNdpqJsIjTwUxi1QCq9BTjfFEiffAFQPu8KomcBhzmlM3i1Mn5XlY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1742195815; c=relaxed/simple;
-	bh=u4jkOfC/hxCuvSMEnh4rOp8tDLt8ar9dDX8YgUSaz5I=;
+	bh=oxoucKNcYzlokTUMj0RVOyzYN7CVa0nZcJ14gXbMUjQ=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=kmHmd+/AhrGlIveUG+JBmkYMhl83VOO4fk6Qx79zv2Q65eW9+VuHWLyMzy6C6t9rQZHeheThjPeMgc0PUTtgyCITMRYxQup8ie8seCnFX9ECo3TrmBMiDlpkOt2mMHIwtoZic0fmKizwzAgOKJTDyeGoitTgXAxLrgoFAec+zuo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b2vF/o1R; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 837BEC4CEF1;
+	 In-Reply-To:To:Cc; b=sZ7y+yrTjk8BbC0BmFl2rU3D4GhBZMiNoIQpfR93sOSNpbYRiSfMTc6LHzXlv2PA9ci+rOsjqB/I7z64ps8gnXSi6rnbpcOzIoKfWFdH+TexfgLdirqIjtDBMayGNOeB6C8Avtfm+qPP/P+v3E+XFAr8i6Mu2K9mrjiXrd4uF/0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cwKLSESh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 8E058C4CEF5;
 	Mon, 17 Mar 2025 07:16:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1742195814;
-	bh=u4jkOfC/hxCuvSMEnh4rOp8tDLt8ar9dDX8YgUSaz5I=;
+	bh=oxoucKNcYzlokTUMj0RVOyzYN7CVa0nZcJ14gXbMUjQ=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=b2vF/o1RqS8kgpUGUlEpWyQ7OiN3pW+tlL0hUmJoh0+zpFm1UETVXrfySKfs3dA/t
-	 fGsxmah7eOm2KU/+a0ekPxgO0UGKBkCVk1V46+Zp5q6gE/s4UFN4qBY/BiosS7UgAN
-	 hytJ0EqlBMphSDaYDYr7CSfbGANax0hKnGAeNEnVagH4L/3VeaH0Oz57BC0WKFlbdv
-	 G7dLP47L5Ph4O7OCFj4eCXclQHoGhicDOorr8zld5/JkfZHlBg5MJRFpqFynYqMmQ/
-	 FH6kW6vnwjsthU3koKJnoINt8/1dTYQT9s6UqzPWTaTrsVWElpaaDU4xsta5vuqiF8
-	 nohb5x8+SmkYQ==
+	b=cwKLSESh3mV4ir0uJW47nVWadAarSWPK/0+sHQ8lb7GazxW9bwSFR0IujDOmboaHy
+	 MDciwZQ64UrI98ObW78jIBEqf3JDJsrwkrpYR50WIgKkRw4hguv+v2em9QD7jdhQGA
+	 +SzdqOWy2Dzk054JZ3dZPiCllQ48Zvzs4LQBk3+41Kdo/GZH1ixby3+mKUnXzNvajT
+	 IYkjoRljboobMOvimGdgjC848p5RlCwzlvZI5NyKNGBXFb0D8qFxeq0uwj7S3rgpyy
+	 MPZktxMiyPRJ3aGwfEQBVNnKfgoNyjHS+VnsfMLYzHmGggdbfI+TaGB9/AvqP/4cqi
+	 h9/dRA3qdlmog==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C26BC35FF9;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E38DC35FFA;
 	Mon, 17 Mar 2025 07:16:54 +0000 (UTC)
 From: Xianwei Zhao via B4 Relay <devnull+xianwei.zhao.amlogic.com@kernel.org>
-Date: Mon, 17 Mar 2025 15:16:54 +0800
-Subject: [PATCH 3/7] dt-bindings: arm: amlogic: add S7D support
+Date: Mon, 17 Mar 2025 15:16:55 +0800
+Subject: [PATCH 4/7] dt-bindings: serial: amlogic,meson-uart: Add
+ compatible string for S6/S7/S7D
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,7 +55,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250317-s6-s7-basic-v1-3-d653384e41f3@amlogic.com>
+Message-Id: <20250317-s6-s7-basic-v1-4-d653384e41f3@amlogic.com>
 References: <20250317-s6-s7-basic-v1-0-d653384e41f3@amlogic.com>
 In-Reply-To: <20250317-s6-s7-basic-v1-0-d653384e41f3@amlogic.com>
 To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
@@ -68,11 +69,11 @@ Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
  linux-amlogic@lists.infradead.org, Xianwei Zhao <xianwei.zhao@amlogic.com>
 X-Mailer: b4 0.12.4
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1742195812; l=1003;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1742195812; l=995;
  i=xianwei.zhao@amlogic.com; s=20231208; h=from:subject:message-id;
- bh=pjx9R4pQY/G2qimVqYxYvsz5cP8LfLzhAKQdoOstkBg=;
- b=pSlkqVmPSwOyI8NpIjVdzmM0dF7bSEPgnLscuEFlUkDSM3oqLF996v5JXdwA2Dzp7BCGd74C5
- FwUzPNVY4OlCN/I/JnTZue47di5tx9sjO7N8/SId5Hu1POtgPNJrtQm
+ bh=8tWndSz2wgG4AKPpBkmzvXgp+1cbCi/8NB7D0Mgsh2s=;
+ b=oGCmPQDQlNKAJdrYHGunPq9vAAqeWtaF/57Ac1nzwBMiRecNx7K5knkP/r7VuG6g1CavemmhE
+ s6r9Mv9O4g6CvZVdRwyi7GI4Y+Y8Th7g2vtT8rIXbQA5R59TNBzWjGM
 X-Developer-Key: i=xianwei.zhao@amlogic.com; a=ed25519;
  pk=o4fDH8ZXL6xQg5h17eNzRljf6pwZHWWjqcOSsj3dW24=
 X-Endpoint-Received: by B4 Relay for xianwei.zhao@amlogic.com/20231208 with
@@ -82,33 +83,29 @@ Reply-To: xianwei.zhao@amlogic.com
 
 From: Xianwei Zhao <xianwei.zhao@amlogic.com>
 
-Document the new S7D SoC/board device tree bindings.
-
-Amlogic S7D is an advanced application processor designed for
-hybrid OTT/IP Set Top Box and high-end media box applications.
+Amlogic S6/S7/7D SoCs uses the same UART controller as S4 SoCs and G12A.
+There is no need for an extra compatible line in the driver, but
+add S6/S7/S7D compatible line for documentation.
 
 Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
 ---
- Documentation/devicetree/bindings/arm/amlogic.yaml | 6 ++++++
- 1 file changed, 6 insertions(+)
+ Documentation/devicetree/bindings/serial/amlogic,meson-uart.yaml | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/arm/amlogic.yaml b/Documentation/devicetree/bindings/arm/amlogic.yaml
-index 9a6e98b55685..0c84c56855ba 100644
---- a/Documentation/devicetree/bindings/arm/amlogic.yaml
-+++ b/Documentation/devicetree/bindings/arm/amlogic.yaml
-@@ -249,6 +249,12 @@ properties:
-               - amlogic,bp201
-           - const: amlogic,s7
- 
-+      - description: Boards with the Amlogic S7D S905X5M SoC
-+        items:
-+          - enum:
-+              - amlogic,bm202
-+          - const: amlogic,s7d
-+
-       - description: Boards with the Amlogic T7 A311D2 SoC
+diff --git a/Documentation/devicetree/bindings/serial/amlogic,meson-uart.yaml b/Documentation/devicetree/bindings/serial/amlogic,meson-uart.yaml
+index 0565fb7649c5..d8ad1bb6172d 100644
+--- a/Documentation/devicetree/bindings/serial/amlogic,meson-uart.yaml
++++ b/Documentation/devicetree/bindings/serial/amlogic,meson-uart.yaml
+@@ -56,6 +56,9 @@ properties:
          items:
            - enum:
+               - amlogic,a4-uart
++              - amlogic,s6-uart
++              - amlogic,s7-uart
++              - amlogic,s7d-uart
+               - amlogic,t7-uart
+           - const: amlogic,meson-s4-uart
+ 
 
 -- 
 2.37.1
