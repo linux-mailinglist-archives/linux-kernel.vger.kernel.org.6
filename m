@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-565019-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565020-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64701A65F45
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 21:37:52 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 407ECA65F47
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 21:37:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 22B857A39C5
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 20:36:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 978A517BF4D
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 20:37:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19F901F583D;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E91DA1F8726;
 	Mon, 17 Mar 2025 20:37:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KSsYA7uR"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fNK+qsZM"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E7A7146588;
-	Mon, 17 Mar 2025 20:37:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4369E1F5842;
+	Mon, 17 Mar 2025 20:37:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742243862; cv=none; b=iRU29ccZlGQBx9SavJSdjTNi3/2oKgU+3j+DcM8jiq4akaTs1sQD80x5Npldi1J+x36okN1aMQIHDgL8NXbDLA1Rkxf7d2pQHM5U+VsyZlVJc3KXWFxGjssiNsAkvYLWuVv8weq/DvabMygk87Q2DIin3MwmegaCYofqmFSQMkE=
+	t=1742243863; cv=none; b=i8poimgl1Tksj3HDwxnYY4QD1wQ5UrnybmprnNQiWi33divYfhpbcw8slFc3KWqxLYO59rmRLgiHQzfyOQcbXq6jaoJEdJzXxIMZTDE4XkfyURJU1q7O1BxnkOHNYvr+rQaAlMxVBilumGWXf5qqg8SkXi99zbX4yk3s5h8trqk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742243862; c=relaxed/simple;
-	bh=aXqJ/pis7CyCbe3dFyicCUqHQk/5npXUAYLRJ48VhpE=;
+	s=arc-20240116; t=1742243863; c=relaxed/simple;
+	bh=EAH6DiCttghSq5ONxKx1j8unsQnFPM5gcsSzH37iVwk=;
 	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=pPajdnr+xJ3jcRti9glZpnL8tdkGL9iIwDdymDYlRTSnOGBZXkcE79Oomnv2A+81A34aixweuvv9SKzvrC5N2Oi9a/aArmwtTgs5tSSkNG3sgHcEeEBYXKCFmCpX6fjhlITtCa6WvgM4yzseX+ZZ3+JOU356D9EfP6sKXhT/Gf8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KSsYA7uR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C76EC4CEE3;
-	Mon, 17 Mar 2025 20:37:41 +0000 (UTC)
+	 Message-Id:Subject; b=lJUXlL9RDnzpqhvqlCNplMGechZ0lznj3qiRt+MKLLvLGhpywBO9jCwtYo6krGFa3VGaIvnYIa3fjdDHKejhHrelz880dX5OrMCGxPFWy15xjNiDHFhYhIt+aEeG3KCJO98pVp88goY+kqxmv73XvgUWA/rGn7uM47SgNEUwv7M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fNK+qsZM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2036C4CEF3;
+	Mon, 17 Mar 2025 20:37:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742243861;
-	bh=aXqJ/pis7CyCbe3dFyicCUqHQk/5npXUAYLRJ48VhpE=;
+	s=k20201202; t=1742243863;
+	bh=EAH6DiCttghSq5ONxKx1j8unsQnFPM5gcsSzH37iVwk=;
 	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=KSsYA7uRKzdXFAuqhX9P2fst3OX9TeQJZuRqxJs8GCrvLsscBDx0fyNv442eDOllN
-	 OeWYytyu+bCTnvlepAy1LCAmvr8GgtVi0q9jmExNhfbKTCRd8QYVc5jmXXnNjL2Z2T
-	 BZZmMef9h8bkdDRoZ2wq2l3O9gFadyLhL1KENsuu2nCLLMId7SePuV2vrDPpbXGMUb
-	 P8b6F1EqXCadq4Yh/mCfvL66jNBg2iYKbCMGDWJmMyeihlW61o+6IHc0DHhVMKz+iL
-	 88NTWhuKGqkRDaTSW4XI1pbYyp7DBbvXkZeyVGA64CkiYJrOeeZXKJHqhL/xsZJYbB
-	 um2Ww+xGXac6w==
-Date: Mon, 17 Mar 2025 15:37:40 -0500
+	b=fNK+qsZMETCsE4vmpMKLZl6mMxKbZdsm1Ao1mDGWMjmPYCVkQXEsVH09rfa1QEZCx
+	 TXKDmiRQLmQufOImGnEtGDP7Mulf2Rnm4WsbooLztBQdCpHtNPwc1Q6NB9RxZ47fO3
+	 ZwojOst6zp4Gj5Y2HczDnx1KkC6PVg+0nHIfHM/NG2IpNJkBkIwIpiydFBaU/kJhDd
+	 5+23T/UpyHw9HRtOO5TqmfrL+7fCf+AsMgNpYaYQXQ3lgiHRWuaTjQPH1gK2reI7aJ
+	 V0/tCr4gKU5y88UahVcaADEzP8z9wXgLlkpquCy/p2G3ck6oMT8ePuUc21Fl717hWQ
+	 7SDdACX9nDedQ==
+Date: Mon, 17 Mar 2025 15:37:41 -0500
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -50,59 +50,69 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: daniel.baluta@gmail.com, shengjiu.wang@nxp.com, 
- linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- shawnguo@kernel.org, mathieu.poirier@linaro.org, festevam@gmail.com, 
- aisheng.dong@nxp.com, krzk+dt@kernel.org, s.hauer@pengutronix.de, 
- a.fatoum@pengutronix.de, frank.li@nxp.com, conor+dt@kernel.org, 
- kernel@pengutronix.de, iuliana.prodan@nxp.com, imx@lists.linux.dev, 
- laurentiu.mihalcea@nxp.com
-To: Daniel Baluta <daniel.baluta@nxp.com>
-In-Reply-To: <20250317133306.2003909-1-daniel.baluta@nxp.com>
-References: <20250317133306.2003909-1-daniel.baluta@nxp.com>
-Message-Id: <174224352689.683565.9145622703259276578.robh@kernel.org>
-Subject: Re: [PATCH v5 0/5] Configure imx8mp dsp node for rproc usage
+Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+ Lee Jones <lee@kernel.org>, Maxime Ripard <mripard@kernel.org>, 
+ Marijn Suijten <marijn.suijten@somainline.org>, 
+ Bjorn Andersson <andersson@kernel.org>, freedreno@lists.freedesktop.org, 
+ Kumar Gala <galak@codeaurora.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, 
+ Abhinav Kumar <quic_abhinavk@quicinc.com>, Simona Vetter <simona@ffwll.ch>, 
+ Sean Paul <sean@poorly.run>, "Ivan T. Ivanov" <ivan.ivanov@linaro.org>, 
+ David Heidelberg <david@ixit.cz>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
+ James Clark <james.clark@linaro.org>, David Airlie <airlied@gmail.com>, 
+ Georgi Djakov <djakov@kernel.org>, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, coresight@lists.linaro.org, 
+ linux-arm-msm@vger.kernel.org, Rob Clark <robdclark@gmail.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, 
+ Mathieu Poirier <mathieu.poirier@linaro.org>, 
+ Andy Gross <andy.gross@linaro.org>, Mike Leach <mike.leach@linaro.org>, 
+ linux-arm-kernel@lists.infradead.org, Conor Dooley <conor+dt@kernel.org>, 
+ Andy Gross <agross@codeaurora.org>, Leo Yan <leo.yan@linux.dev>, 
+ dri-devel@lists.freedesktop.org, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+In-Reply-To: <20250317-fix-nexus-4-v1-0-655c52e2ad97@oss.qualcomm.com>
+References: <20250317-fix-nexus-4-v1-0-655c52e2ad97@oss.qualcomm.com>
+Message-Id: <174224352766.683604.12560729798577306237.robh@kernel.org>
+Subject: Re: [PATCH 0/9] ARM: qcom: fix APQ8064 schema warnings
 
 
-On Mon, 17 Mar 2025 15:33:01 +0200, Daniel Baluta wrote:
-> DSP found in i.MX8MP SOC can be used by multiple frameworks in order to
-> enable various applications:
->         - rproc/rpmsg framework, used to load for example Zephyr samples
->         - Sound Open Firmware, used to enable various audio processing
->           pipelines.
+On Mon, 17 Mar 2025 19:44:35 +0200, Dmitry Baryshkov wrote:
+> Rob's bot has reported [1] several warnings for Nexus 4 submisson,
+> however none of those warnings are specific to that device. Fix all
+> those warnings for all APQ8064 platforms by extending existing schemas,
+> adding missing schemas and making APQ8064 DT follow all the schema
+> files.
 > 
-> Current dsp node was configured with SOF in mind but it doesn't work
-> well with imx8mp-evk dts. SOF controls audio IPs from firmware side
-> while imx8mp-evk.dts preffers to control audio IPs from Linux side.
+> [1]: https://lore.kernel.org/linux-arm-msm/174221818190.3957236.3364090534153729086.robh@kernel.org/
 > 
-> So, configure 'dsp' node to be used with rproc scenario and later will
-> add a separate dts or an overlay to configure the node for SOF.
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+> ---
+> Dmitry Baryshkov (9):
+>       dt-bindings: soc: qcom,rpm: add missing clock-controller node
+>       dt-bindings: display/msm: describe SFPB device
+>       dt-bindings: soc: qcom: add Smart Peripheral System Interrupt Controller
+>       dt-bindings: arm: qcom,coresight-static-replicator: add optional clocks
+>       ARM: dts: qcom-apq8064: add missing clocks to the timer node
+>       ARM: dts: qcom: apq8064 merge hw splinlock into corresponding syscon device
+>       ARM: dts: qcom: apq8064: use new compatible for SFPB device
+>       ARM: dts: qcom: apq8064: use new compatible for SPS SIC device
+>       ARM: dts: qcom: apq8064: move replicator out of soc node
 > 
-> This patch series configures and enables dsp node to be used with rproc.
+>  .../arm/arm,coresight-static-replicator.yaml       | 10 +++
+>  .../devicetree/bindings/display/msm/qcom,sfpb.yaml | 39 ++++++++++
+>  .../devicetree/bindings/soc/qcom/qcom,rpm.yaml     |  8 ++
+>  .../devicetree/bindings/soc/qcom/qcom,sps-sic.yaml | 38 ++++++++++
+>  arch/arm/boot/dts/qcom/qcom-apq8064.dtsi           | 85 +++++++++++-----------
+>  5 files changed, 136 insertions(+), 44 deletions(-)
+> ---
+> base-commit: 2bb3cf7805af73af62ebfcbb55e350549b6a0912
+> change-id: 20250317-fix-nexus-4-dd0fe3bca987
 > 
-> Changes since v4:
-> (https://lore.kernel.org/linux-arm-kernel/Z6zGLn3B6SVXhTV1@lizhi-Precision-Tower-5810/T/)
-> 	- after comments received on v4, we implemented the run/stall
-> 	  bits using reset controller API (changes merged ->
-> https://patchwork.kernel.org/project/linux-arm-kernel/cover/20250311085812.1296243-1-daniel.baluta@nxp.com/)
->         - drop patches related to DSP run/stall/reset via syscon
-> 	- picked up patch related to using run_stall via reset
-> 	  controller API.
-> 
-> Daniel Baluta (5):
->   arm64: dts: imx8mp: Use resets property
->   arm64: dts: imx8mp: Add mu2 root clock
->   arm64: dts: imx8mp: Configure dsp node for rproc usage
->   arm64: dts: imx8mp: Add DSP clocks
->   arm64: dts: Add dsp rproc related mem regions
-> 
->  arch/arm64/boot/dts/freescale/imx8mp-evk.dts | 10 +++++++++
->  arch/arm64/boot/dts/freescale/imx8mp.dtsi    | 22 +++++++++++++-------
->  2 files changed, 25 insertions(+), 7 deletions(-)
-> 
+> Best regards,
 > --
-> 2.43.0
+> Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 > 
 > 
 > 
@@ -122,96 +132,16 @@ make sure dt-schema is up to date:
   pip3 install dtschema --upgrade
 
 
-New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/freescale/' for 20250317133306.2003909-1-daniel.baluta@nxp.com:
+New warnings running 'make CHECK_DTBS=y for arch/arm/boot/dts/qcom/' for 20250317-fix-nexus-4-v1-0-655c52e2ad97@oss.qualcomm.com:
 
-arch/arm64/boot/dts/freescale/imx8mp-aristainetos3-proton2s.dtb: dsp@3b6e8000: memory-region: [[142]] is too short
-	from schema $id: http://devicetree.org/schemas/dsp/fsl,dsp.yaml#
-arch/arm64/boot/dts/freescale/imx8mp-var-som-symphony.dtb: dsp@3b6e8000: memory-region: [[105]] is too short
-	from schema $id: http://devicetree.org/schemas/dsp/fsl,dsp.yaml#
-arch/arm64/boot/dts/freescale/imx8mp-dhcom-pdk3.dtb: dsp@3b6e8000: memory-region: [[156]] is too short
-	from schema $id: http://devicetree.org/schemas/dsp/fsl,dsp.yaml#
-arch/arm64/boot/dts/freescale/imx8mp-venice-gw72xx-2x.dtb: dsp@3b6e8000: memory-region: [[127]] is too short
-	from schema $id: http://devicetree.org/schemas/dsp/fsl,dsp.yaml#
-arch/arm64/boot/dts/freescale/imx8mp-verdin-nonwifi-dahlia.dtb: dsp@3b6e8000: memory-region: [[164]] is too short
-	from schema $id: http://devicetree.org/schemas/dsp/fsl,dsp.yaml#
-arch/arm64/boot/dts/freescale/imx8mp-icore-mx8mp-edimm2.2.dtb: dsp@3b6e8000: memory-region: [[102]] is too short
-	from schema $id: http://devicetree.org/schemas/dsp/fsl,dsp.yaml#
-arch/arm64/boot/dts/freescale/imx8mp-venice-gw73xx-2x.dtb: dsp@3b6e8000: memory-region: [[129]] is too short
-	from schema $id: http://devicetree.org/schemas/dsp/fsl,dsp.yaml#
-arch/arm64/boot/dts/freescale/imx8mp-skov-revb-lt6.dtb: dsp@3b6e8000: memory-region: [[132]] is too short
-	from schema $id: http://devicetree.org/schemas/dsp/fsl,dsp.yaml#
-arch/arm64/boot/dts/freescale/imx8mp-debix-som-a-bmb-08.dtb: dsp@3b6e8000: memory-region: [[118]] is too short
-	from schema $id: http://devicetree.org/schemas/dsp/fsl,dsp.yaml#
-arch/arm64/boot/dts/freescale/imx8mp-verdin-wifi-dev.dtb: dsp@3b6e8000: memory-region: [[165]] is too short
-	from schema $id: http://devicetree.org/schemas/dsp/fsl,dsp.yaml#
-arch/arm64/boot/dts/freescale/imx8mp-nitrogen-smarc-universal-board.dtb: dsp@3b6e8000: memory-region: [[105]] is too short
-	from schema $id: http://devicetree.org/schemas/dsp/fsl,dsp.yaml#
-arch/arm64/boot/dts/freescale/imx8mp-msc-sm2s-ep1.dtb: dsp@3b6e8000: memory-region: [[140]] is too short
-	from schema $id: http://devicetree.org/schemas/dsp/fsl,dsp.yaml#
-arch/arm64/boot/dts/freescale/imx8mp-aristainetos3-adpismarc.dtb: dsp@3b6e8000: memory-region: [[142]] is too short
-	from schema $id: http://devicetree.org/schemas/dsp/fsl,dsp.yaml#
-arch/arm64/boot/dts/freescale/imx8mp-verdin-wifi-ivy.dtb: dsp@3b6e8000: memory-region: [[162]] is too short
-	from schema $id: http://devicetree.org/schemas/dsp/fsl,dsp.yaml#
-arch/arm64/boot/dts/freescale/imx8mp-venice-gw71xx-2x.dtb: dsp@3b6e8000: memory-region: [[120]] is too short
-	from schema $id: http://devicetree.org/schemas/dsp/fsl,dsp.yaml#
-arch/arm64/boot/dts/freescale/imx8mp-verdin-wifi-yavia.dtb: dsp@3b6e8000: memory-region: [[163]] is too short
-	from schema $id: http://devicetree.org/schemas/dsp/fsl,dsp.yaml#
-arch/arm64/boot/dts/freescale/imx8mp-kontron-smarc-eval-carrier.dtb: dsp@3b6e8000: memory-region: [[155]] is too short
-	from schema $id: http://devicetree.org/schemas/dsp/fsl,dsp.yaml#
-arch/arm64/boot/dts/freescale/imx8mp-verdin-wifi-mallow.dtb: dsp@3b6e8000: memory-region: [[164]] is too short
-	from schema $id: http://devicetree.org/schemas/dsp/fsl,dsp.yaml#
-arch/arm64/boot/dts/freescale/imx8mp-debix-model-a.dtb: dsp@3b6e8000: memory-region: [[119]] is too short
-	from schema $id: http://devicetree.org/schemas/dsp/fsl,dsp.yaml#
-arch/arm64/boot/dts/freescale/imx8mp-verdin-nonwifi-yavia.dtb: dsp@3b6e8000: memory-region: [[158]] is too short
-	from schema $id: http://devicetree.org/schemas/dsp/fsl,dsp.yaml#
-arch/arm64/boot/dts/freescale/imx8mp-skov-revb-mi1010ait-1cp1.dtb: dsp@3b6e8000: memory-region: [[131]] is too short
-	from schema $id: http://devicetree.org/schemas/dsp/fsl,dsp.yaml#
-arch/arm64/boot/dts/freescale/imx8mp-navqp.dtb: dsp@3b6e8000: memory-region: [[111]] is too short
-	from schema $id: http://devicetree.org/schemas/dsp/fsl,dsp.yaml#
-arch/arm64/boot/dts/freescale/imx8mp-skov-revb-hdmi.dtb: dsp@3b6e8000: memory-region: [[134]] is too short
-	from schema $id: http://devicetree.org/schemas/dsp/fsl,dsp.yaml#
-arch/arm64/boot/dts/freescale/imx8mp-phyboard-pollux-rdk.dtb: dsp@3b6e8000: memory-region: [[130]] is too short
-	from schema $id: http://devicetree.org/schemas/dsp/fsl,dsp.yaml#
-arch/arm64/boot/dts/freescale/imx8mp-dhcom-pdk2.dtb: dsp@3b6e8000: memory-region: [[152]] is too short
-	from schema $id: http://devicetree.org/schemas/dsp/fsl,dsp.yaml#
-arch/arm64/boot/dts/freescale/imx8mp-skov-revc-bd500.dtb: dsp@3b6e8000: memory-region: [[130]] is too short
-	from schema $id: http://devicetree.org/schemas/dsp/fsl,dsp.yaml#
-arch/arm64/boot/dts/freescale/imx8mp-beacon-kit.dtb: dsp@3b6e8000: memory-region: [[148]] is too short
-	from schema $id: http://devicetree.org/schemas/dsp/fsl,dsp.yaml#
-arch/arm64/boot/dts/freescale/imx8mp-venice-gw74xx.dtb: dsp@3b6e8000: memory-region: [[136]] is too short
-	from schema $id: http://devicetree.org/schemas/dsp/fsl,dsp.yaml#
-arch/arm64/boot/dts/freescale/imx8mp-aristainetos3-helios.dtb: dsp@3b6e8000: memory-region: [[142]] is too short
-	from schema $id: http://devicetree.org/schemas/dsp/fsl,dsp.yaml#
-arch/arm64/boot/dts/freescale/imx8mp-verdin-wifi-dahlia.dtb: dsp@3b6e8000: memory-region: [[169]] is too short
-	from schema $id: http://devicetree.org/schemas/dsp/fsl,dsp.yaml#
-arch/arm64/boot/dts/freescale/imx8mp-tqma8mpql-mba8mp-ras314.dtb: dsp@3b6e8000: memory-region: [[156]] is too short
-	from schema $id: http://devicetree.org/schemas/dsp/fsl,dsp.yaml#
-arch/arm64/boot/dts/freescale/imx8mp-dhcom-drc02.dtb: dsp@3b6e8000: memory-region: [[160]] is too short
-	from schema $id: http://devicetree.org/schemas/dsp/fsl,dsp.yaml#
-arch/arm64/boot/dts/freescale/imx8mp-verdin-nonwifi-ivy.dtb: dsp@3b6e8000: memory-region: [[157]] is too short
-	from schema $id: http://devicetree.org/schemas/dsp/fsl,dsp.yaml#
-arch/arm64/boot/dts/freescale/imx8mp-verdin-nonwifi-mallow.dtb: dsp@3b6e8000: memory-region: [[159]] is too short
-	from schema $id: http://devicetree.org/schemas/dsp/fsl,dsp.yaml#
-arch/arm64/boot/dts/freescale/imx8mp-tqma8mpql-mba8mpxl.dtb: dsp@3b6e8000: memory-region: [[153]] is too short
-	from schema $id: http://devicetree.org/schemas/dsp/fsl,dsp.yaml#
-arch/arm64/boot/dts/freescale/imx8mp-kontron-bl-osm-s.dtb: dsp@3b6e8000: memory-region: [[150]] is too short
-	from schema $id: http://devicetree.org/schemas/dsp/fsl,dsp.yaml#
-arch/arm64/boot/dts/freescale/imx8mp-venice-gw82xx-2x.dtb: dsp@3b6e8000: memory-region: [[132]] is too short
-	from schema $id: http://devicetree.org/schemas/dsp/fsl,dsp.yaml#
-arch/arm64/boot/dts/freescale/imx8mp-venice-gw75xx-2x.dtb: dsp@3b6e8000: memory-region: [[123]] is too short
-	from schema $id: http://devicetree.org/schemas/dsp/fsl,dsp.yaml#
-arch/arm64/boot/dts/freescale/imx8mp-data-modul-edm-sbc.dtb: dsp@3b6e8000: memory-region: [[144]] is too short
-	from schema $id: http://devicetree.org/schemas/dsp/fsl,dsp.yaml#
-arch/arm64/boot/dts/freescale/imx8mp-verdin-nonwifi-dev.dtb: dsp@3b6e8000: memory-region: [[160]] is too short
-	from schema $id: http://devicetree.org/schemas/dsp/fsl,dsp.yaml#
-arch/arm64/boot/dts/freescale/imx8mp-skov-revc-tian-g07017.dtb: dsp@3b6e8000: memory-region: [[131]] is too short
-	from schema $id: http://devicetree.org/schemas/dsp/fsl,dsp.yaml#
-arch/arm64/boot/dts/freescale/imx8mp-iota2-lumpy.dtb: dsp@3b6e8000: memory-region: [[107]] is too short
-	from schema $id: http://devicetree.org/schemas/dsp/fsl,dsp.yaml#
-arch/arm64/boot/dts/freescale/imx8mp-dhcom-picoitx.dtb: dsp@3b6e8000: memory-region: [[158]] is too short
-	from schema $id: http://devicetree.org/schemas/dsp/fsl,dsp.yaml#
-arch/arm64/boot/dts/freescale/imx8mp-skov-basic.dtb: dsp@3b6e8000: memory-region: [[129]] is too short
-	from schema $id: http://devicetree.org/schemas/dsp/fsl,dsp.yaml#
+arch/arm/boot/dts/qcom/qcom-ipq8064-ap148.dtb: rpm@108000: 'clock-names', 'clocks' do not match any of the regexes: '^regulators(-[01])?$', 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/soc/qcom/qcom,rpm.yaml#
+arch/arm/boot/dts/qcom/qcom-ipq8064-rb3011.dtb: rpm@108000: 'clock-names', 'clocks' do not match any of the regexes: '^regulators(-[01])?$', 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/soc/qcom/qcom,rpm.yaml#
+arch/arm/boot/dts/qcom/qcom-apq8060-dragonboard.dtb: rpm@104000: 'clock-names', 'clocks' do not match any of the regexes: '^regulators(-[01])?$', 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/soc/qcom/qcom,rpm.yaml#
+arch/arm/boot/dts/qcom/qcom-msm8660-surf.dtb: rpm@104000: 'clock-names', 'clocks' do not match any of the regexes: '^regulators(-[01])?$', 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/soc/qcom/qcom,rpm.yaml#
 
 
 
