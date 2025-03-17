@@ -1,183 +1,153 @@
-Return-Path: <linux-kernel+bounces-563201-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563202-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6DB9A638BD
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 01:26:53 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60E7CA638E0
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 01:33:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C214B188DF5F
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 00:27:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 91B0016B146
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 00:33:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1B73C2E0;
-	Mon, 17 Mar 2025 00:26:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7F2FEEBD;
+	Mon, 17 Mar 2025 00:32:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dFEcVQ91"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="kHfMTX99"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F312B8F5C
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 00:26:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFA2F28E8;
+	Mon, 17 Mar 2025 00:32:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742171208; cv=none; b=ayxuoDyOKwP8o3MWcoa03linp2aswrYeWGHYsSGmNo7HLvNjP6eXmIPpR04bNKoodgUL/X0dM3lAk8in/BF1dWT1r/g41KY6co3FaOK4ARu5TIR1Uosxz07Q48+zN7HfFap7jbw9Wc0e/0VwRwRPdDPakk6G0w5lwTHX5R1hhMM=
+	t=1742171574; cv=none; b=ugW+ES0KmivyQ/y3UPLRT1hhw54lhsV2CwwskEQ04MIDQJpVCB06mFVq1qMazrPU9iHStYqAIlbZfOyHH8ywolVEmx4I66NzqxuX3H468r7U/AVIknURGv6bSz7gCuQGHP1tbAttLmKjBT33lcphSd4gm1SBG8/kIhsRv5GEqqY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742171208; c=relaxed/simple;
-	bh=/iLZeVGBseZg0Sgr9HpZSDE2yUmIBm3BJof2CSAxgo0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tbaYlytxh5H0qIq/UgckqzXSpQI6eEOmr1JH0xGDu+S+uLI6r7lXaKfjfYpdWPglsQXPXYzMOi26UeA0pEO5lWsPznYroulVnZN4Gur7NA/xJhhMFWEwndlmzksdFuo+a7Tsf4O8D5rs6zD+AFxtwSvv38hD2Wj35ikA5YhMhKo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dFEcVQ91; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1742171204;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YOcZgp8/tuVHGKfNlaTwfXI0xbH/R796rVlRuF7Xhjw=;
-	b=dFEcVQ91Zv+TGqX0KmglBOCBoEzNjVjYh1kSZUSyez7Pn2od7gRxXEpigYHpRMzZ5xmEkY
-	H0N9F5CHyv4bVV8WB6Ie0Ef4MoB5Bg+AdV3P1G1mq/5xP8Nct7J2muv7U6e2YEkYvxGSPO
-	JwbuQV38c8DZwZsjOzbrnhlRTufdJoA=
-Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com
- [209.85.216.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-614-MXNcYBdBPUuL4VyCf55BLQ-1; Sun, 16 Mar 2025 20:26:43 -0400
-X-MC-Unique: MXNcYBdBPUuL4VyCf55BLQ-1
-X-Mimecast-MFC-AGG-ID: MXNcYBdBPUuL4VyCf55BLQ_1742171202
-Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-2ff55176edcso1817859a91.1
-        for <linux-kernel@vger.kernel.org>; Sun, 16 Mar 2025 17:26:43 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742171202; x=1742776002;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YOcZgp8/tuVHGKfNlaTwfXI0xbH/R796rVlRuF7Xhjw=;
-        b=lpxXJlR4+pPJbZErrGCn0qY+qpzANJZ2L/h+nDnBD2l7a1Mif36anvLdaiUv69kDvn
-         C8Y3WFiNRRmV37cOlJquo/QB4u7P4KsKGU/eUIPFS5uElqFqHgSC6+coO6f1JljLRuAu
-         99IJQythQfH+9l5tDvRwdErLUo0qienaRDgnuBoTxz6Zsg5Pr1URcmW3tsrk3kE37FOE
-         VNkENixAwEWX+a21G7dnOu6/sEmzc5qLW5ucUDpIvqtkEHA0yTigFEWf6Uj5PqofGwcA
-         rO403lum464nvMNc8TxD9myhvU81pJulZ48yPmiN+ubtKCgKzBi/S4afr9P/BGtZENaJ
-         0qwg==
-X-Forwarded-Encrypted: i=1; AJvYcCXaJHlhZNXoxttYXrazNKJM7hmbYzDN6Qrv3rRwd78s0Zf0EvIdHdxLepwbzX5H1pFyDtJ2XI8zvIbOo2I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyIEQoPomNu8Q96+jMEPTIDgd17YvXF9Je4Hc2PgmfkQGfJzIMQ
-	3QNDkQIKgf7ElidMPMl2Rcxjs0tozXG4pMCT3ycN5awHHe1vnNzxiwj8ewnCTcFKBvJbwXQ2O04
-	tvkUBzh4rPM5rji5AxwICx5AwbxF3q0vUo3StirlxHmUa6PP7CFIaJt7N1DR0k5HC9j4jKEKjNA
-	2mWogH2tt7ZRA4EY1c9msSTwxYNFHRnmxh1dCA
-X-Gm-Gg: ASbGncvpZu4EoEr23DYarfxDoX0eeENDNXjbH37QgrHtpJiqbVmsQLZJkxzDXjxEeKd
-	QctkJmxhqSnyJ69RdvLjtR1/CCEc951j8MVqVHMdgjLdMLIOaGLQyXHU7QaUc47FzuJyfF0gOBA
-	==
-X-Received: by 2002:a05:6a20:2589:b0:1f5:8748:76cc with SMTP id adf61e73a8af0-1f5c12ec885mr12690831637.31.1742171202482;
-        Sun, 16 Mar 2025 17:26:42 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGcug+Yyw+eml79Skzv3IE+Mls90QaEVal9tNp24iyB07+1Eu0UE4llVFclpQ1PL56l8PLPNU3dXcmt9R6xQ9M=
-X-Received: by 2002:a05:6a20:2589:b0:1f5:8748:76cc with SMTP id
- adf61e73a8af0-1f5c12ec885mr12690809637.31.1742171202079; Sun, 16 Mar 2025
- 17:26:42 -0700 (PDT)
+	s=arc-20240116; t=1742171574; c=relaxed/simple;
+	bh=QQDMyVh4kQpQFqsjt8N5eOvDUFTlUT+SPE80T3yTzmg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QAAmsUCKzenO4Mxp26S3f4cVvHPklQqmVJFgr19WXHfN3ZBuebCt/IX7hiGzI6q6Dhzn8V+aPhgW9fnwZDLVNp7dd1VD1LeRSZ5LE68CfICYuHXeHdn+wXF16g28S3FO+PSMVuRQclPUkJ8U7E95wLpu+4zP2rnlojmNzI0e26E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=kHfMTX99; arc=none smtp.client-ip=212.227.15.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1742171556; x=1742776356; i=w_armin@gmx.de;
+	bh=kZV/eTa1oGW7T91zcA0XwhxZyzT/0rIgzmxiw5LjRqI=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=kHfMTX991Dj87Rdj6+K0YUo0fw37rHxt3w3xpgHWm1G0rWduaAh6gRWk8Rb7a6WV
+	 NXKJHtiDIDZWdvJSaY2OjhBT0aRrmbik/lQ9k4cxmiaHVBpkbohNk0Agn3wCfbPzC
+	 R1M+lSAexIX39U8VkRYEhBWRvMI3/lftmwnYhUDZhd7MBTwmqQ6Zfym3IMWmxVAQ2
+	 WyrJUOuliLQY4GmdWTsSzQmHQuuLRgjrkTTLdTR0QHrTPkEOEfngUcB3gnH5D/cY+
+	 pxduFpPFHyLccx+Ly5bJOf/56KYBzJ6qbCGymf4w7QJG+kgAYnlLmIbRJrSOLYYDQ
+	 WW4ked8BepdydzugFA==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.0.69] ([87.177.78.219]) by mail.gmx.net (mrgmx005
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1MIdeR-1twyXZ1mIX-00B28U; Mon, 17
+ Mar 2025 01:32:36 +0100
+Message-ID: <4d3e34c8-d7b4-4bec-9276-17a1fa473f19@gmx.de>
+Date: Mon, 17 Mar 2025 01:32:33 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <67c7761a.050a0220.15b4b9.0018.GAE@google.com> <20250312130412.3516307-1-quic_zhonhan@quicinc.com>
-In-Reply-To: <20250312130412.3516307-1-quic_zhonhan@quicinc.com>
-From: Jason Wang <jasowang@redhat.com>
-Date: Mon, 17 Mar 2025 08:26:30 +0800
-X-Gm-Features: AQ5f1Jp7pXl7FKd2PoyweWeIqinsO9jQrjigO6XDQe8P2hB1cDsf_Tx2SHTuUYc
-Message-ID: <CACGkMEvRGp3cbZEwsAU0NBGJzzp899=tPMLQwYJx7LsA8RTqww@mail.gmail.com>
-Subject: Re: [PATCH v2] virtio_ring: Fix data race by tagging event_triggered
- as racy for KCSAN
-To: Zhongqiu Han <quic_zhonhan@quicinc.com>
-Cc: mst@redhat.com, xuanzhuo@linux.alibaba.com, eperezma@redhat.com, 
-	syzbot+efe683d57990864b8c8e@syzkaller.appspotmail.com, 
-	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 00/12] platform/x86: alienware-wmi-wmax: HWMON support
+ + DebugFS + Improvements
+To: Kurt Borja <kuurtb@gmail.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: Hans de Goede <hdegoede@redhat.com>, platform-driver-x86@vger.kernel.org,
+ Dell.Client.Kernel@dell.com, linux-kernel@vger.kernel.org,
+ Guenter Roeck <linux@roeck-us.net>, Jean Delvare <jdelvare@suse.com>,
+ linux-hwmon@vger.kernel.org, Bagas Sanjaya <bagasdotme@gmail.com>
+References: <20250313-hwm-v6-0-17b57f787d77@gmail.com>
+Content-Language: en-US
+From: Armin Wolf <W_Armin@gmx.de>
+In-Reply-To: <20250313-hwm-v6-0-17b57f787d77@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:N7nB1OMRH91WYFmZneoQI+GvdVntlL+X2Lo1yB01YOO099e+2Bj
+ sU4+u4CN/bSo1jfarlJ0n+dDy/8IopT/KTvHPxoI637LX9tla8lL6Zq9to/BlogVbXZrbOu
+ xAZHTyyHR/eLqPG8sndHWDqcoRx6/s8u2J8K3CyNKAm0RPT9OC1wVTNA5/BssIabYBzt46g
+ kq0Jq6yPKhXOotOTvhe2w==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:+Y6/nnzBrM4=;1jaNZxUneP6eTFLxmShzEpD1fy6
+ 1Am2gMbixDzA6PXZ/3saz33ufwbT3eLxRjmlX0qRzh8r0RDbr46INH87zoypUXqJrxh0I8iuV
+ S6xFPJgybm6nz/RX6SVCUWqDDHD3/ZRtF7UyeunpH1nh2/NFLj9ag3y03D9k42aFp1nsO3+VI
+ 3b9attBSnB8uijK+cDb3d1V4b+Vg9Be9Kq67HtHJyESe5TwdNQf9tR8YODhDTmJYLq2HSRvDS
+ bEXLyL5DIVnej8Wz+Yc0OT8uCQs9Fr0XqTW3gYWNLmZ6/B85JhGRGa64E9Crh5y6bMlqm+CVU
+ GYED9m1SSIznCAymDx/WFKonfwdZswMFntBrqDcNxakeyVf2PDQJf8L0P7pQDSj8eGiZ9LIZF
+ JtK/Gj2/aXBXIZspezFr7awuAAcRNSXrs8xJKyBa+5+UXDF1JaQcNDpcX+NwcBdQtof/bPwEc
+ dUmyBXCCWE/4gAbf6c9Xz81PutvHT2RvgJuMt12r0xCr2WYfZGDcql+r6xGzvFqgjn8jGexVd
+ 36KTlDDZGiKpDhZtXzVTb5b6xacpwXQ1fMPzGNPF5nBok+3WJREe3PYxTjunt9trTV5RST+Ww
+ Pqw/7Kol/3dqqXsVf0k23TGjpmRA6GiEdpCyZEb2JplWI8qJUipaTdPp7Eq44JcUmErmfbwcp
+ dJSs30inicbDOMH3t/x+nu2SMrqzO/iv8p5168tqncriOH7eFTMeTNQJRdUgY1uq274ZpLUyF
+ CDDPRmlTJifjoqZRe62dVJO3NOdITnmUwmTyRdJEhIIej4M/B07IDxPg4+v6CGQ5800tKrJh8
+ DL9MCdlvipUsPmX5tm//ynzOLlZKrA5vtQg1HhN1piCAvIO9WcWQu+G/ARNKqZagv8Z2hzURt
+ yFhNKj2Nvl3oF4GvYNT49zDYWvDBAn+FDwYXNNT5PD0kd0MlwfFufEYNauI38ZNshdCXWj7a8
+ FtjKMp4Y9aa4AnNYj93PzxW9LloI37Q4bZHP9WvqVd4p+Dt1CfPuH/Ktwsmc5+PcTS71XHFOb
+ R2H/we3V/+qFKwULHoFRgO7qiHD/IpA5CoPgB4l6dHlCqkg0V5qeLcACUihsbYKT0bie0kWZJ
+ 9gQPIF6QGJO5jwY186gqDb2NvQrzldm5fN4LSG5993nJB6NbkOweLcoWsHqeAmBQDloEWDqGP
+ ySWyRmdAABUHzV/IZrjF2gSQJZ6jWrxGTE89rWPOc8WlJa2pBYWlYDgoUpw1VSaGpq2scoSS2
+ 8Aua0Lm9keonJMBS5hVmlMXD4t3AQRq4V4zuXW/RbqmnrYIqYrT4gR+uHZXGw3VFfWZ/Wj1GY
+ /MJmwAv6+6SdZjMDrpIdYoSriXK5o5UgTO7EOU+K36O4kEe9IlMpybMGTzp58D6J0tiTbtSJl
+ lHXgoiTXuVxvAarDAKHXsSZCsBK9G39UrXhcd+XvQG/bc99GJPyaAN+UhEtM11TEMuvORiqHm
+ 6sEmRwZF9LE4FeSK+VeYAFSN2gXk=
 
-On Wed, Mar 12, 2025 at 9:04=E2=80=AFPM Zhongqiu Han <quic_zhonhan@quicinc.=
-com> wrote:
+Am 13.03.25 um 15:29 schrieb Kurt Borja:
+
+> Hi all,
 >
-> syzbot reports a data-race when accessing the event_triggered, here is th=
-e
-> simplified stack when the issue occurred:
+> This set mainly adds hwmon and manual fan control support (patches 7-8)
+> to the alienware-wmi driver, after some improvements.
 >
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> BUG: KCSAN: data-race in virtqueue_disable_cb / virtqueue_enable_cb_delay=
-ed
->
-> write to 0xffff8881025bc452 of 1 bytes by task 3288 on cpu 0:
->  virtqueue_enable_cb_delayed+0x42/0x3c0 drivers/virtio/virtio_ring.c:2653
->  start_xmit+0x230/0x1310 drivers/net/virtio_net.c:3264
->  __netdev_start_xmit include/linux/netdevice.h:5151 [inline]
->  netdev_start_xmit include/linux/netdevice.h:5160 [inline]
->  xmit_one net/core/dev.c:3800 [inline]
->
-> read to 0xffff8881025bc452 of 1 bytes by interrupt on cpu 1:
->  virtqueue_disable_cb_split drivers/virtio/virtio_ring.c:880 [inline]
->  virtqueue_disable_cb+0x92/0x180 drivers/virtio/virtio_ring.c:2566
->  skb_xmit_done+0x5f/0x140 drivers/net/virtio_net.c:777
->  vring_interrupt+0x161/0x190 drivers/virtio/virtio_ring.c:2715
->  __handle_irq_event_percpu+0x95/0x490 kernel/irq/handle.c:158
->  handle_irq_event_percpu kernel/irq/handle.c:193 [inline]
->
-> value changed: 0x01 -> 0x00
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->
-> When the data race occurs, the function virtqueue_enable_cb_delayed() set=
-s
-> event_triggered to false, and virtqueue_disable_cb_split/packed() reads i=
-t
-> as false due to the race condition. Since event_triggered is an unreliabl=
-e
-> hint used for optimization, this should only cause the driver temporarily
-> suggest that the device not send an interrupt notification when the event
-> index is used.
->
-> Fix this KCSAN reported data-race issue by explicitly tagging the access =
-as
-> data_racy.
->
-> Reported-by: syzbot+efe683d57990864b8c8e@syzkaller.appspotmail.com
-> Closes: https://lore.kernel.org/all/67c7761a.050a0220.15b4b9.0018.GAE@goo=
-gle.com/
-> Signed-off-by: Zhongqiu Han <quic_zhonhan@quicinc.com>
+> Thank you for your feedback :)
+
+ From my perspective the whole series is ready for inclusion into the mainline kernel.
+
+Thanks,
+Armin Wolf
+
 > ---
-> v1 -> v2:
-> - Use data_race() instead of memory barriers.
-> - Simplify and rewrite commit messages.
-> - Link to v1: https://lore.kernel.org/all/20250311131735.3205493-1-quic_z=
-honhan@quicinc.com/
+> Changes in v6:
 >
->  drivers/virtio/virtio_ring.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> [08/12]
+>    - Define dev_pm_ops statically (kernel test robot)
 >
-> diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
-> index fdd2d2b07b5a..b784aab66867 100644
-> --- a/drivers/virtio/virtio_ring.c
-> +++ b/drivers/virtio/virtio_ring.c
-> @@ -2650,7 +2650,7 @@ bool virtqueue_enable_cb_delayed(struct virtqueue *=
-_vq)
->         struct vring_virtqueue *vq =3D to_vvq(_vq);
+> Link to v5: https://lore.kernel.org/r/20250312-hwm-v5-0-deb15ff8f3c6@gmail.com
 >
->         if (vq->event_triggered)
-> -               vq->event_triggered =3D false;
-> +               data_race(vq->event_triggered =3D false);
+> ---
+> Kurt Borja (12):
+>        platform/x86: alienware-wmi-wmax: Rename thermal related symbols
+>        platform/x86: alienware-wmi-wmax: Refactor is_awcc_thermal_mode()
+>        platform/x86: alienware-wmi-wmax: Improve internal AWCC API
+>        platform/x86: alienware-wmi-wmax: Modify supported_thermal_profiles[]
+>        platform/x86: alienware-wmi-wmax: Improve platform profile probe
+>        platform/x86: alienware-wmi-wmax: Add support for the "custom" thermal profile
+>        platform/x86: alienware-wmi-wmax: Add HWMON support
+>        platform/x86: alienware-wmi-wmax: Add support for manual fan control
+>        platform/x86: alienware-wmi-wmax: Add a DebugFS interface
+>        Documentation: wmi: Improve and update alienware-wmi documentation
+>        Documentation: admin-guide: laptops: Add documentation for alienware-wmi
+>        Documentation: ABI: Add sysfs platform and debugfs ABI documentation for alienware-wmi
 >
->         return vq->packed_ring ? virtqueue_enable_cb_delayed_packed(_vq) =
-:
->                                  virtqueue_enable_cb_delayed_split(_vq);
-> --
-> 2.25.1
+>   Documentation/ABI/testing/debugfs-alienware-wmi    |   44 +
+>   .../ABI/testing/sysfs-platform-alienware-wmi       |   14 +
+>   .../admin-guide/laptops/alienware-wmi.rst          |  128 +++
+>   Documentation/admin-guide/laptops/index.rst        |    1 +
+>   Documentation/wmi/devices/alienware-wmi.rst        |  383 +++-----
+>   MAINTAINERS                                        |    3 +
+>   drivers/platform/x86/dell/Kconfig                  |    1 +
+>   drivers/platform/x86/dell/alienware-wmi-wmax.c     | 1023 +++++++++++++++++---
+>   8 files changed, 1187 insertions(+), 410 deletions(-)
+> ---
+> base-commit: f895f2493098b862f1ada0568aba278e49bf05b4
+> change-id: 20250305-hwm-f7bd91902b57
 >
-
-Acked-by: Jason Wang <jasowang@redhat.com>
-
-Thanks
-
+> Best regards,
 
