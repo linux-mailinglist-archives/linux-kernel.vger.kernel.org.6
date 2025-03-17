@@ -1,194 +1,175 @@
-Return-Path: <linux-kernel+bounces-563644-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563645-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 830FDA645F3
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 09:41:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8DF4A645F8
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 09:42:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7D5D67A3DF4
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 08:40:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A35E23AC9F6
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 08:42:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D7A921E098;
-	Mon, 17 Mar 2025 08:41:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48C42220694;
+	Mon, 17 Mar 2025 08:42:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=cloud.com header.i=@cloud.com header.b="Dg/gqSMG"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jiXYk3/U"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 089FD21D590
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 08:41:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5CE121CC64;
+	Mon, 17 Mar 2025 08:42:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742200863; cv=none; b=GWE70JZPyLncQzmexyczbx3mdhyTRmrrWNneyJQyyq2PLCADkE/bndoO9zCqlYlMcd2q2/0qX+AR1mBMVPs06SnCV0fIQjYWKsvP2lTOvQ4DKir/sI1FFaL4grJoxtDlBs5dhyOK1jAvlAV4JyILCeK5K6USOkEoEPl8FW3zPe4=
+	t=1742200933; cv=none; b=GEhVdpeugRRdtkGTN2rpJ34iI98uJpBswErtnwG0bgvqIoNfBByVVUbGwiw3cAJ1gluvMwToScjF2Nz4eJIahh0QXeX3v3fXrVNL0fk3xjW7M8AY/FK7AwdrE9+i6N+XOdqGDdYpmCkBuMlcMiN7joyF+xpO/LwU8sAKJGyiJrE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742200863; c=relaxed/simple;
-	bh=zLYIoi9dYdoJtCR0bSrV8206gckhckz39HTHTMJ4Juw=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=SR2muObXS6A+QG+5Knnz0rTrqP4KUAkSwlbI9iripH7jl34LuUCP/+0Ck16HSjpl+EF2Dvs5nirDYZ5YOmlNRYeT8lKxJ1AUX08agintd15nLOqKVJCFi/mkV5xPajxs/JBiAximxsxJ1S5fKVQjDdtJwxBL5CSHIvwRf1oX+MQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloud.com; spf=pass smtp.mailfrom=cloud.com; dkim=pass (1024-bit key) header.d=cloud.com header.i=@cloud.com header.b=Dg/gqSMG; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloud.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-224019ad9edso22940915ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 01:41:01 -0700 (PDT)
+	s=arc-20240116; t=1742200933; c=relaxed/simple;
+	bh=lKHWj9V8Nq6zT3iZ1PBCgGEfS1g71F1u7pC1RxEH4jU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XRP6aqxoqivMN9Pj3nTO1ESSu414P1f4tS6ZTmLY42cr+1u9HMPvM5f/v/tZIu17ALLBqZyMoI/PQVV1t+v9t5f3gJkpCPO5QGr99BxF61rTp6oTindZYuF83hQnSr3U2aAUjFVaq7Hk13vjoksogPbIIFJ1oSVbkvZoumDX2Os=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jiXYk3/U; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-54996d30bfbso3745388e87.2;
+        Mon, 17 Mar 2025 01:42:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cloud.com; s=cloud; t=1742200861; x=1742805661; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=0rIXAsZPT5w/tEmqI4U1ZCe7qRShLUgNuIADzxUIpZs=;
-        b=Dg/gqSMGGX/oqn0D3N85fbmpTLfPyrVt/JN1o2BQVMRz5W9t5j1qscWwjQybiTFexz
-         kTprSYJfQyEVuQMAI7F4JhgAKJlIjdU+7yBUnrkT3ckWfA68npH/JrQB7dlVyPHCWq4Z
-         AFn/dBEjm3BlfnrKSZPtcu/22DXKwl60yPkV8=
+        d=gmail.com; s=20230601; t=1742200930; x=1742805730; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=FpO3HnxuMJXBU+70F/zOGGDYlbCQDeNotNwoR3G8/gw=;
+        b=jiXYk3/ULVWd8KC0GyiPwBmnW9GkQlazLMqyHmJUdQZBMMs5yiQ7ObePPOGR8rwEFA
+         gcKp6nUKUxJh/eqwoKihBRcXhaTI6h+sjPS0vt1SJwbr3eDxLCXeLVcVu7fxBJ2OJXQL
+         VWyhQMZ0BBL5YhqpUwyYl03DCAFALJpTBl+Wynff0qf8QnOAe6b4W7AtH4cT05Em2LO1
+         y/nJY6tFxsyj0JjPbhTcNSkUNNemvoqh7k4+H/iz7jfIH5EBzRNetB/YIJI7cF5bbrQE
+         g3H8zhn0eWdqa9w28yvrb/b6VOEDarLSWMOJgipniI+oCQhhYKbEz1z3t8AXGZmMPijn
+         CW0A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742200861; x=1742805661;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=0rIXAsZPT5w/tEmqI4U1ZCe7qRShLUgNuIADzxUIpZs=;
-        b=tz3jwli1xbGcEogMuhypXRRTJowUYHlcX4l4gZOsSgVExVBXY7VMylyLO7G+of/WVn
-         932zBZwST9vTE42zPGg6yPvMWzJYc7oIzeNRAfW3jxDgtlWXwIh/cXX/ThZHVtE4WAdo
-         vrTtLmheBcwz+NcbW+e/RVBVhojpENZA1qbpJCUs1CUgThvZ4AsLaRHbMCd/V/zSCxO0
-         M/grqAkOlDInnaWBzzFmk5wlBVKbG+yvH6t1lgVtDos72lw4cFQMAq4POQk3yTJ4U1Lq
-         Nwdz+7/2TX2dK3fcdJYGoagSF4mTfftheBnra8Jed7ZIfxVEhQpmgU6XMJI8Yv5fcqbv
-         G8dw==
-X-Forwarded-Encrypted: i=1; AJvYcCWLmaxnjeYlhsTpYMye4LWdOHrqcIkS5KD67IVG8ZurQDBqgZ73iNW9ITPtinbDOKQyPKW8ZVMuq8vfj7g=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yymq3aAJFeaQ0HtxmrQ0UwMKD6kWksHk0f3MMGHi/IaqhF6tJ7i
-	cVU6Tbse8MYNXSUB9dWgRLZHUYx9YPtCl0qk4Ybh8ZkAHswON42qXyOsWNQsRUg=
-X-Gm-Gg: ASbGncvKLLEd/gDgZpe+OZ7+W+HgHqBp4dNgVDSgaJbBwekYJzAhcjMbkqzbnS5Utx1
-	LR45vWVmDVUYDoeR3wL7wlkXBrD7L5rmK9mnMpvAod6g6BoKYVW4B/2zTiIF14NwyJXJGx+q5v2
-	IHFG+zyDaf8PohW78ENZmMuq8zxGW10+aucCT/LEyJjl2bk9TVj2/moijo7UNIPb9SxaQ5TCWKZ
-	38yhmZMSCtI6jPDBW5kewTwMXzqFpUEqcFcaQeOMYoshVJLOEL5bf1/4dPQlAok2fTuT1LLREJo
-	SC2J2qYx4BN9xewTEhcBS5VY/RBIFBPKG4ck5VpwTpRjYJ03r+bCmJF/WPpeAgNBMek=
-X-Google-Smtp-Source: AGHT+IElRBxzMTzHsJSwtFWFl9JbwXGmsjtWkmK6trHwmWRcJhT9vhqsrch9VuReC5Y/yn28+yj6ag==
-X-Received: by 2002:a17:903:1446:b0:224:c76:5e57 with SMTP id d9443c01a7336-225e0ae708bmr147937695ad.39.1742200861244;
-        Mon, 17 Mar 2025 01:41:01 -0700 (PDT)
-Received: from localhost.localdomain ([154.91.3.20])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-225c6bd5bf8sm69302555ad.253.2025.03.17.01.40.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Mar 2025 01:41:00 -0700 (PDT)
-From: Chunjie Zhu <chunjie.zhu@cloud.com>
-To: Steve French <sfrench@samba.org>,
-	Paulo Alcantara <pc@manguebit.com>,
-	Ronnie Sahlberg <lsahlber@redhat.com>,
-	Shyam Prasad N <sprasad@microsoft.com>,
-	Tom Talpey <tom@talpey.com>
-Cc: linux-cifs@vger.kernel.org,
-	samba-technical@lists.samba.org,
-	linux-kernel@vger.kernel.org,
-	ross.lagerwall@cloud.com,
-	Chunjie Zhu <chunjie.zhu@cloud.com>
-Subject: [PATCH] open hardlink on deferred close file return EINVAL
-Date: Mon, 17 Mar 2025 08:39:14 +0000
-Message-Id: <20250317083915.20004-1-chunjie.zhu@cloud.com>
-X-Mailer: git-send-email 2.34.1
+        d=1e100.net; s=20230601; t=1742200930; x=1742805730;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=FpO3HnxuMJXBU+70F/zOGGDYlbCQDeNotNwoR3G8/gw=;
+        b=s7ThjNSvXQu6MzQui6NLw+xRQVKl+vV5FpKzgjaaAad3D7nttOdSADn30/hg/LLJPG
+         +ZMc6DSb7wYK86OoAxx4+z6s22QpVAC1pGJiDhj53APISVuGtJRG1/9kg7dbl8d/FsMj
+         8Cz9p9KjX/PX3Q7iTsRNtWXHK6qEDjghfq2a8r48bPyeGGgI3/3mpfKas4P8JEuEbrIi
+         J7yvdve3RPoasqX8WjMPLERdvhc9ekkvCV0MrgtRYpY8UHW31btBPgRYlVFrECTqtGXH
+         hd48S7ukhJD45PGplIZjEGvluWreNsP3PVyqhAIe590Y+AU1EBcv00XQIEQjVYy3l6c7
+         J+zg==
+X-Forwarded-Encrypted: i=1; AJvYcCWqFOs6j7/n+b201mdTRXjJjlQM9pvYTv8WLyC9rReMD+dxkZ01BMEMYqizW8do81YF9DuHvn0GTAQ=@vger.kernel.org, AJvYcCX1aBtYPcGZl9quG2JPZnGraHaG5KBxHk/TNNQi3HxhYPLZvGDsFikqEWs+2PK2CQKxsywLUnBTfMPL+MjT@vger.kernel.org
+X-Gm-Message-State: AOJu0YzpJF1Jbz9ubbX7NSzTnb8IZptuUBCPDik54l/2UHfnCgEgCg4+
+	wuh2bN8NgBM1a6y76RMDS3A4soGEQTrJcnVYtUBzUjzm0DKTSkZn
+X-Gm-Gg: ASbGncudPr/hlclj9elqW5IEn108hM7dVPjDkTmgaqSVDTkF8zn/iTxPE7T8T5ZoC6v
+	EAoOxdylJEVGYBe/IzHXZ2dWjqV2NrO6qftJohr4SssonRIQjWJQwsck8tYGs7/DRtlXU61Xsdp
+	gJV2JiY0rAKpn4kZ/wanKCWVK9htNQdGG2pugboNX8fZy+iERpu+f0F59KI4IkMT7Cd2N9wqcTa
+	+4Ysc0KbK2BDsC/k1WPtuKV4xAkMzVH6BjewYNyWHAnVTkKdUY9+u/RfEAG9Jd7ORj8bbXQpiU7
+	bP05dFdQTEbcfg4qCwGTOvcmUzueS0Oo+WWCeM3mnUus0Oih0A7Lu7A95sO2VyeWjhkxIvT+XQ2
+	licVlGw7nXUFtnDxEJyV0KB/OvQ==
+X-Google-Smtp-Source: AGHT+IEaEugzJ+pYBfCBL4Vt0JndH1mF1+5wo43FEa3qzrXwIQyPae9SAqetesylNstTDl/wwv+/dQ==
+X-Received: by 2002:a05:6512:1286:b0:545:10eb:1ab2 with SMTP id 2adb3069b0e04-549c398d167mr5642074e87.33.1742200929794;
+        Mon, 17 Mar 2025 01:42:09 -0700 (PDT)
+Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-549ba7bfea4sm1224769e87.67.2025.03.17.01.42.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 17 Mar 2025 01:42:09 -0700 (PDT)
+Message-ID: <0db2a42f-d393-4e75-afbf-cf30c0e06cce@gmail.com>
+Date: Mon, 17 Mar 2025 10:42:07 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 05/10] iio: adc: sun20i-gpadc: Use adc-helpers
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Jonathan Cameron <jic23@kernel.org>,
+ Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+ Lars-Peter Clausen <lars@metafoo.de>, Chen-Yu Tsai <wens@csie.org>,
+ Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Samuel Holland <samuel@sholland.org>, Nuno Sa <nuno.sa@analog.com>,
+ David Lechner <dlechner@baylibre.com>,
+ Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+ Olivier Moysan <olivier.moysan@foss.st.com>,
+ Guillaume Stols <gstols@baylibre.com>,
+ Dumitru Ceclan <mitrutzceclan@gmail.com>,
+ Trevor Gamblin <tgamblin@baylibre.com>,
+ Matteo Martelli <matteomartelli3@gmail.com>,
+ Alisa-Dariana Roman <alisadariana@gmail.com>, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-sunxi@lists.linux.dev
+References: <cover.1741849323.git.mazziesaccount@gmail.com>
+ <df0b2b53affbef5ccb7219328cc15db3ba843737.1741849323.git.mazziesaccount@gmail.com>
+ <Z9LQ0O34EUM8WZku@smile.fi.intel.com> <20250316094112.6731bd01@jic23-huawei>
+ <50b126c5-248e-4694-9782-4f28d6db5fce@gmail.com>
+ <Z9fUmo5wp3EcNWzm@smile.fi.intel.com>
+Content-Language: en-US, en-AU, en-GB, en-BW
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+In-Reply-To: <Z9fUmo5wp3EcNWzm@smile.fi.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-The following Python script results in unexpected behaviour when run on
-a CIFS filesystem against a Windows Server:
+On 17/03/2025 09:51, Andy Shevchenko wrote:
+> On Mon, Mar 17, 2025 at 09:11:08AM +0200, Matti Vaittinen wrote:
+>> On 16/03/2025 11:41, Jonathan Cameron wrote:
+>>> On Thu, 13 Mar 2025 14:34:24 +0200
+>>> Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
+>>>> On Thu, Mar 13, 2025 at 09:18:49AM +0200, Matti Vaittinen wrote:
+> 
+> ...
+> 
+>>>>> +	num_channels = devm_iio_adc_device_alloc_chaninfo_se(dev,
+>>>>> +				&sun20i_gpadc_chan_template, -1, &channels);
+>>>>> +	if (num_channels < 0)
+>>>>> +		return num_channels;
+>>>>> +
+>>>>>    	if (num_channels == 0)
+>>>>>    		return dev_err_probe(dev, -ENODEV, "no channel children\n");
+>>>>
+>>>> Note, this what I would expected in your helper to see, i.e. separated cases
+>>>> for < 0 (error code) and == 0, no channels.
+>>>>
+>>>> Also, are all users going to have this check? Usually in other similar APIs
+>>>> we return -ENOENT. And user won't need to have an additional check in case of
+>>>> 0 being considered as an error case too.
+>>> In a few cases we'll need to do the dance the other way in the caller.
+>>> So specifically check for -ENOENT and not treat it as an error.
+>>>
+>>> That stems from channel nodes being optionally added to drivers after
+>>> they have been around a while (usually to add more specific configuration)
+>>> and needing to maintain old behaviour of presenting all channels with default
+>>> settings.
+>>>
+>>> I agree that returning -ENOENT is a reasonable way to handle this.
+>>
+>> I agree - but I'm going to use -ENODEV instead of -ENOENT because that's
+>> what the current callers return if they find no channels. That way the
+>> drivers can return the value directly without converting -ENOENT to -ENODEV.
+> 
+> ENODEV can be easily clashed with other irrelevant cases,
 
-    # Create file
-    fd = os.open('test', os.O_WRONLY|os.O_CREAT)
-    os.write(fd, b'foo')
-    os.close(fd)
+Can you please explain what cases?
 
-    # Open and close the file to leave a pending deferred close
-    fd = os.open('test', os.O_RDONLY|os.O_DIRECT)
-    os.close(fd)
+> ENOENT is the correct
+> error code.
 
-    # Try to open the file via a hard link
-    os.link('test', 'new')
-    newfd = os.open('new', os.O_RDONLY|os.O_DIRECT)
+I kind of agree if we look this from the fwnode perspective. But, when 
+we look this from the intended user's perspective, I can very well 
+understand the -ENODEV. Returning -ENODEV from ADC driver's probe which 
+can't find any of the channels feels correct to me.
 
-The final open returns EINVAL due to the server returning
-STATUS_INVALID_PARAMETER. The root cause of this is that the client
-caches lease keys per inode, but the spec requires them to be related to
-the filename which causes problems when hard links are involved:
+> If drivers return this instead of another error code, nothing bad
+> happen, it's not an ABI path, correct?
 
-From MS-SMB2 section 3.3.5.9.11:
+I don't know if failure returned from a probe is an ABI. I still feel 
+-ENODEV is correct value, and I don't want to change it for existing 
+users - and I think also new ADC drivers should use -ENODEV if they find 
+no channels at all.
 
-"The server MUST attempt to locate a Lease by performing a lookup in the
-LeaseTable.LeaseList using the LeaseKey in the
-SMB2_CREATE_REQUEST_LEASE_V2 as the lookup key. If a lease is found,
-Lease.FileDeleteOnClose is FALSE, and Lease.Filename does not match the
-file name for the incoming request, the request MUST be failed with
-STATUS_INVALID_PARAMETER"
+Besides that I think -ENODEV to be right, changing it to -ENOENT for 
+existing callers requires a buy-in from Jonathan (and/or) the driver 
+maintainers.
 
-The client side can return EINVAL directly without invoking server
-operations. This reduces client server network communication overhead.
-
-Signed-off-by: Chunjie Zhu <chunjie.zhu@cloud.com>
----
- fs/smb/client/cifsproto.h |  2 ++
- fs/smb/client/file.c      | 29 +++++++++++++++++++++++++++++
- 2 files changed, 31 insertions(+)
-
-diff --git a/fs/smb/client/cifsproto.h b/fs/smb/client/cifsproto.h
-index 260a6299bddb..b563c227792e 100644
---- a/fs/smb/client/cifsproto.h
-+++ b/fs/smb/client/cifsproto.h
-@@ -157,6 +157,8 @@ extern int cifs_get_writable_path(struct cifs_tcon *tcon, const char *name,
- extern struct cifsFileInfo *find_readable_file(struct cifsInodeInfo *, bool);
- extern int cifs_get_readable_path(struct cifs_tcon *tcon, const char *name,
- 				  struct cifsFileInfo **ret_file);
-+extern int cifs_get_hardlink_path(struct cifs_tcon *tcon, struct inode *inode,
-+				  struct file *file);
- extern unsigned int smbCalcSize(void *buf);
- extern int decode_negTokenInit(unsigned char *security_blob, int length,
- 			struct TCP_Server_Info *server);
-diff --git a/fs/smb/client/file.c b/fs/smb/client/file.c
-index 4cbb5487bd8d..0a66cce6e0ff 100644
---- a/fs/smb/client/file.c
-+++ b/fs/smb/client/file.c
-@@ -751,6 +751,12 @@ int cifs_open(struct inode *inode, struct file *file)
- 		} else {
- 			_cifsFileInfo_put(cfile, true, false);
- 		}
-+	} else {
-+		/* hard link on the defeered close file */
-+		rc = cifs_get_hardlink_path(tcon, inode, file);
-+		if (rc) {
-+			goto out;
-+		}
- 	}
- 
- 	if (server->oplocks)
-@@ -2413,6 +2419,29 @@ cifs_get_readable_path(struct cifs_tcon *tcon, const char *name,
- 	return -ENOENT;
- }
- 
-+int
-+cifs_get_hardlink_path(struct cifs_tcon *tcon, struct inode *inode,
-+				struct file *file)
-+{
-+	struct cifsFileInfo *open_file = NULL;
-+	struct cifsInodeInfo *cinode = CIFS_I(inode);
-+	int rc = 0;
-+
-+	spin_lock(&tcon->open_file_lock);
-+	spin_lock(&cinode->open_file_lock);
-+
-+	list_for_each_entry(open_file, &cinode->openFileList, flist) {
-+		if (file->f_flags == open_file->f_flags) {
-+			rc = -EINVAL;
-+			break;
-+		}
-+	}
-+
-+	spin_unlock(&cinode->open_file_lock);
-+	spin_unlock(&tcon->open_file_lock);
-+	return rc;
-+}
-+
- void
- cifs_writedata_release(struct kref *refcount)
- {
--- 
-2.34.1
-
+Yours,
+	-- Matti
 
