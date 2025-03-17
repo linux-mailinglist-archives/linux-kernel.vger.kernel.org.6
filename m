@@ -1,53 +1,68 @@
-Return-Path: <linux-kernel+bounces-564826-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564827-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29837A65B65
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 18:48:54 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20900A65B66
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 18:49:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E2275188AE27
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 17:48:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9E703BE5FB
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 17:48:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E37E1AB6DE;
-	Mon, 17 Mar 2025 17:48:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D98A1AF0BF;
+	Mon, 17 Mar 2025 17:48:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nCrp7lBT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Ak2UAg+p"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BA151A3168;
-	Mon, 17 Mar 2025 17:48:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D0E21A3168;
+	Mon, 17 Mar 2025 17:48:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742233724; cv=none; b=ZpE93FnBBYJVFdd0P8tt0FEXn0nQ2ekHP9Ku2tQBpO3e2k8BE+u59zMUfZ5/vQ0K71pzWBNsX2av/iuKh0WR64X0PoUyabFMQpQRWI9ZjLQDRcyZGIbYKJMpE6RHG9pjqetcHkWZRa8Emw8P0cCcmWZ081jDjSCX81H+t52YXyE=
+	t=1742233733; cv=none; b=aE3ASHt5FbYpSu2oK7zGi640sgz4Jki25H3dPiofo8oQ+a+7YpKfRVwuzIhEP4lqCR4g0dDsjb6bUhkelbd6EZ2htf+873a1TU1O4JFC99Ixh8sI8MU/FDYjChEki5n60VQP3KJcp0kyEgIGivJDVNbgVhCuumkifXtCcjVcr4k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742233724; c=relaxed/simple;
-	bh=+ajp6u19uztN9LzhI5yDd7wErjsDqGFizACW7A6xC28=;
+	s=arc-20240116; t=1742233733; c=relaxed/simple;
+	bh=gW5WrWEsRgzGYeA2WB5QR5OP8afZ6CKKTcYhrgeRDC4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Fr5kIsbxYRHWlqk0VzbGcvH7oO18tVCwtoUDFHveK/Gbi3au+dHkKuGHhq8oFeoRhfKGK7TjM61QwIXs2OK1p7hWqracLOJXu0Tw0L8OOGlE9w7RbXjXFxek1yLKowSRd4SZGFDFctxuiD59H5WK4ZmUr0Tq1oXNCx63wIUNJME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nCrp7lBT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48BBFC4CEE3;
-	Mon, 17 Mar 2025 17:48:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742233724;
-	bh=+ajp6u19uztN9LzhI5yDd7wErjsDqGFizACW7A6xC28=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nCrp7lBTfGBqEHXP48lS3nqfXNtJcLXmHOLTVKNxn/BVY19ocTZGdVNaB/S3V6Pwv
-	 LV4eJWxg4H7bSJh0ygVFuyxV4RqnMp6iHK6QJAerqlupxFR3VlN7L/i2pQa/bLfj7O
-	 yC+MSAE9n1MCRl4XZ1hFL8f3iM5KI/hDP9Hax2aS4vCUZTTTfczePnoXai42KwFlqm
-	 l92dF/vj8UKz4QRPBqI8uxery3W7Go8XmEhLeltylK0ismLDLNdiRql6S0QymXYYBh
-	 bP/zKaL8oxzwvo8QN9qv2Z2EGBl1vcRsXsmrB+pXtho9Q24dJAiAHw46pcMPBW+ZV+
-	 7jZklMlRKpmFg==
-Date: Mon, 17 Mar 2025 10:48:40 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Kees Cook <kees@kernel.org>
-Cc: linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] kunit/fortify: Replace "volatile" with
- OPTIMIZER_HIDE_VAR()
-Message-ID: <20250317174840.GA1451320@ax162>
-References: <20250312000439.work.112-kees@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=fADDa6XGm2GbVFieD+eBlPuOYQdqjvZqcBBC8ve8h5AWQU25zqcTTQ76WiE3jmcjokiZZPmb4b+HImkor5t5hQ0+KP3tzTJdM1/bFhP0VJniIOuGbgx/LcxwMcZn6wsWRnk6H76SxVYHRaQHlHGLD9gJ18mLtftpoD+gT6SSyng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Ak2UAg+p; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=3b0Uj79RdTQCZqfGxFLsxs3VkCOnmsKOMf9Ox34+5LQ=; b=Ak2UAg+pk2NqHPX/5EdoCo0swG
+	SvUtVy3/95AiPFC6NJJnOVBL6Gzn8QvpZQ7SRxp+UZYGxMBia4jROI3kGBbR83d09iwuWNaB8bqcU
+	YvgW3/VTG1qREOLJ1ga4coScnXLmHPQYrJejOBPKgBUKIx84V/0k7SWOxVfdRd6wG27bZ99RvtfTI
+	OEha3nZCf0jPRDopdcH2VQWHULshgYuR5KCGP9h2C/0YQLf6m+mji2b+jRwX+FN6OAMuUc+Jb/s5o
+	P0Jr4mQczwN7pj4lhejtL5sgwcXOdTkP5MpiKjVyQtyq79XJjGVrVBcPdeMhJ8i92tdxC3hFaIe/K
+	RXbX1PtQ==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tuEa1-00000003XHM-1Bvd;
+	Mon, 17 Mar 2025 17:48:49 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id C9389300783; Mon, 17 Mar 2025 18:48:48 +0100 (CET)
+Date: Mon, 17 Mar 2025 18:48:48 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Borislav Petkov <bp@alien8.de>
+Cc: "Ahmed S. Darwish" <darwi@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Andrew Cooper <andrew.cooper3@citrix.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	John Ogness <john.ogness@linutronix.de>, x86@kernel.org,
+	x86-cpuid@lists.linux.dev, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 01/29] x86: treewide: Introduce
+ x86_vendor_amd_or_hygon()
+Message-ID: <20250317174848.GJ6888@noisy.programming.kicks-ass.net>
+References: <20250317164745.4754-1-darwi@linutronix.de>
+ <20250317164745.4754-2-darwi@linutronix.de>
+ <20250317173216.GGZ9hcoDICYl1fBtBG@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,92 +71,20 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250312000439.work.112-kees@kernel.org>
+In-Reply-To: <20250317173216.GGZ9hcoDICYl1fBtBG@fat_crate.local>
 
-Hi Kees,
-
-On Tue, Mar 11, 2025 at 05:04:40PM -0700, Kees Cook wrote:
-> It does seem that using "volatile" isn't going to be sane compared to
-> using OPTIMIZER_HIDE_VAR() going forward. Some strange interactions[1]
-> with the sanitizers have been observed in the self-test code, so replace
-> the logic.
+On Mon, Mar 17, 2025 at 06:32:16PM +0100, Borislav Petkov wrote:
+> On Mon, Mar 17, 2025 at 05:47:17PM +0100, Ahmed S. Darwish wrote:
+> > The pattern to check if an x86 vendor is AMD or HYGON (or not both) is
+> > pretty common.  Introduce x86_vendor_amd_or_hygon() at <asm/processor.h>
 > 
-> Reported-by: Nathan Chancellor <nathan@kernel.org>
-> Closes: https://github.com/ClangBuiltLinux/linux/issues/2075 [1]
-> Signed-off-by: Kees Cook <kees@kernel.org>
-...
-> diff --git a/lib/tests/fortify_kunit.c b/lib/tests/fortify_kunit.c
-> index 18dcdedf777f..29ffc62a71e3 100644
-> --- a/lib/tests/fortify_kunit.c
-> +++ b/lib/tests/fortify_kunit.c
-...
-> @@ -993,8 +1003,11 @@ static void fortify_test_memcmp(struct kunit *test)
->  {
->  	char one[] = "My mind is going ...";
->  	char two[] = "My mind is going ... I can feel it.";
-> -	size_t one_len = sizeof(one) + unconst - 1;
-> -	size_t two_len = sizeof(two) + unconst - 1;
-> +	size_t one_len = sizeof(one) - 1;
-> +	size_t two_len = sizeof(two) - 1;
-> +
-> +	OPTIMIZER_HIDE_VAR(one_len);
-> +	OPTIMIZER_HIDE_VAR(two_len);
->  
->  	/* We match the first string (ignoring the %NUL). */
->  	KUNIT_ASSERT_EQ(test, memcmp(one, two, one_len), 0);
+> So if we need to check "intel too", we do
+> 
+> x86_vendor_amd_or_hygon_or_intel?
+> 
+> Nah, this is silly.
 
-I am sorry for bringing this up some time after you sent this change, as
-I have only now had a chance to actually sit down and understand the
-results of my bisect. I am still seeing a __read_overflow error when
-building lib/tests/fortify_kunit.o with Fedora's configuration + LTO in
-next-20250317, which contains this change. I do not think it is issue
-2075, as I can reproduce it without UBSAN enabled altogether. This is
-with LLVM 20.1.0.
+Would it make more sense to have a Zen1 feature and check that instead?
 
-$ cat kernel/configs/repro.config
-CONFIG_FORTIFY_KUNIT_TEST=m
-CONFIG_FORTIFY_SOURCE=y
-CONFIG_KUNIT=y
-# CONFIG_LTO_NONE is not set
-CONFIG_LTO_CLANG_THIN=y
-
-# or x86_64
-$ make -skj"$(nproc)" ARCH=arm64 LLVM=1 mrproper {def,repro.}config lib/tests/fortify_kunit.o
-ld.lld: error: call to __read_overflow marked "dontcall-error": detected read beyond size of object (1st parameter)
-make[6]: *** [scripts/Makefile.build:203: lib/tests/fortify_kunit.o] Error 1
-
-Selectively reverting this avoids the problem, which is definitely
-odd... Maybe issue 2075 is related more to issue 2077 and this patch
-should not be entertained?
-
-Cheers,
-Nathan
-
-diff --git a/lib/tests/fortify_kunit.c b/lib/tests/fortify_kunit.c
-index 29ffc62a71e3..1164223654ac 100644
---- a/lib/tests/fortify_kunit.c
-+++ b/lib/tests/fortify_kunit.c
-@@ -411,6 +411,8 @@ struct fortify_padding {
- 	char buf[32];
- 	unsigned long bytes_after;
- };
-+/* Force compiler into not being able to resolve size at compile-time. */
-+static volatile int unconst;
- 
- static void fortify_test_strlen(struct kunit *test)
- {
-@@ -1003,11 +1005,8 @@ static void fortify_test_memcmp(struct kunit *test)
- {
- 	char one[] = "My mind is going ...";
- 	char two[] = "My mind is going ... I can feel it.";
--	size_t one_len = sizeof(one) - 1;
--	size_t two_len = sizeof(two) - 1;
--
--	OPTIMIZER_HIDE_VAR(one_len);
--	OPTIMIZER_HIDE_VAR(two_len);
-+	size_t one_len = sizeof(one) + unconst - 1;
-+	size_t two_len = sizeof(two) + unconst - 1;
- 
- 	/* We match the first string (ignoring the %NUL). */
- 	KUNIT_ASSERT_EQ(test, memcmp(one, two, one_len), 0);
+Because, IIRC Hygon is simply a Zen1 copy.
 
