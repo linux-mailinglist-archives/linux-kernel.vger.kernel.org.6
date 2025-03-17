@@ -1,119 +1,154 @@
-Return-Path: <linux-kernel+bounces-564971-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564970-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 216B5A65E13
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 20:36:27 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14DA0A65E11
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 20:36:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 32C6219A062F
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 19:36:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E48317F6AC
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 19:36:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C0841EB1A0;
-	Mon, 17 Mar 2025 19:36:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5586E1EA7F3;
+	Mon, 17 Mar 2025 19:36:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f+74I7Q+"
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tWr1wIGj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0985C1C6FF7;
-	Mon, 17 Mar 2025 19:36:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A44A91DB13A;
+	Mon, 17 Mar 2025 19:36:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742240180; cv=none; b=t6L5oWopoCOthKiSlm8bE/RIwVGzDGE1166xMb2tfft0MvCOS2HxsC63512qQdMyIJ3B5O5mg5hUe0/Qg5cs/IMhZgmI5N/tphb2lSSGj4YIGrm+VE5Qjmu0hn2zoOdxizrN0bLkvtpzy4l6ztUFD+UoXffP3sLs9IJHtXoCaKU=
+	t=1742240168; cv=none; b=tmuUO4vXzh1xxsusWZhZX4uM04ZH/dd8XnlRxqxDonjbhjzsYPT7EpwrQwY5rPfGzGU63nXCTG90E82ta1ThndX2w+8NK0RZelccNF7WPMKT/0YdVZjGAVYKnWWioOxiT6776g7EcbP8QXH8mkMlDYJsI52I5zOV3GDFF3YuwUA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742240180; c=relaxed/simple;
-	bh=v2obfj0ofi0vwoYVPDInvXxBDJFh8tTH93J22JPam7c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cC7ND1GP4maLyEAOFkGhXjWYglS71X4hRWoUhOKZkaNA91YL1XQyPZ9VIZgYA6S/FhTgH9SFOwUSi9RIFvNi9kk6gbEI4qTdX2Jkr1ubAlzwrNgsETFYQwgsZLuDhjgKkeax2gSQHPEYainGUdVt2jap6eahaQtq4OsD95HQl28=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f+74I7Q+; arc=none smtp.client-ip=209.85.216.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-301317939a0so602089a91.2;
-        Mon, 17 Mar 2025 12:36:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742240178; x=1742844978; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KXo+v6jnA1X+4Tld4PMTFXnewHJ2jJrP+UR2zXBqFlY=;
-        b=f+74I7Q+gSJ9M0Mv02WDAP0a6CzGx5YKiWvaRUtmG1A8J0faz2rBNSC6HCRHKTxjHU
-         X7P3Ya0kMhnRBxQPOUYFDskN4jyeOoxg8m3zXAI9bO7CDi9hr9mFp/RG35spCFnvpoTN
-         D3Xh3goMvS9zGUnqSON8bW79r+pPbUpQFY1D0euuhqKO39/k+NbgBNim3NRsBjMZztHz
-         Y0vPMIXa7T4hcY+DMzZzAIIJVh6J6iyMqY1HR4wqlbTPpuPqFgNaDBN+J+LfiWSsWbod
-         x1UfIWzGeLhQftsU39JI0r6bY22zivajFC3CneK6A2LNmQ+GrYltj9tVAU5IrYMt+R4d
-         ckDA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742240178; x=1742844978;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KXo+v6jnA1X+4Tld4PMTFXnewHJ2jJrP+UR2zXBqFlY=;
-        b=er23EXI1+HaaNeYhiKjL1DTjrBUQj/QDVH4zmQdzj94sYcY1L1ibI1YnxY4kRubYXR
-         RkJsPb9ow4nAFULoGX4t7l6SUszSPz7Zm3yim029KWl2YG3/cckEwGuwTO6vKEyYvxoS
-         lNMyxM9Wo0ptidzW3x+eqbrppjntRH6dDwxPsuRaiW7aDSQ6UopGPrnquLl47RD7nUVZ
-         nxulrNMlf0sqqoV9ZPzB4/m6xUwm94letV6MIk6KZHrXmFdZtn5oAuYeMnOjVZAXD5QS
-         2pL8yVKPXAJ5GKnoJdr+ukX0o0Q4VVpUxNUfaDxyvaZuwFWM8pAprBxV7VDPzKAlMM0Z
-         VZ2g==
-X-Forwarded-Encrypted: i=1; AJvYcCWWLg4Uke+S8OKQbpX+Hxu9iMh1yva+AGF4gSfTtf9lNaSZQTjORyRy4JvqM16QrXmxIn2PwF9Zt8eCMyI=@vger.kernel.org, AJvYcCXcFmxIgE91PlXAbW6OD0pLJ2zhv4ObjCx6+FAgrVtYWbVtQaj33HdkjHKkrhJ/K89iNrTPo7GcMwY0vw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwnzIbxP6fEoykrZ1Linj8A4Y2prZN5oIn1kYeF0BBhpI1FDqKR
-	oX7CQbJ8zcZ0VogzpUk+PUkLLDemdeJZQ0aFZllDaxbwijJsfLdv0snQgcU2K9S495TfG0khq3B
-	4TuKKarrY05MmvmPgeiQ9VubLaRn6i+4K
-X-Gm-Gg: ASbGncsJSYwll8mDSe2iw77sxU/sTAXko781M+VDPlXCZXkAHbCsDok2XoAozLH1bP7
-	PQiw3K+NKbgCYGykZnWBIWJhGjY2vqoIr0jeTzLh2xMirV/Qn4rdRPA26tViRGchMivpTPoNuXP
-	DORLys4vQ02qmo7DQiNwq7/D+hcQ==
-X-Google-Smtp-Source: AGHT+IHvr9McC0p5Ht5bhftBl/m9Wn1Anb3wmjCUI3LLldyU72BYFGcNj9dUvgbL4At+MJ+SH72exn99sy1AivNNgoQ=
-X-Received: by 2002:a17:90b:1c0e:b0:2fe:b972:a2c3 with SMTP id
- 98e67ed59e1d1-30151ad6199mr6661114a91.0.1742240178120; Mon, 17 Mar 2025
- 12:36:18 -0700 (PDT)
+	s=arc-20240116; t=1742240168; c=relaxed/simple;
+	bh=M1wlGlbiGv47u5JDnyVXRs99VN8PUyBTmLwEJ6Kh0EM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=K2QxN12c3iGwZbUUh5Us1kdHMORjPhy1hnDrt7iW6mlO5s6visGp5gdQ7ibSaNrDJ2gb1Eq8pnL+O4O5EPds8le4+SJR1KDU8b4A16YlyHUvfpmxLFt9X5179sEkNCuWpVjoD7LVMQ3ZmIztPVRcN5n35j1yEHPEmVSc3+MeMz8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tWr1wIGj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F930C4CEEE;
+	Mon, 17 Mar 2025 19:36:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742240168;
+	bh=M1wlGlbiGv47u5JDnyVXRs99VN8PUyBTmLwEJ6Kh0EM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tWr1wIGj/X9Fb6GOMThPfYUoza9HhNBSpC87+v/RRHlYUSpSrOWzWtbqfgHFSr0wx
+	 KOw+WGcodLslBKNlFwFGqcfhts5DhfQ3cJ12gkc3BNpc44g4JUypBy3QY7Cybf9ncR
+	 Pc79WV+OxfNQrAmUt2+BtUwfL7gYVT67j/O7Zc6IKOEldUh6lVuUIvFj9YAKEL2kpw
+	 BGeWqhBk4yp9uqDKkflcuyoyVSOkeGwkVfppSJi9Fy200D9j76hLIBevASBA/f2zDD
+	 8l7iZmQgVQshTDy0JM7pteYHMhnMFqiSYVKxn73pSiblBXVfi5uTNNqvHQXhr9w2aZ
+	 Ci3q/mqc3mO5A==
+Date: Mon, 17 Mar 2025 16:36:05 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Namhyung Kim <namhyung@kernel.org>, Chun-Tse Shao <ctshao@google.com>,
+	linux-kernel@vger.kernel.org, peterz@infradead.org,
+	mingo@redhat.com, mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+	adrian.hunter@intel.com, kan.liang@linux.intel.com, terrelln@fb.com,
+	leo.yan@arm.com, james.clark@linaro.org,
+	christophe.leroy@csgroup.eu, ben.gainey@arm.com,
+	linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] perf record: Add 8-byte aligned event type
+ PERF_RECORD_COMPRESSED2
+Message-ID: <Z9h5pS4DyLaNp3tO@x1>
+References: <20250303183646.327510-1-ctshao@google.com>
+ <Z9TXabugl374M3bA@google.com>
+ <Z9hFJtEKfsGGUDMg@x1>
+ <Z9hLKsZOfouM3K7H@x1>
+ <CAP-5=fXOBp1F0eXbgjyjZd0K-=trqugmROttwSWT_M393HxeEQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250317203806.63d4bc95@canb.auug.org.au>
-In-Reply-To: <20250317203806.63d4bc95@canb.auug.org.au>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Mon, 17 Mar 2025 20:36:04 +0100
-X-Gm-Features: AQ5f1JoddkkFR097TIAyL2vRgRGggUuI1QJOHyLoxt4Xt4sDtlOIdzl3VU8NHdg
-Message-ID: <CANiq72=5jp-KMmX0jUhaR6G2emVV_w1=onGZamDW0ZRRDM8ipw@mail.gmail.com>
-Subject: Re: linux-next: manual merge of the rust tree with the kbuild tree
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Masahiro Yamada <masahiroy@kernel.org>, 
-	Benno Lossin <benno.lossin@proton.me>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAP-5=fXOBp1F0eXbgjyjZd0K-=trqugmROttwSWT_M393HxeEQ@mail.gmail.com>
 
-On Mon, Mar 17, 2025 at 10:38=E2=80=AFAM Stephen Rothwell <sfr@canb.auug.or=
-g.au> wrote:
->
-> Today's linux-next merge of the rust tree got a conflict in:
->
->   rust/Makefile
->
-> between commit:
->
->   e3de46f775ec ("rust: kbuild: skip `--remap-path-prefix` for `rustdoc`")
->
-> from the kbuild tree and commit:
->
->   d7659acca7a3 ("rust: add pin-init crate build infrastructure")
->
-> from the rust tree.
->
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
+On Mon, Mar 17, 2025 at 09:32:46AM -0700, Ian Rogers wrote:
+> On Mon, Mar 17, 2025 at 9:17 AM Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
+> > On Mon, Mar 17, 2025 at 12:52:09PM -0300, Arnaldo Carvalho de Melo wrote:
+> > > On Fri, Mar 14, 2025 at 06:27:05PM -0700, Namhyung Kim wrote:
+> > > > On Mon, Mar 03, 2025 at 10:32:40AM -0800, Chun-Tse Shao wrote:
+> > > > > The original PERF_RECORD_COMPRESS is not 8-byte aligned, which can cause
+> > > > > asan runtime error:
+> >
+> > > > >   # Build with asan
+> > > > >   $ make -C tools/perf O=/tmp/perf DEBUG=1 EXTRA_CFLAGS="-O0 -g -fno-omit-frame-pointer -fsanitize=undefined"
+> > > > >   # Test success with many asan runtime errors:
+> > > > >   $ /tmp/perf/perf test "Zstd perf.data compression/decompression" -vv
+> > > > >    83: Zstd perf.data compression/decompression:
+> > > > >   ...
+> > > > >   util/session.c:1959:13: runtime error: member access within misaligned address 0x7f69e3f99653 for type 'union perf_event', which requires 13 byte alignment
+> > > > >   0x7f69e3f99653: note: pointer points here
+> > > > >    d0  3a 50 69 44 00 00 00 00  00 08 00 bb 07 00 00 00  00 00 00 44 00 00 00 00  00 00 00 ff 07 00 00
+> > > > >                 ^
+> > > > >   util/session.c:2163:22: runtime error: member access within misaligned address 0x7f69e3f99653 for type 'union perf_event', which requires 8 byte alignment
+> > > > >   0x7f69e3f99653: note: pointer points here
+> > > > >    d0  3a 50 69 44 00 00 00 00  00 08 00 bb 07 00 00 00  00 00 00 44 00 00 00 00  00 00 00 ff 07 00 00
+> > > > >                 ^
+> > > > >   ...
+> >
+> > > > > Since there is no way to align compressed data in zstd compression, this
+> > > > > patch add a new event type `PERF_RECORD_COMPRESSED2`, which adds a field
+> > > > > `data_size` to specify the actual compressed data size. The
+> > > > > `header.size` contains the total record size, including the padding at
+> > > > > the end to make it 8-byte aligned.
+> >
+> > > > > Tested with `Zstd perf.data compression/decompression`
+> >
+> > > > Looks good to me.
+> >
+> > > > Arnaldo, are you ok with adding a new record type for this?
+> >
+> > > Checking the discussion and the patch.
+> >
+> > My first impression yesterday when I saw this on the smartphone was: how
+> > will an old perf binary handle the new PERF_RECORD_COMPRESSED2? Will it
+> > ignore it while emitting a warning, since it can be skipped and then
+> > what we will get a partial view?
+> >
+> > Having some session output showing how an older perf binary handles
+> > PERF_RECORD_COMPRESS2 would be informative.
+> >
+> > I'll try to reproduce/test this all...
+> 
+> I'm not sure we've worried about old perfs being able to read new
+> perf.data files, but we've worried about new perfs being able to read
+> old perf.data files. So if a change is additive, which this change is,
+> then nothing should be impacted.
 
-Looks good to me, thanks!
+Right, its difficult to make it work both ways, even with testing, but
+by 'work' I mean that new stuff should be ignored by older versions,
+i.e. records skipped and then the results will surely be different.
 
-Cheers,
-Miguel
+So I'm just curious how older tools will handle these new files and to,
+if not that super difficult, to improve how we handle unknown records so
+that in the future, when we add new stuff, we mention that this is
+something not handled, please use a new tool.
+ 
+> My thoughts are this way as this patch:
+> https://lore.kernel.org/all/20220614143353.1559597-7-irogers@google.com/
+> changed most perf.data cpumap encodings in a way that old perfs won't
+> be able to handle.
+ 
+> Perhaps testing/documentation should be present for this kind of thing.
+
+Right, but in this specific case it should be a matter of telling the
+user that the header.type PERF_RECORD_COMPRESS2 isn't supported and that
+the user should try and update their tool.
+
+But now back to figuring out how to generate PERF_RECORD_COMPRESS is
+generated, use it, then apply this patch, and then see if how the old
+tool copes.
+
+So documentation is also lacking in suggesting that enumerating the
+steps needed to test before/after is greatly appreciated.
+
+- Arnaldo
 
