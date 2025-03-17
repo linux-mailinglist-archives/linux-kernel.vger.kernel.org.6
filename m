@@ -1,228 +1,174 @@
-Return-Path: <linux-kernel+bounces-564996-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564997-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AD25A65EAE
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B58D7A65EAF
 	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 21:05:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DFFDC3AE584
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 20:04:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 50E06189B4B0
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 20:05:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04B711EFFAA;
-	Mon, 17 Mar 2025 20:04:31 +0000 (UTC)
-Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 533EC1E833B;
+	Mon, 17 Mar 2025 20:04:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IE0uoQvC"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFFB81AA1D8
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 20:04:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EED211DE8A7
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 20:04:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742241870; cv=none; b=VCU+GFZMsICv5IJZg05RrrCy8dOJXannkNRMto0sUCd5/luqjziQETPJOaPe8rIcEy9jfe0GlDx1fpHuPtWnyuD86xOtaI68/PjtPl6id9xwX8i7oHz7JhwXxV/p4TayGhD2+tNIIyN5u5Lonok2ifUJn8pElI9RFZw2V/0vucw=
+	t=1742241877; cv=none; b=AQR+t/iACDBWJrdfYxLWmz79mlTHYMley6CqEW2U38FTG4u866Hh1MQGdYLe7bXJt0O07pOHA5WcI0J+Z5iOJR3lUyVOq7/1tzQw4KlQ/V+rUPtZqhxO/3bqgAd3bZF1i2ezFymXXogzQO0RVOGBS87GEOEB+upRXp5v+yUDWfc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742241870; c=relaxed/simple;
-	bh=zDiqGRosoV+/3ssgCGb2SGIWovWyXkTfd75EIs4R0Yo=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=NPawLPMMGcqQaerwOTtFpjFjO6fjh265ERMsptgR6phy77ujp62nxEa1Dyhxqnwtm2Eb8wcsUrx1qJMCrAd/EDrs6yUSdIlUjhTFke+Rd7SR0ivgAwkUgnIgzn0xBeQF1/x+Qq6ahIuC9MmB3Sdodoqe3FteBij6ZyqkObrEqSs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-3d43d3338d7so95399555ab.0
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 13:04:28 -0700 (PDT)
+	s=arc-20240116; t=1742241877; c=relaxed/simple;
+	bh=5bDbl7G+5LGMGcfVxcK2EQBWdcwcjSQpiqdMNi9eD/M=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=uwQuagSaqbuwG95o1MMobNuv29FNpurRsbYH47BhvuYIPqSDsTVHoqmq8pA+iwAQxJFeu8sE+ro3StERfQkBMGr40cRNg0ok7lSPW9BjK9T0Jru0/xHEvygtQ5fJTmtmIvYZ41URQwVx/ySNKIbs1QMw8qn2mNWuWEOwuyfphKc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IE0uoQvC; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-43cf06eabdaso25129695e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 13:04:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742241874; x=1742846674; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=I+yftTMxlic2mD1ryKYfkycnPpOKHvoQOGTtzztr5L0=;
+        b=IE0uoQvCcOoDq90i+TnVP1SSFdmJYkJiuXYb7I4go1xX+L9sNtII9syisfQLkVlA38
+         i1rUfuLm0JgNOJxQnKxhlrpkJE3WljCEAH+qrGSEqyQ71vFR85i9BsJSptJVwyVDzhMq
+         LXWCdUiXYItxkqvoBsZZdk6P+dRWCe3qZKdpchJ4Rn4GldtYZmsmzvM2oDb4ajrRu8CC
+         B74753UWNh/6UFSCfMIScKMCVbB0UbzgmYv5aRLbsFsPf+aWzyLLoAA+SyBnOqoTu2pP
+         Pbm0CYqrB2Y3ZwWU3G4FRQwbggG+IIEN8NouC+Aw3JJ/dizePcim4j/f23TWtcM7E6ZG
+         qsZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742241868; x=1742846668;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=StTuGp4t5HsXJ4jfpO7DyuaszrNM9Zr0lwk+MnOE5aA=;
-        b=QOWX5pqLK72Zc5YunHS87/48IPD5AuIvkEY+gFDJa7w5ni27nAJXYBhvC8wnOlul9h
-         huyWKwwJZCjv5IolgvrGZ5/oypQRWKJNCzf3uhNJWz5g2/bZnn7GYIzrIscU8LR6PtpL
-         fsF9h+zCxJYbyEyVMXSaLTBEUdGnkgw7xP2pAfM7i5IcHkN5H43uA1B2uNu8VPIvI6DT
-         iVzn/qmsO+fCuEoQtLolXzujyAPVAsk1eC+9F6CBJ6JmJURXITzUREOQrMMM0v4Xfi1F
-         juNy8oqCHe2/dvEOlltJXRpF5owRY8EGR1Vkc94zl2Tq19BK2r/fmzqBcnfgozs5gJti
-         ADog==
-X-Forwarded-Encrypted: i=1; AJvYcCXCT6pl2PLGb02YJn+nf4W77mg4NcxfDqLLdad9OJAwvhduKIb43kb2yZpnYOZYS8eyzoqDgNzHxwYtPVw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+2JqP1gp9fz8iEs+XFqyJC37SVJBSAHNeKHNe5r33sOzvr9W3
-	xhECxUZztScNEWij6wNZ6H4K1ZbKNQ2Fx0v3r4NEwgSsLs6q1bZaFFEZSr7NlMW8BAEL+QCdSxR
-	0q9wGFhJhSMCQ2h0v6T7EKIsxZvk0UNzW2XFr8x7O7oyfjS4wDuHpcnI=
-X-Google-Smtp-Source: AGHT+IGeF15yKLNNo1r8a8INaqF6xkYgfxfTQUNCS6v3ZgwGxHAJepaofrIpUvF9xjWF8HtBe5dVBrxfEzvhODoYQitLfeZnQdYv
+        d=1e100.net; s=20230601; t=1742241874; x=1742846674;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=I+yftTMxlic2mD1ryKYfkycnPpOKHvoQOGTtzztr5L0=;
+        b=sKEVhfhpik3+SbZli3cp89wyYHXqTkDTWXaoQyojmvtCEkX8J3eYkQsxaSL8jjXLZS
+         v3+WUZu7OpeeKM+XW4E3kPEQVsjjz9VX7uprLWzS1cCbwOqWtD9zhhb0rEx+XZnuLWCb
+         Cpsk+U8m4AAfRZ1CuQrsddwEa6nBnMF2iQS/IExKgJ1V4yX9ya1+/N8rE4QbkPrT2o7v
+         hEa4y2OsU6fPDi8ldBzd7hYzhwM9LMWoxf3MPRrHKCyvmNBCKybA4L5apD9pCmNTC0ku
+         keLxjnhHqTXbuiEARP3vx/GUP2Bhyc/EejuJA4ErQ8uwObVLFnJ1Qjzt6VQukGv98Xrz
+         yQow==
+X-Forwarded-Encrypted: i=1; AJvYcCXUaxlNYTTcfPrHqPtYMt3SdLg4xS+bLVTAHDcPdTGmR9aV97agd2KEKfA6RrYarD2lDCxkHxtSL/0Y2CE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw59S28EANSEqZu+O3MOtR/YoSAaGeWwh7Gv/AUruOFiSD48cvF
+	mRDGoqEhD7wv5Q6PUQwkg/iy0HFQeTNFAkgbGkg48fJuuYzChLdV
+X-Gm-Gg: ASbGncuZg/MW0emL0JPvIylk3UQmKLzOteAQKtGLyqbgx1xPJYPVeAccNlJ5Qhu5cEg
+	8xrUVo5b5BJWiOnB5FDWF7nSdwAN8M1mCjB3Xk7sFNDdpEMMIk6rjxViuXMLFDbqWPD+L789uIF
+	P7nwdUXatKKczphn/526cSa5qRp5YoFJYycwSZ7/yDSx+QYFhosk/VZavfS+l/ZHfB0PiKXi3Rw
+	WByUuOZEWoN3yqqRf+U2O5drsQn3bb4O7eXTutQpTVfejHujztOa1xwdrb0OeYp85kqRlKBUqN2
+	dGAC9NtNQLzj7SkaSRSYzrB5Zf3d+cs7MOfhiuxdOMGGr3l8js0UyKeNlQmNWfI1BYsgvisoBsp
+	iPwmJ5epR6hsoO2GpKw==
+X-Google-Smtp-Source: AGHT+IERKA4HXQE/HUQrXsD/N7VST/VXcydaEMCHc/Fsxv9HgpGK2bJ5+FDsxGqZ8At63iwEZsTIbQ==
+X-Received: by 2002:a05:600c:1d2a:b0:43c:efed:732d with SMTP id 5b1f17b1804b1-43d1ec8dd4emr151411765e9.16.1742241874006;
+        Mon, 17 Mar 2025 13:04:34 -0700 (PDT)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-395c83b6b37sm16179101f8f.37.2025.03.17.13.04.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Mar 2025 13:04:33 -0700 (PDT)
+Date: Mon, 17 Mar 2025 20:04:32 +0000
+From: David Laight <david.laight.linux@gmail.com>
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, x86@kernel.org,
+ linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
+ Borislav Petkov <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>, Uros
+ Bizjak <ubizjak@gmail.com>, Andrew Cooper <andrew.cooper3@citrix.com>, Ingo
+ Molnar <mingo@kernel.org>
+Subject: Re: [PATCH 14/20] x86/barrier: Use alternative_io() in 32-bit
+ barrier functions
+Message-ID: <20250317200432.1a076d6a@pumpkin>
+In-Reply-To: <zfabhk7c3fucov7lpfsqf5bj7iie5324ccgn4ingzzakoyhl4u@fzg364keuphn>
+References: <cover.1741988314.git.jpoimboe@kernel.org>
+	<1c2fe7f93c4dd8a87c2e1fa8b780a8a2968be445.1741988314.git.jpoimboe@kernel.org>
+	<CAHk-=wjtvTPERDdrok2kDrSSFBjqHCCNVff95VVxhvP6wCC6jg@mail.gmail.com>
+	<zfabhk7c3fucov7lpfsqf5bj7iie5324ccgn4ingzzakoyhl4u@fzg364keuphn>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1d8e:b0:3cf:bb6e:3065 with SMTP id
- e9e14a558f8ab-3d48397f585mr130592785ab.0.1742241867792; Mon, 17 Mar 2025
- 13:04:27 -0700 (PDT)
-Date: Mon, 17 Mar 2025 13:04:27 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67d8804b.050a0220.2ca2c6.006b.GAE@google.com>
-Subject: [syzbot] [wireless?] INFO: trying to register non-static key in cfg80211_dev_free
-From: syzbot <syzbot+aaf0488c83d1d5f4f029@syzkaller.appspotmail.com>
-To: johannes@sipsolutions.net, linux-kernel@vger.kernel.org, 
-	linux-wireless@vger.kernel.org, netdev@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On Fri, 14 Mar 2025 17:05:34 -0700
+Josh Poimboeuf <jpoimboe@kernel.org> wrote:
 
-syzbot found the following issue on:
+> On Fri, Mar 14, 2025 at 01:49:48PM -1000, Linus Torvalds wrote:
+> > So all of these patches look like good cleanups to me, but I do wonder
+> > if we should
+> > 
+> >  (a) not use some naming *quite* as generic as 'ARG()'
+> > 
+> >  (b) make the asms use ARG_OUT/ARG_IN/ARG_CLOBBER() to clarify
+> > 
+> > because that ARG(), ARG(), ARGC() pattern looks odd to me.
+> > 
+> > Maybe it's just me.
+> > 
+> > Regardless, I do think the series looks like a nice improvement even
+> > in the current form, even if that particular repeated pattern feels
+> > strange.  
+> 
+> So originally I had ASM_OUTPUT/ASM_INPUT/ASM_CLOBBER, but I ended up
+> going with ARG() due to its nice vertical alignment and conciseness:
 
-HEAD commit:    4003c9e78778 Merge tag 'net-6.14-rc7' of git://git.kernel...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1763e04c580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=317038cbd53153e8
-dashboard link: https://syzkaller.appspot.com/bug?extid=aaf0488c83d1d5f4f029
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12c5ddb0580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16d2b03f980000
+But ARG() does look horrid.
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-4003c9e7.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/ce870bfb8bac/vmlinux-4003c9e7.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/195015b7ce43/bzImage-4003c9e7.xz
+Is the ARG() necessary just to handle the comma separated lists?
+If so is it only actually needed if there is more than one item?
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+aaf0488c83d1d5f4f029@syzkaller.appspotmail.com
+Another option is to just require () and add the ARG in the expansion.
+So with:
+#define __asm_call(qual, alt, out, in, clobber) \
+	asm("zzz", ARG out, ARG in, ARG clobber)
 
-RBP: 0000000000000001 R08: 00007ffc330c8967 R09: 000055557c17e4c0
-R10: 0000000000000001 R11: 0000000000000246 R12: 0000000000000004
-R13: 00007fb851c063fc R14: 00007fb851bd6334 R15: 00007fb851c063e4
- </TASK>
-INFO: trying to register non-static key.
-The code is fine but needs lockdep annotation, or maybe
-you didn't initialize this object before use?
-turning off the locking correctness validator.
-CPU: 0 UID: 0 PID: 5935 Comm: syz-executor550 Not tainted 6.14.0-rc6-syzkaller-00103-g4003c9e78778 #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
- assign_lock_key kernel/locking/lockdep.c:983 [inline]
- register_lock_class+0xc39/0x1240 kernel/locking/lockdep.c:1297
- __lock_acquire+0x135/0x3c40 kernel/locking/lockdep.c:5103
- lock_acquire.part.0+0x11b/0x380 kernel/locking/lockdep.c:5851
- __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
- _raw_spin_lock_irqsave+0x3a/0x60 kernel/locking/spinlock.c:162
- cfg80211_dev_free+0x30/0x3d0 net/wireless/core.c:1196
- device_release+0xa1/0x240 drivers/base/core.c:2568
- kobject_cleanup lib/kobject.c:689 [inline]
- kobject_release lib/kobject.c:720 [inline]
- kref_put include/linux/kref.h:65 [inline]
- kobject_put+0x1e4/0x5a0 lib/kobject.c:737
- put_device+0x1f/0x30 drivers/base/core.c:3774
- wiphy_free net/wireless/core.c:1224 [inline]
- wiphy_new_nm+0x1c1f/0x2160 net/wireless/core.c:562
- ieee80211_alloc_hw_nm+0x1b7a/0x2260 net/mac80211/main.c:835
- mac80211_hwsim_new_radio+0x1d6/0x54e0 drivers/net/wireless/virtual/mac80211_hwsim.c:5185
- hwsim_new_radio_nl+0xb42/0x12b0 drivers/net/wireless/virtual/mac80211_hwsim.c:6242
- genl_family_rcv_msg_doit+0x202/0x2f0 net/netlink/genetlink.c:1115
- genl_family_rcv_msg net/netlink/genetlink.c:1195 [inline]
- genl_rcv_msg+0x565/0x800 net/netlink/genetlink.c:1210
- netlink_rcv_skb+0x16b/0x440 net/netlink/af_netlink.c:2533
- genl_rcv+0x28/0x40 net/netlink/genetlink.c:1219
- netlink_unicast_kernel net/netlink/af_netlink.c:1312 [inline]
- netlink_unicast+0x53c/0x7f0 net/netlink/af_netlink.c:1338
- netlink_sendmsg+0x8b8/0xd70 net/netlink/af_netlink.c:1882
- sock_sendmsg_nosec net/socket.c:718 [inline]
- __sock_sendmsg net/socket.c:733 [inline]
- ____sys_sendmsg+0xaaf/0xc90 net/socket.c:2573
- ___sys_sendmsg+0x135/0x1e0 net/socket.c:2627
- __sys_sendmsg+0x16e/0x220 net/socket.c:2659
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fb851b909e9
-Code: 48 83 c4 28 c3 e8 c7 1b 00 00 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffc330c8bc8 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 00007ffc330c8c20 RCX: 00007fb851b909e9
-RDX: 0000000020000000 RSI: 0000400000000140 RDI: 0000000000000003
-RBP: 0000000000000001 R08: 00007ffc330c8967 R09: 000055557c17e4c0
-R10: 0000000000000001 R11: 0000000000000246 R12: 0000000000000004
-R13: 00007fb851c063fc R14: 00007fb851bd6334 R15: 00007fb851c063e4
- </TASK>
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 5935 at net/wireless/core.c:1197 cfg80211_dev_free+0x2e7/0x3d0 net/wireless/core.c:1197
-Modules linked in:
-CPU: 0 UID: 0 PID: 5935 Comm: syz-executor550 Not tainted 6.14.0-rc6-syzkaller-00103-g4003c9e78778 #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-RIP: 0010:cfg80211_dev_free+0x2e7/0x3d0 net/wireless/core.c:1197
-Code: 00 00 49 8b bd e0 08 00 00 e8 85 7a 69 f7 4c 89 ef 48 83 c4 10 5b 5d 41 5c 41 5d 41 5e 41 5f e9 6f 7a 69 f7 e8 8a 0c 11 f7 90 <0f> 0b 90 e9 6f fd ff ff 4c 89 f7 e8 b9 2b 74 f7 e9 aa fe ff ff 4c
-RSP: 0018:ffffc90003e371b8 EFLAGS: 00010093
-RAX: 0000000000000000 RBX: 0000000000000293 RCX: ffffffff81972d2d
-RDX: ffff88802721c880 RSI: ffffffff8aa8e456 RDI: ffffc90003e37128
-RBP: ffff8880121b06a8 R08: 0000000000000001 R09: fffff520007c6e25
-R10: 0000000000000003 R11: 0000000000000001 R12: ffff8880121b06b8
-R13: ffff8880121b0000 R14: ffff8881050d1b80 R15: 0000000000000000
-FS:  000055557c17d380(0000) GS:ffff88806a600000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000400000001ac0 CR3: 00000000122c0000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- device_release+0xa1/0x240 drivers/base/core.c:2568
- kobject_cleanup lib/kobject.c:689 [inline]
- kobject_release lib/kobject.c:720 [inline]
- kref_put include/linux/kref.h:65 [inline]
- kobject_put+0x1e4/0x5a0 lib/kobject.c:737
- put_device+0x1f/0x30 drivers/base/core.c:3774
- wiphy_free net/wireless/core.c:1224 [inline]
- wiphy_new_nm+0x1c1f/0x2160 net/wireless/core.c:562
- ieee80211_alloc_hw_nm+0x1b7a/0x2260 net/mac80211/main.c:835
- mac80211_hwsim_new_radio+0x1d6/0x54e0 drivers/net/wireless/virtual/mac80211_hwsim.c:5185
- hwsim_new_radio_nl+0xb42/0x12b0 drivers/net/wireless/virtual/mac80211_hwsim.c:6242
- genl_family_rcv_msg_doit+0x202/0x2f0 net/netlink/genetlink.c:1115
- genl_family_rcv_msg net/netlink/genetlink.c:1195 [inline]
- genl_rcv_msg+0x565/0x800 net/netlink/genetlink.c:1210
- netlink_rcv_skb+0x16b/0x440 net/netlink/af_netlink.c:2533
- genl_rcv+0x28/0x40 net/netlink/genetlink.c:1219
- netlink_unicast_kernel net/netlink/af_netlink.c:1312 [inline]
- netlink_unicast+0x53c/0x7f0 net/netlink/af_netlink.c:1338
- netlink_sendmsg+0x8b8/0xd70 net/netlink/af_netlink.c:1882
- sock_sendmsg_nosec net/socket.c:718 [inline]
- __sock_sendmsg net/socket.c:733 [inline]
- ____sys_sendmsg+0xaaf/0xc90 net/socket.c:2573
- ___sys_sendmsg+0x135/0x1e0 net/socket.c:2627
- __sys_sendmsg+0x16e/0x220 net/socket.c:2659
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fb851b909e9
-Code: 48 83 c4 28 c3 e8 c7 1b 00 00 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffc330c8bc8 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 00007ffc330c8c20 RCX: 00007fb851b909e9
-RDX: 0000000020000000 RSI: 0000400000000140 RDI: 0000000000000003
-RBP: 0000000000000001 R08: 00007ffc330c8967 R09: 000055557c17e4c0
-R10: 0000000000000001 R11: 0000000000000246 R12: 0000000000000004
-R13: 00007fb851c063fc R14: 00007fb851bd6334 R15: 00007fb851c063e4
- </TASK>
+__asm_call(qual, ALT(), \
+		([var] "+m" (__my_cpu_var(_var)), "+a" (old__.low),	\
+		    "+d" (old__.high)),					\
+		("b" (new__.low), "c" (new__.high), "S" (&(_var))),	\
+		("memory"));
 
+would get expanded the same as the line below.
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+	David
+	
+> 
+> 
+> 	__asm_call(qual,						\
+> 		ALTERNATIVE("call this_cpu_cmpxchg8b_emu",		\
+> 			    "cmpxchg8b " __percpu_arg([var]),		\
+> 			    X86_FEATURE_CX8),				\
+> 		ARG([var] "+m" (__my_cpu_var(_var)), "+a" (old__.low),	\
+> 		    "+d" (old__.high)),					\
+> 		ARG("b" (new__.low), "c" (new__.high), "S" (&(_var))),	\
+> 		ARG("memory"));						\
+> 
+> 
+> Though ASM_OUTPUT/ASM_INPUT/ASM_CLOBBER isn't so bad either:
+> 
+> 	__asm_call(qual,						\
+> 		ALTERNATIVE("call this_cpu_cmpxchg8b_emu",		\
+> 			    "cmpxchg8b " __percpu_arg([var]),		\
+> 			    X86_FEATURE_CX8),				\
+> 		ASM_OUTPUT([var] "+m" (__my_cpu_var(_var)),		\
+> 			   "+a" (old__.low), "+d" (old__.high)),	\
+> 		ASM_INPUT("b" (new__.low), "c" (new__.high),		\
+> 			  "S" (&(_var))),				\
+> 		ASM_CLOBBER("memory"));					\
+> 
+> 
+> That has the nice benefit of being more self-documenting, albeit more
+> verbose and less vertically aligned.
+> 
+> So I could go either way, really.
+> 
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
