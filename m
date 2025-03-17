@@ -1,114 +1,141 @@
-Return-Path: <linux-kernel+bounces-563589-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563591-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10EBFA644E2
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 09:14:05 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53B46A644E6
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 09:15:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 38B0B1893BE5
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 08:14:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 741257A6116
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 08:13:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7407621B9F3;
-	Mon, 17 Mar 2025 08:13:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7DC121B9E3;
+	Mon, 17 Mar 2025 08:14:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Txc4MHT5"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="PdNGLK8I"
+Received: from out-189.mta0.migadu.com (out-189.mta0.migadu.com [91.218.175.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58F731B042F;
-	Mon, 17 Mar 2025 08:13:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81F7A1B042F
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 08:14:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742199237; cv=none; b=pdtCevPGCxCgAHO9x46BEZDLmSUmSg4o9qSMl+zPY9JBtgjY6XgMynaEapXTRYNOxvX2WbxUh6a79gSkLk2kbLRQ3YPVq4pdsgC6ueqAGQGUAYuEJhMryQYHr0qTRbFTtJ6/eaXrF0mVX32cbKMh+uNcqjPuxwNTahfoFt2SSSo=
+	t=1742199294; cv=none; b=Y7pyK2oDHu6QQxnvbpCPK8vxJJj9034K+Am4exxTFVBjx5TIPJQ+Iuq6X6/ncCL48rccfyl3bo6q8xWFRUefhI4jDOLKeuV+M1WV2K600UCfQvm5ZLe6iXpPf3vcbNfaPw9IPILsfa6wIPT/V+2JpjmgwEPZIos+DdWK8Ah2LBI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742199237; c=relaxed/simple;
-	bh=gQf+Lt8p20EGFJVSJ+FVRsAM390Ky3G+/MPAOlYIbkU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GVDAEtaZkiNHW28ApRkJ75+BszRDorjG/giLiu/qv9HXqP84eI37qyI3X9OIa9a7Q0fJU2TCrILwt38sZ2d/uueryQYdu6bc3oZ690EuguqJvL0LveNOVzWA9+MFlLalU6iNjfIB/e3UVPtlvuMtyZbWcOuyI1ePYpLJlNLC0E4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Txc4MHT5; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742199236; x=1773735236;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=gQf+Lt8p20EGFJVSJ+FVRsAM390Ky3G+/MPAOlYIbkU=;
-  b=Txc4MHT5a46TxFnZEeb0nGqmCkbzHhSHNrXw8LaSgCKyXrqJNyVOkX85
-   r2JxGiUizfITmsC0cyTOIirB+hVjpn7YN3EGFiiAe6a1PBxkMTqViTEoN
-   GN1R6Qkc97jUIcgAoNFcIcryJaIqDmJm8pYC0pwNxwxekUngVwlviUVnT
-   9Gbq2SM0YuoD4eUGYuUmyRewkzjFZsiQUF4GmwnXLl2KjTE9E1e7N3Vxz
-   DOyKNv/jslnurcrzVmOmuAmpsmpRBV7+JfIydvNTbdBeh/veuLHss7Khm
-   78iH7PbXgXFc0ifjithosoBVGNyQxnxZ8F4fVAtlFxZz5HqyfBsaTXr9D
-   A==;
-X-CSE-ConnectionGUID: oCeViLjeRJaaoTO0dAwmhQ==
-X-CSE-MsgGUID: wTEm/u7fQyCrDiWLqBZwLQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11375"; a="54279184"
-X-IronPort-AV: E=Sophos;i="6.14,253,1736841600"; 
-   d="scan'208";a="54279184"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Mar 2025 01:13:54 -0700
-X-CSE-ConnectionGUID: KQBmuXvqQcewqb79Od9Plg==
-X-CSE-MsgGUID: oWJvVKwRRlqcDHlhQWKHCQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,253,1736841600"; 
-   d="scan'208";a="126905363"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa004.jf.intel.com with ESMTP; 17 Mar 2025 01:13:51 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1000)
-	id 2FF9D200; Mon, 17 Mar 2025 10:13:50 +0200 (EET)
-Date: Mon, 17 Mar 2025 10:13:50 +0200
-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-To: Adrian Hunter <adrian.hunter@intel.com>
-Cc: pbonzini@redhat.com, seanjc@google.com, kvm@vger.kernel.org, 
-	rick.p.edgecombe@intel.com, kai.huang@intel.com, reinette.chatre@intel.com, 
-	xiaoyao.li@intel.com, tony.lindgren@linux.intel.com, binbin.wu@linux.intel.com, 
-	isaku.yamahata@intel.com, linux-kernel@vger.kernel.org, yan.y.zhao@intel.com, 
-	chao.gao@intel.com
-Subject: Re: [PATCH RFC] KVM: TDX: Defer guest memory removal to decrease
- shutdown time
-Message-ID: <ful5rg4jmtxtpyf4apdgrcp3ohttqvwfdwbcrszf6h3jnlhlr5@pfkl6uvadwhu>
-References: <20250313181629.17764-1-adrian.hunter@intel.com>
+	s=arc-20240116; t=1742199294; c=relaxed/simple;
+	bh=Ik+juuv3vZG7o9rKpUv3FPBSdYaXCPaTs5wTp0dE0ro=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=a/ZeV2GVqXrZ/yq/wxcNwc0xl8Cbsp32zJVD3cn07VcJe6F5lv5nlaIc+dT6FDRukHZeFbtD1K0yLDnQ8/+gSHN0MYAEt6i3aoJ4F5Mc1d5vpCqZNm5c4BgizPI3pp56n1tJ+C2o8JTY6vzFLoLq0IGPQgntdMbRphNdC7+8/nw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=PdNGLK8I; arc=none smtp.client-ip=91.218.175.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1742199289;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=LRqxEhaGGRBnjpe2vKuBwbtSeIwWfJeTVgBc1Z0wJ/4=;
+	b=PdNGLK8ITK14OXWrnSamvqcfkiWYMqi544OKblg8sMlGEo3ZtchjFR/F/EKJ3TZ3RWv7AC
+	Krrd+ft4xu9hbW6/5nNMQStRe3SWE94f1qo8JSlp0Cgsd5nNtC0yo6+22VYcbzroI0vKGs
+	07/uzWV71v1QcjBWFiYjl3pfYDbA7V4=
+From: Kunwu Chan <kunwu.chan@linux.dev>
+To: ojeda@kernel.org,
+	alex.gaynor@gmail.com,
+	boqun.feng@gmail.com,
+	gary@garyguo.net,
+	bjorn3_gh@protonmail.com,
+	benno.lossin@proton.me,
+	a.hindborg@kernel.org,
+	aliceryhl@google.com,
+	tmgross@umich.edu,
+	dakr@kernel.org,
+	nathan@kernel.org,
+	nick.desaulniers+lkml@gmail.com,
+	morbo@google.com,
+	justinstitt@google.com
+Cc: rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev,
+	Kunwu Chan <kunwu.chan@hotmail.com>,
+	Grace Deng <Grace.Deng006@Gmail.com>
+Subject: [PATCH] rust: sync: optimize rust symbol generation for CondVar
+Date: Mon, 17 Mar 2025 16:13:50 +0800
+Message-ID: <20250317081351.2503049-1-kunwu.chan@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250313181629.17764-1-adrian.hunter@intel.com>
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Thu, Mar 13, 2025 at 08:16:29PM +0200, Adrian Hunter wrote:
-> @@ -3221,6 +3241,19 @@ int tdx_gmem_private_max_mapping_level(struct kvm *kvm, kvm_pfn_t pfn)
->  	return PG_LEVEL_4K;
->  }
->  
-> +int tdx_gmem_defer_removal(struct kvm *kvm, struct inode *inode)
-> +{
-> +	struct kvm_tdx *kvm_tdx = to_kvm_tdx(kvm);
-> +
-> +	if (kvm_tdx->nr_gmem_inodes >= TDX_MAX_GMEM_INODES)
-> +		return 0;
+From: Kunwu Chan <kunwu.chan@hotmail.com>
 
-We have graceful way to handle this, but should we pr_warn_once() or
-something if we ever hit this limit?
+When build the kernel using the llvm-18.1.3-rust-1.85.0-x86_64
+with ARCH=arm64, the following symbols are generated:
 
-Hm. It is also a bit odd that we need to wait until removal to add a link
-to guest_memfd inode from struct kvm/kvm_tdx. Can we do it right away in
-__kvm_gmem_create()?
+$nm vmlinux | grep ' _R'.*CondVar | rustfilt
+... T <kernel::sync::condvar::CondVar>::notify_all
+... T <kernel::sync::condvar::CondVar>::notify_one
+... T <kernel::sync::condvar::CondVar>::notify_sync
+... T <kernel::sync::condvar::CondVar>::new::{closure#0}::{closure#0}::panic_cold_explicit
+... T <kernel::sync::condvar::CondVar>::new::{closure#0}::{closure#0}::panic_cold_explicit
+... T <kernel::sync::poll::PollCondVar>::new::{closure#0}::{closure#0}::panic_cold_explicit
+... T <kernel::sync::poll::PollCondVar as core::ops::drop::Drop>::drop
 
-Do I read correctly that inode->i_mapping->i_private_list only ever has
-single entry of the gmem? Seems wasteful.
+These notify* symbols are trivial wrappers around the C functions
+__wake_up and __wake_up_sync.
+It doesn't make sense to go through a trivial wrapper for these
+functions, so mark them inline.
 
-Maybe move it to i_private (I don't see flags being used anywhere) and
-re-use the list_head to link all inodes of the struct kvm?
+Link: https://github.com/Rust-for-Linux/linux/issues/1145
+Suggested-by: Alice Ryhl <aliceryhl@google.com>
+Co-developed-by: Grace Deng <Grace.Deng006@Gmail.com>
+Signed-off-by: Grace Deng <Grace.Deng006@Gmail.com>
+Signed-off-by: Kunwu Chan <kunwu.chan@hotmail.com>
+---
+ rust/kernel/sync/condvar.rs | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-No need in the gmem_inodes array.
-> 
-
+diff --git a/rust/kernel/sync/condvar.rs b/rust/kernel/sync/condvar.rs
+index 7df565038d7d..a826896ba3f0 100644
+--- a/rust/kernel/sync/condvar.rs
++++ b/rust/kernel/sync/condvar.rs
+@@ -181,6 +181,7 @@ pub fn wait_interruptible_timeout<T: ?Sized, B: Backend>(
+     }
+ 
+     /// Calls the kernel function to notify the appropriate number of threads.
++    #[inline]
+     fn notify(&self, count: c_int) {
+         // SAFETY: `wait_queue_head` points to valid memory.
+         unsafe {
+@@ -198,6 +199,7 @@ fn notify(&self, count: c_int) {
+     /// This method behaves like `notify_one`, except that it hints to the scheduler that the
+     /// current thread is about to go to sleep, so it should schedule the target thread on the same
+     /// CPU.
++    #[inline]
+     pub fn notify_sync(&self) {
+         // SAFETY: `wait_queue_head` points to valid memory.
+         unsafe { bindings::__wake_up_sync(self.wait_queue_head.get(), TASK_NORMAL) };
+@@ -207,6 +209,7 @@ pub fn notify_sync(&self) {
+     ///
+     /// This is not 'sticky' in the sense that if no thread is waiting, the notification is lost
+     /// completely (as opposed to automatically waking up the next waiter).
++    #[inline]
+     pub fn notify_one(&self) {
+         self.notify(1);
+     }
+@@ -215,6 +218,7 @@ pub fn notify_one(&self) {
+     ///
+     /// This is not 'sticky' in the sense that if no thread is waiting, the notification is lost
+     /// completely (as opposed to automatically waking up the next waiter).
++    #[inline]
+     pub fn notify_all(&self) {
+         self.notify(0);
+     }
 -- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+2.43.0
+
 
