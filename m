@@ -1,147 +1,106 @@
-Return-Path: <linux-kernel+bounces-564532-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564530-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C6D6A656C6
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 16:57:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0EA4A656DF
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 17:00:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF79F189129B
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 15:54:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A42203BAA05
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 15:53:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9085F1AA1D8;
-	Mon, 17 Mar 2025 15:52:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 234781A072A;
+	Mon, 17 Mar 2025 15:52:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Nr3UWXX5"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D1lU8VNQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 620BD18DB1C;
-	Mon, 17 Mar 2025 15:52:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70F7E17A5A4;
+	Mon, 17 Mar 2025 15:52:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742226755; cv=none; b=ZkxNpCaMyXEtA4ZJlSWboNwy1H7D4IGrgpz4ikICk5H9UAJG+X3EJRk1AYX6uKtG1MQ+7DJyTKd7vzKpXJWVP3HXapq2zOnoButs0YCtLE/UwAHIeE0vrNeqNQTWranOEl+6t1AIkh1TbrIRqoApkZMRfnuUNQq+GHk/+xJ5kno=
+	t=1742226729; cv=none; b=lkrW6RTcp7HuPIXExo2RmPO7Drjc2BWTtmD+oBsZXFGzjWru5Ntcsgd27XoDRa4Acc2xWxofF6Ep2APZRBNCQg9JebfA9yWZzsbPKRfesVygtKYpQrAasexYuKzqY6KxwzkMPJ4MaykKAekX30K5C3lhYFzie0dTr7TTUX1CtKE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742226755; c=relaxed/simple;
-	bh=nTORzG9zIpB1tuECSA+WgYve+Q1rlgWbd3htR+1wW5k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OuX/i09+Cin2cyTl/vv7He4LbRcmwlGtUr1YMGsoMF2RZgJJ0e0j129VtFsgdmmALL37gGGwLMhtG89ormUgfLojUX7Kgp0LrV2rkz+tJFUKoi1hecnyJoy4TiB1zFxIS9A6dy5ojd6oDXtYNbcySqWc0Ds6SakwhHFMqveczNE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Nr3UWXX5; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5e5cd420781so8872258a12.2;
-        Mon, 17 Mar 2025 08:52:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742226752; x=1742831552; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JYzo6yCD6QJcusCjSnO6TtQIIlANc6aE2nAD2UNl8+4=;
-        b=Nr3UWXX5+78hKS2tSkxpjjue0LV6ULVj1cLmdAdBYAOIVfYQ0q738xFgc3lGWOMuF1
-         zvQHQ0WV9U5KwjcRjA4VHETvgXsIBJoQCFh0VJbsWt+Pq08rtySJ8iiFxmdEBj37IIwe
-         cuP/4ua0Z/9tawAeIJxHns8wvB8DNyFOAAux56MYq4MHrgwGze3gSyBlziqouKcyadPL
-         MxVK4wWQN8aL++8pJHd/bxWXuVqha2kH0C/gK+Cm5MTtw8DVqgqZInWw7ZOcH0DdwxBK
-         sLRyGreNdVhENXki9yJvBQ1LobQxt0Tn7yuzfvYmamZTDFTSY9hDrybMVUzOvdaRrcDi
-         pr4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742226752; x=1742831552;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JYzo6yCD6QJcusCjSnO6TtQIIlANc6aE2nAD2UNl8+4=;
-        b=YbrRQCVUrmNABqdD1j9vi/eTCGl9WIA4ucMWSat7lv10NiyfVVMoTubs6Qrr/a4Dv+
-         +tKLTa6A3j4YDqfu8IBsmvUlOE5PiHie5xp6pgD3IypXX6pFGlqMMp331Li3+Wey2/tq
-         BO/C0clCUfomc5lRVC93HpWGFJtLRaVNz6WHo73sxEzxh656ROkR1xn7gIksXHeIlJKx
-         zgStBKMchs0Cfg1CwBpRHrdrgR6pBNTHHsnJSc6RGs+EvccDrTulHdxlwjIPNDCWy//u
-         UYb46WsjhRVwYRsoPM5NXmLmP+Pj92REEB8ngzf19nS9smQW3TxiVdI55ke5NT1Uugaq
-         bM7g==
-X-Forwarded-Encrypted: i=1; AJvYcCVIlaF1W3akouQbz368dovnVcRpsB9QzWuOJB1Bf18aXCFu54ilaNVq+xE5JiVhByA5PFJ1JSJ6nBTjIYoe@vger.kernel.org, AJvYcCX6Vl8yv7tODEAyDqso5ly/rL0kXZtOxO8C3hAnbRyqdTwkqSOuc7d0F72aPBW9ZDRIWcR3Lw2nBAI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxg9VZGaEqGmwbYFaMr6McCB7lsi3+UqAaoWMZ9pmaMnRdWqcsv
-	FyJMsyTljDjUFSn4Ye2x4le3kYq9JPDl/nkC7tNuIaKoszYRo6i3Iq3McPWGfQ7IQ2sj1hYeZTD
-	4WeJVnLOEL0Z8KRswD2M2kpmgSHY=
-X-Gm-Gg: ASbGncsoIWL6RFnNQqkzoIQ9Rv3uOdB8QUHnqANB0YMq99wW1mOiaj6r3HV8IsZqidA
-	OkIu6pjz8wAWMR/TUe5UojxWwLnF8AdmcC4RSbhVpaN7NInyDwQzy8IZNkrNvh1x8jz2LdM4++Z
-	F7OpJdDW+hTT1WGtohzOOVd18mjVj5BNkxNejQZKI=
-X-Google-Smtp-Source: AGHT+IEh7DkFsRuAVv2KyN5MtgSxRJ4NQrsA3c47jwlweh18VSkMzy1dJzBk6IMEOnaId3BCHwWsZJR5sXFi+i/1akY=
-X-Received: by 2002:a17:907:d22:b0:abf:607b:d0d with SMTP id
- a640c23a62f3a-ac38d3fa372mr14844966b.16.1742226751422; Mon, 17 Mar 2025
- 08:52:31 -0700 (PDT)
+	s=arc-20240116; t=1742226729; c=relaxed/simple;
+	bh=VkCAbDUKlok6HX3OVfIlbrktH/ntcEK64hAQas8MqYQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kK82WXdoYZwyhogCNqp/Kw0rYSqiqQ+lLvJPJSD+t2M0Kp1GrNa0+QqHZultTxPG2zGmiNv3Fz6A++0dOZWo9mWo9yIZov9mx4qsK8ohBdckjdlQX/iNKXSoGEIyVHQ1wNGCK10cy3g2JsbRWuVNTdbaeI/97BQdCap0gBPJozw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D1lU8VNQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A7B3C4CEE3;
+	Mon, 17 Mar 2025 15:52:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742226729;
+	bh=VkCAbDUKlok6HX3OVfIlbrktH/ntcEK64hAQas8MqYQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=D1lU8VNQm7/iJN4O/QYEiQlYxMgMjvN6NjlchLm1CKgoyWVLyej+p1IrVa4gbptlW
+	 tzt7eIAG9BcAGNYLPWzlpUMuzryIqVGndlf/irBfeByvyBCnJTpn9/Zx3bMBQ4eApz
+	 NYihf/3DXhvWTQcY0AECBVkhcCvSgbt3ZfzAooUhQjOT+/M7zf1e/JAZt3AGwDNSXp
+	 1FDorFfvMI/R+hwoOgmeZQf9gHBZ+EmdVIpkkHcFxn1j6SBtkQyyEsnKWtQ8pskuVu
+	 BFJrriQPItq0fwHHC33Ay59sCh/drYln+rIXNPv6hpPondMXjXBx2gg8R700H2KBuC
+	 9XlGbWlxs8dOA==
+Date: Mon, 17 Mar 2025 12:52:06 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Chun-Tse Shao <ctshao@google.com>, linux-kernel@vger.kernel.org,
+	peterz@infradead.org, mingo@redhat.com, mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+	irogers@google.com, adrian.hunter@intel.com,
+	kan.liang@linux.intel.com, terrelln@fb.com, leo.yan@arm.com,
+	james.clark@linaro.org, christophe.leroy@csgroup.eu,
+	ben.gainey@arm.com, linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] perf record: Add 8-byte aligned event type
+ PERF_RECORD_COMPRESSED2
+Message-ID: <Z9hFJtEKfsGGUDMg@x1>
+References: <20250303183646.327510-1-ctshao@google.com>
+ <Z9TXabugl374M3bA@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250313165049.48305-1-l.rubusch@gmail.com> <20250313165049.48305-5-l.rubusch@gmail.com>
- <Z9ctSODRTxI53jAY@surfacebook.localdomain> <20250317105540.4b4a586f@jic23-huawei>
-In-Reply-To: <20250317105540.4b4a586f@jic23-huawei>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Mon, 17 Mar 2025 17:51:54 +0200
-X-Gm-Features: AQ5f1Jof8H3EqpVxqJbk3ApXVYR6SEdjKIanV9oN2tFiDkE9bkkagRpS598m2UI
-Message-ID: <CAHp75Vc=c=0yhtaKuiE4mZTTzQdrPywt89E7A1GuHha9=V=GUQ@mail.gmail.com>
-Subject: Re: [PATCH v4 04/14] iio: accel: adxl345: introduce
- adxl345_push_event function
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Lothar Rubusch <l.rubusch@gmail.com>, lars@metafoo.de, Michael.Hennerich@analog.com, 
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, eraretuya@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z9TXabugl374M3bA@google.com>
 
-On Mon, Mar 17, 2025 at 12:56=E2=80=AFPM Jonathan Cameron <jic23@kernel.org=
-> wrote:
-> On Sun, 16 Mar 2025 21:58:00 +0200
-> Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
-> > Thu, Mar 13, 2025 at 04:50:39PM +0000, Lothar Rubusch kirjoitti:
+On Fri, Mar 14, 2025 at 06:27:05PM -0700, Namhyung Kim wrote:
+> Hello,
+> 
+> On Mon, Mar 03, 2025 at 10:32:40AM -0800, Chun-Tse Shao wrote:
+> > The original PERF_RECORD_COMPRESS is not 8-byte aligned, which can cause
+> > asan runtime error:
+> > 
+> >   # Build with asan
+> >   $ make -C tools/perf O=/tmp/perf DEBUG=1 EXTRA_CFLAGS="-O0 -g -fno-omit-frame-pointer -fsanitize=undefined"
+> >   # Test success with many asan runtime errors:
+> >   $ /tmp/perf/perf test "Zstd perf.data compression/decompression" -vv
+> >    83: Zstd perf.data compression/decompression:
+> >   ...
+> >   util/session.c:1959:13: runtime error: member access within misaligned address 0x7f69e3f99653 for type 'union perf_event', which requires 13 byte alignment
+> >   0x7f69e3f99653: note: pointer points here
+> >    d0  3a 50 69 44 00 00 00 00  00 08 00 bb 07 00 00 00  00 00 00 44 00 00 00 00  00 00 00 ff 07 00 00
+> >                 ^
+> >   util/session.c:2163:22: runtime error: member access within misaligned address 0x7f69e3f99653 for type 'union perf_event', which requires 8 byte alignment
+> >   0x7f69e3f99653: note: pointer points here
+> >    d0  3a 50 69 44 00 00 00 00  00 08 00 bb 07 00 00 00  00 00 00 44 00 00 00 00  00 00 00 ff 07 00 00
+> >                 ^
+> >   ...
+> > 
+> > Since there is no way to align compressed data in zstd compression, this
+> > patch add a new event type `PERF_RECORD_COMPRESSED2`, which adds a field
+> > `data_size` to specify the actual compressed data size. The
+> > `header.size` contains the total record size, including the padding at
+> > the end to make it 8-byte aligned.
+> > 
+> > Tested with `Zstd perf.data compression/decompression`
+> 
+> Looks good to me.
+> 
+> Arnaldo, are you ok with adding a new record type for this?
 
-...
+Checking the discussion and the patch.
 
-> > > +static int adxl345_push_event(struct iio_dev *indio_dev, int int_sta=
-t)
-> > > +{
-> > > +   struct adxl345_state *st =3D iio_priv(indio_dev);
-> > > +   int samples;
-
-> > > +   int ret =3D -ENOENT;
-
-Also note, this variable is redundant as far as I can see, just return
-the error code directly.
-
-> > > +
-> > > +   if (FIELD_GET(ADXL345_INT_WATERMARK, int_stat)) {
-> > > +           samples =3D adxl345_get_samples(st);
-> > > +           if (samples < 0)
-> >
-> > > +                   return -EINVAL;
-> >
-> > In the original code it makes no difference, but if you are going to sh=
-are
-> > this, I would expect to see
-> >
-> >                       return samples;
-> >
-> > here. Why the error code is shadowed? If it's trully needed, it has to =
-be
-> > explained in the comment.
-> >
-> >
-> > > +           if (adxl345_fifo_push(indio_dev, samples) < 0)
-> > > +                   return -EINVAL;
-> > > +   }
-> > > +
-> > > +   return ret;
-> > > +}
-
-...
-
-> > Jonathan, I saw that you had applied it, but I guess the above needs
-> > a clarification.
-> Was right at the top of a tree I don't mind rebasing. So dropped
-> this patch (kept 1-3)
-
-Thank you!
-
---=20
-With Best Regards,
-Andy Shevchenko
+- ARnaldo
 
