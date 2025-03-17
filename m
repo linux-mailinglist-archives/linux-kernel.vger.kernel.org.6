@@ -1,249 +1,186 @@
-Return-Path: <linux-kernel+bounces-563340-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563345-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DED7A63F03
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 06:04:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 076C6A63F1C
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 06:05:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A119216B0D8
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 05:04:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9CE18188EB36
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 05:05:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 692D52153C1;
-	Mon, 17 Mar 2025 05:03:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C71BA215075;
+	Mon, 17 Mar 2025 05:05:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="zP72LJ55"
-Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
+	dkim=pass (1024-bit key) header.d=deepin.org header.i=@deepin.org header.b="hRYAmMvY"
+Received: from smtpbgbr2.qq.com (smtpbgbr2.qq.com [54.207.22.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3A66286A1;
-	Mon, 17 Mar 2025 05:03:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AB611CD2C;
+	Mon, 17 Mar 2025 05:05:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.207.22.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742187819; cv=none; b=u0Qsd3ZQXtvNnFjY5RP6BRlkwih/M1ex3ShIO07Ao98Me1SQ44B5WH2BOFq1HSQ/8RlEMb+4uFOjfG3zjrHJREJZj+T+QCoT141urzbJq75WDuGtvGfFLdvHOqgLCfxzwMDu+FwrtsHrUsHzzIqsFrcXWLlYAsfNrcNDCqI7UMs=
+	t=1742187914; cv=none; b=QRRHsY6nwhkThwwZ2Ix3zDQ9CIIGN886hBwPipztj4Yx0ZCQUxHdvHtW3EoQC6etbSDWX++i5g0Y90Cy8WyjNzUqy5pW95oXOI9edbiSLqUaFoFgPDOG8nAEMjz06kfP2Q/JiDP/aMQt4wUTEDw272yf8hKQ659pV7O6fYV8HFM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742187819; c=relaxed/simple;
-	bh=2vD/39xrIeY47JBB4mgWEUPE7E+CTz3iO47JJcNKFIo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=jgbOui8Bbp6cAtasvW5gSa4wYmXoqmA2I7Iokl5iBStDeasee+rupG/NGlC/jMlkoJSu6nRxXgDMfRwKTu4vz2u1E8VVEfdDbM3YuOwD5sqZtohivLgu09fgvRM6YRNCSdIydwrznWGEkaKmnw4oFBZAq52wsiY3eSPFyZkCHZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=zP72LJ55; arc=none smtp.client-ip=148.163.135.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
-Received: from pps.filterd (m0167088.ppops.net [127.0.0.1])
-	by mx0a-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52H4jvUK031114;
-	Mon, 17 Mar 2025 01:03:19 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=DKIM; bh=r2bCI
-	kLhw/rZksWEHKvCBsvGqUq/8+BhI3MfmB5oaQU=; b=zP72LJ55H5+PMkBWBI8kM
-	wgrGwqGATyYvekz2Nvf5fVyumAFd5rqcVR/chcz3xSD7hxzm+FZLAMceFsN7OMo6
-	gtf4C82SFng+/lhFaa4/TwFH9exf7u4Nvi58Y44+cr0dMIts7GMaHTeoozPZsIZ5
-	iLLs/tuYUgys+wOC76Oo+Mw7IyvOsFmRwHVD7DWZxUWbye9tVe7mCXuAsA0NSUYT
-	cjzsT4s1UHFzVpjm0qD2mGDcZ9B96/EkunmlulJQ0audp10PVCkQcCtzyCy7mDvv
-	ikB7RBGJeCz7tucDaAk1SvqxbuR5Zcan5RNmGwQ0HoLtmFqqdDnJnJ7Ge7Be9dKp
-	g==
-Received: from nwd2mta3.analog.com ([137.71.173.56])
-	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 45d3d6g0mv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 17 Mar 2025 01:03:19 -0400 (EDT)
-Received: from ASHBMBX8.ad.analog.com (ASHBMBX8.ad.analog.com [10.64.17.5])
-	by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 52H53ItO044495
-	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Mon, 17 Mar 2025 01:03:18 -0400
-Received: from ASHBMBX8.ad.analog.com (10.64.17.5) by ASHBMBX8.ad.analog.com
- (10.64.17.5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.14; Mon, 17 Mar
- 2025 01:03:18 -0400
-Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx8.ad.analog.com
- (10.64.17.5) with Microsoft SMTP Server id 15.2.986.14 via Frontend
- Transport; Mon, 17 Mar 2025 01:03:18 -0400
-Received: from analog.ad.analog.com (KPALLER2-L03.ad.analog.com [10.117.223.28])
-	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 52H52jZF026775;
-	Mon, 17 Mar 2025 01:03:07 -0400
-From: Kim Seer Paller <kimseer.paller@analog.com>
-Date: Mon, 17 Mar 2025 13:02:27 +0800
-Subject: [PATCH 3/3] hwmon: (pmbus/ltc2978) add support for lt717x
+	s=arc-20240116; t=1742187914; c=relaxed/simple;
+	bh=2j2cV21FgM/8/ZWuQEAf2CTVTrE95v9rMrKC1HP20ws=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RPQROmG+QKghY9CxvDZldLJn0RyDQFqyb0LZOMi+jZJpRXXNbzP/eyQWyBiC3CRhLl9B2byDqJUr+dz/QSLBRsj5MCFtnC6spayCZnWYTZpYVb+9rYCcTVgXoT9MWQxiXWjtxW7w0BLwfxYXPe7TfeJG5AyWDgOEg1eZjT8LYlE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=deepin.org; spf=pass smtp.mailfrom=deepin.org; dkim=pass (1024-bit key) header.d=deepin.org header.i=@deepin.org header.b=hRYAmMvY; arc=none smtp.client-ip=54.207.22.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=deepin.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=deepin.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=deepin.org;
+	s=ukjg2408; t=1742187899;
+	bh=M2UUyPvJ2y1MZA15wI3jxejuhS+GebCXKcVs2DOBs/Q=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To;
+	b=hRYAmMvYO6VsMN6MSpcC4ECIbLb7hkRcJyF78nYlVGsR4B4Y5erfre2sSAZoPys2n
+	 HU7bTpxHv4jywwhyPmYz1AW1jPuLQOc0MDRFpAcDC3H0LsxciQojKzf3ogkpo0A2jg
+	 uOrs07SaA/frFBAIqa6Y3XVywRBKUVnazBsTuleA=
+X-QQ-mid: bizesmtpsz9t1742187895taj7j1y
+X-QQ-Originating-IP: Z5C9+vlboSe8gW7/MYXuaRljzoEiXeNTh6d8mTpRtTo=
+Received: from mail-yb1-f180.google.com ( [209.85.219.180])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Mon, 17 Mar 2025 13:04:53 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 14577142841368056084
+Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-e60b75f87aaso3027648276.2;
+        Sun, 16 Mar 2025 22:04:54 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVghobj7YH88mE9czZAaN1XSd3qq0g7VamUFN4Jn/Ynk8wZAiQGBZXyDIpwYHzpviCyQIU=@vger.kernel.org, AJvYcCWXV5GG1CUxlYNrr/cEBTxtSDKIDT8UF4OjQvFpeeqHaMwrsdyQGktrx/TuocBr75iXwXzM6vrv@vger.kernel.org, AJvYcCWx26V7GA75d8WSKwAoFJCBLxzCDa+aSkwCg6aks/cU82SnGc5l90ckmG060rP3un1q8eZu2D3vMkBpVBYR@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz2Ao3+D66Euf4f8WifBOmpolm1lmBRuJKw8b/NpDNZQh9dcci/
+	dl55LrvSYk5Uz4S2upJ4XyVrBDhH3oYB46V4eZ1MTf0zmqRHOq+8IQED+wPtTSORp6wm5wTNgS/
+	DPoVhcJkr3Zb3cI0TfJuBqzm6cQ4=
+X-Google-Smtp-Source: AGHT+IEclvi37l+5wwO8UmE2nDEZ7P2yrAPC5bWt1YuMHgdSe08lN5oTlUNdlPZn2kALuCGJK82TUIC2DrHQhJs+K4Y=
+X-Received: by 2002:a05:6902:2504:b0:e63:c2d2:94f2 with SMTP id
+ 3f1490d57ef6-e63f64d6613mr12913981276.4.1742187892688; Sun, 16 Mar 2025
+ 22:04:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20250317-hwmon-next-v1-3-da0218c38197@analog.com>
-References: <20250317-hwmon-next-v1-0-da0218c38197@analog.com>
-In-Reply-To: <20250317-hwmon-next-v1-0-da0218c38197@analog.com>
-To: Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>,
-        Jonathan Corbet <corbet@lwn.net>, Rob Herring <robh@kernel.org>,
-        Krzysztof
- Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, Frank Li
-	<Frank.Li@nxp.com>,
-        Delphine CC Chiu <Delphine_CC_Chiu@Wiwynn.com>
-CC: <linux-hwmon@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-i2c@vger.kernel.org>,
-        Kim Seer Paller <kimseer.paller@analog.com>,
-        Cherrence Sarip <cherrence.sarip@analog.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1742187765; l=5152;
- i=kimseer.paller@analog.com; s=20250213; h=from:subject:message-id;
- bh=2vD/39xrIeY47JBB4mgWEUPE7E+CTz3iO47JJcNKFIo=;
- b=wCpAEGlpdIyjd2x8FP5UhX7oBOfoAK4VxCdSpwXz4t7htJYIhXfrdZl6EN2YQkbhIiKtz754r
- wuGTRQOUSLfBNsTEABHSlwceTOi/5vVvJxvGWnxEbOz2bGFCYnSZaM7
-X-Developer-Key: i=kimseer.paller@analog.com; a=ed25519;
- pk=SPXIwGLg4GFKUNfuAavY+YhSDsx+Q+NwGLceiKwm8Ac=
-X-ADIRuleOP-NewSCL: Rule Triggered
-X-Proofpoint-ORIG-GUID: v8vYl_4d_NoVSvChkQsceWIoyRiiywce
-X-Authority-Analysis: v=2.4 cv=MsRS63ae c=1 sm=1 tr=0 ts=67d7ad17 cx=c_pps a=PpDZqlmH/M8setHirZLBMw==:117 a=PpDZqlmH/M8setHirZLBMw==:17 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=gAnH3GRIAAAA:8 a=05dnua3z-gnXFUcAZTMA:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-GUID: v8vYl_4d_NoVSvChkQsceWIoyRiiywce
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-17_01,2025-03-14_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 bulkscore=0
- impostorscore=0 lowpriorityscore=0 malwarescore=0 adultscore=0
- priorityscore=1501 phishscore=0 clxscore=1011 mlxlogscore=999
- suspectscore=0 spamscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503170034
+References: <84B05ADD5527685D+20250317011604.119801-2-chenlinxuan@deepin.org> <2025031759-sacrifice-wreckage-9948@gregkh>
+In-Reply-To: <2025031759-sacrifice-wreckage-9948@gregkh>
+From: Chen Linxuan <chenlinxuan@deepin.org>
+Date: Mon, 17 Mar 2025 13:04:41 +0800
+X-Gmail-Original-Message-ID: <90633147F3110D54+CAC1kPDNNBj3Hd6s72mA3qxwxC0B69aE7qhM+Az5msvjPy41N5w@mail.gmail.com>
+X-Gm-Features: AQ5f1JosL4TAodELERN3orTFlcWSuf3HluXcDHfk5v-mc_DcPgobK1IZuHPieJM
+Message-ID: <CAC1kPDNNBj3Hd6s72mA3qxwxC0B69aE7qhM+Az5msvjPy41N5w@mail.gmail.com>
+Subject: Re: [PATCH stable 6.6 v2] lib/buildid: Handle memfd_secret() files in build_id_parse()
+To: Greg KH <greg@kroah.com>
+Cc: Chen Linxuan <chenlinxuan@deepin.org>, Andrii Nakryiko <andrii@kernel.org>, 
+	Jiri Olsa <jolsa@kernel.org>, Sasha Levin <sashal@kernel.org>, 
+	Eduard Zingerman <eddyz87@gmail.com>, Jann Horn <jannh@google.com>, 
+	Alexey Dobriyan <adobriyan@gmail.com>, Alexei Starovoitov <ast@kernel.org>, 
+	Shakeel Butt <shakeel.butt@linux.dev>, "Peter Zijlstra (Intel)" <peterz@infradead.org>, 
+	Yi Lai <yi1.lai@intel.com>, Daniel Borkmann <daniel@iogearbox.net>, stable@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtpsz:deepin.org:qybglogicsvrgz:qybglogicsvrgz7a-0
+X-QQ-XMAILINFO: OH/oXo99N/TG8mylz+IzWatGYXRibEcyvlAzrNL0VlFXupXGcw66w6a4
+	hCzjgYdXpdWRrEUsgQYqv+yUIdkO7V2KIz5F40/221+0SXNrHAmZd5io45T+DsujC2+enDe
+	mwgfUJDk/Et7jFUZ5qPgyEQRLqOQbpUcl+4gZPlNtOaAx2KiZ39LVrGTUDmqyA0nXKzuSw7
+	Y1+vCpI08n00GP4O1XDFawTZZECo+FV3f7/rz8XobBFwQCzLTQA486QsT3gLSCobhY1RDU0
+	gzqOfAbaeC2B9Tvw0Hba2OVjz12lm1LiQrY4d6sgdaSfwP/AZAJfjCaU9t31UkpXugPQkPV
+	odplmYzsHwlCHVzCadpRvkUIhQ2Rm9FvcjHFRSHvr2unSVdLWPK4vUGpYXaSlyZLDOKBEqi
+	oSEW5+LAcLjmCLlsfhEmWeTDOEtck1axvJCTminWOXBJcAuppNKB8XKIThi1r/rth9l8ZSO
+	eaiUEtXSY4L6ammhsRXaQeTZJqPSb/vwSTRMgOpNwxUaFm4jz5OqIRw3mBeDRJ3Hm2wSAGe
+	5vQ0259CINzYtE4o6Y8G9qQhrp1NxTs+0vm7gjlGK/ouJw61HcTwnYxhf336tQmkwTCvW7n
+	elQ9J3EAqiUbdRn5e/3HW9IbO5ND6vnUMHpINkGtXs/7AcPqnn5Ium6YU2NYAdHpRLcch7K
+	Nart/+Jzo2ViuGMJ+XAreVIgsiC1k+fueKcgeZJqyXtcwrXcpnH1EtmgGSicqbhv3dRrYV4
+	tC2SJPc/GlvTrMjVjdep4uH+CJwFYY8oajvMNUVoyngYRhkaglIYKp1blxZ5WS41vHIGYTj
+	72+aVWaW0mZySFK50z31NyaF3jnrva2N0OmBfTykmynSmWp5lLX17GJsfFMHF+0sg/yzAkl
+	1+kZ4FXWb7AAGA2/HXiVll4PS2oiU+MZOScSs3aqWAyWFFPJeNiv1eu97dJIQnBGL5ZDXrD
+	sPwNNZQFcEdd/+Gbwcok6lF/W1gn3AqHzusgjH150IN8oeSMwesarENz8V1MmzmDUVTAHj1
+	9y6F2CDgt1RIxNmVFqUilwKiwrdIuoLLABILuqqLUqrQ7NQt7Q
+X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
+X-QQ-RECHKSPAM: 0
 
-Add support for LT7170 and LT7171. The LT7170 and LT7171 are 20 A, 16 V,
-Single- or Dual-Phase, Silent Switcher Step-Down Regulators with Digital
-Power System Management.
+Greg KH <greg@kroah.com> =E4=BA=8E2025=E5=B9=B43=E6=9C=8817=E6=97=A5=E5=91=
+=A8=E4=B8=80 12:20=E5=86=99=E9=81=93=EF=BC=9A
+>
+> On Mon, Mar 17, 2025 at 09:16:04AM +0800, Chen Linxuan wrote:
+> > [ Upstream commit 5ac9b4e935dfc6af41eee2ddc21deb5c36507a9f ]
+> >
+> > >>From memfd_secret(2) manpage:
+> >
+> >   The memory areas backing the file created with memfd_secret(2) are
+> >   visible only to the processes that have access to the file descriptor=
+.
+> >   The memory region is removed from the kernel page tables and only the
+> >   page tables of the processes holding the file descriptor map the
+> >   corresponding physical memory. (Thus, the pages in the region can't b=
+e
+> >   accessed by the kernel itself, so that, for example, pointers to the
+> >   region can't be passed to system calls.)
+> >
+> > We need to handle this special case gracefully in build ID fetching
+> > code. Return -EFAULT whenever secretmem file is passed to build_id_pars=
+e()
+> > family of APIs. Original report and repro can be found in [0].
+> >
+> >   [0] https://lore.kernel.org/bpf/ZwyG8Uro%2FSyTXAni@ly-workstation/
+> >
+> > Fixes: de3ec364c3c3 ("lib/buildid: add single folio-based file reader a=
+bstraction")
+> > Reported-by: Yi Lai <yi1.lai@intel.com>
+> > Suggested-by: Shakeel Butt <shakeel.butt@linux.dev>
+> > Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
+> > Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+> > Acked-by: Shakeel Butt <shakeel.butt@linux.dev>
+> > Link: https://lore.kernel.org/bpf/20241017175431.6183-A-hca@linux.ibm.c=
+om
+> > Link: https://lore.kernel.org/bpf/20241017174713.2157873-1-andrii@kerne=
+l.org
+> > [ Chen Linxuan: backport same logic without folio-based changes ]
+> > Cc: stable@vger.kernel.org
+> > Fixes: 88a16a130933 ("perf: Add build id data in mmap2 event")
+> > Signed-off-by: Chen Linxuan <chenlinxuan@deepin.org>
+> > ---
+> > v1 -> v2: use vma_is_secretmem() instead of directly checking
+> >           vma->vm_file->f_op =3D=3D &secretmem_fops
+> > ---
+> >  lib/buildid.c | 5 +++++
+> >  1 file changed, 5 insertions(+)
+> >
+> > diff --git a/lib/buildid.c b/lib/buildid.c
+> > index 9fc46366597e..34315d09b544 100644
+> > --- a/lib/buildid.c
+> > +++ b/lib/buildid.c
+> > @@ -5,6 +5,7 @@
+> >  #include <linux/elf.h>
+> >  #include <linux/kernel.h>
+> >  #include <linux/pagemap.h>
+> > +#include <linux/secretmem.h>
+> >
+> >  #define BUILD_ID 3
+> >
+> > @@ -157,6 +158,10 @@ int build_id_parse(struct vm_area_struct *vma, uns=
+igned char *build_id,
+> >       if (!vma->vm_file)
+> >               return -EINVAL;
+> >
+> > +     /* reject secretmem */
+>
+> Why is this comment different from what is in the original commit?  Same
+> for your other backports.  Please try to keep it as identical to the
+> original whenever possible as we have to maintain this for a very long
+> time.
+>
+> thanks,
+>
+> greg k-h
+>
+>
 
-The relevant registers in the LT7170 and LT7171 are similar to those in
-the LTC3887, but with fewer channels. This adds the chip ID and
-identification of ASCII to differentiate between the LT7170 and LT7171.
-These devices support polling for status updates and clearing peak
-values. The data format for voltage, current, and temperature is set to
-IEEE754 for precision and compatibility.
+Original comment is in a function named freader_get_folio(),
+but folio related changes has not been backported yet.
 
-Co-developed-by: Cherrence Sarip <cherrence.sarip@analog.com>
-Signed-off-by: Cherrence Sarip <cherrence.sarip@analog.com>
-Signed-off-by: Kim Seer Paller <kimseer.paller@analog.com>
----
- drivers/hwmon/pmbus/Kconfig   |  6 +++---
- drivers/hwmon/pmbus/ltc2978.c | 44 ++++++++++++++++++++++++++++++++++++++++---
- 2 files changed, 44 insertions(+), 6 deletions(-)
+thanks,
 
-diff --git a/drivers/hwmon/pmbus/Kconfig b/drivers/hwmon/pmbus/Kconfig
-index 675b0d4703d87c9d5654489d0d770661ff0dba11..6ce68dd333690c407311e256db3f3284bbb48861 100644
---- a/drivers/hwmon/pmbus/Kconfig
-+++ b/drivers/hwmon/pmbus/Kconfig
-@@ -233,9 +233,9 @@ config SENSORS_LTC2978_REGULATOR
- 	depends on SENSORS_LTC2978 && REGULATOR
- 	help
- 	  If you say yes here you get regulator support for Linear Technology
--	  LTC3880, LTC3883, LTC3884, LTC3886, LTC3887, LTC3889, LTC7841,
--	  LTC7880, LTM4644, LTM4673, LTM4675, LTM4676, LTM4677, LTM4678,
--	  LTM4680, LTM4686, and LTM4700.
-+	  LT7170, LT7171, LTC3880, LTC3883, LTC3884, LTC3886, LTC3887, LTC3889,
-+	  LTC7841, LTC7880, LTM4644, LTM4673, LTM4675, LTM4676, LTM4677,
-+	  LTM4678, LTM4680, LTM4686, and LTM4700.
- 
- config SENSORS_LTC3815
- 	tristate "Linear Technologies LTC3815"
-diff --git a/drivers/hwmon/pmbus/ltc2978.c b/drivers/hwmon/pmbus/ltc2978.c
-index 658cb1173291006d83033a6363ac52d24635abaf..8f5be520a15db3d61dcd6df38ece6c74b232f85b 100644
---- a/drivers/hwmon/pmbus/ltc2978.c
-+++ b/drivers/hwmon/pmbus/ltc2978.c
-@@ -23,8 +23,8 @@ enum chips {
- 	/* Managers */
- 	ltc2972, ltc2974, ltc2975, ltc2977, ltc2978, ltc2979, ltc2980,
- 	/* Controllers */
--	ltc3880, ltc3882, ltc3883, ltc3884, ltc3886, ltc3887, ltc3889, ltc7132,
--	ltc7841, ltc7880,
-+	lt7170, lt7171, ltc3880, ltc3882, ltc3883, ltc3884, ltc3886, ltc3887,
-+	ltc3889, ltc7132, ltc7841, ltc7880,
- 	/* Modules */
- 	ltm2987, ltm4664, ltm4673, ltm4675, ltm4676, ltm4677, ltm4678, ltm4680,
- 	ltm4686, ltm4700,
-@@ -62,6 +62,7 @@ enum chips {
- 
- #define LTC2978_ID_MASK			0xfff0
- 
-+#define LT7170_ID			0x1C10
- #define LTC2972_ID			0x0310
- #define LTC2974_ID			0x0210
- #define LTC2975_ID			0x0220
-@@ -537,6 +538,8 @@ static int ltc2978_write_word_data(struct i2c_client *client, int page,
- }
- 
- static const struct i2c_device_id ltc2978_id[] = {
-+	{"lt7170", lt7170},
-+	{"lt7171", lt7171},
- 	{"ltc2972", ltc2972},
- 	{"ltc2974", ltc2974},
- 	{"ltc2975", ltc2975},
-@@ -615,7 +618,7 @@ static int ltc2978_get_id(struct i2c_client *client)
- 		ret = i2c_smbus_read_block_data(client, PMBUS_MFR_ID, buf);
- 		if (ret < 0)
- 			return ret;
--		if (ret < 3 || strncmp(buf, "LTC", 3))
-+		if (ret < 3 || (strncmp(buf, "LTC", 3) && strncmp(buf, "ADI", 3)))
- 			return -ENODEV;
- 
- 		ret = i2c_smbus_read_block_data(client, PMBUS_MFR_MODEL, buf);
-@@ -630,6 +633,25 @@ static int ltc2978_get_id(struct i2c_client *client)
- 
- 	chip_id &= LTC2978_ID_MASK;
- 
-+	if (chip_id == LT7170_ID) {
-+		u8 buf[I2C_SMBUS_BLOCK_MAX];
-+		int ret;
-+
-+		ret = i2c_smbus_read_i2c_block_data(client, PMBUS_IC_DEVICE_ID,
-+						    sizeof(buf), buf);
-+		if (ret < 0)
-+			return ret;
-+
-+		if (!strncmp(buf + 1, "LT7170", 6) ||
-+		    !strncmp(buf + 1, "LT7170-1", 8))
-+			return lt7170;
-+		if (!strncmp(buf + 1, "LT7171", 6) ||
-+		    !strncmp(buf + 1, "LT7171-1", 8))
-+			return lt7171;
-+
-+		return -ENODEV;
-+	}
-+
- 	if (chip_id == LTC2972_ID)
- 		return ltc2972;
- 	else if (chip_id == LTC2974_ID)
-@@ -741,6 +763,20 @@ static int ltc2978_probe(struct i2c_client *client)
- 	data->temp2_max = 0x7c00;
- 
- 	switch (data->id) {
-+	case lt7170:
-+	case lt7171:
-+		data->features |= FEAT_CLEAR_PEAKS | FEAT_NEEDS_POLLING;
-+		info->read_word_data = ltc3883_read_word_data;
-+		info->pages = LTC3883_NUM_PAGES;
-+		info->format[PSC_VOLTAGE_IN] = ieee754;
-+		info->format[PSC_VOLTAGE_OUT] = ieee754;
-+		info->format[PSC_CURRENT_OUT] = ieee754;
-+		info->format[PSC_TEMPERATURE] = ieee754;
-+		info->func[0] = PMBUS_HAVE_VIN | PMBUS_HAVE_STATUS_INPUT
-+		  | PMBUS_HAVE_VOUT | PMBUS_HAVE_STATUS_VOUT
-+		  | PMBUS_HAVE_IOUT | PMBUS_HAVE_STATUS_IOUT
-+		  | PMBUS_HAVE_TEMP | PMBUS_HAVE_STATUS_TEMP;
-+		break;
- 	case ltc2972:
- 		info->read_word_data = ltc2975_read_word_data;
- 		info->pages = LTC2972_NUM_PAGES;
-@@ -927,6 +963,8 @@ static int ltc2978_probe(struct i2c_client *client)
- 
- #ifdef CONFIG_OF
- static const struct of_device_id ltc2978_of_match[] = {
-+	{ .compatible = "lltc,lt7170" },
-+	{ .compatible = "lltc,lt7171" },
- 	{ .compatible = "lltc,ltc2972" },
- 	{ .compatible = "lltc,ltc2974" },
- 	{ .compatible = "lltc,ltc2975" },
-
--- 
-2.34.1
-
+Chen Linxuan
 
