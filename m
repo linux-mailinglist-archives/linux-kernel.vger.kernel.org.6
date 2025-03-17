@@ -1,98 +1,114 @@
-Return-Path: <linux-kernel+bounces-564714-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564717-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1197A659A2
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 18:07:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B983A659AC
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 18:08:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46FE8188CE42
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 17:02:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 577D319A4A1B
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 17:03:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6893D1B0F30;
-	Mon, 17 Mar 2025 16:57:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D6C51DDC15;
+	Mon, 17 Mar 2025 16:59:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rxyGTeG+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iv2eVjMZ"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8B441A83FB
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 16:57:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A76BF1CEAA3;
+	Mon, 17 Mar 2025 16:59:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742230640; cv=none; b=qxpdDmfpDE0TZkxAz1ulk0M9K5dGvQ9zae3t7aYXNgknFYr1EeyYppZPsqHin0c/TWLVRk4kQ+NpF43avFV9P1SnOAxLQ+mtoxbovq7aix3sGTtAlX9GPHDLo09uZ2w0UTXTrtgB54o5+URBKCpW0OFr48+u63ltxTyMH3Xqq98=
+	t=1742230765; cv=none; b=o59lhNT1xdoH7keP5EVcqsYs+5TyNQ+DiCD+jN5K6/QqPdKCx0XnJPwWs/ra2QBtxiO0h/v36LQNhjX+cG2J8WXf6o1fkWVywfCTd1Ggfy1ZXZZ9JbOxviyCCfNvcAT7Bat1RaeR5eiU1DOXG93dlWpmGvVZen2wMkRc4VsNzxY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742230640; c=relaxed/simple;
-	bh=OAjlU0Gz65Q0UCSzk8Pc3sou4cltFCl4F2yVDcU/gMw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=o+u2BUiq0njmkhsMB6l97Hl7etPHIX2fjYz09yvjdFfWLtQ/u7P3ZFNHo3knQqjHxvIapcKFRaTkvHfSNXew18pt+E0YAhkRI7OqRwVkqAOTAPwOQlf50AZNmS+R/W18ujuAVW9VY1SafTjyUYbC73F3+gzQcNMEG4Y/fJ5aAgA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rxyGTeG+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0DB27C4CEE3;
-	Mon, 17 Mar 2025 16:57:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742230640;
-	bh=OAjlU0Gz65Q0UCSzk8Pc3sou4cltFCl4F2yVDcU/gMw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rxyGTeG+bfC6h1PufP79txV0QH0Is0R9wp1RMXDgxAedfiHWSpCpRffpc9ChNA+zE
-	 UUFwUpkuCU2AIr1URx3e0adQO3YNWmi2cRsMGS7DEvY67xIM8gLEF2TOub0ZjfBEYm
-	 mxZPdcd5cMtaEoo0A/MWb2MIwAYncy9/Fnzjp9naPHHvaw0x4oNDbt9VFnbT4vMcL+
-	 ODMMtDa4ctpTkjuiHHav1vCB1ynTxcAJNOHm4XR/JGZXsQIv0RY7Dje2uWvCyOe5go
-	 k11s4kCeR2yiE+kE0zBm/G61GtUTRZqIpWYpFCSGjh7ZzM1Okg26J9dRA4k5wgqHv8
-	 fobgKJwZGOcMA==
-Date: Mon, 17 Mar 2025 06:57:19 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Joel Fernandes <joelagnelf@nvidia.com>, linux-kernel@vger.kernel.org,
-	Andrea Righi <arighi@nvidia.com>, Ingo Molnar <mingo@redhat.com>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	David Vernet <void@manifault.com>,
-	Changwoo Min <changwoo@igalia.com>,
-	Luigi De Matteis <ldematteis123@gmail.com>, paulmck@kernel.org,
-	boqun.feng@gmail.com
-Subject: Re: [PATCH RFC 3/8] sched/ext: Add a DL server for sched_ext tasks
-Message-ID: <Z9hUby9e1JYaE6iC@slm.duckdns.org>
-References: <20250315022158.2354454-1-joelagnelf@nvidia.com>
- <20250315022158.2354454-4-joelagnelf@nvidia.com>
- <20250315072225.GG36322@noisy.programming.kicks-ass.net>
- <3b244939-6d55-4d86-8b77-a9a7629f8239@nvidia.com>
- <20250317103101.GC34541@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1742230765; c=relaxed/simple;
+	bh=5Q7w+OJ7l1ZDm/tsxPV4eM7NaDik6tbwMLcJgZHoSpA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=YHNTNcU4XiUAeedycDAtpvBZ5jK8S75AwLt6uGLPeTLmsIoemmmy4Q9xEsSCY7t5G2/Jo8ZZJuxM2QysbYyypWy22xSspIyjWWQOGKlFEeFth89jiVOLMj5O29HP5wLbTwK67x1b10sm5Zdz0lw9F2Q3tuyr9pVq05SiSzFPvEk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iv2eVjMZ; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3914a5def6bso2477081f8f.1;
+        Mon, 17 Mar 2025 09:59:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742230762; x=1742835562; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=zyGgK84Il9TLLYSLWDjMI2QVCsqArbRSKD1j4zncwxU=;
+        b=iv2eVjMZa/6Dm1LYIbp+xNEyCqNU6vmu23FdTVqIGt5EOPE+hEAth0V9+X/CXEaBCb
+         5M5Rlgd9tx8N+0XwAkfNIdC/A0wve9OMnM5Ih9E6ZAdhSc19vpczDqsK95bN+clQYmYi
+         HyMU9U4vhuZhxPTIzpEXY/AcbYRl4xs102Bhf+h2X3PdcmiFyA8R1woMCEOyp//fAJEI
+         z4ykexFiaKmSdidb3gpftxgxEDjgHt2OVDq8MA9KoZQYEZZnIzEKaYZUkHgDErE3LvXS
+         QkSlypfGwgmpmfx6jQqvSkaD9v9hJNUL1V6SS3LxfP/7rgsa8zUKlch4tUF8PXqVvt+R
+         Mk7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742230762; x=1742835562;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zyGgK84Il9TLLYSLWDjMI2QVCsqArbRSKD1j4zncwxU=;
+        b=d4Bx16aMz7hWHRM2J7xlAWC6gX4HX+R2WxhvxBr3vd1L9LUVE8iVnrgcR1jTrzSxAZ
+         VqTBNU6G8Wu4HC2YKZwV51uliVToEHOsSzf6wvjIexOPjezit8334avVGhA0VxvxDwY/
+         AC57QyImeWDZBpbBGetlIWecn4skiZHOUwQRaxulDe9brIx+BmArcLAFdr9SLl301ku3
+         doCsoYG1jX/e5P7ZSXb8nSt1dDfuLTz5rK7RnBGkAu19/512pGfTI8b/UcRxti3BUcbK
+         0f8PXTAtWsptIvJDjTUkun7iwLZmVPSie+FXmzaHYCsAxE+UWUAtl2NZdeoSBHRxOVby
+         QW/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCW2wt95GLcuGllnoFr3MFyxBSrLwpOOeeDrObfc51euVEKy1DrDDU+ohEX666v52WclUMu2MwmEurQ9npU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxMOXk+r9WzxtIFT26twtVES8k5+LSVXyrM/P5ONdPB61qndfdl
+	tYvlRmpF2zMlnz7N4BVqLWDjZQ7cALKdkwloS9TRpY+2UdP96WLg
+X-Gm-Gg: ASbGncseHRs7rlhA1CHFD/qn5EtF2g35VuSMASgIstB+oJUhDGwVTo0OoIqZefUgivN
+	RIw4LG8ql4uwHZy5xjiMkiYp+je9bX0ogm/Zrj9xCjUo9f+Jap6N+m1mCojW9CvKGAdPstqWNBM
+	6dkwaRtPQShLBxcgELYDT+EKUNf6vVFZBkl9wxMU8Al7co3GWQ0aJzVsu1v6nxuJA6z3v4fGj2P
+	qyA6m9mhpIwcmH0K6dhNFTMu9SlqWPEYgYO1DMX4J8djGUm6aDaaahHlkzaeLO7piPEBfjQk05t
+	10VI7m4mN+Hev+scMZ3W4UHdLffVPVfshu3XXv/9HClRfQ==
+X-Google-Smtp-Source: AGHT+IHTSvBupVcvyiWw5zRhB1DlFobM5fMY1RLGC6HrdyKlgNfYeMkZerhgcR4aRzfPs5HOYlrbdw==
+X-Received: by 2002:a05:6000:4025:b0:391:31f2:b998 with SMTP id ffacd0b85a97d-3971d03ed60mr13509122f8f.6.1742230761660;
+        Mon, 17 Mar 2025 09:59:21 -0700 (PDT)
+Received: from localhost ([194.120.133.58])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-43d1fe05e8dsm109443415e9.9.2025.03.17.09.59.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Mar 2025 09:59:21 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org
+Subject: [PATCH][next] regulator: rtq6752: make const read-only array fault_mask static
+Date: Mon, 17 Mar 2025 16:58:45 +0000
+Message-ID: <20250317165845.525593-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250317103101.GC34541@noisy.programming.kicks-ass.net>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+Don't populate the const read-only array fault_mask on the stack at run
+time, instead make it static.
 
-On Mon, Mar 17, 2025 at 11:31:01AM +0100, Peter Zijlstra wrote:
-> On Sat, Mar 15, 2025 at 07:15:27PM -0400, Joel Fernandes wrote:
-> > If so, that will not handle the case where the system has both
-> > FAIR and EXT tasks in the mix (EXT has a partial mode where certain tasks can be
-> > made EXT with certain others left as FAIR) and FAIR runs 100% and starves EXT.
-> 
-> Well, you did not mention that issue, you only babbled about RT.
-> 
-> I did point out that issue with ext, and TJ said this mixed mode wasn't
-> really meant to be used or somesuch.
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/regulator/rtq6752-regulator.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-It's true that most of the current use cases don't use mixed mode. That
-said, some folks are interested in it and if we can prevent starvation from
-fair saturating CPUs in mixed mode with a DL server, that'd be really nice.
-Would it be possible to toggle the reservations depending on the ext's
-operation mode?
-
-Thanks.
-
+diff --git a/drivers/regulator/rtq6752-regulator.c b/drivers/regulator/rtq6752-regulator.c
+index d35d844eff3b..618904ede72c 100644
+--- a/drivers/regulator/rtq6752-regulator.c
++++ b/drivers/regulator/rtq6752-regulator.c
+@@ -105,7 +105,7 @@ static int rtq6752_get_error_flags(struct regulator_dev *rdev,
+ 				   unsigned int *flags)
+ {
+ 	unsigned int val, events = 0;
+-	const unsigned int fault_mask[] = {
++	static const unsigned int fault_mask[] = {
+ 		RTQ6752_PAVDDF_MASK, RTQ6752_NAVDDF_MASK };
+ 	int rid = rdev_get_id(rdev), ret;
+ 
 -- 
-tejun
+2.49.0
+
 
