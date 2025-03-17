@@ -1,157 +1,222 @@
-Return-Path: <linux-kernel+bounces-564948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564950-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15ED1A65D67
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 20:00:09 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A36B6A65D81
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 20:02:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C7508189A220
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 19:00:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 849D1189A78F
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 19:02:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 745AB1E51EF;
-	Mon, 17 Mar 2025 19:00:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A98811A0BCD;
+	Mon, 17 Mar 2025 19:02:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cuTCvLgM"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="iuBVtNXu"
+Received: from mail-ot1-f52.google.com (mail-ot1-f52.google.com [209.85.210.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34ED01E1E02
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 18:59:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53D3D15B54A
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 19:02:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742238000; cv=none; b=tiAOjow7DfePoO1n72BUb3CCmbVNBf/3agkxdB3xkw4zmeAw4MoRFN9bP4LvS56KqMmTwi1FEbrDcbUHVwCKxgOcPHyIHX6U3ag7a+E24gTFOvH2sXsGfZkoUei1wSmUTB7tKYY7/QgdcbkxsTCy1V6EjpumTDqPw05h4LKZwlo=
+	t=1742238144; cv=none; b=m0IxfVFhSBOkn4vt+dySWPNdbGSWYMQiO32xsVF74Zs1wVis7T/puIfoYcGwYENJeDFuiJTKViC0JSEJN0DaUEYRfmBTHsPFed3zU7iLdgyAxr8wpFFvdm+Z9q1UArcQ/Wl4JFlExBcm1BHu2jSnFstLKvH/4zn7xmrfPBb+Np0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742238000; c=relaxed/simple;
-	bh=pX225uXGVkAghWGBd+3tEfc1RLklNoyG7i5BFjEc+OE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WHH5pmtrmcsUQcsnyPZqEDBhGx2+BjCUsPanaDHtxRDx/TxlhdwjE7R5TwWk7mfXen1qa8jF4iD02KG6ZvYfzmBa/vT2pIHsfg9BYa/7IE100VFwEH3GjFSS9R7zMV1SEObFM4TMv1W0HfLcmshvr9jQ4FazcO+5VKT38gZUBvQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cuTCvLgM; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-abec8b750ebso887734666b.0
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 11:59:58 -0700 (PDT)
+	s=arc-20240116; t=1742238144; c=relaxed/simple;
+	bh=9e9i9ZGozCVOW+DGfTa7ONycW5gmKaNN01G9YalVMnw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rRD5pwQ1EJ2OLthavVwdGVeIuXMF13/6LVFtOxa5UKe8Mz2iqyointvy/J4nR88++kJbJHAWVVUBhlO0S0wsci6EO4JzHvXddgZhL2WFP+/b4aMN9SQgWcJTr823/cYijRUSm2mC7M8e0/ps+vkKzlD8bgYsY5cle7iGFhzsihg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=iuBVtNXu; arc=none smtp.client-ip=209.85.210.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-ot1-f52.google.com with SMTP id 46e09a7af769-72b8028dd8fso445871a34.0
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 12:02:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742237997; x=1742842797; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=yQDBp5VUuXQxeHvKepRV8hD89886c1C3X6r4opw27cM=;
-        b=cuTCvLgMDvgRdKsoy0Z1Aa6RQ4Lq4haRw03GwXm7ZjvwGjidg+CJHRXt19pcAwEKLQ
-         HQpxUhBt7voLBqVoNodDOY7RQ7dfVvbrhx2DckL5YozxO6t1Os1nNer+fuBmXbq4r7JB
-         hr33fpZA0ia/IoPQCRsuyYYnk6F0vRgjWIP3na4M5CkIRLolPb9EswV64DzNkFlctdCL
-         javFctWNbwehxnMH3yiqJijIzr991c82/UV7HA/cFyRQWTa7b5+oIwNj/Uub6NHgFEzi
-         Ma81JXs9PV3N5/mjJxB8q6iygHbgWvbZjJk22mCL2+8xHGLqKLvoXX/sO3Cj9B/ncFWB
-         NQSQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742237997; x=1742842797;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=chromium.org; s=google; t=1742238141; x=1742842941; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=yQDBp5VUuXQxeHvKepRV8hD89886c1C3X6r4opw27cM=;
-        b=dLidF/GkL/ZUCqnOsnSSnli9m2PQnINaXXKVjsq+cIrdOlkNCoeBO94cNluYShNtLj
-         QS5ycV9cYroS2rU0d6OVPAzffIMo9zNsW9RXMOYuJCoffwiEy48O+f/NB8TyoM7OPCzQ
-         CVogaTOr6xu0wCzAo1kS4QMPYhd/Fp4M5eZAtBUy6Ffw/d6gddNUBiWTp3GIJ3dl0KMI
-         Sq3HGqFxLCqSlk/BcOmoYoKFAD6/L689C+zXjHq/vj/4uYFIPHejS+gDSN/NPnJE52Zf
-         mJ4E/8A4XQsJ9zUD3oZ0Y6Eh4c9tT2wCVncenWgKA+bcTSkywELnVmhujEzHNUj3N+R1
-         qVtw==
-X-Forwarded-Encrypted: i=1; AJvYcCU3E47c/sVgH1BSnPWblRf/ppyqvNYxzgMSosMeBULwqMf0hilRFIT6vbmaO0GUfKHBGyCOuWzWSUxGpP0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwOKio86GMpFj5bjHuGNLVEylnL/W4eWiMXZ4Pp6yioZuFGom28
-	nE71DXKbezloW+8zy1z4vNq+WRaLOWTp8CSbZCEJ0RXzyIa+0NL6KALJ9A==
-X-Gm-Gg: ASbGncshpRf+dMPoqeir/rnjshMZ8xSZP1l2kYHbkUCVK0d93a2HEjdFA2n4a4edb+w
-	SNEqDawvpPrCiJMGtsz0aunImP3yas2Q9dqYiQZOyQchiP59jKoWShP6CQLb2pgXrr0tpUh+FZT
-	H63TZP20OAHAT+BdUeM9a43OuQfj/K+o4gNVFD/760y1eVTnc7f4z64d6jPpBUlRLyJXoF3a/6z
-	wvD+xZnwytmCfaQw+4rH+x9PCQc4Os8CNekHXwXgxjxJz6cO4KzCx3MM7gmZ9p4QkteUfVmby1M
-	r6UEljHlMESfNA5m/mZJUHspc6S4Ab9c8iqeBsJzSRI/S8sZif7h5YfNLVR71uuY5pu9DLruYUk
-	h5nIlKYTOjYBiCN4Aw0zIFgj2zVOBS0fo5gSqtoWwduM=
-X-Google-Smtp-Source: AGHT+IFI1RWc9drtLC1fsHugfGd+lXgvlP4qcKYD8ut0s0vnKJhFgSJfeW2USHvPBOFlVUHFJkS8tA==
-X-Received: by 2002:a17:906:99c4:b0:ac2:b8ce:90d5 with SMTP id a640c23a62f3a-ac38d514ff5mr69895366b.44.1742237997088;
-        Mon, 17 Mar 2025 11:59:57 -0700 (PDT)
-Received: from alb3rt0-ThinkPad-P15-Gen-1 (host-95-252-211-62.retail.telecomitalia.it. [95.252.211.62])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3147e7f11sm704655566b.42.2025.03.17.11.59.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Mar 2025 11:59:56 -0700 (PDT)
-Date: Mon, 17 Mar 2025 19:59:54 +0100
-From: Alberto Merciai <alb3rt0.m3rciai@gmail.com>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: shawnguo@kernel.org, linux-kernel@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: OCOTP and DWMAC builtin modules are needed for imx93-11x11-evk
- kernel dev via TFTP and NFS
-Message-ID: <Z9hxKlrrqW4QyzdJ@alb3rt0-ThinkPad-P15-Gen-1>
-References: <Z9fhuVltKwqgHdLp@alb3rt0-ThinkPad-P15-Gen-1>
- <935028c6-ce56-46e0-96ff-46fa91c8f66a@linaro.org>
- <Z9hkDqcKG1xOmIB5@alb3rt0-ThinkPad-P15-Gen-1>
- <ef163f08-35f9-4d1d-8082-c826c6cd0aa0@linaro.org>
+        bh=OttsjgFbyyagfKT+Kygos3ffwlG792Cw3EFU42D0MO0=;
+        b=iuBVtNXuKGA96zFUix5INJ2s3Ctce0dImws0ayFxPyfQ15L5q6PoVjqodsqSe5T4Bl
+         fmeEBMvJvUB0OPCrEuNFvVCkc7RcPfmtotiqzEz4lDqYW3ddTTB7jQZIWouEslXxzUuy
+         JFTAFFiJR4fVQ0U9MgsTqfxU6ClQVobHtGPuc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742238141; x=1742842941;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=OttsjgFbyyagfKT+Kygos3ffwlG792Cw3EFU42D0MO0=;
+        b=LXXa7hDYnjVlc45ryXrKGHPou1qIB56oeRTFXJ96XcK4eWkvjebew/zmZmzpd9tYJa
+         OA17/4Pl40SR/3UIEPY49neP399JxFzAV1PrDqCTfbpn7gZJWGEys5GdlD+XNIXuEyir
+         KJ8WQnUWWsH6BQe5hl8HSM6IyAwhnT4dVJWoCPD/pGLNzkehnDkSl6lYmfYSUTBq50Fd
+         Cxtq4VD9gojJ2AuyyeVxqHpXGT5H/oRVYW7GKFJZlqjGES/4LpYkOMy0MOZsnAv3YnAQ
+         1gLrRJ3Vs2AUobaDl00b+Fo0zuhhj0IU53eHsx2EP3o5eVFDjVxPS6+2+xHbXrmG6Lbc
+         HiCg==
+X-Forwarded-Encrypted: i=1; AJvYcCUrlNSwOEDCTlV0bv1r0M1LWmlCujoWfSQqPerl7u0QT9XACieEaemHYxhUiYLm9fpeViSicJ0/p6rhps0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyLLrdMogQjBdYo1HaIupKF1XJ1FZAyYesndO2bz4rgYjfZtcXw
+	DFRQf2ecI4dlLiwUfehfeB2vg2Gu3vYzwHyoBOegLRqhTEV6YpkuZZURIlo9Y3oygVHcVOUxplQ
+	W63yigeT5aUztFm6IdcWNrVHn9pt8uxOhDp+R
+X-Gm-Gg: ASbGnct8qTrhB1C7YdpmDUbdHOx9+2t7U3/Od2Yqb/4oTBYDcfUEaycdg3sJrhMKnjo
+	nC9kfxTl4aQW3fs0xOgon0b3gqwxI5NYeCQ55hB/+FeymJJnM/bms8H2Ia+9iCINox6I4woOEAH
+	I6RRJ5OgcmyukpuC7mrzsu4YDGPIvyABefeGSa8IJzSyQvIGkuS0YeOiE=
+X-Google-Smtp-Source: AGHT+IFmhELxsEbF5+FGpij6p/0nGDQxLmvLcCOIk3O1Kjoyj75mq8CVjrKZo8Rz/4RdRDTUlZtx2edlKIyzMHgzB8g=
+X-Received: by 2002:a05:6871:d308:b0:297:2582:c66c with SMTP id
+ 586e51a60fabf-2c690b43ca1mr2433846fac.0.1742238141295; Mon, 17 Mar 2025
+ 12:02:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ef163f08-35f9-4d1d-8082-c826c6cd0aa0@linaro.org>
+References: <20250313000623.3192896-1-jeffxu@google.com> <1bbce89c-1efe-40cf-9085-ec4ec16f7996@lucifer.local>
+ <CABi2SkVKxyX0uDabg+wHiq_vTBFbUST-nRdur7cCPB2myhCWhg@mail.gmail.com>
+ <CAMuHMdWLjX-OavON-rj50kZyvV5+Pf0x34WJbcdKsCgAQA7TwQ@mail.gmail.com> <CABi2SkWU6orm-wBFKVt9rsSpYURHPb7fjHRzkOiPGd=Lh-DdkA@mail.gmail.com>
+In-Reply-To: <CABi2SkWU6orm-wBFKVt9rsSpYURHPb7fjHRzkOiPGd=Lh-DdkA@mail.gmail.com>
+From: Jeff Xu <jeffxu@chromium.org>
+Date: Mon, 17 Mar 2025 12:02:09 -0700
+X-Gm-Features: AQ5f1JoqLcgifoqvsf2X7sr50no49b8qRyd6QqCFaHGdNwMKDBXBaaWgVcGITRs
+Message-ID: <CABi2SkWmxwM-MbfmRCZvBYek8KpmOKPMsFmb=-eZTgKfp3AN6w@mail.gmail.com>
+Subject: Re: [PATCH] mseal sysmap: add arch-support txt
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, akpm@linux-foundation.org, 
+	Liam.Howlett@oracle.com, agordeev@linux.ibm.com, borntraeger@linux.ibm.com, 
+	gor@linux.ibm.com, hca@linux.ibm.com, kees@kernel.org, 
+	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, svens@linux.ibm.com, thomas.weissschuh@linutronix.de
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Mar 17, 2025 at 07:12:55PM +0100, Krzysztof Kozlowski wrote:
-> On 17/03/2025 19:03, Alberto Merciai wrote:
-> > On Mon, Mar 17, 2025 at 05:07:26PM +0100, Krzysztof Kozlowski wrote:
-> >> On 17/03/2025 09:47, Alberto Merciai wrote:
-> >>> While playing with linux-next and imx93-11x11-evk via NFS and TFTP
-> >>> I found that the dwmac-imx, nvmem-imx-ocotp-ele drivers by default are
-> >>> not builtin then the I was not able to reach userland. 
-> >>>
-> >>> The following configs were needed to reach my goal:
-> >>> CONFIG_DWMAC_IMX8=y
-> >>> CONFIG_STMMAC_ETH=y
-> >>> CONFIG_NVMEM_IMX_OCOTP_ELE=y
-> >>>
-> >>> is that something expected?
-> >>
-> >> You mean they are disabled or you just did not put them inside your
-> >> initramfs?
-> >>
-> >> Best regards,
-> >> Krzysztof
-> > 
-> > Hello,
-> > 
-> > By default they are enabled as external modules, then until we don't
-> 
-> So everything is as expected...
-> 
-> > reach userland they are not loaded thus eth and all the mechanism behind
-> > that are out.
-> > 
-> > I'm not using initramfs just tftp and NFS as follows:
-> 
-> All arm64 platforms are supposed to use initramfs on defconfig with
-> necessary modules.
-Thanks a lot, I was not aware of that.
-Do you have any reference?
+On Mon, Mar 17, 2025 at 11:14=E2=80=AFAM Jeff Xu <jeffxu@chromium.org> wrot=
+e:
+>
+> On Fri, Mar 14, 2025 at 3:41=E2=80=AFAM Geert Uytterhoeven <geert@linux-m=
+68k.org> wrote:
+> >
+> > Hi Jeff,
+> >
+> > On Thu, 13 Mar 2025 at 23:26, Jeff Xu <jeffxu@chromium.org> wrote:
+> > > On Wed, Mar 12, 2025 at 10:21=E2=80=AFPM Lorenzo Stoakes
+> > > <lorenzo.stoakes@oracle.com> wrote:
+> > > > On Thu, Mar 13, 2025 at 12:06:23AM +0000, jeffxu@chromium.org wrote=
+:
+> > > > > From: Jeff Xu <jeffxu@chromium.org>
+> > > > > Add Documentation/features/core/mseal_sys_mappings/arch-support.t=
+xt
+> > > > >
+> > > > > Signed-off-by: Jeff Xu <jeffxu@chromium.org>
+> >
+> > Thanks for your patch!
+> >
 
-> > setenv loaddtb "tftp 0x80400000 imx93-11x11-evk.dtb"
-> > setenv loadkernel "tftp 0x83000000 Image"
-> > setenv netargs "setenv bootargs console=ttyLP0,115200 root=/dev/nfs ip=dhcp nfsroot=192.168.1.3:/tftp/root,v3,tcp"
-> > setenv bootcmd "run loaddtb; run loadkernel; run netargs; booti 0x83000000 - 0x80400000;"
-> > 
-> > Do you think that initramfs can solve that?
-> 
-> Yes, that's the entire point of initramfs.
-Let's proceed in that way :)
+I used "find * |xargs grep -i  CONFIG_64BIT" to look for CONFIG_64BIT
+under arch/, and together with internet search/wiki page, and below is
+the proposed update.
 
-> > 
-> > To be honest I was expecting to have a builtin driver for eth by
-> 
-> No, why? We built as much as possible as modules in defconfig. Otherwise
-> it would be impossible to actually boot that image because several arm64
-> platforms have limitations of boot partition size.
-Cool! Now is clear.
+> > > > > --- /dev/null
+> > > > > +++ b/Documentation/features/core/mseal_sys_mappings/arch-support=
+.txt
+> > > > > @@ -0,0 +1,30 @@
+> > > > > +#
+> > > > > +# Feature name:          mseal-system-mappings
+> > > > > +#         Kconfig:       ARCH_SUPPORTS_MSEAL_SYSTEM_MAPPINGS
+> > > > > +#         description:   arch supports mseal system mappings
+> > > > > +#
+> > > > > +    -----------------------
+> > > > > +    |         arch |status|
+> > > > > +    -----------------------
+> > > > > +    |       alpha: | TODO |
+No CONFIG_64BIT found under arch/alpha, but search results show alpha
+supports 64 bits. Keep as TODO.
 
-> Best regards,
-> Krzysztof
+> > > > > +    |         arc: | TODO |
+> > > > > +    |         arm: |  N/A |
+> > > > > +    |       arm64: |  ok  |
+> > > > > +    |        csky: | TODO |
+(N/A)
 
-Thanks,
-Alberto
+> > > > > +    |     hexagon: | TODO |
+No CONFIG_64BIT found under arch/hexagon, but search results show
+hexagon supports 64 bits. Keep as TODO.
 
+> > > > > +    |   loongarch: | TODO |
+> > > > > +    |        m68k: | TODO |
+(N/A)
+
+> > > > > +    |  microblaze: | TODO |
+No CONFIG_64BIT found under arch/microblaze, but search results show
+microblaze supports both 32 and 64 bits. Keep as TODO.
+
+> > > > > +    |        mips: | TODO |
+> > > > > +    |       nios2: | TODO |
+(N/A)
+
+> > > > > +    |    openrisc: | TODO |
+No CONFIG_64BIT found under arch/openrisc, but search results show
+microblaze supports both 32 and 64 bits. Keep as TODO.
+
+> > > > > +    |      parisc: | TODO |
+> > > > > +    |     powerpc: | TODO |
+> > > > > +    |       riscv: | TODO |
+> > > > > +    |        s390: |  ok  |
+> > > > > +    |          sh: | TODO |
+No CONFIG_64BIT found under arch/openrisc, but wikipedia shows sh-5 is
+a 64 bit, so Keep as TODO.
+
+> > > > > +    |       sparc: | TODO |
+> > > > > +    |          um: | TODO |
+> > > > > +    |         x86: |  ok  |
+> > > > > +    |      xtensa: | TODO |
+N/A
+
+In summary: csky, m68k, nios2, xtensa, arm only have a 32 bit CPU and
+will use "N/A".
+I will leave it open for a while, If no objection , I will send a new
+patch version.
+
+Thanks.
+-Jeff
+
+> > > > > +    -----------------------
+> >
+> > > > Plus I feel this need expansion a bit 'N/A' is because of being non=
+-64 bit
+> > > > right?
+> > > >
+> > > Below is the definition of N/A in Documentation/features/arch-support=
+.txt
+> > >    | N/A|  # feature doesn't apply to the architecture
+> > >
+> > > It fits the arm case because mseal is not supported in 32 bit.
+> >
+> > IIUIC, you can already s@TODO@N/A@ for all other 32-bit architectures,
+> > so we don't accidentally spend time on looking into adding the support?
+> >
+> Sure, my architecture knowledge is limited.
+>
+> I just checked this, it seems to me that csky, m68k, nios2, sh, xtensa
+> doesn't have 64 bits support, the rest have 64 bits. Is this correct ?
+>
+
+
+
+> Thanks
+> -Jeff
+>
+>
+>
+> > Gr{oetje,eeting}s,
+> >
+> >                         Geert
+> >
+> > --
+> > Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-=
+m68k.org
+> >
+> > In personal conversations with technical people, I call myself a hacker=
+. But
+> > when I'm talking to journalists I just say "programmer" or something li=
+ke that.
+> >                                 -- Linus Torvalds
 
