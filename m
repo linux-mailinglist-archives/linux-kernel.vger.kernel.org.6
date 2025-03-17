@@ -1,76 +1,84 @@
-Return-Path: <linux-kernel+bounces-564185-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564186-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25CD6A64FCC
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 13:53:15 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58C7EA64FCD
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 13:53:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EFFC53B3491
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 12:52:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD459171B0A
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 12:53:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 301DE23C8A8;
-	Mon, 17 Mar 2025 12:52:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FB1923A562;
+	Mon, 17 Mar 2025 12:52:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="zWSxkV0Q"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XdCbHu94"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E68DC149E00;
-	Mon, 17 Mar 2025 12:52:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62A5E1C861C
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 12:52:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742215976; cv=none; b=lhlX/bDD4y6uuZe3JZLkhZt7agGzMCNeDMnPOabQ8uZddJFNeDvt2GG1g92+vzEW+FhA2FVgyPAgQzdAVhDvUz6ohrhh75TPAwCNx4WEamsAHYFmc8t13EW3uAlc21OtP1ngJDSCX10TLv9c3CUS+7BDZwZLbkS9Ob237DlxKOQ=
+	t=1742215978; cv=none; b=Kg9iABhqMTtFZ9KDWktD7dBYdvj58aUaYfYF2mxidRxMNbDs+x7Q+8xWWBZ2xdimcTMAFP5U0xrVI4RT6XDcmIhzfVwlcrpSaRoFJxEg8U293fCTqdWyG4le7llgLsrV4bqs0FlMYB5wFKdEC96pdOO01xia1O+4jUK+TAXj8Mk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742215976; c=relaxed/simple;
-	bh=3Q69/D9Rd3DmfgKV2WC9fKZgHhcyfl6HFbdij0haqEQ=;
+	s=arc-20240116; t=1742215978; c=relaxed/simple;
+	bh=xX2dfXbz/whGYXEP3FNbdkOtOCE7CtRILWO/R95E8jM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ouxi2sl8rvX+YlriCy9HIg9cHCwrKXxbR1EPQm+CC0TCWC2iv0a8sWjE7+KdSteKGSst4o5mdJ3n8UZiXS+beGc5idKfH6oWB0n+Jbmw/56qu8TC1ORt7UyEd44TwTx4n+1bnmrawPuhQBK5MWE2OgYgbkP4Ry7jkvogSdrNZrU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=zWSxkV0Q; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=dq8TNjOCjLs57PNkzG69jW5zDo7b4i7oIyvx27qBQHk=; b=zWSxkV0Q5r82QAJmVgOTeKBxX2
-	QlJGtpW4wD4DoQLscaef5r+m/p6377j9uwUH2+sJG2lRQB6I7jpkoaao+92cm5D/467eylsaMCJL3
-	YxPYpQf11dRIFZXHQeE50Chsa3rVeV9qtiEe4T6XdNzXdxxT9saD/JiNxDAz7smLprOc=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1tu9xP-00689D-H9; Mon, 17 Mar 2025 13:52:39 +0100
-Date: Mon, 17 Mar 2025 13:52:39 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Jacky Chou <jacky_chou@aspeedtech.com>
-Cc: Russell King <linux@armlinux.org.uk>,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	"andrew+netdev@lunn.ch" <andrew+netdev@lunn.ch>,
-	"davem@davemloft.net" <davem@davemloft.net>,
-	"edumazet@google.com" <edumazet@google.com>,
-	"kuba@kernel.org" <kuba@kernel.org>,
-	"pabeni@redhat.com" <pabeni@redhat.com>,
-	"robh@kernel.org" <robh@kernel.org>,
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
-	"conor+dt@kernel.org" <conor+dt@kernel.org>,
-	"joel@jms.id.au" <joel@jms.id.au>,
-	"andrew@codeconstruct.com.au" <andrew@codeconstruct.com.au>,
-	"ratbert@faraday-tech.com" <ratbert@faraday-tech.com>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
-	BMC-SW <BMC-SW@aspeedtech.com>
-Subject: Re: =?utf-8?B?5Zue6KaG?= =?utf-8?Q?=3A?= [net-next 4/4] net:
- ftgmac100: add RGMII delay for AST2600
-Message-ID: <c3c02498-24a3-4ced-8ba3-5ca62b243047@lunn.ch>
-References: <20250317025922.1526937-1-jacky_chou@aspeedtech.com>
- <20250317025922.1526937-5-jacky_chou@aspeedtech.com>
- <20250317095229.6f8754dd@fedora.home>
- <Z9gC2vz2w5dfZsum@shell.armlinux.org.uk>
- <SEYPR06MB51347CD1AB5940641A77427D9DDF2@SEYPR06MB5134.apcprd06.prod.outlook.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=aHWLKRMI9WCWqGzTpuL/Q9qWW/cLRRkGYfoVyoUTvzk12XffNPEcYgYUQzdNKNouAHopSl7AhzejkLcqBo6WDoQSP/fGaS0M8zIuqa7YsLNIyuMfnwKloJluu2u8CSxWzXvOViEKWKlznS0ymuVCff7RxtYKOV2B4MplHQafQx0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XdCbHu94; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742215977; x=1773751977;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=xX2dfXbz/whGYXEP3FNbdkOtOCE7CtRILWO/R95E8jM=;
+  b=XdCbHu94QgcbMvpqebi8dlavUS0ZfUYTKiEbtTwIzKYZEhoclKBpD7hB
+   bTrPv6RwNPn7GVRryGKR7bFiP9hq1ShFXRp/+hg96+d23JEfYIEOxmAEq
+   mnGAfaLlEVVbJmvcGBff1q+8A33luMYNu96VgmzmMW/TYwhjl5hnkigt0
+   +Mv1K7wdbXjNLGt7El5FhcCmcS4WiW/tiL/GjOpYpwkv+YHYoxugBxAfi
+   5BSDsFVCz9lLoqn12xqpGcoyxqeB6vulRK3/eUOcvkAm+0K3knGoeRZ9/
+   HCOBv3YA+ODre7G8DA94ccd3MRDM+JZf+L3Gk0bS3lRRqMLJHKW8v1Bun
+   w==;
+X-CSE-ConnectionGUID: xdmjoU7UT2aQgk7HUUV7Lw==
+X-CSE-MsgGUID: PQlKTGrdRouH2eTNqrLQsg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11376"; a="54687486"
+X-IronPort-AV: E=Sophos;i="6.14,254,1736841600"; 
+   d="scan'208";a="54687486"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Mar 2025 05:52:56 -0700
+X-CSE-ConnectionGUID: 7f+Pg6nGTqiR10P+rZffJg==
+X-CSE-MsgGUID: US+fvUVTS/+5gTDHMZv7hw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,254,1736841600"; 
+   d="scan'208";a="159082654"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa001.jf.intel.com with ESMTP; 17 Mar 2025 05:52:51 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1000)
+	id 350081E5; Mon, 17 Mar 2025 14:52:49 +0200 (EET)
+Date: Mon, 17 Mar 2025 14:52:49 +0200
+From: "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>
+To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
+Cc: "tglx@linutronix.de" <tglx@linutronix.de>, 
+	"peterz@infradead.org" <peterz@infradead.org>, "mingo@redhat.com" <mingo@redhat.com>, 
+	"Hansen, Dave" <dave.hansen@intel.com>, "Huang, Kai" <kai.huang@intel.com>, 
+	"bp@alien8.de" <bp@alien8.de>, "nik.borisov@suse.com" <nik.borisov@suse.com>, 
+	"bhe@redhat.com" <bhe@redhat.com>, "seanjc@google.com" <seanjc@google.com>, 
+	"x86@kernel.org" <x86@kernel.org>, "dyoung@redhat.com" <dyoung@redhat.com>, 
+	"sagis@google.com" <sagis@google.com>, "hpa@zytor.com" <hpa@zytor.com>, 
+	"Chatre, Reinette" <reinette.chatre@intel.com>, "Williams, Dan J" <dan.j.williams@intel.com>, 
+	"thomas.lendacky@amd.com" <thomas.lendacky@amd.com>, "pbonzini@redhat.com" <pbonzini@redhat.com>, 
+	"ashish.kalra@amd.com" <ashish.kalra@amd.com>, "Yamahata, Isaku" <isaku.yamahata@intel.com>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "dwmw@amazon.co.uk" <dwmw@amazon.co.uk>
+Subject: Re: [RFC PATCH 1/5] x86/kexec: Do unconditional WBINVD for
+ bare-metal in stop_this_cpu()
+Message-ID: <gbxpvgmmzf354g3gccflrv5shtaque4rd3uklrgltlbnedip7y@hhwvyhxh46nk>
+References: <cover.1741778537.git.kai.huang@intel.com>
+ <e9ee3c7ffc3ba6feb97247faa40789684e39ffd0.1741778537.git.kai.huang@intel.com>
+ <e0d9a3d599025c92fce5e159e8acc1af32844912.camel@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,12 +87,24 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <SEYPR06MB51347CD1AB5940641A77427D9DDF2@SEYPR06MB5134.apcprd06.prod.outlook.com>
+In-Reply-To: <e0d9a3d599025c92fce5e159e8acc1af32844912.camel@intel.com>
 
-> The RGMII delay of AST2600 has a lot of steps can be configured.
+On Thu, Mar 13, 2025 at 06:40:09PM +0000, Edgecombe, Rick P wrote:
+> > Currently, the kernel only performs WBINVD in stop_this_cpu() when SME
+> > is supported by hardware.  Perform unconditional WBINVD to support TDX
+> > instead of adding one more vendor-specific check.  Kexec is a slow path,
+> > and the additional WBINVD is acceptable for the sake of simplicity and
+> > maintainability.
+> 
+> Out of curiosity, do you know why this was not already needed for non-self snoop
+> CPUs? Why can't there be other cache modes that get written back after the new
+> kernel starts using the memory for something else?
 
-Are they uniformly space? Then it should be a simple formula to
-calculate? Or a lookup table?
+KeyID is a hack. Memory controller is aware about KeyID, but not cache.
+Cache considers KeyID as part of physical address. Two cache lines for the
+same physical address with different KeyID are considered unrelated from
+cache coherency PoV.
 
-	Andrew
+-- 
+  Kiryl Shutsemau / Kirill A. Shutemov
 
