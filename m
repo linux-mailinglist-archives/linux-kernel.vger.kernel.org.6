@@ -1,174 +1,124 @@
-Return-Path: <linux-kernel+bounces-564997-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B58D7A65EAF
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 21:05:01 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 757B9A65EB3
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 21:06:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 50E06189B4B0
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 20:05:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 78B8A7A40F0
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 20:05:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 533EC1E833B;
-	Mon, 17 Mar 2025 20:04:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DE641F5608;
+	Mon, 17 Mar 2025 20:05:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IE0uoQvC"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=fossekall.de header.i=@fossekall.de header.b="n5SBTKZz";
+	dkim=permerror (0-bit key) header.d=fossekall.de header.i=@fossekall.de header.b="6rWg7KFq"
+Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [81.169.146.166])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EED211DE8A7
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 20:04:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742241877; cv=none; b=AQR+t/iACDBWJrdfYxLWmz79mlTHYMley6CqEW2U38FTG4u866Hh1MQGdYLe7bXJt0O07pOHA5WcI0J+Z5iOJR3lUyVOq7/1tzQw4KlQ/V+rUPtZqhxO/3bqgAd3bZF1i2ezFymXXogzQO0RVOGBS87GEOEB+upRXp5v+yUDWfc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742241877; c=relaxed/simple;
-	bh=5bDbl7G+5LGMGcfVxcK2EQBWdcwcjSQpiqdMNi9eD/M=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=uwQuagSaqbuwG95o1MMobNuv29FNpurRsbYH47BhvuYIPqSDsTVHoqmq8pA+iwAQxJFeu8sE+ro3StERfQkBMGr40cRNg0ok7lSPW9BjK9T0Jru0/xHEvygtQ5fJTmtmIvYZ41URQwVx/ySNKIbs1QMw8qn2mNWuWEOwuyfphKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IE0uoQvC; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-43cf06eabdaso25129695e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 13:04:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742241874; x=1742846674; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=I+yftTMxlic2mD1ryKYfkycnPpOKHvoQOGTtzztr5L0=;
-        b=IE0uoQvCcOoDq90i+TnVP1SSFdmJYkJiuXYb7I4go1xX+L9sNtII9syisfQLkVlA38
-         i1rUfuLm0JgNOJxQnKxhlrpkJE3WljCEAH+qrGSEqyQ71vFR85i9BsJSptJVwyVDzhMq
-         LXWCdUiXYItxkqvoBsZZdk6P+dRWCe3qZKdpchJ4Rn4GldtYZmsmzvM2oDb4ajrRu8CC
-         B74753UWNh/6UFSCfMIScKMCVbB0UbzgmYv5aRLbsFsPf+aWzyLLoAA+SyBnOqoTu2pP
-         Pbm0CYqrB2Y3ZwWU3G4FRQwbggG+IIEN8NouC+Aw3JJ/dizePcim4j/f23TWtcM7E6ZG
-         qsZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742241874; x=1742846674;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=I+yftTMxlic2mD1ryKYfkycnPpOKHvoQOGTtzztr5L0=;
-        b=sKEVhfhpik3+SbZli3cp89wyYHXqTkDTWXaoQyojmvtCEkX8J3eYkQsxaSL8jjXLZS
-         v3+WUZu7OpeeKM+XW4E3kPEQVsjjz9VX7uprLWzS1cCbwOqWtD9zhhb0rEx+XZnuLWCb
-         Cpsk+U8m4AAfRZ1CuQrsddwEa6nBnMF2iQS/IExKgJ1V4yX9ya1+/N8rE4QbkPrT2o7v
-         hEa4y2OsU6fPDi8ldBzd7hYzhwM9LMWoxf3MPRrHKCyvmNBCKybA4L5apD9pCmNTC0ku
-         keLxjnhHqTXbuiEARP3vx/GUP2Bhyc/EejuJA4ErQ8uwObVLFnJ1Qjzt6VQukGv98Xrz
-         yQow==
-X-Forwarded-Encrypted: i=1; AJvYcCXUaxlNYTTcfPrHqPtYMt3SdLg4xS+bLVTAHDcPdTGmR9aV97agd2KEKfA6RrYarD2lDCxkHxtSL/0Y2CE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw59S28EANSEqZu+O3MOtR/YoSAaGeWwh7Gv/AUruOFiSD48cvF
-	mRDGoqEhD7wv5Q6PUQwkg/iy0HFQeTNFAkgbGkg48fJuuYzChLdV
-X-Gm-Gg: ASbGncuZg/MW0emL0JPvIylk3UQmKLzOteAQKtGLyqbgx1xPJYPVeAccNlJ5Qhu5cEg
-	8xrUVo5b5BJWiOnB5FDWF7nSdwAN8M1mCjB3Xk7sFNDdpEMMIk6rjxViuXMLFDbqWPD+L789uIF
-	P7nwdUXatKKczphn/526cSa5qRp5YoFJYycwSZ7/yDSx+QYFhosk/VZavfS+l/ZHfB0PiKXi3Rw
-	WByUuOZEWoN3yqqRf+U2O5drsQn3bb4O7eXTutQpTVfejHujztOa1xwdrb0OeYp85kqRlKBUqN2
-	dGAC9NtNQLzj7SkaSRSYzrB5Zf3d+cs7MOfhiuxdOMGGr3l8js0UyKeNlQmNWfI1BYsgvisoBsp
-	iPwmJ5epR6hsoO2GpKw==
-X-Google-Smtp-Source: AGHT+IERKA4HXQE/HUQrXsD/N7VST/VXcydaEMCHc/Fsxv9HgpGK2bJ5+FDsxGqZ8At63iwEZsTIbQ==
-X-Received: by 2002:a05:600c:1d2a:b0:43c:efed:732d with SMTP id 5b1f17b1804b1-43d1ec8dd4emr151411765e9.16.1742241874006;
-        Mon, 17 Mar 2025 13:04:34 -0700 (PDT)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-395c83b6b37sm16179101f8f.37.2025.03.17.13.04.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Mar 2025 13:04:33 -0700 (PDT)
-Date: Mon, 17 Mar 2025 20:04:32 +0000
-From: David Laight <david.laight.linux@gmail.com>
-To: Josh Poimboeuf <jpoimboe@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, x86@kernel.org,
- linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
- Borislav Petkov <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>, Uros
- Bizjak <ubizjak@gmail.com>, Andrew Cooper <andrew.cooper3@citrix.com>, Ingo
- Molnar <mingo@kernel.org>
-Subject: Re: [PATCH 14/20] x86/barrier: Use alternative_io() in 32-bit
- barrier functions
-Message-ID: <20250317200432.1a076d6a@pumpkin>
-In-Reply-To: <zfabhk7c3fucov7lpfsqf5bj7iie5324ccgn4ingzzakoyhl4u@fzg364keuphn>
-References: <cover.1741988314.git.jpoimboe@kernel.org>
-	<1c2fe7f93c4dd8a87c2e1fa8b780a8a2968be445.1741988314.git.jpoimboe@kernel.org>
-	<CAHk-=wjtvTPERDdrok2kDrSSFBjqHCCNVff95VVxhvP6wCC6jg@mail.gmail.com>
-	<zfabhk7c3fucov7lpfsqf5bj7iie5324ccgn4ingzzakoyhl4u@fzg364keuphn>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D6C61D5CE5;
+	Mon, 17 Mar 2025 20:05:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=81.169.146.166
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742241947; cv=pass; b=NfslX9whlYKxezS9dSFVbyYfkESgxiKkOhq1MkmgIRD2OEX+MGhoJvdHzIbPHRUUTwH2fAtsqGPfRi/xHCwBonSkapwTeXUgz3/dpGyG9673DvHFByUiyMrP069edaoB8n/U0KnwadKyCBja+TdZwPL68h/2Wf5j82lmvCUp4ZE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742241947; c=relaxed/simple;
+	bh=kWnsbvdBa1QiTDTl5f5tSn5Hen9rak4a8F1Es32iXKc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=EXvY+jCAncWtybOX1pkcJbRq0vrXkOnjab87jAVsgWasUkQ6QqoaB/e0+uqxh8HCUhjNLfbP6QrJKEksTKC0iBY8R0Leg6mIHiIuRYxGkL4MM84/uQM0MrQRNXSvdmHQiR2VS7i8HtriAlz1iRCWE4VJ52De0dihz4DPEsLxt/s=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fossekall.de; spf=pass smtp.mailfrom=a98shuttle.de; dkim=pass (2048-bit key) header.d=fossekall.de header.i=@fossekall.de header.b=n5SBTKZz; dkim=permerror (0-bit key) header.d=fossekall.de header.i=@fossekall.de header.b=6rWg7KFq; arc=pass smtp.client-ip=81.169.146.166
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fossekall.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=a98shuttle.de
+ARC-Seal: i=1; a=rsa-sha256; t=1742241936; cv=none;
+    d=strato.com; s=strato-dkim-0002;
+    b=DJyNRy+Ha87P72L/+zvko/JhitZly6cMqGlYqFSeQWGc53URBXtenOYbvivV/u+1Eu
+    U4CHdrf4w8wi350+o4f9306ViKClaDzt1r6BB7O4ROrzyeyiU+7XXj9NanFT9rrqg/7B
+    bCIcR1clEa/IJzu2rDsl5nhDKJNectGFpBnjynxN2ZXOJwdTqSJFD5xYtVEWutpmFcP0
+    t4ADA8r3wrAr342nS774yqEKgRAeuBkIJPGzW85CppFER55vH+UaF9Gfgi/Hup5FH0nj
+    ssba7oyozT68gSu3WOEtv0B1E4VBFFcreN2E8l5iQ94gB9XapzqXncTLm55dY3hAC8Wk
+    iDIQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1742241936;
+    s=strato-dkim-0002; d=strato.com;
+    h=Message-Id:Date:Subject:Cc:To:From:Cc:Date:From:Subject:Sender;
+    bh=1rh8G0o8+9wQhTxg3fMPSxvHb/ZwpyMay8h4dcx3diw=;
+    b=E6MLBZAg2mxwd6E48Q/OfbU+VX6De7EXm9ThFPMKH8PuH8KDiX1WIuh25X9XsHjDpp
+    EGt78WHPoNPS3mQ8JpKQfkImCkC6oWZjQH9tMIx+3Gz2gP62G2gu5eBQnx+Ia2SKfGbx
+    BCFznX5upNR2u3bRTpZ5F7OME5MtAAW2sD46Urk7WKurOjNUfGOEkp9GLQxinkEe0Jg7
+    jDL+DGIM4FweI7SIh9PrruktVzMUYufs+tx+qiSG4UySXzgsMD1/p8UiksjJnhp2mAXO
+    m1r68rsPzC6UIDLaRFvnVhP1BWVTN2oBJpRIylFBDISolGXNXbKh/HaDQOEPkUykyOf9
+    uLNg==
+ARC-Authentication-Results: i=1; strato.com;
+    arc=none;
+    dkim=none
+X-RZG-CLASS-ID: mo01
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1742241936;
+    s=strato-dkim-0002; d=fossekall.de;
+    h=Message-Id:Date:Subject:Cc:To:From:Cc:Date:From:Subject:Sender;
+    bh=1rh8G0o8+9wQhTxg3fMPSxvHb/ZwpyMay8h4dcx3diw=;
+    b=n5SBTKZzXtxbt+Qe8CctpfF6oCtX4GdNrPPJXo1zfAVQ4HflDUI/je+LRORGEDTcfD
+    xclUgZAbHxN8gFe5qcgWfso9BM8koQgO/t/nGjEh7knxVJZZ4SETkht/qGX7Uh48TrsM
+    K38a1BVwBf85IEYH4u4EBkvEkf3vz1WSG4uxwrIW2Rj46dM7FA7TqQVXx1JfNiFW5yjN
+    FLCGBWRFTxmgp0YQgMumJSS0ECPCYmR1fdTm+VR7GWO1U6LCzKFdY0GPAx07MT+W8KDa
+    /uy0cu2ensHVvKRflwJT1kjiEbV6LvhANH3cOh6RTYwyOpABacld0+73hCQk20I/fbQA
+    s2pA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1742241936;
+    s=strato-dkim-0003; d=fossekall.de;
+    h=Message-Id:Date:Subject:Cc:To:From:Cc:Date:From:Subject:Sender;
+    bh=1rh8G0o8+9wQhTxg3fMPSxvHb/ZwpyMay8h4dcx3diw=;
+    b=6rWg7KFqe7kyp+x+qcfH7oo0kkq2JQAGCNY//1dRQOQPq0zLSBHFieRDZx60EkXyue
+    wAD89RJBsqQRvxxAdVDw==
+X-RZG-AUTH: ":O2kGeEG7b/pS1EzgE2y7nF0STYsSLflpbjNKxx7cGrBdao6FTL4AJcMdm+lap4JEHkzok9eyEg=="
+Received: from aerfugl
+    by smtp.strato.de (RZmta 51.3.0 AUTH)
+    with ESMTPSA id f28b3512HK5ZFzy
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
+	(Client did not present a certificate);
+    Mon, 17 Mar 2025 21:05:35 +0100 (CET)
+Received: from koltrast.home ([192.168.1.27] helo=a98shuttle.de)
+	by aerfugl with smtp (Exim 4.96)
+	(envelope-from <michael@a98shuttle.de>)
+	id 1tuGiM-00084z-06;
+	Mon, 17 Mar 2025 21:05:34 +0100
+Received: (nullmailer pid 93651 invoked by uid 502);
+	Mon, 17 Mar 2025 20:05:33 -0000
+From: Michael Klein <michael@fossekall.de>
+To: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>, "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Cc: Michael Klein <michael@fossekall.de>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [net-next v4 0/3] net: phy: realtek: Add support for PHY LEDs on
+Date: Mon, 17 Mar 2025 21:05:29 +0100
+Message-Id: <20250317200532.93620-1-michael@fossekall.de>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
 
-On Fri, 14 Mar 2025 17:05:34 -0700
-Josh Poimboeuf <jpoimboe@kernel.org> wrote:
+Changes in V4:
+- Change (!ret) to (ret == 0)
+- Replace set_bit() by __set_bit()
 
-> On Fri, Mar 14, 2025 at 01:49:48PM -1000, Linus Torvalds wrote:
-> > So all of these patches look like good cleanups to me, but I do wonder
-> > if we should
-> > 
-> >  (a) not use some naming *quite* as generic as 'ARG()'
-> > 
-> >  (b) make the asms use ARG_OUT/ARG_IN/ARG_CLOBBER() to clarify
-> > 
-> > because that ARG(), ARG(), ARGC() pattern looks odd to me.
-> > 
-> > Maybe it's just me.
-> > 
-> > Regardless, I do think the series looks like a nice improvement even
-> > in the current form, even if that particular repeated pattern feels
-> > strange.  
-> 
-> So originally I had ASM_OUTPUT/ASM_INPUT/ASM_CLOBBER, but I ended up
-> going with ARG() due to its nice vertical alignment and conciseness:
+Changes in V3:
+- move definition of rtl8211e_read_ext_page() to patch 2
+- Wrap overlong lines
 
-But ARG() does look horrid.
+Changes in V2:
+- Designate to net-next
+- Add ExtPage access cleanup patch as suggested by Andrew Lunn
 
-Is the ARG() necessary just to handle the comma separated lists?
-If so is it only actually needed if there is more than one item?
+Michael Klein (3):
+  net: phy: realtek: Clean up RTL8211E ExtPage access
+  net: phy: realtek: use __set_bit() in rtl8211f_led_hw_control_get()
+  net: phy: realtek: Add support for PHY LEDs on RTL8211E
 
-Another option is to just require () and add the ARG in the expansion.
-So with:
-#define __asm_call(qual, alt, out, in, clobber) \
-	asm("zzz", ARG out, ARG in, ARG clobber)
+ drivers/net/phy/realtek/realtek_main.c | 184 ++++++++++++++++++++-----
+ 1 file changed, 151 insertions(+), 33 deletions(-)
 
-__asm_call(qual, ALT(), \
-		([var] "+m" (__my_cpu_var(_var)), "+a" (old__.low),	\
-		    "+d" (old__.high)),					\
-		("b" (new__.low), "c" (new__.high), "S" (&(_var))),	\
-		("memory"));
-
-would get expanded the same as the line below.
-
-	David
-	
-> 
-> 
-> 	__asm_call(qual,						\
-> 		ALTERNATIVE("call this_cpu_cmpxchg8b_emu",		\
-> 			    "cmpxchg8b " __percpu_arg([var]),		\
-> 			    X86_FEATURE_CX8),				\
-> 		ARG([var] "+m" (__my_cpu_var(_var)), "+a" (old__.low),	\
-> 		    "+d" (old__.high)),					\
-> 		ARG("b" (new__.low), "c" (new__.high), "S" (&(_var))),	\
-> 		ARG("memory"));						\
-> 
-> 
-> Though ASM_OUTPUT/ASM_INPUT/ASM_CLOBBER isn't so bad either:
-> 
-> 	__asm_call(qual,						\
-> 		ALTERNATIVE("call this_cpu_cmpxchg8b_emu",		\
-> 			    "cmpxchg8b " __percpu_arg([var]),		\
-> 			    X86_FEATURE_CX8),				\
-> 		ASM_OUTPUT([var] "+m" (__my_cpu_var(_var)),		\
-> 			   "+a" (old__.low), "+d" (old__.high)),	\
-> 		ASM_INPUT("b" (new__.low), "c" (new__.high),		\
-> 			  "S" (&(_var))),				\
-> 		ASM_CLOBBER("memory"));					\
-> 
-> 
-> That has the nice benefit of being more self-documenting, albeit more
-> verbose and less vertically aligned.
-> 
-> So I could go either way, really.
-> 
+-- 
+2.39.5
 
 
