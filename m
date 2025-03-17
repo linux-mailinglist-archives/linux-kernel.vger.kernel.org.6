@@ -1,108 +1,126 @@
-Return-Path: <linux-kernel+bounces-563956-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563957-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56304A64AD6
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:51:23 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39408A64AD7
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:51:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D3F6188B553
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:50:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8992B174800
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:50:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 878D523027D;
-	Mon, 17 Mar 2025 10:49:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A22E233127;
+	Mon, 17 Mar 2025 10:50:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FTMTEiay"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="eW4txa4L"
+Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE0861993BD;
-	Mon, 17 Mar 2025 10:49:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 224AA225A22
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 10:50:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742208570; cv=none; b=uwerHvGdRkHMUgYXCRnXAz1PfJRzZm79e1PjA82uBoDqGeqQBWqbgGjET3dwZgf/1Io7B+f0oa3k/WulQimby1mZ3pD303foQRarxal8OIOZ7TD8VkI4ihb+A4v3luwoesRBHsV5iknn0Mjvi80ir4Wch7TybKDeOEqvI3lMv8o=
+	t=1742208620; cv=none; b=h//YK3pa9fK0yJ26XRbDsF2i/P1a8M4lmpWjWst3O5MK7JLSEMxp7TDnH0YvZflIsA4lMAxka1H/OD3/SfEl0Yq4ayLkBmHlJM14Bq0wwU4V93IfY9NxMH4YeHmgD0QJe9zA7zGVvKrBk78HwKGKIRimnoyzr9JN9ivNr2YXPaU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742208570; c=relaxed/simple;
-	bh=DHLKtqKokb5/ORaPjnoa21RvlOzXzzI+TwJQN4jKmm8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XKhgCSzcGFNrDoh3u35jdNaCtDKZgLs+8x23SqdHmbJRtRIAy92MnpaQjXg6hlzqVicqgAszuOztMb74KxiWBxDOuFtVRRKs4eJAaoyjYCaBjyuG93hYVFNbGVluPSlR46618iLBDskF0dbWJPAyuUMWD87ey1BYWSUtRfqm5mo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FTMTEiay; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62BD1C4CEE3;
-	Mon, 17 Mar 2025 10:49:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742208569;
-	bh=DHLKtqKokb5/ORaPjnoa21RvlOzXzzI+TwJQN4jKmm8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FTMTEiayCOljtv8GLrylo8HGHweUsQRLbmaUiKxoofC4/CYB8N2vxqCoTaE1F5Z6D
-	 A2k5slyoogC1NQGauUeuQTMSB4yYKO+KrpsOJqfiHJLQDZBfQdlJJCwcGRiwGzMuN/
-	 Hy3m/rCrQPwnptuswFLkxHEzWN2b4U+hha7f8aEn9/uT4elbWZYqcjGej2yWiDPskr
-	 WfJuU8/qfKryhJoH3KcgN5y2dWHwn7x02FTiz6DXznKfslnJBwlQwxCEw2mWVWmMT9
-	 7dF9xr3GXqRs+0Na8zNmlP5ny5KLkY+VRdQ5fHl0TaTdbRdRI3msX75tfZo8dahRl7
-	 bM+FkVf599Q3Q==
-Date: Mon, 17 Mar 2025 11:49:24 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Lu Tang =?utf-8?B?KOaxpOeSkCk=?= <Lu.Tang@mediatek.com>
-Cc: Jonathan Cameron <jic23@kernel.org>, 
-	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Lee Jones <lee@kernel.org>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Sean Wang <sean.wang@kernel.org>, 
-	Linus Walleij <linus.walleij@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, 
-	Mark Brown <broonie@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
-	Chen Zhong =?utf-8?B?KOmSn+i+sCk=?= <Chen.Zhong@mediatek.com>, Sen Chu =?utf-8?B?KOWCqOajrik=?= <Sen.Chu@mediatek.com>, 
-	"linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>, 
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
-	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, 
-	Project_Global_Chrome_Upstream_Group <Project_Global_Chrome_Upstream_Group@mediatek.com>
-Subject: Re: =?utf-8?B?5Zue5aSN?= =?utf-8?Q?=3A?= [PATCH 5/5] dt-bindings:
- pmic: mediatek: Add pmic documents
-Message-ID: <20250317-mighty-dolphin-of-downpour-e7a9f5@krzk-bin>
-References: <20250314073307.25092-1-Lu.Tang@mediatek.com>
- <20250314073307.25092-6-Lu.Tang@mediatek.com>
- <SEZPR03MB6891E21CD04880AB1AC91BFC80D22@SEZPR03MB6891.apcprd03.prod.outlook.com>
+	s=arc-20240116; t=1742208620; c=relaxed/simple;
+	bh=apPmjzBp15h6BuYlIx9rExk+T2+yeZP997KXyoYkzB8=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=QY0aMDXYs48XNGQcspfDoDgsr/ZDZiS1K0wLHox6LB6/nZJqzDKX5B8vIdwehUslLuLVakruBMDF55rRDCRdJuhG4PsYHU04hPzxXFxZv7sgwAlJwmFvp60/ww/lZF7qSMrvQ492lZVcmr5FxnpBAy7TCHW2TPfuhxh0bHKlmCA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=eW4txa4L; arc=none smtp.client-ip=209.85.128.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-4394c747c72so9338905e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 03:50:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1742208617; x=1742813417; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Up6B4MdDWj2/kfMDXbKASX6Gb+BsCApF2SDLkxZErAU=;
+        b=eW4txa4L/DFmFPOhbq4NDINaMtF6ioqDelHNV792lyzp1BDzxFEEn7VrTZHLwRP3HU
+         7w+Q6+ydGfhJTSDShFwYnkCqFoY99LQASx0Nr5hXAXav1PafsYX9LsnhH8Lw5TTOPvwi
+         K+JfZMHWDzVi/dQxscRrhZZOSuObhZHTIcsXdS5UMjR+l8V8QXXH0pzw7uC0O2ZlNR9W
+         9fP04x+xdXssO0JaDBlb29LIvo5Bi6Gtzo+2zrG8ZfnE2E44UnAZp0OgzDbL8chSnocX
+         l8b/FG05DClaRFLbAs/Ifi35Hbc+Q76aK1DtytAi9lkev8Y50cQbChEL8+F+TkbS9sw/
+         GP9g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742208617; x=1742813417;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Up6B4MdDWj2/kfMDXbKASX6Gb+BsCApF2SDLkxZErAU=;
+        b=ds8IH1C4IYuRrrOmvcF+1XvprSTbDaZcm8NoofQhK+OPOMOPAg6IE9AfnVgmg7oo9k
+         FcfsXF4Omm4uzOpbUMUeZt0aKjwO9IIJfBMZgqpy2W3sVhuG0n6mH+7K2Cz4EWj4k0hF
+         tZ3H1fsDZildvfiIPzHD4wKnkKb7f+u2pwJ16mwewjofFzUHb89GtbVJIZLnSjktNkIv
+         Mi8nZWAlDxBjSKFZZ/8SoUMdOKfYZH63Aj4jLT/Rt/K8oEncgQyYKXESd7jJUFifCMWR
+         c+MYrOoLmAMEMBT2ObuvszPVOCzaG4SG8GO0AiQnbbRqt3Dgkt7tGSVVGD1R8mNVLK8s
+         kHZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXCgMlapMwmb5Q2QdfwBaEUJgHepLFe3EjB8BqG7m1bfyThQLrNvK5+f+H0/RwJlugi+gHy4Y5ajAJqquE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZn1fuWJ9JL3GpXSxl+C507P4zAuYBNi0DDnii0+GZLJrnL5zk
+	2bMGlBFUHHU1KJ9esIkw4WAuhMOSLOJfeLxX7qR07jEY14D4WLUOUc0MPfb2b/c5v6l1cA9TajF
+	8RqxiYJ3RSWjSYA==
+X-Google-Smtp-Source: AGHT+IF6IFyAlhN/n6Py4z3zsZpntW/Ns0z5jtqY9dqdYnp9Rx4qA7n2aFjUa1uf7DGmwKc656C0SK+M4oDPlBk=
+X-Received: from wmqd2.prod.google.com ([2002:a05:600c:34c2:b0:43c:f6c0:3375])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:1c86:b0:43c:fa0e:4713 with SMTP id 5b1f17b1804b1-43d1ec66826mr115790365e9.2.1742208617612;
+ Mon, 17 Mar 2025 03:50:17 -0700 (PDT)
+Date: Mon, 17 Mar 2025 10:50:15 +0000
+In-Reply-To: <20250316-vec-set-len-v1-1-60f98a28723f@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <SEZPR03MB6891E21CD04880AB1AC91BFC80D22@SEZPR03MB6891.apcprd03.prod.outlook.com>
+Mime-Version: 1.0
+References: <20250316-vec-set-len-v1-0-60f98a28723f@gmail.com> <20250316-vec-set-len-v1-1-60f98a28723f@gmail.com>
+Message-ID: <Z9f-Z15bSh8MA1wJ@google.com>
+Subject: Re: [PATCH 1/2] rust: alloc: replace `Vec::set_len` with `inc_len`
+From: Alice Ryhl <aliceryhl@google.com>
+To: Tamir Duberstein <tamird@gmail.com>
+Cc: Danilo Krummrich <dakr@kernel.org>, Andrew Ballance <andrewjballance@gmail.com>, 
+	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
 
-On Fri, Mar 14, 2025 at 09:01:11AM +0000, Lu Tang (=E6=B1=A4=E7=92=90) wrot=
-e:
-> Update email
->=20
-> -----=E9=82=AE=E4=BB=B6=E5=8E=9F=E4=BB=B6-----
-> =E5=8F=91=E4=BB=B6=E4=BA=BA: Lu.Tang <Lu.Tang@mediatek.com>=20
-> =E5=8F=91=E9=80=81=E6=97=B6=E9=97=B4: 2025=E5=B9=B43=E6=9C=8814=E6=97=A5 =
-15:33
-> =E6=94=B6=E4=BB=B6=E4=BA=BA: Jonathan Cameron <jic23@kernel.org>; Lars-Pe=
-ter Clausen <lars@metafoo.de>; Rob Herring <robh@kernel.org>; Krzysztof Koz=
-lowski <krzk+dt@kernel.org>; Conor Dooley <conor+dt@kernel.org>; Dmitry Tor=
-okhov <dmitry.torokhov@gmail.com>; Lee Jones <lee@kernel.org>; Matthias Bru=
-gger <matthias.bgg@gmail.com>; AngeloGioacchino Del Regno <angelogioacchino=
-=2Edelregno@collabora.com>; Sean Wang <sean.wang@kernel.org>; Linus Walleij=
- <linus.walleij@linaro.org>; Liam Girdwood <lgirdwood@gmail.com>; Mark Brow=
-n <broonie@kernel.org>; Stephen Boyd <sboyd@kernel.org>; Chen Zhong (=E9=92=
-=9F=E8=BE=B0) <Chen.Zhong@mediatek.com>; Sen Chu <shen.chu@mediatek.com>
-> =E6=8A=84=E9=80=81: linux-iio@vger.kernel.org; devicetree@vger.kernel.org=
-; linux-kernel@vger.kernel.org; linux-input@vger.kernel.org; linux-arm-kern=
-el@lists.infradead.org; linux-mediatek@lists.infradead.org; linux-gpio@vger=
-=2Ekernel.org; Project_Global_Chrome_Upstream_Group <Project_Global_Chrome_=
-Upstream_Group@mediatek.com>; Lu Tang (=E6=B1=A4=E7=92=90) <Lu.Tang@mediate=
-k.com>
-> =E4=B8=BB=E9=A2=98: [PATCH 5/5] dt-bindings: pmic: mediatek: Add pmic doc=
-uments
+On Sun, Mar 16, 2025 at 06:32:00PM -0400, Tamir Duberstein wrote:
+> Rename `set_len` to `inc_len` and simplify its safety contract.
 
-The amount of errors shown by checkpatch on this is just shocking.
+You're missing a Signed-off-by tag.
 
-Best regards,
-Krzysztof
+>  rust/kernel/alloc/kvec.rs | 19 +++++++++----------
+>  rust/kernel/str.rs        |  2 +-
+>  rust/kernel/uaccess.rs    |  2 +-
+>  3 files changed, 11 insertions(+), 12 deletions(-)
+> 
+> diff --git a/rust/kernel/alloc/kvec.rs b/rust/kernel/alloc/kvec.rs
+> index ae9d072741ce..d43a1d609434 100644
+> --- a/rust/kernel/alloc/kvec.rs
+> +++ b/rust/kernel/alloc/kvec.rs
+> @@ -183,17 +183,16 @@ pub fn len(&self) -> usize {
+>          self.len
+>      }
+>  
+> -    /// Forcefully sets `self.len` to `new_len`.
+> +    /// Increments `self.len` by `additional`.
+>      ///
+>      /// # Safety
+>      ///
+> -    /// - `new_len` must be less than or equal to [`Self::capacity`].
+> -    /// - If `new_len` is greater than `self.len`, all elements within the interval
+> -    ///   [`self.len`,`new_len`) must be initialized.
+> +    /// - `self.len + additional` must be less than or equal to [`Self::capacity`].
+> +    /// - All elements within the interval [`self.len`,`self.len + additional`) must be initialized.
+>      #[inline]
+> -    pub unsafe fn set_len(&mut self, new_len: usize) {
+> -        debug_assert!(new_len <= self.capacity());
+> -        self.len = new_len;
+> +    pub unsafe fn inc_len(&mut self, additional: usize) {
+> +        debug_assert!(self.len() + additional <= self.capacity());
+> +        self.len += additional;
 
+I guess we could use an INVARIANT: comment here.
+
+Alice
 
