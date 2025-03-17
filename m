@@ -1,136 +1,93 @@
-Return-Path: <linux-kernel+bounces-564312-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564313-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C97FA65286
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 15:14:18 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38A4FA6528A
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 15:14:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B9FD81774E8
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 14:13:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD4131712C5
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 14:14:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB2672080F4;
-	Mon, 17 Mar 2025 14:13:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="TzYCnaTd";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Cr7WxoOe"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D892820322;
-	Mon, 17 Mar 2025 14:13:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FB942405E7;
+	Mon, 17 Mar 2025 14:13:56 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EF2E20322
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 14:13:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742220812; cv=none; b=r8C8iYAxTlVluYmQYTZc/1cX00+CdM0wNXJ6aDIw36peWPAGdV3XXi4be47Fby05rIVFm4ch0D5M/9nCx0J5Xbr/6PIYqxjE+vSr91EnuHRzFkSEmbPdBIdOeAEwrf0c95GfuovVYF+DytZyUh2bk7aeBGuakqouJUTnybTdaP8=
+	t=1742220835; cv=none; b=ZBvT/aSiqHpnONbZ04/9M8ba5YEQxUEWxuAT1Df0JjKRO53zVIjG1SS6EDJZdpF3pQcfLLU+NPeZb/zKu2855Bs+qevHQYSgElAe+zsmAuT0bamJ2eER81BlJ7LM11P/Tys52JM85KrVkmUxZTWlkD/QE+e+r9aBP3k+luQmano=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742220812; c=relaxed/simple;
-	bh=Hpdcypjt0ZbNYUdHGey6gpoTcz3DMDSTuv0leQ5C0HE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=AV5FC+Cv3OIb+xr/qNKKG2qS7DBmM+PNQQJk14kldTuCb53xoJpPQhkqsNWJQgzxSoL0EVX2JN+B/QvE18ZMtJx31ioB9ItqGkx1tMcDzFUxClsEc0Q6UzzRIQXVmd/nKN1V9D8AANC53AuEuezjkHDXpwzvEL1u6tgQN6gl0v0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=TzYCnaTd; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Cr7WxoOe; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1742220809;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=EtclTXwOSCMg5QOeKYXMx4COUFyfI8/aHYlSBvUgGug=;
-	b=TzYCnaTdWzV3lR+LbCsvEXfYiozktCDRcAjuEJRTFaKJX21f1jRAeEEWrSmmwM693xOcZj
-	2LYKAtFqBlOpqv7KfpCqL2RmmlMHcQn5uBC/EpYh20HASDiCqSZRVz8SKgx3h0+0kLs0f4
-	rLCmkHMHGUOKDFGBMCSyZlFp2qXw++J3Whcu0AZWM9WafvunhtnOuGvfj/iSXg7m97k/JX
-	IE98Ukjxml0QJay26gx3Qo/HKuXQor/S+VxpLA7zycAkUjvQMChVQ+egsa8mNTmI/7ST64
-	9cpjR30crg9kNbyKef84j5u/TbML0mAPVNiXWUl8FmZH4uf3EL4HkwYco0F1+w==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1742220809;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=EtclTXwOSCMg5QOeKYXMx4COUFyfI8/aHYlSBvUgGug=;
-	b=Cr7WxoOe6k9vgW/OwIAFPJXvkXXDWam+Q5QI+HAYPBEKwogwSrCNLAFJK7AloA6dPmU0XD
-	lRnFLnNMiYbyqmAA==
-Date: Mon, 17 Mar 2025 15:13:25 +0100
-Subject: [PATCH] loop: Properly send KOBJ_CHANGED uevent for disk device
+	s=arc-20240116; t=1742220835; c=relaxed/simple;
+	bh=1qsOHAWD51igFnW0QxJV/k+zKI7q662EOWBaJCGlNLA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jVRNHKMyY0n8jsbCty6wa/RwX9SYVAXSLiBeRNXY1wlcg03kwVyRz9kibbgSwhfe3Ug39mqN4H0uaXlN4Vay+TY6mNdJ0+qkK97buPLR4CFiTmeB07Sh91h0rqTz9kSwWheQBK/utFlhgmq+b1xBcvGHVmeFDLsxD3PLdFPbHFs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com; spf=none smtp.mailfrom=foss.arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=foss.arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 616FF13D5;
+	Mon, 17 Mar 2025 07:14:02 -0700 (PDT)
+Received: from bogus (e133711.arm.com [10.1.196.55])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7C2683F63F;
+	Mon, 17 Mar 2025 07:13:52 -0700 (PDT)
+Date: Mon, 17 Mar 2025 14:13:49 +0000
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: Re: [PATCH 9/9] regulator: dummy: convert to use the faux device
+ interface
+Message-ID: <Z9guHSE0nwC1-52J@bogus>
+References: <20250317-plat2faux_dev-v1-0-5fe67c085ad5@arm.com>
+ <20250317-plat2faux_dev-v1-9-5fe67c085ad5@arm.com>
+ <2025031716-decaf-overhead-c56c@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250317-loop-uevent-changed-v1-1-cb29cb91b62d@linutronix.de>
-X-B4-Tracking: v=1; b=H4sIAAQu2GcC/32Nyw7CIBBFf6WZtRgeRYMr/8N0QWRqJ2mgAUpqG
- v5drHtzV+fmPnZIGAkT3LodIhZKFHwDcergOVn/QkauMUguNVf8yuYQFrZiQZ/ZL+GYtepi+Ng
- r5Apac4k40nasPobGE6Uc4vs4KeLr/t8rgjWh0dpKZXqp7zP5NcfgaTs7hKHW+gFGqDT0ugAAA
- A==
-X-Change-ID: 20250307-loop-uevent-changed-aa3690f43e03
-To: Jens Axboe <axboe@kernel.dk>, Martijn Coenen <maco@android.com>, 
- Alyssa Ross <hi@alyssa.is>
-Cc: John Ogness <john.ogness@linutronix.de>, linux-block@vger.kernel.org, 
- linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1742220808; l=2095;
- i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
- bh=Hpdcypjt0ZbNYUdHGey6gpoTcz3DMDSTuv0leQ5C0HE=;
- b=ZiaehUy4QRjIUsV2+NmlNt3mlBEdxOFbu0yZU+R2EUOO8E9PCR+ziupoxLo1EqSseZc+g9f8L
- XR1CUo90jEsDkbodaQktZN9z1XRXdwyXnqFtTUbzSN2/owDrtXrfL1g
-X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
- pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2025031716-decaf-overhead-c56c@gregkh>
 
-The wording "uncork" in the code comment indicates that it is expected that
-the suppressed event instances are automatically sent after unsuppressing.
-This is not the case, they are discarded.
-In effect this means that no "changed" events are emitted on the device
-itself by default. On the other hand each discovered partition does trigger
-a "changed" event on the loop device itself. Therefore no event is emitted for
-devices without partitions.
+On Mon, Mar 17, 2025 at 02:00:04PM +0100, Greg Kroah-Hartman wrote:
+> On Mon, Mar 17, 2025 at 10:13:21AM +0000, Sudeep Holla wrote:
+> > From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> 
+> Why are you resending my patch back to me?
+> 
+> > The dummy regulator driver does not need to create a platform device, it
+> > only did so because it was simple to do.  Change it over to use the
+> > faux bus instead as this is NOT a real platform device, and it makes
+> > the code even smaller than before.
+> > 
+> > Reviewed-by: Mark Brown <broonie@kernel.org>
+> > Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> > Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > Message-Id: <2025021027-outclass-stress-59dd@gregkh>
+> > (sudeep.holla: Made dummy_regulator_driver static)
+> 
+> So this is a new version?
+> 
 
-This leads to udev missing the device creation and prompting workarounds in
-userspace, see the linked util-linux/losetup bug.
+Not really, I pulled your patch as I needed that as well to clean out
+all faux device out of platform. I just made dummy_regulator_driver
+static back again as compiler was warning. Definitely nothing new.
+I will drop it when posting v2. You can probably fix up to make
+dummy_regulator_driver static.
 
-Explicitly emit the events and drop the confusingly worded comments.
+> And as was pointed out, this is already in my tree, and there's a
+> conflict in linux-next with it.
+> 
 
-Link: https://github.com/util-linux/util-linux/issues/2434
-Fixes: 3448914e8cc5 ("loop: Add LOOP_CONFIGURE ioctl")
-Cc: stable@vger.kernel.org
-Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
----
- drivers/block/loop.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Ah may be I missed to pull the updated next. I see I was still on
+next-20250311. Sorry for that.
 
-diff --git a/drivers/block/loop.c b/drivers/block/loop.c
-index c05fe27a96b64f1f1ea3868510fdd0c7f4937f55..fbc67ff29e07c15f2e3b3e225a4a37df016fe9de 100644
---- a/drivers/block/loop.c
-+++ b/drivers/block/loop.c
-@@ -654,8 +654,8 @@ static int loop_change_fd(struct loop_device *lo, struct block_device *bdev,
- 
- 	error = 0;
- done:
--	/* enable and uncork uevent now that we are done */
- 	dev_set_uevent_suppress(disk_to_dev(lo->lo_disk), 0);
-+	kobject_uevent(&disk_to_dev(lo->lo_disk)->kobj, KOBJ_CHANGE);
- 	return error;
- 
- out_err:
-@@ -1115,8 +1115,8 @@ static int loop_configure(struct loop_device *lo, blk_mode_t mode,
- 	if (partscan)
- 		clear_bit(GD_SUPPRESS_PART_SCAN, &lo->lo_disk->state);
- 
--	/* enable and uncork uevent now that we are done */
- 	dev_set_uevent_suppress(disk_to_dev(lo->lo_disk), 0);
-+	kobject_uevent(&disk_to_dev(lo->lo_disk)->kobj, KOBJ_CHANGE);
- 
- 	loop_global_unlock(lo, is_loop);
- 	if (partscan)
-
----
-base-commit: 4701f33a10702d5fc577c32434eb62adde0a1ae1
-change-id: 20250307-loop-uevent-changed-aa3690f43e03
-
-Best regards,
 -- 
-Thomas Weißschuh <thomas.weissschuh@linutronix.de>
-
+Regards,
+Sudeep
 
