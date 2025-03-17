@@ -1,159 +1,125 @@
-Return-Path: <linux-kernel+bounces-563722-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563724-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD160A6473C
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:27:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 60C2DA64742
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:28:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 78A2E3B3D1F
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 09:25:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 64D503B4E93
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 09:26:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC1D8225390;
-	Mon, 17 Mar 2025 09:24:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75539221F36;
+	Mon, 17 Mar 2025 09:25:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="Tyv/ZaCl"
-Received: from linux1587.grserver.gr (linux1587.grserver.gr [185.138.42.100])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="F2slaZbw";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="BjS7QKbn"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 614BD3AC17;
-	Mon, 17 Mar 2025 09:24:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.138.42.100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E732221DAE
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 09:25:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742203475; cv=none; b=iSPlNRiOnqJuuVu+7823IuOh0h7U/jibpDmc1n+dmmVm/sURjEmsh+h7n7n8YpczD5Al8ijEHEyAZskh/yOqucavWyY0lrwzVYgs7O9nlrQLitJGkFCO12bXA/+XFj4NsaomZUx8DYqSO1mUFECixZozMWMYoibvwD51SyG5sec=
+	t=1742203530; cv=none; b=gGr8Qpk35o/g9I/04Cm49XImr7HLJHhJBp/id6WthwHnCGkNAss5hV7So+49VtuM+g3qep3OFCgIjIFOhtjxevPmlDcUJm4v2MI0hwco6xsWEwrDbSumhLlCn18+T9KF58vd53HFvhYBkOca6KmOHxrU33B9aDvvMp/gRdfnRrI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742203475; c=relaxed/simple;
-	bh=HdqM+Kw7auoJFKOG+1yFmuAYczQRqYv6xSwAwWis1+c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=G49mbpe2pgCwza6dSbKkgdfeiChNpwzxPJny5dBhId8aNaKfUfYwpldwdvHe0jIx0I7cBeaV7729XBL6yOEg/aLRujGo1oyQ9yXfZN5zB5RHXsb8Fc1swyivFvge8yC0AiHtqSvPGy3LyVU1yUwAI4zOoDIuqmpDDwnh/FKRwL0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=pass (1024-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=Tyv/ZaCl; arc=none smtp.client-ip=185.138.42.100
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antheas.dev
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
-	by linux1587.grserver.gr (Postfix) with ESMTPSA id B25A92E087A4;
-	Mon, 17 Mar 2025 11:24:30 +0200 (EET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=antheas.dev;
-	s=default; t=1742203471;
-	bh=bpaJAokI/NQ/T1FCGS5iJELae0H5brpgDUQIsXXbr10=;
-	h=Received:From:Subject:To;
-	b=Tyv/ZaClVMNh7lp3NZiJU8GNe3SheFs3oZT+hyLZ1FVZpqWmiURjNvvvVfrIAqkOz
-	 Y2szcK/teCu1vJIUD73DepLHCRuZSY8q42DCU3bO6JcYPxs/cvCn5kIQn1XKcYeWyZ
-	 aJVUYqiwLfFuvMd7/8rqItBAb4Psp+yX4ynrynXE=
-Authentication-Results: linux1587.grserver.gr;
-        spf=pass (sender IP is 209.85.208.180) smtp.mailfrom=lkml@antheas.dev smtp.helo=mail-lj1-f180.google.com
-Received-SPF: pass (linux1587.grserver.gr: connection is authenticated)
-Received: by mail-lj1-f180.google.com with SMTP id
- 38308e7fff4ca-30613802a04so47453751fa.2;
-        Mon, 17 Mar 2025 02:24:30 -0700 (PDT)
-X-Forwarded-Encrypted: i=1;
- AJvYcCUuwxMr2s0jtk1mlWWoWZnUutSRAxwsnD7TsyuGNGpQGJVVbU1nviA+R/DfyssyOa+wUsuwydT7gHDrLQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZB+sgDtZWoO97GyNk9cbg8s/XGadmpCYqBpGjx2V91do431B+
-	SJZ22YySjsEvCdVpd+ILMr2qaC+IVGwA+bhD1THY9xa9O+UV4J7AqFh62wfKCvv1B3/KMFRNPE9
-	NvoUQIzEWLjVQeA711T7CQtM85+o=
-X-Google-Smtp-Source: 
- AGHT+IG393WDcLxj+nSCn5lGo0OfnHjTTcYTFzDoGSO/uYVmGzb6auCXghb6wLrVDzKXWRc1QRDf0xlBxHPaJlSuMtE=
-X-Received: by 2002:a2e:9842:0:b0:30b:c6fe:4500 with SMTP id
- 38308e7fff4ca-30c4a863bb0mr55001111fa.10.1742203470092; Mon, 17 Mar 2025
- 02:24:30 -0700 (PDT)
+	s=arc-20240116; t=1742203530; c=relaxed/simple;
+	bh=dvztFSyZEErM9HZEwREnIEAgg46fSGRjsHx3ksHlq0E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PxB6fsMarCM5NVjsLHl0mGE+2AukfeHPrbFe4+fCSJ12I4yoy7CdSZbt/uxgKiW3ETl3G15eJatDufiITQhekplZ17AapSoN71eQZ7dvlw1QdsM1EGc7fiaLGSxC/sRYjUu+XminopoT9koQ/9lAHFCe/7F4en/zubguSLNx3g0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=F2slaZbw; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=BjS7QKbn; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 17 Mar 2025 10:25:26 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1742203527;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Z/C7OyGVRK60ZqzYGVybQCEnm9DV3fpBqNs0Cp11nQA=;
+	b=F2slaZbwSHazunDpZEf0dQDXezXZ3k6MiI+va2edK8SotRBmRKkOOLroNmm6Lf2diozhZr
+	ovQmE+NhISVh7P3X7sexa+O+T4ej4Ri4DCjsVnrLAp2TIfQnMImvpN15KkLYpY7DFVznbc
+	fica56ms1tMbh8XsppBuZkElnM1k3Yp2+8rBEJ1O4IyySCvn151uz6lEvNUcpt0Ilr39jq
+	yJVz2PR74/aktc4GRvOfawBLmwZGdS+6JCaa1MXnSiq0axktLJSRjxe5MVeSjC8BvMrCNU
+	bvrqInGGSd6OL0ntQ5aTszCvKLg0sczs6beser8nq71mrkZOoMsfw2YeOmqxwA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1742203527;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Z/C7OyGVRK60ZqzYGVybQCEnm9DV3fpBqNs0Cp11nQA=;
+	b=BjS7QKbnK4pwtkhilxtiiAHXJ4A0lMXGS4BflKeNfSNHEiq+SpT6p6EBIk1iQXnv7MoExP
+	PwW9oZ57eavArwBw==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev,
+	Ben Segall <bsegall@google.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
+	Mel Gorman <mgorman@suse.de>, Peter Zijlstra <peterz@infradead.org>,
+	Shrikanth Hegde <sshegde@linux.ibm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Will Deacon <will@kernel.org>
+Subject: Re: [PATCH v4 1/9] sched: Add a generic function to return the
+ preemption string.
+Message-ID: <20250317092526.S1MfZldy@linutronix.de>
+References: <20250314160810.2373416-1-bigeasy@linutronix.de>
+ <20250314160810.2373416-2-bigeasy@linutronix.de>
+ <Z9ay49NsoC73dKXe@gmail.com>
+ <20250317083155.9g9ksofZ@linutronix.de>
+ <Z9fnf9g_zmbNXICh@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250222164321.181340-1-lkml@antheas.dev>
- <20250222164321.181340-6-lkml@antheas.dev>
- <65813e62-aa0f-4167-83c1-49200fc4ca20@redhat.com>
- <CAGwozwE9=Vh6M5CVAkTCDj5x8twtm3n_28DH1DFbbBKekhn9hw@mail.gmail.com>
-In-Reply-To: 
- <CAGwozwE9=Vh6M5CVAkTCDj5x8twtm3n_28DH1DFbbBKekhn9hw@mail.gmail.com>
-From: Antheas Kapenekakis <lkml@antheas.dev>
-Date: Mon, 17 Mar 2025 10:24:18 +0100
-X-Gmail-Original-Message-ID: 
- <CAGwozwH_htUrKukTQ1QDa+qHJjKnU-A2QCzFharVGiiTC-vCRw@mail.gmail.com>
-X-Gm-Features: AQ5f1JpyVorMHWlhiauUBhSWuscYucyza1t1M5lYYzEnht5BWKBWX2AD_k03mpY
-Message-ID: 
- <CAGwozwH_htUrKukTQ1QDa+qHJjKnU-A2QCzFharVGiiTC-vCRw@mail.gmail.com>
-Subject: Re: [PATCH 5/5] drm: panel-orientation-quirks: Add Zotac Gaming Zone
- quirk
-To: Hans de Goede <hdegoede@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>,
-	Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-PPP-Message-ID: 
- <174220347106.27635.1170059049294012610@linux1587.grserver.gr>
-X-PPP-Vhost: antheas.dev
-X-Virus-Scanned: clamav-milter 0.103.11 at linux1587.grserver.gr
-X-Virus-Status: Clean
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <Z9fnf9g_zmbNXICh@gmail.com>
 
-On Mon, 17 Mar 2025 at 10:23, Antheas Kapenekakis <lkml@antheas.dev> wrote:
->
-> On Mon, 17 Mar 2025 at 10:20, Hans de Goede <hdegoede@redhat.com> wrote:
-> >
-> > Hi,
-> >
-> > On 22-Feb-25 17:43, Antheas Kapenekakis wrote:
-> > > The Zotac Gaming Zone handheld features a 1080p portrait OLED screen.
-> > > Add the rotation to the panel orientation quirks.
-> > >
-> > > Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
-> > > ---
-> > >  drivers/gpu/drm/drm_panel_orientation_quirks.c | 6 ++++++
-> > >  1 file changed, 6 insertions(+)
-> > >
-> > > diff --git a/drivers/gpu/drm/drm_panel_orientation_quirks.c b/drivers/gpu/drm/drm_panel_orientation_quirks.c
-> > > index f08cdc81dd9a..bbbe707f541d 100644
-> > > --- a/drivers/gpu/drm/drm_panel_orientation_quirks.c
-> > > +++ b/drivers/gpu/drm/drm_panel_orientation_quirks.c
-> > > @@ -479,6 +479,12 @@ static const struct dmi_system_id orientation_data[] = {
-> > >                 DMI_EXACT_MATCH(DMI_PRODUCT_NAME, "ONEXPLAYER F1 EVA-02"),
-> > >               },
-> > >               .driver_data = (void *)&lcd1080x1920_leftside_up,
-> > > +     }, {    /* Zotac Gaming Zone (OLED) */
-> > > +             .matches = {
-> > > +               DMI_EXACT_MATCH(DMI_SYS_VENDOR, "ZOTAC"),
-> > > +               DMI_EXACT_MATCH(DMI_PRODUCT_NAME, "ZOTAC GAMING ZONE"),
-> > > +             },
-> > > +             .driver_data = (void *)&lcd1080x1920_leftside_up,
-> > >       }, {    /* OrangePi Neo */
-> >
-> > The entries in this list are alphabetically sorted. Please post
-> > a v2 (of just this patch) with this entry moved to the end, just
-> > above the special "One Mix 2S" entry which is at the very end
-> > because its DMI matches are all "Default string".
-> >
-> > Note another entry for another Zotac device, with a board name of
-> > "G0A1W" has been added in drm-misc/next, so please base your v2
-> > on top of drm-misc/next.
-> >
-> > Also the freedesktop.org infra is currently being migrated to
-> > another data center, so the drm-misc tree currently is not
-> > available I think.
-> >
-> > Regards,
-> >
-> > Hans
-> >
-> >
-> >
-> >
-> > >               .matches = {
-> > >                 DMI_EXACT_MATCH(DMI_SYS_VENDOR, "OrangePi"),
-> >
->
-> Ok thanks. I will do that in a few days. Patches 1-4 hopefully should
-> be good to merge.
->
-> Antheas
+On 2025-03-17 10:12:31 [+0100], Ingo Molnar wrote:
+> 
+> * Sebastian Andrzej Siewior <bigeasy@linutronix.de> wrote:
+> 
+> > On 2025-03-16 12:15:47 [+0100], Ingo Molnar wrote:
+> > > 
+> > > * Sebastian Andrzej Siewior <bigeasy@linutronix.de> wrote:
+> > > 
+> > > > +const char *preempt_modes[] = {
+> > > > +	"none", "voluntary", "full", "lazy", NULL,
+> > > > +};
+> > > 
+> > > > +	/* Count entries in NULL terminated preempt_modes */
+> > > > +	for (j = 0; preempt_modes[j]; j++)
+> > > > +		;
+> > > 
+> > > I'm pretty sure the build-time ARRAY_SIZE() primitive is superior here. ;-)
+> > 
+> > It would be but it is not an option.
+> > That array is defined in core.c where it is "always" required while
+> > debug.c needs it optionally. core.c is its one compile unit while
+> > debug.c is included by build_utility.c. So I don't see how this can work
+> > unless we shift things:
+> 
+> Why not have it all in debug.c?
 
-Actually nevermind, this is the Zotac Zone so it is a dupe. It is fine
-to drop this patch from the series and merge the rest.
+The debug.c include is behind CONFIG_SCHED_DEBUG. This needs to be moved
+into debug.c itself so that code can be added regardless of
+CONFIG_SCHED_DEBUG. It is not only sched-debug after that.
 
-Antheas
+Then we have `preempt_dynamic_mode' logic which is in core.c but it is
+exported and used in debug.c
+So if all this is not a concern then I can move it.
+
+> Thanks,
+> 
+> 	Ingo
+
+Sebastian
 
