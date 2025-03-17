@@ -1,171 +1,120 @@
-Return-Path: <linux-kernel+bounces-564258-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564309-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 410B9A65151
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 14:37:18 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DAF5A6527D
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 15:13:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2636E175EBC
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 13:36:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D345167B6D
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 14:13:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6722323F418;
-	Mon, 17 Mar 2025 13:36:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DE2523FC6B;
+	Mon, 17 Mar 2025 14:13:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E8U12ekB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=shurup.com header.i=@shurup.com header.b="itgmWAFW"
+Received: from relay01b.gzo.com (relay01b.gzo.com [96.31.72.150])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7BE5EBE;
-	Mon, 17 Mar 2025 13:36:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D781E20322;
+	Mon, 17 Mar 2025 14:12:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.31.72.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742218590; cv=none; b=PX7z7UIEEjquxfXm9J+RBJDJx58ron1eEWLeOgv2LPXTnvZJRmDUHt1ryhysCrN27qOy7+py48imsiXoYB9WGGhsA3Wj7LbiHbNFfr5pafzPd00ylMwu9sdFsOiATczEu2yzp2EkzydFJslSvtP+8DbCQw5ZManOkGkbYFkLo6I=
+	t=1742220781; cv=none; b=uEUJcigci0p7Wm98wberDPAERMJKNu2KzEzEKW+cq1t2xkzrk65mReY9cYVsJY4AEW5A3kRz5a6q2Jy8yBlRfqj5jkSz3uZPPsf6MG1a1SeMDytFVFFz7XiiNkHF3/STH4Ai+HzBCZhj2Bi1rpkBmt4CXW9ueLk2ZG41lwvk7Iw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742218590; c=relaxed/simple;
-	bh=RseWPBUm8jLujRzewLcvZ2BXS/0vv+m6EhD8xlnMnmA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ITmnWR2y4+0Rsn3IGuwS/yxHS0hJzcDbpXLQ2Unq0Bn9nKAvyPtXIr3NNvVzQYc4w/QbiX+eKxjvuaXxnTuYHCJH3UsAINBQcYNPXduVLvbcki8ell0AnFdSvN7cbPwLTHWtyCtV1W+QVTxTshCakE1hOO93GmNgdmn859cS3HA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E8U12ekB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A95E9C4CEF1;
-	Mon, 17 Mar 2025 13:36:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742218590;
-	bh=RseWPBUm8jLujRzewLcvZ2BXS/0vv+m6EhD8xlnMnmA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=E8U12ekBW2a7Bin/kQfOEIUbrByUMBYu+5OR0NzDEUTrA43lTA0rFWJKazYJ+Ex5M
-	 3o+/YJzUibV3yfvbeKe2NMEcNCFUikI2RTYD5W9k1K8FBYGO6bQsEjw//qw4WfN1Gi
-	 a/QvOf+9Bt/GOxYsnTdWuYccqB1mNu1WgiSNnQAlLkteaLCDb0Je37u7Z7z6fffxz8
-	 qYSFsSjzWr3IauwfmC7xfu1sJmOTrJKOwCD24AWzsDWP9F09Stdrcx6YyoN/9Mf0mu
-	 uSUn9LE5JwCCtOmpkAPFkhYiukkDncrdt9j2xhDepIXGFLxTh/g8kDu2X9x+Ii9YRl
-	 qYadrHPbPCt9A==
-Date: Mon, 17 Mar 2025 15:36:26 +0200
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: Stefano Garzarella <sgarzare@redhat.com>,
-	Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
-	x86@kernel.org, linux-kernel@vger.kernel.org,
-	Borislav Petkov <bp@alien8.de>, linux-integrity@vger.kernel.org,
-	Dov Murik <dovmurik@linux.ibm.com>,
-	Dionna Glaze <dionnaglaze@google.com>, linux-coco@lists.linux.dev,
-	James Bottomley <James.Bottomley@hansenpartnership.com>,
-	Claudio Carvalho <cclaudio@linux.ibm.com>,
-	Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Joerg Roedel <jroedel@suse.de>
-Subject: Re: [PATCH v3 1/4] x86/sev: add SVSM vTPM probe/send_command
- functions
-Message-ID: <Z9glWp6U6vyEmKQa@kernel.org>
-References: <20250311094225.35129-1-sgarzare@redhat.com>
- <20250311094225.35129-2-sgarzare@redhat.com>
- <d7e5a1d2-5fcc-bf7f-a67d-7871a1627c98@amd.com>
+	s=arc-20240116; t=1742220781; c=relaxed/simple;
+	bh=jTB5znB+ogEWEhTkaupi8dMN+yvFZhhh7iKqXffpBfE=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=fpk0Sc/ZUjxuvxDTsreOpa3OYKOEL1tiVr3vftmW7FrTwdyCixiNJbx/YC8wZYleoZ8LdJoCN1cDpLTSqs44W8Nfcmexyvdyw3Zq+MK6E4NVyVVmq/naAmcnt9zOzl99GVu0c/a0H04QKk6ekLQ2l45zmooBGjEpo/ILXqp5YJ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shurup.com; spf=pass smtp.mailfrom=shurup.com; dkim=pass (2048-bit key) header.d=shurup.com header.i=@shurup.com header.b=itgmWAFW; arc=none smtp.client-ip=96.31.72.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shurup.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shurup.com
+Received: from cpanel84.gzo.com ([96.31.72.74]:38344)
+	by relay02.gzo.com with esmtps  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.98.1)
+	(envelope-from <yury@shurup.com>)
+	id 1tuAfX-00000005jnH-3R2z;
+	Mon, 17 Mar 2025 08:38:15 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=shurup.com;
+	s=default; h=To:References:Message-Id:Content-Transfer-Encoding:Cc:Date:
+	In-Reply-To:From:Subject:Mime-Version:Content-Type:Sender:Reply-To:Content-ID
+	:Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:
+	Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe
+	:List-Post:List-Owner:List-Archive;
+	bh=jTB5znB+ogEWEhTkaupi8dMN+yvFZhhh7iKqXffpBfE=; b=itgmWAFW/cuIeL45f9rRrm8AD8
+	oSRYuomvAQ3i3hhhxAuh5G8Z7MEgw6gBc5f1AmFkGfSjypoRJuGZfm0ebwvwEWKJ1UGin889Jy845
+	n/hmIXlvqjpmzUzWROwNEqBw3Mv12wGamJPMXc9PPFyfwDXYyGRdSCjdR5qgK7pKGfFwoaD5beAzL
+	4WImmvX1yUAAM81Rqhsj12WQI4QxuCD7PMImbsbPOIPqCCrgE26vu6RCCfH0n5CHkk97SE5no1Cn8
+	m7shpDRb/eOeXS+dlZ+p8TmXeG2uBTJ+T7tgaVwi/GECFztUuvHR5nw6tB7w3IPOfOy2a2drVH6tb
+	Cn6pydIg==;
+Received: from [178.202.191.195] (port=13529 helo=smtpclient.apple)
+	by cpanel84.gzo.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.1)
+	(envelope-from <yury@shurup.com>)
+	id 1tuAfY-0000000Ei07-0uS3;
+	Mon, 17 Mar 2025 08:38:14 -0500
+Content-Type: text/plain;
+	charset=us-ascii
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d7e5a1d2-5fcc-bf7f-a67d-7871a1627c98@amd.com>
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.400.131.1.6\))
+Subject: Re: [PATCH RESEND] tty: vt: make defkeymap for shifted F-keys
+ consistent with kbd
+From: "Yury V. Zaytsev" <yury@shurup.com>
+In-Reply-To: <202503061554.ZQPrGM8H-lkp@intel.com>
+Date: Mon, 17 Mar 2025 14:37:43 +0100
+Cc: gregkh@linuxfoundation.org,
+ jirislaby@kernel.org,
+ linux-kernel@vger.kernel.org,
+ linux-serial@vger.kernel.org,
+ oe-kbuild-all@lists.linux.dev
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <BD85D5D1-4D09-41AC-BFD8-C53E986C629F@shurup.com>
+References: <20250301132108.62761-1-yury@shurup.com>
+ <202503061554.ZQPrGM8H-lkp@intel.com>
+To: kernel test robot <lkp@intel.com>
+X-Mailer: Apple Mail (2.3826.400.131.1.6)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - cpanel84.gzo.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - shurup.com
+X-Get-Message-Sender-Via: cpanel84.gzo.com: authenticated_id: yury+shurup.com/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: cpanel84.gzo.com: yury@shurup.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-GZO-MailScanner-Information: Please contact the ISP for more information
+X-GZO-MailScanner-ID: 1tuAfX-00000005jnH-3R2z
+X-GZO-MailScanner: Found to be clean
+X-GZO-MailScanner-SpamCheck: not spam, SpamAssassin (cached, score=-2.099,
+	required 6, autolearn=not spam, BAYES_00 -1.90, DKIM_SIGNED 0.10,
+	DKIM_VALID -0.10, DKIM_VALID_AU -0.10, DKIM_VALID_EF -0.10,
+	RCVD_IN_VALIDITY_CERTIFIED_BLOCKED 0.00,
+	RCVD_IN_VALIDITY_RPBL_BLOCKED 0.00, SPF_HELO_PASS -0.00,
+	SPF_PASS -0.00, URIBL_BLOCKED 0.00)
+X-GZO-MailScanner-From: yury@shurup.com
 
-On Fri, Mar 14, 2025 at 10:27:07AM -0500, Tom Lendacky wrote:
-> On 3/11/25 04:42, Stefano Garzarella wrote:
-> > Add two new functions to probe and send commands to the SVSM vTPM.
-> > They leverage the two calls defined by the AMD SVSM specification [1]
-> > for the vTPM protocol: SVSM_VTPM_QUERY and SVSM_VTPM_CMD.
-> > 
-> > Expose these functions to be used by other modules such as a tpm
-> > driver.
-> > 
-> > [1] "Secure VM Service Module for SEV-SNP Guests"
-> >     Publication # 58019 Revision: 1.00
-> > 
-> > Co-developed-by: James Bottomley <James.Bottomley@HansenPartnership.com>
-> > Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.com>
-> > Co-developed-by: Claudio Carvalho <cclaudio@linux.ibm.com>
-> > Signed-off-by: Claudio Carvalho <cclaudio@linux.ibm.com>
-> > Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
-> 
-> One minor nit below, otherwise:
-> 
-> Reviewed-by: Tom Lendacky <thomas.lendacky@amd.com>
-> 
-> > ---
-> > v3:
-> > - removed link to the spec because those URLs are unstable [Borislav]
-> > - squashed "x86/sev: add SVSM call macros for the vTPM protocol" patch
-> >   in this one [Borislav]
-> > - slimmed down snp_svsm_vtpm_probe() [Borislav]
-> > - removed features check and any print related [Tom]
-> > ---
-> >  arch/x86/include/asm/sev.h |  7 +++++++
-> >  arch/x86/coco/sev/core.c   | 31 +++++++++++++++++++++++++++++++
-> >  2 files changed, 38 insertions(+)
-> > 
-> > diff --git a/arch/x86/include/asm/sev.h b/arch/x86/include/asm/sev.h
-> > index ba7999f66abe..09471d058ce5 100644
-> > --- a/arch/x86/include/asm/sev.h
-> > +++ b/arch/x86/include/asm/sev.h
-> > @@ -384,6 +384,10 @@ struct svsm_call {
-> >  #define SVSM_ATTEST_SERVICES		0
-> >  #define SVSM_ATTEST_SINGLE_SERVICE	1
-> >  
-> > +#define SVSM_VTPM_CALL(x)		((2ULL << 32) | (x))
-> > +#define SVSM_VTPM_QUERY			0
-> > +#define SVSM_VTPM_CMD			1
-> > +
-> >  #ifdef CONFIG_AMD_MEM_ENCRYPT
-> >  
-> >  extern u8 snp_vmpl;
-> > @@ -481,6 +485,9 @@ void snp_msg_free(struct snp_msg_desc *mdesc);
-> >  int snp_send_guest_request(struct snp_msg_desc *mdesc, struct snp_guest_req *req,
-> >  			   struct snp_guest_request_ioctl *rio);
-> >  
-> > +bool snp_svsm_vtpm_probe(void);
-> > +int snp_svsm_vtpm_send_command(u8 *buffer);
-> > +
-> >  void __init snp_secure_tsc_prepare(void);
-> >  void __init snp_secure_tsc_init(void);
-> >  
-> > diff --git a/arch/x86/coco/sev/core.c b/arch/x86/coco/sev/core.c
-> > index 96c7bc698e6b..2166bdff88b7 100644
-> > --- a/arch/x86/coco/sev/core.c
-> > +++ b/arch/x86/coco/sev/core.c
-> > @@ -2628,6 +2628,37 @@ static int snp_issue_guest_request(struct snp_guest_req *req, struct snp_req_dat
-> >  	return ret;
-> >  }
-> >  
-> > +bool snp_svsm_vtpm_probe(void)
-> > +{
-> > +	struct svsm_call call = {};
-> > +
-> > +	/* The vTPM device is available only if a SVSM is present */
-> > +	if (!snp_vmpl)
-> > +		return false;
-> > +
-> > +	call.caa = svsm_get_caa();
-> > +	call.rax = SVSM_VTPM_CALL(SVSM_VTPM_QUERY);
-> > +
-> > +	if (svsm_perform_call_protocol(&call))
-> > +		return false;
-> > +
-> > +	/* Check platform commands contains TPM_SEND_COMMAND - platform command 8 */
-> > +	return (call.rcx_out & BIT_ULL(8)) == BIT_ULL(8);
-> 
-> It's a bool function, so this could simplified to just:
-> 
-> 	return call.rcx_out & BIT_ULL(8);
+Hi,
 
-Or perhaps even just "call.rcx_out & 0x100". I don't think BIT_ULL()
-here brings much additional clarity or anything useful...
+> On 6. Mar 2025, at 08:20, kernel test robot <lkp@intel.com> wrote:
+>=20
+> kernel test robot noticed the following build warnings:
 
+Just to make sure I understand the expectations, are you waiting for me =
+to provide a fix and resubmit?
 
-> 
-> Thanks,
-> Tom
+I ask because this is generated code. I can replace zeros with NULLs no =
+problem. Not sure about the symbols, but I guess making them static =
+wouldn't hurt.
 
-BR, Jarkko
+Thank you very much!
+
+All the best,
+Yury
+
 
