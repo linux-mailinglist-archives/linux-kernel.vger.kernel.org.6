@@ -1,172 +1,102 @@
-Return-Path: <linux-kernel+bounces-564171-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564179-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05C77A64F76
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 13:42:07 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DBF7A64F90
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 13:45:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D83CA3AFBE9
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 12:41:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED70518897AB
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 12:45:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B42B23BD1A;
-	Mon, 17 Mar 2025 12:41:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F52623C8B6;
+	Mon, 17 Mar 2025 12:45:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="e+a00mID"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2065.outbound.protection.outlook.com [40.107.237.65])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="uwTmUe6w"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA2D8239082;
-	Mon, 17 Mar 2025 12:41:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.65
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742215318; cv=fail; b=aZXfdOOmVnD3CHWwXwBRDNwztlx4PCxhAjZozKDuWyQpXhi7CuO+4bpO929AL+2NkPQdIsYVDq+e0Fm0sfVPUDtnCTYxj8XngZ7ZRL2kUENWuVuUMsAkAPa7S7fh0z2jcAww9zWoyUBFto8m5mx2DC2o6emOThYy/FywF6IG+dA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742215318; c=relaxed/simple;
-	bh=3jcDi+CHhRWx8/m1D8RcptT1HprG4uh/FjBz2rV0Gq8=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=b7lXamz1jbnK1aMkzJsO9/P+482o65kk4qO331Fqb9iim4mRbxQ1HX4yJdZl3nscKyT9v4EWuus+QdobxMr0+0ADiTtrbjAAhHAI7G098SJx6SJLaqRR5aCVigj6vypaN1kEs8Q0tbtpKm6r5x04tuDCvaUDQ+6TM/k/ewRWWCU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=e+a00mID; arc=fail smtp.client-ip=40.107.237.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=QfaLq6mRLtcy4ybMPD1gnbUSYZXfLaB6cfsIGD/SpGk2X14+o85dT5atjfoI8Beqasl/LL6kDxuThJoiUc8gjbBPNrOAJQsWLAEhKr5N3oYmA3Adjy/OW8eVE5Qld7JhU1WmkbpmAHrGVklB3ZF9shLdRQDHHYhUgAjOdDXEfIKBw0CWnaX3IHx11p2jSzBRWLTobQbYLrAFjMtMHXyVEIxokYTbXpPgDDCabcrKgr/U8NKqRn+TsrnxfFmSPfJLVi2XyfD2QCAfJOse9cCRfJXZGqs7uDQeGvFF4wxJ4Xy4cMnRjQeRvRfpNj2XQ0fEZv7+RdHwIzny351ABOk9OQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=pFVq8gntCpphz6ij/ZXCeQkZ1mfOee0tavIGedNvxJ0=;
- b=uNMT89lJSFGBcZevf/5w94MteWLXvzkXkohbqsHKkpimFxixcrD7QYCBRpGD2K2Qg6lN9LPIWQtIhitJKh9apbPCas85KidLmM47Bcc9K9+6Yk78yCSwJcJFYCRt5XldgPUzl76sEzXpoBHtLVndUIwZSTRj3Bj3xsOgSzdnO30XdRIScF877JhEZ1Y4wsawdP9ymcxKjZSirbDjsAy3zwizW2idW5MG0I5hZdfE4h4hRjxBJPYKSOWJYXyjR59oKZ2UDGWS+6qA7DmyemK6sh0LPHJK2WOqKab6tjOWiWjfZwPjw2fhZf0yYb7mthQFv+Zmjx0E7vrEaNVBR7/3UA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=google.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=pFVq8gntCpphz6ij/ZXCeQkZ1mfOee0tavIGedNvxJ0=;
- b=e+a00mID6IxuM/DBmIIleqqN9VGXUJpB8Z3kB/yMB+wZUXFlQ1flUoGThPXgRG6Pb9bK/ez7OgTG8je/KikOXpQ+Mb8fsFYR/2LB0nPY85ZmfpsTeaVv7O1OckoACERZPhU68KlpSufiwEWMQyUFPRxgCL/5AsS6ND/595a5dz8=
-Received: from BN0PR04CA0175.namprd04.prod.outlook.com (2603:10b6:408:eb::30)
- by SA1PR12MB6945.namprd12.prod.outlook.com (2603:10b6:806:24c::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.33; Mon, 17 Mar
- 2025 12:41:53 +0000
-Received: from MN1PEPF0000F0E4.namprd04.prod.outlook.com
- (2603:10b6:408:eb:cafe::20) by BN0PR04CA0175.outlook.office365.com
- (2603:10b6:408:eb::30) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8534.33 via Frontend Transport; Mon,
- 17 Mar 2025 12:41:53 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- MN1PEPF0000F0E4.mail.protection.outlook.com (10.167.242.42) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8534.20 via Frontend Transport; Mon, 17 Mar 2025 12:41:53 +0000
-Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 17 Mar
- 2025 07:41:52 -0500
-Received: from xhdthippesw40.xilinx.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Mon, 17 Mar 2025 07:41:49 -0500
-From: Thippeswamy Havalige <thippeswamy.havalige@amd.com>
-To: <bhelgaas@google.com>, <lpieralisi@kernel.org>, <kw@linux.com>,
-	<manivannan.sadhasivam@linaro.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-	<conor+dt@kernel.org>
-CC: <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <michal.simek@amd.com>,
-	<bharat.kumar.gogada@amd.com>, Thippeswamy Havalige
-	<thippeswamy.havalige@amd.com>
-Subject: [PATCH] PCI: xilinx-cpm: Add cpm5_csr register mapping for CPM5_HOST1 variant
-Date: Mon, 17 Mar 2025 18:11:36 +0530
-Message-ID: <20250317124136.1317723-1-thippeswamy.havalige@amd.com>
-X-Mailer: git-send-email 2.43.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C4CF3FE4;
+	Mon, 17 Mar 2025 12:45:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742215504; cv=none; b=lYBPN85KO1O6gxftrTIEjIWU8IQI1TBEyTdBAZoVhPySGWhmEMu27UPRHIM1G8nn4YRh9ITGfFCMZiBGNNjj9+2AoY5K7woTMNdLKVdhXV1yHbbAQs3WBEU3R6vpre9EgR/oqNhtOcMCIhhfBoKEbeoiX+FBckPX3KJrjDa5rMM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742215504; c=relaxed/simple;
+	bh=r0gsV4Khp6e9zp+A9RWe1pYdgYloIA21s9D3a93iN34=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Htif0QXJ+7bsa6FBXcp81/wI26YNfchBLy4P8BLRF8v+wudHn1T9o3w6K/t+rE8GzRTv3WlhDeJLpEWq74I/q48ebg/6s2px/UQpYSxiJQi8A4OUb9oTa7kVskVAcwqwO+A6QQqR2/t+w02oLGmMRLggKGGXoSobiyKGoyK+RhY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=uwTmUe6w; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=zjV/I2fEfxjcoP8gAnydAdTVwP1+scv9m0uCGjJEH5Y=; b=uwTmUe6wsrJ41nfKAKTp0Yu0hf
+	CfH6FmTXxj4xWQt3NWyGIJxsrJHrc6CvrNQngk8V2Tu7/bmgNxWES97qeznElbW5UQ3RepjVLvL9x
+	rN8PEO2jFnMmc8/43/rpWwfg0j7BNOoZQgNYIqGM7OHdQBOgbtgly58cwIThnaMwI318=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1tu9pd-00680C-0H; Mon, 17 Mar 2025 13:44:37 +0100
+Date: Mon, 17 Mar 2025 13:44:36 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Jacky Chou <jacky_chou@aspeedtech.com>
+Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, joel@jms.id.au,
+	andrew@codeconstruct.com.au, ratbert@faraday-tech.com,
+	netdev@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-aspeed@lists.ozlabs.org, BMC-SW@aspeedtech.com
+Subject: Re: [net-next 3/4] dt-bindings: net: ftgmac100: add rgmii delay
+ properties
+Message-ID: <27927166-d73b-4837-90a9-ed15661b0a6e@lunn.ch>
+References: <20250317025922.1526937-1-jacky_chou@aspeedtech.com>
+ <20250317025922.1526937-4-jacky_chou@aspeedtech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-Received-SPF: None (SATLEXMB04.amd.com: thippeswamy.havalige@amd.com does not
- designate permitted sender hosts)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN1PEPF0000F0E4:EE_|SA1PR12MB6945:EE_
-X-MS-Office365-Filtering-Correlation-Id: 350c3b69-5488-4f8d-5fb1-08dd6551186a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|36860700013|82310400026|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?NBFxi4VXtjgZXDlC6tpaLXdv6/ErsUtbhCDeNx+SyTLaQKHcLWILBQ9Hfggr?=
- =?us-ascii?Q?SvFskzPs1NRDxydh4rDRWS52ZkZVohILPYZ/G0CnIlO/K56yVdolwdBunUcb?=
- =?us-ascii?Q?nP6zTVzzUXKjvHPNqEz6+VITKi0tiiVZklIkb0BiBr6EPk4b6sW0VubeE2Dh?=
- =?us-ascii?Q?dnC5zfL60WYzCyBmbUL69RDNdfhmxyozLUtGMrfHtKFpFpKLKt6WBtCyLYBO?=
- =?us-ascii?Q?GdgKq8+XuKXtm9TWT1RiXF3fDt0eXPO+7TGw7I2cM1ONrAOTGBj1QpCOV3Hw?=
- =?us-ascii?Q?9Oksp5GTKEX5eKvUUhR+/91wnRSQ+D0kJWAdPBxQLBJNL5MXNnZMg2AAKD52?=
- =?us-ascii?Q?0lhNai87nmFLhjht/96L8bi1U0G3hxHG6CSHdvIywI759V2eT8ExGoUoWzzJ?=
- =?us-ascii?Q?VJ70enrbLTqneWSh1NFUE8b7jS21OwUkKcW+ihEycND0VCWTmDcD0k+cloyc?=
- =?us-ascii?Q?ooGLePQkrrQ487BQx2zI+vdR5iNdgDHZ9hoIiwphU+1vpYao5CK+S2iZ9GrL?=
- =?us-ascii?Q?b97X6LkZrEYe2/QLR++qQT0r3f31Os9NNf5RkyYgWXK+OL5THySqtWVS/+5I?=
- =?us-ascii?Q?tEf6aalO/U0U5rEzHHGaHVvQHhHa5n4T9GYwRGlqneTI/aCrMCl+Hv6YZMCm?=
- =?us-ascii?Q?8GPzSppNn4JlzDg9qKFErIh58s82GTXFoaZHf4ggtHo2+vKxJZmpAhxud4F4?=
- =?us-ascii?Q?dq0rS1lQbpepvLeRORVBbvalM5Py41QyY/x7J4bGHgoUqqIAW4Jc0vFD2ngC?=
- =?us-ascii?Q?Jcxxi20VYg4bPj+1TWCHfOv7191v7GeZNmSZ86vGdicSLzyKvNXO1qhB3xhr?=
- =?us-ascii?Q?hfSwD9E7qvaDzD+5IadcZ0w+1j+u53c8bf8gYGojXI3vvVouTy92l3so6mNK?=
- =?us-ascii?Q?JblKdDOgQ+J8mGfUnN0WyE7aLBe7JcvqOrvMdXSG3yS0gkviNuWIqT3ZOGGQ?=
- =?us-ascii?Q?lxZZ2wOcQxmlyHrh3u7g7oOCuDtY3oe2WDHnfUfByA2meo4KqGxw7AjlzXfh?=
- =?us-ascii?Q?4Z7B+b+H8/7iu9mhbw1BWubOXT0pJ2lNgjtIYIxdf6/NsdQTN883PTZtbB4p?=
- =?us-ascii?Q?qq6JJRQzZwCngScQTn2h6TCeVcpGKOZWaEuERPPYsCCRiYDbOfqtl+gJ9kwr?=
- =?us-ascii?Q?QYP8uWFfkkFwwNfJ0GZ7jRD7ouxv9f/PlWvVO0ghiW6tpuwG7431OcVetg4m?=
- =?us-ascii?Q?zKlx+wwoz0sW5Vi1jPOT6ywCvkinnYHCBN5TPxwXFn2fhiBECUAiHhEtshon?=
- =?us-ascii?Q?9LAa1Wb57X0nfoTrldxTJKQ02Ve/5TNPVlA2dExQ2lh4TVh69RX0Kd4Tjl5Z?=
- =?us-ascii?Q?4eUOyd+rn2QnUOVWPMcvNK0ZEOKiH5pEa/P3E+lvNp6KqFbKS41ANzJsGGUn?=
- =?us-ascii?Q?OW180d0kpXozQy682a5VQ0Qcxc4UvTjQcdcX+Km2N29ModO5PR5+GK5jtBOW?=
- =?us-ascii?Q?CO3nc0EwtiwOdq49yd/XIvNezItV++floSS+DFUwLfGkjiqaE4jMLA=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(82310400026)(7416014)(376014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Mar 2025 12:41:53.2546
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 350c3b69-5488-4f8d-5fb1-08dd6551186a
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	MN1PEPF0000F0E4.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB6945
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250317025922.1526937-4-jacky_chou@aspeedtech.com>
 
-This commit updates the CPM5 variant check to include CPM5_HOST1.
-Previously, only CPM5 was considered when mapping the "cpm_csr" register.
+> In Aspeed desgin, the RGMII delay is a number of ps as unit to
+> set delay, do not use one ps as unit. The values are different
+> from each MAC. So, here describes the property values
+> as index to configure corresponding scu register.
+> 
+> Signed-off-by: Jacky Chou <jacky_chou@aspeedtech.com>
+> ---
+>  .../bindings/net/faraday,ftgmac100.yaml          | 16 +++++++++++++++-
+>  1 file changed, 15 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/net/faraday,ftgmac100.yaml b/Documentation/devicetree/bindings/net/faraday,ftgmac100.yaml
+> index 55d6a8379025..c5904aa84e05 100644
+> --- a/Documentation/devicetree/bindings/net/faraday,ftgmac100.yaml
+> +++ b/Documentation/devicetree/bindings/net/faraday,ftgmac100.yaml
+> @@ -66,6 +66,20 @@ properties:
+>      type: boolean
+>      deprecated: true
+>  
+> +  rx-internal-delay-ps:
+> +    description:
+> +       Setting this property to a non-zero number sets the RX internal delay
+> +       for the MAC. Use this property value as a index not a ps unit to
+> +       configure the corresponding delay register field. And the index range is
+> +       0 to 63.
 
-With this change, CPM5_HOST1 is also supported, ensuring proper resource
-mapping for this variant.
+You have to use picoseconds here. As with all DT binding, you use SI
+units, and the driver then converts them to whatever value you need to
+poke into the register.
+	
+    Andrew
 
-Signed-off-by: Thippeswamy Havalige <thippeswamy.havalige@amd.com>
 ---
- drivers/pci/controller/pcie-xilinx-cpm.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/pci/controller/pcie-xilinx-cpm.c b/drivers/pci/controller/pcie-xilinx-cpm.c
-index d0ab187..13ca493 100644
---- a/drivers/pci/controller/pcie-xilinx-cpm.c
-+++ b/drivers/pci/controller/pcie-xilinx-cpm.c
-@@ -542,7 +542,8 @@ static int xilinx_cpm_pcie_parse_dt(struct xilinx_cpm_pcie *port,
- 	if (IS_ERR(port->cfg))
- 		return PTR_ERR(port->cfg);
- 
--	if (port->variant->version == CPM5) {
-+	if (port->variant->version == CPM5 ||
-+	    port->variant->version == CPM5_HOST1) {
- 		port->reg_base = devm_platform_ioremap_resource_byname(pdev,
- 								    "cpm_csr");
- 		if (IS_ERR(port->reg_base))
--- 
-1.8.3.1
-
+pw-bot: cr
 
