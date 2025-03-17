@@ -1,115 +1,155 @@
-Return-Path: <linux-kernel+bounces-564587-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564589-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7330AA657DE
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 17:22:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF937A657E4
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 17:23:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C8CDD16596A
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 16:22:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 595553B610C
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 16:22:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EFD516F8F5;
-	Mon, 17 Mar 2025 16:22:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2DF11A2545;
+	Mon, 17 Mar 2025 16:22:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TQcPL0co"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rFYdRWCR"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C60119C553
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 16:22:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E7241A072A;
+	Mon, 17 Mar 2025 16:22:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742228567; cv=none; b=TuXRlgk9De3Ch/1iBUF7C0Wtsw6Eya/kDQ6sD6WU5dWmvMQPdg5fVS6eCpQKjsK72rmFv1GXxaBIfUr6mFmotHh4RpF7/wiJ106utw1yqONnXF48XGtZ9EDcQvlDmrT60dnBoja9BoBNbIhFOUO/TbHbD/cktNAdbthD4VIzzeI=
+	t=1742228569; cv=none; b=AGxxGX6Ob0Ahpg9yHsawjujVokdgTXRylhcNdUf9J9vL2UQZgAsmr6u0RIkKJ2b+Ix7wfakd4t0SkWbpEYJNwZYfpOST9c+z0DtjjM+GbwNwh+/a4sJlHN6ryJXQFQkabaCADvhLUgItTQrT08To7QyxM0CZEmwZSj9NX+qFygs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742228567; c=relaxed/simple;
-	bh=s6qZaIWfbpuYHM9fDm/CBBB0GDfmSI/r+3DgSwSfXOs=;
+	s=arc-20240116; t=1742228569; c=relaxed/simple;
+	bh=dRUIl3yQcLybI+RJ6oaOQPFfyifr9VBzmEcrLKujw2A=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Tyfm7FY8bx0nWG0cT2rm7p0TjEI1d7Rvu0wGM9yDSd3njk+qjLPJWxjWzWohBIUzvdVm1yBfKNRw91wUjZarPfQrP7OKpPLpKV9fYXPTS9KnW0LOWq/cirfROJIn9G3zgRnqjcgJDjqang3gS3+dXqoxVCeWz9+DmKp/PdgPgtA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TQcPL0co; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87F25C4CEE3;
-	Mon, 17 Mar 2025 16:22:46 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=r4N7u+LcR0fsZnfaQxR9RvV5wBONhMlsoAHvm2GDif0dVL1zbEnbi65+fo0J8PBLbrkzYQ5ht/bcivezsBS8esjCBvNyIncp1Qzw1NUPQ/nDlqULd9exAEXhTl/N9qg8ck5FwJmab0lpH3YbWB0GKg0cfMBkYk+wmwFHicAXGmg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rFYdRWCR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3D4AC4CEED;
+	Mon, 17 Mar 2025 16:22:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742228566;
-	bh=s6qZaIWfbpuYHM9fDm/CBBB0GDfmSI/r+3DgSwSfXOs=;
+	s=k20201202; t=1742228569;
+	bh=dRUIl3yQcLybI+RJ6oaOQPFfyifr9VBzmEcrLKujw2A=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TQcPL0co2tM3Rr5IHRgOYccbK5u/jAnXuhIsYMtMeg4vY6FvitEfvV7oYdYy6MSOQ
-	 cR0QrmxQR0NQMHklyPvW3QYYE8vZuDloyox2kOar+C3HY1t8TH83gdY+ieslRuE0qR
-	 WpaMp4H1/IKq8RE//H0rUBXUt4zGVK9ro8zZSbV1Ilf0Emr7NQFDrkNy9kXyuSd2aC
-	 dtobIvOQx6Nlbm7mz5fwP9jpzRFH+D2cf7MFxIwg9PY6zORuuq06mqBjn3TJ1UUQvB
-	 APQT85T1CY5htD9nAmZ8c3CdYUEnYwH1CHbdfHhsJUsOfDcdS9JxiLJFGYdICVgp4b
-	 YwX0cINymcGOQ==
-Date: Mon, 17 Mar 2025 17:22:44 +0100
-From: Maxime Ripard <mripard@kernel.org>
-To: David Turner <david.turner@raspberrypi.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Dave Stevenson <dave.stevenson@raspberrypi.com>, 
-	=?utf-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>, Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, 
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	Stefan Wahren <wahrenst@gmx.net>
-Subject: Re: [PATCH v3 1/2] drm/vc4: hdmi: Call HDMI hotplug helper on
- disconnect
-Message-ID: <20250317-cornflower-tortoise-of-stamina-7aa54b@houat>
-References: <20250312-vc4_hotplug-v3-0-d75878677de8@raspberrypi.com>
- <20250312-vc4_hotplug-v3-1-d75878677de8@raspberrypi.com>
- <20250314-armored-tourmaline-lizard-cee8d8@houat>
- <CACXvZi-3mkusGHkZTz=kDo8WcNQZR1A3bddajh+CFT6tQxJSCQ@mail.gmail.com>
+	b=rFYdRWCRMHtn3ek5pOSVea3e1aV3dB3WZkMmGn14i+pVDV70xQ4NY4R/ZlTkyS86C
+	 HGEpT+dhq4uqjcBnp1l01qCouQcDLlbj5wo9QOTOFkc7pQMauL03MlK9Y4h3XhlRxh
+	 cnup+q58QqMDwCuZn/G0pO3SmEuZT+0rrpjuXzn5U1gE9tEdYIF2XFctyrV6Z/YrXu
+	 vMXqUWKB4xXGT75JveTVA6Oblr++7aq8T0SPVv/gnlvDtVtsH6QScGRc+4IUhUCZ+d
+	 /xcMHRSGWcLrC/nuHlZIvmcLTNxXmfazqGOGiM4370sgCS3bSRyyCTmGT9+Rmo71w2
+	 26zc6VcvZZdLw==
+Date: Mon, 17 Mar 2025 09:22:46 -0700
+From: Kees Cook <kees@kernel.org>
+To: Przemek Kitszel <przemyslaw.kitszel@intel.com>
+Cc: Vlastimil Babka <vbabka@suse.cz>, Miguel Ojeda <ojeda@kernel.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Marco Elver <elver@google.com>, linux-hardening@vger.kernel.org,
+	Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
+	David Rientjes <rientjes@google.com>,
+	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Hyeonggon Yoo <42.hyeyoo@gmail.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>, Jann Horn <jannh@google.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Sasha Levin <sashal@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Yafang Shao <laoar.shao@gmail.com>,
+	Tony Ambardar <tony.ambardar@gmail.com>,
+	Alexander Lobakin <aleksander.lobakin@intel.com>,
+	Jan Hendrik Farr <kernel@jfarr.cc>,
+	Alexander Potapenko <glider@google.com>,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	linux-doc@vger.kernel.org, llvm@lists.linux.dev
+Subject: Re: [PATCH v4 1/2] compiler_types: Introduce __flex_counter() and
+ family
+Message-ID: <202503170918.A53A0F2@keescook>
+References: <20250315025852.it.568-kees@kernel.org>
+ <20250315031550.473587-1-kees@kernel.org>
+ <eb6e6198-dc42-4a63-8d0d-35f3061ff388@intel.com>
+ <44a00ad4-b05d-4fb8-87f2-fccbaa068872@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="73vu6btskupebdod"
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <CACXvZi-3mkusGHkZTz=kDo8WcNQZR1A3bddajh+CFT6tQxJSCQ@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <44a00ad4-b05d-4fb8-87f2-fccbaa068872@intel.com>
 
+On Mon, Mar 17, 2025 at 10:43:38AM +0100, Przemek Kitszel wrote:
+> On 3/17/25 10:26, Przemek Kitszel wrote:
+> > On 3/15/25 04:15, Kees Cook wrote:
+> > > Introduce __flex_counter() which wraps __builtin_counted_by_ref(),
+> > > as newly introduced by GCC[1] and Clang[2]. Use of __flex_counter()
+> > > allows access to the counter member of a struct's flexible array member
+> > > when it has been annotated with __counted_by().
+> > > 
+> > > Introduce typeof_flex_counter(), can_set_flex_counter(), and
+> > > set_flex_counter() to provide the needed _Generic() wrappers to get sane
+> > > results out of __flex_counter().
+> > > 
+> > > For example, with:
+> > > 
+> > >     struct foo {
+> > >         int counter;
+> > >         short array[] __counted_by(counter);
+> > >     } *p;
+> > > 
+> > > __flex_counter(p->array) will resolve to: &p->counter
+> > > 
+> > > typeof_flex_counter(p->array) will resolve to "int". (If p->array was not
+> > > annotated, it would resolve to "size_t".)
+> > > 
+> > > can_set_flex_counter(p->array, COUNT) is the same as:
+> > > 
+> > >     COUNT <= type_max(p->counter) && COUNT >= type_min(p->counter)
+> > > 
+> > > (If p->array was not annotated it would return true since everything
+> > > fits in size_t.)
+> > > 
+> > > set_flex_counter(p->array, COUNT) is the same as:
+> > > 
+> > >     p->counter = COUNT;
+> > > 
+> > > (It is a no-op if p->array is not annotated with __counted_by().)
+> > > 
+> > > Signed-off-by: Kees Cook <kees@kernel.org>
+> > 
+> > I agree that there is no suitable fallback handy, but I see counter
+> > as integral part of the struct (in contrast to being merely annotation),
+> > IOW, without set_flex_counter() doing the assignment, someone will
+> > reference it later anyway, without any warning when kzalloc()'d
+> > 
+> > So, maybe BUILD_BUG() instead of no-op?
+> 
+> I get that so far this is only used as an internal helper (in the next
+> patch), so for me it would be also fine to just add __ prefix:
+> __set_flex_counter(), at least until the following is true:
+>  "manual initialization of the flexible array counter is still
+> required (at some point) after allocation as not all compiler versions
+> support the __counted_by annotation yet"
 
---73vu6btskupebdod
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v3 1/2] drm/vc4: hdmi: Call HDMI hotplug helper on
- disconnect
-MIME-Version: 1.0
+Yeah, that's fair. I will rename set_... and can_set_...
 
-On Mon, Mar 17, 2025 at 02:37:03PM +0000, David Turner wrote:
-> Hi Maxime,
->=20
-> Thanks for the reviews.
->=20
-> On Fri, 14 Mar 2025 at 13:33, Maxime Ripard <mripard@kernel.org> wrote:
-> > I also think that it's wrong, it's not just about audio. It just needs
-> > to be called as part of detect no matter what the status is. Audio is
-> > one thing that it will possibly handle depending on the driver, but
-> > EDIDs, CEC, etc. might also be dealt with. So I don't think it's right
-> > to focus on audio there.
->=20
-> Does this wording sound ok?
->=20
->  * This function should be called as a part of the .detect() / .detect_ct=
-x()
->  * callbacks for all status changes in order to update the HDMI-specific
->  * connector's data.
+Thought FWIW I'm not sure we'll ever want a BUILD_BUG_ON() just because
+there will be flex arrays with future annotations that can't have their
+counter set (e.g. annotations that indicate globals, expressions, etc --
+support for these cases is coming, if slowly[1]).
 
-I'd drop everything after "in order to..." but yeah, it's much better, than=
-ks!
-Maxime
+-Kees
 
---73vu6btskupebdod
-Content-Type: application/pgp-signature; name="signature.asc"
+[1] loooong thread https://gcc.gnu.org/pipermail/gcc-patches/2025-March/677024.html
 
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZ9hMUwAKCRAnX84Zoj2+
-djGqAX4/gUi98JP158YvaGceGCpedaNvz9KsGCn2H4aeEyaBMHrsZIM/Kjihdup4
-dHAPX6wBfjUGBjXofkWZ86njUu2JdB90PJMzsemdXyNZbP0obeSZwQCtr4Qe/Cph
-0IMwqPrINg==
-=Xk0X
------END PGP SIGNATURE-----
-
---73vu6btskupebdod--
+-- 
+Kees Cook
 
