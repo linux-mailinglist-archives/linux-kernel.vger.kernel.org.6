@@ -1,94 +1,201 @@
-Return-Path: <linux-kernel+bounces-564375-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564377-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44EEBA653BA
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 15:36:55 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34A91A653C6
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 15:38:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B77C18904BA
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 14:36:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF5BE1709F4
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 14:37:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5568D24290A;
-	Mon, 17 Mar 2025 14:36:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE97024394F;
+	Mon, 17 Mar 2025 14:37:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="JwK3y7t6"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="WJtCvwpf"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C6322417E5
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 14:36:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742222166; cv=none; b=nB8b8VXiKXl/iCyrmtWmbaHm1sBfYdiekUJqO3Y5BMI3c30Lrfg6jUa+3yOjM1eMGbubS92U0JW91cLSD3Ceo6s0+Iy5bSDgMLRYc1g/l7nFnvAJeoAoVkSZ8s6zjhm0IV/m/l3I94WzZcEK0hRvY1TfE5UoWt/oYQ6hjH1bSwM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742222166; c=relaxed/simple;
-	bh=75LOFLkQeS2D990Jln8z6W9YpYFlu6vf8JAndacVpVo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KmlbqV/CIZ0xenRjRG2roLSeWBVyI9fthcUsSlqfJgR3wpL6qAfwVnbCMY23s/aNFKgbQkNuWOWXyXCnJ5PEoZsIRWeqI5EnCqEiSJSZ9jOxgSXVdVDT4JW9lDWmpI6iaw1U9CLXYbJP7r8kyt+9K5mKGYYOJBOPn4mXhmLNlmI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=JwK3y7t6; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=COKOBF5Kp6/L59jrNmNEgGlDWvJC3j7petKc4gxeZ0w=; b=JwK3y7t62997PvSrOTPsG0zOxW
-	LHc2KgGu5yt9ZAkii/OyEV2QTaClAzsCAX0pX4hDhTrgx/qa8cimgJzkUfa8Ji5Xl+DDijY4wtqwq
-	I71UUM3zUEBC2ddI/MS9dUy2nQktJJYmZa1nK3jDQZV6CDvCl7tMpVwPPVZ5Rpam8ZaKixxvINhRi
-	C+bM+KN/Rvlfm9APHfw3nMju7dxBsn0zon5g/mCr0tGkSCn7UwoLNtkZYBeZpbcPW9KF6DZT3EsW4
-	V3uqE07hMSHe9A6+SZcqHfZmeaZ39dmo/wX6QehIuTI+7HrrWH+5UNvKuE/YG74lGARe+j4fPW6wV
-	HlUPRmTA==;
-Received: from [187.90.172.172] (helo=[192.168.1.60])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1tuBZI-002Gaa-CC; Mon, 17 Mar 2025 15:35:52 +0100
-Message-ID: <1238b1d0-275c-9117-a2e3-5e7684404980@igalia.com>
-Date: Mon, 17 Mar 2025 11:35:45 -0300
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1193D227BB2;
+	Mon, 17 Mar 2025 14:37:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742222253; cv=pass; b=o1y4rIGMrAxFiN3uKn5ahCHoklO2G+akG3JMSYeET8D1cmTHdzDG3JYyoncjcT2q95ERSiLKPC3B3iqQdfJWuseABkNHmkXRgY7p3jJYIvXFT05s4ceptwrleb1nO1aEPr2ZFWellfyaQpKoj4mTc++PnmglbPtYIZVFX0vMrK8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742222253; c=relaxed/simple;
+	bh=xwdQefepLcpuArMgOFRTujhCR70T05JrhotEJSRy8t0=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=OAS9j1u+IYJqwzY0p9YMRNxsnGcTa07QDpukfmaHDPp2gVdQq9F0jmCKynERusDLFVZt2ObqXzLsTiHJTasoR/R3D170E6zzIXCtI/q+tyHgNBWcDMMBXklVxBkS+KTBNvCO/wH8fkbHXudM2T0JeNhf39XES7uJMvNtRWSe+iw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=WJtCvwpf; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1742222230; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=BGK6o+A0UH1uPQhigF3rRZwEuvfzAwMm5QTJAKpc90Q6XutKlw9mssWCStE9gPM9duA55FFAcn+5YngdO45SQsV9v89MWNqFhaBDrnfX9ZO2jHstgJFf/tcTy3q85yGP4W1zfdRl70VWSq9ZIYJWd07sMXmEexI2o1f4BZCAZ7Y=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1742222230; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=+dQUWZyWoZn4seq6F9kOnDzOd0SnHDlSeBlmpDH31i4=; 
+	b=PvsU5VvzDbskpLd6Fz4r/go/Xk2rztX0xsKuT1r3eNKSVWuDRt6eWbp8PLHACLdzpnQjWxZpZ+vG10IvTv+fPQ1bBl4mclOcxlcjiYYNK/+ZqT/f5d0+nqKfNOALSso+Me3HJvfGMAAO05Z3QCBHtQIXxOmS03R3nruvYeSM6/w=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
+	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1742222229;
+	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
+	h=From:From:Date:Date:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Message-Id:To:To:Cc:Cc:Reply-To;
+	bh=+dQUWZyWoZn4seq6F9kOnDzOd0SnHDlSeBlmpDH31i4=;
+	b=WJtCvwpfkzxlq0aZehEnBA0/GtiPp+QMSU40uHeMhYG8lRp+VUr8JbhtJosx8v0r
+	KeF4ASi4WJGdJd5i39JSs7yiD3pvQ7I3C8JQnNlghtWRwOUNF7jqVqlRamsroC0NcpF
+	csxU9+9d8D1js6xtPgZYPMtu6X4nX0qSMBKEQFag=
+Received: by mx.zohomail.com with SMTPS id 1742222228862446.3877242817008;
+	Mon, 17 Mar 2025 07:37:08 -0700 (PDT)
+From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+Date: Mon, 17 Mar 2025 15:36:56 +0100
+Subject: [PATCH] pmdomain: rockchip: keep PD_NVM on RK3576 always on
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH] x86/tsc: Add debugfs entry to mark TSC as unstable after
- boot
-Content-Language: en-US
-To: x86@kernel.org, linux-kernel@vger.kernel.org
-Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
- dave.hansen@linux.intel.com, hpa@zytor.com, kernel@gpiccoli.net,
- kernel-dev@igalia.com
-References: <20250226132733.58327-1-gpiccoli@igalia.com>
-From: "Guilherme G. Piccoli" <gpiccoli@igalia.com>
-In-Reply-To: <20250226132733.58327-1-gpiccoli@igalia.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20250317-rk3576-emmc-fix-v1-1-d534d49a41f5@collabora.com>
+X-B4-Tracking: v=1; b=H4sIAIcz2GcC/zWMQQrCMBAAvxL27EKztY30K9JDTFddJKluohRK/
+ 26weJyBmRUyq3CGwayg/JEsc6pgDwbC3acbo0yVgRrqmtY61EfbuR45xoBXWdBN4WR9T+5IBLV
+ 6Klf9O57HnZVf7zouu4SLz4xhjlHKYBIvBf9zGLftCzh52DqSAAAA
+X-Change-ID: 20250317-rk3576-emmc-fix-7dc81a627422
+To: Ulf Hansson <ulf.hansson@linaro.org>, Heiko Stuebner <heiko@sntech.de>, 
+ Elaine Zhang <zhangqing@rock-chips.com>, 
+ Finley Xiao <finley.xiao@rock-chips.com>
+Cc: Sebastian Reichel <sebastian.reichel@collabora.com>, 
+ Detlev Casanova <detlev.casanova@collabora.com>, kernel@collabora.com, 
+ linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+X-Mailer: b4 0.14.2
 
-On 26/02/2025 10:27, Guilherme G. Piccoli wrote:
-> Right now, we can force the TSC to be marked as unstable through
-> boot parameter. There are debug / test cases though in which would
-> be preferable to simulate the clocksource watchdog behavior, i.e.,
-> marking TSC as unstable during the system run. Some paths might
-> change, for example: the tracing clock is auto switched to global
-> if TSC is marked as unstable on boot, but it could remain local if
-> TSC gets marked as unstable after tracing initialization.
-> 
-> Hence, the proposal here is to have a simple debugfs file that
-> gets TSC marked as unstable when written.
-> 
-> Signed-off-by: Guilherme G. Piccoli <gpiccoli@igalia.com>
-> ---
->  arch/x86/kernel/tsc.c | 22 ++++++++++++++++++++++
->  1 file changed, 22 insertions(+)
+Due to what seemingly is a hardware bug, PD_NVM never comes up quite the
+same after being turned off once. The result is that the sdhci
+controller will lock up the entire SoC when it's accessing its CQHCI
+registers.
 
-Hi folks, gentle ping about this one - any suggestions?
-Cheers,
+The downstream kernel hacks around this by setting
+GENPD_FLAG_RPM_ALWAYS_ON in the mmc host driver, which does not seem
+like the right place for this.
 
+Set GENPD_FLAG_ALWAYS_ON in the pmdomain driver for PD_NVM. I'm using
+the non-RPM version of the flag here because I have my doubts a
+suspend-resume cycle will fix it. Suspend-resume currently seems busted,
+so I couldn't test this.
 
-Guilherme
+Fixes: cfee1b507758 ("pmdomain: rockchip: Add support for RK3576 SoC")
+Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+---
+ drivers/pmdomain/rockchip/pm-domains.c | 48 ++++++++++++++++++----------------
+ 1 file changed, 26 insertions(+), 22 deletions(-)
+
+diff --git a/drivers/pmdomain/rockchip/pm-domains.c b/drivers/pmdomain/rockchip/pm-domains.c
+index 03bcf79a461f5db14173b35c0d110541e6d3f760..2b220b7c77b3d292f49cbc60338d3925146fb211 100644
+--- a/drivers/pmdomain/rockchip/pm-domains.c
++++ b/drivers/pmdomain/rockchip/pm-domains.c
+@@ -48,6 +48,7 @@ struct rockchip_domain_info {
+ 	int ack_mask;
+ 	bool active_wakeup;
+ 	bool need_regulator;
++	bool always_on;
+ 	int pwr_w_mask;
+ 	int req_w_mask;
+ 	int clk_ungate_mask;
+@@ -154,7 +155,7 @@ struct rockchip_pmu {
+ 	.need_regulator = regulator,			\
+ }
+ 
+-#define DOMAIN_M_O_R_G(_name, p_offset, pwr, status, m_offset, m_status, r_status, r_offset, req, idle, ack, g_mask, wakeup)	\
++#define DOMAIN_M_O_R_G(_name, p_offset, pwr, status, m_offset, m_status, r_status, r_offset, req, idle, ack, g_mask, wakeup, _always_on)	\
+ {							\
+ 	.name = _name,					\
+ 	.pwr_offset = p_offset,				\
+@@ -171,6 +172,7 @@ struct rockchip_pmu {
+ 	.clk_ungate_mask = (g_mask),			\
+ 	.ack_mask = (ack),				\
+ 	.active_wakeup = wakeup,			\
++	.always_on = _always_on,			\
+ }
+ 
+ #define DOMAIN_RK3036(_name, req, ack, idle, wakeup)		\
+@@ -204,8 +206,8 @@ struct rockchip_pmu {
+ #define DOMAIN_RK3568(name, pwr, req, wakeup)		\
+ 	DOMAIN_M(name, pwr, pwr, req, req, req, wakeup)
+ 
+-#define DOMAIN_RK3576(name, p_offset, pwr, status, r_status, r_offset, req, idle, g_mask, wakeup)	\
+-	DOMAIN_M_O_R_G(name, p_offset, pwr, status, 0, r_status, r_status, r_offset, req, idle, idle, g_mask, wakeup)
++#define DOMAIN_RK3576(name, p_offset, pwr, status, r_status, r_offset, req, idle, g_mask, wakeup, always_on)	\
++	DOMAIN_M_O_R_G(name, p_offset, pwr, status, 0, r_status, r_status, r_offset, req, idle, idle, g_mask, wakeup, always_on)
+ 
+ /*
+  * Dynamic Memory Controller may need to coordinate with us -- see
+@@ -846,6 +848,8 @@ static int rockchip_pm_add_one_domain(struct rockchip_pmu *pmu,
+ 	pd->genpd.flags = GENPD_FLAG_PM_CLK;
+ 	if (pd_info->active_wakeup)
+ 		pd->genpd.flags |= GENPD_FLAG_ACTIVE_WAKEUP;
++	if (pd_info->always_on)
++		pd->genpd.flags |= GENPD_FLAG_ALWAYS_ON;
+ 	pm_genpd_init(&pd->genpd, NULL,
+ 		      !rockchip_pmu_domain_is_on(pd) ||
+ 		      (pd->info->mem_status_mask && !rockchip_pmu_domain_is_mem_on(pd)));
+@@ -1210,25 +1214,25 @@ static const struct rockchip_domain_info rk3568_pm_domains[] = {
+ };
+ 
+ static const struct rockchip_domain_info rk3576_pm_domains[] = {
+-	[RK3576_PD_NPU]		= DOMAIN_RK3576("npu",    0x0, BIT(0),  BIT(0), 0,       0x0, 0,       0,       0,       false),
+-	[RK3576_PD_NVM]		= DOMAIN_RK3576("nvm",    0x0, BIT(6),  0,      BIT(6),  0x4, BIT(2),  BIT(18), BIT(2),  false),
+-	[RK3576_PD_SDGMAC]	= DOMAIN_RK3576("sdgmac", 0x0, BIT(7),  0,      BIT(7),  0x4, BIT(1),  BIT(17), 0x6,     false),
+-	[RK3576_PD_AUDIO]	= DOMAIN_RK3576("audio",  0x0, BIT(8),  0,      BIT(8),  0x4, BIT(0),  BIT(16), BIT(0),  false),
+-	[RK3576_PD_PHP]		= DOMAIN_RK3576("php",    0x0, BIT(9),  0,      BIT(9),  0x0, BIT(15), BIT(15), BIT(15), false),
+-	[RK3576_PD_SUBPHP]	= DOMAIN_RK3576("subphp", 0x0, BIT(10), 0,      BIT(10), 0x0, 0,       0,       0,       false),
+-	[RK3576_PD_VOP]		= DOMAIN_RK3576("vop",    0x0, BIT(11), 0,      BIT(11), 0x0, 0x6000,  0x6000,  0x6000,  false),
+-	[RK3576_PD_VO1]		= DOMAIN_RK3576("vo1",    0x0, BIT(14), 0,      BIT(14), 0x0, BIT(12), BIT(12), 0x7000,  false),
+-	[RK3576_PD_VO0]		= DOMAIN_RK3576("vo0",    0x0, BIT(15), 0,      BIT(15), 0x0, BIT(11), BIT(11), 0x6800,  false),
+-	[RK3576_PD_USB]		= DOMAIN_RK3576("usb",    0x4, BIT(0),  0,      BIT(16), 0x0, BIT(10), BIT(10), 0x6400,  true),
+-	[RK3576_PD_VI]		= DOMAIN_RK3576("vi",     0x4, BIT(1),  0,      BIT(17), 0x0, BIT(9),  BIT(9),  BIT(9),  false),
+-	[RK3576_PD_VEPU0]	= DOMAIN_RK3576("vepu0",  0x4, BIT(2),  0,      BIT(18), 0x0, BIT(7),  BIT(7),  0x280,   false),
+-	[RK3576_PD_VEPU1]	= DOMAIN_RK3576("vepu1",  0x4, BIT(3),  0,      BIT(19), 0x0, BIT(8),  BIT(8),  BIT(8),  false),
+-	[RK3576_PD_VDEC]	= DOMAIN_RK3576("vdec",   0x4, BIT(4),  0,      BIT(20), 0x0, BIT(6),  BIT(6),  BIT(6),  false),
+-	[RK3576_PD_VPU]		= DOMAIN_RK3576("vpu",    0x4, BIT(5),  0,      BIT(21), 0x0, BIT(5),  BIT(5),  BIT(5),  false),
+-	[RK3576_PD_NPUTOP]	= DOMAIN_RK3576("nputop", 0x4, BIT(6),  0,      BIT(22), 0x0, 0x18,    0x18,    0x18,    false),
+-	[RK3576_PD_NPU0]	= DOMAIN_RK3576("npu0",   0x4, BIT(7),  0,      BIT(23), 0x0, BIT(1),  BIT(1),  0x1a,    false),
+-	[RK3576_PD_NPU1]	= DOMAIN_RK3576("npu1",   0x4, BIT(8),  0,      BIT(24), 0x0, BIT(2),  BIT(2),  0x1c,    false),
+-	[RK3576_PD_GPU]		= DOMAIN_RK3576("gpu",    0x4, BIT(9),  0,      BIT(25), 0x0, BIT(0),  BIT(0),  BIT(0),  false),
++	[RK3576_PD_NPU]		= DOMAIN_RK3576("npu",    0x0, BIT(0),  BIT(0), 0,       0x0, 0,       0,       0,       false, false),
++	[RK3576_PD_NVM]		= DOMAIN_RK3576("nvm",    0x0, BIT(6),  0,      BIT(6),  0x4, BIT(2),  BIT(18), BIT(2),  false, true),
++	[RK3576_PD_SDGMAC]	= DOMAIN_RK3576("sdgmac", 0x0, BIT(7),  0,      BIT(7),  0x4, BIT(1),  BIT(17), 0x6,     false, false),
++	[RK3576_PD_AUDIO]	= DOMAIN_RK3576("audio",  0x0, BIT(8),  0,      BIT(8),  0x4, BIT(0),  BIT(16), BIT(0),  false, false),
++	[RK3576_PD_PHP]		= DOMAIN_RK3576("php",    0x0, BIT(9),  0,      BIT(9),  0x0, BIT(15), BIT(15), BIT(15), false, false),
++	[RK3576_PD_SUBPHP]	= DOMAIN_RK3576("subphp", 0x0, BIT(10), 0,      BIT(10), 0x0, 0,       0,       0,       false, false),
++	[RK3576_PD_VOP]		= DOMAIN_RK3576("vop",    0x0, BIT(11), 0,      BIT(11), 0x0, 0x6000,  0x6000,  0x6000,  false, false),
++	[RK3576_PD_VO1]		= DOMAIN_RK3576("vo1",    0x0, BIT(14), 0,      BIT(14), 0x0, BIT(12), BIT(12), 0x7000,  false, false),
++	[RK3576_PD_VO0]		= DOMAIN_RK3576("vo0",    0x0, BIT(15), 0,      BIT(15), 0x0, BIT(11), BIT(11), 0x6800,  false, false),
++	[RK3576_PD_USB]		= DOMAIN_RK3576("usb",    0x4, BIT(0),  0,      BIT(16), 0x0, BIT(10), BIT(10), 0x6400,  true,  false),
++	[RK3576_PD_VI]		= DOMAIN_RK3576("vi",     0x4, BIT(1),  0,      BIT(17), 0x0, BIT(9),  BIT(9),  BIT(9),  false, false),
++	[RK3576_PD_VEPU0]	= DOMAIN_RK3576("vepu0",  0x4, BIT(2),  0,      BIT(18), 0x0, BIT(7),  BIT(7),  0x280,   false, false),
++	[RK3576_PD_VEPU1]	= DOMAIN_RK3576("vepu1",  0x4, BIT(3),  0,      BIT(19), 0x0, BIT(8),  BIT(8),  BIT(8),  false, false),
++	[RK3576_PD_VDEC]	= DOMAIN_RK3576("vdec",   0x4, BIT(4),  0,      BIT(20), 0x0, BIT(6),  BIT(6),  BIT(6),  false, false),
++	[RK3576_PD_VPU]		= DOMAIN_RK3576("vpu",    0x4, BIT(5),  0,      BIT(21), 0x0, BIT(5),  BIT(5),  BIT(5),  false, false),
++	[RK3576_PD_NPUTOP]	= DOMAIN_RK3576("nputop", 0x4, BIT(6),  0,      BIT(22), 0x0, 0x18,    0x18,    0x18,    false, false),
++	[RK3576_PD_NPU0]	= DOMAIN_RK3576("npu0",   0x4, BIT(7),  0,      BIT(23), 0x0, BIT(1),  BIT(1),  0x1a,    false, false),
++	[RK3576_PD_NPU1]	= DOMAIN_RK3576("npu1",   0x4, BIT(8),  0,      BIT(24), 0x0, BIT(2),  BIT(2),  0x1c,    false, false),
++	[RK3576_PD_GPU]		= DOMAIN_RK3576("gpu",    0x4, BIT(9),  0,      BIT(25), 0x0, BIT(0),  BIT(0),  BIT(0),  false, false),
+ };
+ 
+ static const struct rockchip_domain_info rk3588_pm_domains[] = {
+
+---
+base-commit: b52e55576652f29ab7387e2da222123f624a7767
+change-id: 20250317-rk3576-emmc-fix-7dc81a627422
+
+Best regards,
+-- 
+Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+
 
