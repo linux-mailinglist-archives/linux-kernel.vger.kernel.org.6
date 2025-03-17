@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-565140-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565141-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A8B0A661AE
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 23:31:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7B76A661AF
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 23:32:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA1123B701A
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 22:31:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9984D18982A1
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 22:32:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 681192063EB;
-	Mon, 17 Mar 2025 22:31:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 570AC2066DA;
+	Mon, 17 Mar 2025 22:31:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XaybL5dF"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vj4Kqiwj"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFEAF2063E7
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 22:31:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EB202066C6
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 22:31:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742250660; cv=none; b=ufif9OHdDUayTm6zA9j+lTkCP87p6Rd606J8YcKlmKwxhPtAk62iR/89tnuqdFmfFs/gx9SBtTUOcAFGVSA06hvAzULumI8BD1bTJ5lUxN9APS79ddccMlWrlzmdcsek9T0XRVmV3zZx1rrV+8j+MuIwZsSLM3JSYhJOOLuZTRc=
+	t=1742250663; cv=none; b=XRIXBnx2Hsi8XCDm6DRH/mvlGR3DV+wh84hzMErEV6hdby8BFqWTesmLiXlR/rskz6XSATJb2mtGdY7PgJQWuhGy+Wx8JsLgPr6kOfaILOVEMJ1snwP2dQ2is3DHCJzTnBHplXCMtvssPLp4sy12uaAWlHGve5a1nkFHVBk5m4k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742250660; c=relaxed/simple;
-	bh=bqvVUagYkYFiGO2Hv9VCfYL4nMH2z5rutC4NBzLIUY8=;
+	s=arc-20240116; t=1742250663; c=relaxed/simple;
+	bh=CvczkV3kEQ54Jpf2Pd6IPrz8Itw3XX2xRtDAKbNLDZo=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=k2P+kicoFQ5aYIVqNJLgr4Q6rH7C1i2ESSPD4rd7MaTYUXv084FyZre+ajyqWFjArRSCDnwC4eTGdTheQqA94KFXv2Q7SHtfTrbmRVxEkIBllrSloRasBeYx3iehdehWKqI6Y+njlxdB5+hV6oLHB8oChMVQ6KycldPaGIifLP4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XaybL5dF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79798C4CEE9;
-	Mon, 17 Mar 2025 22:30:57 +0000 (UTC)
+	 MIME-Version; b=KaiNt7GWkYDXQVuW4S0OU2O/Ki4aeU4+J1Rpbg36vWmBsOjstEdIDYghBCOkhS/FCZeQWEEb2ICvxkFLdLV+QRLtcO56L4vyPEX5fOuu2ciX8rdUHQM/Pka8r96c2+xlW6UYR84PXe8zpr5v9s5VZ9jBRDJBjmQgnED7P2bteJ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Vj4Kqiwj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5E72C4CEF0;
+	Mon, 17 Mar 2025 22:31:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742250660;
-	bh=bqvVUagYkYFiGO2Hv9VCfYL4nMH2z5rutC4NBzLIUY8=;
+	s=k20201202; t=1742250663;
+	bh=CvczkV3kEQ54Jpf2Pd6IPrz8Itw3XX2xRtDAKbNLDZo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=XaybL5dFMoMPWwz0KBpZR+QpHUawzR0NR+lplQcDVaW0Qmgf2LcyGu6mmmDmlzsQT
-	 gUWMcSq962b6OMGIX3RTYUkJTxAeCaKepS2+4ocwHrVsXqUjWnA66UjHurcy3X2zY1
-	 JaC8gnn5lQBk4Gvo1AOaN5OlQVhDahaMMB4zp5/c+W5OZZW+mR4LZH3goBHSkqZKis
-	 TI8+ls9B28ukfVaVYGMqM0CTFl5BFXR2LsnbddouEJdseg33qJHn8TlW9urf0MUTOW
-	 LA1GtA5uyetfEnPei5F2a1KLsJUSr84bdECSyBCF9f9nUy/nIcU/k0COeU7yiq0HX7
-	 RnU1C3miDNOsA==
+	b=Vj4KqiwjI/3ifwWXjmdXvHVNYZHsFOHxWOXMRh9YQDHiecbtj8Fy9ZedcgDgEAm56
+	 QMiK62Uu71rTUUHiNtWux3Ph4yaQHxaMVaAv3/H9lcF6qJPu/jEWyzTAoOziLd8zkB
+	 7r5MlI7WcaNAwz2f+eQxDIEpjWoNmrrG8jqqk24G+HDXcbgBTu+wlWvBAbrKp/Fbis
+	 B+sRrOeTJvRpgyDKrBnZZQWviWRCMZ3AYtCkEZVl6zy1Hd3AbjaHuOgJC5wXQQrT60
+	 HBOhyi8zZa0/0FAjeWmlg5yKTZF7mwDJYENNtxWO7mcmfHBnaAliB0LhDRJPlFCTy6
+	 1L2o1yhfIDPTw==
 From: mingo@kernel.org
 To: linux-kernel@vger.kernel.org
 Cc: Juergen Gross <jgross@suse.com>,
@@ -52,9 +52,9 @@ Cc: Juergen Gross <jgross@suse.com>,
 	Peter Zijlstra <peterz@infradead.org>,
 	Borislav Petkov <bp@alien8.de>,
 	Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH 4/5] x86/cpuid: Standardize on u32 in <asm/cpuid/api.h>
-Date: Mon, 17 Mar 2025 23:30:38 +0100
-Message-ID: <20250317223039.3741082-5-mingo@kernel.org>
+Subject: [PATCH 5/5] x86/cpuid: Use u32 in instead of uint32_t in <asm/cpuid/api.h>
+Date: Mon, 17 Mar 2025 23:30:39 +0100
+Message-ID: <20250317223039.3741082-6-mingo@kernel.org>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20250317223039.3741082-1-mingo@kernel.org>
 References: <20250317223039.3741082-1-mingo@kernel.org>
@@ -68,13 +68,18 @@ Content-Transfer-Encoding: 8bit
 
 From: Ingo Molnar <mingo@kernel.org>
 
-Convert all uses of 'unsigned int' to 'u32' in <asm/cpuid/api.h>.
+Use u32 instead of uint32_t in hypervisor_cpuid_base().
 
-This is how a lot of the call sites are doing it, and the two
-types are equivalent in the C sense - but 'u32' better expresses
-that these are expressions of an immutable hardware ABI.
+Yes, I realize uint32_t is used in Xen code et al, but this is
+a core x86 architecture header and we should standardize on the
+type that is being used overwhelmingly in related x86 architecture
+code.
+
+The two types are the same so there should be no build warnings.
 
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Cc: Juergen Gross <jgross@suse.com>
+Cc: Stefano Stabellini <sstabellini@kernel.org>
 Cc: Ahmed S. Darwish <darwi@linutronix.de>
 Cc: Andrew Cooper <andrew.cooper3@citrix.com>
 Cc: "H. Peter Anvin" <hpa@zytor.com>
@@ -82,124 +87,25 @@ Cc: John Ogness <john.ogness@linutronix.de>
 Cc: x86-cpuid@lists.linux.dev
 Link: https://lore.kernel.org/r/20250317164745.4754-3-darwi@linutronix.de
 ---
- arch/x86/include/asm/cpuid/api.h | 40 ++++++++++++++++++++--------------------
- 1 file changed, 20 insertions(+), 20 deletions(-)
+ arch/x86/include/asm/cpuid/api.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/arch/x86/include/asm/cpuid/api.h b/arch/x86/include/asm/cpuid/api.h
-index f26926ba5289..356db1894588 100644
+index 356db1894588..9c180c9cc58e 100644
 --- a/arch/x86/include/asm/cpuid/api.h
 +++ b/arch/x86/include/asm/cpuid/api.h
-@@ -22,8 +22,8 @@ static inline bool have_cpuid_p(void)
- }
- #endif
+@@ -187,9 +187,9 @@ static __always_inline bool cpuid_function_is_indexed(u32 function)
+ #define for_each_possible_hypervisor_cpuid_base(function) \
+ 	for (function = 0x40000000; function < 0x40010000; function += 0x100)
  
--static inline void native_cpuid(unsigned int *eax, unsigned int *ebx,
--				unsigned int *ecx, unsigned int *edx)
-+static inline void native_cpuid(u32 *eax, u32 *ebx,
-+				u32 *ecx, u32 *edx)
+-static inline uint32_t hypervisor_cpuid_base(const char *sig, uint32_t leaves)
++static inline u32 hypervisor_cpuid_base(const char *sig, u32 leaves)
  {
- 	/* ecx is often an input as well as an output. */
- 	asm volatile("cpuid"
-@@ -36,9 +36,9 @@ static inline void native_cpuid(unsigned int *eax, unsigned int *ebx,
- }
+-	uint32_t base, eax, signature[3];
++	u32 base, eax, signature[3];
  
- #define NATIVE_CPUID_REG(reg)					\
--static inline unsigned int native_cpuid_##reg(unsigned int op)	\
-+static inline u32 native_cpuid_##reg(u32 op)	\
- {								\
--	unsigned int eax = op, ebx, ecx = 0, edx;		\
-+	u32 eax = op, ebx, ecx = 0, edx;		\
- 								\
- 	native_cpuid(&eax, &ebx, &ecx, &edx);			\
- 								\
-@@ -65,9 +65,9 @@ NATIVE_CPUID_REG(edx)
-  * Clear ECX since some CPUs (Cyrix MII) do not set or clear ECX
-  * resulting in stale register contents being returned.
-  */
--static inline void cpuid(unsigned int op,
--			 unsigned int *eax, unsigned int *ebx,
--			 unsigned int *ecx, unsigned int *edx)
-+static inline void cpuid(u32 op,
-+			 u32 *eax, u32 *ebx,
-+			 u32 *ecx, u32 *edx)
- {
- 	*eax = op;
- 	*ecx = 0;
-@@ -75,9 +75,9 @@ static inline void cpuid(unsigned int op,
- }
- 
- /* Some CPUID calls want 'count' to be placed in ECX */
--static inline void cpuid_count(unsigned int op, int count,
--			       unsigned int *eax, unsigned int *ebx,
--			       unsigned int *ecx, unsigned int *edx)
-+static inline void cpuid_count(u32 op, int count,
-+			       u32 *eax, u32 *ebx,
-+			       u32 *ecx, u32 *edx)
- {
- 	*eax = op;
- 	*ecx = count;
-@@ -88,43 +88,43 @@ static inline void cpuid_count(unsigned int op, int count,
-  * CPUID functions returning a single datum:
-  */
- 
--static inline unsigned int cpuid_eax(unsigned int op)
-+static inline u32 cpuid_eax(u32 op)
- {
--	unsigned int eax, ebx, ecx, edx;
-+	u32 eax, ebx, ecx, edx;
- 
- 	cpuid(op, &eax, &ebx, &ecx, &edx);
- 
- 	return eax;
- }
- 
--static inline unsigned int cpuid_ebx(unsigned int op)
-+static inline u32 cpuid_ebx(u32 op)
- {
--	unsigned int eax, ebx, ecx, edx;
-+	u32 eax, ebx, ecx, edx;
- 
- 	cpuid(op, &eax, &ebx, &ecx, &edx);
- 
- 	return ebx;
- }
- 
--static inline unsigned int cpuid_ecx(unsigned int op)
-+static inline u32 cpuid_ecx(u32 op)
- {
--	unsigned int eax, ebx, ecx, edx;
-+	u32 eax, ebx, ecx, edx;
- 
- 	cpuid(op, &eax, &ebx, &ecx, &edx);
- 
- 	return ecx;
- }
- 
--static inline unsigned int cpuid_edx(unsigned int op)
-+static inline u32 cpuid_edx(u32 op)
- {
--	unsigned int eax, ebx, ecx, edx;
-+	u32 eax, ebx, ecx, edx;
- 
- 	cpuid(op, &eax, &ebx, &ecx, &edx);
- 
- 	return edx;
- }
- 
--static inline void __cpuid_read(unsigned int leaf, unsigned int subleaf, u32 *regs)
-+static inline void __cpuid_read(u32 leaf, u32 subleaf, u32 *regs)
- {
- 	regs[CPUID_EAX] = leaf;
- 	regs[CPUID_ECX] = subleaf;
-@@ -141,7 +141,7 @@ static inline void __cpuid_read(unsigned int leaf, unsigned int subleaf, u32 *re
- 	__cpuid_read(leaf, 0, (u32 *)(regs));		\
- }
- 
--static inline void __cpuid_read_reg(unsigned int leaf, unsigned int subleaf,
-+static inline void __cpuid_read_reg(u32 leaf, u32 subleaf,
- 				    enum cpuid_regs_idx regidx, u32 *reg)
- {
- 	u32 regs[4];
+ 	for_each_possible_hypervisor_cpuid_base(base) {
+ 		cpuid(base, &eax, &signature[0], &signature[1], &signature[2]);
 -- 
 2.45.2
 
