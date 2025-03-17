@@ -1,100 +1,109 @@
-Return-Path: <linux-kernel+bounces-563883-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563884-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 229A3A64A0D
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:33:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4266EA64A24
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:35:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 851C518877E3
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:30:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C07443B8138
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:30:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EA54226D09;
-	Mon, 17 Mar 2025 10:29:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E88B3214A8F;
+	Mon, 17 Mar 2025 10:30:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="H85r+MjO"
-Received: from mail-4322.protonmail.ch (mail-4322.protonmail.ch [185.70.43.22])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gInaH23B"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E60BF13B7A3;
-	Mon, 17 Mar 2025 10:29:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B42938B;
+	Mon, 17 Mar 2025 10:30:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742207386; cv=none; b=c+zAHYh1DW94RaqPvvAEvgqCgHqhsN8WSqnBr+6DSDS+MRuAL0czFiHqHDdtLCgZDdnDGU60bK3vN+H6hpRPBdHT5Tayd4HkKLffhr2slMWZsx5/7OrHhh9lSK5xcXpu0LeSJtzU6JvhaKFXByddYli21jaZQhAfD3e5KPSYZc4=
+	t=1742207423; cv=none; b=bW4pkz8bWahWtI88Pc9eWnKgKAK40+NZsrYkXMAQ05HGiECLJ5cRBxy0AFGuhgJ/JVljhIXz5BrhNJfTJo2QtaPyWyLB/arjcgTWaTtDt+/Txo2QttmvIfY2RUmxNOIVR2cyRgKKu2A7B1cw1qESIeKKBcpwYp+eJo+FBZn49fs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742207386; c=relaxed/simple;
-	bh=KXOjYf3+dyf1XyOqFjHNibIasA8ztVPgXCMXFyZmGDI=;
-	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=ez3D61DAtUczySJ51IPnvRjHmRAWlD+a2w3FzchaUgaK6dWqM2cRMYySJd+dmmbYWIy15DIReV+wYNFRhNqBashHoXKzVoAm+hj8eD/3cwZwhsLmf6rau2TOVnbT+lbENEwsa4SU+zmJPpzzwKHitKhbxHxm0PxYCwCrNY2y0dY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=H85r+MjO; arc=none smtp.client-ip=185.70.43.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1742207381; x=1742466581;
-	bh=DsTyQwSSLCmjcwqszJ0OweMdwYjSkMOEECvTOTBjH1g=;
-	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
-	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector:
-	 List-Unsubscribe:List-Unsubscribe-Post;
-	b=H85r+MjOsnjLJ6ZOa3SXJjUqwlrmpDKXDSwOzOGzIBI1oFgu07EOkLMFYlxdhIbKI
-	 bTKQnQsn0oDCDE63rLuUt6Dh5HgqsUIX+R+kit//b/g+QVPFdRqseN+t9RsRKS4G+p
-	 F7OOVtPr+D54T77gcXwF3eCxu5TmTlBmuYgURxTJL383g+6wPLiYOmQntds57yRcZ8
-	 qsEHk8QIX2lcccvL0qDi7DzSBSMn22md5b514gJFeMcRKIFC+7CeWzWG+vZZgqxyHI
-	 dFaEd0Ikr/xlosHWStR34JE0P+VAEGzePGgNioePWhbQeza6i7faDAMBNk5cW/nt1z
-	 BiX8V29gCFQ0A==
-Date: Mon, 17 Mar 2025 10:29:36 +0000
-To: Kunwu Chan <kunwu.chan@linux.dev>, ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, a.hindborg@kernel.org, aliceryhl@google.com, tmgross@umich.edu, dakr@kernel.org, nathan@kernel.org, nick.desaulniers+lkml@gmail.com, morbo@google.com, justinstitt@google.com
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, llvm@lists.linux.dev, Kunwu Chan <kunwu.chan@hotmail.com>, Grace Deng <Grace.Deng006@Gmail.com>
-Subject: Re: [PATCH v2] rust: file: optimize rust symbol generation for FileDescriptorReservation
-Message-ID: <D8IGYVXXJYS1.36Z7WQ8HTYYJL@proton.me>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: be417d9ad672d367c9fd3474743fd0cfb54a2c00
+	s=arc-20240116; t=1742207423; c=relaxed/simple;
+	bh=hv9/X6byP5WTW/LEG12U9OUywdbJKsD9awuuj2uibE0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ayTjELm8QJFvLPCau/j7qR7jRLuooAc+6IqaFlnrtgthM6UP8k/wArDsyr7CgCTez7ucOdJLUFF4m1TeMJTISHqG5fdsyUq8dmnDQt0XAstbI9iP2HEWhJwrCmb9LBRK0veYEZyYOrxFZdyA/ZAX+uxxst0XE9J5zjza9aCJHcY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gInaH23B; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8CBBAC4CEE9;
+	Mon, 17 Mar 2025 10:30:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742207422;
+	bh=hv9/X6byP5WTW/LEG12U9OUywdbJKsD9awuuj2uibE0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=gInaH23B13hCyN19OZOq/Ey0TrTsnvmjO3RCmat4tfSqbP+l9W0Ww4L7qBUSmfZpm
+	 d7s0gYQTXAB4q29w+8t6skicUC9IPHIrWEBOAJltnQPq4v+VisJHir6SKiVTr6PwQd
+	 pdiHgP+8k0YhEeq4h703sHchk4G8jOfQF3yXzvQNYLCIwsDOdm9hCdtbE8UZ/rztXS
+	 RMdDrra11JH85KkoZ9VAXhdz0o8P07zCWzbbh2MGzd+RE25eYQO9/hWQnHSkm8NJRr
+	 2Ai0bSNM890sLfMiDeAsfWEBMKHlxFkVg9mGY2Rp+8KisiBmL3v9LxfCzaeQQjFlt9
+	 I/pIpFW7SRW/Q==
+Date: Mon, 17 Mar 2025 10:30:12 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Marcelo Schmitt <marcelo.schmitt@analog.com>
+Cc: <linux-iio@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <lars@metafoo.de>,
+ <Michael.Hennerich@analog.com>, <corbet@lwn.net>,
+ <marcelo.schmitt1@gmail.com>
+Subject: Re: [PATCH v1 4/4] Documentation: iio: ad4000: Describe offload
+ support
+Message-ID: <20250317103012.0053bb42@jic23-huawei>
+In-Reply-To: <18df335c2dd4c4db3bf27d68cbf1852425114131.1741970538.git.marcelo.schmitt@analog.com>
+References: <cover.1741970538.git.marcelo.schmitt@analog.com>
+	<18df335c2dd4c4db3bf27d68cbf1852425114131.1741970538.git.marcelo.schmitt@analog.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon Mar 17, 2025 at 3:37 AM CET, Kunwu Chan wrote:
-> From: Kunwu Chan <kunwu.chan@hotmail.com>
->
-> When build the kernel using the llvm-18.1.3-rust-1.85.0-x86_64
-> with ARCH=3Darm64, the following symbols are generated:
->
-> $ nm vmlinux | grep ' _R'.*FileDescriptorReservation | rustfilt
-> ... T <kernel::fs::file::FileDescriptorReservation>::fd_install
-> ... T <kernel::fs::file::FileDescriptorReservation>::get_unused_fd_flags
-> ... T <kernel::fs::file::FileDescriptorReservation as core::ops::drop::Dr=
-op>::drop
->
-> These Rust symbols are trivial wrappers around the C functions
-> fd_install, put_unused_fd and put_task_struct. It
-> doesn't make sense to go through a trivial wrapper for these
-> functions, so mark them inline.
->
-> Link: https://github.com/Rust-for-Linux/linux/issues/1145
-> Suggested-by: Alice Ryhl <aliceryhl@google.com>
-> Co-developed-by: Grace Deng <Grace.Deng006@Gmail.com>
-> Signed-off-by: Grace Deng <Grace.Deng006@Gmail.com>
-> Signed-off-by: Kunwu Chan <kunwu.chan@hotmail.com>
+On Fri, 14 Mar 2025 14:19:33 -0300
+Marcelo Schmitt <marcelo.schmitt@analog.com> wrote:
 
-Reviewed-by: Benno Lossin <benno.lossin@proton.me>
-
----
-Cheers,
-Benno
-
-
+> When SPI offloading is supported, the IIO device provides different sysfs
+> interfaces to allow using the adjusting the sample rate. Document SPI
+> offload support for AD4000 and similar devices.
+> 
+> Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
 > ---
-> Changes in v2:
->  - Add link and Suggested-by
->  - Mark 'reserved_fd' as inline
->  - Reword commit msg
-> ---
->  rust/kernel/fs/file.rs | 4 ++++
->  1 file changed, 4 insertions(+)
+>  Documentation/iio/ad4000.rst | 17 +++++++++++++++++
+>  1 file changed, 17 insertions(+)
+> 
+> diff --git a/Documentation/iio/ad4000.rst b/Documentation/iio/ad4000.rst
+> index 468d30dc9214..2d56b0762570 100644
+> --- a/Documentation/iio/ad4000.rst
+> +++ b/Documentation/iio/ad4000.rst
+> @@ -191,3 +191,20 @@ Typical voltage channel attributes of a differential AD4000 series device:
+>  +-------------------------------------------+------------------------------------------+
+>  | ``in_voltage0-voltage1_scale_available``  | Toggles input span compression           |
+>  +-------------------------------------------+------------------------------------------+
+> +
+> +SPI offload support
+> +-------------------
+> +
+> +To be able to achieve the maximum sample rate, the driver can be used with the
+> +`AXI SPI Engine`_ to provide SPI offload support.
+
+Can we make this more generic?  
+"the driver can be used with SPI offload engine, such as the ...
+
+I'm rather hoping we see others in the long run as useful little things!
+> +
+> +.. _AXI SPI Engine: http://analogdevicesinc.github.io/hdl/projects/pulsar_adc/index.html
+> +
+> +When set for SPI offload support, the IIO device will provide different
+> +interfaces.
+> +
+> +* Either ``in_voltage0_sampling_frequency`` or
+> +  ``in_voltage0-voltage1_sampling_frequency`` file is provided to allow setting
+> +  the sample rate.
+> +* IIO trigger device is not provided (no ``trigger`` directory).
+> +* ``timestamp`` channel is not provided.
 
 
