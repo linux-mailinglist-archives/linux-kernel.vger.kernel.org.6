@@ -1,149 +1,124 @@
-Return-Path: <linux-kernel+bounces-564004-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564005-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41F6DA64BC7
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 12:08:05 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 321A8A64BFA
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 12:11:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D90D9188AF63
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:07:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2A0B3A61A5
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:08:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C911A233717;
-	Mon, 17 Mar 2025 11:07:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26F652356A8;
+	Mon, 17 Mar 2025 11:08:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="04Ii0iJr";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="pNgyY4EB"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RM4/S9vS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC178230BC9;
-	Mon, 17 Mar 2025 11:07:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81DBB1990B7;
+	Mon, 17 Mar 2025 11:08:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742209648; cv=none; b=qBCzOqJHzNM0vIGF9wS9QSnDCqa9PC0KMO+GeJCM22bxPPOUAyVp9CTNQ/QXm6udeojJlbG5cA2+Ak3DZ9+/hyYexGbq0THYNn8k9FWKsj3zGojKdqWCa4Qiv92rg1Bk2f5P2PXQqQZrxtldyaBsisUdlOz8JscqD2YL7K1mr/0=
+	t=1742209713; cv=none; b=ZQGDLUQnA06Bm5C1qnEuEC+8CMduA8Zxxt9qhWz+yM7IrlnTi2+fLJGEde/2WnHW1N55OWziINOo/auS6+B0zHTAx/xUXnHRrDUajxqyaN3qUfoJOxFxRamrYQWi+dTcw0WvqE2h2QuALLFSJf82+rbAcxKAyUWdReBHuA2IvZ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742209648; c=relaxed/simple;
-	bh=0Xpwo/Y0UX8dYJiqPFctM7BIYCy3TALEamqou9qX/VY=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=d1htu4O8rw+dKxxqG5IwqVbKXNa8R9ARWLu7LtamkjZNW19eriadhjR/nZqF5jXesPL7Vl1lZx+UMbKsHcxY2KpF1WEmumKqi1NeLkBx6Pvne71yioFFBAwfCaObJjgzZesIw1EZ93+0Ae4try7uDuhHzJfE6QChzcSEhea9ZGs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=04Ii0iJr; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=pNgyY4EB; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 17 Mar 2025 11:07:23 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1742209644;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cM/W7c+04DZc8h/mlBf+C09lLMYiLYoX4ALWFs9yKms=;
-	b=04Ii0iJrLdvXH+Zlys8VxoCOC3/fxbUvkux0IOnbhs2AUgZsQRZlJqS+steZ2lzqzKhk18
-	TCASGtUpLWA0WdNvMYRl/9tP7u+EbjwrxIF0QRZfspHMAcs7PFMjcUfBkgnKvxqFlTTlhy
-	i5pOJHbihkYQQm5P54jZCHzkF0sXAXg8h2ls6ZAAE2xKzk9ZCHbf0PuDpOoka/QFKU1YLm
-	CXFXrGtnQdNsUXQvXrjemZ2qjh7PcZDSyoUrifYqLNBihLzCE33ka7R5krViP53JonrJf9
-	vC4pbcyphOIV6D5BMdFSGzuiia5CSu39PpunyaembjC/fKQuOAQDbvBj7jIifA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1742209644;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cM/W7c+04DZc8h/mlBf+C09lLMYiLYoX4ALWFs9yKms=;
-	b=pNgyY4EB/NhT4VeTXqA/19aV04i8ydcTh3IbPxrtSQQH9WMyEYLguPakMwu+NS/S3jvXYS
-	5luM0pFnxjkKhKBQ==
-From: "tip-bot2 for Josh Poimboeuf" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: objtool/core] objtool: Add CONFIG_OBJTOOL_WERROR
-Cc: Josh Poimboeuf <jpoimboe@kernel.org>,
- "Peter Zijlstra (Intel)" <peterz@infradead.org>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To:
- <3e7c109313ff15da6c80788965cc7450115b0196.1741975349.git.jpoimboe@kernel.org>
-References:
- <3e7c109313ff15da6c80788965cc7450115b0196.1741975349.git.jpoimboe@kernel.org>
+	s=arc-20240116; t=1742209713; c=relaxed/simple;
+	bh=vD80iwdiMAGzs4naZ/VRoajC/AaqYf0/78u4RZKwmKc=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=b5N9I3X+nXaaov5gPI1lCIiT7BoGAVy58wLmMNVTFwYBgDcUehD/uLH88Jp2tQUoLni5F0BWA+cQJmVLyTboxNJh+LLIUV16npqW1BzZ2o1XaALN+qYLlHOMnB9sRIHhwfNhAKTb4M8WMjLIkJcv9crEUAZXmum7VkbdGIr4V6s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RM4/S9vS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED487C4CEE3;
+	Mon, 17 Mar 2025 11:08:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742209713;
+	bh=vD80iwdiMAGzs4naZ/VRoajC/AaqYf0/78u4RZKwmKc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=RM4/S9vSKlLErShJGXGSJO3O7OGbCoHyj6fao5LlD32rs3aJaoIjPh6mr86sIYxsr
+	 HMxU73du7cVPFxd1jE/gxIV34MEtDXRf9uvE9zAQ8mTJMiTgOgzmmDTxvWP3mFKLwY
+	 EkC9mL4m4WvCdGbeSVPJZfnN66EIQAgc3pzZeeBGka74aQv1mCPNdM8o1Srwk3Y9fW
+	 GQx/cXx4OouQYGgxZADEchkIDE1AqRmWBQFM5Au4kaP1TbzboE0iONnCMXd+w0I947
+	 PT6zaSY5gElvKZWBS2HhimvAj8slpYd2Sg6u83MALSPf5WWmR0k4jr0SV8TEXw8+Ip
+	 0MLNf/mnVb1bA==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1tu8Kc-00EGSs-Py;
+	Mon, 17 Mar 2025 11:08:30 +0000
+Date: Mon, 17 Mar 2025 11:08:30 +0000
+Message-ID: <86zfhjnccx.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Oliver Upton <oliver.upton@linux.dev>
+Cc: Christoffer Dall <cdall@cs.columbia.edu>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next
+ Mailing List <linux-next@vger.kernel.org>,
+	Mark Rutland
+ <mark.rutland@arm.com>,
+	Shameer
+ Kolothum <shameerali.kolothum.thodi@huawei.com>
+Subject: Re: linux-next: manual merge of the kvm-arm tree with the arm64 tree
+In-Reply-To: <20250317172102.55f7c4d9@canb.auug.org.au>
+References: <20250317172102.55f7c4d9@canb.auug.org.au>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Message-ID: <174220964327.14745.17925905226268456380.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: sfr@canb.auug.org.au, oliver.upton@linux.dev, cdall@cs.columbia.edu, catalin.marinas@arm.com, will@kernel.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, mark.rutland@arm.com, shameerali.kolothum.thodi@huawei.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-The following commit has been merged into the objtool/core branch of tip:
+Hi Stephen,
 
-Commit-ID:     36799069b48198e5ce92d99310060c4aecb4b3e3
-Gitweb:        https://git.kernel.org/tip/36799069b48198e5ce92d99310060c4aecb4b3e3
-Author:        Josh Poimboeuf <jpoimboe@kernel.org>
-AuthorDate:    Fri, 14 Mar 2025 12:29:11 -07:00
-Committer:     Peter Zijlstra <peterz@infradead.org>
-CommitterDate: Mon, 17 Mar 2025 11:51:44 +01:00
+On Mon, 17 Mar 2025 06:21:02 +0000,
+Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> 
+> Hi all,
+> 
+> Today's linux-next merge of the kvm-arm tree got a conflict in:
+> 
+>   arch/arm64/kvm/hypercalls.c
+> 
+> between commit:
+> 
+>   d2c173acbf93 ("KVM: arm64: expose SMCCC_ARCH_WORKAROUND_4 to guests")
+> 
+> from the arm64 tree and commit:
+> 
+>   c0000e58c74e ("KVM: arm64: Introduce KVM_REG_ARM_VENDOR_HYP_BMAP_2")
+> 
+> from the kvm-arm tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
 
-objtool: Add CONFIG_OBJTOOL_WERROR
+Thanks for resolving all 3 conflicts, which look good to me.
 
-Objtool warnings can be indicative of crashes, broken live patching, or
-even boot failures.  Ignoring them is not recommended.
+Oliver, would you consider picking the following arm64 branches:
 
-Add CONFIG_OBJTOOL_WERROR to upgrade objtool warnings to errors by
-enabling the objtool --Werror option.  Also set --backtrace to print the
-branches leading up to the warning, which can help considerably when
-debugging certain warnings.
+- arm64/for-next/leaky-prefetcher
+- arm64/for-next/spectre-bhb-assume-vulnerable
 
-To avoid breaking bots too badly for now, make it the default for real
-world builds only (!COMPILE_TEST).
+so that these conflicts are solved on our end?
 
-Co-developed-by: Brendan Jackman <jackmanb@google.com>
-Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Link: https://lore.kernel.org/r/3e7c109313ff15da6c80788965cc7450115b0196.1741975349.git.jpoimboe@kernel.org
----
- lib/Kconfig.debug    | 11 +++++++++++
- scripts/Makefile.lib |  1 +
- 2 files changed, 12 insertions(+)
+Thanks,
 
-diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-index 35796c2..a9709a6 100644
---- a/lib/Kconfig.debug
-+++ b/lib/Kconfig.debug
-@@ -545,6 +545,17 @@ config FRAME_POINTER
- config OBJTOOL
- 	bool
- 
-+config OBJTOOL_WERROR
-+	bool "Upgrade objtool warnings to errors"
-+	depends on OBJTOOL && !COMPILE_TEST
-+	help
-+	  Fail the build on objtool warnings.
-+
-+	  Objtool warnings can indicate kernel instability, including boot
-+	  failures.  This option is highly recommended.
-+
-+	  If unsure, say Y.
-+
- config STACK_VALIDATION
- 	bool "Compile-time stack metadata validation"
- 	depends on HAVE_STACK_VALIDATION && UNWINDER_FRAME_POINTER
-diff --git a/scripts/Makefile.lib b/scripts/Makefile.lib
-index cad20f0..99e2819 100644
---- a/scripts/Makefile.lib
-+++ b/scripts/Makefile.lib
-@@ -277,6 +277,7 @@ objtool-args-$(CONFIG_HAVE_STATIC_CALL_INLINE)		+= --static-call
- objtool-args-$(CONFIG_HAVE_UACCESS_VALIDATION)		+= --uaccess
- objtool-args-$(CONFIG_GCOV_KERNEL)			+= --no-unreachable
- objtool-args-$(CONFIG_PREFIX_SYMBOLS)			+= --prefix=$(CONFIG_FUNCTION_PADDING_BYTES)
-+objtool-args-$(CONFIG_OBJTOOL_WERROR)			+= --Werror --backtrace
- 
- objtool-args = $(objtool-args-y)					\
- 	$(if $(delay-objtool), --link)					\
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
 
