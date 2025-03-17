@@ -1,136 +1,96 @@
-Return-Path: <linux-kernel+bounces-564787-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564788-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A1AFA65AAD
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 18:29:02 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F861A65AA2
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 18:26:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BFF2618827DD
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 17:24:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A2A317F477
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 17:25:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B0D819F424;
-	Mon, 17 Mar 2025 17:24:30 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0F3019F424;
+	Mon, 17 Mar 2025 17:25:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="ULXQOrmk"
+Received: from mail-10629.protonmail.ch (mail-10629.protonmail.ch [79.135.106.29])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 387FC18A6DB;
-	Mon, 17 Mar 2025 17:24:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40A691598F4
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 17:25:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.29
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742232270; cv=none; b=KVe8DaDckBDiEvb9L1MO5QjcC0s7R8kR0zrAmpnaN2TGHRlZdKYUC0jAGbnoSAyu8UL/wlNf29SOvvmndjJ+NyLM7tih0tu3G5QxQu8NRsuKNgTIxuKtddP2tFbqE08Kawi7oo3TFI2bMof+lijoDlg61pIZFlcBpN8ZwzjsLfo=
+	t=1742232307; cv=none; b=C/VT08RjgwLBMtgqThgQrkdsmt9QIz69wOLlntilDFjM71emLBTWJis/EfpAblyU9BLK+MekVgIimpaYNr6xRCrklDjye/IiCOLrlGyxoWDQd+xh4KC6Z7gadTsmWaJWH1dZ6YZnmIKCi2vF36pxN40ZT0QxjOWuxk2uNnag+YU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742232270; c=relaxed/simple;
-	bh=zbbR6WbFaC4VlMNV/gml+ZSldzu+moegdui9CEsqH7Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tJwiby4Q5TakEO9zG5KfzZY+hTzzaEzNPaqJnIo7tpaK4ckLiyAbOEtxsEoFrQ3MTTZ/OynzRULQoaA3kVSJyDiaUmB3cSwPLO6XWCy9A7z9JSWjukWXGI5dr4nx4SZOE+CoI4afhKqh6/dhRzra30qgR3xgsHsDLSPHTnAi0/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5114C4CEE3;
-	Mon, 17 Mar 2025 17:24:27 +0000 (UTC)
-Date: Mon, 17 Mar 2025 17:24:24 +0000
-From: Mark Brown <broonie@debian.org>
-To: Breno Leitao <leitao@debian.org>
-Cc: Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Sowjanya Komatineni <skomatineni@nvidia.com>,
-	Laxman Dewangan <ldewangan@nvidia.com>, linux-tegra@vger.kernel.org,
-	linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	rmikey@meta.com, kernel-team@meta.com
-Subject: Re: [PATCH 1/3] spi: tegra210-quad: use device_reset_optional()
- instead of device_reset()
-Message-ID: <f3e47d12-f6be-4bb5-b87b-84aa0037e1ef@sirena.org.uk>
-References: <20250317-tegra-v1-0-78474efc0386@debian.org>
- <20250317-tegra-v1-1-78474efc0386@debian.org>
- <22ffa8f5-6590-4602-853d-ceffed580f22@sirena.org.uk>
- <20250317-solemn-debonair-sambar-f04fa7@leitao>
+	s=arc-20240116; t=1742232307; c=relaxed/simple;
+	bh=E8mCUktcye+tTgMDxoS6r0Kp92cpbr+ZlAH5107SzCI=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=jb1V3QGEH86i19CI9bOYNb+9atmJb9OUC3TysGV4HY2S6EemkrWbd419VazP8d0tI9P0gpYCkA+oLRVzi3ftA56jobQLt4Suao8O44NZCrgXflDpvIfmPDr1bWjKJGAcTQ5LIejbwA4RrDh6Dwzs7ESrhC161qr64pt+3dl37rk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=ULXQOrmk; arc=none smtp.client-ip=79.135.106.29
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1742232302; x=1742491502;
+	bh=Ije4R12tkjONQYl0x9YoR0tQN8Y1ebS9qLeyIdWqs9k=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
+	b=ULXQOrmkEbtTh8V+Yw2LL7j1gaCax1ziTGeT8oD/2SplIWE8w7cr5JaTcL9Iyr/1f
+	 dZOzpZ5UyjSUQvO+JPI1ZN+F+eq6VI9VbDsfy2HvYRbV6zUyU0CtyNBVs6QBFFPWaz
+	 H5hxGXxLY1apwv44j8R4pfhWJHZHeri7pNu+wiQdsRnFVjWIOMHeSP4P0igQUDO4Mw
+	 zIQDqcfAbe86AhDC5LOgFwM8N0BrBp/oIqLUd6eJCrBY8eRz4OP80/fsTd6203BUR1
+	 PFckMeRfFinvEAq/49R1T3Ea6pVfUU7qWctcNTd5QSFZ+3o8x5CE/KCButUesNm60o
+	 itVPFowfBjEpQ==
+Date: Mon, 17 Mar 2025 17:24:55 +0000
+To: Tamir Duberstein <tamird@gmail.com>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: Danilo Krummrich <dakr@kernel.org>, Andrew Ballance <andrewjballance@gmail.com>, Alice Ryhl <aliceryhl@google.com>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] rust: alloc: add `Vec::dec_len`
+Message-ID: <D8IPSWQWM6U0.1VLTOFNL99G64@proton.me>
+In-Reply-To: <CAJ-ks9kXZDO-5utmQb2HLkxmxmQ-bg8jZ4FdvDatTj_79W2dMA@mail.gmail.com>
+References: <20250316-vec-set-len-v1-0-60f98a28723f@gmail.com> <20250316-vec-set-len-v1-2-60f98a28723f@gmail.com> <D8IGFTJXS2A1.9JBD1UKGN4PX@proton.me> <CAJ-ks9=oq+c_pMg41QgGWsj=phWYfntXQgpSrFmz16Vifofn3g@mail.gmail.com> <D8IMA0GUIPTD.34ZEZ3W8QSKTA@proton.me> <CAJ-ks9kXZDO-5utmQb2HLkxmxmQ-bg8jZ4FdvDatTj_79W2dMA@mail.gmail.com>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: 72b707384655795c8dff72d875329cbd30723c14
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="mKVuPqVh/OxM585l"
-Content-Disposition: inline
-In-Reply-To: <20250317-solemn-debonair-sambar-f04fa7@leitao>
-X-Cookie: I know how to do SPECIAL EFFECTS!!
-
-
---mKVuPqVh/OxM585l
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Mar 17, 2025 at 09:56:43AM -0700, Breno Leitao wrote:
-> Hello Mark,
->=20
-> On Mon, Mar 17, 2025 at 04:45:31PM +0000, Mark Brown wrote:
-> > On Mon, Mar 17, 2025 at 08:44:01AM -0700, Breno Leitao wrote:
-> > > My UEFI machines with tegra210-quad consistently report "device reset
-> > > failed". Investigation showed this isn't an actual failure
-> > > - __device_reset() returns -ENOENT because ACPI has no "*_RST" method.
+On Mon Mar 17, 2025 at 4:37 PM CET, Tamir Duberstein wrote:
+> On Mon, Mar 17, 2025 at 10:39=E2=80=AFAM Benno Lossin <benno.lossin@proto=
+n.me> wrote:
+>> On Mon Mar 17, 2025 at 12:34 PM CET, Tamir Duberstein wrote:
+>> > On Mon, Mar 17, 2025 at 6:04=E2=80=AFAM Benno Lossin <benno.lossin@pro=
+ton.me> wrote:
+>> >> On Sun Mar 16, 2025 at 11:32 PM CET, Tamir Duberstein wrote:
+>> >> > +    ///
+>> >> > +    /// # Safety
+>> >> > +    ///
+>> >> > +    /// - `count` must be less than or equal to `self.len`.
+>> >>
+>> >> I also think that we should use saturating_sub instead and then not h=
+ave
+>> >> to worry about this. (It should still be documented in the function
+>> >> though). That way this can also be a safe function.
+>> >
+>> > This doesn't seem better to me. I'd prefer to have more rather than
+>> > fewer guardrails on such low-level operations.
+>>
+>> Your second sentence seems like an argument for making it safe? I think
+>> it's a lot better as a safe function.
+>
+> The guardrail I was referring to is the requirement that the caller
+> write a safety comment.
 
-> > That's not the case, it's returning an error because there is no reset
-> > controller discoverable via any mechanism.=20
+But saturating_sub is a better guardrail?
 
-> Sorry, I was not very familiar with this subsystem, but I chase down
-> __device_reset(), and I found the return was coming from:
+---
+Cheers,
+Benno
 
-> 	int __device_reset(struct device *dev, bool optional)
-> 	{
-> 		acpi_handle handle =3D ACPI_HANDLE(dev);
-> 		if (handle) {
-> 			if (!acpi_has_method(handle, "_RST"))
-> 				return optional ? 0 : -ENOENT;
-
-> > There's no specific handling for ACPI here. =20
-
-> Do you mean no _RST method as stated above?
-
-That's only happening in the case where the device has an ACPI handle,
-the SPI driver has no idea why the reset API failed to look up a reset
-controller.  Your change is to the SPI driver, not the reset framework.
-
-> > It's also not clear that this is a false positive, the
-> > driver did indeed fail to reset the device and especially for the error
-> > handling case that seems like relevant information.
-
-> If the driver failed to reset the device, then device_reset_optional()
-> it will return an error code, but it will not return an error code if
-> the RST method is not found, right?
-
-> Sorry, if I am mis-understading the code here.
-
-Clearly if no reset controller is available then the driver will have
-been unable to reset the hardware.  That seems like something it
-actually wanted to do, especially in the error handling case - it's a
-lot less likely that we'll recover things without the reset happening.
-During probe it's possibly not so urgent but at other times it seems
-more relevant.
-
-> > At the very least the changelog should be clarified.
-
-> What would you add to the changelog to make this clear?
-
-For starters the mention of ACPI is irrelevant to what the SPI driver is
-doing.  This sounds like a change specific to ACPI but it affects all
-users.
-
---mKVuPqVh/OxM585l
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmfYWscACgkQJNaLcl1U
-h9CdMwf9HG+W0/aFm8iS2Lnww7hNSddYKsFT9JGqqbd6NHP0gTTAJcjrJmauPW/+
-uRbvYzVP7ps9l53qUJZaYoY2nbrywHmog1aV4bdes+XrWGLOixff+NsV7P3OmleR
-DquV/mN6H1IQ4C8uCPJUE4br/wfqNakpThSRXAAhhYgShwm38WMAjH2fV1XprU4o
-P2FAjBQAWXPq6HdQ96zkNSWhgyLk13F1vHT8YBCaCnpZ+EFwM4gtK0vFxBNzyCzh
-o5v5BV9TlA+U1jJviDltp4BYQ7ZmHcJehbEIxJNJSWO3fDh/IHPp2LodWYDs5GJh
-NtFMyB/t6cj2H0ED1Uq2WXwvDwvA3w==
-=zlnz
------END PGP SIGNATURE-----
-
---mKVuPqVh/OxM585l--
 
