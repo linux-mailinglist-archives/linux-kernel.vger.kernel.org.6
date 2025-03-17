@@ -1,106 +1,113 @@
-Return-Path: <linux-kernel+bounces-564329-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564341-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07F3EA652E2
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 15:21:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B688FA6533A
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 15:25:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DEB3D3A5FB5
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 14:21:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E403C3BBD00
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 14:23:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EED22417C7;
-	Mon, 17 Mar 2025 14:21:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F31424888C;
+	Mon, 17 Mar 2025 14:22:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B5RIiOEC"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Lyjx1Bti"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99DFF38DEC;
-	Mon, 17 Mar 2025 14:21:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8F9824168E;
+	Mon, 17 Mar 2025 14:22:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742221265; cv=none; b=LXvr1awAGmwCgu4Kbg7BdKcg5VB7YAoC8Ayb/gs1mELLuZZY43r0QPg3R+kb6j6hKj82vRKafg/cRjr2ukHvrZyAkEMfR/Wnz0ST0Qmj/r9EuXIuBsH4jdW1YoDOs3JJp0sDn8VTXCv5BprL0VgIz4rF+Qn7/0qVSP/ppQFEToY=
+	t=1742221338; cv=none; b=J2XJi0GqnhPh7arV67DqT0YxvgMOEB3JL+j1nhK3AS+dSuuJ2FS5K4nY8p7orIL8LYhAwh9QuX8lacUX7qq2JxL4hjEizla68pLiVM9v0DErDna5keDXZQ3ElOAwd0Heshau62u8nuGRniKDYjzxQ+CEJUfh3HTMB7bjpgX9ZNk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742221265; c=relaxed/simple;
-	bh=TAMZO+Www2JXyEzVnkPyMCDlKAnsJn0Ra9/i84lCzU0=;
+	s=arc-20240116; t=1742221338; c=relaxed/simple;
+	bh=OEM5Fxc7NSraJ8ml5LH6qN0QPIHHUpYetShfE0Kt6Js=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ImGclvEXrIEZ7rmOE8UPVViltMQowzdNlkhVn5JlPE5+deyucIrSmgCtr72TtLo4rleWo8QqRC3OMFN4ncvIhRfl9c3ZyiMXZ+fkPe5Inf6Sz5iQ+qLDSsSlDEbtvt3sWlhOixwxqYAhiD6m/etlk8fKWEvJL3iRknqy+VIWYJU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B5RIiOEC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF198C4CEE3;
-	Mon, 17 Mar 2025 14:21:00 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=dv9Cq2VjFBX7yocRlENQAIwnShPYA/Zq7nBPweEiLjZdQf3zQRyqUrRjr6KXgDDOgtYtWbcnOwS6pgQCJ7ipwiZsGFAvPPZEyzg71P/J5HNDaEM8qv10tn/AfXxcguB2RaeeiX3cMWrolqwopD+CJnLH/GHwm59vHRFH1N6SuUQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Lyjx1Bti; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81E52C4CEE3;
+	Mon, 17 Mar 2025 14:22:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742221265;
-	bh=TAMZO+Www2JXyEzVnkPyMCDlKAnsJn0Ra9/i84lCzU0=;
+	s=k20201202; t=1742221338;
+	bh=OEM5Fxc7NSraJ8ml5LH6qN0QPIHHUpYetShfE0Kt6Js=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=B5RIiOECnb6LikTPnK6WERMaIGdBYP74g15Dw9IDaRyga31AvzNbL9Ub6VbrItoZi
-	 AiSpVG60ZnpTuCjJjbgDO+Q/Sh8vdGcU8DQzkYISRqcZ5upfvnubcqKV2mkA9hAkDC
-	 y/6neFTYR6OFo7co4+iuLQYsmLL3aJgRya74lMmMwla7wMw4uTi7kfx+MU5ssJ/mQg
-	 9pWmyqPDk44U+Q5JiSMTAo36yKOZqHofAe2UXHEdqEuVu8O/gp0c38v/+H+dd2hLOl
-	 5NG3qq4xHnNOYhvNB6XVCOh0RCtOYhpO/+LYz5RG54S0DODRrMq9b2lXDoqVhVnGX/
-	 2/9E4tXepoZrA==
-Date: Mon, 17 Mar 2025 14:20:58 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Sudeep Holla <sudeep.holla@arm.com>
-Cc: linux-kernel@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	linux-pm@vger.kernel.org, Andre Przywara <andre.przywara@arm.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
-	linux-crypto@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>,
-	linux-efi@vger.kernel.org,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	linux-rtc@vger.kernel.org, Takashi Iwai <tiwai@suse.com>,
-	linux-sound@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-	Borislav Petkov <bp@alien8.de>, linux-acpi@vger.kernel.org,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: Re: [PATCH 0/9] drivers: Transition to the faux device interface
-Message-ID: <b13eb5b3-198e-43e3-831a-45172e9975e9@sirena.org.uk>
-References: <20250317-plat2faux_dev-v1-0-5fe67c085ad5@arm.com>
+	b=Lyjx1BtiEqap28/rQX2S8xv+6dovGeWywMyB9yPDDFjaDeo1dGTSfMEnptyaV0/9z
+	 zP4S4eBsIRTGjGkcf0PHon8T9tQrDPWDt7Cq0Q/IdpjzUEZIPp468Vphq5TqatrG15
+	 cqc63au98oHe80niQeLDPDHLEc7v102c7BZdpIc22fGGMW3fKG7j5JkKr6VeuQbnSm
+	 g7C8bkG2Uih15MrslB64f5mdYJIRKInuMkC5U+7pm3KdSVKHatIcosxWmmbsC+Nguo
+	 2gZdpkfFLhVnNlF4EKjYLRAkRg5qufdxakQHSh8JMbWifDdiit9w5xc5N4mc0v3gww
+	 ICKVdr5ObkQAA==
+Date: Mon, 17 Mar 2025 14:22:13 +0000
+From: Will Deacon <will@kernel.org>
+To: Marc Zyngier <maz@kernel.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Christoffer Dall <cdall@cs.columbia.edu>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
+Subject: Re: linux-next: manual merge of the kvm-arm tree with the arm64 tree
+Message-ID: <20250317142212.GA11776@willie-the-truck>
+References: <20250317172102.55f7c4d9@canb.auug.org.au>
+ <86zfhjnccx.wl-maz@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="PFsotoYFiaefK9IS"
-Content-Disposition: inline
-In-Reply-To: <20250317-plat2faux_dev-v1-0-5fe67c085ad5@arm.com>
-X-Cookie: I know how to do SPECIAL EFFECTS!!
-
-
---PFsotoYFiaefK9IS
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <86zfhjnccx.wl-maz@kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-On Mon, Mar 17, 2025 at 10:13:12AM +0000, Sudeep Holla wrote:
+On Mon, Mar 17, 2025 at 11:08:30AM +0000, Marc Zyngier wrote:
+> Hi Stephen,
+> 
+> On Mon, 17 Mar 2025 06:21:02 +0000,
+> Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> > 
+> > Hi all,
+> > 
+> > Today's linux-next merge of the kvm-arm tree got a conflict in:
+> > 
+> >   arch/arm64/kvm/hypercalls.c
+> > 
+> > between commit:
+> > 
+> >   d2c173acbf93 ("KVM: arm64: expose SMCCC_ARCH_WORKAROUND_4 to guests")
+> > 
+> > from the arm64 tree and commit:
+> > 
+> >   c0000e58c74e ("KVM: arm64: Introduce KVM_REG_ARM_VENDOR_HYP_BMAP_2")
+> > 
+> > from the kvm-arm tree.
+> > 
+> > I fixed it up (see below) and can carry the fix as necessary. This
+> > is now fixed as far as linux-next is concerned, but any non trivial
+> > conflicts should be mentioned to your upstream maintainer when your tree
+> > is submitted for merging.  You may also want to consider cooperating
+> > with the maintainer of the conflicting tree to minimise any particularly
+> > complex conflicts.
+> 
+> Thanks for resolving all 3 conflicts, which look good to me.
+> 
+> Oliver, would you consider picking the following arm64 branches:
+> 
+> - arm64/for-next/leaky-prefetcher
 
-> All the patches are independent of each other.
+Can you hold fire on this one, please? ^^^
 
-If that's the case don't send them in a series, it makes things more
-complicated to apply and the CCs cause more mail.  Split independent
-things up by subsystem.
+Catalin asked for comments on Friday and I'm not sure I'm happy with it.
 
---PFsotoYFiaefK9IS
-Content-Type: application/pgp-signature; name="signature.asc"
+https://lore.kernel.org/all/174197730164.734861.6726211221092480832.b4-ty@arm.com/
 
------BEGIN PGP SIGNATURE-----
+Will reply there shortly...
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmfYL8kACgkQJNaLcl1U
-h9Brtgf/ed8/iheDRmn5QcrxD/Fq2JDB0jFynURxgNQDHy+TfIECBMxr4+ouEvh0
-6BYWqGbAjfU+qCRpcQM+3aIA/MyFE8Ckz6XBD3PkopN9hUwfkaBifc3cZLtPeeap
-OINXiEIOTl/jV4+0xkx0PVsCUy1BXiXCgfReCECnjB3tQxMEYZM5dFxgNYHq125y
-8VIE6wPZd2RtOg12Yg8I4++7o1vI8MP03+hy3P8HEmrzubZ8P/2t52y8OmWaQekJ
-9leSB9QSiycWUZ61emRRcVl6GzExoNf4mvPBTNuWEMFrUAD8AmU7AVtjddGPnSrx
-XFpbyUiXwtvodfzzg6B0KEx5kU9WEQ==
-=ALbI
------END PGP SIGNATURE-----
-
---PFsotoYFiaefK9IS--
+Will
 
