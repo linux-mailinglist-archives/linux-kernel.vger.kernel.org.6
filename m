@@ -1,128 +1,167 @@
-Return-Path: <linux-kernel+bounces-563813-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563812-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72073A64914
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:12:28 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47086A64913
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:12:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0BECD188534A
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:12:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B4F9169C4D
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:12:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E92D233722;
-	Mon, 17 Mar 2025 10:12:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DE7F230BCD;
+	Mon, 17 Mar 2025 10:12:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cb30YTbn"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Gi9v8J/w"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28590233141;
-	Mon, 17 Mar 2025 10:12:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C653B76035
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 10:12:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742206333; cv=none; b=tQFvIe2WJ3FZBQVSBATT+kXui+vbUrI1VMZY/UuaicQdOOtOWDkB0VMjvXF1awO5CWIrUCQMbe6VeSI5bWxBkm8k4vtfVEcdjHj8QuFMf6VNBpEEwCc3lhpriCEwVNKBSkbrHBxmmAvgKxYe5a65ZWCbDXmRuYyndyZpbC/ez3Q=
+	t=1742206328; cv=none; b=Wqytj+gFf02kbCOzPArcIDvh7b23S+HxvnO/YsY2VFZbUDjknuEN0zRPmP4s9XpxB1sHp8ZK7O0+BXgr6E+rt6E7/GxjSdpXMZrd1onO0waua8dxQW/VCRRG1e5hHrfkzGnXrwfudwcjF9khCY8/621Gkp7ZwomSQ39PYtPfj1Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742206333; c=relaxed/simple;
-	bh=PjaKVOg2Y8r6iet+S5aQqKdHr0u71p6RNjNkKvB4OY8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:MIME-Version:
-	 Content-Type; b=HILhN9UigLx5ABqxD6ubXml2tRvsGskrXhcbRPtoEubTMy1ZSz2Roi7PDO0S3TTYgvQWHBNkshrZ/AGohsRdatcWppCG3J6dXZF7/+4ldMWOz8QWZQBT4GMRZfXV9uS29GSYZcS0t2HTuDFfgJ1kpniYPlpmE6eTePypobvXP3M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cb30YTbn; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-549946c5346so4363738e87.2;
-        Mon, 17 Mar 2025 03:12:10 -0700 (PDT)
+	s=arc-20240116; t=1742206328; c=relaxed/simple;
+	bh=5llxBf6yrwHPPlLY2/u7q4b9DwPEQkoXUo0BB7//YyQ=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=eXh95d1EPth0t5M5udIBVht0IbTI5Y1JR7np2i+TC0UDu57zl3qs9+dwL//HlF8lDXvgmmtp7XNXiZhSsUjLN3el7Wfto6lKKLEmImXckkbivYWHc/OEJ61vTZMR/vo9RPdgirmXsMGDwHT8hyHzm37cYQSm1X3kMfmzyUZY8sM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Gi9v8J/w; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4394345e4d5so13524775e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 03:12:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742206329; x=1742811129; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:in-reply-to:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=THV265Z1OacT1jAIgvGzx/DQCeY4a77bNldDa3xTI/o=;
-        b=cb30YTbnpUpEr+Gg68WE/6Bc52WDW2CVTF6KkN+BkxEoeWqIKR0ScSAVCLsLpHP+jt
-         GlxIw7elqXU7OF2yMEGcadgnVbAquvBYAmq1e1F1G3vO+UaGIEqxTjGwUpxhiq46lUGt
-         pKZtVA7wLM+vJIZW6SaYwlpsAlCdQ2lb3pMC8ykzzsUmXVZgm7EACZVPDQwbghgfPuPZ
-         SP8P0kVQhVKbSc7YLr4TX7k//FN9KaUAenYRnKYjZwzSGWo4ZNcTduoyK1cP3h8Ywheb
-         DC6y2jmju0VcodxzOBeyAavrOfV0xYdtrEeQRMjDe1T516Af5x+huYWKZ5E/MWnQakpT
-         x3ng==
+        d=linaro.org; s=google; t=1742206325; x=1742811125; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Unak19FFUAPatD54I/+J4+Z4vCj2oJP7uUeW6FKDhls=;
+        b=Gi9v8J/wcXBv/qYk1IWuYV7XOeGnHPC+DLvubo0UX1w3/9Yc3KUbfaJAJlN3uSIGrO
+         0vMXaFQCCbCTELX5JuWnILAiIuRjZd97tXEZXuhpq67x/ZOihyubS7BfLLe/pwnJxw3c
+         enAdghNBIl0YrnKoTbNUEfIWWhjTDbBhbe9kCyhAjA0wvpEXo2hIwK9FLwTuczdzq32A
+         pmFWKQPckeXUDYaXgTHf+xWICqrOYFh6+JPLDUiXv9T/p1SaG45zxO6Cx5fr4sh5AsKH
+         YyLJj91gshcmya3sXdxm3a5ab1AdU1VJHbyXqj4TDN1Yihn37gQO5z8JTxVb/OzvPJt3
+         1rNA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742206329; x=1742811129;
-        h=content-transfer-encoding:mime-version:in-reply-to:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=THV265Z1OacT1jAIgvGzx/DQCeY4a77bNldDa3xTI/o=;
-        b=Bb1CcRe+h1WgEN6JM6NZMcF+YqWJqInai+y2nEQCGxJC3S0rowjfLk//Yz0obdtGRn
-         IUOaNgNVRHQdNNQxgTSLQJTYLrQv13qpXs0BUDCOQHuggl5I/irDwB7D79zjhQkvzUUP
-         TxK4Xcf6+E3PS8UUPpv61Ur2wFvvN7Ek0inLTEzK2or69KQ0jepMIlkzeQZcpbehhc/Y
-         dEgVNhj3wvRrMT02Citeaehl5Iqm1/9fcnV0jpGYsOpNrpd21t4LK5/177S46f//bwSz
-         BQc0gW1oOnnzIgXRBsC+HHw/UYflkyCNkbZZic1WM0tdVAhDB8Uu18Clb73mC8P7R63s
-         GgXw==
-X-Forwarded-Encrypted: i=1; AJvYcCUfss+B9H9m0+9MuwMtKNSFAEovelndIHSMpl7UX8qDzVg345GN36kIvvf0NoMyADxHT8B0QwFTD2+D@vger.kernel.org, AJvYcCXWEqddEKn22AQElwykyNl+9OrXKJlGFJexP7WAMI3Qb6AqRE4H0I/N+xUkGa9Kj4gLya04iFh6DtWtigM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YypH5flIUGf2fpgUnFfDyP4/IebRwo2Xp4b3uPQwkrbHMh0HH2Y
-	KdH/uzrejrVPzZRpChuMzf61/9flRtFgu9pBKJuGKLhiyKgD5WmPhIaOvg==
-X-Gm-Gg: ASbGncviUIBjBzQxx6ufndfWedAye/ID9t42Mj+lM09yu8VfI1hSt+aChUzwB39S9km
-	KuUxNE5duyaZ+eQAMvV1H+KbtP/ygETXpNqRkVM09jkFguQ7nSftYJmg7kp8Bv+iRGtCIQDEl8H
-	wYk3ZA4ABcxHZbdNevr0Km6JHs7hlSqpHRLH3/aa6OucHFuLcXn44GtW0WOXnGWRgjH21/ESOkq
-	7VG9NJQnQr7MpU4FAQOsyjbfmsD3CzV8O0/zuHEfJuYd+Dh930ixyHOM8ffBN8xhcIaiqnvhocj
-	DZjTzDNFLMy4vyyyjmsC9yEVylClBdxFgo4LeOd9qggk24Mk7PllLKpmYsbgtIIz30JFOQ==
-X-Google-Smtp-Source: AGHT+IHrSVJLp5vqRsImw+UcysL48jk5oSGv3caGjeYp1p+RuIeIgqywcMlQJQyasptXM8deK5Pyqg==
-X-Received: by 2002:ac2:4e04:0:b0:549:39d8:51ef with SMTP id 2adb3069b0e04-549c38cf317mr5454991e87.6.1742206328885;
-        Mon, 17 Mar 2025 03:12:08 -0700 (PDT)
-Received: from foxbook (adqh54.neoplus.adsl.tpnet.pl. [79.185.141.54])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-549d6fe3dc0sm6747e87.117.2025.03.17.03.12.07
-        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
-        Mon, 17 Mar 2025 03:12:08 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1742206325; x=1742811125;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Unak19FFUAPatD54I/+J4+Z4vCj2oJP7uUeW6FKDhls=;
+        b=Z8srGkViGzt1U/adSqYxXvQjd5Gn+FlVBg/wfG8UeWdWsP4U8f7YoM/fl/m8ym+Mva
+         p1duYDKXJt0RZJfmcE8hNzo3zJUXBzQ0Nm6cHLs0TR/gizUJt0MtABjDzLmT/usSDSEp
+         6yjdZTzlDjhtIAPm0+wpuzxNzosIACxVVhU15tAxrkAZUR2Cz3KSgVEU7rdVYbn+s5vN
+         e8Xv+6qyFZbWIYHfkEaRi+iRPyRUw4qZfEjd5ZhELdBFLmdHgiEDi2YJBUG2jaxeuuVy
+         e2sqiZFi10lEoU8EqMiPfCTm0Oq4G9qMI3hg1c8nKpSJUVPkbkz42fzMfcBdNnZ6OLJL
+         x9gw==
+X-Forwarded-Encrypted: i=1; AJvYcCUw+4L876B7Uv0GuGSpQUu58m8lvOBc5XrXjJs0fhSWSZV/v9U54VWZBWbT4IYT7Anjp2XkuEm+hLVRnoQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzZ5eFOENmyddTrwomJ9jxIiWIrkj4XPeHCM7zTSENqwC4Wr+sH
+	eVqysXVpE5Y+iezWl9aGsblUhjQhrb9g967Pg0Qx5xbsYjR+BLzELSr4BaFq3H8=
+X-Gm-Gg: ASbGnctjZOfNOXSn62cMF5p825ZrhL7o3lhhiLPFEyAPIVXYs2hAO1IOIMPP38c8pxZ
+	JlhvhVXcOmdh0LQppymyp2VTvn/2cJNUkj2xRqC4nZKJpEee9SmZELSPI2WCP3jjNlrzEbUYti7
+	PJTnptHMV2U2fB0JR5Tu4olskisE+VMPxdODYisy1QUtIZAPTQ3wJHBDZe/POlS3sBWkmRAWRKN
+	aDSMfxZVSH8BLqvzUaBH4p3YcQY3We7oIVTpD6/3regOCZhZVl0iVOYicFrDOSlptL7gd+n3anl
+	Okm1WgPp9scPO1Zg4J0KRceSYi+WMfzildTYH4wl/vk4HJZRzRap+NRevbQl27eBz2FnfAzS3ZS
+	c7hDTruaR93dVU1/T9x2HWw==
+X-Google-Smtp-Source: AGHT+IF9c9Mh2aIPNg9XfrvDpqYWQukEAmGtKi2uLzyWlmrgt/ypKChDbDRK5Er/GjQEgaiU1/Yvkg==
+X-Received: by 2002:a05:600c:4e86:b0:43c:e7ae:4bcf with SMTP id 5b1f17b1804b1-43d1ebf9d44mr128205195e9.0.1742206324974;
+        Mon, 17 Mar 2025 03:12:04 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:3d9:2080:55a6:4776:6e68:e626? ([2a01:e0a:3d9:2080:55a6:4776:6e68:e626])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d200faebbsm99470565e9.30.2025.03.17.03.12.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 17 Mar 2025 03:12:04 -0700 (PDT)
+Message-ID: <3c688493-02db-461d-b07c-34f2f4477f01@linaro.org>
 Date: Mon, 17 Mar 2025 11:12:03 +0100
-From: =?UTF-8?B?TWljaGHFgg==?= Pecio <michal.pecio@gmail.com>
-To: ki.chiang65@gmail.com
-Cc: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
- linux-usb@vger.kernel.org, mathias.nyman@intel.com
-Subject: Re: [PATCH v4 0/1] xhci: Some improvement for Etron xHCI host
-Message-ID: <20250317111203.03a12ec8@foxbook>
-In-Reply-To: <20250205053750.28251-1-ki.chiang65@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH RFC 2/2] drm/panel/panel-simple: Use the new allocation in
+ place of devm_kzalloc()
+To: Anusha Srivatsa <asrivats@redhat.com>,
+ Jessica Zhang <quic_jesszhan@quicinc.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+Cc: Luca Ceresoli <luca.ceresoli@bootlin.com>,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20250312-drm-panel-v1-0-e99cd69f6136@redhat.com>
+ <20250312-drm-panel-v1-2-e99cd69f6136@redhat.com>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <20250312-drm-panel-v1-2-e99cd69f6136@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-Hi again.
+On 13/03/2025 01:54, Anusha Srivatsa wrote:
+> Start using the new helper that does the refcounted
+> allocations.
+> 
+> Signed-off-by: Anusha Srivatsa <asrivats@redhat.com>
+> ---
+>   drivers/gpu/drm/panel/panel-simple.c | 4 +---
+>   1 file changed, 1 insertion(+), 3 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/panel/panel-simple.c b/drivers/gpu/drm/panel/panel-simple.c
+> index 232b03c1a259eb15e423b9d452d28e2ff95c70f8..d7530c3533af34f83ce8c6d6067e7f293f2d4bf1 100644
+> --- a/drivers/gpu/drm/panel/panel-simple.c
+> +++ b/drivers/gpu/drm/panel/panel-simple.c
+> @@ -579,7 +579,7 @@ static int panel_simple_probe(struct device *dev, const struct panel_desc *desc)
+>   	u32 bus_flags;
+>   	int err;
+>   
+> -	panel = devm_kzalloc(dev, sizeof(*panel), GFP_KERNEL);
+> +	panel = devm_drm_panel_alloc(dev, struct panel_simple, base, &panel_simple_funcs);
+>   	if (!panel)
+>   		return -ENOMEM;
+>   
+> @@ -694,8 +694,6 @@ static int panel_simple_probe(struct device *dev, const struct panel_desc *desc)
+>   	pm_runtime_set_autosuspend_delay(dev, 1000);
+>   	pm_runtime_use_autosuspend(dev);
+>   
+> -	drm_panel_init(&panel->base, dev, &panel_simple_funcs, connector_type);
 
-> To prevent the xHCI driver from printing a "Transfer event TRB DMA
-> ptr not part of current TD" error message when an error is detected
-> while processing the last TRB of an isoc TD:
->   xhci: Correctly handle last TRB of isoc TD on Etron xHCI host
+As pointed by the helpers review, you're loosing the connector_type info here.
 
-By the way, do you have other problems with your Etrons trying to run
-SuperSpeed isochronous endpoints? Mine doesn't work at altsettings with
-non-power-of-two ESIT payload very well.
+> -
+>   	err = drm_panel_of_backlight(&panel->base);
+>   	if (err) {
+>   		dev_err_probe(dev, err, "Could not find backlight\n");
+> 
 
-rmmod uvcvideo ; modprobe uvcvideo trace=0x400
-causes the selected altsetting to be printed to dmesg. Choosing some
-video resolutions results in non-power-of-two altsetting which works
-on other HCs, but causes visible image corruption and errors on Etron:
-
-[  +5.514779] usb 7-1: Device requested 7332 B/frame bandwidth
-[  +0.000016] usb 7-1: Selecting alternate setting 8 (12288 B/frame bandwidth)
-[  +0.002647] usb 7-1: Allocated 5 URB buffers of 32x12288 bytes each
-[  +0.148160] xhci_hcd 0000:06:00.0: WARN: bandwidth overrun event for slot 1 ep 2 on endpoint
-[  +0.003382] xhci_hcd 0000:06:00.0: WARN: bandwidth overrun event for slot 1 ep 2 on endpoint
-[  +0.000621] xhci_hcd 0000:06:00.0: WARN: bandwidth overrun event for slot 1 ep 2 on endpoint
-[  +0.003380] xhci_hcd 0000:06:00.0: WARN: bandwidth overrun event for slot 1 ep 2 on endpoint
-[  +0.000614] xhci_hcd 0000:06:00.0: WARN: bandwidth overrun event for slot 1 ep 2 on endpoint
-[  +0.003388] xhci_hcd 0000:06:00.0: WARN: bandwidth overrun event for slot 1 ep 2 on endpoint
-[  +0.000609] xhci_hcd 0000:06:00.0: WARN: bandwidth overrun event for slot 1 ep 2 on endpoint
-
-As far as I'm able to tell, the problem is caused by multi-TRB TDs
-completeing with Short Packet on the first TRB. Then it kinda looks
-like the stupid chip assumes that the second TRB is a new TD, adds
-the actual TRB of the next TD to it and finds that the resulting TD
-is too long, so it rejects it with BW Overrun error.
-
-I wonder if it's something unique to my chip (maybe FW revision?) or
-a general rule with those buggy things.
-
-Thanks,
-Michal
+Thanks !
+Neil
 
