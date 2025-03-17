@@ -1,104 +1,125 @@
-Return-Path: <linux-kernel+bounces-563526-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563527-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CF12A64378
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 08:25:59 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFFB3A6437A
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 08:26:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 881D8188E2A6
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 07:26:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 11A317A4BA1
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 07:25:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C94621ABCA;
-	Mon, 17 Mar 2025 07:25:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF5B021B184;
+	Mon, 17 Mar 2025 07:25:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="jqGWUzt8"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="M/5BFDYv"
+Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77B4621ABA4;
-	Mon, 17 Mar 2025 07:25:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2206E21ADD6;
+	Mon, 17 Mar 2025 07:25:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742196348; cv=none; b=rlumcJUQKHjRWVVVCtxpleiXGntTcSK8wJK0a5A8cq5yh2pCF/rhEPw54bqP8pkQ/kNmt1R8qCbni21Ez+EnpPJQFwHQ71ITxsbZOoqiFXEUUkuymk8sEMegGHJb4lBbg8thBpjRlHXLcA0ncbHoGa15ftatXJRe6MD1Rs69+jI=
+	t=1742196354; cv=none; b=C0SDv60B2tXL0Wou47UmlFHC4qvLPbYGjAXnhKuQ7U4mAwiC+kDZlkON/b5cWziIyDLWduQqMue7hbTvrd+hsVibGuMZNYSniS4+V/3dWY62Gkux37Tar96MTGJGwj90xQXUITI8afL76SoB5ZS/RbgavRGyXanqz5j9LwoCCkU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742196348; c=relaxed/simple;
-	bh=JzoP5yzKpTJ7PuP2QtN1xaA+IYoWEmYujuhmEHGzY9I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=happRtmZTcvUYWw202Dql3N1xmVtiM/Xhh4zbITi+VeJ5fhiXMvzC9B3DfoTlV+jdfzz3Kx62sWyWT1vo/uoEYZVkf4OwNovj9u+w7AtAGo90mB3prQdYMtuLl5BSa9iqrK16mU9EEPY+fRPaMAIziqpef5GsAD4Wu3Cj4Jj3iU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=jqGWUzt8; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+	s=arc-20240116; t=1742196354; c=relaxed/simple;
+	bh=CzLh11DqZtf8IqGapJ5m66ohkDySA4nKLkHEabqVZw4=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=UoNR6XC8q+2+HLytWgVrQa1osqHF0+vQjSeISS5qjnA0VGS4Ldj7cgDJ6doa2irT2JsKYFZC6y48fl5GFpeUfnY3dUobXjWADYIcYwXHwuySs8ZdPM8jSnm8jWfS/6D85VxbGNx8dLv4ZfgqIdnouF7hddq7eqMoFqPjc/FpfQo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=M/5BFDYv; arc=none smtp.client-ip=168.119.38.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=EGbSg0bG5fPXPVKWZzh9nWVVFmYOorGZJPYkwHy6xo4=; b=jqGWUzt8DmwByL+khi3b6qCsAc
-	H7Hfn7uQIWTXAi98RHCKlqis44R16mpXnoQbkqW5hH/tgjuxHXQbrYTjmjaRt6xxqXAig3RBJgnR1
-	No0W8srsw6uOCABuEqh6kIcn4aZ3VrSzi6/Z+yWbRFgaCII9oh3/EFpaHzPfzEOY5Q7xfmq5eNjW6
-	OwUTpxTEELaiCef5rcAxSB6ZuRL3UzOQ+FAUfi4xSahjib8PxyeKw+AqwuAAhrLkUuOsOE7+NhNPo
-	cljX4Mao2J4hKlH5QEXynUgZGkobyCT66Ls2ojS9xSwmjyQhU86sohlogRraAMiQr2GZI3Jf3/mKK
-	M91pRdtQ==;
-Received: from [2001:4bb8:2dd:73af:768b:3020:1cfb:1718] (helo=localhost)
-	by bombadil.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tu4r2-00000001YjZ-082y;
-	Mon, 17 Mar 2025 07:25:45 +0000
-Date: Mon, 17 Mar 2025 08:25:36 +0100
-From: Christoph Hellwig <hch@infradead.org>
-To: John Garry <john.g.garry@oracle.com>
-Cc: brauner@kernel.org, djwong@kernel.org, cem@kernel.org,
-	dchinner@redhat.com, linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	ojaswin@linux.ibm.com, ritesh.list@gmail.com,
-	martin.petersen@oracle.com, tytso@mit.edu,
-	linux-ext4@vger.kernel.org, Carlos Maiolino <cmaiolino@redhat.com>
-Subject: Re: [PATCH v6 13/13] xfs: update atomic write max size
-Message-ID: <Z9fOcFB5dhpK4Lsw@infradead.org>
-References: <20250313171310.1886394-1-john.g.garry@oracle.com>
- <20250313171310.1886394-14-john.g.garry@oracle.com>
+	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
+	Resent-Cc:Resent-Message-ID; bh=p3UTVc3ZDCRlY1xT6AkALtD92EQfzIhzYvG7PR0/6IQ=;
+	t=1742196352; x=1743405952; b=M/5BFDYvElKT0++0pL0u0/TxtUyh1/AlNYy2PvVMpyBketL
+	oLgONyjVWkkqdoCTzbdfxxF8JncQosdg89AeLsHUSOWZcSyDmCiPcDlsGLB7LiNrqg6kviQLMaJaX
+	r8MRiF2VYYmxQOZ05NQae0RL7SNRQdTDrCVSDD7+oTkk1GZxrQ+gHA+AM7yR5zn6uJtjyi3NDWBez
+	udCkDeNKElvQZVF9Myw2gqk7Bc6MH1iyBz5mFNK8cLxGyZcrJA0K7uKlAbtDetEDuwu0uH40oNlhT
+	PNXqQXBOlM+QY55zU8nX5irdoxzWU6FOlPtfXQfcK7O4Cewgn7Hk/pCo9PosupjQ==;
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.98)
+	(envelope-from <johannes@sipsolutions.net>)
+	id 1tu4r4-0000000E1Gl-3Vkg;
+	Mon, 17 Mar 2025 08:25:47 +0100
+Message-ID: <a383d25de302699592bc99867dbf481cb2ab875b.camel@sipsolutions.net>
+Subject: Re: [PATCH v3] wifi: mac80211: check basic rates validity in
+ sta_link_apply_parameters
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Mikhail Lobanov <m.lobanov@rosa.ru>
+Cc: Shaul Triebitz <shaul.triebitz@intel.com>, Christophe Jaillet
+	 <christophe.jaillet@wanadoo.fr>, linux-wireless@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org
+Date: Mon, 17 Mar 2025 08:25:43 +0100
+In-Reply-To: <20250315161253.19399-1-m.lobanov@rosa.ru>
+References: <20250315161253.19399-1-m.lobanov@rosa.ru>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250313171310.1886394-14-john.g.garry@oracle.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+X-malware-bazaar: not-scanned
 
-On Thu, Mar 13, 2025 at 05:13:10PM +0000, John Garry wrote:
-> For simplicity, limit at the max of what the mounted bdev can support in
-> terms of atomic write limits. Maybe in future we will have a better way
-> to advertise this optimised limit.
+On Sat, 2025-03-15 at 19:12 +0300, Mikhail Lobanov wrote:
+> When userspace sets supported rates for a new station via
+> NL80211_CMD_NEW_STATION, it might send a list that's empty
+> or contains only invalid values. Currently, we process these
+> values in sta_link_apply_parameters() without checking the result of
+> ieee80211_parse_bitrates(), which can lead to an empty rates bitmap.
+>=20
+> A similar issue was addressed for NL80211_CMD_SET_BSS in commit
+> ce04abc3fcc6 ("wifi: mac80211: check basic rates validity").
+> This patch applies the same approach in sta_link_apply_parameters()
+> for NL80211_CMD_NEW_STATION, ensuring there is at least one valid
+> rate by inspecting the result of ieee80211_parse_bitrates().
+>=20
+> Found by Linux Verification Center (linuxtesting.org) with Syzkaller.
+>=20
+> Fixes: b95eb7f0eee4 ("wifi: cfg80211/mac80211: separate link params from =
+station params")
+> Signed-off-by: Mikhail Lobanov <m.lobanov@rosa.ru>
+> ---
+> v2: Fixed the patch subject to provide a complete description.
+> v3: added the missing if as Christophe Jaillet (christophe.jaillet@wanado=
+o.fr) noticed.
+>=20
+>  net/mac80211/cfg.c | 9 +++++----
+>  1 file changed, 5 insertions(+), 4 deletions(-)
+>=20
+> diff --git a/net/mac80211/cfg.c b/net/mac80211/cfg.c
+> index 9351c64608a9..b4d18172da16 100644
+> --- a/net/mac80211/cfg.c
+> +++ b/net/mac80211/cfg.c
+> @@ -1909,10 +1909,11 @@ static int sta_link_apply_parameters(struct ieee8=
+0211_local *local,
+> =20
+>  	if (params->supported_rates &&
+>  	    params->supported_rates_len) {
+> -		ieee80211_parse_bitrates(link->conf->chanreq.oper.width,
+> -					 sband, params->supported_rates,
+> -					 params->supported_rates_len,
+> -					 &link_sta->pub->supp_rates[sband->band]);
+> +		if (!ieee80211_parse_bitrates(link->conf->chanreq.oper.width,
+> +					      sband, params->supported_rates,
+> +					      params->supported_rates_len,
+> +					      &link_sta->pub->supp_rates[sband->band]))
+> +			return -EINVAL;
+>  	}
 
-You'll still need to cover limit this by the amount that can
-be commited in a single transactions.  And handle the case where there
-is no hardware support at all.
+Seems you could remove the braces, and put it all into a single if
+statement?
 
->  xfs_get_atomic_write_max_attr(
+ if (... && ... && !parse(...))
+     return -EINVAL;
 
-I missed it in the previous version, but can be drop the
-pointless _attr for these two helpers?
+I think?
 
-> +static inline void
-> +xfs_compute_awu_max(
-
-And use a more descriptive name than AWU, wich really just is a
-nvme field name.
-
-> +	awu_max = 1;
-> +	while (1) {
-> +		if (agsize % (awu_max * 2))
-> +			break;
-
-	while ((agsize % (awu_max * 2) == 0)) {
-
-?
-
-> +	xfs_extlen_t		m_awu_max;	/* data device max atomic write */
-
-overly long line.
-
+johannes
 
