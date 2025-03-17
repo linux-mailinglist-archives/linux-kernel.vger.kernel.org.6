@@ -1,161 +1,219 @@
-Return-Path: <linux-kernel+bounces-564553-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564554-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F28D3A6574F
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 17:06:25 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8A47A6574C
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 17:06:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EE75A42146E
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 15:59:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B10D5170CE3
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 16:00:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39A3F188907;
-	Mon, 17 Mar 2025 15:57:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="talXNKxN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 562D81A01D4;
+	Mon, 17 Mar 2025 15:57:26 +0000 (UTC)
+Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86B7A28EB;
-	Mon, 17 Mar 2025 15:57:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 056C317A31B
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 15:57:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742227043; cv=none; b=TaWk2EMGtFEKYu/HSff9p5zNTVADN/AGqx0H60S3sSaSJluc1o7Bz6Of7r8Q73a+dTfepAjEoJvPe1QkbLXgOLTq7rvfXXciO+l1x7sex4W+eliiALTNT5gz84o5dbRyAm2bLzwOPt1fYNhGtXW4nxY1IgAuqMhZy3fvLdFf+3E=
+	t=1742227045; cv=none; b=rryWzwJXhxx1qGaLSfIVFpH9RgfXV8TcekImyr3LbizG/42kZtej1eFAxoYdsHql5Z0wYSZBIY643OC76fSdSyB1HOqxHC3K6GHRqinkVRUpZHeLAIDzb+qyMGgqcmL5d0oolZV/QOkvdqRo94EMEsfDUvIkIE7/YHHNCi7LhvI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742227043; c=relaxed/simple;
-	bh=Z393QTCPkGUwqAKXZiX9OYGpork+zYIhwJzOk3f+DR0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TIsuqjKqYMO+P0lRRMUW+8WvHTdULLAKCcjtyCNAwMDz5J7HqgmiB0i7n8JNRnnnp8kE0LjmJi18EvxaQTVsl4FyHsnJ9x7jUzMmEANdcdhY6R9OP3xBN5664P1qv05zbnfH+d2PC5VxNA/+q4PDyGIJYJdysKOfvZG9ehRoj98=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=talXNKxN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5071C4CEE3;
-	Mon, 17 Mar 2025 15:57:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742227043;
-	bh=Z393QTCPkGUwqAKXZiX9OYGpork+zYIhwJzOk3f+DR0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=talXNKxNZkpqi1mzOE7aP34ZEd17xw0JWO7D6f9DIDg4SG9/v9YBfX3DfmpDQlbwi
-	 YrR00gDIL7RVTiByS0OIUOZ6z0VjrTpd2mvR30aod6LRBReW290Mo7w4wD+WlfUoUl
-	 Si8p8gX2Yzg9ddZt6NdOoaa2pAOIvw30051bUCygczaKtXHTFBtCKgKZQbwBHYHIjB
-	 dH8XoMqJrRLX11G6VHTwdg4EUDJoeZYSBYuOSAwi57HzXGqfT3pztWeWLLP0izXnJC
-	 eoDExaaTfLYu1GonnkmZ5V636kmEyJNoL+O9KCiXAjZic5MxJ3+1SBZHLRbwWy0mqm
-	 cnyJCe+GSlifQ==
-Date: Mon, 17 Mar 2025 08:57:20 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Borislav Petkov <bp@alien8.de>
-Cc: linux-kernel@vger.kernel.org, linux-tip-commits@vger.kernel.org,
-	Matteo Rizzo <matteorizzo@google.com>,
-	Ingo Molnar <mingo@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>, x86@kernel.org
-Subject: Re: [tip: perf/urgent] perf/x86: Check data address for IBS software
- filter
-Message-ID: <Z9hGYP76E6dDEppS@google.com>
-References: <20250317081058.1794729-1-namhyung@kernel.org>
- <174220290574.14745.9132867025462242568.tip-bot2@tip-bot2>
- <20250317101048.GAZ9f1KEixI3-b0EoR@fat_crate.local>
+	s=arc-20240116; t=1742227045; c=relaxed/simple;
+	bh=bQS/Z8hSCNa+UUBPm5Eq+ej84POnMjt56pV8bkoB5Hs=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=BjIoTuxXBPXPQsdYVznXcYsJTkPUgwTqWjfFfRrVnovNz+U/dJdyP+0sDBJY5Hd3TXwEfruf0ciVvCbYxx8hkL7wWR/s1kxiGh1C+wLMZykBQoomK8+n79XWNOWgSdE2OcDWHFMI8hHY0/sJJFfr6Zq2ufhH575xwevYWVeBciU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-3ce843b51c3so129335985ab.0
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 08:57:23 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742227043; x=1742831843;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=VrSNfPkC4/dJSqogMc2C9zkXX5OF4FlmLIcj0/IqWpk=;
+        b=J0hLLDld0KDG72AKdbKzJj0SyCT32TKr2lx820v2asTYbzNVQz1NAOXiCBcQRNA45g
+         xy/qER0uqjsEyAR28Wr23q0Wihvdk5HN03KJlPLTqyDwyaUc7QYuAoWQW3nXEXdHl32R
+         MF+lEVnsOOCrxIPFPH+DjjiDPynxA1IEDaKK8kEgTdWZi8rPW07kFT+YRUonrgVy6jOy
+         uUSwvVnwPpV3SMfG73Oi9S1UnSDw3LpcS5REvztF2p6ca2Ydh8ARaxPWuhw22hiFt8yO
+         9hJLuyv+GxYA4f70WJC3s+2QSGHEhxs99SPs9Iud0/UAt7BxLcRxpNoKlvLKYO/6ULMu
+         F5hw==
+X-Forwarded-Encrypted: i=1; AJvYcCXD9esXtY3nVItoCxkw8nphL+fSXrLymlQZDHffpXG2bfIYdPXM2r6s8TvL3zkCPp+CK4JxW8gTQqxEBXA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyKfHeS6BqXRWp/9ZNAzDUDDhdIdcCgGm5iYBTvkVlSCda9JZpP
+	iJyJyR5Q+UZpOe4TU6tKixzd8YX5Pln77QSzQ+hER0BDGh2wYH7Z3C6wtZvwsshjV6AMO6d9RS7
+	bXK9xI4PNBcPfF70C62aX/1CasKSX26R8EaAueWitn//KV/qgao+U3BU=
+X-Google-Smtp-Source: AGHT+IEK2YdpsCE23SJm/sdCC58aB+z+BP/BSb7MDUvAjVa1Oe9Bnrn+Ht7YD5EUiCVjjESpQGZe1vCiaBR7sWSFefqSYunEFo9Y
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250317101048.GAZ9f1KEixI3-b0EoR@fat_crate.local>
+X-Received: by 2002:a92:c56e:0:b0:3d2:b72d:a502 with SMTP id
+ e9e14a558f8ab-3d57ba14118mr5178855ab.22.1742227043117; Mon, 17 Mar 2025
+ 08:57:23 -0700 (PDT)
+Date: Mon, 17 Mar 2025 08:57:23 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67d84663.050a0220.2ca2c6.0020.GAE@google.com>
+Subject: [syzbot] [bluetooth?] KASAN: wild-memory-access Read in l2cap_connect_cfm
+From: syzbot <syzbot+0e4ebcc970728e056324@syzkaller.appspotmail.com>
+To: johan.hedberg@gmail.com, linux-bluetooth@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, luiz.dentz@gmail.com, marcel@holtmann.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Mar 17, 2025 at 11:10:48AM +0100, Borislav Petkov wrote:
-> On Mon, Mar 17, 2025 at 09:15:05AM -0000, tip-bot2 for Namhyung Kim wrote:
-> > The following commit has been merged into the perf/urgent branch of tip:
-> > 
-> > Commit-ID:     b0be17d8108bf3448a58be319d085155a128cf3a
-> > Gitweb:        https://git.kernel.org/tip/b0be17d8108bf3448a58be319d085155a128cf3a
-> > Author:        Namhyung Kim <namhyung@kernel.org>
-> > AuthorDate:    Mon, 17 Mar 2025 01:10:58 -07:00
-> > Committer:     Ingo Molnar <mingo@kernel.org>
-> > CommitterDate: Mon, 17 Mar 2025 10:04:31 +01:00
-> > 
-> > perf/x86: Check data address for IBS software filter
-> > 
-> > The IBS software filter is filtering kernel samples for regular users in
-> > PMI handler.  It checks the instruction address in the IBS register to
-> > determine if it was in the kernel mode or not.
-> > 
-> > But it turns out that it's possible to report a kernel data address even
-> > if the instruction address belongs to the user space.  Matteo Rizzo
-> > found that when an instruction raises an exception, IBS can report some
-> > kernel data address like IDT while holding the faulting instruction's
-> > RIP.  To prevent an information leak, it should double check if the data
-> > address in PERF_SAMPLE_DATA is in the kernel space as well.
-> > 
-> > Suggested-by: Matteo Rizzo <matteorizzo@google.com>
-> > Signed-off-by: Namhyung Kim <namhyung@kernel.org>
-> > Signed-off-by: Ingo Molnar <mingo@kernel.org>
-> > Cc: Peter Zijlstra <peterz@infradead.org>
-> > Link: https://lore.kernel.org/r/20250317081058.1794729-1-namhyung@kernel.org
-> > ---
-> >  arch/x86/events/amd/ibs.c | 7 +++++++
-> >  1 file changed, 7 insertions(+)
-> > 
-> > diff --git a/arch/x86/events/amd/ibs.c b/arch/x86/events/amd/ibs.c
-> > index e7a8b87..24985c7 100644
-> > --- a/arch/x86/events/amd/ibs.c
-> > +++ b/arch/x86/events/amd/ibs.c
-> > @@ -1147,6 +1147,13 @@ fail:
-> >  	if (perf_ibs == &perf_ibs_op)
-> >  		perf_ibs_parse_ld_st_data(event->attr.sample_type, &ibs_data, &data);
-> >  
-> > +	if ((event->attr.config2 & IBS_SW_FILTER_MASK) &&
-> > +	    (event->attr.sample_type & PERF_SAMPLE_ADDR) &&
-> > +	    event->attr.exclude_kernel && !access_ok(data.addr)) {
-> > +		throttle = perf_event_account_interrupt(event);
-> > +		goto out;
-> > +	}
-> 
-> Did anyone build this?
+Hello,
 
-Oops, sorry about this.  I fixed it locally but sent the one before
-adding the change.  Will send v2.
+syzbot found the following issue on:
 
-Thanks,
-Namhyung
+HEAD commit:    78e3fd2b7e4b Merge remote-tracking branch 'will/for-next/p..
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+console output: https://syzkaller.appspot.com/x/log.txt?x=15b05874580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=ddc962951c395b1d
+dashboard link: https://syzkaller.appspot.com/bug?extid=0e4ebcc970728e056324
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: arm64
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/6f8d7598ad09/disk-78e3fd2b.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/493e8429a272/vmlinux-78e3fd2b.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/c843736f7c02/Image-78e3fd2b.gz.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+0e4ebcc970728e056324@syzkaller.appspotmail.com
+
+kobject: kobject_add_internal failed for hci1:201 with -EEXIST, don't try to register things with the same name in the same directory.
+Bluetooth: hci1: failed to register connection device
+==================================================================
+BUG: KASAN: wild-memory-access in instrument_atomic_read include/linux/instrumented.h:68 [inline]
+BUG: KASAN: wild-memory-access in atomic_read include/linux/atomic/atomic-instrumented.h:32 [inline]
+BUG: KASAN: wild-memory-access in l2cap_chan_lock include/net/bluetooth/l2cap.h:827 [inline]
+BUG: KASAN: wild-memory-access in l2cap_conn_ready net/bluetooth/l2cap_core.c:1624 [inline]
+BUG: KASAN: wild-memory-access in l2cap_connect_cfm+0x538/0xde4 net/bluetooth/l2cap_core.c:7245
+Read of size 4 at addr deacfffffffffc8c by task kworker/u9:3/6449
+
+CPU: 1 UID: 0 PID: 6449 Comm: kworker/u9:3 Not tainted 6.14.0-rc6-syzkaller-g78e3fd2b7e4b #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
+Workqueue: hci1 hci_rx_work
+Call trace:
+ show_stack+0x2c/0x3c arch/arm64/kernel/stacktrace.c:466 (C)
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0xe4/0x150 lib/dump_stack.c:120
+ print_report+0xf8/0x550 mm/kasan/report.c:524
+ kasan_report+0xd8/0x138 mm/kasan/report.c:634
+ kasan_check_range+0x268/0x2a8 mm/kasan/generic.c:189
+ __kasan_check_read+0x20/0x30 mm/kasan/shadow.c:31
+ instrument_atomic_read include/linux/instrumented.h:68 [inline]
+ atomic_read include/linux/atomic/atomic-instrumented.h:32 [inline]
+ l2cap_chan_lock include/net/bluetooth/l2cap.h:827 [inline]
+ l2cap_conn_ready net/bluetooth/l2cap_core.c:1624 [inline]
+ l2cap_connect_cfm+0x538/0xde4 net/bluetooth/l2cap_core.c:7245
+ hci_connect_cfm+0x120/0x1d4 include/net/bluetooth/hci_core.h:2051
+ le_conn_complete_evt+0xa70/0xf80 net/bluetooth/hci_event.c:5763
+ hci_le_conn_complete_evt+0x114/0x404 net/bluetooth/hci_event.c:5789
+ hci_le_meta_evt+0x2a4/0x478 net/bluetooth/hci_event.c:7162
+ hci_event_func net/bluetooth/hci_event.c:7470 [inline]
+ hci_event_packet+0x884/0x1060 net/bluetooth/hci_event.c:7525
+ hci_rx_work+0x31c/0xb04 net/bluetooth/hci_core.c:4015
+ process_one_work+0x810/0x1638 kernel/workqueue.c:3238
+ process_scheduled_works kernel/workqueue.c:3319 [inline]
+ worker_thread+0x97c/0xeec kernel/workqueue.c:3400
+ kthread+0x65c/0x7b0 kernel/kthread.c:464
+ ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:862
+==================================================================
+Unable to handle kernel paging request at virtual address fbd51fffffffff91
+KASAN: maybe wild-memory-access in range [0xdeacfffffffffc88-0xdeacfffffffffc8f]
+Mem abort info:
+  ESR = 0x0000000096000004
+  EC = 0x25: DABT (current EL), IL = 32 bits
+  SET = 0, FnV = 0
+  EA = 0, S1PTW = 0
+  FSC = 0x04: level 0 translation fault
+Data abort info:
+  ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
+  CM = 0, WnR = 0, TnD = 0, TagAccess = 0
+  GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
+[fbd51fffffffff91] address between user and kernel address ranges
+Internal error: Oops: 0000000096000004 [#1] PREEMPT SMP
+Modules linked in:
+CPU: 1 UID: 0 PID: 6449 Comm: kworker/u9:3 Tainted: G    B              6.14.0-rc6-syzkaller-g78e3fd2b7e4b #0
+Tainted: [B]=BAD_PAGE
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
+Workqueue: hci1 hci_rx_work
+pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+pc : raw_atomic_read include/linux/atomic/atomic-arch-fallback.h:457 [inline]
+pc : atomic_read include/linux/atomic/atomic-instrumented.h:33 [inline]
+pc : l2cap_chan_lock include/net/bluetooth/l2cap.h:827 [inline]
+pc : l2cap_conn_ready net/bluetooth/l2cap_core.c:1624 [inline]
+pc : l2cap_connect_cfm+0x53c/0xde4 net/bluetooth/l2cap_core.c:7245
+lr : instrument_atomic_read include/linux/instrumented.h:68 [inline]
+lr : atomic_read include/linux/atomic/atomic-instrumented.h:32 [inline]
+lr : l2cap_chan_lock include/net/bluetooth/l2cap.h:827 [inline]
+lr : l2cap_conn_ready net/bluetooth/l2cap_core.c:1624 [inline]
+lr : l2cap_connect_cfm+0x538/0xde4 net/bluetooth/l2cap_core.c:7245
+sp : ffff8000a1577460
+x29: ffff8000a1577500 x28: ffff0000d4756000 x27: 1fffe0001afe1a03
+x26: dfff800000000000 x25: ffff0000d47564b0 x24: ffff0000d7f0d01a
+x23: dead000000000100 x22: ffff0000d7f0d2c0 x21: 1fffe0001b467007
+x20: ffff0000da33803d x19: deacfffffffffc8c x18: 1fffe000366f6086
+x17: ffff80008fbbd000 x16: ffff80008b7cba1c x15: 0000000000000001
+x14: 1ffff0001262eaf8 x13: 0000000000000000 x12: 0000000000000000
+x11: 0000000000100000 x10: 00000000000596ee x9 : 0000000000000000
+x8 : 1bd59fffffffff91 x7 : 1fffe000366f6087 x6 : ffff8000803d4bfc
+x5 : 0000000000000000 x4 : 0000000000000001 x3 : ffff8000802f88ec
+x2 : 0000000000000001 x1 : 0000000000000000 x0 : 0000000000000000
+Call trace:
+ raw_atomic_read include/linux/atomic/atomic-arch-fallback.h:457 [inline] (P)
+ atomic_read include/linux/atomic/atomic-instrumented.h:33 [inline] (P)
+ l2cap_chan_lock include/net/bluetooth/l2cap.h:827 [inline] (P)
+ l2cap_conn_ready net/bluetooth/l2cap_core.c:1624 [inline] (P)
+ l2cap_connect_cfm+0x53c/0xde4 net/bluetooth/l2cap_core.c:7245 (P)
+ hci_connect_cfm+0x120/0x1d4 include/net/bluetooth/hci_core.h:2051
+ le_conn_complete_evt+0xa70/0xf80 net/bluetooth/hci_event.c:5763
+ hci_le_conn_complete_evt+0x114/0x404 net/bluetooth/hci_event.c:5789
+ hci_le_meta_evt+0x2a4/0x478 net/bluetooth/hci_event.c:7162
+ hci_event_func net/bluetooth/hci_event.c:7470 [inline]
+ hci_event_packet+0x884/0x1060 net/bluetooth/hci_event.c:7525
+ hci_rx_work+0x31c/0xb04 net/bluetooth/hci_core.c:4015
+ process_one_work+0x810/0x1638 kernel/workqueue.c:3238
+ process_scheduled_works kernel/workqueue.c:3319 [inline]
+ worker_thread+0x97c/0xeec kernel/workqueue.c:3400
+ kthread+0x65c/0x7b0 kernel/kthread.c:464
+ ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:862
+Code: 52800081 aa1303e0 97568921 d343fe68 (38fa6908) 
+---[ end trace 0000000000000000 ]---
+----------------
+Code disassembly (best guess):
+   0:	52800081 	mov	w1, #0x4                   	// #4
+   4:	aa1303e0 	mov	x0, x19
+   8:	97568921 	bl	0xfffffffffd5a248c
+   c:	d343fe68 	lsr	x8, x19, #3
+* 10:	38fa6908 	ldrsb	w8, [x8, x26] <-- trapping instruction
 
 
-> 
-> arch/x86/events/amd/ibs.c: In function ‘perf_ibs_handle_irq’:
-> arch/x86/events/amd/ibs.c:1291:63: error: macro "access_ok" requires 2 arguments, but only 1 given
->  1291 |             event->attr.exclude_kernel && !access_ok(data.addr)) {
->       |                                                               ^
-> In file included from ./arch/x86/include/asm/uaccess.h:25,
->                  from ./include/linux/uaccess.h:12,
->                  from ./include/linux/sched/task.h:13,
->                  from ./include/linux/sched/signal.h:9,
->                  from ./include/linux/ptrace.h:7,
->                  from ./include/uapi/asm-generic/bpf_perf_event.h:4,
->                  from ./arch/x86/include/generated/uapi/asm/bpf_perf_event.h:1,
->                  from ./include/uapi/linux/bpf_perf_event.h:11,
->                  from ./include/linux/perf_event.h:18,
->                  from arch/x86/events/amd/ibs.c:9:
-> ./include/asm-generic/access_ok.h:45: note: macro "access_ok" defined here
->    45 | #define access_ok(addr, size) likely(__access_ok(addr, size))
->       | 
-> arch/x86/events/amd/ibs.c:1291:44: error: ‘access_ok’ undeclared (first use in this function)
->  1291 |             event->attr.exclude_kernel && !access_ok(data.addr)) {
->       |                                            ^~~~~~~~~
-> arch/x86/events/amd/ibs.c:1291:44: note: each undeclared identifier is reported only once for each function it appears in
-> make[5]: *** [scripts/Makefile.build:207: arch/x86/events/amd/ibs.o] Error 1
-> make[4]: *** [scripts/Makefile.build:465: arch/x86/events/amd] Error 2
-> make[4]: *** Waiting for unfinished jobs....
-> make[3]: *** [scripts/Makefile.build:465: arch/x86/events] Error 2
-> make[3]: *** Waiting for unfinished jobs....
-> make[2]: *** [scripts/Makefile.build:465: arch/x86] Error 2
-> make[2]: *** Waiting for unfinished jobs....
-> make[1]: *** [/mnt/kernel/kernel/6th/linux/Makefile:1997: .] Error 2
-> make: *** [Makefile:251: __sub-make] Error 2
-> 
-> -- 
-> Regards/Gruss,
->     Boris.
-> 
-> https://people.kernel.org/tglx/notes-about-netiquette
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
