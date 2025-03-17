@@ -1,99 +1,98 @@
-Return-Path: <linux-kernel+bounces-563212-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563213-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03D06A63937
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 01:50:40 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DF08A63950
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 01:52:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 511A416CD0F
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 00:50:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CDF2E16CD6E
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 00:52:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 816902940D;
-	Mon, 17 Mar 2025 00:50:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7CAF24B28;
+	Mon, 17 Mar 2025 00:52:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="mpzZndO/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S3ALmTLh"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0E6BB67A;
-	Mon, 17 Mar 2025 00:50:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09BFB8C11;
+	Mon, 17 Mar 2025 00:52:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742172633; cv=none; b=f4n8UUU4ZH5lbGgHVqVK7lZovBPq38RBNOEB9u/StO2Lr0EutYJjdVdrNySE9uaNyAMvf3bbnYedmFVD7MX3IAklqi6OMeqSzNYkMByvycIszXk76Ou0vjByNB6XeHk8GC9IQkmQGrOLSpwFBiGOfKeNx5EN23GTqEK18SI0Z4g=
+	t=1742172770; cv=none; b=nH8MtSSdlDRZtmodXVmiIoM7m2GlmP+qNq5Ml4aXlDgjKQbintMAvwdzkkq66sQbKPMDpHPuxNIlcl7s/Bx+nFWb7UeI76hBA4Ys4P4O9BOUeqcCHI0KXsusBKY8Aza4zwrZzuwt6//1fZE+bzD3KTN/TeZ5vhjcMei+OKseuAM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742172633; c=relaxed/simple;
-	bh=/AOSe7aq0nChqdQRh86alo+MWwYHvaes5E17kFYiFIA=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=qjum72+3SMt1hyWy6DC3WNWIsEPQwcFSeIxz8zqCR90RaICJcrxgVrprSUllxNUANSK3WQN4VAtQj0est+5XRLWoxABmx7yX07Hj6yIn/oMtnogQeELW6Xix4KEZOS5ytP5HpxxYWI3A71YFAUEsq5jKaKgeID+Cvu/55wDZ3bM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=mpzZndO/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF3B7C4CEDD;
-	Mon, 17 Mar 2025 00:50:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1742172631;
-	bh=/AOSe7aq0nChqdQRh86alo+MWwYHvaes5E17kFYiFIA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=mpzZndO/iEMbjsNstWhXiw29qloZefDjGCjbdLzVbu8AWoIP3rbYu8gvByPEebqZO
-	 NQ94QS0uXpMoe4gHl20GGVqOEHi5wEnf+zVu6U5DIoTK8/zhixuSeyc7J4gmPPZhtv
-	 jLgyPg2YA52XiVmTXCDcz7B6AaOcaYYiNRKZnq6w=
-Date: Sun, 16 Mar 2025 17:50:30 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Hugh Dickins <hughd@google.com>
-Cc: Roman Gushchin <roman.gushchin@linux.dev>, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, Jann Horn <jannh@google.com>, Peter Zijlstra
- <peterz@infradead.org>, Will Deacon <will@kernel.org>, "Aneesh Kumar K.V"
- <aneesh.kumar@kernel.org>, Nick Piggin <npiggin@gmail.com>,
- linux-arch@vger.kernel.org
-Subject: Re: [PATCH v4] mmu_gather: move tlb flush for VM_PFNMAP/VM_MIXEDMAP
- vmas into free_pgtables()
-Message-Id: <20250316175030.e929cab808c976995ec662b2@linux-foundation.org>
-In-Reply-To: <61e3ea6a-368a-640f-a050-b56c8d3232b5@google.com>
-References: <20250127195321.35779-1-roman.gushchin@linux.dev>
-	<61e3ea6a-368a-640f-a050-b56c8d3232b5@google.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1742172770; c=relaxed/simple;
+	bh=5vKY3AnQvJxY4Hr3lxanztgNCokOGJe1QsE2uMl9vC4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=qj2BTLA0/91Z3pokW90RU60VnhwK7rSTWwkAioc+KTOAmBtuC/uc4YO/8aj+/8bfhVoKoVXlSmECnb14JH+J2Fbatjdw92PQ75NuUELUr2L4k8Vue+27LOva235cUWdIfLgpldj/ixw3UlviU62q2clk2zK7DrZXpnM+T0Yog6k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S3ALmTLh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81727C4CEDD;
+	Mon, 17 Mar 2025 00:52:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742172769;
+	bh=5vKY3AnQvJxY4Hr3lxanztgNCokOGJe1QsE2uMl9vC4=;
+	h=Date:From:To:Cc:Subject:From;
+	b=S3ALmTLhHnhDrzCQyEKK6mXLX0laW4Z4geBgolbVxhClw7P96yPRzj6Y/htJZMvnk
+	 zWyKZCOXg2wPEnCZcNMsvQjz+64icFCN73mep9qcpLQQqP3ZmhQ39uCjAW/nC7c6HT
+	 Jp8uOKJqXKXkG9NBd1OfAfGiwYnBlqwF3Dopdy2ix2S6Jk8VJ2YuGN0/ibofHk27gU
+	 FVCvLSPH2YJWKKX1NxhRVQuT16U5RVcZAQjh+jun3n4cRJogNHItEe9qUnShQhJM7H
+	 ziHAqoM442GdlasL/yzYWboqG9ZsX7KeWd6vwkQzbhogLrel5eST9JDKNqppi+GpMo
+	 lUas5BTYWaJ0A==
+Date: Mon, 17 Mar 2025 11:22:51 +1030
+From: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	linux-hardening@vger.kernel.org
+Subject: [PATCH][next] usb: gadget: uvc: Avoid -Wflex-array-member-not-at-end
+ warnings
+Message-ID: <Z9dyY7_ydJiGqh_d@kspp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Mon, 27 Jan 2025 12:55:11 -0800 (PST) Hugh Dickins <hughd@google.com> wrote:
+-Wflex-array-member-not-at-end was introduced in GCC-14, and we are
+getting ready to enable it, globally.
 
-> > Fix this by moving the tlb flush out of tlb_end_vma() into
-> > free_pgtables(), somewhat similar to the stable version of the
-> > original commit: e.g. stable commit 895428ee124a ("mm: Force TLB flush
-> > for PFNMAP mappings before unlink_file_vma()").
-> > 
-> > Note, that if tlb->fullmm is set, no flush is required, as the whole
-> > mm is about to be destroyed.
-> > 
-> > Signed-off-by: Roman Gushchin <roman.gushchin@linux.dev>
-> > Cc: Jann Horn <jannh@google.com>
-> > Cc: Peter Zijlstra <peterz@infradead.org>
-> > Cc: Will Deacon <will@kernel.org>
-> > Cc: "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>
-> > Cc: Andrew Morton <akpm@linux-foundation.org>
-> > Cc: Nick Piggin <npiggin@gmail.com>
-> > Cc: Hugh Dickins <hughd@google.com>
-> > Cc: linux-arch@vger.kernel.org
-> > Cc: linux-mm@kvack.org
-> > 
-> > ---
-> > 
-> > v4:
-> >   - naming/comments update (by Peter Z.)
-> >   - check vma->vma->vm_flags in tlb_free_vma() (by Peter Z.)
-> 
-> Let me just put on record: you were absolutely right not to extend to
-> this the Ack I gave to v3, this v4 is silly (tlb_free_vma() and its
-> multiple calls, necessary only because of the unnecessary extra test);
-> but I don't see it as doing any actual damage, so I'll stop short of
-> NAKking it.
+Move the conflicting declaration to the end of the structure. Notice
+that `struct uvc_input_header_descriptor` is a flexible structure --a
+structure that contains a flexible-array member.
 
-I think I'll just drop this.  Let's revisit in the next -rc cycle,
-if Roman is motivated.
+With this, fix three of the following warnings:
+
+drivers/usb/gadget/function/uvc_configfs.h:77:57: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+
+Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+---
+ drivers/usb/gadget/function/uvc_configfs.h | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/usb/gadget/function/uvc_configfs.h b/drivers/usb/gadget/function/uvc_configfs.h
+index 2f78cd4f396f..9391614135e9 100644
+--- a/drivers/usb/gadget/function/uvc_configfs.h
++++ b/drivers/usb/gadget/function/uvc_configfs.h
+@@ -74,10 +74,12 @@ static inline struct uvcg_format *to_uvcg_format(struct config_item *item)
+ 
+ struct uvcg_streaming_header {
+ 	struct config_item				item;
+-	struct uvc_input_header_descriptor		desc;
+ 	unsigned					linked;
+ 	struct list_head				formats;
+ 	unsigned					num_fmt;
++
++	/* Must be last --ends in a flexible-array member. */
++	struct uvc_input_header_descriptor		desc;
+ };
+ 
+ static inline struct uvcg_streaming_header *to_uvcg_streaming_header(struct config_item *item)
+-- 
+2.43.0
+
 
