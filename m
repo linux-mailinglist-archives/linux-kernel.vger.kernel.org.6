@@ -1,124 +1,94 @@
-Return-Path: <linux-kernel+bounces-564374-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564375-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A28C4A653B9
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 15:36:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44EEBA653BA
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 15:36:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D62C31889937
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 14:36:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B77C18904BA
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 14:36:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 290CB2459CF;
-	Mon, 17 Mar 2025 14:35:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5568D24290A;
+	Mon, 17 Mar 2025 14:36:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X33WEUha"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="JwK3y7t6"
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5823245036;
-	Mon, 17 Mar 2025 14:35:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C6322417E5
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 14:36:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742222136; cv=none; b=ujy3XTjQzU/DUKqg7yLPjIqch7bS1+Dx1zB1Yq6UsDSzzRMBXFMJ8rmF1n8VpboF458XJKo7CBtV4iNNfFdQjjCBWgFs6LAu5R/s9+AwNDPAWxQL+es1ZPnfpvootlbDVMriklCewJtl48gy7R0N0m+s8HfC6gwmqnW5kxcVzMc=
+	t=1742222166; cv=none; b=nB8b8VXiKXl/iCyrmtWmbaHm1sBfYdiekUJqO3Y5BMI3c30Lrfg6jUa+3yOjM1eMGbubS92U0JW91cLSD3Ceo6s0+Iy5bSDgMLRYc1g/l7nFnvAJeoAoVkSZ8s6zjhm0IV/m/l3I94WzZcEK0hRvY1TfE5UoWt/oYQ6hjH1bSwM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742222136; c=relaxed/simple;
-	bh=Os/3OUI8KCcOIG1iOxmuXB6ZFpAj0XoaeG61qBtx0NA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=tQ1TmoAbjMWPxrP11SgiBg+0Uae59+6klbP2ZlY2IgHeoT+Czd9wie0eO8N/vOMlIFcCuBFILWxjIE70CWDYgTHzTKmFvVlxyNEtoQVVtIAcaKIambSi4a/pmyW0fuO0WA36eiHKns3yGXz2+jAjT02OxBX9L+++slzUvnXBQPA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X33WEUha; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-39133f709f5so2720114f8f.0;
-        Mon, 17 Mar 2025 07:35:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742222133; x=1742826933; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=w87Zh3I28Z1+Sqxqq72rJtkODwwHBc+MVhcgl8wWLzQ=;
-        b=X33WEUhab50tJOI/mwwnSQZGmqv1CRhRTg1NjUWfGiQo2MXxiFoqW5PzPMtTihkojd
-         GdOT8QYVCJ+ph/1AG+8r3qW15QNnjiRmJBNyablQfzootPOb76e2iCkjOY8GicP923Af
-         Cy172UBERuS590u56BgiAFD2a7HN0gfq7tAVkDpmzE63AaZ76024RgsDANcC61B8ZxT1
-         cnldEF2OiRnnH8b0nCN3H5N4zstJWV4eD+iGhJBInU4b/T+Nzco3pUCxLlEEK3ai1Xk9
-         Em1tiQcK6AWumBNocYhYyIP/W5dxctsrBJZgaG9RDojB0FqkI4TzGyEbld7aRipNmdPP
-         7PrQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742222133; x=1742826933;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=w87Zh3I28Z1+Sqxqq72rJtkODwwHBc+MVhcgl8wWLzQ=;
-        b=J6tBfWOVc4OHYwQoC5+q5AcUILZwL5126HtXUkF+yMsBNbD/XBGUjBxhvgEIjJq/2t
-         q5FYbL3VzTBFfTrNL1l5w4hE/OExw+nTPQICy0vHOPy/qdgMZBfDf4+WXnBByUjL/XwG
-         XGmGwKZatDQXEj/Pj+oZDInP+hhhuuRo8CdrxNJ6cPynEBky1iEQ0vkXoRKOIL+4Rn3O
-         832RoFfAUSrv+f95drX6DU7UfFq+HJE/DLmG+SRqXPL3io4BxrVdwVZFh0AJuAOKr6XH
-         +h+q/q0+ocE49sQgAKbPTHJGTkZ98sVlVjqIYEjojwVhv85Z+3Nr4a2I+00M8foz5wsP
-         U+rg==
-X-Forwarded-Encrypted: i=1; AJvYcCUg75F7xYOMdVZJJKHhNrnb0dHLhmkRiTQ4Naqhlelpf6/PztlImjlLzvQdqib59l8Kzr2wQEacurIlONE=@vger.kernel.org, AJvYcCW40msMrNuC89cH2wXUNCMN+fQ7721Uqoak6nNadyDsEOQa4exl24oq5Fz2VsxsjsWzfUjAeoG5VqQ3@vger.kernel.org
-X-Gm-Message-State: AOJu0YySME+JfqiOEtfTurxsX/K0/SQ3nNwDsqsq/87yneAkE15nIgF7
-	5zECWcmNKq6nyJG6bfLTJmt1lc07NQm+Xle0p2N1l6bFxGhiJzo0
-X-Gm-Gg: ASbGncsJeRYWLgs0Aqve/9uO9N8lSNNU7viViW32sFbybMRrmVmNjsBy7PrmvYM6VZo
-	/M/l9geGGg4idyu6u/2YcVQUVmdws9b9Nso9Xy37l1eo+QDDd6MFRX6j1y5phyUQ3T9+RhS9giD
-	EGlx00iZVRghB9PBeoBcStFM3FcF4Lq+3mtPyhom8HTI24vZKiZ/2O20pSSsCybsisXgKgqQX3J
-	Tth0i4HTbltMmQFcI+A6jcxOwCSHmgh3pa2jU7VaEuuaT92SqOMjxWUUB7uHcpPY0ls8CeVYv+L
-	nKEfvyYF2kksxgCUrUBCwmLgErnztSsLS9nb6naefFhEkw==
-X-Google-Smtp-Source: AGHT+IGj2U95C2D/UDRSgWDo1hfyu3+i9z8iABs6gkm9zWiBp79gxMqCjLlCuVAE4sL2PJ8+U38jmA==
-X-Received: by 2002:adf:a348:0:b0:391:401f:bfd8 with SMTP id ffacd0b85a97d-39720584500mr11131524f8f.55.1742222132717;
-        Mon, 17 Mar 2025 07:35:32 -0700 (PDT)
-Received: from localhost ([194.120.133.58])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-395cb40cdd0sm15208107f8f.77.2025.03.17.07.35.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Mar 2025 07:35:32 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Jim Quinlan <jim2101024@gmail.com>,
-	Nicolas Saenz Julienne <nsaenz@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	linux-pci@vger.kernel.org,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] PCI: brcmstb: make const read-only arrays static
-Date: Mon, 17 Mar 2025 14:34:56 +0000
-Message-ID: <20250317143456.477901-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.47.2
+	s=arc-20240116; t=1742222166; c=relaxed/simple;
+	bh=75LOFLkQeS2D990Jln8z6W9YpYFlu6vf8JAndacVpVo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KmlbqV/CIZ0xenRjRG2roLSeWBVyI9fthcUsSlqfJgR3wpL6qAfwVnbCMY23s/aNFKgbQkNuWOWXyXCnJ5PEoZsIRWeqI5EnCqEiSJSZ9jOxgSXVdVDT4JW9lDWmpI6iaw1U9CLXYbJP7r8kyt+9K5mKGYYOJBOPn4mXhmLNlmI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=JwK3y7t6; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=COKOBF5Kp6/L59jrNmNEgGlDWvJC3j7petKc4gxeZ0w=; b=JwK3y7t62997PvSrOTPsG0zOxW
+	LHc2KgGu5yt9ZAkii/OyEV2QTaClAzsCAX0pX4hDhTrgx/qa8cimgJzkUfa8Ji5Xl+DDijY4wtqwq
+	I71UUM3zUEBC2ddI/MS9dUy2nQktJJYmZa1nK3jDQZV6CDvCl7tMpVwPPVZ5Rpam8ZaKixxvINhRi
+	C+bM+KN/Rvlfm9APHfw3nMju7dxBsn0zon5g/mCr0tGkSCn7UwoLNtkZYBeZpbcPW9KF6DZT3EsW4
+	V3uqE07hMSHe9A6+SZcqHfZmeaZ39dmo/wX6QehIuTI+7HrrWH+5UNvKuE/YG74lGARe+j4fPW6wV
+	HlUPRmTA==;
+Received: from [187.90.172.172] (helo=[192.168.1.60])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1tuBZI-002Gaa-CC; Mon, 17 Mar 2025 15:35:52 +0100
+Message-ID: <1238b1d0-275c-9117-a2e3-5e7684404980@igalia.com>
+Date: Mon, 17 Mar 2025 11:35:45 -0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH] x86/tsc: Add debugfs entry to mark TSC as unstable after
+ boot
+Content-Language: en-US
+To: x86@kernel.org, linux-kernel@vger.kernel.org
+Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+ dave.hansen@linux.intel.com, hpa@zytor.com, kernel@gpiccoli.net,
+ kernel-dev@igalia.com
+References: <20250226132733.58327-1-gpiccoli@igalia.com>
+From: "Guilherme G. Piccoli" <gpiccoli@igalia.com>
+In-Reply-To: <20250226132733.58327-1-gpiccoli@igalia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Don't populate the const read-only arrays data and regs on the stack at
-run time, instead make them static.
+On 26/02/2025 10:27, Guilherme G. Piccoli wrote:
+> Right now, we can force the TSC to be marked as unstable through
+> boot parameter. There are debug / test cases though in which would
+> be preferable to simulate the clocksource watchdog behavior, i.e.,
+> marking TSC as unstable during the system run. Some paths might
+> change, for example: the tracing clock is auto switched to global
+> if TSC is marked as unstable on boot, but it could remain local if
+> TSC gets marked as unstable after tracing initialization.
+> 
+> Hence, the proposal here is to have a simple debugfs file that
+> gets TSC marked as unstable when written.
+> 
+> Signed-off-by: Guilherme G. Piccoli <gpiccoli@igalia.com>
+> ---
+>  arch/x86/kernel/tsc.c | 22 ++++++++++++++++++++++
+>  1 file changed, 22 insertions(+)
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/pci/controller/pcie-brcmstb.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Hi folks, gentle ping about this one - any suggestions?
+Cheers,
 
-diff --git a/drivers/pci/controller/pcie-brcmstb.c b/drivers/pci/controller/pcie-brcmstb.c
-index 8b2b099e81eb..d258b571f642 100644
---- a/drivers/pci/controller/pcie-brcmstb.c
-+++ b/drivers/pci/controller/pcie-brcmstb.c
-@@ -832,8 +832,8 @@ static int brcm_pcie_perst_set_generic(struct brcm_pcie *pcie, u32 val)
- 
- static int brcm_pcie_post_setup_bcm2712(struct brcm_pcie *pcie)
- {
--	const u16 data[] = { 0x50b9, 0xbda1, 0x0094, 0x97b4, 0x5030, 0x5030, 0x0007 };
--	const u8 regs[] = { 0x16, 0x17, 0x18, 0x19, 0x1b, 0x1c, 0x1e };
-+	static const u16 data[] = { 0x50b9, 0xbda1, 0x0094, 0x97b4, 0x5030, 0x5030, 0x0007 };
-+	static const u8 regs[] = { 0x16, 0x17, 0x18, 0x19, 0x1b, 0x1c, 0x1e };
- 	int ret, i;
- 	u32 tmp;
- 
--- 
-2.47.2
 
+Guilherme
 
