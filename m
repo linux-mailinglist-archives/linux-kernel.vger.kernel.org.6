@@ -1,105 +1,102 @@
-Return-Path: <linux-kernel+bounces-565167-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565168-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4BD4A66217
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 23:52:02 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F4025A66219
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 23:54:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20B86179E56
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 22:52:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 10EDD7A58FB
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 22:52:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F10F7204851;
-	Mon, 17 Mar 2025 22:51:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96A0B204C35;
+	Mon, 17 Mar 2025 22:53:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="RB6/jLur"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="sjGTpFcW"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9751C1EEA20;
-	Mon, 17 Mar 2025 22:51:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B862E1EEA20;
+	Mon, 17 Mar 2025 22:53:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742251915; cv=none; b=oYTaUjVkG5nGSL2UuNiMrU3/ylObCx7aKArySAvA1n/imlsATW3VUx/B24G2mS0ZOTacP7GIBmU0qjt4ZlH7PdiYLS3DvMP3l9/CDyUgezaqu7ICbOsWhKnqzaKbby3ROpTaVfJLhHk7ua2z1W80DT7m5LqltxhGFJC72yQHr1Y=
+	t=1742252032; cv=none; b=Iqk576PUkrPc1zkt5QHEHOZn3IdZW4slAU2oJn4j8z3AW/tyvkL/X2+wBsGd0joptUM8ZmH8f+DgU3DTeQXmZ1yCc0jAAYuJfSznFNCs2hsGzBr8lNTi3mdo80L/XcNvURA1EROPJCV70OrIhqOr0YPFbtJqRtYnTxY9XNH/txk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742251915; c=relaxed/simple;
-	bh=fYKi21bxCa8ZrGfrGQnP5SrX94dLJholFlCybWT7dAc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QIhwBKq+GLYAKUhqyZuqQbg+h85+D3h1Qdp/XewBoaHjrDuEyjJ2XvMB4WWL3pP+HuXL/YMEzMVRP/HAinkjy1qNWJ6t9UTEVOIOAe6of2UVzbUB3dtn/j59ROeJUiZsQFThrQ/c/akPO/Fzyw+7kN7weh6DPDG6aeTU/Wbjddw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=RB6/jLur; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=wfy9ddRBbcX+tfTfmNOPuCaIiuAFuC2ZDzW9lWqaDig=; b=RB6/jLurPbaj8MZuXj01Xq8uQd
-	2FUBKMC5YjsUBEoMRmzup+qDFD80kc6Gjx7bDpI7gBYxg+AFRv5xz/oyY7wX7LvS3emTqldnqvLMT
-	DW0XGvlUStAxx1Nm8A8n4FIL/n04UoxzIy6SeA8hzoqb5iOBVslsnOrSRGDqMQpvRDELFljwRkCRz
-	MFwO9edVmY4H89FZLF1ScUhpiN4xHV+09ELaN2xOYI0vBvXgACVbK7Spa6bPybb3dpnppI5K2fnjD
-	y0sE4V2irR0+v6mcxqcEdL8rlcnVkLXrtdIx7Wqh7rlRLGxH5+6yNeZsoNJgSMDJ0iZL1eNXCK0Ah
-	z0a+Tvpg==;
-Received: from i53875bc6.versanet.de ([83.135.91.198] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1tuJJ0-0001UR-Bx; Mon, 17 Mar 2025 23:51:34 +0100
-From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
-To: Lee Jones <lee@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: duplicate patch in the mfd tree
-Date: Mon, 17 Mar 2025 23:51:33 +0100
-Message-ID: <5872617.DvuYhMxLoT@diego>
-In-Reply-To: <20250317144507.0938757b@canb.auug.org.au>
-References: <20250317144507.0938757b@canb.auug.org.au>
+	s=arc-20240116; t=1742252032; c=relaxed/simple;
+	bh=1S1wcpOAxOJ4DHTjH1VO4jxPlklt6ZOU7On+F2Rgyjk=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=RXxRN/iZ5C5vFHbx8N6FzTILG/bESEVJvQrYNdWsGjV08iWedGoAeKGv2MaiXh9xxD1kb3Zw+ty8DIsddS8eIG+QBug19M+Wo4iVKuGc2SdDG6Vs5I4B7GdA+xM3qHSOHqYEltt59CjyhMyqw26M+0ZHNb9l+ZdELN2bdsAh0jw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=sjGTpFcW; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net CA02E41081
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1742252030; bh=m1ArYPexXQLLtsttigae2e4aJ3hQRaLakaXfUFdgBoY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=sjGTpFcWrFNyxcrEhg5znWVSCMX/Jxov0q9Ugh8gtnqqZboBDzXiAlylqrhRY2zi1
+	 cyIGLnkpswu+aJtUY2TZFzVxJp5OtmTs2P6lw6wCWVbxIjHv9FM/b8k656bRWLHLaV
+	 IuhbgxUjA3neuEQ3ZllosRbua/ZfRVTLxtuJzGbPskBFHH+A8gwLanTpL4YSk5Rnhk
+	 xKToCE+f5fDf2QwgTp9qiWfUyAm1N7yKJA7tJq1AlBPoNPjGlJG83tN41wUr7ewT3Z
+	 P1JXzlHeb8updjN+8+EUEZwreC8NacJv2vgz5hPP5DZ+bfIcUze43tjUudxE7PLO28
+	 j0KiF4vKWTBRw==
+Received: from localhost (unknown [IPv6:2601:280:4600:2da9::1fe])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id CA02E41081;
+	Mon, 17 Mar 2025 22:53:49 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Jacek Lawrynowicz <jacek.lawrynowicz@linux.intel.com>
+Cc: linux-doc@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, simona.vetter@ffwll.ch, airlied@gmail.com,
+ Jacek Lawrynowicz <jacek.lawrynowicz@linux.intel.com>
+Subject: Re: [PATCH] docs: driver-api: firmware: clarify userspace requirements
+In-Reply-To: <20250314100137.2972355-1-jacek.lawrynowicz@linux.intel.com>
+References: <20250314100137.2972355-1-jacek.lawrynowicz@linux.intel.com>
+Date: Mon, 17 Mar 2025 16:53:49 -0600
+Message-ID: <874izre0aq.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain
 
-Hi Stephen, Lee,
+Jacek Lawrynowicz <jacek.lawrynowicz@linux.intel.com> writes:
 
-Am Montag, 17. M=C3=A4rz 2025, 04:45:07 MEZ schrieb Stephen Rothwell:
-> Hi all,
->=20
-> The following commit is also in the rockchip tree as a different commit
-> (but the same patch):
->=20
->   7f3e3e7228bb ("dt-bindings: mfd: syscon: Add rk3528 QoS register compat=
-ible")
->=20
-> This is commit
->=20
->   19a634195c1a ("dt-bindings: mfd: syscon: Add rk3528 QoS register compat=
-ible")
->=20
-> in the rockchip tree.
+> The guidelines mention that firmware updates can't break the kernel,
+> but it doesn't state directly that they can't break userspace programs.
+> Make it explicit that firmware updates cannot break UAPI.
+>
+> Signed-off-by: Jacek Lawrynowicz <jacek.lawrynowicz@linux.intel.com>
+> ---
+>  .../driver-api/firmware/firmware-usage-guidelines.rst        | 5 +++++
+>  1 file changed, 5 insertions(+)
+>
+> diff --git a/Documentation/driver-api/firmware/firmware-usage-guidelines.rst b/Documentation/driver-api/firmware/firmware-usage-guidelines.rst
+> index fdcfce42c6d28..5f8f13e2ee510 100644
+> --- a/Documentation/driver-api/firmware/firmware-usage-guidelines.rst
+> +++ b/Documentation/driver-api/firmware/firmware-usage-guidelines.rst
+> @@ -42,3 +42,8 @@ then of course these rules will not apply strictly.)
+>    deprecating old major versions, then this should only be done as a
+>    last option, and be stated clearly in all communications.
+>  
+> +* Firmware files that affect the User API (UAPI) shall not introduce
+> +  changes that break existing userspace programs. Updates to such firmware
+> +  must ensure backward compatibility with existing userspace applications.
+> +  This includes maintaining consistent interfaces and behaviors that
+> +  userspace programs rely on.
+> \ No newline at end of file
 
-dang, sorry about that.
+This ^^^^^^^^^^^^^^^^^^^^^^^^  is a good thing to avoid.  That can be
+fixed up at apply time.
 
-With the qos compatible being a syscon, this _should_ go through the mfd
-tree with Lee's Signed-off-by ... that it got in 7f3e3e7228bb .
+Dave, you're the only one with fingerprints on this document; is the
+change OK with you?
 
-I'm not sure how I managed to mess that up :-S .
+Thanks,
 
-In any case, as the commit 19a634195c1a already made its way from my tree
-to the soc-tree [0], I'll create a revert so that this is fixed before the
-merge-window.
-
-
-Sorry for the mess and thanks for noticing
-Heiko
-
-
-[0] https://web.git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git/commit/=
-?h=3Dfor-next&id=3D19a634195c1a
-
-
+jon
 
