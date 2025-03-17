@@ -1,123 +1,132 @@
-Return-Path: <linux-kernel+bounces-564443-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564444-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B789FA65515
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 16:08:46 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A8AEA65519
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 16:09:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F2E45164F4D
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 15:08:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 59E9F16125B
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 15:08:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2493023FC7A;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1A91248872;
+	Mon, 17 Mar 2025 15:07:59 +0000 (UTC)
+Received: from shell.v3.sk (mail.v3.sk [167.172.186.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDD082459FE;
 	Mon, 17 Mar 2025 15:07:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=framepointer.org header.i=@framepointer.org header.b="lxrKEwQf"
-Received: from out-14.pe-a.jellyfish.systems (out-14.pe-a.jellyfish.systems [198.54.127.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9459B2236FD;
-	Mon, 17 Mar 2025 15:07:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.54.127.78
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.172.186.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742224075; cv=none; b=UonN6Wdfy4CoinzlDGzfhROkpJ9bqIeLYZWV7hV7IxTKqxr2XqMlJ0NQ7+eNAyRNobJgFGD9XYoNOrpyAYJPDzo//iceBTbKHPeQkWvpEwlY0VC2r9FAIOCf3ubvXs7/I6USYKAp6P7ZRSN/B/MFBNgdRQJ+XWIXNSfe+t7rk34=
+	t=1742224079; cv=none; b=ivlMbqoJ6RrXV7amrAVB0k533JCuGa05JgNBDtizCH1ys7hfhToj6v7ATz9N4WcWnf0HlelVsvjNmWVbRFL3vOAea6M9vbQY5nshJqE8PjMQIj/8JuBigf4qfxtrPQ8/YFxN8I6lCMzvvOrbtSf7kDi0tUgLf3CtwRgX6PVWjos=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742224075; c=relaxed/simple;
-	bh=BpY9UtFe+O2yT1YzwOQ8IV9Bn6Cu3YlhgV1pKejLnRc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V+t9/dSy7AQYKrWZNG6fqY17FywFvmAEwCx94ebw8n5yDyCGnStpxUkUsaRuAjdKJON8Ebsn48frMQD31gwlOseWsqDT1HRGeUfWPetuSFv41kakI1W0/H/h9TvVGgF1a2OyKZXXIWj7FYI4qPodvxQw3XHQO4Sj1Bb4j05reEY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=framepointer.org; spf=pass smtp.mailfrom=framepointer.org; dkim=pass (2048-bit key) header.d=framepointer.org header.i=@framepointer.org header.b=lxrKEwQf; arc=none smtp.client-ip=198.54.127.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=framepointer.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=framepointer.org
-Received: from prod-lbout-phx.jellyfish.systems (new-01-3.privateemail.com [66.29.159.56])
-	by pe-a.jellyfish.systems (Postfix) with ESMTPA id 4ZGdcy44xLz3xRV;
-	Mon, 17 Mar 2025 15:07:46 +0000 (UTC)
-Received: from MTA-14.privateemail.com (unknown [10.50.14.30])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits))
-	(No client certificate requested)
-	by NEW-01-3.privateemail.com (Postfix) with ESMTPS id 4ZGdcy3ccYz2Sd0R;
-	Mon, 17 Mar 2025 11:07:46 -0400 (EDT)
-Received: from mta-14.privateemail.com (localhost [127.0.0.1])
-	by mta-14.privateemail.com (Postfix) with ESMTP id 4ZGdcy26Ndz3hhW5;
-	Mon, 17 Mar 2025 11:07:46 -0400 (EDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=framepointer.org;
-	s=default; t=1742224066;
-	bh=BpY9UtFe+O2yT1YzwOQ8IV9Bn6Cu3YlhgV1pKejLnRc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lxrKEwQf87N1KBGepFpyL6lQSLFNPT8rgcmtOLqJi+v2uZ+CbNAtymnCkKTk4isWx
-	 b8IqakvyZtTRZkb3f91xwK+GXJFeQHvWNGN3L58gbLRtTGxgQqFMByjzn9T/bhxJC+
-	 PLlCGtDmqX/GMn13kN8kErJb779jKvraEyjfXJE7Ezy3n0fZxabt1DppZRvNyor95O
-	 kH5/sTh5bvGCihS/6DKE4SXJAzhK0QMkCbDGsGCbN0qrW7ICNTEl4ovP0kaJuMlWQA
-	 mW2aN64hdoOkh7zHfHXZE4M0HM8oor/MvssEa3pG6rMt9YESuwt+2oJP9/6GVezOKZ
-	 Kn6T5nD1wxt0A==
-Received: from 65YTFL3.secure.tethers.com (unknown [152.44.190.141])
-	by mta-14.privateemail.com (Postfix) with ESMTPA;
-	Mon, 17 Mar 2025 11:07:31 -0400 (EDT)
-Date: Mon, 17 Mar 2025 11:07:32 -0400
-From: Sam Winchenbach <sam.winchenbach@framepointer.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, lars@metafoo.de,
-	Michael.Hennerich@analog.com, antoniu.miclaus@analog.com,
-	jic23@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, bpellegrino@arka.org,
-	Sam Winchenbach <swinchenbach@arka.org>
-Subject: Re: [PATCH v7 1/6] dt-bindings: iio: filter: Add lpf/hpf freq margins
-Message-ID: <Z9g6tPqhAoTckFBh@65YTFL3.secure.tethers.com>
-References: <20250316135008.155304-1-sam.winchenbach@framepointer.org>
- <20250316-sexy-tested-cheetah-c4a2f8@krzk-bin>
+	s=arc-20240116; t=1742224079; c=relaxed/simple;
+	bh=bP4LPTW0Td8wCHxT0VEifpuO44bbCtEGvCwDTu/Ad0E=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CiohxCNFMxPWIQlwt1VHMlghjolZrxn0v/c34tf6ATJ/VmwZuM16wPnYstt/3gloEtISI5guhzi92JDOQ4kEyR31i84Jtx2kFK/COsy0+QARXzRii9rR4cf2MdWdI2HPJ2BdyQJ3tKn+Cgx3ZSZmfrsae1JVvtZ766OYX79jz2I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=v3.sk; spf=pass smtp.mailfrom=v3.sk; arc=none smtp.client-ip=167.172.186.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=v3.sk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=v3.sk
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by zimbra.v3.sk (Postfix) with ESMTP id 53EB2DD213;
+	Mon, 17 Mar 2025 15:01:51 +0000 (UTC)
+Received: from shell.v3.sk ([127.0.0.1])
+	by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
+	with ESMTP id tpBHPEh84aQP; Mon, 17 Mar 2025 15:01:50 +0000 (UTC)
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by zimbra.v3.sk (Postfix) with ESMTP id D4ED5DFEFD;
+	Mon, 17 Mar 2025 15:01:50 +0000 (UTC)
+X-Virus-Scanned: amavisd-new at zimbra.v3.sk
+Received: from shell.v3.sk ([127.0.0.1])
+	by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id 6PRRIPVEMHUl; Mon, 17 Mar 2025 15:01:50 +0000 (UTC)
+Received: from localhost (unknown [109.183.109.54])
+	by zimbra.v3.sk (Postfix) with ESMTPSA id 92AD9DD213;
+	Mon, 17 Mar 2025 15:01:50 +0000 (UTC)
+From: Lubomir Rintel <lkundrak@v3.sk>
+To: linux-usb@vger.kernel.org
+Cc: Lubomir Rintel <lkundrak@v3.sk>,
+	Paolo Abeni <pabeni@redhat.com>,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	Jakub Kicinski <kuba@kernel.org>,
+	Eric Dumazet <edumazet@google.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Andrew Lunn <andrew+netdev@lunn.ch>
+Subject: [PATCH v2 net-next] rndis_host: Flag RNDIS modems as WWAN devices
+Date: Mon, 17 Mar 2025 16:07:37 +0100
+Message-ID: <20250317150739.2986057-1-lkundrak@v3.sk>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250316-sexy-tested-cheetah-c4a2f8@krzk-bin>
-X-Virus-Scanned: ClamAV using ClamSMTP
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, Mar 16, 2025 at 05:38:42PM +0100, Krzysztof Kozlowski wrote:
-> On Sun, Mar 16, 2025 at 09:50:03AM -0400, Sam Winchenbach wrote:
-> > From: Sam Winchenbach <swinchenbach@arka.org>
-> > 
-> > Adds two properties to add a margin when automatically finding the
-> > corner frequencies.
-> > 
-> > Signed-off-by: Sam Winchenbach <swinchenbach@arka.org>
-> > ---
-> >  .../bindings/iio/filter/adi,admv8818.yaml     | 20 +++++++++++++++++++
-> >  1 file changed, 20 insertions(+)
-> 
-> I don't understand. You got my tag. No changelog here, no cover letter,
-> nothing explains what happened here and why the tag is being removed.
-> 
+Set FLAG_WWAN instead of FLAG_ETHERNET for RNDIS interfaces on Mobile
+Broadband Modems, as opposed to regular Ethernet adapters.
 
-Apologies,
+Otherwise NetworkManager gets confused, misjudges the device type,
+and wouldn't know it should connect a modem to get the device to work.
+What would be the result depends on ModemManager version -- older
+ModemManager would end up disconnecting a device after an unsuccessful
+probe attempt (if it connected without needing to unlock a SIM), while
+a newer one might spawn a separate PPP connection over a tty interface
+instead, resulting in a general confusion and no end of chaos.
 
-I am still quite new to this workflow, and it deviates significantly
-from my day-to-day work. I mentioned in the previous patch set that I
-would like to update my email address and change:
-"driver core: -> iio: core:"
-I wasn't aware more than that was needed. Sorry for any confusion
-this may have caused.
+The only way to get this work reliably is to fix the device type
+and have good enough version ModemManager (or equivalent).
 
-In the future what is the preferred way to handle a
-situation like this? I wasn't aware of the cover letter feature but
-that looks like a promising option.
+Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+Fixes: 475ddf05ce2d ("rndis_host: Flag RNDIS modems as WWAN devices")
 
-It looks like another option is to add commentary to each patch.
+---
+Changes since v1:
+* Added Fixes tag, as suggested by Paolo Abeni
 
-I am less certain about your tag being removed - I don't fully
-understand that. Is there a way to preserve that if changes are made
-after you sign-off?
+ drivers/net/usb/rndis_host.c | 16 ++++++++++++++--
+ 1 file changed, 14 insertions(+), 2 deletions(-)
 
-Sorry again about the confusion this caused,
--Sam
+diff --git a/drivers/net/usb/rndis_host.c b/drivers/net/usb/rndis_host.c
+index 7b3739b29c8f..bb0bf1415872 100644
+--- a/drivers/net/usb/rndis_host.c
++++ b/drivers/net/usb/rndis_host.c
+@@ -630,6 +630,16 @@ static const struct driver_info	zte_rndis_info =3D {
+ 	.tx_fixup =3D	rndis_tx_fixup,
+ };
+=20
++static const struct driver_info	wwan_rndis_info =3D {
++	.description =3D	"Mobile Broadband RNDIS device",
++	.flags =3D	FLAG_WWAN | FLAG_POINTTOPOINT | FLAG_FRAMING_RN | FLAG_NO_SE=
+TINT,
++	.bind =3D		rndis_bind,
++	.unbind =3D	rndis_unbind,
++	.status =3D	rndis_status,
++	.rx_fixup =3D	rndis_rx_fixup,
++	.tx_fixup =3D	rndis_tx_fixup,
++};
++
+ /*----------------------------------------------------------------------=
+---*/
+=20
+ static const struct usb_device_id	products [] =3D {
+@@ -666,9 +676,11 @@ static const struct usb_device_id	products [] =3D {
+ 	USB_INTERFACE_INFO(USB_CLASS_WIRELESS_CONTROLLER, 1, 3),
+ 	.driver_info =3D (unsigned long) &rndis_info,
+ }, {
+-	/* Novatel Verizon USB730L */
++	/* Mobile Broadband Modem, seen in Novatel Verizon USB730L and
++	 * Telit FN990A (RNDIS)
++	 */
+ 	USB_INTERFACE_INFO(USB_CLASS_MISC, 4, 1),
+-	.driver_info =3D (unsigned long) &rndis_info,
++	.driver_info =3D (unsigned long)&wwan_rndis_info,
+ },
+ 	{ },		// END
+ };
+--=20
+2.48.1
 
-> Best regards,
-> Krzysztof
-> 
 
