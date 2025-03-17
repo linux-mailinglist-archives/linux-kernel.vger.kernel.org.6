@@ -1,142 +1,120 @@
-Return-Path: <linux-kernel+bounces-564552-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564555-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAF80A6574D
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 17:06:16 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E564A65752
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 17:06:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C570B189A253
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 15:59:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 48DE44215EC
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 16:00:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68CE219CD13;
-	Mon, 17 Mar 2025 15:56:34 +0000 (UTC)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E7F21A264A;
+	Mon, 17 Mar 2025 15:57:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Yi+HyKlc"
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73B50176FB0;
-	Mon, 17 Mar 2025 15:56:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EE921A23BC;
+	Mon, 17 Mar 2025 15:57:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742226994; cv=none; b=eBkqdeNzdYKcxVKoPaxkXrFAB3xq7mPVhMuP4IKjBn4XZMRK+3JRXp+DFSKvY7AL2vvzUjwkipnBrj240/B1YPp4T2WDA/ZCQ73XS9CqC6hO6Jhtdf5aS7v562JSR82FZ7L/MtMv3X+cU4NNXyFOMUm9g31/Lu6+NEMOKc7hZ0c=
+	t=1742227049; cv=none; b=XCfeKzXsUTGl2sQyYXQ8q8Qf6d74yBf+bVyWysx90mqG0FvgOHVCG77gx3NdjjdpLIf/3lpffExojtQbTxpMjerjKEcOeHW9Lh6rHa1ET36AozY3alXx7KRPnnbf9TvODKZqNOn1tl5aAuGIbmz+TwgChn2Q/wu36KGH6/nDLok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742226994; c=relaxed/simple;
-	bh=JTYbqx6bfQKuupaoVPJmTVygzfWnX4u/I/x3TxxTXO4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DkcpZJzqOLuyDOX+QOAYNkKu0/9QnTZoRpIyX2g1TqZ++PHMfjnGKqR6tCl2T65il8KDJrRFgN+sKtJg5BZkK/z+NHxETJT2c6PLyXxjHsCgnhesrIWxhXTXBS5eOhmheLdC4KhA5FbG0HJCMENFaPKEJcAsf7FT4yOCoDDh2Sk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
-X-CSE-ConnectionGUID: CzZovjXbRCaiOiPHFuTf1w==
-X-CSE-MsgGUID: xrWuP8IQTP2PF4Bar1Ld2g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11376"; a="47102973"
-X-IronPort-AV: E=Sophos;i="6.14,254,1736841600"; 
-   d="scan'208";a="47102973"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Mar 2025 08:56:32 -0700
-X-CSE-ConnectionGUID: EA25EyGGQmuYBW7eHEHuYg==
-X-CSE-MsgGUID: FN4NgrbwT2KvtC80qpTwdQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,254,1736841600"; 
-   d="scan'208";a="122157561"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Mar 2025 08:56:27 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andy.shevchenko@gmail.com>)
-	id 1tuCpE-00000003LsH-1IHs;
-	Mon, 17 Mar 2025 17:56:24 +0200
-Date: Mon, 17 Mar 2025 17:56:24 +0200
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-To: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
-Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Kamel Bouhara <kamel.bouhara@bootlin.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
-	Michael Walle <mwalle@kernel.org>, Mark Brown <broonie@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-input@vger.kernel.org, linux-pwm@vger.kernel.org,
-	=?iso-8859-1?Q?Gr=E9gory?= Clement <gregory.clement@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v4 07/10] gpio: max7360: Add MAX7360 gpio support
-Message-ID: <Z9hGKCdR7NHqfRmC@smile.fi.intel.com>
-References: <20250214-mdb-max7360-support-v4-0-8a35c6dbb966@bootlin.com>
- <20250214-mdb-max7360-support-v4-7-8a35c6dbb966@bootlin.com>
- <Z69oa8_LKFxUacbj@smile.fi.intel.com>
- <D8FAX4E29LZK.3VUK90WB04MV2@bootlin.com>
- <Z9PlYSZDviGOCV7X@surfacebook.localdomain>
- <D8ILQ4NT6977.50SD8DM8FIBF@bootlin.com>
+	s=arc-20240116; t=1742227049; c=relaxed/simple;
+	bh=laCuTv5F1A6gMhBlXcgyrlzImrJDzVe0buSdo+i4Of0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XsGJF9xBMFLYf6vvuEoMsCZwy0zKVJeeHxURYorSA3ZiQqc76Zu/HNTfNkmcDyDCcUREOwuBpf2tjVLU6QMFEUoMgR512G/D4uAxmAkOaKuPXbeVqCBsWKM22ndwYXlxUBRri808wmObU6QAVsUzcramppROnRFRqtX6almjO2w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Yi+HyKlc; arc=none smtp.client-ip=209.85.216.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-2ff6b9a7f91so660964a91.3;
+        Mon, 17 Mar 2025 08:57:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742227048; x=1742831848; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=laCuTv5F1A6gMhBlXcgyrlzImrJDzVe0buSdo+i4Of0=;
+        b=Yi+HyKlcnMg/pLC4+1YelgxWAZpDfkAanYNVSlDHWhpboFp85s39TsU+G757OTpCEB
+         1ILRjg36KGNegdFOQ7QDdjGxvnAKdDiY9uy/OpTiq7I6Eir0M/jSGy/QoHs+e5SEBY+k
+         gFXzRu6FCqYUSW1WKaLQtzmwJNOjFTx9hIsM+ZZNygMO4yBzPoJTrIybdnBfkLyDxWXW
+         loGGGAqFctxvp0heNvMzTsD+CT3JADnpjeZP1isIQlBctgT/omNb+mrrUFcKsdb/mbpM
+         l8RAp0YQLd7A4M77LHhoIIuy2asyAOLTr8ayK7aOPaERFzklwx28OAfJV5mXsrGPwXRr
+         dQ4Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742227048; x=1742831848;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=laCuTv5F1A6gMhBlXcgyrlzImrJDzVe0buSdo+i4Of0=;
+        b=jLVANgtFvxXmRywzG3CSfetpr9pFm4+udCqbgUDtt6sG4OyRht7GyAbjYeoOW4rQ2q
+         uBVfLFjWunVpxuYYeAEsZhnc18ALtfJ2lTj4s3b+h/K+ApAb2ZV3jkdrwNJBuTSrATuY
+         cqglYfflmUWGiAQYbFDGKprASAN1ZnhzBtFcupHf9+aLoSmzxIJzOLQzWVnGSFxBG6rC
+         cq4MMMWInECAHm7jXfgX6AOB1iX/C5uTG74AUxxRXrueVm0lVc5/xAQCJUp5la0Nh0gX
+         5zvhgPrwJDD3+81KFWAr1ZolkuNyrdtcqXRJuNghof4YNI0gcFY6/ab6LDiVeNRngSwN
+         Ayzw==
+X-Forwarded-Encrypted: i=1; AJvYcCVUwzn0AibiyQQiFmMxGN9/8vmx4x4n7cF4bEO5said27d021cfd9TMfMKYWjHpxl1TIDA/gf8PHP+OBug=@vger.kernel.org, AJvYcCWnd2n8t69F9NudLCb7tGRaTswvx99oVxdJH2930RUpXL5FFelBXvCB9EgGiMBatN9Hn9twbW+CnFN03esWAEY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yys1ozipoh0faS/2S6VIcIE3GSdZkd9u7JQtjk397jgJBlYXscJ
+	FDtgofEEYqJ7i0XHPI5fff3jtyp75pF1eDk5rkzxN/gsePbXpmNe7R38g6+LdSSEqZ0lGZKuZ5m
+	oMHrhRplCHYE8vzkPolIyI4nzOIg=
+X-Gm-Gg: ASbGncs6pBiZE1NuCGKOiAe4zD8E9Md40GOUbxu8L8Kyg3XlWQjTK6U1hRr0lGKb89Z
+	JU4I3kG8dJEwBmG5fvqjgtllw1ltxTNPz1UdypbcEb1gBcuZVYU3Xs/JgoaVv88u6d7OEX0Xcok
+	g250eTrMmu8vrsHpQN0MZ+Rbu+fg==
+X-Google-Smtp-Source: AGHT+IEVYUxwx5E9jnbQsVPneJnZeRgJshiR/gfhI42yfApYsUWLNneAxhc+MmSkVoIX+iFteyviofpyQLBZVNXAaMM=
+X-Received: by 2002:a17:90b:3850:b0:2ff:6941:9b6a with SMTP id
+ 98e67ed59e1d1-30151d40343mr6084294a91.3.1742227047825; Mon, 17 Mar 2025
+ 08:57:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <D8ILQ4NT6977.50SD8DM8FIBF@bootlin.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20250316-vec-set-len-v1-0-60f98a28723f@gmail.com>
+ <20250316-vec-set-len-v1-2-60f98a28723f@gmail.com> <D8IGFTJXS2A1.9JBD1UKGN4PX@proton.me>
+ <CAJ-ks9=oq+c_pMg41QgGWsj=phWYfntXQgpSrFmz16Vifofn3g@mail.gmail.com>
+ <D8IMA0GUIPTD.34ZEZ3W8QSKTA@proton.me> <CAJ-ks9kXZDO-5utmQb2HLkxmxmQ-bg8jZ4FdvDatTj_79W2dMA@mail.gmail.com>
+In-Reply-To: <CAJ-ks9kXZDO-5utmQb2HLkxmxmQ-bg8jZ4FdvDatTj_79W2dMA@mail.gmail.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Mon, 17 Mar 2025 16:57:15 +0100
+X-Gm-Features: AQ5f1JqXyKshe8vnYtXANeddPDy0kCXR7B8Tw1pBs_cBlrxTV_PWtFpByDO-91o
+Message-ID: <CANiq72nVPag-9c73rVTpm5A6BOtM0jq9f9n-dobP8QDOoK5EJQ@mail.gmail.com>
+Subject: Re: [PATCH 2/2] rust: alloc: add `Vec::dec_len`
+To: Tamir Duberstein <tamird@gmail.com>
+Cc: Benno Lossin <benno.lossin@proton.me>, Danilo Krummrich <dakr@kernel.org>, 
+	Andrew Ballance <andrewjballance@gmail.com>, Alice Ryhl <aliceryhl@google.com>, 
+	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Mar 17, 2025 at 03:13:07PM +0100, Mathieu Dubois-Briand wrote:
-> On Fri Mar 14, 2025 at 9:14 AM CET, Andy Shevchenko wrote:
-> > Thu, Mar 13, 2025 at 06:07:03PM +0100, Mathieu Dubois-Briand kirjoitti:
-> > > On Fri Feb 14, 2025 at 4:59 PM CET, Andy Shevchenko wrote:
-> > > > On Fri, Feb 14, 2025 at 12:49:57PM +0100, Mathieu Dubois-Briand wrote:
+On Mon, Mar 17, 2025 at 4:38=E2=80=AFPM Tamir Duberstein <tamird@gmail.com>=
+ wrote:
+>
+> It is my understanding that the kernel's policy is in general not to
+> add API surface that doesn't have users. Rust-for-Linux of course
+> often doesn't honor this by necessity, since many abstractions are
+> needed before users (drivers) can be upstream. But in this case we
+> can't even mention a specific use case - so as I mentioned on the
+> previous reply, I am not comfortable putting my name on such an API.
 
-...
+To clarify: as long as the future user is known and agreed upon, it is
+fine, i.e. what cannot be done, and we do honor it, is to add things
+that have no user in sight at all.
 
-> > > > > +	/*
-> > > > > +	 * MAX7360_REG_DEBOUNCE contains configuration both for keypad debounce
-> > > > > +	 * timings and gpos/keypad columns repartition. Only the later is
-> > > > > +	 * modified here.
-> > > > > +	 */
-> > > > > +	val = FIELD_PREP(MAX7360_PORTS, ngpios);
-> > > > > +	ret = regmap_write_bits(regmap, MAX7360_REG_DEBOUNCE, MAX7360_PORTS, val);
-> > > > > +	if (ret) {
-> > > > > +		dev_err(dev, "Failed to write max7360 columns/gpos configuration");
-> > > > > +		return ret;
-> > > > > +	}
-> > > >
-> > > > Shouldn't this be configured via ->set_config() callback?
-> > > 
-> > > I believe this comment has been a bit outdated by our discussion on
-> > > using GPIO valid mask, but I believe we could not use the ->set_config()
-> > > callback here: this callback is made to configure a single pin while the
-> > > gpos/keypad columns repartition is global.
-> >
-> > Yeah, we have similar desing in Intel Bay Trail (see pinctrl-baytrail.c) and it
-> > requires some software driven heuristics on how individual setting may affect
-> > the global one. But the Q here is is the debounce affects only keypad? Then it
-> > should be configured via keypad matrix driver. Btw, have you checked
-> > drivers/input/keyboard/matrix_keypad.c? Is there anything that can be useful
-> > here?
-> >
-> 
-> Hum, maybe the comment is not clear enough? Not sure, but please tell
-> me.
+From time to time, but not really often at all, we have added things
+that will obviously get users eventually even if there is currently no
+one. For instance, all the `pr_*` levels, even if we do not have a
+caller yet for some of them (in that case, because it is simpler to
+add all at once instead of asking for reviews several times for
+essentially the same code).
 
-I see it now, yes, the comment seems point too much attention on the register
-(and hence its name) then content.
-
-I would start this comment with something like:
-"Configure which GPIOs will be used for keypad."
-
-> So yes, this register is named "debounce" but controls two different
-> things:
-> - The keypad debounce: we do not touch it here.
-> - The partition between keypad columns and gpos. This is the value we do
->   modify here.
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Cheers,
+Miguel
 
