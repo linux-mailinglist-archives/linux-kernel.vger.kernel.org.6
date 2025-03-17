@@ -1,101 +1,94 @@
-Return-Path: <linux-kernel+bounces-564011-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564012-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB0DDA64BFE
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 12:13:36 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C458A64C02
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 12:14:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E26B3AA21B
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:13:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 18DA0170101
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:13:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA31F2356B7;
-	Mon, 17 Mar 2025 11:13:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E8D92356AF;
+	Mon, 17 Mar 2025 11:13:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="kk89cWch"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="AnbXt7XT"
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8710023314E;
-	Mon, 17 Mar 2025 11:13:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BFEE38DD8;
+	Mon, 17 Mar 2025 11:13:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742209995; cv=none; b=SK/JZhBOudDHUbJkIZCvlTQNWwRgPrXdACFiTx+iI7bjzflMO+TlcaqxYGdsKbtNpLqs9cOjrW97mropUg81qoeRbS/xTAkw11WnSkYhDSpLFICJ8VxoJWaCMv5yqe64+Z/bOvAr47sVLz6GKJflAIbJpEe0NOdy0E5RnmjKhfc=
+	t=1742210015; cv=none; b=oPfS56udmDBGSIEI9BBpCdO/5WmJYBvro2Ff5yvT37lBsa8J3YVzgFFu+Xio7hfmH5+5InFT1uvCgD8wtHZH8KxCcUA5DaZ9qqhE8KW4JE4ogMFUnwSdJAXbDWOht97zYMGQHX9HhUedq3COf24RVUyrX3MHMJ0GWTLRMBOI+RU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742209995; c=relaxed/simple;
-	bh=8uZXAR1tS9gZ1WIkhNOz3giLSFnP5AIU3jKXmKP+Rcg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=thFvLwzvNrVpLvdWB7di5PdZo+D+3n1WYwF0JH81oSoc6TlD7kNRmelUKmUCgmTM2X45pD5ox+JmwPUNSACrFsyNvkr/wMMaRP7Vhayt2dKJ53B0n3oTJ9ip8EY29TbiIOsxkmg1OgiKDbl4SNSAPTR7ai6RY2DPnjM8EpcvQ5I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=kk89cWch; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=t363R3/YC3BLxxJJdhYMszVV+F1s08ypncv/xkuhIZU=; b=kk89cWchiC6qKMPHhTHquX+flz
-	BCbwvVkz4jfUY1GeALtiw4D3TpuQS8C/fmgF8tXDQ3OEvcqUru9Yxo8ZGSLm0JxMwvawKeono4Ozz
-	TCf6pti97nx/hjbTUsKrcuT2IWHMRGJ9+VCpy/+TKYHkuKmYCvzOIIjR9lCCCNZBzS5vekQ7RmQ1M
-	ONbZxqxT6aoUcDp19sRAKrlufoMlpc7Y9LVwAlDqv+BisJc/33bh/BS5Md3BjwAJicXKDuKZ+GXQS
-	RrtgpS1nUXfb0YeoSbQxyBJ5tTq4Nb6ksBb+S4M13eCmJ9mfG1r7Q+Q8rvwZCsN3B43Y3tBTd/gLI
-	TSkCZa5w==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:49238)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1tu8P4-0003QF-2g;
-	Mon, 17 Mar 2025 11:13:06 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1tu8P2-0003WJ-12;
-	Mon, 17 Mar 2025 11:13:04 +0000
-Date: Mon, 17 Mar 2025 11:13:04 +0000
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Michael Klein <michael@fossekall.de>
-Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [net-next,v3,1/2] net: phy: realtek: Clean up RTL8211E ExtPage
- access
-Message-ID: <Z9gDwDgpeU2iSZT-@shell.armlinux.org.uk>
-References: <20250316121424.82511-1-michael@fossekall.de>
- <20250316121424.82511-2-michael@fossekall.de>
+	s=arc-20240116; t=1742210015; c=relaxed/simple;
+	bh=IaAKqA+v08qVVOfAgogOgdfb7gIXlHYzqSrSY03hVlU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pimV0JTE680Rs98qpy12fyTAw+2Y1f3rNulLqblxeOyaG6xjgb1m3LGwcBOUjXnxM/ngL9MWNFl0qhAAM9kjVVFtSkRGtcSj5cDhKLOSR1giT5acLfp3jS/5VBxzdHYqVRKbVR/mc7MqGecfDkkA3spb66wPTG89+JMnaZqL+kw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=AnbXt7XT; arc=none smtp.client-ip=217.70.183.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id AA54844395;
+	Mon, 17 Mar 2025 11:13:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1742210005;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=6FStxfEl3bohve41RD8RkBjeU0dmNm6zY+w200u/9hk=;
+	b=AnbXt7XT9YAEj73XQC9c6gAuZm4Pf09z4dUlM/3oEF5Ap8A1FtwyXlxZOOlsS+HmhTJLj7
+	XBTVrL7ooIvD3VbdwaP4Th1O4SUPCruACRcUMQCU/mLPrWR291/OLPU7Um17CZ/6CUhFwb
+	KYOqtMssSrYvaIo96BjkVVNBUGUQfAdwUq+7lQcoOerKTcmrRvQ6eeRPg/m9FfV/QwZxQY
+	FS9lXt7XpRrwLYfInGmnXLIjA8bSUpY7oQmQjhD5PaW7Ag5qYPghJnoxkQBEyBqLVJn5jR
+	UZpX1zL52vMa1o4AhoGxtOS7/T3MEn14Q+bY9VKNQ+8eNWq/buYckmyCcjzT5A==
+From: alexandre.belloni@bootlin.com
+To: Johan Hovold <johan+linaro@kernel.org>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: linux-arm-msm@vger.kernel.org,
+	linux-rtc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] rtc: pm8xxx: switch to devm_device_init_wakeup
+Date: Mon, 17 Mar 2025 12:13:11 +0100
+Message-ID: <20250317111312.1518349-1-alexandre.belloni@bootlin.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250316121424.82511-2-michael@fossekall.de>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+Content-Transfer-Encoding: 8bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddufeelfeeiucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkffoggfgsedtkeertdertddtnecuhfhrohhmpegrlhgvgigrnhgurhgvrdgsvghllhhonhhisegsohhothhlihhnrdgtohhmnecuggftrfgrthhtvghrnhepgedtffeugeeftedtfffhiedtjeefieeuveelffetledvueeludeggedtjefgveevnecukfhppedvrgdtudemtggsudegmeehheeimeejrgdttdemugekjegvmedusgdusgemledtkeegmegttghftgenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemtggsudegmeehheeimeejrgdttdemugekjegvmedusgdusgemledtkeegmegttghftgdphhgvlhhopehlohgtrghlhhhoshhtpdhmrghilhhfrhhomheprghlvgigrghnughrvgdrsggvlhhlohhnihessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohephedprhgtphhtthhopehjohhhrghnodhlihhnrghroheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghlvgigrghnughrvgdrsggvlhhlohhnihessghoohhtlhhinhdrtghomhdprhgtphhtthhopehlihhnuhigqdgrrhhmqdhmshhmsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhto
+ heplhhinhhugidqrhhttgesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-GND-Sasl: alexandre.belloni@bootlin.com
 
-On Sun, Mar 16, 2025 at 01:14:22PM +0100, Michael Klein wrote:
-> +static int rtl8211e_modify_ext_page(struct phy_device *phydev, u16 ext_page,
-> +				    u32 regnum, u16 mask, u16 set)
-> +{
-> +	int oldpage, ret = 0;
-> +
-> +	oldpage = phy_select_page(phydev, RTL8211E_SET_EXT_PAGE);
-> +	if (oldpage >= 0) {
-> +		ret = __phy_write(phydev, RTL8211E_EXT_PAGE_SELECT, ext_page);
-> +		if (!ret)
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
 
-Only a nit, but !ret "reads" weirdly when you consider what the code is
-doing, "ret == 0" seems more natural. It's only a nit so feel free to
-ignore.
+Switch to devm_device_init_wakeup to avoid a possible memory leak as wakeup
+is never disabled.
 
-Reviewed-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+---
+ drivers/rtc/rtc-pm8xxx.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks!
-
+diff --git a/drivers/rtc/rtc-pm8xxx.c b/drivers/rtc/rtc-pm8xxx.c
+index c6241a0c26e9..70cbac76147b 100644
+--- a/drivers/rtc/rtc-pm8xxx.c
++++ b/drivers/rtc/rtc-pm8xxx.c
+@@ -647,7 +647,7 @@ static int pm8xxx_rtc_probe(struct platform_device *pdev)
+ 		if (rc)
+ 			return rc;
+ 
+-		device_init_wakeup(&pdev->dev, true);
++		devm_device_init_wakeup(&pdev->dev);
+ 	} else {
+ 		clear_bit(RTC_FEATURE_ALARM, rtc_dd->rtc->features);
+ 	}
 -- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+2.48.1
+
 
