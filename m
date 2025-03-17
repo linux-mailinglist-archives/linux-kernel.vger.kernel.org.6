@@ -1,136 +1,110 @@
-Return-Path: <linux-kernel+bounces-564369-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564370-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A519A653B8
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 15:36:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42643A653AF
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 15:35:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 487881797D4
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 14:34:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 359943B1B05
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 14:34:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B42B82459DE;
-	Mon, 17 Mar 2025 14:33:57 +0000 (UTC)
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 769982459FC;
+	Mon, 17 Mar 2025 14:33:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="CdTLDMSy"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DECA924503F
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 14:33:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A6C52451EE
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 14:33:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742222037; cv=none; b=geaPB0EXW7vDiHZd1yhHRfdoSh+CFkiEPc0T1kt2VfbMTv8hCahxNVGZUwg85Op+FjkHf9QKg1ayCIQzuaCot5Fm52ABbrwOuit8yB6cV6x1xN5o3+PTLQe6xad+hpoxIoK8MZGSL4rKWTOXb+ICN9mK+g7zJQBGV/ciZ3uO0wg=
+	t=1742222037; cv=none; b=oHabLMsuXUC/Y/9j5xbU7qj8nGaKbjFUCs5OjNsVx0PVzR8HvybjSqX59hZOOPMLtoZmpAuRSV/mlmrZJuyJELcGLZdLGFu/klCVrR9G2qgQP6p5u9w70gf9zQ3KmfYidH58vUdTC8eUVUJ09b3jISloKGSJbGEHQSzJzmKagRY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1742222037; c=relaxed/simple;
-	bh=KX38kPJJwm+uenoBjPatuZqS3YE1r0O5G8wfCZZP3t4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=GozOmL5X4V24HCzBPxMsMS/wvN56IU9COvDcLvyEtUDPs/9ykfRWm1G3L0pq1op2Q7F44WIRkkzUKDVNEnFMG+fX8pCA9ABSFUB41owWVwHPeF4CVL/nAfVZiB9jn73Nz2JrcZ8Y7ErAkACiqGAVQ4HYGWTZftgUqcy28qTIjOM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 4B665215D5;
-	Mon, 17 Mar 2025 14:33:34 +0000 (UTC)
-Authentication-Results: smtp-out1.suse.de;
-	none
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 36D2A139D2;
-	Mon, 17 Mar 2025 14:33:34 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id OPgSDb4y2GcycQAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Mon, 17 Mar 2025 14:33:34 +0000
-From: Vlastimil Babka <vbabka@suse.cz>
-Date: Mon, 17 Mar 2025 15:33:09 +0100
-Subject: [PATCH RFC v3 8/8] maple_tree: use percpu sheaves for
- maple_node_cache
+	bh=4l36dhgYBqlpaMgL0Er5cMl92C4EVDVVtd9XEj3CocE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=e8DN/SHXJ1W/KXlEiwAEpLbGB5SMSd1Xj7ahQ1c7h38qnPGhkC2DMahuOozA9QojYc2Alqjemry1f7UFCGkoE1WWGljYPYniVwAex1b7hC76K7H+tCjW5mOW7HtWA+Xu9NrrSmWoMCtsfC/GDgJiwSAf6FszNvssuwgT8tMdHKI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=CdTLDMSy; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=d9tdhsLFx9Y+Ka1QDxT7vBWyBZEyIqUaO+11tLsabUk=; b=CdTLDMSy71yq0pjkXZ577srzPI
+	1IKHmSysgBEN9jZWPrRNOeFwVgXbzZcWcdLcWxOX3QBOw6FwiZvabe4dOZA2M+Rr4DEQ46o0ZJFQD
+	1PfbMq4ANJ/d1Vz5noVp0T6B6W+HR2+8lqF13Tj0vGHRopdGIO2J5qtbt6oe/cKqoadDBQqILqhHY
+	y7fKAix3TWR2zBu6B5v61a640IB6lKB+UqGPi3auqnABCk7JJ7dI+sOJiV8CN+ApJVt+quMqg8VUF
+	/t2Xxa/e78lKw47tVcMoXdvfzJC5OHhQY2Lnqbe27hoaTaHpvITxwlDJowi8P5SOfycEWlli4ipsr
+	FnNSeVRw==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tuBXH-00000008tKR-444w;
+	Mon, 17 Mar 2025 14:33:48 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 6B573300783; Mon, 17 Mar 2025 15:33:47 +0100 (CET)
+Date: Mon, 17 Mar 2025 15:33:47 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: John Stultz <jstultz@google.com>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+	Joel Fernandes <joelagnelf@nvidia.com>,
+	Qais Yousef <qyousef@layalina.io>, Ingo Molnar <mingo@redhat.com>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>,
+	Zimuzo Ezeozue <zezeozue@google.com>, Mel Gorman <mgorman@suse.de>,
+	Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Metin Kaya <Metin.Kaya@arm.com>,
+	Xuewen Yan <xuewen.yan94@gmail.com>,
+	K Prateek Nayak <kprateek.nayak@amd.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Suleiman Souhlal <suleiman@google.com>, kernel-team@android.com
+Subject: Re: [RFC PATCH v15 1/7] sched: Add CONFIG_SCHED_PROXY_EXEC & boot
+ argument to enable/disable
+Message-ID: <20250317143347.GE36386@noisy.programming.kicks-ass.net>
+References: <20250312221147.1865364-1-jstultz@google.com>
+ <20250312221147.1865364-2-jstultz@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250317-slub-percpu-caches-v3-8-9d9884d8b643@suse.cz>
-References: <20250317-slub-percpu-caches-v3-0-9d9884d8b643@suse.cz>
-In-Reply-To: <20250317-slub-percpu-caches-v3-0-9d9884d8b643@suse.cz>
-To: Suren Baghdasaryan <surenb@google.com>, 
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
- Christoph Lameter <cl@linux.com>, David Rientjes <rientjes@google.com>
-Cc: Roman Gushchin <roman.gushchin@linux.dev>, 
- Harry Yoo <harry.yoo@oracle.com>, Uladzislau Rezki <urezki@gmail.com>, 
- linux-mm@kvack.org, linux-kernel@vger.kernel.org, rcu@vger.kernel.org, 
- maple-tree@lists.infradead.org, vbabka@suse.cz
-X-Mailer: b4 0.14.2
-X-Rspamd-Pre-Result: action=no action;
-	module=replies;
-	Message is reply to one we originated
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.00 / 50.00];
-	REPLY(-4.00)[]
-X-Spam-Score: -4.00
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: 4B665215D5
-X-Rspamd-Pre-Result: action=no action;
-	module=replies;
-	Message is reply to one we originated
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250312221147.1865364-2-jstultz@google.com>
 
-Setup the maple_node_cache with percpu sheaves of size 32 to hopefully
-improve its performance. Change the single node rcu freeing in
-ma_free_rcu() to use kfree_rcu() instead of the custom callback, which
-allows the rcu_free sheaf batching to be used. Note there are other
-users of mt_free_rcu() where larger parts of maple tree are submitted to
-call_rcu() as a whole, and that cannot use the rcu_free sheaf, but it's
-still possible for maple nodes freed this way to be reused via the barn,
-even if only some cpus are allowed to process rcu callbacks.
+On Wed, Mar 12, 2025 at 03:11:31PM -0700, John Stultz wrote:
 
-Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
-Reviewed-by: Suren Baghdasaryan <surenb@google.com>
----
- lib/maple_tree.c | 11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+> diff --git a/init/Kconfig b/init/Kconfig
+> index d0d021b3fa3b3..b989ddc27444e 100644
+> --- a/init/Kconfig
+> +++ b/init/Kconfig
+> @@ -875,6 +875,16 @@ config UCLAMP_BUCKETS_COUNT
+>  
+>  	  If in doubt, use the default value.
+>  
+> +config SCHED_PROXY_EXEC
+> +	bool "Proxy Execution"
+> +	default n
+> +	# Avoid some build failures w/ PREEMPT_RT until it can be fixed
+> +	depends on !PREEMPT_RT
+	depends on !SPM && !SCHED_CLASS_EXT
 
-diff --git a/lib/maple_tree.c b/lib/maple_tree.c
-index f7153ade1be5f16423f0ca073846a7f3dfa60523..56e7a00f6f0941bff163091c999a873e4273f071 100644
---- a/lib/maple_tree.c
-+++ b/lib/maple_tree.c
-@@ -208,7 +208,7 @@ static void mt_free_rcu(struct rcu_head *head)
- static void ma_free_rcu(struct maple_node *node)
- {
- 	WARN_ON(node->parent != ma_parent_ptr(node));
--	call_rcu(&node->rcu, mt_free_rcu);
-+	kfree_rcu(node, rcu);
- }
- 
- static void mas_set_height(struct ma_state *mas)
-@@ -6258,9 +6258,14 @@ bool mas_nomem(struct ma_state *mas, gfp_t gfp)
- 
- void __init maple_tree_init(void)
- {
-+	struct kmem_cache_args args = {
-+		.align  = sizeof(struct maple_node),
-+		.sheaf_capacity = 32,
-+	};
-+
- 	maple_node_cache = kmem_cache_create("maple_node",
--			sizeof(struct maple_node), sizeof(struct maple_node),
--			SLAB_PANIC, NULL);
-+			sizeof(struct maple_node), &args,
-+			SLAB_PANIC);
- }
- 
- /**
+for now, right?
 
--- 
-2.48.1
-
+> +	depends on EXPERT
+> +	help
+> +	  This option enables proxy execution, a mechanism for mutex-owning
+> +	  tasks to inherit the scheduling context of higher priority waiters.
+> +
 
