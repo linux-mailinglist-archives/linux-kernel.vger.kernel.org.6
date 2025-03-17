@@ -1,82 +1,143 @@
-Return-Path: <linux-kernel+bounces-563251-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563252-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC02BA63B4A
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 03:19:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A235A63B61
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 03:21:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B04423A6B2F
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 02:19:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9560E188DD3D
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 02:21:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 883AC13B7A3;
-	Mon, 17 Mar 2025 02:19:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u0zpXIzV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D155014A614;
+	Mon, 17 Mar 2025 02:21:38 +0000 (UTC)
+Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [63.216.63.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2876944E;
-	Mon, 17 Mar 2025 02:19:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 986B741C71;
+	Mon, 17 Mar 2025 02:21:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.216.63.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742177989; cv=none; b=LxdRT0/pNEQxGqhs8PUvTpoiMbOyUqZuPXfvi/22T6C8/UNkvKTRS27f48kcdIxH7/PehbWqFY5c8k7oY47UobUU/PeE4stuepzdK6G7B6N/m8evQ2CvyJl+3o0dGQmEEDnhV9rerHKTg8vvtlzqinfw0JzwbHEipYBO/lV18d0=
+	t=1742178098; cv=none; b=VLPG8HrhpMrFEhcOTCohieiCL+ncjvS/bH5ospCECGDt9pZd4szcUCAPIfnR9Z6LZfq8bDUofMn9ijC6+9yExPyqecgonFva0ZKgAMWlaJQRQMiNV5RQcLiY9tkZefIaaExJOgzwaT2EkMf/BrdZVx8l9mbMgsUi0TbrsNjzsJE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742177989; c=relaxed/simple;
-	bh=KmUn9slvYx1bm2Qy4Js2dvCQrzscY78OedCyX7ZC/pU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=A/Tv5I+KL5hl/VfjQCU3f2ZmIN1ZSpch9UAN0/XazQqziqJmSLHzF8WX6g/GGo74uep1HdI7cWYeMZpzsR3jfyMRfRAOpAIIxhFmfc93NIO7Yr1g5d3+JH1eCOWrw7HkYkGYVZQgMsK4cyt5lGdmwTAMPGDhr8O02gHWZx46Fdc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u0zpXIzV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2FF8C4CEDD;
-	Mon, 17 Mar 2025 02:19:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742177988;
-	bh=KmUn9slvYx1bm2Qy4Js2dvCQrzscY78OedCyX7ZC/pU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=u0zpXIzVfXS0fwMbfQdhvZ7wjNd5pO6GEmtlbWtm3hwiN1nLJTg0/9jDs1TrKdzWV
-	 pdkILEYLbBCQ2oSMe8OpG/q8jDmj03H365GdSKwDu66TlfGeWc33ANyb6+ZTDO7MKk
-	 lOO12Vs6XwpXYl1K6rZrZKN4s16eCPDyXyogyfSbCFT0XENwoNNlob+ky3OcO/kn/9
-	 vdvBVfpsreeWTDkPnpSsf4aH3iwJo8ezL+lpkr0UJOeS42vVvFulEa9rIRLEs1p3cq
-	 kKbW0BVOyDKlt9G7cf/qVr/2bzMJDnwTiJOGMtNgac0G/FYo8TCkCkEEqHeXUIyA9k
-	 LHODOTKedUh1w==
-From: alexs@kernel.org
-To: si.yanteng@linux.dev,
-	jiang.peng9@zte.com.cn
-Cc: Alex Shi <alexs@kernel.org>,
-	dzm91@hust.edu.cn,
-	corbet@lwn.net,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] docs/zh_CN: fix spelling mistake
-Date: Mon, 17 Mar 2025 10:19:34 +0800
-Message-ID: <174217796189.171.16994921459981327377.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250317100811126QvOaWRPxSgm2ttU5faitl@zte.com.cn>
-References: <20250317100811126QvOaWRPxSgm2ttU5faitl@zte.com.cn>
+	s=arc-20240116; t=1742178098; c=relaxed/simple;
+	bh=84h1O8DcSONgrEc/QxED8/rrm3K/RmQEr9m0awU9UjQ=;
+	h=Date:Message-ID:Mime-Version:From:To:Cc:Subject:Content-Type; b=jtjvcIIwqWer9AacaWY6YB7ZyA26jpjj2P2XnoQtiDA4+HGe0lP3aaWGugUrW1lEw9XQptbn7ilAxCNfV+g+izzibi1E/f0SFUUcMkciahbMtNP4sSs9/LFmQ3cZLQKxfzEJ+YRzH85Ett/1M5SDhRe+v8bqVPTmLi4W7v3P528=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=63.216.63.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
+Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4ZGJct3tDhz5B1H4;
+	Mon, 17 Mar 2025 10:21:34 +0800 (CST)
+Received: from xaxapp01.zte.com.cn ([10.88.99.176])
+	by mse-fl1.zte.com.cn with SMTP id 52H2LKJV021874;
+	Mon, 17 Mar 2025 10:21:21 +0800 (+08)
+	(envelope-from feng.wei8@zte.com.cn)
+Received: from mapi (xaxapp04[null])
+	by mapi (Zmail) with MAPI id mid32;
+	Mon, 17 Mar 2025 10:21:22 +0800 (CST)
+Date: Mon, 17 Mar 2025 10:21:22 +0800 (CST)
+X-Zmail-TransId: 2afb67d78722ffffffff87f-23ebf
+X-Mailer: Zmail v1.0
+Message-ID: <202503171021222703hl0ry06tOCRmPFcWNp5U@zte.com.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+From: <feng.wei8@zte.com.cn>
+To: <sumit.semwal@linaro.org>
+Cc: <benjamin.gaignard@collabora.com>, <brian.starkey@arm.com>,
+        <jstultz@google.com>, <tjmercier@google.com>,
+        <christian.koenig@amd.com>, <linux-media@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>, <linaro-mm-sig@lists.linaro.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: =?UTF-8?B?W1BBVENIIHYzXSBkbWEtYnVmOiBoZWFwczogUmVwbGFjZSBuZXN0ZWQgbWF4KCkgd2l0aCBzaW5nbGUgbWF4Mygp?=
+Content-Type: multipart/mixed;
+	boundary="=====_001_next====="
+X-MAIL:mse-fl1.zte.com.cn 52H2LKJV021874
+X-Fangmail-Anti-Spam-Filtered: true
+X-Fangmail-MID-QID: 67D7872E.000/4ZGJct3tDhz5B1H4
 
-From: Alex Shi <alexs@kernel.org>
 
 
-On Mon, 17 Mar 2025 10:08:11 +0800, jiang.peng9@zte.com.cn wrote:
-> The word watermark was misspelled as "watemark".
-> 
-> 
+--=====_001_next=====
+Content-Type: multipart/related;
+	boundary="=====_002_next====="
 
-Applied, thanks!
 
-[1/1] docs/zh_CN: fix spelling mistake
-      commit: 26543ba81da682ff7297c0ad038fcf4261e7eaf7
+--=====_002_next=====
+Content-Type: multipart/alternative;
+	boundary="=====_003_next====="
 
-Best regards,
--- 
-Alex Shi <alexs@kernel.org>
+
+--=====_003_next=====
+Content-Type: text/plain;
+	charset="UTF-8"
+Content-Transfer-Encoding: base64
+
+RnJvbTogRmVuZ1dlaSA8ZmVuZy53ZWk4QHp0ZS5jb20uY24+DQoNClVzZSBtYXgzKCkgbWFjcm8g
+aW5zdGVhZCBvZiBuZXN0aW5nIG1heCgpIHRvIHNpbXBsaWZ5IHRoZSByZXR1cm4NCnN0YXRlbWVu
+dC4NCg0KU2lnbmVkLW9mZi1ieTogRmVuZ1dlaSA8ZmVuZy53ZWk4QHp0ZS5jb20uY24+DQotLS0N
+CnYyIC0+IHYzDQpmaXggdGhlIGZvcm1hdCBvZiB0aGlzIHBhdGNoDQogZHJpdmVycy9kbWEtYnVm
+L2RtYS1oZWFwLmMgfCAyICstDQogMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspLCAxIGRl
+bGV0aW9uKC0pDQoNCmRpZmYgLS1naXQgYS9kcml2ZXJzL2RtYS1idWYvZG1hLWhlYXAuYyBiL2Ry
+aXZlcnMvZG1hLWJ1Zi9kbWEtaGVhcC5jDQppbmRleCAzY2JlODdkNGE0NjQuLjk2Y2I5YWI1NzMx
+YSAxMDA2NDQNCi0tLSBhL2RyaXZlcnMvZG1hLWJ1Zi9kbWEtaGVhcC5jDQorKysgYi9kcml2ZXJz
+L2RtYS1idWYvZG1hLWhlYXAuYw0KQEAgLTE0Nyw3ICsxNDcsNyBAQCBzdGF0aWMgbG9uZyBkbWFf
+aGVhcF9pb2N0bChzdHJ1Y3QgZmlsZSAqZmlsZSwgdW5zaWduZWQgaW50IHVjbWQsDQogCQlpbl9z
+aXplID0gMDsNCiAJaWYgKCh1Y21kICYga2NtZCAmIElPQ19PVVQpID09IDApDQogCQlvdXRfc2l6
+ZSA9IDA7DQotCWtzaXplID0gbWF4KG1heChpbl9zaXplLCBvdXRfc2l6ZSksIGRydl9zaXplKTsN
+CisJa3NpemUgPSBtYXgzKGluX3NpemUsIG91dF9zaXplLCBkcnZfc2l6ZSk7DQogDQogCS8qIElm
+IG5lY2Vzc2FyeSwgYWxsb2NhdGUgYnVmZmVyIGZvciBpb2N0bCBhcmd1bWVudCAqLw0KIAlpZiAo
+a3NpemUgPiBzaXplb2Yoc3RhY2tfa2RhdGEpKSB7DQotLSANCjIuMjUuMQ==
+
+
+--=====_003_next=====
+Content-Type: text/html ;
+	charset="UTF-8"
+Content-Transfer-Encoding: base64
+
+PGRpdiBjbGFzcz0iemNvbnRlbnRSb3ciPjxwPkZyb206IEZlbmdXZWkgJmx0O2Zlbmcud2VpOEB6
+dGUuY29tLmNuJmd0Ozxicj48L3A+PHA+PGJyPjwvcD48cD5Vc2UgbWF4MygpIG1hY3JvIGluc3Rl
+YWQgb2YgbmVzdGluZyBtYXgoKSB0byBzaW1wbGlmeSB0aGUgcmV0dXJuPC9wPjxwPnN0YXRlbWVu
+dC48L3A+PHA+PGJyPjwvcD48cD5TaWduZWQtb2ZmLWJ5OiBGZW5nV2VpICZsdDtmZW5nLndlaThA
+enRlLmNvbS5jbiZndDs8L3A+PHA+LS0tPC9wPjxwPnYyIC0mZ3Q7IHYzPC9wPjxwPmZpeCB0aGUg
+Zm9ybWF0IG9mIHRoaXMgcGF0Y2g8YnI+PC9wPjxwPiZuYnNwO2RyaXZlcnMvZG1hLWJ1Zi9kbWEt
+aGVhcC5jIHwgMiArLTwvcD48cD4mbmJzcDsxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKyks
+IDEgZGVsZXRpb24oLSk8L3A+PHA+PGJyPjwvcD48cD5kaWZmIC0tZ2l0IGEvZHJpdmVycy9kbWEt
+YnVmL2RtYS1oZWFwLmMgYi9kcml2ZXJzL2RtYS1idWYvZG1hLWhlYXAuYzwvcD48cD5pbmRleCAz
+Y2JlODdkNGE0NjQuLjk2Y2I5YWI1NzMxYSAxMDA2NDQ8L3A+PHA+LS0tIGEvZHJpdmVycy9kbWEt
+YnVmL2RtYS1oZWFwLmM8L3A+PHA+KysrIGIvZHJpdmVycy9kbWEtYnVmL2RtYS1oZWFwLmM8L3A+
+PHA+QEAgLTE0Nyw3ICsxNDcsNyBAQCBzdGF0aWMgbG9uZyBkbWFfaGVhcF9pb2N0bChzdHJ1Y3Qg
+ZmlsZSAqZmlsZSwgdW5zaWduZWQgaW50IHVjbWQsPC9wPjxwPiZuYnNwOzxzcGFuIHN0eWxlPSJ3
+aGl0ZS1zcGFjZTpwcmUiPgkJPC9zcGFuPmluX3NpemUgPSAwOzwvcD48cD4mbmJzcDs8c3BhbiBz
+dHlsZT0id2hpdGUtc3BhY2U6cHJlIj4JPC9zcGFuPmlmICgodWNtZCAmYW1wOyBrY21kICZhbXA7
+IElPQ19PVVQpID09IDApPC9wPjxwPiZuYnNwOzxzcGFuIHN0eWxlPSJ3aGl0ZS1zcGFjZTpwcmUi
+PgkJPC9zcGFuPm91dF9zaXplID0gMDs8L3A+PHA+LTxzcGFuIHN0eWxlPSJ3aGl0ZS1zcGFjZTpw
+cmUiPgk8L3NwYW4+a3NpemUgPSBtYXgobWF4KGluX3NpemUsIG91dF9zaXplKSwgZHJ2X3NpemUp
+OzwvcD48cD4rPHNwYW4gc3R5bGU9IndoaXRlLXNwYWNlOnByZSI+CTwvc3Bhbj5rc2l6ZSA9IG1h
+eDMoaW5fc2l6ZSwgb3V0X3NpemUsIGRydl9zaXplKTs8L3A+PHA+Jm5ic3A7PC9wPjxwPiZuYnNw
+OzxzcGFuIHN0eWxlPSJ3aGl0ZS1zcGFjZTpwcmUiPgk8L3NwYW4+LyogSWYgbmVjZXNzYXJ5LCBh
+bGxvY2F0ZSBidWZmZXIgZm9yIGlvY3RsIGFyZ3VtZW50ICovPC9wPjxwPiZuYnNwOzxzcGFuIHN0
+eWxlPSJ3aGl0ZS1zcGFjZTpwcmUiPgk8L3NwYW4+aWYgKGtzaXplICZndDsgc2l6ZW9mKHN0YWNr
+X2tkYXRhKSkgezwvcD48cD4tLSZuYnNwOzwvcD48cD4yLjI1LjE8L3A+PHAgc3R5bGU9ImZvbnQt
+c2l6ZToxNHB4O2ZvbnQtZmFtaWx5OuW+rui9r+mbhem7kSxNaWNyb3NvZnQgWWFIZWk7Ij48YnI+
+PC9wPjxwIHN0eWxlPSJmb250LXNpemU6MTRweDtmb250LWZhbWlseTrlvq7ova/pm4Xpu5EsTWlj
+cm9zb2Z0IFlhSGVpOyI+PGJyPjwvcD48cCBzdHlsZT0iZm9udC1zaXplOjE0cHg7Zm9udC1mYW1p
+bHk65b6u6L2v6ZuF6buRLE1pY3Jvc29mdCBZYUhlaTsiPjxicj48L3A+PHAgc3R5bGU9ImZvbnQt
+c2l6ZToxNHB4O2ZvbnQtZmFtaWx5OuW+rui9r+mbhem7kSxNaWNyb3NvZnQgWWFIZWk7Ij48YnI+
+PC9wPjwvZGl2Pg==
+
+
+--=====_003_next=====--
+
+--=====_002_next=====--
+
+--=====_001_next=====--
+
 
