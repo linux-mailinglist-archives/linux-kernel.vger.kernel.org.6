@@ -1,118 +1,208 @@
-Return-Path: <linux-kernel+bounces-565014-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565015-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8BBCA65F14
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 21:27:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37353A65F1B
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 21:29:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 01FED17B772
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 20:27:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 63B46189EF4B
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 20:29:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A4E71F4E47;
-	Mon, 17 Mar 2025 20:27:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F4A31F666B;
+	Mon, 17 Mar 2025 20:28:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="GiaquPeV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NgNKsBsu"
+Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com [209.85.219.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDD5F1DE3B5;
-	Mon, 17 Mar 2025 20:27:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D987117BBF;
+	Mon, 17 Mar 2025 20:28:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742243232; cv=none; b=mzk+efudhoNus19smEzFhz2zB5UhDu1dwXqYkaampDSsGgE/MfjmHvUbK9wELsSlFys47TzYNDxATdMruq6JhSJt8DOtHvqto9e1Eg6h+dz2Kg2D1SJBKyD+uo28RZP/UtkO49CMHBI2bkS5Vvz5EhGsXi3lTVLhvwUtUCynGCo=
+	t=1742243330; cv=none; b=N445ATkHEmR9LBUEMlIsYyy22xJlIwnqNulsw0Eck+tfR02gvy37G9Sc+XWOqVJL2A0+D0MBa5Ba7zXMpaerIQsKz3ypUziPcGT8F6NdqmSnf/ccN5t6YFdkcNnNLLLZ/sqljBkssEeZfYO+dxSrXV4Ye1bnxr8821WxPCJMHcU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742243232; c=relaxed/simple;
-	bh=4UrGEzkEmzoSkM/fjn7XyKgiHlQMMSLunK8C6/I4oXA=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=bKuzFDjS2crq0HMYnr80t7kG09By5V1SoopQYsCFMpQ6TPNz8Fhm+ouI1VCzB8Ij92fcCgZSTYuh55NsqiJSdvLMv/kNtYH0ygvyNK4BjSQo4j2ueIp5E6pdovnvnQfkmfIvprNgp21bmJcpvItL2i8KI1TpYmORvKJDkQO2U5E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=GiaquPeV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04D81C4CEE3;
-	Mon, 17 Mar 2025 20:27:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1742243231;
-	bh=4UrGEzkEmzoSkM/fjn7XyKgiHlQMMSLunK8C6/I4oXA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=GiaquPeVeNCWAt6uc6jdvHDZiz93WzrWqIl+q5V4rvijJAYhBulOuBdqIqrxnAZcc
-	 1cUGxm9CDfEufEDL6EK7ZwyrH4HfwIsHk9MR+frqnOONfMEE7SJGcluH3tiK9iMaRz
-	 4IHFHJI7GeXWWbOLBb0V2h/kQ3mR9LPd5uZwJjrY=
-Date: Mon, 17 Mar 2025 13:27:10 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Shakeel Butt <shakeel.butt@linux.dev>, Johannes Weiner
- <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>, Roman Gushchin
- <roman.gushchin@linux.dev>, Muchun Song <muchun.song@linux.dev>, Vlastimil
- Babka <vbabka@suse.cz>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- linux-mm@kvack.org, cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
- Meta kernel team <kernel-team@meta.com>
-Subject: Re: [PATCH 0/9] memcg: cleanup per-cpu stock
-Message-Id: <20250317132710.fbcde1c8bb66f91f36e78c89@linux-foundation.org>
-In-Reply-To: <tk35wbak4rp4cpz7khnkpwz7ortta26otktb67c5pmt3yan34z@qgyjxc44rvmp>
-References: <20250315174930.1769599-1-shakeel.butt@linux.dev>
-	<20250315205759.c9f9cdfc2c20467e4106c41a@linux-foundation.org>
-	<tk35wbak4rp4cpz7khnkpwz7ortta26otktb67c5pmt3yan34z@qgyjxc44rvmp>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1742243330; c=relaxed/simple;
+	bh=lchsoJgRQfVQ7pnAJv0mq2YPdxtDq/QgWfmec9w36mw=;
+	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q2fXUnVuHvPdm8E8D7yveArTMVR/zwxphaEQGbU1GJNyHqhrKJwSq1hHkOuCrmb2Y7flP4Lx62Mdy0J1Kx43hleYORpKTWTGw2SUt8cwI698EIZdBkzn/WfDkWIutvVluZyi8pK9SSLiBhHNrvTJnKgb0D6bTlVTcwSNjyRMiDg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NgNKsBsu; arc=none smtp.client-ip=209.85.219.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f46.google.com with SMTP id 6a1803df08f44-6e8f43c1fa0so50988946d6.3;
+        Mon, 17 Mar 2025 13:28:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742243328; x=1742848128; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:subject:cc:to:from:date:feedback-id
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=OgTnoCMML7NG1ectzvNO/tL6qoh3imfTVjxu3to55Yo=;
+        b=NgNKsBsuC9bN19avFypi6zTddaXoAHfkObNLQf/UsymTkS0x5cGhHW3PxImBEAGo1t
+         qfT0vrJM41Ca7gv8InRVIYoUrYQrXuj+hUBTBXkbYxODYDeandKNRzw6XOPysfj6rE1U
+         aHmG9Fs0cw/kFrWjM8pHL3UgWD6IddvhvlDv/TJx4/Nm+xSX3Ml9ZhqZhKPqLnKfsTJF
+         iYT7/uNhd5GjfWoz//b3shOP0RZj3eIY195Q9u7UwlLuXHFHlTNMdfCxujxFiqeufAaK
+         ajptxGxX/pUYC4Ip0AQMNYL1758kjL/fCV7gEmwr29KusUjUxOVHGvhP7V+qNWj1ddD3
+         CxZg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742243328; x=1742848128;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:subject:cc:to:from:date:feedback-id
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=OgTnoCMML7NG1ectzvNO/tL6qoh3imfTVjxu3to55Yo=;
+        b=KDl4hwN0UyzKsxXa50oND8AjLmsEAUFnpO8ENBRgmn4CH6SNk7Vd6lTfTCDvarZmdy
+         fFU2sTZ05JEs19+mukLS5FEIn3DMi5UXbC1GWxUgTgHH6R2N+Zg7PyuGlt/Hbvi0J7UA
+         GQvdYJh6jIwQh4mNDEXXVGxj571Z2LDaDOC7muouFFkhI5fxyyGnmJ584znVFo1uupwM
+         bTccOliyNR4P90zVXZdYisvfePYfXhWd0ni8gxgpE7rsAuxfOYK/u4fuWCQjcvQPzlfx
+         sUpMSNXyLcxwC4yYK/VAjsOLdcm7CFNTOJNmX87XNo/RPiONrZyYRz3UZR+d7esfWn9K
+         jeYQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUBUyVYQK/9PTX/KR9SP/CiN6uJkf0LNRDychvDYoye09CzYon9ExOe7zGIvSuoLDNOueawH5ztAxadpMD0OfRq@vger.kernel.org, AJvYcCUtN1XZM4GngE3lBnKJHuNukFZssYPZ+mcN1JR6FN8EgqN05frZlGNMGst8uN7ZD5aM5qpVnpRXE+myJmmk3SQ=@vger.kernel.org, AJvYcCVAKgaqaxo1VMQMHucq3+J8D3Rf3vfyPRAmK7o/uGVVsAE2DBn375dbckR9kPQ8N5FxtHR7RwXDmZdi@vger.kernel.org, AJvYcCVaUTEcexAuFExQPR10bNVpBNbGFOObWPTiyXB/lfCnjTMA4zrmj8uL4zby8qaBvkLTLf9uodQePKY4LDU=@vger.kernel.org, AJvYcCVmkYpAJXcH/l0ORN039Or0TaYkRiQgeFxTPrD0dJJL94KuzdhM4So43ZXhhiObwpa7NA+xpcydNY3QsdfN@vger.kernel.org, AJvYcCX9zONEVU8j3dT4Y+dhnOqnwHwSBDODai2+NtkfFdwcllAoMsxu74mDmwRj0GBkDZKZnN9x3dUCk7RF@vger.kernel.org, AJvYcCXYacWgFEUkzj98TQyHNPEnTPVe/pLzFIpVDynzgYSE6uAugiD84lbK831YXxXAwFNJBgnNJdKxoygONpGZ@vger.kernel.org
+X-Gm-Message-State: AOJu0YzILBFDRS/VwIbY0kCHQNNHFWVwDPT6txiPqAD/hwHC9936d+mn
+	3YJFgIyMIIf8tRDCyGSn+k8uSn74xiMT233lYwIsgLw/HjL2MttC
+X-Gm-Gg: ASbGncuOX+VBw7Wb8SXkyb5NTgprOXZCDL6j2cE+l2QB+QLuAXj+DvsTDo8j5oGRDtE
+	JBNee+8GzWrm5YBYqaJnHH1ZG2XQ9xBDX3MPke+Wjftt75gNQG/tM1GOTKjG1WQSMj1bFR91cLf
+	eq6OsTENAGUodf4aoD1wR+D2cuPDQJFtzGYOFKaSxm7L3MYn9mmbscvoKB5ZN9nF2R58G+0bz3/
+	t6Jp5NLwjUVxPI7jLmTDhOHoA/IP4jq+0gqMt0euKYjBppi3GspA3NLWfMf0sro5/bK9gtNYy7y
+	q+3r9LtONqVaT31hTKVLBxXG1KPVIOMEsb0Bx7ZXUxXxIQ7ukcMESKYwmVnjfAuIkNKs+VSI5mW
+	rTxsVGkp23Peh+Pn03B4mL3BZ+BlKSbRyW9XeQLRKZkG4NQ==
+X-Google-Smtp-Source: AGHT+IG22UCk1wWtKHGuahOdB4N/jHDhl7GdUIABQTTRSKMwZTYkEJZboCMsj9BGDIQnMwF3xDaLwg==
+X-Received: by 2002:ad4:5748:0:b0:6e8:fee2:aadf with SMTP id 6a1803df08f44-6eaeaa9cf9fmr224274316d6.31.1742243327531;
+        Mon, 17 Mar 2025 13:28:47 -0700 (PDT)
+Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6eade231bcbsm58221036d6.36.2025.03.17.13.28.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Mar 2025 13:28:47 -0700 (PDT)
+Message-ID: <67d885ff.0c0a0220.111215.5644@mx.google.com>
+X-Google-Original-Message-ID: <Z9iF-xR9a61rDiAz@winterfell.>
+Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
+	by mailfauth.phl.internal (Postfix) with ESMTP id 3232E12000B0;
+	Mon, 17 Mar 2025 16:28:46 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-09.internal (MEProxy); Mon, 17 Mar 2025 16:28:46 -0400
+X-ME-Sender: <xms:_oXYZxmT28nRC8TZWRlWL-X2AWmpGeFR9Wz9pQdpNH8idwsV9nu35w>
+    <xme:_oXYZ80zqMnm85svzwSWNHpxhYUiKD730qds8ApFH6vVqhmqLOWoaW0QIBG1JSeld
+    iDJJeBx_3Ypw7tbUw>
+X-ME-Received: <xmr:_oXYZ3qUhHnSjvL9DkVflSS5nvIWaFB5P-y_Rb4UJowWVUogiFm1Mxu5To8>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddugedtgeelucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+    gvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggugfgjsehtkeertddt
+    tdejnecuhfhrohhmpeeuohhquhhnucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrg
+    hilhdrtghomheqnecuggftrfgrthhtvghrnhephedthfeukeefuefhteehgedvvdfhleff
+    jeefleevkeeklefhffdvkeefleeuvedtnecuffhomhgrihhnpehgihhthhhusgdrtghomh
+    dprhhushhtqdhlrghnghdrohhrghenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgr
+    mhepmhgrihhlfhhrohhmpegsohhquhhnodhmvghsmhhtphgruhhthhhpvghrshhonhgrlh
+    hithihqdeiledvgeehtdeigedqudejjeekheehhedvqdgsohhquhhnrdhfvghngheppehg
+    mhgrihhlrdgtohhmsehfihigmhgvrdhnrghmvgdpnhgspghrtghpthhtohepfedvpdhmoh
+    guvgepshhmthhpohhuthdprhgtphhtthhopehtrghmihhrugesghhmrghilhdrtghomhdp
+    rhgtphhtthhopehmrghsrghhihhrohihsehkvghrnhgvlhdrohhrghdprhgtphhtthhope
+    hnrghthhgrnheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepnhhitgholhgrshesfhhj
+    rghslhgvrdgvuhdprhgtphhtthhopehojhgvuggrsehkvghrnhgvlhdrohhrghdprhgtph
+    htthhopegrlhgvgidrghgrhihnohhrsehgmhgrihhlrdgtohhmpdhrtghpthhtohepghgr
+    rhihsehgrghrhihguhhordhnvghtpdhrtghpthhtohepsghjohhrnhefpghghhesphhroh
+    htohhnmhgrihhlrdgtohhmpdhrtghpthhtohepsggvnhhnohdrlhhoshhsihhnsehprhho
+    thhonhdrmhgv
+X-ME-Proxy: <xmx:_oXYZxlANMwuNKP6DOD5TBOFjLmRE1W6xYhzD3Dwd8ZbIRuy6xOyig>
+    <xmx:_oXYZ_2EJeXAh6_9vMOF-ARGYLwnMitB_JEetjjhgNPJFhIF1mI2ow>
+    <xmx:_oXYZwuKl8baxiJ2x7FkMMhwnsWQuRwOBnd512TF6iqJsV9YEUFz2Q>
+    <xmx:_oXYZzU6TfNKWU5vvN8twnm0mC3c8x-aG3ih_6qLFdnJXj39vX6sNg>
+    <xmx:_oXYZ20zuqGxVVrfsulmKHmPb990VxojM_28zgMlZR-HuSsn3xd7RkpD>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 17 Mar 2025 16:28:45 -0400 (EDT)
+Date: Mon, 17 Mar 2025 13:28:43 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Tamir Duberstein <tamird@gmail.com>
+Cc: Masahiro Yamada <masahiroy@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas@fjasle.eu>, Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Brendan Higgins <brendan.higgins@linux.dev>,
+	David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Russ Weight <russ.weight@linux.dev>, Rob Herring <robh@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,	linux-kbuild@vger.kernel.org,
+ linux-kernel@vger.kernel.org,	rust-for-linux@vger.kernel.org,
+ linux-kselftest@vger.kernel.org,	kunit-dev@googlegroups.com,
+ linux-pci@vger.kernel.org,	linux-block@vger.kernel.org,
+ devicetree@vger.kernel.org
+Subject: Re: [PATCH v5 6/6] rust: use strict provenance APIs
+References: <20250317-ptr-as-ptr-v5-0-5b5f21fa230a@gmail.com>
+ <20250317-ptr-as-ptr-v5-6-5b5f21fa230a@gmail.com>
+ <67d85e51.050a0220.2a36b.58b3@mx.google.com>
+ <CAJ-ks9kBp8zPfaQuZRb0Unms1b13hDb5cRypceO8TWFR0Ty5Ww@mail.gmail.com>
+ <67d864b2.0c0a0220.39fb6f.4df4@mx.google.com>
+ <CAJ-ks9n8mwt5q9unqfkfSHj9=ELJHtqsXM-xQ8jsbXeJX6Uyfg@mail.gmail.com>
+ <67d8671d.050a0220.3305ab.6372@mx.google.com>
+ <CAJ-ks9=uHjJrzM0ruvm4v4wr8LygRMP-1orWBy_9OiNNeQr0ow@mail.gmail.com>
+ <CAJ-ks9=Qcmvbm=YGJ=jrX_+YdMsftk=FAimszYZB1OUuV4diZw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJ-ks9=Qcmvbm=YGJ=jrX_+YdMsftk=FAimszYZB1OUuV4diZw@mail.gmail.com>
 
-On Sun, 16 Mar 2025 08:59:20 -0700 Alexei Starovoitov <alexei.starovoitov@gmail.com> wrote:
+On Mon, Mar 17, 2025 at 03:05:45PM -0400, Tamir Duberstein wrote:
+> On Mon, Mar 17, 2025 at 2:50 PM Tamir Duberstein <tamird@gmail.com> wrote:
+> >
+> > On Mon, Mar 17, 2025 at 2:17 PM Boqun Feng <boqun.feng@gmail.com> wrote:
+> > >
+> > > Then we should fix clippy or how we set msrv rather adding the stub.
+> > > @Miguel?
+> >
+> > I filed https://github.com/rust-lang/rust-clippy/issues/14425.
+> 
+> I don't think we can wait for that to be fixed, though. Usually clippy
+> is distributed with rustc via rustup, so even if this is eventually
+> fixed, all versions between 1.84.0 and the fix will need this
+> workaround until MSRV is >= 1.84.0.
 
-> On Sat, Mar 15, 2025 at 08:57:59PM -0700, Andrew Morton wrote:
-> > On Sat, 15 Mar 2025 10:49:21 -0700 Shakeel Butt <shakeel.butt@linux.dev> wrote:
-> > 
-> > > 
-> > > This is a cleanup series which is trying to simplify the memcg per-cpu
-> > > stock code, particularly it tries to remove unnecessary dependencies on
-> > > local_lock of per-cpu memcg stock. The eight patch from Vlastimil
-> > > optimizes the charge path by combining the charging and accounting.
-> > > 
-> > > This series is based on next-20250314 plus two following patches:
-> > > 
-> > > Link: https://lore.kernel.org/all/20250312222552.3284173-1-shakeel.butt@linux.dev/
-> > > Link: https://lore.kernel.org/all/20250313054812.2185900-1-shakeel.butt@linux.dev/
-> > 
-> > Unfortunately the bpf tree has been making changes in the same area of
-> > memcontrol.c.  01d37228d331 ("memcg: Use trylock to access memcg
-> > stock_lock.")
-> > 
-> > Sigh.  We're at -rc7 and I don't think it's worth working around that
-> > for a cleanup series.  So I'm inclined to just defer this series until
-> > the next -rc cycle.
-> > 
-> > If BPF merges reasonably early in the next merge window then please
-> > promptly send this along and I should be able to squeak it into
-> > 6.15-rc1.
-> 
-> Ohh. I didn't realize that try_alloc changes are causing so much trouble.
-> Sorry about that.
-> 
-> Andrew,
-> 
-> could you please instead take bpf-next.git try_alloc_pages branch
-> into your tree and resolve two trivial conflicts:
-> 1. https://lore.kernel.org/bpf/20250311120422.1d9a8f80@canb.auug.org.au/
-> 2. https://lore.kernel.org/bpf/20250312145247.380c2aa5@canb.auug.org.au/
-> There are 7 commits there.
-> You can also squash Vlastimil's fix
-> "Fix the flipped condition in gfpflags_allow_spinning" into 
-> "Introduce try_alloc_pages" patch or keep everything as-is.
-> 
-> I'll drop it from bpf-next right after.
-> 
-> Then Shakeel can rebase/resend his set without conflicts and everything
-> will be nicely ready for the merge window.
-> 
-> I'll defer other bpf side things to after merge window when trees converge.
+We need to take one step back to evalute this "workaround".
 
-Let's just leave things as they are, please.  It's only a cleanup
-series and merging cleanups after -rc7 is rather dubious even without
-issues such as these.
+First, expose_provenance() and with_exposed_provenance{,_mut}() API are
+clearly defined as equavilent to `as` operation [1]. Therefore, the
+changes in this patch doing the conversion with expose_provenance() and
+with_exposed_provenance{,_mut}() don't change anything related to
+provenance in practice.
 
+I do agree we want to use the explicit provenance API, but I don't think
+we want to introduce some API that we know we will change them latter
+when we bump the rustc minimal version. So the question is: are these
+stubs what we want even though in the future our minimal rustc version
+stablizes provenance API? If not, then the cost of this patch cannot
+justify its benefits IMO.
+
+Now let's also look into why we choose a msrv for clippy, I would guess
+it's because we need to support all the versions of rustc starting at
+1.78 and we want clippy to report a problem based on 1.78 even though
+we're using a higher version of rustc. But for this particular case, we
+use a feature that has already been stablized in a higher version of
+rustc, which means the problem reported by clippy doesn't help us, nor
+does it provide better code. Frankly speaking, I think we have other
+ways to ensure the support of all rustc versions without a msrv for
+clippy. If I was to choose, I would simply drop the msrv. But maybe I'm
+missing something.
+
+The point is tools should help us to write good and maintainable code,
+we shouldn't introduce complicated structure of code just because some
+tools fail to do its job.
+
+[1]: https://doc.rust-lang.org/std/ptr/fn.with_exposed_provenance_mut.html
+
+Regards,
+Boqun
 
