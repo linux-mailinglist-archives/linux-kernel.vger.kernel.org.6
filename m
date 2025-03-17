@@ -1,165 +1,220 @@
-Return-Path: <linux-kernel+bounces-565018-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565019-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 440C2A65F3F
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 21:36:37 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64701A65F45
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 21:37:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 055A13B96B8
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 20:36:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 22B857A39C5
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 20:36:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA0B21F7904;
-	Mon, 17 Mar 2025 20:36:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19F901F583D;
+	Mon, 17 Mar 2025 20:37:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dQP/3j1Q"
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KSsYA7uR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 614E6146588;
-	Mon, 17 Mar 2025 20:36:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E7A7146588;
+	Mon, 17 Mar 2025 20:37:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742243783; cv=none; b=VsuXiEf3to548FHKhjzo8VEM9qTgTdEMj+lDRXbr2YwdUEekZRXk2Cc3Or33v+6/uLQ97doUusdDGDKRexWkw9W3yaj8owqkwUwGNYe9fRXpOk+ezj6xGf5x74HO7YFsrxolFnFJ6uNkTAYkOkXaaPpI1/cLU3ygRfw4tSWNB1o=
+	t=1742243862; cv=none; b=iRU29ccZlGQBx9SavJSdjTNi3/2oKgU+3j+DcM8jiq4akaTs1sQD80x5Npldi1J+x36okN1aMQIHDgL8NXbDLA1Rkxf7d2pQHM5U+VsyZlVJc3KXWFxGjssiNsAkvYLWuVv8weq/DvabMygk87Q2DIin3MwmegaCYofqmFSQMkE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742243783; c=relaxed/simple;
-	bh=qM2+6w4f6b/JlSZe8vL4wEJF46txPHCxK1AdfBHc6YU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lNhKKxtq6cm32tNzDBU/DTSMqgzb6MKx/vokC6012QvuS4CQWqOTAWGkO2EzX4nOSoRqdiH2bV7BRgiP26gr2DauaDAMaNZo8r4dN3VanKpx28Q4RgW30i3m73JrGMka4JUqsJD8F51/hAbYDjiBqEOy0rUaooGI/KeQud54An4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dQP/3j1Q; arc=none smtp.client-ip=209.85.208.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-30bfed67e08so54251831fa.2;
-        Mon, 17 Mar 2025 13:36:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742243779; x=1742848579; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qM2+6w4f6b/JlSZe8vL4wEJF46txPHCxK1AdfBHc6YU=;
-        b=dQP/3j1QLPCmH/w+WCTSqiTHJbey+5DNXB+g6ZfM/GsDPU4u5ytOLIUS4LKZOXpc2R
-         e7EyJksTNgF6pOsb5/c4MCiDJTavUSBrawE5q4Cpob//YXg6C92RfTfUIhl1RgBEihVE
-         JwPNrWhUxnFWyt8T34Uq9r5nkZkZP2QhHOiuf3klTZSE9tReeVE/cONJyPMY81ietRGE
-         zqypbx7jvP4X9Uj0C+mtl4l6DkhbHJU9DN10A9opW6HNJAak+UrofOoUXFNLBF8DZm2U
-         jp2hVn5tnRgsFzsk/GUHWGTLjf/Gw1TEMSIFVCHsKpPnralZpXV/fonC7yyRbnMucPtJ
-         O47Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742243779; x=1742848579;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qM2+6w4f6b/JlSZe8vL4wEJF46txPHCxK1AdfBHc6YU=;
-        b=hGoiJZsBlg2oPyNgbMRR4Y7NVehALdrRFnyCtjvTH3zwWN9RniWczlQg8PQmXwZp8F
-         L76csH3yjh8Sam6u6AlSHEVrfwlXiITf3L96I4J+Rwsn536HL0/vDRD6b5WspI52oxOT
-         EhEX7CzApNqJuFPYuRKDNaByrGnG93U4NXiwvam1uqoriNmz+9k5DW7onG6ScWs/Morj
-         e2G5RBEAqSew7qxwSVc8f1tw/m8RissZftfja5t4aOT8WpWNNlvgnW28nro0SNZ3a59R
-         SDm/E+Rw/Oa6iN27c6FtUzM86UArWkriqVRRe9Ads7zhsh25sv4GHYiGweptepvePb6H
-         8JCA==
-X-Forwarded-Encrypted: i=1; AJvYcCUmHG46IIbrW3u/d67EVZl8MbH4YopvHI6mZmpzWjiG00F2V5Xs/SZAyG454Wn5ZugZcGCig8EmVEG6@vger.kernel.org, AJvYcCVBdrz5YFNc235rpybMd8GOwxQsbxIguMEkg4SVuKVdTHiyXZ3At88qOMWpLMr53/n3zom8fCsUhcakpuzt@vger.kernel.org, AJvYcCVhHWNQJJPIwVUlnl03ZBfgRqm0aDj1b0JxZj+xUiMiXGtCqegSKsKcN5kAXvhF9jTxKGcHs37s762HmxkK@vger.kernel.org, AJvYcCW26KF/2St4AY1yugQ/9T8uRkAumRtjpnUGaanXpMSiaV7w5yKBarD4aV+LyfbYXkJvujZ/tWQpCVRl57Q=@vger.kernel.org, AJvYcCW5oRU0uZmY7obkbj71aIuXoGKUAGQueZINNyBB+qR1wFSkGOhLtxzyVrVtkLCF41MFoHwuZIuF7O4+T9fyrTM=@vger.kernel.org, AJvYcCWsS5pPCZnGf9ZgvDS46bkiJWGOK51NFUmK1N0V+YthJFYsoltWvHJj6wb42jzJ9RTeRSwzHEFYLABd@vger.kernel.org, AJvYcCXtXNDW+93GGABR5RNjnxw55+dDA5CftNFSiHeo5lJSHzlkWiCcdBXmPbL7YKvsuhOKY5jNi2ENKGFluEkClxmE@vger.kernel.org
-X-Gm-Message-State: AOJu0YypM8J1jNV36LLcHkOt73/WS3DxU6iZS4fhgj1peaRUaCWbzmU0
-	v2AQA9WIpPOj7ZRiXVoPZWYtV+K5cNMttWlSSN4qyB3xE+7aCZb+XjMeP4Ux9fEf/a1if2FLE6n
-	CB180IujDzKZC/sVOPfbT04MDqqE=
-X-Gm-Gg: ASbGncvHcjhftHMMJQbeFe05UVIzyuVqhx0+D72EjtNywqWFRWqcANMjfCp+7awnWsL
-	wLNusFz5sifMZ/1SUj3bgH1YB8lccWVWgvr6vKjoGStQhOTZWVf8rajI7ClaIaNqqpGecSi2dnz
-	QPUegPuHB7kFP1BJ+SJONGs/y2gI9TGF0Kn0h3EtepRn7F45ywt/47KORf8Al+IaoZHQ4rWw==
-X-Google-Smtp-Source: AGHT+IH8zVr++NSNNLXeK1LLEAL53MfIwsN2fQKGrVb8hyKgIXGiHkTS2l6AtuLI3BuMwtJPdkeMKucB/6Pcq+U8mXA=
-X-Received: by 2002:a2e:a4c4:0:b0:30c:50ff:1a4e with SMTP id
- 38308e7fff4ca-30c50ff1acdmr75805741fa.18.1742243779142; Mon, 17 Mar 2025
- 13:36:19 -0700 (PDT)
+	s=arc-20240116; t=1742243862; c=relaxed/simple;
+	bh=aXqJ/pis7CyCbe3dFyicCUqHQk/5npXUAYLRJ48VhpE=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=pPajdnr+xJ3jcRti9glZpnL8tdkGL9iIwDdymDYlRTSnOGBZXkcE79Oomnv2A+81A34aixweuvv9SKzvrC5N2Oi9a/aArmwtTgs5tSSkNG3sgHcEeEBYXKCFmCpX6fjhlITtCa6WvgM4yzseX+ZZ3+JOU356D9EfP6sKXhT/Gf8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KSsYA7uR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C76EC4CEE3;
+	Mon, 17 Mar 2025 20:37:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742243861;
+	bh=aXqJ/pis7CyCbe3dFyicCUqHQk/5npXUAYLRJ48VhpE=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=KSsYA7uRKzdXFAuqhX9P2fst3OX9TeQJZuRqxJs8GCrvLsscBDx0fyNv442eDOllN
+	 OeWYytyu+bCTnvlepAy1LCAmvr8GgtVi0q9jmExNhfbKTCRd8QYVc5jmXXnNjL2Z2T
+	 BZZmMef9h8bkdDRoZ2wq2l3O9gFadyLhL1KENsuu2nCLLMId7SePuV2vrDPpbXGMUb
+	 P8b6F1EqXCadq4Yh/mCfvL66jNBg2iYKbCMGDWJmMyeihlW61o+6IHc0DHhVMKz+iL
+	 88NTWhuKGqkRDaTSW4XI1pbYyp7DBbvXkZeyVGA64CkiYJrOeeZXKJHqhL/xsZJYbB
+	 um2Ww+xGXac6w==
+Date: Mon, 17 Mar 2025 15:37:40 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250317-ptr-as-ptr-v5-0-5b5f21fa230a@gmail.com>
- <20250317-ptr-as-ptr-v5-6-5b5f21fa230a@gmail.com> <67d85e51.050a0220.2a36b.58b3@mx.google.com>
- <CAJ-ks9kBp8zPfaQuZRb0Unms1b13hDb5cRypceO8TWFR0Ty5Ww@mail.gmail.com>
- <67d864b2.0c0a0220.39fb6f.4df4@mx.google.com> <CAJ-ks9n8mwt5q9unqfkfSHj9=ELJHtqsXM-xQ8jsbXeJX6Uyfg@mail.gmail.com>
- <67d8671d.050a0220.3305ab.6372@mx.google.com> <CAJ-ks9=uHjJrzM0ruvm4v4wr8LygRMP-1orWBy_9OiNNeQr0ow@mail.gmail.com>
- <CAJ-ks9=Qcmvbm=YGJ=jrX_+YdMsftk=FAimszYZB1OUuV4diZw@mail.gmail.com> <67d885ff.0c0a0220.111215.5644@mx.google.com>
-In-Reply-To: <67d885ff.0c0a0220.111215.5644@mx.google.com>
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Mon, 17 Mar 2025 16:35:42 -0400
-X-Gm-Features: AQ5f1Jom6vkSdbmn6oaBiraATarxSi5flyvequP1N2vSDIIJ5c82kRxp43mFlwM
-Message-ID: <CAJ-ks9kYB1b4XsQcFb=NScPq+R+13U+Sv-6opi-yp6=ZjuLD_g@mail.gmail.com>
-Subject: Re: [PATCH v5 6/6] rust: use strict provenance APIs
-To: Boqun Feng <boqun.feng@gmail.com>
-Cc: Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
-	Nicolas Schier <nicolas@fjasle.eu>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Brendan Higgins <brendan.higgins@linux.dev>, 
-	David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Luis Chamberlain <mcgrof@kernel.org>, 
-	Russ Weight <russ.weight@linux.dev>, Rob Herring <robh@kernel.org>, 
-	Saravana Kannan <saravanak@google.com>, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, 
-	linux-pci@vger.kernel.org, linux-block@vger.kernel.org, 
-	devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: daniel.baluta@gmail.com, shengjiu.wang@nxp.com, 
+ linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ shawnguo@kernel.org, mathieu.poirier@linaro.org, festevam@gmail.com, 
+ aisheng.dong@nxp.com, krzk+dt@kernel.org, s.hauer@pengutronix.de, 
+ a.fatoum@pengutronix.de, frank.li@nxp.com, conor+dt@kernel.org, 
+ kernel@pengutronix.de, iuliana.prodan@nxp.com, imx@lists.linux.dev, 
+ laurentiu.mihalcea@nxp.com
+To: Daniel Baluta <daniel.baluta@nxp.com>
+In-Reply-To: <20250317133306.2003909-1-daniel.baluta@nxp.com>
+References: <20250317133306.2003909-1-daniel.baluta@nxp.com>
+Message-Id: <174224352689.683565.9145622703259276578.robh@kernel.org>
+Subject: Re: [PATCH v5 0/5] Configure imx8mp dsp node for rproc usage
 
-On Mon, Mar 17, 2025 at 4:28=E2=80=AFPM Boqun Feng <boqun.feng@gmail.com> w=
-rote:
->
-> On Mon, Mar 17, 2025 at 03:05:45PM -0400, Tamir Duberstein wrote:
-> > On Mon, Mar 17, 2025 at 2:50=E2=80=AFPM Tamir Duberstein <tamird@gmail.=
-com> wrote:
-> > >
-> > > On Mon, Mar 17, 2025 at 2:17=E2=80=AFPM Boqun Feng <boqun.feng@gmail.=
-com> wrote:
-> > > >
-> > > > Then we should fix clippy or how we set msrv rather adding the stub=
-.
-> > > > @Miguel?
-> > >
-> > > I filed https://github.com/rust-lang/rust-clippy/issues/14425.
-> >
-> > I don't think we can wait for that to be fixed, though. Usually clippy
-> > is distributed with rustc via rustup, so even if this is eventually
-> > fixed, all versions between 1.84.0 and the fix will need this
-> > workaround until MSRV is >=3D 1.84.0.
->
-> We need to take one step back to evalute this "workaround".
->
-> First, expose_provenance() and with_exposed_provenance{,_mut}() API are
-> clearly defined as equavilent to `as` operation [1]. Therefore, the
-> changes in this patch doing the conversion with expose_provenance() and
-> with_exposed_provenance{,_mut}() don't change anything related to
-> provenance in practice.
->
-> I do agree we want to use the explicit provenance API, but I don't think
-> we want to introduce some API that we know we will change them latter
-> when we bump the rustc minimal version. So the question is: are these
-> stubs what we want even though in the future our minimal rustc version
-> stablizes provenance API? If not, then the cost of this patch cannot
-> justify its benefits IMO.
->
-> Now let's also look into why we choose a msrv for clippy, I would guess
-> it's because we need to support all the versions of rustc starting at
-> 1.78 and we want clippy to report a problem based on 1.78 even though
-> we're using a higher version of rustc. But for this particular case, we
-> use a feature that has already been stablized in a higher version of
-> rustc, which means the problem reported by clippy doesn't help us, nor
-> does it provide better code. Frankly speaking, I think we have other
-> ways to ensure the support of all rustc versions without a msrv for
-> clippy. If I was to choose, I would simply drop the msrv. But maybe I'm
-> missing something.
->
-> The point is tools should help us to write good and maintainable code,
-> we shouldn't introduce complicated structure of code just because some
-> tools fail to do its job.
->
-> [1]: https://doc.rust-lang.org/std/ptr/fn.with_exposed_provenance_mut.htm=
-l
 
-Even if we globally disable this clippy lint, we still need stubs
-because exposed_provenance was added in 1.79.0. Did your suggestion
-address this? Perhaps I missed it.
+On Mon, 17 Mar 2025 15:33:01 +0200, Daniel Baluta wrote:
+> DSP found in i.MX8MP SOC can be used by multiple frameworks in order to
+> enable various applications:
+>         - rproc/rpmsg framework, used to load for example Zephyr samples
+>         - Sound Open Firmware, used to enable various audio processing
+>           pipelines.
+> 
+> Current dsp node was configured with SOF in mind but it doesn't work
+> well with imx8mp-evk dts. SOF controls audio IPs from firmware side
+> while imx8mp-evk.dts preffers to control audio IPs from Linux side.
+> 
+> So, configure 'dsp' node to be used with rproc scenario and later will
+> add a separate dts or an overlay to configure the node for SOF.
+> 
+> This patch series configures and enables dsp node to be used with rproc.
+> 
+> Changes since v4:
+> (https://lore.kernel.org/linux-arm-kernel/Z6zGLn3B6SVXhTV1@lizhi-Precision-Tower-5810/T/)
+> 	- after comments received on v4, we implemented the run/stall
+> 	  bits using reset controller API (changes merged ->
+> https://patchwork.kernel.org/project/linux-arm-kernel/cover/20250311085812.1296243-1-daniel.baluta@nxp.com/)
+>         - drop patches related to DSP run/stall/reset via syscon
+> 	- picked up patch related to using run_stall via reset
+> 	  controller API.
+> 
+> Daniel Baluta (5):
+>   arm64: dts: imx8mp: Use resets property
+>   arm64: dts: imx8mp: Add mu2 root clock
+>   arm64: dts: imx8mp: Configure dsp node for rproc usage
+>   arm64: dts: imx8mp: Add DSP clocks
+>   arm64: dts: Add dsp rproc related mem regions
+> 
+>  arch/arm64/boot/dts/freescale/imx8mp-evk.dts | 10 +++++++++
+>  arch/arm64/boot/dts/freescale/imx8mp.dtsi    | 22 +++++++++++++-------
+>  2 files changed, 25 insertions(+), 7 deletions(-)
+> 
+> --
+> 2.43.0
+> 
+> 
+> 
+
+
+My bot found new DTB warnings on the .dts files added or changed in this
+series.
+
+Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+are fixed by another series. Ultimately, it is up to the platform
+maintainer whether these warnings are acceptable or not. No need to reply
+unless the platform maintainer has comments.
+
+If you already ran DT checks and didn't see these error(s), then
+make sure dt-schema is up to date:
+
+  pip3 install dtschema --upgrade
+
+
+New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/freescale/' for 20250317133306.2003909-1-daniel.baluta@nxp.com:
+
+arch/arm64/boot/dts/freescale/imx8mp-aristainetos3-proton2s.dtb: dsp@3b6e8000: memory-region: [[142]] is too short
+	from schema $id: http://devicetree.org/schemas/dsp/fsl,dsp.yaml#
+arch/arm64/boot/dts/freescale/imx8mp-var-som-symphony.dtb: dsp@3b6e8000: memory-region: [[105]] is too short
+	from schema $id: http://devicetree.org/schemas/dsp/fsl,dsp.yaml#
+arch/arm64/boot/dts/freescale/imx8mp-dhcom-pdk3.dtb: dsp@3b6e8000: memory-region: [[156]] is too short
+	from schema $id: http://devicetree.org/schemas/dsp/fsl,dsp.yaml#
+arch/arm64/boot/dts/freescale/imx8mp-venice-gw72xx-2x.dtb: dsp@3b6e8000: memory-region: [[127]] is too short
+	from schema $id: http://devicetree.org/schemas/dsp/fsl,dsp.yaml#
+arch/arm64/boot/dts/freescale/imx8mp-verdin-nonwifi-dahlia.dtb: dsp@3b6e8000: memory-region: [[164]] is too short
+	from schema $id: http://devicetree.org/schemas/dsp/fsl,dsp.yaml#
+arch/arm64/boot/dts/freescale/imx8mp-icore-mx8mp-edimm2.2.dtb: dsp@3b6e8000: memory-region: [[102]] is too short
+	from schema $id: http://devicetree.org/schemas/dsp/fsl,dsp.yaml#
+arch/arm64/boot/dts/freescale/imx8mp-venice-gw73xx-2x.dtb: dsp@3b6e8000: memory-region: [[129]] is too short
+	from schema $id: http://devicetree.org/schemas/dsp/fsl,dsp.yaml#
+arch/arm64/boot/dts/freescale/imx8mp-skov-revb-lt6.dtb: dsp@3b6e8000: memory-region: [[132]] is too short
+	from schema $id: http://devicetree.org/schemas/dsp/fsl,dsp.yaml#
+arch/arm64/boot/dts/freescale/imx8mp-debix-som-a-bmb-08.dtb: dsp@3b6e8000: memory-region: [[118]] is too short
+	from schema $id: http://devicetree.org/schemas/dsp/fsl,dsp.yaml#
+arch/arm64/boot/dts/freescale/imx8mp-verdin-wifi-dev.dtb: dsp@3b6e8000: memory-region: [[165]] is too short
+	from schema $id: http://devicetree.org/schemas/dsp/fsl,dsp.yaml#
+arch/arm64/boot/dts/freescale/imx8mp-nitrogen-smarc-universal-board.dtb: dsp@3b6e8000: memory-region: [[105]] is too short
+	from schema $id: http://devicetree.org/schemas/dsp/fsl,dsp.yaml#
+arch/arm64/boot/dts/freescale/imx8mp-msc-sm2s-ep1.dtb: dsp@3b6e8000: memory-region: [[140]] is too short
+	from schema $id: http://devicetree.org/schemas/dsp/fsl,dsp.yaml#
+arch/arm64/boot/dts/freescale/imx8mp-aristainetos3-adpismarc.dtb: dsp@3b6e8000: memory-region: [[142]] is too short
+	from schema $id: http://devicetree.org/schemas/dsp/fsl,dsp.yaml#
+arch/arm64/boot/dts/freescale/imx8mp-verdin-wifi-ivy.dtb: dsp@3b6e8000: memory-region: [[162]] is too short
+	from schema $id: http://devicetree.org/schemas/dsp/fsl,dsp.yaml#
+arch/arm64/boot/dts/freescale/imx8mp-venice-gw71xx-2x.dtb: dsp@3b6e8000: memory-region: [[120]] is too short
+	from schema $id: http://devicetree.org/schemas/dsp/fsl,dsp.yaml#
+arch/arm64/boot/dts/freescale/imx8mp-verdin-wifi-yavia.dtb: dsp@3b6e8000: memory-region: [[163]] is too short
+	from schema $id: http://devicetree.org/schemas/dsp/fsl,dsp.yaml#
+arch/arm64/boot/dts/freescale/imx8mp-kontron-smarc-eval-carrier.dtb: dsp@3b6e8000: memory-region: [[155]] is too short
+	from schema $id: http://devicetree.org/schemas/dsp/fsl,dsp.yaml#
+arch/arm64/boot/dts/freescale/imx8mp-verdin-wifi-mallow.dtb: dsp@3b6e8000: memory-region: [[164]] is too short
+	from schema $id: http://devicetree.org/schemas/dsp/fsl,dsp.yaml#
+arch/arm64/boot/dts/freescale/imx8mp-debix-model-a.dtb: dsp@3b6e8000: memory-region: [[119]] is too short
+	from schema $id: http://devicetree.org/schemas/dsp/fsl,dsp.yaml#
+arch/arm64/boot/dts/freescale/imx8mp-verdin-nonwifi-yavia.dtb: dsp@3b6e8000: memory-region: [[158]] is too short
+	from schema $id: http://devicetree.org/schemas/dsp/fsl,dsp.yaml#
+arch/arm64/boot/dts/freescale/imx8mp-skov-revb-mi1010ait-1cp1.dtb: dsp@3b6e8000: memory-region: [[131]] is too short
+	from schema $id: http://devicetree.org/schemas/dsp/fsl,dsp.yaml#
+arch/arm64/boot/dts/freescale/imx8mp-navqp.dtb: dsp@3b6e8000: memory-region: [[111]] is too short
+	from schema $id: http://devicetree.org/schemas/dsp/fsl,dsp.yaml#
+arch/arm64/boot/dts/freescale/imx8mp-skov-revb-hdmi.dtb: dsp@3b6e8000: memory-region: [[134]] is too short
+	from schema $id: http://devicetree.org/schemas/dsp/fsl,dsp.yaml#
+arch/arm64/boot/dts/freescale/imx8mp-phyboard-pollux-rdk.dtb: dsp@3b6e8000: memory-region: [[130]] is too short
+	from schema $id: http://devicetree.org/schemas/dsp/fsl,dsp.yaml#
+arch/arm64/boot/dts/freescale/imx8mp-dhcom-pdk2.dtb: dsp@3b6e8000: memory-region: [[152]] is too short
+	from schema $id: http://devicetree.org/schemas/dsp/fsl,dsp.yaml#
+arch/arm64/boot/dts/freescale/imx8mp-skov-revc-bd500.dtb: dsp@3b6e8000: memory-region: [[130]] is too short
+	from schema $id: http://devicetree.org/schemas/dsp/fsl,dsp.yaml#
+arch/arm64/boot/dts/freescale/imx8mp-beacon-kit.dtb: dsp@3b6e8000: memory-region: [[148]] is too short
+	from schema $id: http://devicetree.org/schemas/dsp/fsl,dsp.yaml#
+arch/arm64/boot/dts/freescale/imx8mp-venice-gw74xx.dtb: dsp@3b6e8000: memory-region: [[136]] is too short
+	from schema $id: http://devicetree.org/schemas/dsp/fsl,dsp.yaml#
+arch/arm64/boot/dts/freescale/imx8mp-aristainetos3-helios.dtb: dsp@3b6e8000: memory-region: [[142]] is too short
+	from schema $id: http://devicetree.org/schemas/dsp/fsl,dsp.yaml#
+arch/arm64/boot/dts/freescale/imx8mp-verdin-wifi-dahlia.dtb: dsp@3b6e8000: memory-region: [[169]] is too short
+	from schema $id: http://devicetree.org/schemas/dsp/fsl,dsp.yaml#
+arch/arm64/boot/dts/freescale/imx8mp-tqma8mpql-mba8mp-ras314.dtb: dsp@3b6e8000: memory-region: [[156]] is too short
+	from schema $id: http://devicetree.org/schemas/dsp/fsl,dsp.yaml#
+arch/arm64/boot/dts/freescale/imx8mp-dhcom-drc02.dtb: dsp@3b6e8000: memory-region: [[160]] is too short
+	from schema $id: http://devicetree.org/schemas/dsp/fsl,dsp.yaml#
+arch/arm64/boot/dts/freescale/imx8mp-verdin-nonwifi-ivy.dtb: dsp@3b6e8000: memory-region: [[157]] is too short
+	from schema $id: http://devicetree.org/schemas/dsp/fsl,dsp.yaml#
+arch/arm64/boot/dts/freescale/imx8mp-verdin-nonwifi-mallow.dtb: dsp@3b6e8000: memory-region: [[159]] is too short
+	from schema $id: http://devicetree.org/schemas/dsp/fsl,dsp.yaml#
+arch/arm64/boot/dts/freescale/imx8mp-tqma8mpql-mba8mpxl.dtb: dsp@3b6e8000: memory-region: [[153]] is too short
+	from schema $id: http://devicetree.org/schemas/dsp/fsl,dsp.yaml#
+arch/arm64/boot/dts/freescale/imx8mp-kontron-bl-osm-s.dtb: dsp@3b6e8000: memory-region: [[150]] is too short
+	from schema $id: http://devicetree.org/schemas/dsp/fsl,dsp.yaml#
+arch/arm64/boot/dts/freescale/imx8mp-venice-gw82xx-2x.dtb: dsp@3b6e8000: memory-region: [[132]] is too short
+	from schema $id: http://devicetree.org/schemas/dsp/fsl,dsp.yaml#
+arch/arm64/boot/dts/freescale/imx8mp-venice-gw75xx-2x.dtb: dsp@3b6e8000: memory-region: [[123]] is too short
+	from schema $id: http://devicetree.org/schemas/dsp/fsl,dsp.yaml#
+arch/arm64/boot/dts/freescale/imx8mp-data-modul-edm-sbc.dtb: dsp@3b6e8000: memory-region: [[144]] is too short
+	from schema $id: http://devicetree.org/schemas/dsp/fsl,dsp.yaml#
+arch/arm64/boot/dts/freescale/imx8mp-verdin-nonwifi-dev.dtb: dsp@3b6e8000: memory-region: [[160]] is too short
+	from schema $id: http://devicetree.org/schemas/dsp/fsl,dsp.yaml#
+arch/arm64/boot/dts/freescale/imx8mp-skov-revc-tian-g07017.dtb: dsp@3b6e8000: memory-region: [[131]] is too short
+	from schema $id: http://devicetree.org/schemas/dsp/fsl,dsp.yaml#
+arch/arm64/boot/dts/freescale/imx8mp-iota2-lumpy.dtb: dsp@3b6e8000: memory-region: [[107]] is too short
+	from schema $id: http://devicetree.org/schemas/dsp/fsl,dsp.yaml#
+arch/arm64/boot/dts/freescale/imx8mp-dhcom-picoitx.dtb: dsp@3b6e8000: memory-region: [[158]] is too short
+	from schema $id: http://devicetree.org/schemas/dsp/fsl,dsp.yaml#
+arch/arm64/boot/dts/freescale/imx8mp-skov-basic.dtb: dsp@3b6e8000: memory-region: [[129]] is too short
+	from schema $id: http://devicetree.org/schemas/dsp/fsl,dsp.yaml#
+
+
+
+
+
 
