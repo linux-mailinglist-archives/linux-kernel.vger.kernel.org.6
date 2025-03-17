@@ -1,79 +1,79 @@
-Return-Path: <linux-kernel+bounces-563936-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563938-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 794C8A64AC4
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:50:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7A2CA64AAD
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:46:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A5AD3A93BD
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:46:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A5AAF18863A0
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:46:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32A29233702;
-	Mon, 17 Mar 2025 10:46:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 628DD2356DE;
+	Mon, 17 Mar 2025 10:46:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="NFFTUTi/";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="veNqJYLY"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="mAzSOkai";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Sir22bHb"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAFEC1993BD;
-	Mon, 17 Mar 2025 10:46:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0270E1C6FF0;
+	Mon, 17 Mar 2025 10:46:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742208389; cv=none; b=aOi5IonNQZKabQawREKkrhmKZbhVUq/t5LlXdCz1yFmAFlks5cUSPiOKJ0jA2oAZjXB1ipp7wwUmQ2sVDDHuvrZR26MDDLMUkfymP1OrWxg9yv9UhX6ln4op3I4TstHUGXLsjHehSNSvctv9Sig1AgbbkkEef6HrcBqzsSB23N4=
+	t=1742208390; cv=none; b=U/ddFUNoOvPXWMIyV51Xf9nBCFOpp0UvTOKmCT4cRs7SveJP4oizjuloXc6+Ud6OlnmS9jrqHK8OUidOSRoMLtZN9Cx6tKGSW4+C/0eJpULhmLUL/yec0F+MHLdj3Qzq3ana7t6UJu+C2cF1Z9YzpqdyqUQYy0dEAat02NfnEZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742208389; c=relaxed/simple;
-	bh=oRyhunPBOyS4FkzNsGJ7Z0Hn3lIuU8WiUPqvbFFEVz4=;
+	s=arc-20240116; t=1742208390; c=relaxed/simple;
+	bh=XkP11VNwHTgkdGlWwghWYeRz4rWuX4Q/A1NzlshIejk=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=LSOsXyffaI8j8Mb+ULic7x/nkUo+648M9wL/BvTj9RRUfLpbylphzDsfrG8aguRjQPuQw+urxpLzPT4v2G6X855UGO7kTJJfzwvBIrCLBRbU86GyYNk/uj/7L7vQ14ai8Zms15MOMNe+Kez8CxbVdAZVbWQmdfeHZajl0s6DuN0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=NFFTUTi/; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=veNqJYLY; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=b0Mdonk/2quRl97+3dsfURT9ttx5cuw5R1O25mURKPEbtQK1auBrzs4rKzIFrVZM2qOz7ICITMWTRF9Z5KVEo/sBiW162DBGVg+8AChcdl00jilZi8r1Mo402JJSJwa/PJFJuYYIqr1n6Iq+IllD8VUPcvZugqG99dyfMJCzXIY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=mAzSOkai; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Sir22bHb; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 17 Mar 2025 10:46:25 -0000
+Date: Mon, 17 Mar 2025 10:46:26 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1742208386;
+	s=2020; t=1742208387;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=LBFD1YNgJQk/xmheVql9ZDIbNcZCbjqOBVV2NdkvJa8=;
-	b=NFFTUTi/NpZuHwb4augrVu5a7rDzlUjTy0ne7dZXhoqtZDqQJslkUvf7L849nBK9fnTNWI
-	hIfMDi5UtBPy59uzwp61OIVaMe6F2VsqGjfUXQtqPLEytrsOf/cqa8l/o47SHScPndiRoV
-	Ti49YfeG/UXZ1cyu5HOw4b7/Li/leyNWaG+9j3rVIdJukahZ9JDdbvK7by0fZvK8axDqkx
-	xJDjylYhVmqjLpXpqgEcKDYxy/iCEwv2B9SZW1CpT3q9Tg7a5Y89hQfVFqIeiF/tTFa5RO
-	vMlKP1DIWEZviMYaBR4gOL7BORQs7h8nsfKk2lpxN4+HAAA4kipYpTOO4LZV/Q==
+	bh=JFV817s1DrqJi1B3I1mhj9fp1LrXP5VRBmVLvDcGstw=;
+	b=mAzSOkaiJ2Eu9LYgyJxuNNVYt/N44P89e8THBftZABP/b7G6m2bfYOXLU0atsusWZDHhZD
+	KbB+Glacd9iybYyFCxuznW5gsuJ4dMmJqsTquxOg7wZVRkbYU0c/SUGu6BQeNIn4w0AVfY
+	VX76bB2j20g8oy58jcv/DIqvr3s78bSeXi9WHy2UBt1tC+yGDE2FK2gi7QuTyyLedgYELz
+	MhaG9vLLPxt60yBn/JwGG8w2oWrBGKzDTugaTYf1kwRGEKucOzLgSc6e9r80wA4zJtGAiA
+	qguC+241mcXxdpRCcGLA298yGQyDycQMH5fJMl5SJ5Ucm5X1ZQxODTPsLbh4qQ==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1742208386;
+	s=2020e; t=1742208387;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=LBFD1YNgJQk/xmheVql9ZDIbNcZCbjqOBVV2NdkvJa8=;
-	b=veNqJYLY31moDgiILwcIGLlwROXM3R/TVqlmbDhNpG7Y003HW7GVXCuFGun0dv22Rs2m0v
-	R+e9hCHUqd2MR+DQ==
+	bh=JFV817s1DrqJi1B3I1mhj9fp1LrXP5VRBmVLvDcGstw=;
+	b=Sir22bHbytiVMm0xoNmcDEWubVWxl3o7K6juZIsQ0tmmEE6wgQ092SIVbLWUPFbi69/I1j
+	qYuNL4AwbJnUXPBg==
 From: "tip-bot2 for Josh Poimboeuf" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip: objtool/core] objtool: Create backup on error and print args
+Subject: [tip: objtool/core] objtool: Add --Werror option
 Cc: Josh Poimboeuf <jpoimboe@kernel.org>,
  "Peter Zijlstra (Intel)" <peterz@infradead.org>, x86@kernel.org,
  linux-kernel@vger.kernel.org
 In-Reply-To:
- <7571e30636359b3e173ce6e122419452bb31882f.1741975349.git.jpoimboe@kernel.org>
+ <e423ea4ec297f510a108aa6c78b52b9fe30fa8c1.1741975349.git.jpoimboe@kernel.org>
 References:
- <7571e30636359b3e173ce6e122419452bb31882f.1741975349.git.jpoimboe@kernel.org>
+ <e423ea4ec297f510a108aa6c78b52b9fe30fa8c1.1741975349.git.jpoimboe@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174220838508.14745.14480888937876114986.tip-bot2@tip-bot2>
+Message-ID: <174220838660.14745.18350712636141675850.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -83,220 +83,82 @@ Content-Transfer-Encoding: 7bit
 
 The following commit has been merged into the objtool/core branch of tip:
 
-Commit-ID:     aa8b3e64fd397eddd6a627d148a964e4bc2ed9ab
-Gitweb:        https://git.kernel.org/tip/aa8b3e64fd397eddd6a627d148a964e4bc2ed9ab
+Commit-ID:     bb62243943dbef4592266e817f4e2e5a96293907
+Gitweb:        https://git.kernel.org/tip/bb62243943dbef4592266e817f4e2e5a96293907
 Author:        Josh Poimboeuf <jpoimboe@kernel.org>
-AuthorDate:    Fri, 14 Mar 2025 12:29:10 -07:00
+AuthorDate:    Fri, 14 Mar 2025 12:29:08 -07:00
 Committer:     Peter Zijlstra <peterz@infradead.org>
-CommitterDate: Mon, 17 Mar 2025 11:36:02 +01:00
+CommitterDate: Mon, 17 Mar 2025 11:36:01 +01:00
 
-objtool: Create backup on error and print args
+objtool: Add --Werror option
 
-Recreating objtool errors can be a manual process.  Kbuild removes the
-object, so it has to be compiled or linked again before running objtool.
-Then the objtool args need to be reversed engineered.
+Any objtool warning has the potential of reflecting (or triggering) a
+major bug in the kernel or compiler which could result in crashing the
+kernel or breaking the livepatch consistency model.
 
-Make that all easier by automatically making a backup of the object file
-on error, and print a modified version of the args which can be used to
-recreate.
+In preparation for failing the build on objtool errors/warnings, add a
+new --Werror option.
 
+[ jpoimboe: commit log, comments, error out on fatal errors too ]
+
+Co-developed-by: Brendan Jackman <jackmanb@google.com>
 Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Link: https://lore.kernel.org/r/7571e30636359b3e173ce6e122419452bb31882f.1741975349.git.jpoimboe@kernel.org
+Link: https://lore.kernel.org/r/e423ea4ec297f510a108aa6c78b52b9fe30fa8c1.1741975349.git.jpoimboe@kernel.org
 ---
- tools/objtool/builtin-check.c           | 68 ++++++++++++++++++++++--
- tools/objtool/include/objtool/builtin.h |  1 +-
- tools/objtool/objtool.c                 | 63 +----------------------
- 3 files changed, 65 insertions(+), 67 deletions(-)
+ tools/objtool/builtin-check.c           |  1 +
+ tools/objtool/check.c                   | 15 ++++++++++++---
+ tools/objtool/include/objtool/builtin.h |  1 +
+ 3 files changed, 14 insertions(+), 3 deletions(-)
 
 diff --git a/tools/objtool/builtin-check.c b/tools/objtool/builtin-check.c
-index c201650..39ddca6 100644
+index 3de3afa..c201650 100644
 --- a/tools/objtool/builtin-check.c
 +++ b/tools/objtool/builtin-check.c
-@@ -91,7 +91,6 @@ static const struct option check_options[] = {
+@@ -101,6 +101,7 @@ static const struct option check_options[] = {
+ 	OPT_BOOLEAN(0,   "sec-address", &opts.sec_address, "print section addresses in warnings"),
+ 	OPT_BOOLEAN(0,   "stats", &opts.stats, "print statistics"),
+ 	OPT_BOOLEAN('v', "verbose", &opts.verbose, "verbose warnings"),
++	OPT_BOOLEAN(0,   "Werror", &opts.werror, "return error on warnings"),
  
- 	OPT_GROUP("Options:"),
- 	OPT_BOOLEAN(0,   "backtrace", &opts.backtrace, "unwind on error"),
--	OPT_BOOLEAN(0,   "backup", &opts.backup, "create .orig files before modification"),
- 	OPT_BOOLEAN(0,   "dry-run", &opts.dryrun, "don't write modifications"),
- 	OPT_BOOLEAN(0,   "link", &opts.link, "object is a linked object"),
- 	OPT_BOOLEAN(0,   "module", &opts.module, "object is part of a kernel module"),
-@@ -228,10 +227,39 @@ static int copy_file(const char *src, const char *dst)
+ 	OPT_END(),
+ };
+diff --git a/tools/objtool/check.c b/tools/objtool/check.c
+index 2f64e46..48d7bc5 100644
+--- a/tools/objtool/check.c
++++ b/tools/objtool/check.c
+@@ -4756,9 +4756,18 @@ int check(struct objtool_file *file)
+ 
+ out:
+ 	/*
+-	 *  For now, don't fail the kernel build on fatal warnings.  These
+-	 *  errors are still fairly common due to the growing matrix of
+-	 *  supported toolchains and their recent pace of change.
++	 * CONFIG_OBJTOOL_WERROR upgrades all warnings (and errors) to actual
++	 * errors.
++	 *
++	 * Note that even "fatal" type errors don't actually return an error
++	 * without CONFIG_OBJTOOL_WERROR.  That probably needs improved at some
++	 * point.
+ 	 */
++	if (opts.werror && (ret || warnings)) {
++		if (warnings)
++			WARN("%d warning(s) upgraded to errors", warnings);
++		return 1;
++	}
++
  	return 0;
- }
- 
-+static char **save_argv(int argc, const char **argv)
-+{
-+	char **orig_argv;
-+
-+	orig_argv = calloc(argc, sizeof(char *));
-+	if (!orig_argv) {
-+		perror("calloc");
-+		return NULL;
-+	}
-+
-+	for (int i = 0; i < argc; i++) {
-+		orig_argv[i] = strdup(argv[i]);
-+		if (!orig_argv[i]) {
-+			perror("strdup");
-+			return NULL;
-+		}
-+	};
-+
-+	return orig_argv;
-+}
-+
-+#define ORIG_SUFFIX ".orig"
-+
- int objtool_run(int argc, const char **argv)
- {
- 	struct objtool_file *file;
--	int ret;
-+	char *backup = NULL;
-+	char **orig_argv;
-+	int ret = 0;
-+
-+	orig_argv = save_argv(argc, argv);
-+	if (!orig_argv)
-+		return 1;
- 
- 	cmd_parse_options(argc, argv, check_usage);
- 
-@@ -271,8 +299,42 @@ int objtool_run(int argc, const char **argv)
- 	return 0;
- 
- err:
--	if (opts.output)
-+	if (opts.dryrun)
-+		goto err_msg;
-+
-+	if (opts.output) {
- 		unlink(opts.output);
-+		goto err_msg;
-+	}
-+
-+	/*
-+	 * Make a backup before kbuild deletes the file so the error
-+	 * can be recreated without recompiling or relinking.
-+	 */
-+	backup = malloc(strlen(objname) + strlen(ORIG_SUFFIX) + 1);
-+	if (!backup) {
-+		perror("malloc");
-+		return 1;
-+	}
-+
-+	strcpy(backup, objname);
-+	strcat(backup, ORIG_SUFFIX);
-+	if (copy_file(objname, backup))
-+		return 1;
-+
-+err_msg:
-+	fprintf(stderr, "%s", orig_argv[0]);
-+
-+	for (int i = 1; i < argc; i++) {
-+		char *arg = orig_argv[i];
-+
-+		if (backup && !strcmp(arg, objname))
-+			fprintf(stderr, " %s -o %s", backup, objname);
-+		else
-+			fprintf(stderr, " %s", arg);
-+	}
-+
-+	fprintf(stderr, "\n");
- 
- 	return 1;
  }
 diff --git a/tools/objtool/include/objtool/builtin.h b/tools/objtool/include/objtool/builtin.h
-index b18f114..0fafd0f 100644
+index 25cfa01..b18f114 100644
 --- a/tools/objtool/include/objtool/builtin.h
 +++ b/tools/objtool/include/objtool/builtin.h
-@@ -29,7 +29,6 @@ struct opts {
+@@ -39,6 +39,7 @@ struct opts {
+ 	bool sec_address;
+ 	bool stats;
+ 	bool verbose;
++	bool werror;
+ };
  
- 	/* options: */
- 	bool backtrace;
--	bool backup;
- 	bool dryrun;
- 	bool link;
- 	bool mnop;
-diff --git a/tools/objtool/objtool.c b/tools/objtool/objtool.c
-index 53cd881..1c73fb6 100644
---- a/tools/objtool/objtool.c
-+++ b/tools/objtool/objtool.c
-@@ -20,64 +20,6 @@ bool help;
- 
- static struct objtool_file file;
- 
--static bool objtool_create_backup(const char *_objname)
--{
--	int len = strlen(_objname);
--	char *buf, *base, *name = malloc(len+6);
--	int s, d, l, t;
--
--	if (!name) {
--		perror("failed backup name malloc");
--		return false;
--	}
--
--	strcpy(name, _objname);
--	strcpy(name + len, ".orig");
--
--	d = open(name, O_CREAT|O_WRONLY|O_TRUNC, 0644);
--	if (d < 0) {
--		perror("failed to create backup file");
--		return false;
--	}
--
--	s = open(_objname, O_RDONLY);
--	if (s < 0) {
--		perror("failed to open orig file");
--		return false;
--	}
--
--	buf = malloc(4096);
--	if (!buf) {
--		perror("failed backup data malloc");
--		return false;
--	}
--
--	while ((l = read(s, buf, 4096)) > 0) {
--		base = buf;
--		do {
--			t = write(d, base, l);
--			if (t < 0) {
--				perror("failed backup write");
--				return false;
--			}
--			base += t;
--			l -= t;
--		} while (l);
--	}
--
--	if (l < 0) {
--		perror("failed backup read");
--		return false;
--	}
--
--	free(name);
--	free(buf);
--	close(d);
--	close(s);
--
--	return true;
--}
--
- struct objtool_file *objtool_open_read(const char *filename)
- {
- 	if (file.elf) {
-@@ -89,11 +31,6 @@ struct objtool_file *objtool_open_read(const char *filename)
- 	if (!file.elf)
- 		return NULL;
- 
--	if (opts.backup && !objtool_create_backup(objname)) {
--		WARN("can't create backup file");
--		return NULL;
--	}
--
- 	hash_init(file.insn_hash);
- 	INIT_LIST_HEAD(&file.retpoline_call_list);
- 	INIT_LIST_HEAD(&file.return_thunk_list);
+ extern struct opts opts;
 
