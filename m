@@ -1,153 +1,141 @@
-Return-Path: <linux-kernel+bounces-563677-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563678-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEF69A64689
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:05:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C6EFA6468D
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:05:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D102D18943FA
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 09:05:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE0D21894979
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 09:05:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7646C221F06;
-	Mon, 17 Mar 2025 09:04:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F40B221DA4;
+	Mon, 17 Mar 2025 09:05:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="K+Th2JIS"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="B+dVnSYS";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="mNHS9VnD"
+Received: from fhigh-a2-smtp.messagingengine.com (fhigh-a2-smtp.messagingengine.com [103.168.172.153])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B5682E3373
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 09:04:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F3931459F7;
+	Mon, 17 Mar 2025 09:05:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742202297; cv=none; b=GLxjXejr/j942PpsSZ+TKB/hU/Sspbd6KOuTvfXnGKwMzNYm9DXp6QvDzFi3970KOR9la2aLb+IyXlRv6uVSIpc6Rt8CxnEnRUjDxGTsmVMRSzSDcJYUPa9IGE8DFD3jDTadq/kP/KM+e/fUZnBQfet3Hu0lf+NJdSikx065b6M=
+	t=1742202314; cv=none; b=SMmyx8F/kqyI3iyaglDBHHyb803zhskZQ+ccjJeVsWUQkakG+vErXdrkjGW1IqUArhuPZFmg4XBzdnZmPxqO6FZVwnbaYCqSSXrDtD/cVgwOmc26bluAjiRFKqSmIHARSINxtRNUWe62YH6WOB2Vrs5fghaRr0uudL/OHguxktc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742202297; c=relaxed/simple;
-	bh=05r/hUCU63UsH3457J7hzt32bAtzfzNcG98x63Sm74I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rnJT3p0HmS1m61pWs6RPIvXvO/XnIeVzYbw7INocXdrVIqZrkqfLnTdsk6ZT+sd7uMp7g+4Tcpj1HM5AKnbJgo2C5eMrxr0QZ/C8gwl069InsZwkCmDCzQXa0yilmlULTDQU+PYeQL2y9MChJKoeJ1gm3nk4i6ulslVbhlpDqJw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=K+Th2JIS; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1742202295;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=29vE6oaVEg14v+0pXwuE2t45Kpr7j22qUMLQirhD7Bg=;
-	b=K+Th2JISHV3yhhaxPGcxr4/C4ud+5xCn5z7jGFnvNwFk4+ktM1BkrZSv+jr8S2GREGWYAB
-	7r6E9+3ZOW6YI7quE7HOjyd3VX+V5lcrn2YXHI2SPfS+9e2KXqEJdSR9ZIYKoEvRu5+GmZ
-	L6D2lHiZHf3sn6KyDIVMX9SKJ9+t0mw=
-Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
- [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-374-fRc-UbkoNgOiyb5K6DuOSw-1; Mon, 17 Mar 2025 05:04:53 -0400
-X-MC-Unique: fRc-UbkoNgOiyb5K6DuOSw-1
-X-Mimecast-MFC-AGG-ID: fRc-UbkoNgOiyb5K6DuOSw_1742202293
-Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-ab76aa0e72bso337665966b.0
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 02:04:53 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742202292; x=1742807092;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=29vE6oaVEg14v+0pXwuE2t45Kpr7j22qUMLQirhD7Bg=;
-        b=eCvGrxH4Dwf/MHpN6dNf94UivkGHsgiDwSFBTz6PqXNlFYL5gDvQQGnWzLnzJSy6ra
-         OJuLMfXUtZtJ2W+8NiUX9zo/700vUE9IhELKECFzIuaVb03cavrgxb/aIvITrC8co8Gm
-         v1zNTPhfR7vp2+WoWsobDREwqCm4kzk1e1fvge0jJessHEpO7pR2gAGTJz9k57FlY6Iw
-         3pKsstp3DStWYsPM6TFGWxevK39fjvIh6IMUA06gdVPrQO30TwabzVWvfEysYPTveAFR
-         hH8xYQnH8ApsPzeMl/KQAAhDiRVfeOIv2+9pBv/UT+ehKHck+oH/ZzQoEOjlhdi7cIR6
-         s44g==
-X-Forwarded-Encrypted: i=1; AJvYcCVxjvTgLA7qevDM0nKI0UmvbGjMbCXzFWvBhnAtoj0Xtfy0zquKIKP9WuVNVGjyPAa1mN5Dsq3SZv+WgFs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxMaszIMbVpGVefbdur1yLRBrAJE4Dz8K8SbCnm6wrHmkp5ow8K
-	fnWZ0NqwaSUA6geJL1VqTa6WTJ0KNG/KwkagC8zbDxpKO8aJjUbbnFq94Juf1Uzc8C/7Pmp7otq
-	qQ84p+1VtfUE8tkJhNKezstSm1boyuiCuHCzQhXUJjpmyFdGjbYsBHYDyzOk9O8BhiVxeVf1G
-X-Gm-Gg: ASbGncshyw6PvodkQm5pLpQd6owZQ4DOVnz5Be+D2Adc9Ko7mjbChrCOyww6LP8ppqq
-	R/eAFRV6SwDoj48ZuW1o61GfBNiutp52Y8FO5DPp4vpkF1xDheBvXQT5QXzHwWM2+l2lNbwyWq/
-	heKaTquIW6A1CmSR+jO7GCpNHtmpGzhU0sPIC+NASjX4uHWENnH24uBXOoSssY8jhAYuRUPTtxn
-	VcMJrFvrfwqeQJcmESwGzJIcacL+vYpRUD80f5bObRG4kZKG6q8V0h5eAjsjErxbKpRq+HAOKcc
-	gGCpZrCglmfaPKW8nmM=
-X-Received: by 2002:a17:907:7290:b0:abf:e7c1:b3bf with SMTP id a640c23a62f3a-ac3301e352amr1336402666b.11.1742202291907;
-        Mon, 17 Mar 2025 02:04:51 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG+G5BfaNF92AjsKhcSSJIGr22ciY52oU2w94T7cj7w7uUFajbxZD3Z37SlZi7kKNz9ge2okw==
-X-Received: by 2002:a17:907:7290:b0:abf:e7c1:b3bf with SMTP id a640c23a62f3a-ac3301e352amr1336400066b.11.1742202291505;
-        Mon, 17 Mar 2025 02:04:51 -0700 (PDT)
-Received: from [10.40.98.122] ([78.108.130.194])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3149cf219sm626215966b.88.2025.03.17.02.04.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 17 Mar 2025 02:04:51 -0700 (PDT)
-Message-ID: <94bc2fef-1138-4252-9ad3-dd6e01d55290@redhat.com>
-Date: Mon, 17 Mar 2025 10:04:50 +0100
+	s=arc-20240116; t=1742202314; c=relaxed/simple;
+	bh=ZEfliQgNQrLF7tY2vcgoRTEhUSXIQ1hj1kWo0r1NaX0=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=ka60I/yLnB47P0f94XS4ko+r3CScydyXFzeEPQ27X6xVipolXg/4kuniLP9KbcLXwuSrZ+ebcJ3ywtGogPHAGBb0RmIhJRpU7ub+3h5lMnIIZYQNk8147Cpn3/fmVhIfCC78TUSB82pJqnKBDy+EgASXz8g7KZ5lQsW4XF1EPQY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=B+dVnSYS; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=mNHS9VnD; arc=none smtp.client-ip=103.168.172.153
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-07.internal (phl-compute-07.phl.internal [10.202.2.47])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 01A3C11401CB;
+	Mon, 17 Mar 2025 05:05:11 -0400 (EDT)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-07.internal (MEProxy); Mon, 17 Mar 2025 05:05:11 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1742202310;
+	 x=1742288710; bh=q8c2oruT3loXTDs3xgE5+1RGIsl+fzW/HgjFl2dlsyw=; b=
+	B+dVnSYS6oyZiYouTxS49g/zc13WQdELKK0Sm7nFv4M17gx2S4OfgrIS9VfnyTAd
+	bmdo30q7D4lxU1ZMEnHwuYp5TsZufcHw/FQU82UlSt+PbuIPfYVd1PJg0Brd8qfT
+	R7w9eOsH2s+r/7gIFeXl99A5RIrAzkZe7hoeBrMBCS/Rrn9D5EUlgYTLePENrpLy
+	twTBJdMyJN/JnGbEMQFGhXzoEhZm9vbf6QVaqITUCtUo5Eqv++3vQ3xT1e/K8jd7
+	0/NclXbXW9S/4ffBEPd9feWSAJZ4t/jceSIIquqSF0rfq1RKrd/g36AqmPRqTmkT
+	WgQEszCe+dLub17WYf5sCA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1742202310; x=
+	1742288710; bh=q8c2oruT3loXTDs3xgE5+1RGIsl+fzW/HgjFl2dlsyw=; b=m
+	NHS9VnD6SB1gbsu8ldfa8g9LeZUW+C0f4g/sH5ne39TS87KyPjH1R3CHIA8lfMqz
+	/qXTPHjnybjxReAgDD6JZw6uhTibb5y9XzBEMlnqMMYj9rlpRyhsirzgMsTqfNqz
+	L50fo2/znu/Bkwf7Gc42W8poE34DaprROTowYikbmM2qMaI59uExNOYHEc3Mk7dA
+	8CzUS2lllVU8/pjhHEPgX8HKltFiTDNt9t/9nxHxaFLIeDYrv3HbpFtO3XyjI/jk
+	5931H5OVkXb2ESQN1skcoqz+GrUb4nW2AVnI0R655gJovwlDEyNEAC162DQ/qsTb
+	6S9DixN49uKbn0AL7mNqQ==
+X-ME-Sender: <xms:xeXXZ8iZs9fL00IeZ7_t6z13sNVpKJqT2InpvgT0ICU3No31Uo4VgA>
+    <xme:xeXXZ1BG-K-T36sKnMYOTNIy7vAhe3sHMx4zyDJ9QQfeURx3P_kI3LqZtwrYhiTuu
+    IX1A0Hb_ZZW2JrR1hE>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddufeeluddtucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+    gvnhhtshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertder
+    tddtnecuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnug
+    gsrdguvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeet
+    fefggfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
+    hmpehmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohep
+    vddtpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegurghvvghmsegurghvvghmlh
+    hofhhtrdhnvghtpdhrtghpthhtohepjhhfohhrsggvshesfhgvughorhgrphhrohhjvggt
+    thdrohhrghdprhgtphhtthhopehrohhsvghnphesghhmrghilhdrtghomhdprhgtphhtth
+    hopehhvghrsggvrhhtsehgohhnughorhdrrghprghnrgdrohhrghdrrghupdhrtghpthht
+    ohepshgvrhhgvgeshhgrlhhlhihnrdgtohhmpdhrtghpthhtohepjhgrmhgvshdrsghoth
+    htohhmlhgvhieshhgrnhhsvghnphgrrhhtnhgvrhhshhhiphdrtghomhdprhgtphhtthho
+    pegrrhgusgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghrnhgusehkvghrnhgvlh
+    drohhrghdprhgtphhtthhopegssghrvgiiihhllhhonheskhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:xeXXZ0EoAiWS1UrsccSVFe3OgXt6PV8LyaooFUFZbJnKWtgljS4z5A>
+    <xmx:xeXXZ9T15HBDPYBO7BFp7FsmgXKKq_n5P4gfad3-s5pxeIWkQ0jQZg>
+    <xmx:xeXXZ5znDHpEBa62saNZ3feGCCGJQn7wZm_HRw3eh77rKHPgQPZ9ng>
+    <xmx:xeXXZ75hS9ykx9nVAmrW33_4xN3Z_REnHVQYr0JiPz4bZWY1Kgpc7A>
+    <xmx:xuXXZyHz7phn6HslI9mlTvZk9B4SA6RSrPg-n9sxD_gs3z6y92Ey5Qzf>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 1C3F92220072; Mon, 17 Mar 2025 05:05:09 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6/8] media: i2c: ov02e10: Implement specification t3 and
- t5 delays on power-up
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Sakari Ailus <sakari.ailus@linux.intel.com>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
-Cc: Jingjing Xiong <jingjing.xiong@intel.com>, Hao Yao <hao.yao@intel.com>,
- Jim Lai <jim.lai@intel.com>, You-Sheng Yang <vicamo.yang@canonical.com>,
- Alan Stern <stern@rowland.harvard.edu>, linux-kernel@vger.kernel.org,
- linux-media@vger.kernel.org
-References: <20250317-b4-media-comitters-next-25-03-13-ov02e10-v1-0-bd924634b889@linaro.org>
- <20250317-b4-media-comitters-next-25-03-13-ov02e10-v1-6-bd924634b889@linaro.org>
-Content-Language: en-US, nl
-From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <20250317-b4-media-comitters-next-25-03-13-ov02e10-v1-6-bd924634b889@linaro.org>
-Content-Type: text/plain; charset=UTF-8
+Date: Mon, 17 Mar 2025 10:04:48 +0100
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Herbert Xu" <herbert@gondor.apana.org.au>,
+ "David Howells" <dhowells@redhat.com>
+Cc: "Arnd Bergmann" <arnd@kernel.org>,
+ "'bbrezillon@kernel.org'" <bbrezillon@kernel.org>,
+ "Arnaud Ebalard" <arno@natisbad.org>, "Srujana Challa" <schalla@marvell.com>,
+ "David S . Miller" <davem@davemloft.net>,
+ "Jarkko Sakkinen" <jarkko@kernel.org>, "Paul Moore" <paul@paul-moore.com>,
+ "James Morris" <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
+ "Justin M. Forbes" <jforbes@fedoraproject.org>,
+ "Jason A . Donenfeld" <Jason@zx2c4.com>, "Rosen Penev" <rosenp@gmail.com>,
+ "Ard Biesheuvel" <ardb@kernel.org>,
+ "James E . J . Bottomley" <James.Bottomley@hansenpartnership.com>,
+ linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+ keyrings@vger.kernel.org, linux-security-module@vger.kernel.org
+Message-Id: <5d23903c-7d95-4f3f-975a-7f2fbd70e12e@app.fastmail.com>
+In-Reply-To: <Z9ffUVmGlpXdh4jO@gondor.apana.org.au>
+References: <20250314160543.605055-1-arnd@kernel.org>
+ <2106120.1742200585@warthog.procyon.org.uk>
+ <Z9ffUVmGlpXdh4jO@gondor.apana.org.au>
+Subject: Re: [PATCH] [v2] crypto: lib/Kconfig: hide library options
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 
-Hi,
+On Mon, Mar 17, 2025, at 09:37, Herbert Xu wrote:
+> On Mon, Mar 17, 2025 at 08:36:25AM +0000, David Howells wrote:
+>> Arnd Bergmann <arnd@kernel.org> wrote:
+>> 
+>> > -	depends on CRYPTO_LIB_CHACHA20POLY1305 = y
+>> > +	select CRYPTO_LIB_CHACHA20POLY1305
+>> 
+>> Doesn't that allow CRYPTO_LIB_CHACHA20POLY1305=m?
+>
+> Not unless BIG_KEYS is tristate or under a tristate.
 
-On 17-Mar-25 01:39, Bryan O'Donoghue wrote:
-> The ov02e10 specification says for power-on:
-> 
-> t3 = the time between dvdd stable and XSHUTDOWN deassert
-> t5 = the time between XSHUTDOWN deassert and SCCB ready
-> 
-> The power-off path in the spec shows no required delays between XSHUTDONW
-> and power-rail shut off so power-off is left alone.
-> 
-> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-> ---
->  drivers/media/i2c/ov02e10.c | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/media/i2c/ov02e10.c b/drivers/media/i2c/ov02e10.c
-> index 9ad70671a718ea0aaf80ad3adcc5738ee57a7ff6..40c4d3ee36e3e2a0bb8be3ff10d016e2bb9bbc9d 100644
-> --- a/drivers/media/i2c/ov02e10.c
-> +++ b/drivers/media/i2c/ov02e10.c
-> @@ -579,7 +579,11 @@ static int ov02e10_power_on(struct device *dev)
->  		goto disable_clk;
->  	}
->  
-> -	gpiod_set_value_cansleep(ov02e10->reset, 0);
-> +	if (ov02e10->reset) {
-> +		usleep_range(5000, 5100);
-> +		gpiod_set_value_cansleep(ov02e10->reset, 0);
-> +		usleep_range(8000, 8100);
-> +	}
->  
->  	return 0;
->  
+Right, or if it selects something that has a dependency.
 
+Before commit 17ec3e71ba79 ("crypto: lib/Kconfig - Hide arch
+options from user"), CRYPTO_LIB_CHACHA20POLY1305 had a
+dependency on CONFIG_CRYPTO, so with CRYPTO=m, the 'select CRYPTO_LIB_CHACHA20POLY1305' in BIG_KEYS would result in
+CRYPTO_LIB_CHACHA20POLY1305=m.
 
-Note ATM ov02e10->reset is requested with GPIOD_OUT_LOW and it is not
-guaranteed that it was high before that. It really should be requested
-with GPIOD_OUT_HIGH so that it is guaranteed to be high before
-ov02e10_power_on() gets called as the code expects here.
-
-Regards,
-
-Hans
-
-
+     Arnd
 
