@@ -1,40 +1,41 @@
-Return-Path: <linux-kernel+bounces-563815-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563816-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A3A6A64920
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:14:41 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B684FA64922
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:15:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F83C1890418
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:14:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ABF781893A4B
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:14:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D45D12356AA;
-	Mon, 17 Mar 2025 10:13:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5449022CBCB;
+	Mon, 17 Mar 2025 10:13:57 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDEE222CBCB;
-	Mon, 17 Mar 2025 10:13:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CD9523373A;
+	Mon, 17 Mar 2025 10:13:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742206435; cv=none; b=N0a+C6qIcMHPA+dY4eI3QChpLBaIt6E5T/EPcIBJ/Z7qMDrogBY8GO0HyfsA+YjZPur0DiU9YUFrYz8Mwmjxqwits/L+md0DACKqoq5J4gxJkuEIH6PbRkmsdCgWqmFch5QLBC2ifvNV1AykYEatlGvGsHHymW90x+mkTEUoDI8=
+	t=1742206436; cv=none; b=bsk0lVOQg0TrkqxOpQud96x5zM15Hq1beCE8P5vfS6RYOj+UgE1+11SZGp8CKcn3+lpyiK7WLWSzDd0qhQUb9PdfyrwLYTp8fxrDpQhxxXG5H7KtgblLCY1G3z54vKcTE/qUy218c5Vn7JftlejbV8zMaqtMniWxIC1Pdc/xqyU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742206435; c=relaxed/simple;
-	bh=CI87/B0Z+bu/xDS4edBZdD4AK/oZaz/fs000mRMbt+U=;
+	s=arc-20240116; t=1742206436; c=relaxed/simple;
+	bh=W3iR8KyjlR4HJ4ebZ4zdbJscuXyuwHmntWmxKR0MThg=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=YLp9rHBYTHTPvxS78ay1bXvpwyYVJWPl7fyro0hZ7d2ni6UDG1+N+u3gsDwXioU//7jIU+wizL72NN2Zwkh/h/vuDyFlS061H9miDVw/awQ9gvMlOYNSjs8y56cZCllKDCiXyWu32X/Cd/HIzg9YrXEParbqYh8+iwIwnBK07kA=
+	 In-Reply-To:To:Cc; b=S3sAr1xmuHAMfekH9CvWg4DyfWNtJ2vtu3s8TPy4dkugMcvPc5srQs0hJJLqtIeohZat+y99SDKlz8ISk0GLcFtAbcOG7Mzwuy1vw5AnBNxyBRB4mTado3m61cdRHeVgqyUJwWaFdkL1GY9AvFi/GYeMpKf6D53s72nCf9YuhSQ=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 19E6A169E;
-	Mon, 17 Mar 2025 03:14:02 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8C9BD2573;
+	Mon, 17 Mar 2025 03:14:03 -0700 (PDT)
 Received: from e133711.arm.com (e133711.arm.com [10.1.196.55])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 02BD43F673;
-	Mon, 17 Mar 2025 03:13:51 -0700 (PDT)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 74D523F673;
+	Mon, 17 Mar 2025 03:13:53 -0700 (PDT)
 From: Sudeep Holla <sudeep.holla@arm.com>
-Date: Mon, 17 Mar 2025 10:13:13 +0000
-Subject: [PATCH 1/9] cpuidle: psci: Transition to the faux device interface
+Date: Mon, 17 Mar 2025 10:13:14 +0000
+Subject: [PATCH 2/9] hwrng: arm-smccc-trng - transition to the faux device
+ interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -43,36 +44,36 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250317-plat2faux_dev-v1-1-5fe67c085ad5@arm.com>
+Message-Id: <20250317-plat2faux_dev-v1-2-5fe67c085ad5@arm.com>
 References: <20250317-plat2faux_dev-v1-0-5fe67c085ad5@arm.com>
 In-Reply-To: <20250317-plat2faux_dev-v1-0-5fe67c085ad5@arm.com>
 To: linux-kernel@vger.kernel.org
 Cc: Sudeep Holla <sudeep.holla@arm.com>, 
  Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Lorenzo Pieralisi <lpieralisi@kernel.org>, 
- "Rafael J. Wysocki" <rafael@kernel.org>, 
- Daniel Lezcano <daniel.lezcano@linaro.org>, linux-pm@vger.kernel.org
+ Andre Przywara <andre.przywara@arm.com>, 
+ Herbert Xu <herbert@gondor.apana.org.au>, 
+ Jeff Johnson <jeff.johnson@oss.qualcomm.com>, linux-crypto@vger.kernel.org
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2777; i=sudeep.holla@arm.com;
- h=from:subject:message-id; bh=CI87/B0Z+bu/xDS4edBZdD4AK/oZaz/fs000mRMbt+U=;
- b=owEBbQKS/ZANAwAIAQBBurwxfuKYAcsmYgBn1/XaZ+U6uYLveI1x2mPg1VMHlAy/5EmFDW6ki
- UUkAdRCsUeJAjMEAAEIAB0WIQS6ceUSBvMeskPdk+EAQbq8MX7imAUCZ9f12gAKCRAAQbq8MX7i
- mAZAEACbwv+dihKcag5jpxHMiyu2m1tRcIhD3ISHTbNxkv4JJPcLPZ0C5U6Zxk3ubxo2O5yNx5O
- zmuft6lLuUIPHFTbHPA1mMHxtL3Jv6Bgmr/hg54CREtWOEIrJbpbu8NYVXKjBNn7cfdxOw9xMti
- x6m+2zCOM/22nDJgRDg40HFMEBKuvf08hl/shDtJMSULUwRXHehbGCP5ADE8L8bEZ2nv7Y++MmB
- rectjYgKvEFvZZqcBh3svsU13HPf2oCDJcaAjbQsIt9q8SLCZR/w+EP4ABRdTfoaXHWI2gjmvL4
- Gts2p0FO7A6DSvPLVyh4gAspH+nRuxH5XOStdgDXfmefCl1P/aPLFER4VgH+LgVp7Srkw8u3iGE
- fDPolaWURybWKp92n+4eEJo0ybIxzA5GzWmbFYq/w/yqyP/Ka6RV+p42gGjfFVWFLe5luhfbI7j
- JoFZDl5uzhjiFuMCz5o87CgLRPUf62N6S79Khkbkq5Tdc8TCu4bnxQl0g868gnWHl/cjmRP1ph3
- Es56Jyan+ewb9aRvp0xOGb30yh9aSghwwg2m61FegFXSTObTxy7mDM1GV12GUiey6PHPeEAFb0P
- VYEhCnFWBzFAUchrmzyqPlJz1SVle7YqIFS06lj+zFbwt8WH0I8wKtLzGCMcRXRjPw0mfZEEi1A
- RQv2dLcNIgXb/Zw==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4989; i=sudeep.holla@arm.com;
+ h=from:subject:message-id; bh=W3iR8KyjlR4HJ4ebZ4zdbJscuXyuwHmntWmxKR0MThg=;
+ b=owEBbQKS/ZANAwAIAQBBurwxfuKYAcsmYgBn1/XbzQBCOprmjqQXP8AvPYDsVkXXAwu4hW/9j
+ bUHAw5iPGuJAjMEAAEIAB0WIQS6ceUSBvMeskPdk+EAQbq8MX7imAUCZ9f12wAKCRAAQbq8MX7i
+ mOK4D/wJDZIpz0HVPixe2YLXS2h4mgkw4nAlBTPrkjzL+jBjHJiYBuFHBMlGheXq0rOX545pDnW
+ IK63VTS+lLKoFEnWeAYG4/ue0Ypu5BULhIRnD1t2P3qOaAFcm05eh3QWzmNkM0t0vzYNAhfANKz
+ g6vrHf4KCdIEcmMzxqzbEn5zUGIpJ2RR0sO5xQG3DsYq79gcvajCqrgMfy4AkFVO4G9BldljaHB
+ R6piMew3fE87FLqerinW/5iWJe/9c1S04eO2p9t+6BmTQ0HoH/fEfWMdY1oGP9yB1/EfkH2nNVc
+ xqoPfRu432JGKioPfMyt21cdZgfjjvngphIK9Weh4RUQK18D5P/Qvi+z6bBoKMwYQ0aN5t6/XDc
+ rPAu64977zZJDa3rkonMe9TS+8PKTOlbTRn4ZFfwkQ0U67nL8vskuTENquUiE+H4Yf7ZItLEspF
+ rvjwVoLNhGk+bOpeqMFkCeGUxCRXDNg7wTULBW3fs9ndhhYqONM0ia5hlYumONjgyHY0tTTond3
+ D1Iz29F/jVugpAgZlEEttvSK/K/p6jBSpCEVtJd4HzjktnZs1bP28wYpuGLhLKdDxkZKOLjKi0G
+ OtiQ5wJ2tY7FbgQaWvhe2AeE2YBG4pCvdf1ND9rr3lbZ8QFAhNULN2n820Hl9cTSPTTBAGF5nZI
+ TxonQGwQvcTMSYw==
 X-Developer-Key: i=sudeep.holla@arm.com; a=openpgp;
  fpr=7360A21742ADF5A11767C1C139CFD4755FE2D5B4
 
-The PSCI cpuidle driver does not require the creation of a platform
-device. Originally, this approach was chosen for simplicity when the
-driver was first implemented.
+The Arm SMCCC based true random number generator driver does not require
+the creation of a platform device/driver. Originally, this approach was
+chosen for simplicity when the driver was first implemented.
 
 With the introduction of the lightweight faux device interface, we now
 have a more appropriate alternative. Migrate the driver to utilize the
@@ -80,78 +81,143 @@ faux bus, given that the platform device it previously created was not
 a real one anyway. This will simplify the code, reducing its footprint
 while maintaining functionality.
 
-Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: linux-pm@vger.kernel.org
+Cc: Andre Przywara <andre.przywara@arm.com>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
+Cc: linux-crypto@vger.kernel.org
 Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
 ---
- drivers/cpuidle/cpuidle-psci.c | 26 +++++++++-----------------
- 1 file changed, 9 insertions(+), 17 deletions(-)
+ drivers/char/hw_random/arm_smccc_trng.c | 40 ++++++++++++++++++++++++---------
+ drivers/firmware/smccc/smccc.c          | 21 -----------------
+ 2 files changed, 29 insertions(+), 32 deletions(-)
 
-diff --git a/drivers/cpuidle/cpuidle-psci.c b/drivers/cpuidle/cpuidle-psci.c
-index 2562dc001fc1de69732ef28f383d2809262a3d96..3e38f712dab3785d5caa8d103fd0146156005921 100644
---- a/drivers/cpuidle/cpuidle-psci.c
-+++ b/drivers/cpuidle/cpuidle-psci.c
-@@ -16,7 +16,7 @@
- #include <linux/kernel.h>
+diff --git a/drivers/char/hw_random/arm_smccc_trng.c b/drivers/char/hw_random/arm_smccc_trng.c
+index dcb8e7f37f25c6b39f76050369b9f324b7fb2e33..2ceab17f6360baaee999a23f3d7370b7b5b7d246 100644
+--- a/drivers/char/hw_random/arm_smccc_trng.c
++++ b/drivers/char/hw_random/arm_smccc_trng.c
+@@ -16,9 +16,11 @@
+ #include <linux/device.h>
+ #include <linux/hw_random.h>
  #include <linux/module.h>
- #include <linux/of.h>
 -#include <linux/platform_device.h>
 +#include <linux/device/faux.h>
- #include <linux/psci.h>
- #include <linux/pm_domain.h>
- #include <linux/pm_runtime.h>
-@@ -404,14 +404,14 @@ static int psci_idle_init_cpu(struct device *dev, int cpu)
-  * to register cpuidle driver then rollback to cancel all CPUs
-  * registration.
-  */
--static int psci_cpuidle_probe(struct platform_device *pdev)
-+static int psci_cpuidle_probe(struct faux_device *fdev)
- {
- 	int cpu, ret;
- 	struct cpuidle_driver *drv;
- 	struct cpuidle_device *dev;
+ #include <linux/arm-smccc.h>
  
- 	for_each_possible_cpu(cpu) {
--		ret = psci_idle_init_cpu(&pdev->dev, cpu);
-+		ret = psci_idle_init_cpu(&fdev->dev, cpu);
- 		if (ret)
- 			goto out_fail;
- 	}
-@@ -431,26 +431,18 @@ static int psci_cpuidle_probe(struct platform_device *pdev)
- 	return ret;
++#include <asm/archrandom.h>
++
+ #ifdef CONFIG_ARM64
+ #define ARM_SMCCC_TRNG_RND	ARM_SMCCC_TRNG_RND64
+ #define MAX_BITS_PER_CALL	(3 * 64UL)
+@@ -33,6 +35,8 @@
+ #define SMCCC_RET_TRNG_INVALID_PARAMETER	-2
+ #define SMCCC_RET_TRNG_NO_ENTROPY		-3
+ 
++bool __ro_after_init smccc_trng_available;
++
+ static int copy_from_registers(char *buf, struct arm_smccc_res *res,
+ 			       size_t bytes)
+ {
+@@ -94,29 +98,43 @@ static int smccc_trng_read(struct hwrng *rng, void *data, size_t max, bool wait)
+ 	return copied;
  }
  
--static struct platform_driver psci_cpuidle_driver = {
-+static struct faux_device_ops psci_cpuidle_ops = {
- 	.probe = psci_cpuidle_probe,
--	.driver = {
--		.name = "psci-cpuidle",
--	},
- };
- 
- static int __init psci_idle_init(void)
+-static int smccc_trng_probe(struct platform_device *pdev)
++static int smccc_trng_probe(struct faux_device *fdev)
  {
--	struct platform_device *pdev;
--	int ret;
+ 	struct hwrng *trng;
+ 
+-	trng = devm_kzalloc(&pdev->dev, sizeof(*trng), GFP_KERNEL);
++	trng = devm_kzalloc(&fdev->dev, sizeof(*trng), GFP_KERNEL);
+ 	if (!trng)
+ 		return -ENOMEM;
+ 
+ 	trng->name = "smccc_trng";
+ 	trng->read = smccc_trng_read;
+ 
+-	return devm_hwrng_register(&pdev->dev, trng);
++	return devm_hwrng_register(&fdev->dev, trng);
+ }
+ 
+-static struct platform_driver smccc_trng_driver = {
+-	.driver = {
+-		.name		= "smccc_trng",
+-	},
+-	.probe		= smccc_trng_probe,
++static struct faux_device_ops smccc_trng_ops = {
++	.probe = smccc_trng_probe,
+ };
+-module_platform_driver(smccc_trng_driver);
+ 
+-MODULE_ALIAS("platform:smccc_trng");
++static int __init smccc_trng_init(void)
++{
 +	struct faux_device *fdev;
- 
--	ret = platform_driver_register(&psci_cpuidle_driver);
--	if (ret)
--		return ret;
--
--	pdev = platform_device_register_simple("psci-cpuidle", -1, NULL, 0);
--	if (IS_ERR(pdev)) {
--		platform_driver_unregister(&psci_cpuidle_driver);
--		return PTR_ERR(pdev);
-+	fdev = faux_device_create("psci-cpuidle", NULL, &psci_cpuidle_ops);
++
++	smccc_trng_available = smccc_probe_trng();
++	if (!smccc_trng_available)
++		return 0;
++
++	fdev = faux_device_create("smccc_trng", NULL, &smccc_trng_ops);
 +	if (!fdev) {
-+		pr_err("Failed to create psci-cpuidle device\n");
++		pr_err("smccc_trng: could not create the device\n");
 +		return -ENODEV;
- 	}
++	}
++
++	return 0;
++}
++device_initcall(smccc_trng_init);
++
++MODULE_ALIAS("faux:smccc_trng");
+ MODULE_AUTHOR("Andre Przywara");
+ MODULE_DESCRIPTION("Arm SMCCC TRNG firmware interface support");
+ MODULE_LICENSE("GPL");
+diff --git a/drivers/firmware/smccc/smccc.c b/drivers/firmware/smccc/smccc.c
+index a74600d9f2d72a5aa0096004f53088c255927a43..0fcd175a53eeaa957d06071b3b26f4c3a3c7116e 100644
+--- a/drivers/firmware/smccc/smccc.c
++++ b/drivers/firmware/smccc/smccc.c
+@@ -9,13 +9,10 @@
+ #include <linux/init.h>
+ #include <linux/arm-smccc.h>
+ #include <linux/kernel.h>
+-#include <linux/platform_device.h>
+-#include <asm/archrandom.h>
  
- 	return 0;
+ static u32 smccc_version = ARM_SMCCC_VERSION_1_0;
+ static enum arm_smccc_conduit smccc_conduit = SMCCC_CONDUIT_NONE;
+ 
+-bool __ro_after_init smccc_trng_available = false;
+ s32 __ro_after_init smccc_soc_id_version = SMCCC_RET_NOT_SUPPORTED;
+ s32 __ro_after_init smccc_soc_id_revision = SMCCC_RET_NOT_SUPPORTED;
+ 
+@@ -26,8 +23,6 @@ void __init arm_smccc_version_init(u32 version, enum arm_smccc_conduit conduit)
+ 	smccc_version = version;
+ 	smccc_conduit = conduit;
+ 
+-	smccc_trng_available = smccc_probe_trng();
+-
+ 	if ((smccc_version >= ARM_SMCCC_VERSION_1_2) &&
+ 	    (smccc_conduit != SMCCC_CONDUIT_NONE)) {
+ 		arm_smccc_1_1_invoke(ARM_SMCCC_ARCH_FEATURES_FUNC_ID,
+@@ -66,19 +61,3 @@ s32 arm_smccc_get_soc_id_revision(void)
+ 	return smccc_soc_id_revision;
+ }
+ EXPORT_SYMBOL_GPL(arm_smccc_get_soc_id_revision);
+-
+-static int __init smccc_devices_init(void)
+-{
+-	struct platform_device *pdev;
+-
+-	if (smccc_trng_available) {
+-		pdev = platform_device_register_simple("smccc_trng", -1,
+-						       NULL, 0);
+-		if (IS_ERR(pdev))
+-			pr_err("smccc_trng: could not register device: %ld\n",
+-			       PTR_ERR(pdev));
+-	}
+-
+-	return 0;
+-}
+-device_initcall(smccc_devices_init);
 
 -- 
 2.34.1
