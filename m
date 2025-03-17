@@ -1,117 +1,83 @@
-Return-Path: <linux-kernel+bounces-563215-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563216-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FB63A63954
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 01:55:46 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DC85A63998
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 02:02:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9CB15188E09A
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 00:55:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EFFAC16AEB4
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 01:02:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96E5D38F91;
-	Mon, 17 Mar 2025 00:55:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13A4722F01;
+	Mon, 17 Mar 2025 01:02:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ft8Qyowi"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="umsUWZmO"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA6D81F941;
-	Mon, 17 Mar 2025 00:55:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 765B18BFF
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 01:02:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742172938; cv=none; b=W7tKlLRG/p/rFp8w17T7V1zTjKhtrcKhlSSjYk41DkS4g3iYUIZ3U1Mb4Dg0Q2H7nAlZH7RTIz+trze0L/qhwT0f2fhilzM9NL0OosacFVn+iiX5CMHrZd773EnnmxNDOgrFBQvdiWywpEF2ks0ALNsOvFSD0C+8fhLC+saI5qA=
+	t=1742173371; cv=none; b=O9kGkY5cZbQX7na32YLW6mGWyh8UZ0UqK0q1UJYCX6lTc25YaDtosxeZZXBNpqdIHIn9AQuHkRw5NFvFnPPyQp7qzGQIM2yX5kjNx2BGMC48veHeksOsRHTIMaC50Q+sVM5Lt3p4V89T7jzjpvkjumb6LXEnESP3vb9OPzpWl9Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742172938; c=relaxed/simple;
-	bh=PVgQzkmryWOb7mXmc9/WhWRNe5ZnnKuIEC0s4BOLFcA=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=NxBQZPfguwuuNTC5ZkiOZyi0MBT+01fNYRluuHyG4IWuwD5KfPlgHDT+QictF+rwb/OWyDQPSH6+5zAtynooC6tCWqXoC7/r07bDwsRu6PPv7feN2eJz8e2yQcYgcI+4bY7QoZhafcAKR7GaMD/UZiW+oZ0dViSp6iek2HsLf7E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ft8Qyowi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1974C4CEDD;
-	Mon, 17 Mar 2025 00:55:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742172937;
-	bh=PVgQzkmryWOb7mXmc9/WhWRNe5ZnnKuIEC0s4BOLFcA=;
-	h=Date:From:To:Cc:Subject:From;
-	b=ft8Qyowib5ZlMK+kXV4IOprCs2RVIN2uLX/adDWp8X919Xzag+w6mLSP2sl4IeGCM
-	 +Is1pk8ee85Z2oZo/OEmOp6+jyuEbTYGkXZCA3Z6L4scuzVkXoPTYpd29n6TI3LHo4
-	 ZgjaRIjWVcoGFgTSnnNBaC61p2owgl6fCGDbKjcPLpWt2u42Tv9+jUwIEWRBzV3vDG
-	 e2A4Bymgz93Z6Y6lVUGOi/nVVjtlNljwUbgE6mLQePupai1OKmce8ffSXY9BdAJ5Ck
-	 cIKrl6LDwMeDWIP3/O1XFJeSeYomWl8aLR56Gle2iMd+/js9XyOHZPahx5e+xqNWVU
-	 6ZPtpQghrI3XQ==
-Date: Mon, 17 Mar 2025 11:25:40 +1030
-From: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-To: Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Benson Leung <bleung@chromium.org>,
-	Guenter Roeck <groeck@chromium.org>
-Cc: linux-iio@vger.kernel.org, chrome-platform@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	linux-hardening@vger.kernel.org
-Subject: [PATCH][next] iio: proximity: cros_ec_mkbp_proximity: Avoid
- -Wflex-array-member-not-at-end warning
-Message-ID: <Z9dzDB1gttXehYGO@kspp>
+	s=arc-20240116; t=1742173371; c=relaxed/simple;
+	bh=G9cV0TFTJ+t2auqmesfJTNbYJNnk22Exj+XyW/E2oGc=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=opoAIs6sTxG98CLKAhy4OaGs13+reeKtdPj0THjhNi2TaNiOiZL06HNuGkb7c/qKYcmz+RJetYePaVSaqy0eIhCOJLlnB6F7XNlK0H7BXQeI8hag8TW8/UhNodjaEAIk918znaso1/1+1Uh9pJ3Rq0RpD8MLjpR4tv83RwecYnI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=umsUWZmO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB7F3C4CEDD;
+	Mon, 17 Mar 2025 01:02:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1742173370;
+	bh=G9cV0TFTJ+t2auqmesfJTNbYJNnk22Exj+XyW/E2oGc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=umsUWZmOqvANgNUoTnjagOzV0EHGA3V3Jc0kOhqq3BacTVLKB4T5iuF2crzGzGHoX
+	 /HNogFnHSSVCddBypl0jo8EYaUyMSeY2+EhLBscXZ4/+QEP501cZWNOWJzFoIkBs8g
+	 M3Oafg/8XM13jbaIqwfJEOKbbXi1O5LWT6xlsfBE=
+Date: Sun, 16 Mar 2025 18:02:50 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Michal Clapinski <mclapinski@google.com>
+Cc: Vlastimil Babka <vbabka@suse.cz>, Pasha Tatashin <tatashin@google.com>,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 0/2] mm/compaction: allow more aggressive proactive
+ compaction
+Message-Id: <20250316180250.70767a305cea9798dcc7c9b8@linux-foundation.org>
+In-Reply-To: <20250127215020.4023545-1-mclapinski@google.com>
+References: <20250127215020.4023545-1-mclapinski@google.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
--Wflex-array-member-not-at-end was introduced in GCC-14, and we are
-getting ready to enable it, globally.
+On Mon, 27 Jan 2025 22:50:18 +0100 Michal Clapinski <mclapinski@google.com> wrote:
 
-Use the `DEFINE_RAW_FLEX()` helper for an on-stack definition of
-a flexible structure where the size of the flexible-array member
-is known at compile-time, and refactor the rest of the code,
-accordingly.
+> Our goal is to keep memory usage of a VM low on the host. For that
+> reason, we use free page reporting which by default reports free pages
+> of order 9 and larger to the host to be freed. The feature works well
+> only if the memory in the guest is not fragmented below pages of order
+> 9. Proactive compaction can be reused to achieve defragmentation after
+> some parameter tweaking.
+> 
+> When the fragmentation score (lower is better) gets larger than the
+> high watermark, proactive compaction kicks in. Compaction stops when
+> the score goes below the low watermark (or no progress is made and
+> backoff kicks in). Let's define the difference between high and low
+> watermarks as leeway. Before these changes, the minimum possible value
+> for low watermark was 5 and the leeway was hardcoded to 10 (so minimum
+> possible value for high watermark was 15).
+> 
 
-So, with these changes, fix the following warning:
+I'm not seeing enthusiasm for these changes and a couple of comments
+from myself remain unaddressed.  I'll drop the series - let's revisit
+in the next -rc cycle, if you feel so motivated.
 
-drivers/iio/proximity/cros_ec_mkbp_proximity.c:63:40: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-
-Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
----
-
-This looks pretty much like the following patch for RTC:
-
-https://lore.kernel.org/linux-hardening/Z9PpPg06OK8ghNvm@kspp/
-
-Thanks
-
- drivers/iio/proximity/cros_ec_mkbp_proximity.c | 14 ++++----------
- 1 file changed, 4 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/iio/proximity/cros_ec_mkbp_proximity.c b/drivers/iio/proximity/cros_ec_mkbp_proximity.c
-index 667369be0555..4fe3d84e2729 100644
---- a/drivers/iio/proximity/cros_ec_mkbp_proximity.c
-+++ b/drivers/iio/proximity/cros_ec_mkbp_proximity.c
-@@ -59,16 +59,10 @@ static int cros_ec_mkbp_proximity_parse_state(const void *data)
- static int cros_ec_mkbp_proximity_query(struct cros_ec_device *ec_dev,
- 					int *state)
- {
--	struct {
--		struct cros_ec_command msg;
--		union {
--			struct ec_params_mkbp_info params;
--			u32 switches;
--		};
--	} __packed buf = { };
--	struct ec_params_mkbp_info *params = &buf.params;
--	struct cros_ec_command *msg = &buf.msg;
--	u32 *switches = &buf.switches;
-+	DEFINE_RAW_FLEX(struct cros_ec_command, buf, data, sizeof(u32));
-+	struct ec_params_mkbp_info *params = (struct ec_params_mkbp_info *)buf->data;
-+	struct cros_ec_command *msg = buf;
-+	u32 *switches = (u32 *)buf->data;
- 	size_t insize = sizeof(*switches);
- 	int ret;
- 
--- 
-2.43.0
 
 
