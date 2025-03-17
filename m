@@ -1,200 +1,182 @@
-Return-Path: <linux-kernel+bounces-563381-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563385-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA2FFA64093
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 07:03:40 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EC69A6409D
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 07:05:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E31283AA2D8
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 06:03:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7FEDA7A524D
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 06:03:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DA59215047;
-	Mon, 17 Mar 2025 06:03:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FD0921A43C;
+	Mon, 17 Mar 2025 06:04:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RT59GHJl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="N4L9L1zs"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74E5C2E3373
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 06:03:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13B11219A67;
+	Mon, 17 Mar 2025 06:04:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742191414; cv=none; b=VHDOjpQVyL/h6Rk9N4PkL7G1/yi9cQaMBfnjs9JDauovNriBHOUSA34cPw7dsNDLwk8/FpVw35YZuqBkxHBYiuejASIAGEryNfyqqJQtDG0PeEr6l+UBFXB0s2PDceG55a+uX2M7qB0K1hXSv76WFE87tTe5zeYHRnwsScV3VMA=
+	t=1742191465; cv=none; b=spURLh8CMkD1WSVNW86xM/v+i9P0KUHKJ5iR65WerW0kbyWmFPY7NRHfuLyOWOhYxBae5jqJ4gcRRcthgGTM6kW/6gtqiOT68tu/tYxkrxAlQ5GG6lD+u9rWomZUsmiUPkKODQOMZ5AEOdClKMiAJFHwJlsLq/Fdz+TBGLKNWSY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742191414; c=relaxed/simple;
-	bh=9GuJYZNYYI8a++OQNnQqfYWr0hu/Ni006bEAgzjYOk4=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=kole2/akJPrvouP68YOvdJPYE/8YfR62ciHdsKcfSIGOYx1JnVXLxVTYePOT0WGd4Yv/1St6EnzdO3zVx6smiaQfEOEtQX0BVxpkUXfONsr7ZH/wO/uLXC0KATwRV5wrepyCZJQtxIr2f3t1LKW8E+8InQ60rbir+ia62EP5BpE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RT59GHJl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0586C4CEE3;
-	Mon, 17 Mar 2025 06:03:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742191413;
-	bh=9GuJYZNYYI8a++OQNnQqfYWr0hu/Ni006bEAgzjYOk4=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=RT59GHJld+0mf/54D79lBO7EzTph/n9ZtqLsXyJUw6nxnKDLZi1shV1/+JJheYT2s
-	 ilR/GHkvuK20xHoddW+xX5eGkvseEHWHJjFQ3DxGy3TOyNsELtTaT7UPLfLVlFvRj6
-	 y1vm9fpZe86I+8qzbCYsBUnWd+G6tdtcix577CF0hWh81f5p1LuQ89tTrdmoZWy56H
-	 arCb05nMlK+79yoJf2DKuYF1ZbAgfjsjN/A06tCP4M0msYDs7CPlWWPHPYE+4T83a7
-	 9KDjhfQF2pozZnwk9wykLMpIOR174BJlaNSxuyjBneDmpQbJahgQPCE0vcZeb0y0Q8
-	 oXVgiopNNJhAw==
-Message-ID: <04050888-7abf-40fa-98d6-6215b8ba989e@kernel.org>
-Date: Mon, 17 Mar 2025 14:03:30 +0800
+	s=arc-20240116; t=1742191465; c=relaxed/simple;
+	bh=BuLAe+ckD3KglGlKDOe/14ODpCMzOcuTzcAY60aVtB0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=folIYRdheouqCW/VMXcyvAhRyzPbkPVHIC85632K4Aq121sVqkv0oaK79C680YqO9b0nSmBT2KY+Kt75uR1/mClQKA5w/UGdGSpSWwDrqMIbJeYW6GzvtmQ1vRAClMUuwFMgu7dEf/ccKGO81zYOTe37ktl9loHr0CiYI6oW1mM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=N4L9L1zs; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52GKb4iN020117;
+	Mon, 17 Mar 2025 06:04:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=6QyI19WOzYbsyCFPiTCl6pr1yzidgieZZUfeDkCxa
+	8s=; b=N4L9L1zs4+29PXSiFIBitPHYyAzR+uxH5gTbOKAYFC3Q/7IsW0F9QdS8g
+	BS/mEMfIqCdvBjtFVMlFrqURAePeZhxYnGZ/UxoBzSuPktp7CCLvhPAgHsAi0uTt
+	E3CVbEeIy+/9WKjEb7lpMIgyTA9J+V5loyDB8AbJZD22TLMa1aMIy/5ntiy3GSBR
+	3gLmC6JeHiSbnD4hWZIzTIq8zGjozIB+Ar9XnX92kd3gQdMiQ4cLDIS74razrFyS
+	5icjwlkvsRbkvOZ06ijWlyq/tLQHTtaqcAaZ+TSq605MnliJsjEASksp0BaM+Knp
+	xMNurm2As7t6Ih89NoVsRCEQWtn4Q==
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45e5tp9k35-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 17 Mar 2025 06:04:05 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52H3LU65009577;
+	Mon, 17 Mar 2025 06:04:04 GMT
+Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 45dm8ymte0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 17 Mar 2025 06:04:04 +0000
+Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
+	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52H640k747710690
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 17 Mar 2025 06:04:00 GMT
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id B95D620043;
+	Mon, 17 Mar 2025 06:04:00 +0000 (GMT)
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 6210620040;
+	Mon, 17 Mar 2025 06:03:59 +0000 (GMT)
+Received: from li-c18b6acc-24ee-11b2-a85c-81492619bda1.in.ibm.com (unknown [9.109.215.55])
+	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Mon, 17 Mar 2025 06:03:59 +0000 (GMT)
+From: Aboorva Devarajan <aboorvad@linux.ibm.com>
+To: "Rafael J . Wysocki" <rafael@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Christian Loehle <christian.loehle@arm.com>,
+        Gautam Menghani <gautam@linux.ibm.com>,
+        Aboorva Devarajan <aboorvad@linux.ibm.com>, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 1/1] cpuidle: menu: Prefer polling state for short idle durations
+Date: Mon, 17 Mar 2025 11:33:57 +0530
+Message-ID: <20250317060357.29451-1-aboorvad@linux.ibm.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: chao@kernel.org, linux-kernel@vger.kernel.org,
- Hongzhen Luo <hongzhen@linux.alibaba.com>,
- linux-erofs mailing list <linux-erofs@lists.ozlabs.org>
-Subject: Re: [PATCH v5] erofs: use Z_EROFS_LCLUSTER_TYPE_MAX to simplify
- switches
-To: Gao Xiang <hsiangkao@linux.alibaba.com>
-References: <20250210032923.3382136-1-hongzhen@linux.alibaba.com>
- <511c5fd9-307e-4c56-9d20-796dd06f775c@kernel.org>
- <489be3d1-a755-4756-ba82-a8f5a0dc9156@linux.alibaba.com>
-Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <489be3d1-a755-4756-ba82-a8f5a0dc9156@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: tNbJvwSjnEJAJOzgXClmmcDcd8RXCkkI
+X-Proofpoint-ORIG-GUID: tNbJvwSjnEJAJOzgXClmmcDcd8RXCkkI
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-17_01,2025-03-17_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 malwarescore=0
+ spamscore=0 clxscore=1015 mlxscore=0 impostorscore=0 phishscore=0
+ adultscore=0 priorityscore=1501 mlxlogscore=999 lowpriorityscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502280000 definitions=main-2503170042
 
-On 3/17/25 01:17, Gao Xiang wrote:
-> Hi Chao,
-> 
-> On 2025/3/16 10:36, Chao Yu wrote:
->> On 2025/2/10 11:29, Hongzhen Luo wrote:
->>> There's no need to enumerate each type.  No logic changes.
->>>
->>> Signed-off-by: Hongzhen Luo <hongzhen@linux.alibaba.com>
->>
->> Looks good to me, feel free to add:
->>
->> Reviewed-by: Chao Yu <chao@kernel.org>
->>
->> And one minor comment below.
->>
->>> diff --git a/fs/erofs/zmap.c b/fs/erofs/zmap.c
->>> index 689437e99a5a..d278ebd60281 100644
->>> --- a/fs/erofs/zmap.c
->>> +++ b/fs/erofs/zmap.c
->>> @@ -265,26 +265,22 @@ static int z_erofs_extent_lookback(struct z_erofs_maprecorder *m,
->>>           if (err)
->>>               return err;
->>> -        switch (m->type) {
->>> -        case Z_EROFS_LCLUSTER_TYPE_NONHEAD:
->>> +        if (m->type >= Z_EROFS_LCLUSTER_TYPE_MAX) {
->>> +            erofs_err(sb, "unknown type %u @ lcn %lu of nid %llu",
->>> +                  m->type, lcn, vi->nid);
->>> +            DBG_BUGON(1);
->>> +            return -EOPNOTSUPP;
->>  > +        } else if (m->type == Z_EROFS_LCLUSTER_TYPE_NONHEAD) {>               lookback_distance = m->delta[0];
->>>               if (!lookback_distance)
->>> -                goto err_bogus;
->>> +                break;
->>>               continue;
->>> -        case Z_EROFS_LCLUSTER_TYPE_PLAIN:
->>> -        case Z_EROFS_LCLUSTER_TYPE_HEAD1:
->>> -        case Z_EROFS_LCLUSTER_TYPE_HEAD2:
->>> +        } else {
->>>               m->headtype = m->type;
->>>               m->map->m_la = (lcn << lclusterbits) | m->clusterofs;
->>>               return 0;
->>> -        default:
->>> -            erofs_err(sb, "unknown type %u @ lcn %lu of nid %llu",
->>> -                  m->type, lcn, vi->nid);
->>> -            DBG_BUGON(1);
->>> -            return -EOPNOTSUPP;
->>
->> Should return EFSCORRUPTED here? is m->type >= Z_EROFS_LCLUSTER_TYPE_MAX a possible
->> case?
-> 
-> It's impossible by the latest on-disk definition, see:
-> #define Z_EROFS_LI_LCLUSTER_TYPE_MASK    (Z_EROFS_LCLUSTER_TYPE_MAX - 1)
-> 
-> Previously, it was useful before Z_EROFS_LCLUSTER_TYPE_HEAD2 was
-> introduced, but the `default:` case is already deadcode now.
+Avoid selecting deep idle state when the predicted idle duration is
+shorter than its target residency, as this leads to unnecessary state
+transitions without energy savings.
 
-Xiang, thanks for the explanation.
+On virtualized PowerPC (pseries) systems, where only one polling state
+(Snooze) and one deep state (CEDE) are available, selecting CEDE when
+its target residency exceeds the predicted idle duration hurts
+performance.
 
-So seems it can happen when mounting last image w/ old kernel which can not
-support newly introduced Z_EROFS_LCLUSTER_TYPE_* type, then it makes sense to
-return EOPNOTSUPP.
+For example, if the predicted idle duration is 15 us and the first
+non-polling state has a target residency of 120 us, selecting it
+would be suboptimal.
 
-> 
->>
->> Btw, we'd better to do sanity check for m->type in z_erofs_load_full_lcluster(),
->> then we can treat m->type as reliable variable later.
->>
->>      advise = le16_to_cpu(di->di_advise);
->>      m->type = advise & Z_EROFS_LI_LCLUSTER_TYPE_MASK;
->>      if (m->type >= Z_EROFS_LCLUSTER_TYPE_MAX) {
-> 
-> It's always false here.
+Remove the condition introduced in commit 69d25870f20c
+("cpuidle: fix the menu governor to boost IO performance") that
+prioritized non-polling states even when their target residency
+exceeded the predicted idle duration and allow polling states to
+be selected when appropriate.
 
-So, what do you think of this?
+Performance improvement observed with pgbench on PowerPC (pseries)
+system:
++---------------------------+------------+------------+------------+
+| Metric                    | Baseline   | Patched    | Change (%) |
++---------------------------+------------+------------+------------+
+| Transactions/sec (TPS)    | 494,834    | 538,707    | +8.85%     |
+| Avg latency (ms)          | 0.162      | 0.149      | -8.02%     |
++---------------------------+------------+------------+------------+
 
-From af584b2eacd468f145e9ee31ccdeedb7355d5afd Mon Sep 17 00:00:00 2001
-From: Chao Yu <chao@kernel.org>
-Date: Mon, 17 Mar 2025 13:57:55 +0800
-Subject: [PATCH] erofs: remove dead codes for cleanup
+CPUIdle state usage:
++--------------+--------------+-------------+
+| Metric       | Baseline     | Patched     |
++--------------+--------------+-------------+
+| Total usage  | 12,703,630   | 13,941,966  |
+| Above usage  | 11,388,990   | 1,620,474   |
+| Below usage  | 19,973       | 684,708     |
++--------------+--------------+-------------+
 
-z_erofs_extent_lookback() and z_erofs_get_extent_decompressedlen() tries
-to do sanity check on m->type, however their caller z_erofs_map_blocks_fo()
-has already checked that, so let's remove those dead codes.
+Above/Total and Below/Total usage percentages:
++------------------------+-----------+---------+
+| Metric                 | Baseline  | Patched |
++------------------------+-----------+---------+
+| Above % (Above/Total)  | 89.67%    | 11.63%  |
+| Below % (Below/Total)  | 0.16%     | 4.91%   |
+| Total cpuidle miss (%) | 89.83%    | 16.54%  |
++------------------------+-----------+---------+
 
-Signed-off-by: Chao Yu <chao@kernel.org>
+Signed-off-by: Aboorva Devarajan <aboorvad@linux.ibm.com>
+
 ---
- fs/erofs/zmap.c | 14 ++------------
- 1 file changed, 2 insertions(+), 12 deletions(-)
 
-diff --git a/fs/erofs/zmap.c b/fs/erofs/zmap.c
-index 8de50df05dfe..4d883ec212d7 100644
---- a/fs/erofs/zmap.c
-+++ b/fs/erofs/zmap.c
-@@ -265,17 +265,12 @@ static int z_erofs_extent_lookback(struct z_erofs_maprecorder *m,
- 		if (err)
- 			return err;
+v1: https://lore.kernel.org/all/20240809073120.250974-1-aboorvad@linux.ibm.com/
 
--		if (m->type >= Z_EROFS_LCLUSTER_TYPE_MAX) {
--			erofs_err(sb, "unknown type %u @ lcn %lu of nid %llu",
--				  m->type, lcn, vi->nid);
--			DBG_BUGON(1);
--			return -EOPNOTSUPP;
--		} else if (m->type == Z_EROFS_LCLUSTER_TYPE_NONHEAD) {
-+		if (m->type == Z_EROFS_LCLUSTER_TYPE_NONHEAD) {
- 			lookback_distance = m->delta[0];
- 			if (!lookback_distance)
+v1 -> v2:
+
+- Drop cover letter and improve commit message.
+---
+ drivers/cpuidle/governors/menu.c | 11 -----------
+ 1 file changed, 11 deletions(-)
+
+diff --git a/drivers/cpuidle/governors/menu.c b/drivers/cpuidle/governors/menu.c
+index 28363bfa3e4c..4b199377e4be 100644
+--- a/drivers/cpuidle/governors/menu.c
++++ b/drivers/cpuidle/governors/menu.c
+@@ -296,17 +296,6 @@ static int menu_select(struct cpuidle_driver *drv, struct cpuidle_device *dev,
+ 			idx = i; /* first enabled state */
+ 
+ 		if (s->target_residency_ns > predicted_ns) {
+-			/*
+-			 * Use a physical idle state, not busy polling, unless
+-			 * a timer is going to trigger soon enough.
+-			 */
+-			if ((drv->states[idx].flags & CPUIDLE_FLAG_POLLING) &&
+-			    s->exit_latency_ns <= latency_req &&
+-			    s->target_residency_ns <= data->next_timer_ns) {
+-				predicted_ns = s->target_residency_ns;
+-				idx = i;
+-				break;
+-			}
+ 			if (predicted_ns < TICK_NSEC)
  				break;
- 			continue;
--		} else {
-+		} else if (m->type < Z_EROFS_LCLUSTER_TYPE_MAX) {
- 			m->headtype = m->type;
- 			m->map->m_la = (lcn << lclusterbits) | m->clusterofs;
- 			return 0;
-@@ -379,11 +374,6 @@ static int z_erofs_get_extent_decompressedlen(struct z_erofs_maprecorder *m)
- 			if (lcn != headlcn)
- 				break;	/* ends at the next HEAD lcluster */
- 			m->delta[1] = 1;
--		} else {
--			erofs_err(inode->i_sb, "unknown type %u @ lcn %llu of nid %llu",
--				  m->type, lcn, vi->nid);
--			DBG_BUGON(1);
--			return -EOPNOTSUPP;
- 		}
- 		lcn += m->delta[1];
- 	}
+ 
 -- 
-2.48.1
-
-> 
-> Thanks,
-> Gao Xiang
-> 
+2.43.5
 
 
