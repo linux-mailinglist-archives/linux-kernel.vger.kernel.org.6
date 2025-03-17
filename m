@@ -1,187 +1,206 @@
-Return-Path: <linux-kernel+bounces-564260-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564252-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B244A65158
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 14:37:42 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DD2DA6513B
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 14:35:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E983E1685AB
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 13:37:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 497AA164452
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 13:34:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A758023F381;
-	Mon, 17 Mar 2025 13:36:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8046B23F40F;
+	Mon, 17 Mar 2025 13:32:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="yQzBbGQ+"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Qm6mLp8K"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2047.outbound.protection.outlook.com [40.107.92.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A5E523E25A;
-	Mon, 17 Mar 2025 13:36:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742218615; cv=none; b=dUtri2ZOqiEzRD3EjO9Rges5/Cu6wUYWxaFvGEZ6ux9RlTWyyr+NAdybdliKe7uiYdXX/rgauwsN4ptQZA5WfHw5CJ5rLYLxODhuMRDbLhTPFGMgee+2/bmc3FsMBAhTauA29lyK8GYITzDpj5y4eT3S9JpaFHdzjJ10bZXgu/w=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742218615; c=relaxed/simple;
-	bh=uUzD2tKx/yOkzia97EwCKxdMZuH21Iwtc+D4U9gO9Ys=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=IzhST1xjxLF/U1i9WVyeSsYhz6Q8/Goj0dE9hMnVXI/J4qD66wtnSa8ZJYp0m7svEbUq9MmpBmgClnKU/KyX5blX0jKsFkBjFIXVlz++5bwbW6uSWgeOhDtRk2yYEbe/LXBSwku871CNBmT2wYOHT9IrGwVI24iYbq12qKdEXsE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=yQzBbGQ+; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1742218613; x=1773754613;
-  h=from:date:subject:mime-version:content-transfer-encoding:
-   message-id:to:cc;
-  bh=uUzD2tKx/yOkzia97EwCKxdMZuH21Iwtc+D4U9gO9Ys=;
-  b=yQzBbGQ+SiuAYs30SoNM1FkrhSkBKigJHTD5cKKta3mas+9KUQrrkiIx
-   UxRMgz6qn/Kn5FxD9lG6WYwo5AB1PTGvO4CM47/Bcw7cfh8ISPsfy3Xnm
-   sp5djWfHo8y2vXCUdrjjz8LI02MMGqQANgrF4/mmC3KiSuebaufOa6avh
-   LGzbDESEblBf9FVgcL2eLhMNEAClrTryLr3BB4CbW6Qk+2b/uQDG7kagt
-   cemoIC/oQkYVS7RDqv7weLoHA+A3cEIXHU7EZ4PFEy5InWRx9Qu2vCg9y
-   CDnQEyr5BCQFV2zZ4uSthhdWwd2S78P3uyFtxdNYXZsCMhYw591jqFCRX
-   A==;
-X-CSE-ConnectionGUID: wbEqb9OZQ2CrxMjUvyeqZg==
-X-CSE-MsgGUID: vfBAesImS76EIy4wVtfOmw==
-X-IronPort-AV: E=Sophos;i="6.14,254,1736838000"; 
-   d="scan'208";a="39256375"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 17 Mar 2025 06:36:45 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44; Mon, 17 Mar 2025 06:36:24 -0700
-Received: from [10.40.56.22] (10.10.85.11) by chn-vm-ex02.mchp-main.com
- (10.10.85.144) with Microsoft SMTP Server id 15.1.2507.44 via Frontend
- Transport; Mon, 17 Mar 2025 06:36:19 -0700
-From: Nayab Sayed <nayabbasha.sayed@microchip.com>
-Date: Mon, 17 Mar 2025 19:01:08 +0530
-Subject: [PATCH RESEND] dt-bindings: mtd: atmel,dataflash: convert txt to
- yaml
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D8E923F40D;
+	Mon, 17 Mar 2025 13:32:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.47
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742218346; cv=fail; b=YQSgy/IBSorhX6fqklXDX2RgLAbdrLDIXstbFhQqVPtg6TT6g+OIJqigwAIdyaPjxJppZDOl9c8lyUDkgECrI1NyFEH/SJoZJe2RRahh5Ai5CzlAIF/UH0DaP/YJPHf8alfYR56wcTZOCOhhWlV0rAu/HhfxwJDtzy9kr9aeNn4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742218346; c=relaxed/simple;
+	bh=G3hYa7CqM/Pst5NaOE3J6nSfKCHlT39WGDk3wlpwP/c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=tUmS+GgGcvtY0F6afdW8q/vOS28hj1VwM8EQTSFTlBL45FifA3ctFzdC/MyGEAtblhcvGLxCJ7q2iBjLBFJ2d9hQcVWb6Ed2/s6+rUHYKQVNRhweScjT5tyZhvmD0aRa8M1A5iRLrTSUqxZWZ6AYv8YylCNpQerg1vdZ023MtE8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Qm6mLp8K; arc=fail smtp.client-ip=40.107.92.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=pm0AaOy1yC/5ZmAZu+Rwvx8DgUyoJ77kWsr2tE1MKw3Kj9pwSs8781UU7Kx56mtseVdPWcF5gOTwVLRaodGhqUf9V8NCzn0O7uojdey2KmX5hq32Ai6RwSMt4oklU0bRkVC7BaGekVQ9DOWIGMSwethyDroHkT2h4jQfuWSpzLL4r/xMAwsaj10qlvtzbZnfW+4SaVQwQO97xV4JdDMXWztwsZYfQbei/zwcCJkX29gvYGvd4hLqcHtE8U1qM8LxYdO3vhYTiMdDg0X+BN8xIWXcQGAowT73/P28nmlmHp4IPz5U3Kx7orFQl1dKobFmNWZNocaL5RUcDTwlJZ0cFA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=dxCoKv1z/6huzBJWcm+pODQanS4VwAHCBT1cfJd9s90=;
+ b=dgpHB93VdSjpqTpKgMD/nLr1/iyOjH+OBSHht5wn7Oykyzz16cOtd2x9z/aKqvlTuU79ck/KpY3a/zhZKNiMNMDFngSmxmaj8v6ILrzxp/WZhoUyilRqvG5JuZt76/PAgqbTaA6yg4LNCM61GuwT5nTiNL5wWqSrCXbEPNsn2fYXi9yi7ljMw/LEgXl4q87mi2y+d+VqwCyViFpvMXiIZlU2aC57aJrDmbOb2U9MVNwYVGdFwJZqmNyC4uqQX5H5lCZtORkcFzJvhRvuBHVGvvWilmtbntxPqqIBATBPG+cC2EjLJsWYWYJrouaKGvtLbuwPncMs7vB7NI2joNvDnw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=dxCoKv1z/6huzBJWcm+pODQanS4VwAHCBT1cfJd9s90=;
+ b=Qm6mLp8Kw0HJNhTEmsaCB2eDKr9aWqI/GlrMBZvhbblEQ8U1x1LOq2kna5DBti5vlofAp+DsK8G3oXU6LMY/KTvaUtykZCEUitDQA27sP62QjfTEfmJF7K2+zf6TlO7+5J0ta9zRj80xVksTeKoxR3OGchhad6gngMSiUBbmc8Q=
+Received: from BL1PR13CA0450.namprd13.prod.outlook.com (2603:10b6:208:2c3::35)
+ by IA1PR12MB7566.namprd12.prod.outlook.com (2603:10b6:208:42e::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.33; Mon, 17 Mar
+ 2025 13:32:16 +0000
+Received: from BL6PEPF00020E62.namprd04.prod.outlook.com
+ (2603:10b6:208:2c3:cafe::fe) by BL1PR13CA0450.outlook.office365.com
+ (2603:10b6:208:2c3::35) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8534.33 via Frontend Transport; Mon,
+ 17 Mar 2025 13:32:16 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ BL6PEPF00020E62.mail.protection.outlook.com (10.167.249.23) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8534.20 via Frontend Transport; Mon, 17 Mar 2025 13:32:15 +0000
+Received: from [10.252.195.191] (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 17 Mar
+ 2025 08:32:08 -0500
+Message-ID: <c7ebab9d-536c-4e3d-a916-30f45fb2e5f6@amd.com>
+Date: Mon, 17 Mar 2025 19:02:06 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 3/8] perf sched stats: Add schedstat v17 support
+To: Namhyung Kim <namhyung@kernel.org>
+CC: <peterz@infradead.org>, <mingo@redhat.com>, <acme@kernel.org>,
+	<irogers@google.com>, <james.clark@arm.com>, <ravi.bangoria@amd.com>,
+	<yu.c.chen@intel.com>, <mark.rutland@arm.com>,
+	<alexander.shishkin@linux.intel.com>, <jolsa@kernel.org>,
+	<rostedt@goodmis.org>, <vincent.guittot@linaro.org>,
+	<adrian.hunter@intel.com>, <kan.liang@linux.intel.com>,
+	<gautham.shenoy@amd.com>, <kprateek.nayak@amd.com>, <juri.lelli@redhat.com>,
+	<yangjihong@bytedance.com>, <void@manifault.com>, <tj@kernel.org>,
+	<sshegde@linux.ibm.com>, <linux-kernel@vger.kernel.org>,
+	<linux-perf-users@vger.kernel.org>, <santosh.shukla@amd.com>,
+	<ananth.narayan@amd.com>, <sandipan.das@amd.com>
+References: <20250311120230.61774-1-swapnil.sapkal@amd.com>
+ <20250311120230.61774-4-swapnil.sapkal@amd.com> <Z9Tljo_cyid7NCgV@google.com>
+Content-Language: en-US
+From: "Sapkal, Swapnil" <swapnil.sapkal@amd.com>
+In-Reply-To: <Z9Tljo_cyid7NCgV@google.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-ID: <20250317-atmel-dataflash-v1-1-1a3247f40299@microchip.com>
-X-B4-Tracking: v=1; b=H4sIABsk2GcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI1MDY0Nz3cSS3NQc3ZTEksS0nMTiDF1LE8Pk1KRkSxOjxFQloK6CotS0zAq
- widFKQa7Brn4uSrG1tQByJOstaQAAAA==
-To: Miquel Raynal <miquel.raynal@bootlin.com>, Richard Weinberger
-	<richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>, Rob Herring
-	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
-	<conor+dt@kernel.org>, Nicolas Ferre <nicolas.ferre@microchip.com>,
-	"Alexandre Belloni" <alexandre.belloni@bootlin.com>, Claudiu Beznea
-	<claudiu.beznea@tuxon.dev>
-CC: <linux-mtd@lists.infradead.org>, <devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	"Nayab Sayed" <nayabbasha.sayed@microchip.com>
-X-Mailer: b4 0.14.1
+X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL6PEPF00020E62:EE_|IA1PR12MB7566:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3ac114bb-f5e2-46d1-f9a4-08dd65582210
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|376014|7416014|82310400026|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?MUpTejJyWkVVUUI1ODhDS1FTbXB2b2xtaWc4dGtZMENHd3pPK0NMZjZJSlZF?=
+ =?utf-8?B?T1ZKdklybFN6LzNZeVl2R2hFVkN3UDlCUCtJT1JIdFVXdHl0aEUydnlYNUN6?=
+ =?utf-8?B?cEFITVdDMDhUUnhIbFN6aUhubHFhWkYrajR6b1hSYkhrNTRMT1dlS1U2VVlN?=
+ =?utf-8?B?cy9TWFRVREJzMnU1S0YybXc2SFVGUTVacGJ4T09vMDBhOVhRcUtZKzhiY2Fy?=
+ =?utf-8?B?N21yaUFZTUY0UHlVZis0ay9hWGRaZ2tCd3F6S3g2K3RqYnVPSXlFbWdFblB3?=
+ =?utf-8?B?d1pHTkZpWWhpM1dscVo4ZzYybld2VjFUS085Vi9QSXRRM2F1ZWdEZmlITVpw?=
+ =?utf-8?B?M0dvWTJ4V1E0MkRZMWpkbUdNY3VaOVdONEplZmJZTUVWeURHSFRBWElUaFUy?=
+ =?utf-8?B?ZW00SXFKWlM0Y3MyUTZIdjNWL3hmYnZIMGJ3Z2VqbG84RUtWdDhDMFZRTXNs?=
+ =?utf-8?B?K1ZIeG1heTE0Nm9EeEZDVmlyWEtDVXRKR1U4c1BhZEhqWWhDMlZZaC8yTVBp?=
+ =?utf-8?B?SWhlTUJSdk1TNmVmWkJYL0tGdGJCMVFGaGRUbk8rK29DemJuektOWWl5U0RX?=
+ =?utf-8?B?M3IyN3dkQzgveEwrUGswaDZ5TjQyTDJZZTRGcjk0aHo2OFdBN0RlZUJDd1Bj?=
+ =?utf-8?B?VVBGTjJpUlBNcnVSYVNaREtxUUI3eDM0bS9JNVIxakFiWm1ZckJjL3VzNEQ0?=
+ =?utf-8?B?ZHp3cGNJdkh6cnp1VHhJam5mNFNTd3h0VU5sbzJLd1JkMTJ0NU5OaG5DdFcx?=
+ =?utf-8?B?SThmanprQUtnOTRMYXh5enZ2YitXVmZJR2NpcXVCdG1hUzYxQmNwT0YzWS9R?=
+ =?utf-8?B?WGpHNEFua0lWcFJNOFZ2SzFpeXJvMW03RGoxcnFSbDRwc2VKRkRnTTBqZWt6?=
+ =?utf-8?B?cjBoUjVMeWdtV1MxY1lZTFViUUZxaTBBUjV4SGNqQnJEMXU4UnlkZCtnSFRn?=
+ =?utf-8?B?ZWJUZmYraGxNUGlCR0srYnZNU2RyWEtMenlteE5JKzZBaDlrTzNlWmUySW1U?=
+ =?utf-8?B?YkJlTmV1bFIvQzVmdFY4RlRlTzRCK1hKaENaODFQR0xwQWtqMXl5eWlmbERO?=
+ =?utf-8?B?c29zczFVRjVmOFpUY29wMEljZGFFZm9IWngwQ0Q5VUNMNUJNR3hMZ3JFMEJU?=
+ =?utf-8?B?SjNId0NDSEZhZDRBTy8wL2NXdTZ4dm1vUDB5c29DU1ZoMDNvVUJEZDhXZVFi?=
+ =?utf-8?B?NHRLM09EMjJGMTE0QStOTWVSejdvMDRGb0orY3h6aERqQ0pieEIwY2ZNS3lr?=
+ =?utf-8?B?ckZPM3RpamprZE1jdmFLM0hFdldPMSttWGdvQURaTGh5T0VvVEV4SHpOME0r?=
+ =?utf-8?B?WDVKNExoeEw5ZGljZDlndFMwWUlrbU80NmwrRXhRSEo4aThBdFlVc0NHMm9j?=
+ =?utf-8?B?Zm90bUNrKy92MVd2MFAwditzK1RpKzJYTC84VThtdmR2Y3B4YUF4cW1YdGRx?=
+ =?utf-8?B?M1RtNHNyVG13WjA2cHk1Y1d1WkJOSjk3TG5KbzgrdTBUWWR4b2FMdjNsK2lq?=
+ =?utf-8?B?NzV1VkJ5TUExcW5pdmlrSmxscndiOFFvbFFONGFGVDNOWHNsNG9DRVRFL0VM?=
+ =?utf-8?B?Q2owbHB0WlJlblloTU5qdHJHeHdJam5tNVVmcVU3ZXgwWERaSWUyTFFpR0tP?=
+ =?utf-8?B?SzVyQzlneEdMdUV1SnFRNU4wY1ArdWZCU0hzRFFnZHNheEFSR0cyWFBibE9z?=
+ =?utf-8?B?bzdIS1pibldIRHZ3OHhBb3Z0Q2NHZDRIL1RwZ1FySFJXanZ4UjRVcXVOREM1?=
+ =?utf-8?B?TVhJOE1BclR6WnBDQWkrTXhwQ1lnRTByYXVWZnNLMVJSa0hkRmFRT0xjWTZ4?=
+ =?utf-8?B?eDJtd3hDL2c4VUtiNTUrenpqZDJvNjFzNldjNFlETmZJTXlJSXlHY0lzTE5n?=
+ =?utf-8?B?YU9FaDdKbWpUOHJKb2NUSlhCcVVaRG9obHl3TDRWbVRWMm1QdWlLZHdTTGls?=
+ =?utf-8?B?SWowS2pXYk9LSjlzSDBRSjVCblpFb1FqazIxeEVaZWp2enBoelpoVEJCdmhH?=
+ =?utf-8?Q?IFWpW/SECW432X8nto761WIvkbniPU=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(82310400026)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Mar 2025 13:32:15.9074
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3ac114bb-f5e2-46d1-f9a4-08dd65582210
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BL6PEPF00020E62.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB7566
 
-Convert atmel-dataflash.txt into atmel,dataflash.yaml
+Hello Namhyung,
 
-Signed-off-by: Nayab Sayed <nayabbasha.sayed@microchip.com>
----
- .../devicetree/bindings/mtd/atmel,dataflash.yaml   | 55 ++++++++++++++++++++++
- .../devicetree/bindings/mtd/atmel-dataflash.txt    | 17 -------
- 2 files changed, 55 insertions(+), 17 deletions(-)
+On 3/15/2025 7:57 AM, Namhyung Kim wrote:
+> On Tue, Mar 11, 2025 at 12:02:25PM +0000, Swapnil Sapkal wrote:
+>> /proc/schedstat file output is standardized with version number.
+>> Add support to record and raw dump v17 version layout.
+>>
+>> Co-developed-by: Ravi Bangoria <ravi.bangoria@amd.com>
+>> Signed-off-by: Ravi Bangoria <ravi.bangoria@amd.com>
+>> Signed-off-by: Swapnil Sapkal <swapnil.sapkal@amd.com>
+>> ---
+>>   tools/lib/perf/Makefile                     |  2 +-
+>>   tools/lib/perf/include/perf/event.h         | 14 +++++
+>>   tools/lib/perf/include/perf/schedstat-v17.h | 61 +++++++++++++++++++++
+>>   tools/perf/util/event.c                     |  6 ++
+>>   tools/perf/util/synthetic-events.c          | 15 +++++
+>>   5 files changed, 97 insertions(+), 1 deletion(-)
+>>   create mode 100644 tools/lib/perf/include/perf/schedstat-v17.h
+>>
+>> diff --git a/tools/lib/perf/Makefile b/tools/lib/perf/Makefile
+>> index d0506a13a97f..30712ce8b6b1 100644
+>> --- a/tools/lib/perf/Makefile
+>> +++ b/tools/lib/perf/Makefile
+>> @@ -174,7 +174,7 @@ install_lib: libs
+>>   		$(call do_install_mkdir,$(libdir_SQ)); \
+>>   		cp -fpR $(LIBPERF_ALL) $(DESTDIR)$(libdir_SQ)
+>>   
+>> -HDRS := bpf_perf.h core.h cpumap.h threadmap.h evlist.h evsel.h event.h mmap.h schedstat-v15.h schedstat-v16.h
+>> +HDRS := bpf_perf.h core.h cpumap.h threadmap.h evlist.h evsel.h event.h mmap.h schedstat-v15.h schedstat-v16.h schedstat-v17.h
+> 
+> Please put them in a separate line like
+> 
+> HDRS += schedstat-v15.h schedstat-v16.h schedstat-v17.h
+> 
 
-diff --git a/Documentation/devicetree/bindings/mtd/atmel,dataflash.yaml b/Documentation/devicetree/bindings/mtd/atmel,dataflash.yaml
-new file mode 100644
-index 000000000000..8c72fa346e36
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mtd/atmel,dataflash.yaml
-@@ -0,0 +1,55 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/mtd/atmel,dataflash.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Atmel DataFlash
-+
-+maintainers:
-+  - Nayab Sayed <nayabbasha.sayed@microchip.com>
-+
-+description:
-+  The Atmel DataFlash is a low pin-count serial interface sequential access
-+  Flash memory, compatible with SPI standard. The device tree may optionally
-+  contain sub-nodes describing partitions of the address space.
-+
-+properties:
-+  compatible:
-+    oneOf:
-+      - items:
-+          - enum:
-+              - atmel,at45db321d
-+              - atmel,at45db041e
-+              - atmel,at45db642d
-+              - atmel,at45db021d
-+          - const: atmel,at45
-+          - const: atmel,dataflash
-+      - items:
-+          - const: atmel,at45
-+          - const: atmel,dataflash
-+
-+  reg:
-+    maxItems: 1
-+
-+required:
-+  - compatible
-+  - reg
-+
-+allOf:
-+  - $ref: mtd.yaml#
-+  - $ref: /schemas/spi/spi-peripheral-props.yaml#
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    spi {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+
-+        flash@1 {
-+            compatible = "atmel,at45db321d", "atmel,at45", "atmel,dataflash";
-+            reg = <1>;
-+        };
-+    };
-diff --git a/Documentation/devicetree/bindings/mtd/atmel-dataflash.txt b/Documentation/devicetree/bindings/mtd/atmel-dataflash.txt
-deleted file mode 100644
-index 1889a4db5b7c..000000000000
---- a/Documentation/devicetree/bindings/mtd/atmel-dataflash.txt
-+++ /dev/null
-@@ -1,17 +0,0 @@
--* Atmel Data Flash
--
--Required properties:
--- compatible : "atmel,<model>", "atmel,<series>", "atmel,dataflash".
--
--The device tree may optionally contain sub-nodes describing partitions of the
--address space. See partition.txt for more detail.
--
--Example:
--
--flash@1 {
--	#address-cells = <1>;
--	#size-cells = <1>;
--	compatible = "atmel,at45db321d", "atmel,at45", "atmel,dataflash";
--	spi-max-frequency = <25000000>;
--	reg = <1>;
--};
+Sure, Will change accordingly.
 
----
-base-commit: 4701f33a10702d5fc577c32434eb62adde0a1ae1
-change-id: 20250317-atmel-dataflash-941cebc942ae
+> Thanks,
+> Namhyung
+> 
 
-Best regards,
--- 
-Nayab Sayed <nayabbasha.sayed@microchip.com>
+--
+Thanks and Regards,
+Swapnil
+
 
 
