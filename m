@@ -1,502 +1,146 @@
-Return-Path: <linux-kernel+bounces-564708-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564675-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8438AA65984
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 18:05:38 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5EC7A65908
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 17:52:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 680B13A68BB
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 17:00:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A0A9A7A65BB
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 16:51:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FD3A206F3B;
-	Mon, 17 Mar 2025 16:54:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E00BC1D89FA;
+	Mon, 17 Mar 2025 16:49:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="FqteZLHZ";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="bxGuqqTe"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="SphrnGmx"
+Received: from mail-oo1-f45.google.com (mail-oo1-f45.google.com [209.85.161.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92741206F21
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 16:53:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 828061A0BF3
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 16:49:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742230441; cv=none; b=BU+XH5/pKZFXJEBnllpFKeufrBZvnhiaHcSCAccaD6Evu9rwsvh830XsXjtghIJFNl+1i8d4MVktVo7IEw57k2/8O4T6+Eajq2j6vCoHK4MAobrEPSaZmSkEnXIU7/BZW+x/+njNNLvqzIadgK1Cp3Ln3875l4SyusjBX+mfkGI=
+	t=1742230147; cv=none; b=KeDw6aQebPXAfEjoBS4l+OfFm6sI6Q9JGM5HhSrFKyqB9z684YkXhFumdk9WPXDDZWFA+ghyCKSl6TjeDChuW9Spn35iMbJ6w35MrJLfeu233AkpZJT7IRCiauQrOL9s025MeNyM/ql0pohkkli5S7Ym1AVzQ6vmXt1Tfhk4MKI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742230441; c=relaxed/simple;
-	bh=t8pwY1ntPd9tzkgg/BRS4onUiPQlOvd11Xfwnu18wsc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Wg81vkhFCg0z+fEioYMZy+1bQdQMZVu8iXz9CA76Nb1TiFhVFY4FDvNKSFDjCwNaGgkPLVoeaywJtXlIXgupFVZYFVtYXn1igTMJPmNDd6UFUPkMM53FmVUUr8ZraPCpNetx6xz6ic7Fqai6NkBT+WKT298rlfZX4/YMZZ0gVgk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=FqteZLHZ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=bxGuqqTe; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: "Ahmed S. Darwish" <darwi@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1742230438;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QIjirh/viyRzm07faqvExfJG5K1IBt6fuENSXJgt9B0=;
-	b=FqteZLHZyYwt71ZFiBHQ1E6+DWdR1wNYxQuUcyV2tQQvP1dMqoSdj2A/hMK9zENaqDqMbp
-	uQs7cKTcmAqtOLHOtmvfqkhrO14G3HKOZ33ZhD01X5ysmoLUm15xngY8Sz572mppx8RDAn
-	mF/C0llmI65P4AYyUgk8Xwcw4/0Kg5ZBYwK07faaUXUfK2ohHia7WqiA8pIRtLMObFbHk4
-	ptFQMGaeWSaR2fXDJCf0rFQlhPDuBI5ofKNxnx3YH4MwnWsjlTGQH5Tp4JrXeCSW3Vl0iz
-	mFM1XEpOu+fqUGTBVWFZWL1sNPxaSxwRwTRFikXNuIZjgpywjM6Vd1lr8+wKhg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1742230438;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QIjirh/viyRzm07faqvExfJG5K1IBt6fuENSXJgt9B0=;
-	b=bxGuqqTeL/P5OLZggBK2Kw12XptQ4TsNVoEbN2VdXe1SDIvQosEvisBhyuXUP8nV2qSBO4
-	7NUQcfurS7d7xPBA==
-To: Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Borislav Petkov <bp@alien8.de>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	Andrew Cooper <andrew.cooper3@citrix.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	John Ogness <john.ogness@linutronix.de>,
-	x86@kernel.org,
-	x86-cpuid@lists.linux.dev,
-	LKML <linux-kernel@vger.kernel.org>,
-	"Ahmed S. Darwish" <darwi@linutronix.de>
-Subject: [PATCH v2 29/29] x86/cacheinfo: Apply maintainer-tip coding style fixes
-Date: Mon, 17 Mar 2025 17:47:45 +0100
-Message-ID: <20250317164745.4754-30-darwi@linutronix.de>
-In-Reply-To: <20250317164745.4754-1-darwi@linutronix.de>
-References: <20250317164745.4754-1-darwi@linutronix.de>
+	s=arc-20240116; t=1742230147; c=relaxed/simple;
+	bh=eM5va7AuXLT0rsHrtPonGC4+dBUXGMAWOPLF0ULzaE8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oLGmLIejfz78dsECKR63Ze+X0ps0SVVq0YBz3yAxgF90Tr5N8JuIBNAuiSkf2P8cGmAYV6T+YsqFlxAocLJFTRGFyYJDnpwrp2YNXycU69PxSf0YW3d6DJ0kbBGVnUnmyGLdx6KACS7Vf1WbqPx9UvbmB8/c3Rp68U/RmNQZsaE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=SphrnGmx; arc=none smtp.client-ip=209.85.161.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-oo1-f45.google.com with SMTP id 006d021491bc7-5fe944a4243so1084187eaf.0
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 09:49:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1742230144; x=1742834944; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=hR+2cdo6mmbMt3HXD2jP5VNCtOJ9m0Gv6fbcgcv/bBU=;
+        b=SphrnGmx4itMCN/ExoJlagg96dOO2GROqAOk5kcZ0CBC0m1fxSmJO1kDeb6MLPPW06
+         kB+NGW1cjPfDCQ56bQrADRBckubZ8uqZ529CRVpA5/c1GEuz+0M6B0nlJHURzm0bET24
+         cXVldmTY5NvTAyszkqxWY51qrbWCt3++YmLm0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742230144; x=1742834944;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hR+2cdo6mmbMt3HXD2jP5VNCtOJ9m0Gv6fbcgcv/bBU=;
+        b=sLhFJfNpSrcCQvBs+bVJ+TYN4DXFUFw2oWEHnvEdLu9hmvfMZ1jSnm51YKkGCrGLRM
+         9H/oh03qPXqmkII1oSSR4w4eJb5vvZXHhPBvctAPJoiwlEDM+VAAZ9BsntwqygYah8DN
+         CG4rjlUzxkNTVtP1SUiA5o6PH46YGf+/jjEHNWt5b9O76j8JVxxxEN2nbc7VACIIYmyg
+         jMt8ZCLTsR3H3U6N3Gi1nYylV3nCdJ9cBRAc1HMK+5prE0qvb6/w+Z46n6sOnSvpYdAX
+         q586vEqXIBHbUxMyNzSsFgoeJvuIQNmf1xfE8oLK7LvvO68yhQo+vly+9qhftGZPcQJF
+         vbhw==
+X-Forwarded-Encrypted: i=1; AJvYcCUZ3nAq8J1m4oMb1vTzclmxtggeGHwXC7ir9OuadC+B3Tdz3bB/TcJsljv2fgD1re6Qpzz2UuMzqjcY+y4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwIorW2MccBDO8B7CSMBSkSFEnr2tfDlwTqqCM/ApTOEpdAwgPw
+	DW0rsp8OfgqyOlL4lbmdKo9tUGiSbNGd6mf9NbwFp73vM2tKcVbnHs7mZjrE0g==
+X-Gm-Gg: ASbGncvB/6OYv0Y+h5uCZ4n4+D/vs85lEx0T9wpHOiXKQtsro115kV6JYbZfiJ/HgAF
+	y9aVHz62JHYWXesKaGLhWfZzGigYi3GIlAeJHXREXB6X2zAcEi867iPmKA20gmfamQpRlxLuTKz
+	OXzKI1/xKImip9ZacePDb0X/7M1MmXyF3ba+cJv3hrrWr/BOf2IID1TewhDXFUSdTfIZoR/llB2
+	aFFGmyXPJpjTrwGO2jir5G+Xv1RVV5dZv0zZJKK4zn8nqB3emP+KL8JwUx6QekoSy9Jhi497+zR
+	svuzjE1+oa3mtfzo6S8YmxH3C706bDGYGOm2q93fyatgQ8sKAzbVGTOgNPRyRRbngj+hC/nWzyQ
+	7Cwxi1EuF
+X-Google-Smtp-Source: AGHT+IEXhCY9xr89eX6tBMG7DkAAspzRtGTTpjNmGgFlbsiwNx2AOKEyzh8EpraAE7G5FQCFX748sA==
+X-Received: by 2002:a05:6820:883:b0:601:b7e1:9233 with SMTP id 006d021491bc7-601e45c8543mr6433144eaf.3.1742230144551;
+        Mon, 17 Mar 2025 09:49:04 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-601db6598aesm1673541eaf.5.2025.03.17.09.49.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 17 Mar 2025 09:49:03 -0700 (PDT)
+Message-ID: <2464508f-864e-4697-8fd5-ffa5c06f64a0@broadcom.com>
+Date: Mon, 17 Mar 2025 09:49:00 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH stable 5.4 0/2] openvswitch port output fixes
+To: stable@vger.kernel.org
+Cc: "David S. Miller" <davem@davemloft.net>, Pravin B Shelar
+ <pshelar@ovn.org>, Alexei Starovoitov <ast@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>, Martin KaFai Lau <kafai@fb.com>,
+ Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+ Andrii Nakryiko <andriin@fb.com>, Sasha Levin <sashal@kernel.org>,
+ Eric Dumazet <edumazet@google.com>, Willem de Bruijn <willemb@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, David Ahern <dsahern@kernel.org>,
+ =?UTF-8?Q?Beno=C3=AEt_Monin?= <benoit.monin@gmx.fr>,
+ Xin Long <lucien.xin@gmail.com>, Felix Huettner
+ <felix.huettner@mail.schwarz>,
+ "open list:NETWORKING [GENERAL]" <netdev@vger.kernel.org>,
+ open list <linux-kernel@vger.kernel.org>,
+ "open list:OPENVSWITCH" <dev@openvswitch.org>,
+ "open list:BPF (Safe dynamic programs and tools)" <bpf@vger.kernel.org>
+References: <20250317154023.3470515-1-florian.fainelli@broadcom.com>
+Content-Language: en-US
+From: Florian Fainelli <florian.fainelli@broadcom.com>
+Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
+ xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
+ M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
+ JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
+ PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
+ KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
+ AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
+ IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
+ ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
+ bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
+ Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
+ tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
+ TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
+ zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
+ WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
+ IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
+ U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
+ 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
+ pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
+ MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
+ IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
+ gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
+ obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
+ N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
+ CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
+ C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
+ wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
+ EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
+ fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
+ MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
+ 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
+ 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
+In-Reply-To: <20250317154023.3470515-1-florian.fainelli@broadcom.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-The x86/cacheinfo code has been heavily refactored and fleshed out at
-parent commits, where any necessary coding style fixes were also done
-in place.
+On 3/17/25 08:40, Florian Fainelli wrote:
+> This patch series contains some missing openvswitch port output fixes
+> for the stable 5.4 kernel.
 
-Apply maintainer-tip.rst coding style fixes to the rest of the code,
-and align its assignment expressions for readability.
-
-At cacheinfo_amd_init_llc_id(), rename variable msb to index_msb as this
-is how it's called at the rest of cacheinfo.c code.
-
-Signed-off-by: Ahmed S. Darwish <darwi@linutronix.de>
----
- arch/x86/kernel/cpu/cacheinfo.c | 211 ++++++++++++++++----------------
- 1 file changed, 106 insertions(+), 105 deletions(-)
-
-diff --git a/arch/x86/kernel/cpu/cacheinfo.c b/arch/x86/kernel/cpu/cacheinfo.c
-index 397c3dbc5851..ad0d1b0445b0 100644
---- a/arch/x86/kernel/cpu/cacheinfo.c
-+++ b/arch/x86/kernel/cpu/cacheinfo.c
-@@ -1,11 +1,11 @@
- // SPDX-License-Identifier: GPL-2.0
- /*
-- *	Routines to identify caches on Intel CPU.
-+ * x86 CPU caches detection and configuration
-  *
-- *	Changes:
-- *	Venkatesh Pallipadi	: Adding cache identification through cpuid(4)
-- *	Ashok Raj <ashok.raj@intel.com>: Work with CPU hotplug infrastructure.
-- *	Andi Kleen / Andreas Herrmann	: CPUID4 emulation on AMD.
-+ * Previous changes
-+ * - Venkatesh Pallipadi:		Cache identification through CPUID(4)
-+ * - Ashok Raj <ashok.raj@intel.com>:	Work with CPU hotplug infrastructure
-+ * - Andi Kleen / Andreas Herrmann:	CPUID(4) emulation on AMD
-  */
- 
- #include <linux/cacheinfo.h>
-@@ -35,37 +35,37 @@ static cpumask_var_t cpu_cacheinfo_mask;
- unsigned int memory_caching_control __ro_after_init;
- 
- enum _cache_type {
--	CTYPE_NULL = 0,
--	CTYPE_DATA = 1,
--	CTYPE_INST = 2,
--	CTYPE_UNIFIED = 3
-+	CTYPE_NULL	= 0,
-+	CTYPE_DATA	= 1,
-+	CTYPE_INST	= 2,
-+	CTYPE_UNIFIED	= 3
- };
- 
- union _cpuid4_leaf_eax {
- 	struct {
--		enum _cache_type	type:5;
--		unsigned int		level:3;
--		unsigned int		is_self_initializing:1;
--		unsigned int		is_fully_associative:1;
--		unsigned int		reserved:4;
--		unsigned int		num_threads_sharing:12;
--		unsigned int		num_cores_on_die:6;
-+		enum _cache_type	type			:5;
-+		unsigned int		level			:3;
-+		unsigned int		is_self_initializing	:1;
-+		unsigned int		is_fully_associative	:1;
-+		unsigned int		reserved		:4;
-+		unsigned int		num_threads_sharing	:12;
-+		unsigned int		num_cores_on_die	:6;
- 	} split;
- 	u32 full;
- };
- 
- union _cpuid4_leaf_ebx {
- 	struct {
--		unsigned int		coherency_line_size:12;
--		unsigned int		physical_line_partition:10;
--		unsigned int		ways_of_associativity:10;
-+		unsigned int		coherency_line_size	:12;
-+		unsigned int		physical_line_partition	:10;
-+		unsigned int		ways_of_associativity	:10;
- 	} split;
- 	u32 full;
- };
- 
- union _cpuid4_leaf_ecx {
- 	struct {
--		unsigned int		number_of_sets:32;
-+		unsigned int		number_of_sets		:32;
- 	} split;
- 	u32 full;
- };
-@@ -93,60 +93,59 @@ static const enum cache_type cache_type_map[] = {
- 
- union l1_cache {
- 	struct {
--		unsigned line_size:8;
--		unsigned lines_per_tag:8;
--		unsigned assoc:8;
--		unsigned size_in_kb:8;
-+		unsigned line_size	:8;
-+		unsigned lines_per_tag	:8;
-+		unsigned assoc		:8;
-+		unsigned size_in_kb	:8;
- 	};
--	unsigned val;
-+	unsigned int val;
- };
- 
- union l2_cache {
- 	struct {
--		unsigned line_size:8;
--		unsigned lines_per_tag:4;
--		unsigned assoc:4;
--		unsigned size_in_kb:16;
-+		unsigned line_size	:8;
-+		unsigned lines_per_tag	:4;
-+		unsigned assoc		:4;
-+		unsigned size_in_kb	:16;
- 	};
--	unsigned val;
-+	unsigned int val;
- };
- 
- union l3_cache {
- 	struct {
--		unsigned line_size:8;
--		unsigned lines_per_tag:4;
--		unsigned assoc:4;
--		unsigned res:2;
--		unsigned size_encoded:14;
-+		unsigned line_size	:8;
-+		unsigned lines_per_tag	:4;
-+		unsigned assoc		:4;
-+		unsigned res		:2;
-+		unsigned size_encoded	:14;
- 	};
--	unsigned val;
-+	unsigned int val;
- };
- 
- static const unsigned short assocs[] = {
--	[1] = 1,
--	[2] = 2,
--	[4] = 4,
--	[6] = 8,
--	[8] = 16,
--	[0xa] = 32,
--	[0xb] = 48,
--	[0xc] = 64,
--	[0xd] = 96,
--	[0xe] = 128,
--	[0xf] = 0xffff /* fully associative - no way to show this currently */
-+	[1]		= 1,
-+	[2]		= 2,
-+	[4]		= 4,
-+	[6]		= 8,
-+	[8]		= 16,
-+	[0xa]		= 32,
-+	[0xb]		= 48,
-+	[0xc]		= 64,
-+	[0xd]		= 96,
-+	[0xe]		= 128,
-+	[0xf]		= 0xffff	/* Fully associative */
- };
- 
- static const unsigned char levels[] = { 1, 1, 2, 3 };
--static const unsigned char types[] = { 1, 2, 3, 3 };
-+static const unsigned char types[]  = { 1, 2, 3, 3 };
- 
- static void legacy_amd_cpuid4(int index, union _cpuid4_leaf_eax *eax,
- 			      union _cpuid4_leaf_ebx *ebx, union _cpuid4_leaf_ecx *ecx)
- {
- 	unsigned int dummy, line_size, lines_per_tag, assoc, size_in_kb;
--	union l1_cache l1i, l1d;
-+	union l1_cache l1i, l1d, *l1;
- 	union l2_cache l2;
- 	union l3_cache l3;
--	union l1_cache *l1 = &l1d;
- 
- 	eax->full = 0;
- 	ebx->full = 0;
-@@ -155,6 +154,7 @@ static void legacy_amd_cpuid4(int index, union _cpuid4_leaf_eax *eax,
- 	cpuid(0x80000005, &dummy, &dummy, &l1d.val, &l1i.val);
- 	cpuid(0x80000006, &dummy, &dummy, &l2.val, &l3.val);
- 
-+	l1 = &l1d;
- 	switch (index) {
- 	case 1:
- 		l1 = &l1i;
-@@ -162,48 +162,52 @@ static void legacy_amd_cpuid4(int index, union _cpuid4_leaf_eax *eax,
- 	case 0:
- 		if (!l1->val)
- 			return;
--		assoc = assocs[l1->assoc];
--		line_size = l1->line_size;
--		lines_per_tag = l1->lines_per_tag;
--		size_in_kb = l1->size_in_kb;
-+
-+		assoc		= assocs[l1->assoc];
-+		line_size	= l1->line_size;
-+		lines_per_tag	= l1->lines_per_tag;
-+		size_in_kb	= l1->size_in_kb;
- 		break;
- 	case 2:
- 		if (!l2.val)
- 			return;
--		assoc = assocs[l2.assoc];
--		line_size = l2.line_size;
--		lines_per_tag = l2.lines_per_tag;
--		/* cpu_data has errata corrections for K7 applied */
--		size_in_kb = __this_cpu_read(cpu_info.x86_cache_size);
-+
-+		/* Use x86_cache_size as it might have K7 errata fixes */
-+		assoc		= assocs[l2.assoc];
-+		line_size	= l2.line_size;
-+		lines_per_tag	= l2.lines_per_tag;
-+		size_in_kb	= __this_cpu_read(cpu_info.x86_cache_size);
- 		break;
- 	case 3:
- 		if (!l3.val)
- 			return;
--		assoc = assocs[l3.assoc];
--		line_size = l3.line_size;
--		lines_per_tag = l3.lines_per_tag;
--		size_in_kb = l3.size_encoded * 512;
-+
-+		assoc		= assocs[l3.assoc];
-+		line_size	= l3.line_size;
-+		lines_per_tag	= l3.lines_per_tag;
-+		size_in_kb	= l3.size_encoded * 512;
- 		if (boot_cpu_has(X86_FEATURE_AMD_DCM)) {
--			size_in_kb = size_in_kb >> 1;
--			assoc = assoc >> 1;
-+			size_in_kb	= size_in_kb >> 1;
-+			assoc		= assoc >> 1;
- 		}
- 		break;
- 	default:
- 		return;
- 	}
- 
--	eax->split.is_self_initializing = 1;
--	eax->split.type = types[index];
--	eax->split.level = levels[index];
--	eax->split.num_threads_sharing = 0;
--	eax->split.num_cores_on_die = topology_num_cores_per_package();
-+	eax->split.is_self_initializing		= 1;
-+	eax->split.type				= types[index];
-+	eax->split.level			= levels[index];
-+	eax->split.num_threads_sharing		= 0;
-+	eax->split.num_cores_on_die		= topology_num_cores_per_package();
- 
- 	if (assoc == 0xffff)
- 		eax->split.is_fully_associative = 1;
--	ebx->split.coherency_line_size = line_size - 1;
--	ebx->split.ways_of_associativity = assoc - 1;
--	ebx->split.physical_line_partition = lines_per_tag - 1;
--	ecx->split.number_of_sets = (size_in_kb * 1024) / line_size /
-+
-+	ebx->split.coherency_line_size		= line_size - 1;
-+	ebx->split.ways_of_associativity	= assoc - 1;
-+	ebx->split.physical_line_partition	= lines_per_tag - 1;
-+	ecx->split.number_of_sets		= (size_in_kb * 1024) / line_size /
- 		(ebx->split.ways_of_associativity + 1) - 1;
- }
- 
-@@ -260,18 +264,14 @@ static int fill_cpuid4_info(int index, struct _cpuid4_info *id4)
- 
- static int find_num_cache_leaves(struct cpuinfo_x86 *c)
- {
--	unsigned int		eax, ebx, ecx, edx, op;
--	union _cpuid4_leaf_eax	cache_eax;
--	int 			i = -1;
--
--	if (x86_vendor_amd_or_hygon(c->x86_vendor))
--		op = 0x8000001d;
--	else
--		op = 4;
-+	unsigned int eax, ebx, ecx, edx, op;
-+	union _cpuid4_leaf_eax cache_eax;
-+	int i = -1;
- 
-+	/* Do a CPUID(op) loop to calculate num_cache_leaves */
-+	op = x86_vendor_amd_or_hygon(c->x86_vendor) ? 0x8000001d : 4;
- 	do {
- 		++i;
--		/* Do cpuid(op) loop to find out num_cache_leaves */
- 		cpuid_count(op, i, &eax, &ebx, &ecx, &edx);
- 		cache_eax.full = eax;
- 	} while (cache_eax.split.type != CTYPE_NULL);
-@@ -309,9 +309,9 @@ void cacheinfo_amd_init_llc_id(struct cpuinfo_x86 *c, u16 die_id)
- 			num_sharing_cache = ((eax >> 14) & 0xfff) + 1;
- 
- 		if (num_sharing_cache) {
--			int bits = get_count_order(num_sharing_cache);
-+			int index_msb = get_count_order(num_sharing_cache);
- 
--			c->topo.llc_id = c->topo.apicid >> bits;
-+			c->topo.llc_id = c->topo.apicid >> index_msb;
- 		}
- 	}
- }
-@@ -332,14 +332,10 @@ void init_amd_cacheinfo(struct cpuinfo_x86 *c)
- {
- 	struct cpu_cacheinfo *ci = get_cpu_cacheinfo(c->cpu_index);
- 
--	if (boot_cpu_has(X86_FEATURE_TOPOEXT)) {
-+	if (boot_cpu_has(X86_FEATURE_TOPOEXT))
- 		ci->num_leaves = find_num_cache_leaves(c);
--	} else if (c->extended_cpuid_level >= 0x80000006) {
--		if (cpuid_edx(0x80000006) & 0xf000)
--			ci->num_leaves = 4;
--		else
--			ci->num_leaves = 3;
--	}
-+	else if (c->extended_cpuid_level >= 0x80000006)
-+		ci->num_leaves = (cpuid_edx(0x80000006) & 0xf000) ? 4 : 3;
- }
- 
- void init_hygon_cacheinfo(struct cpuinfo_x86 *c)
-@@ -466,6 +462,9 @@ void init_intel_cacheinfo(struct cpuinfo_x86 *c)
- 	intel_cacheinfo_0x2(c);
- }
- 
-+/*
-+ * linux/cacheinfo.h shared_cpu_map setup, AMD/Hygon
-+ */
- static int __cache_amd_cpumap_setup(unsigned int cpu, int index,
- 				    const struct _cpuid4_info *id4)
- {
-@@ -482,12 +481,12 @@ static int __cache_amd_cpumap_setup(unsigned int cpu, int index,
- 			this_cpu_ci = get_cpu_cacheinfo(i);
- 			if (!this_cpu_ci->info_list)
- 				continue;
-+
- 			ci = this_cpu_ci->info_list + index;
- 			for_each_cpu(sibling, cpu_llc_shared_mask(cpu)) {
- 				if (!cpu_online(sibling))
- 					continue;
--				cpumask_set_cpu(sibling,
--						&ci->shared_cpu_map);
-+				cpumask_set_cpu(sibling, &ci->shared_cpu_map);
- 			}
- 		}
- 	} else if (boot_cpu_has(X86_FEATURE_TOPOEXT)) {
-@@ -513,8 +512,7 @@ static int __cache_amd_cpumap_setup(unsigned int cpu, int index,
- 				apicid = cpu_data(sibling).topo.apicid;
- 				if ((apicid < first) || (apicid > last))
- 					continue;
--				cpumask_set_cpu(sibling,
--						&ci->shared_cpu_map);
-+				cpumask_set_cpu(sibling, &ci->shared_cpu_map);
- 			}
- 		}
- 	} else
-@@ -523,14 +521,17 @@ static int __cache_amd_cpumap_setup(unsigned int cpu, int index,
- 	return 1;
- }
- 
-+/*
-+ * linux/cacheinfo.h shared_cpu_map setup, Intel + fallback AMD/Hygon
-+ */
- static void __cache_cpumap_setup(unsigned int cpu, int index,
- 				 const struct _cpuid4_info *id4)
- {
- 	struct cpu_cacheinfo *this_cpu_ci = get_cpu_cacheinfo(cpu);
-+	struct cpuinfo_x86 *c = &cpu_data(cpu);
- 	struct cacheinfo *ci, *sibling_ci;
- 	unsigned long num_threads_sharing;
- 	int index_msb, i;
--	struct cpuinfo_x86 *c = &cpu_data(cpu);
- 
- 	if (x86_vendor_amd_or_hygon(c->x86_vendor)) {
- 		if (__cache_amd_cpumap_setup(cpu, index, id4))
-@@ -550,8 +551,10 @@ static void __cache_cpumap_setup(unsigned int cpu, int index,
- 		if (cpu_data(i).topo.apicid >> index_msb == c->topo.apicid >> index_msb) {
- 			struct cpu_cacheinfo *sib_cpu_ci = get_cpu_cacheinfo(i);
- 
-+			/* Skip if itself or no cacheinfo */
- 			if (i == cpu || !sib_cpu_ci->info_list)
--				continue;/* skip if itself or no cacheinfo */
-+				continue;
-+
- 			sibling_ci = sib_cpu_ci->info_list + index;
- 			cpumask_set_cpu(i, &ci->shared_cpu_map);
- 			cpumask_set_cpu(cpu, &sibling_ci->shared_cpu_map);
-@@ -585,7 +588,7 @@ int init_cache_level(unsigned int cpu)
- }
- 
- /*
-- * The max shared threads number comes from CPUID.4:EAX[25-14] with input
-+ * The max shared threads number comes from CPUID(4) EAX[25-14] with input
-  * ECX as cache index. Then right shift apicid by the number's order to get
-  * cache id for this cache node.
-  */
-@@ -621,8 +624,8 @@ int populate_cache_leaves(unsigned int cpu)
- 		ci_info_init(ci++, &id4, nb);
- 		__cache_cpumap_setup(cpu, idx, &id4);
- 	}
--	this_cpu_ci->cpu_map_populated = true;
- 
-+	this_cpu_ci->cpu_map_populated = true;
- 	return 0;
- }
- 
-@@ -654,12 +657,10 @@ void cache_disable(void) __acquires(cache_disable_lock)
- 	unsigned long cr0;
- 
- 	/*
--	 * Note that this is not ideal
--	 * since the cache is only flushed/disabled for this CPU while the
--	 * MTRRs are changed, but changing this requires more invasive
--	 * changes to the way the kernel boots
-+	 * This is not ideal since the cache is only flushed/disabled
-+	 * for this CPU while the MTRRs are changed, but changing this
-+	 * requires more invasive changes to the way the kernel boots.
- 	 */
--
- 	raw_spin_lock(&cache_disable_lock);
- 
- 	/* Enter the no-fill (CD=1, NW=0) cache mode and flush caches. */
+Scratch that and the two others targeting 5.10 and 5.15, I missed that 
+DEBUG_NET_WARN_ON_ONCE was not added until later. Will submit a v2 later 
+today. Thanks!
 -- 
-2.48.1
-
+Florian
 
