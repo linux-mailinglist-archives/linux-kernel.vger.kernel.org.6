@@ -1,73 +1,61 @@
-Return-Path: <linux-kernel+bounces-564007-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564008-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3D17A64BDD
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 12:10:04 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF40EA64BF5
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 12:10:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B1EB18867F6
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:10:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D52CD18874A5
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:11:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 672392356D1;
-	Mon, 17 Mar 2025 11:09:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0087C233731;
+	Mon, 17 Mar 2025 11:10:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="L3ANOjmC"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="XCIJvXLE"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E2681459F7;
-	Mon, 17 Mar 2025 11:09:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 768EF229B28
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 11:10:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742209791; cv=none; b=ZlPyjiFsyJ6+LviQmDiugj1vJ7KIhGweb29pj1j2E+8OLAonOSkzfnQoNdmb0oOyr/68S6UHHT2i+/HvdmOCCInCNlxhQ5vx4YrB0vqkl+Hogl0luCpupuelDcau7458jsWA7dSQxBCOPxYYyH35v9vAwIGaPf/HK7i8exJvXFU=
+	t=1742209853; cv=none; b=Tph9Vag+T/nh97X8+xbCbMSY4e3VpG5Zwd8vogVz7m0xhRMhvTn891lg1g3X19UhYB0VByg5qCQtYVDOuo91NZTB0DdFXSM8+WpGb3nPayVqzy+LihuQQjJBJYVtWXcP9hMpn4jQHGFGz6HOD/Ux52D+P2YF4Y7h+5545MLxM1I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742209791; c=relaxed/simple;
-	bh=k/BM4FwwagS7ER/y5fUKx6y06iSE8U8+RTLffCOxvAg=;
+	s=arc-20240116; t=1742209853; c=relaxed/simple;
+	bh=/ngKFYQCR9FYr7MvB4imU9sLAdn8fQfEgEOdcLZTymk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NeYx+bCEPOhWY2Oa2sbdHsvrVwD8gnAc/1AeNk9xm/AP3ku4r5VW3B/ozehPf2tSCbCoVUcze/jV7zCUPskzFA0U5K4iZhjCu5uCHeYgincikaSjJU/0qnHDKaz3Sym1tffD7JIWYjCpjlPGl0TskD8zV2mrDZ1PF7t/vZXEN84=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=L3ANOjmC; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+	 Content-Type:Content-Disposition:In-Reply-To; b=t/lB+JvO+PhGod5mfQfGmplFQnSs9IoP4tVWiZ0gNn9xDtcJ8yXwvF6gb0DFqdOhiG7/yt2RQ6UmjPvxBFhq+qLczE4mgxTygTeXjmCckzbjaWwElpfeT6kDSOdyg09EeHycWp1oHDHnRSHRgvNZPHW8lCTHOtwzkiZ7Om4QOHU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=XCIJvXLE; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=CucQxAMz4q00rKoqMFkXW/rTlFZs/81VWM2dWuS9iPE=; b=L3ANOjmC4JYjNEDTGSFlYSj+EY
-	lDMUKIAPuul1T4GUZ6puKUkV8BzHq5WJJG6+uQGshRelm43SbzWOXlnmp3+t9vl5U/CCIqrkoFocf
-	0CLTtY4lXl6Aov3FiPFUso512czcMF1HO/Kfq/XAlzRMnW/HXJL2jAIjFrAL1OAvRukC77bqdyIAv
-	vnzXTJERSI/rnvJZYtJBQUhNFNs9z9CSA7BH9VOZ2jnPlNjMcvT0nKfMAOf3fOK49uAvKalEejjFu
-	SziT/8P/6JFZWVLYKFbO8dKi4HTjASat0y9ujjRXOzcAOdpA22UH87wRqpGq1Z7yFEyP30SG71LHf
-	YJq6KtAQ==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:59148)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1tu8LT-0003PO-0x;
-	Mon, 17 Mar 2025 11:09:23 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1tu8LL-0003W9-0k;
-	Mon, 17 Mar 2025 11:09:15 +0000
-Date: Mon, 17 Mar 2025 11:09:14 +0000
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Maxime Chevallier <maxime.chevallier@bootlin.com>
-Cc: Jacky Chou <jacky_chou@aspeedtech.com>, andrew+netdev@lunn.ch,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, joel@jms.id.au, andrew@codeconstruct.com.au,
-	ratbert@faraday-tech.com, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
-	BMC-SW@aspeedtech.com
-Subject: Re: [net-next 4/4] net: ftgmac100: add RGMII delay for AST2600
-Message-ID: <Z9gC2vz2w5dfZsum@shell.armlinux.org.uk>
-References: <20250317025922.1526937-1-jacky_chou@aspeedtech.com>
- <20250317025922.1526937-5-jacky_chou@aspeedtech.com>
- <20250317095229.6f8754dd@fedora.home>
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=/ngKFYQCR9FYr7MvB4imU9sLAdn8fQfEgEOdcLZTymk=; b=XCIJvXLErz/LCKKl0JNWAQPi69
+	7sFX1C/fn0HSohYjPRyQjXcxWLJNGEjLeFSsA5ogMv+evBbZx+SIP37ylWafF9JleMatr+bQxRaUZ
+	vBe+2FIhdypi5aNJzGKm6y7jQet4pRF9DAXPGulV51RyUceNgUp7qOyOCKBaSENUT37TkviOAr3N5
+	OFkpzMypjCqbV9pDkCI0QUdAr98SHLo9gWgEwnvCla7x3t4L/lCM6xyN93EACbSrvzrF8UsThhQCk
+	/R2J9cMSY1QNGr4a5JpEGjlfTM7fXiCbN3C8XxU2rt04Fu/HXOel9A/mMW22+qSP69SVflBK1pSKK
+	vaMrliog==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tu8Mo-00000003QjB-0l7K;
+	Mon, 17 Mar 2025 11:10:46 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id ACFA7300783; Mon, 17 Mar 2025 12:10:45 +0100 (CET)
+Date: Mon, 17 Mar 2025 12:10:45 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: kan.liang@linux.intel.com
+Cc: mingo@redhat.com, tglx@linutronix.de, bp@alien8.de, acme@kernel.org,
+	namhyung@kernel.org, irogers@google.com,
+	linux-kernel@vger.kernel.org, ak@linux.intel.com,
+	eranian@google.com
+Subject: Re: [PATCH V10 1/7] perf: Save PMU specific data in task_struct
+Message-ID: <20250317111045.GA36386@noisy.programming.kicks-ass.net>
+References: <20250314172700.438923-1-kan.liang@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,31 +64,12 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250317095229.6f8754dd@fedora.home>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+In-Reply-To: <20250314172700.438923-1-kan.liang@linux.intel.com>
 
-On Mon, Mar 17, 2025 at 09:53:33AM +0100, Maxime Chevallier wrote:
-> So this goes completely against the naming of the property. It has the
-> -ps suffix, so you would expect to have picoseconds values passed, and
-> not an arbiraty index.
-> 
-> Take a look at other drivers, you should accept picseconds values from
-> these properties, then compute the relevant index in the driver. That
-> index should be something internal to your driver.
-> 
-> An example here :
-> 
-> https://elixir.bootlin.com/linux/v6.14-rc6/source/drivers/net/ethernet/microchip/sparx5/lan969x/lan969x_rgmii.c#L51
 
-Another example would be drivers/net/phy/adin.c::adin_get_reg_value()
-and associated functions - these lookup a DT property and then look
-that up in a table to convert it to a register value.
 
-I suspect that's something which could become generic, as I suspect
-most hardware isn't going to accept a picosecond value, but be a
-choice of N different options.
+Kan, can you please do a patch failing perf_pmu_register() is there's
+more than one pmu with one of the kmem_cache things on?
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+Because the current thing very much cannot deal with that case.
 
