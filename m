@@ -1,133 +1,159 @@
-Return-Path: <linux-kernel+bounces-564855-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE629A65BDB
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 19:04:12 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFAB5A65BE1
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 19:05:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E4A937A2AE4
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 18:03:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 006327A3AB1
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 18:04:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B0351B0F23;
-	Mon, 17 Mar 2025 18:04:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F30A31D5ADD;
+	Mon, 17 Mar 2025 18:05:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EJXba/ZC"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i0oftvuO"
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F8411A840A
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 18:04:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9123FA47;
+	Mon, 17 Mar 2025 18:05:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742234644; cv=none; b=UgVZnD0VhuaOZ39iJweZjNxysvkqiOzvlV2i9oj1MqZe3IJe/8zi03f3e8Pv3iOO83bZOh8fxMITKKbfthMBEyZ07NsNWZ+JZvDJOm4do7Jwn5iaXFu0I6gsj8u4W+306zNP2x64YaxYRsxel+oDkMLlMWZq7qinqLU070wTnuo=
+	t=1742234714; cv=none; b=o/Fd+KIjmg6WQpILIHukk9dDeL9AGLGwE7dpsm2zbPCWq0r28lUvb4Y56LRbhcptjXjSnOonIVpFgk2xawFGooZ1wi8qznhQ7/tS5Nrch83aMQS0UvjAvcO02iBuFeVKN4bZ7VaCqY3wbHPohzRrko8p6eUlUXNrSkNrvbbpDsg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742234644; c=relaxed/simple;
-	bh=awgPAnbrbkaZkPs7TRo9ZTe/vWz9ohJbUh9GSIfTsRI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GPSrxItoH4rq8Eud02AdJUXc+3hZaHjQCtJccCuNNKikWePQsbITe3743pA2lduq+wCF9iryAps8gQzrYK4/rFYZzTVijv/habso2Y8bYdEx5S4IVYHOTa+34DbhIQ6WznvjthOfPlZBIg9hrbHVBLTHVIGhnnJRH7kXVXlCtkI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EJXba/ZC; arc=none smtp.client-ip=209.85.218.41
+	s=arc-20240116; t=1742234714; c=relaxed/simple;
+	bh=yS19w8s2BxyjV6yv9nuygjxyYafL7takTriDGTwkTb0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DtBjBNEYWnOCEwRyQuHLqI8Sgrqhg/VHJqo758EPEcftTsSE7Pz0jzWXrpF01cnQl/8VmOBMlC2GPdWot4OIr/EvJ82jsJzWCEUplp/CBfft1XZatdWycncT7zvl/SplhXwCCwaidMbW0poBylSBwyE5RLTSFAd5wr+Yvo4ayaw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i0oftvuO; arc=none smtp.client-ip=209.85.208.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-ac2ed007aacso942335666b.0
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 11:04:02 -0700 (PDT)
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-30bf8632052so50771761fa.0;
+        Mon, 17 Mar 2025 11:05:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742234641; x=1742839441; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=gMs0KQ2xoYfGwipz0GcDyzvKZDx/2Bps5YmVJfONNew=;
-        b=EJXba/ZCO66ATx803MBlGwRaZxtxopTxIUS29nO9v63Jux87Avu+u07TksKGwwuNrs
-         YGB3m+7yuqHPM3mMlpkgWP7peK813v26FM5tm/7zMupgXdbReUqEADMtF7gqPAG5IArW
-         tRAyC75DnGVC8Op6fekVRO1tKReq3fgiJhsc22fXVo/w/dgiS5XnJjtlfRusGW/oNP3a
-         90voKuHvWSyu2R7DC30wg3HQBJYVo17/4C339294WkqnH4M68yVyDQ2jaX4TNa3yVqAs
-         xuKthDE/lFnKP07ZAH1caHVi3ITHw6s/nNaLvgnbp9XRsaztzZT8UC7urNabyYnxmZpT
-         R/9Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742234641; x=1742839441;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1742234711; x=1742839511; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=gMs0KQ2xoYfGwipz0GcDyzvKZDx/2Bps5YmVJfONNew=;
-        b=g7BYMB+nB40qPPf8r/Dijx0H8mcIaWddnCwbp78MQt1+FLW+6p3mxbKp5vFbStTJDq
-         jDGGBY9DzkbegzN1whg5sAbCrSxqakV0goO7LMOjoMXC+0Bmo/AhtBSTfxGQAznHcyjj
-         DnLhxF/ObR/vBNDIue5X5rK//k5cERlCe77q6/tTTSj32QMJaFUfCbEDqKYDzhMozUaq
-         vIedOucHYdib+FwnucZeR5gWB+mwjJgE9sbJjMJ+vdxMWN0xaK3a2FLfPBLbQXGXQg96
-         GyKaww3pxRO2DS3mD0CK+j0tMM6d+j7xD39jxolJ9Qf1QpIVhE5OXtCCgh4WYa5Tk5rJ
-         sYuQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWR8cED+ka6xI+1yzXj+BxNMbNVaz8NNPMHIm0IGj8dAz6BOBqznaJiVYeNPENx9keX9gDMtvX1aiNu3u4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyn2HN+4gbOBEqiQ8Z9WPpcgupCXho6hHXjDihZMD8EulFx0dTk
-	qZ7KHBbzNBpA/EIkCxtF3Ph0ptpwRK0DNmwtl0ySKWWTVb50rc0X
-X-Gm-Gg: ASbGncuN/l5Ivae3qkmIK4qo2o+EYuy31w3jAl+yZnCImNXJo69fn697XeCci6eUxbC
-	Z0LsP+uA4CUt6dzzdPmXPGqCVKbxyDV8Sw7+CQmYXIrYFuiDJL+r/2KgkEG0/Ahv09my1ws49gT
-	onY78IqsOVGz3EwFvSSYj85FSWbcU6Z89TlCIM4/ft34vyMDG+e6268xL6JllEDLHJferlh4M5x
-	mxhNw9vMwVcp34TojrGXq9ow+vPRApvAkkYrNBy6n3uM7F8ynFYR5J5LMYfHTl8coUqbBi4ruoF
-	AoVqeHgYJZt8o0JC7bh4Q41WemB0teLUk/FJ2PU2CLf+iH6Mx0Ep/mO7/yLK1xxp3oHnHcuDITK
-	VAM71/McuqmBK3CZdPTR5jyXcKw/BQKwQCuG0dskbAaYA4bWSbHjumA==
-X-Google-Smtp-Source: AGHT+IEqHcYMxvD4RWbMqL7gZkeMlgl4L7sidotxxKm051Mjf5HVCCNTwf97wRSQF+aZjoUe1nGS6g==
-X-Received: by 2002:a17:906:6a0a:b0:ac2:b414:ba2a with SMTP id a640c23a62f3a-ac330376bb6mr1524996566b.37.1742234641045;
-        Mon, 17 Mar 2025 11:04:01 -0700 (PDT)
-Received: from alb3rt0-ThinkPad-P15-Gen-1 (host-95-252-211-62.retail.telecomitalia.it. [95.252.211.62])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3149cdec8sm705009766b.112.2025.03.17.11.04.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Mar 2025 11:04:00 -0700 (PDT)
-Date: Mon, 17 Mar 2025 19:03:58 +0100
-From: Alberto Merciai <alb3rt0.m3rciai@gmail.com>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: shawnguo@kernel.org, linux-kernel@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: OCOTP and DWMAC builtin modules are needed for imx93-11x11-evk
- kernel dev via TFTP and NFS
-Message-ID: <Z9hkDqcKG1xOmIB5@alb3rt0-ThinkPad-P15-Gen-1>
-References: <Z9fhuVltKwqgHdLp@alb3rt0-ThinkPad-P15-Gen-1>
- <935028c6-ce56-46e0-96ff-46fa91c8f66a@linaro.org>
+        bh=frfHgQ+gFACrESJvw7LnNR39jC1AwPkl0OXU4bE+ZmE=;
+        b=i0oftvuO4eu0T62J1dW50/iMfanB5G7Cwm1GcbfC4HzL9OifdyBX1LD3dYrxElsCEo
+         ucgog4bH2bYNLXPduZ2/Kee/eogk7hyJ/3s0BysGpy0aFKvW3QaTr+CbcDWBVetTCORI
+         Ael8tPodEw+/1wvRgUdOVz6npAbxMmgcPqmz1HkGNzIufPCFXEdSai/PFk5NjMSzIWFI
+         HI5CAQEOpW9S9nmFI8G4bxiGBy45QToNxgHduC+Em9HF/qQdYbPE3GPEArBvnOTxHjE6
+         0IL7iIPjogfCBafbjaEcQqFetanDFSPHRYvACM8IcVI8EY5H+MwIpIxodk91/waQv+8r
+         tgqw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742234711; x=1742839511;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=frfHgQ+gFACrESJvw7LnNR39jC1AwPkl0OXU4bE+ZmE=;
+        b=Cy9Ay73zm5KAYYdua0OMBP+j4BbAU9Mg/gX/vq0yy5y44nT2PNsNyU9wvwNRCBBdw4
+         rSPv8rm5keD6EyG8QEH4gx1QMBt0HuBhjVtsQYOxb3/fDehfIjv9v1NMA25e2QvkURHC
+         raiBU0Ccs7RtU8vGzQnm6YDqylWKbC5LwwwN+k5I9AWYkMFyq75ed7esriJw48iT1OJg
+         yCDwSiLQO74HK5wrz0BJx8wKwPCTUCTmDM1pkjHb0U/L1wdGvbcnGlXRr2fAd3WDyYu4
+         AtGpctg7e35z1k5OG/LtVqJILJKaEoXz7+zLvgBxKU+BvL2hWhd211VB2GFrlTROGfjX
+         b4TQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU7HwF+I1/0wx7pGNtpUsgwHeW/NlxtjJe5QdWOyOyhkiXW1nzGvdpME/0tzphqpdWUWaW97zHIN69qK8M=@vger.kernel.org, AJvYcCU8WiBR0AMU5foWY1OzMg0QMUE2pBRHjA5I8LCwwtMm58IN5vbnSf5qx7n2QDBBem6+IMi4UhUEulJQMlTkQccP@vger.kernel.org, AJvYcCUVJDor9zakiJQ7TizEqcR/SKWqpYm8UphnXbvmtQK9snF6bdwWuamUmY90gWvxhBO9PxpTXMmagC/nrtV9@vger.kernel.org, AJvYcCUY8rp2QVFNBGggPLpJJ7KHURrJsF/JGLyDjJgAmFXs2J7Q2igObZz+vUUks6gRA678+yo7G5GABlMx@vger.kernel.org, AJvYcCW8TRbQN0/SZMZHFG1CoahvOU0KcRPVMZjNd0slw7QEIK/0pD790Tjwvmy4y79PeVJDspoOcM6tIc9SIfs3SYo=@vger.kernel.org, AJvYcCXYy9PfxO1IVs3r88eLvtwe1IJmK9eIXZS5G47Gpt5rlym27I4DXoBiv8CWHH9kV9IepzcgC5pG9yrCmVUm@vger.kernel.org, AJvYcCXbTWObobo+/k6f0MVpMQoImzOIxzGa62uLzYPC4KhPORPALb4kwhvBElTTsnGcgN55AaiMpXxOj8l4@vger.kernel.org
+X-Gm-Message-State: AOJu0YwjcP5YzxeNd34fxxnDbNQl/gw4bkmH3sCqWrjyB5a7IEDp30Zd
+	cSR8axeXzYoQX3EV8porIvpe5YfbfK5sz686FBO03QnIgmf/bQCQpmwyeXbFl/oFQ7fqH1uWplW
+	es82UV1bYHnRvXel9Rl35sL0mbbw=
+X-Gm-Gg: ASbGnctNTFk0WpsiUbQC78Z6jjGiVuU4nomliunp1LpF4xlbW+8qBpO0WRV6VIson0x
+	gzEeQP9S7tKexweFzBviUDGZQtUpcy9ryW8E4IlvH65xThT8JBIn6Wbhk0te0MPxFQwsXeM0wju
+	VhJOY0M+CyVFJK3tt5LvBZsv/tp8jRSCNm2ez0101hWr6r1MemEhkSveNqrMGp
+X-Google-Smtp-Source: AGHT+IHEiCRYqo5kdtDzu9DwfXgz8qSQf+aHXpVibcrV/eXTAUt79P6itWOg5iJJ3B8dHvF9R2vfggvwUwXXMy4e4BQ=
+X-Received: by 2002:a05:6512:39ca:b0:549:4e78:9ed7 with SMTP id
+ 2adb3069b0e04-549c39afb93mr8766794e87.49.1742234710429; Mon, 17 Mar 2025
+ 11:05:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <935028c6-ce56-46e0-96ff-46fa91c8f66a@linaro.org>
+References: <20250317-ptr-as-ptr-v5-0-5b5f21fa230a@gmail.com>
+ <20250317-ptr-as-ptr-v5-6-5b5f21fa230a@gmail.com> <67d85e51.050a0220.2a36b.58b3@mx.google.com>
+In-Reply-To: <67d85e51.050a0220.2a36b.58b3@mx.google.com>
+From: Tamir Duberstein <tamird@gmail.com>
+Date: Mon, 17 Mar 2025 14:04:34 -0400
+X-Gm-Features: AQ5f1Jo97QAJQPWntDNr9WhIHhk1SFsSEUSY6hlNcHKZZ-5cDJZTOBm_FAQM4OI
+Message-ID: <CAJ-ks9kBp8zPfaQuZRb0Unms1b13hDb5cRypceO8TWFR0Ty5Ww@mail.gmail.com>
+Subject: Re: [PATCH v5 6/6] rust: use strict provenance APIs
+To: Boqun Feng <boqun.feng@gmail.com>
+Cc: Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
+	Nicolas Schier <nicolas@fjasle.eu>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Brendan Higgins <brendan.higgins@linux.dev>, 
+	David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Luis Chamberlain <mcgrof@kernel.org>, 
+	Russ Weight <russ.weight@linux.dev>, Rob Herring <robh@kernel.org>, 
+	Saravana Kannan <saravanak@google.com>, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, 
+	linux-pci@vger.kernel.org, linux-block@vger.kernel.org, 
+	devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Mar 17, 2025 at 05:07:26PM +0100, Krzysztof Kozlowski wrote:
-> On 17/03/2025 09:47, Alberto Merciai wrote:
-> > While playing with linux-next and imx93-11x11-evk via NFS and TFTP
-> > I found that the dwmac-imx, nvmem-imx-ocotp-ele drivers by default are
-> > not builtin then the I was not able to reach userland. 
-> > 
-> > The following configs were needed to reach my goal:
-> > CONFIG_DWMAC_IMX8=y
-> > CONFIG_STMMAC_ETH=y
-> > CONFIG_NVMEM_IMX_OCOTP_ELE=y
-> > 
-> > is that something expected?
-> 
-> You mean they are disabled or you just did not put them inside your
-> initramfs?
-> 
-> Best regards,
-> Krzysztof
+On Mon, Mar 17, 2025 at 1:39=E2=80=AFPM Boqun Feng <boqun.feng@gmail.com> w=
+rote:
+>
+> On Mon, Mar 17, 2025 at 10:23:56AM -0400, Tamir Duberstein wrote:
+> [...]
+> > diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
+> > index fc6835cc36a3..c1b274c04a0f 100644
+> > --- a/rust/kernel/lib.rs
+> > +++ b/rust/kernel/lib.rs
+> > @@ -17,6 +17,11 @@
+> >  #![cfg_attr(not(CONFIG_RUSTC_HAS_COERCE_POINTEE), feature(coerce_unsiz=
+ed))]
+> >  #![cfg_attr(not(CONFIG_RUSTC_HAS_COERCE_POINTEE), feature(dispatch_fro=
+m_dyn))]
+> >  #![cfg_attr(not(CONFIG_RUSTC_HAS_COERCE_POINTEE), feature(unsize))]
+> > +#![cfg_attr(
+> > +    CONFIG_RUSTC_HAS_STABLE_STRICT_PROVENANCE,
+> > +    feature(strict_provenance_lints),
+> > +    deny(fuzzy_provenance_casts, lossy_provenance_casts)
+> > +)]
+> >  #![feature(inline_const)]
+> >  #![feature(lint_reasons)]
+> >  // Stable in Rust 1.83
+> > @@ -25,6 +30,109 @@
+> >  #![feature(const_ptr_write)]
+> >  #![feature(const_refs_to_cell)]
+> >
+> > +#[cfg(CONFIG_RUSTC_HAS_STABLE_STRICT_PROVENANCE)]
+> > +#[allow(clippy::incompatible_msrv)]
+> > +mod strict_provenance {
+> > +    /// Gets the "address" portion of the pointer.
+> > +    ///
+> > +    /// See https://doc.rust-lang.org/stable/core/primitive.pointer.ht=
+ml#method.addr.
+> > +    #[inline]
+> > +    pub fn addr<T>(ptr: *const T) -> usize {
+> > +        ptr.addr()
+> > +    }
+> > +
+>
+> For addr(), I would just enable feature(strict_provenance) if
+> CONFIG_RUSTC_HAS_STABLE_STRICT_PROVENANCE=3Dn, because that feature is
+> available for 1.78. Plus we may need with_addr() or map_addr() in the
+> future.
 
-Hello,
+We still need these stubs to avoid `clippy::incompatible_msrv`, and
+we'll need those until MSRV is above 1.84.
 
-By default they are enabled as external modules, then until we don't
-reach userland they are not loaded thus eth and all the mechanism behind
-that are out.
+>
+> It saves the cost of maintaining our own *addr() and removing it when
+> we bump to a strict_provenance stablized version as minimal verision in
+> the future. Thoughts?
+>
 
-I'm not using initramfs just tftp and NFS as follows:
-setenv loaddtb "tftp 0x80400000 imx93-11x11-evk.dtb"
-setenv loadkernel "tftp 0x83000000 Image"
-setenv netargs "setenv bootargs console=ttyLP0,115200 root=/dev/nfs ip=dhcp nfsroot=192.168.1.3:/tftp/root,v3,tcp"
-setenv bootcmd "run loaddtb; run loadkernel; run netargs; booti 0x83000000 - 0x80400000;"
-
-Do you think that initramfs can solve that?
-
-To be honest I was expecting to have a builtin driver for eth by
-default, so that NFS and TFTP can be turned on without caring about the rest.
-But for sure I'm missing something  there :)
-
-Thanks,
-Alberto
+I can do this by making this particular stub unconditional. I'll do that.
 
