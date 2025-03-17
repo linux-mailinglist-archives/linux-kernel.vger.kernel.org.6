@@ -1,71 +1,56 @@
-Return-Path: <linux-kernel+bounces-564243-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4D83A65137
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 14:34:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C91E0A6513A
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 14:35:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 120313A5AEC
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 13:32:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A6F43A7858
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 13:32:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95C4623FC7A;
-	Mon, 17 Mar 2025 13:30:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="F0IcyCOJ"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DCAA23FC6B;
+	Mon, 17 Mar 2025 13:30:03 +0000 (UTC)
+Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54FDF23F427;
-	Mon, 17 Mar 2025 13:29:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 118F523FC54;
+	Mon, 17 Mar 2025 13:30:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742218200; cv=none; b=FKa1Nm5PuOjnGZ0xdAeJrnVsQFiNjM8JgKMMDeQESa+79xSo0QwHav4XXHUvx4e3Qom+j+jwNKw3YzxlA9E9r6L2RaOpiNSsvvYJ/RpcuTiuPvDzYexd0yN6bvs4iCo/Af4QqHdB+6b754PjnzUp0SXlwbqdWRX5Gwodxjhi3b0=
+	t=1742218202; cv=none; b=LZRhfNRMczn5nrxmHggT3eLIYWHARfPy4ALbe8LuyQ4pu3Wds6iTuRHzD5Mz1NRRcLD7ISqajTsdbUTsakLwHPwXUrQeFqWUCBSNV+roRIEJnp471H5b0K4wowyBL/nA5wvqBlwK/JbgdoU6nQ0gFajL2ZES/FVAAMPhbB3CD4I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742218200; c=relaxed/simple;
-	bh=cwZduDIcheh2ig2+OBjXEx/e6evhzBtMYky5u9SLNIE=;
+	s=arc-20240116; t=1742218202; c=relaxed/simple;
+	bh=GG9/8jbQy5nQY9MAlj9xXlX93pIOtqAetS5raHA83BI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ksGboTRK3oRplAEZiXGma1oMtxaq5pXHBqw1jq5qokDsGL5AaiUhQ94Ji4A7a72bbRYm1GntmSAf9NBkk/dvRMNAkOrghU7qeeXhtZ3RNeO98hsViQx6QHfjEOYJx/W0FdpL7GlYPqvoMjlv70qakRrd3PSI57McxA1uyVBjFE4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=F0IcyCOJ; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=sgGsXCkU8kiUOG4nC+9TNaIaJbcpVMFMLOvQ2+Ggbbg=; b=F0IcyCOJ9V/QumIPwM9APPvQfB
-	hCgYgsUeLH7gOtZ1hqjqhmxFGtgjwWv6oSSFOvLARx3rD3nis0xXTpu+8o/ZBSl4c4tJA9+RsxZeR
-	UyN0lb15THCjwFBeILOZCxhy+8K44D0sn5YBX5AsZwWO8Ubiy5FYol8ZV/5R1/zNlavcWyJ6ZTIvw
-	gnDTfatWYAgSELqBE/oMQmoeMpT3ErE2CQoeisSUKkbZa1zM4Kg7uEJgXpzDD4f7tV0Nyva8tFGkl
-	PD8I16TIPo4PmBmZ7a0vpaLe2uBaSY657d7Lrzxgbq3VbEE9Om6xVHcb684LgHbrf6Vt2ZZprlE4Z
-	D0PWnOCQ==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:38488)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1tuAXN-0003bC-22;
-	Mon, 17 Mar 2025 13:29:49 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1tuAXK-0003bE-2Q;
-	Mon, 17 Mar 2025 13:29:46 +0000
-Date: Mon, 17 Mar 2025 13:29:46 +0000
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Florian Fainelli <florian.fainelli@broadcom.com>
-Cc: Jim Liu <jim.t90615@gmail.com>, JJLIU0@nuvoton.com, andrew@lunn.ch,
-	hkallweit1@gmail.com, kuba@kernel.org, edumazet@google.com,
-	pabeni@redhat.com, netdev@vger.kernel.org,
-	giulio.benetti+tekvox@benettiengineering.com,
-	bcm-kernel-feedback-list@broadcom.com, linux-kernel@vger.kernel.org
-Subject: Re: [v2,net] net: phy: broadcom: Correct BCM5221 PHY model detection
- failure
-Message-ID: <Z9gjylMFV5zFG-i5@shell.armlinux.org.uk>
-References: <20250317063452.3072784-1-JJLIU0@nuvoton.com>
- <Z9f4W86z90PgtkBc@shell.armlinux.org.uk>
- <9391fb55-11c4-4fa9-b38f-500cb1ae325c@broadcom.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=YLTCaxQOV1bALAjM1oSlrXd4cMXNd1aBJdaMQkkPDeVovZrhDieUSgLZej0yrGmDEX6A2heGeraXoanQN9O/A7Z6Nv0xB7zo8Lm+j9BQ2Rv0uETqAJ5CuUmLJo5DSUKgrlTTxGitgMttGUq+bcEBaxlVAKl+e+9gNXajnwMvxXk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
+Received: from localhost (unknown [116.232.18.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: dlan)
+	by smtp.gentoo.org (Postfix) with ESMTPSA id EE6493432A1;
+	Mon, 17 Mar 2025 13:29:59 +0000 (UTC)
+Date: Mon, 17 Mar 2025 13:29:55 +0000
+From: Yixun Lan <dlan@gentoo.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>, Alex Elder <elder@kernel.org>,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org, spacemit@lists.linux.dev,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Alex Elder <elder@riscstar.com>
+Subject: Re: [PATCH v3] pinctrl: spacemit: enable config option
+Message-ID: <20250317132955-GYC1983@gentoo>
+References: <20250218-k1-pinctrl-option-v3-1-36e031e0da1b@gentoo.org>
+ <CAMuHMdV4xWLEuCvCC54GBfCdELE=QSHqaOyUPD-ezE0QLYRnVA@mail.gmail.com>
+ <20250317124120-GYA1983@gentoo>
+ <CAMuHMdWM5ymPVRe36+Atr0cDAdRGyw39jFJvE+9PWTUUiiMfCg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,98 +59,93 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <9391fb55-11c4-4fa9-b38f-500cb1ae325c@broadcom.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+In-Reply-To: <CAMuHMdWM5ymPVRe36+Atr0cDAdRGyw39jFJvE+9PWTUUiiMfCg@mail.gmail.com>
 
-On Mon, Mar 17, 2025 at 06:18:17AM -0700, Florian Fainelli wrote:
-> On 3/17/2025 3:24 AM, Russell King (Oracle) wrote:
-> > On Mon, Mar 17, 2025 at 02:34:52PM +0800, Jim Liu wrote:
-> > > Use "BRCM_PHY_MODEL" can be applied to the entire 5221 family of PHYs.
-> > > 
-> > > Fixes: 3abbd0699b67 ("net: phy: broadcom: add support for BCM5221 phy")
-> > > Signed-off-by: Jim Liu <jim.t90615@gmail.com>
-> > 
-> > Looking at BRCM_PHY_MODEL() and BRCM_PHY_REV(), I think there's more
-> > issues with this driver. E.g.:
-> > 
-> > #define BRCM_PHY_MODEL(phydev) \
-> >          ((phydev)->drv->phy_id & (phydev)->drv->phy_id_mask)
-> > 
-> > #define BRCM_PHY_REV(phydev) \
-> >          ((phydev)->drv->phy_id & ~((phydev)->drv->phy_id_mask))
-> > 
-> > #define PHY_ID_BCM50610                 0x0143bd60
-> > #define PHY_ID_BCM50610M                0x0143bd70
-> > 
-> >          if ((BRCM_PHY_MODEL(phydev) == PHY_ID_BCM50610 ||
-> >               BRCM_PHY_MODEL(phydev) == PHY_ID_BCM50610M) &&
-> >              BRCM_PHY_REV(phydev) >= 0x3) {
-> > 
-> > and from the PHY driver table:
-> > 
-> >          .phy_id         = PHY_ID_BCM50610,
-> >          .phy_id_mask    = 0xfffffff0,
-> > 
-> >          .phy_id         = PHY_ID_BCM50610M,
-> >          .phy_id_mask    = 0xfffffff0,
-> > 
-> > BRCM_PHY_REV() looks at _this_ .phy_id in the table, and tries to match
-> > it against the revision field bits 0-3 being >= 3 - but as we can see,
-> > this field is set to the defined value which has bits 0-3 always as
-> > zero. So, this if() statement is always false.
-> > 
-> > So, BRCM_PHY_REV() should be:
-> > 
-> > #define BRCM_PHY_REV(phydev) \
-> > 	((phydev)->phy_id & ~(phydev)->drv->phy_id_mask)
-> > 
-> > 
-> > Next, I question why BRCM_PHY_MODEL() exists in the first place.
-> > phydev->drv->phy_id is initialised to the defined value(s), and then
-> > we end up doing:
-> > 
-> > 	(phydev->drv->phy_id & phydev->drv->phy_id_mask) ==
-> > 		one-of-those-defined-values
-> > 
-> > which is pointless, because we know that what is in phydev->drv->phy_id
-> > /is/ one-of-those-defined-values.
-> > 
-> > Therefore, I would suggest:
-> > 
-> > #define BRCM_PHY_MODEL(phydev) ((phydev)->drv->phy_id)
-> > 
-> > is entirely sufficient, and with such a simple definition, I question
-> > the value of BRCM_PHY_MODEL() existing.
+Hi Geert:
+
+On 13:59 Mon 17 Mar     , Geert Uytterhoeven wrote:
+> Hi Yixun,
 > 
-> If I were to make a guess, BRCM_PHY_MODEL() might have existed to ease the
-> porting of a non-Linux PHY driver to a Linux PHY driver environment at a
-> time where the subsystem was not as mature as it is now.
+> On Mon, 17 Mar 2025 at 13:41, Yixun Lan <dlan@gentoo.org> wrote:
+> > On 09:18 Mon 17 Mar     , Geert Uytterhoeven wrote:
+> > > Thanks for your patch, which is now commit 7ff4faba63571c51
+> > > ("pinctrl: spacemit: enable config option") in v6.14-rc7.
+> > >
+> > > On Tue, 18 Feb 2025 at 01:32, Yixun Lan <dlan@gentoo.org> wrote:
+> > > > Pinctrl is an essential driver for SpacemiT's SoC,
+> > > > The uart driver requires it, same as sd card driver,
+> > > > so let's enable it by default for this SoC.
+> > > >
+> > > > The CONFIG_PINCTRL_SPACEMIT_K1 isn't enabled when using
+> > > > 'make defconfig' to select kernel configuration options.
+> > > > This result in a broken uart driver where fail at probe()
+> > > > stage due to no pins found.
+> > >
+> > > Perhaps this is an issue with the uart driver?
+> > > I just disabled CONFIG_PINCTRL_RZA2 on RZA2MEVB (which is one of the
+> > > few Renesas platforms where the pin control driver is not enabled by
+> > > default, for saving memory), and the system booted fine into a Debian
+> > > nfsroot.  Probe order of some devices did change, and "Trying to
+> > > probe devices needed for running init" was printed.
+> > >
+> > my problem was CONFIG_PINCTRL_SPACEMIT_K1 isn't enabled, result as
+> > # CONFIG_PINCTRL_SPACEMIT_K1 is not set
+> >
+> > for your case, is CONFIG_PINCTRL_RZA2 built as module?
+> > it should work for uart driver with deferred probe mechanism..
 > 
-> In the interest of a targeted bug fix, I would be keen on taking this patch
-> in its current form and follow up in net next with a removal of
-> BRCM_PHY_MODEL() later on.
+> No, CONFIG_PINCTRL_RZA2 was disabled in my testing.
+> 
+emm, this is interesting, there might be problem that uart driver
+fail to have correct pin settings without pre initialization..
 
-Note that commit 32e5a8d651c0 ("tg3 / broadcom: Add code to disable rxc
-refclk") is still wrong (which introduced BRCM_PHY_REV().)
+which uart driver is used in RZA2MEVB platform? any pinctrl dts property?
+different hardware may vary..
 
-Given its age, I would suggest that the commit I reference above was
-not properly tested, and *possibly* fixing the bug might actually
-cause a regression on TG3.
-
-Also, the original commit description (which references RXC) which is
-supposed to be synchronous to the received data, but the code talks
-about CLK125 which is *technically* a different clock.
-
-We know that the current driver logic works, even though it doesn't
-do what the original author of the code wanted it to do.
-
-Taking these three points together, I don't think it would be wise
-to fix the logical error (and actually test the revision field).
-Instead, I think getting rid of the always-false if() and simplifying
-the code would be better to avoid causing a possible regression on
-TG3.
+> > > > --- a/drivers/pinctrl/spacemit/Kconfig
+> > > > +++ b/drivers/pinctrl/spacemit/Kconfig
+> > > > @@ -4,9 +4,10 @@
+> > > >  #
+> > > >
+> > > >  config PINCTRL_SPACEMIT_K1
+> > > > -       tristate "SpacemiT K1 SoC Pinctrl driver"
+> > > > +       bool "SpacemiT K1 SoC Pinctrl driver"
+> > > >         depends on ARCH_SPACEMIT || COMPILE_TEST
+> > > >         depends on OF
+> > > > +       default y
+> > >
+> > > Ouch, fix sent...
+> > > "[PATCH] pinctrl: spacemit: PINCTRL_SPACEMIT_K1 should not default to
+> > > y unconditionally"
+> > > https://lore.kernel.org/6881b8d1ad74ac780af8a974e604b5ef3f5d4aad.1742198691.git.geert+renesas@glider.be
+> > >
+> > I got suggestion in v1
+> > https://lore.kernel.org/all/20250211-nature-kilt-9882e53e5a3f@spud/
+> 
+> Yeah, I read that, but only after I noticed the issue in v6.14-rc7.
+> 
+> > so for COMPILE_TEST case, ARCH_SPACEMIT config won't be enabled? then neither PINCTRL_SPACEMIT_K1
+> > anyway, I'm fine with either way, thanks
+> >
+> > > >         select GENERIC_PINCTRL_GROUPS
+> > > >         select GENERIC_PINMUX_FUNCTIONS
+> > > >         select GENERIC_PINCONF
+> 
+> It depends. ARCH_SPACEMIT can be enabled only when building for
+> RISC-V, while COMPILE_TEST can be enabled everywhere.
+> 
+Ok, good to know
+> 
+> -- 
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> 
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
+> 
 
 -- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+Yixun Lan (dlan)
+Gentoo Linux Developer
+GPG Key ID AABEFD55
 
