@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-564943-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564944-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 073C3A65D58
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 19:57:04 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3141A65D59
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 19:57:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF1E417661A
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 18:56:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 160971892A1A
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 18:57:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 050512045B8;
-	Mon, 17 Mar 2025 18:54:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 384E1204F9B;
+	Mon, 17 Mar 2025 18:54:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VLEVKi1q"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J5+e/fmk"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A83FB204590;
-	Mon, 17 Mar 2025 18:54:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A44E41E832B;
+	Mon, 17 Mar 2025 18:54:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742237666; cv=none; b=CuVCpTOldsPNyGG0bg2V45/9AmfwEb68ppC2/h75HrpOd7JPOre67KOH+mET7qzqn+RmFKSqqElw/d86g+t9gMyGtWWUMedLLOj847eSScNC3PhP2znPsTcC3tG5weJZKJxRtGpiZK2CW9alGeT8PL5JttYeNIyqMUvfriHe/SE=
+	t=1742237669; cv=none; b=FIbZe+GmGmVYHBPEcHiwKOhFsK/PymrSYo4v/aZ3qEHK+29UBy8GRCAgmwwTzB5a0cAw+IkWN5k5VHoLaH/+zmT+WSWVwLfnG+qhtck39Q7bFU+JBh0jf31i5fhEiFq1jXHMS2vyCPK9wb0e7Rn6b0p04g3fiqVINN/50O4jing=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742237666; c=relaxed/simple;
-	bh=TcpoD/AzioVcQ+RFPHlw+D3njSBh1aynVEy/vrcfm3c=;
+	s=arc-20240116; t=1742237669; c=relaxed/simple;
+	bh=/7wFbnKC/IXue+Ku51P5u/UhRTtbHQI319bGUuW1U8E=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=A1ycokRMEG2mXefLJIRuCfOOcjaNWNEZiO3n2o/VV9EPrB/SNX2cendR6jn9FTwFgKGhgJRp/SEOOGpOdJK0uemDbO17rFNrs55ZmaoNl5+5hTFa+oarELpeYRsIdYlXzatMDql+2o7NM7n+9b87HL9fgSyGUK90YAF9Jj6s7WI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VLEVKi1q; arc=none smtp.client-ip=209.85.167.45
+	 MIME-Version; b=NAimXsrBbkGU8c7AxUBpQHB9D9T5Hlh3ZcJGk2NkOZYYbEDq5lv7sxjwh/Gd9eNDORCyCucatilbqTqzdv0JEzZWGtfd7CVqRerlkuRUzeEBsKNeZNWyVT1UvL7j2qD4A40SBW9h/81GJz1rp+xKTnt5mXG9dc4+xTqRcQDhtQc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J5+e/fmk; arc=none smtp.client-ip=209.85.167.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-5439a6179a7so5294528e87.1;
-        Mon, 17 Mar 2025 11:54:24 -0700 (PDT)
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-549b116321aso5300856e87.3;
+        Mon, 17 Mar 2025 11:54:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742237663; x=1742842463; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1742237666; x=1742842466; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=c6wjTKcHZVvHIKO2S7cxVflMybOF64R/jyjw4en16rI=;
-        b=VLEVKi1qbRhu0zax2Fs6VZI2MgIy5sSZ2ZcQcuL6kVRMuynblHrgeJ/43GPxsOeU5v
-         Kyac/gISjy7qSyhYrkrU8J0dA5G8ApqpiMFkovqXmdjLALZcXRhok3Ix3IvLcKgVj1Qj
-         NBImPQWkTQs4SKJSr8fxE6/5dlg+cWq5pV3UmQbXSuZHKdbObW8idDsXOZIvfeql+Ra6
-         1PxG4vwQFNvWdqs64fHcUaFlWML7dh7byrz39qV9Wqmkm+qIgC4gtct1CF3rFTOrTHQ6
-         FKUyKJZ4gd5l0+vr06bwYL++vfY34hNEb3yFSgSYVj2OxhhtW9nlOfn2wFIlKk6NXfb9
-         XU+w==
+        bh=rTtaX3vhSb5G36KvfqVCTP+WKBznUgLh6K0dIke/e54=;
+        b=J5+e/fmkOSVU+T4HzOW9dyGFEOzjurwdS0edfUpXoqPd6nV2G7rvYA9/GlteVZDrqc
+         KTa/BeVmijlJI07nYMHEWbb+MnE8h9odEmL+H4iZT7K2RC0jzyEGXJsLiR2qq20SNURN
+         wlH0LavVhDATL51fYz/ARfcLuLd4Rkmd+TB5CzvRY6DYG1tvs1GxgdeTf6bVbCKsLV3S
+         G4VXu5cmzzpEzQqgZDjp6GfYCeScvMAkp303CQvhwqwJ4lbcKbNqclE1kx5SYqNodO8Q
+         o1p8VFaw9HEjav8Vw5YUEz/AvEHxc1qGJehJuT9SqgEOz//laVNsNtudbyCyM3Mmco9h
+         zt8Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742237663; x=1742842463;
+        d=1e100.net; s=20230601; t=1742237666; x=1742842466;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=c6wjTKcHZVvHIKO2S7cxVflMybOF64R/jyjw4en16rI=;
-        b=AcgRR3WjGQCxRFTZOYKmC2ts0T7srDUxxWu0goklgsqP4m/kH+wK36pVt/nowb53Ks
-         OleTz9PnlH5o++iT6kTZZrSIvaT1POHBGBPRFhdIVL+lKjJ7DoslI+2QEvyuyWOAacAf
-         nwrGzGz9ZJLTBIOQWyrUWN4OWGC8IJpKMT83R6W3tiLkimTAo1bc50AVtBzpg0yhn4Km
-         OuutLhwng6+4tQ65LZEZyCIhod6MPkhy5WLrbD9+KPFqVDp6MqqmerElHLb9vzFLPJqc
-         hIeohMcE1dQBSSIFQzywGIYaELDB5cZpsTrewsuMLq4bhsWMgKful8QbzXY97e58tqxA
-         8LTg==
-X-Forwarded-Encrypted: i=1; AJvYcCUxbXzQ/7PDNfIR5biLnlsSy/O0VibNX34qGDM3QxaZ424c9gCGmVr9QJKfs2RKAJIbg5MgUsTTlaFOA+M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzrmnOFn6uc/TbYViYzHQuvKXhYFWs+Wyo+ZJ2Ujq9EKTwdCT0r
-	ACpHWF8MQ4ZIMw7A/cJhLg+RzmvAUXbT6lCCizr4z9+2BfqeaMwlapyzuA==
-X-Gm-Gg: ASbGnctcVUVXTaXBBPbtDG43fXLWLxes8lmzsbxHAMZtfY48JJRjiranO8uC5b4KZvU
-	iEUz8o3Np4MNaJdEh7JCCJ5Y8BzB0N68PimOh5jvF4EOohoms+eYwlo6Il5kLYUKF7y1H8eW3ic
-	CMN5CZkv2xJnQYJph+T/3LyOulzKcpltriOlFSF3XZhYtAHPl+9ZA3ZNLJhn4114gzTAIrnwsg2
-	5q5wZlyfOJRd/v9/ylvq6zX9fcSqk6c5XXwrtbf7GsmdxFNaouIwyvix9uzhTGrE08sX1FFXMQp
-	mx3nJ2ihU1oqZaQ8+mJlZXf4jNUcc1xcA/48Rp3THPyTfHpn6188zCouwd8HQLR6ApY2EbiqbT7
-	byO60vRFdY0jlas07twYNO6CrD4e6MFAl
-X-Google-Smtp-Source: AGHT+IEP/PtVThPCG47TCqBvS5ALN6nZRdODEw6SF73CDXB1BtRyV/+bQ0SZ49Nqf98pxWHzMjB8AA==
-X-Received: by 2002:a05:6512:ad0:b0:549:5dcf:a5b with SMTP id 2adb3069b0e04-54a3046a9bamr523713e87.4.1742237662590;
-        Mon, 17 Mar 2025 11:54:22 -0700 (PDT)
+        bh=rTtaX3vhSb5G36KvfqVCTP+WKBznUgLh6K0dIke/e54=;
+        b=fMi2l3u9Y26HRX44V47lTWsVYr0KN1x9y+Ets/eNRVcZXXhxQAXZGkREHpbFfyHw3k
+         LAUHVAUQIf/gQ9Cvio60s5B3nP1ofT+rXXcXV7DbjQ6uTnB5QgnOC2YZ1fCQg/NBMEoz
+         r53lUQJLAzAxbo4d/Uq0nU5z4WSZd9UPeKgzPsmbnxKkC7faNPtYBsMOFTYVv+FH/lFF
+         WZWcSH5Z5yx4NfRND9XqYXS4A/k2clu1I60cTl9+E5cuLZowvazWqMYXTQljv09G0svV
+         uT5XoWhC//pnZej6Ozb3k1YUViG3D7StOf1tYEcaQpJZ3wBd6wmzUepPALcLxXHkLNH+
+         TLiQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVjU3WR5BK12noK7AbeRjcZ5hCUd4luBuIgtW0p91Kev2FtupJ29wngQ2cQxRTDsGGYGpYaWNgB80NPDL0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyt4uUdBM7CWEWmSCXduSeq9uY/cRSIZtmGz9WuPyJD4y/mo0Ga
+	pECwZ9W/o/Bw6/vBgqcaNVTlgEFPiJ7HXuNSi4OIKBr9deMhpKNvCzLXGA==
+X-Gm-Gg: ASbGncuqbXTyimNfXukPITL72Maq1lgSRsZgJhfewZXo124Wr2aig4CO6+tzANWeIMy
+	Qhl2hE3I0vVBY4Xsspai4wjbwByToUoE4Gs+1aZlpPlBijvYJ2xDch7vKjv3NEiYrpNH4IkjhWq
+	p9ruyg/3iso9qcfvJrkoRHNCuUIyTVMF0YAFd0K99NZU80PNQ9Mu9jthVw9S6IvEUe+TLyYz2ke
+	ylgyblCId8Yz7/PhHH/pt7TyWssPFCEyFvhPtXPYLINJABuvk9rMV/RLrNVyOLPCP7jb2nQoATW
+	B8A4gnYwIToofblUNEMtsaUIMoiGkL6lq/dhrKi4xfUzF6OHtwnj08/ycJSTtiUAGB1ttN+10Hp
+	73dloUn5bjpueLMThyApYVblyy85u25n4
+X-Google-Smtp-Source: AGHT+IFLi8eIWmNCR26IQ1ZzNqzF+yX5evRGaLB3kNs6XdGjVB80bX12ukMhk1Sq94RJg91f1Bo3PQ==
+X-Received: by 2002:a05:6512:31c3:b0:549:8f06:8225 with SMTP id 2adb3069b0e04-549c39507ebmr7288403e87.53.1742237665546;
+        Mon, 17 Mar 2025 11:54:25 -0700 (PDT)
 Received: from abj-NUC9VXQNX.. (dsl-hkibng22-54f8dc-251.dhcp.inet.fi. [84.248.220.251])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-549ba865024sm1387506e87.123.2025.03.17.11.54.21
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-549ba865024sm1387506e87.123.2025.03.17.11.54.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Mar 2025 11:54:22 -0700 (PDT)
+        Mon, 17 Mar 2025 11:54:24 -0700 (PDT)
 From: Abdiel Janulgue <abdiel.janulgue@gmail.com>
 To: rust-for-linux@vger.kernel.org,
 	daniel.almeida@collabora.com,
@@ -93,9 +93,9 @@ Cc: Miguel Ojeda <ojeda@kernel.org>,
 	airlied@redhat.com,
 	iommu@lists.linux.dev (open list:DMA MAPPING HELPERS),
 	Abdiel Janulgue <abdiel.janulgue@gmail.com>
-Subject: [PATCH v15 10/11] rust: samples: dma: set DMA mask
-Date: Mon, 17 Mar 2025 20:52:17 +0200
-Message-ID: <20250317185345.2608976-11-abdiel.janulgue@gmail.com>
+Subject: [PATCH v15 11/11] rust: dma: add as_slice/write functions for CoherentAllocation
+Date: Mon, 17 Mar 2025 20:52:18 +0200
+Message-ID: <20250317185345.2608976-12-abdiel.janulgue@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250317185345.2608976-1-abdiel.janulgue@gmail.com>
 References: <20250317185345.2608976-1-abdiel.janulgue@gmail.com>
@@ -107,43 +107,112 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Danilo Krummrich <dakr@kernel.org>
+Add unsafe accessors for the region for reading or writing large
+blocks of data.
 
-Set a DMA mask for the `pci::Device` in the Rust DMA sample driver.
-
-Signed-off-by: Danilo Krummrich <dakr@kernel.org>
 Signed-off-by: Abdiel Janulgue <abdiel.janulgue@gmail.com>
 ---
- samples/rust/rust_dma.rs | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ rust/kernel/dma.rs | 87 ++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 87 insertions(+)
 
-diff --git a/samples/rust/rust_dma.rs b/samples/rust/rust_dma.rs
-index 4c7ebf66647a..39b6050aa3b6 100644
---- a/samples/rust/rust_dma.rs
-+++ b/samples/rust/rust_dma.rs
-@@ -4,7 +4,12 @@
- //!
- //! To make this driver probe, QEMU must be run with `-device pci-testdev`.
+diff --git a/rust/kernel/dma.rs b/rust/kernel/dma.rs
+index 6d7aff6b360a..027ef75a461a 100644
+--- a/rust/kernel/dma.rs
++++ b/rust/kernel/dma.rs
+@@ -253,6 +253,93 @@ pub fn dma_handle(&self) -> bindings::dma_addr_t {
+         self.dma_handle
+     }
  
--use kernel::{bindings, dma::CoherentAllocation, pci, prelude::*};
-+use kernel::{
-+    bindings,
-+    dma::{CoherentAllocation, Device},
-+    pci,
-+    prelude::*,
-+};
- 
- struct DmaSampleDriver {
-     pdev: pci::Device,
-@@ -51,6 +56,8 @@ impl pci::Driver for DmaSampleDriver {
-     fn probe(pdev: &mut pci::Device, _info: &Self::IdInfo) -> Result<Pin<KBox<Self>>> {
-         dev_info!(pdev.as_ref(), "Probe DMA test driver.\n");
- 
-+        pdev.dma_set_mask_and_coherent(kernel::dma::dma_bit_mask(64))?;
++    /// Returns the data from the region starting from `offset` as a slice.
++    /// `offset` and `count` are in units of `T`, not the number of bytes.
++    ///
++    /// Due to the safety requirements of slice, the caller should consider that the region could
++    /// be modified by the device at anytime. For ringbuffer type of r/w access or use-cases where
++    /// the pointer to the live data is needed, `start_ptr()` or `start_ptr_mut()` could be
++    /// used instead.
++    ///
++    /// # Safety
++    ///
++    /// * Callers must ensure that no hardware operations that involve the buffer are currently
++    ///   taking place while the returned slice is live.
++    /// * Callers must ensure that this call does not race with a write to the same region while
++    ///   while the returned slice is live.
++    pub unsafe fn as_slice(&self, offset: usize, count: usize) -> Result<&[T]> {
++        let end = offset.checked_add(count).ok_or(EOVERFLOW)?;
++        if end >= self.count {
++            return Err(EINVAL);
++        }
++        // SAFETY:
++        // - The pointer is valid due to type invariant on `CoherentAllocation`,
++        // we've just checked that the range and index is within bounds. The immutability of the
++        // of data is also guaranteed by the safety requirements of the function.
++        // - `offset` can't overflow since it is smaller than `self.count` and we've checked
++        // that `self.count` won't overflow early in the constructor.
++        Ok(unsafe { core::slice::from_raw_parts(self.cpu_addr.add(offset), count) })
++    }
 +
-         let ca: CoherentAllocation<MyStruct> =
-             CoherentAllocation::alloc_coherent(pdev, TEST_VALUES.len(), GFP_KERNEL)?;
- 
++    /// Performs the same functionality as [`CoherentAllocation::as_slice`], except that a mutable
++    /// slice is returned.
++    ///
++    /// # Safety
++    ///
++    /// * Callers must ensure that no hardware operations that involve the buffer are currently
++    ///   taking place while the returned slice is live.
++    /// * Callers must ensure that this call does not race with a read or write to the same region
++    ///   while the returned slice is live.
++    pub unsafe fn as_slice_mut(&self, offset: usize, count: usize) -> Result<&mut [T]> {
++        let end = offset.checked_add(count).ok_or(EOVERFLOW)?;
++        if end >= self.count {
++            return Err(EINVAL);
++        }
++        // SAFETY:
++        // - The pointer is valid due to type invariant on `CoherentAllocation`,
++        // we've just checked that the range and index is within bounds. The immutability of the
++        // of data is also guaranteed by the safety requirements of the function.
++        // - `offset` can't overflow since it is smaller than `self.count` and we've checked
++        // that `self.count` won't overflow early in the constructor.
++        Ok(unsafe { core::slice::from_raw_parts_mut(self.cpu_addr.add(offset), count) })
++    }
++
++    /// Writes data to the region starting from `offset`. `offset` is in units of `T`, not the
++    /// number of bytes.
++    ///
++    /// # Safety
++    ///
++    /// * Callers must ensure that no hardware operations that involve the buffer overlaps with
++    ///   this write.
++    /// * Callers must ensure that this call does not race with a read or write to the same region
++    ///   that overlaps with this write.
++    ///
++    /// # Examples
++    ///
++    /// ```
++    /// # fn test(alloc: &mut kernel::dma::CoherentAllocation<u8>) -> Result {
++    /// let somedata: [u8; 4] = [0xf; 4];
++    /// let buf: &[u8] = &somedata;
++    /// // SAFETY: No hw operation on the device and no other r/w access to the region at this point.
++    /// unsafe { alloc.write(buf, 0)?; }
++    /// # Ok::<(), Error>(()) }
++    /// ```
++    pub unsafe fn write(&self, src: &[T], offset: usize) -> Result {
++        let end = offset.checked_add(src.len()).ok_or(EOVERFLOW)?;
++        if end >= self.count {
++            return Err(EINVAL);
++        }
++        // SAFETY:
++        // - The pointer is valid due to type invariant on `CoherentAllocation`
++        // and we've just checked that the range and index is within bounds.
++        // - `offset` can't overflow since it is smaller than `self.count` and we've checked
++        // that `self.count` won't overflow early in the constructor.
++        unsafe {
++            core::ptr::copy_nonoverlapping(src.as_ptr(), self.cpu_addr.add(offset), src.len())
++        };
++        Ok(())
++    }
++
+     /// Returns a pointer to an element from the region with bounds checking. `offset` is in
+     /// units of `T`, not the number of bytes.
+     ///
 -- 
 2.43.0
 
