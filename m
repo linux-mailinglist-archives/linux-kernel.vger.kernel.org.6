@@ -1,286 +1,136 @@
-Return-Path: <linux-kernel+bounces-563876-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563879-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCFA5A64A0C
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:33:43 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C078CA649D3
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:29:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EFC373A7251
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:28:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 107AB1614EB
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:29:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BA8838B;
-	Mon, 17 Mar 2025 10:28:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3549F231CB1;
+	Mon, 17 Mar 2025 10:28:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QOfyaZeY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FB5313B7A3;
-	Mon, 17 Mar 2025 10:28:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="SqekagC7"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FE59230BF2
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 10:28:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742207292; cv=none; b=TrRDOyZgJ3yzEPnj94f9U3qc9UcebuuCBsz2saGef47kBYk8ZfPZvJvu63LLOHvRsKFwTshO+VCBOhph/+OESHD3IvqVschv8opfjYIlCsem4QkbwUaz4miO0czZvNZ2eaFTsNufND8z5o/E5DsnTl6xOgxLXCOlIWHat0rCoXE=
+	t=1742207319; cv=none; b=C/bHut/nC7IUwlgCT+EKzTj2bOjrIpGpkFP9VjFK9C9Eh3KqOblFzWiIkbq5tFQBgihiTDKGmYfbkZ1Q3SH2kxm5p1nyD/NQd4V1H5j8hNc5yfvmfriaCCS3nSOzgDskBGJHecrfFO1ISuD5E4B2PfemOOPmXYVODZGedR1nDQ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742207292; c=relaxed/simple;
-	bh=qS18CGlLGP0tpSmU21eSar6JGn73St59+DNZX7wwsqs=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Ppf0cSEf2w6LvDu6UkvzL6T4zJGRQRT+ZF3k7dSTcDK1o1e3nTCjvjjcpwJylhlnQAw08d80W7i1NVtpnAzgvsAbo4Wj74YdMkcLnvfh/XDqjjhujoLEckt5HT6IGyA8zyhvXThAJp5WNZ3dDi3+SoI3eg2KWjBcu9jR7P8Sbbc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QOfyaZeY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7B4FC4CEE3;
-	Mon, 17 Mar 2025 10:28:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742207292;
-	bh=qS18CGlLGP0tpSmU21eSar6JGn73St59+DNZX7wwsqs=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=QOfyaZeYEI/OA3HfCH4/HVVnTYPCdzNiRnk9t3ntUUPQY4QNK9itk93JiwDD5Puxm
-	 Ok4wa+dXq2E1zhK7g55FYRd5x9E+TcyUVaUX6bHhKzk5z7THPCXGZuj1cacUNfnfWx
-	 5TtW6t7i6ym4G4T71RnJs3BXPyd9QR3FHM8HDze/ahDL7wa9osi1oRvHnuO6TWj7dO
-	 ldu8jLFmd305q+7nk0dXE5oVHYh+kvLjUWJ+IrdTeRtLZeceVqYlOYZGuxmLIbyzCM
-	 WZG8ZNqIMKJQjgJFXO6eEZsDDq+BYh6LIxjHiL7Ncle+hk81/7kLDTQ8ET5+0s9N6v
-	 p7pX9GTZtIeUg==
-Date: Mon, 17 Mar 2025 10:27:51 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Marcelo Schmitt <marcelo.schmitt@analog.com>
-Cc: <linux-iio@vger.kernel.org>, <linux-doc@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <lars@metafoo.de>,
- <Michael.Hennerich@analog.com>, <corbet@lwn.net>,
- <marcelo.schmitt1@gmail.com>
-Subject: Re: [PATCH v1 1/4] iio: adc: ad4000: Add support for SPI offload
-Message-ID: <20250317102751.5702fb82@jic23-huawei>
-In-Reply-To: <301fc83a961c4a2ef2ac980d0baa83d9d89a88c5.1741970538.git.marcelo.schmitt@analog.com>
-References: <cover.1741970538.git.marcelo.schmitt@analog.com>
-	<301fc83a961c4a2ef2ac980d0baa83d9d89a88c5.1741970538.git.marcelo.schmitt@analog.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1742207319; c=relaxed/simple;
+	bh=ReMwh/o18Yh18qE5xbGn6VTcyYQt9CJChadEXgAXGUo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aA+hR9EpQSko9/o7Mp5OJzZGMmnvmqYE8xvGqwupNDlkMoBAf2MNJ6A0UQnZpOPa2b5TZ2H2RRPIMdGdaY594/c/uALKCDFKHQdllndsinS1E0rDCRzl8tPk6IjFoCBgaMH1NBqtEf1vFn9BjZT5sn0UZqb5f7aDJ6vJOfZTPV8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=SqekagC7; arc=none smtp.client-ip=220.197.31.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-ID:MIME-Version; bh=fmWIS
+	0wLHvOfDdrgbj8ORSE1eJQwOVhMX/zX7anGKW4=; b=SqekagC72tCKT25KHSmS4
+	/+b/w+C575D1N98h4BDUoxjOxnTCMxhJz4/JPOgO//WZqLyL2LezzhFK4lhH9+ng
+	XzK09N4vXHxDZpHOogN3tAa/TN2/mpv3caiedJldEyp/q8pNoY4wuUXTccxfdjKu
+	Ci4hDKUATluwrmqbDmq0dk=
+Received: from ProDesk.. (unknown [])
+	by gzga-smtp-mtada-g1-3 (Coremail) with SMTP id _____wBnuTwy+ddnhLtwTQ--.47861S2;
+	Mon, 17 Mar 2025 18:28:06 +0800 (CST)
+From: Andy Yan <andyshrk@163.com>
+To: heiko@sntech.de
+Cc: cristian.ciocaltea@collabora.com,
+	hjc@rock-chips.com,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	Andy Yan <andy.yan@rock-chips.com>,
+	Sebastian Reichel <sebastian.reichel@collabora.com>
+Subject: [PATCH v2] drm/rockchip: dw_hdmi_qp: Fix io init for dw_hdmi_qp_rockchip_resume
+Date: Mon, 17 Mar 2025 18:27:53 +0800
+Message-ID: <20250317102757.565679-1-andyshrk@163.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wBnuTwy+ddnhLtwTQ--.47861S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7ZFWfXFWrGr45XFWxGrWUtwb_yoW8Kw45pw
+	4UAa4jkrWkGr47Xrn8ZFnrArW2k3W7Jw4SqFWxKa4vv3W0qrn3KF93Wa1rXr43ZF9xuF4a
+	krWvy34fJF4UXFUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07j7uc_UUUUU=
+X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/xtbB0h4TXmfX95EooAAAsf
 
-On Fri, 14 Mar 2025 14:18:39 -0300
-Marcelo Schmitt <marcelo.schmitt@analog.com> wrote:
+From: Andy Yan <andy.yan@rock-chips.com>
 
-> FPGA HDL projects can include a PWM generator in addition to SPI-Engine.
-> The PWM IP is used to trigger SPI-Engine offload modules that in turn set
-> SPI-Engine to execute transfers to poll data from the ADC. That allows data
-> to be read at the maximum sample rates. Also, it is possible to set a
-> specific sample rate by setting the proper PWM duty cycle and related state
-> parameters, thus allowing an adjustable ADC sample rate when a PWM (offload
-> trigger) is used in combination with SPI-Engine.
-> 
-> Add support for SPI offload.
-> 
-> Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
+Use cfg->ctrl_ops->io_init callback make it work for all platform.
+And it's also gets rid of code duplication
 
-A few minor things inline.  
+Fixes: 3f60dbd40d3f ("drm/rockchip: dw_hdmi_qp: Add platform ctrl callback")
+Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
+Reviewed-by: Sebastian Reichel <sebastian.reichel@collabora.com>
 
-Jonathan
+---
 
-> diff --git a/drivers/iio/adc/ad4000.c b/drivers/iio/adc/ad4000.c
-> index 4fe8dee48da9..6c9b71e7a2fb 100644
-> --- a/drivers/iio/adc/ad4000.c
-> +++ b/drivers/iio/adc/ad4000.c
+Changes in v2:
+- Store the ctrl_ops in struct rockchip_hdmi_qp
 
-> +
-> +static int ad4000_offload_buffer_postdisable(struct iio_dev *indio_dev)
-> +{
-> +	struct ad4000_state *st = iio_priv(indio_dev);
-> +
-> +	spi_offload_trigger_disable(st->offload, st->offload_trigger);
+ .../gpu/drm/rockchip/dw_hdmi_qp-rockchip.c    | 23 +++----------------
+ 1 file changed, 3 insertions(+), 20 deletions(-)
 
-Trivial. Prefer a blank line before a 'simple return' like this one.
-
-> +	return 0;
-> +}
-
-
-> +
-> +/*
-> + * This executes a data sample transfer when using SPI offloading for when the
-> + * device connections are in "3-wire" mode, selected when the adi,sdi-pin device
-> + * tree property is absent. In this connection mode, the ADC SDI pin is
-> + * connected to MOSI or to VIO and ADC CNV pin is connected to a SPI controller
-> + * CS (it can't be connected to a GPIO).
-> + *
-> + * In order to achieve the maximum sample rate, we only do one transfer per
-> + * SPI offload trigger. This has the effect that the first sample data is not
-> + * valid because it is reading the previous conversion result. We also use
-
-As below. Should mention what happens with that invalid sample.
-
-> + * bits_per_word to ensure the minimum of SCLK cycles are used. And a delay is
-> + * added to make sure we meet the minimum quiet time before releasing the CS
-> + * line. Plus the CS change delay is set to ensure that we meet the minimum
-> + * quiet time before asserting CS again.
-> + *
-> + * This timing is only valid if turbo mode is enabled (reading during conversion).
-> + */
-> +static int ad4000_prepare_offload_turbo_message(struct ad4000_state *st,
-> +						const struct iio_chan_spec *chan)
-> +{
-> +
-> +/*
-> + * This executes a data sample transfer when using SPI offloading for when the
-> + * device connections are in "3-wire" mode, selected when the adi,sdi-pin device
-> + * tree property is set to "high". In this connection mode, the ADC SDI pin is
-> + * connected to VIO and ADC CNV pin is connected to a SPI controller CS (it
-> + * can't be connected to a GPIO).
-> + *
-> + * In order to achieve the maximum sample rate, we only do one transfer per
-> + * SPI offload trigger. This has the effect that the first sample data is not
-> + * valid because it is reading the previous conversion result. We also use
-
-Say what happens to that invalid sample.  Is it dropped or provided to userspace
-as if it were valid?  (I hope dropped!)
-
-> + * bits_per_word to ensure the minimum of SCLK cycles are used. And a delay is
-> + * added to make sure we meet the minimum quiet time before releasing the CS
-> + * line. Plus the CS change delay is set to ensure that we meet the minimum
-> + * conversion time before asserting CS again.
-> + *
-> + * This timing is only valid if turbo mode is disabled (reading during acquisition).
-> + */
-> +static int ad4000_prepare_offload_message(struct ad4000_state *st,
-> +					  const struct iio_chan_spec *chan)
-> +
-
-...
-
->  /*
->   * This executes a data sample transfer for when the device connections are
->   * in "3-wire" mode, selected when the adi,sdi-pin device tree property is
-> @@ -689,7 +975,9 @@ static int ad4000_prepare_3wire_mode_message(struct ad4000_state *st,
->  	xfers[0].cs_change_delay.unit = SPI_DELAY_UNIT_NSECS;
->  
->  	xfers[1].rx_buf = &st->scan.data;
-> -	xfers[1].len = BITS_TO_BYTES(chan->scan_type.storagebits);
-> +	xfers[1].len = chan->scan_type.realbits > 16 ? 4 : 2;
-> +	if (chan->scan_type.endianness != IIO_BE)
-
-As below. Endianness being related to bits_per_word is odd. So needs
-explanation.
-
-> +		xfers[1].bits_per_word = chan->scan_type.realbits;
->  	xfers[1].delay.value = st->time_spec->t_quiet2_ns;
->  	xfers[1].delay.unit = SPI_DELAY_UNIT_NSECS;
->  
-> @@ -719,7 +1007,9 @@ static int ad4000_prepare_4wire_mode_message(struct ad4000_state *st,
->  	xfers[0].delay.unit = SPI_DELAY_UNIT_NSECS;
->  
->  	xfers[1].rx_buf = &st->scan.data;
-> -	xfers[1].len = BITS_TO_BYTES(chan->scan_type.storagebits);
-> +	xfers[1].len = chan->scan_type.realbits > 16 ? 4 : 2;
-> +	if (chan->scan_type.endianness != IIO_BE)
-
-This is odd enough to require a comment.  Why is endianness relevant?
-
-> +		xfers[1].bits_per_word = chan->scan_type.realbits;
-> @@ -733,6 +1023,9 @@ static int ad4000_config(struct ad4000_state *st)
->  	if (device_property_present(&st->spi->dev, "adi,high-z-input"))
->  		reg_val |= FIELD_PREP(AD4000_CFG_HIGHZ, 1);
->  
-> +	if (st->using_offload)
-> +		reg_val |= FIELD_PREP(AD4000_CFG_TURBO, 1);
-> +
->  	return ad4000_write_reg(st, reg_val);
->  }
->  
-
-
-> +		if (st->using_offload) {
-> +			indio_dev->channels = &chip->reg_access_offload_chan_spec;
-Set num_channels here
-> +			ret = ad4000_prepare_offload_turbo_message(st, indio_dev->channels);
-> +			if (ret)
-> +				return dev_err_probe(dev, ret,
-> +						     "Failed to optimize SPI msg\n");
-> +		} else {
-> +			indio_dev->channels = chip->reg_access_chan_spec;
-and here as well. I think you can use ARRAY_SIZE() to make the connection even more
-obvious.
-
-> +		}
-> +
-> +		/*
-> +		 * Call ad4000_prepare_3wire_mode_message() so single-shot read
-> +		 * SPI messages are always initialized.
-> +		 */
->  		ret = ad4000_prepare_3wire_mode_message(st, &indio_dev->channels[0]);
->  		if (ret)
-> -			return ret;
-> +			return dev_err_probe(dev, ret,
-> +					     "Failed to optimize SPI msg\n");
->  
->  		ret = ad4000_config(st);
->  		if (ret < 0)
-> @@ -806,19 +1134,36 @@ static int ad4000_probe(struct spi_device *spi)
->  
->  		break;
->  	case AD4000_SDI_VIO:
-> -		indio_dev->info = &ad4000_info;
-> -		indio_dev->channels = chip->chan_spec;
-> +		if (st->using_offload) {
-> +			indio_dev->info = &ad4000_offload_info;
-> +			indio_dev->channels = &chip->offload_chan_spec;
-
-here as well.
-
-> +
-> +			spi->cs_hold.value = AD4000_TCONV_NS;
-> +			spi->cs_hold.unit = SPI_DELAY_UNIT_NSECS;
-> +			ret = ad4000_prepare_offload_message(st, indio_dev->channels);
-> +			if (ret)
-> +				return dev_err_probe(dev, ret,
-> +						     "Failed to optimize SPI msg\n");
-> +		} else {
-> +			indio_dev->info = &ad4000_info;
-> +			indio_dev->channels = chip->chan_spec;
-
-Also set size here.  Obviously this means a little duplication but still good
-to keep them together.
-
-
-> +		}
-
->  	case AD4000_SDI_GND:
-> @@ -830,7 +1175,10 @@ static int ad4000_probe(struct spi_device *spi)
->  	}
->  
->  	indio_dev->name = chip->dev_name;
-> -	indio_dev->num_channels = 2;
-> +	if (st->using_offload)
-> +		indio_dev->num_channels = 1;
-> +	else
-> +		indio_dev->num_channels = 2;
-
-Move this up to where you set channels so that the array
-and size are set together.
-
->  
->  	ret = devm_mutex_init(dev, &st->lock);
->  	if (ret)
-> @@ -853,12 +1201,6 @@ static int ad4000_probe(struct spi_device *spi)
->  
->  	ad4000_fill_scale_tbl(st, &indio_dev->channels[0]);
->  
-> -	ret = devm_iio_triggered_buffer_setup(dev, indio_dev,
-> -					      &iio_pollfunc_store_time,
-> -					      &ad4000_trigger_handler, NULL);
-> -	if (ret)
-> -		return ret;
-> -
->  	return devm_iio_device_register(dev, indio_dev);
->  }
->  
-> @@ -947,3 +1289,4 @@ module_spi_driver(ad4000_driver);
->  MODULE_AUTHOR("Marcelo Schmitt <marcelo.schmitt@analog.com>");
->  MODULE_DESCRIPTION("Analog Devices AD4000 ADC driver");
->  MODULE_LICENSE("GPL");
-> +MODULE_IMPORT_NS("IIO_DMAENGINE_BUFFER");
+diff --git a/drivers/gpu/drm/rockchip/dw_hdmi_qp-rockchip.c b/drivers/gpu/drm/rockchip/dw_hdmi_qp-rockchip.c
+index 3d1dddb34603..7d531b6f4c09 100644
+--- a/drivers/gpu/drm/rockchip/dw_hdmi_qp-rockchip.c
++++ b/drivers/gpu/drm/rockchip/dw_hdmi_qp-rockchip.c
+@@ -94,6 +94,7 @@ struct rockchip_hdmi_qp {
+ 	struct gpio_desc *enable_gpio;
+ 	struct delayed_work hpd_work;
+ 	int port_id;
++	const struct rockchip_hdmi_qp_ctrl_ops *ctrl_ops;
+ };
+ 
+ struct rockchip_hdmi_qp_ctrl_ops {
+@@ -461,6 +462,7 @@ static int dw_hdmi_qp_rockchip_bind(struct device *dev, struct device *master,
+ 		return -ENODEV;
+ 	}
+ 
++	hdmi->ctrl_ops = cfg->ctrl_ops;
+ 	hdmi->dev = &pdev->dev;
+ 	hdmi->port_id = -ENODEV;
+ 
+@@ -600,27 +602,8 @@ static void dw_hdmi_qp_rockchip_remove(struct platform_device *pdev)
+ static int __maybe_unused dw_hdmi_qp_rockchip_resume(struct device *dev)
+ {
+ 	struct rockchip_hdmi_qp *hdmi = dev_get_drvdata(dev);
+-	u32 val;
+ 
+-	val = HIWORD_UPDATE(RK3588_SCLIN_MASK, RK3588_SCLIN_MASK) |
+-	      HIWORD_UPDATE(RK3588_SDAIN_MASK, RK3588_SDAIN_MASK) |
+-	      HIWORD_UPDATE(RK3588_MODE_MASK, RK3588_MODE_MASK) |
+-	      HIWORD_UPDATE(RK3588_I2S_SEL_MASK, RK3588_I2S_SEL_MASK);
+-	regmap_write(hdmi->vo_regmap,
+-		     hdmi->port_id ? RK3588_GRF_VO1_CON6 : RK3588_GRF_VO1_CON3,
+-		     val);
+-
+-	val = HIWORD_UPDATE(RK3588_SET_HPD_PATH_MASK,
+-			    RK3588_SET_HPD_PATH_MASK);
+-	regmap_write(hdmi->regmap, RK3588_GRF_SOC_CON7, val);
+-
+-	if (hdmi->port_id)
+-		val = HIWORD_UPDATE(RK3588_HDMI1_GRANT_SEL,
+-				    RK3588_HDMI1_GRANT_SEL);
+-	else
+-		val = HIWORD_UPDATE(RK3588_HDMI0_GRANT_SEL,
+-				    RK3588_HDMI0_GRANT_SEL);
+-	regmap_write(hdmi->vo_regmap, RK3588_GRF_VO1_CON9, val);
++	hdmi->ctrl_ops->io_init(hdmi);
+ 
+ 	dw_hdmi_qp_resume(dev, hdmi->hdmi);
+ 
+-- 
+2.43.0
 
 
