@@ -1,90 +1,104 @@
-Return-Path: <linux-kernel+bounces-563311-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563312-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD130A63D64
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 04:42:11 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8844A63D67
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 04:45:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB239188E6A6
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 03:42:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 198817A5958
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 03:44:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 994C7215044;
-	Mon, 17 Mar 2025 03:42:04 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59B07170A23;
+	Mon, 17 Mar 2025 03:45:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="uE+lfOJq"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0B2D51C5A
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 03:42:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B4CF76035;
+	Mon, 17 Mar 2025 03:45:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742182924; cv=none; b=jOQvd5lh92KzUHyrQIcElu+6ViVUyDQkbmYxGPNwv9S+tqEhmqwayFJNmpTC7kiXZfhxTWNXa2DZuTqOvYtt5Q54LFElNSvDqYHzUYbiH6iVVQUCTruy5L+z5ttr8zqRpa1fBD88M8QifcVTSYZz56sGg5cXOUGjdS6zmQWRAyg=
+	t=1742183114; cv=none; b=QT5uRxzDHWNQ9QHWT4hhE92DlWXVUmoZduyGe/A52fRlLPO+ZF8F7K6MRIrgUhpLsY0FEA93sMoVu+9ucPN+6TKpcTij7zMqnwBG5Czviu7sUIKX/rHywK9eyNxrGZRx0FIddQzWbzt/6sQLNkVVQhM9ALfO5noht9iTwzAnZbg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742182924; c=relaxed/simple;
-	bh=4bKMRgR40SFIGPrQst350r/1BhxLhA5iWiEP4IH6Wf4=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=MQAsRuoVqd5BFEn3EtKexJxyoBl0lu8+elIruvHsKxJetPpbOIs6VWM1xfy4K03ZbWNMwsmnU3Le/IAjCEhPtk6BXwkPOox0P4GWxTmS6JMpC/YRsl5fUYwK5Ts8gw6zKmkHHQYC6YJxNmaXJ1UIQPgm7RS2kQtIXMv5AJyJDFQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3d4423d0c49so34277675ab.0
-        for <linux-kernel@vger.kernel.org>; Sun, 16 Mar 2025 20:42:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742182922; x=1742787722;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZjiBm1c2DmGIm1FqaFSvnhp7T2ix8so/PQi/7DTSKoI=;
-        b=hz4ewowmL8JHKutsNN6hRfT7cnz55sq8O3rKZMi/tGJ8ldT308kNXcw/5ewilmRr6S
-         QENonGuG69SfBaoUMhdSdNLSbcpiwo7GmPXcMPMcshopHZi/e3alHPUX7Y/H8Php7Huf
-         1FRHtyQdw29AcHlG+Wq3HUUH3iPe33F3r2Dbb3LIQaUhtyfYCClI5nnrJrW8jzpYMUlT
-         c7hpHC9TaZib4UvDIRauNOAvQ9xUyuTtUJdWR7nYp/xDU+2G6dUq/MsyCaaqJrz+6VCe
-         6jlsNDzlTJCSt5AkQplGKdyNeIERz2CT8+LhofjyN/M3L3Jl7pn26Qvm85/mnHJhX0i2
-         ijRw==
-X-Forwarded-Encrypted: i=1; AJvYcCX83CPPOoTtJw5a/iWehBlv4dxo5NTCPWdZb8uP2tMW7hDWoWTsWATRs6x3xP8Y404papeNUuJ1Ien+9jE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz1XC5m6JAsJn/60RS9D/Kh59WiblmbHsOn81/tW6LGv4PcWw9y
-	shQ66CGPFERjO8SAnOaBjOt6sOyJ9ci5XRB/pDSHG/ryil913FA9abj8McfrzST0WYDbRPCy1b2
-	w53IkCyMCrVvI6Ap2c4KG71DKbHILDoHxh0fqz0qgDodwdnLr8P2KrN8=
-X-Google-Smtp-Source: AGHT+IGRJxEYTkN4nNIUivh4AbwbqwYWEBSzEdyGdF65wRPtPt7zza6HZ7IgQX6o8I+5Es6ikmt9MGchhETcY8dWjrVY+2jO/J0F
+	s=arc-20240116; t=1742183114; c=relaxed/simple;
+	bh=H4IIC6D1YrRhQLtiIHDQRnTcqKLqaZAnYHv0tpN4wlk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=ckfxRvw8GJo4tISYzWh379uSxLGwBQyzwyGFIUUrZwYRMmCSwpqlP5JXXIX5onDeM0XxDJZZdCvOc2Sl1k0RUl0zufUE4WJvPaieFPs6e3A27IuxrXt7N1cPIJ7xzLbkVeV3OiPVAfOtRvk+/FmbYD2DpvTfjCyHc+yzz1hwoiQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=uE+lfOJq; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1742183108;
+	bh=4ox/tp1ipH+2V3jE/Z0kDsy3exxzT4fwkJwdNMCWgCM=;
+	h=Date:From:To:Cc:Subject:From;
+	b=uE+lfOJqrAFSUgwcfAOnmAMI1BnJzZ5tTrVaH/237FBjksPC4PZnQ7vcrEJk7QJXi
+	 M/vYYsaU8oqVAm5VQ3hH+UhSvJG2ePx3vY+DbJi+7iNpjzf5Grr6atjFCY7bPd9j6O
+	 PdXWTZJ50rmnRKsrcs21WGCBDvL2nll5VO67vLkTXYJ1oAMTD2k/UqkmO7TvisY39o
+	 b3R9n+qUJ3OFNSnhMRALh3OcpbtQLxybg3+0mZEJQ99NScM4FTDuZnrFS/2GWaPV94
+	 WF5Ax/tN7GCMBV13C3UWwfu6lEE0i66huJiiIXRX0YDf+VhtgOa/rJgdB+JCtYWyoI
+	 l17Z0V6KRdd5g==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZGLTH6lx6z4wcQ;
+	Mon, 17 Mar 2025 14:45:07 +1100 (AEDT)
+Date: Mon, 17 Mar 2025 14:45:07 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Lee Jones <lee@kernel.org>, Heiko Stuebner <heiko@sntech.de>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: duplicate patch in the mfd tree
+Message-ID: <20250317144507.0938757b@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:378f:b0:3d3:dcb8:1bf1 with SMTP id
- e9e14a558f8ab-3d4839f440dmr135090345ab.3.1742182922001; Sun, 16 Mar 2025
- 20:42:02 -0700 (PDT)
-Date: Sun, 16 Mar 2025 20:42:01 -0700
-In-Reply-To: <PUZPR04MB6316E1DB152B8065EB4615C781DF2@PUZPR04MB6316.apcprd04.prod.outlook.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67d79a09.050a0220.2ca2c6.000a.GAE@google.com>
-Subject: Re: [syzbot] [exfat?] INFO: task hung in __blockdev_direct_IO (4)
-From: syzbot <syzbot+f7d147e6db52b1e09dba@syzkaller.appspotmail.com>
-To: bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com, 
-	linkinjeon@kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, mingo@redhat.com, sj1557.seo@samsung.com, 
-	syzkaller-bugs@googlegroups.com, tglx@linutronix.de, x86@kernel.org, 
-	yuezhang.mo@sony.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; boundary="Sig_/lSmIl.k1OrI6oHefG15qlkf";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Hello,
+--Sig_/lSmIl.k1OrI6oHefG15qlkf
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Hi all,
 
-Reported-by: syzbot+f7d147e6db52b1e09dba@syzkaller.appspotmail.com
-Tested-by: syzbot+f7d147e6db52b1e09dba@syzkaller.appspotmail.com
+The following commit is also in the rockchip tree as a different commit
+(but the same patch):
 
-Tested on:
+  7f3e3e7228bb ("dt-bindings: mfd: syscon: Add rk3528 QoS register compatib=
+le")
 
-commit:         4701f33a Linux 6.14-rc7
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=15154068580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=620facf12ff15d10
-dashboard link: https://syzkaller.appspot.com/bug?extid=f7d147e6db52b1e09dba
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=16b9c474580000
+This is commit
 
-Note: testing is done by a robot and is best-effort only.
+  19a634195c1a ("dt-bindings: mfd: syscon: Add rk3528 QoS register compatib=
+le")
+
+in the rockchip tree.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/lSmIl.k1OrI6oHefG15qlkf
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfXmsMACgkQAVBC80lX
+0GxFtgf/Z5ASHW0GfDGoIwGRmIGhOBx8eOfr52my1FXPo6PgKr1nGD8IPwhikJNx
+BKXMdBNkmrAvrPDVexpwxnAzuei8QZsSiOedr1hGtljRAoe2jONIYDOujZUeQ3G9
+ThPT25EiXQQ265ASQ9IQoJl+3PJE/1r+7CpBtyWyNjT37Sgmjoqc7gQmbv0O4prY
+7kjL1JRHf9ytAIlupZJjGDwsB+vCfkQyC/MFVXtBucmHBWzckyw9ML4Q67awFNvA
+2M2DlALPlIiNFhx167RP1c+ptb3AJsW8AvSUcvfM+TkTnYEpQXf0HNv2DQMDdeyu
+Sm64Ftf4a2ajnn6mAToH5BFBjc9V3Q==
+=DDZA
+-----END PGP SIGNATURE-----
+
+--Sig_/lSmIl.k1OrI6oHefG15qlkf--
 
