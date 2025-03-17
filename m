@@ -1,145 +1,148 @@
-Return-Path: <linux-kernel+bounces-564326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564327-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FD93A652B9
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 15:19:52 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5405A652C7
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 15:20:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 90A6D178198
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 14:19:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 410E71898B97
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 14:19:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A68624292B;
-	Mon, 17 Mar 2025 14:18:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="seHcm0PJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98A0C23F27B;
+	Mon, 17 Mar 2025 14:19:03 +0000 (UTC)
+Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65CCB241CB3;
-	Mon, 17 Mar 2025 14:18:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88D46199E8D;
+	Mon, 17 Mar 2025 14:19:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742221115; cv=none; b=lAXNHUtNB72GXnWnLuAQV+JC/bVaxUewaUEHa3kaGfp+l2H4HcbCBiximGaOuC1ullmTPlevzA1nhZLeneX912UMJUTnypYWwlpzXNnIv56wxuHpLkD3wEtxFhEQ4dNjoszBr1gLjj1Z7u/srnQ9+IO5ZRu32oAUjhSvEL49Ijs=
+	t=1742221143; cv=none; b=sGEqDPlw9JAoZ6xjo+sAXLRjUuuGyxNXa/wjO6do2CsFM+7PJMrQhJJbBJH8dxOKR95XouykIb5251tzKNMWMUegcpml5CVqtEyxnZ6SlE9ln14WEAi/hGVeB3NoxJRL+pnreo5id+rD7aLGcFPJrsVRwsT3eDVEUi1uKNZnvkI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742221115; c=relaxed/simple;
-	bh=tdxQTZrRgc3mlz+myXpPPoFEk1dsxHliy8RiXOrdono=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=L0KYM8Tm0l+aW2/tAm9tLuDTNPkM0LPxQxKBGAT+R83oESnB+PDAPtQNEN3KwU6PJGshI6H3IIVkJLdnDTpTUP8F6xYIM40rqgnipQE7u8z8IHJkHOyeBBrLH8RXABVhSOU/iy1yu2ySL3xQ2YHs6WGjM9NOex89YtuuFEJDoPg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=seHcm0PJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4E97C4CEED;
-	Mon, 17 Mar 2025 14:18:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742221114;
-	bh=tdxQTZrRgc3mlz+myXpPPoFEk1dsxHliy8RiXOrdono=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=seHcm0PJa2FqSG5ipCCChaY6pVOGdWYyEKrZcSSQnchMPS9rLt/VKZ2r1wA6Nu6Og
-	 OwZ8df8T9h1Gvb09HRK4ayq+HDHgXDtEQ9LUR/FKktkhiQyMEFXDdoFgCS0MDmm1JH
-	 WSKH0ReYBRDsTKZCN9lemiIryaks5owBstQoE8CSzM3wPFNdw2xI/Jn50qvbiyQfYT
-	 1ASTOkfjCdDBF8XJnm5PJjVeZYViuQBJMlgHAHxq71itjSFyTTeLLGiKdakM9ZHyV6
-	 2czUHKacudytJubAqxZTQUv/I/FkhZDDdPsYtBJgGBPAwuDS5VK8CIuYdi2AitrNCw
-	 X3fsryH02/VoA==
-Date: Mon, 17 Mar 2025 09:18:33 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1742221143; c=relaxed/simple;
+	bh=8PM6QbVEn4s657b1vZBMBsMKFGc8AAH22xuLnz8sw7A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aqobiFhHIxlsf2wk2l5msDgz+7t46U1IgfdtgV2kjvnWHUcbTZ7vnE6fVnp8B7G4BFxvK8iDaHB3k26RFlefMRZDFwk53dBfHnSmw0mX1G6MSdZNdT/qTFCw+Gv9wc092R0vVS70u0SRW1B0qDFWkorAs67MOkoXv8iyGvElhuM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.160.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-476b89782c3so51321811cf.1;
+        Mon, 17 Mar 2025 07:19:01 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742221138; x=1742825938;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FQzfQJUTkwGhun6W4CYWdgvhWW8H+wpChsA4H5Uf+0w=;
+        b=RMiomOUig6P/dW+aZFTjzklObYVArgfwrXAIqota9L71KRwkJOBRzh4/mtM4aUlSOM
+         83ZXbNze27WOTPWxhvdGbHye/z5v6mUhESA+56foDPcsLl4Z1eglbPQgyhjNpDWjklts
+         aM5TRNfh+A1UialMEssILk3YeotRRKHc4bCWM4T1uetY8k0jbR60NixjYeivp/loMx/1
+         i/sIZr45TUqUvrOAoRHUusxW6V6vs+qq3SSGsdLdx1GodUOuVfhxXcs3nGdJbO40iaAl
+         kns1ORsJ3EHjUgEGXz+2V2zlpfXE9fFug01qg6vZAM8DZPrkwb/5fNag7Z43ZYrzSRYz
+         jYbw==
+X-Forwarded-Encrypted: i=1; AJvYcCWWlvAv5zzbINmCFS9zuFiBCbUUicusHwkAtpnz53/+5RLqEvGRVEK5+gcfysJIBV+XZ86IXiPpC5P8@vger.kernel.org, AJvYcCXpxTl+sDDj7clgVEvrtKID2oNxb//NgUh/ajyZxzQyYt5Yfo0adR0lMKfmDK8wN9ageSDMfSu2E+KNhJpU@vger.kernel.org
+X-Gm-Message-State: AOJu0YwmNXcsNvJu8vC7dGaXtOgp1D0fe/4+p6E7Zwp3M/4P+e2OmnR4
+	PjEii3Ov4ZkNrsYKOcW2ULY8LevHn4gkKjAPx07dXkzDfoEvUbcdcY2wqbBP
+X-Gm-Gg: ASbGncspjmpFCDvqyt3I4V4Rh9fL9f7CQB1cQObpsGamFCbw4Gjfw7mTO6s29g9sBeE
+	AdKw0Q9pKAhUMXchQY53vOU5JyPKjO826UYzUCOxCQOlaTFmMaj80j3chKphuFBlel9fMmenE2k
+	paYXoR2wnqjqHYdulUTzwZ8TbiJZdSQrAPTY90MhJrKLgtSAf1wADQb+QpK/tLvFpFWUvYLHrYp
+	vN8Ygtp2PceC/WT1LyEtjnW/ZDu1GF9F9MPIvIf/7HpHgwIlMAaClWTRdMWvFiAJ08H/rTnFkT0
+	+Y4cy+HKfemnIkocIkku8Y+F8tPSaCWbzSiXWEcVr9bmYxkbCFBIWRQGOk/NFuG9m/esBkTMTIN
+	gUfjT+Gg=
+X-Google-Smtp-Source: AGHT+IEToVfW+W01NFBwwfdMnq1kW7cP1iloXeUfIAwg9GX0Yl48vteBPz4gtemTEqXweZIbii3V0A==
+X-Received: by 2002:a05:622a:438b:b0:476:8f75:b898 with SMTP id d75a77b69052e-476c815c9fcmr156895841cf.25.1742221138312;
+        Mon, 17 Mar 2025 07:18:58 -0700 (PDT)
+Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com. [209.85.219.51])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-476bb63ac46sm54632641cf.17.2025.03.17.07.18.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 17 Mar 2025 07:18:57 -0700 (PDT)
+Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-6e17d3e92d9so31383236d6.1;
+        Mon, 17 Mar 2025 07:18:57 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCURHY0wS6iMqT6owdWAhrHC+bYW9tcoxvlRrqJSeF944nc6zn3MFcZng7BGYBtU7y63basvs6B+M92T@vger.kernel.org, AJvYcCWfzwqobmnCt0WVTCH0DXv5QF4VUezsubvMusnk15LGz/Y/Snvsu4HTve89C2GCD/OfoUp/Sqa4+zX1wlVZ@vger.kernel.org
+X-Received: by 2002:a0c:eb82:0:b0:6e8:feae:929c with SMTP id
+ 6a1803df08f44-6eaeaa63b4bmr161375046d6.21.1742221137414; Mon, 17 Mar 2025
+ 07:18:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: devicetree@vger.kernel.org, Bjorn Andersson <andersson@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
- Ivan Belokobylskiy <belokobylskij@gmail.com>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Tony Luck <tony.luck@intel.com>, 
- linux-hardening@vger.kernel.org, Kees Cook <kees@kernel.org>, 
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
- "Guilherme G. Piccoli" <gpiccoli@igalia.com>
-To: David Heidelberg <david@ixit.cz>
-In-Reply-To: <20250316-lg-nexus4-mako-v5-1-79feae815a85@ixit.cz>
-References: <20250316-lg-nexus4-mako-v5-1-79feae815a85@ixit.cz>
-Message-Id: <174221818190.3957236.3364090534153729086.robh@kernel.org>
-Subject: Re: [PATCH v5] ARM: dts: nexus4: Initial dts
+References: <20250218-k1-pinctrl-option-v3-1-36e031e0da1b@gentoo.org>
+ <CAMuHMdV4xWLEuCvCC54GBfCdELE=QSHqaOyUPD-ezE0QLYRnVA@mail.gmail.com>
+ <20250317124120-GYA1983@gentoo> <CAMuHMdWM5ymPVRe36+Atr0cDAdRGyw39jFJvE+9PWTUUiiMfCg@mail.gmail.com>
+ <20250317132955-GYC1983@gentoo>
+In-Reply-To: <20250317132955-GYC1983@gentoo>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 17 Mar 2025 15:18:45 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdUWUd-xAzhRvazurD-1t3pFb2OUMXqEpeDyTVVbAUG19g@mail.gmail.com>
+X-Gm-Features: AQ5f1JrurBlRutNcrH6Q6idcmvXYK5KPYEnvrshCL60keuYt9BH4Ng3SnCR2u0Y
+Message-ID: <CAMuHMdUWUd-xAzhRvazurD-1t3pFb2OUMXqEpeDyTVVbAUG19g@mail.gmail.com>
+Subject: Re: [PATCH v3] pinctrl: spacemit: enable config option
+To: Yixun Lan <dlan@gentoo.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Alex Elder <elder@kernel.org>, linux-riscv@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	spacemit@lists.linux.dev, Conor Dooley <conor.dooley@microchip.com>, 
+	Alex Elder <elder@riscstar.com>
+Content-Type: text/plain; charset="UTF-8"
 
+Hi Yixun,
 
-On Sun, 16 Mar 2025 23:16:55 +0100, David Heidelberg wrote:
-> From: Ivan Belokobylskiy <belokobylskij@gmail.com>
-> 
-> Add initial support for LG Nexus 4 (mako).
-> 
-> Features currently working: regulators, eMMC, and volume keys.
-> 
-> Signed-off-by: Ivan Belokobylskiy <belokobylskij@gmail.com>
-> Co-developed-by: David Heidelberg <david@ixit.cz>
-> Signed-off-by: David Heidelberg <david@ixit.cz>
-> ---
-> Changes in v5:
-> - Sorted nodes alphabetically.
-> - Link to v4: https://lore.kernel.org/r/20250311-lg-nexus4-mako-v4-1-3916c8ec7edb@ixit.cz
-> 
-> Changes in v4:
-> - Sorted regulators and added regulators compatible.
-> - Corrected pmic include and references.
-> - Moved &rpm outside of / node.
-> - Moved and simplify pm8921 keypad.
-> - Added chasis-type.
-> - Dropped incomplete WiFi node, will be provided in future
->   contributions.
-> - Link to v3: https://lore.kernel.org/r/20250309-lg-nexus4-mako-v3-1-1dc2807df296@ixit.cz
-> 
-> Changes in v3:
-> - rebased against next-20250307
-> - dropped backlight until driver gets converted to DT
-> 
-> Changes in v2:
-> - lge vendor doesn't exist anymore, rename to lg
-> - sdcc@ to mmc@ to comply with dt-schema
-> ---
->  arch/arm/boot/dts/qcom/Makefile                    |   1 +
->  .../boot/dts/qcom/qcom-apq8064-lg-nexus4-mako.dts  | 341 +++++++++++++++++++++
->  2 files changed, 342 insertions(+)
-> 
+On Mon, 17 Mar 2025 at 14:30, Yixun Lan <dlan@gentoo.org> wrote:
+> On 13:59 Mon 17 Mar     , Geert Uytterhoeven wrote:
+> > On Mon, 17 Mar 2025 at 13:41, Yixun Lan <dlan@gentoo.org> wrote:
+> > > On 09:18 Mon 17 Mar     , Geert Uytterhoeven wrote:
+> > > > Thanks for your patch, which is now commit 7ff4faba63571c51
+> > > > ("pinctrl: spacemit: enable config option") in v6.14-rc7.
+> > > >
+> > > > On Tue, 18 Feb 2025 at 01:32, Yixun Lan <dlan@gentoo.org> wrote:
+> > > > > Pinctrl is an essential driver for SpacemiT's SoC,
+> > > > > The uart driver requires it, same as sd card driver,
+> > > > > so let's enable it by default for this SoC.
+> > > > >
+> > > > > The CONFIG_PINCTRL_SPACEMIT_K1 isn't enabled when using
+> > > > > 'make defconfig' to select kernel configuration options.
+> > > > > This result in a broken uart driver where fail at probe()
+> > > > > stage due to no pins found.
+> > > >
+> > > > Perhaps this is an issue with the uart driver?
+> > > > I just disabled CONFIG_PINCTRL_RZA2 on RZA2MEVB (which is one of the
+> > > > few Renesas platforms where the pin control driver is not enabled by
+> > > > default, for saving memory), and the system booted fine into a Debian
+> > > > nfsroot.  Probe order of some devices did change, and "Trying to
+> > > > probe devices needed for running init" was printed.
+> > > >
+> > > my problem was CONFIG_PINCTRL_SPACEMIT_K1 isn't enabled, result as
+> > > # CONFIG_PINCTRL_SPACEMIT_K1 is not set
+> > >
+> > > for your case, is CONFIG_PINCTRL_RZA2 built as module?
+> > > it should work for uart driver with deferred probe mechanism..
+> >
+> > No, CONFIG_PINCTRL_RZA2 was disabled in my testing.
+> >
+> emm, this is interesting, there might be problem that uart driver
+> fail to have correct pin settings without pre initialization..
+>
+> which uart driver is used in RZA2MEVB platform? any pinctrl dts property?
+> different hardware may vary..
 
+It indeed depends on both hardware and firmware.
+RZA2MEVB uses the sh-sci driver, and its serial console is set up
+by the boot loader.
 
-My bot found new DTB warnings on the .dts files added or changed in this
-series.
+Does your serial console work with "earlycon"?
 
-Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-are fixed by another series. Ultimately, it is up to the platform
-maintainer whether these warnings are acceptable or not. No need to reply
-unless the platform maintainer has comments.
+Gr{oetje,eeting}s,
 
-If you already ran DT checks and didn't see these error(s), then
-make sure dt-schema is up to date:
+                        Geert
 
-  pip3 install dtschema --upgrade
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-
-New warnings running 'make CHECK_DTBS=y for arch/arm/boot/dts/qcom/' for 20250316-lg-nexus4-mako-v5-1-79feae815a85@ixit.cz:
-
-arch/arm/boot/dts/qcom/qcom-apq8064-lg-nexus4-mako.dtb: hwmutex: 'reg' is a required property
-	from schema $id: http://devicetree.org/schemas/hwlock/qcom-hwspinlock.yaml#
-arch/arm/boot/dts/qcom/qcom-apq8064-lg-nexus4-mako.dtb: hwmutex: 'syscon' does not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/hwlock/qcom-hwspinlock.yaml#
-arch/arm/boot/dts/qcom/qcom-apq8064-lg-nexus4-mako.dtb: soc: replicator: 'ranges' is a required property
-	from schema $id: http://devicetree.org/schemas/simple-bus.yaml#
-arch/arm/boot/dts/qcom/qcom-apq8064-lg-nexus4-mako.dtb: syscon@1200000: compatible: ['syscon'] is too short
-	from schema $id: http://devicetree.org/schemas/mfd/syscon-common.yaml#
-arch/arm/boot/dts/qcom/qcom-apq8064-lg-nexus4-mako.dtb: timer@200a000: 'clocks' is a required property
-	from schema $id: http://devicetree.org/schemas/watchdog/qcom-wdt.yaml#
-arch/arm/boot/dts/qcom/qcom-apq8064-lg-nexus4-mako.dtb: sps-sic-non-secure@12100000: compatible: ['syscon'] is too short
-	from schema $id: http://devicetree.org/schemas/mfd/syscon-common.yaml#
-arch/arm/boot/dts/qcom/qcom-apq8064-lg-nexus4-mako.dtb: rpm@108000: 'clock-controller' does not match any of the regexes: '^regulators(-[01])?$', 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/soc/qcom/qcom,rpm.yaml#
-arch/arm/boot/dts/qcom/qcom-apq8064-lg-nexus4-mako.dtb: syscon@5700000: compatible: ['syscon'] is too short
-	from schema $id: http://devicetree.org/schemas/mfd/syscon-common.yaml#
-arch/arm/boot/dts/qcom/qcom-apq8064-lg-nexus4-mako.dtb: replicator: 'clock-names', 'clocks' do not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/arm/arm,coresight-static-replicator.yaml#
-
-
-
-
-
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
