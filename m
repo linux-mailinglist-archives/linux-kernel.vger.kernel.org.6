@@ -1,90 +1,92 @@
-Return-Path: <linux-kernel+bounces-563577-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563576-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70C64A64481
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 08:59:46 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C858A6447E
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 08:58:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4FBA018940A2
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 07:59:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5CEBE7A5681
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 07:57:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F84021B9C5;
-	Mon, 17 Mar 2025 07:59:06 +0000 (UTC)
-Received: from mxct.zte.com.cn (mxct.zte.com.cn [183.62.165.209])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E93F21B9D3;
+	Mon, 17 Mar 2025 07:58:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iuV//NN3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C88C121B19E;
-	Mon, 17 Mar 2025 07:59:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=183.62.165.209
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABF207E9;
+	Mon, 17 Mar 2025 07:58:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742198345; cv=none; b=GRWZt4jW1crP4Uns2VPHr/jgezIZnNi4uEF2gR/fDcxa12E0omDXS2K5/ZHJ2ItZck5HVL7PgNX22y70YSkHVF1jCSXXo0LhYX8KgLgQg5TJgCnzdaJPJE46bkaSinKKai5mDrjKl1IMygdTZQFfrH3+Oe52UwocCa25poI3RmA=
+	t=1742198327; cv=none; b=qNNXMuvEVIyKClwlA7yNFMBbEVyC7c8JaDX+MSpneA6h9PujLGFo0E9k1zdinry0bx6cV6XRneooSstcnHxT5ud46RwaMOj4zv4YsPJ9G2lEEx5M6NKa9zR6HaNrS329NiXO4MoAxFouoPXLVW9CzOVc1OyRb0HwEgbktPa82QY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742198345; c=relaxed/simple;
-	bh=uqXlMhmLB9R3Z+lGdy71/yzhmji7GGi92P8qqFpGnGk=;
-	h=Date:Message-ID:Mime-Version:From:To:Cc:Subject:Content-Type; b=e2xiboWW/7EN3OwZp3g4bLDcFIz6aNovIKDeiyYrPlBMz4ndK7PUtj3qMUWB+dtO1f85qRzDFdwiT9yhvmKb3JE9f1+gSq+XS0byPsPjB2NuQwqBdTQGtaUKIPJqFXg+qvjrVjWJZXZCBD89gKGsGRxekeflit3hE2YdCrCo9+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=183.62.165.209
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
-Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mxct.zte.com.cn (FangMail) with ESMTPS id 4ZGS6B4Zqtz501gJ;
-	Mon, 17 Mar 2025 15:58:58 +0800 (CST)
-Received: from xaxapp05.zte.com.cn ([10.99.98.109])
-	by mse-fl1.zte.com.cn with SMTP id 52H7wbQ2044474;
-	Mon, 17 Mar 2025 15:58:37 +0800 (+08)
-	(envelope-from xie.ludan@zte.com.cn)
-Received: from mapi (xaxapp02[null])
-	by mapi (Zmail) with MAPI id mid32;
-	Mon, 17 Mar 2025 15:58:39 +0800 (CST)
-Date: Mon, 17 Mar 2025 15:58:39 +0800 (CST)
-X-Zmail-TransId: 2afa67d7d62fffffffffb17-33f49
-X-Mailer: Zmail v1.0
-Message-ID: <20250317155839844Il-ucxcy_UAEF0tTd7FX6@zte.com.cn>
+	s=arc-20240116; t=1742198327; c=relaxed/simple;
+	bh=2v0do6VIwqpU4cRxJMLNn3PrlCZX3QFEq4K6WtzwMiE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=C5PqwOc1FZLSu13usR5+ygP0r2FiNIuR+fbbpuCmrMd0/kMWIGfEjzrK7s/eZNuQnEjhv0U+aTYT9PLQY/7AGABPWEL1eLFcnFfH6R23cTbVL3x/TPt6mnMjD9De7kRSj7r9sljqRgCPJXLU4nj5nvs6EwhAhYaOB1LIBr/S504=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iuV//NN3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9DEFAC4CEE3;
+	Mon, 17 Mar 2025 07:58:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742198327;
+	bh=2v0do6VIwqpU4cRxJMLNn3PrlCZX3QFEq4K6WtzwMiE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=iuV//NN3pIxOqg2j932/2V9a+/OMoOoVL8BuT9p5TihirVs6x8hVQNAtKiyY6ZNfD
+	 C8FRvfBjJYIYPrpe9ihKUGaZFVwqn9cf10Qa2nHgy/2ATcUYG3+P5R5h3xWdntjkdC
+	 N022U/cHp6CrLitdcGacpX8w3yU175OsJ9iVTh+pmpSwq1snREKhyCNi54PPyLU3Wd
+	 BWEEyDpZpOMQjYxNMry05JHKVFyxgcR3xXg5SFZaqXhD1cKKkuP06igfA3crte9uUL
+	 m48Nx30znERuY305BNEUGbV849ih3V1bHplbvV9MRLzcwjr/SlBxlBJMPPfrCV49pn
+	 xeKTrxRx3ceew==
+Date: Mon, 17 Mar 2025 08:58:41 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: dmukhin@ford.com
+Cc: Jonathan Corbet <corbet@lwn.net>, Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] x86/early_printk: add MMIO-based UARTs
+Message-ID: <Z9fWMaX25c8GIaQK@gmail.com>
+References: <20250314-earlyprintk-v2-1-2bcbe05290b8@ford.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-From: <xie.ludan@zte.com.cn>
-To: <andreas@gaisler.com>
-Cc: <davem@davemloft.net>, <zhangkunbo@huawei.com>, <xie.ludan@zte.com.cn>,
-        <sparclinux@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <xu.xin16@zte.com.cn>, <yang.yang29@zte.com.cn>
-Subject: =?UTF-8?B?W1BBVENIIGxpbnV4LW5leHRdIHNwYXJjOiB1c2Ugc3lzZnNfZW1pdCgpIGluc3RlYWQgb2Ygc2NucHJpbnRmKCku?=
-Content-Type: text/plain;
-	charset="UTF-8"
-X-MAIL:mse-fl1.zte.com.cn 52H7wbQ2044474
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 67D7D642.000/4ZGS6B4Zqtz501gJ
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250314-earlyprintk-v2-1-2bcbe05290b8@ford.com>
 
-From: XieLudan <xie.ludan@zte.com.cn>
 
-Follow the advice in Documentation/filesystems/sysfs.rst:
-show() should only use sysfs_emit() or sysfs_emit_at() when formatting
-the value to be returned to user space.
+* Denis Mukhin via B4 Relay <devnull+dmukhin.ford.com@kernel.org> wrote:
 
-Signed-off-by: XieLudan <xie.ludan@zte.com.cn>
----
- arch/sparc/kernel/pci.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> +	if (!strncmp(s, "nocfg", 5))
+> +		baudrate = 0;
+> +	else {
+> +		baudrate = simple_strtoul(s, &e, 0);
+> +		if (baudrate == 0 || s == e)
+> +			baudrate = DEFAULT_BAUD;
+> +	}
 
-diff --git a/arch/sparc/kernel/pci.c b/arch/sparc/kernel/pci.c
-index ddac216a2aff..917e1db3164e 100644
---- a/arch/sparc/kernel/pci.c
-+++ b/arch/sparc/kernel/pci.c
-@@ -593,7 +593,7 @@ show_pciobppath_attr(struct device * dev, struct device_attribute * attr, char *
- 	pdev = to_pci_dev(dev);
- 	dp = pdev->dev.of_node;
+In standard kernel coding style we always balance curly braces and 
+don't skip them in the single-statement case. Ie. the above should be:
 
--	return scnprintf(buf, PAGE_SIZE, "%pOF\n", dp);
-+	return sysfs_emit(buf, "%pOF\n", dp);
- }
+	if (!strncmp(s, "nocfg", 5)) {
+		baudrate = 0;
+	} else {
 
- static DEVICE_ATTR(obppath, S_IRUSR | S_IRGRP | S_IROTH, show_pciobppath_attr, NULL);
--- 
-2.25.1
+
+> +	if (baudrate)
+> +		early_serial_hw_init(115200 / baudrate);
+
+Hm, I think that division will go poorly if 'baudrate' ends up being 0 
+in the 'nocfg' case ... ;-)
+
+Thanks,
+
+	Ingo
 
