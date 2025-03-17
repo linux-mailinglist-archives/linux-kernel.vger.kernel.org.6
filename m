@@ -1,81 +1,87 @@
-Return-Path: <linux-kernel+bounces-563867-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563869-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82636A649AB
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:26:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85B8AA649F3
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:31:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE5BD168FED
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:26:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C2613A3E43
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:26:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C274F236A7B;
-	Mon, 17 Mar 2025 10:23:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2715423A98F;
+	Mon, 17 Mar 2025 10:24:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b="MbHgl9ZP"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CIbwQzri"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE30923370C
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 10:23:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98B0322CBE3
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 10:24:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742207038; cv=none; b=qQKR4GwOIMQO9m/ZP/GVPhRDVI2uC3JBvdHvFyehvj48v0sOTJ3Y+FCaxvNTgByHJN7HSeHkC/LJi4qyRd+aIcdf7G0j6F7r8UCDihxUCEHWxTlPcE/QfAVV5tByzuU1xzthAf3ZUWgSmIPcGGrqqZt7wvylWa1093fM2IqzcgQ=
+	t=1742207049; cv=none; b=ju+Jza7rR2+UGbRn14E2ZXBBjuUwX+ZQmSGHtwO6d16F3X5Fq5sr2uuPVQ6piyO34Tv1EcnNnjQp+hsmIlXxcoglDU13NDamhjhPVXnFTPO2g7m/IkjKPNeVA4JNd1WzSc9JFKX7NvWUWcowE8ofZAuvHleAcmnbgAD7uXm+/68=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742207038; c=relaxed/simple;
-	bh=hQVevsPun2k4OhyGxK6ojfHybwz34faUfbgawDCGPbc=;
+	s=arc-20240116; t=1742207049; c=relaxed/simple;
+	bh=bCANhreDkENKAEhk4KUIB7Cm7ZYifLCC60fKPlqYwAw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cy+uNwDJwTxLxP9vcvWT5aHxB1sjNNRVtVh2fLkHAfc2ShNpLP6nOR2RGV6u/WgiUS65OQdIyGhzeFxzA72n9JPA6kbclYl3zQl1A6rOOmduVyH2fuuiTko/nT5WkUa9M24zOcZmcUXOqPHW3HrzSvz7tAyJslbnJksQ/15+jmE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net; spf=pass smtp.mailfrom=openvpn.com; dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b=MbHgl9ZP; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=openvpn.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-aaee2c5ee6eso649981066b.1
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 03:23:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=openvpn.net; s=google; t=1742207032; x=1742811832; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=ei5Q1Uq7iZNEXlK4IXQpSEeLrrdIHuZ+VdKd1lHY1oE=;
-        b=MbHgl9ZPs6Riw5e6Ajc/HCP/Kbkne2Uws5HDBlgcFTU9C33Mvjg5gbznh/Ljhrr6qn
-         dqv7kE+d5ARXC+GCIvQ4EtiwmYSZm86u7iRkf3SXC4NFjKuQnG4CRm9tBa8QjF2aN8N2
-         JewXN5b93o5RSQ+vuiefnU3eNBn0NqjtYLslBi2RewsytmGMJTCXq+MD9PFKjX8CqGhb
-         nTgCVe11/BMGjX5KoZS/y6MQpztA03OnfSKUUWMJ4gNOxjxS4hnlYajBwRkSkCJ8Dq9P
-         iyoVVq4u9CLhazHaXiXwDDlXgU0kb04ubd+iCumjYtlrfM+M8fuzvx7Nzl9pa7tAh37f
-         DDnw==
+	 In-Reply-To:Content-Type; b=inCHXgo9ShVAKkUbU0QeNTeHbWrQppRaFgVpnyMGzqOJ2xl3Dhu0BzCyNuFOgnVnaZPOUszLcVLYPJ4ubGusSUN+3GINM5jI4ckTPXed0nfuiX06m/nChjqyrlp0qHQD+VgFQBjeK9xGW0Z3d8cXI9xFzdgoV8D+2WrkLkC54ws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CIbwQzri; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1742207046;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=3Oam/KdpgzWcAfFC8T6sIsWCKibErh7/9y30vLrSIxs=;
+	b=CIbwQzriysLZj8Y5vUrX55aYRx19VJN5XsVFbZ4ffhrhCPTOz9DyFnRxukX/0yO0mSq8BU
+	zNfKW0GW8mcC2TLNvQ1ZmyQhgl/QmeCVipRB2AkUYLh6UEhT4gvGJVdi+yxwhC9PrRg9tO
+	Jksvyb7R5W5QcOJNFJtRqlXwc17eKgA=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-286-SfIb3absNMqhVUBHvKeVFA-1; Mon, 17 Mar 2025 06:24:05 -0400
+X-MC-Unique: SfIb3absNMqhVUBHvKeVFA-1
+X-Mimecast-MFC-AGG-ID: SfIb3absNMqhVUBHvKeVFA_1742207044
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-39126c3469fso1921592f8f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 03:24:05 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742207032; x=1742811832;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ei5Q1Uq7iZNEXlK4IXQpSEeLrrdIHuZ+VdKd1lHY1oE=;
-        b=bJ03/j0QZON2iQUAUPzBv57KolHDczstiWyO2XY/N7YWp7ndTSwbwjHNBaGTRXaFrM
-         erihBLwt+lpmCRkuMQEBeMfKaZNYsdLby+qwKIfK8ryqpczaZ1dHl+dvye5/U6EVa5/a
-         s5Ysa02AyLSJh/iPNeuVYAH8nWNInagMJB7XR2Aj0k8sY5b1cc7CEl++JJwxzhbp6pgz
-         x+xS/blTUSz8eNYYcv3H7qh8x1POiFuU99Aqh8Dia6OFBhAhn91vjeW8Fw28A42wBLqH
-         ras1e1k3NhlsdierYMeRQsrL0q21A99QItR3JI5NvDH4520tl4HV1hcoKvgCWMu/Iwed
-         WUWw==
-X-Forwarded-Encrypted: i=1; AJvYcCU5+fU6wVUQaIwvFFhyN2iYEa+ykpjXSec3BBkXwhtnJ+eqtm2MAX4UA/A2VPG26pY3LXou7Dv42oCMB9Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwrXT/NECRlSpvvMOx6AXK2MX1VV7/bGMZjVMQTEU6ysQslEWcI
-	NelAeCCO/K2uoOrgh1Nk1PUMCuccN6CIgpzqgOURFOkkzMQzz0lzO6TgRhxuXiR5zTGXo4b70Ii
-	g3/6ug72TD7gmFJ3s3tNFTBSPbwrUOrZZXHh2IPPQZDQFAxQ56Q/ZyBk=
-X-Gm-Gg: ASbGncvJoHrOlrh4YU1C01RK406Q//Je9MQvlYRaZ2yN06CP5G0yhVmZDohpSygtF4s
-	RpM4nNuX42ADYuP896VYmlH5881FVPhOBLUnnGWmswRgljl9FZ0Mv93MjuzQ0YkLXgGJoEDmvF5
-	sHtJeKhbWUrvoS6PC73A1aYcGqHOUfBoGkq9neDjRRfGMPvlonQmQXqr5u85z04R2QJFVbm36OD
-	lQ2256CEqg7f4v2306C008ABtqljyQV4zgMKZBgVWsQ86kh7TVi3v8OpQ0fxN4sp72qOLddplio
-	EViABzbjDnU3mWGVZWo5BfjmtwrL/he9BPIbBCZKUfW5MeH59xoSzHfv9ix2SaOrDEJcsjfKbt1
-	QvB2z+vo=
-X-Google-Smtp-Source: AGHT+IEuoWp/V+oU0hSk2OtYEyy9iWN/u33KlCZ/YdLr7dfG2Cq9xaFU4lEX3PuSL1/VvHM04q1FhA==
-X-Received: by 2002:a17:906:4795:b0:ac3:17d3:eba1 with SMTP id a640c23a62f3a-ac3301df227mr1244768666b.9.1742207032103;
-        Mon, 17 Mar 2025 03:23:52 -0700 (PDT)
-Received: from ?IPV6:2001:67c:2fbc:1:23e9:a6ad:805e:ca75? ([2001:67c:2fbc:1:23e9:a6ad:805e:ca75])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3147f0cd3sm640554366b.70.2025.03.17.03.23.51
+        d=1e100.net; s=20230601; t=1742207044; x=1742811844;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=3Oam/KdpgzWcAfFC8T6sIsWCKibErh7/9y30vLrSIxs=;
+        b=YcIsTLjCK/acRJnvuDkumY5QiToLrpocw6OadrW1Mvw3pLeRGpKcLqLIx6a5ZGLeKf
+         IyOKczSr6ND1fW489+O+2+GxacCvMwxtr4TXzv3UgPSLI0edvRa8HQYUmxYbsFS2aM9O
+         syppCDcP7bya3+k/xGW/5ZHmXnIKiWcQKxMyvVxE1xHYdAIzPxwhcSqC4JU5SDVbRBPB
+         N9DRnyfHK8Jqte7OKvDqKX219Arh8eShJlC9EPiWecVbsJFH07RdA9RPKlUgDU8VQspR
+         y+Ply2KXjHrnaJyCmwqFm48IAMagIIAOQrXn49SkPag74IqIcgkDGAvoFMT7U/6nL0+W
+         WM4A==
+X-Forwarded-Encrypted: i=1; AJvYcCUL2mrF2I9AbdpSJdA2+0d3QojE2axaU5OHdp+tL/d9vJMVDRtVvlrGZ6myB/PAg1W5WNnj4MmwiQho28o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzXBO11mE3vKFegrH2RrzwDCyuuurECc2WsdoqCaUEFv05Uzfv9
+	qwQXhyIv5V+O/WFuvviySLcayFfIv0VIGKvbHNFwgbnX5zTHvtWE2ptYKsFDUU83ar96y/8kGWP
+	RmnqPfgwBwM3Qqt1NEpsA29K0//BsxIs8WSnnQDg5sxRGscWvddldK95UEN/BEw==
+X-Gm-Gg: ASbGncvXypij5iDYXB93AdUd4t0LYt2fiIdQTpaXrhX72R5Lxv/0T3c7BifFpy+3HA0
+	qJvZeniUDkPOCh9RJMgrHvsShGC6Pt5pak7b9S9eFufIxTQGinXVP7YwWz49INb99tK16M9/dZr
+	5s0YYef8vMy452VZvHkdCPXK/2oNmARFWAf56/Y3iQxdMAkb7VX2pmH/Z/Yd2Y4dEHqYWSdOgDj
+	uyDs6GuEhX8bCekhpVD6Kb3qOuFfRQpaiJjF4of69AM3X7nV66b7ZkmUCuAkrWSqxRxHvx3hVvD
+	1a8JnXlLCimXkvuhxf36fJbiI19faUZ8EbVlzdkqVzT672dgVvs53neLjlkAx2ru+zV8NeGEr73
+	DToDoR/qE73OFa6wftJzRaobpeyPAVNcsPA7fAVM09Gw=
+X-Received: by 2002:a5d:6484:0:b0:390:df02:47f0 with SMTP id ffacd0b85a97d-3971ee444e2mr12570887f8f.42.1742207043969;
+        Mon, 17 Mar 2025 03:24:03 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGGMajM7qeiu3bh5YLRlaSSbWaTncb/O+rwjUnc6izvixZyxF3h6+ZrClNs4vCrS4tsu4/jMg==
+X-Received: by 2002:a5d:6484:0:b0:390:df02:47f0 with SMTP id ffacd0b85a97d-3971ee444e2mr12570860f8f.42.1742207043616;
+        Mon, 17 Mar 2025 03:24:03 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c73c:aa00:ab00:6415:bbb7:f3a1? (p200300cbc73caa00ab006415bbb7f3a1.dip0.t-ipconnect.de. [2003:cb:c73c:aa00:ab00:6415:bbb7:f3a1])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-395cb7ebaf8sm14854833f8f.95.2025.03.17.03.24.02
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 17 Mar 2025 03:23:51 -0700 (PDT)
-Message-ID: <ab583ad2-d9b4-49ec-88a5-74b66e63839c@openvpn.net>
-Date: Mon, 17 Mar 2025 11:23:50 +0100
+        Mon, 17 Mar 2025 03:24:03 -0700 (PDT)
+Message-ID: <a43ff37d-497c-4508-b6e5-667e060908cc@redhat.com>
+Date: Mon, 17 Mar 2025 11:24:02 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,117 +89,183 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v23 03/23] ovpn: add basic interface
- creation/destruction/management routines
-To: Qingfang Deng <dqfext@gmail.com>
-Cc: andrew+netdev@lunn.ch, donald.hunter@gmail.com, edumazet@google.com,
- horms@kernel.org, kuba@kernel.org, linux-kernel@vger.kernel.org,
- linux-kselftest@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com,
- ryazanov.s.a@gmail.com, sd@queasysnail.net, shaw.leon@gmail.com,
- shuah@kernel.org, "Jason A. Donenfeld" <Jason@zx2c4.com>
-References: <20250312-b4-ovpn-v23-3-76066bc0a30c@openvpn.net>
- <20250317060947.2368390-1-dqfext@gmail.com>
- <f4c9a29f-a5c6-464a-a659-c7ffeaf123c1@openvpn.net>
- <CALW65jZe3JQGNcWsZtqU-B4-V-JZ6ocninxvoqMGeusMaU7C=A@mail.gmail.com>
- <0d8a8602-2db4-4c19-ab1c-51efef42cef6@openvpn.net>
- <CALW65jYaMBuMqzCFYwUJfLBg8+epQEjCg0MOpssGCwXqxbFP9w@mail.gmail.com>
+Subject: Re: [PATCH v2] fs/proc/page: Refactoring to reduce code duplication.
+To: Liu Ye <liuyerd@163.com>, akpm@linux-foundation.org
+Cc: willy@infradead.org, ran.xiaokai@zte.com.cn, dan.carpenter@linaro.org,
+ linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ Liu Ye <liuye@kylinos.cn>
+References: <20250317100719.134558-1-liuyerd@163.com>
+From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
-From: Antonio Quartulli <antonio@openvpn.net>
-Autocrypt: addr=antonio@openvpn.net; keydata=
- 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
-Organization: OpenVPN Inc.
-In-Reply-To: <CALW65jYaMBuMqzCFYwUJfLBg8+epQEjCg0MOpssGCwXqxbFP9w@mail.gmail.com>
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20250317100719.134558-1-liuyerd@163.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 17/03/2025 11:10, Qingfang Deng wrote:
-> On Mon, Mar 17, 2025 at 6:00 PM Antonio Quartulli <antonio@openvpn.net> wrote:
->>
->> On 17/03/2025 10:41, Qingfang Deng wrote:
->>> Hi Antonio,
->>>
->>> On Mon, Mar 17, 2025 at 5:23 PM Antonio Quartulli <antonio@openvpn.net> wrote:
->>>>>> +static void ovpn_setup(struct net_device *dev)
->>>>>> +{
->>>>>> +    netdev_features_t feat = NETIF_F_SG | NETIF_F_HW_CSUM | NETIF_F_RXCSUM |
->>>>>
->>>>> Do not advertise NETIF_F_HW_CSUM or NETIF_F_RXCSUM, as TX/RX checksum is
->>>>> not handled in hardware.
->>>>
->>>> The idea behind these flags was that the OpenVPN protocol will take care
->>>> of authenticating packets, thus substituting what the CSUM would do here.
->>>> For this I wanted to avoid the stack to spend time computing the CSUM in
->>>> software.
->>>
->>> For the RX part (NETIF_F_RXCSUM), you might be correct, but in patch
->>> 08 you wrote:
->>>> /* we can't guarantee the packet wasn't corrupted before entering the
->>>> * VPN, therefore we give other layers a chance to check that
->>>> */
->>>> skb->ip_summed = CHECKSUM_NONE;
->>
->> Right. This was the result after a lengthy discussion with Sabrina.
->> Despite authenticating what enters the tunnel, we indeed concluded it is
->> better to let the stack verify that what entered was not corrupted.
->>
->>>
->>> So NETIF_F_RXCSUM has no effect.
->>
->> Does it mean I can drop NETIF_F_RXCSUM and also the line
->>
->> skb->ip_summed = CHECKSUM_NONE;
->>
->> at the same time?
+On 17.03.25 11:07, Liu Ye wrote:
+> From: Liu Ye <liuye@kylinos.cn>
 > 
-> I don't think so. skb->ip_summed might have been set to
-> CHECKSUM_UNNECESSARY on the lower layer with UDP/TCP RX checksum.
+> The function kpageflags_read and kpagecgroup_read is quite similar
+> to kpagecount_read. Consider refactoring common code into a helper
+> function to reduce code duplication.
+> 
+> Signed-off-by: Liu Ye <liuye@kylinos.cn>
+> 
+> ---
+> V2 : Use an enumeration to indicate the operation to be performed
+> to avoid passing functions.
+> ---
+> ---
+>   fs/proc/page.c | 166 +++++++++++++++++--------------------------------
+>   1 file changed, 58 insertions(+), 108 deletions(-)
+> 
+> diff --git a/fs/proc/page.c b/fs/proc/page.c
+> index a55f5acefa97..66f454330a87 100644
+> --- a/fs/proc/page.c
+> +++ b/fs/proc/page.c
+> @@ -22,6 +22,14 @@
+>   #define KPMMASK (KPMSIZE - 1)
+>   #define KPMBITS (KPMSIZE * BITS_PER_BYTE)
+>   
+> +enum kpage_operation {
+> +	KPAGE_FLAGS,
+> +	KPAGE_COUNT,
+> +#ifdef CONFIG_MEMCG
+> +	KPAGE_CGROUP,
+> +#endif
+> +};
+> +
+>   static inline unsigned long get_max_dump_pfn(void)
+>   {
+>   #ifdef CONFIG_SPARSEMEM
+> @@ -37,19 +45,17 @@ static inline unsigned long get_max_dump_pfn(void)
+>   #endif
+>   }
+>   
+> -/* /proc/kpagecount - an array exposing page mapcounts
+> - *
+> - * Each entry is a u64 representing the corresponding
+> - * physical page mapcount.
+> - */
+> -static ssize_t kpagecount_read(struct file *file, char __user *buf,
+> -			     size_t count, loff_t *ppos)
+> +static ssize_t kpage_read(struct file *file, char __user *buf,
+> +		size_t count, loff_t *ppos,
+> +		enum kpage_operation op)
+>   {
+>   	const unsigned long max_dump_pfn = get_max_dump_pfn();
+>   	u64 __user *out = (u64 __user *)buf;
+> +	struct page *ppage;
+>   	unsigned long src = *ppos;
+>   	unsigned long pfn;
+>   	ssize_t ret = 0;
+> +	u64 info;
+>   
+>   	pfn = src / KPMSIZE;
+>   	if (src & KPMMASK || count & KPMMASK)
+> @@ -59,19 +65,29 @@ static ssize_t kpagecount_read(struct file *file, char __user *buf,
+>   	count = min_t(unsigned long, count, (max_dump_pfn * KPMSIZE) - src);
+>   
+>   	while (count > 0) {
+> -		struct page *page;
+> -		u64 mapcount = 0;
+> -
+> -		/*
+> -		 * TODO: ZONE_DEVICE support requires to identify
+> -		 * memmaps that were actually initialized.
+> -		 */
+> -		page = pfn_to_online_page(pfn);
+> -		if (page)
+> -			mapcount = folio_precise_page_mapcount(page_folio(page),
+> -							       page);
+> -
+> -		if (put_user(mapcount, out)) {
+> +		ppage = pfn_to_online_page(pfn);
+> +
+> +		if (ppage) {
+> +			switch (op) {
+> +			case KPAGE_FLAGS:
+> +				info = stable_page_flags(ppage);
+> +				break;
+> +			case KPAGE_COUNT:
+> +				info = folio_precise_page_mapcount(page_folio(ppage), ppage);
+> +				break;
+> +#ifdef CONFIG_MEMCG
+> +			case KPAGE_CGROUP:
+> +				info = page_cgroup_ino(ppage);
+> +				break;
+> +#endif
 
-Makes sense.
+In general, LGTM.
 
-Ok, thanks!
+I do wonder if we should just get rid of the two "#ifdef CONFIG_MEMCG" by adding
+a stub for page_cgroup_ino().
 
-Regards,
+diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+index 57664e2a8fb7b..24248f4dcc971 100644
+--- a/include/linux/memcontrol.h
++++ b/include/linux/memcontrol.h
+@@ -1788,6 +1788,11 @@ static inline void count_objcg_events(struct obj_cgroup *objcg,
+  {
+  }
+  
++static inline ino_t page_cgroup_ino(struct page *page)
++{
++       return 0;
++}
++
+  #endif /* CONFIG_MEMCG */
+  
+  #if defined(CONFIG_MEMCG) && defined(CONFIG_ZSWAP)
 
 
 -- 
-Antonio Quartulli
-OpenVPN Inc.
+Cheers,
+
+David / dhildenb
 
 
