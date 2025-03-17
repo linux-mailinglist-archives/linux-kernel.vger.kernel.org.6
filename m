@@ -1,124 +1,284 @@
-Return-Path: <linux-kernel+bounces-564005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 321A8A64BFA
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 12:11:59 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66855A64BCC
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 12:09:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2A0B3A61A5
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:08:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4F00B7A4B41
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:08:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26F652356A8;
-	Mon, 17 Mar 2025 11:08:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25E8023314E;
+	Mon, 17 Mar 2025 11:09:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RM4/S9vS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="hwWjiKe4";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="B0T0sJOJ";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="hwWjiKe4";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="B0T0sJOJ"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81DBB1990B7;
-	Mon, 17 Mar 2025 11:08:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 063A5233717
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 11:08:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742209713; cv=none; b=ZQGDLUQnA06Bm5C1qnEuEC+8CMduA8Zxxt9qhWz+yM7IrlnTi2+fLJGEde/2WnHW1N55OWziINOo/auS6+B0zHTAx/xUXnHRrDUajxqyaN3qUfoJOxFxRamrYQWi+dTcw0WvqE2h2QuALLFSJf82+rbAcxKAyUWdReBHuA2IvZ4=
+	t=1742209741; cv=none; b=PpG5R1aeIrOYbXsjTC17Pey4vOUZkeRgr6O7KLNnKGA3ObPXv7lmXch/+rWpSxaiWVLJHA3ZtL/qL+S0KmoTeQ9L1S1WNsCW1vRGBCbCJFdciznDszyMLBmdL0fP7kpki9yQKLXhWqcxRohd3EIxjK9w8OVK8ILIFDEKW9iPOeI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742209713; c=relaxed/simple;
-	bh=vD80iwdiMAGzs4naZ/VRoajC/AaqYf0/78u4RZKwmKc=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=b5N9I3X+nXaaov5gPI1lCIiT7BoGAVy58wLmMNVTFwYBgDcUehD/uLH88Jp2tQUoLni5F0BWA+cQJmVLyTboxNJh+LLIUV16npqW1BzZ2o1XaALN+qYLlHOMnB9sRIHhwfNhAKTb4M8WMjLIkJcv9crEUAZXmum7VkbdGIr4V6s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RM4/S9vS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED487C4CEE3;
-	Mon, 17 Mar 2025 11:08:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742209713;
-	bh=vD80iwdiMAGzs4naZ/VRoajC/AaqYf0/78u4RZKwmKc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=RM4/S9vSKlLErShJGXGSJO3O7OGbCoHyj6fao5LlD32rs3aJaoIjPh6mr86sIYxsr
-	 HMxU73du7cVPFxd1jE/gxIV34MEtDXRf9uvE9zAQ8mTJMiTgOgzmmDTxvWP3mFKLwY
-	 EkC9mL4m4WvCdGbeSVPJZfnN66EIQAgc3pzZeeBGka74aQv1mCPNdM8o1Srwk3Y9fW
-	 GQx/cXx4OouQYGgxZADEchkIDE1AqRmWBQFM5Au4kaP1TbzboE0iONnCMXd+w0I947
-	 PT6zaSY5gElvKZWBS2HhimvAj8slpYd2Sg6u83MALSPf5WWmR0k4jr0SV8TEXw8+Ip
-	 0MLNf/mnVb1bA==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1tu8Kc-00EGSs-Py;
-	Mon, 17 Mar 2025 11:08:30 +0000
-Date: Mon, 17 Mar 2025 11:08:30 +0000
-Message-ID: <86zfhjnccx.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Oliver Upton <oliver.upton@linux.dev>
-Cc: Christoffer Dall <cdall@cs.columbia.edu>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next
- Mailing List <linux-next@vger.kernel.org>,
-	Mark Rutland
- <mark.rutland@arm.com>,
-	Shameer
- Kolothum <shameerali.kolothum.thodi@huawei.com>
-Subject: Re: linux-next: manual merge of the kvm-arm tree with the arm64 tree
-In-Reply-To: <20250317172102.55f7c4d9@canb.auug.org.au>
-References: <20250317172102.55f7c4d9@canb.auug.org.au>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1742209741; c=relaxed/simple;
+	bh=tWtg1QWw/sSvhu0Irttbs6EX4vmu0Sl///oymLht61s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=bZrUsO2XC6JRzQ/1Kqm7etyj3uTvzCMA+1bQiucY/J3H9Ex8G0pzsOyZFQlqwrdjRyYNT1lqgdlw4D62xWAB9r64LH2evFNBpKvHfuQjrmLXbgU7JIePgV11gQaS1blIUdTdMnZDnSP/+PQocU/S/sEhbKLRbRbo57EcPEpBof8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=hwWjiKe4; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=B0T0sJOJ; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=hwWjiKe4; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=B0T0sJOJ; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 1614B21C94;
+	Mon, 17 Mar 2025 11:08:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1742209736; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=t/DK9r72Uol6zgQzU2gC1hGvx4LoRdqfQlA9txMt/Pg=;
+	b=hwWjiKe4+VhV/uDqgYQCVtEp6iPqo//Gghh2Uclg9qsm7CAW8y0WUk79lIYOspdCGfXHZn
+	Nu0S8yFRFhO4C+KgjopzH1DTSjODZdQQIMkGWvI02CogM/wqPNyRwXr8RyAyiVOhlN5Jeh
+	qGoPQtIzNCueZaEocPQnQKesdqcwO5I=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1742209736;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=t/DK9r72Uol6zgQzU2gC1hGvx4LoRdqfQlA9txMt/Pg=;
+	b=B0T0sJOJKeCFIJiQ4OJAT4s4s29ghj+674SrtqIOwEIIjprm/G+NqeTzcHYSdZBnIQYexW
+	bOyFuPBtCepgkJCQ==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=hwWjiKe4;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=B0T0sJOJ
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1742209736; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=t/DK9r72Uol6zgQzU2gC1hGvx4LoRdqfQlA9txMt/Pg=;
+	b=hwWjiKe4+VhV/uDqgYQCVtEp6iPqo//Gghh2Uclg9qsm7CAW8y0WUk79lIYOspdCGfXHZn
+	Nu0S8yFRFhO4C+KgjopzH1DTSjODZdQQIMkGWvI02CogM/wqPNyRwXr8RyAyiVOhlN5Jeh
+	qGoPQtIzNCueZaEocPQnQKesdqcwO5I=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1742209736;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=t/DK9r72Uol6zgQzU2gC1hGvx4LoRdqfQlA9txMt/Pg=;
+	b=B0T0sJOJKeCFIJiQ4OJAT4s4s29ghj+674SrtqIOwEIIjprm/G+NqeTzcHYSdZBnIQYexW
+	bOyFuPBtCepgkJCQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E85FA139D2;
+	Mon, 17 Mar 2025 11:08:55 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id e+QlOMcC2GfnLgAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Mon, 17 Mar 2025 11:08:55 +0000
+Message-ID: <e728af67-4f7b-43ef-8fe5-0eec4064c625@suse.cz>
+Date: Mon, 17 Mar 2025 12:08:55 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: sfr@canb.auug.org.au, oliver.upton@linux.dev, cdall@cs.columbia.edu, catalin.marinas@arm.com, will@kernel.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, mark.rutland@arm.com, shameerali.kolothum.thodi@huawei.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC v2 00/10] SLUB percpu sheaves
+Content-Language: en-US
+To: Suren Baghdasaryan <surenb@google.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Kent Overstreet <kent.overstreet@linux.dev>, Christoph Lameter
+ <cl@linux.com>, David Rientjes <rientjes@google.com>,
+ Roman Gushchin <roman.gushchin@linux.dev>,
+ Hyeonggon Yoo <42.hyeyoo@gmail.com>, Uladzislau Rezki <urezki@gmail.com>,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org, rcu@vger.kernel.org,
+ maple-tree@lists.infradead.org,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ Alexei Starovoitov <ast@kernel.org>,
+ Sidhartha Kumar <sidhartha.kumar@oracle.com>
+References: <20250214-slub-percpu-caches-v2-0-88592ee0966a@suse.cz>
+ <ztssad52ikws3a2dwodju4o73h6rsutxnvzj5i6vyjjkudkiel@g7c7g5i3l7jd>
+ <CAJuCfpHi4Od4K2xQEUFWuG=a4zCKecWBMwBiy_7mVn6QgsTSvA@mail.gmail.com>
+ <CAJuCfpEq8P4cz7HXaRVqaagONPBKrFgOSqdigEYU60sGAE4-rg@mail.gmail.com>
+ <173d4dbe-399d-4330-944c-9689588f18e8@suse.cz>
+ <CAJuCfpHHXYKGjaOxHcuJcuQbUVO7YqLMpcYeF3HM5Ayxy1fE+g@mail.gmail.com>
+ <CAJuCfpE7t83PKWw+8XJLE5538kKJnbhirLg2siDSw=F4sw=9uA@mail.gmail.com>
+ <19df9218-c984-4cbc-8b5d-4e0f7658935f@suse.cz>
+ <ape445nrqgod4ivtzcwacmfdshi3fgcqmmu54iascbjsk3sluo@w4jjihiz5jzr>
+ <CAJuCfpFVopL+sMdU4bLRxs+HS_WPCmFZBdCmwE8qV2Dpa5WZnA@mail.gmail.com>
+From: Vlastimil Babka <vbabka@suse.cz>
+In-Reply-To: <CAJuCfpFVopL+sMdU4bLRxs+HS_WPCmFZBdCmwE8qV2Dpa5WZnA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Rspamd-Queue-Id: 1614B21C94
+X-Spam-Score: -3.01
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-3.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	MIME_TRACE(0.00)[0:+];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FREEMAIL_TO(0.00)[google.com,oracle.com,linux.dev,linux.com,gmail.com,kvack.org,vger.kernel.org,lists.infradead.org,linutronix.de,kernel.org];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[15];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	ARC_NA(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.cz:mid,suse.cz:email]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-Hi Stephen,
+On 3/14/25 18:10, Suren Baghdasaryan wrote:
+> On Tue, Mar 4, 2025 at 11:08 AM Liam R. Howlett <Liam.Howlett@oracle.com> wrote:
+>>
+>> * Vlastimil Babka <vbabka@suse.cz> [250304 05:55]:
+>> > On 2/25/25 21:26, Suren Baghdasaryan wrote:
+>> > > On Mon, Feb 24, 2025 at 1:12 PM Suren Baghdasaryan <surenb@google.com> wrote:
+>> > >>
+>> > >> >
+>> > >> > > The values represent the total time it took to perform mmap syscalls, less is
+>> > >> > > better.
+>> > >> > >
+>> > >> > > (1)                  baseline       control
+>> > >> > > Little core       7.58327       6.614939 (-12.77%)
+>> > >> > > Medium core  2.125315     1.428702 (-32.78%)
+>> > >> > > Big core          0.514673     0.422948 (-17.82%)
+>> > >> > >
+>> > >> > > (2)                  baseline      control
+>> > >> > > Little core       7.58327       5.141478 (-32.20%)
+>> > >> > > Medium core  2.125315     0.427692 (-79.88%)
+>> > >> > > Big core          0.514673    0.046642 (-90.94%)
+>> > >> > >
+>> > >> > > (3)                   baseline      control
+>> > >> > > Little core        7.58327      4.779624 (-36.97%)
+>> > >> > > Medium core   2.125315    0.450368 (-78.81%)
+>> > >> > > Big core           0.514673    0.037776 (-92.66%)
+>> > >
+>> > > (4)                   baseline      control
+>> > > Little core        7.58327      4.642977 (-38.77%)
+>> > > Medium core   2.125315    0.373692 (-82.42%)
+>> > > Big core           0.514673    0.043613 (-91.53%)
+>> > >
+>> > > I think the difference between (3) and (4) is noise.
+>> > > Thanks,
+>> > > Suren.
+>> >
+>> > Hi, as we discussed yesterday, it would be useful to set the baseline to
+>> > include everything before sheaves as that's already on the way to 6.15, so
+>> > we can see more clearly what sheaves do relative to that. So at this point
+>> > it's the vma lock conversion including TYPESAFE_BY_RCU (that's not undone,
+>> > thus like in scenario (4)), and benchmark the following:
+>> >
+>> > - baseline - vma locking conversion with TYPESAFE_BY_RCU
+>> > - baseline+maple tree node reduction from mm-unstable (Liam might point out
+>> > which patches?)
+>>
+>> Sid's patches [1] are already in mm-unstable.
+>>
+>>
+>> > - the above + this series + sheaves enabled for vm_area_struct cache
+>> > - the above + full maple node sheaves conversion [1]
+>> > - the above + the top-most patches from [1] that are optimizations with a
+>> > tradeoff (not clear win-win) so it would be good to know if they are useful
+>> >
+>> > [1] currently the 4 commits here:
+>> > https://web.git.kernel.org/pub/scm/linux/kernel/git/vbabka/linux.git/log/?h=slub-percpu-sheaves-v2-maple
+>> > from "maple_tree: Sheaf conversion" to "maple_tree: Clean up sheaf"
+>> > but as Liam noted, they won't cherry pick without conflict once maple tree
+>> > node reduction is backported, but he's working on a rebase
+>>
+>> Rebased maple tree sheaves, patches are here [2].
+> 
+> Hi Folks,
+> Sorry for the delay. I got the numbers last week but they looked a bit
+> weird, so I reran the test increasing the number of iterations to make
+> sure noise is not a factor. That took most of this week. Below are the
+> results. Please note that I had to backport the patchsets to 6.12
+> because that's the closest stable Android kernel I can use. I measure
+> cumulative time to execute mmap syscalls, so the smaller the number
+> the better mmap performance is:
 
-On Mon, 17 Mar 2025 06:21:02 +0000,
-Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> 
-> Hi all,
-> 
-> Today's linux-next merge of the kvm-arm tree got a conflict in:
-> 
->   arch/arm64/kvm/hypercalls.c
-> 
-> between commit:
-> 
->   d2c173acbf93 ("KVM: arm64: expose SMCCC_ARCH_WORKAROUND_4 to guests")
-> 
-> from the arm64 tree and commit:
-> 
->   c0000e58c74e ("KVM: arm64: Introduce KVM_REG_ARM_VENDOR_HYP_BMAP_2")
-> 
-> from the kvm-arm tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
+Is that a particular benchmark doing those syscalls, or you time them within
+actual workloads?
 
-Thanks for resolving all 3 conflicts, which look good to me.
+> baseline: 6.12 + vm_lock conversion and TYPESAFE_BY_RCU
+> config1: baseline + Sid's patches [1]
+> config2: sheaves RFC
+> config3: config1 + vm_area_struct with sheaves
+> config4: config2 + maple_tree Sheaf conversion [2]
+> config5: config3 + 2 last optimization patches from [3]
+> 
+>                config1     config2     config3     config4     config5
+> Little core    -0.10%      -10.10%     -12.89%     -10.02%     -13.64%
+> Mid core       -21.05%     -37.31%     -44.97%     -15.81%     -22.15%
+> Big core       -17.17%     -34.41%     -45.68%     -11.39%     -15.29%
 
-Oliver, would you consider picking the following arm64 branches:
+Thanks a lot, Suren.
 
-- arm64/for-next/leaky-prefetcher
-- arm64/for-next/spectre-bhb-assume-vulnerable
+> [1] https://lore.kernel.org/linux-mm/20250227204823.758784-1-sidhartha.kumar@oracle.com/
+> [2] https://www.infradead.org/git/?p=users/jedix/linux-maple.git;a=shortlog;h=refs/heads/sheaves_rebase_20250304
+> [3] https://web.git.kernel.org/pub/scm/linux/kernel/git/vbabka/linux.git/log/?h=slub-percpu-sheaves-v2-maple
+> 
+> From the numbers, it looks like config4 regresses the performance and
+> that's what looked weird to me last week and I wanted to confirm this.
+> But from sheaves POV, it looks like they provide the benefits I saw
+> before. Sid's patches which I did not test separately before also look
+> beneficial.
 
-so that these conflicts are solved on our end?
+Indeed, good job, Sid. It's weird that config4 isn't doing well. The problem
+can be either in sheaves side (the sheaves preallocation isn't effective) or
+maple tree side doing some excessive work. It could be caused by the wrong
+condition in kmem_cache_return_sheaf() that Harry pointed out, so v3 might
+improve if that was it. Otherwise we'll probably need to fill the gaps in
+sheaf-related stats and see what are the differences between config3 and
+config4.
 
-Thanks,
+> Thanks,
+> Suren.
+> 
+>>
+>>
+>> >
+>> >
+>> ...
+>>
+>> Thanks,
+>> Liam
+>>
+>> [1]. https://lore.kernel.org/linux-mm/20250227204823.758784-1-sidhartha.kumar@oracle.com/
+>> [2]. https://www.infradead.org/git/?p=users/jedix/linux-maple.git;a=shortlog;h=refs/heads/sheaves_rebase_20250304
 
-	M.
-
--- 
-Without deviation from the norm, progress is not possible.
 
