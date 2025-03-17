@@ -1,219 +1,125 @@
-Return-Path: <linux-kernel+bounces-564554-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564556-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8A47A6574C
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 17:06:15 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF709A65754
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 17:06:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B10D5170CE3
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 16:00:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3AFDB421731
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 16:00:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 562D81A01D4;
-	Mon, 17 Mar 2025 15:57:26 +0000 (UTC)
-Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF9E01A83E5;
+	Mon, 17 Mar 2025 15:58:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SMTFTTf7"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 056C317A31B
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 15:57:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5A9517A30F;
+	Mon, 17 Mar 2025 15:58:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742227045; cv=none; b=rryWzwJXhxx1qGaLSfIVFpH9RgfXV8TcekImyr3LbizG/42kZtej1eFAxoYdsHql5Z0wYSZBIY643OC76fSdSyB1HOqxHC3K6GHRqinkVRUpZHeLAIDzb+qyMGgqcmL5d0oolZV/QOkvdqRo94EMEsfDUvIkIE7/YHHNCi7LhvI=
+	t=1742227085; cv=none; b=LAtVdVFj3CDCReVE45Wy2InKo+IiDlsXK/Sl8YDGE4YZ4FCdAq/sLK9bejuElT4meNpo5KSmR5j+QNactNIwZthvtjb7y4ngngnwwE78MEloO8glHV5LqRUik/f9ISiVRy5qv5bs4T+fHIys7/LwiJbcH19fWmw7PNt9xJXTc3M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742227045; c=relaxed/simple;
-	bh=bQS/Z8hSCNa+UUBPm5Eq+ej84POnMjt56pV8bkoB5Hs=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=BjIoTuxXBPXPQsdYVznXcYsJTkPUgwTqWjfFfRrVnovNz+U/dJdyP+0sDBJY5Hd3TXwEfruf0ciVvCbYxx8hkL7wWR/s1kxiGh1C+wLMZykBQoomK8+n79XWNOWgSdE2OcDWHFMI8hHY0/sJJFfr6Zq2ufhH575xwevYWVeBciU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-3ce843b51c3so129335985ab.0
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 08:57:23 -0700 (PDT)
+	s=arc-20240116; t=1742227085; c=relaxed/simple;
+	bh=yMKzmgdAa1GrfN1P1367oG58K7sJ1GR+/2GwB7WGKUc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KYsPbjofdtxpjzh1kjY1fqXayKBBvHh2b2dwbLZo3SLxxVEwmttFqES8RI5ZD71kiKDdyPi9c9tt4JCOJSX50WbyFyYl3O0TkMC4+hQHrWsqdZ6AZ2OKi77H7c7ifTkXMaKg3X0dvT5eaqhSu183uASAVn+9MFgcrnT/swG9Vts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SMTFTTf7; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-224019ad9edso35539345ad.1;
+        Mon, 17 Mar 2025 08:58:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742227083; x=1742831883; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=06QGEsbiDHTPlITpRCkSEygiFBtZganqjlJySZAtEPM=;
+        b=SMTFTTf723AxXy4OSnMzTmpSgvMaXDGzYPg/1GVw/WNHcyjPGc373IXAAnmnqmM2FI
+         XwRBMM1VT+/mF3NJJAJgwpFj9iaUPJZ9tMqzV4SDZG9OPd4F6EatvKBEJpMi1YY1+sNf
+         M9Fykb0eveZdjggZ9IyGvTxRUO/YyVKpJVx8pQzN1ZBpfQzIDZVdlifEXiMlVPjoCMVG
+         tXcj+iSnXfPCfjAmrNMrcOQ4iSzrQk6s+9lSJ3bH0xIGeK8zN3bnP+AD7MUdEdzu9eLX
+         25fCr4wbZPBmgwUZozhaSF1xK2vBADLMSm4khNKAq9vaqrkDaU36x/VoCd6uR5bichte
+         fArQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742227043; x=1742831843;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=VrSNfPkC4/dJSqogMc2C9zkXX5OF4FlmLIcj0/IqWpk=;
-        b=J0hLLDld0KDG72AKdbKzJj0SyCT32TKr2lx820v2asTYbzNVQz1NAOXiCBcQRNA45g
-         xy/qER0uqjsEyAR28Wr23q0Wihvdk5HN03KJlPLTqyDwyaUc7QYuAoWQW3nXEXdHl32R
-         MF+lEVnsOOCrxIPFPH+DjjiDPynxA1IEDaKK8kEgTdWZi8rPW07kFT+YRUonrgVy6jOy
-         uUSwvVnwPpV3SMfG73Oi9S1UnSDw3LpcS5REvztF2p6ca2Ydh8ARaxPWuhw22hiFt8yO
-         9hJLuyv+GxYA4f70WJC3s+2QSGHEhxs99SPs9Iud0/UAt7BxLcRxpNoKlvLKYO/6ULMu
-         F5hw==
-X-Forwarded-Encrypted: i=1; AJvYcCXD9esXtY3nVItoCxkw8nphL+fSXrLymlQZDHffpXG2bfIYdPXM2r6s8TvL3zkCPp+CK4JxW8gTQqxEBXA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyKfHeS6BqXRWp/9ZNAzDUDDhdIdcCgGm5iYBTvkVlSCda9JZpP
-	iJyJyR5Q+UZpOe4TU6tKixzd8YX5Pln77QSzQ+hER0BDGh2wYH7Z3C6wtZvwsshjV6AMO6d9RS7
-	bXK9xI4PNBcPfF70C62aX/1CasKSX26R8EaAueWitn//KV/qgao+U3BU=
-X-Google-Smtp-Source: AGHT+IEK2YdpsCE23SJm/sdCC58aB+z+BP/BSb7MDUvAjVa1Oe9Bnrn+Ht7YD5EUiCVjjESpQGZe1vCiaBR7sWSFefqSYunEFo9Y
+        d=1e100.net; s=20230601; t=1742227083; x=1742831883;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=06QGEsbiDHTPlITpRCkSEygiFBtZganqjlJySZAtEPM=;
+        b=hSgzOS4Ob5Qsh5HLrKtrLplmztmXzXaS94w1GZQ/e2Nv0Lhy06rUKsl/BCjYDxh8Jf
+         tQmiMZCoKUVuZFU8AUMwFryb8lZXVgt7fqxWibf8aBchOR3z6CeXD4q+Yi6H9gn+w58z
+         pcx0H3b4vKFYMXsr4MaLdFz4v/dyRFF9KSPBScSFgy8L+fGtTZFTx8g4Vz7y22CUO1o5
+         zsSlqots35qtDqnZEMBP54CUKDMu9UAS2LIitfQFDCUWzOZkwbvi/hf/+UGtFt3pYQ6/
+         bUHNQeEAzHzyfTTbZOplPzJ2/VNX0Kxj2idHb04WWzbpoTb6AQLndCJSTOCjHrK215qi
+         vAFQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWJ6yolh3/ky9VItXc8ggMgQTEKOXsIPQECdGUOR2dbQ/pLR9dvJ4qF40U/eeH6ldwnF4swHAI0aAuB@vger.kernel.org, AJvYcCWWMLJtMXm8gI9M/XaopvGQX5akCCPBcPi8hxq/q19smihIDWedTL6W3aYwNCO2aMbPMbGvEJQNoK3+6NK/@vger.kernel.org, AJvYcCXRpVjg4tWC1CdhmV9iGBUDl1DhLVife+XEHDT4yIBCDgxfQnlNJLP+DIH0ygrqfLM/lOhpopQzEFIXP5Op4muPlg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyLG0cSuCdCMH9sylCwGFk5HGTsjE7jvm48zpUKGzz1tdrf1j/w
+	hMrRiR1KvJXTBITCyXv3UhJArycQYUztOcxyySTImDVIjIpyvXvl2ZtiN+zpu4JFRULA6/IsZhv
+	eXHf3RZovybzOEepGY8bbW3Pip2A=
+X-Gm-Gg: ASbGnctDIuEd6zeN1s/BCTc4X6REfLebFGb4DIBmHS++9U+1jfKenZScAM0Az9LyG5b
+	HwQD2XJpNGAxV8NEtnaGTDGCCJ8m+cXwZitX8gI7NO7Cqr6vRjx1OPrBifPwNWGD0guEI87Mqi3
+	nWU3dC5IGxMrXcA/TQK5G1jWkT5vU=
+X-Google-Smtp-Source: AGHT+IG3Ayo9k0yRtjHNBCfqhmNJz3asFcvcSqQ3hdNGSq7kkzqBge1sZkHTYixEYa/8f6gTrblik9jUofUotL/jY/U=
+X-Received: by 2002:a17:90b:17c5:b0:2fe:b735:87da with SMTP id
+ 98e67ed59e1d1-3019e7a3ce7mr409937a91.0.1742227082981; Mon, 17 Mar 2025
+ 08:58:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:c56e:0:b0:3d2:b72d:a502 with SMTP id
- e9e14a558f8ab-3d57ba14118mr5178855ab.22.1742227043117; Mon, 17 Mar 2025
- 08:57:23 -0700 (PDT)
-Date: Mon, 17 Mar 2025 08:57:23 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67d84663.050a0220.2ca2c6.0020.GAE@google.com>
-Subject: [syzbot] [bluetooth?] KASAN: wild-memory-access Read in l2cap_connect_cfm
-From: syzbot <syzbot+0e4ebcc970728e056324@syzkaller.appspotmail.com>
-To: johan.hedberg@gmail.com, linux-bluetooth@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, luiz.dentz@gmail.com, marcel@holtmann.org, 
-	syzkaller-bugs@googlegroups.com
+References: <20250317133306.2003909-1-daniel.baluta@nxp.com>
+ <20250317133306.2003909-3-daniel.baluta@nxp.com> <5873285.DvuYhMxLoT@steina-w>
+In-Reply-To: <5873285.DvuYhMxLoT@steina-w>
+From: Daniel Baluta <daniel.baluta@gmail.com>
+Date: Mon, 17 Mar 2025 17:58:07 +0200
+X-Gm-Features: AQ5f1JrRqDM8p6JEGxBqM22DUaeaV1igcAM-i6by99ARfroWOHqb4YOLD6MREdU
+Message-ID: <CAEnQRZCsCYbQU8uxpFeyLmji65VRoO0rckRcoyc3frd2_B_KqQ@mail.gmail.com>
+Subject: Re: [PATCH v5 2/5] arm64: dts: imx8mp: Add mu2 root clock
+To: Alexander Stein <alexander.stein@ew.tq-group.com>
+Cc: shawnguo@kernel.org, robh@kernel.org, linux-arm-kernel@lists.infradead.org, 
+	s.hauer@pengutronix.de, kernel@pengutronix.de, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, festevam@gmail.com, devicetree@vger.kernel.org, 
+	imx@lists.linux.dev, linux-kernel@vger.kernel.org, frank.li@nxp.com, 
+	aisheng.dong@nxp.com, laurentiu.mihalcea@nxp.com, shengjiu.wang@nxp.com, 
+	iuliana.prodan@nxp.com, a.fatoum@pengutronix.de, mathieu.poirier@linaro.org, 
+	linux-remoteproc@vger.kernel.org, Daniel Baluta <daniel.baluta@nxp.com>, 
+	Peng Fan <peng.fan@nxp.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Mon, Mar 17, 2025 at 5:30=E2=80=AFPM Alexander Stein
+<alexander.stein@ew.tq-group.com> wrote:
+>
+> Am Montag, 17. M=C3=A4rz 2025, 14:33:03 CET schrieb Daniel Baluta:
+> > Enable MU2 node and add mu2 root clock.
+> > MU2 is used to communicate with DSP core.
+> >
+> > Reviewed-by: Iuliana Prodan <iuliana.prodan@nxp.com>
+> > Reviewed-by: Peng Fan <peng.fan@nxp.com>
+> > Signed-off-by: Daniel Baluta <daniel.baluta@nxp.com>
+> > ---
+> >  arch/arm64/boot/dts/freescale/imx8mp.dtsi | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/arch/arm64/boot/dts/freescale/imx8mp.dtsi b/arch/arm64/boo=
+t/dts/freescale/imx8mp.dtsi
+> > index 3b725fe442d0..5b443fbeded8 100644
+> > --- a/arch/arm64/boot/dts/freescale/imx8mp.dtsi
+> > +++ b/arch/arm64/boot/dts/freescale/imx8mp.dtsi
+> > @@ -1253,7 +1253,7 @@ mu2: mailbox@30e60000 {
+> >                               reg =3D <0x30e60000 0x10000>;
+> >                               interrupts =3D <GIC_SPI 136 IRQ_TYPE_LEVE=
+L_HIGH>;
+> >                               #mbox-cells =3D <2>;
+> > -                             status =3D "disabled";
+>
+> There is no need to enable MU2 if the DSP is disabled by default, no?
 
-syzbot found the following issue on:
-
-HEAD commit:    78e3fd2b7e4b Merge remote-tracking branch 'will/for-next/p..
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-console output: https://syzkaller.appspot.com/x/log.txt?x=15b05874580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=ddc962951c395b1d
-dashboard link: https://syzkaller.appspot.com/bug?extid=0e4ebcc970728e056324
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: arm64
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/6f8d7598ad09/disk-78e3fd2b.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/493e8429a272/vmlinux-78e3fd2b.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/c843736f7c02/Image-78e3fd2b.gz.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+0e4ebcc970728e056324@syzkaller.appspotmail.com
-
-kobject: kobject_add_internal failed for hci1:201 with -EEXIST, don't try to register things with the same name in the same directory.
-Bluetooth: hci1: failed to register connection device
-==================================================================
-BUG: KASAN: wild-memory-access in instrument_atomic_read include/linux/instrumented.h:68 [inline]
-BUG: KASAN: wild-memory-access in atomic_read include/linux/atomic/atomic-instrumented.h:32 [inline]
-BUG: KASAN: wild-memory-access in l2cap_chan_lock include/net/bluetooth/l2cap.h:827 [inline]
-BUG: KASAN: wild-memory-access in l2cap_conn_ready net/bluetooth/l2cap_core.c:1624 [inline]
-BUG: KASAN: wild-memory-access in l2cap_connect_cfm+0x538/0xde4 net/bluetooth/l2cap_core.c:7245
-Read of size 4 at addr deacfffffffffc8c by task kworker/u9:3/6449
-
-CPU: 1 UID: 0 PID: 6449 Comm: kworker/u9:3 Not tainted 6.14.0-rc6-syzkaller-g78e3fd2b7e4b #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
-Workqueue: hci1 hci_rx_work
-Call trace:
- show_stack+0x2c/0x3c arch/arm64/kernel/stacktrace.c:466 (C)
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0xe4/0x150 lib/dump_stack.c:120
- print_report+0xf8/0x550 mm/kasan/report.c:524
- kasan_report+0xd8/0x138 mm/kasan/report.c:634
- kasan_check_range+0x268/0x2a8 mm/kasan/generic.c:189
- __kasan_check_read+0x20/0x30 mm/kasan/shadow.c:31
- instrument_atomic_read include/linux/instrumented.h:68 [inline]
- atomic_read include/linux/atomic/atomic-instrumented.h:32 [inline]
- l2cap_chan_lock include/net/bluetooth/l2cap.h:827 [inline]
- l2cap_conn_ready net/bluetooth/l2cap_core.c:1624 [inline]
- l2cap_connect_cfm+0x538/0xde4 net/bluetooth/l2cap_core.c:7245
- hci_connect_cfm+0x120/0x1d4 include/net/bluetooth/hci_core.h:2051
- le_conn_complete_evt+0xa70/0xf80 net/bluetooth/hci_event.c:5763
- hci_le_conn_complete_evt+0x114/0x404 net/bluetooth/hci_event.c:5789
- hci_le_meta_evt+0x2a4/0x478 net/bluetooth/hci_event.c:7162
- hci_event_func net/bluetooth/hci_event.c:7470 [inline]
- hci_event_packet+0x884/0x1060 net/bluetooth/hci_event.c:7525
- hci_rx_work+0x31c/0xb04 net/bluetooth/hci_core.c:4015
- process_one_work+0x810/0x1638 kernel/workqueue.c:3238
- process_scheduled_works kernel/workqueue.c:3319 [inline]
- worker_thread+0x97c/0xeec kernel/workqueue.c:3400
- kthread+0x65c/0x7b0 kernel/kthread.c:464
- ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:862
-==================================================================
-Unable to handle kernel paging request at virtual address fbd51fffffffff91
-KASAN: maybe wild-memory-access in range [0xdeacfffffffffc88-0xdeacfffffffffc8f]
-Mem abort info:
-  ESR = 0x0000000096000004
-  EC = 0x25: DABT (current EL), IL = 32 bits
-  SET = 0, FnV = 0
-  EA = 0, S1PTW = 0
-  FSC = 0x04: level 0 translation fault
-Data abort info:
-  ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
-  CM = 0, WnR = 0, TnD = 0, TagAccess = 0
-  GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
-[fbd51fffffffff91] address between user and kernel address ranges
-Internal error: Oops: 0000000096000004 [#1] PREEMPT SMP
-Modules linked in:
-CPU: 1 UID: 0 PID: 6449 Comm: kworker/u9:3 Tainted: G    B              6.14.0-rc6-syzkaller-g78e3fd2b7e4b #0
-Tainted: [B]=BAD_PAGE
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
-Workqueue: hci1 hci_rx_work
-pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : raw_atomic_read include/linux/atomic/atomic-arch-fallback.h:457 [inline]
-pc : atomic_read include/linux/atomic/atomic-instrumented.h:33 [inline]
-pc : l2cap_chan_lock include/net/bluetooth/l2cap.h:827 [inline]
-pc : l2cap_conn_ready net/bluetooth/l2cap_core.c:1624 [inline]
-pc : l2cap_connect_cfm+0x53c/0xde4 net/bluetooth/l2cap_core.c:7245
-lr : instrument_atomic_read include/linux/instrumented.h:68 [inline]
-lr : atomic_read include/linux/atomic/atomic-instrumented.h:32 [inline]
-lr : l2cap_chan_lock include/net/bluetooth/l2cap.h:827 [inline]
-lr : l2cap_conn_ready net/bluetooth/l2cap_core.c:1624 [inline]
-lr : l2cap_connect_cfm+0x538/0xde4 net/bluetooth/l2cap_core.c:7245
-sp : ffff8000a1577460
-x29: ffff8000a1577500 x28: ffff0000d4756000 x27: 1fffe0001afe1a03
-x26: dfff800000000000 x25: ffff0000d47564b0 x24: ffff0000d7f0d01a
-x23: dead000000000100 x22: ffff0000d7f0d2c0 x21: 1fffe0001b467007
-x20: ffff0000da33803d x19: deacfffffffffc8c x18: 1fffe000366f6086
-x17: ffff80008fbbd000 x16: ffff80008b7cba1c x15: 0000000000000001
-x14: 1ffff0001262eaf8 x13: 0000000000000000 x12: 0000000000000000
-x11: 0000000000100000 x10: 00000000000596ee x9 : 0000000000000000
-x8 : 1bd59fffffffff91 x7 : 1fffe000366f6087 x6 : ffff8000803d4bfc
-x5 : 0000000000000000 x4 : 0000000000000001 x3 : ffff8000802f88ec
-x2 : 0000000000000001 x1 : 0000000000000000 x0 : 0000000000000000
-Call trace:
- raw_atomic_read include/linux/atomic/atomic-arch-fallback.h:457 [inline] (P)
- atomic_read include/linux/atomic/atomic-instrumented.h:33 [inline] (P)
- l2cap_chan_lock include/net/bluetooth/l2cap.h:827 [inline] (P)
- l2cap_conn_ready net/bluetooth/l2cap_core.c:1624 [inline] (P)
- l2cap_connect_cfm+0x53c/0xde4 net/bluetooth/l2cap_core.c:7245 (P)
- hci_connect_cfm+0x120/0x1d4 include/net/bluetooth/hci_core.h:2051
- le_conn_complete_evt+0xa70/0xf80 net/bluetooth/hci_event.c:5763
- hci_le_conn_complete_evt+0x114/0x404 net/bluetooth/hci_event.c:5789
- hci_le_meta_evt+0x2a4/0x478 net/bluetooth/hci_event.c:7162
- hci_event_func net/bluetooth/hci_event.c:7470 [inline]
- hci_event_packet+0x884/0x1060 net/bluetooth/hci_event.c:7525
- hci_rx_work+0x31c/0xb04 net/bluetooth/hci_core.c:4015
- process_one_work+0x810/0x1638 kernel/workqueue.c:3238
- process_scheduled_works kernel/workqueue.c:3319 [inline]
- worker_thread+0x97c/0xeec kernel/workqueue.c:3400
- kthread+0x65c/0x7b0 kernel/kthread.c:464
- ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:862
-Code: 52800081 aa1303e0 97568921 d343fe68 (38fa6908) 
----[ end trace 0000000000000000 ]---
-----------------
-Code disassembly (best guess):
-   0:	52800081 	mov	w1, #0x4                   	// #4
-   4:	aa1303e0 	mov	x0, x19
-   8:	97568921 	bl	0xfffffffffd5a248c
-   c:	d343fe68 	lsr	x8, x19, #3
-* 10:	38fa6908 	ldrsb	w8, [x8, x26] <-- trapping instruction
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+True, I can enable it only when needed. Will fix in next version.
 
