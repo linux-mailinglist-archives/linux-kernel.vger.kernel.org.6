@@ -1,175 +1,134 @@
-Return-Path: <linux-kernel+bounces-563713-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563714-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2D9AA64715
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:23:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4563A64725
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:24:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 248E8171E40
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 09:23:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5DF613A343A
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 09:23:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3A9A221F1B;
-	Mon, 17 Mar 2025 09:22:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D26A5219313;
+	Mon, 17 Mar 2025 09:23:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="etk2tHo0"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="b2QALQon"
+Received: from out-187.mta1.migadu.com (out-187.mta1.migadu.com [95.215.58.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48D3E221540;
-	Mon, 17 Mar 2025 09:22:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3F6E21D3DF
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 09:23:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742203374; cv=none; b=mA2HPGk95TrByNtQozAlkUp6dZfUAxdNCbLwSKYkOil+2jVwSU30nIWzKCEQhNzBRYInLMEkVXhoBmRV8fDNST0ufZxu1ambeMNA7he9VS18Pan63Qf/jaNBnf7i9HPV/YjepCEpvzjFHW3kHycfXAPqZqp35ZhPXyrXUb85tR0=
+	t=1742203397; cv=none; b=joCO/76BHGO8Z59o0k5uDGB+if3ytxeEyQ48lQV7Qu3tJfGfntvJqOTNKToUo911hzltQbtswuzZx/76neCHqiTN/H/YK5chLpWHyoR/twjwoGxz/HLePTbynaDXr5MgN/DBLujsmyUKkzUwCvl9X5bFW71P9gKR8Y7736In45Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742203374; c=relaxed/simple;
-	bh=WwqRo4Rn7rEhs3itYeIlnsJWkBlj136JMQ4Q4PGyZVU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=YcjTexSIzdWX61eTKpj073pEKj+yisnrSSf54M2SmAFgvtWcc6TRiWI2mNNIkyOgcYp6lSJ8871XUspcCjYVp9bokqDDd4jk6HSRqOIFn1onuM0BMTKB0U83XsRzQ8Ghmt1g6goemdX6Le+OOZWyluwjdcsVtxjLlRDLvENwRPQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=etk2tHo0; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52H0To6h022723;
-	Mon, 17 Mar 2025 09:22:48 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	3ciq3E2J8gZcfsBrXRmTg7dip/MJPjpBOViIXCSBzh0=; b=etk2tHo0qcDbk48a
-	ETn9yORn/s8p4FTJnrgFM+C1wh2v8GnYpZQMjcPBCZwdyLP+I9ULzYQb3KMLTZ0H
-	Ry0/J7IhghQZjpXZh9khoWxGY4rzatVLVNYPY+L6t7dGbnIaqHUetqABKBRrfCri
-	lbywiF6J7urrWNSRXfQbMEH+SycS79TpcfOxViKKrjE3t42IitM7x1fjJSRSGt+x
-	xd3970BFRbZVNrd5iR9U8CUrosswKK7nj4SBoa7ctIsuGOAZMBh0Owi3LI8hUJbC
-	DASQ4dYgjHE63orCrEZKxWTMPFE+SHxfMMI3VkFh7Ll6yMC8wGTtZol9OpAuJGsb
-	Qfg6Xg==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45d1r1440t-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 17 Mar 2025 09:22:48 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52H9Mldr020485
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 17 Mar 2025 09:22:47 GMT
-Received: from [10.152.195.140] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 17 Mar
- 2025 02:22:43 -0700
-Message-ID: <a1cbab24-d931-4946-ba58-4c37f0bb9cc0@quicinc.com>
-Date: Mon, 17 Mar 2025 14:52:40 +0530
+	s=arc-20240116; t=1742203397; c=relaxed/simple;
+	bh=Mb+VgaKm8ivxxe76CDFQAgmn9l/OziEXUXi1fWj9XjA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Cktbu8Kt9eQTNGybDPsTEisKrsjeKqqcM64+pHRMVknwslH6JB/j7h7+wBPMz99NhZZXF6wk9a28/+Y6qTgyPJgc8xzPXet7RJhz+Ond4yGMotk7E3ppF3O6wHfUb3FzbpIKhN0nihiNLCxnjHWvYWNcxizV5k/FODkpp8bLDj8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=b2QALQon; arc=none smtp.client-ip=95.215.58.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1742203390;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=KquXK1TpLM2XmJHXcnCYTlyZgnHIxPXdI8vQnH71mNA=;
+	b=b2QALQon8MOddzk0m4fpkNMP0165GyN7u+ahlifTUVPAdZkyMBNVDsV5e2/BAzrSlZfH0V
+	8mtN3heQ/oMBw6Bgv/x34HKBXQFdBFiIctfPrQICFpCNIF3L+yzrZIZ9xr7PYAOiu5DI0g
+	fq31WNO9OneS+ccqqbJNf1bKrvXjkps=
+From: Jiayuan Chen <jiayuan.chen@linux.dev>
+To: xiyou.wangcong@gmail.com,
+	john.fastabend@gmail.com,
+	jakub@cloudflare.com
+Cc: davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	horms@kernel.org,
+	andrii@kernel.org,
+	eddyz87@gmail.com,
+	mykolal@fb.com,
+	ast@kernel.org,
+	daniel@iogearbox.net,
+	martin.lau@linux.dev,
+	song@kernel.org,
+	yonghong.song@linux.dev,
+	kpsingh@kernel.org,
+	sdf@fomichev.me,
+	haoluo@google.com,
+	jolsa@kernel.org,
+	shuah@kernel.org,
+	mhal@rbox.co,
+	jiayuan.chen@linux.dev,
+	sgarzare@redhat.com,
+	netdev@vger.kernel.org,
+	bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org
+Subject: [PATCH bpf-next v3 0/3] bpf: Fix use-after-free of sockmap
+Date: Mon, 17 Mar 2025 17:22:53 +0800
+Message-ID: <20250317092257.68760-1-jiayuan.chen@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] arm64: dts: qcom: ipq5424: fix and relocate uart1 gpio
- configurations
-To: Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>,
-        <andersson@kernel.org>, <konradybcio@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <quic_srichara@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: <quic_varada@quicinc.com>
-References: <20250312091418.3265352-1-quic_mmanikan@quicinc.com>
- <8efdc560-d061-4f03-bed5-8571044119cc@oss.qualcomm.com>
-Content-Language: en-US
-From: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
-In-Reply-To: <8efdc560-d061-4f03-bed5-8571044119cc@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=LuaSymdc c=1 sm=1 tr=0 ts=67d7e9e8 cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=COk6AnOGAAAA:8 a=5MmNdGAJjUIhlSV6Oz8A:9 a=3ZKOabzyN94A:10
- a=QEXdDO2ut3YA:10 a=tNJfs_13QIiYcIrPbywa:22 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-GUID: Dg2oimBU9dGSoakBt7E_wkNcSyVfrxX8
-X-Proofpoint-ORIG-GUID: Dg2oimBU9dGSoakBt7E_wkNcSyVfrxX8
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-17_03,2025-03-17_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 bulkscore=0
- mlxscore=0 suspectscore=0 priorityscore=1501 phishscore=0 adultscore=0
- clxscore=1015 lowpriorityscore=0 spamscore=0 mlxlogscore=770
- malwarescore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503170068
+X-Migadu-Flow: FLOW_OUT
 
+Hi all, this is the v3 version.
+===
+Syzkaller reported this issue [1].
 
+The current sockmap has a dependency on sk_socket in both read and write
+stages, but there is a possibility that sk->sk_socket is released during
+the process, leading to panic situations. For a detailed reproduction,
+please refer to the description in the v2:
+https://lore.kernel.org/bpf/20250228055106.58071-1-jiayuan.chen@linux.dev/
 
-On 3/12/2025 10:10 PM, Kathiravan Thirumoorthy wrote:
-> On 3/12/2025 2:44 PM, Manikanta Mylavarapu wrote:
->> Update the bias configuration for UART1 TX and RX pins to ensure correct
->> settings for RDP466.
->>
->> Additionally, move the UART1 GPIO configurations from the common .dtsi
->> file to the RDP-specific .dts files to account for differing bias
->> configurations across RDPs of IPQ5424.
->>
->> Fixes: 1a91d2a6021e ("arm64: dts: qcom: add IPQ5424 SoC and rdp466 board support")
->> Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
->> ---
->>   arch/arm64/boot/dts/qcom/ipq5424-rdp466.dts | 16 +++++++++++++++-
->>   arch/arm64/boot/dts/qcom/ipq5424.dtsi       |  7 -------
->>   2 files changed, 15 insertions(+), 8 deletions(-)
->>
->> diff --git a/arch/arm64/boot/dts/qcom/ipq5424-rdp466.dts b/arch/arm64/boot/dts/qcom/ipq5424-rdp466.dts
->> index b6e4bb3328b3..7b85aaa11ee8 100644
->> --- a/arch/arm64/boot/dts/qcom/ipq5424-rdp466.dts
->> +++ b/arch/arm64/boot/dts/qcom/ipq5424-rdp466.dts
->> @@ -147,10 +147,24 @@ data-pins {
->>               bias-pull-up;
->>           };
->>       };
->> +
->> +    uart1_tx_state: uart1-tx-state {
->> +        pins = "gpio44";
->> +        function = "uart1";
->> +        drive-strength = <8>;
->> +        bias-pull-down;
->> +    };
->> +
->> +    uart1_rx_state: uart1-rx-state {
->> +        pins = "gpio43";
->> +        function = "uart1";
->> +        drive-strength = <8>;
->> +        bias-pull-up;
->> +    };
->>   };
->>     &uart1 {
->> -    pinctrl-0 = <&uart1_pins>;
->> +    pinctrl-0 = <&uart1_tx_state>, <&uart1_rx_state>;
-> 
-> 
-> Change LGTM. But can we define both TX and RX pin definition under one node like below, to align with the SPI and SDCC gpio definition layout?
-> 
-> qup_uart1_default_state: qup-uart1-default-state {
-> 
->         uart1_tx_state: uart1-tx-state {
-> 
->          ...
-> 
->         };
-> 
->         uart1_rx_state: uart1-rx-state {
-> 
->          ...
-> 
->         };
-> 
-> };
-> 
-> and refer it like pinctrl-0 = <&qup_uart1_default_state>;
-> 
-> 
+The corresponding fix approaches are described in the commit messages of
+each patch.
 
-Hi Kathir,
+By the way, the current sockmap lacks statistical information, especially
+global statistics, such as the number of successful or failed rx and tx
+operations. These statistics cannot be obtained from the socket interface
+itself.
 
-	Thank you for reviewing the patch.
-	I will incorporate the suggested change in the next version.
+These data will be of great help in troubleshooting issues and observing
+sockmap behavior.
 
-Thanks & Regards,
-Manikanta.
+If the maintainer/reviewer does not object, I think we can provide these
+statistical information in the future, either through proc/trace/bpftool.
+
+[1] https://syzkaller.appspot.com/bug?extid=dd90a702f518e0eac072
+
+---
+v2 -> v3:
+1. Michal Luczaj reported similar race issue under sockmap sending path.
+2. Rcu lock is conflict with mutex_lock in unix socket read implementation.
+https://lore.kernel.org/bpf/20250228055106.58071-1-jiayuan.chen@linux.dev/
+
+v1 -> v2:
+1. Add Fixes tag.
+2. Extend selftest of edge case for TCP/UDP sockets.
+3. Add Reviewed-by and Acked-by tag.
+https://lore.kernel.org/bpf/20250226132242.52663-1-jiayuan.chen@linux.dev/T/#t
+
+Jiayuan Chen (3):
+  bpf, sockmap: avoid using sk_socket after free when sending
+  bpf, sockmap: avoid using sk_socket after free when reading
+  selftests/bpf: Add edge case tests for sockmap
+
+ net/core/skmsg.c                              | 22 ++++++-
+ .../selftests/bpf/prog_tests/socket_helpers.h | 13 +++-
+ .../selftests/bpf/prog_tests/sockmap_basic.c  | 60 +++++++++++++++++++
+ 3 files changed, 91 insertions(+), 4 deletions(-)
+
+-- 
+2.47.1
+
 
