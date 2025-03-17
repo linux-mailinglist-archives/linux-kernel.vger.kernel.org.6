@@ -1,155 +1,100 @@
-Return-Path: <linux-kernel+bounces-564095-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564098-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B01E1A64DB0
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 13:01:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABD5EA64DC9
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 13:03:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A60F53AE642
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 12:01:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 45C9918970DC
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 12:02:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DB0D19F101;
-	Mon, 17 Mar 2025 12:00:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8084323BCEA;
+	Mon, 17 Mar 2025 12:01:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Sv/qVAbU"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d+kyM1j+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A73F8239096;
-	Mon, 17 Mar 2025 12:00:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D465D23A983;
+	Mon, 17 Mar 2025 12:01:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742212807; cv=none; b=BwhsQHqnPDwKoEr/jJMlAt7Vw6KBi+BcAju637w/6su9bWMBdUkyvtKB+0ljn234J/OiOPYuCeo9ByttMvtgUQLlviSMuA9qeXkjItOzi8dPJ9a6emza+PFErsmhgpBRfiUND3sx8LIqzPy5LwzVtO1TMWo730aKGXeSrPZxuGw=
+	t=1742212865; cv=none; b=jwKGWF0KwVTGM3kK9DwkbvPgJhRJvVWtVF2zkj1LPh9GIhGkX0pOR+Yds4ml0UplQAGABTPXvanu5NQ3WEqrFnpkejdqnPGm5kBO9OXD2efbChU4665jt0mujGrMQqAbUS63HSuftp1c33lM1G6vIjsf8EJJlOZZSiruOUDvdt8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742212807; c=relaxed/simple;
-	bh=/lAoAaVx4WxkYhZzgk4yiXRzsbO40tnfKcBRUZX11dw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dQeFdstRG8vAKODAJ87MbOo0mx4ChYidoGO6h4lE6E2OhnHpIS+0QyM0dDKoSJq/fZiWUhd2qaZa6R6M/9Do4EeXk43DKqesWZSvYkSQg5cH2z523nc/Vmx/QEhKAD3tGl1/0asEDgyz2qx2jHoo7pFwFzKmmS817WVWO7lnhto=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Sv/qVAbU; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-391211ea598so2301132f8f.1;
-        Mon, 17 Mar 2025 05:00:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742212804; x=1742817604; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=NPfYFPQDBJXaI7i52Tj0TRgvPndnRJHENfvRIAbA7rQ=;
-        b=Sv/qVAbUN5B7PBX754M3yNT6rEoTKNCEC/ck5QW944sI1W+3ZfDkIMtiKBF4A2iYOH
-         vm3vVxzeI694LZkVvyBhCWYVM0eip0sSML1Wpn/Fv5IdxN0Tn3ZIJEymULahaRaWxapr
-         vbLVttqRitQ0ZIF7kmir89+2FjHtiyUBHVuyD8+ikmjVPLxOM17vZpPGa8daqeZdke6g
-         nCJcVQMIjuoct8v8P6NWURFyEwvkjV3mnGQ08EIiwKkHXq9BgTg0TtqOAVETCVRZwHit
-         W7txq09htdQehsIcGzIEq0688+od9q9eO6bXhFwv+1VdZMjHYUguKBKl/9TmRs3097xK
-         +iig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742212804; x=1742817604;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NPfYFPQDBJXaI7i52Tj0TRgvPndnRJHENfvRIAbA7rQ=;
-        b=BPuxS2XdKu5YQsKN4H4gJB3w/TJ6ClifJKFMllKxh/m94js21pv4Zf394eWcTPAC3+
-         AlLnymBkgfQIU27aelinYsuWgH6s3y2v+Kg3kJLCZcR27nQ0ZDyxUbxuG7lMrilXuPPV
-         tQ31D2oN0W45x1zk4+ZyERZED6GCO9NSwcW3NTZD0g0uhn3VpEdVhSmqbYQmcxUzevqf
-         gioTkGsOZ6XTI7LO1VYaOcXPWwuJE1xRbnLAYSF2y/PPDhwZxE1F+jmwM7bOpNyils5m
-         vV9BxwSfWxStkuv6rv7V+vhVVNa7sux0Qtr/J0HQTuuag3Fd88XJ7F3OXkAToP6Bn4CV
-         /HKQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUu3kgexeKv7EzNCq3V/UX4YmbjTkRk96JyXqrP+SWm8kRxtEGOkOROM76Y7KH721h9Hr97xSu/28IKizo=@vger.kernel.org, AJvYcCXJq44Ckap3WfhoB5TUouR9o+rvFi2z3ZF2MgwG63bAqnMHEOXZNXVsBmrArxSMN+AtTMO9LkyJ0xJyuyQroYY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwC6f9pzw6eYXtjoqhtnidqkUrCheAX8hAUVN48T5CakfBjsh+m
-	StwdrmzDu8TtzewusCsB0lamidI9zLmvYJUi8enY856tH5IoX93x
-X-Gm-Gg: ASbGncs7cLvNklOK53m9zd88bVoDO9Zx2o6AxqeeiK/wKhR95JcHXKwaS6PTMngao5v
-	qqN3IHfMgGbB8Jt5miuu0ohLSPrL4H3dOQRnBZN1UUo3ggLQVmq4SF010GwT68U1/eU5i5g5ovC
-	eQfSpnvCQgF6M5sJeUT+A2a6Ncgqvw9n4J5ojfpwYJOzHNlX2D4/Ts9RSt/6foY+BBlLqgeVMOi
-	S9cRyb17fLfV7bd7rIYhiTX9opdD54Cl3c0+cvV3UToVs44xu0MDCL45Q3TP9ebs0hC6s4H6V71
-	/TXMiA2Kl/k1k/mg31B4NBSnUiuh05W4mILqWjGhp6OGWjd/Z7UdW+vaW+uvlJVIKIuGXSpM9qE
-	KJ7GqJmkE
-X-Google-Smtp-Source: AGHT+IFDxL0qCVe3e+njil/QVZMzz/LbKUbwYQ9tEHGz3vWaacWrbWMcyXYu1QeHoOHNVDK6ygNPaA==
-X-Received: by 2002:a05:6000:2ab:b0:390:e5c6:920 with SMTP id ffacd0b85a97d-3971ddd6164mr13035498f8f.3.1742212803597;
-        Mon, 17 Mar 2025 05:00:03 -0700 (PDT)
-Received: from localhost (cpc1-brnt4-2-0-cust862.4-2.cable.virginm.net. [86.9.131.95])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-395cb7ebaa5sm14689092f8f.87.2025.03.17.05.00.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Mar 2025 05:00:02 -0700 (PDT)
-Date: Mon, 17 Mar 2025 12:00:01 +0000
-From: Stafford Horne <shorne@gmail.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Sahil Siddiq <icegambit91@gmail.com>, jonas@southpole.se,
-	stefan.kristiansson@saunalahti.fi, linux-openrisc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Sahil Siddiq <sahilcdq@proton.me>
-Subject: Re: [PATCH v2] openrisc: Add cacheinfo support
-Message-ID: <Z9gOwYl6kmoPY9-C@antec>
-References: <20250315203937.77017-1-sahilcdq@proton.me>
- <Z9Z2sjWQHKgGJyGo@antec>
- <CAMuHMdWh=oo6JykPGD3DNEL=GcfgyKw2UK7vb8XMbH19GcdrwA@mail.gmail.com>
+	s=arc-20240116; t=1742212865; c=relaxed/simple;
+	bh=LlCDNKDvo5kEJa8v9yaiQCRUYA/WFkcBUmy5viW6Syk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=NRr4MF1F8XXxuKF43BkdCp7b3/ZrkWNG+yubB9cshmwSpgyRoIKr/eEWnzICEcGotHrKoptyZmvdq+jTYf7kVdedPuqt9bJ4lZYgnxxvhXbj0McNpizMAyN795BDZIglqoDtvhxuswRKTYR4PDEwVuHx8VsDa3jZaUqu6Kyi3EA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d+kyM1j+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28A65C4CEE3;
+	Mon, 17 Mar 2025 12:00:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742212865;
+	bh=LlCDNKDvo5kEJa8v9yaiQCRUYA/WFkcBUmy5viW6Syk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=d+kyM1j+4UhEWVrdDzz1pQqLcE6MCtFOW5lCdm4SxdCObTbZlSf/vDPAHuoYf4hB7
+	 bgFytKAtKGbnY4c9CsJCdY9ln+kmcs46dWZjKW0iCESCq5+1TKoOA869VCPi7IIKdO
+	 kyd7FYPZ66EOes28NB97UoaoyX9U42CSy8D918cMFb47ngr4CoADR1Yu268is724z8
+	 gloAy0smeHU5R/Wxls5KBHh/581peZCdcFWdFPvSJ28ttn5q+iDOI4svsGOWhQ7PMj
+	 Vc45NVlQLo+t/EjenHJ+jr4wtBOHvrfeR/s4waUipuUAjAGwXns9F8DwJ+XRVDmh3F
+	 uXmWFq3B9ksRQ==
+Date: Mon, 17 Mar 2025 12:00:50 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Andreas Klinger <ak@it-klinger.de>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ lars@metafoo.de, linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, javier.carrasco.cruz@gmail.com,
+ mazziesaccount@gmail.com, subhajit.ghosh@tweaklogic.com,
+ muditsharma.info@gmail.com, arthur.becker@sentec.com,
+ ivan.orlov0322@gmail.com
+Subject: Re: [PATCH v2 0/3] iio:light: add driver for veml6046x00 RGBIR
+ color sensor
+Message-ID: <20250317120050.425ef6cc@jic23-huawei>
+In-Reply-To: <20250316164813.30291-1-ak@it-klinger.de>
+References: <20250316164813.30291-1-ak@it-klinger.de>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdWh=oo6JykPGD3DNEL=GcfgyKw2UK7vb8XMbH19GcdrwA@mail.gmail.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi Geert,
+On Sun, 16 Mar 2025 17:48:10 +0100
+Andreas Klinger <ak@it-klinger.de> wrote:
 
-On Mon, Mar 17, 2025 at 09:25:26AM +0100, Geert Uytterhoeven wrote:
-> Hi Stafford,
+> This patchset adds an IIO driver for Vishay veml6046x00 RGBIR color sensor
 > 
-> On Sun, 16 Mar 2025 at 07:59, Stafford Horne <shorne@gmail.com> wrote:
-> > On Sun, Mar 16, 2025 at 02:09:37AM +0530, Sahil Siddiq wrote:
-> > > Add cacheinfo support for OpenRISC.
-> > >
-> > > Currently, a few CPU cache attributes pertaining to OpenRISC processors
-> > > are exposed along with other unrelated CPU attributes in the procfs file
-> > > system (/proc/cpuinfo). However, a few cache attributes remain unexposed.
-> > > An attempt is also made to pull these CPU cache attributes without
-> > > detecting if the relevant cache exists.
-> > >
-> > > This patch provides a mechanism that the generic cacheinfo infrastructure
-> > > can employ to expose these attributes via the sysfs file system. These
-> > > attributes are exposed in /sys/devices/system/cpu/cpuX/cache/indexN.
-> > > Cache attributes are pulled only when the cache component is detected.
-> > >
-> > > The implementation to pull cache attributes from the processor's
-> > > registers has been moved from arch/openrisc/kernel/setup.c with a few
-> > > modifications.
-> > >
-> > > The patch also moves cache-related fields out of struct cpuinfo_or1k and
-> > > into its own struct to keep the implementation straightforward. This
-> > > reduces duplication of cache-related fields while keeping cpuinfo_or1k
-> > > extensible in case more cache descriptors are added in the future.
-> > >
-> > > This implementation is based on similar work done for MIPS and LoongArch.
-> > >
-> > > Signed-off-by: Sahil Siddiq <sahilcdq@proton.me>
+Ah.  As a general rule don't send a v2 out that fast - leave
+it at least a few days even if there is an 'obvious fix'.
+A rush can make sense if we are trying to sneak it in very late
+in a kernel cycle, but right now we are right at the start of the next
+one so lots of time.
+
+Anyhow, comments on v1 probably still apply ;)
+
+Jonathan
+
+> Changes in v2:
+> - fix missing include for example in vishay,veml6046x00.yaml
 > 
-> > > --- a/arch/openrisc/include/asm/cpuinfo.h
-> > > +++ b/arch/openrisc/include/asm/cpuinfo.h
-> > > @@ -15,16 +15,18 @@
-> > >  #ifndef __ASM_OPENRISC_CPUINFO_H
-> > >  #define __ASM_OPENRISC_CPUINFO_H
-> > >
-> > > +struct cache_desc {
-> > > +     u32 size;
-> > > +     u32 sets;
-> > > +     u32 block_size;
-> > > +     u32 ways;
-> >
-> > Considering the changes below to add cache available checks, maybe we
-> > want to add a field here, such as `bool present`.  Or a flags field like
-> > is used in loongarch?
+> Andreas Klinger (3):
+>   dt-bindings: iio: light: veml6046x00: add color sensor
+>   iio: light: add support for veml6046x00 RGBIR color sensor
+>   MAINTAINER: add maintainer for veml6046x00
 > 
-> I assume cache_desc.size is zero when the cache is not present?
-
-Yes, good point, would be clean too work too.  I was not too happy with using
-cache_desc.ways as is done below.  Also there ended up bieng 2 different ways
-that were used.
-
-I am happy to use size too, but I think checking the SPR would be faster or just
-as fast as using the struct.  I am not too fussed either way.
-
--Stafford
+>  .../iio/light/vishay,veml6046x00.yaml         |  51 +
+>  MAINTAINERS                                   |   6 +
+>  drivers/iio/light/Kconfig                     |  13 +
+>  drivers/iio/light/Makefile                    |   1 +
+>  drivers/iio/light/veml6046x00.c               | 890 ++++++++++++++++++
+>  5 files changed, 961 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/iio/light/vishay,veml6046x00.yaml
+>  create mode 100644 drivers/iio/light/veml6046x00.c
+> 
 
 
