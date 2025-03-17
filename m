@@ -1,116 +1,82 @@
-Return-Path: <linux-kernel+bounces-564756-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564757-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5608A65A4F
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 18:19:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A4A33A65A50
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 18:19:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD4201896550
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 17:15:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B10ED18965E7
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 17:15:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61DCC1AAA1E;
-	Mon, 17 Mar 2025 17:09:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 790861B393C;
+	Mon, 17 Mar 2025 17:09:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W6MY5att"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oUOj+Fz4"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B99E819F13F;
-	Mon, 17 Mar 2025 17:09:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC2B01B043E;
+	Mon, 17 Mar 2025 17:09:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742231351; cv=none; b=dv0iOL011K2L8BfFnZjHy28AHoVkVnoKSc8Zs1oumWEgm9F8ythM2kMpjpSKhag9rAoYfydrUISrH6bJggs4SJbMwuaFXm5KUoXxC7AVKhQC0zs8n4UfThSpqRkqRF2dvS3N6ORAmjYd0PalbX9umM4wrPvRCz6HJWB5hm/6k5w=
+	t=1742231357; cv=none; b=V7t1prv+yrsJVb3bgoaAlHpyoC2XlgAZ3Ca8fBFgBY99LQmGet4zJ4nUwhlQTXiZV9ADjs4ZS2E3w/t6kwMqoQzbBQdAx/t72hZlMykVYz95ACSW1WyIsKl9pGzJfj0SSiecF6md3hSVzOzRat7jnUf946cu2G1r6Lz/dEUjfNY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742231351; c=relaxed/simple;
-	bh=A1jL+peMSeOFcHU5ac/T5X7kFEtj+k/4Qol4NnZA+ts=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oRFIlO0Ir7FZzWzKv8c2t7YRv1L5L/vPf7pNU8T6DgvQUrO7dKQPD05HDb1cqOQt9+CkvMYngpDmHuDWmBaKN4ply/SKBelEf2XbUSTUAhCbXL9V5nobhnVdrNf+j1P1Zw14JtPUiZtTWGl1vDf/WywzRyBLrUT3F3BfMpeDQnw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W6MY5att; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BDA53C4CEE3;
-	Mon, 17 Mar 2025 17:09:08 +0000 (UTC)
+	s=arc-20240116; t=1742231357; c=relaxed/simple;
+	bh=3LVlLlnoG9tLdeo7FvVmGhItTlSlYVxrMKAUSPQdUuA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=rgd1rk7OTBxtDIOl79Gub0tecDaZNIQvzDba56WOiYSFvYobmOP3yJxOBIMb52Za45Mfvn1bhiANwn3IYd1mZjUCTpEnYUf3QVOgXqUgkPtFMQq2wLSAyARJ7X0LBEcsPY+zbxWeAP5L7HuJ/NXCnUTbp5WrvtdHtuuk0yIUufk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oUOj+Fz4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3342C4CEE3;
+	Mon, 17 Mar 2025 17:09:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742231351;
-	bh=A1jL+peMSeOFcHU5ac/T5X7kFEtj+k/4Qol4NnZA+ts=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=W6MY5attizH0WsAMY3CAiD0Yt81ww/OJLwJpMj7vuE00gUIJSlOVx4zD8gywcuPh2
-	 6KJi/jg9GoiYb9t6437l4Z4ncbXW1mW5o+a2zzqzQEpPymgDBsdgEpyPa7FIWWJJoY
-	 EgKNW/N+HgMFrvxjERewJv/LwJrvElLdCcFuuGsTQHgjhU/YgcLkHdK5J2aJMZO/vF
-	 k4OVfGFZlFBvMjnIyBgbFHZ1TKIhrqvh8i7ro2MvtV7n6e5EesqbPCiauQniWRFCPB
-	 Q4gqKMRQPfz9pzrgIHAgSMxyQNfHijNXZ+Snby9pSGpqNyuVudH8uN0X1FboqNM++1
-	 UoQE/2LDulqDw==
-Date: Mon, 17 Mar 2025 18:09:05 +0100
-From: Danilo Krummrich <dakr@kernel.org>
-To: Tamir Duberstein <tamird@gmail.com>
-Cc: Benno Lossin <benno.lossin@proton.me>, Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] rust: alloc: use `spare_capacity_mut` to reduce unsafe
-Message-ID: <Z9hXMcFVdF8MMusU@cassiopeiae>
-References: <20250317-vec-push-use-spare-v1-1-7e025ef4ae14@gmail.com>
- <D8IM66U67XBD.28KWYO1XSF8ZQ@proton.me>
- <CAJ-ks9kq1cQ2-ZNzG9P4SBvk-AjXxT+na-89K33imB4fsCvu4A@mail.gmail.com>
+	s=k20201202; t=1742231357;
+	bh=3LVlLlnoG9tLdeo7FvVmGhItTlSlYVxrMKAUSPQdUuA=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=oUOj+Fz4bsGGbR3y776/086oSpbr2Uc84EZHAc84lpSHtDsxeb0azobOFMBoAFrOZ
+	 Enlk3bRngeIj6ZXjx9p/+JOoAVy94HfWqvCBA2apKmLxPW8V8zmDiynwuXn8F7xCuZ
+	 WkRZVKIHABi8RjpV5qyDrqXj6FZYHiE3cwpYNF4/+h5zN4nbopNenXu4Ik1dNp7Og4
+	 y3ZbU03TVJMpDbXZvHziXuJoXwYymaR0INiKeh8N0wPvihbJ8aC7+yPCW1lofpI31z
+	 E38dwzXLzP4jDg47swZSKsAHayItTGhQ1PRlx36DpkYsaM5za2teSu1JQwdfntU4KM
+	 8sRonZVZoz8ag==
+From: Bjorn Andersson <andersson@kernel.org>
+To: Konrad Dybcio <konradybcio@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Maulik Shah <maulik.shah@oss.qualcomm.com>
+Cc: linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm64: dts: qcom: qcs8300: Add RPMh sleep stats
+Date: Mon, 17 Mar 2025 12:09:14 -0500
+Message-ID: <174223135177.2001681.13269933501288643135.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250317-add_qcom_stats-v1-1-016ae05ac4b0@oss.qualcomm.com>
+References: <20250317-add_qcom_stats-v1-1-016ae05ac4b0@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJ-ks9kq1cQ2-ZNzG9P4SBvk-AjXxT+na-89K33imB4fsCvu4A@mail.gmail.com>
 
-On Mon, Mar 17, 2025 at 10:39:05AM -0400, Tamir Duberstein wrote:
-> On Mon, Mar 17, 2025 at 10:34 AM Benno Lossin <benno.lossin@proton.me> wrote:
-> >
-> > On Mon Mar 17, 2025 at 12:42 PM CET, Tamir Duberstein wrote:
-> > > Use `spare_capacity_mut` in the implementation of `push` to reduce the
-> > > use of `unsafe`. Both methods were added in commit 2aac4cd7dae3 ("rust:
-> > > alloc: implement kernel `Vec` type").
-> > >
-> > > Signed-off-by: Tamir Duberstein <tamird@gmail.com>
-> > > ---
-> > >  rust/kernel/alloc/kvec.rs | 11 ++---------
-> > >  1 file changed, 2 insertions(+), 9 deletions(-)
-> > >
-> > > diff --git a/rust/kernel/alloc/kvec.rs b/rust/kernel/alloc/kvec.rs
-> > > index ae9d072741ce..d2bc3d02179e 100644
-> > > --- a/rust/kernel/alloc/kvec.rs
-> > > +++ b/rust/kernel/alloc/kvec.rs
-> > > @@ -285,15 +285,8 @@ pub fn spare_capacity_mut(&mut self) -> &mut [MaybeUninit<T>] {
-> > >      pub fn push(&mut self, v: T, flags: Flags) -> Result<(), AllocError> {
-> > >          self.reserve(1, flags)?;
-> > >
-> > > -        // SAFETY:
-> > > -        // - `self.len` is smaller than `self.capacity` and hence, the resulting pointer is
-> > > -        //   guaranteed to be part of the same allocated object.
-> > > -        // - `self.len` can not overflow `isize`.
-> > > -        let ptr = unsafe { self.as_mut_ptr().add(self.len) };
-> > > -
-> > > -        // SAFETY:
-> > > -        // - `ptr` is properly aligned and valid for writes.
-> > > -        unsafe { core::ptr::write(ptr, v) };
-> > > +        // The call to `reserve` was successful so the spare capacity is at least 1.
-> > > +        self.spare_capacity_mut()[0].write(v);
-> >
-> > I think the code uses unsafe to avoid a bounds check, but I'm not 100%
-> > sure. Danilo might remember more info.
 
-Yes, that was the justification to use unsafe calls instead.
-
-(This may also justify keeping dec_len() unsafe, since otherwise it would
-introduce an additional boundary check for pop().)
-
+On Mon, 17 Mar 2025 18:08:41 +0530, Maulik Shah wrote:
+> Add RPMh stats to read low power statistics for various subsystem
+> and SoC sleep modes.
 > 
-> We could use `slice::get_unchecked_mut` here to retain the same
-> guarantee of no bounds check. That would still be one fewer unsafe
-> blocks.
+> 
 
-Sounds reasonable.
+Applied, thanks!
+
+[1/1] arm64: dts: qcom: qcs8300: Add RPMh sleep stats
+      commit: bba4e13c0f337df4cab3d65ccdb5524eb81a00bf
+
+Best regards,
+-- 
+Bjorn Andersson <andersson@kernel.org>
 
