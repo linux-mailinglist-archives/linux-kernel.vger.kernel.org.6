@@ -1,75 +1,97 @@
-Return-Path: <linux-kernel+bounces-563233-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563234-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A96F6A63A5E
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 02:32:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B9B7A63A61
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 02:34:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB18A188F384
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 01:32:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 717373A71F4
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 01:33:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35EB653E23;
-	Mon, 17 Mar 2025 01:32:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OvvtAdcY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FEF4DF71;
-	Mon, 17 Mar 2025 01:32:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C818E137742;
+	Mon, 17 Mar 2025 01:33:58 +0000 (UTC)
+Received: from mail.nfschina.com (unknown [42.101.60.213])
+	by smtp.subspace.kernel.org (Postfix) with SMTP id 56AA3DF71;
+	Mon, 17 Mar 2025 01:33:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=42.101.60.213
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742175154; cv=none; b=mdvfUByffu2zwOCiI9BYNiUD2yrUaN6WbV0y9tRIos4naFPYqFTEulv8aV6B/zGfgCCr3w+kK/B+JmbsCmU1TUVzBho9Xq8znMLwwW2h2NKBrZsOnKFBJkO6j7f0GLMP8rnBFSNcZd++lcblq+7H1rmpOBXnQljFuz+RxXqbL2M=
+	t=1742175238; cv=none; b=GkU2igZQnL4b87Ar4O5G5Wy9MXKcZq6bCzNl81G7hwM2qeVETu7CKIrpXQAIbZwuku7+KBu3u1d8NYY8ywf2Dkl74Ba2WAoz7GzjgXyhRmNUMXaWZ1kl8SMx5rkqEE1k8QYyilITb/wFNU1OdBILHsb88qm+a4UU0f5chpS7hDQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742175154; c=relaxed/simple;
-	bh=s8GEmYzbmS9r1yi+MUIttdEdJaVN5wVHb6I3vPopbTQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=U+Rx2mK/Zk7y85Iw8IoPaDTD+M8buQjVLzan6tYe83yy59anxZ5yyqTufJb59kV8wzHM4XKMqeV7zu2C0ZKswWnK4QturKPWUcucMi1WpeWy4l4M33xy3jmZl41WGKzBSP70shS2P83XfY+E9y8/gbrTyAhcF3mtpV9rzNR9wKo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OvvtAdcY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C8C7C4CEDD;
-	Mon, 17 Mar 2025 01:32:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742175154;
-	bh=s8GEmYzbmS9r1yi+MUIttdEdJaVN5wVHb6I3vPopbTQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OvvtAdcY3LePAv0xsm6FdDZcrFUa/xd8jEpteznMBts5AU8E+vF7+GGlMc115YNRH
-	 BQWFNZ3f1wLPIMOhbyvOGwS2qwFRaM0nwE/0Vb3uuT4RTGbDjBq2VdxZOCBNmcCUIY
-	 zoR4yeBN87VjEDsPtPXB8jeH1EnHQClpbX4rWRF7fhsY8MR8upGNGI6KetBB/EUf/n
-	 vZ9eKQCfseOVVmgqaith+zXVjL0vobpGa7Poz9sbCOVkYCtL+LsxMs2nGA8GnLaRF6
-	 YFLhJ6aZg7SfuKgQL2XMYCeVbg0bmRxh7KLMSI3MN77a6jdpYTXThuv/tVuJWESizU
-	 TX3ewDoH0483A==
-Date: Mon, 17 Mar 2025 01:32:30 +0000
-From: Tzung-Bi Shih <tzungbi@kernel.org>
-To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Benson Leung <bleung@chromium.org>,
-	Guenter Roeck <groeck@chromium.org>, linux-iio@vger.kernel.org,
-	chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH][next] iio: cros_ec: Avoid -Wflex-array-member-not-at-end
- warning
-Message-ID: <Z9d7rp-ullvmXKoM@google.com>
-References: <Z9dy43vUUh4goi-Q@kspp>
+	s=arc-20240116; t=1742175238; c=relaxed/simple;
+	bh=7mLWhIaj0gljG+t/JUlukM9ob5yv5rUFn/dW4zETZfE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type; b=OIQR46DN7+cmLNPsG8jEv2Tt+tyi2U1KgsKLf0CU+YjxMnOOryCJryFLi02PNDWRDBrwvSpPZ7CIDVHNJkEY1yYJ/Mo5Jf3L26V6Y33KQJ615gCNE85gk2FkX0XmuNLv1M+kgOOqdjHFRQuxFEgQfkheE5BG73fQt0L1GV+0NX4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com; spf=pass smtp.mailfrom=nfschina.com; arc=none smtp.client-ip=42.101.60.213
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nfschina.com
+Received: from [172.30.20.101] (unknown [180.167.10.98])
+	by mail.nfschina.com (MailData Gateway V2.8.8) with ESMTPSA id F32BC6019982F;
+	Mon, 17 Mar 2025 09:33:42 +0800 (CST)
+Message-ID: <5d5caaea-4031-44a7-932e-2cf3f6fa4d6e@nfschina.com>
+Date: Mon, 17 Mar 2025 09:33:42 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z9dy43vUUh4goi-Q@kspp>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/4] selftests: ntsync: fix the wrong condition in
+ wake_all
+To: Elizabeth Figura <zfigura@codeweavers.com>,
+ Dan Carpenter <dan.carpenter@linaro.org>
+Cc: shuah@kernel.org, wine-devel@winehq.org, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Language: en-US
+X-MD-Sfrom: suhui@nfschina.com
+X-MD-SrcIP: 180.167.10.98
+From: Su Hui <suhui@nfschina.com>
+In-Reply-To: <1961744.6tgchFWduM@camazotz>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Mar 17, 2025 at 11:24:59AM +1030, Gustavo A. R. Silva wrote:
->  static int cros_ec_get_host_cmd_version_mask(struct cros_ec_device *ec_dev,
->  					     u16 cmd_offset, u16 cmd, u32 *mask)
->  {
-> +	DEFINE_RAW_FLEX(struct cros_ec_command, buf, data,
-> +			sizeof(struct ec_response_get_cmd_versions));
+On 2025/3/16 04:29, Elizabeth Figura wrote:
+> On Saturday, 15 March 2025 04:39:46 CDT Dan Carpenter wrote:
+>> On Fri, Mar 14, 2025 at 05:13:50PM -0500, Elizabeth Figura wrote:
+>>> On Friday, 14 March 2025 05:14:30 CDT Su Hui wrote:
+>>>> On 2025/3/14 17:21, Dan Carpenter wrote:
+>>>>> On Fri, Mar 14, 2025 at 03:14:51PM +0800, Su Hui wrote:
+>>>>>> When  'manual=false' and  'signaled=true', then expected value when using
+>>>>>> NTSYNC_IOC_CREATE_EVENT should be greater than zero. Fix this typo error.
+>>>>>>
+>>>>>> Signed-off-by: Su Hui<suhui@nfschina.com>
+>>>>>> ---
+>>>>>>    tools/testing/selftests/drivers/ntsync/ntsync.c | 2 +-
+>>>>>>    1 file changed, 1 insertion(+), 1 deletion(-)
+>>>>>>
+>>>>>> diff --git a/tools/testing/selftests/drivers/ntsync/ntsync.c b/tools/testing/selftests/drivers/ntsync/ntsync.c
+>>>>>> index 3aad311574c4..bfb6fad653d0 100644
+>>>>>> --- a/tools/testing/selftests/drivers/ntsync/ntsync.c
+>>>>>> +++ b/tools/testing/selftests/drivers/ntsync/ntsync.c
+>>>>>> @@ -968,7 +968,7 @@ TEST(wake_all)
+>>>>>>    	auto_event_args.manual = false;
+>>>>>>    	auto_event_args.signaled = true;
+>>>>>>    	objs[3] = ioctl(fd, NTSYNC_IOC_CREATE_EVENT, &auto_event_args);
+>>>>>> -	EXPECT_EQ(0, objs[3]);
+>>>>>> +	EXPECT_LE(0, objs[3]);
+>>>>> It's kind of weird how these macros put the constant on the left.
+>>>>> It returns an "fd" on success.  So this look reasonable.  It probably
+>>>>> won't return the zero fd so we could probably check EXPECT_LT()?
+>>>> Agreed, there are about 29 items that can be changed to EXPECT_LT().
+>>>> I can send a v2 patchset with this change if there is no more other
+>>>> suggestions.
+>>> I personally think it looks wrong to use EXPECT_LT(), but I'll certainly
+>>> defer to a higher maintainer on this point.
+>> I'm not sure I understand what you are saying.  Are you saying that we
+>> should allow zero as an expected file descriptor here?  I don't have
+>> strong feelings about that either way.
+> Yes, my apologies for the ambiguous wording. That is, EXPECT_LE looks more correct to me than EXPECT_LT per se.
 
-max(sizeof(struct ec_params_get_cmd_versions),
-    sizeof(struct ec_response_get_cmd_versions))?
+Got it, I think there is no need for v2 patch that using EXPECT_LT(). 
+Thanks for your feedback.
+
+Su Hui
+
 
