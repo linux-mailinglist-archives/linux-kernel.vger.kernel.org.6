@@ -1,108 +1,145 @@
-Return-Path: <linux-kernel+bounces-564886-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564888-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DC08A65C43
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 19:19:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE3BAA65C5C
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 19:21:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3307A17D43E
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 18:19:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D05988255D
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 18:20:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05F9D1D8DFB;
-	Mon, 17 Mar 2025 18:19:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF7D41C8627;
+	Mon, 17 Mar 2025 18:20:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P7l9KZMB"
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="D2ysSVvW"
+Received: from mail-ed1-f73.google.com (mail-ed1-f73.google.com [209.85.208.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E790C14C5AA;
-	Mon, 17 Mar 2025 18:19:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EC4A1AD403
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 18:20:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742235565; cv=none; b=seS6QCnjMLFJHo+azHEMksoiUUaBV1QH3LULtLJkQe1ECDTQu9xmwtCqseXVr5y/QWW6i8htU70+ZZj80110zwIGEx33a9xZxhFY8PFAZaQTrIACCGuJ2VYMVYS34d/uCt8D6zJ9JdbunrtzbMuOwuH7bSrACCjpzJFMxgEtI/Q=
+	t=1742235659; cv=none; b=taB8kctCN59kpOr0q1RvbZKILy88/rdN1/UVXvpgOjq7QyyHO70gq4dMuaT6uL8rhoALn0Ri8+odmUcrN1hgrhDcCPXyXz6B/4xrGX4Xy1Si/wethuhq0A7DDJcRltxnvCjClYZAeo7DljaJDNXxM80Gu/QHQfYi6HgwOCCz1h8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742235565; c=relaxed/simple;
-	bh=Mtvl/jyJUdtL4QFBo7D0YAZhHSay/PjR0/QIolqsMWU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ld8kXdxBalqCCUV8WafJtcDphMjBjAPZdBpgseoSWekpBVpMLHfRGNQAPSbt9HpM/TyRyRk2Uv7/rdXq5BO9eOLZUjR7ehlyGRjTN9VbUnuqhqSpV2/etE45oXLdSKqTFWI0oxWcNZYFFbgnid6hlEr+Y2KoeiRBowy2+ldnu3E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P7l9KZMB; arc=none smtp.client-ip=209.85.216.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2ff615a114bso3260547a91.0;
-        Mon, 17 Mar 2025 11:19:23 -0700 (PDT)
+	s=arc-20240116; t=1742235659; c=relaxed/simple;
+	bh=6vBrLA9rerjT1JiQXteOtoki36y3WaAlLpdjheNBOOA=;
+	h=Date:Mime-Version:Message-ID:Subject:From:Cc:Content-Type; b=ki1owXySnB5pRR3BodCPuzO+GYKyX89C0IQ3ve6N4nG0pBMnwEoObqx29hWR0sMBMcG5DaaOoysVy147vtYl1RGxZfp2Sk4n1NfNzliY3vFfUkmmdeNd0/QkH0s6FdgDgBqVkk0sTxOgGraXvjY+C+vu8wtx8XMn94UhwuiVpGc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--czapiga.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=D2ysSVvW; arc=none smtp.client-ip=209.85.208.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--czapiga.bounces.google.com
+Received: by mail-ed1-f73.google.com with SMTP id 4fb4d7f45d1cf-5e5dbd04225so4392263a12.3
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 11:20:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742235563; x=1742840363; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=1p/vJyLOF8KyVZFp2qeYUDBByhHRPvWe2lPITuY8vOw=;
-        b=P7l9KZMB2Ylt0Sz/QjYBy0SKGTasenhVLI5N8s280TjcJfe4WPivnAizyHfR8aVL3D
-         kyyV1NszRlvOBrSXdX2MiA2BqWNuAfn7M/GtQR3HOSO1+Lq/AL5Hdzw7oJXJ7NNOvn4/
-         ceFw2982ybtN8OuTa+LJi25V4hyiZsrHLPJ4xCPG+X/5eW+BR5tpiKVLcTCiSUrj/7yO
-         3Z7NRrtrIHnAWuOgBS0d5mIZI8Fpv2jjblMYXAKtTRcJnCTCZJ0YLgZFaVnsD7kqhB+g
-         3XCqEuK67j+WYHjzPs7ApG+GSEvZ2u/VHa/5mjZdFNPSw/rJDSZiVQajEl6uMJvv8itV
-         ezRQ==
+        d=google.com; s=20230601; t=1742235656; x=1742840456; darn=vger.kernel.org;
+        h=cc:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=78VRu6+9psP2tn8WejDwRNX+ffhQVxd9hB24F6U+zQI=;
+        b=D2ysSVvWRIFz0nRTRBZKmun0jZzsMxSmNsgQsGGzy1PSrhPZ+V5AjVGHNbotA0virH
+         ICwisoGtBul251wu40t6edaxon4PrKqkVEUUqc2eX+6UDgf0LNnY9vQhp835MJ0DAhg/
+         qWEh7jc4MJxXSO7rtsOMGv5roSZQcp405DDkyN5SFCowX6wN8ChbASK1cYSzJSUjIHXR
+         UVSMRzL8NYeyjr1Ure6Eq83b8jzFU0a3R187UwamSOparxLXC1j3wIBT975i0ptWA/yi
+         iG+2OZIbfSDqlJ/1M1cV5QcMDjHxaxMt/vqlTinljQHDSTYUXo71oxSo3z2rcBZ0HpJT
+         gL/Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742235563; x=1742840363;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1p/vJyLOF8KyVZFp2qeYUDBByhHRPvWe2lPITuY8vOw=;
-        b=dBmrTOP6MgNUmRI5yC5oID7q1KKozOGCZ7cHbc5aSI17/6SWtM2foNmQGWUjlAhqIw
-         MRrWMVLRdt0TRWXhO87Ck+6aZXU91RslUXtK1tHOcjKPM0auEiEgOgH15S6rZAnhAbAf
-         c79eP5Rph9cBuCirTxwG8QdCAf+PnvZyZUEvKNF3HpeOx/0jnxwrCyKCIrA+iDmE5rYD
-         T3cew9cAwdcjr7RfXST5xHkb9SzfiaFQtYMGfhnK6ezCvWNw3/hUf5SfglW206Tv9sOK
-         mitxS4Cy9kl1ydb6O76LWTXuQzp0ButS3XpsyUGVCuIonx5/O4+PzgkRPtLsPSTkAIdR
-         lDQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUULUKl/n4vgWsw/gol2eOUFwYOt1pJ5yszb61VglVojbG3BHoyZ/8N0qrnRgP3p9VTjdN02AhHWNmKNZAM@vger.kernel.org, AJvYcCUtIucSHBIJftbsEhsQjBaidfPXGHGweKQSbe7pNooefKXmf3Gd0Lx5yrSRtx3+7z1d5Fc/bIwp7qmY@vger.kernel.org, AJvYcCWWmzkhpGHH70xBGOqP4HefsOhVtYbRoa+4YBIZzpEfh44E4/oiDKOvVLtUYcvYfHffycCb7aVZYEFv@vger.kernel.org, AJvYcCWhZXQUaf5E7h4oY6PQkeMAUfqwjao2vaakSoco37yA4a7AZoghMm+CDEUAZcIZTjeGMUwMYwbUGghoSBo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YztMy/L7kPVgj7s3CzvBD1vfZ/y6BjCXvvO/52Mv2yRzhunt6RZ
-	aDOWJL7aME+GbLv/VtdM3YHdgVtQ6LRF6wEwVb6n4ZmYdyEQgBKa
-X-Gm-Gg: ASbGncuoTQ3M11z2Yc3Ts5ubELQXaBrzISyTxHUFd+abc85Y4vf8GjiXUJuJaCYNqBU
-	HdBbO7DPIPtq+VSl1shG3k70djtBJ+Ot5GP6v4G9JA7HD/zOaCWNOfbX+uHo8D1ErWmm8q42yEM
-	MnYAqc2le+8n20wp4XKL3IzZuxsxCC1tKYih3VQltYzRwyXBJ6b+WF1qH870tB5dezFHU0pmQT1
-	tKRbC87u8Vp7hfvutC90i5xLZ2qpVhOPzthncGLPlLmABg9izOJcfdt0fVt7wnYa4fOGD+0QNMR
-	pHnr3k4NA+GpIJYFOe6cEOQg4doApZ5i/PmaGs1TzuoZzaUGErOp7BM9Pw==
-X-Google-Smtp-Source: AGHT+IFGsTOd8uYKRb77bxFuXoZw2j0kYHafi/HpYTv7uH6M/4v9MlJQ5+zFAOZhK4Y8uixkSvjS+A==
-X-Received: by 2002:a17:90b:4c12:b0:2fa:562c:c1cf with SMTP id 98e67ed59e1d1-3019f1f1203mr607059a91.1.1742235563180;
-        Mon, 17 Mar 2025 11:19:23 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3015364d849sm6415219a91.41.2025.03.17.11.19.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Mar 2025 11:19:22 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Mon, 17 Mar 2025 11:19:22 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Leo Yang <leo.yang.sy0@gmail.com>
-Cc: jdelvare@suse.com, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, Leo-Yang@quantatw.com, corbet@lwn.net,
-	Delphine_CC_Chiu@wiwynn.com, linux-hwmon@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org
-Subject: Re: [PATCH v4 2/2] hwmon: Add driver for TI INA233 Current and Power
- Monitor
-Message-ID: <acd1c18f-780c-40d6-bd00-fcdfce85789e@roeck-us.net>
-References: <20250116085939.1235598-1-leo.yang.sy0@gmail.com>
- <20250116085939.1235598-3-leo.yang.sy0@gmail.com>
+        d=1e100.net; s=20230601; t=1742235656; x=1742840456;
+        h=cc:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=78VRu6+9psP2tn8WejDwRNX+ffhQVxd9hB24F6U+zQI=;
+        b=v9ei82bQWLv2TimQhPyUVt7+XvLnWQbsXZrnMfjc2EY1KvQx+wJim/Vi4+yxCZCpjf
+         81f6xeOY56tSikxXAHgejQssuupk97Vokua2rRRaMi2Ir76azg3qK5t6eFduA4SiaovL
+         HGIAdJfJNSnjpJXKzKcqKiMNKavjluwNbdcbC9e4FfMi+ev5iZeL+vm4CByzgoUH/cew
+         uDAwrrHJ9VD7y1AnVALi5GD7SIGXoyzoSgGtWG0qxz1+oqQIiL2CnBz68WiR8X2hoUBJ
+         vjVL05j7pGJJWDtP505y74m/xjjFilFNVp7I+qb9apTYDGteGdii2NsfBJEBfrFCa68k
+         Bozg==
+X-Forwarded-Encrypted: i=1; AJvYcCXJrE53zb66QVaGubvYkymTSoPBM1suwWiWyAseQawxlJo081SMaBXgGbC0mMMS1rslQbDRp6pFCnz4ypI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxlXFGIQ6Xfkm/eVhNtTWdb8r+wVKbJCxj2s4TacQwPOl1VrSnp
+	ExC5urzYpFAkd/rd1wc8S44R12BVCDvkZHloN3boS//hBED9dieImszJwUt1Szbvw4j52nIDiYG
+	IfFWBJQ==
+X-Google-Smtp-Source: AGHT+IESE69/iddcPk7ehPy7NsOJmNhG1D3/pIzqBBHE1LoGJdUPkmqYoQ6QIm5bo43o00RoxkTuy8sKiOiK
+X-Received: from edbel4.prod.google.com ([2002:a05:6402:3604:b0:5ea:815a:c43c])
+ (user=czapiga job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6402:35d4:b0:5e6:1838:e8c6
+ with SMTP id 4fb4d7f45d1cf-5e8a032c2b4mr13262186a12.22.1742235656080; Mon, 17
+ Mar 2025 11:20:56 -0700 (PDT)
+Date: Mon, 17 Mar 2025 18:20:20 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250116085939.1235598-3-leo.yang.sy0@gmail.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.49.0.rc1.451.g8f38331e32-goog
+Message-ID: <20250317182047.2060036-1-czapiga@google.com>
+Subject: [PATCH] mtd: spi-nor: gigadevice: add lock flags for GD25Q128/256 and GD25LQ128D
+From: Jakub Czapiga <czapiga@google.com>
+Cc: Jakub Czapiga <czapiga@google.com>, Tudor Ambarus <tudor.ambarus@linaro.org>, 
+	Pratyush Yadav <pratyush@kernel.org>, Michael Walle <mwalle@kernel.org>, 
+	Miquel Raynal <miquel.raynal@bootlin.com>, Richard Weinberger <richard@nod.at>, 
+	Vignesh Raghavendra <vigneshr@ti.com>, linux-mtd@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Jan 16, 2025 at 04:59:42PM +0800, Leo Yang wrote:
-> Driver for Texas Instruments INA233 Current and Power Monitor
-> With I2C-, SMBus-, and PMBus-Compatible Interface
-> 
-> Signed-off-by: Leo Yang <leo.yang.sy0@gmail.com>
+Set appropriate FLASH lock feature flags.
+Set top-bottom protection configuration bit flags.
 
-Applied.
+Modified chips:
+- GD25Q128 (+lock, +tb)
+- GD25Q256 (+lock)
+- GD25Q256D, GD25Q256E (+tb)
+- GD25LQ128D (+lock, +tb)
 
-Thanks,
-Guenter
+Signed-off-by: Jakub Czapiga <czapiga@google.com>
+---
+ drivers/mtd/spi-nor/gigadevice.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/mtd/spi-nor/gigadevice.c b/drivers/mtd/spi-nor/gigadevice.c
+index ef1edd0add70..8eec6557b036 100644
+--- a/drivers/mtd/spi-nor/gigadevice.c
++++ b/drivers/mtd/spi-nor/gigadevice.c
+@@ -16,6 +16,7 @@ gd25q256_post_bfpt(struct spi_nor *nor,
+ 	/*
+ 	 * GD25Q256C supports the first version of JESD216 which does not define
+ 	 * the Quad Enable methods. Overwrite the default Quad Enable method.
++	 * Otherwise set TB to SR(6).
+ 	 *
+ 	 * GD25Q256 GENERATION | SFDP MAJOR VERSION | SFDP MINOR VERSION
+ 	 *      GD25Q256C      | SFDP_JESD216_MAJOR | SFDP_JESD216_MINOR
+@@ -25,6 +26,8 @@ gd25q256_post_bfpt(struct spi_nor *nor,
+ 	if (bfpt_header->major == SFDP_JESD216_MAJOR &&
+ 	    bfpt_header->minor == SFDP_JESD216_MINOR)
+ 		nor->params->quad_enable = spi_nor_sr1_bit6_quad_enable;
++	else
++		nor->flags |= SNOR_F_HAS_SR_TB | SNOR_F_HAS_SR_TB_BIT6;
+ 
+ 	return 0;
+ }
+@@ -56,12 +59,12 @@ static const struct flash_info gigadevice_nor_parts[] = {
+ 		.id = SNOR_ID(0xc8, 0x40, 0x18),
+ 		.name = "gd25q128",
+ 		.size = SZ_16M,
+-		.flags = SPI_NOR_HAS_LOCK | SPI_NOR_HAS_TB,
++		.flags = SPI_NOR_HAS_LOCK | SPI_NOR_HAS_TB | SPI_NOR_4BIT_BP | SPI_NOR_BP3_SR_BIT6,
+ 		.no_sfdp_flags = SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ,
+ 	}, {
+ 		.id = SNOR_ID(0xc8, 0x40, 0x19),
+ 		.name = "gd25q256",
+-		.flags = SPI_NOR_HAS_LOCK | SPI_NOR_HAS_TB | SPI_NOR_TB_SR_BIT6,
++		.flags = SPI_NOR_HAS_LOCK | SPI_NOR_HAS_4BIT_BP,
+ 		.fixups = &gd25q256_fixups,
+ 		.fixup_flags = SPI_NOR_4B_OPCODES,
+ 	}, {
+@@ -80,7 +83,7 @@ static const struct flash_info gigadevice_nor_parts[] = {
+ 		.id = SNOR_ID(0xc8, 0x60, 0x18),
+ 		.name = "gd25lq128d",
+ 		.size = SZ_16M,
+-		.flags = SPI_NOR_HAS_LOCK | SPI_NOR_HAS_TB,
++		.flags = SPI_NOR_HAS_LOCK | SPI_NOR_HAS_TB | SPI_NOR_4BIT_BP | SPI_NOR_BP3_SR_BIT6,
+ 		.no_sfdp_flags = SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ,
+ 	},
+ };
+-- 
+2.49.0.rc1.451.g8f38331e32-goog
+
 
