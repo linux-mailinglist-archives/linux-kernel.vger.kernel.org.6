@@ -1,138 +1,99 @@
-Return-Path: <linux-kernel+bounces-563839-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563840-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D73BFA64977
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:21:36 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44DFFA64983
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:21:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F0281893FF2
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:19:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 07EB71896ADC
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:19:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFB2D22FE06;
-	Mon, 17 Mar 2025 10:17:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49A5211185;
+	Mon, 17 Mar 2025 10:17:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eWb79POI"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SQQd7VAp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7E0C11185;
-	Mon, 17 Mar 2025 10:17:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94BA723370D;
+	Mon, 17 Mar 2025 10:17:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742206650; cv=none; b=qXuZu+CBoGFjx9RF8QBLgFzmfFCNVh1IA/0mlGSgDkY2XLWd1tTq6MaeO7YyP/4iaQfrS2Cb/5xm7euJbOMMIWtqsobZgNvD5o8T5zspqWIESr/Kxq81HLaGEI2jIXdk5YMJ2oFudgU/EXyZPn6qzQdIaq7hH3vcqo3ATZh0YJA=
+	t=1742206656; cv=none; b=dtOgVJDirD5nJETJ+oPMs0IYMOwebMfwyoeju9ysp3CMPwtYmfYeTVIgHsvRsd9gfmhalWlKTE/B3n0o1+vH2FKtMUh3aPzm9RWuT8FaaXIpGwgGkqk0yilCHfZELVbnJo58tla4SDtfI3hAJd1rDgcNaXwD8UWKsWfS5ZJNg0Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742206650; c=relaxed/simple;
-	bh=7Ig07IL0hYtvwsZbHSCfJWHOKySji8yIp6WpMqp8UoI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WchzWhvB77kruxyIkeaVJAiiNnv2kn0lfyOS4YYwCAiYP8hdhzVFSlcsg23VUOrj0g2FWa9gpqW+XFDnKoV0SZxrEFXs3PUN9CUPvG+CYyTGw4woKflfq4bmNPtY8Rnm4GECIiDapbcnJQ3POr6dJU3inYmYwxlIcFhdtglk/vA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eWb79POI; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742206649; x=1773742649;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=7Ig07IL0hYtvwsZbHSCfJWHOKySji8yIp6WpMqp8UoI=;
-  b=eWb79POIH/B+5En0y5jpk5cmFzSSWRmduNWRdrxgnCrC+vvMjfKn39/2
-   25TCv5nEVXa8koeJZhD1S5SAcElFAnvRol5D7D77plvc5ObovBjnKyn6Q
-   AN9Wb+XG/R2QNy1HhnJHND+c8C0hpPY1NYuSGPKpqHBksOK3MwVF34aCF
-   jOygAIod0mKrzUbfXErUIYwNXkUH4dT9rI3Ag2vr2SbnbPCDBMAS5cixT
-   v2z00QCyC43Z4ynw9ZlnaunEHItR01c3WR/GM5w/+Gzqo/XTIlmtTWYdm
-   TqxBY6XTcq20Cz1NczgzmhKBfoElv5Lf6uj7+uW4SD3bshTUuVbHbT4Sf
-   A==;
-X-CSE-ConnectionGUID: RnCZ/VaeR5yCZ0tHxTiYJQ==
-X-CSE-MsgGUID: QAv42ZRyTRKqXWaOMOSSfg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11375"; a="65757409"
-X-IronPort-AV: E=Sophos;i="6.14,253,1736841600"; 
-   d="scan'208";a="65757409"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Mar 2025 03:17:28 -0700
-X-CSE-ConnectionGUID: 2hr63sXWQ8yQTBQvVCCZBQ==
-X-CSE-MsgGUID: ny9JBYUyQrm7SvcIbDHPEQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,253,1736841600"; 
-   d="scan'208";a="127076450"
-Received: from unknown (HELO [10.238.224.248]) ([10.238.224.248])
-  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Mar 2025 03:17:26 -0700
-Message-ID: <ecb959fe-69e3-4265-9e4b-326bff421153@intel.com>
-Date: Mon, 17 Mar 2025 18:17:23 +0800
+	s=arc-20240116; t=1742206656; c=relaxed/simple;
+	bh=0h+XlZja1L0Hzx3E+PGSZyubLgYa+1MEZ5jOyeF2nFY=;
+	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=O+JXWB9OQIz7Zvs7vFswQHRxsB8up4BWxNP/XTd3+Q43uH5A22uGbrhtiqeJ8qbhkXvbco0tHZ+YD2Ej0mQzLhJlqsDsdkV1d5eY755gTcdcFC3zGnEhe0Xsdx9BJoCXnLb232FbCS/sqTr8yxBm5uZDDHgHA8TejzE4Cyz+088=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SQQd7VAp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EABBDC4CEE3;
+	Mon, 17 Mar 2025 10:17:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742206656;
+	bh=0h+XlZja1L0Hzx3E+PGSZyubLgYa+1MEZ5jOyeF2nFY=;
+	h=From:To:In-Reply-To:References:Subject:Date:From;
+	b=SQQd7VAp97n+EP2wnT7EhjnjSQYMqPggqRuKwocLOXd4I5bP+xFBTTUFaPGOfE5eF
+	 YwYoZrchZ/RrDX/Gxs5SvEqk8W0kzi0kaetDdptZ2bOrqdfqGl6gLcKl4BBgftL2F6
+	 KjuBRH4H7ApRz69XnWSmeU7boPakb18YeLqtRQHjJF4M2m4mdjLOFfBVfXzNRB43b4
+	 Cyupa7TPcaUOErZG4fU1KboYM28OAba2Dew+dunNgzt7SUI0dTsvegWtRGXg2+9x45
+	 kQXyuse2Je3cDFQGLPJxgdI55b5Q3jKZfNxdprMDc5MDQgwgeacAqOXwh0A2RaUvIN
+	 wkOFHAJThJiwg==
+From: Mark Brown <broonie@kernel.org>
+To: lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com, 
+ matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com, 
+ amergnat@baylibre.com, linux-sound@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-mediatek@lists.infradead.org, Chen Ni <nichen@iscas.ac.cn>
+In-Reply-To: <20250312032600.1235158-1-nichen@iscas.ac.cn>
+References: <20250312032600.1235158-1-nichen@iscas.ac.cn>
+Subject: Re: [PATCH] ASoC: mt8365: remove unnecessary NULL check before
+ clk_disable_unprepare()
+Message-Id: <174220665367.86423.10873134642092088398.b4-ty@kernel.org>
+Date: Mon, 17 Mar 2025 10:17:33 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] media: i2c: lt6911uxe: Fix Kconfig dependencies:
-To: Arnd Bergmann <arnd@kernel.org>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Hans Verkuil <hverkuil@xs4all.nl>
-Cc: Arnd Bergmann <arnd@arndb.de>, Sakari Ailus
- <sakari.ailus@linux.intel.com>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Umang Jain <umang.jain@ideasonboard.com>, linux-media@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250314154738.3983798-1-arnd@kernel.org>
-From: "Yan, Dongcheng" <dongcheng.yan@intel.com>
-Content-Language: en-US
-In-Reply-To: <20250314154738.3983798-1-arnd@kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-1b0d6
 
-Hi Arnd,
+On Wed, 12 Mar 2025 11:26:00 +0800, Chen Ni wrote:
+> clk_disable_unprepare() already checks NULL by using IS_ERR_OR_NULL.
+> Remove unneeded NULL check for clk here.
+> 
+> 
 
-On 3/14/2025 11:46 PM, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
-> 
-> The new driver fails to build if I2C is disabled:
-> 
-> drivers/media/i2c/lt6911uxe.c:703:1: error: data definition has no type or storage class [-Werror]
->   703 | module_i2c_driver(lt6911uxe_i2c_driver);
-> 
-> or if I2C is on but V4L2_CCI_I2C is not:
-> 
-> ERROR: modpost: "cci_write" [drivers/media/i2c/lt6911uxe.ko] undefined!
-> ERROR: modpost: "cci_read" [drivers/media/i2c/lt6911uxe.ko] undefined!
-> 
-> For both by adding a dependency on I2C and selecting V4L2_CCI_I2C, which
-> follows the common practice for these.
-> 
-> Fixes: e49563c3be09 ("media: i2c: add lt6911uxe hdmi bridge driver")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  drivers/media/i2c/Kconfig | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/media/i2c/Kconfig b/drivers/media/i2c/Kconfig
-> index e576b213084d..b06365d02ef1 100644
-> --- a/drivers/media/i2c/Kconfig
-> +++ b/drivers/media/i2c/Kconfig
-> @@ -1149,8 +1149,9 @@ config VIDEO_ISL7998X
->  
->  config VIDEO_LT6911UXE
->  	tristate "Lontium LT6911UXE decoder"
-> -	depends on ACPI && VIDEO_DEV
-> +	depends on ACPI && VIDEO_DEV && I2C
->  	select V4L2_FWNODE
-> +	select V4L2_CCI_I2C
->  	help
->  	  This is a Video4Linux2 sensor-level driver for the Lontium
->  	  LT6911UXE HDMI to MIPI CSI-2 bridge.
+Applied to
 
-Thanks for your fix.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
-Lkp is a bit weird to me, because it tested a warning in patch v6 likes
-below:
+Thanks!
 
-    kismet: WARNING: unmet direct dependencies detected for V4L2_CCI_I2C
-when selected by VIDEO_LT6911UXE
+[1/1] ASoC: mt8365: remove unnecessary NULL check before clk_disable_unprepare()
+      commit: f37ab219a3336ef787ce4babd20510f060f6f48d
 
-So I remove this select flag and passed lkp build test in patch v7.
-But now it encounters build error again, I'm curious why...
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
 Thanks,
-Dongcheng
+Mark
 
 
