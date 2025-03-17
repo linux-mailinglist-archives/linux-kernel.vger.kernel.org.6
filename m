@@ -1,98 +1,79 @@
-Return-Path: <linux-kernel+bounces-564723-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564725-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5196DA6598C
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 18:06:10 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01B3DA6598A
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 18:06:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 873E71727D2
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 17:05:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 35CBD7AFD4C
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 17:05:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 497941B0434;
-	Mon, 17 Mar 2025 17:03:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3831017A310;
+	Mon, 17 Mar 2025 17:04:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="bFBZk2aD";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="iq9Ui5SA";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="bFBZk2aD";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="iq9Ui5SA"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VoipQmU1"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 023F6A55
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 17:03:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F313D191F92;
+	Mon, 17 Mar 2025 17:04:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742230988; cv=none; b=EAqom+ktnfU6a0HjSGjw9dO0yk3FaofqLvphkaAR2xyGFrP6UUTEKP8yNa136Jd/OsXXFgqbXbCMLSn9pRQAWZzo6WUpWkGZXgbdiVVl3ynoHjniTodo1kCRTCFPdYj2HYNpT8lxHGuxnkQF6roVR9R7sMKohLtEFoQ+2T8VW/M=
+	t=1742231091; cv=none; b=lXm0xkTlWNSv+HnMMT6uICKiAspyPSMLUKDhd9c0EfWtq23muVtCA3S196WYr6FNF+D6bI93AhB9KexqfqZQedNKAAiV62f24rQSYU2GgNoTwg/PwDYwPJ0tLrKjSCATmGez4akOkgRTkzJiOLdv7+Gp9n5XIqwm+5ahfOm8i0g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742230988; c=relaxed/simple;
-	bh=Y1lEL/P4AAiBvQvEgf/V9bLVgFS07sJXZXwE6QLB2xY=;
+	s=arc-20240116; t=1742231091; c=relaxed/simple;
+	bh=S7K5tol0k7/0uioJVu6Ej4ugCuis6kd+0UfRokfW3/M=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nqggDSVLk4yQD55fRiFCwVWC8zq4AS3O9rYrrTId8emZ+tIUBP4RNdeNkKTLPfadKzS+0njOL0ExYuazOIBb/vprEGIrgkJLYLN3J3i4MYUznHoQnljZJkEcOEQK6dbT/OJZpUtdeO2p3j8sqF6QTQ9aJVcwPynKGC+MwO+/1w8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=bFBZk2aD; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=iq9Ui5SA; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=bFBZk2aD; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=iq9Ui5SA; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 21B8F21E86;
-	Mon, 17 Mar 2025 17:03:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1742230985; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7RtdBLjUX5HzImX3cp7Yd+vB9keMyW7jPADEVYMiqJE=;
-	b=bFBZk2aD0h1n5a+TV5nRhJbYYc/h8Wy0v0Dca60oPC5fHbfb+a89UCUB0kT/WgF2nnORGI
-	DaQ3Se37zw56DBrpXYsUhGP8zwr5FG0wY1nVpkUfXExwp/C83LJnOp6xgE0CJ3kId7z3ue
-	9Yt8c/E25oTz/ZLaxDr4oapqn4EzzQ0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1742230985;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7RtdBLjUX5HzImX3cp7Yd+vB9keMyW7jPADEVYMiqJE=;
-	b=iq9Ui5SAn/BTMC27bpNHFa7AharG7H14agTMJLjN1OpYMhxmR4D/60sXnY9OxOODXWhmws
-	M5wL9TAIy+ioo6Cg==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1742230985; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7RtdBLjUX5HzImX3cp7Yd+vB9keMyW7jPADEVYMiqJE=;
-	b=bFBZk2aD0h1n5a+TV5nRhJbYYc/h8Wy0v0Dca60oPC5fHbfb+a89UCUB0kT/WgF2nnORGI
-	DaQ3Se37zw56DBrpXYsUhGP8zwr5FG0wY1nVpkUfXExwp/C83LJnOp6xgE0CJ3kId7z3ue
-	9Yt8c/E25oTz/ZLaxDr4oapqn4EzzQ0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1742230985;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7RtdBLjUX5HzImX3cp7Yd+vB9keMyW7jPADEVYMiqJE=;
-	b=iq9Ui5SAn/BTMC27bpNHFa7AharG7H14agTMJLjN1OpYMhxmR4D/60sXnY9OxOODXWhmws
-	M5wL9TAIy+ioo6Cg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 052EB139D2;
-	Mon, 17 Mar 2025 17:03:05 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 83DvAMlV2GfvIgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 17 Mar 2025 17:03:05 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 94636A09A8; Mon, 17 Mar 2025 18:03:04 +0100 (CET)
-Date: Mon, 17 Mar 2025 18:03:04 +0100
-From: Jan Kara <jack@suse.cz>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] fs: use wq_has_sleeper() in end_dir_add()
-Message-ID: <apadfckxgxx46eten4sftyiay5nnbuopnph5oagnch6lyrtd3r@cgpwxge6bzs3>
-References: <20250316232421.1642758-1-mjguzik@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Xm5kaYOcjWCa1YGrM6eOT0He6HUD2tkEuvno83tWHBxqKwXt/+w5h0Qv4IlagygOePRve8m3EUZqM8gLLBnbBBhwcKMbxRHDu57E+M5g9j+J2AoKgxjQ9M6eMWQt4+7t8zaO96Jy0QgDEcdEw0rLtlxcdWRJ210dL6h31LnKKsA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VoipQmU1; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742231090; x=1773767090;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=S7K5tol0k7/0uioJVu6Ej4ugCuis6kd+0UfRokfW3/M=;
+  b=VoipQmU173ny/2d4A7LJWds1XFJFlZid1Rkp9gHaaAqAvs2Fo7TQuk56
+   K3RA+dYtYapFJEqcywXoZqzzp2UmXWjlwMO2A0nlZcxZADt5UYu5NMYR9
+   5h7SblKb/XSWEhKciKiNMmf2xEXGWitzMvANXXsb65SB45/R8aGOJTuP0
+   LQ0yK2ijgeE7AAwjVCWwFw0kX2shOgOa4cB9KyXkyEGikqXznpzrhz1Ny
+   IwL8yaldve5QHHl2LiDRly/vwLTQmYL0Gmvei159z/+PcHRLPUrec4078
+   LaV8nq8s2QexNv1Gc6t+/dteyMiepbFuKJX3/OF7mEJr4UcBO2gZk1sUy
+   g==;
+X-CSE-ConnectionGUID: /ZJLPkFPRT2tB8Bp16pSBA==
+X-CSE-MsgGUID: Md1X3YTJTj25xxyeu0gHeg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11376"; a="42586218"
+X-IronPort-AV: E=Sophos;i="6.14,254,1736841600"; 
+   d="scan'208";a="42586218"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Mar 2025 10:04:49 -0700
+X-CSE-ConnectionGUID: CzFf9nnuR061A68i6JhRng==
+X-CSE-MsgGUID: tYzu9Ls4SV6yENQAJhM3vw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,254,1736841600"; 
+   d="scan'208";a="127167782"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Mar 2025 10:04:46 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tuDtL-00000003Mjc-47u8;
+	Mon, 17 Mar 2025 19:04:43 +0200
+Date: Mon, 17 Mar 2025 19:04:43 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Thomas Richard <thomas.richard@bootlin.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	thomas.petazzoni@bootlin.com, DanieleCleri@aaeon.eu,
+	GaryWang@aaeon.com.tw
+Subject: Re: [PATCH RFC v2 2/6] gpio: aggregator: refactor the forwarder part.
+Message-ID: <Z9hWKxbcHlhyiCmR@smile.fi.intel.com>
+References: <20250317-aaeon-up-board-pinctrl-support-v2-0-36126e30aa62@bootlin.com>
+ <20250317-aaeon-up-board-pinctrl-support-v2-2-36126e30aa62@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -101,93 +82,74 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250316232421.1642758-1-mjguzik@gmail.com>
-X-Spam-Score: -3.80
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-0.998];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	FREEMAIL_TO(0.00)[gmail.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.cz:email]
-X-Spam-Flag: NO
-X-Spam-Level: 
+In-Reply-To: <20250317-aaeon-up-board-pinctrl-support-v2-2-36126e30aa62@bootlin.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Mon 17-03-25 00:24:21, Mateusz Guzik wrote:
-> The routine is used a lot, while the wakeup almost never has anyone to
-> deal with.
-> 
-> wake_up_all() takes an irq-protected spinlock, wq_has_sleeper() "only"
-> contains a full fence -- not free by any means, but still cheaper.
-> 
-> Sample result tracing waiters using a custom probe during -j 20 kernel
-> build (0 - no waiters, 1 - waiters):
-> 
-> @[
->     wakeprobe+5
->     __wake_up_common+63
->     __wake_up+54
->     __d_add+234
->     d_splice_alias+146
->     ext4_lookup+439
->     path_openat+1746
->     do_filp_open+195
->     do_sys_openat2+153
->     __x64_sys_openat+86
->     do_syscall_64+82
->     entry_SYSCALL_64_after_hwframe+118
-> ]:
-> [0, 1)             13999 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
-> [1, ...)               1 |                                                    |
-> 
-> So that 14000 calls in total from this backtrace, where only one time
-> had a waiter.
-> 
-> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+On Mon, Mar 17, 2025 at 04:38:00PM +0100, Thomas Richard wrote:
+> Prepare the code to create a gpio-fwd library. This library will allow to
+> create and register a gpiochip forwarder.
 
-Looks good. Feel free to add:
+...
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+>  struct gpiochip_fwd {
+> +	struct device *dev;
+>  	struct gpio_chip chip;
 
-								Honza
+Have you checked the code generation?
+Also, is this new pointer the same as chip.parent?
 
-> ---
->  fs/dcache.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/dcache.c b/fs/dcache.c
-> index df8833fe9986..bd5aa136153a 100644
-> --- a/fs/dcache.c
-> +++ b/fs/dcache.c
-> @@ -2497,7 +2497,8 @@ static inline void end_dir_add(struct inode *dir, unsigned int n,
->  {
->  	smp_store_release(&dir->i_dir_seq, n + 2);
->  	preempt_enable_nested();
-> -	wake_up_all(d_wait);
-> +	if (wq_has_sleeper(d_wait))
-> +		wake_up_all(d_wait);
->  }
+>  	struct gpio_desc **descs;
+>  	union {
+
+>  };
+
+...
+
+> +static struct gpiochip_fwd *devm_gpiochip_fwd_alloc(struct device *dev,
+> +						    unsigned int ngpios)
+
+I would rather split as
+
+static struct gpiochip_fwd *
+devm_gpiochip_fwd_alloc(struct device *dev, unsigned int ngpios)
+
+...
+
+> +	fwd->descs = devm_kcalloc(dev, ngpios, sizeof(*fwd->descs),
+> +				  GFP_KERNEL);
+
+One line.
+
+...
+
+> +static int gpiochip_fwd_register(struct gpiochip_fwd *fwd)
+> +{
+> +	struct gpio_chip *chip = &fwd->chip;
+> +	struct device *dev = fwd->dev;
+> +	int error;
 >  
->  static void d_wait_lookup(struct dentry *dentry)
-> -- 
-> 2.43.0
-> 
+>  	if (chip->can_sleep)
+>  		mutex_init(&fwd->mlock);
+>  	else
+>  		spin_lock_init(&fwd->slock);
+>  
+> +	error = devm_gpiochip_add_data(dev, chip, fwd);
+> +
+> +	return error;
+
+	return devm_...
+
+> +}
+
+...
+
+Overall it looks and feels like this can be split to more simpler logically
+isolated changes. At least I see that folding function parameters can be a
+separate patch.
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+With Best Regards,
+Andy Shevchenko
+
+
 
