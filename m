@@ -1,220 +1,243 @@
-Return-Path: <linux-kernel+bounces-563453-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563454-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8653A6420C
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 07:49:32 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35717A6422E
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 07:52:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 19D933AB6B7
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 06:49:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D80116E897
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 06:52:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB54C1DE3B5;
-	Mon, 17 Mar 2025 06:49:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BA63218591;
+	Mon, 17 Mar 2025 06:52:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="YfVHK3PA"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2062.outbound.protection.outlook.com [40.107.237.62])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Upqmpc0q"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70B0A154C0D
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 06:49:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.62
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742194161; cv=fail; b=o2+IHek66tqAIjZBL/pKW6oz4E3ijUVDHFkIEs9YNVJMgCMIg56JgdVErObRKGniT4UZQVm1V35aZcUD+fmIzzSqvwBz9IZKCRhvocG4PE/Ykr5I1X5x5HCDF3G1avOyHOW09bypBmpkkfQ507cK+VaDx8llY0w3129mGd7KtH0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742194161; c=relaxed/simple;
-	bh=9aRIlM79g7hnBw8Q65k3ImBV/fcge7gtYoYpPxS+16M=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=JZxJMs6ECZX4HyZ3xhuojWRRLjw+xV0meJTXWYZu1AmGC4HuR/YNcPU2kcCH5RQ6iHDsDxLrrFbBxAm3PJZcNVn+aPzJyOLJXvySqXMul0TuOccxPEqbIh2Msx2n/6KX/2STCnRXDXEYpu7L6GWGUkzsy/lxjWObpTfntP17GlI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=YfVHK3PA; arc=fail smtp.client-ip=40.107.237.62
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=hUvps7n9zOuMAAC/aEFPSNEgdJcOPVe1fk8QfB0I811PfISCqr8tDqdxHXybYW1xhDcd7xxN0iJ1IHXkeQZz71Ds4dhbpAMUh2k+g/oE2BAYTZbd1XuqoSL165nTb0mZNy0rYw05swR8QEflaQOeQqWql3oszhEZKjlD7WgjCLLpIDVMePbV82RK5YYKRJES4cb+tvAnxo10TYGDWf9LPpOor4wrwp+ucOweypjRqvDuL6qai1Qb9P1BQK7M9V9cDiwADPaz+UxsDtt9AzaaNH63OT4A4oCBrHPl1YoK7cCyXEOQCcz4nI0HBmjUoxzumnTm/B53Sfad/mgMUmSijw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=+DDwVFUvZuzl/Yd6/UVChjY7Zn6po1vZQdDWKZc0z7o=;
- b=tCeicmTS+ujQV58Z0CA9PP8ODC31MbrxOUCjHutfAp2xqK1oeXTBmhK36qowdd8/m41F5EL7hSQLP02lgPK46F1EJViuuqgvmHp0ao2CdJ9t2MSS7mY4EuzehVhhVY0aJG8yu5VxW369yrAqHigyg3SkSHUoh+uzvzq9O8txIebfoHD3G+7ufM0i13OQtCRdYSZuadkNB1yzxEupi8OYbGsMQhR9p+Wq+kWuCrIfTYG/ZP0ulJUHIIxiF64Ph1tySSSYc6dezt78zd9QJype0MG6MNFWcxet9ydEjlSFNxYIzhw+l4HAnHqSA621BS8I1jmKlWFUU2r37myJGSy6QQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=+DDwVFUvZuzl/Yd6/UVChjY7Zn6po1vZQdDWKZc0z7o=;
- b=YfVHK3PAKL/cGTn9jlSA6sn7BACDw0kI5p8K588xxmocwlp5GKWu2iaTe7F528DfgidoNgoIVfpPrSi/nGNQWaywW/YsqNQHsLE32RAwtAPdT3xjXOgSbWVXCTzwMUEB+o6yZ2qz0idGoRo84JSu7jZmYOsN1r6MHzZEX+nO55o=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from PH7PR12MB6588.namprd12.prod.outlook.com (2603:10b6:510:210::10)
- by PH7PR12MB5997.namprd12.prod.outlook.com (2603:10b6:510:1d9::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.33; Mon, 17 Mar
- 2025 06:49:16 +0000
-Received: from PH7PR12MB6588.namprd12.prod.outlook.com
- ([fe80::5e9c:4117:b5e0:cf39]) by PH7PR12MB6588.namprd12.prod.outlook.com
- ([fe80::5e9c:4117:b5e0:cf39%6]) with mapi id 15.20.8534.031; Mon, 17 Mar 2025
- 06:49:16 +0000
-Message-ID: <1d9d8520-bb4d-4af3-a395-4a4e594e67e8@amd.com>
-Date: Mon, 17 Mar 2025 12:19:07 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/7] perf: Simplify perf_event_free_task() wait
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: mingo@kernel.org, lucas.demarchi@intel.com, linux-kernel@vger.kernel.org,
- acme@kernel.org, namhyung@kernel.org, mark.rutland@arm.com,
- alexander.shishkin@linux.intel.com, jolsa@kernel.org, irogers@google.com,
- adrian.hunter@intel.com, kan.liang@linux.intel.com,
- Ravi Bangoria <ravi.bangoria@amd.com>
-References: <20250307193305.486326750@infradead.org>
- <20250307193723.044499344@infradead.org>
-Content-Language: en-US
-From: Ravi Bangoria <ravi.bangoria@amd.com>
-In-Reply-To: <20250307193723.044499344@infradead.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: BM1P287CA0016.INDP287.PROD.OUTLOOK.COM
- (2603:1096:b00:40::27) To PH7PR12MB6588.namprd12.prod.outlook.com
- (2603:10b6:510:210::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D07A154C0D;
+	Mon, 17 Mar 2025 06:52:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742194339; cv=none; b=EFT77hC5dGNRmUFNg6/RJ9aFPoCNKtAP8gOz/guUO7/F4wizSrrsh1JISKMjLiYgzgDNCl3s1dSkqp5nq2FdmxFu7lsfyk3OsuPW7vtocEjHhC2bgPtZJ4Zs8JZjQ08mK2J4HgJ0VIJbLy/rcWpZG9kcR96o4W1YcYt+nQ6xM4E=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742194339; c=relaxed/simple;
+	bh=dgde7QjU5NzrulQjv+nC8gia1h90VQGW4bvT3fO3XY8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WN2xyVXmU1Dl1jlrZbBgzSyXsxOxoUYqqkv6t5DmO1IGariF0inUKQc93aFUeHVDU7V9CoOsYOCIHon1VMZw7t3uc7oODkrBkR8ZBH335S6gAPKeYoNzS4wbbZlKXNnpoOgykICWY+GCZ28BT9vE4bakTw3RgKBR/mYO95xLX2E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Upqmpc0q; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-5499bd3084aso4173432e87.0;
+        Sun, 16 Mar 2025 23:52:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742194334; x=1742799134; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=gasgoAze4PfSvdUivzZ1QQeZ3gra51s87x24FFJFeOg=;
+        b=Upqmpc0qBn1N4UO8iUSbFzWp+hK1wEvK24PX7X08jGA7BwYTRqonqzpUlb1EL6w7bC
+         QzLjFuvOOXt7os5qUGefqJhJaaIMB/h+2BF9onHieiwmPHrc+BVNbSNY9iBara3DB7f/
+         +Vw1hsTWWjZ/rcTuGTCqZwIwmYoOPX96/baUfzdVQlKvU7fhdCRLM6+EP5pPdZXTq97B
+         MqMZmPY4MLaHGRTnyVojKSxJd6RMSHFHwij0MMokfGQVxtY++Gb5lom4P03CimPOkL1v
+         kK4F27CNJyEA1TeSuEXm+yPukn+6q8mZzHtDNbxg+2lW/gqv/pFK0mcBM3rPETLEO2IU
+         XcCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742194334; x=1742799134;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=gasgoAze4PfSvdUivzZ1QQeZ3gra51s87x24FFJFeOg=;
+        b=kH5p192DZ/cOh2eMjdU42uVujfQHV0OJ/otI1xS0Aec+JF4ey2qM6VQJ/T5elkoqMM
+         BppKl9vPic+dB2utW2Dfgqk3nllv/3rj13wdjKQAK0SwUpOUP5+oxtmTe6JksMf8MFL4
+         K8D0eG9x0lP9WQrc7qArGHQsHRkUljhkVqtqwB2FVBSsnmiRYkQILjwApGWzHGKldV14
+         dloNgqR8PmkMA/a5bxtwVp1XSPFYU4ycDh0vFtuGcD099P8suPG//RCxi7aPD/SnJPui
+         LxvV4QRWDjWRETJ+KfUgrZF0Hl2XCsqmqc7LHiHYIFD1SqBaAKtAEx73pmZk357kUj7m
+         LD3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWDDQGvWVuvMKxOzp6K6oE/k80rePN9scDqaMN6xbtARBxcJPwsK5CX09un+FqNH1J71so8yVbcO71sMFGe@vger.kernel.org, AJvYcCXUerr20d2EwHzqiIwNDIm7RXfQC+NgcJoSGbatTNAStDceQHxgWgNeczYcSGGXu+n1NW5vUYQGa/E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxOiumIlQTgSzShRhYS/xLClhWjZWOAQ6/43DaR9ooqxO2o9ED6
+	nuY09AdqiBSvjAC8BCPtXqXdLg1VyNU9GcH2Huwk9u8GGxfx27QW
+X-Gm-Gg: ASbGncvCaseleUHtMj0o3UVvaThzhrb01KYqH7jbyOwiPLv7Pwt9/pBQfszv5DMqjAN
+	AtNh2D3g9Twv1ZxW1gPrY060c+7Wn6/xZcn9B0dSARO7rveeoORM7ctBo5UfgDCKIKEOUMNDMzr
+	LIMIvf8ZuF2L41v/f9zmv3er1p/DDBHRR7dViB9NhmAyFkxlkYebFXKCQ5ixhrKDlzJv/Ubn/2U
+	hJMag10/H2PuLZoY9lMK1JECWfKfLGJFGooh1D2XbQXRVy6L/wu6d4uSVaAKzippFxsdoqWu5Lg
+	o39VW+nFJJi+xGUtwkj+GEi0mOrfONU8EucGCz3EJAImUSrVdI5UCq6AqOPwg44nIsZWra5GtEJ
+	nHWp89emJVR6Ww8Mz+XPHgARhqnuNW0IYImjK
+X-Google-Smtp-Source: AGHT+IFuv4k/CfvsKuOboK+i7Xb2DjT7/C+AfWgfzY2Qp/J/T2fDJ9WndujqgV2XCWAG9XELpn0T+w==
+X-Received: by 2002:a05:6512:b05:b0:549:9143:2609 with SMTP id 2adb3069b0e04-549c38cf99bmr6832474e87.3.1742194333245;
+        Sun, 16 Mar 2025 23:52:13 -0700 (PDT)
+Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-549ba8804b4sm1198072e87.171.2025.03.16.23.52.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 16 Mar 2025 23:52:11 -0700 (PDT)
+Message-ID: <c7ef9333-c044-4640-b126-7771a1135d87@gmail.com>
+Date: Mon, 17 Mar 2025 08:52:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR12MB6588:EE_|PH7PR12MB5997:EE_
-X-MS-Office365-Filtering-Correlation-Id: d9fcb011-5d70-44bf-5400-08dd651fd5c7
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?OVc5VFBUcUlZK3hTVUtrMXVuYU14c0gzY0k3TS9MMnhmeHVSd2J4VEIwc2ln?=
- =?utf-8?B?V2xReDJvVGh3WW5TOWtkdjN5STkzZ21hYkVYa2xZaEMzV2MyQ1R2QzRJT3oz?=
- =?utf-8?B?OUVqaVRKMG1nZ0tBaTdaYVJZQVh0U0JsNmZUeWlPc1ZKOXdoVkkrQ2Y4TzhS?=
- =?utf-8?B?R1QyekVjbXBNQnRITUtEWGtUckRJeWw2bTZHcUMyRHVvVk1zUTMrSlRWaGpI?=
- =?utf-8?B?UEdWSFBVQUxHUUdsN1BCSU1RR3EzV1hmRkh4TitXS0g3ZUFqaWlORUphUUQ3?=
- =?utf-8?B?bS9jbVVoZUUzN1Q5b0lCT0ErUlVrZGVsejRSYWhDRlpBbDNQK1o3Q0NFRHFT?=
- =?utf-8?B?ZEJxRnlUTjZ3TXN6b1M1MGN4b1VxSm5Vb2NwSnUzYnRKTkxZWXpaMmZjZXY3?=
- =?utf-8?B?aWJqSUlHTTRMSXNIdDRINTdMaTRiQXBDOHZvWjZGTldzS3ppeVEvQkdGVWw1?=
- =?utf-8?B?U09XSWp1VnR1emwzWEU2YTFkem44YlZSS1VPZjZFRlluRnZVWTh5SXMxYWxm?=
- =?utf-8?B?QnZtWktieFNjVWlPV2UyKzhUa09kbjIzQlNDSENFcXBLTzlqWTh5Q2Rua2FF?=
- =?utf-8?B?bWc1cmQ5VjVKNDRWSlJ1MC8ybXVWeGRwVjltUVFGQkRWZk9HUkpyd1ZnamZX?=
- =?utf-8?B?Ujdsa1B4Z2V3Vm44c0RqVFFiUzJUSmZYUlgvT05uUzFnL29lKzZtbmx0WTNR?=
- =?utf-8?B?VnRyZU8rVVBtMmpUUjc5YTNKL2lPa3pwSHM3TEFUUGFmNXNkd3lHYzBsemN2?=
- =?utf-8?B?ZTF6N1pPKzFuZmF0cUh4N2tnY3cxSWE0cnQrY3V5NUlRVS8yeTNTamcvdFp4?=
- =?utf-8?B?VGlkUnd1S1c5OW81QzhuUTNBWHl6SEhVSHovcTR0NDNUbTgzM3Z0WVFrYWor?=
- =?utf-8?B?NzIyOUh2S2Z5Q0k5eldVcVJicEZMcjFubzNzaTZsbXkxSUJKSDZwaXRtVXho?=
- =?utf-8?B?anlyUHZ6TkdsOXJyZTBlaWM4SVQ5bkw3MVljTWlkSGFtRS9yVVBRTWxxZEdo?=
- =?utf-8?B?WWgrSlkwa2NlZjN2eS80N0V0b2VUMmlKZzVpR3hyNXVkaWUra3U2SnNJV3J2?=
- =?utf-8?B?QjJOUUNsMXZkZFQyMlZrNXVLaDhrYWJwbWpmd29qV2grV2UwS25RK0srNGtU?=
- =?utf-8?B?YnRTQmp4TXpia1pMQlpCS0lpcVRoNVVqd1N6ZXVkUkQ5eG1LRnBpSG9GdkRs?=
- =?utf-8?B?cFZvODhTbHdmcWhaNXc5MUNVTzRtWEVWQjBxSnN4TkJFNUQ2eW5yTVJSMW51?=
- =?utf-8?B?eC9DTnVXYkNPS0lmd3JQUUo5cHZTVlFlNm9ESktWOHNiS24wZTRKMEFrZGc1?=
- =?utf-8?B?TlFoNVlLVm5XdlJnQW9LQjQxQWdsNmxZYlNSbmlsS3grSFJDMTFXckhRNnZD?=
- =?utf-8?B?MGJpcVZqU3gwZ05zUDVtZ2QvMDNHdTd3R3pMK29UNFFMTWNzVlBWK25PQVlM?=
- =?utf-8?B?bTZycU1TelUyc1Rod3k0SVFTdERNalhPelh3RlZuWGVDbTVWWDM1VHN6aFBJ?=
- =?utf-8?B?NStQN0ZJVDM1c0VVbWdKdGxna3VrUTZWdUlHV0xjNW5yYTBjOGlDVUZwcWVj?=
- =?utf-8?B?M0E5dDI1Rk5FR1FvZ3J3dGp6Sk92Zy8rdVZ5SlBLODE5Q3lvQ3NvVlczSk9y?=
- =?utf-8?B?dDZrNzZEK2l4UUk0ZmJ3NXRaYUw0TFJESE1EejZrVSs0b1I1dXg4YmVwWm5j?=
- =?utf-8?B?TE5iS3FTSVVjL25LY0dzYjFmQnZnTmVmMndKN2VWa2ZZWnhSSzcyNDJ2dlVK?=
- =?utf-8?B?aCtjejh1dXYxam1xZzZoNzZhVTk3NHVRbWNqN0syd1JBa1ZGVGl0TGtMYUZ3?=
- =?utf-8?B?dmp0NFg2cFVWbmdEalJacHlmS2pwTG5rSUl0aEtvY2NoS3d5RzQ3TE9xSXcr?=
- =?utf-8?Q?J1vJXPKrW/xrf?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB6588.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?NUMrdWh2TDR0QWUxTFkzcEFMc2tyY21seENVOVRJaTJHWE8wazAvRFNaU3hZ?=
- =?utf-8?B?Z1FSdGFCY294OFlaeTMyU0FqRTVFNGt0ZFRhaldWc0s5MEdUQVVkK2hqYzdQ?=
- =?utf-8?B?RVRYV1JWRWlZMmNOSUQ3bVBiTVhRZUVJWWZ1L2JYcW9oZ2djUGhHWHcwdkVL?=
- =?utf-8?B?TkoybXF1djE4OEMvSzFOL0pVNUk4Ky82eldOUE9uMGMwODZPYTNTMGUyWXFZ?=
- =?utf-8?B?aTBPZGI2Ni9BeklMSVZtOFM4NWh3Vm12ZklmRlBrZUw3RUUyZmx5bWQ2a0Iv?=
- =?utf-8?B?WjlaTUo0ak1LSWFKdzBzcmVhTGd3cTRoT3J2RzdxSFRxWG1jOUV5amVmMWcz?=
- =?utf-8?B?S2VhNFEyVlJtRVpGSWhteDl3dTE1RlFaV3Zub3BPS2tTdnR6RVBsWDF0MGpj?=
- =?utf-8?B?cnBFZUdkNHp6MCtseG9CanAvbzVHaDAvc3FsOWtYR0VoVEE5OU84enB3NzV5?=
- =?utf-8?B?bS81dnI1ckQ1NnhReWM5Yk9qTzZ6NE1qMHF1YTBpWWloT2M3bkNzZXNmNGtX?=
- =?utf-8?B?dEUzK01hK3M0aS9IN0c1YmZRWWJQTjZNVS9JaVpFSzZSUE13eGpZL3hGM3Av?=
- =?utf-8?B?OHVURkZ5UnVYYzFsTFd2TVZxSkN3bUE2cmRQUXdNUHZGdDBnbkhCTkE1SDdN?=
- =?utf-8?B?dnlBTTZqN0tIL1BJbndkWktYNUVQbXlHOEwvZGZhUVAyWkdkQXVqN09oQkZP?=
- =?utf-8?B?VVRFcUdsNENYS25UWUtvaEJMOVBER1hZdHVrT3liQk8zaGNNbWVuZDRhdWhz?=
- =?utf-8?B?WGFDMThQOVY2UDl2L21lSU85S3ZPR21ZQVRVVW85UUZ3OHlIWUo1SHhJWWtw?=
- =?utf-8?B?d09JUGtoQ3VIWnZpOE1iUkRFYXJaYjNESERvUDBQa2NXcEFEazZodmZRV1BI?=
- =?utf-8?B?aUx5NnFtYUpRNCtETUVLdEZoOHdIRXViZEpiRGVRZlF6Sjl3LzVPMllvalc0?=
- =?utf-8?B?MnEzcFl3YjVIbkNlcmZaajZZbGxTRlg2Z2RpSEdZZ0ZYNGVCblgwOU85dXBp?=
- =?utf-8?B?a2dRUVRERGxpTk5JWmRBWEpDWWc5LzlVSmYyemlYQnhvdHpRTno0WXN0bFho?=
- =?utf-8?B?aE9od1RMQ1UrekFKbnJIRlpaWUtYcW10aWJlbG1OTHVhNkZsT2pSU29GM2Jx?=
- =?utf-8?B?UnR3VmxJNEtPVUdKdjdUcEc1S1Z5cXZUM1AzS3FIb2M3YVB0cjh0ZGhhZDUv?=
- =?utf-8?B?K0E1cUpmSDVtamRabFFtNzYxaDBPT0JRYmlGTVhJTXJzR3Z3OTUwWXJCeXoy?=
- =?utf-8?B?V1NxVHowQm4zazNSNG1EbG1BVXFvdk45aEo3STYxdmpqMWpVc0hWVHVEb3Nz?=
- =?utf-8?B?RVdMbUh4M2g5YkNmVDU0RjNwN1NlZU0xVkJDaUs5dVQyeTNzZDc0Y3c1aHhV?=
- =?utf-8?B?bGEvWEM2MmpBbVpDOUEvRDdnRS9Bb3p3NTBRSC9jL2tXTGJQdGIvcVZ0eW1n?=
- =?utf-8?B?NDJReThhTDVtZFo5Ym9JN0ZGV2RKSVBnUXFjbU9zNnV5djRPcjVwZmMxL0lO?=
- =?utf-8?B?M1JRaEorUElISlRYeDg5WHExQXB0Y0lIMTFLanNpWCt3azB0SFNFTGtsT1Ez?=
- =?utf-8?B?Vkh4dFU1K3FETGdwZjQwbmtSbDdRT1ZLbFBTc01UdTErMXY0c0ttQVlQYlE3?=
- =?utf-8?B?K2VQYkZzTnlTbExNWWtpZE9aTGtIUFV2V3V5WEQ0TjBhcWpxYWxhbUx0OVE4?=
- =?utf-8?B?SXNmOG93a3M5Wlp5Z2NXR3dRQXFmUU82dmRCN3lqQ3U2RTNwS2tWRnNieWND?=
- =?utf-8?B?eHVDUzFWVnhtUnhZM1BhQzh5Q1FjOU9JN0RHK2NZZzdKRGgrTEpweWRnd3Ix?=
- =?utf-8?B?SnE1TWpHMW92Zy8zV0lXUWczeTVjcWZMeTMxK1NPaHRRSkd0SWc2WTY1V3hz?=
- =?utf-8?B?UnkrbHlmZXhzWmQwdy9CUjRVd29tNkdqZVRRNXZvUFh3OEZGd0VJL2xBbU5W?=
- =?utf-8?B?U1JuU29LYU5NaVJ1MnVkeVVrdnZybXBYY1czU25hRks0RTc2a3dCc2V2UG9C?=
- =?utf-8?B?OWR0RXZUK3JXblNDeWZrN3JkQ3ZWdEd4Q1hVbHBFSXlUdUtVcWZkb05VeENs?=
- =?utf-8?B?NmRFdW03b1lDM3pZcTRYc3JLUWUySkY3T29sb3pLeklRcm43WWJSZ0hqcjNV?=
- =?utf-8?Q?nR/kyN9cG6JCZjtpFubnjBtGf?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d9fcb011-5d70-44bf-5400-08dd651fd5c7
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB6588.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Mar 2025 06:49:16.4875
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: T+KLtbRkKPvwSwKgcS5nb+TS7HXigOHPSNbKYDvTZsu5DWkolwiuhLWjiNDUB38c9Xhcy53wjhaPT7LwVDvLjg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB5997
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 06/10] iio: adc: Support ROHM BD79124 ADC
+To: Jonathan Cameron <jic23@kernel.org>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+ Lars-Peter Clausen <lars@metafoo.de>, Nuno Sa <nuno.sa@analog.com>,
+ David Lechner <dlechner@baylibre.com>,
+ Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+ Olivier Moysan <olivier.moysan@foss.st.com>,
+ Guillaume Stols <gstols@baylibre.com>,
+ Dumitru Ceclan <mitrutzceclan@gmail.com>,
+ Trevor Gamblin <tgamblin@baylibre.com>,
+ Matteo Martelli <matteomartelli3@gmail.com>,
+ Alisa-Dariana Roman <alisadariana@gmail.com>,
+ =?UTF-8?Q?Jo=C3=A3o_Paulo_Gon=C3=A7alves?= <joao.goncalves@toradex.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org
+References: <cover.1741849323.git.mazziesaccount@gmail.com>
+ <b6c02a5d75a20bbbf8c3370ccee615d269620117.1741849323.git.mazziesaccount@gmail.com>
+ <Z9LbT1BvPEIp7U2N@smile.fi.intel.com>
+ <bb403ddb-5c6f-4286-8d80-3ede40f94dc2@gmail.com>
+ <Z9Q-KcadLHdDLxVc@smile.fi.intel.com> <20250316095233.20d1a134@jic23-huawei>
+Content-Language: en-US, en-AU, en-GB, en-BW
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+In-Reply-To: <20250316095233.20d1a134@jic23-huawei>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Peter,
+On 16/03/2025 11:52, Jonathan Cameron wrote:
+> On Fri, 14 Mar 2025 16:33:13 +0200
+> Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
+> 
+>> On Fri, Mar 14, 2025 at 09:31:58AM +0200, Matti Vaittinen wrote:
+>>> On 13/03/2025 15:19, Andy Shevchenko wrote:
+>>>> On Thu, Mar 13, 2025 at 09:19:03AM +0200, Matti Vaittinen wrote:
+>>
+>> ...
+> Picking out a few things to comment on...
+>>
+>>>>> +#define BD79124_MASK_HYSTERESIS GENMASK(3, 0)
+>>>>> +#define BD79124_LOW_LIMIT_MIN 0
+>>>>> +#define BD79124_HIGH_LIMIT_MAX GENMASK(11, 0)
+>>>>
+>>>> These masks are not named after registers (or I don't see it clearly),
+>>>
+>>> Naming is hard. I usually try to make a balance between:
+>>>
+>>> 1) using names which explain the purpose when seen in the code (at call
+>>> site)
+>>> 2) keeping names short enough
+>>> 3) following the naming convention in the data sheet
+>>> 4) maintain relation to the register.
+>>>
+>>> I put most emphasis to the 1, while 2 is important to me as well. 3 is
+>>> _very_ nice to have, but it is often somehow contradicting with 1 and 2. 4
+>>> is IMO just nice to have. The register is usually clearly visible at call
+>>> site, and if someone adds new functionality (or checks the correctness of
+>>> the masks/registers), then 3 is way more important.
+>>>
+>>> I am open to any concrete suggestions though.
+>>
+>>  From my point of view the starting point is 3, then one may apply 2 and 4,
+>> the 1 may mangle the name so much that register data field name becomes quite
+>> abstract.
+>>
+>>>> it's
+>>>> hard to understand which one relates to which register. Also, why not using
+>>>> bitfield.h?
+>>>
+>>> I saw no need for it?
+>>
+>> Hmm... Okay, I think Jonathan will ask that if really needed.
+>>
+> 
+> I won't as I'm not a huge fan of bitfield.h. In many cases they bloat the code
+> and increase the writes that go over the bus.  Don't get me wrong, there
+> are good usecases, but it's not a universal thing (unlike PREP_FIELD()
+> etc which I love :)
+> 
+> I do favour burning a few characters to make field / register relationship
+> clear though.  A few things can help I think.
+> 
+> Structuring defines and naming:
+> I like using whitespace in subtle ways for this.
+> 
+> #define PREFIX_REGNAME_REG				0x00
+> #define  PREFIX_REGNAME_FIELDNAME_MSK			GENMASK(X, Y)
+> #define  PREFIX_REGNAME_FIELDNAME_FILEVALNAME  		0x3
+> etc
 
-> @@ -1223,8 +1223,14 @@ static void put_ctx(struct perf_event_co
->  	if (refcount_dec_and_test(&ctx->refcount)) {
->  		if (ctx->parent_ctx)
->  			put_ctx(ctx->parent_ctx);
-> -		if (ctx->task && ctx->task != TASK_TOMBSTONE)
-> -			put_task_struct(ctx->task);
-> +		if (ctx->task) {
-> +			if (ctx->task == TASK_TOMBSTONE) {
-> +				smp_mb(); /* pairs with wait_var_event() */
-> +				wake_up_var(&ctx->refcount);
+This is close to my usual way, but not quite. I most often do:
 
-perf_event_free_task() waits on "ctx->refcount == 1". But moving
-wake_up_var() under refcount_dec_and_test() will cause
-perf_event_free_task() to wait indefinitely. Right? So, shouldn't
-wake_up_var() be outside? something like:
+PREFIX_REG_REGNAME
+PREFIX_MASK_FIELDNAME
+PREFIX_FIELDNAME_FIELDVALUE.
 
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -1281,15 +1281,14 @@ static void put_ctx(struct perf_event_context *ctx)
- 	if (refcount_dec_and_test(&ctx->refcount)) {
- 		if (ctx->parent_ctx)
- 			put_ctx(ctx->parent_ctx);
--		if (ctx->task) {
--			if (ctx->task == TASK_TOMBSTONE) {
--				smp_mb(); /* pairs with wait_var_event() */
--				wake_up_var(&ctx->refcount);
--			} else {
--				put_task_struct(ctx->task);
--			}
--		}
-+		if (ctx->task && ctx->task != TASK_TOMBSTONE)
-+			put_task_struct(ctx->task);
- 		call_rcu(&ctx->rcu_head, free_ctx);
-+	} else {
-+		if (ctx->task == TASK_TOMBSTONE) {
-+			smp_mb(); /* pairs with wait_var_event() */
-+			wake_up_var(&ctx->refcount);
-+		}
- 	}
- }
+Problem with
+PREFIX_REGNAME_FIELDNAME_MSK
+compared to
+PREFIX_MASK_FIELDNAME
 
-Thanks,
-Ravi
+tends to be the length of the define. Also, sometimes registers contain 
+field(s) which have nothing to do with the register name. Sometimes it 
+results confusing definitions. (Confusing meaning that seeing the actual 
+read/write makes one to wonder what the register field is supposed to do).
+
+> Makes it easy to see if we have a mismatch going on
+> 
+> However, I don't insist on this in all cases as it is one of those
+> "don't let perfect be the enemy of good" cases I think.
+> 
+> So Matti, good to have one last look at the defines and see if they
+> can be wrangled into a slightly better form.
+
+I can at least change the MASK to MSK and save one letter :) What comes 
+to the ordering, I see you prefer having MSK / REG suffix at the end - 
+while I like having it right after the prefix (just because it makes the 
+MSK / REG to stay aligned - which in my eyes looks a little bit better). 
+So, I'm not sure if I change it to your preference (which may end up 
+being more common in IIO if it's what you prefer), or if I keep it the 
+way I am used to.
+
+>> ...
+>>
+>>>>> +static void bd79124gpo_set_multiple(struct gpio_chip *gc, unsigned long *mask,
+>>>>> +				    unsigned long *bits)
+>>>>
+>>>> Ditto, .set_multiple_rv().
+>>>
+>>> As you know, this started at v6.14 cycle which is still ongoing. I don't
+>>> think .set_rv() and .set_multiple_rv() are available?
+>>
+>> You mean that you are still hope to have this series to be squeezed for
+>> v6.15-rc1? That's not me who decides, but if not, those APIs will be part of
+>> the v6.15-rc1 (at least they are pending in GPIO subsystem).
+>>
+> I'd vote for a rebase on rc1 that should be really easy to for me to pick
+> up.
+
+I sure can rebase if the series is not merged before the rc1 is out. I, 
+however, rather not delay versions (unless explicitly asked to).
+
+Sometimes postponing things to wait dependencies to get merged backfires 
+due to some 'last minute' delays. Hence, I don't usually adapt to new 
+APIs until they are in the rc1 or target subsystem's 'for-next' (or 
+other suitable) -branch.
+
+> I'd accept a follow up series though.   Ultimately won't affect
+> when this series lands as very unlikely Linus will delay the release
+> long enough for me to do another pull request this cycle,
+
+No problem. You'll pick this when you think it's ready - and I'll rebase 
+if new rc1 is out before that (and convert to set_rv() and 
+set_multiple_rv() if they are included in the rc1).
+
+If you merge before the set_rv() and set_multiple_rv() are in your tree, 
+then a follow-up will be done when they emerge. :)
+
+Yours,
+	-- Matti
 
