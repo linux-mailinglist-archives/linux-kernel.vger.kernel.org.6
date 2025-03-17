@@ -1,132 +1,156 @@
-Return-Path: <linux-kernel+bounces-563753-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563756-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F766A647A5
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:39:09 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E13D5A647C6
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:41:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 768E0165A96
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 09:39:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10C2E1890B1C
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 09:41:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E83F2224B12;
-	Mon, 17 Mar 2025 09:39:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACBB1224B03;
+	Mon, 17 Mar 2025 09:41:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Hd8HN8xt"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="xhfCFjhj"
+Received: from out-183.mta1.migadu.com (out-183.mta1.migadu.com [95.215.58.183])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF7E92E3373;
-	Mon, 17 Mar 2025 09:39:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE15F2236FC;
+	Mon, 17 Mar 2025 09:41:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742204342; cv=none; b=HKhJfX1KMMZhQ+kG2p+Wk+13PZy6uUzBvB2QgT7/are6hdfjnbmE7Tb4tkrO7kDh7XIqGtQE1C87AOvZbkfipt5Efd/ZHP85U2b5uHLOrYCH3d198lq2Wsi2Dmpsv58X42cUnQW4WK9jn/Oz8NfZ38wQsfTsdx0i+hteoCq86uU=
+	t=1742204467; cv=none; b=bmZNS1sQ5fEjGZ49Yi69QGuOiWCp9ukCAXnFHyZFJxctzcmvq0ejohjcCoBSaG8zxtesmM7VE4Jq3cCetOE0qVEOpnyVAwCq6H7nN1ewqK2T9ewPBQDUGUfZCxQWZtMV/3sx8o89dvkUeyRhx3+lTn3zvDh1yGLs2IuAYg2lPHg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742204342; c=relaxed/simple;
-	bh=P83TY0gOs7vPUW/KjHn5qXlUWoTtrYzEJqZWCh5o4Uk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HGaXaPjsV1fjgcTlwpDYoaAj9bohFje7K+7wiTWHbvL0FRdHi7WYctv6ET8vynrfO2ZEUNpGOjTA5s3wFEHACo9AT+RmS0X7T2sIaOPSCq6Y+mHhBKKI6jRgwGKbh7RBd7BSAQJq9znqoKFvulMumWyf1LwY/97IrfQuLcrW1qI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Hd8HN8xt; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=EKUyx7KbRM5GU2Q4/TLVPYUhyMHFXhXGrBJE0yM5/N8=; b=Hd8HN8xtwy0CmVK217jVStXdr5
-	A6CyiZLXDBX70gp7ve2I3ybOpcI5HNAj5avecq5MPFr+aDcgQflForxjuPOTmiPOcK1vP8HmWBIN6
-	0tvFl470Sbvtzi8Fxxz+PEOmU8ptr0IhZ/Qx+8RT4bD/sfT9biqS2sL9ZzMum5XsLakbxlGZbJLtw
-	gD1yBahkqG1Ge0/FwETgRdQzG/auzJJ/2POdPAX+VC6ajmX24cP4Xs0egMi/+XqopfR/WpCAHneKg
-	IP4L3RqboWcBOgiAXfa+P42NJVwMzWTHT61gyaGFMSkV2dGxggEGky4GohSvQUlqxcsdg05tC+YgP
-	NAyBe4Sw==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tu6vx-00000003Pbq-0Lmd;
-	Mon, 17 Mar 2025 09:38:57 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 2F046300783; Mon, 17 Mar 2025 10:38:56 +0100 (CET)
-Date: Mon, 17 Mar 2025 10:38:56 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, jirislaby@kernel.org,
-	ubizjak@gmail.com
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the tip tree
-Message-ID: <20250317093856.GA34541@noisy.programming.kicks-ass.net>
-References: <20250304162402.475eb3bc@canb.auug.org.au>
+	s=arc-20240116; t=1742204467; c=relaxed/simple;
+	bh=EFrzB9n6hijOkeb2lyBndIAZnvP8anhnOgTluUvD300=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iOiajARUlLiedf4iEszgNm0/iO7oWiun+qiIuVICI1EmUbh5N7hzoEGqGDlAqTxFEpAoCsHbZXpYSkHI5XUPSs4XlayavpjqpPzoYDCSqwgpZSc+olhW3MuQ2xWrjJ42yhU0Kpivd6/z3GaNcCqGpUa1DSwKUO/oc6ejjJ405Io=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=xhfCFjhj; arc=none smtp.client-ip=95.215.58.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1742204460;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=m0XSCnSukterJAo4E10iYkPySrScWtoaWdoov5OHuTo=;
+	b=xhfCFjhjUh11wsPpQQRCxJvI+8n/7UjQIM6gtj8fQGPitN38/M1YWROr6Tnd3N45K7EDbr
+	xMHaBiJcdaK59+3tjfnceNTDDMWTtnU46xzVYsT2ASol5eZ3yziw7TxIaGn534fZxSDSPT
+	W5+2tLX+riCc+2N1uVHRBmlPr4QvNzo=
+From: Kunwu Chan <kunwu.chan@linux.dev>
+To: ojeda@kernel.org,
+	alex.gaynor@gmail.com,
+	boqun.feng@gmail.com,
+	gary@garyguo.net,
+	bjorn3_gh@protonmail.com,
+	benno.lossin@proton.me,
+	a.hindborg@kernel.org,
+	aliceryhl@google.com,
+	tmgross@umich.edu,
+	dakr@kernel.org,
+	nathan@kernel.org,
+	nick.desaulniers+lkml@gmail.com,
+	morbo@google.com,
+	justinstitt@google.com
+Cc: rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev,
+	Kunwu Chan <kunwu.chan@hotmail.com>,
+	Grace Deng <Grace.Deng006@Gmail.com>
+Subject: [PATCH] rust: page:: optimize rust symbol generation for Page
+Date: Mon, 17 Mar 2025 17:40:04 +0800
+Message-ID: <20250317094004.2622640-1-kunwu.chan@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250304162402.475eb3bc@canb.auug.org.au>
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, Mar 04, 2025 at 04:25:31PM +1100, Stephen Rothwell wrote:
-> Hi all,
-> 
-> After merging the tip tree, today's linux-next build (x86_64 allmodconfig)
-> failed like this:
-> 
-> In file included from include/asm-generic/percpu.h:7,
->                  from arch/x86/include/asm/percpu.h:597,
->                  from arch/x86/include/asm/preempt.h:6,
->                  from include/linux/preempt.h:79,
->                  from include/linux/spinlock.h:56,
->                  from include/linux/wait.h:9,
->                  from include/linux/wait_bit.h:8,
->                  from include/linux/fs.h:7,
->                  from kernel/events/core.c:11:
-> kernel/events/core.c: In function 'this_cpc':
-> include/linux/percpu-defs.h:220:45: error: initialization from pointer to non-enclosed address space
->   220 |         const void __percpu *__vpp_verify = (typeof((ptr) + 0))NULL;    \
->       |                                             ^
-> include/linux/percpu-defs.h:251:9: note: in expansion of macro '__verify_pcpu_ptr'
->   251 |         __verify_pcpu_ptr(ptr);                                         \
->       |         ^~~~~~~~~~~~~~~~~
-> kernel/events/core.c:1222:17: note: in expansion of macro 'this_cpu_ptr'
->  1222 |         return *this_cpu_ptr(pmu->cpu_pmu_context);
->       |                 ^~~~~~~~~~~~
-> 
-> (and many more similar)
-> 
-> Presumably caused by commit
-> 
->   f67d1ffd841f ("perf/core: Detach 'struct perf_cpu_pmu_context' and 'struct pmu' lifetimes")
-> 
-> I have used the tip tree from next-20250303 for today.
+From: Kunwu Chan <kunwu.chan@hotmail.com>
 
-Right. Sorry for not noticing before, and thanks Jiri for poking me.
+When build the kernel using the llvm-18.1.3-rust-1.85.0-x86_64
+with ARCH=arm64, the following symbols are generated:
 
-So the below resolution make it go for me. The problem appears to be
-that due to:
+$nm vmlinux | grep ' _R'.*Page | rustfilt
+ffff8000805b6f98 T <kernel::page::Page>::alloc_page
+ffff8000805b715c T <kernel::page::Page>::fill_zero_raw
+ffff8000805b720c T <kernel::page::Page>::copy_from_user_slice_raw
+ffff8000805b6fb4 T <kernel::page::Page>::read_raw
+ffff8000805b7088 T <kernel::page::Page>::write_raw
+ffff8000805b72fc T <kernel::page::Page as core::ops::drop::Drop>::drop
 
-  bcecd5a529c1 ("percpu: repurpose __percpu tag as a named address space qualifier")
+These Rust symbols are trivial wrappers around the C functions
+alloc_pages, kunmap_local and __free_pages.
+It doesn't make sense to go through a trivial wrapper for these
+functions, so mark them inline.
 
-this makes that this_cpu_ptr() wants a '__percpu *', instead we feed it
-'__percpu**' which confuses things.
+Link: https://github.com/Rust-for-Linux/linux/issues/1145
+Suggested-by: Alice Ryhl <aliceryhl@google.com>
+Co-developed-by: Grace Deng <Grace.Deng006@Gmail.com>
+Signed-off-by: Grace Deng <Grace.Deng006@Gmail.com>
+Signed-off-by: Kunwu Chan <kunwu.chan@hotmail.com>
+---
+ rust/kernel/page.rs | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-What would be the best way around to getting this resolved, should I
-stick the below in a fixup patch in tip/perf/core, or do we carry this
-in a merge resolution somewhere?
+diff --git a/rust/kernel/page.rs b/rust/kernel/page.rs
+index f6126aca33a6..e75cbc5cafd4 100644
+--- a/rust/kernel/page.rs
++++ b/rust/kernel/page.rs
+@@ -69,6 +69,7 @@ impl Page {
+     /// let page = Page::alloc_page(GFP_KERNEL | __GFP_ZERO)?;
+     /// # Ok::<(), kernel::alloc::AllocError>(())
+     /// ```
++    #[inline]
+     pub fn alloc_page(flags: Flags) -> Result<Self, AllocError> {
+         // SAFETY: Depending on the value of `gfp_flags`, this call may sleep. Other than that, it
+         // is always safe to call this method.
+@@ -170,6 +171,7 @@ fn with_pointer_into_page<T>(
+     /// * Callers must ensure that `dst` is valid for writing `len` bytes.
+     /// * Callers must ensure that this call does not race with a write to the same page that
+     ///   overlaps with this read.
++    #[inline]
+     pub unsafe fn read_raw(&self, dst: *mut u8, offset: usize, len: usize) -> Result {
+         self.with_pointer_into_page(offset, len, move |src| {
+             // SAFETY: If `with_pointer_into_page` calls into this closure, then
+@@ -192,6 +194,7 @@ pub unsafe fn read_raw(&self, dst: *mut u8, offset: usize, len: usize) -> Result
+     /// * Callers must ensure that `src` is valid for reading `len` bytes.
+     /// * Callers must ensure that this call does not race with a read or write to the same page
+     ///   that overlaps with this write.
++    #[inline]
+     pub unsafe fn write_raw(&self, src: *const u8, offset: usize, len: usize) -> Result {
+         self.with_pointer_into_page(offset, len, move |dst| {
+             // SAFETY: If `with_pointer_into_page` calls into this closure, then it has performed a
+@@ -212,6 +215,7 @@ pub unsafe fn write_raw(&self, src: *const u8, offset: usize, len: usize) -> Res
+     ///
+     /// Callers must ensure that this call does not race with a read or write to the same page that
+     /// overlaps with this write.
++    #[inline]
+     pub unsafe fn fill_zero_raw(&self, offset: usize, len: usize) -> Result {
+         self.with_pointer_into_page(offset, len, move |dst| {
+             // SAFETY: If `with_pointer_into_page` calls into this closure, then it has performed a
+@@ -235,6 +239,7 @@ pub unsafe fn fill_zero_raw(&self, offset: usize, len: usize) -> Result {
+     ///
+     /// Callers must ensure that this call does not race with a read or write to the same page that
+     /// overlaps with this write.
++    #[inline]
+     pub unsafe fn copy_from_user_slice_raw(
+         &self,
+         reader: &mut UserSliceReader,
+@@ -251,6 +256,7 @@ pub unsafe fn copy_from_user_slice_raw(
+ }
+ 
+ impl Drop for Page {
++    #[inline]
+     fn drop(&mut self) {
+         // SAFETY: By the type invariants, we have ownership of the page and can free it.
+         unsafe { bindings::__free_pages(self.page.as_ptr(), 0) };
+-- 
+2.43.0
 
-diff --cc include/linux/perf_event.h
-index 4d0b0b007498,76f4265efee9..000000000000
---- a/include/linux/perf_event.h
-+++ b/include/linux/perf_event.h
-@@@ -343,7 -343,7 +343,7 @@@ struct pmu 
-  	 */
-  	unsigned int			scope;
-  
-- 	struct perf_cpu_pmu_context __percpu *cpu_pmu_context;
- -	struct perf_cpu_pmu_context __percpu **cpu_pmu_context;
-++	struct perf_cpu_pmu_context * __percpu *cpu_pmu_context;
-  	atomic_t			exclusive_cnt; /* < 0: cpu; > 0: tsk */
-  	int				task_ctx_nr;
-  	int				hrtimer_interval_ms;
 
