@@ -1,148 +1,125 @@
-Return-Path: <linux-kernel+bounces-563596-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563597-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE70CA644F5
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 09:18:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91E2BA6450F
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 09:19:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 02137189430E
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 08:18:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3DA5D3B1FE3
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 08:19:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C65E821CC79;
-	Mon, 17 Mar 2025 08:18:37 +0000 (UTC)
-Received: from mail-ua1-f44.google.com (mail-ua1-f44.google.com [209.85.222.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE4DE21D00A;
+	Mon, 17 Mar 2025 08:19:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pzNYl7n2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A85E221C17D;
-	Mon, 17 Mar 2025 08:18:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E10021B910;
+	Mon, 17 Mar 2025 08:19:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742199517; cv=none; b=MmJOsPPVevLBJoEmDC/0WR/B1vFlYbt0akmNgKxg7tRyBa9Jg4SvbuUOWP0UScrwYVlulPZkUDNnWnecKlE3f9t/NDYht0R6GM5hkfHzVlxbrL2dzz+wEsm67MR0vt6HOgztYH9rXO8b9T1baRW3FdjvMw9WBE42kBdapaMHPK8=
+	t=1742199573; cv=none; b=iMWHGT/502DbkyS/MbM+Gthxdw3m6+C+R1rh2+xJ6m/uwwq3nbVHJmv5gA53mhUEASUii4D2AIvqswjAXZzEAvfzBFufIqaD9oNFxxbjjlaNyxoMP3o4H/SXqheldt9u+0CJjggsqgiCi3bJ095dICb9dlu3rG8Ar/XR8ljk6Ak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742199517; c=relaxed/simple;
-	bh=2dz0+FF7Roh1dPT6mqzZ/u4xIGB7Kh6rMesnh0OScFg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cxCQCJXj7TAvgQruSV8tDByIa4jW1bvqx+KadXNgVgp2VSRcRFCox0+d8HyQEKL/f1KTAGJNsR28aFvyFAkJztggj2aiWjshuB8ZLP+ivklQb8hdFTHdWZ+y+4YvxbZdYD6GQTtgFmOyq1Va+OkLb7oBmpVeii7E1pwrYBLklr8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f44.google.com with SMTP id a1e0cc1a2514c-86112ab1ad4so1635661241.1;
-        Mon, 17 Mar 2025 01:18:33 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742199512; x=1742804312;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=PHo+opHkohWj4HkGFv6lxx1lupJr0F8BlUKSDFasPds=;
-        b=U2FQ3EY9QY11/cLjdAucOb+CJ3lISO1s1FRo4xZG8u3GQN0oc6aCmzb9k5FvIrZjQR
-         pOx2z/ID+6er8zTfvYOO1tNzty+qwnfTe/hE1WCUAcjM6YB43HpHEz8SM8/k72gWP8f2
-         QBBusd5a+oRM8c08aLms/WqTlPOR3kzkPA3uWSjazcVdYueUF/s9DeCKjGRA2HaZ6HO3
-         sxnWVs8cSnVZpxMuUBQJDeE/LknR8BduHHaagqaXjNIPOABKzaOsDnyPkWU+I2m1KaIR
-         AEDSHLJnts6+0FjSqIx3cdT7qzJRIkSQkBrMMjFl8SwwhcJkhgPkj93wFftBWBDHCznw
-         ACCg==
-X-Forwarded-Encrypted: i=1; AJvYcCU3ZYvDTk3kHOH7PFEG5biLrsV52vpzVMigQsVYuqlUZ8CNZ8x5mY3GJbNjAUKfWKHGbMl32+5+LOu9J9af@vger.kernel.org, AJvYcCWWiiqkt4L6/ludRvwAlQIVI/HiFFOVvBb0g517bnMfVxC8jnHc32flncCObZ3GnkYmH+0kYyx7xAmO@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy5SJ+DrOBAjMcb4qLn8Q3ls7iNBh+M4huwuGmOTm/ZQB4i6Pxe
-	+vblTcyFczVAej00ma82udmrd4xiQxipDRV0b5HNI9sNPQuKvC6LWAahK7o9
-X-Gm-Gg: ASbGnctNVLFETksT14k1xzd+3yfCewJ2Wq/dcELAwrBI/PCxhOkI60dO5nWsQjdpqDX
-	fd5i53kleolkj/mTML5eDqP46rIcxQlecWElIYfqJHN1rkUmCW+n9ABjtLL+tMw6osbnjAiD9yu
-	iTFYi3h/JjvFXF3ZXQAcPKpS9WruTVpJtXkIIEtJmD4de0XyzIngzflgwlgQHz1YEXWIkc9CEff
-	oPgF67VFjHnpQyAknkpcFr9FUFrATilDPnzoU42Uwn+iBs55C+diV0tQQ27CELUJTUbK7EMVryi
-	NLt0/O/LlbXk7w3yVhQXGVhN+uRajE9SGxZBZ+dNTHLxmWC5V+voIgKJepd1S3q+MRF1XMUn+ol
-	ZulpvpdE=
-X-Google-Smtp-Source: AGHT+IFTFzSn2BdiF+Z3dueNv2qiZzaSlHlJKMHbbolCVCugiedFTZNYfjoR9zv2ypb80O/eZ8p+0w==
-X-Received: by 2002:a05:6102:54a4:b0:4bb:ecb9:b34d with SMTP id ada2fe7eead31-4c3831f697amr6808085137.18.1742199512025;
-        Mon, 17 Mar 2025 01:18:32 -0700 (PDT)
-Received: from mail-ua1-f41.google.com (mail-ua1-f41.google.com. [209.85.222.41])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-86d90dbc709sm1469160241.19.2025.03.17.01.18.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 17 Mar 2025 01:18:31 -0700 (PDT)
-Received: by mail-ua1-f41.google.com with SMTP id a1e0cc1a2514c-86d3805a551so1824128241.3;
-        Mon, 17 Mar 2025 01:18:31 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUQH8yg5zu8RT/k2tsdJCQaNCHcKfgi5llNekxjwDLeZPO4dD8eo8Wp3ZUFD3uU0nQp2znF5/sBZrCp9WDy@vger.kernel.org, AJvYcCV2m8o1NNorB2Xeewrv2fnIIAOV0S0oym4zyMTaYBwzE0FFTZAaXgoliGVTBwnY8XWyT8HkvuSE++s0@vger.kernel.org
-X-Received: by 2002:a05:6102:148c:b0:4c1:76a4:aee4 with SMTP id
- ada2fe7eead31-4c3831f6b73mr7790718137.19.1742199511494; Mon, 17 Mar 2025
- 01:18:31 -0700 (PDT)
+	s=arc-20240116; t=1742199573; c=relaxed/simple;
+	bh=OCC+mYDQPuP2N1ShX3bfGGi04SGy5DRFdyXbMoxMUdw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LTTB+IZhVl+vE/+IR3OXn4ERndZQw7oOa2yZhjyNzgIze7bpUK5fqw94kltsT4FJIPSLfTw5wh1dmGSUjvv7ZTEwUIowxXpfbPyWoJm+j6W5y77sYKKiyJj8MPp5j5Bjqyt0AX6ddJGaj2zi6xjInveNkrKm3pMFr7A71wPgH3E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pzNYl7n2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC8BAC4CEEC;
+	Mon, 17 Mar 2025 08:19:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742199572;
+	bh=OCC+mYDQPuP2N1ShX3bfGGi04SGy5DRFdyXbMoxMUdw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=pzNYl7n2mroeGhLcjpf/4giu//c3D3lBUPBiume22u2gF6DUPTsoKweI5rk6Hcj1g
+	 g61Dw5j7sFWlu97UQ5+qwhZoHA46STRjPd9GkoD642b17MQN6rib/dMDauYgZaPg24
+	 obOzUhsiuswhxCDOfF+ZByWdNFaMlHIZ+yJtL2zSJ+QgGGRSwpj2WP37jDkkX+eLVw
+	 pCsoxT1vMhpZaUB7/3HhP7KD3yoUTH2777jgZn60VM2mjafblkBebibiCrgVjaQ5MQ
+	 RhIQy+5kShf2ZdVM/JDipxo7neA9/a0zxWhOWMU5liMdwhLS/fbhSlvosClLUwvux8
+	 RIKJjTHs7Mpaw==
+Message-ID: <c5cf8522-8967-40f5-9f7c-525ff535875c@kernel.org>
+Date: Mon, 17 Mar 2025 09:19:27 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250218-k1-pinctrl-option-v3-1-36e031e0da1b@gentoo.org>
-In-Reply-To: <20250218-k1-pinctrl-option-v3-1-36e031e0da1b@gentoo.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 17 Mar 2025 09:18:19 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdV4xWLEuCvCC54GBfCdELE=QSHqaOyUPD-ezE0QLYRnVA@mail.gmail.com>
-X-Gm-Features: AQ5f1JrIBpkwjNryxJfQFaslTevdePU3lGPPs76Z4xJvDEvLswRAjXO6120Ar_8
-Message-ID: <CAMuHMdV4xWLEuCvCC54GBfCdELE=QSHqaOyUPD-ezE0QLYRnVA@mail.gmail.com>
-Subject: Re: [PATCH v3] pinctrl: spacemit: enable config option
-To: Yixun Lan <dlan@gentoo.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Alex Elder <elder@kernel.org>, linux-riscv@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	spacemit@lists.linux.dev, Conor Dooley <conor.dooley@microchip.com>, 
-	Alex Elder <elder@riscstar.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ACPICA: Replace deprecated strncpy() with strscpy()
+To: feng.wei8@zte.com.cn, robert.moore@intel.com
+Cc: rafael.j.wysocki@intel.com, lenb@kernel.org, linux-acpi@vger.kernel.org,
+ acpica-devel@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <20250317143806244wrGxYdlssPbWp7T7W5Gbr@zte.com.cn>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20250317143806244wrGxYdlssPbWp7T7W5Gbr@zte.com.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Yixun,
+On 17/03/2025 07:38, feng.wei8@zte.com.cn wrote:
+> diff --git a/drivers/acpi/acpica/utnonansi.c b/drivers/acpi/acpica/utnonansi.c
+> index ff0802ace19b..1da9b8246011 100644
+> --- a/drivers/acpi/acpica/utnonansi.c
+> +++ b/drivers/acpi/acpica/utnonansi.c
+> @@ -168,8 +168,7 @@ void acpi_ut_safe_strncpy(char *dest, char *source, acpi_size dest_size)
+>  {
+>  	/* Always terminate destination string */
+> 
+> -	strncpy(dest, source, dest_size);
+> -	dest[dest_size - 1] = 0;
+> +	strscpy(dest, source, dest_size);
 
-Thanks for your patch, which is now commit 7ff4faba63571c51
-("pinctrl: spacemit: enable config option") in v6.14-rc7.
+What is the point of this function now?
 
-On Tue, 18 Feb 2025 at 01:32, Yixun Lan <dlan@gentoo.org> wrote:
-> Pinctrl is an essential driver for SpacemiT's SoC,
-> The uart driver requires it, same as sd card driver,
-> so let's enable it by default for this SoC.
->
-> The CONFIG_PINCTRL_SPACEMIT_K1 isn't enabled when using
-> 'make defconfig' to select kernel configuration options.
-> This result in a broken uart driver where fail at probe()
-> stage due to no pins found.
+Can ZTE slow down and address the feedback first?
 
-Perhaps this is an issue with the uart driver?
-I just disabled CONFIG_PINCTRL_RZA2 on RZA2MEVB (which is one of the
-few Renesas platforms where the pin control driver is not enabled by
-default, for saving memory), and the system booted fine into a Debian
-nfsroot.  Probe order of some devices did change, and "Trying to
-probe devices needed for running init" was printed.
-
-> Fixes: a83c29e1d145 ("pinctrl: spacemit: add support for SpacemiT K1 SoC")
-> Reported-by: Alex Elder <elder@kernel.org>
-> Acked-by: Conor Dooley <conor.dooley@microchip.com>
-> Tested-by: Alex Elder <elder@riscstar.com>
-> Signed-off-by: Yixun Lan <dlan@gentoo.org>
-
-> --- a/drivers/pinctrl/spacemit/Kconfig
-> +++ b/drivers/pinctrl/spacemit/Kconfig
-> @@ -4,9 +4,10 @@
->  #
->
->  config PINCTRL_SPACEMIT_K1
-> -       tristate "SpacemiT K1 SoC Pinctrl driver"
-> +       bool "SpacemiT K1 SoC Pinctrl driver"
->         depends on ARCH_SPACEMIT || COMPILE_TEST
->         depends on OF
-> +       default y
-
-Ouch, fix sent...
-"[PATCH] pinctrl: spacemit: PINCTRL_SPACEMIT_K1 should not default to
-y unconditionally"
-https://lore.kernel.org/6881b8d1ad74ac780af8a974e604b5ef3f5d4aad.1742198691.git.geert+renesas@glider.be
-
->         select GENERIC_PINCTRL_GROUPS
->         select GENERIC_PINMUX_FUNCTIONS
->         select GENERIC_PINCONF
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Best regards,
+Krzysztof
 
