@@ -1,145 +1,105 @@
-Return-Path: <linux-kernel+bounces-565166-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565167-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CF60A66214
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 23:51:29 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4BD4A66217
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 23:52:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C35E189CE77
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 22:51:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20B86179E56
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 22:52:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39EFA204C35;
-	Mon, 17 Mar 2025 22:51:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F10F7204851;
+	Mon, 17 Mar 2025 22:51:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="jJVLgAVK";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="u/tYFJ7a"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="RB6/jLur"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7960200111;
-	Mon, 17 Mar 2025 22:51:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9751C1EEA20;
+	Mon, 17 Mar 2025 22:51:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742251880; cv=none; b=GRSxHkic7/naYFpnw3+YuWltdnJL/paZJTV/+AfnFqhAzG09bD0/I8f4QmR1EL2DfPWYBrIAKBHIvZaX/oayNk/63A8uZXOQY6mmHc3aR5Tet4zFdFAlQAUhTOGoiNTlSv72MtEi3mMH1GMzyga2e3L6IphzURPaLBZQDWUWMFo=
+	t=1742251915; cv=none; b=oYTaUjVkG5nGSL2UuNiMrU3/ylObCx7aKArySAvA1n/imlsATW3VUx/B24G2mS0ZOTacP7GIBmU0qjt4ZlH7PdiYLS3DvMP3l9/CDyUgezaqu7ICbOsWhKnqzaKbby3ROpTaVfJLhHk7ua2z1W80DT7m5LqltxhGFJC72yQHr1Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742251880; c=relaxed/simple;
-	bh=ty8COmLCYXzrSs2VKimK+5lRrGoXtwOi0ut2Q2ZP7T8=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=LoeEU/whTqRLO3BsLb1bRyctg31iIGwQziSL+CWnDaBgDD0lA6nqkTLOhY35ITprZlquwzpb66l9x+amri2yV1GBZWF9uQg1MROr8yJ6CbKYKmMof4q/ydD1jLb0HUAe2wIu6RvduKHUkHmbhvKGoiHdqroLDbPzWTkpKRTrhvg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=jJVLgAVK; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=u/tYFJ7a; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 17 Mar 2025 22:51:01 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1742251869;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RwvxwfzHTsd8qiCIg1rWmUI1koniPlKx5MCWSN0KrLw=;
-	b=jJVLgAVKycJwoINK69QkBolDQJ3A4s+gEym6YUVZ/bPoc+qKN+pnv+LRScqOfN4EtaTC4Z
-	ANdDIU7KONNBtuYkNGaYB2+ttVFdGSZ0KcayS0qfEw4T8gL2kOkdF6NAO1AtYaKQqZ/qFA
-	ymF2ROyOMNr7VKgeGsUZzw61sCoh+uuukF6aw0A7k+Q1jgvTVA5ohrCYAFWx4+w70RZSt1
-	bFNDFvAB0Al9wmewHiOJEOpWMCtC6cuJBgLFzRzONfAWtxdT0c4Uxzs6+ATRnttahxtWkY
-	O/KNPJ4/GadZojhbU2Ha1ys1CuoBEOPOJpQLIxh5otu/V1vPagZjdddT+22QOA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1742251869;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RwvxwfzHTsd8qiCIg1rWmUI1koniPlKx5MCWSN0KrLw=;
-	b=u/tYFJ7ajPdy8Ad2xE6GOClOmh+doZlk6G+Bw+fQR7bErCk+yYMCMq61Z/hi6RBe8jos5l
-	Zj0OoCCAzi0J8eCQ==
-From: "tip-bot2 for Namhyung Kim" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: perf/urgent] perf/x86: Check data address for IBS software filter
-Cc: Matteo Rizzo <matteorizzo@google.com>, Namhyung Kim <namhyung@kernel.org>,
- Ingo Molnar <mingo@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
- x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250317163755.1842589-1-namhyung@kernel.org>
-References: <20250317163755.1842589-1-namhyung@kernel.org>
+	s=arc-20240116; t=1742251915; c=relaxed/simple;
+	bh=fYKi21bxCa8ZrGfrGQnP5SrX94dLJholFlCybWT7dAc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QIhwBKq+GLYAKUhqyZuqQbg+h85+D3h1Qdp/XewBoaHjrDuEyjJ2XvMB4WWL3pP+HuXL/YMEzMVRP/HAinkjy1qNWJ6t9UTEVOIOAe6of2UVzbUB3dtn/j59ROeJUiZsQFThrQ/c/akPO/Fzyw+7kN7weh6DPDG6aeTU/Wbjddw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=RB6/jLur; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=wfy9ddRBbcX+tfTfmNOPuCaIiuAFuC2ZDzW9lWqaDig=; b=RB6/jLurPbaj8MZuXj01Xq8uQd
+	2FUBKMC5YjsUBEoMRmzup+qDFD80kc6Gjx7bDpI7gBYxg+AFRv5xz/oyY7wX7LvS3emTqldnqvLMT
+	DW0XGvlUStAxx1Nm8A8n4FIL/n04UoxzIy6SeA8hzoqb5iOBVslsnOrSRGDqMQpvRDELFljwRkCRz
+	MFwO9edVmY4H89FZLF1ScUhpiN4xHV+09ELaN2xOYI0vBvXgACVbK7Spa6bPybb3dpnppI5K2fnjD
+	y0sE4V2irR0+v6mcxqcEdL8rlcnVkLXrtdIx7Wqh7rlRLGxH5+6yNeZsoNJgSMDJ0iZL1eNXCK0Ah
+	z0a+Tvpg==;
+Received: from i53875bc6.versanet.de ([83.135.91.198] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1tuJJ0-0001UR-Bx; Mon, 17 Mar 2025 23:51:34 +0100
+From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
+To: Lee Jones <lee@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: duplicate patch in the mfd tree
+Date: Mon, 17 Mar 2025 23:51:33 +0100
+Message-ID: <5872617.DvuYhMxLoT@diego>
+In-Reply-To: <20250317144507.0938757b@canb.auug.org.au>
+References: <20250317144507.0938757b@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174225186227.14745.16631399663046111624.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
 
-The following commit has been merged into the perf/urgent branch of tip:
+Hi Stephen, Lee,
 
-Commit-ID:     65a99264f5e5a2bcc8c905f7b2d633e8991672ac
-Gitweb:        https://git.kernel.org/tip/65a99264f5e5a2bcc8c905f7b2d633e8991672ac
-Author:        Namhyung Kim <namhyung@kernel.org>
-AuthorDate:    Mon, 17 Mar 2025 09:37:55 -07:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Mon, 17 Mar 2025 23:37:31 +01:00
+Am Montag, 17. M=C3=A4rz 2025, 04:45:07 MEZ schrieb Stephen Rothwell:
+> Hi all,
+>=20
+> The following commit is also in the rockchip tree as a different commit
+> (but the same patch):
+>=20
+>   7f3e3e7228bb ("dt-bindings: mfd: syscon: Add rk3528 QoS register compat=
+ible")
+>=20
+> This is commit
+>=20
+>   19a634195c1a ("dt-bindings: mfd: syscon: Add rk3528 QoS register compat=
+ible")
+>=20
+> in the rockchip tree.
 
-perf/x86: Check data address for IBS software filter
+dang, sorry about that.
 
-The IBS software filter is filtering kernel samples for regular users in
-the PMI handler.  It checks the instruction address in the IBS register to
-determine if it was in kernel mode or not.
+With the qos compatible being a syscon, this _should_ go through the mfd
+tree with Lee's Signed-off-by ... that it got in 7f3e3e7228bb .
 
-But it turns out that it's possible to report a kernel data address even
-if the instruction address belongs to user-space.  Matteo Rizzo
-found that when an instruction raises an exception, IBS can report some
-kernel data addresses like IDT while holding the faulting instruction's
-RIP.  To prevent an information leak, it should double check if the data
-address in PERF_SAMPLE_DATA is in the kernel space as well.
+I'm not sure how I managed to mess that up :-S .
 
-[ mingo: Clarified the changelog ]
+In any case, as the commit 19a634195c1a already made its way from my tree
+to the soc-tree [0], I'll create a revert so that this is fixed before the
+merge-window.
 
-Suggested-by: Matteo Rizzo <matteorizzo@google.com>
-Signed-off-by: Namhyung Kim <namhyung@kernel.org>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: https://lore.kernel.org/r/20250317163755.1842589-1-namhyung@kernel.org
----
- arch/x86/events/amd/ibs.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/arch/x86/events/amd/ibs.c b/arch/x86/events/amd/ibs.c
-index e7a8b87..c465005 100644
---- a/arch/x86/events/amd/ibs.c
-+++ b/arch/x86/events/amd/ibs.c
-@@ -1128,8 +1128,13 @@ fail:
- 		regs.flags |= PERF_EFLAGS_EXACT;
- 	}
- 
-+	if (perf_ibs == &perf_ibs_op)
-+		perf_ibs_parse_ld_st_data(event->attr.sample_type, &ibs_data, &data);
-+
- 	if ((event->attr.config2 & IBS_SW_FILTER_MASK) &&
--	    perf_exclude_event(event, &regs)) {
-+	    (perf_exclude_event(event, &regs) ||
-+	     ((data.sample_flags & PERF_SAMPLE_ADDR) &&
-+	      event->attr.exclude_kernel && kernel_ip(data.addr)))) {
- 		throttle = perf_event_account_interrupt(event);
- 		goto out;
- 	}
-@@ -1144,9 +1149,6 @@ fail:
- 		perf_sample_save_raw_data(&data, event, &raw);
- 	}
- 
--	if (perf_ibs == &perf_ibs_op)
--		perf_ibs_parse_ld_st_data(event->attr.sample_type, &ibs_data, &data);
--
- 	/*
- 	 * rip recorded by IbsOpRip will not be consistent with rsp and rbp
- 	 * recorded as part of interrupt regs. Thus we need to use rip from
+Sorry for the mess and thanks for noticing
+Heiko
+
+
+[0] https://web.git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git/commit/=
+?h=3Dfor-next&id=3D19a634195c1a
+
+
 
