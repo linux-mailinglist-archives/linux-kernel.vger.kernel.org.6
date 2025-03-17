@@ -1,146 +1,137 @@
-Return-Path: <linux-kernel+bounces-563435-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563436-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC815A641B9
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 07:37:31 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A63D8A641BA
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 07:38:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF46A1891414
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 06:37:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 074D216E7BD
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 06:38:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C14FD219E8F;
-	Mon, 17 Mar 2025 06:37:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37ADC219A70;
+	Mon, 17 Mar 2025 06:38:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a5lwLj8v"
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FGDroM1o"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E347D4A35;
-	Mon, 17 Mar 2025 06:37:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 967DB13C9A3
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 06:37:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742193443; cv=none; b=cP9zvQ8zQjW97Blrwj86WAMuP8O62QNhIqHmc4fswVsc20s4xP4u3V8xTWKIiiZOfsmhUs6znC6pvXPKxhx3nBM4VfsiqslCUd+OHbPjyKQZcgSW/y3GMdcDKgRj2Jj0222aRC5JwcovGJXoLgb1kVUuNeRqj/UdBKNA/J2EQfg=
+	t=1742193479; cv=none; b=Ngkw9/XepojmjL6sqs1/4qdQEi6Y4jCQwf4cRgKCp5eobLB9Cx1tX45IXR/OR4ni8VsEZf7O5VnxRi/qTJpJp7uXNhDfZMpOpBrUTsPChksmYEwf2uOeNyhAl5xmSfRho1N/2cM3R0btzh0RZQ+eqqUpFMgvtjppZsahT17AIRc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742193443; c=relaxed/simple;
-	bh=1SmQdaDCcVZUFeKegyosslUZh74voPuVwRMkA6hJ3yY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=fApWYqNiIxEs3sPRq0RcXexR81IFsHDJB1Y6m/QHwDDF+PCOlhiJl5F6Nxt0EfL7fS+DFK1Rr7574q7ZakIQuGZtpoKzWBFCr+TF6DTYEY8vb4rBDN1kgqjoz2g0v8bHTV7+A62cVPyc852qjR0mo/l8g54CNcGM6U6KZP+Dhyk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a5lwLj8v; arc=none smtp.client-ip=209.85.216.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2ff85fec403so2484408a91.1;
-        Sun, 16 Mar 2025 23:37:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742193441; x=1742798241; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=QsmcEAxz1CSjVtD/4Y7lNEkmcTe30atWfNzAvXoAg/4=;
-        b=a5lwLj8vEa2Rv//axj9S1Is+hjBHQbBU6rJEh9VD6Hj+/ex5vkVnSYOLDQ9v3qLrqr
-         12r5x6kkAbjLaER3nH8ZQGaeBjA/G0LHBQAwGNyVuJsPdB1NVXMasvvbOrNssw570Wqi
-         0CCSpHBoWiUmwFeoig7X/vQ5EAbeM2EyMl3gCvaSRzS8AwZa593Wzaef5JMxLtpHIOEV
-         ZLA14dJlWJckaCbzI19b6pO6nQ7muWlJoySXYyGDbFZfGoiSj9kg3ZSeLySU/vo0Srej
-         yTw6tnUQulinrRlmVxlDYJ9HcVowsIZBi85t9OzifohOlKB8Ukk47LDVDaLyvl+JEUsN
-         vApQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742193441; x=1742798241;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=QsmcEAxz1CSjVtD/4Y7lNEkmcTe30atWfNzAvXoAg/4=;
-        b=azIN6I4j3fUV432m4QjpQKf+NZmZ1s3Qbuz0F7MwAsPB3ZqbbI1F+ODOAWISa46Pp5
-         go7TnD3q9DjtVz9caAGu/MXZMJdTfIYSvScPy4Sey0ooCfd/HtvOp9QP1JedWsbPcvSj
-         FX7w9wClC9MFgqj8bVq0zsON/moocosylXcCo8c/qhUWoOOt676iWGk3s1Yz+ZtxtSOz
-         XY42Yvk3wLKvK2eSXqKo8FSSuPE0XDmgaCEqodgvSuceuHhIwNue+8XaUrPc//VFMRu4
-         +EGLA8lDpZoxqfX5ToF18givatRAzXohnFe/G+VcxsOMx/2Fs0yoV5yhsD8rf1+YltB0
-         5RRQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU0/4aqj/uYA0a9E1LTLFFxNoSbVvkZTVuYV1ExLEp0lm4X948uW53UBTAXvjDHpp6nEI7ZEW9run/Ye2I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHN61PQlMNbibj9eq/DCNPso8v1GpBJJuZwZ4asnziubuimajx
-	GaNgSKYskxrJNMdN5hDR1L7GdOnuCldhIEkjegNftSJ5xYRC/Lj8
-X-Gm-Gg: ASbGncsi9h5bvjEh5bjU1ujT7d2e7VDsXKnrd3tFPrYkG1xpvHtMCyI5wT1DcLX9Wx9
-	rfzQkV187OaQ8ePgsAJtBJejklJ1K/WJhakXAFms+Ln5k+4mb6TDkgx67b0pYx0cFVGn6yJlwYU
-	bhiF6bGRPGhcjUNtdkvnAUjMEALk2VFn1aXPY/G32Bvu2gwkFFSccjclB1wvXjLt2oRz4lnWwai
-	yHwjyOiq2aDht4MTUcaUmsmo5XPxZ5mupMxsLVImzzMiYxFtj23PJx3Ou4a6c7cb1ZvVxjWf8Bd
-	uSYFo6WAac8G/mEyDovAppTmKInahAGyIwG2tte1A6t5MVcTX0zl+S67tIHSaoUqSn8=
-X-Google-Smtp-Source: AGHT+IFgv3PFg/FgN0t+tN4c2fWnOWJoUKBZ0u7g03PjoFpf+Q3WnHMU06Y/aiomLUhr4UveVbsydg==
-X-Received: by 2002:a17:90b:3804:b0:2fa:4926:d18d with SMTP id 98e67ed59e1d1-30135f4cf2bmr20033700a91.13.1742193441112;
-        Sun, 16 Mar 2025 23:37:21 -0700 (PDT)
-Received: from cs20-buildserver.lan ([2403:c300:df04:8817:2e0:4cff:fe68:863])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-301534d3e52sm5822101a91.1.2025.03.16.23.37.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 16 Mar 2025 23:37:20 -0700 (PDT)
-From: Jim Liu <jim.t90615@gmail.com>
-X-Google-Original-From: Jim Liu <JJLIU0@nuvoton.com>
-To: JJLIU0@nuvoton.com,
-	jim.t90615@gmail.com,
-	florian.fainelli@broadcom.com,
-	andrew@lunn.ch,
-	hkallweit1@gmail.com,
-	kuba@kernel.org,
-	linux@armlinux.org.uk,
-	edumazet@google.com,
-	pabeni@redhat.com
-Cc: netdev@vger.kernel.org,
-	giulio.benetti+tekvox@benettiengineering.com,
-	bcm-kernel-feedback-list@broadcom.com,
-	linux-kernel@vger.kernel.org
-Subject: [v2,net] net: phy: broadcom: Correct BCM5221 PHY model detection failure
-Date: Mon, 17 Mar 2025 14:34:52 +0800
-Message-Id: <20250317063452.3072784-1-JJLIU0@nuvoton.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1742193479; c=relaxed/simple;
+	bh=Of2UWH/80gbUJhiYmlBSvv2wenxLN1u+9PVGPZ1W4ZY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jv8lfco+oOhHy46qsMkTabIeTSISO+/Ls3bUKgwAR0Y/RFDcbBvEGmoUL9ZJW7/Lm8NZ2ROgj5AsQoLxISFBlXYh9RwBdQxO28zSu/NkYM0kqip2adBgr3NIgTNfJmg9GL6TYmE1sjfh4wdx4dHt2d8/CXLqh2OuSMTBrRjNAic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FGDroM1o; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4BFEBC4CEE3;
+	Mon, 17 Mar 2025 06:37:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742193479;
+	bh=Of2UWH/80gbUJhiYmlBSvv2wenxLN1u+9PVGPZ1W4ZY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=FGDroM1oR6mgqq4NYu1E8WHw7qjMsgIe/JFyKmSVrxdxTNBTzPBqCtV/1RMhMfaBF
+	 a4ggKl38T9G+7hpyYLs4sNzBhGkys3ll57r95UXFJ2wIVAOfBHeYoXh6L2s/dLi6aj
+	 Fw757eUF/Baz70ncBkjk8Ev/TUdMBJzQ5tY6PRTJVjSVV/P7qAUideRJX+F4We2FKf
+	 9emAjK3814cIREPHc5Ge89XS+KLWFtetMk7lEj8oWCXACiTTXKvXA8ncDMx0hyrU6A
+	 Uswyl3TlppPZsQWtMf8OdVC4AxmfMQWbVIcgKkMSxNkC8y8+6ZbtJ2cyE4wvsTWfGa
+	 IIpVwtmOb+3gA==
+Message-ID: <c2cf45ed-95ac-482c-9710-06cacc0189f9@kernel.org>
+Date: Mon, 17 Mar 2025 07:37:56 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH linux-next] genirq: use sysfs_emit() instead of
+ scnprintf().
+To: xie.ludan@zte.com.cn, tglx@linutronix.de
+Cc: linux-kernel@vger.kernel.org
+References: <20250317142730784jyJNa1DQf10K4kIqtJw3w@zte.com.cn>
+Content-Language: en-US
+From: Jiri Slaby <jirislaby@kernel.org>
+Autocrypt: addr=jirislaby@kernel.org; keydata=
+ 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
+In-Reply-To: <20250317142730784jyJNa1DQf10K4kIqtJw3w@zte.com.cn>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Use "BRCM_PHY_MODEL" can be applied to the entire 5221 family of PHYs.
+On 17. 03. 25, 7:27, xie.ludan@zte.com.cn wrote:
+> Date: Fri, 14 Mar 2025 12:05:36 +0800
+> 
+> Follow the advice in Documentation/filesystems/sysfs.rst:
+> show() should only use sysfs_emit() or sysfs_emit_at() when formatting
+> the value to be returned to user space.
+> 
+> Signed-off-by: XieLudan <xie.ludan@zte.com.cn>
 
-Fixes: 3abbd0699b67 ("net: phy: broadcom: add support for BCM5221 phy")
-Signed-off-by: Jim Liu <jim.t90615@gmail.com>
----
-v2: 
-   - add target tree
-   - add maintainer in mail thread
-   - modify checkpatch warning
----
- drivers/net/phy/broadcom.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+I point you to study Documentation/process/submitting-patches.rst first.
 
-diff --git a/drivers/net/phy/broadcom.c b/drivers/net/phy/broadcom.c
-index 22edb7e4c1a1..3529289e9d13 100644
---- a/drivers/net/phy/broadcom.c
-+++ b/drivers/net/phy/broadcom.c
-@@ -859,7 +859,7 @@ static int brcm_fet_config_init(struct phy_device *phydev)
- 		return reg;
- 
- 	/* Unmask events we are interested in and mask interrupts globally. */
--	if (phydev->phy_id == PHY_ID_BCM5221)
-+	if (BRCM_PHY_MODEL(phydev) == PHY_ID_BCM5221)
- 		reg = MII_BRCM_FET_IR_ENABLE |
- 		      MII_BRCM_FET_IR_MASK;
- 	else
-@@ -888,7 +888,7 @@ static int brcm_fet_config_init(struct phy_device *phydev)
- 		return err;
- 	}
- 
--	if (phydev->phy_id != PHY_ID_BCM5221) {
-+	if (BRCM_PHY_MODEL(phydev) != PHY_ID_BCM5221) {
- 		/* Set the LED mode */
- 		reg = __phy_read(phydev, MII_BRCM_FET_SHDW_AUXMODE4);
- 		if (reg < 0) {
-@@ -1009,7 +1009,7 @@ static int brcm_fet_suspend(struct phy_device *phydev)
- 		return err;
- 	}
- 
--	if (phydev->phy_id == PHY_ID_BCM5221)
-+	if (BRCM_PHY_MODEL(phydev) == PHY_ID_BCM5221)
- 		/* Force Low Power Mode with clock enabled */
- 		reg = BCM5221_SHDW_AM4_EN_CLK_LPM | BCM5221_SHDW_AM4_FORCE_LPM;
- 	else
+In particular, I am missing versioning and versionlog.
+
+I would also appreciate being CCed on next versions of patches I am 
+reviewing.
+
+> --- a/kernel/irq/irqdesc.c
+> +++ b/kernel/irq/irqdesc.c
+> @@ -257,11 +257,11 @@ static ssize_t per_cpu_count_show(struct kobject *kobj,
+>   	for_each_possible_cpu(cpu) {
+>   		unsigned int c = irq_desc_kstat_cpu(desc, cpu);
+> 
+> -		ret += scnprintf(buf + ret, PAGE_SIZE - ret, "%s%u", p, c);
+> +		ret += sysfs_emit(buf + ret, "%s%u", p, c);
+
+Sadly, the more important concern I had remained.
+
+regards,
 -- 
-2.34.1
+js
+suse labs
 
 
