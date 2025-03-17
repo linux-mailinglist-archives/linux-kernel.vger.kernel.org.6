@@ -1,182 +1,169 @@
-Return-Path: <linux-kernel+bounces-564829-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564830-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DAA38A65B84
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 18:51:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9C26A65B89
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 18:51:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C83D47A7A81
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 17:50:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B12618930A1
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 17:51:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E74951B4235;
-	Mon, 17 Mar 2025 17:50:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 312901B21A7;
+	Mon, 17 Mar 2025 17:51:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="P9J9ecPq"
-Received: from mail-10631.protonmail.ch (mail-10631.protonmail.ch [79.135.106.31])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="arrb2wum"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 866AA1A83E5;
-	Mon, 17 Mar 2025 17:50:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.31
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76E491A3171;
+	Mon, 17 Mar 2025 17:51:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742233853; cv=none; b=GVeXOBgOku4+8ef3qNiUWOiA90ZAiMwBG8vHABfqCLwNWtVo7avQZvvoN89vHqo+aOgoEsCW3EfZPEyvNReCLxTeBw2tGckKpT3/HMrYb4nYAsmgVDkowgno5hKaRtwja+kY2ERiPdZn8iTXXhEBoa+irpU24jvMjGFmDwJ/Osw=
+	t=1742233882; cv=none; b=f/v30mJRdCnfvyxpXLLXefsikX5WE7ux3nmfcdaYA2h4qUVhHI+Y47dmM6AbUunkHfbL9WTB1P5Z4OUZerEudHrxDu+n9DJlxDnxO2r7yRGz+3FCTa9FqKVq3Z0f/CzJz1kE1VCp22l9m2WQHhEYzAoalJTgIMgG3JuD9+gLqEs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742233853; c=relaxed/simple;
-	bh=m1J+GlCnSs1V3eKSpEzP0HLIPlFQKU5vK8yQL04FOY0=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CbBvi/eukUvINq1xT8f/zPuMSgpkNhoAocsgbhvHf7FNyKnvhNHOJ2VEfiqs1PSIz4OTE3kIn7c9hYI8lq68GDwS+IAUp+uNUuE+ZSWa3KCfCLjNtvuLtnN1VwgbCEjYG8BCvkmltm6zOJ1W7hM9M/IGa854u5BNLUDVFrFiA3M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=P9J9ecPq; arc=none smtp.client-ip=79.135.106.31
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1742233847; x=1742493047;
-	bh=jhrRLqEl3iEr57VAvfSUeb0SK6yGoWOiTfnMPFKUv4M=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
-	b=P9J9ecPq5xxFQsW1R4INE7psjA2bcyMbqj/Vz1X1e+SxrtZrogqpde0pZMyioL05c
-	 5uV3Dx/3VajelTPuX0Yih3bFDflG+ok/jwCmrbJu+lYqOyw7PcemdvbEfWRjn+A4Ft
-	 rpcrqhQCMTF6MOZ7RT1EDlIM2Sqcflnkx/wboYcWytff2kWy/DDshWhhmCEVBFjDmC
-	 YQvAAduNkOl7fkOaksQ+b0DnTdhmBCXvbvCHTYrGTPUb+zEimn2Ewn94+w/w/XDpjj
-	 iZa64zb2mIEiXbxMupFt7SvvgTrruUhWhSKU2h31Y8vEBqlZHTyKVFCm58f9wOBGsI
-	 K2/9apW/Z/vJw==
-Date: Mon, 17 Mar 2025 17:50:38 +0000
-To: Tamir Duberstein <tamird@gmail.com>, Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, Bjorn Helgaas <bhelgaas@google.com>, Luis Chamberlain <mcgrof@kernel.org>, Russ Weight <russ.weight@linux.dev>, Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, linux-pci@vger.kernel.org, linux-block@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v5 6/6] rust: use strict provenance APIs
-Message-ID: <D8IQCJHJWPNJ.1J2UO4OK0D0B3@proton.me>
-In-Reply-To: <20250317-ptr-as-ptr-v5-6-5b5f21fa230a@gmail.com>
-References: <20250317-ptr-as-ptr-v5-0-5b5f21fa230a@gmail.com> <20250317-ptr-as-ptr-v5-6-5b5f21fa230a@gmail.com>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: bfb891ae1b62b7c3c15f976a4883734178cbd860
+	s=arc-20240116; t=1742233882; c=relaxed/simple;
+	bh=/cKV0Fyi6T03lXlvNH38U4UTUiANpMHFR7ZBQzIISmc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qKKbFFm580N0sp73uAwgHnecmry4bEaeIDn3m6uGx1ZrM+8ut5IBDfNRpa1sLxQCTFlN+4Z+8cfst2TSxeIt7VTx7Wjn8Z2MjdfYBJf987EJ+qdxZayd8minoKHG+DpkZAO/0b8as1HAwysh+3/nmGas6yUce1feruacOED48eA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=arrb2wum; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3BC9C4CEE3;
+	Mon, 17 Mar 2025 17:51:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742233881;
+	bh=/cKV0Fyi6T03lXlvNH38U4UTUiANpMHFR7ZBQzIISmc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=arrb2wumol6HA37c5JOUXQf10sXU/GN+zJFEfCtDCiaKqg/WN2FG50ycPyMY59aS4
+	 Z/7BYhHlwL4BMFqrv9HEs6MRf6WmpFNzvKFbKy/VwLFbRVS3OBVnumwoV7KfxydqqY
+	 i8YgmHNAci1IUoDcEtT43m1elrMU9JejrLRzwxFJgePhcuWwu4gjYk5JsgAElu3xwq
+	 otcjlKsHUVJf0aaOp4dq90YdEvZfOx6vbnzT7l+qosELAXeGdUzAYNgC09R9aGHkW9
+	 rn45UNgoNC/qQjg0lm4Auv+z5gppF+pDmfiwoRvE1rKwTbMkUS1dCFtkSfsiEBLHxR
+	 iMQ8bCZ+9TnWg==
+Date: Mon, 17 Mar 2025 17:51:17 +0000
+From: Simon Horman <horms@kernel.org>
+To: Qasim Ijaz <qasdev00@gmail.com>
+Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+	syzbot <syzbot+3361c2d6f78a3e0892f9@syzkaller.appspotmail.com>,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] net: fix uninitialised access in mii_nway_restart() and
+ cleanup error handling
+Message-ID: <20250317175117.GI688833@kernel.org>
+References: <20250311161157.49065-1-qasdev00@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250311161157.49065-1-qasdev00@gmail.com>
 
-On Mon Mar 17, 2025 at 3:23 PM CET, Tamir Duberstein wrote:
-> Throughout the tree, use the strict provenance APIs stabilized in Rust
-> 1.84.0[1]. Retain backwards-compatibility by introducing forwarding
-> functions at the `kernel` crate root along with polyfills for rustc <
-> 1.84.0.
->
-> Use `#[allow(clippy::incompatible_msrv)]` to avoid warnings on rustc <
-> 1.84.0 as our MSRV is 1.78.0.
->
-> In the `kernel` crate, enable the strict provenance lints on rustc >=3D
-> 1.84.0; do this in `lib.rs` rather than `Makefile` to avoid introducing
-> compiler flags that are dependent on the rustc version in use.
->
-> Link: https://blog.rust-lang.org/2025/01/09/Rust-1.84.0.html#strict-prove=
-nance-apis [1]
-> Suggested-by: Benno Lossin <benno.lossin@proton.me>
-> Link: https://lore.kernel.org/all/D8EIXDMRXMJP.36TFCGWZBRS3Y@proton.me/
-> Signed-off-by: Tamir Duberstein <tamird@gmail.com>
+On Tue, Mar 11, 2025 at 04:11:57PM +0000, Qasim Ijaz wrote:
+> In mii_nway_restart() during the line:
+> 
+>         bmcr = mii->mdio_read(mii->dev, mii->phy_id, MII_BMCR);
+> 
+> The code attempts to call mii->mdio_read which is ch9200_mdio_read().
+> 
+> ch9200_mdio_read() utilises a local buffer, which is initialised
+> with control_read():
+> 
+>         unsigned char buff[2];
+> 
+> However buff is conditionally initialised inside control_read():
+> 
+>         if (err == size) {
+>                 memcpy(data, buf, size);
+>         }
+> 
+> If the condition of "err == size" is not met, then buff remains
+> uninitialised. Once this happens the uninitialised buff is accessed
+> and returned during ch9200_mdio_read():
+> 
+>         return (buff[0] | buff[1] << 8);
+> 
+> The problem stems from the fact that ch9200_mdio_read() ignores the
+> return value of control_read(), leading to uinit-access of buff.
+> 
+> To fix this we should check the return value of control_read()
+> and return early on error.
+> 
+> Furthermore the get_mac_address() function has a similar problem where
+> it does not directly check the return value of each control_read(),
+> instead it sums up the return values and checks them all at the end
+> which means if any call to control_read() fails the function just 
+> continues on.
+> 
+> Handle this by validating the return value of each call and fail fast
+> and early instead of continuing.
+> 
+> Lastly ch9200_bind() ignores the return values of multiple 
+> control_write() calls.
+> 
+> Validate each control_write() call to ensure it succeeds before
+> continuing with the next call.
 
-One comment below, with that fixed:
+Hi Qasim,
 
-Reviewed-by: Benno Lossin <benno.lossin@proton.me>
+I see that these problems are related, but this is quite a lot
+of fixes for one patch: the rule of thumb is one fix per patch.
+Could you consider splitting it up along those lines?
 
-> ---
->  init/Kconfig           |   3 ++
->  rust/kernel/alloc.rs   |   2 +-
->  rust/kernel/devres.rs  |   4 +-
->  rust/kernel/io.rs      |  14 +++----
->  rust/kernel/lib.rs     | 108 +++++++++++++++++++++++++++++++++++++++++++=
-++++++
->  rust/kernel/of.rs      |   2 +-
->  rust/kernel/pci.rs     |   4 +-
->  rust/kernel/str.rs     |  16 +++-----
->  rust/kernel/uaccess.rs |  12 ++++--
->  9 files changed, 138 insertions(+), 27 deletions(-)
+> 
+> Reported-by: syzbot <syzbot+3361c2d6f78a3e0892f9@syzkaller.appspotmail.com>
+> Closes: https://syzkaller.appspot.com/bug?extid=3361c2d6f78a3e0892f9
+> Tested-by: syzbot <syzbot+3361c2d6f78a3e0892f9@syzkaller.appspotmail.com>
+> Fixes: 4a476bd6d1d9 ("usbnet: New driver for QinHeng CH9200 devices")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Qasim Ijaz <qasdev00@gmail.com>
 
+...
 
-> +#[cfg(not(CONFIG_RUSTC_HAS_STABLE_STRICT_PROVENANCE))]
-> +mod strict_provenance {
-> +    /// Gets the "address" portion of the pointer.
-> +    ///
-> +    /// See https://doc.rust-lang.org/stable/core/primitive.pointer.html=
-#method.addr.
-> +    #[inline]
-> +    pub fn addr<T>(ptr: *const T) -> usize {
-> +        // This is core's implementation from
-> +        // https://github.com/rust-lang/rust/commit/4291332175d12e79e606=
-1cdc3f5dccac2e28b969 through
-> +        // https://github.com/rust-lang/rust/blob/1.84.0/library/core/sr=
-c/ptr/const_ptr.rs#L172
-> +        // which is the first version that satisfies `CONFIG_RUSTC_HAS_S=
-TABLE_STRICT_PROVENANCE`.
-> +        #[allow(clippy::undocumented_unsafe_blocks)]
-> +        unsafe {
-> +            #[allow(clippy::transmutes_expressible_as_ptr_casts)]
-> +            core::mem::transmute(ptr.cast::<()>())
-> +        }
+> diff --git a/drivers/net/usb/ch9200.c b/drivers/net/usb/ch9200.c
+> index f69d9b902da0..e938501a1fc8 100644
+> --- a/drivers/net/usb/ch9200.c
+> +++ b/drivers/net/usb/ch9200.c
+> @@ -178,6 +178,7 @@ static int ch9200_mdio_read(struct net_device *netdev, int phy_id, int loc)
+>  {
+>  	struct usbnet *dev = netdev_priv(netdev);
+>  	unsigned char buff[2];
+> +	int ret;
+>  
+>  	netdev_dbg(netdev, "%s phy_id:%02x loc:%02x\n",
+>  		   __func__, phy_id, loc);
+> @@ -185,8 +186,10 @@ static int ch9200_mdio_read(struct net_device *netdev, int phy_id, int loc)
+>  	if (phy_id != 0)
+>  		return -ENODEV;
+>  
+> -	control_read(dev, REQUEST_READ, 0, loc * 2, buff, 0x02,
+> -		     CONTROL_TIMEOUT_MS);
+> +	ret = control_read(dev, REQUEST_READ, 0, loc * 2, buff, 0x02,
+> +			   CONTROL_TIMEOUT_MS);
+> +	if (ret != 2)
+> +		return ret;
 
-I think we should just use `ptr as usize` here instead. It's going away
-at some point and it will only affect optimizations (I don't even know
-if they exist at the moment) of old versions.
+If I understand things correctly, control_read() can (only) return:
 
----
-Cheers,
-Benno
+* 2: success
+* negative error value: a different failure mode
 
-> +    }
-> +
-> +    /// Exposes the "provenance" part of the pointer for future use in
-> +    /// [`with_exposed_provenance`] and returns the "address" portion.
-> +    ///
-> +    /// See https://doc.rust-lang.org/stable/core/primitive.pointer.html=
-#method.expose_provenance.
-> +    #[inline]
-> +    pub fn expose_provenance<T>(ptr: *const T) -> usize {
-> +        ptr.cast::<()>() as usize
-> +    }
-> +
-> +    /// Converts an address back to a pointer, picking up some previousl=
-y 'exposed'
-> +    /// provenance.
-> +    ///
-> +    /// See https://doc.rust-lang.org/stable/core/ptr/fn.with_exposed_pr=
-ovenance.html.
-> +    #[inline]
-> +    pub fn with_exposed_provenance<T>(addr: usize) -> *const T {
-> +        addr as *const T
-> +    }
-> +
-> +    /// Converts an address back to a mutable pointer, picking up some p=
-reviously 'exposed'
-> +    /// provenance.
-> +    ///
-> +    /// See https://doc.rust-lang.org/stable/core/ptr/fn.with_exposed_pr=
-ovenance_mut.html
-> +    #[inline]
-> +    pub fn with_exposed_provenance_mut<T>(addr: usize) -> *mut T {
-> +        addr as *mut T
-> +    }
-> +
-> +    /// Creates a pointer with the given address and no [provenance][cra=
-te::ptr#provenance].
-> +    ///
-> +    /// See https://doc.rust-lang.org/stable/core/ptr/fn.without_provena=
-nce_mut.html.
-> +    #[inline]
-> +    pub fn without_provenance_mut<T>(addr: usize) -> *mut T {
-> +        addr as *mut T
-> +    }
-> +}
-> +
-> +pub use strict_provenance::*;
-> +
->  // Ensure conditional compilation based on the kernel configuration work=
-s;
->  // otherwise we may silently break things like initcall handling.
->  #[cfg(not(CONFIG_RUST))]
+If so, I think it would be more idiomatic to write this as:
 
+	if (ret < 0)
+		return ret;
+
+This makes it easier for those reading the code to see that
+an error value is being returns on error.
+
+Likewise elsewhere in this patch.
+
+>  
+>  	return (buff[0] | buff[1] << 8);
+>  }
+
+...
 
