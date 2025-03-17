@@ -1,142 +1,186 @@
-Return-Path: <linux-kernel+bounces-563726-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563728-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49442A64747
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:29:04 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D32FDA6474D
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:29:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8E5B3AB885
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 09:27:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD56A1896097
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 09:28:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A01612253A1;
-	Mon, 17 Mar 2025 09:27:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D402422539E;
+	Mon, 17 Mar 2025 09:27:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JqzXzOEN"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="A8Qij+8Q"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A5B92222D2
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 09:27:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D99B2248B4;
+	Mon, 17 Mar 2025 09:27:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742203652; cv=none; b=BTuQDn83Cjf6R1bIJFGea4ZPLH+tI7M2pOuCcZ74cWAJScXAx5RU5e+UPaDNCO2sKz8FtULhLyDqBEbeaixbS+WmznG0FeAG7rXZEawhsHEX3Nf7Nu1VSI/XIEFbZldRrJySxtDHk73iCPgyDCeaxwRjdMCpG3MxmPz9pY6TJh0=
+	t=1742203668; cv=none; b=OeJJUSMvMtC1/OJtsgnWapEg2y9/zqAiJVjWW+rnIH7yMWdpBRQFiaW3ikfEOk+lIeZ0dC7gaGxVLB44pxelch6cj+rW6QA+nahcI0tXBQaBZsnxvVJgZDQWyqsBY7p4GJJwnrMl5mjhhtQI2QUQFpbVPEW03FAb6p8Fo21c+wI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742203652; c=relaxed/simple;
-	bh=wc8ZUJs4juXlpOzJC3dYvkAmWROYc3NkYrmr2+p4WQI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ssSwtLZp+GdN/fTgmshIxvbwfPxztKapAuy60L/0uxRWPWpJA3cdtv+owm/1EkErPd1zpJMzfJ+zPrEE2RE0X0kzxB5/ah1x2LRx/Vpw0n3cjX4q3OsUyPoJOZbtcncHv8FUtQf+JP9aY+/+sBoRw5qyzTjG0CQcPU1TBUszPkY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JqzXzOEN; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1742203649;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=ELVb8/TgPP99S2US6QOwfM5yFjDUVc6XvoMzilxTm90=;
-	b=JqzXzOENl/divQG6HdzNRe7hqNPkqFSTmE9VLeCGBdu99M20gdyvVylDgV9Y/d7yOeeqB6
-	+Rr3xECxp+dTFDojgqShkjhfbqEa2/0RL1dS9IA8ISBATAe7pFZjAW0BAPeIMHzkY3Iwse
-	KAay0we3Mz7kJHSo91eXrzQOzyKy3ZQ=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-392-ST7NcI_nNTicxXbhppvBFg-1; Mon, 17 Mar 2025 05:27:27 -0400
-X-MC-Unique: ST7NcI_nNTicxXbhppvBFg-1
-X-Mimecast-MFC-AGG-ID: ST7NcI_nNTicxXbhppvBFg_1742203646
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-39141ffa913so2492203f8f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 02:27:27 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742203646; x=1742808446;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ELVb8/TgPP99S2US6QOwfM5yFjDUVc6XvoMzilxTm90=;
-        b=JGTNv049odFnMp/4rr58hQkmx4T4BdWDUthtLxhWHZDLO47G4srZq5TCkd2j4qYElR
-         MT04P3OgrRAwug15HUwQCncdGYO/vGkmxNoL4uAWB600Hn4dvTvxVxXNFx8gtprtxa9E
-         jpQng12JUPcKx6CWnfo8cRPF1a4tTi9kA40c7kbZEd/eJJZBwR76t1crVSW08ujmNjWH
-         2NCZaidWWsa+ICXT/diMtUuJaw2VqwM1yTkDvGcQoFG38clNxodi1tJtuxZ5UKiRHvQh
-         /y/kHM5HfHA/pkPBfPBYmkw9PFNipVppB8E1mnV9Qx2NeiI5QwkLnAfYN232FqT2kYCU
-         fVKw==
-X-Forwarded-Encrypted: i=1; AJvYcCWVQuxA+TPoSmUG+w/4GXiIqGhSmX7N73LC8+t+pJqyKrrTTAkA/Q31JY+I6n/3+oCCJVOJKz7V3CfPlKs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxU2wM7YgmVRuoc6vmlwKvimCi1QxgEoS+D4VoAeCa9Y/Myg88J
-	ANLJUFJMfW9Zm1naKTIwutV51UWzvtQdxuA7KPEnKG8w/P8IMwFiI+l6ARiMtN4GwTyQmZ+qKM8
-	3FruARufkc1FWwk/UjsUnnN/fPy902pOaEFBGT6gXJUWnPxvf9Mw9mHb0wRIZxA==
-X-Gm-Gg: ASbGnctKKb7aKJGDYi6YtCG60dRW5vbFVFABEDi/Xg2Few86Vlx6s0lp7RuMBZ2zPZn
-	1Pw4RuOaQD9AAH74K1JjWvtbaljHqRNdehwcuqOV4NnNbZ9Un+9COs86fBfLiFf5UGabdf8OPTE
-	M6jikwLiK0pT7NBZbG/tBvlrbL0WfW58lna5QxIh5JzKsvpmJW+GykfpuGao/xidhiHGRgL7Sod
-	syUxUIuOR7JeomwaGoQtt7wIiyODcNQ0sC+hesnvAmp2Si4eC2opS6NbnJR/YsJ12Pwk3Wcl0oj
-	2LMYU2AYQY7rXMYdAXKyqAk0Nuyhrt0Orq7CnRvj08o5WRMfOggor9sTmX9Kla0=
-X-Received: by 2002:a5d:5f84:0:b0:391:3fa7:bf77 with SMTP id ffacd0b85a97d-3971e3a54cbmr14547803f8f.31.1742203646494;
-        Mon, 17 Mar 2025 02:27:26 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHRgjJ/x/oVlKZKHU7TipAkeP19C9rZyh+PBBydQPPRm8QgqfVoTWGnhCYtv13jfPOOqNUncg==
-X-Received: by 2002:a5d:5f84:0:b0:391:3fa7:bf77 with SMTP id ffacd0b85a97d-3971e3a54cbmr14547775f8f.31.1742203646117;
-        Mon, 17 Mar 2025 02:27:26 -0700 (PDT)
-Received: from lbulwahn-thinkpadx1carbongen9.rmtde.csb ([2a02:810d:7e40:14b0:4ce1:e394:7ac0:6905])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-395c7df3506sm14795571f8f.11.2025.03.17.02.27.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Mar 2025 02:27:25 -0700 (PDT)
-From: Lukas Bulwahn <lbulwahn@redhat.com>
-X-Google-Original-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
-To: Rajneesh Bhardwaj <irenic.rajneesh@gmail.com>,
-	David E Box <david.e.box@intel.com>,
-	Hans de Goede <hdegoede@redhat.com>,
-	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Chao Qin <chao.qin@intel.com>,
-	Choong Yong Liang <yong.liang.choong@linux.intel.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	netdev@vger.kernel.org,
-	platform-driver-x86@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Lukas Bulwahn <lukas.bulwahn@redhat.com>
-Subject: [PATCH net-next] MAINTAINERS: adjust the file entry in INTEL PMC CORE DRIVER
-Date: Mon, 17 Mar 2025 10:27:17 +0100
-Message-ID: <20250317092717.322862-1-lukas.bulwahn@redhat.com>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1742203668; c=relaxed/simple;
+	bh=dJoV1yMs920m1r9dWptgBPGSZSrP9BNdmMBKMk1MVp0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lOgsDYx0fBhLnzqVzeuARGO2mD/lTFt/k01papK4OWQ/u4nXAX5j2hRhpsYt6OAgmjfHqBp7z66wrACnIWVYjyUtt+lTIXenk2X6OIE6S/sttoNTN01aeSIhdY3lhIeFcV4wcoFzMaHjFQ5o400fQILZjalUdXHZ0BTIBfcO6zc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=A8Qij+8Q; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742203667; x=1773739667;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=dJoV1yMs920m1r9dWptgBPGSZSrP9BNdmMBKMk1MVp0=;
+  b=A8Qij+8QbjYROwmwmC0twC+sgZMWlCtUetQX+AKe9KepChc+PnnT/kjt
+   ANvjI8tOl2MZFU36ymgiNjGggGteM8KlM9udFX592E55Wuxd3hAnYaopH
+   oAFfaYlIkzHjoD0GEPkbgr3vey2K5N20VU5Fh14/CJUaxWIZrZk2X2Z7s
+   kOb94hkWgC9AAbhP0cNiVpLMUgdtfQplIvna0yB62MLL79NYPK2W4lbCh
+   JpvSOCBIozi1bJdZNtDFK4mWQnIDavpfOThndO7p9fWmLpDjTKTqdC9iO
+   /xLPVMReXottD3jHPmTxmwJo1/cv4N2PyFmh+GP12S7lCyn7Ul47UHMr+
+   Q==;
+X-CSE-ConnectionGUID: yTlDwhLNRgCj2gVoQ8CAzg==
+X-CSE-MsgGUID: VsYQg5tYT9+Y/FDIU1O+mw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11375"; a="43157130"
+X-IronPort-AV: E=Sophos;i="6.14,253,1736841600"; 
+   d="scan'208";a="43157130"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Mar 2025 02:27:45 -0700
+X-CSE-ConnectionGUID: DNF9w2caToufAA+qjO/N8w==
+X-CSE-MsgGUID: 4w/qxc07Q9GdL3t3sDcjLQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,253,1736841600"; 
+   d="scan'208";a="126743831"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Mar 2025 02:27:41 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tu6kz-00000003GTc-24Ua;
+	Mon, 17 Mar 2025 11:27:37 +0200
+Date: Mon, 17 Mar 2025 11:27:37 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Jonathan Cameron <jic23@kernel.org>,
+	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+	Lars-Peter Clausen <lars@metafoo.de>, Chen-Yu Tsai <wens@csie.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>, Nuno Sa <nuno.sa@analog.com>,
+	David Lechner <dlechner@baylibre.com>,
+	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+	Olivier Moysan <olivier.moysan@foss.st.com>,
+	Guillaume Stols <gstols@baylibre.com>,
+	Dumitru Ceclan <mitrutzceclan@gmail.com>,
+	Trevor Gamblin <tgamblin@baylibre.com>,
+	Matteo Martelli <matteomartelli3@gmail.com>,
+	Alisa-Dariana Roman <alisadariana@gmail.com>,
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev
+Subject: Re: [PATCH v7 05/10] iio: adc: sun20i-gpadc: Use adc-helpers
+Message-ID: <Z9frCUqRTD0i1Faq@smile.fi.intel.com>
+References: <cover.1741849323.git.mazziesaccount@gmail.com>
+ <df0b2b53affbef5ccb7219328cc15db3ba843737.1741849323.git.mazziesaccount@gmail.com>
+ <Z9LQ0O34EUM8WZku@smile.fi.intel.com>
+ <20250316094112.6731bd01@jic23-huawei>
+ <50b126c5-248e-4694-9782-4f28d6db5fce@gmail.com>
+ <Z9fUmo5wp3EcNWzm@smile.fi.intel.com>
+ <0db2a42f-d393-4e75-afbf-cf30c0e06cce@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0db2a42f-d393-4e75-afbf-cf30c0e06cce@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+On Mon, Mar 17, 2025 at 10:42:07AM +0200, Matti Vaittinen wrote:
+> On 17/03/2025 09:51, Andy Shevchenko wrote:
+> > On Mon, Mar 17, 2025 at 09:11:08AM +0200, Matti Vaittinen wrote:
+> > > On 16/03/2025 11:41, Jonathan Cameron wrote:
+> > > > On Thu, 13 Mar 2025 14:34:24 +0200
+> > > > Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
+> > > > > On Thu, Mar 13, 2025 at 09:18:49AM +0200, Matti Vaittinen wrote:
 
-Commit 7e2f7e25f6ff ("arch: x86: add IPC mailbox accessor function and add
-SoC register access") adds a new file entry referring to the non-existent
-file linux/platform_data/x86/intel_pmc_ipc.h in section INTEL PMC CORE
-DRIVER rather than referring to the file
-include/linux/platform_data/x86/intel_pmc_ipc.h added with this commit.
-Note that it was missing 'include' in the beginning.
+...
 
-Adjust the file reference to the intended file.
+> > > > > > +	num_channels = devm_iio_adc_device_alloc_chaninfo_se(dev,
+> > > > > > +				&sun20i_gpadc_chan_template, -1, &channels);
+> > > > > > +	if (num_channels < 0)
+> > > > > > +		return num_channels;
+> > > > > > +
+> > > > > >    	if (num_channels == 0)
+> > > > > >    		return dev_err_probe(dev, -ENODEV, "no channel children\n");
+> > > > > 
+> > > > > Note, this what I would expected in your helper to see, i.e. separated cases
+> > > > > for < 0 (error code) and == 0, no channels.
+> > > > > 
+> > > > > Also, are all users going to have this check? Usually in other similar APIs
+> > > > > we return -ENOENT. And user won't need to have an additional check in case of
+> > > > > 0 being considered as an error case too.
+> > > > In a few cases we'll need to do the dance the other way in the caller.
+> > > > So specifically check for -ENOENT and not treat it as an error.
+> > > > 
+> > > > That stems from channel nodes being optionally added to drivers after
+> > > > they have been around a while (usually to add more specific configuration)
+> > > > and needing to maintain old behaviour of presenting all channels with default
+> > > > settings.
+> > > > 
+> > > > I agree that returning -ENOENT is a reasonable way to handle this.
+> > > 
+> > > I agree - but I'm going to use -ENODEV instead of -ENOENT because that's
+> > > what the current callers return if they find no channels. That way the
+> > > drivers can return the value directly without converting -ENOENT to -ENODEV.
+> > 
+> > ENODEV can be easily clashed with other irrelevant cases,
+> 
+> Can you please explain what cases?
 
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
----
-I think the commit above is in net-next, this patch is to be applied
-on the tree where the commit has been added.
+When it's a code path that returns the same error code for something different.
 
-Jakub, please pick this minor non-urgent fix. Thanks.
+> > ENOENT is the correct
+> > error code.
+> 
+> I kind of agree if we look this from the fwnode perspective. But, when we
+> look this from the intended user's perspective, I can very well understand
+> the -ENODEV. Returning -ENODEV from ADC driver's probe which can't find any
+> of the channels feels correct to me.
 
- MAINTAINERS | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Okay, it seems we have got yet another disagreement as I think this has to
+be ENOENT. Because this is related to the firmware description and not real
+hardware discovery path. If it is the latter, I may fully agree on ENODEV
+choice. But AFAICS it's not the case here.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 96ae7f628da4..9544a4e84f99 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -12069,7 +12069,7 @@ L:	platform-driver-x86@vger.kernel.org
- S:	Maintained
- F:	Documentation/ABI/testing/sysfs-platform-intel-pmc
- F:	drivers/platform/x86/intel/pmc/
--F:	linux/platform_data/x86/intel_pmc_ipc.h
-+F:	include/linux/platform_data/x86/intel_pmc_ipc.h
- 
- INTEL PMIC GPIO DRIVERS
- M:	Andy Shevchenko <andy@kernel.org>
+> > If drivers return this instead of another error code, nothing bad
+> > happen, it's not an ABI path, correct?
+> 
+> I don't know if failure returned from a probe is an ABI. I still feel
+> -ENODEV is correct value,
+
+And I have the opposite opinion. I think ENODEV is _incorrect_ choice
+in this case.
+
+> and I don't want to change it for existing users -
+> and I think also new ADC drivers should use -ENODEV if they find no channels
+> at all.
+
+Again, the problem is that you are trying to apply the error code for HW to the
+information that comes from FW.
+
+> Besides that I think -ENODEV to be right, changing it to -ENOENT for
+> existing callers requires a buy-in from Jonathan (and/or) the driver
+> maintainers.
+
+Yeah, will wait for Jonathan to judge, but I think you can find rationale above.
+
 -- 
-2.48.1
+With Best Regards,
+Andy Shevchenko
+
 
 
