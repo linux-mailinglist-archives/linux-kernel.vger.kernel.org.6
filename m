@@ -1,160 +1,98 @@
-Return-Path: <linux-kernel+bounces-563304-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563305-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54933A63D11
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 04:27:08 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19DD2A63D12
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 04:28:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F02B83AC62C
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 03:26:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 520E516BE18
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 03:28:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3A522080EE;
-	Mon, 17 Mar 2025 03:27:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 888212080C3;
+	Mon, 17 Mar 2025 03:28:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UVRWX00+"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M4YmSqK6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F497322B;
-	Mon, 17 Mar 2025 03:26:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3E9E1FAA;
+	Mon, 17 Mar 2025 03:28:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742182020; cv=none; b=FzL77vH++s3E05XHkmjh6y7R0oE39kWFQ3sWT8EYmg/xufl7o5Ixf5fzbMuzV8sUgeQWwGIDtR7UelJxsPHWMU9/tXcNlM+i2+JQ5V2ApZWTokFXRfok2DTjWTQG/5H+IxGcDNyO2UGQc1Rff4hdIUO7WwjJowgV8xfhWBXZxaM=
+	t=1742182127; cv=none; b=gvI1AwOPO6EO2oOqPfepu5mq2xoP7N6r3i78ekIIQo1S5bV8TIx4PAB7i6h26RxsYxiV+VK48BR1x/K3ciwnmk3RmtI8NakhrGN6yI6DeYaxVuVXr44zBpH8sSwL3YOSeyEJ+OnMH9AQu9uH9wZAWkIqGseeLD1ZQutzLhN1wls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742182020; c=relaxed/simple;
-	bh=jo3XbSFL3LH3YXoNw8nLYH1e6fdgcaJFMQ+QEKVdyhw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LuuOFacKVPk2JZnaAqeE6FIFmsXykFzZqyIlQoOG6/mkkmdsD9E3iGJC1o662PfgojBVDrCN21cXYOSBxIAAmLgfu3MEC3FUHKbuZYtqVuP2GDX5NDLJBBDMaTH+L44GgVtJDLnAu2I+P4NZoPHhonOsTyb0iBhSW58gx14Q7y0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UVRWX00+; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5e8be1c6ff8so3448122a12.1;
-        Sun, 16 Mar 2025 20:26:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742182017; x=1742786817; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ew9cK3VwqmmSRKM9CfCwZLqsPTxGVr8AsBsVV+VELps=;
-        b=UVRWX00+EWnKspxRNuKwMV8TmOUhWj9ueeeH+QiHp4UkT9L6reDR2NZNhVuXUrek/n
-         bxz03JdxzZDp/etvNNNXL3KKrtoae5gGTjf3BldJDlj+YwYT/EjoumZ/iot5iQ6qGU68
-         TO1FlzLGVQMqd/4kaDza+O4dSEs3aaQEPgNVM3VPcuaRAOkGworWQzBhxQfXYcDE1Xwf
-         PLLCDlSxpWccMdeOBzpmSYc9FCIwJIukpWuuUNHaq+/5cBy3Avn8Z4Pc/Vz0qPSR3kUa
-         rcuuZnbhVAyC3DX7qvNzDcdkGeXzhAyQVppLYairKauitKTzsh7QuBHBlBqm1py0z19Y
-         SZbQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742182017; x=1742786817;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Ew9cK3VwqmmSRKM9CfCwZLqsPTxGVr8AsBsVV+VELps=;
-        b=e3fGsgr0eyIJRfEn6u43peHkr4AqvH8rHk5/TO3O11pcv+PVP321L5e26GmYJCWHZe
-         cb6S7CK2+bKZpzzkpaHXzk3iNOfCvSgTIMze43AmDG3Anbwn+1OyIAKloIaX8HRkm8ht
-         46u8qgH79agPVIMu2MmuqXApCejWcOJQD5uf1W5qwN9ba3kMSleGx8ieb8GBGVvgvWNc
-         PVJjJYmBktcg1BwI81jYw3HpeRLHzNq46IHCYtc0RTIIjTyDGS7ClQHngMRz0Wc42FHx
-         Z2YJbSaRkiTUdSad5pCh0QOxgIe6gKUd8Ko1W4lCQB2ZHcR7efOcIG26+igko5gDBxLB
-         Kg7g==
-X-Forwarded-Encrypted: i=1; AJvYcCUR7GrS+C/10YU7X+W0jbGvq4LRr8RihqXh7nvXa1tb0P/8RewMezxKVqgNKFWAFyRyBgSwDSr4w3NE@vger.kernel.org, AJvYcCVOhPAOTsZx6XivP+oIog42NobY/n29vBT0t1fsw7iM47xP/1or54SfjSBQE1hkUgDeRDqGpsbfuEZTlAQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw6QaTS0OwF+3/dc0YaHBOIiwx88XPVji4U6N2ia91vxc8Qs3uN
-	FPrm0uTbJyWiWgggk45HnTPQ0hWSjg0H/VqV4xpxvjwb9/n5IeXpjgXVHnC5hFXPEko7Fo2owuK
-	qsRjovASwXM1IGqGg3GSGI3b4T88=
-X-Gm-Gg: ASbGncu6Pe8uTKCwscEhoyzi+n5RqWd2zYBVoZx+RERaiMXxf6RqGCBSfloQ7UkZ0XC
-	2bl4F95kl3FWTuWDu23hjSajJcDlFbrWlax8XpQKh+c4hiMjp5YCbZ3bKLk/12EBayNZr3hmIue
-	+LKeffCqX4kAVKJ8n1WMiBdpXYtQ==
-X-Google-Smtp-Source: AGHT+IGsZbe1TuR22q+uzkeQHGQ4QwuEq4vTb2qXLC4+gba6al+dR+brO1MSKqlHitMr+joW1Coja90NLgfxq6Hmfgc=
-X-Received: by 2002:a05:6402:1d54:b0:5e5:b9b1:8117 with SMTP id
- 4fb4d7f45d1cf-5e89fa3afc7mr10800086a12.18.1742182016369; Sun, 16 Mar 2025
- 20:26:56 -0700 (PDT)
+	s=arc-20240116; t=1742182127; c=relaxed/simple;
+	bh=D+FxkY/P5bIf3YRt/5c6e+SSalHrVCp4WMlM8rBOt/Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=izu8qlmkz5genF28xlCpZtWJM6q/KQmC8NcOzY5W+h4ORVZknTU8NODhe/twEqFwsUmimy0QAzUZcBg+Ha1higcgj3yZWtZZgUoTksRF7efd7uio1z1WuXF6B3VFExbHeuLnAnncnqXKnIeBaTsjxMBxBSoNo1i9lCbZj0dlMsg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M4YmSqK6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B2B6C4CEDD;
+	Mon, 17 Mar 2025 03:28:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742182126;
+	bh=D+FxkY/P5bIf3YRt/5c6e+SSalHrVCp4WMlM8rBOt/Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=M4YmSqK6p08H7tX8oxssyGbGOEvX4/yAVNEW3bsk5KeywYcdeHpeRJjRJfLTC6t5A
+	 6+VDNLKVPWBMLSA/2np4SMkFvNIMcZP0RVfo5X+BDZx0U1xtt2iOmdhmgBTnvvXeqv
+	 Nk8WagCLvB8w9tNpe5n6VqPTROiyMwDL9TuvY2SZBqJkzP9mWG7QkJiZngGy9sHvnC
+	 ABhf7YjA8gecI+5NnTBqHLUmzdQlMA27THNOgihtpmKjILnJLBTV41oCt4ZuG541y4
+	 cnRMBezY4LvX6CPDxiAvI0qX9NykQUt5bi/3LMc8yQnn/643Na6Tc72bmCSzZcdnqi
+	 Is7XsZoT9n3EQ==
+Date: Mon, 17 Mar 2025 11:28:40 +0800
+From: "Peter Chen (CIX)" <peter.chen@kernel.org>
+To: Li Qiong <liqiong@nfschina.com>
+Cc: Pawel Laszczak <pawell@cadence.com>, Roger Quadros <rogerq@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] usb: cdns3: Remove the invalid comment
+Message-ID: <20250317032840.GE218167@nchen-desktop>
+References: <20250314070921.355986-1-liqiong@nfschina.com>
+ <20250314101639.424013-1-liqiong@nfschina.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250316171250.5901-1-linux.amoon@gmail.com> <20250316171250.5901-2-linux.amoon@gmail.com>
- <SHXPR01MB08630F70345E05F6124B54B8E6DF2@SHXPR01MB0863.CHNPR01.prod.partner.outlook.cn>
-In-Reply-To: <SHXPR01MB08630F70345E05F6124B54B8E6DF2@SHXPR01MB0863.CHNPR01.prod.partner.outlook.cn>
-From: Anand Moon <linux.amoon@gmail.com>
-Date: Mon, 17 Mar 2025 08:56:38 +0530
-X-Gm-Features: AQ5f1JoMw6Pj9qFozta3p1hRlyepaxFMZtCw2sXiHZHf_NLToaOCXjhYCJz2H9U
-Message-ID: <CANAwSgQObUP-Jxk4o5KokA=U4RsNz5uoqvyfU-Tcmj=YNM=pYQ@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] PCI: starfive: Simplify event doorbell bitmap
- initialization in pcie-starfive
-To: Minda Chen <minda.chen@starfivetech.com>
-Cc: Daire McNamara <daire.mcnamara@microchip.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Rob Herring <robh@kernel.org>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Kevin Xie <kevin.xie@starfivetech.com>, 
-	Conor Dooley <conor.dooley@microchip.com>, Mason Huo <mason.huo@starfivetech.com>, 
-	"open list:PCI DRIVER FOR PLDA PCIE IP" <linux-pci@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250314101639.424013-1-liqiong@nfschina.com>
 
-Hi Minda
+On 25-03-14 18:16:38, Li Qiong wrote:
+> The function don't return value, remove the invalid comment.
+> 
+> Signed-off-by: Li Qiong <liqiong@nfschina.com>
 
-On Mon, 17 Mar 2025 at 07:53, Minda Chen <minda.chen@starfivetech.com> wrote:
->
->
->
-> >
-> > The events_bitmap initialization in starfive_pcie_probe() previously masked out
-> > the PLDA_AXI_DOORBELL and PLDA_PCIE_DOORBELL events.
-> >
-> > These masking has been removed, allowing these events to be included in the
-> > bitmap. With this change ensures that all interrupt events are properly
-> > accounted for and may be necessary for handling doorbell events in certain use
-> > cases.
-> >
-> > PCIe Doorbell Events: These are typically used to notify a device about an event
-> > or to trigger an action. For example, a host system can write to a doorbell
-> > register on a PCIe device to signal that new data is available or that an
-> > operation should start12.
-> >
-> > AXI-PCIe Bridge: This bridge acts as a protocol converter between AXI
-> > (Advanced eXtensible Interface) and PCIe (Peripheral Component Interconnect
-> > Express) domains. It allows transactions to be converted and communicated
-> > between these two different protocols3.
-> >
-> > Fixes: 39b91eb40c6a ("PCI: starfive: Add JH7110 PCIe controller")
-> > Cc: Minda Chen <minda.chen@starfivetech.com>
-> > Signed-off-by: Anand Moon <linux.amoon@gmail.com>
-> > ---
-> > v2: new patch
-> > ---
-> >  drivers/pci/controller/plda/pcie-starfive.c | 4 +---
-> >  1 file changed, 1 insertion(+), 3 deletions(-)
-> >
-> > diff --git a/drivers/pci/controller/plda/pcie-starfive.c
-> > b/drivers/pci/controller/plda/pcie-starfive.c
-> > index e73c1b7bc8efc..d2c2a8e039e10 100644
-> > --- a/drivers/pci/controller/plda/pcie-starfive.c
-> > +++ b/drivers/pci/controller/plda/pcie-starfive.c
-> > @@ -410,9 +410,7 @@ static int starfive_pcie_probe(struct platform_device
-> > *pdev)
-> >       plda->host_ops = &sf_host_ops;
-> >       plda->num_events = PLDA_MAX_EVENT_NUM;
-> >       /* mask doorbell event */
-> > -     plda->events_bitmap = GENMASK(PLDA_INT_EVENT_NUM - 1, 0)
-> > -                          & ~BIT(PLDA_AXI_DOORBELL)
-> > -                          & ~BIT(PLDA_PCIE_DOORBELL);
-> > +     plda->events_bitmap = GENMASK(PLDA_INT_EVENT_NUM - 1, 0);
-> >       plda->events_bitmap <<= PLDA_NUM_DMA_EVENTS;
-> >       ret = plda_pcie_host_init(&pcie->plda, &starfive_pcie_ops,
-> >                                 &stf_pcie_event);
-> > --
-> > 2.48.1
->
-> Hi Anand
->    Mask the door bell interrupt is required. In some case, ( eg :NVMe read/write mass data) found error.
+Acked-by: Peter Chen <peter.chen@kernel.org>
 
-Thank you for your review comments.
+> ---
+> v2: Split the first patch to two patches.
+> v3: Add changes from the previous version.
+> 
+>  drivers/usb/cdns3/cdns3-plat.c | 2 --
+>  1 file changed, 2 deletions(-)
+> 
+> diff --git a/drivers/usb/cdns3/cdns3-plat.c b/drivers/usb/cdns3/cdns3-plat.c
+> index 59ec505e198a..735df88774e4 100644
+> --- a/drivers/usb/cdns3/cdns3-plat.c
+> +++ b/drivers/usb/cdns3/cdns3-plat.c
+> @@ -179,8 +179,6 @@ static int cdns3_plat_probe(struct platform_device *pdev)
+>  /**
+>   * cdns3_plat_remove() - unbind drd driver and clean up
+>   * @pdev: Pointer to Linux platform device
+> - *
+> - * Returns 0 on success otherwise negative errno
+>   */
+>  static void cdns3_plat_remove(struct platform_device *pdev)
+>  {
+> -- 
+> 2.30.2
+> 
 
-I have tested using the Starfive Vision Five 2 board with a Samsung NVMe drive
-and did not encounter any data read/write errors.
-However, we can consider dropping this patch if there are issues with
-other development boards.
-I am also available to test with different NVMe modules if needed.
+-- 
 
-Thanks
--Anand
+Best regards,
+Peter
 
