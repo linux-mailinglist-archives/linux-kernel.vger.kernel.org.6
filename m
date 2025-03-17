@@ -1,70 +1,63 @@
-Return-Path: <linux-kernel+bounces-564015-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564016-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A701A64C14
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 12:15:31 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 129D7A64C16
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 12:16:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32D303AE451
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:15:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 66960169B2B
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:16:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE5E82356DB;
-	Mon, 17 Mar 2025 11:15:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 454E52356D0;
+	Mon, 17 Mar 2025 11:16:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="EXk7e5cC"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K5l1nkp/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ADE0366;
-	Mon, 17 Mar 2025 11:15:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F3F442069;
+	Mon, 17 Mar 2025 11:16:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742210122; cv=none; b=LTRYNw9yzGDmZLWxNQwigQZqSFhEk49VucH08dCcjeAcniL0IM71sDUeN0C2fbWtUqi8qhaDFiV2rfOw1f+eYHNrxe3xEmsOZP7K8Gyi9uqAYAgdcE9hr6p5/OvEo92uNXAklr8NdP4wwHcpIYe/DKcxGdLOav6tbkLc5Cmnzr4=
+	t=1742210166; cv=none; b=iw3i6AStOwloYmGANdoLcpemurIRoIA1YUl2mtmrXegGPe+8jtRu92zWBs90yFlnPDLU5Z6AFCQQte2VlxEpoqtSXmlWpe1Mxn2kz6QL5kENPufHb5PCVVg0CxF9wNhQ0h2mXLRV8rgFoYmc8h01xABmE2VhveDk3PWCUVKqYzk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742210122; c=relaxed/simple;
-	bh=eNTPcJSiWc/MzJSny1IbHlNyuwWxhulQntYMxksDwLs=;
+	s=arc-20240116; t=1742210166; c=relaxed/simple;
+	bh=OaMOFq+Tfv3lDS5eZ6Buv2ayrywSEXFmvlYWNCSt1nY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=naSeDSSX8HUl0BtaV+At+E/RqGofUZraBaTihpl2KZIyn9UaW5VD/nH0at49qzH9XmVJ+fdyzdTkR1P0zUlpyLqx1B6wkLuZhGwt/J4S/Oc95C39qwL1cmCtFIgbaWs17DsuPVRmXieYlxtbnxr1wYTjkokZlqCjBL17u7im5+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=EXk7e5cC; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=mZq8jgI6QykZOlO5S6BA2uTbJ1kmNJri47i8SvX5HVc=; b=EXk7e5cC+vRdsbVAe0qNjiSYMy
-	QiBLLGwMH+Izq3tc2oeLUJ2aZ1OEtYAHQVS9I5MuJd18+8WgPu4B5V0XnyczeQLzWYNnXeXlnij7U
-	PlhJ+b8618p5G1a0wmH1k6sgnRTpb6sA+9koml62wnTbOnKpwCcefFvsgI836G3JgJVtciyroEzJD
-	aqVCODVxWttebGVquF9SOAXfx0IDdz1ebR1ewYWI4Z5qtUPSrF3czy+wm3B1sWfzbj9nB5W0P+OE5
-	hYIJT1o9WfCyqGZBu938exwuxQUSUAEmVcCY71iEZOHAL6+S8IhHDZ9XYrnlVM80x++lgwmYcUlFh
-	NxNN/zyA==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:48350)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1tu8R7-0003QY-35;
-	Mon, 17 Mar 2025 11:15:14 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1tu8R6-0003WS-0A;
-	Mon, 17 Mar 2025 11:15:12 +0000
-Date: Mon, 17 Mar 2025 11:15:11 +0000
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Michael Klein <michael@fossekall.de>
-Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [net-next,v3,2/2] net: phy: realtek: Add support for PHY LEDs on
- RTL8211E
-Message-ID: <Z9gEP_w6WvuCC_ge@shell.armlinux.org.uk>
-References: <20250316121424.82511-1-michael@fossekall.de>
- <20250316121424.82511-3-michael@fossekall.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=H6trcVpcYowMHDJD5MZaeVWGzznDi9JKxy1qL53R42EOZwIa0f6KIFBoGyYrnwwJ8VJUU4pz0XyD6F2fwbeHW6Vc96BOrAlgrdkJRTsBZk9rDFXSlaO1db3fGUG3v/YAP+4KfBsn+KGzHHbebmRIZchSyALZ49CUON28uSb5IwM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K5l1nkp/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E9D0C4CEE3;
+	Mon, 17 Mar 2025 11:16:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742210166;
+	bh=OaMOFq+Tfv3lDS5eZ6Buv2ayrywSEXFmvlYWNCSt1nY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=K5l1nkp/YS6nGYbNPBoLd12N8u0FdLmg1Hjj4nEUYhx+dRbQQBsppNX9w7tu95Uhp
+	 6On9MvFi0xk8TKRKYA/9ZDzLNwTOTHc2Rq1PSstfu8621eqVWR3wNCyJY/F7GuXzbd
+	 TSI0eSg3Ujr7qXp4amCG/9faawxd9CbaBWlcVy2WV1GEjGHc+0ZSUq3mF1yskyP1Ve
+	 Eb6fyjYCtA2Gm+70zdDT0YDGA1GTbv/FymUA1Uwcwp7gxJ3YEyhOUIYbo5NwJ+qXT6
+	 jC0UKOD03Z9N4qpzNHgKoeaXTaRBKFDwePoiwHIxvSgQYRsquzjBE+B03JInmfXg1H
+	 fB7iMf8ynziLA==
+Date: Mon, 17 Mar 2025 12:16:00 +0100
+From: Danilo Krummrich <dakr@kernel.org>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Tamir Duberstein <tamird@gmail.com>,
+	Andrew Ballance <andrewjballance@gmail.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] rust: alloc: replace `Vec::set_len` with `inc_len`
+Message-ID: <Z9gEcDRDLTd4Svp7@pollux>
+References: <20250316-vec-set-len-v1-0-60f98a28723f@gmail.com>
+ <20250316-vec-set-len-v1-1-60f98a28723f@gmail.com>
+ <Z9f-Z15bSh8MA1wJ@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,61 +66,48 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250316121424.82511-3-michael@fossekall.de>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+In-Reply-To: <Z9f-Z15bSh8MA1wJ@google.com>
 
-On Sun, Mar 16, 2025 at 01:14:23PM +0100, Michael Klein wrote:
-> +static int rtl8211e_read_ext_page(struct phy_device *phydev, u16 ext_page,
-> +				  u32 regnum)
-> +{
-> +	int oldpage, ret = 0;
-> +
-> +	oldpage = phy_select_page(phydev, RTL8211E_SET_EXT_PAGE);
-> +	if (oldpage >= 0) {
-> +		ret = __phy_write(phydev, RTL8211E_EXT_PAGE_SELECT, ext_page);
-> +		if (!ret)
+On Mon, Mar 17, 2025 at 10:50:15AM +0000, Alice Ryhl wrote:
+> On Sun, Mar 16, 2025 at 06:32:00PM -0400, Tamir Duberstein wrote:
+> > Rename `set_len` to `inc_len` and simplify its safety contract.
+> 
+> You're missing a Signed-off-by tag.
+> 
+> >  rust/kernel/alloc/kvec.rs | 19 +++++++++----------
+> >  rust/kernel/str.rs        |  2 +-
+> >  rust/kernel/uaccess.rs    |  2 +-
+> >  3 files changed, 11 insertions(+), 12 deletions(-)
+> > 
+> > diff --git a/rust/kernel/alloc/kvec.rs b/rust/kernel/alloc/kvec.rs
+> > index ae9d072741ce..d43a1d609434 100644
+> > --- a/rust/kernel/alloc/kvec.rs
+> > +++ b/rust/kernel/alloc/kvec.rs
+> > @@ -183,17 +183,16 @@ pub fn len(&self) -> usize {
+> >          self.len
+> >      }
+> >  
+> > -    /// Forcefully sets `self.len` to `new_len`.
+> > +    /// Increments `self.len` by `additional`.
+> >      ///
+> >      /// # Safety
+> >      ///
+> > -    /// - `new_len` must be less than or equal to [`Self::capacity`].
+> > -    /// - If `new_len` is greater than `self.len`, all elements within the interval
+> > -    ///   [`self.len`,`new_len`) must be initialized.
+> > +    /// - `self.len + additional` must be less than or equal to [`Self::capacity`].
+> > +    /// - All elements within the interval [`self.len`,`self.len + additional`) must be initialized.
+> >      #[inline]
+> > -    pub unsafe fn set_len(&mut self, new_len: usize) {
+> > -        debug_assert!(new_len <= self.capacity());
+> > -        self.len = new_len;
+> > +    pub unsafe fn inc_len(&mut self, additional: usize) {
+> > +        debug_assert!(self.len() + additional <= self.capacity());
+> > +        self.len += additional;
+> 
+> I guess we could use an INVARIANT: comment here.
 
-Same nit as patch 1.
-
-> +static int rtl8211e_led_hw_control_get(struct phy_device *phydev, u8 index,
-> +				       unsigned long *rules)
-> +{
-> +	int ret;
-> +	u16 cr1, cr2;
-> +
-> +	if (index >= RTL8211x_LED_COUNT)
-> +		return -EINVAL;
-> +
-> +	ret = rtl8211e_read_ext_page(phydev, RTL8211E_LEDCR_EXT_PAGE,
-> +				     RTL8211E_LEDCR1);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	cr1 = ret >> RTL8211E_LEDCR1_SHIFT * index;
-> +	if (cr1 & RTL8211E_LEDCR1_ACT_TXRX) {
-> +		set_bit(TRIGGER_NETDEV_RX, rules);
-> +		set_bit(TRIGGER_NETDEV_TX, rules);
-> +	}
-> +
-> +	ret = rtl8211e_read_ext_page(phydev, RTL8211E_LEDCR_EXT_PAGE,
-> +				     RTL8211E_LEDCR2);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	cr2 = ret >> RTL8211E_LEDCR2_SHIFT * index;
-> +	if (cr2 & RTL8211E_LEDCR2_LINK_10)
-> +		set_bit(TRIGGER_NETDEV_LINK_10, rules);
-> +
-> +	if (cr2 & RTL8211E_LEDCR2_LINK_100)
-> +		set_bit(TRIGGER_NETDEV_LINK_100, rules);
-> +
-> +	if (cr2 & RTL8211E_LEDCR2_LINK_1000)
-> +		set_bit(TRIGGER_NETDEV_LINK_1000, rules);
-
-Do you need these set_bit()s to be a heavy-weight atomic operation, or
-will __set_bit() being its lighter-weight non-atomic version be better?
-
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+Yeah, I fixed that up in a separate patch. I'm fine with Tamir picking it up or
+doing it himself in a new one, etc. But I think this patch should only focus on
+the rename.
 
