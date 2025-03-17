@@ -1,179 +1,179 @@
-Return-Path: <linux-kernel+bounces-564427-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564428-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6776AA654AB
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 15:59:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FF5CA654BB
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 16:00:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE6C116914A
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 14:59:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 950EC188878B
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 15:00:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B769723FC7A;
-	Mon, 17 Mar 2025 14:58:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E63024418F;
+	Mon, 17 Mar 2025 15:00:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3SAfpPDm"
-Received: from mail-wr1-f74.google.com (mail-wr1-f74.google.com [209.85.221.74])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nGDa7mzj"
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BF9B22CBFC
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 14:58:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C80AB23FC61;
+	Mon, 17 Mar 2025 15:00:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742223535; cv=none; b=WHxC28u/c1Bc720Pvyt1iBSDAkmQmyrXPbvo+oLb0EoA3h2s3vs48Or68uBnBxNk5Vccj7JAkRBumG9+IghyANboH/HaWeuu4Ho4VdwJKMHHx1ZMLkczDe4U18wQEqXl1W1up9nbw7yOSkLuL8h6kGvmdto4r1XXe+R6zUaB3OQ=
+	t=1742223612; cv=none; b=hVAH2KbtwDrzHaFk8M0HKaoJMYucYYSABMFfosH2pH+pKWW+xw004yzYXR43W2IvCSP8qL1Xt6bn280vziYzHzEd64t7M/fehhVG4N9P0WqBaA8tcNT4WZOR+dnPbmRj9FpdZasHTSyw8TrN3kmL/bAEkFmjar0150gD/GJkq7Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742223535; c=relaxed/simple;
-	bh=YSnrE2Mf4NXuMV4nwjpl5ipWPI5O+hoQ3wDnyAzryLM=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Zw1OCQatHjelaGbqd4+erOgR2Bu6iUINDW0hHK82avD5pENWasR6Hkpz8F9d60mSMPnFwydhvZK0nQ9sngtkw0jTjXlT2xp6XD4mRNAIfviJMzwiYKfHLOaYfB6JksjCJDfFKD+MD6bNj5rOey9eBG8WqQD+q0AHWJVvv/vjcD4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3SAfpPDm; arc=none smtp.client-ip=209.85.221.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wr1-f74.google.com with SMTP id ffacd0b85a97d-39142ce2151so2097565f8f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 07:58:51 -0700 (PDT)
+	s=arc-20240116; t=1742223612; c=relaxed/simple;
+	bh=1vuS6Rd8o+ntlyTBUnEQazfZLhY9aZtgMavV+2vj/WM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PeUxvZV5IdWhskTMMyErmK6q51d93u1SixKxAiEEtjsWVJ+p4Fxgq69vFG6Rkn5m694xkdLgKXt0JmaqPz3c5o344PBVQYXzb4WG+ttgm1W6K4u0Znh4plgMUR4nNgi7ZJSYRRFGrkIT4gNi2TmIBNgtdwlg7sKjGP138QHCeHc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nGDa7mzj; arc=none smtp.client-ip=209.85.216.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2ff615a114bso2769444a91.0;
+        Mon, 17 Mar 2025 08:00:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1742223530; x=1742828330; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=0W54RDOvcdnQzS3X6oJkrsyeDCVHCelcC6YCVp/JKWY=;
-        b=3SAfpPDmbm5V5eth1asmy7QRHMJgo22GeGYztFQ32ltGZvjWj8ogmSN3cEksrsi1n4
-         Rgd/AWDMLP/9jtpfErz18zvCAEd/Xqrs4KtelRUJ6QJHsWiqWAC+acvtXpljdkQS9izL
-         dH5OvIj7oHqFcqMeZ79gy8n2ZcCd6YbYLki6aK6W/y9oX6XMHyXOcop1srbVXEmyjs7s
-         NpDi99k5iEwIrZXs2wqP9ENqMInbWonPDgpA5PrGmEoT6VXLKLky3YUaeIBtAPQ8iJrI
-         ZFAZluQEtereUynfZF9UsRFKRQ6COrXs1DcVAuoqfthtTDX37rO421kbUgA+2c4wiagH
-         iXeQ==
+        d=gmail.com; s=20230601; t=1742223610; x=1742828410; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=lKg3+CntGpo2nGd/HO2S30tnDbQnjifg17kcFSnARp4=;
+        b=nGDa7mzjKu1rkE4gesphsTgUgqf5gStwa52CiTKynkmVumfq6/5f852jdFPtw3BDqy
+         ytPZYl7FD4hEetft9t+JS07L/rUy3i7/5r8wc+EsN2Xmc3hcJGLoqx+lwJhWrZXEChPK
+         srBAGdbNGgeeRYSoz76cEOT67DBhWa0rJ1IfbkpUvsKoxe9ZlqZvJ4Fknoa8xdMQp9jV
+         L+urawW6FOYMUfUo69eaGZs29deUhBimtA7BAaWC7qLhUoSPC5OO4am1ycmOar7HCOzv
+         TgbNEtR2DLIYuz3OvZADJpXKhLQL36xbD5SC9soIoOr2zO/u4HZYrtEEg/UWR1V2P3RI
+         nxmw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742223530; x=1742828330;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0W54RDOvcdnQzS3X6oJkrsyeDCVHCelcC6YCVp/JKWY=;
-        b=n5Kk+HwCcBgngVVku3R+6AH1mgsctFmaqNz5ol0X6ytf68Fa7GArUAtE8Zes/hBlF7
-         6kxd3re1rY6hQqiQ9evZrg7cBrHU2KVol+MzMmxCFD86H91aqHZjH+MxpRbtL8cCVNa6
-         lkMrlc9Jdj9jnClr16QOgwkG08tfYQPNmrf6/H+W33eJObrYp8syB8OomFqF6EDYWu7V
-         iMnAbu4AnNvFpuLjQ7XBqhuDmG5qMT5WGeRGn6BlE7xF+U9TopC5t/qf30+zBvq0q/jf
-         FQiqzYRkWI3ChtLf3/DT79bbtpFgku72IEV9efThL6kPNNawCS4Sx0Cx47p7ay3szR82
-         lmLQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXL7tfn4HExSRJoxKQWx4E9ZR00rW7Z+mO1c6mNb/w7paW7/7bjDodfgovqcsad/3/hqcE0bL9/X8JPSKo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxbFRyNWa0KAQim/lW34iYvVbgYOkvmE+UOlB4VgNYYmnKS9umH
-	UY4gWIsWIukgqptkKTbYMDfwjElf3ziqNMNQVF+QvMWw52cw2nOIt8YYeycxqmRLw1NkJGNNHDO
-	Jxvi2Dv+hPqIRsg==
-X-Google-Smtp-Source: AGHT+IGkKMstp6hUyo1fMGHnVlJ1yuahl6v9vWiGcfuGBZHhBDPMgMpxi1MLnx5580hjiU4Paz3WFdV5VN6fJOw=
-X-Received: from wmgg15.prod.google.com ([2002:a05:600d:f:b0:43d:1db0:6628])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6000:402a:b0:390:f2f1:2a21 with SMTP id ffacd0b85a97d-3971f9e4985mr14314647f8f.37.1742223530580;
- Mon, 17 Mar 2025 07:58:50 -0700 (PDT)
-Date: Mon, 17 Mar 2025 14:58:48 +0000
-In-Reply-To: <87cyewhpxj.fsf@kernel.org>
+        d=1e100.net; s=20230601; t=1742223610; x=1742828410;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lKg3+CntGpo2nGd/HO2S30tnDbQnjifg17kcFSnARp4=;
+        b=f5aqrIPc8USPWLnL4homQuwhPEdd1fT0DcmUU6nSrWFcMewZAI8iHFOdLye5k/lehR
+         PZoSrMThxnEGtEtl31euiaW5Rvdz/J2CD/kZ+nHwvxEQvZaZ8aRzZjkOUoV2iMr3gIFr
+         /f2YMK2NDxmvVwluTfU2xVv99MJjbDHmzIl9Gh4S6EgrXfEeodP9xypUbgouF5BbHjzY
+         zGBgrYlWq96mYMecEznT3pd2d/RIqZaIgymcZSnO0znPAjOIBdqk3vJC+5bYITvtUobL
+         5YtCTKPnshKvsKsJRJnJm0RwDFX4YLeOly1AdbcxtljxY/txhXUeSOvM+25TqKieEY9k
+         P9Xw==
+X-Forwarded-Encrypted: i=1; AJvYcCUypMUq9oBL6pSGDkbotN01R6TRpW1n7g9VZqYZEb30bPI+mV8+OHg9raFPtR5ZmB/kqge1KUKMPXduHuo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxPGNZYjP+kGEwW1Bc9pX7OQ9J7uDAIKS5ySBhKFpRdwIwkU9zJ
+	9iKWvk2AZ1Cwx+dhhra4K1F/sS5+rSoAYBBW6sr3pnfLMlMoWH5J
+X-Gm-Gg: ASbGncvcq0NOD83858XNmc4FsJuihH80jgqUmUb5K4TKnd2fC1WU62xWFHJBoC2WSIW
+	3GJnKLxo0ura24ru097TJwgJCdJFtaOFnHClQ1fUSR8njxuo5GW/KVyQbWGQ9mLPLPT9xJA9NKh
+	eyXHmtn74n/1o45+jwrgzKSE/NmUdXzCZLegna89Iywj5zv91wxUF1QSYbTZSoepRg/8T+Ir+fj
+	6rsg6STc/zV4R61ZO0ebet2O2Y+kVbedRPHmqXC3UoRFV/H12nI8EkggB3AzOhHG4ZW2ThHwI3f
+	gBr6ED058FDyRWGdpykza2V400AvEM0q6QtsdHQ+lRLLWlHnDE3Odvke7pRxXMC43XVtvVbZcSW
+	emazjW7PwR9Q1e0PHb3c=
+X-Google-Smtp-Source: AGHT+IHpqQOthZ629rK5OBwdGCNb3YwECxZM9wivvDLCurM5eSyLS9L2K41fuMd5nLAFoGdSrLTErQ==
+X-Received: by 2002:a05:6a20:12c8:b0:1f3:2968:5ac5 with SMTP id adf61e73a8af0-1f5b095d100mr25087612637.20.1742223609746;
+        Mon, 17 Mar 2025 08:00:09 -0700 (PDT)
+Received: from localhost ([2a00:79e0:3e00:2601:3afc:446b:f0df:eadc])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-af56e9cd03bsm7297043a12.8.2025.03.17.08.00.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Mar 2025 08:00:08 -0700 (PDT)
+From: Rob Clark <robdclark@gmail.com>
+To: dri-devel@lists.freedesktop.org
+Cc: linux-arm-msm@vger.kernel.org,
+	freedreno@lists.freedesktop.org,
+	Rob Clark <robdclark@chromium.org>,
+	Connor Abbott <cwabbott0@gmail.com>,
+	Rob Clark <robdclark@gmail.com>,
+	Sean Paul <sean@poorly.run>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Abhinav Kumar <quic_abhinavk@quicinc.com>,
+	Dmitry Baryshkov <lumag@kernel.org>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Jonathan Marek <jonathan@marek.ca>,
+	Jordan Crouse <jordan@cosmicpenguin.net>,
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] drm/msm/a6xx+: Don't let IB_SIZE overflow
+Date: Mon, 17 Mar 2025 08:00:06 -0700
+Message-ID: <20250317150006.34084-1-robdclark@gmail.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <u-vC1KbeOK3Fd2PClzinb8LmqS_dntOW-pOSmZIFWotCZeTOg30xR_GYUc4oReAKZeuuu7ZaXWzfeTkpGMlr0A==@protonmail.internalid>
- <20250122163932.46697-1-daniel.almeida@collabora.com> <87cyewhpxj.fsf@kernel.org>
-Message-ID: <Z9g4qDd7qp2t_e9u@google.com>
-Subject: Re: [PATCH v2] rust: irq: add support for request_irq()
-From: Alice Ryhl <aliceryhl@google.com>
-To: Andreas Hindborg <a.hindborg@kernel.org>
-Cc: Daniel Almeida <daniel.almeida@collabora.com>, ojeda@kernel.org, alex.gaynor@gmail.com, 
-	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, 
-	benno.lossin@proton.me, tmgross@umich.edu, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Tue, Mar 04, 2025 at 02:43:20PM +0100, Andreas Hindborg wrote:
-> "Daniel Almeida" <daniel.almeida@collabora.com> writes:
-> > +    /// handler after suspending interrupts. For system wakeup devices users
-> > +    /// need to implement wakeup detection in their interrupt handlers.
-> > +    pub const COND_SUSPEND: Flags = Flags(bindings::IRQF_COND_SUSPEND as _);
-> > +
-> > +    /// Don't enable IRQ or NMI automatically when users request it. Users will
-> > +    /// enable it explicitly by `enable_irq` or `enable_nmi` later.
-> > +    pub const NO_AUTOEN: Flags = Flags(bindings::IRQF_NO_AUTOEN as _);
-> > +
-> > +    /// Exclude from runnaway detection for IPI and similar handlers, depends on
-> > +    /// `PERCPU`.
-> > +    pub const NO_DEBUG: Flags = Flags(bindings::IRQF_NO_DEBUG as _);
-> > +}
-> > +
-> > +/// The value that can be returned from an IrqHandler or a ThreadedIrqHandler.
-> > +pub enum IrqReturn {
-> 
-> I learned recently that if you choose the right representation here, you
-> don't need to cast here and when you call `Handler::handle_irq`. I think
-> `#[repr(u32)]` is the one to use here.
+From: Rob Clark <robdclark@chromium.org>
 
-I wonder if we can get it to use the repr of the same size as
-irqreturn_t?
+IB_SIZE is only b0..b19.  Starting with a6xx gen3, additional fields
+were added above the IB_SIZE.  Accidentially setting them can cause
+badness.  Fix this by properly defining the CP_INDIRECT_BUFFER packet
+and using the generated builder macro to ensure unintended bits are not
+set.
 
-> > +    /// The interrupt was not from this device or was not handled.
-> > +    None = bindings::irqreturn_IRQ_NONE as _,
-> > +
-> > +    /// The interrupt was handled by this device.
-> > +    Handled = bindings::irqreturn_IRQ_HANDLED as _,
-> > +}
-> > +
-> > +/// Callbacks for an IRQ handler.
-> > +pub trait Handler: Sync {
-> > +    /// The actual handler function. As usual, sleeps are not allowed in IRQ
-> > +    /// context.
-> > +    fn handle_irq(&self) -> IrqReturn;
-> > +}
-> 
-> What is the reason for moving away from the following:
-> 
-> 
->     pub trait Handler {
->         /// The context data associated with and made available to the handler.
->         type Data: ForeignOwnable;
-> 
->         /// Called from interrupt context when the irq happens.
->         fn handle_irq(data: <Self::Data as ForeignOwnable>::Borrowed<'_>) -> Return;
->     }
-> 
-> 
-> I think we will run into problems if we want to pass `Arc<Foo>` as the
-> handler. I don't think we can `impl Handler for Arc<Foo>` in a driver
-> crate, since both `Handler` and `Arc` are defined in external crates
+v2: add missing type attribute for IB_BASE
+v3: fix offset attribute in xml
 
-My understanding is that since the data is not stored behind a
-private_data void pointer, we don't need ForeignOwnable. I think we
-should avoid using ForeignOwnable when it's not necessary.
+Reported-by: Connor Abbott <cwabbott0@gmail.com>
+Fixes: a83366ef19ea ("drm/msm/a6xx: add A640/A650 to gpulist")
+Signed-off-by: Rob Clark <robdclark@chromium.org>
+---
+Backport notes, prior to commit ae22a94997b8 ("drm/msm: import A2xx-A4xx
+XML display registers database"), just open code, ie:
 
-We can support the Arc / Box case by adding
+   OUT_RING(ring, submit->cmd[i].size & 0xfffff);
 
-impl<T: ?Sized + Handler> Handler for Arc<T> {
-    fn handle_irq(&self) -> IrqReturn {
-        T::handle_irq(self)
-    }
-}
+Prior to commit af66706accdf ("drm/msm/a6xx: Add skeleton A7xx
+support"), a7xx_submit() did not exist so that hunk can be dropped.
 
-This way, the user implements it for their struct and then it works with
-Arc<MyStruct> too.
+ drivers/gpu/drm/msm/adreno/a6xx_gpu.c               | 8 ++++----
+ drivers/gpu/drm/msm/registers/adreno/adreno_pm4.xml | 7 +++++++
+ 2 files changed, 11 insertions(+), 4 deletions(-)
 
-This kind of blanket impl for Arc/Box is very common in userspace Rust
-too. For example, the Tokio traits AsyncRead/AsyncWrite have blanket
-impls for Box.
+diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
+index 91173bfb7e58..eeb8b5e582d5 100644
+--- a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
++++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
+@@ -244,10 +244,10 @@ static void a6xx_submit(struct msm_gpu *gpu, struct msm_gem_submit *submit)
+ 				break;
+ 			fallthrough;
+ 		case MSM_SUBMIT_CMD_BUF:
+-			OUT_PKT7(ring, CP_INDIRECT_BUFFER_PFE, 3);
++			OUT_PKT7(ring, CP_INDIRECT_BUFFER, 3);
+ 			OUT_RING(ring, lower_32_bits(submit->cmd[i].iova));
+ 			OUT_RING(ring, upper_32_bits(submit->cmd[i].iova));
+-			OUT_RING(ring, submit->cmd[i].size);
++			OUT_RING(ring, A5XX_CP_INDIRECT_BUFFER_2_IB_SIZE(submit->cmd[i].size));
+ 			ibs++;
+ 			break;
+ 		}
+@@ -381,10 +381,10 @@ static void a7xx_submit(struct msm_gpu *gpu, struct msm_gem_submit *submit)
+ 				break;
+ 			fallthrough;
+ 		case MSM_SUBMIT_CMD_BUF:
+-			OUT_PKT7(ring, CP_INDIRECT_BUFFER_PFE, 3);
++			OUT_PKT7(ring, CP_INDIRECT_BUFFER, 3);
+ 			OUT_RING(ring, lower_32_bits(submit->cmd[i].iova));
+ 			OUT_RING(ring, upper_32_bits(submit->cmd[i].iova));
+-			OUT_RING(ring, submit->cmd[i].size);
++			OUT_RING(ring, A5XX_CP_INDIRECT_BUFFER_2_IB_SIZE(submit->cmd[i].size));
+ 			ibs++;
+ 			break;
+ 		}
+diff --git a/drivers/gpu/drm/msm/registers/adreno/adreno_pm4.xml b/drivers/gpu/drm/msm/registers/adreno/adreno_pm4.xml
+index 55a35182858c..5a6ae9fc3194 100644
+--- a/drivers/gpu/drm/msm/registers/adreno/adreno_pm4.xml
++++ b/drivers/gpu/drm/msm/registers/adreno/adreno_pm4.xml
+@@ -2259,5 +2259,12 @@ opcode: CP_LOAD_STATE4 (30) (4 dwords)
+ 	</reg32>
+ </domain>
+ 
++<domain name="CP_INDIRECT_BUFFER" width="32" varset="chip" prefix="chip" variants="A5XX-">
++	<reg64 offset="0" name="IB_BASE" type="address"/>
++	<reg32 offset="2" name="2">
++		<bitfield name="IB_SIZE" low="0" high="19"/>
++	</reg32>
++</domain>
++
+ </database>
+ 
+-- 
+2.48.1
 
-> > +#[pin_data(PinnedDrop)]
-> > +pub struct ThreadedRegistration<T: ThreadedHandler> {
-> > +    irq: u32,
-> > +    #[pin]
-> > +    handler: T,
-> > +    #[pin]
-> > +    /// Pinned because we need address stability so that we can pass a pointer
-> > +    /// to the callback.
-> > +    _pin: PhantomPinned,
-> > +}
-> 
-> As others have mentioned, I wonder if we can avoid the code duplication
-> that makes up most of the rest of this patch.
-
-I'm worried that getting rid of duplication makes the code too complex
-in this case. I could be wrong, but it seems difficult to deduplicate in
-a simple way.
-
-Alice
 
