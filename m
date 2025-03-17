@@ -1,69 +1,72 @@
-Return-Path: <linux-kernel+bounces-564790-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564791-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10037A65AA7
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 18:27:09 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE307A65AA8
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 18:27:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 97ACA169199
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 17:25:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 196DB1703EF
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 17:26:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3C3A195808;
-	Mon, 17 Mar 2025 17:25:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D034C1A0BF1;
+	Mon, 17 Mar 2025 17:26:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ZIPI0mIx"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="zWnuJKr0"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F34E417A2EC
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 17:25:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A679C1598F4;
+	Mon, 17 Mar 2025 17:26:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742232349; cv=none; b=RVdcSzbY0H/szf5IE3wzWbgovCXUyFTCwbqQS2MuaRghfUxuh9zOmDmI2li9rBvyJIaDDrg92oJhz43G37HnaTcp+r4uKrlKfpG0IsAHqf6D2iDAKlo6yuVZLh123CvYeMu/iPzl1yQ2LkRLkfcCVaPRjHVw//hJtBpoP4B1Qm0=
+	t=1742232381; cv=none; b=aHOFfQTXZC7sP7oK1rjbcvuWVXpufWDlCFcPljUnTKm0JoU8TMJb6KVT46rVnHVdQhMOzn82zOVXmEHrtMOY9GTErgB7WwNo/mypXIVKNJ9T1GSvVmY4okOylErOSKmLO2UZOD4CsndmXJxTHSO/KU4bbV7DFHd8nVDoguw1BBE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742232349; c=relaxed/simple;
-	bh=+m2o+1RkSSOS1CRqKraRDIxQJJtaGzOP34fmPu6Y5vQ=;
+	s=arc-20240116; t=1742232381; c=relaxed/simple;
+	bh=Zdnk8+u2UNNmWlp1HDJAd4/7g37MB+blyQvMNcfb8qM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W3rm1iU9K7Uurbb68c+paz69quvmd5jMKh/tP3nOlW76SdFcW1lILxAvF58EwClcpVzMY2yXeaurqoBs2t09KcHhC1fxn4ShjYBfYnKuIWw9hHu3fxroUyEfd749x2D4f9nFw0LWxLYiU+NCH6++wLhizfYo8kf3BlXUcVphWAA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ZIPI0mIx; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+	 Content-Type:Content-Disposition:In-Reply-To; b=W8Dz0Zeotu2YDr4FGeX7mdv7/mpwROv11N4WXS9HvyF5p4mMAxffrHucH10z+EZZ84Dfcyn37IW88FQJELjBXiXVN2zKRAgRd0fWf7ropvoLqnoGqgs3Qq5BzwMED8zYlzHN6nJqopAj3UtBvMk9einW68Y4Si1x3hKgGMbpm34=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=zWnuJKr0; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=3T7MbICDWLqXG/IN46NNRXZBn6qTa6XHFg3bjRm1Tq0=; b=ZIPI0mIxMkmottMyMF+LBoVDxe
-	gx/1COr+rWQvcA708SpcFZeyqRE9Ak1Klk1q+Ji65JX+nG9KDCh3cGPGYfmKOH0YpzLcTG2X9Uoid
-	NYI6lfLPTW5COm7cmtLgqjjJNGm1LHpasDm+bWVYC/2niEizCMwB4CF6fhOpSyFURf/r3rN0U5k3E
-	KzTnN+xTtUawXnRJTbwMzrPsWjKdhqrPMjlh4AJ9guKcesqEn8i2IWX5HMBPkGsxqsY1FZxV8RJ5H
-	TjrfQhDiVaCIkaTsV3tMwzQ0dKhWrTkUvYjP9PXbvJTgHsMTYUvaiJgbXABoWkcMtvCMNrlRGgbPB
-	3Q/Bf9MQ==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tuEDZ-00000009CqT-2Y8f;
-	Mon, 17 Mar 2025 17:25:37 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id CBC3E3004AF; Mon, 17 Mar 2025 18:25:36 +0100 (CET)
-Date: Mon, 17 Mar 2025 18:25:36 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: K Prateek Nayak <kprateek.nayak@amd.com>
-Cc: Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Chen Yu <yu.c.chen@intel.com>, linux-kernel@vger.kernel.org,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	David Vernet <void@manifault.com>,
-	"Gautham R. Shenoy" <gautham.shenoy@amd.com>,
-	Swapnil Sapkal <swapnil.sapkal@amd.com>,
-	Shrikanth Hegde <sshegde@linux.ibm.com>
-Subject: Re: [RFC PATCH 0/8] sched/fair: Propagate load balancing stats up
- the sched domain hierarchy
-Message-ID: <20250317172536.GF6888@noisy.programming.kicks-ass.net>
-References: <20250313093746.6760-1-kprateek.nayak@amd.com>
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=Vf/rrfmUh/cN/Ci7m3WrKzNaadewo9ODJy0hAZOm2A4=; b=zWnuJKr0IugatZKsug7ygJbpSO
+	NdBk+dQLucfakdOOgM28zZG3u7JeGLu6KxYRxprAMuTgXy/4T4vYbAf9hV+B/FxQudELPTOsXdU/1
+	6yoMZhoXLIjPC8YSOJGHNBIzQkisPQflFA/7BR6mq3Jhsjw0iX7ggDkIgzjXDHS70RufjEj/agih1
+	w6hvi4MTaaU/YzuQ0kOExwY+jMaOQv35bL6ltsXZwAVfgcbyoZYACeONFZY99buykM+3X82enhyQc
+	jRnK4d5m/zfSiXgOhblp82tPjFLczmHwRetTA8NdZ5Q5XG/2r1/GycAazwE/AdRFzPeIKeFQFyIjj
+	MKWxrYFg==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:39368)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1tuEE2-0003ss-0E;
+	Mon, 17 Mar 2025 17:26:06 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1tuEDz-0003jn-1O;
+	Mon, 17 Mar 2025 17:26:03 +0000
+Date: Mon, 17 Mar 2025 17:26:03 +0000
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Michael Klein <michael@fossekall.de>
+Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [net-next,v3,2/2] net: phy: realtek: Add support for PHY LEDs on
+ RTL8211E
+Message-ID: <Z9hbKy6SuARPvmXf@shell.armlinux.org.uk>
+References: <20250316121424.82511-1-michael@fossekall.de>
+ <20250316121424.82511-3-michael@fossekall.de>
+ <Z9gEP_w6WvuCC_ge@shell.armlinux.org.uk>
+ <Z9haewIdFv4bed3H@a98shuttle.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,26 +75,23 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250313093746.6760-1-kprateek.nayak@amd.com>
+In-Reply-To: <Z9haewIdFv4bed3H@a98shuttle.de>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On Thu, Mar 13, 2025 at 09:37:38AM +0000, K Prateek Nayak wrote:
-> tl;dr
+Hi,
+
+On Mon, Mar 17, 2025 at 06:23:07PM +0100, Michael Klein wrote:
+> I don't think this needs to be atomic at all, as the phydev lock is held by
+> the one and only caller (phy_led_hw_control_get()).
 > 
-> This prototype is currently limited in the sense that it can only reuse
-> statistics for busy load balancing. Reusing stats for newidle load
-> balancing specifically ran into issues elaborated below.
+> rtl8211f_led_hw_control_get() also uses set_bit(). Should I change those
+> also to __set_bit() in a separate patch while I'm at it?
 
-Right, it makes sense for busy load balance, newidle I think:
+Yes please.
 
-> David had proposed SHARED_RUNQ [4] to improve on the shortcomings of
-> newidle balance for Meta's production workloads.
+Thanks!
 
-we need to look at this again. Something around the EEVDF merge made the
-thing unhappy -- if we figure out what and fix it, I think this makes
-more sense than trying to optimize the current scheme for newidle.
-
-newidle really is about getting *any* work fast, which is a totally
-different game than the regular busy balancing.
-
-Anyway, I'll try and have a look through the patches.
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
