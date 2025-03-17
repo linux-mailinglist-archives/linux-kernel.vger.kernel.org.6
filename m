@@ -1,188 +1,187 @@
-Return-Path: <linux-kernel+bounces-563809-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563810-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 287B6A6490A
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:11:16 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8623A64910
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:11:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3659218823D7
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:11:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 39886167E61
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:11:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D8DA231CB1;
-	Mon, 17 Mar 2025 10:11:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 923E0230BDC;
+	Mon, 17 Mar 2025 10:11:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FMZvZPEV"
-Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="azZUoXve"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D794D229B28;
-	Mon, 17 Mar 2025 10:10:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 011EE2E3373;
+	Mon, 17 Mar 2025 10:11:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742206259; cv=none; b=pyCmnq05l+YgjfIaC82tLuZuE6jSxDW5OX+QmEGGb9vPIJ+61qc5dr5FDCK8FY/Zr1LKLSqnEMCShXP0vfMzgabSNwb12Fbaz0rUshb0N/zn9SQnzxyZWURHK9efx/HZo2bNGv6B4l3PwoQV3HHjASRGFJWLbHMXYGdFn2e7VLg=
+	t=1742206283; cv=none; b=GQS/gNdqW4ffngiU0wIE78qlULg2EHswA9AwUgXOkJ9d/dCa2qHVh/Ju7psbTYW4LtgHgEl0qpTn7JboXLI0EzyW54GA3/EFtMcAJVio6UXJwEbf0qeue8ukbIOaml3P3UKYsmhSn8Lqbghnz1jym7oh0Om+C9qQM0KJcjDrE7c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742206259; c=relaxed/simple;
-	bh=Wxs+z1Wms/rz3FZCDLd8lPCpX3EWYhXBgRFH5+EsDvI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Zg5O6WoDgP/io9Gf7KRvu2uhDtjC5aXYUDFqWjiBNjnO/3syCoKyOx+obTGWXBb+6Km0hmp95cbK/ca1C2r/wqhvUg/vabroFxxuST6AdhQO8ghzb0fJF9yZpacfixuXR0QYQsESKaU/gSTzZ/ij+McAHPDC46nREN0OmakPFS8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FMZvZPEV; arc=none smtp.client-ip=209.85.219.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-e573136107bso3864774276.3;
-        Mon, 17 Mar 2025 03:10:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742206257; x=1742811057; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=14ZjU9nXfljCfIeuLE7AsggRfd6lcojl1mTtLC8IsKk=;
-        b=FMZvZPEVl1B85+p0MGMQwQL3+E6s+OvtZ3cpqlAq+6lPZ+QqBs4/Bkn7+9LlB1bFTH
-         82G6UJd21KozlEbBQHRQi0VaDCV0zURxrVBA8AJl+6XDvAt+AKbys37pfx2g4EOaYtst
-         d6X/MeT/8k8dFvxr1VJOynAXBVnGMiB1Tt8nqBvyAxqpwTI94UVaqG/pDQOYpvW4xcsh
-         xzgnf/gNZDlGRpzzQdRhYhtXVPhekUCLL58tbBeePCjViHxWb7s2WQCm19s3hXnGt/0u
-         VtQX9QPb81eKL5su4bWhf5o880T2jAl02LQQMltsA2P4xa2LNgCsOaQQoaOmIl1njHHf
-         /HrA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742206257; x=1742811057;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=14ZjU9nXfljCfIeuLE7AsggRfd6lcojl1mTtLC8IsKk=;
-        b=ARF3fMsTkkWnKNMED2rocymHfHc0x19RJrv3hNayVXwj0qlv+zAdBwJ3ejv5z2On6A
-         g0nU3OLAmd5mohb+xEWykBX8NnXlZFLcQ0c7tYTkffFOGr3OpwveDvF5wdPGKFoljM/8
-         Rs9XqtrKPIjUYP1nHcdRh0yDW8jeeEUt6ooYbr1ZcgH2KzYpHai7f2oPq8GNQLPWhSp7
-         KCfjI4dR5mQLHfp8Wcj0a9IqoEmUcpJRgyFKb3UpP6KHRA8mX5XFXCJTYC8ZH8UpbAfY
-         6gmWq38ewUUxhCoCAs/XA8zsTqdPG+YdsGRqsFNoF4Rxa3IopwK9+I2t4yO6cINO+lT2
-         pvUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUY+3BQGkDF854s5ISwEq4FgnCfIIw1cWujEQZyQWPM8uPlzV6HbWDyPUFKIoJe3/mwaB2rbpdsnTq3ptiP/NXX@vger.kernel.org, AJvYcCUmFpjZuka3y4/glUNliHT4RALii7qiyXw/CHWK7XWiJ1nX0EDhbVwRYBdT7qZUfyf3/9wu2k4Z@vger.kernel.org, AJvYcCV8vL2RuG6ssWkYEAUEVq0/yHQBc+s52JzKcnlwmNbpUJ9fExW0huH39v26x52+Di3NEUwoQCJJLZ2bs3w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwklkZsw8UOLs0+WoLCi7Y/vGoLxT+oaYLik6SsYGkO1D4Usl3n
-	yJ9KeCB42SkEGX2KSryfSOGcJ9eMKDlnFlHNPo/vjnyVra4oGhaxfgH1N/eDkJQpxEAyYSuuwo7
-	E0LcVGdr18boCOdlVP1CmKn8BhGs=
-X-Gm-Gg: ASbGnct5h5QQhDKn9oTFX68O5o2YJVunOBdTQVLzyDziykII4eEcVRrpD7ExuYvlC8x
-	tQjvrNz/9cQJM38Ba9Tmkyq6I5mgBi7Pa9zTgeKWbCru3cBw/pkfs5ODYLO3FigTVkNM73lqKii
-	s8iHaPkJ0ZCDorhG+CAriMbmdiMwVWqAZomodCwkLJqg==
-X-Google-Smtp-Source: AGHT+IFeEwX2XBlKWWzrkEKnBTAYiIEeloN1LG9w0cpntS5lTgsKiw5wSHUPI3GA92GyKQZHSvhzhxajCnV/EuAnk2I=
-X-Received: by 2002:a05:6902:2747:b0:e5a:c5d6:3948 with SMTP id
- 3f1490d57ef6-e63f5cf0c16mr13681061276.0.1742206256657; Mon, 17 Mar 2025
- 03:10:56 -0700 (PDT)
+	s=arc-20240116; t=1742206283; c=relaxed/simple;
+	bh=eW/WVR83/G+WjEdhgFrMxyre750EOzwDwu8lMLAJhKo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Eod6JzRVD9EipZWaDEebG4fGO1tK4EA/rqSgdY4NxNSGh7W86+ZJR1sxQcVhV5mD0cTGlCNb9snhZsw9hfI1yycxD9CHMs8Foy4l6qTGViYtugU9PfP/KuUbkD6V1dQmKetdKpG6y1Fm21Eg+zW8wVRI6e1Hr/3rRA8CcPY+T/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=fail (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=azZUoXve reason="signature verification failed"; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 586A040E021D;
+	Mon, 17 Mar 2025 10:11:10 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=fail (4096-bit key)
+	reason="fail (body has been altered)" header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id t_qZJD97eXRO; Mon, 17 Mar 2025 10:11:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1742206262; bh=HUpO6KJBEMZfTvE+fpTAFSj4Si4oa0/R/CsTREmzzLs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=azZUoXvefM8G9tZJY7DQoTYWoLvljmwsVn/WXp93FNr2xFcUWC4Ql2JK3z8CChk6w
+	 kERERBdka7fV6soPc+sum682Mz4hqw1yAYQT51cuwYbrb00u/pYpb6/caluijLufwx
+	 KXEFMh4hUf6HtE4JDO3dcPX//WrqJlPncxCCgqeElBvpcTZcBC81OhJjqDHnWMfA1V
+	 e1DvbrmWMYaB1hX9nMhXg8NKX1JMIq0gn3Xzz1oXmF954cQSmgYHmtVYbREv3KcOh3
+	 9EzCq964gTNA13sBnxj3u2cIUQnK68PfdyRJmBpwww8rLvtttAJ5O7PNarWUyf8/6p
+	 iXsxBOjtRnaSObxCVBmHGpRXm8kKUJDyYyQacyMB1ZI3v5aLpV7FE3OBnOBC3DSeNa
+	 xnukAdtpDdUMd73wcf90hdhpYWdizG3ZQ+FwmrbfJ2c3XBtaR1PQ2g6X0U/xLBC9/5
+	 CiaWjvTVhREa8pThDG6PccF8/7rJE9GXFSZJ3e9xQNt+7W7DMvMhvbcmKf3cBdS8lp
+	 4Sn6Es0daDWr4529xnXEBowbLeI1uNOgBtiUyh8iShDbrPX186/MhIixWwDAgcqwNY
+	 2dZutHlT2QKJh5pgm4vGNhRCPnbTllknDQO6JH3xB30JkJdiZLzSdybC7qVi42+R1x
+	 VMbtrG0/ofDqtPDIA3iEPYQg=
+Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 498F140E0196;
+	Mon, 17 Mar 2025 10:10:55 +0000 (UTC)
+Date: Mon, 17 Mar 2025 11:10:48 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: linux-kernel@vger.kernel.org
+Cc: linux-tip-commits@vger.kernel.org,
+	Matteo Rizzo <matteorizzo@google.com>,
+	Namhyung Kim <namhyung@kernel.org>, Ingo Molnar <mingo@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>, x86@kernel.org
+Subject: Re: [tip: perf/urgent] perf/x86: Check data address for IBS software
+ filter
+Message-ID: <20250317101048.GAZ9f1KEixI3-b0EoR@fat_crate.local>
+References: <20250317081058.1794729-1-namhyung@kernel.org>
+ <174220290574.14745.9132867025462242568.tip-bot2@tip-bot2>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250312-b4-ovpn-v23-3-76066bc0a30c@openvpn.net>
- <20250317060947.2368390-1-dqfext@gmail.com> <f4c9a29f-a5c6-464a-a659-c7ffeaf123c1@openvpn.net>
- <CALW65jZe3JQGNcWsZtqU-B4-V-JZ6ocninxvoqMGeusMaU7C=A@mail.gmail.com> <0d8a8602-2db4-4c19-ab1c-51efef42cef6@openvpn.net>
-In-Reply-To: <0d8a8602-2db4-4c19-ab1c-51efef42cef6@openvpn.net>
-From: Qingfang Deng <dqfext@gmail.com>
-Date: Mon, 17 Mar 2025 18:10:46 +0800
-X-Gm-Features: AQ5f1JrZOv5SDMKrcUIEXFo9D0GgKi-eZeGIu0RavrSG4UmNhD3vkPc4aOtmKg8
-Message-ID: <CALW65jYaMBuMqzCFYwUJfLBg8+epQEjCg0MOpssGCwXqxbFP9w@mail.gmail.com>
-Subject: Re: [PATCH net-next v23 03/23] ovpn: add basic interface
- creation/destruction/management routines
-To: Antonio Quartulli <antonio@openvpn.net>
-Cc: andrew+netdev@lunn.ch, donald.hunter@gmail.com, edumazet@google.com, 
-	horms@kernel.org, kuba@kernel.org, linux-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com, 
-	ryazanov.s.a@gmail.com, sd@queasysnail.net, shaw.leon@gmail.com, 
-	shuah@kernel.org, "Jason A. Donenfeld" <Jason@zx2c4.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <174220290574.14745.9132867025462242568.tip-bot2@tip-bot2>
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Mar 17, 2025 at 6:00=E2=80=AFPM Antonio Quartulli <antonio@openvpn.=
-net> wrote:
->
-> On 17/03/2025 10:41, Qingfang Deng wrote:
-> > Hi Antonio,
-> >
-> > On Mon, Mar 17, 2025 at 5:23=E2=80=AFPM Antonio Quartulli <antonio@open=
-vpn.net> wrote:
-> >>>> +static void ovpn_setup(struct net_device *dev)
-> >>>> +{
-> >>>> +    netdev_features_t feat =3D NETIF_F_SG | NETIF_F_HW_CSUM | NETIF=
-_F_RXCSUM |
-> >>>
-> >>> Do not advertise NETIF_F_HW_CSUM or NETIF_F_RXCSUM, as TX/RX checksum=
- is
-> >>> not handled in hardware.
-> >>
-> >> The idea behind these flags was that the OpenVPN protocol will take ca=
-re
-> >> of authenticating packets, thus substituting what the CSUM would do he=
-re.
-> >> For this I wanted to avoid the stack to spend time computing the CSUM =
-in
-> >> software.
-> >
-> > For the RX part (NETIF_F_RXCSUM), you might be correct, but in patch
-> > 08 you wrote:
-> >> /* we can't guarantee the packet wasn't corrupted before entering the
-> >> * VPN, therefore we give other layers a chance to check that
-> >> */
-> >> skb->ip_summed =3D CHECKSUM_NONE;
->
-> Right. This was the result after a lengthy discussion with Sabrina.
-> Despite authenticating what enters the tunnel, we indeed concluded it is
-> better to let the stack verify that what entered was not corrupted.
->
-> >
-> > So NETIF_F_RXCSUM has no effect.
->
-> Does it mean I can drop NETIF_F_RXCSUM and also the line
->
-> skb->ip_summed =3D CHECKSUM_NONE;
->
-> at the same time?
+On Mon, Mar 17, 2025 at 09:15:05AM -0000, tip-bot2 for Namhyung Kim wrote=
+:
+> The following commit has been merged into the perf/urgent branch of tip=
+:
+>=20
+> Commit-ID:     b0be17d8108bf3448a58be319d085155a128cf3a
+> Gitweb:        https://git.kernel.org/tip/b0be17d8108bf3448a58be319d085=
+155a128cf3a
+> Author:        Namhyung Kim <namhyung@kernel.org>
+> AuthorDate:    Mon, 17 Mar 2025 01:10:58 -07:00
+> Committer:     Ingo Molnar <mingo@kernel.org>
+> CommitterDate: Mon, 17 Mar 2025 10:04:31 +01:00
+>=20
+> perf/x86: Check data address for IBS software filter
+>=20
+> The IBS software filter is filtering kernel samples for regular users i=
+n
+> PMI handler.  It checks the instruction address in the IBS register to
+> determine if it was in the kernel mode or not.
+>=20
+> But it turns out that it's possible to report a kernel data address eve=
+n
+> if the instruction address belongs to the user space.  Matteo Rizzo
+> found that when an instruction raises an exception, IBS can report some
+> kernel data address like IDT while holding the faulting instruction's
+> RIP.  To prevent an information leak, it should double check if the dat=
+a
+> address in PERF_SAMPLE_DATA is in the kernel space as well.
+>=20
+> Suggested-by: Matteo Rizzo <matteorizzo@google.com>
+> Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+> Signed-off-by: Ingo Molnar <mingo@kernel.org>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Link: https://lore.kernel.org/r/20250317081058.1794729-1-namhyung@kerne=
+l.org
+> ---
+>  arch/x86/events/amd/ibs.c | 7 +++++++
+>  1 file changed, 7 insertions(+)
+>=20
+> diff --git a/arch/x86/events/amd/ibs.c b/arch/x86/events/amd/ibs.c
+> index e7a8b87..24985c7 100644
+> --- a/arch/x86/events/amd/ibs.c
+> +++ b/arch/x86/events/amd/ibs.c
+> @@ -1147,6 +1147,13 @@ fail:
+>  	if (perf_ibs =3D=3D &perf_ibs_op)
+>  		perf_ibs_parse_ld_st_data(event->attr.sample_type, &ibs_data, &data)=
+;
+> =20
+> +	if ((event->attr.config2 & IBS_SW_FILTER_MASK) &&
+> +	    (event->attr.sample_type & PERF_SAMPLE_ADDR) &&
+> +	    event->attr.exclude_kernel && !access_ok(data.addr)) {
+> +		throttle =3D perf_event_account_interrupt(event);
+> +		goto out;
+> +	}
 
-I don't think so. skb->ip_summed might have been set to
-CHECKSUM_UNNECESSARY on the lower layer with UDP/TCP RX checksum.
+Did anyone build this?
 
->
-> >
-> > For the TX part (NETIF_F_HW_CSUM) however, I believe wireguard made
-> > the same mistake.
-> > Your code both contains the pattern:
-> >
-> > if (skb->ip_summed =3D=3D CHECKSUM_PARTIAL && skb_checksum_help(skb)) /=
-/ ...
-> >
-> > NETIF_F_HW_CSUM causes the upper layers to send packets with
-> > CHECKSUM_PARTIAL, assuming hardware offload will complete the
-> > checksum, but if skb_checksum_help(skb) is invoked, the checksum is
-> > still computed in software. This means there's no real benefit unless
-> > there's an actual hardware offload mechanism.
->
-> Got it.
-> Then as per your suggestion I can drop both NETIF_F_HW_CSUM and the
-> if/call to skb_checksum_help().
->
-> Regards,
->
-> >
-> > +Cc: zx2c4
-> >
-> >>
-> >> I believe wireguard sets those flags for the same reason.
-> >>
-> >> Does it make sense to you?
-> >>
-> >>>
-> >>>> +                             NETIF_F_GSO | NETIF_F_GSO_SOFTWARE |
-> >>>> +                             NETIF_F_HIGHDMA;
-> >>
-> >>
-> >> Regards,
-> >>
-> >> --
-> >> Antonio Quartulli
-> >> OpenVPN Inc.
-> >>
->
-> --
-> Antonio Quartulli
-> OpenVPN Inc.
->
+arch/x86/events/amd/ibs.c: In function =E2=80=98perf_ibs_handle_irq=E2=80=
+=99:
+arch/x86/events/amd/ibs.c:1291:63: error: macro "access_ok" requires 2 ar=
+guments, but only 1 given
+ 1291 |             event->attr.exclude_kernel && !access_ok(data.addr)) =
+{
+      |                                                               ^
+In file included from ./arch/x86/include/asm/uaccess.h:25,
+                 from ./include/linux/uaccess.h:12,
+                 from ./include/linux/sched/task.h:13,
+                 from ./include/linux/sched/signal.h:9,
+                 from ./include/linux/ptrace.h:7,
+                 from ./include/uapi/asm-generic/bpf_perf_event.h:4,
+                 from ./arch/x86/include/generated/uapi/asm/bpf_perf_even=
+t.h:1,
+                 from ./include/uapi/linux/bpf_perf_event.h:11,
+                 from ./include/linux/perf_event.h:18,
+                 from arch/x86/events/amd/ibs.c:9:
+./include/asm-generic/access_ok.h:45: note: macro "access_ok" defined her=
+e
+   45 | #define access_ok(addr, size) likely(__access_ok(addr, size))
+      |=20
+arch/x86/events/amd/ibs.c:1291:44: error: =E2=80=98access_ok=E2=80=99 und=
+eclared (first use in this function)
+ 1291 |             event->attr.exclude_kernel && !access_ok(data.addr)) =
+{
+      |                                            ^~~~~~~~~
+arch/x86/events/amd/ibs.c:1291:44: note: each undeclared identifier is re=
+ported only once for each function it appears in
+make[5]: *** [scripts/Makefile.build:207: arch/x86/events/amd/ibs.o] Erro=
+r 1
+make[4]: *** [scripts/Makefile.build:465: arch/x86/events/amd] Error 2
+make[4]: *** Waiting for unfinished jobs....
+make[3]: *** [scripts/Makefile.build:465: arch/x86/events] Error 2
+make[3]: *** Waiting for unfinished jobs....
+make[2]: *** [scripts/Makefile.build:465: arch/x86] Error 2
+make[2]: *** Waiting for unfinished jobs....
+make[1]: *** [/mnt/kernel/kernel/6th/linux/Makefile:1997: .] Error 2
+make: *** [Makefile:251: __sub-make] Error 2
+
+--=20
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
