@@ -1,92 +1,209 @@
-Return-Path: <linux-kernel+bounces-564300-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564301-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35A1BA6523F
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 15:04:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F59EA65249
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 15:06:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D8D1B173D40
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 14:04:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 91C18168C7B
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 14:06:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7774423F420;
-	Mon, 17 Mar 2025 14:04:14 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75A5F14F9F4;
-	Mon, 17 Mar 2025 14:04:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1389323F400;
+	Mon, 17 Mar 2025 14:06:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hiE1zWrh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AAC322759C;
+	Mon, 17 Mar 2025 14:06:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742220254; cv=none; b=pM98Ssv5tkITPK3X1MgSLKr79NDMoob8eYGk5rXOSTxHtm13eoyWBTwCSnxkD7/1+zDVormPT82drqLS5uQjSXyfXXIoLKRk8I8lpyuNl57Yz/Dk6fgI80EbWbUgxv3FJiBEDagh6WofC/qYz1dYxGcVgfycltlkoRDkQaY8QgU=
+	t=1742220366; cv=none; b=HBOjmnP6pwblkyoDdo237bfFMGdtlVnfTLj/B+SybYYuBVuL269tv1K6TkcKOkdz7/XDMAR6uKM18u7U8VTNDFIX+UT4aArAicioYBkkdA3UH/J087OrokcEeENqsb1Ac8t3goVekJ+YdTHzQKxQU1aUlxZCbfWMRV0cJ3Pv2QU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742220254; c=relaxed/simple;
-	bh=rCOF7+2sbxkUxGez3jb20hbtG3fg3N+Iwqx48ey03RI=;
+	s=arc-20240116; t=1742220366; c=relaxed/simple;
+	bh=eLH32FMzkPLJk3sk0cW1wEKTH92IZIBRoZQnyhh397g=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Mh+ntxRAEN658vWrJ2aagcOxckeO9mz5bJxvQNKGD8cWN8VN8/etGn/sP94vPY2zd0u9vdXJ87g+ifi98Kwas8AFQJkCMK3kk/unDe5kx4Gvd8qEDhylppAOVvJQ52iOXeaBsI1zdLvOgTlrGjxxGL3mQqZDZdp9iSrBDqv2Xbo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com; spf=none smtp.mailfrom=foss.arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=foss.arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 49F4E13D5;
-	Mon, 17 Mar 2025 07:04:20 -0700 (PDT)
-Received: from bogus (e133711.arm.com [10.1.196.55])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1BE083F63F;
-	Mon, 17 Mar 2025 07:04:09 -0700 (PDT)
-Date: Mon, 17 Mar 2025 14:04:07 +0000
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-kernel@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Sudeep Holla <sudeep.holla@arm.com>, linux-rtc@vger.kernel.org,
-	linux-efi@vger.kernel.org
-Subject: Re: [PATCH 4/9] rtc: efi: Transition to the faux device interface
-Message-ID: <Z9gr11GUYPWxPMSc@bogus>
-References: <20250317-plat2faux_dev-v1-0-5fe67c085ad5@arm.com>
- <20250317-plat2faux_dev-v1-4-5fe67c085ad5@arm.com>
- <2025031755-simile-landside-e719@gregkh>
+	 Content-Type:Content-Disposition:In-Reply-To; b=jrwidtuc4Xmo5YCRhO+EP2TAYGgkCl0KNFaG/WIsQAydrslmc2cR6Xro2CO6a2OuOCRqsFHi0vgOu/mlKP5Ti4zsNwl2MXfzhLWlE+qwAMu0u+x1mjmN4LoSltsysxXteSO/VqbP3mi+plzmwPNe6PnV45Ub8lEqKxomNE9DeLU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hiE1zWrh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22BC3C4CEE3;
+	Mon, 17 Mar 2025 14:06:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742220365;
+	bh=eLH32FMzkPLJk3sk0cW1wEKTH92IZIBRoZQnyhh397g=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hiE1zWrhqyJl1WfbXiV9GE0f2l8jjNdUXEvSo9+LKCgY/NBqUGRAL1tmjAVuQYKx/
+	 +h66JauWprE0JW4NGqbpfhnvj8/ZzOHaSnnK40zK4TmzakJVVEgMyOcoYB8jBeI5Dl
+	 /lZeF0lFXBQ79fATJn0VAtFLYXSPqLtwcEfQx84yCF8OT0Z5h0oCAiEb+Vg7z0yFLz
+	 BFk7nVrfT4ml3nYZ9U/cSzrwDhvvwtdhNlu2mIULA/3CbIFC4N8MYeGyRfcqUPy9WY
+	 iWq0TFHzThgVb/K889RFCObY4xQfwOQkNN6FlzFn2bjpbOviuJS3XeA37d+TjER7SB
+	 vOEjVQf3Jh47A==
+Date: Mon, 17 Mar 2025 14:06:01 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Raju Rangoju <Raju.Rangoju@amd.com>
+Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	krishnamoorthi.m@amd.com, akshata.mukundshetty@amd.com
+Subject: Re: [PATCH 01/10] spi: espi_amd: Add AMD eSPI controller driver
+ support
+Message-ID: <311453e6-c3a0-4976-92aa-e3961485b9ab@sirena.org.uk>
+References: <20250313183440.261872-1-Raju.Rangoju@amd.com>
+ <20250313183440.261872-2-Raju.Rangoju@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="+DVoHDKHv2yRx0ee"
+Content-Disposition: inline
+In-Reply-To: <20250313183440.261872-2-Raju.Rangoju@amd.com>
+X-Cookie: I know how to do SPECIAL EFFECTS!!
+
+
+--+DVoHDKHv2yRx0ee
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <2025031755-simile-landside-e719@gregkh>
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Mar 17, 2025 at 02:07:00PM +0100, Greg Kroah-Hartman wrote:
-> On Mon, Mar 17, 2025 at 10:13:16AM +0000, Sudeep Holla wrote:
-> > The EFI RTC driver does not require the creation of a platform device.
-> > Originally, this approach was chosen for simplicity when the driver was
-> > first implemented.
-> > 
-> > With the introduction of the lightweight faux device interface, we now
-> > have a more appropriate alternative. Migrate the driver to utilize the
-> > faux bus, given that the platform device it previously created was not
-> > a real one anyway. This will simplify the code, reducing its footprint
-> > while maintaining functionality.
-> > 
-> > Cc: Ard Biesheuvel <ardb@kernel.org>
-> > Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>
-> > Cc: linux-rtc@vger.kernel.org
-> > Cc: linux-efi@vger.kernel.org
-> > Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
-> > ---
-> >  drivers/firmware/efi/efi.c |  3 ---
-> >  drivers/rtc/rtc-efi.c      | 31 ++++++++++++++++++++++---------
-> >  2 files changed, 22 insertions(+), 12 deletions(-)
-> > 
+On Fri, Mar 14, 2025 at 12:04:31AM +0530, Raju Rangoju wrote:
 
-[...]
+> @@ -159,6 +159,8 @@ obj-$(CONFIG_SPI_XTENSA_XTFPGA)		+=3D spi-xtensa-xtfp=
+ga.o
+>  obj-$(CONFIG_SPI_ZYNQ_QSPI)		+=3D spi-zynq-qspi.o
+>  obj-$(CONFIG_SPI_ZYNQMP_GQSPI)		+=3D spi-zynqmp-gqspi.o
+>  obj-$(CONFIG_SPI_AMD)			+=3D spi-amd.o
+> +obj-$(CONFIG_SPI_AMD_ESPI)		+=3D espi-amd.o
+> +espi-amd-objs				:=3D espi-amd-core.o espi-amd-dev.o
+> =20
 
-> > -MODULE_ALIAS("platform:rtc-efi");
-> > +MODULE_ALIAS("faux:rtc-efi");
-> 
-> No alias please.
+Please keep these files sorted.
 
-Thanks for the review, will drop all the alias.
+> @@ -0,0 +1,883 @@
+> +// SPDX-License-Identifier: GPL-2.0-or-later
+> +/*
+> + * AMD eSPI controller driver
 
--- 
-Regards,
-Sudeep
+Please make the entire comment block a C++ one to make things look more
+consistent.
+
+> + *
+> + * Copyright (c) 2025, Advanced Micro Devices, Inc.
+> + * All Rights Reserved.
+
+Are you sure?
+
+> +static int amd_espi_check_error_status(struct amd_espi *amd_espi, u32 st=
+atus)
+> +{
+> +	int ret =3D CB_SUCCESS;
+> +
+> +	if (!(status & ESPI_DNCMD_INT)) {
+> +		ret =3D  ESPI_DNCMD_INT;
+> +		dev_err(amd_espi->dev, "eSPI downstream command completion failure\n");
+> +	} else if (status & ESPI_BUS_ERR_INT) {
+> +		ret =3D ESPI_BUS_ERR_INT;
+> +		dev_err(amd_espi->dev, "%s\n", espi_error_codes[POS_BUS_TIMING]);
+
+Can we really only have one error flagged at once?  The whole
+espi_error_codes thing also seems like unneeded complexity and fagility,
+this function is the only place they're used and there's nothing
+ensuring that the defines for indexing into the array have anything to
+do with the strings in there.
+
+> +int amd_espi_set_iomode(struct amd_espi *amd_espi, u32 *slave_config, u3=
+2 *ctrlr_config,
+> +			u8 io_mode)
+> +{
+> +	struct espi_master *master =3D amd_espi->master;
+
+There's a lot of outdated terminology like this in the driver - while
+sometimes it's unavoidable due to the register map it's better to use
+more modern terms like controller and device when it's just pure
+software things.
+
+> +	ret =3D amd_espi_get_config(amd_espi, ESPI_SLAVE_PERIPH_CFG, &slave_con=
+fig);
+> +	if (ret !=3D CB_SUCCESS)
+> +		return ret;
+> +
+> +	/* Check if PC is already enabled */
+> +	if (slave_config & ESPI_SLAVE_CHANNEL_ENABLE)
+> +		return CB_SUCCESS;
+
+Is there any great reason to use these non-standard CB_ return codes?
+
+> +static int amd_espi_suspend(struct device *dev)
+> +{
+> +	return 0;
+> +}
+
+Remove empty functions, if they can safely be empty the functions will
+be optional.
+
+> +	res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +	if (!res)
+> +		return -EOPNOTSUPP;
+> +
+> +	amd_espi->io_remap_addr =3D devm_ioremap_resource(dev, res);
+
+dev_platform_get_and_ioremap_resource().
+
+> +	amd_espi_control_reg_init(amd_espi);
+> +	ret =3D amd_espi_init_slave(amd_espi);
+> +	if (ret !=3D CB_SUCCESS)
+> +		goto espidev_free;
+> +
+> +	dev_info(dev, "AMD ESPI device initialization completed\n");
+
+This is just noise, remove it.
+
+> +
+> +	return 0;
+> +
+> +espidev_free:
+> +	amd_espi_device_remove(amd_espi);
+> +	return ret;
+
+This will return your non-standard error codes to generic code.
+
+> +static void amd_espi_remove(struct platform_device *pdev)
+> +{
+> +	struct amd_espi *amd_espi =3D platform_get_drvdata(pdev);
+> +
+> +	amd_espi_device_remove(amd_espi);
+> +}
+
+There's no need for this wrapper function, there's exactly one place we
+can call remove from.
+
+> +static int amd_espi_open(struct inode *inode, struct file *filp)
+> +{
+> +	struct amd_espi *espi;
+> +	int status =3D -ENXIO;
+> +
+> +	guard(mutex)(&device_list_lock);
+
+Whatever this userspace ABI is for it should be added in a separate
+patch, most likely it shouldn't be here at all and standard interfaces
+should be used.  Currently it doesn't seem to actually do anything.
+
+--+DVoHDKHv2yRx0ee
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmfYLEgACgkQJNaLcl1U
+h9CQMgf+MuVrwpP5VDKerTkKoiMKm4AAh2qTI5SqWPThMS4Y2va74wQv7nj7hc1z
+UtwNZbixn/Ku7IkeIiDN3QZTNetPH6cijzDdhpDj2KXYl0K/MJ4XVbF7FhMn7JAr
+G+nuQsZ6TCaL0IZfDSD86zyHTMUyI3SZQqNwEQzKskS+VkBVk4ZhXexjaGlL1y/Y
+B58kpzdoTrXYC46To67Fq59XoJ7L2wVVysC56tYarYgZlQZxfb46hXzJG44qk+q5
+h1RhdAGqkR/hcQhOg5+q72hI2Ogcu01PQmJdjNAXu2JBmZUTLo10yMaOQgyAuGva
+Wh9OIW1bMKvDPfIl8gh7eQa0hQ/1tg==
+=iHhC
+-----END PGP SIGNATURE-----
+
+--+DVoHDKHv2yRx0ee--
 
