@@ -1,143 +1,173 @@
-Return-Path: <linux-kernel+bounces-563990-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563992-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC03AA64B9A
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 12:04:17 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3382AA64B8E
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 12:03:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 533C21645E8
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:03:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 36B6A7A7255
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:02:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B62B2356CE;
-	Mon, 17 Mar 2025 11:00:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BZtT7gJk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C77D4221D90;
-	Mon, 17 Mar 2025 11:00:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F7FC237705;
+	Mon, 17 Mar 2025 11:02:20 +0000 (UTC)
+Received: from outboundhk.mxmail.xiaomi.com (outboundhk.mxmail.xiaomi.com [207.226.244.123])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CC4B237186;
+	Mon, 17 Mar 2025 11:02:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.226.244.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742209235; cv=none; b=jvCGjyIprUgk0vneRx0oUAsFO2ljVjNcuqn78C0gm/QBbrGB6H/4zhGmOxam+3bHA9xgVWqk9NnoSuCsvuhHK/DjqDs9picTrJE+nBG57xGdQMnXdHJIznpJFpeqiWc8YmrTuoB6sdKh9hXF5/EDREIp/zZRsDUH2bUOGDXZTAU=
+	t=1742209339; cv=none; b=VUBeksUd7bb1c7f8L1FrYl0sM3uG90bcg17GvSRSKnePKRHcLlrd5BkzIWrvlUuBLGZgKFGWCftQZE8nTTu8WsViUXxHAU41DK7OcXxUmOu6zrla/OVjIi1QGeksaxNmT3KnaX2GD6RbokgfgMKQnF+lK2/Ow/UdGGIZ8jecOU8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742209235; c=relaxed/simple;
-	bh=cIaIJPwYqOlCSjrnyIzd9vFpecO2RJ2/gkUxMvk8lC8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jV8+WNsil4OrL5xcCRdD2yIrUUggthD/mWuTmQRysHDHyMvD/vRex2XF6w8HY7J8E/n+q9SJCoGSQOMmZBc3P0PTihettvzPd57bwZz2IrGK3DG6vokqMvJG2xYI2l6DgQDo/R4l9N7Z4vkEQxVFyFFqClWHmEz0jz9dl5yJN0U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BZtT7gJk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E363C4CEE3;
-	Mon, 17 Mar 2025 11:00:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742209234;
-	bh=cIaIJPwYqOlCSjrnyIzd9vFpecO2RJ2/gkUxMvk8lC8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=BZtT7gJkXFBW3k13ZwFE6PnSSSuaNGfQ7UyVPsMJrv2zWOqEJDtxCOvQ25Ubq6RXd
-	 wrQhN0GziufdmwGSzPxrK2YWxwVDI6ZxmhSmRg/KG6zty2rrLtgdpbWq+J3KFLovrG
-	 djAa5zU5SIR/6YF0SPqcTZIzJGBhBwuW+tCC8l+qcaP26blNu1DKSccpYHLKj7lpvd
-	 qsSZfqaIJR2kYor99/8nKLGxJH0UGxYESFTmfYTJ2EggQ02owV24gAyaztQ/lZyzCR
-	 bsnl2hYzHhSOoV7WJ9wL92luMmj4ZaXcJH4Vf1ImyM848ruOkxBwePZ8JzTWuTBaLr
-	 hUgItkkUJk5ww==
-Date: Mon, 17 Mar 2025 11:00:12 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Andreas Klinger <ak@it-klinger.de>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- lars@metafoo.de, linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, javier.carrasco.cruz@gmail.com,
- mazziesaccount@gmail.com, subhajit.ghosh@tweaklogic.com,
- muditsharma.info@gmail.com, arthur.becker@sentec.com,
- ivan.orlov0322@gmail.com
-Subject: Re: [PATCH 1/3] dt-bindings: iio: light: veml6046x00: add color
- sensor
-Message-ID: <20250317110012.2ad89cb9@jic23-huawei>
-In-Reply-To: <20250316113131.62884-2-ak@it-klinger.de>
-References: <20250316113131.62884-1-ak@it-klinger.de>
-	<20250316113131.62884-2-ak@it-klinger.de>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1742209339; c=relaxed/simple;
+	bh=bL3QYx2aczuym377nt5RPmYoIq4HQYGZcGFcYcU+28E=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=twMJ78oRK8GefcirWTgNT2kRc0GRBP+rZzG9t+kp1vvdXpML2J8+V9WFsJiKeGtDJ+umH2KlMChPj5Cg7SYRDhz6s3D552QdJIGYgofDR2Ytevk4px3KP5ArmvPqOzlv3nOvL6b9l9QyfGt2ayCjMn4T29dU7PAFDA4jnfQVCYs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=xiaomi.com; spf=pass smtp.mailfrom=xiaomi.com; arc=none smtp.client-ip=207.226.244.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=xiaomi.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xiaomi.com
+X-CSE-ConnectionGUID: 6Gr2zm80SOq+e15xjO8xsQ==
+X-CSE-MsgGUID: qplW48dPR9KNkhLa0AG+1A==
+X-IronPort-AV: E=Sophos;i="6.14,253,1736784000"; 
+   d="scan'208";a="134714987"
+From: ZhangHui <zhanghui31@xiaomi.com>
+To: <bvanassche@acm.org>, <alim.akhtar@samsung.com>, <avri.altman@wdc.com>,
+	<James.Bottomley@HansenPartnership.com>, <martin.petersen@oracle.com>
+CC: <ebiggers@google.co>, <peter.griffin@linaro.org>, <zhanghui31@xiaomi.com>,
+	<linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH] ufs: crypto: add host_sem lock in ufshcd_program_key
+Date: Mon, 17 Mar 2025 19:01:01 +0800
+Message-ID: <20250317110101.347636-1-zhanghui31@xiaomi.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: BJ-MBX05.mioffice.cn (10.237.8.125) To YZ-MBX07.mioffice.cn
+ (10.237.88.127)
 
-On Sun, 16 Mar 2025 12:31:29 +0100
-Andreas Klinger <ak@it-klinger.de> wrote:
+From: zhanghui <zhanghui31@xiaomi.com>
 
-> Add a new compatible for Vishay high accuracy RGBIR color sensor
-> veml6046x00.
-> 
-> Signed-off-by: Andreas Klinger <ak@it-klinger.de>
-> ---
->  .../iio/light/vishay,veml6046x00.yaml         | 49 +++++++++++++++++++
->  1 file changed, 49 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/iio/light/vishay,veml6046x00.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/iio/light/vishay,veml6046x00.yaml b/Documentation/devicetree/bindings/iio/light/vishay,veml6046x00.yaml
-> new file mode 100644
-> index 000000000000..3207800fc539
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/iio/light/vishay,veml6046x00.yaml
-> @@ -0,0 +1,49 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/iio/light/vishay,veml6046x00.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Vishay VEML6046X00 High accuracy RGBIR color sensor
-> +
-> +maintainers:
-> +  - Andreas Klinger <ak@it-klinger.de>
-> +
-> +description:
-> +  VEML6046X00 datasheet at https://www.vishay.com/docs/80173/veml6046x00.pdf
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - vishay,veml6046x00
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  vdd-supply: true
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - vdd-supply
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    i2c {
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
-> +
-> +        color-sensor@29 {
-> +            compatible = "vishay,veml6046x00";
-> +            reg = <0x29>;
-> +            vdd-supply = <&vdd_reg>;
-> +            interrupt-parent = <&gpio2>;
-> +            interrupts = <3 IRQ_TYPE_EDGE_FALLING>;
-Need an include for this I think.  Make sure to test build your
-bindings following the instructions in the bot message.
+On Android devices, we found that there is a probability that
+the ufs has been shut down but the thread is still deleting the
+key, which will cause the bus error.
 
-Thanks,
+We checked the Android reboot process and found that it is indeed
+possible that some threads have not been killed before the device
+shutdown, because the Android reboot process will not wait until
+all threads are killed before continuing to execute.
 
-Jonathan
+The call stack is as follows:
 
-> +        };
-> +    };
-> +...
+__blk_crypto_evict_key+0x148/0x1c4
+blk_crypto_evict_key+0x38/0x9c
+dm_keyslot_evict_callback+0x18/0x2c
+default_key_iterate_devices+0x40/0x50
+dm_keyslot_evict+0xac/0xfc
+__blk_crypto_evict_key+0xf4/0x1c4
+blk_crypto_evict_key+0x38/0x9c
+fscrypt_destroy_inline_crypt_key+0xb8/0x10c
+fscrypt_destroy_prepared_key+0x30/0x48
+fscrypt_put_master_key_activeref+0xc4/0x308
+fscrypt_destroy_keyring+0xb0/0xfc
+generic_shutdown_super+0x60/0x12c
+kill_block_super+0x1c/0x48
+kill_f2fs_super+0xc4/0x1a8
+deactivate_locked_super+0x98/0x144
+deactivate_super+0x78/0x8c
+cleanup_mnt+0x110/0x148
+__cleanup_mnt+0x14/0x20
+task_work_run+0xc4/0xec
+get_signal+0x6c/0x8d8
+do_notify_resume+0x128/0x828
+el0_svc+0x6c/0x70
+el0t_64_sync_handler+0x68/0xbc
+el0t_64_sync+0x1a8/0x1ac
+
+Let's fixed this issue by adding a lock in program_key flow.
+
+Signed-off-by: zhanghui <zhanghui31@xiaomi.com>
+---
+ drivers/ufs/core/ufshcd-crypto.c | 20 +++++++++++++++-----
+ 1 file changed, 15 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/ufs/core/ufshcd-crypto.c b/drivers/ufs/core/ufshcd-crypto.c
+index 694ff7578fc1..f3260a072c0c 100644
+--- a/drivers/ufs/core/ufshcd-crypto.c
++++ b/drivers/ufs/core/ufshcd-crypto.c
+@@ -5,6 +5,7 @@
+ 
+ #include <ufs/ufshcd.h>
+ #include "ufshcd-crypto.h"
++#include "ufshcd-priv.h"
+ 
+ /* Blk-crypto modes supported by UFS crypto */
+ static const struct ufs_crypto_alg_entry {
+@@ -17,12 +18,18 @@ static const struct ufs_crypto_alg_entry {
+ 	},
+ };
+ 
+-static void ufshcd_program_key(struct ufs_hba *hba,
++static int ufshcd_program_key(struct ufs_hba *hba,
+ 			       const union ufs_crypto_cfg_entry *cfg, int slot)
+ {
+ 	int i;
+ 	u32 slot_offset = hba->crypto_cfg_register + slot * sizeof(*cfg);
+ 
++	down(&hba->host_sem);
++	if (!ufshcd_is_user_access_allowed(hba)) {
++		up(&hba->host_sem);
++		return -EBUSY;
++	}
++
+ 	ufshcd_hold(hba);
+ 
+ 	/* Ensure that CFGE is cleared before programming the key */
+@@ -38,6 +45,9 @@ static void ufshcd_program_key(struct ufs_hba *hba,
+ 	ufshcd_writel(hba, le32_to_cpu(cfg->reg_val[16]),
+ 		      slot_offset + 16 * sizeof(cfg->reg_val[0]));
+ 	ufshcd_release(hba);
++
++	up(&hba->host_sem);
++	return 0;
+ }
+ 
+ static int ufshcd_crypto_keyslot_program(struct blk_crypto_profile *profile,
+@@ -52,6 +62,7 @@ static int ufshcd_crypto_keyslot_program(struct blk_crypto_profile *profile,
+ 	int i;
+ 	int cap_idx = -1;
+ 	union ufs_crypto_cfg_entry cfg = {};
++	int err;
+ 
+ 	BUILD_BUG_ON(UFS_CRYPTO_KEY_SIZE_INVALID != 0);
+ 	for (i = 0; i < hba->crypto_capabilities.num_crypto_cap; i++) {
+@@ -79,10 +90,10 @@ static int ufshcd_crypto_keyslot_program(struct blk_crypto_profile *profile,
+ 		memcpy(cfg.crypto_key, key->raw, key->size);
+ 	}
+ 
+-	ufshcd_program_key(hba, &cfg, slot);
++	err = ufshcd_program_key(hba, &cfg, slot);
+ 
+ 	memzero_explicit(&cfg, sizeof(cfg));
+-	return 0;
++	return err;
+ }
+ 
+ static int ufshcd_crypto_keyslot_evict(struct blk_crypto_profile *profile,
+@@ -96,8 +107,7 @@ static int ufshcd_crypto_keyslot_evict(struct blk_crypto_profile *profile,
+ 	 */
+ 	union ufs_crypto_cfg_entry cfg = {};
+ 
+-	ufshcd_program_key(hba, &cfg, slot);
+-	return 0;
++	return ufshcd_program_key(hba, &cfg, slot);
+ }
+ 
+ /*
+-- 
+2.43.0
 
 
