@@ -1,356 +1,353 @@
-Return-Path: <linux-kernel+bounces-563440-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563441-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC9AAA641E5
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 07:40:45 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDBFAA641E7
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 07:40:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D672A188F5FD
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 06:40:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EA1907A3D1A
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 06:39:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C475521A451;
-	Mon, 17 Mar 2025 06:40:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEC53219EB6;
+	Mon, 17 Mar 2025 06:40:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ZFif/tmq"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="A74Kj2bN"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E80C21931B;
-	Mon, 17 Mar 2025 06:40:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25537219E8F
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 06:40:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742193633; cv=none; b=BHAgQRb3fT9U8KbitKieFeUjt8EOGHfkpAj/hrEIsyPyxBiPOudb2H66OqYtFLbCKkLgrJVg9Xu94jdH8wt/yIeLf1JzKniPAntknBcpCeIMV9ZxDnO4p1aL+E5rBOVeh2KWYMeUyWYM6YsFjGgAxnpWraUrYUeF4wrw3sqeTNk=
+	t=1742193644; cv=none; b=VcFTWDs6oYrqGNeDG4PtVKAU1HNGoxRamtpcbcmljcLbzPG+DwETRYgB0hE+5rHKEby+g3UoL+3yH/20iWYmAqqyLQuKtxaK22SwskWsIJ+L/aOHPZoU2CxqLUCnpm7WHlnNC5sAn86D7z4VoCJwJ69GlKc7/lrVeGMc+yycCcI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742193633; c=relaxed/simple;
-	bh=kvym4Y1kHMdfeCqHXx/9Lrbd9BjykKpdH9yvTlY4xqM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=HWyJdDuubGb1hYacgdGpgQgHx+FmwRDTuf+GHZ2z5D/+8Ubj1WWoc0ArNJ6dZF5Cno7e34KB1vnLui9445+paaCdaxgpsZF0Y2O6BZb//eE2hmzsvgNLrJe6YSXQszWeDJFs9s5YDI0Qdhs/R53kjnEWJVdweTc5m1fIJKP3iH0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ZFif/tmq; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52GNUWCF026414;
-	Mon, 17 Mar 2025 06:40:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	XqR/8Lr9ciR42DrxgBAE2S1qm0VN83ZWpi0qtm9sFxM=; b=ZFif/tmqasEFFMf8
-	70g3dhdk6nwemn7jTCLnU2t5Ez8NR1eaF+E7Uv6hDKiDQ4TDxGpCtMxF8oD5KFg/
-	b/f3CZBvzsyDaUmFl+FHsqRRlZfRVmIHB1+z2cga0fIGQRlcyLLQAZMU2rw6Ex6Q
-	Q6t8nT+qa4jmtrN0ehu0Z4Ql1FFUJ4S7Kfs43fC1DGqDMEX6H5flvVL0vvLIM8Tv
-	QdpUGlxV2BXMWgOLtMk/uXTNKDToVLVzk93QJDg2OGRIzh7t3UPVgXvueXE3XGyw
-	1YrSeinynUASIRQ1k0DdO76FnTwOt7ivbvbKDvgC/1N8fAykVX1Ppi3s1IeozuEt
-	lUsHiw==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45d1u8bp5j-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 17 Mar 2025 06:40:22 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52H6eLiI015440
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 17 Mar 2025 06:40:21 GMT
-Received: from [10.217.216.178] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 16 Mar
- 2025 23:40:16 -0700
-Message-ID: <fce2fe9e-5c1b-4fa9-b6ca-0a4ab5133e5a@quicinc.com>
-Date: Mon, 17 Mar 2025 12:10:13 +0530
+	s=arc-20240116; t=1742193644; c=relaxed/simple;
+	bh=NNI2Z3H1Z1taOsrJKmGeSBymwwLbUWhciwJiqkKYPCc=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=nCal/f3E3KRk972r/8H2NLDrGeTbSYAenXPsjLWJH2fsgE0aocc/bSxs0Zh9vZsUU9NqxbW2gn+MSWoj4h8XMf+QHOmcHDL6LlPUORIRYzouvfzGnj8m8W8ACXnZ0lBGKmRI+wiEtFk1ncBFpGgbnfeQL+g1JxBt8XGfV1afU/c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=A74Kj2bN; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-226185948ffso7822525ad.0
+        for <linux-kernel@vger.kernel.org>; Sun, 16 Mar 2025 23:40:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1742193642; x=1742798442; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=RQk6j3M79hEoncMWZINU1Z+Ssb2ztnm1q7nYaYaJel4=;
+        b=A74Kj2bN8RzNF6xY27nTGHikvtr0zFUrDIcTicqhIiOR1Oi/MaQSOcogUxezRoh2sY
+         rBE2tWf3I+rXXw9Bw+UWXUSbPWUh6zh5cnzwVTWLnQxm5I500kXfEeBaS89ztPOj6eWk
+         yVNlzne416Iv25slV/KE+GGd82E3+y2cG3UaQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742193642; x=1742798442;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=RQk6j3M79hEoncMWZINU1Z+Ssb2ztnm1q7nYaYaJel4=;
+        b=S963U0/jK7Zy2Z1eDwWuPmzenZ89WsVv57PYgiBy8uar7tOdJYtJpgvRiLYr3+0QEy
+         VIpOONWDAioA+tgC8YsQAq0ueBF6EGt6MXYpyeuaJfehZFIygnSnNUkAjO15b5LfzWF/
+         i+qlHTr41ImsPill0hxvbnMiFg/xam9K/xdKA1wnGw5TDCT1K8CAZ9FG4/95ilCSEIXv
+         n3vOdDt+7qNbYYkTQ8UFCfKsShiWdVyJZKrX8VVj9nPDKsABq1/ZxyCXmiCMUzotqSTU
+         v5qOvQeHyorTkV3x2A4fTDS4gVGoWKNYlh0WVgwS8Z78ZjO6fdVrvnZznGtDRg2VVapD
+         PuBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVVKwFLFGZ/RMAWN5zwrknO7zGHbdQLiM3FKo8MytDyrJL5+5ct887HRurraQvv4qEAtW5yNTlnxcv/VuA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwmfXgdy+ExApvM/Jym0bzo65d8X27sH8ywyFYSMGPFL1+Ihk2h
+	6Q4WrkPeQnuNfgf5jCHp4aXg07Z8wtMItgoOTZmkCNMAlFCY8dq8ILU+tx8ScoRh2I5XiU55JwI
+	=
+X-Gm-Gg: ASbGncv1AI9ykNSUgCVmsWjZm3yIeZj0zS2b2iw5mHrfVbIXpGDKYMbYKH37lRdzd2u
+	ZbengT8xNXiJ31mF1HETdoYUaDjoDKolzbHVO/FhBLXaPpGWeQWScxg+ZCMw3x7VtBWBCJI0OvQ
+	GDy692muX4uGu3w4YPItU63DU92U7vpnTzHNpZ2Im+2J2fO4O+s7w8ttZ+3+zVx3tvP2ixHefi8
+	JaC4reyn/cZMcL+JhMfyCVMamQdZ4LNO4oZgWFphATegnWtP78pv95I1ePYgC5URU77VDA4Ex7z
+	eVQA+NEBkFdu9FwOuG17fiV1MUaR5atDjkQK8Ctqr/N14CpGBfd7WFJndQ5AkPcT07o=
+X-Google-Smtp-Source: AGHT+IGvST1WW6xrrmRCUrQ9geHSg+2is3Fy2cyAzWBdbqKnhPLUHPqAQ6MYtun3HvFH4+LCOhrjkQ==
+X-Received: by 2002:a17:902:e84e:b0:224:c76:5e56 with SMTP id d9443c01a7336-225e0a6b222mr134440485ad.27.1742193642285;
+        Sun, 16 Mar 2025 23:40:42 -0700 (PDT)
+Received: from lschyi-p920.tpe.corp.google.com ([2401:fa00:1:10:77b5:e0b8:95d2:83db])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-225c6bbcb24sm67619675ad.169.2025.03.16.23.40.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 16 Mar 2025 23:40:41 -0700 (PDT)
+From: Sung-Chi Li <lschyi@chromium.org>
+Date: Mon, 17 Mar 2025 14:40:26 +0800
+Subject: [PATCH v2] hwmon: (cros_ec) Add set and get target fan RPM
+ function
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 01/10] clk: qcom: clk-alpha-pll: Add support for
- dynamic update for slewing PLLs
-To: Bjorn Andersson <andersson@kernel.org>
-CC: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Catalin Marinas
-	<catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, Ajit Pandey
-	<quic_ajipan@quicinc.com>,
-        Imran Shaik <quic_imrashai@quicinc.com>,
-        "Jagadeesh Kona" <quic_jkona@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-References: <20250313-qcs615-v5-mm-cc-v6-0-ebf4b9a5e916@quicinc.com>
- <20250313-qcs615-v5-mm-cc-v6-1-ebf4b9a5e916@quicinc.com>
- <r6xikx2idlzwc4xl7doap3v5ug3a6qtg65jwqjuekiv7tvbwzn@5nk4c7nl2zws>
-Content-Language: en-US
-From: Taniya Das <quic_tdas@quicinc.com>
-In-Reply-To: <r6xikx2idlzwc4xl7doap3v5ug3a6qtg65jwqjuekiv7tvbwzn@5nk4c7nl2zws>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: jpL48WS3wXSe3L4YA7eOeVEzoPGbocVe
-X-Authority-Analysis: v=2.4 cv=c42rQQ9l c=1 sm=1 tr=0 ts=67d7c3d6 cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=COk6AnOGAAAA:8 a=p-S28tgwJCCmrtNokHgA:9 a=QEXdDO2ut3YA:10
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: jpL48WS3wXSe3L4YA7eOeVEzoPGbocVe
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-17_02,2025-03-17_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 spamscore=0
- bulkscore=0 lowpriorityscore=0 mlxscore=0 adultscore=0 malwarescore=0
- impostorscore=0 mlxlogscore=999 priorityscore=1501 suspectscore=0
- clxscore=1015 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503170047
+Message-Id: <20250317-extend_ec_hwmon_fan-v2-1-13670557afe5@chromium.org>
+X-B4-Tracking: v=1; b=H4sIANnD12cC/32NQQ6DIBBFr2JmXRrFgmlXvUdjCOIgsxAasNTGe
+ PdSD9Dle8l/f4OEkTDBrdogYqZEwRfgpwqM035CRmNh4DUXddu0DNcF/ajQKPeeg1dWe6aFFVe
+ tB26GFsryGdHSelQffWFHaQnxc5zk5mf/93LDaiaMkLLrpOXmcjcuhple8znECfp937+jYcglu
+ QAAAA==
+X-Change-ID: 20250313-extend_ec_hwmon_fan-a5f59aab2cb3
+To: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas@weissschuh.net>, 
+ Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, 
+ Benson Leung <bleung@chromium.org>
+Cc: Guenter Roeck <groeck@chromium.org>, chrome-platform@lists.linux.dev, 
+ linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Sung-Chi Li <lschyi@chromium.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1742193640; l=8426;
+ i=lschyi@chromium.org; s=20241113; h=from:subject:message-id;
+ bh=NNI2Z3H1Z1taOsrJKmGeSBymwwLbUWhciwJiqkKYPCc=;
+ b=ICbiLycT3VjgaMdDZnSIQZOmLY1PFd1I1c7IyKvp7jnTi9I4PzfXt5M6yyXhm3oHEWFVCwZgZ
+ PiU2t7CIWcQACWIOg18QJIiP/9FAM5PZ278hQspJIav1d8egOr31QrA
+X-Developer-Key: i=lschyi@chromium.org; a=ed25519;
+ pk=nE3PJlqSK35GdWfB4oVLOwi4njfaUZRhM66HGos9P6o=
 
+The ChromeOS embedded controller (EC) supports closed loop fan speed
+control, so add the fan target attribute under hwmon framework, such
+that kernel can expose reading and specifying the desired fan RPM for
+fans connected to the EC.
 
+When probing the cros_ec hwmon module, we also check the supported
+command version of setting target fan RPM. This commit implements the
+version 0 of getting the target fan RPM, which can only read the target
+RPM of the first fan. This commit also implements the version 0 and 1 of
+setting the target fan RPM, where the version 0 only supports setting
+all fan to the same RPM, while version 1 supports setting different RPM
+to each fan respectively.
 
-On 3/14/2025 5:09 AM, Bjorn Andersson wrote:
-> On Thu, Mar 13, 2025 at 12:29:38PM +0530, Taniya Das wrote:
->> The alpha PLLs which slew to a new frequency at runtime would require
->> the PLL to calibrate at the mid point of the VCO. Add the new PLL ops
->> which can support the slewing of the PLL to a new frequency.
->>
->> Reviewed-by: Imran Shaik <quic_imrashai@quicinc.com>
->> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
->> ---
->>  drivers/clk/qcom/clk-alpha-pll.c | 170 +++++++++++++++++++++++++++++++++++++++
->>  drivers/clk/qcom/clk-alpha-pll.h |   1 +
->>  2 files changed, 171 insertions(+)
->>
->> diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
->> index cec0afea8e446010f0d4140d4ef63121706dde47..7d784db8b7441e886d94ded1d3e3258dda46674c 100644
->> --- a/drivers/clk/qcom/clk-alpha-pll.c
->> +++ b/drivers/clk/qcom/clk-alpha-pll.c
->> @@ -2960,3 +2960,173 @@ const struct clk_ops clk_alpha_pll_regera_ops = {
->>  	.set_rate = clk_zonda_pll_set_rate,
->>  };
->>  EXPORT_SYMBOL_GPL(clk_alpha_pll_regera_ops);
->> +
->> +static int clk_alpha_pll_slew_update(struct clk_alpha_pll *pll)
->> +{
->> +	int ret;
->> +	u32 val;
->> +
->> +	regmap_update_bits(pll->clkr.regmap, PLL_MODE(pll), PLL_UPDATE, PLL_UPDATE);
->> +	regmap_read(pll->clkr.regmap, PLL_MODE(pll), &val);
->> +
->> +	ret = wait_for_pll_update(pll);
->> +	if (ret)
->> +		return ret;
->> +	/*
->> +	 * Hardware programming mandates a wait of at least 570ns before polling the LOCK
->> +	 * detect bit. Have a delay of 1us just to be safe.
->> +	 */
->> +	mb();
->> +	udelay(1);
->> +
->> +	return wait_for_pll_enable_lock(pll);
->> +}
->> +
->> +static int clk_alpha_pll_slew_set_rate(struct clk_hw *hw, unsigned long rate,
->> +					unsigned long parent_rate)
->> +{
->> +	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
->> +	unsigned long freq_hz;
->> +	const struct pll_vco *curr_vco, *vco;
->> +	u32 l, alpha_width = pll_alpha_width(pll);
->> +	u64 a;
->> +
->> +	freq_hz =  alpha_pll_round_rate(rate, parent_rate, &l, &a, alpha_width);
-> 
-> Double space here.
+Signed-off-by: Sung-Chi Li <lschyi@chromium.org>
+---
+ChromeOS embedded controller (EC) supports closed-loop fan control. We
+anticipate to have the fan related control from the kernel side, so this
+series register the HWMON_F_TARGET attribute, and implement the read and
+write function for setting/reading the target fan RPM from the EC side.
+---
+Changes in v2:
 
-Sure, needs a fix.
+- Squash the read, write, and register of fan target attribute to 1
+  commit, as they are the same topic.
+- Probe the supported command version from EC for setting the target fan
+  RPM, and perform the set fan target RPM based on the supported
+  version.
+- Update the used variable type to kernel types (i.e., u32).
+- Link to v1: https://lore.kernel.org/r/20250313-extend_ec_hwmon_fan-v1-0-5c566776f2c4@chromium.org
+---
+ drivers/hwmon/cros_ec_hwmon.c | 130 ++++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 125 insertions(+), 5 deletions(-)
 
-> 
->> +	if (freq_hz != rate) {
->> +		pr_err("alpha_pll: Call clk_set_rate with rounded rates!\n");
->> +		return -EINVAL;
->> +	}
->> +
->> +	curr_vco = alpha_pll_find_vco(pll, clk_hw_get_rate(hw));
->> +	if (!curr_vco) {
->> +		pr_err("alpha pll: not in a valid vco range\n");
->> +		return -EINVAL;
->> +	}
->> +
->> +	vco = alpha_pll_find_vco(pll, freq_hz);
->> +	if (!vco) {
->> +		pr_err("alpha pll: not in a valid vco range\n");
->> +		return -EINVAL;
->> +	}
->> +
->> +	/*
->> +	 * Dynamic pll update will not support switching frequencies across
->> +	 * vco ranges. In those cases fall back to normal alpha set rate.
->> +	 */
->> +	if (curr_vco->val != vco->val)
->> +		return clk_alpha_pll_set_rate(hw, rate, parent_rate);
->> +
->> +	a = a << (ALPHA_REG_BITWIDTH - ALPHA_BITWIDTH);
-> 
-> Above this function is written to deal with both alpha bitwidths, but
-> here it's assumed to only be one of the cases.
-> 
-> It would be nice to get this cleaned up somehow, because we now have
-> this shift 6 times in slightly different forms.
-> 
+diff --git a/drivers/hwmon/cros_ec_hwmon.c b/drivers/hwmon/cros_ec_hwmon.c
+index 9991c3fa020ac859cbbff29dfb669e53248df885..b118a355f67d7238a6f596cf01a49d5b621b31d6 100644
+--- a/drivers/hwmon/cros_ec_hwmon.c
++++ b/drivers/hwmon/cros_ec_hwmon.c
+@@ -21,6 +21,12 @@ struct cros_ec_hwmon_priv {
+ 	struct cros_ec_device *cros_ec;
+ 	const char *temp_sensor_names[EC_TEMP_SENSOR_ENTRIES + EC_TEMP_SENSOR_B_ENTRIES];
+ 	u8 usable_fans;
++	int set_fan_target_rpm_version;
++};
++
++union ec_params_pwm_set_fan_target_rpm {
++	struct ec_params_pwm_set_fan_target_rpm_v0 v0;
++	struct ec_params_pwm_set_fan_target_rpm_v1 v1;
+ };
+ 
+ static int cros_ec_hwmon_read_fan_speed(struct cros_ec_device *cros_ec, u8 index, u16 *speed)
+@@ -36,6 +42,25 @@ static int cros_ec_hwmon_read_fan_speed(struct cros_ec_device *cros_ec, u8 index
+ 	return 0;
+ }
+ 
++static int cros_ec_hwmon_read_fan_target(struct cros_ec_device *cros_ec,
++					 u8 index, u32 *speed)
++{
++	struct ec_response_pwm_get_fan_rpm r;
++	int ret;
++
++	// Currently only supports reading the first fan.
++	if (index > 0)
++		return -EOPNOTSUPP;
++
++	ret = cros_ec_cmd(cros_ec, 0, EC_CMD_PWM_GET_FAN_TARGET_RPM, NULL, 0,
++			  &r, sizeof(r));
++	if (ret < 0)
++		return ret;
++
++	*speed = r.rpm;
++	return 0;
++}
++
+ static int cros_ec_hwmon_read_temp(struct cros_ec_device *cros_ec, u8 index, u8 *temp)
+ {
+ 	unsigned int offset;
+@@ -52,6 +77,49 @@ static int cros_ec_hwmon_read_temp(struct cros_ec_device *cros_ec, u8 index, u8
+ 	return 0;
+ }
+ 
++static int cros_ec_hwmon_set_fan_rpm(struct cros_ec_device *cros_ec,
++				     int version, u8 index, u16 val)
++{
++	union ec_params_pwm_set_fan_target_rpm req;
++	int req_size;
++	int ret;
++
++	if (version == 0) {
++		if (index != 0)
++			dev_warn(
++				cros_ec->dev,
++				"v0 only supports setting all fan to same RPM (cannot just set idx %d), set all to %d\n",
++				index, val);
++
++		req_size = sizeof(req.v0);
++		req.v0.rpm = val;
++	} else if (version == 1) {
++		req_size = sizeof(req.v1);
++		req.v1.rpm = val;
++		req.v1.fan_idx = index;
++	} else
++		return -EOPNOTSUPP;
++
++	ret = cros_ec_cmd(cros_ec, version, EC_CMD_PWM_SET_FAN_TARGET_RPM, &req,
++			  req_size, NULL, 0);
++	if (ret < 0)
++		return ret;
++	return 0;
++}
++
++static int cros_ec_hwmon_write_fan(struct cros_ec_hwmon_priv *priv, u32 attr,
++				   int channel, long rpm)
++{
++	switch (attr) {
++	case hwmon_fan_target:
++		return cros_ec_hwmon_set_fan_rpm(
++			priv->cros_ec, priv->set_fan_target_rpm_version,
++			channel, rpm);
++	default:
++		return -EOPNOTSUPP;
++	}
++}
++
+ static bool cros_ec_hwmon_is_error_fan(u16 speed)
+ {
+ 	return speed == EC_FAN_SPEED_NOT_PRESENT || speed == EC_FAN_SPEED_STALLED;
+@@ -75,6 +143,7 @@ static int cros_ec_hwmon_read(struct device *dev, enum hwmon_sensor_types type,
+ {
+ 	struct cros_ec_hwmon_priv *priv = dev_get_drvdata(dev);
+ 	int ret = -EOPNOTSUPP;
++	u32 target_rpm;
+ 	u16 speed;
+ 	u8 temp;
+ 
+@@ -91,6 +160,11 @@ static int cros_ec_hwmon_read(struct device *dev, enum hwmon_sensor_types type,
+ 			ret = cros_ec_hwmon_read_fan_speed(priv->cros_ec, channel, &speed);
+ 			if (ret == 0)
+ 				*val = cros_ec_hwmon_is_error_fan(speed);
++		} else if (attr == hwmon_fan_target) {
++			ret = cros_ec_hwmon_read_fan_target(
++				priv->cros_ec, channel, &target_rpm);
++			if (ret == 0)
++				*val = target_rpm;
+ 		}
+ 	} else if (type == hwmon_temp) {
+ 		if (attr == hwmon_temp_input) {
+@@ -130,8 +204,15 @@ static umode_t cros_ec_hwmon_is_visible(const void *data, enum hwmon_sensor_type
+ 	const struct cros_ec_hwmon_priv *priv = data;
+ 
+ 	if (type == hwmon_fan) {
+-		if (priv->usable_fans & BIT(channel))
++		if (!(priv->usable_fans & BIT(channel)))
++			return 0;
++
++		switch (attr) {
++		case hwmon_fan_target:
++			return 0644;
++		default:
+ 			return 0444;
++		}
+ 	} else if (type == hwmon_temp) {
+ 		if (priv->temp_sensor_names[channel])
+ 			return 0444;
+@@ -140,13 +221,26 @@ static umode_t cros_ec_hwmon_is_visible(const void *data, enum hwmon_sensor_type
+ 	return 0;
+ }
+ 
++static int cros_ec_hwmon_write(struct device *dev, enum hwmon_sensor_types type,
++			      u32 attr, int channel, long val)
++{
++	struct cros_ec_hwmon_priv *priv = dev_get_drvdata(dev);
++
++	switch (type) {
++	case hwmon_fan:
++		return cros_ec_hwmon_write_fan(priv, attr, channel, val);
++	default:
++		return -EOPNOTSUPP;
++	}
++}
++
+ static const struct hwmon_channel_info * const cros_ec_hwmon_info[] = {
+ 	HWMON_CHANNEL_INFO(chip, HWMON_C_REGISTER_TZ),
+ 	HWMON_CHANNEL_INFO(fan,
+-			   HWMON_F_INPUT | HWMON_F_FAULT,
+-			   HWMON_F_INPUT | HWMON_F_FAULT,
+-			   HWMON_F_INPUT | HWMON_F_FAULT,
+-			   HWMON_F_INPUT | HWMON_F_FAULT),
++			   HWMON_F_INPUT | HWMON_F_FAULT | HWMON_F_TARGET,
++			   HWMON_F_INPUT | HWMON_F_FAULT | HWMON_F_TARGET,
++			   HWMON_F_INPUT | HWMON_F_FAULT | HWMON_F_TARGET,
++			   HWMON_F_INPUT | HWMON_F_FAULT | HWMON_F_TARGET),
+ 	HWMON_CHANNEL_INFO(temp,
+ 			   HWMON_T_INPUT | HWMON_T_FAULT | HWMON_T_LABEL,
+ 			   HWMON_T_INPUT | HWMON_T_FAULT | HWMON_T_LABEL,
+@@ -178,6 +272,7 @@ static const struct hwmon_channel_info * const cros_ec_hwmon_info[] = {
+ static const struct hwmon_ops cros_ec_hwmon_ops = {
+ 	.read = cros_ec_hwmon_read,
+ 	.read_string = cros_ec_hwmon_read_string,
++	.write = cros_ec_hwmon_write,
+ 	.is_visible = cros_ec_hwmon_is_visible,
+ };
+ 
+@@ -233,6 +328,27 @@ static void cros_ec_hwmon_probe_fans(struct cros_ec_hwmon_priv *priv)
+ 	}
+ }
+ 
++static int cros_ec_hwmon_probe_fan_target_cmd_version(struct cros_ec_hwmon_priv *priv)
++{
++	struct ec_params_get_cmd_versions_v1 params = {
++		.cmd = EC_CMD_PWM_SET_FAN_TARGET_RPM,
++	};
++	struct ec_response_get_cmd_versions response;
++	int ret;
++
++	ret = cros_ec_cmd(priv->cros_ec, 1, EC_CMD_GET_CMD_VERSIONS, &params,
++			  sizeof(params), &response, sizeof(response));
++	if (ret < 0) {
++		dev_err(priv->cros_ec->dev,
++			"error getting target fan RPM set command version: %d\n", ret);
++		return ret;
++	}
++
++	priv->set_fan_target_rpm_version = (response.version_mask & EC_VER_MASK(1)) ? 1 : 0;
++
++	return 0;
++}
++
+ static int cros_ec_hwmon_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+@@ -260,6 +376,10 @@ static int cros_ec_hwmon_probe(struct platform_device *pdev)
+ 	cros_ec_hwmon_probe_temp_sensors(dev, priv, thermal_version);
+ 	cros_ec_hwmon_probe_fans(priv);
+ 
++	ret = cros_ec_hwmon_probe_fan_target_cmd_version(priv);
++	if (ret < 0)
++		return ret;
++
+ 	hwmon_dev = devm_hwmon_device_register_with_info(dev, "cros_ec", priv,
+ 							 &cros_ec_hwmon_chip_info, NULL);
+ 
 
-I will check if I can clean up.
+---
+base-commit: 80e54e84911a923c40d7bee33a34c1b4be148d7a
+change-id: 20250313-extend_ec_hwmon_fan-a5f59aab2cb3
 
->> +
->> +	regmap_write(pll->clkr.regmap, PLL_L_VAL(pll), l);
->> +	regmap_write(pll->clkr.regmap, PLL_ALPHA_VAL(pll), a);
->> +	regmap_write(pll->clkr.regmap, PLL_ALPHA_VAL_U(pll), a >> 32);
-> 
-> In a number of places in the driver alpha_width is compared to 32 bits
-> to see if this should be written or not. Perhaps that's not applicable
-> here, but again, if so then why is it dynamic above?
-> 
-> 
-> Also, how about upper_32_bits() and lower_32_bits() to make it clear
-> what's going on here?
-> 
-
-Sure.
-
-
->> +
->> +	/* Ensure that the write above goes through before proceeding. */
-> 
-> That's not what mb() does.
-> 
-> Regards,
-> Bjorn
-> 
->> +	mb();
->> +
->> +	if (clk_hw_is_enabled(hw))
->> +		return clk_alpha_pll_slew_update(pll);
->> +
->> +	return 0;
->> +}
->> +
->> +/*
->> + * Slewing plls should be bought up at frequency which is in the middle of the
->> + * desired VCO range. So after bringing up the pll at calibration freq, set it
->> + * back to desired frequency(that was set by previous clk_set_rate).
->> + */
->> +static int clk_alpha_pll_calibrate(struct clk_hw *hw)
->> +{
->> +	unsigned long calibration_freq, freq_hz;
->> +	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
->> +	struct clk_hw *parent;
->> +	const struct pll_vco *vco;
->> +	u32 l, alpha_width = pll_alpha_width(pll);
->> +	int rc;
->> +	u64 a;
->> +
->> +	parent = clk_hw_get_parent(hw);
->> +	if (!parent) {
->> +		pr_err("alpha pll: no valid parent found\n");
->> +		return -EINVAL;
->> +	}
->> +
->> +	vco = alpha_pll_find_vco(pll, clk_hw_get_rate(hw));
->> +	if (!vco) {
->> +		pr_err("alpha pll: not in a valid vco range\n");
->> +		return -EINVAL;
->> +	}
->> +
->> +	/*
->> +	 * As during slewing plls vco_sel won't be allowed to change, vco table
->> +	 * should have only one entry table, i.e. index = 0, find the
->> +	 * calibration frequency.
->> +	 */
->> +	calibration_freq = (pll->vco_table[0].min_freq + pll->vco_table[0].max_freq) / 2;
->> +
->> +	freq_hz = alpha_pll_round_rate(calibration_freq, clk_hw_get_rate(parent),
->> +					&l, &a, alpha_width);
->> +	if (freq_hz != calibration_freq) {
->> +		pr_err("alpha_pll: call clk_set_rate with rounded rates!\n");
->> +		return -EINVAL;
->> +	}
->> +
->> +	/* Setup PLL for calibration frequency */
->> +	a <<= (ALPHA_REG_BITWIDTH - ALPHA_BITWIDTH);
->> +
->> +	regmap_write(pll->clkr.regmap, PLL_L_VAL(pll), l);
->> +	regmap_write(pll->clkr.regmap, PLL_ALPHA_VAL(pll), a);
->> +	regmap_write(pll->clkr.regmap, PLL_ALPHA_VAL_U(pll), a >> 32);
->> +
->> +	regmap_update_bits(pll->clkr.regmap, PLL_USER_CTL(pll), PLL_VCO_MASK << PLL_VCO_SHIFT,
->> +				vco->val << PLL_VCO_SHIFT);
->> +
->> +	/* Bringup the pll at calibration frequency */
->> +	rc = clk_alpha_pll_enable(hw);
->> +	if (rc) {
->> +		pr_err("alpha pll calibration failed\n");
->> +		return rc;
->> +	}
->> +
->> +	/*
->> +	 * PLL is already running at calibration frequency.
->> +	 * So slew pll to the previously set frequency.
->> +	 */
->> +	freq_hz = alpha_pll_round_rate(clk_hw_get_rate(hw),
->> +			clk_hw_get_rate(parent), &l, &a, alpha_width);
->> +
->> +	pr_debug("pll %s: setting back to required rate %lu, freq_hz %ld\n",
->> +		clk_hw_get_name(hw), clk_hw_get_rate(hw), freq_hz);
->> +
->> +	/* Setup the PLL for the new frequency */
->> +	a <<= (ALPHA_REG_BITWIDTH - ALPHA_BITWIDTH);
->> +
->> +	regmap_write(pll->clkr.regmap, PLL_L_VAL(pll), l);
->> +	regmap_write(pll->clkr.regmap, PLL_ALPHA_VAL(pll), a);
->> +	regmap_write(pll->clkr.regmap, PLL_ALPHA_VAL_U(pll), a >> 32);
->> +
->> +	regmap_update_bits(pll->clkr.regmap, PLL_USER_CTL(pll), PLL_ALPHA_EN, PLL_ALPHA_EN);
->> +
->> +	return clk_alpha_pll_slew_update(pll);
->> +}
->> +
->> +static int clk_alpha_pll_slew_enable(struct clk_hw *hw)
->> +{
->> +	int rc;
->> +
->> +	rc = clk_alpha_pll_calibrate(hw);
->> +	if (rc)
->> +		return rc;
->> +
->> +	return clk_alpha_pll_enable(hw);
->> +}
->> +
->> +const struct clk_ops clk_alpha_pll_slew_ops = {
->> +	.enable = clk_alpha_pll_slew_enable,
->> +	.disable = clk_alpha_pll_disable,
->> +	.recalc_rate = clk_alpha_pll_recalc_rate,
->> +	.round_rate = clk_alpha_pll_round_rate,
->> +	.set_rate = clk_alpha_pll_slew_set_rate,
->> +};
->> +EXPORT_SYMBOL(clk_alpha_pll_slew_ops);
->> diff --git a/drivers/clk/qcom/clk-alpha-pll.h b/drivers/clk/qcom/clk-alpha-pll.h
->> index 79aca8525262211ae5295245427d4540abf1e09a..1d19001605eb10fd8ae8041c56d951e928cbbe9f 100644
->> --- a/drivers/clk/qcom/clk-alpha-pll.h
->> +++ b/drivers/clk/qcom/clk-alpha-pll.h
->> @@ -204,6 +204,7 @@ extern const struct clk_ops clk_alpha_pll_rivian_evo_ops;
->>  #define clk_alpha_pll_postdiv_rivian_evo_ops clk_alpha_pll_postdiv_fabia_ops
->>  
->>  extern const struct clk_ops clk_alpha_pll_regera_ops;
->> +extern const struct clk_ops clk_alpha_pll_slew_ops;
->>  
->>  void clk_alpha_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
->>  			     const struct alpha_pll_config *config);
->>
->> -- 
->> 2.48.1
->>
+Best regards,
+-- 
+Sung-Chi Li <lschyi@chromium.org>
 
 
