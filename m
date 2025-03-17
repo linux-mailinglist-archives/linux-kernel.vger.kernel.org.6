@@ -1,122 +1,156 @@
-Return-Path: <linux-kernel+bounces-564669-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564674-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EEF4A65927
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 17:55:43 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89F71A65938
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 17:57:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10DB419A0B6A
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 16:51:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D10893ACA41
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 16:52:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABA2D1A3152;
-	Mon, 17 Mar 2025 16:46:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86A201A5BAF;
+	Mon, 17 Mar 2025 16:48:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lSyJzNu1"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="yTSNjT/J"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00CBA1C8637;
-	Mon, 17 Mar 2025 16:46:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1E371DEFFD;
+	Mon, 17 Mar 2025 16:48:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742230003; cv=none; b=H4hwQHRkR+GPuYv3LG4VwueQqEi3KqGqWO7XQbpAFvy0bMQAnyZdex6+O/OtEW3wqE8dNMvHarMB4TxBrcy6GNrzMOt6yLdBpo8ttPel9mlZa0uEEESmL3xpDu18VLM0oHHYZ0ptl7V4YikP9i+gMfabtuG6xbO3hnC3n72FKxM=
+	t=1742230091; cv=none; b=Wrl1T+CSnDLAAUe4JwdiABbK3JlghXZKqqB19Bsd3lbjUoas1MyQvYSRebCnv01OvkIbJk2L7jvc8odjbnvGzsXBDDUMonTYwf6cf90ZIFDIy0xbRbzwKHv4zN5JGavRURVVMrAmioSAGgELQPUDoZyfLsAZYWTUBKofScBA5D8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742230003; c=relaxed/simple;
-	bh=+gpgx1f/Gxc036wNUlCVYAX4Xs//acADzBzuOoLrCmI=;
+	s=arc-20240116; t=1742230091; c=relaxed/simple;
+	bh=6LRjey91kAKbtfGT1kdcYHXdkjzmNzELr3+IyaNjcS0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XrDWI1JAV+ViKKW+MYnxulhxaSuRP7OXL+veLTcK3Ed0LROq848D0Q4cokj0zYvrx9+LD1LQx/hn/6YX+fslc4p3g8kLtelWzyH1zkdAKHa4iwX6hpttfc3N8+3xzGCxH91lO0C4POvapBmTwOZ2jCkbR63lo7uLAS3jIGAZr1k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lSyJzNu1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB9D1C4CEE3;
-	Mon, 17 Mar 2025 16:46:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742230002;
-	bh=+gpgx1f/Gxc036wNUlCVYAX4Xs//acADzBzuOoLrCmI=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=E0LGuR5c3dRlpA/MhUe7lD4FiVOvrNIjJrfPxHy9duObMzVhXZH25ijbk3UeSKhu+nqLyaxs+qxYpC+BfGHOtres8R/LLmEEgdf2GqsN88C4WGGLvdUzzoNK9J0X/+mjQQEfOcoE2AeBn0awAcRiJ9mgluk+lTlGFv2KnatI3Vc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=yTSNjT/J; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 364ABC4CEE3;
+	Mon, 17 Mar 2025 16:48:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1742230091;
+	bh=6LRjey91kAKbtfGT1kdcYHXdkjzmNzELr3+IyaNjcS0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lSyJzNu1XI24vzUJST7LRc1wPpIUK8XSunvC5pBTzK2p5A0BCsBPOlhHmLIugLhc1
-	 hYUD6cYUW4tCNSVi0feAcVrxk3oPVFcvf435Zmn0WabvlwIQKNdQzpULX1re49daXH
-	 CIYEP8106uxqZHyfkuGEh19aH+6wBph+fomwnc7eR+Dz5Hek0pqkCAua1CjrZ6j9Bu
-	 ezxDtFDcVWzhrk3SPzqFE/Fjy/XWo19PzHMHoYnNtDCMw/JhrBWHOV2Tw3Ldmohkw/
-	 xMb57F7AEUzAZAsDfqa5oMRslK4Kt3EnBaUOx+LMtbgDOhqxrllkRQwAARN76f2KJk
-	 n0t3MYcYMjhRw==
-Date: Mon, 17 Mar 2025 09:46:40 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Chun-Tse Shao <ctshao@google.com>, linux-kernel@vger.kernel.org,
-	peterz@infradead.org, mingo@redhat.com, mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-	irogers@google.com, adrian.hunter@intel.com,
-	kan.liang@linux.intel.com, terrelln@fb.com, leo.yan@arm.com,
-	james.clark@linaro.org, christophe.leroy@csgroup.eu,
-	ben.gainey@arm.com, linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] perf record: Add 8-byte aligned event type
- PERF_RECORD_COMPRESSED2
-Message-ID: <Z9hR8M-SQ5TD2qMX@google.com>
-References: <20250303183646.327510-1-ctshao@google.com>
- <Z9TXabugl374M3bA@google.com>
- <Z9hFJtEKfsGGUDMg@x1>
- <Z9hLKsZOfouM3K7H@x1>
+	b=yTSNjT/J5Efwj3gx46L4Ufx0r3DJe6UhGPJayknglFogTlfkykNgDkPmIXSkupWHS
+	 p1wAVNw6B4xvlrEvLvL0GGEW00yuf1bTabAWYWNz0/Vo9HRUE6xxXoEi4lxJ0dCrQl
+	 +OKNVOqflFYIU6/sCQ9HSYROAwq9Mv/c7DQ3Ztn0=
+Date: Mon, 17 Mar 2025 17:46:46 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Sudeep Holla <sudeep.holla@arm.com>
+Cc: linux-kernel@vger.kernel.org, Andre Przywara <andre.przywara@arm.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
+	linux-crypto@vger.kernel.org
+Subject: Re: [PATCH 2/9] hwrng: arm-smccc-trng - transition to the faux
+ device interface
+Message-ID: <2025031731-anyhow-askew-5731@gregkh>
+References: <20250317-plat2faux_dev-v1-0-5fe67c085ad5@arm.com>
+ <20250317-plat2faux_dev-v1-2-5fe67c085ad5@arm.com>
+ <2025031748-deface-wasting-b635@gregkh>
+ <Z9gwNaUoTmqViPrh@bogus>
+ <2025031709-unmoved-carton-c130@gregkh>
+ <Z9g1CV6jgea8VpW4@bogus>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Z9hLKsZOfouM3K7H@x1>
+In-Reply-To: <Z9g1CV6jgea8VpW4@bogus>
 
-On Mon, Mar 17, 2025 at 01:17:46PM -0300, Arnaldo Carvalho de Melo wrote:
-> On Mon, Mar 17, 2025 at 12:52:09PM -0300, Arnaldo Carvalho de Melo wrote:
-> > On Fri, Mar 14, 2025 at 06:27:05PM -0700, Namhyung Kim wrote:
-> > > On Mon, Mar 03, 2025 at 10:32:40AM -0800, Chun-Tse Shao wrote:
-> > > > The original PERF_RECORD_COMPRESS is not 8-byte aligned, which can cause
-> > > > asan runtime error:
+On Mon, Mar 17, 2025 at 02:43:21PM +0000, Sudeep Holla wrote:
+> On Mon, Mar 17, 2025 at 03:30:15PM +0100, Greg Kroah-Hartman wrote:
+> > On Mon, Mar 17, 2025 at 02:22:45PM +0000, Sudeep Holla wrote:
+> > > On Mon, Mar 17, 2025 at 02:04:27PM +0100, Greg Kroah-Hartman wrote:
+> > > > On Mon, Mar 17, 2025 at 10:13:14AM +0000, Sudeep Holla wrote:
+> > > > > +MODULE_ALIAS("faux:smccc_trng");
+> > > > 
+> > > > Why do you need a branch new alias you just made up?  Please don't add
+> > > > that for these types of devices, that's not going to work at all (just
+> > > > like the platform alias really doesn't work well.
+> > > > 
+> > > 
+> > > Sure I will drop all of those alias. One question I have if the idea of
+> > > creating a macro for this is good or bad ? I need this initial condition
+> > > flag to make use of such a macro, so I didn't go for it, but it does
+> > > remove some boiler-plate code.
+> > > 
+> > > Let me know what do you think of it ?
+> > > 
+> > > Regards,
+> > > Sudeep
+> > > 
+> > > -->8 
+> > > diff --git i/include/linux/device/faux.h w/include/linux/device/faux.h
+> > > index 9f43c0e46aa4..8af3eaef281a 100644
+> > > --- i/include/linux/device/faux.h
+> > > +++ w/include/linux/device/faux.h
+> > > @@ -66,4 +66,30 @@ static inline void faux_device_set_drvdata(struct faux_device *faux_dev, void *d
+> > >  	dev_set_drvdata(&faux_dev->dev, data);
+> > >  }
+> > >  
+> > > +#define module_faux_driver(name, tag, init_cond)			\
+> > > +static struct faux_device_ops tag##_ops = {				\
+> > > +	.probe = tag##_probe,						\
+> > > +	.remove = tag##_remove,						\
+> > > +};									\
+> > > +									\
+> > > +static struct faux_device *tag##_dev;					\
+> > > +									\
+> > > +static int __init tag##_init(void)					\
+> > > +{									\
+> > > +	if (!(init_cond))						\
+> > > +		return 0;						\
+> > > +	tag##_dev = faux_device_create(name, NULL, &tag##_ops);		\
+> > > +	if (!tag##_dev)							\
+> > > +		return -ENODEV;						\
+> > > +									\
+> > > +	return 0;							\
+> > > +}									\
+> > > +module_init(tag##_init);						\
+> > > +									\
+> > > +static void __exit tag##_exit(void)					\
+> > > +{									\
+> > > +	faux_device_destroy(tag##_dev);					\
+> > > +}									\
+> > > +module_exit(tag##_exit);						\
+> > 
+> > Yes, I see that some of your changes could be moved to use this, so I
+> > think it is worth it.
+> > 
+> > But why can't you use module_driver() here?  Ah, that init_cond?  And
+> > the device.  Hm, why not put the init_cond in the probe callback?  That
+> > should make this macro simpler.
+> > 
 > 
-> > > >   # Build with asan
-> > > >   $ make -C tools/perf O=/tmp/perf DEBUG=1 EXTRA_CFLAGS="-O0 -g -fno-omit-frame-pointer -fsanitize=undefined"
-> > > >   # Test success with many asan runtime errors:
-> > > >   $ /tmp/perf/perf test "Zstd perf.data compression/decompression" -vv
-> > > >    83: Zstd perf.data compression/decompression:
-> > > >   ...
-> > > >   util/session.c:1959:13: runtime error: member access within misaligned address 0x7f69e3f99653 for type 'union perf_event', which requires 13 byte alignment
-> > > >   0x7f69e3f99653: note: pointer points here
-> > > >    d0  3a 50 69 44 00 00 00 00  00 08 00 bb 07 00 00 00  00 00 00 44 00 00 00 00  00 00 00 ff 07 00 00
-> > > >                 ^
-> > > >   util/session.c:2163:22: runtime error: member access within misaligned address 0x7f69e3f99653 for type 'union perf_event', which requires 8 byte alignment
-> > > >   0x7f69e3f99653: note: pointer points here
-> > > >    d0  3a 50 69 44 00 00 00 00  00 08 00 bb 07 00 00 00  00 00 00 44 00 00 00 00  00 00 00 ff 07 00 00
-> > > >                 ^
-> > > >   ...
-> 
-> > > > Since there is no way to align compressed data in zstd compression, this
-> > > > patch add a new event type `PERF_RECORD_COMPRESSED2`, which adds a field
-> > > > `data_size` to specify the actual compressed data size. The
-> > > > `header.size` contains the total record size, including the padding at
-> > > > the end to make it 8-byte aligned.
-> 
-> > > > Tested with `Zstd perf.data compression/decompression`
-> 
-> > > Looks good to me.
->  
-> > > Arnaldo, are you ok with adding a new record type for this?
->  
-> > Checking the discussion and the patch.
-> 
-> My first impression yesterday when I saw this on the smartphone was: how
-> will an old perf binary handle the new PERF_RECORD_COMPRESSED2? Will it
-> ignore it while emitting a warning, since it can be skipped and then
-> what we will get a partial view?
-> 
-> Having some session output showing how an older perf binary handles
-> PERF_RECORD_COMPRESS2 would be informative.
+> I tried to keep the creation of the device itself conditional the way
+> it is today. Deferring the check to probe means the device gets created
+> unconditionally but won't be probed which is fine I guess. I was thinking
+> that device shouldn't show up on the bus if the condition is not met to
+> match the current scenario. I might be overthinking there.
 
-I think it'll show the below warning:
+It will not show up anywhere if the probe call fails.
 
-  <offset> [<size>]: failed to process type: 83
+> > And don't use "tag", that's an odd term here, just copy what
+> > module_driver() does instead please.
+> > 
+> 
+> Sure, I will not use it. It was just a name that came to my mind.
+> 
+> Also creating the macro builds the dependency. Do you prefer to push the
+> changes as is and the macro in one release and make use of the macro later.
 
-Thanks,
-Namhyung
+Let's see a series that adds the macro and uses it and we can figure it
+out from there.  If the macro is sane, I can just take that now for
+6.15-rc1 and then you can send the others to the different subsystems
+after that shows up.
 
+thanks,
+
+greg k-h
 
