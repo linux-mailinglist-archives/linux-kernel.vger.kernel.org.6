@@ -1,161 +1,133 @@
-Return-Path: <linux-kernel+bounces-563681-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563683-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A98BAA6469B
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:08:20 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38E82A646A2
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:09:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B88C1893D95
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 09:08:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5300D188B760
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 09:09:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89C3E221F1F;
-	Mon, 17 Mar 2025 09:08:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C55AC221DA4;
+	Mon, 17 Mar 2025 09:08:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="mdmwEFVO";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="34eQYoD0";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="mdmwEFVO";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="34eQYoD0"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="dX4kwwI8"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 734A7221F1E
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 09:08:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9055D21B1A3;
+	Mon, 17 Mar 2025 09:08:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742202481; cv=none; b=bYCNETCEp/+wsQnO0GhDdDGfX73n1qiCnD4IwQYZUaq4GEzVjld/GD0RFljgzTnwAjloGDiibueTeHjS3snPrg2Ozj+5xW7IaZ2M+t2TtOtiZxKpU40GXQh/FmEOD9/T9H8cld0eEOPNaSUxynmEQTFI5Cfr3TbqRIdCsw+TnEE=
+	t=1742202528; cv=none; b=k1csX21BSkKp7r73ujvN4d5ceqBkSL7ItjxgDq7arDVKvy7/xMBhKkH/UZUnF/saldUm0vz8qRoEQEbyXkF7NYjN3sYraQaWXZOGzrlHkwKjMfVnd6uNpcAPMNnGPPnbZ9eyz//JKjw9fgOHroUJJ7/rH9xKZF720xnNJXciOvk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742202481; c=relaxed/simple;
-	bh=UgPBZvjsFQmiYNA6znXuMhzjQ271ggAz4JFSOSvqvZ4=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=T8mN6sSB6WpYLcuIbILpPLHEZvxQ8AnRZ35Gia/CtqmVYh9kxaQzkpYM3NY28Ezkm7MdH848QvH+Ou7g1eQ4dDfibLHwCBF26BT9OYupFm3E8eRoF7CzWMkZcakgkwJKMwwTGTZDFkuvnrCpvpVJeuJQBWXquPW0zPm2mkTMggU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=mdmwEFVO; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=34eQYoD0; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=mdmwEFVO; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=34eQYoD0; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from pobox.suse.cz (unknown [10.100.2.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id A9C0321D92;
-	Mon, 17 Mar 2025 09:07:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1742202478; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wnKFNLrLhAN97UeP+wzQU9edyI2DXXEOjOLsBP6B4eQ=;
-	b=mdmwEFVOvZgIbkhQEoa9slH513xeG7AGOURUICIl1Jp1Fdeh6vi5MxfuQG/2/rlt5ZrG4/
-	Tf5ea1HCt/QclEZrMFSWgbmODsbF78/k2BaRnKOZCXfKo9EcPL3WpfEdj7aOUo2BODlNYq
-	7e1qO1IA46lUQlj+Yp1PiVTnVtzAJRA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1742202478;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wnKFNLrLhAN97UeP+wzQU9edyI2DXXEOjOLsBP6B4eQ=;
-	b=34eQYoD0Q40srGmeBJ5kuXok7ZTv2bSKWLuqtLeeouHNL9TsGu4KbnrWwBXioFteWi9ZfU
-	JNZ5yfK6tXPri+Ag==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1742202478; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wnKFNLrLhAN97UeP+wzQU9edyI2DXXEOjOLsBP6B4eQ=;
-	b=mdmwEFVOvZgIbkhQEoa9slH513xeG7AGOURUICIl1Jp1Fdeh6vi5MxfuQG/2/rlt5ZrG4/
-	Tf5ea1HCt/QclEZrMFSWgbmODsbF78/k2BaRnKOZCXfKo9EcPL3WpfEdj7aOUo2BODlNYq
-	7e1qO1IA46lUQlj+Yp1PiVTnVtzAJRA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1742202478;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wnKFNLrLhAN97UeP+wzQU9edyI2DXXEOjOLsBP6B4eQ=;
-	b=34eQYoD0Q40srGmeBJ5kuXok7ZTv2bSKWLuqtLeeouHNL9TsGu4KbnrWwBXioFteWi9ZfU
-	JNZ5yfK6tXPri+Ag==
-Date: Mon, 17 Mar 2025 10:07:58 +0100 (CET)
-From: Miroslav Benes <mbenes@suse.cz>
-To: Filipe Xavier <felipeaggger@gmail.com>
-cc: Josh Poimboeuf <jpoimboe@kernel.org>, Jiri Kosina <jikos@kernel.org>, 
-    Petr Mladek <pmladek@suse.com>, Joe Lawrence <joe.lawrence@redhat.com>, 
-    Shuah Khan <shuah@kernel.org>, Marcos Paulo de Souza <mpdesouza@suse.com>, 
-    live-patching@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-    linux-kernel@vger.kernel.org, felipe_life@live.com
-Subject: Re: [PATCH PATCH 2/2] selftests: livepatch: test if ftrace can trace
- a livepatched function
-In-Reply-To: <6d9b9394-690b-49a3-b8df-7ef510c96c00@gmail.com>
-Message-ID: <alpine.LSU.2.21.2503171006260.4236@pobox.suse.cz>
-References: <20250306-ftrace-sftest-livepatch-v1-0-a6f1dfc30e17@gmail.com> <20250306-ftrace-sftest-livepatch-v1-2-a6f1dfc30e17@gmail.com> <alpine.LSU.2.21.2503141411010.4442@pobox.suse.cz> <6d9b9394-690b-49a3-b8df-7ef510c96c00@gmail.com>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+	s=arc-20240116; t=1742202528; c=relaxed/simple;
+	bh=JTPXIlCvhGNW08kSL9ZQe12t3Ga0p3gZHTOp47t1/Sk=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=tZPhnSZILMnJFtth1okOvXaHueLtLkYuOjvQxv8l0TOXuivey8WsTIu3d50b/789w117D+mJTp7eNQ4aBmc4tomV7jK0L/LuvrPnBFgQCYzx45mKGgYKvJWO4B/8GC+cnxY27dVa8+tZ5WQr5YHOoxmMLQrBK5BqJVx2L5n5HVQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=dX4kwwI8; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1742202526; x=1773738526;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=JTPXIlCvhGNW08kSL9ZQe12t3Ga0p3gZHTOp47t1/Sk=;
+  b=dX4kwwI8dw8Zhn8yhRngLwo+orRPkHGr/qJllBpAFyEXPfx8IWCdpXKO
+   2hjQ+Y5Gixk8b7lNmmCWgVYq9XZrphfCDxKRAQJZIRzkSmiBZZ31CawiU
+   ZyS25IHTk/oGwRpxl+eKHcCFznj9+RdnzXLGQv4it/Jla9m4eZ/GEikEY
+   fKhvBwXJX+V2EcVKBeysnLE41IwiJRwZHt2rL8k6e7qXPP8VSRYJ7L6Av
+   Gl7Z+oSpIlE5gCLWPsKRw68zxH+cu94APsNoNbZc/WscR82ASluw/kbRi
+   hEUyIlX1uuiu+mBHKq4S1g8oOv0WFYdiHnMdwM2hBOl4EiuWDcTgrCECp
+   Q==;
+X-CSE-ConnectionGUID: cdV/yO62T2+o2ggmCIuq7A==
+X-CSE-MsgGUID: TKPR0AqgSTCkH9O884aMCw==
+X-IronPort-AV: E=Sophos;i="6.14,253,1736838000"; 
+   d="scan'208";a="43507978"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa1.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 17 Mar 2025 02:08:40 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44; Mon, 17 Mar 2025 02:08:10 -0700
+Received: from marius-VM.mshome.net (10.10.85.11) by chn-vm-ex01.mchp-main.com
+ (10.10.85.143) with Microsoft SMTP Server id 15.1.2507.44 via Frontend
+ Transport; Mon, 17 Mar 2025 02:08:08 -0700
+From: <marius.cristea@microchip.com>
+To: <jic23@kernel.org>, <lars@metafoo.de>, <robh@kernel.org>
+CC: <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <oskar.andero@gmail.com>,
+	<linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <marius.cristea@microchip.com>
+Subject: [PATCH v2 0/2] adding support for Microchip PAC194X Power Monitor
+Date: Mon, 17 Mar 2025 11:08:01 +0200
+Message-ID: <20250317090803.30003-1-marius.cristea@microchip.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Score: -4.30
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	ARC_NA(0.00)[];
-	FREEMAIL_TO(0.00)[gmail.com];
-	RCVD_COUNT_ZERO(0.00)[0];
-	MID_RHS_MATCH_FROMTLD(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com,live.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[kernel.org,suse.com,redhat.com,vger.kernel.org,live.com];
-	MIME_TRACE(0.00)[0:+];
-	FROM_EQ_ENVFROM(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	TO_DN_SOME(0.00)[]
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On Fri, 14 Mar 2025, Filipe Xavier wrote:
+From: Marius Cristea <marius.cristea@microchip.com>
 
-> On 3/14/25 10:14 AM, Miroslav Benes wrote:
-> 
-> > Hi,
-> >
-> >> +start_test "trace livepatched function and check that the live patch
-> >> remains in effect"
-> >> +
-> >> +FUNCTION_NAME="livepatch_cmdline_proc_show"
-> >> +
-> >> +load_lp $MOD_LIVEPATCH
-> >> +trace_function "$FUNCTION_NAME"
-> > trace_funtion() calls cleanup_ftrace() to prepare the test. Ok.
-> >
-> >> +if [[ "$(cat /proc/cmdline)" == "$MOD_LIVEPATCH: this has been live
-> >> patched" ]] ; then
-> >> +	log "livepatch: ok"
-> >> +fi
-> >> +
-> >> +check_traced_function "$FUNCTION_NAME"
-> >> +
-> >> +cleanup_tracing
-> > Here, I suppose, cleanup_tracing() is called to clean up after the check
-> > above so that nothing stays and more tests can be added later. Right?
-> > Would it make sense then to call cleanup_tracing() in
-> > check_traced_function()? I think it would less error prone.
-> > If needed, check_traced_function() can always be upgraded so that it
-> > checks for more traced functions.
-> 
-> In cases where we need to check two or more functions with
-> check_traced_function,
-> 
-> if there is cleanup_tracing, it will not be possible, make sense?
-> 
-> e.g: function1 call -> function2 call -> function3.
+Adding support for Microchip PAC194X and PAC195X series of Power Monitor with
+Accumulator chip family. This driver covers the following part numbers:
+ - PAC1941, PAC1941_2, PAC1942, PAC1942_2, PAC1943, PAC1944
+ - PAC1951, PAC1951_2, PAC1952, PAC1952_2, PAC1953, PAC1954
 
-I meant... check_traced_function() (or check_traced_functions() in this 
-case) can have multiple arguments. You would loop over them inside and 
-then clean up. Or did I misunderstood?
+The PAC194X family supports 9V Full-Scale Range and the PAC195X supports 32V
+Full-Scale Range.
+There are two versions of the PAC194X/5X: the PAC194X/5X-1 devices are for
+high-side current sensing and the PAC194X/5X-2 devices are for low-side current
+sensing or floating VBUS applications.
+The PAC194X/5X-1 is named shortly PAC194X/5X.
 
-Miroslav
+Differences related to previous patch:
+v2:
+- fix review comments device tree binding:
+    remove underscore from names
+    add names to the interrupts and list them
+    add a better description for new properties
+- fix review comments driver:
+    fix coding style issues
+    use bitmap for checking the active channels
+    keep the "pac1944_get_unaligned_be56" here because the change wasn't acceted
+      into the asm-generic.
+    document new added attributes
+    remove the "scan" part till we support buffered capture
+    remove "unlikely" marking
+    add masks up in some array of const structures to avoid some case statements
+    remove pac1944_mutex_destroy function
+    replace some functions with a macro (just for testing)
+    replace dev_err with dev_err_probe in functions used in pac1944_probe
+    
+v1:
+- first version committed to review
+
+Marius Cristea (2):
+  dt-bindings: iio: adc: adding support for PAC194X
+  iio: adc: adding support for PAC194X
+
+ .../ABI/testing/sysfs-bus-iio-adc-pac1944     |  118 +
+ .../bindings/iio/adc/microchip,pac1944.yaml   |  195 +
+ MAINTAINERS                                   |    7 +
+ drivers/iio/adc/Kconfig                       |   12 +
+ drivers/iio/adc/Makefile                      |    1 +
+ drivers/iio/adc/pac1944.c                     | 3314 +++++++++++++++++
+ 6 files changed, 3647 insertions(+)
+ create mode 100644 Documentation/ABI/testing/sysfs-bus-iio-adc-pac1944
+ create mode 100644 Documentation/devicetree/bindings/iio/adc/microchip,pac1944.yaml
+ create mode 100644 drivers/iio/adc/pac1944.c
+
+
+base-commit: 577a66e2e634f712384c57a98f504c44ea4b47da
+-- 
+2.45.2
+
 
