@@ -1,45 +1,47 @@
-Return-Path: <linux-kernel+bounces-563380-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563381-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED573A64091
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 07:02:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA2FFA64093
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 07:03:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B1FD16C150
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 06:02:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E31283AA2D8
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 06:03:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84EE721505B;
-	Mon, 17 Mar 2025 06:02:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DA59215047;
+	Mon, 17 Mar 2025 06:03:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="a12kam4p"
-Received: from out30-111.freemail.mail.aliyun.com (out30-111.freemail.mail.aliyun.com [115.124.30.111])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RT59GHJl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD26C2E3373;
-	Mon, 17 Mar 2025 06:02:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.111
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74E5C2E3373
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 06:03:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742191362; cv=none; b=J6t4q0yFcxLMS6Rz8JHiMaif8Gpo1D1pHGXIQ8mCezGtmHrbhxooCJQ0sqV+3hW45/fFVa6QY59JMY7zIZzgi5STOhUaYDmeZVkpcPfafzKOfdJfrlLciTFqrGZC+BzBdt5teNw5S/R1UP5C7gjoQAMiNMG4dXw86y2iCRLDlaQ=
+	t=1742191414; cv=none; b=VHDOjpQVyL/h6Rk9N4PkL7G1/yi9cQaMBfnjs9JDauovNriBHOUSA34cPw7dsNDLwk8/FpVw35YZuqBkxHBYiuejASIAGEryNfyqqJQtDG0PeEr6l+UBFXB0s2PDceG55a+uX2M7qB0K1hXSv76WFE87tTe5zeYHRnwsScV3VMA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742191362; c=relaxed/simple;
-	bh=sOig/ORpClWPiiaToPGJq5t+0VEGnCE5ZesaAcaMFAM=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=qiSz6m3eHG8XZE9O8lvqf2cDY/P4sjTHUwAs6OLKstOSBhE0X9wWG2XlAnAehbldaFmfplCqoXCFnQol70StHk7RCL8mxIbXqLpvRFZHtNSen6r+MW27zli5PA9FYiAORIqoxkZP58NWcEVWjQox1J8uvg2AmyIKO8fyZPNL168=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=a12kam4p; arc=none smtp.client-ip=115.124.30.111
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1742191349; h=Message-ID:Date:MIME-Version:Subject:From:To:Content-Type;
-	bh=b5GxWT6HNGG5WO59UC9kgPZf/Ys/EEvS9UccUUiRohs=;
-	b=a12kam4pxZPBeTjI5STZtSuyYYN6uCVjFR2GQYStNAAFsywgQdwHIR70nnEr9AD43HHwpWULwBG2Baoi+cvajiz6TmJ8ip/n92cNkhKjGEXgQ6ZxocGPjjVt7rA6UxqVHuNy6xdUb2nzIZRYAthpPCNjsm2oKoymhBSVFl+/1/M=
-Received: from 30.246.160.93(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WRZvNEt_1742191346 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Mon, 17 Mar 2025 14:02:27 +0800
-Message-ID: <362fcb01-8d9c-49e6-be83-5a784c1e5f3e@linux.alibaba.com>
-Date: Mon, 17 Mar 2025 14:02:26 +0800
+	s=arc-20240116; t=1742191414; c=relaxed/simple;
+	bh=9GuJYZNYYI8a++OQNnQqfYWr0hu/Ni006bEAgzjYOk4=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=kole2/akJPrvouP68YOvdJPYE/8YfR62ciHdsKcfSIGOYx1JnVXLxVTYePOT0WGd4Yv/1St6EnzdO3zVx6smiaQfEOEtQX0BVxpkUXfONsr7ZH/wO/uLXC0KATwRV5wrepyCZJQtxIr2f3t1LKW8E+8InQ60rbir+ia62EP5BpE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RT59GHJl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0586C4CEE3;
+	Mon, 17 Mar 2025 06:03:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742191413;
+	bh=9GuJYZNYYI8a++OQNnQqfYWr0hu/Ni006bEAgzjYOk4=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=RT59GHJld+0mf/54D79lBO7EzTph/n9ZtqLsXyJUw6nxnKDLZi1shV1/+JJheYT2s
+	 ilR/GHkvuK20xHoddW+xX5eGkvseEHWHJjFQ3DxGy3TOyNsELtTaT7UPLfLVlFvRj6
+	 y1vm9fpZe86I+8qzbCYsBUnWd+G6tdtcix577CF0hWh81f5p1LuQ89tTrdmoZWy56H
+	 arCb05nMlK+79yoJf2DKuYF1ZbAgfjsjN/A06tCP4M0msYDs7CPlWWPHPYE+4T83a7
+	 9KDjhfQF2pozZnwk9wykLMpIOR174BJlaNSxuyjBneDmpQbJahgQPCE0vcZeb0y0Q8
+	 oXVgiopNNJhAw==
+Message-ID: <04050888-7abf-40fa-98d6-6215b8ba989e@kernel.org>
+Date: Mon, 17 Mar 2025 14:03:30 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -47,78 +49,152 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 3/3] PCI/AER: Report fatal errors of RCiEP and EP if
- link recoverd
-From: Shuai Xue <xueshuai@linux.alibaba.com>
-To: Sathyanarayanan Kuppuswamy <sathyanarayanan.kuppuswamy@linux.intel.com>,
- linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, bhelgaas@google.com, kbusch@kernel.org
-Cc: mahesh@linux.ibm.com, oohall@gmail.com, Jonathan.Cameron@huawei.com,
- terry.bowman@amd.com, tianruidong@linux.alibaba.com
-References: <20250217024218.1681-1-xueshuai@linux.alibaba.com>
- <20250217024218.1681-4-xueshuai@linux.alibaba.com>
- <8a833aaf-53aa-4e56-a560-2b84a6e9c28c@linux.intel.com>
- <1dea64ef-3c9f-4bff-820f-34d8f3a6a1d4@linux.alibaba.com>
-In-Reply-To: <1dea64ef-3c9f-4bff-820f-34d8f3a6a1d4@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Cc: chao@kernel.org, linux-kernel@vger.kernel.org,
+ Hongzhen Luo <hongzhen@linux.alibaba.com>,
+ linux-erofs mailing list <linux-erofs@lists.ozlabs.org>
+Subject: Re: [PATCH v5] erofs: use Z_EROFS_LCLUSTER_TYPE_MAX to simplify
+ switches
+To: Gao Xiang <hsiangkao@linux.alibaba.com>
+References: <20250210032923.3382136-1-hongzhen@linux.alibaba.com>
+ <511c5fd9-307e-4c56-9d20-796dd06f775c@kernel.org>
+ <489be3d1-a755-4756-ba82-a8f5a0dc9156@linux.alibaba.com>
+Content-Language: en-US
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <489be3d1-a755-4756-ba82-a8f5a0dc9156@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-
-
-在 2025/3/3 12:33, Shuai Xue 写道:
+On 3/17/25 01:17, Gao Xiang wrote:
+> Hi Chao,
 > 
+> On 2025/3/16 10:36, Chao Yu wrote:
+>> On 2025/2/10 11:29, Hongzhen Luo wrote:
+>>> There's no need to enumerate each type.  No logic changes.
+>>>
+>>> Signed-off-by: Hongzhen Luo <hongzhen@linux.alibaba.com>
+>>
+>> Looks good to me, feel free to add:
+>>
+>> Reviewed-by: Chao Yu <chao@kernel.org>
+>>
+>> And one minor comment below.
+>>
+>>> diff --git a/fs/erofs/zmap.c b/fs/erofs/zmap.c
+>>> index 689437e99a5a..d278ebd60281 100644
+>>> --- a/fs/erofs/zmap.c
+>>> +++ b/fs/erofs/zmap.c
+>>> @@ -265,26 +265,22 @@ static int z_erofs_extent_lookback(struct z_erofs_maprecorder *m,
+>>>           if (err)
+>>>               return err;
+>>> -        switch (m->type) {
+>>> -        case Z_EROFS_LCLUSTER_TYPE_NONHEAD:
+>>> +        if (m->type >= Z_EROFS_LCLUSTER_TYPE_MAX) {
+>>> +            erofs_err(sb, "unknown type %u @ lcn %lu of nid %llu",
+>>> +                  m->type, lcn, vi->nid);
+>>> +            DBG_BUGON(1);
+>>> +            return -EOPNOTSUPP;
+>>  > +        } else if (m->type == Z_EROFS_LCLUSTER_TYPE_NONHEAD) {>               lookback_distance = m->delta[0];
+>>>               if (!lookback_distance)
+>>> -                goto err_bogus;
+>>> +                break;
+>>>               continue;
+>>> -        case Z_EROFS_LCLUSTER_TYPE_PLAIN:
+>>> -        case Z_EROFS_LCLUSTER_TYPE_HEAD1:
+>>> -        case Z_EROFS_LCLUSTER_TYPE_HEAD2:
+>>> +        } else {
+>>>               m->headtype = m->type;
+>>>               m->map->m_la = (lcn << lclusterbits) | m->clusterofs;
+>>>               return 0;
+>>> -        default:
+>>> -            erofs_err(sb, "unknown type %u @ lcn %lu of nid %llu",
+>>> -                  m->type, lcn, vi->nid);
+>>> -            DBG_BUGON(1);
+>>> -            return -EOPNOTSUPP;
+>>
+>> Should return EFSCORRUPTED here? is m->type >= Z_EROFS_LCLUSTER_TYPE_MAX a possible
+>> case?
 > 
-> 在 2025/3/3 11:43, Sathyanarayanan Kuppuswamy 写道:
->>
->> On 2/16/25 6:42 PM, Shuai Xue wrote:
->>> The AER driver has historically avoided reading the configuration space of
->>> an endpoint or RCiEP that reported a fatal error, considering the link to
->>> that device unreliable. Consequently, when a fatal error occurs, the AER
->>> and DPC drivers do not report specific error types, resulting in logs like:
->>>
->>>    pcieport 0000:30:03.0: EDR: EDR event received
->>>    pcieport 0000:30:03.0: DPC: containment event, status:0x0005 source:0x3400
->>>    pcieport 0000:30:03.0: DPC: ERR_FATAL detected
->>>    pcieport 0000:30:03.0: AER: broadcast error_detected message
->>>    nvme nvme0: frozen state error detected, reset controller
->>>    nvme 0000:34:00.0: ready 0ms after DPC
->>>    pcieport 0000:30:03.0: AER: broadcast slot_reset message
->>>
->>> AER status registers are sticky and Write-1-to-clear. If the link recovered
->>> after hot reset, we can still safely access AER status of the error device.
->>> In such case, report fatal errors which helps to figure out the error root
->>> case.
->>>
->>> After this patch, the logs like:
->>>
->>>    pcieport 0000:30:03.0: EDR: EDR event received
->>>    pcieport 0000:30:03.0: DPC: containment event, status:0x0005 source:0x3400
->>>    pcieport 0000:30:03.0: DPC: ERR_FATAL detected
->>>    pcieport 0000:30:03.0: AER: broadcast error_detected message
->>>    nvme nvme0: frozen state error detected, reset controller
->>>    pcieport 0000:30:03.0: waiting 100 ms for downstream link, after activation
->>>    nvme 0000:34:00.0: ready 0ms after DPC
->>>    nvme 0000:34:00.0: PCIe Bus Error: severity=Uncorrectable (Fatal), type=Data Link Layer, (Receiver ID)
->>>    nvme 0000:34:00.0:   device [144d:a804] error status/mask=00000010/00504000
->>>    nvme 0000:34:00.0:    [ 4] DLP                    (First)
->>>    pcieport 0000:30:03.0: AER: broadcast slot_reset message
->>
->> IMO, above info about device error details is more of a debug info. Since the
->> main use of this info use to understand more details about the recovered
->> DPC error. So I think is better to print with debug tag. Lets see what others
->> think.
->>
->> Code wise, looks fine to me.
+> It's impossible by the latest on-disk definition, see:
+> #define Z_EROFS_LI_LCLUSTER_TYPE_MASK    (Z_EROFS_LCLUSTER_TYPE_MAX - 1)
 > 
-> thanks, looking forward to more feedback.
+> Previously, it was useful before Z_EROFS_LCLUSTER_TYPE_HEAD2 was
+> introduced, but the `default:` case is already deadcode now.
+
+Xiang, thanks for the explanation.
+
+So seems it can happen when mounting last image w/ old kernel which can not
+support newly introduced Z_EROFS_LCLUSTER_TYPE_* type, then it makes sense to
+return EOPNOTSUPP.
+
+> 
 >>
+>> Btw, we'd better to do sanity check for m->type in z_erofs_load_full_lcluster(),
+>> then we can treat m->type as reliable variable later.
 >>
+>>      advise = le16_to_cpu(di->di_advise);
+>>      m->type = advise & Z_EROFS_LI_LCLUSTER_TYPE_MASK;
+>>      if (m->type >= Z_EROFS_LCLUSTER_TYPE_MAX) {
+> 
+> It's always false here.
 
-Hi, all,
+So, what do you think of this?
 
-Gentle ping.
+From af584b2eacd468f145e9ee31ccdeedb7355d5afd Mon Sep 17 00:00:00 2001
+From: Chao Yu <chao@kernel.org>
+Date: Mon, 17 Mar 2025 13:57:55 +0800
+Subject: [PATCH] erofs: remove dead codes for cleanup
 
-Thanks.
-Shuai
+z_erofs_extent_lookback() and z_erofs_get_extent_decompressedlen() tries
+to do sanity check on m->type, however their caller z_erofs_map_blocks_fo()
+has already checked that, so let's remove those dead codes.
+
+Signed-off-by: Chao Yu <chao@kernel.org>
+---
+ fs/erofs/zmap.c | 14 ++------------
+ 1 file changed, 2 insertions(+), 12 deletions(-)
+
+diff --git a/fs/erofs/zmap.c b/fs/erofs/zmap.c
+index 8de50df05dfe..4d883ec212d7 100644
+--- a/fs/erofs/zmap.c
++++ b/fs/erofs/zmap.c
+@@ -265,17 +265,12 @@ static int z_erofs_extent_lookback(struct z_erofs_maprecorder *m,
+ 		if (err)
+ 			return err;
+
+-		if (m->type >= Z_EROFS_LCLUSTER_TYPE_MAX) {
+-			erofs_err(sb, "unknown type %u @ lcn %lu of nid %llu",
+-				  m->type, lcn, vi->nid);
+-			DBG_BUGON(1);
+-			return -EOPNOTSUPP;
+-		} else if (m->type == Z_EROFS_LCLUSTER_TYPE_NONHEAD) {
++		if (m->type == Z_EROFS_LCLUSTER_TYPE_NONHEAD) {
+ 			lookback_distance = m->delta[0];
+ 			if (!lookback_distance)
+ 				break;
+ 			continue;
+-		} else {
++		} else if (m->type < Z_EROFS_LCLUSTER_TYPE_MAX) {
+ 			m->headtype = m->type;
+ 			m->map->m_la = (lcn << lclusterbits) | m->clusterofs;
+ 			return 0;
+@@ -379,11 +374,6 @@ static int z_erofs_get_extent_decompressedlen(struct z_erofs_maprecorder *m)
+ 			if (lcn != headlcn)
+ 				break;	/* ends at the next HEAD lcluster */
+ 			m->delta[1] = 1;
+-		} else {
+-			erofs_err(inode->i_sb, "unknown type %u @ lcn %llu of nid %llu",
+-				  m->type, lcn, vi->nid);
+-			DBG_BUGON(1);
+-			return -EOPNOTSUPP;
+ 		}
+ 		lcn += m->delta[1];
+ 	}
+-- 
+2.48.1
+
+> 
+> Thanks,
+> Gao Xiang
+> 
 
 
