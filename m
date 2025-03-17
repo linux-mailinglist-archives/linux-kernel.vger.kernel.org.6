@@ -1,123 +1,175 @@
-Return-Path: <linux-kernel+bounces-564060-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564061-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3598CA64CE6
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 12:37:47 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5A1BA64CEC
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 12:38:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55B453A72FA
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:37:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0AAD1166A9D
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:38:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2B162356D0;
-	Mon, 17 Mar 2025 11:37:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="aalPKhNF";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="qMXRRaqW"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC8FF199E8D;
-	Mon, 17 Mar 2025 11:37:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B7952376FF;
+	Mon, 17 Mar 2025 11:38:11 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98EB4199E8D;
+	Mon, 17 Mar 2025 11:38:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742211448; cv=none; b=idrwKCj+TWMxmGYQ3Q5qveGe/GLsJjTrtbpjTGDs6h6xVssUcXLX/MAy2gN7niyEm7pl0IRxZlExeJqwNgoth5NRNZD6Y3eIzyVWVjG348LTsk9mieJgp/FPaHHID51/1k4H3gvvJe8IQ8QolOf5smL6NixwEUG/X0hMB+naXfI=
+	t=1742211491; cv=none; b=sMAPg6Ng4yx/Kb8jj6OZMkdnPCvvLTgF4MbAplLq2iN1mdlZOEBzRlxXXp7pWrTWHEgK7F3m3bPbuYS9gBSoTkwcfoM+tLW5KVuAXXEJHJ9hx8CfVUr1VymAnSGKt45OMNxLd+csk53BlCVUquG9lOiVGP1hvtrdpmscXPCgmI0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742211448; c=relaxed/simple;
-	bh=71CXXVtgzmlwAMwzcr5G9y1vpDB4nXN8Vvsor8sLpO8=;
-	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=V/mPFVg8pGGtKRhDX6XNCtpv2A8MNWzcNK30KOYN2bevIibHAHuQaMabJJzrg9k5VqI5SDc0cW1uPaH6/4VPXhkwkIcimyMjUWd9FPWLcDNiCSIc3eDdXqWTKQyhxe9mU/QC9R8hfrCx6wI7o9dCfqYBxUcRMEC5y9JPrZNrIZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=aalPKhNF; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=qMXRRaqW; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 17 Mar 2025 11:37:20 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1742211444;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=3HSqls5wrVuDhzHqTP6Wk1iiOHTNEb5g1Pk7dwr89RQ=;
-	b=aalPKhNFrw84QFhv7i4MGrxJ6rG/HATqbd6kN+xskv76puwSJHYGxbrr9NMxu8DP+99nae
-	+r9RdDKvQ1O+8B0HNXFEPUL7UUQd29fOURzl4/Zd2M0S9xck8LkCqau45bQ7bCt5Z7FNEY
-	iish/+XKz7RDzFmhHnefNbooCB7TxlGSYjlPoTcvy/+CZtBIdUFAsrLIz2n7fIEWtfqck0
-	S1LNSf/Bxx+licJ8JKWDYg7BKZkaCwThjNYcOaFkCUDmeeHwy2LlMbb+NbT/5Mj6s+laxa
-	0NLEZMitQVgiKPorHaA703k+E4gm030yJ0uLSzOMbtc2JAVkS/ojZSH5s3xYYA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1742211444;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=3HSqls5wrVuDhzHqTP6Wk1iiOHTNEb5g1Pk7dwr89RQ=;
-	b=qMXRRaqWuxKiEbp7N4DYmEMG63+Hdjzpx5s2FYgLSsk69NwCMA/Hljbg93iT5XnriA6Q0B
-	slhdEvB9Cat35pDg==
-From: "tip-bot2 for Ingo Molnar" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: objtool/core] objtool: Use O_CREAT with explicit mode mask
-Cc: Ingo Molnar <mingo@kernel.org>, Josh Poimboeuf <jpoimboe@redhat.com>,
- Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org,
- x86@kernel.org
+	s=arc-20240116; t=1742211491; c=relaxed/simple;
+	bh=EqvvYmOyfgYejPEXBf8UIa6m1QV3pZwmCtppfI9ul+c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HkipM+JPb4dnbep4o0FHJOALbRPH4YCY2TAx8pk0bah+XOQxMZn5Qwqn8UhI/Nktf9D4OYchDbCs+tZZeH8Jvz/ytevutzKVXJgT50B/ki4htYoWVqXpAhOOdqEfNTpg/4ZyOss6/pT8AXK2YruEbXcbXMz5uCJ8q7Z+0BUyhcU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8DB3413D5;
+	Mon, 17 Mar 2025 04:38:16 -0700 (PDT)
+Received: from J2N7QTR9R3.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4BECB3F694;
+	Mon, 17 Mar 2025 04:38:00 -0700 (PDT)
+Date: Mon, 17 Mar 2025 11:37:57 +0000
+From: Mark Rutland <mark.rutland@arm.com>
+To: Roman Kisel <romank@linux.microsoft.com>
+Cc: arnd@arndb.de, bhelgaas@google.com, bp@alien8.de,
+	catalin.marinas@arm.com, conor+dt@kernel.org,
+	dan.carpenter@linaro.org, dave.hansen@linux.intel.com,
+	decui@microsoft.com, haiyangz@microsoft.com, hpa@zytor.com,
+	joey.gouly@arm.com, krzk+dt@kernel.org, kw@linux.com,
+	kys@microsoft.com, lenb@kernel.org, lpieralisi@kernel.org,
+	manivannan.sadhasivam@linaro.org, maz@kernel.org, mingo@redhat.com,
+	oliver.upton@linux.dev, rafael@kernel.org, robh@kernel.org,
+	ssengar@linux.microsoft.com, sudeep.holla@arm.com,
+	suzuki.poulose@arm.com, tglx@linutronix.de, wei.liu@kernel.org,
+	will@kernel.org, yuzenghui@huawei.com, devicetree@vger.kernel.org,
+	kvmarm@lists.linux.dev, linux-acpi@vger.kernel.org,
+	linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, x86@kernel.org, apais@microsoft.com,
+	benhill@microsoft.com, bperkins@microsoft.com,
+	sunilmut@microsoft.com
+Subject: Re: [PATCH hyperv-next v6 02/11] arm64: hyperv: Use SMCCC to detect
+ hypervisor presence
+Message-ID: <Z9gJlQgV3hm1kxY0@J2N7QTR9R3.cambridge.arm.com>
+References: <20250315001931.631210-1-romank@linux.microsoft.com>
+ <20250315001931.631210-3-romank@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174221144059.14745.8349031235521776012.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250315001931.631210-3-romank@linux.microsoft.com>
 
-The following commit has been merged into the objtool/core branch of tip:
+On Fri, Mar 14, 2025 at 05:19:22PM -0700, Roman Kisel wrote:
+> The arm64 Hyper-V startup path relies on ACPI to detect
+> running under a Hyper-V compatible hypervisor. That
+> doesn't work on non-ACPI systems.
+> 
+> Hoist the ACPI detection logic into a separate function. Then
+> use the vendor-specific hypervisor service call (implemented
+> recently in Hyper-V) via SMCCC in the non-ACPI case.
+> 
+> Signed-off-by: Roman Kisel <romank@linux.microsoft.com>
+> Reviewed-by: Michael Kelley <mhklinux@outlook.com>
+> ---
+>  arch/arm64/hyperv/mshyperv.c | 43 +++++++++++++++++++++++++++++++-----
+>  1 file changed, 38 insertions(+), 5 deletions(-)
+> 
+> diff --git a/arch/arm64/hyperv/mshyperv.c b/arch/arm64/hyperv/mshyperv.c
+> index 2265ea5ce5ad..c5b03d3af7c5 100644
+> --- a/arch/arm64/hyperv/mshyperv.c
+> +++ b/arch/arm64/hyperv/mshyperv.c
+> @@ -27,6 +27,41 @@ int hv_get_hypervisor_version(union hv_hypervisor_version_info *info)
+>  	return 0;
+>  }
+>  
+> +static bool __init hyperv_detect_via_acpi(void)
+> +{
+> +	if (acpi_disabled)
+> +		return false;
+> +#if IS_ENABLED(CONFIG_ACPI)
+> +	/*
+> +	 * Hypervisor ID is only available in ACPI v6+, and the
+> +	 * structure layout was extended in v6 to accommodate that
+> +	 * new field.
+> +	 *
+> +	 * At the very minimum, this check makes sure not to read
+> +	 * past the FADT structure.
+> +	 *
+> +	 * It is also needed to catch running in some unknown
+> +	 * non-Hyper-V environment that has ACPI 5.x or less.
+> +	 * In such a case, it can't be Hyper-V.
+> +	 */
+> +	if (acpi_gbl_FADT.header.revision < 6)
+> +		return false;
+> +	return strncmp((char *)&acpi_gbl_FADT.hypervisor_id, "MsHyperV", 8) == 0;
+> +#else
+> +	return false;
+> +#endif
+> +}
+> +
 
-Commit-ID:     73070466ed3b5e4620e03c159ee12a570b171d08
-Gitweb:        https://git.kernel.org/tip/73070466ed3b5e4620e03c159ee12a570b1=
-71d08
-Author:        Ingo Molnar <mingo@kernel.org>
-AuthorDate:    Mon, 17 Mar 2025 12:21:57 +01:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Mon, 17 Mar 2025 12:24:02 +01:00
+The 'acpi_disabled' variable doesn't exist for !CONFIG_ACPI, so its use
+prior to the ifdeffery looks misplaced.
 
-objtool: Use O_CREAT with explicit mode mask
+Usual codestyle is to avoid ifdeffery if possible, using IS_ENABLED().
+Otherwise, use a stub, e.g.
 
-Recent Ubuntu enforces 3-argument open() with O_CREAT:
+| #ifdef CONFIG_ACPI
+| static bool __init hyperv_detect_via_acpi(void)
+| {
+| 	if (acpi_disabled)
+| 		return false;
+| 	
+| 	if (acpi_gbl_FADT.header.revision < 6)
+| 		return false;
+| 	
+| 	return strncmp((char *)&acpi_gbl_FADT.hypervisor_id, "MsHyperV", 8) == 0;
+| }
+| #else
+| static inline bool hyperv_detect_via_acpi(void) { return false; }
+| #endif
 
-      CC      /home/mingo/tip/tools/objtool/builtin-check.o
-    In file included from /usr/include/fcntl.h:341,
-                     from builtin-check.c:9:
-    In function =E2=80=98open=E2=80=99,
-        inlined from =E2=80=98copy_file=E2=80=99 at builtin-check.c:201:11:
-    /usr/include/x86_64-linux-gnu/bits/fcntl2.h:52:11: error: call to =E2=80=
-=98__open_missing_mode=E2=80=99 declared with attribute error: open with O_CR=
-EAT or O_TMPFILE in second argument needs 3 arguments
-       52 |           __open_missing_mode ();
-          |           ^~~~~~~~~~~~~~~~~~~~~~
+Mark.
 
-Use 0400 as the most restrictive mode for the new file.
-
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: linux-kernel@vger.kernel.org
----
- tools/objtool/builtin-check.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/tools/objtool/builtin-check.c b/tools/objtool/builtin-check.c
-index 39ddca6..5f761f4 100644
---- a/tools/objtool/builtin-check.c
-+++ b/tools/objtool/builtin-check.c
-@@ -198,7 +198,7 @@ static int copy_file(const char *src, const char *dst)
- 		return 1;
- 	}
-=20
--	dst_fd =3D open(dst, O_WRONLY | O_CREAT | O_TRUNC);
-+	dst_fd =3D open(dst, O_WRONLY | O_CREAT | O_TRUNC, 0400);
- 	if (dst_fd =3D=3D -1) {
- 		ERROR("can't open '%s' for writing", dst);
- 		return 1;
+> +static bool __init hyperv_detect_via_smccc(void)
+> +{
+> +	uuid_t hyperv_uuid = UUID_INIT(
+> +		0x4d32ba58, 0x4764, 0xcd24,
+> +		0x75, 0x6c, 0xef, 0x8e,
+> +		0x24, 0x70, 0x59, 0x16);
+> +
+> +	return arm_smccc_hyp_present(&hyperv_uuid);
+> +}
+> +
+>  static int __init hyperv_init(void)
+>  {
+>  	struct hv_get_vp_registers_output	result;
+> @@ -35,13 +70,11 @@ static int __init hyperv_init(void)
+>  
+>  	/*
+>  	 * Allow for a kernel built with CONFIG_HYPERV to be running in
+> -	 * a non-Hyper-V environment, including on DT instead of ACPI.
+> +	 * a non-Hyper-V environment.
+> +	 *
+>  	 * In such cases, do nothing and return success.
+>  	 */
+> -	if (acpi_disabled)
+> -		return 0;
+> -
+> -	if (strncmp((char *)&acpi_gbl_FADT.hypervisor_id, "MsHyperV", 8))
+> +	if (!hyperv_detect_via_acpi() && !hyperv_detect_via_smccc())
+>  		return 0;
+>  
+>  	/* Setup the guest ID */
+> -- 
+> 2.43.0
+> 
 
