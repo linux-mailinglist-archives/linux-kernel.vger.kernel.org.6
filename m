@@ -1,229 +1,208 @@
-Return-Path: <linux-kernel+bounces-563370-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563371-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B804BA64021
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 06:49:04 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9E29A64025
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 06:49:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E6DD188BE6E
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 05:49:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A5DD17A6978
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 05:48:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BA671DF990;
-	Mon, 17 Mar 2025 05:48:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 409D921884A;
+	Mon, 17 Mar 2025 05:49:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="EQJ371sv"
-Received: from out30-113.freemail.mail.aliyun.com (out30-113.freemail.mail.aliyun.com [115.124.30.113])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="TedKtWJC"
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AF8818C33B
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 05:48:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.113
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AE6A19E99E
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 05:49:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742190538; cv=none; b=LXvCjsmgfkU3g7WC+Nana7A7GC6j6i2VyLdfbUflYh6GGvkxHpG3BiGVkeuu932BtKfv/6sK8IyCbw9O07ShTvSN0UBQADJYmDUcMC5MG8gK4bBP/ig6iO1F1Bd2Y1fwZkp9me/YDCBTu5SSFJUJsniX1mV5b2VCv4ujoWczHAY=
+	t=1742190549; cv=none; b=bE5xn0lVy3ecMqomvsSEhWq33JCeMA+dXonU1H1RuQbXeVnMj2FLjFcFMQHC5ZNB8ot6BDkljiX45Fj3q2pCnZRyZFu5AoL3ATdwNC4C6JQas9IkvGqwno/GxYKq96My7xGQDXKBzuphkQY+YSLcGEQ8S6kqQznH/YRKVMnftHM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742190538; c=relaxed/simple;
-	bh=JVm2I3eEVcuOd8f4J14oDousZLERFkd8o1n+DJN43H8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=lWjdJRqQt7s2R/Evo69KrFD7y6dG1PLaeVE30IUSj8UougzpzDbxqtKtotpnNtGn6E7rtUCJXQ0BGS3K/GG+Ccpk7/etxBffOtJy6dTd72ZKj2pju9g/Rc+QDMLcXYVE2OobqtYhRTAfFVt76bQaYN5kdKwZVakjD5acaiX3APY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=EQJ371sv; arc=none smtp.client-ip=115.124.30.113
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1742190526; h=From:To:Subject:Date:Message-ID:MIME-Version;
-	bh=JH/MtI7nWIdLEx6Tsg9Uphc5JkLI9ry7g3+yzUJaGuM=;
-	b=EQJ371svYla0nD1EcG6fAVGDO4NRzAiFhzBAkMvSf//CD/1qKd74kVyZXV+Wrn3lJDJsrvBUOKrOkkjEbSWuBJHMTgAXN1UY1mQmZTxKmJ7uUNsoCKbofuDcSW0wVQ2JNKAR7zIXxdyfmSUE41v/6/KFyP0JyKRkiYPXxZfGhWg=
-Received: from x31i01179.sqa.na131.tbsite.net(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WRZQaGx_1742190521 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Mon, 17 Mar 2025 13:48:45 +0800
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-To: linux-erofs@lists.ozlabs.org
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Gao Xiang <hsiangkao@linux.alibaba.com>,
-	Chao Yu <chao@kernel.org>
-Subject: [PATCH v3 06/10] erofs: initialize decompression early
-Date: Mon, 17 Mar 2025 13:48:40 +0800
-Message-ID: <20250317054840.3483000-1-hsiangkao@linux.alibaba.com>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <20250316170729.2325406-1-hsiangkao@linux.alibaba.com>
-References: <20250316170729.2325406-1-hsiangkao@linux.alibaba.com>
+	s=arc-20240116; t=1742190549; c=relaxed/simple;
+	bh=b4ET+kmStg4kYp97gsva7ZKtE4llSQn+wBVk4iJUuCk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=X2yBrwA/QdyuxT1yd/M7ZkBcV8drNjtxKgRBE3fQ8rboujbJR2g0Ed5YMn5bMrFSDtF27bGA4SV2YpPYOM8BL1I/Jan9aTKm+x31zD0fSqh6rWInY34Ht80g8Ocf5vFdhnbFCdfN7GWafE3XUPOUe/60pSM8iAYX3DHfVEoqIkk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=TedKtWJC; arc=none smtp.client-ip=209.85.216.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2ff694d2d4dso1916818a91.0
+        for <linux-kernel@vger.kernel.org>; Sun, 16 Mar 2025 22:49:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1742190546; x=1742795346; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=TKXW11VtaMuobC163bGqLeavsNh8UtgyJ54q+fYvbSw=;
+        b=TedKtWJC5w1iN9qeb2CjOl4mKfVMsKa5nkWK79hbHGJlPfCRBQAa5IrA9mOYnWNgqe
+         9IduPeJYzLzkU8usZjr7jk3voirRm+1n7gRd6ja3llyIQnFziJJzOSx2SJwbtG+VVqB4
+         YN8aoult0weTei2HYES0eIyWDv9yGBFEkkAbPvKC9NVVJdUc2HA+Z/RCMxL46SIZjQ7m
+         VxDFuix95rRUcqPSIbqwu9Q+CIkcgs8LpPvxp7tZ1GfwqeQUNHeVNDx+M8OwyfwusRAv
+         zb4QpGce8VUSoLxzqDg79+8B2YO88TLr1nOJVtEEpVrk6Rl+JYfPpQUoDfaSGil1xHgr
+         ckTg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742190546; x=1742795346;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TKXW11VtaMuobC163bGqLeavsNh8UtgyJ54q+fYvbSw=;
+        b=QVc8bUjERF1e4cRpvV5oVUwa2eA7VHWiHq9CqbfN7SgdVkb14FkhqFsv8nWOJqdem0
+         6d/goBzPw99w7g6PB2W5wKktUmVcvZHYWiNdD8NWMwNYkjNY7u6xYl+GG4fHffvHoqw6
+         En1QD+psDfGg5XPNzM0lP5mj9s0SkcEI12WA4wAUY7yTvIC3Gm0DMyb/h+HSJaeD2bb8
+         wmygqhFqO0ykY4LZwj/uUnwBclx3KuHHH5G8/tCo8xfLUOntsqT8M63DPONbEXSa5/Ff
+         Z74DlfDKvOD82/RrSu6KUpz/nSYyAbywtB8r4p5ihewtJf04pIBWDFaYzDFm1YXs699r
+         EUGw==
+X-Forwarded-Encrypted: i=1; AJvYcCVDnL2ltNZpinEN8TPcEF9/S+LyZImxCavyrrBRAwuqi4vXtXr0z0XdHd4fG0+pQ1C/L058YvqmXSIRSig=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxtdGmGPej7XNaxhtH9obWCzajoR4Ss+IU6TWwaDIHXljyHlD1H
+	8KwCQaLtw8TBfpAQIBFQepvkVkeRg85s/qrYshxRBXhLpsWmTGAtNos+M7QxqQ==
+X-Gm-Gg: ASbGncvt86FwTEbBSEnADA9v4ZgIBxHSK37BO+4VFPdZz3u3kq5OK4LOOgFF8NaoYsk
+	dVTpSjab55xg5M/4kcDvlrdigAaO4vTFQ5zxYtJtQz7fwZgfZIa3aljZ9E/m9D6yC2z7GNZIZfr
+	HWJl+tOo5a6kxCfpTcHYmig2hPPHeUwOsW8sLh1SRIsTp+lGS9+1E+h2mYfe0jNNN3BXa4MyVE0
+	8DMMt6EDxfOH0QrDGavDHL6caYoIwTwcLMURi+fyhijsRHxCoodP8CJ0psvciL4qqWnDdQueccz
+	z8AUHK0uuTsYhnKnqkkF34mzEAQh2Z7nqRdA4xlH2ddj
+X-Google-Smtp-Source: AGHT+IHQZB/LzF7QYVTTddAwRnUQT5Em8+btqUAAePgxsG9SPEKtLX6tte8HbpNbzmI85WxKzvcUiA==
+X-Received: by 2002:a05:6a21:394c:b0:1f5:889c:3cdb with SMTP id adf61e73a8af0-1f5c11936e7mr15763813637.8.1742190546526;
+        Sun, 16 Mar 2025 22:49:06 -0700 (PDT)
+Received: from bytedance ([115.190.40.12])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-af56e9e0fe3sm6397284a12.24.2025.03.16.22.49.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 16 Mar 2025 22:49:05 -0700 (PDT)
+Date: Mon, 17 Mar 2025 13:48:47 +0800
+From: Aaron Lu <ziqianlu@bytedance.com>
+To: K Prateek Nayak <kprateek.nayak@amd.com>
+Cc: Valentin Schneider <vschneid@redhat.com>,
+	Ben Segall <bsegall@google.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Josh Don <joshdon@google.com>, Ingo Molnar <mingo@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	linux-kernel@vger.kernel.org, Juri Lelli <juri.lelli@redhat.com>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>, Mel Gorman <mgorman@suse.de>,
+	Chengming Zhou <chengming.zhou@linux.dev>,
+	Chuyi Zhou <zhouchuyi@bytedance.com>
+Subject: Re: [RFC PATCH 3/7] sched/fair: Handle unthrottle path for task
+ based throttle
+Message-ID: <20250317054847.GA3107573@bytedance>
+References: <20250313072030.1032893-1-ziqianlu@bytedance.com>
+ <CANCG0GcAic5QThYG-r9CaXPgZtXJuB0RuCW5Y0SyBn7VyOQi=g@mail.gmail.com>
+ <3fdb7163-d1f0-45c8-89fa-7c904b567696@amd.com>
+ <20250314104315.GE1633113@bytedance>
+ <dd749cb4-fcf7-4007-a68e-3ca405925e9d@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <dd749cb4-fcf7-4007-a68e-3ca405925e9d@amd.com>
 
- - Rename erofs_init_managed_cache() to z_erofs_init_super();
- - Move the initialization of managed_pslots into z_erofs_init_super() too;
- - Move z_erofs_init_super() and packed inode preparation upwards, before
-   the root inode initialization.
+On Fri, Mar 14, 2025 at 11:22:20PM +0530, K Prateek Nayak wrote:
+> Hello Aaron,
+> 
+> On 3/14/2025 4:13 PM, Aaron Lu wrote:
+> > On Fri, Mar 14, 2025 at 09:23:47AM +0530, K Prateek Nayak wrote:
+> > > Hello Aaron,
+> > > 
+> > > On 3/13/2025 12:51 PM, Aaron Lu wrote:
+> > > 
+> > > [..snip..]
+> > > 
+> > > > ---
+> > > >    kernel/sched/fair.c | 132 +++++++++++++++-----------------------------
+> > > >    1 file changed, 45 insertions(+), 87 deletions(-)
+> > > > 
+> > > > diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> > > > index ab403ff7d53c8..4a95fe3785e43 100644
+> > > > --- a/kernel/sched/fair.c
+> > > > +++ b/kernel/sched/fair.c
+> > > > @@ -5366,18 +5366,17 @@ enqueue_entity(struct cfs_rq *cfs_rq, struct
+> > > > sched_entity *se, int flags)
+> > > > 
+> > > >    	if (cfs_rq->nr_queued == 1) {
+> > > >    		check_enqueue_throttle(cfs_rq);
+> > > > -		if (!throttled_hierarchy(cfs_rq)) {
+> > > > -			list_add_leaf_cfs_rq(cfs_rq);
+> > > > -		} else {
+> > > > +		list_add_leaf_cfs_rq(cfs_rq);
+> > > >    #ifdef CONFIG_CFS_BANDWIDTH
+> > > > +		if (throttled_hierarchy(cfs_rq)) {
+> > > >    			struct rq *rq = rq_of(cfs_rq);
+> > > > 
+> > > >    			if (cfs_rq_throttled(cfs_rq) && !cfs_rq->throttled_clock)
+> > > >    				cfs_rq->throttled_clock = rq_clock(rq);
+> > > >    			if (!cfs_rq->throttled_clock_self)
+> > > >    				cfs_rq->throttled_clock_self = rq_clock(rq);
+> > > 
+> > > These bits probabaly need revisiting. From what I understand, these
+> > > stats were maintained to know when a task was woken up on a
+> > > throttled hierarchy which was not connected to the parent essentially
+> > > tracking the amount of time runnable tasks were waiting on the
+> > > cfs_rq before an unthrottle event allowed them to be picked.
+> > 
+> > Do you mean these throttled_clock stats?
+> > 
+> > I think they are here because we do not record the throttled_clock for
+> > empty cfs_rqs and once the cfs_rq has task enqueued, it needs to record
+> > its throttled_clock. This is done in commit 79462e8c879a("sched: don't
+> > account throttle time for empty groups") by Josh. I don't think per-task
+> > throttle change this.
+> > 
+> > With this said, I think there is a gap in per-task throttle, i.e. when
+> > all tasks are dequeued from this throttled cfs_rq, we should record its
+> > throttled_time and clear its throttled_clock.
+> 
+> Yes but then what it'll track is the amount of time task were running
+> when the cfs_rq was on a throttled hierarchy. Is that what we want to
+> track or something else.
 
-Therefore, the root directory can also be compressible.
+Right, my last comment was not correct.
 
-Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
-Acked-by: Chao Yu <chao@kernel.org>
----
-v3:
- - should handle both .put_super() and .kill_sb(), otherwise VFS will
-   report "VFS: Busy inodes after unmount of ..."
+Basically, my current approach tried to mimic the existing accounting,
+i.e. when there is task enqueued in a throttled cfs_rq, start recording
+this cfs_rq's throttled_clock. It kind of over-accounts the throttled
+time for cfs_rq with this per-task throttle model because some task can
+still be running in kernel mode while cfs_rq is throttled.
 
- fs/erofs/internal.h |  4 ++--
- fs/erofs/super.c    | 46 ++++++++++++++++++++++-----------------------
- fs/erofs/zdata.c    |  4 ++--
- 3 files changed, 26 insertions(+), 28 deletions(-)
+> The commit log for 677ea015f231 ("sched: add throttled time stat for
+> throttled children") says the following for "throttled_clock_self_time":
+> 
+>     We currently export the total throttled time for cgroups that are given
+>     a bandwidth limit. This patch extends this accounting to also account
+>     the total time that each children cgroup has been throttled.
+> 
+>     This is useful to understand the degree to which children have been
+>     affected by the throttling control. Children which are not runnable
+>     during the entire throttled period, for example, will not show any
+>     self-throttling time during this period.
+> 
+> but with per-task model, it is probably the amount of time that
+> "throttled_limbo_list" has a task on it since they are runnable
+> but are in-fact waiting for an unthrottle.
+>
+> If a task enqueues itself on a throttled hierarchy and then blocks
+> again before exiting to the userspace, it should not count in
+> "throttled_clock_self_time" since the task was runnable the whole
+> time despite the hierarchy being frozen.
 
-diff --git a/fs/erofs/internal.h b/fs/erofs/internal.h
-index 91d0b400459c..b35742cf9431 100644
---- a/fs/erofs/internal.h
-+++ b/fs/erofs/internal.h
-@@ -436,6 +436,7 @@ int __init erofs_init_shrinker(void);
- void erofs_exit_shrinker(void);
- int __init z_erofs_init_subsystem(void);
- void z_erofs_exit_subsystem(void);
-+int z_erofs_init_super(struct super_block *sb);
- unsigned long z_erofs_shrink_scan(struct erofs_sb_info *sbi,
- 				  unsigned long nr_shrink);
- int z_erofs_map_blocks_iter(struct inode *inode, struct erofs_map_blocks *map,
-@@ -445,7 +446,6 @@ void z_erofs_put_gbuf(void *ptr);
- int z_erofs_gbuf_growsize(unsigned int nrpages);
- int __init z_erofs_gbuf_init(void);
- void z_erofs_gbuf_exit(void);
--int erofs_init_managed_cache(struct super_block *sb);
- int z_erofs_parse_cfgs(struct super_block *sb, struct erofs_super_block *dsb);
- #else
- static inline void erofs_shrinker_register(struct super_block *sb) {}
-@@ -454,7 +454,7 @@ static inline int erofs_init_shrinker(void) { return 0; }
- static inline void erofs_exit_shrinker(void) {}
- static inline int z_erofs_init_subsystem(void) { return 0; }
- static inline void z_erofs_exit_subsystem(void) {}
--static inline int erofs_init_managed_cache(struct super_block *sb) { return 0; }
-+static inline int z_erofs_init_super(struct super_block *sb) { return 0; }
- #endif	/* !CONFIG_EROFS_FS_ZIP */
- 
- #ifdef CONFIG_EROFS_FS_BACKED_BY_FILE
-diff --git a/fs/erofs/super.c b/fs/erofs/super.c
-index 18445dc8597d..563da5213032 100644
---- a/fs/erofs/super.c
-+++ b/fs/erofs/super.c
-@@ -636,9 +636,16 @@ static int erofs_fc_fill_super(struct super_block *sb, struct fs_context *fc)
- 	else
- 		sb->s_flags &= ~SB_POSIXACL;
- 
--#ifdef CONFIG_EROFS_FS_ZIP
--	xa_init(&sbi->managed_pslots);
--#endif
-+	err = z_erofs_init_super(sb);
-+	if (err)
-+		return err;
-+
-+	if (erofs_sb_has_fragments(sbi) && sbi->packed_nid) {
-+		inode = erofs_iget(sb, sbi->packed_nid);
-+		if (IS_ERR(inode))
-+			return PTR_ERR(inode);
-+		sbi->packed_inode = inode;
-+	}
- 
- 	inode = erofs_iget(sb, sbi->root_nid);
- 	if (IS_ERR(inode))
-@@ -650,24 +657,11 @@ static int erofs_fc_fill_super(struct super_block *sb, struct fs_context *fc)
- 		iput(inode);
- 		return -EINVAL;
- 	}
--
- 	sb->s_root = d_make_root(inode);
- 	if (!sb->s_root)
- 		return -ENOMEM;
- 
- 	erofs_shrinker_register(sb);
--	if (erofs_sb_has_fragments(sbi) && sbi->packed_nid) {
--		sbi->packed_inode = erofs_iget(sb, sbi->packed_nid);
--		if (IS_ERR(sbi->packed_inode)) {
--			err = PTR_ERR(sbi->packed_inode);
--			sbi->packed_inode = NULL;
--			return err;
--		}
--	}
--	err = erofs_init_managed_cache(sb);
--	if (err)
--		return err;
--
- 	err = erofs_xattr_prefixes_init(sb);
- 	if (err)
- 		return err;
-@@ -803,6 +797,16 @@ static int erofs_init_fs_context(struct fs_context *fc)
- 	return 0;
- }
- 
-+static void erofs_drop_internal_inodes(struct erofs_sb_info *sbi)
-+{
-+	iput(sbi->packed_inode);
-+	sbi->packed_inode = NULL;
-+#ifdef CONFIG_EROFS_FS_ZIP
-+	iput(sbi->managed_cache);
-+	sbi->managed_cache = NULL;
-+#endif
-+}
-+
- static void erofs_kill_sb(struct super_block *sb)
- {
- 	struct erofs_sb_info *sbi = EROFS_SB(sb);
-@@ -812,6 +816,7 @@ static void erofs_kill_sb(struct super_block *sb)
- 		kill_anon_super(sb);
- 	else
- 		kill_block_super(sb);
-+	erofs_drop_internal_inodes(sbi);
- 	fs_put_dax(sbi->dif0.dax_dev, NULL);
- 	erofs_fscache_unregister_fs(sb);
- 	erofs_sb_free(sbi);
-@@ -822,17 +827,10 @@ static void erofs_put_super(struct super_block *sb)
- {
- 	struct erofs_sb_info *const sbi = EROFS_SB(sb);
- 
--	DBG_BUGON(!sbi);
--
-+	erofs_drop_internal_inodes(sbi);
- 	erofs_unregister_sysfs(sb);
- 	erofs_shrinker_unregister(sb);
- 	erofs_xattr_prefixes_cleanup(sb);
--#ifdef CONFIG_EROFS_FS_ZIP
--	iput(sbi->managed_cache);
--	sbi->managed_cache = NULL;
--#endif
--	iput(sbi->packed_inode);
--	sbi->packed_inode = NULL;
- 	erofs_free_dev_context(sbi->devs);
- 	sbi->devs = NULL;
- 	erofs_fscache_unregister_fs(sb);
-diff --git a/fs/erofs/zdata.c b/fs/erofs/zdata.c
-index 5e4b65070b86..bc6d6842c5c2 100644
---- a/fs/erofs/zdata.c
-+++ b/fs/erofs/zdata.c
-@@ -644,18 +644,18 @@ static const struct address_space_operations z_erofs_cache_aops = {
- 	.invalidate_folio = z_erofs_cache_invalidate_folio,
- };
- 
--int erofs_init_managed_cache(struct super_block *sb)
-+int z_erofs_init_super(struct super_block *sb)
- {
- 	struct inode *const inode = new_inode(sb);
- 
- 	if (!inode)
- 		return -ENOMEM;
--
- 	set_nlink(inode, 1);
- 	inode->i_size = OFFSET_MAX;
- 	inode->i_mapping->a_ops = &z_erofs_cache_aops;
- 	mapping_set_gfp_mask(inode->i_mapping, GFP_KERNEL);
- 	EROFS_SB(sb)->managed_cache = inode;
-+	xa_init(&EROFS_SB(sb)->managed_pslots);
- 	return 0;
- }
- 
--- 
-2.43.5
+I think there is a mismatch between per-task throttle and per-cfs_rq
+stats, it's hard to make the accounting perfect. Assume a throttled
+cfs_rq has 4 tasks, with 2 tasks blocked on limbo_list and 2 tasks still
+running in kernel mode. Should we treat this time as throttled or not
+for this cfs_rq?
 
+This is similar to the pelt clock freeze problem. For the above example,
+should we freeze the cfs_rq's pelt clock or let it continue when this
+cfs_rq is throttled with some task blocked on limbo_list and some task
+still running in kernel mode?
+
+My understanding is, neither approach is perfect, so I just chose the
+simpler one for now. Please correct me if my understaning is wrong.
+
+Thanks,
+Aaron
 
