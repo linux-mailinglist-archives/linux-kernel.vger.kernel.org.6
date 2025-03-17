@@ -1,162 +1,101 @@
-Return-Path: <linux-kernel+bounces-563862-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563864-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B02FA649C1
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:27:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8ACBBA649D6
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:29:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A9858189626E
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:25:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D75933B0BF7
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:25:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 102B023ED40;
-	Mon, 17 Mar 2025 10:20:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18B3222FF39;
+	Mon, 17 Mar 2025 10:23:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Inc2k5Oo"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b="NA1NfbBf"
+Received: from sender4-op-o15.zoho.com (sender4-op-o15.zoho.com [136.143.188.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58FE12E3373;
-	Mon, 17 Mar 2025 10:20:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742206854; cv=none; b=HRSLVWYQyR/zRRudD1d1gVTE06NpttYbdp2iN0fBO5jFbpomJ3cn4f7ucHE1OQ3ItAOOSJxBYiu8cYyC9Ct7nZDp32oUDaWbCagZJto5XxvnfL+dj+7USEyFtC1jgWlSRlWtzuR2eB2Dw18dm82erPSIXJnilJKa5I1pd8Fkkn8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742206854; c=relaxed/simple;
-	bh=Vfxm/VS6MThIEmj1NooHYgGirDykhwnBgrzXiaYLB2U=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=caLhYFf4iK4Rzijazjf1IkkbqFW8+yTSRpX0TKz+6H4n+LIQWokOQ9xvZaGs+JbhL116RFe1mbnuaJpyCoq/yVRPVtX5XrsTOtIEW76EFrkaLR8EPQopvzpA6SXveqFjlCFbMjdEYl9ITR5QlJi39jGu0gzNPlHfiiUzK/P23Ws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=Inc2k5Oo; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1742206849;
-	bh=vBkrHPBpB5I3CJhiuvURGb6f9Nt1C7x4BoMDG32F5UM=;
-	h=Date:From:To:Cc:Subject:From;
-	b=Inc2k5OoCtFF2szEBd9Q+0pVyCJ/Lswukx3A47XeqJw/Ib8imtg+OKP/HcQ2GwFuT
-	 tScMQmIqYdCWo01KqIc7xCkk1IcMY8QvBUxGie7dqSdK+2mmBzmpmIFToGuAxP98+Y
-	 k9qCAaBxBgszuUIZmFv+luFVE1DLihlm4D1XeBmqPEziP7dFV6LjtAHgHNh7plODLt
-	 MAKEZGlRRy5EMtJzMxCWujTv76l+SekV8vlTnv86EYUnV0gLFTSjbNLjCl8At5M4Bj
-	 jkjIsXf4vxR+Gc27VJ5+2R8kmlACdoxdcgYdNags8ELX4lQmUIJ9ua7WliNB+qbVB7
-	 yB0yRJpGXBGJw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZGWFr4MB9z4wcD;
-	Mon, 17 Mar 2025 21:20:48 +1100 (AEDT)
-Date: Mon, 17 Mar 2025 21:20:47 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Miguel Ojeda <ojeda@kernel.org>
-Cc: Alban Kurti <kurti@invicto.ai>, Benno Lossin <benno.lossin@proton.me>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: manual merge of the rust tree with Linus' tree
-Message-ID: <20250317212047.46580935@canb.auug.org.au>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8982D22F17B;
+	Mon, 17 Mar 2025 10:23:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.15
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742206985; cv=pass; b=ZdsDs9F9GBDE3STs/BblVJuV2c1Ca6H0oF1KWbjGuVpFSYL+af353m5+aYyzSzid22Mkh2Urkx2C0cFg2jOYziZ53cOdyUoHIG4Ac2c4FDk0ni5JYf4JQ9U8jizK0lOknPWIC9R+eFgzZJVOR9VmcOD7fFkR0Ort268/ExPI5sY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742206985; c=relaxed/simple;
+	bh=XolH65F1l7szuKiPhO962yVmzBfWf5QJ0pfKBmLw/hY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=S6iofESSk1WYkMeu9K5ENe2hH/Af25gJbgyxWBJF3ZTu3HVlAVufOvlHmlymZOQwyvP+n2q3dhW0FW40yQFRGjmy9UjhBGKB/TLzRAhoZPrugLgQ+vYHXl4DNechfUF3nDPP/w7daszm71+tlYIiDgqV0suR+mObY+sXZwtLXl0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me; spf=pass smtp.mailfrom=icenowy.me; dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b=NA1NfbBf; arc=pass smtp.client-ip=136.143.188.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icenowy.me
+ARC-Seal: i=1; a=rsa-sha256; t=1742206973; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=Wn8oedazNRVaMAx3l9vI9ODkCDq2sKU2A3F0BqMZLOZoVn09qOtIkpwtGohxxKEk3BKXXKbKRHI6ZvjXivhPFEZbE5ADGQr22F7121u9iupBuhJyZW/uIwgbUvbX+c6udeG7jtxX0V72ZzccYAEx56PUflWl39ZNLyy66bbLvAk=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1742206973; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=MOZCjnFEPRZ+mZWx5sBcTALXGbiHOgYvrRPV11YeXzk=; 
+	b=cAxCSvW0iRMwqp7QQNfSbYHF3qGhHLazXx9QCUUC6MCLPcqiP9iutQRyCssk600v66BJ2pzJRVp8qcgbNrDqcYQzzRjW8aN4QuMULLoKTpT5TLs+UgfReQM7VN0dsgQAHmCzBHgboTcWu6nfUfyZnL0Is2La4v23Whl/vHX+ypk=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=icenowy.me;
+	spf=pass  smtp.mailfrom=uwu@icenowy.me;
+	dmarc=pass header.from=<uwu@icenowy.me>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1742206973;
+	s=zmail2; d=icenowy.me; i=uwu@icenowy.me;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=MOZCjnFEPRZ+mZWx5sBcTALXGbiHOgYvrRPV11YeXzk=;
+	b=NA1NfbBfMHYEZYPTuoI19PnRaJRprm/0ESgWpXqfFAr/39phtTloJCcG4Jn8a3Ul
+	h9cKpy2PNOUxzTro/2mX5nAoMho8o8j1RwpMaoBJLUHIhYEGhpCBEMwMg129YaWrO1O
+	c70fyKawbN0SmPJSgvRJdUUP2BPHJP9P5KxE82AG77Yh0LKcDRC00IJh1nlPRDzsXyE
+	O5rFJ7wdHyr+eVHqFiUTrXGVC7EvhY0P95BvnS0pGe05S/g8nJ2pkpNVs8XoO8wjB2t
+	x7zTd59YauIuh0XOBIcv4t1jrMGWRKEKL7lOJGBxykQWeeQUW/kZGe5OGSsOa5qLcHB
+	b9Z5NtKVXg==
+Received: by mx.zohomail.com with SMTPS id 1742206970523335.4972672946949;
+	Mon, 17 Mar 2025 03:22:50 -0700 (PDT)
+From: Icenowy Zheng <uwu@icenowy.me>
+To: Felix Fietkau <nbd@nbd.name>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	Ryder Lee <ryder.lee@mediatek.com>,
+	Shayne Chen <shayne.chen@mediatek.com>,
+	Sean Wang <sean.wang@mediatek.com>
+Cc: linux-wireless@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Icenowy Zheng <uwu@icenowy.me>
+Subject: [PATCH] wifi: mt76: mt76x2u: add TP-Link TL-WDN6200 ID to device table
+Date: Mon, 17 Mar 2025 18:22:35 +0800
+Message-ID: <20250317102235.1421726-1-uwu@icenowy.me>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/cO5x9zXH8CKLxgbbSVBJH8s";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 
---Sig_/cO5x9zXH8CKLxgbbSVBJH8s
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+The TP-Link TL-WDN6200 "Driverless" version cards use a MT7612U chipset.
 
-Hi all,
+Add the USB ID to mt76x2u driver.
 
-Today's linux-next merge of the rust tree got a conflict in:
-
-  rust/kernel/init.rs
-  rust/pin-init/src/macros.rs
-
-between commits:
-
-  df27cef15360 ("rust: init: fix `Zeroable` implementation for `Option<NonN=
-ull<T>>` and `Option<KBox<T>>`")
-  6933c1067fe6 ("rust: init: add missing newline to pr_info! calls")
-
-from Linus' tree and commit:
-
-  fbf8fb328d1b ("rust: move pin-init API into its own directory")
-
-and following ones from the rust tree.
-
-I fixed it up (I just used the latter version and applied the following
-patch) and can carry the fix as necessary. This is now fixed as far as
-linux-next is concerned, but any non trivial conflicts should be
-mentioned to your upstream maintainer when your tree is submitted for
-merging.  You may also want to consider cooperating with the maintainer
-of the conflicting tree to minimise any particularly complex conflicts.
-
-More (or less) may be needed :-(
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, 17 Mar 2025 21:16:57 +1100
-Subject: [PATCH] fix up for "rust: init: fix `Zeroable` implementation for
- `Option<NonNull<T>>` and `Option<KBox<T>>`"
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: Icenowy Zheng <uwu@icenowy.me>
 ---
- rust/pin-init/src/lib.rs | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+ drivers/net/wireless/mediatek/mt76/mt76x2/usb.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/rust/pin-init/src/lib.rs b/rust/pin-init/src/lib.rs
-index f36b8f8e8730..9cd822388ba2 100644
---- a/rust/pin-init/src/lib.rs
-+++ b/rust/pin-init/src/lib.rs
-@@ -1446,16 +1446,14 @@ macro_rules! impl_zeroable {
-     // SAFETY: `T: Zeroable` and `UnsafeCell` is `repr(transparent)`.
-     {<T: ?Sized + Zeroable>} UnsafeCell<T>,
-=20
--    // SAFETY: All zeros is equivalent to `None` (option layout optimizati=
-on guarantee).
-+    // SAFETY: All zeros is equivalent to `None` (option layout optimizati=
-on guarantee:
-+    // https://doc.rust-lang.org/stable/std/option/index.html#representati=
-on).
-     Option<NonZeroU8>, Option<NonZeroU16>, Option<NonZeroU32>, Option<NonZ=
-eroU64>,
-     Option<NonZeroU128>, Option<NonZeroUsize>,
-     Option<NonZeroI8>, Option<NonZeroI16>, Option<NonZeroI32>, Option<NonZ=
-eroI64>,
-     Option<NonZeroI128>, Option<NonZeroIsize>,
-=20
--    // SAFETY: All zeros is equivalent to `None` (option layout optimizati=
-on guarantee).
--    //
--    // In this case we are allowed to use `T: ?Sized`, since all zeros is =
-the `None` variant.
--    {<T: ?Sized>} Option<NonNull<T>>,
-+    {<T>} Option<NonNull<T>>,
-=20
-     // SAFETY: `null` pointer is valid.
-     //
---=20
-2.45.2
+diff --git a/drivers/net/wireless/mediatek/mt76/mt76x2/usb.c b/drivers/net/wireless/mediatek/mt76/mt76x2/usb.c
+index e832ad53e2393..a4f4d12f904e7 100644
+--- a/drivers/net/wireless/mediatek/mt76/mt76x2/usb.c
++++ b/drivers/net/wireless/mediatek/mt76/mt76x2/usb.c
+@@ -22,6 +22,7 @@ static const struct usb_device_id mt76x2u_device_table[] = {
+ 	{ USB_DEVICE(0x0846, 0x9053) },	/* Netgear A6210 */
+ 	{ USB_DEVICE(0x045e, 0x02e6) },	/* XBox One Wireless Adapter */
+ 	{ USB_DEVICE(0x045e, 0x02fe) },	/* XBox One Wireless Adapter */
++	{ USB_DEVICE(0x2357, 0x0137) },	/* TP-Link TL-WDN6200 */
+ 	{ },
+ };
+ 
+-- 
+2.48.1
 
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/cO5x9zXH8CKLxgbbSVBJH8s
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfX938ACgkQAVBC80lX
-0GxnUQf7BCSCxl1e3GF7AI+lxNe5WpKLr14HVCPFiKPwhwBxVyqVvZx1T4AAbP0Q
-PDgFQfxUF9wFE/UTevetK53jDPlM6x1fiTIP3z249yMYnXiY1xQNoOGCQNWsiDA5
-UesM58qbJtXMJm81OpdzpJbfKD0odUF8qanlb+mDUBU9G9R0wQluuERBSQMyrlWQ
-uwa5kg7uNZrA7kP744GiKlrbPzmJDvbwsZsEn05f91K1FzJQcl7itNJ9Z9+4iw4E
-N1XooxSVEp4IZg3QWZXqr20lmXSBf8D2eKIM4GBPyUblpODsc+OSDFm3gxQoWBCU
-ASjAKbw7zDC5SclLaSTiXY+YIHYXaQ==
-=+ka5
------END PGP SIGNATURE-----
-
---Sig_/cO5x9zXH8CKLxgbbSVBJH8s--
 
