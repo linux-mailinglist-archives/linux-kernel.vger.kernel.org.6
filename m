@@ -1,127 +1,111 @@
-Return-Path: <linux-kernel+bounces-564201-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564203-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB18AA6502D
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 14:04:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F41CA65032
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 14:05:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87FF71886C3B
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 13:04:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4EB521895B05
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 13:04:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D6F723C39A;
-	Mon, 17 Mar 2025 13:04:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 216F023ED7A;
+	Mon, 17 Mar 2025 13:04:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="KSFZMo2C";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="AuudW1XH";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="b/SsGPN9";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="hjoNYyQL"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Q6YGjhvh";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="AfCWfj63"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08C858F5E
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 13:04:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2C1423E32E;
+	Mon, 17 Mar 2025 13:04:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742216646; cv=none; b=MFlEmP/bg+RAJIQnNyn0y2/uTS6U7B7+hWO/A21u2KIR31yyuBxwcqWfVuRlD+686XNDEVmCepUOuUd1uJYvtY2BDyq34iK2PSYzHq+kzhXDGBuTrJKZqgQ7m31qN6UknR163InLugUedY24msfuh/D85HEYviNmF+q6Q9WQn2c=
+	t=1742216654; cv=none; b=cuAdG3nxId747CgzTdyRE60KWM9ab/ZIFe2FsxVY8etuG98amEizHnToFhLBpB9p5yGMquJljZ72v89lYHQ3P33cb2ZmRTsI0Dc0LYgGCAba573B2qj6VJlKfx7UkiEKe0vhVZF+E6Maji+1+bIGhTXvWm+anygfe0LG3i3LZfQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742216646; c=relaxed/simple;
-	bh=QJK8ijm5hOqBgDrLDzLf+CfEU/prs9FB2WajFUUyhsg=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=axWjuiz78UYe66GOw93fUr0fe/YcXJYXH0rrO5KEHgcJMIWLU0Sh8c9OlKvxcO/TAKpQE7bmCXQNZeMxjbhbOLiLqt8k4Ei3K7HlSk66oW3YI2Aqv+mn7KU8yqE4pw4FWsMR0nOwVfNMN4XnjqtV2BhMxY1PK+QT0WZSffscY1Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=KSFZMo2C; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=AuudW1XH; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=b/SsGPN9; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=hjoNYyQL; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from pobox.suse.cz (unknown [10.100.2.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id F3C8721206;
-	Mon, 17 Mar 2025 13:04:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1742216643; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0sEuen0bC8rf/5QoYodGmqk6k8gRlnVoJgSAywbjU94=;
-	b=KSFZMo2ClECKgS93ynrQnjODqRTNmB+6i2LNAP/ftAz8c1QMfTd2A8eaPS/TGMKF3BtpNI
-	Rt42oqYrKQ03fBKnYF0EOhtBKKjgZb19ME2nl0wbJ4tWSsUkSoqn0pff/nmsdKk8w1g7B6
-	1sKToVitl6K/Z92X9Q9PnDQwiL3KZxU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1742216643;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0sEuen0bC8rf/5QoYodGmqk6k8gRlnVoJgSAywbjU94=;
-	b=AuudW1XHOv4bvUxoa/d+bAp+bHj2fsLmRGYxlQrndbMu3jVVA/lDkdaO5bb2ChIhaMt1z+
-	IvAAx1P65qu+cICg==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1742216642; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0sEuen0bC8rf/5QoYodGmqk6k8gRlnVoJgSAywbjU94=;
-	b=b/SsGPN9bPJvgY2HS8ESvxMnRmWJyiToF0/0h6QHH80hsFM6V3b/PWm64wzfnhxrmxU/94
-	s/cpI55I0/jSmquWzdJ/8G/zOTTlPbFxqIpcco+25KxGc34O1wcy1xwyN8+ZdG6hV00B0A
-	5MP7t8fCa6oNSYpU3Ozh2vDr20twfAU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1742216642;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0sEuen0bC8rf/5QoYodGmqk6k8gRlnVoJgSAywbjU94=;
-	b=hjoNYyQLz5orSKLhZYuvmQixWDzOj/iwUtw8r/Z+Jq5D4DbUGM4sFP8Q6oyTH9Dm2k48kt
-	H6sxrzWKb8nOjwAg==
-Date: Mon, 17 Mar 2025 14:04:02 +0100 (CET)
-From: Miroslav Benes <mbenes@suse.cz>
-To: Josh Poimboeuf <jpoimboe@kernel.org>
-cc: x86@kernel.org, linux-kernel@vger.kernel.org, 
-    Peter Zijlstra <peterz@infradead.org>, 
-    Brendan Jackman <jackmanb@google.com>, 
-    Nathan Chancellor <nathan@kernel.org>
-Subject: Re: [PATCH 11/13] objtool: Change "warning:" to "error:" for
- --Werror
-In-Reply-To: <56f0565b15b4b4caa9a08953fa9c679dfa973514.1741975349.git.jpoimboe@kernel.org>
-Message-ID: <alpine.LSU.2.21.2503171403520.4236@pobox.suse.cz>
-References: <cover.1741975349.git.jpoimboe@kernel.org> <56f0565b15b4b4caa9a08953fa9c679dfa973514.1741975349.git.jpoimboe@kernel.org>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+	s=arc-20240116; t=1742216654; c=relaxed/simple;
+	bh=KVUNmQdehuyTOB1NM2ZuDHvypCGHYTpjpC/HxaStcNU=;
+	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=eXfdA0dOMLGqPlFNJ507e3uhR8qiDoDEuxb34DIascl6IOn1987hdZObcoOgeTgvB9t+isQD3b7weuV6SAuVdG0OEG5hGOzcyyFDePFu66aCF/rdw91x7NaT9ZZ0Fymam50dx+cAwmYdbhA7vX+eqi5Pk9attWlZt5rDkppngq8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Q6YGjhvh; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=AfCWfj63; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 17 Mar 2025 13:04:07 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1742216650;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
+	bh=6dkw96a023iuOdRzg3FQ8Drz5v8x2QWbz4/l3/X8tU0=;
+	b=Q6YGjhvhvXz0x92A38D5LTV+Yt7B+6wUm1n6PvxCL2XD5k92x/9FsCJ6CkjZRddaJQgTvc
+	z0rQ19S4b9WaKH9JCXjdEXngF48zwUXM5Qoy1/EBS8MOSI+Ndsb5+efbJvS5vFlx+ICjP/
+	m9Twx4Ay7IMyriRUxuL970BFp3utefv91Nvs5dLsaTpsMVFXZGz0IMYtVLjm7WBy/LlnVg
+	dCcXD7Ez4IbzOGKxlY1d5fPjkl3mvoE+0eEWy9RJgfBCMc0wp2L8MfLOfwZSM2IPVoVGS1
+	9+7NXLMG7kTcDkA+2nr75qGMTXmIKalPwvxow79iBOHyOa2QQemMdSErkTqQmA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1742216650;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
+	bh=6dkw96a023iuOdRzg3FQ8Drz5v8x2QWbz4/l3/X8tU0=;
+	b=AfCWfj63fAEfDznDAGoDF8tq3LAYcsqIglMPE3SR6xhAC/E+g6/WlEMNaYX0ppAKD7jhhM
+	0DAWIRcN/52O+1Dw==
+From: "tip-bot2 for Borislav Petkov (AMD)" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/fpu] x86/fpu: Clarify the "xa" symbolic name used in the
+ XSTATE* macros
+Cc: "Borislav Petkov (AMD)" <bp@alien8.de>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Score: -4.30
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_ZERO(0.00)[0];
-	MID_RHS_MATCH_FROMTLD(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[pobox.suse.cz:mid,pobox.suse.cz:helo,suse.cz:email]
-X-Spam-Flag: NO
-X-Spam-Level: 
+Message-ID: <174221664750.14745.17196771195042757712.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On Fri, 14 Mar 2025, Josh Poimboeuf wrote:
+The following commit has been merged into the x86/fpu branch of tip:
 
-> This is similar to GCC's behavior and makes it more obvious why the
-> build failed.
-> 
-> Suggested-by: Nathan Chancellor <nathan@kernel.org>
-> Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
+Commit-ID:     4348e9177813656d5d8bd18f34b3e611df004032
+Gitweb:        https://git.kernel.org/tip/4348e9177813656d5d8bd18f34b3e611df004032
+Author:        Borislav Petkov (AMD) <bp@alien8.de>
+AuthorDate:    Mon, 17 Mar 2025 13:47:12 +01:00
+Committer:     Borislav Petkov (AMD) <bp@alien8.de>
+CommitterDate: Mon, 17 Mar 2025 13:47:12 +01:00
 
-Reviewed-by: Miroslav Benes <mbenes@suse.cz>
+x86/fpu: Clarify the "xa" symbolic name used in the XSTATE* macros
 
-M
+Tie together the %[xa] in the XSAVE/XRSTOR definitions with the
+respective usage in the asm macros so that it is perfectly clear.
+
+No functional changes.
+
+Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+---
+ arch/x86/kernel/fpu/xstate.h | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/arch/x86/kernel/fpu/xstate.h b/arch/x86/kernel/fpu/xstate.h
+index 1418423..0fd34f5 100644
+--- a/arch/x86/kernel/fpu/xstate.h
++++ b/arch/x86/kernel/fpu/xstate.h
+@@ -109,6 +109,10 @@ static inline int update_pkru_in_sigframe(struct xregs_state __user *buf, u64 ma
+ /*
+  * After this @err contains 0 on success or the trap number when the
+  * operation raises an exception.
++ *
++ * The [xa] input parameter below represents the struct xregs_state pointer
++ * and the asm symbolic name for the argument used in the XSAVE/XRSTOR insns
++ * above.
+  */
+ #define XSTATE_OP(op, st, lmask, hmask, err)				\
+ 	asm volatile("1:" op "\n\t"					\
 
