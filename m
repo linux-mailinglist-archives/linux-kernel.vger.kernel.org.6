@@ -1,210 +1,125 @@
-Return-Path: <linux-kernel+bounces-564608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564609-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41E81A65835
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 17:36:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18A4BA65836
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 17:36:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7DD0D3B10A6
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 16:36:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD0043BE0A4
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 16:36:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EACB1A23BB;
-	Mon, 17 Mar 2025 16:36:18 +0000 (UTC)
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C2381A314C;
+	Mon, 17 Mar 2025 16:36:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cBvBe2fi"
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 099B81922D3
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 16:36:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60CC31A23B5
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 16:36:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742229378; cv=none; b=F8loVlU1PrnJagPOTk4SYoojqKqQ9x5TRk9UlcuxifZZzqb5VR09UUtSWvvMxD1i4IjggBsXHNBt/PHCP0bpp5i+ibSjvnaTlEDI9XqQPOci3PpE9nDPRujL5b/XDNq2wiWjiWz5xmTd/L6h73WvfWgQ7oOTQjVbuuTstIPSGMM=
+	t=1742229379; cv=none; b=mqROIMwsCf/M0yJkRxyNqmtXweEDANiwl7n4TGd2GRN+z6XdymN8IiynVD9cVtq/xxgeld0HcYfU4+o+UriB81DE2o3OnuWtKmksaVpFhDMjtVXRR4pQxqg5bxnNg+t7jG2ZABxff7FYKRsb7/dU9/jQHGlNUQ5tksKNzEY1tTA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742229378; c=relaxed/simple;
-	bh=XOz73fs4njuWISS4miyh4nhy0sHdCuLjt7rMNIvKoc8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=efA01xIxl5nFi15skvwBSXF2wnYiDFJGumrb3nUe1vAG+FLz0eRg7EwjoNO2PGZvRyoBBniEWysOJ7hA3+XQSSAkz9961jjkpAdkinVmM5K//Rd/RkTgoyH2d0MWzl7IsL4k6FL5YSRJNeu+CvCzNna69tc54+pRxctGL1WQcUU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
-Received: by mail.gandi.net (Postfix) with ESMTPSA id B0361442B7;
-	Mon, 17 Mar 2025 16:36:12 +0000 (UTC)
-Message-ID: <d964bf15-7172-448b-9aa1-72d5bf3e1695@ghiti.fr>
-Date: Mon, 17 Mar 2025 17:36:11 +0100
+	s=arc-20240116; t=1742229379; c=relaxed/simple;
+	bh=+5qOoiQ9fJgCIchDENR3sXW+cpUgNlPDH1B+xKZEJEs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=LcFRPRvQ3vxl8h7B8WkIRUvHDW5nTX67O2eyAxzSQfsv1zKd5kQcLNXgF5WFOwkStnPbx2vbgFYNcqwiKxDQR+Ato5Cbs4E8LPYLbZRyq4QiUbgfH1dZdLC/oB0ikK73BbBlcTEIy/4Vrch24MX4B2UGydvu6DilYh8gnoOKbMY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cBvBe2fi; arc=none smtp.client-ip=209.85.208.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-30795988ebeso48143661fa.3
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 09:36:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742229376; x=1742834176; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Fm+Vc8Ft3wj+TdV2Qy7sCZQLNLQL3Vgkfnk4EUOWKbA=;
+        b=cBvBe2fioVkZjKS+HtqMYPn4uhG/KpkRneExZYWyAH/p9YQNnw3njRGEySeZtvrh7T
+         ZCH9Gk0wrRkcrZvJ0Hd+QWPPxyh6AQcXYv7rboONT7hPN2tv6OkWAWvzqUv+QD9vqnB5
+         RwzzX8Q1z/paMNN5I+RFfxBVRPwqWWZHv2q31LjkPjk4TtoBs+usur1oRnSi292p3XPY
+         ku6SXXZYA1GPGBO7+Bt/oDXjfl4G7hByUScmN50GpFcc0LjWUabIYUlskWgSv+bhB+AT
+         w0UMlNRB+yl7M5r1ikE3dZQPdbniLCyKaTzMeYYQG4XM9R+BhdiElND5Ic2fQ1x8IItf
+         FA2A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742229376; x=1742834176;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Fm+Vc8Ft3wj+TdV2Qy7sCZQLNLQL3Vgkfnk4EUOWKbA=;
+        b=iuI8w8N9OmwomqhSIRPf9qnAWVCpbJRiSV79qwVhX/xGdBUkzjuXvW8zy2svLiRmro
+         /B5BzNeHzANnYk99wOmdEg6WaqL6MZv/TIBvMVRiD1CaxEombBRH0bMw76AcJJE77E76
+         dnUm1eE0me4MJZptUkOrYYbk8W9pb7yUdlL3wUlvsF5RFGgQaVf7TKSdFBDlbZpWpumD
+         29Hy3VAGr7vUVMntPsmXi81NN5LhVmP3xuZekHMiDQ5e41SI1zH2RyUwCiZGU3lA+Cs5
+         yRH1UonLswxpiELl7eFdLOH8DyZISTPOl3ytAW9Eswy//ITS9179YG3AXvGlsMT6+o8D
+         cpjw==
+X-Gm-Message-State: AOJu0YyiIeBoMYK3xwlHcejKTqtZsx1rphQRZJLKkvRv6cIhWsm0w+ZK
+	lS0wmnhiywB9oYHIn/58d/aE1wGaCzXbf1r/whE2IAL6R3zxcmw7vJUTUA==
+X-Gm-Gg: ASbGnctRipW4xi4vJwn/1/fm19OEPAGws/d6nhQrFhrCS8BjlnaBL9FlIDwaYpA4tD+
+	DhycKKnB47061vyOhBpoKZyJFTITf6QeBdY3H1/nzG+BX4dyKY6Dt+mtmYQwvhENPrGBrxQrteF
+	P3pdA2VxBf6y4kAAksI+jLohWCyOEZJABbq+P0Ijk/RH2DKatNId8Sdi6/aH4fO7UoceMjIRRLz
+	JhYQWaL81XCq9Hkpvelf9hS9GJfKSs2tFcX9VDkxLqy0nrxjv7nyhqd8sCVu9Y8yWo9LRkqUBGU
+	DYkTRwmxSokiBLc9SJTHyDjrhE+oqVcadJeCIgXU
+X-Google-Smtp-Source: AGHT+IErnjd1NSIMGuhSG/RxgeAIAcxg08vAi/aa0NwoW1lo5isTMHntblkxDcHvV8JQPOGA6bZkHg==
+X-Received: by 2002:a2e:be89:0:b0:30b:bba5:abfc with SMTP id 38308e7fff4ca-30c4a863416mr76221661fa.9.1742229376263;
+        Mon, 17 Mar 2025 09:36:16 -0700 (PDT)
+Received: from pc638.lan ([2001:9b1:d5a0:a500:2d8:61ff:fec9:d743])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30c4012af5dsm16457911fa.15.2025.03.17.09.36.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Mar 2025 09:36:15 -0700 (PDT)
+From: "Uladzislau Rezki (Sony)" <urezki@gmail.com>
+To: LKML <linux-kernel@vger.kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Oleg Nesterov <oleg@redhat.com>,
+	Tejun Heo <tj@kernel.org>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Oleksiy Avramchenko <oleksiy.avramchenko@sony.com>
+Subject: [PATCH] fork: Use __vmalloc_node() for stack allocation
+Date: Mon, 17 Mar 2025 17:36:14 +0100
+Message-Id: <20250317163614.166502-1-urezki@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC] riscv: introduce asm/swab.h
-Content-Language: en-US
-To: Ignacio Encinas <ignacio@iencinas.com>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>
-Cc: Eric Biggers <ebiggers@kernel.org>, linux-riscv@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-kernel-mentees@lists.linux.dev,
- skhan@linuxfoundation.org, Zhihang Shao <zhihang.shao.iscas@gmail.com>,
- =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>
-References: <20250310-riscv-swab-v1-1-34652ef1ee96@iencinas.com>
-From: Alexandre Ghiti <alex@ghiti.fr>
-In-Reply-To: <20250310-riscv-swab-v1-1-34652ef1ee96@iencinas.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddugedttdduucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthejredttddvjeenucfhrhhomheptehlvgigrghnughrvgcuifhhihhtihcuoegrlhgvgiesghhhihhtihdrfhhrqeenucggtffrrghtthgvrhhnpefhhfdutdevgeelgeegfeeltdduhfduledvteduhfegffffiefggfektefhjedujeenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecukfhppeefuddrfedvrdekuddrudekjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeefuddrfedvrdekuddrudekjedphhgvlhhopegludelvddrudeikedrvddurddvhegnpdhmrghilhhfrhhomheprghlvgigsehghhhithhirdhfrhdpnhgspghrtghpthhtohepuddtpdhrtghpthhtohepihhgnhgrtghiohesihgvnhgtihhnrghsrdgtohhmpdhrtghpthhtohepphgruhhlrdifrghlmhhslhgvhiesshhifhhivhgvrdgtohhmpdhrtghpthhtohepphgrlhhmvghrsegurggssggvlhhtrdgtohhmpdhrtghpthhtohepvggsihhgghgvrhhssehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhrihhstghvsehlihhsthhsrdhinhhfrhgruggvrggur
- dhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlqdhmvghnthgvvghssehlihhsthhsrdhlihhnuhigrdguvghvpdhrtghpthhtohepshhkhhgrnheslhhinhhugihfohhunhgurghtihhonhdrohhrgh
-X-GND-Sasl: alex@ghiti.fr
+Content-Transfer-Encoding: 8bit
 
-Hi Ignacio,
+Replace __vmalloc_node_range() by the __vmalloc_node() function.
+The last variant requires less parameters and it uses exactly the
+same arguments which are partly now hidden inside __vmalloc_node()
+function.
 
-On 10/03/2025 23:03, Ignacio Encinas wrote:
-> Implement endianness swap macros for RISC-V.
->
-> Use the rev8 instruction when Zbb is available. Otherwise, rely on the
-> default mask-and-shift implementation.
->
-> Signed-off-by: Ignacio Encinas <ignacio@iencinas.com>
-> ---
-> Motivated by [1]. A couple of things to note:
->
-> We need a default implementation to fall back on, but there isn't any in
-> `asm-generic/swab.h`. Should I introduce a first patch moving
-> ___constant_swab<XX> into include/uapi/asm-generic/swab.h?
+This change does not change any functionality. It makes the code
+a bit simpler.
 
+Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
+---
+ kernel/fork.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-Yes, that or something else to avoid the code duplication.
-
-
->
-> I don't particularly like the ARCH_SWAB macro but I can't think of
-> anything better that doesn't result in code duplication.
->
-> Tested with crc_kunit as pointed out here [2]. I can't provide
-> performance numbers as I don't have RISC-V hardware yet.
->
-> Ccing everyone involved with [1].
->
-> [1] https://lore.kernel.org/all/20250302220426.GC2079@quark.localdomain/
-> [2] https://lore.kernel.org/all/20250216225530.306980-1-ebiggers@kernel.org/
-> ---
->   arch/riscv/include/asm/swab.h | 81 +++++++++++++++++++++++++++++++++++++++++++
->   1 file changed, 81 insertions(+)
->
-> diff --git a/arch/riscv/include/asm/swab.h b/arch/riscv/include/asm/swab.h
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..8f8a13b343f6ffbefbb3c7747ab4e14243852014
-> --- /dev/null
-> +++ b/arch/riscv/include/asm/swab.h
-> @@ -0,0 +1,81 @@
-> +/* SPDX-License-Identifier: GPL-2.0-only */
-> +#ifndef _ASM_RISCV_SWAB_H
-> +#define _ASM_RISCV_SWAB_H
-> +
-> +#include <linux/types.h>
-> +#include <linux/compiler.h>
-> +#include <asm/alternative-macros.h>
-> +#include <asm/hwcap.h>
-> +
-> +#if defined(CONFIG_RISCV_ISA_ZBB) && !defined(NO_ALTERNATIVE)
-
-
-NO_ALTERNATIVE does not exist to my knowledge, and you don't need to 
-check for ALTERNATIVE as alternative-macros.h will do the right thing in 
-that case.
-
-
-> +
-> +/*
-> + * FIXME, RFC PATCH: This is copypasted from include/uapi/linux/swab.h
-> + * should I move these `#defines` to include/uapi/asm-generic/swab.h
-> + * and include that file here and in include/uapi/linux/swab.h ?
-> + */
-> +#define ___constant_swab16(x) ((__u16)(				\
-> +	(((__u16)(x) & (__u16)0x00ffU) << 8) |			\
-> +	(((__u16)(x) & (__u16)0xff00U) >> 8)))
-> +
-> +#define ___constant_swab32(x) ((__u32)(				\
-> +	(((__u32)(x) & (__u32)0x000000ffUL) << 24) |		\
-> +	(((__u32)(x) & (__u32)0x0000ff00UL) <<  8) |		\
-> +	(((__u32)(x) & (__u32)0x00ff0000UL) >>  8) |		\
-> +	(((__u32)(x) & (__u32)0xff000000UL) >> 24)))
-> +
-> +#define ___constant_swab64(x) ((__u64)(				\
-> +	(((__u64)(x) & (__u64)0x00000000000000ffULL) << 56) |	\
-> +	(((__u64)(x) & (__u64)0x000000000000ff00ULL) << 40) |	\
-> +	(((__u64)(x) & (__u64)0x0000000000ff0000ULL) << 24) |	\
-> +	(((__u64)(x) & (__u64)0x00000000ff000000ULL) <<  8) |	\
-> +	(((__u64)(x) & (__u64)0x000000ff00000000ULL) >>  8) |	\
-> +	(((__u64)(x) & (__u64)0x0000ff0000000000ULL) >> 24) |	\
-> +	(((__u64)(x) & (__u64)0x00ff000000000000ULL) >> 40) |	\
-> +	(((__u64)(x) & (__u64)0xff00000000000000ULL) >> 56)))
-> +
-> +#define ___constant_swahw32(x) ((__u32)(			\
-> +	(((__u32)(x) & (__u32)0x0000ffffUL) << 16) |		\
-> +	(((__u32)(x) & (__u32)0xffff0000UL) >> 16)))
-> +
-> +#define ___constant_swahb32(x) ((__u32)(			\
-> +	(((__u32)(x) & (__u32)0x00ff00ffUL) << 8) |		\
-> +	(((__u32)(x) & (__u32)0xff00ff00UL) >> 8)))
-> +
-> +
-> +#define ARCH_SWAB(size) \
-> +static __always_inline unsigned long __arch_swab##size(__u##size value) \
-
-
-I don't like the ARCH_SWAB macro neither but I don't have another 
-solution too, maybe someone will come up with some macro magic.
-
-
-> +{									\
-> +	unsigned long x = value;					\
-> +									\
-> +	asm goto(ALTERNATIVE("j %l[legacy]", "nop", 0,			\
-> +			     RISCV_ISA_EXT_ZBB, 1)			\
-> +			     :::: legacy);				\
-> +									\
-> +	asm volatile (".option push\n"					\
-> +		      ".option arch,+zbb\n"				\
-> +		      "rev8 %0, %1\n"					\
-> +		      ".option pop\n"					\
-> +		      : "=r" (x) : "r" (x));				\
-> +									\
-> +	return x >> (BITS_PER_LONG - size);				\
-> +									\
-> +legacy:									\
-> +	return  ___constant_swab##size(value);				\
-> +}
-> +
-> +#ifdef CONFIG_64BIT
-> +ARCH_SWAB(64)
-> +#define __arch_swab64 __arch_swab64
-> +#endif
-> +
-> +ARCH_SWAB(32)
-> +#define __arch_swab32 __arch_swab32
-> +
-> +ARCH_SWAB(16)
-> +#define __arch_swab16 __arch_swab16
-> +
-> +#undef ARCH_SWAB
-> +
-> +#endif /* defined(CONFIG_RISCV_ISA_ZBB) && !defined(NO_ALTERNATIVE) */
-> +#endif /* _ASM_RISCV_SWAB_H */
->
-> ---
-> base-commit: 2014c95afecee3e76ca4a56956a936e23283f05b
-> change-id: 20250307-riscv-swab-b81b94a9ac1b
->
-> Best regards,
-
-
-It would be nice to have some perf numbers too, maybe Bjorn will chime in :)
-
-Thanks for your patch, looking forward the v2,
-
-Alex
+diff --git a/kernel/fork.c b/kernel/fork.c
+index 2fa2a3582925..72d9e7c7639e 100644
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -311,11 +311,9 @@ static int alloc_thread_stack_node(struct task_struct *tsk, int node)
+ 	 * so memcg accounting is performed manually on assigning/releasing
+ 	 * stacks to tasks. Drop __GFP_ACCOUNT.
+ 	 */
+-	stack = __vmalloc_node_range(THREAD_SIZE, THREAD_ALIGN,
+-				     VMALLOC_START, VMALLOC_END,
++	stack = __vmalloc_node(THREAD_SIZE, THREAD_ALIGN,
+ 				     THREADINFO_GFP & ~__GFP_ACCOUNT,
+-				     PAGE_KERNEL,
+-				     0, node, __builtin_return_address(0));
++				     node, __builtin_return_address(0));
+ 	if (!stack)
+ 		return -ENOMEM;
+ 
+-- 
+2.39.5
 
 
