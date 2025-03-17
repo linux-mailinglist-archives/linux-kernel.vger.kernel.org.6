@@ -1,103 +1,339 @@
-Return-Path: <linux-kernel+bounces-564728-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564735-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90C68A659EE
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 18:12:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DAB3A65A0E
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 18:14:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27DB91888E68
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 17:07:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4631F1894C3B
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 17:08:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A33171A264A;
-	Mon, 17 Mar 2025 17:06:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 636091AAA2C;
+	Mon, 17 Mar 2025 17:08:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="DbVpv00x"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="VstgZkNu"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9643E1A2630
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 17:06:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3665186E2D
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 17:08:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742231175; cv=none; b=JbxXAH5PrFtSuSuTnfTWA0cwl+CAhasThDyic/svGsQoGtQRaxfuaEo9sQW+6m4X1/GAgfYW6vIWW4jnoFlxR5dbuV0zQigOo+UC5qNCtSq142VHRescKpZPhU6LsNmeO40cSXLBuyA3JZHSkEMV0dfHBriyCW9AeaoZ4bECyCA=
+	t=1742231290; cv=none; b=RedQt6pYRkgVBtlQhyucGE9uaRVCp/HWPDhpe86HV3Px502w/Ylge/6XDIzMw30zekikxNJhLYz74K6IJupuV+88KhIzcOvBVWKhKtuKTtgxuFqmvFTAjec3De83PPqRq/gBiuAZ5gr0LfIi/0lGQbMVBNymTIy9jTG/5f9WxPM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742231175; c=relaxed/simple;
-	bh=EKcGOxVMzjKzzpY2bAD/qKhkOsw3/ZS5jWoFiHGL9QY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NqTvhJry/YSAGb0vtSfuhKPln8Ny/OKGntUSR+j5Yv97jmsG0tsKynF+8v1zPvU+Ypo+fJ/tv5QmFWcsJOLGgmRPoJL0YAN6XIWfQSop6WbrHcnjHxKXgMJer/mgz0QDqWHJKUJTvu2F0vMWSg1hOmSfjE0BgyTGCYod6Xc/jN4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=DbVpv00x; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=dGzCutVqaGoQAQTN8SMp16X3bMGayRAE4xjT/iqKqv4=; b=DbVpv00x+lyC9GE1HhMwx82/pC
-	vST0lop5ZdDtgbprWQDxdG3UJkVQ0FDsUayc6xmlw6peWOxTTJPkEXTeyVnjOcWdYdzUiVRTLh6qc
-	95R8FpRI2h9eobEmTk0VvVIFVlQ7nuYJXmHUADS8KT20JsiCgIGmQOc/LgKp/LDQJYeeabEx2KBDn
-	iksISKi5Dav5WoR8BwFG1E7VZrqThVzNCVOR0msWOMHzu8A2rjkOfq4nH/weONbOIpu6hjMJfO9iC
-	VUYxRRoG0wIOCg+BsGyNTvpoFALPCAjP/VQruEDR5qFtIMLFv3dBJIwmD/U3p/LbL7l+BcbPeqviX
-	uDxU772w==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tuDud-00000003UtN-2WOY;
-	Mon, 17 Mar 2025 17:06:03 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 2F1A6300B40; Mon, 17 Mar 2025 18:06:03 +0100 (CET)
-Date: Mon, 17 Mar 2025 18:06:02 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Tejun Heo <tj@kernel.org>
-Cc: Joel Fernandes <joelagnelf@nvidia.com>, linux-kernel@vger.kernel.org,
-	Andrea Righi <arighi@nvidia.com>, Ingo Molnar <mingo@redhat.com>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	David Vernet <void@manifault.com>,
-	Changwoo Min <changwoo@igalia.com>,
-	Luigi De Matteis <ldematteis123@gmail.com>, paulmck@kernel.org,
-	boqun.feng@gmail.com
-Subject: Re: [PATCH RFC 3/8] sched/ext: Add a DL server for sched_ext tasks
-Message-ID: <20250317170602.GE6888@noisy.programming.kicks-ass.net>
-References: <20250315022158.2354454-1-joelagnelf@nvidia.com>
- <20250315022158.2354454-4-joelagnelf@nvidia.com>
- <20250315072225.GG36322@noisy.programming.kicks-ass.net>
- <3b244939-6d55-4d86-8b77-a9a7629f8239@nvidia.com>
- <20250317103101.GC34541@noisy.programming.kicks-ass.net>
- <Z9hUby9e1JYaE6iC@slm.duckdns.org>
+	s=arc-20240116; t=1742231290; c=relaxed/simple;
+	bh=JdPJSsoUPh3J14sgnO5tdyg3B1Ac17THJgC6ElmusB4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=iy9lgN+cZc8pWs13/7D4frgw90nGIF2J31Tt6MoeWFyxZZCLVU+HceklyVq7ff5AgENA9zCcZSYXpU/Ps4n2TKxwNUFYurX4dT9x2bFRB/rXf3McuMfZ0oUWfS290VteZjTLA+vUNQOPoP02oTxl9nZiuzqcBZYjy90wWQw8jLw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=VstgZkNu; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4394345e4d5so17924175e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 10:08:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1742231286; x=1742836086; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=vqJe7JsC5kaJHyx8vh1Uhg8CkQIQnEwRCDY7BLjtntM=;
+        b=VstgZkNu0zVcpjx5QR85SIv6aaiXJa7Ag95imFcdPlYkNbP2EKo0Do/7qLuE8OFG2n
+         VwwIOzrm06aZYpir2kRvVeCtgVrgjd8N+1Bv1dGeNgp6XT7JrIbYpIw4kBCRr5nMeQM8
+         AXlcL72f63ukZY1y1IgUJ+NfzxjeIoOGoLxaERgdFOKfg9TBxo4+IeBEBmn3cIVHAaR3
+         Jhhy4QF6XQ0tL9T1gK6gALqa7/CZFXGmmFfKZq3oD2Bkhl+27mI/yfNiNV/+zdhE1dr2
+         b+XcTZvXDQaaswKi+w1UuV0rB5uJVbJohwH9W6ljO+aejC8F0VvoTeXXEMkG8nlU4s6N
+         ZYZw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742231286; x=1742836086;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vqJe7JsC5kaJHyx8vh1Uhg8CkQIQnEwRCDY7BLjtntM=;
+        b=WcTVtrxV/qWHRyZ7+6OiozmbTD6hu1AJ17gIDaMS6F2hG4+fldGL+XWhTSbkDv8hok
+         KrqBnDjCcllczCWVQL7elzjU8pc7ydeZx5FZfO2KuVjXhl00uyYxI0D6t61Hr3N8rqpy
+         AygG5j5Y1MFUl0MQt3wKIh+OTxMkKT+ThyPOefGvlO3ZMyQpFSwUBRGJ6v2CZn0x+rq8
+         KbDRo5YdgNIJDBbnYH7cYTfeke5rhS/TDHbw8K6/HJR1r633JRyv+1/OB69aiUcnXUA+
+         nLyuKAkDvz8rydtuIt0VZ90N3l9U4IoHuCsKNZKJLBI0hdPo/kzakSyjy7VYw/TgYz1B
+         K6Zg==
+X-Forwarded-Encrypted: i=1; AJvYcCXdkaxOH1NBX1xdZtyYjYyT+scBba2LwIpj8qiHKYHYJHsXp0mHCcxmApyV0FH9xvVWyaDU625gQaSAA7Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywm0zRUmraCW9jT3fRQzUZ9RTtFGl5INIo5Gt8L2uD9M933myMG
+	C8bb3CsQFzxgGmPMOQXvAZ4IMu0/dKkGSYv9nKjsfvVm31G46TorRQGuBslA0zI=
+X-Gm-Gg: ASbGncvMlWGV2bkJPu2a6k9Jwu3kDt7Qd8Vr5rx30N/sNPWyF7Nx00QXGy0EeQAY8R0
+	NAtITp8ax3s6nqVKkkF1usZzOGeDge0c9I9ZAJZlCoN5bo51NeKNqD/B5OyQo58cnnVPADbd9Rx
+	99P8ndpLv7Jb0YfeiYTFoztXnnYRE+z4K3fnVhWnp3iN0r/+42z9BsR2fV3RfU6rc9yjIRG5TzO
+	jAr3ZpDKa1Ct3TtCu1XNV1FRiBFie8Xjpy0P+3mxwRN96U/SSHG/yQZdm887Nqch5gPNbZxXL+A
+	anlkGuZ+/MedUCoYd5cwpmeBNVoKvdvIsnt4ABHwdHNgNw==
+X-Google-Smtp-Source: AGHT+IHpI7qisyqTziWbLZb4THigYkciSVbVN6SXNbkTleu87TQUTXV4zvRscWYGmKBNgZsPrQyXWA==
+X-Received: by 2002:a05:600c:46cf:b0:43c:ea40:ae4a with SMTP id 5b1f17b1804b1-43d389d1f87mr5943205e9.31.1742231286042;
+        Mon, 17 Mar 2025 10:08:06 -0700 (PDT)
+Received: from carbon-x1.. ([2a01:e0a:e17:9700:16d2:7456:6634:9626])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d23cddb2asm96014505e9.39.2025.03.17.10.08.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Mar 2025 10:08:05 -0700 (PDT)
+From: =?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <cleger@rivosinc.com>
+To: Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Anup Patel <anup@brainfault.org>,
+	Atish Patra <atishp@atishpatra.org>,
+	Shuah Khan <shuah@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	kvm@vger.kernel.org,
+	kvm-riscv@lists.infradead.org,
+	linux-kselftest@vger.kernel.org
+Cc: =?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <cleger@rivosinc.com>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Andrew Jones <ajones@ventanamicro.com>
+Subject: [PATCH v4 00/18] riscv: add SBI FWFT misaligned exception delegation support
+Date: Mon, 17 Mar 2025 18:06:06 +0100
+Message-ID: <20250317170625.1142870-1-cleger@rivosinc.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z9hUby9e1JYaE6iC@slm.duckdns.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon, Mar 17, 2025 at 06:57:19AM -1000, Tejun Heo wrote:
-> Hello,
-> 
-> On Mon, Mar 17, 2025 at 11:31:01AM +0100, Peter Zijlstra wrote:
-> > On Sat, Mar 15, 2025 at 07:15:27PM -0400, Joel Fernandes wrote:
-> > > If so, that will not handle the case where the system has both
-> > > FAIR and EXT tasks in the mix (EXT has a partial mode where certain tasks can be
-> > > made EXT with certain others left as FAIR) and FAIR runs 100% and starves EXT.
-> > 
-> > Well, you did not mention that issue, you only babbled about RT.
-> > 
-> > I did point out that issue with ext, and TJ said this mixed mode wasn't
-> > really meant to be used or somesuch.
-> 
-> It's true that most of the current use cases don't use mixed mode. That
-> said, some folks are interested in it and if we can prevent starvation from
-> fair saturating CPUs in mixed mode with a DL server, that'd be really nice.
-> Would it be possible to toggle the reservations depending on the ext's
-> operation mode?
+The SBI Firmware Feature extension allows the S-mode to request some
+specific features (either hardware or software) to be enabled. This
+series uses this extension to request misaligned access exception
+delegation to S-mode in order to let the kernel handle it. It also adds
+support for the KVM FWFT SBI extension based on the misaligned access
+handling infrastructure.
 
-Yeah, that should be doable.
+FWFT SBI extension is part of the SBI V3.0 specifications [1]. It can be
+tested using the qemu provided at [2] which contains the series from
+[3]. kvm-unit-tests [4] can be used inside kvm to tests the correct
+delegation of misaligned exceptions. Upstream OpenSBI can be used.
+
+Note: Since SBI V3.0 is not yet ratified, FWFT extension API is split
+between interface only and implementation, allowing to pick only the
+interface which do not have hard dependencies on SBI.
+
+The tests can be run using the included kselftest:
+
+$ qemu-system-riscv64 \
+	-cpu rv64,trap-misaligned-access=true,v=true \
+	-M virt \
+	-m 1024M \
+	-bios fw_dynamic.bin \
+	-kernel Image
+ ...
+
+ # ./misaligned
+ TAP version 13
+ 1..23
+ # Starting 23 tests from 1 test cases.
+ #  RUN           global.gp_load_lh ...
+ #            OK  global.gp_load_lh
+ ok 1 global.gp_load_lh
+ #  RUN           global.gp_load_lhu ...
+ #            OK  global.gp_load_lhu
+ ok 2 global.gp_load_lhu
+ #  RUN           global.gp_load_lw ...
+ #            OK  global.gp_load_lw
+ ok 3 global.gp_load_lw
+ #  RUN           global.gp_load_lwu ...
+ #            OK  global.gp_load_lwu
+ ok 4 global.gp_load_lwu
+ #  RUN           global.gp_load_ld ...
+ #            OK  global.gp_load_ld
+ ok 5 global.gp_load_ld
+ #  RUN           global.gp_load_c_lw ...
+ #            OK  global.gp_load_c_lw
+ ok 6 global.gp_load_c_lw
+ #  RUN           global.gp_load_c_ld ...
+ #            OK  global.gp_load_c_ld
+ ok 7 global.gp_load_c_ld
+ #  RUN           global.gp_load_c_ldsp ...
+ #            OK  global.gp_load_c_ldsp
+ ok 8 global.gp_load_c_ldsp
+ #  RUN           global.gp_load_sh ...
+ #            OK  global.gp_load_sh
+ ok 9 global.gp_load_sh
+ #  RUN           global.gp_load_sw ...
+ #            OK  global.gp_load_sw
+ ok 10 global.gp_load_sw
+ #  RUN           global.gp_load_sd ...
+ #            OK  global.gp_load_sd
+ ok 11 global.gp_load_sd
+ #  RUN           global.gp_load_c_sw ...
+ #            OK  global.gp_load_c_sw
+ ok 12 global.gp_load_c_sw
+ #  RUN           global.gp_load_c_sd ...
+ #            OK  global.gp_load_c_sd
+ ok 13 global.gp_load_c_sd
+ #  RUN           global.gp_load_c_sdsp ...
+ #            OK  global.gp_load_c_sdsp
+ ok 14 global.gp_load_c_sdsp
+ #  RUN           global.fpu_load_flw ...
+ #            OK  global.fpu_load_flw
+ ok 15 global.fpu_load_flw
+ #  RUN           global.fpu_load_fld ...
+ #            OK  global.fpu_load_fld
+ ok 16 global.fpu_load_fld
+ #  RUN           global.fpu_load_c_fld ...
+ #            OK  global.fpu_load_c_fld
+ ok 17 global.fpu_load_c_fld
+ #  RUN           global.fpu_load_c_fldsp ...
+ #            OK  global.fpu_load_c_fldsp
+ ok 18 global.fpu_load_c_fldsp
+ #  RUN           global.fpu_store_fsw ...
+ #            OK  global.fpu_store_fsw
+ ok 19 global.fpu_store_fsw
+ #  RUN           global.fpu_store_fsd ...
+ #            OK  global.fpu_store_fsd
+ ok 20 global.fpu_store_fsd
+ #  RUN           global.fpu_store_c_fsd ...
+ #            OK  global.fpu_store_c_fsd
+ ok 21 global.fpu_store_c_fsd
+ #  RUN           global.fpu_store_c_fsdsp ...
+ #            OK  global.fpu_store_c_fsdsp
+ ok 22 global.fpu_store_c_fsdsp
+ #  RUN           global.gen_sigbus ...
+ [12797.988647] misaligned[618]: unhandled signal 7 code 0x1 at 0x0000000000014dc0 in misaligned[4dc0,10000+76000]
+ [12797.988990] CPU: 0 UID: 0 PID: 618 Comm: misaligned Not tainted 6.13.0-rc6-00008-g4ec4468967c9-dirty #51
+ [12797.989169] Hardware name: riscv-virtio,qemu (DT)
+ [12797.989264] epc : 0000000000014dc0 ra : 0000000000014d00 sp : 00007fffe165d100
+ [12797.989407]  gp : 000000000008f6e8 tp : 0000000000095760 t0 : 0000000000000008
+ [12797.989544]  t1 : 00000000000965d8 t2 : 000000000008e830 s0 : 00007fffe165d160
+ [12797.989692]  s1 : 000000000000001a a0 : 0000000000000000 a1 : 0000000000000002
+ [12797.989831]  a2 : 0000000000000000 a3 : 0000000000000000 a4 : ffffffffdeadbeef
+ [12797.989964]  a5 : 000000000008ef61 a6 : 626769735f6e0000 a7 : fffffffffffff000
+ [12797.990094]  s2 : 0000000000000001 s3 : 00007fffe165d838 s4 : 00007fffe165d848
+ [12797.990238]  s5 : 000000000000001a s6 : 0000000000010442 s7 : 0000000000010200
+ [12797.990391]  s8 : 000000000000003a s9 : 0000000000094508 s10: 0000000000000000
+ [12797.990526]  s11: 0000555567460668 t3 : 00007fffe165d070 t4 : 00000000000965d0
+ [12797.990656]  t5 : fefefefefefefeff t6 : 0000000000000073
+ [12797.990756] status: 0000000200004020 badaddr: 000000000008ef61 cause: 0000000000000006
+ [12797.990911] Code: 8793 8791 3423 fcf4 3783 fc84 c737 dead 0713 eef7 (c398) 0001
+ #            OK  global.gen_sigbus
+ ok 23 global.gen_sigbus
+ # PASSED: 23 / 23 tests passed.
+ # Totals: pass:23 fail:0 xfail:0 xpass:0 skip:0 error:0
+
+With kvm-tools:
+
+ # lkvm run -k sbi.flat -m 128
+  Info: # lkvm run -k sbi.flat -m 128 -c 1 --name guest-97
+  Info: Removed ghost socket file "/root/.lkvm//guest-97.sock".
+
+ ##########################################################################
+ #    kvm-unit-tests
+ ##########################################################################
+
+ ... [test messages elided]
+ PASS: sbi: fwft: FWFT extension probing no error
+ PASS: sbi: fwft: get/set reserved feature 0x6 error == SBI_ERR_DENIED
+ PASS: sbi: fwft: get/set reserved feature 0x3fffffff error == SBI_ERR_DENIED
+ PASS: sbi: fwft: get/set reserved feature 0x80000000 error == SBI_ERR_DENIED
+ PASS: sbi: fwft: get/set reserved feature 0xbfffffff error == SBI_ERR_DENIED
+ PASS: sbi: fwft: misaligned_deleg: Get misaligned deleg feature no error
+ PASS: sbi: fwft: misaligned_deleg: Set misaligned deleg feature invalid value error
+ PASS: sbi: fwft: misaligned_deleg: Set misaligned deleg feature invalid value error
+ PASS: sbi: fwft: misaligned_deleg: Set misaligned deleg feature value no error
+ PASS: sbi: fwft: misaligned_deleg: Set misaligned deleg feature value 0
+ PASS: sbi: fwft: misaligned_deleg: Set misaligned deleg feature value no error
+ PASS: sbi: fwft: misaligned_deleg: Set misaligned deleg feature value 1
+ PASS: sbi: fwft: misaligned_deleg: Verify misaligned load exception trap in supervisor
+ SUMMARY: 50 tests, 2 unexpected failures, 12 skipped
+
+This series is available at [6].
+
+Link: https://github.com/riscv-non-isa/riscv-sbi-doc/releases/download/vv3.0-rc2/riscv-sbi.pdf [1]
+Link: https://github.com/rivosinc/qemu/tree/dev/cleger/misaligned [2]
+Link: https://lore.kernel.org/all/20241211211933.198792-3-fkonrad@amd.com/T/ [3]
+Link: https://github.com/clementleger/kvm-unit-tests/tree/dev/cleger/fwft_v1 [4]
+Link: https://github.com/clementleger/unaligned_test [5]
+Link: https://github.com/rivosinc/linux/tree/dev/cleger/fwft_v1 [6]
+---
+
+V4:
+ - Check SBI version 3.0 instead of 2.0 for FWFT presence
+ - Use long for kvm_sbi_fwft operation return value
+ - Init KVM sbi extension even if default_disabled
+ - Remove revert_on_fail parameter for sbi_fwft_feature_set().
+ - Fix comments for sbi_fwft_set/get()
+ - Only handle local features (there are no globals yet in the spec)
+ - Add new SBI errors to sbi_err_map_linux_errno()
+
+V3:
+ - Added comment about kvm sbi fwft supported/set/get callback
+   requirements
+ - Move struct kvm_sbi_fwft_feature in kvm_sbi_fwft.c
+ - Add a FWFT interface
+
+V2:
+ - Added Kselftest for misaligned testing
+ - Added get_user() usage instead of __get_user()
+ - Reenable interrupt when possible in misaligned access handling
+ - Document that riscv supports unaligned-traps
+ - Fix KVM extension state when an init function is present
+ - Rework SBI misaligned accesses trap delegation code
+ - Added support for CPU hotplugging
+ - Added KVM SBI reset callback
+ - Added reset for KVM SBI FWFT lock
+ - Return SBI_ERR_DENIED_LOCKED when LOCK flag is set
+
+Clément Léger (18):
+  riscv: add Firmware Feature (FWFT) SBI extensions definitions
+  riscv: sbi: add new SBI error mappings
+  riscv: sbi: add FWFT extension interface
+  riscv: sbi: add SBI FWFT extension calls
+  riscv: misaligned: request misaligned exception from SBI
+  riscv: misaligned: use on_each_cpu() for scalar misaligned access
+    probing
+  riscv: misaligned: use correct CONFIG_ ifdef for
+    misaligned_access_speed
+  riscv: misaligned: move emulated access uniformity check in a function
+  riscv: misaligned: add a function to check misalign trap delegability
+  riscv: misaligned: factorize trap handling
+  riscv: misaligned: enable IRQs while handling misaligned accesses
+  riscv: misaligned: use get_user() instead of __get_user()
+  Documentation/sysctl: add riscv to unaligned-trap supported archs
+  selftests: riscv: add misaligned access testing
+  RISC-V: KVM: add SBI extension init()/deinit() functions
+  RISC-V: KVM: add SBI extension reset callback
+  RISC-V: KVM: add support for FWFT SBI extension
+  RISC-V: KVM: add support for SBI_FWFT_MISALIGNED_DELEG
+
+ Documentation/admin-guide/sysctl/kernel.rst   |   4 +-
+ arch/riscv/include/asm/cpufeature.h           |   8 +-
+ arch/riscv/include/asm/kvm_host.h             |   5 +-
+ arch/riscv/include/asm/kvm_vcpu_sbi.h         |  12 +
+ arch/riscv/include/asm/kvm_vcpu_sbi_fwft.h    |  29 ++
+ arch/riscv/include/asm/sbi.h                  |  62 +++++
+ arch/riscv/include/uapi/asm/kvm.h             |   1 +
+ arch/riscv/kernel/sbi.c                       |  95 +++++++
+ arch/riscv/kernel/traps.c                     |  57 ++--
+ arch/riscv/kernel/traps_misaligned.c          | 118 +++++++-
+ arch/riscv/kernel/unaligned_access_speed.c    |  11 +-
+ arch/riscv/kvm/Makefile                       |   1 +
+ arch/riscv/kvm/vcpu.c                         |   7 +-
+ arch/riscv/kvm/vcpu_sbi.c                     |  54 ++++
+ arch/riscv/kvm/vcpu_sbi_fwft.c                | 252 +++++++++++++++++
+ arch/riscv/kvm/vcpu_sbi_sta.c                 |   3 +-
+ .../selftests/riscv/misaligned/.gitignore     |   1 +
+ .../selftests/riscv/misaligned/Makefile       |  12 +
+ .../selftests/riscv/misaligned/common.S       |  33 +++
+ .../testing/selftests/riscv/misaligned/fpu.S  | 180 +++++++++++++
+ tools/testing/selftests/riscv/misaligned/gp.S | 103 +++++++
+ .../selftests/riscv/misaligned/misaligned.c   | 254 ++++++++++++++++++
+ 22 files changed, 1255 insertions(+), 47 deletions(-)
+ create mode 100644 arch/riscv/include/asm/kvm_vcpu_sbi_fwft.h
+ create mode 100644 arch/riscv/kvm/vcpu_sbi_fwft.c
+ create mode 100644 tools/testing/selftests/riscv/misaligned/.gitignore
+ create mode 100644 tools/testing/selftests/riscv/misaligned/Makefile
+ create mode 100644 tools/testing/selftests/riscv/misaligned/common.S
+ create mode 100644 tools/testing/selftests/riscv/misaligned/fpu.S
+ create mode 100644 tools/testing/selftests/riscv/misaligned/gp.S
+ create mode 100644 tools/testing/selftests/riscv/misaligned/misaligned.c
+
+-- 
+2.47.2
+
 
