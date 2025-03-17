@@ -1,107 +1,121 @@
-Return-Path: <linux-kernel+bounces-564903-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC013A65C83
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 19:28:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E954A65C85
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 19:28:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 846D33B8317
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 18:27:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6C1A3BC95E
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 18:28:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77652EED6;
-	Mon, 17 Mar 2025 18:28:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CA811D934D;
+	Mon, 17 Mar 2025 18:28:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WpLmKyBx"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="o+MzdPFN"
+Received: from 003.mia.mailroute.net (003.mia.mailroute.net [199.89.3.6])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8792619048F;
-	Mon, 17 Mar 2025 18:28:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41763EED6;
+	Mon, 17 Mar 2025 18:28:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742236085; cv=none; b=KPifeyzwps3aHB4Q04jV+t5UQ2m6cJJJm4x2ijHo4W1ctWtV+bNZ3Ze5cd1WmhM3TYLJZ5ZEugAPybd83n8FyYhe7ro5A7/Lz7BrRHM9s6O+5UT7Mh4AL2tX2+peWrlUHwko25LJh+q6UJXNTvMvDevtPert4BZbQFkkEI7Vios=
+	t=1742236105; cv=none; b=BehI7RIJuNf9xqKO8spBuqd+n+TRnQLhXuK8/f18vLP8gnlb6PuiQ8kBY7OJ+wKeojkqu1upJqwWbLeNEIhGzZvQf+E+qV6Y/NigYLUZkvk0ttLphezA/07PS7tw+ZquzJLBIVQ4GaufmkFYUCbAmZ6X9bYdnFYg1onFToCUSic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742236085; c=relaxed/simple;
-	bh=/kL+Ap6DDe66A8Zm0uZY9aQg5lJrAyNkoqxCKmILK3k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HoT2Suuu2bcThznoCKcx4Ad2rvymrcJNLKVDhqEpOOMocKCiiymygV3cGijWqzzwfvcOOCKTGbHNjUF9a0DR7XO6R45WiCKp04KRwJO7TtZO2gnNfsXD8cGf4SB4W+o/fO6cyPnFqzxhR+lyg8Mds/LKvasPmW2/WWPaEloNGLo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WpLmKyBx; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-22435603572so76459765ad.1;
-        Mon, 17 Mar 2025 11:28:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742236084; x=1742840884; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=tbNrdg7l4vUElHmVIwQwGoavySU6aVvgzfhqS1x4uMg=;
-        b=WpLmKyBxqCs5QI+hezXJx4S87/HGJ8ArZ+ZrZtpGSJ4SQlpU9x/hhqBY72cTIsOe99
-         IPdY5YZVbqO7MUH0pVMaAeW+yt3qwXgRXHLoTF5hMleK76u9uh0S1OjWw/xgqVwYtbOd
-         3mq3UNf7IUdq5u3MgMxAxevDXBe3x+7JlO5Vj4lLaYN5y4XKuysXTWKmAeVKtEUuKXna
-         HBG/n+Y54osZbZZOqMvh0KOD8sneoRvIqw/+UhR4rcuPRm5MKomh8NAu1ZsVTATguHQX
-         15kzcScHyx6Kda07xW/KOGYFFV6V94PnyULgSexycRmQOcLJv5I52qKIgv6GXLjeoyZ1
-         ZMqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742236084; x=1742840884;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tbNrdg7l4vUElHmVIwQwGoavySU6aVvgzfhqS1x4uMg=;
-        b=apov5pZHm11TSODpOc15491a2hsHOvMi9s5FLAqb4+vhalj7prfUoMiLikVUKwtUcs
-         QL91HQGh+uXB7rQmEO5r9PkkUhQdlXEiNcI9+PEcW7DlEkGpUCaKccwuBWKtJWALuJd5
-         GDC9yTXnt/VP9EQCTq7cBEc/jC05VWIthddoqKdeNnRgbwht2Ikif4jsodMbX+eegcBN
-         wA5PhdNmAfXGPC9HNtV1zXHXce5JcHPHrC/1Cnf7vH2iODckpueW1AVxx+GJJOttgIMj
-         eMBaYQmBZJHK0FQLulMqtwaCLmDxdtvMwKxEbikSq4YPwZn1HBwsQI1P+n7ylF5904J5
-         VkyA==
-X-Forwarded-Encrypted: i=1; AJvYcCUjh8DkD+TLAqCHiUnq5KtOjGV3jDxtWcCMJ1wEanuivjg2VnMA5x04bWXTDA69NiHX0QhpEkea1PsoBIyp@vger.kernel.org, AJvYcCWd1RlEJZBBL3Age2PIAk17Ns/v9MG5dX5SpYd0aENjfuD2owDBSFOwr9Uhb8QXrNGCSliBlE9vIPjcSQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzIY4i7/iM2rtw31hDLBd5rprochF7ciKRfOEYIpgJOCYvjYkuX
-	aDQRI5abxoo2mVqxpSNJfi9+k+6u5A5Mm2UqXCmqmSFYLYxmlCn7
-X-Gm-Gg: ASbGncsiSgkJThZWGWHQ3R7HiP+L+N159jvyP4YbGIxSxt57ieOKAtrNXXgy7DHb/gI
-	wroX6dCy07eVVrrgCBRyH9HSRizCFcF/u82YMcfidP/dFZ2Y/oGVopp1W6HK5IlmlL7VysJ7KyR
-	aSWl1Rhd54qX9YxA2ytY+zh2Yjkzuca4n6EFNEirSf7XVaz4jyLAwCsGy2/e3+dPdl9Ikbnnp0x
-	mjtrg7C7ko/wHLZ3BPg46MrCnPUgSaRtp9LpgyeYoQHQ4ac2SqyTaecUC0sGoH26jHjUh0c4Ly/
-	HQcXvTGUISFEDOPPWEirzQ5vYmYGJZgIpEjpsls2HiEy+MLVjjA/wS6z8A==
-X-Google-Smtp-Source: AGHT+IEepljzu0RP6ynLtQW4JsGi2Rq/NtjCuUtHgpqfaY4I5z3m5Zx0lOuJZq+cIUufWXNuNP0GUw==
-X-Received: by 2002:a05:6a20:4309:b0:1f5:7f45:7f95 with SMTP id adf61e73a8af0-1f5c12ec879mr17565588637.27.1742236083790;
-        Mon, 17 Mar 2025 11:28:03 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-af56e9ddf4fsm7471193a12.21.2025.03.17.11.28.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Mar 2025 11:28:03 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Mon, 17 Mar 2025 11:28:02 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Subu Dwevedi <messigoatcr7nop@gmail.com>
-Cc: Henrik Rydberg <rydberg@bitmath.org>, Jean Delvare <jdelvare@suse.com>,
-	linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] hwmon/applesmc: add MMIO for newer macs
-Message-ID: <c7df720c-c4d1-4d0d-8c67-982899e60aaf@roeck-us.net>
-References: <20250312123055.1735-1-messigoatcr7nop@gmail.com>
- <20250312123055.1735-2-messigoatcr7nop@gmail.com>
+	s=arc-20240116; t=1742236105; c=relaxed/simple;
+	bh=Jic7LTo33nITNM3oJkdLiqyjphLqMZ8yFiyEQhuSp5k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hS+1q7Y3wfA366UPDra84k1ISGrPhhWqzNE9yTmHkQQl5+qoUeUHvQBzRQA2E3p0gPPoueIViJx1aSedidaWDRrSbfIiJNUjOX/CM3hAH6oPItlupjQfDRF/bzXYFa5VkXhNnjlervGW1y0Ci/wtaqW3I1mr37nwOocnkj2GAZ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=o+MzdPFN; arc=none smtp.client-ip=199.89.3.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 003.mia.mailroute.net (Postfix) with ESMTP id 4ZGk4J1rMJzm0R40;
+	Mon, 17 Mar 2025 18:28:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1742236095; x=1744828096; bh=7TPkFiJOJUHh3hlZJsWwzzO5
+	re+hHlLP4IsNnjC0wkM=; b=o+MzdPFN33MspEhQwhPRfyGp1huUhEK+thVupdFU
+	RO8Ye1VjTPe2blHwDHkE/uwuT3y3i4z2prbAcNPt+kIYgYl/ylSBZuVDniIE0GO3
+	4GSBZg9CzzjGl2ZiQhF8Txx1GvKUkn7Jo0pLTAXIsBVH31JGcxysN44aryvWyZh5
+	5VzZRpkTjj9GB0ELXj3Lm4jsLMVNMK8CiM71ZOd/mYrXvF4CW6MvPEagxJBbZhsI
+	B8KVbyJOCKCGF68Xi4rQitODbAj3QXjkpxVjPMceEaDZNvVwEipgdsUfjOvoi13o
+	rQeAgdgahz+XV5nasCYVzDrn38glFtAsbL76RNMxJBFa8A==
+X-Virus-Scanned: by MailRoute
+Received: from 003.mia.mailroute.net ([127.0.0.1])
+ by localhost (003.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id ZCOmU5wj8kFo; Mon, 17 Mar 2025 18:28:15 +0000 (UTC)
+Received: from [100.66.154.22] (unknown [104.135.204.82])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 003.mia.mailroute.net (Postfix) with ESMTPSA id 4ZGk4C5fybzltBD0;
+	Mon, 17 Mar 2025 18:28:10 +0000 (UTC)
+Message-ID: <5b81f4be-427f-4083-8cbe-e201d0f255c5@acm.org>
+Date: Mon, 17 Mar 2025 11:28:09 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250312123055.1735-2-messigoatcr7nop@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH] block: Make request_queue lockdep splats show up
+ earlier
+To: =?UTF-8?Q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
+ Jens Axboe <axboe@kernel.dk>
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Ming Lei <ming.lei@redhat.com>
+References: <20250317171156.2954-1-thomas.hellstrom@linux.intel.com>
+ <f46f0286-8052-4a29-9d89-376bf9b48d8a@acm.org>
+ <13031d34692b0c97799de81c0b83875d56076e13.camel@linux.intel.com>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <13031d34692b0c97799de81c0b83875d56076e13.camel@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Mar 12, 2025 at 06:00:22PM +0530, Subu Dwevedi wrote:
-> Add basic MMIO support to AppleSMC for T2 Macs,
-> enabling it only when supported.
-> This replaces the legacy port-based method for
-> key reading, writing, and metadata operations
-> (retrieving keys by index and obtaining key information)
-> 
-> Signed-off-by: Subu Dwevedi <messigoatcr7nop@gmail.com>
+On 3/17/25 11:13 AM, Thomas Hellstr=C3=B6m wrote:
+> On Mon, 2025-03-17 at 10:37 -0700, Bart Van Assche wrote:
+>> On 3/17/25 10:11 AM, Thomas Hellstr=C3=B6m wrote:
+>>> diff --git a/block/blk-core.c b/block/blk-core.c
+>>> index d6c4fa3943b5..4aa439309406 100644
+>>> --- a/block/blk-core.c
+>>> +++ b/block/blk-core.c
+>>> @@ -455,6 +455,12 @@ struct request_queue *blk_alloc_queue(struct
+>>> queue_limits *lim, int node_id)
+>>>  =C2=A0=C2=A0	lockdep_init_map(&q->q_lockdep_map, "&q-
+>>>> q_usage_counter(queue)",
+>>>  =C2=A0=C2=A0			 &q->q_lock_cls_key, 0);
+>>>   =20
+>>> +	/* Prime io_lockdep_map as reclaim tainted */
+>>> +	fs_reclaim_acquire(GFP_KERNEL);
+>>> +	rwsem_acquire_read(&q->io_lockdep_map, 0, 0, _RET_IP_);
+>>> +	rwsem_release(&q->io_lockdep_map, _RET_IP_);
+>>> +	fs_reclaim_release(GFP_KERNEL);
+>>> +
+>>>  =C2=A0=C2=A0	q->nr_requests =3D BLKDEV_DEFAULT_RQ;
+>>>   =20
+>>>  =C2=A0=C2=A0	return q;
+>>
+>> Hmm ... my understanding is that it is fine if FS code calls block
+>> layer
+>> code but also that block layer code never should call FS code.
+>=20
+> That added code only mimics the locking sequence that happens during
+> reclaim with the existing code to register the locking order expected
+> by the reclaim code. If anything violates that, lockdep splat [2] will
+> appear.
+>=20
+> So I'm not quite following your comment?
+Shouldn't the above code be added in the VFS code rather than in the
+block layer?
 
-I expect the errors reported by the kernel test robot to be fixed before
-I have a closer look at the patches.
+Thanks,
 
-Guenter
+Bart.
 
