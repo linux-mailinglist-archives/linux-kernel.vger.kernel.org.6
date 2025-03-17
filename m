@@ -1,136 +1,159 @@
-Return-Path: <linux-kernel+bounces-563720-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563722-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51E3EA64737
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:26:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CD160A6473C
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:27:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 683493B5440
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 09:24:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 78A2E3B3D1F
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 09:25:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B39182222C7;
-	Mon, 17 Mar 2025 09:24:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC1D8225390;
+	Mon, 17 Mar 2025 09:24:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xy/tzjt0"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	dkim=pass (1024-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="Tyv/ZaCl"
+Received: from linux1587.grserver.gr (linux1587.grserver.gr [185.138.42.100])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83EC9221F1B
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 09:24:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 614BD3AC17;
+	Mon, 17 Mar 2025 09:24:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.138.42.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742203449; cv=none; b=PPTMZIpBNwtVOhsJijxcIwe+PyOnBwS3GKL6qdkTw5QYgoDpYtq+xnM32V1lBERsq5skYwG/M7yRLWcUyGTW1qa7Fk0UO129DtW4GYzXvQNb7mm2IgpjrmxCO4vVE5sF/iubme55ZvUsrpH7WXl7foSM+vw6mo6ysxi1T4UyG6w=
+	t=1742203475; cv=none; b=iSPlNRiOnqJuuVu+7823IuOh0h7U/jibpDmc1n+dmmVm/sURjEmsh+h7n7n8YpczD5Al8ijEHEyAZskh/yOqucavWyY0lrwzVYgs7O9nlrQLitJGkFCO12bXA/+XFj4NsaomZUx8DYqSO1mUFECixZozMWMYoibvwD51SyG5sec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742203449; c=relaxed/simple;
-	bh=n20nGFxTmcJaZG2reuyyngVL2ZIPOhrefpjSOvNbBzM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Kwz7Ns+omE1dzNvWPTxE2M4AavVB4qC/Wbu7C0qpN4ePFaw3aRreHq1zplqsAfqbyNF8XpVfCU0/NDgbikvg9BBJFGKCTTXL0jsX1vVIBYPLykGU+UOLwL5vffzJ0RgMVVhNS/XUg7a/2USz4Ttbb7WJyZyA98zISJd03cOQs68=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xy/tzjt0; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2255003f4c6so67754945ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 02:24:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1742203447; x=1742808247; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=qX0t6hmEl/ttFwtNba0D0ghdF1Z5CR+NbGCxyEIf37s=;
-        b=xy/tzjt0G76DGeZ+YqH3trc1+czZxDUza6y5SNjHEfjkXJlQbjs2nk4R6RgizLAB/8
-         J8RZy35kWjoi4kiznEPSthe+/yCRU4QNvp1icYHTrJOgcfb5ZCNYt7kxQVtNWYFxNLzn
-         PlN5SRjOUhYxYpqZkuoAn32MoX+eYXQU4HKzhHcTx9wZj7sTnKBss/NiIVIMC5GS1JRm
-         GWWa8b3eA5Y5KGvno5lmRK4Y1ATOc7drWzbisOKpt9Lg4/LJ6wzKu4hcVFT+lPXoq2Gz
-         9kGs+L2Re4M3OugBI7zMZGa+plzb8VUKZvTPBltKdbVa+j8IGyeHdBe0b4sk+nae+j9m
-         G+XA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742203447; x=1742808247;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qX0t6hmEl/ttFwtNba0D0ghdF1Z5CR+NbGCxyEIf37s=;
-        b=PVC4nLlaOPkZRclI/yLrqfyRrtM2zNmp9pYfsw4ioR70z0M2k7TkyxStxaISgNwb/A
-         ydfKxHxfkjRQfo1j4uJnIKnl4kb9wNF6oVeOlVyFwNjXyyK4O2z/1u3BJeUWeaTQadJn
-         S5CEU2o3XppAVCepWi89IPIFKikVA0PbRnai2atXnPMEbiVY2u7rs3/KLqOSNp4ATFO6
-         1X4Dl+J2/0/HQGQr8TlYySUUavToZ+qRVqtHHdJ33N3dfFnc729pPkP7JiQTysItI7ze
-         2NEMGDgSdBygd5ZBSBOcz/n5AubvLscaP9O3o6VM7/2PvV9s9RyET+zVbi6pT31zAOI/
-         TqxA==
-X-Forwarded-Encrypted: i=1; AJvYcCXZd2uWPRFljKOef0SJXYoe8AbktNdVd4J8lh+sbnnuJJooqS/cckjg/bmG0fznoJqS+KWNrnxffHeWSNU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YystiMWcranokH9VS/4zY7p2Rh0eDQ9X6PF1QQOT87bYHUSTs3v
-	+BVZyAnlItMdA3qLhRljTRKVGeGTdmAnOdekvhNN8ViY+yP1my2WAdTp0BC0O5I=
-X-Gm-Gg: ASbGncv8POWYnnA+1Cia05buokffPEbGdvCL95RQg7NrlXGfjsVKniW2wx7hDrthmoL
-	d5w0C+77c5vq2dKY8SUJPAm6H5756HwsjKn7Q6VBoqT3miG77rWtKNbZMaou1zYeecKPiGNcovj
-	I6LloLk/kcuGiLxaUSZrV8xWOjWD9S8VB5dVngFj7H4TbnAwVJBrcNwlCRi6RnDfSRgehEQWTuC
-	NbmtY5amNB/VQWEH7Ren7RpXfRtls1IyoVWHECCjmoxbPRbpeSimsH2M5PxsvSqdAju4pZW0rk3
-	o0qnB17JyMwrZLBFH7t5qt39MFEXwXw+zZ8mf7b+7YFp7w==
-X-Google-Smtp-Source: AGHT+IGJ/2dHOLsZIbIG2tr0KpKh72aCjWHwXgPaFwja0OjiG43diYcHNku0fI+Vv1FDoPAaGUSjNQ==
-X-Received: by 2002:a17:902:d482:b0:224:1074:63af with SMTP id d9443c01a7336-225e0aef7c4mr157534905ad.34.1742203446830;
-        Mon, 17 Mar 2025 02:24:06 -0700 (PDT)
-Received: from localhost ([122.172.84.15])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-225c68883fesm70839775ad.6.2025.03.17.02.24.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Mar 2025 02:24:06 -0700 (PDT)
-Date: Mon, 17 Mar 2025 14:54:03 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Yury Norov <yury.norov@gmail.com>, Akira Yokosawa <akiyks@gmail.com>,
-	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	linux-doc@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V2 1/2] cpumask: Fix kernel-doc formatting errors in
- cpumask.h
-Message-ID: <20250317092403.uphmlx7u52ntvih5@vireshk-i7>
-References: <cover.1741332579.git.viresh.kumar@linaro.org>
- <f4ad81150eaa00b43c161f0d1f811f8ecfe21889.1741332579.git.viresh.kumar@linaro.org>
- <Z8snakYmzhaavkKN@thinkpad>
+	s=arc-20240116; t=1742203475; c=relaxed/simple;
+	bh=HdqM+Kw7auoJFKOG+1yFmuAYczQRqYv6xSwAwWis1+c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=G49mbpe2pgCwza6dSbKkgdfeiChNpwzxPJny5dBhId8aNaKfUfYwpldwdvHe0jIx0I7cBeaV7729XBL6yOEg/aLRujGo1oyQ9yXfZN5zB5RHXsb8Fc1swyivFvge8yC0AiHtqSvPGy3LyVU1yUwAI4zOoDIuqmpDDwnh/FKRwL0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=pass (1024-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=Tyv/ZaCl; arc=none smtp.client-ip=185.138.42.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antheas.dev
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
+	by linux1587.grserver.gr (Postfix) with ESMTPSA id B25A92E087A4;
+	Mon, 17 Mar 2025 11:24:30 +0200 (EET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=antheas.dev;
+	s=default; t=1742203471;
+	bh=bpaJAokI/NQ/T1FCGS5iJELae0H5brpgDUQIsXXbr10=;
+	h=Received:From:Subject:To;
+	b=Tyv/ZaClVMNh7lp3NZiJU8GNe3SheFs3oZT+hyLZ1FVZpqWmiURjNvvvVfrIAqkOz
+	 Y2szcK/teCu1vJIUD73DepLHCRuZSY8q42DCU3bO6JcYPxs/cvCn5kIQn1XKcYeWyZ
+	 aJVUYqiwLfFuvMd7/8rqItBAb4Psp+yX4ynrynXE=
+Authentication-Results: linux1587.grserver.gr;
+        spf=pass (sender IP is 209.85.208.180) smtp.mailfrom=lkml@antheas.dev smtp.helo=mail-lj1-f180.google.com
+Received-SPF: pass (linux1587.grserver.gr: connection is authenticated)
+Received: by mail-lj1-f180.google.com with SMTP id
+ 38308e7fff4ca-30613802a04so47453751fa.2;
+        Mon, 17 Mar 2025 02:24:30 -0700 (PDT)
+X-Forwarded-Encrypted: i=1;
+ AJvYcCUuwxMr2s0jtk1mlWWoWZnUutSRAxwsnD7TsyuGNGpQGJVVbU1nviA+R/DfyssyOa+wUsuwydT7gHDrLQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZB+sgDtZWoO97GyNk9cbg8s/XGadmpCYqBpGjx2V91do431B+
+	SJZ22YySjsEvCdVpd+ILMr2qaC+IVGwA+bhD1THY9xa9O+UV4J7AqFh62wfKCvv1B3/KMFRNPE9
+	NvoUQIzEWLjVQeA711T7CQtM85+o=
+X-Google-Smtp-Source: 
+ AGHT+IG393WDcLxj+nSCn5lGo0OfnHjTTcYTFzDoGSO/uYVmGzb6auCXghb6wLrVDzKXWRc1QRDf0xlBxHPaJlSuMtE=
+X-Received: by 2002:a2e:9842:0:b0:30b:c6fe:4500 with SMTP id
+ 38308e7fff4ca-30c4a863bb0mr55001111fa.10.1742203470092; Mon, 17 Mar 2025
+ 02:24:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z8snakYmzhaavkKN@thinkpad>
+References: <20250222164321.181340-1-lkml@antheas.dev>
+ <20250222164321.181340-6-lkml@antheas.dev>
+ <65813e62-aa0f-4167-83c1-49200fc4ca20@redhat.com>
+ <CAGwozwE9=Vh6M5CVAkTCDj5x8twtm3n_28DH1DFbbBKekhn9hw@mail.gmail.com>
+In-Reply-To: 
+ <CAGwozwE9=Vh6M5CVAkTCDj5x8twtm3n_28DH1DFbbBKekhn9hw@mail.gmail.com>
+From: Antheas Kapenekakis <lkml@antheas.dev>
+Date: Mon, 17 Mar 2025 10:24:18 +0100
+X-Gmail-Original-Message-ID: 
+ <CAGwozwH_htUrKukTQ1QDa+qHJjKnU-A2QCzFharVGiiTC-vCRw@mail.gmail.com>
+X-Gm-Features: AQ5f1JpyVorMHWlhiauUBhSWuscYucyza1t1M5lYYzEnht5BWKBWX2AD_k03mpY
+Message-ID: 
+ <CAGwozwH_htUrKukTQ1QDa+qHJjKnU-A2QCzFharVGiiTC-vCRw@mail.gmail.com>
+Subject: Re: [PATCH 5/5] drm: panel-orientation-quirks: Add Zotac Gaming Zone
+ quirk
+To: Hans de Goede <hdegoede@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>,
+	Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-PPP-Message-ID: 
+ <174220347106.27635.1170059049294012610@linux1587.grserver.gr>
+X-PPP-Vhost: antheas.dev
+X-Virus-Scanned: clamav-milter 0.103.11 at linux1587.grserver.gr
+X-Virus-Status: Clean
 
-Hi Yury / Akira / Mauro,
+On Mon, 17 Mar 2025 at 10:23, Antheas Kapenekakis <lkml@antheas.dev> wrote:
+>
+> On Mon, 17 Mar 2025 at 10:20, Hans de Goede <hdegoede@redhat.com> wrote:
+> >
+> > Hi,
+> >
+> > On 22-Feb-25 17:43, Antheas Kapenekakis wrote:
+> > > The Zotac Gaming Zone handheld features a 1080p portrait OLED screen.
+> > > Add the rotation to the panel orientation quirks.
+> > >
+> > > Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
+> > > ---
+> > >  drivers/gpu/drm/drm_panel_orientation_quirks.c | 6 ++++++
+> > >  1 file changed, 6 insertions(+)
+> > >
+> > > diff --git a/drivers/gpu/drm/drm_panel_orientation_quirks.c b/drivers/gpu/drm/drm_panel_orientation_quirks.c
+> > > index f08cdc81dd9a..bbbe707f541d 100644
+> > > --- a/drivers/gpu/drm/drm_panel_orientation_quirks.c
+> > > +++ b/drivers/gpu/drm/drm_panel_orientation_quirks.c
+> > > @@ -479,6 +479,12 @@ static const struct dmi_system_id orientation_data[] = {
+> > >                 DMI_EXACT_MATCH(DMI_PRODUCT_NAME, "ONEXPLAYER F1 EVA-02"),
+> > >               },
+> > >               .driver_data = (void *)&lcd1080x1920_leftside_up,
+> > > +     }, {    /* Zotac Gaming Zone (OLED) */
+> > > +             .matches = {
+> > > +               DMI_EXACT_MATCH(DMI_SYS_VENDOR, "ZOTAC"),
+> > > +               DMI_EXACT_MATCH(DMI_PRODUCT_NAME, "ZOTAC GAMING ZONE"),
+> > > +             },
+> > > +             .driver_data = (void *)&lcd1080x1920_leftside_up,
+> > >       }, {    /* OrangePi Neo */
+> >
+> > The entries in this list are alphabetically sorted. Please post
+> > a v2 (of just this patch) with this entry moved to the end, just
+> > above the special "One Mix 2S" entry which is at the very end
+> > because its DMI matches are all "Default string".
+> >
+> > Note another entry for another Zotac device, with a board name of
+> > "G0A1W" has been added in drm-misc/next, so please base your v2
+> > on top of drm-misc/next.
+> >
+> > Also the freedesktop.org infra is currently being migrated to
+> > another data center, so the drm-misc tree currently is not
+> > available I think.
+> >
+> > Regards,
+> >
+> > Hans
+> >
+> >
+> >
+> >
+> > >               .matches = {
+> > >                 DMI_EXACT_MATCH(DMI_SYS_VENDOR, "OrangePi"),
+> >
+>
+> Ok thanks. I will do that in a few days. Patches 1-4 hopefully should
+> be good to merge.
+>
+> Antheas
 
-On 07-03-25, 12:05, Yury Norov wrote:
-> On Fri, Mar 07, 2025 at 01:04:51PM +0530, Viresh Kumar wrote:
-> >  /**
-> > - * cpumask_next_and - get the next cpu in *src1p & *src2p
-> > + * cpumask_next_and - get the next cpu in *@src1p & *@src2p
-> >   * @n: the cpu prior to the place to search (i.e. return will be > @n)
-> >   * @src1p: the first cpumask pointer
-> >   * @src2p: the second cpumask pointer
-> 
-> So the question: if some word in this particular comment block is
-> prefixed with @ symbol, can we teach kernel-doc to consider every
-> occurrence of this word as a variable?
-> 
-> Why I'm asking: before the "*src1p & *src2p" was a line of C code.
-> And because we are all C programmers here, it's really simple to ident
-> it and decode. After it looks like something weird, and I think many
-> of us will just mentally skip it.
-> 
-> I like kernel-docs and everything, but again, kernel sources should
-> stay readable, and particularly comments should stay human-readable.
+Actually nevermind, this is the Zotac Zone so it is a dupe. It is fine
+to drop this patch from the series and merge the rest.
 
-I was looking to get a public links to cpumask APIs, like:
-
-https://docs.kernel.org/core-api/kernel-api.html#bitmap-operations
-
-which I can use from the (WIP) Rust cpumask documentation.
-
-Can you suggest how do I move ahead with this ?
-
-- Let the warnings be there and keep the comment as "... cpu in *src1p & *stc2p" ?
-
-- Something like what Mauro suggested: "... cpu in @src1p and @stc2p" ? 
-
-- Something else ?
-
--- 
-viresh
+Antheas
 
