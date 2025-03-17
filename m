@@ -1,62 +1,117 @@
-Return-Path: <linux-kernel+bounces-563540-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563515-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61D0CA643C8
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 08:33:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97330A6433B
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 08:19:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B3C541641F8
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 07:33:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51CCC3AB845
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 07:19:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18D5821ABB9;
-	Mon, 17 Mar 2025 07:33:37 +0000 (UTC)
-Received: from 1wt.eu (ded1.1wt.eu [163.172.96.212])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F8391D9A79
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 07:33:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=163.172.96.212
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFADD21B8EC;
+	Mon, 17 Mar 2025 07:18:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="nUN+pThr"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B0968F4A;
+	Mon, 17 Mar 2025 07:18:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742196816; cv=none; b=KjS00wFDhT9u0MlAy8e7OdopeK4e/xMA4X2MwSHCcgtJ3H4DtAa9M/Q7nbppBkkmX5zYmymIEjv2GFe30+ccLBFns/Y5ko5hGPOMujjc8K6hyJ+/NtjzoaTZI/PIibLwgxQ3VtBtzssFkZx72fEeWzEmQas3uXhi3m+3e3Tkis0=
+	t=1742195931; cv=none; b=HKMACvaMxJwreBzANCPVMeFj3lKY4DCy3RZlxhJs/5WAUWSzCZETfOgH41APkTactXbNKnd6HvV17hzZH6Xi2WH1Rjy/QHxHlAUVS7Yqv2tUVo9eDtDWu96cYJiyEqHyQ+unNvYBnMxnwr0Dqlz6GTG8663T2QgPguVondhuSUk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742196816; c=relaxed/simple;
-	bh=UU+a68L6t+cHsFbWnvfSxYR7gGVjob+U7UJsyob5/S4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oohsVYAVGrwTVSPsxkX2PR3P7jnZYZqAVrIR6SPVJdP9hdfygHGFJfM/W0v4fQv5Jc6iPakMiX0G/yqV6+SAoQkee1a/MY+qFuyWtF4pqFzKOaD40BAM+fslCl451itd9T4jqhb0MPm2hg/GWNBKLl2QLK7dPp9Pi9JkQAvaBVI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=1wt.eu; spf=pass smtp.mailfrom=1wt.eu; arc=none smtp.client-ip=163.172.96.212
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=1wt.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=1wt.eu
-Received: (from willy@localhost)
-	by pcw.home.local (8.15.2/8.15.2/Submit) id 52H7Iac3005123;
-	Mon, 17 Mar 2025 08:18:36 +0100
-Date: Mon, 17 Mar 2025 08:18:36 +0100
-From: Willy Tarreau <w@1wt.eu>
-To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
-Cc: linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] tools/nolibc: drop manual stack pointer alignment
-Message-ID: <20250317071836.GA5114@1wt.eu>
-References: <20250316-nolibc-sp-align-v1-1-1e1fb073ca1e@weissschuh.net>
+	s=arc-20240116; t=1742195931; c=relaxed/simple;
+	bh=DF8CWTevGrtneS52pgFyp6DMOHXtxVtbGchIhytF7vg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=BcJcjpxPpHk3myCXDAAO0UZavhHX1c7bqhu43cfa+JO/W+DZJhWTQCglcG4mxwGYa9LVYr/1mvpWqVeE1yv+2nNwq78jvyTLBHscoHIv8u1j8qRVwNdc7u2ls1ND9WgZHg1+WYeuiKbmnuVtxn+xqbxdUb4xtMMxfv3C6jZCbYI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=nUN+pThr; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1742195924;
+	bh=tuXG7ljJ8IXbQjSE0wlcognsJveQad/sZG5KaYMefJY=;
+	h=Date:From:To:Cc:Subject:From;
+	b=nUN+pThrLjqumxYH2pYeRG+qAiKPgBecNPWmbFMq5UChmzIYWOGBLwFi091slGkjS
+	 Dvlzu8smp3HPayOIKBNl7cvDUBDLB8PUcg8Z0Abu/CWcIr+q0z2wW7wlWeyfkz0v4I
+	 bKO14K1Jr2SrumeaGC/1FgNygnNTpyN9756vNgqAR5+3S2Eq0OtNWXjx+rRNgOuo/R
+	 WhD61n8NDCHqidVNlQTfzwh7j8K8+mWQX8a/wYCpsEWQ/h68hQmFb5gf590k1gSE5Y
+	 zFur/k4c+5a3zPEtH6fK/kNy0lUV0bMRKn4KTcbt/0Vw/eZOJyuMSPZoBZrsHd4KNI
+	 BRcLWCE6mjoVA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZGRCm0S52z4wcd;
+	Mon, 17 Mar 2025 18:18:44 +1100 (AEDT)
+Date: Mon, 17 Mar 2025 18:18:43 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>, Mark Brown
+ <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
+Cc: Christian Eggers <ceggers@arri.de>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: manual merge of the char-misc tree with the
+ regulator-fixes tree
+Message-ID: <20250317181843.59127ac9@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250316-nolibc-sp-align-v1-1-1e1fb073ca1e@weissschuh.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: multipart/signed; boundary="Sig_/hUG/walHy5IJbKxALx3grvg";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Sun, Mar 16, 2025 at 08:46:07PM +0100, Thomas Weiﬂschuh wrote:
-> The stack pointer is already aligned by the kernel to a multiple of 16.
-> See STACK_ROUND() in fs/binfmt_elf.c.
-> 
-> The manual realignment is unnecessary, drop it.
-> 
-> Signed-off-by: Thomas Weiﬂschuh <linux@weissschuh.net>
+--Sig_/hUG/walHy5IJbKxALx3grvg
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Looks good to me, thanks Thomas!
-Acked-by: Willy Tarreau <w@1wt.eu>
-Willy
+Hi all,
+
+Today's linux-next merge of the char-misc tree got a conflict in:
+
+  drivers/regulator/dummy.c
+
+between commit:
+
+  8619909b38ee ("regulator: dummy: force synchronous probing")
+
+from the regulator-fixes tree and commit:
+
+  dcd2a9a5550e ("regulator: dummy: convert to use the faux device interface=
+")
+
+from the char-misc tree.
+
+I fixed it up (I just used the latter - since that seems to always use
+synchronous probing) and can carry the fix as necessary. This is now fixed
+as far as linux-next is concerned, but any non trivial conflicts should
+be mentioned to your upstream maintainer when your tree is submitted for
+merging.  You may also want to consider cooperating with the maintainer
+of the conflicting tree to minimise any particularly complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/hUG/walHy5IJbKxALx3grvg
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfXzNMACgkQAVBC80lX
+0GxFnQf/aH4pc4SuuaBlPCexrp1Zbyu5hnHVqeNtwl85aDUoqBO3JaXqVhQPAYwE
+7JQeEy5XeouAqbz9wTFgad+Dzcgogo/r4zxq5dYJZaSzNhx5o8cQ1Pn1pXIFXrVW
+WOfdz/AHMqD9OxzhlEnsUV/uSzdv5grA/wt59rP2k/9qEt+92yw5tOi71kn9dCPN
+AlY7F/X7QT19EGH1+CnFKuthWYfoIZtP1DVLbE9KhXYe+McaaRdg9tl1tDwaUxsa
+x5jj024IblEE6Bhee2jW3tQZD3F6Y8F9gLVPuoPiM2Pa7+tNB9vzkERzb+E2tWO7
+403FFMr8rBiHpXtgEhsqKNrxJw+uIQ==
+=e2+a
+-----END PGP SIGNATURE-----
+
+--Sig_/hUG/walHy5IJbKxALx3grvg--
 
