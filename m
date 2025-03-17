@@ -1,122 +1,108 @@
-Return-Path: <linux-kernel+bounces-563954-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563956-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DEB1A64B16
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:55:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56304A64AD6
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:51:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5BB9C3BA3DC
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:49:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D3F6188B553
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:50:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B43BB2356A8;
-	Mon, 17 Mar 2025 10:48:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 878D523027D;
+	Mon, 17 Mar 2025 10:49:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RteWM9GS"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FTMTEiay"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51DA0EED6
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 10:48:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE0861993BD;
+	Mon, 17 Mar 2025 10:49:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742208531; cv=none; b=WfQpBZQmSNiWoDjY9Pixzr1wOi8eD3KcA5diBYu7oN9RxDyLUuun4SNNLMnltAWZbJjX3ZPY1PqXHDNBhNX+X0YLIGKX5iBEaLJxDn+RDFgkmDdrx+VeSOgwDXxCfD38BlI19HdRO8m7nW4MrBImp4CWq4XydvM1a2T+8L+Sq6A=
+	t=1742208570; cv=none; b=uwerHvGdRkHMUgYXCRnXAz1PfJRzZm79e1PjA82uBoDqGeqQBWqbgGjET3dwZgf/1Io7B+f0oa3k/WulQimby1mZ3pD303foQRarxal8OIOZ7TD8VkI4ihb+A4v3luwoesRBHsV5iknn0Mjvi80ir4Wch7TybKDeOEqvI3lMv8o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742208531; c=relaxed/simple;
-	bh=p75LrdmcmOCqHM4SAzLua2uSyJuWodBI95URCCVuJys=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=SOwxowIO0OyIFI2rnzsOhNdafxNAD2+ycuOA0dXlXlV414ldsjx8vERlfG9DQocXzdopiTDrUeWBlTZjpXhfwWHzBJyhEkjmGLn1X6gL98D+T425Dy4eMY4QUy5//3fsfAX+zokSY4p2/bRYdHuVAz6VOi5uhlqH1bYw+WRcJBE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RteWM9GS; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4394036c0efso12386185e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 03:48:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1742208527; x=1742813327; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=eycY61Wk6wfvZBg4chYuMAQviSFft2VvOnLfN3NdZe0=;
-        b=RteWM9GSXmh66sH+f4L8W7ou2imnpeAJAp9zhYl53WO+NYMq1AdTy0nZmyD5+8iwcx
-         ov/c2f5iyfNBVU2g0Lm1mn6YjeJNMg+TGT5x/hN0ta8pMjWwVlHhajRrPw+wiOngx61+
-         I+hGykruscc68XCUKTbE4gHg8ABFORxzjBbu+SUkpbVGWtEdLj3oer7u8zK/wMRBwEu9
-         vjzQk+eKsSe02rH+YekUtCjf8hTJh0Q96vLR4ypyFBc5FboYrUNYYvWB6U6QLFTas3mN
-         rtYWKsLL8mnkPZcCIEAMODKLBM1jTWQ09HvtzGfEsuXPLaTqXJzyimAkXM5+3+BgK92x
-         WhEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742208527; x=1742813327;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=eycY61Wk6wfvZBg4chYuMAQviSFft2VvOnLfN3NdZe0=;
-        b=Rx6nsH1i3loCRRBE3p0lV1mrX2VFgIcNRR27X5FVyOufWZssSi2xfpsJ63ykfs7tWn
-         DxdU9oTJwYpCaNziMoClV8Z/Elwzn18g1W33qBJbNCZSb3wu/IKTM1qa0Q39QypPkxLo
-         yJAyVCQ4IpaY/tvN40iki13A+z0w1A4nD58CBwijVEBrVG0w6n5KG5fLU6RCVetRRTMS
-         ORcAmEE7NrVGWncsEMC3fAvxGzii9jjgrZ8b9HvbfedFB2t2IHn9FjO/WT3ka/4gZ2yR
-         Z4usxu/z/WD4oAZJ+ChlxAoUCaHoY+PHT0eZGAB4rutTiUdsLm6lS0mpuZ30wjuxRyA3
-         ZR7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVkC7boo2xqI9IlwAYR/v1Brh7EkWa4nCPAKhfM7d4VEu0qXSudDQaPwvriEsjURa2PRZN08r3dKs2kUcs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwGBsO+r3hpdv4oZZ902TkKuYAycYWpOaTNeLJvP4m49M5FYynw
-	0a6kDDhOtwtc7m3RuFz4pnHojGJNicvDKAo/XMzAz5pAD75CzJoxph7U7xTbkps=
-X-Gm-Gg: ASbGnctibqT3TNJvWNaaiu8yW04xr9ugAXAI7BTP6Aq9jYV9j49lBfAEPV5/jI0SB1x
-	GlRRX/7qTse6PUEDLIyhIgQ6KPu/ItipTjWA+F8UC+to+NZ0gTTKG1YZHiVSTNUHls/xkn0ie5A
-	TI+DHKr6YmshTz37qrGwnHi9p6xzqTUpmtzZ4lGjusoW22mw+Ya96+52qr5HSetd78nJ2m+UXBu
-	2gvNJvmGhyPQfzR2zLxwuC9d1vGcHQGU6YR+gm3leYaAcdpCskAXzNdAL+3nhRjZyn+QNkKZbDb
-	q2uK3NnKwaAXun4KexbjvZ+vZ10CYGktDDZ7paPqW0NZD+UBbuEMq4uVIc16SebatMGKA9N2usS
-	CZh681M1iuSKVKcgYbw0=
-X-Google-Smtp-Source: AGHT+IHwbJoYZqGiwb6co2hREAgWTQOaf/s4YEZo96aCVG79kC6hdFtxQajN7lHob6EAvFbTP7K5bA==
-X-Received: by 2002:a05:600c:3592:b0:43c:f44c:72b7 with SMTP id 5b1f17b1804b1-43d1ec86200mr141007775e9.14.1742208527614;
-        Mon, 17 Mar 2025 03:48:47 -0700 (PDT)
-Received: from ?IPV6:2a02:2f04:900a:ff00:eb98:2c37:6a77:39? ([2a02:2f04:900a:ff00:eb98:2c37:6a77:39])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d1fe609a2sm100628115e9.30.2025.03.17.03.48.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 17 Mar 2025 03:48:46 -0700 (PDT)
-Message-ID: <d2e162cd-b12b-47e2-9190-2ecce3489b9c@linaro.org>
-Date: Mon, 17 Mar 2025 10:48:45 +0000
+	s=arc-20240116; t=1742208570; c=relaxed/simple;
+	bh=DHLKtqKokb5/ORaPjnoa21RvlOzXzzI+TwJQN4jKmm8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XKhgCSzcGFNrDoh3u35jdNaCtDKZgLs+8x23SqdHmbJRtRIAy92MnpaQjXg6hlzqVicqgAszuOztMb74KxiWBxDOuFtVRRKs4eJAaoyjYCaBjyuG93hYVFNbGVluPSlR46618iLBDskF0dbWJPAyuUMWD87ey1BYWSUtRfqm5mo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FTMTEiay; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62BD1C4CEE3;
+	Mon, 17 Mar 2025 10:49:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742208569;
+	bh=DHLKtqKokb5/ORaPjnoa21RvlOzXzzI+TwJQN4jKmm8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FTMTEiayCOljtv8GLrylo8HGHweUsQRLbmaUiKxoofC4/CYB8N2vxqCoTaE1F5Z6D
+	 A2k5slyoogC1NQGauUeuQTMSB4yYKO+KrpsOJqfiHJLQDZBfQdlJJCwcGRiwGzMuN/
+	 Hy3m/rCrQPwnptuswFLkxHEzWN2b4U+hha7f8aEn9/uT4elbWZYqcjGej2yWiDPskr
+	 WfJuU8/qfKryhJoH3KcgN5y2dWHwn7x02FTiz6DXznKfslnJBwlQwxCEw2mWVWmMT9
+	 7dF9xr3GXqRs+0Na8zNmlP5ny5KLkY+VRdQ5fHl0TaTdbRdRI3msX75tfZo8dahRl7
+	 bM+FkVf599Q3Q==
+Date: Mon, 17 Mar 2025 11:49:24 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Lu Tang =?utf-8?B?KOaxpOeSkCk=?= <Lu.Tang@mediatek.com>
+Cc: Jonathan Cameron <jic23@kernel.org>, 
+	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Lee Jones <lee@kernel.org>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Sean Wang <sean.wang@kernel.org>, 
+	Linus Walleij <linus.walleij@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, 
+	Mark Brown <broonie@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
+	Chen Zhong =?utf-8?B?KOmSn+i+sCk=?= <Chen.Zhong@mediatek.com>, Sen Chu =?utf-8?B?KOWCqOajrik=?= <Sen.Chu@mediatek.com>, 
+	"linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>, 
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
+	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, 
+	Project_Global_Chrome_Upstream_Group <Project_Global_Chrome_Upstream_Group@mediatek.com>
+Subject: Re: =?utf-8?B?5Zue5aSN?= =?utf-8?Q?=3A?= [PATCH 5/5] dt-bindings:
+ pmic: mediatek: Add pmic documents
+Message-ID: <20250317-mighty-dolphin-of-downpour-e7a9f5@krzk-bin>
+References: <20250314073307.25092-1-Lu.Tang@mediatek.com>
+ <20250314073307.25092-6-Lu.Tang@mediatek.com>
+ <SEZPR03MB6891E21CD04880AB1AC91BFC80D22@SEZPR03MB6891.apcprd03.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] firmware: exynos-acpm: silence EPROBE_DEFER error on
- boot
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
-Cc: Peter Griffin <peter.griffin@linaro.org>,
- Will McVicker <willmcvicker@google.com>, kernel-team@android.com,
- linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-References: <20250314-acpm-fixes-v1-0-ab03ca8e723f@linaro.org>
- <20250314-acpm-fixes-v1-2-ab03ca8e723f@linaro.org>
- <638cf070-9fd1-416e-8172-75f189ab0dfe@linaro.org>
-Content-Language: en-US
-In-Reply-To: <638cf070-9fd1-416e-8172-75f189ab0dfe@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <SEZPR03MB6891E21CD04880AB1AC91BFC80D22@SEZPR03MB6891.apcprd03.prod.outlook.com>
 
+On Fri, Mar 14, 2025 at 09:01:11AM +0000, Lu Tang (=E6=B1=A4=E7=92=90) wrot=
+e:
+> Update email
+>=20
+> -----=E9=82=AE=E4=BB=B6=E5=8E=9F=E4=BB=B6-----
+> =E5=8F=91=E4=BB=B6=E4=BA=BA: Lu.Tang <Lu.Tang@mediatek.com>=20
+> =E5=8F=91=E9=80=81=E6=97=B6=E9=97=B4: 2025=E5=B9=B43=E6=9C=8814=E6=97=A5 =
+15:33
+> =E6=94=B6=E4=BB=B6=E4=BA=BA: Jonathan Cameron <jic23@kernel.org>; Lars-Pe=
+ter Clausen <lars@metafoo.de>; Rob Herring <robh@kernel.org>; Krzysztof Koz=
+lowski <krzk+dt@kernel.org>; Conor Dooley <conor+dt@kernel.org>; Dmitry Tor=
+okhov <dmitry.torokhov@gmail.com>; Lee Jones <lee@kernel.org>; Matthias Bru=
+gger <matthias.bgg@gmail.com>; AngeloGioacchino Del Regno <angelogioacchino=
+=2Edelregno@collabora.com>; Sean Wang <sean.wang@kernel.org>; Linus Walleij=
+ <linus.walleij@linaro.org>; Liam Girdwood <lgirdwood@gmail.com>; Mark Brow=
+n <broonie@kernel.org>; Stephen Boyd <sboyd@kernel.org>; Chen Zhong (=E9=92=
+=9F=E8=BE=B0) <Chen.Zhong@mediatek.com>; Sen Chu <shen.chu@mediatek.com>
+> =E6=8A=84=E9=80=81: linux-iio@vger.kernel.org; devicetree@vger.kernel.org=
+; linux-kernel@vger.kernel.org; linux-input@vger.kernel.org; linux-arm-kern=
+el@lists.infradead.org; linux-mediatek@lists.infradead.org; linux-gpio@vger=
+=2Ekernel.org; Project_Global_Chrome_Upstream_Group <Project_Global_Chrome_=
+Upstream_Group@mediatek.com>; Lu Tang (=E6=B1=A4=E7=92=90) <Lu.Tang@mediate=
+k.com>
+> =E4=B8=BB=E9=A2=98: [PATCH 5/5] dt-bindings: pmic: mediatek: Add pmic doc=
+uments
 
+The amount of errors shown by checkpatch on this is just shocking.
 
-On 3/17/25 10:26 AM, Tudor Ambarus wrote:
-> 
-> 
-> On 3/14/25 4:40 PM, André Draszik wrote:
->> This driver emits error messages when client drivers are trying to get
->> an interface handle to this driver here before this driver has
->> completed _probe().
->>
->> Given this driver returns -EPROBE_DEFER in that case, this is not an
->> error and shouldn't be emitted to the log, so just remove them.
->>
->> Fixes: a88927b534ba ("firmware: add Exynos ACPM protocol driver")
->> Signed-off-by: André Draszik <andre.draszik@linaro.org>
-> 
-> Reviewed-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+Best regards,
+Krzysztof
 
-I see you kept the error message though for of_find_device_by_node()
-failure. You either get rid of that too, or maybe transform all to dev_dbg?
 
