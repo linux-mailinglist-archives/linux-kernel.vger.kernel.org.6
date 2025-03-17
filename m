@@ -1,208 +1,145 @@
-Return-Path: <linux-kernel+bounces-564136-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564108-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A64CA64E45
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 13:13:29 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFBC5A64DF0
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 13:07:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0FA341682EA
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 12:13:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 672B0164D4E
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 12:07:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BB99241686;
-	Mon, 17 Mar 2025 12:08:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26E00238D43;
+	Mon, 17 Mar 2025 12:06:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="PZ/Pjrqn"
-Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="W1GVNBtK"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C577D24A042;
-	Mon, 17 Mar 2025 12:08:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD443237702
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 12:06:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742213304; cv=none; b=Icc1mCTx7SBjl0Bjmn7tNoCfcTKO61bFP9UA/mKUT97slZXabywBwq0C56UMDul0KmyHcOK4JRfXeY11KrN1LHkqjUjiGWhnAEAauzZPMsaz/YQHWUOiwk3tNXeBU7C/q08i3ClE85uc1udMqrSJVCMxfEJA79HAFUagLU5QfBQ=
+	t=1742213209; cv=none; b=g3JkL0dJFeybMd+zBjlFjELivCRgz2kUyPDZLuPkmO22FxBLgkl0kh50uGDeg2zAMyZoVTxECmztbcx3koWS7EW8HnfwZupxAWbvXt1qb8ZjvVSpiK2rVTQ0/r3mAQXpCr9sz5/wQxKoUskQZFN8D5nA2fMgrOe8HTdmJn0gmOY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742213304; c=relaxed/simple;
-	bh=zayEsJU+c8cOBRixd8Ws3Oj7Y3PF77IZpr5UDqJofo0=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kgf0rzP+D+h5NTGbv7HLJ2UD+mpirKZ8+Fr8Bbjx4L+CkolGojzAE4JDljjJMb8xk4jfXDHd3/nA9zIrypk8YPfWy13e6DR0aCTcu9s+7C7iKZMo7O+t3bgsZNpxs9z4IFTxi/DbAjdP36XPKV+ITNcMKqa8kx8qYm+Z5sM8mHk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=PZ/Pjrqn; arc=none smtp.client-ip=198.47.19.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 52HC8Cg42755841
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 17 Mar 2025 07:08:12 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1742213292;
-	bh=NgtW+ifdP60oEZkzqO6isD8I+BsOR6W5AuC7p1fICE8=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=PZ/PjrqnS9QVIWZED7Yx4r81Vew8oXcdfTHMjt7es+fF5Y3HEkMAitDThgdJyHWOW
-	 JVjADAMVxEmEvFn7VjqICbYt4XsU+nlUNN3fK0ysfpThflbYTjmPeufFzja9I5lY0E
-	 3dXFjLMaDTZZWQ1Sjl+lyPjqocsW2E/AG6KJs1nc=
-Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 52HC8CTY124573
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Mon, 17 Mar 2025 07:08:12 -0500
-Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 17
- Mar 2025 07:08:11 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Mon, 17 Mar 2025 07:08:11 -0500
-Received: from uda0510294.dhcp.ti.com (uda0510294.dhcp.ti.com [172.24.227.151])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 52HC6MKN060901;
-	Mon, 17 Mar 2025 07:08:06 -0500
-From: Beleswar Padhi <b-padhi@ti.com>
-To: <andersson@kernel.org>, <mathieu.poirier@linaro.org>
-CC: <afd@ti.com>, <hnagalla@ti.com>, <u-kumar1@ti.com>, <jm@ti.com>,
-        <jan.kiszka@siemens.com>, <christophe.jaillet@wanadoo.fr>,
-        <jkangas@redhat.com>, <eballetbo@redhat.com>, <b-padhi@ti.com>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v9 26/26] remoteproc: k3: Refactor release_tsp() functions into common driver
-Date: Mon, 17 Mar 2025 17:36:22 +0530
-Message-ID: <20250317120622.1746415-27-b-padhi@ti.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250317120622.1746415-1-b-padhi@ti.com>
-References: <20250317120622.1746415-1-b-padhi@ti.com>
+	s=arc-20240116; t=1742213209; c=relaxed/simple;
+	bh=OdhP8xqEt2iM7IROoka4dd5M0pkY/P6CneVm+XNjuY8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BpJcHd0oaf9oKEW7B57Utdaqvhcb3miBNOt+5pO2U/5S6JX0dkPa96bhkIxmjLL3ejGN7kKzBulkwkcE1oabdJOjOAmsSlW+05VFuUhkS2qLDMNYZ5TY8sfhvJlpuu0fQS6ko62w6JEQeDmcUjYACObOcqaqrOwpHZYgH0QIUVU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=W1GVNBtK; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1742213206;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FsJOBNIkT+IrsuxSgC3fs8kWA8Vn7b/lsGkqVTldQws=;
+	b=W1GVNBtKi6pQ+EuIl1J9Ond2jYeHh4Jw6WEYrz3WjiBsre5XCpydIrySBCNOdll5yjwAD1
+	PkWVQlgt89bvmYC/ZpUBhEW7UXKPcAyC3IEP7fwdwO5rtd9RnoqmPfTlAGYQ+RvJ1/YoMl
+	d8FLxc1Yd/1ivjmif9ndFzWnhwAWquU=
+Received: from mail-ed1-f70.google.com (mail-ed1-f70.google.com
+ [209.85.208.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-342-J33KV07KMeKaEYBE9re9BQ-1; Mon, 17 Mar 2025 08:06:45 -0400
+X-MC-Unique: J33KV07KMeKaEYBE9re9BQ-1
+X-Mimecast-MFC-AGG-ID: J33KV07KMeKaEYBE9re9BQ_1742213204
+Received: by mail-ed1-f70.google.com with SMTP id 4fb4d7f45d1cf-5e5c76fd898so3819375a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 05:06:45 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742213204; x=1742818004;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=FsJOBNIkT+IrsuxSgC3fs8kWA8Vn7b/lsGkqVTldQws=;
+        b=eCy8Et2k5Ax7mUmAqnCzik/Ii3Bu3d6LUqiP2JdWWlC99SsMu4gTN/ObZ1KKfL+azS
+         TB7N8LrTYu3zgGmrptpQezId8zoyd8DsB/jdHB4IGVg3BqcCe01eZfWA8B3LAuW/zaCy
+         PNhGTcAVtj8etIL5NdbKk4TP4gBnOoPFsI+m6GRiOtNOQS9fvMu6XIo1kWVf8ouyn53f
+         oSr+Me0u6OGV8LMzQ6BoWDjZizlwwTNVcI3Ms8eSfTcJPj3hd2qxZpC8/ZpMCFtDGIOI
+         +zAZM0p/Mxw62aBrIzieNOD0/ykPm105r2ldGaJxxWkVwE86ra7KFjF9y0FqYzJnjB1e
+         CLNw==
+X-Forwarded-Encrypted: i=1; AJvYcCUcgMOtnNKLoo4FNXoNbbXPpz0mqDoq1T4d/9DgWlA6yLi4TYSjjjPbwUNOBNXy4WrJW3YnfGfGZrrWklM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/FYpX7gj6kylzeh5+1hagGNxUKrjoEwnX5VRt7ZU/IM2ReO+q
+	0VR7k2cqFL8+dtZrjVELfvDfHlkBoNXBTuTWHKVhNkk5EY+uxnKQroGwXvDoA8B62RLFJziF5LN
+	auDuJQBXSXuXVHQ/kqdsT27r/RuBA38Rjg2Nhuh5MqKZNY8b/shhE1dMInNoj7Q==
+X-Gm-Gg: ASbGncuQds4WkPaGXtFvxHO3UMBIGH4GtTf/4wLkTeSQrTTIWAr07vDbEdw3y/nW2+v
+	MToH2R8kMVKtOBt43tUZazNDFzXvY3cy7makpGXobchzBPL7B5C/F0S8axQQkB2vzAqmsiTZeAz
+	VDmsfVkg6y2a7PiABuOW5SXDDVEB35xZg8A5GSp4gevVZmYSik9493LErXCx4lXkLv57mKz00QP
+	EihXGK9+o01v75pqZHSEvuBlCA51FqluIWRSDqZnf7lMJQZnE6D27GMw3+GFx6QHMoNeATM0UZf
+	E5F6OS0qyzyR6VAlOUo=
+X-Received: by 2002:a05:6402:1e88:b0:5e5:dea5:3eb2 with SMTP id 4fb4d7f45d1cf-5e89fa27ff5mr13019756a12.11.1742213204084;
+        Mon, 17 Mar 2025 05:06:44 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHmQMtOckCF+PJyW0evnswjVRpHzbUIJWSKU6Yez1QrIPqUxHyXtbiMkkXYeWU68iPbIwfbAA==
+X-Received: by 2002:a05:6402:1e88:b0:5e5:dea5:3eb2 with SMTP id 4fb4d7f45d1cf-5e89fa27ff5mr13019703a12.11.1742213203664;
+        Mon, 17 Mar 2025 05:06:43 -0700 (PDT)
+Received: from [10.40.98.122] ([78.108.130.194])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e81692e6d4sm5761290a12.9.2025.03.17.05.06.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 17 Mar 2025 05:06:43 -0700 (PDT)
+Message-ID: <45fff318-7925-4328-9dca-999c00e271d2@redhat.com>
+Date: Mon, 17 Mar 2025 13:06:41 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] Input: atkbd - Correctly map F13 - F24
+To: Werner Sembach <wse@tuxedocomputers.com>,
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250311180643.1107430-1-wse@tuxedocomputers.com>
+ <20250311180643.1107430-2-wse@tuxedocomputers.com>
+ <83ea44f6-c0ad-4cb0-a16e-dd4fa17b63c7@tuxedocomputers.com>
+Content-Language: en-US, nl
+From: Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <83ea44f6-c0ad-4cb0-a16e-dd4fa17b63c7@tuxedocomputers.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-The k3_{r5/dsp/m4}_release_tsp() functions release the TI-SCI processor
-control of a remote processor, which is auto triggered upon device
-removal. Refactor these functions into ti_k3_common.c driver as
-k3_release_tsp() and align R5, DSP and M4 drivers to use this common
-function throughout.
+Hi,
 
-Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
----
- drivers/remoteproc/ti_k3_common.c         | 8 ++++++++
- drivers/remoteproc/ti_k3_common.h         | 1 +
- drivers/remoteproc/ti_k3_dsp_remoteproc.c | 9 +--------
- drivers/remoteproc/ti_k3_m4_remoteproc.c  | 9 +--------
- drivers/remoteproc/ti_k3_r5_remoteproc.c  | 9 +--------
- 5 files changed, 12 insertions(+), 24 deletions(-)
+On 11-Mar-25 19:10, Werner Sembach wrote:
+> Hi Hans, Hi Dimitry,
+> 
+> resending this too on the v2 to not cause confusion:
+> 
+> Regarding remapping KEY_ZENKAKUHANKAKU to KEY_TOUCHPAD_TOGGLE:
+> 
+> Am 11.03.25 um 19:06 schrieb Werner Sembach:
+>> Currently only F23 is correctly mapped for PS/2 keyboards.
+>>
+>> Following to this table:
+>> https://download.microsoft.com/download/1/6/1/161ba512-40e2-4cc9-843a-923143f3456c/translate.pdf
+>>
+>> - F24 and Zenkaku/Hankaku share the same scancode, but since in real world
+>> Zenkaku/Hankaku keys seem to just use the tilde scancode, this patch binds the
+>> scancode to F24. Note that on userspace side the KEY_ZENKAKUHANKAKU keycode is
+>> currently not bound in xkeyboard-config, so it is (mostly*) unused anyway.
+> 
+> I think what the firmware vendor actually wanted to do was to send ctrl+super+f24 upon touchpad toggle. This would somewhat fall in line with, for example, the copilot key being implemented as shift+super+f23.
 
-diff --git a/drivers/remoteproc/ti_k3_common.c b/drivers/remoteproc/ti_k3_common.c
-index b72c4c179c97..d5003112136b 100644
---- a/drivers/remoteproc/ti_k3_common.c
-+++ b/drivers/remoteproc/ti_k3_common.c
-@@ -540,5 +540,13 @@ int k3_reserved_mem_init(struct k3_rproc *kproc)
- }
- EXPORT_SYMBOL_GPL(k3_reserved_mem_init);
- 
-+void k3_release_tsp(void *data)
-+{
-+	struct ti_sci_proc *tsp = data;
-+
-+	ti_sci_proc_release(tsp);
-+}
-+EXPORT_SYMBOL_GPL(k3_release_tsp);
-+
- MODULE_LICENSE("GPL");
- MODULE_DESCRIPTION("TI K3 common Remoteproc code");
-diff --git a/drivers/remoteproc/ti_k3_common.h b/drivers/remoteproc/ti_k3_common.h
-index 148717942dfb..a9981303dde8 100644
---- a/drivers/remoteproc/ti_k3_common.h
-+++ b/drivers/remoteproc/ti_k3_common.h
-@@ -109,4 +109,5 @@ int k3_rproc_of_get_memories(struct platform_device *pdev,
- 			     struct k3_rproc *kproc);
- void k3_mem_release(void *data);
- int k3_reserved_mem_init(struct k3_rproc *kproc);
-+void k3_release_tsp(void *data);
- #endif /* REMOTEPROC_TI_K3_COMMON_H */
-diff --git a/drivers/remoteproc/ti_k3_dsp_remoteproc.c b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
-index 40187d03206f..f5f17c18fc1b 100644
---- a/drivers/remoteproc/ti_k3_dsp_remoteproc.c
-+++ b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
-@@ -66,13 +66,6 @@ static const struct rproc_ops k3_dsp_rproc_ops = {
- 	.get_loaded_rsc_table	=	k3_get_loaded_rsc_table,
- };
- 
--static void k3_dsp_release_tsp(void *data)
--{
--	struct ti_sci_proc *tsp = data;
--
--	ti_sci_proc_release(tsp);
--}
--
- static int k3_dsp_rproc_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
-@@ -136,7 +129,7 @@ static int k3_dsp_rproc_probe(struct platform_device *pdev)
- 		dev_err_probe(dev, ret, "ti_sci_proc_request failed\n");
- 		return ret;
- 	}
--	ret = devm_add_action_or_reset(dev, k3_dsp_release_tsp, kproc->tsp);
-+	ret = devm_add_action_or_reset(dev, k3_release_tsp, kproc->tsp);
- 	if (ret)
- 		return ret;
- 
-diff --git a/drivers/remoteproc/ti_k3_m4_remoteproc.c b/drivers/remoteproc/ti_k3_m4_remoteproc.c
-index a1a31c4f8c3e..c9c563c75ff6 100644
---- a/drivers/remoteproc/ti_k3_m4_remoteproc.c
-+++ b/drivers/remoteproc/ti_k3_m4_remoteproc.c
-@@ -21,13 +21,6 @@
- #include "ti_sci_proc.h"
- #include "ti_k3_common.h"
- 
--static void k3_m4_release_tsp(void *data)
--{
--	struct ti_sci_proc *tsp = data;
--
--	ti_sci_proc_release(tsp);
--}
--
- static const struct rproc_ops k3_m4_rproc_ops = {
- 	.prepare = k3_rproc_prepare,
- 	.unprepare = k3_rproc_unprepare,
-@@ -93,7 +86,7 @@ static int k3_m4_rproc_probe(struct platform_device *pdev)
- 	ret = ti_sci_proc_request(kproc->tsp);
- 	if (ret < 0)
- 		return dev_err_probe(dev, ret, "ti_sci_proc_request failed\n");
--	ret = devm_add_action_or_reset(dev, k3_m4_release_tsp, kproc->tsp);
-+	ret = devm_add_action_or_reset(dev, k3_release_tsp, kproc->tsp);
- 	if (ret)
- 		return ret;
- 
-diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
-index ecac013b6482..ffb146c9cd47 100644
---- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
-+++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
-@@ -954,13 +954,6 @@ static int k3_r5_core_of_get_internal_memories(struct platform_device *pdev,
- 	return 0;
- }
- 
--static void k3_r5_release_tsp(void *data)
--{
--	struct ti_sci_proc *tsp = data;
--
--	ti_sci_proc_release(tsp);
--}
--
- static int k3_r5_cluster_rproc_init(struct platform_device *pdev)
- {
- 	struct k3_r5_cluster *cluster = platform_get_drvdata(pdev);
-@@ -1046,7 +1039,7 @@ static int k3_r5_cluster_rproc_init(struct platform_device *pdev)
- 			goto out;
- 		}
- 
--		ret = devm_add_action_or_reset(cdev, k3_r5_release_tsp, kproc->tsp);
-+		ret = devm_add_action_or_reset(cdev, k3_release_tsp, kproc->tsp);
- 		if (ret)
- 			goto out;
- 	}
--- 
-2.34.1
+I agree that that seems to be the intent.
+
+> Following this, my suggestion is to do this remapping and handle the rest in xkeyboard-config
+
+xkeyboard config already contains mappings for F13 - F18 and F20-F23 in
+/usr/share/X11/xkb/symbols/inet
+
+So all that needs to happen there is map FK19 -> F19 and FK24 -> F24.
+
+And then teach KDE + GNOME that ctrl+super+f24 means touchpad-toggle.
+
+We could maybe get away with also dropping the weird mappings for FK13 - FK18
+and map those straight to F13 - F18, but we need the special mappings
+for F20 - F23 to stay in place to not break stuff.
+
+Regards,
+
+Hans
+
 
 
