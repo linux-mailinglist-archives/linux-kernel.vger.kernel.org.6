@@ -1,97 +1,169 @@
-Return-Path: <linux-kernel+bounces-565133-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565134-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91D8FA66187
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 23:26:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2286AA66188
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 23:26:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E3E5917513D
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 22:25:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C33A3A7669
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 22:26:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6CA8204597;
-	Mon, 17 Mar 2025 22:25:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70F26204C39;
+	Mon, 17 Mar 2025 22:26:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Glubxaow"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AY0SlfFv"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 527F71FFC55
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 22:25:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4882E202C40
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 22:26:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742250354; cv=none; b=q+xRnNmfx7DBfRbt+IMGZ3sq0VDg7mjV0GbRNzEqiGYsIyTi/6EA6MtVS3ORjatGNuIrscELwvobYe/tNM25kT/osjOj30OmFYkcNR9lQcFDSxTUCrjGRpfCWYpgLuRLiv7+rSSoO8ENPMIvAS/OlwAkkfhEnFIDY1TGfuY/b64=
+	t=1742250374; cv=none; b=IwxDUl7kWrgtfhrC44xN3WI2zltALR4rVopqb7VSUXvx5mcUi0rsuueBGt9FI0xezL1XDQWEsz/JojZ6DbRG4L2358qakokDZO9PTuMlRPQqnlIo3VUB6k2r7iknUWUhQGEFMPoZcwagnFyHT74kYihBgtGL5mofm0PG201MSf4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742250354; c=relaxed/simple;
-	bh=YXhqoFceAYxum5yQk11C06WJaX6rsjvA+greKgjyzeE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JkrPEJyZ1vZ2NVyz+qLnWVfH5m+vSZvfUXKzaQ11yA0CMr4ewvMa96DrjwzIQc5fpI/QNPzBxKtgcixUAJy8LCqQmmphCbM8tebhS0Ay0Zij+ZnrvY8M9r2oR/3lvlfnHtUyP7MIRj/P+Sask8fVNsR7rToEN3NUg+/xgt77sgg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Glubxaow; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0C67C4CEE3;
-	Mon, 17 Mar 2025 22:25:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742250352;
-	bh=YXhqoFceAYxum5yQk11C06WJaX6rsjvA+greKgjyzeE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GlubxaowKYL7naaoDrfXDA1Z6tgWrFFzyP84pDDyTxVGXuhNbYcM26nViEooAQhQ5
-	 RWzWpCPt6ANnp7+BhUS2pZb2PhewE7zXSeNivONAS11KWCC7mtLQsBzjSoQJSlM9o5
-	 emod+iiF3soWsAQOi5R6nVmRz+3wvBf90JmUGuMoPnLBCbLpLbmkfmtzqpoFtDeMHF
-	 X0xMdYBjCt8JF5ak/rAA8WUwBB4iiafMYxveJWCROJWpvXFOx0KZ0mnoCBwcBSFQCi
-	 GT9BIJF1EVae6s7/Jbq8UyrtkS0BBeE05iO0OdlbQ0cY3DIv0SPuijuK3qRIoExeD9
-	 MAESUyjMTKGag==
-Date: Mon, 17 Mar 2025 12:25:50 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Joel Fernandes <joelagnelf@nvidia.com>
-Cc: linux-kernel@vger.kernel.org, David Vernet <void@manifault.com>,
-	Andrea Righi <arighi@nvidia.com>,
-	Changwoo Min <changwoo@igalia.com>, Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>
-Subject: Re: [PATCH RFC] sched_ext: Choose prev_cpu if idle and cache affine
- without WF_SYNC
-Message-ID: <Z9ihbiUV7dohm7FT@slm.duckdns.org>
-References: <20250317082803.3071809-1-joelagnelf@nvidia.com>
- <Z9hW_3cPN8u7VURV@slm.duckdns.org>
- <b0dea973-bf41-4f44-850c-7bc860d5bf8a@nvidia.com>
+	s=arc-20240116; t=1742250374; c=relaxed/simple;
+	bh=MFJ0Lo//Ju5gWfi71VQ1cgg5LNab7fehD2stzF52p+M=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=U9GgBRs/BBJLybRW7J54ZE07ghP0cP5ykAkigHuh38ToxwKmtw5TdCsyW8SN0OiSTP6C9KGk9Map0BBa7hYFpwDOA06a1NyL1FCdND1BsQSrxShzQCWVRpoR2K8rVexS7cT3op3HIR6Ed97HIPFkAyz+PwcRtBZq/DJgWs5lkME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AY0SlfFv; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1742250372;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=4S2fQMl2F6KY1Aue5YIw362BMJ8oJdYbwC8OSZWD64s=;
+	b=AY0SlfFvselkPzMZQG2aL00vK7GpWxhvIWR8NZJnpSp0/ZIItZbw0E6CPGhzClBm0pC/c1
+	KoXxFNNVcOx4YwRctRrB1GG2v7VmwFWxwEUKYlDhlDbsOLtmZGYo6qK+Y38Q8nXk5t+Vit
+	eoVgaYcZaFZ8GjTlgDq/IMvnQFAWLFQ=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-97-lT_RFLNjMGO0waXDPzTY3A-1; Mon,
+ 17 Mar 2025 18:26:10 -0400
+X-MC-Unique: lT_RFLNjMGO0waXDPzTY3A-1
+X-Mimecast-MFC-AGG-ID: lT_RFLNjMGO0waXDPzTY3A_1742250369
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8291E1800257;
+	Mon, 17 Mar 2025 22:26:08 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.61])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 6A1901800268;
+	Mon, 17 Mar 2025 22:26:05 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <90a695663117ec2822c7384af3943c9d4edcc802.camel@ibm.com>
+References: <90a695663117ec2822c7384af3943c9d4edcc802.camel@ibm.com> <20250313233341.1675324-1-dhowells@redhat.com> <20250313233341.1675324-12-dhowells@redhat.com>
+To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+Cc: dhowells@redhat.com, Alex Markuze <amarkuze@redhat.com>,
+    "slava@dubeyko.com" <slava@dubeyko.com>,
+    "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+    "idryomov@gmail.com" <idryomov@gmail.com>,
+    "jlayton@kernel.org" <jlayton@kernel.org>,
+    "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+    "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>,
+    "dongsheng.yang@easystack.cn" <dongsheng.yang@easystack.cn>,
+    "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH 11/35] ceph: Use ceph_databuf in DIO
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b0dea973-bf41-4f44-850c-7bc860d5bf8a@nvidia.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2342924.1742250364.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date: Mon, 17 Mar 2025 22:26:04 +0000
+Message-ID: <2342925.1742250364@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-Hello,
+Viacheslav Dubeyko <Slava.Dubeyko@ibm.com> wrote:
 
-On Mon, Mar 17, 2025 at 11:07:36PM +0100, Joel Fernandes wrote:
-...
-> > I think it's preferring idle core a
-> > bit too much - it probably doesn't make sense to cross the NUMA boundary if
-> > there is an idle CPU in this node, at least.
-> 
-> Yes, that is a bit extreme. I believe that is what my patch is fixing.  If
-> previous CPU and current CPU share cache, we prefer busy cores with free
-> previous idle SMT, otherwise go looking for fully idle cores. But it sounds like
-> from Peter's reply that is not necessarily a good thing to do in case 'fast
-> numa'. So I guess there is no good answer (?) or way of doing it.
+> > +					    ITER_GET_BVECS_PAGES, &start);
+> > +		if (bytes < 0) {
+> > +			if (size =3D=3D 0)
+> > +				return bytes;
+> > +			break;
+> =
 
-Yeah, recent AMD CPUs can be configured into NUMA mode where each chiplet is
-reported as a node and they do behave like one as each has its own memory
-connection but the distances among them are significantly closer than
-traditional multi-socket. That said, I think the implementation is still a
-bit too happy to jump the boundary. What Andrea is suggesting seems
-reasonable?
+> I am slightly confused by 'break;' here. Do we have a loop around?
 
-Thanks.
+Yes.  You need to look at the original code as the while-directive didn't =
+make
+it into the patch context;-).
 
--- 
-tejun
+> > -	return size;
+> > +	return 0;
+> =
+
+> Do we really need to return zero here? It looks to me that we calculated=
+ the
+> size for returning here. Am I wrong?
+
+The only caller only cares if an error is returned.  It doesn't actually c=
+are
+about the size.  The size is stored in the databuf anyway.
+
+> > +		dbuf =3D ceph_databuf_req_alloc(npages, 0, GFP_KERNEL);
+> =
+
+> I am still feeling confused of allocated npages of zero size. :)
+
+That's not what it's saying.  It's allocating npages' worth of bio_vec[] a=
+nd
+not creating any bufferage.  The bio_vecs will be loaded from a DIO reques=
+t.
+As mentioned in a previous reply, it might be worth creating a separate
+databuf API call for this case.
+
+> > -static void put_bvecs(struct bio_vec *bvecs, int num_bvecs, bool shou=
+ld_dirty)
+> > +static void ceph_dirty_pages(struct ceph_databuf *dbuf)
+> =
+
+> Does it mean that we never used should_dirty argument with false value? =
+Or the
+> main goal of this method is always making the pages dirty?
+> =
+
+> >  {
+> > +	struct bio_vec *bvec =3D dbuf->bvec;
+> >  	int i;
+> >  =
+
+> > -	for (i =3D 0; i < num_bvecs; i++) {
+> > -		if (bvecs[i].bv_page) {
+> > -			if (should_dirty)
+> > -				set_page_dirty_lock(bvecs[i].bv_page);
+> > -			put_page(bvecs[i].bv_page);
+> =
+
+> So, which code will put_page() now?
+
+The dirtying of pages is split from the putting of those pages.  The datab=
+uf
+releaser puts the pages, but doesn't dirty them.  ceph_aio_complete_req()
+needs to do that itself.  Netfslib does this on behalf of the filesystem a=
+nd
+switching to that will delegate the responsibility.
+
+Also in future, netfslib will handle putting the page refs or unpinning th=
+e
+pages as appropriate - and ceph should not then take refs on those pages
+(indeed, as struct page is disintegrated into different types such as foli=
+os,
+there may not even *be* a ref counter on some of the pages).
+
+David
+
 
