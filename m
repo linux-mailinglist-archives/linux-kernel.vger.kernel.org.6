@@ -1,106 +1,305 @@
-Return-Path: <linux-kernel+bounces-564088-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564089-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07F50A64D92
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 12:59:57 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E53EDA64D96
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 13:00:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C798172B96
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:59:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 37841173770
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 12:00:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33CDB2356C0;
-	Mon, 17 Mar 2025 11:58:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79339237705;
+	Mon, 17 Mar 2025 11:59:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dMsRMSbm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="EKnH153f"
+Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2083.outbound.protection.outlook.com [40.107.95.83])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88A62238156;
-	Mon, 17 Mar 2025 11:58:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742212690; cv=none; b=cfp++JcWr6oNB4wu+qV2NEAG/FGPjUdn5rSg37/C4Ag3RmfPLJ04/mLUUZQaxRVRvVd2Nd2bhSQ6qwvRMv/1j0NToGOTZfL/MSW+W0LLF6JWrgdB8Kyq9+2IOom7eJtTYPmJLx2b2SpVNmZ5fWPHyLWJCfQJRssjO0e5crsM3d4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742212690; c=relaxed/simple;
-	bh=sq/y7ToMuiEYjILLs9HwScQY78qLtJ+EUzbHvYcFahE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iff4WLdxORbYviuF7a/Kg2Gq6+xXO6z4OceydbFQow9L1nya45YspfAzQRr0Zd9GU2ypfuiWBH3P9Rb7mWKsLfaaTx5HFjc7AfG4nPtOeKxAi6OEJ5Y/HxI7Cy8/HiVkPzWykcKg9me52Cz/jEa9SjEPv1fZxPuXxn7TQxIeRDk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dMsRMSbm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF7CFC4CEE3;
-	Mon, 17 Mar 2025 11:58:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742212690;
-	bh=sq/y7ToMuiEYjILLs9HwScQY78qLtJ+EUzbHvYcFahE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dMsRMSbmEjUg08T36jpvjIpXopIOqt3lksnDPiquVrUU+ZcuZMintWSixY1KecFBK
-	 u5IGvl1PdEgpsuAPWLllxe285atv/fUenvzZzLvSznR3p/YqdVgNwpmCq+zQRYAgPy
-	 QdFW8ftA4jVqU2xAy21Hkb/bQMgz9qoxivpkY6GBayzOG2UXTGdYZ7CmFEtSD6fpJa
-	 87zI6f37CMVxNktP7yFMy1XZCnj6WnUJElxv1htNDhpik7A0fuL9KW+WGqDaahxBNy
-	 ZnQMlFXPQc1pWKncdLkfWuFAgI9JyHRGRHqFiKXZormATHM+J5vXhNW+ct3zA/hbN6
-	 Xvn+zG5UsibLw==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1tu96d-000000006pl-3dZv;
-	Mon, 17 Mar 2025 12:58:08 +0100
-Date: Mon, 17 Mar 2025 12:58:07 +0100
-From: Johan Hovold <johan@kernel.org>
-To: alexandre.belloni@bootlin.com
-Cc: Johan Hovold <johan+linaro@kernel.org>, linux-arm-msm@vger.kernel.org,
-	linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] rtc: pm8xxx: switch to devm_device_init_wakeup
-Message-ID: <Z9gOT5WBaGkBZjl9@hovoldconsulting.com>
-References: <20250317111312.1518349-1-alexandre.belloni@bootlin.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C739523771E
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 11:58:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.95.83
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742212739; cv=fail; b=b0OGYzohQyUQvVGTp+rIdSIQ4SiFdnSD3GfxWC1Voxh97k2JAb5UByEpuLgP2+67UPEPVYkrzuQ/pwq5gI1raMlrRyrmYGQbRDBYqt4vFdifUGLz0wT3dNE/5t4VzteWhwvfoXUaXEUAUaOvlr2YSCv1ohGFPF0w87nZnSqHoIQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742212739; c=relaxed/simple;
+	bh=yIMU5AYFnCmoye1F1HyM6wIKmnuRLZFqK0BATeMp+aA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=lA220a+E1puYNaNBJ5asAXyRNvY1YWqqf1DE+YG18xePyGzvK7hwNHlEJLWxE1yRTbw3704yBSUmoRioJHyFjOnlYU3PMppB7W1hUTWCaEHr4soUSOAbFQHDsz+/TXa6+21/suHqjC7rMV0kYfw4nKCzpKHHBKXnND9eCYh4GOI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=EKnH153f; arc=fail smtp.client-ip=40.107.95.83
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=fcr/yl5XuOvI0wA1gRM+MQGkNZWpY/+AjKgncSdg8QzES763FK5oo9Ez8fBPTcFRzO4cEJoerKi4AnA0EOiqdw8bAFhWISubR5O86Tz1/yMcQXBEOhyIyRjvp8tOPyay2E6oW7s+FeHiCYAQji0BDYzz2HP/tujJ4hnrsJ4ukPuUNQ1RAgFFe1cOTi9wpv/Nb+zBJgKGsR1ib6FsABDi6KqZV/JwD3cBItptVagAwVI2rD8IPdvKQe26Py4fv/RiRG8GbBx6cCkYnhb4oj12eAwQBNJ/YkaeTxp0EHOw+7HYcRTClBykOWcn0b6GTVHFpFdMX/KOJcO0IcLpnlyYcQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=/YSF+glVIoRrN02XEP35zA53zBsp+VyGmccvn878k10=;
+ b=ZOH9xKwkDiH63hcjQ6Px0B7GX+whirKOvWIhXB1eNYl3AAbcN1CdmSmG3uhzx6wRxXKLA8OJPq1mp8D1UQGFo62Z6FRLbR6AnjQrFr7AIbgTqD9ZMZDcQmMT4zGl/JCWuhfmIFfFqyJ+CzhUY66cd3r6kTylwcnJRel6rz5RR5haE5xjGa34jkz07lPWp5IyBA0KDRK6nb9bQyz0TNEsrpMfXm0OB+63A4FmNfQUBPEPLm5SYxLVNuJugcf1TwEeI6FikdXXTFwsVz5jQrJXLlzKXLjSHWb3UqaaOf3I8rwBfvC1zF6fv0zFwTNQQf3F/5Euq4Jq8/p3wvYdlJnaKA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=8bytes.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=/YSF+glVIoRrN02XEP35zA53zBsp+VyGmccvn878k10=;
+ b=EKnH153f7hzXW+wQB7NevRszc583C4H/I3QQG/N+z+nj345IVGHbm+PbeqVVh4tsbvCA1hlyg6yhKTuIkZs7YPu07ENHWxOngI46FqJ8tr88kvX0qeyTwCdP3reIX4I7MiBHSaOld2BnL+jSfeiBZfjs7A55Uu4aOWNjfIz3SRQ=
+Received: from MW2PR2101CA0030.namprd21.prod.outlook.com (2603:10b6:302:1::43)
+ by SJ2PR12MB8739.namprd12.prod.outlook.com (2603:10b6:a03:549::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.33; Mon, 17 Mar
+ 2025 11:58:52 +0000
+Received: from SJ1PEPF000023D7.namprd21.prod.outlook.com
+ (2603:10b6:302:1:cafe::1e) by MW2PR2101CA0030.outlook.office365.com
+ (2603:10b6:302:1::43) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8534.24 via Frontend Transport; Mon,
+ 17 Mar 2025 11:58:52 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ SJ1PEPF000023D7.mail.protection.outlook.com (10.167.244.72) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8583.3 via Frontend Transport; Mon, 17 Mar 2025 11:58:51 +0000
+Received: from BLRDHSRIVAS.amd.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 17 Mar
+ 2025 06:58:46 -0500
+From: Dheeraj Kumar Srivastava <dheerajkumar.srivastava@amd.com>
+To: <joro@8bytes.org>, <will@kernel.org>, <robin.murphy@arm.com>,
+	<linux-kernel@vger.kernel.org>, <iommu@lists.linux.dev>
+CC: <suravee.suthikulpanit@amd.com>, <vasant.hegde@amd.com>, "Dheeraj Kumar
+ Srivastava" <dheerajkumar.srivastava@amd.com>
+Subject: [PATCH v4 0/8] Introduce debugfs support in IOMMU
+Date: Mon, 17 Mar 2025 17:28:22 +0530
+Message-ID: <20250317115830.3416-1-dheerajkumar.srivastava@amd.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250317111312.1518349-1-alexandre.belloni@bootlin.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ1PEPF000023D7:EE_|SJ2PR12MB8739:EE_
+X-MS-Office365-Filtering-Correlation-Id: 04015201-449b-4884-d950-08dd654b15d5
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|36860700013|82310400026|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?3+K6VGwcd0dPMNoLdUbKvv/VJZtIeqWCzlju5OSsNTzfdmgJM9Vv0h4QvXpA?=
+ =?us-ascii?Q?eqb0HPS8c0O72bRas23aZzCMweOP8eK8r4TtN3+wW130/h2troIIC48M6fv2?=
+ =?us-ascii?Q?hnXWOu1rHttIhLxxZ3jOSxfhHwjXFv8rJchgnO+ThQ0JYFVkVqQFiQFFTriF?=
+ =?us-ascii?Q?MX6ihvvjdBEIzup+/wbPWgsksLcKVT8IwV9pFLwYvw0wN7kQVd5fQbz/WlVG?=
+ =?us-ascii?Q?aMaxBGXMVspqsVbxFW7ETu16f0BaXxmBDwCWERhCMjgPehWyHsvGljiPIE9o?=
+ =?us-ascii?Q?x/EpevySS2w3gpfh0/5jswmYf3ucpK3AqPmcq36vrVTnnbOVHiuQ6rH0szuo?=
+ =?us-ascii?Q?tF55dj8eAaLvG5X2fG0i7xh0lbZHYyuEUGoRiOEVKW6hPm6o1a6eV8lfaQf3?=
+ =?us-ascii?Q?yIOgYuzFBfAl34sqONf/mYi3xnhbOgAEAaa8+8Ihz9WsCWN3ULlXoqBeaLDt?=
+ =?us-ascii?Q?EabXZ4nr1MViIZrpnllRYfe9sIjdqBLJSFS/YsK5b0BbcI5HkUt6ME1zRu6h?=
+ =?us-ascii?Q?hKEB8BZl11lYgXwuXihl1p6CFcUbtHifE3h+3fORPxJOlSoqFFnMSZVW2Fi+?=
+ =?us-ascii?Q?Xs+7lOQ1iHslX8siT3td3vhWeSb7qrfzZwo7B7B16GhTXHoopXuD92wq0wBn?=
+ =?us-ascii?Q?ObpPY7mj0lUmNu4dG49qP8cswng8fQiffy0uBbjxnfVM0vAqyG58fqDg9Q1O?=
+ =?us-ascii?Q?24RIHtRdXzTARsv9cIYVfxaEAjzaTKtVwdkISQTR3j8OPlNmVdCwBQfgSn+v?=
+ =?us-ascii?Q?w9OnD+3I8HpbRaDVrxgwnfA8QJsXxapi9RUjg0r9j+QTvRj0xOvH30B6xBY5?=
+ =?us-ascii?Q?EKvjqatEQnUSBWaWh+oUsHZNYBnvYwxJ1iJSXYpxjlV6/vFRgjEePlKxlomz?=
+ =?us-ascii?Q?3R00mmxglk5cZ+nUZx1/gM+Yx2j6rRmfxljRFZQ++t6Y5mfws3yTpkadg2Ik?=
+ =?us-ascii?Q?/G9paV9iih+4njkJTKWRPAlXCzjCc+pIpjxi+IZQlPP2Avo5MVCPBgv1L1xF?=
+ =?us-ascii?Q?ME5tFb2VGfZVj80nwHiLCkZFYOdqOZUxl/4JNu4EY1iyg5fuuF4HNZSu8tmB?=
+ =?us-ascii?Q?dGraFuEDRZ/locdA2tpN7ntcwhUb9Vjqgoc3y95iJZGF6K+nQ6BKw8j1KV55?=
+ =?us-ascii?Q?ZH9ON3VeQX3s02/XjW9KAXr1DtFwAmx/xw/X3SEoTiyK3gh6vo0urZTTrza3?=
+ =?us-ascii?Q?apcipSswriDrSFy4Ll3VX/RjpwkcAlWhPNUXXlhir3X0gDczbDfBwZ6BOK5k?=
+ =?us-ascii?Q?oMtWMLL2ouK6W5DMrRXGWhEiCFu/3CQP6gjD1RYlsHNFK+XoQNdZOzhD65wL?=
+ =?us-ascii?Q?oeXOTHufZK4eZmubmrg0ZobB1gcwkyMnOzQp8lBNdkOG4df+IAuxG9d50/bh?=
+ =?us-ascii?Q?qGJzSWYC2KZZsCDfMkKJY8kedrF68psqxvOzH/u00+RUHJTpiOuIQdMSH3xr?=
+ =?us-ascii?Q?SPTdgwIHeF0GcbVBpRlJhQ/AwzWcmy3L620WEs8XT4uxl1FiXwY3TbSNFhmp?=
+ =?us-ascii?Q?IvfXfM/ua18YorU=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(82310400026)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Mar 2025 11:58:51.8361
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 04015201-449b-4884-d950-08dd654b15d5
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ1PEPF000023D7.namprd21.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB8739
 
-On Mon, Mar 17, 2025 at 12:13:11PM +0100, alexandre.belloni@bootlin.com wrote:
-> From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-> 
-> Switch to devm_device_init_wakeup to avoid a possible memory leak as wakeup
-> is never disabled.
+Introducing debugfs support in AMD/IOMMU driver that will allow
+userspace to dump below IOMMU information
+1) MMIO and Capability register per IOMMU
+2) Command buffer
+3) Device table entry
+4) Interrupt remapping table entry
 
-You should probably mention that this was due to a bad merge. The
-no-alarm patch moved the previous call to device_init_wakeup() into the
-conditional, but you had switched it to use devres so we ended up with
-two calls when you applied the patch.
+Analyzing contents of IOMMU data structures helps in understanding IOMMU
+capabilities and behavior and debug issues faster.
 
-Unless you want to and can rebase your tree.
+1. MMIO and Capability registers - Add support to dump MMIO and Capability
+   registers per IOMMU.
 
-> Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-> ---
->  drivers/rtc/rtc-pm8xxx.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/rtc/rtc-pm8xxx.c b/drivers/rtc/rtc-pm8xxx.c
-> index c6241a0c26e9..70cbac76147b 100644
-> --- a/drivers/rtc/rtc-pm8xxx.c
-> +++ b/drivers/rtc/rtc-pm8xxx.c
-> @@ -647,7 +647,7 @@ static int pm8xxx_rtc_probe(struct platform_device *pdev)
->  		if (rc)
->  			return rc;
->  
-> -		device_init_wakeup(&pdev->dev, true);
-> +		devm_device_init_wakeup(&pdev->dev);
+   Example:
+   a. Write MMIO register offset to dump it
+      $ echo 0x18 > /sys/kernel/debug/iommu/amd/iommu00/mmio
+      $ cat /sys/kernel/debug/iommu/amd/iommu00/mmio
 
-So you need to remove the call to devm_device_init_wakeup() above as
-well (after platform_set_drvdata()) which the no-alarm patch moved here.
+      Output:
+      $ Offset:0x18 Value:0x000c22000003f48d
 
-With that fixed:
+    b. Write capability register offset to dump it
+       $ echo 0x10 > /sys/kernel/debug/iommu/amd/iommu00/capability
+       $ cat /sys/kernel/debug/iommu/amd/iommu00/capability
 
-Reviewed-by: Johan Hovold <johan+linaro@kernel.org>
+       Output:
+       $ Offset:0x10 Value:0x00203040
 
->  	} else {
->  		clear_bit(RTC_FEATURE_ALARM, rtc_dd->rtc->features);
->  	}
+2. Command buffer - Add support to dump per IOMMU command buffer.
 
-Johan
+   Example:
+   a. cat /sys/kernel/debug/iommu/amd/iommu00/cmdbuf
+
+   Output:
+   CMD Buffer Head Offset:339 Tail Offset:339
+     0: 00835001 10000001 00009900 00000000
+     1: 00000000 30000005 fffff003 7fffffff
+     2: 00835001 10000001 00009901 00000000
+     3: 00000000 30000005 fffff003 7fffffff
+     4: 00835001 10000001 00009902 00000000
+   ........................................
+   ........................................
+   ........................................
+
+3. Device table - Add support to dump device table per IOMMU.
+
+   Example:
+   a. Write device id to dump device table entry for that device
+      $ echo 0000:01:00.0 > /sys/kernel/debug/iommu/amd/devid
+      $ cat /sys/kernel/debug/iommu/amd/devid
+
+      Output:
+      0000:01:00.0
+
+      Dump the device table entry for the input given
+      $ cat /sys/kernel/debug/iommu/amd/devtbl
+
+      Output:
+      DeviceId             QWORD[3]         QWORD[2]         QWORD[1]         QWORD[0] iommu
+      0000:01:00.0 0000000000000000 20000001373b8013 0000000000000038 6000000114d7b603 iommu3
+
+    b. Write device id to dump device table entry for that device
+      $ echo 01:00.0 > /sys/kernel/debug/iommu/amd/devid
+      $ cat /sys/kernel/debug/iommu/amd/devid
+
+      Output:
+      0000:01:00.0
+
+      Dump the device table entry for the input given
+      $ cat /sys/kernel/debug/iommu/amd/devtbl
+
+      Output:
+      DeviceId             QWORD[3]         QWORD[2]         QWORD[1]         QWORD[0] iommu
+      0000:01:00.0 0000000000000000 20000001373b8013 0000000000000038 6000000114d7b603 iommu3
+
+4. Interrupt remapping table - Add support to dump IRT table valid entries in
+   "iommu_irqtbl" file. This supports user input to dump IRT entry for a
+   specific pci device.
+
+   Example:
+   a. Write device id to dump device table entry for that device
+      $ echo 0000:01:00.0 > /sys/kernel/debug/iommu/amd/devid
+      $ cat /sys/kernel/debug/iommu/amd/devid
+
+      Output:
+      0000:01:00.0
+
+      Dump the device table entry for the input given
+      $ cat /sys/kernel/debug/iommu/amd/irtbl
+
+      Output:
+      DeviceId 0000:01:00.0
+      IRT[0000] 0000000000000020 0000000000000241
+      IRT[0001] 0000000000000020 0000000000000841
+      IRT[0002] 0000000000000020 0000000000002041
+      IRT[0003] 0000000000000020 0000000000008041
+      IRT[0004] 0000000000000020 0000000000020041
+      ..........................................
+      ..........................................
+      ..........................................
+
+   b. Write device id to dump device table entry for that device
+      $ echo 01:00.0 > /sys/kernel/debug/iommu/amd/devid
+      $ cat /sys/kernel/debug/iommu/amd/devid
+
+      Output:
+      0000:01:00.0
+
+      Dump the device table entry for the input given
+      $ cat /sys/kernel/debug/iommu/amd/irttbl
+
+      Output:
+      Device 0000:01:00.0
+      IRT[0000] 0000000000000020 0000000000000241
+      IRT[0001] 0000000000000020 0000000000000841
+      IRT[0002] 0000000000000020 0000000000002041
+      IRT[0003] 0000000000000020 0000000000008041
+      IRT[0004] 0000000000000020 0000000000020041
+      ..........................................
+      ..........................................
+      ..........................................
+
+Open question:[Suggestion from Bjorn Helgaas] Instead of using device_id input support
+              "/sys/kernel/debug/iommu/amd/devid", can we create separate directory
+              "/sys/kernel/debug/iommu/amd/<bdf>/" for per device IOMMU data strcutures
+              dump.
+
+Changes since v3:
+-> Patch 2/8: Print 64 bits instead of 32 bits for MMIO registers dump. Since most of
+   the MMIO registers are 64 bits.
+-> Patch 5/8: Update commit message with the need to add support for device_id input.
+-> Patch 3/8: Throw error message mentioning valid capability offset range if user capability
+   offset's input is not in valid range and input fails.
+
+Changes since v2:
+-> Patch 2/8 and 3/8: Use single file mmio and capability for input and output registers
+   offset and register's dump respctively.
+-> Patch 8/8: Correct path for files "irqtbl" and "devtbl" in Documentation
+
+Changes since v1:
+-> Patch 2/8 and 3/8: Use kstrtou32_from_user() instead of memdup_user_nul() --> kstrtou32()
+-> Patch 4/8: Dump command buffer head and tail offset instead of head and tail pointer registers.
+-> Patch 8/8: Fix bot reported warning on v1 patch series.
+
+Dheeraj Kumar Srivastava (8):
+  iommu/amd: Refactor AMD IOMMU debugfs initial setup
+  iommu/amd: Add debugfs support to dump IOMMU MMIO registers
+  iommu/amd: Add debugfs support to dump IOMMU Capability registers
+  iommu/amd: Add debugfs support to dump IOMMU command buffer
+  iommu/amd: Add support for device id user input
+  iommu/amd: Add debugfs support to dump device table
+  iommu/amd: Add debugfs support to dump IRT Table
+  iommu/amd: Add documentation for AMD IOMMU debugfs support
+
+ Documentation/ABI/testing/debugfs-amd-iommu | 114 +++++++
+ drivers/iommu/amd/amd_iommu.h               |   4 +-
+ drivers/iommu/amd/amd_iommu_types.h         |   7 +
+ drivers/iommu/amd/debugfs.c                 | 354 +++++++++++++++++++-
+ drivers/iommu/amd/init.c                    |   5 +-
+ drivers/iommu/amd/iommu.c                   |   7 -
+ 6 files changed, 470 insertions(+), 21 deletions(-)
+ create mode 100644 Documentation/ABI/testing/debugfs-amd-iommu
+
+-- 
+2.25.1
+
 
