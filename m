@@ -1,111 +1,72 @@
-Return-Path: <linux-kernel+bounces-564203-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564206-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F41CA65032
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 14:05:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 055BEA65035
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 14:06:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4EB521895B05
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 13:04:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D31E81895AB0
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 13:06:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 216F023ED7A;
-	Mon, 17 Mar 2025 13:04:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AF4023BD1C;
+	Mon, 17 Mar 2025 13:05:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Q6YGjhvh";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="AfCWfj63"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Xu0sbxoU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2C1423E32E;
-	Mon, 17 Mar 2025 13:04:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97226E56F;
+	Mon, 17 Mar 2025 13:05:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742216654; cv=none; b=cuAdG3nxId747CgzTdyRE60KWM9ab/ZIFe2FsxVY8etuG98amEizHnToFhLBpB9p5yGMquJljZ72v89lYHQ3P33cb2ZmRTsI0Dc0LYgGCAba573B2qj6VJlKfx7UkiEKe0vhVZF+E6Maji+1+bIGhTXvWm+anygfe0LG3i3LZfQ=
+	t=1742216753; cv=none; b=VZ0ZkZfIxJf0AYkEdyqIpgClIecqsuDOUmJwEma5N3tMZKOfbIRrqypexRv10T6fbFJZj5cQW3/kjEAvRj5i8r6sdowk0jC33tOLnkg71u+qLBYMVVg8m0Q963VvfEOzOZyXb6KDYhTSqWYM3cpdNUbFgBLhq7Dkv9j5bN4COt4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742216654; c=relaxed/simple;
-	bh=KVUNmQdehuyTOB1NM2ZuDHvypCGHYTpjpC/HxaStcNU=;
-	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=eXfdA0dOMLGqPlFNJ507e3uhR8qiDoDEuxb34DIascl6IOn1987hdZObcoOgeTgvB9t+isQD3b7weuV6SAuVdG0OEG5hGOzcyyFDePFu66aCF/rdw91x7NaT9ZZ0Fymam50dx+cAwmYdbhA7vX+eqi5Pk9attWlZt5rDkppngq8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Q6YGjhvh; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=AfCWfj63; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 17 Mar 2025 13:04:07 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1742216650;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=6dkw96a023iuOdRzg3FQ8Drz5v8x2QWbz4/l3/X8tU0=;
-	b=Q6YGjhvhvXz0x92A38D5LTV+Yt7B+6wUm1n6PvxCL2XD5k92x/9FsCJ6CkjZRddaJQgTvc
-	z0rQ19S4b9WaKH9JCXjdEXngF48zwUXM5Qoy1/EBS8MOSI+Ndsb5+efbJvS5vFlx+ICjP/
-	m9Twx4Ay7IMyriRUxuL970BFp3utefv91Nvs5dLsaTpsMVFXZGz0IMYtVLjm7WBy/LlnVg
-	dCcXD7Ez4IbzOGKxlY1d5fPjkl3mvoE+0eEWy9RJgfBCMc0wp2L8MfLOfwZSM2IPVoVGS1
-	9+7NXLMG7kTcDkA+2nr75qGMTXmIKalPwvxow79iBOHyOa2QQemMdSErkTqQmA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1742216650;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=6dkw96a023iuOdRzg3FQ8Drz5v8x2QWbz4/l3/X8tU0=;
-	b=AfCWfj63fAEfDznDAGoDF8tq3LAYcsqIglMPE3SR6xhAC/E+g6/WlEMNaYX0ppAKD7jhhM
-	0DAWIRcN/52O+1Dw==
-From: "tip-bot2 for Borislav Petkov (AMD)" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/fpu] x86/fpu: Clarify the "xa" symbolic name used in the
- XSTATE* macros
-Cc: "Borislav Petkov (AMD)" <bp@alien8.de>, x86@kernel.org,
- linux-kernel@vger.kernel.org
+	s=arc-20240116; t=1742216753; c=relaxed/simple;
+	bh=9+BayI/3W2fli9bAbhq9aYLeJiIaK+dexWqAfoA1wkc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=azJUt5TnpIkX5YiOyQJhRdH9HLYlB7qBf6UfAKH1t5sDFpuqpXpFGCdrX+0TaUycZxxzJRLqI0/d6Afbmm90TheP+QPSPdOc5v1VDPhANQQCS1IlDk7wvihDA9jJjtZl+3X/reyzyspnt7TWwegfREtYS6EACwi1L4Z1+tSqfb4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Xu0sbxoU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32C8AC4CEE3;
+	Mon, 17 Mar 2025 13:05:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1742216753;
+	bh=9+BayI/3W2fli9bAbhq9aYLeJiIaK+dexWqAfoA1wkc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Xu0sbxoU17DvK07bubIAXV45lnRVYQ+ZQS+e0K1RwoyrTzGSVAN4TBBg2lwhvK1d3
+	 8ttJYl+KSfSdtRVtSJBELfSVh6DjMlMzVwugRfq3d5DKFLm2ZtswngNaCfoj2X1wa3
+	 PBuDu6VGeyULJmaVtOepfnu5yHfJsMNsRGQH+XNk=
+Date: Mon, 17 Mar 2025 14:04:27 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Sudeep Holla <sudeep.holla@arm.com>
+Cc: linux-kernel@vger.kernel.org, Andre Przywara <andre.przywara@arm.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
+	linux-crypto@vger.kernel.org
+Subject: Re: [PATCH 2/9] hwrng: arm-smccc-trng - transition to the faux
+ device interface
+Message-ID: <2025031748-deface-wasting-b635@gregkh>
+References: <20250317-plat2faux_dev-v1-0-5fe67c085ad5@arm.com>
+ <20250317-plat2faux_dev-v1-2-5fe67c085ad5@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174221664750.14745.17196771195042757712.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250317-plat2faux_dev-v1-2-5fe67c085ad5@arm.com>
 
-The following commit has been merged into the x86/fpu branch of tip:
+On Mon, Mar 17, 2025 at 10:13:14AM +0000, Sudeep Holla wrote:
+> +MODULE_ALIAS("faux:smccc_trng");
 
-Commit-ID:     4348e9177813656d5d8bd18f34b3e611df004032
-Gitweb:        https://git.kernel.org/tip/4348e9177813656d5d8bd18f34b3e611df004032
-Author:        Borislav Petkov (AMD) <bp@alien8.de>
-AuthorDate:    Mon, 17 Mar 2025 13:47:12 +01:00
-Committer:     Borislav Petkov (AMD) <bp@alien8.de>
-CommitterDate: Mon, 17 Mar 2025 13:47:12 +01:00
+Why do you need a branch new alias you just made up?  Please don't add
+that for these types of devices, that's not going to work at all (just
+like the platform alias really doesn't work well.
 
-x86/fpu: Clarify the "xa" symbolic name used in the XSTATE* macros
+thanks,
 
-Tie together the %[xa] in the XSAVE/XRSTOR definitions with the
-respective usage in the asm macros so that it is perfectly clear.
-
-No functional changes.
-
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
----
- arch/x86/kernel/fpu/xstate.h | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/arch/x86/kernel/fpu/xstate.h b/arch/x86/kernel/fpu/xstate.h
-index 1418423..0fd34f5 100644
---- a/arch/x86/kernel/fpu/xstate.h
-+++ b/arch/x86/kernel/fpu/xstate.h
-@@ -109,6 +109,10 @@ static inline int update_pkru_in_sigframe(struct xregs_state __user *buf, u64 ma
- /*
-  * After this @err contains 0 on success or the trap number when the
-  * operation raises an exception.
-+ *
-+ * The [xa] input parameter below represents the struct xregs_state pointer
-+ * and the asm symbolic name for the argument used in the XSAVE/XRSTOR insns
-+ * above.
-  */
- #define XSTATE_OP(op, st, lmask, hmask, err)				\
- 	asm volatile("1:" op "\n\t"					\
+greg k-h
 
