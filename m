@@ -1,93 +1,181 @@
-Return-Path: <linux-kernel+bounces-564670-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564681-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 218B2A6592D
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 17:56:09 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98CDAA65925
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 17:55:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BBECB88681B
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 16:51:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A17BA7ADFFA
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 16:54:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCDFD1A3BC0;
-	Mon, 17 Mar 2025 16:47:26 +0000 (UTC)
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 161FF1BC9E2;
+	Mon, 17 Mar 2025 16:52:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="lH8HzpyT";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="b30CgE5a"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF8AC1A255C
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 16:47:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E59C11B4232
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 16:52:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742230046; cv=none; b=A+6TDHiG7lpkfvF27Rgs6nMcdc1uk8LTpr3VJb6Jf4NAQZvXAy3wa3z8F2i/3NRW2Z7WynELnnAbXPngtWBg68f+u8Vaut6x48vNwY8H8ShPYmYffSFDdlbIv/gDkNwQPVPJxbIg2m93nV4aW3ewqMQRsCymqlRZ2NT2MQKalyg=
+	t=1742230365; cv=none; b=WtRqn1UwV1EsjLdntVWKL183SUCfPKU2I9QJTfLLno444lbf3LGZw9Dql+03N0eacICgiOorY9jZj302cwdcoHqzTJtQIZAGV/rx6HfxLVy+teOdxDSh6MumIMDcdLHGqAX9MBu48mbzUz6yiXjxLLnkOguDfTDY5Rktf2otvrQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742230046; c=relaxed/simple;
-	bh=jwOTwlsAwVrR1HbXPCZjYqzaL4dNCXSzEJhenSYGWQg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bbvaXYr0fekdcr+vo2tW8+0oB9ONg1LFf31GwLGukYmIRLMFPcg8PRUV3Zku10FDhNQYEVoZeiiM7U/s7AiznIHVHD7iUo0EIycfNDxDLqUijjmuMRAZ4be55+g0raTElom6ncALquXYUKZ+J6px3DMQE1TtvASa+qBHtLJixeg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
-Received: by mail.gandi.net (Postfix) with ESMTPSA id CDE4E441C3;
-	Mon, 17 Mar 2025 16:47:20 +0000 (UTC)
-Message-ID: <b7969702-5e88-4891-bd0e-8728562ff5f5@ghiti.fr>
+	s=arc-20240116; t=1742230365; c=relaxed/simple;
+	bh=g5nCTLUQ7v/dgeHO9ZdiBcj0f1KcnklqusMEc/U04jM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=X+OR409yLx8SlxvzPK3VF3VBJzEf+BUiAfL5lCbMB6tgNXCHcyoa6F/13DKY5qgDj9al55LaVqkHWX0jR6zQbRpawKi75wDqiRIC/Ro/ETnaeTLN/J3o4tGIm6CQyZEP9pmh9ID32DH1V5rWL46uYb5cPqB5noCD6jZaeXfcYAw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=lH8HzpyT; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=b30CgE5a; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: "Ahmed S. Darwish" <darwi@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1742230362;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0XG4Vc/qKmqnIpTdZ4sagmxTTKpcTja3KbsV8H2WxcY=;
+	b=lH8HzpyTJRGzZTtJVPipk9ZYX2+2q7lRbXZ/faQjRILORybDUZhFB1xksZEXz9SR6IE7ai
+	a71jwvC53F5CpBk0gGQe6QxfVlDV1LWl1FBXtOERiU2skJPIuh9n6W/VApuWWMt0UaQ8vc
+	5O8AfK7azZpSQocPRIqtwHAxzHhigwI9+cs3RKpfK/ksQHre/GjiEloPVVnrDpLMdVWIti
+	IU8L0U9O0JpgFimejesoQFOpmXDa33MT+eb/NHERMXpBLDbJU4cce5mfKtXRJ8gX5eQjQt
+	ETrvc8DoYlPHXgunmFyuTBkGFeqpwcA6t5x2CyWvkFmPe9fAAWHbaCxefKf6Yg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1742230362;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0XG4Vc/qKmqnIpTdZ4sagmxTTKpcTja3KbsV8H2WxcY=;
+	b=b30CgE5a3wh4w7odNYO6VdN82hFC6VhZn5T4jS74yNYnVTlBytaGDSzAqPh8BvyYbWUNXG
+	YDmBnAchWVlqkgAg==
+To: Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Borislav Petkov <bp@alien8.de>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	Andrew Cooper <andrew.cooper3@citrix.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	John Ogness <john.ogness@linutronix.de>,
+	x86@kernel.org,
+	x86-cpuid@lists.linux.dev,
+	LKML <linux-kernel@vger.kernel.org>,
+	"Ahmed S. Darwish" <darwi@linutronix.de>
+Subject: [PATCH v2 04/29] x86/cacheinfo: Use CPUID leaf 0x2 parsing helpers
 Date: Mon, 17 Mar 2025 17:47:20 +0100
+Message-ID: <20250317164745.4754-5-darwi@linutronix.de>
+In-Reply-To: <20250317164745.4754-1-darwi@linutronix.de>
+References: <20250317164745.4754-1-darwi@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/4] riscv: iommu: Support Svnapot
-Content-Language: en-US
-To: Xu Lu <luxu.kernel@bytedance.com>, akpm@linux-foundation.org,
- jhubbard@nvidia.com, kirill.shutemov@linux.intel.com, tjeznach@rivosinc.com,
- joro@8bytes.org, will@kernel.org, robin.murphy@arm.com
-Cc: lihangjing@bytedance.com, xieyongji@bytedance.com,
- linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20250311122510.72934-1-luxu.kernel@bytedance.com>
-From: Alexandre Ghiti <alex@ghiti.fr>
-In-Reply-To: <20250311122510.72934-1-luxu.kernel@bytedance.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-GND-State: clean
-X-GND-Score: 0
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddugedttdegucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecunecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdejnecuhfhrohhmpeetlhgvgigrnhgurhgvucfihhhithhiuceorghlvgigsehghhhithhirdhfrheqnecuggftrfgrthhtvghrnheptdfhleefjeegheevgeeljeellefgvefhkeeiffekueejteefvdevhfelvdeggeeinecukfhppeefuddrfedvrdekuddrudekjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeefuddrfedvrdekuddrudekjedphhgvlhhopegludelvddrudeikedrvddurddvhegnpdhmrghilhhfrhhomheprghlvgigsehghhhithhirdhfrhdpnhgspghrtghpthhtohepuddvpdhrtghpthhtoheplhhugihurdhkvghrnhgvlhessgihthgvuggrnhgtvgdrtghomhdprhgtphhtthhopegrkhhpmheslhhinhhugidqfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtohepjhhhuhgssggrrhgusehnvhhiughirgdrtghomhdprhgtphhtthhopehkihhrihhllhdrshhhuhhtvghmohhvsehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhtohepthhjvgiinhgrtghhsehrihhvohhsihhntgdrtghomhdprhgtphhtthhopehjohhroheskegshihtvghsrdhorhhgpdhrt
- ghpthhtohepfihilhhlsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehrohgsihhnrdhmuhhrphhhhiesrghrmhdrtghomh
-X-GND-Sasl: alex@ghiti.fr
+Content-Transfer-Encoding: 8bit
 
-Hi Xu,
+Use the CPUID leaf 0x2 parsing helpers added in previous commits, which
+queries the CPUID leaf just once.  This also makes the same leaf 0x2
+parsing logic used by both x86/cacheinfo and x86/cpu intel.c
 
-You did not +cc linux-mm on your series, it would be nice to have 
-feedback from them. I'd say it would be easier to resend the whole 
-patchset with them in +cc.
+Suggested-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Ahmed S. Darwish <darwi@linutronix.de>
+---
+ arch/x86/kernel/cpu/cacheinfo.c | 66 +++++++++++++--------------------
+ 1 file changed, 26 insertions(+), 40 deletions(-)
 
-Thanks,
-
-Alex
-
-On 11/03/2025 13:25, Xu Lu wrote:
-> According to the RISC-V IOMMU hardware spec, the IOMMU implementation
-> has the same translation process as MMU and supports Svnapot standard
-> extension as well. These patches add support for Svnapot in the IOMMU
-> driver to make 64K also an available page size during DMA mapping.
->
-> Changes in V2:
-> 1. Supply more details about huge pte issue in follow_page_pte().
-> 2. Fix some style problems.
->
-> Xu Lu (4):
->    mm/gup: Add huge pte handling logic in follow_page_pte()
->    iommu/riscv: Use pte_t to represent page table entry
->    iommu/riscv: Introduce IOMMU page table lock
->    iommu/riscv: Add support for Svnapot
->
->   arch/riscv/include/asm/pgtable.h |   6 +
->   drivers/iommu/riscv/iommu.c      | 258 +++++++++++++++++++++++++------
->   include/linux/pgtable.h          |   8 +
->   mm/gup.c                         |  17 +-
->   4 files changed, 233 insertions(+), 56 deletions(-)
->
+diff --git a/arch/x86/kernel/cpu/cacheinfo.c b/arch/x86/kernel/cpu/cacheinfo.c
+index 584811ffca0c..53f51acefac6 100644
+--- a/arch/x86/kernel/cpu/cacheinfo.c
++++ b/arch/x86/kernel/cpu/cacheinfo.c
+@@ -19,6 +19,7 @@
+ #include <asm/amd_nb.h>
+ #include <asm/cacheinfo.h>
+ #include <asm/cpufeature.h>
++#include <asm/cpuid.h>
+ #include <asm/mtrr.h>
+ #include <asm/smp.h>
+ #include <asm/tlbflush.h>
+@@ -782,50 +783,35 @@ void init_intel_cacheinfo(struct cpuinfo_x86 *c)
+ 
+ 	/* Don't use CPUID(2) if CPUID(4) is supported. */
+ 	if (!ci->num_leaves && c->cpuid_level > 1) {
+-		/* supports eax=2  call */
+-		int j, n;
+-		unsigned int regs[4];
+-		unsigned char *dp = (unsigned char *)regs;
+-
+-		/* Number of times to iterate */
+-		n = cpuid_eax(2) & 0xFF;
+-
+-		for (i = 0 ; i < n ; i++) {
+-			cpuid(2, &regs[0], &regs[1], &regs[2], &regs[3]);
+-
+-			/* If bit 31 is set, this is an unknown format */
+-			for (j = 0 ; j < 4 ; j++)
+-				if (regs[j] & (1 << 31))
+-					regs[j] = 0;
+-
+-			/* Byte 0 is level count, not a descriptor */
+-			for (j = 1 ; j < 16 ; j++) {
+-				unsigned char des = dp[j];
+-				unsigned char k = 0;
+-
+-				/* look up this descriptor in the table */
+-				while (cache_table[k].descriptor != 0) {
+-					if (cache_table[k].descriptor == des) {
+-						switch (cache_table[k].cache_type) {
+-						case LVL_1_INST:
+-							l1i += cache_table[k].size;
+-							break;
+-						case LVL_1_DATA:
+-							l1d += cache_table[k].size;
+-							break;
+-						case LVL_2:
+-							l2 += cache_table[k].size;
+-							break;
+-						case LVL_3:
+-							l3 += cache_table[k].size;
+-							break;
+-						}
+-
++		union leaf_0x2_regs regs;
++		u8 *desc;
++
++		cpuid_get_leaf_0x2_regs(&regs);
++		for_each_leaf_0x2_desc(regs, desc) {
++			unsigned char k = 0;
++
++			/* look up this descriptor in the table */
++			while (cache_table[k].descriptor != 0) {
++				if (cache_table[k].descriptor == *desc) {
++					switch (cache_table[k].cache_type) {
++					case LVL_1_INST:
++						l1i += cache_table[k].size;
++						break;
++					case LVL_1_DATA:
++						l1d += cache_table[k].size;
++						break;
++					case LVL_2:
++						l2 += cache_table[k].size;
++						break;
++					case LVL_3:
++						l3 += cache_table[k].size;
+ 						break;
+ 					}
+ 
+-					k++;
++					break;
+ 				}
++
++					k++;
+ 			}
+ 		}
+ 	}
+-- 
+2.48.1
 
 
