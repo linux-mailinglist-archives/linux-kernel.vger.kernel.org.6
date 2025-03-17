@@ -1,105 +1,165 @@
-Return-Path: <linux-kernel+bounces-563271-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563272-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 161DFA63C27
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 03:53:57 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1398EA63C29
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 03:56:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 37A851889540
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 02:54:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 647CA167631
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 02:56:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F63015687D;
-	Mon, 17 Mar 2025 02:53:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45474155C82;
+	Mon, 17 Mar 2025 02:55:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P+nQnTBX"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="wKSsRhlD"
+Received: from out-183.mta0.migadu.com (out-183.mta0.migadu.com [91.218.175.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A46412FB6;
-	Mon, 17 Mar 2025 02:53:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4AFE1537DA
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 02:55:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742180028; cv=none; b=pLqmwlNF9xrrJqYgvdy04x6os9QP9nQfIk1+GvQFGZNt/rPoNn0LvoliaaXgqmrKrCaD3KByiGYUsiLp/s4moo8stiMYt821/pNgiMLDzXoh3cO0oLMQRnXgCMfsO4d1VV+IIV3o5A/6eIYeWM3T2wVMkHujE+LAhX3SiCQzV7A=
+	t=1742180156; cv=none; b=E2fhfxi6gMkn1hcwmUB0qDZV3MaTme5ADqTCGm3EeTPE8mhREoOUOEMolXZPSAftb1t1kb+ijeUcUdsF9PKHg78NwpmHdKXU/KTMihJ9xFo4uagEfW4uJTXj2OiHvbA/vZDqpukNlHCPnkILwpvVAjh3iW7xCPJ8XHiKzzQkPKI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742180028; c=relaxed/simple;
-	bh=s4pehmqV798v9Jv3dej+/6WZnixtY8UeLNjRX5JnVlo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AfeDk+xAPQnEBGsrsJ9vgn9xtmX5CYE39F6Z2vfLvHcHZ7W/jZXDHQeoy8E6aJ6eCG5ABBYTQ2waQlFknOOitmIh5841GjoQjEUA4uHAEmJiU4PBYpPnQqcooGYhnxTRmQe4X5UjM0GnmxsLIUfB5b9rYj/RqUsCCXcSrQ5cRr8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P+nQnTBX; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-ac34257295dso231851666b.2;
-        Sun, 16 Mar 2025 19:53:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742180024; x=1742784824; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=s4pehmqV798v9Jv3dej+/6WZnixtY8UeLNjRX5JnVlo=;
-        b=P+nQnTBXISAN06nd3R5VFpHGKVCwA0SlizDSZD1p5YM6H2GujOvamIJHSqbHtWzl4H
-         YheKPOHowCgxNF8Xs8za+SE7S6QpzVRuvUxVYX5laqgdQoE89d0wK9RlFs8gMVPGgR/3
-         3Blz1VwndIr0vnBI/SiPfy7D4wimLnJmmiEe3WDAAz794XTW0iTl2/WUUhAtzPUDpuOu
-         0VSbEAQhEfokcnunlyVFEPy3hXr9xs4SwfUgtQVNvFxqoxf2tZWeaWzupXPN2hsp2Atq
-         SHhudGyINkDIKCMqEna0JgcTA7H88r/d77z6UMYDPR7aR9c0IepSR2XKrll22AhPD3al
-         duOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742180024; x=1742784824;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=s4pehmqV798v9Jv3dej+/6WZnixtY8UeLNjRX5JnVlo=;
-        b=VMmlCSnYu8T5RDTDumGOcMDmxVhyh0sW47WSCxLS0Uovo7/36wDFIJB804WksJNzHi
-         INfQfOwfP+xs4StIBdu3zw/Rgtb5HyFyG22ugmugVcSaptwT0oR7W6B4BHFi4DcSRLo3
-         luA8mDPDnh8tMGgQ7Gg2phpXb/eUx9jXaswYUvhOKz7cYgxdzI/9wpsH9hrwSx3D7Z2C
-         CwNVVMU2HVOxbptxP2WX9p/1WE20NA/3c/uuXhdfJFbLKcqtwHIexYDKmOtXA99KZOC2
-         YL6KJIYmsbqq974MuW1UUkQub4TDMxq2LZ7O9aFUDlTB0gvNHBs4/CXknSa0xVuzsObB
-         lQtA==
-X-Forwarded-Encrypted: i=1; AJvYcCUCTr1ZUXuSWmxaWfM/hMFoUi0k6fPFaJP79xHFvUzlS61IUmEdhr2ewm6uMz/N9fxmAezZBiSQpR/UsaNW@vger.kernel.org, AJvYcCXPjwCYziwJwig/Fz5HItRnRbf45Q04yVAwnO26WAa/J4JARZhRVnB48d91axwUaOVTO+FcwfGjtq0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzUBiMEwbHrqywSAsIh59Y038s/KtUmLNaQdkmk5JQmHxO7M802
-	GKaKT3KfDaeRoyo2pF1E2/a0hQRN4Cbw6Pcj8BvW9TZ6Y8QAg9yRVEToYdIg+aqQ2FmQOKFrla+
-	oMBN9LzpICMO1qmr4HXl8Y+3dlR+/rfgxkB0=
-X-Gm-Gg: ASbGncvwTCefoeSs1WGswI4KdV0SQEC+/Y3+KIqJoNt3u9bMHEcukjtRCdz0KWjshHH
-	8nkby7XbMD/mKrToQjchwLZdHC8tk1tJw1fqYBgenEeStSR3lmA5b9XFxlBRKHac5STw1SYroS0
-	tK99l9VyAaNRUb6v0ynLKKV5gCUPf+
-X-Google-Smtp-Source: AGHT+IFb1SBXwfQIshlQn4d8jRFmxovYMRaGpa48Dp7+9we1erWX7TndiXy7ho6ihN/58Q8wpfTYjXd5njKvgrDV3ug=
-X-Received: by 2002:a17:907:6ea9:b0:abf:74d6:e2b0 with SMTP id
- a640c23a62f3a-ac3301db34fmr1188373266b.3.1742180023551; Sun, 16 Mar 2025
- 19:53:43 -0700 (PDT)
+	s=arc-20240116; t=1742180156; c=relaxed/simple;
+	bh=Fhaojl1WiaXXJoZzWeNs5O5NenyDYwiIBoWcSjqqsbY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EZO1QhkQVinC1RtkTvSK9VacKsptuG+36kmvaXMiMEQdpNRzeXc2jm9JPsz7WoEncJoElNAf58qRKOBJZVJxbstWr/IMzqv0rZCzjQ0xqVe8mK6LBi6e3YAYLDvws832xMkirfmHBRpN/ldMMKOcqEpqOLDR+UFRGwv1uxwyb0s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=wKSsRhlD; arc=none smtp.client-ip=91.218.175.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <f121fdf9-aa0d-419f-9323-bd8b0c9682f3@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1742180151;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zAuClrG3jlt4lXj5XeeHjNqrTi0iDE/XijApFJxz9L8=;
+	b=wKSsRhlDNbaSh4KtCTSPB3pDTVwpfn/eIscYvj3fJrzDrRqIvGmp121lSchCxrCydBImjI
+	5XH9nSZ3/MC6P5XCfIaMKr8Xzf//tQvF0CQ07akd+K6cjgN/PsUrNzN92ChL5cmoIs4Gp4
+	WqZDIi7BuZ0zlHUxCfqggEn4N9475gw=
+Date: Mon, 17 Mar 2025 10:54:55 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <f11afa64-1629-4005-8cb4-723d9b6ce6cb@hust.edu.cn> <20250317103147313V7IEKc3g37STl_idkF_ZB@zte.com.cn>
-In-Reply-To: <20250317103147313V7IEKc3g37STl_idkF_ZB@zte.com.cn>
-From: Dongliang Mu <mudongliangabcd@gmail.com>
-Date: Mon, 17 Mar 2025 10:53:17 +0800
-X-Gm-Features: AQ5f1JqIn9iLbOK6qwul6BzNHb0SFYqnLe7tLMEFJvtAV5TeZT-AztBwBzPH_No
-Message-ID: <CAD-N9QXEam8v6amrfswCDFfmEkb6npDLxHRaT2dYAVEV0T4i8Q@mail.gmail.com>
-Subject: Re: [PATCH] docs/zh_CN: fix spelling mistake
-To: jiang.peng9@zte.com.cn
-Cc: dzm91@hust.edu.cn, alexs@kernel.org, corbet@lwn.net, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Subject: Re: [RFC PATCH 2/7] sched/fair: Handle throttle path for task based
+ throttle
+To: Josh Don <joshdon@google.com>, Aaron Lu <ziqianlu@bytedance.com>
+Cc: Valentin Schneider <vschneid@redhat.com>, Ben Segall
+ <bsegall@google.com>, K Prateek Nayak <kprateek.nayak@amd.com>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>, linux-kernel@vger.kernel.org,
+ Juri Lelli <juri.lelli@redhat.com>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Mel Gorman <mgorman@suse.de>,
+ Chuyi Zhou <zhouchuyi@bytedance.com>, Xi Wang <xii@google.com>
+References: <20250313072030.1032893-1-ziqianlu@bytedance.com>
+ <CANCG0GcFF7cnR4rCbU5MmY1Gq3M+r4gPXv39QPXXC=Cdr6sRww@mail.gmail.com>
+ <CABk29Nuuq6s1+FBftOPAcMkYU+F1n2nebcP5tDK9dH4_KXA2cw@mail.gmail.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Chengming Zhou <chengming.zhou@linux.dev>
+In-Reply-To: <CABk29Nuuq6s1+FBftOPAcMkYU+F1n2nebcP5tDK9dH4_KXA2cw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, Mar 17, 2025 at 10:32=E2=80=AFAM <jiang.peng9@zte.com.cn> wrote:
->
-> > One suggestion: the original English(Documentation/mm/balance.rst)
-> > version also has this typo. Submit a v2 patch to fix both?
->
-> Documentation/mm/balance.rst was already modified by Suchit 4 days ago. T=
-herefore, it might not contain the typo anymore.
-> https://web.git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/c=
-ommit/Documentation/mm/balance.rst?id=3Df5d10c46872ca9a6d716854354c11f2f32f=
-ce0e8
+On 2025/3/16 11:25, Josh Don wrote:
+> Hi Aaron,
+> 
+>>   static int tg_throttle_down(struct task_group *tg, void *data)
+>>   {
+>>          struct rq *rq = data;
+>>          struct cfs_rq *cfs_rq = tg->cfs_rq[cpu_of(rq)];
+>> +       struct task_struct *p;
+>> +       struct rb_node *node;
+>> +
+>> +       cfs_rq->throttle_count++;
+>> +       if (cfs_rq->throttle_count > 1)
+>> +               return 0;
+>>
+>>          /* group is entering throttled state, stop time */
+>> -       if (!cfs_rq->throttle_count) {
+>> -               cfs_rq->throttled_clock_pelt = rq_clock_pelt(rq);
+>> -               list_del_leaf_cfs_rq(cfs_rq);
+>> +       cfs_rq->throttled_clock_pelt = rq_clock_pelt(rq);
+>> +       list_del_leaf_cfs_rq(cfs_rq);
+>>
+>> -               SCHED_WARN_ON(cfs_rq->throttled_clock_self);
+>> -               if (cfs_rq->nr_queued)
+>> -                       cfs_rq->throttled_clock_self = rq_clock(rq);
+>> +       SCHED_WARN_ON(cfs_rq->throttled_clock_self);
+>> +       if (cfs_rq->nr_queued)
+>> +               cfs_rq->throttled_clock_self = rq_clock(rq);
+>> +
+>> +       WARN_ON_ONCE(!list_empty(&cfs_rq->throttled_limbo_list));
+>> +       /*
+>> +        * rq_lock is held, current is (obviously) executing this in kernelspace.
+>> +        *
+>> +        * All other tasks enqueued on this rq have their saved PC at the
+>> +        * context switch, so they will go through the kernel before returning
+>> +        * to userspace. Thus, there are no tasks-in-userspace to handle, just
+>> +        * install the task_work on all of them.
+>> +        */
+>> +       node = rb_first(&cfs_rq->tasks_timeline.rb_root);
+>> +       while (node) {
+>> +               struct sched_entity *se = __node_2_se(node);
+>> +
+>> +               if (!entity_is_task(se))
+>> +                       goto next;
+>> +
+>> +               p = task_of(se);
+>> +               task_throttle_setup_work(p);
+>> +next:
+>> +               node = rb_next(node);
+>> +       }
+> 
+> I'd like to strongly push back on this approach. This adds quite a lot
+> of extra computation to an already expensive path
+> (throttle/unthrottle). e.g. this function is part of the cgroup walk
 
-LGTM. And your patch is merged into Alex's tree. Congrats!
+Actually, with my suggestion in another email that we only need to mark
+these cfs_rqs throttled when quote used up, and setup throttle task work
+when the tasks under those cfs_rqs get picked, the cost of throttle path
+is much like the dual tree approach.
 
-Dongliang Mu
+As for unthrottle path, you're right, it has to iterate each task on
+a list to get it queued into the cfs_rq tree, so it needs more thinking.
 
->
+> and so it is already O(cgroups) for the number of cgroups in the
+> hierarchy being throttled. This gets even worse when you consider that
+> we repeat this separately across all the cpus that the
+> bandwidth-constrained group is running on. Keep in mind that
+> throttle/unthrottle is done with rq lock held and IRQ disabled.
+
+Maybe we can avoid holding rq lock when unthrottle? As for per-task
+unthrottle, it's much like just waking up lots of tasks, so maybe we
+can reuse ttwu path to wakeup those tasks, which could utilise remote
+IPI to avoid holding remote rq locks. I'm not sure, just some random thinking..
+
+> 
+> In K Prateek's last RFC, there was discussion of using context
+> tracking; did you consider that approach any further? We could keep
+> track of the number of threads within a cgroup hierarchy currently in
+> kernel mode (similar to h_nr_runnable), and thus simplify down the
+
+Yeah, I think Prateek's approach is very creative! The only downside of
+it is that the code becomes much complex.. on already complex codebase.
+Anyway, it would be great that or this could be merged in mainline kernel.
+
+At last, I wonder is it possible that we can implement a cgroup-level
+bandwidth control, instead of doing it in each sched_class? Then SCX
+tasks could be controlled too, without implementing it in BPF code...
+
+Thanks!
+
+> throttling code here.
+> 
+> Best,
+> Josh
 
