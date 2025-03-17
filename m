@@ -1,163 +1,385 @@
-Return-Path: <linux-kernel+bounces-563392-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563393-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB261A640D3
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 07:09:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BAE3CA640D6
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 07:10:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5CCA07A569E
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 06:08:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B624D1890DE9
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 06:10:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CA1321931B;
-	Mon, 17 Mar 2025 06:09:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77058219A80;
+	Mon, 17 Mar 2025 06:09:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="NPCIXPAE"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VXazHtBc"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FAEA41C71;
-	Mon, 17 Mar 2025 06:09:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECEBE148FE6;
+	Mon, 17 Mar 2025 06:09:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742191772; cv=none; b=i4h1lUjgFglZ1D+rYKeNTaDZP7LQHk2vmLeGXITodjNk2/vxqaF/utCzuPG0Nh4h8e9jHARhNHoo/J0I28uNq8xLUxCtvBGbT3pXxeMEtnnOA9sN6VAXyUI03uGVtOiaWYWBhXqZhpgwY/lHCS0XmdaGAXZMbUufO8rWiODfRtY=
+	t=1742191796; cv=none; b=W0UvXCj5q2KwOihPEQ7ARGfLRDYciGfPSD/IPOJvFfTSj9+gONPIKIzp89duri89A6A6qCMNfCW33TaWSMCHywzISoyPRA7xVVRs0WERZ3RN56wnCTmCEXrJgI2RQsjIGqrOlNISZ1bQYJ5X3BD1ln1+fDoMEh5DXi6spa1FjHY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742191772; c=relaxed/simple;
-	bh=Rozd0ay08zhUYHX0hU8dZz+gTk/HJACtr3S44HG8+cg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=LDmx1XFVA84dWyL/c91tnM+ytbrFzXsnG+wRR/UM3g+4gmWPTW4CggAKVs645RxTIkhVs8gYEJWp0bC1Zug1IOkYUNk2slZSzq1sgQn1O3WLyaPVmvf4nvWh5RIpoH5zoXtDQyy/UTKui+JFA+jlzggC1g83u1k9DQGmdQdmI9o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=NPCIXPAE; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52GMbtIR026060;
-	Mon, 17 Mar 2025 06:09:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	cs252hSKQ8r3PqXg/ZWLSpu++8tfs3RG1zspmH9vM4c=; b=NPCIXPAESuAWi4Rz
-	eteoXut6ZvguedzyQE/Bpj+OMq80SdLVsauzHMInbbtICDDvOdDLgQozXl4KrQ9d
-	0BxWnuph0C6gcgHyWdDLRrtpiXzzuH8ynsj0ndR2dNm6qmswepH8mrcoIC9TM0aq
-	WLAtDcq5nVrnr9yJDW9RwkxJp3yIojXVG/lzy6EhGxozMqC5FLF+Qr3LpVdrEYbL
-	3DrcoQveITCFCGFRQNUqwU837ZhD8GH8+YZS8zJhKFi6VdnY5DK/bia2CkuGTiFn
-	zY3XleKTgGMBxM2J/1toL0RMYg6FZUCqvC5vQJdRwH9SAGu5N5/yye31xs2NSdhV
-	LyDNsA==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45d1sxuj5f-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 17 Mar 2025 06:09:13 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52H69BVW011181
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 17 Mar 2025 06:09:11 GMT
-Received: from [10.216.43.207] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 16 Mar
- 2025 23:09:05 -0700
-Message-ID: <e2168ae0-2eef-4f48-91ee-daec5bfc0fc8@quicinc.com>
-Date: Mon, 17 Mar 2025 11:39:02 +0530
+	s=arc-20240116; t=1742191796; c=relaxed/simple;
+	bh=Px8vpVh9fykiQJEyVByA9IcxFMZmVpdPBx0cH689/Zg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=OMCq8Q4OOoaYuR8XMmG+aVo6txQyMZOmjSTG9x8VkVvqT/D02fDOPdU3ktZImJb2oV38fxCU5QDOYn9H8uaopKTfc9MCbqEocYigACdfYV77PQZk7K94IP6xkqH5IbwNbn/iBrZ25kgCIg5p0AeJbYC5xShYQlpg7psbFwITHpQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VXazHtBc; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-223f4c06e9fso66275645ad.1;
+        Sun, 16 Mar 2025 23:09:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742191794; x=1742796594; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Pa9BV1jXSQB73rHHnYGQnNymMvpBIjyjfGKtqPjN3Y8=;
+        b=VXazHtBc3gQQOBYBdSXSSeG7O0ymlQ76l0U5toU6w5U+ZcbM0gBoFT8sUbpPJWtFUS
+         uqiWN4B5VZzd0GfUZ8EeAd2RVjNcqw2kOjd7tHdKKvkwYynQTgr5FSBe9wOWvY4rPEWr
+         nxdLOcYg6B9HoXIb7a6oCZX06uMjWAJEiiBbRmSrJHK3ER3EVY0rmKc/0yaCrAIwKFO3
+         qXDril4QQh/uRoCm0DwLiCnzEOiyrCtMUxIHMNUm1GjYPoGI6/j7sXgMB74349NASrLQ
+         2JcCAv080eHW7BFZ2+u1OtqJwVOtmKSOfD7siquSG4nJTppGQo/unIJXW2M3KR0nLsGm
+         7tuw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742191794; x=1742796594;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Pa9BV1jXSQB73rHHnYGQnNymMvpBIjyjfGKtqPjN3Y8=;
+        b=TCjlSAYRfmdAHv70eqZia97SeMobCnfSpOmq7ZpF4b3uW9DV8bZ9VHeuM9tvQzqKa6
+         fKVI88AThin6QmZYbIz0lL5mS/YB6OM7qr0gfF79EmkWpA5S3DOv8KyKCXVmvbRjvDlC
+         MieNL2OBt2S0l5CwvR5XkdbZXPG7hnpq7x8V68GP2lOFwlRzTsXJLS2+WFDdFUDa5quK
+         MA0pLYq7NZ/r39Pzyzz9n8fNKZVZYp8URf6VvolXkI1OV3KQkQ8IvAIN/eNF0blIvggP
+         NU5t66iPisWY4ze4ooghpJG53VZWHDIAgUTiEN9QCTkwtSzP3gQDBnWGFNZ3/4gu+gLm
+         YmXw==
+X-Forwarded-Encrypted: i=1; AJvYcCVkYRu2us38UfbAGDJzuFKAwXt2Y690w1RDcKowDta887EOt/59HckymcusAUWgowzWCRVUnOSK4Ix00xPlDfU4@vger.kernel.org, AJvYcCW2/8GN0i+6zuT0LxkzGGDVVqeyhbbp+V1Cpp4QL8kJOKcuwBQIb9OgmcyuPi9PUtfG5T7jyVOC@vger.kernel.org, AJvYcCXG6tC29rHrk6S2H/0w1yKkzx6uU8tGxK/EMTDKPW5gmph94FQiFmXO9T0C1dLKcbz5QBXP9rcyreLwqjE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YylfdHXItDUZGfOuBP0cqhY8sJtd6cFtvkU8GCtXXrPdX1KidMg
+	0qs/MHMZLTcdSVPYTiqvwSyFuqxFhZNcYH2pu+Scd2z3prtgZCwHuq9osFSLwzk=
+X-Gm-Gg: ASbGncsWoVeT0RIfQ+4EIgVrMrWiqrGM97gQPZRBeVkhSWrUnro1KyyeizjsafFkqfb
+	U6mnADuByXgDJs2PFyFTVcLsoPHkw7+WWlsQkY3KWjE3cObyBKyXATNsjRg/Mq3XCYmWn+p/LCg
+	DSqlMOWw/7N8LbLiRUcW90tM5JYmwBpDNWuSPWzCmk0XMlqRFFYEKZZAH2q57WToL578V9yH2yb
+	1erEIUUxH7rYuw1Qp+ghNIFUixmdvjIP3DvvtSIqhEJI7hJMxZ+9p0jNHyAJ0ZqNlB+s4mnOut5
+	k10FzxV4mH5udqRNpXNx1REAk4vJt9frzamroFaheC1LOGwx
+X-Google-Smtp-Source: AGHT+IELF7SXmc16DSlKnGIz+mGWt6C3WmN7fVaNUJ8YqnjdSwECd/zhHKcZw9V/bdtpiwCiLfzuBg==
+X-Received: by 2002:a17:902:f693:b0:223:3394:3a2e with SMTP id d9443c01a7336-225e175c2c5mr133175745ad.18.1742191794015;
+        Sun, 16 Mar 2025 23:09:54 -0700 (PDT)
+Received: from gmail.com ([116.237.135.88])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-225c68a4134sm66962305ad.56.2025.03.16.23.09.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 16 Mar 2025 23:09:53 -0700 (PDT)
+From: Qingfang Deng <dqfext@gmail.com>
+To: antonio@openvpn.net
+Cc: andrew+netdev@lunn.ch,
+	donald.hunter@gmail.com,
+	edumazet@google.com,
+	horms@kernel.org,
+	kuba@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	netdev@vger.kernel.org,
+	pabeni@redhat.com,
+	ryazanov.s.a@gmail.com,
+	sd@queasysnail.net,
+	shaw.leon@gmail.com,
+	shuah@kernel.org
+Subject: Re: [PATCH net-next v23 03/23] ovpn: add basic interface creation/destruction/management routines
+Date: Mon, 17 Mar 2025 14:09:47 +0800
+Message-ID: <20250317060947.2368390-1-dqfext@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250312-b4-ovpn-v23-3-76066bc0a30c@openvpn.net>
+References: <20250312-b4-ovpn-v23-3-76066bc0a30c@openvpn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/6] Support for Adreno 623 GPU
-To: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-        "Konrad
- Dybcio" <konradybcio@kernel.org>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Marijn Suijten
-	<marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, "Simona
- Vetter" <simona@ffwll.ch>,
-        Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, Jie Zhang <quic_jiezh@quicinc.com>,
-        "Krzysztof
- Kozlowski" <krzysztof.kozlowski@linaro.org>
-References: <20250228-a623-gpu-support-v2-0-aea654ecc1d3@quicinc.com>
-From: Akhil P Oommen <quic_akhilpo@quicinc.com>
-Content-Language: en-US
-In-Reply-To: <20250228-a623-gpu-support-v2-0-aea654ecc1d3@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: SM1T1GtEYDSow5VpaqeRCWGPHv7Q-4SH
-X-Proofpoint-ORIG-GUID: SM1T1GtEYDSow5VpaqeRCWGPHv7Q-4SH
-X-Authority-Analysis: v=2.4 cv=XKcwSRhE c=1 sm=1 tr=0 ts=67d7bc89 cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=CB1IMkvWpqPTZiQhnbEA:9
- a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-17_02,2025-03-17_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- mlxlogscore=999 priorityscore=1501 clxscore=1015 phishscore=0
- impostorscore=0 adultscore=0 mlxscore=0 malwarescore=0 suspectscore=0
- spamscore=0 bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503170043
+Content-Transfer-Encoding: 8bit
 
-On 2/28/2025 1:37 AM, Akhil P Oommen wrote:
-> This series adds support for A623 GPU found in QCS8300 chipsets. This
-> GPU IP is very similar to A621 GPU, except for the UBWC configuration
-> and the GMU firmware.
-> 
-> Both DT patches are for Bjorn and rest of the patches for Rob Clark to
-> pick up.
-> 
-> ---
-> Changes in v2:
-> - Fix hwcg config (Konrad)
-> - Split gpucc reg list patch (Rob)
-> - Rebase on msm-next tip
-> - Link to v1: https://lore.kernel.org/r/20250213-a623-gpu-support-v1-0-993c65c39fd2@quicinc.com
-> 
-> ---
-> Jie Zhang (6):
->       drm/msm/a6xx: Split out gpucc register block
->       drm/msm/a6xx: Fix gpucc register block for A621
->       drm/msm/a6xx: Add support for Adreno 623
->       dt-bindings: display/msm/gmu: Add Adreno 623 GMU
->       arm64: dts: qcom: qcs8300: Add gpu and gmu nodes
->       arm64: dts: qcom: qcs8300-ride: Enable Adreno 623 GPU
-> 
->  .../devicetree/bindings/display/msm/gmu.yaml       |  1 +
->  arch/arm64/boot/dts/qcom/qcs8300-ride.dts          |  8 ++
->  arch/arm64/boot/dts/qcom/qcs8300.dtsi              | 93 ++++++++++++++++++++++
->  drivers/gpu/drm/msm/adreno/a6xx_catalog.c          | 29 +++++++
->  drivers/gpu/drm/msm/adreno/a6xx_gpu.c              |  8 ++
->  drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c        | 13 ++-
->  drivers/gpu/drm/msm/adreno/a6xx_gpu_state.h        | 17 ++++
->  drivers/gpu/drm/msm/adreno/adreno_gpu.h            |  5 ++
->  8 files changed, 171 insertions(+), 3 deletions(-)
-> ---
-> base-commit: 89839e69f6154feecd79bd01171375225b0296e9
-> change-id: 20250213-a623-gpu-support-f6698603fb85
-> prerequisite-change-id: 20250131-b4-branch-gfx-smmu-b03261963064:v5
-> prerequisite-patch-id: f8fd1a2020c940e595e58a8bd3c55d00d3d87271
-> prerequisite-patch-id: 08a0540f75b0f95fd2018b38c9ed5c6f96433b4d
-> 
-> Best regards,
+Hi Antonio,
 
-Bjorn,
+On Wed, 12 Mar 2025 21:54:32 +0100, Antonio Quartulli Wrote:
+> diff --git a/drivers/net/ovpn/main.c b/drivers/net/ovpn/main.c
+> index 28133e7e15e74b8a4a937ed03f70d9f83d7a14c8..e71183e6f42cd801861caaec9eb0f6828b64cda9 100644
+> --- a/drivers/net/ovpn/main.c
+> +++ b/drivers/net/ovpn/main.c
+> @@ -10,14 +10,42 @@
+>  #include <linux/genetlink.h>
+>  #include <linux/module.h>
+>  #include <linux/netdevice.h>
+> +#include <linux/inetdevice.h>
+> +#include <net/ip.h>
+>  #include <net/rtnetlink.h>
+> -#include <uapi/linux/ovpn.h>
+> +#include <uapi/linux/if_arp.h>
+>  
+>  #include "ovpnpriv.h"
+>  #include "main.h"
+>  #include "netlink.h"
+> +#include "io.h"
+> +#include "proto.h"
+> +
+> +static int ovpn_net_open(struct net_device *dev)
+> +{
+> +	netif_tx_start_all_queues(dev);
 
-Now that the adreno smmu changes have merged, can we pick up the GPU DT
-patches into your tree?
+This is not required as the virtual interface does not have a queue
+(marked as IFF_NO_QUEUE).
 
-https://lore.kernel.org/linux-arm-kernel/174198247897.1604753.3634981110002933426.b4-ty@kernel.org/
+> +	return 0;
+> +}
+> +
+> +static int ovpn_net_stop(struct net_device *dev)
+> +{
+> +	netif_tx_stop_all_queues(dev);
 
--Akhil.
+Same as above.
+
+> +	return 0;
+> +}
+>  
+>  static const struct net_device_ops ovpn_netdev_ops = {
+> +	.ndo_open		= ovpn_net_open,
+> +	.ndo_stop		= ovpn_net_stop,
+> +	.ndo_start_xmit		= ovpn_net_xmit,
+> +};
+> +
+> +static const struct device_type ovpn_type = {
+> +	.name = OVPN_FAMILY_NAME,
+> +};
+> +
+> +static const struct nla_policy ovpn_policy[IFLA_OVPN_MAX + 1] = {
+> +	[IFLA_OVPN_MODE] = NLA_POLICY_RANGE(NLA_U8, OVPN_MODE_P2P,
+> +					    OVPN_MODE_MP),
+>  };
+>  
+>  /**
+> @@ -31,44 +59,120 @@ bool ovpn_dev_is_valid(const struct net_device *dev)
+>  	return dev->netdev_ops == &ovpn_netdev_ops;
+>  }
+>  
+> +static void ovpn_setup(struct net_device *dev)
+> +{
+> +	netdev_features_t feat = NETIF_F_SG | NETIF_F_HW_CSUM | NETIF_F_RXCSUM |
+
+Do not advertise NETIF_F_HW_CSUM or NETIF_F_RXCSUM, as TX/RX checksum is
+not handled in hardware.
+
+> +				 NETIF_F_GSO | NETIF_F_GSO_SOFTWARE |
+> +				 NETIF_F_HIGHDMA;
+> +
+> +	dev->needs_free_netdev = true;
+> +
+> +	dev->pcpu_stat_type = NETDEV_PCPU_STAT_TSTATS;
+> +
+> +	dev->netdev_ops = &ovpn_netdev_ops;
+> +
+> +	dev->hard_header_len = 0;
+> +	dev->addr_len = 0;
+> +	dev->mtu = ETH_DATA_LEN - OVPN_HEAD_ROOM;
+> +	dev->min_mtu = IPV4_MIN_MTU;
+> +	dev->max_mtu = IP_MAX_MTU - OVPN_HEAD_ROOM;
+> +
+> +	dev->type = ARPHRD_NONE;
+> +	dev->flags = IFF_POINTOPOINT | IFF_NOARP;
+> +	dev->priv_flags |= IFF_NO_QUEUE;
+> +
+> +	dev->lltx = true;
+> +	dev->features |= feat;
+> +	dev->hw_features |= feat;
+> +	dev->hw_enc_features |= feat;
+> +
+> +	dev->needed_headroom = ALIGN(OVPN_HEAD_ROOM, 4);
+> +	dev->needed_tailroom = OVPN_MAX_PADDING;
+> +
+> +	SET_NETDEV_DEVTYPE(dev, &ovpn_type);
+> +}
+> +
+>  static int ovpn_newlink(struct net_device *dev,
+>  			struct rtnl_newlink_params *params,
+>  			struct netlink_ext_ack *extack)
+>  {
+> -	return -EOPNOTSUPP;
+> +	struct ovpn_priv *ovpn = netdev_priv(dev);
+> +	struct nlattr **data = params->data;
+> +	enum ovpn_mode mode = OVPN_MODE_P2P;
+> +
+> +	if (data && data[IFLA_OVPN_MODE]) {
+> +		mode = nla_get_u8(data[IFLA_OVPN_MODE]);
+> +		netdev_dbg(dev, "setting device mode: %u\n", mode);
+> +	}
+> +
+> +	ovpn->dev = dev;
+> +	ovpn->mode = mode;
+> +
+> +	/* turn carrier explicitly off after registration, this way state is
+> +	 * clearly defined
+> +	 */
+> +	netif_carrier_off(dev);
+> +
+> +	return register_netdevice(dev);
+> +}
+> +
+> +static int ovpn_fill_info(struct sk_buff *skb, const struct net_device *dev)
+> +{
+> +	struct ovpn_priv *ovpn = netdev_priv(dev);
+> +
+> +	if (nla_put_u8(skb, IFLA_OVPN_MODE, ovpn->mode))
+> +		return -EMSGSIZE;
+> +
+> +	return 0;
+>  }
+>  
+>  static struct rtnl_link_ops ovpn_link_ops = {
+>  	.kind = "ovpn",
+>  	.netns_refund = false,
+> +	.priv_size = sizeof(struct ovpn_priv),
+> +	.setup = ovpn_setup,
+> +	.policy = ovpn_policy,
+> +	.maxtype = IFLA_OVPN_MAX,
+>  	.newlink = ovpn_newlink,
+>  	.dellink = unregister_netdevice_queue,
+> +	.fill_info = ovpn_fill_info,
+>  };
+>  
+>  static int ovpn_netdev_notifier_call(struct notifier_block *nb,
+>  				     unsigned long state, void *ptr)
+>  {
+>  	struct net_device *dev = netdev_notifier_info_to_dev(ptr);
+> +	struct ovpn_priv *ovpn;
+>  
+>  	if (!ovpn_dev_is_valid(dev))
+>  		return NOTIFY_DONE;
+>  
+> +	ovpn = netdev_priv(dev);
+> +
+>  	switch (state) {
+>  	case NETDEV_REGISTER:
+> -		/* add device to internal list for later destruction upon
+> -		 * unregistration
+> -		 */
+> +		ovpn->registered = true;
+>  		break;
+>  	case NETDEV_UNREGISTER:
+> +		/* twiddle thumbs on netns device moves */
+> +		if (dev->reg_state != NETREG_UNREGISTERING)
+> +			break;
+> +
+>  		/* can be delivered multiple times, so check registered flag,
+>  		 * then destroy the interface
+>  		 */
+> +		if (!ovpn->registered)
+> +			return NOTIFY_DONE;
+> +
+> +		netif_carrier_off(dev);
+> +		ovpn->registered = false;
+>  		break;
+>  	case NETDEV_POST_INIT:
+>  	case NETDEV_GOING_DOWN:
+>  	case NETDEV_DOWN:
+>  	case NETDEV_UP:
+>  	case NETDEV_PRE_UP:
+> +		break;
+>  	default:
+>  		return NOTIFY_DONE;
+>  	}
+> diff --git a/drivers/net/ovpn/ovpnpriv.h b/drivers/net/ovpn/ovpnpriv.h
+> index f9322536b06d6baa5524de57cd7d69f5ecbbd194..33c2a41edf9b3204e8aebd2679649cb7158f05f2 100644
+> --- a/drivers/net/ovpn/ovpnpriv.h
+> +++ b/drivers/net/ovpn/ovpnpriv.h
+> @@ -10,12 +10,19 @@
+>  #ifndef _NET_OVPN_OVPNSTRUCT_H_
+>  #define _NET_OVPN_OVPNSTRUCT_H_
+>  
+> +#include <uapi/linux/if_link.h>
+> +#include <uapi/linux/ovpn.h>
+> +
+>  /**
+>   * struct ovpn_priv - per ovpn interface state
+>   * @dev: the actual netdev representing the tunnel
+> + * @registered: whether dev is still registered with netdev or not
+> + * @mode: device operation mode (i.e. p2p, mp, ..)
+>   */
+>  struct ovpn_priv {
+>  	struct net_device *dev;
+> +	bool registered;
+> +	enum ovpn_mode mode;
+>  };
+>  
+>  #endif /* _NET_OVPN_OVPNSTRUCT_H_ */
+> diff --git a/drivers/net/ovpn/proto.h b/drivers/net/ovpn/proto.h
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..5f95a78bebd3702868ffeeab3ea4938e957d568c
+> --- /dev/null
+> +++ b/drivers/net/ovpn/proto.h
+> @@ -0,0 +1,38 @@
+> +/* SPDX-License-Identifier: GPL-2.0-only */
+> +/*  OpenVPN data channel offload
+> + *
+> + *  Copyright (C) 2020-2025 OpenVPN, Inc.
+> + *
+> + *  Author:	Antonio Quartulli <antonio@openvpn.net>
+> + *		James Yonan <james@openvpn.net>
+> + */
+> +
+> +#ifndef _NET_OVPN_PROTO_H_
+> +#define _NET_OVPN_PROTO_H_
+> +
+> +/* When the OpenVPN protocol is ran in AEAD mode, use
+> + * the OpenVPN packet ID as the AEAD nonce:
+> + *
+> + *    00000005 521c3b01 4308c041
+> + *    [seq # ] [  nonce_tail   ]
+> + *    [     12-byte full IV    ] -> OVPN_NONCE_SIZE
+> + *    [4-bytes                   -> OVPN_NONCE_WIRE_SIZE
+> + *    on wire]
+> + */
+> +
+> +/* nonce size (96bits) as required by AEAD ciphers */
+> +#define OVPN_NONCE_SIZE			12
+> +/* last 8 bytes of AEAD nonce: provided by userspace and usually derived
+> + * from key material generated during TLS handshake
+> + */
+> +#define OVPN_NONCE_TAIL_SIZE		8
+> +
+> +/* OpenVPN nonce size reduced by 8-byte nonce tail -- this is the
+> + * size of the AEAD Associated Data (AD) sent over the wire
+> + * and is normally the head of the IV
+> + */
+> +#define OVPN_NONCE_WIRE_SIZE (OVPN_NONCE_SIZE - OVPN_NONCE_TAIL_SIZE)
+> +
+> +#define OVPN_OPCODE_SIZE		4 /* DATA_V2 opcode size */
+> +
+> +#endif /* _NET_OVPN_PROTO_H_ */
+> diff --git a/include/uapi/linux/if_link.h b/include/uapi/linux/if_link.h
+> index 318386cc5b0d19ed6a37734feffb450353dd9440..3ad2d5d9803479a10a6b2cfab2df98ce0f823926 100644
+> --- a/include/uapi/linux/if_link.h
+> +++ b/include/uapi/linux/if_link.h
+> @@ -1986,4 +1986,19 @@ enum {
+>  
+>  #define IFLA_DSA_MAX	(__IFLA_DSA_MAX - 1)
+>  
+> +/* OVPN section */
+> +
+> +enum ovpn_mode {
+> +	OVPN_MODE_P2P,
+> +	OVPN_MODE_MP,
+> +};
+> +
+> +enum {
+> +	IFLA_OVPN_UNSPEC,
+> +	IFLA_OVPN_MODE,
+> +	__IFLA_OVPN_MAX,
+> +};
+> +
+> +#define IFLA_OVPN_MAX	(__IFLA_OVPN_MAX - 1)
+> +
+>  #endif /* _UAPI_LINUX_IF_LINK_H */
+> 
+
+-- Qingfang
 
