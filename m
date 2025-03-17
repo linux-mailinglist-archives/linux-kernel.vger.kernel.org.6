@@ -1,159 +1,105 @@
-Return-Path: <linux-kernel+bounces-563257-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563258-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36957A63B84
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 03:27:17 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0D15A63B90
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 03:27:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 78EE216D74D
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 02:27:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 42E1916D6B2
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 02:27:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4465B156F28;
-	Mon, 17 Mar 2025 02:27:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6CF4155322;
+	Mon, 17 Mar 2025 02:27:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YnlD1Ep4"
-Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="qLF6FJz4"
+Received: from out30-133.freemail.mail.aliyun.com (out30-133.freemail.mail.aliyun.com [115.124.30.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F8C028E8;
-	Mon, 17 Mar 2025 02:26:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EDE451C5A;
+	Mon, 17 Mar 2025 02:27:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742178421; cv=none; b=Frvy59g/8B7c/nPSxHDXKkCnpNB1KuU3KfExS4AcoDagMcYi/6bIC3cqD4mRs9kTUJ4cEK9TwwaCF0hi5RhwzfaRL7jjRC7wPhoxyCXxr5AC53urJmZMDL8YxJA2bc+uIXZxWRA6BXOfQKUwImjOHJiIoHa5NcpEYxq2BvY0dfo=
+	t=1742178468; cv=none; b=Ze/ZUeFJMIH/PF4SaoM8syLnk1Sw7jU4x9QDXfvO38MlJHm+ANLk165zGZfuxnaUt6bjb35XFQN1V50AmQsCutwOR+kjv0kkNlnFAGemwaVdZHlKUlYeeczdW33fJbKaA4itQsXKm4hBScdN0EL8mgyi2onYK9K0MuNyPGFbFMc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742178421; c=relaxed/simple;
-	bh=5vhLGktHPhjtW/GXQtwrN69gvCvTY5yz3MTavCEdYw0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ehTXqy5CavtEsGpxAP7uGl6n1yr4hXl0DS5CFQWudG22oGtNKGCqAmnv1sWyhMnsaDWdTttyo5PMv0bRMuTAm+mZTPFLLFa+DnhivhYnrAAp2NLbJqW+iCxBDnAyS9pWIlPk0F2TQJ+m5ASGHIUdct6Fu0bCA20HcVsZ9ZWj7ro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YnlD1Ep4; arc=none smtp.client-ip=209.85.219.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-e6405b5cd9bso1616136276.1;
-        Sun, 16 Mar 2025 19:26:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742178419; x=1742783219; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Nu2GsgQsdgmuAVjnZCRZ1iMk0CgeXo/QNGYVH+hlGfc=;
-        b=YnlD1Ep4o+5teNy3L1E5To2v2+40ICRA4N9P7v5b/7WQJSa9t4Evi2ZPiew26ynNc4
-         A1K/TS7uBheNRVUiDToC+k1Gi1RmVHJmGDiwzBZOpsP5GbsoAG5RZtOMXOizIZqzOlp5
-         qIHZdMYOPIJauCwwO05lt2FRZNTE+QjoXAYJa9TIOfBP8xz5VtjfvYhn7zsJrp6oV9Cv
-         Xwrdb1EjEDtTzIzjMFEwlk3iSImXQuEmINwlLOROo2BkdZy8uwzZ8i6fh16KNz7kfnyu
-         XHXu42uuuO940q4Q77MRbmid6gIxyeb37hnAFoyl0YChvJ8MMGbZw3tpyxkcCEgqtNUj
-         klgQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742178419; x=1742783219;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Nu2GsgQsdgmuAVjnZCRZ1iMk0CgeXo/QNGYVH+hlGfc=;
-        b=YDjTPGE4/GvBswB1Wnk9uzm3dzWrbwgA1FtqxPXLpP5PmDSWVx69THR54bn3v3ZWfT
-         RyWgGGwSPgjThJFMAM4v7vGueiyE12w+y+JvZsH30eLlpixzpgurGK0/qAnqxhsRqLHO
-         +osmFzuWatjnp7cgkbgl0j6srz2FZTTZRv9hTiG6KoDcrVjvuj7OvtR06OcSo30SUzV2
-         tu0DB2G9P93wfmlyPbSKICPb0phAFo6nAjPrQm2y+uoAxn3aCAc9xaTP/i8+ivXBl3JY
-         AjhP/hPH9f9diKONwS+V1xk9Z2HJfSM6ElnLYfsPqhluyn1kO7P902GtP3G3hnybR27r
-         1ZYw==
-X-Forwarded-Encrypted: i=1; AJvYcCU7aqef7lyWlTUjw5nSK2MQR3m2jf1E+pxVaVYlSU0+YzPHjLaB8ugt7qnXA45I1veBD7TVTKhUCBez@vger.kernel.org, AJvYcCUTuJw0yjT5GiraBIu2DG9KbUTqQD2xQyAq8QLSGrT6F+LcDxwyuIua3XsDHPLr9U/UCXHVrypFtX8=@vger.kernel.org, AJvYcCVrEXB3tM/NaXbcC4UJwWkomVMGfJwPZuGo1aGX8EfNUCOAklC+jLdt8kQ6Tvzjb0KVDKAQ299TngwaxKQ=@vger.kernel.org, AJvYcCW0ln1rWRDtcXOJr82j1RI7AGzOVOeCg2H/BgvFr8Id7Wkg/rwuvPuGNDp9diOfiqXeaJTdlBPjcWgt46yg@vger.kernel.org, AJvYcCWBGwHlJlvgDQ8oEOIy6R3QYSYuHOpKpflOx5ylVKsgYgr2OEywFRA8l4K0EHLIwr27B1E2TiJzsxGgYQ==@vger.kernel.org, AJvYcCWRL87U7AzdJZGnEr+bwgEbQsbXnNRqEFVzPw1+dvCV483LeuQW2PZfowACNbw7i/rVUgw0p/yi2mIE@vger.kernel.org, AJvYcCX4stDUfr6Gw9wzVFHSaTcvQBVNbPxI1XCpPxI1fiyGhFkkRnzeh/oDXG+I9goZRT088CK1gB4A@vger.kernel.org, AJvYcCX5Y8Fhf5bt9HcS3+o/oehqXRBzCVvLeXAwk11BN4x6q7TjxBDunyl5063brhXbyRS74gdwW83Kt2OCu0SthDI=@vger.kernel.org, AJvYcCXR3U1boaaf/LdZ6ViIiEGo6HeIGYkAM/eU5PTT/i6Ln8C6E4s8sIRY9XlXAEks6eC9IOpv/4ilZWtL@vger.kernel.org
-X-Gm-Message-State: AOJu0YwMYx1od/RW3jq9NJYmarohorzuDsCibxS76dgX0snd45Jvi3lt
-	nZhvpR/AZB+RSxF/UyChs9G0h8xZZnqdDykbgfkkEdSP5MPCaHyc3ETnSTkoPoujghQkx7fOsIN
-	BHwHp0uUuUlevZ0IQ7m5RKexTNHU=
-X-Gm-Gg: ASbGnctIxYEkLumvGfmejiVRt81b5FxtdPhYQarzko5QYC/l/z5WEPxzKA6qgUy0tI7
-	QpfqmoyzK6Wsw1jiZ+SNF0+jnJw0Z2+Fm4k6Gxm4jXXajXCCa8hGIm1Oksw35evsSWmYme5VpAi
-	UbxpEUD0kCjycB5eKvhBiR+cceZc2NEV352/Z+eZrYqyUB0Pgf7yjnrcp/rrvMVi1QwmUUpg0=
-X-Google-Smtp-Source: AGHT+IHrNs3BjFu4lZLRoyKVBpzLNfOIlauSqHuJLzyLvOq1H8+kKGrfADJGl6Sbe6IxIIMg72a3jsbz5evZ/CbNya4=
-X-Received: by 2002:a05:6902:2788:b0:e63:c936:c07f with SMTP id
- 3f1490d57ef6-e63f870c83dmr12994290276.2.1742178418960; Sun, 16 Mar 2025
- 19:26:58 -0700 (PDT)
+	s=arc-20240116; t=1742178468; c=relaxed/simple;
+	bh=mUzG+ik7zIOlXc8Gp465g6xDPDL5Ez55ulzZYdJhjHc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TV6VTroD4odZCQ+HkBzFs1lI+qO/OBMc2q1GzJ7FUNZ5zdM3C6PcEz48EbIFQt4D8J4Adw2UzaDhIwvbE8KZOykimw2SLUJGJqbUwGsJv+qs37W6bvj6DHQ7U2sT2yQ2G1X3w8LYalVmJKYEC8/c1u3gatmuepDgq26hq7nCEnA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=qLF6FJz4; arc=none smtp.client-ip=115.124.30.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1742178454; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=EJ8I6/uv4gDuHu2hvbLCTYuIGGwSQNob954hSFwxMc0=;
+	b=qLF6FJz40MncyjKiyeTOctQcBe9lw6wNbxfVXX5WmU1DW+eR3w0WtQK73jk15YE0r83aTvIWxT/TV8VmueBEEvP5V0tPK+v7qLMztzQeUyUgVGIJW8iT5yS4zLe9dRvj0lTGU8IRx68yTAQbed59/knRH09Yx5n4u81Y+xyvqwQ=
+Received: from 30.221.64.192(mailfrom:chengyou@linux.alibaba.com fp:SMTPD_---0WRXrLf._1742178452 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Mon, 17 Mar 2025 10:27:33 +0800
+Message-ID: <67a12e7e-51ff-36bf-a575-b77c09b56110@linux.alibaba.com>
+Date: Mon, 17 Mar 2025 10:27:32 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250225081644.3524915-1-a0282524688@gmail.com>
- <20250225081644.3524915-2-a0282524688@gmail.com> <20250228-married-bullfrog-of-reading-89042b-mkl@pengutronix.de>
-In-Reply-To: <20250228-married-bullfrog-of-reading-89042b-mkl@pengutronix.de>
-From: Ming Yu <a0282524688@gmail.com>
-Date: Mon, 17 Mar 2025 10:26:47 +0800
-X-Gm-Features: AQ5f1Jp7tg2D7CsEfZE57l_02NxRc7WNgBELb0_1TanqpJB_kChtq-QCtEIIQLU
-Message-ID: <CAOoeyxVqeuThjodnN61HLAKkuwSjCz0Mdd2a--icafPwHv_aiA@mail.gmail.com>
-Subject: Re: [PATCH v8 1/7] mfd: Add core driver for Nuvoton NCT6694
-To: Marc Kleine-Budde <mkl@pengutronix.de>
-Cc: tmyu0@nuvoton.com, lee@kernel.org, linus.walleij@linaro.org, brgl@bgdev.pl, 
-	andi.shyti@kernel.org, mailhol.vincent@wanadoo.fr, andrew+netdev@lunn.ch, 
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
-	wim@linux-watchdog.org, linux@roeck-us.net, jdelvare@suse.com, 
-	alexandre.belloni@bootlin.com, linux-kernel@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org, 
-	linux-can@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-watchdog@vger.kernel.org, linux-hwmon@vger.kernel.org, 
-	linux-rtc@vger.kernel.org, linux-usb@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-Dear Marc,
-
-Thank you for reviewing,
-
-Marc Kleine-Budde <mkl@pengutronix.de> =E6=96=BC 2025=E5=B9=B42=E6=9C=8828=
-=E6=97=A5 =E9=80=B1=E4=BA=94 =E4=B8=8B=E5=8D=884:52=E5=AF=AB=E9=81=93=EF=BC=
-=9A
->
-> > +static int nct6694_usb_probe(struct usb_interface *iface,
-> > +                          const struct usb_device_id *id)
-> > +{
-> > +     struct usb_device *udev =3D interface_to_usbdev(iface);
-> > +     struct usb_endpoint_descriptor *int_endpoint;
-> > +     struct usb_host_interface *interface;
-> > +     struct device *dev =3D &iface->dev;
-> > +     struct nct6694 *nct6694;
-> > +     int pipe, maxp;
-> > +     int ret;
-> > +
-> > +     nct6694 =3D devm_kzalloc(dev, sizeof(*nct6694), GFP_KERNEL);
-> > +     if (!nct6694)
-> > +             return -ENOMEM;
-> > +
-> > +     pipe =3D usb_rcvintpipe(udev, NCT6694_INT_IN_EP);
-> > +     maxp =3D usb_maxpacket(udev, pipe);
-> > +
-> > +     nct6694->usb_msg =3D devm_kzalloc(dev, sizeof(union nct6694_usb_m=
-sg), GFP_KERNEL);
-> > +     if (!nct6694->usb_msg)
-> > +             return -ENOMEM;
-> > +
-> > +     nct6694->int_buffer =3D devm_kzalloc(dev, maxp, GFP_KERNEL);
-> > +     if (!nct6694->int_buffer)
-> > +             return -ENOMEM;
-> > +
-> > +     nct6694->int_in_urb =3D usb_alloc_urb(0, GFP_KERNEL);
-> > +     if (!nct6694->int_in_urb)
-> > +             return -ENOMEM;
-> > +
-> > +     nct6694->domain =3D irq_domain_add_simple(NULL, NCT6694_NR_IRQS, =
-0,
-> > +                                             &nct6694_irq_domain_ops,
-> > +                                             nct6694);
-> > +     if (!nct6694->domain) {
-> > +             ret =3D -ENODEV;
-> > +             goto err_urb;
-> > +     }
-> > +
-> > +     nct6694->dev =3D dev;
-> > +     nct6694->udev =3D udev;
-> > +     nct6694->timeout =3D NCT6694_URB_TIMEOUT; /* Wait until URB compl=
-etes */
->
-> Why do you need this variable? You can directly use NCT6694_URB_TIMEOUT
-> in the usb_bulk_msg() and friends calls.
->
-
-Okay, I will make the modifications in the next patch.
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
+ Gecko/20100101 Thunderbird/102.15.1
+Subject: Re: [PATCH v2] RDMA/erdma: Fix exception handling in
+ erdma_accept_newconn()
+Content-Language: en-US
+To: Markus Elfring <Markus.Elfring@web.de>, linux-rdma@vger.kernel.org,
+ Jason Gunthorpe <jgg@ziepe.ca>, Kai Shen <kaishen@linux.alibaba.com>,
+ Leon Romanovsky <leon@kernel.org>, Yang Li <yang.lee@linux.alibaba.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+References: <2e9ae1d6-4bbb-470f-957f-bb6ea2e0829e@web.de>
+From: Cheng Xu <chengyou@linux.alibaba.com>
+In-Reply-To: <2e9ae1d6-4bbb-470f-957f-bb6ea2e0829e@web.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
 
-Best regards,
-Ming
+
+On 3/13/25 8:10 PM, Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Thu, 13 Mar 2025 11:44:50 +0100
+> 
+> The label “error” was used to jump to another pointer check despite of
+> the detail in the implementation of the function “erdma_accept_newconn”
+> that it was determined already that corresponding variables contained
+> still null pointers.
+> 
+> 1. Thus return directly if
+>    * the cep state is not the value “ERDMA_EPSTATE_LISTENING”
+>      or
+>    * a call of the function “erdma_cep_alloc” failed.
+> 
+> 2. Use more appropriate labels instead.
+> 
+> 3. Delete two questionable checks.
+> 
+> 4. Omit extra initialisations (for the variables “new_cep”, “new_s” and “ret”)
+>    which became unnecessary with this refactoring.
+> 
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Fixes: 920d93eac8b9 ("RDMA/erdma: Add connection management (CM) support")
+
+
+I think this patch does not fix issues, so fix line is not needed.
+
+Thanks,
+Cheng Xu
+
+
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+
+<...>
+
 
