@@ -1,138 +1,201 @@
-Return-Path: <linux-kernel+bounces-564027-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564026-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 634A6A64C57
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 12:23:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78FCBA64C59
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 12:23:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 97D09188D6FD
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:23:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB2313AB005
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:22:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCD3823718D;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A493237160;
 	Mon, 17 Mar 2025 11:23:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Cbi+4YnE"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="CcaXvhbH"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2059.outbound.protection.outlook.com [40.107.92.59])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B60AC2356D1;
-	Mon, 17 Mar 2025 11:23:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742210584; cv=none; b=ljWNcRDU6uxikYTXbBlAx3JIjz13YE7PqOEJzgdJMtriX1+XFiZVNmT1pS4tGHvlHyrQiDM/HW6xSnoSRS9N/riR1/yLXkLLq5PVyCKWNL3KMG6O3+sHTzRKhT4ohsKJTIhwgbhsqDVBW8InPPLTeSMAiFvSkkQlb+LxT1emTps=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742210584; c=relaxed/simple;
-	bh=+fyXxHmYv0R+lbu1Reb1SHILRaZBwfXvn/7+jXlLCXc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lMFvWa/5gClPwwhCW7RVFFLUSIHepveqvhwPtTzq48hvtpPj7S7WpaVtBQNoMY4IBZok/CqI+j9LfmBAKPPIkvhy74cGbbf1WXqvAbQB1IBSzuZ5krIXmrGs4Lc5yZ75s7Fhy5HqJyPLZy0uiSm/BcRYBkzgKlDLqLUsOfbkWq0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Cbi+4YnE; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52H3lvrF021048;
-	Mon, 17 Mar 2025 11:22:54 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=MAzDiJ
-	O2/OjKpJBQCdHly5sf2CDGJLMhqgH0tyI3Btc=; b=Cbi+4YnEsCDDciehET+5TO
-	yEc7SoAJ9NyWDAAgJ32LRQuo5rUHfP0rCB4/ueCMdWMGrbsL+gFg05/TO95iMF66
-	i+UnS+BVEzdyZGpyhqCBYrl4Nv0e+Bu3N+6pbDtD72fIPfFEm/hHA9WJFq1gI6d7
-	XOQWD2D6sYoWV2nCpt77HK/C/zzAWvxwuZCruRzpPA2CPQsQFUXwUwCN4S9Pg2AK
-	T/xuZYMCYMSpm/wEtx2dNybth7tFisIr2Lx5vTCYPZL79KTPeow7lOr9SysdcB47
-	3VnUzd+xBUNGLVAY9DpO78tSBPnZ0zBnxAWKltdBLO/74Bfto56yU0VZnTkhrCvg
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45ec499uvd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 17 Mar 2025 11:22:54 +0000 (GMT)
-Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 52HBKSdW029008;
-	Mon, 17 Mar 2025 11:22:53 GMT
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45ec499uva-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 17 Mar 2025 11:22:53 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52H9bS4V024411;
-	Mon, 17 Mar 2025 11:22:52 GMT
-Received: from smtprelay05.wdc07v.mail.ibm.com ([172.16.1.72])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 45dnckwr1h-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 17 Mar 2025 11:22:52 +0000
-Received: from smtpav03.wdc07v.mail.ibm.com (smtpav03.wdc07v.mail.ibm.com [10.39.53.230])
-	by smtprelay05.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52HBMpMi20972232
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 17 Mar 2025 11:22:51 GMT
-Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 3321C5805C;
-	Mon, 17 Mar 2025 11:22:51 +0000 (GMT)
-Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id BA2A358054;
-	Mon, 17 Mar 2025 11:22:47 +0000 (GMT)
-Received: from [9.171.94.58] (unknown [9.171.94.58])
-	by smtpav03.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Mon, 17 Mar 2025 11:22:47 +0000 (GMT)
-Message-ID: <66ce34a0-b79d-4ef0-bdd5-982e139571f1@linux.ibm.com>
-Date: Mon, 17 Mar 2025 12:22:46 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2675D21A436
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 11:22:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.59
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742210583; cv=fail; b=oG4jTC6otVdCbb2I3DcfkNQTV/lf2QHF1KSVUG7MqwNWLJpIdR1YQNo9G/jl/55pFETE/XmFazzACivJKF5wkq2P0TLok1jkRpjVsWqp42mycWacLazd7pwMliJirIjBbPd8hAmae55Mgl6CuCYZ4AhJ2GnRVJ4QxAq8FwZgQgk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742210583; c=relaxed/simple;
+	bh=4Ej3FExeeaKdLuYTrlDocsY+sV0sCNBkaNBrsCGLkL8=;
+	h=Message-ID:Date:Subject:To:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=UJqNW0+3gOv0cE4LyG0iDFzjZeg+ok0QU63c0UL8ycFnUEYA+wTUcd20i2JebpFYxrYcGZ5aKijkbcX3CkcVe6grr1COS9FAUJWPP/y2nZQV77lAtHRfwN9YMuOR/Em9GpEs2ZoJEaYXwsG7gioOBXaPJx0heRfWDA8j1fMvrsQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=CcaXvhbH; arc=fail smtp.client-ip=40.107.92.59
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=K2sLlCqHUo5WndrRDIC68iOpxc9u0iRoK17IBeGWZgp0zcd0B+kJiKBmiAW5dhrO5m04tdPCzHQp1VjMDNcpgK2UTu//RaACB6t+1GjU5MaqJKC90m5oD7TloVdjmFc0HrytnBJKApxWqFsuA4jVgdcHJJO4ar2JWsXHpFyBdpm/pQAODjJwM4e19i/3rhbi5q+A9KrywdL5SFJAvQHeL/t+uYTsPQohBX/HN0bNuUbsPpXrL0ZpYo5c8plDbts6if8fBJO3DMZRDWXf+YOhd+c1bavE8BGGJKRw+2bznFpkmvKUvC1KoZ7ak/WJk0hUVHN03phzcvL/vZvYAuHAxg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=9Ul5rlOM4qjhKPTAd6m6Mlvto5WhEtjj0C55Xuk3FfU=;
+ b=NJvpHNpeQwP54PvWQb6uy03ltuasUwWFnM031eFLSPzPuAtYmz8xdxuD8JwZjiF5zLHCx7KthAN9KE/Q/izU0yTMW/J6kyz7s4M2J75oyJtiwHxocZMvJbCebIA38X8PL+T+ilfL3r6mNNy++xw/sxdiR6/4HWO/1UDVmiyFZxrz8i8sWTYf8xj8MD+88WUqFTEGvszSpab6OE2l5T6cwWigx520Y6K2rQ+KJ/6ZHxZmAmOF51+zfpSJLr7mXIMP7ahFpqqt+Q3slw/XjxC/h5zGz6Bwv/4auzuQ0SwxYgwLKpUtWngXHRBE6a8nuzgfTqH2BSXfuC4LatNmjko0bA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=9Ul5rlOM4qjhKPTAd6m6Mlvto5WhEtjj0C55Xuk3FfU=;
+ b=CcaXvhbHvxOjXmj1vLS/w7Mje91wFp4ZA0YsLNnnFwnk8HaQaV3/RpbTOZDU2sp49iVj3ARsOUw1XBfoCJk7QJXlGg+v2M9zI2Vd6xZ6MzW2c9+mX4DxdKXwePs/8CU+jEjS6gZeTHz8GTFw92g2MRFVT1yQSBGOPMIzGjH54Ks=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from BN9PR12MB5163.namprd12.prod.outlook.com (2603:10b6:408:11c::7)
+ by CYYPR12MB8964.namprd12.prod.outlook.com (2603:10b6:930:bc::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.33; Mon, 17 Mar
+ 2025 11:22:56 +0000
+Received: from BN9PR12MB5163.namprd12.prod.outlook.com
+ ([fe80::61ca:6d43:a98d:3b7f]) by BN9PR12MB5163.namprd12.prod.outlook.com
+ ([fe80::61ca:6d43:a98d:3b7f%6]) with mapi id 15.20.8534.031; Mon, 17 Mar 2025
+ 11:22:56 +0000
+Message-ID: <aac3de2f-8f76-4df7-8eb2-1f89a86cd91f@amd.com>
+Date: Mon, 17 Mar 2025 16:52:47 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/8] iommu/amd: Add debugfs support to dump IOMMU MMIO
+ registers
+To: Vasant Hegde <vasant.hegde@amd.com>, joro@8bytes.org,
+ suravee.suthikulpanit@amd.com, will@kernel.org, robin.murphy@arm.com,
+ linux-kernel@vger.kernel.org, iommu@lists.linux.dev
+References: <20250206060003.685-1-dheerajkumar.srivastava@amd.com>
+ <20250206060003.685-3-dheerajkumar.srivastava@amd.com>
+ <08816382-f02c-4f98-a355-a4aa5af16d86@amd.com>
+Content-Language: en-US
+From: Dheeraj Kumar Srivastava <dheerajkumar.srivastava@amd.com>
+In-Reply-To: <08816382-f02c-4f98-a355-a4aa5af16d86@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: PN3PR01CA0175.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:c01:de::20) To BN9PR12MB5163.namprd12.prod.outlook.com
+ (2603:10b6:408:11c::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] net/smc: Reduce size of smc_wr_tx_tasklet_fn
-To: I Hsin Cheng <richard120310@gmail.com>, alibuda@linux.alibaba.com
-Cc: jaka@linux.ibm.com, mjambigi@linux.ibm.com, sidraya@linux.ibm.com,
-        tonylu@linux.alibaba.com, guwen@linux.alibaba.com, davem@davemloft.net,
-        edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-        horms@kernel.org, linux-rdma@vger.kernel.org,
-        linux-s390@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, skhan@linuxfoundation.org,
-        jserv@ccns.ncku.edu.tw, linux-kernel-mentees@lists.linux.dev
-References: <20250315062516.788528-1-richard120310@gmail.com>
-Content-Language: en-US
-From: Wenjia Zhang <wenjia@linux.ibm.com>
-In-Reply-To: <20250315062516.788528-1-richard120310@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: YrURz_ERbaNDYvI-YlvHKtnMUZ56YnS1
-X-Proofpoint-ORIG-GUID: dmmfzEmZNCCI5O1ySa_aDr9ZzpvUdf2i
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-17_04,2025-03-17_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 spamscore=0
- adultscore=0 phishscore=0 bulkscore=0 lowpriorityscore=0
- priorityscore=1501 suspectscore=0 mlxscore=0 impostorscore=0
- malwarescore=0 mlxlogscore=999 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2502280000 definitions=main-2503170080
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN9PR12MB5163:EE_|CYYPR12MB8964:EE_
+X-MS-Office365-Filtering-Correlation-Id: f66af216-6b8a-4ec1-1f60-08dd65460ffc
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?N1VteWg0eFBFZm05c2RKck1Ta3hya3hyZThuUXR3SzJxcVhiL3ZpQStnVkZM?=
+ =?utf-8?B?UENvMmdRMUFMTW85TnVZWXdCdkQyS2lhSFEvUlo2bTRJRWlSWTJzRjBZUDZV?=
+ =?utf-8?B?RlQvRFNxYk00UnRJdFBMVjl4bDdiZnVTYjdVV0xtcHYrMmZkWjhkWk93b3Jh?=
+ =?utf-8?B?YlVYSUpZS0RSRHFPZ0dCcHRSNWRmK1B0ay9nTk4vOVRXT0FOV1JXejk1ZFB5?=
+ =?utf-8?B?NnhudVI3VXY1TFdLYmJVVmtlbnJ0UjUzOHkrT3BTSERUVGdidUtYNk4vY0ZX?=
+ =?utf-8?B?dmlWZ0l4TExwY3ZIa3hFYVgrMkJDNURna2tieENBejdpZ0M2elNrMzFEenhj?=
+ =?utf-8?B?Qk1KZWpYVDd5Z3N6VWxtbHk2QmNCQWNrWEVVbEZiaHFRQStHcWFSWUllN09o?=
+ =?utf-8?B?d1dOMkwyejlzOUs0bGJ6VktDSlF2NGJkbTN2LzhmM1NwK3VrNnhkUnhvSWhL?=
+ =?utf-8?B?VEFGTzU4aDNwTUwvTFF0WHdpUVpSd3JrRkVISWpZNjE1YmlPM3l0dG4wMHJI?=
+ =?utf-8?B?QlBZMlhid0JKYkdPYVpINXgvWUJGZThYeHU2V3UwN2dzK3E1QXFQeSs5QWFP?=
+ =?utf-8?B?M1piT0duNE5yenpNRjZ0VzJUdEt3RXVOZEJScTB3TVhhSGdWRzBhVVdLR2hE?=
+ =?utf-8?B?dStPWnRNUkZCZEM3V0hOZ3ZtU0kxUlF6bjJEeGt0a2FuZ2Y4aXVIR1lHYlVU?=
+ =?utf-8?B?ZkJ2Y3ZFdWYvZFdPUzZpQWtkWkVFazcxWVpKWFk3V0RwWTN3SjA3NWpyYlRW?=
+ =?utf-8?B?YmJySzlkMTBuRkpWYmNPYTBKNm5Hc01SZWdBWUpGbk1RSW5WVHN3MHRqck5m?=
+ =?utf-8?B?QU1mckxncEpkOFNrOGhwTTFPV1YzeTlhMFE1bmpwVW5qWGpIWENOTXJPME5P?=
+ =?utf-8?B?aFZudjJ4OTR6UEZwY3Nnd3VDdVI1VWdhZ0MzVXNwZnAvNnM2NGNlZUNXb2tW?=
+ =?utf-8?B?WHRpWTlPTjdBcEUwZVJ6VElFMkZwWkhWYTJPU1BxRGdzUDlYWmwzbFYxSWxK?=
+ =?utf-8?B?M0RmeFlsZDl4R1o5K0VpNWJPTUVsR2RZU3dERjVEK3RSV1BLU1Q3ZEh1dW9G?=
+ =?utf-8?B?OEk0OWdYSmtCeGprQ0hQTTM2WUVXQTZ0UkZzT0NDTGxQS08zY1RPOEpFK0dT?=
+ =?utf-8?B?d1NKZXdsbHhpcmswbDBmdGZkSXlSSUY5OWR0dmUvWG95ZURRTkI0V3REdUY5?=
+ =?utf-8?B?OGY3d3BMbFd2TytKdGZOMzFIWFU5ZDdIK1p0RE9acVB6bVMraS9qUjNyUXJn?=
+ =?utf-8?B?RmwyVGMvM2VJN0hJVTRlQnJGVjZCZnc0TloweHdKZ3lmMVlaaFNFNmtOZFJJ?=
+ =?utf-8?B?MERyZU5MNUxQb0I3Sjhxd3VWeUN3MktHUllJenRJUm9uTU1vcEZzZDk5VFZw?=
+ =?utf-8?B?T1FBSHNMUCtlS1QvL2xqOHlvMm9zZk9RZ284SWJ4a1Y5Smx5WkZVVmlBTTBm?=
+ =?utf-8?B?bU5LVEN0cDNCUzJHakJxaDJGQTIrY3F0VmpjNVVBN2FIUHk4MC9CSTZ3Y3dX?=
+ =?utf-8?B?bWE4OFZQZVZVaWJ4c2NrU1ZVejU0Wi9pYStZVHBWRm9BSkZta2N2YXdqSFAy?=
+ =?utf-8?B?Vy85WHE1M3l0cGp4SkRpMDAxRHVJY21MSlhScmhvcHRQaFpaZS9RdmVBQXp2?=
+ =?utf-8?B?eForT2dYWjVWdXpYYkVZZ0tpOTdmaVRhSXBVVTJUN2lmRldkbFZ4QytybFhE?=
+ =?utf-8?B?WElnWTZidnovUWViOFQva2V6UkpYZlpIWjM5aXNTdTY4aGJyaVJhVmE2a1VT?=
+ =?utf-8?B?ZVhMQnM2OUo1ODk4YzFjcklMTEQ0TnJLZXVRSkRwOEtZcFA4ZHhqRnpqN0RM?=
+ =?utf-8?B?cEtrdkN5dmJQbFpITEpvMlR0UUhha2VMalp4ZVNZdmJoRlhjbTR6NTN5c2pE?=
+ =?utf-8?Q?d34AJbHVKn3uS?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN9PR12MB5163.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?L1k2ZlhXRm05TXlMcVQyK0MwMHBzdkxiMit4aWN2WHFOWjg0VThxc05WVk1n?=
+ =?utf-8?B?Smw0cXk4RWhKeFNTdkl3NHIzZmhpQkJmQmxSZkNxV3FCREVnc0FZVldDeVFZ?=
+ =?utf-8?B?bUYxbFRJNHQ2cG5FcXZ0T1NrRTB6YUR2QUJ5RldJME5QRkZCQ2UrclV0OUp2?=
+ =?utf-8?B?Wm9yWGRiZFpRazRSazJXMWhNUmJTRDF1cjIySVZETnBWZXNUYy9kQUxkTzFT?=
+ =?utf-8?B?NElwbS9BK21pRUNxSUFvZlQ0UzBoUWp1UnhKYVV2OE9YK0o1YjdoblJWL0FO?=
+ =?utf-8?B?RlVsYktobkk0QktXSHpmbW1kbndESHZZZDRSMGdDK1E4dkNHTmF1R3FLVnNU?=
+ =?utf-8?B?NmRyOXV0cGRWQXdUVXdWWVh0MHU1SWl5bnQ1NHpMWjZKdXhtUXZzcjFmWDQ5?=
+ =?utf-8?B?NVFwL0E1OWNmU1FBS0FSZlpQcmlrV05rNnZKeEJLNjhlVE51cG9wKzRmSHpP?=
+ =?utf-8?B?eE9WN28walRlS3ZrT2JCWmtjZ1EvMUg2UXQ3TFZlM1NEUkk1VDNvU2hSc2xU?=
+ =?utf-8?B?MHZjZHhCS0ZQYUNDYURIVUVvRTZDVFVEb2ozSkRNN3Zybzh0VVQ5WXhzWC9D?=
+ =?utf-8?B?SGNkbUdiemdSS1lLd1ZaSDNNSnRDR0hkQTZGa1VGVERoZFQxT1VsTmFlZnJX?=
+ =?utf-8?B?QnhOYy9TZ09YTVJWWmUzVkFRN012Nm9qOVo3cnUvRnRydVg5c1lYRlRZeGZW?=
+ =?utf-8?B?dHM0VFJBNUVHa3o0UWFnWWNrb1J4YWtEUkd2WGZSZ3ViRHdDeVFsRjEyNjlF?=
+ =?utf-8?B?Z3JvRGZGbFlHZXZhUWFVelhoU0lxSmFneUREYllsYjNxbS9ielV0YnFMcTZW?=
+ =?utf-8?B?d2JCQ1RnclRJbS9sRGMzYkwvRDZBdmMxUWZQenZydTU0RlVTZ0dVWlgvQnF6?=
+ =?utf-8?B?WTRtd1VJTE4veVQ3TXh4Q0JURkpnSUVPVGFDaks4K0Y0aEtiUm9aVWxDVCsx?=
+ =?utf-8?B?RXV4TTllQkZJNU5DV0RhRitCYkRwVkROZXYwMXYzaTBLWGV0TnUvNk1wellk?=
+ =?utf-8?B?enhMVHBiVk9VOEIwZTU3YkVFYmZrYWV5S2NFaHhqN2ovQlA3YVdESHBnNzdK?=
+ =?utf-8?B?T1VhU0cwSmJCN0UvRGdReHY2NjBFZFp2ZVBNVi8zRU8xTjhoU2ZxOGJqOTJ1?=
+ =?utf-8?B?VW1kU1NxQjdwd004ckhsSjlXVndpSkRJYW52aVdkaEswdTZkZHlxRlRnbURo?=
+ =?utf-8?B?cXpvZ25jSWtKcHVpaHJEdmQ4UkVDeDZIUExUSmczWXZpZ3JqancxeTJQbTkw?=
+ =?utf-8?B?ZEpCZWpjYlhXaDIvS0VEcy9ScFlkY01EN1JFemNZNFNnTlBjRU4xM0pXT1M3?=
+ =?utf-8?B?SUZ5RVgreCtmanBtaGxVZVVFbi9DeWRXaStMQTlpSldmUHNPR0xGc1ZRZDE4?=
+ =?utf-8?B?RXZYOFBMMzdKTGN0TnNVdXV0V0tuTlB1bnpIbkdwbXUyNmJTR0kyMkY3aGNo?=
+ =?utf-8?B?ei9lSG9RZ0d1MWdjYVlsZlRWR2pHL0hYZFcyeW5waWlocTBDbmpUWXM0Y1pt?=
+ =?utf-8?B?OXJDZlhtYVc5TDhJZzhKY3BIZk5HR3N2NSs1eDZvNEJmZlplL3FPQVM5WUZy?=
+ =?utf-8?B?NjR0VnovT2VMUVJxMEtOUXAwb2ZJcnBnVDZud044b1htbzQvdnoyZEtwTkNn?=
+ =?utf-8?B?SWlXUnlPcFFtYm0xaU0xY2FReXYya2p4bEg5U3Q1Z3RFUm9EQUJrZUtrL3NP?=
+ =?utf-8?B?NWhsN1hadlNwN1ZZOFczdUVLYktrd2RkZ1NQMXdoQ1ZEVDdLT3RUQmVCU0U1?=
+ =?utf-8?B?RFRGakkvcEFoejhDZXBmSS9zYmpndnkwOWdIb0J5NGxCeXBQbFRpa2FxU0o0?=
+ =?utf-8?B?WFZPZmNTRkw3MUc0YlgzUi9qalNEQVQ3Y0xqdlFpMXJ2bm1TdXIxdlBObzFW?=
+ =?utf-8?B?bXdtYkxiNTh5aXBoYm1TaDRRM2xuM2ovSmhiRmhjWjl1ZTg4WU9NbURvR3VE?=
+ =?utf-8?B?Wm5ZUkRkZ1RIYXZCRFpmbTJ2dklLdXlUdkxZU3RBMEEzOVpLY2pGUmx2TW41?=
+ =?utf-8?B?M0VXRjFaZU9mSW1PYXpzYWV3YUM0amNPZmxRMkRXOGpCNlVUQ1Vab1lsSDlh?=
+ =?utf-8?B?UXgrU1BqWFNzcUVhR3RrVUw5ekJpRHpVQkRxRmZSb0JQTHcraHk0bXk2b0x3?=
+ =?utf-8?Q?6o06QE9Qmw4oVGtuxEf1BY57a?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f66af216-6b8a-4ec1-1f60-08dd65460ffc
+X-MS-Exchange-CrossTenant-AuthSource: BN9PR12MB5163.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Mar 2025 11:22:55.8545
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: PsHgrw0XBmLblYvKRw8NaIlFAO/gM7N6PbtjdiPQgwY8gEKklM1qGyczRQq54hsx4X97u86ODYKZAACfav/Ypg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CYYPR12MB8964
 
+Hi Vasant,
 
-
-On 15.03.25 07:25, I Hsin Cheng wrote:
-> The variable "polled" in smc_wr_tx_tasklet_fn is a counter to determine
-> whether the loop has been executed for the first time. Refactor the type
-> of "polled" from "int" to "bool" can reduce the size of generated code
-> size by 12 bytes shown with the test below
+On 3/13/2025 3:58 PM, Vasant Hegde wrote:
 > 
-> $ ./scripts/bloat-o-meter vmlinux_old vmlinux_new
-> add/remove: 0/0 grow/shrink: 0/1 up/down: 0/-12 (-12)
-> Function                                     old     new   delta
-> smc_wr_tx_tasklet_fn                        1076    1064     -12
-> Total: Before=24795091, After=24795079, chg -0.00%
 > 
-> In some configuration, the compiler will complain this function for
-> exceeding 1024 bytes for function stack, this change can at least reduce
-> the size by 12 bytes within manner.
+> On 2/6/2025 11:29 AM, Dheeraj Kumar Srivastava wrote:
+>> Analyzing IOMMU MMIO registers gives a view of what IOMMU is
+>> configured with on the system and is helpful to debug issues
+>> with IOMMU.
+>>
+>> eg.
+>> 1. To get mmio registers value for iommu<x>
+>>     # echo "0x18" > /sys/kernel/debug/iommu/amd/iommu00/mmio
+>>     # cat /sys/kernel/debug/iommu/amd/iommu00/mmio
 > 
-The code itself looks good. However, I’m curious about the specific 
-situation where the compiler complained. Also, compared to exceeding the 
-function stack limit by 1024 bytes, I don’t see how saving 12 bytes 
-would bring any significant benefit.
+> Many of MMIO registers are 8 bytes. By default can we print 8 bytes instead of 4
+> bytes?
 
-Thanks,
-Wenjia
+Sure will print 64 bits (8 bytes) for MMIO registers dump.
+
+Thanks
+Dheeraj
+
+> 
+> -Vasant
+> 
+
 
