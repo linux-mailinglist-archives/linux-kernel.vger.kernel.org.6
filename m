@@ -1,185 +1,221 @@
-Return-Path: <linux-kernel+bounces-563783-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563784-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B53F0A6485C
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:57:27 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B56DA64863
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:58:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B70A81884A55
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 09:57:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 603E1169FF2
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 09:57:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF77222B8D9;
-	Mon, 17 Mar 2025 09:57:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F383522DFBE;
+	Mon, 17 Mar 2025 09:57:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="Xkd/RWw0"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B35FC22A81E;
-	Mon, 17 Mar 2025 09:57:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="nkfwHgNI"
+Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EAD222C355;
+	Mon, 17 Mar 2025 09:57:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742205442; cv=none; b=slWYSDIRvQItFiFH3B3hcQ/5NZXhUrerH/9qmBmj7xBhVKV8fRV9nBV7fUJu0D+SAsd3LB7QbBJB7+bu9Fl67iViZRFolvMv4erzVJJrexIF8G9SChDrU+brVqtp3f3MjxbnXQ19vbo7K0d1+2ob8B/MrJVY1t92Fr1FLZ1Uq6A=
+	t=1742205472; cv=none; b=FrZWCa8Cwch7FvcDfJfD91j+Bso3TiMpzzO2DfaeIIU9yMLACNcHpBcOy20dj9QJ6goVTVeYDvrIwa99jfWOu9oqbEuP8DLMZz0BpJLIo95AGYQhL+ND8L9hQyv62L7kkamSHrgptkYXNzm7gy+xQdW+aSEgbm2+XIqeGA0hkUA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742205442; c=relaxed/simple;
-	bh=kMtkAlLK2V+OrVGCRvzbRI/my96MeuyTuAHg3u2InlM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KlqYZID3149NU3MJhFk55kIFJtZTpgAjYR5+sFdkTboFk5OS4vkiJeTRzEp7IBABjv/KzIBjukhtbKngfQCB9lz88l3PLoUwGwOI/IMUbPppmL4N/ioe1HeYCfB9KrZTx5OO8gvt0ORteTX/OX5x3WjTMjF997otUmJjVeWLn8Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=Xkd/RWw0; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [10.95.65.22] (unknown [167.220.238.22])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 6457A2045FF1;
-	Mon, 17 Mar 2025 02:57:10 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 6457A2045FF1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1742205434;
-	bh=1gNif6YjABdnpvf0u2zC4lMhgEA3cPPjxTKRt/DuQzA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Xkd/RWw0UNhAs25aPukjNo5Zzf9Kv1zu4UXPShasMtdq98S26whVV8HxvpbhKR69Y
-	 GSToIiamXIAK8v8uB2j9s1b6fafrYGzqATnb9J3c7N4erc5l9rciOR3oYj8EWuNI7J
-	 E9r2SqcCinRqvc/HPtbD3L8g2BmjkwUhPWdr5UrY=
-Message-ID: <8c2c67cc-d8a0-42cf-b9fe-c5e5c4f627c6@linux.microsoft.com>
-Date: Mon, 17 Mar 2025 15:27:08 +0530
+	s=arc-20240116; t=1742205472; c=relaxed/simple;
+	bh=u4gGQHQyXKmcD/n4B9Coibe/2rVi6aB/7qBpOdGg5FU=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=p+ZW75W3IcAYoJRGo5xf9XtG3h9Osvhg0cWTNh3BxbquXXvmnJWhdgaR1kiFx95sDgUC3jyv7k8NC8/9YOaKPjckRn7n/nJuPPqjeKHAViWzC5cV5px8lzQVTIbKZPlvYOObXlEpzwIXsv7/PLqVbqwiTzWOOjwALu3KFVuRaEE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=nkfwHgNI; arc=none smtp.client-ip=5.75.144.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
+Received: from [127.0.0.1] (254C1C5A.nat.pool.telekom.hu [37.76.28.90])
+	by mail.mainlining.org (Postfix) with ESMTPSA id B53F0BBAC4;
+	Mon, 17 Mar 2025 09:57:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mainlining.org;
+	s=psm; t=1742205468;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FhlrRtgQ29uAkg57Izvory2SkjADGQMOEcn3oIaEafg=;
+	b=nkfwHgNIkMw6drNJf+qwgVofGWU+RQr5cydxMVJUZvLcx3uT/yiIjF68d2I6B9d2H1DydP
+	AmymPLAI6g2lw7kEDLY+0D3uDkoP9QAUPFh6TEeG/dpXpr6lEisnrxIYknRRnEID3jHCtQ
+	N7MZ+vsQz5FHOYKqC1J89V2skPUC++82H33O3InzwoQO5ZmDaFg0uwmVqxqTsBqmeJG1AS
+	lcvUWqbfk29XZM0NjItqztSvwYQH6wtwYVBMjOYLAuZB8fFOHSsD/BKYZpMHFwGxb8SSof
+	8QBPprrFFrZjZ6wirsgCU+OShkqiFfLOD11BURS2ICwXmBXo27u7e81uiLmRvw==
+Date: Mon, 17 Mar 2025 10:57:45 +0100
+From: =?ISO-8859-1?Q?Barnab=E1s_Cz=E9m=E1n?= <barnabas.czeman@mainlining.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+CC: Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Stephan Gerhold <stephan@gerhold.net>,
+ =?ISO-8859-1?Q?Otto_Pfl=FCger?= <otto.pflueger@abscue.de>,
+ Linus Walleij <linus.walleij@linaro.org>, Lee Jones <lee@kernel.org>,
+ Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+ Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+ Robin Murphy <robin.murphy@arm.com>, Konrad Dybcio <konradybcio@kernel.org>,
+ Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+ Abhinav Kumar <quic_abhinavk@quicinc.com>,
+ Marijn Suijten <marijn.suijten@somainline.org>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Dmitry Baryshkov <lumag@kernel.org>, linux-arm-msm@vger.kernel.org,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+ iommu@lists.linux.dev, dri-devel@lists.freedesktop.org,
+ freedreno@lists.freedesktop.org, phone-devel@vger.kernel.org,
+ ~postmarketos/upstreaming@lists.sr.ht, linux@mainlining.org
+Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_v4_1/6=5D_dt-bindings=3A_clock=3A_q?=
+ =?US-ASCII?Q?com=3A_Add_MSM8937_Global_Clock_Controller?=
+User-Agent: Thunderbird for Android
+In-Reply-To: <20250317-hot-obedient-sturgeon-394cb8@krzk-bin>
+References: <20250315-msm8937-v4-0-1f132e870a49@mainlining.org> <20250315-msm8937-v4-1-1f132e870a49@mainlining.org> <20250317-hot-obedient-sturgeon-394cb8@krzk-bin>
+Message-ID: <11695D76-7CBE-41CE-A8DD-D6845D01670C@mainlining.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5] sched/topology: Enable topology_span_sane check only
- for debug builds
-To: Valentin Schneider <vschneid@redhat.com>, Ingo Molnar <mingo@redhat.com>,
- Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
- Mel Gorman <mgorman@suse.de>
-Cc: stable@vger.kernel.org, linux-kernel@vger.kernel.org,
- Steve Wahl <steve.wahl@hpe.com>,
- Saurabh Singh Sengar <ssengar@linux.microsoft.com>, srivatsa@csail.mit.edu,
- K Prateek Nayak <kprateek.nayak@amd.com>,
- Michael Kelley <mhklinux@outlook.com>,
- Shrikanth Hegde <sshegde@linux.ibm.com>
-References: <20250310052509.1416-1-namjain@linux.microsoft.com>
- <xhsmh34fjr3av.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
-Content-Language: en-US
-From: Naman Jain <namjain@linux.microsoft.com>
-In-Reply-To: <xhsmh34fjr3av.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
 
 
-On 3/11/2025 9:02 PM, Valentin Schneider wrote:
-> On 10/03/25 10:55, Naman Jain wrote:
->> From: Saurabh Sengar <ssengar@linux.microsoft.com>
->>
->> On a x86 system under test with 1780 CPUs, topology_span_sane() takes
->> around 8 seconds cumulatively for all the iterations. It is an expensive
->> operation which does the sanity of non-NUMA topology masks.
->>
->> CPU topology is not something which changes very frequently hence make
->> this check optional for the systems where the topology is trusted and
->> need faster bootup.
->>
->> Restrict this to sched_verbose kernel cmdline option so that this penalty
->> can be avoided for the systems who want to avoid it.
->>
->> Cc: stable@vger.kernel.org
->> Fixes: ccf74128d66c ("sched/topology: Assert non-NUMA topology masks don't (partially) overlap")
->> Signed-off-by: Saurabh Sengar <ssengar@linux.microsoft.com>
->> Co-developed-by: Naman Jain <namjain@linux.microsoft.com>
->> Signed-off-by: Naman Jain <namjain@linux.microsoft.com>
->> Tested-by: K Prateek Nayak <kprateek.nayak@amd.com>
+On March 17, 2025 10:17:46 AM GMT+01:00, Krzysztof Kozlowski <krzk@kernel=
+=2Eorg> wrote:
+>On Sat, Mar 15, 2025 at 03:57:35PM +0100, Barnab=C3=A1s Cz=C3=A9m=C3=A1n =
+wrote:
+>> Add device tree bindings for the global clock controller on Qualcomm
+>> MSM8937 platform=2E
+>>=20
+>> Signed-off-by: Barnab=C3=A1s Cz=C3=A9m=C3=A1n <barnabas=2Eczeman@mainli=
+ning=2Eorg>
 >> ---
->> Changes since v4:
->> https://lore.kernel.org/all/20250306055354.52915-1-namjain@linux.microsoft.com/
->>        - Rephrased print statement and moved it to sched_domain_debug.
->>          (addressing Valentin's comments)
->> Changes since v3:
->> https://lore.kernel.org/all/20250203114738.3109-1-namjain@linux.microsoft.com/
->>        - Minor typo correction in comment
->>        - Added Tested-by tag from Prateek for x86
->> Changes since v2:
->> https://lore.kernel.org/all/1731922777-7121-1-git-send-email-ssengar@linux.microsoft.com/
->>        - Use sched_debug() instead of using sched_debug_verbose
->>          variable directly (addressing Prateek's comment)
->>
->> Changes since v1:
->> https://lore.kernel.org/all/1729619853-2597-1-git-send-email-ssengar@linux.microsoft.com/
->>        - Use kernel cmdline param instead of compile time flag.
->>
->> Adding a link to the other patch which is under review.
->> https://lore.kernel.org/lkml/20241031200431.182443-1-steve.wahl@hpe.com/
->> Above patch tries to optimize the topology sanity check, whereas this
->> patch makes it optional. We believe both patches can coexist, as even
->> with optimization, there will still be some performance overhead for
->> this check.
->>
->> ---
->>   kernel/sched/topology.c | 9 ++++++++-
->>   1 file changed, 8 insertions(+), 1 deletion(-)
->>
->> diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
->> index c49aea8c1025..d7254c47af45 100644
->> --- a/kernel/sched/topology.c
->> +++ b/kernel/sched/topology.c
->> @@ -132,8 +132,11 @@ static void sched_domain_debug(struct sched_domain *sd, int cpu)
->>   {
->>        int level = 0;
->>
->> -	if (!sched_debug_verbose)
->> +	if (!sched_debug_verbose) {
->> +		pr_info_once("%s: Scheduler topology debugging disabled, add 'sched_verbose' to the cmdline to enable it\n",
->> +			     __func__);
->>                return;
->> +	}
->>
-> 
-> Nit: I've been told not to break warnings over multiple lines so they can
-> be grep'ed, but given this has the "sched_domain_debug:" prefix I think we
-> could get away with the below.
-> 
-> Regardless:
-> Reviewed-by: Valentin Schneider <vschneid@redhat.com>
-> 
-> ---
-> diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
-> index d7254c47af455..b4dc7c7d2c41c 100644
-> --- a/kernel/sched/topology.c
-> +++ b/kernel/sched/topology.c
-> @@ -133,7 +133,8 @@ static void sched_domain_debug(struct sched_domain *sd, int cpu)
->   	int level = 0;
->   
->   	if (!sched_debug_verbose) {
-> -		pr_info_once("%s: Scheduler topology debugging disabled, add 'sched_verbose' to the cmdline to enable it\n",
-> +		pr_info_once("%s: Scheduler topology debugging disabled, "
-> +			     "add 'sched_verbose' to the cmdline to enable it\n",
->   			     __func__);
->   		return;
->   	}
-
-
-Hi Valentin,
-Splitting the warning to different lines give checkpatch error with 
---strict option. --fix option suggests we keep it like we have it 
-originally(single line). Please let me know if you feel we can change it 
-to something else or if you are fine with picking the change for next 
-iteration. Thanks again.
-
-# ./scripts/checkpatch.pl --strict 
-v6-0001-sched-topology-Enable-topology_span_sane-check-on.patch
-WARNING: quoted string split across lines
-#40: FILE: kernel/sched/topology.c:137:
-+               pr_info_once("%s: Scheduler topology debugging disabled, "
-+                            "add 'sched_verbose' to the cmdline to 
-enable it\n",
-
-total: 0 errors, 1 warnings, 0 checks, 23 lines checked
-
-
-Regards,
-Naman
+>>  =2E=2E=2E/bindings/clock/qcom,gcc-msm8937=2Eyaml           | 75 ++++++=
+++++++++++++++++
+>>  include/dt-bindings/clock/qcom,gcc-msm8917=2Eh       | 17 +++++
+>>  2 files changed, 92 insertions(+)
+>>=20
+>> diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-msm8937=
+=2Eyaml b/Documentation/devicetree/bindings/clock/qcom,gcc-msm8937=2Eyaml
+>> new file mode 100644
+>> index 0000000000000000000000000000000000000000=2E=2E3c3f6756048e195671f=
+542b3a6cd09057558eafa
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/clock/qcom,gcc-msm8937=2Eyaml
+>> @@ -0,0 +1,75 @@
+>> +# SPDX-License-Identifier: (GPL-2=2E0-only OR BSD-2-Clause)
+>> +%YAML 1=2E2
+>> +---
+>> +$id: http://devicetree=2Eorg/schemas/clock/qcom,gcc-msm8937=2Eyaml#
+>> +$schema: http://devicetree=2Eorg/meta-schemas/core=2Eyaml#
+>> +
+>> +title: Qualcomm Global Clock & Reset Controller on MSM8937
+>> +
+>> +maintainers:
+>> +  - Barnabas Czeman <barnabas=2Eczeman@mainlining=2Eorg>
+>> +
+>> +description: |
+>> +  Qualcomm global clock control module provides the clocks, resets and=
+ power
+>> +  domains on MSM8937=2E
+>
+>This is exactly like msm8953, so why it cannot be there?
+>
+Not exactly clock names are different, msm8953 have sleep msm8937 have sle=
+ep_clk=2E
+>> +
+>> +  See also::
+>> +    include/dt-bindings/clock/qcom,gcc-msm8917=2Eh
+>
+>typo, 8937
+>
+No
+>> +
+>> +properties:
+>> +  compatible:
+>> +    const: qcom,gcc-msm8937
+>> +
+>> +  clocks:
+>> +    items:
+>> +      - description: XO source
+>> +      - description: Sleep clock source
+>> +      - description: DSI phy instance 0 dsi clock
+>> +      - description: DSI phy instance 0 byte clock
+>> +      - description: DSI phy instance 1 dsi clock
+>> +      - description: DSI phy instance 1 byte clock
+>> +
+>> +  clock-names:
+>> +    items:
+>> +      - const: xo
+>> +      - const: sleep_clk
+>> +      - const: dsi0pll
+>> +      - const: dsi0pllbyte
+>> +      - const: dsi1pll
+>> +      - const: dsi1pllbyte
+>> +
+>> +required:
+>> +  - compatible
+>> +  - clocks
+>> +  - clock-names
+>> +  - '#power-domain-cells'
+>> +
+>> +allOf:
+>> +  - $ref: qcom,gcc=2Eyaml#
+>> +
+>> +unevaluatedProperties: false
+>> +
+>> +examples:
+>> +  - |
+>> +    #include <dt-bindings/clock/qcom,rpmcc=2Eh>
+>> +
+>> +    clock-controller@1800000 {
+>> +      compatible =3D "qcom,gcc-msm8937";
+>> +      reg =3D <0x01800000 0x80000>;
+>> +      #clock-cells =3D <1>;
+>> +      #reset-cells =3D <1>;
+>> +      #power-domain-cells =3D <1>;
+>> +      clocks =3D <&rpmcc RPM_SMD_XO_CLK_SRC>,
+>> +               <&sleep_clk>,
+>> +               <&dsi0_phy 1>,
+>> +               <&dsi0_phy 0>,
+>> +               <&dsi1_phy 1>,
+>> +               <&dsi1_phy 0>;
+>> +      clock-names =3D "xo",
+>> +                    "sleep_clk",
+>> +                    "dsi0pll",
+>> +                    "dsi0pllbyte",
+>> +                    "dsi1pll",
+>> +                    "dsi1pllbyte";
+>> +    };
+>> +=2E=2E=2E
+>> diff --git a/include/dt-bindings/clock/qcom,gcc-msm8917=2Eh b/include/d=
+t-bindings/clock/qcom,gcc-msm8917=2Eh
+>> index 4b421e7414b50bef2e2400f868ae5b7212a427bb=2E=2Eec1f0b261dd5ccfe489=
+6a00ffa9cf86de98b9cb3 100644
+>> --- a/include/dt-bindings/clock/qcom,gcc-msm8917=2Eh
+>> +++ b/include/dt-bindings/clock/qcom,gcc-msm8917=2Eh
+>> @@ -170,6 +170,22 @@
+>>  #define VFE1_CLK_SRC				163
+>>  #define VSYNC_CLK_SRC				164
+>>  #define GPLL0_SLEEP_CLK_SRC			165
+>> +#define BLSP1_QUP1_I2C_APPS_CLK_SRC		166
+>> +#define BLSP1_QUP1_SPI_APPS_CLK_SRC		167
+>> +#define BLSP2_QUP4_I2C_APPS_CLK_SRC		168
+>> +#define BLSP2_QUP4_SPI_APPS_CLK_SRC		169
+>
+>Why are you adding bindings to 8917? Nothing in commit msg explains
+>that=2E
+Because msm8917 driver was expanded with 8937 bits, i will expand the comm=
+it message=2E
+>
+>Best regards,
+>Krzysztof
+>
 
