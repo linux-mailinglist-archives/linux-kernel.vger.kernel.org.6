@@ -1,104 +1,127 @@
-Return-Path: <linux-kernel+bounces-564202-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564201-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 157DBA65031
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 14:05:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB18AA6502D
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 14:04:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF4271895978
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 13:04:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87FF71886C3B
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 13:04:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7BD223ED68;
-	Mon, 17 Mar 2025 13:04:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D6F723C39A;
+	Mon, 17 Mar 2025 13:04:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="lYp3UZUY"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="KSFZMo2C";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="AuudW1XH";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="b/SsGPN9";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="hjoNYyQL"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81E2523372E;
-	Mon, 17 Mar 2025 13:04:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08C858F5E
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 13:04:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742216654; cv=none; b=RTY4quVFi1Ny0tpBvHpgivILf1zB2K93fmgtZL0TuXtDboFzdwkMDreHJcKUhyJrLjT2v4BB5Oc/TkO4Zu212djALFZUqhL3CYFBz4LTRyTgyTIXwZC7KkpHKRZWriqydvYnhXkMno+fV16p4KdWMVKr9f3cqPsxXXdpQRu4Bz8=
+	t=1742216646; cv=none; b=MFlEmP/bg+RAJIQnNyn0y2/uTS6U7B7+hWO/A21u2KIR31yyuBxwcqWfVuRlD+686XNDEVmCepUOuUd1uJYvtY2BDyq34iK2PSYzHq+kzhXDGBuTrJKZqgQ7m31qN6UknR163InLugUedY24msfuh/D85HEYviNmF+q6Q9WQn2c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742216654; c=relaxed/simple;
-	bh=EHLMuw/JyYlLvDqU6h58lMcp/uEcpIyU1m8aaA3ufQM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=p2nocHr+SYn4i/ZAAO4eqf5Qvv8Sckh6M7MZ0CmWCTPRvDIWyvVdeihhMyTBRkS2+N8jYTkBWHnIgXxd32lLYH2QdjE+MvFBtbHIKVcdKW6KTb2OYiop9dTj5E8GvSa8V0zihYDRTQXNphkThg8AckrC9jOXvv0wtdual0FvFDQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=lYp3UZUY; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=QQDJSZlvsPxdtXrcfxhzYY3pnuTPlN7iObJIZ09ja6k=; b=lYp3UZUYsynZHh9SB8+AUqn7QV
-	AyCwpZ8gMkzuLmEHDZlx0CX1cJWd/yocolMKVYsRv55tey9MEQwUSpi36y3RIBZAPtPPkU3wUiSOx
-	ef+YKgM+xnNz05PyqngL0J8pWFoe17d+g4PUZE99fHXCZppS+aSBCwmUiLyNxV/j14aY=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1tuA8M-0068KE-SL; Mon, 17 Mar 2025 14:03:58 +0100
-Date: Mon, 17 Mar 2025 14:03:58 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Jacky Chou <jacky_chou@aspeedtech.com>
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, joel@jms.id.au,
-	andrew@codeconstruct.com.au, ratbert@faraday-tech.com,
-	netdev@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-aspeed@lists.ozlabs.org, BMC-SW@aspeedtech.com
-Subject: Re: [net-next 4/4] net: ftgmac100: add RGMII delay for AST2600
-Message-ID: <dc7296b2-e7aa-4cc3-9aa7-44e97ec50fc3@lunn.ch>
-References: <20250317025922.1526937-1-jacky_chou@aspeedtech.com>
- <20250317025922.1526937-5-jacky_chou@aspeedtech.com>
+	s=arc-20240116; t=1742216646; c=relaxed/simple;
+	bh=QJK8ijm5hOqBgDrLDzLf+CfEU/prs9FB2WajFUUyhsg=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=axWjuiz78UYe66GOw93fUr0fe/YcXJYXH0rrO5KEHgcJMIWLU0Sh8c9OlKvxcO/TAKpQE7bmCXQNZeMxjbhbOLiLqt8k4Ei3K7HlSk66oW3YI2Aqv+mn7KU8yqE4pw4FWsMR0nOwVfNMN4XnjqtV2BhMxY1PK+QT0WZSffscY1Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=KSFZMo2C; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=AuudW1XH; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=b/SsGPN9; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=hjoNYyQL; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from pobox.suse.cz (unknown [10.100.2.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id F3C8721206;
+	Mon, 17 Mar 2025 13:04:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1742216643; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0sEuen0bC8rf/5QoYodGmqk6k8gRlnVoJgSAywbjU94=;
+	b=KSFZMo2ClECKgS93ynrQnjODqRTNmB+6i2LNAP/ftAz8c1QMfTd2A8eaPS/TGMKF3BtpNI
+	Rt42oqYrKQ03fBKnYF0EOhtBKKjgZb19ME2nl0wbJ4tWSsUkSoqn0pff/nmsdKk8w1g7B6
+	1sKToVitl6K/Z92X9Q9PnDQwiL3KZxU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1742216643;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0sEuen0bC8rf/5QoYodGmqk6k8gRlnVoJgSAywbjU94=;
+	b=AuudW1XHOv4bvUxoa/d+bAp+bHj2fsLmRGYxlQrndbMu3jVVA/lDkdaO5bb2ChIhaMt1z+
+	IvAAx1P65qu+cICg==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1742216642; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0sEuen0bC8rf/5QoYodGmqk6k8gRlnVoJgSAywbjU94=;
+	b=b/SsGPN9bPJvgY2HS8ESvxMnRmWJyiToF0/0h6QHH80hsFM6V3b/PWm64wzfnhxrmxU/94
+	s/cpI55I0/jSmquWzdJ/8G/zOTTlPbFxqIpcco+25KxGc34O1wcy1xwyN8+ZdG6hV00B0A
+	5MP7t8fCa6oNSYpU3Ozh2vDr20twfAU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1742216642;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0sEuen0bC8rf/5QoYodGmqk6k8gRlnVoJgSAywbjU94=;
+	b=hjoNYyQLz5orSKLhZYuvmQixWDzOj/iwUtw8r/Z+Jq5D4DbUGM4sFP8Q6oyTH9Dm2k48kt
+	H6sxrzWKb8nOjwAg==
+Date: Mon, 17 Mar 2025 14:04:02 +0100 (CET)
+From: Miroslav Benes <mbenes@suse.cz>
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+cc: x86@kernel.org, linux-kernel@vger.kernel.org, 
+    Peter Zijlstra <peterz@infradead.org>, 
+    Brendan Jackman <jackmanb@google.com>, 
+    Nathan Chancellor <nathan@kernel.org>
+Subject: Re: [PATCH 11/13] objtool: Change "warning:" to "error:" for
+ --Werror
+In-Reply-To: <56f0565b15b4b4caa9a08953fa9c679dfa973514.1741975349.git.jpoimboe@kernel.org>
+Message-ID: <alpine.LSU.2.21.2503171403520.4236@pobox.suse.cz>
+References: <cover.1741975349.git.jpoimboe@kernel.org> <56f0565b15b4b4caa9a08953fa9c679dfa973514.1741975349.git.jpoimboe@kernel.org>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250317025922.1526937-5-jacky_chou@aspeedtech.com>
+Content-Type: text/plain; charset=US-ASCII
+X-Spam-Score: -4.30
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_ZERO(0.00)[0];
+	MID_RHS_MATCH_FROMTLD(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[pobox.suse.cz:mid,pobox.suse.cz:helo,suse.cz:email]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-> +	u32 rgmii_tx_delay, rgmii_rx_delay;
-> +	u32 dly_reg, tx_dly_mask, rx_dly_mask;
-> +	int tx, rx;
-> +
-> +	netdev = platform_get_drvdata(pdev);
-> +	priv = netdev_priv(netdev);
-> +
-> +	tx = of_property_read_u32(np, "tx-internal-delay-ps", &rgmii_tx_delay);
-> +	rx = of_property_read_u32(np, "rx-internal-delay-ps", &rgmii_rx_delay);
+On Fri, 14 Mar 2025, Josh Poimboeuf wrote:
 
-> +	if (!tx) {
+> This is similar to GCC's behavior and makes it more obvious why the
+> build failed.
+> 
+> Suggested-by: Nathan Chancellor <nathan@kernel.org>
+> Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
 
-The documentation for of_property_read_u32() says:
+Reviewed-by: Miroslav Benes <mbenes@suse.cz>
 
- * Return: 0 on success, -EINVAL if the property does not exist,
- * -ENODATA if property does not have a value, and -EOVERFLOW if the
- * property data isn't large enough.
-
-You need to handle EINVAL different to the other errors, which are
-real errors and should fail the probe.
-
-The commit message, and probably the binding needs to document what
-happens when the properties are not in the DT blob. This needs to be
-part of the bigger picture of how you are going to sort out the mess
-with existing .dts files listing 'rgmii' when in fact they should be
-'rgmii-id'.
-
-> +		/* Use tx-internal-delay-ps as index to configure tx delay
-> +		 * into scu register.
-> +		 */
-> +		if (rgmii_tx_delay > 64)
-> +			dev_warn(&pdev->dev, "Get invalid tx delay value");
-
-Return EINVAL and fail the probe.
-
-	Andrew
+M
 
