@@ -1,100 +1,93 @@
-Return-Path: <linux-kernel+bounces-563561-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563562-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03FDAA64423
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 08:47:28 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1655A64429
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 08:47:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 262F33A13BF
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 07:47:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A533170D83
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 07:47:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B85B121ABC1;
-	Mon, 17 Mar 2025 07:47:20 +0000 (UTC)
-Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [63.216.63.35])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2C37664C6;
+	Mon, 17 Mar 2025 07:47:26 +0000 (UTC)
+Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [63.216.63.40])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49F598F5C
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 07:47:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.216.63.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB0498F5C;
+	Mon, 17 Mar 2025 07:47:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.216.63.40
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742197640; cv=none; b=auFmK/JVH0Gkv0MPP3k/DViaPWNwdXydii/bOfmPsFcXbXTWS5FwnpgrwK7B5iixKBDdVGU9pYvpQToLUIFj/BgMz7DQ1m2EDHqZhYgLZqG9GGYMojxKNApVe/Iu190mBos0ZH/9rJWoMIZfRoKqVy4TCFOimN5lBHFyDyvBBes=
+	t=1742197646; cv=none; b=fTm6/vAAHKF5O4PJlRzBf25T/wJXl3lxKwxttmJY3WoLgwpl4Nn1L2LU8KX2mwxincC+wwBEnjKPHpqNq1yL93J0W6JF4Wf0niWa/zF0uJA+gSzRleVrFCjxnVaGm5ndP5NtJmJRGVH4tY5cLEfH6bAug6Xkoks/aDdYqm75fgw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742197640; c=relaxed/simple;
-	bh=kfcvLecLv1q9xbglTQLonj5fKbZWoIAYa1VVQ0GQZKY=;
-	h=Date:Message-ID:Mime-Version:From:To:Cc:Subject:Content-Type; b=BhjerV9zfsowTPDtNmCaWMl/13M4x1nCXgrbAdNZ+WIr4esrxrbuA+r78Ed5Yih/LGDlpA8oFOL6LJSKOpW0Nmbnhu2PiBcI/UZunaMusN27qZPsWiREOdw6dcT9IQBHn8H6xSw6aUmQq70E8cnSA92cdoZps3tgg3BsfPPrtjQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=63.216.63.35
+	s=arc-20240116; t=1742197646; c=relaxed/simple;
+	bh=gPIajBVKq4rXHmPk+hUGg64doFuZ8TLuMJGnWh797tw=;
+	h=Date:Message-ID:Mime-Version:From:To:Cc:Subject:Content-Type; b=lPOrGd0XM5DdMzaGSO81iu+Loz9f60/uLsImGEYXKqt+rCS3onXVV/s1bkCYcOldFnyH401Gw34wGUEHDOzkH0qhlWR/XgSNhQ4PrPYu1VJluZJXisXlXV0+zEPoYW0cZt4ceojb3T4RtQsCa1XRANNkQVE57Gz34Sr3+ZY8ulc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=63.216.63.40
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
-Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
+Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4ZGRrf3bsSz5B1Jy;
-	Mon, 17 Mar 2025 15:47:14 +0800 (CST)
-Received: from xaxapp01.zte.com.cn ([10.88.99.176])
-	by mse-fl2.zte.com.cn with SMTP id 52H7ktjt063259;
-	Mon, 17 Mar 2025 15:46:55 +0800 (+08)
-	(envelope-from tang.dongxing@zte.com.cn)
-Received: from mapi (xaxapp05[null])
+	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4ZGRrl5Md6z8R049;
+	Mon, 17 Mar 2025 15:47:19 +0800 (CST)
+Received: from xaxapp04.zte.com.cn ([10.99.98.157])
+	by mse-fl1.zte.com.cn with SMTP id 52H7l4Sv022486;
+	Mon, 17 Mar 2025 15:47:04 +0800 (+08)
+	(envelope-from feng.wei8@zte.com.cn)
+Received: from mapi (xaxapp04[null])
 	by mapi (Zmail) with MAPI id mid32;
-	Mon, 17 Mar 2025 15:46:57 +0800 (CST)
-Date: Mon, 17 Mar 2025 15:46:57 +0800 (CST)
-X-Zmail-TransId: 2afc67d7d3710bd-1450e
+	Mon, 17 Mar 2025 15:47:06 +0800 (CST)
+Date: Mon, 17 Mar 2025 15:47:06 +0800 (CST)
+X-Zmail-TransId: 2afb67d7d37a33c-0e793
 X-Mailer: Zmail v1.0
-Message-ID: <20250317154657278tVMfwXa9KMOtZ6c_FfHJ9@zte.com.cn>
+Message-ID: <20250317154706711RvRh_96VDw-u63cPmkeHk@zte.com.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-From: <tang.dongxing@zte.com.cn>
-To: <alexander.shishkin@linux.intel.com>
-Cc: <linux-kernel@vger.kernel.org>, <yang.guang5@zte.com.cn>,
-        <yang.yang29@zte.com.cn>, <xu.xin16@zte.com.cn>,
-        <ye.xingchen@zte.com.cn>
-Subject: =?UTF-8?B?W1BBVENIXSBpbnRlbF90aDogbXN1OiB1c2Ugc3lzZnNfZW1pdF9hdCgpIGluc3RlYWQgb2Ygc2NucHJpbnRmKCk=?=
+From: <feng.wei8@zte.com.cn>
+To: <andrii@kernel.org>
+Cc: <eddyz87@gmail.com>, <mykolal@fb.com>, <ast@kernel.org>,
+        <daniel@iogearbox.net>, <martin.lau@linux.dev>, <song@kernel.org>,
+        <yonghong.song@linux.dev>, <john.fastabend@gmail.com>,
+        <kpsingh@kernel.org>, <sdf@fomichev.me>, <haoluo@google.com>,
+        <jolsa@kernel.org>, <shuah@kernel.org>, <bpf@vger.kernel.org>,
+        <linux-kselftest@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: =?UTF-8?B?W1BBVENIXSBzZWxmdGVzdHMvYnBmOiBSZXBsYWNlIGRlcHJlY2F0ZWQgc3RybmNweSgpIHdpdGggc3Ryc2NweSgp?=
 Content-Type: text/plain;
 	charset="UTF-8"
-X-MAIL:mse-fl2.zte.com.cn 52H7ktjt063259
+X-MAIL:mse-fl1.zte.com.cn 52H7l4Sv022486
 X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 67D7D382.001/4ZGRrf3bsSz5B1Jy
+X-Fangmail-MID-QID: 67D7D387.005/4ZGRrl5Md6z8R049
 
-From: TangDongxing <tang.dongxing@zte.com.cn>
+From: FengWei <feng.wei8@zte.com.cn>
 
-Follow the advice in Documentation/filesystems/sysfs.rst:
-show() should only use sysfs_emit() or sysfs_emit_at() when formatting
-the value to be returned to user space.
+strncpy() is deprecated for NUL-terminated destination buffers. Use
+strscpy() instead and remove the manual NUL-termination.
 
-Signed-off-by: TangDongxing <tang.dongxing@zte.com.cn>
+Signed-off-by: FengWei <feng.wei8@zte.com.cn>
 ---
- drivers/hwtracing/intel_th/msu.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ tools/testing/selftests/bpf/test_verifier.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/hwtracing/intel_th/msu.c b/drivers/hwtracing/intel_th/msu.c
-index bf99d79a4192..eb474e9a9645 100644
---- a/drivers/hwtracing/intel_th/msu.c
-+++ b/drivers/hwtracing/intel_th/msu.c
-@@ -1983,15 +1983,15 @@ nr_pages_show(struct device *dev, struct device_attribute *attr, char *buf)
- 	mutex_lock(&msc->buf_mutex);
-
- 	if (msc->mode == MSC_MODE_SINGLE)
--		count = scnprintf(buf, PAGE_SIZE, "%ld\n", msc->nr_pages);
-+		count = sysfs_emit(buf, "%ld\n", msc->nr_pages);
- 	else if (msc->mode == MSC_MODE_MULTI) {
- 		list_for_each_entry(win, &msc->win_list, entry) {
--			count += scnprintf(buf + count, PAGE_SIZE - count,
-+			count += sysfs_emit_at(buf, count,
- 					   "%d%c", win->nr_blocks,
- 					   msc_is_last_win(win) ? '\n' : ',');
+diff --git a/tools/testing/selftests/bpf/test_verifier.c b/tools/testing/selftests/bpf/test_verifier.c
+index 447b68509d76..dfe64c6d4f87 100644
+--- a/tools/testing/selftests/bpf/test_verifier.c
++++ b/tools/testing/selftests/bpf/test_verifier.c
+@@ -1320,8 +1320,7 @@ static bool cmp_str_seq(const char *log, const char *exp)
+ 			printf("FAIL\nTestcase bug\n");
+ 			return false;
  		}
- 	} else {
--		count = scnprintf(buf, PAGE_SIZE, "unsupported\n");
-+		count = sysfs_emit(buf, "unsupported\n");
- 	}
-
- 	mutex_unlock(&msc->buf_mutex);
+-		strncpy(needle, exp, len);
+-		needle[len] = 0;
++		strscpy(needle, exp, len);
+ 		q = strstr(log, needle);
+ 		if (!q) {
+ 			printf("FAIL\nUnexpected verifier log!\n"
 -- 
 2.25.1
 
