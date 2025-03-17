@@ -1,139 +1,96 @@
-Return-Path: <linux-kernel+bounces-564316-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564317-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B445AA65296
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 15:15:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5448EA65299
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 15:15:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9DA571893DDD
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 14:14:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E07E23B606B
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 14:14:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90C5424168D;
-	Mon, 17 Mar 2025 14:14:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6429F241674;
+	Mon, 17 Mar 2025 14:14:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="GfmTwChY";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="MjyKqYV+";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="GfmTwChY";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="MjyKqYV+"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e7jU9tDH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9498D20322
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 14:14:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD62F241129;
+	Mon, 17 Mar 2025 14:14:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742220869; cv=none; b=IIJ3MXF6+VUD7PGW78RcMEvPyvNPJSvprQHfcIRJxa+08H5MtohUg84UjuzdgXfULiP86anBn0LolY/h742sCw3qLD/sa0U76ecw7ZJctZTuxMJZawdBO1P67BtiqwR/jRHj1pRNpiBAAQteXJN1353ab30aVhzuyMzJc8+p2zU=
+	t=1742220877; cv=none; b=u3HLc9WTXNUL3XXRuPTed03xC/m7DOqseHdsBADZSmCd4HVs9mXzdeLvxLPNsaZ7kCknwhdOHeO6TWz2gGEBTJ8mDV+LiK8Sc4uANFSr0fmsAOMAbYPzuEvkHe+LKugxL5I1yvdiQo/n+QoUbdX2+OToLfrDMUwBPlHiNR70j9I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742220869; c=relaxed/simple;
-	bh=QVlWw1919MkP3HCZOyLZw3RUE/k0cg3+lw6S6q28Xkw=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=Vkr7FYis+C9tC4/peaCdN3pQW6/fhzxuk7MKaYwAOyBIoQ8ZwONL/V58RVZ0RYDTbNXu2e0OX0NB5HxOuSzY2d4QSuUZzT/F90+PhzttG7+NdiqAtOYtkWYjy/fuXXlP+SUdewJ/ykN2cIImNreig6xwNwl6q7RwHgqonht+DUg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=GfmTwChY; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=MjyKqYV+; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=GfmTwChY; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=MjyKqYV+; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from pobox.suse.cz (unknown [10.100.2.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 81D8021BEC;
-	Mon, 17 Mar 2025 14:14:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1742220865; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=AQfDeJ75EOri6vsUUpPlKmxoLJNQZwJ+1oJNbDKNfY8=;
-	b=GfmTwChYc3lHwM7jLKy/DZIPKhNI+0au+l1Yjgkn+fMKQaUDe3fe7gGHc1fJtyn5G5bqnN
-	zZuxmKDk3TFme5IRHPwbyySsmQJ/ckyEf71XOX31yYbk9W+FyS9gQeF708kcrW8gmBFu+D
-	dx2c8PgSpApsmaKpeLeXJFHLwLPPrRA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1742220865;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=AQfDeJ75EOri6vsUUpPlKmxoLJNQZwJ+1oJNbDKNfY8=;
-	b=MjyKqYV+Kv4sY6uS81wKTCB5PeO1SzpwW9ZvMsW75sz1OhbJd9Qs2461OinvQUITKOPHyg
-	bcUl/evr1PlscEBA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1742220865; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=AQfDeJ75EOri6vsUUpPlKmxoLJNQZwJ+1oJNbDKNfY8=;
-	b=GfmTwChYc3lHwM7jLKy/DZIPKhNI+0au+l1Yjgkn+fMKQaUDe3fe7gGHc1fJtyn5G5bqnN
-	zZuxmKDk3TFme5IRHPwbyySsmQJ/ckyEf71XOX31yYbk9W+FyS9gQeF708kcrW8gmBFu+D
-	dx2c8PgSpApsmaKpeLeXJFHLwLPPrRA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1742220865;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=AQfDeJ75EOri6vsUUpPlKmxoLJNQZwJ+1oJNbDKNfY8=;
-	b=MjyKqYV+Kv4sY6uS81wKTCB5PeO1SzpwW9ZvMsW75sz1OhbJd9Qs2461OinvQUITKOPHyg
-	bcUl/evr1PlscEBA==
-Date: Mon, 17 Mar 2025 15:14:25 +0100 (CET)
-From: Miroslav Benes <mbenes@suse.cz>
-To: Josh Poimboeuf <jpoimboe@kernel.org>
-cc: x86@kernel.org, linux-kernel@vger.kernel.org, 
-    Peter Zijlstra <peterz@infradead.org>, 
-    Brendan Jackman <jackmanb@google.com>, 
-    Nathan Chancellor <nathan@kernel.org>
-Subject: Re: [PATCH 13/13] objtool: Add CONFIG_OBJTOOL_WERROR
-In-Reply-To: <3e7c109313ff15da6c80788965cc7450115b0196.1741975349.git.jpoimboe@kernel.org>
-Message-ID: <alpine.LSU.2.21.2503171513220.4236@pobox.suse.cz>
-References: <cover.1741975349.git.jpoimboe@kernel.org> <3e7c109313ff15da6c80788965cc7450115b0196.1741975349.git.jpoimboe@kernel.org>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+	s=arc-20240116; t=1742220877; c=relaxed/simple;
+	bh=pY1JxRicJZEiI7Ph2Tc1BOaW/F125agZaK4g2a7BjCY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KpBARPFmuO/b8GE26q8DU8hmm6+bRq91G3RgGoAi4l9Cv2Ht0IYiKeU/r0M3M+PCKdF4323VXsfapgz2oEwgF4a4cpdLFWShwipMRxA6K40+5s5OE38p/qMOD+nngbFJSMsi9sVLwZJfZw3fLfKjWv/+0f1A6G8MlQhZRsC0ezY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e7jU9tDH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1ED4BC4CEE3;
+	Mon, 17 Mar 2025 14:14:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742220877;
+	bh=pY1JxRicJZEiI7Ph2Tc1BOaW/F125agZaK4g2a7BjCY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=e7jU9tDHKQsu4264eOxVqCtFefQ+3hHlSdlzuyA62F5dujjc0J8y8YcXXwUbzzAjv
+	 6mJV8B0MlCCWnrdcJz+nPJOREaUhEQP1Ccw2212uEEyHficjeEzDxXmhWxs/udbsuZ
+	 Syak/ALU8+PfWUTpLfJ45USpTfc1c1fvhGaanG9ufQY/wlT2HzUTL3BoF86xqoyOAo
+	 fPhIQywP3DDvkSZAuX27cm0q8HUNGDPR8Tfgj4Jrgsk9fe1IaSlfC8fbkJKp0Ad+1c
+	 2GLTvk7pt6LS+CQ+Uamg9GbzIjC/jJ83/GocWqKRvx0k6cbDCh4Ie9xifFql9Twkfe
+	 kEPQ3bZnyrYsg==
+Date: Mon, 17 Mar 2025 14:14:33 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Raju Rangoju <Raju.Rangoju@amd.com>
+Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	krishnamoorthi.m@amd.com, akshata.mukundshetty@amd.com
+Subject: Re: [PATCH 00/10] spi: Add driver to support AMD eSPI controller
+Message-ID: <e41947bb-7a2d-4b64-b680-d38dd9935a00@sirena.org.uk>
+References: <20250313183440.261872-1-Raju.Rangoju@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_ZERO(0.00)[0];
-	ARC_NA(0.00)[];
-	MID_RHS_MATCH_FROMTLD(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCPT_COUNT_FIVE(0.00)[6]
-X-Spam-Score: -4.30
-X-Spam-Flag: NO
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="RLLAKZMqeKdynpzg"
+Content-Disposition: inline
+In-Reply-To: <20250313183440.261872-1-Raju.Rangoju@amd.com>
+X-Cookie: I know how to do SPECIAL EFFECTS!!
 
-On Fri, 14 Mar 2025, Josh Poimboeuf wrote:
 
-> Objtool warnings can be indicative of crashes, broken live patching, or
-> even boot failures.  Ignoring them is not recommended.
-> 
-> Add CONFIG_OBJTOOL_WERROR to upgrade objtool warnings to errors by
-> enabling the objtool --Werror option.  Also set --backtrace to print the
-> branches leading up to the warning, which can help considerably when
-> debugging certain warnings.
-> 
-> To avoid breaking bots too badly for now, make it the default for real
-> world builds only (!COMPILE_TEST).
-> 
-> Co-developed-by: Brendan Jackman <jackmanb@google.com>
-> Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
+--RLLAKZMqeKdynpzg
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Brendan's SoB missing.
+On Fri, Mar 14, 2025 at 12:04:30AM +0530, Raju Rangoju wrote:
+> The eSPI protocol serves as a communication interface between the main
+> processor and peripheral devices in computer systems. It offers several
+> advantages over the traditional LPC bus, including higher data transfer
+> rates, increased scalability and improved system management capabilities.
+> The eSPI protocol supports multiple channels, each serving a specific
+> purpose in the communication process.
 
-With 'default y' being present or not
+I see nothing in this series that registers a SPI controller with the
+SPI core.  You need to use the standard frameworks the kernel offers to
+provide standard functionality.
 
-Reviewed-by: Miroslav Benes <mbenes@suse.cz>
+--RLLAKZMqeKdynpzg
+Content-Type: application/pgp-signature; name="signature.asc"
 
-and fingers crossed.
+-----BEGIN PGP SIGNATURE-----
 
-M
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmfYLkgACgkQJNaLcl1U
+h9CvFQf/a8knKTfIgOI8IOHCct/yutOUa+x9Lzw7GkfqwWr+cM3ZAc4zWfpkSHHV
+3pg577VvDocl+JNmfid77IqcuseOxmnhl/wI0ZL2hGJtOgpAa3KZ0wOlNvuVgLvA
+naYxpUHm0SXQiUA2iPXTTyuCZztcqxCKt2slDi7fr0tnjIGZec9Xt3WL+yE65YEv
+it8nbDQ9rcWRBe7VG9y5kgCWGGvhxX6K47VU5IrqnqWrP3dQf20jJrUlpiny54BF
+wRmDZ715b4+OXKBlYBfc12OS5gm/whQFGlWsBJEoKS70GTzaBDDu4mAok7U8kT0A
+J8yhDe3wtRWuDcqOMKheFWZkCLTK8w==
+=wmJA
+-----END PGP SIGNATURE-----
+
+--RLLAKZMqeKdynpzg--
 
