@@ -1,60 +1,261 @@
-Return-Path: <linux-kernel+bounces-563399-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563401-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D072CA6410A
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 07:16:35 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3FE5A6410E
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 07:17:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0DD091891179
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 06:16:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E81B316EA3C
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 06:17:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11752219A70;
-	Mon, 17 Mar 2025 06:16:24 +0000 (UTC)
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2AAB219A8D;
+	Mon, 17 Mar 2025 06:17:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="YcC7B322"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60AE8290F;
-	Mon, 17 Mar 2025 06:16:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D76D1290F;
+	Mon, 17 Mar 2025 06:17:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742192183; cv=none; b=jGo3A1CS0061k8FKD/dC5tqgb0oZ6eZo4N8CIjAC4Ydyk9YS2DKXyucyu33vvxMqRzfdsjSBbjc8uvzlqTIlWfsaon0B5p0VqvpTXptHbhhXKwSTlTI97Dg7G6vwwkIXgR7J5tXLetGvD8ko17cDK1O7BKJvtTpNRQAfTljNAj4=
+	t=1742192231; cv=none; b=B4GA0R2C+ODRujuEc1CRrdCt67s671eKdUDuMdRr/xouJhdm7xzUerR8N4OMvrU+dZ9xkVd6Jr9Y2seKWyI2JTkgBJ4XH1Rd9ABbWkwvBuU51fMUPEaX+81ojveHtY8lO56PXpAZLCljnQJGMEpcBx29Uq0A/uqM2IFV8fQHYts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742192183; c=relaxed/simple;
-	bh=M7NmYC/Iylm9myghHwqILim55SAUt9QrM+UZYk0eJlw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M3kfzhkvrZajb3JF3fGOukHLTL/pOa6sevPOJK6GK92qUQemaBnHHSA3+F/oklSoQn4eQGDcItieRJ+rC1fRAomceeDJ7DH2a7YImtQ7jia1li7TA20NguPi/nEOw2Vh2oCaFRnS8p6vlM/Wlj+0UL23dyr0qi9sLtaDzk5+mIo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 6A83368AFE; Mon, 17 Mar 2025 07:16:18 +0100 (CET)
-Date: Mon, 17 Mar 2025 07:16:18 +0100
-From: Christoph Hellwig <hch@lst.de>
-To: John Garry <john.g.garry@oracle.com>
-Cc: brauner@kernel.org, djwong@kernel.org, cem@kernel.org,
-	dchinner@redhat.com, linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	ojaswin@linux.ibm.com, ritesh.list@gmail.com,
-	martin.petersen@oracle.com, tytso@mit.edu,
-	linux-ext4@vger.kernel.org
-Subject: Re: [PATCH v6 05/13] xfs: allow block allocator to take an
- alignment hint
-Message-ID: <20250317061618.GE27019@lst.de>
-References: <20250313171310.1886394-1-john.g.garry@oracle.com> <20250313171310.1886394-6-john.g.garry@oracle.com>
+	s=arc-20240116; t=1742192231; c=relaxed/simple;
+	bh=ag2I3Z6QwQfbm8LXO+zVW/LeJnpXJZRawJhY1voh77A=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=kM1aN5sVlc91cwdsxHXnmIa+tmoMq2E2riWklvR0QCVV50KpMrbtPXy7UgGKyPq1cbv4K9uT4O36Fb8qsJwoOdj5jgJjnN2mVo7BnBbbU/t4p7ynP8v4FA1irdTKmpqqimKwnZfgIGqXCwaKruYQZOl1MVDtGmh1TzQLfHXRUJU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=YcC7B322; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1742192224;
+	bh=uzr6N2j9JwgdCojr5RBgum8Z5ZbFaXwyt/EUAwMk8oM=;
+	h=Date:From:To:Cc:Subject:From;
+	b=YcC7B3220EZYlGBTgYNwHbBJoUAKrNXpns9oiBOnwZJ6lKsm9QR6M4iOsovHjrzKo
+	 fN5P3ERe53bRZBN/9QiyDfcH0jSVyVToVyTuSoNN0k0F4+gs0bPYuXdX0gSyX8ILhy
+	 855St7SQAMhlkrdUhha7LhrAxEVsm+8D2dv/OhT+OQMhJ7TQOxXGDIUzctkjZixNEk
+	 08pIEqqb5K0leSDgVzWdwc6IA/reO2vqxSVIgJdvrrc8/ovu8RdGTrfJM6+jQtKZcK
+	 SH8P0M5zE97SOMjl+EOTsce1TYY8h04/jXaZGPwS2KNeyR25I3wwti9tkX/J9rG9gM
+	 azvZREvuRJItw==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZGPrb0ncRz4wcn;
+	Mon, 17 Mar 2025 17:17:02 +1100 (AEDT)
+Date: Mon, 17 Mar 2025 17:17:01 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Christoffer Dall <cdall@cs.columbia.edu>, Marc Zyngier <maz@kernel.org>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
+Cc: Douglas Anderson <dianders@chromium.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>, Oliver Upton <oliver.upton@linux.dev>,
+ Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
+Subject: linux-next: manual merge of the kvm-arm tree with the arm64 tree
+Message-ID: <20250317171701.71c8677a@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250313171310.1886394-6-john.g.garry@oracle.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Type: multipart/signed; boundary="Sig_/C2/R6dTjtzY/cpnU2J8rCu1";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Looks good:
+--Sig_/C2/R6dTjtzY/cpnU2J8rCu1
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+Hi all,
+
+Today's linux-next merge of the kvm-arm tree got a conflict in:
+
+  arch/arm64/kernel/proton-pack.c
+
+between commits:
+
+  e403e8538359 ("arm64: errata: Assume that unknown CPUs _are_ vulnerable t=
+o Spectre BHB")
+  a5951389e58d ("arm64: errata: Add newer ARM cores to the spectre_bhb_loop=
+_affected() lists")
+
+from the arm64 tree and commit:
+
+  e3121298c7fc ("arm64: Modify _midr_range() functions to read MIDR/REVIDR =
+internally")
+
+from the kvm-arm tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc arch/arm64/kernel/proton-pack.c
+index 0f51fd10b4b0,a573fa40d4b6..000000000000
+--- a/arch/arm64/kernel/proton-pack.c
++++ b/arch/arm64/kernel/proton-pack.c
+@@@ -845,86 -845,52 +845,86 @@@ static unsigned long system_bhb_mitigat
+   * This must be called with SCOPE_LOCAL_CPU for each type of CPU, before =
+any
+   * SCOPE_SYSTEM call will give the right answer.
+   */
+ -u8 spectre_bhb_loop_affected(int scope)
+ +static bool is_spectre_bhb_safe(int scope)
+ +{
+ +	static const struct midr_range spectre_bhb_safe_list[] =3D {
+ +		MIDR_ALL_VERSIONS(MIDR_CORTEX_A35),
+ +		MIDR_ALL_VERSIONS(MIDR_CORTEX_A53),
+ +		MIDR_ALL_VERSIONS(MIDR_CORTEX_A55),
+ +		MIDR_ALL_VERSIONS(MIDR_CORTEX_A510),
+ +		MIDR_ALL_VERSIONS(MIDR_CORTEX_A520),
+ +		MIDR_ALL_VERSIONS(MIDR_BRAHMA_B53),
+ +		MIDR_ALL_VERSIONS(MIDR_QCOM_KRYO_2XX_SILVER),
+ +		MIDR_ALL_VERSIONS(MIDR_QCOM_KRYO_3XX_SILVER),
+ +		MIDR_ALL_VERSIONS(MIDR_QCOM_KRYO_4XX_SILVER),
+ +		{},
+ +	};
+ +	static bool all_safe =3D true;
+ +
+ +	if (scope !=3D SCOPE_LOCAL_CPU)
+ +		return all_safe;
+ +
+- 	if (is_midr_in_range_list(read_cpuid_id(), spectre_bhb_safe_list))
+++	if (is_midr_in_range_list(spectre_bhb_safe_list))
+ +		return true;
+ +
+ +	all_safe =3D false;
+ +
+ +	return false;
+ +}
+ +
+ +static u8 spectre_bhb_loop_affected(void)
+  {
+  	u8 k =3D 0;
+ -	static u8 max_bhb_k;
+ =20
+ -	if (scope =3D=3D SCOPE_LOCAL_CPU) {
+ -		static const struct midr_range spectre_bhb_k32_list[] =3D {
+ -			MIDR_ALL_VERSIONS(MIDR_CORTEX_A78),
+ -			MIDR_ALL_VERSIONS(MIDR_CORTEX_A78AE),
+ -			MIDR_ALL_VERSIONS(MIDR_CORTEX_A78C),
+ -			MIDR_ALL_VERSIONS(MIDR_CORTEX_X1),
+ -			MIDR_ALL_VERSIONS(MIDR_CORTEX_A710),
+ -			MIDR_ALL_VERSIONS(MIDR_CORTEX_X2),
+ -			MIDR_ALL_VERSIONS(MIDR_NEOVERSE_N2),
+ -			MIDR_ALL_VERSIONS(MIDR_NEOVERSE_V1),
+ -			{},
+ -		};
+ -		static const struct midr_range spectre_bhb_k24_list[] =3D {
+ -			MIDR_ALL_VERSIONS(MIDR_CORTEX_A76),
+ -			MIDR_ALL_VERSIONS(MIDR_CORTEX_A77),
+ -			MIDR_ALL_VERSIONS(MIDR_NEOVERSE_N1),
+ -			{},
+ -		};
+ -		static const struct midr_range spectre_bhb_k11_list[] =3D {
+ -			MIDR_ALL_VERSIONS(MIDR_AMPERE1),
+ -			{},
+ -		};
+ -		static const struct midr_range spectre_bhb_k8_list[] =3D {
+ -			MIDR_ALL_VERSIONS(MIDR_CORTEX_A72),
+ -			MIDR_ALL_VERSIONS(MIDR_CORTEX_A57),
+ -			{},
+ -		};
+ +	static const struct midr_range spectre_bhb_k132_list[] =3D {
+ +		MIDR_ALL_VERSIONS(MIDR_CORTEX_X3),
+ +		MIDR_ALL_VERSIONS(MIDR_NEOVERSE_V2),
+ +	};
+ +	static const struct midr_range spectre_bhb_k38_list[] =3D {
+ +		MIDR_ALL_VERSIONS(MIDR_CORTEX_A715),
+ +		MIDR_ALL_VERSIONS(MIDR_CORTEX_A720),
+ +	};
+ +	static const struct midr_range spectre_bhb_k32_list[] =3D {
+ +		MIDR_ALL_VERSIONS(MIDR_CORTEX_A78),
+ +		MIDR_ALL_VERSIONS(MIDR_CORTEX_A78AE),
+ +		MIDR_ALL_VERSIONS(MIDR_CORTEX_A78C),
+ +		MIDR_ALL_VERSIONS(MIDR_CORTEX_X1),
+ +		MIDR_ALL_VERSIONS(MIDR_CORTEX_A710),
+ +		MIDR_ALL_VERSIONS(MIDR_CORTEX_X2),
+ +		MIDR_ALL_VERSIONS(MIDR_NEOVERSE_N2),
+ +		MIDR_ALL_VERSIONS(MIDR_NEOVERSE_V1),
+ +		{},
+ +	};
+ +	static const struct midr_range spectre_bhb_k24_list[] =3D {
+ +		MIDR_ALL_VERSIONS(MIDR_CORTEX_A76),
+ +		MIDR_ALL_VERSIONS(MIDR_CORTEX_A76AE),
+ +		MIDR_ALL_VERSIONS(MIDR_CORTEX_A77),
+ +		MIDR_ALL_VERSIONS(MIDR_NEOVERSE_N1),
+ +		MIDR_ALL_VERSIONS(MIDR_QCOM_KRYO_4XX_GOLD),
+ +		{},
+ +	};
+ +	static const struct midr_range spectre_bhb_k11_list[] =3D {
+ +		MIDR_ALL_VERSIONS(MIDR_AMPERE1),
+ +		{},
+ +	};
+ +	static const struct midr_range spectre_bhb_k8_list[] =3D {
+ +		MIDR_ALL_VERSIONS(MIDR_CORTEX_A72),
+ +		MIDR_ALL_VERSIONS(MIDR_CORTEX_A57),
+ +		{},
+ +	};
+ =20
+- 	if (is_midr_in_range_list(read_cpuid_id(), spectre_bhb_k132_list))
+ -		if (is_midr_in_range_list(spectre_bhb_k32_list))
+ -			k =3D 32;
+ -		else if (is_midr_in_range_list(spectre_bhb_k24_list))
+ -			k =3D 24;
+ -		else if (is_midr_in_range_list(spectre_bhb_k11_list))
+ -			k =3D 11;
+ -		else if (is_midr_in_range_list(spectre_bhb_k8_list))
+ -			k =3D  8;
+ -
+ -		max_bhb_k =3D max(max_bhb_k, k);
+ -	} else {
+ -		k =3D max_bhb_k;
+ -	}
+++	if (is_midr_in_range_list(spectre_bhb_k132_list))
+ +		k =3D 132;
+- 	else if (is_midr_in_range_list(read_cpuid_id(), spectre_bhb_k38_list))
+++	else if (is_midr_in_range_list(spectre_bhb_k38_list))
+ +		k =3D 38;
+- 	else if (is_midr_in_range_list(read_cpuid_id(), spectre_bhb_k32_list))
+++	else if (is_midr_in_range_list(spectre_bhb_k32_list))
+ +		k =3D 32;
+- 	else if (is_midr_in_range_list(read_cpuid_id(), spectre_bhb_k24_list))
+++	else if (is_midr_in_range_list(spectre_bhb_k24_list))
+ +		k =3D 24;
+- 	else if (is_midr_in_range_list(read_cpuid_id(), spectre_bhb_k11_list))
+++	else if (is_midr_in_range_list(spectre_bhb_k11_list))
+ +		k =3D 11;
+- 	else if (is_midr_in_range_list(read_cpuid_id(), spectre_bhb_k8_list))
+++	else if (is_midr_in_range_list(spectre_bhb_k8_list))
+ +		k =3D  8;
+ =20
+  	return k;
+  }
+
+--Sig_/C2/R6dTjtzY/cpnU2J8rCu1
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfXvl0ACgkQAVBC80lX
+0GwiLQf/cMkKaN3oXT+rh0glxXgQAJzx55wpr4vPLmuUFlug2gcAn9CmQRKP2Lk9
+e6akFhDCvRfW6RGFpKe6fFa8Qax9Ka7osFJ0kvVqCjOSwgCHgQIDGX9dDoOPU7N7
+ou/3u9BkVSLdYKoNi/qS0CTMDqxIonxflcQ/JYCZ3x+QQ01LlJHhIRkGjPeBAEVs
+5QmhsCDbV7PBt1HqmdTWuNeVSFTLK6P3fJLKiFFMoh+hkbolGCf5nSNdK3ugs4W2
+IWWsxOefsqvZKp9Zhk5NBB/+As10ztxnEsXYVTDjZZIwXD7iIR/INg8lLyOBt9kE
+4jv6U/JPz0R50RZZUsyXD6rdrylLKw==
+=WidW
+-----END PGP SIGNATURE-----
+
+--Sig_/C2/R6dTjtzY/cpnU2J8rCu1--
 
