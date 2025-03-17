@@ -1,141 +1,129 @@
-Return-Path: <linux-kernel+bounces-564320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564328-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8942A6529F
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 15:16:51 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DF19A652CE
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 15:20:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0CD5B1885DF4
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 14:17:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 308F97AA83A
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 14:19:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47F1824060C;
-	Mon, 17 Mar 2025 14:16:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1771024166F;
+	Mon, 17 Mar 2025 14:20:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LQmbZHHp"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kGCFzqMs"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D44823770C;
-	Mon, 17 Mar 2025 14:16:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FCBE1DAC81;
+	Mon, 17 Mar 2025 14:20:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742221003; cv=none; b=DRe9r+973hmQZD4ISUNqkrHILAttpNHm4ZTcW8iczBbTXQvWUSisvokApiqu2pgSe8wIo2IdTFqbCXHgwP8K+MTpXS3ZpxNohQ9bBlIPZZRL7/jhmaKl115gBcUG0JdGXyxtfqZBJY7L7xnNS/Tjh/gX4t+4p3GwovWHrn1e100=
+	t=1742221218; cv=none; b=LqRjq2QA21sejvRtzeuGihXyxDskx8cEgtBL9WdgmL9tG0n+AQ4n4dQH9Z/1o0CSCExT0D8xgrR7SFVaDoSJFVSsFnXcnU+kCEnpIGDDCjrp1R58GGLGi91MjY2S6h5PFLGKB/z5nRyh1mV7Xw/g58fuYrOl9u2/JzD5ULfITDc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742221003; c=relaxed/simple;
-	bh=0ilSX9e2BRGSoa04k4V6buK/L3zHxwpAqwF0JBaigfk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Ep7eQDeO1BgOBQzz0xMHrD3CM+qP3XzhvYMYtvnw11e4nXooJL82fj3/NqAL0O6xcU6V14YkXQYxOZeCL2TfYyeWNwg5BTDcVYN8lCZLuauZ9Jz2xkWUwkn4L11idnX/3f7hz/3xwf5yhqO0m1nRNDJXKiLqdaVr1GyrNMhvXdo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LQmbZHHp; arc=none smtp.client-ip=209.85.221.45
+	s=arc-20240116; t=1742221218; c=relaxed/simple;
+	bh=XhyHwURC9+CP8pemGI0NfFA0YnuwTfrUw5S8OEx64IU=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References; b=h+YkZl1E3XFj714K8Nr46nU4TFg1DpWMjCK203qZ5jPpDC7Py8oel956ajllQPUV59AB0rtKZc9FY8G6lgDGYBmPdfjAbgMlYjFqNlSdsDgcbYSFNI320/QedumjNU6iqKbyQ6KIE6WmnOBShJGrQxLIboSYZzEFlhVqCbTfx4Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kGCFzqMs; arc=none smtp.client-ip=209.85.214.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3995ff6b066so911787f8f.3;
-        Mon, 17 Mar 2025 07:16:41 -0700 (PDT)
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-223594b3c6dso88123055ad.2;
+        Mon, 17 Mar 2025 07:20:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742220999; x=1742825799; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=c27v+fvC8ONOiONTHIvwQnJldmxitxn94mbwD2g2Dgw=;
-        b=LQmbZHHpcSXeYOy2WPU8g7E/xxvEPQmjDAFpDFI7JXitHsF3acDJQLb81hO7+wYxd7
-         HHSOFExP1sQSpIhZwn8boh7C24xqEwIYF8CPiY41DM7Y1GuTe5OatgXGzn4lmZdtXG7R
-         LVaozVXCvGvkdxR5qJYdvVPP4/eU8u1K6I8Xsb5fLCb214rvz+9McM9d6m/A4QDf7PQp
-         oQVF5p1V4CQrEwduZSdzq4UxFcb0ijVcPP72TLqx8wVEfAkKokJjN/YK/SYb1dnDrLe1
-         ulSSBlZVmlgbkQ5ywIY07OT8NEVamam/ld1cQLnUuPjEh0tRR6DsGLeWXKs3DYb+JuQd
-         895w==
+        d=gmail.com; s=20230601; t=1742221216; x=1742826016; darn=vger.kernel.org;
+        h=references:message-id:date:in-reply-to:subject:cc:to:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=mn6LOo+P9XtJ87ZI04DuUoHTU+5hgc1cTOgwmoIh8Cc=;
+        b=kGCFzqMsRcXQPUDu42HWi2F6G83VIknczldFSsLM7FRk3RUE1tcWKI7m/VSwEEDLp/
+         VpYn/oTi7KuKintbpGhzN74MpuCEcUAsKTWyLO6odmzK+KAU7w5uGGhTR9Gh2PNzmngE
+         NTZQcDl5soom4o2/HUUrBzTT3Rm9jVCBxRGLj9urjgxpB8Ith+ZJopRGK/bvVGHt2kSA
+         hVVFX5Wlqun0TVMI9JOBmgppQlZThaoxxOLonZyNwukfGYqf4ZUYBMYIqRlHO9V122DW
+         CH97BkTMiGaBiOzBprc/GlurVPd0oygJb5np/NihFEpT0SCiOMP/DuEnK276QmhItEKW
+         LKYg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742220999; x=1742825799;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=c27v+fvC8ONOiONTHIvwQnJldmxitxn94mbwD2g2Dgw=;
-        b=CfkQcXWIMYxGOyCbuko4vs30DCgQJVLNsNeWaiHQCPBYDGuFQiZRsGbmzW0NZykK/S
-         0qDK/meKNDgWXlg7aKYmfPUulPmVwS23yyMeKi6BTOuMeOJ2UkoScGtLcD7ZRFMyz/Mn
-         4mj/+P3+6r69KXjiM+gf5GLT1rSh5Oqs0w6N5GR6VRjtV8q5VktgMYj+gpToMIHiJPU2
-         Tw3eNQRw7Z3lLKqAzvvHzare2iPe8XXYlrTBVVMjUjBaIeyX8FYx7zMaXgRpqlb+PoQG
-         wf2kl1Tb9QtjeQcGO7vVDiq64U/oxz970pdb9vnJnpZZmRoj7zESneMKPBCl0jyJbLU7
-         eEYw==
-X-Forwarded-Encrypted: i=1; AJvYcCU3fPF0259uY0H83pfDRSOSDVGExAd+at7N0rXXIo7bDkfnl4RFdC7FUogGNNvOkV/+iFhj/TvCiWgrIw==@vger.kernel.org, AJvYcCVw1/6M9ExOesXk13lENcIpXLodBO6zBppdNd/RcMYdcF4rseyxzWCqKpylWfy7yRiO33vsbQIZClMNv+eM@vger.kernel.org
-X-Gm-Message-State: AOJu0YwWvaQlKJHgo9pU5AObnlKCIs4+wSJe2WIq8kF+6coLHCZxFRVo
-	vbjucxBOtPCJjYFunakowSyq7jerWafYrbB2v+2HE57EEi+73ysE
-X-Gm-Gg: ASbGncsC2+u0ClMBtjZnTSsYIIAh9RpimKRwUqKDhObkxbX6rW8oOjVrcGfLvz51i/6
-	K5qZUJMzNf2R5Za69+hfJWA8aB81BOKs583LFTbF2U+tSn4krVO7f1W8noVCrsQRCXTHXkFfhKo
-	ojSbCIdmrDH9Mujgyadqo35lTn8o6RkyrsWmLyKtT0EYUuM2KAOa2J54yDsJSQtXIAoCw8S3lK7
-	MKbBk9TWTGhWBMWP93PQ14Ai6Ew0AHGstGyFZYlQAZ/3xIx7xPWRv+iDWWMN+0ODXLboE3I21Sc
-	6A0piVe6xMCHj/L4jIJEbfbrVoDIwE5wuH9ph2Sh/QTbHD8i7BP+Yv4o7PB73i42wnc392VDKZz
-	5rJQtoME=
-X-Google-Smtp-Source: AGHT+IFj3IrRceB74+RXiXiFBoPZDpqrSS8EKJfu0cp/CuW2HsSBA6TromRFP9hqrvnND9IxwoP3bw==
-X-Received: by 2002:a5d:6da9:0:b0:38d:e401:fd61 with SMTP id ffacd0b85a97d-39720d47e80mr14523459f8f.49.1742220999418;
-        Mon, 17 Mar 2025 07:16:39 -0700 (PDT)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-395cb318afbsm15557735f8f.72.2025.03.17.07.16.38
+        d=1e100.net; s=20230601; t=1742221216; x=1742826016;
+        h=references:message-id:date:in-reply-to:subject:cc:to:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=mn6LOo+P9XtJ87ZI04DuUoHTU+5hgc1cTOgwmoIh8Cc=;
+        b=uYIVC3tUBqMOQAyeB8qI2WuJVwknD1n9xIqy/FxetiZpR2Yh2VTWUp7W7glrha0DD2
+         ZkfTf4DDVTJYIJv9rFYj2aYeEurZGUc9jWOeyNaxI26iP34Kn+/26Tqn2QGAaKDz5CT3
+         9bq20VxpoBV/GqkzXpHsIPntPssj2WD3h1uxeAwn3tFNsxPMDK4x1Hc/Jtc6uja67LFn
+         JNdVwYyLwao0CzY0jZWoEkLQKcjwwFSHQLGBnX9uJZ5AWKVcxwaFqmtr7Q3nfaDu8gyy
+         DtkeMuOhL3h2KsAZQx7cIWDWuCsQyL0S30M58Wv2hBYpnW8fGYGCfGKlAMj5yzeHsrFf
+         yUsg==
+X-Forwarded-Encrypted: i=1; AJvYcCU27GHEZ70UPxuD98FaL7+UFFCTA8bgFQ2KgHp+TfeVLJl04EVe0hPYbFUBDsMBsCquWiwEWBvlQov46R3Y@vger.kernel.org, AJvYcCVsux032z70M+Tp7ST1m/2Ea6ddqdUU635IGL0+AFJIObeEjc9H3QAbq+8npqc+RDFNkHSuPGXTM+rA@vger.kernel.org, AJvYcCXZWK3/nwcWyuVZ9+DPKnAwgNi8bqYabiGHjqAcw/vK07DyRY9UiZ24GKMqrdFyn3Ijn/CCqF5kRwQpJyon2w==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzke7dsi/6R0XSwhOcOSd8nqtIKE2NbzO3vtOIgKbBnTruDUVGU
+	qD/c3k/GcabPoZulPbYJH+cqmjhzDXfdctpzW/Ky8DsMROKxZW6C
+X-Gm-Gg: ASbGncv8oZuMQ2bO9nHiuyK9GcB9DcYYVD8W6NIkZVY+aLaSUnkODtU6WIwhP7q3tSM
+	qrPGMu/oP6rbgkwS1R/jYzkZeUItubkBKCS/YxzJ8NJ4mxmu51LcGf5ofFzAHBoOqjZuRcZG5xw
+	qguGQeXEif558IF9DJq4iKVO5PA6RF4QbVFragCofS3oxEAeITbbOgShYAbhzRdOJtzEgaSc+2D
+	k7FHBtYH5vVjHvCCrRCWYL0duLDw22pHfrkWuQ+B5Cc/VMPoZ82IJp2bZJnTVjVPBqqpUqUxIc9
+	ApAM3pwPnsV+PuP1e/GkC9JuoDMMEK1FW6obUA==
+X-Google-Smtp-Source: AGHT+IGV1CWprmcfxTUb24BvAmY8dTAt4IVm8P8AohmpcC8KXTXWtD2cv7EA/HFLs4YKHqZrL28FFA==
+X-Received: by 2002:a17:903:230d:b0:220:e1e6:4457 with SMTP id d9443c01a7336-225e0a8dff2mr145717585ad.26.1742221216269;
+        Mon, 17 Mar 2025 07:20:16 -0700 (PDT)
+Received: from dw-tp ([171.76.81.247])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-225c6bbfe22sm75580795ad.206.2025.03.17.07.20.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Mar 2025 07:16:38 -0700 (PDT)
-Date: Mon, 17 Mar 2025 14:16:37 +0000
-From: David Laight <david.laight.linux@gmail.com>
-To: Arnd Bergmann <arnd@kernel.org>
-Cc: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>, David
- Sterba <dsterba@suse.com>, Qu Wenruo <wqu@suse.com>, Arnd Bergmann
- <arnd@arndb.de>, Johannes Thumshirn <johannes.thumshirn@wdc.com>, Filipe
- Manana <fdmanana@suse.com>, Li Zetao <lizetao1@huawei.com>,
- linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
- akpm@linux-foundation.org
-Subject: Re: [PATCH] btrfs: fix signedness issue in min()
-Message-ID: <20250317141637.5ee242ad@pumpkin>
-In-Reply-To: <20250314155447.124842-1-arnd@kernel.org>
-References: <20250314155447.124842-1-arnd@kernel.org>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+        Mon, 17 Mar 2025 07:20:15 -0700 (PDT)
+From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+To: John Garry <john.g.garry@oracle.com>, brauner@kernel.org, djwong@kernel.org, cem@kernel.org, dchinner@redhat.com, hch@lst.de
+Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, ojaswin@linux.ibm.com, martin.petersen@oracle.com, tytso@mit.edu, linux-ext4@vger.kernel.org, John Garry <john.g.garry@oracle.com>
+Subject: Re: [PATCH v6 02/13] iomap: comment on atomic write checks in iomap_dio_bio_iter()
+In-Reply-To: <20250313171310.1886394-3-john.g.garry@oracle.com>
+Date: Mon, 17 Mar 2025 19:46:40 +0530
+Message-ID: <87senbspx3.fsf@gmail.com>
+References: <20250313171310.1886394-1-john.g.garry@oracle.com> <20250313171310.1886394-3-john.g.garry@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
 
-On Fri, 14 Mar 2025 16:54:41 +0100
-Arnd Bergmann <arnd@kernel.org> wrote:
+John Garry <john.g.garry@oracle.com> writes:
 
-> From: Arnd Bergmann <arnd@arndb.de>
-> 
-> Comparing a u64 to an loff_t causes a warning in min()
-> 
-> fs/btrfs/extent_io.c: In function 'extent_write_locked_range':
-> include/linux/compiler_types.h:557:45: error: call to '__compiletime_assert_588' declared with attribute error: min(folio_pos(folio) + folio_size(folio) - 1, end) signedness error
-> fs/btrfs/extent_io.c:2472:27: note: in expansion of macro 'min'
->  2472 |                 cur_end = min(folio_pos(folio) + folio_size(folio) - 1, end);
->       |                           ^~~
-> 
-> Use min_t() instead.
-
-It would be slightly better to use min_unsigned() since, regardless of the types
-involved, it can't discard significant bits.
-
-OTOH the real problem here is that both folio_pos() and folio_size() return signed types.
-
-	David
-
-> 
-> Fixes: f286b1c72175 ("btrfs: prepare extent_io.c for future larger folio support")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> Help explain the code.
+>
+> Also clarify the comment for bio size check.
+>
+> Signed-off-by: John Garry <john.g.garry@oracle.com>
 > ---
->  fs/btrfs/extent_io.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/btrfs/extent_io.c b/fs/btrfs/extent_io.c
-> index c2451194be66..88bced0bfa51 100644
-> --- a/fs/btrfs/extent_io.c
-> +++ b/fs/btrfs/extent_io.c
-> @@ -2468,7 +2468,7 @@ void extent_write_locked_range(struct inode *inode, const struct folio *locked_f
->  			continue;
->  		}
+>  fs/iomap/direct-io.c | 7 ++++++-
+>  1 file changed, 6 insertions(+), 1 deletion(-)
+>
+> diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
+> index 8c1bec473586..9d72b99cb447 100644
+> --- a/fs/iomap/direct-io.c
+> +++ b/fs/iomap/direct-io.c
+> @@ -350,6 +350,11 @@ static int iomap_dio_bio_iter(struct iomap_iter *iter, struct iomap_dio *dio)
+>  		bio_opf |= REQ_OP_WRITE;
 >  
-> -		cur_end = min(folio_pos(folio) + folio_size(folio) - 1, end);
-> +		cur_end = min_t(u64, folio_pos(folio) + folio_size(folio) - 1, end);
->  		cur_len = cur_end + 1 - cur;
->  
->  		ASSERT(folio_test_locked(folio));
+>  		if (iter->flags & IOMAP_ATOMIC_HW) {
+> +			/*
+> +			* Ensure that the mapping covers the full write length,
+> +			* otherwise we will submit multiple BIOs, which is
+> +			* disallowed.
+> +			*/
 
+Nit: IMO, this can be clubbed together with your next patch PATCH-03 itself.
+But either ways, no strong preference.
+
+-ritesh
+
+>  			if (length != iter->len)
+>  				return -EINVAL;
+>  			bio_opf |= REQ_ATOMIC;
+> @@ -449,7 +454,7 @@ static int iomap_dio_bio_iter(struct iomap_iter *iter, struct iomap_dio *dio)
+>  		n = bio->bi_iter.bi_size;
+>  		if (WARN_ON_ONCE((bio_opf & REQ_ATOMIC) && n != length)) {
+>  			/*
+> -			 * This bio should have covered the complete length,
+> +			 * An atomic write bio must cover the complete length,
+>  			 * which it doesn't, so error. We may need to zero out
+>  			 * the tail (complete FS block), similar to when
+>  			 * bio_iov_iter_get_pages() returns an error, above.
+> -- 
+> 2.31.1
 
