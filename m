@@ -1,185 +1,159 @@
-Return-Path: <linux-kernel+bounces-565047-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565049-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACB6DA65FD6
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 21:59:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57803A65FF6
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 22:01:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B5233B6AFC
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 20:59:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D58E1896CAE
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 21:00:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 174751FA14B;
-	Mon, 17 Mar 2025 20:59:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D82D8200B9B;
+	Mon, 17 Mar 2025 21:00:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p+6XPPrN"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FvWrOsCB"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BE451FAA;
-	Mon, 17 Mar 2025 20:59:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3046118A6B5;
+	Mon, 17 Mar 2025 21:00:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742245161; cv=none; b=VVoo/RdFrc0Q52l4NKcjhTQx9GMCWtjJrMMdMvOq99LaxAV1vn2KtY4Bh9deoF7yWRccO12zMfd0ds40EoQitOt7a8O/dD8xsMFx9lHO4BrswaNs65IBEZcDE5KG2xZSolKRECJzHbuDyYUrPUD0Mhk8iqETcYdnMcnfQy0z3SM=
+	t=1742245208; cv=none; b=G2FKvgCtXeQ6+KjTXPbFG0OgAAJiQQyPVHHh2LG6oUoQPkn+GpHbKPWwumHVMhzl2xBklFqm4eALA6u8qpYZiN4Pr/mTHbfWijZyGUZrEVLrdvQSHoSOVCgkZSbBXv/yi3l3ggCJTuXy1BUjtETlu9uOlXhNO5FUk97KHAOOCjc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742245161; c=relaxed/simple;
-	bh=vjYs1iVtvT6elCJYWvA6a39Fiy+4oldR0sImIebwG2k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Z0apXJVJDMzp1rp2/m8DMl8cGfYcpNO1qPUavYzlDY7yVwCkbsdrlqXl8t2B5XtSaLcBAWyEMwJE+7eaDT6WX82j3+hpghDo+rKCKDIgSeumAOFOAIqQs/WX1otgOGv8sQMAbh3qopWCsd2hupQkNUQuFoGPaT07jGNfDmnw9E0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p+6XPPrN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB031C4CEF2;
-	Mon, 17 Mar 2025 20:59:20 +0000 (UTC)
+	s=arc-20240116; t=1742245208; c=relaxed/simple;
+	bh=LZezTtfBxnU1U9NfWyM3dhrEClwTdALOaDfardOQj5A=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=o2r7RVwvp1XjbQ17G5vTUBlzYzFDG3TyyiQ/j/scDJ6ZI8Ob6sve7dH6ljR9N9B2GGqoTNeLOLbZ7xNThprTStAUxj9oyC2rhRP57zoylGMPCGlksBKQP0tN/fx0yaKtnERt6EdHXfJG1Wy/rJIylQIoYPA9vFd2wXlbjgDGGuM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FvWrOsCB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20FE1C4CEE3;
+	Mon, 17 Mar 2025 21:00:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742245160;
-	bh=vjYs1iVtvT6elCJYWvA6a39Fiy+4oldR0sImIebwG2k=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=p+6XPPrNuH6u+/zhkkK3a/t53bIXFuFzXp6p4RjfOjjrP8AIMDUWZjWcfJL4GZLXl
-	 0/Q9HAqhNkWEiuV2u5CAtJC6V5ANJ+Hw8oAeSPzh/WoDTYxJkZZ8rX2GFxETz3E1Kw
-	 Z2xdu6QRc3qaMoVA9AbFr4+HS6lqus2c8WxSUf/B96710S2bJ5L+LoUr2UFI5w8GpD
-	 pBZPVACsZ9o59Ot732iVX/lYrzFinZj2eJWulgjm+zsdD1yeXHq+Vt/u+NuGMbHXLA
-	 wyzdNuKA4ux607YNlhchLenPAKSwe3zvR6OxWEd0SxpmBQw/CuV7t1qHP15Hs8YvYw
-	 E2pgP5r1PY+yg==
-Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-6f666c94285so47219517b3.3;
-        Mon, 17 Mar 2025 13:59:20 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU2kZbAb7VLDb/QJLWYuo142Z+oL7oD2OruoPjUk54PEy3zUJp3VdpJVMFcXlFAX458QBjAEw==@vger.kernel.org, AJvYcCU5fbGCUcMTs+N04LBi0/rkM6msOXcoB7vBeEpSwSDM+od3mV6U5qJAqXnLBqucdGd7wnXCMjHGOYaCa4Gz@vger.kernel.org, AJvYcCV9yR4vv2IsOotP57gmdNWfU/bwZYTkJnc2Q7b/3ENWvu4L+ngh593JmVjs0rInLjZp+uaF+SNwqmGs@vger.kernel.org, AJvYcCXYdDLXOhdJws3tzeZiOKC9LgyFL6VWCT56RyLgp1tF+c6Qo5W6i+19B9Lo8ZmtfrKC9s0K6IrjRBUTD9JbxdKzJZMs92U+@vger.kernel.org
-X-Gm-Message-State: AOJu0Yye7yixqRgxdxG7YtYjnKsQgHyxthSAgSFDLtR+sptiKFvCGNwR
-	nOTP4sd2wsb+wCgixa6s3l5gPsA/1Sg9cvkDVaIR8AYMEqtisdWSq1vYVohPwp0S0+mceY2c32A
-	YD6nfYwXrQlbhVqNxfOtikG8jAyg=
-X-Google-Smtp-Source: AGHT+IG2KGySkbENIEIwfPWn9Y0xEwyw2vu7R1Cg5oOaKr3QUdu4o2IoxOYJkMdYnLlTBrmK/eWhPMya6kUW2cA8aBI=
-X-Received: by 2002:a05:6902:118f:b0:e64:192e:725d with SMTP id
- 3f1490d57ef6-e64af124d1emr2325540276.15.1742245160049; Mon, 17 Mar 2025
- 13:59:20 -0700 (PDT)
+	s=k20201202; t=1742245207;
+	bh=LZezTtfBxnU1U9NfWyM3dhrEClwTdALOaDfardOQj5A=;
+	h=From:Subject:Date:To:Cc:From;
+	b=FvWrOsCBkG2b5WR2fYek1NqWkkVZeh+rYJX6AeSmHWk2tmn7v/K7ndRKUKBUgiKhv
+	 YC1SGFLoSjILCx7RTfq9ETrW7gy/rbq+SI9pTZXJgq1FOyTYPobw2DpYKGb6bCl0MQ
+	 wQnINJIS8OQKFNfA+MXBvQkVt4Mk4VLuG+EJPW2dM5JOkUQX3jhal8cIj5xt9eFzYa
+	 nuQzBjcU0Ddp4j+oQuMPgVaapUUdh/yU8dJH4Sx3c71HsNF9rnViEczZ4ux/Er50ju
+	 73YOoGDvmZ05WwNlNjUfznC039L+7Ns5sDBHGCk/E/53t/5wl0YnD7RYQl4abzP4vR
+	 NVIziORlPmI0g==
+From: Jeff Layton <jlayton@kernel.org>
+Subject: [PATCH RFC 0/9] nfs/sunrpc: stop holding netns references in
+ client-side NFS and RPC objects
+Date: Mon, 17 Mar 2025 16:59:52 -0400
+Message-Id: <20250317-rpc-shutdown-v1-0-85ba8e20b75d@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <1741902661-31767-1-git-send-email-jasjivsingh@linux.microsoft.com>
- <1741902661-31767-2-git-send-email-jasjivsingh@linux.microsoft.com>
-In-Reply-To: <1741902661-31767-2-git-send-email-jasjivsingh@linux.microsoft.com>
-From: Fan Wu <wufan@kernel.org>
-Date: Mon, 17 Mar 2025 13:59:08 -0700
-X-Gmail-Original-Message-ID: <CAKtyLkGuRraMbArSQCGxb+m5p+M8G5WZCTHk-7dKVfQd2EJYxw@mail.gmail.com>
-X-Gm-Features: AQ5f1JrHOtrVJ6GMM8x4vxzrK5EKOKJCc20cPLm5ogUONaxzbIbLo2wsHktkfwc
-Message-ID: <CAKtyLkGuRraMbArSQCGxb+m5p+M8G5WZCTHk-7dKVfQd2EJYxw@mail.gmail.com>
-Subject: Re: [PATCH v5 1/1] ipe: add errno field to IPE policy load auditing
-To: Jasjiv Singh <jasjivsingh@linux.microsoft.com>
-Cc: corbet@lwn.net, jmorris@namei.org, serge@hallyn.com, eparis@redhat.com, 
-	paul@paul-moore.com, linux-doc@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, audit@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAEiN2GcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDY0Nz3aKCZN3ijNKSlPzyPF1DU0PLxMTkFMOUJGMloJaCotS0zAqwcdF
+ KQW7OSrG1tQDviDdvYwAAAA==
+X-Change-ID: 20250317-rpc-shutdown-1519aacd1db3
+To: Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>, 
+ Chuck Lever <chuck.lever@oracle.com>, Neil Brown <neilb@suse.de>, 
+ Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>, 
+ Tom Talpey <tom@talpey.com>, "David S. Miller" <davem@davemloft.net>, 
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+ Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>
+Cc: Josef Bacik <josef@toxicpanda.com>, 
+ Benjamin Coddington <bcodding@redhat.com>, linux-nfs@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+ Jeff Layton <jlayton@kernel.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3362; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=LZezTtfBxnU1U9NfWyM3dhrEClwTdALOaDfardOQj5A=;
+ b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBn2I1UV12EFnRz5ZoqCJ5wmQaOhCJwRqarq0CBX
+ wL5904V+raJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZ9iNVAAKCRAADmhBGVaC
+ Fb24D/4/Rd/JgmewcD9iQ9XGk04mlfYwMRmp6jXhl5sIQxFvOAnNpvPXNFv5GLtLFYMJZ4ffxo5
+ FxJHCtrRLFOlETo4BW2uJsyLwvC696QF7txzvjnpaRg8MGKQ3oV6MLVVOtTa53cnMT1LuuI65vK
+ b3hqHJulaiskG+QxDY/F+2y+mQ2mXdTW7ttUxXiDGsGOhmXhKPbqbMjHrDux+DHIvcTuMCjHhpk
+ CJJmcJkxDmeI+Ot2H0VE6YPQyTgcM2sKtuDJgJOSccJg9RGXD72NI0kLGu3H1yT+tzopB+JfMnZ
+ rq4ihVXj7XZlNf8FC1uH4O2++af45lsfrhCdpfH6hO7U4QPvt51ztomBfrn9VR2NssNoFnMCoZl
+ fbvKtyQz11DK8CBMMVmZyFQkY2FWvWZ2DYS4E+vbsOXDZb4bq1Blnkhft3mkd7Ez14EJgLXRtkU
+ mn+tf4jv+PgNOvpoypggM6o/Oc4/c1g0pacoXfd4B01syRklZg39omJ3lJJD1wIHujGUOTkQCA6
+ FU/n4b4GBh28pIsbKXhMNnwrShtheHYo0EMf2e4qflBrxU7t+xIHcsQ5HL4pscVbh+GMCVSeaEQ
+ 2ZEazcsram4DKqhv+ZDSDt/ZVocLnf4ZOZF/hsQhWzCzFZNnxfjFjsDFY3RzknnTi/Sb0Qia4KL
+ fcBuMNJbZh9h+bA==
+X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
+ fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-On Thu, Mar 13, 2025 at 2:51=E2=80=AFPM Jasjiv Singh
-<jasjivsingh@linux.microsoft.com> wrote:
->
-> Users of IPE require a way to identify when and why an operation fails,
-> allowing them to both respond to violations of policy and be notified
-> of potentially malicious actions on their systems with respect to IPE.
->
-> This patch introduces a new error field to the AUDIT_IPE_POLICY_LOAD even=
-t
-> to log policy loading failures. Currently, IPE only logs successful polic=
-y
-> loads, but not failures. Tracking failures is crucial to detect malicious
-> attempts and ensure a complete audit trail for security events.
->
-> The new error field will capture the following error codes:
->
-> * -ENOKEY: Key used to sign the IPE policy not found in the keyring
-> * -ESTALE: Attempting to update an IPE policy with an older version
-> * -EKEYREJECTED: IPE signature verification failed
-> * -ENOENT: Policy was deleted while updating
-> * -EEXIST: Same name policy already deployed
-> * -ERANGE: Policy version number overflow
-> * -EINVAL: Policy version parsing error
-> * -EPERM: Insufficient permission
-> * -ENOMEM: Out of memory (OOM)
-> * -EBADMSG: Policy is invalid
->
-> Here are some examples of the updated audit record types:
->
-> AUDIT_IPE_POLICY_LOAD(1422):
-> audit:  AUDIT1422 policy_name=3D"Test_Policy" policy_version=3D0.0.1
-> policy_digest=3Dsha256:84EFBA8FA71E62AE0A537FAB962F8A2BD1053964C4299DCA
-> 92BFFF4DB82E86D3 auid=3D1000 ses=3D3 lsm=3Dipe res=3D1 errno=3D0
->
-> The above record shows a new policy has been successfully loaded into
-> the kernel with the policy name, version, and hash with the errno=3D0.
->
-> AUDIT_IPE_POLICY_LOAD(1422) with error:
->
-> audit: AUDIT1422 policy_name=3D? policy_version=3D? policy_digest=3D?
-> auid=3D1000 ses=3D3 lsm=3Dipe res=3D0 errno=3D-74
->
-> The above record shows a policy load failure due to an invalid policy
-> (-EBADMSG).
->
-> By adding this error field, we ensure that all policy load attempts,
-> whether successful or failed, are logged, providing a comprehensive
-> audit trail for IPE policy management.
->
-> Signed-off-by: Jasjiv Singh <jasjivsingh@linux.microsoft.com>
-> ---
->  Documentation/admin-guide/LSM/ipe.rst | 69 +++++++++++++++++++--------
->  security/ipe/audit.c                  | 19 ++++++--
->  security/ipe/fs.c                     | 25 ++++++----
->  security/ipe/policy.c                 | 17 ++++---
->  security/ipe/policy_fs.c              | 28 ++++++++---
->  5 files changed, 113 insertions(+), 45 deletions(-)
->
+We have a long-standing problem with containers that have NFS mounts in
+them. Best practice is to unmount gracefully, of course, but sometimes
+containers just spontaneously die (e.g. SIGSEGV in the init task in the
+container). When that happens the orchestrator will see that all of the
+tasks are dead, and will detach the mount namespace and kill off the
+network connection.
 
-...
+If there are RPCs in flight at the time, the rpc_clnt will try to
+retransmit them indefinitely, but there is no hope of them ever
+contacting the server since nothing in userland can reach the netns
+at that point to fix anything.
 
-> diff --git a/security/ipe/policy.c b/security/ipe/policy.c
-> index b628f696e32b..1c58c29886e8 100644
-> --- a/security/ipe/policy.c
-> +++ b/security/ipe/policy.c
-> @@ -84,8 +84,11 @@ static int set_pkcs7_data(void *ctx, const void *data,=
- size_t len,
->   * ipe_new_policy.
->   *
->   * Context: Requires root->i_rwsem to be held.
-> - * Return: %0 on success. If an error occurs, the function will return
-> - * the -errno.
-> + * Return:
-> + * * %0        - Success
-> + * * %-ENOENT  - Policy was deleted while updating
-> + * * %-EINVAL  - Policy name mismatch
-> + * * %-ESTALE  - Policy version too old
->   */
->  int ipe_update_policy(struct inode *root, const char *text, size_t textl=
-en,
->                       const char *pkcs7, size_t pkcs7len)
-> @@ -146,10 +149,12 @@ int ipe_update_policy(struct inode *root, const cha=
-r *text, size_t textlen,
->   *
->   * Return:
->   * * a pointer to the ipe_policy structure     - Success
-> - * * %-EBADMSG                                 - Policy is invalid
-> - * * %-ENOMEM                                  - Out of memory (OOM)
-> - * * %-ERANGE                                  - Policy version number o=
-verflow
-> - * * %-EINVAL                                  - Policy version parsing =
-error
-> + * * %-EBADMSG                         - Policy is invalid
-> + * * %-ENOMEM                          - Out of memory (OOM)
-> + * * %-ERANGE                          - Policy version number overflow
-> + * * %-EINVAL                          - Policy version parsing error
-> + * * %-ENOKEY                          - Policy signing key not found
-> + * * %-EKEYREJECTED                    - Policy signature verification f=
-ailed
->   */
+This patchset takes the approach of changing various nfs client and
+sunrpc objects to not hold a netns reference. Instead, when a nfs_net or
+sunrpc_net is exiting, all nfs_server, nfs_client and rpc_clnt objects
+associated with it are shut down, and the pre_exit functions block
+until they are gone.
 
-The indentation here is not aligned.
+With this approach, when the last userland task in the container exits,
+the NFS and RPC clients get cleaned up automatically. As a bonus, this
+fixes another bug with the gssproxy RPC client that causes net namespace
+leaks in any container where it runs (details in the patch
+descriptions).
 
-I don't see any other issue, if there is no objection from the audit
-folks, I will pull this into ipe's tree.
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+---
+Jeff Layton (9):
+      sunrpc: transplant shutdown_client() to sunrpc module
+      lockd: add a helper to shut down rpc_clnt in nlm_host
+      lockd: don't #include debug.h from lockd.h
+      nfs: transplant nfs_server shutdown into a helper function
+      nfs: don't hold a reference to struct net in struct nfs_client
+      auth_gss: shut down gssproxy rpc_clnt in net pre_exit
+      auth_gss: don't hold a net reference in gss_auth
+      sunrpc: don't hold a struct net reference in rpc_xprt
+      sunrpc: don't upgrade passive net reference in xs_create_sock
 
--Fan
+ fs/lockd/clnt4xdr.c                |  1 +
+ fs/lockd/clntlock.c                |  1 +
+ fs/lockd/clntproc.c                |  1 +
+ fs/lockd/clntxdr.c                 |  1 +
+ fs/lockd/host.c                    |  8 ++++++++
+ fs/lockd/mon.c                     |  1 +
+ fs/lockd/svc.c                     |  1 +
+ fs/lockd/svc4proc.c                |  1 +
+ fs/lockd/svclock.c                 |  1 +
+ fs/lockd/svcproc.c                 |  1 +
+ fs/lockd/svcsubs.c                 |  1 +
+ fs/nfs/client.c                    |  6 ++++--
+ fs/nfs/inode.c                     | 28 ++++++++++++++++++++++++++++
+ fs/nfs/internal.h                  |  1 +
+ fs/nfs/super.c                     | 18 ++++++++++++++++++
+ fs/nfs/sysfs.c                     | 27 ++-------------------------
+ include/linux/lockd/lockd.h        |  2 +-
+ include/linux/sunrpc/sched.h       |  1 +
+ include/linux/sunrpc/svcauth_gss.h |  1 +
+ include/linux/sunrpc/xprt.h        |  1 -
+ net/sunrpc/auth_gss/auth_gss.c     | 15 ++++++++-------
+ net/sunrpc/auth_gss/svcauth_gss.c  |  7 ++++++-
+ net/sunrpc/clnt.c                  | 14 ++++++++++++++
+ net/sunrpc/sunrpc_syms.c           | 29 +++++++++++++++++++++++++++++
+ net/sunrpc/xprt.c                  |  3 +--
+ net/sunrpc/xprtsock.c              |  3 ---
+ 26 files changed, 132 insertions(+), 42 deletions(-)
+---
+base-commit: 80e54e84911a923c40d7bee33a34c1b4be148d7a
+change-id: 20250317-rpc-shutdown-1519aacd1db3
 
-.
+Best regards,
+-- 
+Jeff Layton <jlayton@kernel.org>
+
 
