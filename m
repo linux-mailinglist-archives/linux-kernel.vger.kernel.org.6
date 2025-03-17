@@ -1,110 +1,135 @@
-Return-Path: <linux-kernel+bounces-564186-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564189-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58C7EA64FCD
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 13:53:17 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B33CA64FE7
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 13:55:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD459171B0A
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 12:53:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DCDC218891AE
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 12:54:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FB1923A562;
-	Mon, 17 Mar 2025 12:52:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01D9823ED6C;
+	Mon, 17 Mar 2025 12:53:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XdCbHu94"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="dzCdsjVI";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="IHleJdvg";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="dzCdsjVI";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="IHleJdvg"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62A5E1C861C
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 12:52:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0225823C8D1
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 12:53:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742215978; cv=none; b=Kg9iABhqMTtFZ9KDWktD7dBYdvj58aUaYfYF2mxidRxMNbDs+x7Q+8xWWBZ2xdimcTMAFP5U0xrVI4RT6XDcmIhzfVwlcrpSaRoFJxEg8U293fCTqdWyG4le7llgLsrV4bqs0FlMYB5wFKdEC96pdOO01xia1O+4jUK+TAXj8Mk=
+	t=1742215993; cv=none; b=CxMPj5Nw5p1Ve5XVvq2J8TlccjfsNEELxnrc+UNjYXUluF6A+RG2eHWPVOyL+95zTP3MA1kMhny5Sgf3S5nqM6zrjTm5XMwAD+ARPbbDKIusCYqOwm/AKJYc04+pqg9YYT5BJp4Zq38Hz5jHS9eYe5xpKljOomP4DYsHqLiEVPk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742215978; c=relaxed/simple;
-	bh=xX2dfXbz/whGYXEP3FNbdkOtOCE7CtRILWO/R95E8jM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aHWLKRMI9WCWqGzTpuL/Q9qWW/cLRRkGYfoVyoUTvzk12XffNPEcYgYUQzdNKNouAHopSl7AhzejkLcqBo6WDoQSP/fGaS0M8zIuqa7YsLNIyuMfnwKloJluu2u8CSxWzXvOViEKWKlznS0ymuVCff7RxtYKOV2B4MplHQafQx0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XdCbHu94; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742215977; x=1773751977;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=xX2dfXbz/whGYXEP3FNbdkOtOCE7CtRILWO/R95E8jM=;
-  b=XdCbHu94QgcbMvpqebi8dlavUS0ZfUYTKiEbtTwIzKYZEhoclKBpD7hB
-   bTrPv6RwNPn7GVRryGKR7bFiP9hq1ShFXRp/+hg96+d23JEfYIEOxmAEq
-   mnGAfaLlEVVbJmvcGBff1q+8A33luMYNu96VgmzmMW/TYwhjl5hnkigt0
-   +Mv1K7wdbXjNLGt7El5FhcCmcS4WiW/tiL/GjOpYpwkv+YHYoxugBxAfi
-   5BSDsFVCz9lLoqn12xqpGcoyxqeB6vulRK3/eUOcvkAm+0K3knGoeRZ9/
-   HCOBv3YA+ODre7G8DA94ccd3MRDM+JZf+L3Gk0bS3lRRqMLJHKW8v1Bun
-   w==;
-X-CSE-ConnectionGUID: xdmjoU7UT2aQgk7HUUV7Lw==
-X-CSE-MsgGUID: PQlKTGrdRouH2eTNqrLQsg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11376"; a="54687486"
-X-IronPort-AV: E=Sophos;i="6.14,254,1736841600"; 
-   d="scan'208";a="54687486"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Mar 2025 05:52:56 -0700
-X-CSE-ConnectionGUID: 7f+Pg6nGTqiR10P+rZffJg==
-X-CSE-MsgGUID: US+fvUVTS/+5gTDHMZv7hw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,254,1736841600"; 
-   d="scan'208";a="159082654"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa001.jf.intel.com with ESMTP; 17 Mar 2025 05:52:51 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1000)
-	id 350081E5; Mon, 17 Mar 2025 14:52:49 +0200 (EET)
-Date: Mon, 17 Mar 2025 14:52:49 +0200
-From: "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>
-To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
-Cc: "tglx@linutronix.de" <tglx@linutronix.de>, 
-	"peterz@infradead.org" <peterz@infradead.org>, "mingo@redhat.com" <mingo@redhat.com>, 
-	"Hansen, Dave" <dave.hansen@intel.com>, "Huang, Kai" <kai.huang@intel.com>, 
-	"bp@alien8.de" <bp@alien8.de>, "nik.borisov@suse.com" <nik.borisov@suse.com>, 
-	"bhe@redhat.com" <bhe@redhat.com>, "seanjc@google.com" <seanjc@google.com>, 
-	"x86@kernel.org" <x86@kernel.org>, "dyoung@redhat.com" <dyoung@redhat.com>, 
-	"sagis@google.com" <sagis@google.com>, "hpa@zytor.com" <hpa@zytor.com>, 
-	"Chatre, Reinette" <reinette.chatre@intel.com>, "Williams, Dan J" <dan.j.williams@intel.com>, 
-	"thomas.lendacky@amd.com" <thomas.lendacky@amd.com>, "pbonzini@redhat.com" <pbonzini@redhat.com>, 
-	"ashish.kalra@amd.com" <ashish.kalra@amd.com>, "Yamahata, Isaku" <isaku.yamahata@intel.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "dwmw@amazon.co.uk" <dwmw@amazon.co.uk>
-Subject: Re: [RFC PATCH 1/5] x86/kexec: Do unconditional WBINVD for
- bare-metal in stop_this_cpu()
-Message-ID: <gbxpvgmmzf354g3gccflrv5shtaque4rd3uklrgltlbnedip7y@hhwvyhxh46nk>
-References: <cover.1741778537.git.kai.huang@intel.com>
- <e9ee3c7ffc3ba6feb97247faa40789684e39ffd0.1741778537.git.kai.huang@intel.com>
- <e0d9a3d599025c92fce5e159e8acc1af32844912.camel@intel.com>
+	s=arc-20240116; t=1742215993; c=relaxed/simple;
+	bh=3EZAx5nVQbEmbxHxOEIgu+zrRNJbaozapqGR2rf0Kj4=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=at0VjLv+/Yg53qvWIaYaEvOV35fYOwQGnyHqAMyP0vEnHgdGgBxiJbaLqsUpNlM27xuQyO2aOwkclHk2FKIxpyOJGIuJVaZDWyHYFA80Y+MaIBx1CUd1b48IS8oRFZRkiY9kGfyFEDbHOgT7aJ1irx0PvMXwIWyeEQo9BcCxsu8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=dzCdsjVI; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=IHleJdvg; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=dzCdsjVI; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=IHleJdvg; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from pobox.suse.cz (unknown [10.100.2.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 152EA21C18;
+	Mon, 17 Mar 2025 12:53:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1742215990; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=aGsH6QgIA++Fd8yvriC2jCRr27WERveOdOFTS8rRhts=;
+	b=dzCdsjVI8c0DwvbAHOJv2/tCAxZMmaW6qlqXi2bY7wsSvU4vk1gKmn1odkzGL/q723Q8DO
+	EHGmHGmVHxIfszLWrb6Z1DrWP8PSHndV3e8YP2PZEAMsbU99LFKYEcxUqGZCISzOroHVTX
+	wWARUEhwpK/jZJVlUmevPDI9rJB6i9g=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1742215990;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=aGsH6QgIA++Fd8yvriC2jCRr27WERveOdOFTS8rRhts=;
+	b=IHleJdvg4dYI3h+4HJH357WZmM0YgtkJx9IJtOaJPKHFPyiWOGwQoJT+bi0ozv4wpQj4ZI
+	LMya98UQgE1wa+Cg==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1742215990; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=aGsH6QgIA++Fd8yvriC2jCRr27WERveOdOFTS8rRhts=;
+	b=dzCdsjVI8c0DwvbAHOJv2/tCAxZMmaW6qlqXi2bY7wsSvU4vk1gKmn1odkzGL/q723Q8DO
+	EHGmHGmVHxIfszLWrb6Z1DrWP8PSHndV3e8YP2PZEAMsbU99LFKYEcxUqGZCISzOroHVTX
+	wWARUEhwpK/jZJVlUmevPDI9rJB6i9g=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1742215990;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=aGsH6QgIA++Fd8yvriC2jCRr27WERveOdOFTS8rRhts=;
+	b=IHleJdvg4dYI3h+4HJH357WZmM0YgtkJx9IJtOaJPKHFPyiWOGwQoJT+bi0ozv4wpQj4ZI
+	LMya98UQgE1wa+Cg==
+Date: Mon, 17 Mar 2025 13:53:10 +0100 (CET)
+From: Miroslav Benes <mbenes@suse.cz>
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+cc: x86@kernel.org, linux-kernel@vger.kernel.org, 
+    Peter Zijlstra <peterz@infradead.org>, 
+    Brendan Jackman <jackmanb@google.com>, 
+    Nathan Chancellor <nathan@kernel.org>
+Subject: Re: [PATCH 10/13] objtool: Add --Werror option
+In-Reply-To: <e423ea4ec297f510a108aa6c78b52b9fe30fa8c1.1741975349.git.jpoimboe@kernel.org>
+Message-ID: <alpine.LSU.2.21.2503171352150.4236@pobox.suse.cz>
+References: <cover.1741975349.git.jpoimboe@kernel.org> <e423ea4ec297f510a108aa6c78b52b9fe30fa8c1.1741975349.git.jpoimboe@kernel.org>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e0d9a3d599025c92fce5e159e8acc1af32844912.camel@intel.com>
+Content-Type: text/plain; charset=US-ASCII
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_ZERO(0.00)[0];
+	MID_RHS_MATCH_FROMTLD(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[pobox.suse.cz:helo,pobox.suse.cz:mid,suse.cz:email]
+X-Spam-Score: -4.30
+X-Spam-Flag: NO
 
-On Thu, Mar 13, 2025 at 06:40:09PM +0000, Edgecombe, Rick P wrote:
-> > Currently, the kernel only performs WBINVD in stop_this_cpu() when SME
-> > is supported by hardware.  Perform unconditional WBINVD to support TDX
-> > instead of adding one more vendor-specific check.  Kexec is a slow path,
-> > and the additional WBINVD is acceptable for the sake of simplicity and
-> > maintainability.
+On Fri, 14 Mar 2025, Josh Poimboeuf wrote:
+
+> Any objtool warning has the potential of reflecting (or triggering) a
+> major bug in the kernel or compiler which could result in crashing the
+> kernel or breaking the livepatch consistency model.
 > 
-> Out of curiosity, do you know why this was not already needed for non-self snoop
-> CPUs? Why can't there be other cache modes that get written back after the new
-> kernel starts using the memory for something else?
+> In preparation for failing the build on objtool errors/warnings, add a
+> new --Werror option.
+> 
+> [ jpoimboe: commit log, comments, error out on fatal errors too ]
+> 
+> Co-developed-by: Brendan Jackman <jackmanb@google.com>
+> Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
 
-KeyID is a hack. Memory controller is aware about KeyID, but not cache.
-Cache considers KeyID as part of physical address. Two cache lines for the
-same physical address with different KeyID are considered unrelated from
-cache coherency PoV.
+Shouldn't be there also Brendan's SoB? I think these tags should always 
+come in pairs.
 
--- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+Reviewed-by: Miroslav Benes <mbenes@suse.cz>
+
+M
 
