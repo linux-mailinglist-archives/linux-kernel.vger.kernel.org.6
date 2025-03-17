@@ -1,111 +1,107 @@
-Return-Path: <linux-kernel+bounces-563878-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563880-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99A7BA649FC
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:32:07 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88F20A64A17
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:34:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E20F188C2C6
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:28:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4AD83B6117
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:29:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DDD4233720;
-	Mon, 17 Mar 2025 10:28:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F00A233720;
+	Mon, 17 Mar 2025 10:28:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EfpOd3Uv"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="x+bhBU1o"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1812221CC7B
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 10:28:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39C7313B7A3;
+	Mon, 17 Mar 2025 10:28:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742207311; cv=none; b=GPECnAnMTCxR6QqWVST6HMmV2IzxVJt21kWwN/BWyIpX1byTbYYz/q5BBLmNfTmxa4vdXeFveX2+ehCPfPizIqU3R2YMxE9aXjL+s5zai+pE79/Gzns51krawNINSu/Kic2YIz59uNUxTqsbqO/y9TO78u7Fge79bWD1gLGZbIk=
+	t=1742207329; cv=none; b=QkysIlZJZjHfv7Mben8gydjhfOnEEeZP89hFVDR2pC5xlMsi7hXpFeu/7LPtn6u33uTtNxeIus4q9prdLd171jd2/3L57QQVLY5czLmHYY70KQKJyxpWdK0b+QK1oqtd3JenF33phWcAFbfc1YQpr8OLWT/9OR9g31UPg8Sk/Ko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742207311; c=relaxed/simple;
-	bh=UHHo92O52nWRNsisehdFxVI8rIastL0jHugBpGz18lk=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=lEm517jFPFWJjX5hE7S2ALFSE4G/kps2fjQJVdyOzXlYRtRGV+USoSBeYDzDx2gGVLSIqv9xBOEXxaOoIGIvrjzyk+9tcXC6I35pI5oH2shaoupp59tLZynpf0Oa6Du9efFEY7LbetFIbt0jk37ZKWSo6ePEEbeamJtgAkyySak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EfpOd3Uv; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1742207307;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=l3ZpCYyD2or8iE1ALBW4gTcZc3gKrNq4HxsVD0AGmAU=;
-	b=EfpOd3UvUtAW6oBkiT/d4yVqk7u8QS7cBa4vS7rPVe6OvUlsN2bPvM42bTyhx78SO2JSQF
-	MEfSEjg1lyxwKtxJ9PWhrFrHKC4GmroObFWmOc0gbVCOQSOleytk0K3F6BFZ6cbaBlM9Mz
-	lSgo89DIzD2l3gtNnXx+T+HCrMqupaY=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-302-e4jxckrlM8SWC6JhHT8eNg-1; Mon, 17 Mar 2025 06:28:26 -0400
-X-MC-Unique: e4jxckrlM8SWC6JhHT8eNg-1
-X-Mimecast-MFC-AGG-ID: e4jxckrlM8SWC6JhHT8eNg_1742207305
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-43ceb011ea5so11881105e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 03:28:25 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742207305; x=1742812105;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=l3ZpCYyD2or8iE1ALBW4gTcZc3gKrNq4HxsVD0AGmAU=;
-        b=m6Q3nQXeEdjTNiCnEOae545MbD4KqleuvqW8YVBfIZLlyS9QKZErx2NuSm4UNjqTt0
-         gWDo4+wiuZ8F2NxzDpXI570BbgxKcCvTlqXUDcoMNyUzPZ6YYX4T08N5TTZzk9NXI8LP
-         HdCepWEVSTLHZFSai1X4DwyJ/5xV5mVtxf3vLXXKGkaCAkr+NSSxumbJH5doRB5US1VJ
-         svk9sJJFcRNQ7TlkCsFigb6leUIjo+QD2QfRa3RGfO241aHrg6FqM2bcEovtygjE96Yw
-         r6Nc2/yWbFXOkoyt+CS8crP/eLCZUsFNMfuQhkO8mpQkubdoWoadvQG/DqlGRaSf6Mn7
-         EltA==
-X-Gm-Message-State: AOJu0YyLzqssRneYlF0y+K0d7obSFY5DGOgMQFenHmdZxxQNZPMw5c7r
-	n35VFSj1TtKTM5+jK+9wh0+TWzhsNr/1658b16reRMspIUvL7ELGiDtldvoksAszykTPuqaWBd9
-	1hHhUgzzD+1+0nN8SozWu23m0GJUgPa7EV6TQ6GO3NQrpujU0uFNMXf1uXQCmKg==
-X-Gm-Gg: ASbGncvQaZhCSO9xReI2ztGtF5ck4s744HTHkmsUeRWRFtjXKEiTtEkRzRcGS2Bc+Rm
-	QXKQwFhz1ALmXbTi9jhPeN5ki0gDvtlq+n0Sz0Jcq0z5pjTfx+JkdurALo8xjguF57AXcH7hXx6
-	6NkRLTphgEywkMwGNzUYgMDh1AFLQQE24iaQxAyqgTD9XyDbdJTftVW23CrP9lPOUutaGsqBHnN
-	W/1oxFjt3i3AxPdSfu5l2Gf/pM9R2NNWEW2vRQ5PcZbYHw5qrMc5k1RoLnxTCTzhwnALKEf2WzV
-	1k/esnWsqid4wGTfKMKOGiV5zWqB/fzyZY0X/wr9vNFLUHwjmWTilHftLt5Xd0sq0ZvtBFpG4Ql
-	FeI4RtHkGjz/mb5HOOmHkg3q5LJETxv6l
-X-Received: by 2002:a05:600c:1d05:b0:43c:efed:732c with SMTP id 5b1f17b1804b1-43d1ed0f578mr110241545e9.28.1742207304698;
-        Mon, 17 Mar 2025 03:28:24 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGLd82s7hmq4XzPKPiYFmG7ancuCXYwwSBwnPVIpiuyKnYj0ig9fIVTt/U5+lWFU0IRQ+PUlw==
-X-Received: by 2002:a05:600c:1d05:b0:43c:efed:732c with SMTP id 5b1f17b1804b1-43d1ed0f578mr110241385e9.28.1742207304369;
-        Mon, 17 Mar 2025 03:28:24 -0700 (PDT)
-Received: from vschneid-thinkpadt14sgen2i.remote.csb (106.15.202.62.static.wline.lns.sme.cust.swisscom.ch. [62.202.15.106])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d1fe065b0sm100080515e9.14.2025.03.17.03.28.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Mar 2025 03:28:23 -0700 (PDT)
-From: Valentin Schneider <vschneid@redhat.com>
-To: Aaron Lu <ziqianlu@bytedance.com>, Ben Segall <bsegall@google.com>, K
- Prateek Nayak <kprateek.nayak@amd.com>, Peter Zijlstra
- <peterz@infradead.org>, Josh Don <joshdon@google.com>, Ingo Molnar
- <mingo@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>
-Cc: linux-kernel@vger.kernel.org, Juri Lelli <juri.lelli@redhat.com>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt
- <rostedt@goodmis.org>, Mel Gorman <mgorman@suse.de>, Chengming Zhou
- <chengming.zhou@linux.dev>, Chuyi Zhou <zhouchuyi@bytedance.com>
-Subject: Re: [RFC PATCH 1/7] sched/fair: Add related data structure for task
- based throttle
-In-Reply-To: <CANCG0GcxLJOnNSZgYVYYh_Ug-sVpCOmsf3VATELrKrs_6jovQw@mail.gmail.com>
-References: <20250313072030.1032893-1-ziqianlu@bytedance.com>
- <CANCG0GcxLJOnNSZgYVYYh_Ug-sVpCOmsf3VATELrKrs_6jovQw@mail.gmail.com>
-Date: Mon, 17 Mar 2025 11:28:23 +0100
-Message-ID: <xhsmh7c4ooss8.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+	s=arc-20240116; t=1742207329; c=relaxed/simple;
+	bh=D475GWEV9xZkUiRyncrmvUAsUnBc2KaZ13XrCGru9zM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QhjenMTA76+UoCm2sC1trQUXalT46oQoGYJSXx5TPiIBjBK4l2wbvB8k1zWhMOe4Esf5MJHVeRXWpbeC9sCQPqJISBwqtBaSML0+Xa4AG5Ihe4IkhyqLgjQH5BNojNQ1NXNYM2BkMeXqx/HF1coz2dED5szYlMxmYvZHRklZn6s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=x+bhBU1o; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=tzhM71c7XeDXnGaEMVePBynM75aidEmqvkMrNMTXDQI=; b=x+bhBU1ozAin+2pMbdUoolbzcR
+	1tX9ivxR2w4CSndXSYOkO5+ofjj2hAwRUz84zpzsZ5dsxVJTvAxC+GNIaiSL0zd4wwNDGU+ikEeVu
+	BdbNJDByWGYrQHs3kLGFjSG28wG8ZACc33HVSuG76dToZo1BdiP6DCXR/xzngvWxd+TRtXvf8DQYU
+	0QsVEhG/X1Zl7ryUyFsCX0eItCYNHFksGz58gKP/Cwzrdr0oPiYILhiCEzST1dgGSYFEvQOln5UCN
+	nr6nIs1c1af+w8D1HiWbRDz6EYdj8Q+A82eE7ymRgQRM9MEeyLJxws60pBKLJ9oyE3f3qP+ToYsCh
+	GiOgrpMA==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:54150)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1tu7i0-0003Ll-1n;
+	Mon, 17 Mar 2025 10:28:36 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1tu7hx-0003U7-1w;
+	Mon, 17 Mar 2025 10:28:33 +0000
+Date: Mon, 17 Mar 2025 10:28:33 +0000
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
+Cc: Jim Liu <jim.t90615@gmail.com>, JJLIU0@nuvoton.com,
+	florian.fainelli@broadcom.com, andrew@lunn.ch, hkallweit1@gmail.com,
+	kuba@kernel.org, edumazet@google.com, pabeni@redhat.com,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] net: phy: broadcom: Correct BCM5221 PHY model
+ detection failure
+Message-ID: <Z9f5UQPRTPT8lbXm@shell.armlinux.org.uk>
+References: <20250317035005.3064083-1-JJLIU0@nuvoton.com>
+ <Z9fhqbfoQGSm1Njx@mev-dev.igk.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z9fhqbfoQGSm1Njx@mev-dev.igk.intel.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-Hi, just an FYI, I didn't receive the cover letter (PATCH 0/7) and it can't
-be found on lore either:
+On Mon, Mar 17, 2025 at 09:47:37AM +0100, Michal Swiatkowski wrote:
+> It will be nice to have wider explanation what it is fixing in commit
+> message. Is phydev->phy_id different than phydev->driver->phy_id? Looks
+> like masking isn't crucial as phydev->driver->phy_id is initialized by
+> PHY_ID_BCM5221 which is already masked.
 
-  https://lore.kernel.org/lkml/20250313072030.1032893-1-ziqianlu@bytedance.com/
+The two are very different, and this driver just gets it totally wrong.
 
-Not sure what went wrong there, but could you consider resending that?
-Thanks.
+phydev->phy_id is the ID read from the PHY. It includes the revision
+field.
 
+phydev->drv is one of the phy_driver entries at the bottom of the file.
+These contain whatever the driver author puts there, which in this
+case would be PHY_ID_BCM5221, and PHY_ID_BCM5221 is defined without
+the revision number.
+
+So doing the masking is entirely redundant if you're comparing the
+drv->phy_id that was initialised with a definition against the same
+definition.
+
+As pointed out in my review with v2, there's more problems in this
+driver _because_ this has not been understood. In an attempt to get
+rid of some of this stuff, I introduced phydev_id_compare() and
+phy_id_compare() helpers into core phylib code, but didn't get
+around to updating broadcom.c. See my comments against v2.
+
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
