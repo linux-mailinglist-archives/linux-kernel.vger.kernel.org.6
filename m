@@ -1,113 +1,131 @@
-Return-Path: <linux-kernel+bounces-564720-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564721-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A51C5A659B4
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 18:09:02 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B6BEA659C3
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 18:10:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 64A1B3A4FFE
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 17:04:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA63B18983CC
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 17:04:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC2C61A3031;
-	Mon, 17 Mar 2025 17:02:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FD8A1537CB;
+	Mon, 17 Mar 2025 17:02:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MXWjDHjA"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HNCXHSzA"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05DBDA48;
-	Mon, 17 Mar 2025 17:02:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6621A187876;
+	Mon, 17 Mar 2025 17:02:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742230921; cv=none; b=sg/JEHLYZ5a4cLjghxBvwnG3zsUNUx0SP93n1XIWNQp6unebZD48OSgGmrRAJ7yPYi7wCQYd4b70HlF184/1sUC3t7VhfxqQiVWP/1FbXG/JsMEXdgOz21GopXO3uyHvfp9r3qraKiWPKfI8rwNJXfGKAk9Rk8L4IHcSqIYMitU=
+	t=1742230939; cv=none; b=BP88ZtqLX/Pi/2QQMwo2NRRdzKauGYIkfoljxL0IS/IR7rUh0dFi/YjN2XvKWBHAZ9S2WQUzXydXiiYqPNOUQIXALRky5xqbkH5loNPmTyzPkLduF+h/H08cMOkf8mN+j7iiOnNuBoaKRKTDRwgXfe5AKSBlnDLQirD25YFLyY0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742230921; c=relaxed/simple;
-	bh=x/mGAkrV+8U34K+5jMdXc/eUYG9sUfn3SkW/CtmeZXA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pD6mzkpvtjn7PEHLwI6KmKLXkBDeHUU15WibuVehQbxLs1Vo6dEQjUE3sIs10U55TjJoWX+x46MQgfBD9IBUHt5LA4F/QG4Kx3xcJoBcak9IEeSM0dg0gOYaZ8E+5/+cM+fMXyK1f8uiu6xrgQ5WqNM9lxmfJ6WiratVCmqccHQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MXWjDHjA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 970C2C4CEE3;
-	Mon, 17 Mar 2025 17:01:56 +0000 (UTC)
+	s=arc-20240116; t=1742230939; c=relaxed/simple;
+	bh=/4xrpSPTVqqhwJKQtTQwsKnSGXWkUrjyG2cKU635uRg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CrqE3KN9mPRN1fMbJJgNn8xMEMKzyUVdTWMI2DBd1g/dT294eg7CVixqntn6K3M+oSD7S3IKAng0DlcGwqdMHdaWUyyhx8fwjCXMkvrkHCyTFE/VeNGYCv1mhJkMvbqzfgPDxjqqTf5pmR0C064s9p2aiL+pD06/cBDFCRrsxqs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HNCXHSzA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D89CC4CEE3;
+	Mon, 17 Mar 2025 17:02:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742230920;
-	bh=x/mGAkrV+8U34K+5jMdXc/eUYG9sUfn3SkW/CtmeZXA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MXWjDHjAQFJe8AyUlboM8EDsbGsI17LHbp41AxpboHEAeN98Ipu+r2oayp08t8UtW
-	 XqG42w5KElVvK7Q+P4xrFXnbGIRvFf6BIg20Zcwty/Z+qVcQwiBvQ8YHbVP1AvqkYY
-	 E2d4w7TbmD8UVSQgMYSfiJUHx+42w8E5HxwCZHb3/CDJqmdbX8+5wMpGe+kDJHEhlw
-	 L9ijnqFj5FKc+wF09fwVT5XKhB1dNY6HSPN8dWHwxl6UOlPSgr0f3ewg3shFuSv8pL
-	 llh1wIQLTV/v8K8jtkQzphsFTQ5djNE/QKPl906ptEVZ6spMGcjtR+XA+2vVi2eW1J
-	 FDf9ctn+TtMuw==
-Date: Mon, 17 Mar 2025 17:01:54 +0000
-From: Simon Horman <horms@kernel.org>
-To: Sai Krishna Gajula <saikrishnag@marvell.com>
-Cc: "davem@davemloft.net" <davem@davemloft.net>,
-	"edumazet@google.com" <edumazet@google.com>,
-	"kuba@kernel.org" <kuba@kernel.org>,
-	"pabeni@redhat.com" <pabeni@redhat.com>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Sunil Kovvuri Goutham <sgoutham@marvell.com>,
-	Geethasowjanya Akula <gakula@marvell.com>,
-	Linu Cherian <lcherian@marvell.com>,
-	Jerin Jacob <jerinj@marvell.com>,
-	Hariprasad Kelam <hkelam@marvell.com>,
-	Subbaraya Sundeep Bhatta <sbhatta@marvell.com>,
-	"andrew+netdev@lunn.ch" <andrew+netdev@lunn.ch>,
-	Bharat Bhushan <bbhushan2@marvell.com>,
-	"nathan@kernel.org" <nathan@kernel.org>,
-	"ndesaulniers@google.com" <ndesaulniers@google.com>,
-	"morbo@google.com" <morbo@google.com>,
-	"justinstitt@google.com" <justinstitt@google.com>,
-	"llvm@lists.linux.dev" <llvm@lists.linux.dev>,
-	kernel test robot <lkp@intel.com>
-Subject: Re: [net-next PATCH v2] octeontx2-af: fix build warnings flagged by
- clang, sparse ,kernel test robot
-Message-ID: <20250317170154.GF688833@kernel.org>
-References: <20250305094623.2819994-1-saikrishnag@marvell.com>
- <20250306164322.GC3666230@kernel.org>
- <BY3PR18MB470761F0063CA2AA4481DF7CA0D12@BY3PR18MB4707.namprd18.prod.outlook.com>
+	s=k20201202; t=1742230938;
+	bh=/4xrpSPTVqqhwJKQtTQwsKnSGXWkUrjyG2cKU635uRg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=HNCXHSzA33E4CyIgmKFg/JMEJs+pEmeJ45K8If/pZGyhlNqvpTJ+0CvdwrxHXCvSY
+	 B/KBtPBq63N0a3AnS8AmYqpzY4BLxBHHMKRGIWxS9rL8/0Lh99d4ykrRUwm1VahoFE
+	 pq8xCIY4YYvoJ/AD0rHhjA5c7XXwtPp3AOIfd7tx9fLSqgWb41tUZ99JqAASeorf7a
+	 5CH7MdQYP3CBXYn7R4+nnM4KWQy+0fzB9Xvnz3b+3BAAf0otH8jCEeZvT3Nu1iDOD9
+	 bHL2XJW6dbutUKANR2e60Y5A2a6Ft2YpEpCtmoAHb99r7Nc/aR+h5idt8TcV7cyTbp
+	 0Wexjv4Qg4tZA==
+Message-ID: <80b1351d-3860-4849-b18a-0e736fe458fc@kernel.org>
+Date: Mon, 17 Mar 2025 18:02:14 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <BY3PR18MB470761F0063CA2AA4481DF7CA0D12@BY3PR18MB4707.namprd18.prod.outlook.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: sound/soc/codecs/snd-soc-wcd934x.o: warning: objtool:
+ .text.wcd934x_slim_irq_handler: unexpected end of section
+To: kernel test robot <lkp@intel.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+ Mark Brown <broonie@kernel.org>
+References: <202503180044.oH9gyPeg-lkp@intel.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <202503180044.oH9gyPeg-lkp@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Mar 11, 2025 at 08:57:22AM +0000, Sai Krishna Gajula wrote:
-
-...
-
-> > > diff --git a/drivers/net/ethernet/marvell/octeontx2/af/rvu.c
-> > > b/drivers/net/ethernet/marvell/octeontx2/af/rvu.c
-> > > index cd0d7b7774f1..c850ea5d1960 100644
-> > > --- a/drivers/net/ethernet/marvell/octeontx2/af/rvu.c
-> > > +++ b/drivers/net/ethernet/marvell/octeontx2/af/rvu.c
-> > > @@ -591,7 +591,7 @@ static void rvu_check_min_msix_vec(struct rvu
-> > > *rvu, int nvecs, int pf, int vf)
-> > >
-> > >  check_pf:
-> > >  	if (pf == 0)
-> > > -		min_vecs = RVU_AF_INT_VEC_CNT + RVU_PF_INT_VEC_CNT;
-> > > +		min_vecs = (int)RVU_AF_INT_VEC_CNT +
-> > (int)RVU_PF_INT_VEC_CNT;
-> > >  	else
-> > >  		min_vecs = RVU_PF_INT_VEC_CNT;
-> > >
-> > 
-> > I think that in the light of Linus's feedback and the subsequent patch that
-> > demoted -Wenum-enum-conversion from W=1 to W=1 this is not necessary.
+On 17/03/2025 17:24, kernel test robot wrote:
+> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+> head:   4701f33a10702d5fc577c32434eb62adde0a1ae1
+> commit: 9ea22713227397b56a2b36a68c8bda13f0b43d70 ASoC: codecs: wcd934x: Handle nicer probe deferral and simplify with dev_err_probe()
+> date:   9 months ago
+> config: x86_64-randconfig-102-20250317 (https://download.01.org/0day-ci/archive/20250318/202503180044.oH9gyPeg-lkp@intel.com/config)
+> compiler: clang version 20.1.0 (https://github.com/llvm/llvm-project 24a30daaa559829ad079f2ff7f73eb4e18095f88)
+> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250318/202503180044.oH9gyPeg-lkp@intel.com/reproduce)
 > 
-> Ack, will ignore these changes which are flagged by  -Wenum-enum-conversion
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202503180044.oH9gyPeg-lkp@intel.com/
+> 
+> All warnings (new ones prefixed by >>):
+> 
+>>> sound/soc/codecs/snd-soc-wcd934x.o: warning: objtool: .text.wcd934x_slim_irq_handler: unexpected end of section
 
-Thanks,
+I cannot reproduce it on clang-18 and clang-19 (I do not have clang-20
+in my distros) and I do not see how original commit could trigger this
+warning.
 
-FTR this should have read "from W=1 to W=2"
-
-...
+Best regards,
+Krzysztof
 
