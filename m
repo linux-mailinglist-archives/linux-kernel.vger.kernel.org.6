@@ -1,143 +1,137 @@
-Return-Path: <linux-kernel+bounces-563338-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563339-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7175A63ED6
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 05:59:22 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3984A63EFE
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 06:03:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 183E1188E746
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 04:59:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 11350169A83
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 05:03:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1624F215061;
-	Mon, 17 Mar 2025 04:59:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CEB421516C;
+	Mon, 17 Mar 2025 05:03:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I+t8mhR4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="cFCSuqQe"
+Received: from mx0b-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B2B022F01;
-	Mon, 17 Mar 2025 04:59:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB0B01CD2C;
+	Mon, 17 Mar 2025 05:03:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742187548; cv=none; b=VEsRtYVjpRaqZYMD0ClA7j1dRKaPD/Ee8DU3XgmUF8az7DBGtA/5yJMJuuNsmyKeEDRsoNLZ15XiS7t0bwQ372N32Xzu/arIaLQUKxnLe1LguKZZnvmfk86csks2DhmPMecx6hBKCIFSDu6jaRFsuTPeJxZs2BuYoFmzft7Ohlg=
+	t=1742187819; cv=none; b=URQgcPIHg5/sLs7kgyYlL/jUF6+RER9laOyH/pZZhiUnj4D0KYqqrISuknOh1XKTR38n/Nq29yONzhtce3u8ROJ6vREg6StIJ1RlgmxAaUzTbG1UT8MJEkHL3jxW9BGeMTfEnDgJeqVek+WM2oPz2tOk6i326UbBD96X4tVsz/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742187548; c=relaxed/simple;
-	bh=6VnMyDZwa6cw1ap/4K/skRrOVO89UvB+zZL65t5WJYE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VThAtPwc8REnsZbxIbG+Um/i5DBdBtebdid0qwwSTCX7CCkRzsVD4FpXIWV4CKfZ7gH4IgO3oyLAMqmxL9EqMeRcN/3llbRNazoUBUUsUux6+kyNO7JhwnXabSCt/VTj8u7MJ/vEQJYHM1sWOILaYiT3CdWrbihImy12UsKZDNs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I+t8mhR4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7D91C4CEEC;
-	Mon, 17 Mar 2025 04:59:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742187547;
-	bh=6VnMyDZwa6cw1ap/4K/skRrOVO89UvB+zZL65t5WJYE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=I+t8mhR44VuOprWH/sIp5oYYWtlC2cKIf5pcKH81Jol5XdGXk5C9bNFRZms0fsWZI
-	 aedk/a4IKpG3aXkfxcWDu2xvmx5FtOE/+8JcR6C0vnEf7iFFbZvHn421f9phxmURVR
-	 1ddRbsCRrWDfL5vHEktlpwk1eRYQbA2Abfvr+oX8FfQ6tflfodoM4veR3Kpdja/eDO
-	 PchKIazdQRHOOErtgg7lFllw+ZEnXqNIuHt3S/rLlZeoWJ4zafYbYA0Tvef9FMVJbN
-	 j6/LuzqmJz4mI0KbF+bif8QUjRnA7SuzaFiq1qpc7CX0hx7reTo5B1Rm9vk2p1twab
-	 qO9hUfVGraFVA==
-Message-ID: <e8fb71ea-84cb-427a-9dc9-9c44ec0db08f@kernel.org>
-Date: Mon, 17 Mar 2025 05:59:01 +0100
+	s=arc-20240116; t=1742187819; c=relaxed/simple;
+	bh=QQOgHAx4bqB/G+0viL5wr8/f/OvbtCr44pgzhVL/Xiw=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=BCcfI5WWVPqCIcBiqivKEPbs+sOqwTcauEGDIgYnas+uK0HRUHlmXTWi68jvlzWJXVuwsyyHc8CmcuRsn6nCzdQ+5InHUXxc6eKZI3H2PtyUE4A2F+9FOn1hvsCsd+4gYQvuqAdzPQNexgfci52udRd+cTeUQnnfKbjb8vJhIbc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=cFCSuqQe; arc=none smtp.client-ip=148.163.135.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
+Received: from pps.filterd (m0375855.ppops.net [127.0.0.1])
+	by mx0b-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52H4jYT0006318;
+	Mon, 17 Mar 2025 01:03:06 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=DKIM; bh=9emfpnOu83fm0SBMlmaj/tL4q9H
+	x2vMSoYAw+9hGuu4=; b=cFCSuqQeVPL/tmECJ+p+HbF8l1n2fjfN/RDajO6rkRT
+	6t3gSvKQ5LRNuOEQXyAB2YfJRqx/TqMBoh8J9cFZfvBY5xfKk+9thXjR4wSFmfjy
+	l8+w2UFO6O7ywujPrVHAsLLQ7miuh7Yn89GwjWcxhbgbXlFpYx485lh/QtJY5OPc
+	uRZ8b1LTSN4XY0+AEZQ5L86BnhNCcE24nZqC5wGeOsvKgaC8p1wCRmmmHKxpD+ZQ
+	+chtcOpaRCejy7Mnj1yiKAtTPl6R3JaLqsywMc0vGD6K4rsKZE/BzesV6F3um6N+
+	OnW8LqGrmQySQZ4TAt4ztA8n1B1UqMkc215DzF6I1WQ==
+Received: from nwd2mta3.analog.com ([137.71.173.56])
+	by mx0b-00128a01.pphosted.com (PPS) with ESMTPS id 45ed0ag1v8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 17 Mar 2025 01:03:06 -0400 (EDT)
+Received: from ASHBMBX8.ad.analog.com (ASHBMBX8.ad.analog.com [10.64.17.5])
+	by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 52H535QG044473
+	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 17 Mar 2025 01:03:05 -0400
+Received: from ASHBMBX8.ad.analog.com (10.64.17.5) by ASHBMBX8.ad.analog.com
+ (10.64.17.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.14; Mon, 17 Mar
+ 2025 01:03:05 -0400
+Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx8.ad.analog.com
+ (10.64.17.5) with Microsoft SMTP Server id 15.2.986.14 via Frontend
+ Transport; Mon, 17 Mar 2025 01:03:05 -0400
+Received: from analog.ad.analog.com (KPALLER2-L03.ad.analog.com [10.117.223.28])
+	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 52H52jZC026775;
+	Mon, 17 Mar 2025 01:02:48 -0400
+From: Kim Seer Paller <kimseer.paller@analog.com>
+Subject: [PATCH 0/3] Add support for LT7170 and LT7171 Regulator
+Date: Mon, 17 Mar 2025 13:02:24 +0800
+Message-ID: <20250317-hwmon-next-v1-0-da0218c38197@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 00/29] tty: cleanup no. 99
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
- Alex Elder <elder@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- David Lin <dtwlin@gmail.com>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, greybus-dev@lists.linaro.org,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- Jakub Kicinski <kuba@kernel.org>, Johan Hovold <johan@kernel.org>,
- linux-alpha@vger.kernel.org, linux-staging@lists.linux.dev,
- Matt Turner <mattst88@gmail.com>, netdev@vger.kernel.org,
- Paolo Abeni <pabeni@redhat.com>,
- Richard Henderson <richard.henderson@linaro.org>,
- Rob Herring <robh@kernel.org>, sparclinux@vger.kernel.org
-References: <20250220111606.138045-1-jirislaby@kernel.org>
- <2025031738-fabric-alright-6a32@gregkh>
-Content-Language: en-US
-From: Jiri Slaby <jirislaby@kernel.org>
-Autocrypt: addr=jirislaby@kernel.org; keydata=
- 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
-In-Reply-To: <2025031738-fabric-alright-6a32@gregkh>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAOCs12cC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDY0Nz3Yzy3Pw83bzUihJd00STVKPExFQDA9MUJaCGgqLUtMwKsGHRsbW
+ 1AHbYulBcAAAA
+X-Change-ID: 20250317-hwmon-next-5a4e2aae005d
+To: Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>,
+        Jonathan Corbet <corbet@lwn.net>, Rob Herring <robh@kernel.org>,
+        Krzysztof
+ Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, Frank Li
+	<Frank.Li@nxp.com>,
+        Delphine CC Chiu <Delphine_CC_Chiu@Wiwynn.com>
+CC: <linux-hwmon@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-i2c@vger.kernel.org>,
+        Kim Seer Paller <kimseer.paller@analog.com>,
+        Cherrence Sarip <cherrence.sarip@analog.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1742187765; l=1038;
+ i=kimseer.paller@analog.com; s=20250213; h=from:subject:message-id;
+ bh=QQOgHAx4bqB/G+0viL5wr8/f/OvbtCr44pgzhVL/Xiw=;
+ b=0qbZIKmrgUzQ2cV12n+noijRyJO9dLTDV9q5OHIXkJcdW1/2KEswaAbxNEjiZv6nd5i4dzYAG
+ waUO9JM8oynAwUDWAz0tFcDaGA2f7ZtuDmR85hTHnz3HnInZYqDi/5w
+X-Developer-Key: i=kimseer.paller@analog.com; a=ed25519;
+ pk=SPXIwGLg4GFKUNfuAavY+YhSDsx+Q+NwGLceiKwm8Ac=
+X-ADIRuleOP-NewSCL: Rule Triggered
+X-Proofpoint-ORIG-GUID: cMEaapBLlmLIMDYMKeK_5hLTuv1CAz2_
+X-Proofpoint-GUID: cMEaapBLlmLIMDYMKeK_5hLTuv1CAz2_
+X-Authority-Analysis: v=2.4 cv=A4NsP7WG c=1 sm=1 tr=0 ts=67d7ad0a cx=c_pps a=PpDZqlmH/M8setHirZLBMw==:117 a=PpDZqlmH/M8setHirZLBMw==:17 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=gAnH3GRIAAAA:8 a=YBTbsA-Evqry1RJy-_8A:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-17_01,2025-03-14_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 suspectscore=0
+ phishscore=0 spamscore=0 lowpriorityscore=0 mlxlogscore=823 mlxscore=0
+ priorityscore=1501 bulkscore=0 malwarescore=0 impostorscore=0 adultscore=0
+ classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503170034
 
-On 17. 03. 25, 5:28, Greg KH wrote:
-> On Thu, Feb 20, 2025 at 12:15:37PM +0100, Jiri Slaby (SUSE) wrote:
->> Hi,
->>
->> this is (again) a series of cleanup in tty. I am trying to rework
->> tty+serial to avoid limitations of devices (so called NR_UART or
->> tty_alloc_driver()'s first parameter). And the below popped up while
->> crawling through the code. So this is only a prep cleanup.
->>
->> * many tty flags are now enums
->> * many functions were improved for readability
->> * quite a few unused or old code dropped
->>
->> In particular, the runtime behaviour of the kernel before and after the
->> changes is supposed to be bug to bug compatible (except moxa's ioctl
->> and ISA evils dropped). That is, noone should notice.
-> 
-> Were you going to do a new respin of this, or do you want me to take
-> this as-is and you will send a follow-up ones for the commented-on
-> changes?
+The LT7170 and LT7171 are 20 A, 16 V, Single- or Dual-Phase, Silent
+Switcher Step-Down Regulators with Digital Power System Management.
+The I2C-based PMBus serial interface enables control of device functions
+while providing telemetry information for system monitoring.
 
-I planned to send a v2 on Fri, but did not make it. I will today.
+Signed-off-by: Kim Seer Paller <kimseer.paller@analog.com>
+---
+Kim Seer Paller (3):
+      hwmon: (pmbus/ltc7841) add support for LT717x - docs
+      dt-bindings: hwmon: ltc2978: add support for LT717x
+      hwmon: (pmbus/ltc2978) add support for lt717x
 
-thanks,
+ .../devicetree/bindings/hwmon/lltc,ltc2978.yaml    |  3 ++
+ Documentation/hwmon/ltc2978.rst                    | 28 ++++++++++++--
+ drivers/hwmon/pmbus/Kconfig                        |  6 +--
+ drivers/hwmon/pmbus/ltc2978.c                      | 44 ++++++++++++++++++++--
+ 4 files changed, 72 insertions(+), 9 deletions(-)
+---
+base-commit: dbcfcb239b3b452ef8782842c36fb17dd1b9092f
+change-id: 20250317-hwmon-next-5a4e2aae005d
+
+Best regards,
 -- 
-js
-suse labs
+Kim Seer Paller <kimseer.paller@analog.com>
+
 
