@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-563421-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563422-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 628EEA64168
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 07:28:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1DF3A64173
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 07:29:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B4E80169352
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 06:28:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A1685188A79A
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 06:29:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EC06219A7C;
-	Mon, 17 Mar 2025 06:28:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 138E4219A67;
+	Mon, 17 Mar 2025 06:29:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TxgFanU3"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Yxx5iqk4"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4823218AC7
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 06:28:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F211207E1C
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 06:29:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742192888; cv=none; b=O4RSP/FMirxB7KiLBQ7mPWIxx3hOZi/WoZCY/v2zSDEhjHOnTZ97kC9m/6mKks6Z5qDjf6rEXcfWW1PhKMVnYwkWEH5/K2nR7XJ+16za2w5qHb3jS2fmcpqJg+P+A3tADR/8+sH64SgWYfdqL0OAKeWyXtPFCH50+TsYJjCc60E=
+	t=1742192944; cv=none; b=I2qfijINItldIj+w4TA7cR+2tKXiNOJ5ZXfkRRAtogiEKozY8KfOHf1M3R4sSUcyHWh15j8TlPe3ZSb9wP5AMzXmV0dnLxoDe3zlV4NhgjAyNGhIY48KyjZoXQQquB/QkwaHoiY3qOdEKaDPVm8cAHi8lPTea3gIwu75tuP5gfQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742192888; c=relaxed/simple;
-	bh=i9fxZ+XI8NYRm51/h6v55WoQ0t5KAqKMb6z+WtDxSDA=;
+	s=arc-20240116; t=1742192944; c=relaxed/simple;
+	bh=C4Xv2ewkRmTtekayeKpX+KQw2m0DjBThVe1eoCB7rAM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pPke0Wqvn7r2a9XQOP1+8Wt+7JMcC2rpFQlhBCzU1cVRl1JunEWI3WuC9N0TXDkcEZAaxv3iG3k4q4ga5RHVrsa90bB3VZmxIcmjGGj3jMSy0XdtzkU++E6VBSvSgZjQpWMhIXzHoITFlQr1J90Wifdj8HE8J8fJhF5u9DPqT1o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TxgFanU3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0193DC4CEE3;
-	Mon, 17 Mar 2025 06:28:06 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=g7WEJFEyrOQwJghufwv4B0j/sv/wGSNqEQA0pgeKTuom69jv7zfM9hooVnbgV9hMqrXhzeM1viaks6b7ZeHO7xspS+gwPKn4LyJjff/J6mR6nb5VOjWdyiqS/d3yVVSQtmU0ryE2WsZUfUsLrcayKiPQ37qS96lhFp8vb02wd5M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Yxx5iqk4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D61A8C4CEE3;
+	Mon, 17 Mar 2025 06:29:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742192888;
-	bh=i9fxZ+XI8NYRm51/h6v55WoQ0t5KAqKMb6z+WtDxSDA=;
+	s=k20201202; t=1742192943;
+	bh=C4Xv2ewkRmTtekayeKpX+KQw2m0DjBThVe1eoCB7rAM=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=TxgFanU3n7AaKm6sCSzEfSbUTsNekeYgmNNMWsKZiUWuxnP+tHqkJXbEhJG/x1Orb
-	 XcSkgh5bQXoepoKd+1BZb7irFq8y9kF4luWxdpdImuXKx/Ufwn3IRD5kAawO+egB9L
-	 OMmuRSkRO1Vq2ZQ46wb9mivv+ndZmouGDt45rFcF8kbU+3fSsTuh7AVroeoyOqPqWC
-	 OcjLqtENHHu5CIrtnqvTGXJpUIjQNvziJ2cAOOcyEpxoKhTdKhTwQPZFVTr+xesodY
-	 kewIJ2mbVcO1rWbsRSGIMSTdU5xFN/B6RfseAov1bB+owEIPptLmnPpfZg02lsskuj
-	 2pNQ2vsh8zNgA==
-Message-ID: <242e67a0-0a07-458d-a3ed-e37062d940a3@kernel.org>
-Date: Mon, 17 Mar 2025 07:28:05 +0100
+	b=Yxx5iqk43Ryhvl+SOKo32jyc02wVxs93Qj9nN+7BDkUrLL72ApK+8c+VZIzLmbIPa
+	 HYaAgL9uYNzabnLmmB2NtiZqENKh2ZrFUAOnFQZs4JR41WKlHUWa38XugOfbNvbZ22
+	 qcKmM0kMjoFfLgOX7sckbNkHlC+jR8FFja8XmjlXUw8LAcBJglis4CXDjxZAtJF/jl
+	 4hDWRWjWp+oIETr76pYJLPVag+mRBTCTVQs2E1oLYThbtwO/6XDLPwlW8Cid8xJFoM
+	 pX/DM4XvJCB6svW4ua3FaSGPCVSGteSkFcrgJaHegQesq5XvUzv0rYSg3rKf9MCUt9
+	 ZPGLdThRsNRrA==
+Message-ID: <7ef024ab-a073-4deb-b410-f2db17de4150@kernel.org>
+Date: Mon, 17 Mar 2025 07:29:01 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,12 +49,10 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH linux-next] params: use sysfs_emit() instead of
- scnprintf().
-To: xie.ludan@zte.com.cn, petr.pavlu@suse.com
-Cc: linux@weissschuh.net, mcgrof@kernel.org, thorsten.blum@linux.dev,
- linux-kernel@vger.kernel.org
-References: <202503151417004728U9HCHFf6b_zP5GsZuMdu@zte.com.cn>
+Subject: Re: [PATCH] dyndbg: use sysfs_emit() instead of scnprintf()
+To: xie.ludan@zte.com.cn, akpm@linux-foundation.org
+Cc: jbaron@akamai.com, jim.cromie@gmail.com, linux-kernel@vger.kernel.org
+References: <20250315140743750cHJ6I1rOluLjS4m5GCKjr@zte.com.cn>
 Content-Language: en-US
 From: Jiri Slaby <jirislaby@kernel.org>
 Autocrypt: addr=jirislaby@kernel.org; keydata=
@@ -99,51 +97,45 @@ Autocrypt: addr=jirislaby@kernel.org; keydata=
  f/bIWIr0cqQmqQ33FgRhrG1+Xml6UXyJ2jExmlO8JljuOGeXYh6ZkIEyzqzffzBLXZCujlYQ
  DFXpyMNVJ2ZwPmX2mWEoYuaBU0JN7wM+/zWgOf2zRwhEuD3A2cO2PxoiIfyUEfB9SSmffaK/
  S4xXoB6wvGENZ85Hg37C7WDNdaAt6Xh2uQIly5grkgvWppkNy4ZHxE+jeNsU7tg=
-In-Reply-To: <202503151417004728U9HCHFf6b_zP5GsZuMdu@zte.com.cn>
+In-Reply-To: <20250315140743750cHJ6I1rOluLjS4m5GCKjr@zte.com.cn>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 15. 03. 25, 7:17, xie.ludan@zte.com.cn wrote:
-> From: XieLudan <xie.ludan@zte.com.cn>
-> 
+You sent a couple of patches multiple times without a reason?
+
+On 15. 03. 25, 7:07, xie.ludan@zte.com.cn wrote:
+> From: XieLudan
 > 
 > Follow the advice in Documentation/filesystems/sysfs.rst:
-> 
 > show() should only use sysfs_emit() or sysfs_emit_at() when formatting
-> 
 > the value to be returned to user space.
 > 
-> 
-> Signed-off-by: XieLudan <xie.ludan@zte.com.cn>
-> 
+> Signed-off-by: XieLudan
 > ---
+> lib/dynamic_debug.c | 4 ++--
+> 1 file changed, 2 insertions(+), 2 deletions(-)
 > 
->   kernel/params.c | 8 ++++----
+> diff --git a/lib/dynamic_debug.c b/lib/dynamic_debug.c
+> index 5a007952f7f2..83ce3f310ab9 100644
+> --- a/lib/dynamic_debug.c
+> +++ b/lib/dynamic_debug.c
+> @@ -795,11 +795,11 @@ int param_get_dyndbg_classes(char *buffer, const struct kernel_param *kp)
 > 
->   1 file changed, 4 insertions(+), 4 deletions(-)
+> case DD_CLASS_TYPE_DISJOINT_NAMES:
+> case DD_CLASS_TYPE_DISJOINT_BITS:
+> - return scnprintf(buffer, PAGE_SIZE, "0x%lx\n", *dcp->bits);
+> + return sysfs_emit(buffer, "0x%lx\n", *dcp->bits);
 > 
+> case DD_CLASS_TYPE_LEVEL_NAMES:
+> case DD_CLASS_TYPE_LEVEL_NUM:
+> - return scnprintf(buffer, PAGE_SIZE, "%d\n", *dcp->lvl);
+> + return sysfs_emit(buffer, "%d\n", *dcp->lvl);
+> default:
+> return -1;
+> }
+> --
+> 2.25.1
 > 
-> diff --git a/kernel/params.c b/kernel/params.c
-> 
-> index 2509f216c9f3..89ae571af266 100644
-> 
-> --- a/kernel/params.c
-> 
-> +++ b/kernel/params.c
-> 
-> @@ -219,7 +219,7 @@ char *parse_args(const char *doing,
-> 
-> }\
-> 
-> int param_get_##name(char *buffer, const struct kernel_param *kp) \
-> 
-> {\
-> 
-> -return scnprintf(buffer, PAGE_SIZE, format "\n",\
-> 
-> +return sysfs_emit(buffer, format "\n",\
-
-This has nothing to do with sysfs, right?
 
 -- 
 js
