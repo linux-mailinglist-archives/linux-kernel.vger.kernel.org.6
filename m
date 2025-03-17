@@ -1,258 +1,186 @@
-Return-Path: <linux-kernel+bounces-563320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563321-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B2BBA63DA9
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 04:57:05 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4503A63DC1
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 05:01:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C6FE18879F5
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 03:57:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C9B413ADE46
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 04:00:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F29B169AE6;
-	Mon, 17 Mar 2025 03:56:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAB2C215044;
+	Mon, 17 Mar 2025 04:01:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dtEhN3an"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aQfNIQPH"
+Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD6C214A4F9;
-	Mon, 17 Mar 2025 03:56:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A44AEEBB;
+	Mon, 17 Mar 2025 04:01:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742183817; cv=none; b=qm1NqeGPYRnSS47smwaFb9p2wnICWTYv4h57VnsrEiUdMa5pgZClrSLoCDJOQiv4kTr+1IHChR75Gg90TnfPio9+VSR2YskmiH3rUSQzAphqxt94NN/SlqqaBkyD0Lk0l5fuv6qAaqYVBzjtIx9p9+R8gEEVzBbq5tAzSzvJR8k=
+	t=1742184063; cv=none; b=RIFQEaxYBh6YH3c76b7AdP21xRUqCSklhnVeK/clHHyV0mYzGCVtvXiirPtOj7TEPXsv+i1U0UDiHTEfdZK/1ycPMbmqPgguEjxz2wzO497V4r4FoKaoB7nhr+Ge2L3YmI7Aq8VMTAWE7FUYrvZjNTkhH7rv3tqor3vT2tFmQQg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742183817; c=relaxed/simple;
-	bh=pXTAu4i+lPwO2BP0fApT2DXfArtOvPYetf21fXbZR/I=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=H0I+7f8C5BsqScL8QUrAub+wAAcpgrDe8/w+ftSMecSRdmDusUKgH0d3FjGdFd2UkB4gkwKAuYwz8HUEi6p+7vx8IZjWYOc6+rZmGmPOsmR8YY94QPCK4uAtyf/3/dYrFNtdDjrJA7T2Ac03zoiVXBhtAn6DfVQYrEOrBTfmMZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dtEhN3an; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742183816; x=1773719816;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=pXTAu4i+lPwO2BP0fApT2DXfArtOvPYetf21fXbZR/I=;
-  b=dtEhN3anBNMZLENuruxfV5JJ9OccESL90NbvV616kbRsGLQktu1oHbPe
-   qyQTl3CVrRKgPTHNL2o2YFuYzxmg14ekunqtZ4eo5Df6u42IjoM2T3wKi
-   UbrPZn9mByXxF3L/1s4hg4bNlsdnZzinVSHq08z11px43aU1mlCCtprZt
-   ilDR7v9q2jnKe/M/zJTaQ1q21O6KyhEoMeKf6FLwKKbOMVw5mt2PK59nc
-   fTsNzYii8VyxUUXFr99jkkJBgKMpa8JZtpX7hgBM/+rjIqveOXShNtJno
-   /mnx34BPwIUNuLycNi1So23wHsdJgM96dh+6w9VladcCwlTP7lbMB9FV9
-   g==;
-X-CSE-ConnectionGUID: qG37IcUTSw6K2UGdFTDZ4A==
-X-CSE-MsgGUID: W4hOmRJ4TguyWzwN3RZGwg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11375"; a="42998744"
-X-IronPort-AV: E=Sophos;i="6.14,253,1736841600"; 
-   d="scan'208";a="42998744"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Mar 2025 20:56:55 -0700
-X-CSE-ConnectionGUID: nImjPajCTwGxdSCetvpK3w==
-X-CSE-MsgGUID: 8m5c0qZ+QZK5aqukcgoDlw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,253,1736841600"; 
-   d="scan'208";a="152702313"
-Received: from allen-box.sh.intel.com ([10.239.159.52])
-  by orviesa002.jf.intel.com with ESMTP; 16 Mar 2025 20:56:53 -0700
-From: Lu Baolu <baolu.lu@linux.intel.com>
-To: Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Kevin Tian <kevin.tian@intel.com>,
-	chaitanya.kumar.borah@intel.com
-Cc: iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Lu Baolu <baolu.lu@linux.intel.com>,
-	stable@vger.kernel.org
-Subject: [PATCH 1/1] iommu/vt-d: Fix possible circular locking dependency
-Date: Mon, 17 Mar 2025 11:57:14 +0800
-Message-ID: <20250317035714.1041549-1-baolu.lu@linux.intel.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1742184063; c=relaxed/simple;
+	bh=CPRK+WJkOO4h0Vp9h8+sDfVxsygNEVJ8QoQNxeVtxbw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=U1KdMoDR9CAtwbwRh6eaB0KY1vH5AtwtSg0syW6fZo/Hc6qQQnqdD5n8AxEo2c2tCNu1+Y5cPFgIaWnSNZagSvAJgB21oi+189H1k5V3JX7VHXSzj5V85gMiFhFKVxxy3G0o52ESByDGZNGVGCCPU+V+TPkmuouBFa7BdWD3/Dg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aQfNIQPH; arc=none smtp.client-ip=209.85.222.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-7c0a159ded2so532055785a.0;
+        Sun, 16 Mar 2025 21:01:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742184060; x=1742788860; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=N0RY31U7IeQCdaigqT63GbXTi4AkErC9Ud8HZP9nkSk=;
+        b=aQfNIQPHB3fF4RwzB2wM0ZKABeNLVOxp/if1vgEfc+fKbjFkroe//FBIlWYBz+q+I6
+         dljTUU5zFzSGWlhEqmoLQi2j5RIPyIShkfevh/PdfXIQu9UXx9cxNxaDP4Bb8G4owy4i
+         asyWpM7zNwqAuhCxSVMVIIKQ4Ek7Jee5HUbMhKuUvjNE04YKTA9zjykFkjzndg62wlnr
+         Z+B4co2CCIzKUvHnsG1jTIYjSPSp//YEistzS6e7tZ/Y293y09U926sATeFG6Zw9d+qf
+         C9fS6jpVeF8NnV5sYCIg//4urC7FqGcbPCdLFfo62s6KmPvugB5aLB/SLSIERI/8aCqE
+         eE8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742184060; x=1742788860;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=N0RY31U7IeQCdaigqT63GbXTi4AkErC9Ud8HZP9nkSk=;
+        b=d8d6EZ8UDO7RDmRV59DwwOvujRg73IPLU7YacAxlDJ062rqfRYRULsTA8eDTmLp6w8
+         snAt9HyF3v/0Nbu7KhdAfyRgz2pW2Q2vxSuQLK1uvRUeQX0u1vd+h63DHUb8XsjbfqFp
+         NIr3JrJIrqBKMKcrvZz1eTUcbjOHMnFGBCtmcBNiL7CAs9qtDE5ui9m0WtaZ7D0pKzmE
+         G/rBB3HzOVG0HLAyXzhUv3F7S1hVTGB7vLpJ73Is/EcGHn5e/jw3U0m5Al4tj586JwF1
+         dyPJGROH0FdD5dxqdLMnOUDY3gKBBYh//OQUixvzfYB3pTFWcic+x1DPD2bEryGlaoU9
+         a5Zw==
+X-Forwarded-Encrypted: i=1; AJvYcCVAuKK2l1WuSVpRBli3Yp3ert13l1GcRccOC08GUOSxEceLgwJLadNUQXzhC8bL5WVQ8zWX/KrelU95lMY=@vger.kernel.org, AJvYcCX5Povw1SbRb3JBXenvYBHSYx195FQa0Z11nYcFXz3k+kAmVVJu/dMfjWItjPb75uNKSKs6zUVpzgxVvquJFzQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx87V++CwTBwwdoYCxLiunH2ZZGsHKOwVFoMwziAihBQ9e58Jf/
+	TqHyCUXh+Q76Hl005+ggAP0jW/b3QusleFiogqXrnj/KSWprACDx
+X-Gm-Gg: ASbGncucMlJtSRMPLN9+1MoBZPzDBpTbbJjpSDDI32+NjuPS5Bt8LAxdJI5PGg8zK69
+	hAxAa3DZLNRO7ajy+zUyMtUi9TigKBNI1Iq8jOGDYwQOxelU/PCUJGhfpas/pUG6oOdVKT1JGDG
+	Mq6wDD7D9pOkuxQPOloOebgoRIMJ180PJM/x+oXQcAeHOx56lDpSOY19NUz4rCS5PaTWt+u6jTs
+	b2waIMsxaSYD/iw5Jm7/zgmZ+ENi/gO5GtT2diy0oz2YEGEIiWF8RcEGYjJGcQW+kQrhSvzHyep
+	gKCbAjz+atKcNSqj961cnnoxTGDOg7223bgoZZhlkArBBKuE49GDDpajhuQch+bk6InXHBvQuhe
+	kfYMYXIhRiw6YiOfRb+2XwnEDzCyT/vkhhPA=
+X-Google-Smtp-Source: AGHT+IGYQe3AtIK+Tt+34wc6nrL/bqTpsVN0e/l7vVIWlB5VhW2ixXwbMxLBGm7aMe4he1pcGcwSGg==
+X-Received: by 2002:ad4:5f4f:0:b0:6e8:9d00:3d71 with SMTP id 6a1803df08f44-6eaeaa2389fmr161898576d6.21.1742184060285;
+        Sun, 16 Mar 2025 21:01:00 -0700 (PDT)
+Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6eade330b72sm50588896d6.72.2025.03.16.21.00.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 16 Mar 2025 21:00:59 -0700 (PDT)
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailfauth.phl.internal (Postfix) with ESMTP id 5E4F6120007C;
+	Mon, 17 Mar 2025 00:00:59 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-10.internal (MEProxy); Mon, 17 Mar 2025 00:00:59 -0400
+X-ME-Sender: <xms:e57XZzMXD-BH5R5FyVdfv23mcleoZ0uDObogRhxq-0vvjtXrrTvlJg>
+    <xme:e57XZ9_OPtpybRUU2Dz3-rIxCHUe_qji5M_CF1RA8wAzTNI1Cl0j0WShnHnh2sEm7
+    TfkGabAlkVFqsG2Ug>
+X-ME-Received: <xmr:e57XZyTHjmkWCCDfmRGl1d-3y5HIKR5cJk0qFMrjd28k_6daLcE6vZ64>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddufeekgeelucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+    gvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddt
+    vdenucfhrhhomhepuehoqhhunhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrih
+    hlrdgtohhmqeenucggtffrrghtthgvrhhnpeejieeffeeffeehffdugfetveefhedtheeu
+    tdekudfhtefggfetieeiffekgffghfenucffohhmrghinhepghhithhhuhgsrdgtohhmpd
+    grshgpphhtrhdrghhrohhuphdprghspghpthhrrdhpihgunecuvehluhhsthgvrhfuihii
+    vgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsghoqhhunhdomhgvshhmthhprghuth
+    hhphgvrhhsohhnrghlihhthidqieelvdeghedtieegqddujeejkeehheehvddqsghoqhhu
+    nhdrfhgvnhhgpeepghhmrghilhdrtghomhesfhhigihmvgdrnhgrmhgvpdhnsggprhgtph
+    htthhopedugedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheptghonhhtrggtthes
+    sgihthgvqdhfohhrghgvrdhiohdprhgtphhtthhopehojhgvuggrsehkvghrnhgvlhdroh
+    hrghdprhgtphhtthhopegrlhgvgidrghgrhihnohhrsehgmhgrihhlrdgtohhmpdhrtghp
+    thhtohepghgrrhihsehgrghrhihguhhordhnvghtpdhrtghpthhtohepsghjohhrnhefpg
+    hghhesphhrohhtohhnmhgrihhlrdgtohhmpdhrtghpthhtohepsggvnhhnohdrlhhoshhs
+    ihhnsehprhhothhonhdrmhgvpdhrtghpthhtoheprgdrhhhinhgusghorhhgsehkvghrnh
+    gvlhdrohhrghdprhgtphhtthhopegrlhhitggvrhihhhhlsehgohhoghhlvgdrtghomhdp
+    rhgtphhtthhopehtmhhgrhhoshhssehumhhitghhrdgvughu
+X-ME-Proxy: <xmx:e57XZ3uOyErEeJWNcNCalErNQI94Y4kWfmLySK0Oj-nBon1rYuca1A>
+    <xmx:e57XZ7fwDkdAKMC6-sMSfl5_cb9IFKoeajSzfn2ThD9oktEfhn3tLQ>
+    <xmx:e57XZz2EO8kDXnoAso6ZXEZHkOzOowIndyyjxqZHXqKvc5PgfpuD8g>
+    <xmx:e57XZ3-t_2cDCytk2N9CWFGo-ixIqc6fBfE93QSKiaqLgmd-QqcqfA>
+    <xmx:e57XZ-_FgRkJXmbaivMMReNZRw1rwIidqAJarudCJVSPKRYe7p5TmV0f>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 17 Mar 2025 00:00:58 -0400 (EDT)
+Date: Sun, 16 Mar 2025 21:00:57 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Antonio Hickey <contact@byte-forge.io>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Antonio Hickey <contact@antoniohickey.com>,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 04/16] rust: task: refactor to use `&raw [const|mut]`
+Message-ID: <Z9eeeTpSr-vVD5eL@Mac.home>
+References: <20250316061429.817126-1-contact@antoniohickey.com>
+ <20250316061429.817126-5-contact@antoniohickey.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250316061429.817126-5-contact@antoniohickey.com>
 
-We have recently seen report of lockdep circular lock dependency warnings
-on platforms like skykale and kabylake:
+Hi Antonio,
 
- ======================================================
- WARNING: possible circular locking dependency detected
- 6.14.0-rc6-CI_DRM_16276-gca2c04fe76e8+ #1 Not tainted
- ------------------------------------------------------
- swapper/0/1 is trying to acquire lock:
- ffffffff8360ee48 (iommu_probe_device_lock){+.+.}-{3:3},
-   at: iommu_probe_device+0x1d/0x70
+On Sun, Mar 16, 2025 at 02:14:13AM -0400, Antonio Hickey wrote:
+> Replacing all occurrences of `addr_of!(place)` and `addr_of_mut!(place)`
+> with `&raw const place` and `&raw mut place` respectively.
+> 
+> This will allow us to reduce macro complexity, and improve consistency
+> with existing reference syntax as `&raw const`, `&raw mut` are similar
+> to `&`, `&mut` making it fit more naturally with other existing code.
+> 
+> Suggested-by: Benno Lossin <benno.lossin@proton.me>
+> Link: https://github.com/Rust-for-Linux/linux/issues/1148
 
- but task is already holding lock:
- ffff888102c7efa8 (&device->physical_node_lock){+.+.}-{3:3},
-   at: intel_iommu_init+0xe75/0x11f0
+You need to change the above because this patch doesn't replace
+addr_of_{,mut}!() with `&raw`, and also the patch title. Thanks!
 
- which lock already depends on the new lock.
+Regards,
+Boqun
 
- the existing dependency chain (in reverse order) is:
-
- -> #6 (&device->physical_node_lock){+.+.}-{3:3}:
-        __mutex_lock+0xb4/0xe40
-        mutex_lock_nested+0x1b/0x30
-        intel_iommu_init+0xe75/0x11f0
-        pci_iommu_init+0x13/0x70
-        do_one_initcall+0x62/0x3f0
-        kernel_init_freeable+0x3da/0x6a0
-        kernel_init+0x1b/0x200
-        ret_from_fork+0x44/0x70
-        ret_from_fork_asm+0x1a/0x30
-
- -> #5 (dmar_global_lock){++++}-{3:3}:
-        down_read+0x43/0x1d0
-        enable_drhd_fault_handling+0x21/0x110
-        cpuhp_invoke_callback+0x4c6/0x870
-        cpuhp_issue_call+0xbf/0x1f0
-        __cpuhp_setup_state_cpuslocked+0x111/0x320
-        __cpuhp_setup_state+0xb0/0x220
-        irq_remap_enable_fault_handling+0x3f/0xa0
-        apic_intr_mode_init+0x5c/0x110
-        x86_late_time_init+0x24/0x40
-        start_kernel+0x895/0xbd0
-        x86_64_start_reservations+0x18/0x30
-        x86_64_start_kernel+0xbf/0x110
-        common_startup_64+0x13e/0x141
-
- -> #4 (cpuhp_state_mutex){+.+.}-{3:3}:
-        __mutex_lock+0xb4/0xe40
-        mutex_lock_nested+0x1b/0x30
-        __cpuhp_setup_state_cpuslocked+0x67/0x320
-        __cpuhp_setup_state+0xb0/0x220
-        page_alloc_init_cpuhp+0x2d/0x60
-        mm_core_init+0x18/0x2c0
-        start_kernel+0x576/0xbd0
-        x86_64_start_reservations+0x18/0x30
-        x86_64_start_kernel+0xbf/0x110
-        common_startup_64+0x13e/0x141
-
- -> #3 (cpu_hotplug_lock){++++}-{0:0}:
-        __cpuhp_state_add_instance+0x4f/0x220
-        iova_domain_init_rcaches+0x214/0x280
-        iommu_setup_dma_ops+0x1a4/0x710
-        iommu_device_register+0x17d/0x260
-        intel_iommu_init+0xda4/0x11f0
-        pci_iommu_init+0x13/0x70
-        do_one_initcall+0x62/0x3f0
-        kernel_init_freeable+0x3da/0x6a0
-        kernel_init+0x1b/0x200
-        ret_from_fork+0x44/0x70
-        ret_from_fork_asm+0x1a/0x30
-
- -> #2 (&domain->iova_cookie->mutex){+.+.}-{3:3}:
-        __mutex_lock+0xb4/0xe40
-        mutex_lock_nested+0x1b/0x30
-        iommu_setup_dma_ops+0x16b/0x710
-        iommu_device_register+0x17d/0x260
-        intel_iommu_init+0xda4/0x11f0
-        pci_iommu_init+0x13/0x70
-        do_one_initcall+0x62/0x3f0
-        kernel_init_freeable+0x3da/0x6a0
-        kernel_init+0x1b/0x200
-        ret_from_fork+0x44/0x70
-        ret_from_fork_asm+0x1a/0x30
-
- -> #1 (&group->mutex){+.+.}-{3:3}:
-        __mutex_lock+0xb4/0xe40
-        mutex_lock_nested+0x1b/0x30
-        __iommu_probe_device+0x24c/0x4e0
-        probe_iommu_group+0x2b/0x50
-        bus_for_each_dev+0x7d/0xe0
-        iommu_device_register+0xe1/0x260
-        intel_iommu_init+0xda4/0x11f0
-        pci_iommu_init+0x13/0x70
-        do_one_initcall+0x62/0x3f0
-        kernel_init_freeable+0x3da/0x6a0
-        kernel_init+0x1b/0x200
-        ret_from_fork+0x44/0x70
-        ret_from_fork_asm+0x1a/0x30
-
- -> #0 (iommu_probe_device_lock){+.+.}-{3:3}:
-        __lock_acquire+0x1637/0x2810
-        lock_acquire+0xc9/0x300
-        __mutex_lock+0xb4/0xe40
-        mutex_lock_nested+0x1b/0x30
-        iommu_probe_device+0x1d/0x70
-        intel_iommu_init+0xe90/0x11f0
-        pci_iommu_init+0x13/0x70
-        do_one_initcall+0x62/0x3f0
-        kernel_init_freeable+0x3da/0x6a0
-        kernel_init+0x1b/0x200
-        ret_from_fork+0x44/0x70
-        ret_from_fork_asm+0x1a/0x30
-
- other info that might help us debug this:
-
- Chain exists of:
-   iommu_probe_device_lock --> dmar_global_lock -->
-     &device->physical_node_lock
-
-  Possible unsafe locking scenario:
-
-        CPU0                    CPU1
-        ----                    ----
-   lock(&device->physical_node_lock);
-                                lock(dmar_global_lock);
-                                lock(&device->physical_node_lock);
-   lock(iommu_probe_device_lock);
-
-  *** DEADLOCK ***
-
-This driver uses a global lock to protect the list of enumerated DMA
-remapping units. It is necessary due to the driver's support for dynamic
-addition and removal of remapping units at runtime.
-
-Two distinct code paths require iteration over this remapping unit list:
-
-- Device registration and probing: the driver iterates the list to
-  register each remapping unit with the upper layer IOMMU framework
-  and subsequently probe the devices managed by that unit.
-- Global configuration: Upper layer components may also iterate the list
-  to apply configuration changes.
-
-The lock acquisition order between these two code paths was reversed. This
-caused lockdep warnings, indicating a risk of deadlock. Fix this warning
-by releasing the global lock before invoking upper layer interfaces for
-device registration.
-
-Fixes: b150654f74bf ("iommu/vt-d: Fix suspicious RCU usage")
-Closes: https://lore.kernel.org/linux-iommu/SJ1PR11MB612953431F94F18C954C4A9CB9D32@SJ1PR11MB6129.namprd11.prod.outlook.com/
-Cc: stable@vger.kernel.org
-Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
----
- drivers/iommu/intel/iommu.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/iommu/intel/iommu.c b/drivers/iommu/intel/iommu.c
-index 85aa66ef4d61..ec2f385ae25b 100644
---- a/drivers/iommu/intel/iommu.c
-+++ b/drivers/iommu/intel/iommu.c
-@@ -3049,6 +3049,7 @@ static int __init probe_acpi_namespace_devices(void)
- 			if (dev->bus != &acpi_bus_type)
- 				continue;
- 
-+			up_read(&dmar_global_lock);
- 			adev = to_acpi_device(dev);
- 			mutex_lock(&adev->physical_node_lock);
- 			list_for_each_entry(pn,
-@@ -3058,6 +3059,7 @@ static int __init probe_acpi_namespace_devices(void)
- 					break;
- 			}
- 			mutex_unlock(&adev->physical_node_lock);
-+			down_read(&dmar_global_lock);
- 
- 			if (ret)
- 				return ret;
--- 
-2.43.0
-
+> Signed-off-by: Antonio Hickey <contact@antoniohickey.com>
+> ---
+>  rust/kernel/task.rs | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/rust/kernel/task.rs b/rust/kernel/task.rs
+> index 49012e711942..568b528e2cc4 100644
+> --- a/rust/kernel/task.rs
+> +++ b/rust/kernel/task.rs
+> @@ -257,7 +257,7 @@ pub fn as_ptr(&self) -> *mut bindings::task_struct {
+>      pub fn group_leader(&self) -> &Task {
+>          // SAFETY: The group leader of a task never changes after initialization, so reading this
+>          // field is not a data race.
+> -        let ptr = unsafe { *ptr::addr_of!((*self.as_ptr()).group_leader) };
+> +        let ptr = unsafe { (*self.as_ptr()).group_leader };
+>  
+>          // SAFETY: The lifetime of the returned task reference is tied to the lifetime of `self`,
+>          // and given that a task has a reference to its group leader, we know it must be valid for
+> @@ -269,7 +269,7 @@ pub fn group_leader(&self) -> &Task {
+>      pub fn pid(&self) -> Pid {
+>          // SAFETY: The pid of a task never changes after initialization, so reading this field is
+>          // not a data race.
+> -        unsafe { *ptr::addr_of!((*self.as_ptr()).pid) }
+> +        unsafe { (*self.as_ptr()).pid }
+>      }
+>  
+>      /// Returns the UID of the given task.
+> -- 
+> 2.48.1
+> 
 
