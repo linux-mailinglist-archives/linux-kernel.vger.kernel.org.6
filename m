@@ -1,221 +1,176 @@
-Return-Path: <linux-kernel+bounces-563924-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563925-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF0B6A64A8F
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:43:50 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C3C0A64A71
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:41:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A8291189256A
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:41:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 775457A2BD8
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:40:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 565B12376FF;
-	Mon, 17 Mar 2025 10:39:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB21523816E;
+	Mon, 17 Mar 2025 10:40:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a5Xfnf3C"
-Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="C4bLramU"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC3F723315F;
-	Mon, 17 Mar 2025 10:39:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A5AA238146;
+	Mon, 17 Mar 2025 10:39:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742207974; cv=none; b=n9buwfptBlQDdf7krYzSUSh/haZEXm8YmTBOpxv5e1NEqzIl8RtFfiuelsGTORH9c/p0/faAz8viSCJfovScbtfI3y1QIGDDosMjOPkAZQ8PYDfUuDhh2aGc53/QSR2O3FezRcdveroYc4TefJ4XrT9VXGdKKmPEriUyf3OO7/U=
+	t=1742208001; cv=none; b=hEU+N3R3C/YvE6JYuzLOspxs2FoYWfDyMfcL+nCPsrVniBBvehfyzgK9kUGmpniFtws77hiKihpFEr3e0uJQIRzxbtCUGcE35Z9q9BXjkZaP2w9UaMv1e1JdBYsClcAaFRvHHQWGRfzMgGtrVK6WQcZ9+Ag3rX4qvN8WrueY82A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742207974; c=relaxed/simple;
-	bh=TfpfaeLI4S6m1v+uddZe93RivyyarsvruxbycvEgKas=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bhivIXWcQZHmonM4dJb1FoHsDICirEW4n4a/92KemCgzk9s3/Ezn4NqrXdVP3iS9UY2hrFkbz15gv+GDtgB2ofwm5UbJACPDan6Y2dJ9+za8NQRfidZx0M7AO1CKLx3KUh7pbz5IYhnp2Uija5Y2aA34PJVcX9yHb4Pn+dJq+yY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a5Xfnf3C; arc=none smtp.client-ip=209.85.219.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-e5dc299dee9so3872350276.3;
-        Mon, 17 Mar 2025 03:39:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742207972; x=1742812772; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=IoGBlbe9Czmc/JKLBj0F16RNsymqq1dJ1tqyI1v1Ytg=;
-        b=a5Xfnf3Ciqz7oqMk15UVEWLqMLB/mSoOu+Rd0RHYnuJ1LV6glpYu0flheE9LAERkaV
-         HtNA3Da5wCrtTEsI3IlHW1Fo6g1VkgXlRxoktTpTIUtbQ6u84Cr5LoZz4l/+OE9wyUz1
-         cqvdsXJjKkPunL6ajUNDrSqhvJEi66dFmQPtsAJd4ygSFOuqrY7yhaD7jg1ezvfRv5GP
-         HPYKLarBQIssxTecEjRCEhTIPjWwPyUt2IlZJ3YPm48zqMdE+iOlftIliRrcRT7pwJCI
-         DPYCnSodApaHcgSJxGfXU+02s1xbHR0FjNiaP7Q9D9mgV5afhj7U9/hUk0xaFupBA7w0
-         vniQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742207972; x=1742812772;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=IoGBlbe9Czmc/JKLBj0F16RNsymqq1dJ1tqyI1v1Ytg=;
-        b=MWxDxcfcnaDk9Z0hFTnCU+OLqBNS8fIkKowmo0zY8i7AtaxFJIc09nEHn3/j3q3P8N
-         fJHFQE9V1QYAJPuCfJCCN9ig1ZFCO2UnBHivOtic/A1zV/0q///vS1+dRdyPOVHx0uul
-         4ZNBqAxc7rgJNkPqc9+gia4lQVJINPwlImHJ9DwftRrTI8vPkRqH5PMwqN569emACu+L
-         csJ9pT7q/wb2JafNNWg5KibN78GQAQed1CyFcA30107bnXkDauCRPnR9n7OI6ebS6ibP
-         9pDhhP+vDrQylXb9DUEcIL+g3keFB9yzi90zHX3JrU956qseEdGSLJoPAP7IXWzgEDGR
-         CS4A==
-X-Forwarded-Encrypted: i=1; AJvYcCX7eB2GKkKXS5JKu822lYBHhf4COcL5pBLgVx33+T9/Jf4tchqqBiVTuJjKGw/SnJbfoccIbk5sobmf@vger.kernel.org, AJvYcCXA4rsuV5a7nZ5alTWowKjvc6cBS+5VjR0JYwYZse4R3jQS7eVXg5qkEpH+WAy2Td45I0ARQXJCN+kBKAte@vger.kernel.org, AJvYcCXvFflsz4yAHJLcDj2vFxJCnoceR/ZQDB1MEQ7cuxuivGpqlr5t7C3ZgCDComyXsez+KCG3KVYVcKOG@vger.kernel.org
-X-Gm-Message-State: AOJu0YxXbnCQub/E6+6Rsxp/I4m2WlXiEXDDapjEsTk4kUdwz4URRP42
-	snCmS/2scp2syUrsgES6bD4xx2KY6lku/gz6/oxQx5Ji6bQNPjvZAA6U7FK2LE8yCIdNbH5JAPS
-	2nZMOqbQNxHFPBdcnq9mAPKvT9LM=
-X-Gm-Gg: ASbGncsaybJhhl/VkOMjr0kMZw4D3MeRsuxcJEtZoz3649AUKSwYxgM/mJ/DrswtERR
-	Y1ormk0ePRbf/rGPSMbTFKc6Dj+HTguZlTyqV6xkyUWUS1S198dBELHP6Bd4Z6e3EZ0jtkMFPVR
-	CtnO7CZp8c5qvXXN1kN21xuGj0Occ=
-X-Google-Smtp-Source: AGHT+IHy+RO89nDi9FmYtvf/yESHna7TilFKwweegOO/mX3S8jWkfc8ZcfeV/QYwVZlEKxwfn3Yq7ZH5aj8lCxwN4uE=
-X-Received: by 2002:a05:6902:2191:b0:e61:1c18:3f36 with SMTP id
- 3f1490d57ef6-e63f65e5ea6mr14903162276.44.1742207971658; Mon, 17 Mar 2025
- 03:39:31 -0700 (PDT)
+	s=arc-20240116; t=1742208001; c=relaxed/simple;
+	bh=kuaeieyGks1neK56oaQRuwcEzGtCSERfAvBXVCCzd9s=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=qdKk3DhfsHvBcVcskWtDnsre1I/rCSiVWPDPQ60fPPLzKEX9j89vhlFJuI29P1q051DDiCowi5pYN3hjTksYX60h5EzJ8zGMHjzyoR889BEuUUI8uHHrvhAOg9iSeWxCpEmvVNJ6lzgiTAFYaJZ6DyGDAy8T6krDhfKS4Hm0k0M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=C4bLramU; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1742207994;
+	bh=oMkgyTBxX6S1bu3dvbjIlLhUbd7vNobhAbq9SBT9jGQ=;
+	h=Date:From:To:Cc:Subject:From;
+	b=C4bLramUZXtpcK5NYv4REpvRHVaqb8kfL8v3emxa36IKa8jBAj+QiKQV8um1p5r9n
+	 DuxZUx/TMZzgwXSQtAtcmyQ3jmyzuxdXrQZtUNu7lKaBkQshCkxb2xNW/f3BUa7lSb
+	 KeHkA78Krs4TSVDwp7f7jAqmgtD+eQCKFcP3utCf0pjPoOL1uaAoJYzW9kwI68am08
+	 44eSptHVrR84jMxJEzglrhrW87ZnhZmTxJ1xFXoMPXM6KuP9SW6wAVN9j8WfLdNrIe
+	 4kEo9bT7rQhfjsZj/2qnGc/14jnBB4vpyMNj9EI3e2Uhe2E+QloA1Kwq4MuUCSxA6k
+	 kXKpGdQeCk38A==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZGWgt1vNTz4x8W;
+	Mon, 17 Mar 2025 21:39:54 +1100 (AEDT)
+Date: Mon, 17 Mar 2025 21:39:53 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Kees Cook <kees@kernel.org>, Andrew Morton <akpm@linux-foundation.org>,
+ Shuah Khan <shuah@kernel.org>, Brendan Higgins <brendanhiggins@google.com>
+Cc: Sergio =?UTF-8?B?R29uesOhbGV6?= Collado <sergio.collado@gmail.com>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>, Nam Cao <namcao@linutronix.de>,
+ Thomas Gleixner <tglx@linutronix.de>, Thomas =?UTF-8?B?V2Vpw59zY2h1aA==?=
+ <thomas.weissschuh@linutronix.de>
+Subject: linux-next: manual merge of the kspp tree with the kunit-next and
+ mm trees
+Message-ID: <20250317213953.01ca90e9@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240912191038.981105-1-tmaimon77@gmail.com> <20240912191038.981105-3-tmaimon77@gmail.com>
- <536f5393-478c-4a50-b25f-180e221ef7a3@roeck-us.net>
-In-Reply-To: <536f5393-478c-4a50-b25f-180e221ef7a3@roeck-us.net>
-From: Tomer Maimon <tmaimon77@gmail.com>
-Date: Mon, 17 Mar 2025 12:39:20 +0200
-X-Gm-Features: AQ5f1Jq_X-0lZX7kkWxOU1PNLphKdtirYmAhXmqFll0JeXRXfeWOSuOpsLz0fxM
-Message-ID: <CAP6Zq1ioebnqgJB1B8AqD9UtMZRy5CDT8+_dXF_aBZEjjj_B-A@mail.gmail.com>
-Subject: Re: [PATCH v28 2/3] reset: npcm: register npcm8xx clock auxiliary bus device
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de, 
-	robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, tali.perry1@gmail.com, 
-	joel@jms.id.au, venture@google.com, yuenn@google.com, benjaminfair@google.com, 
-	openbmc@lists.ozlabs.org, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; boundary="Sig_/X0vvp6GkZImaay8FbdTAEcl";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Hi Guenter,
+--Sig_/X0vvp6GkZImaay8FbdTAEcl
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Yes, of course, it works in real hardware.
-The modification was made since the reset and clock share the same
-register memory region.
+Hi all,
 
-To enable the clock change needs to be done in the device tree as
-follows (we are planning to send these change patches soon):
+Today's linux-next merge of the kspp tree got a conflict in:
 
-diff -Naur a/arch/arm64/boot/dts/nuvoton/nuvoton-common-npcm8xx.dtsi
-b/arch/arm64/boot/dts/nuvoton/nuvoton-common-npcm8xx.dtsi
---- a/arch/arm64/boot/dts/nuvoton/nuvoton-common-npcm8xx.dtsi
-2025-02-26 16:20:39.000000000 +0200
-+++ b/arch/arm64/boot/dts/nuvoton/nuvoton-common-npcm8xx.dtsi
-2025-03-17 12:29:17.876551537 +0200
-@@ -47,19 +47,16 @@
-                interrupt-parent = <&gic>;
-                ranges;
+  lib/Makefile
 
--               rstc: reset-controller@f0801000 {
-+               clk: rstc: reset-controller@f0801000 {
-                        compatible = "nuvoton,npcm845-reset";
--                       reg = <0x0 0xf0801000 0x0 0x78>;
--                       #reset-cells = <2>;
-+                       reg = <0x0 0xf0801000 0x0 0xC4>;
-                        nuvoton,sysgcr = <&gcr>;
--               };
--
--               clk: clock-controller@f0801000 {
--                       compatible = "nuvoton,npcm845-clk";
-+                       #reset-cells = <2>;
-+                       clocks = <&refclk>;
-                        #clock-cells = <1>;
--                       reg = <0x0 0xf0801000 0x0 0x1000>;
-                };
+between commits:
 
-+
-                apb {
-                        #address-cells = <1>;
-                        #size-cells = <1>;
-diff -Naur a/arch/arm64/boot/dts/nuvoton/nuvoton-npcm845-evb.dts
-b/arch/arm64/boot/dts/nuvoton/nuvoton-npcm845-evb.dts
---- a/arch/arm64/boot/dts/nuvoton/nuvoton-npcm845-evb.dts
-2025-02-26 16:20:39.000000000 +0200
-+++ b/arch/arm64/boot/dts/nuvoton/nuvoton-npcm845-evb.dts
-2025-03-17 12:24:52.293171764 +0200
-@@ -19,6 +19,13 @@
-        memory@0 {
-                reg = <0x0 0x0 0x0 0x40000000>;
-        };
-+
-+       refclk: refclk-25mhz {
-+               compatible = "fixed-clock";
-+               clock-output-names = "ref";
-+               clock-frequency = <25000000>;
-+               #clock-cells = <0>;
-+       };
- };
+  62f3802332ed ("vdso: add generic time data storage")
 
- &serial0 {
+from the mm-unstable branch of the mm tree,
 
-Is it better to modify the reset driver with your suggestion or change
-the device tree?
+  c104c16073b7 ("Kunit to check the longest symbol length")
 
-Thanks,
+from the kunit-next tree and commit:
 
-Tomer
+  db6fe4d61ece ("lib: Move KUnit tests into tests/ subdirectory")
 
+from the kspp tree.
 
-On Sun, 16 Mar 2025 at 17:22, Guenter Roeck <linux@roeck-us.net> wrote:
->
-> Hi,
->
-> On Thu, Sep 12, 2024 at 10:10:37PM +0300, Tomer Maimon wrote:
-> > Add NPCM8xx clock controller auxiliary bus device registration.
-> >
-> > The NPCM8xx clock controller is registered as an aux device because the
-> > reset and the clock controller share the same register region.
-> >
-> > Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
-> > Tested-by: Benjamin Fair <benjaminfair@google.com>
-> > Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
->
-> Does this work with real hardware ? I tried with the new qemu emulation,
-> but that gets stuck in the serial driver initialization. I found that the clock
-> device instantiates but does not register as clock provider because it does
-> not have a device node. I needed something like the patch below to get beyond
-> that point.
->
-> Thanks,
-> Guenter
->
-> ---
-> From: Guenter Roeck <linux@roeck-us.net>
-> Subject: [PATCH] reset: npcm: Provide device node to clock driver
->
-> Without device node, the clock driver can not register itself as clock
-> provider. With debugging enabled, this manifests itself with
->
->  of_serial f0000000.serial: error -EPROBE_DEFER: failed to get clock
->  of_serial f0000000.serial: Driver of_serial requests probe deferral
->  platform f0000000.serial: Added to deferred list
-> ...
->  Warning: unable to open an initial console.
->
-> Look up the device node and attach it to the clock device to solve the
-> problem.
->
-> Fixes: 22823157d90c ("reset: npcm: register npcm8xx clock auxiliary bus device")
-> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-> ---
->  drivers/reset/reset-npcm.c | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/drivers/reset/reset-npcm.c b/drivers/reset/reset-npcm.c
-> index e5b6127783a7..43bc46755e82 100644
-> --- a/drivers/reset/reset-npcm.c
-> +++ b/drivers/reset/reset-npcm.c
-> @@ -409,6 +409,8 @@ static struct auxiliary_device *npcm_clock_adev_alloc(struct npcm_rc_data *rst_d
->         adev->name = clk_name;
->         adev->dev.parent = rst_data->dev;
->         adev->dev.release = npcm_clock_adev_release;
-> +       adev->dev.of_node = of_find_compatible_node(rst_data->dev->parent->of_node,
-> +                                                   NULL, "nuvoton,npcm845-clk");
->         adev->id = 555u;
->
->         ret = auxiliary_device_init(adev);
-> --
-> 2.45.2
->
+I fixed it up (see below and added a merge fix patch) and can carry the
+fix as necessary. This is now fixed as far as linux-next is concerned,
+but any non trivial conflicts should be mentioned to your upstream
+maintainer when your tree is submitted for merging.  You may also want
+to consider cooperating with the maintainer of the conflicting tree to
+minimise any particularly complex conflicts.
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 17 Mar 2025 21:35:42 +1100
+Subject: [PATCH] fix up 2 for "lib: Move KUnit tests into tests/ subdirecto=
+ry"
+
+interacting with commit
+
+  c104c16073b7 ("Kunit to check the longest symbol length")
+
+from the kunit-next tree.
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ lib/tests/Makefile                     | 2 ++
+ lib/{ =3D> tests}/longest_symbol_kunit.c | 0
+ 2 files changed, 2 insertions(+)
+ rename lib/{ =3D> tests}/longest_symbol_kunit.c (100%)
+
+diff --git a/lib/tests/Makefile b/lib/tests/Makefile
+index a434c7cb733a..f2c3c4f74608 100644
+--- a/lib/tests/Makefile
++++ b/lib/tests/Makefile
+@@ -20,6 +20,8 @@ CFLAGS_test_fprobe.o +=3D $(CC_FLAGS_FTRACE)
+ obj-$(CONFIG_FPROBE_SANITY_TEST) +=3D test_fprobe.o
+ obj-$(CONFIG_HASHTABLE_KUNIT_TEST) +=3D hashtable_test.o
+ obj-$(CONFIG_HASH_KUNIT_TEST) +=3D test_hash.o
++CFLAGS_longest_symbol_kunit.o +=3D $(call cc-disable-warning, missing-prot=
+otypes)
++obj-$(CONFIG_LONGEST_SYM_KUNIT_TEST) +=3D longest_symbol_kunit.o
+ obj-$(CONFIG_TEST_IOV_ITER) +=3D kunit_iov_iter.o
+ obj-$(CONFIG_IS_SIGNED_TYPE_KUNIT_TEST) +=3D is_signed_type_kunit.o
+ obj-$(CONFIG_KPROBES_SANITY_TEST) +=3D test_kprobes.o
+diff --git a/lib/longest_symbol_kunit.c b/lib/tests/longest_symbol_kunit.c
+similarity index 100%
+rename from lib/longest_symbol_kunit.c
+rename to lib/tests/longest_symbol_kunit.c
+--=20
+2.45.2
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc lib/Makefile
+index 651811f5d677,89b8a4bce108..000000000000
+--- a/lib/Makefile
++++ b/lib/Makefile
+@@@ -131,7 -119,7 +118,7 @@@ endi
+  obj-$(CONFIG_DEBUG_INFO_REDUCED) +=3D debug_info.o
+  CFLAGS_debug_info.o +=3D $(call cc-option, -femit-struct-debug-detailed=
+=3Dany)
+ =20
+- obj-y +=3D math/ crypto/ vdso/
+ -obj-y +=3D math/ crypto/ tests/
+++obj-y +=3D math/ crypto/ vdso/ tests/
+ =20
+  obj-$(CONFIG_GENERIC_IOMAP) +=3D iomap.o
+  obj-$(CONFIG_HAS_IOMEM) +=3D iomap_copy.o devres.o
+
+--Sig_/X0vvp6GkZImaay8FbdTAEcl
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfX+/kACgkQAVBC80lX
+0Gxgwgf/b9uVpH6DELKYKwUiZOddCqHmijwyy53jqMhAGFrv3dLi9BretJ8S1w3a
+auOfWMFLDrOiWJhm22yIxnMeXPZtgG2AoeSTikG3QXxdVEo8sQ7J6XOWiW398H3O
+T/sxX1Y5HJxC25EC66FbrnQxsnzRzZ+UXjnHuD/l/2jp5S4w4mADMYRPYVqHY/85
+r7ve+6IT/ezoQ42QSMwd2aiqrDqBpn8h2ThYq7hckgnOn+6xigMoG8p9JUfaTBvc
+NeEndZL69udT23O4jmReI0yuzJLlLjz2HmyRmZtIWA4UHWnrLc3c4RoQ0fGl8THF
+ZaBukr2pA9byVMnfiKqhp5RA4AJj8g==
+=47UG
+-----END PGP SIGNATURE-----
+
+--Sig_/X0vvp6GkZImaay8FbdTAEcl--
 
