@@ -1,96 +1,154 @@
-Return-Path: <linux-kernel+bounces-563692-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563694-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CBAEA646C2
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:13:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FF61A646C6
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:13:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE65E1718FD
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 09:13:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 843E93AC9E0
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 09:13:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31324221712;
-	Mon, 17 Mar 2025 09:13:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3FFF221F04;
+	Mon, 17 Mar 2025 09:13:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KjKN/zG7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A5EC3AC17;
-	Mon, 17 Mar 2025 09:13:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="L/Z+Ii17"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4311322171B;
+	Mon, 17 Mar 2025 09:13:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742202788; cv=none; b=cGKKLJ9g8NFcrnAxlz2udhsuGeJDMYaSUU8W8gKiDPOZu4oUc2GnxaM6B2gwlcq3lfp5TUQQ7BGyap88qf7gpN4UCdq6XRSXvuP36/ECOpMdJ+6SZhct7oNB5E0fUvrETFj+/g3vfFyXwf3r45XWlrNMNDzxaM7B49yksw0ewrU=
+	t=1742202815; cv=none; b=mYZb/wkQLpWHo1MhY/68KcbrOjmArkBhmqVnZ0faSrtaQHkqnKYLYUUrZDfZmzEsoIcNcTLb94L5HJ9QdXM6FQN6Mir0F+ZjfQgK2PRYjLlkgTlFc7NXkv+6dWIYgwHDpEh6siiuRye4oZ+/ogF77cazIGgYWg10VXn8bzRbJAQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742202788; c=relaxed/simple;
-	bh=egUbHhdw/VIJUm8LAkutH+qWohBTh+J4+/zQg3hloi0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sm7MqJAAZQ8UP6Z4Nts2jlTpSuOUgFlCoDMRMdY9GtgLCVvXqtIh9tUqlvObc6VpVNfzyUO/CAdbwUGKx+eAuewakBmw/s+zErlVFsiD9J2MtpaQBmgLciODPyHVZA9YUQ85JX63+o/cmBOLSiD2g6BJXFcDX9Z1B0vKKo5YA3Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KjKN/zG7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1ED64C4CEE3;
-	Mon, 17 Mar 2025 09:13:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742202788;
-	bh=egUbHhdw/VIJUm8LAkutH+qWohBTh+J4+/zQg3hloi0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KjKN/zG7AcRdgZCTvQmGNJS/2vUNCY0+Vj973da/zf3skngITlJdC8hKBNeJ2k+TX
-	 zzhTEyI04kRxaWNf9LjC0c37o6ZztkmkjIQR+xXdmsTbx99+HC8OdE2vHc5lQODm0g
-	 zZs3js/JJAVI6s4zJairySxrmVYks36twqWF9hCzjyviyXzFpJ9Ql4bjlMYM1lp1NS
-	 cmvAh5KTGD8vTn/lCAhbgw/0lX+6OkG+MKHJzK7EsvK8DfR8d3UDuyDLwgp64Zd2Hp
-	 tNwzcvIjhmguyrmtYXZSBKebeW44t0TMzlu0yLSAb4WXImdFY+tSUXf8VX1ofmtNrH
-	 9ER51BCV754Tg==
-Date: Mon, 17 Mar 2025 10:13:04 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Kevin Chen <kevin_chen@aspeedtech.com>
-Cc: lee@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, joel@jms.id.au, andrew@codeconstruct.com.au, 
-	derek.kiernan@amd.com, dragan.cvetic@amd.com, arnd@arndb.de, gregkh@linuxfoundation.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 2/3] ARM: dts: aspeed-g6: Add AST2600 LPC PCC support
-Message-ID: <20250317-chital-of-unusual-force-a4b7b7@krzk-bin>
-References: <20250314112113.953238-1-kevin_chen@aspeedtech.com>
- <20250314112113.953238-3-kevin_chen@aspeedtech.com>
+	s=arc-20240116; t=1742202815; c=relaxed/simple;
+	bh=xbknrIV2AOwViV4/e6I0TKuNc7TJwYEBDQJhvAxvCTg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NkMH2qvGYajXYhz+WpTgaOMpAGATOCKa+ZscTmwEK8n6noR2ci9ojv9GaRvZ6wW93LcPrbMJYZycX5BEfvY2SjEPai0ZFNvfet4sOLBPR6r7HiYmVqWYGNI32BUGpyCWvCG+CfOYMyhvTIqK7ugQXYbvHCOxzJVOc59ZwlXA+aI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=L/Z+Ii17; arc=none smtp.client-ip=117.135.210.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:
+	Content-Type; bh=xbknrIV2AOwViV4/e6I0TKuNc7TJwYEBDQJhvAxvCTg=;
+	b=L/Z+Ii17lRyvbtR87Tc/zdusuPBLJktBDu2e0J04vACIbKe4uy9v/gphlTzVPk
+	tc8L0jG9a8OHM0BJp+909SIxq9pCzwe0adJ/eg2TviFm/RP2yrcqn/5bwhv/phjN
+	ZBH+zVv/n7AQzdKTt6ibjO4H7GlmCWROfwfqwtWzSJzIo=
+Received: from [192.168.22.248] (unknown [223.70.253.31])
+	by gzsmtp5 (Coremail) with SMTP id QCgvCgCXw0Cl59dnbdKbRQ--.9069S2;
+	Mon, 17 Mar 2025 17:13:10 +0800 (CST)
+Message-ID: <2ecdf349-779f-43d5-ae3d-55d973ea50e9@163.com>
+Date: Mon, 17 Mar 2025 17:13:09 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250314112113.953238-3-kevin_chen@aspeedtech.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] fs/proc/page: Refactoring to reduce code duplication.
+To: David Hildenbrand <david@redhat.com>, akpm@linux-foundation.org
+Cc: willy@infradead.org, ran.xiaokai@zte.com.cn, dan.carpenter@linaro.org,
+ linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ Liu Ye <liuye@kylinos.cn>
+References: <20250317080118.95696-1-liuyerd@163.com>
+ <1c7018f1-fdc5-4fc6-adc7-fae592851710@redhat.com>
+Content-Language: en-US
+From: Liu Ye <liuyerd@163.com>
+In-Reply-To: <1c7018f1-fdc5-4fc6-adc7-fae592851710@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:QCgvCgCXw0Cl59dnbdKbRQ--.9069S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxJryfZF13uw4DAw45Zw17trb_yoW8Kry5pF
+	45J3W3Aan5twn8Cr1xJa98Z3sxC393KF4UtrW7K34fX3WDArnxCFyYyFnYvFy8GryUAr18
+	uayq9FyavF42yF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jBE_tUUUUU=
+X-CM-SenderInfo: 5olx5vlug6il2tof0z/1tbiKBUTTGfXzsDMtQACsn
 
-On Fri, Mar 14, 2025 at 07:21:12PM +0800, Kevin Chen wrote:
-> The AST2600 has PCC controller in LPC, placed in LPC node.
-> 
-> Signed-off-by: Kevin Chen <kevin_chen@aspeedtech.com>
-> ---
->  arch/arm/boot/dts/aspeed/aspeed-g6.dtsi | 8 ++++++++
->  1 file changed, 8 insertions(+)
-> 
-> diff --git a/arch/arm/boot/dts/aspeed/aspeed-g6.dtsi b/arch/arm/boot/dts/aspeed/aspeed-g6.dtsi
-> index 8ed715bd53aa..f238337e02da 100644
-> --- a/arch/arm/boot/dts/aspeed/aspeed-g6.dtsi
-> +++ b/arch/arm/boot/dts/aspeed/aspeed-g6.dtsi
-> @@ -626,6 +626,14 @@ lpc_snoop: lpc-snoop@80 {
->  					status = "disabled";
->  				};
->  
-> +				lpc_pcc: lpc-pcc@0 {
-> +					compatible = "aspeed,ast2600-lpc-pcc";
-> +					reg = <0x0 0x140>;
-> +					interrupts = <GIC_SPI 145 IRQ_TYPE_LEVEL_HIGH>;
-> +					pcc-ports = <0x80>;
 
-So this is 0x80 for entire SoC, then it is implied by compatible, no?
+在 2025/3/17 16:56, David Hildenbrand 写道:
+> On 17.03.25 09:01, Liu Ye wrote:
+>> From: Liu Ye <liuye@kylinos.cn>
+>>
+>> The function kpageflags_read and kpagecgroup_read is quite similar
+>> to kpagecount_read. Consider refactoring common code into a helper
+>> function to reduce code duplication.
+>>
+>> Signed-off-by: Liu Ye <liuye@kylinos.cn>
+>> ---
+>>   fs/proc/page.c | 158 ++++++++++++++++---------------------------------
+>>   1 file changed, 50 insertions(+), 108 deletions(-)
+>>
+>> diff --git a/fs/proc/page.c b/fs/proc/page.c
+>> index a55f5acefa97..f413016ebe67 100644
+>> --- a/fs/proc/page.c
+>> +++ b/fs/proc/page.c
+>> @@ -37,19 +37,17 @@ static inline unsigned long get_max_dump_pfn(void)
+>>   #endif
+>>   }
+>>   -/* /proc/kpagecount - an array exposing page mapcounts
+>> - *
+>> - * Each entry is a u64 representing the corresponding
+>> - * physical page mapcount.
+>> - */
+>> -static ssize_t kpagecount_read(struct file *file, char __user *buf,
+>> -                 size_t count, loff_t *ppos)
+>> +static ssize_t kpage_read(struct file *file, char __user *buf,
+>> +        size_t count, loff_t *ppos,
+>> +        u64 (*get_page_info)(struct page *))
+>
+> Can we just indicate using an enum which operation to perform, so we can avoid having+passing these functions?
+>
+Like this? Good idea, I'll send a new patch later.
 
-> +					status = "disabled";
+enum kpage_operation {
+    KPAGE_FLAGS,
+    KPAGE_COUNT,
+    KPAGE_CGROUP,
+};
 
-Where is any DTS user of this device?
+static u64 get_page_info(struct page *page, enum kpage_operation op)
+{
+    switch (op) {
+    case KPAGE_FLAGS:
+        return stable_page_flags(page);
+    case KPAGE_COUNT:
+        return page_count(page);
+    case KPAGE_CGROUP:
+        return page_cgroup_ino(page);
+    default:
+        return 0;
+    }
+}
 
-Best regards,
-Krzysztof
+static ssize_t kpageflags_read(struct file *file, char __user *buf,
+                               size_t count, loff_t *ppos)
+{
+    return kpage_read(file, buf, count, ppos, KPAGE_FLAGS);
+}
+
+static ssize_t kpagecount_read(struct file *file, char __user *buf,
+                               size_t count, loff_t *ppos)
+{
+    return kpage_read(file, buf, count, ppos, KPAGE_COUNT);
+}
+
+static ssize_t kpagecgroup_read(struct file *file, char __user *buf,
+                                size_t count, loff_t *ppos)
+{
+    return kpage_read(file, buf, count, ppos, KPAGE_CGROUP);
+}
+
+static ssize_t kpage_read(struct file *file, char __user *buf,
+                          size_t count, loff_t *ppos,
+                          enum kpage_operation op)
+{
+        ...
+        info = get_page_info(ppage, op);
+        ...
+}
+
+
+
 
 
