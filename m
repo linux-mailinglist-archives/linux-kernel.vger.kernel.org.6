@@ -1,93 +1,158 @@
-Return-Path: <linux-kernel+bounces-563530-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563531-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26E87A6438B
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 08:27:11 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2BEAA6438D
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 08:27:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D65A1893107
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 07:27:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 31FB516FEEC
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 07:27:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A59B21ABA4;
-	Mon, 17 Mar 2025 07:27:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BC9F21A931;
+	Mon, 17 Mar 2025 07:27:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iIOqtbr9"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="s/Ni7WMl"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8458918C337
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 07:27:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E07726ADD
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 07:27:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742196424; cv=none; b=izgi30al1rf67RRt4PPyoVVPh/wtFz0pWLI+c3PQGhMjOJCobbRXvHD6ZToy5sgVuKEQq6+sVMHwKM4zqyIvDA6IjSVKJDjrzNlH46IBCGQMHV+ZhS8emQJyWNzhNhWzJYn7PVHE8mVuiAm/8rNL3xVcuMF+HRw7QOZ7pGu61EY=
+	t=1742196455; cv=none; b=gCM6uQRZcuFnVrMOJqgZGD/fwxvutRK+mw9J7P5UWYenq5kSACppGNc6KhzFb8R+qIs8iz7TYQPJ+dlK1eXhAT/v9pwl3TkE1/uafstNWGzHd0SRwACi2O1idVsvCCPUZ6rpf0xU63nM8E0TFLZvOKpR7BDqumLQpjA70SsmuNM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742196424; c=relaxed/simple;
-	bh=Dv6IcpigPQK43ljESs7c3/kc6GP7113YFVySNKAJ2iY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tKVfV2rFZ1aj5Y682sGMZdCkmFTfQ4cVO2VeKp+W5HxXgZUCTwh9505mNa3nst/6b6FBkcFHSoXdl5nXrlGRkYD8w9ljK7PUSCkI/rWoTdW6mfjkSHKL62+I2CKfm3TE7Gha8R6yVc5CsRfrpGvBgIsR1gyozjYl5gaslG6I4YU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iIOqtbr9; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742196423; x=1773732423;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Dv6IcpigPQK43ljESs7c3/kc6GP7113YFVySNKAJ2iY=;
-  b=iIOqtbr9VTlc06g3kHA4k/Px0ovNFd4b82uCT1wqoTXPFAdZIjjWXVR4
-   fXZp1MuVCuPEVE528was4yIhiH92l3OcP0yg5ntpEmSD2uiNBeisXSZjn
-   VM6sKrTxuhRYFruJEw/xSUxWY/gMDCfyi6pl9ckFwEQfiZ7R0aQQiY8LU
-   4mzdAILCqxdY9NvSlOlL95Mda9nyd1MrOO83afTD5kmGsEVI/HMRq6o6A
-   t2ClL0SUrhFavphrXzBTMw+84cXvQ02ogITD5VqFAWgJBK5kkT3ePK7hj
-   bqW7to8z5Y8C6qWbQQfyXamyRnDdg4NuDGzG5L5XKPSu215/+mj7xXtsf
-   A==;
-X-CSE-ConnectionGUID: TEV4uJMOS3eUvhMgF7e4NQ==
-X-CSE-MsgGUID: vwvxJVwDTYS6/qmOFv2rnA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11375"; a="47056100"
-X-IronPort-AV: E=Sophos;i="6.14,253,1736841600"; 
-   d="scan'208";a="47056100"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Mar 2025 00:27:03 -0700
-X-CSE-ConnectionGUID: cPzt/28tSDy6ivAwzpz1FQ==
-X-CSE-MsgGUID: MOxBSgvcSWSvXGqQ1xfoXQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,253,1736841600"; 
-   d="scan'208";a="126492064"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by fmviesa005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Mar 2025 00:27:01 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tu4sF-00000003EnC-1uxh;
-	Mon, 17 Mar 2025 09:26:59 +0200
-Date: Mon, 17 Mar 2025 09:26:59 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Raag Jadav <raag.jadav@intel.com>
-Cc: giometti@enneenne.com, gregkh@linuxfoundation.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1] pps: generators: tio: fix platform_set_drvdata()
-Message-ID: <Z9fOw6iu37GVxD48@smile.fi.intel.com>
-References: <20250315133140.1707949-1-raag.jadav@intel.com>
+	s=arc-20240116; t=1742196455; c=relaxed/simple;
+	bh=wXts2IHAWBROlgFED/50XTl84wncyrf0LRRv1qrRYqo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=opNOIvIcTBq7JEPAFPlutkxKQD/CTEurbiUgl4bsiVsv1QjboNjRD0MOi3MAm9H7lpcnggXkbFSIajIeciWYCIV0nfCSwMWsGswSg+Nq9eyHpXm/UEKGcdqpVChHK2QPwID2wNTwZior7s6u1IPrm5bFeFbEYl5ht7nIL/zX+YE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=s/Ni7WMl; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52GMGTSu001856;
+	Mon, 17 Mar 2025 07:27:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=hcycxx
+	jnsnNocNAPKlQOHoruJQXx4GJ8snQ6qY0ENpo=; b=s/Ni7WMl2dNwuL3BWf3jRW
+	CHlrWgErJ5y+3q3O8xJhLc2nzugzOX+D6LD4hhdDm6MgYsyXjsXxI949r5x7Wwni
+	41yhM5a8MgQvUFeI+iUm6kbl4nd2doG0lAyNufsrC4DvD4VtjvJ4XKv8cefjcFVU
+	b+Im2CGHvm+hRGRuVivjiqxLepPmsj+bN3EqFBSgNMmrjkB4uNKkG4mcDohuCsVh
+	V7jR74OjVN1IDVTdVySMquYU+1/yNzV+V5EKzBqTPeGp7swcMuVzLL2NaXVAldMb
+	BSB13q/2Ws/hHYMyHRHVfE94x+xIGBwGasNcGyTYaHV66WBZzE864wLQsMdwlVYA
+	==
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45e6251tgt-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 17 Mar 2025 07:27:17 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52H4HFVR012347;
+	Mon, 17 Mar 2025 07:27:16 GMT
+Received: from smtprelay01.wdc07v.mail.ibm.com ([172.16.1.68])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 45dmvnmxkd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 17 Mar 2025 07:27:16 +0000
+Received: from smtpav06.wdc07v.mail.ibm.com (smtpav06.wdc07v.mail.ibm.com [10.39.53.233])
+	by smtprelay01.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52H7RGLI26477134
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 17 Mar 2025 07:27:16 GMT
+Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 3F49858054;
+	Mon, 17 Mar 2025 07:27:16 +0000 (GMT)
+Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 2F2695803F;
+	Mon, 17 Mar 2025 07:27:14 +0000 (GMT)
+Received: from [9.61.253.6] (unknown [9.61.253.6])
+	by smtpav06.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Mon, 17 Mar 2025 07:27:13 +0000 (GMT)
+Message-ID: <25e5d468-6c40-40b7-a010-8c8018b6d228@linux.ibm.com>
+Date: Mon, 17 Mar 2025 12:57:12 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250315133140.1707949-1-raag.jadav@intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mozilla Thunderbird
+Subject: Re: [linux-next-20250307] Build Failure
+Content-Language: en-GB
+To: Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Stephen Rothwell <sfr@canb.auug.org.au>, linux-kernel@vger.kernel.org,
+        Madhavan Srinivasan <maddy@linux.ibm.com>,
+        linuxppc-dev@lists.ozlabs.org, Michael Ellerman <mpe@ellerman.id.au>
+References: <70ba4e80-53c4-4583-82f3-2851e0829aa6@linux.ibm.com>
+ <5ab103b4-70f0-454e-bca6-0bfc66d143f5@csgroup.eu>
+ <c0a716d0-6811-4b1b-b008-d4e97900cb0e@linux.ibm.com>
+ <5c671410-cedd-4854-a3e7-2060607d5c4d@csgroup.eu>
+From: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
+In-Reply-To: <5c671410-cedd-4854-a3e7-2060607d5c4d@csgroup.eu>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: YhvBaWjhfQDpi8JCDxE7_yIHnHyO0JDU
+X-Proofpoint-ORIG-GUID: YhvBaWjhfQDpi8JCDxE7_yIHnHyO0JDU
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-17_02,2025-03-17_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ lowpriorityscore=0 malwarescore=0 adultscore=0 mlxlogscore=865
+ clxscore=1015 suspectscore=0 spamscore=0 phishscore=0 priorityscore=1501
+ bulkscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502280000 definitions=main-2503170054
 
-On Sat, Mar 15, 2025 at 07:01:40PM +0530, Raag Jadav wrote:
-> Set driver_data correctly and fix illegal memory access on driver reload.
 
-Do you have it in practice or you are thinking it will be like this?
+On 12/03/25 8:49 pm, Christophe Leroy wrote:
+>
+>
+> Le 12/03/2025 à 11:11, Venkat Rao Bagalkote a écrit :
+>>
+>> On 12/03/25 4:20 am, Christophe Leroy wrote:
+>>>
+>>>
+>>> Le 09/03/2025 à 13:38, Venkat Rao Bagalkote a écrit :
+>>>> Greetings!!,
+>>>>
+>>>> I see linux-next-20250307 fails to build on IBM Power9 and Power10 
+>>>> servers.
+>>>>
+>>>>
+>>>> Errors:
+>>>>
+>>>> In file included from ^[[01m^[[K<command-line>^[[m^[[K:
+>>>> ^[[01m^[[K./usr/include/cxl/features.h:11:10:^[[m^[[K 
+>>>> ^[[01;31m^[[Kfatal error: ^[[m^[[Kuuid/uuid.h: No such file or 
+>>>> directory
+>>>>     11 | #include ^[[01;31m^[[K<uuid/uuid.h>^[[m^[[K
+>>>>        |          ^[[01;31m^[[K^~~~~~~~~~~~~^[[m^[[K
+>>>
+>>> This is unreadable. Please avoid fancy colors that add escapes to 
+>>> logs. You can unset LANG environment var before building in order to 
+>>> get pastable stuff.
+>>>
+>
+> Allthought not really readable, it seems to mention that uuid/uuid.h 
+> is missing.
+>
+> Can you confirm that you have installed libuuid package in your system 
+> ? Maybe you also need some libuuid-dev packet to get headers ?
 
--- 
-With Best Regards,
-Andy Shevchenko
 
+Yeah uuid package is installed on my system. I am seeing this failure 
+only with build next-20250307.
 
+Builds with before and after are compiling successfully.
+
+UUID package version:
+libuuid-2.37.4-18.el9.ppc64le
+libuuid-2.37.4-20.el9.ppc64le
+
+Regards,
+
+Venkat.
+
+>
+> Christophe
+>
 
