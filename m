@@ -1,116 +1,113 @@
-Return-Path: <linux-kernel+bounces-564582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564583-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBB39A657BB
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 17:17:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CE8A4A657BE
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 17:19:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 60884188ED3B
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 16:18:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 15D88188DDB1
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 16:19:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AAFF19DF75;
-	Mon, 17 Mar 2025 16:17:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D4XUfczs"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4F8D188907;
-	Mon, 17 Mar 2025 16:17:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F353419D09C;
+	Mon, 17 Mar 2025 16:19:00 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 636338C1F
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 16:18:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742228269; cv=none; b=ppmD6I+6IJF2EEGIrTC0zLsb7onL+hnft5MbCx0cT6+q75elmLYbfkJgb3SFZ3smCDNYylG6Htkiuev5pkUsyZ4ed3JzgvL2bdA5uG6Ya3l18DELjy76x9ItMZBgA7Ou/iy/5X9ptB6mtlYLDuzafdnTz/tnsb4sSa3DvvT4kWU=
+	t=1742228340; cv=none; b=TdzvkJ66edmzKCOe8BLuJMbd8buTzjVV66Ze6ZrH5gJhu8V0Pldovr3GGjmC96LDXCTAvLes8UZppT4OfsouDM5//k8yYJm9cI+ZJk3hIeFu+Z1yT4DrZ9a7yXgHHB+IfM0PlouC+5bG0J6sE/9IMAjvm/hg/0/dLcbYWdgqPro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742228269; c=relaxed/simple;
-	bh=G42GrbRlFLadgeAorXitKrnMtX3TCyZknmA2IK3Bfk0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GTYMC5D2riKawAkKLIWEF+pbOYLdXsaQlFDCkAsS3OjbzOQnuFzfxMoxF5UbB2zscWTb3NwZs8jGEtKdFJK+YAUJoR/2Th+9JYcZ5OOCHW3DvnBs9WSz7TruekYuRdwUCUaa0bO2Xvv2gT99Sd/crwH9kBJrDchl0kn0TBvi1iA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D4XUfczs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9201C4CEE3;
-	Mon, 17 Mar 2025 16:17:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742228269;
-	bh=G42GrbRlFLadgeAorXitKrnMtX3TCyZknmA2IK3Bfk0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=D4XUfczseN+rrOTPQuSZejroQ55t7/R8yhHyg2TG2Tupr5raFLs5Wzetyo88H+cyn
-	 Dq3z3oW7xQB7+OZoqOyuPhfwt6PZ9OC4OT77sk9KsRuhlnGVgWScxSaxsbtSYzf4F+
-	 VXUlCcMu7o5qRPXsqX8PFkhi4gdX0gKPDkkDM+wohSpn3zAxpbaBmQ9b3gvoBEjAwh
-	 EEovcEMfbONYlKjgZy1hlYLEXmAJlbB+thdvhVnpctjxxgLvMzIR1FO10XSUR8ccLE
-	 ZWwpYFC8jLivmP8F6WyPft+wBbqhOEE+gIB39MhcTbjzS3THdb25FrAiTKCAnWBA/5
-	 TaQa5kdB86ieg==
-Date: Mon, 17 Mar 2025 13:17:46 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Chun-Tse Shao <ctshao@google.com>, linux-kernel@vger.kernel.org,
-	peterz@infradead.org, mingo@redhat.com, mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-	irogers@google.com, adrian.hunter@intel.com,
-	kan.liang@linux.intel.com, terrelln@fb.com, leo.yan@arm.com,
-	james.clark@linaro.org, christophe.leroy@csgroup.eu,
-	ben.gainey@arm.com, linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] perf record: Add 8-byte aligned event type
- PERF_RECORD_COMPRESSED2
-Message-ID: <Z9hLKsZOfouM3K7H@x1>
-References: <20250303183646.327510-1-ctshao@google.com>
- <Z9TXabugl374M3bA@google.com>
- <Z9hFJtEKfsGGUDMg@x1>
+	s=arc-20240116; t=1742228340; c=relaxed/simple;
+	bh=6rQeh550awBHYaCqL+6KVASX3lywQZMB/ygYf+frD1o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IxP7vtK/Gkp5E2UdcD4DlReVvCdhmt0MTWcI3YLp1ysoGSg9hYlbS+n4l4T/ctUial9mSKo5kNge+Sxmvji3wy3Xq5f3txJQedOHks/c5rnsgl+A1qDlEHOk9c71pzE7HW6WKlIR3Ei2X7oVSMHNlY48Y2T1AvH/WA4slUEh8o4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4273713D5;
+	Mon, 17 Mar 2025 09:19:06 -0700 (PDT)
+Received: from [192.168.3.45] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 194A73F63F;
+	Mon, 17 Mar 2025 09:18:51 -0700 (PDT)
+Message-ID: <c357e638-d523-4cd2-a15f-ed3b0b41bd22@arm.com>
+Date: Mon, 17 Mar 2025 17:18:49 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z9hFJtEKfsGGUDMg@x1>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v12 2/4] arch_topology: Support SMT control for OF based
+ system
+To: Yicong Yang <yangyicong@huawei.com>
+Cc: catalin.marinas@arm.com, will@kernel.org, sudeep.holla@arm.com,
+ tglx@linutronix.de, peterz@infradead.org, mpe@ellerman.id.au,
+ linux-arm-kernel@lists.infradead.org, mingo@redhat.com, bp@alien8.de,
+ dave.hansen@linux.intel.com, pierre.gondois@arm.com,
+ yangyicong@hisilicon.com, linuxppc-dev@lists.ozlabs.org, x86@kernel.org,
+ linux-kernel@vger.kernel.org, morten.rasmussen@arm.com, msuchanek@suse.de,
+ gregkh@linuxfoundation.org, rafael@kernel.org, jonathan.cameron@huawei.com,
+ prime.zeng@hisilicon.com, linuxarm@huawei.com, xuwei5@huawei.com,
+ guohanjun@huawei.com, sshegde@linux.ibm.com
+References: <20250311075143.61078-1-yangyicong@huawei.com>
+ <20250311075143.61078-3-yangyicong@huawei.com>
+ <2bd3aa0a-d700-46bf-81d1-a5fb0364d1e0@arm.com>
+ <c88e5b78-37b7-3023-7842-56a93fe119d2@huawei.com>
+From: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Content-Language: en-US
+In-Reply-To: <c88e5b78-37b7-3023-7842-56a93fe119d2@huawei.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Mar 17, 2025 at 12:52:09PM -0300, Arnaldo Carvalho de Melo wrote:
-> On Fri, Mar 14, 2025 at 06:27:05PM -0700, Namhyung Kim wrote:
-> > On Mon, Mar 03, 2025 at 10:32:40AM -0800, Chun-Tse Shao wrote:
-> > > The original PERF_RECORD_COMPRESS is not 8-byte aligned, which can cause
-> > > asan runtime error:
+On 17/03/2025 12:29, Yicong Yang wrote:
+> On 2025/3/17 17:56, Dietmar Eggemann wrote:
+>> On 11/03/2025 08:51, Yicong Yang wrote:
+>>> From: Yicong Yang <yangyicong@hisilicon.com>
 
-> > >   # Build with asan
-> > >   $ make -C tools/perf O=/tmp/perf DEBUG=1 EXTRA_CFLAGS="-O0 -g -fno-omit-frame-pointer -fsanitize=undefined"
-> > >   # Test success with many asan runtime errors:
-> > >   $ /tmp/perf/perf test "Zstd perf.data compression/decompression" -vv
-> > >    83: Zstd perf.data compression/decompression:
-> > >   ...
-> > >   util/session.c:1959:13: runtime error: member access within misaligned address 0x7f69e3f99653 for type 'union perf_event', which requires 13 byte alignment
-> > >   0x7f69e3f99653: note: pointer points here
-> > >    d0  3a 50 69 44 00 00 00 00  00 08 00 bb 07 00 00 00  00 00 00 44 00 00 00 00  00 00 00 ff 07 00 00
-> > >                 ^
-> > >   util/session.c:2163:22: runtime error: member access within misaligned address 0x7f69e3f99653 for type 'union perf_event', which requires 8 byte alignment
-> > >   0x7f69e3f99653: note: pointer points here
-> > >    d0  3a 50 69 44 00 00 00 00  00 08 00 bb 07 00 00 00  00 00 00 44 00 00 00 00  00 00 00 ff 07 00 00
-> > >                 ^
-> > >   ...
+[...]
 
-> > > Since there is no way to align compressed data in zstd compression, this
-> > > patch add a new event type `PERF_RECORD_COMPRESSED2`, which adds a field
-> > > `data_size` to specify the actual compressed data size. The
-> > > `header.size` contains the total record size, including the padding at
-> > > the end to make it 8-byte aligned.
+>>> Both method support to completely disable/enable the SMT cores so both
+>>> work correctly for symmetric SMT platform and asymmetric platform with
+>>> non-SMT and one type SMT cores like:
+>>> core A: 1 thread
+>>> core B: X (X!=1) threads
+>>>
+>>> Note that for a theoretically possible multiple SMT-X (X>1) core
+>>> platform the SMT control is also supported as expected but only
+>>> by writing the "on/off" method.
+>>
+>> Here we still have a little misunderstanding. IMHO, even on such a
+>> system 2) would work too.
+>>
+> 
+> 
+> yes but only by writing the max_thread_number. e.g. a system with SMT number
+> of 1 (no SMT core), X, Y (Y > X), 1 works same as "off" and Y works same as
+> "on", as you shown below. write X will be blocked by the CPU framework:
+> estuary:/sys/devices/system/cpu/smt$ cat control
+> off
+> # emulated CPU 0-7,16-22 as SMT-2, CPU 8-11,24-27 as SMT-4
+> estuary:/sys/devices/system/cpu/smt$ cat ../online
+> 0,2,4,6,8,12-16,18,20,22,24,28-31
+> estuary:/sys/devices/system/cpu/smt$ echo 2 > control
+> bash: echo: write error: Invalid argument
+> estuary:/sys/devices/system/cpu/smt$ echo 4 > control
+> estuary:/sys/devices/system/cpu/smt$ cat ../online
+> 0-31
+> 
+> so method 1) will always match the expectation to fully enable/disable the
+> SMT on all cores, that's I mean here. But 2) won't work if user expected
+> to write 2 to enable SMT-2 (I think it'll will work if we support
+> CONFIG_SMT_NUM_THREADS_DYNAMIC on arm64 later).
 
-> > > Tested with `Zstd perf.data compression/decompression`
+OK, looks like you're aware of this then. Just saying that technically
+'4' would be the max thread number of the system and not '2' so it still
+looks OK from this perspective. But OK, we don't have those systems now
+anyway.
 
-> > Looks good to me.
- 
-> > Arnaldo, are you ok with adding a new record type for this?
- 
-> Checking the discussion and the patch.
-
-My first impression yesterday when I saw this on the smartphone was: how
-will an old perf binary handle the new PERF_RECORD_COMPRESSED2? Will it
-ignore it while emitting a warning, since it can be skipped and then
-what we will get a partial view?
-
-Having some session output showing how an older perf binary handles
-PERF_RECORD_COMPRESS2 would be informative.
-
-I'll try to reproduce/test this all...
-
-- Arnaldo
+[...]
 
