@@ -1,94 +1,132 @@
-Return-Path: <linux-kernel+bounces-563513-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563509-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65160A64336
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 08:19:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF7E4A6432B
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 08:17:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C4714188337B
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 07:19:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79D203A86F1
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 07:17:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69CD721931C;
-	Mon, 17 Mar 2025 07:17:20 +0000 (UTC)
-Received: from mxct.zte.com.cn (mxct.zte.com.cn [183.62.165.209])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A709621B184;
+	Mon, 17 Mar 2025 07:16:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ef+oFqeg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B147A21CFEC
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 07:17:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=183.62.165.209
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9F0E1422AB;
+	Mon, 17 Mar 2025 07:16:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742195840; cv=none; b=BejhAE4M8lehfibKC6cZSnoXyEQNYYp2JLgsC/iV35VEZ7R6Y1ddzpWgtf21jGbTYywQDhKePjf2ZyDvMnvTX6w4IGkNl1JS9BGFx7e5YO8JNs73z4iVYlr4Iv1Kgz3m2nao/8c0C0F/hWDcnoGqHGSDqw9kubytLZB5zXS1QIU=
+	t=1742195815; cv=none; b=pLYBbBD5uV7yEl5hlA5a+Og7l5F63UaSdV4A42eMy8VhSCcYUbFuCnrdu5rbptRdTuHrzgz96CcnsV1GSSPyiTXydoQhw7n+aqwIf8993aTp6reffLBTF6Exbzz/rb9c62mzEGccOp5higNjJL+UdLlAFlDFTem8xNs7ozrQWWQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742195840; c=relaxed/simple;
-	bh=TbdqC6kaY8ADR7bsnfdwIHRhnhOpf1QkzLFQbDHaCOk=;
-	h=Date:Message-ID:Mime-Version:From:To:Cc:Subject:Content-Type; b=m5Kk3ZhvsFcI1LH0QiPazms0CV8aBBa9i/waWMjSZ5d5iaeEThHETiql9JUbVWzRvN/xtVOScl2ZmkGbHXkOmHYIY5LKkUKlkw7e00vLQtN/z45e+l14DHFjgjBp7byvchGf78HQDlornhF/KauqhxJUhrPacPbatVpyh86mcjw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=183.62.165.209
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
-Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mxct.zte.com.cn (FangMail) with ESMTPS id 4ZGR9z4DFLz501gV;
-	Mon, 17 Mar 2025 15:17:11 +0800 (CST)
-Received: from xaxapp05.zte.com.cn ([10.99.98.109])
-	by mse-fl1.zte.com.cn with SMTP id 52H7GjbN079096;
-	Mon, 17 Mar 2025 15:16:45 +0800 (+08)
-	(envelope-from tang.dongxing@zte.com.cn)
-Received: from mapi (xaxapp01[null])
-	by mapi (Zmail) with MAPI id mid32;
-	Mon, 17 Mar 2025 15:16:48 +0800 (CST)
-Date: Mon, 17 Mar 2025 15:16:48 +0800 (CST)
-X-Zmail-TransId: 2af967d7cc60616-56a25
-X-Mailer: Zmail v1.0
-Message-ID: <20250317151648132Sj7qhbVfKcPYvqCievFUf@zte.com.cn>
+	s=arc-20240116; t=1742195815; c=relaxed/simple;
+	bh=wL9gUnrlsPQNAWa/Td3yrEb1Mzg5Mf+QmQXD9OzX72w=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=TEFSB659nEXKb/lbVwMQlGvx9BKVvcunlkLSKxpL/9h2P9/OUpC6OcTE6nXrsACvX/ORyUrNuQSjL7TWalfT6DpWdP3FNcB+9ds3f53IzKevpAWzNIlhiL9LH3PRYnjWklYhKW4Na0JbvpNb/E3YW6UvHtYAWHiOy2ATdv6zZso=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ef+oFqeg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 4DBD8C4CEEC;
+	Mon, 17 Mar 2025 07:16:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742195814;
+	bh=wL9gUnrlsPQNAWa/Td3yrEb1Mzg5Mf+QmQXD9OzX72w=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=ef+oFqegpteYd+UM3MsMEVF+QkF5iBAu9RBV02JpdRABpsFtdrILxzUzFMNt58Skz
+	 WHp3pq1KvvDwsnON6hggASuw6wYydh0iM9IlnaKrEMVolKCMLW7D+mlJI6QlTYA2bq
+	 B4pODHMApmXaxIwZULvAXSHw+p7s0iAp+UvHaB7c2/PKoSLZNVxC/qCpK7t1E0kecp
+	 l6zn0638rk9szP0o/lIL631lUGgVgG55pP6jsiHFFX/LXrrwOsExa5wIKwIpb4MSV+
+	 CyBqy/xHnQmg5CLyLqE0xYanFJbe9kH4zY2LI8HKDTjKRoYW8arJQ5yK4eNBhUytyQ
+	 EPERWtIQ3nxlQ==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 327E4C282EC;
+	Mon, 17 Mar 2025 07:16:54 +0000 (UTC)
+From: Xianwei Zhao via B4 Relay <devnull+xianwei.zhao.amlogic.com@kernel.org>
+Subject: [PATCH 0/7] Baisc devicetree support for Amlogic S6 S7 and S7D
+Date: Mon, 17 Mar 2025 15:16:51 +0800
+Message-Id: <20250317-s6-s7-basic-v1-0-d653384e41f3@amlogic.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-From: <tang.dongxing@zte.com.cn>
-To: <jgross@suse.com>
-Cc: <sstabellini@kernel.org>, <oleksandr_tyshchenko@epam.com>,
-        <jiqian.chen@amd.com>, <ray.huang@amd.com>,
-        <jeff.johnson@oss.qualcomm.com>, <minhuadotchen@gmail.com>,
-        <tang.dongxing@zte.com.cn>, <xen-devel@lists.xenproject.org>,
-        <linux-kernel@vger.kernel.org>, <ye.xingchen@zte.com.cn>,
-        <yang.guang5@zte.com.cn>, <yang.yang29@zte.com.cn>,
-        <xu.xin16@zte.com.cn>
-Subject: =?UTF-8?B?W1BBVENIXSB4ZW4vcGNpYmFjazogdXNlIHN5c2ZzX2VtaXRfYXQoKSBpbnN0ZWFkIG9mIHNjbnByaW50Zigp?=
-Content-Type: text/plain;
-	charset="UTF-8"
-X-MAIL:mse-fl1.zte.com.cn 52H7GjbN079096
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 67D7CC77.001/4ZGR9z4DFLz501gV
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAGPM12cC/x3MMQqAMAxA0atIZgNpi1a8ijjUGjVLlQZEKN7d4
+ viG/wsoZ2GFsSmQ+RaVM1WYtoF4hLQzyloNlmxH1hrUHtXjElQibo4oOhq85x5qcWXe5Plv0/y
+ +Hxwrow1dAAAA
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
+ Jerome Brunet <jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Jiri Slaby <jirislaby@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-amlogic@lists.infradead.org, Xianwei Zhao <xianwei.zhao@amlogic.com>
+X-Mailer: b4 0.12.4
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1742195812; l=2174;
+ i=xianwei.zhao@amlogic.com; s=20231208; h=from:subject:message-id;
+ bh=wL9gUnrlsPQNAWa/Td3yrEb1Mzg5Mf+QmQXD9OzX72w=;
+ b=DudI+EZbNWKj/cExJWHpLtrhBZq5G0gH1aBEaWY7T5W6Q5fTXxZpYlb0lsmNgLYJ4ScXYKMYM
+ 63/vxuVARWeAv3IcZip6ckG3PmaVmkDFz9zOOBC3vVCunosibV9eRy9
+X-Developer-Key: i=xianwei.zhao@amlogic.com; a=ed25519;
+ pk=o4fDH8ZXL6xQg5h17eNzRljf6pwZHWWjqcOSsj3dW24=
+X-Endpoint-Received: by B4 Relay for xianwei.zhao@amlogic.com/20231208 with
+ auth_id=107
+X-Original-From: Xianwei Zhao <xianwei.zhao@amlogic.com>
+Reply-To: xianwei.zhao@amlogic.com
 
-From: TangDongxing <tang.dongxing@zte.com.cn>
+Amlogic S6 S7 and S7D are application processors designed for
+hybrid OTT/IP Set Top Box and high-end media box applications.
 
-Follow the advice in Documentation/filesystems/sysfs.rst:
-show() should only use sysfs_emit() or sysfs_emit_at() when formatting
-the value to be returned to user space.
+Add the new S6 SoC/board device tree bindings.
+Add the new S7 SoC/board device tree bindings.
+Add the new S7D SoC/board device tree bindings.
 
-Signed-off-by: TangDongxing <tang.dongxing@zte.com.cn>
+Add basic support for the S6 based Amlogic BL209 board, which describes
+the following components: CPU, GIC, IRQ, Timer and UART. These are capable of
+booting up into the serial console.
+
+Add basic support for the S7 based Amlogic BP201 board, which describes
+the following components: CPU, GIC, IRQ, Timer and UART. These are capable of
+booting up into the serial console.
+
+Add basic support for the S7D based Amlogic BM202 board, which describes
+the following components: CPU, GIC, IRQ, Timer and UART. These are capable of
+booting up into the serial console.
+
+Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
 ---
- drivers/xen/xen-pciback/pci_stub.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Xianwei Zhao (7):
+      dt-bindings: arm: amlogic: add S6 support
+      dt-bindings: arm: amlogic: add S7 support
+      dt-bindings: arm: amlogic: add S7D support
+      dt-bindings: serial: amlogic,meson-uart: Add compatible string for S6/S7/S7D
+      arm64: dts: add support for S6 based Amlogic BL209
+      arm64: dts: add support for S7 based Amlogic BP201
+      arm64: dts: add support for S7D based Amlogic BM202
 
-diff --git a/drivers/xen/xen-pciback/pci_stub.c b/drivers/xen/xen-pciback/pci_stub.c
-index b616b7768c3b..a0782a74ed34 100644
---- a/drivers/xen/xen-pciback/pci_stub.c
-+++ b/drivers/xen/xen-pciback/pci_stub.c
-@@ -1281,7 +1281,7 @@ static ssize_t slots_show(struct device_driver *drv, char *buf)
- 		if (count >= PAGE_SIZE)
- 			break;
+ Documentation/devicetree/bindings/arm/amlogic.yaml | 18 ++++
+ .../bindings/serial/amlogic,meson-uart.yaml        |  3 +
+ arch/arm64/boot/dts/amlogic/Makefile               |  3 +
+ .../boot/dts/amlogic/amlogic-s6-s905x5-bl209.dts   | 42 +++++++++
+ arch/arm64/boot/dts/amlogic/amlogic-s6.dtsi        | 97 +++++++++++++++++++++
+ .../boot/dts/amlogic/amlogic-s7-s805x3-bp201.dts   | 41 +++++++++
+ arch/arm64/boot/dts/amlogic/amlogic-s7.dtsi        | 99 ++++++++++++++++++++++
+ .../boot/dts/amlogic/amlogic-s7d-s905x5m-bm202.dts | 41 +++++++++
+ arch/arm64/boot/dts/amlogic/amlogic-s7d.dtsi       | 99 ++++++++++++++++++++++
+ 9 files changed, 443 insertions(+)
+---
+base-commit: 73e4ffb27bb8a093d557bb2dac1a271474cca99c
+change-id: 20250221-s6-s7-basic-f300c30877e6
 
--		count += scnprintf(buf + count, PAGE_SIZE - count,
-+		count += sysfs_emit_at(buf, count,
- 				   "%04x:%02x:%02x.%d\n",
- 				   pci_dev_id->domain, pci_dev_id->bus,
- 				   PCI_SLOT(pci_dev_id->devfn),
+Best regards,
 -- 
-2.25.1
+Xianwei Zhao <xianwei.zhao@amlogic.com>
+
+
 
