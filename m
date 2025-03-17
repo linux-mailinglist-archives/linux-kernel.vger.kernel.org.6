@@ -1,117 +1,172 @@
-Return-Path: <linux-kernel+bounces-564961-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564963-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64B7FA65DD4
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 20:23:12 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49DCEA65DE0
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 20:26:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4621B3B22A6
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 19:22:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E03517F58C
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 19:26:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A42B41E8355;
-	Mon, 17 Mar 2025 19:22:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F08891E835A;
+	Mon, 17 Mar 2025 19:26:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="Hp7LGUmI"
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="MnqDRmkJ";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="sMaDgJbT";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="L3vJmwuW";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="kVVeHEcx"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06DA615573A;
-	Mon, 17 Mar 2025 19:22:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D701D450EE
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 19:26:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742239378; cv=none; b=FbN25rAefd49eMltOVyjCAef8dZCsur2QXj82/Jy+A/pUJ0lr5cKPRnjCOoZGqU9HXiaHQh7xWjeQPLPg0e/9W094GM+V0AeecTn74prxSLIbhSccpqj28t+fB01ZNO0qdkmNW9+3EijpCEB0d0Pij3Em6tFGh2BGLmOGmhLq8o=
+	t=1742239604; cv=none; b=t0enxDvboyfmWeQxURSPvNUc1zaLeFc7GsMeY2vpl6FZ1pnh6dhi0o4I7MRCJrBRAWQcnCjUjAcno+FYuDlbDeU4I65NkATm9NujlhgGFoXzKs6R7bHGWrEV/RqnuStdPiDBkNUSH7A57U1d3qk1aWVQHWW/Y+XRrsraCMd8RMQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742239378; c=relaxed/simple;
-	bh=fZNVQMp38R+fm09V4IiqclMsqo4Do1Cn9eVz2bE9FPY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=iDYURD3cU2vAcXeSxiJkZnpIDyiAiKF/GtAAezjBYT4S8OxqrX5ZznoUsF3tZ8/nSfDIPdQCQ8kl82S20fNBueFwwK4X1bY5caYekvtiNj1LJWMfEXAehE5/VSwOPEF8uPZljzUe9sHtYFZ4KsMhLscXcz3lPwHSu7VqFgE+6d0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=Hp7LGUmI; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id B684520221;
-	Mon, 17 Mar 2025 20:22:54 +0100 (CET)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id ExWSxhWLF5ZT; Mon, 17 Mar 2025 20:22:50 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1742239370; bh=fZNVQMp38R+fm09V4IiqclMsqo4Do1Cn9eVz2bE9FPY=;
-	h=From:Date:Subject:To:Cc;
-	b=Hp7LGUmIsRZ+VC8B4cwU+FNiPEcOEpsmfvyOe16dpxp0eucMs81kHoxKA2Ob7VQy2
-	 /rnIzh6nGp5fiXYcSJXjdzJq/EOW5V7mM26q5et1anqCbo+qG87azjkgXc9OmLWBSB
-	 KlTRw61vVvACDD7uHZyN9/i2Je+2x5WFqQ0qsbmpi7i5dg6ilFPhS2uLpxKizhRuTk
-	 w23A6gb3jz9kiSjhFS6DfK8GhD+kcXprEv2Q1/fy4p2K+58ta6zGsaE1/g4DbkWya8
-	 7fmJ9x5v9S+9DH8Kl2xF2UTcvUg+iNAf2itX+J4I7+3xK0MQpeyzuhyf6kGKIgBQ23
-	 eFFHTTMyM/AIQ==
-From: Kaustabh Chakraborty <kauschluss@disroot.org>
-Date: Tue, 18 Mar 2025 00:51:53 +0530
-Subject: [PATCH RESEND v2] dt-bindings: serial: samsung: add
- exynos7870-uart compatible
+	s=arc-20240116; t=1742239604; c=relaxed/simple;
+	bh=tpv8UIeCbShk+QLKA1DYUc5mRKeANCP8ckHK/0VgXsw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Drvul3tZ9hqpWlFGbY7ClOAwNbOM0Dx1hMALHeWgI3ZGOP0uftmjhzNS2oxw9xMDMknZh+NKgURw8CPd5diETO8orkEMdA+QsIpwqDjCRSfb97vnzDsHhOhEV95oXYp6zTNfrLNrNQDK+FErEIvsEJ9lsohTuvMokYJgHkyche8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=MnqDRmkJ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=sMaDgJbT; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=L3vJmwuW; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=kVVeHEcx; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id B65AE21B46;
+	Mon, 17 Mar 2025 19:26:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1742239601;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ws8nI3M8yfYzmDuAw0gtkM2kduV7WGmYve45iQIEyYc=;
+	b=MnqDRmkJHVPcXzXx3pWLwQVEkLsIoVGdmn0vkMbZHc9AHQZgmoQY1QrKXyXXMT7FYkdzD6
+	+jsXl1KU9LXazd85nZfN77YJzYum/KUuEZ1Na66tUQWKHc59U+aNZGtmWsv8Twh1Y1A3Jk
+	rSOmUi1tqB8NMGztClyB4247Sb8NuyY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1742239601;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ws8nI3M8yfYzmDuAw0gtkM2kduV7WGmYve45iQIEyYc=;
+	b=sMaDgJbTYKykW8r3J9AvF5yQZalP0dRePoH7pW9o3ABI7wAi5LbehuRxMfaragMRjK+R9q
+	LdpKA1nXYbDGQeBA==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1742239600;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ws8nI3M8yfYzmDuAw0gtkM2kduV7WGmYve45iQIEyYc=;
+	b=L3vJmwuWySc6QjqI/OZfz4v0mpvBvZARXSHIU6nW0AVn289ljfSm5RCGg+5BHS7oKXTTxC
+	eKNDCDncIFYMx+OPTFidQe9vd5cZM4w+26AVpeqIwXXBdKJaCuZHQ85T2WrsnfqzvaKG+T
+	3wVazszqqc6CBh3UwWRIuSorpr+rOrg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1742239600;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ws8nI3M8yfYzmDuAw0gtkM2kduV7WGmYve45iQIEyYc=;
+	b=kVVeHEcx1W6AMKdsQGtBR+ossSGNkioqFDoxcyAF1FvlQRFgrCcut3b/akrJTiDZoxBG5p
+	gO4TcU2lCwxv4RDg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 92F57139D2;
+	Mon, 17 Mar 2025 19:26:40 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id ZQSmI3B32GdLSgAAD6G6ig
+	(envelope-from <dsterba@suse.cz>); Mon, 17 Mar 2025 19:26:40 +0000
+Date: Mon, 17 Mar 2025 20:26:39 +0100
+From: David Sterba <dsterba@suse.cz>
+To: David Laight <david.laight.linux@gmail.com>
+Cc: Arnd Bergmann <arnd@kernel.org>, Chris Mason <clm@fb.com>,
+	Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
+	Qu Wenruo <wqu@suse.com>, Arnd Bergmann <arnd@arndb.de>,
+	Johannes Thumshirn <johannes.thumshirn@wdc.com>,
+	Filipe Manana <fdmanana@suse.com>, Li Zetao <lizetao1@huawei.com>,
+	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+	akpm@linux-foundation.org
+Subject: Re: [PATCH] btrfs: fix signedness issue in min()
+Message-ID: <20250317192638.GA32661@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+References: <20250314155447.124842-1-arnd@kernel.org>
+ <20250317141637.5ee242ad@pumpkin>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250318-exynos7870-uart-v2-1-b9dcf145ae87@disroot.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Jiri Slaby <jirislaby@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, linux-kernel@vger.kernel.org, 
- linux-serial@vger.kernel.org, devicetree@vger.kernel.org, 
- Kaustabh Chakraborty <kauschluss@disroot.org>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1742239363; l=1559;
- i=kauschluss@disroot.org; s=20250202; h=from:subject:message-id;
- bh=fZNVQMp38R+fm09V4IiqclMsqo4Do1Cn9eVz2bE9FPY=;
- b=2rVCzd5/CHqGb1ChG52Moc7SN+UJOR7KnsnSJzMf3usgccSgb8ohIzSBjAZz0Z+Adgb82phoG
- LZ1aRVpd9SLBMnzz1HXOixpCirufJGURtbTF6F2zhaoFH05IVi2dex6
-X-Developer-Key: i=kauschluss@disroot.org; a=ed25519;
- pk=h2xeR+V2I1+GrfDPAhZa3M+NWA0Cnbdkkq1bH3ct1hE=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250317141637.5ee242ad@pumpkin>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+X-Spam-Level: 
+X-Spamd-Result: default: False [-2.50 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	HAS_REPLYTO(0.30)[dsterba@suse.cz];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	TAGGED_RCPT(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[13];
+	FREEMAIL_TO(0.00)[gmail.com];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	REPLYTO_ADDR_EQ_FROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.cz:replyto];
+	RCVD_COUNT_TWO(0.00)[2];
+	REPLYTO_DOM_NEQ_TO_DOM(0.00)[]
+X-Spam-Score: -2.50
+X-Spam-Flag: NO
 
-Document the compatible string for Exynos7870's UART driver. The
-devicetree property samsung,uart-fifosize must be mandatory, as the
-driver enquires about the FIFO sizes. This feature makes it compatible
-with Exynos8895's UART.
+On Mon, Mar 17, 2025 at 02:16:37PM +0000, David Laight wrote:
+> On Fri, 14 Mar 2025 16:54:41 +0100
+> Arnd Bergmann <arnd@kernel.org> wrote:
+> 
+> > From: Arnd Bergmann <arnd@arndb.de>
+> > 
+> > Comparing a u64 to an loff_t causes a warning in min()
+> > 
+> > fs/btrfs/extent_io.c: In function 'extent_write_locked_range':
+> > include/linux/compiler_types.h:557:45: error: call to '__compiletime_assert_588' declared with attribute error: min(folio_pos(folio) + folio_size(folio) - 1, end) signedness error
+> > fs/btrfs/extent_io.c:2472:27: note: in expansion of macro 'min'
+> >  2472 |                 cur_end = min(folio_pos(folio) + folio_size(folio) - 1, end);
+> >       |                           ^~~
+> > 
+> > Use min_t() instead.
+> 
+> It would be slightly better to use min_unsigned() since, regardless of the types
+> involved, it can't discard significant bits.
+> 
+> OTOH the real problem here is that both folio_pos() and folio_size() return signed types.
 
-Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
----
-This patch series is a part of Exynos7870 upstreaming.
----
-Changes in v2:
-- Modify UART compatible to now fallback Exynos8895 UART.
-- Remove the UART driver patch, no longer needed.
-- Link to v1: https://lore.kernel.org/r/20250204-exynos7870-uart-v1-0-06be6aa96284@disroot.org
----
- Documentation/devicetree/bindings/serial/samsung_uart.yaml | 4 ++++
- 1 file changed, 4 insertions(+)
+folio_size() returns size_t:
 
-diff --git a/Documentation/devicetree/bindings/serial/samsung_uart.yaml b/Documentation/devicetree/bindings/serial/samsung_uart.yaml
-index 070eba9f19d3e039090c58a82f93d02eed58ab84..83d9986d8e98a2a55615d15383c9c7fc89f5b52f 100644
---- a/Documentation/devicetree/bindings/serial/samsung_uart.yaml
-+++ b/Documentation/devicetree/bindings/serial/samsung_uart.yaml
-@@ -42,6 +42,10 @@ properties:
-               - samsung,exynosautov9-uart
-               - samsung,exynosautov920-uart
-           - const: samsung,exynos850-uart
-+      - items:
-+          - enum:
-+              - samsung,exynos7870-uart
-+          - const: samsung,exynos8895-uart
- 
-   reg:
-     maxItems: 1
+static inline size_t folio_size(const struct folio *folio)
+{
+	return PAGE_SIZE << folio_order(folio);
+}
 
----
-base-commit: e5d3fd687aac5eceb1721fa92b9f49afcf4c3717
-change-id: 20250203-exynos7870-uart-62f64cea2489
-
-Best regards,
--- 
-Kaustabh Chakraborty <kauschluss@disroot.org>
-
+Otherwise the min_t with force u64 is ok and lots of min() use (in
+btrfs) was converted to the typed variant in case the types don't match.
 
