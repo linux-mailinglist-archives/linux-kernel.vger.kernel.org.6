@@ -1,146 +1,141 @@
-Return-Path: <linux-kernel+bounces-564184-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564170-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 389E4A64FAE
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 13:49:09 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 925D2A64F73
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 13:41:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C0DB9171152
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 12:48:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A05AB17041D
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 12:41:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4DB623A9BA;
-	Mon, 17 Mar 2025 12:48:51 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CCCD23BD0E;
+	Mon, 17 Mar 2025 12:41:33 +0000 (UTC)
+Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5931D156F20
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 12:48:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B22C923A9AA;
+	Mon, 17 Mar 2025 12:41:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742215731; cv=none; b=ZlhSOEX464PnkxfQJ8v+DtZmD6FWMgNMBMmhYPSt0PaTWU0Ei262Eqlx00J2x51xhmgnxANkXiT5hTDMkl+OrSlyP151B8DMcVxUMSJ7zwI688MrtRkXd1pYnT5ilo3SCGYlJlP8clKmx/udJjZcDzTJ45LvOeFSfNxoZEd1hcE=
+	t=1742215293; cv=none; b=N6yr1F/gyk39jHV4w1BfCtpzQGy6z3YPATFb9CSFfOyB2oGsLNC830v0NmVnzyw14sL4vFsbiS/6Utmpd5jP+YrGTF8b0LP6SZltyI1iJTIMxwZnJwNvJubHnc1fpBxMqm6T4NgdQZMgfTbTDx2zH9pvb7wgLutWRxXQkYfjewk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742215731; c=relaxed/simple;
-	bh=TGfuq/mvWmbAkTPeHZHr4vDXUR/V20kicyYAANurWXQ=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=iSnek2Lwf8BR1D+nPA3V1FT4f51LmQUxEJsujflhCjbE5s6Rc/MIVE2WNclCWz0mmS8FsYkw09ilX4RTnlgt3ucFhQ5Bqv+jDAoRlkNihD+fmTWvnZxkncc+mBg5MbqcuQw601lUYK6VG+Yxp906UPWk/hzPCikUMgcAHuLGg1c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.234])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4ZGZSr2rM8z2Ccln;
-	Mon, 17 Mar 2025 20:45:32 +0800 (CST)
-Received: from dggemv706-chm.china.huawei.com (unknown [10.3.19.33])
-	by mail.maildlp.com (Postfix) with ESMTPS id 727A91400FD;
-	Mon, 17 Mar 2025 20:48:45 +0800 (CST)
-Received: from kwepemn500004.china.huawei.com (7.202.194.145) by
- dggemv706-chm.china.huawei.com (10.3.19.33) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 17 Mar 2025 20:48:45 +0800
-Received: from localhost.localdomain (10.90.30.45) by
- kwepemn500004.china.huawei.com (7.202.194.145) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 17 Mar 2025 20:48:44 +0800
-From: Junhao He <hejunhao3@huawei.com>
-To: <suzuki.poulose@arm.com>, <james.clark@arm.com>,
-	<anshuman.khandual@arm.com>
-CC: <coresight@lists.linaro.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <linuxarm@huawei.com>
-Subject: [PATCH v2] coresight: Fixes device's owner field for registered using coresight_init_driver()
-Date: Mon, 17 Mar 2025 20:41:06 +0800
-Message-ID: <20250317124106.271374-1-hejunhao3@huawei.com>
-X-Mailer: git-send-email 2.30.0
+	s=arc-20240116; t=1742215293; c=relaxed/simple;
+	bh=NTIMa/JLkLsU+CMNlhQWrTBB6VsnbivcBYfYYl4V/44=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oBHpZooJ+2S1SQ+2jSCu5oVBEWDRDpyPK+6xApWOZRaTke9xVjtf9NXs3m/F5bBtd+hBQQVpFJBAqtxW03ikIPLtwFVOsG20A3h7iyXeqDXtDKckPAjXJxj366xqqO+waxH8bB2lAoQtRtZMDF659/K6UJKoOYUHq+Hmr8ADPOY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
+Received: from localhost (unknown [116.232.18.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: dlan)
+	by smtp.gentoo.org (Postfix) with ESMTPSA id 9FEFE3432D6;
+	Mon, 17 Mar 2025 12:41:30 +0000 (UTC)
+Date: Mon, 17 Mar 2025 12:41:20 +0000
+From: Yixun Lan <dlan@gentoo.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>, Alex Elder <elder@kernel.org>,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org, spacemit@lists.linux.dev,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Alex Elder <elder@riscstar.com>
+Subject: Re: [PATCH v3] pinctrl: spacemit: enable config option
+Message-ID: <20250317124120-GYA1983@gentoo>
+References: <20250218-k1-pinctrl-option-v3-1-36e031e0da1b@gentoo.org>
+ <CAMuHMdV4xWLEuCvCC54GBfCdELE=QSHqaOyUPD-ezE0QLYRnVA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemn500004.china.huawei.com (7.202.194.145)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdV4xWLEuCvCC54GBfCdELE=QSHqaOyUPD-ezE0QLYRnVA@mail.gmail.com>
 
-The coresight_init_driver() of the coresight-core module is called from
-the sub coresgiht device (such as tmc/stm/funnle/...) module. It calls
-amba_driver_register() and Platform_driver_register(), which are macro
-functions that use the coresight-core's module to initialize the caller's
-owner field.  Therefore, when the sub coresight device calls
-coresight_init_driver(), an incorrect THIS_MODULE value is captured.
+Hi Geert:
 
-The sub coesgiht modules can be removed while their callbacks are
-running, resulting in a general protection failure.
+On 09:18 Mon 17 Mar     , Geert Uytterhoeven wrote:
+> Hi Yixun,
+> 
+> Thanks for your patch, which is now commit 7ff4faba63571c51
+> ("pinctrl: spacemit: enable config option") in v6.14-rc7.
+> 
+> On Tue, 18 Feb 2025 at 01:32, Yixun Lan <dlan@gentoo.org> wrote:
+> > Pinctrl is an essential driver for SpacemiT's SoC,
+> > The uart driver requires it, same as sd card driver,
+> > so let's enable it by default for this SoC.
+> >
+> > The CONFIG_PINCTRL_SPACEMIT_K1 isn't enabled when using
+> > 'make defconfig' to select kernel configuration options.
+> > This result in a broken uart driver where fail at probe()
+> > stage due to no pins found.
+> 
+> Perhaps this is an issue with the uart driver?
+> I just disabled CONFIG_PINCTRL_RZA2 on RZA2MEVB (which is one of the
+> few Renesas platforms where the pin control driver is not enabled by
+> default, for saving memory), and the system booted fine into a Debian
+> nfsroot.  Probe order of some devices did change, and "Trying to
+> probe devices needed for running init" was printed.
+> 
+my problem was CONFIG_PINCTRL_SPACEMIT_K1 isn't enabled, result as
+# CONFIG_PINCTRL_SPACEMIT_K1 is not set
 
-User a macro to automatically add the THIS_MODULE param to
-coresight_init_driver() to fix this.
+for your case, is CONFIG_PINCTRL_RZA2 built as module? 
+it should work for uart driver with deferred probe mechanism..
 
-Fixes: 075b7cd7ad7d ("coresight: Add helpers registering/removing both AMBA and platform drivers")
-Signed-off-by: Junhao He <hejunhao3@huawei.com>
----
-Changes in v2:
-- even a macro to automatically add the THIS_MODULE param for coresight_init_driver();
-- Link to v1: https://lore.kernel.org/lkml/c3744062-f7c1-82df-2fa1-591da3b2dc5e@huawei.com/T/
----
- drivers/hwtracing/coresight/coresight-core.c | 11 ++++++-----
- include/linux/coresight.h                    |  7 +++++--
- 2 files changed, 11 insertions(+), 7 deletions(-)
+> > Fixes: a83c29e1d145 ("pinctrl: spacemit: add support for SpacemiT K1 SoC")
+> > Reported-by: Alex Elder <elder@kernel.org>
+> > Acked-by: Conor Dooley <conor.dooley@microchip.com>
+> > Tested-by: Alex Elder <elder@riscstar.com>
+> > Signed-off-by: Yixun Lan <dlan@gentoo.org>
+> 
+> > --- a/drivers/pinctrl/spacemit/Kconfig
+> > +++ b/drivers/pinctrl/spacemit/Kconfig
+> > @@ -4,9 +4,10 @@
+> >  #
+> >
+> >  config PINCTRL_SPACEMIT_K1
+> > -       tristate "SpacemiT K1 SoC Pinctrl driver"
+> > +       bool "SpacemiT K1 SoC Pinctrl driver"
+> >         depends on ARCH_SPACEMIT || COMPILE_TEST
+> >         depends on OF
+> > +       default y
+> 
+> Ouch, fix sent...
+> "[PATCH] pinctrl: spacemit: PINCTRL_SPACEMIT_K1 should not default to
+> y unconditionally"
+> https://lore.kernel.org/6881b8d1ad74ac780af8a974e604b5ef3f5d4aad.1742198691.git.geert+renesas@glider.be
+> 
+I got suggestion in v1
+https://lore.kernel.org/all/20250211-nature-kilt-9882e53e5a3f@spud/
 
-diff --git a/drivers/hwtracing/coresight/coresight-core.c b/drivers/hwtracing/coresight/coresight-core.c
-index 0a9380350fb5..abf2e4fd4de0 100644
---- a/drivers/hwtracing/coresight/coresight-core.c
-+++ b/drivers/hwtracing/coresight/coresight-core.c
-@@ -1486,18 +1486,19 @@ static void __exit coresight_exit(void)
- module_init(coresight_init);
- module_exit(coresight_exit);
- 
--int coresight_init_driver(const char *drv, struct amba_driver *amba_drv,
--			  struct platform_driver *pdev_drv)
-+int coresight_init_driver_owner(const char *drv, struct amba_driver *amba_drv,
-+				struct platform_driver *pdev_drv,
-+				struct module *owner)
- {
- 	int ret;
- 
--	ret = amba_driver_register(amba_drv);
-+	ret = __amba_driver_register(amba_drv, owner);
- 	if (ret) {
- 		pr_err("%s: error registering AMBA driver\n", drv);
- 		return ret;
- 	}
- 
--	ret = platform_driver_register(pdev_drv);
-+	ret = __platform_driver_register(pdev_drv, owner);
- 	if (!ret)
- 		return 0;
- 
-@@ -1505,7 +1506,7 @@ int coresight_init_driver(const char *drv, struct amba_driver *amba_drv,
- 	amba_driver_unregister(amba_drv);
- 	return ret;
- }
--EXPORT_SYMBOL_GPL(coresight_init_driver);
-+EXPORT_SYMBOL_GPL(coresight_init_driver_owner);
- 
- void coresight_remove_driver(struct amba_driver *amba_drv,
- 			     struct platform_driver *pdev_drv)
-diff --git a/include/linux/coresight.h b/include/linux/coresight.h
-index 17276965ff1d..b07455956f7a 100644
---- a/include/linux/coresight.h
-+++ b/include/linux/coresight.h
-@@ -689,8 +689,11 @@ coresight_find_output_type(struct coresight_platform_data *pdata,
- 			   enum coresight_dev_type type,
- 			   union coresight_dev_subtype subtype);
- 
--int coresight_init_driver(const char *drv, struct amba_driver *amba_drv,
--			  struct platform_driver *pdev_drv);
-+int coresight_init_driver_owner(const char *drv, struct amba_driver *amba_drv,
-+				struct platform_driver *pdev_drv, struct module *owner);
-+
-+#define coresight_init_driver(name, amba_drv, pdev_drv)	\
-+	coresight_init_driver_owner(name, amba_drv, pdev_drv, THIS_MODULE)
- 
- void coresight_remove_driver(struct amba_driver *amba_drv,
- 			     struct platform_driver *pdev_drv);
+so for COMPILE_TEST case, ARCH_SPACEMIT config won't be enabled? then neither PINCTRL_SPACEMIT_K1
+anyway, I'm fine with either way, thanks
+
+> >         select GENERIC_PINCTRL_GROUPS
+> >         select GENERIC_PINMUX_FUNCTIONS
+> >         select GENERIC_PINCONF
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
+> -- 
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> 
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
+
 -- 
-2.33.0
-
+Yixun Lan (dlan)
+Gentoo Linux Developer
+GPG Key ID AABEFD55
 
