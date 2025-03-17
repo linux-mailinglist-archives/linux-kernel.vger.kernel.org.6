@@ -1,130 +1,122 @@
-Return-Path: <linux-kernel+bounces-564945-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564946-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09B5BA65D5C
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 19:57:33 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CC24A65D60
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 19:57:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4BFD417676E
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 18:57:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F2592176244
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 18:57:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB1931E8344;
-	Mon, 17 Mar 2025 18:55:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 435601EB5F1;
+	Mon, 17 Mar 2025 18:56:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aBUaAqNR"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g49BcDQt"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24E191DDC2C;
-	Mon, 17 Mar 2025 18:55:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CBA01E1E03;
+	Mon, 17 Mar 2025 18:56:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742237746; cv=none; b=Xk1VQluYnXk9ZkKjXvltiWZiS9E2kGfeKOlTJIvlWj7RBOluKZscNevy2sEvzvCeaYCtyZEzkJn4sK5GA7R54O9tr6NYKHP0Xb3qZxgDhUDnIugZU0OaIoW3Oiu0MdJ5dmac6odVf56fCvS7V/a7tpFiXpEt6CZqW9zrMlg9x68=
+	t=1742237786; cv=none; b=N1VxvIbXIn/LQMpqU8an9bW8fSdF2c2LM3SbZA1CpYvd7OlDUTWwuvn+XC31J+FFkhFL1XpEdzW13EDBlvuRlceb9tgG/GqdQXvWde3Rq1tSdVky4PpeM/Zf/tkDjs4VEhPGxsB9f0Ws16vefUJRxL7fXBc0+Eqha1OlksAQxqE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742237746; c=relaxed/simple;
-	bh=UBSgKTFL1pCFuUwk9CpwgabxBS+GuDSaPy6E3MS1gVw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LxTsuvji71aS7CitHNPz43c3E1bpgGwxe3BfGUJQoIm9JIQGpoei9MWPkBqUTVRyp/jOFuyzZpfArZR1PB75v/iVkqFEMkclQsHm2afn+cwtMYocLqwvAaGBtRO46JeUzJtrPdqzpbEKaz6jyXFcwig9wKl+HA8BshDgicQZy8E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aBUaAqNR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9C45C4CEE3;
-	Mon, 17 Mar 2025 18:55:40 +0000 (UTC)
+	s=arc-20240116; t=1742237786; c=relaxed/simple;
+	bh=1e4w5hz4mFH34gA0uZbOVpuAdr2fk4qSjjH+ov2gFLc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ueLw3EY0bOaB0BiYblJ2QsF4OnKUarKxVV/8++cxbvwoxdyE38P+LhCh/UryyAanQoCmFkOjVgCq/ntfy7tG0sOzXJcTCwAyf7NfI3eU23+oiBjYTwQawZ3L4wZT11vRUfaQBV2CDR7BIthkvyBxdA7LFG2wXpOTF1QE+I93Cyk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g49BcDQt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 032BDC4CEE3;
+	Mon, 17 Mar 2025 18:56:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742237746;
-	bh=UBSgKTFL1pCFuUwk9CpwgabxBS+GuDSaPy6E3MS1gVw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=aBUaAqNRiVr3vCE4c8v2VOTJ240MG0+F8pEW7/FtnoHijksbNEEKv2fl+pM5dzdzF
-	 NJnukCASsqmBJrtrJTgbefHsupjUEXmDhg3JMSEYKYnHpfMgB70NsIGcWMhl1z8ucw
-	 yxwcsfgWOFku6LrcFmnd+wuzMMkOA4p2LjHEntfDSFwqm5pmKtw61jLCO9QAMZh4aE
-	 vSfVyU5sDVC5i0z6sH4sui0/Utd/N9T0aHxmX37DyX/ILiC4SkxEkd49tkoBnZw1R/
-	 25nnuuT/ONvGCWcam3GRb0TXgCrpAN91/+1frL8JtBCb7pLjRuvcnf4YSz0yNt99VI
-	 /RW5HpqLuu6RA==
-Date: Mon, 17 Mar 2025 18:55:35 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Sam Winchenbach <sam.winchenbach@framepointer.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, linux-kernel@vger.kernel.org,
- lars@metafoo.de, Michael.Hennerich@analog.com, antoniu.miclaus@analog.com,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- bpellegrino@arka.org, Sam Winchenbach <swinchenbach@arka.org>
-Subject: Re: [PATCH v7 1/6] dt-bindings: iio: filter: Add lpf/hpf freq
- margins
-Message-ID: <20250317185535.7d00444d@jic23-huawei>
-In-Reply-To: <Z9g6tPqhAoTckFBh@65YTFL3.secure.tethers.com>
-References: <20250316135008.155304-1-sam.winchenbach@framepointer.org>
-	<20250316-sexy-tested-cheetah-c4a2f8@krzk-bin>
-	<Z9g6tPqhAoTckFBh@65YTFL3.secure.tethers.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
+	s=k20201202; t=1742237786;
+	bh=1e4w5hz4mFH34gA0uZbOVpuAdr2fk4qSjjH+ov2gFLc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=g49BcDQtydEODtoRxCv/0Ge+wIgFimsFVv5x/AJpF/ythvIFKKS9oYn5Wxtb0BJzm
+	 /mEW9xjQyZ8X47jAFPu+Ra2biaQu7IC+TlIdOerTe1HCdu1NxIdyV8zKGyKNZM4m/k
+	 O0aQ/Ls1cmqO8npyLDm9xHwu3TigAfP9s3shzHGxydmEu177pGTcYYoUY9jk7HRy04
+	 6iJ4WORIARH2yTic/VTMJJ7Ek6GytJFI19GvNj75KvmWS43x1staKu6FjidFD0Ja2O
+	 vLnEeLYC3CXvXLmDUw6T/odZ1CC2NS/H7XIv+2hhZHNOo5SdEkHECKiNAW64RjE37N
+	 IK3SO3DDadWgg==
+Date: Mon, 17 Mar 2025 18:56:22 +0000
+From: Simon Horman <horms@kernel.org>
+To: Michal Kubiak <michal.kubiak@intel.com>
+Cc: Chen Ni <nichen@iscas.ac.cn>, manishc@marvell.com,
+	andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next] qed: remove cast to pointers passed to kfree
+Message-ID: <20250317185622.GK688833@kernel.org>
+References: <20250311070624.1037787-1-nichen@iscas.ac.cn>
+ <Z9BuCIqxg5CRzD8w@localhost.localdomain>
+ <Z9Bv+cjkxlVHsKAd@localhost.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z9Bv+cjkxlVHsKAd@localhost.localdomain>
 
-On Mon, 17 Mar 2025 11:07:32 -0400
-Sam Winchenbach <sam.winchenbach@framepointer.org> wrote:
-
-> On Sun, Mar 16, 2025 at 05:38:42PM +0100, Krzysztof Kozlowski wrote:
-> > On Sun, Mar 16, 2025 at 09:50:03AM -0400, Sam Winchenbach wrote:  
-> > > From: Sam Winchenbach <swinchenbach@arka.org>
+On Tue, Mar 11, 2025 at 06:16:41PM +0100, Michal Kubiak wrote:
+> On Tue, Mar 11, 2025 at 06:08:24PM +0100, Michal Kubiak wrote:
+> > On Tue, Mar 11, 2025 at 03:06:24PM +0800, Chen Ni wrote:
+> > > Remove unnecessary casts to pointer types passed to kfree.
+> > > Issue detected by coccinelle:
+> > > @@
+> > > type t1;
+> > > expression *e;
+> > > @@
 > > > 
-> > > Adds two properties to add a margin when automatically finding the
-> > > corner frequencies.
+> > > -kfree((t1 *)e);
+> > > +kfree(e);
 > > > 
-> > > Signed-off-by: Sam Winchenbach <swinchenbach@arka.org>
+> > > Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
 > > > ---
-> > >  .../bindings/iio/filter/adi,admv8818.yaml     | 20 +++++++++++++++++++
-> > >  1 file changed, 20 insertions(+)  
+> > >  drivers/net/ethernet/qlogic/qed/qed_main.c | 2 +-
+> > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > > 
+> > > diff --git a/drivers/net/ethernet/qlogic/qed/qed_main.c b/drivers/net/ethernet/qlogic/qed/qed_main.c
+> > > index f915c423fe70..886061d7351a 100644
+> > > --- a/drivers/net/ethernet/qlogic/qed/qed_main.c
+> > > +++ b/drivers/net/ethernet/qlogic/qed/qed_main.c
+> > > @@ -454,7 +454,7 @@ int qed_fill_dev_info(struct qed_dev *cdev,
+> > >  
+> > >  static void qed_free_cdev(struct qed_dev *cdev)
+> > >  {
+> > > -	kfree((void *)cdev);
+> > > +	kfree(cdev);
+> > >  }
+> > >  
+> > >  static struct qed_dev *qed_alloc_cdev(struct pci_dev *pdev)
+> > > -- 
+> > > 2.25.1
+> > > 
+> > > 
 > > 
-> > I don't understand. You got my tag. No changelog here, no cover letter,
-> > nothing explains what happened here and why the tag is being removed.
-> >   
+> > 
+> > LGTM.
+> > 
+> > Thanks,
+> > Reviewed-by: Michal Kubiak <michal.kubiak@intel.com>
+> > 
 > 
-> Apologies,
+> I'm sorry I missed that the patch is addressed to "net-next".
+> It rather looks like as a candidate for the "net" tree.
 > 
-> I am still quite new to this workflow, and it deviates significantly
-> from my day-to-day work. I mentioned in the previous patch set that I
-> would like to update my email address and change:
-> "driver core: -> iio: core:"
-> I wasn't aware more than that was needed. Sorry for any confusion
-> this may have caused.
+> Please resend it to the "net" tree with an appropriate "Fixes" tag.
 > 
-> In the future what is the preferred way to handle a
-> situation like this? I wasn't aware of the cover letter feature but
-> that looks like a promising option.
+> My apologies for the noise.
 
-Either add stuff below the --- above as that doesn't end up in the
-eventual git log, or --cover-letter on your git-format-patch and
-put useful things like that in there.
+Hi Michal,
 
-> 
-> It looks like another option is to add commentary to each patch.
-> 
-> I am less certain about your tag being removed - I don't fully
-> understand that. Is there a way to preserve that if changes are made
-> after you sign-off?
+I'm unclear what bug this fixes.
 
-Once a tag is given it is up to the patch author to add it to the
-patches for future versions.  That should only be dropped if the
-author thinks there are significant enough changes to warrant a fresh
-review.  If you do drop a tag like that, then the change log
-under --- on the particular patch should clearly state why.
-> 
-> Sorry again about the confusion this caused,
-No problem, takes a while for everyone to get used to a different
-process. There are extensive docs, but it is still easy to miss
-things!
-
-Jonathan
-
-> -Sam
-> 
-> > Best regards,
-> > Krzysztof
-> >   
-
+It seems to me that this is a clean-up.
+That as such it should only be considered in the context
+of more material changes to this driver.
 
