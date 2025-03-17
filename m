@@ -1,164 +1,139 @@
-Return-Path: <linux-kernel+bounces-564900-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564901-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A759A65C78
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 19:24:10 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21B41A65C7A
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 19:25:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 38AB61898874
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 18:24:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B34483B3C10
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 18:24:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB8731B4240;
-	Mon, 17 Mar 2025 18:23:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61CF71C84A2;
+	Mon, 17 Mar 2025 18:24:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bl92vVTI"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="S+zOsbPz"
+Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 726F419048F
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 18:23:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F286419048F
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 18:24:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742235832; cv=none; b=qF95w7pRXpcfjLASbISs6+Otlxp8cbkyQXuNa0TuOVEa44FdcbV2HCzPdM6Ud3KLeqlpa8rGWq/ED8p+8pv/q8Ofq/9Qo4qlpvw4fxRHnHTtNhoRYItCDArcHrq8tbdEGYPep3UmG+zg8M09OdS3MDub6XoDETsbAgBALgR/rAs=
+	t=1742235893; cv=none; b=Yt3uLrpz37/dTPjMX4gwPwSQcQu8YOndsDYdiBTV5BimByBW4YWofpKMkrNu/c6htwznYfIO4X5C8oqaA2oWKPxTzF5ZF+sRDAkTCfJNkF3p2grzKFiH+SjHk8fvTrbb4GE5/pe7i0f+HKKJ6gsK+/byrSERcKgsFa0G4VsHG4o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742235832; c=relaxed/simple;
-	bh=Jk/K6zIn9osKO3C+0ens+03myrUFYSybl0/ovakDeFI=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Ys3BXICyDY6lzEBnLv1zKZxmWuEUIIEDJGzByARc9i/y5P8ubrxaxTx1+2s3a3fmq+vL9R2b6VWKpJ4SzhtgGleY6Eq3TDdZXZe2BymqiBwQ0aSVf52YLAL3zKtMp9Fa6vjfRAm2sv+wqquZR4YOLlvNid1/bi4py62pgXTxI7c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bl92vVTI; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742235830; x=1773771830;
-  h=message-id:subject:from:to:cc:date:in-reply-to:
-   references:content-transfer-encoding:mime-version;
-  bh=Jk/K6zIn9osKO3C+0ens+03myrUFYSybl0/ovakDeFI=;
-  b=bl92vVTISDRGtSF+mseJZs2jUXd5KKtg4YWlpZTeesPEig8Hb0CDAFHd
-   TXw0MZmElfqq2+Or2jzw+I89r2D3bD1JhSwHGCpgT+dW9WZuCAebfYrw2
-   vySKrrTaXkfwMHgAZVpcKpaF3t5UIR9OZWuz+H3CyeDNfEJE3TBVcQWwT
-   rMO/SKL7xCd+LB7cBnmSDPTP6vy7edAOh3BuB8QKry6D4MqJ/4kJZ8W+p
-   bE0yUivDreI+8fghyU/tFz91Ze66wzhQgY1mVkLgnZWennwwavcwG9wGw
-   QEWYbf+ti8bMHi4silVljQotMNpsbPGYU1cqg3JOoqmRQDsWT4XrIiHBW
-   Q==;
-X-CSE-ConnectionGUID: QcVchqkZQ+i2t7fTg1VcJQ==
-X-CSE-MsgGUID: yf8HmCvvQWWYRJqVkvja4w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11376"; a="54723352"
-X-IronPort-AV: E=Sophos;i="6.14,254,1736841600"; 
-   d="scan'208";a="54723352"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Mar 2025 11:23:49 -0700
-X-CSE-ConnectionGUID: UokWbO1ySKKkZTwpyn9/KQ==
-X-CSE-MsgGUID: u5JgGuMDSKW0GNrBjc3p/Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,254,1736841600"; 
-   d="scan'208";a="121752137"
-Received: from aschofie-mobl2.amr.corp.intel.com (HELO [10.125.109.110]) ([10.125.109.110])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Mar 2025 11:23:50 -0700
-Message-ID: <754b55926794f41f0c064be98c74b89abff1172c.camel@linux.intel.com>
-Subject: Re: [PATCH 9/9] mm: swap: replace cluster_swap_free_nr() with
- swap_entries_put_[map/cache]()
-From: Tim Chen <tim.c.chen@linux.intel.com>
-To: Kemeng Shi <shikemeng@huaweicloud.com>, akpm@linux-foundation.org
-Cc: kasong@tencent.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Date: Mon, 17 Mar 2025 11:23:49 -0700
-In-Reply-To: <20250313210515.9920-10-shikemeng@huaweicloud.com>
-References: <20250313210515.9920-1-shikemeng@huaweicloud.com>
-	 <20250313210515.9920-10-shikemeng@huaweicloud.com>
-Autocrypt: addr=tim.c.chen@linux.intel.com; prefer-encrypt=mutual;
- keydata=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
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
+	s=arc-20240116; t=1742235893; c=relaxed/simple;
+	bh=+q0Pkl+0ut0ZVjPhp2WhARVxM+/p2oXgrwzMBgwbvRc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ndtvv72bALe7f8BeTxO/HKiX08Lsa1GvyyQ2omTp6hVxJDNxcQVR2z1YnkcISISxA/gacMGAtCGEL3+6AvqH6+mujL+6pIrO74Rm72tvMbpKy9SNBWNBgHlfuv2quII57pshg3TfB4XIJ/AYb31LrgFT+XcFhQEN6zHIacqOlEQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=S+zOsbPz; arc=none smtp.client-ip=209.85.219.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
+Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-6eafac1f047so20695956d6.2
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 11:24:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gourry.net; s=google; t=1742235891; x=1742840691; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=qffRqeeaN/xyBcdXkC41yRxHN6rIHMJ0xVP8VR6XDiU=;
+        b=S+zOsbPzXvOeTYmuwGfJEWugAi/zOutyfHoYSVlcRLykMEIrMn2os7QgNOrVM8DoHT
+         IdhzBsHvbvr+KnWHNgHUsBzD5YlsAcwYtQq7FyYWRQuc8wLrIAlNSIB9JyDyQpn4ruOi
+         1BIEKmJLXbruJ3GHovYpF0W+MkuHsuT5IfMqZfzboBrYQWIGPSPhXN8Xv1KA53OmCQcb
+         W1qzVC3B7XAcbEe+nrHyo6gqDWIX2hOHcw0D/6Zm42N67OV+7Mv/v3iwm6QTm/1iyDHl
+         pHRf0EHF1HN1WU5giXGlKYG3+getQ0m+sU4FsfP6JMdOgCMEfTdca16xOnM4WyZPfvbK
+         +yAA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742235891; x=1742840691;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qffRqeeaN/xyBcdXkC41yRxHN6rIHMJ0xVP8VR6XDiU=;
+        b=CdrUe75Y9d0Inxdy0roawUSMfgOGJ0Cs1FDMJw9y6fPkIRgmXCvY28hlJvufTrooX0
+         +/vC6qIPszUpSP9qJrfPlb56lM5wcCZUBPnfFKH/y85rwkyK0wxrHa+djYyJcuRIl7Qp
+         s7dpNJ1EhEYhUOIN2e13RvNoC009+63/tNV3P3Ue7+odHjs2Cws0zzMHKMIesfVICWTe
+         +qojueXc/qbs8AjOCZdRyEUSlvv/bOzmKWew8vrIoNhVzopsNECJf6ElUeRn7kQB0twb
+         7GXwJeW8vX3GWFckA/eZvuX7ra0gdQx9Ua2uT4vpGixAob7oW064PT6ii3jsCDuOqO10
+         qdZw==
+X-Gm-Message-State: AOJu0YwPOyciUfqR3VAL2MOHIK3h5ICGzbAMpr/SQof5+EuL2xg1cril
+	uIKKwcTt5tTxrZ6rrbIYWDAvW6I+vNMErl2yTUi69x3OcQM5REESf8qb1CHxeOE=
+X-Gm-Gg: ASbGncuwITNBDoyRJj+V7V3UI2jxRmJR8TPjycNfreXJmRNYo9nue3gXXW4yJwzwb1O
+	yiV7pocfnyugQkRlj5DGbmp4e8MzqDFb7/+kZDErkjj4SCrAUhsZvvNLkW6yboteBlDH0oj94ZJ
+	yPlJ4ss8GkRvvQONhDAvZtScPNgecUeVTuh8v+K86k76lR/4iydgraI5gRNm08DmAqiu//Zg1yL
+	u9HejL6Dpi4P2UHJ2XWZ75FzzhlpU6SFIqktsCaD1ddL9x+E/iDn6ANw+smddWLNHGUZdKUVequ
+	B+4yc4PYFuTw9TU0PhWsgyaFaUcC8BCdCNtu5fwMicyIC9L53atDyqcofN+Y7GMTRVNAjtU1zRN
+	fPKJ+7qWGdHZrhVruIn6/0NxapnaXxt5i1+FC1A==
+X-Google-Smtp-Source: AGHT+IECAQV2W4ZfXVx/cTTr/lq8wcLUfss4PApt70+7/vAmtkEDvbuW09xiFSiw2Zhgj5gShBbs2g==
+X-Received: by 2002:a05:6214:2626:b0:6d4:dae:6250 with SMTP id 6a1803df08f44-6eaeaad4dd7mr242589906d6.34.1742235890789;
+        Mon, 17 Mar 2025 11:24:50 -0700 (PDT)
+Received: from gourry-fedora-PF4VCD3F (pool-173-79-56-208.washdc.fios.verizon.net. [173.79.56.208])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6eaef289853sm39397646d6.25.2025.03.17.11.24.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Mar 2025 11:24:50 -0700 (PDT)
+Date: Mon, 17 Mar 2025 14:24:47 -0400
+From: Gregory Price <gourry@gourry.net>
+To: Bharata B Rao <bharata@amd.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	AneeshKumar.KizhakeVeetil@arm.com, Hasan.Maruf@amd.com,
+	Jonathan.Cameron@huawei.com, Michael.Day@amd.com,
+	akpm@linux-foundation.org, dave.hansen@intel.com, david@redhat.com,
+	feng.tang@intel.com, hannes@cmpxchg.org, honggyu.kim@sk.com,
+	hughd@google.com, jhubbard@nvidia.com, k.shutemov@gmail.com,
+	kbusch@meta.com, kmanaouil.dev@gmail.com, leesuyeon0506@gmail.com,
+	leillc@google.com, liam.howlett@oracle.com,
+	mgorman@techsingularity.net, mingo@redhat.com, nadav.amit@gmail.com,
+	nphamcs@gmail.com, peterz@infradead.org, raghavendra.kt@amd.com,
+	riel@surriel.com, rientjes@google.com, rppt@kernel.org,
+	shivankg@amd.com, shy828301@gmail.com, sj@kernel.org,
+	vbabka@suse.cz, weixugc@google.com, willy@infradead.org,
+	ying.huang@linux.alibaba.com, ziy@nvidia.com, yuanchu@google.com
+Subject: Re: [RFC PATCH 2/4] mm: kpromoted: Hot page info collection and
+ promotion daemon
+Message-ID: <Z9ho77H94jsLHDNu@gourry-fedora-PF4VCD3F>
+References: <20250306054532.221138-1-bharata@amd.com>
+ <20250306054532.221138-3-bharata@amd.com>
+ <20250313164430.bzkfyqmx6a5dj7d2@offworld>
+ <b9965654-af90-42c9-8e4b-b29621d11ea7@amd.com>
+ <Z9g6JIAPZof2eFbJ@gourry-fedora-PF4VCD3F>
+ <038d0332-2146-4bda-adf6-03ef58dcc3b5@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <038d0332-2146-4bda-adf6-03ef58dcc3b5@amd.com>
 
-On Fri, 2025-03-14 at 05:05 +0800, Kemeng Shi wrote:
-> Replace cluster_swap_free_nr() with swap_entries_put_[map/cache]() to
-> remove repeat code and leverage batch-remove for entries with last flag.
->=20
-> Signed-off-by: Kemeng Shi <shikemeng@huaweicloud.com>
-> ---
->  mm/swapfile.c | 21 ++-------------------
->  1 file changed, 2 insertions(+), 19 deletions(-)
->=20
-> diff --git a/mm/swapfile.c b/mm/swapfile.c
-> index 343b34eb2a81..c27cf09d84a6 100644
-> --- a/mm/swapfile.c
-> +++ b/mm/swapfile.c
-> @@ -1570,21 +1570,6 @@ static void swap_entries_free(struct swap_info_str=
-uct *si,
->  	__swap_entries_free(si, ci, entry, nr_pages);
->  }
-> =20
-> -static void cluster_swap_free_nr(struct swap_info_struct *si,
-> -		unsigned long offset, int nr_pages,
-> -		unsigned char usage)
-> -{
-> -	struct swap_cluster_info *ci;
-> -	unsigned long end =3D offset + nr_pages;
-> -
-> -	ci =3D lock_cluster(si, offset);
-> -	do {
-> -		swap_entry_put_locked(si, ci, swp_entry(si->type, offset),
-> -				      usage);
-> -	} while (++offset < end);
-> -	unlock_cluster(ci);
-> -}
-> -
->  /*
->   * Caller has made sure that the swap device corresponding to entry
->   * is still around or has not been recycled.
-> @@ -1601,7 +1586,7 @@ void swap_free_nr(swp_entry_t entry, int nr_pages)
-> =20
->  	while (nr_pages) {
->  		nr =3D min_t(int, nr_pages, SWAPFILE_CLUSTER - offset % SWAPFILE_CLUST=
-ER);
-> -		cluster_swap_free_nr(sis, offset, nr, 1);
-> +		swap_entries_put_map(sis, swp_entry(sis->type, offset), nr);
->  		offset +=3D nr;
->  		nr_pages -=3D nr;
->  	}
-> @@ -3632,9 +3617,7 @@ int swapcache_prepare(swp_entry_t entry, int nr)
-> =20
->  void swapcache_clear(struct swap_info_struct *si, swp_entry_t entry, int=
- nr)
->  {
-> -	unsigned long offset =3D swp_offset(entry);
-> -
-> -	cluster_swap_free_nr(si, offset, nr, SWAP_HAS_CACHE);
-> +	swap_entries_put_cache(si, entry, nr);
+On Mon, Mar 17, 2025 at 09:52:29PM +0530, Bharata B Rao wrote:
+> > 
+> > > kpromoted_recorded_accesses 960620 /* Number of recorded accesses */
+> > > kpromoted_recorded_hwhints 960620  /* Nr accesses via HW hints, IBS in this
+> > > case */
+> > > kpromoted_recorded_pgtscans 0
+> > > kpromoted_record_toptier 638006 /* Nr toptier accesses */
+> > > kpromoted_record_added 321234 /* Nr (CXL) accesses that are tracked */
+> > > kpromoted_record_exists 1380
+> > > kpromoted_mig_right_node 0
+> > > kpromoted_mig_non_lru 226
+> > > kpromoted_mig_lru_active 47 /* Number of accesses considered for promotion
+> > > as determined by folio_test_active() check */
+> 
+> However disabling demotion has no impact on this number (and hence the
+> folio_test_active() check)
+>
 
+I've been mulling over what's likely to occur when the Low but not Min
+watermark is hit and reclaim is invoked but without demotion enabled.
 
-swap_entries_put_cache() assumes nr does not cross cluster boundary
-as we only lock the cluster associated with the beginning entry.
+I'm wonder if kswapd pushes things like r/o pagecache out, only to have
+them faulted back into CXL later, while new allocations stick on the
+main memory.
 
-Current callers to swapcache_clear() like
-do_swap_page() and shmem_swapin_folio, call swapcache_clear()
-only for pages within a folio so we do fall in a cluster so
-we are okay.
+You might try MPOL_PREFERRED with CXL node as the target instead of bind
+w/ the local node to at least make sure the system is actually
+identifying hotness correctly.
 
-Perhaps we should document with a comment that
-caller to swapcache_clear() should use the function only for pages in
-a folio so the pages don't cross clusters for future users
-of swapcache_clear().
-
-Otherwise the patch looks good.
-
-Tim
-
->  }
-> =20
->  struct swap_info_struct *swp_swap_info(swp_entry_t entry)
-
+~Gregory
 
