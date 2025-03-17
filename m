@@ -1,186 +1,188 @@
-Return-Path: <linux-kernel+bounces-563807-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29696A648FD
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:10:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 287B6A6490A
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:11:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CAD1718928AC
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:09:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3659218823D7
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:11:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DA83944E;
-	Mon, 17 Mar 2025 10:09:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D8DA231CB1;
+	Mon, 17 Mar 2025 10:11:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="2zqCNa3k";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ZnSs9nuF";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="2zqCNa3k";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ZnSs9nuF"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FMZvZPEV"
+Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AED2B13B7A3
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 10:09:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D794D229B28;
+	Mon, 17 Mar 2025 10:10:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742206180; cv=none; b=s1sCXIEmq4+ygzeq3wd95hqABWpD0k2wE7eL8lbdrTxONEMzXlcdyil4kBlt4+9adwqbQd9/NaKbnAZtoBllgmePK8cRWkL/aXMzN63icPtiqrrLr9CzfNRc1Y0KuWcjI3CCzKNORWlRZFgn8T6WYjKACYpyC3OC/ZUDwAD7jEM=
+	t=1742206259; cv=none; b=pyCmnq05l+YgjfIaC82tLuZuE6jSxDW5OX+QmEGGb9vPIJ+61qc5dr5FDCK8FY/Zr1LKLSqnEMCShXP0vfMzgabSNwb12Fbaz0rUshb0N/zn9SQnzxyZWURHK9efx/HZo2bNGv6B4l3PwoQV3HHjASRGFJWLbHMXYGdFn2e7VLg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742206180; c=relaxed/simple;
-	bh=RWqYOAA5tbEc6bfm4D63/g9qpPi74sA1IhlXJ1qk+L4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ytnv9CPTph7zs72PoCDhlP25IR/R0cH+m612lPJgs6c9CMS4ycf64kxHav36a54Mytdrs2JAf3Q9BDAhRyOhgPe8ORf4S0op54E9/WlWjPl/GQ6AtF92NRRSz0t7NE6i25UfAyvZJRoPxki+rteUI/rmtNm6QFW0AIxm1dz+gg4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=2zqCNa3k; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ZnSs9nuF; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=2zqCNa3k; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ZnSs9nuF; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id C79C721A9A;
-	Mon, 17 Mar 2025 10:09:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1742206176; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3Xq7lBKy5lPmzEwBcsRowSYenNgBJYixD9T0ziVEtAY=;
-	b=2zqCNa3kOVVBSVca1eFpmuD2rauprLsaCT8uTN/qFLPOeMTXGiTS9CaD4OeQvhwEJq1gso
-	ofI8IPJ+SvfaMp1x4Gu13/5lFeHK7hA5FgfKrOtBZS3QIh2NdLrilv4ga4Quh/VqsU+IUt
-	jqQhTomHtMeYnTnv8IzfxnfvaJodeuY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1742206176;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3Xq7lBKy5lPmzEwBcsRowSYenNgBJYixD9T0ziVEtAY=;
-	b=ZnSs9nuFD0z+rG2M8LU8sWQX3IW8ha2hxgwarPk0hSgs1pxan4YEvYoz3z5837YDFSdmn1
-	rqxTVt50H90QMwCQ==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=2zqCNa3k;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=ZnSs9nuF
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1742206176; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3Xq7lBKy5lPmzEwBcsRowSYenNgBJYixD9T0ziVEtAY=;
-	b=2zqCNa3kOVVBSVca1eFpmuD2rauprLsaCT8uTN/qFLPOeMTXGiTS9CaD4OeQvhwEJq1gso
-	ofI8IPJ+SvfaMp1x4Gu13/5lFeHK7hA5FgfKrOtBZS3QIh2NdLrilv4ga4Quh/VqsU+IUt
-	jqQhTomHtMeYnTnv8IzfxnfvaJodeuY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1742206176;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3Xq7lBKy5lPmzEwBcsRowSYenNgBJYixD9T0ziVEtAY=;
-	b=ZnSs9nuFD0z+rG2M8LU8sWQX3IW8ha2hxgwarPk0hSgs1pxan4YEvYoz3z5837YDFSdmn1
-	rqxTVt50H90QMwCQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 77728132CF;
-	Mon, 17 Mar 2025 10:09:36 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id FW3OHOD012cIHQAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Mon, 17 Mar 2025 10:09:36 +0000
-Message-ID: <cbbaa3f3-bbb2-4dab-8cd2-72a55df7a3a8@suse.cz>
-Date: Mon, 17 Mar 2025 11:09:36 +0100
+	s=arc-20240116; t=1742206259; c=relaxed/simple;
+	bh=Wxs+z1Wms/rz3FZCDLd8lPCpX3EWYhXBgRFH5+EsDvI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Zg5O6WoDgP/io9Gf7KRvu2uhDtjC5aXYUDFqWjiBNjnO/3syCoKyOx+obTGWXBb+6Km0hmp95cbK/ca1C2r/wqhvUg/vabroFxxuST6AdhQO8ghzb0fJF9yZpacfixuXR0QYQsESKaU/gSTzZ/ij+McAHPDC46nREN0OmakPFS8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FMZvZPEV; arc=none smtp.client-ip=209.85.219.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-e573136107bso3864774276.3;
+        Mon, 17 Mar 2025 03:10:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742206257; x=1742811057; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=14ZjU9nXfljCfIeuLE7AsggRfd6lcojl1mTtLC8IsKk=;
+        b=FMZvZPEVl1B85+p0MGMQwQL3+E6s+OvtZ3cpqlAq+6lPZ+QqBs4/Bkn7+9LlB1bFTH
+         82G6UJd21KozlEbBQHRQi0VaDCV0zURxrVBA8AJl+6XDvAt+AKbys37pfx2g4EOaYtst
+         d6X/MeT/8k8dFvxr1VJOynAXBVnGMiB1Tt8nqBvyAxqpwTI94UVaqG/pDQOYpvW4xcsh
+         xzgnf/gNZDlGRpzzQdRhYhtXVPhekUCLL58tbBeePCjViHxWb7s2WQCm19s3hXnGt/0u
+         VtQX9QPb81eKL5su4bWhf5o880T2jAl02LQQMltsA2P4xa2LNgCsOaQQoaOmIl1njHHf
+         /HrA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742206257; x=1742811057;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=14ZjU9nXfljCfIeuLE7AsggRfd6lcojl1mTtLC8IsKk=;
+        b=ARF3fMsTkkWnKNMED2rocymHfHc0x19RJrv3hNayVXwj0qlv+zAdBwJ3ejv5z2On6A
+         g0nU3OLAmd5mohb+xEWykBX8NnXlZFLcQ0c7tYTkffFOGr3OpwveDvF5wdPGKFoljM/8
+         Rs9XqtrKPIjUYP1nHcdRh0yDW8jeeEUt6ooYbr1ZcgH2KzYpHai7f2oPq8GNQLPWhSp7
+         KCfjI4dR5mQLHfp8Wcj0a9IqoEmUcpJRgyFKb3UpP6KHRA8mX5XFXCJTYC8ZH8UpbAfY
+         6gmWq38ewUUxhCoCAs/XA8zsTqdPG+YdsGRqsFNoF4Rxa3IopwK9+I2t4yO6cINO+lT2
+         pvUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUY+3BQGkDF854s5ISwEq4FgnCfIIw1cWujEQZyQWPM8uPlzV6HbWDyPUFKIoJe3/mwaB2rbpdsnTq3ptiP/NXX@vger.kernel.org, AJvYcCUmFpjZuka3y4/glUNliHT4RALii7qiyXw/CHWK7XWiJ1nX0EDhbVwRYBdT7qZUfyf3/9wu2k4Z@vger.kernel.org, AJvYcCV8vL2RuG6ssWkYEAUEVq0/yHQBc+s52JzKcnlwmNbpUJ9fExW0huH39v26x52+Di3NEUwoQCJJLZ2bs3w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwklkZsw8UOLs0+WoLCi7Y/vGoLxT+oaYLik6SsYGkO1D4Usl3n
+	yJ9KeCB42SkEGX2KSryfSOGcJ9eMKDlnFlHNPo/vjnyVra4oGhaxfgH1N/eDkJQpxEAyYSuuwo7
+	E0LcVGdr18boCOdlVP1CmKn8BhGs=
+X-Gm-Gg: ASbGnct5h5QQhDKn9oTFX68O5o2YJVunOBdTQVLzyDziykII4eEcVRrpD7ExuYvlC8x
+	tQjvrNz/9cQJM38Ba9Tmkyq6I5mgBi7Pa9zTgeKWbCru3cBw/pkfs5ODYLO3FigTVkNM73lqKii
+	s8iHaPkJ0ZCDorhG+CAriMbmdiMwVWqAZomodCwkLJqg==
+X-Google-Smtp-Source: AGHT+IFeEwX2XBlKWWzrkEKnBTAYiIEeloN1LG9w0cpntS5lTgsKiw5wSHUPI3GA92GyKQZHSvhzhxajCnV/EuAnk2I=
+X-Received: by 2002:a05:6902:2747:b0:e5a:c5d6:3948 with SMTP id
+ 3f1490d57ef6-e63f5cf0c16mr13681061276.0.1742206256657; Mon, 17 Mar 2025
+ 03:10:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v2 01/10] slab: add opt-in caching layer of percpu
- sheaves
-Content-Language: en-US
-To: Suren Baghdasaryan <surenb@google.com>
-Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- Christoph Lameter <cl@linux.com>, David Rientjes <rientjes@google.com>,
- Roman Gushchin <roman.gushchin@linux.dev>,
- Hyeonggon Yoo <42.hyeyoo@gmail.com>, Uladzislau Rezki <urezki@gmail.com>,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org, rcu@vger.kernel.org,
- maple-tree@lists.infradead.org
-References: <20250214-slub-percpu-caches-v2-0-88592ee0966a@suse.cz>
- <20250214-slub-percpu-caches-v2-1-88592ee0966a@suse.cz>
- <CAJuCfpG4BYNWM24_Jha-SapfeaGdO0GKuteHwNE1hDdWXRS+1Q@mail.gmail.com>
- <befd17b0-160e-4933-96d9-8d5c4a774162@suse.cz>
- <CAJuCfpHwvAUep6YT3Eu2SCu-dDbUoN=WE8r9aEV4UDWKfHXV+g@mail.gmail.com>
-From: Vlastimil Babka <vbabka@suse.cz>
-In-Reply-To: <CAJuCfpHwvAUep6YT3Eu2SCu-dDbUoN=WE8r9aEV4UDWKfHXV+g@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: C79C721A9A
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_TLS_ALL(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_COUNT_TWO(0.00)[2];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[oracle.com,linux.com,google.com,linux.dev,gmail.com,kvack.org,vger.kernel.org,lists.infradead.org];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	TAGGED_RCPT(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -3.01
-X-Spam-Flag: NO
+References: <20250312-b4-ovpn-v23-3-76066bc0a30c@openvpn.net>
+ <20250317060947.2368390-1-dqfext@gmail.com> <f4c9a29f-a5c6-464a-a659-c7ffeaf123c1@openvpn.net>
+ <CALW65jZe3JQGNcWsZtqU-B4-V-JZ6ocninxvoqMGeusMaU7C=A@mail.gmail.com> <0d8a8602-2db4-4c19-ab1c-51efef42cef6@openvpn.net>
+In-Reply-To: <0d8a8602-2db4-4c19-ab1c-51efef42cef6@openvpn.net>
+From: Qingfang Deng <dqfext@gmail.com>
+Date: Mon, 17 Mar 2025 18:10:46 +0800
+X-Gm-Features: AQ5f1JrZOv5SDMKrcUIEXFo9D0GgKi-eZeGIu0RavrSG4UmNhD3vkPc4aOtmKg8
+Message-ID: <CALW65jYaMBuMqzCFYwUJfLBg8+epQEjCg0MOpssGCwXqxbFP9w@mail.gmail.com>
+Subject: Re: [PATCH net-next v23 03/23] ovpn: add basic interface
+ creation/destruction/management routines
+To: Antonio Quartulli <antonio@openvpn.net>
+Cc: andrew+netdev@lunn.ch, donald.hunter@gmail.com, edumazet@google.com, 
+	horms@kernel.org, kuba@kernel.org, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com, 
+	ryazanov.s.a@gmail.com, sd@queasysnail.net, shaw.leon@gmail.com, 
+	shuah@kernel.org, "Jason A. Donenfeld" <Jason@zx2c4.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 3/12/25 16:14, Suren Baghdasaryan wrote:
-> On Wed, Mar 12, 2025 at 7:58 AM Vlastimil Babka <vbabka@suse.cz> wrote:
->> > I find the program flow in this function quite complex and hard to
->> > follow. I think refactoring the above block starting from "pcs =
->> > this_cpu_ptr(s->cpu_sheaves)" would somewhat simplify it. That
->> > eliminates the need for the "got_empty" label and makes the
->> > locking/unlocking sequence of s->cpu_sheaves->lock a bit more clear.
->>
->> I'm a bit lost, refactoring how exactly?
-> 
-> I thought moving the code above into a function above starting from
-> "pcs = this_cpu_ptr(s->cpu_sheaves)" into its own function would
-> simplify the flow. But as I said, it's a nit. If you try and don't
-> like that feel free to ignore this suggestion.
+On Mon, Mar 17, 2025 at 6:00=E2=80=AFPM Antonio Quartulli <antonio@openvpn.=
+net> wrote:
+>
+> On 17/03/2025 10:41, Qingfang Deng wrote:
+> > Hi Antonio,
+> >
+> > On Mon, Mar 17, 2025 at 5:23=E2=80=AFPM Antonio Quartulli <antonio@open=
+vpn.net> wrote:
+> >>>> +static void ovpn_setup(struct net_device *dev)
+> >>>> +{
+> >>>> +    netdev_features_t feat =3D NETIF_F_SG | NETIF_F_HW_CSUM | NETIF=
+_F_RXCSUM |
+> >>>
+> >>> Do not advertise NETIF_F_HW_CSUM or NETIF_F_RXCSUM, as TX/RX checksum=
+ is
+> >>> not handled in hardware.
+> >>
+> >> The idea behind these flags was that the OpenVPN protocol will take ca=
+re
+> >> of authenticating packets, thus substituting what the CSUM would do he=
+re.
+> >> For this I wanted to avoid the stack to spend time computing the CSUM =
+in
+> >> software.
+> >
+> > For the RX part (NETIF_F_RXCSUM), you might be correct, but in patch
+> > 08 you wrote:
+> >> /* we can't guarantee the packet wasn't corrupted before entering the
+> >> * VPN, therefore we give other layers a chance to check that
+> >> */
+> >> skb->ip_summed =3D CHECKSUM_NONE;
+>
+> Right. This was the result after a lengthy discussion with Sabrina.
+> Despite authenticating what enters the tunnel, we indeed concluded it is
+> better to let the stack verify that what entered was not corrupted.
+>
+> >
+> > So NETIF_F_RXCSUM has no effect.
+>
+> Does it mean I can drop NETIF_F_RXCSUM and also the line
+>
+> skb->ip_summed =3D CHECKSUM_NONE;
+>
+> at the same time?
 
-OK did it and although I didn't manage to remove the got_empty label, it's
-better and I realized I can handle the cases there in a better order and add
-one extra possible fallback in the unlikely cases. Please check the result
-when I send v3? thanks
+I don't think so. skb->ip_summed might have been set to
+CHECKSUM_UNNECESSARY on the lower layer with UDP/TCP RX checksum.
 
->>
->> >> +       }
->> >> +
->> >> +do_free:
->> >> +       pcs->main->objects[pcs->main->size++] = object;
->> >> +
->> >> +       local_unlock_irqrestore(&s->cpu_sheaves->lock, flags);
->> >> +
->> >> +       stat(s, FREE_PCS);
->> >> +}
-
+>
+> >
+> > For the TX part (NETIF_F_HW_CSUM) however, I believe wireguard made
+> > the same mistake.
+> > Your code both contains the pattern:
+> >
+> > if (skb->ip_summed =3D=3D CHECKSUM_PARTIAL && skb_checksum_help(skb)) /=
+/ ...
+> >
+> > NETIF_F_HW_CSUM causes the upper layers to send packets with
+> > CHECKSUM_PARTIAL, assuming hardware offload will complete the
+> > checksum, but if skb_checksum_help(skb) is invoked, the checksum is
+> > still computed in software. This means there's no real benefit unless
+> > there's an actual hardware offload mechanism.
+>
+> Got it.
+> Then as per your suggestion I can drop both NETIF_F_HW_CSUM and the
+> if/call to skb_checksum_help().
+>
+> Regards,
+>
+> >
+> > +Cc: zx2c4
+> >
+> >>
+> >> I believe wireguard sets those flags for the same reason.
+> >>
+> >> Does it make sense to you?
+> >>
+> >>>
+> >>>> +                             NETIF_F_GSO | NETIF_F_GSO_SOFTWARE |
+> >>>> +                             NETIF_F_HIGHDMA;
+> >>
+> >>
+> >> Regards,
+> >>
+> >> --
+> >> Antonio Quartulli
+> >> OpenVPN Inc.
+> >>
+>
+> --
+> Antonio Quartulli
+> OpenVPN Inc.
+>
 
