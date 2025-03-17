@@ -1,182 +1,106 @@
-Return-Path: <linux-kernel+bounces-564087-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564088-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E2BDA64D94
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 13:00:08 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07F50A64D92
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 12:59:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E73F03B511E
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:59:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C798172B96
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:59:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F29F623F277;
-	Mon, 17 Mar 2025 11:57:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33CDB2356C0;
+	Mon, 17 Mar 2025 11:58:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="NWfJO4UQ"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dMsRMSbm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A47F923E33A;
-	Mon, 17 Mar 2025 11:57:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88A62238156;
+	Mon, 17 Mar 2025 11:58:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742212669; cv=none; b=hZ/DKRU6z0amPEuDSoVSxIJNLbAgEapAyvO1Goqy4Gx5DSa8EHY93XNkwtBM/ayzJS0/68JryGS6ryZfiPUfAtCr4BWhNPXFbvZFDKFKKP0wHAw4q/f0xzjK4ic45F/Fm2N3avelp5I4Gfg0Dy2eXND5lU5DI07SkdX3zNNs95Y=
+	t=1742212690; cv=none; b=cfp++JcWr6oNB4wu+qV2NEAG/FGPjUdn5rSg37/C4Ag3RmfPLJ04/mLUUZQaxRVRvVd2Nd2bhSQ6qwvRMv/1j0NToGOTZfL/MSW+W0LLF6JWrgdB8Kyq9+2IOom7eJtTYPmJLx2b2SpVNmZ5fWPHyLWJCfQJRssjO0e5crsM3d4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742212669; c=relaxed/simple;
-	bh=bq3PFayu/4BwfT2SlO+W2wU2snxSQnLdE8pQmBjWLnU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Wh5m6roboVyODjKmJhAW/1Q6qb9MVKCq7i1H95q2EiHOHomcBh/IrjjeEEG/9OnerCDQmKM/1oxK6ixKB8Kjs57AyXbf43rulnizSZNUlCNFUuVNDJQ0RgjH7dqHqgGu1u5xYOouLhAXXiSymq3xyDMVCb6QaNHGcG0nnVm3LLU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=NWfJO4UQ; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from [192.168.1.102] (93-61-96-190.ip145.fastwebnet.it [93.61.96.190])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id BCDB219C7;
-	Mon, 17 Mar 2025 12:55:49 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1742212550;
-	bh=bq3PFayu/4BwfT2SlO+W2wU2snxSQnLdE8pQmBjWLnU=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=NWfJO4UQ2sPYdFVkeRPNPkXcsxIBVsuLneDHkI39mrvzp/MYfREBuHpyHLFRkjLWk
-	 BIjG74rHteI2eN2vwtu8W1e3bu2XsoACaBknDo1W7RpX+k1L0h3OTtL5SbLQoClF4i
-	 0Nh4U8WDGBEqz4XiVJl27Ng0xsUbL1K1p95x1pc4=
-From: Jacopo Mondi <jacopo.mondi+renesas@ideasonboard.com>
-Date: Mon, 17 Mar 2025 12:56:45 +0100
-Subject: [PATCH v3 7/7] media: vsp1: pipe: Add RAW Bayer formats mapping
+	s=arc-20240116; t=1742212690; c=relaxed/simple;
+	bh=sq/y7ToMuiEYjILLs9HwScQY78qLtJ+EUzbHvYcFahE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iff4WLdxORbYviuF7a/Kg2Gq6+xXO6z4OceydbFQow9L1nya45YspfAzQRr0Zd9GU2ypfuiWBH3P9Rb7mWKsLfaaTx5HFjc7AfG4nPtOeKxAi6OEJ5Y/HxI7Cy8/HiVkPzWykcKg9me52Cz/jEa9SjEPv1fZxPuXxn7TQxIeRDk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dMsRMSbm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF7CFC4CEE3;
+	Mon, 17 Mar 2025 11:58:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742212690;
+	bh=sq/y7ToMuiEYjILLs9HwScQY78qLtJ+EUzbHvYcFahE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dMsRMSbmEjUg08T36jpvjIpXopIOqt3lksnDPiquVrUU+ZcuZMintWSixY1KecFBK
+	 u5IGvl1PdEgpsuAPWLllxe285atv/fUenvzZzLvSznR3p/YqdVgNwpmCq+zQRYAgPy
+	 QdFW8ftA4jVqU2xAy21Hkb/bQMgz9qoxivpkY6GBayzOG2UXTGdYZ7CmFEtSD6fpJa
+	 87zI6f37CMVxNktP7yFMy1XZCnj6WnUJElxv1htNDhpik7A0fuL9KW+WGqDaahxBNy
+	 ZnQMlFXPQc1pWKncdLkfWuFAgI9JyHRGRHqFiKXZormATHM+J5vXhNW+ct3zA/hbN6
+	 Xvn+zG5UsibLw==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1tu96d-000000006pl-3dZv;
+	Mon, 17 Mar 2025 12:58:08 +0100
+Date: Mon, 17 Mar 2025 12:58:07 +0100
+From: Johan Hovold <johan@kernel.org>
+To: alexandre.belloni@bootlin.com
+Cc: Johan Hovold <johan+linaro@kernel.org>, linux-arm-msm@vger.kernel.org,
+	linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] rtc: pm8xxx: switch to devm_device_init_wakeup
+Message-ID: <Z9gOT5WBaGkBZjl9@hovoldconsulting.com>
+References: <20250317111312.1518349-1-alexandre.belloni@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250317-v4h-iif-v3-7-63aab8982b50@ideasonboard.com>
-References: <20250317-v4h-iif-v3-0-63aab8982b50@ideasonboard.com>
-In-Reply-To: <20250317-v4h-iif-v3-0-63aab8982b50@ideasonboard.com>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
- Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
- =?utf-8?q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
-Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
- linux-renesas-soc@vger.kernel.org, 
- Jacopo Mondi <jacopo.mondi+renesas@ideasonboard.com>
-X-Mailer: b4 0.15-dev-1b0d6
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4791;
- i=jacopo.mondi+renesas@ideasonboard.com; h=from:subject:message-id;
- bh=bq3PFayu/4BwfT2SlO+W2wU2snxSQnLdE8pQmBjWLnU=;
- b=owEBbQKS/ZANAwAIAXI0Bo8WoVY8AcsmYgBn2A4liAhyBVGNxI7gQVZyZo3ZAkozexTFiA19l
- lBOrTKfC/uJAjMEAAEIAB0WIQS1xD1IgJogio9YOMByNAaPFqFWPAUCZ9gOJQAKCRByNAaPFqFW
- PI9RD/9TEnzECr/kPgF0R555kLpW4jEADpErswgIN6W/GbXMwUheqDyBE2CiTIKkISuIxnl1DuP
- /4VSmJzfXqiSVcDCvgrlawuOTJlHhdWhKtZoopgs2soJPvQaT6C+oUxEGHrvbjW1idVRuz3HgrI
- kB1nHO4hd3CS43UbMvdVY60EPmTkKb0bM20JQvD5spBn8LkdzlLvFPFZkAwt/NfzYZtoJt8m27p
- WRy9y9UrfMOQZgBlcqo94XfsRU3tWseUiBbY2hYZxYpTbvWanAlnv6p9OXpyY4dAJet6TE5W7eQ
- 6FpLMk14l737P4bMv1PblultZl/dayS2huQsYzyYhErKaqqDcMzkc75v1TGD8EN/WvKrM0aBeLt
- Nu3RvVJBtzv3o8m9PwWcJl+Lljq1B4e6uohSQR9E/UGi5J2PhvodnfM7IHz3jhr5DtevHrT66zB
- GeLWgLjcnj89u1iHqdKJFUwD27KwyIJzHeDS6caZ2Vu1pF5qBqjE7OpCEyldIfdtpeAZ6Fr8V/B
- 0WIhC6KBG2Ftw4trQ/W8le0B+XSzR6svTkr6GBb2prywtVYyWKfNuMRG/tcsMUJd4Spm+cikI7Q
- 111iWu/iEUFITOte6vY9WuUdsXiWiEbkQnYxnty/6noQq23ScB7lnSq+hfD97wSuGGQoEvW3StB
- v9zk5CD8yR/sPUg==
-X-Developer-Key: i=jacopo.mondi+renesas@ideasonboard.com; a=openpgp;
- fpr=72392EDC88144A65C701EA9BA5826A2587AD026B
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250317111312.1518349-1-alexandre.belloni@bootlin.com>
 
-Add formats definition for RAW Bayer formats in vsp1_pipe.c.
+On Mon, Mar 17, 2025 at 12:13:11PM +0100, alexandre.belloni@bootlin.com wrote:
+> From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+> 
+> Switch to devm_device_init_wakeup to avoid a possible memory leak as wakeup
+> is never disabled.
 
-8-bits RAW Bayer pixel formats map on VSP format RGB332.
-10, 12 and 16 bits RAW Bayer pixel formats map on RGB565 insted.
+You should probably mention that this was due to a bad merge. The
+no-alarm patch moved the previous call to device_init_wakeup() into the
+conditional, but you had switched it to use devres so we ended up with
+two calls when you applied the patch.
 
-Signed-off-by: Jacopo Mondi <jacopo.mondi+renesas@ideasonboard.com>
----
- drivers/media/platform/renesas/vsp1/vsp1_pipe.c | 72 ++++++++++++++++++++++++-
- 1 file changed, 71 insertions(+), 1 deletion(-)
+Unless you want to and can rebase your tree.
 
-diff --git a/drivers/media/platform/renesas/vsp1/vsp1_pipe.c b/drivers/media/platform/renesas/vsp1/vsp1_pipe.c
-index 8e9be3ec1b4dbdad1cbe35ae3a88952f46e41343..6592513ca833175bdbfe850d61d1b5957ad27e0d 100644
---- a/drivers/media/platform/renesas/vsp1/vsp1_pipe.c
-+++ b/drivers/media/platform/renesas/vsp1/vsp1_pipe.c
-@@ -30,10 +30,80 @@
-  */
- 
- static const struct vsp1_format_info vsp1_video_formats[] = {
--	{ V4L2_PIX_FMT_RGB332, MEDIA_BUS_FMT_ARGB8888_1X32,
-+	/* Raw Bayer 8-bit: Maps on RGB332 */
-+	{ V4L2_PIX_FMT_SBGGR8, MEDIA_BUS_FMT_Y8_1X8,
-+	  VI6_FMT_RGB_332, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
-+	  VI6_RPF_DSWAP_P_WDS | VI6_RPF_DSWAP_P_BTS,
-+	  1, { 8, 0, 0 }, false, false, 1, 1, false },
-+	{ V4L2_PIX_FMT_SGBRG8, MEDIA_BUS_FMT_Y8_1X8,
-+	  VI6_FMT_RGB_332, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
-+	  VI6_RPF_DSWAP_P_WDS | VI6_RPF_DSWAP_P_BTS,
-+	  1, { 8, 0, 0 }, false, false, 1, 1, false },
-+	{ V4L2_PIX_FMT_SGRBG8, MEDIA_BUS_FMT_Y8_1X8,
-+	  VI6_FMT_RGB_332, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
-+	  VI6_RPF_DSWAP_P_WDS | VI6_RPF_DSWAP_P_BTS,
-+	  1, { 8, 0, 0 }, false, false, 1, 1, false },
-+	{ V4L2_PIX_FMT_SRGGB8, MEDIA_BUS_FMT_Y8_1X8,
- 	  VI6_FMT_RGB_332, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
- 	  VI6_RPF_DSWAP_P_WDS | VI6_RPF_DSWAP_P_BTS,
- 	  1, { 8, 0, 0 }, false, false, 1, 1, false },
-+
-+	/* Raw Bayer 10/12/16-bit: Maps on RGB565 */
-+	{ V4L2_PIX_FMT_SBGGR10, MEDIA_BUS_FMT_Y10_1X10,
-+	  VI6_FMT_RGB_565, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
-+	  VI6_RPF_DSWAP_P_WDS | VI6_RPF_DSWAP_P_BTS,
-+	  1, { 10, 0, 0 }, false, false, 1, 1, false },
-+	{ V4L2_PIX_FMT_SGBRG10, MEDIA_BUS_FMT_Y10_1X10,
-+	  VI6_FMT_RGB_565, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
-+	  VI6_RPF_DSWAP_P_WDS | VI6_RPF_DSWAP_P_BTS,
-+	  1, { 10, 0, 0 }, false, false, 1, 1, false },
-+	{ V4L2_PIX_FMT_SGRBG10, MEDIA_BUS_FMT_Y10_1X10,
-+	  VI6_FMT_RGB_565, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
-+	  VI6_RPF_DSWAP_P_WDS | VI6_RPF_DSWAP_P_BTS,
-+	  1, { 10, 0, 0 }, false, false, 1, 1, false },
-+	{ V4L2_PIX_FMT_SRGGB10, MEDIA_BUS_FMT_Y10_1X10,
-+	  VI6_FMT_RGB_565, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
-+	  VI6_RPF_DSWAP_P_WDS | VI6_RPF_DSWAP_P_BTS,
-+	  1, { 10, 0, 0 }, false, false, 1, 1, false },
-+
-+	{ V4L2_PIX_FMT_SBGGR12, MEDIA_BUS_FMT_Y12_1X12,
-+	  VI6_FMT_RGB_565, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
-+	  VI6_RPF_DSWAP_P_WDS | VI6_RPF_DSWAP_P_BTS,
-+	  1, { 12, 0, 0 }, false, false, 1, 1, false },
-+	{ V4L2_PIX_FMT_SGBRG12, MEDIA_BUS_FMT_Y12_1X12,
-+	  VI6_FMT_RGB_565, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
-+	  VI6_RPF_DSWAP_P_WDS | VI6_RPF_DSWAP_P_BTS,
-+	  1, { 12, 0, 0 }, false, false, 1, 1, false },
-+	{ V4L2_PIX_FMT_SGRBG12, MEDIA_BUS_FMT_Y12_1X12,
-+	  VI6_FMT_RGB_565, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
-+	  VI6_RPF_DSWAP_P_WDS | VI6_RPF_DSWAP_P_BTS,
-+	  1, { 12, 0, 0 }, false, false, 1, 1, false },
-+	{ V4L2_PIX_FMT_SRGGB12, MEDIA_BUS_FMT_Y12_1X12,
-+	  VI6_FMT_RGB_565, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
-+	  VI6_RPF_DSWAP_P_WDS | VI6_RPF_DSWAP_P_BTS,
-+	  1, { 12, 0, 0 }, false, false, 1, 1, false },
-+
-+	{ V4L2_PIX_FMT_SBGGR16, MEDIA_BUS_FMT_Y16_1X16,
-+	  VI6_FMT_RGB_565, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
-+	  VI6_RPF_DSWAP_P_WDS | VI6_RPF_DSWAP_P_BTS,
-+	  1, { 16, 0, 0 }, false, false, 1, 1, false },
-+	{ V4L2_PIX_FMT_SGBRG16, MEDIA_BUS_FMT_Y16_1X16,
-+	  VI6_FMT_RGB_565, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
-+	  VI6_RPF_DSWAP_P_WDS | VI6_RPF_DSWAP_P_BTS,
-+	  1, { 16, 0, 0 }, false, false, 1, 1, false },
-+	{ V4L2_PIX_FMT_SGRBG16, MEDIA_BUS_FMT_Y16_1X16,
-+	  VI6_FMT_RGB_565, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
-+	  VI6_RPF_DSWAP_P_WDS | VI6_RPF_DSWAP_P_BTS,
-+	  1, { 16, 0, 0 }, false, false, 1, 1, false },
-+	{ V4L2_PIX_FMT_SRGGB16, MEDIA_BUS_FMT_Y16_1X16,
-+	  VI6_FMT_RGB_565, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
-+	  VI6_RPF_DSWAP_P_WDS | VI6_RPF_DSWAP_P_BTS,
-+	  1, { 16, 0, 0 }, false, false, 1, 1, false },
-+
-+	{ V4L2_PIX_FMT_RGB332, MEDIA_BUS_FMT_ARGB8888_1X32,
-+	  VI6_FMT_RGB_332, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
-+	  VI6_RPF_DSWAP_P_WDS | VI6_RPF_DSWAP_P_BTS,
-+	  1, { 10, 0, 0 }, false, false, 1, 1, false },
- 	{ V4L2_PIX_FMT_ARGB444, MEDIA_BUS_FMT_ARGB8888_1X32,
- 	  VI6_FMT_ARGB_4444, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
- 	  VI6_RPF_DSWAP_P_WDS,
+> Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+> ---
+>  drivers/rtc/rtc-pm8xxx.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/rtc/rtc-pm8xxx.c b/drivers/rtc/rtc-pm8xxx.c
+> index c6241a0c26e9..70cbac76147b 100644
+> --- a/drivers/rtc/rtc-pm8xxx.c
+> +++ b/drivers/rtc/rtc-pm8xxx.c
+> @@ -647,7 +647,7 @@ static int pm8xxx_rtc_probe(struct platform_device *pdev)
+>  		if (rc)
+>  			return rc;
+>  
+> -		device_init_wakeup(&pdev->dev, true);
+> +		devm_device_init_wakeup(&pdev->dev);
 
--- 
-2.48.1
+So you need to remove the call to devm_device_init_wakeup() above as
+well (after platform_set_drvdata()) which the no-alarm patch moved here.
 
+With that fixed:
+
+Reviewed-by: Johan Hovold <johan+linaro@kernel.org>
+
+>  	} else {
+>  		clear_bit(RTC_FEATURE_ALARM, rtc_dd->rtc->features);
+>  	}
+
+Johan
 
