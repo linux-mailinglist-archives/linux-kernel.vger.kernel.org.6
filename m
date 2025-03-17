@@ -1,284 +1,143 @@
-Return-Path: <linux-kernel+bounces-564695-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564673-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EF1AA6596D
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 18:02:42 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F4F1A65930
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 17:56:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B43AE3B3F46
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 16:58:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0341918840ED
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 16:52:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4676E1F8916;
-	Mon, 17 Mar 2025 16:53:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A79AB1F5616;
+	Mon, 17 Mar 2025 16:47:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="pjBirZmx";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="OhX9Kb1C"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b="YP8lt0KR"
+Received: from mail.tuxedocomputers.com (mail.tuxedocomputers.com [157.90.84.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54E6A204583
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 16:53:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B5981DE2AA;
+	Mon, 17 Mar 2025 16:47:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=157.90.84.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742230405; cv=none; b=eLpHpS9K88LJHsRt5XW1j1y9HSJP3PGLGRPwQYXjXgXheqR4r8BxxEjeDhQEts6hs2sDrDP/rbF5nMOkZnFLNQTjuigVfeW6DIJK1dF6IM6Z6XM23qmrXz3DAwUzmlpNU5hb+euJhUVHAcKFqhg0sVaoiHy/dO4ozt4FIK3vmtk=
+	t=1742230060; cv=none; b=kohCGNRo2ITmggEXGXqxkr91kUyFfmwDbTHT7i7bNksAccwN5yrEfnejDDHIObgKCBa7SstZyzho49OVMU0hCwGEtBsipJcBqQ+eX3CzTqHH6POcIgc9w1Mr7elbDurekFix1Q0JHYj2A+JpPtgzwyqGn/mZ2zAVB/Vijv6TYOA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742230405; c=relaxed/simple;
-	bh=b59TrbQ+kEYTwNIa0bC9iu+E/iPQZou+g3A8LWMifJc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Fn9lzQn8SOtarg/w1Qn1CX2+d3TDFjCS4XwXDmpAlOPL4Us1bKV7CClCufFrVbRQI2uc/dnyQjVw4Cm/oHFXgMWIgL4gKeEMXcBj431eZOet3CXOB6xX6a1d8j9hdSFH/E31qKyUpnhfnoMYpT8jTbDNawl+2Ah6F3k3nMpsexI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=pjBirZmx; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=OhX9Kb1C; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: "Ahmed S. Darwish" <darwi@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1742230401;
+	s=arc-20240116; t=1742230060; c=relaxed/simple;
+	bh=XgPa90LY/PpieORERDS3+8kRabc2ceRRbQTEUppqSzI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NDdozgDxD5LOoCwiVxFko6co36x3QhABLbdL6wqv4TPvkAZSMvkqnIhgkwNU+EmC/44/ofOWAGGM8KzeuW1+1SWcvp/M3Dl3mPHmYxxqZmnpzKnsOrKPCOq7ZdAsUoaeCfcc9kuLklz44s0LKW3kZtaz6tF+olI08dGlTvd3jl0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com; spf=pass smtp.mailfrom=tuxedocomputers.com; dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b=YP8lt0KR; arc=none smtp.client-ip=157.90.84.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxedocomputers.com
+Received: from [192.168.42.116] (p5b164989.dip0.t-ipconnect.de [91.22.73.137])
+	(Authenticated sender: wse@tuxedocomputers.com)
+	by mail.tuxedocomputers.com (Postfix) with ESMTPSA id 503142FC0048;
+	Mon, 17 Mar 2025 17:47:34 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tuxedocomputers.com;
+	s=default; t=1742230054;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=+coD2oBATVg10IrsyeQ8QhsqcgihmoJWbXif4H38ylM=;
-	b=pjBirZmx1OwAG5xt+/qkhnftmlTL2ASduJcF4FHpVL7Hh4v2Ior9Xm4KqNXt3VGhEev15+
-	bUUBu1FnBzvkueW2tOV3xQGTSiGS5TWqrOXShtZXoqoy7/0EN8Hx1pZ3Oy23Ez/zLnghgv
-	C3qZc7QvkCdrDtSDxhcPwMwRJ12fi7atBTectYCPzbHoMNVKe9yrZB7QLIR0Lnp/4ySmUd
-	3OcgJnAJ+zLv1VFUY7GstMRAngVtwSZ7nUMrYy8Vn13XiIWNw6HhGmwtgKZ4nCpMBAVCp4
-	GgtYUyunv7xiR66ogHo+teGFngrnHk0mtZOg0wxeHHeXM0P7YXG1FG/QEecxQw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1742230401;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+coD2oBATVg10IrsyeQ8QhsqcgihmoJWbXif4H38ylM=;
-	b=OhX9Kb1CdakSxJcGujYmsGnVUebfxlpyEQfFRqkDZm3V2AmuSFoFpFLPR5gOIpAcU6fL4m
-	+a3Ah7n8NQ7/EfBQ==
-To: Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Borislav Petkov <bp@alien8.de>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	Andrew Cooper <andrew.cooper3@citrix.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	John Ogness <john.ogness@linutronix.de>,
-	x86@kernel.org,
-	x86-cpuid@lists.linux.dev,
-	LKML <linux-kernel@vger.kernel.org>,
-	"Ahmed S. Darwish" <darwi@linutronix.de>
-Subject: [PATCH v2 17/29] x86/cacheinfo: Clarify type markers for leaf 0x2 cache descriptors
-Date: Mon, 17 Mar 2025 17:47:33 +0100
-Message-ID: <20250317164745.4754-18-darwi@linutronix.de>
-In-Reply-To: <20250317164745.4754-1-darwi@linutronix.de>
-References: <20250317164745.4754-1-darwi@linutronix.de>
+	bh=0+sqYxrzCaSfYTZoE/oMFfhzV583vx7qY1e1stV6xyk=;
+	b=YP8lt0KRyh83Z3zCJFIFF4kdE65UuW2VlNNvCi+l3K2Sx0TIPWY2usYcnN10O1VhPDQ8QL
+	FtqAt+78lxqQih39z581UtdF3g+k4JUEZzq7iXjcf7PqINu8MS96QJO7i9kAzqtYaogLbX
+	8Hy4M1OBtVZlpwNp6NLrpqIwtjlbm08=
+Authentication-Results: mail.tuxedocomputers.com;
+	auth=pass smtp.auth=wse@tuxedocomputers.com smtp.mailfrom=wse@tuxedocomputers.com
+Message-ID: <f742f82e-d533-431f-bf64-01cec4bead09@tuxedocomputers.com>
+Date: Mon, 17 Mar 2025 17:47:34 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] Input: atkbd - Correctly map F13 - F24
+To: Hans de Goede <hdegoede@redhat.com>,
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250311180643.1107430-1-wse@tuxedocomputers.com>
+ <20250311180643.1107430-2-wse@tuxedocomputers.com>
+ <83ea44f6-c0ad-4cb0-a16e-dd4fa17b63c7@tuxedocomputers.com>
+ <45fff318-7925-4328-9dca-999c00e271d2@redhat.com>
+Content-Language: en-US
+From: Werner Sembach <wse@tuxedocomputers.com>
+In-Reply-To: <45fff318-7925-4328-9dca-999c00e271d2@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-CPUID leaf 0x2 output is a stream of one-byte descriptors, each implying
-certain details about the CPU's cache and TLB entries.
+Hi again,
 
-Two separate tables exist for interpreting these descriptors: one for
-TLBs at intel.c and one for caches at cacheinfo.c.  These mapping tables
-will be merged in further commits, among other improvements to their
-model.
+Am 17.03.25 um 13:06 schrieb Hans de Goede:
+> Hi,
+>
+> On 11-Mar-25 19:10, Werner Sembach wrote:
+>> Hi Hans, Hi Dimitry,
+>>
+>> resending this too on the v2 to not cause confusion:
+>>
+>> Regarding remapping KEY_ZENKAKUHANKAKU to KEY_TOUCHPAD_TOGGLE:
+>>
+>> Am 11.03.25 um 19:06 schrieb Werner Sembach:
+>>> Currently only F23 is correctly mapped for PS/2 keyboards.
+>>>
+>>> Following to this table:
+>>> https://download.microsoft.com/download/1/6/1/161ba512-40e2-4cc9-843a-923143f3456c/translate.pdf
+>>>
+>>> - F24 and Zenkaku/Hankaku share the same scancode, but since in real world
+>>> Zenkaku/Hankaku keys seem to just use the tilde scancode, this patch binds the
+>>> scancode to F24. Note that on userspace side the KEY_ZENKAKUHANKAKU keycode is
+>>> currently not bound in xkeyboard-config, so it is (mostly*) unused anyway.
+>> I think what the firmware vendor actually wanted to do was to send ctrl+super+f24 upon touchpad toggle. This would somewhat fall in line with, for example, the copilot key being implemented as shift+super+f23.
+> I agree that that seems to be the intent.
+>
+>> Following this, my suggestion is to do this remapping and handle the rest in xkeyboard-config
+> xkeyboard config already contains mappings for F13 - F18 and F20-F23 in
+> /usr/share/X11/xkb/symbols/inet
+>
+> So all that needs to happen there is map FK19 -> F19 and FK24 -> F24.
+>
+> And then teach KDE + GNOME that ctrl+super+f24 means touchpad-toggle.
 
-In preparation for this, use more descriptive type names for the leaf
-0x2 descriptors associated with cpu caches.  Namely:
+Alternative suggestion, again following how the copilot key is implemented:
 
-	LVL_1_INST	=>	CACHE_L1_INST
-	LVL_1_DATA	=>	CACHE_L1_DATA
-	LVL_2		=>	CACHE_L2
-	LVL_3		=>	CACHE_L3
+key <FK19>   {      [ F19 ]       };
+[...]
+key <FK23>   {      [ XF86TouchpadOff, XF86Assistant ], type[Group1] = 
+"PC_SHIFT_SUPER_LEVEL2" };
+key <FK24>   {      [ F24, XF86TouchpadToggle ], type[Group1] = 
+"PC_CONTROL_SUPER_LEVEL2" };
 
-After the TLB and cache descriptors mapping tables are merged, this will
-make it clear that such descriptors correspond to cpu caches.
+Then only xkb has to be touched again, but not KDE and GNOME.
 
-Signed-off-by: Ahmed S. Darwish <darwi@linutronix.de>
----
- arch/x86/kernel/cpu/cacheinfo.c | 152 ++++++++++++++++----------------
- 1 file changed, 76 insertions(+), 76 deletions(-)
+>
+> We could maybe get away with also dropping the weird mappings for FK13 - FK18
+> and map those straight to F13 - F18, but we need the special mappings
+> for F20 - F23 to stay in place to not break stuff.
 
-diff --git a/arch/x86/kernel/cpu/cacheinfo.c b/arch/x86/kernel/cpu/cacheinfo.c
-index ce00265233bc..777f95c86e03 100644
---- a/arch/x86/kernel/cpu/cacheinfo.c
-+++ b/arch/x86/kernel/cpu/cacheinfo.c
-@@ -23,10 +23,10 @@
- 
- #include "cpu.h"
- 
--#define LVL_1_INST	1
--#define LVL_1_DATA	2
--#define LVL_2		3
--#define LVL_3		4
-+#define CACHE_L1_INST	1
-+#define CACHE_L1_DATA	2
-+#define CACHE_L2	3
-+#define CACHE_L3	4
- 
- /* Shared last level cache maps */
- DEFINE_PER_CPU_READ_MOSTLY(cpumask_var_t, cpu_llc_shared_map);
-@@ -52,74 +52,74 @@ struct _cache_table {
- 
- static const struct _cache_table cache_table[] =
- {
--	{ 0x06, LVL_1_INST, 8 },	/* 4-way set assoc, 32 byte line size */
--	{ 0x08, LVL_1_INST, 16 },	/* 4-way set assoc, 32 byte line size */
--	{ 0x09, LVL_1_INST, 32 },	/* 4-way set assoc, 64 byte line size */
--	{ 0x0a, LVL_1_DATA, 8 },	/* 2 way set assoc, 32 byte line size */
--	{ 0x0c, LVL_1_DATA, 16 },	/* 4-way set assoc, 32 byte line size */
--	{ 0x0d, LVL_1_DATA, 16 },	/* 4-way set assoc, 64 byte line size */
--	{ 0x0e, LVL_1_DATA, 24 },	/* 6-way set assoc, 64 byte line size */
--	{ 0x21, LVL_2,      256 },	/* 8-way set assoc, 64 byte line size */
--	{ 0x22, LVL_3,      512 },	/* 4-way set assoc, sectored cache, 64 byte line size */
--	{ 0x23, LVL_3,      MB(1) },	/* 8-way set assoc, sectored cache, 64 byte line size */
--	{ 0x25, LVL_3,      MB(2) },	/* 8-way set assoc, sectored cache, 64 byte line size */
--	{ 0x29, LVL_3,      MB(4) },	/* 8-way set assoc, sectored cache, 64 byte line size */
--	{ 0x2c, LVL_1_DATA, 32 },	/* 8-way set assoc, 64 byte line size */
--	{ 0x30, LVL_1_INST, 32 },	/* 8-way set assoc, 64 byte line size */
--	{ 0x39, LVL_2,      128 },	/* 4-way set assoc, sectored cache, 64 byte line size */
--	{ 0x3a, LVL_2,      192 },	/* 6-way set assoc, sectored cache, 64 byte line size */
--	{ 0x3b, LVL_2,      128 },	/* 2-way set assoc, sectored cache, 64 byte line size */
--	{ 0x3c, LVL_2,      256 },	/* 4-way set assoc, sectored cache, 64 byte line size */
--	{ 0x3d, LVL_2,      384 },	/* 6-way set assoc, sectored cache, 64 byte line size */
--	{ 0x3e, LVL_2,      512 },	/* 4-way set assoc, sectored cache, 64 byte line size */
--	{ 0x3f, LVL_2,      256 },	/* 2-way set assoc, 64 byte line size */
--	{ 0x41, LVL_2,      128 },	/* 4-way set assoc, 32 byte line size */
--	{ 0x42, LVL_2,      256 },	/* 4-way set assoc, 32 byte line size */
--	{ 0x43, LVL_2,      512 },	/* 4-way set assoc, 32 byte line size */
--	{ 0x44, LVL_2,      MB(1) },	/* 4-way set assoc, 32 byte line size */
--	{ 0x45, LVL_2,      MB(2) },	/* 4-way set assoc, 32 byte line size */
--	{ 0x46, LVL_3,      MB(4) },	/* 4-way set assoc, 64 byte line size */
--	{ 0x47, LVL_3,      MB(8) },	/* 8-way set assoc, 64 byte line size */
--	{ 0x48, LVL_2,      MB(3) },	/* 12-way set assoc, 64 byte line size */
--	{ 0x49, LVL_3,      MB(4) },	/* 16-way set assoc, 64 byte line size */
--	{ 0x4a, LVL_3,      MB(6) },	/* 12-way set assoc, 64 byte line size */
--	{ 0x4b, LVL_3,      MB(8) },	/* 16-way set assoc, 64 byte line size */
--	{ 0x4c, LVL_3,      MB(12) },	/* 12-way set assoc, 64 byte line size */
--	{ 0x4d, LVL_3,      MB(16) },	/* 16-way set assoc, 64 byte line size */
--	{ 0x4e, LVL_2,      MB(6) },	/* 24-way set assoc, 64 byte line size */
--	{ 0x60, LVL_1_DATA, 16 },	/* 8-way set assoc, sectored cache, 64 byte line size */
--	{ 0x66, LVL_1_DATA, 8 },	/* 4-way set assoc, sectored cache, 64 byte line size */
--	{ 0x67, LVL_1_DATA, 16 },	/* 4-way set assoc, sectored cache, 64 byte line size */
--	{ 0x68, LVL_1_DATA, 32 },	/* 4-way set assoc, sectored cache, 64 byte line size */
--	{ 0x78, LVL_2,      MB(1) },	/* 4-way set assoc, 64 byte line size */
--	{ 0x79, LVL_2,      128 },	/* 8-way set assoc, sectored cache, 64 byte line size */
--	{ 0x7a, LVL_2,      256 },	/* 8-way set assoc, sectored cache, 64 byte line size */
--	{ 0x7b, LVL_2,      512 },	/* 8-way set assoc, sectored cache, 64 byte line size */
--	{ 0x7c, LVL_2,      MB(1) },	/* 8-way set assoc, sectored cache, 64 byte line size */
--	{ 0x7d, LVL_2,      MB(2) },	/* 8-way set assoc, 64 byte line size */
--	{ 0x7f, LVL_2,      512 },	/* 2-way set assoc, 64 byte line size */
--	{ 0x80, LVL_2,      512 },	/* 8-way set assoc, 64 byte line size */
--	{ 0x82, LVL_2,      256 },	/* 8-way set assoc, 32 byte line size */
--	{ 0x83, LVL_2,      512 },	/* 8-way set assoc, 32 byte line size */
--	{ 0x84, LVL_2,      MB(1) },	/* 8-way set assoc, 32 byte line size */
--	{ 0x85, LVL_2,      MB(2) },	/* 8-way set assoc, 32 byte line size */
--	{ 0x86, LVL_2,      512 },	/* 4-way set assoc, 64 byte line size */
--	{ 0x87, LVL_2,      MB(1) },	/* 8-way set assoc, 64 byte line size */
--	{ 0xd0, LVL_3,      512 },	/* 4-way set assoc, 64 byte line size */
--	{ 0xd1, LVL_3,      MB(1) },	/* 4-way set assoc, 64 byte line size */
--	{ 0xd2, LVL_3,      MB(2) },	/* 4-way set assoc, 64 byte line size */
--	{ 0xd6, LVL_3,      MB(1) },	/* 8-way set assoc, 64 byte line size */
--	{ 0xd7, LVL_3,      MB(2) },	/* 8-way set assoc, 64 byte line size */
--	{ 0xd8, LVL_3,      MB(4) },	/* 12-way set assoc, 64 byte line size */
--	{ 0xdc, LVL_3,      MB(2) },	/* 12-way set assoc, 64 byte line size */
--	{ 0xdd, LVL_3,      MB(4) },	/* 12-way set assoc, 64 byte line size */
--	{ 0xde, LVL_3,      MB(8) },	/* 12-way set assoc, 64 byte line size */
--	{ 0xe2, LVL_3,      MB(2) },	/* 16-way set assoc, 64 byte line size */
--	{ 0xe3, LVL_3,      MB(4) },	/* 16-way set assoc, 64 byte line size */
--	{ 0xe4, LVL_3,      MB(8) },	/* 16-way set assoc, 64 byte line size */
--	{ 0xea, LVL_3,      MB(12) },	/* 24-way set assoc, 64 byte line size */
--	{ 0xeb, LVL_3,      MB(18) },	/* 24-way set assoc, 64 byte line size */
--	{ 0xec, LVL_3,      MB(24) },	/* 24-way set assoc, 64 byte line size */
-+	{ 0x06, CACHE_L1_INST,	8	},	/* 4-way set assoc, 32 byte line size */
-+	{ 0x08, CACHE_L1_INST,	16	},	/* 4-way set assoc, 32 byte line size */
-+	{ 0x09, CACHE_L1_INST,	32	},	/* 4-way set assoc, 64 byte line size */
-+	{ 0x0a, CACHE_L1_DATA,	8	},	/* 2 way set assoc, 32 byte line size */
-+	{ 0x0c, CACHE_L1_DATA,	16	},	/* 4-way set assoc, 32 byte line size */
-+	{ 0x0d, CACHE_L1_DATA,	16	},	/* 4-way set assoc, 64 byte line size */
-+	{ 0x0e, CACHE_L1_DATA,	24	},	/* 6-way set assoc, 64 byte line size */
-+	{ 0x21, CACHE_L2,	256	},	/* 8-way set assoc, 64 byte line size */
-+	{ 0x22, CACHE_L3,	512	},	/* 4-way set assoc, sectored cache, 64 byte line size */
-+	{ 0x23, CACHE_L3,	MB(1)	},	/* 8-way set assoc, sectored cache, 64 byte line size */
-+	{ 0x25, CACHE_L3,	MB(2)	},	/* 8-way set assoc, sectored cache, 64 byte line size */
-+	{ 0x29, CACHE_L3,	MB(4)	},	/* 8-way set assoc, sectored cache, 64 byte line size */
-+	{ 0x2c, CACHE_L1_DATA,	32	},	/* 8-way set assoc, 64 byte line size */
-+	{ 0x30, CACHE_L1_INST,	32	},	/* 8-way set assoc, 64 byte line size */
-+	{ 0x39, CACHE_L2,	128	},	/* 4-way set assoc, sectored cache, 64 byte line size */
-+	{ 0x3a, CACHE_L2,	192	},	/* 6-way set assoc, sectored cache, 64 byte line size */
-+	{ 0x3b, CACHE_L2,	128	},	/* 2-way set assoc, sectored cache, 64 byte line size */
-+	{ 0x3c, CACHE_L2,	256	},	/* 4-way set assoc, sectored cache, 64 byte line size */
-+	{ 0x3d, CACHE_L2,	384	},	/* 6-way set assoc, sectored cache, 64 byte line size */
-+	{ 0x3e, CACHE_L2,	512	},	/* 4-way set assoc, sectored cache, 64 byte line size */
-+	{ 0x3f, CACHE_L2,	256	},	/* 2-way set assoc, 64 byte line size */
-+	{ 0x41, CACHE_L2,	128	},	/* 4-way set assoc, 32 byte line size */
-+	{ 0x42, CACHE_L2,	256	},	/* 4-way set assoc, 32 byte line size */
-+	{ 0x43, CACHE_L2,	512	},	/* 4-way set assoc, 32 byte line size */
-+	{ 0x44, CACHE_L2,	MB(1)	},	/* 4-way set assoc, 32 byte line size */
-+	{ 0x45, CACHE_L2,	MB(2)	},	/* 4-way set assoc, 32 byte line size */
-+	{ 0x46, CACHE_L3,	MB(4)	},	/* 4-way set assoc, 64 byte line size */
-+	{ 0x47, CACHE_L3,	MB(8)	},	/* 8-way set assoc, 64 byte line size */
-+	{ 0x48, CACHE_L2,	MB(3)	},	/* 12-way set assoc, 64 byte line size */
-+	{ 0x49, CACHE_L3,	MB(4)	},	/* 16-way set assoc, 64 byte line size */
-+	{ 0x4a, CACHE_L3,	MB(6)	},	/* 12-way set assoc, 64 byte line size */
-+	{ 0x4b, CACHE_L3,	MB(8)	},	/* 16-way set assoc, 64 byte line size */
-+	{ 0x4c, CACHE_L3,	MB(12)	},	/* 12-way set assoc, 64 byte line size */
-+	{ 0x4d, CACHE_L3,	MB(16)	},	/* 16-way set assoc, 64 byte line size */
-+	{ 0x4e, CACHE_L2,	MB(6)	},	/* 24-way set assoc, 64 byte line size */
-+	{ 0x60, CACHE_L1_DATA,	16	},	/* 8-way set assoc, sectored cache, 64 byte line size */
-+	{ 0x66, CACHE_L1_DATA,	8	},	/* 4-way set assoc, sectored cache, 64 byte line size */
-+	{ 0x67, CACHE_L1_DATA,	16	},	/* 4-way set assoc, sectored cache, 64 byte line size */
-+	{ 0x68, CACHE_L1_DATA,	32	},	/* 4-way set assoc, sectored cache, 64 byte line size */
-+	{ 0x78, CACHE_L2,	MB(1)	},	/* 4-way set assoc, 64 byte line size */
-+	{ 0x79, CACHE_L2,	128	},	/* 8-way set assoc, sectored cache, 64 byte line size */
-+	{ 0x7a, CACHE_L2,	256	},	/* 8-way set assoc, sectored cache, 64 byte line size */
-+	{ 0x7b, CACHE_L2,	512	},	/* 8-way set assoc, sectored cache, 64 byte line size */
-+	{ 0x7c, CACHE_L2,	MB(1)	},	/* 8-way set assoc, sectored cache, 64 byte line size */
-+	{ 0x7d, CACHE_L2,	MB(2)	},	/* 8-way set assoc, 64 byte line size */
-+	{ 0x7f, CACHE_L2,	512	},	/* 2-way set assoc, 64 byte line size */
-+	{ 0x80, CACHE_L2,	512	},	/* 8-way set assoc, 64 byte line size */
-+	{ 0x82, CACHE_L2,	256	},	/* 8-way set assoc, 32 byte line size */
-+	{ 0x83, CACHE_L2,	512	},	/* 8-way set assoc, 32 byte line size */
-+	{ 0x84, CACHE_L2,	MB(1)	},	/* 8-way set assoc, 32 byte line size */
-+	{ 0x85, CACHE_L2,	MB(2)	},	/* 8-way set assoc, 32 byte line size */
-+	{ 0x86, CACHE_L2,	512	},	/* 4-way set assoc, 64 byte line size */
-+	{ 0x87, CACHE_L2,	MB(1)	},	/* 8-way set assoc, 64 byte line size */
-+	{ 0xd0, CACHE_L3,	512	},	/* 4-way set assoc, 64 byte line size */
-+	{ 0xd1, CACHE_L3,	MB(1)	},	/* 4-way set assoc, 64 byte line size */
-+	{ 0xd2, CACHE_L3,	MB(2)	},	/* 4-way set assoc, 64 byte line size */
-+	{ 0xd6, CACHE_L3,	MB(1)	},	/* 8-way set assoc, 64 byte line size */
-+	{ 0xd7, CACHE_L3,	MB(2)	},	/* 8-way set assoc, 64 byte line size */
-+	{ 0xd8, CACHE_L3,	MB(4)	},	/* 12-way set assoc, 64 byte line size */
-+	{ 0xdc, CACHE_L3,	MB(2)	},	/* 12-way set assoc, 64 byte line size */
-+	{ 0xdd, CACHE_L3,	MB(4)	},	/* 12-way set assoc, 64 byte line size */
-+	{ 0xde, CACHE_L3,	MB(8)	},	/* 12-way set assoc, 64 byte line size */
-+	{ 0xe2, CACHE_L3,	MB(2)	},	/* 16-way set assoc, 64 byte line size */
-+	{ 0xe3, CACHE_L3,	MB(4)	},	/* 16-way set assoc, 64 byte line size */
-+	{ 0xe4, CACHE_L3,	MB(8)	},	/* 16-way set assoc, 64 byte line size */
-+	{ 0xea, CACHE_L3,	MB(12)	},	/* 24-way set assoc, 64 byte line size */
-+	{ 0xeb, CACHE_L3,	MB(18)	},	/* 24-way set assoc, 64 byte line size */
-+	{ 0xec, CACHE_L3,	MB(24)	},	/* 24-way set assoc, 64 byte line size */
- };
- 
- 
-@@ -518,10 +518,10 @@ void init_intel_cacheinfo(struct cpuinfo_x86 *c)
- 				continue;
- 
- 			switch (entry->cache_type) {
--			case LVL_1_INST: l1i += entry->size; break;
--			case LVL_1_DATA: l1d += entry->size; break;
--			case LVL_2:	 l2  += entry->size; break;
--			case LVL_3:	 l3  += entry->size; break;
-+			case CACHE_L1_INST:	l1i += entry->size; break;
-+			case CACHE_L1_DATA:	l1d += entry->size; break;
-+			case CACHE_L2:		l2  += entry->size; break;
-+			case CACHE_L3:		l3  += entry->size; break;
- 			}
- 		}
- 	}
--- 
-2.48.1
+Good question
 
+XF86Tools launches system settings on KDE.
+
+XF86Launch5-9 do nothing by default afaict.
+
+Looking at the links in the git log of xkeyboard-config (commit 
+1e94d48801bf8cb75741aa308d4cdfb63b03c66c and 
+01d742bc5cd22543d21edb2101fec6558d4075db) these seems to be device specific 
+bindings that got accepted in the default config because the keys where unbound 
+before.
+
+Best regards,
+
+Werner
+
+>
+> Regards,
+>
+> Hans
+>
+>
 
