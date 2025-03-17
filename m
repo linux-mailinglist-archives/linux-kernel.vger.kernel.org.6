@@ -1,92 +1,138 @@
-Return-Path: <linux-kernel+bounces-564025-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564027-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3023FA64C56
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 12:22:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 634A6A64C57
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 12:23:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 83B4716F023
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:22:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 97D09188D6FD
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:23:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65931236458;
-	Mon, 17 Mar 2025 11:22:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCD3823718D;
+	Mon, 17 Mar 2025 11:23:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O8GWI8JZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Cbi+4YnE"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA9DA233141;
-	Mon, 17 Mar 2025 11:22:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B60AC2356D1;
+	Mon, 17 Mar 2025 11:23:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742210556; cv=none; b=DKvF7JONLTNhgRf5AiWoM8Jo79eme9SiyoBrs7BoapOiij7JIxWRB6QbqoECNUgphsPpXv4JyhHiOZZCScrWD+UJeDDdqcM+7TzFN+feyrrSno8gRURBoWALjwmjh8BIYFJemQ9AIb2f9z2d7FRVgJJ8FT7TIcEo+cWaUwKX23Q=
+	t=1742210584; cv=none; b=ljWNcRDU6uxikYTXbBlAx3JIjz13YE7PqOEJzgdJMtriX1+XFiZVNmT1pS4tGHvlHyrQiDM/HW6xSnoSRS9N/riR1/yLXkLLq5PVyCKWNL3KMG6O3+sHTzRKhT4ohsKJTIhwgbhsqDVBW8InPPLTeSMAiFvSkkQlb+LxT1emTps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742210556; c=relaxed/simple;
-	bh=SANJtUkZ0zwsElokWUpyA/lX4b4roCBs4fJGQpMCpcc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AluCnxoapbK1P7mqncr1jytLQlqS7fKIQNbqnCKeDqhXY40w06PA70/heEDSRjwVJPhXmGm7N3xKuzdOKNBsuXPxLL8OOW+A88AylGALHrG1W9kQCghQW8LBJZx/8hsPieKHlsQ0bmhbDbiPXTURQI93zwIkUXUt97ZKJiuWtw8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O8GWI8JZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1016C4CEE3;
-	Mon, 17 Mar 2025 11:22:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742210556;
-	bh=SANJtUkZ0zwsElokWUpyA/lX4b4roCBs4fJGQpMCpcc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=O8GWI8JZ+HeTApLCk80aRuEwLf/ZcRf1cxgV7Dw+G8slkW1NID62OgyejEz5o4mp3
-	 VVvVZJBbnXKxIZHcbmdc1ABfMCmRsAXRUCo5Z0iSRLvtHoRQ1OCI9tYwjB4G/lmflo
-	 RaZR7y+rpv0zXAIKI9LT5gVIC/slbbBqowWMVfezaTXWGnDoWvznE28XpDFYpyqM3K
-	 NtlS4bSDikZVYjusyTbSz9+T/sBsYvkxE5gSjyrZhn9nGGPKX/yU8zFYRbfEdycmUV
-	 OcZ8qQ+P/o2Y7EHr0jRI20P0bsPrVX8jRKP8lY3UmcY8O5MLzSJ0uIIPAz8W72KKxm
-	 NhUPbRY1SbUng==
-Date: Mon, 17 Mar 2025 12:22:31 +0100
-From: Danilo Krummrich <dakr@kernel.org>
-To: Tamir Duberstein <tamird@gmail.com>
-Cc: Andrew Ballance <andrewjballance@gmail.com>,
-	Alice Ryhl <aliceryhl@google.com>, Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] rust: alloc: add `Vec::dec_len`
-Message-ID: <Z9gF90wPSZTRQfRR@pollux>
-References: <20250316-vec-set-len-v1-0-60f98a28723f@gmail.com>
- <20250316-vec-set-len-v1-2-60f98a28723f@gmail.com>
- <Z9dTspva0aJRWG3Y@pollux>
- <CAJ-ks9mwuLaULKW0cwD73yb3yH-p9KS3ZFoJJ3OxhvUOpXo3KA@mail.gmail.com>
- <Z9dYnSC13ruc-VC5@pollux>
- <CAJ-ks9mJYyJK7iQz+qS2TnwNgTqp3rRWGTv6hiPhJ3v6aWsLng@mail.gmail.com>
+	s=arc-20240116; t=1742210584; c=relaxed/simple;
+	bh=+fyXxHmYv0R+lbu1Reb1SHILRaZBwfXvn/7+jXlLCXc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lMFvWa/5gClPwwhCW7RVFFLUSIHepveqvhwPtTzq48hvtpPj7S7WpaVtBQNoMY4IBZok/CqI+j9LfmBAKPPIkvhy74cGbbf1WXqvAbQB1IBSzuZ5krIXmrGs4Lc5yZ75s7Fhy5HqJyPLZy0uiSm/BcRYBkzgKlDLqLUsOfbkWq0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Cbi+4YnE; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52H3lvrF021048;
+	Mon, 17 Mar 2025 11:22:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=MAzDiJ
+	O2/OjKpJBQCdHly5sf2CDGJLMhqgH0tyI3Btc=; b=Cbi+4YnEsCDDciehET+5TO
+	yEc7SoAJ9NyWDAAgJ32LRQuo5rUHfP0rCB4/ueCMdWMGrbsL+gFg05/TO95iMF66
+	i+UnS+BVEzdyZGpyhqCBYrl4Nv0e+Bu3N+6pbDtD72fIPfFEm/hHA9WJFq1gI6d7
+	XOQWD2D6sYoWV2nCpt77HK/C/zzAWvxwuZCruRzpPA2CPQsQFUXwUwCN4S9Pg2AK
+	T/xuZYMCYMSpm/wEtx2dNybth7tFisIr2Lx5vTCYPZL79KTPeow7lOr9SysdcB47
+	3VnUzd+xBUNGLVAY9DpO78tSBPnZ0zBnxAWKltdBLO/74Bfto56yU0VZnTkhrCvg
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45ec499uvd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 17 Mar 2025 11:22:54 +0000 (GMT)
+Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 52HBKSdW029008;
+	Mon, 17 Mar 2025 11:22:53 GMT
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45ec499uva-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 17 Mar 2025 11:22:53 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52H9bS4V024411;
+	Mon, 17 Mar 2025 11:22:52 GMT
+Received: from smtprelay05.wdc07v.mail.ibm.com ([172.16.1.72])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 45dnckwr1h-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 17 Mar 2025 11:22:52 +0000
+Received: from smtpav03.wdc07v.mail.ibm.com (smtpav03.wdc07v.mail.ibm.com [10.39.53.230])
+	by smtprelay05.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52HBMpMi20972232
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 17 Mar 2025 11:22:51 GMT
+Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 3321C5805C;
+	Mon, 17 Mar 2025 11:22:51 +0000 (GMT)
+Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id BA2A358054;
+	Mon, 17 Mar 2025 11:22:47 +0000 (GMT)
+Received: from [9.171.94.58] (unknown [9.171.94.58])
+	by smtpav03.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Mon, 17 Mar 2025 11:22:47 +0000 (GMT)
+Message-ID: <66ce34a0-b79d-4ef0-bdd5-982e139571f1@linux.ibm.com>
+Date: Mon, 17 Mar 2025 12:22:46 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJ-ks9mJYyJK7iQz+qS2TnwNgTqp3rRWGTv6hiPhJ3v6aWsLng@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] net/smc: Reduce size of smc_wr_tx_tasklet_fn
+To: I Hsin Cheng <richard120310@gmail.com>, alibuda@linux.alibaba.com
+Cc: jaka@linux.ibm.com, mjambigi@linux.ibm.com, sidraya@linux.ibm.com,
+        tonylu@linux.alibaba.com, guwen@linux.alibaba.com, davem@davemloft.net,
+        edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+        horms@kernel.org, linux-rdma@vger.kernel.org,
+        linux-s390@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, skhan@linuxfoundation.org,
+        jserv@ccns.ncku.edu.tw, linux-kernel-mentees@lists.linux.dev
+References: <20250315062516.788528-1-richard120310@gmail.com>
+Content-Language: en-US
+From: Wenjia Zhang <wenjia@linux.ibm.com>
+In-Reply-To: <20250315062516.788528-1-richard120310@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: YrURz_ERbaNDYvI-YlvHKtnMUZ56YnS1
+X-Proofpoint-ORIG-GUID: dmmfzEmZNCCI5O1ySa_aDr9ZzpvUdf2i
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-17_04,2025-03-17_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 spamscore=0
+ adultscore=0 phishscore=0 bulkscore=0 lowpriorityscore=0
+ priorityscore=1501 suspectscore=0 mlxscore=0 impostorscore=0
+ malwarescore=0 mlxlogscore=999 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2502280000 definitions=main-2503170080
 
-On Sun, Mar 16, 2025 at 07:27:22PM -0400, Tamir Duberstein wrote:
->
-> Does this suit?
 
-I think for dec_ref() it is not the safety requrement that justifies the
-invariant.
 
-I think it should be something along the lines of:
-
-	// INVARIANT: We drop ownership for all elements within the range
-	// `[self.len - count, self.len]`, hence the updated value of `set.len`
-	// represents the exact number of elements stored within `self`.
-
+On 15.03.25 07:25, I Hsin Cheng wrote:
+> The variable "polled" in smc_wr_tx_tasklet_fn is a counter to determine
+> whether the loop has been executed for the first time. Refactor the type
+> of "polled" from "int" to "bool" can reduce the size of generated code
+> size by 12 bytes shown with the test below
 > 
-> >         // INVARIANT: By the safety requirements of this method `self.len - count` represents the
-> >         // exact number of elements stored within `self`.
+> $ ./scripts/bloat-o-meter vmlinux_old vmlinux_new
+> add/remove: 0/0 grow/shrink: 0/1 up/down: 0/-12 (-12)
+> Function                                     old     new   delta
+> smc_wr_tx_tasklet_fn                        1076    1064     -12
+> Total: Before=24795091, After=24795079, chg -0.00%
+> 
+> In some configuration, the compiler will complain this function for
+> exceeding 1024 bytes for function stack, this change can at least reduce
+> the size by 12 bytes within manner.
+> 
+The code itself looks good. However, I’m curious about the specific 
+situation where the compiler complained. Also, compared to exceeding the 
+function stack limit by 1024 bytes, I don’t see how saving 12 bytes 
+would bring any significant benefit.
 
-Please do not use the email quote mechanism for code snippets, it's confusing
-for readers to figure out by whom it has been written.
+Thanks,
+Wenjia
 
