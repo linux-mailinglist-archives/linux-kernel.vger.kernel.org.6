@@ -1,173 +1,113 @@
-Return-Path: <linux-kernel+bounces-563729-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563730-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5018CA64745
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:28:41 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90DBCA6474F
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:29:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4DD9E16080C
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 09:28:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BFCF31895C66
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 09:28:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D526225A3E;
-	Mon, 17 Mar 2025 09:27:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA3A1221F14;
+	Mon, 17 Mar 2025 09:28:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dJYt/3k0"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fheKkLq6"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C68A4224B12;
-	Mon, 17 Mar 2025 09:27:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A262133987
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 09:28:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742203676; cv=none; b=e3zJlDd6pl/ZZ1wkE5Kp2/FO2/Wjys6TC9QBXyAontNDl2NTEBBWuL0OfMmH0H56p/PYNLD5909Kh7UkumfeccROmyqvTtJ4azisl53pRZQvrZdUorLf4yRiCqDLulHuyZoY/SoWxPyo2aXBv/SzRMwrBOaGymGXGPs59p09LRA=
+	t=1742203693; cv=none; b=oAnAfumRDSRH8kWKGaWyGWzNnMa1k0zG3MZvafhEFG0ywjopo30bZ+iW4XbAtoqvhfphb4e/N9d95OfA3zajDvuauvLIr8/t+Mdw5dF1TSr1wertzzEV3fzqcxRH74r8kSrCGX0qw/No4ykLsxqmqEfjc5S2b+kf33UPqw44zNQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742203676; c=relaxed/simple;
-	bh=xX7lHGFYnpplLSbCZnNB6JktC5keaB3sAg4LSZJ5VdQ=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sqAsDeAKkXM2t3AylZaQWtf8RGszJyoyJgE42Tdaismegc8xnhF6Mnc5/ovQyoj3hLO/Z2VTN3A/qxzyAnjercu3Z5H5NFE77VbRISTETpgdV5T+9dt7UX2sMnqM6DRKZ3Q1fa2ziG5OKN+ucnL7SLWVNtcBM/NgM403ht3rT/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dJYt/3k0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26A58C4CEE3;
-	Mon, 17 Mar 2025 09:27:56 +0000 (UTC)
+	s=arc-20240116; t=1742203693; c=relaxed/simple;
+	bh=E2Q9rXhOJFqwklf98cKy7dtPqCvcux6p5MfxkmZmZJg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=M9MxHFs/yUta9f4zpi6yPF0wwzlVslFWPcgAMG1AZ4PRMDEPw5MhAGkmx9ZaVHTBrl8iuibSfjJTeEBgPYq+y349Af0WRXWwN2YldKMZx/VdEDvlfaO6QrSmEYACyJMj6EkHMAv3Inx8W7r3WLnHNZZLGbBTb5tp0DLZijoX40I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fheKkLq6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF8E3C4CEE3;
+	Mon, 17 Mar 2025 09:28:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742203676;
-	bh=xX7lHGFYnpplLSbCZnNB6JktC5keaB3sAg4LSZJ5VdQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=dJYt/3k016lB/8vi06XSanBCTpSfH2BWqga6pTd50rbE2MU/A6PFw/OCqXO4lpLe8
-	 glDrZnSBuQ7f4tIJoORMWwOjJqPk/rQefvmcAjcR/+b3UDzghnaBl4sCTkwIF14InH
-	 6hFHFDdDxPBm8D/YkpWbkhI9jgLdrhpFdqfIVTs7JoJ9mAV0xBjHHRyHm/ozfSICup
-	 KR5ykY+MrvkMnTLvNnn/qVQRTDbLRSDVFxGPOiba9ESYDDuN7dT/VCgWY50IG93ITl
-	 PibJq52FsdT0KMmRpkGFWFFPf1wWFVFwRzlwyDBECGzwY7/1SvO8XCkk7BK/3udQn/
-	 yQuGUeiSEUOVA==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1tu6lE-00EDv5-WB;
-	Mon, 17 Mar 2025 09:27:53 +0000
-Date: Mon, 17 Mar 2025 09:27:52 +0000
-Message-ID: <8634fcnh0n.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Ankit Agrawal <ankita@nvidia.com>
-Cc: Jason Gunthorpe <jgg@nvidia.com>,
-	"oliver.upton@linux.dev"
-	<oliver.upton@linux.dev>,
-	"joey.gouly@arm.com" <joey.gouly@arm.com>,
-	"suzuki.poulose@arm.com" <suzuki.poulose@arm.com>,
-	"yuzenghui@huawei.com"
-	<yuzenghui@huawei.com>,
-	"catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-	"will@kernel.org" <will@kernel.org>,
-	"ryan.roberts@arm.com"
-	<ryan.roberts@arm.com>,
-	"shahuang@redhat.com" <shahuang@redhat.com>,
-	"lpieralisi@kernel.org" <lpieralisi@kernel.org>,
-	"david@redhat.com"
-	<david@redhat.com>,
-	Aniket Agashe <aniketa@nvidia.com>,
-	Neo Jia
-	<cjia@nvidia.com>,
-	Kirti Wankhede <kwankhede@nvidia.com>,
-	"Tarun Gupta\
- (SW-GPU)" <targupta@nvidia.com>,
-	Vikram Sethi <vsethi@nvidia.com>,
-	Andy
- Currid <acurrid@nvidia.com>,
-	Alistair Popple <apopple@nvidia.com>,
-	John
- Hubbard <jhubbard@nvidia.com>,
-	Dan Williams <danw@nvidia.com>,
-	Zhi Wang
-	<zhiw@nvidia.com>,
-	Matt Ochs <mochs@nvidia.com>,
-	Uday Dhoke
-	<udhoke@nvidia.com>,
-	Dheeraj Nigam <dnigam@nvidia.com>,
-	Krishnakant Jaju
-	<kjaju@nvidia.com>,
-	"alex.williamson@redhat.com"
-	<alex.williamson@redhat.com>,
-	"sebastianene@google.com"
-	<sebastianene@google.com>,
-	"coltonlewis@google.com" <coltonlewis@google.com>,
-	"kevin.tian@intel.com" <kevin.tian@intel.com>,
-	"yi.l.liu@intel.com"
-	<yi.l.liu@intel.com>,
-	"ardb@kernel.org" <ardb@kernel.org>,
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-	"gshan@redhat.com"
-	<gshan@redhat.com>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>,
-	"ddutile@redhat.com" <ddutile@redhat.com>,
-	"tabba@google.com"
-	<tabba@google.com>,
-	"qperret@google.com" <qperret@google.com>,
-	"seanjc@google.com" <seanjc@google.com>,
-	"kvmarm@lists.linux.dev"
-	<kvmarm@lists.linux.dev>,
-	"linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v3 1/1] KVM: arm64: Allow cacheable stage 2 mapping using VMA flags
-In-Reply-To: <SA1PR12MB7199B320DAE42A8D7038A78EB0D32@SA1PR12MB7199.namprd12.prod.outlook.com>
-References: <20250310103008.3471-1-ankita@nvidia.com>
-	<20250310103008.3471-2-ankita@nvidia.com>
-	<861pv5p0c3.wl-maz@kernel.org>
-	<SA1PR12MB7199DD985C45943A663E7003B0D12@SA1PR12MB7199.namprd12.prod.outlook.com>
-	<86r033olwv.wl-maz@kernel.org>
-	<SA1PR12MB7199500A3683B15A64B663D6B0D12@SA1PR12MB7199.namprd12.prod.outlook.com>
-	<87tt7y7j6r.wl-maz@kernel.org>
-	<SA1PR12MB7199B320DAE42A8D7038A78EB0D32@SA1PR12MB7199.namprd12.prod.outlook.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=k20201202; t=1742203692;
+	bh=E2Q9rXhOJFqwklf98cKy7dtPqCvcux6p5MfxkmZmZJg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fheKkLq6pvP7eIcaH91nP/rulfVhd9RwDXl7BARXs6Rb0vdxp4kBd5y9j1T2IV1Hp
+	 hew0tgbqxAOtiiPbWEj4BkyXXu/N9VT+7l6hi/QVtu1KLseO6SNyWGNAis2oTd1IQL
+	 8X0E7IYNv1MGvbuOHVs8SxDxkluWAjg+x2E8dOFn5EJwPAbHHpOFrNkyo9fo5U50c4
+	 pHxgqsmd61uqCd+EVrY3XffRZgImeG0jBRiW1+WvdSkawOOk6hbUk2ZCcjd/oLpYal
+	 2vWh4mljcOK1T3vZ9CYyuAfEDfWMyAyjFCuVpo81WgMtoHZLV87ebFWCTQnrX/W3C4
+	 gzsQ+ZlX0ww7Q==
+Date: Mon, 17 Mar 2025 10:28:08 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: Borislav Petkov <bp@alien8.de>
+Cc: Uros Bizjak <ubizjak@gmail.com>, x86@kernel.org,
+	linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH] x86/asm: Use asm_inline() instead of asm() in
+ __untagged_addr()
+Message-ID: <Z9frKMLYnhZI0MDD@gmail.com>
+References: <20250314093111.654359-1-ubizjak@gmail.com>
+ <20250314112504.GBZ9QSEL1hgjp376ey@fat_crate.local>
+ <Z9fk2NMBRHB9Eu5h@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: ankita@nvidia.com, jgg@nvidia.com, oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, catalin.marinas@arm.com, will@kernel.org, ryan.roberts@arm.com, shahuang@redhat.com, lpieralisi@kernel.org, david@redhat.com, aniketa@nvidia.com, cjia@nvidia.com, kwankhede@nvidia.com, targupta@nvidia.com, vsethi@nvidia.com, acurrid@nvidia.com, apopple@nvidia.com, jhubbard@nvidia.com, danw@nvidia.com, zhiw@nvidia.com, mochs@nvidia.com, udhoke@nvidia.com, dnigam@nvidia.com, kjaju@nvidia.com, alex.williamson@redhat.com, sebastianene@google.com, coltonlewis@google.com, kevin.tian@intel.com, yi.l.liu@intel.com, ardb@kernel.org, akpm@linux-foundation.org, gshan@redhat.com, linux-mm@kvack.org, ddutile@redhat.com, tabba@google.com, qperret@google.com, seanjc@google.com, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z9fk2NMBRHB9Eu5h@gmail.com>
 
-On Mon, 17 Mar 2025 05:55:55 +0000,
-Ankit Agrawal <ankita@nvidia.com> wrote:
+
+* Ingo Molnar <mingo@kernel.org> wrote:
+
+> But GCC cannot always do proper inlining decisions due to our 
+> complicated ALTERNATIVE macro constructs confusing the GCC inliner:
 > 
-> >> For my education, what is an accepted way to communicate this? Please let
-> >> me know if there are any relevant examples that you may be aware of.
-> >
-> > A KVM capability is what is usually needed.
+>   > > ALTERNATIVE macro that expands to several pseudo directives causes 
+>   > > instruction length estimate to count more than 20 instructions.
+>                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 > 
-> I see. If IIUC, this would involve a corresponding Qemu (usermode) change
-> to fetch the new KVM cap. Then it could fail in case the FWB is not
-> supported with some additional conditions (so that the currently supported
-> configs with !FWB won't break on usermode). 
+> Note how the asm_inline() compiler feature was added by GCC at the 
+> kernel community's request to address such issues. (!)
 > 
-> The proposed code change is to map in S2 as NORMAL when vma flags
-> has VM_PFNMAP. However, Qemu cannot know that driver is mapping
-> with PFNMAP or not. So how may Qemu decide whether it is okay to
-> fail for !FWB or not?
+> So for those reasons, in my book, eliminating a function call for 
+> really simple single instruction inlines is an unconditional 
+> improvement that doesn't require futile performance measurements - it 
+> 'only' requires assembly level code generation analysis in the 
+> changelog.
 
-This is not about FWB as far as userspace is concerned. This is about
-PFNMAP as non-device memory. If the host doesn't have FWB, then the
-"PFNMAP as non-device memory" capability doesn't exist, and userspace
-fails early.
+Note that at least in part this is a weakness of GCC: the compiler 
+isn't looking at the asm() closely enough and the 20 instructions count 
+vastly overestimates the true footprint of these statements.
 
-Userspace must also have some knowledge of what device it obtains the
-mapping from, and whether that device requires some extra host
-capability to be assigned to the guest.
+Yet GCC is also giving us a tool: "asm __inline", which tells the 
+compiler that this piece of asm() statement is small. A tool that was 
+created at the request of the kernel community's complaints about this 
+issue. :-/
 
-You can then check whether the VMA associated with the memslot is
-PFNMAP or not, if the memslot has been enabled for PFNMAP mappings
-(either globally or on a per-memslot basis, I don't really care).
+asm_inline() is functionally similar to __force_inline - which we 
+regularly apply if it has code generation benefits.
 
-	M.
+So I really don't see the harm in these patches - they have benefits in 
+terms of GCC code generation quality, documentation and performance:
 
--- 
-Without deviation from the norm, progress is not possible.
+ - It documents small asm() statements by annotating them asm_inline().
+
+ - It sometimes avoids function call overhead, improving performance.
+
+And because single-function inlining changes are next to impossible to 
+measure in practice in most cases, I'd suggest we skip the performance 
+measurement requirement if the code generation advantages on a recent 
+GCC version are unambiguous.
+
+Thanks,
+
+	Ingo
 
