@@ -1,119 +1,140 @@
-Return-Path: <linux-kernel+bounces-565160-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565161-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A225A661F0
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 23:48:34 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72BBEA661F2
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 23:48:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 433CE3B74A8
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 22:48:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 28EA4179315
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 22:48:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 301CA1F63F0;
-	Mon, 17 Mar 2025 22:48:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62E0C204840;
+	Mon, 17 Mar 2025 22:48:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kBGzMtpn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="145oZ/59"
+Received: from fout-b8-smtp.messagingengine.com (fout-b8-smtp.messagingengine.com [202.12.124.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 904641F941
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 22:48:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76C5A1DE3CB;
+	Mon, 17 Mar 2025 22:48:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742251707; cv=none; b=bBTffrVNlIYyYvbJhtLntTqY/+OMmymmzZqg/CRvaua8bqYI30XOhNFBCD9qbmfSqIRhtRjKYptYhJZ/bQmwyguc3g03CU4JuYzy063q2vzqe3MVqRW5eFzypaVwLcH37tDS6GaNDVB9g43nZBOi0II175Qbf+r5JwSBldK++V4=
+	t=1742251726; cv=none; b=QyJ9dK12gPyg4+36dRwvUBvfOXOzk0ikj7ZLH3a9VdDg9JzXMlsslx+Pd5pOb+jKDVACw4T9eioV0Q1DpQW85D4ObjHeMDi7wZQhheHqA4bhCoYf+3FevS2S7MOVTT40p5n4BKU9xncuWtfbvJIlSZFXc5uqbtPMKTrZYmokdTY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742251707; c=relaxed/simple;
-	bh=hIsLZVXmJV1zKbZHdyvcavTGWICeicStgjCYkyMOP7Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rLu1QP+KPWKnl5N9IeI1sdCZc2YrBIhgWCQPVrrHBC0646gHRknQCkFYt6RxSnYt8koLlMQs+XuVI+fpX+fzxQea6Odjeoeyl7FSD/j0OOV5YJUYM+NfzCfJXiRH4QF/BT6hh7m1yixFu5MC8bpXBLDiZJjP6mkL/OYToqW0Pn0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kBGzMtpn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC1C9C4CEE3;
-	Mon, 17 Mar 2025 22:48:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742251706;
-	bh=hIsLZVXmJV1zKbZHdyvcavTGWICeicStgjCYkyMOP7Y=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kBGzMtpnBGWR5lANTTrIXe4VErlp3fmviybxr+11COZ1PAfKmQz3KSXR0PwOOqNoO
-	 U6W1SDpJC6IOUoxtm2qCv3DmhWN0CTstFmeoUQ94CjbvNwSNYaXgv3N3ZLWZk81jMh
-	 yTHk6GqAEAWmBiMpxDYefkOMpYwsBvmdl3mtsL8eBpmHvTLFbhW20y+FjSIiXPx0KU
-	 8Z+J/zxDeEbt+HDpTY/vPtcuAhOhCvz3oJDWi2lJZoID2mbmo2Zy/dp8VWBIipotfB
-	 cOOypsdxsAsaA+UStEzoiqndQepKGY8qNidFKinPzk8CJl8yBoyORTNfIOX+UK142O
-	 UfgP2J4bQoCcA==
-Date: Mon, 17 Mar 2025 12:48:25 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Joel Fernandes <joelagnelf@nvidia.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org,
-	Andrea Righi <arighi@nvidia.com>, Ingo Molnar <mingo@redhat.com>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	David Vernet <void@manifault.com>,
-	Changwoo Min <changwoo@igalia.com>,
-	Luigi De Matteis <ldematteis123@gmail.com>, paulmck@kernel.org,
-	boqun.feng@gmail.com
-Subject: Re: [PATCH RFC 3/8] sched/ext: Add a DL server for sched_ext tasks
-Message-ID: <Z9imufPw3NbcpqJV@slm.duckdns.org>
-References: <20250315022158.2354454-1-joelagnelf@nvidia.com>
- <20250315022158.2354454-4-joelagnelf@nvidia.com>
- <20250315072225.GG36322@noisy.programming.kicks-ass.net>
- <3b244939-6d55-4d86-8b77-a9a7629f8239@nvidia.com>
- <20250317103101.GC34541@noisy.programming.kicks-ass.net>
- <Z9hUby9e1JYaE6iC@slm.duckdns.org>
- <20250317170602.GE6888@noisy.programming.kicks-ass.net>
- <8d9e6300-113e-4a89-8fc3-2ae895c77794@nvidia.com>
- <Z9ifV3UcLPNvBttF@slm.duckdns.org>
- <4b8a25f7-c7c8-467f-8d03-6e590712ffbd@nvidia.com>
+	s=arc-20240116; t=1742251726; c=relaxed/simple;
+	bh=ioTnEAuhr3Pub8Z9EfYIwul2H8ShlzATvu1Td70qjTk=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=AX6l80AOt+prp0BK6/4ByxTF0hRKsLRDCTopqJa42WZPFyHWuO5UbJ5xdIoq8fXg5C7YrNWmLikCtWR1W5A0L3LMJUEVNiWrrrwOj4SQx2kJopMAJ6fCAP+O1e2y/XxBnCTOu9lJNZXvVHkAPtxhkId7CpQHj1I33WNExyGyMEw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=none smtp.mailfrom=linux-m68k.org; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=145oZ/59; arc=none smtp.client-ip=202.12.124.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailfout.stl.internal (Postfix) with ESMTP id 61DE711401FD;
+	Mon, 17 Mar 2025 18:48:43 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-10.internal (MEProxy); Mon, 17 Mar 2025 18:48:43 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
+	1742251723; x=1742338123; bh=R1vaJFtFdJW8YWR8qMo2bNDCNqTwTcZARad
+	vxpaOfME=; b=145oZ/59WJ4ni4RaK4uhJiEFFhRV97I0tCa4ETLMCzlrpl91Qpf
+	6sc3fVJSZ7qC6/VBO9zSSvJ5pNolKGVb09S0VD/cZb8gtuuDvBPXb4BlM43xA3AQ
+	Djl4+TvoIu9gtpm+c3dmk4nKcA4LKxIuTE7IQFaYl288/m1H3MlnTiQeRf1jeBP6
+	mXR3CjF398r/EJ4iL6nF1WwW0AAo36beFvPDUn74vYsrL2k8KY7Xvs7dS+xB6xsT
+	69+SsGMxzVn9qbzU1Px37wxCk7ctdgrBuElPBoAHX2+wWEX0ghaN6hls3MwAUn7e
+	HPM+9m5P9r2QFRUKl1XCfRTrHAGBxpLOUsg==
+X-ME-Sender: <xms:yqbYZxsJPxNzqKZpqXms7lnnXCN1fCLivLdSG4yzyL5i1ycQJaQybg>
+    <xme:yqbYZ6c-3-r3PrPjZZLuxg-C2SomgvjLyBTpNbk6N7SV1CtC_YGSwiniDDx6qFA9l
+    1GuRL2SjP9iFDx2kXU>
+X-ME-Received: <xmr:yqbYZ0wPrB7rEHw0qsS_EDx2ZtIUwLFjgz1ykBB3uIGn8mlAeJexsG2mc2KpFe9UyQYIQFcR60dFC7JZQmvL3SjbnFni4YfAMkM>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddugedtjeejucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+    gvnhhtshculddquddttddmnecujfgurhepfffhvfevufgjkfhfgggtsehttdertddttddv
+    necuhfhrohhmpefhihhnnhcuvfhhrghinhcuoehfthhhrghinheslhhinhhugidqmheike
+    hkrdhorhhgqeenucggtffrrghtthgvrhhnpeffiefhudeggfefgeejleekfedtkefgudev
+    ueeguedvffeukeetvdfffeefledvkeenucffohhmrghinhephhgvrggurdhssgenucevlh
+    hushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehfthhhrghinhes
+    lhhinhhugidqmheikehkrdhorhhgpdhnsggprhgtphhtthhopeegpdhmohguvgepshhmth
+    hpohhuthdprhgtphhtthhopehgvggvrhhtsehlihhnuhigqdhmieekkhdrohhrghdprhgt
+    phhtthhopehsthgrsghlvgesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhope
+    hlihhnuhigqdhmieekkheslhhishhtshdrlhhinhhugidqmheikehkrdhorhhgpdhrtghp
+    thhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:yqbYZ4M39OseBdSKpG9v-NWHlMNAru5VXKg4SyRSlaItdx3MtFQP2Q>
+    <xmx:yqbYZx8Z4-PfwZmDanSIyXKRU5VXqfPFx9Bq6eoFqFLcjGvZCtrNEg>
+    <xmx:yqbYZ4UovpuNJ65Sh8FU-sZ81ltzpXa3fD01tN8wdGokbbn1fInVFQ>
+    <xmx:yqbYZydQmEvtCkg9EfqNARPQRqEQZpeB5xXf4PVxcR2w-80RTjMOfg>
+    <xmx:y6bYZ8Y5j4pQXfEeSuNUqwnvw7TF6YsaRTa8TcnJ_bhiHpLNCb0Tg0X0>
+Feedback-ID: i58a146ae:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 17 Mar 2025 18:48:41 -0400 (EDT)
+Date: Tue, 18 Mar 2025 09:48:40 +1100 (AEDT)
+From: Finn Thain <fthain@linux-m68k.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+cc: stable@vger.kernel.org, linux-m68k@lists.linux-m68k.org, 
+    linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] m68k: Fix lost column on framebuffer debug console
+In-Reply-To: <c03e60ce451e4ccdf12830192080be4262b31b89.1741338535.git.fthain@linux-m68k.org>
+Message-ID: <b504b718-0ffb-ff28-0c91-badf92282b32@linux-m68k.org>
+References: <c03e60ce451e4ccdf12830192080be4262b31b89.1741338535.git.fthain@linux-m68k.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4b8a25f7-c7c8-467f-8d03-6e590712ffbd@nvidia.com>
+Content-Type: text/plain; charset=US-ASCII
 
-On Mon, Mar 17, 2025 at 11:39:32PM +0100, Joel Fernandes wrote:
-> On 3/17/2025 11:16 PM, Tejun Heo wrote:
-> > On Mon, Mar 17, 2025 at 10:48:16PM +0100, Joel Fernandes wrote:
-> > ...
-> >> Just to clarify, Tejun is suggesting that in mixed mode, we boost EXT
-> >> independent of FAIR. And in normal mode, we we boost both FAIR+EXT, because well
-> >> - nothing would be running as fair anyway.
-> >>
-> >> But what is the point of doing that, if we have boost EXT independent of FAIR
-> >> anyway? We need that code _anyway_ due to mixed mode so it would not simplify
-> >> anything.
-> >>
-> >> Or did Tejun mean something else about "toggle the reservations"?
-> > 
-> > My understanding is that if we have both FAIR and EXT's DL servers reserving
-> > execution time all the time, we'd be reserving execution time for something
-> > which can't be active, so the only change necessary I think is just
-> > retracting FAIR's or EXT's reservation whent we know they are not active
-> > (ie. if EXT is not loaded or EXT is loaded in full-sys mode).
-> > 
-> Ah, I see what you mean. We already have a 'toggle' like that though because if
-> FAIR or EXT is not running (due to whatever reason), we would have already
-> called 'dl_server_stop()' or would never have called 'dl_server_start()'.
+
+Please disregard the patch below. Further testing shows that it does not 
+completely solve the problem. In particular, when line-wrap also produces 
+vertical scrolling. I think the recursive console_putc call may have to 
+go.
+
+On Fri, 7 Mar 2025, Finn Thain wrote:
+
+> When long lines are sent to the debug console on the framebuffer, the
+> right-most column is lost. Fix this by subtracting 1 from the column
+> count before comparing it with console_struct_cur_column, as the latter
+> counts from zero.
 > 
-> On the other hand, even if full-sys-mode, we need the EXT server to boost it to
-> above RT if EXT is running, so we need its server initialized and ready to go.
+> Linewrap is handled with a recursive call to console_putc, but this
+> alters the console_struct_cur_row global. Store the old value before
+> calling console_putc, so the right-most character gets rendered on the
+> correct line.
 > 
-> Let me know if I missed anything though, thanks,
-
-I'm not very familiar with DL but it looks like a stopped DL server would
-still be reserving bandwidth which limits what other actual DL users would
-be able to reserve without causing overflow. It looks like EXT's activation
-modes should be calling into dl_bw_manage() so that FAIR's and EXT's
-reservations can be retracted when not in use.
-
-Thanks.
-
--- 
-tejun
+> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Finn Thain <fthain@linux-m68k.org>
+> ---
+>  arch/m68k/kernel/head.S | 7 ++++++-
+>  1 file changed, 6 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/m68k/kernel/head.S b/arch/m68k/kernel/head.S
+> index 852255cf60de..9c60047764d0 100644
+> --- a/arch/m68k/kernel/head.S
+> +++ b/arch/m68k/kernel/head.S
+> @@ -3583,11 +3583,16 @@ L(console_not_home):
+>  	movel	%a0@(Lconsole_struct_cur_column),%d0
+>  	addql	#1,%a0@(Lconsole_struct_cur_column)
+>  	movel	%a0@(Lconsole_struct_num_columns),%d1
+> +	subil	#1,%d1
+>  	cmpl	%d1,%d0
+>  	jcs	1f
+> -	console_putc	#'\n'	/* recursion is OK! */
+> +	/*	recursion will alter console_struct so load d1 register first */
+> +	movel	%a0@(Lconsole_struct_cur_row),%d1
+> +	console_putc	#'\n'
+> +	jmp	2f
+>  1:
+>  	movel	%a0@(Lconsole_struct_cur_row),%d1
+> +2:
+>  
+>  	/*
+>  	 *	At this point we make a shift in register usage
+> 
 
