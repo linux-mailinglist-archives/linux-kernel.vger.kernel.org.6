@@ -1,98 +1,108 @@
-Return-Path: <linux-kernel+bounces-564981-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564982-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3979A65E45
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 20:43:48 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 598F1A65E48
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 20:44:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 02E4D169DA7
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 19:43:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B5F6D175A1C
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 19:43:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 079FC1F4619;
-	Mon, 17 Mar 2025 19:42:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF6C61EB5F1;
+	Mon, 17 Mar 2025 19:43:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YX1nIBwZ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bJY6pWHA"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 634001F1934;
-	Mon, 17 Mar 2025 19:42:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30D6AF9DA;
+	Mon, 17 Mar 2025 19:43:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742240578; cv=none; b=BzS7BRxKqZtvcfmxEhBF0MTkA8cOQDnehIomO+bAYdvZSOGlcav74GapK3sJSjpHiqmWHfI/SNVtSgkE1+NPoB/vxgaP/5yEFtjoOLihnnoLbeqbTSZ2gGCN70ZO/2qH7T8wG91GbVTLjFROiqXq3DnEenWxE/LMC5p3nThxfoM=
+	t=1742240595; cv=none; b=F1fvXAvyLvSmE2coiwpfH+jjFMbsihlzyMXKyvjPDgUr4Cpncs5GbTmf/56jTKp5P17ttyBqhNvSksFY999iCQP6SMJWccJGQjiVscSTByFl55s5ivbi1zUHqyynRII/r0YqhR8+p3TzdiuipHvFQrOWxP0ec9rUKHqrC4x7ifY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742240578; c=relaxed/simple;
-	bh=pixIi8HOmDovFYgnyjMAMsQG2ysAU7ZNKHEa2xoDO5A=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=dGPEy98Q5iG7GUhqVG8LDcdQx8rlEzRtoYZq95Aq5oEA3IXnnb5DsBRtXqoLB6rJmGJLBxIe72tbxegmqkoZkYiSi+vb9XFKkZwKSeSZi6rFhE+E+Cbcj/+kfX9b+1zsaF8rQZuWOhZ2EZ5vh7EhMynLtwD55kFWVpj1rtrVeSw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YX1nIBwZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11F5DC4CEEE;
-	Mon, 17 Mar 2025 19:42:55 +0000 (UTC)
+	s=arc-20240116; t=1742240595; c=relaxed/simple;
+	bh=t//6P/q0t8jIMHBT9W/8mr8iVb+RwiE/dM2UG+3+3rs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HhyzWqlRKHjzRMFgQUYnIbLFml0PRVe0DoXt39pkX793WhV+14MvJuz4XOdAZKDG+Eiu/Q85RL12/HKVbQvekSmLnpzTSWPQausjPYUyHJTkeIBulEXPG5JP0bXBe3o+VMIH1QqsU/TQcK43o0qCsAHIOpQerKd9JX/2ICbSpcQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bJY6pWHA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6D6DC4CEE3;
+	Mon, 17 Mar 2025 19:43:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742240576;
-	bh=pixIi8HOmDovFYgnyjMAMsQG2ysAU7ZNKHEa2xoDO5A=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=YX1nIBwZQy/Vc0u8YC8qCO51Ck8f28LvtMANqRbEtOnyUbdjX08bwZHS2SSlm+Lgx
-	 qoW1ASrhC/g+cYOV5aV6se0U7Tb0DFCN3XGTL/xZep4c+XCfnhNBInZViAGa7+9XaU
-	 GMXJ27AhKkDyHefaTeaJbnfLFNeanc332M6lA3dDFC+ckXlh8L01nUP3bDPAdHp9Ru
-	 ubWy3oguPZsjBTUccWCEgXembBKFOWg8nxCYQkoE899rhHc+FYRA0Smg07DihSa7f9
-	 NwrZ2fZs9GFyHYqTIfpLM7blMbQaAudQs0qClVwmWRnZZHzn9JdhO/pmvUfGDqvK5N
-	 T/6+WmPJvtp6A==
-From: Mark Brown <broonie@kernel.org>
-To: skhan@linuxfoundation.org, Sergio Perez Gonzalez <sperezglz@gmail.com>
-Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250316054651.13242-1-sperezglz@gmail.com>
-References: <20250316054651.13242-1-sperezglz@gmail.com>
-Subject: Re: [PATCH v2] spi: spi-mux: Fix coverity issue, unchecked return
- value
-Message-Id: <174224057580.315737.13134675216872556124.b4-ty@kernel.org>
-Date: Mon, 17 Mar 2025 19:42:55 +0000
+	s=k20201202; t=1742240595;
+	bh=t//6P/q0t8jIMHBT9W/8mr8iVb+RwiE/dM2UG+3+3rs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bJY6pWHAHjA8xrZ/5+VUjB1jqkwWQCAceb0D2Kx7WuOa/IeJcN7gAg8gWrxfY0F1U
+	 SQZR5hMLDYoUm3n3eaILBNSY9qtWVg0N9pX7wa3so9kHRslCGuR3KWEY0Pk9v6L4/R
+	 Pk6sPCllY/LZHOwZiQshkmDf7C6W+czCc5B5pWBzEyKE66h+B/12eIcXSNG7gQ02OX
+	 m2Mkk7MVV+5O3/at5i9/MO48RkGLWyWcXIActOkWOt1ZX2GuZnQTGMx4OaiF4GThWu
+	 Mt3ks+Uhjwnvj62d3ra1dt7drBybKMgcoW1xBqFO77B66t/jFOTmo0LhKw1uDI72XB
+	 HUCK9E2oZZBOQ==
+Date: Mon, 17 Mar 2025 19:43:09 +0000
+From: Simon Horman <horms@kernel.org>
+To: Jonas Karlman <jonas@kwiboo.se>
+Cc: Heiko Stuebner <heiko@sntech.de>, Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	David Wu <david.wu@rock-chips.com>, Yao Zi <ziyao@disroot.org>,
+	netdev@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 0/5] net: stmmac: dwmac-rk: Add GMAC support for RK3528
+Message-ID: <20250317194309.GL688833@kernel.org>
+References: <20250309232622.1498084-1-jonas@kwiboo.se>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-1b0d6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250309232622.1498084-1-jonas@kwiboo.se>
 
-On Sat, 15 Mar 2025 23:46:06 -0600, Sergio Perez Gonzalez wrote:
-> The return value of spi_setup() is not captured within
-> spi_mux_select() and it is assumed to be always success.
+On Sun, Mar 09, 2025 at 11:26:10PM +0000, Jonas Karlman wrote:
+> The Rockchip RK3528 has two Ethernet controllers, one 100/10 MAC to be
+> used with the integrated PHY and a second 1000/100/10 MAC to be used
+> with an external Ethernet PHY.
 > 
-> CID: 1638374
+> This series add initial support for the Ethernet controllers found in
+> RK3528 and initial support to power up/down the integrated PHY.
+> 
+> This series depends on v2 of the "net: stmmac: dwmac-rk: Validate GRF
+> and peripheral GRF during probe" [1] cleanup series.
 > 
 > 
+> Changes in v2:
+> - Restrict the minItems: 4 change to rockchip,rk3528-gmac
+> - Add initial support to power up/down the integrated PHY in RK3528
+> - Split device tree changes into a separate series
+> 
+> [1] https://lore.kernel.org/r/20250308213720.2517944-1-jonas@kwiboo.se/
 
-Applied to
+Hi Jonas,
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
+This patchset looks reasonable to me. However it will need
+to be reposted once it's dependencies ([1]) are present in net-next.
 
-Thanks!
+And on the topic of process:
 
-[1/1] spi: spi-mux: Fix coverity issue, unchecked return value
-      commit: 5a5fc308418aca275a898d638bc38c093d101855
+* As this is a patch-set for net-next it would be best to
+  target it accordingly:
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
+  Subject: [PATCH net-next] ...
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+* Please post patches for net/net-next which have dependencies as RFCs.
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+For more information on Netdev processes please take a look at
+https://docs.kernel.org/process/maintainer-netdev.html
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+-- 
+pw-bot: deferred
 
