@@ -1,251 +1,117 @@
-Return-Path: <linux-kernel+bounces-563664-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1664FA64650
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 09:54:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0075EA6464C
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 09:53:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B9C3167D7C
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 08:54:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27DE81891130
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 08:53:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F14BC22173D;
-	Mon, 17 Mar 2025 08:54:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F3FE2206AA;
+	Mon, 17 Mar 2025 08:53:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="YCLf6vjH"
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="anG/Z06Q"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A849C21ABD8;
-	Mon, 17 Mar 2025 08:53:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EA908634E
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 08:53:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742201640; cv=none; b=dqd52uIS+qhtan7nMMlMepSUlSZiLj5KHC+UeGLiv0wcA3XXkM4/LtuMD8GskAaT4AearGVU8KXR2qYcvQ/hic6q21Qb+/sfLAHawUQfqtPxIoz3OPpTulA99g7Yya3/vtfSgilA4Uqf8KlSi0a9ZzYYxEbbtzUGR+xaMQELEOo=
+	t=1742201622; cv=none; b=rTcRzjEsmDkEIkyAZemoECQIkirwbhkXlSXpxhigqlb52daLNCnTq+jRTqWUazlgvesF2Ctg3PHsEdL+U9zbFm4wLA9J8Q8t9MsIzMF07IEvdG1TS/uprIUKo1pQkzWvJehs6Oyoc++oqJ3azyvMFQEWCNbC78Ga7UPoh76U30s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742201640; c=relaxed/simple;
-	bh=mvlHIMW270R7dZycsLruZdJ42iDtj8IQ29EjCbYvgvU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tH8PSENtiFuCHyQcN1NYgfMNgftwnCGlgpkxd7GhV1VkZlQk8nyfDPWdlYHXEyTMrWBjUGIAF6r9wPxbJ9lEBcoG8ZAMh/90xVCEWEwzITUFQJifESTewgfq8pWOQuj1YoF2itLQwuvWY3dntIER5AYClvI/8XnGlcYfgy2LNKA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=YCLf6vjH; arc=none smtp.client-ip=217.70.183.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id F1BDB4322A;
-	Mon, 17 Mar 2025 08:53:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1742201628;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bfRlKgxGL6xoBQwjzEteEvARnfiax3+DCGaa/aKYtl4=;
-	b=YCLf6vjHy3sJd0CsYWO7OZuY4buzPPO5wZbJqQSWcK7t3GABHlfmRQJoZSWTOQ1Zo4nDFe
-	NYa2spNHSoIbU9TSvlftuLGzRft0Je0neMbDbkCoecYvgT5g6mH1wVxwlbapeL7YmAXb4w
-	MPNFZvAlD2FeYq76sJzV7+BFCkfKb1yqKttrnJSjuG4qrM9sahsSXdS8RrkqN62uL7q48x
-	TxDbk5IbPoyVSdcqcmsgvDb/k+67UwIemiT+/XoKd9yB7GGn/8MClLzMnsyRqTuRGZOkOn
-	+950TlKYZFaKSVhb0if6ZyGFfvW6CJmN999djpQRpdUWooKL2llQ04EhzHQ0fw==
-Date: Mon, 17 Mar 2025 09:53:33 +0100
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-To: Jacky Chou <jacky_chou@aspeedtech.com>
-Cc: <andrew+netdev@lunn.ch>, <davem@davemloft.net>, <edumazet@google.com>,
- <kuba@kernel.org>, <pabeni@redhat.com>, <robh@kernel.org>,
- <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <joel@jms.id.au>,
- <andrew@codeconstruct.com.au>, <ratbert@faraday-tech.com>,
- <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
- <linux-aspeed@lists.ozlabs.org>, <BMC-SW@aspeedtech.com>
-Subject: Re: [net-next 4/4] net: ftgmac100: add RGMII delay for AST2600
-Message-ID: <20250317095229.6f8754dd@fedora.home>
-In-Reply-To: <20250317025922.1526937-5-jacky_chou@aspeedtech.com>
-References: <20250317025922.1526937-1-jacky_chou@aspeedtech.com>
-	<20250317025922.1526937-5-jacky_chou@aspeedtech.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1742201622; c=relaxed/simple;
+	bh=5TLinsCFZY6ypy0cnZ760RF7CdaufS9N1m06Lm0tnw4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bNmaK+rEQw7juDR2udrUBQing5gYF2s/dD+UZQExL2AiIX9AnqaOwcbsjxd5C8LdY1JejorCnI+wchRerizsAVIwPm0MPGTMc6sOXxnv5h/8HzFTLfWYCu91KXzB1nHQgc80T93kJLK76y+PpSyaX2ktYmjuflc59v3OYIq5fNU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=anG/Z06Q; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-223fd89d036so78965105ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 01:53:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1742201619; x=1742806419; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=R1gfFdT9yc0ID86bAZQcBXC/s8a7FX9Kfok55CN+i30=;
+        b=anG/Z06QSOhuaHYtTZZNDN4jrc5wAD1zubQKxfrDEye3qYCrDdRBwOTuGtpLmttUfK
+         3ZiVnzR5M5s1H5/TIvFcFFrCsGs+1jtybSXBcy+8ILEWdI16pjKpS4aAiH45IAuwjVuI
+         b9HXo400YMy7IuXWwD/RcUGEqbYacwdzAVdEKtaeNTSM8XRiElJzRar6/VJu8NcTmYLU
+         PK1cz+10+c1xXxamovm3jY+cweWnchFRLkNVjjRNWcwCKPlFbWA2zAXH7rMjH9PedCJK
+         aDbtpe17gvdxjMle57L4SPARnVzNZNh7NKvFkoimpHdAU1R4sqiLtEqfz5UjnPpMGfJj
+         o4dw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742201619; x=1742806419;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=R1gfFdT9yc0ID86bAZQcBXC/s8a7FX9Kfok55CN+i30=;
+        b=D+3lmJx3K13qPHd1TS6bKpv6p+1ER5b3SGEidLMa8LT/tZaC6B6oYp5ERjTwgwAW+x
+         OmT2JXkgHBKGo4L03rK80Tq7B5dvkjDK8y1Wbvg+ghd/+BhCSwtGBtclc+crVlGhFAVM
+         zfSyILSfDXMIaqtgrq8CARxTzf37jiwnqUipF1GIvVutnZnWbgN3doA7jiIRHdsaoaRN
+         Klm/W4cNAnbNjpjZW5xym+FbCBpCDW7uywd+yGT0ixuiaTIC8AfbGzLg9JSLGigmYB9p
+         0XYO4m0+PztkOzsVOnxNyW7qrX0FAwF+10mlWad14Gf5adWYdrPzfBmLUDeRAB3oCLuV
+         9K/w==
+X-Forwarded-Encrypted: i=1; AJvYcCUmulMNsCpExMThzFxq2pLfm/t4RQkM2bXFdiskl+D605GOFcnvxI1DWFX6G2llCmOpctkzLPvuSTPVDuA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzk4H+D0ROMN54PWfFXmUFA6gX6xJEYMDEMvWeLFtS8aqTIJuxB
+	709b8vowVrqFtW2in054gvQwD5KT7ysfu/jFXz4LVIH1eK4Gx2hQ/4pWsrzzt7hzYrufrpZyHnE
+	l
+X-Gm-Gg: ASbGncvQsdKUMVU5LQtf6GhWIVPnEU1qWe84zUaxKjA0tVOLz+lj3Bn9P8q5bLicy8g
+	TwnWk9tETKyhFlSHSTkRQt4WgsZOFPwEhRWN4vJXtMp0p1GuX0/j2MMDzOREfdvf9ageVeWTYDq
+	pcFZoSKIeNlxlbwrGDgKNICMrzyWox6G7rlhIISd/BSIt53RsounCR6oOikmAP8HlGYKb0jdEfT
+	ZZ7UKRlZpbrll5dvkVCopMQgzt4ySL3WVB2P9k+6IVrkqxFCjuD+riPUoqoohYNwi8b8auT4H8s
+	zh3nStXISzr4eg2UD04jR7qOlpvbg6L67W3DXPEGKatHiQ==
+X-Google-Smtp-Source: AGHT+IFDNnj2E/5Q4qSJV0JJLbClWNS4V04i4NWCWhKijLjJLsNAdu+JYl9z1X7dvEDSsRoDUhQEtw==
+X-Received: by 2002:a17:903:2f86:b0:224:93e:b5d7 with SMTP id d9443c01a7336-225e0afa057mr167261555ad.34.1742201619619;
+        Mon, 17 Mar 2025 01:53:39 -0700 (PDT)
+Received: from localhost ([122.172.84.15])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-225c6bbeb89sm69895575ad.204.2025.03.17.01.53.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Mar 2025 01:53:39 -0700 (PDT)
+Date: Mon, 17 Mar 2025 14:23:36 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Yury Norov <yury.norov@gmail.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Akira Yokosawa <akiyks@gmail.com>, linux-doc@vger.kernel.org,
+	Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V2 1/2] cpumask: Fix kernel-doc formatting errors in
+ cpumask.h
+Message-ID: <20250317085336.tlmuvpq663m4krkb@vireshk-i7>
+References: <cover.1741332579.git.viresh.kumar@linaro.org>
+ <f4ad81150eaa00b43c161f0d1f811f8ecfe21889.1741332579.git.viresh.kumar@linaro.org>
+ <20250310155301.6db5033c@foz.lan>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddufeeltdekucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtjeertdertddvnecuhfhrohhmpeforgigihhmvgcuvehhvghvrghllhhivghruceomhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepvdeihfelueevvdekueeghfefiefgheeigeduveeifedvueeuleevudfhledulefgnecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppedvrgdtudemtggsudelmeekugegheemgeeltddtmeeiheeikeemvdelsgdumeelvghfheemvgektgejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgduleemkegugeehmeegledttdemieehieekmedvlegsudemlegvfhehmegvkegtjedphhgvlhhopehfvgguohhrrgdrhhhomhgvpdhmrghilhhfrhhomhepmhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudekpdhrtghpthhtohepjhgrtghkhigptghhohhusegrshhpvggvughtvggthhdrtghomhdprhgtphhtthhopegrnhgurhgvfidonhgvthguvghvsehluhhnnhdrtghhp
- dhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopegvughumhgriigvthesghhoohhglhgvrdgtohhmpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehprggsvghnihesrhgvughhrghtrdgtohhmpdhrtghpthhtoheprhhosghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkrhiikhdoughtsehkvghrnhgvlhdrohhrgh
-X-GND-Sasl: maxime.chevallier@bootlin.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250310155301.6db5033c@foz.lan>
 
-Hi,
-
-On Mon, 17 Mar 2025 10:59:22 +0800
-Jacky Chou <jacky_chou@aspeedtech.com> wrote:
-
-> Use rx-internal-delay-ps and tx-internal-delay-ps
-> properties to configue the RGMII delay into corresponding register of
-> scu. Currently, the ftgmac100 driver only configures on AST2600 and will
-> be by pass the other platforms.
-> The details are in faraday,ftgmac100.yaml.
+On 10-03-25, 15:53, Mauro Carvalho Chehab wrote:
+> >  /**
+> > - * cpumask_first_and - return the first cpu from *srcp1 & *srcp2
+> > + * cpumask_first_and - return the first cpu from *@srcp1 & *@srcp2
 > 
-> Signed-off-by: Jacky Chou <jacky_chou@aspeedtech.com>
-> ---
->  drivers/net/ethernet/faraday/ftgmac100.c | 88 ++++++++++++++++++++++++
->  drivers/net/ethernet/faraday/ftgmac100.h | 12 ++++
->  2 files changed, 100 insertions(+)
-> 
-> diff --git a/drivers/net/ethernet/faraday/ftgmac100.c b/drivers/net/ethernet/faraday/ftgmac100.c
-> index 17ec35e75a65..ea2061488cba 100644
-> --- a/drivers/net/ethernet/faraday/ftgmac100.c
-> +++ b/drivers/net/ethernet/faraday/ftgmac100.c
-> @@ -27,6 +27,9 @@
->  #include <linux/phy_fixed.h>
->  #include <net/ip.h>
->  #include <net/ncsi.h>
-> +#include <linux/mfd/syscon.h>
-> +#include <linux/regmap.h>
-> +#include <linux/bitfield.h>
->  
->  #include "ftgmac100.h"
->  
-> @@ -1812,6 +1815,88 @@ static bool ftgmac100_has_child_node(struct device_node *np, const char *name)
->  	return ret;
->  }
->  
-> +static void ftgmac100_set_internal_delay(struct platform_device *pdev)
-> +{
-> +	struct device_node *np = pdev->dev.of_node;
-> +	struct net_device *netdev;
-> +	struct ftgmac100 *priv;
-> +	struct regmap *scu;
-> +	u32 rgmii_tx_delay, rgmii_rx_delay;
-> +	u32 dly_reg, tx_dly_mask, rx_dly_mask;
-> +	int tx, rx;
+> I don't think this would produce the right output. See my other comment.
 
-Please use the reverse christmas tree notation, sorting declarations by
-descending line length
+I see. I was only looking at the html output earlier and that was
+showing up correctly.
 
-> +	netdev = platform_get_drvdata(pdev);
-> +	priv = netdev_priv(netdev);
-> +
-> +	tx = of_property_read_u32(np, "tx-internal-delay-ps", &rgmii_tx_delay);
-> +	rx = of_property_read_u32(np, "rx-internal-delay-ps", &rgmii_rx_delay);
-> +
-> +	if (of_device_is_compatible(np, "aspeed,ast2600-mac")) {
-> +		/* According to mac base address to get mac index */
-> +		switch (priv->res->start) {
-> +		case 0x1e660000:
-> +			dly_reg = AST2600_MAC12_CLK_DLY;
-> +			tx_dly_mask = AST2600_MAC1_TX_DLY;
-> +			rx_dly_mask = AST2600_MAC1_RX_DLY;
-> +			rgmii_tx_delay = FIELD_PREP(AST2600_MAC1_TX_DLY, rgmii_tx_delay);
-> +			rgmii_rx_delay = FIELD_PREP(AST2600_MAC1_RX_DLY, rgmii_rx_delay);
-> +			break;
-> +		case 0x1e680000:
-> +			dly_reg = AST2600_MAC12_CLK_DLY;
-> +			tx_dly_mask = AST2600_MAC2_TX_DLY;
-> +			rx_dly_mask = AST2600_MAC2_RX_DLY;
-> +			rgmii_tx_delay = FIELD_PREP(AST2600_MAC2_TX_DLY, rgmii_tx_delay);
-> +			rgmii_rx_delay = FIELD_PREP(AST2600_MAC2_RX_DLY, rgmii_rx_delay);
-> +			break;
-> +		case 0x1e670000:
-> +			dly_reg = AST2600_MAC34_CLK_DLY;
-> +			tx_dly_mask = AST2600_MAC3_TX_DLY;
-> +			rx_dly_mask = AST2600_MAC3_RX_DLY;
-> +			rgmii_tx_delay = FIELD_PREP(AST2600_MAC3_TX_DLY, rgmii_tx_delay);
-> +			rgmii_rx_delay = FIELD_PREP(AST2600_MAC3_RX_DLY, rgmii_rx_delay);
-> +			break;
-> +		case 0x1e690000:
-> +			dly_reg = AST2600_MAC34_CLK_DLY;
-> +			tx_dly_mask = AST2600_MAC4_TX_DLY;
-> +			rx_dly_mask = AST2600_MAC4_RX_DLY;
-> +			rgmii_tx_delay = FIELD_PREP(AST2600_MAC4_TX_DLY, rgmii_tx_delay);
-> +			rgmii_rx_delay = FIELD_PREP(AST2600_MAC4_RX_DLY, rgmii_rx_delay);
-> +			break;
-> +		default:
-> +			dev_warn(&pdev->dev, "Invalid mac base address");
-> +			return;
+   return the first cpu from *srcp1 & *srcp2
 
-There has to be a better way that directly looking up the base address.
-Maybe you need an extra DT property ?
 
-> +		}
-> +	} else {
-> +		return;
-> +	}
-> +
-> +	scu = syscon_regmap_lookup_by_phandle(np, "scu");
-> +	if (IS_ERR(scu)) {
-> +		dev_warn(&pdev->dev, "failed to map scu base");
-> +		return;
-> +	}
-> +
-> +	if (!tx) {
-> +		/* Use tx-internal-delay-ps as index to configure tx delay
-> +		 * into scu register.
-> +		 */
+Tried with "scripts/kernel-doc -rst" now and it does show
 
-So this goes completely against the naming of the property. It has the
--ps suffix, so you would expect to have picoseconds values passed, and
-not an arbiraty index.
+   return the first cpu from ***srcp1** & ***srcp2**
 
-Take a look at other drivers, you should accept picseconds values from
-these properties, then compute the relevant index in the driver. That
-index should be something internal to your driver.
-
-An example here :
-
-https://elixir.bootlin.com/linux/v6.14-rc6/source/drivers/net/ethernet/microchip/sparx5/lan969x/lan969x_rgmii.c#L51
-
-> +		if (rgmii_tx_delay > 64)
-> +			dev_warn(&pdev->dev, "Get invalid tx delay value");
-> +		else
-> +			regmap_update_bits(scu, dly_reg, tx_dly_mask, rgmii_tx_delay);
-> +	}
-> +
-> +	if (!rx) {
-> +		/* Use rx-internal-delay-ps as index to configure rx delay
-> +		 * into scu register.
-> +		 */
-> +		if (rgmii_tx_delay > 64)
-> +			dev_warn(&pdev->dev, "Get invalid rx delay value");
-> +		else
-> +			regmap_update_bits(scu, dly_reg, rx_dly_mask, rgmii_rx_delay);
-> +	}
-> +}
-> +
->  static int ftgmac100_probe(struct platform_device *pdev)
->  {
->  	struct resource *res;
-> @@ -1977,6 +2062,9 @@ static int ftgmac100_probe(struct platform_device *pdev)
->  		if (of_device_is_compatible(np, "aspeed,ast2600-mac"))
->  			iowrite32(FTGMAC100_TM_DEFAULT,
->  				  priv->base + FTGMAC100_OFFSET_TM);
-> +
-> +		/* Configure RGMII delay if there are the corresponding properties */
-> +		ftgmac100_set_internal_delay(pdev);
->  	}
->  
->  	/* Default ring sizes */
-> diff --git a/drivers/net/ethernet/faraday/ftgmac100.h b/drivers/net/ethernet/faraday/ftgmac100.h
-> index 4968f6f0bdbc..d464d287502c 100644
-> --- a/drivers/net/ethernet/faraday/ftgmac100.h
-> +++ b/drivers/net/ethernet/faraday/ftgmac100.h
-> @@ -271,4 +271,16 @@ struct ftgmac100_rxdes {
->  #define FTGMAC100_RXDES1_UDP_CHKSUM_ERR	(1 << 26)
->  #define FTGMAC100_RXDES1_IP_CHKSUM_ERR	(1 << 27)
->  
-> +/* Aspeed SCU */
-> +#define AST2600_MAC12_CLK_DLY	0x340
-> +#define AST2600_MAC1_TX_DLY		GENMASK(5, 0)
-> +#define AST2600_MAC1_RX_DLY		GENMASK(17, 12)
-> +#define AST2600_MAC2_TX_DLY		GENMASK(11, 6)
-> +#define AST2600_MAC2_RX_DLY		GENMASK(23, 18)
-> +#define AST2600_MAC34_CLK_DLY	0x350
-> +#define AST2600_MAC3_TX_DLY		AST2600_MAC1_TX_DLY
-> +#define AST2600_MAC3_RX_DLY		AST2600_MAC1_RX_DLY
-> +#define AST2600_MAC4_TX_DLY		AST2600_MAC2_TX_DLY
-> +#define AST2600_MAC4_RX_DLY		AST2600_MAC2_RX_DLY
-> +
->  #endif /* __FTGMAC100_H */
-
-Maxime
+-- 
+viresh
 
