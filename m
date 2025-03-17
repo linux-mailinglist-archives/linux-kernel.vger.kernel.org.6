@@ -1,205 +1,90 @@
-Return-Path: <linux-kernel+bounces-564188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564185-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CBA6A64FD0
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 13:53:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 25CD6A64FCC
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 13:53:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D58C53B1F26
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 12:53:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EFFC53B3491
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 12:52:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3437923C8AA;
-	Mon, 17 Mar 2025 12:53:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 301DE23C8A8;
+	Mon, 17 Mar 2025 12:52:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="jB0mvXCk"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 784EF23C392;
-	Mon, 17 Mar 2025 12:53:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="zWSxkV0Q"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E68DC149E00;
+	Mon, 17 Mar 2025 12:52:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742215990; cv=none; b=Hqro18nnAcAcyuLuEsyI+3/gATrYnx4I63zNAJ3bbdFqpoQ/Dsk4cQjcLS3VoMHwxBdaJ1awcotkFL2ZBXLz88BHYtiAj9w9iWSTqw8aOe17LqCoR0UpOnryWh29s8lfJhVAnHhX8NEBniZdIzVYAbP1Bh8t2vYqGMgM3yheyUo=
+	t=1742215976; cv=none; b=lhlX/bDD4y6uuZe3JZLkhZt7agGzMCNeDMnPOabQ8uZddJFNeDvt2GG1g92+vzEW+FhA2FVgyPAgQzdAVhDvUz6ohrhh75TPAwCNx4WEamsAHYFmc8t13EW3uAlc21OtP1ngJDSCX10TLv9c3CUS+7BDZwZLbkS9Ob237DlxKOQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742215990; c=relaxed/simple;
-	bh=SnG8t4ZHTw/mTzkb8/QHpGoz+pEORF9Ygx+G+xb2i8Q=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=CZngTg9b7LF/Zki2OXSjYmKD53k79pUCKK4fkjkKW9pG0AHc+qPJKkMVfTAYhAN1VWHgXgmgJYh9Natt6qwqDTBHTZL96niFjO3Y1Dzgd3latfqMfNvEx/3eT7Qod5EQCV5ZZYUXJG3T1Z90NAcl3pM9LuNoFnn2ZdyDuhL56q4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=jB0mvXCk; arc=none smtp.client-ip=220.197.31.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=oBnaM
-	2tQUy/4jIsYzZe7U/N1BbRaO8mY/ZrPYIqr0qs=; b=jB0mvXCkXpHIE5tE3vO2p
-	paWselfgmfLmJ3raT5tdDgNab4somZOjoYQMXHOfcg3nWy470eD/2JrV17kmKIE9
-	xd9Jthrz5gIQmJBn9vEnfe4qKl3h9eZXaxbHKSP/BpK/bYdrNMzxrlWOb+Z3vFNd
-	+1G8AXf6mcEnpmEUxXXCVY=
-Received: from localhost.localdomain (unknown [])
-	by gzga-smtp-mtada-g1-4 (Coremail) with SMTP id _____wAXas0LG9hnSGoGAA--.1153S4;
-	Mon, 17 Mar 2025 20:52:28 +0800 (CST)
-From: Ran Xiaokai <ranxiaokai627@163.com>
-To: vishalc@linux.ibm.com
-Cc: linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	mathieu.desnoyers@efficios.com,
-	mhiramat@kernel.org,
-	ran.xiaokai@zte.com.cn,
-	ranxiaokai627@163.com,
-	rostedt@goodmis.org
-Subject: Re: [PATCH] tracing/osnoise: Fix possible recursive locking for cpus_read_lock()
-Date: Mon, 17 Mar 2025 12:52:26 +0000
-Message-Id: <20250317125226.2720728-1-ranxiaokai627@163.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <Z8AW2Ny1NrKNh_dZ@linux.ibm.com>
-References: <Z8AW2Ny1NrKNh_dZ@linux.ibm.com>
+	s=arc-20240116; t=1742215976; c=relaxed/simple;
+	bh=3Q69/D9Rd3DmfgKV2WC9fKZgHhcyfl6HFbdij0haqEQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ouxi2sl8rvX+YlriCy9HIg9cHCwrKXxbR1EPQm+CC0TCWC2iv0a8sWjE7+KdSteKGSst4o5mdJ3n8UZiXS+beGc5idKfH6oWB0n+Jbmw/56qu8TC1ORt7UyEd44TwTx4n+1bnmrawPuhQBK5MWE2OgYgbkP4Ry7jkvogSdrNZrU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=zWSxkV0Q; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=dq8TNjOCjLs57PNkzG69jW5zDo7b4i7oIyvx27qBQHk=; b=zWSxkV0Q5r82QAJmVgOTeKBxX2
+	QlJGtpW4wD4DoQLscaef5r+m/p6377j9uwUH2+sJG2lRQB6I7jpkoaao+92cm5D/467eylsaMCJL3
+	YxPYpQf11dRIFZXHQeE50Chsa3rVeV9qtiEe4T6XdNzXdxxT9saD/JiNxDAz7smLprOc=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1tu9xP-00689D-H9; Mon, 17 Mar 2025 13:52:39 +0100
+Date: Mon, 17 Mar 2025 13:52:39 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Jacky Chou <jacky_chou@aspeedtech.com>
+Cc: Russell King <linux@armlinux.org.uk>,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	"andrew+netdev@lunn.ch" <andrew+netdev@lunn.ch>,
+	"davem@davemloft.net" <davem@davemloft.net>,
+	"edumazet@google.com" <edumazet@google.com>,
+	"kuba@kernel.org" <kuba@kernel.org>,
+	"pabeni@redhat.com" <pabeni@redhat.com>,
+	"robh@kernel.org" <robh@kernel.org>,
+	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+	"conor+dt@kernel.org" <conor+dt@kernel.org>,
+	"joel@jms.id.au" <joel@jms.id.au>,
+	"andrew@codeconstruct.com.au" <andrew@codeconstruct.com.au>,
+	"ratbert@faraday-tech.com" <ratbert@faraday-tech.com>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
+	BMC-SW <BMC-SW@aspeedtech.com>
+Subject: Re: =?utf-8?B?5Zue6KaG?= =?utf-8?Q?=3A?= [net-next 4/4] net:
+ ftgmac100: add RGMII delay for AST2600
+Message-ID: <c3c02498-24a3-4ced-8ba3-5ca62b243047@lunn.ch>
+References: <20250317025922.1526937-1-jacky_chou@aspeedtech.com>
+ <20250317025922.1526937-5-jacky_chou@aspeedtech.com>
+ <20250317095229.6f8754dd@fedora.home>
+ <Z9gC2vz2w5dfZsum@shell.armlinux.org.uk>
+ <SEYPR06MB51347CD1AB5940641A77427D9DDF2@SEYPR06MB5134.apcprd06.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wAXas0LG9hnSGoGAA--.1153S4
-X-Coremail-Antispam: 1Uf129KBjvJXoWxuF47Cr1DAF48uw17CrykKrg_yoWrWw13pr
-	Z3KFy7Jw4jkryvv34UZ3W5A340q3yjqF48tryktw1rA3Z8uw4aqr1Yga4Fq345ury8urW2
-	v3WqyFZxuw4DXw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0JUemhrUUUUU=
-X-CM-SenderInfo: xudq5x5drntxqwsxqiywtou0bp/xtbB0gkTTGfYF4AkXwABsW
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <SEYPR06MB51347CD1AB5940641A77427D9DDF2@SEYPR06MB5134.apcprd06.prod.outlook.com>
 
->On Tue, Feb 25, 2025 at 12:31:32PM +0000, Ran Xiaokai wrote:
->> From: Ran Xiaokai <ran.xiaokai@zte.com.cn>
->> 
->> Lockdep reports this deadlock log:
->> ============================================
->> WARNING: possible recursive locking detected
->> --------------------------------------------
->> sh/31444 is trying to acquire lock:
->> ffffffff82c51af0 (cpu_hotplug_lock){++++}-{0:0}, at:
->> stop_per_cpu_kthreads+0x7/0x60
->> 
->> but task is already holding lock:
->> ffffffff82c51af0 (cpu_hotplug_lock){++++}-{0:0}, at:
->> start_per_cpu_kthreads+0x28/0x140
->> 
->> other info that might help us debug this:
->>  Possible unsafe locking scenario:
->> 
->>        CPU0
->>        ----
->>   lock(cpu_hotplug_lock);
->>   lock(cpu_hotplug_lock);
->> 
->> Call Trace:
->>  <TASK>
->>  __lock_acquire+0x1612/0x29b0
->>  lock_acquire+0xd0/0x2e0
->>  cpus_read_lock+0x49/0x120
->>  stop_per_cpu_kthreads+0x7/0x60
->>  start_kthread+0x105/0x120
->>  start_per_cpu_kthreads+0xdd/0x140
->>  osnoise_workload_start+0x261/0x2f0
->>  osnoise_tracer_start+0x18/0x4
->> 
->> In start_kthread(), when kthread_run_on_cpu() fails,
->> cpus_read_unlock() should be called before stop_per_cpu_kthreads(),
->> but both start_per_cpu_kthreads() and start_kthread() call the error
->> handling routine stop_per_cpu_kthreads(),
->> which is redundant. Only one call is necessary.
->> To fix this, move stop_per_cpu_kthreads() outside of start_kthread(),
->> use the return value of start_kthread() to determine kthread creation
->> error.
->> The same issue exists in osnoise_hotplug_workfn() too.
->> 
->> Reviewed-by: Yang Guang <yang.guang5@zte.com.cn>
->> Reviewed-by: Wang Yong <wang.yong12@zte.com.cn>
->> Signed-off-by: Ran Xiaokai <ran.xiaokai@zte.com.cn>
->> ---
->>  kernel/trace/trace_osnoise.c | 10 +++++++---
->>  1 file changed, 7 insertions(+), 3 deletions(-)
->> 
->> diff --git a/kernel/trace/trace_osnoise.c b/kernel/trace/trace_osnoise.c
->> index 92e16f03fa4e..38fb0c655f5b 100644
->> --- a/kernel/trace/trace_osnoise.c
->> +++ b/kernel/trace/trace_osnoise.c
->> @@ -2029,7 +2029,6 @@ static int start_kthread(unsigned int cpu)
->>  
->>  	if (IS_ERR(kthread)) {
->>  		pr_err(BANNER "could not start sampling thread\n");
->> -		stop_per_cpu_kthreads();
->>  		return -ENOMEM;
->>  	}
->>  
->> @@ -2097,7 +2096,7 @@ static void osnoise_hotplug_workfn(struct
->> work_struct *dummy)
->>  		return;
->>  
->>  	guard(mutex)(&interface_lock);
->> -	guard(cpus_read_lock)();
->> +	cpus_read_lock();
->>  
->>  	if (!cpu_online(cpu))
->>  		return;
->> @@ -2105,7 +2104,12 @@ static void osnoise_hotplug_workfn(struct
->> work_struct *dummy)
->>  	if (!cpumask_test_cpu(cpu, &osnoise_cpumask))
->>  		return;
->>  
->> -	start_kthread(cpu);
->> +	if (start_kthread(cpu)) {
->> +		cpus_read_unlock();
->> +		stop_per_cpu_kthreads();
->
->Is it right to call stop_per_cpu_kthreads() which stops osnoise kthread
->for every other CPUs in the system if a failure occurs during hotplug of a
->CPU?
+> The RGMII delay of AST2600 has a lot of steps can be configured.
 
-I also suspect that this is not a rational behavior.
+Are they uniformly space? Then it should be a simple formula to
+calculate? Or a lookup table?
 
->On another note, since stop_per_cpu_kthreads() invokes stop_kthread()
->for every online CPU. It's better to remove stop_per_cpu_kthreads() from
->start_kthread() and handle the error in `osnoise_hotplug_workfn` 
-
-Hi, Vishal
-I did this in my first versin, something like this:
-
-@@ -2097,7 +2096,7 @@ static void osnoise_hotplug_workfn(struct
-work_struct *dummy)
- 		return;
- 
- 	guard(mutex)(&interface_lock);
--	guard(cpus_read_lock)();
-+	cpus_read_lock();
- 
- 	if (!cpu_online(cpu)) {
-+		cpus_read_unlock();
- 		return;
-	}
-
- 	if (!cpumask_test_cpu(cpu, &osnoise_cpumask)) {
-+		cpus_read_unlock();
- 		return;
-	}
--	start_kthread(cpu);
-+	if (start_kthread(cpu)) {
-+		cpus_read_unlock();
-+		stop_per_cpu_kthreads();
-+		return;
-+	}
-+	cpus_read_unlock();
- }
-
-We have to drop the guard() and call unlock() manually,
-this somewhat makes the code redundant.
-
->	Vishal
->> +		return;
->> +	}
->> +	cpus_read_unlock();
->>  }
->>  
->>  static DECLARE_WORK(osnoise_hotplug_work, osnoise_hotplug_workfn);
->> -- 
->> 2.15.2
->> 
-
+	Andrew
 
