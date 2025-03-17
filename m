@@ -1,208 +1,222 @@
-Return-Path: <linux-kernel+bounces-563371-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563372-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9E29A64025
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 06:49:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD4DAA6402A
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 06:49:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A5DD17A6978
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 05:48:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB6DF188BE8E
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 05:49:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 409D921884A;
-	Mon, 17 Mar 2025 05:49:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D95910957;
+	Mon, 17 Mar 2025 05:49:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="TedKtWJC"
-Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="BL/xA+Aw"
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12olkn2072.outbound.protection.outlook.com [40.92.22.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AE6A19E99E
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 05:49:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742190549; cv=none; b=bE5xn0lVy3ecMqomvsSEhWq33JCeMA+dXonU1H1RuQbXeVnMj2FLjFcFMQHC5ZNB8ot6BDkljiX45Fj3q2pCnZRyZFu5AoL3ATdwNC4C6JQas9IkvGqwno/GxYKq96My7xGQDXKBzuphkQY+YSLcGEQ8S6kqQznH/YRKVMnftHM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742190549; c=relaxed/simple;
-	bh=b4ET+kmStg4kYp97gsva7ZKtE4llSQn+wBVk4iJUuCk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X2yBrwA/QdyuxT1yd/M7ZkBcV8drNjtxKgRBE3fQ8rboujbJR2g0Ed5YMn5bMrFSDtF27bGA4SV2YpPYOM8BL1I/Jan9aTKm+x31zD0fSqh6rWInY34Ht80g8Ocf5vFdhnbFCdfN7GWafE3XUPOUe/60pSM8iAYX3DHfVEoqIkk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=TedKtWJC; arc=none smtp.client-ip=209.85.216.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2ff694d2d4dso1916818a91.0
-        for <linux-kernel@vger.kernel.org>; Sun, 16 Mar 2025 22:49:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1742190546; x=1742795346; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=TKXW11VtaMuobC163bGqLeavsNh8UtgyJ54q+fYvbSw=;
-        b=TedKtWJC5w1iN9qeb2CjOl4mKfVMsKa5nkWK79hbHGJlPfCRBQAa5IrA9mOYnWNgqe
-         9IduPeJYzLzkU8usZjr7jk3voirRm+1n7gRd6ja3llyIQnFziJJzOSx2SJwbtG+VVqB4
-         YN8aoult0weTei2HYES0eIyWDv9yGBFEkkAbPvKC9NVVJdUc2HA+Z/RCMxL46SIZjQ7m
-         VxDFuix95rRUcqPSIbqwu9Q+CIkcgs8LpPvxp7tZ1GfwqeQUNHeVNDx+M8OwyfwusRAv
-         zb4QpGce8VUSoLxzqDg79+8B2YO88TLr1nOJVtEEpVrk6Rl+JYfPpQUoDfaSGil1xHgr
-         ckTg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742190546; x=1742795346;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TKXW11VtaMuobC163bGqLeavsNh8UtgyJ54q+fYvbSw=;
-        b=QVc8bUjERF1e4cRpvV5oVUwa2eA7VHWiHq9CqbfN7SgdVkb14FkhqFsv8nWOJqdem0
-         6d/goBzPw99w7g6PB2W5wKktUmVcvZHYWiNdD8NWMwNYkjNY7u6xYl+GG4fHffvHoqw6
-         En1QD+psDfGg5XPNzM0lP5mj9s0SkcEI12WA4wAUY7yTvIC3Gm0DMyb/h+HSJaeD2bb8
-         wmygqhFqO0ykY4LZwj/uUnwBclx3KuHHH5G8/tCo8xfLUOntsqT8M63DPONbEXSa5/Ff
-         Z74DlfDKvOD82/RrSu6KUpz/nSYyAbywtB8r4p5ihewtJf04pIBWDFaYzDFm1YXs699r
-         EUGw==
-X-Forwarded-Encrypted: i=1; AJvYcCVDnL2ltNZpinEN8TPcEF9/S+LyZImxCavyrrBRAwuqi4vXtXr0z0XdHd4fG0+pQ1C/L058YvqmXSIRSig=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxtdGmGPej7XNaxhtH9obWCzajoR4Ss+IU6TWwaDIHXljyHlD1H
-	8KwCQaLtw8TBfpAQIBFQepvkVkeRg85s/qrYshxRBXhLpsWmTGAtNos+M7QxqQ==
-X-Gm-Gg: ASbGncvt86FwTEbBSEnADA9v4ZgIBxHSK37BO+4VFPdZz3u3kq5OK4LOOgFF8NaoYsk
-	dVTpSjab55xg5M/4kcDvlrdigAaO4vTFQ5zxYtJtQz7fwZgfZIa3aljZ9E/m9D6yC2z7GNZIZfr
-	HWJl+tOo5a6kxCfpTcHYmig2hPPHeUwOsW8sLh1SRIsTp+lGS9+1E+h2mYfe0jNNN3BXa4MyVE0
-	8DMMt6EDxfOH0QrDGavDHL6caYoIwTwcLMURi+fyhijsRHxCoodP8CJ0psvciL4qqWnDdQueccz
-	z8AUHK0uuTsYhnKnqkkF34mzEAQh2Z7nqRdA4xlH2ddj
-X-Google-Smtp-Source: AGHT+IHQZB/LzF7QYVTTddAwRnUQT5Em8+btqUAAePgxsG9SPEKtLX6tte8HbpNbzmI85WxKzvcUiA==
-X-Received: by 2002:a05:6a21:394c:b0:1f5:889c:3cdb with SMTP id adf61e73a8af0-1f5c11936e7mr15763813637.8.1742190546526;
-        Sun, 16 Mar 2025 22:49:06 -0700 (PDT)
-Received: from bytedance ([115.190.40.12])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-af56e9e0fe3sm6397284a12.24.2025.03.16.22.49.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 16 Mar 2025 22:49:05 -0700 (PDT)
-Date: Mon, 17 Mar 2025 13:48:47 +0800
-From: Aaron Lu <ziqianlu@bytedance.com>
-To: K Prateek Nayak <kprateek.nayak@amd.com>
-Cc: Valentin Schneider <vschneid@redhat.com>,
-	Ben Segall <bsegall@google.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Josh Don <joshdon@google.com>, Ingo Molnar <mingo@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	linux-kernel@vger.kernel.org, Juri Lelli <juri.lelli@redhat.com>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>, Mel Gorman <mgorman@suse.de>,
-	Chengming Zhou <chengming.zhou@linux.dev>,
-	Chuyi Zhou <zhouchuyi@bytedance.com>
-Subject: Re: [RFC PATCH 3/7] sched/fair: Handle unthrottle path for task
- based throttle
-Message-ID: <20250317054847.GA3107573@bytedance>
-References: <20250313072030.1032893-1-ziqianlu@bytedance.com>
- <CANCG0GcAic5QThYG-r9CaXPgZtXJuB0RuCW5Y0SyBn7VyOQi=g@mail.gmail.com>
- <3fdb7163-d1f0-45c8-89fa-7c904b567696@amd.com>
- <20250314104315.GE1633113@bytedance>
- <dd749cb4-fcf7-4007-a68e-3ca405925e9d@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E65579D2;
+	Mon, 17 Mar 2025 05:49:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.22.72
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742190573; cv=fail; b=LhBxY8SokFnDmSzM0ainiZULOOlIQZ5e8HEZjhcO0Xbm7dfYhAPZmwSssH1idupuCMrKou7vGgCJx7/669yWVY6orOf7x+kLneP9ZOP7Va3EiJAlOIKnZ7UP4+GbH4NMCmInF95kPAkMsVw+jm7ufqUreWGyjGM4ytSPbCYziC4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742190573; c=relaxed/simple;
+	bh=J23Joal37A1da/Dc95uym1L8/QaM8VmhGglbx/Unrfg=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=JUUSAuzl8m16jsGx+3+6a+IaqokNbYbBIa4404sTKUgX1M49WLCIFLzIoX+INqHaM8rPZqjz/FpXRk3wY0SUQpLJuVOrzdWBrDO/isyPznp1wfIrBN/lJNmiM9Gafr2ryiZu3VkQb5re7VVp0kUB6ivyEtOj8KaJHjP91PwIqx0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=BL/xA+Aw; arc=fail smtp.client-ip=40.92.22.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=UaWbSEjVL73STVpjELq2d9ttRWgKsCGU7I1CnFzpo7PLKOsbWycXc/eh9VbpaajP6CRh8NaS+cGRHo5gFUM8b75DdHwTVnyhYHKNRAJJGRwloKGVr+5g6LGFF6MTqCXldX6c/yhu2huNwjOlLQZxV2gwbOeD6yDTY9eoERzGSCsLoBkU6ODaUpA07yFTyq1fyakOnQRVFBH/SbI9X6368tP/hHwLRtgy162Dk1R6er80Z2RXAe8AqeNsJZWRp+eOZf+ZAcVALU7EIVZqCFvUvBD7NeYph88PH6Wj2QsR225UG/nEmsjJvw3oovORvQrUH/qTOvTakaaIUGHVeg6rAA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=AgYY/ZDYc8XogsHgmWgGI3FauF/mxZh61Ue07cQ1Xxs=;
+ b=mDSTiZS5soswHWhJmeIdk5gmvCKhMbKkU6ZM+DibvcoyWTxusDApDp3X0jmQsusP4ySRIdZzHXMzQ90qrVKurq6P3I8sg1rmyi7a+i3xvIE72AL5ty896o3u5Y0qudRMxQK+OJ9n5Pyvq4wCCgd0HDHGZb7mLjh456sppUdxX3znbvdjOfL4cai03xlpspi1lP3R0tXUkrNg2bLU0EXdy81TZlD4hUfunjj91kmuJxtx3qp41ibIuWRJrF1QCGWU85XrfxS3mxh7nAwipeRx3kpOYnIziKG60LnATE+eqNfZUnNLIhRJVoBJ5eG3fLKQSL0aXPYrsEgkL4Okz2uIvg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=AgYY/ZDYc8XogsHgmWgGI3FauF/mxZh61Ue07cQ1Xxs=;
+ b=BL/xA+AwJp/5pCk31EyOxAUxDv20CzWoYIZ8z5GjTXxo+sVXLDvGHRlVYnhu25XDIrlc49f1E+bAvVNKdcEs6n4HbnUWiBUm68IVx8pMlFVN56UeQdUHTNVkGs0vkER1mSvf9n3wHUDfORbojxn6Oq0fI2pNer0Bnuq7JxqORJwvr/M5JF4z+5/W2ykcxyHmihShvMih7EcSuhom1GdqNLzWreK5erVfWp6bCpAn96i51A0ZQteYeY5VYZTlowPvkBVLwq3tANptHciVeohoZyO1Sw3IyrqF5Vq4aBHqmFRD0+Wd+JQcygzlTNIPobLqwTBIZvWfkeKoTERx+1A4rg==
+Received: from DS7PR19MB8883.namprd19.prod.outlook.com (2603:10b6:8:253::16)
+ by PH0PR19MB5099.namprd19.prod.outlook.com (2603:10b6:510:75::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.33; Mon, 17 Mar
+ 2025 05:49:26 +0000
+Received: from DS7PR19MB8883.namprd19.prod.outlook.com
+ ([fe80::e0c2:5b31:534:4305]) by DS7PR19MB8883.namprd19.prod.outlook.com
+ ([fe80::e0c2:5b31:534:4305%6]) with mapi id 15.20.8534.031; Mon, 17 Mar 2025
+ 05:49:26 +0000
+Message-ID:
+ <DS7PR19MB8883AB849DC21D7C43DDA78A9DDF2@DS7PR19MB8883.namprd19.prod.outlook.com>
+Date: Mon, 17 Mar 2025 09:49:08 +0400
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 3/6] dt-bindings: PCI: qcom: Add IPQ5018 SoC
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-pci@vger.kernel.org, linux-phy@lists.infradead.org,
+ andersson@kernel.org, bhelgaas@google.com, conor+dt@kernel.org,
+ devicetree@vger.kernel.org, lumag@kernel.org, kishon@kernel.org,
+ konradybcio@kernel.org, krzk+dt@kernel.org, kw@linux.com,
+ lpieralisi@kernel.org, manivannan.sadhasivam@linaro.org,
+ p.zabel@pengutronix.de, quic_nsekar@quicinc.com, robh@kernel.org,
+ robimarko@gmail.com, vkoul@kernel.org, quic_srichara@quicinc.com
+References: <DS7PR19MB8883F2538AA7D047E13C102B9DD22@DS7PR19MB8883.namprd19.prod.outlook.com>
+ <20250314055644.32705-1-george.moussalem@outlook.com>
+ <DS7PR19MB88834CAC414A0C2B4D71D57C9DD22@DS7PR19MB8883.namprd19.prod.outlook.com>
+ <20250314-greedy-tested-flamingo-59ae28@krzk-bin>
+ <DS7PR19MB88839F5961CB1C0AAC1902959DD22@DS7PR19MB8883.namprd19.prod.outlook.com>
+ <6843e66c-d85c-4af0-8b49-773803825381@kernel.org>
+Content-Language: en-US
+From: George Moussalem <george.moussalem@outlook.com>
+In-Reply-To: <6843e66c-d85c-4af0-8b49-773803825381@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: DX0P273CA0087.AREP273.PROD.OUTLOOK.COM
+ (2603:1086:300:5d::9) To DS7PR19MB8883.namprd19.prod.outlook.com
+ (2603:10b6:8:253::16)
+X-Microsoft-Original-Message-ID:
+ <04c4fbb0-5edc-496f-aeca-fd004e837ab3@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <dd749cb4-fcf7-4007-a68e-3ca405925e9d@amd.com>
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR19MB8883:EE_|PH0PR19MB5099:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5fa032df-2e68-4d13-f9bd-08dd651779ee
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|19110799003|461199028|8060799006|5072599009|7092599003|6090799003|15080799006|10035399004|3412199025|440099028|4302099013|41001999003|1602099012;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?TXJJandMMnRzeFFlN3FUenJPSGM1aiszeWdmMEg5OGl1VVNrTjBhMm5CUWdX?=
+ =?utf-8?B?NFFEVGNQUmJjb1pONGZaSkNkZ1BoM3J0Y3ZSQnBINVdxT1VDa1dHdmpWOUxs?=
+ =?utf-8?B?RmV5VzlHRWErckVwclNRVngrRnlzT1Q2T2RyaGc1V2hSRnRhNkM4SWJrd3Nn?=
+ =?utf-8?B?US9qdlFlTnA5V2ZzTmFFTy9OVjg5eSsxUkpRWTV5MmEvbUdub25hSmVpZjdR?=
+ =?utf-8?B?cmI3NXl6SHV6VTJ3NFZ5b21qak95dDJKYU43ZWgxeXBxdVdNV0VXclZlemQ4?=
+ =?utf-8?B?dnJBU1luQ282MFBIT2lDbjFERjF3UXdzY1dJSCthWUdxS1VUNUljeHdVakl3?=
+ =?utf-8?B?MVJ1V09RWmYyVjJMVTdPTzJ3ckllL1Y4Tm1vUkZ4U0FoZnJhWFFjWkJzRTJE?=
+ =?utf-8?B?bUovN3BkNm5QMU1wRExOZFhLSThNdnEyRzhlUVRBUElrSHI2YmsveGdoanYx?=
+ =?utf-8?B?WHlZK2ttT3BmekhnZ3J4K3hZc0FmbmtvVkw4RE9TVTRMWFRnUUJ1RXFzcVpl?=
+ =?utf-8?B?dXErSWRKV0FySXR0ZGdCVS9rcVl4L2xpWnF6dU9mQU40TFFmTmVUSkJjZFRG?=
+ =?utf-8?B?L3lHaSs1SXhQRXhreG5jS09rNjl5Ri9oUjVIVVFJdGN4MkpKRnRHZ0p4L0s5?=
+ =?utf-8?B?U2IwVmJpN0xHYnNidjJXbnNEUS9QcU5BdzdBNUNad0w5KytDOUNaT0kxUjhs?=
+ =?utf-8?B?ak94VUU4NFlGaFBxNUdHcC80WHlTN0tQa2hGZEZkYUoybzdzbmhzMXZFeEE2?=
+ =?utf-8?B?R0xVUUxRQmd5VDlpSzdLd1FyWVFEWS90TFBITlZGRFcwakhkWnZVYmhZVFQw?=
+ =?utf-8?B?dGVtWWJWN3VqYmlYQ3lNSUx4ZzJKSmxFakhiZlpDMDYxS1pIdVcwRXNRQnc3?=
+ =?utf-8?B?NWRtb1NDQTViWFRXVVhSTWdTTWI4eVlEeER3YVBxMFlHSmg3L0MrRklxUXZX?=
+ =?utf-8?B?VGZuRktZeWF3ajhZOGd2RjlDcXVzM2lpVVdXUzdWbjRWK004QTFIVGNFdlY4?=
+ =?utf-8?B?SEFmZFVGNENmU3BzQU9rRXhxVXlVTFFGejBwYmlvdjk2aS9nYllFT3luVFhj?=
+ =?utf-8?B?c0QvVHo4OHNDMXJBN2IwTkM1WG5oU0M1U1VwL2dackIvU092cEF1aEVKSlg0?=
+ =?utf-8?B?cEkyS25JTW01S21lZ3RlRGtNcCsvWmI5bU1WUklhS2lzOW9SZWRIRWJKUktv?=
+ =?utf-8?B?TG9kdVpsc2VVTG9Tbi9vSHhyUDl0WTZzdThwSVhEbU1nSmIyZ1k2Nms0Yng4?=
+ =?utf-8?B?N2JiOUhaN3NHNisxM0RFTThVVFpNOUwzTHpPQnpIdWh3QTgwRzZJcEVFSlMz?=
+ =?utf-8?B?dG0zRitLNHBlZUtocGJrVjhPSTUrbXJHUUU4UTFJMjFmSmc0MmNqQ2xONnQx?=
+ =?utf-8?B?NzQ2elY2bGpmUWxNS1RoTEhWb3htakNsdkJEV2tjRjJwaFhJMXQ4ZTNBWHV0?=
+ =?utf-8?B?dnRTUVNxYmgwU25JOXdJOW5XTHZPVys3YmRZN0MvUWNMVFpmdXhMa3pxOEhM?=
+ =?utf-8?B?bUI5SnkraFJPbVByYnNaVjNYUk43NXYxTVV5UlFJMDYyckZodVZhcGxzQXcx?=
+ =?utf-8?B?a0U5UEpialgxZUpxQzZ1VVVxVWhIaW1ZNmc5N2FzUHdhSmZoU1BUOVdyTHE2?=
+ =?utf-8?B?Zy96ZjhjSVI5c3ltalhzamNJbDJ5L3l4dEFDM0VsaXBQOWEyWmJtOWVheEVQ?=
+ =?utf-8?B?U2NKVkxaK1BmUlNsQVRiV0dEOXNxc0tVbmxISmdvSnAwSDQ2NUMybCtXZHBW?=
+ =?utf-8?B?R25nTDVQamRmaUFwQXprZW43Z0s1NnBXdFlIdWgvWWRab1YwUWVlU2d0RXdI?=
+ =?utf-8?B?QUVpT0xkOThvb3lIbytOZz09?=
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?SWJ2enZiVWx1MnZZNmgzWW1mTjBWdVM0dThqenVmUkg1ZTJiOFVFS00wTjJq?=
+ =?utf-8?B?S2VKQlM1ZG9BRlJvek1uWXRTYnpJV1RwNHA3MzZwV1NQRkZtMXpwL1RwcCt2?=
+ =?utf-8?B?MHdPQXNGZGNGTVI0eDNEcWFvNS9ERlA2U2FpTEoyem5sYmJ4SHRJNmJJODh3?=
+ =?utf-8?B?ZkxteVV6VXp3WEZLbHp3MmlVamtiQ1hqd1A5SG5ldUY0RTNxOHJzNFdSQWJx?=
+ =?utf-8?B?Zlo3TDAxSWRkdWgvbW5Ja2V5cG9kYnZsOUNGNmVrdDdzT0hoL0VSWUQwMStY?=
+ =?utf-8?B?SmdhYlR4eVJ1TEZSeXhqejc5Nnp4cG1Fc3Z0Q0w1NG5lZ3hFeTkwZWRPK3VX?=
+ =?utf-8?B?M0dGN2F1VXowWXRVbGtnQ1hJQ2k1ZXhDdDc5MFBIQ3pSMElIdHo4M080TXlR?=
+ =?utf-8?B?alplZ3p1eUFwZjBySk5QSEtjQTIwUlpMUm11T1FUWHdnWUdOTjNMNDREQW1C?=
+ =?utf-8?B?OW92eEVIZ0NqOU0vVVRuQlNxWCtqUS9KbWdrRHBZZUE3YkNTV2dyaWJyOEFF?=
+ =?utf-8?B?NTg5VmR3REk4UmxMT2lpbm4zbHJyRFlZUHVBRFdBaVRSemFwK2VxVktpeU1y?=
+ =?utf-8?B?eWZMSHdTK2lCVTJObHgwU2pkQWxiQW15aTVtSCt2VDAwaG94amROMzRrQTNY?=
+ =?utf-8?B?TktRZGtQekN6S2dwU3k5NHNpUkhkVWxxSElNWmhrNzFYZUhjYzRBNkhhMEQx?=
+ =?utf-8?B?VkZDWDVhK1BybFFpRHphZm11TysxS2VqZWtpWU1TWTI4bnhVMmk0TVlZd3FW?=
+ =?utf-8?B?SFRITDhlL2RXUXdKUlFIZFBhS3c3cCtrNkVEQzhLL1RGNWlvMG9Sd01qaGc4?=
+ =?utf-8?B?eXNwdFZ6SkZ4cncrNFZ2dmZiNXRacU10ck9lYXRDYUdOVWV4dk45QktRSWht?=
+ =?utf-8?B?cHZ2bHlZcTdGYkxlZFQwUXFOWGhpd3hvTDVibTE0V3VNd09zMjl5YXJQNEdw?=
+ =?utf-8?B?SFoyNThWOFM1dzRkNnhEQWJuZjM2M3l6T0NOQ0ZJb3Fxbm9kaDU3VXltNXpN?=
+ =?utf-8?B?SGpNd2hWdTJlMk80Z292N00rZG9UckR1ZDB5MlN5b2NwWEZpV29LOGc1bFdO?=
+ =?utf-8?B?enl2V1A4VWF3SFgya0JabEtvOGgwaTRuTDNjSXduTXp3Yzh3d0g0QUZtM0Zu?=
+ =?utf-8?B?ODlETlJMR3lkVHZ3YUhNUHRBMkt6TndEMnIxVFk4MGZXOTVROENWeGNEbFk4?=
+ =?utf-8?B?SU44Q0xXdjJjV29UOUlobjloMkdKWHVHSEFod0phTlhkeHZta2NHZ0hKTmtn?=
+ =?utf-8?B?UUZiUjBlTVhoYTIzVW9BWEQ5NndtZ1lEd2h2WFllaHZLTnh3TVkrTDA3NnF2?=
+ =?utf-8?B?SHEwQkpmSG5CajhYUUZoR2F6Q3BydEo0b1RrVjNJb1drc0JoRnNhcmxEMnp2?=
+ =?utf-8?B?bWlrOCt4RTFvM0lmQkNOTGhaMXFkMkVLWTc1SzNVc0tVeExOR1lyMTVHNU5X?=
+ =?utf-8?B?bnFPN2RWMlZsYmlCRnZZMFBzSGsrUm9VTFl3V003MzU3SmRtYTZRdE9GQXNx?=
+ =?utf-8?B?d2tGL05aTlBQeW1oeG4vRjN2T2VBL0dSTGVEVEp4a2FvSk0yaUg2Rlk3enVT?=
+ =?utf-8?B?M2o1V21hdXkybzhqdzQzQUhTV0pHQVBkWWVRWDk2S1l2OFhmczU0cnRzT1NS?=
+ =?utf-8?B?eFdERENzNjllKzNEZUw0bnlQblVDaHUwbTNMb1FaS3pjb2ZQKy94RktKVGVU?=
+ =?utf-8?Q?JjgCsTPxZ4p9VTd7jSa5?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5fa032df-2e68-4d13-f9bd-08dd651779ee
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR19MB8883.namprd19.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Mar 2025 05:49:26.7461
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR19MB5099
 
-On Fri, Mar 14, 2025 at 11:22:20PM +0530, K Prateek Nayak wrote:
-> Hello Aaron,
+
+
+On 3/14/25 13:20, Krzysztof Kozlowski wrote:
+> On 14/03/2025 09:42, George Moussalem wrote:
+>>>> +        reg-names:
+>>>> +          items:
+>>>> +            - const: parf # Qualcomm specific registers
+>>>> +            - const: dbi # DesignWare PCIe registers
+>>>> +            - const: elbi # External local bus interface registers
+>>>> +            - const: atu # ATU address space
+>>>> +            - const: config # PCIe configuration space
+>>>
+>>> Keep the same order as other IPQ, so dbi+elbi+atu+parf+config. Same for
+>>> everything else, so standard rule applies: devices are supposed to use
+>>> ordering from existing variants.
+>>>
+>>> There is some huge mess with IPQ PCI bindings, including things on the
+>>> list. Apparently it became my job to oversee Qualcomm PCI work... well,
+>>> I do not have time for that, so rather I expect contributors to
+>>> cooperate in this matter.
+>>>
+>>> Don't throw your patches over the wall.
+>>>
+>>> If you need to rework the patch, take the ownership and rework it.
+>>>
+>>>
+>>
+>> Thanks Krzysztof. I did reorder them deliberately based on unit
+>> addresses as discussed also in other threads about IPQ9574 and IPQ5332
+>> as I thought it would be neater that way. I'll change it back, reuse
 > 
-> On 3/14/2025 4:13 PM, Aaron Lu wrote:
-> > On Fri, Mar 14, 2025 at 09:23:47AM +0530, K Prateek Nayak wrote:
-> > > Hello Aaron,
-> > > 
-> > > On 3/13/2025 12:51 PM, Aaron Lu wrote:
-> > > 
-> > > [..snip..]
-> > > 
-> > > > ---
-> > > >    kernel/sched/fair.c | 132 +++++++++++++++-----------------------------
-> > > >    1 file changed, 45 insertions(+), 87 deletions(-)
-> > > > 
-> > > > diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> > > > index ab403ff7d53c8..4a95fe3785e43 100644
-> > > > --- a/kernel/sched/fair.c
-> > > > +++ b/kernel/sched/fair.c
-> > > > @@ -5366,18 +5366,17 @@ enqueue_entity(struct cfs_rq *cfs_rq, struct
-> > > > sched_entity *se, int flags)
-> > > > 
-> > > >    	if (cfs_rq->nr_queued == 1) {
-> > > >    		check_enqueue_throttle(cfs_rq);
-> > > > -		if (!throttled_hierarchy(cfs_rq)) {
-> > > > -			list_add_leaf_cfs_rq(cfs_rq);
-> > > > -		} else {
-> > > > +		list_add_leaf_cfs_rq(cfs_rq);
-> > > >    #ifdef CONFIG_CFS_BANDWIDTH
-> > > > +		if (throttled_hierarchy(cfs_rq)) {
-> > > >    			struct rq *rq = rq_of(cfs_rq);
-> > > > 
-> > > >    			if (cfs_rq_throttled(cfs_rq) && !cfs_rq->throttled_clock)
-> > > >    				cfs_rq->throttled_clock = rq_clock(rq);
-> > > >    			if (!cfs_rq->throttled_clock_self)
-> > > >    				cfs_rq->throttled_clock_self = rq_clock(rq);
-> > > 
-> > > These bits probabaly need revisiting. From what I understand, these
-> > > stats were maintained to know when a task was woken up on a
-> > > throttled hierarchy which was not connected to the parent essentially
-> > > tracking the amount of time runnable tasks were waiting on the
-> > > cfs_rq before an unthrottle event allowed them to be picked.
-> > 
-> > Do you mean these throttled_clock stats?
-> > 
-> > I think they are here because we do not record the throttled_clock for
-> > empty cfs_rqs and once the cfs_rq has task enqueued, it needs to record
-> > its throttled_clock. This is done in commit 79462e8c879a("sched: don't
-> > account throttle time for empty groups") by Josh. I don't think per-task
-> > throttle change this.
-> > 
-> > With this said, I think there is a gap in per-task throttle, i.e. when
-> > all tasks are dequeued from this throttled cfs_rq, we should record its
-> > throttled_time and clear its throttled_clock.
+> Which discusses were that? What were the reasons to start with parf?
 > 
-> Yes but then what it'll track is the amount of time task were running
-> when the cfs_rq was on a throttled hierarchy. Is that what we want to
-> track or something else.
 
-Right, my last comment was not correct.
+I based the reordering on this patch so assumed that was the direction 
+(at that time):
+https://patchwork.kernel.org/project/linux-pci/patch/20250128062708.573662-5-quic_varada@quicinc.com/
 
-Basically, my current approach tried to mimic the existing accounting,
-i.e. when there is task enqueued in a throttled cfs_rq, start recording
-this cfs_rq's throttled_clock. It kind of over-accounts the throttled
-time for cfs_rq with this per-task throttle model because some task can
-still be running in kernel mode while cfs_rq is throttled.
+This was then reverted in subsequent version so will reorder as suggested.
 
-> The commit log for 677ea015f231 ("sched: add throttled time stat for
-> throttled children") says the following for "throttled_clock_self_time":
 > 
->     We currently export the total throttled time for cgroups that are given
->     a bandwidth limit. This patch extends this accounting to also account
->     the total time that each children cgroup has been throttled.
+>> other sections in the dt as much as possible, and follow your guidance
+>> instead.
 > 
->     This is useful to understand the degree to which children have been
->     affected by the throttling control. Children which are not runnable
->     during the entire throttled period, for example, will not show any
->     self-throttling time during this period.
-> 
-> but with per-task model, it is probably the amount of time that
-> "throttled_limbo_list" has a task on it since they are runnable
-> but are in-fact waiting for an unthrottle.
->
-> If a task enqueues itself on a throttled hierarchy and then blocks
-> again before exiting to the userspace, it should not count in
-> "throttled_clock_self_time" since the task was runnable the whole
-> time despite the hierarchy being frozen.
+> Best regards,
+> Krzysztof
 
-I think there is a mismatch between per-task throttle and per-cfs_rq
-stats, it's hard to make the accounting perfect. Assume a throttled
-cfs_rq has 4 tasks, with 2 tasks blocked on limbo_list and 2 tasks still
-running in kernel mode. Should we treat this time as throttled or not
-for this cfs_rq?
-
-This is similar to the pelt clock freeze problem. For the above example,
-should we freeze the cfs_rq's pelt clock or let it continue when this
-cfs_rq is throttled with some task blocked on limbo_list and some task
-still running in kernel mode?
-
-My understanding is, neither approach is perfect, so I just chose the
-simpler one for now. Please correct me if my understaning is wrong.
-
-Thanks,
-Aaron
+Best regards,
+George
 
