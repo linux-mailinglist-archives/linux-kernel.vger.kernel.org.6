@@ -1,211 +1,379 @@
-Return-Path: <linux-kernel+bounces-564595-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564596-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76855A657F4
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 17:26:35 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71CE3A657FA
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 17:26:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B894D161E4F
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 16:26:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D3A81893615
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 16:27:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8508619EEBD;
-	Mon, 17 Mar 2025 16:26:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 234BA1A2545;
+	Mon, 17 Mar 2025 16:26:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="dYhTUseQ"
-Received: from EUR03-AM7-obe.outbound.protection.outlook.com (mail-am7eur03on2082.outbound.protection.outlook.com [40.107.105.82])
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="Zb/b0736"
+Received: from lamorak.hansenpartnership.com (lamorak.hansenpartnership.com [198.37.111.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A34A817A2E9;
-	Mon, 17 Mar 2025 16:26:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.105.82
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742228785; cv=fail; b=PLlrNLxmR2d+g5A5XO3bkmrQ0M4lL9or4LwJGlaT+RCiTXB42Rsfcdo+RgvrAd79Up8cHgNe7Ks2IcWKox68YRJvV6GzY+yrEZ4sQ0yJDzvqctGvZEl7MrhPGXkYd3Z3W9qvgn3WokHx0h1DPqQvAqH2XcOO39UvP3M7obV6Vug=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742228785; c=relaxed/simple;
-	bh=DU4wqBnRo3jpBvk2+S/LApK7zJhVRW/ObnFyVO4kEf0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=RxarGaPdOGiiS18j06/BBfnKz4wdjrK4lBLnbIyVzC8AcNfAkvZgTeiBVRHpbCG53wCor/iashM4x41K63rZ4P94W1PG8FCg4yFVzR8N3sDbDKudPDvXBmZztwgSsHpIdO5SIF9vtbQnib+OsdukwsEr4ZwO2cdSSLlOYSqY348=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=dYhTUseQ; arc=fail smtp.client-ip=40.107.105.82
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=RCioz6ovJhBC6NjkF3jozDE9Hp3gIQ8SeTUT2K1WJzxzLHLWbggE/PZowciJbaw9RIBwN9HhiMS69pockqYSLjHPXKDNSrdldGHrfzVlU0mV75LLRIEEJKw74TIXFkVG7oAellrFWf9omWAY1D1GvowxjcseoEo0CWA3jFzCMtGIcAMlbJ/Dwpy8qKLDK+KWXsW3m1x8XGKDYkyY9ec0GDXnSfKpLTa9W6wsIaJq/sMd0jn2dpv8iiq6VfF3C1q5i0WTj77y926QS5W7D0tyQEqKIvebT9hBLSym3VrFBjMT4uUWyhgz45T46ljVfRK2tK6a8iHlZnSHHQ6bXAWg6w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=bVwWTVtxWQYWl5CvdZU7f8nezVxewC4+mc713iB6aYM=;
- b=P6RFKjGPI4xZCWYnTyQQo7BFikhh9RRVRxUhhqhjcW0ZN43gXrSL9Q4e37zoeNGA9a08Wlg6g8+leUHveQjjDvV5bNQIIuD4qA84TIb92mbBFfpQaMHMlkmTWpAQppW8tRevmkK+4V1GZR210zpdold3ErrLfqdvg39OwuNGMo5ZSyn0J4d/yOtLX3Our4PsKV4iasR4jjfao8iXjriGb32DGfsrWdHK6HSOdcO+qy5pLdezbqRhDDLwGLVQr+P6E2SUVFMb9Uwuajxo1tgzgZlOtxaN0pk3jH2xHUg2DkzWBv5es+ohJPDZ2wtCxwFVLt12xwRjrw12jsb3QQ35Dw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=bVwWTVtxWQYWl5CvdZU7f8nezVxewC4+mc713iB6aYM=;
- b=dYhTUseQu7TRcvmNJKNE2ZwpruRbC7lOYFychTAY5ZO9Fh9d8VkvDIYHVaUwoOdMny8agpi5Q9f6mCWwk1CZppjceItmVRSg8TFBbeTHcQC7x0Um3RVXwADaYEeJMfHpSodVgRowjTDgcZwrEeg4rqwYbr9rUAMosWR5fsS67rFo2Kj/T6qse0VmUwHoLY0IVmy1A593nGfRZJzksuXAf7ceDi7gtN9mnsDLZtCfd86hslfspiMHcfyHPvjm2JTkZBVxu0Hd3bxX1LVu7VkbMThZ2VJW2vT47Cj9E3zc3YO5RRe9JdDSaCVEUMIKkI995D1wun5AndHjAI13/PO/EQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AM8PR04MB7779.eurprd04.prod.outlook.com (2603:10a6:20b:24b::14)
- by AM7PR04MB6888.eurprd04.prod.outlook.com (2603:10a6:20b:107::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.33; Mon, 17 Mar
- 2025 16:26:20 +0000
-Received: from AM8PR04MB7779.eurprd04.prod.outlook.com
- ([fe80::7417:d17f:8d97:44d2]) by AM8PR04MB7779.eurprd04.prod.outlook.com
- ([fe80::7417:d17f:8d97:44d2%6]) with mapi id 15.20.8534.031; Mon, 17 Mar 2025
- 16:26:20 +0000
-Date: Mon, 17 Mar 2025 18:26:17 +0200
-From: Vladimir Oltean <vladimir.oltean@nxp.com>
-To: Wei Fang <wei.fang@nxp.com>
-Cc: claudiu.manoil@nxp.com, xiaoning.wang@nxp.com, andrew+netdev@lunn.ch,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, christophe.leroy@csgroup.eu,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	imx@lists.linux.dev, linuxppc-dev@lists.ozlabs.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v4 net-next 07/14] net: enetc: make enetc_set_rss_key()
- reusable
-Message-ID: <20250317162617.glikwbcey3s3isfn@skbuf>
-References: <20250311053830.1516523-1-wei.fang@nxp.com>
- <20250311053830.1516523-1-wei.fang@nxp.com>
- <20250311053830.1516523-8-wei.fang@nxp.com>
- <20250311053830.1516523-8-wei.fang@nxp.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250311053830.1516523-8-wei.fang@nxp.com>
- <20250311053830.1516523-8-wei.fang@nxp.com>
-X-ClientProxiedBy: VI1P195CA0088.EURP195.PROD.OUTLOOK.COM
- (2603:10a6:802:59::41) To AM8PR04MB7779.eurprd04.prod.outlook.com
- (2603:10a6:20b:24b::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F20B4198E60;
+	Mon, 17 Mar 2025 16:26:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.37.111.173
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742228794; cv=none; b=vDxiwDLyq+l7Y4+p9w54u6CaMyNHf48m49EnxaZjfRAY3LGB/dVrp6KrOznK2zWuXhIyKipXHSV41lY8vCjxcJD3PCBN/58oM5kXUy7T63kStf9cK8tioE1bmRUESmzhq8rd8S4C0yobvqJf2tOOCcxXw7+3QUs6P7LH7KPp6qo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742228794; c=relaxed/simple;
+	bh=+Ndjy4xmcEbXyhbj74b5WBRBd0mqSMQV+7NKaMwfF0w=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=JWe9iYrWD8VWROwab7WlXSnwx+mPR7062J7VVmo4xQp3nA1x6XAXb1cJ2AKjBnNUBoUcD/pnkK23CoM2htZbUjcm1++yIIo+91JstmJox5yXiibyWHMaBgZX/HkCr/j9UgPVOObFCpsKb3RRpFxq4Fg7StM3tbf1Vm8UayAixhA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=Zb/b0736; arc=none smtp.client-ip=198.37.111.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1742228790;
+	bh=+Ndjy4xmcEbXyhbj74b5WBRBd0mqSMQV+7NKaMwfF0w=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+	b=Zb/b0736daXymZaWap1l3aurwmc/9FF73bbGMNHV9DFCCB5Jch9TlatrPBsTcmAxi
+	 C1srhA4D8T6OAx6K3bNyEQlA++AhjiFPFLKi1OZJKi0phx1X/gNmO4BOiMxfIumFxx
+	 XVuEkLWLXWf3aNnBbAf800il9shIJMoGK9hmGfis=
+Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by lamorak.hansenpartnership.com (Postfix) with ESMTPSA id 0F8421C01F4;
+	Mon, 17 Mar 2025 12:26:30 -0400 (EDT)
+Message-ID: <609eeb873fdef6171c71f3beda289d799cb7172c.camel@HansenPartnership.com>
+Subject: Re: [patch V3 09/10] scsi: ufs: qcom: Remove the MSI descriptor
+ abuse
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: Thomas Gleixner <tglx@linutronix.de>, LKML <linux-kernel@vger.kernel.org>
+Cc: Marc Zyngier <maz@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, "Martin K.
+ Petersen" <martin.petersen@oracle.com>,  linux-scsi@vger.kernel.org,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>,  Nishanth Menon
+ <nm@ti.com>, Dhruva Gole <d-gole@ti.com>, Tero Kristo <kristo@kernel.org>, 
+ Santosh Shilimkar <ssantosh@kernel.org>, Logan Gunthorpe
+ <logang@deltatee.com>, Dave Jiang <dave.jiang@intel.com>,  Jon Mason
+ <jdmason@kudzu.us>, Allen Hubbe <allenbh@gmail.com>, ntb@lists.linux.dev,
+ Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, Michael
+ Kelley <mhklinux@outlook.com>, Wei Liu <wei.liu@kernel.org>, Haiyang Zhang
+ <haiyangz@microsoft.com>, linux-hyperv@vger.kernel.org, Wei Huang
+ <wei.huang2@amd.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Date: Mon, 17 Mar 2025 12:26:29 -0400
+In-Reply-To: <20250317092946.265146293@linutronix.de>
+References: <20250317092919.008573387@linutronix.de>
+	 <20250317092946.265146293@linutronix.de>
+Autocrypt: addr=James.Bottomley@HansenPartnership.com;
+ prefer-encrypt=mutual;
+ keydata=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
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.3 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM8PR04MB7779:EE_|AM7PR04MB6888:EE_
-X-MS-Office365-Filtering-Correlation-Id: 89fca27b-c4ed-4242-5446-08dd6570736d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?teftZZi+uhLjPklZXGcW+FhJPhIKXhjmn4kcqZgEyD53b4EW7gpE3PPqdl4M?=
- =?us-ascii?Q?fSOE2gld6OTTtyIrEL0opEIylak3YaOo12HWv+1Ko5373zUgmGrWkO5MjTMU?=
- =?us-ascii?Q?ZUgnk+w6yjAq2yuvKJUVwBrdwsIWiQNRPoo0Xob1bWZBqep2St9NAHRTZy4W?=
- =?us-ascii?Q?Gw3xb9lgAirt+gAnSpxZzzW1xlWUGOpPy7tdChKrvCmylIScG/4VEpcybjRc?=
- =?us-ascii?Q?s3jTyNcdqwZNGbqYjV092upnGpRR8JTO3wBbWlqzYm6PhiqQwn1G4pvi9geK?=
- =?us-ascii?Q?okhlURJZOB6H/3qHZJbzmnjV96sZTGHFfE/pyXEg4BHhGUUHjVEtXgww4ziM?=
- =?us-ascii?Q?Yn5Q60faD5gER7DyV8MMOs+VbKmR12HjS86RYaDnnmlTB5NU91+gqWcCw+CV?=
- =?us-ascii?Q?K7J8UbFbjfipinE8r4ibXEE4ob9VFmlSfsx6ayajeUfwWj5gDfz0Fkv1ATRF?=
- =?us-ascii?Q?Hwh3P9FXe/QPKjcIlJ6xYhkVrc9vgRrx4wOwSJe03zD5yrpJbNf2m9EV8snN?=
- =?us-ascii?Q?p6Wq3JuMvf+Xr9R/BC93reuyUy/byKGVGZH7TfYJ5lEEaI06WLBrkGL5VrHu?=
- =?us-ascii?Q?9rPIEOZr1OUj0IeoUcIlLcg3NRQBEbhecjBydOC+HzWusiaQpFohzzg9r1Nx?=
- =?us-ascii?Q?o5AtfJXGtu99d6biADm+LkAVfo16uXz4+xPuw2+NK1/B76wRw9sX5wokeTZx?=
- =?us-ascii?Q?ulxv9o1z9dfemlCxqS6FRESCODwVGZwrg1bsvhRFwfe5d0+irUmi6APeKYRt?=
- =?us-ascii?Q?BuQTVxKIDB1xdDpZvJ1LJPByfZIFKnEwsZosqR01Mra8c4FwblC2scz1var/?=
- =?us-ascii?Q?r+l/gPwQcGMjl9deY7irmBAZ4bRmSzCX4FXA1esWEIwotGztZBQ6U/eV2A5z?=
- =?us-ascii?Q?5/6F9HS3SiMseW6gMTlFGOPIFPtojv2RxKxm+TZhGv3qoEWCrTLANjbHBjlG?=
- =?us-ascii?Q?M+xNPSUzzxU93XpUtyCCvkYrYtjaUKgFZhPt2U+hHqwxO9HgQyxawFIkaGhX?=
- =?us-ascii?Q?bphheB0C9eagaJfkLRdOOLqgiGtsxesXFqJiHsZ8FDsxhPwTj9mbYLTmSfjx?=
- =?us-ascii?Q?Vy9HK/fKAWJXMu46vsjgYXIoKDo67OjVA3iC3zwERWeE8ywc7kgeF9OBQNYz?=
- =?us-ascii?Q?RbwXC6/ljf3P35239CX2n9r+s0WU4QcHU+3GE6QPZrPsGOSTGOv0iGDnScVw?=
- =?us-ascii?Q?XPiyaOQY5golBU/iiABIooFAkrNkv45emx4okGYKKTWaaAOlI/s3xNl1W3XY?=
- =?us-ascii?Q?oFDjoCkpApyGOZ0NzTs3L32PKsD0b++XndGS4HrpzzscfuviBUGAGc8xX9Hw?=
- =?us-ascii?Q?92I7HkIxD1ZbAhQF8JN7WimsCtmSrHb6QeyYEfoi1cyqrhdNzG89rEcfVdfs?=
- =?us-ascii?Q?zpvwy5jI7u2EYf7+erg0JKcBeL5q?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM8PR04MB7779.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?L3L96gt3+iwDi1giGsBCHp/mclITHkodsiMqR8SXG04Ok2VOZ1e2mM3CCpQ1?=
- =?us-ascii?Q?NcgSu9kzOh8peqbuK0lIVlcauUZ1/YOEUg6qP4U6KmVK3EDZstQcu46797x+?=
- =?us-ascii?Q?HFS7o6G9G8FIndIL3yk333uEsvmCa2KgvHBo69E6EI1OWIBm1ysBCn1lHnmE?=
- =?us-ascii?Q?29K9HX+DDyNDHG+d6PcRv/OeLgc3BdwNmY3X/evb1nTA6SqgHUTFiaCDkcVt?=
- =?us-ascii?Q?n4ck0+nWyANa8pP6WHtPiYyTpMp92JwzFDmhpOk945AqqbL1+D142eS8Ea2J?=
- =?us-ascii?Q?ocY5BWoQcF12JOR9yztOtcgvVrYN1+8JxJygI9+1GI4SSJTij7YcE943inlW?=
- =?us-ascii?Q?pUDc482YDUmdhxA7uJytoi+SuSdPGOJsKlHI7J/QsZgYp9FMgxGa03u9K4Uv?=
- =?us-ascii?Q?64tnXxWR2O6fhV1K38376CNhLGkjEWc1alMuhw/W+xHhq8u1UZRls/g/0wT3?=
- =?us-ascii?Q?D2HAPaogCetKpz0IlvlDdSgeaiiJ0O9ZY/EQtjOYJYabSZYyS6UMt7uRqbjy?=
- =?us-ascii?Q?twZsroCAiB7V8wxsoZR0yWVGYLepa/N+53kifADGbPwpP6551sB1hSRQClph?=
- =?us-ascii?Q?3OwBsq+nmfeeOyRJqFJEeRML9kcFK7K592Tcyafi1U8dwI7d8xDJsOfZpvs8?=
- =?us-ascii?Q?7X8TaKhru2IhthmEOmAPVp9emHNEkAoCSqKY8JgT+dCnr3FQpVu4XyDoXN5G?=
- =?us-ascii?Q?svBX/mQ9icbh0En+rdxQiWhwrJuoi11xOQ04/kq5Ppkqyu2axiioTxkPWxFX?=
- =?us-ascii?Q?Q7eZ8k0oeDxF9KAYjdBxoXkIJfZ/PHzG6SzcUriQ9Zyna5DzjpBoHUJ8GUg5?=
- =?us-ascii?Q?Wv4iSnJD+dvVO0w63lXPghnXcOY7gnGsZZhwC3JiYZryKnpB9XD4GxD/mN3U?=
- =?us-ascii?Q?9z52x5XCq7Quhe4vfygehNZehyk+mrKKRX+6v0R0dgpsW37zX7FNGVKfcifx?=
- =?us-ascii?Q?zmx3XxYgjHQxOH12zc2QnY7P83UrsOQP65a4jM7tRov5xUowla+QEgGti3p1?=
- =?us-ascii?Q?41Gar+GHdt2W3/pz48ZgHwzLMIyLDiRI+JOlWjz6MB9G3xKQQGFly5auWDUL?=
- =?us-ascii?Q?klX7nyEf+feY/Uonhg9soMeqfPgSRtlglEL0olu+DAfxHHT0UqsCT/Fw7rPI?=
- =?us-ascii?Q?ak0lwbqNttpxVQeuYmNydQFjJqCWov5ZK3Vz+WaGXWjK1G6cjcTRW/D2I/VE?=
- =?us-ascii?Q?xj0fesT92dL2SNjuObPwVUspqYDyC5e67yWqhYFRL48Ox9z8AWRPHLBE6h9X?=
- =?us-ascii?Q?vQRH2gGkvYyEoZl7SQB+cdBxnHbUMczRhZoSd8tHUMk0ULcTJRfxua7FV9Kk?=
- =?us-ascii?Q?oPj5OS/OZ+WpIDB94CBNsaTlIA9CF15XUlmiKDIblDb1PYyztT5+KNDNiN0B?=
- =?us-ascii?Q?WLC6xjCLg2m+9WeoaPWeLw4IfGaVKOyC47D7P0NB0W8cTXi4wWvdeNt4SCGe?=
- =?us-ascii?Q?CrYavrE1GenrMiSo4rKv6rZi83H35WPNPVEYw13Qmlepl6i2zIRVFkhg0w4B?=
- =?us-ascii?Q?i3bhDjcmYzgwGGWIVG4BZyIy61Am8UdyOTl63QTnsJt9Evr22MrE7rUi4l8Z?=
- =?us-ascii?Q?VwbwB8GpHbViZjIszFQdEMThAELfV3CvIZPP2pWrYVobCd0LrxEL4YxtMpBm?=
- =?us-ascii?Q?Xw=3D=3D?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 89fca27b-c4ed-4242-5446-08dd6570736d
-X-MS-Exchange-CrossTenant-AuthSource: AM8PR04MB7779.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Mar 2025 16:26:20.5821
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: b3hmUC93C/xxw+7XApUWPkEXfSbrf8hN9Ix+gNrTd4OR/ojxQQfUOhktKYBaItWKwUqz1lnXBwMGTL7MQ0CVJg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM7PR04MB6888
 
-On Tue, Mar 11, 2025 at 01:38:23PM +0800, Wei Fang wrote:
-> Since the offset of the RSS key registers of i.MX95 ENETC is different
-> from that of LS1028A, so add enetc_get_rss_key_base() to get the base
-> offset for the different chips, so that enetc_set_rss_key() can be
-> reused for this trivial.
-
-for this trivial... ? task?
-
-> 
-> Signed-off-by: Wei Fang <wei.fang@nxp.com>
+On Mon, 2025-03-17 at 14:29 +0100, Thomas Gleixner wrote:
+> The driver abuses the MSI descriptors for internal purposes. Aside of
+> core code and MSI providers nothing has to care about their
+> existence. They have been encapsulated with a lot of effort because
+> this kind of abuse caused all sorts of issues including a
+> maintainability nightmare.
+>=20
+> Rewrite the code so it uses dedicated storage to hand the required
+> information to the interrupt handler.
+>=20
+> No functional change intended.
+>=20
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> Cc: "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>
+> Cc: "Martin K. Petersen" <martin.petersen@oracle.com>
+> Cc: linux-scsi@vger.kernel.org
+>=20
+>=20
 > ---
->  drivers/net/ethernet/freescale/enetc/enetc.h  |  2 +-
->  .../net/ethernet/freescale/enetc/enetc4_pf.c  | 11 +----------
->  .../ethernet/freescale/enetc/enetc_ethtool.c  | 19 ++++++++++++++-----
->  .../net/ethernet/freescale/enetc/enetc_pf.c   |  2 +-
->  4 files changed, 17 insertions(+), 17 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/freescale/enetc/enetc4_pf.c b/drivers/net/ethernet/freescale/enetc/enetc4_pf.c
-> index a98ed059a83f..f991e1aae85c 100644
-> --- a/drivers/net/ethernet/freescale/enetc/enetc4_pf.c
-> +++ b/drivers/net/ethernet/freescale/enetc/enetc4_pf.c
-> @@ -583,22 +583,13 @@ static void enetc4_set_trx_frame_size(struct enetc_pf *pf)
->  	enetc4_pf_reset_tc_msdu(&si->hw);
->  }
->  
-> -static void enetc4_set_rss_key(struct enetc_hw *hw, const u8 *bytes)
-> -{
-> -	int i;
-> -
-> -	for (i = 0; i < ENETC_RSSHASH_KEY_SIZE / 4; i++)
-> -		enetc_port_wr(hw, ENETC4_PRSSKR(i), ((u32 *)bytes)[i]);
-> -}
-> -
->  static void enetc4_set_default_rss_key(struct enetc_pf *pf)
->  {
->  	u8 hash_key[ENETC_RSSHASH_KEY_SIZE] = {0};
-> -	struct enetc_hw *hw = &pf->si->hw;
->  
->  	/* set up hash key */
->  	get_random_bytes(hash_key, ENETC_RSSHASH_KEY_SIZE);
-> -	enetc4_set_rss_key(hw, hash_key);
-> +	enetc_set_rss_key(pf->si, hash_key);
->  }
+> =C2=A0drivers/ufs/host/ufs-qcom.c |=C2=A0=C2=A0 77 ++++++++++++++++++++++=
+-----------
+> -----------
+> =C2=A01 file changed, 40 insertions(+), 37 deletions(-)
+>=20
+> --- a/drivers/ufs/host/ufs-qcom.c
+> +++ b/drivers/ufs/host/ufs-qcom.c
+> @@ -1782,15 +1782,19 @@ static void ufs_qcom_write_msi_msg(struc
+> =C2=A0	ufshcd_mcq_config_esi(hba, msg);
+> =C2=A0}
+> =C2=A0
+> +struct ufs_qcom_irq {
+> +	unsigned int		irq;
+> +	unsigned int		idx;
+> +	struct ufs_hba		*hba;
+> +};
+> +
+> =C2=A0static irqreturn_t ufs_qcom_mcq_esi_handler(int irq, void *data)
+> =C2=A0{
+> -	struct msi_desc *desc =3D data;
+> -	struct device *dev =3D msi_desc_to_dev(desc);
+> -	struct ufs_hba *hba =3D dev_get_drvdata(dev);
+> -	u32 id =3D desc->msi_index;
+> -	struct ufs_hw_queue *hwq =3D &hba->uhq[id];
+> +	struct ufs_qcom_irq *qi =3D data;
+> +	struct ufs_hba *hba =3D qi->hba;
+> +	struct ufs_hw_queue *hwq =3D &hba->uhq[qi->idx];
+> =C2=A0
+> -	ufshcd_mcq_write_cqis(hba, 0x1, id);
+> +	ufshcd_mcq_write_cqis(hba, 0x1, qi->idx);
+> =C2=A0	ufshcd_mcq_poll_cqe_lock(hba, hwq);
+> =C2=A0
+> =C2=A0	return IRQ_HANDLED;
+> @@ -1799,8 +1803,7 @@ static irqreturn_t ufs_qcom_mcq_esi_hand
+> =C2=A0static int ufs_qcom_config_esi(struct ufs_hba *hba)
+> =C2=A0{
+> =C2=A0	struct ufs_qcom_host *host =3D ufshcd_get_variant(hba);
+> -	struct msi_desc *desc;
+> -	struct msi_desc *failed_desc =3D NULL;
+> +	struct ufs_qcom_irq *qi;
+> =C2=A0	int nr_irqs, ret;
+> =C2=A0
+> =C2=A0	if (host->esi_enabled)
+> @@ -1811,47 +1814,47 @@ static int ufs_qcom_config_esi(struct uf
+> =C2=A0	 * 2. Poll queues do not need ESI.
+> =C2=A0	 */
+> =C2=A0	nr_irqs =3D hba->nr_hw_queues - hba-
+> >nr_queues[HCTX_TYPE_POLL];
+> +	qi =3D devm_kcalloc(hba->dev, nr_irqs, sizeof(*qi),
+> GFP_KERNEL);
+> +	if (qi)
 
-The entire enetc4_set_default_rss_key() seems reusable as
-enetc_set_default_rss_key(). enetc_configure_port() has the same logic.
+Typo causing logic inversion: should be !qi here (you need a more
+responsive ! key).
 
->  
->  static void enetc4_enable_trx(struct enetc_pf *pf)
+> +		return -ENOMEM;
+> +
+> =C2=A0	ret =3D platform_device_msi_init_and_alloc_irqs(hba->dev,
+> nr_irqs,
+> =C2=A0						=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0
+> ufs_qcom_write_msi_msg);
+> =C2=A0	if (ret) {
+> =C2=A0		dev_err(hba->dev, "Failed to request Platform MSI
+> %d\n", ret);
+> -		return ret;
+> +		goto cleanup;
+> =C2=A0	}
+> =C2=A0
+> -	msi_lock_descs(hba->dev);
+> -	msi_for_each_desc(desc, hba->dev, MSI_DESC_ALL) {
+> -		ret =3D devm_request_irq(hba->dev, desc->irq,
+> -				=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ufs_qcom_mcq_esi_handler,
+> -				=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 IRQF_SHARED, "qcom-mcq-esi",
+> desc);
+> +	for (int idx =3D 0; idx < nr_irqs; idx++) {
+> +		qi[idx].irq =3D msi_get_virq(hba->dev, idx);
+> +		qi[idx].idx =3D idx;
+> +		qi[idx].hba =3D hba;
+> +
+> +		ret =3D devm_request_irq(hba->dev, qi[idx].irq,
+> ufs_qcom_mcq_esi_handler,
+> +				=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 IRQF_SHARED, "qcom-mcq-esi",
+> qi + idx);
+> =C2=A0		if (ret) {
+> =C2=A0			dev_err(hba->dev, "%s: Fail to request IRQ
+> for %d, err =3D %d\n",
+> -				__func__, desc->irq, ret);
+> -			failed_desc =3D desc;
+> -			break;
+> +				__func__, qi[idx].irq, ret);
+> +			qi[idx].irq =3D 0;
+> +			goto cleanup;
+> =C2=A0		}
+> =C2=A0	}
+> -	msi_unlock_descs(hba->dev);
+> =C2=A0
+> -	if (ret) {
+> -		/* Rewind */
+> -		msi_lock_descs(hba->dev);
+> -		msi_for_each_desc(desc, hba->dev, MSI_DESC_ALL) {
+> -			if (desc =3D=3D failed_desc)
+> -				break;
+> -			devm_free_irq(hba->dev, desc->irq, hba);
+> -		}
+> -		msi_unlock_descs(hba->dev);
+> -		platform_device_msi_free_irqs_all(hba->dev);
+> -	} else {
+> -		if (host->hw_ver.major =3D=3D 6 && host->hw_ver.minor =3D=3D
+> 0 &&
+> -		=C2=A0=C2=A0=C2=A0 host->hw_ver.step =3D=3D 0)
+> -			ufshcd_rmwl(hba, ESI_VEC_MASK,
+> -				=C2=A0=C2=A0=C2=A0 FIELD_PREP(ESI_VEC_MASK,
+> MAX_ESI_VEC - 1),
+> -				=C2=A0=C2=A0=C2=A0 REG_UFS_CFG3);
+> -		ufshcd_mcq_enable_esi(hba);
+> -		host->esi_enabled =3D true;
+> +	if (host->hw_ver.major =3D=3D 6 && host->hw_ver.minor =3D=3D 0 &&
+> +	=C2=A0=C2=A0=C2=A0 host->hw_ver.step =3D=3D 0) {
+> +		ufshcd_rmwl(hba, ESI_VEC_MASK,
+> +			=C2=A0=C2=A0=C2=A0 FIELD_PREP(ESI_VEC_MASK, MAX_ESI_VEC -
+> 1),
+> +			=C2=A0=C2=A0=C2=A0 REG_UFS_CFG3);
+> =C2=A0	}
+> -
+> +	ufshcd_mcq_enable_esi(hba);
+> +	host->esi_enabled =3D true;
+> +	return 0;
+> +
+> +cleanup:
+> +	for (int idx =3D 0; qi[idx].irq; idx++)
+> +		devm_free_irq(hba->dev, qi[idx].irq, hba);
+> +	platform_device_msi_free_irqs_all(hba->dev);
+> +	devm_kfree(hba->dev, qi);
+> =C2=A0	return ret;
+> =C2=A0}
+
+This does seem to be exactly the pattern you describe in 1/10, although
+I'm not entirely convinced that something like the below is more
+readable and safe.
+
+Regards,
+
+James
+
+---
+
+diff --git a/drivers/ufs/host/ufs-qcom.c b/drivers/ufs/host/ufs-qcom.c
+index 23b9f6efa047..26b0c665c3b7 100644
+--- a/drivers/ufs/host/ufs-qcom.c
++++ b/drivers/ufs/host/ufs-qcom.c
+@@ -1782,25 +1782,37 @@ static void ufs_qcom_write_msi_msg(struct msi_desc =
+*desc, struct msi_msg *msg)
+ 	ufshcd_mcq_config_esi(hba, msg);
+ }
+=20
++struct ufs_qcom_irq {
++	unsigned int		irq;
++	unsigned int		idx;
++	struct ufs_hba		*hba;
++};
++
+ static irqreturn_t ufs_qcom_mcq_esi_handler(int irq, void *data)
+ {
+-	struct msi_desc *desc =3D data;
+-	struct device *dev =3D msi_desc_to_dev(desc);
+-	struct ufs_hba *hba =3D dev_get_drvdata(dev);
+-	u32 id =3D desc->msi_index;
+-	struct ufs_hw_queue *hwq =3D &hba->uhq[id];
++	struct ufs_qcom_irq *qi =3D data;
++	struct ufs_hba *hba =3D qi->hba;
++	struct ufs_hw_queue *hwq =3D &hba->uhq[qi->idx];
+=20
+-	ufshcd_mcq_write_cqis(hba, 0x1, id);
++	ufshcd_mcq_write_cqis(hba, 0x1, qi->idx);
+ 	ufshcd_mcq_poll_cqe_lock(hba, hwq);
+=20
+ 	return IRQ_HANDLED;
+ }
+=20
++DEFINE_FREE(ufs_qcom_irq, struct ufs_qcom_irq *,
++	    if (_T) {							\
++		    for (int idx =3D 0; _T[idx].irq; idx++)		\
++			    devm_free_irq(_T[idx].hba->dev, _T[idx].irq, \
++					  _T[idx].hba);			\
++		    platform_device_msi_free_irqs_all(_T[0].hba->dev);	\
++		    devm_kfree(_T[0].hba->dev, _T);			\
++	    })
++
+ static int ufs_qcom_config_esi(struct ufs_hba *hba)
+ {
+ 	struct ufs_qcom_host *host =3D ufshcd_get_variant(hba);
+-	struct msi_desc *desc;
+-	struct msi_desc *failed_desc =3D NULL;
++	struct ufs_qcom_irq *qi __free(ufs_qcom_irq);
+ 	int nr_irqs, ret;
+=20
+ 	if (host->esi_enabled)
+@@ -1811,6 +1823,11 @@ static int ufs_qcom_config_esi(struct ufs_hba *hba)
+ 	 * 2. Poll queues do not need ESI.
+ 	 */
+ 	nr_irqs =3D hba->nr_hw_queues - hba->nr_queues[HCTX_TYPE_POLL];
++	qi =3D devm_kcalloc(hba->dev, nr_irqs, sizeof(*qi), GFP_KERNEL);
++	if (!qi)
++		return -ENOMEM;
++	qi[0].hba =3D hba;	/* required by __free() */
++
+ 	ret =3D platform_device_msi_init_and_alloc_irqs(hba->dev, nr_irqs,
+ 						      ufs_qcom_write_msi_msg);
+ 	if (ret) {
+@@ -1818,41 +1835,31 @@ static int ufs_qcom_config_esi(struct ufs_hba *hba)
+ 		return ret;
+ 	}
+=20
+-	msi_lock_descs(hba->dev);
+-	msi_for_each_desc(desc, hba->dev, MSI_DESC_ALL) {
+-		ret =3D devm_request_irq(hba->dev, desc->irq,
+-				       ufs_qcom_mcq_esi_handler,
+-				       IRQF_SHARED, "qcom-mcq-esi", desc);
++	for (int idx =3D 0; idx < nr_irqs; idx++) {
++		qi[idx].irq =3D msi_get_virq(hba->dev, idx);
++		qi[idx].idx =3D idx;
++		qi[idx].hba =3D hba;
++
++		ret =3D devm_request_irq(hba->dev, qi[idx].irq, ufs_qcom_mcq_esi_handler=
+,
++				       IRQF_SHARED, "qcom-mcq-esi", qi + idx);
+ 		if (ret) {
+ 			dev_err(hba->dev, "%s: Fail to request IRQ for %d, err =3D %d\n",
+-				__func__, desc->irq, ret);
+-			failed_desc =3D desc;
+-			break;
++				__func__, qi[idx].irq, ret);
++			qi[idx].irq =3D 0;
++			return ret;
+ 		}
+ 	}
+-	msi_unlock_descs(hba->dev);
++	retain_ptr(qi);
+=20
+-	if (ret) {
+-		/* Rewind */
+-		msi_lock_descs(hba->dev);
+-		msi_for_each_desc(desc, hba->dev, MSI_DESC_ALL) {
+-			if (desc =3D=3D failed_desc)
+-				break;
+-			devm_free_irq(hba->dev, desc->irq, hba);
+-		}
+-		msi_unlock_descs(hba->dev);
+-		platform_device_msi_free_irqs_all(hba->dev);
+-	} else {
+-		if (host->hw_ver.major =3D=3D 6 && host->hw_ver.minor =3D=3D 0 &&
+-		    host->hw_ver.step =3D=3D 0)
+-			ufshcd_rmwl(hba, ESI_VEC_MASK,
+-				    FIELD_PREP(ESI_VEC_MASK, MAX_ESI_VEC - 1),
+-				    REG_UFS_CFG3);
+-		ufshcd_mcq_enable_esi(hba);
+-		host->esi_enabled =3D true;
++	if (host->hw_ver.major =3D=3D 6 && host->hw_ver.minor =3D=3D 0 &&
++	    host->hw_ver.step =3D=3D 0) {
++		ufshcd_rmwl(hba, ESI_VEC_MASK,
++			    FIELD_PREP(ESI_VEC_MASK, MAX_ESI_VEC - 1),
++			    REG_UFS_CFG3);
+ 	}
+-
+-	return ret;
++	ufshcd_mcq_enable_esi(hba);
++	host->esi_enabled =3D true;
++	return 0;
+ }
+=20
+ /*
+
 
