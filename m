@@ -1,201 +1,155 @@
-Return-Path: <linux-kernel+bounces-564018-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564019-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4556DA64C1E
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 12:17:45 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 259B5A64C21
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 12:17:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 461413A571E
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:17:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 17E387A429C
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:16:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BCA32356DB;
-	Mon, 17 Mar 2025 11:17:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBA34231C8D;
+	Mon, 17 Mar 2025 11:17:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=it-klinger.de header.i=@it-klinger.de header.b="cKtWN5YO"
-Received: from www571.your-server.de (www571.your-server.de [78.46.3.230])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="HYHxUqMP"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBE131D79B3;
-	Mon, 17 Mar 2025 11:17:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.46.3.230
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9A2322CBE3
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 11:17:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742210248; cv=none; b=cXJ360xRlOHN8hln06qKgqyGuSoI00jTVL1s4HVW+JWQcgVnmqLHIAn4yn8iCVesUMKDzPUy0+qkg90eE8fFKAzj2cEbr0pLY+VDj/a+kkEiuqb8SY3Mc0+3qdQV1aIm/2gRZ4Xkd//RDE9wE3NAO8cMgfwkMGDxfkeChmfctd8=
+	t=1742210259; cv=none; b=C/ru/nz184AE3PQz5+IgvzKCuz7YZ8casTVLVYdAMmnjjhjcAYr098M07ijtHxwEfayYpJGnH4OJL/J6agHQGdHBvVbQYgDEpzCGbJZ0TicyctptIe4A+N0dbj5xGjynVXOeX+/QOuth2/4BU0Qs7jLaPOKjeI2EogU5fpfGyZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742210248; c=relaxed/simple;
-	bh=uYoF2XU04ed3cUfLW0Zv5oZ4ni4Gbd2nEZjhSx/oo3c=;
+	s=arc-20240116; t=1742210259; c=relaxed/simple;
+	bh=MjGaHAxIyKXmVDUqw6iZrWpQY4My0C236pP+phIqMXs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UsAVZt/IuB10JEM8RpO+vz1sxwi51Japnu4MYAB/SlTyKxfSGaeIcmxNQXvIc1iFQE8HmuMvrDktCZzgolfnTJZAPHHqGkm+SdEg/9k3SaQpCWjGTmZDFvPoF5v05n9noNVkK+AJ2Ehsy+/z3npLs8mOUzPS+I8u3frhxyh4huk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=it-klinger.de; spf=pass smtp.mailfrom=it-klinger.de; dkim=pass (2048-bit key) header.d=it-klinger.de header.i=@it-klinger.de header.b=cKtWN5YO; arc=none smtp.client-ip=78.46.3.230
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=it-klinger.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=it-klinger.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=it-klinger.de; s=default2502; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=XE0nklv5FnGcO0JcWnNv2Mt7qztg3JvxQsyWfUqHEME=; b=cKtWN5YOCkrZIyY9o5Xa0JW0T6
-	fYKwfZ1BbksJSQHb35XcdgRkifJDyPiEFuO8RtmDI1rkEIOKHDrb+GHcKK4qiKircGrC+8w76X9PL
-	ieL2IdKXmYljon5XV8XvQGRNRrqxBdQh87gZp+JSjhVOJ9zPhdac3GjvYzI1XhLoGiBqBBjOMsqKS
-	wgsDBE/npELYE6gd0b6jQqsCwe5eDcTQaEhp3zE2DAd+ZRA9lbhD/Eiebo2qQoA9jjyryJw7K1+88
-	2rWx/qr2ged3Ljm0qqHSqRoGf9YlurbrTQDMBRTEU70qGzB1PfW1DnRPbSbS3o/74BbQV0neKqY+U
-	L5r0U1qA==;
-Received: from sslproxy03.your-server.de ([88.198.220.132])
-	by www571.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96.2)
-	(envelope-from <ak@it-klinger.de>)
-	id 1tu8TA-0006DP-20;
-	Mon, 17 Mar 2025 12:17:20 +0100
-Received: from [2a0f:6480:1:600:fc64:4dfc:9829:9e5f] (helo=mail.your-server.de)
-	by sslproxy03.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <ak@it-klinger.de>)
-	id 1tu8TA-0003Yc-2H;
-	Mon, 17 Mar 2025 12:17:20 +0100
-Date: Mon, 17 Mar 2025 12:17:17 +0100
-From: Andreas Klinger <ak@it-klinger.de>
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	lars@metafoo.de, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	javier.carrasco.cruz@gmail.com, mazziesaccount@gmail.com,
-	subhajit.ghosh@tweaklogic.com, muditsharma.info@gmail.com,
-	arthur.becker@sentec.com, ivan.orlov0322@gmail.com
-Subject: Re: [PATCH 1/3] dt-bindings: iio: light: veml6046x00: add color
- sensor
-Message-ID: <Z9gEveqC91o8Ojks@mail.your-server.de>
-References: <20250316113131.62884-1-ak@it-klinger.de>
- <20250316113131.62884-2-ak@it-klinger.de>
- <20250317110012.2ad89cb9@jic23-huawei>
+	 Content-Type:Content-Disposition:In-Reply-To; b=n2HlvQwTWVmH2MsxgK1o6ttqK0kaQ2vNKlzzYecI4e/UblYz7dIwBfz+pJY9MSSVknRtaAt1SMY1Rog8nYbO7IsroVyohBxGpCABF8TQhv3wvMLyppVPF7F7NDmV5pK1WfarVgzrHJsniIFz7CQdTKB3/KGNivZVVRaOc5QR3Lc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=HYHxUqMP; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52H9sQSZ014469
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 11:17:36 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=h74ZuGvGt7Gc4RGJOB1qbK9R
+	Ms5B7HunMvfAcbl6nvI=; b=HYHxUqMPrJ3obXGUkn3BioKk6j6uxHLRu7NOjZ6Q
+	na2xwlx1XjT+6HHgGhYHgxUu0HyEUuyTIw4tkbu7bVGW4moFV4UW93i1sFXRpgW0
+	C+b+xTlN219AHLkDzh4tcROiG7Dng8YcRpKoU8os1A4BeGsWI85bY1d5QTWYvVR9
+	mVK9+SHC0mXBWnWtE2KjB5SnL91X+q02dIyuEGOJQ63A/viXrJNynF0ffqW3ekMA
+	4uV+/ttvfdmdKGMgKZBIhm7ClX968bawO6/xmsRiK+cZg95wEZIsntqvexcreKnc
+	Cfr7Faml7mCCPwX/cYaHRobY+9D4Qdg8QLj01sKWlQcWYg==
+Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com [209.85.219.72])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45d1rdmj8p-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 11:17:36 +0000 (GMT)
+Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-6e8feea216aso101223336d6.0
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 04:17:36 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742210248; x=1742815048;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=h74ZuGvGt7Gc4RGJOB1qbK9RMs5B7HunMvfAcbl6nvI=;
+        b=XiJ6HZ0U3MUpgI9V1Y3SP2QRuFLsnf2YB0+YpNkaUYdbr57XimFQEfxbwWWND6/mlJ
+         sVSADF1ToCwcZDIWR9kZOrun4HWDjdLua/5WR7IfCCF/XXhI4fcE97FX7S9b0Da+1Cso
+         N2yXkq2aqluujgZjjumTSapcc6MzyPbIKeX93PDMXVuGQUrGNzacJzt8kyBuuv7o2EQy
+         bB5O9E7Z39hzob+CpvWflxO/W+4PSIovzSvjhClZY4yuCVFlzjurcg/KfuMigroiPEKu
+         l8bZ2+MUtN3LnyGtz5zuRRinDmX+VwlPMBMdPLVTdNPYUbHn3fCij0ej9p4iiGF1RZjN
+         dNGg==
+X-Forwarded-Encrypted: i=1; AJvYcCVD44RYx1DVWxkCjm5/dCg1W4s2AENTjSiUQ5Ct6JP0II1DAvZKdkS6tNj+jWitHIVP/fuWYuxBLrHshRU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzcy37zfl5T7CBf+aQp89tfI4MG1IDFJeDUQ1EDZArO4EZjrWtc
+	dB0C6Izk9j0DVNSgORW8Vvg0OmK2QtqRMLknYDcFJaBasSB9YX28oePYU86hq3WnnD40yF3Hf+J
+	hCcW2M0fvxmy2B0TMUs8xa6HdC5FJ6w5yiIlSCBC0oQlomd3rVytnTsNfgPRFhXA=
+X-Gm-Gg: ASbGncs/z/ZAoZtRxSqMNCUEqcS2g/p2cyueWvTk0M7Mq/AkDj9G5jdx7ae2x7NKi5Y
+	LRYEevtxX+0W+7//6CH1sDuV3C7U0+2dJW5y6/RB0wyxE6LSr/CkpdQEO7WxqMVIhi+Wpm1j3py
+	bEytn8FpLqUVvEqN+XHB0D5SujtcpBIiYZCeGW+RQi6C1ZNO44qjTtRbTSiJrBmmv8S416YYgAr
+	Q3H5PKQdyCeBlmX7lGSPiIvcgIt4Iyxk7aWp6I2uvNARZl3QmnL4Ifss5AU0jUdvB+MvCPLrp/Z
+	5exoXjcYu2amFYxC3imdnGLlUZ8L21tYEuUv1GJjECr13ccOeJraQ+d5JVR8aTi0jV82tSayK9O
+	XSBw=
+X-Received: by 2002:a05:6214:5784:b0:6e4:4adb:8c29 with SMTP id 6a1803df08f44-6eaddf4d222mr233455176d6.12.1742210248619;
+        Mon, 17 Mar 2025 04:17:28 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH1cyDl4xkioe3y+ghWS263/60KKZ8OYW8NPmR6GC2f7A41gOXYwaVyUw5mFVJ9O7ml2j/IHQ==
+X-Received: by 2002:a05:6214:5784:b0:6e4:4adb:8c29 with SMTP id 6a1803df08f44-6eaddf4d222mr233454916d6.12.1742210248276;
+        Mon, 17 Mar 2025 04:17:28 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-549ba864e24sm1302546e87.107.2025.03.17.04.17.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Mar 2025 04:17:26 -0700 (PDT)
+Date: Mon, 17 Mar 2025 13:17:22 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Maxime Ripard <mripard@kernel.org>
+Cc: dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Andrzej Hajda <andrzej.hajda@intel.com>,
+        David Airlie <airlied@gmail.com>, Dmitry Baryshkov <lumag@kernel.org>,
+        Hermes Wu <Hermes.wu@ite.com.tw>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Rob Clark <robdclark@gmail.com>, Robert Foss <rfoss@kernel.org>,
+        Sean Paul <sean@poorly.run>, Simona Vetter <simona@ffwll.ch>,
+        Thomas Zimmermann <tzimmermann@suse.de>
+Subject: Re: [PATCH v6 2/4] drm/bridge: add function interface for
+ DisplayPort audio implementation
+Message-ID: <2wxcuacri3ts24hyuqpvw75cubkhcup2mftrsu7yykrrodulix@fmuzn3unykux>
+References: <20250314-dp-hdmi-audio-v6-2-dbd228fa73d7@oss.qualcomm.com>
+ <d5b8a7fa506ed3026c19b383edf160d6@kernel.org>
+ <otidtln4pjb47azr7zhllxkqmwocdnbdiay6xcg6psphz3436i@fn5hxgaflgv6>
+ <20250317-dancing-loyal-malkoha-ad5a36@houat>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="XEGLpz3pfiqoz7zZ"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250317110012.2ad89cb9@jic23-huawei>
-X-Authenticated-Sender: ak@it-klinger.de
-X-Virus-Scanned: Clear (ClamAV 1.0.7/27580/Mon Mar 17 10:42:01 2025)
+In-Reply-To: <20250317-dancing-loyal-malkoha-ad5a36@houat>
+X-Authority-Analysis: v=2.4 cv=Fe83xI+6 c=1 sm=1 tr=0 ts=67d804d0 cx=c_pps a=7E5Bxpl4vBhpaufnMqZlrw==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=Vs1iUdzkB0EA:10 a=VwQbUJbxAAAA:8 a=dGy_cPlXK_KhQYNS9IIA:9 a=CjuIK1q_8ugA:10 a=pJ04lnu7RYOZP9TFuWaZ:22
+X-Proofpoint-ORIG-GUID: 1lywJdweXw2vm-WU8oqRjo3Dw0jhf6iu
+X-Proofpoint-GUID: 1lywJdweXw2vm-WU8oqRjo3Dw0jhf6iu
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-17_04,2025-03-17_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ lowpriorityscore=0 bulkscore=0 mlxscore=0 mlxlogscore=952 spamscore=0
+ clxscore=1015 suspectscore=0 adultscore=0 phishscore=0 malwarescore=0
+ priorityscore=1501 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503170083
 
+On Mon, Mar 17, 2025 at 10:45:16AM +0100, Maxime Ripard wrote:
+> On Fri, Mar 14, 2025 at 08:55:05PM +0200, Dmitry Baryshkov wrote:
+> > On Fri, Mar 14, 2025 at 05:54:14PM +0000, Maxime Ripard wrote:
+> > > On Fri, 14 Mar 2025 11:36:49 +0200, Dmitry Baryshkov wrote:
+> > > > It is common for the DisplayPort bridges to implement audio support. In
+> > > > preparation to providing a generic framework for DP audio, add
+> > > > corresponding interface to struct drm_bridge. As suggested by Maxime
+> > > > for now this is mostly c&p of the corresponding HDMI audio API.
+> > > > 
+> > > > 
+> > > > [ ... ]
+> > > 
+> > > Reviewed-by: Maxime Ripard <mripard@kernel.org>
+> > 
+> > You've sent two r-b's for patch 2. Is there a chance that one of those
+> > was for patch 3?
+> 
+> Did I? Sorry, it was indeed meant for patch 3
 
---XEGLpz3pfiqoz7zZ
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Yes, at least mutt and lore show both under patch 2. If/when you have
+time, could you please fix that so that the r-b is recorded for future
+generations?
 
-Hi Jonathan,
-
-
-Jonathan Cameron <jic23@kernel.org> schrieb am Mo, 17. M=C3=A4r 11:00:
-> On Sun, 16 Mar 2025 12:31:29 +0100
-> Andreas Klinger <ak@it-klinger.de> wrote:
->=20
-> > Add a new compatible for Vishay high accuracy RGBIR color sensor
-> > veml6046x00.
-> >=20
-> > Signed-off-by: Andreas Klinger <ak@it-klinger.de>
-> > ---
-> >  .../iio/light/vishay,veml6046x00.yaml         | 49 +++++++++++++++++++
-> >  1 file changed, 49 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/iio/light/vishay,=
-veml6046x00.yaml
-> >=20
-> > diff --git a/Documentation/devicetree/bindings/iio/light/vishay,veml604=
-6x00.yaml b/Documentation/devicetree/bindings/iio/light/vishay,veml6046x00.=
-yaml
-> > new file mode 100644
-> > index 000000000000..3207800fc539
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/iio/light/vishay,veml6046x00.ya=
-ml
-> > @@ -0,0 +1,49 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/iio/light/vishay,veml6046x00.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: Vishay VEML6046X00 High accuracy RGBIR color sensor
-> > +
-> > +maintainers:
-> > +  - Andreas Klinger <ak@it-klinger.de>
-> > +
-> > +description:
-> > +  VEML6046X00 datasheet at https://www.vishay.com/docs/80173/veml6046x=
-00.pdf
-> > +
-> > +properties:
-> > +  compatible:
-> > +    enum:
-> > +      - vishay,veml6046x00
-> > +
-> > +  reg:
-> > +    maxItems: 1
-> > +
-> > +  vdd-supply: true
-> > +
-> > +  interrupts:
-> > +    maxItems: 1
-> > +
-> > +required:
-> > +  - compatible
-> > +  - reg
-> > +  - vdd-supply
-> > +
-> > +additionalProperties: false
-> > +
-> > +examples:
-> > +  - |
-> > +    i2c {
-> > +        #address-cells =3D <1>;
-> > +        #size-cells =3D <0>;
-> > +
-> > +        color-sensor@29 {
-> > +            compatible =3D "vishay,veml6046x00";
-> > +            reg =3D <0x29>;
-> > +            vdd-supply =3D <&vdd_reg>;
-> > +            interrupt-parent =3D <&gpio2>;
-> > +            interrupts =3D <3 IRQ_TYPE_EDGE_FALLING>;
-> Need an include for this I think.  Make sure to test build your
-> bindings following the instructions in the bot message.
-
-I already sent out an version 2 yesterday which is with the include, tested=
- and
-already reviewed by Krzysztof.
-
-Andreas
-
->=20
-> Thanks,
->=20
-> Jonathan
->=20
-> > +        };
-> > +    };
-> > +...
->=20
-
---XEGLpz3pfiqoz7zZ
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQGzBAABCgAdFiEE7/NrAFtB/Pj7rTUyyHDM+xwPAVEFAmfYBL0ACgkQyHDM+xwP
-AVE2lQv9GdwIjbFFQpSvLsazG5OU3K07IvPqo35rsS/LWbOon1cgXXLdLbpO/qZY
-uz6I/70wIzNxh2TFTKBZZYwMGJW76erVQbnRQV1tb+OLDqYgvGNIa7BAqqsrYGcP
-t1VTvDoiR5+xawWbaeiIaAMtNtaM2jDBJRslmdmx7zwCSsHaTRLCEe83oiuEDlYL
-FmcIQqixuiupDtjdXkj8dTciGUAtpS9pOqihxT/5EOueA6+e8B0LAlhLcKhNKEKD
-qKx5VTwWU8F1gaX/4BawUXhMY9ZmJzuEwMqQkMIWtOYVDTIT/2WMyowrQJ998vQ5
-F0CqB+P9lmnOnrMX7rK8kw6b0qJgNMm1nX3weyE8QSZfhktHyjide90SqREbsENn
-r05jziiGjpCrJwOO0FizygmA/3xs3cr4f6YzGt3viE9tjXmeMpK/6fFjATmReTXP
-DVaduXUwY5v2vj3jnU90aEBJn2gVCrtB/8inSCqAUSH+IBekuLh+K9W3PWrCEVr6
-Ft/LQ0id
-=H3cW
------END PGP SIGNATURE-----
-
---XEGLpz3pfiqoz7zZ--
+-- 
+With best wishes
+Dmitry
 
