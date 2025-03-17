@@ -1,70 +1,121 @@
-Return-Path: <linux-kernel+bounces-564984-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564985-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43F15A65E55
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 20:45:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00647A65E54
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 20:45:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A78E47AD793
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 19:43:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C890C19A0938
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 19:45:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B74251F3B85;
-	Mon, 17 Mar 2025 19:44:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD1471EEA20;
+	Mon, 17 Mar 2025 19:44:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="syRpsLcJ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LOa737wr"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E5A11C6FF7;
-	Mon, 17 Mar 2025 19:44:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B5A41EB1A0;
+	Mon, 17 Mar 2025 19:44:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742240672; cv=none; b=uSn/Iyy5mMLA0/+RaslMTj3yEuDZ4t1KoGvnZ2tIPAGVyc40c+SeTaEvipVNZYOx6/uJnKqtx3CY7Pbhkk7w0PKFrXky0g2XxV6Ifj8xe7prOsJP2jjVUNAV9TItllbsxZeR5yh3UdvH2HKZdLWBQwafEH6n4cGvDfY7JUZ4gI4=
+	t=1742240685; cv=none; b=H9RJYuqhX8giPQoJbrHo6AaaOS+Fq81FujEd2ZHCOQQ0LdDu3/8RWCfo0Xsnzhrq1uJgCV2pZ1QBqbWQuaGaMi8GkZFpP+T07Gn8E8D5PTm066T2k34IQx+n5J+zFnX7+LI+MAaIdRWW11vZcgJjuPJ/yY10AoHgmG/Z3YnkXQI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742240672; c=relaxed/simple;
-	bh=HlITNVvztffv/YhxjM31NZ5/sBOmrPKFljobJEV2PPc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dw3E1nbfS/iim+N+8VBfjKLCYB5bb48PN0LDw2vgYarHIX4e2PDW+q8YhhBSpz2Ms6FRb303lPaOUEpbvONNPxYhVgMdPz08q0PIHtxk/dZprDkOUFc2K/hbVFYzv9PmCjT4eV+Acqb31qF7dGwzE/hXKtSpA7xLss4gbelbSRA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=syRpsLcJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1472EC4CEE3;
-	Mon, 17 Mar 2025 19:44:29 +0000 (UTC)
+	s=arc-20240116; t=1742240685; c=relaxed/simple;
+	bh=OiQVuvTN1/XflXpR3RqcHCaJ640D1uHI1i9Ur7T7qKs=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=dn89yCGnX5PboUpDyPyi/BrCdDHFIR7prBIqn+tGT0Pcz43OHkUzZXex3NSIWh7fI+msyfLjms+mIlG8S2/1a+SWdHY29LFV7IS/WDolIr+M+H4+FvHR6bvBJsm9reX/JmjfwrGgxw51AzRa2lrL//iuaf/z/cJoCUpFvXuPT7M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LOa737wr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45DB4C4CEE3;
+	Mon, 17 Mar 2025 19:44:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742240671;
-	bh=HlITNVvztffv/YhxjM31NZ5/sBOmrPKFljobJEV2PPc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=syRpsLcJNEt1jnJXJNL/GF67SRnQaAKAngx5z9gtQZwgJdAY6EinU+CmwWv9HLu9X
-	 KKJz+yCfhi7/eZIU92/m09HTVCpOqk+T6FlxL9giBq+6jTn+9nvdE875XeYK/hSj0d
-	 dwwJ/QP82YyCoae1X7Jhf2Z0Hu2uNdTLy9mEo0InvyFhDFs6agRF5y/8qXZkuGTmJc
-	 SdOhUsVmYTesLN+54hy1swC4WdVR1zCSjVyP+z+HY8e8SzzNL0Mu1tWOFaWMdU+ubf
-	 Nv5nOdF9wLJwodSFVBXsdfvtT/YDE7C0dAbiFEsPL7RTrba3bwi7lK1WC5vl+M21DH
-	 rMTbUtj48Jr/Q==
-Date: Mon, 17 Mar 2025 19:44:28 +0000
-From: Simon Horman <horms@kernel.org>
-To: Yue Haibing <yuehaibing@huawei.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next] net: skbuff: Remove unused skb_add_data()
-Message-ID: <20250317194428.GM688833@kernel.org>
-References: <20250312063450.183652-1-yuehaibing@huawei.com>
+	s=k20201202; t=1742240684;
+	bh=OiQVuvTN1/XflXpR3RqcHCaJ640D1uHI1i9Ur7T7qKs=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=LOa737wrjHepnbxep326FXIDSAcB2rL++PYLUj/AszMLNZHv7tdoRhUNrX9QZrleC
+	 A0dKbD1XhZRR5Kv2Fi+eBXALlamDgHb3ExZfje4E09ZLXgLCzdM/CMLltD/YSV7Pql
+	 e7ZJ5fJgFeVAZJVt/ZwuHnhroS4ZRwlm5COLLNnvU8vbZJXfoyHcuiETR0b9hB60XY
+	 aFKci0gMNcgOLFIieuVYhfo08wg0yLhvo7tpxm4rMSU2JW1PuIIf5br0HavPhfuvHQ
+	 PCMfyIH4pXJC7Kvc1Ss6nyRrHrpCcUm6EDHLoZdJDiFJf2sqKkQp++J2gbgdnaGf5p
+	 pRfeDmX1+CpwQ==
+Date: Mon, 17 Mar 2025 14:44:43 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250312063450.183652-1-yuehaibing@huawei.com>
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+ Abhinav Kumar <quic_abhinavk@quicinc.com>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Marijn Suijten <marijn.suijten@somainline.org>, 
+ Georgi Djakov <djakov@kernel.org>, James Clark <james.clark@linaro.org>, 
+ Bjorn Andersson <andersson@kernel.org>, Andy Gross <andy.gross@linaro.org>, 
+ Simona Vetter <simona@ffwll.ch>, linux-arm-kernel@lists.infradead.org, 
+ Leo Yan <leo.yan@linux.dev>, Andy Gross <agross@codeaurora.org>, 
+ devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+ Konrad Dybcio <konradybcio@kernel.org>, David Airlie <airlied@gmail.com>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Lee Jones <lee@kernel.org>, 
+ coresight@lists.linaro.org, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ "Ivan T. Ivanov" <ivan.ivanov@linaro.org>, 
+ Mike Leach <mike.leach@linaro.org>, Maxime Ripard <mripard@kernel.org>, 
+ linux-kernel@vger.kernel.org, Rob Clark <robdclark@gmail.com>, 
+ Thomas Zimmermann <tzimmermann@suse.de>, David Heidelberg <david@ixit.cz>, 
+ freedreno@lists.freedesktop.org, Sean Paul <sean@poorly.run>, 
+ linux-arm-msm@vger.kernel.org, Neil Armstrong <neil.armstrong@linaro.org>, 
+ Mathieu Poirier <mathieu.poirier@linaro.org>, 
+ Suzuki K Poulose <suzuki.poulose@arm.com>, 
+ Kumar Gala <galak@codeaurora.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+In-Reply-To: <20250317-fix-nexus-4-v1-4-655c52e2ad97@oss.qualcomm.com>
+References: <20250317-fix-nexus-4-v1-0-655c52e2ad97@oss.qualcomm.com>
+ <20250317-fix-nexus-4-v1-4-655c52e2ad97@oss.qualcomm.com>
+Message-Id: <174224068328.474126.11922746474259386307.robh@kernel.org>
+Subject: Re: [PATCH 4/9] dt-bindings: arm:
+ qcom,coresight-static-replicator: add optional clocks
 
-On Wed, Mar 12, 2025 at 02:34:50PM +0800, Yue Haibing wrote:
-> Since commit a4ea4c477619 ("rxrpc: Don't use a ring buffer for call Tx
-> queue") this function is not used anymore.
+
+On Mon, 17 Mar 2025 19:44:39 +0200, Dmitry Baryshkov wrote:
+> As most other CoreSight devices the replicator can use either of the
+> optional clocks (or both). Document those optional clocks in the schema.
 > 
-> Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
+> Fixes: 3c15fddf3121 ("dt-bindings: arm: Convert CoreSight bindings to DT schema")
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+> ---
+>  .../bindings/arm/arm,coresight-static-replicator.yaml          | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+> 
 
-Reviewed-by: Simon Horman <horms@kernel.org>
+My bot found errors running 'make dt_binding_check' on your patch:
+
+yamllint warnings/errors:
+
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/arm/arm,coresight-static-replicator.yaml: properties:clock-names: 'enum' should not be valid under {'enum': ['const', 'enum', 'exclusiveMaximum', 'exclusiveMinimum', 'minimum', 'maximum', 'multipleOf', 'pattern']}
+	hint: Scalar and array keywords cannot be mixed
+	from schema $id: http://devicetree.org/meta-schemas/keywords.yaml#
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250317-fix-nexus-4-v1-4-655c52e2ad97@oss.qualcomm.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
 
 
