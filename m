@@ -1,250 +1,265 @@
-Return-Path: <linux-kernel+bounces-564465-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564467-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81415A655BC
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 16:32:34 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80BB8A655CA
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 16:33:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B7C211898447
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 15:32:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F39C37A7713
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 15:31:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0DE624DFF6;
-	Mon, 17 Mar 2025 15:30:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FZZ7PEYK"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43DA824A04F;
+	Mon, 17 Mar 2025 15:31:35 +0000 (UTC)
+Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F493248891;
-	Mon, 17 Mar 2025 15:30:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A861F248195
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 15:31:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742225437; cv=none; b=uXJGomg5Dsh7ENYzmzGhITVH2ZHwo4w7hhfIEmXF6JcLhAGh2ZbN8ZY/nvkwjnJPE3wNn5+xuXcaVGJsrPfEMJV3KsljT0+y/WK4sMWV9PsFb7cWr/KEjbxoaGif6eWD1AX5UDX949KmMKwG5TIkIlllMkIbf0bucFoA77H7qBY=
+	t=1742225494; cv=none; b=lsNT6P/r7Y/tcYnT6AQJSxJhfDdvkWKAQ1DLD2L3bCj2omvgy7ugRJcXA2pa40KwxO56Pat1BdJofCvNly1qUdOlL85og9XILmSZs5nybWNCmDBi0k0kBzOdd7qWxQiq0wefjZMUKKct0D4q1mbMrRp2jDBtt4gXPOj135dCtC8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742225437; c=relaxed/simple;
-	bh=C+W3kd4+v5TVLwjpGOynMcqkXwzK5jGbOBiTl1R5l/w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X3nU8rTQwozReTQE901UKIx/u4Ht5wV+J1B2yeAcsFiyzIL5FAO+I0WSqkPv2tjHjd+EyY5y05zrbNNeIOWR1+9XiYej8WTVqZqhS/XOuYKUOOmBLWiJn2SYgohToQQFMclsirVTNV7TgZgknExS/mYI5VtUovU2XF+1CFHpyZ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FZZ7PEYK; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-226185948ffso20437435ad.0;
-        Mon, 17 Mar 2025 08:30:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742225433; x=1742830233; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=y5gJh5Eadmca86/ej6h5ytEhpVhFbI54t41u4rv/hs4=;
-        b=FZZ7PEYKpzeh3hX7NRwtAMRrOqRG4xd89vXOaIbSYmuJ0A8m65I12L9ZCFh5bTUiL+
-         SMjIDkPd8gnY5E1o4oR2JRkCqq8MUWmm5YaDSvxlh08Y3lhv0k0FSDlJlb/MD8AkwyIF
-         Ss92ykWgdE//DQYb1o99+dNgZ1NK3ZUYHtFpYoFupGTusBayNRrspDrt0dz3mfkDz9DR
-         6QMaz2PMl6fIY6jskipxm85f5URYd6DjIrr7c1cggHui4StbpJyYyVwsp2HXWyKRIJf2
-         LEma+3etArc7MSmNWt3YfMoKD5DMiIV2E+Ynvq+qcO4woSnkHbSa/QEdo3JcNyiZ6qMr
-         xn0w==
+	s=arc-20240116; t=1742225494; c=relaxed/simple;
+	bh=a9tOcJvICKfwQlzKQ1Gg+cqvgcLxdfWCM9qRpztJ3Do=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=lpieXfrg2II6LeTEe7QXPMGku7R5AXyeQPUr2XH+LhCZrEhbOhILj1wzeNQ10mOnobtjJht3i64aVFDVuF0Oyw+jSp+tKnz2UY5/ibuiiHze5YffjXBC7XQvg6sKPWO/KfBdq6Z3le0H1y6KvJ+lmt98PKo2gDMZb25lBe+Kd1E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-3d43b460962so98246535ab.2
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 08:31:31 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742225433; x=1742830233;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=y5gJh5Eadmca86/ej6h5ytEhpVhFbI54t41u4rv/hs4=;
-        b=PkLMlPICrNGtmQekzpRRsrV+pAZxvF85G23U7cSRC1g3IYXk1PNQ5K0STM/tRQxKRe
-         +q72FuGyzOaPU7B6k6ntMM/byE9vDEb1uV5Z+MaN4oiLuAbYIP7PM1bbZ1TYc+5mXGkj
-         XW0vsLqzR2DTHWz6Yo9pxDnHNhVq0OPQquKJijuwS2XmXd2ja0PtCGX3BEX+drGEO7b1
-         wX0pr9SXSr05xkYVhINY6Hu5ThoWwU5TkLBV5sX8NcsYkRIkCUVh3o+XraeImRTqHLOL
-         VtGZhMWbJuhVGT9OGX2nmTXOj8f8rvAD+hocl5mtX6R8Mg1GSs5gq67YJP+pOAr8AlOi
-         SBYA==
-X-Forwarded-Encrypted: i=1; AJvYcCV6RqSEj5sY2Rt1r/lWh1pPpMxJZiA7qSQ9Up9Ejt9d0tmFtHizv4dgqQrc2YF+i6kbSr7wdbiRglH0d6XM@vger.kernel.org, AJvYcCWYI1wi8FSWcEUb67n/UrefxqXifxH3E48BCQ+IDNzZwXQx7vr66JWxyP+bm6Ml5DAzE1YlQDRi8shd@vger.kernel.org, AJvYcCXM+dodJYEsuVvYkNYdHe+2LjBpYTSyA6Hcc6G00i/n5UzO4HIMxrowpLB+ng/PY6NbiWrh/VRh0rQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyqXtM/VcjQ6Kv+AHAVoxZLIw2BknSz20yTwdIH6hm4N5tocsjM
-	/MKAQYaaIxF6LKVElO1zsuM9Fxko/qyhjvcojqbbnyPdMv4bpgpO
-X-Gm-Gg: ASbGncthaTeNz2sqZrKNOfMISu4TkSy0LZtrxpvPDjTGwIXekuQAwVN/mxrW8RkFTve
-	+IZgIIYHR/bJl/9g9sRzZM7HnWwg6QrQFwniJh/698drUZxG7Yegkwzq5BygwHM/93oSkCenCVE
-	syvCDi2MXmAdAU4UeuX+/GtEV2dTvp61Qm02MDbFpCNq22iaV8CUJTd5T8AHRxuQOVAARoCS16i
-	chWnov8EuYpXXX0WymHM6vGmXkLDdjHuHfYw7b3R218jLCYaWxDOPBdz0s2malIJSBSgiaHhH3e
-	PJOENKWlP7O7kmfOvqcRp9EKXOfGdWc6Mb9TGd/ymyiOtuCR0Pj+pA==
-X-Google-Smtp-Source: AGHT+IHCE2g1unOOKhest7l0/SVHeZt3puUsiLsau9c4ECUa088fp1tCbdUjpDJ/ca4QLxUiFLAA8Q==
-X-Received: by 2002:a17:902:e806:b0:224:78e:4ebe with SMTP id d9443c01a7336-225e0aeea0cmr161127745ad.33.1742225433341;
-        Mon, 17 Mar 2025 08:30:33 -0700 (PDT)
-Received: from localhost ([2804:30c:b31:2d00:277c:5cbe:7f44:752b])
-        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-225c6ba6a38sm76423745ad.108.2025.03.17.08.30.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Mar 2025 08:30:32 -0700 (PDT)
-Date: Mon, 17 Mar 2025 12:31:30 -0300
-From: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Marcelo Schmitt <marcelo.schmitt@analog.com>, linux-iio@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	lars@metafoo.de, Michael.Hennerich@analog.com, corbet@lwn.net
-Subject: Re: [PATCH v1 1/4] iio: adc: ad4000: Add support for SPI offload
-Message-ID: <Z9hAUs1wPOIAo2nt@debian-BULLSEYE-live-builder-AMD64>
-References: <cover.1741970538.git.marcelo.schmitt@analog.com>
- <301fc83a961c4a2ef2ac980d0baa83d9d89a88c5.1741970538.git.marcelo.schmitt@analog.com>
- <20250317102751.5702fb82@jic23-huawei>
+        d=1e100.net; s=20230601; t=1742225491; x=1742830291;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=fHF9CFj0CyBGv7pEPhPrZdGlspc1yKnU78g2f2aMVsQ=;
+        b=SGOgq/58wQVnNs+rljJonLlmTZ0iULgBynEkMif1WEjt/1LUOIuRRiVdWiei1XFIHR
+         xF1DQcqGL6XjdOkFj1D+vGcYM2QnnVaj4Hu8lmghkQKXPnmWjLCGu5tiXWskEHP7WzxL
+         NB4vu9s3NHmp5sJ2AJH4bjUcao8NFSqvzunm1n4ngLwRuVOmLFm0OsgH6UK9WvRSZxpw
+         ik7XfkhDbSRP/vG2Xngusb1XmnXpN116CHMXzak+uOPsPotf5DEwlwwoJ+9FICPeFvnk
+         zq1cADeI2oMFbBDhFX/Njrpk5qGrpa3DttUy+8zjTISSBacT81vT8fGKi7Q2m9ULgmgf
+         XLTg==
+X-Forwarded-Encrypted: i=1; AJvYcCWwExp9pobQo9xo5vzyFZotjOFdygjziI3m18Z/mdwR6O4UwVAfT9FY1emNWnwx2ljFx0ZSz8uvRFlwtJY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxctCuMkistdcuMNBUsoBmSDfeleGCZ7ufaGE4piXO23vKagHUe
+	w1us/QU2IE1brcpP/O7IFlxlHyt9oxQcBk3/vnf9RKRAx/xoiNguRk4DA6wPpJVCrj9v4OHyz9M
+	TEJUMopgug2JgUO7WrCZ3vz1/ryMZqplO3DAYW/knc/WDIJRwxcszptA=
+X-Google-Smtp-Source: AGHT+IEz5reQvm0Vb1hMjH4/SkesiyYrQ5DriHUUtBLTwR8e78WsdmrC1+vzx8HEZaEHPbe852f8z0XWv0k3XOxWi11meivgzgPw
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250317102751.5702fb82@jic23-huawei>
+X-Received: by 2002:a05:6e02:174c:b0:3d4:337f:121b with SMTP id
+ e9e14a558f8ab-3d57b9c1425mr3446125ab.8.1742225490602; Mon, 17 Mar 2025
+ 08:31:30 -0700 (PDT)
+Date: Mon, 17 Mar 2025 08:31:30 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67d84052.050a0220.3657bb.0006.GAE@google.com>
+Subject: [syzbot] [bcachefs?] INFO: task hung in __closure_sync_timeout (2)
+From: syzbot <syzbot+77e39767e330b03df7af@syzkaller.appspotmail.com>
+To: anna-maria@linutronix.de, frederic@kernel.org, kent.overstreet@linux.dev, 
+	linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com, tglx@linutronix.de
+Content-Type: text/plain; charset="UTF-8"
 
-...
-> > diff --git a/drivers/iio/adc/ad4000.c b/drivers/iio/adc/ad4000.c
-> > index 4fe8dee48da9..6c9b71e7a2fb 100644
-> > --- a/drivers/iio/adc/ad4000.c
-> > +++ b/drivers/iio/adc/ad4000.c
-> 
-> > +
-> > +static int ad4000_offload_buffer_postdisable(struct iio_dev *indio_dev)
-> > +{
-> > +	struct ad4000_state *st = iio_priv(indio_dev);
-> > +
-> > +	spi_offload_trigger_disable(st->offload, st->offload_trigger);
-> 
-> Trivial. Prefer a blank line before a 'simple return' like this one.
-> 
-Ack
+Hello,
 
-> > +	return 0;
-> > +}
-> 
-> 
-...
-> > +/*
-> > + * This executes a data sample transfer when using SPI offloading for when the
-> > + * device connections are in "3-wire" mode, selected when the adi,sdi-pin device
-> > + * tree property is set to "high". In this connection mode, the ADC SDI pin is
-> > + * connected to VIO and ADC CNV pin is connected to a SPI controller CS (it
-> > + * can't be connected to a GPIO).
-> > + *
-> > + * In order to achieve the maximum sample rate, we only do one transfer per
-> > + * SPI offload trigger. This has the effect that the first sample data is not
-> > + * valid because it is reading the previous conversion result. We also use
-> 
-> Say what happens to that invalid sample.  Is it dropped or provided to userspace
-> as if it were valid?  (I hope dropped!)
+syzbot found the following issue on:
 
-TL;DR: The invalid sample goes into the buffer as a valid one.
+HEAD commit:    eb88e6bfbc0a Merge tag 'fsnotify_for_v6.14-rc7' of git://g..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=176d83b0580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=eb44f62cb82f8a0a
+dashboard link: https://syzkaller.appspot.com/bug?extid=77e39767e330b03df7af
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1583bff8580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=119c7698580000
 
-In AD4000 '3-wire' mode, data capture has a latency (delay) of one sample.
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-eb88e6bf.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/dd1bfa9979b6/vmlinux-eb88e6bf.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/5dce0ab6f758/bzImage-eb88e6bf.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/78f15ca8a908/mount_0.gz
 
-The ADC begins sampling data N at CNV rising edge
-          |   +-- CNV (usually SPI CS) is brought low to begin reading the data
-          |   |                                +-- Data N + 1 that will be read
-          |   |                                |   on the next transfer starts 
-          v   v                                v   being sampled at end of transfer N.
-           ___                                  ____            
-CNV  _____/   \________________________________/    \_____
-                    _     _             _
-SCLK ______________/ \___/ \_ ...   ___/ \_______________
-                   ___   ___           ___
-SDO  _____________/___\_/___\ ...   __/___\_______________
-                    ^
-                    |
-             Data from conversion N is output from here on
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+77e39767e330b03df7af@syzkaller.appspotmail.com
 
-A better drawing can be found in datasheet page 29, Figure 57.
-https://www.analog.com/media/en/technical-documentation/data-sheets/ADAQ4003.pdf
+INFO: task kworker/u4:6:1037 blocked for more than 143 seconds.
+      Not tainted 6.14.0-rc6-syzkaller-00212-geb88e6bfbc0a #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:kworker/u4:6    state:D stack:19128 pid:1037  tgid:1037  ppid:2      task_flags:0x4208060 flags:0x00004000
+Workqueue: btree_node_rewrite async_btree_node_rewrite_work
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5378 [inline]
+ __schedule+0x190e/0x4c90 kernel/sched/core.c:6765
+ __schedule_loop kernel/sched/core.c:6842 [inline]
+ schedule+0x14b/0x320 kernel/sched/core.c:6857
+ schedule_timeout+0x15a/0x290 kernel/time/sleep_timeout.c:99
+ __closure_sync_timeout+0x2d8/0x450 lib/closure.c:217
+ closure_sync_timeout include/linux/closure.h:206 [inline]
+ __bch2_wait_on_allocator+0x11a/0x250 fs/bcachefs/alloc_foreground.c:1728
+ bch2_wait_on_allocator fs/bcachefs/alloc_foreground.h:237 [inline]
+ bch2_btree_update_start+0x1200/0x1540 fs/bcachefs/btree_update_interior.c:1254
+ bch2_btree_node_rewrite+0x1ba/0x1230 fs/bcachefs/btree_update_interior.c:2144
+ async_btree_node_rewrite_trans fs/bcachefs/btree_update_interior.c:2217 [inline]
+ async_btree_node_rewrite_work+0x3fb/0xf60 fs/bcachefs/btree_update_interior.c:2253
+ process_one_work kernel/workqueue.c:3238 [inline]
+ process_scheduled_works+0xabe/0x18e0 kernel/workqueue.c:3319
+ worker_thread+0x870/0xd30 kernel/workqueue.c:3400
+ kthread+0x7a9/0x920 kernel/kthread.c:464
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+INFO: task syz-executor848:5323 blocked for more than 143 seconds.
+      Not tainted 6.14.0-rc6-syzkaller-00212-geb88e6bfbc0a #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz-executor848 state:D stack:17200 pid:5323  tgid:5323  ppid:5322   task_flags:0x400140 flags:0x00004006
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5378 [inline]
+ __schedule+0x190e/0x4c90 kernel/sched/core.c:6765
+ __schedule_loop kernel/sched/core.c:6842 [inline]
+ schedule+0x14b/0x320 kernel/sched/core.c:6857
+ schedule_timeout+0x15a/0x290 kernel/time/sleep_timeout.c:99
+ __closure_sync_timeout+0x2d8/0x450 lib/closure.c:217
+ closure_sync_timeout include/linux/closure.h:206 [inline]
+ __bch2_wait_on_allocator+0x11a/0x250 fs/bcachefs/alloc_foreground.c:1728
+ bch2_wait_on_allocator fs/bcachefs/alloc_foreground.h:237 [inline]
+ bch2_btree_update_start+0x1200/0x1540 fs/bcachefs/btree_update_interior.c:1254
+ bch2_btree_split_leaf+0x121/0x880 fs/bcachefs/btree_update_interior.c:1853
+ bch2_trans_commit_error+0x212/0x1380 fs/bcachefs/btree_trans_commit.c:908
+ __bch2_trans_commit+0x8105/0x9790 fs/bcachefs/btree_trans_commit.c:1089
+ bch2_trans_commit fs/bcachefs/btree_update.h:191 [inline]
+ bch2_journal_replay+0x221b/0x2b10 fs/bcachefs/recovery.c:406
+ bch2_run_recovery_pass+0xf0/0x1e0 fs/bcachefs/recovery_passes.c:226
+ bch2_run_recovery_passes+0x2ad/0xa90 fs/bcachefs/recovery_passes.c:291
+ bch2_fs_recovery+0x265a/0x3de0 fs/bcachefs/recovery.c:936
+ bch2_fs_start+0x37c/0x610 fs/bcachefs/super.c:1041
+ bch2_fs_get_tree+0xdb7/0x17a0 fs/bcachefs/fs.c:2203
+ vfs_get_tree+0x90/0x2b0 fs/super.c:1814
+ do_new_mount+0x2be/0xb40 fs/namespace.c:3560
+ do_mount fs/namespace.c:3900 [inline]
+ __do_sys_mount fs/namespace.c:4111 [inline]
+ __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:4088
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7feb3b77fe2a
+RSP: 002b:00007ffceb5721e8 EFLAGS: 00000282 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 00007ffceb572200 RCX: 00007feb3b77fe2a
+RDX: 0000400000000040 RSI: 0000400000000000 RDI: 00007ffceb572200
+RBP: 0000400000000000 R08: 00007ffceb572240 R09: 0000000000005900
+R10: 0000000000800000 R11: 0000000000000282 R12: 0000400000000040
+R13: 00007ffceb572240 R14: 0000000000000003 R15: 0000000000800000
+ </TASK>
+INFO: task bch-reclaim/loo:5332 blocked for more than 143 seconds.
+      Not tainted 6.14.0-rc6-syzkaller-00212-geb88e6bfbc0a #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:bch-reclaim/loo state:D stack:22864 pid:5332  tgid:5332  ppid:2      task_flags:0x200840 flags:0x00004000
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5378 [inline]
+ __schedule+0x190e/0x4c90 kernel/sched/core.c:6765
+ __schedule_loop kernel/sched/core.c:6842 [inline]
+ schedule+0x14b/0x320 kernel/sched/core.c:6857
+ schedule_timeout+0x15a/0x290 kernel/time/sleep_timeout.c:99
+ __closure_sync_timeout+0x2d8/0x450 lib/closure.c:217
+ closure_sync_timeout include/linux/closure.h:206 [inline]
+ __bch2_wait_on_allocator+0x11a/0x250 fs/bcachefs/alloc_foreground.c:1728
+ bch2_wait_on_allocator fs/bcachefs/alloc_foreground.h:237 [inline]
+ bch2_btree_update_start+0x1200/0x1540 fs/bcachefs/btree_update_interior.c:1254
+ bch2_btree_split_leaf+0x121/0x880 fs/bcachefs/btree_update_interior.c:1853
+ bch2_trans_commit_error+0x212/0x1380 fs/bcachefs/btree_trans_commit.c:908
+ __bch2_trans_commit+0x8105/0x9790 fs/bcachefs/btree_trans_commit.c:1089
+ bch2_trans_commit fs/bcachefs/btree_update.h:191 [inline]
+ bch2_btree_write_buffer_flush_locked+0x4b12/0x5570 fs/bcachefs/btree_write_buffer.c:452
+ btree_write_buffer_flush_seq+0x1c49/0x1e10 fs/bcachefs/btree_write_buffer.c:570
+ bch2_btree_write_buffer_journal_flush+0xc7/0x150 fs/bcachefs/btree_write_buffer.c:586
+ journal_flush_pins+0x89b/0xe40 fs/bcachefs/journal_reclaim.c:589
+ __bch2_journal_reclaim+0x789/0xda0 fs/bcachefs/journal_reclaim.c:722
+ bch2_journal_reclaim_thread+0x17a/0x570 fs/bcachefs/journal_reclaim.c:764
+ kthread+0x7a9/0x920 kernel/kthread.c:464
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
 
-In sum, we're always reading a conversion that started at the end of the
-previous SPI transfer or, in other words, the data comes out with a latency
-(delay) of one read.
+Showing all locks held in the system:
+1 lock held by khungtaskd/26:
+ #0: ffffffff8eb393e0 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire include/linux/rcupdate.h:337 [inline]
+ #0: ffffffff8eb393e0 (rcu_read_lock){....}-{1:3}, at: rcu_read_lock include/linux/rcupdate.h:849 [inline]
+ #0: ffffffff8eb393e0 (rcu_read_lock){....}-{1:3}, at: debug_show_all_locks+0x55/0x2a0 kernel/locking/lockdep.c:6746
+4 locks held by kworker/u4:6/1037:
+ #0: ffff88804085c148 ((wq_completion)btree_node_rewrite){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3213 [inline]
+ #0: ffff88804085c148 ((wq_completion)btree_node_rewrite){+.+.}-{0:0}, at: process_scheduled_works+0x98b/0x18e0 kernel/workqueue.c:3319
+ #1: ffffc9000252fc60 ((work_completion)(&a->work)){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3214 [inline]
+ #1: ffffc9000252fc60 ((work_completion)(&a->work)){+.+.}-{0:0}, at: process_scheduled_works+0x9c6/0x18e0 kernel/workqueue.c:3319
+ #2: ffff888044884378 (&c->btree_trans_barrier){.+.+}-{0:0}, at: srcu_lock_acquire include/linux/srcu.h:164 [inline]
+ #2: ffff888044884378 (&c->btree_trans_barrier){.+.+}-{0:0}, at: srcu_read_lock include/linux/srcu.h:256 [inline]
+ #2: ffff888044884378 (&c->btree_trans_barrier){.+.+}-{0:0}, at: bch2_trans_srcu_lock+0x9a/0x1a0 fs/bcachefs/btree_iter.c:3225
+ #3: ffff8880448a66d0 (&c->gc_lock){.+.+}-{4:4}, at: bch2_btree_update_start+0x680/0x1540 fs/bcachefs/btree_update_interior.c:1182
+2 locks held by getty/5105:
+ #0: ffff8880003510a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x25/0x70 drivers/tty/tty_ldisc.c:243
+ #1: ffffc9000019b2f0 (&ldata->atomic_read_lock){+.+.}-{4:4}, at: n_tty_read+0x616/0x1770 drivers/tty/n_tty.c:2211
+3 locks held by syz-executor848/5323:
+ #0: ffff888044880278 (&c->state_lock){+.+.}-{4:4}, at: bch2_fs_start+0x45/0x610 fs/bcachefs/super.c:1010
+ #1: ffff888044884378 (&c->btree_trans_barrier){.+.+}-{0:0}, at: srcu_lock_acquire include/linux/srcu.h:164 [inline]
+ #1: ffff888044884378 (&c->btree_trans_barrier){.+.+}-{0:0}, at: srcu_read_lock include/linux/srcu.h:256 [inline]
+ #1: ffff888044884378 (&c->btree_trans_barrier){.+.+}-{0:0}, at: bch2_trans_srcu_lock+0x9a/0x1a0 fs/bcachefs/btree_iter.c:3225
+ #2: ffff8880448a66d0 (&c->gc_lock){.+.+}-{4:4}, at: bch2_btree_update_start+0x680/0x1540 fs/bcachefs/btree_update_interior.c:1182
+4 locks held by bch-reclaim/loo/5332:
+ #0: ffff8880448cb028 (&j->reclaim_lock){+.+.}-{4:4}, at: bch2_journal_reclaim_thread+0x16d/0x570 fs/bcachefs/journal_reclaim.c:763
+ #1: ffff888044884378 (&c->btree_trans_barrier){.+.+}-{0:0}, at: srcu_lock_acquire include/linux/srcu.h:164 [inline]
+ #1: ffff888044884378 (&c->btree_trans_barrier){.+.+}-{0:0}, at: srcu_read_lock include/linux/srcu.h:256 [inline]
+ #1: ffff888044884378 (&c->btree_trans_barrier){.+.+}-{0:0}, at: __bch2_trans_get+0x7e4/0xd30 fs/bcachefs/btree_iter.c:3408
+ #2: ffff888044884720 (&wb->flushing.lock){+.+.}-{4:4}, at: btree_write_buffer_flush_seq+0x1c3f/0x1e10 fs/bcachefs/btree_write_buffer.c:569
+ #3: ffff8880448a66d0 (&c->gc_lock){.+.+}-{4:4}, at: bch2_btree_update_start+0x680/0x1540 fs/bcachefs/btree_update_interior.c:1182
 
-Datasheet somehow mentions that by saying
-	When turbo mode is enabled, the conversion result read on SDO corresponds to
-	the result of the previous conversion.
+=============================================
 
-I think I can do a dummy SPI transfer on buffer preenable so at least the
-first data is not invalid. Would that be better?
+NMI backtrace for cpu 0
+CPU: 0 UID: 0 PID: 26 Comm: khungtaskd Not tainted 6.14.0-rc6-syzkaller-00212-geb88e6bfbc0a #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+ nmi_cpu_backtrace+0x49c/0x4d0 lib/nmi_backtrace.c:113
+ nmi_trigger_cpumask_backtrace+0x198/0x320 lib/nmi_backtrace.c:62
+ trigger_all_cpu_backtrace include/linux/nmi.h:162 [inline]
+ check_hung_uninterruptible_tasks kernel/hung_task.c:236 [inline]
+ watchdog+0x1058/0x10a0 kernel/hung_task.c:399
+ kthread+0x7a9/0x920 kernel/kthread.c:464
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
 
-> 
-> > + * bits_per_word to ensure the minimum of SCLK cycles are used. And a delay is
-> > + * added to make sure we meet the minimum quiet time before releasing the CS
-> > + * line. Plus the CS change delay is set to ensure that we meet the minimum
-> > + * conversion time before asserting CS again.
-> > + *
-> > + * This timing is only valid if turbo mode is disabled (reading during acquisition).
-> > + */
-> > +static int ad4000_prepare_offload_message(struct ad4000_state *st,
-> > +					  const struct iio_chan_spec *chan)
-> > +
-> 
-...
-> > +		xfers[1].bits_per_word = chan->scan_type.realbits;
-> >  	xfers[1].delay.value = st->time_spec->t_quiet2_ns;
-> >  	xfers[1].delay.unit = SPI_DELAY_UNIT_NSECS;
-> >  
-> > @@ -719,7 +1007,9 @@ static int ad4000_prepare_4wire_mode_message(struct ad4000_state *st,
-> >  	xfers[0].delay.unit = SPI_DELAY_UNIT_NSECS;
-> >  
-> >  	xfers[1].rx_buf = &st->scan.data;
-> > -	xfers[1].len = BITS_TO_BYTES(chan->scan_type.storagebits);
-> > +	xfers[1].len = chan->scan_type.realbits > 16 ? 4 : 2;
-> > +	if (chan->scan_type.endianness != IIO_BE)
-> 
-> This is odd enough to require a comment.  Why is endianness relevant?
 
-When using SPI offloading (at least with PULSAR-ADC HDL project [1]), ADC data
-is read by SPI controller and pushed to DMA memory in CPU endianness. I don't
-know exactly where data gets rearranged in the data path (whether SPI-Engine,
-the DMA controller, or something else rearranges ADC data into CPU endianess).
-But I know, from testing with these ADCs and HDL project, that data is correct
-when read in CPU endianness because it converts back to expected mV values.
-When IIO buffers were set to IIO_BE and SPI offloading is used, data just looked
-weird and didn't convert to expected values in mV.
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-[1]: https://analogdevicesinc.github.io/hdl/projects/pulsar_adc/index.html
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-Other IIO drivers also set IIO_CPU buffer endianness when using offload support,
-e.g. ad7944, ad7380.
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-They only say buffer would use 32 storagebits when using SPI offload.
-https://lore.kernel.org/linux-iio/20250207-dlech-mainline-spi-engine-offload-2-v8-10-e48a489be48c@baylibre.com/
-https://lore.kernel.org/linux-iio/20250220-wip-bl-spi-offload-ad7380-v1-1-838aa873e62a@baylibre.com/#t
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
-I also didn't expect to find out HDL support for 16-bit data width was removed.
-We used to have a build parameter for 16-bit precision ADCs.
-https://github.com/analogdevicesinc/hdl/commit/b2dc91b30dae891b6319d88e083f26e726f43ba0#diff-1117c2618353232e5f22aa6a12e8ae976757fa897b3425f470a12123cae26535L13
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
-Would something like 'because SPI offloading leads to data being pushed to
-memory in CPU endianness' be a reasonable comment?
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
 
-...
-> 
-> > +		if (st->using_offload) {
-> > +			indio_dev->channels = &chip->reg_access_offload_chan_spec;
-> Set num_channels here
-Ack for all these
-
-> > +			ret = ad4000_prepare_offload_turbo_message(st, indio_dev->channels);
-...
-> 
-> Also set size here.  Obviously this means a little duplication but still good
-> to keep them together.
-Okay, sounds reasonable.
-
-> 
-> 
-> > +		}
-> 
-> >  	case AD4000_SDI_GND:
-> > @@ -830,7 +1175,10 @@ static int ad4000_probe(struct spi_device *spi)
-> >  	}
-> >  
-> >  	indio_dev->name = chip->dev_name;
-> > -	indio_dev->num_channels = 2;
-> > +	if (st->using_offload)
-> > +		indio_dev->num_channels = 1;
-> > +	else
-> > +		indio_dev->num_channels = 2;
-> 
-> Move this up to where you set channels so that the array
-> and size are set together.
-Acknowledged as all the above cases.
-
-Thanks,
-Marcelo
+If you want to undo deduplication, reply with:
+#syz undup
 
