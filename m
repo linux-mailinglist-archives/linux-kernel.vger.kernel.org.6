@@ -1,143 +1,165 @@
-Return-Path: <linux-kernel+bounces-564404-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564403-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F721A6542C
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 15:47:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C6C3A65428
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 15:46:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CDD951898392
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 14:47:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9340B3AA504
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 14:46:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E723A2459D9;
-	Mon, 17 Mar 2025 14:46:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HcN0nLDs"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EC3D22CBFC;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF24B2417F2;
 	Mon, 17 Mar 2025 14:46:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="Wtb81bW1"
+Received: from mail-24416.protonmail.ch (mail-24416.protonmail.ch [109.224.244.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F24D54652
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 14:46:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.224.244.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742222806; cv=none; b=ZwVBJS24b0JnUggX47t8ORF7D2tDvANH3Cnura3HsT14p+zR3cLEbxDOiIHbDnmp6okXLWOUeFpycp+qoYMKv56j/ZMvKCS6hOFe/gQy50VGmFHX5nyJ9jH2vKtEo2z0IFu4aR+eC/Bc6SrQ5iKLsFgjNKM7XGJCdfzwXuR6HwY=
+	t=1742222804; cv=none; b=b7R9cWpFT0w2oLDqiXVm67zxSQ+KdYjpvvGnD30nYUhrwLYu5+v1KBu1unR/cYSW44cqj59xMUKqogXa1XP1UfNEji0FhpqmAlax9Qfe4QpBPJZEofUQ015YSRx+X44oeyZ4h3usxFuwmb2wtOi5u5Zeriz3/HSn2kHEa8nifNA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742222806; c=relaxed/simple;
-	bh=KEmS1iazSZ7MW4u0s0WffWWZI/F30vXJvZhHvLypmnE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=abbccbcLnyw+OyvafPwypjNd4Scc3Gf3EPk8u4N3XeFW+vN6uBoFjBaJcvyxrq9fYHoAqBi04RAU2DCvnm63gOifVKgSS6uRFSWiigXq7ZqAtkmX8DzJycNH4z6QcfNqhNJVNSnjSVb5H71kaB4iR3uvTw/SH/gxjmr5UKUc/c4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HcN0nLDs; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-390fdaf2897so4255071f8f.0;
-        Mon, 17 Mar 2025 07:46:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742222803; x=1742827603; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=HEE7cJguboNfIM/ImN+bEQAuxRuRsoshNhnvPdF6CRk=;
-        b=HcN0nLDs4AimQH8YzhjWDKN+y9adOGi233YcpIQ1Xq4+xeojr1emNBp9inuBnrTJtF
-         vSyxe9mmnq7RFJ+Qk/0xJ90TwQXAVWc40oNS7m5r8SbdAE1XnV752dVxUczzYT6vVKN+
-         x1qGQHM0KXQk0pthbSIS0Adt0JfPBIh3/kNIM4EL5L1TABB0/VDj4+v0yyWOuYF9+vlL
-         QLU4tSDkrj41TqjEeU9veyPiYWCtUufwwt1XVzldoz1HBpK64yXRUT8Y/b/v/R60mXWU
-         4+n9rrncSnrX1fOe2xyER6coUpr2TTbTBiAbWaAi2y/yLXheuAJ5jM/t1EjV/hPG7M+f
-         TTxw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742222803; x=1742827603;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=HEE7cJguboNfIM/ImN+bEQAuxRuRsoshNhnvPdF6CRk=;
-        b=NlfdUWAyqwhLoruDHrgJGldwtkTP+PITT/vShtid1E8fXLNZBKdSFqrpKTFU+X1he6
-         +WJrbdXsr8zbCcbU06MG9EIn4uy7hjtSVZZUJBkrddn6k4WpvcuDALV61iLSH1GiURy0
-         yhHAp1VXa2N79puW7uQIpTgJ+lCdeEbL3Ws/NE8EKKDzT82oUuZJfMmM9nNzJMB3N5E4
-         Mmv3PaC7T1b03rDIejhlDKTD7VQnGYB9Jk/5x5dytoKqMSf2faXu/ApF3qHT76SgBj+w
-         gViwprkk9zMAl0vGBOf7vf7gvT2znux5y0WnemC27uZXH2fwdNb6SeP8oB6607qTXyq1
-         trFA==
-X-Forwarded-Encrypted: i=1; AJvYcCVDJTGnZVPtyv4BVyGnig+glYy4hnrysSv5f51cmcUBLjXETxQNJu6sBfCbYMC9qhTJB37XNaQ4Y7ipXKc=@vger.kernel.org, AJvYcCWcPiUUF9q66ZKl92LgRZJQLKVW+JEJJ/CsoKii6KYNY186R8uuc3U4qWLEHgd3y1kjNzfL3zcW@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx3Z/H997Dav0uWHHLSbt1HGNgcjgH/3bIQ+mKcO5gz7kEfHwLG
-	Is3W6xOYiXNwcLyHDMUy+ljoArdfVErHxSxg/8160A+eNu5VVKut
-X-Gm-Gg: ASbGncvQm96ZRw21QYePwTkW7DtXVQTVlxTasRnJCXnCKvs1p1/GdRMY2fVFumqw6Ng
-	OS5snhzzhaS1kjIekxTiRD+q6WKfoUFJwkne0dplErl+JVsVa1+909Jb/A6NxYJrxJIsrTrUYzX
-	VcMczzSBpYI8nhtIFvkFflqwhynU1EZQHs4oolWs0Vj8kjTInf7fhFjiKnMzEY8m8LD7dlloThX
-	gHd4AsFoOKBjEdAGp8y4Jv+OcspZjV8exs+WgkjNHt02GvGuLfTJ6jOgX6kmbauAbDZ4yyGPQzu
-	AESJTw09B36aGIxkzB/zSoM4uurSrDwZp4Y9fptLaU0K4w==
-X-Google-Smtp-Source: AGHT+IFivRZ2EUR5/RimYhdOCuEzRooY6An887/W/KkgBBJttW2RvsoNsxmtBckobWqWYaquB0gK1w==
-X-Received: by 2002:a05:6000:18ae:b0:391:40bd:621e with SMTP id ffacd0b85a97d-39720398fe7mr13511129f8f.44.1742222802524;
-        Mon, 17 Mar 2025 07:46:42 -0700 (PDT)
-Received: from localhost ([194.120.133.58])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-395cb7ec14bsm15130948f8f.100.2025.03.17.07.46.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Mar 2025 07:46:42 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Jani Nikula <jani.nikula@linux.intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Tony Nguyen <anthony.l.nguyen@intel.com>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	intel-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	intel-wired-lan@lists.osuosl.org,
-	netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] ice: make const read-only array dflt_rules static
-Date: Mon, 17 Mar 2025 14:46:06 +0000
-Message-ID: <20250317144606.478431-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.47.2
+	s=arc-20240116; t=1742222804; c=relaxed/simple;
+	bh=dBrC1u0IiUOyDfFTSQe3LuUdm91RasyufM6i//hsVp8=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=W9K44afU5/upznbeYBH5Qdbbl0loW0JJmwwRByERm93ssScI7JmG2qJkyumkTSvvHCs/+jSaSA81Ni2y8cYAg99x5gHi2bh60ve0JEMfCZ7FGufgdKe66mwRTiv887UdKbFy1sT0taqDu64c4ru3/lBfwc6WHhk0buu2/dvHJzE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=Wtb81bW1; arc=none smtp.client-ip=109.224.244.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1742222794; x=1742481994;
+	bh=QY+djW/K3/3fwrxQnWk5eIq6mklf+YPdlaYKCGAZlxE=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
+	b=Wtb81bW1n4BY/CP+BVk766mWLsb/m3xGn2EFocEA56KUW2Hd4+Da/lQRKfWc/N8fW
+	 zYHg2Kx+JlIPcDTXEbwmaokAM9Yz5HwXI1jnGe01vg42hLM8vlN6ApY2bBJVvC+u8i
+	 Om1delJfOJUfZb4yyBTarHovfYcnnAT9jLZTnikPc4d2JIUstx8zVM0g22RV0gI4i2
+	 CoNgGm6hy/P8NamSteO5XRQNCvVm4zuT6W1j2wG9SLsVZfYC7MxFJeNvxB0W/x+IUO
+	 5AZ/ZNhkfhDb85Dxd8Ie05mNvK35oSRSJ/t2CUre06zn2BYkkCqKSoYe09eH8fvBnk
+	 G3RuG4K1gaOFg==
+Date: Mon, 17 Mar 2025 14:46:30 +0000
+To: Tamir Duberstein <tamird@gmail.com>, Alice Ryhl <aliceryhl@google.com>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: Danilo Krummrich <dakr@kernel.org>, Andrew Ballance <andrewjballance@gmail.com>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] rust: alloc: replace `Vec::set_len` with `inc_len`
+Message-ID: <D8IMFM8UTOV6.1EYIRMPNAZ7I7@proton.me>
+In-Reply-To: <CAJ-ks9nSNweaSCVAruo-zWxMAFKcRxcJRScV06NRNBoeEZggfA@mail.gmail.com>
+References: <20250316-vec-set-len-v1-0-60f98a28723f@gmail.com> <20250316-vec-set-len-v1-1-60f98a28723f@gmail.com> <D8IGB61NVPBT.1I3IZYPVPIEMU@proton.me> <Z9f96iXE0xxj8th7@google.com> <CAJ-ks9nSNweaSCVAruo-zWxMAFKcRxcJRScV06NRNBoeEZggfA@mail.gmail.com>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: 3b514c4267c74f0f38a70d821dda0b9b73e4ab0c
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Don't populate the const read-only array dflt_rules on the stack at run
-time, instead make it static.
+On Mon Mar 17, 2025 at 12:25 PM CET, Tamir Duberstein wrote:
+> On Mon, Mar 17, 2025 at 6:48=E2=80=AFAM Alice Ryhl <aliceryhl@google.com>=
+ wrote:
+>>
+>> On Mon, Mar 17, 2025 at 09:58:35AM +0000, Benno Lossin wrote:
+>> > On Sun Mar 16, 2025 at 11:32 PM CET, Tamir Duberstein wrote:
+>> > > Rename `set_len` to `inc_len` and simplify its safety contract.
+>> > > ---
+>> > >  rust/kernel/alloc/kvec.rs | 19 +++++++++----------
+>> > >  rust/kernel/str.rs        |  2 +-
+>> > >  rust/kernel/uaccess.rs    |  2 +-
+>> > >  3 files changed, 11 insertions(+), 12 deletions(-)
+>> > >
+>> > > diff --git a/rust/kernel/alloc/kvec.rs b/rust/kernel/alloc/kvec.rs
+>> > > index ae9d072741ce..d43a1d609434 100644
+>> > > --- a/rust/kernel/alloc/kvec.rs
+>> > > +++ b/rust/kernel/alloc/kvec.rs
+>> > > @@ -183,17 +183,16 @@ pub fn len(&self) -> usize {
+>> > >          self.len
+>> > >      }
+>> > >
+>> > > -    /// Forcefully sets `self.len` to `new_len`.
+>> > > +    /// Increments `self.len` by `additional`.
+>> >
+>> > I would keep the "Forcefully".
+>
+> Why? Is it possible to set it any other way?
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+Yeah when `truncate` and `resize` land. It conveys that this is a
+low-level operation.
+
+>> > >      ///
+>> > >      /// # Safety
+>> > >      ///
+>> > > -    /// - `new_len` must be less than or equal to [`Self::capacity`=
+].
+>> > > -    /// - If `new_len` is greater than `self.len`, all elements wit=
+hin the interval
+>> > > -    ///   [`self.len`,`new_len`) must be initialized.
+>> > > +    /// - `self.len + additional` must be less than or equal to [`S=
+elf::capacity`].
+>> > > +    /// - All elements within the interval [`self.len`,`self.len + =
+additional`) must be initialized.
+>> > >      #[inline]
+>> > > -    pub unsafe fn set_len(&mut self, new_len: usize) {
+>> > > -        debug_assert!(new_len <=3D self.capacity());
+>> > > -        self.len =3D new_len;
+>> > > +    pub unsafe fn inc_len(&mut self, additional: usize) {
+>> > > +        debug_assert!(self.len() + additional <=3D self.capacity())=
+;
+>> >
+>> > What if this overflows? Do we always have overflow debugging on when
+>> > debug assertions are enabled? If yes, then this is fine.
+>>
+>> I don't think we do.
+>
+> Rearranged as
+>
+>         debug_assert!(additional <=3D self.capacity() - self.len());
+
+LGTM
+
+> It should be impossible for this to underflow because capacity must be
+>>=3D len. Interestingly this isn't a documented invariant, but it is
+> relied upon by `spare_capacity_mut`.
+
+Oh yeah that should be an invariant. Feel free to open an issue or send
+a patch.
+
+>> > > diff --git a/rust/kernel/str.rs b/rust/kernel/str.rs
+>> > > index 28e2201604d6..005713839e9e 100644
+>> > > --- a/rust/kernel/str.rs
+>> > > +++ b/rust/kernel/str.rs
+>> > > @@ -840,7 +840,7 @@ pub fn try_from_fmt(args: fmt::Arguments<'_>) ->=
+ Result<Self, Error> {
+>> > >
+>> > >          // SAFETY: The number of bytes that can be written to `f` i=
+s bounded by `size`, which is
+>> > >          // `buf`'s capacity. The contents of the buffer have been i=
+nitialised by writes to `f`.
+>> > > -        unsafe { buf.set_len(f.bytes_written()) };
+>> > > +        unsafe { buf.inc_len(f.bytes_written()) };
+>> >
+>> > This change seems wrong unless the code was wrong to begin with.
+>> >
+>> > Otherwise the change looks good.
+>>
+>> The buffer has length zero as it was just created with:
+>>
+>> let mut buf =3D KVec::with_capacity(size, GFP_KERNEL)?;
+
+Ahh, I didn't look at the context. Makes sense.
+
+> Indeed. Added to the commit message.
+
+Thanks.
+
 ---
- drivers/gpu/drm/i915/intel_memory_region.c        | 2 +-
- drivers/net/ethernet/intel/ice/ice_ethtool_fdir.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/gpu/drm/i915/intel_memory_region.c b/drivers/gpu/drm/i915/intel_memory_region.c
-index d40ee1b42110..7f4102edc75b 100644
---- a/drivers/gpu/drm/i915/intel_memory_region.c
-+++ b/drivers/gpu/drm/i915/intel_memory_region.c
-@@ -62,7 +62,7 @@ static int iopagetest(struct intel_memory_region *mem,
- 		      resource_size_t offset,
- 		      const void *caller)
- {
--	const u8 val[] = { 0x0, 0xa5, 0xc3, 0xf0 };
-+	static const u8 val[] = { 0x0, 0xa5, 0xc3, 0xf0 };
- 	void __iomem *va;
- 	int err;
- 	int i;
-diff --git a/drivers/net/ethernet/intel/ice/ice_ethtool_fdir.c b/drivers/net/ethernet/intel/ice/ice_ethtool_fdir.c
-index 1d118171de37..aceec184e89b 100644
---- a/drivers/net/ethernet/intel/ice/ice_ethtool_fdir.c
-+++ b/drivers/net/ethernet/intel/ice/ice_ethtool_fdir.c
-@@ -1605,7 +1605,7 @@ void ice_fdir_replay_fltrs(struct ice_pf *pf)
-  */
- int ice_fdir_create_dflt_rules(struct ice_pf *pf)
- {
--	const enum ice_fltr_ptype dflt_rules[] = {
-+	static const enum ice_fltr_ptype dflt_rules[] = {
- 		ICE_FLTR_PTYPE_NONF_IPV4_TCP, ICE_FLTR_PTYPE_NONF_IPV4_UDP,
- 		ICE_FLTR_PTYPE_NONF_IPV6_TCP, ICE_FLTR_PTYPE_NONF_IPV6_UDP,
- 	};
--- 
-2.47.2
+Cheers,
+Benno
 
 
