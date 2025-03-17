@@ -1,216 +1,134 @@
-Return-Path: <linux-kernel+bounces-563610-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563611-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24EE1A6454C
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 09:25:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79DFAA64550
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 09:25:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C7D6B166762
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 08:24:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94CF23A6DC4
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 08:24:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9B5321D3F2;
-	Mon, 17 Mar 2025 08:24:40 +0000 (UTC)
-Received: from invmail4.hynix.com (exvmail4.skhynix.com [166.125.252.92])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88CD021ADB0;
-	Mon, 17 Mar 2025 08:24:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 140CE21D3FE;
+	Mon, 17 Mar 2025 08:24:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QOyr/a4s"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D313664C6;
+	Mon, 17 Mar 2025 08:24:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742199880; cv=none; b=WiLbgeDF6uZ0ZuVyLzjf9akctqIjv/+f72YoY9RRhNUk84n/0aNtNWvoOvyzL4Or+tzoBXZGkPz9hRxEI+WDHS9rbYou9mF+nMwKHEDlA1xbZOgV7tFE3tmyqt/Ek5Q6ktawvuH3v1ilQ4WzO+QuJoBRU7Oqc2RviHI+AZZAFV0=
+	t=1742199896; cv=none; b=mi8xWCxm9zpKchYs/Dwa796lVjxtWOqPwpgfR8nWptz6vHdNf0FBZXCsEPLjZ/sX/5ogJLaW78ImQuQ5EeBCOWvPJRs25WDOoR6BJQ8nbVfl7tQPCEDoYxBBUitBNfC3AD+jT0BbC2QqmoBAKW9VbQCFKO6taQgZ5awO8hBAYrg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742199880; c=relaxed/simple;
-	bh=b7Rn3k+XrysZNtSoTUfI/Vqywy0np6ejQIRHxes6qig=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=GrqZOlwjcZEzORgvkyrloFQrEw6ZJVS29snntqod+ZSldMT0Nuv4+1tlJysUt3vkM58hikQt4qlD6+K/wUDX0QX2ZCVV8Urlx31YfKsvvrMkh0hXalTE0OnZwVoLqTUDEVBxpbEnsAqCeVf6qFoQjuUqCdntOYewSpR2WBMH5yc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc5b-681ff7000002311f-4f-67d7dc4337dc
-From: Rakie Kim <rakie.kim@sk.com>
-To: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Cc: Rakie Kim <rakie.kim@sk.com>,
-	akpm@linux-foundation.org,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	linux-cxl@vger.kernel.org,
-	joshua.hahnjy@gmail.com,
-	dan.j.williams@intel.com,
-	ying.huang@linux.alibaba.com,
-	kernel_team@skhynix.com,
-	honggyu.kim@sk.com,
-	yunjeong.mun@sk.com,
-	Gregory Price <gourry@gourry.net>
-Subject: Re: [PATCH v2 1/4] mm/mempolicy: Fix memory leaks in mempolicy_sysfs_init()
-Date: Mon, 17 Mar 2025 17:24:23 +0900
-Message-ID: <20250317082430.829-1-rakie.kim@sk.com>
-X-Mailer: git-send-email 2.48.1.windows.1
-In-Reply-To: <20250314105500.00000157@huawei.com>
-References: 
+	s=arc-20240116; t=1742199896; c=relaxed/simple;
+	bh=wA0+c1P5/BwcDYtx6mUHdieuC2tjdlLGiihDrVP5uBM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EzhZ4r6oyhRtj4nXR1mRAkbaX7avGHHpp2WCZlgr+KvR2fXr/VU+7qWroWuCEMxih1ebdBLPmDuOtUhk+oq/SECZX802kSuVaoRqdN9nGBLDEYWd9ihwG65OwQ6GuXWeC+du0o57Jgukc9qb7tKt6ZjbVC7ZnyMOtKlsTiOYdm8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QOyr/a4s; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E33DC4CEE3;
+	Mon, 17 Mar 2025 08:24:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742199895;
+	bh=wA0+c1P5/BwcDYtx6mUHdieuC2tjdlLGiihDrVP5uBM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=QOyr/a4sT0dsoQ95s1x9tDo3UUCh1LAdjg1P8TDN6vbQuJzDVaU0Pi25fA0vZY1a0
+	 zU81egKdiy/NbtLkMg2SQw1r2Y/afChjlPSnF8lonAZWCRUnYAL3/JiHlrJNv54bc6
+	 hvJbth+lTVFiMC/j6OoJjtR+klED2JSsIrh+rtOL1Q9leFU4KIihuSGBy220y7aB2B
+	 qOO4jgLe2GtylDmd8JT+7qrExRIjZ5BhSKuOnFry46C7UBao38LVEFCj0Ar/0xaec0
+	 KuGkMQ/MouYPmcIAprA3UujW5CXLnFiwTWcxbc4SGSiv0feN5Wd3FLOnSbFMkhcEvm
+	 WTiQnFHp6Mhgg==
+Message-ID: <663a958b-3847-41e3-9710-897446694bc2@kernel.org>
+Date: Mon, 17 Mar 2025 09:24:48 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrGLMWRmVeSWpSXmKPExsXC9ZZnoa7znevpBjPWcFnMWb+GzWL61AuM
-	Fj/vHme3WLXwGpvF8a3z2C3OzzrFYnF51xw2i3tr/rNarF6T4cDpsXPWXXaP7rbL7B4tR96y
-	eize85LJY9OnSeweJ2b8ZvHY+dDS4/MmuQCOKC6blNSczLLUIn27BK6Mni9P2QpOKlas33iC
-	tYHxgGQXIweHhICJxISdwl2MnGDmsSXLWUHCbAJKEsf2xoCERQSMJN7dmMTYxcjFwSxwhUni
-	9bEWNpCEsECIxLpbi9lBbBYBVYkfn26zgNi8AsYSpy43MUPM1JRouHSPCcTmFDCUePlgO1i9
-	kACPxKsN+xkh6gUlTs58AtbLLCAv0bx1NjPIMgmB+2wS63b0MUEMkpQ4uOIGywRG/llIemYh
-	6VnAyLSKUSgzryw3MTPHRC+jMi+zQi85P3cTIzC0l9X+id7B+OlC8CFGAQ5GJR5eg/XX0oVY
-	E8uKK3MPMUpwMCuJ8LLsuJ4uxJuSWFmVWpQfX1Sak1p8iFGag0VJnNfoW3mKkEB6Yklqdmpq
-	QWoRTJaJg1OqgdHkhelBRoWbyrL+//a+UpnTxF+l2bd9lshKdfO8HsMv8x++U5v50HBH5RfT
-	0MCOgjO+StctTujeuL3dWfeec00EazFL5qJ1L28ZVCeuTHrDyR3FpyXq1HhcO+/yn0792HMs
-	gekS87e4mTRLvlot+GH1SS0XUYXjlbzeW+Qsay4Hb9ddw2nwXImlOCPRUIu5qDgRABN4wzNp
-	AgAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrILMWRmVeSWpSXmKPExsXCNUNNS9fpzvV0g3XTbSzmrF/DZjF96gVG
-	i593j7NbfH72mtli1cJrbBbHt85jtzg89ySrxflZp1gsLu+aw2Zxb81/VotD156zWqxek2Hx
-	e9sKNgdej52z7rJ7dLddZvdoOfKW1WPxnpdMHps+TWL3ODHjN4vHzoeWHt9ue3gsfvGByePz
-	JrkArigum5TUnMyy1CJ9uwSujJ4vT9kKTipWrN94grWB8YBkFyMnh4SAicSxJctZuxg5ONgE
-	lCSO7Y0BCYsIGEm8uzGJsYuRi4NZ4AqTxOtjLWwgCWGBEIl1txazg9gsAqoSPz7dZgGxeQWM
-	JU5dbmKGmKkp0XDpHhOIzSlgKPHywXaweiEBHolXG/YzQtQLSpyc+QSsl1lAXqJ562zmCYw8
-	s5CkZiFJLWBkWsUokplXlpuYmWOqV5ydUZmXWaGXnJ+7iREY0Mtq/0zcwfjlsvshRgEORiUe
-	XoP119KFWBPLiitzDzFKcDArifCy7LieLsSbklhZlVqUH19UmpNafIhRmoNFSZzXKzw1QUgg
-	PbEkNTs1tSC1CCbLxMEp1cC4cqbulFb/peJNa2rVXJruOi8/b+TN/kLlaX3hasbV3ad6f/06
-	GVw9bYmMHsf6dpmG6mdLVhe+tnvwatuKrM9lbo9MbMrTIl2kON9f0VD6vqTNIstxnvU8/h63
-	7k0KXkFyywq3T3imUfvOUai+7orh0yvJAbqLV3bMefxNdIfTLdPN80Jy7M8qsRRnJBpqMRcV
-	JwIAZeOdBGQCAAA=
-X-CFilter-Loop: Reflected
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4] dma-buf: heap: Replace nested max() with single max3()
+To: feng.wei8@zte.com.cn, sumit.semwal@linaro.org, xie.ludan@zte.com.cn,
+ shao.mingyin@zte.com.cn, tang.dongxing@zte.com.cn
+Cc: benjamin.gaignard@collabora.com, brian.starkey@arm.com,
+ jstultz@google.com, tjmercier@google.com, christian.koenig@amd.com,
+ linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linaro-mm-sig@lists.linaro.org, linux-kernel@vger.kernel.org
+References: <20250317103702708UdayAw742BADL4gzNYcle@zte.com.cn>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20250317103702708UdayAw742BADL4gzNYcle@zte.com.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, 14 Mar 2025 10:55:00 +0000 Jonathan Cameron <Jonathan.Cameron@huawei.com> wrote:
-> On Thu, 13 Mar 2025 11:52:18 -0400
-> Gregory Price <gourry@gourry.net> wrote:
+On 17/03/2025 03:37, feng.wei8@zte.com.cn wrote:
+> From: FengWei <feng.wei8@zte.com.cn>
 > 
-> > On Thu, Mar 13, 2025 at 03:31:38PM +0900, Rakie Kim wrote:
-> > > > Is this correct? If kobject_init_and_add fails, from other examples we
-> > > > need only free the mempolicy_kobj - because it failed to initialize and
-> > > > therefore should not have any references.  I think this causes an
-> > > > underflow.  
-> > > 
-> > > Regarding the reordering of mempolicy_kobj allocation:
-> > > 1) In kobject_init_and_add(), kobject_init() is always called, which  
-> > 
-> > Quite right, mea culpa.
-> > 
-> > > 
-> > > 2) The release function for mempolicy_kobj is responsible for freeing
-> > >    associated memory:
-> > > 
-> > >    static void mempolicy_kobj_release(struct kobject *kobj)
-> > >    {
-> > >        ...
-> > >        kfree(ngrp->nattrs);
-> > >        kfree(ngrp);
-> > >        kfree(kobj);
-> > >    }
-> > >   
-> > 
-> > I see what you're trying to do now after looking at the free-ordering
-> > at little closer.
-> > 
-> > Lets do the following:
-> > 
-> > 1) allocate node_attrs and mempolicy_kobj up front and keep your
-> >    reordering, this lets us clean up allocations on failure before
-> >    kobject_init is called
-> > 
-> > 2) after this remove all the other code and just let
-> >    mempolicy_kobj_release clean up node_attrs
-> > 
-> > 3) Add a (%d) to the error message to differentiate failures
+> Use max3() macro instead of nesting max() to simplify the return
+> statement.
 > 
-> Given how unlikely (and noisy) a memory allocation failure is,
-> maybe just drop the printing at all in those paths - allowing
-> early returns.
-> 
-> The lifetime rules around node_attrs in here are making readability
-> poor. It is implicitly owned by the mempolicy_kobj, but no direct association.
-> Maybe just encapsulating the kobject in a structure that contains
-> this as a [] array at the end.  Then we end up with single allocation of
-> stuff that is effectively one thing.
-> 
+> Signed-off-by: FengWei <feng.wei8@zte.com.cn>
+> ---
+> v3 -> v4
+> fix the format of this patch.
+>  drivers/dma-buf/dma-heap.c | 2 +-
+You sent five versions per day of the same patch.
 
-Hi Jonathan
+Look what was in v3:
 
-Thank you for your response regarding this patch.
-Your suggestions seem very appropriate. As you recommended, I will proceed to
-encapsulate node_attrs and mempolicy_kobj into a single structure.
+	v2 -> v3
+	fix the format of this patch
 
-Rakie
+So you are doing the same over and over and sending it to us?
 
-> 
-> > 
-> > This is a little bit cleaner and is a bit less code. (Not built or
-> > tested, just a recommendation).
-> > 
-> > I'd recommend submitting this patch by itself to mm-stable, since the
-> > remainder of the patch line changes functionality and this fixes a bug
-> > in LTS kernels.
-> > 
-> > ~Gregory
-> > 
-> > ---
-> > 
-> > 
-> > diff --git a/mm/mempolicy.c b/mm/mempolicy.c
-> > index 530e71fe9147..05a410db08b4 100644
-> > --- a/mm/mempolicy.c
-> > +++ b/mm/mempolicy.c
-> > @@ -3541,38 +3541,34 @@ static int __init mempolicy_sysfs_init(void)
-> >  	int err;
-> >  	static struct kobject *mempolicy_kobj;
-> > 
-> > -	mempolicy_kobj = kzalloc(sizeof(*mempolicy_kobj), GFP_KERNEL);
-> > -	if (!mempolicy_kobj) {
-> > +	node_attrs = kcalloc(nr_node_ids, sizeof(struct iw_node_attr *),
-> > +			     GFP_KERNEL);
-> > +	if (!node_attrs) {
-> >  		err = -ENOMEM;
-> >  		goto err_out;
-> >  	}
-> > 
-> > -	node_attrs = kcalloc(nr_node_ids, sizeof(struct iw_node_attr *),
-> > -			     GFP_KERNEL);
-> > -	if (!node_attrs) {
-> > +	mempolicy_kobj = kzalloc(sizeof(*mempolicy_kobj), GFP_KERNEL);
-> > +	if (!mempolicy_kobj) {
-> >  		err = -ENOMEM;
-> > -		goto mempol_out;
-> > +		kfree(node_attrs);
-> > +		goto err_out;
-> >  	}
-> > 
-> >  	err = kobject_init_and_add(mempolicy_kobj, &mempolicy_ktype, mm_kobj,
-> >  				   "mempolicy");
-> >  	if (err)
-> > -		goto node_out;
-> > +		goto mempol_out;
-> > 
-> >  	err = add_weighted_interleave_group(mempolicy_kobj);
-> > -	if (err) {
-> > -		pr_err("mempolicy sysfs structure failed to initialize\n");
-> > -		kobject_put(mempolicy_kobj);
-> > -		return err;
-> > -	}
-> > +	if (err)
-> > +		goto mempol_out;
-> > 
-> > -	return err;
-> > -node_out:
-> > -	kfree(node_attrs);
-> > +	return 0;
-> >  mempol_out:
-> > -	kfree(mempolicy_kobj);
-> > +	kobject_put(mempolicy_kobj);
-> >  err_out:
-> > -	pr_err("failed to add mempolicy kobject to the system\n");
-> > +	pr_err("mempolicy sysfs structure failed to initialize (%d)\n", err);
-> >  	return err;
-> >  }
-> > 
-> > 
-> 
+Srsly, ZTE, slow down and be sure you follow the process BEFORE you send
+flood of patches like that and learn on the go.
+
+Best regards,
+Krzysztof
 
