@@ -1,79 +1,79 @@
-Return-Path: <linux-kernel+bounces-563945-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563944-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85109A64ABA
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:48:14 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADD61A64AB7
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:47:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 526C81886C6A
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:48:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A3CE16A6FB
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:47:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A7E723A58D;
-	Mon, 17 Mar 2025 10:46:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDB7E239595;
+	Mon, 17 Mar 2025 10:46:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="jj+RAa/O";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="kD0sWpcU"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="fyiNwAiJ";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="FPbJbFz3"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46369237706;
-	Mon, 17 Mar 2025 10:46:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A641D238141;
+	Mon, 17 Mar 2025 10:46:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742208395; cv=none; b=Kr+SbgjLjHObHFCg2ojEPCD6Y5AwoNlFQ5kPGgwR1DkBvjMRmdnXcWkDFAvsNzsmZfevShSLZ/k1jnJMGu4AyIEpr/a52KJ4HTazYIiRrEyGS3lgsUrmWvIcrsmWm1XI+7TkG6/0knDbnBFFcdul/De0ZD4MyT0TNEL/YK7VA+U=
+	t=1742208395; cv=none; b=TR/bEDXLjYyuUaiK5JgCxeTOq+veefmLAdsGqe5zzUqRJP9wD5NHwGnsHla/q8cYQcxtleJeDXzgZulvja05TtIEDS4GAyEikWsLoFv0OwVJU7A7OXyOX/rhJq8+QtnVfM0vn/fCwss4LK0mi2rGwZivKaXxCInWfO6x22WwXRM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1742208395; c=relaxed/simple;
-	bh=2PsEH+0Gdt6yKvbwuQxOPN55pptM7bcZRROCv7o8VPY=;
+	bh=0fRdMdBIAAtUMdw/vbdQ4bhoRFafsmrVvagZ8ioni0s=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=GZ1trvwabRYoaDRnXbABeAcMHLDEajpkY7kz6pif8LggwBmKqaNCl3e5LdefsFUvyNTgFoE2RNDlBU50SHpj1ItuMF0aR4RveF0Hu9fhHwtgiGfHjmIxV5eF+9eaEjbzk3jiUV6slm2x0Oe3C70vZ+vZ3gvC4n6dnzOJt7ihNxU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=jj+RAa/O; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=kD0sWpcU; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=Z9fPz/l9LwfvsR4ACPk3p9aVCQcZw5bN6UAl326M9AaeVxxxUWHKxpXo/YaIqBBgPgTTusgBN8+9SyRtMfAoqLxNk5qMxxn4rUixQx4ds07UI9Ecc6t49vaFSN94c8Dp/fvk/uZODx7hmnOwK2AFL+PJQHTehavTgLTIlfeFjg8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=fyiNwAiJ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=FPbJbFz3; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 17 Mar 2025 10:46:30 -0000
+Date: Mon, 17 Mar 2025 10:46:31 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1742208391;
+	s=2020; t=1742208392;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=JtMGw8P6wyjPeQ5skfhUII/iMAZJ56cSKoYMyQMW7hk=;
-	b=jj+RAa/OYDF7GYOfmzL7o5GtsfcidAQlJtxVwbSMVydYhF+bK1W6Dw5nWTQMuv4kMteWWO
-	kdXzafJ9ooEQfsIzNZIga1jeKMPkEk9+mzuJtZ0JWyXjunF05MwuwWZmoW4tqoleZEltjJ
-	gOwi8j5HrqL1hPiUtjqoKMrHxitc0gyua+TDq2XMkUOBwtJDK59O3W3OM9COt9+4ISupjD
-	VZWhn5QehWetuFSISxpiOqtdZhQ1Gw2YFodJvuu7w72j8ACF9scjjMoGjIeLIrng8CqY3W
-	je11M91KwhgFNiTLlM114+yLIgBKZXwYADRVRL9MMDjWsQ0b+WoB2RL6jwJPIA==
+	bh=lsUPPA57gFUEZQeyNkQk2c4p5E87dxP5FIHlr6jaMsE=;
+	b=fyiNwAiJJ81Ks3b9z6lpwg0qNX//ga6O2HpjoziB51qTlUmJlTSKYqv1xXlbmTj9OxyvBj
+	mKHq1so8Hc+mzaHV94xqBIckA7DVqrm96PSZp/rsf6+ooHZ95C1SWKhKoGvUSyzOFypswh
+	jWMV1QTahxW2TmF/ch2e1ORrt6rCNHfESDTIM8OGcMYgVaDnV+DG2zWDL328cD2qSPTTyc
+	V3vHCwa9Ib9+Ozl1BEsy7UGJB+o3ln7NMcIRKHRheq/CkyvGRFaoOv8PT4S5nBOCwYyRJW
+	s+oPWM2JTZ+6xWUnCSFQkzXhMsMk37Du4ZTuk1zE8wFv36awoFQE96lkb9z/9A==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1742208391;
+	s=2020e; t=1742208392;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=JtMGw8P6wyjPeQ5skfhUII/iMAZJ56cSKoYMyQMW7hk=;
-	b=kD0sWpcU6/Ufvc3hvlB5OLVzh5ixy4Vtfz4yNWNPLVQsGRZSVq9U2yahG7lAlw6mk96LbB
-	lSV5ENK53K7gtRCQ==
+	bh=lsUPPA57gFUEZQeyNkQk2c4p5E87dxP5FIHlr6jaMsE=;
+	b=FPbJbFz3zABmE3qmpdQPdDxexyoFZyH5pc5wgr+lQT2Fw1vqUyznpknTKjI6X7w0vDu13B
+	3tOJB5zdhGsOXlBQ==
 From: "tip-bot2 for Josh Poimboeuf" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip: objtool/core] objtool: Update documentation
+Subject: [tip: objtool/core] objtool: Improve __noreturn annotation warning
 Cc: Josh Poimboeuf <jpoimboe@kernel.org>,
  "Peter Zijlstra (Intel)" <peterz@infradead.org>, x86@kernel.org,
  linux-kernel@vger.kernel.org
 In-Reply-To:
- <2552ee8b48631127bf269359647a7389edf5f002.1741975349.git.jpoimboe@kernel.org>
+ <ab835a35d00bacf8aff0b56257df93f14fdd8224.1741975349.git.jpoimboe@kernel.org>
 References:
- <2552ee8b48631127bf269359647a7389edf5f002.1741975349.git.jpoimboe@kernel.org>
+ <ab835a35d00bacf8aff0b56257df93f14fdd8224.1741975349.git.jpoimboe@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174220839062.14745.16055592795155388481.tip-bot2@tip-bot2>
+Message-ID: <174220839140.14745.6981725595927605919.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -83,225 +83,60 @@ Content-Transfer-Encoding: 7bit
 
 The following commit has been merged into the objtool/core branch of tip:
 
-Commit-ID:     dd95beba97b61ed53e6c96b5a43fbc9edf07c033
-Gitweb:        https://git.kernel.org/tip/dd95beba97b61ed53e6c96b5a43fbc9edf07c033
+Commit-ID:     acae6b5bfffedc0440837c52584696dadb2fa334
+Gitweb:        https://git.kernel.org/tip/acae6b5bfffedc0440837c52584696dadb2fa334
 Author:        Josh Poimboeuf <jpoimboe@kernel.org>
-AuthorDate:    Fri, 14 Mar 2025 12:29:02 -07:00
+AuthorDate:    Fri, 14 Mar 2025 12:29:01 -07:00
 Committer:     Peter Zijlstra <peterz@infradead.org>
 CommitterDate: Mon, 17 Mar 2025 11:36:00 +01:00
 
-objtool: Update documentation
+objtool: Improve __noreturn annotation warning
 
-Fix some outdated information in the objtool doc.
+Clarify what needs to be done to resolve the missing __noreturn warning.
 
 Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Link: https://lore.kernel.org/r/2552ee8b48631127bf269359647a7389edf5f002.1741975349.git.jpoimboe@kernel.org
+Link: https://lore.kernel.org/r/ab835a35d00bacf8aff0b56257df93f14fdd8224.1741975349.git.jpoimboe@kernel.org
 ---
- tools/objtool/Documentation/objtool.txt | 95 +++++++++++++-----------
- 1 file changed, 53 insertions(+), 42 deletions(-)
+ tools/objtool/Documentation/objtool.txt | 12 +++++-------
+ tools/objtool/check.c                   |  2 +-
+ 2 files changed, 6 insertions(+), 8 deletions(-)
 
 diff --git a/tools/objtool/Documentation/objtool.txt b/tools/objtool/Documentation/objtool.txt
-index 87950a7..28ac57b 100644
+index 7c3ee95..87950a7 100644
 --- a/tools/objtool/Documentation/objtool.txt
 +++ b/tools/objtool/Documentation/objtool.txt
-@@ -28,6 +28,15 @@ Objtool has the following features:
-   sites, enabling the kernel to patch them inline, to prevent "thunk
-   funneling" for both security and performance reasons
+@@ -319,14 +319,12 @@ the objtool maintainers.
+    a just a bad person, you can tell objtool to ignore it.  See the
+    "Adding exceptions" section below.
  
-+- Return thunk validation -- validates return thunks are used for
-+  certain CPU mitigations including Retbleed and SRSO
-+
-+- Return thunk annotation -- annotates all return thunk sites so kernel
-+  can patch them inline, depending on enabled mitigations
-+
-+- Return thunk training valiation -- validate that all entry paths
-+  untrain a "safe return" before the first return (or call)
-+
- - Non-instrumentation validation -- validates non-instrumentable
-   ("noinstr") code rules, preventing instrumentation in low-level C
-   entry code
-@@ -53,6 +62,9 @@ Objtool has the following features:
- - Function entry annotation -- annotates function entries, enabling
-   kernel function tracing
+-   If it's not actually in a callable function (e.g. kernel entry code),
+-   change ENDPROC to END.
++3. file.o: warning: objtool: foo+0x48c: bar() missing __noreturn in .c/.h or NORETURN() in noreturns.h
  
-+- Function preamble (prefix) annotation and/or symbol generation -- used
-+  for FineIBT and call depth tracking
-+
- - Other toolchain hacks which will go unmentioned at this time...
- 
- Each feature can be enabled individually or in combination using the
-@@ -197,19 +209,17 @@ To achieve the validation, objtool enforces the following rules:
- 
- 1. Each callable function must be annotated as such with the ELF
-    function type.  In asm code, this is typically done using the
--   ENTRY/ENDPROC macros.  If objtool finds a return instruction
-+   SYM_FUNC_{START,END} macros.  If objtool finds a return instruction
-    outside of a function, it flags an error since that usually indicates
-    callable code which should be annotated accordingly.
- 
-    This rule is needed so that objtool can properly identify each
-    callable function in order to analyze its stack metadata.
- 
--2. Conversely, each section of code which is *not* callable should *not*
--   be annotated as an ELF function.  The ENDPROC macro shouldn't be used
--   in this case.
+-3. file.o: warning: objtool: foo+0x48c: bar() is missing a __noreturn annotation
 -
--   This rule is needed so that objtool can ignore non-callable code.
--   Such code doesn't have to follow any of the other rules.
-+2. Conversely, each section of code which is *not* callable, or is
-+   otherwise doing funny things with the stack or registers, should
-+   *not* be annotated as an ELF function.  Rather, SYM_CODE_{START,END}
-+   should be used along with unwind hints.
+-   The call from foo() to bar() doesn't return, but bar() is missing the
+-   __noreturn annotation.  NOTE: In addition to annotating the function
+-   with __noreturn, please also add it to tools/objtool/noreturns.h.
++   The call from foo() to bar() doesn't return, but bar() is incorrectly
++   annotated.  A noreturn function must be marked __noreturn in both its
++   declaration and its definition, and must have a NORETURN() annotation
++   in tools/objtool/noreturns.h.
  
- 3. Each callable function which calls another function must have the
-    correct frame pointer logic, if required by CONFIG_FRAME_POINTER or
-@@ -221,7 +231,7 @@ To achieve the validation, objtool enforces the following rules:
-    function B, the _caller_ of function A will be skipped on the stack
-    trace.
- 
--4. Dynamic jumps and jumps to undefined symbols are only allowed if:
-+4. Indirect jumps and jumps to undefined symbols are only allowed if:
- 
-    a) the jump is part of a switch statement; or
- 
-@@ -304,20 +314,21 @@ the objtool maintainers.
-    001e    2823e:  80 ce 02                or     $0x2,%dh
-    ...
- 
-+
- 2. file.o: warning: objtool: .text+0x53: unreachable instruction
- 
-    Objtool couldn't find a code path to reach the instruction.
- 
-    If the error is for an asm file, and the instruction is inside (or
-    reachable from) a callable function, the function should be annotated
--   with the ENTRY/ENDPROC macros (ENDPROC is the important one).
--   Otherwise, the code should probably be annotated with the unwind hint
--   macros in asm/unwind_hints.h so objtool and the unwinder can know the
--   stack state associated with the code.
-+   with the SYM_FUNC_START and SYM_FUNC_END macros.
-+
-+   Otherwise, SYM_CODE_START can be used.  In that case the code needs
-+   to be annotated with unwind hint macros.
-+
-+   If you're sure the code won't affect the reliability of runtime stack
-+   traces and want objtool to ignore it, see "Adding exceptions" below.
- 
--   If you're 100% sure the code won't affect stack traces, or if you're
--   a just a bad person, you can tell objtool to ignore it.  See the
--   "Adding exceptions" section below.
- 
- 3. file.o: warning: objtool: foo+0x48c: bar() missing __noreturn in .c/.h or NORETURN() in noreturns.h
- 
-@@ -326,6 +337,7 @@ the objtool maintainers.
-    declaration and its definition, and must have a NORETURN() annotation
-    in tools/objtool/noreturns.h.
- 
-+
  4. file.o: warning: objtool: func(): can't find starting instruction
     or
-    file.o: warning: objtool: func()+0x11dd: can't decode instruction
-@@ -339,23 +351,21 @@ the objtool maintainers.
- 
-    This is a kernel entry/exit instruction like sysenter or iret.  Such
-    instructions aren't allowed in a callable function, and are most
--   likely part of the kernel entry code.  They should usually not have
--   the callable function annotation (ENDPROC) and should always be
--   annotated with the unwind hint macros in asm/unwind_hints.h.
-+   likely part of the kernel entry code.  Such code should probably be
-+   placed in a SYM_FUNC_CODE block with unwind hints.
- 
- 
- 6. file.o: warning: objtool: func()+0x26: sibling call from callable instruction with modified stack frame
- 
--   This is a dynamic jump or a jump to an undefined symbol.  Objtool
--   assumed it's a sibling call and detected that the frame pointer
--   wasn't first restored to its original state.
-+   This is a branch to an UNDEF symbol.  Objtool assumed it's a
-+   sibling call and detected that the stack wasn't first restored to its
-+   original state.
- 
--   If it's not really a sibling call, you may need to move the
--   destination code to the local file.
-+   If it's not really a sibling call, you may need to use unwind hints
-+   and/or move the destination code to the local file.
- 
-    If the instruction is not actually in a callable function (e.g.
--   kernel entry code), change ENDPROC to END and annotate manually with
--   the unwind hint macros in asm/unwind_hints.h.
-+   kernel entry code), use SYM_CODE_{START,END} and unwind hints.
- 
- 
- 7. file: warning: objtool: func()+0x5c: stack state mismatch
-@@ -371,8 +381,8 @@ the objtool maintainers.
- 
-    Another possibility is that the code has some asm or inline asm which
-    does some unusual things to the stack or the frame pointer.  In such
--   cases it's probably appropriate to use the unwind hint macros in
--   asm/unwind_hints.h.
-+   cases it's probably appropriate to use SYM_FUNC_CODE with unwind
-+   hints.
- 
- 
- 8. file.o: warning: objtool: funcA() falls through to next function funcB()
-@@ -382,17 +392,16 @@ the objtool maintainers.
-    can fall through into the next function.  There could be different
-    reasons for this:
- 
--   1) funcA()'s last instruction is a call to a "noreturn" function like
-+   a) funcA()'s last instruction is a call to a "noreturn" function like
-       panic().  In this case the noreturn function needs to be added to
-       objtool's hard-coded global_noreturns array.  Feel free to bug the
-       objtool maintainer, or you can submit a patch.
- 
--   2) funcA() uses the unreachable() annotation in a section of code
-+   b) funcA() uses the unreachable() annotation in a section of code
-       that is actually reachable.
- 
--   3) If funcA() calls an inline function, the object code for funcA()
--      might be corrupt due to a gcc bug.  For more details, see:
--      https://gcc.gnu.org/bugzilla/show_bug.cgi?id=70646
-+   c) Some undefined behavior like divide by zero.
-+
- 
- 9. file.o: warning: objtool: funcA() call to funcB() with UACCESS enabled
- 
-@@ -430,24 +439,26 @@ the objtool maintainers.
-     This limitation can be overcome by massaging the alternatives with
-     NOPs to shift the stack changes around so they no longer conflict.
- 
-+
- 11. file.o: warning: unannotated intra-function call
- 
--   This warning means that a direct call is done to a destination which
--   is not at the beginning of a function. If this is a legit call, you
--   can remove this warning by putting the ANNOTATE_INTRA_FUNCTION_CALL
--   directive right before the call.
-+    This warning means that a direct call is done to a destination which
-+    is not at the beginning of a function. If this is a legit call, you
-+    can remove this warning by putting the ANNOTATE_INTRA_FUNCTION_CALL
-+    directive right before the call.
-+
- 
- 12. file.o: warning: func(): not an indirect call target
- 
--   This means that objtool is running with --ibt and a function expected
--   to be an indirect call target is not. In particular, this happens for
--   init_module() or cleanup_module() if a module relies on these special
--   names and does not use module_init() / module_exit() macros to create
--   them.
-+    This means that objtool is running with --ibt and a function
-+    expected to be an indirect call target is not. In particular, this
-+    happens for init_module() or cleanup_module() if a module relies on
-+    these special names and does not use module_init() / module_exit()
-+    macros to create them.
- 
- 
- If the error doesn't seem to make sense, it could be a bug in objtool.
--Feel free to ask the objtool maintainer for help.
-+Feel free to ask objtool maintainers for help.
- 
- 
- Adding exceptions
+diff --git a/tools/objtool/check.c b/tools/objtool/check.c
+index e68a89e..d6af538 100644
+--- a/tools/objtool/check.c
++++ b/tools/objtool/check.c
+@@ -4477,7 +4477,7 @@ static int validate_reachable_instructions(struct objtool_file *file)
+ 		if (prev_insn && prev_insn->dead_end) {
+ 			call_dest = insn_call_dest(prev_insn);
+ 			if (call_dest) {
+-				WARN_INSN(insn, "%s() is missing a __noreturn annotation",
++				WARN_INSN(insn, "%s() missing __noreturn in .c/.h or NORETURN() in noreturns.h",
+ 					  call_dest->name);
+ 				warnings++;
+ 				continue;
 
