@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-563669-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563670-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DB7FA64667
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 09:58:15 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87B8BA64670
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:00:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5239917085D
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 08:58:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC8CD1893AC4
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 09:00:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7057C221730;
-	Mon, 17 Mar 2025 08:58:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC02921D3F1;
+	Mon, 17 Mar 2025 09:00:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MKkRhJUP"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tkaO8/yj"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC0A71B412B;
-	Mon, 17 Mar 2025 08:58:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D7882E3373;
+	Mon, 17 Mar 2025 09:00:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742201886; cv=none; b=eS9Q7FkL/cvTDUSTzEYuQBCW0NOQ9V1mSf567aJIWDHLOgWniw6iGTfQbRm154r4WziP4K9vAeMLQhbbFiKEiO4f3c9zS5J+m+xREgE7RFZbvh192sijV88U6ksS+I5IdlSdxa+zfhUWQasBHet2nkZ+3+yeRWMe7u+Tyt0bdrQ=
+	t=1742202027; cv=none; b=uEAPMr/rYqg7GhHjJsdEFKA6eUFon71uib6vrHmirtYqUVBhP1lL6AP5boImp0H3xP9+yrFIYsXQ1WyYBTUKE89EziGXVbts1VPi3ncp3v9ZEmE6+ZcfXrv39ja65dbK4HN/d+8isWPwdEvBX4mM6A/RRL8I3RBreymglu1Ka34=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742201886; c=relaxed/simple;
-	bh=asAG8ifzS5TnfNYFFs+T/MgOzmKtZDts70S39RMV0cA=;
+	s=arc-20240116; t=1742202027; c=relaxed/simple;
+	bh=W3D20CMMDeTVehzFoOsspP1Xy3fZIs1JN+w4F2wuzL0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PjzJoWI9UzJuFG6h1N1XzLn3j8wigmT/vqs2oAlerABLL3Kavq3xPWaeyJSXwbEyOFgzRcJkmTbKZ3FiLIxTm9ZCpVB6CVUKX1tUUz80k3sCgqcAP9h/XBUxV4WsHaTMsu+oxEgBDGxRx/JXysR0zglBwlz+pPDgwla53NPcsLo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MKkRhJUP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0826C4CEE3;
-	Mon, 17 Mar 2025 08:57:59 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=p2pcMea89y3g+63L7ittiCvYFIRVr4ndBc3VYh7cEPWGjEjedK+1RDp5GfAPI/TaF3fv2cF26+4/xHgUWKyzoL1E4KfWLcP5YTPstZPMFIel2cVpJTg0eqc1QX8s8KKi4lQUeceflCpoJna28mpqZTJ83N15LGyE05BUQMQWGaM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tkaO8/yj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB69CC4CEE3;
+	Mon, 17 Mar 2025 09:00:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742201885;
-	bh=asAG8ifzS5TnfNYFFs+T/MgOzmKtZDts70S39RMV0cA=;
+	s=k20201202; t=1742202026;
+	bh=W3D20CMMDeTVehzFoOsspP1Xy3fZIs1JN+w4F2wuzL0=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=MKkRhJUPmchxA6hSveaUHu6pkQzR3C5mkEqIr1ZmoljpP4zv/kDgmJQvK08zMcVuZ
-	 VTS/mzi97Kd/e1CUXX08vwh98V54+omgy8vll9vNytEZkTDPFJlfVIDtYbqS3zcATr
-	 1h2j7lCWc0JqWkKme5W8a0DRQUeQ3jqpM0lqkteY9Zec2BKVJg8QRCZMO52smCewUB
-	 aL1TkOfIEyeDIf2m9rW2P8EqahhSjPmc+ssV5k5WUjY4yLZ7cZ+10OaiTnRzmrb9L+
-	 /C4vrKAfZZQ0IwJ5UZEODGTPxbg3a52baXI8FTSaEYp7MvyT4Wecmq85rOdHRcGGJv
-	 sCKW18R2qviFQ==
-Message-ID: <e0d80130-ab5e-4e0b-8d74-ccc94d084192@kernel.org>
-Date: Mon, 17 Mar 2025 09:57:57 +0100
+	b=tkaO8/yjry0qQlrMCfP3KBKh3c6fbLV44Qk/aD37apAwhxmCpmwnSzy4TGcBaNMUM
+	 2Pk90jQtZnxhS02R2faTN31pPgsEWZEqpoewaQq3BUzsKn3fHHaeYJekvp52Rhlszl
+	 g7Xt4IC8Kxa5Je2Tp/7MWanJ45Ga7H1kAatP3v3d92lCvjMIbJMIFRBflVu/RVk2MX
+	 bXF5/QbcjFjzRGnnqsCY67R7CSYNtE2zw/sX6pWudxHgvfks5dSKCyUAM3k4BHhiwj
+	 ms4oxsUSeiXVJfvBTfUQaiVzF1i/uwPBCNrWJlSN01RB8i0R+5WxEeKopP8vr4RwGF
+	 CHUL19Fi+3ZiQ==
+Message-ID: <df592920-cdf3-40fe-8357-2fbdfc0afd78@kernel.org>
+Date: Mon, 17 Mar 2025 10:00:19 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,31 +49,19 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v16 2/3] i2c: aspeed: support AST2600 i2c new register
- mode driver
-To: Ryan Chen <ryan_chen@aspeedtech.com>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: kernel test robot <lkp@intel.com>,
- "benh@kernel.crashing.org" <benh@kernel.crashing.org>,
- "joel@jms.id.au" <joel@jms.id.au>,
- "andi.shyti@kernel.org" <andi.shyti@kernel.org>,
- "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
- <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
- "andrew@codeconstruct.com.au" <andrew@codeconstruct.com.au>,
- "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
- "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
- "openbmc@lists.ozlabs.org" <openbmc@lists.ozlabs.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "oe-kbuild-all@lists.linux.dev" <oe-kbuild-all@lists.linux.dev>
-References: <20250224055936.1804279-3-ryan_chen@aspeedtech.com>
- <202502280902.U0gLDhve-lkp@intel.com> <Z8GuOT5bJL7CdXX6@smile.fi.intel.com>
- <fec0a1c8-251b-491e-893d-11a8186a2128@kernel.org>
- <Z9fWhGDrUbAmGRl0@smile.fi.intel.com>
- <OS8PR06MB7541B15342ED1C92579AE18DF2DF2@OS8PR06MB7541.apcprd06.prod.outlook.com>
+Subject: Re: [PATCH RFC v2 3/3] dt-bindings: mailbox: mtk,vcp-mbox: add mtk
+ vcp-mbox document
+To: Jjian Zhou <jjian.zhou@mediatek.com>,
+ Jassi Brar <jassisinghbrar@gmail.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ Project_Global_Chrome_Upstream_Group@mediatek.com,
+ Chen-Yu Tsai <wenst@chromium.org>
+References: <20250317083822.891-1-jjian.zhou@mediatek.com>
+ <20250317083822.891-4-jjian.zhou@mediatek.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -119,68 +107,36 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <OS8PR06MB7541B15342ED1C92579AE18DF2DF2@OS8PR06MB7541.apcprd06.prod.outlook.com>
+In-Reply-To: <20250317083822.891-4-jjian.zhou@mediatek.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 17/03/2025 09:51, Ryan Chen wrote:
->> Subject: Re: [PATCH v16 2/3] i2c: aspeed: support AST2600 i2c new register
->> mode driver
->>
->> On Mon, Mar 17, 2025 at 08:48:03AM +0100, Krzysztof Kozlowski wrote:
->>> On 28/02/2025 13:38, Andy Shevchenko wrote:
->>>> On Fri, Feb 28, 2025 at 09:28:59AM +0800, kernel test robot wrote:
->>>>> Hi Ryan,
->>>>>
->>>>> kernel test robot noticed the following build warnings:
->>>>>
->>>>> [auto build test WARNING on andi-shyti/i2c/i2c-host] [also build
->>>>> test WARNING on linus/master v6.14-rc4 next-20250227] [If your
->>>>> patch is applied to the wrong git tree, kindly drop us a note.
->>>>> And when submitting patch, we suggest to use '--base' as documented
->>>>> in
->>>>> https://git-scm.com/docs/git-format-patch#_base_tree_information]
->>>>>
->>>>> url:
->> https://github.com/intel-lab-lkp/linux/commits/Ryan-Chen/dt-bindings-i2c-asp
->> eed-support-for-AST2600-i2cv2/20250224-140221
->>>>> base:
->> https://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux.git i2c/i2c-host
->>>>> patch link:
->> https://lore.kernel.org/r/20250224055936.1804279-3-ryan_chen%40aspeedtec
->> h.com
->>>>> patch subject: [PATCH v16 2/3] i2c: aspeed: support AST2600 i2c new
->>>>> register mode driver
->>>>> config: mips-allyesconfig
->>>>> (https://download.01.org/0day-ci/archive/20250228/202502280902.U0gL
->>>>> Dhve-lkp@intel.com/config)
->>>>> compiler: mips-linux-gcc (GCC) 14.2.0 reproduce (this is a W=1
->>>>> build):
->>>>> (https://download.01.org/0day-ci/archive/20250228/202502280902.U0gL
->>>>> Dhve-lkp@intel.com/reproduce)
->>>>>
->>>>> If you fix the issue in a separate patch/commit (i.e. not just a
->>>>> new version of the same patch/commit), kindly add following tags
->>>>> | Reported-by: kernel test robot <lkp@intel.com>
->>>>> | Closes:
->>>>> | https://lore.kernel.org/oe-kbuild-all/202502280902.U0gLDhve-lkp@i
->>>>> | ntel.com/
->>>>>
->>>>> All warnings (new ones prefixed by >>):
->>>>
->>>> My gosh, this is valid report. But it looks like a preexisted issue.
->>>> Can somebody fix this, please?
->>>
->>>
->>> That was three weeks ago and still no responses from Aspeed or
->>> contributors from here.
->>>
->>> I think this tells a lot about aspeedtech.com patchsets on the list.
->>
-> Sorry, I don't aware this is my patches issue, could you tell me what build instruction can reproduce this?
+On 17/03/2025 09:38, Jjian Zhou wrote:
+> This patch adds document for mediatek vcp mbox.
+> 
+> Signed-off-by: Jjian Zhou <jjian.zhou@mediatek.com>
+> ---
+>  .../bindings/mailbox/mtk,mt8196-vcp-mbox.yaml | 49 +++++++++++++++++++
 
-Everything is explained in the email. You do not need two people
-explaining the report, just read the report.
+Please use subject prefixes matching the subsystem. You can get them for
+example with `git log --oneline -- DIRECTORY_OR_FILE` on the directory
+your patch is touching. For bindings, the preferred subjects are
+explained here:
+https://www.kernel.org/doc/html/latest/devicetree/bindings/submitting-patches.html#i-for-patch-submitters
+
+>  1 file changed, 49 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/mailbox/mtk,mt8196-vcp-mbox.yaml
+
+Filename based on compatible. You already got this comment. Copy paste
+your filename here:
+
+<here goes filename>
+
+and here your compatible:
+
+<here goes compatible>
+
+Are the the same?
 
 Best regards,
 Krzysztof
