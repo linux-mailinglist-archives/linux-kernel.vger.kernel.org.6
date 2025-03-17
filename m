@@ -1,199 +1,217 @@
-Return-Path: <linux-kernel+bounces-563605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563606-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0169A64538
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 09:23:45 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 935ABA64539
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 09:23:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F63B3B3C02
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 08:23:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E7AF016BD6D
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 08:23:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9B0F2206BF;
-	Mon, 17 Mar 2025 08:23:14 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07FF721D3E7;
-	Mon, 17 Mar 2025 08:23:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7412121CC7D;
+	Mon, 17 Mar 2025 08:23:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="luk1APmx"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1BD121E0AC
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 08:23:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742199794; cv=none; b=H0Qkqm7hk5IcbzX84OTlWlRW5rTQwl8nMTDi3Xbgmofp1RZaEcXNogogDJA05t87H9thz2YIKBCanzWVhJDGHMmB2KjgQiCbAy8uxkRpfipqdLMwBKkP/yp6hU5Vpp6pIsD93tFr8mQVefHmIEl1LC6GqKp059s3Jr2H55KLH8Q=
+	t=1742199795; cv=none; b=bah0H0n1Df3F8hc968gFCGQ2caeaPpRcPCH2kmyKsOO3i0O+M2VfDIPmbbqPKns5yxFPR/Yrj+3VH9f1ofKuw2WdSf4cqQjwVT8juGi3xI3SmAkXQOVXEKezGBRNUj+0bialeNL3+Yf8znLbhLLFKryo6bkeZVhn2e9ky7UNwFE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742199794; c=relaxed/simple;
-	bh=6aUbTFZ9/zgMe0Jzt1+2v/MeJeMgEV1d9QChOoSsIc8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=AEidkVIuKkL2YJvSjlRLTv+k6ng1JAvev0MSuqxUPy+HXnyIbMRnufBLyIayvwUCpruvCBIF9cnzgrjUzXOVuFh9ExCSLDOk5SBcLu0FCBdITM/N6Y2HrBwYL5rZUFZhx1DFsswZi2MuI+1AZ9VvEoB+pWT+Wk7bA6svh/mpcpM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.2.10.34])
-	by gateway (Coremail) with SMTP id _____8AxCGrn29dnsrCZAA--.63804S3;
-	Mon, 17 Mar 2025 16:23:03 +0800 (CST)
-Received: from localhost.localdomain (unknown [10.2.10.34])
-	by front1 (Coremail) with SMTP id qMiowMBx3MTf29dnhFpPAA--.27886S3;
-	Mon, 17 Mar 2025 16:22:59 +0800 (CST)
-From: Tianyang Zhang <zhangtianyang@loongson.cn>
-To: chenhuacai@kernel.org,
-	kernel@xen0n.name,
-	corbet@lwn.net,
-	alexs@kernel.org,
-	si.yanteng@linux.dev,
-	tglx@linutronix.de,
-	jiaxun.yang@flygoat.com,
-	peterz@infradead.org,
-	wangliupu@loongson.cn,
-	lvjianmin@loongson.cn,
-	maobibo@loongson.cn,
-	siyanteng@cqsoftware.com.cn,
-	gaosong@loongson.cn,
-	yangtiezhu@loongson.cn
-Cc: loongarch@lists.linux.dev,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Tianyang Zhang <zhangtianyang@loongson.cn>
-Subject: [PATCH 1/2] Docs/LoongArch: Add Advanced Extended-Redirect IRQ model description
-Date: Mon, 17 Mar 2025 16:22:52 +0800
-Message-Id: <20250317082253.20520-2-zhangtianyang@loongson.cn>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20250317082253.20520-1-zhangtianyang@loongson.cn>
-References: <20250317082253.20520-1-zhangtianyang@loongson.cn>
+	s=arc-20240116; t=1742199795; c=relaxed/simple;
+	bh=WpFgNwc8iTy+ic8zvThJh/LrOGJEdfq8lpE+cc/saXw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rDwfx6Fn4PxrxVbC4BHFWLVEo9tXhZovPIzcs/4snJjtup7/vM9AR3WngKV22+zSewNbMUJYEKbPPMgJgNHCnni6ogfijJ/ZOBZBI8KlVSvWF5g6HPsCHuRfU7xpMlnAAarvBtgaEdiHqogtxFN9DXSnC0Bn14nSvNnATmh798k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=luk1APmx; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52H7ogoC003088;
+	Mon, 17 Mar 2025 08:22:57 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=xvL0Pp
+	AeErdyXUkpj2HkMsYgvrJPF4QQTEgBNCTaDmg=; b=luk1APmxpKlPcSQlmSzfPt
+	bJkkGaMqDMIqwVtUnlHFGSCWQfgLUU1uL33KhoeIXhWQRnQ1xIVkRIgPnb9Hk72P
+	Zd8xn3Gkr9/CWhAXFdcD9sNjNpluhjcMHHh2ZdJVGLT2GZ6+v3w5mEK/Yk77fRs+
+	QhzpJYags6gOp3WcXCiJTBQLeAEqV+qouexScParQ34KqmS/8hylEN6EMBQorU2I
+	as2jCw7fxXZWI/V106NVRDuNhxw6XTRtDdBVpmrwTvavQHnbvH/yBgBrAVOayVkG
+	HHVR/yF3KEWxbBfhFYB8oXPFUr4pWIcqZmb/jN1WXgzaGZTj0mLt4V+YJGiLJU8A
+	==
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45e5v0258v-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 17 Mar 2025 08:22:56 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52H4WA0i012451;
+	Mon, 17 Mar 2025 08:22:56 GMT
+Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 45dmvnn611-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 17 Mar 2025 08:22:55 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52H8Mss751839450
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 17 Mar 2025 08:22:54 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id F37D820043;
+	Mon, 17 Mar 2025 08:22:53 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 2B70C20040;
+	Mon, 17 Mar 2025 08:22:53 +0000 (GMT)
+Received: from [9.109.215.252] (unknown [9.109.215.252])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Mon, 17 Mar 2025 08:22:52 +0000 (GMT)
+Message-ID: <b0e222ca-0226-45fc-b348-fd21f691a466@linux.ibm.com>
+Date: Mon, 17 Mar 2025 13:52:52 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowMBx3MTf29dnhFpPAA--.27886S3
-X-CM-SenderInfo: x2kd0wxwld05hdqjqz5rrqw2lrqou0/
-X-Coremail-Antispam: 1Uk129KBj93XoWxAryfuw1rKw1kuw4rJr4kKrX_yoWrGFWxpr
-	Z3GryxXF18Jry5WF17Jr4UXr13G3Z3Ja1DtF1xKry8Xr4kAr1ktr1UJrykJFy7G34rAr1j
-	qFWrJw4UJr1UJwcCm3ZEXasCq-sJn29KB7ZKAUJUUUUD529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUBFb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I8E87Iv6xkF7I0E14v2
-	6F4UJVW0owAaw2AFwI0_JF0_Jw1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0c
-	Ia020Ex4CE44I27wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jw0_
-	WrylYx0Ex4A2jsIE14v26r4j6F4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwI
-	xGrwCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWU
-	JVW8JwCFI7km07C267AKxVWUAVWUtwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4
-	vE14v26r106r1rMI8E67AF67kF1VAFwI0_GFv_WrylIxkGc2Ij64vIr41lIxAIcVC0I7IY
-	x2IY67AKxVW8JVW5JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26c
-	xKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r4j6F4UMIIF0xvEx4A2jsIEc7CjxVAF
-	wI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07jr9NsUUUUU=
+User-Agent: Mozilla Thunderbird
+Subject: Re: [patch 05/46] genirq/resend: Switch to lock guards
+To: Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>
+Cc: Jiri Slaby <jirislaby@kernel.org>, LKML <linux-kernel@vger.kernel.org>
+References: <20250313154615.860723120@linutronix.de>
+ <20250313155914.210122456@linutronix.de>
+From: Shrikanth Hegde <sshegde@linux.ibm.com>
+Content-Language: en-US
+In-Reply-To: <20250313155914.210122456@linutronix.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: F6Bntv2FJGEY3YGffif2_P9GgwkICafG
+X-Proofpoint-GUID: F6Bntv2FJGEY3YGffif2_P9GgwkICafG
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-17_02,2025-03-17_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 suspectscore=0
+ impostorscore=0 adultscore=0 mlxscore=0 spamscore=0 phishscore=0
+ priorityscore=1501 lowpriorityscore=0 malwarescore=0 mlxlogscore=999
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502280000 definitions=main-2503170058
 
-Introduce the redirect interrupt controllers.When the redirect interrupt
-controller is enabled, the routing target of MSI interrupts is no longer a
-specific CPU and vector number, but a specific redirect entry. The actual
-CPU and vector number used are described by the redirect entry.
+Hi Thomas.
 
-Signed-off-by: Tianyang Zhang <zhangtianyang@loongson.cn>
----
- .../arch/loongarch/irq-chip-model.rst         | 38 +++++++++++++++++++
- .../zh_CN/arch/loongarch/irq-chip-model.rst   | 37 ++++++++++++++++++
- 2 files changed, 75 insertions(+)
+On 3/13/25 21:29, Thomas Gleixner wrote:
+> Convert all lock/unlock pairs to guards and tidy up the code.
+> 
+> No functional change.
+> 
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+> ---
+>   kernel/irq/resend.c |   50 +++++++++++++++++++++-----------------------------
+>   1 file changed, 21 insertions(+), 29 deletions(-)
+> 
+> --- a/kernel/irq/resend.c
+> +++ b/kernel/irq/resend.c
+> @@ -30,18 +30,17 @@ static DEFINE_RAW_SPINLOCK(irq_resend_lo
+>    */
+>   static void resend_irqs(struct tasklet_struct *unused)
+>   {
+> -	struct irq_desc *desc;
+> -
+> -	raw_spin_lock_irq(&irq_resend_lock);
+> +	guard(raw_spinlock_irq)(&irq_resend_lock);
+>   	while (!hlist_empty(&irq_resend_list)) {
+> -		desc = hlist_entry(irq_resend_list.first, struct irq_desc,
+> -				   resend_node);
+> +		struct irq_desc *desc;
+> +
+> +		desc = hlist_entry(irq_resend_list.first, struct irq_desc,  resend_node);
+>   		hlist_del_init(&desc->resend_node);
+> +
+>   		raw_spin_unlock(&irq_resend_lock);
+>   		desc->handle_irq(desc);
+>   		raw_spin_lock(&irq_resend_lock);
+>   	}
+> -	raw_spin_unlock_irq(&irq_resend_lock);
+>   }
+>   
+>   /* Tasklet to handle resend: */
+> @@ -75,19 +74,18 @@ static int irq_sw_resend(struct irq_desc
+>   	}
+>   
+>   	/* Add to resend_list and activate the softirq: */
+> -	raw_spin_lock(&irq_resend_lock);
+> -	if (hlist_unhashed(&desc->resend_node))
+> -		hlist_add_head(&desc->resend_node, &irq_resend_list);
+> -	raw_spin_unlock(&irq_resend_lock);
+> +	scoped_guard (raw_spinlock, &irq_resend_lock) {
 
-diff --git a/Documentation/arch/loongarch/irq-chip-model.rst b/Documentation/arch/loongarch/irq-chip-model.rst
-index a7ecce11e445..84fafb86ec17 100644
---- a/Documentation/arch/loongarch/irq-chip-model.rst
-+++ b/Documentation/arch/loongarch/irq-chip-model.rst
-@@ -181,6 +181,44 @@ go to PCH-PIC/PCH-LPC and gathered by EIOINTC, and then go to CPUINTC directly::
-              | Devices |
-              +---------+
- 
-+Advanced Extended IRQ model (with redirection)
-+===============
-+
-+In this model, IPI (Inter-Processor Interrupt) and CPU Local Timer interrupt go
-+to CPUINTC directly, CPU UARTS interrupts go to LIOINTC, PCH-MSI interrupts go
-+to REDIRECT for remapping it to AVEC, and then go to CPUINTC directly, while all
-+other devices interrupts go to PCH-PIC/PCH-LPC and gathered by EIOINTC, and then
-+go to CPUINTC directly::
-+
-+ +-----+     +-----------------------+     +-------+
-+ | IPI | --> |        CPUINTC        | <-- | Timer |
-+ +-----+     +-----------------------+     +-------+
-+              ^          ^          ^
-+              |          |          |
-+       +---------+ +----------+ +---------+     +-------+
-+       | EIOINTC | | AVECINTC | | LIOINTC | <-- | UARTs |
-+       +---------+ +----------+ +---------+     +-------+
-+            ^            ^
-+            |            |
-+            |      +----------+
-+            |      | REDIRECT |
-+            |      +----------+
-+            |            ^
-+            |            |
-+       +---------+  +---------+
-+       | PCH-PIC |  | PCH-MSI |
-+       +---------+  +---------+
-+         ^     ^           ^
-+         |     |           |
-+ +---------+ +---------+ +---------+
-+ | Devices | | PCH-LPC | | Devices |
-+ +---------+ +---------+ +---------+
-+                  ^
-+                  |
-+             +---------+
-+             | Devices |
-+             +---------+
-+
- ACPI-related definitions
- ========================
- 
-diff --git a/Documentation/translations/zh_CN/arch/loongarch/irq-chip-model.rst b/Documentation/translations/zh_CN/arch/loongarch/irq-chip-model.rst
-index d4ff80de47b6..5d82cba07482 100644
---- a/Documentation/translations/zh_CN/arch/loongarch/irq-chip-model.rst
-+++ b/Documentation/translations/zh_CN/arch/loongarch/irq-chip-model.rst
-@@ -174,6 +174,43 @@ CPU串口（UARTs）中断发送到LIOINTC，PCH-MSI中断发送到AVECINTC，
-              | Devices |
-              +---------+
- 
-+高级扩展IRQ模型 (带重定向)
-+===============
-+
-+在这种模型里面，IPI（Inter-Processor Interrupt）和CPU本地时钟中断直接发送到CPUINTC，
-+CPU串口（UARTs）中断发送到LIOINTC，PCH-MSI中断首先发送到REDIRECT模块,完成重定向后发
-+送到AVECINTC，而后通过AVECINTC直接送达CPUINTC，而其他所有设备的中断则分别发送到所连
-+接的PCH-PIC/PCH-LPC，然后由EIOINTC统一收集，再直接到达CPUINTC::
-+
-+ +-----+     +-----------------------+     +-------+
-+ | IPI | --> |        CPUINTC        | <-- | Timer |
-+ +-----+     +-----------------------+     +-------+
-+              ^          ^          ^
-+              |          |          |
-+       +---------+ +----------+ +---------+     +-------+
-+       | EIOINTC | | AVECINTC | | LIOINTC | <-- | UARTs |
-+       +---------+ +----------+ +---------+     +-------+
-+            ^            ^
-+            |            |
-+            |      +----------+
-+            |      | REDIRECT |
-+            |      +----------+
-+            |            ^
-+            |            |
-+       +---------+  +---------+
-+       | PCH-PIC |  | PCH-MSI |
-+       +---------+  +---------+
-+         ^     ^           ^
-+         |     |           |
-+ +---------+ +---------+ +---------+
-+ | Devices | | PCH-LPC | | Devices |
-+ +---------+ +---------+ +---------+
-+                  ^
-+                  |
-+             +---------+
-+             | Devices |
-+             +---------+
-+
- ACPI相关的定义
- ==============
- 
--- 
-2.43.0
+Nit: Any reason why it is "scoped_guard ()" instead of "scoped_guard()". 
+Is there a difference between the two?
+
+I have seen in the current code base both are present, i would be nice 
+to have one of it no? or guideline on which one to use when?
+
+> +		if (hlist_unhashed(&desc->resend_node))
+> +			hlist_add_head(&desc->resend_node, &irq_resend_list);
+> +	}
+>   	tasklet_schedule(&resend_tasklet);
+>   	return 0;
+>   }
+>   
+>   void clear_irq_resend(struct irq_desc *desc)
+>   {
+> -	raw_spin_lock(&irq_resend_lock);
+> +	guard(raw_spinlock)(&irq_resend_lock);
+>   	hlist_del_init(&desc->resend_node);
+> -	raw_spin_unlock(&irq_resend_lock);
+>   }
+>   
+>   void irq_resend_init(struct irq_desc *desc)
+> @@ -172,30 +170,24 @@ int check_irq_resend(struct irq_desc *de
+>    */
+>   int irq_inject_interrupt(unsigned int irq)
+>   {
+> -	struct irq_desc *desc;
+> -	unsigned long flags;
+> -	int err;
+> +	int err = -EINVAL;
+>   
+>   	/* Try the state injection hardware interface first */
+>   	if (!irq_set_irqchip_state(irq, IRQCHIP_STATE_PENDING, true))
+>   		return 0;
+>   
+>   	/* That failed, try via the resend mechanism */
+> -	desc = irq_get_desc_buslock(irq, &flags, 0);
+> -	if (!desc)
+> -		return -EINVAL;
+> +	scoped_irqdesc_get_and_buslock(irq, 0) {
+> +		struct irq_desc *desc = scoped_irqdesc;
+>   
+> -	/*
+> -	 * Only try to inject when the interrupt is:
+> -	 *  - not NMI type
+> -	 *  - activated
+> -	 */
+> -	if (irq_is_nmi(desc) || !irqd_is_activated(&desc->irq_data))
+> -		err = -EINVAL;
+> -	else
+> -		err = check_irq_resend(desc, true);
+> -
+> -	irq_put_desc_busunlock(desc, flags);
+> +		/*
+> +		 * Only try to inject when the interrupt is:
+> +		 *  - not NMI type
+> +		 *  - activated
+> +		 */
+> +		if (!irq_is_nmi(desc) && irqd_is_activated(&desc->irq_data))
+> +			err = check_irq_resend(desc, true);
+> +	}
+>   	return err;
+>   }
+>   EXPORT_SYMBOL_GPL(irq_inject_interrupt);
+> 
+> 
 
 
