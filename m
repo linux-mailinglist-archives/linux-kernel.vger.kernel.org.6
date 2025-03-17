@@ -1,261 +1,139 @@
-Return-Path: <linux-kernel+bounces-563401-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563400-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3FE5A6410E
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 07:17:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C093CA6410C
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 07:17:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E81B316EA3C
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 06:17:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1DB9D16ED1C
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 06:17:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2AAB219A8D;
-	Mon, 17 Mar 2025 06:17:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9E091DF24E;
+	Mon, 17 Mar 2025 06:17:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="YcC7B322"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NTRteb81"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D76D1290F;
-	Mon, 17 Mar 2025 06:17:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 135304430
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 06:17:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742192231; cv=none; b=B4GA0R2C+ODRujuEc1CRrdCt67s671eKdUDuMdRr/xouJhdm7xzUerR8N4OMvrU+dZ9xkVd6Jr9Y2seKWyI2JTkgBJ4XH1Rd9ABbWkwvBuU51fMUPEaX+81ojveHtY8lO56PXpAZLCljnQJGMEpcBx29Uq0A/uqM2IFV8fQHYts=
+	t=1742192230; cv=none; b=uI8+yf6/NKnEgYkQO91t717PDYEcmy4BSR8pV6tXBLmpOYjiTztXgu6e1+idgaiflQQMiG/jcvuzWxLzr6x9U47UjKpwTTRcMJpBJ25t/dPAGpanoUx9BsTHfUpKEYq/G9h0R/K+2+BIJfj58eh+/JIR99+THF1G5hlwIFeypsM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742192231; c=relaxed/simple;
-	bh=ag2I3Z6QwQfbm8LXO+zVW/LeJnpXJZRawJhY1voh77A=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=kM1aN5sVlc91cwdsxHXnmIa+tmoMq2E2riWklvR0QCVV50KpMrbtPXy7UgGKyPq1cbv4K9uT4O36Fb8qsJwoOdj5jgJjnN2mVo7BnBbbU/t4p7ynP8v4FA1irdTKmpqqimKwnZfgIGqXCwaKruYQZOl1MVDtGmh1TzQLfHXRUJU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=YcC7B322; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1742192224;
-	bh=uzr6N2j9JwgdCojr5RBgum8Z5ZbFaXwyt/EUAwMk8oM=;
-	h=Date:From:To:Cc:Subject:From;
-	b=YcC7B3220EZYlGBTgYNwHbBJoUAKrNXpns9oiBOnwZJ6lKsm9QR6M4iOsovHjrzKo
-	 fN5P3ERe53bRZBN/9QiyDfcH0jSVyVToVyTuSoNN0k0F4+gs0bPYuXdX0gSyX8ILhy
-	 855St7SQAMhlkrdUhha7LhrAxEVsm+8D2dv/OhT+OQMhJ7TQOxXGDIUzctkjZixNEk
-	 08pIEqqb5K0leSDgVzWdwc6IA/reO2vqxSVIgJdvrrc8/ovu8RdGTrfJM6+jQtKZcK
-	 SH8P0M5zE97SOMjl+EOTsce1TYY8h04/jXaZGPwS2KNeyR25I3wwti9tkX/J9rG9gM
-	 azvZREvuRJItw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZGPrb0ncRz4wcn;
-	Mon, 17 Mar 2025 17:17:02 +1100 (AEDT)
-Date: Mon, 17 Mar 2025 17:17:01 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Christoffer Dall <cdall@cs.columbia.edu>, Marc Zyngier <maz@kernel.org>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
-Cc: Douglas Anderson <dianders@chromium.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, Oliver Upton <oliver.upton@linux.dev>,
- Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
-Subject: linux-next: manual merge of the kvm-arm tree with the arm64 tree
-Message-ID: <20250317171701.71c8677a@canb.auug.org.au>
+	s=arc-20240116; t=1742192230; c=relaxed/simple;
+	bh=m3mvLpmhRYvQR28rlEcSuB4sdhql3ccHGhUoBXjPeeU=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=jkCowZPwcw2py6PyJ5EXgarGBfvk6cm9hzH9Oii/DWhFhrP2Ov+Zc83mt/pyGXP/pvrPt+w0eakiqugjCCt3sDHNnk0zMVzQoCqACDG1p7w2/Fpa083LBccPYoL2UfNDFBqTcDvF4T3pisLERhoYmQQuaxzpibeorabbuyUvat0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NTRteb81; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8620C4CEEC;
+	Mon, 17 Mar 2025 06:17:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742192229;
+	bh=m3mvLpmhRYvQR28rlEcSuB4sdhql3ccHGhUoBXjPeeU=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=NTRteb81KcIqr/ZZ2055KeJL5FYXM45nQPr69hEH10tRPQbkXaIKjmIm+peflaBhO
+	 24GI8km1HZ9iKT2zP0vvOaoPdezSAInU7iqm+1/NI++0W4tiPLaOd03xg+4/lB7oYx
+	 7BoT+bjicDPguLiVg/S7YAGThNwuMB6BXOu7BX/3m98ldRR6+V1NR+c/E4fhMBorpT
+	 HowY0wSBI5kdxzcArbZPZgxWsJB3VpW7GktRsQZjqtdLUeJfDsLKEYQqXFLl5hrAs+
+	 JS9K1hOvtAe/PQAlWJi5cQN34ORpLwgMfCuZTbIOGXftvJ3dsLc4pxLGgwBNQa5MA9
+	 AoSZCXSeLAJNQ==
+Message-ID: <33f8428e-f152-49a6-a074-b8532b96ff9a@kernel.org>
+Date: Mon, 17 Mar 2025 07:17:07 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/C2/R6dTjtzY/cpnU2J8rCu1";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH linux-next] genirq: use sysfs_emit() instead of
+ scnprintf().
+From: Jiri Slaby <jirislaby@kernel.org>
+To: xie.ludan@zte.com.cn, tglx@linutronix.de
+Cc: linux-kernel@vger.kernel.org
+References: <20250315141721157LhKSIQccKZ3ZgAzuvbQo1@zte.com.cn>
+ <e177acba-24d3-4202-a0a8-92bfbfdf87e7@suse.cz>
+ <9c552d9a-2d46-4069-a9c4-35fab857bfc3@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=jirislaby@kernel.org; keydata=
+ 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
+In-Reply-To: <9c552d9a-2d46-4069-a9c4-35fab857bfc3@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
---Sig_/C2/R6dTjtzY/cpnU2J8rCu1
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 17. 03. 25, 7:12, Jiri Slaby wrote:
+>>> --- a/kernel/irq/irqdesc.c
+>>>
+>>> +++ b/kernel/irq/irqdesc.c
+>>>
+>>> @@ -257,11 +257,11 @@ static ssize_t per_cpu_count_show(struct 
+>>> kobject *kobj,
+>>>
+>>> for_each_possible_cpu(cpu) {
+>>>
+>>> unsigned int c = irq_desc_kstat_cpu(desc, cpu);
+>>>
+>>> -ret += scnprintf(buf + ret, PAGE_SIZE - ret, "%s%u", p, c);
+>>>
+>>> +ret += sysfs_emit(buf + ret, "%s%u", p, c);
+>>
+>> Well, so the PAGE_SIZE boundary is never checked for this stacking 
+>> write now, right?
+> 
+> ^^^ not really clear what I mean, so:
+> 
+> If you advance buf by ret every time, sysfs_emit() still would only 
+> check if buf is not written more than "PAGE_SIZE" bytes. But the 
+> original code performs this proper "PAGE_SIZE - ret" check.
 
-Hi all,
+Apparently, sysfs_emit_at() is your friend here.
 
-Today's linux-next merge of the kvm-arm tree got a conflict in:
+>> thanks,
+-- 
+js
+suse labs
 
-  arch/arm64/kernel/proton-pack.c
-
-between commits:
-
-  e403e8538359 ("arm64: errata: Assume that unknown CPUs _are_ vulnerable t=
-o Spectre BHB")
-  a5951389e58d ("arm64: errata: Add newer ARM cores to the spectre_bhb_loop=
-_affected() lists")
-
-from the arm64 tree and commit:
-
-  e3121298c7fc ("arm64: Modify _midr_range() functions to read MIDR/REVIDR =
-internally")
-
-from the kvm-arm tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc arch/arm64/kernel/proton-pack.c
-index 0f51fd10b4b0,a573fa40d4b6..000000000000
---- a/arch/arm64/kernel/proton-pack.c
-+++ b/arch/arm64/kernel/proton-pack.c
-@@@ -845,86 -845,52 +845,86 @@@ static unsigned long system_bhb_mitigat
-   * This must be called with SCOPE_LOCAL_CPU for each type of CPU, before =
-any
-   * SCOPE_SYSTEM call will give the right answer.
-   */
- -u8 spectre_bhb_loop_affected(int scope)
- +static bool is_spectre_bhb_safe(int scope)
- +{
- +	static const struct midr_range spectre_bhb_safe_list[] =3D {
- +		MIDR_ALL_VERSIONS(MIDR_CORTEX_A35),
- +		MIDR_ALL_VERSIONS(MIDR_CORTEX_A53),
- +		MIDR_ALL_VERSIONS(MIDR_CORTEX_A55),
- +		MIDR_ALL_VERSIONS(MIDR_CORTEX_A510),
- +		MIDR_ALL_VERSIONS(MIDR_CORTEX_A520),
- +		MIDR_ALL_VERSIONS(MIDR_BRAHMA_B53),
- +		MIDR_ALL_VERSIONS(MIDR_QCOM_KRYO_2XX_SILVER),
- +		MIDR_ALL_VERSIONS(MIDR_QCOM_KRYO_3XX_SILVER),
- +		MIDR_ALL_VERSIONS(MIDR_QCOM_KRYO_4XX_SILVER),
- +		{},
- +	};
- +	static bool all_safe =3D true;
- +
- +	if (scope !=3D SCOPE_LOCAL_CPU)
- +		return all_safe;
- +
-- 	if (is_midr_in_range_list(read_cpuid_id(), spectre_bhb_safe_list))
-++	if (is_midr_in_range_list(spectre_bhb_safe_list))
- +		return true;
- +
- +	all_safe =3D false;
- +
- +	return false;
- +}
- +
- +static u8 spectre_bhb_loop_affected(void)
-  {
-  	u8 k =3D 0;
- -	static u8 max_bhb_k;
- =20
- -	if (scope =3D=3D SCOPE_LOCAL_CPU) {
- -		static const struct midr_range spectre_bhb_k32_list[] =3D {
- -			MIDR_ALL_VERSIONS(MIDR_CORTEX_A78),
- -			MIDR_ALL_VERSIONS(MIDR_CORTEX_A78AE),
- -			MIDR_ALL_VERSIONS(MIDR_CORTEX_A78C),
- -			MIDR_ALL_VERSIONS(MIDR_CORTEX_X1),
- -			MIDR_ALL_VERSIONS(MIDR_CORTEX_A710),
- -			MIDR_ALL_VERSIONS(MIDR_CORTEX_X2),
- -			MIDR_ALL_VERSIONS(MIDR_NEOVERSE_N2),
- -			MIDR_ALL_VERSIONS(MIDR_NEOVERSE_V1),
- -			{},
- -		};
- -		static const struct midr_range spectre_bhb_k24_list[] =3D {
- -			MIDR_ALL_VERSIONS(MIDR_CORTEX_A76),
- -			MIDR_ALL_VERSIONS(MIDR_CORTEX_A77),
- -			MIDR_ALL_VERSIONS(MIDR_NEOVERSE_N1),
- -			{},
- -		};
- -		static const struct midr_range spectre_bhb_k11_list[] =3D {
- -			MIDR_ALL_VERSIONS(MIDR_AMPERE1),
- -			{},
- -		};
- -		static const struct midr_range spectre_bhb_k8_list[] =3D {
- -			MIDR_ALL_VERSIONS(MIDR_CORTEX_A72),
- -			MIDR_ALL_VERSIONS(MIDR_CORTEX_A57),
- -			{},
- -		};
- +	static const struct midr_range spectre_bhb_k132_list[] =3D {
- +		MIDR_ALL_VERSIONS(MIDR_CORTEX_X3),
- +		MIDR_ALL_VERSIONS(MIDR_NEOVERSE_V2),
- +	};
- +	static const struct midr_range spectre_bhb_k38_list[] =3D {
- +		MIDR_ALL_VERSIONS(MIDR_CORTEX_A715),
- +		MIDR_ALL_VERSIONS(MIDR_CORTEX_A720),
- +	};
- +	static const struct midr_range spectre_bhb_k32_list[] =3D {
- +		MIDR_ALL_VERSIONS(MIDR_CORTEX_A78),
- +		MIDR_ALL_VERSIONS(MIDR_CORTEX_A78AE),
- +		MIDR_ALL_VERSIONS(MIDR_CORTEX_A78C),
- +		MIDR_ALL_VERSIONS(MIDR_CORTEX_X1),
- +		MIDR_ALL_VERSIONS(MIDR_CORTEX_A710),
- +		MIDR_ALL_VERSIONS(MIDR_CORTEX_X2),
- +		MIDR_ALL_VERSIONS(MIDR_NEOVERSE_N2),
- +		MIDR_ALL_VERSIONS(MIDR_NEOVERSE_V1),
- +		{},
- +	};
- +	static const struct midr_range spectre_bhb_k24_list[] =3D {
- +		MIDR_ALL_VERSIONS(MIDR_CORTEX_A76),
- +		MIDR_ALL_VERSIONS(MIDR_CORTEX_A76AE),
- +		MIDR_ALL_VERSIONS(MIDR_CORTEX_A77),
- +		MIDR_ALL_VERSIONS(MIDR_NEOVERSE_N1),
- +		MIDR_ALL_VERSIONS(MIDR_QCOM_KRYO_4XX_GOLD),
- +		{},
- +	};
- +	static const struct midr_range spectre_bhb_k11_list[] =3D {
- +		MIDR_ALL_VERSIONS(MIDR_AMPERE1),
- +		{},
- +	};
- +	static const struct midr_range spectre_bhb_k8_list[] =3D {
- +		MIDR_ALL_VERSIONS(MIDR_CORTEX_A72),
- +		MIDR_ALL_VERSIONS(MIDR_CORTEX_A57),
- +		{},
- +	};
- =20
-- 	if (is_midr_in_range_list(read_cpuid_id(), spectre_bhb_k132_list))
- -		if (is_midr_in_range_list(spectre_bhb_k32_list))
- -			k =3D 32;
- -		else if (is_midr_in_range_list(spectre_bhb_k24_list))
- -			k =3D 24;
- -		else if (is_midr_in_range_list(spectre_bhb_k11_list))
- -			k =3D 11;
- -		else if (is_midr_in_range_list(spectre_bhb_k8_list))
- -			k =3D  8;
- -
- -		max_bhb_k =3D max(max_bhb_k, k);
- -	} else {
- -		k =3D max_bhb_k;
- -	}
-++	if (is_midr_in_range_list(spectre_bhb_k132_list))
- +		k =3D 132;
-- 	else if (is_midr_in_range_list(read_cpuid_id(), spectre_bhb_k38_list))
-++	else if (is_midr_in_range_list(spectre_bhb_k38_list))
- +		k =3D 38;
-- 	else if (is_midr_in_range_list(read_cpuid_id(), spectre_bhb_k32_list))
-++	else if (is_midr_in_range_list(spectre_bhb_k32_list))
- +		k =3D 32;
-- 	else if (is_midr_in_range_list(read_cpuid_id(), spectre_bhb_k24_list))
-++	else if (is_midr_in_range_list(spectre_bhb_k24_list))
- +		k =3D 24;
-- 	else if (is_midr_in_range_list(read_cpuid_id(), spectre_bhb_k11_list))
-++	else if (is_midr_in_range_list(spectre_bhb_k11_list))
- +		k =3D 11;
-- 	else if (is_midr_in_range_list(read_cpuid_id(), spectre_bhb_k8_list))
-++	else if (is_midr_in_range_list(spectre_bhb_k8_list))
- +		k =3D  8;
- =20
-  	return k;
-  }
-
---Sig_/C2/R6dTjtzY/cpnU2J8rCu1
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfXvl0ACgkQAVBC80lX
-0GwiLQf/cMkKaN3oXT+rh0glxXgQAJzx55wpr4vPLmuUFlug2gcAn9CmQRKP2Lk9
-e6akFhDCvRfW6RGFpKe6fFa8Qax9Ka7osFJ0kvVqCjOSwgCHgQIDGX9dDoOPU7N7
-ou/3u9BkVSLdYKoNi/qS0CTMDqxIonxflcQ/JYCZ3x+QQ01LlJHhIRkGjPeBAEVs
-5QmhsCDbV7PBt1HqmdTWuNeVSFTLK6P3fJLKiFFMoh+hkbolGCf5nSNdK3ugs4W2
-IWWsxOefsqvZKp9Zhk5NBB/+As10ztxnEsXYVTDjZZIwXD7iIR/INg8lLyOBt9kE
-4jv6U/JPz0R50RZZUsyXD6rdrylLKw==
-=WidW
------END PGP SIGNATURE-----
-
---Sig_/C2/R6dTjtzY/cpnU2J8rCu1--
 
