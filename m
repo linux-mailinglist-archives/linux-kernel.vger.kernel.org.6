@@ -1,92 +1,69 @@
-Return-Path: <linux-kernel+bounces-563854-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563855-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D17D8A649A1
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:24:46 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2ED6AA6498B
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:22:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3C0C18986F5
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:22:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 82A10164B8B
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:22:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B537623AE87;
-	Mon, 17 Mar 2025 10:18:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61BF823BCFA;
+	Mon, 17 Mar 2025 10:18:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b7LpPKBD"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JRNhqbJP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4692822F17B;
-	Mon, 17 Mar 2025 10:18:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE53D238D43;
+	Mon, 17 Mar 2025 10:18:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742206715; cv=none; b=gznlctuVQvcKYPbny60cWipb9lblLb20bOw/cNueJUvCSmWQPi4Q1CMzu2EfVapUAa1ettiJNEhpdvU0GKYsY5y3hFkxyFR59SDolboIUBB6SXHdI7P9KVsKu7ZhW/vsufqhFce8QoSjmuyTLvkPJJGN8Le4OJr69Baa0GmWgRg=
+	t=1742206725; cv=none; b=hlJy4gG8pOU/PwSByoRPGkmVpMdwez7GiX24jHLBqtTEhcDpCXYqtP2fxK9jYfvdyjLEwv+znhSnhnzJKzJ6Zp5ZfpvTyuPVeo1udF2j1H3wJ+YbW8qPmn+H8m6UDTIPovG7S2FsbcCEgGTwzlBn70z7TGPkNFQRXelrZpV+iFE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742206715; c=relaxed/simple;
-	bh=XjE4+zFvz2SqefVif3aUirZvhQJ87SiWwJlaKUqZNXk=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=avW3jp+GeZ0f6LVe3VXBoUCzQfFG90L2MUkiY4/DGkBGSTXrNF6QsvVcB5EXXNBW09F8HKga5WYI7ypd3Vk9YL2xnBJvPftrZXmR0LPtV+Ozv9wDe5cujuyJbTk3P9wshVO2S6VG3mDwYjDUBqJbdPBUuUmfE/+IessMyPFQGtc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b7LpPKBD; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-ac2c663a3daso192786466b.2;
-        Mon, 17 Mar 2025 03:18:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742206711; x=1742811511; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=AEHlrjy8RB8567Xd0YTE7NiCgDY2+uTN3AGwaU7/bsE=;
-        b=b7LpPKBDZdLz9W45NZDD5Zv8I/uAvfOFSRH82bUq/mhCgAkCo0VaN1Y4bjEkZPLzL2
-         1qCNaUfuBdBqeh3EPs1flMEbTntkg9ubsVnR3qW49+eBBSlGIa/8KBzDrPqdlBMi3LtG
-         Y0sjFldDyOnHIfx/lMOiWmOK3rf1vdNTssgfvUQ9l+lsVe3mjCeQEcMlS1cXAjlEV+8I
-         SyseSECZ+IIzHWGKtzJtzaYyH4CgQtdFGAJEtq66+4zNLHpBhTxdLyVzEuAgTiv+xRyM
-         Kq2i+qz0Fx2rB6i7fd84ScpUbo1/kmNzyDI6GViJl+6sGM2J3hZTmGM0qVAGP7o10Y44
-         qmEw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742206711; x=1742811511;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AEHlrjy8RB8567Xd0YTE7NiCgDY2+uTN3AGwaU7/bsE=;
-        b=qXFCcIJvpwE26SudBtDGO7pYDjBWofwx0DIH3YxHh7enwX+17AG6RO7izHq6JpCIZX
-         DtqoICo0L5doadBb9X8etqdgZweaqgpgl+THd6Vp6c6bBrrkqzOZlXFtYwtIzZ1vm9TX
-         8y0qqAwTeAKNZpFi0CvCYuDTjp5COfpqevXtfo0BSkjrLIIQ6xv50SPalEQMJHlmHB3e
-         lwC0Tx3WA9YLSJrjsM15lb8c22fYHRdwZ8l5oFTy8W5fsdzsZUfUa8k+WJiZ3jWL3fDn
-         6C7o74454588MTLc4KMLPdkUvXEmofDp1Co2vjx5ak+CsS+m/xlRdomzVC6SWwoU5Pyj
-         rPrA==
-X-Forwarded-Encrypted: i=1; AJvYcCWjbymWvmxZ1qTxuGbMgeMBv1kF0iESRWniHrzMKA/fW5l3yIRI+WK8XrImWGYLQI/obZ01sIkE@vger.kernel.org, AJvYcCXbEACatVrbvtLSYqV7bRAP3Uw+caSMjhijAWajHJDiXMuwVQ3M9+Sqdsjm45Xu0UGobA+nao0/v02scxMN@vger.kernel.org, AJvYcCXpKScecY7LkZ2w3p60szmbiy9f1Xgz+l905x7/vRFw9N1XGp037UlqH/MpDO8y/BhOp08=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxvuro5n10wYeu9I186sufsPao9V85J4jzo3BHyflP3IYiipbYx
-	ichwqWgURR4IwRMzblB+NkKKXggcmf24dxeTWO12EeRYEfT3xtde
-X-Gm-Gg: ASbGnctrP9493sjKlsfYRKKY1jwmB26Tx2o+pZyhxkodT+nmn8qaHWqlcjdV1dnvejW
-	cd7CqJ4+aaqVH5YXLnHuCiFlzpQX6u5PHSr5u4HrJUVvtg8mjiOlQek8TbX7ydESYDmGVL+NTTX
-	7odbMXXR8tvlqmkNmy2B3TvqiPnyVRonlkH+a4iFTB8LiHVXt2RrizFK/369LfR9oIa2dShFJR1
-	GVEFSXDRrxeS7AhijNUCO02q4oyJ7G+IQAnHNuXd5kKAff2iO4wFPvtcCo6ZpPGN6M57YPEIPoB
-	K0eV3DUTGC7cz76viiox5Nbie5Q9Qdo=
-X-Google-Smtp-Source: AGHT+IEZgRKTDLQyVHbs0c06ifShWYg0fN3NKtuuUCjdd9f2W7b/hT5jWr1RKcn7GzFwSmh5x1D74A==
-X-Received: by 2002:a05:6402:5251:b0:5e0:9390:f0d2 with SMTP id 4fb4d7f45d1cf-5e8a0228606mr11038428a12.20.1742206711416;
-        Mon, 17 Mar 2025 03:18:31 -0700 (PDT)
-Received: from krava ([173.38.220.45])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e816974740sm5693886a12.26.2025.03.17.03.18.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Mar 2025 03:18:31 -0700 (PDT)
-From: Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date: Mon, 17 Mar 2025 11:18:29 +0100
-To: Chen Linxuan <chenlinxuan@deepin.org>
-Cc: Andrii Nakryiko <andrii@kernel.org>, Sasha Levin <sashal@kernel.org>,
-	Shakeel Butt <shakeel.butt@linux.dev>,
-	Alexey Dobriyan <adobriyan@gmail.com>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
-	Yi Lai <yi1.lai@intel.com>, Daniel Borkmann <daniel@iogearbox.net>,
-	stable@vger.kernel.org, Jann Horn <jannh@google.com>,
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org
-Subject: Re: [PATCH stable 6.1 v3] lib/buildid: Handle memfd_secret() files
- in build_id_parse()
-Message-ID: <Z9f29SF5Wg5wA7FC@krava>
-References: <84211070D1A421C2+20250317052300.24146-2-chenlinxuan@deepin.org>
+	s=arc-20240116; t=1742206725; c=relaxed/simple;
+	bh=tdihrKE7tzndVFnw9dWBP73Eu2/SjZoCbquhjXvIpzM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kuxy0aBF2PjlnZHj3vgbdV9BSTuv7IoVyV9ZB/3SUYA1eMqiKK4WWyk+EoXNLZ5iKskl0bO3SvimOLITPQWkM1GhcJaqn8fmUaS1KlloFRuOkew37DZTgfAl4AFY/sph5iGx2g5MVqsT2znwFIUFLiAyiFTMycD45MMTbwct/7U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JRNhqbJP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91A62C4CEE3;
+	Mon, 17 Mar 2025 10:18:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742206723;
+	bh=tdihrKE7tzndVFnw9dWBP73Eu2/SjZoCbquhjXvIpzM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JRNhqbJPLHmdKTQyG4guXvGs+c8P4CPGjccAaxa0KUdhiMJz6C4UNRN1PLTIDipvf
+	 y+D2H0C1NCXJYgrAui99at8QYk4LbtlGPVtyjCQl0u+DNqbEE6LwXyWMrSd9OyUd8Q
+	 ZKJWpojx74Z/BrI1j8Ms2pSud4PL3bLgSHsE92GLzbhWyYKTbJ1+JQqhymCEFAHLJh
+	 GQ7cBwvnm5ZcIpEAHYvpuY58qCBDpeRRYCWLJ1N6D3IIgtZd+P1DdiD3UCkybzT5h/
+	 Q9DuMqPWv9D8xtmkpZeIbhVcdncyZqaVDY9DYQni/ujtlj3o3E4CQ5kaR6uO3ZPEby
+	 6iqR/IgM/QT5w==
+Date: Mon, 17 Mar 2025 11:18:37 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev,
+	Ben Segall <bsegall@google.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
+	Mel Gorman <mgorman@suse.de>, Peter Zijlstra <peterz@infradead.org>,
+	Shrikanth Hegde <sshegde@linux.ibm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Will Deacon <will@kernel.org>
+Subject: Re: [PATCH v4 1/9] sched: Add a generic function to return the
+ preemption string.
+Message-ID: <Z9f2_exjFEpTpuRr@gmail.com>
+References: <20250314160810.2373416-1-bigeasy@linutronix.de>
+ <20250314160810.2373416-2-bigeasy@linutronix.de>
+ <Z9ay49NsoC73dKXe@gmail.com>
+ <20250317083155.9g9ksofZ@linutronix.de>
+ <Z9fnf9g_zmbNXICh@gmail.com>
+ <20250317092526.S1MfZldy@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -95,79 +72,51 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <84211070D1A421C2+20250317052300.24146-2-chenlinxuan@deepin.org>
-
-On Mon, Mar 17, 2025 at 01:23:00PM +0800, Chen Linxuan wrote:
-> [ Upstream commit 5ac9b4e935dfc6af41eee2ddc21deb5c36507a9f ]
-> 
-> >From memfd_secret(2) manpage:
-> 
->   The memory areas backing the file created with memfd_secret(2) are
->   visible only to the processes that have access to the file descriptor.
->   The memory region is removed from the kernel page tables and only the
->   page tables of the processes holding the file descriptor map the
->   corresponding physical memory. (Thus, the pages in the region can't be
->   accessed by the kernel itself, so that, for example, pointers to the
->   region can't be passed to system calls.)
-> 
-> We need to handle this special case gracefully in build ID fetching
-> code. Return -EFAULT whenever secretmem file is passed to build_id_parse()
-> family of APIs. Original report and repro can be found in [0].
-> 
->   [0] https://lore.kernel.org/bpf/ZwyG8Uro%2FSyTXAni@ly-workstation/
-> 
-> Fixes: de3ec364c3c3 ("lib/buildid: add single folio-based file reader abstraction")
-> Reported-by: Yi Lai <yi1.lai@intel.com>
-> Suggested-by: Shakeel Butt <shakeel.butt@linux.dev>
-> Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
-> Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
-> Acked-by: Shakeel Butt <shakeel.butt@linux.dev>
-> Link: https://lore.kernel.org/bpf/20241017175431.6183-A-hca@linux.ibm.com
-> Link: https://lore.kernel.org/bpf/20241017174713.2157873-1-andrii@kernel.org
-> [ Chen Linxuan: backport same logic without folio-based changes ]
-> Cc: stable@vger.kernel.org
-> Fixes: 88a16a130933 ("perf: Add build id data in mmap2 event")
-> Signed-off-by: Chen Linxuan <chenlinxuan@deepin.org>
-
-lgtm
-
-Reviewed-by: Jiri Olsa <jolsa@kernel.org>
-
-jirka
+In-Reply-To: <20250317092526.S1MfZldy@linutronix.de>
 
 
-> ---
-> v1 -> v2: use vma_is_secretmem() instead of directly checking
->           vma->vm_file->f_op == &secretmem_fops
-> v2 -> v3: keep original comment
-> ---
->  lib/buildid.c | 5 +++++
->  1 file changed, 5 insertions(+)
+* Sebastian Andrzej Siewior <bigeasy@linutronix.de> wrote:
+
+> On 2025-03-17 10:12:31 [+0100], Ingo Molnar wrote:
+> > 
+> > * Sebastian Andrzej Siewior <bigeasy@linutronix.de> wrote:
+> > 
+> > > On 2025-03-16 12:15:47 [+0100], Ingo Molnar wrote:
+> > > > 
+> > > > * Sebastian Andrzej Siewior <bigeasy@linutronix.de> wrote:
+> > > > 
+> > > > > +const char *preempt_modes[] = {
+> > > > > +	"none", "voluntary", "full", "lazy", NULL,
+> > > > > +};
+> > > > 
+> > > > > +	/* Count entries in NULL terminated preempt_modes */
+> > > > > +	for (j = 0; preempt_modes[j]; j++)
+> > > > > +		;
+> > > > 
+> > > > I'm pretty sure the build-time ARRAY_SIZE() primitive is superior here. ;-)
+> > > 
+> > > It would be but it is not an option.
+> > > That array is defined in core.c where it is "always" required while
+> > > debug.c needs it optionally. core.c is its one compile unit while
+> > > debug.c is included by build_utility.c. So I don't see how this can work
+> > > unless we shift things:
+> > 
+> > Why not have it all in debug.c?
 > 
-> diff --git a/lib/buildid.c b/lib/buildid.c
-> index 9fc46366597e..8d839ff5548e 100644
-> --- a/lib/buildid.c
-> +++ b/lib/buildid.c
-> @@ -5,6 +5,7 @@
->  #include <linux/elf.h>
->  #include <linux/kernel.h>
->  #include <linux/pagemap.h>
-> +#include <linux/secretmem.h>
->  
->  #define BUILD_ID 3
->  
-> @@ -157,6 +158,10 @@ int build_id_parse(struct vm_area_struct *vma, unsigned char *build_id,
->  	if (!vma->vm_file)
->  		return -EINVAL;
->  
-> +	/* reject secretmem folios created with memfd_secret() */
-> +	if (vma_is_secretmem(vma))
-> +		return -EFAULT;
-> +
->  	page = find_get_page(vma->vm_file->f_mapping, 0);
->  	if (!page)
->  		return -EFAULT;	/* page not mapped */
-> -- 
-> 2.48.1
-> 
+> The debug.c include is behind CONFIG_SCHED_DEBUG. This needs to be moved
+> into debug.c itself so that code can be added regardless of
+> CONFIG_SCHED_DEBUG. It is not only sched-debug after that.
+
+Yeah, that's a valid concern.
+
+The thing is, CONFIG_SCHED_DEBUG is mostly meaningless these days - all 
+major distributions enable it because of the statistics are useful for 
+system administration, tooling and general software development.
+
+So we should enable it permanently and remove the #ifdeffery. I'll send 
+out a series to do so soon.
+
+Thanks,
+
+	Ingo
 
