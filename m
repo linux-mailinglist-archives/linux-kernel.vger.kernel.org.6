@@ -1,96 +1,143 @@
-Return-Path: <linux-kernel+bounces-563243-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE471A63ACC
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 02:55:49 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67468A63AD7
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 02:56:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B34E43ABE7E
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 01:55:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B790316CF09
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 01:56:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 642A213CA9C;
-	Mon, 17 Mar 2025 01:55:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AAF7149E17;
+	Mon, 17 Mar 2025 01:56:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="H0ZXvlJ4"
-Received: from out30-124.freemail.mail.aliyun.com (out30-124.freemail.mail.aliyun.com [115.124.30.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sgO6gic3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3129B79D2;
-	Mon, 17 Mar 2025 01:55:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EC2E79D2;
+	Mon, 17 Mar 2025 01:56:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742176543; cv=none; b=V8pZH44xEUIINa/OZGW6lcAa3MNQFw6T42opBoZSu3WpaHsBHW0oEe2yIQ4eZZsd4M2UQqQqlonbFP8Ukkf3JugfAtxwlSl0LWAarUMsNvEyizSE5gCp0Yb5uRiSVEAUicz/XvmV3MwLQCwOAfd4U/XpIT+uT4JKrC0iQaE7NRM=
+	t=1742176570; cv=none; b=LWjNrQ5ujv0mnGa51/sd8jNtfwly6MiXp+8zWJmb1ov3zoBYPWj4NTChrk2oAs+GeS7Q7QDvd8dVWl0ZGwAI0BbOKYKPXKiCtTA0tiu7qhe7GH456b816v7VpSQKqOkT0JYOz1HZJpjvR2DX9bGBWJbtCoJD2Hqi3o9qfwnRuvg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742176543; c=relaxed/simple;
-	bh=7GlVFROGhQYP4W1Es7a2w1q7aJ6QXK6BRS5zZWU3QQc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=YXKK/O8Ksgxt8I4irvxblSoj5wzWXcYIEY0WCyx9BGAik3LTKjBelip824MR8dB+I4msUmdMcGrSA7JwGcHdSlZfRPQ8QLiaIwdL/iDqmlRUMWQ+bPYwg37QqzaQMhEusXOG0idjMgc/O62OehjHIa/92gcGQxUuP7E8lGRA9y8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=H0ZXvlJ4; arc=none smtp.client-ip=115.124.30.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1742176532; h=From:To:Subject:Date:Message-Id:MIME-Version:Content-Type;
-	bh=uoBZcHvTXH4zImpYvULitH9EJk+5AMCPZ8jdSfBBn3Y=;
-	b=H0ZXvlJ4nLA15O8RSaDh3B1fYDg8Q9xjBB9soC776N95v8O6SJISQZgmtOZiPXhQ7OhUhemEf/Wp97l+Pv9oDeu9NwMV42LO7bjAhlRKIlPoBAfcdaaIIYekSdo4fq2MJYvGY60TsbHXDm+vLKMquVq4LuJVta3CqMfsR3lTNmQ=
-Received: from localhost(mailfrom:jiapeng.chong@linux.alibaba.com fp:SMTPD_---0WRXQteu_1742176525 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Mon, 17 Mar 2025 09:55:31 +0800
-From: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
-To: rostedt@goodmis.org
-Cc: mhiramat@kernel.org,
-	mathieu.desnoyers@efficios.com,
-	linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	Jiapeng Chong <jiapeng.chong@linux.alibaba.com>,
-	Abaci Robot <abaci@linux.alibaba.com>
-Subject: [PATCH -next] ring-buffer: Remove the unused variable bmeta
-Date: Mon, 17 Mar 2025 09:55:24 +0800
-Message-Id: <20250317015524.3902-1-jiapeng.chong@linux.alibaba.com>
-X-Mailer: git-send-email 2.32.0.3.g01195cf9f
+	s=arc-20240116; t=1742176570; c=relaxed/simple;
+	bh=DW/PqvX6IeUImr+orrmNc0CoOSwyap646QVZ5Tbd3sU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WU48FuQMvkeuR+qBdvD2IkMDoClrahJxFkOuglF5Pr80gDrlOX2C9CI4iN6xrE63tgzoeGrsR3rIysXxmUMkRhoWrhJfStVORvElVWnv6E+j2jc+gITJkAKnWZ1GBtd4uwJDyu4nWlWo/HqtaqFmcPlVUXKZLD4oUH8F73TBp30=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sgO6gic3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA194C4CEDD;
+	Mon, 17 Mar 2025 01:56:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742176569;
+	bh=DW/PqvX6IeUImr+orrmNc0CoOSwyap646QVZ5Tbd3sU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=sgO6gic3aLP5WD4qeK/GnvwCiJSitTz2Gt1erDNWLnNrEkznxdXhqdc+O75VTAdxr
+	 61ZnvHhdUVMXBt5XeFtR9/A0H/OpeEG5Dg5ery/d6mRbPS3IIPbVr2NauH2bds90Xb
+	 oF5pg6/M568SpedRB0+4TCbcBKrbV7CVXP7XXSeerfOMCq5HQ2OcMlHSTHgASYe4WI
+	 ROiiBVv2ivwoe8mv9X89u2tpEWAsr/qZWwp0ADenS+DlqtIz8iXTJMSByy0k1QGhGc
+	 cue4kBlKeuA+rX6fTqLdLjoQSnM0MZqTTEvemDBE31VX4R5tCbBV3Wf/o8SEFaDY4f
+	 9expRlxM54ztg==
+Date: Mon, 17 Mar 2025 09:56:01 +0800
+From: "Peter Chen (CIX)" <peter.chen@kernel.org>
+To: Fedor Pchelkin <pchelkin@ispras.ru>
+Cc: Frank Li <Frank.li@nxp.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Joe Hattori <joe@pf.is.s.u-tokyo.ac.jp>,
+	Sebastian Reichel <sre@kernel.org>,
+	Fabien Lahoudere <fabien.lahoudere@collabora.co.uk>,
+	linux-usb@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	lvc-project@linuxtesting.org, stable@vger.kernel.org
+Subject: Re: [PATCH v2 3/3] usb: chipidea: ci_hdrc_imx: implement
+ usb_phy_init() error handling
+Message-ID: <20250317015601.GC218167@nchen-desktop>
+References: <20250316102658.490340-1-pchelkin@ispras.ru>
+ <20250316102658.490340-4-pchelkin@ispras.ru>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250316102658.490340-4-pchelkin@ispras.ru>
 
-Variable bmeta is not effectively used, so delete it.
+On 25-03-16 13:26:56, Fedor Pchelkin wrote:
+> usb_phy_init() may return an error code if e.g. its implementation fails
+> to prepare/enable some clocks. And properly rollback on probe error path
+> by calling the counterpart usb_phy_shutdown().
+> 
+> Found by Linux Verification Center (linuxtesting.org).
+> 
+> Fixes: be9cae2479f4 ("usb: chipidea: imx: Fix ULPI on imx53")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Fedor Pchelkin <pchelkin@ispras.ru>
 
-kernel/trace/ring_buffer.c:1952:27: warning: variable ‘bmeta’ set but not used.
+Acked-by: Peter Chen <peter.chen@kernel.org>
 
-Reported-by: Abaci Robot <abaci@linux.alibaba.com>
-Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=19524
-Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
----
- kernel/trace/ring_buffer.c | 3 ---
- 1 file changed, 3 deletions(-)
+> ---
+>  drivers/usb/chipidea/ci_hdrc_imx.c | 13 ++++++++++---
+>  1 file changed, 10 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/usb/chipidea/ci_hdrc_imx.c b/drivers/usb/chipidea/ci_hdrc_imx.c
+> index d942b3c72640..4f8bfd242b59 100644
+> --- a/drivers/usb/chipidea/ci_hdrc_imx.c
+> +++ b/drivers/usb/chipidea/ci_hdrc_imx.c
+> @@ -484,7 +484,11 @@ static int ci_hdrc_imx_probe(struct platform_device *pdev)
+>  	    of_usb_get_phy_mode(np) == USBPHY_INTERFACE_MODE_ULPI) {
+>  		pdata.flags |= CI_HDRC_OVERRIDE_PHY_CONTROL;
+>  		data->override_phy_control = true;
+> -		usb_phy_init(pdata.usb_phy);
+> +		ret = usb_phy_init(pdata.usb_phy);
+> +		if (ret) {
+> +			dev_err(dev, "Failed to init phy\n");
+> +			goto err_clk;
+> +		}
+>  	}
+>  
+>  	if (pdata.flags & CI_HDRC_SUPPORTS_RUNTIME_PM)
+> @@ -493,7 +497,7 @@ static int ci_hdrc_imx_probe(struct platform_device *pdev)
+>  	ret = imx_usbmisc_init(data->usbmisc_data);
+>  	if (ret) {
+>  		dev_err(dev, "usbmisc init failed, ret=%d\n", ret);
+> -		goto err_clk;
+> +		goto phy_shutdown;
+>  	}
+>  
+>  	data->ci_pdev = ci_hdrc_add_device(dev,
+> @@ -502,7 +506,7 @@ static int ci_hdrc_imx_probe(struct platform_device *pdev)
+>  	if (IS_ERR(data->ci_pdev)) {
+>  		ret = PTR_ERR(data->ci_pdev);
+>  		dev_err_probe(dev, ret, "ci_hdrc_add_device failed\n");
+> -		goto err_clk;
+> +		goto phy_shutdown;
+>  	}
+>  
+>  	if (data->usbmisc_data) {
+> @@ -536,6 +540,9 @@ static int ci_hdrc_imx_probe(struct platform_device *pdev)
+>  
+>  disable_device:
+>  	ci_hdrc_remove_device(data->ci_pdev);
+> +phy_shutdown:
+> +	if (data->override_phy_control)
+> +		usb_phy_shutdown(data->phy);
+>  err_clk:
+>  	clk_disable_unprepare(data->clk_wakeup);
+>  err_wakeup_clk:
+> -- 
+> 2.48.1
+> 
 
-diff --git a/kernel/trace/ring_buffer.c b/kernel/trace/ring_buffer.c
-index 1f9f3fd7e23d..229427fe0c2f 100644
---- a/kernel/trace/ring_buffer.c
-+++ b/kernel/trace/ring_buffer.c
-@@ -1949,7 +1949,6 @@ static void rb_meta_validate_events(struct ring_buffer_per_cpu *cpu_buffer)
- static void rb_range_meta_init(struct trace_buffer *buffer, int nr_pages, int scratch_size)
- {
- 	struct ring_buffer_cpu_meta *meta;
--	struct ring_buffer_meta *bmeta;
- 	unsigned long *subbuf_mask;
- 	unsigned long delta;
- 	void *subbuf;
-@@ -1964,8 +1963,6 @@ static void rb_range_meta_init(struct trace_buffer *buffer, int nr_pages, int sc
- 	if (rb_meta_init(buffer, scratch_size))
- 		valid = true;
- 
--	bmeta = buffer->meta;
--
- 	for (cpu = 0; cpu < nr_cpu_ids; cpu++) {
- 		void *next_meta;
- 
 -- 
-2.32.0.3.g01195cf9f
 
+Best regards,
+Peter
 
