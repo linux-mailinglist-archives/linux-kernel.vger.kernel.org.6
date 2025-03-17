@@ -1,53 +1,79 @@
-Return-Path: <linux-kernel+bounces-564482-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564483-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CC50A6560B
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 16:40:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 80831A6560D
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 16:41:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB8181899DA7
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 15:40:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B4E5A188504B
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 15:40:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9168524A07D;
-	Mon, 17 Mar 2025 15:39:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C20852475C3;
+	Mon, 17 Mar 2025 15:40:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b="vIrmcCRI"
-Received: from ixit.cz (ip-89-177-23-149.bb.vodafone.cz [89.177.23.149])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="kFiRhRgN"
+Received: from mail-io1-f48.google.com (mail-io1-f48.google.com [209.85.166.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E937C23FC48;
-	Mon, 17 Mar 2025 15:39:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.177.23.149
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FB58241693
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 15:40:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742225962; cv=none; b=j6m6/2ECmpe9i/rbIWSBlf+l2HdOb9FDWlMNFR9IU94UYTLTG9pOVdGkURNGR3WrhvfKtsQaHqwT4dyC/pPonj7kCtEX5RJL0fys1qh8botrUNQkVcc4vNXLGj9Ol62dqcrB8ZiCz/39gzonqWrCjJHVczI+SH37ypW9DH938dA=
+	t=1742226011; cv=none; b=SY8FdPPcDELtIdZc/BHqMURzNwebh8TN1rUgMPaq6sLgdsQaFWN259JJPeIyH8PezjR4222v+Wu1VP2i2qQjyJV+eTSV7QU4Q4zIeg/8ecCDwwdfmy7/zvT61uD/3jv8ClWIkEQsSzI6hX/kkkgCerMz8VyOKiB1NlugnX0K4Ts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742225962; c=relaxed/simple;
-	bh=Sh975lz6XsISdagtutDAXsZPtuyfNLljOxdDiELNgRk=;
+	s=arc-20240116; t=1742226011; c=relaxed/simple;
+	bh=Zk5t2sU0aCBaBnN0KQfk+cU/1BqX9as35kPCVJMUe5s=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=p8a0UGYvCLoDCo9qpmsCtBkIaWN4SvpPXSxg9kxKDHUgytYr0TLrTW/PDKmhVL9Ybnt1vkYkQpUVY4wG4VVRZQXymeKUm7sDJtZDGC0zIe7vMKdOs6HD+GnvBgHbOcESUgubSBF/j/YMyPUO7Z0PPeTJ4I7DOoxRLrbPq79ogkY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz; spf=pass smtp.mailfrom=ixit.cz; dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b=vIrmcCRI; arc=none smtp.client-ip=89.177.23.149
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ixit.cz
-Received: from [192.168.2.71] (office.icewarp.com [82.113.48.146])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ixit.cz (Postfix) with ESMTPSA id 1FD3B1603F9;
-	Mon, 17 Mar 2025 16:39:10 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ixit.cz; s=dkim;
-	t=1742225950;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=HpMXPD7v2TVLhujP/CqwJ0vvCueRnUFka/y/qFcIY/w=;
-	b=vIrmcCRI4IJBe6jTmcXuOmAMIo+iQ1iE+GS1hQhvtvyJ/lxv8z7KDl59AkRPhd5b2NfJRy
-	jRLpVHjZw/RjFtAe7/ToGJRBlU4gLHOu/OqxzmxiO0MzllISd3U/6SJhEZkKo5jw0IExV+
-	97IOuBuwXKzmSqUe7kq6lpLfryrZmzE=
-Message-ID: <4cdb22a5-f21b-4240-afd7-822d4167e982@ixit.cz>
-Date: Mon, 17 Mar 2025 16:39:09 +0100
+	 In-Reply-To:Content-Type; b=OrGs76Nd8L4sWKGOJp0hYBI89+8Z9PW1YSv3azrTgljMLWQC0ffSMoEgANhpZ1W9fQQ8YBmaYj8xIOLrRWhm28jrCDLyVdg2T5PIWOkGtmKozd/Tgp2v2TVUOr13wVOQX53M1vtvot6lkGt/2qBbhwa3XKe7CyS1GUre5YQms6Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=kFiRhRgN; arc=none smtp.client-ip=209.85.166.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f48.google.com with SMTP id ca18e2360f4ac-85de3e8d0adso15386239f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 08:40:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1742226007; x=1742830807; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ShUy4m+vJwdS4QZv6PMnZsGbPGN8eu9awNnNG2yKLpU=;
+        b=kFiRhRgNzlYLXTFW1ajt0pNhz9DF+aQlzqgUJJjkeLYlB/rikTzxYpiZKNtEsxGtAz
+         uyaR8emXzgd7zLspKEn3Es3Cf5mhLu/I8Ifb7CQjYaho2geyPgnm2LbF9Se/st9lPZmU
+         FplAekpsAhMQ1cZlS/IjZUho+xjDmibMaUNMs+x/Kusx9LMdSU5Kd/KrH8u+BHiorLfj
+         5QpZX4R2NcbbcKD43iuvOD+d6CEl8ykn8MzAYLIJkOGkIJWqaFLaQrYNEvH2mVZhjrVr
+         pZlF/dBmRQKS3BrRsKk232JZmtJW+SQ3c4rpSnkkl1ax7cvGCHzFiVQhSL6oKPqtsIe3
+         uw7A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742226007; x=1742830807;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ShUy4m+vJwdS4QZv6PMnZsGbPGN8eu9awNnNG2yKLpU=;
+        b=ov1i4osIhWIS1MxWcPLdsynPkJ8Yvc10dBlmczPgAzuWJratozVdU0UxbBljcUrZUs
+         /EVyCatBYM+HcIdUwt/rl+17o8MqLGX47W5PIZu4z+q9LfoWVwZD+J+HFDWhOxmJB4AS
+         NIxdmTWWpI4/j1drUn2H4aY9rj5AtMC2a8KKq5wRECjBMxXBZlsln1iuxm6TkUg3Cl1/
+         iIzzRjK0TpgDpzxf/EPVSECeDu3xTwT10uOCKQfIZEwvyL/2tgMFTl3jA+42KKZRk5yD
+         7QLb0cXJDvz8n6hFh1XxEKe3NBlxqeRs2J/zgFX7TelrVS89rL9vdjzhuJEg9AkAB6Wc
+         lFYw==
+X-Forwarded-Encrypted: i=1; AJvYcCUtgFx+WT0quVHxZvIM6NKL4q+VxT1vHsQubP5H1eFYd179n1izYukm6fSpbNn251O8f7ZkPX9Rlqdwq5s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YziAyH3k6hLpIdIl9pjrTJySivY1dusR/3ko9/s4dWi4s209Zd9
+	1mZF2qyG9Hi1pYjnaQgwP+dhfUhpQutzACHOO1F0jdVUiXJFpsGQyxGNYNQwBzUeplXJldyCN+2
+	A
+X-Gm-Gg: ASbGncs80E2hfJo//nf0y2NdfoMKYOhbMLdcuceHuIGoqCA356g6TrU03U98L/zsBmV
+	fwn1SFspHJ1fv2y1OsEpiRjJ3RmxzZJZsfsV0x740mt5P9fm2lhaHfhb12yKBPvFnSTXaOCkpjj
+	KL3Yxl0Iv11mbRHP4/uNe+OZJEMTSnRFoZXVtyfynVsA3VB3NCQJ8h/OoVJGprwzE6oJON2lwR6
+	z+5+7XIG1oc9QQTzzDAz0MqNkODTCUGRuUzLLRxjhnJ54HjvUouqmbSfibHlM0TbR2AcOZnhr31
+	z5OJ6ccxl7Cfm+Pk152256TxfCBtWH7PWUQ6Q8UP3WlkmQo5kmU=
+X-Google-Smtp-Source: AGHT+IHvdkWe+7JRGqXk+mUfmTZQ49tXHQzvD62kUaQdqYU4vxNYPeTNSe4s+5gD3xqVGJ1qX4dzzg==
+X-Received: by 2002:a05:6602:4147:b0:85b:505a:7e01 with SMTP id ca18e2360f4ac-85dc479224dmr1541106539f.5.1742226007242;
+        Mon, 17 Mar 2025 08:40:07 -0700 (PDT)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f2637031basm2315060173.2.2025.03.17.08.40.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 17 Mar 2025 08:40:06 -0700 (PDT)
+Message-ID: <3a883e1e-d822-4c89-a7b0-f8802b8cc261@kernel.dk>
+Date: Mon, 17 Mar 2025 09:40:05 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,155 +81,65 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5] ARM: dts: nexus4: Initial dts
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
- "Rob Herring (Arm)" <robh@kernel.org>
-Cc: devicetree@vger.kernel.org, Bjorn Andersson <andersson@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>,
- Ivan Belokobylskiy <belokobylskij@gmail.com>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Tony Luck <tony.luck@intel.com>,
- linux-hardening@vger.kernel.org, Kees Cook <kees@kernel.org>,
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- "Guilherme G. Piccoli" <gpiccoli@igalia.com>
-References: <20250316-lg-nexus4-mako-v5-1-79feae815a85@ixit.cz>
- <174221818190.3957236.3364090534153729086.robh@kernel.org>
- <7z2u2almxk7rnd6cx6nq3ypgbzvttkj3jqawv5jojayjz3foix@zprthr6awbcp>
+Subject: Re: [RFC PATCH v4 4/5] btrfs: ioctl: introduce
+ btrfs_uring_import_iovec()
+To: Sidong Yang <sidong.yang@furiosa.ai>, Josef Bacik <josef@toxicpanda.com>,
+ David Sterba <dsterba@suse.com>, Pavel Begunkov <asml.silence@gmail.com>
+Cc: linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+ io-uring@vger.kernel.org
+References: <20250317135742.4331-1-sidong.yang@furiosa.ai>
+ <20250317135742.4331-5-sidong.yang@furiosa.ai>
 Content-Language: en-US
-From: David Heidelberg <david@ixit.cz>
-Autocrypt: addr=david@ixit.cz; keydata=
- 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
-In-Reply-To: <7z2u2almxk7rnd6cx6nq3ypgbzvttkj3jqawv5jojayjz3foix@zprthr6awbcp>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20250317135742.4331-5-sidong.yang@furiosa.ai>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-> On Mon, Mar 17, 2025 at 09:18:33AM -0500, Rob Herring (Arm) wrote:
->>
->> On Sun, 16 Mar 2025 23:16:55 +0100, David Heidelberg wrote:
->>> From: Ivan Belokobylskiy <belokobylskij@gmail.com>
->>>
->>> Add initial support for LG Nexus 4 (mako).
->>>
->>> Features currently working: regulators, eMMC, and volume keys.
->>>
->>> Signed-off-by: Ivan Belokobylskiy <belokobylskij@gmail.com>
->>> Co-developed-by: David Heidelberg <david@ixit.cz>
->>> Signed-off-by: David Heidelberg <david@ixit.cz>
->>> ---
->>> Changes in v5:
->>> - Sorted nodes alphabetically.
->>> - Link to v4: https://lore.kernel.org/r/20250311-lg-nexus4-mako-v4-1-3916c8ec7edb@ixit.cz
->>>
->>> Changes in v4:
->>> - Sorted regulators and added regulators compatible.
->>> - Corrected pmic include and references.
->>> - Moved &rpm outside of / node.
->>> - Moved and simplify pm8921 keypad.
->>> - Added chasis-type.
->>> - Dropped incomplete WiFi node, will be provided in future
->>>    contributions.
->>> - Link to v3: https://lore.kernel.org/r/20250309-lg-nexus4-mako-v3-1-1dc2807df296@ixit.cz
->>>
->>> Changes in v3:
->>> - rebased against next-20250307
->>> - dropped backlight until driver gets converted to DT
->>>
->>> Changes in v2:
->>> - lge vendor doesn't exist anymore, rename to lg
->>> - sdcc@ to mmc@ to comply with dt-schema
->>> ---
->>>   arch/arm/boot/dts/qcom/Makefile                    |   1 +
->>>   .../boot/dts/qcom/qcom-apq8064-lg-nexus4-mako.dts  | 341 +++++++++++++++++++++
->>>   2 files changed, 342 insertions(+)
->>>
->>
->>
->> My bot found new DTB warnings on the .dts files added or changed in this
->> series.
->>
->> Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
->> are fixed by another series. Ultimately, it is up to the platform
->> maintainer whether these warnings are acceptable or not. No need to reply
->> unless the platform maintainer has comments.
->>
->> If you already ran DT checks and didn't see these error(s), then
->> make sure dt-schema is up to date:
->>
->>    pip3 install dtschema --upgrade
->>
->>
->> New warnings running 'make CHECK_DTBS=y for arch/arm/boot/dts/qcom/' for 20250316-lg-nexus4-mako-v5-1-79feae815a85@ixit.cz:
->>
->> arch/arm/boot/dts/qcom/qcom-apq8064-lg-nexus4-mako.dtb: hwmutex: 'reg' is a required property
->> 	from schema $id: http://devicetree.org/schemas/hwlock/qcom-hwspinlock.yaml#
->> arch/arm/boot/dts/qcom/qcom-apq8064-lg-nexus4-mako.dtb: hwmutex: 'syscon' does not match any of the regexes: 'pinctrl-[0-9]+'
->> 	from schema $id: http://devicetree.org/schemas/hwlock/qcom-hwspinlock.yaml#
->> arch/arm/boot/dts/qcom/qcom-apq8064-lg-nexus4-mako.dtb: soc: replicator: 'ranges' is a required property
->> 	from schema $id: http://devicetree.org/schemas/simple-bus.yaml#
->> arch/arm/boot/dts/qcom/qcom-apq8064-lg-nexus4-mako.dtb: syscon@1200000: compatible: ['syscon'] is too short
->> 	from schema $id: http://devicetree.org/schemas/mfd/syscon-common.yaml#
->> arch/arm/boot/dts/qcom/qcom-apq8064-lg-nexus4-mako.dtb: timer@200a000: 'clocks' is a required property
->> 	from schema $id: http://devicetree.org/schemas/watchdog/qcom-wdt.yaml#
->> arch/arm/boot/dts/qcom/qcom-apq8064-lg-nexus4-mako.dtb: sps-sic-non-secure@12100000: compatible: ['syscon'] is too short
->> 	from schema $id: http://devicetree.org/schemas/mfd/syscon-common.yaml#
->> arch/arm/boot/dts/qcom/qcom-apq8064-lg-nexus4-mako.dtb: rpm@108000: 'clock-controller' does not match any of the regexes: '^regulators(-[01])?$', 'pinctrl-[0-9]+'
->> 	from schema $id: http://devicetree.org/schemas/soc/qcom/qcom,rpm.yaml#
->> arch/arm/boot/dts/qcom/qcom-apq8064-lg-nexus4-mako.dtb: syscon@5700000: compatible: ['syscon'] is too short
->> 	from schema $id: http://devicetree.org/schemas/mfd/syscon-common.yaml#
->> arch/arm/boot/dts/qcom/qcom-apq8064-lg-nexus4-mako.dtb: replicator: 'clock-names', 'clocks' do not match any of the regexes: 'pinctrl-[0-9]+'
->> 	from schema $id: http://devicetree.org/schemas/arm/arm,coresight-static-replicator.yaml#
+On 3/17/25 7:57 AM, Sidong Yang wrote:
+> This patch introduces btrfs_uring_import_iovec(). In encoded read/write
+> with uring cmd, it uses import_iovec without supporting fixed buffer.
+> btrfs_using_import_iovec() could use fixed buffer if cmd flags has
+> IORING_URING_CMD_FIXED.
 > 
-> As far as I can see, all those are generic rather than being introduced
-> by the new DT. I'll send a set of fixes soon.
+> Signed-off-by: Sidong Yang <sidong.yang@furiosa.ai>
+> ---
+>  fs/btrfs/ioctl.c | 32 ++++++++++++++++++++++++--------
+>  1 file changed, 24 insertions(+), 8 deletions(-)
 > 
-Yup, as I checked these are coming from apq8064.dtsi. I was thinking to 
-look into them, but if you're going to go trough them, I'll just drop my 
-R-b on your patchset :)
+> diff --git a/fs/btrfs/ioctl.c b/fs/btrfs/ioctl.c
+> index 6c18bad53cd3..a7b52fd99059 100644
+> --- a/fs/btrfs/ioctl.c
+> +++ b/fs/btrfs/ioctl.c
+> @@ -4802,6 +4802,28 @@ struct btrfs_uring_encoded_data {
+>  	struct iov_iter iter;
+>  };
+>  
+> +static int btrfs_uring_import_iovec(struct io_uring_cmd *cmd,
+> +				    unsigned int issue_flags, int rw)
+> +{
+> +	struct btrfs_uring_encoded_data *data =
+> +		io_uring_cmd_get_async_data(cmd)->op_data;
+> +	int ret;
+> +
+> +	if (cmd && (cmd->flags & IORING_URING_CMD_FIXED)) {
+> +		data->iov = NULL;
+> +		ret = io_uring_cmd_import_fixed_vec(cmd, data->args.iov,
+> +						    data->args.iovcnt,
+> +						    ITER_DEST, issue_flags,
+> +						    &data->iter);
+> +	} else {
+> +		data->iov = data->iovstack;
+> +		ret = import_iovec(rw, data->args.iov, data->args.iovcnt,
+> +				   ARRAY_SIZE(data->iovstack), &data->iov,
+> +				   &data->iter);
+> +	}
+> +	return ret;
+> +}
 
-Thanks
-David
+How can 'cmd' be NULL here?
+
 
 -- 
-David Heidelberg
+Jens Axboe
 
 
