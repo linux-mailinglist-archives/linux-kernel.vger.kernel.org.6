@@ -1,179 +1,138 @@
-Return-Path: <linux-kernel+bounces-563649-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E16C5A6460D
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 09:46:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CB579A6460E
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 09:47:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D81B33A3F26
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 08:46:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44B9E3A56B2
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 08:47:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5380521CC79;
-	Mon, 17 Mar 2025 08:46:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 475CB21B9F7;
+	Mon, 17 Mar 2025 08:47:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Hu8I+h5L"
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PK+HoQdz"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA32285270;
-	Mon, 17 Mar 2025 08:46:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 143C1290F
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 08:47:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742201166; cv=none; b=ZJiIrxIS931AmN7dM82803SxY65ZyvJSS6ZMcB6yk2lFNKP79pS+JB9kV/hCfx8sVwMrLjM/fd/Q4ICztYWHLx31t5lyGIqiMme9F+Ik1J8HRKmRQXOJSsqxTYJUOLP0ApImKTwhEcltcYbwOsoawLEHZbb5BfvowNdHyINFujY=
+	t=1742201248; cv=none; b=uToYW48FW3Lj+3H1j00ZkfCbCs1PIKhfzV8C/gl/fSKXZBSd5zvoiZNycIxV4lTb0hqipW1Y4u/wgD8zjQM6oSvUztBNVUx10rXTbN0e3PbGFHHPFq866cSUthO9lcHGJuI9Np12spu2f8tScu8+U2Qu8X4vhf/Eancxcjd1lu4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742201166; c=relaxed/simple;
-	bh=HXbTEk6n3QynE7gKkPGXFKjRIRjrNpjqXDTnnipaiRM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TAPjJ0Akd0svKdOHH1Io6LrtfttFKfpDlFWpqyYor8snITeVIBxQJnQ4NF+rkyOceqe8CzfKCdTS09BtQ+H75glfqMtYOXzQFJi4JqFVQqJVVRLQ2fQ4laI4WXM3irmtCiPHCMSHLYsKuFiwVSMfVS2K+2a5ufeLv1PNQMakIZs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Hu8I+h5L; arc=none smtp.client-ip=209.85.208.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-30bee278c2aso54732801fa.0;
-        Mon, 17 Mar 2025 01:46:04 -0700 (PDT)
+	s=arc-20240116; t=1742201248; c=relaxed/simple;
+	bh=GcbYMMUSIE3M4i78Wxii4boc3e2DKtEOdBzPXwAlr8E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tx01fGTg0gxg1fKQ/2w19R5Yd6B2BdcDmCbCEsjEvWbMXWbtrvpl4ys4Wsq6u/DeL5JpmwfML+40gXpDQjrwEpOclDF7X8myeD1C8mOa1+6kW9M36GuiTAZytmtkw88RXG2QGvbkepBk87Q0H5mD9Bsw7dVPPSM2T7xwfGn7d0g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=PK+HoQdz; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-438d9c391fcso68575e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 01:47:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742201163; x=1742805963; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=MxbiKv6elGIs5Nn4LiqGeMrFmApt2xh9/qpgGFawsLg=;
-        b=Hu8I+h5LnJymE2H7YdP8UoATNn8PYtkFCt4iTaE+fcgZfz30fmAsR9wc10Bg2jFXyP
-         l1ixg6jYsQlgtmmtPeNg31duUpTtLNYcYFMJ2hI92Uhm0W9BddGEFSKbkd/KRAPREF9w
-         TMt5Dz3Q5ey7rG0LQjIK7A1xPo1oRCcouIzus5EwREuZxE7JP9IFMZbB7oqHN4A6h/D1
-         nqysU8roLHOf2QGAvJpPXcakJUIIAoYtWT5k2jQqwAmU11lrvS1JBQu2OUC0TliZ5B5a
-         Hj4t2qpTExnubkz8uBP/1jh6IGxwxDsQCmKgxocPUF6Z4JGF0EBh2mpEQPilvMb+Cy3/
-         3/7A==
+        d=google.com; s=20230601; t=1742201245; x=1742806045; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=t/fkYxvznXVkWYdwjft7DNkV/shj8zHmAOJFoExLy+4=;
+        b=PK+HoQdzCSZ4G+HXXF624YPzcyOJVXHnoKVI04NQ3e9UAAUujlTgrjCqgKCophUcy3
+         YkEHc5VVQidBm8qYpfZOOX6iUF3+YkOde0F2gNhi81bZ+JXWE5v4ypvQzpBcRYVFR5Ct
+         1I8aL5MSDALWRhx/x+mTIGIBRe5ciqlAmTo+6gloJvCtNZbMiqcJ1A3ePBSohrD3H8eo
+         kHZ9x45kz1EtTHfyEGKJi+7Rzm8UeQJlB9xSkvpf3BUL0XB6LRNxgjzCqEsvo5uvZVQx
+         b1e0La3CIa1/Y+0P3FvtIukMajqVTc8zh2j1WQy6FadIvtk7J6/jXvc4TuSAdN+rqZ/N
+         ZA3w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742201163; x=1742805963;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=MxbiKv6elGIs5Nn4LiqGeMrFmApt2xh9/qpgGFawsLg=;
-        b=WDIXtf73dyxtg4WI4q94kIgjPQWkpnpz+eu0eHsU9rlgdJdagifJ6/agV41/+H6DD5
-         XQlUbo7enIla2RMfOrBR2FpscwVGVzbG9Y4ji4x8zMQwkePAIjM6EqZRud99CSNzhOTQ
-         20ffwgo5FmQbk9v81nzvvMVi8uQzyNGj92RDVJhnF3RvdpVthYDB7LngoSdBD8s17zj7
-         phPN68hKkIDiAYsvTBppF9fT9KNY3aZhj3iDPqLELTegdpXTyd1AfUp/rZ5675/eALG0
-         tfK2rfouPxucYRR7r3XVNtBqWAy5As5Pdyr9Y3zxMUBLyFOaNBCgbIQ4AqCECTEcMde2
-         SoEg==
-X-Forwarded-Encrypted: i=1; AJvYcCU4G8004zMh313G2g0vPnKhPB6JURrW9cOGCC5EeiOUODxnuEO8Ayzq7MpzCr2SM5BdsZREwLQnIqMSQbE=@vger.kernel.org, AJvYcCUKi4tR53acydRdNzRDKjXHsIEz/dxp1i89xiSZbX6BZ9/bZe6WOUTwqoM6msQyXosAC/S5yArFuFs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwtlVPT9c553izfsNJkUSw8DvLgoUrF3PxhwPaLwmxQtqPVUUkI
-	EsfjDJkpvoQfiX2+nYGSw/2fcGv5FP2+pjuWn5/OjYXRggfz3MTv
-X-Gm-Gg: ASbGncuvNnWYdG5x9WmYUFTBC1YJgWLHGShC0GOqz4xUl96J9pU10Ji+ceoDze6Fu4S
-	ZOtK78/bnfevym7Oq+PVst/MAVMtiKacROArqAfXbNFwP5YxuwYKjxBZOQaPQc27DESlqaBxr2w
-	l6n9Q7LtHcMyI2btAdidcUi1MBoHv9R9MhDeEI66NgV7DTUonQBzj1RwxRVD/mISkGQCHE4UcRX
-	tP3OzfrghNAQUAdzQlZKzJ+CL3/yXZBAjpog00dCsgEnvu0BuIapIvV/bozyd5sXM4jcwrPxLjl
-	FZrFZ3JABhdihcSBn0YHkOj0cn/ocMm01+LIIl0RIfAHRgF8x935AwIsZ3S3N64FxGCAe5wyISq
-	AbW/dheaH6NjB5NqPkyvvkIcrbQ==
-X-Google-Smtp-Source: AGHT+IFeAg/G8whxA4gtxiYZbH0SjBZ7xoClvaA1Vcblwhy4bW0jCjldjrGw6uW7vsQd59L9ZAQ4WA==
-X-Received: by 2002:a05:6512:3990:b0:549:68a7:177c with SMTP id 2adb3069b0e04-549ba3d563fmr7023614e87.7.1742201162859;
-        Mon, 17 Mar 2025 01:46:02 -0700 (PDT)
-Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-549ba7a86c1sm1281669e87.21.2025.03.17.01.46.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 17 Mar 2025 01:46:02 -0700 (PDT)
-Message-ID: <a34c14c1-875d-40a4-8019-67f7b9aa4133@gmail.com>
-Date: Mon, 17 Mar 2025 10:46:01 +0200
+        d=1e100.net; s=20230601; t=1742201245; x=1742806045;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=t/fkYxvznXVkWYdwjft7DNkV/shj8zHmAOJFoExLy+4=;
+        b=dZtWUR4KUsjRj31oOW2SzlSALs9Y3c5Ad/orNrgiksK4y8IkmUmKcEGFDN3e9TWn7S
+         h94tCqjGxyadms3EGMuGyr2q0mYyb+IeRGS26o3TLSluFXJav9UkEc6v8bRoK3yd89wg
+         40T3EdNdVcZ8BrPX3r+CSlk/7yqwuE/q7VVxJByRV0Juk8MooJ6HsRCd5P5cQrv7AKrj
+         UncMGQiv45HmlxAWIf7iQGNPvb9kyn1t4VjX6JIh0P8xs+rjlm5dbTW/guHPzGDwTM2y
+         XT5wUgpu/YspPVHxGu2Ww8vuofBQ50fUpSbEFbUpKgOayOZvcralLgu7wnKpwG6suoXH
+         Ui0w==
+X-Forwarded-Encrypted: i=1; AJvYcCWJQlsMlArbWkqyChOBc0RHx6uhFWLqYnsztV8TQy9nsLPqUtsOBPXbWzwkgoNSMWTwXodhNb/Mrn6Ir/U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YydyzKJ4rjXaVKm/rz0vRncz38x3PYUTaJ8qIsT47T9PzZLbGyU
+	zuEui0v9IoE08ZBl7GhIDIKBnN3RX6kAJGBcwT5VLDKDoT1THnt4fy6klzV8Mw==
+X-Gm-Gg: ASbGncsy4HqU4y8xrSRq/1gx2+NqGfxEsmpQGTTN8F3hDs5HCtzwXdoNZi8dLm0p65t
+	gxrxIdnXXnpqRH/faA1ej3G02HRpyfbJEKpa6vJ1asr0gUXNBhsXAi64RDbGpfc+Vqlb9o1P2w8
+	EWmawlnxtqSx3GHaqHsZRxBXMB5gp/nzWVMopfFTku4iR+hatBQrp29qMeybFvNWO5wQjjqrlxQ
+	UmYCwNoytD/7mUKwVQWSe2PvUQ0ir62/rDRjGF23dM+2KIlrpAb77BCw0u5sVNrNqI3bDulmmoK
+	ZD/GUhzkoRa8kEqxR0zysGLiigbOHRVhD9cv2/YR1sXcUOkbst6NrRlanTagt80atnrANuU0lIS
+	sZHm63To=
+X-Google-Smtp-Source: AGHT+IEdU8jg9DLExsfx/Dignybsg8rNFerbvJiYjWiieoEf80yLDexyq7/WybhQskE8MGMn1w2icg==
+X-Received: by 2002:a7b:c389:0:b0:439:8d84:32ff with SMTP id 5b1f17b1804b1-43d266e191bmr2132585e9.3.1742201245192;
+        Mon, 17 Mar 2025 01:47:25 -0700 (PDT)
+Received: from google.com (158.100.79.34.bc.googleusercontent.com. [34.79.100.158])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-395c8881187sm14080655f8f.41.2025.03.17.01.47.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Mar 2025 01:47:24 -0700 (PDT)
+Date: Mon, 17 Mar 2025 08:47:20 +0000
+From: Brendan Jackman <jackmanb@google.com>
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org,
+	Peter Zijlstra <peterz@infradead.org>,
+	Nathan Chancellor <nathan@kernel.org>
+Subject: Re: [PATCH 04/13] objtool: Update documentation
+Message-ID: <Z9fhmCS68Fc8GGw_@google.com>
+References: <cover.1741975349.git.jpoimboe@kernel.org>
+ <2552ee8b48631127bf269359647a7389edf5f002.1741975349.git.jpoimboe@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 7/7] Documentation: Add sysfs documentation for PSCRR
- reboot reason tracking
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: Sebastian Reichel <sre@kernel.org>,
- Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
- Benson Leung <bleung@chromium.org>, Tzung-Bi Shih <tzungbi@kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>, kernel@pengutronix.de,
- linux-kernel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
- Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
- linux-pm@vger.kernel.org, =?UTF-8?Q?S=C3=B8ren_Andersen?= <san@skov.dk>,
- Guenter Roeck <groeck@chromium.org>, Ahmad Fatoum <a.fatoum@pengutronix.de>,
- Andrew Morton <akpm@linux-foundation.org>, chrome-platform@lists.linux.dev
-References: <20250314113604.1776201-1-o.rempel@pengutronix.de>
- <20250314113604.1776201-8-o.rempel@pengutronix.de>
- <a8f76dd0-56be-46a5-9cc1-2d17d013127d@gmail.com>
- <Z9Q4z2dPdpqVcu6u@pengutronix.de>
-Content-Language: en-US, en-AU, en-GB, en-BW
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-In-Reply-To: <Z9Q4z2dPdpqVcu6u@pengutronix.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2552ee8b48631127bf269359647a7389edf5f002.1741975349.git.jpoimboe@kernel.org>
 
-On 14/03/2025 16:10, Oleksij Rempel wrote:
-> On Fri, Mar 14, 2025 at 03:38:55PM +0200, Matti Vaittinen wrote:
->> On 14/03/2025 13:36, Oleksij Rempel wrote:
->>> Add documentation for the Power State Change Reason Recorder (PSCRR)
->>> sysfs interface, which allows tracking of system shutdown and reboot
->>> reasons. The documentation provides details on available sysfs entries
->>> under `/sys/kernel/pscrr/`, explaining their functionality, example usage,
->>> and how they interact with different backend storage options (e.g., NVMEM).
->>>
->>> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
->>> ---
->>>    .../ABI/testing/sysfs-kernel-reboot-pscrr     | 46 +++++++++++++++++++
->>>    1 file changed, 46 insertions(+)
->>>    create mode 100644 Documentation/ABI/testing/sysfs-kernel-reboot-pscrr
->>>
->>> diff --git a/Documentation/ABI/testing/sysfs-kernel-reboot-pscrr b/Documentation/ABI/testing/sysfs-kernel-reboot-pscrr
->>> new file mode 100644
->>> index 000000000000..7cc643f89675
->>> --- /dev/null
->>> +++ b/Documentation/ABI/testing/sysfs-kernel-reboot-pscrr
->>> @@ -0,0 +1,46 @@
->>> +What:		/sys/kernel/pscrr/reason
->>> +Date:		April 2025
->>> +KernelVersion:  6.15
->>> +Contact:	Oleksij Rempel <o.rempel@pengutronix.de>
->>> +Description:
->>> +		This file provides access to the last recorded power state
->>> +		change reason. The storage backend is configurable and, if
->>> +		supported, the reason may be stored persistently in an
->>> +		NVMEM cell or another backend.
->>> +
->>> +		Reading this file returns an integer representing the last
->>> +		recorded shutdown or reboot cause.
->>> +
->>> +		Writing an integer value to this file sets the reason to be
->>> +		stored and recorded for system analysis.
->>> +
->>> +		Example usage (values are for illustration and may not reflect
->>> +		actual reasons used in a given system):
->>> +		  Read:
->>> +			$ cat /sys/kernel/pscrr/reason
->>> +			3   # (Example: Power loss event, may differ per system)
->>> +
->>> +		  Write:
->>> +			$ echo 5 > /sys/kernel/pscrr/reason
->>> +			# Sets the reason to 5 (Example: User-triggered reboot,
->>> +			# this may not be a real value in your system)
->>> +
->>> +		Values are defined in:
->>> +		  - `include/linux/reboot.h` (enum psc_reason)
->>
->> Is it possible to provide the reason (also) as string?
->>
->> I believe we should fix the meaning of the numbers so the ABI is not
->> changing for the users. Hence we could as well document the meaning of the
->> values(?) If I read the suggestion right, we will in any case have
->> predefined set of reasons in the kernel side.
->>
->> Or, am I missing something?
+On Fri, Mar 14, 2025 at 12:29:02PM -0700, Josh Poimboeuf wrote:
+> Fix some outdated information in the objtool doc.
+
+Regarding the switch from ENTRY/ENDPROC to SYM_FUNC_{START,END}, would
+you mind adding a bit more context to the commit message for the
+benefit of ignorami like me?
+
+BTW in tip/objtool/core include/linux/objtool.h still says:
+
+>  Such normal callable functions
+>  are annotated with the ENTRY/ENDPROC macros.
+
+And o we also wanna update include/linux/linkage.h to mention that
+these macros are deprecated?
+
+> Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
+> ---
+>  tools/objtool/Documentation/objtool.txt | 95 ++++++++++++++-----------
+>  1 file changed, 53 insertions(+), 42 deletions(-)
 > 
-> Yes, it is correct, the values should be fixed for user space. Should
-> they be documented in this documentation too?
+> diff --git a/tools/objtool/Documentation/objtool.txt b/tools/objtool/Documentation/objtool.txt
+> index 87950a7aaa17..28ac57b9e102 100644
+> --- a/tools/objtool/Documentation/objtool.txt
+> +++ b/tools/objtool/Documentation/objtool.txt
+> @@ -28,6 +28,15 @@ Objtool has the following features:
+>    sites, enabling the kernel to patch them inline, to prevent "thunk
+>    funneling" for both security and performance reasons
+>  
+> +- Return thunk validation -- validates return thunks are used for
+> +  certain CPU mitigations including Retbleed and SRSO
+> +
+> +- Return thunk annotation -- annotates all return thunk sites so kernel
+> +  can patch them inline, depending on enabled mitigations
+> +
+> +- Return thunk training valiation -- validate that all entry paths
 
-I believe it could be helpful for both the user-space users and 
-potential pscrr provider driver writers. It could also set things to stone.
+s/valiation/validation
 
-But, I don't have much experience on the documentation like this so 
-please treat this as a suggestion - but do as you see fits best.
+Also did you mean "untraining"?
 
-Yours,
-	-- Matti
+> +  untrain a "safe return" before the first return (or call)
 
+Nit - assuming this is about the SRSO mitigation I think it's better
+to just refer concretely to "Safe RET" here (with the capitalisation).
 
