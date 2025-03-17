@@ -1,75 +1,75 @@
-Return-Path: <linux-kernel+bounces-563354-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563355-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89177A63F75
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 06:20:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 91C02A63F76
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 06:20:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE7EB1890345
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 05:20:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B4714189022C
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 05:20:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91DBC2192E2;
-	Mon, 17 Mar 2025 05:20:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A49782192FC;
+	Mon, 17 Mar 2025 05:20:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UZpwjXV4"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GvClAWsS"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9970B218E92
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 05:20:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B78202192E5
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 05:20:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742188804; cv=none; b=V9CbSjud/m2qsT64QdotNse8L1UsaTX8yit6dT1zTufmCEE725Gz1cVcjKZYKF9Tub+9/f6bvgOKXNwCoQxTl18TuEZWxNse5gUcFhFW3aRywZ7g39kL/eXZsqBpbznt2F+LajiMgFFqaOHmoxET1WCgSM4CIdF0p9hhHAiGW3E=
+	t=1742188806; cv=none; b=tmVh2v4cl7v1TV1ZqWC9UWAXTZ3ZoPCIVsBjyNV++JnbvC1iY6qzvrOck1Etxak+nwNyj8fqq9RrLfjfj5lzqr+E3sodwqO49ZsaKvLbWfFb/RSWsFKj2+wEJDmlbdxBQSTT2P+GQcMkPhkVVQRFNQJkx8Jbo26FZeZ5W5LKYKM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742188804; c=relaxed/simple;
-	bh=ZvUxiJNGJUJ6eSLy6xmqeIcDyL3ulL7Wf4C669XW1MI=;
+	s=arc-20240116; t=1742188806; c=relaxed/simple;
+	bh=tm73wRGCtj2/+L15dF+oTxK0gYdTwD/VikeDQ7qKsDw=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=kbVbwM1xMkUID/jWEAQuFNHiWl0+VvOHz9v+GaFKikYT8/+SJ97X8XUXaiVlqcRyPLVCyBo8nh4g7v+M4K41PxM8P39EpalaX+r8l5F+p6rF4iC8zed5dUVnX9rKBngs7EyzmKtTUQEzZyBzHoHDMV/StO6+gGZWbIa7kBGUV6U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UZpwjXV4; arc=none smtp.client-ip=209.85.214.179
+	 MIME-Version; b=Leuc3RpER+YMB80AR1mX5LvOjt05L1rlUgImt417KydJJsoOjzfOU4usdgKulRuNymCrMOV83FxLfC0KFwXqE9/k3n2nKClYDNWZc5w7NXcel5ZKjOCWheoiGEN6S3/COBPdNVACvlsLtQuvU910t4CfAOjSBwR7u41RpAMd2pY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GvClAWsS; arc=none smtp.client-ip=209.85.214.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-225d66a4839so45586035ad.1
-        for <linux-kernel@vger.kernel.org>; Sun, 16 Mar 2025 22:20:02 -0700 (PDT)
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2235189adaeso65345565ad.0
+        for <linux-kernel@vger.kernel.org>; Sun, 16 Mar 2025 22:20:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742188802; x=1742793602; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1742188804; x=1742793604; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=aAEvizj50eAxWAKykJSsmzW28jqssjw0r0XHccdzS7k=;
-        b=UZpwjXV4ydW/GGuQ5Uc8qPu7hZJelZw2221/rtXS3zPGCYZgMHCWp/cjF7ChUV2Ngh
-         zUr5xhNKZjrZKdG7Bx+5Equ2eNCTnRKN2ii9gbb5xH1ta7z/i+FMnOWNDKOosMXCawun
-         ViGxflPFNd6KFEINQqLhOAKk6nyFbkFnlAFVjNAy5IcE4EIdqc++7FXO3+/ye7DhVjJB
-         Y70bh85tfpGK1op+vsxAoZDuqxjdVJ23vZ50/WgjTevRknxBGGsB1wIZ/T7BfXoKPlr4
-         Oc4ZCj1fi2xbejjb0W6oAt2ih7lIqKcD1/WCX2iuLRdN62trpZ908+HEOdEYYwoCi+Yf
-         z9pQ==
+        bh=T18/LmksYiI2JDaALAx8F0tVbVplhY6o09bZJuKtckw=;
+        b=GvClAWsSw/rNg49bQnvwPu6Ie2pEjLVHRSWGEHjZJzSkm0FT1/39eroeDB0FyrR+Y5
+         JX4k7I8BuZsHN2dAE0rGB5ysXVfLWftF0WttrKc1w86jU/r8JA1kRiKvUPF3OBcKq/gI
+         fBvzU9mwyb/1hDfnS+CLNKbLdRAj6/VaCs4lKqaG6h8+JGIR25IX3d85P/VRENC1v/AE
+         j+oxIz6M9buklO8M39R0d6ik7f42k9+R0/jIVCHiL+fJU5h68xD+4zO53pNS+lLvDOvG
+         MgMuUwOR+g3iRPo+tmPd2gzoQfD6Qa/1inqV/Q2w/w0Ob5soHyxNFZX+8yD95/zbiNhx
+         UUOw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742188802; x=1742793602;
+        d=1e100.net; s=20230601; t=1742188804; x=1742793604;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=aAEvizj50eAxWAKykJSsmzW28jqssjw0r0XHccdzS7k=;
-        b=WCjO2BmknXdhMc2Q9xgM7c8mn3ROqkqe/bY5WLIl/uBfUP4ksHNJS6iVaIToXGrZGR
-         +HwvtUTw49Wi3fYPApDJT0bmBGoeA8ehBhnXrSgEphT7fm+0bY5etsl/5xHPrPUp0LGF
-         aQ+h57ad9YWeQkEB6MT2lZj11vcx4bky0RLj35is0bdB2sz2y2/dUKLGyeR5ovDjkFvO
-         L7quRaLru3vMwfPq82mZQX2SI3V8Bkj6w0zU7jm+nWKmtCWnyTzIj3UZNf5AvjI3GdJt
-         y4J7T7caKUewQ233AiHnDzSpqYKWqL/axbCz+Skv7CGkmjyopDp0QpgJ+krw2x41Eq7v
-         EOOg==
-X-Gm-Message-State: AOJu0YxFlJDJJ/hrBrj3L4HwQOJtsr79k0UmAz9Adfh+K04M81du7RWW
-	uVN86n4YnaEoWCcZO/CHso+S3xjQ8Gyaxc98/Ydhqa6NWMDPJgZ5
-X-Gm-Gg: ASbGncvcG8lt3OMnsHsU9GIdXwCqy6sB9bZiDd0ii+o1MpMCd1+wL1JLFNBFQiOv9Re
-	ui2cmoti65dXcWe8NeOcZ+yQen5Ihg/P9waXf1G9xie0/QksdikJay//nm94K9ZNugAJ7R4Qtz3
-	FWpr9RpbRdppYMSkOs/cIIFgtGWk0Bxa5IMKKGVoAaOAMvIM4VdBTEsckLU1FIDrtWAA9otFsXe
-	XWI/2duKJ14o+uOz80wfNHu2XBt3HWv4WRv5WtM/0n8mvfzj3cg7TdlGgZHSEQ65oNsmabqJL+q
-	LgpvrmY5hLQZoDL3JK0KQDU53uaYyrysKiu/SM/2w/Vgs6FO8/cY5Lg=
-X-Google-Smtp-Source: AGHT+IEHB6SBZYCHYVZ9nI0CRHRWXDHgiOP2L/CSK0IC9gfbmhq+cygXWU14lVnZh41QKkaCLFkxmQ==
-X-Received: by 2002:a17:902:e750:b0:223:607c:1d99 with SMTP id d9443c01a7336-225e1594eacmr155354065ad.0.1742188801791;
-        Sun, 16 Mar 2025 22:20:01 -0700 (PDT)
+        bh=T18/LmksYiI2JDaALAx8F0tVbVplhY6o09bZJuKtckw=;
+        b=UTU/7pv/XsrvyvQCbInKPirhHAN1CFdefSWR7B1GZB1HmvlfuDDI9cvA7xFpe205uA
+         k8B89b5Gdr9F3cVUbIK8U0lBva42mZScg1u0/oXegfnJolqJPKdKfxetogCUy+PjjAwF
+         wD8MZrdBhdIp03xxdLSOgXO9TSXS0kTjaDb3s/PpbN7lKofZT8t1oYtgJUIPYO6W8BCp
+         D7Ari5Nl0U/GnHwD9ZiEqSQf+t8gQeiM9+GqIjqUSDW2zrNcAP/tSIwwFdRHj0yfRzfg
+         lX0YTGZdFTxn1Juy5P4iEcIFxFPPvv+iuz9syBrEs0NQ8b0LEdhvDRfcjpGnLrKMdSLp
+         918w==
+X-Gm-Message-State: AOJu0YxwdfIwMUrMb0Qh6m0/WonB1fJnvKRxaD+/WrQkOBbX+6GPy8xk
+	vHY64/XZdunPsk5QPYx2/PYsFOkVZMxX+rMj9kxHP/JlAOnS/Wsy
+X-Gm-Gg: ASbGncuytsDvYHe8xVZfJCaMX3tlPah7yOYciZbi/tD4Tn5a9DP7rKTdCoB6rocbqxH
+	YFQnM7t+ECbQPaQBkMJR61ScfS/AtZZBfntrftjLnZYs6ISpAWvG0PlKkKzCmY1ruFbmS3PWITN
+	uC0T/AvwdSGdynlXlUFHxrkQ1aMmVPkPUQr7ftSPyUGo5pscyVhzREbAqLvVzsGm5fEH3wntNis
+	rzZX47UXOyzC+XGMku+BwXvOlOfs6JztZa0V20h5P/VIEi20QtwbASJ6KpUxlMELJ/gkkJe8IR1
+	aBFhM/3gB+2NFGYt9OfdwXl8LBRyyEirir6cX0oqhVTSZEpLIqtkfvg=
+X-Google-Smtp-Source: AGHT+IFAseff1yIkZHzc1rGdhQPKl7uycYfsnTrI/GVu4JilKm2nddWrecFI4sABECPAMNZYRmECeA==
+X-Received: by 2002:a17:903:41d0:b0:220:fe36:650c with SMTP id d9443c01a7336-225e1782e22mr164178955ad.23.1742188803960;
+        Sun, 16 Mar 2025 22:20:03 -0700 (PDT)
 Received: from cs20-buildserver.lan ([2403:c300:df04:8817:2e0:4cff:fe68:863])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-225c6ba721esm66029975ad.149.2025.03.16.22.19.59
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-225c6ba721esm66029975ad.149.2025.03.16.22.20.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 16 Mar 2025 22:20:01 -0700 (PDT)
+        Sun, 16 Mar 2025 22:20:03 -0700 (PDT)
 From: Stanley Chu <stanley.chuys@gmail.com>
 X-Google-Original-From: Stanley Chu <yschu@nuvoton.com>
 To: frank.li@nxp.com,
@@ -80,9 +80,9 @@ Cc: linux-kernel@vger.kernel.org,
 	tomer.maimon@nuvoton.com,
 	kwliu@nuvoton.com,
 	yschu@nuvoton.com
-Subject: [PATCH v1 2/3] i3c: master: svc: Use readsb helper for reading MDB
-Date: Mon, 17 Mar 2025 13:19:50 +0800
-Message-Id: <20250317051951.3065011-3-yschu@nuvoton.com>
+Subject: [PATCH v1 3/3] i3c: master: svc: Fix missing STOP for master request
+Date: Mon, 17 Mar 2025 13:19:51 +0800
+Message-Id: <20250317051951.3065011-4-yschu@nuvoton.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250317051951.3065011-1-yschu@nuvoton.com>
 References: <20250317051951.3065011-1-yschu@nuvoton.com>
@@ -96,29 +96,27 @@ Content-Transfer-Encoding: 8bit
 
 From: Stanley Chu <yschu@nuvoton.com>
 
-The target can send the MDB byte followed by additional data bytes.
-The readl on MRDATAB reads one actual byte, but the readsl advances
-the destination pointer by 4 bytes. This causes the subsequent payload
-to be copied to wrong position in the destination buffer.
+The controller driver nacked the master request but didn't emit a
+STOP to end the transaction. The driver shall refuse the unsupported
+requests and return the controller state to IDLE by emitting a STOP.
 
 Fixes: dd3c52846d59 ("i3c: master: svc: Add Silvaco I3C master driver")
 Signed-off-by: Stanley Chu <yschu@nuvoton.com>
 ---
- drivers/i3c/master/svc-i3c-master.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/i3c/master/svc-i3c-master.c | 1 +
+ 1 file changed, 1 insertion(+)
 
 diff --git a/drivers/i3c/master/svc-i3c-master.c b/drivers/i3c/master/svc-i3c-master.c
-index a72ba5a7edd4..57b9dec6b5a8 100644
+index 57b9dec6b5a8..e0cd3ce28b7f 100644
 --- a/drivers/i3c/master/svc-i3c-master.c
 +++ b/drivers/i3c/master/svc-i3c-master.c
-@@ -425,7 +425,7 @@ static int svc_i3c_master_handle_ibi(struct svc_i3c_master *master,
- 	       slot->len < SVC_I3C_FIFO_SIZE) {
- 		mdatactrl = readl(master->regs + SVC_I3C_MDATACTRL);
- 		count = SVC_I3C_MDATACTRL_RXCOUNT(mdatactrl);
--		readsl(master->regs + SVC_I3C_MRDATAB, buf, count);
-+		readsb(master->regs + SVC_I3C_MRDATAB, buf, count);
- 		slot->len += count;
- 		buf += count;
+@@ -592,6 +592,7 @@ static void svc_i3c_master_ibi_work(struct work_struct *work)
+ 			queue_work(master->base.wq, &master->hj_work);
+ 		break;
+ 	case SVC_I3C_MSTATUS_IBITYPE_MASTER_REQUEST:
++		svc_i3c_master_emit_stop(master);
+ 	default:
+ 		break;
  	}
 -- 
 2.34.1
