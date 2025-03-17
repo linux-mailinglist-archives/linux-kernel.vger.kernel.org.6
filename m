@@ -1,198 +1,130 @@
-Return-Path: <linux-kernel+bounces-565165-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565154-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB743A66200
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 23:50:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 004D8A661E8
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 23:44:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A65417AB371
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 22:49:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E86BF189AA88
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 22:45:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EE6D204851;
-	Mon, 17 Mar 2025 22:50:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A7EA1F63F0;
+	Mon, 17 Mar 2025 22:44:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=sandropischinger.de header.i=@sandropischinger.de header.b="LrlPBbb/"
-Received: from mailgate02.uberspace.is (mailgate02.uberspace.is [185.26.156.114])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Tfs+PypC"
+Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F83B15B54A
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 22:50:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.26.156.114
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AEA5946F
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 22:44:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742251812; cv=none; b=OL/6LnSHQn8VdWuBBmo735E29S8a46bIOI0s6VAf96Gp01HL9I0KT9EZHqY1MY1UTcx/Np/Tpkyr1S73MjuwBA8NA0uCGYm5iEtM8dU4aV2rVArHzjYsn2r/FQXKOKpQg/WRFd2z4ZZUVdNVIu5AOkSi8zJ533bL45n5cEGJSDs=
+	t=1742251486; cv=none; b=GUs9ombaPXmdG+wdtBInEn3xzkHCJE3QtW7KMXhfqFIOR47aHa9k0SAv0kgXp+HEaXQR5p48eYMPCq6MDTkGMFy4bAKe/uoz/rU+W5W+oenk7/4pLV2xcOHkRRtEwtQkq9KRzAH+k339Mkwb+iaWI1mwHB7u0uAw5Mb3QK/puGE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742251812; c=relaxed/simple;
-	bh=fc3WG6UFW0l4VdaDXLqPFhzUts1S6Myw6fnyGAl1OMA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gNm1hLs5oJxr4GINr2b+jtzyKU1aLplRKMbLGJRKK2Y/igGPGd3kHlPJd0AbX0Px0p8/HXuKBzI/afS2tdGF//OVEG/MIJtakjiIvTP5LHHyJDfsRKetfTIoIOwd9VpDjMvEA4I7hP4/MA9myycrC029UKpF/u3a8RJc5DvP+hY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sandropischinger.de; spf=pass smtp.mailfrom=sandropischinger.de; dkim=pass (4096-bit key) header.d=sandropischinger.de header.i=@sandropischinger.de header.b=LrlPBbb/; arc=none smtp.client-ip=185.26.156.114
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sandropischinger.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sandropischinger.de
-Received: from daphnis.uberspace.de (daphnis.uberspace.de [185.26.156.151])
-	by mailgate02.uberspace.is (Postfix) with ESMTPS id 8AC38181449
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 23:43:52 +0100 (CET)
-Received: (qmail 9731 invoked by uid 989); 17 Mar 2025 22:43:52 -0000
-Authentication-Results: daphnis.uberspace.de;
-	auth=pass (plain)
-Received: from unknown (HELO unkown) (::1)
-	by daphnis.uberspace.de (Haraka/3.0.1) with ESMTPSA; Mon, 17 Mar 2025 23:43:52 +0100
-From: Sandro Pischinger <kernel@sandropischinger.de>
-To: davem@davemloft.net,
-	dsahern@kernel.org,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com
-Cc: netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Sandro Pischinger <kernel@sandropischinger.de>
-Subject: [bug report, net-next] lo.disable_ipv6=1 allows ::1 dst packet to take a default route
-Date: Mon, 17 Mar 2025 23:43:00 +0100
-Message-ID: <20250317224300.25985-1-kernel@sandropischinger.de>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1742251486; c=relaxed/simple;
+	bh=GIa4+70HaoeLJA3SQUbd+Njvuh3wwoPCbP1yH7ozI7s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EfYESA9xTL0nitgwdlqo83IdEzZAvSOzWTioA75Ju6tFJF8CO3SMPzM5FGErxwIlcqt7l9R1w0bAxFeemweaLv5y8HOOv+Ho69Cu1zgm9hiUPrA1SxV4246EySyM9qOsZoWjkGJ8g+IIvLpALc92s5CfZe9/vNTCxe5Sef7fuAE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Tfs+PypC; arc=none smtp.client-ip=217.70.183.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 003134327A;
+	Mon, 17 Mar 2025 22:44:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1742251482;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+DFeujrXddI7AipEE/U92hGOn892c6Z6ywxYR+W8kOo=;
+	b=Tfs+PypCiW8O+ZQMtkwQpPVVdplJ32j+A9AbS/L54/ahVfEVwfQxYmrrPGChYvYycZbqI8
+	zOjlT1VjUt+TP3vODZW5MLBDr6qJlSs7dNtoEMX+KCfnUT33Qtgsu7F3hMlJfnkkmrfLxs
+	8GNKL22nEhs8D5cKLXWNQBPH+Dbc/rnqDFF4FKJ0u8g12Egkb/AYqamsAGElcc4GX4GMkD
+	9IK0pYXFomv7ysuPvNwuPCfxm5Nb/12DjxvbRO/o5SIivMjcnO6uOeLwcaiiTaTknfdu2G
+	HKvJHMeSQmQG+ee2keSyeeZbH41Cc/qbUCNskuDW0be9gNSpboZUVp1C6YgDCA==
+Date: Mon, 17 Mar 2025 23:44:40 +0100
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Frank Li <Frank.li@nxp.com>
+Cc: Stanley Chu <stanley.chuys@gmail.com>, miquel.raynal@bootlin.com,
+	linux-i3c@lists.infradead.org, linux-kernel@vger.kernel.org,
+	tomer.maimon@nuvoton.com, kwliu@nuvoton.com, yschu@nuvoton.com
+Subject: Re: [PATCH v1 1/3] i3c: master: svc: Fix missing the IBI rules
+Message-ID: <20250317224440840e4117@mail.local>
+References: <20250317051951.3065011-1-yschu@nuvoton.com>
+ <20250317051951.3065011-2-yschu@nuvoton.com>
+ <Z9glVBnpdwXuLwD7@lizhi-Precision-Tower-5810>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Rspamd-Bar: +
-X-Rspamd-Report: MID_CONTAINS_FROM(1) MIME_GOOD(-0.1) R_MISSING_CHARSET(0.5)
-X-Rspamd-Score: 1.4
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=sandropischinger.de; s=uberspace;
-	h=from:to:cc:subject:date;
-	bh=fc3WG6UFW0l4VdaDXLqPFhzUts1S6Myw6fnyGAl1OMA=;
-	b=LrlPBbb/vaFOGJVms/tE4DkxaNf914t/C+Uv+AoAgBzT1oTsTrowTO34DMnlV7BZtn0bqgk4RW
-	DH+M5Ui5i544Oq8mEa91ZuN6vZrb6fWZBgSJVqGAQzv2bIPrPb8YcpRwGcsXEjAsA0pPjoAER4GU
-	1Y5FM8SIxl7XE7CKyEScJvC84S4pAJL5tIlzfBSVprMagTItI1O4iexve6fTcBRzeK89Js4ZPEZq
-	hmBg5Z2cvm2EU038EXtseFpjTkmO+wl1zZsrDZW98NbXuKxnlzeEobHeCdWXpfkoKhl0dKIiV3rp
-	NOe8uiJC3+3FIr1NwRjRuVEOVnlKEU08EP0eE/lVAEbX7Je3sFXDFsrG2LALBvkUsLiZj00wIQmQ
-	QVjAsMphQfMstP9OjLFvA+9FARsOBx6WdRTLZDiL9eoZ56LITZcD+roJWr621gUow8BecAkSGLJB
-	zzkE+0QwqoCx97Lvn2exPqx1o4i/k8y69AnfiQv2Flu+wQF6yTLZoAgS3HvVQ+sUxUO6hccOAdnb
-	4JDSqQnWX8MobQz1+3rwpnUigHivjPamV8q5dnI0jgPXLYgxF2YTGnclkaEiReBNbMPpG+zR6W40
-	9vl7/Fzq0KSxXjndXvHLL7fO3+LQB3pmJGGV8Hqe+vaHy7xVFPypZD7/k5iQXbAt1S+tnLJ7Wfgg
-	0=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z9glVBnpdwXuLwD7@lizhi-Precision-Tower-5810>
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddugedtjeejucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeetlhgvgigrnhgurhgvuceuvghllhhonhhiuceorghlvgigrghnughrvgdrsggvlhhlohhnihessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepgeeiudeuteehhfekgeejveefhfeiudejuefhgfeljefgjeegkeeujeeugfehgefgnecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppedvrgdtudemvgdtrgemvdgumeeifeejtdemjeekvgdtmegttdgvkeemvdektdeimeekrggtieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemvgdtrgemvdgumeeifeejtdemjeekvgdtmegttdgvkeemvdektdeimeekrggtiedphhgvlhhopehlohgtrghlhhhoshhtpdhmrghilhhfrhhomheprghlvgigrghnughrvgdrsggvlhhlohhnihessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepkedprhgtphhtthhopefhrhgrnhhkrdhlihesnhigphdrtghomhdprhgtphhtthhopehsthgrnhhlvgihrdgthhhuhihssehgmhgrihhlrdgtohhmpdhrtghpthhtohepmhhiqhhuvghlrdhrrgihn
+ hgrlhessghoohhtlhhinhdrtghomhdprhgtphhtthhopehlihhnuhigqdhifegtsehlihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepthhomhgvrhdrmhgrihhmohhnsehnuhhvohhtohhnrdgtohhmpdhrtghpthhtohepkhiflhhiuhesnhhuvhhothhonhdrtghomhdprhgtphhtthhopeihshgthhhusehnuhhvohhtohhnrdgtohhm
+X-GND-Sasl: alexandre.belloni@bootlin.com
 
-Hello all,
+Hello Frank,
 
-I stumbled upon an issue when disabling ipv6 just for the loopback device.
-Afer doing so, sending a packet with destination ::1 will follow an available
-default route, if exists, e.g. "default via fe80::2 dev ens3". This seems
-to contradict RFC4291 2.5.3, which states that loopback packets must never leave
-the node.
+On 17/03/2025 09:36:20-0400, Frank Li wrote:
+> On Mon, Mar 17, 2025 at 01:19:49PM +0800, Stanley Chu wrote:
+> > From: Stanley Chu <yschu@nuvoton.com>
+> >
+> > The code does not add IBI rules for devices with controller capability.
+> > However, some target devices, such as secondary controller, also have
+>                 ^^ dual rule devices
+> 
+> OR
+> 
+> However, the second controller have the controller capablity and work at
+> target devices mode when the device probe. So add IBI rules for such
+> devices.
+> 
+> 
+> > the controller capability.
+> > Modify the code to add rules for devices capable of sending IBI requests.
+> >
+> > Fixes: dd3c52846d59 ("i3c: master: svc: Add Silvaco I3C master driver")
+> > Signed-off-by: Stanley Chu <yschu@nuvoton.com>
+> 
+> 
+> Reviewed-by: Frank Li <Frank.Li@nxp.com>
 
-Using mainline kernel v6.14-rc7, configured with
-x86_64_defconfig and kvm_guest.config on archlinux (in qemu):
+Please avoid adding you reviewed-by tag when you request changes, else
+patch work will show the patch as being applicable. This is fine to do
+it occasionally but not for all the patches you review. You can simply
+wait for the next version to come.
 
-$ ip -6 r
-fe80::/64 dev ens3 proto kernel metric 256 pref medium
-fec0::/64 dev ens3 proto ra metric 1002 pref medium
-multicast ff00::/8 dev ens3 proto kernel metric 256 pref medium
-default via fe80::2 dev ens3 proto ra metric 1002 pref medium
+> 
+> 
+> > ---
+> >  drivers/i3c/master/svc-i3c-master.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/i3c/master/svc-i3c-master.c b/drivers/i3c/master/svc-i3c-master.c
+> > index 1d1f351b9a85..a72ba5a7edd4 100644
+> > --- a/drivers/i3c/master/svc-i3c-master.c
+> > +++ b/drivers/i3c/master/svc-i3c-master.c
+> > @@ -1106,7 +1106,7 @@ static int svc_i3c_update_ibirules(struct svc_i3c_master *master)
+> >
+> >  	/* Create the IBIRULES register for both cases */
+> >  	i3c_bus_for_each_i3cdev(&master->base.bus, dev) {
+> > -		if (I3C_BCR_DEVICE_ROLE(dev->info.bcr) == I3C_BCR_I3C_MASTER)
+> > +		if (!(dev->info.bcr & I3C_BCR_IBI_REQ_CAP))
+> >  			continue;
+> >
+> >  		if (dev->info.bcr & I3C_BCR_IBI_PAYLOAD) {
+> > --
+> > 2.34.1
+> >
 
-$ ip -6 r get ::1
-local ::1 dev lo proto kernel src ::1 metric 0 pref medium
-
-$ sysctl -w net.ipv6.conf.lo.disable_ipv6=1
-net.ipv6.conf.lo.disable_ipv6 = 1
-
-$ ip -6 r get ::1
-::1 via fe80::2 dev ens3 proto ra src fe80::c9cb:505e:82a2:8ca7 metric 1002 pref medium
-
-When observing trace events `fib6_table_lookup` for ping ::1, then we see that the ens3 device is selected
-for the case when ipv6 is disabled for lo:
-== lo.disable_ipv6=0
-            ping-356   [000] .....   292.199930: fib6_table_lookup:    (ffffffff84041fd4)
-            ping-356   [000] .....   292.199932: fib6_table_lookup:    table 254 oif 0 iif 1 proto 17 ::/56460 -> ::1/1025 flowlabel 0 tos 0 scope 0 flags 0 ==> dev lo gw :: err 0
-            ping-356   [000] .....   292.200176: fib6_table_lookup:    (ffffffff84041fd4)
-            ping-356   [000] .....   292.200176: fib6_table_lookup:    table 254 oif 0 iif 1 proto 58 ::/0 -> ::1/0 flowlabel 0 tos 0 scope 0 flags 0 ==> dev lo gw :: err 0
-            ping-356   [000] ..s2.   292.200187: fib6_table_lookup:    (ffffffff84041fd4)
-            ping-356   [000] ..s2.   292.200187: fib6_table_lookup:    table 254 oif 1 iif 1 proto 58 ::1/0 -> ::1/0 flowlabel 0 tos 0 scope 0 flags 0 ==> dev lo gw :: err 0
-            ping-356   [000] .....   293.255592: fib6_table_lookup:    (ffffffff84041fd4)
-            ping-356   [000] .....   293.255594: fib6_table_lookup:    table 254 oif 0 iif 1 proto 58 ::/0 -> ::1/0 flowlabel 0 tos 0 scope 0 flags 0 ==> dev lo gw :: err 0
-            ping-356   [000] ..s2.   293.255606: fib6_table_lookup:    (ffffffff84041fd4)
-            ping-356   [000] ..s2.   293.255606: fib6_table_lookup:    table 254 oif 1 iif 1 proto 58 ::1/0 -> ::1/0 flowlabel 0 tos 0 scope 0 flags 0 ==> dev lo gw :: err 0
-            ping-356   [000] .....   294.279429: fib6_table_lookup:    (ffffffff84041fd4)
-            ping-356   [000] .....   294.279430: fib6_table_lookup:    table 254 oif 0 iif 1 proto 58 ::/0 -> ::1/0 flowlabel 0 tos 0 scope 0 flags 0 ==> dev lo gw :: err 0
-            ping-356   [000] ..s2.   294.279441: fib6_table_lookup:    (ffffffff84041fd4)
-            ping-356   [000] ..s2.   294.279441: fib6_table_lookup:    table 254 oif 1 iif 1 proto 58 ::1/0 -> ::1/0 flowlabel 0 tos 0 scope 0 flags 0 ==> dev lo gw :: err 0
-            ping-356   [000] .....   295.303440: fib6_table_lookup:    (ffffffff84041fd4)
-            ping-356   [000] .....   295.303442: fib6_table_lookup:    table 254 oif 0 iif 1 proto 58 ::/0 -> ::1/0 flowlabel 0 tos 0 scope 0 flags 0 ==> dev lo gw :: err 0
-            ping-356   [000] ..s2.   295.303451: fib6_table_lookup:    (ffffffff84041fd4)
-            ping-356   [000] ..s2.   295.303452: fib6_table_lookup:    table 254 oif 1 iif 1 proto 58 ::1/0 -> ::1/0 flowlabel 0 tos 0 scope 0 flags 0 ==> dev lo gw :: err 0
-
-== lo.disable_ipv6=1
-            ping-363   [000] .....   358.104211: fib6_table_lookup:    (ffffffff84041fd4)
-            ping-363   [000] .....   358.104213: fib6_table_lookup:    table 254 oif 0 iif 1 proto 17 ::/37566 -> ::1/1025 flowlabel 0 tos 0 scope 0 flags 0 ==> dev ens3 gw fe80::2 err 0
-            ping-363   [000] .....   358.104453: fib6_table_lookup:    (ffffffff84041fd4)
-            ping-363   [000] .....   358.104453: fib6_table_lookup:    table 254 oif 0 iif 1 proto 58 ::/0 -> ::1/0 flowlabel 0 tos 0 scope 0 flags 0 ==> dev ens3 gw fe80::2 err 0
-            ping-363   [000] .....   359.111414: fib6_table_lookup:    (ffffffff84041fd4)
-            ping-363   [000] .....   359.111415: fib6_table_lookup:    table 254 oif 0 iif 1 proto 58 ::/0 -> ::1/0 flowlabel 0 tos 0 scope 0 flags 0 ==> dev ens3 gw fe80::2 err 0
-            ping-363   [000] .....   360.135436: fib6_table_lookup:    (ffffffff84041fd4)
-            ping-363   [000] .....   360.135437: fib6_table_lookup:    table 254 oif 0 iif 1 proto 58 ::/0 -> ::1/0 flowlabel 0 tos 0 scope 0 flags 0 ==> dev ens3 gw fe80::2 err 0
-            ping-363   [000] .....   361.159595: fib6_table_lookup:    (ffffffff84041fd4)
-            ping-363   [000] .....   361.159597: fib6_table_lookup:    table 254 oif 0 iif 1 proto 58 ::/0 -> ::1/0 flowlabel 0 tos 0 scope 0 flags 0 ==> dev ens3 gw fe80::2 err 0
-            ping-363   [000] .....   362.183614: fib6_table_lookup:    (ffffffff84041fd4)
-            ping-363   [000] .....   362.183616: fib6_table_lookup:    table 254 oif 0 iif 1 proto 58 ::/0 -> ::1/0 flowlabel 0 tos 0 scope 0 flags 0 ==> dev ens3 gw fe80::2 err 0
-            ping-363   [000] .....   363.207450: fib6_table_lookup:    (ffffffff84041fd4)
-            ping-363   [000] .....   363.207452: fib6_table_lookup:    table 254 oif 0 iif 1 proto 58 ::/0 -> ::1/0 flowlabel 0 tos 0 scope 0 flags 0 ==> dev ens3 gw fe80::2 err 0
-     ksoftirqd/0-16    [000] ..s..   363.527470: fib6_table_lookup:    (ffffffff84041fd4)
-     ksoftirqd/0-16    [000] ..s..   363.527471: fib6_table_lookup:    table 254 oif 0 iif 2 proto 58 fe80::2/0 -> fe80::c9cb:505e:82a2:8ca7/0 flowlabel 0 tos 0 scope 0 flags 0 ==> dev ens3 gw :: err 0
-
-Intuitively I would expect `ping ::1` to fail with `ping: connect: Network is unreachable`,
-as it does if there's no default route configured. However if there is one,
-then ping just continues trying to send packets via the matching default route.
-
-$ ping ::1
-PING ::1 (::1) 56 data bytes
-^C
-    ::1 ping statistics ---
-11 packets transmitted, 0 received, 100% packet loss, time 10230ms
-
-Searching through the netdev mailing list archive, I found a somewaht related discussion,
-where special handling for ::1 was mentioned. In particular one comment by Stephen Hemminger was:
-as found in
-  https://lore.kernel.org/netdev/20101216132812.2d7fd885@nehalam/
-  Message-ID: <20101216132812.2d7fd885@nehalam> :
-
-> When loopback device is being brought down, then keep the route table
-> entries because they are special. The entries in the local table for
-> linklocal routes and ::1 address should not be purged.
-
-I don't understand enough of kernel IPv6 networking in order to
-known if this is (still) the case today.
-
-Is this behavior intended? If not, here's my draft patch for this, though
-I'm not familiar with the codebase and cannot foresee any side-effects.
-
-Best regards,
-Sandro Pischinger
-
-Signed-off-by: Sandro Pischinger <kernel@sandropischinger.de>
----
- net/ipv6/route.c | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/net/ipv6/route.c b/net/ipv6/route.c
-index fb2e99a56529..b27844de3baa 100644
---- a/net/ipv6/route.c
-+++ b/net/ipv6/route.c
-@@ -2193,6 +2193,12 @@ int fib6_table_lookup(struct net *net, struct fib6_table *table, int oif,
- 
- redo_rt6_select:
- 	rt6_select(net, fn, oif, res, strict);
-+	if (ipv6_addr_loopback(&fl6->daddr)) {
-+		struct fib6_info *rt = res->f6i;
-+
-+		if (!rt || !(rt->fib6_flags & RTF_LOCAL))
-+			res->f6i = net->ipv6.fib6_null_entry;
-+	}
- 	if (res->f6i == net->ipv6.fib6_null_entry) {
- 		fn = fib6_backtrack(fn, &fl6->saddr);
- 		if (fn)
 -- 
-2.48.1
-
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
