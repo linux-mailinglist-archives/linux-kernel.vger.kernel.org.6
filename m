@@ -1,57 +1,79 @@
-Return-Path: <linux-kernel+bounces-564159-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564160-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46E4BA64EFD
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 13:34:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 509D9A64EFE
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 13:35:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5D9FE7A241C
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 12:33:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7AF97188DAC1
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 12:35:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE7392397B0;
-	Mon, 17 Mar 2025 12:34:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 248B023A566;
+	Mon, 17 Mar 2025 12:35:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=ariel.dalessandro@collabora.com header.b="Uz/UiIyv"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="pIZGW+XJ"
+Received: from mail-io1-f54.google.com (mail-io1-f54.google.com [209.85.166.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9484F22FF39
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 12:34:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742214881; cv=pass; b=p+qPGMrUqvPy6+Mmw7xSQcmDKLSeEBmHYHY6tDLiNgiRrn/So4hdQ3JHmbuzXuCpSpKnvwsNlccma8unkO/+BqKvV5rA0pzlMNqrUabKUkXZwFi98AUqdxmYoqzLrPpw5VFBtuHiNY1cGwCwSqIeH6GURagOFL9ElzA//YNBRqQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742214881; c=relaxed/simple;
-	bh=UmvmuhH9S/ghcTziUjyJujjvbkoAPlbz8/LVPitzp1I=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4D3C238D32
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 12:35:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.54
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742214912; cv=none; b=GUQTjfFx0qOslhl2nCkCCzoDVuPl5vxUoH8Do3PxC5yB/H+bQIIQhk0poB3cw6DAV3DllZg17sMn6XolNyJ7dHL7FKeL7enc5f/8QRr/aY6e4ZhN0eV/9E5s4nO21xB8+gsmZzvKF72DSscC7ktH+ZKKAPCZfhzOTqoQ+Wpcveo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742214912; c=relaxed/simple;
+	bh=2hhxamJKnEYjgJz9HCPDDBlgMOFyLWxFx7AWrATtYGo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YEbTngUbr4Z9O0GQqpsXNJDrz6paomz41Nv+KRNEVnBGVytdXQ9bishSxl9qyCxtQpVIOEALtcFMFYEXZtthW8gxWND+yRikdbkrkmkdbMQLqtcrViUDwCtYf5E6d3SwMknUY5QlBB6QdSSMabHEH80fqBiJp6+glAiZZ84nJIg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=ariel.dalessandro@collabora.com header.b=Uz/UiIyv; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1742214850; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=I9pUAZdiFLI//cH52Kqfo4rvkjMEg30CtBXrYGx4wuc1IFEvEPlTwnjbPJ6fXHSfsIpoZkYbUk9LtXDdxMnGOdosi7BhaD84CuzfSmYu591x20rbmpt4s/MOrmQuFsvBCmlN9t7bwZJOf/pyxqiDq+bTXIn90V4XaM4uUqkipFI=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1742214850; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=RuuepCErqz74J7Vm8iCfe3Wt490fynlSOHzqHACM1Y8=; 
-	b=oFtwzOs6mhMZ7S/APOHrYtIzMZL4zclTAxBRnjuRXOAVNGtR0STk4npAuO8vjH9rMScCHoQiusErzEx19JMvHKdGC+wW7DqGif9HaKVMFDKyzMIQ9PfnTf1/fM1L+b7EwrKvTMxxPiXnTttFil2ehrbdI9oCI+VjJYIKIdka6C0=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=ariel.dalessandro@collabora.com;
-	dmarc=pass header.from=<ariel.dalessandro@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1742214850;
-	s=zohomail; d=collabora.com; i=ariel.dalessandro@collabora.com;
-	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=RuuepCErqz74J7Vm8iCfe3Wt490fynlSOHzqHACM1Y8=;
-	b=Uz/UiIyv6UOLXZg+DdwwlT3M5ft8aH3HVKKtiUZsVSSwMuBu1ddFlfAlGPBn4B5u
-	amuPqY0eRs/yhJNGMLTGi7Wy34Wbfyzj8qPh0Qj7eyUDuF8uRoEqqrjcFR7hW5gf3Qj
-	VueQ/9UXKoCAgd1d4Dg+U2Mzph0ToyvHIOO8tMng=
-Received: by mx.zohomail.com with SMTPS id 1742214847997718.7652866374787;
-	Mon, 17 Mar 2025 05:34:07 -0700 (PDT)
-Message-ID: <eabb2f2c-b193-4ddf-8a50-27952f37393d@collabora.com>
-Date: Mon, 17 Mar 2025 09:34:00 -0300
+	 In-Reply-To:Content-Type; b=AfVc54hy54F893zwrS2OrerWAd2/q69s1je6FCOqIAP+zGo1jg/Wbvp8gLTtUc0maouf9pywPMYKNIk7J/1ygO7WEFPI9d0QXsq/k/ozRNrOcWei3SdLA4hpgvWFPaU5cpMDtMR4E0s9DG4XXkdCWu6KBGBNuASCXTISpNygXIA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=pIZGW+XJ; arc=none smtp.client-ip=209.85.166.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=riscstar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
+Received: by mail-io1-f54.google.com with SMTP id ca18e2360f4ac-85b515e4521so135331339f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 05:35:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1742214910; x=1742819710; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=00q0lF62iZBDilWeDRlriXLySeQsOfJjRaqFJoh5fG8=;
+        b=pIZGW+XJ4VqSFbjZZGvFywgqNL4kFFLYFcRiVic2bcsVQ9hL9veUgvadJQa8sAJcJ/
+         f1JM69T/LRwhYG2IXBjfLB4vZeFPOA0vldvKt7JZZeQ3nyyIokso0B6yoEo5YXULxmyd
+         c0K1lLXrNXDg7zRtibLpcJRGfmD7svm2CYHKxvKfNyp6DYsF2a44dbK35MycfMDds2yv
+         Iou9GM7zdXOtE9YN04atY1BUoMuu8ukuGPLy1QcIn3zVFlnAPMDOdtp/0dtke8GGOix8
+         9R70Qpmr6/RCo1nLOIK0u3NdKhdNWs8fr8aEQnHVLDyOL8uYxkTG9/vZEqnhSspfv9/b
+         8azA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742214910; x=1742819710;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=00q0lF62iZBDilWeDRlriXLySeQsOfJjRaqFJoh5fG8=;
+        b=C2fAoA3wIDohFCj8BXLlsY5sN8RH5keigndZ4LUi1Qx3w9RlhHheUXhm1gL+sCtrg8
+         4YrK7ZMg3IWY49wP8M3OGhjiAo5dXx/YnwOrDx99RNvRMAphpPXd/zvvkOu8VNuw/J67
+         hfh7PDk7fxfSIhgEXXr1eMEKlqFnGgIMFIcPG31xkddg5mZ7TNXh+xCp4yE0i4Zm8tZo
+         rMkHvlXGS5Kf9AwPd1zF2lML/pKL75FaRzfJICQCQnZ3Pkik+DCRldYeWp9tLYMxZAwM
+         L1vaDd9ySOW35CmZLVcv+dyIMzALQbE38Rv7E/LgWrQC6WKVU/KVeloa0+P3AoD8TsZp
+         RlwQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUOntqWdAXrO+wdTgs4MVPtrMfw/i0Zuo7j8UZPHp5fNQ7wh39gStz2hQ/s7rIcYIICh7RrjelEDhDO3II=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzcqr4ue4pFtxvby12Tf1IpM2lzO915SpcPrs4CfOTCmJbkjXhP
+	iHe5jiDxHsh4n6/1NPBzxsvALWZRMaubnyVu0a3lk8s+ls1nkQB/6CQldC1HUoE=
+X-Gm-Gg: ASbGncs6Bs918hpMdCCOHsexzmhgJc7io0KH9ebaH+WbLRVumBLLcrKnKGNRm1aX5s3
+	ntzgzFSKHSh2GLHhb7+3IyzZEok6k0bOcKBMM2XzsQzHxd1VSoxmbJrKOLftTVmtcMRCswbMZZS
+	0GvRuYbZ8lWdYiVuRZG0cusb6SMMp9RPk5Je29Q33gJR2Q/CEshnoZf382ISYLjO3nC04cdnE9m
+	RuACnmu202O6DgWiems/S7i9BlzA3sjNE9FOpzDW+6OikH5ebTKwR/w35S+mWxqqssuAteBP5Q1
+	ahAffGdmchN5j+SqUYsHr3Jl5nfZ6CKXyvFI/46AeQFaUC3/TEuyL3LGAo/6ed1ladC7nfq+6xD
+	O/erTxL/E
+X-Google-Smtp-Source: AGHT+IHVpD7/mZoav16FzU6IphNyJrgQsnIiWZ2iM1qY0DQdugl/0lXuxuk7bx2DwfBAOuvC4HPD+Q==
+X-Received: by 2002:a05:6e02:1a26:b0:3d3:f64a:38b9 with SMTP id e9e14a558f8ab-3d483a63552mr114188275ab.15.1742214909989;
+        Mon, 17 Mar 2025 05:35:09 -0700 (PDT)
+Received: from [172.22.22.28] (c-73-228-159-35.hsd1.mn.comcast.net. [73.228.159.35])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3d47a83817dsm26967285ab.61.2025.03.17.05.35.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 17 Mar 2025 05:35:09 -0700 (PDT)
+Message-ID: <abdaa38e-77e4-435e-94c4-91bc24b49b02@riscstar.com>
+Date: Mon, 17 Mar 2025 07:35:08 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,109 +81,63 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/6] drm/panfrost: Add support for AARCH64_4K page
- table format
-To: Boris Brezillon <boris.brezillon@collabora.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- robh@kernel.org, steven.price@arm.com, maarten.lankhorst@linux.intel.com,
- mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
- kernel@collabora.com, linux-mediatek@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, sjoerd@collabora.com,
- angelogioacchino.delregno@collabora.com
-References: <20250314173858.212264-1-ariel.dalessandro@collabora.com>
- <20250314173858.212264-5-ariel.dalessandro@collabora.com>
- <20250315094338.5f402426@collabora.com>
+Subject: Re: [PATCH v2 22/31] tty: staging/greybus: pass tty_driver flags to
+ tty_alloc_driver()
+To: "Jiri Slaby (SUSE)" <jirislaby@kernel.org>, gregkh@linuxfoundation.org
+Cc: linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Johan Hovold <johan@kernel.org>, David Lin <dtwlin@gmail.com>,
+ Alex Elder <elder@kernel.org>, greybus-dev@lists.linaro.org,
+ linux-staging@lists.linux.dev
+References: <20250317070046.24386-1-jirislaby@kernel.org>
+ <20250317070046.24386-23-jirislaby@kernel.org>
 Content-Language: en-US
-From: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
-In-Reply-To: <20250315094338.5f402426@collabora.com>
+From: Alex Elder <elder@riscstar.com>
+In-Reply-To: <20250317070046.24386-23-jirislaby@kernel.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ZohoMailClient: External
 
-Boris,
+On 3/17/25 2:00 AM, Jiri Slaby (SUSE) wrote:
+> tty_alloc_driver() is supposed to receive tty driver flags.
 
-On 3/15/25 5:43 AM, Boris Brezillon wrote:
-> On Fri, 14 Mar 2025 14:38:56 -0300
-> Ariel D'Alessandro <ariel.dalessandro@collabora.com> wrote:
+Looks like tty_alloc_driver() doesn't directly depend on the
+two flags passed in this case, but this corrects the code.
+
+Looks good to me.
+
+Reviewed-by: Alex Elder <elder@riscstar.com>
+
 > 
->> Currently, Panfrost only supports MMU configuration in "LEGACY" (as
->> Bifrost calls it) mode, a (modified) version of LPAE "Large Physical
->> Address Extension", which in Linux we've called "mali_lpae".
->>
->> This commit adds support for conditionally enabling AARCH64_4K page
->> table format. To achieve that, a "GPU optional quirks" field was added
->> to `struct panfrost_features` with the related flag.
->>
->> Note that, in order to enable AARCH64_4K mode, the GPU variant must have
->> the HW_FEATURE_AARCH64_MMU feature flag present.
->>
->> Signed-off-by: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
->> ---
->>   drivers/gpu/drm/panfrost/panfrost_device.h |  16 +++
->>   drivers/gpu/drm/panfrost/panfrost_mmu.c    | 136 +++++++++++++++++++--
->>   drivers/gpu/drm/panfrost/panfrost_regs.h   |  34 ++++++
->>   3 files changed, 177 insertions(+), 9 deletions(-)
-[snip]
->> diff --git a/drivers/gpu/drm/panfrost/panfrost_mmu.c b/drivers/gpu/drm/panfrost/panfrost_mmu.c
->> index 294f86b3c25e7..f24c23e1f67b8 100644
->> --- a/drivers/gpu/drm/panfrost/panfrost_mmu.c
->> +++ b/drivers/gpu/drm/panfrost/panfrost_mmu.c
->> @@ -26,6 +26,48 @@
->>   #define mmu_write(dev, reg, data) writel(data, dev->iomem + reg)
->>   #define mmu_read(dev, reg) readl(dev->iomem + reg)
->>   
-[snip]
->>   u32 panfrost_mmu_as_get(struct panfrost_device *pfdev, struct panfrost_mmu *mmu)
->>   {
->>   	int as;
->> @@ -618,6 +720,18 @@ struct panfrost_mmu *panfrost_mmu_ctx_create(struct panfrost_device *pfdev)
->>   	u32 va_bits = GPU_MMU_FEATURES_VA_BITS(pfdev->features.mmu_features);
->>   	u32 pa_bits = GPU_MMU_FEATURES_PA_BITS(pfdev->features.mmu_features);
->>   	struct panfrost_mmu *mmu;
->> +	enum io_pgtable_fmt fmt;
->> +
->> +	if (pfdev->comp->gpu_quirks & BIT(GPU_QUIRK_FORCE_AARCH64_PGTABLE)) {
->> +		if (!panfrost_has_hw_feature(pfdev, HW_FEATURE_AARCH64_MMU)) {
->> +			dev_err_once(pfdev->dev,
->> +				     "AARCH64_4K page table not supported\n");
->> +			return ERR_PTR(-EINVAL);
->> +		}
->> +		fmt = ARM_64_LPAE_S1;
->> +	} else {
->> +		fmt = ARM_MALI_LPAE;
->> +	}
->>   
->>   	mmu = kzalloc(sizeof(*mmu), GFP_KERNEL);
->>   	if (!mmu)
->> @@ -642,16 +756,20 @@ struct panfrost_mmu *panfrost_mmu_ctx_create(struct panfrost_device *pfdev)
->>   		.iommu_dev	= pfdev->dev,
->>   	};
->>   
->> -	mmu->pgtbl_ops = alloc_io_pgtable_ops(ARM_MALI_LPAE, &mmu->pgtbl_cfg,
->> -					      mmu);
->> -	if (!mmu->pgtbl_ops) {
->> -		kfree(mmu);
->> -		return ERR_PTR(-EINVAL);
->> -	}
->> +	mmu->pgtbl_ops = alloc_io_pgtable_ops(fmt, &mmu->pgtbl_cfg, mmu);
->> +	if (!mmu->pgtbl_ops)
->> +		goto err_free_mmu;
->> +
->> +	if (panfrost_mmu_cfg_init(mmu, fmt))
->> +		goto err_free_mmu;
+> Signed-off-by: Jiri Slaby (SUSE) <jirislaby@kernel.org>
+> Acked-by: Johan Hovold <johan@kernel.org>
+> Cc: David Lin <dtwlin@gmail.com>
+> Cc: Alex Elder <elder@kernel.org>
+> Cc: greybus-dev@lists.linaro.org
+> Cc: linux-staging@lists.linux.dev
+> ---
+>   drivers/staging/greybus/uart.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> How about propagating the error returned by panfrost_mmu_cfg_init()
-> instead of assuming it's always -EINVAL on failure? Oh, and you need to
-> call free_io_pgtable_ops(), not just kfree().
-
-Ah, totally, thanks for the heads up. Will fix in v3 right away.
-
--- 
-Ariel D'Alessandro
-Software Engineer
-
-Collabora Ltd.
-Platinum Building, St John's Innovation Park, Cambridge CB4 0DS, UK 
-Registered in England & Wales, no. 5513718
+> diff --git a/drivers/staging/greybus/uart.c b/drivers/staging/greybus/uart.c
+> index 8eab94cb06fa..308ed1ca9947 100644
+> --- a/drivers/staging/greybus/uart.c
+> +++ b/drivers/staging/greybus/uart.c
+> @@ -948,7 +948,8 @@ static int gb_tty_init(void)
+>   {
+>   	int retval = 0;
+>   
+> -	gb_tty_driver = tty_alloc_driver(GB_NUM_MINORS, 0);
+> +	gb_tty_driver = tty_alloc_driver(GB_NUM_MINORS, TTY_DRIVER_REAL_RAW |
+> +					 TTY_DRIVER_DYNAMIC_DEV);
+>   	if (IS_ERR(gb_tty_driver)) {
+>   		pr_err("Can not allocate tty driver\n");
+>   		retval = -ENOMEM;
+> @@ -961,7 +962,6 @@ static int gb_tty_init(void)
+>   	gb_tty_driver->minor_start = 0;
+>   	gb_tty_driver->type = TTY_DRIVER_TYPE_SERIAL;
+>   	gb_tty_driver->subtype = SERIAL_TYPE_NORMAL;
+> -	gb_tty_driver->flags = TTY_DRIVER_REAL_RAW | TTY_DRIVER_DYNAMIC_DEV;
+>   	gb_tty_driver->init_termios = tty_std_termios;
+>   	gb_tty_driver->init_termios.c_cflag = B9600 | CS8 |
+>   		CREAD | HUPCL | CLOCAL;
 
 
