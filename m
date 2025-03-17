@@ -1,111 +1,129 @@
-Return-Path: <linux-kernel+bounces-565064-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565065-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61198A6602B
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 22:10:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E14C1A66043
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 22:12:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD88316D31B
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 21:10:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B7B616E0CF
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 21:12:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 161CF1FBEBD;
-	Mon, 17 Mar 2025 21:10:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 737561F5852;
+	Mon, 17 Mar 2025 21:12:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="PqjKNESz"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ee7LXzJ+"
+Received: from out-180.mta0.migadu.com (out-180.mta0.migadu.com [91.218.175.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58B221B393A;
-	Mon, 17 Mar 2025 21:09:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EA417E9
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 21:12:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742245801; cv=none; b=CWGei4uZaFHMcoJkhcr+ZuYO81LDx9OVL3mctK2IcEB/chbPZBsUkTRH3Z3D5gOoKqt3Tq01NNtQ27TRHNls+nmGuJaWuIilMW2V+rvd7CFpvjjbz/7RTas0BUCQbNay0O93P4eDIQ/+f5waae+JX4aHm+0tmy6KhXlvbhqhyZ4=
+	t=1742245926; cv=none; b=BvUjjuqMbj+9MllAIPpVqdUDumCCwPbuN539qEvuQEv2Z2dsUlLrGriVhDhwGkNLiGvig2wnbXMrD3NAqitaff8lQrEBWORUaIT5cz/weOMOZZI8kV9q7J/mKgPHVW2cxaKoqnnhptJyGgo1ktX/znQOcSJ/zf+NPIjBX58VMlg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742245801; c=relaxed/simple;
-	bh=RV4zKHuWdRwFrOoGAOvvfhFQFF/Jzow9rIzlvPpUUjs=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=aNrKxEWi4VPrfdcQCUpWxO/hJY72f3edcsQ0gj8zTAmPweOqEPnZ4hlvVGGgD9ZPUVn99401NQYl4W8Fuzps854f+AkIRPOl5LpUHFtOQCv/YGSBUu4TdDFwxa69rz9GU7UbBIN/Ly3TUmqUfNpnrQYiqosXNMyZpYzCjioCZww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=PqjKNESz; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1742245793;
-	bh=HWJgiIhzJR50/ZGvS8R6AHJ6tWeVJoPnp8wm7ibd6g4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=PqjKNESz/JMeILtnxZvMVLT1LGl/tCPVUfXfggag8g6Jpe+rY2JOjNnoBIk+wDh8c
-	 wk0bcpwFHGT1QhoEdEVfiGSk0Y6jqfW89+eozgO1YwsmQEQfe6nvmlHia3iyTYN6kE
-	 UslF894CxHfrxx+UX2WHZIpExnLDmNw1lo8SFLwktDM5ak6fwKHtZaEr/hDDnJ0VUk
-	 gOgOLoyPO90qZg2JRJi4hZnlim8lSzg+CkrY9DW9Laq83FSFlcFyPji1genOWsrvbO
-	 KeupUD+YAtBEN7xhGSsz9NzqImemn4NsDAqALklzMGtVuInwg3X/udRHHkZ21kMnAC
-	 3hESwlZHJ66Iw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZGnfn3LWRz4xCy;
-	Tue, 18 Mar 2025 08:09:53 +1100 (AEDT)
-Date: Tue, 18 Mar 2025 08:09:51 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Theodore Ts'o <tytso@mit.edu>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: Signed-off-by missing for commit in the ext4 tree
-Message-ID: <20250318080951.71772135@canb.auug.org.au>
-In-Reply-To: <20250318000658.29a791b4@canb.auug.org.au>
-References: <20250318000658.29a791b4@canb.auug.org.au>
+	s=arc-20240116; t=1742245926; c=relaxed/simple;
+	bh=Q44OiKPmtCXgGHbf4MCJCUBX1K59+ZC7S1QYVgcaWBY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rZWVYVsV6PZE0sXQ2OxKLzRpdxOkz3Hv0OZn0842uXDX4pCyfOojZ9+rAHWfgxrCZzTdyMIP0hVfuQglgseZYepT3JvIQX4YyD8Tuo2iQAjcQKzWIDNxvzTt2DK3BlOCY0b8YFzMQFZ6pvRZukaMk2nfFo/ESpFF6pUGwBs4z+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ee7LXzJ+; arc=none smtp.client-ip=91.218.175.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Mon, 17 Mar 2025 21:11:45 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1742245910;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0U39mg1m03nP3wbLf9xV2iS796N9j66PGE+5QWYWutw=;
+	b=ee7LXzJ+86r2fS7arMi0dkwCzskYbLNWx6Vuokox7Bzu1tNcGNEOnZGvrAicSA+wv6v554
+	8c9+aZSlwYKkP00O1OFArFG2Ns8Zjm/FXbZu3XxhwIGlcXFy7LPJGX35GM0a57TivXKOoW
+	U1niGqWu+JR24ufZk++UxpWL6OjC8B0=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yosry Ahmed <yosry.ahmed@linux.dev>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>,
+	Maxim Levitsky <mlevitsk@redhat.com>, x86@kernel.org,
+	kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 6/7] KVM: SVM: Use a single ASID per VM
+Message-ID: <Z9iQEV9SQYjtLT8V@google.com>
+References: <20250313215540.4171762-1-yosry.ahmed@linux.dev>
+ <20250313215540.4171762-7-yosry.ahmed@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/TLYwLWuBjI22vqvc8uVuc.p";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250313215540.4171762-7-yosry.ahmed@linux.dev>
+X-Migadu-Flow: FLOW_OUT
 
---Sig_/TLYwLWuBjI22vqvc8uVuc.p
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Thu, Mar 13, 2025 at 09:55:39PM +0000, Yosry Ahmed wrote:
+> The ASID generation and dynamic ASID allocation logic is now only used
+> by initialization the generation to 0 to trigger a new ASID allocation
+> per-vCPU on the first VMRUN, so the ASID is more-or-less static
+> per-vCPU.
+> 
+> Moreover, having a unique ASID per-vCPU is not required. ASIDs are local
+> to each physical CPU, and the ASID is flushed when a vCPU is migrated to
+> a new physical CPU anyway. SEV VMs have been using a single ASID per VM
+> already for other reasons.
+> 
+> Use a static ASID per VM and drop the dynamic ASID allocation logic. The
+> ASID is allocated during vCPU reset (SEV allocates its own ASID), and
+> the ASID is always flushed on first use in case it was used by another
+> VM previously.
+> 
+> On VMRUN, WARN if the ASID in the VMCB does not match the VM's ASID, and
+> update it accordingly. Also, flush the ASID on every VMRUN if the VM
+> failed to allocate a unique ASID. This would probably wreck performance
+> if it happens, but it should be an edge case as most AMD CPUs have over
+> 32k ASIDs.
+> 
+> Suggested-by: Sean Christopherson <seanjc@google.com>
+> Signed-off-by: Yosry Ahmed <yosry.ahmed@linux.dev>
+> ---
+[..]
+> @@ -3622,7 +3613,7 @@ static int svm_handle_exit(struct kvm_vcpu *vcpu, fastpath_t exit_fastpath)
+>  
+>  static int pre_svm_run(struct kvm_vcpu *vcpu)
+>  {
+> -	struct svm_cpu_data *sd = per_cpu_ptr(&svm_data, vcpu->cpu);
+> +	struct kvm_svm *kvm_svm = to_kvm_svm(vcpu->kvm);
+>  	struct vcpu_svm *svm = to_svm(vcpu);
+>  
+>  	/*
+> @@ -3639,9 +3630,15 @@ static int pre_svm_run(struct kvm_vcpu *vcpu)
+>  	if (sev_guest(vcpu->kvm))
+>  		return pre_sev_run(svm, vcpu->cpu);
+>  
+> -	/* FIXME: handle wraparound of asid_generation */
+> -	if (svm->current_vmcb->asid_generation != sd->asid_generation)
+> -		new_asid(svm, sd);
+> +	/* Flush the ASID on every VMRUN if kvm_svm->asid allocation failed */
+> +	if (unlikely(!kvm_svm->asid))
+> +		svm_vmcb_set_flush_asid(svm->vmcb);
 
-Hi all,
+This is wrong. I thought we can handle ASID allocation failures by just
+reusing ASID=0 and flushing it on every VMRUN, but using ASID=0 is
+illegal according to the APM. Also, in this case we also need to flush
+the ASID on every VM-exit, which I failed to do here.
 
-On Tue, 18 Mar 2025 00:06:58 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> Commits
->=20
->   400bb71a00da ("ext4: fix out-of-bound read in ext4_xattr_inode_dec_ref_=
-all()")
->   4d6eb75d2364 ("ext4: introduce ITAIL helper")
->=20
-> are missing a Signed-off-by from their committer.
+There are two ways to handle running out of ASIDs:
 
-These are now commits
+(a) Failing to create the VM. This will impose a virtual limit on the
+number of VMs that can be run concurrently. The number of ASIDs was
+quite high on the CPUs I checked (2^15 IIRC), so it's probably not
+an issue, but I am not sure if this is considered breaking userspace.
 
-  850d8d9ff97a ("ext4: fix out-of-bound read in ext4_xattr_inode_dec_ref_al=
-l()")
-  8bffe40e9e9c ("ext4: introduce ITAIL helper")
+(b) Designating a specific ASID value as the "fallback ASID". This value
+would be used by any VMs created after running out of ASIDs, and we
+flush it on every VMRUN, similar to what I am trying to do here for
+ASID=0.
 
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/TLYwLWuBjI22vqvc8uVuc.p
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfYj58ACgkQAVBC80lX
-0Gwj9Qf9EOQ1HjQA2wp2+lwy3IrVd9FmapKSscm5TEgNad3kAgHBeu9ZC29l/ZGy
-R5k/U4KUMSsVE78dc9XLPhpQTqgN9lDJl9QjYl23NZUTvmLGGmP6GidMwIesm/Rd
-9W6K8YHMQnSVD6l8cjLK792E3XszbbTRBxpO98KZbr2wPo2uLon0eaWbDyBBM5Cz
-p0uhhyyfVMLpuTdyBf2MKVxxuSAAX+82PHjVQmyOR4Wp/xug7Z5yjALDls+FbLap
-ItFXDcd5xOwe+VoCd85fSNqi3D/+tJ8twqxmFTc43rwGpC59tr2d9c+Uw02St7zV
-hyMTxeIwpK5sPg/ZeKfVg+yZX74oKw==
-=C3b1
------END PGP SIGNATURE-----
-
---Sig_/TLYwLWuBjI22vqvc8uVuc.p--
+Any thoughts on which way we should take? (a) is simpler if we can get
+away with it and all AMD CPUs have a sufficiently large number of ASIDs.
 
