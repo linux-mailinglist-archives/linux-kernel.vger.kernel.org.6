@@ -1,98 +1,89 @@
-Return-Path: <linux-kernel+bounces-564533-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564534-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F372A656C7
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 16:58:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FCBAA6570B
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 17:01:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3219018918EC
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 15:54:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58FCA3BD3C4
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 15:54:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD36B1AA1F6;
-	Mon, 17 Mar 2025 15:52:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7BE51953BB;
+	Mon, 17 Mar 2025 15:52:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h7yyAIfw"
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UbjHMKZS"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 625BB18EFD4;
-	Mon, 17 Mar 2025 15:52:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AD67191F6D;
+	Mon, 17 Mar 2025 15:52:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742226755; cv=none; b=Oz+kauonX8eUWdgr2wMRnsqAcVOVej/hfr8xmu2iNtfMQpb2unzSRL96jcWLw43KbS5qGf3kVv+dYV2w+wauuXqxW6JFn15055SG1YtGgZXxflUaBoRpIFy6c0YnFddKDGWTLu3IWwSWgMWV5fwLFUa1PgmK8p5Xg6TXbYPFvzg=
+	t=1742226769; cv=none; b=fWelHsCPR/Mgm5bohMjwU8dgWZ3vyPf0mshW2OCdKhutarPvyljAKrB+gc+WcP0h4zD+lEVu+wCXL+iax9PBoJAkC0UnKKRKOa7iDy9hRk7BMsNNjQ78flTukxjI0O/6wBx93EMmf1O7bibqoKDn0POq2OXW32m7Z1j60p2UvaM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742226755; c=relaxed/simple;
-	bh=OGQkmyXOL35hKkBO69DLUu/I8HPGPktH92dHDZFr1ok=;
+	s=arc-20240116; t=1742226769; c=relaxed/simple;
+	bh=LQPXhVdsd27bls7Z9gs1cfAmX7yOsRJezTgCGdhIcJQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G5vujJG6DwsnFgiCGRGgtfbHU7NvzvH0vpZCa6Hbl/dp03RvZaGHrr9TP6TOVZPYh0pKR8CoYJdTQvOFDVXAc0ZC2SEGZYVGfAuwTho1VtrkYNgzK6yUkgbIrIL++eLcT4xdDgm6wYoMdQQgw7KhBbRLwPO+kxh2bYKIUG3HlD4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h7yyAIfw; arc=none smtp.client-ip=209.85.208.178
+	 Content-Type:Content-Disposition:In-Reply-To; b=mEi43mUGOk9RDeHCwgY7dOUe+2Fic3Y86QZS7aHS5TjF4/ttMObF5glM7LvgE8ZkwpLfAVkCzoXlh18MyI8nqUpSckJo2i7509whYSSCXP4cANnU6i8ELA0upMQWQpgWMJp+wXC82m4C4M6dZk2FcnyVoEw5jC7kSN5NqZg8PVM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UbjHMKZS; arc=none smtp.client-ip=209.85.208.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-30c461a45f8so38256161fa.1;
-        Mon, 17 Mar 2025 08:52:33 -0700 (PDT)
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-30b83290b7bso46821611fa.1;
+        Mon, 17 Mar 2025 08:52:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742226751; x=1742831551; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1742226765; x=1742831565; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Bhq+kH+X05mUcX1Ap2GbPha12Vb9rFmptZREzPwZw0k=;
-        b=h7yyAIfwTDXAJNZTQoIbNSrguGP4XQXl89VBPtp6y7wyQNqOr4UOuuGRvIUwtd4+HU
-         lio6hSoWK27OG7z/3h/XBIVvi3b7T72G7dIv3jaxdrfTbh/iVpXetmJ+ETHeugp/iu4U
-         b/QAui2OCHRIBLR2xTGQxlzMNMUJ8qLO86Pi9FBM5jBPXKS50wzb/D/x1nk3sd6kiJZn
-         sBypg08MqBk4Jv6iFNznDQGJrZkCH5sZLldq0ArV+nVY2kH9Hod6yYAuObgA/JbA4u6L
-         4vR5gNL9WgD/Gs7GLf/C5FH3+Hb/wiNQlipI74UqixAJdHRuF8FMOKmvoU/6WcDcaNGk
-         iBsQ==
+        bh=wOrgpCesyo7K8PeHYtDUc+GcqoK6FTDWO+S3bjh5O+E=;
+        b=UbjHMKZSSg8mPGC4WifIgB5wQTM2vTrbT08X0MR11V/yGcjR8uN0m6UzNe2xyTC4uY
+         rrBC1kZC/cuMPMY5q0Tj9yRrZ1E3g6m5TulfVaxW4MVsNTS1U4fOKg4hasjpBQnZp8nY
+         +rdSNHIdH1318tpmBa47NaozevV7wYtoYCn8CPEP131aiA/g3nEhgVqr24rRDNr/zqWM
+         XmTGM2zSN3n1BXBpWWNBFzczFbz4dHv8nTkDesio6pZj00ReaAF/z5b9WjbbQhSPoYFe
+         3sPuyQIyY5yUYzMJplyAW18g/fJudn82nLyh0mviKDKc0VeNU+Vh4tZE5x2vQ//5eUIO
+         ycfg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742226751; x=1742831551;
+        d=1e100.net; s=20230601; t=1742226765; x=1742831565;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Bhq+kH+X05mUcX1Ap2GbPha12Vb9rFmptZREzPwZw0k=;
-        b=Uy8VsqIEIlEmpxGcPddm5PM2JbmBJR5bTft7OGiz+NV+S++PfuSO41lcjpJQRD4iAv
-         Dg+FAmJYYaM/mveGJcs3cu4GIrPoOrV8ciaS9GWHLL4hsTr7nMIw2liJvKIGFu2eFGXc
-         vn5XlrTP+ETlJjq9ZpI5/FHbFLg3xmuk64+xPNPT40x5dpau7Xw8U8eorvTP8itd8uJN
-         EtJljzgRfuT7koh5r0MT2w40u+VZDNwU7dGR1E5ANgXK9q+lNJsDplaR65ZcvBskFyHR
-         nHCm36HYLZ6qWZGeVLTXgMIym1OwFZBj2Jjfof5bGNaZXHu/SWo0huhaESp8m2vE4cXe
-         qxXw==
-X-Forwarded-Encrypted: i=1; AJvYcCVwFFuM9fG4hURz+9MKt1P5twD7I377IQbnACJKeurSLBi0U56kKwIle2Al7NsTpHgV+NLRG58ms1Cc@vger.kernel.org, AJvYcCX+HP0X3/mq4SsBNRR09ToboDNrlOVGaU1qXq/fYrmhMvDcOeEBPubUr5yVtsXfYiQ3RYiJisjS4ZXka8Z9@vger.kernel.org, AJvYcCXqiAEBYdgWhAhNFVlinw9OiVi89z4k4iyGLXbfBq984wGuwIJQVo8Aopnw5weANto6fiSbDCRy@vger.kernel.org
-X-Gm-Message-State: AOJu0YxgKUUFTvUqLbK3En96MFhLH1sJphBUdYkHNfNyeP3eDCVpq/ze
-	exrlBExyTk4QGHB6Mc1cpg6ehiKRbS6sm5DfVbcfqRiQOFBhfVBP
-X-Gm-Gg: ASbGncvi6hLHYo3SdrsZRMdpbW0zApY4LUrItvC14GETAgaKmkA2gupqTySH8sFfTrV
-	BnAWlMUw0v0l+3mFVItEYcKJEx8A2j4s5d7haEWXsZErb4/2XISI8BLhNrfJK8DX3cSbbn82kDQ
-	i8WbyQ5S6JBNCzW6cyKgxb9ipRRvUFj02jcFyOIe1D0UrqbR9huST2tQKLpxqOxOt4/krjcICox
-	g+KBFaSH54CNgRsUHDkKukf285zTnWxkrI9piiFyylsoXoVhamjpcc0tMwN2yJmE7i6RBeDRRJo
-	fMwPwLmYEaA7qm5+KGcceiqftDK58ZAmkUecveinB/CRU7mpEmk=
-X-Google-Smtp-Source: AGHT+IGP8VDfLvdRHqupcyGY3jxaeZE5NMXtcA2RJMTkKbc2npNWVjBiXR6Dy5pmtZ78eWJwHB/b0w==
-X-Received: by 2002:a05:6512:3e17:b0:545:2a7f:8f79 with SMTP id 2adb3069b0e04-549c3902c47mr8375280e87.16.1742226751200;
-        Mon, 17 Mar 2025 08:52:31 -0700 (PDT)
+        bh=wOrgpCesyo7K8PeHYtDUc+GcqoK6FTDWO+S3bjh5O+E=;
+        b=JAHijT7LDgFH8o4msEp7ecPMTPMIRAY2kFaQ2llu5LDXT81+WN0w4MzXoOqeb7K2HT
+         pAWVpb2+1luNzi9kAGlmhbhnuZqzBAmuDVRUBF8yTpzj3XI7A3ntw5dcfw0B3x2G/aKQ
+         oQ0Ta9G+YQR3P3gbYxa4eQk8ghYG+ewET0eFqBc/DvLzvI87keHagPDcml8qdaLBbg2Q
+         PDQzwoH+BoXElK4x8vqhsyfAkuX0fvyYntjJZunzqWlIhCwCoBEwQtwX/f9kqMh0yCM5
+         ppK9LVK6KUnKtg3IxD4+ShYpGlMICMk14gJrH3TumSIQYvuqgIp64F8HNu7bVzuIK2TX
+         QIMA==
+X-Forwarded-Encrypted: i=1; AJvYcCVHLEBwr/v/YgrGNf8eYr33RJaIGp0/HjAALwmO1xQLsXofwwtE8iInj3z+1y0DucYjVJkmH8GUGAPXE84=@vger.kernel.org, AJvYcCVHa6jdK3r3v4vucVb9uwHksJZaJRtan4Tv4Dy2A8z0fcYOV3Gbu1XM2pIE4LfchX1zCza0zhorDIF872Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwEeouLZUfPOLG5Q2psMLOJJZDW2W0zSklEmuQbiH+2uBvmlfst
+	N1VVbQbj3X+y8+xgbJGCg+AkRg9JbW3dNDMjy/QTrBOCL5KHWU0b
+X-Gm-Gg: ASbGncuh34Z3vGblQzvL1ty17YDK/P43nxTR0/AYoFTV176ovdxo/jagZlfHIm79c5E
+	haBitkIBOYk3S1LfKCvV2UttPZ+Vto4nA6aDWSXkOYGElmfG52RAwg2w1gMbegYQU47sKFczWSi
+	LZqK9TqzRjhvvu3oW7q2a+stcnxi4hRgbYnFO0sufOF7btMVJiRZ77NbDdz7k70Qih6wJ5J3KI1
+	mUjRpkI/6qOkYSGoa5xvwYg1qPmsJQt0X/RYXI760y7RwSM45Sn+jUSpVk4OxtzYMAKRrChtH2b
+	0CUIqoi/p/GwA6Xv++ydT4EA7mZW44KGWX1+GvxejwM2CVwd90g=
+X-Google-Smtp-Source: AGHT+IGRYCFC8hQbVstyD1wJakOvjN7IcgkwHKz76OTVUgOUkMwv6DHUAUr5Q3dOkgqL0JjlJYsV8A==
+X-Received: by 2002:a05:6512:2345:b0:549:5c5f:c0c0 with SMTP id 2adb3069b0e04-54a03cf6b13mr284125e87.41.1742226765325;
+        Mon, 17 Mar 2025 08:52:45 -0700 (PDT)
 Received: from mva-rohm ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-549ba8a8ec9sm1366286e87.236.2025.03.17.08.52.29
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-549ba8a92f3sm1342796e87.237.2025.03.17.08.52.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Mar 2025 08:52:29 -0700 (PDT)
-Date: Mon, 17 Mar 2025 17:52:25 +0200
+        Mon, 17 Mar 2025 08:52:44 -0700 (PDT)
+Date: Mon, 17 Mar 2025 17:52:39 +0200
 From: Matti Vaittinen <mazziesaccount@gmail.com>
 To: Matti Vaittinen <mazziesaccount@gmail.com>,
 	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
 Cc: Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Daniel Scally <djrscally@gmail.com>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Claudiu Manoil <claudiu.manoil@nxp.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: [PATCH net-next v8 09/10] net: gianfar: Use
- device_get_child_node_count_named()
-Message-ID: <95b6015cd5f6fcce535982118543d47504ed609f.1742225817.git.mazziesaccount@gmail.com>
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Matti Vaittinen <mazziesaccount@gmail.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Paul Elder <paul.elder@ideasonboard.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v8 10/10] media: thp7312: Use helper for iterating named
+ child nodes
+Message-ID: <ecb1a801749418c8b6e451b5bd4161057a3a3077.1742225817.git.mazziesaccount@gmail.com>
 References: <cover.1742225817.git.mazziesaccount@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -101,110 +92,74 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="+bpOqBC81XVIei51"
+	protocol="application/pgp-signature"; boundary="xMS6GVxvdFtwhp2p"
 Content-Disposition: inline
 In-Reply-To: <cover.1742225817.git.mazziesaccount@gmail.com>
 
 
---+bpOqBC81XVIei51
+--xMS6GVxvdFtwhp2p
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-We can avoid open-coding the loop construct which counts firmware child
-nodes with a specific name by using the newly added
-device_get_child_node_count_named().
+Slightly simplify code iterating the child nodes with specific names
+using the new fwnode_for_each_available_named_child_node().
 
-The gianfar driver has such open-coded loop. Replace it with the
-device_get_child_node_count_named().
-
-Suggested-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 ---
 Revision history:
 v6 =3D>:
  - No changes
-v5 (RFC) =3D> v6:
- - Drop RFC
- - Adapt to changed function name.
-
-It's fair to tell the pros and cons of this patch.
-The simplification is there, but it's not a big one. It comes with a cost
-of getting the property.h included in this driver which currently uses
-exclusively the of_* APIs.
+v5 =3D> v6:
+ - New patch
 
 NOTE: This patch depends on the patch:
 [2/10] "property: Add functions to iterate named child"
 
 Compile-tested only!
 ---
- drivers/net/ethernet/freescale/gianfar.c | 17 ++++-------------
- 1 file changed, 4 insertions(+), 13 deletions(-)
+ drivers/media/i2c/thp7312.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/net/ethernet/freescale/gianfar.c b/drivers/net/etherne=
-t/freescale/gianfar.c
-index 435138f4699d..d4ee0fc843be 100644
---- a/drivers/net/ethernet/freescale/gianfar.c
-+++ b/drivers/net/ethernet/freescale/gianfar.c
-@@ -97,6 +97,7 @@
- #include <linux/phy_fixed.h>
- #include <linux/of.h>
- #include <linux/of_net.h>
-+#include <linux/property.h>
+diff --git a/drivers/media/i2c/thp7312.c b/drivers/media/i2c/thp7312.c
+index 8852c56431fe..104754b2ace2 100644
+--- a/drivers/media/i2c/thp7312.c
++++ b/drivers/media/i2c/thp7312.c
+@@ -2067,11 +2067,9 @@ static int thp7312_parse_dt(struct thp7312_device *t=
+hp7312)
+ 		return -EINVAL;
+ 	}
 =20
- #include "gianfar.h"
+-	fwnode_for_each_available_child_node(sensors, node) {
+-		if (fwnode_name_eq(node, "sensor")) {
+-			if (!thp7312_sensor_parse_dt(thp7312, node))
+-				num_sensors++;
+-		}
++	fwnode_for_each_available_named_child_node(sensors, node, "sensor") {
++		if (!thp7312_sensor_parse_dt(thp7312, node))
++			num_sensors++;
+ 	}
 =20
-@@ -571,18 +572,6 @@ static int gfar_parse_group(struct device_node *np,
- 	return 0;
- }
-=20
--static int gfar_of_group_count(struct device_node *np)
--{
--	struct device_node *child;
--	int num =3D 0;
--
--	for_each_available_child_of_node(np, child)
--		if (of_node_name_eq(child, "queue-group"))
--			num++;
--
--	return num;
--}
--
- /* Reads the controller's registers to determine what interface
-  * connects it to the PHY.
-  */
-@@ -654,8 +643,10 @@ static int gfar_of_init(struct platform_device *ofdev,=
- struct net_device **pdev)
- 		num_rx_qs =3D 1;
- 	} else { /* MQ_MG_MODE */
- 		/* get the actual number of supported groups */
--		unsigned int num_grps =3D gfar_of_group_count(np);
-+		unsigned int num_grps;
-=20
-+		num_grps =3D device_get_named_child_node_count(&ofdev->dev,
-+							     "queue-group");
- 		if (num_grps =3D=3D 0 || num_grps > MAXGROUPS) {
- 			dev_err(&ofdev->dev, "Invalid # of int groups(%d)\n",
- 				num_grps);
+ 	fwnode_handle_put(sensors);
 --=20
 2.48.1
 
 
---+bpOqBC81XVIei51
+--xMS6GVxvdFtwhp2p
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEEIx+f8wZb28fLKEhTeFA3/03aocUFAmfYRTkACgkQeFA3/03a
-ocU6fQf+NqTVEuJIrVBVRDWbyUAld54IR/HPsJ+BOnWD4It8e5tZgefm5rl18SYl
-heFnxZbk/pwj/KpENcarv8gnNUAqTcCSBYIWyAbIGyI0vKUTsCtaHokC9gLfWLAR
-8SehIKhYpoRfjEKsf/l9WpJ1HzsJDX95jRy1+ATzkkqO/Qa/3WxRY2oyh1pNaM5N
-7alYgqT1RmDYUnkNHGoqDOuh1fc64jQQ8F36+vFyp0R78Cm3ZHMh3UjUJZQX9Hf4
-Ep/26COg3LpSGFDRrQ4WqwTeGFyJiRJyEOKDzm63LVo+dmYTmYHdWRz2mfKfwZ3B
-Ckcz8vM4IWUWTHe0qKzebEQTwHaqdA==
-=9Pxc
+iQEzBAEBCAAdFiEEIx+f8wZb28fLKEhTeFA3/03aocUFAmfYRUcACgkQeFA3/03a
+ocWgSAgAnpPv8dWlx1uYpTGvnhRGyaLoVRhyW0lJ96uonnfocB4S9FpfSX4ptNMy
+XUYuGNjknUR5rOzpBdnjYAWXHVgAoBiujIkB+t3ogxXsdHvw+p54wvsKYWG52USd
+SbqosGTZRU1tC8+SG5zWcA/aYg5zn5n4rxH86UKLV1djkuH6V7BLIdS/xhX49jWQ
+gq2TvftieqYIalhv8uSA+S9oTKB1dIkI6iYNH310+V8NKwVY8v8D9MJKH5CP15I8
+1A+rIsbWThFEPpwGlrGAKaHQDjawS0rFbmuZAYCMuVvNNfHPjTbrnHsiZzUoy14F
++rBBhw3eqpdJ0AO0OZZ83LFxItR1pg==
+=FnX6
 -----END PGP SIGNATURE-----
 
---+bpOqBC81XVIei51--
+--xMS6GVxvdFtwhp2p--
 
