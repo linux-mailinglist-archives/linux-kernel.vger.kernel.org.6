@@ -1,202 +1,150 @@
-Return-Path: <linux-kernel+bounces-563718-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563715-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA358A64729
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:24:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CB162A6471C
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:23:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C52C6172492
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 09:24:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 70C21167E56
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 09:23:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01562224B15;
-	Mon, 17 Mar 2025 09:23:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9CF72236F7;
+	Mon, 17 Mar 2025 09:23:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="RNA2CAAn"
-Received: from out-188.mta1.migadu.com (out-188.mta1.migadu.com [95.215.58.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="o6ME4Bjl"
+Received: from linux1587.grserver.gr (linux1587.grserver.gr [185.138.42.100])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D16BE22259D;
-	Mon, 17 Mar 2025 09:23:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FEDD2222D5;
+	Mon, 17 Mar 2025 09:23:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.138.42.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742203423; cv=none; b=biZIsp/URFnalQ/glTyhT/VXiZDJ4FkAEjrC8xiGFU1vytMrpqKon+LsLZwMVxcG1pEQ3igzqbfLhxLU1RonjP+oWSXQ2c+zPSXwNy7Vww67bqwW7ObPJa/UDtPp70zRO5VZDPzKhh61b/xG/Ec05/xFk8HTJODmeBFN0Z71x/Q=
+	t=1742203404; cv=none; b=KbcVISHS+V2OvHQNOrS8Becb+uNpdZtjQL3MvQvi2+W0RVIx+cBC7rHOGet3bBuRQGTzAaYKDSL3irxtm5gjNUb45uzvsoB/ZMGWrB4fgeP/b49Ov4MMkTw/FhWiGa8yt07VH8pbT0/euzleNXoFyrzPSN6OU6n8xGBCMWN8AOk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742203423; c=relaxed/simple;
-	bh=ZOHoR1DVLuoqBGux5wOEYgvMSK5hDjDDqM2npNWq+30=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=IKwCFQFZznTZ8OF9g/FGNjYDaVwrD7oHCfiwFqgZyROUs4kVn1HGfmGWLbwGjXpm+WuxHpR5woaWoVTYJUpZQba6BSSqHs/W4R0jRk8zdSI/siUBPcSJeeG2UOMcniSyQqq/oNGEPK219Hjcz5PMUdC3ZbT8iajTzV/Ka+5TtI4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=RNA2CAAn; arc=none smtp.client-ip=95.215.58.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1742203419;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BLSYPFz/nwodbHpxtrd6necAV0xMxciGJi0Eu7RL7/E=;
-	b=RNA2CAAnuPOFBDghPRo59PAWyHNhb/EZS0Iojw2W4OL9J7bW9AOp3MYTnEYVcExyrnymyM
-	6xFpwefmKLIQY6JiKke1uaAlB764IntP1LH3Mq8LnS4puuSRhXKauBLXb9eyal2rJo3HeX
-	wdhm4ypkvHh6qn+dmKe8Jy3AUNt2yms=
-From: Jiayuan Chen <jiayuan.chen@linux.dev>
-To: xiyou.wangcong@gmail.com,
-	john.fastabend@gmail.com,
-	jakub@cloudflare.com
-Cc: davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	horms@kernel.org,
-	andrii@kernel.org,
-	eddyz87@gmail.com,
-	mykolal@fb.com,
-	ast@kernel.org,
-	daniel@iogearbox.net,
-	martin.lau@linux.dev,
-	song@kernel.org,
-	yonghong.song@linux.dev,
-	kpsingh@kernel.org,
-	sdf@fomichev.me,
-	haoluo@google.com,
-	jolsa@kernel.org,
-	shuah@kernel.org,
-	mhal@rbox.co,
-	jiayuan.chen@linux.dev,
-	sgarzare@redhat.com,
-	netdev@vger.kernel.org,
-	bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org
-Subject: [PATCH bpf-next v3 3/3] selftests/bpf: Add edge case tests for sockmap
-Date: Mon, 17 Mar 2025 17:22:56 +0800
-Message-ID: <20250317092257.68760-4-jiayuan.chen@linux.dev>
-In-Reply-To: <20250317092257.68760-1-jiayuan.chen@linux.dev>
-References: <20250317092257.68760-1-jiayuan.chen@linux.dev>
+	s=arc-20240116; t=1742203404; c=relaxed/simple;
+	bh=aq5Zls+Ijc6uFlGNIxrbDLG+JLk7nCLttjJwFfdbiMA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hgQeeUNF0bcIpkTpfOi1AdZsugjfRw2X2Aj6B5gRviG3QcXENnOXvyUzC/rQ4/CZ4jjxWy4Mi3+ka/SeNRByBezUwtpWqMOseTPqIktQ791nPmuVfZiuriArRjSuP3RPiDhOd2jx1QW+Z7pBAmPW32R/FYtycwMBJNSib5yThfk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=pass (1024-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=o6ME4Bjl; arc=none smtp.client-ip=185.138.42.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antheas.dev
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+	by linux1587.grserver.gr (Postfix) with ESMTPSA id 011B62E0625C;
+	Mon, 17 Mar 2025 11:23:18 +0200 (EET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=antheas.dev;
+	s=default; t=1742203400;
+	bh=bMWZV6Y+CvWUJMijtT6uLEoH46eXhT+qDmoUd1vNxBw=;
+	h=Received:From:Subject:To;
+	b=o6ME4Bjl2fJvvawHGOQwbNQEg34H1aRS4VcDnyO4QxhStZdJkt4bS59UGezH+0iE6
+	 gy1k6+uv5dJxf+rSHm/vFWBe3n/yck6CEz4PbD2kcIEsXuxzscH//uuhRG+53A1UW0
+	 hk18RnuAgdt3LC18gDPfBkVJ3WWazY2W304BPNck=
+Authentication-Results: linux1587.grserver.gr;
+        spf=pass (sender IP is 209.85.208.170) smtp.mailfrom=lkml@antheas.dev smtp.helo=mail-lj1-f170.google.com
+Received-SPF: pass (linux1587.grserver.gr: connection is authenticated)
+Received: by mail-lj1-f170.google.com with SMTP id
+ 38308e7fff4ca-30bd11bfec6so42527721fa.0;
+        Mon, 17 Mar 2025 02:23:18 -0700 (PDT)
+X-Forwarded-Encrypted: i=1;
+ AJvYcCUhNhu5Bap8p2c8oFZs2AOlux6x0ww9GisE8yvtOTfPswbabiu2VTXc1pTmbZeoHGYrC9yIVWnGsmqnkg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzkPY73K4My3biT55hjyia0i1RztsZ1cpX7BfM4CXg8nqod5Fbh
+	r9IGteBzNG2HKEfy+XXrF6KktoHg+lKstNnaeCSNAa241Suk+I36fPNp/KaQxrYx1RKnPkn3wRu
+	kdh6xBDENuNLckNr+nLozSHWlU7U=
+X-Google-Smtp-Source: 
+ AGHT+IGnX0Dxok6dcb+rjWQwufCJAoqGhc6ZRb6GFGcDlijV4M5H5bpenR0zhTIAvk4LfpODCGWQbJmvgBgIb4j1so0=
+X-Received: by 2002:a2e:bc09:0:b0:30b:b78e:c473 with SMTP id
+ 38308e7fff4ca-30c4a754732mr55899831fa.7.1742203398342; Mon, 17 Mar 2025
+ 02:23:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+References: <20250222164321.181340-1-lkml@antheas.dev>
+ <20250222164321.181340-6-lkml@antheas.dev>
+ <65813e62-aa0f-4167-83c1-49200fc4ca20@redhat.com>
+In-Reply-To: <65813e62-aa0f-4167-83c1-49200fc4ca20@redhat.com>
+From: Antheas Kapenekakis <lkml@antheas.dev>
+Date: Mon, 17 Mar 2025 10:23:06 +0100
+X-Gmail-Original-Message-ID: 
+ <CAGwozwE9=Vh6M5CVAkTCDj5x8twtm3n_28DH1DFbbBKekhn9hw@mail.gmail.com>
+X-Gm-Features: AQ5f1JrQiT3dbA-hsykAHt-BAHevZp__oLHonDIs7jMsVuuegGkdIf4udvIsUfo
+Message-ID: 
+ <CAGwozwE9=Vh6M5CVAkTCDj5x8twtm3n_28DH1DFbbBKekhn9hw@mail.gmail.com>
+Subject: Re: [PATCH 5/5] drm: panel-orientation-quirks: Add Zotac Gaming Zone
+ quirk
+To: Hans de Goede <hdegoede@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>,
+	Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-PPP-Message-ID: 
+ <174220339987.22458.11008987463524674951@linux1587.grserver.gr>
+X-PPP-Vhost: antheas.dev
+X-Virus-Scanned: clamav-milter 0.103.11 at linux1587.grserver.gr
+X-Virus-Status: Clean
 
-Add edge case tests for sockmap.
+On Mon, 17 Mar 2025 at 10:20, Hans de Goede <hdegoede@redhat.com> wrote:
+>
+> Hi,
+>
+> On 22-Feb-25 17:43, Antheas Kapenekakis wrote:
+> > The Zotac Gaming Zone handheld features a 1080p portrait OLED screen.
+> > Add the rotation to the panel orientation quirks.
+> >
+> > Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
+> > ---
+> >  drivers/gpu/drm/drm_panel_orientation_quirks.c | 6 ++++++
+> >  1 file changed, 6 insertions(+)
+> >
+> > diff --git a/drivers/gpu/drm/drm_panel_orientation_quirks.c b/drivers/gpu/drm/drm_panel_orientation_quirks.c
+> > index f08cdc81dd9a..bbbe707f541d 100644
+> > --- a/drivers/gpu/drm/drm_panel_orientation_quirks.c
+> > +++ b/drivers/gpu/drm/drm_panel_orientation_quirks.c
+> > @@ -479,6 +479,12 @@ static const struct dmi_system_id orientation_data[] = {
+> >                 DMI_EXACT_MATCH(DMI_PRODUCT_NAME, "ONEXPLAYER F1 EVA-02"),
+> >               },
+> >               .driver_data = (void *)&lcd1080x1920_leftside_up,
+> > +     }, {    /* Zotac Gaming Zone (OLED) */
+> > +             .matches = {
+> > +               DMI_EXACT_MATCH(DMI_SYS_VENDOR, "ZOTAC"),
+> > +               DMI_EXACT_MATCH(DMI_PRODUCT_NAME, "ZOTAC GAMING ZONE"),
+> > +             },
+> > +             .driver_data = (void *)&lcd1080x1920_leftside_up,
+> >       }, {    /* OrangePi Neo */
+>
+> The entries in this list are alphabetically sorted. Please post
+> a v2 (of just this patch) with this entry moved to the end, just
+> above the special "One Mix 2S" entry which is at the very end
+> because its DMI matches are all "Default string".
+>
+> Note another entry for another Zotac device, with a board name of
+> "G0A1W" has been added in drm-misc/next, so please base your v2
+> on top of drm-misc/next.
+>
+> Also the freedesktop.org infra is currently being migrated to
+> another data center, so the drm-misc tree currently is not
+> available I think.
+>
+> Regards,
+>
+> Hans
+>
+>
+>
+>
+> >               .matches = {
+> >                 DMI_EXACT_MATCH(DMI_SYS_VENDOR, "OrangePi"),
+>
 
-Signed-off-by: Jiayuan Chen <jiayuan.chen@linux.dev>
----
- .../selftests/bpf/prog_tests/socket_helpers.h | 13 +++-
- .../selftests/bpf/prog_tests/sockmap_basic.c  | 60 +++++++++++++++++++
- 2 files changed, 72 insertions(+), 1 deletion(-)
+Ok thanks. I will do that in a few days. Patches 1-4 hopefully should
+be good to merge.
 
-diff --git a/tools/testing/selftests/bpf/prog_tests/socket_helpers.h b/tools/testing/selftests/bpf/prog_tests/socket_helpers.h
-index 1bdfb79ef009..a805143dd84f 100644
---- a/tools/testing/selftests/bpf/prog_tests/socket_helpers.h
-+++ b/tools/testing/selftests/bpf/prog_tests/socket_helpers.h
-@@ -313,11 +313,22 @@ static inline int recv_timeout(int fd, void *buf, size_t len, int flags,
- 
- static inline int create_pair(int family, int sotype, int *p0, int *p1)
- {
--	__close_fd int s, c = -1, p = -1;
-+	__close_fd int s = -1, c = -1, p = -1;
- 	struct sockaddr_storage addr;
- 	socklen_t len = sizeof(addr);
- 	int err;
- 
-+	if (family == AF_UNIX) {
-+		int fds[2];
-+
-+		err = socketpair(family, sotype, 0, fds);
-+		if (!err) {
-+			*p0 = fds[0];
-+			*p1 = fds[1];
-+		}
-+		return err;
-+	}
-+
- 	s = socket_loopback(family, sotype);
- 	if (s < 0)
- 		return s;
-diff --git a/tools/testing/selftests/bpf/prog_tests/sockmap_basic.c b/tools/testing/selftests/bpf/prog_tests/sockmap_basic.c
-index 1e3e4392dcca..c72357f41035 100644
---- a/tools/testing/selftests/bpf/prog_tests/sockmap_basic.c
-+++ b/tools/testing/selftests/bpf/prog_tests/sockmap_basic.c
-@@ -1042,6 +1042,59 @@ static void test_sockmap_vsock_unconnected(void)
- 	xclose(map);
- }
- 
-+void *close_thread(void *arg)
-+{
-+	int *fd = (int *)arg;
-+
-+	sleep(1);
-+	close(*fd);
-+	*fd = -1;
-+	return NULL;
-+}
-+
-+void test_sockmap_with_close_on_write(int family, int sotype)
-+{
-+	struct test_sockmap_pass_prog *skel;
-+	int err, map, verdict;
-+	pthread_t tid;
-+	int zero = 0;
-+	int c = -1, p = -1;
-+
-+	skel = test_sockmap_pass_prog__open_and_load();
-+	if (!ASSERT_OK_PTR(skel, "open_and_load"))
-+		return;
-+
-+	verdict = bpf_program__fd(skel->progs.prog_skb_verdict);
-+	map = bpf_map__fd(skel->maps.sock_map_rx);
-+
-+	err = bpf_prog_attach(verdict, map, BPF_SK_SKB_STREAM_VERDICT, 0);
-+	if (!ASSERT_OK(err, "bpf_prog_attach"))
-+		goto out;
-+
-+	err = create_pair(family, sotype, &c, &p);
-+	if (!ASSERT_OK(err, "create_pair"))
-+		goto out;
-+
-+	err = bpf_map_update_elem(map, &zero, &p, BPF_ANY);
-+	if (!ASSERT_OK(err, "bpf_map_update_elem"))
-+		goto out;
-+
-+	err = pthread_create(&tid, 0, close_thread, &p);
-+	if (!ASSERT_OK(err, "pthread_create"))
-+		goto out;
-+
-+	while (p > 0)
-+		send(c, "a", 1, MSG_NOSIGNAL);
-+
-+	pthread_join(tid, NULL);
-+out:
-+	if (c > 0)
-+		close(c);
-+	if (p > 0)
-+		close(p);
-+	test_sockmap_pass_prog__destroy(skel);
-+}
-+
- void test_sockmap_basic(void)
- {
- 	if (test__start_subtest("sockmap create_update_free"))
-@@ -1108,4 +1161,11 @@ void test_sockmap_basic(void)
- 		test_sockmap_skb_verdict_vsock_poll();
- 	if (test__start_subtest("sockmap vsock unconnected"))
- 		test_sockmap_vsock_unconnected();
-+	if (test__start_subtest("sockmap with write on close")) {
-+		test_sockmap_with_close_on_write(AF_UNIX, SOCK_STREAM);
-+		test_sockmap_with_close_on_write(AF_UNIX, SOCK_DGRAM);
-+		test_sockmap_with_close_on_write(AF_INET, SOCK_STREAM);
-+		test_sockmap_with_close_on_write(AF_INET, SOCK_DGRAM);
-+		test_sockmap_with_close_on_write(AF_VSOCK, SOCK_STREAM);
-+	}
- }
--- 
-2.47.1
-
+Antheas
 
