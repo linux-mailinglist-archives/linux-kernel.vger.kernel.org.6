@@ -1,395 +1,958 @@
-Return-Path: <linux-kernel+bounces-564911-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564912-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDAF2A65CCA
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 19:36:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 656C4A65CD7
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 19:37:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B67183BB098
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 18:36:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C08443A5D8A
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 18:37:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04C1B1C6FF5;
-	Mon, 17 Mar 2025 18:36:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCA5B1BC07B;
+	Mon, 17 Mar 2025 18:37:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lkoUtzEr"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0ZiZslsH"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 462D11C8602;
-	Mon, 17 Mar 2025 18:36:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 064151B4244
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 18:37:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742236599; cv=none; b=iTV/fPrtgDM9DXsaTkfYoQsLECVN4sdHvrq0ZRE14GfMW+VZFSm57QNKQTQ7QlaZB+0xcFT65mUZ0ulZMB3Rbr2WsKJ5cU1AHI25RoZb4Q3sZFSxl7CJEVF90tJrQI8HqdwhgkIINeR7UeDOoxN/LCixad9Tz/l++ZXS845AKyk=
+	t=1742236659; cv=none; b=VLYJDhWfhA6mfosTdwePgM3mPxQNJUgWYql4Mjl6rVfbgrVVXCDZF7Nyt4UyKvxPxByTmMB7Xg+e0XuhMURJh0Icxra4thNqOkjSGMNOfeTv8mtFMgOvipIYPyl6miQLVL4mSlz/KzONGxdlKZ/SueuOaOMLEGCneB90s/fRZ38=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742236599; c=relaxed/simple;
-	bh=KrPfI8u+KTHxiIfxreoPc062SIJpqGxycaHqTqTQ2Bo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=me5TbdCoE3tmQIaUhL1KqbPnLXUm78HN2Bf8Y1IsoyoLvkCif+XL5YWhgNhTKku94iHu//R7j/VQ5JFtn2eUY8MV9sUqMiEXQPHas/rFsUy+igLHVVFw7fjpkF+Ve31mHnV85lWE9yaHEygiAM2YWK7aGQufXDQn1lu52VIV+E4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lkoUtzEr; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-223a7065ff8so52305305ad.0;
-        Mon, 17 Mar 2025 11:36:37 -0700 (PDT)
+	s=arc-20240116; t=1742236659; c=relaxed/simple;
+	bh=62qiyA3fbyaqFZkEPNcFUcNUKidWcx5YgoIkUEseWDk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eyV+befED1KcMjkiKVNMFL50kqgDyRkN/NYhFgWUOno/pftDe8/gQvDoG2p1ZoN0uLTgy0fyNtDI6/kfrMfW0RXQnfjOiMiout8cYL7ATvNINVz4/cgx1z5M3plGa6GB8dSWvMZ+HZiEMtGpXlL5KMMmQZNAN5CNe5QR/GwAtYo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0ZiZslsH; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-2242aca53efso6105ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 11:37:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742236596; x=1742841396; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=35xW/q0P3gfqWEbO9Z//OBJEMGPEl1K3Vv4FMtFvJhU=;
-        b=lkoUtzEr0Jo2OBrB+YiF5ha6g6Th+LCM670mF4Ojy54BethUQOWghrHCxdEj067QNu
-         xVVqKe5T9lj00cVTC+UuMNE06Hh3+vAZDLONjKSYgsnhLUN2zGUZAkLV4HjvUeitmCjf
-         o41UiFsRF3mIkazBy9DOcxRgT/y2KiISIDQmVXq72zmV+gt4jsoH6QDYo7Vc43wWuafT
-         w5N5KUss8u5FECM+3w/AiXxtBnE8+REpa2JjHf7Tr/8RHQYGXHrYqJ2gKmL94QEF3hd2
-         dPCCquBuExFeT03Ae8jwznijLSvUCQMlUgvCEQ/fpdBCpcZkpp89whXDzEr3MrRST7+7
-         2gGw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742236596; x=1742841396;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1742236656; x=1742841456; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=35xW/q0P3gfqWEbO9Z//OBJEMGPEl1K3Vv4FMtFvJhU=;
-        b=ThrPb3NH1l6k8O2fSRv3pLnRHBqECKwTjrnPKSS+/cjYzIvQAU4nwHXJR1zUciPtl0
-         Y9EMFgy/W9oqu9EZcESM2UwbGzg/ca4RrT+j5rel/SREilj1g166wI70Uw1ZoO7jbYAk
-         a7bPxivAODjsET4FrzE87/lOaufyzSvqhXsuJplKnsJ+Ch1cbZm8cQpF/F2PJij2Tjn2
-         +fKyqbwLWsoac4xKRSGgdjMY6wx9ur00Yx2FOdZF92mgzhOK8seqFbV+2QNWndYESnAK
-         vCRhqIcn3+lvySQVIkcBhBjOmRNXRq8idR9xaKqII0AEG3SSs/ZwrnvP5j/z8cg+uSH/
-         iiWg==
-X-Forwarded-Encrypted: i=1; AJvYcCUVmCL+xWNfX9mqrtmpiNwA6Bwz5FivAa83QISbOpZpsMvH7wYIzPzHBAcq7DoIQl3hrc0xiQ593U1+Llb2DXY=@vger.kernel.org, AJvYcCW8oNqZugbqINSgQTgku1n3S3+7YIm9DwkOaIzFppMwvyE0NWMzBG4MhQyD/iUnKCJThHDeQvTRS46RS1c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyO4ABvCxRnHO5Z/ERoSHjPUDG/Wpn9f0GXW5j7wsKORSxf+qBJ
-	3o7tV5gp0d6yieByw5FvGKVpgqTvnuiSH1unesqhUDK9L9IzPhbm
-X-Gm-Gg: ASbGncsU5oixYavVT3JrHvzC4jo9e8Hnh7ThBQCS+QyeO3LAVN82K5TjozhOPX+EMLk
-	6DxmGvHIjrZEVfUNXXliHawJAHHGuvHBwOKOt5aJXfRJg/thNAws8BArnsV2Ahbv5YT/HWmj8qc
-	+V+D1OrA0vCV7xWo16pWdIcgrOCBAA3NKDWSBfqVJtSTZrXpojgpir0lOuzGKoHrp/+CIJmandA
-	6sKVIqeZPbRDbSNPice5ecsckaLz0GwGtKSxRBNJexdYiQnCG5EUDPz3j08Gq8VtuSHaAaWGRC1
-	dXDtFgZdF6Lo3UC7
-X-Google-Smtp-Source: AGHT+IHrr/LRS1M+JxVQAyURwncywZDsb1BQPKD9BMtZ274xbCp4WAlnp8+qlpymCZwNRNnEczAa7A==
-X-Received: by 2002:a17:902:d584:b0:223:517a:d2e2 with SMTP id d9443c01a7336-225e0b658b8mr191550475ad.53.1742236596362;
-        Mon, 17 Mar 2025 11:36:36 -0700 (PDT)
-Received: from [192.168.0.106] ([182.48.209.218])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-225c68883dbsm79007275ad.19.2025.03.17.11.36.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 17 Mar 2025 11:36:35 -0700 (PDT)
-Message-ID: <d54849db-956b-4c1a-ab93-4705394af637@gmail.com>
-Date: Tue, 18 Mar 2025 00:06:30 +0530
+        bh=nXoiuTRkoBnNFmuMpPNrD6IzlBMB6sBa2guyvSkTcCc=;
+        b=0ZiZslsHI1HNcEEi6Wky1GSQrBw61x55qe25n4XkDjQP24PXXfKVG3PIGO2lc2GaxH
+         D2rIgrzUQSFwyhiXFrGBKPQFLAogFIXH+UHPuWRZloGRDWO1vP3c/zHPQBrGf6fcOUts
+         HmtNI33eUNhPI9wjE2jjMArpQs7kUxepeAhwADBlaG4RiskkYCGdwKprsewLTTsqyUgg
+         n5tLfa5bkBiUxZJFGY1ONQPhX/Bl1QbGEWR5adtsOg3c7w3hfOIjYreHbxm9BvSw3pX9
+         toecDoc5jDKS6aGpjLHU+vqHeY0nEVLH9rudyeJd3lBfUAGgSfCrGNjXKBXffZ5YclyZ
+         Udlw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742236656; x=1742841456;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nXoiuTRkoBnNFmuMpPNrD6IzlBMB6sBa2guyvSkTcCc=;
+        b=XpIPMPS4yZqe7ZSX5Z/N/oC9c5U7VpgIisOGJ5fc4pCAeOqx1D2TKUMvCy3Nx9ZcB5
+         jLOUA+vhMBfxblbb8awSgnWRe/zWdetcgCovDkkpMNh9bfIz6YNESNSo2ZcDp1CeTJ5d
+         Lf4M2hlHgj8GzJLsHbjHDck4ymc68AjkxOoTSXTxQsUTKDzeAq65HRuylxuSAKSxc/WV
+         cT2DA0Qrocdp8coRtD6uM0ubAlNVSg6IFqhx0Edf+Aqg916Dv9wMT0PtEmbvricVybKT
+         SYBZrMUDCfIe5GqkACge81NQv2+lH7sSUpQ+wf+ixigDjaGEG2+TT4fKavO3eiMIk/K4
+         zNww==
+X-Forwarded-Encrypted: i=1; AJvYcCUBVCtlmiFWbSwhhx8RJC+8R6CEERjzokmTauwodFJsU4SwuGhfefXpPaLH5RLX0JQygcRkTeFIN7R1VxA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw24GAcAygpN/m4s9a7yFLaKQ59XwJ3yk7jbzSqvjp6ehJ87tkW
+	AZy0uRGf+jONT8U+w8e1c256Hrkq3bJZv57z0fFb2LasnVb/TKr/mAa5voGBjQhkZDXCi9pmIq1
+	REbiFTXU/zpQsWTQp+NlQOlPOIkapDvSnGrEC
+X-Gm-Gg: ASbGnctiBMp3MbvY4SQoroqUY8gLamlXVOdwWV/BoxKtDUFjeXGxZeY8cQSj5Cf7n4R
+	uCMYTbLiPsGHSsMbcCTW7Vgvaiq74NyqVqUKuZLUPxjXLRIrGqSA+hgg8UVVHRGZyVKYphh3UoP
+	V4spuai7CdKx7eNiWGS5kmOQtUP9lzRRqhJqHkoI2Eu5fjGNSJQYisFIDZJu50+xSUjg==
+X-Google-Smtp-Source: AGHT+IEPAgriL4EGagfAbqVrl7L32dxheFBoi7/U1htyds/AD7tvpxx3m3N65wKdSqfxeY9KHz540hNUSxss/wzWnis=
+X-Received: by 2002:a17:903:2f91:b0:216:6ecd:8950 with SMTP id
+ d9443c01a7336-2262e7f83e4mr155625ad.19.1742236655488; Mon, 17 Mar 2025
+ 11:37:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] openrisc: Add cacheinfo support
-To: Stafford Horne <shorne@gmail.com>,
- Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: jonas@southpole.se, stefan.kristiansson@saunalahti.fi,
- linux-openrisc@vger.kernel.org, linux-kernel@vger.kernel.org,
- Sahil Siddiq <sahilcdq@proton.me>
-References: <20250315203937.77017-1-sahilcdq@proton.me>
- <Z9Z2sjWQHKgGJyGo@antec>
- <CAMuHMdWh=oo6JykPGD3DNEL=GcfgyKw2UK7vb8XMbH19GcdrwA@mail.gmail.com>
- <Z9gOwYl6kmoPY9-C@antec>
-Content-Language: en-US
-From: Sahil Siddiq <icegambit91@gmail.com>
-Autocrypt: addr=icegambit91@gmail.com; keydata=
- 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
- rPgMe6IIvn24UuW2f6fIt0AaqOWq
-In-Reply-To: <Z9gOwYl6kmoPY9-C@antec>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250317180834.1862079-1-namhyung@kernel.org>
+In-Reply-To: <20250317180834.1862079-1-namhyung@kernel.org>
+From: Ian Rogers <irogers@google.com>
+Date: Mon, 17 Mar 2025 11:37:22 -0700
+X-Gm-Features: AQ5f1JqSf39tMZZ7-rfK1bvslb_GowMYnW_8LBmtjrHTlJsQ5c6-fCKjGgSUVtc
+Message-ID: <CAP-5=fWW=9WboQ0_MJx1pYeUTNSC0FNmyeTzw40+Q-mw+TreeA@mail.gmail.com>
+Subject: Re: [PATCH v2] perf trace: Implement syscall summary in BPF
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Kan Liang <kan.liang@linux.intel.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org, 
+	bpf@vger.kernel.org, Song Liu <song@kernel.org>, Howard Chu <howardchu95@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello Stafford and Geert,
-
-Thank you for the reviews.
-
-On 3/17/25 1:55 PM, Geert Uytterhoeven wrote:
-> On Sun, 16 Mar 2025 at 07:59, Stafford Horne <shorne@gmail.com> wrote:
->> [...]
->>> +struct cache_desc {
->>> +     u32 size;
->>> +     u32 sets;
->>> +     u32 block_size;
->>> +     u32 ways;
->>
->> Considering the changes below to add cache available checks, maybe we
->> want to add a field here, such as `bool present`.  Or a flags field like
->> is used in loongarch?
-> 
-> I assume cache_desc.size is zero when the cache is not present?
-
-Yes, cache_desc.size will be zero when there's no cache component since
-cpuinfo_or1k[NR_CPUS] is declared as a global variable in setup.c. The
-cache attributes are stored in this struct.
-
-On 3/17/25 5:30 PM, Stafford Horne wrote:
-> [...]
-> Yes, good point, would be clean too work too.  I was not too happy with using
-> cache_desc.ways as is done below.  Also there ended up bieng 2 different ways
-> that were used.
+On Mon, Mar 17, 2025 at 11:08=E2=80=AFAM Namhyung Kim <namhyung@kernel.org>=
+ wrote:
 >
-> I am happy to use size too, but I think checking the SPR would be faster or just
-> as fast as using the struct.  I am not too fussed either way.
+> When -s/--summary option is used, it doesn't need (augmented) arguments
+> of syscalls.  Let's skip the augmentation and load another small BPF
+> program to collect the statistics in the kernel instead of copying the
+> data to the ring-buffer to calculate the stats in userspace.  This will
+> be much more light-weight than the existing approach and remove any lost
+> events.
+>
+> Let's add a new option --bpf-summary to control this behavior.  I cannot
+> make it default because there's no way to get e_machine in the BPF which
+> is needed for detecting different ABIs like 32-bit compat mode.
+>
+> No functional changes intended except for no more LOST events. :)
+>
+>   $ sudo perf trace -as --bpf-summary --summary-mode=3Dtotal -- sleep 1
+>
+>    Summary of events:
+>
+>    total, 2824 events
+>
+>      syscall            calls  errors  total       min       avg       ma=
+x       stddev
+>                                        (msec)    (msec)    (msec)    (mse=
+c)        (%)
+>      --------------- --------  ------ -------- --------- --------- ------=
+---     ------
+>      futex                372     18  4373.773     0.000    11.757   997.=
+715    660.42%
+>      poll                 241      0  2757.963     0.000    11.444   997.=
+758    580.34%
+>      epoll_wait           161      0  2460.854     0.000    15.285   325.=
+189    260.73%
+>      ppoll                 19      0  1298.652     0.000    68.350   667.=
+172    281.46%
+>      clock_nanosleep        1      0  1000.093     0.000  1000.093  1000.=
+093      0.00%
+>      epoll_pwait           16      0   192.787     0.000    12.049   173.=
+994    348.73%
+>      nanosleep              6      0    50.926     0.000     8.488    10.=
+210     43.96%
+>      ...
+>
+> Cc: Howard Chu <howardchu95@gmail.com>
+> Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+> ---
+> v2)
+>  * rebased on top of Ian's e_machine changes
+>  * add --bpf-summary option
+>  * support per-thread summary
+>  * add stddev calculation  (Howard)
+>
+>  tools/perf/Documentation/perf-trace.txt       |   6 +
+>  tools/perf/Makefile.perf                      |   2 +-
+>  tools/perf/builtin-trace.c                    |  43 ++-
+>  tools/perf/util/Build                         |   1 +
+>  tools/perf/util/bpf-trace-summary.c           | 334 ++++++++++++++++++
+>  .../perf/util/bpf_skel/syscall_summary.bpf.c  | 118 +++++++
+>  tools/perf/util/bpf_skel/syscall_summary.h    |  25 ++
+>  tools/perf/util/trace.h                       |  37 ++
+>  8 files changed, 553 insertions(+), 13 deletions(-)
+>  create mode 100644 tools/perf/util/bpf-trace-summary.c
+>  create mode 100644 tools/perf/util/bpf_skel/syscall_summary.bpf.c
+>  create mode 100644 tools/perf/util/bpf_skel/syscall_summary.h
+>  create mode 100644 tools/perf/util/trace.h
+>
+> diff --git a/tools/perf/Documentation/perf-trace.txt b/tools/perf/Documen=
+tation/perf-trace.txt
+> index 887dc37773d0f4d6..a8a0d8c33438fef7 100644
+> --- a/tools/perf/Documentation/perf-trace.txt
+> +++ b/tools/perf/Documentation/perf-trace.txt
+> @@ -251,6 +251,12 @@ the thread executes on the designated CPUs. Default =
+is to monitor all CPUs.
+>         pretty-printing serves as a fallback to hand-crafted pretty print=
+ers, as the latter can
+>         better pretty-print integer flags and struct pointers.
+>
+> +--bpf-summary::
+> +       Collect system call statistics in BPF.  This is only for live mod=
+e and
+> +       works well with -s/--summary option where no argument information=
+ is
+> +       required.
+> +
+> +
+>  PAGEFAULTS
+>  ----------
+>
+> diff --git a/tools/perf/Makefile.perf b/tools/perf/Makefile.perf
+> index f3cd8de15d1a2681..d7a7e0c68fc10b8b 100644
+> --- a/tools/perf/Makefile.perf
+> +++ b/tools/perf/Makefile.perf
+> @@ -1206,7 +1206,7 @@ SKELETONS +=3D $(SKEL_OUT)/bperf_leader.skel.h $(SK=
+EL_OUT)/bperf_follower.skel.h
+>  SKELETONS +=3D $(SKEL_OUT)/bperf_cgroup.skel.h $(SKEL_OUT)/func_latency.=
+skel.h
+>  SKELETONS +=3D $(SKEL_OUT)/off_cpu.skel.h $(SKEL_OUT)/lock_contention.sk=
+el.h
+>  SKELETONS +=3D $(SKEL_OUT)/kwork_trace.skel.h $(SKEL_OUT)/sample_filter.=
+skel.h
+> -SKELETONS +=3D $(SKEL_OUT)/kwork_top.skel.h
+> +SKELETONS +=3D $(SKEL_OUT)/kwork_top.skel.h $(SKEL_OUT)/syscall_summary.=
+skel.h
+>  SKELETONS +=3D $(SKEL_OUT)/bench_uprobe.skel.h
+>  SKELETONS +=3D $(SKEL_OUT)/augmented_raw_syscalls.skel.h
+>
+> diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
+> index 7fef59306db2891f..deeb7250e8c52354 100644
+> --- a/tools/perf/builtin-trace.c
+> +++ b/tools/perf/builtin-trace.c
+> @@ -55,6 +55,7 @@
+>  #include "util/thread_map.h"
+>  #include "util/stat.h"
+>  #include "util/tool.h"
+> +#include "util/trace.h"
+>  #include "util/util.h"
+>  #include "trace/beauty/beauty.h"
+>  #include "trace-event.h"
+> @@ -141,12 +142,6 @@ struct syscall_fmt {
+>         bool       hexret;
+>  };
+>
+> -enum summary_mode {
+> -       SUMMARY__NONE =3D 0,
+> -       SUMMARY__BY_TOTAL,
+> -       SUMMARY__BY_THREAD,
+> -};
+> -
+>  struct trace {
+>         struct perf_tool        tool;
+>         struct {
+> @@ -205,7 +200,7 @@ struct trace {
+>         } stats;
+>         unsigned int            max_stack;
+>         unsigned int            min_stack;
+> -       enum summary_mode       summary_mode;
+> +       enum trace_summary_mode summary_mode;
+>         int                     raw_augmented_syscalls_args_size;
+>         bool                    raw_augmented_syscalls;
+>         bool                    fd_path_disabled;
+> @@ -234,6 +229,7 @@ struct trace {
+>         bool                    force;
+>         bool                    vfs_getname;
+>         bool                    force_btf;
+> +       bool                    summary_bpf;
+>         int                     trace_pgfaults;
+>         char                    *perfconfig_events;
+>         struct {
+> @@ -4356,6 +4352,13 @@ static int trace__run(struct trace *trace, int arg=
+c, const char **argv)
+>
+>         trace->live =3D true;
+>
+> +       if (trace->summary_bpf) {
+> +               if (trace_prepare_bpf_summary(trace->summary_mode) < 0)
+> +                       goto out_delete_evlist;
+> +
+> +               goto create_maps;
+> +       }
+> +
+>         if (!trace->raw_augmented_syscalls) {
+>                 if (trace->trace_syscalls && trace__add_syscall_newtp(tra=
+ce))
+>                         goto out_error_raw_syscalls;
+> @@ -4414,6 +4417,7 @@ static int trace__run(struct trace *trace, int argc=
+, const char **argv)
+>         if (trace->cgroup)
+>                 evlist__set_default_cgroup(trace->evlist, trace->cgroup);
+>
+> +create_maps:
+>         err =3D evlist__create_maps(evlist, &trace->opts.target);
+>         if (err < 0) {
+>                 fprintf(trace->output, "Problems parsing the target to tr=
+ace, check your options!\n");
+> @@ -4426,7 +4430,7 @@ static int trace__run(struct trace *trace, int argc=
+, const char **argv)
+>                 goto out_delete_evlist;
+>         }
+>
+> -       if (trace->summary_mode =3D=3D SUMMARY__BY_TOTAL) {
+> +       if (trace->summary_mode =3D=3D SUMMARY__BY_TOTAL && !trace->summa=
+ry_bpf) {
+>                 trace->syscall_stats =3D alloc_syscall_stats();
+>                 if (trace->syscall_stats =3D=3D NULL)
+>                         goto out_delete_evlist;
+> @@ -4512,9 +4516,11 @@ static int trace__run(struct trace *trace, int arg=
+c, const char **argv)
+>         if (err < 0)
+>                 goto out_error_apply_filters;
+>
+> -       err =3D evlist__mmap(evlist, trace->opts.mmap_pages);
+> -       if (err < 0)
+> -               goto out_error_mmap;
+> +       if (!trace->summary_bpf) {
+> +               err =3D evlist__mmap(evlist, trace->opts.mmap_pages);
+> +               if (err < 0)
+> +                       goto out_error_mmap;
+> +       }
+>
+>         if (!target__none(&trace->opts.target) && !trace->opts.target.ini=
+tial_delay)
+>                 evlist__enable(evlist);
+> @@ -4527,6 +4533,9 @@ static int trace__run(struct trace *trace, int argc=
+, const char **argv)
+>                 evlist__enable(evlist);
+>         }
+>
+> +       if (trace->summary_bpf)
+> +               trace_start_bpf_summary();
+> +
+>         trace->multiple_threads =3D perf_thread_map__pid(evlist->core.thr=
+eads, 0) =3D=3D -1 ||
+>                 perf_thread_map__nr(evlist->core.threads) > 1 ||
+>                 evlist__first(evlist)->core.attr.inherit;
+> @@ -4594,12 +4603,17 @@ static int trace__run(struct trace *trace, int ar=
+gc, const char **argv)
+>
+>         evlist__disable(evlist);
+>
+> +       if (trace->summary_bpf)
+> +               trace_end_bpf_summary();
+> +
+>         if (trace->sort_events)
+>                 ordered_events__flush(&trace->oe.data, OE_FLUSH__FINAL);
+>
+>         if (!err) {
+>                 if (trace->summary) {
+> -                       if (trace->summary_mode =3D=3D SUMMARY__BY_TOTAL)
+> +                       if (trace->summary_bpf)
+> +                               trace_print_bpf_summary(trace->output);
+> +                       else if (trace->summary_mode =3D=3D SUMMARY__BY_T=
+OTAL)
+>                                 trace__fprintf_total_summary(trace, trace=
+->output);
+>                         else
+>                                 trace__fprintf_thread_summary(trace, trac=
+e->output);
+> @@ -4615,6 +4629,7 @@ static int trace__run(struct trace *trace, int argc=
+, const char **argv)
+>         }
+>
+>  out_delete_evlist:
+> +       trace_cleanup_bpf_summary();
+>         delete_syscall_stats(trace->syscall_stats);
+>         trace__symbols__exit(trace);
+>         evlist__free_syscall_tp_fields(evlist);
+> @@ -5444,6 +5459,7 @@ int cmd_trace(int argc, const char **argv)
+>                      "start"),
+>         OPT_BOOLEAN(0, "force-btf", &trace.force_btf, "Prefer btf_dump ge=
+neral pretty printer"
+>                        "to customized ones"),
+> +       OPT_BOOLEAN(0, "bpf-summary", &trace.summary_bpf, "Summary syscal=
+l stats in BPF"),
+>         OPTS_EVSWITCH(&trace.evswitch),
+>         OPT_END()
+>         };
+> @@ -5535,6 +5551,9 @@ int cmd_trace(int argc, const char **argv)
+>                 goto skip_augmentation;
+>         }
+>
+> +       if (trace.summary_only && trace.summary_bpf)
+> +               goto skip_augmentation;
+> +
+>         trace.skel =3D augmented_raw_syscalls_bpf__open();
+>         if (!trace.skel) {
+>                 pr_debug("Failed to open augmented syscalls BPF skeleton"=
+);
+> diff --git a/tools/perf/util/Build b/tools/perf/util/Build
+> index 034a6603d5a8e8b0..ba4201a6f3c69753 100644
+> --- a/tools/perf/util/Build
+> +++ b/tools/perf/util/Build
+> @@ -171,6 +171,7 @@ perf-util-$(CONFIG_PERF_BPF_SKEL) +=3D bpf_off_cpu.o
+>  perf-util-$(CONFIG_PERF_BPF_SKEL) +=3D bpf-filter.o
+>  perf-util-$(CONFIG_PERF_BPF_SKEL) +=3D bpf-filter-flex.o
+>  perf-util-$(CONFIG_PERF_BPF_SKEL) +=3D bpf-filter-bison.o
+> +perf-util-$(CONFIG_PERF_BPF_SKEL) +=3D bpf-trace-summary.o
+>  perf-util-$(CONFIG_PERF_BPF_SKEL) +=3D btf.o
+>
+>  ifeq ($(CONFIG_LIBTRACEEVENT),y)
+> diff --git a/tools/perf/util/bpf-trace-summary.c b/tools/perf/util/bpf-tr=
+ace-summary.c
+> new file mode 100644
+> index 0000000000000000..5ae9feca244d5b22
+> --- /dev/null
+> +++ b/tools/perf/util/bpf-trace-summary.c
+> @@ -0,0 +1,334 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +#include <inttypes.h>
+> +#include <math.h>
+> +#include <stdio.h>
+> +#include <stdlib.h>
+> +
+> +#include "dwarf-regs.h" /* for EM_HOST */
+> +#include "syscalltbl.h"
+> +#include "util/hashmap.h"
+> +#include "util/trace.h"
+> +#include "util/util.h"
+> +#include <bpf/bpf.h>
+> +#include <linux/time64.h>
+> +#include <tools/libc_compat.h> /* reallocarray */
+> +
+> +#include "bpf_skel/syscall_summary.h"
+> +#include "bpf_skel/syscall_summary.skel.h"
+> +
+> +
+> +static struct syscall_summary_bpf *skel;
+> +
+> +int trace_prepare_bpf_summary(enum trace_summary_mode mode)
+> +{
+> +       skel =3D syscall_summary_bpf__open();
+> +       if (skel =3D=3D NULL) {
+> +               fprintf(stderr, "failed to open syscall summary bpf skele=
+ton\n");
+> +               return -1;
+> +       }
+> +
+> +       if (mode =3D=3D SUMMARY__BY_THREAD)
+> +               skel->rodata->aggr_mode =3D SYSCALL_AGGR_THREAD;
+> +       else
+> +               skel->rodata->aggr_mode =3D SYSCALL_AGGR_CPU;
+> +
+> +       if (syscall_summary_bpf__load(skel) < 0) {
+> +               fprintf(stderr, "failed to load syscall summary bpf skele=
+ton\n");
+> +               return -1;
+> +       }
+> +
+> +       if (syscall_summary_bpf__attach(skel) < 0) {
+> +               fprintf(stderr, "failed to attach syscall summary bpf ske=
+leton\n");
+> +               return -1;
+> +       }
+> +
+> +       return 0;
+> +}
+> +
+> +void trace_start_bpf_summary(void)
+> +{
+> +       skel->bss->enabled =3D 1;
+> +}
+> +
+> +void trace_end_bpf_summary(void)
+> +{
+> +       skel->bss->enabled =3D 0;
+> +}
+> +
+> +struct syscall_node {
+> +       int syscall_nr;
+> +       struct syscall_stats stats;
+> +};
+> +
+> +static double rel_stddev(struct syscall_stats *stat)
+> +{
+> +       double variance, average;
+> +
+> +       if (stat->count < 2)
+> +               return 0;
+> +
+> +       average =3D (double)stat->total_time / stat->count;
+> +
+> +       variance =3D stat->squared_sum;
+> +       variance -=3D (stat->total_time * stat->total_time) / stat->count=
+;
+> +       variance /=3D stat->count;
+> +
+> +       return 100 * sqrt(variance) / average;
+> +}
+> +
+> +struct syscall_data {
+> +       int key; /* tid if AGGR_THREAD, syscall-nr if AGGR_CPU */
+> +       int nr_events;
+> +       int nr_nodes;
+> +       u64 total_time;
+> +       struct syscall_node *nodes;
+> +};
+> +
+> +static int datacmp(const void *a, const void *b)
+> +{
+> +       const struct syscall_data * const *sa =3D a;
+> +       const struct syscall_data * const *sb =3D b;
+> +
+> +       return (*sa)->total_time > (*sb)->total_time ? -1 : 1;
+> +}
+> +
+> +static int nodecmp(const void *a, const void *b)
+> +{
+> +       const struct syscall_node *na =3D a;
+> +       const struct syscall_node *nb =3D b;
+> +
+> +       return na->stats.total_time > nb->stats.total_time ? -1 : 1;
+> +}
+> +
+> +static size_t sc_node_hash(long key, void *ctx __maybe_unused)
+> +{
+> +       return key;
+> +}
+> +
+> +static bool sc_node_equal(long key1, long key2, void *ctx __maybe_unused=
+)
+> +{
+> +       return key1 =3D=3D key2;
+> +}
+> +
+> +static int print_common_stats(struct syscall_data *data, FILE *fp)
+> +{
+> +       int printed =3D 0;
+> +
+> +       for (int i =3D 0; i < data->nr_nodes; i++) {
+> +               struct syscall_node *node =3D &data->nodes[i];
+> +               struct syscall_stats *stat =3D &node->stats;
+> +               double total =3D (double)(stat->total_time) / NSEC_PER_MS=
+EC;
+> +               double min =3D (double)(stat->min_time) / NSEC_PER_MSEC;
+> +               double max =3D (double)(stat->max_time) / NSEC_PER_MSEC;
+> +               double avg =3D total / stat->count;
+> +               const char *name;
+> +
+> +               /* TODO: support other ABIs */
+> +               name =3D syscalltbl__name(EM_HOST, node->syscall_nr);
+> +               if (name)
+> +                       printed +=3D fprintf(fp, "   %-15s", name);
+> +               else
+> +                       printed +=3D fprintf(fp, "   syscall:%-7d", node-=
+>syscall_nr);
+> +
+> +               printed +=3D fprintf(fp, " %8u %6u %9.3f %9.3f %9.3f %9.3=
+f %9.2f%%\n",
+> +                                  stat->count, stat->error, total, min, =
+avg, max,
+> +                                  rel_stddev(stat));
+> +       }
+> +       return printed;
+> +}
+> +
+> +static int update_thread_stats(struct hashmap *hash, struct syscall_key =
+*map_key,
+> +                              struct syscall_stats *map_data)
+> +{
+> +       struct syscall_data *data;
+> +       struct syscall_node *nodes;
+> +
+> +       if (!hashmap__find(hash, map_key->cpu_or_tid, &data)) {
+> +               data =3D zalloc(sizeof(*data));
+> +               if (data =3D=3D NULL)
+> +                       return -ENOMEM;
+> +
+> +               data->key =3D map_key->cpu_or_tid;
+> +               if (hashmap__add(hash, data->key, data) < 0) {
+> +                       free(data);
+> +                       return -ENOMEM;
+> +               }
+> +       }
+> +
+> +       /* update thread total stats */
+> +       data->nr_events +=3D map_data->count;
+> +       data->total_time +=3D map_data->total_time;
+> +
+> +       nodes =3D reallocarray(data->nodes, data->nr_nodes + 1, sizeof(*n=
+odes));
+> +       if (nodes =3D=3D NULL)
+> +               return -ENOMEM;
+> +
+> +       data->nodes =3D nodes;
+> +       nodes =3D &data->nodes[data->nr_nodes++];
+> +       nodes->syscall_nr =3D map_key->nr;
+> +
+> +       /* each thread has an entry for each syscall, just use the stat *=
+/
+> +       memcpy(&nodes->stats, map_data, sizeof(*map_data));
+> +       return 0;
+> +}
+> +
+> +static int print_thread_stat(struct syscall_data *data, FILE *fp)
+> +{
+> +       int printed =3D 0;
+> +
+> +       qsort(data->nodes, data->nr_nodes, sizeof(*data->nodes), nodecmp)=
+;
+> +
+> +       printed +=3D fprintf(fp, " thread (%d), ", data->key);
+> +       printed +=3D fprintf(fp, "%d events\n\n", data->nr_events);
+> +
+> +       printed +=3D fprintf(fp, "   syscall            calls  errors  to=
+tal       min       avg       max       stddev\n");
+> +       printed +=3D fprintf(fp, "                                     (m=
+sec)    (msec)    (msec)    (msec)        (%%)\n");
+> +       printed +=3D fprintf(fp, "   --------------- --------  ------ ---=
+----- --------- --------- ---------     ------\n");
 
-There are a few places (e.g. cache_loop() in cache.c) where
-cpuinfo_or1k[smp_processor_id()] is not being referenced. This will have to be
-referenced to access cache_desc. In these cases, I think it would be better to
-read from the SPR instead. For consistency, the SPR can also be read where
-cpuinfo_or1k[smp_processor_id()] is already being referenced.
-
-On 3/16/25 12:28 PM, Stafford Horne wrote:
-> On Sun, Mar 16, 2025 at 02:09:37AM +0530, Sahil Siddiq wrote:
->> Add cacheinfo support for OpenRISC.
->> [...]
->> diff --git a/arch/openrisc/kernel/cacheinfo.c b/arch/openrisc/kernel/cacheinfo.c
->> new file mode 100644
->> index 000000000000..6bb81e246f7e
->> --- /dev/null
->> +++ b/arch/openrisc/kernel/cacheinfo.c
->> @@ -0,0 +1,106 @@
->> +// SPDX-License-Identifier: GPL-2.0-or-later
->> +/*
->> + * OpenRISC cacheinfo support
->> + *
->> + * Based on work done for MIPS and LoongArch. All original copyrights
->> + * apply as per the original source declaration.
->> + *
->> + * OpenRISC implementation:
->> + * Copyright (C) 2025 Sahil Siddiq <sahilcdq@proton.me>
->> + */
->> +
->> +#include <linux/cacheinfo.h>
->> +#include <asm/cpuinfo.h>
->> +#include <asm/spr.h>
->> +#include <asm/spr_defs.h>
->> +
->> +static inline void ci_leaf_init(struct cacheinfo *this_leaf, enum cache_type type,
->> +				unsigned int level, struct cache_desc *cache, int cpu)
->> +{
->> +	this_leaf->type = type;
->> +	this_leaf->level = level;
->> +	this_leaf->coherency_line_size = cache->block_size;
->> +	this_leaf->number_of_sets = cache->sets;
->> +	this_leaf->ways_of_associativity = cache->ways;
->> +	this_leaf->size = cache->size;
->> +	cpumask_set_cpu(cpu, &this_leaf->shared_cpu_map);
->> +}
->> +
->> +int init_cache_level(unsigned int cpu)
->> +{
->> +	struct cpuinfo_or1k *cpuinfo = &cpuinfo_or1k[smp_processor_id()];
->> +	struct cpu_cacheinfo *this_cpu_ci = get_cpu_cacheinfo(cpu);
->> +	int leaves = 0, levels = 0;
->> +	unsigned long upr = mfspr(SPR_UPR);
->> +	unsigned long iccfgr, dccfgr;
->> +
->> +	if (!(upr & SPR_UPR_UP)) {
->> +		printk(KERN_INFO
->> +		       "-- no UPR register... unable to detect configuration\n");
->> +		return -ENOENT;
->> +	}
->> +
->> +	if (upr & SPR_UPR_DCP) {
->> +		dccfgr = mfspr(SPR_DCCFGR);
->> +		cpuinfo->dcache.ways = 1 << (dccfgr & SPR_DCCFGR_NCW);
->> +		cpuinfo->dcache.sets = 1 << ((dccfgr & SPR_DCCFGR_NCS) >> 3);
->> +		cpuinfo->dcache.block_size = 16 << ((dccfgr & SPR_DCCFGR_CBS) >> 7);
->> +		cpuinfo->dcache.size =
->> +		    cpuinfo->dcache.sets * cpuinfo->dcache.ways * cpuinfo->dcache.block_size;
->> +		leaves += 1;
->> +		printk(KERN_INFO
->> +		       "-- dcache: %d bytes total, %d bytes/line, %d set(s), %d way(s)\n",
->> +		       cpuinfo->dcache.size, cpuinfo->dcache.block_size,
->> +			   cpuinfo->dcache.sets,
->> +		       cpuinfo->dcache.ways);
-> 
-> The indentation of sets looks a bit off here.
-> 
->> +	} else
->> +		printk(KERN_INFO "-- dcache disabled\n");
->> +
->> +	if (upr & SPR_UPR_ICP) {
->> +		iccfgr = mfspr(SPR_ICCFGR);
->> +		cpuinfo->icache.ways = 1 << (iccfgr & SPR_ICCFGR_NCW);
->> +		cpuinfo->icache.sets = 1 << ((iccfgr & SPR_ICCFGR_NCS) >> 3);
->> +		cpuinfo->icache.block_size = 16 << ((iccfgr & SPR_ICCFGR_CBS) >> 7);
->> +		cpuinfo->icache.size =
->> +		    cpuinfo->icache.sets * cpuinfo->icache.ways * cpuinfo->icache.block_size;
->> +		leaves += 1;
->> +		printk(KERN_INFO
->> +		       "-- icache: %d bytes total, %d bytes/line, %d set(s), %d way(s)\n",
->> +		       cpuinfo->icache.size, cpuinfo->icache.block_size,
->> +			   cpuinfo->icache.sets,
->> +		       cpuinfo->icache.ways);
-> 
-> The indentation of sets looks a bit off here. Maybe its the others that are out
-> of line, but can you fix?  Also I think sets and ways could be on the same line.
-
-Sorry, I must have missed this. I'll fix it.
-
->> [...]
->> diff --git a/arch/openrisc/kernel/dma.c b/arch/openrisc/kernel/dma.c
->> index b3edbb33b621..ffb161e41e9d 100644
->> --- a/arch/openrisc/kernel/dma.c
->> +++ b/arch/openrisc/kernel/dma.c
->> @@ -36,8 +36,10 @@ page_set_nocache(pte_t *pte, unsigned long addr,
->>   	flush_tlb_kernel_range(addr, addr + PAGE_SIZE);
->>   
->>   	/* Flush page out of dcache */
->> -	for (cl = __pa(addr); cl < __pa(next); cl += cpuinfo->dcache_block_size)
->> -		mtspr(SPR_DCBFR, cl);
->> +	if (cpuinfo->dcache.ways) {
->> +		for (cl = __pa(addr); cl < __pa(next); cl += cpuinfo->dcache.block_size)
->> +			mtspr(SPR_DCBFR, cl);
->> +	}
-> 
-> I think it would be better to move this to cacheflush.h as a function like
-> flush_dcache_range() or local_dcache_range_flush().
-> 
->>   	return 0;
->>   }
->> @@ -104,15 +106,19 @@ void arch_sync_dma_for_device(phys_addr_t addr, size_t size,
->>   	switch (dir) {
->>   	case DMA_TO_DEVICE:
->>   		/* Flush the dcache for the requested range */
->> -		for (cl = addr; cl < addr + size;
->> -		     cl += cpuinfo->dcache_block_size)
->> -			mtspr(SPR_DCBFR, cl);
->> +		if (cpuinfo->dcache.ways) {
->> +			for (cl = addr; cl < addr + size;
->> +			     cl += cpuinfo->dcache.block_size)
->> +				mtspr(SPR_DCBFR, cl);
->> +		}
-> 
-> Also here,I think it would be better to move this to cacheflush.h as a function like
-> flush_dcache_range().
-> 
-> Or, local_dcache_range_flush(), which seems to be the convention we use in
-> cacheflush.h/cache.c.
-> 
-> 
->>   		break;
->>   	case DMA_FROM_DEVICE:
->>   		/* Invalidate the dcache for the requested range */
->> -		for (cl = addr; cl < addr + size;
->> -		     cl += cpuinfo->dcache_block_size)
->> -			mtspr(SPR_DCBIR, cl);
->> +		if (cpuinfo->dcache.ways) {
->> +			for (cl = addr; cl < addr + size;
->> +			     cl += cpuinfo->dcache.block_size)
->> +				mtspr(SPR_DCBIR, cl);
->> +		}
-> 
-> This one could be invalidate_dcache_range().   Note, this will also be useful
-> for the kexec patches that I am working on.
-> 
-> Or, local_dcache_range_inv(), which seems to be the convention we use in
-> cacheflush.h/cache.c.
-
-Understood.
-
->> [...]
->> @@ -29,13 +34,13 @@ static __always_inline void cache_loop(struct page *page, const unsigned int reg
->>   
->>   void local_dcache_page_flush(struct page *page)
->>   {
->> -	cache_loop(page, SPR_DCBFR);
->> +	cache_loop(page, SPR_DCBFR, SPR_UPR_DCP);
->>   }
->>   EXPORT_SYMBOL(local_dcache_page_flush);
->>   
->>   void local_icache_page_inv(struct page *page)
->>   {
->> -	cache_loop(page, SPR_ICBIR);
->> +	cache_loop(page, SPR_ICBIR, SPR_UPR_ICP);
->>   }
->>   EXPORT_SYMBOL(local_icache_page_inv);
-> 
-> OK, if we move the range flush and invalidate here we will need to add to this
-> cache_loop a bit more.
-
-Right. I'll see what can be done to keep it concise.
-
->> diff --git a/arch/openrisc/mm/init.c b/arch/openrisc/mm/init.c
->> index d0cb1a0126f9..bbe16546c5b9 100644
->> --- a/arch/openrisc/mm/init.c
->> +++ b/arch/openrisc/mm/init.c
->> @@ -124,6 +124,7 @@ static void __init map_ram(void)
->>   void __init paging_init(void)
->>   {
->>   	int i;
->> +	unsigned long upr;
->>   
->>   	printk(KERN_INFO "Setting up paging and PTEs.\n");
->>   
->> @@ -176,8 +177,11 @@ void __init paging_init(void)
->>   	barrier();
->>   
->>   	/* Invalidate instruction caches after code modification */
->> -	mtspr(SPR_ICBIR, 0x900);
->> -	mtspr(SPR_ICBIR, 0xa00);
->> +	upr = mfspr(SPR_UPR);
->> +	if (upr & SPR_UPR_UP & SPR_UPR_ICP) {
->> +		mtspr(SPR_ICBIR, 0x900);
->> +		mtspr(SPR_ICBIR, 0xa00);
->> +	}
-> 
-> Here we could use new utilities such as local_icache_range_inv(0x900,
-> L1_CACHE_BYTES);
-> 
-> Or something like local_icache_block_inv(0x900).  This only needs to flush a
-> single block as the code it is invalidating is just 2 instructions 8 bytes:
-> 
->      .org 0x900
-> 	l.j     boot_dtlb_miss_handler
-> 	 l.nop
-> 
->      .org 0xa00
-> 	l.j     boot_itlb_miss_handler
-> 	 l.nop
-
-Given that there'll be generic local_(i|d)cache_range_inv(start, stop) utility
-functions, would it make sense to simply have a macro defined as:
-
-#define local_icache_block_inv(addr) local_icache_range_inv(start, L1_CACHE_BYTES)
-
-instead of having a separate function for invalidating a single cache line? This would
-still use cache_loop() under the hood. The alternative would be to use
-local_icache_range_inv(start, L1_CACHE_BYTES) directly but using the macro might be
-more readable.
+The code lgtm and follows the code base's conventions but it seems odd
+to put very specific output like this inside of util/ rather than
+builtin-trace.c. stat-display.c is similar, it just seems the boundary
+between util/ and the buitin-*.c files is blurry.
 
 Thanks,
-Sahil
+Ian
+
+> +
+> +       printed +=3D print_common_stats(data, fp);
+> +       printed +=3D fprintf(fp, "\n\n");
+> +
+> +       return printed;
+> +}
+> +
+> +static int print_thread_stats(struct syscall_data **data, int nr_data, F=
+ILE *fp)
+> +{
+> +       int printed =3D 0;
+> +
+> +       for (int i =3D 0; i < nr_data; i++)
+> +               printed +=3D print_thread_stat(data[i], fp);
+> +
+> +       return printed;
+> +}
+> +
+> +static int update_total_stats(struct hashmap *hash, struct syscall_key *=
+map_key,
+> +                             struct syscall_stats *map_data)
+> +{
+> +       struct syscall_data *data;
+> +       struct syscall_stats *stat;
+> +
+> +       if (!hashmap__find(hash, map_key, &data)) {
+> +               data =3D zalloc(sizeof(*data));
+> +               if (data =3D=3D NULL)
+> +                       return -ENOMEM;
+> +
+> +               data->nodes =3D zalloc(sizeof(*data->nodes));
+> +               if (data->nodes =3D=3D NULL) {
+> +                       free(data);
+> +                       return -ENOMEM;
+> +               }
+> +
+> +               data->nr_nodes =3D 1;
+> +               data->key =3D map_key->nr;
+> +               data->nodes->syscall_nr =3D data->key;
+> +
+> +               if (hashmap__add(hash, data->key, data) < 0) {
+> +                       free(data->nodes);
+> +                       free(data);
+> +                       return -ENOMEM;
+> +               }
+> +       }
+> +
+> +       /* update total stats for this syscall */
+> +       data->nr_events +=3D map_data->count;
+> +       data->total_time +=3D map_data->total_time;
+> +
+> +       /* This is sum of the same syscall from different CPUs */
+> +       stat =3D &data->nodes->stats;
+> +
+> +       stat->total_time +=3D map_data->total_time;
+> +       stat->squared_sum +=3D map_data->squared_sum;
+> +       stat->count +=3D map_data->count;
+> +       stat->error +=3D map_data->error;
+> +
+> +       if (stat->max_time < map_data->max_time)
+> +               stat->max_time =3D map_data->max_time;
+> +       if (stat->min_time > map_data->min_time)
+> +               stat->min_time =3D map_data->min_time;
+> +
+> +       return 0;
+> +}
+> +
+> +static int print_total_stats(struct syscall_data **data, int nr_data, FI=
+LE *fp)
+> +{
+> +       int printed =3D 0;
+> +       int nr_events =3D 0;
+> +
+> +       for (int i =3D 0; i < nr_data; i++)
+> +               nr_events +=3D data[i]->nr_events;
+> +
+> +       printed +=3D fprintf(fp, " total, %d events\n\n", nr_events);
+> +
+> +       printed +=3D fprintf(fp, "   syscall            calls  errors  to=
+tal       min       avg       max       stddev\n");
+> +       printed +=3D fprintf(fp, "                                     (m=
+sec)    (msec)    (msec)    (msec)        (%%)\n");
+> +       printed +=3D fprintf(fp, "   --------------- --------  ------ ---=
+----- --------- --------- ---------     ------\n");
+> +
+> +       for (int i =3D 0; i < nr_data; i++)
+> +               printed +=3D print_common_stats(data[i], fp);
+> +
+> +       printed +=3D fprintf(fp, "\n\n");
+> +       return printed;
+> +}
+> +
+> +int trace_print_bpf_summary(FILE *fp)
+> +{
+> +       struct bpf_map *map =3D skel->maps.syscall_stats_map;
+> +       struct syscall_key *prev_key, key;
+> +       struct syscall_data **data =3D NULL;
+> +       struct hashmap schash;
+> +       struct hashmap_entry *entry;
+> +       int nr_data =3D 0;
+> +       int printed =3D 0;
+> +       int i;
+> +       size_t bkt;
+> +
+> +       hashmap__init(&schash, sc_node_hash, sc_node_equal, /*ctx=3D*/NUL=
+L);
+> +
+> +       printed =3D fprintf(fp, "\n Summary of events:\n\n");
+> +
+> +       /* get stats from the bpf map */
+> +       prev_key =3D NULL;
+> +       while (!bpf_map__get_next_key(map, prev_key, &key, sizeof(key))) =
+{
+> +               struct syscall_stats stat;
+> +
+> +               if (!bpf_map__lookup_elem(map, &key, sizeof(key), &stat, =
+sizeof(stat), 0)) {
+> +                       if (skel->rodata->aggr_mode =3D=3D SYSCALL_AGGR_T=
+HREAD)
+> +                               update_thread_stats(&schash, &key, &stat)=
+;
+> +                       else
+> +                               update_total_stats(&schash, &key, &stat);
+> +               }
+> +
+> +               prev_key =3D &key;
+> +       }
+> +
+> +       nr_data =3D hashmap__size(&schash);
+> +       data =3D calloc(nr_data, sizeof(*data));
+> +       if (data =3D=3D NULL)
+> +               goto out;
+> +
+> +       i =3D 0;
+> +       hashmap__for_each_entry(&schash, entry, bkt)
+> +               data[i++] =3D entry->pvalue;
+> +
+> +       qsort(data, nr_data, sizeof(*data), datacmp);
+> +
+> +       if (skel->rodata->aggr_mode =3D=3D SYSCALL_AGGR_THREAD)
+> +               printed +=3D print_thread_stats(data, nr_data, fp);
+> +       else
+> +               printed +=3D print_total_stats(data, nr_data, fp);
+> +
+> +       for (i =3D 0; i < nr_data && data; i++) {
+> +               free(data[i]->nodes);
+> +               free(data[i]);
+> +       }
+> +       free(data);
+> +
+> +out:
+> +       hashmap__clear(&schash);
+> +       return printed;
+> +}
+> +
+> +void trace_cleanup_bpf_summary(void)
+> +{
+> +       syscall_summary_bpf__destroy(skel);
+> +}
+> diff --git a/tools/perf/util/bpf_skel/syscall_summary.bpf.c b/tools/perf/=
+util/bpf_skel/syscall_summary.bpf.c
+> new file mode 100644
+> index 0000000000000000..b25f53b3c1351392
+> --- /dev/null
+> +++ b/tools/perf/util/bpf_skel/syscall_summary.bpf.c
+> @@ -0,0 +1,118 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Trace raw_syscalls tracepoints to collect system call statistics.
+> + */
+> +
+> +#include "vmlinux.h"
+> +#include "syscall_summary.h"
+> +
+> +#include <bpf/bpf_helpers.h>
+> +#include <bpf/bpf_tracing.h>
+> +
+> +/* This is to calculate a delta between sys-enter and sys-exit for each =
+thread */
+> +struct syscall_trace {
+> +       int nr; /* syscall number is only available at sys-enter */
+> +       int unused;
+> +       u64 timestamp;
+> +};
+> +
+> +#define MAX_ENTRIES    (128 * 1024)
+> +
+> +struct syscall_trace_map {
+> +       __uint(type, BPF_MAP_TYPE_HASH);
+> +       __type(key, int); /* tid */
+> +       __type(value, struct syscall_trace);
+> +       __uint(max_entries, MAX_ENTRIES);
+> +} syscall_trace_map SEC(".maps");
+> +
+> +struct syscall_stats_map {
+> +       __uint(type, BPF_MAP_TYPE_HASH);
+> +       __type(key, struct syscall_key);
+> +       __type(value, struct syscall_stats);
+> +       __uint(max_entries, MAX_ENTRIES);
+> +} syscall_stats_map SEC(".maps");
+> +
+> +int enabled; /* controlled from userspace */
+> +
+> +const volatile enum syscall_aggr_mode aggr_mode;
+> +
+> +static void update_stats(int cpu_or_tid, int nr, s64 duration, long ret)
+> +{
+> +       struct syscall_key key =3D { .cpu_or_tid =3D cpu_or_tid, .nr =3D =
+nr, };
+> +       struct syscall_stats *stats;
+> +
+> +       stats =3D bpf_map_lookup_elem(&syscall_stats_map, &key);
+> +       if (stats =3D=3D NULL) {
+> +               struct syscall_stats zero =3D {};
+> +
+> +               bpf_map_update_elem(&syscall_stats_map, &key, &zero, BPF_=
+NOEXIST);
+> +               stats =3D bpf_map_lookup_elem(&syscall_stats_map, &key);
+> +               if (stats =3D=3D NULL)
+> +                       return;
+> +       }
+> +
+> +       __sync_fetch_and_add(&stats->count, 1);
+> +       if (ret < 0)
+> +               __sync_fetch_and_add(&stats->error, 1);
+> +
+> +       if (duration > 0) {
+> +               __sync_fetch_and_add(&stats->total_time, duration);
+> +               __sync_fetch_and_add(&stats->squared_sum, duration * dura=
+tion);
+> +               if (stats->max_time < duration)
+> +                       stats->max_time =3D duration;
+> +               if (stats->min_time > duration || stats->min_time =3D=3D =
+0)
+> +                       stats->min_time =3D duration;
+> +       }
+> +
+> +       return;
+> +}
+> +
+> +SEC("tp_btf/sys_enter")
+> +int sys_enter(u64 *ctx)
+> +{
+> +       int tid;
+> +       struct syscall_trace st;
+> +
+> +       if (!enabled)
+> +               return 0;
+> +
+> +       st.nr =3D ctx[1]; /* syscall number */
+> +       st.unused =3D 0;
+> +       st.timestamp =3D bpf_ktime_get_ns();
+> +
+> +       tid =3D bpf_get_current_pid_tgid();
+> +       bpf_map_update_elem(&syscall_trace_map, &tid, &st, BPF_ANY);
+> +
+> +       return 0;
+> +}
+> +
+> +SEC("tp_btf/sys_exit")
+> +int sys_exit(u64 *ctx)
+> +{
+> +       int tid;
+> +       int key;
+> +       long ret =3D ctx[1]; /* return value of the syscall */
+> +       struct syscall_trace *st;
+> +       s64 delta;
+> +
+> +       if (!enabled)
+> +               return 0;
+> +
+> +       tid =3D bpf_get_current_pid_tgid();
+> +       st =3D bpf_map_lookup_elem(&syscall_trace_map, &tid);
+> +       if (st =3D=3D NULL)
+> +               return 0;
+> +
+> +       if (aggr_mode =3D=3D SYSCALL_AGGR_THREAD)
+> +               key =3D tid;
+> +       else
+> +               key =3D bpf_get_smp_processor_id();
+> +
+> +       delta =3D bpf_ktime_get_ns() - st->timestamp;
+> +       update_stats(key, st->nr, delta, ret);
+> +
+> +       bpf_map_delete_elem(&syscall_trace_map, &tid);
+> +       return 0;
+> +}
+> +
+> +char _license[] SEC("license") =3D "GPL";
+> diff --git a/tools/perf/util/bpf_skel/syscall_summary.h b/tools/perf/util=
+/bpf_skel/syscall_summary.h
+> new file mode 100644
+> index 0000000000000000..17f9ecba657088aa
+> --- /dev/null
+> +++ b/tools/perf/util/bpf_skel/syscall_summary.h
+> @@ -0,0 +1,25 @@
+> +// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +/* Data structures shared between BPF and tools. */
+> +#ifndef UTIL_BPF_SKEL_SYSCALL_SUMMARY_H
+> +#define UTIL_BPF_SKEL_SYSCALL_SUMMARY_H
+> +
+> +enum syscall_aggr_mode {
+> +       SYSCALL_AGGR_THREAD,
+> +       SYSCALL_AGGR_CPU,
+> +};
+> +
+> +struct syscall_key {
+> +       int cpu_or_tid;
+> +       int nr;
+> +};
+> +
+> +struct syscall_stats {
+> +       u64 total_time;
+> +       u64 squared_sum;
+> +       u64 max_time;
+> +       u64 min_time;
+> +       u32 count;
+> +       u32 error;
+> +};
+> +
+> +#endif /* UTIL_BPF_SKEL_SYSCALL_SUMMARY_H */
+> diff --git a/tools/perf/util/trace.h b/tools/perf/util/trace.h
+> new file mode 100644
+> index 0000000000000000..ef8361ed12c4edc1
+> --- /dev/null
+> +++ b/tools/perf/util/trace.h
+> @@ -0,0 +1,37 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +#ifndef UTIL_TRACE_H
+> +#define UTIL_TRACE_H
+> +
+> +#include <stdio.h>  /* for FILE */
+> +
+> +enum trace_summary_mode {
+> +       SUMMARY__NONE =3D 0,
+> +       SUMMARY__BY_TOTAL,
+> +       SUMMARY__BY_THREAD,
+> +};
+> +
+> +#ifdef HAVE_BPF_SKEL
+> +
+> +int trace_prepare_bpf_summary(enum trace_summary_mode mode);
+> +void trace_start_bpf_summary(void);
+> +void trace_end_bpf_summary(void);
+> +int trace_print_bpf_summary(FILE *fp);
+> +void trace_cleanup_bpf_summary(void);
+> +
+> +#else /* !HAVE_BPF_SKEL */
+> +
+> +static inline int trace_prepare_bpf_summary(enum trace_summary_mode mode=
+ __maybe_unused)
+> +{
+> +       return -1;
+> +}
+> +static inline void trace_start_bpf_summary(void) {}
+> +static inline void trace_end_bpf_summary(void) {}
+> +static inline int trace_print_bpf_summary(FILE *fp __maybe_unused)
+> +{
+> +       return 0;
+> +}
+> +static inline void trace_cleanup_bpf_summary(void) {}
+> +
+> +#endif /* HAVE_BPF_SKEL */
+> +
+> +#endif /* UTIL_TRACE_H */
+> --
+> 2.49.0.rc1.451.g8f38331e32-goog
+>
 
