@@ -1,55 +1,55 @@
-Return-Path: <linux-kernel+bounces-564367-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564368-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB192A653AE
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 15:34:59 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F7ADA653B7
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 15:36:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 85319188A270
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 14:34:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1AC5D179450
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 14:34:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C579244E89;
-	Mon, 17 Mar 2025 14:33:52 +0000 (UTC)
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D52A2459C4;
+	Mon, 17 Mar 2025 14:33:57 +0000 (UTC)
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 025F924397B
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 14:33:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2200B241C90
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 14:33:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742222031; cv=none; b=bflnQve2aYIruF5gMAp67qqTseVWiY3i3e5fU/2NKlbkNpXre7k2n+MRN7gN8y3KTjD7xnOw58djLS8RViQotleZtB6dlC0/uaKcLl5eNOGC1fHfW4ojVzCSWuMGmiutu727ltW49AgJd8Rj8HxB/CkQ2L/ujazPR2Rz6R80QPg=
+	t=1742222036; cv=none; b=pXr+EZdeQS5o/ijo9r/bLmYb6Q2bEUyTIbcBTUWPgWE8y9LsAoKYZPaHFa6Dw+GyLQpAyxgw8iq+P9s18CF8VMeyIzAgnBqeHV95T7eGJLXI2vbm/iJNmI4JRkmP6jloy20+/gs4xxcbcpJr/O29lmXKGZ46upP12iVOsafcLLM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742222031; c=relaxed/simple;
-	bh=50tQcubCUH+CBgUwKBIh63YGi3Os5DtzMxCkiADJQNA=;
+	s=arc-20240116; t=1742222036; c=relaxed/simple;
+	bh=qUa6SQ3/K8ohFfOKNMBJrs7GgsuyLmWV+TxdT8k3KnU=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=WF+9EnQ2jhYyW9ePNU9pkbTk59NniO6OyYESOxUM6buXtnCjMNk+IfFd/fpWr1fOveo0+5Ns2mDH7DwHUfdxGOfHJKTrHcxJkxi3okOq67ZuU0W4dOMWBaQewYFjjdr1VmQ5mAPn3+cUUWL/LGOwu6jTakovXUNAz1+LunqkJFw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; arc=none smtp.client-ip=195.135.223.130
+	 In-Reply-To:To:Cc; b=Xr+T72x42Z+LX+1W7uRiFm5xCUoPqVE9kzdKinEe9E9+HxNu6qkXRla1xAsQ4YSaWcLyZSiwycmARuOU9ZgseuaDdo4WgH3lKY+Vq4SVptHSYIYSFnF0paaSfftl0rcsl49eh2nULsmeGrt9CoynaDCJe9fav80EtycuBmH9v2Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; arc=none smtp.client-ip=195.135.223.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
 Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 10A1821AF7;
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 233BA1F823;
 	Mon, 17 Mar 2025 14:33:34 +0000 (UTC)
-Authentication-Results: smtp-out1.suse.de;
+Authentication-Results: smtp-out2.suse.de;
 	none
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id F040A13A5D;
-	Mon, 17 Mar 2025 14:33:33 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0ED5313A2C;
+	Mon, 17 Mar 2025 14:33:34 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id eK1jOr0y2GcycQAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Mon, 17 Mar 2025 14:33:33 +0000
+	id qPFTA74y2GcycQAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Mon, 17 Mar 2025 14:33:34 +0000
 From: Vlastimil Babka <vbabka@suse.cz>
-Date: Mon, 17 Mar 2025 15:33:06 +0100
-Subject: [PATCH RFC v3 5/8] slab: determine barn status racily outside of
- lock
+Date: Mon, 17 Mar 2025 15:33:07 +0100
+Subject: [PATCH RFC v3 6/8] tools: Add testing support for changes to rcu
+ and slab for sheaves
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,7 +58,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250317-slub-percpu-caches-v3-5-9d9884d8b643@suse.cz>
+Message-Id: <20250317-slub-percpu-caches-v3-6-9d9884d8b643@suse.cz>
 References: <20250317-slub-percpu-caches-v3-0-9d9884d8b643@suse.cz>
 In-Reply-To: <20250317-slub-percpu-caches-v3-0-9d9884d8b643@suse.cz>
 To: Suren Baghdasaryan <surenb@google.com>, 
@@ -67,166 +67,211 @@ To: Suren Baghdasaryan <surenb@google.com>,
 Cc: Roman Gushchin <roman.gushchin@linux.dev>, 
  Harry Yoo <harry.yoo@oracle.com>, Uladzislau Rezki <urezki@gmail.com>, 
  linux-mm@kvack.org, linux-kernel@vger.kernel.org, rcu@vger.kernel.org, 
- maple-tree@lists.infradead.org, vbabka@suse.cz
+ maple-tree@lists.infradead.org, vbabka@suse.cz, 
+ "Liam R. Howlett" <Liam.Howlett@Oracle.com>
 X-Mailer: b4 0.14.2
 X-Rspamd-Pre-Result: action=no action;
 	module=replies;
 	Message is reply to one we originated
+X-Spam-Level: 
 X-Spamd-Result: default: False [-4.00 / 50.00];
 	REPLY(-4.00)[]
-X-Spam-Flag: NO
 X-Spam-Score: -4.00
-X-Rspamd-Queue-Id: 10A1821AF7
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: 233BA1F823
 X-Rspamd-Pre-Result: action=no action;
 	module=replies;
 	Message is reply to one we originated
 X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Level: 
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
 
-The possibility of many barn operations is determined by the current
-number of full or empty sheaves. Taking the barn->lock just to find out
-that e.g. there are no empty sheaves results in unnecessary overhead and
-lock contention. Thus perform these checks outside of the lock with a
-data_race() annotated variable read and fail quickly without taking the
-lock.
+From: "Liam R. Howlett" <Liam.Howlett@Oracle.com>
 
-Checks for sheaf availability that racily succeed have to be obviously
-repeated under the lock for correctness, but we can skip repeating
-checks if there are too many sheaves on the given list as the limits
-don't need to be strict.
+Make testing work for the slab and rcu changes that have come in with
+the sheaves work.
 
-Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
-Reviewed-by: Suren Baghdasaryan <surenb@google.com>
-Reviewed-by: Harry Yoo <harry.yoo@oracle.com>
+This only works with one kmem_cache, and only the first one used.
+Subsequent setting of kmem_cache will not update the active kmem_cache
+and will be silently dropped because there are other tests which happen
+after the kmem_cache of interest is set.
+
+The saved active kmem_cache is used in the rcu callback, which passes
+the object to be freed.
+
+The rcu call takes the rcu_head, which is passed in as the field in the
+struct (in this case rcu in the maple tree node), which is calculated by
+pointer math.  The offset of which is saved (in a global variable) for
+restoring the node pointer on the callback after the rcu grace period
+expires.
+
+Don't use any of this outside of testing, please.
+
+Signed-off-by: Liam R. Howlett <Liam.Howlett@Oracle.com>
 ---
- mm/slub.c | 57 ++++++++++++++++++++++++++++++++++-----------------------
- 1 file changed, 34 insertions(+), 23 deletions(-)
+ tools/include/linux/slab.h            | 41 ++++++++++++++++++++++++++++++++---
+ tools/testing/shared/linux.c          | 24 ++++++++++++++++----
+ tools/testing/shared/linux/rcupdate.h | 22 +++++++++++++++++++
+ 3 files changed, 80 insertions(+), 7 deletions(-)
 
-diff --git a/mm/slub.c b/mm/slub.c
-index ab3532d5f41045d8268b12ad774541dcd066c4c4..2c7b2a85c628d01fa4811dd6cd3e4fd198d80381 100644
---- a/mm/slub.c
-+++ b/mm/slub.c
-@@ -2698,9 +2698,12 @@ static struct slab_sheaf *barn_get_empty_sheaf(struct node_barn *barn)
- 	struct slab_sheaf *empty = NULL;
- 	unsigned long flags;
+diff --git a/tools/include/linux/slab.h b/tools/include/linux/slab.h
+index 51b25e9c4ec7b66bdf4c68cc1353c6faf1ca7bb8..a475364cfd9fcdb10db252aab18ea3a620326b6b 100644
+--- a/tools/include/linux/slab.h
++++ b/tools/include/linux/slab.h
+@@ -22,6 +22,12 @@ enum slab_state {
+ 	FULL
+ };
  
-+	if (!data_race(barn->nr_empty))
-+		return NULL;
++struct kmem_cache_args {
++	unsigned int align;
++	unsigned int sheaf_capacity;
++	void (*ctor)(void *);
++};
 +
- 	spin_lock_irqsave(&barn->lock, flags);
- 
--	if (barn->nr_empty) {
-+	if (likely(barn->nr_empty)) {
- 		empty = list_first_entry(&barn->sheaves_empty,
- 					 struct slab_sheaf, barn_list);
- 		list_del(&empty->barn_list);
-@@ -2716,38 +2719,36 @@ static int barn_put_empty_sheaf(struct node_barn *barn,
- 				struct slab_sheaf *sheaf, bool ignore_limit)
+ static inline void *kzalloc(size_t size, gfp_t gfp)
  {
- 	unsigned long flags;
--	int ret = 0;
+ 	return kmalloc(size, gfp | __GFP_ZERO);
+@@ -36,9 +42,38 @@ static inline void *kmem_cache_alloc(struct kmem_cache *cachep, int flags)
+ }
+ void kmem_cache_free(struct kmem_cache *cachep, void *objp);
+ 
+-struct kmem_cache *kmem_cache_create(const char *name, unsigned int size,
+-			unsigned int align, unsigned int flags,
+-			void (*ctor)(void *));
 +
-+	/* we don't repeat the check under barn->lock as it's not critical */
-+	if (!ignore_limit && data_race(barn->nr_empty) >= MAX_EMPTY_SHEAVES)
-+		return -E2BIG;
++struct kmem_cache *
++__kmem_cache_create_args(const char *name, unsigned int size,
++		struct kmem_cache_args *args, unsigned int flags);
++
++/* If NULL is passed for @args, use this variant with default arguments. */
++static inline struct kmem_cache *
++__kmem_cache_default_args(const char *name, unsigned int size,
++		struct kmem_cache_args *args, unsigned int flags)
++{
++	struct kmem_cache_args kmem_default_args = {};
++
++	return __kmem_cache_create_args(name, size, &kmem_default_args, flags);
++}
++
++static inline struct kmem_cache *
++__kmem_cache_create(const char *name, unsigned int size, unsigned int align,
++		unsigned int flags, void (*ctor)(void *))
++{
++	struct kmem_cache_args kmem_args = {
++		.align	= align,
++		.ctor	= ctor,
++	};
++
++	return __kmem_cache_create_args(name, size, &kmem_args, flags);
++}
++
++#define kmem_cache_create(__name, __object_size, __args, ...)           \
++	_Generic((__args),                                              \
++		struct kmem_cache_args *: __kmem_cache_create_args,	\
++		void *: __kmem_cache_default_args,			\
++		default: __kmem_cache_create)(__name, __object_size, __args, __VA_ARGS__)
  
- 	spin_lock_irqsave(&barn->lock, flags);
+ void kmem_cache_free_bulk(struct kmem_cache *cachep, size_t size, void **list);
+ int kmem_cache_alloc_bulk(struct kmem_cache *cachep, gfp_t gfp, size_t size,
+diff --git a/tools/testing/shared/linux.c b/tools/testing/shared/linux.c
+index 66dbb362385f3c3d923233448cc591adfe6dc9e7..9f5fd722f27f1d3877be8927be30409cd74ab3c3 100644
+--- a/tools/testing/shared/linux.c
++++ b/tools/testing/shared/linux.c
+@@ -20,6 +20,7 @@ struct kmem_cache {
+ 	pthread_mutex_t lock;
+ 	unsigned int size;
+ 	unsigned int align;
++	unsigned int sheaf_capacity;
+ 	int nr_objs;
+ 	void *objs;
+ 	void (*ctor)(void *);
+@@ -31,6 +32,8 @@ struct kmem_cache {
+ 	void *private;
+ };
  
--	if (!ignore_limit && barn->nr_empty >= MAX_EMPTY_SHEAVES) {
--		ret = -E2BIG;
--	} else {
--		list_add(&sheaf->barn_list, &barn->sheaves_empty);
--		barn->nr_empty++;
--	}
-+	list_add(&sheaf->barn_list, &barn->sheaves_empty);
-+	barn->nr_empty++;
- 
- 	spin_unlock_irqrestore(&barn->lock, flags);
--	return ret;
-+	return 0;
++static struct kmem_cache *kmem_active = NULL;
++
+ void kmem_cache_set_callback(struct kmem_cache *cachep, void (*callback)(void *))
+ {
+ 	cachep->callback = callback;
+@@ -147,6 +150,14 @@ void kmem_cache_free(struct kmem_cache *cachep, void *objp)
+ 	pthread_mutex_unlock(&cachep->lock);
  }
  
- static int barn_put_full_sheaf(struct node_barn *barn, struct slab_sheaf *sheaf,
- 			       bool ignore_limit)
- {
- 	unsigned long flags;
--	int ret = 0;
++void kmem_cache_free_active(void *objp)
++{
++	if (!kmem_active)
++		printf("WARNING: No active kmem_cache\n");
 +
-+	/* we don't repeat the check under barn->lock as it's not critical */
-+	if (!ignore_limit && data_race(barn->nr_full) >= MAX_FULL_SHEAVES)
-+		return -E2BIG;
- 
- 	spin_lock_irqsave(&barn->lock, flags);
- 
--	if (!ignore_limit && barn->nr_full >= MAX_FULL_SHEAVES) {
--		ret = -E2BIG;
--	} else {
--		list_add(&sheaf->barn_list, &barn->sheaves_full);
--		barn->nr_full++;
--	}
-+	list_add(&sheaf->barn_list, &barn->sheaves_full);
-+	barn->nr_full++;
- 
- 	spin_unlock_irqrestore(&barn->lock, flags);
--	return ret;
-+	return 0;
++	kmem_cache_free(kmem_active, objp);
++}
++
+ void kmem_cache_free_bulk(struct kmem_cache *cachep, size_t size, void **list)
+ {
+ 	if (kmalloc_verbose)
+@@ -234,23 +245,28 @@ int kmem_cache_alloc_bulk(struct kmem_cache *cachep, gfp_t gfp, size_t size,
  }
  
- static struct slab_sheaf *barn_get_full_or_empty_sheaf(struct node_barn *barn)
-@@ -2755,6 +2756,9 @@ static struct slab_sheaf *barn_get_full_or_empty_sheaf(struct node_barn *barn)
- 	struct slab_sheaf *sheaf = NULL;
- 	unsigned long flags;
+ struct kmem_cache *
+-kmem_cache_create(const char *name, unsigned int size, unsigned int align,
+-		unsigned int flags, void (*ctor)(void *))
++__kmem_cache_create_args(const char *name, unsigned int size,
++			  struct kmem_cache_args *args,
++			  unsigned int flags)
+ {
+ 	struct kmem_cache *ret = malloc(sizeof(*ret));
  
-+	if (!data_race(barn->nr_full) && !data_race(barn->nr_empty))
-+		return NULL;
+ 	pthread_mutex_init(&ret->lock, NULL);
+ 	ret->size = size;
+-	ret->align = align;
++	ret->align = args->align;
++	ret->sheaf_capacity = args->sheaf_capacity;
+ 	ret->nr_objs = 0;
+ 	ret->nr_allocated = 0;
+ 	ret->nr_tallocated = 0;
+ 	ret->objs = NULL;
+-	ret->ctor = ctor;
++	ret->ctor = args->ctor;
+ 	ret->non_kernel = 0;
+ 	ret->exec_callback = false;
+ 	ret->callback = NULL;
+ 	ret->private = NULL;
++	if (!kmem_active)
++		kmem_active = ret;
 +
- 	spin_lock_irqsave(&barn->lock, flags);
+ 	return ret;
+ }
  
- 	if (barn->nr_full) {
-@@ -2785,9 +2789,12 @@ barn_replace_empty_sheaf(struct node_barn *barn, struct slab_sheaf *empty)
- 	struct slab_sheaf *full = NULL;
- 	unsigned long flags;
+diff --git a/tools/testing/shared/linux/rcupdate.h b/tools/testing/shared/linux/rcupdate.h
+index fed468fb0c78db6f33fb1900c7110ab5f3c19c65..c95e2f0bbd93798e544d7d34e0823ed68414f924 100644
+--- a/tools/testing/shared/linux/rcupdate.h
++++ b/tools/testing/shared/linux/rcupdate.h
+@@ -9,4 +9,26 @@
+ #define rcu_dereference_check(p, cond) rcu_dereference(p)
+ #define RCU_INIT_POINTER(p, v)	do { (p) = (v); } while (0)
  
-+	if (!data_race(barn->nr_full))
-+		return NULL;
++void kmem_cache_free_active(void *objp);
++static unsigned long kfree_cb_offset = 0;
 +
- 	spin_lock_irqsave(&barn->lock, flags);
- 
--	if (barn->nr_full) {
-+	if (likely(barn->nr_full)) {
- 		full = list_first_entry(&barn->sheaves_full, struct slab_sheaf,
- 					barn_list);
- 		list_del(&full->barn_list);
-@@ -2810,19 +2817,23 @@ barn_replace_full_sheaf(struct node_barn *barn, struct slab_sheaf *full)
- 	struct slab_sheaf *empty;
- 	unsigned long flags;
- 
-+	/* we don't repeat this check under barn->lock as it's not critical */
-+	if (data_race(barn->nr_full) >= MAX_FULL_SHEAVES)
-+		return ERR_PTR(-E2BIG);
-+	if (!data_race(barn->nr_empty))
-+		return ERR_PTR(-ENOMEM);
++static inline void kfree_rcu_cb(struct rcu_head *head)
++{
++	void *objp = (void *) ((unsigned long)head - kfree_cb_offset);
 +
- 	spin_lock_irqsave(&barn->lock, flags);
- 
--	if (barn->nr_full >= MAX_FULL_SHEAVES) {
--		empty = ERR_PTR(-E2BIG);
--	} else if (!barn->nr_empty) {
--		empty = ERR_PTR(-ENOMEM);
--	} else {
-+	if (likely(barn->nr_empty)) {
- 		empty = list_first_entry(&barn->sheaves_empty, struct slab_sheaf,
- 					 barn_list);
- 		list_del(&empty->barn_list);
- 		list_add(&full->barn_list, &barn->sheaves_full);
- 		barn->nr_empty--;
- 		barn->nr_full++;
-+	} else {
-+		empty = ERR_PTR(-ENOMEM);
- 	}
- 
- 	spin_unlock_irqrestore(&barn->lock, flags);
++	kmem_cache_free_active(objp);
++}
++
++#ifndef offsetof
++#define offsetof(TYPE, MEMBER)	__builtin_offsetof(TYPE, MEMBER)
++#endif
++
++#define kfree_rcu(ptr, rhv)						\
++do {									\
++	if (!kfree_cb_offset)						\
++		kfree_cb_offset = offsetof(typeof(*(ptr)), rhv);	\
++									\
++	call_rcu(&ptr->rhv, kfree_rcu_cb);				\
++} while (0)
++
+ #endif
 
 -- 
 2.48.1
