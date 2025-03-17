@@ -1,73 +1,119 @@
-Return-Path: <linux-kernel+bounces-564270-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564269-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 202E8A6519D
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 14:48:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B288A6519B
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 14:47:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 20AC03ABAB6
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 13:47:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A14A3A910E
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 13:47:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F02C023F412;
-	Mon, 17 Mar 2025 13:47:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="nSU0aWuE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BD8F23E227;
+	Mon, 17 Mar 2025 13:47:42 +0000 (UTC)
+Received: from out03.mta.xmission.com (out03.mta.xmission.com [166.70.13.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B3AE2253B2;
-	Mon, 17 Mar 2025 13:47:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5850014A4E0
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 13:47:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.70.13.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742219265; cv=none; b=Z7EDg5asjWLahZSckKYwzI6uxDYJIX3FB35879TzoeZmWeEk29w2HVDDxi8/WlrnRGUaKDmrvEcNwKq7KrQBMIcuMLqGTk7HlBlt4uCwHH6t+0OwJIZi5jU7UFVeezhuDRO4/ja7qLWR71jj3a4M8cuquBYetpSmEexFCSs1AcI=
+	t=1742219262; cv=none; b=X6fzGA8lHGl0qHUJ+L8Se5csU+bl2FoZrwvzXT8aTH8JAtwPqH5qXmjNclmhf+2hOHR8pN3StoZmb9u2fmhUGb86NnG4+od28fuALaSTnhUapFWV3UHqJlDCOmeAY07ns/o1PhwxGjMvuqJnRi6lXI6+cTjPRnNCD4fnxXZoQlY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742219265; c=relaxed/simple;
-	bh=APpyBzeHrERkrfYDypeg50f/VwE8NlywBf95x9pAa9U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FM34bbcWtrVo5DzgVoc44RZP4yQVEnEvgMp5aHun6uVsSLY+j/l3WautSzWx1bk5iRbZIvDqLQ9tb3MRv/1VL5gbrcj02HE7IDTjl8RbDbrgrDkehodXPpHBXwJIl38+UoL7asvAJLYUXSegJSctsfBG5m/pCei8ti0ULzaWFMM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=nSU0aWuE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BEC91C4CEE9;
-	Mon, 17 Mar 2025 13:47:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1742219264;
-	bh=APpyBzeHrERkrfYDypeg50f/VwE8NlywBf95x9pAa9U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nSU0aWuEQ/v+Q9DRLUBVavPm2lAlmHu1OEoLD+yeh/bovPCoh/072Nv649dVG3TRX
-	 Mm66JOvSJN6oQAyy6N1S0hyUxOc2NTrlykxsG0pgH6k0kolmyMUnSiDisNMPp1sQkA
-	 3ftWzgAWaNetHS3eBIHs9WUtDyHZhRGVAbHLSGEw=
-Date: Mon, 17 Mar 2025 14:46:20 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Brendan Jackman <jackmanb@google.com>
-Cc: cve@kernel.org, linux-cve-announce@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: CVE-2022-49444: module: fix [e_shstrndx].sh_size=0 OOB access
-Message-ID: <2025031759-pretzel-automated-fc3e@gregkh>
-References: <2025022658-CVE-2022-49444-ff21@gregkh>
- <20250317081416.377784-1-jackmanb@google.com>
+	s=arc-20240116; t=1742219262; c=relaxed/simple;
+	bh=FUAGxSnhR1t8Np3jzCiwBr6lZTqyKfAJbH5KVHS1oIA=;
+	h=From:To:Cc:Date:Message-ID:MIME-Version:Content-Type:Subject; b=kP4to6xk/L1fuEM95qaF5xH3V9W/Ue8J85fbL0cWN5KnZdYg/WA5hPFcc3Wp29acwrFtaFzf+lX4aShNwmyi3xmG0U8mkpsbCbxIio0Ybhck6quIkSjEpilFPhtgFJYNKUOaBMDSZx7YmdjbcBW6w2N2KkxVZuElNNjZ8I1fDsA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com; spf=pass smtp.mailfrom=xmission.com; arc=none smtp.client-ip=166.70.13.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xmission.com
+Received: from in02.mta.xmission.com ([166.70.13.52]:44470)
+	by out03.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.93)
+	(envelope-from <ebiederm@xmission.com>)
+	id 1tuAoc-001XWc-FI; Mon, 17 Mar 2025 07:47:38 -0600
+Received: from ip72-198-198-28.om.om.cox.net ([72.198.198.28]:59574 helo=email.froward.int.ebiederm.org.xmission.com)
+	by in02.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.93)
+	(envelope-from <ebiederm@xmission.com>)
+	id 1tuAoa-003fO2-WF; Mon, 17 Mar 2025 07:47:38 -0600
+From: "Eric W. Biederman" <ebiederm@xmission.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ <linux-kernel@vger.kernel.org> ,
+ Kexec Mailing List <kexec@lists.infradead.org>,
+ Kees Cook <keescook@chromium.org> 
+Date: Mon, 17 Mar 2025 08:47:30 -0500
+Message-ID: <87r02v7or1.fsf@email.froward.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250317081416.377784-1-jackmanb@google.com>
+Content-Type: text/plain
+X-XM-SPF: eid=1tuAoa-003fO2-WF;;;mid=<87r02v7or1.fsf@email.froward.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=72.198.198.28;;;frm=ebiederm@xmission.com;;;spf=pass
+X-XM-AID: U2FsdGVkX197FQxHXBXos5TSabCI0KcBicWE4+FEdFM=
+X-Spam-Level: 
+X-Spam-Report: 
+	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+	* -0.0 BAYES_40 BODY: Bayes spam probability is 20 to 40%
+	*      [score: 0.2552]
+	* -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+	*      [sa06 1397; Body=1 Fuz1=1 Fuz2=1]
+X-Spam-DCC: XMission; sa06 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ;Linus Torvalds <torvalds@linux-foundation.org>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 743 ms - load_scoreonly_sql: 0.04 (0.0%),
+	signal_user_changed: 11 (1.5%), b_tie_ro: 10 (1.3%), parse: 0.89
+	(0.1%), extract_message_metadata: 23 (3.1%), get_uri_detail_list: 1.98
+	(0.3%), tests_pri_-2000: 31 (4.2%), tests_pri_-1000: 2.3 (0.3%),
+	tests_pri_-950: 1.22 (0.2%), tests_pri_-900: 0.97 (0.1%),
+	tests_pri_-90: 193 (26.0%), check_bayes: 189 (25.4%), b_tokenize: 6
+	(0.8%), b_tok_get_all: 42 (5.7%), b_comp_prob: 1.93 (0.3%),
+	b_tok_touch_all: 135 (18.1%), b_finish: 0.97 (0.1%), tests_pri_0: 205
+	(27.6%), check_dkim_signature: 0.81 (0.1%), check_dkim_adsp: 3.9
+	(0.5%), poll_dns_idle: 248 (33.5%), tests_pri_10: 2.7 (0.4%),
+	tests_pri_500: 268 (36.1%), rewrite_mail: 0.00 (0.0%)
+Subject: [PATCH] MAINTAINERS: Remove myself
+X-SA-Exim-Connect-IP: 166.70.13.52
+X-SA-Exim-Rcpt-To: keescook@chromium.org, kexec@lists.infradead.org, linux-kernel@vger.kernel.org, akpm@linux-foundation.org, torvalds@linux-foundation.org
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-SA-Exim-Scanned: No (on out03.mta.xmission.com); SAEximRunCond expanded to false
 
-On Mon, Mar 17, 2025 at 08:14:16AM +0000, Brendan Jackman wrote:
-> > It is trivial to craft a module to trigger OOB access in this line:
-> 
-> Requires loading a crafted module?  I don't think there's any coherent threat
-> model where this is a vuln. Probably a CVE to revoke?
 
-Look at the commit this is marked as fixing.  It was a "feature"
-introduced to properly harden elf sections in modules.  So if you are
-relying on that new thing, then yes, this is a vulnerability.  If your
-system does not, then your system is not vulnerable to this issue.
+Unfortunately I no longer have time to meaningfully take part in the
+linux kernel development.
 
-thanks,
+Signed-off-by: Eric W. Biederman <ebiederm@xmission.com>
+---
+ MAINTAINERS | 3 ---
+ 1 file changed, 3 deletions(-)
 
-greg k-h
+diff --git a/MAINTAINERS b/MAINTAINERS
+index c9763412a508..7469254b13ec 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -8644,7 +8644,6 @@ F:	rust/kernel/net/phy/reg.rs
+ 
+ EXEC & BINFMT API, ELF
+ M:	Kees Cook <kees@kernel.org>
+-R:	Eric Biederman <ebiederm@xmission.com>
+ L:	linux-mm@kvack.org
+ S:	Supported
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git for-next/execve
+@@ -12824,9 +12823,7 @@ F:	fs/kernfs/
+ F:	include/linux/kernfs.h
+ 
+ KEXEC
+-M:	Eric Biederman <ebiederm@xmission.com>
+ L:	kexec@lists.infradead.org
+-S:	Maintained
+ W:	http://kernel.org/pub/linux/utils/kernel/kexec/
+ F:	include/linux/kexec.h
+ F:	include/uapi/linux/kexec.h
+-- 
+2.41.0
+
 
