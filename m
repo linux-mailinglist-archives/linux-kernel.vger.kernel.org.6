@@ -1,213 +1,124 @@
-Return-Path: <linux-kernel+bounces-563379-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563380-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EDF0A64081
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 07:00:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id ED573A64091
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 07:02:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C2B1616C0F9
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 06:00:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B1FD16C150
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 06:02:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0156C215047;
-	Mon, 17 Mar 2025 06:00:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84EE721505B;
+	Mon, 17 Mar 2025 06:02:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="KEaACtEN"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="a12kam4p"
+Received: from out30-111.freemail.mail.aliyun.com (out30-111.freemail.mail.aliyun.com [115.124.30.111])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A967F219A67;
-	Mon, 17 Mar 2025 06:00:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD26C2E3373;
+	Mon, 17 Mar 2025 06:02:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.111
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742191230; cv=none; b=YzGlnKYMg6YM2Y6+T7aI3Sl8A0DV5JqD3O9Kfx2VWbRjt2+yMTGnqymV50ET2LdyhD4Dw8caoVimrGwyIdGRoESiOietAClq8uJBXgF+yTyqEC9aRvKFDvBjsAdoD/nxG0VxwzaP7Ek8b1Xdeg8PIt88ZORZ+zC8pGnfMEnyhLY=
+	t=1742191362; cv=none; b=J6t4q0yFcxLMS6Rz8JHiMaif8Gpo1D1pHGXIQ8mCezGtmHrbhxooCJQ0sqV+3hW45/fFVa6QY59JMY7zIZzgi5STOhUaYDmeZVkpcPfafzKOfdJfrlLciTFqrGZC+BzBdt5teNw5S/R1UP5C7gjoQAMiNMG4dXw86y2iCRLDlaQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742191230; c=relaxed/simple;
-	bh=KolPb0ZPx8rcPVhd+iIkVv8wTL1cMaWQTdS3A9h7eeI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Y82piAzrHLD/YVbR3R0U5z19spdGnrSEhpf3eJNC000ltAtrZ2SLB8cjegwLdYgkg0Nj0Qu+nrLvzF7op7he/8mVB5wyXxS2HjZftxnezjUqadozS0kC6PTb8YpssEGJRVMetlzbEG5n3y4nSH4sdMO3B1RrfCMtb7OtDvHcFN8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=KEaACtEN; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52GLG2u0028438;
-	Mon, 17 Mar 2025 06:00:25 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	A+dA4s4jwVJZgJSxp0R2I5Q/Rl0g+wdmKtRcggg0pxc=; b=KEaACtENJksCnYmn
-	hRuZUk6Cg9wj4ItsgDUzTFBijg1qCJLGUD91SWYrOjd1mCACfxeE4E/rKuxQ077Y
-	9sPr+HysEylR8alDCQIn0wHXg9sy4/O7iNbf1RTv20REozEazfwUyt3ih82McFce
-	AgsL3/nJH51HMkRuprJmiau+45DbeJbiyPvUc6SwzbPXA3ep6odaEDKVNBtttLve
-	1GJOuwzyI/2aqZmlRa3k8o2n83o8VVhZN/inR6S/CwJFTA3530KRovSdIFQ9IfYt
-	tKxjTbF0c9SzNSw8696ImrRnFoHhkgbC50fkEs141zTNSkJc130p0jMx+kOLu5PN
-	9VAcDA==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45d1utuhhe-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 17 Mar 2025 06:00:24 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52H60NlF028526
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 17 Mar 2025 06:00:23 GMT
-Received: from [10.204.100.69] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 16 Mar
- 2025 23:00:19 -0700
-Message-ID: <b9743d3a-d0bb-385f-f21e-6b0c0be37fae@quicinc.com>
-Date: Mon, 17 Mar 2025 11:30:16 +0530
+	s=arc-20240116; t=1742191362; c=relaxed/simple;
+	bh=sOig/ORpClWPiiaToPGJq5t+0VEGnCE5ZesaAcaMFAM=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=qiSz6m3eHG8XZE9O8lvqf2cDY/P4sjTHUwAs6OLKstOSBhE0X9wWG2XlAnAehbldaFmfplCqoXCFnQol70StHk7RCL8mxIbXqLpvRFZHtNSen6r+MW27zli5PA9FYiAORIqoxkZP58NWcEVWjQox1J8uvg2AmyIKO8fyZPNL168=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=a12kam4p; arc=none smtp.client-ip=115.124.30.111
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1742191349; h=Message-ID:Date:MIME-Version:Subject:From:To:Content-Type;
+	bh=b5GxWT6HNGG5WO59UC9kgPZf/Ys/EEvS9UccUUiRohs=;
+	b=a12kam4pxZPBeTjI5STZtSuyYYN6uCVjFR2GQYStNAAFsywgQdwHIR70nnEr9AD43HHwpWULwBG2Baoi+cvajiz6TmJ8ip/n92cNkhKjGEXgQ6ZxocGPjjVt7rA6UxqVHuNy6xdUb2nzIZRYAthpPCNjsm2oKoymhBSVFl+/1/M=
+Received: from 30.246.160.93(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WRZvNEt_1742191346 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Mon, 17 Mar 2025 14:02:27 +0800
+Message-ID: <362fcb01-8d9c-49e6-be83-5a784c1e5f3e@linux.alibaba.com>
+Date: Mon, 17 Mar 2025 14:02:26 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH 3/4] arm64: dts: qcom: sa8775p: add support for video node
-Content-Language: en-US
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-        Konrad Dybcio
-	<konrad.dybcio@oss.qualcomm.com>
-CC: Dikshita Agarwal <quic_dikshita@quicinc.com>,
-        Abhinav Kumar
-	<quic_abhinavk@quicinc.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        "Rob
- Herring" <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        "Conor
- Dooley" <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        "Konrad Dybcio" <konradybcio@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-media@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20250311-dtbinding-v1-0-5c807d33f7ae@quicinc.com>
- <20250311-dtbinding-v1-3-5c807d33f7ae@quicinc.com>
- <3ec71075-b1ef-4366-b595-80fe41cd1e13@oss.qualcomm.com>
- <5qfe4gnjnttnpezj36rdsdbomghnz5ytj3hiecoingj7622o5a@h4tq4tzliwz4>
-From: Vikash Garodia <quic_vgarodia@quicinc.com>
-In-Reply-To: <5qfe4gnjnttnpezj36rdsdbomghnz5ytj3hiecoingj7622o5a@h4tq4tzliwz4>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=H8Pbw/Yi c=1 sm=1 tr=0 ts=67d7ba78 cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=COk6AnOGAAAA:8 a=ZGXQcgbqD8WDeBfBLQcA:9 a=4gxJ66kGJAKMeDS_:21
- a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-GUID: KaW_Gi31VPCcydntAPzUYPCIhfEw1Syv
-X-Proofpoint-ORIG-GUID: KaW_Gi31VPCcydntAPzUYPCIhfEw1Syv
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-17_01,2025-03-17_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
- lowpriorityscore=0 bulkscore=0 adultscore=0 spamscore=0 priorityscore=1501
- mlxscore=0 suspectscore=0 malwarescore=0 clxscore=1015 impostorscore=0
- phishscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503170042
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 3/3] PCI/AER: Report fatal errors of RCiEP and EP if
+ link recoverd
+From: Shuai Xue <xueshuai@linux.alibaba.com>
+To: Sathyanarayanan Kuppuswamy <sathyanarayanan.kuppuswamy@linux.intel.com>,
+ linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, bhelgaas@google.com, kbusch@kernel.org
+Cc: mahesh@linux.ibm.com, oohall@gmail.com, Jonathan.Cameron@huawei.com,
+ terry.bowman@amd.com, tianruidong@linux.alibaba.com
+References: <20250217024218.1681-1-xueshuai@linux.alibaba.com>
+ <20250217024218.1681-4-xueshuai@linux.alibaba.com>
+ <8a833aaf-53aa-4e56-a560-2b84a6e9c28c@linux.intel.com>
+ <1dea64ef-3c9f-4bff-820f-34d8f3a6a1d4@linux.alibaba.com>
+In-Reply-To: <1dea64ef-3c9f-4bff-820f-34d8f3a6a1d4@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
 
-On 3/16/2025 12:02 AM, Dmitry Baryshkov wrote:
-> On Sat, Mar 15, 2025 at 02:43:30PM +0100, Konrad Dybcio wrote:
->> On 3/11/25 1:03 PM, Vikash Garodia wrote:
->>> Video node enables video on Qualcomm SA8775P platform.
+
+在 2025/3/3 12:33, Shuai Xue 写道:
+> 
+> 
+> 在 2025/3/3 11:43, Sathyanarayanan Kuppuswamy 写道:
+>>
+>> On 2/16/25 6:42 PM, Shuai Xue wrote:
+>>> The AER driver has historically avoided reading the configuration space of
+>>> an endpoint or RCiEP that reported a fatal error, considering the link to
+>>> that device unreliable. Consequently, when a fatal error occurs, the AER
+>>> and DPC drivers do not report specific error types, resulting in logs like:
 >>>
->>> Signed-off-by: Vikash Garodia <quic_vgarodia@quicinc.com>
->>> ---
->>>  arch/arm64/boot/dts/qcom/sa8775p.dtsi | 67 +++++++++++++++++++++++++++++++++++
->>>  1 file changed, 67 insertions(+)
+>>>    pcieport 0000:30:03.0: EDR: EDR event received
+>>>    pcieport 0000:30:03.0: DPC: containment event, status:0x0005 source:0x3400
+>>>    pcieport 0000:30:03.0: DPC: ERR_FATAL detected
+>>>    pcieport 0000:30:03.0: AER: broadcast error_detected message
+>>>    nvme nvme0: frozen state error detected, reset controller
+>>>    nvme 0000:34:00.0: ready 0ms after DPC
+>>>    pcieport 0000:30:03.0: AER: broadcast slot_reset message
 >>>
->>> diff --git a/arch/arm64/boot/dts/qcom/sa8775p.dtsi b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
->>> index 3394ae2d13003417a15e64c9e47833725ec779e6..09db8e2eb578f1cada0f4a15e3f844dc097bd46d 100644
->>> --- a/arch/arm64/boot/dts/qcom/sa8775p.dtsi
->>> +++ b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
->>> @@ -10,6 +10,7 @@
->>>  #include <dt-bindings/clock/qcom,sa8775p-dispcc.h>
->>>  #include <dt-bindings/clock/qcom,sa8775p-gcc.h>
->>>  #include <dt-bindings/clock/qcom,sa8775p-gpucc.h>
->>> +#include <dt-bindings/clock/qcom,sa8775p-videocc.h>
->>>  #include <dt-bindings/dma/qcom-gpi.h>
->>>  #include <dt-bindings/interconnect/qcom,sa8775p-rpmh.h>
->>>  #include <dt-bindings/mailbox/qcom-ipcc.h>
->>> @@ -3783,6 +3784,72 @@ llcc: system-cache-controller@9200000 {
->>>  			interrupts = <GIC_SPI 580 IRQ_TYPE_LEVEL_HIGH>;
->>>  		};
->>>  
->>> +		iris: video-codec@aa00000 {
->>> +			compatible = "qcom,sa8775p-iris";
->>> +
->>> +			reg = <0 0x0aa00000 0 0xf0000>;
->>> +			interrupts = <GIC_SPI 174 IRQ_TYPE_LEVEL_HIGH>;
->>> +
->>> +			power-domains = <&videocc VIDEO_CC_MVS0C_GDSC>,
->>> +					<&videocc VIDEO_CC_MVS0_GDSC>,
->>> +					<&rpmhpd SA8775P_MXC>,
->>> +					<&rpmhpd SA8775P_MMCX>;
->>> +			power-domain-names = "venus",
->>> +					     "vcodec0",
->>> +					     "mx",
->>> +					     "mmcx";
->>> +			operating-points-v2 = <&iris_opp_table>;
->>> +
->>> +			clocks = <&gcc GCC_VIDEO_AXI0_CLK>,
->>> +				 <&videocc VIDEO_CC_MVS0C_CLK>,
->>> +				 <&videocc VIDEO_CC_MVS0_CLK>;
->>> +			clock-names = "iface",
->>> +				      "core",
->>> +				      "vcodec0_core";
->>> +
->>> +			interconnects = <&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
->>> +					&config_noc SLAVE_VENUS_CFG QCOM_ICC_TAG_ALWAYS>,
+>>> AER status registers are sticky and Write-1-to-clear. If the link recovered
+>>> after hot reset, we can still safely access AER status of the error device.
+>>> In such case, report fatal errors which helps to figure out the error root
+>>> case.
+>>>
+>>> After this patch, the logs like:
+>>>
+>>>    pcieport 0000:30:03.0: EDR: EDR event received
+>>>    pcieport 0000:30:03.0: DPC: containment event, status:0x0005 source:0x3400
+>>>    pcieport 0000:30:03.0: DPC: ERR_FATAL detected
+>>>    pcieport 0000:30:03.0: AER: broadcast error_detected message
+>>>    nvme nvme0: frozen state error detected, reset controller
+>>>    pcieport 0000:30:03.0: waiting 100 ms for downstream link, after activation
+>>>    nvme 0000:34:00.0: ready 0ms after DPC
+>>>    nvme 0000:34:00.0: PCIe Bus Error: severity=Uncorrectable (Fatal), type=Data Link Layer, (Receiver ID)
+>>>    nvme 0000:34:00.0:   device [144d:a804] error status/mask=00000010/00504000
+>>>    nvme 0000:34:00.0:    [ 4] DLP                    (First)
+>>>    pcieport 0000:30:03.0: AER: broadcast slot_reset message
 >>
->> This path should use QCOM_ICC_TAG_ACTIVE_ONLY on both endpoints
+>> IMO, above info about device error details is more of a debug info. Since the
+>> main use of this info use to understand more details about the recovered
+>> DPC error. So I think is better to print with debug tag. Lets see what others
+>> think.
 >>
->>> +					<&mmss_noc MASTER_VIDEO_P0 QCOM_ICC_TAG_ALWAYS
->>> +					&mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>;
->>> +			interconnect-names = "cpu-cfg",
->>> +					     "video-mem";
->>> +
->>> +			firmware-name = "qcom/vpu/vpu30_p4_s6.mbn";
+>> Code wise, looks fine to me.
 > 
-> Firmware-name should be a part of the board DT file rather than the SoC
-> DT.
-Given that video ip is independent of any board, remains same for any board
-variant of SA8775p, and again for the same reason, PIL, aspects of video driver
-was made out of probe, i would prefer to keep it in SOC. Again, this can be
-overridden in board specific variant DT, if any case arise, incase.
+> thanks, looking forward to more feedback.
 >>
->> If it needs different firmware, I have my doubts over why 8550's data
->> would be fully reused. Are you sure everything in iris_platform_sm8550.c
->> applies?
-> 
-> If I understand correctly, the firmware is different, because the
-> signature profile is different. The Iris core should be compatible.
-That appropriately explains the need for different firmware.
-> 
 >>
->>> +			memory-region = <&pil_video_mem>;
->>> +
->>> +			resets = <&gcc GCC_VIDEO_AXI0_CLK_ARES>;
->>> +			reset-names = "bus";
->>> +
->>> +			iommus = <&apps_smmu 0x0880 0x0400>,
->>> +				 <&apps_smmu 0x0887 0x0400>;
->>> +			dma-coherent;
->>> +
->>> +			iris_opp_table: opp-table {
->>> +				compatible = "operating-points-v2";
->>> +
->>> +				opp-366000000 {
->>> +					opp-hz = /bits/ 64 <366000000>;
->>> +					required-opps = <&rpmhpd_opp_svs_l1>,
->>> +							<&rpmhpd_opp_svs_l1>;
->>> +				};
->>
->> Please add a newline between subsequent subnodes
->>
->> Konrad
-Regards,
-Vikash
+
+Hi, all,
+
+Gentle ping.
+
+Thanks.
+Shuai
+
 
