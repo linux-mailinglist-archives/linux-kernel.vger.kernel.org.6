@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-563503-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563504-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF912A6430B
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 08:13:02 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B88FA6430F
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 08:15:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E1C33A8818
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 07:12:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD33C16C4B0
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 07:15:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CD5621A45E;
-	Mon, 17 Mar 2025 07:12:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6660F21ABA6;
+	Mon, 17 Mar 2025 07:14:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LF62dsWd"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S2vtqP5x"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7146F18A6B5
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 07:12:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C54E8219A7E
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 07:14:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742195576; cv=none; b=jbPY9MyIP/JzBEhxwb3pXEMvLfsgiAW4UV562YDh+NuId8BatlCrHI0YEhD4tnlOLKnA00cagIIgun+11a4oPSFWo4/fsX/1o7s+lI0Mp8ciaDST7g9MznWDz9ppYjb1dbb+wKbvt9H1YXJXTQEYIIYb3u3EsPQ+z6l/ORy0VpQ=
+	t=1742195694; cv=none; b=HmlATFDkQjsLmYuKnsPW/Ved8yR/C85+9TJGcZHU950GjaysMzBN5ZdwdR6DZ3puZH0d7+DLKyFX6Fen9ALyomILkmWXPX5CbLzXHHLbmpN7/TEDmtVIkpjR2/lzEc5Tzii0Rl7kkZ6rO0FqgDc7e82zJmMxqNqJkuOVMyWimIc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742195576; c=relaxed/simple;
-	bh=8CS4msPxk4DCirERvuRrksmNRWtm494ZCr116H0cv0I=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=nI7AmLbWTQlB5R5lpBy1N+4qMg8X5L8prnyDdI4SQk8PKdFU7hQUbsxzZF7X0cjHxAbR+3ALhNkhrryMNkRHt8zqSA9hBRaO2LXi0B/3xeY7pX8H+bzEJgYhfvf0JkKssmc1GfKtyjPQpDaqc1tl9i6u/7Idh2/N3ZQUCv869Hk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LF62dsWd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B2DFC4CEE3;
-	Mon, 17 Mar 2025 07:12:55 +0000 (UTC)
+	s=arc-20240116; t=1742195694; c=relaxed/simple;
+	bh=+GnndWOE1pTkssulvuePPCLLL2W8FebbY/6H8oDhMPc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=J7XI4QkgUr4v9LjBnK81HchGa+u7bUBioemUC5OidbnKAARsOW47cUHEvzUQl1qCI1OslBTLK1DN2fmseVQ1hH9CiofaqolsAFWuFT/G5NN7XlNp52HUXP2D6Fryf/PjVgx8OjVM3zoJUoVqsYKHbIw1wPvY/zwaMCy9BqymNvE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S2vtqP5x; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A62EC4CEE3;
+	Mon, 17 Mar 2025 07:14:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742195576;
-	bh=8CS4msPxk4DCirERvuRrksmNRWtm494ZCr116H0cv0I=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=LF62dsWd9hmoMcCslTEilzyXJHFy/cmN8CxKod0XPZRyzzmfvTheXhT9/p+iFgH4B
-	 v4UFJHUrh0HrqZfW8i0M3gL6Zlb9Ltw1VREPojlOiXryU0D4sFQI0AiXpPSosWHgnx
-	 /Wq/AcGHdbB8M4JCsS2oDgPjDeFcHNukHBvFsggRIwoBdkQle6RWeNFN10doNU2A4+
-	 SeRZLScE4awskkiblmxaoTBzbe7zQsroyGJvPIbmfU9hzwMuTE3ubrc5CxEDJyxTM3
-	 BoxOCb9kIqH/UGs4Xes0EU/pYSauaVSI+yHvJObNIU6kfdnbu15muYAobrHOOdbEZ3
-	 skboG043PBhOw==
-Message-ID: <6ad02c17-a175-43fd-bce4-d3cd2dc01338@kernel.org>
-Date: Mon, 17 Mar 2025 15:12:53 +0800
+	s=k20201202; t=1742195694;
+	bh=+GnndWOE1pTkssulvuePPCLLL2W8FebbY/6H8oDhMPc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=S2vtqP5xMr+jpn3ymSHuOqI1N46sEZzTWOEvnIxUaYdxbia700LWLVuwFGskPHWR9
+	 AnkXAky19bsVBnj2unomD8TrqQRFysxoQnQbDTRW2EvXYHznRP1aDnNFMm4K9Yn2KI
+	 4hfhDfzFpOHWgo6ZQu0dr8s0SSrJ30XzwkAU/C1hxWIFbgOPAg9klFKYjDTnMNRKzb
+	 XqMPlYyo9ClykSlXTdqJTzspzR0qrTPsrn+7vbRmOY0UYy/yE3ch0YdaPt1Pq+2fwk
+	 2MOXQb8qNG63ggSN2sxEufA9ihF4AbaihnmpoR55XbOwU49SJzxI7wzQWE/WD+1eVe
+	 vbS2/o8Afk0UA==
+Message-ID: <bc7d8174-f0dc-4976-8040-cfd50c04c25d@kernel.org>
+Date: Mon, 17 Mar 2025 08:14:51 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,127 +49,74 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Cc: chao@kernel.org,
- "linux-f2fs-devel@lists.sourceforge.net"
- <linux-f2fs-devel@lists.sourceforge.net>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] f2fs: fix missing discard for active segments
-To: Chunhai Guo <guochunhai@vivo.com>, "jaegeuk@kernel.org"
- <jaegeuk@kernel.org>
-References: <20250109122755.177926-1-guochunhai@vivo.com>
- <4270b213-e4f9-46b2-958a-df3dbaaed969@kernel.org>
- <95b8334a-45e6-496a-8b0b-ab7a7fe180b5@vivo.com>
+Subject: Re: [PATCH linux-next] genirq: use sysfs_emit()/sysfs_emit_at()
+ instead of scnprintf().
+To: xie.ludan@zte.com.cn, tglx@linutronix.de
+Cc: linux-kernel@vger.kernel.org, xu.xin16@zte.com.cn, yang.yang29@zte.com.cn
+References: <20250317145456376WIxu0TMZrHMod4XZCbh2g@zte.com.cn>
 Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <95b8334a-45e6-496a-8b0b-ab7a7fe180b5@vivo.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+From: Jiri Slaby <jirislaby@kernel.org>
+Autocrypt: addr=jirislaby@kernel.org; keydata=
+ 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
+In-Reply-To: <20250317145456376WIxu0TMZrHMod4XZCbh2g@zte.com.cn>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 3/13/25 10:25, Chunhai Guo wrote:
-> 在 1/20/2025 8:25 PM, Chao Yu 写道:
->> On 1/9/25 20:27, Chunhai Guo wrote:
->>> During a checkpoint, the current active segment X may not be handled
->>> properly. This occurs when segment X has 0 valid blocks and a non-zero
->> How does this happen? Allocator selects a dirty segment w/ SSR? and the
->> left valid data blocks were deleted later before following checkpoint?
->>
->> If so, pending discard count in that segment should be in range of (0, 512)?
-> 
-> 
-> This issue is found with LFS rather than SSR. Here's what happens: some
-> data blocks are allocated for a file in the current active segment, and
-> then the file is deleted, resulting in all valid data blocks in the
-> current active segment being deleted before the following checkpoint.
-> This issue is easy to reproduce with the following operations:
-> 
-> 
-> # mkfs.f2fs -f /dev/nvme2n1
-> # mount -t f2fs /dev/nvme2n1 /vtmp/mnt/f2fs
-> # dd if=/dev/nvme0n1 of=/vtmp/mnt/f2fs/1.bin bs=4k count=256
-> # sync
-> # rm /vtmp/mnt/f2fs/1.bin
-> # umount /vtmp/mnt/f2fs
-> # dump.f2fs /dev/nvme2n1 | grep "checkpoint state"
-> Info: checkpoint state = 45 :  crc compacted_summary unmount ----
-> 'trimmed' flag is missing
-> 
-> The pending discard count in that segment indeed falls within the range
-> of (0, 512).
+Are you a bot?
 
-Please add this testcase into commit message, otherwise it looks
-good to me, feel free to add:
-
-Reviewed-by: Chao Yu <chao@kernel.org>
-
-Thanks,
-
-> 
-> Thanks,
->> Thanks,
->>
->>> number of discard blocks, for the following reasons:
->>>
->>> locate_dirty_segment() does not mark any active segment as a prefree
->>> segment. As a result, segment X is not included in dirty_segmap[PRE], and
->>> f2fs_clear_prefree_segments() skips it when handling prefree segments.
->>>
->>> add_discard_addrs() skips any segment with 0 valid blocks, so segment X is
->>> also skipped.
->>>
->>> Consequently, no `struct discard_cmd` is actually created for segment X.
->>> However, the ckpt_valid_map and cur_valid_map of segment X are synced by
->>> seg_info_to_raw_sit() during the current checkpoint process. As a result,
->>> it cannot find the missing discard bits even in subsequent checkpoints.
->>> Consequently, the value of sbi->discard_blks remains non-zero. Thus, when
->>> f2fs is umounted, CP_TRIMMED_FLAG will not be set due to the non-zero
->>> sbi->discard_blks.
->>>
->>> Relevant code process:
->>>
->>> f2fs_write_checkpoint()
->>>       f2fs_flush_sit_entries()
->>>            list_for_each_entry_safe(ses, tmp, head, set_list) {
->>>                for_each_set_bit_from(segno, bitmap, end) {
->>>                    ...
->>>                    add_discard_addrs(sbi, cpc, false); // skip segment X due to its 0 valid blocks
->>>                    ...
->>>                    seg_info_to_raw_sit(); // sync ckpt_valid_map with cur_valid_map for segment X
->>>                    ...
->>>                }
->>>            }
->>>       f2fs_clear_prefree_segments(); // segment X is not included in dirty_segmap[PRE] and is skipped
->>>
->>> Since add_discard_addrs() can handle active segments with non-zero valid
->>> blocks, it is reasonable to fix this issue by allowing it to also handle
->>> active segments with 0 valid blocks.
->>>
->>> Fixes: b29555505d81 ("f2fs: add key functions for small discards")
->>> Signed-off-by: Chunhai Guo <guochunhai@vivo.com>
->>> ---
->>> v1: https://lore.kernel.org/linux-f2fs-devel/20241203065108.2763436-1-guochunhai@vivo.com/
->>> v1->v2:
->>>    - Modify the commit message to make it easier to understand.
->>>    - Add fixes to the commit.
->>> ---
->>>    fs/f2fs/segment.c | 4 +++-
->>>    1 file changed, 3 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
->>> index 86e547f008f9..13ee73a3c481 100644
->>> --- a/fs/f2fs/segment.c
->>> +++ b/fs/f2fs/segment.c
->>> @@ -2090,7 +2090,9 @@ static bool add_discard_addrs(struct f2fs_sb_info *sbi, struct cp_control *cpc,
->>>              return false;
->>>
->>>      if (!force) {
->>> -            if (!f2fs_realtime_discard_enable(sbi) || !se->valid_blocks ||
->>> +            if (!f2fs_realtime_discard_enable(sbi) ||
->>> +                    (!se->valid_blocks &&
->>> +                            !IS_CURSEG(sbi, cpc->trim_start)) ||
->>>                      SM_I(sbi)->dcc_info->nr_discards >=
->>>                              SM_I(sbi)->dcc_info->max_discards)
->>>                      return false;
+On 17. 03. 25, 7:54, xie.ludan@zte.com.cn wrote:
+> From: XieLudan <xie.ludan@zte.com.cn>
 > 
 > 
+> Follow the advice in Documentation/filesystems/sysfs.rst: show() should
+> 
+> only use sysfs_emit() or sysfs_emit_at() when formatting the value to be
+> 
+> returned to user space.
+
+
+-- 
+js
+suse labs
 
 
