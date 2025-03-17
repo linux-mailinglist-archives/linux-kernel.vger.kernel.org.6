@@ -1,368 +1,136 @@
-Return-Path: <linux-kernel+bounces-564382-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564387-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAB19A653EA
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 15:40:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39A69A653F0
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 15:40:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E0F816D708
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 14:39:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 311783A509A
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 14:40:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D7CA248166;
-	Mon, 17 Mar 2025 14:39:09 +0000 (UTC)
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AE9624501F;
+	Mon, 17 Mar 2025 14:39:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Nlad7igY"
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9B052441A0;
-	Mon, 17 Mar 2025 14:39:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA1562441A7;
+	Mon, 17 Mar 2025 14:39:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742222348; cv=none; b=bH3GGRdkTf3eY4spdXQGYXAigLos0T4PjLCIIozXWDik0SvQhpnon4Kb8a7j0sypakGqEwJ1Vv4BXoBhIjkJRjw0cgFZ6C5YnvAVS+sYrSNaYJeEC33N2iARjyT+GVsNswEPvVgy5y29EUYQ8gdk5RvhM9Nd/wsUbJs5g6d17RA=
+	t=1742222385; cv=none; b=rLt9NA5JW6iHIG49V3tDzicaNFEi9GvLF/jXeXZrp12M4/jjQ2ndklA02zuLZS2RFaX6/ARYlBFNefJMMRgq6V2xTsMgeoaLNG0TDsk2wJuhjlAf1h62zEhtB/Weh4l2GXUroxN42TkjdsZhlbOIQSzqJKNXl3LpTNnQuOJP2hA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742222348; c=relaxed/simple;
-	bh=5sctOWQdDZU6goyyowPsbITQ4Qx7EMOcJkexjRoQrMI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=i/AaY87u4wO2EhgynHToccaD5BZZv0EUZYeUnNKtinp1zlLddT2U3C7Dnz9o3OIPDl+GPzgHonyWLpWziGCDJJ497oU8seCP5e8yW0VMqDBvaShm7Bu9ogAC5rBD6YBkIH64MIZ2r3DEZf1+grrTdgKmVAfWCVhD+uvS2/xIgjs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 624FC44382;
-	Mon, 17 Mar 2025 14:39:02 +0000 (UTC)
-Message-ID: <1b7e3d0f-0526-4afb-9f7a-2695e4166a9b@ghiti.fr>
-Date: Mon, 17 Mar 2025 15:39:01 +0100
+	s=arc-20240116; t=1742222385; c=relaxed/simple;
+	bh=jpRejpT5HWaatfO72y6aMmmK2j+bOCOP6s7bDhC0TVI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DqAPqAgnGFQU5yxLKVgQS61dlLRX5ka6mQ9WRJcXTkgI9lkxll5HDACEDsznh+wFwZRiqL1IJqzT2t4bn1r/ODOKFmgMiY77WdN45N1WY9D7rFNY54A2jd7mftyLCQASBgFpdOaGi3HPztz2CNQ7PU5jMCSNCZNwuonPA6iVKLw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Nlad7igY; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-307c13298eeso51854631fa.0;
+        Mon, 17 Mar 2025 07:39:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742222382; x=1742827182; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fZZTDYJnWzodGEAZZ7zFDaFFv2pV5qvHdRMtYkMak7s=;
+        b=Nlad7igY2KaF55PlgJQF2SHGY1/+Qz1sMFc2q604EgA8SYPFmHt0b6mHrXF0LHNXRy
+         KND4QNGIvwkCMwVMqHSyeeMmgAabpC7o13KFirjsnXO1rYXLrymbjOYXx16LNYScepf0
+         3S6gOoqAzCT80Kw/SYAx7sJ/qITsPfGTEu9Rx/qb2Gb7ADxuVUsdzcV+OIRnQTgqkHRj
+         DXGyjIXGT6uw4Qv1iM9KmObX71tOGq6v+lhK1cTvtyuMun3LnZ2hy7hwZM+JpdQNOnH/
+         GXs2+z08NSTAzxKLmOEamQoMob3pbDiH9dAT8kXpb5tko3MPCrTFfdc+aubzH4CAv2He
+         aY9Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742222382; x=1742827182;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fZZTDYJnWzodGEAZZ7zFDaFFv2pV5qvHdRMtYkMak7s=;
+        b=ITlt4rKZotzgP6QhisWZ70feEYNbz1IP1EJ2IanXEwNdISLuGOLlWnc1JfGDfvsXbS
+         VmvaQ38MHHl95EnNpfVIO5eOkTAKDgPLgWdKhygnyRQIDt1yysvoRiTOKKAU8YznbnzB
+         sYptEi9iGkFcFwS578aBmhlATHbLWVrbkKdxEqK7bZcL9J2aRFdw3+Xy6kyMd1cI9l0X
+         RwBlZeoPuHTbcT7pJ/1qpRBkkCQIFsHZ8kg3rbxk01gBjYtS8CJsN7gev12ESJuv6E3a
+         CiHAQdi2Yq6UmDz3D2pRZFkJf5z1xkCjXJK5BwP8m/V0BEeXYZw5ixIhdtNFLK4rhqc/
+         cdgg==
+X-Forwarded-Encrypted: i=1; AJvYcCWIVRn6ccx4yyT82POYeHaua4ng90Ps8CmGX8qqAYwwki61zgwXqj0FQNf0UEkbQ1+xax827pnt9Y4KFSgtGRM=@vger.kernel.org, AJvYcCWUZdpMcHI+DBFXmBVrLQW78CN5WSjx37jvWYkp5vuMA05w/k9owUmJXH9Yx04DhTCvoqI5ZuyY1dpn1HY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/x6qP+VaeHROEmLi37hC0iz2CwqtmRNWYyYVqSDK8XmsX7wNL
+	zNE9gve6x0NBRA0QCPpt+F5AYGnfxgD/j1L1hFgCKtFPhlrIu9Zfzlj6is8i59E5Z4eAQ/wYj/Z
+	YKdMPDB/e6+l3EZZqN2E2Fb2M96s=
+X-Gm-Gg: ASbGncuqODEBCiPAfb3niAxHod84eFrWW61z3MMDX0h3v/L8oB4uK0axoCxVBt25tTx
+	wO/F5ED6H2+gdarV2pUBt3siaZAdCdvXHJG53gXOH/lTkN5XJ//UGrAJTI9aab/5A921rBR4ygk
+	zvJdoBN14p1ccXx0lFkme7Tb1gPoFeJFKuq8nLiFlZ80plqHZIkSFeNoO0Yc0N
+X-Google-Smtp-Source: AGHT+IGN49ryQeOA4dTk7/oHqn8S1VLc8bEyt2Bbl2KQl13M0wE0Ni/NceUr+ZlyvimC7XAU41P+nsIvvJTTgjY3ius=
+X-Received: by 2002:a05:651c:50b:b0:30b:a4f6:bb3f with SMTP id
+ 38308e7fff4ca-30c4ab12662mr65665901fa.16.1742222381532; Mon, 17 Mar 2025
+ 07:39:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 7/8] riscv: Add parameter for skipping access speed
- tests
-Content-Language: en-US
-To: Andrew Jones <ajones@ventanamicro.com>, linux-riscv@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
-Cc: paul.walmsley@sifive.com, palmer@dabbelt.com, charlie@rivosinc.com,
- cleger@rivosinc.com, Anup Patel <apatel@ventanamicro.com>, corbet@lwn.net
-References: <20250304120014.143628-10-ajones@ventanamicro.com>
- <20250304120014.143628-17-ajones@ventanamicro.com>
-From: Alexandre Ghiti <alex@ghiti.fr>
-In-Reply-To: <20250304120014.143628-17-ajones@ventanamicro.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddufeeljeejucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthekredttddvjeenucfhrhhomheptehlvgigrghnughrvgcuifhhihhtihcuoegrlhgvgiesghhhihhtihdrfhhrqeenucggtffrrghtthgvrhhnpeejieeuudejieekveeutdeguefhkeduledugeevhefffeejudeggedufffgleeugfenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecukfhppeefuddrfedvrdekuddrudekjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeefuddrfedvrdekuddrudekjedphhgvlhhopegludelvddrudeikedrvddurddvhegnpdhmrghilhhfrhhomheprghlvgigsehghhhithhirdhfrhdpnhgspghrtghpthhtohepuddtpdhrtghpthhtoheprghjohhnvghssehvvghnthgrnhgrmhhitghrohdrtghomhdprhgtphhtthhopehlihhnuhigqdhrihhstghvsehlihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqughotgesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehpr
- ghulhdrfigrlhhmshhlvgihsehsihhfihhvvgdrtghomhdprhgtphhtthhopehprghlmhgvrhesuggrsggsvghlthdrtghomhdprhgtphhtthhopegthhgrrhhlihgvsehrihhvohhsihhntgdrtghomhdprhgtphhtthhopegtlhgvghgvrhesrhhivhhoshhinhgtrdgtohhm
-X-GND-Sasl: alex@ghiti.fr
+References: <20250317-vec-push-use-spare-v1-1-7e025ef4ae14@gmail.com> <D8IM66U67XBD.28KWYO1XSF8ZQ@proton.me>
+In-Reply-To: <D8IM66U67XBD.28KWYO1XSF8ZQ@proton.me>
+From: Tamir Duberstein <tamird@gmail.com>
+Date: Mon, 17 Mar 2025 10:39:05 -0400
+X-Gm-Features: AQ5f1JoFhidwD_tOTzOryJsJaMynkWFJr4g5abu-m-PjOLDh4UZ7JyAmfnK_Ub4
+Message-ID: <CAJ-ks9kq1cQ2-ZNzG9P4SBvk-AjXxT+na-89K33imB4fsCvu4A@mail.gmail.com>
+Subject: Re: [PATCH] rust: alloc: use `spare_capacity_mut` to reduce unsafe
+To: Benno Lossin <benno.lossin@proton.me>
+Cc: Danilo Krummrich <dakr@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+	Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Drew,
-
-On 04/03/2025 13:00, Andrew Jones wrote:
-> Allow skipping scalar and vector unaligned access speed tests. This
-> is useful for testing alternative code paths and to skip the tests in
-> environments where they run too slowly. All CPUs must have the same
-> unaligned access speed.
-
-I'm not a big fan of the command line parameter, this is not where we 
-should push uarch decisions because there could be many other in the 
-future, the best solution to me should be in DT/ACPI and since the DT 
-folks, according to Palmer, shut down this solution, it remains using an 
-extension.
-
-I have been reading a bit about unaligned accesses. Zicclsm was 
-described as "Even though mandated, misaligned loads and stores might 
-execute extremely slowly. Standard software distributions should assume 
-their existence only for correctness, not for performance." in rva20/22 
-but *not* in rva23. So what about using this "hole" and consider that a 
-platform that *advertises* Zicclsm means its unaligned accesses are 
-fast? After internal discussion, It actually does not make sense to 
-advertise Zicclsm if the platform accesses are slow right?
-
-arm64 for example considers that armv8 has fast unaligned accesses and 
-can then enable HAVE_EFFICIENT_ALIGNED_ACCESS in the kernel, even though 
-some uarchs are slow. Distros will very likely use rva23 as baseline so 
-they will enable Zicclsm which would allow us to take advantage of this 
-too, without this, we lose a lot of perf improvement in the kernel, see 
-https://lore.kernel.org/lkml/20231225044207.3821-1-jszhang@kernel.org/.
-
-Or we could have a new named feature for this, even though it's weird to 
-have a named feature which would basically  mean "Zicclsm is fast". We 
-don't have, for example, a named feature to say "Zicboz is fast" but 
-given the vague wording in the profile spec, maybe we can ask for one in 
-that case?
-
-Sorry for the late review and for triggering this debate...
-
-Thanks,
-
-Alex
-
-
+On Mon, Mar 17, 2025 at 10:34=E2=80=AFAM Benno Lossin <benno.lossin@proton.=
+me> wrote:
 >
-> The code movement is because we now need the scalar cpu hotplug
-> callback to always run, so we need to bring it and its supporting
-> functions out of CONFIG_RISCV_PROBE_UNALIGNED_ACCESS.
+> On Mon Mar 17, 2025 at 12:42 PM CET, Tamir Duberstein wrote:
+> > Use `spare_capacity_mut` in the implementation of `push` to reduce the
+> > use of `unsafe`. Both methods were added in commit 2aac4cd7dae3 ("rust:
+> > alloc: implement kernel `Vec` type").
+> >
+> > Signed-off-by: Tamir Duberstein <tamird@gmail.com>
+> > ---
+> >  rust/kernel/alloc/kvec.rs | 11 ++---------
+> >  1 file changed, 2 insertions(+), 9 deletions(-)
+> >
+> > diff --git a/rust/kernel/alloc/kvec.rs b/rust/kernel/alloc/kvec.rs
+> > index ae9d072741ce..d2bc3d02179e 100644
+> > --- a/rust/kernel/alloc/kvec.rs
+> > +++ b/rust/kernel/alloc/kvec.rs
+> > @@ -285,15 +285,8 @@ pub fn spare_capacity_mut(&mut self) -> &mut [Mayb=
+eUninit<T>] {
+> >      pub fn push(&mut self, v: T, flags: Flags) -> Result<(), AllocErro=
+r> {
+> >          self.reserve(1, flags)?;
+> >
+> > -        // SAFETY:
+> > -        // - `self.len` is smaller than `self.capacity` and hence, the=
+ resulting pointer is
+> > -        //   guaranteed to be part of the same allocated object.
+> > -        // - `self.len` can not overflow `isize`.
+> > -        let ptr =3D unsafe { self.as_mut_ptr().add(self.len) };
+> > -
+> > -        // SAFETY:
+> > -        // - `ptr` is properly aligned and valid for writes.
+> > -        unsafe { core::ptr::write(ptr, v) };
+> > +        // The call to `reserve` was successful so the spare capacity =
+is at least 1.
+> > +        self.spare_capacity_mut()[0].write(v);
 >
-> Signed-off-by: Andrew Jones <ajones@ventanamicro.com>
-> ---
->   arch/riscv/kernel/unaligned_access_speed.c | 187 +++++++++++++--------
->   1 file changed, 121 insertions(+), 66 deletions(-)
->
-> diff --git a/arch/riscv/kernel/unaligned_access_speed.c b/arch/riscv/kernel/unaligned_access_speed.c
-> index d9d4ca1fadc7..18e334549544 100644
-> --- a/arch/riscv/kernel/unaligned_access_speed.c
-> +++ b/arch/riscv/kernel/unaligned_access_speed.c
-> @@ -24,8 +24,12 @@
->   DEFINE_PER_CPU(long, misaligned_access_speed) = RISCV_HWPROBE_MISALIGNED_SCALAR_UNKNOWN;
->   DEFINE_PER_CPU(long, vector_misaligned_access) = RISCV_HWPROBE_MISALIGNED_VECTOR_UNSUPPORTED;
->   
-> -#ifdef CONFIG_RISCV_PROBE_UNALIGNED_ACCESS
-> +static long unaligned_scalar_speed_param = RISCV_HWPROBE_MISALIGNED_SCALAR_UNKNOWN;
-> +static long unaligned_vector_speed_param = RISCV_HWPROBE_MISALIGNED_VECTOR_UNKNOWN;
-> +
->   static cpumask_t fast_misaligned_access;
-> +
-> +#ifdef CONFIG_RISCV_PROBE_UNALIGNED_ACCESS
->   static int check_unaligned_access(void *param)
->   {
->   	int cpu = smp_processor_id();
-> @@ -130,6 +134,50 @@ static void __init check_unaligned_access_nonboot_cpu(void *param)
->   		check_unaligned_access(pages[cpu]);
->   }
->   
-> +/* Measure unaligned access speed on all CPUs present at boot in parallel. */
-> +static void __init check_unaligned_access_speed_all_cpus(void)
-> +{
-> +	unsigned int cpu;
-> +	unsigned int cpu_count = num_possible_cpus();
-> +	struct page **bufs = kcalloc(cpu_count, sizeof(*bufs), GFP_KERNEL);
-> +
-> +	if (!bufs) {
-> +		pr_warn("Allocation failure, not measuring misaligned performance\n");
-> +		return;
-> +	}
-> +
-> +	/*
-> +	 * Allocate separate buffers for each CPU so there's no fighting over
-> +	 * cache lines.
-> +	 */
-> +	for_each_cpu(cpu, cpu_online_mask) {
-> +		bufs[cpu] = alloc_pages(GFP_KERNEL, MISALIGNED_BUFFER_ORDER);
-> +		if (!bufs[cpu]) {
-> +			pr_warn("Allocation failure, not measuring misaligned performance\n");
-> +			goto out;
-> +		}
-> +	}
-> +
-> +	/* Check everybody except 0, who stays behind to tend jiffies. */
-> +	on_each_cpu(check_unaligned_access_nonboot_cpu, bufs, 1);
-> +
-> +	/* Check core 0. */
-> +	smp_call_on_cpu(0, check_unaligned_access, bufs[0], true);
-> +
-> +out:
-> +	for_each_cpu(cpu, cpu_online_mask) {
-> +		if (bufs[cpu])
-> +			__free_pages(bufs[cpu], MISALIGNED_BUFFER_ORDER);
-> +	}
-> +
-> +	kfree(bufs);
-> +}
-> +#else /* CONFIG_RISCV_PROBE_UNALIGNED_ACCESS */
-> +static void __init check_unaligned_access_speed_all_cpus(void)
-> +{
-> +}
-> +#endif
-> +
->   DEFINE_STATIC_KEY_FALSE(fast_unaligned_access_speed_key);
->   
->   static void modify_unaligned_access_branches(cpumask_t *mask, int weight)
-> @@ -188,21 +236,29 @@ arch_initcall_sync(lock_and_set_unaligned_access_static_branch);
->   
->   static int riscv_online_cpu(unsigned int cpu)
->   {
-> -	static struct page *buf;
-> -
->   	/* We are already set since the last check */
-> -	if (per_cpu(misaligned_access_speed, cpu) != RISCV_HWPROBE_MISALIGNED_SCALAR_UNKNOWN)
-> +	if (per_cpu(misaligned_access_speed, cpu) != RISCV_HWPROBE_MISALIGNED_SCALAR_UNKNOWN) {
-> +		goto exit;
-> +	} else if (unaligned_scalar_speed_param != RISCV_HWPROBE_MISALIGNED_SCALAR_UNKNOWN) {
-> +		per_cpu(misaligned_access_speed, cpu) = unaligned_scalar_speed_param;
->   		goto exit;
-> -
-> -	check_unaligned_access_emulated(NULL);
-> -	buf = alloc_pages(GFP_KERNEL, MISALIGNED_BUFFER_ORDER);
-> -	if (!buf) {
-> -		pr_warn("Allocation failure, not measuring misaligned performance\n");
-> -		return -ENOMEM;
->   	}
->   
-> -	check_unaligned_access(buf);
-> -	__free_pages(buf, MISALIGNED_BUFFER_ORDER);
-> +#ifdef CONFIG_RISCV_PROBE_UNALIGNED_ACCESS
-> +	{
-> +		static struct page *buf;
-> +
-> +		check_unaligned_access_emulated(NULL);
-> +		buf = alloc_pages(GFP_KERNEL, MISALIGNED_BUFFER_ORDER);
-> +		if (!buf) {
-> +			pr_warn("Allocation failure, not measuring misaligned performance\n");
-> +			return -ENOMEM;
-> +		}
-> +
-> +		check_unaligned_access(buf);
-> +		__free_pages(buf, MISALIGNED_BUFFER_ORDER);
-> +	}
-> +#endif
->   
->   exit:
->   	set_unaligned_access_static_branches();
-> @@ -217,50 +273,6 @@ static int riscv_offline_cpu(unsigned int cpu)
->   	return 0;
->   }
->   
-> -/* Measure unaligned access speed on all CPUs present at boot in parallel. */
-> -static void __init check_unaligned_access_speed_all_cpus(void)
-> -{
-> -	unsigned int cpu;
-> -	unsigned int cpu_count = num_possible_cpus();
-> -	struct page **bufs = kcalloc(cpu_count, sizeof(*bufs), GFP_KERNEL);
-> -
-> -	if (!bufs) {
-> -		pr_warn("Allocation failure, not measuring misaligned performance\n");
-> -		return;
-> -	}
-> -
-> -	/*
-> -	 * Allocate separate buffers for each CPU so there's no fighting over
-> -	 * cache lines.
-> -	 */
-> -	for_each_cpu(cpu, cpu_online_mask) {
-> -		bufs[cpu] = alloc_pages(GFP_KERNEL, MISALIGNED_BUFFER_ORDER);
-> -		if (!bufs[cpu]) {
-> -			pr_warn("Allocation failure, not measuring misaligned performance\n");
-> -			goto out;
-> -		}
-> -	}
-> -
-> -	/* Check everybody except 0, who stays behind to tend jiffies. */
-> -	on_each_cpu(check_unaligned_access_nonboot_cpu, bufs, 1);
-> -
-> -	/* Check core 0. */
-> -	smp_call_on_cpu(0, check_unaligned_access, bufs[0], true);
-> -
-> -out:
-> -	for_each_cpu(cpu, cpu_online_mask) {
-> -		if (bufs[cpu])
-> -			__free_pages(bufs[cpu], MISALIGNED_BUFFER_ORDER);
-> -	}
-> -
-> -	kfree(bufs);
-> -}
-> -#else /* CONFIG_RISCV_PROBE_UNALIGNED_ACCESS */
-> -static void __init check_unaligned_access_speed_all_cpus(void)
-> -{
-> -}
-> -#endif
-> -
->   #ifdef CONFIG_RISCV_PROBE_VECTOR_UNALIGNED_ACCESS
->   static void check_vector_unaligned_access(struct work_struct *work __always_unused)
->   {
-> @@ -372,8 +384,8 @@ static int __init vec_check_unaligned_access_speed_all_cpus(void *unused __alway
->   
->   static int riscv_online_cpu_vec(unsigned int cpu)
->   {
-> -	if (!has_vector()) {
-> -		per_cpu(vector_misaligned_access, cpu) = RISCV_HWPROBE_MISALIGNED_VECTOR_UNSUPPORTED;
-> +	if (unaligned_vector_speed_param != RISCV_HWPROBE_MISALIGNED_VECTOR_UNKNOWN) {
-> +		per_cpu(vector_misaligned_access, cpu) = unaligned_vector_speed_param;
->   		return 0;
->   	}
->   
-> @@ -388,30 +400,73 @@ static int riscv_online_cpu_vec(unsigned int cpu)
->   	return 0;
->   }
->   
-> +static const char * const speed_str[] __initconst = { NULL, NULL, "slow", "fast", "unsupported" };
-> +
-> +static int __init set_unaligned_scalar_speed_param(char *str)
-> +{
-> +	if (!strcmp(str, speed_str[RISCV_HWPROBE_MISALIGNED_SCALAR_SLOW]))
-> +		unaligned_scalar_speed_param = RISCV_HWPROBE_MISALIGNED_SCALAR_SLOW;
-> +	else if (!strcmp(str, speed_str[RISCV_HWPROBE_MISALIGNED_SCALAR_FAST]))
-> +		unaligned_scalar_speed_param = RISCV_HWPROBE_MISALIGNED_SCALAR_FAST;
-> +	else if (!strcmp(str, speed_str[RISCV_HWPROBE_MISALIGNED_SCALAR_UNSUPPORTED]))
-> +		unaligned_scalar_speed_param = RISCV_HWPROBE_MISALIGNED_SCALAR_UNSUPPORTED;
-> +	else
-> +		return -EINVAL;
-> +
-> +	return 1;
-> +}
-> +__setup("unaligned_scalar_speed=", set_unaligned_scalar_speed_param);
-> +
-> +static int __init set_unaligned_vector_speed_param(char *str)
-> +{
-> +	if (!strcmp(str, speed_str[RISCV_HWPROBE_MISALIGNED_VECTOR_SLOW]))
-> +		unaligned_vector_speed_param = RISCV_HWPROBE_MISALIGNED_VECTOR_SLOW;
-> +	else if (!strcmp(str, speed_str[RISCV_HWPROBE_MISALIGNED_VECTOR_FAST]))
-> +		unaligned_vector_speed_param = RISCV_HWPROBE_MISALIGNED_VECTOR_FAST;
-> +	else if (!strcmp(str, speed_str[RISCV_HWPROBE_MISALIGNED_VECTOR_UNSUPPORTED]))
-> +		unaligned_vector_speed_param = RISCV_HWPROBE_MISALIGNED_VECTOR_UNSUPPORTED;
-> +	else
-> +		return -EINVAL;
-> +
-> +	return 1;
-> +}
-> +__setup("unaligned_vector_speed=", set_unaligned_vector_speed_param);
-> +
->   static int __init check_unaligned_access_all_cpus(void)
->   {
->   	int cpu;
->   
-> -	if (!check_unaligned_access_emulated_all_cpus())
-> +	if (unaligned_scalar_speed_param == RISCV_HWPROBE_MISALIGNED_SCALAR_UNKNOWN &&
-> +	    !check_unaligned_access_emulated_all_cpus()) {
->   		check_unaligned_access_speed_all_cpus();
-> -
-> -	if (!has_vector()) {
-> +	} else {
-> +		pr_info("scalar unaligned access speed set to '%s' by command line\n",
-> +			speed_str[unaligned_scalar_speed_param]);
->   		for_each_online_cpu(cpu)
-> -			per_cpu(vector_misaligned_access, cpu) = RISCV_HWPROBE_MISALIGNED_VECTOR_UNSUPPORTED;
-> -	} else if (!check_vector_unaligned_access_emulated_all_cpus() &&
-> -		   IS_ENABLED(CONFIG_RISCV_PROBE_VECTOR_UNALIGNED_ACCESS)) {
-> +			per_cpu(misaligned_access_speed, cpu) = unaligned_scalar_speed_param;
-> +	}
-> +
-> +	if (!has_vector())
-> +		unaligned_vector_speed_param = RISCV_HWPROBE_MISALIGNED_VECTOR_UNSUPPORTED;
-> +
-> +	if (unaligned_vector_speed_param == RISCV_HWPROBE_MISALIGNED_VECTOR_UNKNOWN &&
-> +	    !check_vector_unaligned_access_emulated_all_cpus() &&
-> +	    IS_ENABLED(CONFIG_RISCV_PROBE_VECTOR_UNALIGNED_ACCESS)) {
->   		kthread_run(vec_check_unaligned_access_speed_all_cpus,
->   			    NULL, "vec_check_unaligned_access_speed_all_cpus");
-> +	} else {
-> +		pr_info("vector unaligned access speed set to '%s' by command line\n",
-> +			speed_str[unaligned_vector_speed_param]);
-> +		for_each_online_cpu(cpu)
-> +			per_cpu(vector_misaligned_access, cpu) = unaligned_vector_speed_param;
->   	}
->   
->   	/*
->   	 * Setup hotplug callbacks for any new CPUs that come online or go
->   	 * offline.
->   	 */
-> -#ifdef CONFIG_RISCV_PROBE_UNALIGNED_ACCESS
->   	cpuhp_setup_state_nocalls(CPUHP_AP_ONLINE_DYN, "riscv:online",
->   				  riscv_online_cpu, riscv_offline_cpu);
-> -#endif
->   	cpuhp_setup_state_nocalls(CPUHP_AP_ONLINE_DYN, "riscv:online",
->   				  riscv_online_cpu_vec, NULL);
->   
+> I think the code uses unsafe to avoid a bounds check, but I'm not 100%
+> sure. Danilo might remember more info.
+
+We could use `slice::get_unchecked_mut` here to retain the same
+guarantee of no bounds check. That would still be one fewer unsafe
+blocks.
 
