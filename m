@@ -1,139 +1,249 @@
-Return-Path: <linux-kernel+bounces-564901-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564902-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21B41A65C7A
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 19:25:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 57F16A65C7F
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 19:26:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B34483B3C10
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 18:24:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4216C3B093B
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 18:26:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61CF71C84A2;
-	Mon, 17 Mar 2025 18:24:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20F101CDFD5;
+	Mon, 17 Mar 2025 18:26:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="S+zOsbPz"
-Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F286419048F
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 18:24:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.41
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="BByOTodA"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C51FDEED6;
+	Mon, 17 Mar 2025 18:26:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742235893; cv=none; b=Yt3uLrpz37/dTPjMX4gwPwSQcQu8YOndsDYdiBTV5BimByBW4YWofpKMkrNu/c6htwznYfIO4X5C8oqaA2oWKPxTzF5ZF+sRDAkTCfJNkF3p2grzKFiH+SjHk8fvTrbb4GE5/pe7i0f+HKKJ6gsK+/byrSERcKgsFa0G4VsHG4o=
+	t=1742235990; cv=none; b=lW6DVpjhjgzBHyNBENHLZ94MeQuLqLhZvTJ6kN8/D/BKYs1lSgzF/ZYr9YKvz/iM9Ow7x/LFbcSL84jvTd1c5rs2rlWutqrIUvV3NeFRdXvNp7WcMrtsFczU1IW/7edmxJm/CpwUR1MEQEggfPD1YdhJ+n/8W/m4tZzaGbxbGhA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742235893; c=relaxed/simple;
-	bh=+q0Pkl+0ut0ZVjPhp2WhARVxM+/p2oXgrwzMBgwbvRc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ndtvv72bALe7f8BeTxO/HKiX08Lsa1GvyyQ2omTp6hVxJDNxcQVR2z1YnkcISISxA/gacMGAtCGEL3+6AvqH6+mujL+6pIrO74Rm72tvMbpKy9SNBWNBgHlfuv2quII57pshg3TfB4XIJ/AYb31LrgFT+XcFhQEN6zHIacqOlEQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=S+zOsbPz; arc=none smtp.client-ip=209.85.219.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
-Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-6eafac1f047so20695956d6.2
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 11:24:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gourry.net; s=google; t=1742235891; x=1742840691; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=qffRqeeaN/xyBcdXkC41yRxHN6rIHMJ0xVP8VR6XDiU=;
-        b=S+zOsbPzXvOeTYmuwGfJEWugAi/zOutyfHoYSVlcRLykMEIrMn2os7QgNOrVM8DoHT
-         IdhzBsHvbvr+KnWHNgHUsBzD5YlsAcwYtQq7FyYWRQuc8wLrIAlNSIB9JyDyQpn4ruOi
-         1BIEKmJLXbruJ3GHovYpF0W+MkuHsuT5IfMqZfzboBrYQWIGPSPhXN8Xv1KA53OmCQcb
-         W1qzVC3B7XAcbEe+nrHyo6gqDWIX2hOHcw0D/6Zm42N67OV+7Mv/v3iwm6QTm/1iyDHl
-         pHRf0EHF1HN1WU5giXGlKYG3+getQ0m+sU4FsfP6JMdOgCMEfTdca16xOnM4WyZPfvbK
-         +yAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742235891; x=1742840691;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qffRqeeaN/xyBcdXkC41yRxHN6rIHMJ0xVP8VR6XDiU=;
-        b=CdrUe75Y9d0Inxdy0roawUSMfgOGJ0Cs1FDMJw9y6fPkIRgmXCvY28hlJvufTrooX0
-         +/vC6qIPszUpSP9qJrfPlb56lM5wcCZUBPnfFKH/y85rwkyK0wxrHa+djYyJcuRIl7Qp
-         s7dpNJ1EhEYhUOIN2e13RvNoC009+63/tNV3P3Ue7+odHjs2Cws0zzMHKMIesfVICWTe
-         +qojueXc/qbs8AjOCZdRyEUSlvv/bOzmKWew8vrIoNhVzopsNECJf6ElUeRn7kQB0twb
-         7GXwJeW8vX3GWFckA/eZvuX7ra0gdQx9Ua2uT4vpGixAob7oW064PT6ii3jsCDuOqO10
-         qdZw==
-X-Gm-Message-State: AOJu0YwPOyciUfqR3VAL2MOHIK3h5ICGzbAMpr/SQof5+EuL2xg1cril
-	uIKKwcTt5tTxrZ6rrbIYWDAvW6I+vNMErl2yTUi69x3OcQM5REESf8qb1CHxeOE=
-X-Gm-Gg: ASbGncuwITNBDoyRJj+V7V3UI2jxRmJR8TPjycNfreXJmRNYo9nue3gXXW4yJwzwb1O
-	yiV7pocfnyugQkRlj5DGbmp4e8MzqDFb7/+kZDErkjj4SCrAUhsZvvNLkW6yboteBlDH0oj94ZJ
-	yPlJ4ss8GkRvvQONhDAvZtScPNgecUeVTuh8v+K86k76lR/4iydgraI5gRNm08DmAqiu//Zg1yL
-	u9HejL6Dpi4P2UHJ2XWZ75FzzhlpU6SFIqktsCaD1ddL9x+E/iDn6ANw+smddWLNHGUZdKUVequ
-	B+4yc4PYFuTw9TU0PhWsgyaFaUcC8BCdCNtu5fwMicyIC9L53atDyqcofN+Y7GMTRVNAjtU1zRN
-	fPKJ+7qWGdHZrhVruIn6/0NxapnaXxt5i1+FC1A==
-X-Google-Smtp-Source: AGHT+IECAQV2W4ZfXVx/cTTr/lq8wcLUfss4PApt70+7/vAmtkEDvbuW09xiFSiw2Zhgj5gShBbs2g==
-X-Received: by 2002:a05:6214:2626:b0:6d4:dae:6250 with SMTP id 6a1803df08f44-6eaeaad4dd7mr242589906d6.34.1742235890789;
-        Mon, 17 Mar 2025 11:24:50 -0700 (PDT)
-Received: from gourry-fedora-PF4VCD3F (pool-173-79-56-208.washdc.fios.verizon.net. [173.79.56.208])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6eaef289853sm39397646d6.25.2025.03.17.11.24.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Mar 2025 11:24:50 -0700 (PDT)
-Date: Mon, 17 Mar 2025 14:24:47 -0400
-From: Gregory Price <gourry@gourry.net>
-To: Bharata B Rao <bharata@amd.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	AneeshKumar.KizhakeVeetil@arm.com, Hasan.Maruf@amd.com,
-	Jonathan.Cameron@huawei.com, Michael.Day@amd.com,
-	akpm@linux-foundation.org, dave.hansen@intel.com, david@redhat.com,
-	feng.tang@intel.com, hannes@cmpxchg.org, honggyu.kim@sk.com,
-	hughd@google.com, jhubbard@nvidia.com, k.shutemov@gmail.com,
-	kbusch@meta.com, kmanaouil.dev@gmail.com, leesuyeon0506@gmail.com,
-	leillc@google.com, liam.howlett@oracle.com,
-	mgorman@techsingularity.net, mingo@redhat.com, nadav.amit@gmail.com,
-	nphamcs@gmail.com, peterz@infradead.org, raghavendra.kt@amd.com,
-	riel@surriel.com, rientjes@google.com, rppt@kernel.org,
-	shivankg@amd.com, shy828301@gmail.com, sj@kernel.org,
-	vbabka@suse.cz, weixugc@google.com, willy@infradead.org,
-	ying.huang@linux.alibaba.com, ziy@nvidia.com, yuanchu@google.com
-Subject: Re: [RFC PATCH 2/4] mm: kpromoted: Hot page info collection and
- promotion daemon
-Message-ID: <Z9ho77H94jsLHDNu@gourry-fedora-PF4VCD3F>
-References: <20250306054532.221138-1-bharata@amd.com>
- <20250306054532.221138-3-bharata@amd.com>
- <20250313164430.bzkfyqmx6a5dj7d2@offworld>
- <b9965654-af90-42c9-8e4b-b29621d11ea7@amd.com>
- <Z9g6JIAPZof2eFbJ@gourry-fedora-PF4VCD3F>
- <038d0332-2146-4bda-adf6-03ef58dcc3b5@amd.com>
+	s=arc-20240116; t=1742235990; c=relaxed/simple;
+	bh=+++DQafxWKb80y1XK+8h/f8b+FTVjPzib9hddsHz5uw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=m3+bLAGrRjZ9RsrEtcVLjZ6VfrYQNtnZ6/bbo+SoQEUJn4IfH+n9YOv7/l1Ku1EttYGS5zkVQSzMeAgmhILubs3EygYyL6UJcv0HFNIAAtenmGyU+gIm+U265+3q3v/t67BL5G8yCClo2Lh5hazPFDjNd5Mwp54fKaU0iTImPQs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=BByOTodA; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [10.17.64.108] (unknown [131.107.147.236])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 0A1392033446;
+	Mon, 17 Mar 2025 11:26:28 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 0A1392033446
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1742235988;
+	bh=qp2xI3QTzUgxM5S5rM6E+Zs1aGPEVZUMHtXpZqPzgJc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=BByOTodA2rsY66J+N49CcTYDbbdQti49s8SiLd+O0iAQ/vkj9vEDbkudszCWMlzAv
+	 REYofXu+RdkvOhLCXd8vJdqNR8M0UDacd78xKnx917rsICHJnLBgyiPkFi3MvbcVo1
+	 j+Leqq9h3DNiQ/nogyjoxpsr/Sk8M3XJCpuimjkc=
+Message-ID: <30eea6c2-cc42-4836-ad70-ccae99b3afda@linux.microsoft.com>
+Date: Mon, 17 Mar 2025 11:26:27 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <038d0332-2146-4bda-adf6-03ef58dcc3b5@amd.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 2/7] kexec: define functions to map and unmap segments
+To: Baoquan He <bhe@redhat.com>
+Cc: Jarkko Sakkinen <jarkko@kernel.org>, zohar@linux.ibm.com,
+ stefanb@linux.ibm.com, roberto.sassu@huaweicloud.com,
+ roberto.sassu@huawei.com, eric.snowberg@oracle.com, ebiederm@xmission.com,
+ paul@paul-moore.com, code@tyhicks.com, bauermann@kolabnow.com,
+ linux-integrity@vger.kernel.org, kexec@lists.infradead.org,
+ linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+ madvenka@linux.microsoft.com, nramas@linux.microsoft.com,
+ James.Bottomley@hansenpartnership.com, vgoyal@redhat.com, dyoung@redhat.com
+References: <20250304190351.96975-1-chenste@linux.microsoft.com>
+ <20250304190351.96975-3-chenste@linux.microsoft.com>
+ <Z8d9RvRWPOADOgsx@kernel.org>
+ <97c27a30-a5ee-4825-ab7e-82dcddedd688@linux.microsoft.com>
+ <Z8hCl4piQ1Sfpi7h@MiWiFi-R3L-srv>
+Content-Language: en-US
+From: steven chen <chenste@linux.microsoft.com>
+In-Reply-To: <Z8hCl4piQ1Sfpi7h@MiWiFi-R3L-srv>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Mar 17, 2025 at 09:52:29PM +0530, Bharata B Rao wrote:
-> > 
-> > > kpromoted_recorded_accesses 960620 /* Number of recorded accesses */
-> > > kpromoted_recorded_hwhints 960620  /* Nr accesses via HW hints, IBS in this
-> > > case */
-> > > kpromoted_recorded_pgtscans 0
-> > > kpromoted_record_toptier 638006 /* Nr toptier accesses */
-> > > kpromoted_record_added 321234 /* Nr (CXL) accesses that are tracked */
-> > > kpromoted_record_exists 1380
-> > > kpromoted_mig_right_node 0
-> > > kpromoted_mig_non_lru 226
-> > > kpromoted_mig_lru_active 47 /* Number of accesses considered for promotion
-> > > as determined by folio_test_active() check */
-> 
-> However disabling demotion has no impact on this number (and hence the
-> folio_test_active() check)
+On 3/5/2025 4:24 AM, Baoquan He wrote:
+> On 03/04/25 at 04:55pm, steven chen wrote:
+>> On 3/4/2025 2:23 PM, Jarkko Sakkinen wrote:
+>>> On Tue, Mar 04, 2025 at 11:03:46AM -0800, steven chen wrote:
+>>>> The content of memory segments carried over to the new kernel during the
+>>>> kexec systemcall can be changed at kexec 'execute' stage, but the size of
+>>>> the memory segments cannot be changed at kexec 'execute' stage.
+>>>>
+>>>> To copy IMA measurement logs during the kexec operation, IMA needs to
+>>>> allocate memory at the kexec 'load' stage and map the segments to the
+>>>> kimage structure. The mapped address will then be used to copy IMA
+>>>> measurements during the kexec 'execute' stage.
+>>>>
+>>>> Currently, the mechanism to map and unmap segments to the kimage
+>>>> structure is not available to subsystems outside of kexec.
+>>> How does IMA work with kexec without having this? Just interested
+>>> (and confused).
+>> Currently, all IMA-related operations during a soft reboot, such as memory
+>> allocation and IMA log list copy, are handled in the kexec 'load' stage, so
+>> the map/unmap mechanism is not required.
+>>
+>> The new design separates these two operations into different stages: memory
+>> allocation remains in the kexec 'load' stage, while the IMA log list copy is
+>> moved to the kexec 'execute' stage. Therefore, the map/unmap mechanism is
+>> introduced.
+> I think the log can be improved. About the found problem and solution
+> part, we possible can describe them like below:
 >
+> ===
+> Currently, the kernel behaviour of kexec load is the IMA measurements
+> log is fetched from TPM PCRs and stored into buffer and hold. When
+> kexec reboot is triggered, the stored log buffer is carried over to the
+> 2nd kernel. However, the time gap between kexec load and kexec reboot
+> could be very long. Then those new events extended into TPM PCRs during
+> the time window misses the chance to be carried over to 2nd kernel. This
+> results in mismatch between TPM PCR quotes and the actual IMA measurements
+> list after kexec reboot, which in turn results in remote attestation
+> failure.
+>
+> To solve this problem, the new design is to defer the reading TPM PCRs
+> content out into kexec buffer to kexec reboot phase. While still
+> allocating the necessary buffer at kexec load time because it's not
+> appropriate to allocate memory at kexec reboot moment.
+> ===
+>
+> It may still need be improved, just for your reference. You can change
+> and add more detail needed and add them into your log.
+>
+>> Please refer to "[PATCH v9 0/7] ima: kexec: measure events between kexec
+>> load and execute" for the reason why to add this.
+>>
+>> Steven
+>>
+>>>> Implement kimage_map_segment() to enable IMA to map measurement log list to
+>>>> the kimage structure during kexec 'load' stage.  This function takes a kimage
+>>>> pointer, a memory address, and a size, then gathers the
+>>>> source pages within the specified address range, creates an array of page
+>>>> pointers, and maps these to a contiguous virtual address range.  The
+>>>> function returns the start virtual address of this range if successful, or NULL on
+>>>> failure.
+>>>>
+>>>> Implement kimage_unmap_segment() for unmapping segments
+>>>> using vunmap().
+>>>>
+>>>> From: Tushar Sugandhi <tusharsu@linux.microsoft.com>
+>>>> Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
+>>>> Cc: Eric Biederman <ebiederm@xmission.com>
+>>>> Cc: Baoquan He <bhe@redhat.com>
+>>>> Cc: Vivek Goyal <vgoyal@redhat.com>
+>>>> Cc: Dave Young <dyoung@redhat.com>
+>>>> Signed-off-by: steven chen <chenste@linux.microsoft.com>
+>>>> ---
+>>>>    include/linux/kexec.h |  6 +++++
+>>>>    kernel/kexec_core.c   | 54 +++++++++++++++++++++++++++++++++++++++++++
+>>>>    2 files changed, 60 insertions(+)
+>>>>
+>>>> diff --git a/include/linux/kexec.h b/include/linux/kexec.h
+>>>> index f0e9f8eda7a3..7d6b12f8b8d0 100644
+>>>> --- a/include/linux/kexec.h
+>>>> +++ b/include/linux/kexec.h
+>>>> @@ -467,13 +467,19 @@ extern bool kexec_file_dbg_print;
+>>>>    #define kexec_dprintk(fmt, arg...) \
+>>>>            do { if (kexec_file_dbg_print) pr_info(fmt, ##arg); } while (0)
+>>>> +extern void *kimage_map_segment(struct kimage *image, unsigned long addr, unsigned long size);
+>>>> +extern void kimage_unmap_segment(void *buffer);
+>>>>    #else /* !CONFIG_KEXEC_CORE */
+>>>>    struct pt_regs;
+>>>>    struct task_struct;
+>>>> +struct kimage;
+>>>>    static inline void __crash_kexec(struct pt_regs *regs) { }
+>>>>    static inline void crash_kexec(struct pt_regs *regs) { }
+>>>>    static inline int kexec_should_crash(struct task_struct *p) { return 0; }
+>>>>    static inline int kexec_crash_loaded(void) { return 0; }
+>>>> +static inline void *kimage_map_segment(struct kimage *image, unsigned long addr, unsigned long size)
+>>>> +{ return NULL; }
+>>>> +static inline void kimage_unmap_segment(void *buffer) { }
+>>>>    #define kexec_in_progress false
+>>>>    #endif /* CONFIG_KEXEC_CORE */
+>>>> diff --git a/kernel/kexec_core.c b/kernel/kexec_core.c
+>>>> index c0bdc1686154..63e4d16b6023 100644
+>>>> --- a/kernel/kexec_core.c
+>>>> +++ b/kernel/kexec_core.c
+>>>> @@ -867,6 +867,60 @@ int kimage_load_segment(struct kimage *image,
+>>>>    	return result;
+>>>>    }
+>>>> +void *kimage_map_segment(struct kimage *image,
+>>>> +			 unsigned long addr, unsigned long size)
+>>>> +{
+>>>> +	unsigned long eaddr = addr + size;
+>>>> +	unsigned long src_page_addr, dest_page_addr;
+>>>> +	unsigned int npages;
+>>>> +	struct page **src_pages;
+>>>> +	int i;
+>>>> +	kimage_entry_t *ptr, entry;
+>>>> +	void *vaddr = NULL;
+> When adding a new function, it's suggested to take the reverse xmas tree
+> style for local variable ordering usually.
+>
+>>>> +
+>>>> +	/*
+>>>> +	 * Collect the source pages and map them in a contiguous VA range.
+>>>> +	 */
+>>>> +	npages = PFN_UP(eaddr) - PFN_DOWN(addr);
+>>>> +	src_pages = kmalloc_array(npages, sizeof(*src_pages), GFP_KERNEL);
+>>>> +	if (!src_pages) {
+>>>> +		pr_err("Could not allocate ima pages array.\n");
+>>>> +		return NULL;
+>>>> +	}
+>>>> +
+>>>> +	i = 0;
+>>>> +	for_each_kimage_entry(image, ptr, entry) {
+>>>> +		if (entry & IND_DESTINATION) {
+>>>> +			dest_page_addr = entry & PAGE_MASK;
+>>>> +		} else if (entry & IND_SOURCE) {
+>>>> +			if (dest_page_addr >= addr && dest_page_addr < eaddr) {
+>>>> +				src_page_addr = entry & PAGE_MASK;
+>>>> +				src_pages[i++] =
+>>>> +					virt_to_page(__va(src_page_addr));
+>>>> +				if (i == npages)
+>>>> +					break;
+>>>> +				dest_page_addr += PAGE_SIZE;
+>>>> +			}
+>>>> +		}
+>>>> +	}
+>>>> +
+>>>> +	/* Sanity check. */
+>>>> +	WARN_ON(i < npages);
+>>>> +
+>>>> +	vaddr = vmap(src_pages, npages, VM_MAP, PAGE_KERNEL);
+>>>> +	kfree(src_pages);
+>>>> +
+>>>> +	if (!vaddr)
+>>>> +		pr_err("Could not map ima buffer.\n");
+>>>> +
+>>>> +	return vaddr;
+>>>> +}
+>>>> +
+>>>> +void kimage_unmap_segment(void *segment_buffer)
+>>>> +{
+>>>> +	vunmap(segment_buffer);
+>>>> +}
+>>>> +
+>>>>    struct kexec_load_limit {
+>>>>    	/* Mutex protects the limit count. */
+>>>>    	struct mutex mutex;
+>>>> -- 
+>>>> 2.25.1
+>>>>
+>>>>
+>>> BR, Jarkko
+>>
+Hi Baoquan,
 
-I've been mulling over what's likely to occur when the Low but not Min
-watermark is hit and reclaim is invoked but without demotion enabled.
+Thanks for your comments. I will update it in next version.
 
-I'm wonder if kswapd pushes things like r/o pagecache out, only to have
-them faulted back into CXL later, while new allocations stick on the
-main memory.
+Steven
 
-You might try MPOL_PREFERRED with CXL node as the target instead of bind
-w/ the local node to at least make sure the system is actually
-identifying hotness correctly.
-
-~Gregory
 
