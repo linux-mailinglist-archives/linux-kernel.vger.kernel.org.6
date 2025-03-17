@@ -1,284 +1,106 @@
-Return-Path: <linux-kernel+bounces-564006-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564007-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66855A64BCC
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 12:09:07 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3D17A64BDD
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 12:10:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4F00B7A4B41
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:08:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B1EB18867F6
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:10:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25E8023314E;
-	Mon, 17 Mar 2025 11:09:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 672392356D1;
+	Mon, 17 Mar 2025 11:09:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="hwWjiKe4";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="B0T0sJOJ";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="hwWjiKe4";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="B0T0sJOJ"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="L3ANOjmC"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 063A5233717
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 11:08:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E2681459F7;
+	Mon, 17 Mar 2025 11:09:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742209741; cv=none; b=PpG5R1aeIrOYbXsjTC17Pey4vOUZkeRgr6O7KLNnKGA3ObPXv7lmXch/+rWpSxaiWVLJHA3ZtL/qL+S0KmoTeQ9L1S1WNsCW1vRGBCbCJFdciznDszyMLBmdL0fP7kpki9yQKLXhWqcxRohd3EIxjK9w8OVK8ILIFDEKW9iPOeI=
+	t=1742209791; cv=none; b=ZlPyjiFsyJ6+LviQmDiugj1vJ7KIhGweb29pj1j2E+8OLAonOSkzfnQoNdmb0oOyr/68S6UHHT2i+/HvdmOCCInCNlxhQ5vx4YrB0vqkl+Hogl0luCpupuelDcau7458jsWA7dSQxBCOPxYYyH35v9vAwIGaPf/HK7i8exJvXFU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742209741; c=relaxed/simple;
-	bh=tWtg1QWw/sSvhu0Irttbs6EX4vmu0Sl///oymLht61s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=bZrUsO2XC6JRzQ/1Kqm7etyj3uTvzCMA+1bQiucY/J3H9Ex8G0pzsOyZFQlqwrdjRyYNT1lqgdlw4D62xWAB9r64LH2evFNBpKvHfuQjrmLXbgU7JIePgV11gQaS1blIUdTdMnZDnSP/+PQocU/S/sEhbKLRbRbo57EcPEpBof8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=hwWjiKe4; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=B0T0sJOJ; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=hwWjiKe4; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=B0T0sJOJ; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 1614B21C94;
-	Mon, 17 Mar 2025 11:08:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1742209736; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=t/DK9r72Uol6zgQzU2gC1hGvx4LoRdqfQlA9txMt/Pg=;
-	b=hwWjiKe4+VhV/uDqgYQCVtEp6iPqo//Gghh2Uclg9qsm7CAW8y0WUk79lIYOspdCGfXHZn
-	Nu0S8yFRFhO4C+KgjopzH1DTSjODZdQQIMkGWvI02CogM/wqPNyRwXr8RyAyiVOhlN5Jeh
-	qGoPQtIzNCueZaEocPQnQKesdqcwO5I=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1742209736;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=t/DK9r72Uol6zgQzU2gC1hGvx4LoRdqfQlA9txMt/Pg=;
-	b=B0T0sJOJKeCFIJiQ4OJAT4s4s29ghj+674SrtqIOwEIIjprm/G+NqeTzcHYSdZBnIQYexW
-	bOyFuPBtCepgkJCQ==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=hwWjiKe4;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=B0T0sJOJ
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1742209736; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=t/DK9r72Uol6zgQzU2gC1hGvx4LoRdqfQlA9txMt/Pg=;
-	b=hwWjiKe4+VhV/uDqgYQCVtEp6iPqo//Gghh2Uclg9qsm7CAW8y0WUk79lIYOspdCGfXHZn
-	Nu0S8yFRFhO4C+KgjopzH1DTSjODZdQQIMkGWvI02CogM/wqPNyRwXr8RyAyiVOhlN5Jeh
-	qGoPQtIzNCueZaEocPQnQKesdqcwO5I=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1742209736;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=t/DK9r72Uol6zgQzU2gC1hGvx4LoRdqfQlA9txMt/Pg=;
-	b=B0T0sJOJKeCFIJiQ4OJAT4s4s29ghj+674SrtqIOwEIIjprm/G+NqeTzcHYSdZBnIQYexW
-	bOyFuPBtCepgkJCQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E85FA139D2;
-	Mon, 17 Mar 2025 11:08:55 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id e+QlOMcC2GfnLgAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Mon, 17 Mar 2025 11:08:55 +0000
-Message-ID: <e728af67-4f7b-43ef-8fe5-0eec4064c625@suse.cz>
-Date: Mon, 17 Mar 2025 12:08:55 +0100
+	s=arc-20240116; t=1742209791; c=relaxed/simple;
+	bh=k/BM4FwwagS7ER/y5fUKx6y06iSE8U8+RTLffCOxvAg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NeYx+bCEPOhWY2Oa2sbdHsvrVwD8gnAc/1AeNk9xm/AP3ku4r5VW3B/ozehPf2tSCbCoVUcze/jV7zCUPskzFA0U5K4iZhjCu5uCHeYgincikaSjJU/0qnHDKaz3Sym1tffD7JIWYjCpjlPGl0TskD8zV2mrDZ1PF7t/vZXEN84=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=L3ANOjmC; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=CucQxAMz4q00rKoqMFkXW/rTlFZs/81VWM2dWuS9iPE=; b=L3ANOjmC4JYjNEDTGSFlYSj+EY
+	lDMUKIAPuul1T4GUZ6puKUkV8BzHq5WJJG6+uQGshRelm43SbzWOXlnmp3+t9vl5U/CCIqrkoFocf
+	0CLTtY4lXl6Aov3FiPFUso512czcMF1HO/Kfq/XAlzRMnW/HXJL2jAIjFrAL1OAvRukC77bqdyIAv
+	vnzXTJERSI/rnvJZYtJBQUhNFNs9z9CSA7BH9VOZ2jnPlNjMcvT0nKfMAOf3fOK49uAvKalEejjFu
+	SziT/8P/6JFZWVLYKFbO8dKi4HTjASat0y9ujjRXOzcAOdpA22UH87wRqpGq1Z7yFEyP30SG71LHf
+	YJq6KtAQ==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:59148)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1tu8LT-0003PO-0x;
+	Mon, 17 Mar 2025 11:09:23 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1tu8LL-0003W9-0k;
+	Mon, 17 Mar 2025 11:09:15 +0000
+Date: Mon, 17 Mar 2025 11:09:14 +0000
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Cc: Jacky Chou <jacky_chou@aspeedtech.com>, andrew+netdev@lunn.ch,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, joel@jms.id.au, andrew@codeconstruct.com.au,
+	ratbert@faraday-tech.com, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
+	BMC-SW@aspeedtech.com
+Subject: Re: [net-next 4/4] net: ftgmac100: add RGMII delay for AST2600
+Message-ID: <Z9gC2vz2w5dfZsum@shell.armlinux.org.uk>
+References: <20250317025922.1526937-1-jacky_chou@aspeedtech.com>
+ <20250317025922.1526937-5-jacky_chou@aspeedtech.com>
+ <20250317095229.6f8754dd@fedora.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v2 00/10] SLUB percpu sheaves
-Content-Language: en-US
-To: Suren Baghdasaryan <surenb@google.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- Kent Overstreet <kent.overstreet@linux.dev>, Christoph Lameter
- <cl@linux.com>, David Rientjes <rientjes@google.com>,
- Roman Gushchin <roman.gushchin@linux.dev>,
- Hyeonggon Yoo <42.hyeyoo@gmail.com>, Uladzislau Rezki <urezki@gmail.com>,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org, rcu@vger.kernel.org,
- maple-tree@lists.infradead.org,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- Alexei Starovoitov <ast@kernel.org>,
- Sidhartha Kumar <sidhartha.kumar@oracle.com>
-References: <20250214-slub-percpu-caches-v2-0-88592ee0966a@suse.cz>
- <ztssad52ikws3a2dwodju4o73h6rsutxnvzj5i6vyjjkudkiel@g7c7g5i3l7jd>
- <CAJuCfpHi4Od4K2xQEUFWuG=a4zCKecWBMwBiy_7mVn6QgsTSvA@mail.gmail.com>
- <CAJuCfpEq8P4cz7HXaRVqaagONPBKrFgOSqdigEYU60sGAE4-rg@mail.gmail.com>
- <173d4dbe-399d-4330-944c-9689588f18e8@suse.cz>
- <CAJuCfpHHXYKGjaOxHcuJcuQbUVO7YqLMpcYeF3HM5Ayxy1fE+g@mail.gmail.com>
- <CAJuCfpE7t83PKWw+8XJLE5538kKJnbhirLg2siDSw=F4sw=9uA@mail.gmail.com>
- <19df9218-c984-4cbc-8b5d-4e0f7658935f@suse.cz>
- <ape445nrqgod4ivtzcwacmfdshi3fgcqmmu54iascbjsk3sluo@w4jjihiz5jzr>
- <CAJuCfpFVopL+sMdU4bLRxs+HS_WPCmFZBdCmwE8qV2Dpa5WZnA@mail.gmail.com>
-From: Vlastimil Babka <vbabka@suse.cz>
-In-Reply-To: <CAJuCfpFVopL+sMdU4bLRxs+HS_WPCmFZBdCmwE8qV2Dpa5WZnA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: 1614B21C94
-X-Spam-Score: -3.01
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	MIME_TRACE(0.00)[0:+];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FREEMAIL_TO(0.00)[google.com,oracle.com,linux.dev,linux.com,gmail.com,kvack.org,vger.kernel.org,lists.infradead.org,linutronix.de,kernel.org];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[15];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	ARC_NA(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.cz:mid,suse.cz:email]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250317095229.6f8754dd@fedora.home>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On 3/14/25 18:10, Suren Baghdasaryan wrote:
-> On Tue, Mar 4, 2025 at 11:08 AM Liam R. Howlett <Liam.Howlett@oracle.com> wrote:
->>
->> * Vlastimil Babka <vbabka@suse.cz> [250304 05:55]:
->> > On 2/25/25 21:26, Suren Baghdasaryan wrote:
->> > > On Mon, Feb 24, 2025 at 1:12 PM Suren Baghdasaryan <surenb@google.com> wrote:
->> > >>
->> > >> >
->> > >> > > The values represent the total time it took to perform mmap syscalls, less is
->> > >> > > better.
->> > >> > >
->> > >> > > (1)                  baseline       control
->> > >> > > Little core       7.58327       6.614939 (-12.77%)
->> > >> > > Medium core  2.125315     1.428702 (-32.78%)
->> > >> > > Big core          0.514673     0.422948 (-17.82%)
->> > >> > >
->> > >> > > (2)                  baseline      control
->> > >> > > Little core       7.58327       5.141478 (-32.20%)
->> > >> > > Medium core  2.125315     0.427692 (-79.88%)
->> > >> > > Big core          0.514673    0.046642 (-90.94%)
->> > >> > >
->> > >> > > (3)                   baseline      control
->> > >> > > Little core        7.58327      4.779624 (-36.97%)
->> > >> > > Medium core   2.125315    0.450368 (-78.81%)
->> > >> > > Big core           0.514673    0.037776 (-92.66%)
->> > >
->> > > (4)                   baseline      control
->> > > Little core        7.58327      4.642977 (-38.77%)
->> > > Medium core   2.125315    0.373692 (-82.42%)
->> > > Big core           0.514673    0.043613 (-91.53%)
->> > >
->> > > I think the difference between (3) and (4) is noise.
->> > > Thanks,
->> > > Suren.
->> >
->> > Hi, as we discussed yesterday, it would be useful to set the baseline to
->> > include everything before sheaves as that's already on the way to 6.15, so
->> > we can see more clearly what sheaves do relative to that. So at this point
->> > it's the vma lock conversion including TYPESAFE_BY_RCU (that's not undone,
->> > thus like in scenario (4)), and benchmark the following:
->> >
->> > - baseline - vma locking conversion with TYPESAFE_BY_RCU
->> > - baseline+maple tree node reduction from mm-unstable (Liam might point out
->> > which patches?)
->>
->> Sid's patches [1] are already in mm-unstable.
->>
->>
->> > - the above + this series + sheaves enabled for vm_area_struct cache
->> > - the above + full maple node sheaves conversion [1]
->> > - the above + the top-most patches from [1] that are optimizations with a
->> > tradeoff (not clear win-win) so it would be good to know if they are useful
->> >
->> > [1] currently the 4 commits here:
->> > https://web.git.kernel.org/pub/scm/linux/kernel/git/vbabka/linux.git/log/?h=slub-percpu-sheaves-v2-maple
->> > from "maple_tree: Sheaf conversion" to "maple_tree: Clean up sheaf"
->> > but as Liam noted, they won't cherry pick without conflict once maple tree
->> > node reduction is backported, but he's working on a rebase
->>
->> Rebased maple tree sheaves, patches are here [2].
+On Mon, Mar 17, 2025 at 09:53:33AM +0100, Maxime Chevallier wrote:
+> So this goes completely against the naming of the property. It has the
+> -ps suffix, so you would expect to have picoseconds values passed, and
+> not an arbiraty index.
 > 
-> Hi Folks,
-> Sorry for the delay. I got the numbers last week but they looked a bit
-> weird, so I reran the test increasing the number of iterations to make
-> sure noise is not a factor. That took most of this week. Below are the
-> results. Please note that I had to backport the patchsets to 6.12
-> because that's the closest stable Android kernel I can use. I measure
-> cumulative time to execute mmap syscalls, so the smaller the number
-> the better mmap performance is:
-
-Is that a particular benchmark doing those syscalls, or you time them within
-actual workloads?
-
-> baseline: 6.12 + vm_lock conversion and TYPESAFE_BY_RCU
-> config1: baseline + Sid's patches [1]
-> config2: sheaves RFC
-> config3: config1 + vm_area_struct with sheaves
-> config4: config2 + maple_tree Sheaf conversion [2]
-> config5: config3 + 2 last optimization patches from [3]
+> Take a look at other drivers, you should accept picseconds values from
+> these properties, then compute the relevant index in the driver. That
+> index should be something internal to your driver.
 > 
->                config1     config2     config3     config4     config5
-> Little core    -0.10%      -10.10%     -12.89%     -10.02%     -13.64%
-> Mid core       -21.05%     -37.31%     -44.97%     -15.81%     -22.15%
-> Big core       -17.17%     -34.41%     -45.68%     -11.39%     -15.29%
-
-Thanks a lot, Suren.
-
-> [1] https://lore.kernel.org/linux-mm/20250227204823.758784-1-sidhartha.kumar@oracle.com/
-> [2] https://www.infradead.org/git/?p=users/jedix/linux-maple.git;a=shortlog;h=refs/heads/sheaves_rebase_20250304
-> [3] https://web.git.kernel.org/pub/scm/linux/kernel/git/vbabka/linux.git/log/?h=slub-percpu-sheaves-v2-maple
+> An example here :
 > 
-> From the numbers, it looks like config4 regresses the performance and
-> that's what looked weird to me last week and I wanted to confirm this.
-> But from sheaves POV, it looks like they provide the benefits I saw
-> before. Sid's patches which I did not test separately before also look
-> beneficial.
+> https://elixir.bootlin.com/linux/v6.14-rc6/source/drivers/net/ethernet/microchip/sparx5/lan969x/lan969x_rgmii.c#L51
 
-Indeed, good job, Sid. It's weird that config4 isn't doing well. The problem
-can be either in sheaves side (the sheaves preallocation isn't effective) or
-maple tree side doing some excessive work. It could be caused by the wrong
-condition in kmem_cache_return_sheaf() that Harry pointed out, so v3 might
-improve if that was it. Otherwise we'll probably need to fill the gaps in
-sheaf-related stats and see what are the differences between config3 and
-config4.
+Another example would be drivers/net/phy/adin.c::adin_get_reg_value()
+and associated functions - these lookup a DT property and then look
+that up in a table to convert it to a register value.
 
-> Thanks,
-> Suren.
-> 
->>
->>
->> >
->> >
->> ...
->>
->> Thanks,
->> Liam
->>
->> [1]. https://lore.kernel.org/linux-mm/20250227204823.758784-1-sidhartha.kumar@oracle.com/
->> [2]. https://www.infradead.org/git/?p=users/jedix/linux-maple.git;a=shortlog;h=refs/heads/sheaves_rebase_20250304
+I suspect that's something which could become generic, as I suspect
+most hardware isn't going to accept a picosecond value, but be a
+choice of N different options.
 
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
