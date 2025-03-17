@@ -1,119 +1,113 @@
-Return-Path: <linux-kernel+bounces-564623-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07491A6587F
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD94AA65880
 	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 17:41:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C20041888B55
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 16:40:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E36A07AC8AF
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 16:40:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57FFC1E00A0;
-	Mon, 17 Mar 2025 16:37:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A1341AE01C;
+	Mon, 17 Mar 2025 16:38:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QOnK2zFa"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RBd6lIRm"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB1B91A0BD6
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 16:37:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E83201AA795;
+	Mon, 17 Mar 2025 16:38:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742229476; cv=none; b=rqjRj9VXW1tMURp7f835KR47p1ZRCYXtMHaq4onRivUfyhXD1ZNYCNxHMIo5gTB3+vGUWO0GDiAUtqf8OEVYG/eu/gJIerxJUiQ5hB9i34lFIo5Lnh0G+1DT3O/3Eh+NTUHqJHmoCPmbsmpKWcAvcT4BZ2mFIkKaURPThRB4OBA=
+	t=1742229504; cv=none; b=SI9P8UvwmvqFK4zbnkdBLSCTIPMqsQcypaUpliGoGvjbR9aMZge8QKx9pr8MykefNWufLvC1HARrbZqtY5O+X6KSBXVzFu8l1cABQchVf4VU3/abmZCT6tKNy+0xoBKbqfWpJkwxQFE/ycB8/1txgaeor8ywhrE21uAf+3RxEZo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742229476; c=relaxed/simple;
-	bh=xJgC0H9lzIM57GZ1j7kOyitOHpUwGjjj7f2RdwSCtO0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lDr1m+FyvcsL8xB+aLA8zpVXIw/C1yxlVbXygb6gh5yMwV7jyylnydQOsM/He4TOIrkYWpJ5H+vKqIODOeJ1VIT9AXxW7JGcwPiJSCHchsYC+O2u2gh6l9YNe9rjMlqkuiBP7YADq60+e/OAX8nfrEoTDbR5NYnEgFNPr81J3So=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QOnK2zFa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47F38C4CEF1;
-	Mon, 17 Mar 2025 16:37:56 +0000 (UTC)
+	s=arc-20240116; t=1742229504; c=relaxed/simple;
+	bh=N/aRBNxPho1kgMQVdIQBUk7vp1cyQKJPsr48d15Ncd8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=cvAS349KFWUob2qHUzzG2sca4HAGG2eL2gv07VaeHSq2zf44asfr9lImz4Or1ZqV+DfDNJkr8TOK/mzIxENhQEnnoom/+WHiM3IP+r7XDjwonKgw9ZH6ymd5RHOegbOIak3Adea9Kiet8tH09O4S3P6FjYr6adj+2r1cZgm81Zc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RBd6lIRm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9957DC4CEE3;
+	Mon, 17 Mar 2025 16:38:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742229476;
-	bh=xJgC0H9lzIM57GZ1j7kOyitOHpUwGjjj7f2RdwSCtO0=;
+	s=k20201202; t=1742229503;
+	bh=N/aRBNxPho1kgMQVdIQBUk7vp1cyQKJPsr48d15Ncd8=;
 	h=From:To:Cc:Subject:Date:From;
-	b=QOnK2zFaIXo1k+PFc6R5yMNoKLeDnQBhY+1ZjTWTGut8CDD/Q3glmdwsVdZaY6PHZ
-	 pMIRRd9T7rIeZRtMGe32PE3H1rZDF9PXm3WVaWCQKYndT8XnBMbrPCFEnrLWU1Rv7q
-	 oN1bSEhokQuc+pxPD1hmUwPJ65CAzYAEBame7TM2vQMVU0uj1b7ii4j2JK12n/MPS5
-	 hAb/iLg75Bem4sYl01M7biVwep+X+YSKWI4DuV4CyUVED64kOqDzPY27Z64H7Hy0SV
-	 YmwtuCutPi9mvm3waaG2ipSTsizG1DemjK+fWniXonW9/wSIcMUPjSIZx6S96fx8v2
-	 B+7sD6Rd38isg==
-From: Namhyung Kim <namhyung@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>
-Cc: Kan Liang <kan.liang@linux.intel.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Matteo Rizzo <matteorizzo@google.com>,
-	Ravi Bangoria <ravi.bangoria@amd.com>
-Subject: [PATCH v2] perf/x86: Check data address for IBS software filter
-Date: Mon, 17 Mar 2025 09:37:55 -0700
-Message-ID: <20250317163755.1842589-1-namhyung@kernel.org>
-X-Mailer: git-send-email 2.49.0.rc1.451.g8f38331e32-goog
+	b=RBd6lIRm1hIWxm0KUeLj7d+UXMQdXGpBSyZO/q0qgLiTEptbB240lZjInIYnkBcDC
+	 24UUVbf+cYbnzBmlVpsojn2X/cLpJLStnJekoHZxRaGA+ZfkAngQ3mcws1IFhaOFjK
+	 GzkEa9PRMW2h+9sr9uzssHHCX37Ju33eJTy9Bc059354isq8togX1gM52QXEo6WidW
+	 13oCCKWqrZfeIGau4gfFJirkpeCEgVJMFOIuvdC9g5aYmVDF2nMXhIz7Fj6fBOGTAJ
+	 WyfeFzgXbTT8DNxAtc1IYzoKBFol/4uuuP7lAi+ptLTQedDZfzYsFGcsZmbsyQiKrK
+	 QSSaF5tEeHkCw==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Naman Jain <namjain@linux.microsoft.com>,
+	Saurabh Sengar <ssengar@linux.microsoft.com>,
+	Roman Kisel <romank@linux.microsoft.com>,
+	Wei Liu <wei.liu@kernel.org>,
+	Sasha Levin <sashal@kernel.org>,
+	kys@microsoft.com,
+	haiyangz@microsoft.com,
+	decui@microsoft.com,
+	tglx@linutronix.de,
+	mingo@redhat.com,
+	bp@alien8.de,
+	dave.hansen@linux.intel.com,
+	x86@kernel.org,
+	linux-hyperv@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.12 01/13] x86/hyperv/vtl: Stop kernel from probing VTL0 low memory
+Date: Mon, 17 Mar 2025 12:38:06 -0400
+Message-Id: <20250317163818.1893102-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.12.19
 Content-Transfer-Encoding: 8bit
 
-IBS software filter was to filter kernel samples for regular users in
-PMI handler.  It checks the instruction address in the IBS register to
-determine if it was in the kernel more or not.
+From: Naman Jain <namjain@linux.microsoft.com>
 
-But it turns out that it's possible to report a kernel data address even
-if the instruction address belongs to the user space.  Matteo Rizzo
-found that when an instruction raises an exception, IBS can report some
-kernel data address like IDT while holding the faulting instruction's
-RIP.  To prevent an information leak, it should double check if the data
-address in PERF_SAMPLE_DATA is in the kernel space as well.
+[ Upstream commit 59115e2e25f42924181055ed7cc1d123af7598b7 ]
 
-Suggested-by: Matteo Rizzo <matteorizzo@google.com>
-Cc: Ravi Bangoria <ravi.bangoria@amd.com>
-Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+For Linux, running in Hyper-V VTL (Virtual Trust Level), kernel in VTL2
+tries to access VTL0 low memory in probe_roms. This memory is not
+described in the e820 map. Initialize probe_roms call to no-ops
+during boot for VTL2 kernel to avoid this. The issue got identified
+in OpenVMM which detects invalid accesses initiated from kernel running
+in VTL2.
+
+Co-developed-by: Saurabh Sengar <ssengar@linux.microsoft.com>
+Signed-off-by: Saurabh Sengar <ssengar@linux.microsoft.com>
+Signed-off-by: Naman Jain <namjain@linux.microsoft.com>
+Tested-by: Roman Kisel <romank@linux.microsoft.com>
+Reviewed-by: Roman Kisel <romank@linux.microsoft.com>
+Link: https://lore.kernel.org/r/20250116061224.1701-1-namjain@linux.microsoft.com
+Signed-off-by: Wei Liu <wei.liu@kernel.org>
+Message-ID: <20250116061224.1701-1-namjain@linux.microsoft.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
-v2)
- * fix a build error  (Boris)
- * use kernel_ip() instead  (Peter)
- * combine sw filter checks  (Ravi)
+ arch/x86/hyperv/hv_vtl.c | 1 +
+ 1 file changed, 1 insertion(+)
 
- arch/x86/events/amd/ibs.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
-
-diff --git a/arch/x86/events/amd/ibs.c b/arch/x86/events/amd/ibs.c
-index 7b52b8e3a185157f..fbe10b469e8b03d5 100644
---- a/arch/x86/events/amd/ibs.c
-+++ b/arch/x86/events/amd/ibs.c
-@@ -1267,8 +1267,13 @@ static int perf_ibs_handle_irq(struct perf_ibs *perf_ibs, struct pt_regs *iregs)
- 		regs.flags |= PERF_EFLAGS_EXACT;
- 	}
+diff --git a/arch/x86/hyperv/hv_vtl.c b/arch/x86/hyperv/hv_vtl.c
+index 04775346369c5..d04ccd4b3b4af 100644
+--- a/arch/x86/hyperv/hv_vtl.c
++++ b/arch/x86/hyperv/hv_vtl.c
+@@ -30,6 +30,7 @@ void __init hv_vtl_init_platform(void)
+ 	x86_platform.realmode_init = x86_init_noop;
+ 	x86_init.irqs.pre_vector_init = x86_init_noop;
+ 	x86_init.timers.timer_init = x86_init_noop;
++	x86_init.resources.probe_roms = x86_init_noop;
  
-+	if (perf_ibs == &perf_ibs_op)
-+		perf_ibs_parse_ld_st_data(event->attr.sample_type, &ibs_data, &data);
-+
- 	if ((event->attr.config2 & IBS_SW_FILTER_MASK) &&
--	    perf_exclude_event(event, &regs)) {
-+	    (perf_exclude_event(event, &regs) ||
-+	     ((data.sample_flags & PERF_SAMPLE_ADDR) &&
-+	      event->attr.exclude_kernel && kernel_ip(data.addr)))) {
- 		throttle = perf_event_account_interrupt(event);
- 		goto out;
- 	}
-@@ -1283,9 +1288,6 @@ static int perf_ibs_handle_irq(struct perf_ibs *perf_ibs, struct pt_regs *iregs)
- 		perf_sample_save_raw_data(&data, event, &raw);
- 	}
- 
--	if (perf_ibs == &perf_ibs_op)
--		perf_ibs_parse_ld_st_data(event->attr.sample_type, &ibs_data, &data);
--
- 	/*
- 	 * rip recorded by IbsOpRip will not be consistent with rsp and rbp
- 	 * recorded as part of interrupt regs. Thus we need to use rip from
+ 	/* Avoid searching for BIOS MP tables */
+ 	x86_init.mpparse.find_mptable = x86_init_noop;
 -- 
-2.49.0.rc1.451.g8f38331e32-goog
+2.39.5
 
 
