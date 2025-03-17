@@ -1,139 +1,179 @@
-Return-Path: <linux-kernel+bounces-564105-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564112-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03159A64DD9
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 13:05:58 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3404DA64DFA
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 13:08:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F18CF3A9E03
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 12:05:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C56B18869BB
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 12:07:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32DB6237709;
-	Mon, 17 Mar 2025 12:05:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA1B623BCEF;
+	Mon, 17 Mar 2025 12:06:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b="CoAHs0q+";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="w61/GzQk"
-Received: from fout-a2-smtp.messagingengine.com (fout-a2-smtp.messagingengine.com [103.168.172.145])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="HewFk8I/"
+Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 208AE2E3373;
-	Mon, 17 Mar 2025 12:05:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E889821D3DF;
+	Mon, 17 Mar 2025 12:06:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742213150; cv=none; b=YcVyYMdDt2xfBukg6BfqwroIdGorUMGRFJo4wMvyxLfyqOQJBdNZY/2Cp+wrpIG9i/2WcqKxJNL4EaaubNsse74HXaBKMSuqzTZc7RzysLuroSQlVZD7vcwGgpkPJRsuC1E53WFSrum86XUp/gVFKLSrj5Pb+fQKGMf1rHf2LhU=
+	t=1742213219; cv=none; b=GGSQeeAmEg1s1Cg4TC9ePVmPV21ZBtRRXo5ocyJ+8WTnww4s7NPVCY/87stLftTZTbukiM+TSFQ05Ty9esNsQ41SFkh2g+8oK/cvcu5upCjzdh/AB8YvdM7dOsthuBKVH+90eLse3nQn0mSHI+HS0ijm/ku2VAx1f6X2KSNgNVA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742213150; c=relaxed/simple;
-	bh=3inWSjEROZv7RUpkzHRVyiGH3EXYNQIryvNSxPHVJ1o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NuHlmN2JTdeNPcRlV4IxZI/vUqL2w2xtoWvFYIfhg/WY8brKXMdvgJ6OZIJkYsAyetWbHgHAhVFfs5l92HWcSqzWODTq+o6i+Yc6T0DsftAeEOL7zKODz2Z8GX0AmFQHHDzMMV8EB4ElIp94VinU5sYFWndFvQt2Az0S2thbVP8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp; spf=pass smtp.mailfrom=sakamocchi.jp; dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b=CoAHs0q+; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=w61/GzQk; arc=none smtp.client-ip=103.168.172.145
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sakamocchi.jp
-Received: from phl-compute-02.internal (phl-compute-02.phl.internal [10.202.2.42])
-	by mailfout.phl.internal (Postfix) with ESMTP id F370A1382CE9;
-	Mon, 17 Mar 2025 08:05:46 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-02.internal (MEProxy); Mon, 17 Mar 2025 08:05:46 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sakamocchi.jp;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm1; t=1742213146; x=
-	1742299546; bh=VlE2aCu2dxScBu+S/YF4VoV7bWcPS836pUf9gH4Te88=; b=C
-	oAHs0q+RRJPO2YWgoZosSIfMyU4Qso45A2junUU37g8fKEat5bmbiPEi5+H/7paz
-	seE18t77/FVuVnaPcVGCORp5Tjz6ZQ67jM4iC7VnEpNG0iNinBOTkklvsw/4+LnS
-	2jHcIlRSMQ0Rs6w7KM3eL90qqSKEx961m/KmzFwViJJZwjwMxJ2x9Anv2qNaFkMx
-	XVc/KZwEhAncC5wzDJdmOX/1DisWr4nbcEBv+qTxvr3YSc9HyCo6fICsamVIkXN1
-	3BZbBe5JDOW6hBWYRdYOztWWaPPmEoZmcWCTSxdVBYbIV2j9aAB+sz7tGryNSaDY
-	WN1WVnFXOKeWpivw98xIw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-	1742213146; x=1742299546; bh=VlE2aCu2dxScBu+S/YF4VoV7bWcPS836pUf
-	9gH4Te88=; b=w61/GzQk9h/ygcwh/I4B076fiEoJhQYMfcmWTglEeHPBgIeG4t/
-	6+Vt1z/BIvCzu2/0iIYgtdruQvP+++z2zZeKMuWVceG/0Dxr300JeXfVv+7gNYMb
-	JOwSnXJR9u+mQ3s/tQjDWC6mKRqmQ3YYE2qsy1CiFMjxFZOd4QlUlBasNBGI+Lam
-	sumEoxR6vQRJWAZrLEVZhULyso5MRi9cnWE0gd3pKh43iPDqY1mLNDz2yFIwJXBC
-	oBzVseoEf4d4pqQDTI8fXNdnOis84Ziny4QjfRrhPtdVu6i/whl/NkfRdJ2pkIuq
-	07qE4lFOxbieSYiB9KibINWAKMySVI72SEA==
-X-ME-Sender: <xms:GhDYZzEz6KbBo2txi4gEEm-oi1L83slCf8ZWsWX2rInvgLZfYCt_fQ>
-    <xme:GhDYZwXu_aXHgvxHHhNhp7092YAUFI9rWKZmWNqD7UPYHED_wcaNyIqgVPWQy-Gij
-    f-nxxkKBC7gjoLohGA>
-X-ME-Received: <xmr:GhDYZ1Iu84qeOpULqdsU13vqzHDOTMl_Nh4-pDM5WfeS04CtenZhz2Y4HLItooOOOOWMc3VLIlvLnThQpV7IR3nan_zfGRZ0Dcc>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddufeelgeeiucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucenucfjughrpeffhf
-    fvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpefvrghkrghshhhiucfurghk
-    rghmohhtohcuoehoqdhtrghkrghshhhisehsrghkrghmohgttghhihdrjhhpqeenucggtf
-    frrghtthgvrhhnpeevieelhfdukeffheekffduudevvdefudelleefgeeileejheejuedv
-    gefhteevvdenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuih
-    iivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepohdqthgrkhgrshhhihesshgrkhgr
-    mhhotggthhhirdhjphdpnhgspghrtghpthhtohepgedpmhhouggvpehsmhhtphhouhhtpd
-    hrtghpthhtohepghhushhtrghvohgrrhhssehkvghrnhgvlhdrohhrghdprhgtphhtthho
-    pehlihhnuhigudefleegqdguvghvvghlsehlihhsthhsrdhsohhurhgtvghfohhrghgvrd
-    hnvghtpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghl
-    rdhorhhgpdhrtghpthhtoheplhhinhhugidqhhgrrhguvghnihhnghesvhhgvghrrdhkvg
-    hrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:GhDYZxHRo7nWHO_ukohRWpNe9goED6A_0_2RFXs8wGPGcRKSGH4BEQ>
-    <xmx:GhDYZ5UOhe7d7I675IjzPb7yU8RfyfFKQWDNvBk1YyZHKZ2CsA9iKg>
-    <xmx:GhDYZ8OvA0JAxqvNUPjXF-awDYfEPWG25GHbZssFVB_B9cLImSeUHw>
-    <xmx:GhDYZ42Z3P-y2Hu2Q4Gn-mIKUwi5fUyMJ2WkvGl65dQlK6NFtDFEgw>
-    <xmx:GhDYZ_zsIBjfWHvqkvV3sRoPwSBb3nlzXy3ZHlaGbjDsxKlVCGhC-MjQ>
-Feedback-ID: ie8e14432:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 17 Mar 2025 08:05:45 -0400 (EDT)
-Date: Mon, 17 Mar 2025 21:05:41 +0900
-From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
-To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: linux1394-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH v2][next] firewire: core: avoid
- -Wflex-array-member-not-at-end warning
-Message-ID: <20250317120541.GA6070@workstation.local>
-Mail-Followup-To: "Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	linux1394-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-References: <Z9NcB81yfPo-8o0h@kspp>
+	s=arc-20240116; t=1742213219; c=relaxed/simple;
+	bh=PF3ZDWVN8LuCDbIaK0PxC8hkeYCHGUuekx7FZJ4PTjw=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Y3vqsDlLYdNvEG6N0T/tum70Q3e2Se6sCMcB3+zgkii7/TfRG6H2C44WcUa6l/uuD5ZMhudPrTvzo1CALklGeLkrlRlJinXYdQwNB1oWOcl/EOpGRitTEBGno62KbERV5lLyqvy3fZcZLbhYlRtjOv6f5qCPN1Yp2GDJtczPsD0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=HewFk8I/; arc=none smtp.client-ip=198.47.23.235
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 52HC6W9D2802691
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+	Mon, 17 Mar 2025 07:06:32 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1742213192;
+	bh=sYqMUxY6aPO+kyTDUr8OW8US2KBxBSF0pqrgcL06vOE=;
+	h=From:To:CC:Subject:Date;
+	b=HewFk8I/BiRkZFwkjP5kdUdFvRQZNA2fn8utS9geqzmzctGNtYwEkU397jIYUR3Qa
+	 nvZbsKPNGJJdBkZpe63jb5Dr1m67wUdDJZN1WIbIf2rli1wOIRjiyHsLeKbRts9LNL
+	 vz+qqw8b/gPnNfECiw/Ry+Qp7wRBjyinl7u1PGhE=
+Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 52HC6Wb4004869;
+	Mon, 17 Mar 2025 07:06:32 -0500
+Received: from DLEE104.ent.ti.com (157.170.170.34) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 17
+ Mar 2025 07:06:31 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE104.ent.ti.com
+ (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Mon, 17 Mar 2025 07:06:31 -0500
+Received: from uda0510294.dhcp.ti.com (uda0510294.dhcp.ti.com [172.24.227.151])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 52HC6MJv060901;
+	Mon, 17 Mar 2025 07:06:28 -0500
+From: Beleswar Padhi <b-padhi@ti.com>
+To: <andersson@kernel.org>, <mathieu.poirier@linaro.org>
+CC: <afd@ti.com>, <hnagalla@ti.com>, <u-kumar1@ti.com>, <jm@ti.com>,
+        <jan.kiszka@siemens.com>, <christophe.jaillet@wanadoo.fr>,
+        <jkangas@redhat.com>, <eballetbo@redhat.com>, <b-padhi@ti.com>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v9 00/26] Refactor TI K3 R5, DSP and M4 Remoteproc Drivers
+Date: Mon, 17 Mar 2025 17:35:56 +0530
+Message-ID: <20250317120622.1746415-1-b-padhi@ti.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z9NcB81yfPo-8o0h@kspp>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Hi,
+This series refactors a lot of functions & callbacks from
+ti_k3_dsp_remoteproc.c, ti_k3_r5_remoteproc.c and ti_k3_m4_remoteproc.c
+drivers. This is a consolidated and final series as part of the
+refactoring of K3 remoteproc drivers. Below is the breakdown:
+1. PATCHES #1-#5 does the pre-cleanup and aligns R5, DSP, M4 data structures.
+2. PATCHES #6-#8 fixes important bugs in R5 and DSP drivers before refactoring
+them into a common driver.
+3. PATCHES #9-#26 does the actual refactoring from into ti_k3_common.c driver.
 
-On Fri, Mar 14, 2025 at 08:58:23AM +1030, Gustavo A. R. Silva wrote:
-> Use the `DEFINE_RAW_FLEX()` helper for an on-stack definition of
-> a flexible structure where the size of the flexible-array member
-> is known at compile-time, and refactor the rest of the code,
-> accordingly.
-> 
-> So, with these changes, fix the following warning:
-> 
-> drivers/firewire/core-cdev.c:1141:38: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-> 
-> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
-> ---
-> Changes in v2:
->  - Adjust COUNT argument for DEFINE_RAW_FLEX() to 64. (Takashi)
-> 
-> v1:
->  - Link: https://lore.kernel.org/linux-hardening/Z9AA9tAbcIcz6BMO@kspp/
-> 
->  drivers/firewire/core-cdev.c | 42 ++++++++++++++++--------------------
->  1 file changed, 19 insertions(+), 23 deletions(-)
+NOTE:
+This series supersedes below series:
+https://lore.kernel.org/all/20250219091042.263819-1-b-padhi@ti.com/
+https://lore.kernel.org/all/20250103101231.1508151-1-b-padhi@ti.com/
+https://lore.kernel.org/all/20250108063727.1416324-1-b-padhi@ti.com/
 
-Applied to for-next branch.
+Testing Done:
+1. Tested boot of R5Fs, C66x DSPs, C71x DSPs across Jacinto J7* devices in
+remoteproc mode and IPC-Only mode.
+2. Tested boot of M4F core _only_ in _AM62xx SK_ board in Remoteproc mode and
+IPC-Only mode.
+3. Tested Core stop and detach operations from sysfs for R5Fs, C66x DSPs, C71x DSPs
+4. Tested device removal paths by executing 'modprobe -r ti_k3_dsp_remoteproc'
+and 'modprobe -r ti_k3_r5_remoteproc'.
+5. Tested usecases where firmware not available at device probe time, but
+later in sysfs, able to load firmware into a remotecore and start it. [R5Fs]
+6. Tested that each patch in this series generates no new warnings/errors.
 
+v9: Changelog:
+1. Added R5 cleanup & refactoring along with existing DSP, M4 refactoring into this series. [Andrew]
+2. Dropped Mailbox level IPC checks across R5, DSP, M4 drivers in IPC-only mode. [Andrew] 
 
-Thanks
+Link to v8:
+https://lore.kernel.org/all/20250103101231.1508151-1-b-padhi@ti.com/
 
-Takashi Sakamoto
+v8: Changelog:
+1. Broken down refactoring into patches, each patch dealing with one function
+for ease in review. [Andrew]
+
+Links to older versions:
+v7: https://lore.kernel.org/all/20240202175538.1705-1-hnagalla@ti.com/
+v6: https://lore.kernel.org/all/20230913111644.29889-1-hnagalla@ti.com/
+v5: https://lore.kernel.org/all/20230808044529.25925-1-hnagalla@ti.com/
+v4: https://lore.kernel.org/all/20230801141117.2559-1-hnagalla@ti.com/
+v3: https://lore.kernel.org/all/20230302171450.1598576-1-martyn.welch@collabora.com/
+v2:
+https://lore.kernel.org/all/20230301111323.1532479-4-martyn.welch@collabora.com/
+v1: https://lore.kernel.org/all/20220110040650.18186-1-hnagalla@ti.com/
+
+Thanks,
+Beleswar
+
+Beleswar Padhi (24):
+  remoteproc: k3-r5: Re-order internal memory initialization function
+  remoteproc: k3-r5: Refactor Data Structures to Align with DSP and M4
+  remoteproc: k3-r5: Use k3_r5_rproc_mem_data structure for memory info
+  remoteproc: k3-{m4/dsp}: Align internal rproc data structure with R5
+  remoteproc: k3-m4: Use k3_rproc_mem_data structure for memory info
+  remoteproc: k3-r5: Refactor sequential core power up/down operations
+  remoteproc: k3: Refactor shared data structures
+  remoteproc: k3: Refactor mailbox rx_callback functions into common
+    driver
+  remoteproc: k3: Refactor .kick rproc ops into common driver
+  remoteproc: k3: Refactor rproc_reset() implementation into common
+    driver
+  remoteproc: k3: Refactor rproc_release() implementation into common
+    driver
+  remoteproc: k3: Refactor rproc_request_mbox() implementations into
+    common driver
+  remoteproc: k3: Refactor .prepare rproc ops into common driver
+  remoteproc: k3: Refactor .unprepare rproc ops into common driver
+  remoteproc: k3: Refactor .start rproc ops into common driver
+  remoteproc: k3: Refactor .stop rproc ops into common driver
+  remoteproc: k3: Refactor .attach rproc ops into common driver
+  remoteproc: k3: Refactor .detach rproc ops into common driver
+  remoteproc: k3: Refactor .get_loaded_rsc_table ops into common driver
+  remoteproc: k3: Refactor .da_to_va rproc ops into common driver
+  remoteproc: k3: Refactor of_get_memories() functions into common
+    driver
+  remoteproc: k3: Refactor mem_release() functions into common driver
+  remoteproc: k3: Refactor reserved_mem_init() functions into common
+    driver
+  remoteproc: k3: Refactor release_tsp() functions into common driver
+
+Siddharth Vadapalli (2):
+  remoteproc: k3-r5: Drop check performed in
+    k3_r5_rproc_{mbox_callback/kick}
+  remoteproc: k3-dsp: Drop check performed in
+    k3_dsp_rproc_{mbox_callback/kick}
+
+ drivers/remoteproc/Makefile               |   4 +-
+ drivers/remoteproc/ti_k3_common.c         | 552 +++++++++++++
+ drivers/remoteproc/ti_k3_common.h         | 113 +++
+ drivers/remoteproc/ti_k3_dsp_remoteproc.c | 618 +--------------
+ drivers/remoteproc/ti_k3_m4_remoteproc.c  | 583 +-------------
+ drivers/remoteproc/ti_k3_r5_remoteproc.c  | 898 +++++++---------------
+ 6 files changed, 1021 insertions(+), 1747 deletions(-)
+ create mode 100644 drivers/remoteproc/ti_k3_common.c
+ create mode 100644 drivers/remoteproc/ti_k3_common.h
+
+-- 
+2.34.1
+
 
