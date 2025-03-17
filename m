@@ -1,126 +1,176 @@
-Return-Path: <linux-kernel+bounces-564949-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564908-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58833A65D80
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 20:02:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BC42A65CBE
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 19:35:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88F33189A8A6
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 19:02:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04F093BAD2C
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 18:35:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A56B71C5F3F;
-	Mon, 17 Mar 2025 19:02:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD1EC1F4170;
+	Mon, 17 Mar 2025 18:34:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FctDCp8N"
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="oIhIyey4"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9BE04A06;
-	Mon, 17 Mar 2025 19:02:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93DC71DDC16
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 18:34:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742238133; cv=none; b=q9VRVzfnflt/RXMeaJxxlJDMjrxnKO8IhPXmm0CjXR3qIOABhj50dHBZyrXGBWDCD3S7vhmE733ubjiR3LwYxcnMn+fVLlMTavvM2grS81JdP3SxYw4b5ZeL77Ku6tp4z9qeiuFjYa84pXBBSB/QyBPs1+2N+UhWlkm4e360A7I=
+	t=1742236481; cv=none; b=Kcsi1NObgI8u6xFo/ybeDD45mxAXODCh4dcnN25/t/mzKMsrl0V3bP2QBhk5UmmHHAD6poflB3Df+vHcNpVDUAMhZzWRl/dOd8+zC8S4NqShR6u8JAD10XBbTv8mP9STx4zHg1UaR8WjdO74pVmplk6I8ZWh9awrT8991MTEgY4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742238133; c=relaxed/simple;
-	bh=Hvttu3ONsKCVI+zX+/ec6G/+a20ZSKSWdAO/LAA+zDg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jI6qOW/5BEC31YPqyd0j4arh23lU5RHkwSwEx1K+8RlJDA/wRruCQjIV6IsEJyX6iofy2/umnK4wD+R+cAzJLhL3E7D6QhVYETlb1taW7xEhHfG9OiA3LWUom1eQDQy1+HO2yFkVyAd1xIYiPp+kNx+l6ziJ/3plzwdQe4vC/54=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FctDCp8N; arc=none smtp.client-ip=209.85.216.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2fecba90cc3so5569221a91.2;
-        Mon, 17 Mar 2025 12:02:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742238131; x=1742842931; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=gVCXkbbka6K+VZe0MGxgjrGWBkeWob34kqWL102MXy4=;
-        b=FctDCp8NhceW3lJ/wwc4Pu7fviTdnlw0xvoasaOXhoW6z9A0rFrkP6aF4igALkqFRz
-         XKSg1Z2Bp+LbK6Ndf+3Q8nwBo6XTxCqSHwyoQNASaJN9UYfoIDCSSVX2agrzG5R/cczJ
-         eGvgC7IHAZVaa9TMv2FykHCQ6QGUkCjTUQtySpgzmgwUVZjiCpV72Lzl5svCr0u/LF4p
-         +8W9NIlcFq+PWGYvpE3Je+ZJwwb/c/qXv0j5pe2NgBRWj7LQRN7+ZN30Mj+rYwE6BAVc
-         9+dNTCMr5+TIJ8CYieiFfd22XRhVaOtgkG+kVTrcSXzINPnXQtQDcM5DhxhzcHg/OZy4
-         yOUg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742238131; x=1742842931;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=gVCXkbbka6K+VZe0MGxgjrGWBkeWob34kqWL102MXy4=;
-        b=hPxWH2X4s4dMw2j0SVJSrZu6+bOCPlpp5vUmJfUl5N4thVLnENwzukND6BZCXWtHu8
-         C/esfW3zUjLU9ekTSynOX61djmq0tZ8Rg5D3cXyYeze5D+bN1x4u5vK5td+6beKmtMRA
-         J3d9dI9MkHLdkgFaDVP1LfXKxXpEu7wpZFxDukKVywEOCpwD2Ya336N6aRxURS12lL61
-         8OPIL/sSQ++GxU1OrGaIrh2ORb43iFLGiR0cVcaZ7X56IAAGZCH7okC2f7IXmqRctGHb
-         HqhlVUO0BmbKarKcvL3lgAXBHpZz8kJ5qzrOlfEuVHVSm+VwlXocJtClx4hOD/u8lhjf
-         jFsQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW/wv5dF4mNYBqn5vU7/maYxncV3vOn2HIe2THorVLq51O4YYj79HWSbTE8M+zRAKs91Qcxyq198viw@vger.kernel.org, AJvYcCWrStmASUqZ6e0G67lLg2QmJnjn5y6Ds1NyEjlY7c858owgFv6XheR64uD+mewtQH/65e+aaHPo9/8k5o4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxgEHO3oEYNis5X2bF8BkR5wchBI1ft7GAgmT1WQXCrFrwi0cZx
-	3w/uTD4C0s7oYvInn/Vy8kOIjOLNL6Pykb6qHiN5uy0Oq4hJtrav
-X-Gm-Gg: ASbGncsxh2iBTn88zC7jH3bxSa0CdgWv70URfUjxzfYXoyrOy7Vh3p5+lMw4rafowAk
-	bzSJ7k2I6LjqPM07PkDCzb3I9t1SiJe8KtAb5r4UPLvh2UglHF0V78T8DY6EgnEy0/0EkoWroKi
-	tTdXldJYX+8ndawIFBrh3NB2Ia5dw/q/7vpf+qJxG7jG1eXLCZyV/ips4efXKDEalSs7Psj+jE5
-	NuxJWJ9K0oYjsIb86Dhwz/YW/mKt7I508ml+QuNZpy/2jUL3RTJYIcTg0raJxQ6wTQPHn5Tvqf0
-	glIDGp0lKiuAARtJ7qu8+sJS5ZxGlggBOCeV9j8gIW2B8QgtLNlTGt+cA221TVJYyQ==
-X-Google-Smtp-Source: AGHT+IGwW94/c+nWHi2B2aO2rPj0vPspA7nN6VmmEbHkP3+uGtj1SqduHMk+oLRnKzvqVpsyVbzStg==
-X-Received: by 2002:a17:90b:1f90:b0:2f8:49ad:4079 with SMTP id 98e67ed59e1d1-30151c5df91mr14364174a91.6.1742238130859;
-        Mon, 17 Mar 2025 12:02:10 -0700 (PDT)
-Received: from localhost.localdomain ([14.139.69.34])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-301535196e5sm6473747a91.16.2025.03.17.12.02.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Mar 2025 12:02:10 -0700 (PDT)
-From: Bharadwaj Raju <bharadwaj.raju777@gmail.com>
-To: alexandre.belloni@bootlin.com
-Cc: Bharadwaj Raju <bharadwaj.raju777@gmail.com>,
-	linux-rtc@vger.kernel.org,
-	shuah@kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-kernel-mentees@lists.linux.dev
-Subject: [PATCH] rtc: fix use of uninit struct in rtc_read_alarm_internal
-Date: Tue, 18 Mar 2025 00:03:43 +0530
-Message-ID: <20250317183349.346399-1-bharadwaj.raju777@gmail.com>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1742236481; c=relaxed/simple;
+	bh=WPvFh0iTwaqlqrtPgeJtgbfDX2prTYQSc37gvTNIaFI=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=Rm8clMrx4iVxCOsE4neXAsvn6eTQ6I4KFYkUEzZjr1FcuE9N3PbZowSdosx+5hcvpZre1G9Fmk/MAZRzANwD3LEWOQWtfaAXDPQ2bMFn5gjNjK7wW8cyGYrDhNg1U3BE6HVrYslS3IpPFzvHjzbZvauZQ+j8b7zXnyhVBynzxj4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=oIhIyey4; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [127.0.0.1] ([76.133.66.138])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 52HIYEpx662912
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Mon, 17 Mar 2025 11:34:15 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 52HIYEpx662912
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025021701; t=1742236455;
+	bh=gTyUfoKni7BCQJ49qIT4dxeTpJNfoERL9pZV1Bp47vg=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=oIhIyey4n7dEWOgxW9LGIfHeSLP0j6WVRXf/W5+pszTbLpp0p9AlzvAEgyFRjqZqn
+	 WWCQgvKTY1Nm9LeDkUp+MDXUymJwAaURPjLMkAAFqixnD55Ny3bpKweoq5xXkJu0BE
+	 5M2nV0zMcLIBzwbppzczuCpEVaKOMIb2+kKMXlGSz9WIpvsaW9DWV1T/vPrPeSxtkh
+	 yJMnb/fakcpDZ+yVLOnlVTDdZk1NOiwX8O5RVl5sIOeEcQnf9d7xRvjTuym/SNgsZs
+	 CBsttdjKCkaGD+dEHqv5+cW2UuO38dxdHxdtqGTvWcLPqMnfQ9YcYpc+gFanejRKk9
+	 8LAiErH6jukig==
+Date: Mon, 17 Mar 2025 11:34:12 -0700
+From: "H. Peter Anvin" <hpa@zytor.com>
+To: Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>
+CC: Uros Bizjak <ubizjak@gmail.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: =?US-ASCII?Q?Re=3A_=5BPATCH=5D_x86/asm=3A_Use_asm=5Finline=28=29?=
+ =?US-ASCII?Q?_instead_of_asm=28=29_in_=5F=5Funtagged=5Faddr=28=29?=
+User-Agent: K-9 Mail for Android
+In-Reply-To: <Z9fk2NMBRHB9Eu5h@gmail.com>
+References: <20250314093111.654359-1-ubizjak@gmail.com> <20250314112504.GBZ9QSEL1hgjp376ey@fat_crate.local> <Z9fk2NMBRHB9Eu5h@gmail.com>
+Message-ID: <E54655B6-6E91-492E-A4DA-1A6378CC03A1@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-The trace call invokes rtc_tm_to_time64 on a
-potentially uninitialized alarm->time. Move the
-trace call to the path where we do successfully
-initialize and read that struct.
+On March 17, 2025 2:01:12 AM PDT, Ingo Molnar <mingo@kernel=2Eorg> wrote:
+>
+>* Borislav Petkov <bp@alien8=2Ede> wrote:
+>
+>> On Fri, Mar 14, 2025 at 10:30:55AM +0100, Uros Bizjak wrote:
+>> > Use asm_inline() to instruct the compiler that the size of asm()
+>> > is the minimum size of one instruction, ignoring how many instruction=
+s
+>> > the compiler thinks it is=2E ALTERNATIVE macro that expands to severa=
+l
+>> > pseudo directives causes instruction length estimate to count
+>> > more than 20 instructions=2E
+>> >=20
+>> > bloat-o-meter reports minimal code size increase
+>>=20
+>> If you see an increase and *no* *other* *palpable* improvement, you=20
+>> don't send it=2E It is that simple=2E
+>
+>Sorry, but you wouldn't be saying that eliminating function calls is=20
+>not a 'palpable improvement', had you ever profiled a recent kernel on=20
+>a real system, on modern CPUs =2E=2E=2E :-/
+>
+>The sad reality is that the top profile is dominated by function call +=
+=20
+>return overhead due to CPU bug mitigation workarounds that create per=20
+>function call overhead:
+>
+> Overhead  Shared Object               Symbol
+>   4=2E57%  [kernel]                    [k] retbleed_return_thunk <=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D !!!!!!!!
+>   4=2E40%  [kernel]                    [k] unmap_page_range
+>   4=2E31%  [kernel]                    [k] _copy_to_iter
+>   2=2E46%  [kernel]                    [k] memset_orig
+>   2=2E31%  libc=2Eso=2E6                   [=2E] __cxa_finalize
+>
+>That retbleed_return_thunk overhead gets avoided every time we inline a=
+=20
+>simple enough function=2E
+>
+>But GCC cannot always do proper inlining decisions due to our=20
+>complicated ALTERNATIVE macro constructs confusing the GCC inliner:
+>
+>  > > ALTERNATIVE macro that expands to several pseudo directives causes=
+=20
+>  > > instruction length estimate to count more than 20 instructions=2E
+>                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>
+>Note how the asm_inline() compiler feature was added by GCC at the=20
+>kernel community's request to address such issues=2E (!)
+>
+>So for those reasons, in my book, eliminating a function call for=20
+>really simple single instruction inlines is an unconditional=20
+>improvement that doesn't require futile performance measurements - it=20
+>'only' requires assembly level code generation analysis in the=20
+>changelog=2E
+>
+>The reason is that requiring measurable effects for really small=20
+>inlining changes is pretty much impossible in practice=2E I know, because=
+=20
+>I tried, and I'm good at measuring such things and I have the hardware=20
+>to do it=2E Yet the per function call overhead demonstrated above in the=
+=20
+>profile is very much real and should not be handwaved away=2E
+>
+>Note that this policy doesn't apply to other inlining decisions, only=20
+>to single-instruction inline functions=2E
+>
+>Also, having said all that, for this particular patch I'd still like to=
+=20
+>see a bit more GCC code generation analysis in this particular=20
+>changelog: could you please cite a single relevant, representative=20
+>example before/after assembly code section that demonstrates the=20
+>effects of the inlined asm versus function call version, including the=20
+>function that gets called?
+>
+>I'm asking for that because sometimes single instructions can still=20
+>have a halo of half a dozen of instructions that set them up or=20
+>transform their results, so sometimes having a function call is the=20
+>better option=2E Not all single-instruction asm() statements are 'simple'=
+=20
+>in praxis - but looking at the code generation will very much tell us=20
+>whether it is=2E
+>
+>Thanks,
+>
+>	Ingo
 
-This fixes a KMSAN warning.
+I would like to repeat that I would like to see us at least try to #define=
+ asm __asm__ __inline__ tree-wide (with a possible opt-out) and run a bench=
+mark on it=2E Since this is a central knob, we could even make it a Kconfig=
+ option that architectures can opt in or out of, or be overridden for speci=
+fic compilers should it ever be necessary=2E
 
-Fixes: 29a1f599c0cc ("rtc: Add tracepoints for RTC system")
+It is simply much closer to how we actually use asm() in the Linux kernel,=
+ *and* what performance characteristics we tend to care about=2E More often=
+ than not if we have a large hunk of assembly source it is because of metad=
+ata and/or directives=2E
 
-Signed-off-by: Bharadwaj Raju <bharadwaj.raju777@gmail.com>
----
- drivers/rtc/interface.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+It doesn't hurt that inline duplicating kernel code can occasionally bring=
+ about huge improvements in terms of branch eliminations because often (but=
+ far from always, of course) the difference in call context allows the comp=
+iler to eliminate dead paths=2E=20
 
-diff --git a/drivers/rtc/interface.c b/drivers/rtc/interface.c
-index aaf76406cd7d..82ba33bf478b 100644
---- a/drivers/rtc/interface.c
-+++ b/drivers/rtc/interface.c
-@@ -201,11 +201,12 @@ static int rtc_read_alarm_internal(struct rtc_device *rtc,
- 		alarm->time.tm_yday = -1;
- 		alarm->time.tm_isdst = -1;
- 		err = rtc->ops->read_alarm(rtc->dev.parent, alarm);
-+		if (!err)
-+			trace_rtc_read_alarm(rtc_tm_to_time64(&alarm->time), err);
- 	}
- 
- 	mutex_unlock(&rtc->ops_lock);
- 
--	trace_rtc_read_alarm(rtc_tm_to_time64(&alarm->time), err);
- 	return err;
- }
- 
--- 
-2.48.1
-
+    -hpa
 
