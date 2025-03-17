@@ -1,185 +1,148 @@
-Return-Path: <linux-kernel+bounces-564471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564473-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98352A655D8
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 16:37:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CA9EA655DE
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 16:38:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 736347A251B
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 15:36:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44CFF1899901
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 15:38:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F042F2475C3;
-	Mon, 17 Mar 2025 15:37:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30EFE24886F;
+	Mon, 17 Mar 2025 15:38:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="YQG0MXK9"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nsU6IhzZ"
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81CC0241693
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 15:37:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE1082376ED;
+	Mon, 17 Mar 2025 15:38:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742225839; cv=none; b=uC6ceFJJpHq0yD+1ZX7fyXapWa/7KzdaoXyXMRpxBhw58hkvB8WjHlZBdPJbcMXevQRIa5tT4NZui4w8mSuWgglYdZdUJVzA6robXdbMYcnM0tKriFmPou707iVLlBgVjFjDUxkwJEWuCxLxliexUdyX7wCJmM850AzK3SfI6wE=
+	t=1742225884; cv=none; b=PWr38LfLKXvuo/7Fbmon499F1nQ14NK3Pe5xwt9Vfct1Fhc7trI8j2AzaI/Ay6e48jiTguAtx6jdCnXfyM3PoiziDPzrqfTZXvo5arwE7763rsq/Sxf8APQGkZE/J9YtM2c5d516Uvr3BntUZYbK4EUs/WeHpH3g3MS5z0bkgls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742225839; c=relaxed/simple;
-	bh=91EOAGT/LTBvqkDxJPvP1DdiTgpu0CdX8waGspRJd3Q=;
+	s=arc-20240116; t=1742225884; c=relaxed/simple;
+	bh=ZZWzmUWTimLJAcdPXG8JY1eISTp/yQNRuJsjDNuSk6s=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=R4SyJiNn3V2nw+clcY6QmQfw0kUF7XNAyQb26VjtWo8B9l2iHyB/1wZb1gOat3JkjfMUZnxToQNKRckLgwNeOPelw1ir6RTbj0Vr8ohrxKMFrlJAZAX9GVieGX327ysGkdNcLEOvwtwZh3Gox4qnwo9OxDY0fPqY7FVZ5qxXh+c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=YQG0MXK9; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-2240d930f13so10262655ad.3
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 08:37:17 -0700 (PDT)
+	 To:Cc:Content-Type; b=hB+zQlfvaO0osJIlUowMxJbMri7CUzGabxn0TKt/40OhW7o0f4gWtVMEWTdtKNrKyLlHF0JZCaUND/3htqXBLEV4JZbxLYASA0eqwtsOsl9LRuoiEatC7oY2RmJH8tzPTsSjzIcVa7aTfy/TlTlI5SZP5o+XOzWoIqEd2Pp2nBk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nsU6IhzZ; arc=none smtp.client-ip=209.85.208.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-30761be8fa8so7925321fa.2;
+        Mon, 17 Mar 2025 08:38:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1742225837; x=1742830637; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1742225881; x=1742830681; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=SiuraD0scF98DIVnU8j0ichZUEJVFJ9SSQQ48OkmXJE=;
-        b=YQG0MXK9/XmPj12Y2SpjDJLDxCCbZRn9d5hR3wxd+LyFEKabXc+JBD0kvgbTL1ASCT
-         LbiTntYo3sDdy2OhFN8KSHx+ydrhr4dRYyMepN//mNUc73vTNKy4lYdoSHzfAyvibol1
-         ilIoBv4LEaPloiIJe8221dum6Lo/UpLn94RwTT6gTsJQGbnBbgwbytqGTu5CRrcqFFoW
-         b2JeyMe8V6ljj2h2CEDWqoerdgqB4aZ8TWotraMtfG1jdeD0NNCYdvZgIF0K04JUSPFH
-         Ol69N70SjicxhazQIzWLO9mPlM8UyWco2iQbyEk6nVnLAdFPqNF/1uy0EBdO0tcQN/Jl
-         Tpxw==
+        bh=eUIrj43rm3bDSnVFHsMBGJ+fSVgHIGogbTLMRzpu2A4=;
+        b=nsU6IhzZ8AETp9r2rSgc0OpCAbWsU6qp0waT4Um4/jpgL7zGr1wPTBkaHWvoe7mKqd
+         rDdUSKXusINJAzGe6VazyUv6+/Jm5smsmK/yCBE5NKR3RF827EIV0yISRSvAgC4H8Rp0
+         ogeAZW+TKuhW/6tAIaS5tYJJKOA4uGeVboJkgd90qeDANrvRQ9RmZsygPE67ZIIhMWtE
+         h3AmC8anTPjzX9P3TZthHmdk2Wnd1s+1v/i3Fppxau1jMOu1QtqBn1yw2tH26dfYR9EF
+         LOkYkTNHUZ6pkqYAVInx+kHMKxKxI0KtZUcbXpcrc7ivPmXFAN5ormDZaF55tYm0d48N
+         9hNQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742225837; x=1742830637;
+        d=1e100.net; s=20230601; t=1742225881; x=1742830681;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=SiuraD0scF98DIVnU8j0ichZUEJVFJ9SSQQ48OkmXJE=;
-        b=W3j8yEc+Fi1ABI1KJYkIY8Kk5EiQU+VpL2rRM4rPf2biXezBPKIon95Bg9TW9M12RB
-         GQNcbZL8rCJzmslwFKWAdjlo/5dkvVVf2+NquMYCp5xD2fGrTQZ29h5tXX/UR/mglGWm
-         dEjjSDIQ6k5/ALKTQjV3hhpCDdQH6/WDrZOG3reJozuFrN9kv48SMa1RE+U5InGsUcQ/
-         FtBlEVEOrTh3BFSbCb7OpyRJenILoMQLXB79pKUrUFMjv0FvH9qzq57CD6p8yd/ENhsW
-         soupwmCNETdH1x8zNNhCkHRp8qYFlc0DmNIZLPlh6qb03+tIicn98btXoMuEkXZKgFuu
-         h99g==
-X-Forwarded-Encrypted: i=1; AJvYcCUz3U349XGwAqVwrC+1IEXZcO7gLRn4xHfGXONuXOwTszbeFzQJ5kjlCCDMpDyWC4JFTOlEw85p+z+dWlQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyi8k2X+IDL0cT14ifOFabAc15Myv6v48FoJS9UV+VkvJ+Al/ji
-	Qx8gqOGZxYeecvDnB2BC3orhK1m4QB2gLZhqpSsALIkrT2Jgzf+T8x7Pd8Cy6LjlofrfI/WwTCl
-	oK+jROnOIFeIcLsmG0LXIyQlvOVtS+9RHDknw/Q==
-X-Gm-Gg: ASbGnctAmgCkjWcyOyw+mhfH/oFUXaEbLT/7mJgHV8M7894puffxL5dQYzA9exUv2Hd
-	DQMhx80nSHSmeitTK6iazT6wJnG/iBG5zXPSXW8V/OuWG7R6EfYSAOcj5ftMPh0D0EyotM0s7Cn
-	jRcdQ6i8EDJZGFV4fr6Ck/cHzD
-X-Google-Smtp-Source: AGHT+IE8Qbr3Z3+6SwhCTqHY9ADPhV2r/oQIGA5Q+N790zg0o4fuQxNlr+9lLIHk8Xp4CRzlkCuTq1UUuAzPw3fR6GI=
-X-Received: by 2002:a17:902:e548:b0:223:5e86:efa9 with SMTP id
- d9443c01a7336-225e0a7e750mr60599445ad.8.1742225836723; Mon, 17 Mar 2025
- 08:37:16 -0700 (PDT)
+        bh=eUIrj43rm3bDSnVFHsMBGJ+fSVgHIGogbTLMRzpu2A4=;
+        b=In9SGLb5lPvv1JJHY/qnWhDtcQcjclZm8qvBoADElPamV34h/hyjgdxmQE0JQmH881
+         Za/CkErUD5iUUja94y65R/9sYB0TIZW7nHKJ9Mt2AAOfM6diPhiohK/5NIGKUIOL+2yF
+         ffwwrHvbk1x5E3Ufdh191KHd2TmlU9ZQf8c1F6B3fmQ1yXT40TlusoFBII3d3gbDEQdm
+         vAbtrhIXFkqvlDKYg2BDGIQVkRn2sW4s20Ku8CXbb5MSTN1QzlsB2lqPIUotV5n4B+Tn
+         9Aq8VXM5+xaeE1CQhWBvXfHyKUMS1UMcLW410Ar4oxncVhS373NJoI5sifbBNvArRJJT
+         becw==
+X-Forwarded-Encrypted: i=1; AJvYcCUj62CIJQjzjtgLG3rNRMapyfTsUn1uQTytH24ajbxScbWSECc4fyrq2lc8FL+ILrBX0kjChuLfGu/KYqS1Xkg=@vger.kernel.org, AJvYcCXRi0cFSQvstWWLs7u+LS1x8TfHcqQgk3JJlHiv5iSambNSMqviIpX3Psc1aXApH0UJlDsT0z4c6PXGxLk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzKIkA39myhW2I0+pgG5LG1bSFYG0t4ywC18cb7u66xAWvXa3OJ
+	QT9/VAXdMloQJGErtAN+/kGnsbBwokUvgc1lcLvnhVbJlYbGRPj4igUL04gLEkqxoP+u2lwbx0I
+	HgK78gJLFoexU/CA1kyZU9h0faQk=
+X-Gm-Gg: ASbGnct5fCJPCJu8PPKNZ71FxwjBndDKKbELGUI5YZIA42KHTp2YkCiVrA91EVqQc1i
+	iDls1rIVSYqwYKDDdreVK0QUJDld8V3P+lLEY1J/gVwTGgfLpWuwiciWJZP1qW7DjAium2awkWU
+	0mWt7kFdu40Vjw1Hwdq7t2fj3xFgfYJSLBLjjhlFmtN0qKE9GQZNt5itUQbOgg
+X-Google-Smtp-Source: AGHT+IH5ohCk5uuMKetMbjr8G6G2cxZCP8S9CkJlvAvgc+Fk0dQ8gE41Sls+pmLoPm5tocBiLzRNUGBJihVNUQ/f394=
+X-Received: by 2002:a2e:9bc6:0:b0:30c:b2c:edb6 with SMTP id
+ 38308e7fff4ca-30c4a876caamr74059371fa.18.1742225880670; Mon, 17 Mar 2025
+ 08:38:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250317135742.4331-1-sidong.yang@furiosa.ai> <20250317135742.4331-5-sidong.yang@furiosa.ai>
-In-Reply-To: <20250317135742.4331-5-sidong.yang@furiosa.ai>
-From: Caleb Sander Mateos <csander@purestorage.com>
-Date: Mon, 17 Mar 2025 08:37:04 -0700
-X-Gm-Features: AQ5f1JotubFdO4WCR1ty3ess4dG_oJvLLuow5UKCYcAMST_9n9hwbV1GunT3J1E
-Message-ID: <CADUfDZoR+L8za5h6-Q=EL-7bRekBt03CeARE48EjMr18S6gvww@mail.gmail.com>
-Subject: Re: [RFC PATCH v4 4/5] btrfs: ioctl: introduce btrfs_uring_import_iovec()
-To: Sidong Yang <sidong.yang@furiosa.ai>
-Cc: Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, Jens Axboe <axboe@kernel.dk>, 
-	Pavel Begunkov <asml.silence@gmail.com>, linux-btrfs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
+References: <20250316-vec-set-len-v1-0-60f98a28723f@gmail.com>
+ <20250316-vec-set-len-v1-2-60f98a28723f@gmail.com> <D8IGFTJXS2A1.9JBD1UKGN4PX@proton.me>
+ <CAJ-ks9=oq+c_pMg41QgGWsj=phWYfntXQgpSrFmz16Vifofn3g@mail.gmail.com> <D8IMA0GUIPTD.34ZEZ3W8QSKTA@proton.me>
+In-Reply-To: <D8IMA0GUIPTD.34ZEZ3W8QSKTA@proton.me>
+From: Tamir Duberstein <tamird@gmail.com>
+Date: Mon, 17 Mar 2025 11:37:24 -0400
+X-Gm-Features: AQ5f1JrgHQYe1BFwoE76k6wYz6LF0WzHEWpp_g8GemEC4LULIpXbGBcJs3pFmq0
+Message-ID: <CAJ-ks9kXZDO-5utmQb2HLkxmxmQ-bg8jZ4FdvDatTj_79W2dMA@mail.gmail.com>
+Subject: Re: [PATCH 2/2] rust: alloc: add `Vec::dec_len`
+To: Benno Lossin <benno.lossin@proton.me>
+Cc: Danilo Krummrich <dakr@kernel.org>, Andrew Ballance <andrewjballance@gmail.com>, 
+	Alice Ryhl <aliceryhl@google.com>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Mar 17, 2025 at 7:00=E2=80=AFAM Sidong Yang <sidong.yang@furiosa.ai=
-> wrote:
+On Mon, Mar 17, 2025 at 10:39=E2=80=AFAM Benno Lossin <benno.lossin@proton.=
+me> wrote:
 >
-> This patch introduces btrfs_uring_import_iovec(). In encoded read/write
-> with uring cmd, it uses import_iovec without supporting fixed buffer.
-> btrfs_using_import_iovec() could use fixed buffer if cmd flags has
-> IORING_URING_CMD_FIXED.
+> On Mon Mar 17, 2025 at 12:34 PM CET, Tamir Duberstein wrote:
+> > On Mon, Mar 17, 2025 at 6:04=E2=80=AFAM Benno Lossin <benno.lossin@prot=
+on.me> wrote:
+> >>
+> >> On Sun Mar 16, 2025 at 11:32 PM CET, Tamir Duberstein wrote:
+> >> > Add `Vec::dec_len` that reduces the length of the receiver. This met=
+hod
+> >> > is intended to be used from methods that remove elements from `Vec` =
+such
+> >> > as `truncate`, `pop`, `remove`, and others. This method is intention=
+ally
+> >> > not `pub`.
+> >>
+> >> I think it should be `pub`. Otherwise we're loosing functionality
+> >> compared to now. If one decides to give the raw pointer to some C API
+> >> that takes ownership of the pointer, then I want them to be able to ca=
+ll
+> >> `dec_len` manually.
+> >
+> > This is premature. It is trivial to make this function pub when the nee=
+d arises.
 >
-> Signed-off-by: Sidong Yang <sidong.yang@furiosa.ai>
-> ---
->  fs/btrfs/ioctl.c | 32 ++++++++++++++++++++++++--------
->  1 file changed, 24 insertions(+), 8 deletions(-)
->
-> diff --git a/fs/btrfs/ioctl.c b/fs/btrfs/ioctl.c
-> index 6c18bad53cd3..a7b52fd99059 100644
-> --- a/fs/btrfs/ioctl.c
-> +++ b/fs/btrfs/ioctl.c
-> @@ -4802,6 +4802,28 @@ struct btrfs_uring_encoded_data {
->         struct iov_iter iter;
->  };
->
-> +static int btrfs_uring_import_iovec(struct io_uring_cmd *cmd,
-> +                                   unsigned int issue_flags, int rw)
-> +{
-> +       struct btrfs_uring_encoded_data *data =3D
-> +               io_uring_cmd_get_async_data(cmd)->op_data;
-> +       int ret;
-> +
-> +       if (cmd && (cmd->flags & IORING_URING_CMD_FIXED)) {
-> +               data->iov =3D NULL;
-> +               ret =3D io_uring_cmd_import_fixed_vec(cmd, data->args.iov=
-,
-> +                                                   data->args.iovcnt,
-> +                                                   ITER_DEST, issue_flag=
-s,
+> And it's trivial to do it now. If it's private now, someone will have to
+> change this in some random patch and it's annoying.
 
-Why ITER_DEST instead of rw?
+It is my understanding that the kernel's policy is in general not to
+add API surface that doesn't have users. Rust-for-Linux of course
+often doesn't honor this by necessity, since many abstractions are
+needed before users (drivers) can be upstream. But in this case we
+can't even mention a specific use case - so as I mentioned on the
+previous reply, I am not comfortable putting my name on such an API.
 
-Best,
-Caleb
+> >> > +    ///
+> >> > +    /// # Safety
+> >> > +    ///
+> >> > +    /// - `count` must be less than or equal to `self.len`.
+> >>
+> >> I also think that we should use saturating_sub instead and then not ha=
+ve
+> >> to worry about this. (It should still be documented in the function
+> >> though). That way this can also be a safe function.
+> >
+> > This doesn't seem better to me. I'd prefer to have more rather than
+> > fewer guardrails on such low-level operations.
+>
+> Your second sentence seems like an argument for making it safe? I think
+> it's a lot better as a safe function.
 
-> +                                                   &data->iter);
-> +       } else {
-> +               data->iov =3D data->iovstack;
-> +               ret =3D import_iovec(rw, data->args.iov, data->args.iovcn=
-t,
-> +                                  ARRAY_SIZE(data->iovstack), &data->iov=
-,
-> +                                  &data->iter);
-> +       }
-> +       return ret;
-> +}
-> +
->  static int btrfs_uring_encoded_read(struct io_uring_cmd *cmd, unsigned i=
-nt issue_flags)
->  {
->         size_t copy_end_kernel =3D offsetofend(struct btrfs_ioctl_encoded=
-_io_args, flags);
-> @@ -4874,10 +4896,7 @@ static int btrfs_uring_encoded_read(struct io_urin=
-g_cmd *cmd, unsigned int issue
->                         goto out_acct;
->                 }
->
-> -               data->iov =3D data->iovstack;
-> -               ret =3D import_iovec(ITER_DEST, data->args.iov, data->arg=
-s.iovcnt,
-> -                                  ARRAY_SIZE(data->iovstack), &data->iov=
-,
-> -                                  &data->iter);
-> +               ret =3D btrfs_uring_import_iovec(cmd, issue_flags, ITER_D=
-EST);
->                 if (ret < 0)
->                         goto out_acct;
->
-> @@ -5022,10 +5041,7 @@ static int btrfs_uring_encoded_write(struct io_uri=
-ng_cmd *cmd, unsigned int issu
->                 if (data->args.len > data->args.unencoded_len - data->arg=
-s.unencoded_offset)
->                         goto out_acct;
->
-> -               data->iov =3D data->iovstack;
-> -               ret =3D import_iovec(ITER_SOURCE, data->args.iov, data->a=
-rgs.iovcnt,
-> -                                  ARRAY_SIZE(data->iovstack), &data->iov=
-,
-> -                                  &data->iter);
-> +               ret =3D btrfs_uring_import_iovec(cmd, issue_flags, ITER_S=
-OURCE);
->                 if (ret < 0)
->                         goto out_acct;
->
-> --
-> 2.43.0
->
->
+The guardrail I was referring to is the requirement that the caller
+write a safety comment.
 
