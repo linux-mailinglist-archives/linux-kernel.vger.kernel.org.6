@@ -1,126 +1,138 @@
-Return-Path: <linux-kernel+bounces-563957-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563959-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39408A64AD7
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:51:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F261AA64AE2
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:52:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8992B174800
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:50:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0AC3B1886433
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:51:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A22E233127;
-	Mon, 17 Mar 2025 10:50:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F78C22F16E;
+	Mon, 17 Mar 2025 10:51:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="eW4txa4L"
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lSpWpmpI"
+Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 224AA225A22
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 10:50:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B599EED6
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 10:51:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742208620; cv=none; b=h//YK3pa9fK0yJ26XRbDsF2i/P1a8M4lmpWjWst3O5MK7JLSEMxp7TDnH0YvZflIsA4lMAxka1H/OD3/SfEl0Yq4ayLkBmHlJM14Bq0wwU4V93IfY9NxMH4YeHmgD0QJe9zA7zGVvKrBk78HwKGKIRimnoyzr9JN9ivNr2YXPaU=
+	t=1742208687; cv=none; b=nI9dvHU3F+SW8mor75qEFNRqTnZVaAS9QisjLQMIZUuLNNBPsDe8rnrM83MLhlTxYuKl17LtWYn1uIYA1jmFzXah4Eg2CEaUVOYxN4mia/c7GkMv4zkqAtR7cBe3S3fnBZDN/2dqW8oGutnww7ohSGzIO8DeUblf6tDxmLUZctY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742208620; c=relaxed/simple;
-	bh=apPmjzBp15h6BuYlIx9rExk+T2+yeZP997KXyoYkzB8=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=QY0aMDXYs48XNGQcspfDoDgsr/ZDZiS1K0wLHox6LB6/nZJqzDKX5B8vIdwehUslLuLVakruBMDF55rRDCRdJuhG4PsYHU04hPzxXFxZv7sgwAlJwmFvp60/ww/lZF7qSMrvQ492lZVcmr5FxnpBAy7TCHW2TPfuhxh0bHKlmCA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=eW4txa4L; arc=none smtp.client-ip=209.85.128.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-4394c747c72so9338905e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 03:50:18 -0700 (PDT)
+	s=arc-20240116; t=1742208687; c=relaxed/simple;
+	bh=oMZ2yf11cn6QsFjSCpGR+HdSkwBNuHuHfa6xY5WzLS8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cZkWWwGlxgWs+VqnA8uegmLMEmu2myDaDXZ246eKOLwE8xrBfRCG+GJlGa+mLIPKePUvC0fSTzhd5xWH0xaeH2pG2tZ3O+9vz2a6ce57SCy+ag9oXVzlcGtAwKuxqlJ4tHZ6dctWCROUB2ZPXbW5fLeo2uoEQvzSadjkpNbfOt4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lSpWpmpI; arc=none smtp.client-ip=209.85.128.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-6feafc707d3so34308677b3.1
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 03:51:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1742208617; x=1742813417; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Up6B4MdDWj2/kfMDXbKASX6Gb+BsCApF2SDLkxZErAU=;
-        b=eW4txa4L/DFmFPOhbq4NDINaMtF6ioqDelHNV792lyzp1BDzxFEEn7VrTZHLwRP3HU
-         7w+Q6+ydGfhJTSDShFwYnkCqFoY99LQASx0Nr5hXAXav1PafsYX9LsnhH8Lw5TTOPvwi
-         K+JfZMHWDzVi/dQxscRrhZZOSuObhZHTIcsXdS5UMjR+l8V8QXXH0pzw7uC0O2ZlNR9W
-         9fP04x+xdXssO0JaDBlb29LIvo5Bi6Gtzo+2zrG8ZfnE2E44UnAZp0OgzDbL8chSnocX
-         l8b/FG05DClaRFLbAs/Ifi35Hbc+Q76aK1DtytAi9lkev8Y50cQbChEL8+F+TkbS9sw/
-         GP9g==
+        d=linaro.org; s=google; t=1742208684; x=1742813484; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=hhHd7SXnwkBnjLxo83dsWFNVVc7WEn7JrzvB0bh3I1s=;
+        b=lSpWpmpIM8Gp41D655wMruszhCql4PtB6XaDHbR0ifcyyxaL1NqZjEDDazr4WK9GDX
+         dYmRnkPb0htV8lCeWlPIYtJPtPUhek7JCIq1wlpwKXm659YGBn+aa/yRa2Yv32z6ka5s
+         CUIbpt0x523VNEaCTU2Tre0DuZ3b9K6UihCj8kg45aTnCadAmB7/LfMhtwtW0u8k0ry8
+         zPcAO/QIHG7lrMLbJayaQuv1HGRKu62JWI54YyiNif6OpqFomgp1je9DkU8KWkDk9Bkl
+         +2CabNSc/Zgkrogfk3XRsQUmQHzC8AGTGwWhiHZayWAMWP9G5hW+OTNrl+Eo5oyVWQyF
+         isWg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742208617; x=1742813417;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Up6B4MdDWj2/kfMDXbKASX6Gb+BsCApF2SDLkxZErAU=;
-        b=ds8IH1C4IYuRrrOmvcF+1XvprSTbDaZcm8NoofQhK+OPOMOPAg6IE9AfnVgmg7oo9k
-         FcfsXF4Omm4uzOpbUMUeZt0aKjwO9IIJfBMZgqpy2W3sVhuG0n6mH+7K2Cz4EWj4k0hF
-         tZ3H1fsDZildvfiIPzHD4wKnkKb7f+u2pwJ16mwewjofFzUHb89GtbVJIZLnSjktNkIv
-         Mi8nZWAlDxBjSKFZZ/8SoUMdOKfYZH63Aj4jLT/Rt/K8oEncgQyYKXESd7jJUFifCMWR
-         c+MYrOoLmAMEMBT2ObuvszPVOCzaG4SG8GO0AiQnbbRqt3Dgkt7tGSVVGD1R8mNVLK8s
-         kHZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXCgMlapMwmb5Q2QdfwBaEUJgHepLFe3EjB8BqG7m1bfyThQLrNvK5+f+H0/RwJlugi+gHy4Y5ajAJqquE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZn1fuWJ9JL3GpXSxl+C507P4zAuYBNi0DDnii0+GZLJrnL5zk
-	2bMGlBFUHHU1KJ9esIkw4WAuhMOSLOJfeLxX7qR07jEY14D4WLUOUc0MPfb2b/c5v6l1cA9TajF
-	8RqxiYJ3RSWjSYA==
-X-Google-Smtp-Source: AGHT+IF6IFyAlhN/n6Py4z3zsZpntW/Ns0z5jtqY9dqdYnp9Rx4qA7n2aFjUa1uf7DGmwKc656C0SK+M4oDPlBk=
-X-Received: from wmqd2.prod.google.com ([2002:a05:600c:34c2:b0:43c:f6c0:3375])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:1c86:b0:43c:fa0e:4713 with SMTP id 5b1f17b1804b1-43d1ec66826mr115790365e9.2.1742208617612;
- Mon, 17 Mar 2025 03:50:17 -0700 (PDT)
-Date: Mon, 17 Mar 2025 10:50:15 +0000
-In-Reply-To: <20250316-vec-set-len-v1-1-60f98a28723f@gmail.com>
+        d=1e100.net; s=20230601; t=1742208684; x=1742813484;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hhHd7SXnwkBnjLxo83dsWFNVVc7WEn7JrzvB0bh3I1s=;
+        b=bBARmKmGcar5kJDDT0IeyPBVgGXAAT/EviPGAsa+TtUWeQBGpcH/QAujiBSAP/wHrD
+         9ux3KaVGtPT+bPlcCVdNVvQzzkg2U+Z/D5yRvt3LpuNOHpJ8wqpX4iDRDlNNcF8c3FMu
+         p6hoEP+hd0Lks6KjKKM+XypDEULsMKj6Xgkze8L9OA535znpYeIJpkeA5bX2FFkz0uI0
+         Qe6brrx/mX8llgMAwhR7F30puku0wbHDgL8cqEpR46zYD4CliiQe0gGFSbSn8KzfOJ3M
+         AugA/8zoVJrw8qzlJo/+2TCVPX44LxB7tYreLjiSUHtzZmoJxs1LnINjz31T3pDBMa1y
+         YVdQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWz8pj8hV8ionADbzKlpQ4+zoyC8+JWb7STGO4gh3JUszcl4l0lhrZ9qV5UfsHMprpjwwI6jyc0rPPyHf0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwizAt7PutpGGqHcV1E2DUuqEJQmpDqUyiCyOpnaZVMQfBIBUP/
+	0o8SzCZX0LcLZD3PAImITgpKvgLIpFYBBipOPfrWsiAjLQ4DFHW2mf/tQ1dz6N2q8mexcLQxRhn
+	U+SsLgPJGjW1/l7DMvjE6DWJ+hfClSfM/GOp+w0hBEmk4oS7i
+X-Gm-Gg: ASbGncuzkJ40jal6ghHTMdyhQqosycM1P8XPtWgoU7OKyIIPr2JwQNE0nk3b/ROB6QE
+	NQ2HQQ8F3Cfh3hsmHAj3/X38ULI3kcg5058jV7a29s9ZSqq0So41jnc6AOsN0OC/dcV0865Ub2/
+	KaTNCEI85bkFO2lT5jLPD5G2k+1W4=
+X-Google-Smtp-Source: AGHT+IEe40CfksyDI5mdSQUSHhqAslmj6SGjaz3DQ4bTsoYnRMhPf4eCW4qJvzXcD+bNgB+yF6CSG5NQVgbkPysQZfM=
+X-Received: by 2002:a05:690c:b8e:b0:6f7:5605:c62b with SMTP id
+ 00721157ae682-6ff4600ebd2mr140912807b3.27.1742208684308; Mon, 17 Mar 2025
+ 03:51:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250316-vec-set-len-v1-0-60f98a28723f@gmail.com> <20250316-vec-set-len-v1-1-60f98a28723f@gmail.com>
-Message-ID: <Z9f-Z15bSh8MA1wJ@google.com>
-Subject: Re: [PATCH 1/2] rust: alloc: replace `Vec::set_len` with `inc_len`
-From: Alice Ryhl <aliceryhl@google.com>
-To: Tamir Duberstein <tamird@gmail.com>
-Cc: Danilo Krummrich <dakr@kernel.org>, Andrew Ballance <andrewjballance@gmail.com>, 
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+References: <20250314154834.4053416-1-arnd@kernel.org>
+In-Reply-To: <20250314154834.4053416-1-arnd@kernel.org>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Mon, 17 Mar 2025 11:50:47 +0100
+X-Gm-Features: AQ5f1Jr6iktPjJh5-3SyBgHuMVQK2t5ir32zhMU3Ip0MrgbDCFUExx4K6sMmMQQ
+Message-ID: <CAPDyKFrBfoMpGxnYM1g4M2+LViy8OAtogLL9swUFQfhhm9Ge1Q@mail.gmail.com>
+Subject: Re: [PATCH] pmdomain: thead: fix TH1520_AON_PROTOCOL dependency
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: Drew Fustini <drew@pdp7.com>, Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>, 
+	Michal Wilczynski <m.wilczynski@samsung.com>, Arnd Bergmann <arnd@arndb.de>, 
+	linux-riscv@lists.infradead.org, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Sun, Mar 16, 2025 at 06:32:00PM -0400, Tamir Duberstein wrote:
-> Rename `set_len` to `inc_len` and simplify its safety contract.
+On Fri, 14 Mar 2025 at 16:48, Arnd Bergmann <arnd@kernel.org> wrote:
+>
+> From: Arnd Bergmann <arnd@arndb.de>
+>
+> Kconfig treats the dependency as optional, but the header file only provides
+> normal declarations and no empty API stubs:
+>
+> ld: fs/btrfs/extent_io.o: in function `writepage_delalloc':
+> extent_io.c:(.text+0x2b42): undefined reference to `__udivdi3'
+> ld: drivers/pmdomain/thead/th1520-pm-domains.o: in function `th1520_pd_power_off':
+> th1520-pm-domains.c:(.text+0x57): undefined reference to `th1520_aon_power_update'
+> ld: drivers/pmdomain/thead/th1520-pm-domains.o: in function `th1520_pd_power_on':
+> th1520-pm-domains.c:(.text+0x8a): undefined reference to `th1520_aon_power_update'
+> ld: drivers/pmdomain/thead/th1520-pm-domains.o: in function `th1520_pd_probe':
+> th1520-pm-domains.c:(.text+0xb8): undefined reference to `th1520_aon_init'
+> ld: th1520-pm-domains.c:(.text+0x1c6): undefined reference to `th1520_aon_power_update'
+>
+> Since the firmware code can easily be enabled for compile testing, there
+> is no need to add stubs either, so just make it a hard dependency.
+>
+> Fixes: dc9a897dbb03 ("pmdomain: thead: Add power-domain driver for TH1520")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-You're missing a Signed-off-by tag.
+Applied for next, thanks!
 
->  rust/kernel/alloc/kvec.rs | 19 +++++++++----------
->  rust/kernel/str.rs        |  2 +-
->  rust/kernel/uaccess.rs    |  2 +-
->  3 files changed, 11 insertions(+), 12 deletions(-)
-> 
-> diff --git a/rust/kernel/alloc/kvec.rs b/rust/kernel/alloc/kvec.rs
-> index ae9d072741ce..d43a1d609434 100644
-> --- a/rust/kernel/alloc/kvec.rs
-> +++ b/rust/kernel/alloc/kvec.rs
-> @@ -183,17 +183,16 @@ pub fn len(&self) -> usize {
->          self.len
->      }
->  
-> -    /// Forcefully sets `self.len` to `new_len`.
-> +    /// Increments `self.len` by `additional`.
->      ///
->      /// # Safety
->      ///
-> -    /// - `new_len` must be less than or equal to [`Self::capacity`].
-> -    /// - If `new_len` is greater than `self.len`, all elements within the interval
-> -    ///   [`self.len`,`new_len`) must be initialized.
-> +    /// - `self.len + additional` must be less than or equal to [`Self::capacity`].
-> +    /// - All elements within the interval [`self.len`,`self.len + additional`) must be initialized.
->      #[inline]
-> -    pub unsafe fn set_len(&mut self, new_len: usize) {
-> -        debug_assert!(new_len <= self.capacity());
-> -        self.len = new_len;
-> +    pub unsafe fn inc_len(&mut self, additional: usize) {
-> +        debug_assert!(self.len() + additional <= self.capacity());
-> +        self.len += additional;
+Kind regards
+Uffe
 
-I guess we could use an INVARIANT: comment here.
 
-Alice
+> ---
+>  drivers/pmdomain/thead/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/pmdomain/thead/Kconfig b/drivers/pmdomain/thead/Kconfig
+> index c7a1ac0c61dc..7d52f8374b07 100644
+> --- a/drivers/pmdomain/thead/Kconfig
+> +++ b/drivers/pmdomain/thead/Kconfig
+> @@ -2,7 +2,7 @@
+>
+>  config TH1520_PM_DOMAINS
+>         tristate "Support TH1520 Power Domains"
+> -       depends on TH1520_AON_PROTOCOL || !TH1520_AON_PROTOCOL
+> +       depends on TH1520_AON_PROTOCOL
+>         select REGMAP_MMIO
+>         help
+>           This driver enables power domain management for the T-HEAD
+> --
+> 2.39.5
+>
 
