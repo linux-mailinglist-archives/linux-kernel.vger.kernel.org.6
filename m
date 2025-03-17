@@ -1,75 +1,75 @@
-Return-Path: <linux-kernel+bounces-565126-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565127-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 865C3A66163
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 23:19:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 56EB9A66164
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 23:19:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D35F9178C5B
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 22:19:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DFE6442007B
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 22:19:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DB25204F9B;
-	Mon, 17 Mar 2025 22:18:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0C6A205AC2;
+	Mon, 17 Mar 2025 22:18:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TFL+OB8U"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aOpF6Xxw"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CD3C2040B7
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 22:18:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D71B204F99
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 22:18:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742249929; cv=none; b=oaHyI5baewOiilokTvF3zSYlGkKr2LQWuveVgOEarHu1gCojRuRc294f/hKRitmMtcMkFgl7DhZcRA8TEZcHYOT7XlCgRYdtoTWGu8iZC1P89enHCzM5IlF52crdak/Lgfez1NdsOu1XO73N3Y8Qc9iGlcRBh6NVI1LFbOjB0ts=
+	t=1742249932; cv=none; b=DUFbtIAnJQAzEI6vILyvWchTL8Dt7CXZ9jtK2wmtZ2rSLO60CgzyyBViuVGRhNqraUCKM8ctRkD0XJdM6AAmTqEKzyfY2UZlstv54WgvaD7CjmsnzvNQfcB4ywewqH53yaTTpLRyrBIXqxS2bPLokWPG6rtcEe+2owjtYDLMcQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742249929; c=relaxed/simple;
-	bh=3XtREF1KRyHr7r2A8W/kBHu37fjo9QX1shsUsVhiIkM=;
+	s=arc-20240116; t=1742249932; c=relaxed/simple;
+	bh=21hyvfAgw0UCXSu4Bb7SLxAPr3QZnlntthYvDyrDKoA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=DZ0k9sQ63X3acH8qnFJ4f5eOiR4+rT4uNXRy1yE+vrX5bwCuPvjX6T36s4AUhKDIh9pBIrMx71xJh4P5obRf4yVTu8LNleSN5fskFu2wZ1rTwq/sxeKiQKsfEX9W+RYXfpV3vl4oJmsTxDp51LuVlTeDP/XwmAF/Bb1mrJRNyW4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TFL+OB8U; arc=none smtp.client-ip=209.85.218.49
+	 MIME-Version; b=s+s2N6uQPM94RWVvGUh/m4nXp/+AEydqLACQPdx7Ddp72+2Gc58dYtikSp9tTvvnyCHPgSOJQQivpg0IuiXY7PbJ015kyfsXYFVchIiFVB8THz0j9WkpTDKfgJrZzYJHRobGKJ1CtBbfIAx6vKCqqDpCAfpx/yvdDe1yA6kSTzE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aOpF6Xxw; arc=none smtp.client-ip=209.85.218.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-ac2b10bea16so351826066b.0
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 15:18:47 -0700 (PDT)
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-ac339f53df9so326268066b.1
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 15:18:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742249926; x=1742854726; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1742249929; x=1742854729; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:sender:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=WaMO2x9PhDqccZ8XJQRrT65SV5IUJDCFSLKnMbdH/3Y=;
-        b=TFL+OB8UcigJqg2rp3sLb5k0QF9iGEC8gA+K9wyLZzEXEbvtvw2bgdZkiJDfFdnWRd
-         g7m4kIwcEfv/Tc1tV/hACOMepvMbojm0fQMXnn5z6puDEVH3MRCGstgDE8C7OBHN6HTI
-         BilGD/fWyhirvIodiVdmzzVjzWX9BWuZA36FEBjYjyK79UXnhiwfoU/AxdUUMyHZpg82
-         aiDosz5mlYhgRNH0nXcLvXhYaOYp6QZeX1HBoMigo749Nwb0uBB8jw74ZYvH+h/yOyHx
-         WnRH8WGiXdv3oUhmHKIU6fmMxPfzLELTD/FUp4GOOPpcfT4ViQ8q1BMsWfzl8nFkqHAb
-         YSPA==
+        bh=FGTDbMbl7rJNc1xMOaRIKrwNGnAZ9yjWyI/0GLpPStk=;
+        b=aOpF6Xxwf0ZoCg8iZpSi6UtMNUaEdkehNUEk3s+C1q2oNWE6VFEFcFDwP3qCFpgTBg
+         Y7O/QH3eZ3tPjp4TM/I6vQYlqGv9Q4xSu6x57Kb4chI6p4iDHLIGW9CpFJCxd1/047PV
+         OgJbsnOH2RyeobHPKmXnyRkxEliaHmhkrWnqMprrLHbrhgWInsgzzFiKm50XprEN6FNF
+         DHPLWA+qgsxlnXDiICrui6yBF9Y5zwWoBh/YeCnm6AGdPbz6eCG18IFGWAEOPfYWw1x1
+         reI8LVQZy5tDNCMbkVmkqhAcGTcgVk1R1GIc4WI1RDpf/q/fWosfD69vK5XiZknYa7Rl
+         +9mA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742249926; x=1742854726;
+        d=1e100.net; s=20230601; t=1742249929; x=1742854729;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:sender:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=WaMO2x9PhDqccZ8XJQRrT65SV5IUJDCFSLKnMbdH/3Y=;
-        b=NsQuo0QnYQrQWO6BpXgUlBzIpWbxP+TmPHbJYYHJMXvYiD8JLmc3bkSTvc2gTEGyPx
-         /GRr+fZww9DyKd0YRhUQhD+VQsgj8uYpUgvA7GGw1ibr9TAF58qlO4qhrdgF8BXNAAnK
-         YJhDYfmzDFj6LrH7ByL9XGlKGjz6s3QSKl+oWuB40WyVqTzw0aJkan6Vuy+psZ06ylVS
-         Ll+g6NNa5XPvujfBqAn/9t7vsljlBnhbyYQ7EyOggFc75+KTu8dUklutfHkxNYKXbTnS
-         H0fMUIORYqSDuVhoBiDeKnyprxmLAD/GNoGaYTIYlSHlhkEj1/BNUSJhkvbDx+dFsnEA
-         +iOQ==
-X-Gm-Message-State: AOJu0YxOviXPc7R+68Q8trBsKAyZXUfsO2n1eNAUwURa90wLbTbaqnDB
-	QI8tUlUU/L4NN3/p/hQSLjDvKCx9YShVQcyHr99NgOUuKAUPICSwY0PLh/d5
-X-Gm-Gg: ASbGncuZ2+06x+v6zkq7HN5kQ6mYIxNjPUq4MJ7+IgAyiYe/Mw06nUzMMN18HWun3sa
-	rUH3x3J2YRDhHBt1mkmFESQxRfYnRBA9uyiYPguGveAhANzW3iiHaSq3nwDsm+6qvGhhNesbBjz
-	IpLUA9VXpeI7zLiApnPGa6NBggl/v5OPFcqBVZpLEvwmUprNgUNhkPvGRTsRLExW+JWYDJ9q2RD
-	gXveSdi1NfQ5AXcsM1DIWT/aAfsNGvy4UWJ+qbX1VSonTJG+Lnv7oS/Q2/O9+EiFHxMWY2A7cO/
-	t9Seb9vd/T72d+R1ZitiPj6Okwb4kgL3pvh7ddnCLRHPpSo5444v2YYn+5n+rKOfDQ==
-X-Google-Smtp-Source: AGHT+IHfagJawbGkp6AmMrhC7sQVRzn4HkZNoiFJSc4Zg32JaOfjgmvBqu9ILOLMemnC2vFWxHdI3w==
-X-Received: by 2002:a17:906:3409:b0:ac3:4229:91da with SMTP id a640c23a62f3a-ac342299440mr1122675366b.16.1742249926127;
-        Mon, 17 Mar 2025 15:18:46 -0700 (PDT)
+        bh=FGTDbMbl7rJNc1xMOaRIKrwNGnAZ9yjWyI/0GLpPStk=;
+        b=SVdoxhIxRkGPB4aJocYz9QaW82WbVtNIegoqj05qAF3JxA70Z3aivUUshoE6g37GHP
+         IDLYViil4z6f8L1vBRDinr0v9mybN2esT7Vl76PBbHwomOnkm/0HR/M99cCLB/TOtBN8
+         Uwx3kZDylMTXgWuUjsZsJMTQ8GcgY/KHIeesW2xwU5XtDuzOEu2KwoXQn79noAmQJdk4
+         Oc5dIlVi9/pvwG50WQYanY+VMwtOoujf/K5LGktnG9BAtBaqOyrOE8EpQc/svtmGKOIq
+         chTSz1VdNUp6KgSP8kd3rCfB0jUitVnAGPAuRCI78A5tVv4dEEfeaaTKaWEbXzTvR4uz
+         9Zkw==
+X-Gm-Message-State: AOJu0YwzkF2XmvI1NhZ1jrULOupVCENuakP32w0gjYC+EFaBF8yYp+Rs
+	9frQomg4a7ctW3onkt5VgSMM2nUcMl3rxj/WfUJmacxb1GzjIr8WdjWlvRak
+X-Gm-Gg: ASbGncvV/cVpLvlYMsH6/NVbzdNAoj096AmE0jq/VnpRCwGHhm4drFxq9YwN5I427Nn
+	NqCBF10ZY/J+5+ICq1gmu8HrC9pt3G8Kgj0QZRxKIl04bb7bZWCsF7AdCODrdNJB5wf+adAbMCT
+	3m+rPB50D+DLurwLe4IsenpC2+mwJQSZhJhlb8pzgatLllCZYjQ8EIz+tlFgTMpb8O0MSEZMrhS
+	qoOgHfFYJYF0LoTRch7e59SbP1p6Q1vmtYx6er3NtQl2pAjIADS2rnU10FjGZtoklTSIu2oercM
+	IO2YmuxiCgU9RFY+B9JRttZHcIr23OgyKsR8EK1+ZUZswIQ87BARLNU35fynpnN8bQ==
+X-Google-Smtp-Source: AGHT+IGQzCbssnsxCRIDN7nP+aVnUTvQCvb9vk8Zvp+QnPkf9eOEfnjbK/mBdxUK7p+CX5VvjxvbAg==
+X-Received: by 2002:a17:907:2d89:b0:ac2:7fd5:774 with SMTP id a640c23a62f3a-ac33048970bmr1474047366b.56.1742249928451;
+        Mon, 17 Mar 2025 15:18:48 -0700 (PDT)
 Received: from starship.. (1F2EF046.nat.pool.telekom.hu. [31.46.240.70])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac314a481absm727454966b.155.2025.03.17.15.18.44
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac314a481absm727454966b.155.2025.03.17.15.18.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Mar 2025 15:18:45 -0700 (PDT)
+        Mon, 17 Mar 2025 15:18:47 -0700 (PDT)
 Sender: Ingo Molnar <mingo.kernel.org@gmail.com>
 From: Ingo Molnar <mingo@kernel.org>
 To: linux-kernel@vger.kernel.org
@@ -83,9 +83,9 @@ Cc: Juergen Gross <jgross@suse.com>,
 	Peter Zijlstra <peterz@infradead.org>,
 	Borislav Petkov <bp@alien8.de>,
 	Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH 2/5] x86/cpuid: Clean up <asm/cpuid/types.h>
-Date: Mon, 17 Mar 2025 23:18:21 +0100
-Message-ID: <20250317221824.3738853-3-mingo@kernel.org>
+Subject: [PATCH 3/5] x86/cpuid: Clean up <asm/cpuid/api.h>
+Date: Mon, 17 Mar 2025 23:18:22 +0100
+Message-ID: <20250317221824.3738853-4-mingo@kernel.org>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20250317221824.3738853-1-mingo@kernel.org>
 References: <20250317221824.3738853-1-mingo@kernel.org>
@@ -97,12 +97,29 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
- - We have 0x0d, 0x9 and 0x1d as literals for the CPUID_LEAF definitions,
-   pick a single, consistent style of 0xZZ literals.
+ - Include <asm/cpuid/types.h> first, as is customary. This also has
+   the side effect of build-testing the header dependency assumptions
+   in the types header.
 
- - Likewise, harmonize the style of the 'struct cpuid_regs' list of
-   registers with that of 'enum cpuid_regs_idx'. Because while computers
-   don't care about unnecessary visual noise, humans do.
+ - No newline necessary after the SPDX line
+
+ - Newline necessary after inline function definitions
+
+ - Rename native_cpuid_reg() to NATIVE_CPUID_REG(): it's a CPP macro,
+   whose name we capitalize in such cases.
+
+ - Prettify the CONFIG_PARAVIRT_XXL inclusion block a bit
+
+ - Standardize register references in comments to EAX/EBX/ECX/etc.,
+   from the hodgepodge of references.
+
+ - s/cpus/CPUs because why add noise to common acronyms?
+
+ - Use u32 instead of uint32_t in hypervisor_cpuid_base(). Yes, I realize
+   uint32_t is used in Xen code, but this is a core x86 architecture header
+   and we should standardize on the type that is being used overwhelmingly
+   in x86 architecture code. The two types are the same so there should be
+   no build warnings.
 
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Cc: Ahmed S. Darwish <darwi@linutronix.de>
@@ -112,41 +129,100 @@ Cc: John Ogness <john.ogness@linutronix.de>
 Cc: x86-cpuid@lists.linux.dev
 Link: https://lore.kernel.org/r/20250317164745.4754-3-darwi@linutronix.de
 ---
- arch/x86/include/asm/cpuid/types.h | 11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+ arch/x86/include/asm/cpuid/api.h | 30 ++++++++++++++++--------------
+ 1 file changed, 16 insertions(+), 14 deletions(-)
 
-diff --git a/arch/x86/include/asm/cpuid/types.h b/arch/x86/include/asm/cpuid/types.h
-index 724002aaff4d..8582e27e836d 100644
---- a/arch/x86/include/asm/cpuid/types.h
-+++ b/arch/x86/include/asm/cpuid/types.h
-@@ -5,11 +5,14 @@
+diff --git a/arch/x86/include/asm/cpuid/api.h b/arch/x86/include/asm/cpuid/api.h
+index 4d1da9cc8b6f..f26926ba5289 100644
+--- a/arch/x86/include/asm/cpuid/api.h
++++ b/arch/x86/include/asm/cpuid/api.h
+@@ -1,16 +1,16 @@
+ /* SPDX-License-Identifier: GPL-2.0 */
+-
+ #ifndef _ASM_X86_CPUID_API_H
+ #define _ASM_X86_CPUID_API_H
+ 
++#include <asm/cpuid/types.h>
++
+ #include <linux/build_bug.h>
  #include <linux/types.h>
  
+-#include <asm/cpuid/types.h>
+ #include <asm/string.h>
+ 
  /*
-- * Types for raw CPUID access
-+ * Types for raw CPUID access:
+- * Raw CPUID accessors
++ * Raw CPUID accessors:
   */
  
- struct cpuid_regs {
--	u32 eax, ebx, ecx, edx;
-+	u32 eax;
-+	u32 ebx;
-+	u32 ecx;
-+	u32 edx;
- };
+ #ifdef CONFIG_X86_32
+@@ -21,6 +21,7 @@ static inline bool have_cpuid_p(void)
+ 	return true;
+ }
+ #endif
++
+ static inline void native_cpuid(unsigned int *eax, unsigned int *ebx,
+ 				unsigned int *ecx, unsigned int *edx)
+ {
+@@ -34,7 +35,7 @@ static inline void native_cpuid(unsigned int *eax, unsigned int *ebx,
+ 	    : "memory");
+ }
  
- enum cpuid_regs_idx {
-@@ -19,8 +22,8 @@ enum cpuid_regs_idx {
- 	CPUID_EDX,
- };
+-#define native_cpuid_reg(reg)					\
++#define NATIVE_CPUID_REG(reg)					\
+ static inline unsigned int native_cpuid_##reg(unsigned int op)	\
+ {								\
+ 	unsigned int eax = op, ebx, ecx = 0, edx;		\
+@@ -45,22 +46,23 @@ static inline unsigned int native_cpuid_##reg(unsigned int op)	\
+ }
  
--#define CPUID_LEAF_MWAIT	0x5
--#define CPUID_LEAF_DCA		0x9
-+#define CPUID_LEAF_MWAIT	0x05
-+#define CPUID_LEAF_DCA		0x09
- #define CPUID_LEAF_XSTATE	0x0d
- #define CPUID_LEAF_TSC		0x15
- #define CPUID_LEAF_FREQ		0x16
+ /*
+- * Native CPUID functions returning a single datum.
++ * Native CPUID functions returning a single datum:
+  */
+-native_cpuid_reg(eax)
+-native_cpuid_reg(ebx)
+-native_cpuid_reg(ecx)
+-native_cpuid_reg(edx)
++NATIVE_CPUID_REG(eax)
++NATIVE_CPUID_REG(ebx)
++NATIVE_CPUID_REG(ecx)
++NATIVE_CPUID_REG(edx)
+ 
+ #ifdef CONFIG_PARAVIRT_XXL
+-#include <asm/paravirt.h>
++# include <asm/paravirt.h>
+ #else
+-#define __cpuid			native_cpuid
++# define __cpuid native_cpuid
+ #endif
+ 
+ /*
+  * Generic CPUID function
+- * clear %ecx since some cpus (Cyrix MII) do not set or clear %ecx
++ *
++ * Clear ECX since some CPUs (Cyrix MII) do not set or clear ECX
+  * resulting in stale register contents being returned.
+  */
+ static inline void cpuid(unsigned int op,
+@@ -72,7 +74,7 @@ static inline void cpuid(unsigned int op,
+ 	__cpuid(eax, ebx, ecx, edx);
+ }
+ 
+-/* Some CPUID calls want 'count' to be placed in ecx */
++/* Some CPUID calls want 'count' to be placed in ECX */
+ static inline void cpuid_count(unsigned int op, int count,
+ 			       unsigned int *eax, unsigned int *ebx,
+ 			       unsigned int *ecx, unsigned int *edx)
+@@ -83,7 +85,7 @@ static inline void cpuid_count(unsigned int op, int count,
+ }
+ 
+ /*
+- * CPUID functions returning a single datum
++ * CPUID functions returning a single datum:
+  */
+ 
+ static inline unsigned int cpuid_eax(unsigned int op)
 -- 
 2.45.2
 
