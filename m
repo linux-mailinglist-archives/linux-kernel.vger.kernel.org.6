@@ -1,64 +1,78 @@
-Return-Path: <linux-kernel+bounces-563830-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563834-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AF78A6494B
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:18:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B96FAA64957
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:20:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B5173B4F10
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:17:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80D893B2BD6
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:17:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0045C233722;
-	Mon, 17 Mar 2025 10:16:17 +0000 (UTC)
-Received: from zg8tmtyylji0my4xnjqumte4.icoremail.net (zg8tmtyylji0my4xnjqumte4.icoremail.net [162.243.164.118])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FD1AEED6;
-	Mon, 17 Mar 2025 10:16:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.243.164.118
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 495AB238D5F;
+	Mon, 17 Mar 2025 10:16:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="rT/d7l02"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 248902356B4;
+	Mon, 17 Mar 2025 10:16:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742206576; cv=none; b=KUzR4bB5rSg4XqycAmYsIECAkkUuqNmOIzLvfhJwDcskGjE+Hckpy6sFoWLU/CMtw5+Dj4uMj2br75VUR2lXpahN9wlDEbTlYtPgb4IxI9uep/MOgYIxzQzAF/k2bEqyjZLxxhXow9V+IjHwbVgiqGE23zJsAVbO/8Nwd1gYB3A=
+	t=1742206596; cv=none; b=qI5LNtBLoGyRMU2eOVBGyLL3FZ+unVOcze1yyULUDXKRNYvMBv0B6DuIJtbPfm7CR3ZC2bePICX3NRlPPIg7J4SMGma5igVYWjGMsoTbC89IZmTt7z6tTZgRTujmUGGDmSnkIwdf+mRaDkWD4syyuQo6QMkZ6lrdbWojJF95F7M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742206576; c=relaxed/simple;
-	bh=gNa9WH3CbpnyjD0jwvZJ/5xvl2hPG86rsEve7RWuBlo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=U/8wUo3V+zDY6/8oDrbVn0o4J+Es2gBNU166Vkx4Jjrn3EsdszLXaGGBP0cnfW5Us5204Ki6KCikscF1CCURAnuwzC6Nszo3XgqqqwRw2rPX3szZj3CxJ44wdQrI1xz+KdjmngWN18pCkIaMLJL53QbQVvzodTQI5ZJ4lPgqEcA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytium.com.cn; spf=pass smtp.mailfrom=phytium.com.cn; arc=none smtp.client-ip=162.243.164.118
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytium.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=phytium.com.cn
-Received: from prodtpl.icoremail.net (unknown [10.12.1.20])
-	by hzbj-icmmx-7 (Coremail) with SMTP id AQAAfwBnb09r9tdnwnzGCg--.38785S2;
-	Mon, 17 Mar 2025 18:16:11 +0800 (CST)
-Received: from phytium.com.cn (unknown [123.150.8.50])
-	by mail (Coremail) with SMTP id AQAAfwDX2oZU9tdncdJLAA--.4190S5;
-	Mon, 17 Mar 2025 18:16:05 +0800 (CST)
-From: Yuquan Wang <wangyuquan1236@phytium.com.cn>
-To: Jonathan.Cameron@huawei.com,
-	dan.j.williams@intel.com,
-	rppt@kernel.org,
-	akpm@linux-foundation.org,
-	david@redhat.com,
-	bfaccini@nvidia.com,
-	rafael@kernel.org,
-	lenb@kernel.org,
-	dave@stgolabs.net,
-	dave.jiang@intel.com,
-	alison.schofield@intel.com,
-	vishal.l.verma@intel.com,
-	ira.weiny@intel.com,
-	rrichter@amd.com,
-	haibo1.xu@intel.com
-Cc: linux-acpi@vger.kernel.org,
-	linux-cxl@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	chenbaozi@phytium.com.cn,
-	Yuquan Wang <wangyuquan1236@phytium.com.cn>
-Subject: [PATCH v3 2/2] ACPI: NUMA: debug invalid unused PXM value for CFMWs
-Date: Mon, 17 Mar 2025 18:15:33 +0800
-Message-Id: <20250317101533.2582624-3-wangyuquan1236@phytium.com.cn>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250317101533.2582624-1-wangyuquan1236@phytium.com.cn>
-References: <20250317101533.2582624-1-wangyuquan1236@phytium.com.cn>
+	s=arc-20240116; t=1742206596; c=relaxed/simple;
+	bh=IUObPNRR4NQzu31kLweJs0iKm+Tw8gF+37su5fyiEFE=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ooC75wjjiB+rrfoSmIi+W3jgu1YY4paqyUC6dqEwK93/dm3/mHRhaGGKefcRpq8hZw8kjyrqLIOZfRuJwNccx/H9h3AEUeZN6ros9tOSEFbF3U7ZLK4KIJ73OG4ouF/YlI0MIFrNDca4JE/n3d/tLjbIrrY8NQmGFRGQr3Q+w9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=rT/d7l02; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 52HAFwoe2248052
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+	Mon, 17 Mar 2025 05:15:58 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1742206558;
+	bh=CdL/+PjoujWaXbjx9Z6DltuQ+LmtMfq1I7St4x1lKEY=;
+	h=From:To:CC:Subject:Date;
+	b=rT/d7l02DwVXTVZQuvKIJ+3ad/PDz83E7BSa7gcBKo2nU+yI6hfuzsSCmCXOBOHmm
+	 bDtR3pUj15YvCnsyAkveGhBN9+SZihUJzJs7P+p/P0agV9U3MYU35+qnaCGFiwddjx
+	 XXyx9LwyDVSf4SCr3Hx3grzS7ijrmraDOyvt4vSU=
+Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 52HAFwEU076244;
+	Mon, 17 Mar 2025 05:15:58 -0500
+Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE107.ent.ti.com
+ (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 17
+ Mar 2025 05:15:57 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE102.ent.ti.com
+ (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Mon, 17 Mar 2025 05:15:57 -0500
+Received: from lelv0854.itg.ti.com (lelv0854.itg.ti.com [10.181.64.140])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 52HAFvM6036212;
+	Mon, 17 Mar 2025 05:15:57 -0500
+Received: from localhost (meghana-pc.dhcp.ti.com [10.24.69.13] (may be forged))
+	by lelv0854.itg.ti.com (8.14.7/8.14.7) with ESMTP id 52HAFugA019281;
+	Mon, 17 Mar 2025 05:15:57 -0500
+From: Meghana Malladi <m-malladi@ti.com>
+To: <pabeni@redhat.com>, <kuba@kernel.org>, <edumazet@google.com>,
+        <davem@davemloft.net>, <andrew+netdev@lunn.ch>
+CC: <bpf@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <netdev@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <kory.maincent@bootlin.com>, <javier.carrasco.cruz@gmail.com>,
+        <diogo.ivo@siemens.com>, <horms@kernel.org>,
+        <jacob.e.keller@intel.com>, <m-malladi@ti.com>,
+        <john.fastabend@gmail.com>, <hawk@kernel.org>, <daniel@iogearbox.net>,
+        <ast@kernel.org>, <srk@ti.com>, Vignesh Raghavendra
+	<vigneshr@ti.com>,
+        Roger Quadros <rogerq@kernel.org>, <danishanwar@ti.com>
+Subject: [PATCH net-next 0/3] Bug fixes from XDP and perout series
+Date: Mon, 17 Mar 2025 15:45:47 +0530
+Message-ID: <20250317101551.1005706-1-m-malladi@ti.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,82 +80,30 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:AQAAfwDX2oZU9tdncdJLAA--.4190S5
-X-CM-SenderInfo: 5zdqw5pxtxt0arstlqxsk13x1xpou0fpof0/1tbiAQAMAWfXLewFAQAAs5
-Authentication-Results: hzbj-icmmx-7; spf=neutral smtp.mail=wangyuquan
-	1236@phytium.com.cn;
-X-Coremail-Antispam: 1Uk129KBjvJXoW7Kry7JrWxXFW5Zw43ZrWfAFb_yoW5JFWxpF
-	WIkF95JryxGrWxCa4Ivr4jv34fC3WxCFZ8KF9rCry3ZanxWry3Zr47JF9IvFyjy3y8ur10
-	vr4vvF15ua48ZFDanT9S1TB71UUUUj7qnTZGkaVYY2UrUUUUj1kv1TuYvTs0mT0YCTnIWj
-	DUYxn0WfASr-VFAU7a7-sFnT9fnUUIcSsGvfJ3UbIYCTnIWIevJa73UjIFyTuYvj4RJUUU
-	UUUUU
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-The absence of SRAT would cause the fake_pxm to be -1 and increment
-to 0, then send to acpi_parse_cfmws(). If there exists CXL memory
-ranges that are defined in the CFMWS and not already defined in the
-SRAT, the new node (node0) for the CXL memory would be invalid, as
-node0 is already in "used", and all CXL memory might be online on
-node0.
+This patch series consists of bug fixes from the features which recently
+got merged into net-next, and haven't been merged to net tree yet.
 
-This utilizes node_set(0, nodes_found_map) to set pxm&node map. With
-this setting, acpi_map_pxm_to_node() could return the expected node
-value even if no SRAT.
+Patch 2/3 and 3/3 are bug fixes reported by Dan Carpenter
+<dan.carpenter@linaro.org> using Smatch static checker.
 
-If SRAT is valid, the numa_memblks_init() would then utilize
-numa_move_tail_memblk() to move the numa_memblk from numa_meminfo to
-numa_reserved_meminfo in CFMWs fake node situation.
+Meghana Malladi (3):
+  net: ti: prueth: Fix kernel warning while bringing down network
+    interface
+  net: ti: prueth: Fix possible NULL pointer dereference inside
+    emac_xmit_xdp_frame()
+  net: ti: icss-iep: Fix possible NULL pointer dereference for perout
+    request
 
-If SRAT is missing or bad, the numa_memblks_init() would fail since
-init_func() would fail. And it causes that no numa_memblk in
-numa_reserved_meminfo list and the following dax_cxl driver could
-find the expected fake node.
+ drivers/net/ethernet/ti/icssg/icss_iep.c     | 4 ++++
+ drivers/net/ethernet/ti/icssg/icssg_common.c | 9 ++++-----
+ 2 files changed, 8 insertions(+), 5 deletions(-)
 
-Use numa_add_reserved_memblk() to replace numa_add_memblk(), since
-the cxl numa_memblk added by numa_add_memblk() would finally be moved
-to numa_reserved_meminfo, and numa_add_reserved_memblk() here could
-add cxl numa_memblk into reserved list directly. Hence, no matter
-SRAT is good or not, cxl numa_memblk could be allocated to reserved
-list.
 
-Signed-off-by: Yuquan Wang <wangyuquan1236@phytium.com.cn>
----
- drivers/acpi/numa/srat.c | 11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/acpi/numa/srat.c b/drivers/acpi/numa/srat.c
-index 00ac0d7bb8c9..50bfecfb9c16 100644
---- a/drivers/acpi/numa/srat.c
-+++ b/drivers/acpi/numa/srat.c
-@@ -458,11 +458,12 @@ static int __init acpi_parse_cfmws(union acpi_subtable_headers *header,
- 		return -EINVAL;
- 	}
- 
--	if (numa_add_memblk(node, start, end) < 0) {
-+	if (numa_add_reserved_memblk(node, start, end) < 0) {
- 		/* CXL driver must handle the NUMA_NO_NODE case */
- 		pr_warn("ACPI NUMA: Failed to add memblk for CFMWS node %d [mem %#llx-%#llx]\n",
- 			node, start, end);
- 	}
-+
- 	node_set(node, numa_nodes_parsed);
- 
- 	/* Set the next available fake_pxm value */
-@@ -646,8 +647,12 @@ int __init acpi_numa_init(void)
- 		if (node_to_pxm_map[i] > fake_pxm)
- 			fake_pxm = node_to_pxm_map[i];
- 	}
--	last_real_pxm = fake_pxm;
--	fake_pxm++;
-+
-+	/* Make sure CFMWs fake node >= 1 */
-+	fake_pxm = max(fake_pxm, 0);
-+	last_real_pxm = fake_pxm++;
-+	node_set(0, nodes_found_map);
-+
- 	acpi_table_parse_cedt(ACPI_CEDT_TYPE_CFMWS, acpi_parse_cfmws,
- 			      &fake_pxm);
- 
+base-commit: bfc6c67ec2d64d0ca4e5cc3e1ac84298a10b8d62
 -- 
-2.34.1
+2.43.0
 
 
