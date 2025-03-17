@@ -1,102 +1,141 @@
-Return-Path: <linux-kernel+bounces-565073-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565074-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1CC1A66053
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 22:18:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B3EA2A66055
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 22:19:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 674CB3AEAF7
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 21:17:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38E243A75AD
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 21:19:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65FDF200120;
-	Mon, 17 Mar 2025 21:17:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D354202C40;
+	Mon, 17 Mar 2025 21:19:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="AK21o6Fu"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qgUgXRwV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D9931F7916;
-	Mon, 17 Mar 2025 21:17:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1D4A54670;
+	Mon, 17 Mar 2025 21:19:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742246268; cv=none; b=texJNhXuby62uprWsXFsYSRv4V62QoNAFM0D4tNJazoV9qOCRovA162N4Lk5FtlB69chzveEzM3rN6XRIkqKCgbnXplvD6nRcExGsgfoXDuidZq22SSWPeSUkm1s/i4zNaxjLFkH5E8lTVBJbVCfRycqj55nSfaJbzMbfeRrWGo=
+	t=1742246366; cv=none; b=YXpBbjvpV2xVRHCCOAfsmKXA1ZNHOjmuDg/U5a0gJbdtgXvPmngBWm8CQ2X3Ok2bFlW61TIQDPQRcrUX67jHaV6QOHKI0lkEdTOJEx6DC8cyrsfYyw6d4Kzjb9z93n7hfOCxZ+f4bcWYxSsYsrYAPcV/NjLNtjufN2JKn+Dd8Wk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742246268; c=relaxed/simple;
-	bh=QYLOUBEjdnyfT54iqSQ4S6A7SnHgRiCZJRpueifzRyI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=maUGfQTVvFwHaYtmn80sBYOw0FQWKxteIP2HVZwaGk1G+kj2FEibaHKOPVrw9KcRDCLBPqTFb2viQB2rvHsQXTl9vFlK/eLBJINzrUB+6hBd2t9j0bOww1Akx51bWjUI+mcZ7HefrCVBPT6XsYJDfcpE+OB7yQTTFR1mHcRjXq8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=AK21o6Fu; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1742246264;
-	bh=YU9quJPTIYISwNZ6rh3ERFz67+zPDglhQfl5TTdQQUE=;
-	h=Date:From:To:Cc:Subject:From;
-	b=AK21o6FuccvpM3RHkWYr84AqlmOqAdMeatQX/95grkz/tLT6Jw4vUdYaPFW3tRD7I
-	 6JMjMMNSIXj3b0YrJQ48uduY7qae/Y+CXQKrlnpVOV1UqDQjGTTzhG1xA6s/zy1oqB
-	 QCZ2ldBI8WIGzZ2p2w9Pt2ROZX7xe6Sk548zTCndpzyy8JUpZlE4lV0HN7jCoV/4vW
-	 il/D3GHD3kBTTQ0gv/XrUTwUgDhyTn3n2HdpNE/mwhAlRJF/jF6YK2gzwtIqzVVTj3
-	 eRr7lg5yRJlLBGttUOfkSUe1bQ57mastcNEsF3qq7NEwpJrJAboyGIw/wZR4QeghLt
-	 BJN+KFys4YRZw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZGnqq6gvGz4wc4;
-	Tue, 18 Mar 2025 08:17:43 +1100 (AEDT)
-Date: Tue, 18 Mar 2025 08:17:43 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: Signed-off-by missing for commit in the tpmdd tree
-Message-ID: <20250318081743.32c72c1c@canb.auug.org.au>
+	s=arc-20240116; t=1742246366; c=relaxed/simple;
+	bh=yxOJ65p4SAnE0Ir7dTqcv9g7ATU7SmbWT29NkJuH8BA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=F6igaulZHn5/LwdfhL4NTZlbfb9HFgQcmmjj9YiOVouiDiisX7ZVhvDR6Nfc76G7nulF/fkUEKoWD9qLJs25DpYu4HvVzEa7atW3a+hsN3k9K0YByO/q8k3TqtcGlIvf/b81gthg/KQdj8Hkvc6kWjJAKpAjpe+PP+fueClzkqo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qgUgXRwV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5DDFFC4CEE3;
+	Mon, 17 Mar 2025 21:19:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742246366;
+	bh=yxOJ65p4SAnE0Ir7dTqcv9g7ATU7SmbWT29NkJuH8BA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=qgUgXRwV69Nt7k3tS39yXyXMdldqU28UP+PtwBMatgfeffOfA5/oHb56jjgdcyxm/
+	 JSGRh83BxwutSnS40H41FN22i3wiENJS/dURZ3QjAjRHXeQG1UMqDT2HVcc79oBvMw
+	 vET5PfeOtb2f+b5dq+iwwdVPOK5J+pDe1JXaD9jjDP8DwVr5tpS0ev5oM5mzqDbZnv
+	 ai2u9v9ej5kzSJD99oA46h0kZ3R1oPFMxv8UODWo/IX8tL8mkrTsCX3RKrQYklEMUu
+	 YO6BRjjTOzO5YIGpehdDeTsx7RuknHnK/zXPyN9Y0IP9bCUcV1+H7bMrAIfj+kVJi4
+	 Oe1CcOBuXZfsg==
+Message-ID: <c4f4a1d0-aed8-4b09-a3d2-067fdd04bed3@kernel.org>
+Date: Mon, 17 Mar 2025 21:19:22 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/dD38/NjlR76YegvWRU3o2rX";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/1 next] tools build: Remove the libunwind feature tests
+ from the ones detected when test-all.o builds
+To: Ian Rogers <irogers@google.com>, Namhyung Kim <namhyung@kernel.org>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Adrian Hunter <adrian.hunter@intel.com>, James Clark
+ <james.clark@linaro.org>, Jiri Olsa <jolsa@kernel.org>,
+ Kan Liang <kan.liang@linux.intel.com>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ linux-perf-users@vger.kernel.org, bpf@vger.kernel.org,
+ linux-trace-devel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>
+References: <Z1mzpfAUi8zeiFOp@x1>
+ <CAP-5=fWqpcwc021enM8uMChSgCRB+UW_6z7+=pdsQG9msLJsbw@mail.gmail.com>
+ <Z9hWqwvNQO0GqH09@google.com>
+ <CAP-5=fWCWD5Rq5RR7NSMxrxmc1SUkK=8gg+D-JxGOgaHA7_WBA@mail.gmail.com>
+From: Quentin Monnet <qmo@kernel.org>
+Content-Language: en-GB
+In-Reply-To: <CAP-5=fWCWD5Rq5RR7NSMxrxmc1SUkK=8gg+D-JxGOgaHA7_WBA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
---Sig_/dD38/NjlR76YegvWRU3o2rX
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+2025-03-17 10:16 UTC-0700 ~ Ian Rogers <irogers@google.com>
+> On Mon, Mar 17, 2025 at 10:06 AM Namhyung Kim <namhyung@kernel.org> wrote:
+>>
+>> Hello,
+>>
+>> On Mon, Mar 17, 2025 at 09:10:29AM -0700, Ian Rogers wrote:
+>>> On Wed, Dec 11, 2024 at 7:45 AM Arnaldo Carvalho de Melo
+>>> <acme@kernel.org> wrote:
+>>>>
+>>>> We have a tools/build/feature/test-all.c that has the most common set of
+>>>> features that perf uses and are expected to have its development files
+>>>> available when building perf.
+>>>>
+>>>> When we made libwunwind opt-in we forgot to remove them from the list of
+>>>> features that are assumed to be available when test-all.c builds, remove
+>>>> them.
+>>>>
+>>>> Before this patch:
+>>>>
+>>>>   $ rm -rf /tmp/b ; mkdir /tmp/b ; make -C tools/perf O=/tmp/b feature-dump ; grep feature-libunwind-aarch64= /tmp/b/FEATURE-DUMP
+>>>>   feature-libunwind-aarch64=1
+>>>>   $
+>>>>
+>>>> Even tho this not being test built and those header files being
+>>>> available:
+>>>>
+>>>>   $ head -5 tools/build/feature/test-libunwind-aarch64.c
+>>>>   // SPDX-License-Identifier: GPL-2.0
+>>>>   #include <libunwind-aarch64.h>
+>>>>   #include <stdlib.h>
+>>>>
+>>>>   extern int UNW_OBJ(dwarf_search_unwind_table) (unw_addr_space_t as,
+>>>>   $
+>>>>
+>>>> After this patch:
+>>>>
+>>>>   $ grep feature-libunwind- /tmp/b/FEATURE-DUMP
+>>>>   $
+>>>>
+>>>> Now an audit on what is being enabled when test-all.c builds will be
+>>>> performed.
+>>>>
+>>>> Fixes: 176c9d1e6a06f2fa ("tools features: Don't check for libunwind devel files by default")
+>>>> Cc: Adrian Hunter <adrian.hunter@intel.com>
+>>>> Cc: Ian Rogers <irogers@google.com>
+>>>> Cc: James Clark <james.clark@linaro.org>
+>>>> Cc: Jiri Olsa <jolsa@kernel.org>
+>>>> Cc: Kan Liang <kan.liang@linux.intel.com>
+>>>> Cc: Namhyung Kim <namhyung@kernel.org>
+>>>> Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+>>>
+>>> Sorry for the delay on this.
+>>>
+>>> Reviewed-by: Ian Rogers <irogers@google.com>
+>>
+>> Thanks for the review, but I think this part is used by other tools like
+>> BPF and tracing.  It'd be nice to get reviews from them.
+> 
+> Sgtm. The patch hasn't had attention for 3 months. A quick grep for
+> "unwind" and "UNW_" shows only use in perf and the feature tests.
+> 
+> Thanks,
+> Ian
 
-Hi all,
 
-Commits
+Indeed, bpftool does not rely on libunwind, and I don't remember other
+BPF components doing so, either.
 
-  04c72b01f618 ("Documentation: tpm: Add documentation for the CRB FF-A int=
-erface")
-  cebcb37cc882 ("tpm_crb: Add support for the ARM FF-A start method")
-  1cfb6e10a755 ("ACPICA: Add start method for ARM FF-A")
-  abf6e84648dd ("tpm_crb: ffa_tpm: Implement driver compliant to CRB over F=
-F-A")
-
-are missing a Signed-off-by from their committers.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/dD38/NjlR76YegvWRU3o2rX
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfYkXcACgkQAVBC80lX
-0GzCNgf/eAWalAyQWo4mw0DOd2qqQu75FVrqpwiojYy2tR5bN25Hm8cphuOEZ76l
-O8cFydKRcrCAo1zvflMCtvDOWIVlCxLAxbvBnLNRp/ITD6R5+0vsfvXTn3o6K1uu
-H6Wjt2E83DKqNlVbbdmbikqxPBUWDFJ2p4IEgGOcjn0G6hyNVkhPDs6DusYWvX+L
-e1O5ZiV2dRja/3b5EhdTiZuipRevotiTG9zyV19QyIu/E5o+Igs91Ga2+QKJbiep
-RZwBUPCQvcnL0+ymKBM6AM2K/g6JIsjuhmL1JD4c7qPbRz/BZVOrSlZUO5uMncij
-Ov5PtnG2o60LEnfodRGCUFJzSMWwLw==
-=8Gkf
------END PGP SIGNATURE-----
-
---Sig_/dD38/NjlR76YegvWRU3o2rX--
+Quentin
 
