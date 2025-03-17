@@ -1,110 +1,115 @@
-Return-Path: <linux-kernel+bounces-563626-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563624-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEF6CA6458A
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 09:32:21 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5640A64588
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 09:32:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E2C816C81B
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 08:32:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E82E07A406F
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 08:31:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E8EE22171B;
-	Mon, 17 Mar 2025 08:32:02 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A9B521ABA6;
+	Mon, 17 Mar 2025 08:31:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Vt29bOSL"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E66D2629D
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C4ED18C03A
 	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 08:31:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742200321; cv=none; b=NrwaMM1piDXk3WjpYah1OEbSCcApMPW4CnkksaAYpQ4y3BTcD5WTrtoTM6d4/hjyPYcctEXKZ9IfZkWApR26pGYCccLlK/onZGs1f2AqrodYlJTAa6k3ooxDRjUKaradP48QnKo5n0WQBya8e8jDVmii/KDrS5uIbdA/xnwspEk=
+	t=1742200314; cv=none; b=FSDpzaX9LrxK7DAbRDLwk0+B8mSmm+m3M0iNUCMwvK4zL9OAnxvQBZVbtgXC6oF0O8J/Dku/NY5lxTebxeRLKZlJ+U2wp8AyNbb2x9jL0sI21PtEA8K9VshAEuxbJ5IGqoSA+qMYzexJWAwHopDbWiHh7t0Aso+Yd5o9JihDaC0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742200321; c=relaxed/simple;
-	bh=0hTlN1XUzNR8sJlUM5E9khwlIeJtFbebJeQTl3tA4ts=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=pXsvgwOhIs3J48kUYu/4UP3XrAzo/L0Eb0ec7onr0iJYMM+fRIACacGqjPh8J+gJNNXdSDbivlDFS9CfoLDSGL0x27n6enNvEpl0hjhyq3HDFkwoaw3Hl0cS+aphpN6OMvJQh5ncZTXX9MpFDwHU2ykua7mB37gPcYPJ5derDa0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 42bf6580030a11f0a216b1d71e6e1362-20250317
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.45,REQID:c03f0eb4-6149-4105-8cf3-b3466abafae2,IP:0,U
-	RL:0,TC:0,Content:0,EDM:25,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
-	:release,TS:25
-X-CID-META: VersionHash:6493067,CLOUDID:a224ae872dd280008ad123e8ee58416e,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|50,EDM:5,IP:nil,URL
-	:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SP
-	R:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 42bf6580030a11f0a216b1d71e6e1362-20250317
-Received: from node4.com.cn [(10.44.16.170)] by mailgw.kylinos.cn
-	(envelope-from <zhangxi@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 1236381295; Mon, 17 Mar 2025 16:31:45 +0800
-Received: from node4.com.cn (localhost [127.0.0.1])
-	by node4.com.cn (NSMail) with SMTP id 1256716011394;
-	Mon, 17 Mar 2025 16:31:45 +0800 (CST)
-X-ns-mid: postfix-67D7DDF0-9653161327
-Received: from localhost.localdomain (unknown [172.30.80.11])
-	by node4.com.cn (NSMail) with ESMTPA id E08491600052C;
-	Mon, 17 Mar 2025 08:31:44 +0000 (UTC)
-From: zhang Xi <zhangxi@kylinos.cn>
-To: linux-kernel@vger.kernel.org
-Cc: yangtiezhu@loongson.cn,
-	yijiangshan@kylinos.cn,
-	zhangxi <zhangxi@kylinos.cn>
-Subject: [PATCH] selftests/bpf: fix the compilation errors caused by larchintrin.h
-Date: Mon, 17 Mar 2025 16:31:42 +0800
-Message-Id: <20250317083142.561104-1-zhangxi@kylinos.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1742200314; c=relaxed/simple;
+	bh=4vfa2nbOoNw6ZazHPFyQUz4LY0q33gkHH2PnpcGUm3I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uxTa8mfa9zS2CbsD9LEQTMOSqfVw+y86HaaVXlorh5F/daAvIg4lB7VnIc/MEvJ1vjPmP8YzCIXmIuAKlDxg9RiA1wsLFZcy5eTLALn7U9sAzhba5rZfmPkk44hGJXuCHkUUIg/5r/wd15R8FTH8sqo5Usc3tSWwvdiaTN8Tl8s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Vt29bOSL; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4393ee912e1so68595e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 01:31:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1742200311; x=1742805111; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ts/iSgo7uroCJrlhqFf9mwkUABh0eKE3Qcf3xl8ptu8=;
+        b=Vt29bOSLqlGQXkOI1Hq24YlRfPr4IMCvq+8ZKFfuObGF4L/GkUnTg0vOU7bbzNV1ny
+         juhMLPyVQcTWYmBjqbK50Ac6v5ZzQt0kby8xqyub+qDYl9+tbxl08u8KJPyCIrOsXXpN
+         MW168xjtFPYYNgnINAZdVEIzNVuuVowfuru5Mc55Q1IiwgzHLL/BoarsJEaZqpF69l11
+         yDmBwAjGvhgJSupYg5xn7JsEbF+JWCXjXTcx1iCB6Osdw9AeNCjq8nKD5PEr2WoS9li5
+         lfkhwYp4G0D8h2r+K82kwh5MNHd+TkL77oNNS0MxiBSc0HZdhPh1QUuU2Juk6lRx40s8
+         xH7A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742200311; x=1742805111;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ts/iSgo7uroCJrlhqFf9mwkUABh0eKE3Qcf3xl8ptu8=;
+        b=nW1fppCmLuDV9bD3hTKCB8f2W6RFBpj8c+DXODrXMWSPYMPvcC3S0RYV1fesUMmj9y
+         ET7J+BBIXJM4veq8al6s5/BLvr3LNz4TxOUbeUOm5TpDW+bU64pmJNs4+a/rw9lTiRZn
+         tloetofUbH773mJ4H2MFoVwb5yLRPMLsoyIxW1OHQxZCHeAqpNlX4f4pwvnQ96R3mYfA
+         6SlcSFf6RzvY0aJmthdmPKEKBbyOFkIrjKoZIo+jW0WlI4i2t1dQNkMxkbLsSEz4DNZj
+         cNWE1wXTOfAwPrn2ph+4iPqpmtu3Um0ic8n7g2+Ls1vmHO19KVD+Y4oVsmNqtGwraC5S
+         CPCg==
+X-Forwarded-Encrypted: i=1; AJvYcCVFlsFJx2n+bl0YwGHMc7I2Ar9fyzHD1m2MgS+F7QjaoK2xidkZDiAoKxjU6CH6F6godZvfSaM9vSJqKB0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxTenTU/k3ifZQe1PkRntuxsBJBaDMyFKxBzcnpc5x+OFMD2v5o
+	tgDpHNYy0bYOA4TGPSh5SnXcQHshCkNZqKYlAUeIBMa1fEksevoja4OpG7XjRg==
+X-Gm-Gg: ASbGncvkgZwbRAqlEcGdUkyn3WBSae43ymjroqp8T8DwHKhDxvlnuuxgti2hmEjiuAc
+	0hjNgioPZbnV3Qq5STsquE2YGCqdjAMwPRNdKeIpQw28faa3kPYhAkh/5WN4I+QkupJua0lKn0s
+	prh5EYODIccmDTfW+tnBaWGG9XN+dNXAuoVX0gHpVdbgGGtco8XnmZJ9cRQNRARkYHkvQKS5KKk
+	j6WFqbA/68m6nM3VHuf/RfizhwGBmBAd+AY7aK4u270DMwb6dhBgmXu8qkeG4ubjJIntHUPFu+2
+	dF2cRSocGNl2XcKXm9dYCaI6aT//8qRmCD7VV4/aFE2tk0ProifCZtsoK+QQGemEwA0UoDgGuWP
+	uG5UF+BE=
+X-Google-Smtp-Source: AGHT+IFsKXe3JR+ofIJ7M32FHsFHp1kz09RRhdQuWukTEEKLv1/hhyNOKe55+KjtAhpwBNlpPmDcaQ==
+X-Received: by 2002:a05:600c:3b20:b0:43b:bf3f:9664 with SMTP id 5b1f17b1804b1-43d25bbee13mr2337835e9.5.1742200311269;
+        Mon, 17 Mar 2025 01:31:51 -0700 (PDT)
+Received: from google.com (158.100.79.34.bc.googleusercontent.com. [34.79.100.158])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-395cb7ebbc3sm14092661f8f.88.2025.03.17.01.31.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Mar 2025 01:31:50 -0700 (PDT)
+Date: Mon, 17 Mar 2025 08:31:47 +0000
+From: Brendan Jackman <jackmanb@google.com>
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org,
+	Peter Zijlstra <peterz@infradead.org>,
+	Nathan Chancellor <nathan@kernel.org>
+Subject: Re: [PATCH 03/13] objtool: Improve __noreturn annotation warning
+Message-ID: <Z9fd82KugPxoGaRS@google.com>
+References: <cover.1741975349.git.jpoimboe@kernel.org>
+ <ab835a35d00bacf8aff0b56257df93f14fdd8224.1741975349.git.jpoimboe@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ab835a35d00bacf8aff0b56257df93f14fdd8224.1741975349.git.jpoimboe@kernel.org>
 
-From: zhangxi <zhangxi@kylinos.cn>
+On Fri, Mar 14, 2025 at 12:29:01PM -0700, Josh Poimboeuf wrote:
+> Clarify what needs to be done to resolve the missing __noreturn warning.
+> 
+> Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
+> ---
+>  tools/objtool/Documentation/objtool.txt | 12 +++++-------
+>  tools/objtool/check.c                   |  2 +-
+>  2 files changed, 6 insertions(+), 8 deletions(-)
+> 
+> diff --git a/tools/objtool/Documentation/objtool.txt b/tools/objtool/Documentation/objtool.txt
+> index 7c3ee959b63c..87950a7aaa17 100644
+> --- a/tools/objtool/Documentation/objtool.txt
+> +++ b/tools/objtool/Documentation/objtool.txt
+> @@ -319,14 +319,12 @@ the objtool maintainers.
+>     a just a bad person, you can tell objtool to ignore it.  See the
+>     "Adding exceptions" section below.
+>  
+> -   If it's not actually in a callable function (e.g. kernel entry code),
+> -   change ENDPROC to END.
 
-On the Loongson platform, the header file 'larchintrin.h' is provided by
-the package clang-libs, and it is necessary to add CLANG_SYS_INCLUDES to
-the compilation command.
-
-Signed-off-by: zhangxi <zhangxi@kylinos.cn>
----
- samples/bpf/Makefile | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
-
-diff --git a/samples/bpf/Makefile b/samples/bpf/Makefile
-index dd9944a97b7e..f459360c99bc 100644
---- a/samples/bpf/Makefile
-+++ b/samples/bpf/Makefile
-@@ -337,6 +337,10 @@ endef
-=20
- CLANG_SYS_INCLUDES =3D $(call get_sys_includes,$(CLANG))
-=20
-+ifeq ($(ARCH), loongarch)
-+CLANG_CFLAGS =3D $(CLANG_SYS_INCLUDES)
-+endif
-+
- $(obj)/xdp_router_ipv4.bpf.o: $(obj)/xdp_sample.bpf.o
-=20
- $(obj)/%.bpf.o: $(src)/%.bpf.c $(obj)/vmlinux.h $(src)/xdp_sample.bpf.h =
-$(src)/xdp_sample_shared.h
-@@ -376,7 +380,7 @@ $(obj)/%.o: $(src)/%.c
- 	@echo "  CLANG-bpf " $@
- 	$(Q)$(CLANG) $(NOSTDINC_FLAGS) $(LINUXINCLUDE) $(BPF_EXTRA_CFLAGS) \
- 		-I$(obj) -I$(srctree)/tools/testing/selftests/bpf/ \
--		-I$(LIBBPF_INCLUDE) \
-+		-I$(LIBBPF_INCLUDE) $(CLANG_CFLAGS)\
- 		-D__KERNEL__ -D__BPF_TRACING__ -Wno-unused-value -Wno-pointer-sign \
- 		-D__TARGET_ARCH_$(SRCARCH) -Wno-compare-distinct-pointer-types \
- 		-Wno-gnu-variable-sized-type-not-at-end \
---=20
-2.25.1
-
+Did you mean to delete that?
 
