@@ -1,130 +1,116 @@
-Return-Path: <linux-kernel+bounces-564581-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564582-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A45F0A657B7
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 17:17:09 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBB39A657BB
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 17:17:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D3CB1188E6BF
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 16:17:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 60884188ED3B
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 16:18:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E57219D8A2;
-	Mon, 17 Mar 2025 16:17:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AAFF19DF75;
+	Mon, 17 Mar 2025 16:17:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qmSjNK47"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D4XUfczs"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 681741922D3;
-	Mon, 17 Mar 2025 16:17:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4F8D188907;
+	Mon, 17 Mar 2025 16:17:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742228221; cv=none; b=G4cJ93PkNs/cP29LY8qMFReoPZr2TB0j7oBYVFYZ1BMoGKG64yuwrNKeBvAkem5gj2Kuk/EWR5lD09dMWOov+jqTUKtoA9MqcEyj6zvtS97VmMk+ehFnySN2xWQm7ftyIVRAO/CYxqi11KKrUwFKsMxrD1r5ygsI7FwN88F12Ps=
+	t=1742228269; cv=none; b=ppmD6I+6IJF2EEGIrTC0zLsb7onL+hnft5MbCx0cT6+q75elmLYbfkJgb3SFZ3smCDNYylG6Htkiuev5pkUsyZ4ed3JzgvL2bdA5uG6Ya3l18DELjy76x9ItMZBgA7Ou/iy/5X9ptB6mtlYLDuzafdnTz/tnsb4sSa3DvvT4kWU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742228221; c=relaxed/simple;
-	bh=3nLJh160QmzXnmlwT9c83fok8ylSn9nGD1m5ScL+J7M=;
+	s=arc-20240116; t=1742228269; c=relaxed/simple;
+	bh=G42GrbRlFLadgeAorXitKrnMtX3TCyZknmA2IK3Bfk0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fGxY5/bHlSxqxeJrW3hBmxmBu1aQmbEjPuYCdfrFgSTX/d99hnYHzLeQYUCK31ZrkEwW5Gk5/g8f8/emnOob1zwY/di7rTFiH5+f9/f+dYxA7X/WdWJh0RCjur3p/W1VzoWWpcPYiRPX48B4/ZEeRTKRa+DQT/BqHcdkXGodwZw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qmSjNK47; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E22BC4CEE3;
-	Mon, 17 Mar 2025 16:16:58 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=GTYMC5D2riKawAkKLIWEF+pbOYLdXsaQlFDCkAsS3OjbzOQnuFzfxMoxF5UbB2zscWTb3NwZs8jGEtKdFJK+YAUJoR/2Th+9JYcZ5OOCHW3DvnBs9WSz7TruekYuRdwUCUaa0bO2Xvv2gT99Sd/crwH9kBJrDchl0kn0TBvi1iA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D4XUfczs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9201C4CEE3;
+	Mon, 17 Mar 2025 16:17:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742228220;
-	bh=3nLJh160QmzXnmlwT9c83fok8ylSn9nGD1m5ScL+J7M=;
+	s=k20201202; t=1742228269;
+	bh=G42GrbRlFLadgeAorXitKrnMtX3TCyZknmA2IK3Bfk0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qmSjNK47xIfKhoPiz22nCRMD8HYwX4zBP3o6A4S2CZxSjpbK3O8Zyb5Vb5WdzP0o5
-	 IOFEyP+heAucZhbDS/GA8tVn59/GHPlkGcASa/zn2IOONdZSYEyxJsWpsoBI4PwUfb
-	 nQlN2djuJAvB48Zz6pUGbEqSjTdGps2BoAQYjGo/UIM5KeFILjCsGMixygFGm0dPgN
-	 WYGbWSn8TFK4dMwyCYyERsW7WiNhweNEgf+uRVATRBAmWJvovmYgU6nkwjr0Lnr4Is
-	 BW3StaiXwpi5zydlCvVEmQBc9Ca9ntyt5U4mz4OqwoVErUYPz/WfYCl5GHBps4s0Ry
-	 FZRnXBIprGTiQ==
-Date: Mon, 17 Mar 2025 17:16:55 +0100
-From: Danilo Krummrich <dakr@kernel.org>
-To: Tamir Duberstein <tamird@gmail.com>
-Cc: Benno Lossin <benno.lossin@proton.me>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Andrew Ballance <andrewjballance@gmail.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] rust: alloc: add `Vec::dec_len`
-Message-ID: <Z9hK9_zFqnH5XQC-@cassiopeiae>
-References: <20250316-vec-set-len-v1-0-60f98a28723f@gmail.com>
- <20250316-vec-set-len-v1-2-60f98a28723f@gmail.com>
- <D8IGFTJXS2A1.9JBD1UKGN4PX@proton.me>
- <CAJ-ks9=oq+c_pMg41QgGWsj=phWYfntXQgpSrFmz16Vifofn3g@mail.gmail.com>
- <Z9gL5hQWvCNy5XNH@google.com>
- <Z9gcqHihXLg6kcZb@google.com>
- <D8IMCFZJ2G7C.28DHUZGDB596P@proton.me>
- <CAJ-ks9kEpC=7jK9CLNKBWYpoOyAo_Wr8eyvaYf0ZSiC8m-VREQ@mail.gmail.com>
+	b=D4XUfczseN+rrOTPQuSZejroQ55t7/R8yhHyg2TG2Tupr5raFLs5Wzetyo88H+cyn
+	 Dq3z3oW7xQB7+OZoqOyuPhfwt6PZ9OC4OT77sk9KsRuhlnGVgWScxSaxsbtSYzf4F+
+	 VXUlCcMu7o5qRPXsqX8PFkhi4gdX0gKPDkkDM+wohSpn3zAxpbaBmQ9b3gvoBEjAwh
+	 EEovcEMfbONYlKjgZy1hlYLEXmAJlbB+thdvhVnpctjxxgLvMzIR1FO10XSUR8ccLE
+	 ZWwpYFC8jLivmP8F6WyPft+wBbqhOEE+gIB39MhcTbjzS3THdb25FrAiTKCAnWBA/5
+	 TaQa5kdB86ieg==
+Date: Mon, 17 Mar 2025 13:17:46 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Chun-Tse Shao <ctshao@google.com>, linux-kernel@vger.kernel.org,
+	peterz@infradead.org, mingo@redhat.com, mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+	irogers@google.com, adrian.hunter@intel.com,
+	kan.liang@linux.intel.com, terrelln@fb.com, leo.yan@arm.com,
+	james.clark@linaro.org, christophe.leroy@csgroup.eu,
+	ben.gainey@arm.com, linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] perf record: Add 8-byte aligned event type
+ PERF_RECORD_COMPRESSED2
+Message-ID: <Z9hLKsZOfouM3K7H@x1>
+References: <20250303183646.327510-1-ctshao@google.com>
+ <Z9TXabugl374M3bA@google.com>
+ <Z9hFJtEKfsGGUDMg@x1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJ-ks9kEpC=7jK9CLNKBWYpoOyAo_Wr8eyvaYf0ZSiC8m-VREQ@mail.gmail.com>
+In-Reply-To: <Z9hFJtEKfsGGUDMg@x1>
 
-On Mon, Mar 17, 2025 at 10:44:25AM -0400, Tamir Duberstein wrote:
-> On Mon, Mar 17, 2025 at 10:42 AM Benno Lossin <benno.lossin@proton.me> wrote:
-> >
-> > On Mon Mar 17, 2025 at 1:59 PM CET, Alice Ryhl wrote:
-> > > On Mon, Mar 17, 2025 at 11:47:50AM +0000, Alice Ryhl wrote:
-> > >> On Mon, Mar 17, 2025 at 07:34:44AM -0400, Tamir Duberstein wrote:
-> > >> > On Mon, Mar 17, 2025 at 6:04 AM Benno Lossin <benno.lossin@proton.me> wrote:
-> > >> > >
-> > >> > > On Sun Mar 16, 2025 at 11:32 PM CET, Tamir Duberstein wrote:
-> > >> > > > Add `Vec::dec_len` that reduces the length of the receiver. This method
-> > >> > > > is intended to be used from methods that remove elements from `Vec` such
-> > >> > > > as `truncate`, `pop`, `remove`, and others. This method is intentionally
-> > >> > > > not `pub`.
-> > >> > >
-> > >> > > I think it should be `pub`. Otherwise we're loosing functionality
-> > >> > > compared to now. If one decides to give the raw pointer to some C API
-> > >> > > that takes ownership of the pointer, then I want them to be able to call
-> > >> > > `dec_len` manually.
-> > >> >
-> > >> > This is premature. It is trivial to make this function pub when the need arises.
-> > >>
-> > >> Normally I'd agree with Benno, but in this case I think having it
-> > >> private is preferable. The function is safe, so it's too easy for
-> > >> end-users to confuse it with truncate.
-> > >
-> > > Thinking more about this ... I think we should have `set_len` and
-> > > `inc_len` instead. That way, both methods are unsafe so people will not
-> > > accidentally use `set_len` when they meant to use `truncate`.
-> >
-> > I agree for this on the public API. The way I usually saw `set_len`
-> > being used for decrementing was truncation without dropping the old
-> > values. And that is going to be `vec.dec_len(vec.len())` with the
-> > current design. `vec.set_len(0);` is much clearer in that respect.
-> >
-> > But for the internals, I'd say that `dec_len` is nicer, so for `pop` one
-> > would then use `self.dec_len(1)`.
-> >
-> > How about we keep `set_len` and make `dec_len` a private, safe helper?
-> 
-> This discussion is _way_ too speculative for my taste. If you'd like
-> to do this kind of thing, I'm happy to drop this patch or the series.
-> I'm not comfortable adding API whose usage I haven't seen and don't
-> understand.
+On Mon, Mar 17, 2025 at 12:52:09PM -0300, Arnaldo Carvalho de Melo wrote:
+> On Fri, Mar 14, 2025 at 06:27:05PM -0700, Namhyung Kim wrote:
+> > On Mon, Mar 03, 2025 at 10:32:40AM -0800, Chun-Tse Shao wrote:
+> > > The original PERF_RECORD_COMPRESS is not 8-byte aligned, which can cause
+> > > asan runtime error:
 
-Seems like setting the length of a vector is a hard thing to do. :)
+> > >   # Build with asan
+> > >   $ make -C tools/perf O=/tmp/perf DEBUG=1 EXTRA_CFLAGS="-O0 -g -fno-omit-frame-pointer -fsanitize=undefined"
+> > >   # Test success with many asan runtime errors:
+> > >   $ /tmp/perf/perf test "Zstd perf.data compression/decompression" -vv
+> > >    83: Zstd perf.data compression/decompression:
+> > >   ...
+> > >   util/session.c:1959:13: runtime error: member access within misaligned address 0x7f69e3f99653 for type 'union perf_event', which requires 13 byte alignment
+> > >   0x7f69e3f99653: note: pointer points here
+> > >    d0  3a 50 69 44 00 00 00 00  00 08 00 bb 07 00 00 00  00 00 00 44 00 00 00 00  00 00 00 ff 07 00 00
+> > >                 ^
+> > >   util/session.c:2163:22: runtime error: member access within misaligned address 0x7f69e3f99653 for type 'union perf_event', which requires 8 byte alignment
+> > >   0x7f69e3f99653: note: pointer points here
+> > >    d0  3a 50 69 44 00 00 00 00  00 08 00 bb 07 00 00 00  00 00 00 44 00 00 00 00  00 00 00 ff 07 00 00
+> > >                 ^
+> > >   ...
 
-I advocate for a middle ground.
+> > > Since there is no way to align compressed data in zstd compression, this
+> > > patch add a new event type `PERF_RECORD_COMPRESSED2`, which adds a field
+> > > `data_size` to specify the actual compressed data size. The
+> > > `header.size` contains the total record size, including the padding at
+> > > the end to make it 8-byte aligned.
 
-(1) Let's keep dec_len() a private and safe helper, it clearly improves the
-internals.
+> > > Tested with `Zstd perf.data compression/decompression`
 
-(2) Introduce set_len() as a public API and defer the question on how to support
-dec_len() in a public API once the need arises.
+> > Looks good to me.
+ 
+> > Arnaldo, are you ok with adding a new record type for this?
+ 
+> Checking the discussion and the patch.
+
+My first impression yesterday when I saw this on the smartphone was: how
+will an old perf binary handle the new PERF_RECORD_COMPRESSED2? Will it
+ignore it while emitting a warning, since it can be skipped and then
+what we will get a partial view?
+
+Having some session output showing how an older perf binary handles
+PERF_RECORD_COMPRESS2 would be informative.
+
+I'll try to reproduce/test this all...
+
+- Arnaldo
 
