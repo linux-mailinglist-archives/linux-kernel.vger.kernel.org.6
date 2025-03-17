@@ -1,155 +1,184 @@
-Return-Path: <linux-kernel+bounces-564884-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564887-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C65DA65C41
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 19:19:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9ECFEA65C56
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 19:20:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4E5B57A376A
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 18:17:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87B40882155
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 18:20:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B57151C84C5;
-	Mon, 17 Mar 2025 18:18:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 582D61C8627;
+	Mon, 17 Mar 2025 18:20:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="hVDEO61v"
-Received: from out-171.mta0.migadu.com (out-171.mta0.migadu.com [91.218.175.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1BF1hVki"
+Received: from mail-ej1-f73.google.com (mail-ej1-f73.google.com [209.85.218.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B360914C5AA
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 18:18:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E78361AD403
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 18:20:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742235528; cv=none; b=R5F3qS+ZZtB+EZQ6qlEtZpdHPh8wrfgapJws5PUI2686nyXVDLKnJwWEny9vpGgMydOGN/JPqpWMMoGiTSVyFhSIYgFYEJaBg4wRhjXxbOxG4ewfUxrkOSY4KBqi9z0Dmoyz1V3xgSaY+0/TUXMlp28r69O907nO4mxS46nsja4=
+	t=1742235623; cv=none; b=LqTmxuWO2WwF7fH7AjOFm75MON+N55TeLaji+QDY4hdEYsfyvYPsFtQfCmENq/0fEmC7XoEvMVRMWgC5XHvRjtQprhn2BtgvZJ1OlKgicFcc5S4zNWCGDpj+Hfidm9oOgb2QnjANvFaMy5yaVBRR+mUhNpHds7GgKAUA8qZ+f3I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742235528; c=relaxed/simple;
-	bh=p3n4HVJD+Jwr/egUeXjJx4oqvPezPTUR8CdjTxPi8JY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J65vNqqfdt7ahY3e0jP04uGjFzZQbsdD5rvhIbH3/0zgpQtM+OKXppH41Djof3bojDQE5JXGUxi302+VFaytEIV8FEdQpGl3CPaQXrOY7XbYI9ieJiGKB32MvkXyKYoBJGjeggQaXYh16k93i41+fI5QdfeQYhwVzcPagaE8EyQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=hVDEO61v; arc=none smtp.client-ip=91.218.175.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Mon, 17 Mar 2025 18:18:39 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1742235523;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LzCRo0knkfJ8o8M5oL/sL88fmyKB4M28RkEky5+ZWrI=;
-	b=hVDEO61v7y2gc7S4vBCqSkkkVNYXUx3ECw9zmcBlxnd8cv1Bfna57KycbjgX5l/1m4P87l
-	RlujJH2cqZWkNJVF/sVbY0P9hUwKDSd/9MaFAk4VymW9qJnZMi5LkEMaKG6gsEPuEIIO0n
-	kb6uLH67aiJFdVRQy9MCuSbCQxRAMH8=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yosry Ahmed <yosry.ahmed@linux.dev>
-To: Chengming Zhou <chengming.zhou@linux.dev>
-Cc: ffhgfv <xnxc22xnxc22@qq.com>, hannes <hannes@cmpxchg.org>,
-	nphamcs <nphamcs@gmail.com>, akpm <akpm@linux-foundation.org>,
-	linux-mm <linux-mm@kvack.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: Linux6.14-rc5: KASAN: use-after-free Read in zswap_store
-Message-ID: <Z9hnf0Zv7_1vkh3n@google.com>
-References: <tencent_49DA3E780998A9B96ADC9FF658CC84641808@qq.com>
- <e6039be4-c7dc-4f2b-9ea3-5b16181d5a1a@linux.dev>
+	s=arc-20240116; t=1742235623; c=relaxed/simple;
+	bh=tlnyXjcJkBX833gIcJu1QtnQCG8uMa8bA5wrM/847KQ=;
+	h=Date:Mime-Version:Message-ID:Subject:From:Cc:Content-Type; b=G/qitjAH4w5SF+qTiUYXfsqxuo6cdjmoIpW+qvfxbKQrQH8B4DT7wNWCM96EIFbaUMKZJjy7ZPAkUet8CSyOTjzkAL3TWulx124Bu4D0WM93AoGissmomC86xg6GJz32pEnW/MYSJBm0ZABS1J1OmiiQBzHtVrIOTFF3ou3sW9g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--czapiga.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1BF1hVki; arc=none smtp.client-ip=209.85.218.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--czapiga.bounces.google.com
+Received: by mail-ej1-f73.google.com with SMTP id a640c23a62f3a-ac2840b1ee8so493156166b.1
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 11:20:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1742235620; x=1742840420; darn=vger.kernel.org;
+        h=cc:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=/7NZ7peIlm0yG+Cn7UyH1yowKXkfRqsYGiOXYDLW9yw=;
+        b=1BF1hVkiSZRrROVQYlJlq3zS1ulDKKQJsLSFYilTSgn6cAIC/OtwKpd5/CGKudGOLk
+         3X+rsuxa60tm8XZe9goRouTGp8J2bEHE1lAWfCiNOHafuI5rSMzNbWYMvhndfZr9oGsQ
+         rugx936xptHCZoDK91o2RAUav6J/qonInJSNlMElzUqylNNOWdrjHqGswxBqPsQzCs2N
+         7Hgxlc2mKRPJQummmSBB6e4gQsDUgrdRoi6RhTJqaZR9SMXg0tIXy1MkF+SIj2g30wpZ
+         ygm9yxeJeyFtZnnzu++Kzkh6H0unZcVT5qAFS0zvAvy7D+I0DQS0LlQdV9+QgYgntc/Q
+         1S4Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742235620; x=1742840420;
+        h=cc:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=/7NZ7peIlm0yG+Cn7UyH1yowKXkfRqsYGiOXYDLW9yw=;
+        b=ejPXhKUdT1NmHpOOxHsx7D5i/ew25RBedeqLoyf2FBIWsNvVqQV3HlqxTj2RRHd9Dm
+         jaSKJCR15BJd7XkfeAa6w1iqpF8qhfxGSHnu8U5aFTg4RtdjZmcDQI/nlEMwY6Ctgkm7
+         3A352BHSQpm6VEW9pT26wTlQH0CqnhR+DU/QiKh25NfP+HL4VI3ndz5YxGwJ8zVqaL1P
+         4jIUIUlNdMeAD1yTuq6oDRlwMs8BUFKe47xfRwVEs1AKayYlzzwDN8JZB81+bkR8IKHm
+         Cy8crZ5BKyai1pkYGob6n4NNN2NaESUfxb3xNHcm4xejH9AFjkDY2K9wj6hgixF1wNzm
+         CXtw==
+X-Forwarded-Encrypted: i=1; AJvYcCUN4dX0R8AEiTSrOaUvmBolwIr7dqc9IpTJEMoaT0T5oGnXlMWvMBzWBTjrJRUyp9ttGyvyNByKm4jn394=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzAvJ+T45Jp/SDEwwDznjLO0bj9PkZrSBZxnmXEOJ87mbfDaiF2
+	L8+1BdGqabaJOdpkAJvn84CPafIxHGPS4dPJKRYcuePVLTk7EsDuHQ5Uhxw1x+DFjrwCsiuNtHM
+	najwERQ==
+X-Google-Smtp-Source: AGHT+IE84F2eM4gDbNKOPL/wvEHNq3+GiqxIQtJuObp+x01KaqbBtyapAgs6XaomjtlNda8x+qKPNMx0IHSC
+X-Received: from ejpl10.prod.google.com ([2002:a17:906:7d4a:b0:ac1:fe6f:8a88])
+ (user=czapiga job=prod-delivery.src-stubby-dispatcher) by 2002:a17:907:368a:b0:ac1:f162:fb0d
+ with SMTP id a640c23a62f3a-ac38d514eebmr71247366b.37.1742235620357; Mon, 17
+ Mar 2025 11:20:20 -0700 (PDT)
+Date: Mon, 17 Mar 2025 18:18:51 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e6039be4-c7dc-4f2b-9ea3-5b16181d5a1a@linux.dev>
-X-Migadu-Flow: FLOW_OUT
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.49.0.rc1.451.g8f38331e32-goog
+Message-ID: <20250317181856.2059536-1-czapiga@google.com>
+Subject: [PATCH] mtd: spi-nor: eon: fix lock and non-SFDP flags
+From: Jakub Czapiga <czapiga@google.com>
+Cc: Jakub Czapiga <czapiga@google.com>, Tudor Ambarus <tudor.ambarus@linaro.org>, 
+	Pratyush Yadav <pratyush@kernel.org>, Michael Walle <mwalle@kernel.org>, 
+	Miquel Raynal <miquel.raynal@bootlin.com>, Richard Weinberger <richard@nod.at>, 
+	Vignesh Raghavendra <vigneshr@ti.com>, linux-mtd@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Mar 17, 2025 at 10:33:20AM +0800, Chengming Zhou wrote:
-> On 2025/3/17 08:13, ffhgfv wrote:
-> > Hello, I found a bug titled " KASAN: use-after-free Read in zswap_store " with modified syzkaller in the Linux6.14-rc5.
-> > If you fix this issue, please add the following tag to the commit:  Reported-by: Jianzhou Zhao <xnxc22xnxc22@qq.com>,    xingwei lee <xrivendell7@gmail.com>, Zhizhuo Tang <strforexctzzchange@foxmail.com>
-> > 
-> > I use the same kernel as syzbot instance upstream: 7eb172143d5508b4da468ed59ee857c6e5e01da6
-> > kernel config: https://syzkaller.appspot.com/text?tag=KernelConfig&amp;x=da4b04ae798b7ef6
-> > compiler: gcc version 11.4.0
-> > ------------[ cut here ]-----------------------------------------
-> >   TITLE:   KASAN: use-after-free Read in zswap_store
-> > ==================================================================
-> > ==================================================================
-> > BUG: KASAN: use-after-free in debug_spin_lock_before kernel/locking/spinlock_debug.c:86 [inline]
-> > BUG: KASAN: use-after-free in do_raw_spin_lock+0x285/0x2e0 kernel/locking/spinlock_debug.c:115
-> > Read of size 4 at addr ffff88804e78e014 by task kswapd0/98
-> > 
-> > CPU: 0 UID: 0 PID: 98 Comm: kswapd0 Not tainted 6.14.0-rc5-dirty #11
-> > Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
-> > Call Trace:
-> >   <task>
-> >   __dump_stack lib/dump_stack.c:94 [inline]
-> >   dump_stack_lvl+0x116/0x1b0 lib/dump_stack.c:120
-> >   print_address_description mm/kasan/report.c:408 [inline]
-> >   print_report+0xc1/0x630 mm/kasan/report.c:521
-> >   kasan_report+0x93/0xc0 mm/kasan/report.c:634
-> >   debug_spin_lock_before kernel/locking/spinlock_debug.c:86 [inline]
-> >   do_raw_spin_lock+0x285/0x2e0 kernel/locking/spinlock_debug.c:115
-> >   spin_lock include/linux/spinlock.h:351 [inline]
-> >   z3fold_page_lock mm/z3fold.c:223 [inline]
-> >   z3fold_alloc mm/z3fold.c:1060 [inline]
-> >   z3fold_zpool_malloc+0x9b1/0x1410 mm/z3fold.c:1388
-> >   zswap_compress mm/zswap.c:971 [inline]
-> >   zswap_store_page mm/zswap.c:1462 [inline]
-> >   zswap_store+0xe46/0x41e0 mm/zswap.c:1571
-> >   swap_writepage+0x3a7/0x1430 mm/page_io.c:278
-> >   pageout+0x3bf/0xac0 mm/vmscan.c:696
-> >   shrink_folio_list+0x3509/0x4480 mm/vmscan.c:1402
-> >   evict_folios+0x849/0x2100 mm/vmscan.c:4660
-> >   try_to_shrink_lruvec+0x608/0x9b0 mm/vmscan.c:4821
-> >   shrink_one+0x412/0x7d0 mm/vmscan.c:4866
-> >   shrink_many mm/vmscan.c:4929 [inline]
-> >   lru_gen_shrink_node mm/vmscan.c:5007 [inline]
-> >   shrink_node+0x2355/0x3c10 mm/vmscan.c:5978
-> >   kswapd_shrink_node mm/vmscan.c:6807 [inline]
-> >   balance_pgdat+0xa85/0x1740 mm/vmscan.c:6999
-> >   kswapd+0x4c0/0xbe0 mm/vmscan.c:7264
-> >   kthread+0x427/0x880 kernel/kthread.c:464
-> >   ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:148
-> >   ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-> >   </task>
-> > 
-> > The buggy address belongs to the physical page:
-> > page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x564c9cd0a pfn:0x4e78e
-> > flags: 0x4fff00000000000(node=1|zone=1|lastcpupid=0x7ff)
-> > raw: 04fff00000000000 ffffea000139e508 ffffea000139e248 0000000000000000
-> > raw: 0000000564c9cd0a 0000000000000000 00000000ffffffff 0000000000000000
-> > page dumped because: kasan: bad access detected
-> > page_owner tracks the page as freed
-> > page last allocated via order 0, migratetype Unmovable, gfp_mask 0x12800(GFP_NOWAIT|__GFP_NORETRY), pid 98, tgid 98 (kswapd0), ts 431124924160, free_ts 431131252025
-> >   set_page_owner include/linux/page_owner.h:32 [inline]
-> >   post_alloc_hook mm/page_alloc.c:1551 [inline]
-> >   prep_new_page+0x1b0/0x1e0 mm/page_alloc.c:1559
-> >   get_page_from_freelist+0x19a2/0x3250 mm/page_alloc.c:3477
-> >   __alloc_frozen_pages_noprof+0x324/0x6b0 mm/page_alloc.c:4739
-> >   alloc_pages_mpol+0x20a/0x550 mm/mempolicy.c:2270
-> >   alloc_pages_noprof+0x1c/0x250 mm/mempolicy.c:2361
-> >   z3fold_alloc mm/z3fold.c:1036 [inline]
-> >   z3fold_zpool_malloc+0x7aa/0x1410 mm/z3fold.c:1388
-> >   zswap_compress mm/zswap.c:971 [inline]
-> >   zswap_store_page mm/zswap.c:1462 [inline]
-> >   zswap_store+0xe46/0x41e0 mm/zswap.c:1571
-> >   swap_writepage+0x3a7/0x1430 mm/page_io.c:278
-> >   pageout+0x3bf/0xac0 mm/vmscan.c:696
-> >   shrink_folio_list+0x3509/0x4480 mm/vmscan.c:1402
-> >   evict_folios+0x849/0x2100 mm/vmscan.c:4660
-> >   try_to_shrink_lruvec+0x608/0x9b0 mm/vmscan.c:4821
-> >   shrink_one+0x412/0x7d0 mm/vmscan.c:4866
-> >   shrink_many mm/vmscan.c:4929 [inline]
-> >   lru_gen_shrink_node mm/vmscan.c:5007 [inline]
-> >   shrink_node+0x2355/0x3c10 mm/vmscan.c:5978
-> >   kswapd_shrink_node mm/vmscan.c:6807 [inline]
-> >   balance_pgdat+0xa85/0x1740 mm/vmscan.c:6999
-> >   kswapd+0x4c0/0xbe0 mm/vmscan.c:7264
-> > page last free pid 38 tgid 38 stack trace:
-> 
-> It looks like the z3fold doesn't handle the migration correctly?
-> But it's suggested that we should use zsmalloc as zswap allocator,
-> and the z3fold/zbud will be deleted.
+Set appropriate FLASH lock feature flags for chips that support it.
+Set top-bottom protection bit flag for chips that support it.
+Add no-SFDP flags for chips with missing SFDP or without clear
+SFDP description regarding 4K sectors, dual and quad read support.
+Remove no-SFDP flags for chips which documentation states that this
+information can be extracted from SFDP.
 
-Yeah this code should be gone in v6.15.
+Modified chips:
+- EN25Q32 (+lock)
+- EN25Q64 (+lock)
+- EN25Q32B (+lock, +tb, +4k, +dual, +quad)
+- EN25Q64 (+lock, +tb, +dual, +quad)
+- EN25F32 (+lock, +tb)
+- EN25S64 (+lock, +tb, +4k, +dual, +quad)
+- EN25QH16 (+lock, +tb, -4k, -dual)
+- EN25QH32 (+lock, +tb)
+- EN25QH64 (+lock, +tb, -4k, -dual)
+- EN25QH128 (+lock, +tb)
+- EN25QH256 (+lock, +tb)
+
+Signed-off-by: Jakub Czapiga <czapiga@google.com>
+---
+ drivers/mtd/spi-nor/eon.c | 19 +++++++++++++++----
+ 1 file changed, 15 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/mtd/spi-nor/eon.c b/drivers/mtd/spi-nor/eon.c
+index c1ddf662f782..10ed06022a76 100644
+--- a/drivers/mtd/spi-nor/eon.c
++++ b/drivers/mtd/spi-nor/eon.c
+@@ -13,10 +13,12 @@ static const struct flash_info eon_nor_parts[] = {
+ 		.id = SNOR_ID(0x1c, 0x20, 0x16),
+ 		.name = "en25p32",
+ 		.size = SZ_4M,
++		.flags = SPI_NOR_HAS_LOCK,
+ 	}, {
+ 		.id = SNOR_ID(0x1c, 0x20, 0x17),
+ 		.name = "en25p64",
+ 		.size = SZ_8M,
++		.flags = SPI_NOR_HAS_LOCK,
+ 	}, {
+ 		.id = SNOR_ID(0x1c, 0x30, 0x14),
+ 		.name = "en25q80a",
+@@ -26,42 +28,51 @@ static const struct flash_info eon_nor_parts[] = {
+ 		.id = SNOR_ID(0x1c, 0x30, 0x16),
+ 		.name = "en25q32b",
+ 		.size = SZ_4M,
++		.no_sfdp_flags = SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ,
++		.flags = SPI_NOR_HAS_LOCK | SPI_NOR_HAS_TB,
+ 	}, {
+ 		.id = SNOR_ID(0x1c, 0x30, 0x17),
+ 		.name = "en25q64",
+ 		.size = SZ_8M,
+-		.no_sfdp_flags = SECT_4K,
++		.no_sfdp_flags = SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ,
++		.flags = SPI_NOR_HAS_LOCK | SPI_NOR_HAS_TB,
+ 	}, {
+ 		.id = SNOR_ID(0x1c, 0x31, 0x16),
+ 		.name = "en25f32",
+ 		.size = SZ_4M,
+ 		.no_sfdp_flags = SECT_4K,
++		.flags = SPI_NOR_HAS_LOCK | SPI_NOR_HAS_TB,
+ 	}, {
+ 		.name = "en25s64",
+ 		.id = SNOR_ID(0x1c, 0x38, 0x17),
+ 		.size = SZ_8M,
+-		.no_sfdp_flags = SECT_4K,
++		.no_sfdp_flags = SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ,
++		.flags = SPI_NOR_HAS_LOCK | SPI_NOR_HAS_TB,
+ 	}, {
+ 		.id = SNOR_ID(0x1c, 0x70, 0x15),
+ 		.name = "en25qh16",
+ 		.size = SZ_2M,
+-		.no_sfdp_flags = SECT_4K | SPI_NOR_DUAL_READ,
++		.flags = SPI_NOR_HAS_LOCK | SPI_NOR_HAS_TB,
+ 	}, {
+ 		.id = SNOR_ID(0x1c, 0x70, 0x16),
+ 		.name = "en25qh32",
+ 		.size = SZ_4M,
++		.flags = SPI_NOR_HAS_LOCK | SPI_NOR_HAS_TB,
+ 	}, {
+ 		.id = SNOR_ID(0x1c, 0x70, 0x17),
+ 		.name = "en25qh64",
+ 		.size = SZ_8M,
+-		.no_sfdp_flags = SECT_4K | SPI_NOR_DUAL_READ,
++		.flags = SPI_NOR_HAS_LOCK | SPI_NOR_HAS_TB,
+ 	}, {
+ 		.id = SNOR_ID(0x1c, 0x70, 0x18),
+ 		.name = "en25qh128",
+ 		.size = SZ_16M,
++		.flags = SPI_NOR_HAS_LOCK | SPI_NOR_HAS_TB,
+ 	}, {
+ 		.id = SNOR_ID(0x1c, 0x70, 0x19),
+ 		.name = "en25qh256",
++		.size = SZ_32M,
++		.flags = SPI_NOR_HAS_LOCK | SPI_NOR_HAS_TB,
+ 	},
+ };
+ 
+-- 
+2.49.0.rc1.451.g8f38331e32-goog
+
 
