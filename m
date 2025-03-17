@@ -1,98 +1,129 @@
-Return-Path: <linux-kernel+bounces-564319-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564306-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E38ADA6529E
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 15:16:43 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58BEBA6525C
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 15:10:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E729171577
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 14:16:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C343F3B942A
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 14:09:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D158424110F;
-	Mon, 17 Mar 2025 14:16:04 +0000 (UTC)
-Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1FA123F439;
+	Mon, 17 Mar 2025 14:09:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="dWDelYiD";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="1eLhkirC";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="wq6rFTyY";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="O7rKO6a3"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D8D51DFCB;
-	Mon, 17 Mar 2025 14:15:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA9D454652
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 14:09:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742220964; cv=none; b=NiLQGgDBeECz0z7I6xwjSmsg+WrQGoh302r/HS34wY9kCzEcwM7qtit7jRr24EOiW/WGz/vEieGFSu/AN1F+p3gzzp0bQSMSHtBxUmgmQaINl+IocR0Kp3HwFuxqUjx7LbnQUrxWFKYFUGBVZJk8/ZsJUICE0RrlsJwiudR9YUU=
+	t=1742220564; cv=none; b=ARaodXU+ZDEB28KbwTaHoFyqdarldsKdpWEsOPGcaR6SAMFHoZ7Vv4mmCMaXW1+DDVDvXTFSHXEc67xAokODpkqAZabNragaD8xD6pfeYFSp2BiwV7WUX83Q7LRXzRl8rv3MysNWQxPsGJtvllhfHg3FQiw0ccSLt9zXbHx1mfI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742220964; c=relaxed/simple;
-	bh=AldV/hJHv/I1W5buCOvwpWiW3xaNj5/BwKZ/rUXUNZk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hAQesG1Xftc4zZXNmsLMDYCNQW7fiVMIJCacuAYOXwGTXpbrxYUtVVrrAMoPbaemk7pC53Z/KSeWl1VMTPzpMdbU2clIEiAio1p3bKhqBARK89BkzIUeIQsd71lTgrro099ile5hoXP/ujexOIwuc5vWBhLzKPDmBcSfXOtGDD8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost.localdomain (unknown [124.16.141.245])
-	by APP-01 (Coremail) with SMTP id qwCowADn7dH+LNhnDJr5FQ--.11818S2;
-	Mon, 17 Mar 2025 22:09:07 +0800 (CST)
-From: Wentao Liang <vulab@iscas.ac.cn>
-To: lgirdwood@gmail.com,
-	broonie@kernel.org,
-	perex@perex.cz,
-	tiwai@suse.com
-Cc: u.kleine-koenig@baylibre.com,
-	patches@opensource.cirrus.com,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Wentao Liang <vulab@iscas.ac.cn>
-Subject: [PATCH] ASoC: Add initialization for wm8997 component
-Date: Mon, 17 Mar 2025 22:08:44 +0800
-Message-ID: <20250317140845.702-1-vulab@iscas.ac.cn>
-X-Mailer: git-send-email 2.42.0.windows.2
+	s=arc-20240116; t=1742220564; c=relaxed/simple;
+	bh=MNw7UnBG+ygO0oIWosbuTBGCsuDhsvZNnmzDpKcdXmE=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=ECHAHKGqt3bgC+Yg4F0YfA3CTi8lPAeSReQlog9MORZE6KyF3k6U3xc2s/1nKkG/189iKIjePZJFmnRDZDU//TAew7WQRyC2ZoWyKQwJ0s0spV7+cW8e7Nuv0d4VXWCRATsD1yjxfgwSkl57KRLNuZBAIY5b6RTVtO0KAHtbdbI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=dWDelYiD; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=1eLhkirC; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=wq6rFTyY; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=O7rKO6a3; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from pobox.suse.cz (unknown [10.100.2.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id DA52821BC8;
+	Mon, 17 Mar 2025 14:09:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1742220561; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7mSIclVZV0URw7y1Fbp+WwCW0DPdbm1tY2NRXrH6VmQ=;
+	b=dWDelYiDObi/zpxt2+w82Gn1MOq3zfqQe07TD2JIlkm5FzW/vxpQhkkHlPNRXPu4In23LR
+	s6ZyMuXgqRkHQr8kQUf0zdPUMICSGuvwjLFqf4WpHektL1OVm0HcfkU5VcP3DTIfoe/y9Y
+	MbsS3yAjJZ+JXqotxWAem//WF2aPyiw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1742220561;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7mSIclVZV0URw7y1Fbp+WwCW0DPdbm1tY2NRXrH6VmQ=;
+	b=1eLhkirCcTsAlYjfHxsY/L1KKQ2OM2j3vgVzx8MuynIgozQaPCToCXBJ5tnBT3YEEguV35
+	YXU6A+ZnK1lnd1AQ==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1742220560; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7mSIclVZV0URw7y1Fbp+WwCW0DPdbm1tY2NRXrH6VmQ=;
+	b=wq6rFTyYWrLItdXNqXhSUJUKINlPT4P5Zsi6bvX205cQEmwX/FHG5Xl8R+ithvDkHiS5/z
+	6incE/6XysMxd5k10PSyzoHwOH2G16b0pjWbwsvCaLxiO7EwXLfrexClv/+Ux0N2DZ51kW
+	hQE+PQafs/y1XiQqGOPncP7rZ9BSz2E=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1742220560;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7mSIclVZV0URw7y1Fbp+WwCW0DPdbm1tY2NRXrH6VmQ=;
+	b=O7rKO6a3om8oq3LGw18OcdwIn0twmKz8rJCI2gE5IGi9t/u4pgPDqKJ8LZsV+OU1xEo5vA
+	IfkRFAr112e0KqAg==
+Date: Mon, 17 Mar 2025 15:09:21 +0100 (CET)
+From: Miroslav Benes <mbenes@suse.cz>
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+cc: x86@kernel.org, linux-kernel@vger.kernel.org, 
+    Peter Zijlstra <peterz@infradead.org>, 
+    Brendan Jackman <jackmanb@google.com>, 
+    Nathan Chancellor <nathan@kernel.org>
+Subject: Re: [PATCH 12/13] objtool: Create backup on error and print args
+In-Reply-To: <7571e30636359b3e173ce6e122419452bb31882f.1741975349.git.jpoimboe@kernel.org>
+Message-ID: <alpine.LSU.2.21.2503171508590.4236@pobox.suse.cz>
+References: <cover.1741975349.git.jpoimboe@kernel.org> <7571e30636359b3e173ce6e122419452bb31882f.1741975349.git.jpoimboe@kernel.org>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qwCowADn7dH+LNhnDJr5FQ--.11818S2
-X-Coremail-Antispam: 1UD129KBjvdXoWrtF4fZry7Jr48Cw45Aw48Crg_yoW3twc_Ca
-	1rW3yUZFy3KrZavrW2q3y5K3WkZayxCa1jk3WvqFy5JF47Ja1fJryDJry3uryDW3y0ka45
-	ZF9F9r4jyrWIkjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbckFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
-	Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s
-	1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0
-	cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r4j6F4UMcvjeVCFs4IE7xkEbVWUJVW8Jw
-	ACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc7CjxVAaw2AFwI0_Jw0_
-	GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxV
-	WUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI
-	7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r
-	1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI
-	42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x0JUqeHgUUUUU=
-X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiBg0EA2fYDpVwXwAAsH
+Content-Type: text/plain; charset=US-ASCII
+X-Spam-Score: -4.30
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.998];
+	MIME_GOOD(-0.10)[text/plain];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_COUNT_ZERO(0.00)[0];
+	ARC_NA(0.00)[];
+	MID_RHS_MATCH_FROMTLD(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCPT_COUNT_FIVE(0.00)[6]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-In wm8997_component_probe(), wm8997 should be initialized by
-arizona_init_gpio(). A proper implementation can be found in
-'wm8998_component_probe()' where the wm8998 component is
-initialized with arizona_init_gpio().
+On Fri, 14 Mar 2025, Josh Poimboeuf wrote:
 
-Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
----
- sound/soc/codecs/wm8997.c | 2 ++
- 1 file changed, 2 insertions(+)
+> Recreating objtool errors can be a manual process.  Kbuild removes the
+> object, so it has to be compiled or linked again before running objtool.
+> Then the objtool args need to be reversed engineered.
+> 
+> Make that all easier by automatically making a backup of the object file
+> on error, and print a modified version of the args which can be used to
+> recreate.
+> 
+> Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
 
-diff --git a/sound/soc/codecs/wm8997.c b/sound/soc/codecs/wm8997.c
-index 5389c363b14e..ef8e09cc7211 100644
---- a/sound/soc/codecs/wm8997.c
-+++ b/sound/soc/codecs/wm8997.c
-@@ -1066,6 +1066,8 @@ static int wm8997_component_probe(struct snd_soc_component *component)
- 	if (ret < 0)
- 		return ret;
- 
-+	arizona_init_gpio(component);
-+
- 	snd_soc_component_disable_pin(component, "HAPTICS");
- 
- 	priv->core.arizona->dapm = dapm;
--- 
-2.42.0.windows.2
+Reviewed-by: Miroslav Benes <mbenes@suse.cz>
 
+M
 
