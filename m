@@ -1,124 +1,127 @@
-Return-Path: <linux-kernel+bounces-565084-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565085-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 178D2A66084
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 22:29:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6542A66087
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 22:29:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3534B7AB152
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 21:28:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB4733B3A6A
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 21:29:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9602A201278;
-	Mon, 17 Mar 2025 21:29:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9ADB203710;
+	Mon, 17 Mar 2025 21:29:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Mpvj0NJS"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A3hZmg3T"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E4B21F8ADB
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 21:29:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C5151F583E;
+	Mon, 17 Mar 2025 21:29:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742246968; cv=none; b=NLRnLY+PiZqXb0c1tQN092z2XDXvGIpx7UwCdyGUrTXTiNVVR8AtfSr8IvMxUXQ3VPAVhJdws8x9ATP65sfmqHu35cweWBMIUCIQjHzzqJ4pKr3r9wdTeIodxXTBGjw3quM7NazDkjEG1fe0DtezQLfYBi0IMC8FNjfh+INkQdg=
+	t=1742246975; cv=none; b=AjaD07hVh6a8fBjV0ll1KHhXiqGya16c64r1zqJ/qAtZOJ6MqVga6ehEkqyfOiM1QX2Tp5gY8+rEOBSS1zMb4+6zOpuhIs/iG6wgumM27sSr5QM6O7vW/y7qwFPiFV4z1H6E5advGYRYP6cV5Fz/56B2hYlTQQCk+YvWVNkzvMs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742246968; c=relaxed/simple;
-	bh=vK4O45wExSGocePRqMOevgBIOA9nRmgU+D3T6rwxuxo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jOZL4Jw6mFd6KQdvp82n+7fxswj3+E7znHHbUNVqpkUWjRZV5g2ALQouSq6cUJgUoA2LQHrFfVnPhOxrx8lXgrv4eUg5/kmZ5cVQG8gH60CIzKNrqQzhG/GL/Uk46a6s760ahFKtUnoxOcLp9Fa/O1FMXmPOH2OuTCec7HpPiPw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Mpvj0NJS; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5e033c2f106so6881616a12.3
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 14:29:26 -0700 (PDT)
+	s=arc-20240116; t=1742246975; c=relaxed/simple;
+	bh=Qa8QoEh9bDo7NtQBpICcdHs0hz6i/1qhN7Icv/uqqS8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=Hz0qvLOj1cjk6o7ZR4zzOp9QtxybyXl/ESK+RwGBgt9Sc4UK1PtiGOFdJ/8PAZnrk3MdLmdtnUeYowtG+QkhyH1scFNMiDxKeF/vQ1uSMVMjTfEHYdUv/jZIN3L5fOHcJWi32nKiC5olKwFDx3caFjMlYu4dsLyc6jdbAWqWujk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A3hZmg3T; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-30c44a87b9cso42457761fa.3;
+        Mon, 17 Mar 2025 14:29:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1742246964; x=1742851764; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=rVfVjdaiHdKvLhD8GK0obNQ+wrdNPOtG9MyK2Tp8QrU=;
-        b=Mpvj0NJSqzmk6p8Z7yAQd2zTfGqKBh0kyiu+SVMCqcacNRKRWzR7H+KPbirCznxzuI
-         4FNWyIQ4bX87R6ZOh//nzkGBkeXPdeCHMJyRIuZvgTLk4EyVGpogUBoeVYFYPbK99LBJ
-         iPNb5uN/CV5ZpL7o7zaKdVvgKk35LoEfZpNzU=
+        d=gmail.com; s=20230601; t=1742246971; x=1742851771; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:subject:cc:to
+         :from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=M2DvdMulhD2lWgMBe7TR4sBlPK2uKT9yFU9Bypz2sH4=;
+        b=A3hZmg3TfjTiDOdEsUUWz/+WZKYb4X9LvemIfOsv3vAS3T3YTpPRjRsm5yAmHhUCpB
+         eMz/TfrV0VL0Y2i79UAZWD26rKq2xpgKE2l2SYmKYzZD/YmQhGInN879tGFc/y3T0ut8
+         rcmfW98Wh8IDIYdafoRiTOk9rggN/Nh+eLtb10N8HUmsFGM2y01f+2MjXBT/aJR7A1Nz
+         u8/xINE4pe/Qws7KjNOumRMsdR/AS4jRdnnhbbChCvjYveXsGp77sJf1GHhULHi2HVVW
+         sykEV09Zt5cMcg468zwpRj8Vgrjf/JyAUt7J3gu0Ql99aAdqSVqdzy9XaquWccrxoPz3
+         cCOg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742246964; x=1742851764;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1742246971; x=1742851771;
+        h=content-transfer-encoding:mime-version:message-id:subject:cc:to
+         :from:date:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=rVfVjdaiHdKvLhD8GK0obNQ+wrdNPOtG9MyK2Tp8QrU=;
-        b=KuJIdKL7YI/r6MzwBsF0SIRXqDXCg50que8fmTAzr3zWbQBgOXPgH/Uxa8MtKOWXJO
-         80dxx3sVsZgQ2W70J0HP19mH2C4ljkXVRb7638ot5zPOBKx1sCOoNjeOqczNL6CxX98c
-         RQrHP9tYaapN5gwpcpXTRc2l419DSAP+m7xzd4I8YBcB4xZeZEDL3+dqvfEUWDejahhC
-         nWntnQnm3MUbH3vrlpkd5A8R5nCQznheYHhlIuQXqYdwW6wkJAwhmmoCjT0myNBqMsZI
-         uJyjhwyaFlhHr3nP54F9aIDLOBlW0k79z0nVHyjlIwzH/SfRuB5hp8OVfUCuRruDzTHq
-         frgA==
-X-Forwarded-Encrypted: i=1; AJvYcCWxV6pLEIIrp/V8pBC6Xjf0KOZ3Ti3w7PRsySEj1heO7znUYjfEWIMSEDB9mZsneWnRaNNehnGOsjzHmqg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyNwd5Cdu9k/FrWWFdKLISTLs0jiKuluO7AlV2m5qThGl2hrEL0
-	AZiXopLpKNWN/PFMdbobHlRKykKuPx6TBnnqT/V2pEjKZ10wMjhGDk6UII2cK6grCoBvcNeVX6U
-	8NVs=
-X-Gm-Gg: ASbGnctWh8nCCne5AzP6GHEwjUDFsf6ncyVqfG7C5Ysg13A8lKp3gl1QZ1MCeSxnXFi
-	JPHK8sAIAwfs6csGocvl/CoZM8x2StRXIhIUSYsDntgy0HgdJmPqcxGV4sy96SLgYt+QTK2iS8G
-	RSHwG+2v3gmcBUc2P8o4r0O3Kc6A3EPvbzBZbRpBd7NIUYYdhqaZRugWJ9gs56jEf92oZBR/Rer
-	aV7+KTPhcr4psOSQD5qNWhWIyae2UdMAWIf4NyOsKOaShfiPaVVAruVv4hY9ekVt8zMHT30G8bP
-	zG2RTGUb/DgmElr9dK1hA8Go8mc7PClHV6M7+k3JDHE8eOuIPRR5MVEd6pT7r+KhbaFQmm9218Z
-	4T0rRwtac9FoYj6beySs=
-X-Google-Smtp-Source: AGHT+IGEuj8HAbIMgU4dSrcS2ZWFxHfgCTDF8Dl/1Hwr5WYLnWux/uI8HUkz93Me2Ml2f1MA9XgkhQ==
-X-Received: by 2002:a05:6402:90d:b0:5e5:ba77:6f24 with SMTP id 4fb4d7f45d1cf-5e89f92dc6fmr15363176a12.16.1742246964369;
-        Mon, 17 Mar 2025 14:29:24 -0700 (PDT)
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com. [209.85.208.53])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e8169bca53sm6649188a12.46.2025.03.17.14.29.21
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 17 Mar 2025 14:29:23 -0700 (PDT)
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5e033c2f106so6881569a12.3
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 14:29:21 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXPd8gZnTKTOysobjGYEhxflTpyDBNi/MqvNrU3g+eKfuPwNH+8MAjobgKohJWAydJ9Dwtnd/E97m/qfvs=@vger.kernel.org
-X-Received: by 2002:a17:907:c28:b0:ac2:dcb9:d2d7 with SMTP id
- a640c23a62f3a-ac3301e243dmr1719133666b.12.1742246961528; Mon, 17 Mar 2025
- 14:29:21 -0700 (PDT)
+        bh=M2DvdMulhD2lWgMBe7TR4sBlPK2uKT9yFU9Bypz2sH4=;
+        b=j7/2F6kxKPuC8qJVbn2ReWj7GRY/24/LEZn2vECkXEoOF/x3ANjd4i31HQ63zjfPUE
+         rnyMpD5U+xRgBDaPuDaHV9pk5eODmQSaXrDByBTodr3sWAujPDFXz6tnZln9TK0U/Bho
+         O2eEw7Xma+XgT/plkrDi2Ojb9zHNiq22mcHJXMhN8Waext6F7IVicBqweiXWvMnJwg2b
+         12YTTZ8VPGD6RJGlI2h2ZNu0zVkxSGY1404aRutKFy7FbHIYEAOAOVbdhRvewBm756/e
+         /O+9RIXpuNLvh3lFmzpjlc/65M07vfb1zfAYnVRB8vZuepuYQDXhwcA/yZZ2yt2jYwht
+         rUjg==
+X-Forwarded-Encrypted: i=1; AJvYcCUl73AFN30rN68TVL9Jlm6vyifGvHoZB1OP1zdLcXPZ67uDeNz+1kwYkub5luu0gVkyW7EEJ6jzKXqC@vger.kernel.org, AJvYcCXkaUm6aR6Qctzn+Np2YEDvd9llVnEd2Sm2Q7PoPhVzWE3gpsSA4gVrdNVEywlO6Q5VoOFZy6mJ7MQtTCc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz9NaIm14dbIfLet8PjX+Ucb7DhExme0/Qf4HDmvUt5nACOGSxu
+	0DVb8S4YFCVsvQX1kj6bsjILN+RuRo0MgTZsHCai6LVGeWodKMz5
+X-Gm-Gg: ASbGnctTfkmKZthUInZtTwnVQRgkZnj0Rl29y+5TBTYlPfsS83UF/301NcEFt4VC0YV
+	b5TT1rZML4T+XuS61VwbCoPC20XsfkkqQ/1/fbzDej049D72NFDXZEd6P4u/rkUzOYgNwgkRTEs
+	sO7VLvuvEVYcroPa/BYGymxLXBwjolQFYIv3DcuRfIXYbr2+YFjaxb5pxAdrGdmR05X07zC4clm
+	vR5/ZwTz3UsNnMvYoiX/3X91ycY12Qiw73dqDJqq3nWjcelwqWkFjf5KMo5rvImqju6wBm+pgDv
+	dbuNctHuXjK+853xvJwgochKRImzMLcukQUtckcgqhYhm3o3Pm+4eMtvkl0=
+X-Google-Smtp-Source: AGHT+IFrJZNMGWxmAGxKGz9lAPn9PjgEvHeGtZ1KxH3uJc86HN7GLtVV2llhcIYOyL+IV64mjm5wrA==
+X-Received: by 2002:a2e:3516:0:b0:30c:7a7:e841 with SMTP id 38308e7fff4ca-30c4a8edceamr84492411fa.34.1742246971136;
+        Mon, 17 Mar 2025 14:29:31 -0700 (PDT)
+Received: from foxbook (adqh54.neoplus.adsl.tpnet.pl. [79.185.141.54])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30c3f1dbf23sm17564911fa.106.2025.03.17.14.29.30
+        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
+        Mon, 17 Mar 2025 14:29:30 -0700 (PDT)
+Date: Mon, 17 Mar 2025 22:29:27 +0100
+From: Michal Pecio <michal.pecio@gmail.com>
+To: Mathias Nyman <mathias.nyman@intel.com>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>
+Cc: Kuangyi Chiang <ki.chiang65@gmail.com>, linux-usb@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: [PATCH] usb: xhci: Fix invalid pointer dereference in Etron
+ workaround
+Message-ID: <20250317222927.5b76518e@foxbook>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250314175309.2263997-1-herton@redhat.com> <20250314175309.2263997-2-herton@redhat.com>
- <CAHk-=wj2MhDH_zjnyrUhYUf3ZqokC-jKSeRp9G6GnhwFU9z+Hg@mail.gmail.com> <20250317131623.2cc15ada@pumpkin>
-In-Reply-To: <20250317131623.2cc15ada@pumpkin>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Mon, 17 Mar 2025 14:29:05 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wg6aT1ytSaBouOSpu71ZFMY8ct1a6=HOQC0CZuHxQqK2w@mail.gmail.com>
-X-Gm-Features: AQ5f1Jpru_4tA7Fcshs7y84OUHNY8Pr20Ph2P5__e5uENS1fJExDUd_Zuyn-QFI
-Message-ID: <CAHk-=wg6aT1ytSaBouOSpu71ZFMY8ct1a6=HOQC0CZuHxQqK2w@mail.gmail.com>
-Subject: Re: [PATCH] x86: add back the alignment of the destination to 8 bytes
- in copy_user_generic()
-To: David Laight <david.laight.linux@gmail.com>
-Cc: "Herton R. Krzesinski" <herton@redhat.com>, x86@kernel.org, tglx@linutronix.de, mingo@redhat.com, 
-	bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com, 
-	linux-kernel@vger.kernel.org, olichtne@redhat.com, atomasov@redhat.com, 
-	aokuliar@redhat.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, 17 Mar 2025 at 06:16, David Laight <david.laight.linux@gmail.com> wrote:
->
-> You can also something similar for any trailing bytes.
-> If you are feeling 'brave' copy the last 8 bytes first.
+This check is performed before prepare_transfer() and prepare_ring(), so
+enqueue can already point at the final link TRB of a segment. And indeed
+it will, some 0.4% of times this code is called.
 
-I think that would be a mistake.
+Then enqueue + 1 is an invalid pointer. It will crash the kernel right
+away or load some junk which may look like a link TRB and cause the real
+link TRB to be replaced with a NOOP. This wouldn't end well.
 
-Not only does ti cause bad patterns on page faults - we should recover
-ok from it (the exception will go back and do the copy in the right
-order one byte at a time in the "copy_user_tail" code) - but even in
-the absence of page faults it quite possibly messes with CPU
-prefetching and write buffer coalescing etc if you hop around like
-that.
+Use a functionally equivalent test which doesn't dereference the pointer
+and always gives correct result.
 
-It *might* be worth trying doing last unaligned part the same way my
-patch does the first one - by just doing a full-word write at the end,
-offset backwards. That avoids the byte-at-a-time tail case.
+Something has crashed my machine twice in recent days while playing with
+an Etron HC, and a control transfer stress test ran for confirmation has
+just crashed it again. The same test passes with this patch applied.
 
-I'm not convinced it's worth it, but if somebody spends the effort on
-a patch and on benchmarking...
+Fixes: 5e1c67abc930 ("xhci: Fix control transfer error on Etron xHCI host")
+Cc: stable@vger.kernel.org
+Signed-off-by: Michal Pecio <michal.pecio@gmail.com>
+---
+ drivers/usb/host/xhci-ring.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-            Linus
+diff --git a/drivers/usb/host/xhci-ring.c b/drivers/usb/host/xhci-ring.c
+index 60d89cf418da..dc674bc24a89 100644
+--- a/drivers/usb/host/xhci-ring.c
++++ b/drivers/usb/host/xhci-ring.c
+@@ -3786,7 +3786,7 @@ int xhci_queue_ctrl_tx(struct xhci_hcd *xhci, gfp_t mem_flags,
+ 		 * enqueue a No Op TRB, this can prevent the Setup and Data Stage
+ 		 * TRB to be breaked by the Link TRB.
+ 		 */
+-		if (trb_is_link(ep_ring->enqueue + 1)) {
++		if (last_trb_on_seg(ep_ring->enq_seg, ep_ring->enqueue + 1)) {
+ 			field = TRB_TYPE(TRB_TR_NOOP) | ep_ring->cycle_state;
+ 			queue_trb(xhci, ep_ring, false, 0, 0,
+ 					TRB_INTR_TARGET(0), field);
+-- 
+2.48.1
 
