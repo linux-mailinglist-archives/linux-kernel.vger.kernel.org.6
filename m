@@ -1,249 +1,98 @@
-Return-Path: <linux-kernel+bounces-564072-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564073-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 959B8A64D2C
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 12:48:16 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D50BBA64D2E
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 12:49:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E5F331895240
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:48:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 21E2D3B4DB1
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:49:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 891452376FE;
-	Mon, 17 Mar 2025 11:48:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6601D2376E9;
+	Mon, 17 Mar 2025 11:49:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="AGIi57Xh"
-Received: from smtp.forwardemail.net (smtp.forwardemail.net [121.127.44.73])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="H3AQiK0F"
+Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A756EED6
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 11:48:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=121.127.44.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 499A721CC7B
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 11:49:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742212090; cv=none; b=b+gJ10lQCcs0AuhfQUj8Intt9uUXzY+niXCE/aGgWxI9m01YatnY4bcJnwQb+dAbp+D/XwatLJsnDsE28t+Ek0LKrSkGfGSBUYIswNl22VgBMXE2NfJyl7f5lQUKLuTM0gFnszk41XQFyQLDdfU81naShtjAB/Tb3VN2ubHE/aY=
+	t=1742212151; cv=none; b=Y4iS1wBt2xmuy9bBEceo/eK2l3+I+2+UUY6bQhbb6QlDk8NbxfLoP90uv9K0NSDURmmc+P9VYZA6dBOwsl8ran5MU3FIOTLmEyg0RkH659bXloepH7//JPwQIFeykqVgo4SLyBZXzLLJlaQmilDaU0I33W3skbEaFrIfSEDXKYA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742212090; c=relaxed/simple;
-	bh=0V8Kpv3GRconCqA+yTaYkzmha0LljPTt+ZO2xmG2Ppg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=X8QWICXSveQVLxIg8LqkLJ4z/UG94+7KJJ7mA9XUrDoE5uhv+E+R+n1v+2uBcpcR7883iUiKB3Bthe6J8U73NYkKnieCRJ8AxN5h/Ip+UW9kOIYBmk5d2KXEUw+LUpqIDTHNVzsC0MLeJ6yPNAOmG1NX39gRPq4omqMBG/FVW4U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=AGIi57Xh; arc=none smtp.client-ip=121.127.44.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
- h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
- Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
- s=fe-e1b5cab7be; t=1742212086;
- bh=HEOVbh7gUdGpeV0lk7aQTpECpLg2DtqXrUEnTsWW+ag=;
- b=AGIi57XhqUt82sgAO/mujiEEpLf9y90F8elPfJlzCQrNRWxScwfl4zQoeDX1xUuZhb9RiKnMX
- 7Uz0UEtw8cjWeJTVrTjtLcbY3E0LWe19Fyd4cKH8e/Ki1kjsp0N70864xMsbY+o/qAFcq6w5pGU
- cccezGVwcRxEpnCCCd+/8yyF6Ha/caKDclhKLFzLPvAB74wNZU8QQel9IszAnGaPGXQQrXUTU7X
- cqGFDz4GpMGop4afVZJ7f5KQukfuusmAON/AAcUUFM8L0zPZJlzXQr/MBvikRShMnqZD6OttoRA
- YTJzy23Zj2kclMfFm97CPUAHFNunGvTgXkaRJrB2Z6zw==
-X-Forward-Email-ID: 67d80befc3abe04af72034b8
-X-Forward-Email-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
- 121.127.44.73
-X-Forward-Email-Version: 0.4.40
-X-Forward-Email-Website: https://forwardemail.net
-X-Complaints-To: abuse@forwardemail.net
-X-Report-Abuse: abuse@forwardemail.net
-X-Report-Abuse-To: abuse@forwardemail.net
-Message-ID: <ba057235-85d4-4635-87ad-741e369904f3@kwiboo.se>
-Date: Mon, 17 Mar 2025 12:47:52 +0100
+	s=arc-20240116; t=1742212151; c=relaxed/simple;
+	bh=O4rxkACoIMr0aTpUuepWNgTVZ1VF0SUZH4urO/9sbQc=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=hY6WaM+HSPpUDuYTI3GJ2GLlN0wAdAs1r0CBRu0oKrUbFniIZ1FWAGGCzY5uyOD3o0kebTEBP6VyEmjv+31sxpN3uNtX+ZQJR9WBrjb1OyhEEAiNiqCLxAE5jSJ7rMC14Ql2Y4mWP/C0ToffJnkVJM5Tpoe8ZdX/uq3UQEhLFf8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=H3AQiK0F; arc=none smtp.client-ip=209.85.128.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-438da39bb69so16558535e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 04:49:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1742212148; x=1742816948; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=6mbmNCDCe88iT3v2lZir9x9mqE4OgQ+puKOgqrIfOxE=;
+        b=H3AQiK0F05zlNZf020z7weiIYyX9PSjWBRLm8jg0IJg6IafRoizmtBZ/Dt/1DiagPO
+         Weoo0DTpmZqlQ5P1qBfN6ba9Ff05x2O7LmgE5/6M4IkhFlVtNwQaHQOr9nDRO6albc5h
+         92ujrZ5OUIHPQtmgkpBABKzAHbPg8CfJeCZR4lyr/lPwIONfLEtKn39A7DqjiVTC7jvQ
+         cSGy09UcFGt0HXEM6wSU3XMTzSAu9WgjOgdXR5q0ip6uwOfV4/A74jE0Utw1wBAvRvA/
+         vAV8QQuYxqh21mMvP9wnIwC3D2EsKhTOBE9TWsh956Uq88FXZA6YdN/PsA+4IUi8kKT0
+         FD7A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742212148; x=1742816948;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6mbmNCDCe88iT3v2lZir9x9mqE4OgQ+puKOgqrIfOxE=;
+        b=LO0Vko8tTeemHSans/oo1CtcNfHrbYaV9gE2XGrdxv/32AU8WbNx0CT8wJj/tdARGT
+         p6Dk9Lla+IHQIMigjtNsOEczJk4I+xTDuKAXTRJprW2PSEonVGfLU3lcVVDRcyI9VjYa
+         9/QM1XOy36EowW+hiDKlRyOs1naTAKO8mZ+U5tSQwLbTlFsoI6X51CMx/lfUknphJtVU
+         80wvQRSm10VXIcpubt782l/KTCHqzHGIXpicuutje84A1levmpl0yl75FUubbnA/4eOO
+         TmUVMIMMAdzpqKh6B8S8xv38c4s1ZTUaQ3XIIdtA4L8mi844mONz2v3/X3Il9nCTepe1
+         LJHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXLrAj3hhNQjccj/Afy9mMkm/700IROhS8zf3JiTYlLMjxowdOFCYqj0Oy/Qj5oMvgiwH5e4URKBJnk3Ms=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwmviMst3jAeD0lvSjxgcBi/6DNs/+rT2yQodZECB9FhQr5Kmzn
+	isqFv+gLqy/O4ccYn4B6l5wMnBRuBgRrowB34yV5piqXuPGUtB03mhwTObBsh8qFogYvb9kMmxJ
+	zGFqhgw+XYt9idw==
+X-Google-Smtp-Source: AGHT+IEiyp9+pMsEtIMrEBRP3da21dFJjvcd2SDLZI/bjIqBrdT2NJvvFj4p6Awul2Zl+CaLrkN22+RpYMsvF+M=
+X-Received: from wmbbi17.prod.google.com ([2002:a05:600c:3d91:b0:43b:c9fc:b269])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:3b0a:b0:43c:e70d:44f0 with SMTP id 5b1f17b1804b1-43d1ecc31b8mr119276965e9.19.1742212148696;
+ Mon, 17 Mar 2025 04:49:08 -0700 (PDT)
+Date: Mon, 17 Mar 2025 11:49:06 +0000
+In-Reply-To: <20250317-uaccess-typo-reserve-v1-1-bbfcb45121f3@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/6] thermal: rockchip: Support RK3576 SoC in the
- thermal driver
-To: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
- Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
- Ye Zhang <ye.zhang@rock-chips.com>, devicetree@vger.kernel.org,
- linux-pm@vger.kernel.org, Sebastian Reichel
- <sebastian.reichel@collabora.com>, linux-kernel@vger.kernel.org,
- linux-rockchip@lists.infradead.org, kernel@collabora.com,
- linux-arm-kernel@lists.infradead.org
-References: <20250228-rk3576-tsadc-upstream-v3-0-4bfbb3b699b9@collabora.com>
- <20250228-rk3576-tsadc-upstream-v3-3-4bfbb3b699b9@collabora.com>
- <6c355664-50dd-4efd-94b7-9d93c02d3e80@kwiboo.se>
- <4994384.31r3eYUQgx@workhorse>
-Content-Language: en-US
-From: Jonas Karlman <jonas@kwiboo.se>
-In-Reply-To: <4994384.31r3eYUQgx@workhorse>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+References: <20250317-uaccess-typo-reserve-v1-1-bbfcb45121f3@gmail.com>
+Message-ID: <Z9gMMhXdzyiwxqoM@google.com>
+Subject: Re: [PATCH] rust: uaccess: name the correct function
+From: Alice Ryhl <aliceryhl@google.com>
+To: Tamir Duberstein <tamird@gmail.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, Wedson Almeida Filho <wedsonaf@gmail.com>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
 
-Hi Nicolas,
+On Mon, Mar 17, 2025 at 07:43:03AM -0400, Tamir Duberstein wrote:
+> Correctly refer to `reserve` rather than `try_reserve` in a comment.  This
+> comment has been incorrect since inception in commit 1b580e7b9ba2 ("rust:
+> uaccess: add userspace pointers").
+> 
+> Fixes: 1b580e7b9ba2 ("rust: uaccess: add userspace pointers")
+> Signed-off-by: Tamir Duberstein <tamird@gmail.com>
 
-On 2025-03-17 09:28, Nicolas Frattaroli wrote:
-> On Saturday, 15 March 2025 09:20:07 Central European Standard Time Jonas 
-> Karlman wrote:
->> Hi Nicolas,
-> 
-> Hi Jonas,
-> 
->>
->> On 2025-02-28 21:06, Nicolas Frattaroli wrote:
->>> From: Ye Zhang <ye.zhang@rock-chips.com>
->>>
->>> The RK3576 SoC has six TS-ADC channels: TOP, BIG_CORE, LITTLE_CORE,
->>> DDR, NPU and GPU.
->>>
->>> Signed-off-by: Ye Zhang <ye.zhang@rock-chips.com>
->>> [ported to mainline, reworded commit message]
->>> Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
->>> ---
->>>
->>>  drivers/thermal/rockchip_thermal.c | 42
->>>  ++++++++++++++++++++++++++++++++++++++ 1 file changed, 42 insertions(+)
->>>
->>> diff --git a/drivers/thermal/rockchip_thermal.c
->>> b/drivers/thermal/rockchip_thermal.c index
->>> a8ad85feb68fbb7ec8d79602b16c47838ecb3c00..bec1930bebd87859a7e519cfc9f05e1
->>> 0b1c31e87 100644 --- a/drivers/thermal/rockchip_thermal.c
->>> +++ b/drivers/thermal/rockchip_thermal.c
->>> @@ -1061,6 +1061,22 @@ static void rk_tsadcv3_tshut_mode(int chn, void
->>> __iomem *regs,> 
->>>  	writel_relaxed(val_cru, regs + TSADCV3_HSHUT_CRU_INT_EN);
->>>  
->>>  }
->>>
->>> +static void rk_tsadcv4_tshut_mode(int chn, void __iomem *regs,
->>> +				  enum tshut_mode mode)
->>> +{
->>> +	u32 val_gpio, val_cru;
->>> +
->>> +	if (mode == TSHUT_MODE_GPIO) {
->>> +		val_gpio = TSADCV2_INT_SRC_EN(chn) | 
-> TSADCV2_INT_SRC_EN_MASK(chn);
->>> +		val_cru = TSADCV2_INT_SRC_EN_MASK(chn);
->>> +	} else {
->>> +		val_cru = TSADCV2_INT_SRC_EN(chn) | 
-> TSADCV2_INT_SRC_EN_MASK(chn);
->>> +		val_gpio = TSADCV2_INT_SRC_EN_MASK(chn);
->>> +	}
->>> +	writel_relaxed(val_gpio, regs + TSADCV3_HSHUT_GPIO_INT_EN);
->>> +	writel_relaxed(val_cru, regs + TSADCV3_HSHUT_CRU_INT_EN);
->>> +}
->>
->> This function is identical to rk_tsadcv3_tshut_mode() in mainline.
->>
->> Should the v3 function be renamed to v4 in mainline to match vendor
->> kernel to avoid confusion?
-> 
-> Good catch. Yes, I'll add a patch to rename the function before introducing 
-> new changes in v4, and get rid of the duplicate function.
+Thanks.
 
-Great.
-
-> 
->>
->>> +
->>>
->>>  static const struct rockchip_tsadc_chip px30_tsadc_data = {
->>>  
->>>  	/* cpu, gpu */
->>>  	.chn_offset = 0,
->>>
->>> @@ -1284,6 +1300,28 @@ static const struct rockchip_tsadc_chip
->>> rk3568_tsadc_data = {> 
->>>  	},
->>>  
->>>  };
->>>
->>> +static const struct rockchip_tsadc_chip rk3576_tsadc_data = {
->>> +	/* top, big_core, little_core, ddr, npu, gpu */
->>> +	.chn_offset = 0,
->>> +	.chn_num = 6, /* six channels for tsadc */
->>> +	.tshut_mode = TSHUT_MODE_GPIO, /* default TSHUT via GPIO give PMIC 
-> */
->>> +	.tshut_polarity = TSHUT_LOW_ACTIVE, /* default TSHUT LOW ACTIVE */
->>> +	.tshut_temp = 95000,
->>
->> Here the default is GPIO and 95 deg, in DT node the default is override
->> to CRU and 120 deg.
->>
->> Any reason that is not the default here?
-> 
-> No reason, other than that this is what most Rockchip SoCs seem to do. RK3588 
-> does the same thing. The hardware power-on-reset state is to not have any 
-> tshut, so whatever the "default" should be is entirely made up by the driver 
-> in either case.
-> 
-> For the sake of being consistent, I'll keep it the same in v4, as RK3588 does. 
-> Otherwise, we'll have RK3576 and RK3588 do different things. If someone wants 
-> to change the default, then ideally this would be done in a follow-up series 
-> to make it consistent for all SoCs.
-> 
-> If that's alright with you, then I'll send out a v4.
-
-Sounds good, I was mostly wondering because I am preparing patches for
-RK3528 and it felt strange to define one default in driver and directly
-override that default in DT to something different.
-
-Also noticed that this driver log a warning when the DT props are
-missing, something that probably should be downgraded as the props are
-optional in DT schema. Something for another series.
-
-Regards,
-Jonas
-
-> 
->>
->> Regards,
->> Jonas
->>
-> 
-> Regards,
-> Nicolas Frattaroli
-> 
->>> +	.initialize = rk_tsadcv8_initialize,
->>> +	.irq_ack = rk_tsadcv4_irq_ack,
->>> +	.control = rk_tsadcv4_control,
->>> +	.get_temp = rk_tsadcv4_get_temp,
->>> +	.set_alarm_temp = rk_tsadcv3_alarm_temp,
->>> +	.set_tshut_temp = rk_tsadcv3_tshut_temp,
->>> +	.set_tshut_mode = rk_tsadcv4_tshut_mode,
->>> +	.table = {
->>> +		.id = rk3588_code_table,
->>> +		.length = ARRAY_SIZE(rk3588_code_table),
->>> +		.data_mask = TSADCV4_DATA_MASK,
->>> +		.mode = ADC_INCREMENT,
->>> +	},
->>> +};
->>> +
->>>
->>>  static const struct rockchip_tsadc_chip rk3588_tsadc_data = {
->>>  
->>>  	/* top, big_core0, big_core1, little_core, center, gpu, npu */
->>>  	.chn_offset = 0,
->>>
->>> @@ -1342,6 +1380,10 @@ static const struct of_device_id
->>> of_rockchip_thermal_match[] = {> 
->>>  		.compatible = "rockchip,rk3568-tsadc",
->>>  		.data = (void *)&rk3568_tsadc_data,
->>>  	
->>>  	},
->>>
->>> +	{
->>> +		.compatible = "rockchip,rk3576-tsadc",
->>> +		.data = (void *)&rk3576_tsadc_data,
->>> +	},
->>>
->>>  	{
->>>  	
->>>  		.compatible = "rockchip,rk3588-tsadc",
->>>  		.data = (void *)&rk3588_tsadc_data,
-> 
-> 
-> 
-> 
-
+Reviewed-by: Alice Ryhl <aliceryhl@google.com>
 
