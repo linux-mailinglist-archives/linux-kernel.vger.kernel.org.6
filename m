@@ -1,132 +1,106 @@
-Return-Path: <linux-kernel+bounces-563351-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563352-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B218DA63F5C
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 06:17:31 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FF7AA63F61
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 06:20:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB182188D0DF
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 05:17:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6979D16E1E6
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 05:20:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65CAD218AAD;
-	Mon, 17 Mar 2025 05:17:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B9AC21882F;
+	Mon, 17 Mar 2025 05:20:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c0UHhTF2"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dkodmahx"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34B751DA61D;
-	Mon, 17 Mar 2025 05:17:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5954A140E30
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 05:19:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742188642; cv=none; b=MSS3GxNL4DK600BauPy3shDCPsHeD7RwiM6L+hTeXOPQOzPHxOyKht/98AXTI2c8MQDAR9hoVmPb3fta7nMDWbxHYfulNfjgYcnO9yqk8jqse01pK1xAiFyRgkuu176Pk5UME50DJ69OK8QA24AFEGOVoKVXJKe06Ts8H2gdJY4=
+	t=1742188799; cv=none; b=GrGlfjfoqRgSxLynM+W3OjZePkt9i/vzv3TLavMIlkhHfRb6mNNopzhysbHFZsn9VUnnqFUWFS9ifg3ZGoqtQiE2xlFkbZ9amjAUlgHmKPw/V5ekinvWLuzwoHI+0QWbTWCg4hmHVRiDRJpsRXoAjrg+EWntYtHdtNy+WIh9leU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742188642; c=relaxed/simple;
-	bh=vLi1Y671MAsh1r15QlDQ4G8er01KxAKWFFKOKWwZTso=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=XKQyW+U7RIfj1vrOBTX81E6VWdycQLhNL5VOniuy0utBSeWeWJFZe7iNST9OTLrMvLrnhRWNBLIstUgdECrrARAtY/dm0rhBvE/J8VWq381hcAbq25OqLqI5HaewoWVzy85YBbdUyBIqdux7yvI5fGuumxEeDsTagTehs/AuvbU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c0UHhTF2; arc=none smtp.client-ip=209.85.208.45
+	s=arc-20240116; t=1742188799; c=relaxed/simple;
+	bh=8oQghyez17aH26kMvp2RD24R4kX2f6/H/4UC7Q+V39Q=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=FzZTFFyeM5X/S9wxIcpdEsAXphfDq07viQwEAyqPoXQHqvpkpVytFPHGtljLj1xdGC5FRK/hnPQ6MWJx2dWjAMqsxwIRLOHB7nxRbClZk6dxpjvOeoJ8E6qzQwClDQejNUhlxFjFQtD4A59VtSR3g8Q+8xobME+ypSm01qJlHRk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dkodmahx; arc=none smtp.client-ip=209.85.214.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5e5bc066283so5531825a12.0;
-        Sun, 16 Mar 2025 22:17:20 -0700 (PDT)
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-2243803b776so24400545ad.0
+        for <linux-kernel@vger.kernel.org>; Sun, 16 Mar 2025 22:19:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742188639; x=1742793439; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=FviiEizNsPrswvoF1WtZ4IxURDJ9d85H3lSIXGoQ6I0=;
-        b=c0UHhTF28rfg+cesuXkc9aGl/1cCO/Htduy2AQKZtFKrWl/GBNCWC9pkooDSkEHB2N
-         A/Phko2MKWzO9ENNR10ajDy1+a6zagVjoLfJ+62aJNQqN8yCQqooGAS0ceMh5YqajMO9
-         nY87TKK3TpTQSmrez/JGU69iBQj05Jy7NcMX6a+HWTXNjit3iDNuc8BM1roOuZNhKtdW
-         EWWSXvcPdBzWuguXAPgAEu2WjDF55SFmu+jn5yMCoada6bhZp5MIsvSwbKZr0rQ8/Opg
-         QkuWNAjS/fjRdLmNh3mNOLwDmqViaFYQcJh5DR3exUCYPED73nmsMqjNjz73XP/J+Nh9
-         MTiQ==
+        d=gmail.com; s=20230601; t=1742188797; x=1742793597; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=QQWQga54dvDSkq0vaFiXjWbUXDkOKyh1NJzeCcOJyv8=;
+        b=dkodmahx1nnJATj5W/zvY3CayGOTjlWN1WCwnBMyM/3Zp1KkLEX3Xlti34CmNkzC9+
+         p5J1PtZkcxKqbE1KdJtRTAWEvaHaUAbYzGJfEw9pJXJKOCoEG575Vq9DI+5yhJx6pB1H
+         mjjTaAPN5RVcaVQEEwvoQvkz4fdVHdOfUF5Inf+0SBeU0CoiXZtsO+gohd1swKCQmq0Y
+         +lvvUcjB0ut7KRtF9/K9n91oPT8CZ70eFNloysTVaKSsZ+a4e5aHJRqPAeG6RTJAeXqJ
+         SUj3kO8jZcem/ctkFf445bEpWSA4+M5A4ZxEgSTJ/Ny2KX3mP/RDP8Y9GoIFnQOOVUqa
+         N9Ug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742188639; x=1742793439;
-        h=content-disposition:mime-version:message-id:subject:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FviiEizNsPrswvoF1WtZ4IxURDJ9d85H3lSIXGoQ6I0=;
-        b=Vx3L49zbDjtPViAFzfuXV42sxsWw1EfZpXu/9JeJnHJmzWOkzMBFVxvlyI2DhtIN5R
-         YcEYIXYRScMg4vbEaEgPIhadChTqBgi8rmOh+qQxHTTgFfUVqu7E+y54T8mXFwTpFr/A
-         dsi7yvaEMTQ724XsKM+hAvAtNSUjuef+jVt/Z6jA83g2ho7qKXIQGHLSkXEFAKFUENEh
-         uhpYfa8DNENElsOiE9PRWtU1/1yhelASMLU0LPlISxkncaWVc9ZW1+SVvyEv3qiliBZN
-         +Z2MzJzJD4JvF0uRs0CIiypdJYlP/3pyqUnx8F8oFz8XmKB7r8f3GX9yK0PPCXdD4L85
-         ovlw==
-X-Forwarded-Encrypted: i=1; AJvYcCU56WgsGj8aGZ8E7JMXSSi9zmvCkLWA32RjisWbavoDiH3P+nLP7+oRP+9rfjnOYWYOqfLL4uTROb6W@vger.kernel.org, AJvYcCWWRyq4SA8X+2uLbX+muAr73ODAfrNLikKXbXuWNDlFs3tW91jjFlOpOJ5DDHzoy4CoMczRdjW2aqRRFs8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTTP6p86xk9T4krSsA6E11C3MaZ/CgEBSEQrx/nr9FSdJRR2gY
-	fjStJDdNfbb++nuuquAZ8J8nHpFeInAbDT6Ky3miKE2c4H3szbft
-X-Gm-Gg: ASbGncutnwg1Bpgz7c4vU5kaIXWAMVWiuQlOyRj+EIPugQ7nLpUIpnL5NY+ZBFCXji4
-	lDNGOjPMJk9FHxmkyz04t5uTqT+Y25oBVgsusIbb2hgKoUBkRX2+Q3aABWFf1hsO+uKTR/8JMcQ
-	dwCAxrg+ppxQwKisTpLWctLnoghXbNv5fbRfb6umsI54ZXRnYM54tfWtqYtQRLF+BO9sTpF3vSx
-	sDnsbNbJePrIAXL7EZ7OGcRp0P8Rmjcq14h37CLGiDxmzvwm2JnFFkQ1lR2vo7YO+4twCXe5aj4
-	k5yGEG2hDZyuFkIa1ZAMF6A8VhBme6GFzdJJaswqcA2w2Oe5NXt8Td+06F+Lvd4nztYR4rnk1eb
-	hhwSESIGzOWhbOvMkWHP5O/KwxA==
-X-Google-Smtp-Source: AGHT+IHCJDbslQRk+xyipAV1mKRrF+/+NV16nsiZd9UURhUECsvo0H8J4RQvmsaDs2dCB74Kirz0ZQ==
-X-Received: by 2002:a05:6402:4405:b0:5e7:8503:1a4b with SMTP id 4fb4d7f45d1cf-5e89f6430b1mr12304682a12.18.1742188639269;
-        Sun, 16 Mar 2025 22:17:19 -0700 (PDT)
-Received: from veno.localdomain (213-47-47-110.cable.dynamic.surfer.at. [213.47.47.110])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e816b2a683sm5253103a12.81.2025.03.16.22.17.17
+        d=1e100.net; s=20230601; t=1742188797; x=1742793597;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QQWQga54dvDSkq0vaFiXjWbUXDkOKyh1NJzeCcOJyv8=;
+        b=VTGR4GjMdC3iQrxl8D2xmopLNSQ2/V3m5rxJOG8c9mPOD5XAbAsTxGlr+/p/mjcP9V
+         OyzHdd9N5BxVuHdfRyxVlB08NWElKY6Qko/loGXbEWwCi220kz1iiad5lJoyRSkoEwgJ
+         VLjA2l9A5PoADzxILy7xgNJnax23uc1PQTYqIl3Ja7JS6nRKM2HqDT/fj0u4gWsUOiJb
+         XiwpWbyXsoCFWb1WBUz5N9AjznewSSLjKAIlN4o+flDtAUgPUdOQgP4Geoi39Z0cNtil
+         PKJJ4Y4vIzqEoSXJ0R7JJT/9cOyxLZ61sVCn6NfZiXLfPB0s1aOWR3z1evQ0GzaQ2IUL
+         Aq1Q==
+X-Gm-Message-State: AOJu0Yy0QBl4xGx7UjMmbPV4xk+llVNST+LG4+dpQGD35yFoDOP8SgrY
+	4JGoTJXL5BtY5oQvzUyKGVIHbyitNklmyDOdsbPofJYOOuxbDp0o
+X-Gm-Gg: ASbGnct7E88sP+j4xkLwXjPzXHq1R1cdIH2PRXjVSykRCMOiABE1YAM6xohO9y4D8Rx
+	3AfloPkNg4TbZIzlpcpoZSii7ohvKM2CMvB5hYUHgKpltmDVOZLqjcs1YajEaKDBrHRkFANYwWa
+	tt8LHwkjImAeW3JOBok2cUjMbobejh9VOQ7oQxWSlIIvYIDWHvJNAbFJKNIwxvpNmS8rVGlc2+9
+	zZ16ynN6oyNj7sK5QkslA+Vishw1fRfqSFtvhuAWQMYYIscmzleb7otwIHnvqlF9uYekoEaDA6x
+	sCxHBbGWpMC2ub6wC61cy9GrLBMWuOeI6kG5b4szZZ2Kkww3RBLfnPg=
+X-Google-Smtp-Source: AGHT+IFIQIiIw7BEaZAezA9tIbw376BxhXQW6CO98d0U9Z6lnqMOKr82iRgHEAdjTBiNwKG/nnfZoA==
+X-Received: by 2002:a17:903:440f:b0:216:3d72:1712 with SMTP id d9443c01a7336-225e0b094e7mr173798885ad.48.1742188797484;
+        Sun, 16 Mar 2025 22:19:57 -0700 (PDT)
+Received: from cs20-buildserver.lan ([2403:c300:df04:8817:2e0:4cff:fe68:863])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-225c6ba721esm66029975ad.149.2025.03.16.22.19.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 16 Mar 2025 22:17:18 -0700 (PDT)
-Date: Mon, 17 Mar 2025 06:17:15 +0100
-From: Michael Ehrenreich <michideep@gmail.com>
-To: Johan Hovold <johan@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] USB: serial: ftdi_sio: add support for Abacus Electrics
- Optical Probe
-Message-ID: <Z9ewW-63F212DcV7@veno.localdomain>
+        Sun, 16 Mar 2025 22:19:57 -0700 (PDT)
+From: Stanley Chu <stanley.chuys@gmail.com>
+X-Google-Original-From: Stanley Chu <yschu@nuvoton.com>
+To: frank.li@nxp.com,
+	miquel.raynal@bootlin.com,
+	alexandre.belloni@bootlin.com,
+	linux-i3c@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org,
+	tomer.maimon@nuvoton.com,
+	kwliu@nuvoton.com,
+	yschu@nuvoton.com
+Subject: [PATCH v1 0/3] Some fixes for Silvaco I3C controller driver
+Date: Mon, 17 Mar 2025 13:19:48 +0800
+Message-Id: <20250317051951.3065011-1-yschu@nuvoton.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-Abacus Electrics makes optical probes for interacting with smart meters
-over an optical interface.
+This patchset adds some fixes for the Silvaco I3C controller driver.
 
-At least one version uses an FT232B chip (as detected by ftdi_sio) with
-a custom USB PID, which needs to be added to the list to make the device
-work in a plug-and-play fashion.
+Stanley Chu (3):
+  i3c: master: svc: Fix missing the IBI rules
+  i3c: master: svc: Use readsb helper for reading MDB
+  i3c: master: svc: Fix missing STOP for master request
 
-Signed-off-by: Michael Ehrenreich <michideep@gmail.com>
----
- drivers/usb/serial/ftdi_sio.c     | 2 ++
- drivers/usb/serial/ftdi_sio_ids.h | 5 +++++
- 2 files changed, 7 insertions(+)
+ drivers/i3c/master/svc-i3c-master.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/usb/serial/ftdi_sio.c b/drivers/usb/serial/ftdi_sio.c
-index e07c5e3eb..7bf46104e 100644
---- a/drivers/usb/serial/ftdi_sio.c
-+++ b/drivers/usb/serial/ftdi_sio.c
-@@ -1079,6 +1079,8 @@ static const struct usb_device_id id_table_combined[] = {
- 		.driver_info = (kernel_ulong_t)&ftdi_jtag_quirk },
- 	/* GMC devices */
- 	{ USB_DEVICE(GMC_VID, GMC_Z216C_PID) },
-+	/* Abacus Electrics */
-+	{ USB_DEVICE(FTDI_VID, ABACUS_OPTICAL_PROBE_PID) },
- 	{ }					/* Terminating entry */
- };
- 
-diff --git a/drivers/usb/serial/ftdi_sio_ids.h b/drivers/usb/serial/ftdi_sio_ids.h
-index 5ee60ba2a..5de8067be 100644
---- a/drivers/usb/serial/ftdi_sio_ids.h
-+++ b/drivers/usb/serial/ftdi_sio_ids.h
-@@ -1612,3 +1612,8 @@
-  */
- #define GMC_VID				0x1cd7
- #define GMC_Z216C_PID			0x0217 /* GMC Z216C Adapter IR-USB */
-+
-+/*
-+ * Abacus Electrics
-+ */
-+#define ABACUS_OPTICAL_PROBE_PID	0xf458 /* ABACUS ELECTRICS Optical Probe */
 -- 
-2.48.1
+2.34.1
 
 
