@@ -1,134 +1,104 @@
-Return-Path: <linux-kernel+bounces-563635-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563636-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FDAEA645B9
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 09:36:40 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4357EA645BC
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 09:36:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B8B73A4F9B
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 08:36:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 885B1169AFA
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 08:36:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CF1521E0A8;
-	Mon, 17 Mar 2025 08:36:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26F3621E0BB;
+	Mon, 17 Mar 2025 08:36:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="SrJ9y8rU"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="W7eIy6as"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26B04191499;
-	Mon, 17 Mar 2025 08:36:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B52921CC64
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 08:36:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742200591; cv=none; b=DfzlRDLyxshKzVlUVzesX0anuFPbs2RJzznY5keFXrUbDkHIndxQ/nrV78fgTE/g6EYWysGwJ5C9IXyEuAU8M3+BHtBmz2HJF3hTRTI/IuDFXYPN1F1kLDr/X5aWQ7r5C5K5Zapw3LRQnUyUfBSfPQC2XFfguaNFq4sTyp/N1x4=
+	t=1742200605; cv=none; b=QG9gjWfEKK1GSNBB+rY/raVbcgGjKodv/ke1ksNHlx4/ZcixHkazIk55j3vKXAJ5La4C1+0/YQiLJjDisyuO70aGuSXI26KFvZj0cJyG9w/jV0Dfe9UoOPw5s2UQ1CM7M7rgATYQVTRt1724x3lys4CFKAuW3bxjcIOHOVFQKv0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742200591; c=relaxed/simple;
-	bh=UyhuXGln5+ft1pHnigfzjGcRIc5uKiAk+wUegpAjsWU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=TX6y9tpuCe2wt2uZ1Rq+DpQaDyIys8xMImnLV3SgTGrQUn6a//oJxl78ksAvLOKvRwlWBvgaHs/9gFEz2+Zwp7maFlXg+9hQa+CFxw+PMhrtTNn7Mw7Clmm9g4p5zf3YMLA9mS3HRqbNT9uEoUb2oh9g3SWK7OAa3YXCoSrKlhQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=SrJ9y8rU; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1742200583;
-	bh=IlfGdgJfr6ZKNTbJzXvUWKXaP17H/CCBQIKz//mIQUo=;
-	h=Date:From:To:Cc:Subject:From;
-	b=SrJ9y8rUvMqGAYe4zCOIMoEri5bXSJa+ibKim4l+9avRSb4foS9OiLqBxxIKYBOSw
-	 fbt5gY/CUFGbeU0QdV5hXXyTK8eOmdQG5VelBgyWX9l7e7QIycTJfCBUo4b0jqxFxa
-	 NQ5EIj7rZH/shro/c1hf/2byHxDSwm5/Qo23zj9hZHw/mqbiShizkls4hggCz2hVPq
-	 lZqaWT7OKOvly8IAEM33kfgEBm2q/mGCT5FyRsE+4JG9I8gVQtAHyiKNdGmvm7/tgN
-	 HwOM1YaHrvN2GoEGNg5B6mL6D9nTc0+eJQgWMWpTWervwdAvPtMC/CFewyZfOi+z67
-	 H6opdCmvPiZKQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	s=arc-20240116; t=1742200605; c=relaxed/simple;
+	bh=4Ja7e6U9yNhl+JrvSpvm42lU4+p2vsE/X83W7rD/14Q=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=Xll1QFgiUI5EIdyWtYcRhvatgeztRtq3avbdYM5fhb8i7Z3vbKftgDTIvbmfxTciJufEllIv1LYNfGFE+J/SvdivI5dsTncEQO1tAa9Y5fK/1dMmbNyza5nrLrjQsu4E9iRtCZ289N9+XneGzxijoKCUl+gA6xhvueYNlw+gs2s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=W7eIy6as; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1742200602;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Gb2tWkutFdwW0BrIFMtAs6rVWFa189SNP9nOSQ9SGtg=;
+	b=W7eIy6asJdxtSnMrSpdKIGEaxGrWoXWKzI+4vwQB6wOpfuCnRN7xw68iSm6PpTGBXzHWq+
+	TMSqBMd59gFmkuaWsZ7QM67KeDGm9ywBu0sRJTVlt1Pk3F+8RT78D8fx3JDRvvQoEJZ8rx
+	oZkKPD7R4tjlzBUs9/Y39WMmIP4SI0A=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-331-32CXKvvsP7OKdn_3Vs2QiA-1; Mon,
+ 17 Mar 2025 04:36:36 -0400
+X-MC-Unique: 32CXKvvsP7OKdn_3Vs2QiA-1
+X-Mimecast-MFC-AGG-ID: 32CXKvvsP7OKdn_3Vs2QiA_1742200594
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZGSxL4DJCz4wcZ;
-	Mon, 17 Mar 2025 19:36:22 +1100 (AEDT)
-Date: Mon, 17 Mar 2025 19:36:21 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Shuah Khan <skhan@linuxfoundation.org>, Brendan Higgins
- <brendanhiggins@google.com>, David Miller <davem@davemloft.net>, Jakub
- Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Cc: Networking <netdev@vger.kernel.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, Sergio =?UTF-8?B?R29uesOhbGV6?= Collado
- <sergio.collado@gmail.com>, Shuah Khan <shuah@kernel.org>, Tamir Duberstein
- <tamird@gmail.com>
-Subject: linux-next: manual merge of the kunit-next tree with the net-next
- tree
-Message-ID: <20250317193621.4b4db936@canb.auug.org.au>
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id BF3961955DCD;
+	Mon, 17 Mar 2025 08:36:32 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.61])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 420DF1955DCD;
+	Mon, 17 Mar 2025 08:36:26 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <20250314160543.605055-1-arnd@kernel.org>
+References: <20250314160543.605055-1-arnd@kernel.org>
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: dhowells@redhat.com, Boris Brezillon <bbrezillon@kernel.org>,
+    Arnaud Ebalard <arno@natisbad.org>,
+    Srujana Challa <schalla@marvell.com>,
+    Herbert Xu <herbert@gondor.apana.org.au>,
+    "David S. Miller" <davem@davemloft.net>,
+    Jarkko Sakkinen <jarkko@kernel.org>,
+    Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+    "Serge E.
+ Hallyn" <serge@hallyn.com>,
+    "Justin M. Forbes" <jforbes@fedoraproject.org>,
+    "Jason A. Donenfeld" <Jason@zx2c4.com>,
+    Arnd Bergmann <arnd@arndb.de>, Rosen Penev <rosenp@gmail.com>,
+    Ard Biesheuvel <ardb@kernel.org>,
+    James Bottomley <James.Bottomley@HansenPartnership.com>,
+    linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+    keyrings@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: Re: [PATCH] [v2] crypto: lib/Kconfig: hide library options
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/076mAxA_l.m86nRuWPP6JiL";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2106119.1742200585.1@warthog.procyon.org.uk>
+Date: Mon, 17 Mar 2025 08:36:25 +0000
+Message-ID: <2106120.1742200585@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
---Sig_/076mAxA_l.m86nRuWPP6JiL
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Arnd Bergmann <arnd@kernel.org> wrote:
 
-Hi all,
+> -	depends on CRYPTO_LIB_CHACHA20POLY1305 = y
+> +	select CRYPTO_LIB_CHACHA20POLY1305
 
-Today's linux-next merge of the kunit-next tree got a conflict in:
+Doesn't that allow CRYPTO_LIB_CHACHA20POLY1305=m?
 
-  lib/Makefile
+David
 
-between commit:
-
-  b341f6fd45ab ("blackhole_dev: convert self-test to KUnit")
-
-from the net-next tree and commit:
-
-  c104c16073b7 ("Kunit to check the longest symbol length")
-
-from the kunit-next tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc lib/Makefile
-index 66e44569b141,e8fec9defec2..000000000000
---- a/lib/Makefile
-+++ b/lib/Makefile
-@@@ -392,7 -393,8 +392,9 @@@ obj-$(CONFIG_FORTIFY_KUNIT_TEST) +=3D for
-  obj-$(CONFIG_CRC_KUNIT_TEST) +=3D crc_kunit.o
-  obj-$(CONFIG_SIPHASH_KUNIT_TEST) +=3D siphash_kunit.o
-  obj-$(CONFIG_USERCOPY_KUNIT_TEST) +=3D usercopy_kunit.o
- +obj-$(CONFIG_BLACKHOLE_DEV_KUNIT_TEST) +=3D blackhole_dev_kunit.o
-+ obj-$(CONFIG_LONGEST_SYM_KUNIT_TEST) +=3D longest_symbol_kunit.o
-+ CFLAGS_longest_symbol_kunit.o +=3D $(call cc-disable-warning, missing-pro=
-totypes)
- =20
-  obj-$(CONFIG_GENERIC_LIB_DEVMEM_IS_ALLOWED) +=3D devmem_is_allowed.o
- =20
-
---Sig_/076mAxA_l.m86nRuWPP6JiL
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfX3wUACgkQAVBC80lX
-0GxZ6Qf/YnRsriB0q7CmcrCIeHwVxkGTJqlm6L6TY0FG9rK3ef3TiQ6ey6zvOQIN
-iwCs0PeK0YT31xf5hqVXyrXcJPj++ikGocTBmRm+OxbSBl1eyeTKoQLggZDmtBLf
-HsJBKVxAmCQ8fH49jknv+OThgC7dcUij3Z5j86i8J2X3fNpbx4vvLQAF5y7eybCh
-xSxzKsU75Io8P+34bG9T00M6DYt04HO3amGbYBBhwQuqDZ74Q2QAAkxKTFGPq/Ct
-mhyS232pNuT1sJ6IXisTHkTkPJ2FBcK5DAY9Ar4ARllIPM7u7tqc2pRz5dQD71lk
-7wZ6IiTHL4OiAoXZrSX2Su+/rWjDbg==
-=Mtze
------END PGP SIGNATURE-----
-
---Sig_/076mAxA_l.m86nRuWPP6JiL--
 
