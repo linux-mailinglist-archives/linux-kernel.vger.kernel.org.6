@@ -1,96 +1,123 @@
-Return-Path: <linux-kernel+bounces-564356-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C15DA6539F
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 15:32:08 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 811E3A653A1
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 15:32:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68BE7174611
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 14:30:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 560FE166685
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 14:31:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 353C12417D2;
-	Mon, 17 Mar 2025 14:30:25 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8002123FC59
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 14:30:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742221824; cv=none; b=fSUv7Fi5MzM6HxXlgm7RQQJXPk20sJAjy3ABik85DRl/ZqvOl131XtCVes+ZK7UA2/Oy/ZQI6DkYJxAPFzbOsB6gDZhvXfxy139MC6H3f/piIB81JIl6Bn19ILBBr2/idBbv5d+tiNAc5jJnmuGlMSK5HViylTXuS8DaUopjpiU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742221824; c=relaxed/simple;
-	bh=D7K/1UfqHYIvv44EIU1iz/IrCoIWaOyxfx5yfPNuOt4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IJ5+3nH7pDc80UyUs9FPWG+tzu5RaXKGxCBd6xr981pPx8cm0/Vr26IdSB88T21BdE5WZKjHV1SKt1UxQVWmMROJ4Ql3dag0q56S/mkkdp7iC9XM48KloRR6bgHapCB4ZCYJi8HRmZDALf+1bNzjxhMlfaWz05O1bDmrdO+WNEg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com; spf=none smtp.mailfrom=foss.arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=foss.arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E25E313D5;
-	Mon, 17 Mar 2025 07:30:31 -0700 (PDT)
-Received: from bogus (e133711.arm.com [10.1.196.55])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0B2AE3F63F;
-	Mon, 17 Mar 2025 07:30:21 -0700 (PDT)
-Date: Mon, 17 Mar 2025 14:30:19 +0000
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: Re: [PATCH 9/9] regulator: dummy: convert to use the faux device
- interface
-Message-ID: <Z9gx-4-3RMfTXB0e@bogus>
-References: <20250317-plat2faux_dev-v1-0-5fe67c085ad5@arm.com>
- <20250317-plat2faux_dev-v1-9-5fe67c085ad5@arm.com>
- <2025031716-decaf-overhead-c56c@gregkh>
- <Z9guHSE0nwC1-52J@bogus>
- <2025031742-perfectly-hydrogen-159c@gregkh>
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F10323F401;
+	Mon, 17 Mar 2025 14:31:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=ariel.dalessandro@collabora.com header.b="CiAXpq8N"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37E1D2940D
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 14:31:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742221897; cv=pass; b=IqzrMzgiSXrdxyM634gdun205v7GLMl070my3o1oHuX0h2Gh//bVn+lTZdqf3nn2q9/yt+fXdoseKOfMwRX1OIZf0LBwkbInEULPXFR6o9yYeINumF+Y4AcmvCh3POmUc35mxcVmTaj4bJ90BcV5KXt61B/jaEl4uKSLg5fo9Ic=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742221897; c=relaxed/simple;
+	bh=+cKkWnVr1coakUMf/WK6R0x3EVXrLJlx4VnLHV8Mp/c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LbXdTQ/oz7J5+HpzLXIr4j0TD3FGKVkRu8vNp9WNtQNDrZjemKXKbYUe58yYM/QkbdcA/XGrL5amJ6/+qfo8Crd+iNM/WPD7SC7HHJiE0Z275GZGdyisxfzcdRJHKHJUshpTBuyuft2ICtmvlHwOqOZXRRwoM9KtllA6xmtLgQc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=ariel.dalessandro@collabora.com header.b=CiAXpq8N; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1742221868; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=BJpEgdkNOnSiwPrSUBLBl5lYM+9hFEOctSz9K9PKKQtT5xnLZulbT4jKlx5w5CyrA7bRjPfUchYlYQNkDIwJ3I8ppedq7Dv1VUg5TyTlG2+HY/vwjLnveGsb3+E7+EoKkbk06OmOsrqbOGSgrmMMWNGes0MRf19ZxaeGjSmMx2U=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1742221868; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=juhBGFrnJEtXmwmWUkOgurD4ow1+cM0JUbcI3gD4F48=; 
+	b=ecgMK9cayVciXKLAu5E0ZSdMZjVvZf7lm927GcnIz1VU3UBjjcCpsJr6CrO7K2f9wtg5uRocgz3DxeRYM18tgoBdiZTywAnL0hqyXDt7roYcgzXKcBYO7FVAEnXnxnPBUWt3hueS0tglURSEXOwtsGM2mod3r3cMkKSr9mVwDrU=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=ariel.dalessandro@collabora.com;
+	dmarc=pass header.from=<ariel.dalessandro@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1742221868;
+	s=zohomail; d=collabora.com; i=ariel.dalessandro@collabora.com;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=juhBGFrnJEtXmwmWUkOgurD4ow1+cM0JUbcI3gD4F48=;
+	b=CiAXpq8Nrl/AHbcs52PL//215ZsdMXGiJpd1bLL0pvgHIbsjUTw4dPW6Xg9FdhHh
+	VyKaKpzY/kQP6q94ru+oCbZfFGzK9UMFu98OW0CsHa8T49RsZCBg6kxjO7W9/aGUXG1
+	zrh0Fz3mtauDQ+mUb70hAcN9IV4RZYToVMNZEumQ=
+Received: by mx.zohomail.com with SMTPS id 1742221866050461.80081265142326;
+	Mon, 17 Mar 2025 07:31:06 -0700 (PDT)
+Message-ID: <992360e3-632c-4a0e-bb84-a72be7d7cd37@collabora.com>
+Date: Mon, 17 Mar 2025 11:30:59 -0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2025031742-perfectly-hydrogen-159c@gregkh>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 4/6] drm/panfrost: Add support for AARCH64_4K page
+ table format
+To: Boris Brezillon <boris.brezillon@collabora.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ robh@kernel.org, steven.price@arm.com, maarten.lankhorst@linux.intel.com,
+ mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
+ kernel@collabora.com, linux-mediatek@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, sjoerd@collabora.com,
+ angelogioacchino.delregno@collabora.com
+References: <20250317124044.16257-1-ariel.dalessandro@collabora.com>
+ <20250317124044.16257-5-ariel.dalessandro@collabora.com>
+ <20250317144436.2bcc17ed@collabora.com>
+Content-Language: en-US
+From: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
+In-Reply-To: <20250317144436.2bcc17ed@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ZohoMailClient: External
 
-On Mon, Mar 17, 2025 at 03:26:00PM +0100, Greg Kroah-Hartman wrote:
-> On Mon, Mar 17, 2025 at 02:13:49PM +0000, Sudeep Holla wrote:
-> > On Mon, Mar 17, 2025 at 02:00:04PM +0100, Greg Kroah-Hartman wrote:
-> > > On Mon, Mar 17, 2025 at 10:13:21AM +0000, Sudeep Holla wrote:
-> > > > From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > > 
-> > > Why are you resending my patch back to me?
-> > > 
-> > > > The dummy regulator driver does not need to create a platform device, it
-> > > > only did so because it was simple to do.  Change it over to use the
-> > > > faux bus instead as this is NOT a real platform device, and it makes
-> > > > the code even smaller than before.
-> > > > 
-> > > > Reviewed-by: Mark Brown <broonie@kernel.org>
-> > > > Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> > > > Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > > > Message-Id: <2025021027-outclass-stress-59dd@gregkh>
-> > > > (sudeep.holla: Made dummy_regulator_driver static)
-> > > 
-> > > So this is a new version?
-> > > 
-> > 
-> > Not really, I pulled your patch as I needed that as well to clean out
-> > all faux device out of platform. I just made dummy_regulator_driver
-> > static back again as compiler was warning. Definitely nothing new.
-> > I will drop it when posting v2. You can probably fix up to make
-> > dummy_regulator_driver static.
-> 
-> My tree can't be rebased, can you just send a patch to make that change
-> instead?
-> 
+Boris,
 
-Sure, will do that.
+On 3/17/25 10:44 AM, Boris Brezillon wrote:
+> On Mon, 17 Mar 2025 09:40:42 -0300
+> Ariel D'Alessandro <ariel.dalessandro@collabora.com> wrote:
+> 
+>> +static int panfrost_mmu_cfg_init(struct panfrost_mmu *mmu,
+>> +				  enum io_pgtable_fmt fmt)
+>> +{
+>> +	struct panfrost_device *pfdev = mmu->pfdev;
+>> +
+>> +	switch (fmt) {
+>> +	case ARM_64_LPAE_S1:
+>> +		return mmu_cfg_init_aarch64_4k(mmu);
+>> +	case ARM_MALI_LPAE:
+>> +		return mmu_cfg_init_mali_lpae(mmu);
+>> +	default:
+>> +		/* This should never happen */
+>> +		return drm_WARN_ON(pfdev->ddev, -EINVAL);
+> 
+> This won't return -EINVAL, but !!(-EINVAL), AKA true. We should do
+> 
+> 	default:
+> 		drm_WARN(ptdev->ddev, "Invalid pgtable format");
+> 		return -EINVAL;
+> 
+> instead.
+
+Ah, good catch. I missed that from the WARN_ON definition:
+
+         int __ret_warn_on = !!(condition);
+
+Thanks, will fix in v4.
 
 -- 
-Regards,
-Sudeep
+Ariel D'Alessandro
+Software Engineer
+
+Collabora Ltd.
+Platinum Building, St John's Innovation Park, Cambridge CB4 0DS, UK 
+Registered in England & Wales, no. 5513718
+
 
