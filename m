@@ -1,115 +1,121 @@
-Return-Path: <linux-kernel+bounces-563970-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563972-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 510FEA64B1C
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:55:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 837ADA64B22
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:56:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0351916FA57
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:55:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9842188BC72
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:56:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3C00236458;
-	Mon, 17 Mar 2025 10:55:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 807F623534D;
+	Mon, 17 Mar 2025 10:56:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=siemens.com header.i=diogo.ivo@siemens.com header.b="JI/6N8x4"
-Received: from mta-65-225.siemens.flowmailer.net (mta-65-225.siemens.flowmailer.net [185.136.65.225])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bgqSfJsq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D685F233141
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 10:55:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.136.65.225
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DABBC38B;
+	Mon, 17 Mar 2025 10:56:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742208927; cv=none; b=F1wyxQvhEZb/jEeVI9NMTuuCpF3NHTmJX7iy1/f6N4ZPRbYMWL9J07BYaVWDu1qzNZePoZyOS3+Su3xyQxacNQ9P8DLMNNRQyHjIT3zxhb/gx23nr/LM+5DpbEeCklZFfrxIvlbRhVomx/y/Cbf4ksIrS9S1RPzBe+WDxg9uKU0=
+	t=1742208969; cv=none; b=u/rzTpve3EnjtZpm/Cyxq2UzA8gqKyMipTbI/zMEUfB3d+PjQ+gAWB3ruqEFVcwNAIViyT7Qnhth595ru77j1nHqh+PCX0qSJMj8XyjeClkhy+9ytfOchwwW8QpixDchl7JM9tUJFGUJhTRVZnwRIsOzHlKfvBuBYD3NYTbv+J8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742208927; c=relaxed/simple;
-	bh=GwZkwEPq4cFO76H7Y98P0dYu+xTlZLKLmJbqtXxtgoY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=YRk5lk0ymqWTicD81Mn9xXHOeGwF4+BFJeKTQjyM4z8yr4Apx+L3mD1FU23F2zfg9pxKhYQ0muJQ4Tc085JW+dcQdgeYkDmY1Ws6DLHonfrXt4YefiuyU2QEgEe6tcaxyNiwsTTyJw0Fk4AZe443FbASY6sL1VIvDZmntNO9dfU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=diogo.ivo@siemens.com header.b=JI/6N8x4; arc=none smtp.client-ip=185.136.65.225
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com
-Received: by mta-65-225.siemens.flowmailer.net with ESMTPSA id 20250317105516b15750e8f94db4d632
-        for <linux-kernel@vger.kernel.org>;
-        Mon, 17 Mar 2025 11:55:16 +0100
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
- d=siemens.com; i=diogo.ivo@siemens.com;
- h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc:References:In-Reply-To;
- bh=y+mw3eTX34ZhavSHte3oJKReRA6UkQ9FchpympJdBDU=;
- b=JI/6N8x4mVjbr45hoavaLf/aGefRfdWxattg46X3Dgi2YoJwOiU7qtwyX+PDRFDJGSvmJS
- oNhMnWUbaAFifbwveZqS8Q58YJDx8eASUrPkzRf4NqC7B7GEH3Sk77XNkvLJ2091pK859sPJ
- SOBBYDlT+AHZjZEWpeM5+L01Q/eeRQ6CIif1OXBty95ZfIN7ZniIK4twi4R53VtuQsBXx0q8
- qPUpk81klcLeXON8sJ2oqrPgAoB48oxzC+5iABsjiGsqmc1wXOkVAj2LItFibFyLLi8Oa/4b
- VaPie81M8C5mlCk48z6s8MMI7LF9/bdQzEFXxW7QHSU3TKHL0eJNZ2DQ==;
-From: Diogo Ivo <diogo.ivo@siemens.com>
-Date: Mon, 17 Mar 2025 10:55:07 +0000
-Subject: [PATCH v3 2/2] ACPI: PNP: Add Intel OC Watchdog IDs to non-PNP
- device list
+	s=arc-20240116; t=1742208969; c=relaxed/simple;
+	bh=WZDhLqcf3/jlXtuxPqvBtDZ50ZpRwYoWKtIABiDvqd4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=lSvXbflxKeg4rgxm9J8FYXOufFPZYsKpBq1Ma/Dr1GjrdQ4jjae4Kmg2/klwSJLjFIR0UCUhx2EtE4NUtF+Ynlr7gUDdAXyYuMH1r1xPSO0memRDBa1TkHS7BOYZtoUtu2oqTB56Br4jSi455mbLbs6Kaw6W50+hgwgnh2iaciU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bgqSfJsq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BC3AC4CEE3;
+	Mon, 17 Mar 2025 10:56:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742208968;
+	bh=WZDhLqcf3/jlXtuxPqvBtDZ50ZpRwYoWKtIABiDvqd4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=bgqSfJsq4P2PixZITDuCNavXJWB7M03AOC9P8sBR6cEUBliAdqgp569M3+wcQjA+o
+	 bPF5+mZ1N4yHjRi6oi8RmccDfVIw06DdEjRDsd7vB7BF0DgwY6uKXF31UyRC+/6aTk
+	 zWZSsr9atW1INNYAgCEMUzvjuVjHOBThoOmL7hXcr1mF0BOABrHxOrqhyvhiM2TizM
+	 rGohxxKPI7jJ9l++5X9kWXkXLASi9KXwV9GWhBSPPizA3Y46VQSZThvHlsXHJMHoFk
+	 myzOYRmQj5HpUsfIpbaXit6UyFahf7ZT/H6ydGmleDBwQdTZ4YFMkDLVQ1cwl8Lw6Z
+	 ee428K/ZaPKqw==
+Date: Mon, 17 Mar 2025 10:55:48 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Lothar Rubusch <l.rubusch@gmail.com>, lars@metafoo.de,
+ Michael.Hennerich@analog.com, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, eraretuya@gmail.com
+Subject: Re: [PATCH v4 04/14] iio: accel: adxl345: introduce
+ adxl345_push_event function
+Message-ID: <20250317105540.4b4a586f@jic23-huawei>
+In-Reply-To: <Z9ctSODRTxI53jAY@surfacebook.localdomain>
+References: <20250313165049.48305-1-l.rubusch@gmail.com>
+	<20250313165049.48305-5-l.rubusch@gmail.com>
+	<Z9ctSODRTxI53jAY@surfacebook.localdomain>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250317-ivo-intel_oc_wdt-v3-2-32c396f4eefd@siemens.com>
-References: <20250317-ivo-intel_oc_wdt-v3-0-32c396f4eefd@siemens.com>
-In-Reply-To: <20250317-ivo-intel_oc_wdt-v3-0-32c396f4eefd@siemens.com>
-To: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, 
- Wim Van Sebroeck <wim@linux-watchdog.org>, 
- Guenter Roeck <linux@roeck-us.net>
-Cc: linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org, 
- linux-watchdog@vger.kernel.org, jan.kiszka@siemens.com, 
- benedikt.niedermayr@siemens.com, Diogo Ivo <diogo.ivo@siemens.com>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1742208915; l=1282;
- i=diogo.ivo@siemens.com; s=20240529; h=from:subject:message-id;
- bh=GwZkwEPq4cFO76H7Y98P0dYu+xTlZLKLmJbqtXxtgoY=;
- b=6W9q+5XD/i/wOmfmYYsERYU3EDKkvbACjgaHLOvYW415Tn+DZKc/jwF11nhb5qU641xyfV2NK
- DT/iPamQrcNBFjD2X1vM0AZpPQsQ569/PQ+TDiJXO8jY/GeJqhRlUT6
-X-Developer-Key: i=diogo.ivo@siemens.com; a=ed25519;
- pk=BRGXhMh1q5KDlZ9y2B8SodFFY8FGupal+NMtJPwRpUQ=
-X-Flowmailer-Platform: Siemens
-Feedback-ID: 519:519-1328357:519-21489:flowmailer
 
-Intel Over-Clocking Watchdogs are described in ACPI tables by both the
-generic PNP0C02 _CID and their ACPI _HID. The presence of the _CID then
-causes the PNP scan handler to attach to the watchdog, preventing the
-actual watchdog driver from binding. Address this by adding the ACPI
-_HIDs to the list of non-PNP devices, so that the PNP scan handler is
-bypassed.
+On Sun, 16 Mar 2025 21:58:00 +0200
+Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
 
-Note that these watchdogs can be described by multiple _HIDs for what
-seems to be identical hardware. This commit is not a complete list of
-all the possible watchdog ACPI _HIDs.
+> Thu, Mar 13, 2025 at 04:50:39PM +0000, Lothar Rubusch kirjoitti:
+> > Move the fifo handling into a separate function. This is a preparation
+> > for a generic handling of the interrupt status register results.
+> > 
+> > The interrupt status register is read into a variable int_stat. It carries
+> > status for various sensor events, handling of which is added in follow up
+> > patches. Evaluation of the int_stat variable is common for sensor events,
+> > such as tap detection, freefall, activity,... and for fifo events, such as
+> > data ready, overrun, watermark,... Also, dealing with in case error
+> > returns shall be common to all events. Thus migrate fifo read-out and push
+> > fifo content to iio channels into this function to be built up with
+> > additional event handling.  
+> 
+> ...
+> 
+> > +static int adxl345_push_event(struct iio_dev *indio_dev, int int_stat)
+> > +{
+> > +	struct adxl345_state *st = iio_priv(indio_dev);
+> > +	int samples;
+> > +	int ret = -ENOENT;
+> > +
+> > +	if (FIELD_GET(ADXL345_INT_WATERMARK, int_stat)) {
+> > +		samples = adxl345_get_samples(st);
+> > +		if (samples < 0)  
+> 
+> > +			return -EINVAL;  
+> 
+> In the original code it makes no difference, but if you are going to share
+> this, I would expect to see
+> 
+> 			return samples;
+> 
+> here. Why the error code is shadowed? If it's trully needed, it has to be
+> explained in the comment.
+> 
+> 
+> > +		if (adxl345_fifo_push(indio_dev, samples) < 0)
+> > +			return -EINVAL;
+> > +	}
+> > +
+> > +	return ret;
+> > +}  
+> 
+> ...
+> 
+> Jonathan, I saw that you had applied it, but I guess the above needs
+> a clarification.
+Was right at the top of a tree I don't mind rebasing. So dropped
+this patch (kept 1-3)
 
-Signed-off-by: Diogo Ivo <diogo.ivo@siemens.com>
----
-v2->v3:
- - Reword the commit message to clarify purpose of patch
----
----
- drivers/acpi/acpi_pnp.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/acpi/acpi_pnp.c b/drivers/acpi/acpi_pnp.c
-index 01abf26764b00c86f938dea2ed138424f041f880..3f5a1840f573303c71f5d579e32963a5b29d2587 100644
---- a/drivers/acpi/acpi_pnp.c
-+++ b/drivers/acpi/acpi_pnp.c
-@@ -355,8 +355,10 @@ static bool acpi_pnp_match(const char *idstr, const struct acpi_device_id **matc
-  * device represented by it.
-  */
- static const struct acpi_device_id acpi_nonpnp_device_ids[] = {
-+	{"INT3F0D"},
- 	{"INTC1080"},
- 	{"INTC1081"},
-+	{"INTC1099"},
- 	{""},
- };
- 
-
--- 
-2.48.1
+> 
 
 
