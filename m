@@ -1,119 +1,193 @@
-Return-Path: <linux-kernel+bounces-564722-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564723-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50D3BA65982
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 18:05:05 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5196DA6598C
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 18:06:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 846007AF87D
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 17:04:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 873E71727D2
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 17:05:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C30C11ACEC7;
-	Mon, 17 Mar 2025 17:02:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 497941B0434;
+	Mon, 17 Mar 2025 17:03:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ao9RUyOn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="bFBZk2aD";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="iq9Ui5SA";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="bFBZk2aD";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="iq9Ui5SA"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 134AA1A0BFD;
-	Mon, 17 Mar 2025 17:02:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 023F6A55
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 17:03:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742230959; cv=none; b=HGZORtHtFaQHeFfP7iE9EjRaMzXD7l/IMyV5+iw5WRnRDWla57qXb3zp1OaaHGEUmXAn/KxF3E9BPIoPszq3QQDIEDgshf6GN72K2tjPyXTYTQDfCMi2Y7yWGHxa8chwvJ/OevuVuFr9PL4JwO+79hW2vYol7epAVLde+/tSdwk=
+	t=1742230988; cv=none; b=EAqom+ktnfU6a0HjSGjw9dO0yk3FaofqLvphkaAR2xyGFrP6UUTEKP8yNa136Jd/OsXXFgqbXbCMLSn9pRQAWZzo6WUpWkGZXgbdiVVl3ynoHjniTodo1kCRTCFPdYj2HYNpT8lxHGuxnkQF6roVR9R7sMKohLtEFoQ+2T8VW/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742230959; c=relaxed/simple;
-	bh=wmAQpWrbnl5KpOhZB+M44f4YKrDesD193thOm41Mty4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gflkUaGVHjKXUyUlSvuzgLvZHx/0HYGazan4O8mqM79fJf1wDsveqXfeasaUpmXhz/g1Uts0GAk02+hMNKQ9F3C0C4FwarPvxou84Obbd2FYfigfN+ich7Sq1ODDFap7+VD1ihU4j46dFm5wHsBqZAbpT9SEu1/88m9mwUQxD3Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ao9RUyOn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D499C4CEF2;
-	Mon, 17 Mar 2025 17:02:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742230958;
-	bh=wmAQpWrbnl5KpOhZB+M44f4YKrDesD193thOm41Mty4=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Ao9RUyOnn62fb0KVAiHTegwxi15GPbyJbLSIAd0btxQAMQP+bXHtton1vYC2D7fec
-	 nWNcR2F8rqhKkvJcAMAE1xiikaOPQAkDaa+FfNmive6OjF4K83g5frzYQtjBqEjcwi
-	 5M+gIwBwGywIYIfYkWpIWdEhS4bp566w3h9KQwog5JBckbwP22hVk4eoj+ktBFs5N/
-	 9sC8ryScjL/Dro5HAFlUB1KbFHwe6glbMpFqd8CWE5RMz+QG/wDYi6FmRx3YbSEVXx
-	 lU129MhDtB5nccU/UMgxJublcx81OgUn9yYDImNVJAjfRxT65vGSIrtmJuZ+4v8i0T
-	 +nZdtW6DmV5/g==
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5e5b6f3025dso6828786a12.1;
-        Mon, 17 Mar 2025 10:02:38 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUXu0A4Dv5UnF/jtTpZ5cWgq0Kuh9aRBYKCrAwpnaWVtKVNoxVLS84L3+NKJ+PZD9HYF04kwq49mZo=@vger.kernel.org, AJvYcCUlxNNo4Ipi5ZpLxjtvKEJTBzGQ4BNLyrE3xnxMltn/7XOhNQVGVl3rSxauR47foWufrBlj5xzizaLC0qA=@vger.kernel.org, AJvYcCWntVQR5ZcoofVxfyTr2lD8MKiUWX2LTNhyQoRvQi2kCMwt4w6PBLJUx9IllpH1ybnrTIjTUqSMr6Q9Dg==@vger.kernel.org, AJvYcCXLLNtZd0fN1w6+qXtioaNk7lebOseVkNmsxV36l8mGL48nxOcbbEpeuhiy9EmbsDkGyXbC5I2ATYBS@vger.kernel.org, AJvYcCXTv7C7ycAjBluDBG7FTDh35aDMAwGNI+7c3f9oJfn0fiJ59rf1Rs+fTCvcuA6ag/nzbBg0ldtKJkdLz+4g@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy3zHRx77Jd3KcI6/YIJ3sv5Z99hibtfDqssUMChq5BIYpZu7C1
-	rAfvJVqJze03oIEZ9nC+FqBpcJp9DMKaF6hVXfJzgwG0FYkHUJp1hJxHCn0XQG3UkBnmUHKu4rP
-	Nd3R2Tv/sv3xXvEfggXAqoY8EWA==
-X-Google-Smtp-Source: AGHT+IELNK7EJqeju5Ff6Mi3w6hvTrNHJTNTnaKN8BlBDScpmQHS2FI/3UdKP632/dHKwxiBT7Jwm7K4RNzFWhl+jw0=
-X-Received: by 2002:a05:6402:4409:b0:5e7:97d1:e371 with SMTP id
- 4fb4d7f45d1cf-5eb1decc924mr428618a12.13.1742230956827; Mon, 17 Mar 2025
- 10:02:36 -0700 (PDT)
+	s=arc-20240116; t=1742230988; c=relaxed/simple;
+	bh=Y1lEL/P4AAiBvQvEgf/V9bLVgFS07sJXZXwE6QLB2xY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nqggDSVLk4yQD55fRiFCwVWC8zq4AS3O9rYrrTId8emZ+tIUBP4RNdeNkKTLPfadKzS+0njOL0ExYuazOIBb/vprEGIrgkJLYLN3J3i4MYUznHoQnljZJkEcOEQK6dbT/OJZpUtdeO2p3j8sqF6QTQ9aJVcwPynKGC+MwO+/1w8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=bFBZk2aD; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=iq9Ui5SA; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=bFBZk2aD; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=iq9Ui5SA; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 21B8F21E86;
+	Mon, 17 Mar 2025 17:03:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1742230985; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7RtdBLjUX5HzImX3cp7Yd+vB9keMyW7jPADEVYMiqJE=;
+	b=bFBZk2aD0h1n5a+TV5nRhJbYYc/h8Wy0v0Dca60oPC5fHbfb+a89UCUB0kT/WgF2nnORGI
+	DaQ3Se37zw56DBrpXYsUhGP8zwr5FG0wY1nVpkUfXExwp/C83LJnOp6xgE0CJ3kId7z3ue
+	9Yt8c/E25oTz/ZLaxDr4oapqn4EzzQ0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1742230985;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7RtdBLjUX5HzImX3cp7Yd+vB9keMyW7jPADEVYMiqJE=;
+	b=iq9Ui5SAn/BTMC27bpNHFa7AharG7H14agTMJLjN1OpYMhxmR4D/60sXnY9OxOODXWhmws
+	M5wL9TAIy+ioo6Cg==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1742230985; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7RtdBLjUX5HzImX3cp7Yd+vB9keMyW7jPADEVYMiqJE=;
+	b=bFBZk2aD0h1n5a+TV5nRhJbYYc/h8Wy0v0Dca60oPC5fHbfb+a89UCUB0kT/WgF2nnORGI
+	DaQ3Se37zw56DBrpXYsUhGP8zwr5FG0wY1nVpkUfXExwp/C83LJnOp6xgE0CJ3kId7z3ue
+	9Yt8c/E25oTz/ZLaxDr4oapqn4EzzQ0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1742230985;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7RtdBLjUX5HzImX3cp7Yd+vB9keMyW7jPADEVYMiqJE=;
+	b=iq9Ui5SAn/BTMC27bpNHFa7AharG7H14agTMJLjN1OpYMhxmR4D/60sXnY9OxOODXWhmws
+	M5wL9TAIy+ioo6Cg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 052EB139D2;
+	Mon, 17 Mar 2025 17:03:05 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 83DvAMlV2GfvIgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 17 Mar 2025 17:03:05 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 94636A09A8; Mon, 17 Mar 2025 18:03:04 +0100 (CET)
+Date: Mon, 17 Mar 2025 18:03:04 +0100
+From: Jan Kara <jack@suse.cz>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] fs: use wq_has_sleeper() in end_dir_add()
+Message-ID: <apadfckxgxx46eten4sftyiay5nnbuopnph5oagnch6lyrtd3r@cgpwxge6bzs3>
+References: <20250316232421.1642758-1-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250123-starqltechn_integration_upstream-v17-0-8b06685b6612@gmail.com>
- <20250221160322.GE824852@google.com>
-In-Reply-To: <20250221160322.GE824852@google.com>
-From: Rob Herring <robh@kernel.org>
-Date: Mon, 17 Mar 2025 12:02:24 -0500
-X-Gmail-Original-Message-ID: <CAL_Jsq+f23KniKZuTHkOq5a7WL=pBy6PwuQwXmbPXMjq3Qax4A@mail.gmail.com>
-X-Gm-Features: AQ5f1JoasT_jUUldML7pER3fUWB0fDR2taZ4qNmmgf7ICMfbcDnTgm4IkhLwvaQ
-Message-ID: <CAL_Jsq+f23KniKZuTHkOq5a7WL=pBy6PwuQwXmbPXMjq3Qax4A@mail.gmail.com>
-Subject: Re: [GIT PULL] Immutable branch between MFD, Input, LEDs and Power
- due for the v6.15 merge window
-To: Lee Jones <lee@kernel.org>
-Cc: Dzmitry Sankouski <dsankouski@gmail.com>, Sebastian Reichel <sre@kernel.org>, 
-	Chanwoo Choi <cw00.choi@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
-	Pavel Machek <pavel@ucw.cz>, Hans de Goede <hdegoede@redhat.com>, 
-	Marek Szyprowski <m.szyprowski@samsung.com>, 
-	Sebastian Krzyszkowiak <sebastian.krzyszkowiak@puri.sm>, Purism Kernel Team <kernel@puri.sm>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-input@vger.kernel.org, 
-	linux-leds@vger.kernel.org, 
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250316232421.1642758-1-mjguzik@gmail.com>
+X-Spam-Score: -3.80
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-0.998];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	FREEMAIL_TO(0.00)[gmail.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_TLS_LAST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.cz:email]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On Fri, Feb 21, 2025 at 10:03=E2=80=AFAM Lee Jones <lee@kernel.org> wrote:
->
-> Enjoy!
->
-> The following changes since commit 2014c95afecee3e76ca4a56956a936e23283f0=
-5b:
->
->   Linux 6.14-rc1 (2025-02-02 15:39:26 -0800)
->
-> are available in the Git repository at:
->
->   ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git tags=
-/ib-mfd-input-leds-power-v6.15
->
-> for you to fetch changes up to aebb5fc9a0d87916133b911e1ef2cc04a7996335:
->
->   leds: max77705: Add LEDs support (2025-02-20 16:38:37 +0000)
->
-> ----------------------------------------------------------------
-> Immutable branch between MFD, Input, LEDs and Power due for the v6.15 mer=
-ge window
->
-> ----------------------------------------------------------------
-> Dzmitry Sankouski (7):
->       dt-bindings: power: supply: add maxim,max77705 charger
->       dt-bindings: mfd: Add maxim,max77705
->       power: supply: max77705: Add charger driver for Maxim 77705
->       mfd: simple-mfd-i2c: Add MAX77705 support
->       mfd: Add new driver for MAX77705 PMIC
->       Input: max77693 - add max77705 haptic support
->       leds: max77705: Add LEDs support
+On Mon 17-03-25 00:24:21, Mateusz Guzik wrote:
+> The routine is used a lot, while the wakeup almost never has anyone to
+> deal with.
+> 
+> wake_up_all() takes an irq-protected spinlock, wq_has_sleeper() "only"
+> contains a full fence -- not free by any means, but still cheaper.
+> 
+> Sample result tracing waiters using a custom probe during -j 20 kernel
+> build (0 - no waiters, 1 - waiters):
+> 
+> @[
+>     wakeprobe+5
+>     __wake_up_common+63
+>     __wake_up+54
+>     __d_add+234
+>     d_splice_alias+146
+>     ext4_lookup+439
+>     path_openat+1746
+>     do_filp_open+195
+>     do_sys_openat2+153
+>     __x64_sys_openat+86
+>     do_syscall_64+82
+>     entry_SYSCALL_64_after_hwframe+118
+> ]:
+> [0, 1)             13999 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
+> [1, ...)               1 |                                                    |
+> 
+> So that 14000 calls in total from this backtrace, where only one time
+> had a waiter.
+> 
+> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
 
-None of this seems to be in linux-next, but now we have users in .dts files=
-.
+Looks good. Feel free to add:
 
-Rob
+Reviewed-by: Jan Kara <jack@suse.cz>
+
+								Honza
+
+> ---
+>  fs/dcache.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/dcache.c b/fs/dcache.c
+> index df8833fe9986..bd5aa136153a 100644
+> --- a/fs/dcache.c
+> +++ b/fs/dcache.c
+> @@ -2497,7 +2497,8 @@ static inline void end_dir_add(struct inode *dir, unsigned int n,
+>  {
+>  	smp_store_release(&dir->i_dir_seq, n + 2);
+>  	preempt_enable_nested();
+> -	wake_up_all(d_wait);
+> +	if (wq_has_sleeper(d_wait))
+> +		wake_up_all(d_wait);
+>  }
+>  
+>  static void d_wait_lookup(struct dentry *dentry)
+> -- 
+> 2.43.0
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
