@@ -1,97 +1,93 @@
-Return-Path: <linux-kernel+bounces-565144-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565145-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A027A661B7
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 23:33:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B73FA661B9
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 23:34:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A41A1896792
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 22:33:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1AC213B0CD9
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 22:33:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBC93204590;
-	Mon, 17 Mar 2025 22:33:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FBD22045B8;
+	Mon, 17 Mar 2025 22:33:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="0hH1PUp6"
-Received: from 004.mia.mailroute.net (004.mia.mailroute.net [199.89.3.7])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="BSPVlcfk"
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67E7E169AE6;
-	Mon, 17 Mar 2025 22:33:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFB3617BBF;
+	Mon, 17 Mar 2025 22:33:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742250784; cv=none; b=DKhGafQV1bq0PbiD5CdcVNUf8daN1ZfoWD2bwujlnfTuKJwGawPHJV7cRbvrFLuxg8hZtkhdhBa+pkNW2nvrkwcf7HmtD0UoAUI8BgFNAdRuV4j+Il86QcS9kwpIg4j9eWlxnEKVauXtsZsxi5JWyDNQ20BSzaNMXQlVY53g7vU=
+	t=1742250818; cv=none; b=u3I2PEEgl4Bu7fv9d5leFCS9UOCzrf+IOhcgJqxBrlBNXODIvqS+UabnFz4cezcqn5keAxhY3+KpUdrz9MW+lysb5qU8TaLxdFHdN8josrF9M9bPZFhWI1yzXi3VrxS2GKCpbDtkHtr0P5ORexnNLMfCzbMejCe7ykpbaznxut4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742250784; c=relaxed/simple;
-	bh=x2Jp6BA79XnSr568cFnJDlm0j4jkbXIbU7ZSskA8SgI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ImUlTUIpOs5wCRX2yJlTLIeclnOABCzSf9ItzuTuGCaCsSdVEq5ruDC7qNWCyGYRQpfd2myIO4RP/ORIuoiUP1jY5yYQ8tPFQ7ZKAjLaNbmK1vwaI9381gCdNcKktVmDehZHjckjQ+EoWnMahfb06fLLcxxiQUi6YfWWX8c15sY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=0hH1PUp6; arc=none smtp.client-ip=199.89.3.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 004.mia.mailroute.net (Postfix) with ESMTP id 4ZGqVj0pK6zm0pKK;
-	Mon, 17 Mar 2025 22:33:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1742250779; x=1744842780; bh=x2Jp6BA79XnSr568cFnJDlm0
-	j4jkbXIbU7ZSskA8SgI=; b=0hH1PUp6/iU9GbBX88mYABOt2ViHhVdL7SRPrz/C
-	H69nEgpsvkA//eDLtUlQFlyjuGo0mW0tHIB71pYrrWunf8YCP91h078REiVGo18b
-	nvCGKtmbZlizUlaPN4psyIUHGPxT8Qty9LjEgXihT/2DKC42gycmkchlmH0cF/f+
-	b0EpBbM9btLq3u144UuFoW14P1TZ3xRjYva97mnd2Vtf0JoISStlLwLGdJpleyVD
-	BVmywHhOb3j0Nm1KoFvYRjmCZ1qyj9nCoezhsarr8qNh3UzykUh34hUI3NnqPOOk
-	4sIDhhK/SE3SCycqLIa8LDwQDFqlOvNdj/LA08EjBvNing==
-X-Virus-Scanned: by MailRoute
-Received: from 004.mia.mailroute.net ([127.0.0.1])
- by localhost (004.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id 3tZXuy2qahQw; Mon, 17 Mar 2025 22:32:59 +0000 (UTC)
-Received: from [100.66.154.22] (unknown [104.135.204.82])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 004.mia.mailroute.net (Postfix) with ESMTPSA id 4ZGqVY5DlNzm0jvG;
-	Mon, 17 Mar 2025 22:32:52 +0000 (UTC)
-Message-ID: <048d2f33-2697-4ede-9814-d8e9f3aeb732@acm.org>
-Date: Mon, 17 Mar 2025 15:32:51 -0700
+	s=arc-20240116; t=1742250818; c=relaxed/simple;
+	bh=5evH5hxDSJYzkVboZ6IFWK0TA54VK7B3YDyzYALK7b0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tcjcdIhRGLcO89VCy9D2PxDDEmc231eAQTEv0//vgxSHhEpwQAl+kl2TtNgms1mwgtIwczy/B83nDDV05ONZy0VxqP+8yqx5LkTvAXLNEPF8F/lyUS/HQ6+E4t1xrugXqgFU1NhB22youEmtcaOoSCWjb0nKwffSAh87EYkJ9Us=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=BSPVlcfk; arc=none smtp.client-ip=217.70.183.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id B8526432EB;
+	Mon, 17 Mar 2025 22:33:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1742250815;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1JkgyP3NSZUKGIiR5ww73hdF3uIzJbl4G8VkBozlivs=;
+	b=BSPVlcfkPVxjFJGXRC1NsqzJMXzgoP/fRPVW368UrHhRDC0Waq1KeJcOAkYAFX3fW10ji0
+	bo4j+K7ypK3rA0ouALu85iZT2eMocGOgFqebY3S2/iOx/6nUuv01l/EqhMbQ/f3z60Galb
+	EZkDDrQslhY7/gPA/CpBYRc2ygcgi/Tp4SDWdiNf8DIEmtxpOqUXXmu/n5w0V1rVtLwNla
+	0puoaAKOKb4yJv7MTgU3LPiK0alDUlbHijalZKpsC9ZXNEFHxjv8P9bx3y1le79/JbXtfm
+	OKRxIypX68t6vpwiEnBTJLlLrbQYjL6Dm0y6ihOm6XBsmCzKw7DekBapGDH5pg==
+Date: Mon, 17 Mar 2025 23:33:33 +0100
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Benson Leung <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>,
+	Tzung-Bi Shih <tzungbi@kernel.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>
+Cc: linux-rtc@vger.kernel.org, chrome-platform@lists.linux.dev,
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH v2][next] rtc: Avoid a couple of
+ -Wflex-array-member-not-at-end warnings
+Message-ID: <174225080420.1592452.18415523185009670787.b4-ty@bootlin.com>
+References: <Z9PpPg06OK8ghNvm@kspp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ufs: crypto: add host_sem lock in ufshcd_program_key
-To: ZhangHui <zhanghui31@xiaomi.com>, alim.akhtar@samsung.com,
- avri.altman@wdc.com, James.Bottomley@HansenPartnership.com,
- martin.petersen@oracle.com
-Cc: ebiggers@google.co, peter.griffin@linaro.org, linux-scsi@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250317110101.347636-1-zhanghui31@xiaomi.com>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20250317110101.347636-1-zhanghui31@xiaomi.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z9PpPg06OK8ghNvm@kspp>
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddugedtjeehucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeetlhgvgigrnhgurhgvuceuvghllhhonhhiuceorghlvgigrghnughrvgdrsggvlhhlohhnihessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepieejfefhffekjeeuheevueevjedvleevjeetudffheeutdffudefjeduffeuvddtnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghdpsghoohhtlhhinhdrtghomhenucfkphepvdgrtddumegvtdgrmedvugemieefjedtmeejkegvtdemtgdtvgekmedvkedtieemkegrtgeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegvtdgrmedvugemieefjedtmeejkegvtdemtgdtvgekmedvkedtieemkegrtgeipdhhvghloheplhhotggrlhhhohhsthdpmhgrihhlfhhrohhmpegrlhgvgigrnhgurhgvrdgsvghllhhonhhisegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeekpdhrtghpthhtohepsghlvghunhhgsegthhhrohhmihhumhdrohhrghdprhgtphhtthhopehgrhhovggtkhestghhrhhomhhiuhhmrdhorhhgpdhrtghpthhtohept
+ hiiuhhnghgsiheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepghhushhtrghvohgrrhhssehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhrthgtsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheptghhrhhomhgvqdhplhgrthhfohhrmheslhhishhtshdrlhhinhhugidruggvvhdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhhrghruggvnhhinhhgsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-GND-Sasl: alexandre.belloni@bootlin.com
 
-On 3/17/25 4:01 AM, ZhangHui wrote:
-> On Android devices, we found that there is a probability that
-> the ufs has been shut down but the thread is still deleting the
-> key, which will cause the bus error.
+On Fri, 14 Mar 2025 19:00:54 +1030, Gustavo A. R. Silva wrote:
+> Use the `DEFINE_RAW_FLEX()` helper for an on-stack definition of
+> a flexible structure where the size of the flexible-array member
+> is known at compile-time, and refactor the rest of the code,
+> accordingly.
+> 
+> So, with these changes, fix the following warning:
+> 
+> [...]
 
-How does this patch guarantee that crypto keys are evicted before the
-UFS driver has been shut down? This should be explained in detail in the
-patch description.
+Applied, thanks!
 
-> Let's fixed this issue by adding a lock in program_key flow.
+[1/1] rtc: Avoid a couple of -Wflex-array-member-not-at-end warnings
+      https://git.kernel.org/abelloni/c/0176188220a7
 
-There are multiple synchronization objects owned by the UFS driver. Why
-'host_sem' and not any other synchronization object?
+Best regards,
 
-Thanks,
-
-Bart.
+-- 
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
