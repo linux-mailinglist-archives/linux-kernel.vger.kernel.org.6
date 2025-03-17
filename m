@@ -1,155 +1,97 @@
-Return-Path: <linux-kernel+bounces-564589-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564591-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF937A657E4
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 17:23:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AEAEA657E8
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 17:24:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 595553B610C
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 16:22:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B403718936BF
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 16:24:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2DF11A2545;
-	Mon, 17 Mar 2025 16:22:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05A4619F120;
+	Mon, 17 Mar 2025 16:23:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rFYdRWCR"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V/DSMUty"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E7241A072A;
-	Mon, 17 Mar 2025 16:22:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65D3F19992D
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 16:23:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742228569; cv=none; b=AGxxGX6Ob0Ahpg9yHsawjujVokdgTXRylhcNdUf9J9vL2UQZgAsmr6u0RIkKJ2b+Ix7wfakd4t0SkWbpEYJNwZYfpOST9c+z0DtjjM+GbwNwh+/a4sJlHN6ryJXQFQkabaCADvhLUgItTQrT08To7QyxM0CZEmwZSj9NX+qFygs=
+	t=1742228631; cv=none; b=q5RtW94r4MrbuYR5t6Knos+asy3layWA5L/Z8EduuJGPAq1+pEnVnCHHKi0Nyr02TmZShfrgjRM/lYemVlS4gFh3o0p19/74jiXAniknD7I4LpwiH8f37WFXU6YP+LnYd1VtqMTha1OaBXGqKe//4Pho1PghxpR38YNfLlQwUOQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742228569; c=relaxed/simple;
-	bh=dRUIl3yQcLybI+RJ6oaOQPFfyifr9VBzmEcrLKujw2A=;
+	s=arc-20240116; t=1742228631; c=relaxed/simple;
+	bh=aV/yanZJIXli1pcrOKQsZ9hWz9PMDSmBVNch4gPOhZI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r4N7u+LcR0fsZnfaQxR9RvV5wBONhMlsoAHvm2GDif0dVL1zbEnbi65+fo0J8PBLbrkzYQ5ht/bcivezsBS8esjCBvNyIncp1Qzw1NUPQ/nDlqULd9exAEXhTl/N9qg8ck5FwJmab0lpH3YbWB0GKg0cfMBkYk+wmwFHicAXGmg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rFYdRWCR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3D4AC4CEED;
-	Mon, 17 Mar 2025 16:22:48 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=UtF6qCJgF+3svrEXn9QHWgy57sfUx58BaIqXEzRawBAdeBiyTm+DS6bN1dOnO1B36gjk94WVhPnVjuZMyvHAr+Q/xIEPjbM2aBj9ZRdclDgRIkcKEjmvUvHf9TnGyg15NNw0IO3NznvbJp/QjMNbz0VauvLm4KbY0g0bbfCLU4E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V/DSMUty; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E3FCC4CEE3;
+	Mon, 17 Mar 2025 16:23:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742228569;
-	bh=dRUIl3yQcLybI+RJ6oaOQPFfyifr9VBzmEcrLKujw2A=;
+	s=k20201202; t=1742228630;
+	bh=aV/yanZJIXli1pcrOKQsZ9hWz9PMDSmBVNch4gPOhZI=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rFYdRWCRMHtn3ek5pOSVea3e1aV3dB3WZkMmGn14i+pVDV70xQ4NY4R/ZlTkyS86C
-	 HGEpT+dhq4uqjcBnp1l01qCouQcDLlbj5wo9QOTOFkc7pQMauL03MlK9Y4h3XhlRxh
-	 cnup+q58QqMDwCuZn/G0pO3SmEuZT+0rrpjuXzn5U1gE9tEdYIF2XFctyrV6Z/YrXu
-	 vMXqUWKB4xXGT75JveTVA6Oblr++7aq8T0SPVv/gnlvDtVtsH6QScGRc+4IUhUCZ+d
-	 /xcMHRSGWcLrC/nuHlZIvmcLTNxXmfazqGOGiM4370sgCS3bSRyyCTmGT9+Rmo71w2
-	 26zc6VcvZZdLw==
-Date: Mon, 17 Mar 2025 09:22:46 -0700
-From: Kees Cook <kees@kernel.org>
-To: Przemek Kitszel <przemyslaw.kitszel@intel.com>
-Cc: Vlastimil Babka <vbabka@suse.cz>, Miguel Ojeda <ojeda@kernel.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Marco Elver <elver@google.com>, linux-hardening@vger.kernel.org,
-	Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
-	David Rientjes <rientjes@google.com>,
-	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Hyeonggon Yoo <42.hyeyoo@gmail.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>, Jann Horn <jannh@google.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Sasha Levin <sashal@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Yafang Shao <laoar.shao@gmail.com>,
-	Tony Ambardar <tony.ambardar@gmail.com>,
-	Alexander Lobakin <aleksander.lobakin@intel.com>,
-	Jan Hendrik Farr <kernel@jfarr.cc>,
-	Alexander Potapenko <glider@google.com>,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	linux-doc@vger.kernel.org, llvm@lists.linux.dev
-Subject: Re: [PATCH v4 1/2] compiler_types: Introduce __flex_counter() and
- family
-Message-ID: <202503170918.A53A0F2@keescook>
-References: <20250315025852.it.568-kees@kernel.org>
- <20250315031550.473587-1-kees@kernel.org>
- <eb6e6198-dc42-4a63-8d0d-35f3061ff388@intel.com>
- <44a00ad4-b05d-4fb8-87f2-fccbaa068872@intel.com>
+	b=V/DSMUtyT0S/QCwTtFGLz2hW7zK84kxlRctbI2KzNLVla4ZrXuuwTvbECT/Wagcjo
+	 m8nuRXxIIn7XZy/XMvpumhAxLi0k4wz3p0Pm7T24kdN6XdyfHAspkSzniQB+6PU58+
+	 MvEqFp7GRQfDrMPXyrolTXUxxAybQF/Jzv1phA0myUFFCQmAjCv3oDFFhXBMThCqge
+	 eIic98oPf2nr4O5CBHRh0eJlYLWsCkOppybLq6hqLKzeaa4csfONULPOAJ/BGAZUR4
+	 Z5vYUnIRFNujpzJHeti1txp0ygGHfv5cyaQXCIDAmpVTiDXSwSALZ5kiuVzTTulHN2
+	 G6eFuoYNvK1Gw==
+Date: Mon, 17 Mar 2025 09:23:49 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Ravi Bangoria <ravi.bangoria@amd.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Matteo Rizzo <matteorizzo@google.com>
+Subject: Re: [PATCH] perf/x86: Check data address for IBS software filter
+Message-ID: <Z9hMlYsjeSmmnZCl@google.com>
+References: <20250317081058.1794729-1-namhyung@kernel.org>
+ <28663df2-31f2-4726-9dad-a78e1b19afc9@amd.com>
+ <Z9hHhKwUoQMAqZAa@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <44a00ad4-b05d-4fb8-87f2-fccbaa068872@intel.com>
+In-Reply-To: <Z9hHhKwUoQMAqZAa@google.com>
 
-On Mon, Mar 17, 2025 at 10:43:38AM +0100, Przemek Kitszel wrote:
-> On 3/17/25 10:26, Przemek Kitszel wrote:
-> > On 3/15/25 04:15, Kees Cook wrote:
-> > > Introduce __flex_counter() which wraps __builtin_counted_by_ref(),
-> > > as newly introduced by GCC[1] and Clang[2]. Use of __flex_counter()
-> > > allows access to the counter member of a struct's flexible array member
-> > > when it has been annotated with __counted_by().
-> > > 
-> > > Introduce typeof_flex_counter(), can_set_flex_counter(), and
-> > > set_flex_counter() to provide the needed _Generic() wrappers to get sane
-> > > results out of __flex_counter().
-> > > 
-> > > For example, with:
-> > > 
-> > >     struct foo {
-> > >         int counter;
-> > >         short array[] __counted_by(counter);
-> > >     } *p;
-> > > 
-> > > __flex_counter(p->array) will resolve to: &p->counter
-> > > 
-> > > typeof_flex_counter(p->array) will resolve to "int". (If p->array was not
-> > > annotated, it would resolve to "size_t".)
-> > > 
-> > > can_set_flex_counter(p->array, COUNT) is the same as:
-> > > 
-> > >     COUNT <= type_max(p->counter) && COUNT >= type_min(p->counter)
-> > > 
-> > > (If p->array was not annotated it would return true since everything
-> > > fits in size_t.)
-> > > 
-> > > set_flex_counter(p->array, COUNT) is the same as:
-> > > 
-> > >     p->counter = COUNT;
-> > > 
-> > > (It is a no-op if p->array is not annotated with __counted_by().)
-> > > 
-> > > Signed-off-by: Kees Cook <kees@kernel.org>
-> > 
-> > I agree that there is no suitable fallback handy, but I see counter
-> > as integral part of the struct (in contrast to being merely annotation),
-> > IOW, without set_flex_counter() doing the assignment, someone will
-> > reference it later anyway, without any warning when kzalloc()'d
-> > 
-> > So, maybe BUILD_BUG() instead of no-op?
+On Mon, Mar 17, 2025 at 09:02:12AM -0700, Namhyung Kim wrote:
+> Hi Ravi,
 > 
-> I get that so far this is only used as an internal helper (in the next
-> patch), so for me it would be also fine to just add __ prefix:
-> __set_flex_counter(), at least until the following is true:
->  "manual initialization of the flexible array counter is still
-> required (at some point) after allocation as not all compiler versions
-> support the __counted_by annotation yet"
+> On Mon, Mar 17, 2025 at 06:59:33PM +0530, Ravi Bangoria wrote:
+> > Hi Namhyung,
+> > 
+> > > @@ -1286,6 +1286,13 @@ static int perf_ibs_handle_irq(struct perf_ibs *perf_ibs, struct pt_regs *iregs)
+> > >  	if (perf_ibs == &perf_ibs_op)
+> > >  		perf_ibs_parse_ld_st_data(event->attr.sample_type, &ibs_data, &data);
+> > >  
+> > > +	if ((event->attr.config2 & IBS_SW_FILTER_MASK) &&
+> > > +	    (event->attr.sample_type & PERF_SAMPLE_ADDR) &&
+> > > +	    event->attr.exclude_kernel && !access_ok(data.addr)) {
+> > > +		throttle = perf_event_account_interrupt(event);
+> > > +		goto out;
+> > > +	}
+> > 
+> > Can this move up where it checks perf_exclude_event()? Use
+> > ibs_data.regs[ibs_op_msr_idx(MSR_AMD64_IBSDCLINAD)] instead
+> > of data.addr.
+> 
+> Sure, will do.
 
-Yeah, that's fair. I will rename set_... and can_set_...
+Hmm.. but I think it also needs to check op_data3_dc_lin_addr_valid bit.
+Can we move up the perf_ibs_parse_ld_st_data() too and check data.addr?
 
-Thought FWIW I'm not sure we'll ever want a BUILD_BUG_ON() just because
-there will be flex arrays with future annotations that can't have their
-counter set (e.g. annotations that indicate globals, expressions, etc --
-support for these cases is coming, if slowly[1]).
+Thanks,
+Namhyung
 
--Kees
-
-[1] loooong thread https://gcc.gnu.org/pipermail/gcc-patches/2025-March/677024.html
-
--- 
-Kees Cook
 
