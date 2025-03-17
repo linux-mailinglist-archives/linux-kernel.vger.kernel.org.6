@@ -1,113 +1,96 @@
-Return-Path: <linux-kernel+bounces-565058-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565048-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D0E4A6600A
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 22:04:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 66A5FA65FEE
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 22:01:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E893A42087A
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 21:02:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E02C316A722
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 21:00:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCB1D20764A;
-	Mon, 17 Mar 2025 21:00:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6307C1FA14B;
+	Mon, 17 Mar 2025 21:00:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Mzh6aZRq"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L6nrHaqt"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D7B4206F23;
-	Mon, 17 Mar 2025 21:00:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C156B1A8412;
+	Mon, 17 Mar 2025 20:59:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742245223; cv=none; b=EhpzXlfKR0ptggqGmbed/qKE2Cw2kjPibz68Dz1D5cDZDei5ccGnoAPcXXdX989/02ff3TKzTgCm+UrZgdfeO5Yx5gGlpJRXwsEv7PghQ/RrSOBF7mwm74hagr9mjmaTz+i5DGyjgowVPHVn6TKi3hiMNvNNmFE4V3jZxK6+BVs=
+	t=1742245199; cv=none; b=Z3eU70m2FjHhpN5OWZNu5q0LLxCq0GjgNOIaykzRahamBH7koY1RSojKTt9DwgJMz3kWftuzeg7jItcgevH1sIH3qW8FvTfsIAi+/0H65HODS/Cfr6ExkyujOjNfkHETlVIASYvl1WfCnXF//NdeY9m3qSs+MKgzxHLE4JPe8OI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742245223; c=relaxed/simple;
-	bh=jM6hQB3KxGdlYpqgDDu0LJlP7dZIsC6hRFDyQ4A1hPY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=KLtXACSiooIdZxDabxaVQwOhEOkhkAn+tm3jZtSdDN77Fg8p7YqSbKigvXF162Y9bHSH+BvgGiy09Uum70NqK5ZWjfMmuqRQVVwtM53u3Gq2P9nRVBWRcoxHwtdAmNTV7SOQyA8+dHCIih4OXPZcWlURh9r3Vd9hWODCImTLHt8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Mzh6aZRq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D932C4CEF1;
-	Mon, 17 Mar 2025 21:00:21 +0000 (UTC)
+	s=arc-20240116; t=1742245199; c=relaxed/simple;
+	bh=aUbH8+3Y+Q9R5IdXXRjoFdSG/+KV8wXsIDPkDCS+rFE=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=nPtu9oUi1k7EEr1f1IjciD6qFlXFryUY3BmCgnWByoQzudzRAjxCjwAE/q0N175hWCS/n9VU4H337HR05p3LwtIGBz+p5+vJfoFVkIgk3gQJGAo931UsCK9QCr2uCwY8qA8XoBo/V2wC0rS3B4lV7bZ1fcUiH6k6OuZ5vEHJAjc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L6nrHaqt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31733C4CEE3;
+	Mon, 17 Mar 2025 20:59:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742245223;
-	bh=jM6hQB3KxGdlYpqgDDu0LJlP7dZIsC6hRFDyQ4A1hPY=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=Mzh6aZRqfG2krE4LFAsF5dbxEUJR/6aFy43gZb/TkEhAnrPhiE/1zyVDd//CMXpYo
-	 TDj79lvKSYgNPMG+ntWnAajFOytb1DiQrLBmVMMQbjwClptCJ1wCerUMpuVAwlFfJd
-	 FRduzxhz0ddp6nV6UGvf41pTXFNerhc+owBa2yWFnnpL3eJhfwu6+tzxtNYhdqeB3K
-	 aQUXHEWFQkML+0ulD5USiomVOUlL+TZZExzyfFVKcEGgZb5Yz4FnBn5g7JJRnKo6Gl
-	 8oeAlwjaLfE7b9wL3gMxJquV7R1JoV/QBzW7PgXD24frNOSZAU+DCHuug4R/ojrGiO
-	 mqiMsF3BVDPlQ==
-From: Jeff Layton <jlayton@kernel.org>
-Date: Mon, 17 Mar 2025 17:00:01 -0400
-Subject: [PATCH RFC 9/9] sunrpc: don't upgrade passive net reference in
- xs_create_sock
+	s=k20201202; t=1742245199;
+	bh=aUbH8+3Y+Q9R5IdXXRjoFdSG/+KV8wXsIDPkDCS+rFE=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=L6nrHaqt78Sl+rLpcfpK8aQOePl0UQpOQcBdZbrq7uWoZOn6HwjguIKG3nRiRhWfD
+	 Mb+KjqFjEvLeHBj8yAF+fBkq0Jg3WQ3oHn30hptmWhbGM/+5oyRk9o10OdtUHgU8NR
+	 2VFTEWGT386hF6nu4dzZdqUCef/BUw3TI9nH3Zh4Ici18qtQzNGVd767Tsec0wwpAM
+	 lWI5oSpl4+/vZfu1wfFWPYbzLBhegNw1pOHmS9M6vGUXlsKB184gpx1xE5+rp2UKA3
+	 YZMpPMGkrSkYTLWYNT2vRJvmG1bG7zT91JyTMYH3EDPR2PorDo2VkFxvN71Cx4smaB
+	 ZMx6vlIrGlNbw==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id B0001380DBE7;
+	Mon, 17 Mar 2025 21:00:35 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250317-rpc-shutdown-v1-9-85ba8e20b75d@kernel.org>
-References: <20250317-rpc-shutdown-v1-0-85ba8e20b75d@kernel.org>
-In-Reply-To: <20250317-rpc-shutdown-v1-0-85ba8e20b75d@kernel.org>
-To: Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>, 
- Chuck Lever <chuck.lever@oracle.com>, Neil Brown <neilb@suse.de>, 
- Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>, 
- Tom Talpey <tom@talpey.com>, "David S. Miller" <davem@davemloft.net>, 
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
- Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>
-Cc: Josef Bacik <josef@toxicpanda.com>, 
- Benjamin Coddington <bcodding@redhat.com>, linux-nfs@vger.kernel.org, 
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
- Jeff Layton <jlayton@kernel.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=836; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=jM6hQB3KxGdlYpqgDDu0LJlP7dZIsC6hRFDyQ4A1hPY=;
- b=kA0DAAgBAA5oQRlWghUByyZiAGfYjVWiRKkxD6qwL79Bm7MvXbKxaKqHN3zIajad3pvAqXM3c
- 4kCMwQAAQgAHRYhBEvA17JEcbKhhOr10wAOaEEZVoIVBQJn2I1VAAoJEAAOaEEZVoIV3loQAJMI
- HnR/zomdrtqt3k0IG0M7q9Bqe8M8FtP8izUB5Ny0WlY84to4WT+HXgXxubH6hWDwv6swdi0MJQA
- ztwnokr7fU3GNLmWGFgv7xRqezpOyThr8FgAD1F4MOcsSlOhIZC/0V3SqwfeQkHJjidtw2gC5Ks
- ZzdynlUOq133ZKMOKi9P5Stq8T6wf5uaLIwYoutrhOWzGSHmes1wZOi58tJMYHKa9oBQVxsA0VH
- ng818IoePQgBlKHzDxwD+Zzp9TO/SWND26I2/+kJB8mCt6oLXNoKPRD/65OOfPEZRQb9486I7J+
- NBs/23felh7QEI85hAsSjM7C1lN4EUmTf91sRc9YaELlMa0dE/JNIolnox/6kco6FTeqLIGVkAU
- W7Qy2e8dE89db2fdqQRt48vMwqIcezz+fcsLC4Y/t0foS9HMNoi29HaLQMfGXdgfi8l0Ym1/xUT
- EOzW2WOc+m6791GGn+eDU8rIbXassJbZOYLpNJothbIQSZ+H1fEZoOeAMc3lNpaR/Qj/m3eNkY3
- Kk9S8fGwTzgTrfS00vaFBnoXyyAafdelCEtmKIWGTbJ1VZfANRLIFa7No00bIlQkH8ZTWXwqyC5
- mzn2923EPj+reJUqzhKS3pVeOIySpZtpyulq42I/v/GdyxLuuFMQhiz83/3n76GLvZgsmMXOlTj
- zJeXK
-X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
- fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH bpf-next v2 0/2] bpftool: Using the right format specifiers
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <174224523451.3912314.17317997494330739760.git-patchwork-notify@kernel.org>
+Date: Mon, 17 Mar 2025 21:00:34 +0000
+References: <20250311112809.81901-1-jiayuan.chen@linux.dev>
+In-Reply-To: <20250311112809.81901-1-jiayuan.chen@linux.dev>
+To: Jiayuan Chen <jiayuan.chen@linux.dev>
+Cc: bpf@vger.kernel.org, qmo@kernel.org, daniel@iogearbox.net,
+ linux-kernel@vger.kernel.org, ast@kernel.org, davem@davemloft.net,
+ kuba@kernel.org, hawk@kernel.org, john.fastabend@gmail.com,
+ andrii@kernel.org, martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
+ yonghong.song@linux.dev, kpsingh@kernel.org, sdf@fomichev.me,
+ haoluo@google.com, jolsa@kernel.org, mrpre@163.com
 
-With the move to having sunrpc client xprts not hold active references
-to the net namespace, there is no need to upgrade the socket's reference
-in xs_create_sock. Just keep the passive reference instead.
+Hello:
 
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
- net/sunrpc/xprtsock.c | 3 ---
- 1 file changed, 3 deletions(-)
+This series was applied to bpf/bpf-next.git (master)
+by Andrii Nakryiko <andrii@kernel.org>:
 
-diff --git a/net/sunrpc/xprtsock.c b/net/sunrpc/xprtsock.c
-index 83cc095846d356f24aed26e2f98525662a6cff1f..0c3d7552f772d6f8477a3aed8f0c513b62cdf589 100644
---- a/net/sunrpc/xprtsock.c
-+++ b/net/sunrpc/xprtsock.c
-@@ -1941,9 +1941,6 @@ static struct socket *xs_create_sock(struct rpc_xprt *xprt,
- 		goto out;
- 	}
- 
--	if (protocol == IPPROTO_TCP)
--		sk_net_refcnt_upgrade(sock->sk);
--
- 	filp = sock_alloc_file(sock, O_NONBLOCK, NULL);
- 	if (IS_ERR(filp))
- 		return ERR_CAST(filp);
+On Tue, 11 Mar 2025 19:28:07 +0800 you wrote:
+> This patch adds the -Wformat-signedness compiler flag to detect and
+> prevent format string errors, where signed or unsigned types are
+> mismatched with format specifiers. Additionally, it fixes some format
+> string errors that were not fully addressed by the previous patch [1].
+> 
+> [1] https://lore.kernel.org/bpf/20250207123706.727928-1-mrpre@163.com/T/#u
+> 
+> [...]
 
+Here is the summary with links:
+  - [bpf-next,v2,1/2] bpftool: Add -Wformat-signedness flag to detect format errors
+    https://git.kernel.org/bpf/bpf-next/c/8d86767be9c9
+  - [bpf-next,v2,2/2] bpftool: Using the right format specifiers
+    https://git.kernel.org/bpf/bpf-next/c/3775be3417cc
+
+You are awesome, thank you!
 -- 
-2.48.1
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
 
