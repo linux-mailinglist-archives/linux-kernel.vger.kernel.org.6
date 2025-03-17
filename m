@@ -1,119 +1,114 @@
-Return-Path: <linux-kernel+bounces-564269-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564271-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B288A6519B
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 14:47:48 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0BB7A651A0
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 14:48:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A14A3A910E
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 13:47:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 176D97A3DBF
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 13:47:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BD8F23E227;
-	Mon, 17 Mar 2025 13:47:42 +0000 (UTC)
-Received: from out03.mta.xmission.com (out03.mta.xmission.com [166.70.13.233])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EA7023E227;
+	Mon, 17 Mar 2025 13:48:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="crZIQWPa"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5850014A4E0
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 13:47:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.70.13.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B182C33CFC
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 13:48:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742219262; cv=none; b=X6fzGA8lHGl0qHUJ+L8Se5csU+bl2FoZrwvzXT8aTH8JAtwPqH5qXmjNclmhf+2hOHR8pN3StoZmb9u2fmhUGb86NnG4+od28fuALaSTnhUapFWV3UHqJlDCOmeAY07ns/o1PhwxGjMvuqJnRi6lXI6+cTjPRnNCD4fnxXZoQlY=
+	t=1742219330; cv=none; b=QparxHcuwVTE2Pj9AVdcKXZfsH+2s33M1vSke1yK2XQiwopUj0WeFt12ky1iNVV2iV7T97/a4BK5RS6Acmxr6VOgGpbSp4z+FlsSs9fD2IWom7gg3Ys++5r1ETyQsv0OLndijzOWUbKnsd195KZsAiJzhPmWjtgxBd7gRybT1B0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742219262; c=relaxed/simple;
-	bh=FUAGxSnhR1t8Np3jzCiwBr6lZTqyKfAJbH5KVHS1oIA=;
-	h=From:To:Cc:Date:Message-ID:MIME-Version:Content-Type:Subject; b=kP4to6xk/L1fuEM95qaF5xH3V9W/Ue8J85fbL0cWN5KnZdYg/WA5hPFcc3Wp29acwrFtaFzf+lX4aShNwmyi3xmG0U8mkpsbCbxIio0Ybhck6quIkSjEpilFPhtgFJYNKUOaBMDSZx7YmdjbcBW6w2N2KkxVZuElNNjZ8I1fDsA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com; spf=pass smtp.mailfrom=xmission.com; arc=none smtp.client-ip=166.70.13.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xmission.com
-Received: from in02.mta.xmission.com ([166.70.13.52]:44470)
-	by out03.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.93)
-	(envelope-from <ebiederm@xmission.com>)
-	id 1tuAoc-001XWc-FI; Mon, 17 Mar 2025 07:47:38 -0600
-Received: from ip72-198-198-28.om.om.cox.net ([72.198.198.28]:59574 helo=email.froward.int.ebiederm.org.xmission.com)
-	by in02.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.93)
-	(envelope-from <ebiederm@xmission.com>)
-	id 1tuAoa-003fO2-WF; Mon, 17 Mar 2025 07:47:38 -0600
-From: "Eric W. Biederman" <ebiederm@xmission.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- <linux-kernel@vger.kernel.org> ,
- Kexec Mailing List <kexec@lists.infradead.org>,
- Kees Cook <keescook@chromium.org> 
-Date: Mon, 17 Mar 2025 08:47:30 -0500
-Message-ID: <87r02v7or1.fsf@email.froward.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+	s=arc-20240116; t=1742219330; c=relaxed/simple;
+	bh=X5kQlAe6V0IWV3AfX/1cpge5j9TR7mJMVFfQqAnFVBI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oK2oaDDspfIvb9gp/q2wAb5xvz0Exq0Mm0ex2h/ZtNrkyXKOhjSbnjczdV/nN1rvxc5AGmyZklJMqQlhbmXohYNp80lZ253X5v+jqGu/j3mymg187iIshPWXj0NtO4NNf8YhBAhhfgIM6BbRIRYa45Fz89wcKecf5JE7yrz6LyY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=crZIQWPa; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=VU7NEXsrVVZw4RIK+G8nYDaRoOUrahZLuONfHBtRehY=; b=crZIQWPa+dKSJQxpTyf4cXG/E3
+	OoApJM4XIOdWlJxX+YcJERbADaUd7sG17rufN2h65SYZBwzDURtl3iwByt0h+O9bay2y0ZSRwNMX+
+	BJnfybRDWRcduN2LhxKANN/HYl2bMXBnoZ0pbNAD0KYkUhI056BaUsCox5xJiWu9PDUHC/B6Kd+E8
+	6dfJDNd0iyZbYpHJRNGhhOaL2V5wDVW42kJTHgdz98wveOGEblNLl33VIa9oSGiHIto+XekXSzdV/
+	/YwGhFeJFTz0/Q9whqebq19frcoNqbibMprG2JwVmBh6+1Cbp/NtrjDm/5i9XeVYBCKkulX811CiB
+	o4sqcqHw==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tuApZ-00000003SiA-49VO;
+	Mon, 17 Mar 2025 13:48:38 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 4D136300783; Mon, 17 Mar 2025 14:48:37 +0100 (CET)
+Date: Mon, 17 Mar 2025 14:48:37 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: John Stultz <jstultz@google.com>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+	Joel Fernandes <joelagnelf@nvidia.com>,
+	Qais Yousef <qyousef@layalina.io>, Ingo Molnar <mingo@redhat.com>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>,
+	Zimuzo Ezeozue <zezeozue@google.com>, Mel Gorman <mgorman@suse.de>,
+	Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Metin Kaya <Metin.Kaya@arm.com>,
+	Xuewen Yan <xuewen.yan94@gmail.com>,
+	K Prateek Nayak <kprateek.nayak@amd.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Suleiman Souhlal <suleiman@google.com>, kernel-team@android.com
+Subject: Re: [RFC PATCH v15 5/7] sched: Add an initial sketch of the
+ find_proxy_task() function
+Message-ID: <20250317134837.GC36386@noisy.programming.kicks-ass.net>
+References: <20250312221147.1865364-1-jstultz@google.com>
+ <20250312221147.1865364-6-jstultz@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1tuAoa-003fO2-WF;;;mid=<87r02v7or1.fsf@email.froward.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=72.198.198.28;;;frm=ebiederm@xmission.com;;;spf=pass
-X-XM-AID: U2FsdGVkX197FQxHXBXos5TSabCI0KcBicWE4+FEdFM=
-X-Spam-Level: 
-X-Spam-Report: 
-	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-	* -0.0 BAYES_40 BODY: Bayes spam probability is 20 to 40%
-	*      [score: 0.2552]
-	* -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-	*      [sa06 1397; Body=1 Fuz1=1 Fuz2=1]
-X-Spam-DCC: XMission; sa06 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: ;Linus Torvalds <torvalds@linux-foundation.org>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 743 ms - load_scoreonly_sql: 0.04 (0.0%),
-	signal_user_changed: 11 (1.5%), b_tie_ro: 10 (1.3%), parse: 0.89
-	(0.1%), extract_message_metadata: 23 (3.1%), get_uri_detail_list: 1.98
-	(0.3%), tests_pri_-2000: 31 (4.2%), tests_pri_-1000: 2.3 (0.3%),
-	tests_pri_-950: 1.22 (0.2%), tests_pri_-900: 0.97 (0.1%),
-	tests_pri_-90: 193 (26.0%), check_bayes: 189 (25.4%), b_tokenize: 6
-	(0.8%), b_tok_get_all: 42 (5.7%), b_comp_prob: 1.93 (0.3%),
-	b_tok_touch_all: 135 (18.1%), b_finish: 0.97 (0.1%), tests_pri_0: 205
-	(27.6%), check_dkim_signature: 0.81 (0.1%), check_dkim_adsp: 3.9
-	(0.5%), poll_dns_idle: 248 (33.5%), tests_pri_10: 2.7 (0.4%),
-	tests_pri_500: 268 (36.1%), rewrite_mail: 0.00 (0.0%)
-Subject: [PATCH] MAINTAINERS: Remove myself
-X-SA-Exim-Connect-IP: 166.70.13.52
-X-SA-Exim-Rcpt-To: keescook@chromium.org, kexec@lists.infradead.org, linux-kernel@vger.kernel.org, akpm@linux-foundation.org, torvalds@linux-foundation.org
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-SA-Exim-Scanned: No (on out03.mta.xmission.com); SAEximRunCond expanded to false
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250312221147.1865364-6-jstultz@google.com>
 
+On Wed, Mar 12, 2025 at 03:11:35PM -0700, John Stultz wrote:
+> diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
+> index 4b8e33c615b12..2d418e0efecc5 100644
+> --- a/kernel/sched/rt.c
+> +++ b/kernel/sched/rt.c
+> @@ -1479,8 +1479,19 @@ enqueue_task_rt(struct rq *rq, struct task_struct *p, int flags)
+>  
+>  	enqueue_rt_entity(rt_se, flags);
+>  
+> -	if (!task_current(rq, p) && p->nr_cpus_allowed > 1)
+> -		enqueue_pushable_task(rq, p);
+> +	/*
+> +	 * Current can't be pushed away. Selected is tied to current,
+> +	 * so don't push it either.
+> +	 */
+> +	if (task_current(rq, p) || task_current_donor(rq, p))
+> +		return;
+> +	/*
+> +	 * Pinned tasks can't be pushed.
+> +	 */
+> +	if (p->nr_cpus_allowed == 1)
+> +		return;
+> +
+> +	enqueue_pushable_task(rq, p);
+>  }
+>  
 
-Unfortunately I no longer have time to meaningfully take part in the
-linux kernel development.
-
-Signed-off-by: Eric W. Biederman <ebiederm@xmission.com>
----
- MAINTAINERS | 3 ---
- 1 file changed, 3 deletions(-)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index c9763412a508..7469254b13ec 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -8644,7 +8644,6 @@ F:	rust/kernel/net/phy/reg.rs
- 
- EXEC & BINFMT API, ELF
- M:	Kees Cook <kees@kernel.org>
--R:	Eric Biederman <ebiederm@xmission.com>
- L:	linux-mm@kvack.org
- S:	Supported
- T:	git git://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git for-next/execve
-@@ -12824,9 +12823,7 @@ F:	fs/kernfs/
- F:	include/linux/kernfs.h
- 
- KEXEC
--M:	Eric Biederman <ebiederm@xmission.com>
- L:	kexec@lists.infradead.org
--S:	Maintained
- W:	http://kernel.org/pub/linux/utils/kernel/kexec/
- F:	include/linux/kexec.h
- F:	include/uapi/linux/kexec.h
--- 
-2.41.0
-
+As per always, deadline.c will have the exact same logic.
 
