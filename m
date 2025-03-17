@@ -1,89 +1,96 @@
-Return-Path: <linux-kernel+bounces-564020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564021-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42A7DA64C23
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 12:18:09 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2E92A64C2A
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 12:18:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68C893A925E
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:17:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2DF967A6A18
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:17:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 466491D79B3;
-	Mon, 17 Mar 2025 11:17:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5194E2356B7;
+	Mon, 17 Mar 2025 11:18:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="NKGCmiIR"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="hull9x8J"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F33B236A7B
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 11:17:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4173822CBE3
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 11:18:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742210266; cv=none; b=nI99yEEf+WUwEfNkcdm7j/GXE5QqJWh7JDsn6Qk5oVFIy4c1bsQJ+KTdSFj0w1fVE+FtNLoIuPJIDkKITb/q80fvapcBk1jMiz2KckJBnArmN/+qbK1Y9qrCLLVXehMJns32QO1kHivyXwev4pbYV25EfeZhvau2r9kjn4h/PoU=
+	t=1742210316; cv=none; b=l6Z97+y3DUAKS/PTNbzT6seIDdnd9My1fa3lRcz6c/x9N8rdMcYO95+fothR1ZpkU3GnAmSoZMCjK7LQgkaMcmsAkH2iOXIsA3gZWS4ZWbhG7iLoIOxuGL9EoLjm+wav6urNbj3aBKHbkQTS/XymQs8sEJhfAHEoOGeaVWB9u1k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742210266; c=relaxed/simple;
-	bh=zBMrzjhDEoENG0cx7jVM5zbDjkh5Hafdqv8uGRyG+EM=;
+	s=arc-20240116; t=1742210316; c=relaxed/simple;
+	bh=jrgw6Gygr4CPrUKfVVlFEZ9x5B2iq8/1oQW8zcdFomw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kuAIQpvADlPLgUQglOuDUqEBWlCMPDIFLZE8AYplnFLO3Ee18SohxmwTRUQ8XufJkhMhtUn/ajZ2/Chgm5OV6g1lHxYozZkybhPY0MN34g9w4cX1K6eXr/UnGo8NpgSbQSrk8E2hJYhAK7v/7Yv95sGucL+Rb0hoZCsxBMxUaoc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=NKGCmiIR; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-43cfba466b2so20126805e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 04:17:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1742210262; x=1742815062; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=sjO8wZhfLshl3t4eiJF/ZoYHpW+SANCczo4fSdh+4pM=;
-        b=NKGCmiIRO8cYqPbNv9ZpwvpBm3ZbjsHq44Vnni7Z5hVXAtel032Gn17kFPL5MNj3/T
-         iAI2PdsvVFCtcXkbfks8aKMdXXyK5DUwB+8ofKI6OahM9qdDI6ftMNTiIS/pVj5XZLd2
-         E4f7mOJeGrxEAOCFk3NG+JhMNthL/Z0N1z92bRegUwEoR7UFfpCglug6dCq2NS0nqeph
-         VahUgwH0pN5X888wJfqR9x36HYyX3mN8MSypSOqhmxDg2DqZX76/EZ91hC7Les4kzMFc
-         Dj6yGytHZQpLHbhsVttKBJ1Lu/n4lFQH9cmU5iTwIAbL8Bb+glLYDu/2OcteTs8iccYl
-         dRZg==
+	 Content-Type:Content-Disposition:In-Reply-To; b=oyXBt4WEHbSekayGNQUNwAV+T5TD6KTP502CY368bsZxmcbpyyW93Avd1Pxo2pHUw48YpwZejBs47e9+oESFEAjm+d9Ektpxa66GEYZowjwuW0zoz+m9BDKLpYzbWIIcAzyTxVWhxGcVrQE58MZhQo0XdyegAJDCMS3BhVPDMqk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=hull9x8J; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52HA8Djr006169
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 11:18:34 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=T6QOzefVCB1ALDVD4b+E90Zw
+	NlbrEyFAiugsTYpAVrY=; b=hull9x8JoHiFgaS3SlgZechUD/CMNKDXKs3KhU67
+	uNYO21JvYUPJ0GabzPXvCGjxWgR1VQ5Uf/WmaswT2MMWaUqFxTXq+dDsGqlPlfOf
+	m64LXYj4gMAFGNuN1JoSRg47sPuC26MKAmQ3spbnUk8M5vPIsLTuOk9gzptMg4Ja
+	ydzYfTDAb0XFz/98pRFCnrJorI4CQjOYeKwR18Lrr31G4OKyFoYXcw+71OFLvV+3
+	eDe/vUWX8+7WMO9sAY4WMhQsx5gthKCVgSGahWtUgUwpo4asWQJp8KlGsxhgf8lu
+	d/kiIRy9Fb6bKYnHjN3199AnAQTi6PD0Gnu5BcObSC2MlQ==
+Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com [209.85.219.70])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45d1u8chps-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 11:18:34 +0000 (GMT)
+Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-6e8f99a9524so155924956d6.1
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 04:18:34 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742210262; x=1742815062;
+        d=1e100.net; s=20230601; t=1742210313; x=1742815113;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=sjO8wZhfLshl3t4eiJF/ZoYHpW+SANCczo4fSdh+4pM=;
-        b=uU/c6sxDj7bAEOzrr7eCi/n5YdjMTTxLwquHrXU4NqILE2kfyDeeT51Gcd9apSQkYR
-         FUVY3CfRb+iA/jnQ+wD196sAUUbBunatJzmOLr2b75F1NG93rCiHxpZBrCvumlablxH4
-         Y+yXZfis9hDM7vNAnQzg3iOZqS64XCCnhf43Ff2esLnB0yXD+sxsovN8yH00SZI+KV6/
-         58xwAPylms7gmXfR8s2WkdLThZRKObjkmBSGSDa7CiSQEkP6VdNo1nOGx6YdjxRyudBM
-         du9O1gLysu9ITkCgsr+QgF6Q0UgKEz5QZQKgGmM5QxwMDvWuy2su6AeLeZYju7OsMQ65
-         /X+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXwz15OWlraAfspDQV7jH8XtmAmKigAB6s5pGrC1vybJWv/WCDRg7CFHRd0Mye5MwSZdDneLypH8o1PVDE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yypi5Uo2EjcYF6vkEjFGEB7/17HSd2Sjwu01DCQgR637MjC6qB1
-	GhBguz0Yv2OUAn7bWJOlB9kIKKV6GBGzlAmIE2U5VROPdhLtZzXg3CD5WMLENY4=
-X-Gm-Gg: ASbGncsNOsIzQ+cfZ4xppXIsYLIt5AlKhAvfmD639w0HvMeO/y6AwFQZ2bANkLpsOof
-	RagTN1XpwW9/L2hfjAUrzEFcd2OCR8a/6ennoGqlQz6z3iHcdDC6vc70ihB7Gf0HB3h1nX3m7Hq
-	ny97M2Y3nYp+OOjA1s7af97cWy+PQ6EOHU8xNyUliLwuPAn2mKWO4DMbl7tjx3K734//OZDxQUq
-	yYqa7jApP+XKc8oFTeAmj3pnRT7Il3ngrIFWEbrldf6+KqMOkrJnhIGVZt1FzGD74ZBp+aUlY8I
-	Ug6LuBFmbJzWc9r4XnOSejytUoa9zWFP0rwVjM3jPpXRbU0gCw3PtikHJQ==
-X-Google-Smtp-Source: AGHT+IFRKO1J7Kmy3N9ZPTGo03XaSalHTdVs0NfUTHKX0BeDLIXyoYs7wREqe3Jxq+EOFVfXXugO9A==
-X-Received: by 2002:a05:600c:548e:b0:43c:fb95:c752 with SMTP id 5b1f17b1804b1-43d1ec74ec4mr122834825e9.3.1742210262577;
-        Mon, 17 Mar 2025 04:17:42 -0700 (PDT)
-Received: from pathway.suse.cz ([176.114.240.130])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d1fe6a1c7sm101845505e9.39.2025.03.17.04.17.42
+        bh=T6QOzefVCB1ALDVD4b+E90ZwNlbrEyFAiugsTYpAVrY=;
+        b=cXHEiQS6/npSFEesrHTcaT++Xfm9vC9KFiDVr9sEmj7ubfiMKd0eXHzYWhR38Gqmht
+         Drzm+kQ1hqMDLhVOepxPLpAVeKGsF3DFdeC495ddFLjQGF+O5L2FPop62PDm19DAH1YH
+         LD5WgMz5qrR/djN4JZ/wp6mUx4FeFClay/F7BgAgF1fVkpNXp2xoA+xbHiQ0t0zqoHwH
+         FbtQRBztzUVYBr1EbTrq20zfqBFSAj87O0QNSOCfzw3dFT01GYYv6ravqO7tywJGwVYq
+         pv38tqy/ECB8zG79CdmmGceajQbE5YadjI9fWEAWLxbrLpd4a/8lt4LSO1XXZVfSpE2l
+         pwnQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWpgIiWTw5Yzq00bXqEqichb+HF8NjQBL4BWxAfkgDNNrxnGhUi/ncFmxHlhQG0hisJkZw3qakJmxSRows=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx2SgbJ46wnlectUbPPU7fE5vceWPLX+Rh041wr4s3x9PpwuhBg
+	IHz8wOL2UILFVz++M8xPJlwAIxV8G8tOboTMfQu9Z7Mh6gdYukD3bY1I0iW0TlmaqcWLee0G9yP
+	CA80llvENClVHrI7aw0V90QZLe2ggtgWaFgCjcD543r3Q3+JZkweQrXfbdMZLT2Y=
+X-Gm-Gg: ASbGncv3Qym5p8w//9U8MATr1vmHO0JYXNqw7iqAmwypgFilGKAfWLRVoetmK/Jt9k7
+	NfxQJaTPnbThS7xc5wPr/6CFy4NABywVAlplDkTFA4NIJZPN2GAXxYPAvzryJc/5S1z3PjY/Wz8
+	i8TFrZkbLqEz9hV0ifN46OoRBfAW6R+skHscNKXtNPP/V6txzaMF+P5TAEOB0Sd9d/MYvuws3jm
+	KsluYoBqBFs97LO8Fe/WSEezo0twlH01UfI2vs6Rwjw6GdIk+n4uqXbu+HB0IDfsf7XbXeUFwj/
+	YvSRtGtqLUiWCmJFi4unkJp7MyKZEtIvGlZ4lcOfL9EXT0bOhUlR1THBS+jx6DBWDjp3mrhaD+5
+	iwzI=
+X-Received: by 2002:ad4:5bac:0:b0:6e8:c713:3220 with SMTP id 6a1803df08f44-6eaeaaeaf05mr223054276d6.36.1742210312970;
+        Mon, 17 Mar 2025 04:18:32 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHRfErhQONfbnUCDF3/m06A/fCJBaed+xYW/LUK+0W0eB9q/0f4vqTLFVHcA8wc0miWiEPlSQ==
+X-Received: by 2002:ad4:5bac:0:b0:6e8:c713:3220 with SMTP id 6a1803df08f44-6eaeaaeaf05mr223053646d6.36.1742210312455;
+        Mon, 17 Mar 2025 04:18:32 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30c3f0e99e0sm15568441fa.34.2025.03.17.04.18.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Mar 2025 04:17:42 -0700 (PDT)
-Date: Mon, 17 Mar 2025 12:17:40 +0100
-From: Petr Mladek <pmladek@suse.com>
-To: Joe Lawrence <joe.lawrence@redhat.com>
-Cc: Nicolai Stange <nstange@suse.de>, live-patching@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Josh Poimboeuf <jpoimboe@kernel.org>,
-	Miroslav Benes <mbenes@suse.cz>
-Subject: Re: [PATCH v1 18/19] Documentation/livepatch: Update documentation
- for state, callbacks, and shadow variables
-Message-ID: <Z9gE1B__mP6F0b9N@pathway.suse.cz>
-References: <20250115082431.5550-1-pmladek@suse.com>
- <20250115082431.5550-19-pmladek@suse.com>
- <c291e9ea-2e66-e9f5-216d-f27e01382bfe@redhat.com>
- <Z8rmCritDCtNmw64@pathway.suse.cz>
- <566cfe7c-d5df-6407-6058-b78de5519e04@redhat.com>
+        Mon, 17 Mar 2025 04:18:30 -0700 (PDT)
+Date: Mon, 17 Mar 2025 13:18:27 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: zhang.enpei@zte.com.cn
+Cc: neil.armstrong@linaro.org, andrzej.hajda@intel.com, rfoss@kernel.org,
+        laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
+        jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
+        mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com,
+        simona@ffwll.ch, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/bridge: sil-sii8620: Use dev_err_probe()
+Message-ID: <7vxbjx3mjeo2a7km5jo3kwguqfip4rkl35mncdgcvhymhe2w6j@7mwshdqfn4id>
+References: <202503171404563447jAdJlVvoFXDvBoj0sAx6@zte.com.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,85 +99,36 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <566cfe7c-d5df-6407-6058-b78de5519e04@redhat.com>
+In-Reply-To: <202503171404563447jAdJlVvoFXDvBoj0sAx6@zte.com.cn>
+X-Proofpoint-GUID: z-0MaqfnSe0FpONLOorVI-nSB9I-pXcc
+X-Authority-Analysis: v=2.4 cv=c42rQQ9l c=1 sm=1 tr=0 ts=67d8050a cx=c_pps a=oc9J++0uMp73DTRD5QyR2A==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=Vs1iUdzkB0EA:10 a=1RTuLK3dAAAA:8 a=EUspDBNiAAAA:8 a=ib6j6c_6DBfqJxPKIQYA:9 a=CjuIK1q_8ugA:10
+ a=iYH6xdkBrDN1Jqds4HTS:22 a=kRpfLKi8w9umh8uBmg1i:22
+X-Proofpoint-ORIG-GUID: z-0MaqfnSe0FpONLOorVI-nSB9I-pXcc
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-17_04,2025-03-17_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 spamscore=0
+ bulkscore=0 lowpriorityscore=0 mlxscore=0 adultscore=0 malwarescore=0
+ impostorscore=0 mlxlogscore=848 priorityscore=1501 suspectscore=0
+ clxscore=1015 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503170082
 
-Hi,
-
-I am sorry for the late reply. I have read the mail on Friday and then
-forgot to come back to it last Monday...
-
-On Fri 2025-03-07 10:50:42, Joe Lawrence wrote:
-> On 3/7/25 07:26, Petr Mladek wrote:
-> > On Thu 2025-03-06 17:54:41, Joe Lawrence wrote:
-> >> Finally, the patchset adds .is_shadow and .callbacks.  A short sequence
-> >> of livepatches may look like:
-> >>
-> >>   klp_patch A               |  klp_patch B
-> >>     .states[x]              |    .states[y]
-> >>       .id            = 42   |      .id            = 42
-> >>       .callbacks            |      .callbacks
-> >>       .block_disable        |      .block_disable
-> >>       .is_shadow            |      .is_shadow
-> >>
-> >> is there any harm or confusion if the two patches' state 42 contained
-> >> disparate .callbacks, .block_disable, or .is_shadow contents?
-> > 
-> > Yes, two incompatible states with the same .id would break things.
-> > The callbacks won't be called and the old shadow variables
-> > won't get freed during an atomic replace.
-> > 
-> > It is responsibility of the author of the livepatches to use
-> > different .id for different states.
-> > 
-> > I am not sure if we could prevent mistakes. Hmm, we might add
-> > a check that every .id is there only once in the patch.states[] array.
-> > Also we could add a human readable .name of the state and ensure
-> > that it is the same. Or something like this.
-> > 
+On Mon, Mar 17, 2025 at 02:04:56PM +0800, zhang.enpei@zte.com.cn wrote:
+> From: ZhangEnpei <zhang.enpei@zte.com.cn>
 > 
-> Well, providing the same state twice in the same klp_patch seems highly
-> likely a bug by livepatch author.  That's worth a WARN?
-
-Yes, I agree. I'll add the check and warning in the next revision of
-the patch set.
-
-
-> I'm not sure what to think about the same state id provided by two
-> klp_patches.  For a atomic-replace series of patches, if the state
-> content is the same, it's effectively like handing off cleanup
-> responsibility for that state to the incoming patch, right?
-
-Exactly. And I could imagine an usage of the same state even without
-the atomic replace. For example, more livepatches could share the same shadow
-variable. Or they might need the same semantic change of a data
-structure which would require updating the data by the state callbacks.
+> Replace the open-code with dev_err_probe() to simplify the code.
+> 
+> Signed-off-by: ZhangEnpei <zhang.enpei@zte.com.cn>
+> ---
+>  drivers/gpu/drm/bridge/sil-sii8620.c | 9 +++------
+>  1 file changed, 3 insertions(+), 6 deletions(-)
+> 
 
 
-> If the state content changes, that would mean that the incoming patch is
-> redefining the state... which could be ok?
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 
-Using the same state .id for different purpose is _not_ ok.
-
-We could also imagine the state as a reference count of its users.
-The pre_patch/post_patch callbacks are called when it is introduced
-(refcount goes from 0 -> 1). And the pre_unpatch/post_unpatch
-callbacks are called when the state is being removed (refcount
-drops from 1 -> 0). [*]
-
-This won't work when two different states share the same .id.
-The callbacks won't be called when the 2nd one is added
-or when the 1st one is removed.
-
-That said, I do not know how to check that two states have different
-semantic when the atomic replace is _not_ used. We could prohibit it.
-But I think that there are valid use-cases, especially when
-using cumulative livepatches. So, I would keep it allowed.
-
-[*] Note that the current code does not count to refcount number.
-    It just checks whether the state is used in other enabled livepatches,
-    see is_state_in_other_patches().
-
-
-Best Regards,
-Petr
+-- 
+With best wishes
+Dmitry
 
