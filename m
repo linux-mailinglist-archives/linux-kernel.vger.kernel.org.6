@@ -1,76 +1,88 @@
-Return-Path: <linux-kernel+bounces-564897-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564898-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 139BEA65C77
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 19:23:58 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17A56A65C76
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 19:23:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C50E883C58
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 18:23:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F778421318
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 18:23:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D5871CDFD5;
-	Mon, 17 Mar 2025 18:23:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 713C81D61A4;
+	Mon, 17 Mar 2025 18:23:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lrj/7YEq"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ejQjvgRB"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 361091A7AF7
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 18:23:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7779A1A7AF7;
+	Mon, 17 Mar 2025 18:23:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742235796; cv=none; b=tcI5A5tGIpi0fxWnBX7GEB7321aDZWPE9LS6uuLZCyivoKiO3ZhVuay5Nj6N1FBFC/myGQWxxAzOdreD2IxfC1zZhWaBk+S82gsJL2dclbGt73zEho4Hhi1GE1r/ovWdIcl1nQSGtGpmp5D5nmW5M/fHOZ7I6Wli8OY9P3iH7vw=
+	t=1742235807; cv=none; b=HvstSqH9IUXpLPegTVl82LVLYVio+d9XF2EdTCvKNuUfWQtCEaPWRCdPW1dStAzUKlZLo9uVZC/+6DXrQIz8nXm922bh1p9kEci/mZjckM9/iC9O7nyRDobIAah+yncZA1iUknl+CJXqfG2UpgBaucCPdhvjj0KszBuDSiE7NU8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742235796; c=relaxed/simple;
-	bh=4w2t8ziQ3MaQSWNJnAtKVR9xCLHkPnm+0yL66gLdGMY=;
+	s=arc-20240116; t=1742235807; c=relaxed/simple;
+	bh=WS/beQDNL7wmrZ0qggdva3xoNx/Nfmh6FfFb4BzMBMY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B1gT9Zhpw1DONu+F5BLXBjVif3m+TnXtchYlgr6usBzlhYa+QWfJM2l7B4UqY29MWJDu6VhYevqtXT2wHQJm/pb13Td76nxmRw7dRCnGCifupWNjYvqJXM6xfGlLKxGYAplo3X2bcjdNfR/LNxVHdbLXdu6j9eQsUejzuMhFPPY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lrj/7YEq; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742235795; x=1773771795;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=4w2t8ziQ3MaQSWNJnAtKVR9xCLHkPnm+0yL66gLdGMY=;
-  b=lrj/7YEqiwLPJl2NCuswzCy1X0WdaLv1VnzF6n6lCYJuyYBZ35PPT5D9
-   /FiBYzHUDapyLJwTkRDBlnwm7YGBZkOTltMqwhr4wnmb2txMJhTHCOlJi
-   +fEMDpelh2rTRV2iyNpt43kytcswme9VjZY9k/CEO9IrZTIQqm+q1Xi3+
-   ddthoCn7LXGAmSCLim2K1xqVbne/RKNLo3akFTiU//ZuvUoFe0Q41GTmG
-   IC5LS3Vdh5lxRYnA9Z8UsLztgSXBhjpH41uAfC20xZ04U6VbHkrrHZuaW
-   +nEKAMByBWQBTmp75/MGnAWhpD0aQwKfGxrgJN1Dps3qj4FZo7zATLWwj
-   A==;
-X-CSE-ConnectionGUID: Jm9votP0SWm+TEvTxmbYfg==
-X-CSE-MsgGUID: BMNzRkTJTv6r9GmGLw7IJw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11376"; a="47235925"
-X-IronPort-AV: E=Sophos;i="6.14,254,1736841600"; 
-   d="scan'208";a="47235925"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Mar 2025 11:23:14 -0700
-X-CSE-ConnectionGUID: fZX/3bVJQW6gDdd5wJXL3Q==
-X-CSE-MsgGUID: dW1/HaRuSGe9/hUl9tNyNA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,254,1736841600"; 
-   d="scan'208";a="122001407"
-Received: from agluck-desk3.sc.intel.com (HELO agluck-desk3) ([172.25.222.70])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Mar 2025 11:23:14 -0700
-Date: Mon, 17 Mar 2025 11:23:12 -0700
-From: "Luck, Tony" <tony.luck@intel.com>
-To: Fenghua Yu <fenghuay@nvidia.com>,
-	Reinette Chatre <reinette.chatre@intel.com>,
-	Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>,
-	Peter Newman <peternewman@google.com>,
-	James Morse <james.morse@arm.com>, Babu Moger <babu.moger@amd.com>,
-	Drew Fustini <dfustini@baylibre.com>,
-	Dave Martin <Dave.Martin@arm.com>
-Cc: linux-kernel@vger.kernel.org, patches@lists.linux.dev
-Subject: Re: [PATCH] x86/resctrl: Refactor to make adding extra MBM events
- easy
-Message-ID: <Z9hokNv4PvUILFjF@agluck-desk3>
-References: <20250314202609.5753-1-tony.luck@intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=KYCahcPRQgwO01F7pZyUtjVK7QilXoCf4Y2cJ7lOlPV9/KfR0htaOO8x+eUXI7N2U4O6VqcVDpVc9vB3feF5gJa1YO7vYFpPx9OAiH0x46ydZwvl5QKp1wquWir6RiNLP+KRoYOY3GWA9aIAYQJFw91d4+GrGxNjhTK+Sne/Tdg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ejQjvgRB; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-225df540edcso61226285ad.0;
+        Mon, 17 Mar 2025 11:23:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742235805; x=1742840605; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=raU6yvjFajPdul3fWiqTUWQ66/KuoIXSGZczRw+B49M=;
+        b=ejQjvgRBgFpxGo+Luq2GpdBCHJP7J4vykm0B6SvQOabAeGVoKw9HGvUaE3HbQ4DldU
+         XbOhg9V3wooyC5RbeQKza956AcaD/AxRqTucHkenmslnXfoSbPDDjYM4NMdw1EEYnDII
+         cAYREBz06GmQm8QSIKZ7KwHVi0jKHoWFOYXW4rNKD7yh1ZIrs33XUaoR/vXb7lNEkHoK
+         QdnF6c7i+IJGvTFgUf0WW79MBNFXumEDwVUBrspmRiFKdjkEcmRUR1g4Xs3dNpFG55SP
+         0Z/zY06Y0tMJusExGe/j7MVdmebf3YSba4iF2UP5+c30URiQpfB2j4RXozKG/zFuWaM1
+         2cKg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742235805; x=1742840605;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=raU6yvjFajPdul3fWiqTUWQ66/KuoIXSGZczRw+B49M=;
+        b=XYVq4ccEik//eogbhHhnFkeCoxgAjqPfyxnmfBBZDD1FGJuh/G0toLgfFn3PpkQ5cU
+         Wi9rf1lHZYZ3q6rDeGW8zHTvMajGcrWN8HMFU8di2shuVl/TXfZr3VIhvQXFZfQeV2Jx
+         N4yaqxnaXckpF+BNOpoQ4AoGTY5Id0UWP3FCnIcGYKBrrwp9KW+Q1KDAyvz/fgJtkt2x
+         iNClu1FrQxnIcBueusLvdP/oAEeeAI1WfEDYHspRxMilHsXL0hhtja9IX/iVFc3eMoZf
+         PzvCE1hgpaXEXATlmTaTfNh1al3iT+xsv4Nng4ngFBnxTSW3fJyqIefQUxJG36MO5eb9
+         i0WQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW9G52i2EfNvIJwtNliE+QwgckO8UzdvYDftnLRne4lMmaNtH0mS1LuPzWEYpR05ByYXag3Q7L8CKu66jI=@vger.kernel.org, AJvYcCWNr9Dvy2zI2gNSJPDbNd/TBYiDHu26xTKaF0s038pU9D5j79pGgl8kS6gnwdPiUY+Vhsb/VEuFdrS3@vger.kernel.org, AJvYcCWlPQehVeOm2N3/8pMiwkscCily9/bbJToRguvaIPZOVQkFJ5B/Pb+yr7GeOD8Mv0l8XqdQN/6c9ImMAENe@vger.kernel.org
+X-Gm-Message-State: AOJu0YxIbuB/f6XRrxYxi/NIiVzDNhZK9n5YCxehWHOkVC607o9+Taoi
+	Z+EFJefchN5ZK4PHFxtJS34dxXeGz5WJOmPt/g4ywnzoJMl3iXDEi887AQ==
+X-Gm-Gg: ASbGncsRJ0RgIhtOXF8DBfM/hUy7xrWeU5TPvvX8EhFacul6ZDFUL1oX2Gbn7SXEV5d
+	9c55c6RLxAmUbJOAOAlCc+jcfh6fyQ2pApvsknVQC03XO/5CXrapk96PC/p64qXZ8g9tm9/m5N4
+	Wk7qRK3Np43SFMub+g3M4hOqGaTVE7sMFga5rbGUOFv5JGyUS1na87l0vEhULj+InFuBdzLR1Tp
+	9FiuUQxHJ6jnILNuXkwDj+BCm1WrQci55tw1vY2IfOVzGnCuKRU99EFCSzAJbn/CmTpLYlD+NyJ
+	CFQxS9DEPfaWeJUlT2fe0/AM+SqQOAwOt71EpXVdEaFkRo8nhXP7VtVszQ==
+X-Google-Smtp-Source: AGHT+IHoApapmryAS+pdqlIWcy577+zynlAjn596ZSexCbyRdAhICkcLH0GhI0QnYoYouuGmfnIP7g==
+X-Received: by 2002:a05:6a21:99a1:b0:1ee:c7c8:cae with SMTP id adf61e73a8af0-1fa4ff2e285mr540102637.9.1742235805638;
+        Mon, 17 Mar 2025 11:23:25 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73730ca057csm4665831b3a.48.2025.03.17.11.23.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Mar 2025 11:23:25 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Mon, 17 Mar 2025 11:23:24 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: Andrei Lalaev <andrey.lalaev@gmail.com>
+Cc: krzk@kernel.org, robh@kernel.org, christophe.jaillet@wanadoo.fr,
+	jdelvare@suse.com, linux-hwmon@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	conor+dt@kernel.org
+Subject: Re: [PATCH RESEND v3 1/2] hwmon: add driver for HTU31
+Message-ID: <a6c54c30-bafa-49fd-99c2-e5e31013bcc1@roeck-us.net>
+References: <20250217051110.46827-1-andrey.lalaev@gmail.com>
+ <20250217051110.46827-2-andrey.lalaev@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,57 +91,22 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250314202609.5753-1-tony.luck@intel.com>
+In-Reply-To: <20250217051110.46827-2-andrey.lalaev@gmail.com>
 
-Here's my other bug:
+On Mon, Feb 17, 2025 at 06:10:55AM +0100, Andrei Lalaev wrote:
+> Add base support for HTU31 temperature and humidity sensor.
+> 
+> Besides temperature and humidity values, the driver also exports a 24-bit
+> heater control to sysfs and serial number to debugfs.
+> 
+> Signed-off-by: Andrei Lalaev <andrey.lalaev@gmail.com>
 
-> @@ -4162,31 +4156,29 @@ static int domain_setup_mon_state(struct rdt_resource *r, struct rdt_mon_domain
->  {
->  	u32 idx_limit = resctrl_arch_system_num_rmid_idx();
->  	size_t tsize;
-> +	int evt;
->  
->  	if (resctrl_arch_is_llc_occupancy_enabled()) {
->  		d->rmid_busy_llc = bitmap_zalloc(idx_limit, GFP_KERNEL);
->  		if (!d->rmid_busy_llc)
->  			return -ENOMEM;
->  	}
-> -	if (resctrl_arch_is_mbm_total_enabled()) {
-> -		tsize = sizeof(*d->mbm_total);
-> -		d->mbm_total = kcalloc(idx_limit, tsize, GFP_KERNEL);
-> -		if (!d->mbm_total) {
-> -			bitmap_free(d->rmid_busy_llc);
-> -			return -ENOMEM;
-> -		}
-> -	}
-> -	if (resctrl_arch_is_mbm_local_enabled()) {
-> -		tsize = sizeof(*d->mbm_local);
-> -		d->mbm_local = kcalloc(idx_limit, tsize, GFP_KERNEL);
-> -		if (!d->mbm_local) {
-> -			bitmap_free(d->rmid_busy_llc);
-> -			kfree(d->mbm_total);
-> -			return -ENOMEM;
-> -		}
-> +
-> +	for_each_set_bit(evt, &rdt_mon_features, sizeof(rdt_mon_features)) {
-> +		if (!resctrl_arch_is_mbm_event(evt))
-> +			continue;
-> +		d->mbm_states[evt] = kcalloc(idx_limit, tsize, GFP_KERNEL);
+Applied, after fixing:
 
-tsize used uninitialized ... so "random" allocation amount.
+CHECK: Alignment should match open parenthesis
+#493: FILE: drivers/hwmon/htu31.c:254:
++	seq_printf(seq_file, "%X%X%X\n", data->serial_number[0],
++					 data->serial_number[1],
 
-> +		if (!d->mbm_states[evt])
-> +			goto cleanup;
->  	}
->  
->  	return 0;
-> +cleanup:
-> +	bitmap_free(d->rmid_busy_llc);
-> +	for (evt = 0; evt < QOS_L3_NUM_EVENTS; evt++)
-> +		kfree(d->mbm_states[evt]);
-> +
-> +	return -ENOMEM;
->  }
-
--Tony
+Guenter
 
