@@ -1,143 +1,141 @@
-Return-Path: <linux-kernel+bounces-563670-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563671-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87B8BA64670
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:00:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FDC9A64674
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:01:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC8CD1893AC4
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 09:00:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 575871893CA2
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 09:01:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC02921D3F1;
-	Mon, 17 Mar 2025 09:00:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98B4021B9E2;
+	Mon, 17 Mar 2025 09:01:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tkaO8/yj"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T59YP1aF"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D7882E3373;
-	Mon, 17 Mar 2025 09:00:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECE1C2E3373
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 09:01:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742202027; cv=none; b=uEAPMr/rYqg7GhHjJsdEFKA6eUFon71uib6vrHmirtYqUVBhP1lL6AP5boImp0H3xP9+yrFIYsXQ1WyYBTUKE89EziGXVbts1VPi3ncp3v9ZEmE6+ZcfXrv39ja65dbK4HN/d+8isWPwdEvBX4mM6A/RRL8I3RBreymglu1Ka34=
+	t=1742202078; cv=none; b=Gf8X3SDCcXzXd84EeWWTDIVOmfOzCqXnDpl+TPnhCHEY2NtfvhoHXZ1tqvwwJFcrJ2tUCWXCnnsOc+L+HUpZ+rVkKM+UtOtO7I3rLllH+rRJ/MEFQ+oyrdhJNP/dQj+TPi+ls4qwyFOLN/AjvDC7SlpuRRfRKdeM2Vkv7qmygvM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742202027; c=relaxed/simple;
-	bh=W3D20CMMDeTVehzFoOsspP1Xy3fZIs1JN+w4F2wuzL0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=p2pcMea89y3g+63L7ittiCvYFIRVr4ndBc3VYh7cEPWGjEjedK+1RDp5GfAPI/TaF3fv2cF26+4/xHgUWKyzoL1E4KfWLcP5YTPstZPMFIel2cVpJTg0eqc1QX8s8KKi4lQUeceflCpoJna28mpqZTJ83N15LGyE05BUQMQWGaM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tkaO8/yj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB69CC4CEE3;
-	Mon, 17 Mar 2025 09:00:21 +0000 (UTC)
+	s=arc-20240116; t=1742202078; c=relaxed/simple;
+	bh=pbajq5xRwv39EgJDJWaG9rD/vd/ESA5/w3PRxNpg0OM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uM440CH6Po+6WeNGVlO9ZALo0cJbp2hWe7mvRZDf5BB5V7vYeqn/CTjWguFQIcRz01tm7+IH6DG5UtcKZNLFr65Cr0KyPOl3B32Xz0lpgEQt7+J7dt54kSn7h8Xtmj3MfJopp5qYOHZXT/BbBhtXRB2QA4NPBZLGiNRDsyybBZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T59YP1aF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5194AC4CEEF;
+	Mon, 17 Mar 2025 09:01:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742202026;
-	bh=W3D20CMMDeTVehzFoOsspP1Xy3fZIs1JN+w4F2wuzL0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=tkaO8/yjry0qQlrMCfP3KBKh3c6fbLV44Qk/aD37apAwhxmCpmwnSzy4TGcBaNMUM
-	 2Pk90jQtZnxhS02R2faTN31pPgsEWZEqpoewaQq3BUzsKn3fHHaeYJekvp52Rhlszl
-	 g7Xt4IC8Kxa5Je2Tp/7MWanJ45Ga7H1kAatP3v3d92lCvjMIbJMIFRBflVu/RVk2MX
-	 bXF5/QbcjFjzRGnnqsCY67R7CSYNtE2zw/sX6pWudxHgvfks5dSKCyUAM3k4BHhiwj
-	 ms4oxsUSeiXVJfvBTfUQaiVzF1i/uwPBCNrWJlSN01RB8i0R+5WxEeKopP8vr4RwGF
-	 CHUL19Fi+3ZiQ==
-Message-ID: <df592920-cdf3-40fe-8357-2fbdfc0afd78@kernel.org>
-Date: Mon, 17 Mar 2025 10:00:19 +0100
+	s=k20201202; t=1742202077;
+	bh=pbajq5xRwv39EgJDJWaG9rD/vd/ESA5/w3PRxNpg0OM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=T59YP1aFdj0777b/zNMlZJ4nRYfFwIKAb6OA8Znex87gMq5UObpggv34Fx1o1+yHv
+	 IqpC7xfvpIRmd9jtAOBemd0xXdq1re9QJ2QI1GvSpGakiG+0Rm2wPy0jr60S5Ef/JV
+	 tPS1Y2LRyxTubmuGm7Ygvb1pIwQmHc9gtmJLQ/XnZ6J4W7B48hN71LQpBTFMI5V0px
+	 qC0NL6OoWeSqqHowkfLUdDcz1vk/2vrB5lk5o0GTzbqOOjSCRqKzLzE8essgE9+I3N
+	 BOe/niJPiAkPRK+5STJkIGmnZZHOB3tJyBx48SWXJNYp73kJ6q3XLmU+21VjIrTK58
+	 RqyNyqtMcSsjw==
+Date: Mon, 17 Mar 2025 10:01:12 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: Borislav Petkov <bp@alien8.de>
+Cc: Uros Bizjak <ubizjak@gmail.com>, x86@kernel.org,
+	linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH] x86/asm: Use asm_inline() instead of asm() in
+ __untagged_addr()
+Message-ID: <Z9fk2NMBRHB9Eu5h@gmail.com>
+References: <20250314093111.654359-1-ubizjak@gmail.com>
+ <20250314112504.GBZ9QSEL1hgjp376ey@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v2 3/3] dt-bindings: mailbox: mtk,vcp-mbox: add mtk
- vcp-mbox document
-To: Jjian Zhou <jjian.zhou@mediatek.com>,
- Jassi Brar <jassisinghbrar@gmail.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- Project_Global_Chrome_Upstream_Group@mediatek.com,
- Chen-Yu Tsai <wenst@chromium.org>
-References: <20250317083822.891-1-jjian.zhou@mediatek.com>
- <20250317083822.891-4-jjian.zhou@mediatek.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20250317083822.891-4-jjian.zhou@mediatek.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250314112504.GBZ9QSEL1hgjp376ey@fat_crate.local>
 
-On 17/03/2025 09:38, Jjian Zhou wrote:
-> This patch adds document for mediatek vcp mbox.
+
+* Borislav Petkov <bp@alien8.de> wrote:
+
+> On Fri, Mar 14, 2025 at 10:30:55AM +0100, Uros Bizjak wrote:
+> > Use asm_inline() to instruct the compiler that the size of asm()
+> > is the minimum size of one instruction, ignoring how many instructions
+> > the compiler thinks it is. ALTERNATIVE macro that expands to several
+> > pseudo directives causes instruction length estimate to count
+> > more than 20 instructions.
+> > 
+> > bloat-o-meter reports minimal code size increase
 > 
-> Signed-off-by: Jjian Zhou <jjian.zhou@mediatek.com>
-> ---
->  .../bindings/mailbox/mtk,mt8196-vcp-mbox.yaml | 49 +++++++++++++++++++
+> If you see an increase and *no* *other* *palpable* improvement, you 
+> don't send it. It is that simple.
 
-Please use subject prefixes matching the subsystem. You can get them for
-example with `git log --oneline -- DIRECTORY_OR_FILE` on the directory
-your patch is touching. For bindings, the preferred subjects are
-explained here:
-https://www.kernel.org/doc/html/latest/devicetree/bindings/submitting-patches.html#i-for-patch-submitters
+Sorry, but you wouldn't be saying that eliminating function calls is 
+not a 'palpable improvement', had you ever profiled a recent kernel on 
+a real system, on modern CPUs ... :-/
 
->  1 file changed, 49 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/mailbox/mtk,mt8196-vcp-mbox.yaml
+The sad reality is that the top profile is dominated by function call + 
+return overhead due to CPU bug mitigation workarounds that create per 
+function call overhead:
 
-Filename based on compatible. You already got this comment. Copy paste
-your filename here:
+ Overhead  Shared Object               Symbol
+   4.57%  [kernel]                    [k] retbleed_return_thunk <============= !!!!!!!!
+   4.40%  [kernel]                    [k] unmap_page_range
+   4.31%  [kernel]                    [k] _copy_to_iter
+   2.46%  [kernel]                    [k] memset_orig
+   2.31%  libc.so.6                   [.] __cxa_finalize
 
-<here goes filename>
+That retbleed_return_thunk overhead gets avoided every time we inline a 
+simple enough function.
 
-and here your compatible:
+But GCC cannot always do proper inlining decisions due to our 
+complicated ALTERNATIVE macro constructs confusing the GCC inliner:
 
-<here goes compatible>
+  > > ALTERNATIVE macro that expands to several pseudo directives causes 
+  > > instruction length estimate to count more than 20 instructions.
+                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Are the the same?
+Note how the asm_inline() compiler feature was added by GCC at the 
+kernel community's request to address such issues. (!)
 
-Best regards,
-Krzysztof
+So for those reasons, in my book, eliminating a function call for 
+really simple single instruction inlines is an unconditional 
+improvement that doesn't require futile performance measurements - it 
+'only' requires assembly level code generation analysis in the 
+changelog.
+
+The reason is that requiring measurable effects for really small 
+inlining changes is pretty much impossible in practice. I know, because 
+I tried, and I'm good at measuring such things and I have the hardware 
+to do it. Yet the per function call overhead demonstrated above in the 
+profile is very much real and should not be handwaved away.
+
+Note that this policy doesn't apply to other inlining decisions, only 
+to single-instruction inline functions.
+
+Also, having said all that, for this particular patch I'd still like to 
+see a bit more GCC code generation analysis in this particular 
+changelog: could you please cite a single relevant, representative 
+example before/after assembly code section that demonstrates the 
+effects of the inlined asm versus function call version, including the 
+function that gets called?
+
+I'm asking for that because sometimes single instructions can still 
+have a halo of half a dozen of instructions that set them up or 
+transform their results, so sometimes having a function call is the 
+better option. Not all single-instruction asm() statements are 'simple' 
+in praxis - but looking at the code generation will very much tell us 
+whether it is.
+
+Thanks,
+
+	Ingo
 
