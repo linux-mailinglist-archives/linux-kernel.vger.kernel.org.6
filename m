@@ -1,110 +1,118 @@
-Return-Path: <linux-kernel+bounces-564962-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564960-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C450DA65DDD
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 20:25:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 854C2A65DD0
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 20:21:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3D7819A04D8
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 19:25:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B663919A0193
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 19:22:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F08851E833B;
-	Mon, 17 Mar 2025 19:25:35 +0000 (UTC)
-Received: from shelob.surriel.com (shelob.surriel.com [96.67.55.147])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ECDC1E833E;
+	Mon, 17 Mar 2025 19:21:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="l+YImy4a"
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E698450EE
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 19:25:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.67.55.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F04E15573A;
+	Mon, 17 Mar 2025 19:21:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742239535; cv=none; b=nZcxshVpRLnuNpjVPxQa4rvkj8/4mnxBDFNoIPPCgkfKXd27NNyhO3bTURXeoJn/IbiB06rHiOM1XM3yus6VFKQwYW5JQj/KERZAtBwJpMRC85D2KTsPRxn0qghgOnwQLF7wgorDn+Y8rO0dltx4K2HSBa8beIPKw9zd2ZBkbyk=
+	t=1742239310; cv=none; b=M/0TCSA/fhcyLvOp+7gnpKc57cPIivTn2tT2R/DTNncfjwhKZxiQgfr9RjpvCE2c3vcmW37fQH8fnHimfR6tobwWlgMor65UsCc61tqDUt+6oDRLBaFF4oZDcSpQRHYXmq22sUn2K65aS8Z658PF1b2LXTAMdbgYmnVhoH0g7pI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742239535; c=relaxed/simple;
-	bh=JOUycSmepedZyreMKBcy/aJBF9qR36IXmmYVz6OHokc=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=YV5FI52CzIzFTwRH/Zq9FfE0MX9SeNwbXUdXwozRecgurdIXPLsAod//0u+eBjQB05TKDTycyeGZJuvpxk9jOZZfnO9IFVf7vOW5PGKxCh/GUNHpP23NlQS4JLM4jf3PrtuTHdQabKpmVeYSF1fUBFVx66vzRb+1WTdUCfourUM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com; spf=pass smtp.mailfrom=shelob.surriel.com; arc=none smtp.client-ip=96.67.55.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shelob.surriel.com
-Received: from fangorn.home.surriel.com ([10.0.13.7])
-	by shelob.surriel.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.97.1)
-	(envelope-from <riel@shelob.surriel.com>)
-	id 1tuG0T-000000001DY-1CqJ;
-	Mon, 17 Mar 2025 15:20:13 -0400
-Message-ID: <cb76a32131dd10dee4f6097fd349dd3d5786eee6.camel@surriel.com>
-Subject: Re: [PATCH] mm: Optimize TLB flushes during page reclaim
-From: Rik van Riel <riel@surriel.com>
-To: Vinay Banakar <vny@google.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- akpm@linux-foundation.org, 	willy@infradead.org, mgorman@suse.de, Wei Xu
- <weixugc@google.com>, Greg Thelen	 <gthelen@google.com>
-Date: Mon, 17 Mar 2025 15:20:13 -0400
-In-Reply-To: <CALf+9YdLB3U7cjY8xi0PQjqPJ_YKformTZFQ4ZxXo_ZzsEwCog@mail.gmail.com>
-References: 
-	<CALf+9Yc3WjbG89uRWiDC_qYshJ5z_9WCrbEJe42Vbv+gJjs26g@mail.gmail.com>
-	 <135b6d6fad6083bfd11a9dc98fad69756b51c59d.camel@surriel.com>
-	 <CALf+9YdLB3U7cjY8xi0PQjqPJ_YKformTZFQ4ZxXo_ZzsEwCog@mail.gmail.com>
-Autocrypt: addr=riel@surriel.com; prefer-encrypt=mutual;
- keydata=mQENBFIt3aUBCADCK0LicyCYyMa0E1lodCDUBf6G+6C5UXKG1jEYwQu49cc/gUBTTk33A
- eo2hjn4JinVaPF3zfZprnKMEGGv4dHvEOCPWiNhlz5RtqH3SKJllq2dpeMS9RqbMvDA36rlJIIo47
- Z/nl6IA8MDhSqyqdnTY8z7LnQHqq16jAqwo7Ll9qALXz4yG1ZdSCmo80VPetBZZPw7WMjo+1hByv/
- lvdFnLfiQ52tayuuC1r9x2qZ/SYWd2M4p/f5CLmvG9UcnkbYFsKWz8bwOBWKg1PQcaYHLx06sHGdY
- dIDaeVvkIfMFwAprSo5EFU+aes2VB2ZjugOTbkkW2aPSWTRsBhPHhV6dABEBAAG0HlJpayB2YW4gU
- mllbCA8cmllbEByZWRoYXQuY29tPokBHwQwAQIACQUCW5LcVgIdIAAKCRDOed6ShMTeg05SB/986o
- gEgdq4byrtaBQKFg5LWfd8e+h+QzLOg/T8mSS3dJzFXe5JBOfvYg7Bj47xXi9I5sM+I9Lu9+1XVb/
- r2rGJrU1DwA09TnmyFtK76bgMF0sBEh1ECILYNQTEIemzNFwOWLZZlEhZFRJsZyX+mtEp/WQIygHV
- WjwuP69VJw+fPQvLOGn4j8W9QXuvhha7u1QJ7mYx4dLGHrZlHdwDsqpvWsW+3rsIqs1BBe5/Itz9o
- 6y9gLNtQzwmSDioV8KhF85VmYInslhv5tUtMEppfdTLyX4SUKh8ftNIVmH9mXyRCZclSoa6IMd635
- Jq1Pj2/Lp64tOzSvN5Y9zaiCc5FucXtB9SaWsgdmFuIFJpZWwgPHJpZWxAc3VycmllbC5jb20+iQE
- +BBMBAgAoBQJSLd2lAhsjBQkSzAMABgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRDOed6ShMTe
- g4PpB/0ZivKYFt0LaB22ssWUrBoeNWCP1NY/lkq2QbPhR3agLB7ZXI97PF2z/5QD9Fuy/FD/jddPx
- KRTvFCtHcEzTOcFjBmf52uqgt3U40H9GM++0IM0yHusd9EzlaWsbp09vsAV2DwdqS69x9RPbvE/Ne
- fO5subhocH76okcF/aQiQ+oj2j6LJZGBJBVigOHg+4zyzdDgKM+jp0bvDI51KQ4XfxV593OhvkS3z
- 3FPx0CE7l62WhWrieHyBblqvkTYgJ6dq4bsYpqxxGJOkQ47WpEUx6onH+rImWmPJbSYGhwBzTo0Mm
- G1Nb1qGPG+mTrSmJjDRxrwf1zjmYqQreWVSFEt26tBpSaWsgdmFuIFJpZWwgPHJpZWxAZmIuY29tP
- okBPgQTAQIAKAUCW5LbiAIbIwUJEswDAAYLCQgHAwIGFQgCCQoLBBYCAwECHgECF4AACgkQznneko
- TE3oOUEQgAsrGxjTC1bGtZyuvyQPcXclap11Ogib6rQywGYu6/Mnkbd6hbyY3wpdyQii/cas2S44N
- cQj8HkGv91JLVE24/Wt0gITPCH3rLVJJDGQxprHTVDs1t1RAbsbp0XTksZPCNWDGYIBo2aHDwErhI
- omYQ0Xluo1WBtH/UmHgirHvclsou1Ks9jyTxiPyUKRfae7GNOFiX99+ZlB27P3t8CjtSO831Ij0Ip
- QrfooZ21YVlUKw0Wy6Ll8EyefyrEYSh8KTm8dQj4O7xxvdg865TLeLpho5PwDRF+/mR3qi8CdGbkE
- c4pYZQO8UDXUN4S+pe0aTeTqlYw8rRHWF9TnvtpcNzZw==
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
+	s=arc-20240116; t=1742239310; c=relaxed/simple;
+	bh=NgHB5DloDHIam4+aHZexc6F7ttmxCu/XVF8xokkwquA=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=n38/uCmGKkWr2SiDXbteIgOStT+QS1Dba8tGWzZpPlSiMoDQy3ZbvMscyus4qYeDC5Rt4HoQAEzeVv78ZiwKA7+p8pRfpsF1wjEpOnWImaMTZhxFLXtYDpM66fKTewtRE3Q8gJCVQJI2GKYniB3AT4AcR+nV4i+L4RpoPd+oJDQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=l+YImy4a; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id 49DA4219D8;
+	Mon, 17 Mar 2025 20:21:40 +0100 (CET)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id Kxohck1h9amb; Mon, 17 Mar 2025 20:21:37 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1742239297; bh=NgHB5DloDHIam4+aHZexc6F7ttmxCu/XVF8xokkwquA=;
+	h=From:Date:Subject:To:Cc;
+	b=l+YImy4aQlQv0I0Anwet+lGQrE6VSpB9qlQteehdh6qiyDn79CnMF5Ds5e72K7mPw
+	 UGtyf8fu0tGm6VprKTvPEkFOS9f+qePsu7X9QnkHqgIaFsmPhZOkgyF3rHbJvAYU6X
+	 +psKT7kDIubpNdRF73kJWfeUgB0SYTmissoO+CAINUguxqWCf3ysv5SOzs3fjjVHPC
+	 DQRmyHpwWaGdHLQAk5MC2UEzu1ZXfmwinornAmh+fncD9C/OUn5VMpHK4FNli+WGIT
+	 XZ8vGfcU7kdQ1JOfqDTsUlOPtaTWtQ5H2JYb3YqZxr+3fCVQnHdLu2qtm10XIuMyl+
+	 7yIxWUnHc89Mw==
+From: Kaustabh Chakraborty <kauschluss@disroot.org>
+Date: Tue, 18 Mar 2025 00:50:51 +0530
+Subject: [PATCH RESEND] dt-bindings: gpu: arm,mali-midgard: add
+ exynos7870-mali compatible
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Sender: riel@surriel.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250318-exynos7870-gpu-v1-1-084863f28b5c@disroot.org>
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: Sergey Lisov <sleirsgoevy@gmail.com>, dri-devel@lists.freedesktop.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Kaustabh Chakraborty <kauschluss@disroot.org>
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1742239290; l=1463;
+ i=kauschluss@disroot.org; s=20250202; h=from:subject:message-id;
+ bh=NgHB5DloDHIam4+aHZexc6F7ttmxCu/XVF8xokkwquA=;
+ b=5AWkfH6JBT7GtIr30t5ZeuidQwBQJjvOsSNHSN1mjAhWajpxjQo3OHQF3a7zfzfDPKi5Yb/CM
+ NsBOKLPJ/OjBRklcXN8mQaUszht7FKeYS3IovG+S9fSNA6UYIhWyfFQ
+X-Developer-Key: i=kauschluss@disroot.org; a=ed25519;
+ pk=h2xeR+V2I1+GrfDPAhZa3M+NWA0Cnbdkkq1bH3ct1hE=
 
-On Thu, 2025-01-23 at 13:16 -0600, Vinay Banakar wrote:
->=20
-> We have two options:
-> 1. Keep the current logic where TLB flush batching varies by caller
-> 2. Enforce consistent 512-page batching in shrink_folio_list() and
-> also convert to folio_batch as suggested by Matthew
->=20
+Exynos7870 SoC uses the ARM Mali T830 GPU, document its compatible
+string with the appropriate fallback. The T830 compatible is already
+defined in the panfrost driver, but was commented out as it was unused.
 
-Given that your code is correct, and only the comment
-was a little misleading, would you be open to resending
-your patch without the comments about "PMD level"
-batching?
+Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
+---
+This patch series is a part of Exynos7870 upstreaming.
+---
+ Documentation/devicetree/bindings/gpu/arm,mali-midgard.yaml | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-It would be really nice to get this optimization into
-the kernel.
+diff --git a/Documentation/devicetree/bindings/gpu/arm,mali-midgard.yaml b/Documentation/devicetree/bindings/gpu/arm,mali-midgard.yaml
+index 0801da33a385b42fa3a7ff367fafee54b1aae458..48daba21a890d24c02383672518bbd5cd7885d16 100644
+--- a/Documentation/devicetree/bindings/gpu/arm,mali-midgard.yaml
++++ b/Documentation/devicetree/bindings/gpu/arm,mali-midgard.yaml
+@@ -45,12 +45,15 @@ properties:
+               - samsung,exynos7-mali
+           - const: samsung,exynos5433-mali
+           - const: arm,mali-t760
++      - items:
++          - enum:
++              - samsung,exynos7870-mali
++          - const: arm,mali-t830
+       - items:
+           - enum:
+               - rockchip,rk3399-mali
+           - const: arm,mali-t860
+ 
+-          # "arm,mali-t830"
+           # "arm,mali-t880"
+ 
+   reg:
 
-If you don't have the time currently, I would also be
-happy to clean up the patch and get it to Andrew.
-Just let me know.
+---
+base-commit: df4b2bbff898227db0c14264ac7edd634e79f755
+change-id: 20250203-exynos7870-gpu-ccb918e23b2e
 
-kind regards,
+Best regards,
+-- 
+Kaustabh Chakraborty <kauschluss@disroot.org>
 
-Rik
---=20
-All Rights Reversed.
 
