@@ -1,87 +1,106 @@
-Return-Path: <linux-kernel+bounces-564916-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05138A65CE5
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 19:39:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BB05A65D0F
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 19:44:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A6FE3BCAA3
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 18:39:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 582683AF9C3
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 18:43:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 447E81DE2BF;
-	Mon, 17 Mar 2025 18:39:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73DB91DD539;
+	Mon, 17 Mar 2025 18:43:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jGuuttoH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="UZ+Wjvl/"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 979CDA47;
-	Mon, 17 Mar 2025 18:39:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6025DA47
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 18:43:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742236787; cv=none; b=R3gRkiI2CgWnBzk4UkSYaFUzaKBzVYaifSwLNK4dqfeWbTtk+yuPiWwL1UdLAbwcje/8X56EWHqgMGBt/SOzqugX0un61cv/xQvRafm4DkbYVR6DvNWzAMpYDcPaXWZPsaxZfbIdvQDY14H4WUXWKpZIp1BUoHuM1wQMD2xfvDc=
+	t=1742236992; cv=none; b=rZwonOlPZASz6MqbV3ByfJp91lJ4fQkGiwOZEdXgHpbjgfKCZ3iNdIucb2D+UDU4mfyuwCgagkBOxByX9C1oi0V4cF5v3gvTaeKHPQE/bYTmCXMLBSmlg4b/iDHysZkYUtr4Xb3DYRZ0fFQsXqz6iSwaU7+UOXau1zvNJeRqu8k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742236787; c=relaxed/simple;
-	bh=vUX45IpvzkZ02AKd/IPVjrW9oSbaLGh6sBQvAFq19HE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X1n+fY4yIoIc6s1uXvAL/Cd3h4Ka3M5t8K22CB51WJGpFtoi87J69A38ONRbr1LYK5Kyatd9Tnu/YtDoLTdemwCgWiraQyNT1YddFbR1bRdV71WPsMetQWe+rMLr/WUtg2WpXMwhVpwnvK2KuUWTv0aNV2xbkofHpfr0hP+yV4w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jGuuttoH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD18EC4CEE3;
-	Mon, 17 Mar 2025 18:39:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742236787;
-	bh=vUX45IpvzkZ02AKd/IPVjrW9oSbaLGh6sBQvAFq19HE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jGuuttoHaD6RxL8XyLcH8U/Eze2zBL1LfSMf4UoEBLdE1Qb6R6B+I2ir38qrpN8RT
-	 NJUKQcY7FEya0MNZQGnwmHFoiGecAxvcYA/FsGVW5H7Xl8txUn7D7UGnjhbh53evO1
-	 dVo44wh+dEkVYp2d0kdPWEXhsV9UBU0oIM3+VTeB/eMfIFlf9f5ZCCIgNkbSPTSrNt
-	 Z0G/pZd1lWIzCw1yBrVcs+dGv9/OW8cUYsXSxn6UGyOKjkxE5JG3IFO2WJYorL0rus
-	 bQd8mX53MU3/oIWREW1Zev0HsYRHB8AE3eFqjvygceJfN92Fddnp87GnEbmp+QsDC7
-	 6EEdwMZf75HWw==
-Date: Mon, 17 Mar 2025 08:39:45 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Chen Linxuan <chenlinxuan@uniontech.com>
-Cc: Josef Bacik <josef@toxicpanda.com>, Jens Axboe <axboe@kernel.dk>,
-	Wen Tao <wentao@uniontech.com>, cgroups@vger.kernel.org,
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RESEND v2] blk-cgroup: improve policy registration error
- handling
-Message-ID: <Z9hscRtPa76fdank@slm.duckdns.org>
-References: <3E333A73B6B6DFC0+20250317022924.150907-1-chenlinxuan@uniontech.com>
+	s=arc-20240116; t=1742236992; c=relaxed/simple;
+	bh=/fwDvjGTmqCM1OlkPLVoWJP7tYxigoJaZ1g/RajmrWQ=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=Ax/lIdjXupnsnu0YW333IRYa3hBXOt4ZS6MjgNa/4vVt+JQEq6r7Z+oLpXSd8EGcdDy2M+A0tdebtL1a9PVyxgC/0ZsbgKhtqEYSNljEmmfccSDpJuqteSZtKWLxV4+keknkJFYKcO3zRH7L8Epl0BU9qs+ivoufMlUvI2NNwpo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=UZ+Wjvl/; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [127.0.0.1] ([76.133.66.138])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 52HIgWYP665151
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Mon, 17 Mar 2025 11:42:33 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 52HIgWYP665151
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025021701; t=1742236953;
+	bh=REDJtYGbH5GtvkMLVZUaW6QeOxOHTGnsBXTjcOzTpbs=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=UZ+Wjvl/XONt/FW7XbLTyjrG3Wo219jB5MuGIaszG6G2C0a/X0Ki9fzvGhxh5TJVN
+	 AOO2cp9rwopikKgogbJjpLyciH2aBd9mf9TQdkfs5E4YUqcqjsNOFEKMo9lzhYYzmI
+	 vVN8evmNX/oj1AyV2KEF7fSGh2zTSB6eqplAHkdmXoHsFTfECmtqK+xbFik5EQ2OYH
+	 qBqWGTrDhsl6hmo8G8bZD1vU/mczCh5ONqn6qsiEv7+Hccs29tGljRugNaQbf82GGM
+	 xz4x5SYE+CNwnZP0MsILZOt/hmGLLQpO5e0H3Im12oWONdJXy2ra7hOs0vpti5SdnY
+	 Eemip5IbnqwDA==
+Date: Mon, 17 Mar 2025 11:42:30 -0700
+From: "H. Peter Anvin" <hpa@zytor.com>
+To: "Guilherme G. Piccoli" <gpiccoli@igalia.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+CC: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+        dave.hansen@linux.intel.com, kernel@gpiccoli.net,
+        kernel-dev@igalia.com
+Subject: =?US-ASCII?Q?Re=3A_=5BPATCH=5D_x86/tsc=3A_Add_debugfs_ent?=
+ =?US-ASCII?Q?ry_to_mark_TSC_as_unstable_after_boot?=
+User-Agent: K-9 Mail for Android
+In-Reply-To: <1238b1d0-275c-9117-a2e3-5e7684404980@igalia.com>
+References: <20250226132733.58327-1-gpiccoli@igalia.com> <1238b1d0-275c-9117-a2e3-5e7684404980@igalia.com>
+Message-ID: <EA2BAF2F-3F8E-4F81-B71C-7B97677216C9@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3E333A73B6B6DFC0+20250317022924.150907-1-chenlinxuan@uniontech.com>
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Mar 17, 2025 at 10:29:24AM +0800, Chen Linxuan wrote:
-> This patch improve the returned error code of blkcg_policy_register().
-> 
-> 1. Move the validation check for cpd/pd_alloc_fn and cpd/pd_free_fn
->    function pairs to the start of blkcg_policy_register(). This ensures
->    we immediately return -EINVAL if the function pairs are not correctly
->    provided, rather than returning -ENOSPC after locking and unlocking
->    mutexes unnecessarily.
-> 
->    Those locks should not contention any problems, as error of policy
->    registration is a super cold path.
-> 
-> 2. Return -ENOMEM when cpd_alloc_fn() failed.
-> 
-> Co-authored-by: Wen Tao <wentao@uniontech.com>
-> Signed-off-by: Wen Tao <wentao@uniontech.com>
-> Signed-off-by: Chen Linxuan <chenlinxuan@uniontech.com>
+On March 17, 2025 7:35:45 AM PDT, "Guilherme G=2E Piccoli" <gpiccoli@igalia=
+=2Ecom> wrote:
+>On 26/02/2025 10:27, Guilherme G=2E Piccoli wrote:
+>> Right now, we can force the TSC to be marked as unstable through
+>> boot parameter=2E There are debug / test cases though in which would
+>> be preferable to simulate the clocksource watchdog behavior, i=2Ee=2E,
+>> marking TSC as unstable during the system run=2E Some paths might
+>> change, for example: the tracing clock is auto switched to global
+>> if TSC is marked as unstable on boot, but it could remain local if
+>> TSC gets marked as unstable after tracing initialization=2E
+>>=20
+>> Hence, the proposal here is to have a simple debugfs file that
+>> gets TSC marked as unstable when written=2E
+>>=20
+>> Signed-off-by: Guilherme G=2E Piccoli <gpiccoli@igalia=2Ecom>
+>> ---
+>>  arch/x86/kernel/tsc=2Ec | 22 ++++++++++++++++++++++
+>>  1 file changed, 22 insertions(+)
+>
+>Hi folks, gentle ping about this one - any suggestions?
+>Cheers,
+>
+>
+>Guilherme
 
-Acked-by: Tejun Heo <tj@kernel.org>
+To be honest I don't think this belongs in debugfs; rather it belongs in s=
+ysfs=2E
 
-Thanks.
+Debugfs should not be necessarily in serious production systems =E2=80=93 =
+it is way too large of an attack surface, which is a very good reason why i=
+t is its own filesystem =E2=80=93 but if this is a real issue on hardware t=
+hen it may be needed=2E
 
--- 
-tejun
+   -hpa
 
