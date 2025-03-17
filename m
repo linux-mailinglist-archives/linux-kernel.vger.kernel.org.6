@@ -1,163 +1,147 @@
-Return-Path: <linux-kernel+bounces-563686-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563687-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 350FEA646AE
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:10:19 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1351A646AA
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:10:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 08A551880149
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 09:09:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A86127A823B
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 09:09:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 087BF2222D5;
-	Mon, 17 Mar 2025 09:09:26 +0000 (UTC)
-Received: from mxct.zte.com.cn (mxct.zte.com.cn [183.62.165.209])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20850224242;
+	Mon, 17 Mar 2025 09:09:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="D5BSSkU7"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23A53221F15;
-	Mon, 17 Mar 2025 09:09:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=183.62.165.209
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BA8E2222DF
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 09:09:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742202565; cv=none; b=C+je3R5wm8KbB+i7yzu4aJx/eYTMl16zg6+3GFFq1kjN+/ukOEhW1try/4b9qH0UDw3LHK0HxhdCjUKb9TOjntXr/Q9dYowfz2aG/uBGPOx+LGrRu4qP6aLXQed+CZovgPj8ahbRTP8d0QKHogbR2vHo+2AzBlUsTUjLtcmc0q8=
+	t=1742202568; cv=none; b=n6nOEN2lZlGSVkyYm+H9TTOaufQvP9CUujCo543WG1GoMakflw7ake8t/EGT25mEqE5ZKZ65QXlCtGp2XDo4oOcE39Gp4zorXp/+MaM7USuYkGbviKobnShBSasQ7F6KKSdq/K7n/ruVFiQoyjtHzcRNBS8b+8oPddPr6teiMew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742202565; c=relaxed/simple;
-	bh=A58IKkT2v4JxafP4IjCwILzRT1z9Vw+XfcSbYNDROaE=;
-	h=Date:Message-ID:In-Reply-To:References:Mime-Version:From:To:Cc:
-	 Subject:Content-Type; b=bIdubHFPn+dXoe9wwuyckKE2gLLvTZK7XjFOZq59dglcZdznMO7rR/aRLhwFaRrt76lRXu58MszQnv/S39qx2l/zMX8oToos9Fi7gyQNlgsb8njEhcKeIlI+smtp42U+L2eWP56PjoEbFFk+pJNw/oGsVqTm3j3QKcISf7fbJHE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=183.62.165.209
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
-Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mxct.zte.com.cn (FangMail) with ESMTPS id 4ZGTgH3yMRz501gV;
-	Mon, 17 Mar 2025 17:09:15 +0800 (CST)
-Received: from xaxapp02.zte.com.cn ([10.88.97.241])
-	by mse-fl1.zte.com.cn with SMTP id 52H98xbl059278;
-	Mon, 17 Mar 2025 17:08:59 +0800 (+08)
-	(envelope-from tang.dongxing@zte.com.cn)
-Received: from mapi (xaxapp01[null])
-	by mapi (Zmail) with MAPI id mid32;
-	Mon, 17 Mar 2025 17:09:02 +0800 (CST)
-Date: Mon, 17 Mar 2025 17:09:02 +0800 (CST)
-X-Zmail-TransId: 2af967d7e6ae63b-29978
-X-Mailer: Zmail v1.0
-Message-ID: <20250317170902154iQh7_gBiO8KjCrFrhnAqn@zte.com.cn>
-In-Reply-To: <e0204a28-7e3a-48f9-aea9-20b35294ada6@kernel.org>
-References: 20250317155102808MZdMkiovw52X0oY7n47wI@zte.com.cn,e0204a28-7e3a-48f9-aea9-20b35294ada6@kernel.org
+	s=arc-20240116; t=1742202568; c=relaxed/simple;
+	bh=UGeKxti/Rtl1+ILDl2QXu4lQBMO2Zbk90augSVkNHLY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qBJ5z5mDViw0pOVPf0Ys+A81hihqiAxVRH4GhHyLlsj+TA6zdTclAcNZzfxDWhcF0XlUbWByGC/zsQdxhL9ihQX7aP0Ebz+PkSec8m1QJHKovkKDVyqh6HuXgPbmIbvJIL8SK/gymHvvczD0f+2KpI+7bNS9geqNRYExulZHtug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=D5BSSkU7; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1742202564;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Bww8JOfOpzHjN4KnEpLdpIzThEx7K4HigFEfHRKZmPk=;
+	b=D5BSSkU7t8CBNmrFXxsyUPMDtyOsyxbVzw3XAhF0DLwZgtUmFh3aw3rulyvVAO7YSFYTZ1
+	VFopZJAlGKoltz8BemaPp+dayWd1gELXj7XHhbXI9cPWph/jdHxmseTfKc99HxmCl0lL4L
+	+s3EaFfd2CDvLJA2ic7GsFT3nAd8ehk=
+Received: from mail-ed1-f70.google.com (mail-ed1-f70.google.com
+ [209.85.208.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-397-NunBFmFwP8u8d1vu6rIViw-1; Mon, 17 Mar 2025 05:09:23 -0400
+X-MC-Unique: NunBFmFwP8u8d1vu6rIViw-1
+X-Mimecast-MFC-AGG-ID: NunBFmFwP8u8d1vu6rIViw_1742202562
+Received: by mail-ed1-f70.google.com with SMTP id 4fb4d7f45d1cf-5d9e4d33f04so3580421a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 02:09:23 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742202562; x=1742807362;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Bww8JOfOpzHjN4KnEpLdpIzThEx7K4HigFEfHRKZmPk=;
+        b=oChM7WORe+PkwTa0qBXIlQVi58jeoMHTQ5ZqN8wdIMCQ1mBpuimN3IHtjFKpKUTQk0
+         qT513pYCBtYosSRUhuY1cBO05H9KUd/n7guDmEoGfXYCjxwZBrpxQfiWxRCY2MITVitf
+         uohBYiMhuOLGG/who/UI96SRYzlTeQ//qrCCzBmDRHHGoxdUKl8FV7wqVJ6Rt5PhU53L
+         BUXLH8OCvQzvhUU0pwzs7vfUcqH23cO2XBw7Gb/AqYEiUeBkwRORmaEDiIB2X5v87clj
+         v5WOMtl9xWrQVKDQ4HSZMONhz56RvmMNPXvaDCdw4L9YVwllTgFkM15S8GHNuZAzVB2l
+         m2eg==
+X-Forwarded-Encrypted: i=1; AJvYcCUeJz/XRCdzPROJe3TKW7UrSTI4qTdkm0wzo6w01Yl0hMIp/JnjtBkq74xsRYD5kfJLNMoSj8dXIAAG/XI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwElMnBMq6RNG5QrQza3D57alaF1rNlf9N+k0WbuCbVTta1gllR
+	sBhjdGXrUAHb0R50EWR0MaveBlZ0iYzRjVWS0GB9a2Gp7YGXx5TO72ehgJWH6+KXqJM7SWqEOVJ
+	KxW13rn0oIfNkwa15SxoBtZl9/b3554KopxwLQ9vAjEnvJyQGkYA7xvogW7HkPA==
+X-Gm-Gg: ASbGncsTn9v6cPMM0z3S5xU/aAKeCIdIpuFfxyuYBgR9Fw24Ue+agJQjQJoCMIjl7/2
+	UU+NvhgqnVWqgLX2BWwwl06YL031otVSQPuG1p2PGPdr8EYCNaEFd15TKPnL8ICq0AiNeqCS/u8
+	rGXmIwVVlSJbodU6dZcMG6ANO949EFMddGZYaaTf+Msk5Zp86g92lFPIAfxXc5LxBtu+4UwNWau
+	AO1vz3rWgLJghi3pXyHfutaV3lx88jNGe8PbA9A3+gPVAqgYnWB/agvgUOKh9XzPHAPuw7ANDLc
+	ClCSbvUa6mDLUgs4GJk=
+X-Received: by 2002:a17:907:7d87:b0:ac3:26fb:f420 with SMTP id a640c23a62f3a-ac3303715c9mr1316675566b.42.1742202562165;
+        Mon, 17 Mar 2025 02:09:22 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFbzLKOvU6u087cvw4eQbB3+jMOWQmFWk87CZXwlrr7X5z5g/l5JBC7ADKxnGSg2zX1KEVA2A==
+X-Received: by 2002:a17:907:7d87:b0:ac3:26fb:f420 with SMTP id a640c23a62f3a-ac3303715c9mr1316673666b.42.1742202561824;
+        Mon, 17 Mar 2025 02:09:21 -0700 (PDT)
+Received: from [10.40.98.122] ([78.108.130.194])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac314a3d3d7sm634405166b.132.2025.03.17.02.09.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 17 Mar 2025 02:09:21 -0700 (PDT)
+Message-ID: <9ca06bfe-84fc-44fb-bd32-c5914ab553d8@redhat.com>
+Date: Mon, 17 Mar 2025 10:09:20 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-From: <tang.dongxing@zte.com.cn>
-To: <krzk@kernel.org>
-Cc: <davem@davemloft.net>, <feng.wei8@zte.com.cn>, <shao.mingyin@zte.com.cn>,
-        <xie.ludan@zte.com.cn>, <edumazet@google.com>, <kuba@kernel.org>,
-        <pabeni@redhat.com>, <horms@kernel.org>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <yang.guang5@zte.com.cn>,
-        <yang.yang29@zte.com.cn>, <ye.xingchen@zte.com.cn>,
-        <xu.xin16@zte.com.cn>
-Subject: =?UTF-8?B?UmU6IFtQQVRDSF0gbmV0OiBhdG06IHVzZSBzeXNmc19lbWl0X2F0KCkgaW5zdGVhZCBvZiBzY25wcmludGYoKQ==?=
-Content-Type: multipart/mixed;
-	boundary="=====_001_next====="
-X-MAIL:mse-fl1.zte.com.cn 52H98xbl059278
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 67D7E6BB.000/4ZGTgH3yMRz501gV
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/5] drm: panel-orientation-quirks: Add OneXPlayer X1 Mini
+ (AMD) quirk
+To: Antheas Kapenekakis <lkml@antheas.dev>, linux-kernel@vger.kernel.org,
+ linux-input@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>
+References: <20250222164321.181340-1-lkml@antheas.dev>
+ <20250222164321.181340-3-lkml@antheas.dev>
+Content-Language: en-US, nl
+From: Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <20250222164321.181340-3-lkml@antheas.dev>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+
+Hi,
+
+On 22-Feb-25 17:43, Antheas Kapenekakis wrote:
+> The OneXPlayer X1 mini features a 2k 8.8 display with a portrait
+> orientation. Add a quirk to set the panel orientation to portrait
+> mode. There is no Intel variant.
+> 
+> Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
+
+Thanks, patch looks good to me:
+
+Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+
+Regards,
+
+Hans
 
 
-
---=====_001_next=====
-Content-Type: multipart/related;
-	boundary="=====_002_next====="
-
-
---=====_002_next=====
-Content-Type: multipart/alternative;
-	boundary="=====_003_next====="
-
-
---=====_003_next=====
-Content-Type: text/plain;
-	charset="UTF-8"
-Content-Transfer-Encoding: base64
-
-Pk9uIDE3LzAzLzIwMjUgMDg6NTEsIHRhbmcuZG9uZ3hpbmdAenRlLmNvbS5jbiB3cm90ZTo+IEZy
-b206IFRhbmdEb25neGluZyA8dGFuZy5kb25neGluZ0B6dGUuY29tLmNuPg0KPj4gDQo+PiBGb2xs
-b3cgdGhlIGFkdmljZSBpbiBEb2N1bWVudGF0aW9uL2ZpbGVzeXN0ZW1zL3N5c2ZzLnJzdDoNCj4+
-IHNob3coKSBzaG91bGQgb25seSB1c2Ugc3lzZnNfZW1pdCgpIG9yIHN5c2ZzX2VtaXRfYXQoKSB3
-aGVuIGZvcm1hdHRpbmcNCj4+IHRoZSB2YWx1ZSB0byBiZSByZXR1cm5lZCB0byB1c2VyIHNwYWNl
-Lg0KPj4gDQo+PiBTaWduZWQtb2ZmLWJ5OiBUYW5nIERvbmd4aW5nIDx0YW5nLmRvbmd4aW5nQHp0
-ZS5jb20uY24+RGVhciBaVEUsDQo+DQo+Q2FuIHlvdSBzbG93IGRvd24/IFlvdSBzZW50IGEgYnVu
-Y2ggb2YgZW1haWxzIHdpdGggc2ltaWxhciBpc3N1ZXMgd2hpY2gNCj5tZWFucyB0aGF0IGRvemVu
-IG9mIG1haW50YWluZXJzIHdpbGwgZGVhbCB3aXRoIHRoZSBzYW1lIGlzc3Vlcw0KPmluZGVwZW5k
-ZW50bHkuIFRoaXMgbG9va3MgbGlrZSBhbm90aGVyIHZpdm8gb3IgaHVhd2VpIHN0eWxlIHN1Ym1p
-c3Npb24sDQo+bGVhZGluZyB0byBidWdzIHNuZWFrZWQgdmlhIGZsb29kIG9mIHBhdGNoZXMuDQo+
-DQo+Rmlyc3QsIGZpeCB0aGUgbmFtZSB1c2VkIGluIHRoZSBTb0IgKHNlZSBzdWJtaXR0aW5nIHBh
-dGNoZXMpIHRvIG1hdGNoDQo+TGF0aW4gdHJhbnNjcmlwdGlvbi4NCj4NCj5TZWNvbmQsIHVzZSBw
-cm9wZXIgU29CIGNoYWluLCBzZWUgc3VibWl0dGluZyBwYXRjaGVzLg0KPg0KPlRoaXJkLCByZWFs
-bHksIHJlYWxseSBiZSBzdXJlIHRoYXQgd2hhdCB5b3Ugc2VuZCBpcyBjb3JyZWN0LiBZb3UgYWxy
-ZWFkeQ0KPmdvdCBxdWl0ZSByZXNwb25zZXMsIGJ1dCB5b3Ugc3RpbGwga2VlcCBzZW5kaW5nIHBh
-dGNoZXMuDQo+DQo+Rm91cnRoLCByZXNwb25kIHRvIHJlY2VpdmVkIGZlZWRiYWNrIGluc3RlYWQg
-b2YgZmxvb2RpbmcgdXMgd2l0aCBtb3JlIG9mDQo+dGhpcyENCg0KRGVhciBLcnp5c3p0b2YsDQpU
-aGFuayB5b3UgZm9yIHlvdXIgZmVlZGJhY2suIEkgYXBvbG9naXplIGZvciBteSBwcmV2aW91cyBz
-dWJtaXNzaW9ucy4NClJlZ2FyZGluZyB0aGUgaXNzdWVzIHlvdSd2ZSBwb2ludGVkIG91dDoNCkkg
-d2lsbCBjb3JyZWN0IHRoZSBuYW1lIHVzZWQgaW4gdGhlIFNvQiB0byBlbnN1cmUgaXQgbWF0Y2hl
-cyB0aGUgTGF0aW4gdHJhbnNjcmlwdGlvbiBhcyByZXF1aXJlZC4NCkkgd2lsbCBkb3VibGUtY2hl
-Y2sgbXkgd29yayBiZWZvcmUgc2VuZGluZyBhbnkgZnVydGhlciB1cGRhdGVzLg0KSSBhcHByZWNp
-YXRlIHlvdXIgZ3VpZGFuY2UgYW5kIHdpbGwgZm9sbG93IHRoZSBzdWJtaXNzaW9uIGd1aWRlbGlu
-ZXMgbW9yZSBjYXJlZnVsbHkgZ29pbmcgZm9yd2FyZC4gSWYgeW91IGhhdmUgYW55IGZ1cnRoZXIg
-YWR2aWNlIG9yIHJlc291cmNlcyB0byBoZWxwIG1lIGltcHJvdmUgbXkgc3VibWlzc2lvbnMsIEkg
-d291bGQgYmUgZ3JhdGVmdWwgZm9yIHlvdXIgaW5wdXQuDQpCZXN0IHJlZ2FyZHMsIA0KVGFuZyBE
-b25neGluZw==
-
-
---=====_003_next=====
-Content-Type: text/html ;
-	charset="UTF-8"
-Content-Transfer-Encoding: base64
-
-PGRpdiBjbGFzcz0iemNvbnRlbnRSb3ciPjxwPiZndDtPbiAxNy8wMy8yMDI1IDA4OjUxLCB0YW5n
-LmRvbmd4aW5nQHp0ZS5jb20uY24gd3JvdGU6Jmd0OyBGcm9tOiBUYW5nRG9uZ3hpbmcgJmx0O3Rh
-bmcuZG9uZ3hpbmdAenRlLmNvbS5jbiZndDs8L3A+PHA+Jmd0OyZndDsmbmJzcDs8L3A+PHA+Jmd0
-OyZndDsgRm9sbG93IHRoZSBhZHZpY2UgaW4gRG9jdW1lbnRhdGlvbi9maWxlc3lzdGVtcy9zeXNm
-cy5yc3Q6PC9wPjxwPiZndDsmZ3Q7IHNob3coKSBzaG91bGQgb25seSB1c2Ugc3lzZnNfZW1pdCgp
-IG9yIHN5c2ZzX2VtaXRfYXQoKSB3aGVuIGZvcm1hdHRpbmc8L3A+PHA+Jmd0OyZndDsgdGhlIHZh
-bHVlIHRvIGJlIHJldHVybmVkIHRvIHVzZXIgc3BhY2UuPC9wPjxwPiZndDsmZ3Q7Jm5ic3A7PC9w
-PjxwPiZndDsmZ3Q7IFNpZ25lZC1vZmYtYnk6IFRhbmcgRG9uZ3hpbmcgJmx0O3RhbmcuZG9uZ3hp
-bmdAenRlLmNvbS5jbiZndDtEZWFyIFpURSw8L3A+PHA+Jmd0OzwvcD48cD4mZ3Q7Q2FuIHlvdSBz
-bG93IGRvd24/IFlvdSBzZW50IGEgYnVuY2ggb2YgZW1haWxzIHdpdGggc2ltaWxhciBpc3N1ZXMg
-d2hpY2g8L3A+PHA+Jmd0O21lYW5zIHRoYXQgZG96ZW4gb2YgbWFpbnRhaW5lcnMgd2lsbCBkZWFs
-IHdpdGggdGhlIHNhbWUgaXNzdWVzPC9wPjxwPiZndDtpbmRlcGVuZGVudGx5LiBUaGlzIGxvb2tz
-IGxpa2UgYW5vdGhlciB2aXZvIG9yIGh1YXdlaSBzdHlsZSBzdWJtaXNzaW9uLDwvcD48cD4mZ3Q7
-bGVhZGluZyB0byBidWdzIHNuZWFrZWQgdmlhIGZsb29kIG9mIHBhdGNoZXMuPC9wPjxwPiZndDs8
-L3A+PHA+Jmd0O0ZpcnN0LCBmaXggdGhlIG5hbWUgdXNlZCBpbiB0aGUgU29CIChzZWUgc3VibWl0
-dGluZyBwYXRjaGVzKSB0byBtYXRjaDwvcD48cD4mZ3Q7TGF0aW4gdHJhbnNjcmlwdGlvbi48L3A+
-PHA+Jmd0OzwvcD48cD4mZ3Q7U2Vjb25kLCB1c2UgcHJvcGVyIFNvQiBjaGFpbiwgc2VlIHN1Ym1p
-dHRpbmcgcGF0Y2hlcy48L3A+PHA+Jmd0OzwvcD48cD4mZ3Q7VGhpcmQsIHJlYWxseSwgcmVhbGx5
-IGJlIHN1cmUgdGhhdCB3aGF0IHlvdSBzZW5kIGlzIGNvcnJlY3QuIFlvdSBhbHJlYWR5PC9wPjxw
-PiZndDtnb3QgcXVpdGUgcmVzcG9uc2VzLCBidXQgeW91IHN0aWxsIGtlZXAgc2VuZGluZyBwYXRj
-aGVzLjwvcD48cD4mZ3Q7PC9wPjxwPiZndDtGb3VydGgsIHJlc3BvbmQgdG8gcmVjZWl2ZWQgZmVl
-ZGJhY2sgaW5zdGVhZCBvZiBmbG9vZGluZyB1cyB3aXRoIG1vcmUgb2Y8L3A+PHA+Jmd0O3RoaXMh
-PC9wPjxwPjxicj48L3A+PHA+RGVhciBLcnp5c3p0b2YsPC9wPjxwPlRoYW5rIHlvdSBmb3IgeW91
-ciBmZWVkYmFjay4gSSBhcG9sb2dpemUgZm9yIG15IHByZXZpb3VzIHN1Ym1pc3Npb25zLjwvcD48
-cD5SZWdhcmRpbmcgdGhlIGlzc3VlcyB5b3UndmUgcG9pbnRlZCBvdXQ6PC9wPjxwPkkgd2lsbCBj
-b3JyZWN0IHRoZSBuYW1lIHVzZWQgaW4gdGhlIFNvQiB0byBlbnN1cmUgaXQgbWF0Y2hlcyB0aGUg
-TGF0aW4gdHJhbnNjcmlwdGlvbiBhcyByZXF1aXJlZC48L3A+PHA+SSB3aWxsIGRvdWJsZS1jaGVj
-ayBteSB3b3JrIGJlZm9yZSBzZW5kaW5nIGFueSBmdXJ0aGVyIHVwZGF0ZXMuPC9wPjxwPkkgYXBw
-cmVjaWF0ZSB5b3VyIGd1aWRhbmNlIGFuZCB3aWxsIGZvbGxvdyB0aGUgc3VibWlzc2lvbiBndWlk
-ZWxpbmVzIG1vcmUgY2FyZWZ1bGx5IGdvaW5nIGZvcndhcmQuIElmIHlvdSBoYXZlIGFueSBmdXJ0
-aGVyIGFkdmljZSBvciByZXNvdXJjZXMgdG8gaGVscCBtZSBpbXByb3ZlIG15IHN1Ym1pc3Npb25z
-LCBJIHdvdWxkIGJlIGdyYXRlZnVsIGZvciB5b3VyIGlucHV0LjwvcD48cD5CZXN0IHJlZ2FyZHMs
-Jm5ic3A7PC9wPjxwPlRhbmcgRG9uZ3hpbmc8L3A+PHA+PGJyPjwvcD48L2Rpdj4=
-
-
---=====_003_next=====--
-
---=====_002_next=====--
-
---=====_001_next=====--
+> ---
+>  drivers/gpu/drm/drm_panel_orientation_quirks.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/drm_panel_orientation_quirks.c b/drivers/gpu/drm/drm_panel_orientation_quirks.c
+> index 17b4f57d64d7..1378690b7287 100644
+> --- a/drivers/gpu/drm/drm_panel_orientation_quirks.c
+> +++ b/drivers/gpu/drm/drm_panel_orientation_quirks.c
+> @@ -461,6 +461,12 @@ static const struct dmi_system_id orientation_data[] = {
+>  		  DMI_EXACT_MATCH(DMI_PRODUCT_NAME, "ONEXPLAYER X1 i"),
+>  		},
+>  		.driver_data = (void *)&lcd1600x2560_leftside_up,
+> +	}, {	/* OneXPlayer X1 mini (AMD) */
+> +		.matches = {
+> +		  DMI_EXACT_MATCH(DMI_SYS_VENDOR, "ONE-NETBOOK"),
+> +		  DMI_EXACT_MATCH(DMI_PRODUCT_NAME, "ONEXPLAYER X1 mini"),
+> +		},
+> +		.driver_data = (void *)&lcd1600x2560_leftside_up,
+>  	}, {	/* OrangePi Neo */
+>  		.matches = {
+>  		  DMI_EXACT_MATCH(DMI_SYS_VENDOR, "OrangePi"),
 
 
