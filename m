@@ -1,166 +1,144 @@
-Return-Path: <linux-kernel+bounces-565181-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565182-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 922CDA66281
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 00:15:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 51375A66297
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 00:21:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0381D17C337
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 23:15:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0036D17CFF7
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 23:21:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1186204851;
-	Mon, 17 Mar 2025 23:15:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F796204C0A;
+	Mon, 17 Mar 2025 23:21:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jytu1tqV"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q6XPN0qd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC2281FECBA
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 23:15:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92C35202C40
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 23:21:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742253317; cv=none; b=e9oKYL5DpPEckS2XizMZ3gap6A4X1GaVSgbs2ks7tDcvVU4FCWQ0oncQTC2xmNEhAd8MA66lI+g/ImX2CDgAT+cKx7X57Gho74DkVl0hr/PP+DCL9hgF6PfqRO3KQ/Iqz9CmrFp/InjyDIAN0Vs0fcUzbf3478pNzgyeZDZT5OI=
+	t=1742253671; cv=none; b=I50kExvJnYRwqRwJL2xrlwmbk6dqu+fCPHgj8KP4+pjLhYdvy3FUJUiHA+ZexV0S6j5lnabapK7mOsAJXQi/Mcu6WCwppJbzr1zhtSDHh9wLFK5IAW85lxAGEc8Orh1FAudie+/a5sIzPv5FDPGJKSWGX22I7IVKN7ysjR5v8vQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742253317; c=relaxed/simple;
-	bh=MzWNzuJI6VEPxWYJV1nrzHEx5PZZDvQKAuseLGVZ1Qw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CMabSyOzUQGvQxk0RNUbZynTj6HACXRC8D+b1f/tEx1bQXEMJxXrdEZyBlGJ+OeAELX7GK5FZTudusNoykbP25VaHJs8+WJQpnOx/ZN0Lj3z/AvdNrvfrbehr4Cvk1kFbPv5XYOC6fD9dmP5JNGypzuN7yy7g2JegOX+MI0DSwY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jytu1tqV; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742253316; x=1773789316;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=MzWNzuJI6VEPxWYJV1nrzHEx5PZZDvQKAuseLGVZ1Qw=;
-  b=jytu1tqVVuovlwzcMoQIeK7BqTeEF3K1+IEhmUcajKGRDyOGiiYyQ0hY
-   UDMQCuRDO6W6D8KY/WxlrXHUP30MMJk6PmlkfZp7FKS7qDibwVvvLDeSH
-   g4wGyTZjhg1wTb4s1OKhq+8JLCu2y+5U+IM1erj3WNkEcb7s4t9/s8yuZ
-   p1t59F+BlnMhsIO7g0d+hjdv7KyVXYT9XkeCx54rShD4oAth0p3++Yf8n
-   uo6DPtOwD9UNXraYJ3mflLD4QCZfRHU9ekWdAs70p0HmHy20xL8aZbz4X
-   424YOr4siWKLnATQIgLDfGTcPVClIk6w/2erhbMdAzIhv50cwg5v4KXUI
-   g==;
-X-CSE-ConnectionGUID: lZYaIRv9SIeIzJXeA0EFrw==
-X-CSE-MsgGUID: pkCZwy+HTda4PQJ2PVPFVQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11376"; a="43109339"
-X-IronPort-AV: E=Sophos;i="6.14,255,1736841600"; 
-   d="scan'208";a="43109339"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Mar 2025 16:15:15 -0700
-X-CSE-ConnectionGUID: PtP25NO8QlyjwYAjJLnucw==
-X-CSE-MsgGUID: eBOI8D5xQ1GzewUSv6FDaw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,255,1736841600"; 
-   d="scan'208";a="145257535"
-Received: from spandruv-desk2.amr.corp.intel.com (HELO [10.124.223.123]) ([10.124.223.123])
-  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Mar 2025 16:15:13 -0700
-Message-ID: <8e188239-44d2-42ad-9fa9-b46ad0a5b5bb@linux.intel.com>
-Date: Mon, 17 Mar 2025 16:15:12 -0700
+	s=arc-20240116; t=1742253671; c=relaxed/simple;
+	bh=thZig93pGamR0fzTSt/D8t8Dg/04R+h7w6uzT5A88YQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=P8nOC3jY+tHNC+978LPzfExTvNiaI91QHCOHN8A6hIgVPcVzPPXaUX3dhMslDKpPzimWceu6drgGVa86xUQTL+1L39JwbPwNkD6//Y1gApvxf0Wb6rQhQI9QMUudhBzBYTEoaxoAFGvs5JW9ITWceggH/HzuDyPWZBJkhyC0eCE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q6XPN0qd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0BFE2C4CEE3;
+	Mon, 17 Mar 2025 23:21:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742253671;
+	bh=thZig93pGamR0fzTSt/D8t8Dg/04R+h7w6uzT5A88YQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Q6XPN0qdiZ6pR7yLw2woYaWesucZNCm3nyU9v9u/uPKaNallNUoIBNhNyys2pKhrq
+	 OwPBw4edEz/7su6AXE4NQTnR0JfOv3xDCTkqQczIfaLAYHvKIebg4Zjr88lHRewjvg
+	 ET22UnfOuTCZO0SApRCY80vnbwGw9Xll26bKNEGzVUvV5D6cdO7isMZ7forUyeV/SP
+	 H6paUTjUW7XF2MWLC3QREk0XI+doJ4ntcPH8snbLbIRRqdcKI3yDygHBVtBEaup87W
+	 Wgka3IV4sP18pTLtqHgVUVhBgCAdFMP4jeccFNT2RR1fI/RJlt7riMBrmT5vBlJFYV
+	 rCZpwUpU+u39w==
+Date: Tue, 18 Mar 2025 00:21:06 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: Uros Bizjak <ubizjak@gmail.com>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH v2] x86/asm: Use asm_inline() instead of asm() in
+ __untagged_addr()
+Message-ID: <Z9iuYk-3YNKLAJip@gmail.com>
+References: <20250317113013.182359-1-ubizjak@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/4] tsm: Unified Measurement Register ABI for TVMs
-To: Cedric Xing <cedric.xing@intel.com>,
- Dan Williams <dan.j.williams@intel.com>,
- "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, x86@kernel.org,
- "H. Peter Anvin" <hpa@zytor.com>
-Cc: linux-kernel@vger.kernel.org, linux-coco@lists.linux.dev,
- Dionna Amalie Glaze <dionnaglaze@google.com>,
- James Bottomley <James.Bottomley@HansenPartnership.com>,
- Dan Middleton <dan.middleton@linux.intel.com>,
- Mikko Ylinen <mikko.ylinen@linux.intel.com>
-References: <20250223-tdx-rtmr-v2-0-f2d85b0a5f94@intel.com>
-Content-Language: en-US
-From: Sathyanarayanan Kuppuswamy <sathyanarayanan.kuppuswamy@linux.intel.com>
-In-Reply-To: <20250223-tdx-rtmr-v2-0-f2d85b0a5f94@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-
-Hi Cedric,
-
-On 2/23/25 7:20 PM, Cedric Xing wrote:
-> NOTE: This patch series introduces the Measurement Register (MR) ABI, and
-> is a continuation of the RFC series on the same topic [1].
->
-> This patch series adds a unified interface to the TSM core, allowing TVM
-> (TEE VM) guest drivers to expose measurement registers (MRs) as attributes
-> (files) in sysfs. With this interface, applications can read and write
-> (extend) MRs like regular files, enabling usages like configuration
-> verification (e.g., verifying a TVM's configuration against digests stored
-> in static/immutable MRs like MRCONFIGID on TDX or HOSTDATA on SEV) and
-> runtime measurements (e.g., extending the measurement of a container image
-> to an RTMR before running it).
->
-> Patches included in this series:
->
-> - Patch 1 adds TSM APIs for TVM guest drivers to register/expose MRs
->    through sysfs.
-> - Patch 2 provides a sample module demonstrating the usage of the new TSM
->    APIs.
-> - The remaining patches update the TDX guest driver to expose TDX MRs
->    through the new TSM APIs.
-
-Any comment on the missing event log support? Extending the measurements
-without logging the event should break the tractability feature. Can you add
-info about why it is ok to just add extension support for now?
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250317113013.182359-1-ubizjak@gmail.com>
 
 
->
-> [1]: https://lore.kernel.org/linux-coco/20241210-tsm-rtmr-v3-0-5997d4dbda73@intel.com/
->
-> Signed-off-by: Cedric Xing <cedric.xing@intel.com>
-> ---
-> Changes in v2:
-> - Added TSM_MR_MAXBANKS Kconfig option
-> - Updated Kconfig dependency for TSM_REPORTS
-> - Updated comments in include/linux/tsm.h
-> - Updated drivers/virt/coco/tsm-mr.c to use `IS_BUILTIN()` for determining
->    if static buffer addresses can be converted to GPAs by `virt_to_phys()`
-> - Renamed function `tdx_mcall_rtmr_extend()` -> `tdx_mcall_extend_rtmr()`
-> - Link to v1: https://lore.kernel.org/r/20250212-tdx-rtmr-v1-0-9795dc49e132@intel.com
->
-> ---
-> Cedric Xing (4):
->        tsm: Add TVM Measurement Register support
->        tsm: Add TSM measurement sample code
->        x86/tdx: Add tdx_mcall_extend_rtmr() interface
->        x86/tdx: Expose TDX MRs through TSM sysfs interface
->
->   Documentation/ABI/testing/sysfs-kernel-tsm |  20 ++
->   MAINTAINERS                                |   3 +-
->   arch/x86/coco/tdx/tdx.c                    |  36 +++
->   arch/x86/include/asm/shared/tdx.h          |   1 +
->   arch/x86/include/asm/tdx.h                 |   2 +
->   drivers/virt/coco/Kconfig                  |  17 +-
->   drivers/virt/coco/Makefile                 |   2 +
->   drivers/virt/coco/tdx-guest/Kconfig        |  24 +-
->   drivers/virt/coco/tdx-guest/tdx-guest.c    | 115 +++++++++
->   drivers/virt/coco/{tsm.c => tsm-core.c}    |   6 +-
->   drivers/virt/coco/tsm-mr.c                 | 383 +++++++++++++++++++++++++++++
->   include/linux/tsm.h                        |  65 +++++
->   samples/Kconfig                            |  13 +
->   samples/Makefile                           |   1 +
->   samples/tsm/Makefile                       |   2 +
->   samples/tsm/tsm_mr_sample.c                | 107 ++++++++
->   16 files changed, 789 insertions(+), 8 deletions(-)
-> ---
-> base-commit: d082ecbc71e9e0bf49883ee4afd435a77a5101b6
-> change-id: 20250209-tdx-rtmr-255479667146
->
-> Best regards,
+* Uros Bizjak <ubizjak@gmail.com> wrote:
 
--- 
-Sathyanarayanan Kuppuswamy
-Linux Kernel Developer
+> Use asm_inline() to instruct the compiler that the size of asm()
+> is the minimum size of one instruction, ignoring how many instructions
+> the compiler thinks it is. ALTERNATIVE macro that expands to several
+> pseudo directives causes instruction length estimate to count
+> more than 20 instructions.
+> 
+> bloat-o-meter reports minimal code size increase
+> (x86_64 defconfig with CONFIG_ADDRESS_MASKING, gcc-14.2.1):
+> 
+>   add/remove: 2/2 grow/shrink: 5/1 up/down: 2365/-1995 (370)
+> 
+> 	Function                          old     new   delta
+> 	-----------------------------------------------------
+> 	do_get_mempolicy                    -    1449   +1449
+> 	copy_nodes_to_user                  -     226    +226
+> 	__x64_sys_get_mempolicy            35     213    +178
+> 	syscall_user_dispatch_set_config  157     332    +175
+> 	__ia32_sys_get_mempolicy           31     206    +175
+> 	set_syscall_user_dispatch          29     181    +152
+> 	__do_sys_mremap                  2073    2083     +10
+> 	sp_insert                         133     117     -16
+> 	task_set_syscall_user_dispatch    172       -    -172
+> 	kernel_get_mempolicy             1807       -   -1807
+> 
+>   Total: Before=21423151, After=21423521, chg +0.00%
+> 
+> The code size increase is due to the compiler inlining
+> more functions that inline untagged_addr(), e.g:
+> 
+> task_set_syscall_user_dispatch() is now fully inlined in
+> set_syscall_user_dispatch():
+> 
+> 	000000000010b7e0 <set_syscall_user_dispatch>:
+> 	  10b7e0:	f3 0f 1e fa          	endbr64
+> 	  10b7e4:	49 89 c8             	mov    %rcx,%r8
+> 	  10b7e7:	48 89 d1             	mov    %rdx,%rcx
+> 	  10b7ea:	48 89 f2             	mov    %rsi,%rdx
+> 	  10b7ed:	48 89 fe             	mov    %rdi,%rsi
+> 	  10b7f0:	65 48 8b 3d 00 00 00 	mov    %gs:0x0(%rip),%rdi
+> 	  10b7f7:	00
+> 	  10b7f8:	e9 03 fe ff ff       	jmp    10b600 <task_set_syscall_user_dispatch>
 
+So this was a tail-call optimization that jumped to a standalone 
+<task_set_syscall_user_dispatch>, right? So now we'll avoid the 
+tail-jump and maybe a bit of the register parameter shuffling? Which 
+would explain the bloatometer delta of -172 for 
+task_set_syscall_user_dispatch?
+
+Could you also cite the first relevant bits of <task_set_syscall_user_dispatch>?
+
+I don't seem to be able to reproduce this inlining decision, my version 
+of GCC is:
+
+  gcc version 14.2.0 (Ubuntu 14.2.0-4ubuntu2) 
+
+which is one patch version older than your 14.2.1.
+
+I tried GCC 11, 12, 13 as well, but none did this tail optimization, 
+all appear to be inlining <task_set_syscall_user_dispatch> into 
+<set_syscall_user_dispatch>. What am I missing?
+
+Another question, where do the size increases in these functions come 
+from:
+
+>       __x64_sys_get_mempolicy            35     213    +178
+>       syscall_user_dispatch_set_config  157     332    +175
+>       __ia32_sys_get_mempolicy           31     206    +175
+>       set_syscall_user_dispatch          29     181    +152
+
+(I have to ask, because I have trouble reproducing with my toolchain so 
+I cannot look at this myself.)
+
+Thanks,
+
+	Ingo
 
