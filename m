@@ -1,203 +1,168 @@
-Return-Path: <linux-kernel+bounces-563824-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563825-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60CA6A64932
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:16:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1959AA6493F
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:17:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 93B1A173830
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:16:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED9663B5E3E
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:16:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66244233731;
-	Mon, 17 Mar 2025 10:14:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D36912356B7;
+	Mon, 17 Mar 2025 10:14:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SCLEPjLw"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="SfbCsiPD"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3BDE233726
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 10:14:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BA4722257F;
+	Mon, 17 Mar 2025 10:14:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742206458; cv=none; b=Vu3m7RzKeQiimMru+5JrJYei8X2W5dJOHmRy+T6/D8abSsVIloQgBz9FuHxN0zaqpIzw8D3Mb+EN1EiqtqFUbhezaQW3fypm6kAc+Sq7XkyMfBp9bocqHDkwkTH+xDVeixPzdMz2GsaAh2epiHXia/XPL/30LdZY6KuOUaiTK3k=
+	t=1742206477; cv=none; b=jB02IShho2Z/fqSOTxiH13hlTzflbo+uMKVTqWqOMDhrFD8dlN69xgCD4ZgP1hNXZIZxzrJuWwyytEz4t0JKMq/V5Y+jol/BYkXI8kP6kr6GF0/7/FOCmQGfFKBR2bOU2XxMcQGfjwb3E/oHTq9M1RFax9T2KIZm2MxNhyMKrR0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742206458; c=relaxed/simple;
-	bh=sZB0Xl2Pp1TkHFdbxGqYaPZTq/4+leRWWiqvKWe5oLE=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=nRNur7q9SpqNuRdI5Zk6bfjxLYYzdCiGTjLxMkCGwH4PqRXaO7tLIT5H4mhMsizfSQ5CLwfvvFXSFpTvRISn6Rl8j1hEGUs3GdFD84SyS6zYx+RQvDmR0hgPgoQ6fx3LbX+jepArbvhzpBDCnBDz5XWG2YhdvKEadCmD1kA7DEQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SCLEPjLw; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-39727fe912cso885312f8f.3
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 03:14:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1742206455; x=1742811255; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=MkFf4kCvzevanXv5Ra3CouyTzGW5e0hWlak1EUbm37A=;
-        b=SCLEPjLwCpeVqrB7A4HqcHwctCEWEJjo6fkvG04erA/h5lHZE2dgHEQrlwnO1dV6po
-         /i5m4syyjqyWFJmXlj4rt+3Mu+OoE4iSvhxWRRryq/tPRvzIZw3TdzmNz5HmpnBMigiu
-         89hPKpsONSN/JjLFkOTRzfAWimXwj23Ekcrg+ntPrLhsihIgOeLg6yDOuCivZeK9WkW6
-         TXIIL97HyBJT4BYnnzbrqKj9quWFNhx0IrWpH6kwd5MzmNzfq61vflRYdBCdjpafImIP
-         vRDfnyY4Ijpc2ajH8YWtacZ6xQ90KN2yvlMcUh5JnxpN5NvznniA4GLATspGY5R7kcrP
-         Ozrg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742206455; x=1742811255;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=MkFf4kCvzevanXv5Ra3CouyTzGW5e0hWlak1EUbm37A=;
-        b=h/zd+mT/OhJghaGeNYR95JMsRA9XCFsB/V45M0qBVrHX4u87bZx6opwp/Cwxa1+8PK
-         zD7ZsTkViPZGJlq9u80z60YeKVH10GI0VMHL+dBNtV8kNMjs1PkLusV6wAfjg/S/e2GF
-         ujDv2/r02GP60MUCXNgMQOO1IlgC/ZcrIVNTcSG5c61XvIGmq/K+tgRe3q34/scap1/N
-         C2qYkmDhv1knPxrmD4OhdOjnuWiwiaAp44s05Jusdl50pN4SlT1HZ6o+ZJEcdZPYybSa
-         z0C8ucuINyPIp/MBU0bSXJ6+X/xi+Ncm+RerkXwoutFDi3UgVF9CyGI/b4nfk6wGpQkW
-         aSVw==
-X-Forwarded-Encrypted: i=1; AJvYcCVyn5kRkrYpbN0w/+wDmYH0UPxupZ/zRtVPQxiur3Gsjn6rl6ArDckxwYk308I4zeYDpA1KdDrGzdcbSUU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwDhguvwdIZns+NszSInHHg8JSTHvyN/mWGcOX+GzNaLaLnEmQa
-	Vn4ABcKxkuN8RiVpS4lP/sN5kWh7ewzK4rx8YHPG1wORDWAxgRpur90kTUU5pBY=
-X-Gm-Gg: ASbGnctAGEOB9MYP2cbH/eDsWJUF9IWkO1L6dWrV16qdrGs5f4Uizny7aWddDz7TmSg
-	iJ8CMZz5XW/t0ubBVD0k9vtihixGe1h9koTOh2eQI75gl/35/ILIUHhr4MYDjD3gs1rylCjccJm
-	FPj79f+WHy82IXeIu/gnxdv1JdJrpA14VGFnLazvoh6Vm7jCERiRVrtGKIoWZdFcncGbIq03/BZ
-	1fbgOTw61x6qJ0zt8XGsDblDw0OC5X1DD3Y8fsrnyAxQ3e8+HyzuabGDn6pQCadMBUdENEPsDct
-	BktOYBXN0kEvYVqyD0wpQbY/s6KOy9+/kMe2s1JEYgLYV3h1aM4qI8SNIsiQzvmb35vI1dUA59x
-	pYhj7Ru2Po5UXUWJUDDUO+w==
-X-Google-Smtp-Source: AGHT+IFg8DYdHdUMxV4ttCgnYaZlXCiwiHVT/Zz0plPz8BiWoKXgYkhHYAZJWNOA3PzN0BKVDvL6AQ==
-X-Received: by 2002:a5d:64c9:0:b0:391:39ea:7866 with SMTP id ffacd0b85a97d-3971d8faedcmr15996408f8f.19.1742206454898;
-        Mon, 17 Mar 2025 03:14:14 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:3d9:2080:55a6:4776:6e68:e626? ([2a01:e0a:3d9:2080:55a6:4776:6e68:e626])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d1fe6a1c7sm100284585e9.39.2025.03.17.03.14.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 17 Mar 2025 03:14:14 -0700 (PDT)
-Message-ID: <78758343-b9f9-4920-977c-cab4b5f84679@linaro.org>
-Date: Mon, 17 Mar 2025 11:14:13 +0100
+	s=arc-20240116; t=1742206477; c=relaxed/simple;
+	bh=EeUctE2/P3yKvJnbRUh15fbcP0Z9xVX9onyE9XYknRE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MoEMhOG1tdF7ZmB5PnJb/yJEQLeQFYQnxG+KA6FfC9ETcbKm70nCoOkxDKiD5A5GaseFVvP+rlEs/n9sWVBO48bnfMTPNGWZfbbULI23xPEjcF5ai0O4MWPD9k5zQDCQt0DdAf6ZiHt6j6flWcJnHJvSF8mCYB1YLLXYgzAoEHE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=SfbCsiPD; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 7B51C40E0196;
+	Mon, 17 Mar 2025 10:14:31 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id IaeYT4_IfyoQ; Mon, 17 Mar 2025 10:14:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1742206466; bh=2n6hcLCVWzPn78xpoYAPBUM/0TX6AgClpAc8Szp8ycg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SfbCsiPDj04tOmiulVjsl7pkxZUc8rES8TmPzhyJqBDBhLb5m+U+2JJRSRz5IUJuO
+	 /KsZyxYq908/OAm0L0SavKnUe4M/lSnotDgdfBpYPvO2bJXnI1R4qSNqKYEZoMrt28
+	 70XIE08J6NbJVBWLsCkBz5xaqIXOlCmOENMQnWDJgAEOACCIHPzholsR+i/A7H1aDQ
+	 ImpZ/ZPNJ3ft7yMHhyB1Q55jFZuPaZYGJuEptOBffBSdWPuubycCjSYeh5l+KOfSrr
+	 mddlr467kdD9ZbpqBNor1YCmE55tv2XMPgK1qCzr4LkiE2pBe+aC2nmBt8wi5TsETA
+	 KeG/+krQeZeGah58Q30hLiXo/keartsUGqFDaOINpzjKxGAjVHOFbSR4wDejRp0t2V
+	 walzhq5AX+Z/zRTohogVxZ5Ac9Ce4GgIudP6Crr9ddWzwAMsz09WfOMhHFJV0GguMZ
+	 EPVZ2ByJ0qSelAZnFKXzHUIUub+3IFIPV22xYvlEndJ4/6TOvtBnaRVpC76UGv/HbP
+	 P4Pw+FmOsnaBqbsfmDeGMyPIaCAaW4TjlD5ulLGM/0ZNA3x9ADYLmVJXyL7O9j+j1p
+	 +B/HSpiscGgxwjPnlXYZofZ/jhS1Zbmx2VPvSbaNW8dDCy3UvhJdVENhNLRAIjtRsp
+	 p0nMySBKCMH2IRTtPPEuLMpg=
+Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id A7C0B40E020E;
+	Mon, 17 Mar 2025 10:14:16 +0000 (UTC)
+Date: Mon, 17 Mar 2025 11:14:15 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: linux-kernel@vger.kernel.org
+Cc: linux-tip-commits@vger.kernel.org, Uros Bizjak <ubizjak@gmail.com>,
+	Ingo Molnar <mingo@kernel.org>, Andy Lutomirski <luto@kernel.org>,
+	Brian Gerst <brgerst@gmail.com>, "H. Peter Anvin" <hpa@zytor.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>, x86@kernel.org
+Subject: Re: [tip: x86/fpu] x86/fpu: Use XSAVE{,OPT,C,S} and XRSTOR{,S}
+ mnemonics in xstate.h
+Message-ID: <20250317101415.GBZ9f198PAh90nMWDf@fat_crate.local>
+References: <20250313130251.383204-1-ubizjak@gmail.com>
+ <174188823430.14745.17591986001259957573.tip-bot2@tip-bot2>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH] drm/panel/synaptics-r63353: Use _multi variants
-To: Anusha Srivatsa <asrivats@redhat.com>,
- Doug Anderson <dianders@chromium.org>
-Cc: Michael Trimarchi <michael@amarulasolutions.com>,
- Jessica Zhang <quic_jesszhan@quicinc.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Tejas Vipin <tejasvipin76@gmail.com>
-References: <20250314-b4-mipi-synaptic-v1-1-a64ccb5e5c66@redhat.com>
- <CAD=FV=XUN7CcnjURs6xfVAFqvZ1WR86y8nQm=OMcrV_hYjq5RQ@mail.gmail.com>
- <CAN9Xe3TpwwBtfXD7oii3VR8-ijDN_WQe9JUTC5bE_7vFQVRN3w@mail.gmail.com>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <CAN9Xe3TpwwBtfXD7oii3VR8-ijDN_WQe9JUTC5bE_7vFQVRN3w@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <174188823430.14745.17591986001259957573.tip-bot2@tip-bot2>
 
-On 16/03/2025 18:40, Anusha Srivatsa wrote:
+On Thu, Mar 13, 2025 at 05:50:34PM -0000, tip-bot2 for Uros Bizjak wrote:
+> The following commit has been merged into the x86/fpu branch of tip:
 > 
+> Commit-ID:     2883b4c2169a435488f7845e1b6fdc6f3438c7c6
+> Gitweb:        https://git.kernel.org/tip/2883b4c2169a435488f7845e1b6fdc6f3438c7c6
+> Author:        Uros Bizjak <ubizjak@gmail.com>
+> AuthorDate:    Thu, 13 Mar 2025 14:02:27 +01:00
+> Committer:     Ingo Molnar <mingo@kernel.org>
+> CommitterDate: Thu, 13 Mar 2025 18:36:52 +01:00
 > 
-> On Fri, Mar 14, 2025 at 10:20 AM Doug Anderson <dianders@chromium.org <mailto:dianders@chromium.org>> wrote:
+> x86/fpu: Use XSAVE{,OPT,C,S} and XRSTOR{,S} mnemonics in xstate.h
 > 
->     Hi,
+> Current minimum required version of binutils is 2.25, which
+> supports XSAVE{,OPT,C,S} and XRSTOR{,S} instruction mnemonics.
 > 
->     On Thu, Mar 13, 2025 at 9:47 PM Anusha Srivatsa <asrivats@redhat.com <mailto:asrivats@redhat.com>> wrote:
->      >
->      > @@ -181,24 +162,15 @@ static int r63353_panel_prepare(struct drm_panel *panel)
->      >  static int r63353_panel_deactivate(struct r63353_panel *rpanel)
->      >  {
->      >         struct mipi_dsi_device *dsi = rpanel->dsi;
->      > -       struct device *dev = &dsi->dev;
->      > -       int ret;
->      > +       struct mipi_dsi_multi_context dsi_ctx = { .dsi = dsi };
->      >
->      > -       ret = mipi_dsi_dcs_set_display_off(dsi);
->      > -       if (ret < 0) {
->      > -               dev_err(dev, "Failed to set display OFF (%d)\n", ret);
->      > -               return ret;
->      > -       }
->      > +       mipi_dsi_dcs_set_display_off_multi(&dsi_ctx);
->      >
->      > -       usleep_range(5000, 10000);
->      > +       mipi_dsi_usleep_range(&dsi_ctx, 5000, 10000);
->      >
->      > -       ret = mipi_dsi_dcs_enter_sleep_mode(dsi);
->      > -       if (ret < 0) {
->      > -               dev_err(dev, "Failed to enter sleep mode (%d)\n", ret);
->      > -               return ret;
->      > -       }
->      > +       mipi_dsi_dcs_enter_sleep_mode_multi(&dsi_ctx);
->      >
->      > -       return 0;
->      > +       return dsi_ctx.accum_err;
+> Replace the byte-wise specification of XSAVE{,OPT,C,S}
+> and XRSTOR{,S} with these proper mnemonics.
 > 
->     nit: the one caller of r63353_panel_deactivate() doesn't actually look
->     at the error code, so this could be a function that returns "void".
->     That was true even before your patch, though. I wouldn't mind a
->     followup patch that fixed this. ;-)
+> No functional change intended.
 > 
+> Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
+> Signed-off-by: Ingo Molnar <mingo@kernel.org>
+> Cc: Andy Lutomirski <luto@kernel.org>
+> Cc: Brian Gerst <brgerst@gmail.com>
+> Cc: H. Peter Anvin <hpa@zytor.com>
+> Cc: Dave Hansen <dave.hansen@linux.intel.com>
+> Cc: Linus Torvalds <torvalds@linux-foundation.org>
+> Link: https://lore.kernel.org/r/20250313130251.383204-1-ubizjak@gmail.com
+> ---
+>  arch/x86/kernel/fpu/xstate.h | 27 +++++++++++++--------------
+>  1 file changed, 13 insertions(+), 14 deletions(-)
 > 
-> This is anyway not merged, Maybe better to fix right now instead of a follow up patch?
+> diff --git a/arch/x86/kernel/fpu/xstate.h b/arch/x86/kernel/fpu/xstate.h
+> index aa16f1a..1418423 100644
+> --- a/arch/x86/kernel/fpu/xstate.h
+> +++ b/arch/x86/kernel/fpu/xstate.h
+> @@ -94,18 +94,17 @@ static inline int update_pkru_in_sigframe(struct xregs_state __user *buf, u64 ma
+>  /* XSAVE/XRSTOR wrapper functions */
+>  
+>  #ifdef CONFIG_X86_64
+> -#define REX_PREFIX	"0x48, "
+> +#define REX_SUFFIX	"64"
+>  #else
+> -#define REX_PREFIX
+> +#define REX_SUFFIX
+>  #endif
+>  
+> -/* These macros all use (%edi)/(%rdi) as the single memory argument. */
+> -#define XSAVE		".byte " REX_PREFIX "0x0f,0xae,0x27"
+> -#define XSAVEOPT	".byte " REX_PREFIX "0x0f,0xae,0x37"
+> -#define XSAVEC		".byte " REX_PREFIX "0x0f,0xc7,0x27"
+> -#define XSAVES		".byte " REX_PREFIX "0x0f,0xc7,0x2f"
+> -#define XRSTOR		".byte " REX_PREFIX "0x0f,0xae,0x2f"
+> -#define XRSTORS		".byte " REX_PREFIX "0x0f,0xc7,0x1f"
+> +#define XSAVE		"xsave" REX_SUFFIX " %[xa]"
+> +#define XSAVEOPT	"xsaveopt" REX_SUFFIX " %[xa]"
+> +#define XSAVEC		"xsavec" REX_SUFFIX " %[xa]"
+> +#define XSAVES		"xsaves" REX_SUFFIX " %[xa]"
+> +#define XRSTOR		"xrstor" REX_SUFFIX " %[xa]"
+> +#define XRSTORS		"xrstors" REX_SUFFIX " %[xa]"
+>  
+>  /*
+>   * After this @err contains 0 on success or the trap number when the
+> @@ -114,10 +113,10 @@ static inline int update_pkru_in_sigframe(struct xregs_state __user *buf, u64 ma
+>  #define XSTATE_OP(op, st, lmask, hmask, err)				\
+>  	asm volatile("1:" op "\n\t"					\
+>  		     "xor %[err], %[err]\n"				\
+> -		     "2:\n\t"						\
+> +		     "2:\n"						\
+>  		     _ASM_EXTABLE_TYPE(1b, 2b, EX_TYPE_FAULT_MCE_SAFE)	\
+>  		     : [err] "=a" (err)					\
+> -		     : "D" (st), "m" (*st), "a" (lmask), "d" (hmask)	\
+> +		     : [xa] "m" (*(st)), "a" (lmask), "d" (hmask)	\
 
-If you can, yeah fix it now !
+This [xa] needs documenting in the comment above this.
 
-> 
->     In any case, the patch looks reasonable to me now.
-> 
->     Reviewed-by: Douglas Anderson <dianders@chromium.org <mailto:dianders@chromium.org>>
-> 
-> 
-> Thanks :)
-> 
-> Anusha
+What does "xa" even mean?
 
+-- 
+Regards/Gruss,
+    Boris.
 
-Thanks,
-Neil
-> 
-> 
->     Happy for someone else to apply it if they want. If not, I'll snooze
->     this for ~a week to give others a chance to comment and then plan to
->     push to drm-misc-next. 
-> 
-> 
-> 
->     -Doug
-> 
-
+https://people.kernel.org/tglx/notes-about-netiquette
 
