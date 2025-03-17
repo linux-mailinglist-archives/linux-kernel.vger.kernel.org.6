@@ -1,187 +1,124 @@
-Return-Path: <linux-kernel+bounces-563800-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563859-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EABDBA648B7
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:05:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06C0EA649BD
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:27:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 39F707A68B1
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:04:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72E023B4B17
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:23:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E753322F397;
-	Mon, 17 Mar 2025 10:05:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="LcB1Mrb7"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD84A142E67;
-	Mon, 17 Mar 2025 10:05:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A14AE233720;
+	Mon, 17 Mar 2025 10:20:06 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 691B32E3373
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 10:20:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742205926; cv=none; b=bFyxmAGniQo6U705XexbDLbT/8aYDTlMOuUDaxsmcX5sE0wSN6IpOpsTAMRUky6u+mlKY/tVgSZhNvZovH/5d3j30dThBGDvyjbt84TvCqI3A0IzX10XcIuJjRXRwHuswvAKvRWhwDUmzVDSWjI2zEiYEPvyHvXJA3q23K8heVc=
+	t=1742206806; cv=none; b=kG2zrGT+BCbotdTcUq/UNYnCNKYJ/afVfKEKVrBRx80vDh0Wz4P2YTuOlcPA9EdkcULF2o2nWWWuNWq2a96765ASTuEYyiO9hrYBpTKqJ8ptBRS953keHZFikHP9H6M9y6tUwKudKytf17Cx9C7/DS9ld/ODlW+2WTnBJihKnXU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742205926; c=relaxed/simple;
-	bh=GuLrLeGuWtF9otaYpx1pubF8qiYT7k0+sIhm9qGLWEU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=O77rtQje2QonxiibGxBLBKR7HbIdkkE4aW7nCfwNM5hp66jNoAlsxlB+bRBfj46+I91YYAsQdekOuhPMQTAZlDTNifGu42aBJrYOLuRdMSFzc6f5uAHXPaa5pzKY2reDuQO8je64mAWbyYB6bxS4rUrXhd1K+YhCbdYnN8yDHGo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=LcB1Mrb7; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1742205919;
-	bh=v3dicJvYxgbmXYrQzi/KchK0gl0zLQlQjFZAt77e1jI=;
-	h=Date:From:To:Cc:Subject:From;
-	b=LcB1Mrb7JswiNuHxjRrFFvRH+DsMimFpSRMxUYA17wHGyALAeNWZND4yuc4Sk5rOP
-	 r76NY0tnGy1y/WCGSrUnGQQBey8GEj080/pJyyMl1rhiEBfC4P/mU2hj4Z2uDzfb+Z
-	 X2wDcx0YwrQ2CB1sB6p9jgok1WrP9PKEv6c1R0d0L+Yidr3hRv8rBvL/mAvYnbZ0MQ
-	 tjvkiTLlc6PyGyco578IJ88zLdvRtPAdqheRxOmqZMIWZwCqqFNvkFTsiS6M7QhgDe
-	 9yVyQI41KS0VL4FeEW/GpGuufzpVxVywG0pED89vHG91sWeSfPwEkbnVh0cXKty+ud
-	 yR8s9GISR89hQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZGVvz3SH3z4wbv;
-	Mon, 17 Mar 2025 21:05:19 +1100 (AEDT)
-Date: Mon, 17 Mar 2025 21:05:18 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Miguel Ojeda <ojeda@kernel.org>
-Cc: Benno Lossin <benno.lossin@proton.me>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, Tamir Duberstein <tamird@gmail.com>
-Subject: linux-next: manual merge of the rust tree with Linus' tree
-Message-ID: <20250317210518.01aad634@canb.auug.org.au>
+	s=arc-20240116; t=1742206806; c=relaxed/simple;
+	bh=y7SQyiNMqR2HpYoZOrpm5CIwKXkQ2/gmiiqomrbVWOI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=etcRoJxJeXxSbFvCbtTjJK+4XXl8IjMCpFJAvBhH9LYwf0aqJY579FF+q736oyeSp5yofi59QDu/M9PKXL984ywlZQYNuadaxxG9eQbK/9juBpQLqpWODbFCJ0Hu98OkGKZNTea0mlu2YsgBrcrysglR+j9pPcIkUaz4vNnaKXs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4ZGVx21Cfmz9sRy;
+	Mon, 17 Mar 2025 11:06:14 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id GY3M6MKxajRN; Mon, 17 Mar 2025 11:06:14 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4ZGVx20QyPz9sRr;
+	Mon, 17 Mar 2025 11:06:14 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id EF3CF8B765;
+	Mon, 17 Mar 2025 11:06:13 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id Jcpq8BWRW1ng; Mon, 17 Mar 2025 11:06:13 +0100 (CET)
+Received: from [10.25.207.144] (unknown [10.25.207.144])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id CAF918B764;
+	Mon, 17 Mar 2025 11:06:13 +0100 (CET)
+Message-ID: <ebc5d8c6-3c5c-4e6a-a218-9dddcdb4f8bc@csgroup.eu>
+Date: Mon, 17 Mar 2025 11:06:13 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/7xdb3gVryb/9bPhTeywP9Yz";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+User-Agent: Mozilla Thunderbird
+Subject: Re: [linux-next-20250307] Build Failure
+To: Venkat Rao Bagalkote <venkat88@linux.ibm.com>,
+ Stephen Rothwell <sfr@canb.auug.org.au>, linux-kernel@vger.kernel.org,
+ Madhavan Srinivasan <maddy@linux.ibm.com>, linuxppc-dev@lists.ozlabs.org,
+ Michael Ellerman <mpe@ellerman.id.au>
+References: <70ba4e80-53c4-4583-82f3-2851e0829aa6@linux.ibm.com>
+ <5ab103b4-70f0-454e-bca6-0bfc66d143f5@csgroup.eu>
+ <c0a716d0-6811-4b1b-b008-d4e97900cb0e@linux.ibm.com>
+ <5c671410-cedd-4854-a3e7-2060607d5c4d@csgroup.eu>
+ <25e5d468-6c40-40b7-a010-8c8018b6d228@linux.ibm.com>
+Content-Language: fr-FR
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+In-Reply-To: <25e5d468-6c40-40b7-a010-8c8018b6d228@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
---Sig_/7xdb3gVryb/9bPhTeywP9Yz
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
 
-Today's linux-next merge of the rust tree got a conflict in:
+Le 17/03/2025 à 08:27, Venkat Rao Bagalkote a écrit :
+> 
+> On 12/03/25 8:49 pm, Christophe Leroy wrote:
+>>
+>>
+>> Le 12/03/2025 à 11:11, Venkat Rao Bagalkote a écrit :
+>>>
+>>> On 12/03/25 4:20 am, Christophe Leroy wrote:
+>>>>
+>>>>
+>>>> Le 09/03/2025 à 13:38, Venkat Rao Bagalkote a écrit :
+>>>>> Greetings!!,
+>>>>>
+>>>>> I see linux-next-20250307 fails to build on IBM Power9 and Power10 
+>>>>> servers.
+>>>>>
+>>>>>
+>>>>> Errors:
+>>>>>
+>>>>> In file included from ^[[01m^[[K<command-line>^[[m^[[K:
+>>>>> ^[[01m^[[K./usr/include/cxl/features.h:11:10:^[[m^[[K 
+>>>>> ^[[01;31m^[[Kfatal error: ^[[m^[[Kuuid/uuid.h: No such file or 
+>>>>> directory
+>>>>>     11 | #include ^[[01;31m^[[K<uuid/uuid.h>^[[m^[[K
+>>>>>        |          ^[[01;31m^[[K^~~~~~~~~~~~~^[[m^[[K
+>>>>
+>>>> This is unreadable. Please avoid fancy colors that add escapes to 
+>>>> logs. You can unset LANG environment var before building in order to 
+>>>> get pastable stuff.
+>>>>
+>>
+>> Allthought not really readable, it seems to mention that uuid/uuid.h 
+>> is missing.
+>>
+>> Can you confirm that you have installed libuuid package in your 
+>> system ? Maybe you also need some libuuid-dev packet to get headers ?
+> 
+> 
+> Yeah uuid package is installed on my system. I am seeing this failure 
+> only with build next-20250307.
+> 
+> Builds with before and after are compiling successfully.
 
-  scripts/generate_rust_analyzer.py
+Ok, so I understand from this that the problem is fixed and there is not 
+further investigation required.
 
-between commits:
-
-  d1f928052439 ("scripts: generate_rust_analyzer: add missing include_dirs")
-  a1eb95d6b5f4 ("scripts: generate_rust_analyzer: add uapi crate")
-
-from Linus' tree and commits:
-
-  d7659acca7a3 ("rust: add pin-init crate build infrastructure")
-  dbd5058ba60c ("rust: make pin-init its own crate")
-
-from the rust tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc scripts/generate_rust_analyzer.py
-index adae71544cbd,54228e87e577..000000000000
---- a/scripts/generate_rust_analyzer.py
-+++ b/scripts/generate_rust_analyzer.py
-@@@ -97,29 -85,43 +97,44 @@@ def generate_crates(srctree, objtree, s
-          ["core", "compiler_builtins"],
-      )
- =20
- -    append_crate(
- -        "bindings",
- -        srctree / "rust"/ "bindings" / "lib.rs",
- -        ["core"],
- -        cfg=3Dcfg,
- -    )
- -    crates[-1]["env"]["OBJTREE"] =3D str(objtree.resolve(True))
- +    def append_crate_with_generated(
- +        display_name,
- +        deps,
- +    ):
- +        append_crate(
- +            display_name,
- +            srctree / "rust"/ display_name / "lib.rs",
- +            deps,
- +            cfg=3Dcfg,
- +        )
- +        crates[-1]["env"]["OBJTREE"] =3D str(objtree.resolve(True))
- +        crates[-1]["source"] =3D {
- +            "include_dirs": [
- +                str(srctree / "rust" / display_name),
- +                str(objtree / "rust")
- +            ],
- +            "exclude_dirs": [],
- +        }
- +
- +    append_crate_with_generated("bindings", ["core"])
- +    append_crate_with_generated("uapi", ["core"])
- +    append_crate_with_generated("kernel", ["core", "macros", "build_error=
-", "bindings", "uapi"])
- =20
-+     append_crate(
-+         "pin_init_internal",
-+         srctree / "rust" / "pin-init" / "internal" / "src" / "lib.rs",
-+         [],
-+         cfg=3D["kernel"],
-+         is_proc_macro=3DTrue,
-+     )
-+=20
-+     append_crate(
-+         "pin_init",
-+         srctree / "rust" / "pin-init" / "src" / "lib.rs",
-+         ["core", "pin_init_internal", "macros"],
-+         cfg=3D["kernel"],
-+     )
-+=20
- -    append_crate(
- -        "kernel",
- -        srctree / "rust" / "kernel" / "lib.rs",
- -        ["core", "macros", "build_error", "bindings", "pin_init"],
- -        cfg=3Dcfg,
- -    )
- -    crates[-1]["source"] =3D {
- -        "include_dirs": [
- -            str(srctree / "rust" / "kernel"),
- -            str(objtree / "rust")
- -        ],
- -        "exclude_dirs": [],
- -    }
- -
-      def is_root_crate(build_file, target):
-          try:
-              return f"{target}.o" in open(build_file).read()
-
---Sig_/7xdb3gVryb/9bPhTeywP9Yz
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfX894ACgkQAVBC80lX
-0GwFnQgAm2kjJW2eL3wyGhUbvJlufeGI/SA6X5o0KWRxuPVoNuqR03VejgktzrYv
-HiGgoBCeyDWf1ao2C1P8bQhvR/4hYXGEZYD/A+qd5pXcEez4gLuVtn4TeJS9Clzy
-z00A47W/l9g47lSasdHRyK+TIGRxX7dT3h59eG+SsqyuA6Gr7IYoov4DC9SWlX4e
-NBKAjxelppl38K1K5BSDy3tAz9SxHxPPAI6jmJin5gR0ip6bMMIERMmT7yjOBbAQ
-eqUevOSXABeaqRmEO5qpUj+33cLOnzc0UXDF0AETR7r3jXmhko92E915qcsqXAES
-bZ+hCdFCl1yduxl/KgGvEsfnPwTGVQ==
-=UXEL
------END PGP SIGNATURE-----
-
---Sig_/7xdb3gVryb/9bPhTeywP9Yz--
+Thanks
+Christophe
 
