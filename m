@@ -1,209 +1,263 @@
-Return-Path: <linux-kernel+bounces-565090-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565091-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AFA8A660AA
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 22:36:14 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77936A660B1
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 22:36:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF83B17869C
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 21:36:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 57E90178CDA
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 21:36:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D527203705;
-	Mon, 17 Mar 2025 21:36:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9717D2046BD;
+	Mon, 17 Mar 2025 21:36:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rgqpNoyA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wd6ULlpE"
+Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EB421FECD7;
-	Mon, 17 Mar 2025 21:36:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0CF3200BB3;
+	Mon, 17 Mar 2025 21:36:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742247365; cv=none; b=UyWiVjsjiON9lGRgFqFK1vkNYj6p+68EIql1I77wILY/nlYc08fV1uNs3H/p0Uf+A8ueuTnxKUmkeEywPm/1Z1F4Lfvvf11bp84uhQ0g4dFzK1OgFXn1JZkPN+jKxXDvaaiNI+TQ71MGIqiwBBUfLhs4RmARWQA6TUjt/ONwGg4=
+	t=1742247375; cv=none; b=oiqy2QfAurosWmDU1KrMu8/TDFhx+w9LxBmiztAkoBGg3V2PeVWhC1qpE7cbfPFhxktO2of+VkE356/3xiKznO4D1+8xiqV8DVDcBFXeCueJuK8IEmSL9qZalr8rmnXNYp8tsi8C02EaBKUoxkUxRTIMRoNUfZLMEJ2NskyQb24=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742247365; c=relaxed/simple;
-	bh=RftVXsvLu9UkkdSDu5kq2D/BS6QcHt92E22sXnRuF3o=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Jww/G/LEa5uxxqs7rYR0C53MqztLsF/XgqkrSGhspqv97J+6Izp0HWpaILtHOXRicAtJR1f8cQMX8DzetfRG2/QvaEuAmU4kMJbJAPlFj9otLntf64w0+Hgl9ZVR7bhXa6dnV5WpEsTYu155FlDm4MklYfwv9C7Gx2L9S0kh0HA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rgqpNoyA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D0A1C4CEE3;
-	Mon, 17 Mar 2025 21:36:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742247365;
-	bh=RftVXsvLu9UkkdSDu5kq2D/BS6QcHt92E22sXnRuF3o=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=rgqpNoyAcWZrwfTBaeIHSPFqZImmlxFcRJgUGY4DNm119Lwfqlhuq7VD3nEUy9Pl0
-	 BpD2sce7MsvQ7D97e+te/sovCG46Fk+4PCl+l4CNpi8MKuQ0CCTgy484/lRtobs3f+
-	 nKX76LwO/LyF7nzsPx5jVe2trK6aZrTFXluuGG0WUcbJhaUZTaSI1heZ2dowA+hWzf
-	 iinYHCl6kmnj9lkMo0mMhN3CE+DJruudHkaeCsbliIqwJm4zg/DhtiPNNaXiIdB5sT
-	 NnMz5dnCCSeMka25I1a0RO0bu3quQCkGqjEzLSjSozPj1+g8ca4OxKWaX557AdkMyH
-	 7Blv7yoYD4VGA==
-Message-ID: <1b2824d29af8b23ed59db976420e048eff875159.camel@kernel.org>
-Subject: Re: [PATCH RFC 9/9] sunrpc: don't upgrade passive net reference in
- xs_create_sock
-From: Jeff Layton <jlayton@kernel.org>
-To: Trond Myklebust <trondmy@hammerspace.com>, "horms@kernel.org"	
- <horms@kernel.org>, "davem@davemloft.net" <davem@davemloft.net>, 
- "chuck.lever@oracle.com"	 <chuck.lever@oracle.com>, "okorniev@redhat.com"
- <okorniev@redhat.com>,  "anna@kernel.org"	 <anna@kernel.org>,
- "kuba@kernel.org" <kuba@kernel.org>, "tom@talpey.com"	 <tom@talpey.com>,
- "Dai.Ngo@oracle.com" <Dai.Ngo@oracle.com>, "neilb@suse.de"	
- <neilb@suse.de>, "edumazet@google.com" <edumazet@google.com>, 
- "pabeni@redhat.com"	 <pabeni@redhat.com>
-Cc: "josef@toxicpanda.com" <josef@toxicpanda.com>, 
- "linux-nfs@vger.kernel.org"
-	 <linux-nfs@vger.kernel.org>, "bcodding@redhat.com" <bcodding@redhat.com>, 
- "linux-kernel@vger.kernel.org"
-	 <linux-kernel@vger.kernel.org>, "netdev@vger.kernel.org"
-	 <netdev@vger.kernel.org>
-Date: Mon, 17 Mar 2025 17:36:02 -0400
-In-Reply-To: <8555e0cb4774bc1b225fe628cc4e07eb3c6e2a40.camel@hammerspace.com>
-References: <20250317-rpc-shutdown-v1-0-85ba8e20b75d@kernel.org>
-		 <20250317-rpc-shutdown-v1-9-85ba8e20b75d@kernel.org>
-	 <8555e0cb4774bc1b225fe628cc4e07eb3c6e2a40.camel@hammerspace.com>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=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
- QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
+	s=arc-20240116; t=1742247375; c=relaxed/simple;
+	bh=NDRo1NDyk0UjBObq9g44k3C9noQuO7EtswHNQ9SKiec=;
+	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=j0PKDBvfTRZHhcPR9da5uoxQ/fBFoolkKWsczDRtlqHzh/yviX+5l2ltYbKJsBHO3NWEo28BpBb0U6pTYPrtl7AJdkbgekMcxjnxXzndhkqt872ShN+Ud6XtsRR9Sn1BxkvHpkfW+98ZxybOW6g1cQnrzC1sLIgTXFIcSpvlz+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Wd6ULlpE; arc=none smtp.client-ip=209.85.219.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-6e8f4c50a8fso41538676d6.1;
+        Mon, 17 Mar 2025 14:36:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742247372; x=1742852172; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:subject:cc:to:from:date:feedback-id
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=8gbb/i5BgK8BB2vPDb7y+lygRuwfeWxT2URX0MKFH64=;
+        b=Wd6ULlpE/9aitSilvzrPJUogeV+afAS6Q9DCfD8Z8OmQoZabhmsg6fjX7mfkYZDSYs
+         f0Hr6IZHNvia/nETXeB0DX3Eps/o+Su4eKsFo0ON7uebLWl40u7V4MYP12gW13Xu9Whw
+         8GDMCfMcf/MUwRar/gGrD0PsX67ceYRYvNvagQNAs6kj02vn7vA2CrINj2fpqUtO3UaT
+         UMdRHFuwNxBVkuIkdk4FtVC4AGIxZQhGNh7jXb//1hAVry5650+Oy/lXoHMP8eNP0Dj7
+         kNlK6XnZZZ0gwVvYVUzWcW+zN/+AjlQ+nvxcZKFJWHXdOFd5yaJh2ZEH97Sf6+kUnUA2
+         M7Tg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742247372; x=1742852172;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:subject:cc:to:from:date:feedback-id
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8gbb/i5BgK8BB2vPDb7y+lygRuwfeWxT2URX0MKFH64=;
+        b=eFtz78hCAbxsE3Xt1/Hmqh3bqlrPUVKU4FP+ny0nQHv/Ye59QvAAhKlGJHuKPLf9aD
+         4nv2T7zBNrYv5nSmuH+erLoeyysdotXqT343d3C8YIrgjQ2N6hqM77CMwUcOaeq4n+PN
+         DWmSr9uZz8XOAiMFf5IgRxB9ezKrAulti2CXgA9a2e5rMJIcsKhAHuy7wgC28wrkrZnt
+         x7jITvJ5ZyHn6i2sZv5UfsNBD1n/y8nL4JPvF0F9mnam/s25vqAWLd1KEDUYyFpA9/gc
+         JJQ684eidmEoLzgBqPH+hr9og0T7PVHLkubAu6DcmfUeyEynfDnEIMdc2Cl9I7klzwjO
+         pUFA==
+X-Forwarded-Encrypted: i=1; AJvYcCUIIuw+KJyN1G7G98ofllND30CQIjn3Yx8nVvYn1y8bybOkb+d1n0it2Legi0xHe0dpoTdv9THW6UBx@vger.kernel.org, AJvYcCUsyHSyyP/nuHyq4WRa1SJR7rXyGMGGSS/crLJjBByXDEf11r20Wz8SX+tbK5ZYJfDL9XCU/h9fui5i/qeN@vger.kernel.org, AJvYcCUyanpg2vg+Lzt7cPljobq8A+TZASZV8Mk3t5ETbe4DMSvafZU+e99ZWMU4TggpDr+A2gJ4/Al6sdBvAneiNanj@vger.kernel.org, AJvYcCVhlb6JvWosBEATNn7tuZjRtsxt6xxOr727nPnfx/WBKnmA92ADOb1n0ig635Zy85j7TIqVVykEtc/uyKIg@vger.kernel.org, AJvYcCW4+J7Ir8T4dQySjquChgbrneMqIbgFGmewzcdZ0x2uO/iapZXWMy7sT8//SpBA9QgUF5MhUQRJDtBg@vger.kernel.org, AJvYcCWzN9CjQa/Kunm1Wh/XBL0NfdPG3B+xEvtc5H5TkSPkfHVNMrHnWIhvSzqlt6LLw3SmfTC5jwODEmbIiAA=@vger.kernel.org, AJvYcCXr2YU5FWSTQHC0YCAl05oByRaPUyKvSCxZOwj8HT26uSR7tFOGz93EArSPekaYo33Oh5QBgF3n1XcDD/BD40s=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy5Ighyk1YwwDB0iXP3Sz0raJVrxRTdYQ4CbUzxqRgYZyYrGatW
+	rY5XjlwVJGJQIO6jgffHWvtdPcsgbdU7MVRhjFTeEqiHdbybi2Qm
+X-Gm-Gg: ASbGncuY2xGlEgGj2QLrIfwZwkxBO/w071DL0G5yBpT0/6OjlZt1Ni75me/r//ft6sD
+	YHXdqujqgMYeQcZX6lOWFUQa4qQBJ9unCk7QSK8hJcLnWWvhT81qj5tF7Ns4ywTs6+1foS1TmHV
+	DUuJahYa2bv310zVmv0cQxU+LZpU4N7sxCDX9Ii55ToWpDfzmEUDZd9D4ubVSkNDya8v6c8zC27
+	9vywXPtKiswUA97flxumG1y1hgNuGwbTp1794KNn7G7aMjH00hdYSdj0QlGt3Kj7Vnl8CTaFXN/
+	iC+y/TNBSoUXVDQdYVfpz1jponxgJb4JG5daL59T4o6MtHOCrsib/ODvmHXz8sUGxdSiriNZLQC
+	Dk1PHpwn3SytwP3FgAg3zv0ihFwN0FFQd7mKUzMII3F8Ppw==
+X-Google-Smtp-Source: AGHT+IH7Cg+zRnk0RKChbvzsCRrFHm3/BGwV9VJShTZo0drsjzRIjm781oK9RmO+lw2g3ZlpO0mzrA==
+X-Received: by 2002:a05:6214:d49:b0:6e6:602f:ef68 with SMTP id 6a1803df08f44-6eaea9e0a17mr215245556d6.10.1742247372550;
+        Mon, 17 Mar 2025 14:36:12 -0700 (PDT)
+Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6eade24b8c2sm59151996d6.50.2025.03.17.14.36.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Mar 2025 14:36:12 -0700 (PDT)
+Message-ID: <67d895cc.050a0220.99d33.5adc@mx.google.com>
+X-Google-Original-Message-ID: <Z9iVyI7hTo0imPzs@winterfell.>
+Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
+	by mailfauth.phl.internal (Postfix) with ESMTP id 18F611200073;
+	Mon, 17 Mar 2025 17:36:11 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-05.internal (MEProxy); Mon, 17 Mar 2025 17:36:11 -0400
+X-ME-Sender: <xms:ypXYZ4YXhTbqXacc55vyK0DzU36dWKEoqldGMH5M6YKAOcHDbJQ2nA>
+    <xme:ypXYZzaES_UoXJhNr1-Tpfcy9v_PPeCLlIF_G-JB2IOtJKMJxXpIr-C9w4HJkEoIe
+    PdXMRJsXTe-JBGXIA>
+X-ME-Received: <xmr:ypXYZy8nGPeqzJOzL8NTluopRnAXycXq7Fx6bEGwXYEm5IbLg5trBkpcf1iOKA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddugedtieefucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+    gvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggugfgjsehtkeertddt
+    tdejnecuhfhrohhmpeeuohhquhhnucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrg
+    hilhdrtghomheqnecuggftrfgrthhtvghrnhephedthfeukeefuefhteehgedvvdfhleff
+    jeefleevkeeklefhffdvkeefleeuvedtnecuffhomhgrihhnpehgihhthhhusgdrtghomh
+    dprhhushhtqdhlrghnghdrohhrghenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgr
+    mhepmhgrihhlfhhrohhmpegsohhquhhnodhmvghsmhhtphgruhhthhhpvghrshhonhgrlh
+    hithihqdeiledvgeehtdeigedqudejjeekheehhedvqdgsohhquhhnrdhfvghngheppehg
+    mhgrihhlrdgtohhmsehfihigmhgvrdhnrghmvgdpnhgspghrtghpthhtohepfedvpdhmoh
+    guvgepshhmthhpohhuthdprhgtphhtthhopehtrghmihhrugesghhmrghilhdrtghomhdp
+    rhgtphhtthhopehmrghsrghhihhrohihsehkvghrnhgvlhdrohhrghdprhgtphhtthhope
+    hnrghthhgrnheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepnhhitgholhgrshesfhhj
+    rghslhgvrdgvuhdprhgtphhtthhopehojhgvuggrsehkvghrnhgvlhdrohhrghdprhgtph
+    htthhopegrlhgvgidrghgrhihnohhrsehgmhgrihhlrdgtohhmpdhrtghpthhtohepghgr
+    rhihsehgrghrhihguhhordhnvghtpdhrtghpthhtohepsghjohhrnhefpghghhesphhroh
+    htohhnmhgrihhlrdgtohhmpdhrtghpthhtohepsggvnhhnohdrlhhoshhsihhnsehprhho
+    thhonhdrmhgv
+X-ME-Proxy: <xmx:y5XYZypVtA76PPl-m-9kbwVPrIJgH5gajSBF3WTO0nKBx_5qXn6pdg>
+    <xmx:y5XYZzrDR3LvRcQhC_YjdvlvHCExbhH_kDpbnyWb0oU0v1YByxCBcA>
+    <xmx:y5XYZwTYUuiPTy3RWllPn1PCnorfOu_ULD6QLLg3X52FEOnzp6HIdw>
+    <xmx:y5XYZzojp2cg3CDIWX-EdUsXDkf_6fF-SbZDicqSt6QlHWCr-wgjug>
+    <xmx:y5XYZ47o-BkwHDGbRJ7JuT-GW1O6nTYgbSm5Ebi6pRye0rPkZg8zfL6G>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 17 Mar 2025 17:36:10 -0400 (EDT)
+Date: Mon, 17 Mar 2025 14:36:08 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Tamir Duberstein <tamird@gmail.com>
+Cc: Masahiro Yamada <masahiroy@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas@fjasle.eu>, Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Brendan Higgins <brendan.higgins@linux.dev>,
+	David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Russ Weight <russ.weight@linux.dev>, Rob Herring <robh@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,	linux-kbuild@vger.kernel.org,
+ linux-kernel@vger.kernel.org,	rust-for-linux@vger.kernel.org,
+ linux-kselftest@vger.kernel.org,	kunit-dev@googlegroups.com,
+ linux-pci@vger.kernel.org,	linux-block@vger.kernel.org,
+ devicetree@vger.kernel.org
+Subject: Re: [PATCH v5 6/6] rust: use strict provenance APIs
+References: <CAJ-ks9kBp8zPfaQuZRb0Unms1b13hDb5cRypceO8TWFR0Ty5Ww@mail.gmail.com>
+ <67d864b2.0c0a0220.39fb6f.4df4@mx.google.com>
+ <CAJ-ks9n8mwt5q9unqfkfSHj9=ELJHtqsXM-xQ8jsbXeJX6Uyfg@mail.gmail.com>
+ <67d8671d.050a0220.3305ab.6372@mx.google.com>
+ <CAJ-ks9=uHjJrzM0ruvm4v4wr8LygRMP-1orWBy_9OiNNeQr0ow@mail.gmail.com>
+ <CAJ-ks9=Qcmvbm=YGJ=jrX_+YdMsftk=FAimszYZB1OUuV4diZw@mail.gmail.com>
+ <67d885ff.0c0a0220.111215.5644@mx.google.com>
+ <CAJ-ks9kYB1b4XsQcFb=NScPq+R+13U+Sv-6opi-yp6=ZjuLD_g@mail.gmail.com>
+ <67d88a1d.050a0220.2cdacf.4adf@mx.google.com>
+ <CAJ-ks9kg4Br=56HT7T5sWpoMKhRqT_2x+cpQAWoyrEG3qyqQ6Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJ-ks9kg4Br=56HT7T5sWpoMKhRqT_2x+cpQAWoyrEG3qyqQ6Q@mail.gmail.com>
 
-On Mon, 2025-03-17 at 21:28 +0000, Trond Myklebust wrote:
-> On Mon, 2025-03-17 at 17:00 -0400, Jeff Layton wrote:
-> > With the move to having sunrpc client xprts not hold active
-> > references
-> > to the net namespace, there is no need to upgrade the socket's
-> > reference
-> > in xs_create_sock. Just keep the passive reference instead.
-> >=20
-> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > ---
-> > =C2=A0net/sunrpc/xprtsock.c | 3 ---
-> > =C2=A01 file changed, 3 deletions(-)
-> >=20
-> > diff --git a/net/sunrpc/xprtsock.c b/net/sunrpc/xprtsock.c
-> > index
-> > 83cc095846d356f24aed26e2f98525662a6cff1f..0c3d7552f772d6f8477a3aed8f0
-> > c513b62cdf589 100644
-> > --- a/net/sunrpc/xprtsock.c
-> > +++ b/net/sunrpc/xprtsock.c
-> > @@ -1941,9 +1941,6 @@ static struct socket *xs_create_sock(struct
-> > rpc_xprt *xprt,
-> > =C2=A0		goto out;
-> > =C2=A0	}
-> > =C2=A0
-> > -	if (protocol =3D=3D IPPROTO_TCP)
-> > -		sk_net_refcnt_upgrade(sock->sk);
-> > -
-> > =C2=A0	filp =3D sock_alloc_file(sock, O_NONBLOCK, NULL);
-> > =C2=A0	if (IS_ERR(filp))
-> > =C2=A0		return ERR_CAST(filp);
-> >=20
->=20
-> Is this not going to reintroduce the bug described by
-> https://lore.kernel.org/netdev/67b72aeb.050a0220.14d86d.0283.GAE@google.c=
-om/T/#u
-> ?
->=20
-> As I understand it, the problem has nothing to do with whether or not
-> NFS or the RPC layer holds a reference to the net namespace, but rather
-> whether there are still packets in the socket queues at the time when
-> that net namespace is being freed.
->=20
->=20
+On Mon, Mar 17, 2025 at 04:53:18PM -0400, Tamir Duberstein wrote:
+> On Mon, Mar 17, 2025 at 4:46 PM Boqun Feng <boqun.feng@gmail.com> wrote:
+> >
+> > On Mon, Mar 17, 2025 at 04:35:42PM -0400, Tamir Duberstein wrote:
+> > > On Mon, Mar 17, 2025 at 4:28 PM Boqun Feng <boqun.feng@gmail.com> wrote:
+> > > >
+> > > > On Mon, Mar 17, 2025 at 03:05:45PM -0400, Tamir Duberstein wrote:
+> > > > > On Mon, Mar 17, 2025 at 2:50 PM Tamir Duberstein <tamird@gmail.com> wrote:
+> > > > > >
+> > > > > > On Mon, Mar 17, 2025 at 2:17 PM Boqun Feng <boqun.feng@gmail.com> wrote:
+> > > > > > >
+> > > > > > > Then we should fix clippy or how we set msrv rather adding the stub.
+> > > > > > > @Miguel?
+> > > > > >
+> > > > > > I filed https://github.com/rust-lang/rust-clippy/issues/14425.
+> > > > >
+> > > > > I don't think we can wait for that to be fixed, though. Usually clippy
+> > > > > is distributed with rustc via rustup, so even if this is eventually
+> > > > > fixed, all versions between 1.84.0 and the fix will need this
+> > > > > workaround until MSRV is >= 1.84.0.
+> > > >
+> > > > We need to take one step back to evalute this "workaround".
+> > > >
+> > > > First, expose_provenance() and with_exposed_provenance{,_mut}() API are
+> > > > clearly defined as equavilent to `as` operation [1]. Therefore, the
+> > > > changes in this patch doing the conversion with expose_provenance() and
+> > > > with_exposed_provenance{,_mut}() don't change anything related to
+> > > > provenance in practice.
+> > > >
+> > > > I do agree we want to use the explicit provenance API, but I don't think
+> > > > we want to introduce some API that we know we will change them latter
+> > > > when we bump the rustc minimal version. So the question is: are these
+> > > > stubs what we want even though in the future our minimal rustc version
+> > > > stablizes provenance API? If not, then the cost of this patch cannot
+> > > > justify its benefits IMO.
+> > > >
+> > > > Now let's also look into why we choose a msrv for clippy, I would guess
+> > > > it's because we need to support all the versions of rustc starting at
+> > > > 1.78 and we want clippy to report a problem based on 1.78 even though
+> > > > we're using a higher version of rustc. But for this particular case, we
+> > > > use a feature that has already been stablized in a higher version of
+> > > > rustc, which means the problem reported by clippy doesn't help us, nor
+> > > > does it provide better code. Frankly speaking, I think we have other
+> > > > ways to ensure the support of all rustc versions without a msrv for
+> > > > clippy. If I was to choose, I would simply drop the msrv. But maybe I'm
+> > > > missing something.
+> > > >
+> > > > The point is tools should help us to write good and maintainable code,
+> > > > we shouldn't introduce complicated structure of code just because some
+> > > > tools fail to do its job.
+> > > >
+> > > > [1]: https://doc.rust-lang.org/std/ptr/fn.with_exposed_provenance_mut.html
+> > >
+> > > Even if we globally disable this clippy lint, we still need stubs
+> > > because exposed_provenance was added in 1.79.0. Did your suggestion
+> > > address this? Perhaps I missed it.
+> >
+> > No, I didn't.
+> >
+> > That's a separate topic though, because I can see the argument that:
+> > because with_exposed_provenance() is a function rather than a method, it
+> > won't be very benefical to use ptr::with_exposed_provenance() instead of
+> > kernel::with_exposed_provenance(), therefor these stubs of
+> > exposed_provenance make sense to exist. But I don't think the same
+> > argument works for ptr::{with_,map_,}addr().
+> 
+> What about `pointer::expose_provenance`? It's a method that was added in 1.79.0.
+> 
 
-I don't think so. That syzkaller report was closed by this patch:
+We have a few options:
 
-    5c70eb5c593d net: better track kernel sockets lifetime
+1) we can decide to use funtion-version of expose_provenance() (i.e. the
+   stub), if we feel the symmetry with with_exposed_provenance() is
+   a strong rationale. This also means we won't likely use
+   pointer::expose_provenance() in the future. That is, although kernel
+   doesn't have stable internal API, but in the foreseeable future, we
+   decide to use funtion-version of expose_provenance().
 
-That says:
+2) we can introduce a PtrExt trait for <1.79
 
-    "To fix this, make sure that kernel sockets own a reference on net
-passive."
+   pub trait PtrExt<T> {
+       fn expose_provenance(self) -> usize;
+   }
 
-With this, we still do keep a passive reference on the net in the
-socket, which I think is enough.
+   and
 
-That said, I'd appreciate a look at this from the netdev folks.
---=20
-Jeff Layton <jlayton@kernel.org>
+   impl<T> PtrExt<T> for *const T {
+   	...
+   }
+
+   and `PtrExt` in kernel::prelude.
+
+   (we need to #[allow(unstable_name_collisions)] to make that work)
+
+   We can also make with_exposed_provenance() use the same *Ext trick,
+   and remove it when we bump the minimal rustc version.
+
+Regards,
+Boqun
+
+> We can certainly disable the clippy lint rather than add stubs for
+> `pointer::{with_,map_,}addr`, but it doesn't bring us to a solution
+> where only free functions require stubs.
 
