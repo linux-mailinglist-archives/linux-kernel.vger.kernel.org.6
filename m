@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-563534-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563535-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A1A2A64398
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 08:29:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E011A6439B
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 08:29:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68AAB3B1881
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 07:28:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BAF373AA522
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 07:29:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D67B721ABB9;
-	Mon, 17 Mar 2025 07:28:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5206C21ABCA;
+	Mon, 17 Mar 2025 07:29:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dYhCFNXh"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o0WfeKB8"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35D2726ADD;
-	Mon, 17 Mar 2025 07:28:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DD6121A931;
+	Mon, 17 Mar 2025 07:29:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742196535; cv=none; b=eFdWb6c/aDnln1ZMaNgszxyH+a2pAb/2uLunsYFBEtmd+SLq81B6xiPIOJ3cBXvl7W+WwUXw8R01FebmSiDibPG9542i0g8R40DcMGDSyYBeZGh0g4rG+HK3eYWNiNJO0M2LhzbeKmjvQb23AjejEdJLUPBkzlWfMo7COLZpfh0=
+	t=1742196575; cv=none; b=b98wRdytFN+Rwt6toTmjcwFtPcTYr/aeszfiyIkZXwnt18jNHeCCheAE/DAQx84YL4Wkdi22+k8zWO2s1DHyAtASIiHL2X/vTOhHLerkncA/uTdpqwbnGDH8NCfRp0nIfggnFeQTF3C/3i89Tvxl0guJGrK2XnNCaTO7xAehUS8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742196535; c=relaxed/simple;
-	bh=KX8lPefXh51osUSwCR8m3OipolqZ4ExuJ1TF8HKpVZQ=;
+	s=arc-20240116; t=1742196575; c=relaxed/simple;
+	bh=J+kuOv2uD9z+2pUSjAjZdJct3mszF6bPV8DehOnBEa8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mabA6ZZmziES/VRWG5Qx7Uccrv1rR89Hme34ElX9qJuo/tH2yOwliBdT2c6/IsRpvPlL1x2wuw0klp/i7i7EcHBluEiCB9TnWLhwrkCc4wLbzFpHK/471SS67c5V1hW6wSMhrcMX4Ke7vyT68Kl+ypiiTCa2OApYXWYh5xrcOSk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dYhCFNXh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E38DBC4CEEC;
-	Mon, 17 Mar 2025 07:28:48 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=sBqLpSxiGUrRujwah9a0cuURWjFIUASGHxsRPXmQ4YNfrZ3iQxUYW33EWSLrwq7jKV6PBE81Act8S4gotj6NzvxGwNL7/uYGo/XWveBR6Kj96k0Jd+irwVdxWNvY4BjWKVMqNUUT8RvaeBDt8vbLAPMiYakvzvBIwQAKpOGFm7Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o0WfeKB8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24A4DC4CEE3;
+	Mon, 17 Mar 2025 07:29:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742196533;
-	bh=KX8lPefXh51osUSwCR8m3OipolqZ4ExuJ1TF8HKpVZQ=;
+	s=k20201202; t=1742196575;
+	bh=J+kuOv2uD9z+2pUSjAjZdJct3mszF6bPV8DehOnBEa8=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=dYhCFNXhhkYaL60Kpf9UYUo4iRFxjKZqjwD9o5Pn33aXjjuLrzXGLz9szuGusVXWe
-	 VVSYy2jUAvk+UsxxXiCcrTtfHGyqZRDKOP3wnDQLQQaKxKTdT4UgrxFchW46huHO05
-	 fk5h9JW/bXjzJ9P5rnc/frChG3LFgNtwmog5UWaDzMBTpcY6iMeuV3Ub/LleAE+3Ho
-	 yE1Wk72qaDcTm9ebPLmvYuHClloyHylp3HZtnvGdTuOaVmwEoC4Z9XolA8V2rt+Gq6
-	 LXEsXcrmCW4rXPmI+cBYx8B8XsJHll7QwQeJV/weeo2ofjLE17iyRJ5QpMf9PqI3on
-	 MTSXjlm1p2Qcw==
-Message-ID: <4cec908c-1412-4e18-959d-b71c9ec21eb4@kernel.org>
-Date: Mon, 17 Mar 2025 08:28:45 +0100
+	b=o0WfeKB8+1ErfjAST3zYKnjN+ZOzwp4IYMvVy98MzTVPXq36zknRqRPpKHmMug9Pj
+	 HD+fCDyxjaZYIcKlB2rslAFm+V7MhHs+unvrh1YUBZ9z9ylycENxwDsgABS1eOPlZ4
+	 Zp3iM4g1vFgxO/9jIOQQW7Rpqb2hh6wNrAZM/ICzlGSriYceJj1yFGkzLCGYF9I3RE
+	 VJWINpaJSIRSSKW8tCK0zr0UVcGg7r/AzC/KWWepFm2ibX+56I3AfsH2GxHH1zvp/1
+	 JW5Ks9ShPZOpVjQQOtQo1q+ArwNhz3L9Lgw9C4zI9yDS4xMun+ga1BaPFYB4Aw3/S1
+	 p+gAe84GqGQuQ==
+Message-ID: <07ce157f-98ec-4606-bfa7-5d8f7ca43135@kernel.org>
+Date: Mon, 17 Mar 2025 08:29:26 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,20 +49,24 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/3] arm64: dts: amlogic: Add A4 Reset Controller
-To: Kelvin Zhang <kelvin.zhang@amlogic.com>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh@kernel.org>,
+Subject: Re: [PATCH v3 1/9] clk: bcm: kona: Move CLOCK_COUNT defines into the
+ driver
+To: Artur Weber <aweber.kernel@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>,
+ Florian Fainelli <florian.fainelli@broadcom.com>, Ray Jui
+ <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>,
- Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
- Zelong Dong <zelong.dong@amlogic.com>
-References: <20250313-a4-a5-reset-v4-0-8076f684d6cf@amlogic.com>
- <20250313-a4-a5-reset-v4-2-8076f684d6cf@amlogic.com>
- <20250314-tested-husky-of-force-1ccdca@krzk-bin>
- <3dceafbf-49d4-4084-bfae-74384e187941@amlogic.com>
+ <conor+dt@kernel.org>, Alex Elder <elder@kernel.org>,
+ Stanislav Jakubek <stano.jakubek@gmail.com>, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ ~postmarketos/upstreaming@lists.sr.ht
+References: <20250308-kona-bus-clock-v3-0-d6fb5bfc3b67@gmail.com>
+ <20250308-kona-bus-clock-v3-1-d6fb5bfc3b67@gmail.com>
+ <20250310-proficient-free-antelope-abb6b7@krzk-bin>
+ <fffe0118-6235-446c-a9c5-93f5d1f5ed04@gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -108,39 +112,43 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <3dceafbf-49d4-4084-bfae-74384e187941@amlogic.com>
+In-Reply-To: <fffe0118-6235-446c-a9c5-93f5d1f5ed04@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 17/03/2025 03:49, Kelvin Zhang wrote:
+On 16/03/2025 20:01, Artur Weber wrote:
+> On 10.03.2025 09:40, Krzysztof Kozlowski wrote:
+>> On Sat, Mar 08, 2025 at 08:50:39AM +0100, Artur Weber wrote:
+>>> CLOCK_COUNT defines for each CCU are stored in the DT binding header.
+>>> This is not correct - they are not used by device trees, only internally
+>>> by the driver.
+>>>
+>>> Move the CLOCK_COUNT defines directly into the driver in preparation
+>>> for dropping them from the DT binding include.
+>>>
+>>> Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
+>>> ---
+>>>   drivers/clk/bcm/clk-bcm21664.c |  8 ++++++++
+>>>   drivers/clk/bcm/clk-bcm281xx.c | 10 ++++++++++
+>>>   2 files changed, 18 insertions(+)
+>>>
+>>> diff --git a/drivers/clk/bcm/clk-bcm21664.c b/drivers/clk/bcm/clk-bcm21664.c
+>>> index 520c3aeb4ea9c4a431512c0909f9545c1761d17a..fa6e1649d6f5f459b63026109caea9e2f72e22dd 100644
+>>> --- a/drivers/clk/bcm/clk-bcm21664.c
+>>> +++ b/drivers/clk/bcm/clk-bcm21664.c
+>>> @@ -17,6 +17,8 @@ static struct peri_clk_data frac_1m_data = {
+>>>   	.clocks		= CLOCKS("ref_crystal"),
+>>>   };
+>>>   
+>>> +#define BCM21664_ROOT_CCU_CLOCK_COUNT	(BCM21664_ROOT_CCU_FRAC_1M + 1)
 >>
->> Why do you have on the bus devices with bus addressing and without it?
->> What sort of bus is it?
+>> I hit that wall too, no worries. It might surprise you but 0+1 != 1 :),
 > 
-> Are you referring to the 'apb'?
-> If so, the 'apb' bus is defined in 
-> arch/arm64/boot/dts/amlogic/amlogic-a4-common.dtsi.
-> 
-> apb: bus@fe000000 {
->          compatible = "simple-bus";
->          reg = <0x0 0xfe000000 0x0 0x480000>;
->          #address-cells = <2>;
->          #size-cells = <2>;
->          ranges = <0x0 0x0 0x0 0xfe000000 0x0 0x480000>;
-> 
->>
->>>        periphs_pinctrl: pinctrl {
+> Do you mean that I should specify the clock count directly rather than
+> incrementing the last ID? Some other drivers seem to do this the way I
+> did here (samsung/clk-exynos*, renesas/r9a06g032-clocks.c).
 
-Then what the heck is this?
-
->>>                compatible = "amlogic,pinctrl-a4";
->>>                #address-cells = <2>;
->>
->> Best regards,
->> Krzysztof
->>
-> 
-
+Just build and test your patches...
 
 Best regards,
 Krzysztof
