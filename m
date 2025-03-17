@@ -1,233 +1,103 @@
-Return-Path: <linux-kernel+bounces-563788-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563838-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02D76A64882
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:00:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95E3CA64973
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:21:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51DB63AB9CF
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 09:59:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1011C1887F33
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:19:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6758C230242;
-	Mon, 17 Mar 2025 09:59:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AA3F23CF11;
+	Mon, 17 Mar 2025 10:16:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="mx5a+Ig2"
-Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2045.outbound.protection.outlook.com [40.107.255.45])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="ZehzFm9e"
+Received: from mail-40133.protonmail.ch (mail-40133.protonmail.ch [185.70.40.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99D6D22F17B
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 09:59:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.255.45
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742205576; cv=fail; b=RN23htdVc8Ut702ej2PyPhN0qfIdXfHE7RLv2Z0ElCD6S1SzagTk11vZRYtHQaqG5cLZoQ94+qi70H4OGfbohvd471erg79e0nm67mhSt/PxCJIBXJ9ugP0P+k/UHxUOE6ShqSKkPXaQstD04Dpe3b0f4utY4xJ6rRdgyT0prAQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742205576; c=relaxed/simple;
-	bh=ZKEOfzSIBsml+z9ApCssSF5Lk8NkW+91p0k8nnHni+E=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=fsKyIlrVVgChw5hOVsiAF7WwgE5TcKiUDYSPIwhchcyzJ9+8Gk6N0GbVpte3USZ6BLvvfPQQum50jOn2lYkyGm8x/N4r0Duylwtaq8HpBCaSE0RIcIA/kDrJQDV7F6SKhbRZfhP2bo7j+cu8damFjsXc1smxnKsXdOPJP/zl7RM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=mx5a+Ig2; arc=fail smtp.client-ip=40.107.255.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=k+vALhGFLLRkBxgg42inabqoUZpzggMcShEC1cC7BTjUo6AQqQDAGBjFHonv2YV0GrPDrzOLsgpuOvV0bbxooWrNkLPh5b24a86Cl2nPnB/3hBElFr1u8WPJ9p0VRxuF/xLWx3Advmh8sBPXAW72TD3kvu/MG3lO5wzVitL0VMc5HC3ELwtqlOPyRZ73P29qh6x5a/hKdQeAppGY6ZzeIDR2WBiQ00Kbnu5CM1ViHTMHAo/lZqa71d+gvTe9v7/tJ4tTzhKXXy9kMm58+1lGluKB4QJZ5bIYe9EZiTtlIsUrXIYNqrmCyWJp9RKWFW9+Hk65Gn7xb6nlFGwURJzzNA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=OPMwHxvrqvzN9SEXJAuSf92F/0BoN/FJ8f9SA1NCMas=;
- b=gNxZu2kgYP42vnVXDazkeMpK0eIE5FnSQUYho1tyR4oM7PL+X1Em6AJdgKYIcUoOoKazfLVBpMU7uz8LlBGwqrwXJcEfgVgkLDOBsEKLO4biJ4RMNzLWZ4LnthgHdDut+r07YD7b3iSIjffxx5D2GXfiJWLcTTmf11G3Q5E9ksUSqi1B/xVbOlp7GDyroYJMH899lxEqplhCCgTrkroMeyOgbOo3E7tzi6xHt3QfxFGA/7xyg1445H2GskcMrb8al2SAp+ot1bHIoBDVaCQ/f8+y/kpSqPyuu2wlGlnXKZExQ4MkAD4paNN5ljNH7jhwGOUcbYIw4rp0FO6lTyZ8Jw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=OPMwHxvrqvzN9SEXJAuSf92F/0BoN/FJ8f9SA1NCMas=;
- b=mx5a+Ig2mVasl85+Tl3e5KIxS7lZzXb9FI6ql0IykHlpziDH5yNt1pdZKs4r9qRl9ahEFejiEdAtdhdTTZ0CATalGCfLL26888Vmpbf1jjtQOB3u2bASiiXGlq79cA1VESyDzF2U8/4LwvD3UhTRh9bNWr6W1j1EubWPvRCb6oqfRboYaT1UvMD5TCcNnRlSdmF2DWqXyA29+lviNiUFlA/+lJkPcLjGULSEJj46x2mCU7a4nighNM4oCt9OCDD32xArs6Gs4CE1NGbrTAYlF2X7EN1BQcoYnEKzBMG++lR9JvgAAlnTnk9TrGbUL4eAQbG/I/y4h3AbvHvhr2rksw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from TYZPR06MB7096.apcprd06.prod.outlook.com (2603:1096:405:b5::13)
- by SEYPR06MB5766.apcprd06.prod.outlook.com (2603:1096:101:b9::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.28; Mon, 17 Mar
- 2025 09:59:30 +0000
-Received: from TYZPR06MB7096.apcprd06.prod.outlook.com
- ([fe80::6c3a:9f76:c4a5:c2b]) by TYZPR06MB7096.apcprd06.prod.outlook.com
- ([fe80::6c3a:9f76:c4a5:c2b%5]) with mapi id 15.20.8511.026; Mon, 17 Mar 2025
- 09:59:30 +0000
-From: Chunhai Guo <guochunhai@vivo.com>
-To: chao@kernel.org,
-	jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org,
-	Chunhai Guo <guochunhai@vivo.com>
-Subject: [PATCH v3] f2fs: fix missing discard for active segments
-Date: Mon, 17 Mar 2025 04:16:24 -0600
-Message-Id: <20250317101624.3223575-1-guochunhai@vivo.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: TYCP286CA0030.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:263::20) To TYZPR06MB7096.apcprd06.prod.outlook.com
- (2603:1096:405:b5::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90DF023909F
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 10:16:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.133
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742206599; cv=none; b=tn4AgG1I1k6adtSUVAnnhUPy5kwdsDmy/zP86aH3EnQcmnjCK/nUW85oZMKI0z26EvjcNTZnGFxOZclv1fjvfgHM9qw1oHhyTA7L8S3BFGl85QOfuP0TPlnkgAfisqRSY6mpZiUN2f3iKPNqc/h2VZa7dm1zO83LGO/w4Mn9tw8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742206599; c=relaxed/simple;
+	bh=tAXyC/Z0ZWitiHzL9nvON4Jigtijh73MzpCu2PhMbDI=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=m7VqQa8gjMSRaXKm1+PnmYpgWozYzVKonjw0n9Dab1Bwf+Lvuwgq1uO9w2dtiZoTxzUY35HMa0a/QYIGJivLxcJyDDLeeMoIOIiHATnX2QW2RyxoKi0zsE3Q+6dNLZOSegGVuXqFu/37Kx2kQW/iWGjM2bmgKJK6qPagRnIuuRg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=ZehzFm9e; arc=none smtp.client-ip=185.70.40.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1742206595; x=1742465795;
+	bh=KQoILsilHEJo5usuiJ2jeJyGOMiJd+yx37iGtpQVeHE=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
+	b=ZehzFm9e+0RYuDRbtyUDTPs4sG5OtU3hyazfGtACn6nkBSbTtMzfEBM9xf53BBC6V
+	 68krE7OdugTYXo45/E8WXDximPehcXRbg03aDL9GEQTvjNdygLChDdN9Evj1LZCAAj
+	 uK0CTzZDElClQtUaIgd0P+7qwWSQJ6ecEXcce09nuwvrrSNI1K/vZQBzj3ChsXqwSh
+	 Wp92sYWyJa6qGeYcJwxDftalNHzgLweijHUnnCsfD8Tk5yDYfbNBOrIwNJxIeawdB7
+	 uEHM76VU4ThinIyJcoN7Gi3tMVlLh1zC7bGe271p305RaDWU4SGqVfJagV/2d9VkJQ
+	 3ESD41nQZ+wSg==
+Date: Mon, 17 Mar 2025 10:16:30 +0000
+To: Kunwu Chan <kunwu.chan@linux.dev>, ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, a.hindborg@kernel.org, aliceryhl@google.com, tmgross@umich.edu, dakr@kernel.org, nathan@kernel.org, nick.desaulniers+lkml@gmail.com, morbo@google.com, justinstitt@google.com
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, llvm@lists.linux.dev, Kunwu Chan <kunwu.chan@hotmail.com>, Grace Deng <Grace.Deng006@Gmail.com>
+Subject: Re: [PATCH] rust: sync: optimize rust symbol generation for CondVar
+Message-ID: <D8IGOUUTDAZL.7LMGZFOHU4PU@proton.me>
+In-Reply-To: <20250317081351.2503049-1-kunwu.chan@linux.dev>
+References: <20250317081351.2503049-1-kunwu.chan@linux.dev>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: 4f3e90c92b18f37feebf3e6e5057f09b64505ab5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TYZPR06MB7096:EE_|SEYPR06MB5766:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6337fe32-f692-46ee-95f2-08dd653a6944
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|1800799024|366016|52116014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?faM2QYwHRiFOX+UMc/g0cGQffmY2SOa94ABd88I6sG/X+0sGs/sHDtg6irOc?=
- =?us-ascii?Q?RN01YqHLfa5yUL1G4zHkhfhxTlKRM/dJnYHP+qhxzGEhCq64bRIbxQxYUQ9u?=
- =?us-ascii?Q?vOfWsmuqdBC2unBne2ffGUDRWVlipSxWx5pjG//MDVS59rVNHBTjVN9bBKED?=
- =?us-ascii?Q?r2Eu7X5YhowsNLp3eB57sNMdvTKBGDaReVlBsmOUZIdNsZd00+v13sNyQJ2G?=
- =?us-ascii?Q?8pOm8pcLrOsO36i1Hr88WM9mY0u62uhAWnU3gMesWic1GffxUU1+5EVGxViY?=
- =?us-ascii?Q?lhR7hOUl1vGa4d+73R51v/vS7cea2cw1f0KdslVruwFZdc6Lxc6hCszBaWq9?=
- =?us-ascii?Q?31FfmHq1JJzPyddG9cuy5wHaF9wGzrr5YU0RymM4TeUZRY2H7qN48p2m+rZq?=
- =?us-ascii?Q?P8bV+WWv2TT7eBuSTz2zMU3A0uplxMsxh6Sx4zAyKl4p2wjH5Uvzd+KYFJlN?=
- =?us-ascii?Q?poImUXpGWXIjC2MFh9TDARex2AfZcfmqRM+adnKtUdZlGdOW0SKfzGumeDhr?=
- =?us-ascii?Q?Nzy8CyN8oWAUaqBHG+5v9B/0Q/bE7Wxo/vKNq9Cqf+u1I5WV4EuRV7eoN+Mx?=
- =?us-ascii?Q?iJx8NspS0Q4tqJecq0AJeY22Hk0mZFuRwXVOMWlozC2+uisirryWKugU9MFE?=
- =?us-ascii?Q?1hoQH04S7NzFbeb02bFzhthttjzKDYyzC96ZMFpM+SWMs3NaYtT4ClCtK/51?=
- =?us-ascii?Q?fa96iX7ApmpUces9F6yaw4tucrxPgHVuozpWyoLdzc/tpYuIi874LuuhcYiZ?=
- =?us-ascii?Q?3q3Ou3ysuOUwGWUkXqKYmu1Wv5m+2mSFrJZ5tupUxPK8f7/XxUOwB2S4UGua?=
- =?us-ascii?Q?sW0RAbqMhcLJH2R51qD2ILH7zx2diVJaHe+O70p1BHdIG2dLE9kcCuiUTZDi?=
- =?us-ascii?Q?B12pTftWEjQsSGbyD36eIMdY0mdtBuKcii+C10Sb8lvQq8+WpHy144OEIJzf?=
- =?us-ascii?Q?Ly19NGSLwnmr90ZoO1upsLNm8ZghUtJT4KVQIqVcaJSXxMjkTXsTA9YZhYHL?=
- =?us-ascii?Q?9z5ZvQpY6U02xZRQHC1QHvW5FmILJ9pxzkcuhikU3YWD0FeNvCL5sUwyqYh2?=
- =?us-ascii?Q?nwaXEbZhMNzCa+2VFuxFIqJgFgyR3VxXLRxqYHt6fZrH4Tb2cKkwECCs5k5U?=
- =?us-ascii?Q?Ut3IrV6bLll7kNg5/3vYcKt4k/RHTiy1oVWq69FYDNAcc4e8ZSLyDlSqCEME?=
- =?us-ascii?Q?hbwWm3vw7wJBoLXKa1b7jino5y07L0Pxkuc/nU53ESyy2/1Qa/Grk3GHYG7M?=
- =?us-ascii?Q?myz58ukcYqniSeAVYIQCvKisVgqzvTkT2XfamSRvUfIKd0lfDjMBmnozDVd+?=
- =?us-ascii?Q?mFLxDMYI8+TVqW/+SM2JUNOuHeOXJJbUB8nF+Q42wHdRq6tcGri9czcdKiIj?=
- =?us-ascii?Q?BXrAn5LpNN9RaBBhDRnJ7+7YIT5NxSTOZh1CCe/1bNiIfjXVSNc/MK+/UaGD?=
- =?us-ascii?Q?HI9g1tTVq/6S+LYeGnIcI5wXNvu5wi0A?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR06MB7096.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(52116014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?Mb9dXI80vHhEhjZDs5jk+X1DWQXEaLvzPy0cCv2KOFedKyAW/JcrIju/jePJ?=
- =?us-ascii?Q?rb4jjXa8okvFQ0QuZXGm80Q28HdHoGeDcyXioPRpMPHsyTVDICCFkKzkBIvB?=
- =?us-ascii?Q?GuwMMrM3o2W135GfIwZbRWlwC83qL/vaHjfTxjoeetGNYtBBsJBZd3Cu/ZyC?=
- =?us-ascii?Q?assSF8Osflw+cyAfGRL2w4D9zV5CYGWTkkNxcNW2ZQg94UOs4vQBHdkmUFpp?=
- =?us-ascii?Q?ZDowDfrsrp2j9iooImguyAiV8Yib9sT0PoYletC0YEKy5akOSp7vlklXZ3Tc?=
- =?us-ascii?Q?IG+y7E+vRoS9eWzLdX7mYzHHTFSCKC1NxtoxTSkNiE3M0+vFOkIEpYn783aF?=
- =?us-ascii?Q?6m8aUVf2EBBsELtglhulxV9xR6Tn6J/nXMaqTs8XXqEAdsnLjClmLYec5OXR?=
- =?us-ascii?Q?NHK6zCL/WekOPINf25pYJEKqGb0FMC2aBeGVL5uRUimkAYlCh/Pau0qQU0UH?=
- =?us-ascii?Q?OOGmI80mlUPJSV3fy7OOPzK+9Q2i7eOUKMk449+LbXDIF/ymfbXFia2FS07D?=
- =?us-ascii?Q?HtBqoDZ9OZe0sXWAnOhMbCpXkgm+uyi4oNGHH59RsV4cMO2UJcQ7CAJSQgV1?=
- =?us-ascii?Q?h6Yr1kDJsFo6oGsWP+ldPn+dbqoCol23h9Jp4dfqkD7rlcE5jIsPN3bUvS6L?=
- =?us-ascii?Q?Bftfyr6wfW9Byp0rbSUIeJK3SzkRj7MS7Agpzmiy1DiKBtD5NAGcnasyJovc?=
- =?us-ascii?Q?3N9/WYp8J4IOXw8Bg8gZGy/hXXKSoJSm91CeAKrVE0kRhBSuoy8QPqDYLoww?=
- =?us-ascii?Q?jQp30ug83Cm5odT/tmwXSczqIDjOFhT/StCZPutubtDklqemP2NdgDCbsPZi?=
- =?us-ascii?Q?/RnTIz+dvbx2FaMG62W7pqndrzsNJ/VbDUJhTF1IWcJtxY7teOMDHeOr0RXh?=
- =?us-ascii?Q?+nWiIApIcHCsCqAQeelHPKZm3J1znvfJRipBoRZx/rMOuPVojJe8rmkyAs7B?=
- =?us-ascii?Q?uUyWk/unaHns8xvbAzWtI/i4uYqB9EUrsQOAfN/ejHBNq7aEI+1Xptb501Ea?=
- =?us-ascii?Q?MHG8XJqplLHE4uo1pqXmf5IRRMmrkjFske8lFDYuq+w6KhioWlMx9MeoQ+LB?=
- =?us-ascii?Q?AQfEppf/Gv4cwMno7phFKTjDoUXLoFuaEZDPRHYfIIRwj2x5eHqeKWz2PGWi?=
- =?us-ascii?Q?dlpQvAuDzLvrKFsKn1qoRwO4cDfKzG6w7OR/h7w2ZmcTgb6xla4nrF8EYSUJ?=
- =?us-ascii?Q?FfVjJvfDz/pl+kgfCGD0FR2gZR41Q1TsSNMUzKVW+m4fNiTnltrtN/2aKYT+?=
- =?us-ascii?Q?eefKzZOjGJDGoJKl9zREUZLWRWjEPiAecZoNTQmnMxowN3vREh6Oc+gl/01d?=
- =?us-ascii?Q?U4YOeoiDewgatOvx8JylwbsWVa7bKid98L4hy+qKaQ50zr+Hchm62qn2WqqV?=
- =?us-ascii?Q?iBHQe9WqXsQXspSMwLXvA+4xxJlSDmcn22FSDQuVi1H2t1dttkPMYtW9oip9?=
- =?us-ascii?Q?TdkkbeEhRbfTC6b0HkOxN7Pqa/SwlrUGB7SSuJ7bH2sXYnIQC1mPxW2lb1Dx?=
- =?us-ascii?Q?fRY98mEtd+F+0LDsszx0oybTB/5y37ncK9cZBVlXT/KxSlVUb6eOfNfVFI0n?=
- =?us-ascii?Q?xKVVXFmjOfh7EC4DmXcuS1Be0ggoeARqkkkOqazl?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6337fe32-f692-46ee-95f2-08dd653a6944
-X-MS-Exchange-CrossTenant-AuthSource: TYZPR06MB7096.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Mar 2025 09:59:30.7853
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 0KGUnzRNk3IyHnGbhC3nJMkJ3NTXqNc7Ya2F37XM3OLgQau65VedHSU07LwT98I3KJyDj+N/J7EkgGl7CDp0gA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR06MB5766
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-During a checkpoint, the current active segment X may not be handled
-properly. This occurs when segment X has 0 valid blocks and a non-zero
-number of discard blocks, for the following reasons:
+On Mon Mar 17, 2025 at 9:13 AM CET, Kunwu Chan wrote:
+> From: Kunwu Chan <kunwu.chan@hotmail.com>
+>
+> When build the kernel using the llvm-18.1.3-rust-1.85.0-x86_64
+> with ARCH=3Darm64, the following symbols are generated:
+>
+> $nm vmlinux | grep ' _R'.*CondVar | rustfilt
+> ... T <kernel::sync::condvar::CondVar>::notify_all
+> ... T <kernel::sync::condvar::CondVar>::notify_one
+> ... T <kernel::sync::condvar::CondVar>::notify_sync
+> ... T <kernel::sync::condvar::CondVar>::new::{closure#0}::{closure#0}::pa=
+nic_cold_explicit
+> ... T <kernel::sync::condvar::CondVar>::new::{closure#0}::{closure#0}::pa=
+nic_cold_explicit
+> ... T <kernel::sync::poll::PollCondVar>::new::{closure#0}::{closure#0}::p=
+anic_cold_explicit
+> ... T <kernel::sync::poll::PollCondVar as core::ops::drop::Drop>::drop
+>
+> These notify* symbols are trivial wrappers around the C functions
+> __wake_up and __wake_up_sync.
+> It doesn't make sense to go through a trivial wrapper for these
+> functions, so mark them inline.
+>
+> Link: https://github.com/Rust-for-Linux/linux/issues/1145
+> Suggested-by: Alice Ryhl <aliceryhl@google.com>
+> Co-developed-by: Grace Deng <Grace.Deng006@Gmail.com>
+> Signed-off-by: Grace Deng <Grace.Deng006@Gmail.com>
+> Signed-off-by: Kunwu Chan <kunwu.chan@hotmail.com>
 
-locate_dirty_segment() does not mark any active segment as a prefree
-segment. As a result, segment X is not included in dirty_segmap[PRE], and
-f2fs_clear_prefree_segments() skips it when handling prefree segments.
+Reviewed-by: Benno Lossin <benno.lossin@proton.me>
 
-add_discard_addrs() skips any segment with 0 valid blocks, so segment X is
-also skipped.
-
-Consequently, no `struct discard_cmd` is actually created for segment X.
-However, the ckpt_valid_map and cur_valid_map of segment X are synced by
-seg_info_to_raw_sit() during the current checkpoint process. As a result,
-it cannot find the missing discard bits even in subsequent checkpoints.
-Consequently, the value of sbi->discard_blks remains non-zero. Thus, when
-f2fs is umounted, CP_TRIMMED_FLAG will not be set due to the non-zero
-sbi->discard_blks.
-
-Relevant code process:
-
-f2fs_write_checkpoint()
-    f2fs_flush_sit_entries()
-         list_for_each_entry_safe(ses, tmp, head, set_list) {
-             for_each_set_bit_from(segno, bitmap, end) {
-                 ...
-                 add_discard_addrs(sbi, cpc, false); // skip segment X due to its 0 valid blocks
-                 ...
-                 seg_info_to_raw_sit(); // sync ckpt_valid_map with cur_valid_map for segment X
-                 ...
-             }
-         }
-    f2fs_clear_prefree_segments(); // segment X is not included in dirty_segmap[PRE] and is skipped
-
-This issue is easy to reproduce with the following operations:
-
-root # mkfs.f2fs -f /dev/f2fs_dev
-root # mount -t f2fs /dev/f2fs_dev /mnt_point
-root # dd if=/dev/blk_dev of=/mnt_point/1.bin bs=4k count=256
-root # sync
-root # rm /mnt_point/1.bin
-root # umount /mnt_point
-root # dump.f2fs /dev/f2fs_dev | grep "checkpoint state"
-Info: checkpoint state = 45 :  crc compacted_summary unmount ---- 'trimmed' flag is missing
-
-Since add_discard_addrs() can handle active segments with non-zero valid
-blocks, it is reasonable to fix this issue by allowing it to also handle
-active segments with 0 valid blocks.
-
-Fixes: b29555505d81 ("f2fs: add key functions for small discards")
-Signed-off-by: Chunhai Guo <guochunhai@vivo.com>
 ---
-v2->v3: Add the test case for this issue in the commit message.
-v1->v2:
- - Modify the commit message to make it easier to understand.
- - Add fixes to the commit.
-v1: https://lore.kernel.org/linux-f2fs-devel/20241203065108.2763436-1-guochunhai@vivo.com/
----
- fs/f2fs/segment.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Cheers,
+Benno
 
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 50a346f7cb93..396ef71f41e3 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -2096,7 +2096,9 @@ static bool add_discard_addrs(struct f2fs_sb_info *sbi, struct cp_control *cpc,
- 		return false;
- 
- 	if (!force) {
--		if (!f2fs_realtime_discard_enable(sbi) || !se->valid_blocks ||
-+		if (!f2fs_realtime_discard_enable(sbi) ||
-+			(!se->valid_blocks &&
-+				!IS_CURSEG(sbi, cpc->trim_start)) ||
- 			SM_I(sbi)->dcc_info->nr_discards >=
- 				SM_I(sbi)->dcc_info->max_discards)
- 			return false;
--- 
-2.34.1
+> ---
+>  rust/kernel/sync/condvar.rs | 4 ++++
+>  1 file changed, 4 insertions(+)
 
 
