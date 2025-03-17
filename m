@@ -1,115 +1,133 @@
-Return-Path: <linux-kernel+bounces-564733-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564734-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F84EA659F6
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 18:13:01 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB182A659B5
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 18:09:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8071A8801D8
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 17:08:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6358D1699A8
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 17:08:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45774DF5C;
-	Mon, 17 Mar 2025 17:07:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DF901A0711;
+	Mon, 17 Mar 2025 17:07:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="XSBhoPps"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 373CE186E2D;
-	Mon, 17 Mar 2025 17:07:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aY6YvKpJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CEEE186E2D;
+	Mon, 17 Mar 2025 17:07:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742231263; cv=none; b=O3x7E3zjHpX8sXGjNp6nsU3v2Hk3ylFrx/odf2f3Mq9ENyKPiNoftQ5eNhiPoAvBvZ/zTUwpic9WsfWlFj22ekXAfHKx5VtWMWpUW5mjt+8UfGOT09Oc963Dqb4gx53SYyD+XioW9tOIKlxlXcOqqkUSFfGW1FhMxTkEw70Ma5U=
+	t=1742231277; cv=none; b=DdeQ3xH0pyqKA6OPolHtjVgTID9TEbkGdA9GaC1OtEix3Nk6WZpIqcFpaJeI1vm8F7eylCbUYiLcb5rg16XShEfJEWpYrDDthw+NxIXIR9DPJ2g487x0mPJ6IABFoKx0b99mmAaH97Vn+/Bl0boBQnD/kuG+PpTGhx4kWkMt5JY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742231263; c=relaxed/simple;
-	bh=JL8vSU7tQ3+QoGzw+/APuflPMIAYCi6VkHHm4HkXgTg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RK1Cj9oX2SPhEuB9VMuADce48Eg1s/3NFYgxrOLnE3kr0wN0Ggt7nRlHvgEqGT90huhYQnGahl3eXEOPjcsVKtpgmNk7Hg1y9Jp8fPlbfbRsFgfIHAxU1GoDC265JSslIiPxQJnowASKEN5Tsk5IxKzTmj/SjVHCZizTcaYXw64=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=XSBhoPps; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [10.137.184.60] (unknown [131.107.160.188])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 7BFBB2033444;
-	Mon, 17 Mar 2025 10:07:41 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 7BFBB2033444
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1742231261;
-	bh=PBKO3+sFdf3j+9DusQSeJkY76BUx4yGl9KDAQjeRCo8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=XSBhoPpsdkLkmTk3qErtq7Cuq1UaChiFkw6kXGiD9sH8+hspF1i5lsiqiYkjwRCBB
-	 iVqT5cJe8xu+9gjgWPR9s5bH/kyVP+cnsNNF6iCaun/zsXbZKBgMHGCF5/NSR3KwU5
-	 ysZtQjFJVoI5LvU9qesC/3ZFeWH6kGQ7Jq/AFHfI=
-Message-ID: <091001a7-7398-4f5f-b9b6-d220a5a226cb@linux.microsoft.com>
-Date: Mon, 17 Mar 2025 10:07:41 -0700
+	s=arc-20240116; t=1742231277; c=relaxed/simple;
+	bh=7cogRGtinGcNBp5bTBUGEzmjHt0hHwqKooY6PjLalzw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZHeOO2AHJ8We0R63Q84gRny42IqL6pAwr+UlJkNzJXhJxAHREgsuGwXo4Fh/TLNQiWqPyK26gD4864dDJNx2dztjzub+g8j0uoIn2rXKF+kXTsTt9sLS08wfLoBX/Lw7UvrCBc/DM4bTv5lmodNyMcZA8jfzfkzDzTzC2HN/Y/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aY6YvKpJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83F84C4CEE3;
+	Mon, 17 Mar 2025 17:07:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742231276;
+	bh=7cogRGtinGcNBp5bTBUGEzmjHt0hHwqKooY6PjLalzw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=aY6YvKpJWXNJo97CXn00Asd9GI7EXhlxfIX2v0jnhXFBXLsU9+wnweymDpyveDsB/
+	 1WSmArwMFWF3GBl4NoyuPcMOvFOAvj2RzjL3sGht30ZnaeGdHEs7LnnqVw90xpK5PF
+	 6cS6IRnyIXGgeIpiF5V6DUcULSfIUO7sxKDYghNkjirVbojDACF8gXJswTFJ/GEAOl
+	 u1ZZ4uW/bio0wnDUrnzTWZo6ZkFIWZpVP6VqjJVxEUr5ZGOazNG7sX2OIJpWLcLheM
+	 9AikyOjz+mPFJOe6MtauobVOWrQG5skgoJQ4KvlGtb9gU2gwk3oLphQwJlwKsazjud
+	 HFRmW/ac7owww==
+Date: Mon, 17 Mar 2025 10:07:52 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Christian Heusel <christian@heusel.eu>,
+	Nicolas Schier <nicolas@fjasle.eu>,
+	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
+Subject: Re: [PATCH] kbuild: pacman-pkg: hardcode module installation path
+Message-ID: <20250317170752.GA830988@ax162>
+References: <20250315151522.2766939-1-masahiroy@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH hyperv-next v6 07/11] dt-bindings: microsoft,vmbus: Add
- interrupt and DMA coherence properties
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: arnd@arndb.de, bhelgaas@google.com, bp@alien8.de,
- catalin.marinas@arm.com, conor+dt@kernel.org, dan.carpenter@linaro.org,
- dave.hansen@linux.intel.com, decui@microsoft.com, haiyangz@microsoft.com,
- hpa@zytor.com, joey.gouly@arm.com, krzk+dt@kernel.org, kw@linux.com,
- kys@microsoft.com, lenb@kernel.org, lpieralisi@kernel.org,
- manivannan.sadhasivam@linaro.org, mark.rutland@arm.com, maz@kernel.org,
- mingo@redhat.com, oliver.upton@linux.dev, rafael@kernel.org,
- robh@kernel.org, ssengar@linux.microsoft.com, sudeep.holla@arm.com,
- suzuki.poulose@arm.com, tglx@linutronix.de, wei.liu@kernel.org,
- will@kernel.org, yuzenghui@huawei.com, devicetree@vger.kernel.org,
- kvmarm@lists.linux.dev, linux-acpi@vger.kernel.org,
- linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-pci@vger.kernel.org, x86@kernel.org, apais@microsoft.com,
- benhill@microsoft.com, bperkins@microsoft.com, sunilmut@microsoft.com
-References: <20250315001931.631210-1-romank@linux.microsoft.com>
- <20250315001931.631210-8-romank@linux.microsoft.com>
- <20250316-versed-trogon-of-serendipity-bf7ea7@krzk-bin>
-Content-Language: en-US
-From: Roman Kisel <romank@linux.microsoft.com>
-In-Reply-To: <20250316-versed-trogon-of-serendipity-bf7ea7@krzk-bin>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250315151522.2766939-1-masahiroy@kernel.org>
 
+On Sun, Mar 16, 2025 at 12:15:20AM +0900, Masahiro Yamada wrote:
+> 'make pacman-pkg' for architectures with device tree support (i.e., arm,
+> arm64, etc.) shows logs like follows:
+> 
+>   Installing dtbs...
+>     INSTALL /home/masahiro/linux/pacman/linux-upstream/pkg/linux-upstream/usr//lib/modules/6.14.0-rc6+/dtb/actions/s700-cubieboard7.dtb
+>     INSTALL /home/masahiro/linux/pacman/linux-upstream/pkg/linux-upstream/usr//lib/modules/6.14.0-rc6+/dtb/actions/s900-bubblegum-96.dtb
+>     INSTALL /home/masahiro/linux/pacman/linux-upstream/pkg/linux-upstream/usr//lib/modules/6.14.0-rc6+/dtb/airoha/en7581-evb.dtb
+>       ...
+> 
+> The double slashes ('//') between 'usr' and 'lib' are somewhat ugly.
+> 
+> Let's hardcode the module installation path because the package contents
+> should remain unaffected even if ${MODLIB} is overridden. Please note that
+> scripts/packages/{builddeb,kernel.spec} also hardcode the module
+> installation path.
+> 
+> With this change, the log will look better, as follows:
+> 
+>   Installing dtbs...
+>     INSTALL /home/masahiro/linux/pacman/linux-upstream/pkg/linux-upstream/usr/lib/modules/6.14.0-rc6+/dtb/actions/s700-cubieboard7.dtb
+>     INSTALL /home/masahiro/linux/pacman/linux-upstream/pkg/linux-upstream/usr/lib/modules/6.14.0-rc6+/dtb/actions/s900-bubblegum-96.dtb
+>     INSTALL /home/masahiro/linux/pacman/linux-upstream/pkg/linux-upstream/usr/lib/modules/6.14.0-rc6+/dtb/airoha/en7581-evb.dtb
+>       ...
+> 
+> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
 
+Seems reasonable to me.
 
-On 3/16/2025 10:36 AM, Krzysztof Kozlowski wrote:
-> On Fri, Mar 14, 2025 at 05:19:27PM -0700, Roman Kisel wrote:
->>   
->> +  dma-coherent: true
->> +
->> +  interrupts:
-> 
->> +    maxItems: 1
->> +    description: |
->> +      This interrupt is used to report a message from the host.
-> 
-> These could be just two lines:
-> 
-> items:
->    - description: Interrupt used to report a message from the host.
-> 
-> (and note that just like we do not use "This" in commit msg, there is
-> really no benefit of using it in hardware descruption for simple
-> statements)
-> 
+Reviewed-by: Nathan Chancellor <nathan@kernel.org>
 
-Appreciate your help very much!! Will fix the formatting.
-
-> Regardless:
+> ---
 > 
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>  scripts/package/PKGBUILD | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
 > 
-> Best regards,
-> Krzysztof
+> diff --git a/scripts/package/PKGBUILD b/scripts/package/PKGBUILD
+> index 0cf3a55b05e1..452374d63c24 100644
+> --- a/scripts/package/PKGBUILD
+> +++ b/scripts/package/PKGBUILD
+> @@ -53,7 +53,7 @@ build() {
+>  _package() {
+>  	pkgdesc="The ${pkgdesc} kernel and modules"
+>  
+> -	local modulesdir="${pkgdir}/usr/${MODLIB}"
+> +	local modulesdir="${pkgdir}/usr/lib/modules/${KERNELRELEASE}"
+>  
+>  	_prologue
+>  
+> @@ -81,7 +81,7 @@ _package() {
+>  _package-headers() {
+>  	pkgdesc="Headers and scripts for building modules for the ${pkgdesc} kernel"
+>  
+> -	local builddir="${pkgdir}/usr/${MODLIB}/build"
+> +	local builddir="${pkgdir}/usr/lib/modules/${KERNELRELEASE}/build"
+>  
+>  	_prologue
+>  
+> @@ -114,7 +114,7 @@ _package-debug(){
+>  	pkgdesc="Non-stripped vmlinux file for the ${pkgdesc} kernel"
+>  
+>  	local debugdir="${pkgdir}/usr/src/debug/${pkgbase}"
+> -	local builddir="${pkgdir}/usr/${MODLIB}/build"
+> +	local builddir="${pkgdir}/usr/lib/modules/${KERNELRELEASE}/build"
+>  
+>  	_prologue
+>  
+> -- 
+> 2.43.0
 > 
-
--- 
-Thank you,
-Roman
-
 
