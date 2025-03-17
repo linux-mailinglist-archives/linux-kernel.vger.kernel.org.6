@@ -1,145 +1,103 @@
-Return-Path: <linux-kernel+bounces-563444-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563445-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDB5FA641EF
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 07:42:30 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2455AA641F0
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 07:43:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1E8B07A3319
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 06:41:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F1A116F18A
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 06:43:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BC2E219A94;
-	Mon, 17 Mar 2025 06:42:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2A38219E9E;
+	Mon, 17 Mar 2025 06:42:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oNE9lSrJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bfdJGl1R"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CE1A1B0401
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 06:42:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1F1B15382E
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 06:42:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742193742; cv=none; b=dy+jqP94hxW1AWpHkxc9ABjvv2JgT+NvisOWv+ZpeOgwaoQUO8vgOzlnr8Qg4WdHE89fM3jp4gpY6VylfsA4zE3ySjAd0pI+9IhOvt9fGvfL6h/QiGScsKVqKZkuJ+YiH7+atT0MC8WtiwnHmH+A9SoynWlGjI8AvZb6CW+0Q3Y=
+	t=1742193776; cv=none; b=YCl3Cj2DsXnQV4DvtxKaPoohIiXHhQq7zKCpbA2WG3bL3q2iBkOkzrb7lkU0Yyo3Je0X+Zpkq4oGf2+wppwrBG2zqBJdH+gfubg8pvCOfz2kZ4z8S81S/jwqhlifqnfud0LsRv9ecymC4gSYECJvPZehIJ5U/a6HV7omn76KCfc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742193742; c=relaxed/simple;
-	bh=FuS8Av9mTTAznTxqWO7qBNNd49jKIqF6PQ5eAuT/Yv8=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=aGMCscd8eRgwhbXRKfuAAVeeHP091Ry6RCsGhfmCPEJKVfDco3rAzQZBiBXTKPAdZzROortz4gyF37w6mVBgBYsEb1aL+mUHKDxgpfNz4eEVBXt8JKdO/UPCNOpKxI050uC6HP1BKX3BY0FW9k7HH0biuIjsJyZnIoowfOrZ2qs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oNE9lSrJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C464C4CEE3;
-	Mon, 17 Mar 2025 06:42:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742193742;
-	bh=FuS8Av9mTTAznTxqWO7qBNNd49jKIqF6PQ5eAuT/Yv8=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=oNE9lSrJI67ImxHG55W0LD2RLYScUWXTrqRCcKIXq6kQqwFfGG7g1+zDQ4xVc+tXn
-	 fB/E+fw2RZuoZgaxMIbSKARV+7hLdK4uTnpujfNQtiykpE7AbJo0KG+Wj6/5CXBxPc
-	 mZscr9XXyDM+Du5DSnM7aI5B0jgEZAJxE0EcjkuXlnWIP9gKtTc4siw+Mvh9KMYbFw
-	 03OwP1+YmrtPI4U3oC5jmGAPZllBJdaSWUJ7nMifFDS4WIoyEN2+8u+Q9iixdJLUUO
-	 IZVqfmILNXmJxK6p9M6q4SqVZO6bvFAirmgW2e6HlfPMzchWG0X5krY4DSYncgr94J
-	 rndBIs/7EXyrQ==
-Message-ID: <1dd3b2a6-5431-4a2a-bccb-2a3672f5d1bd@kernel.org>
-Date: Mon, 17 Mar 2025 14:42:19 +0800
+	s=arc-20240116; t=1742193776; c=relaxed/simple;
+	bh=tmuz3S8QS2CK1Do0ifyQigpJ/ofdqUE49XrcsC1JGjo=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=AbJh4Mn+fug7xpAS0vYxdPB+vuGlyCtqqLsTdBcm0e5PGdx2irxBA8K/LMqzYgQu1UQTwMae0J6ozaqIbJCt8E/T38X1UOybgo8MbClzc5xGUdZ2768MWnHdnWzLTEb1fxVb5J9jZgKHJm32R0aFbSEZX1lzUL1J0GejCcnNgZg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bfdJGl1R; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-43cfecdd8b2so12376675e9.2
+        for <linux-kernel@vger.kernel.org>; Sun, 16 Mar 2025 23:42:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1742193772; x=1742798572; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=F5FewJ6YzHvRF4+9HsRWOweevFbmaLN9395N1HxAjAI=;
+        b=bfdJGl1Re5mS91MXqCduMdRn+1T49drS79F/hqcbM3M8KWg/94O2kPWZRiDif/IFq8
+         5ftn4Oh0353ag4PddCUDCb4OKX8bJTFqdjuVcEoUIemh8UaAivKFL6+12UzsbFkTDjF6
+         g6F2EyIS0GVwRujX/5NvaR7Mn++GtWBB7VDthgaAAZVTOCyl5nRGX+0dzleF0s93BNyD
+         EiGN3b/5zndnoaSTqLhxV3LeFZz1qN679/eLGYTLJfzVqu+7yA7qhml7VOs/XPaJCZBB
+         0wLUtUi1OtYAHgTl7S9sr2UFiYyEckwBC3xOpkVGQ+uhA0wfAXLSSlPR2JfaR4sZbTgW
+         n7VA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742193772; x=1742798572;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=F5FewJ6YzHvRF4+9HsRWOweevFbmaLN9395N1HxAjAI=;
+        b=TXHAO+83dKX0B3w1E7IkRR66qfDVbRzuBaaBdfI/+WhbU6UyH2Jm81qnsR5ldpvbuZ
+         2FLRf2czcN56j00euyN/oLVykW8ElNACfP69j3M4p9C0+bsgjEWHwZ+/u5l48dTtnEWD
+         CbPxN+g/G4b+34KT7NpVG7bSUYEUIapCHjhQJRkznuJbv7pg8u7DaUD4RaYJ0muI9lWC
+         xzxGE050M1nUG5X5tXCSW2j6ph6yabJvrGHA4LiaZH1R29wxGH0Tc8Fak5AdyJPDQH4f
+         1tpkaDx58q7cpWnHA3Hcth8SN4GPK3qHG93t3NX6+HnpYOoOP2S9RgjLDLGZLXArziVE
+         RcXA==
+X-Forwarded-Encrypted: i=1; AJvYcCXbR+r8QLZ87KRFBnLLAltNSZVOPm2AiJfsPSU6OpVrCw5fLSjmydrO5wuOsF/Bla196GEtTYLh+t4c320=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwrROZxGgNZQbCz1DgA+dyL25cL9iUf2tjFGevoZXciuS55Y6QD
+	nXAGj7NPYzjurl7H0/9bEUHqkb9/WC9nMLZ2CumGHb2SZBZnWdhAEP28DKH49dg=
+X-Gm-Gg: ASbGncvMFFRGvJE7VPZEuxTrL/PCA+cYrXwF8I9VEzv0DhIyYwsHiNiFpeMGIGB6lQ6
+	FOpcDsRCKo3DFzwnlMJi7M2KgSYOUSjr8zyARo0WHCWOf1sQw0BqiBTCYDfwDo6tLVrIiHnNJWo
+	X62SSy+LzP+Jy+HptO6USeGfPRx6Q7FAQ6Rdy8qSkQFz3+UunfPvETz2a3MGtZTO9ve/yEPYRTd
+	G9QuMe4hH/EY3Vr5JztmMnv3RglWDsln57Vi3ll83/r5Y4i2JHLjHNbFXtbpb8wQEnIsh4qOZvv
+	i5G+JHn8jOXmpMsHKc+MOFMlBYY6d+hNBJT5RoYOpKLGwAag/w==
+X-Google-Smtp-Source: AGHT+IHxu9xjH7mhApYVVv9e3tygFxjACr3/rHNOhNNTZEZVnWCwgxdXUjJa6ONf3FkbXFANSKR7sw==
+X-Received: by 2002:a05:600c:1994:b0:43d:b51:46fb with SMTP id 5b1f17b1804b1-43d1ec622b5mr110644745e9.2.1742193771884;
+        Sun, 16 Mar 2025 23:42:51 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-43d2010e0bfsm94729805e9.36.2025.03.16.23.42.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 16 Mar 2025 23:42:51 -0700 (PDT)
+Date: Mon, 17 Mar 2025 09:42:47 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Joerg Roedel <joro@8bytes.org>
+Cc: iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Robin Murphy <robin.murphy@arm.com>,
+	Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
+	Will Deacon <will@kernel.org>
+Subject: [PATCH 0/2] iommu/amd: two tiny cleanups
+Message-ID: <960a6d1a-63d6-49e8-890c-5e8a66e50c45@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: chao@kernel.org, linux-kernel@vger.kernel.org,
- Hongzhen Luo <hongzhen@linux.alibaba.com>,
- linux-erofs mailing list <linux-erofs@lists.ozlabs.org>
-Subject: Re: [PATCH v5] erofs: use Z_EROFS_LCLUSTER_TYPE_MAX to simplify
- switches
-To: Gao Xiang <hsiangkao@linux.alibaba.com>
-References: <20250210032923.3382136-1-hongzhen@linux.alibaba.com>
- <511c5fd9-307e-4c56-9d20-796dd06f775c@kernel.org>
- <489be3d1-a755-4756-ba82-a8f5a0dc9156@linux.alibaba.com>
- <04050888-7abf-40fa-98d6-6215b8ba989e@kernel.org>
- <18767765-53b5-4e78-b50d-9305fe1cb2d0@linux.alibaba.com>
-Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <18767765-53b5-4e78-b50d-9305fe1cb2d0@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 3/17/25 14:15, Gao Xiang wrote:
-> Hi Chao,
-> 
-> On 2025/3/17 14:03, Chao Yu wrote:
->> On 3/17/25 01:17, Gao Xiang wrote:
->>> Hi Chao,
->>>
-> 
-> ...
-> 
->>>
->>> Previously, it was useful before Z_EROFS_LCLUSTER_TYPE_HEAD2 was
->>> introduced, but the `default:` case is already deadcode now.
->>
->> Xiang, thanks for the explanation.
->>
->> So seems it can happen when mounting last image w/ old kernel which can not
->> support newly introduced Z_EROFS_LCLUSTER_TYPE_* type, then it makes sense to
->> return EOPNOTSUPP.
-> 
-> Yeah.
-> 
->>
->>>
->>>>
->>>> Btw, we'd better to do sanity check for m->type in z_erofs_load_full_lcluster(),
->>>> then we can treat m->type as reliable variable later.
->>>>
->>>>       advise = le16_to_cpu(di->di_advise);
->>>>       m->type = advise & Z_EROFS_LI_LCLUSTER_TYPE_MASK;
->>>>       if (m->type >= Z_EROFS_LCLUSTER_TYPE_MAX) {
->>>
->>> It's always false here.
->>
->> So, what do you think of this?
->>
->>  From af584b2eacd468f145e9ee31ccdeedb7355d5afd Mon Sep 17 00:00:00 2001
->> From: Chao Yu <chao@kernel.org>
->> Date: Mon, 17 Mar 2025 13:57:55 +0800
->> Subject: [PATCH] erofs: remove dead codes for cleanup
->>
->> z_erofs_extent_lookback() and z_erofs_get_extent_decompressedlen() tries
->> to do sanity check on m->type, however their caller z_erofs_map_blocks_fo()
->> has already checked that, so let's remove those dead codes.
-> 
-> z_erofs_extent_lookback() will (lookback) read new lcn in
-> z_erofs_load_lcluster_from_disk() so it won't be covered by
-> the original z_erofs_map_blocks_fo().
+Delete an unnecessary NULL check and return a literal zero instead
+of "ret" (where ret is zero).
 
-Xiang,
+Dan Carpenter (2):
+  iommu/amd: Delete unnecessary NULL check
+  iommu/amd: Return a literal in init_gcr3_table()
 
-Oh, I see, changed here:
+ drivers/iommu/amd/iommu.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-- z_erofs_extent_lookback
- - z_erofs_load_lcluster_from_disk
-  - z_erofs_load_full_lcluster
-  : m->type = advise & Z_EROFS_LI_LCLUSTER_TYPE_MASK;
- - z_erofs_load_compact_lcluster
- : m->type = type;
-
-> 
-> I think this check can be resolved in
-> z_erofs_load_lcluster_from_disk() instead but maybe address
-> for the next cycle? since there are already enough features
-> for this cycle and I have to make sure no major issues....
-
-Yeah, it's fine to check the cleanup later, let's keep focusing
-on improving patches in dev now.
-
-Thanks,
-
-> 
-> Thanks,
-> Gao Xiang
-> 
+-- 
+2.47.2
 
 
