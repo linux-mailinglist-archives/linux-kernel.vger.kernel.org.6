@@ -1,55 +1,55 @@
-Return-Path: <linux-kernel+bounces-564177-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564178-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA485A64F8E
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 13:44:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C581A64F8F
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 13:45:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 46E39166692
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 12:43:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 84F2E176357
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 12:44:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C37023E336;
-	Mon, 17 Mar 2025 12:43:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EF8723DE85;
+	Mon, 17 Mar 2025 12:43:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=ariel.dalessandro@collabora.com header.b="HXf4hO02"
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=ariel.dalessandro@collabora.com header.b="OkfHSrIs"
 Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 123771DF990
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 12:43:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9000A23BD0B
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 12:43:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742215406; cv=pass; b=XY+WQzaubXTcQIdAj0f9dQz3BlsN8SvucBhzXGI0nuWE2y/N1HKfIAthuld6TDxtQWV3EBXPyupHu6rTwB0/idyqA+oJlVbmXKTtf/wswviD3ymUb2R7hss7yGRnjZ7mM/xnrQE6PIgc3qsz2TXjxW94P057D8AdPwjM1K0cjXc=
+	t=1742215413; cv=pass; b=MG8Fb1RBMp8tIoe9GfB5tCHUGOzjo984Fpgw2qHwVD1NtE4fV1UucAEs1ZHOsQxumecqfOe9abyLCV9NyRURRkMGCYWU2XLP8wm8hnEMUFWa7SG9PKpZgAiMpP+WH/i7Kf9kjMEqlW9fiQXNhUBYrzqX/djULbSBUlrSpwu7Zog=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742215406; c=relaxed/simple;
-	bh=/BfLumKFocdvcPhxCskhPjNGo3ZslfA2/N6FaAoc5lg=;
+	s=arc-20240116; t=1742215413; c=relaxed/simple;
+	bh=4g2ZQBFOSqDtFo7TcFJmBzRGTqG+IeUHgHmpfqX2nx4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ugpmu8gHiicX4XgBO6ijgJKeEtV2CbI2xqv9RRnQ++iWEyU8JIDsXun8g9iBzPpconlhahJou90rhInpRvCckTfugvAoBr2HAbgWhpOXCZP0fdg4fEgWLvsNndkI2Ozk5PG1ZB50Uw6Q20pvqCZ2tJRG5TfcVN7fCMQe6POROho=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=ariel.dalessandro@collabora.com header.b=HXf4hO02; arc=pass smtp.client-ip=136.143.188.112
+	 MIME-Version; b=mp1r6PTbkHc9MTOQPfayPLU8w6CuG8Lq8sUMIpV2A9u1gKn9Ead56km+wdhe3iaVb0UlWJUymkvk1wtuyZep8SSyrRkFqhLzxbbOmiMdbrqJiKXyVC9U6FSohij1qWrBLlIo0FQhXRQrasNhQ/izzDp9Zspyyzw8W/HwlQDgV3Y=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=ariel.dalessandro@collabora.com header.b=OkfHSrIs; arc=pass smtp.client-ip=136.143.188.112
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1742215387; cv=none; 
+ARC-Seal: i=1; a=rsa-sha256; t=1742215393; cv=none; 
 	d=zohomail.com; s=zohoarc; 
-	b=b3uWeDL+gwYzvfpizehB9YJMhwMmtQNJyd/A4OiYYSiMFhIjN2RWvPv1NsWIedC/s9yCeMRk+U+2R8bgf5VFrs0HIoq7YRrxUH8+l9lAoa3ygGx7DgHzsmgo6RXvd+iQPOM9ba4BTxeoOh+4s3dwpJEeHYz4bdlP4PFUgsjlVkk=
+	b=W/8A6fXZMKuCo7yUW8I8FHOZojX8UAAcSDBG9imgFl5PeZ2NYsdDcluh5eHBAOULjnU8hgh0xJFyqlwtadsFDiS8PRiU9nykISmIdY/RMzjnUxbGOBRNCAm/x1D8l49E53aPOQCWWj97nOHyJnlhCg+HaOdF+K0WJ+WQ3/RVXeA=
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1742215387; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=E+fTK3txOlyskp4W/rEPx48F2NlCVYh8mb8E/EDT8nE=; 
-	b=IzQsjoeyM9AXwepdnNHsLHNuF/dfCcGS5qu8H2MGZK6Bjkaftozyu5N9hN7eiap1CAQxd9XBrfUF2Hs3Y5StlMz5KZKlZ29VvXktExVFm1YIPY/AJAtSBfv3w19iWMQGmu2glZEVk850gNPC180SHI4bRtkGw0ErcEKcG1f0LTw=
+	t=1742215393; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=shM7+TC0TXgX3AuBtBbLz5FbCbczMV6yD/4P/qN2rI4=; 
+	b=MwCdaGOOs9ebmu4IcYdfX22qmjpwTQa7COKws79IFpzW8VfEfzNwptQ+hP1SSGfJv4RXdx1n9ygWajUnyFnYlOrIyBl6wC2xEYaFSyut0+a80dTZWGtGIKdE3DV9Lp5EcK//yLPFCrqZwuUXHO4QkaE5WKvpTZsvTfKW/C6YVCo=
 ARC-Authentication-Results: i=1; mx.zohomail.com;
 	dkim=pass  header.i=collabora.com;
 	spf=pass  smtp.mailfrom=ariel.dalessandro@collabora.com;
 	dmarc=pass header.from=<ariel.dalessandro@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1742215387;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1742215393;
 	s=zohomail; d=collabora.com; i=ariel.dalessandro@collabora.com;
 	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=E+fTK3txOlyskp4W/rEPx48F2NlCVYh8mb8E/EDT8nE=;
-	b=HXf4hO02HUcqjTyZmWPudp85pADFXGqoYHtKYToogsvzm2r29rQY2SnXtal9riGA
-	MXoYasjLxREOvo9h3J+JE65ngDedFo1rWfw6D0N7R93QOKhSgNP0MCoNj+arx1usUz3
-	Q+f/gi8pazD+WSg1cr6GjM5wscwHghLd1fC3xmyk=
-Received: by mx.zohomail.com with SMTPS id 1742215386268731.4491412408154;
-	Mon, 17 Mar 2025 05:43:06 -0700 (PDT)
+	bh=shM7+TC0TXgX3AuBtBbLz5FbCbczMV6yD/4P/qN2rI4=;
+	b=OkfHSrIsBxJzTXcPR4jVqm/6LfIZAQTv4yvcZNw/J3zSglqeeyBC2rlheQqlHOaH
+	+26HPd/l9kWLb6PiB02Q62F3yd3D6LBrtde59SV53yYo6+1SXtNudesPF/Q6Dt/9GO5
+	5tOkRkxeKAwL96yOkDNE6iZyhaEjVQNdUN1euCuU=
+Received: by mx.zohomail.com with SMTPS id 1742215391542357.2105699159947;
+	Mon, 17 Mar 2025 05:43:11 -0700 (PDT)
 From: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
 To: dri-devel@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org
@@ -67,9 +67,9 @@ Cc: boris.brezillon@collabora.com,
 	sjoerd@collabora.com,
 	angelogioacchino.delregno@collabora.com,
 	Ariel D'Alessandro <ariel.dalessandro@collabora.com>
-Subject: [PATCH v3 5/6] drm/panfrost: Force AARCH64_4K page table format on MediaTek MT8188
-Date: Mon, 17 Mar 2025 09:40:43 -0300
-Message-ID: <20250317124044.16257-6-ariel.dalessandro@collabora.com>
+Subject: [PATCH v3 6/6] drm/panfrost: Force AARCH64_4K page table format on MediaTek MT8192
+Date: Mon, 17 Mar 2025 09:40:44 -0300
+Message-ID: <20250317124044.16257-7-ariel.dalessandro@collabora.com>
 X-Mailer: git-send-email 2.47.2
 In-Reply-To: <20250317124044.16257-1-ariel.dalessandro@collabora.com>
 References: <20250317124044.16257-1-ariel.dalessandro@collabora.com>
@@ -82,57 +82,35 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-ZohoMailClient: External
 
-MediaTek MT8188 SoC has an ARM Mali-G57 MC3 GPU (Valhall-JM), which
-constantly faults with the current panfrost support.
+MediaTek MT8192 SoC has an ARM Mali-G57 MC5 GPU (Valhall-JM). Now that
+Panfrost supports AARCH64_4K page table format, let's enable it on this
+SoC.
 
-For instance, running `glmark2-es2-drm` benchmark test:
-```
-[   79.617461] panfrost 13000000.gpu: js fault, js=1, status=JOB_BUS_FAULT, head=0xaadc380, tail=0xaadc380
-[   80.119811] panfrost 13000000.gpu: gpu sched timeout, js=0, config=0x7300, status=0x58, head=0xaaca180, tail=0xaaca180, sched_job=000000002fd03ccc
-[   80.129083] panfrost 13000000.gpu: Unhandled Page fault in AS0 at VA 0x0000000000000000
-[   80.129083] Reason: TODO
-[   80.129083] raw fault status: 0x1C2
-[   80.129083] decoded fault status: SLAVE FAULT
-[   80.129083] exception type 0xC2: TRANSLATION_FAULT_2
-[   80.129083] access type 0x1: EXECUTE
-[   80.129083] source id 0x0
-```
+Running glmark2-es2-drm [0] benchmark, reported the same performance
+score on both modes Mali LPAE (LEGACY) vs. AARCH64_4K, before and after
+this commit. Tested on a Mediatek (MT8395) Genio 1200 EVK board.
 
-Note that current panfrost mode (Mali LPAE - LEGACY) only allows to
-specify write-cache or implementation-defined as the caching policy,
-probably not matching the right configuration. As depicted in the source
-code:
-
-drivers/iommu/io-pgtable-arm.c:
-```
-* MEMATTR: Mali has no actual notion of a non-cacheable type, so the
-* best we can do is mimic the out-of-tree driver and hope that the
-* "implementation-defined caching policy" is good enough...
-```
-
-Now that Panfrost supports AARCH64_4K page table format, let's enable it
-on Mediatek MT8188 and configure the cache/shareability policies
-properly.
+[0] https://github.com/glmark2/glmark2
 
 Signed-off-by: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 ---
  drivers/gpu/drm/panfrost/panfrost_drv.c | 1 +
  1 file changed, 1 insertion(+)
 
 diff --git a/drivers/gpu/drm/panfrost/panfrost_drv.c b/drivers/gpu/drm/panfrost/panfrost_drv.c
-index 0f3935556ac76..e854f290858f9 100644
+index e854f290858f9..ef30d314b2281 100644
 --- a/drivers/gpu/drm/panfrost/panfrost_drv.c
 +++ b/drivers/gpu/drm/panfrost/panfrost_drv.c
-@@ -824,6 +824,7 @@ static const struct panfrost_compatible mediatek_mt8188_data = {
- 	.num_pm_domains = ARRAY_SIZE(mediatek_mt8183_pm_domains),
- 	.pm_domain_names = mediatek_mt8183_pm_domains,
+@@ -836,6 +836,7 @@ static const struct panfrost_compatible mediatek_mt8192_data = {
+ 	.num_pm_domains = ARRAY_SIZE(mediatek_mt8192_pm_domains),
+ 	.pm_domain_names = mediatek_mt8192_pm_domains,
  	.pm_features = BIT(GPU_PM_CLK_DIS) | BIT(GPU_PM_VREG_OFF),
 +	.gpu_quirks = BIT(GPU_QUIRK_FORCE_AARCH64_PGTABLE),
  };
  
- static const char * const mediatek_mt8192_supplies[] = { "mali", NULL };
+ static const struct of_device_id dt_match[] = {
 -- 
 2.47.2
 
