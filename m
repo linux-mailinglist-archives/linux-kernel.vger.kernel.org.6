@@ -1,56 +1,57 @@
-Return-Path: <linux-kernel+bounces-563845-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563846-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE767A6498C
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:22:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9ACEBA64992
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:23:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 98C881899131
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:20:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D5E61899D7B
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:20:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8699923ED66;
-	Mon, 17 Mar 2025 10:17:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCFFC23F39E;
+	Mon, 17 Mar 2025 10:17:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uV7tjhIF"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rO73L1cg"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E007723ED5A;
-	Mon, 17 Mar 2025 10:17:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41BD3238169;
+	Mon, 17 Mar 2025 10:17:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742206667; cv=none; b=qY5VZ+7tqbq5SHuBvGE/mL8nYBLsr7MA3Dk7+BoY8IRB1vl7cwjpTjW/ROPb81KfjRf1+erX6focVWXaiHVyPDrvNzOt0g+XV49gY1mqRXj0ihYOe7jMYqaruTT+ig/5T5FklAOHc00ZES2T+uiRVkDTuRv3iQR4aqEWifDoZvI=
+	t=1742206670; cv=none; b=dMB+21gawcitMM0bdh9nySzbeFbYfYptUvWDSCzcP7dcdjfXTCWityABjZbl2XlV9lB77PEtheDWJoD0/Po9GVvVNDg8nOyqfiUNIfSiNjILdQGnR7+cI1rhXAJpB8q/sR+zgrVdU5uwWnKLw5ylkjIpJ2I842DOQHYbVt7ItME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742206667; c=relaxed/simple;
-	bh=Y+YGybTwdUVkmfjxKggKP3yQRtEpic9iLyWLwUYHf7Q=;
+	s=arc-20240116; t=1742206670; c=relaxed/simple;
+	bh=Zc1s02Paz9PewXxLMWtam4EKd2uwWCrlzwljHdP8Ztk=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=NQNZ+18yxDW1rTCnCEGw3MojKIBzof5E0rDSTlUQ4/6ssYsi1dS/Syel0A1tuLp9ujRsNMI9g5ehC27fTeh9MBvo1qlD+fWfBCQY8KsrxhaedJ95+tb7WLqGEaxPfzEJ3xMSZUzPMaInlz57X/jwPjK8tmz/dkHBukMgvIdd3fk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uV7tjhIF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8C78C4CEEF;
-	Mon, 17 Mar 2025 10:17:44 +0000 (UTC)
+	 MIME-Version:Content-Type; b=ltGkGIiNLVjZUCPPkerzj+7ddxz7UDCPCd5CspporHUzPlrynePdFLOC1sKDXir83cQsyaco9BY43UZab3Zh+jdEZEbl9IO0p4hV+JPFJgJz5c9JsIcBA7gQPW0w6APPmWPJf2IcVLPu494ZDmJdgOY55ep/xD1T3cpuwt6yiqA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rO73L1cg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A15EC4CEE3;
+	Mon, 17 Mar 2025 10:17:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742206666;
-	bh=Y+YGybTwdUVkmfjxKggKP3yQRtEpic9iLyWLwUYHf7Q=;
+	s=k20201202; t=1742206669;
+	bh=Zc1s02Paz9PewXxLMWtam4EKd2uwWCrlzwljHdP8Ztk=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=uV7tjhIFjf1HfRQxlyeNKpobQZP6XRe2zPaLpUjoTpN01oLgFmIiFGYq+G/ecikXN
-	 tziBmb7fbD2Fqgmg/lr3AuwMD0Uj+U3tGeP9aHWr2x1LBs6GvsQX7fX+QC3OtatYzC
-	 GOOBwWqFeLplIUWlCbI9r37Mscz3BoPymoBnCxEfeIWELps3Cs4Tn9Iqz7a7DxPqU9
-	 IA+NOSt51oJAx4SXHqgLmO+rQJtPcs0xJyI8pQP387Oqo7FwJYZrxd7YVfOgyPqKkN
-	 x02cKT9gSPRyFlzu90lz57oDKq+qBKiKF84YMFvSkYn/c1eRdKq0GfmF2h5SUUrJI/
-	 dJuUgKStm2pCg==
+	b=rO73L1cg3HvgBQiwOEen/BkKsKLD30Uts+s1MkWynyTRfW8akKez4qEtZNgPG2hDm
+	 lgfahYgC6BIKcUNtCwZCXu/qM8b7N38JT3flKJELxQkUN91SMhqpqRNzqc4GDz5eDb
+	 oA+CHwcFHA7nCOBfTKyINig+OInqvMIm5ytuqjQjYkbmLud6kMHLhiIqzn1BNpEsTe
+	 NnW0cJrXVNkZffpXOrAsp5SDIbWu4bJLgG2pjk0EB/2LtFXemVYmc6RxN1ZFRVBQvH
+	 OoV9kQxfZ6arhyl9W5CXvZshGSntCHL+9UrFoIHM+KQr/Lj3Im44yeRvdkWXvIIyF8
+	 26DKS/VbalzBQ==
 From: Mark Brown <broonie@kernel.org>
-To: linux-sound@vger.kernel.org, "Sheetal ." <sheetal@nvidia.com>
-Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
- jonathanh@nvidia.com, thierry.reding@gmail.com, mkumard@nvidia.com, 
- spujar@nvidia.com, Ritu Chaudhary <rituc@nvidia.com>
-In-Reply-To: <20250311062010.33412-1-sheetal@nvidia.com>
-References: <20250311062010.33412-1-sheetal@nvidia.com>
-Subject: Re: [PATCH] ASoC: tegra: Use non-atomic timeout for ADX status
- register
-Message-Id: <174220666440.86423.15072032170869045785.b4-ty@kernel.org>
-Date: Mon, 17 Mar 2025 10:17:44 +0000
+To: Venkata Prasad Potturu <venkataprasad.potturu@amd.com>, 
+ Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
+ Takashi Iwai <tiwai@suse.com>, Vijendar Mukunda <Vijendar.Mukunda@amd.com>, 
+ linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ kernel-janitors@vger.kernel.org
+In-Reply-To: <3dad80cb-e177-45aa-97ac-df9c98a47d94@stanley.mountain>
+References: <3dad80cb-e177-45aa-97ac-df9c98a47d94@stanley.mountain>
+Subject: Re: [PATCH next] ASoC: amd: acp: Fix leak in acp_pci_probe()
+Message-Id: <174220666776.86423.15767893414939503196.b4-ty@kernel.org>
+Date: Mon, 17 Mar 2025 10:17:47 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,16 +62,11 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.15-dev-1b0d6
 
-On Tue, 11 Mar 2025 06:20:10 +0000, Sheetal . wrote:
-> ADX startup() callback uses atomic poll timeout on ADX status register.
+On Fri, 14 Mar 2025 13:11:43 +0300, Dan Carpenter wrote:
+> There needs to be some cleanup on this error path.  We can't just
+> return directly.
 > 
-> This is unnecessary because:
 > 
-> - The startup() callback itself is non-atomic.
-> - The subsequent timeout call in the same function already uses a
->   non-atomic version.
-> 
-> [...]
 
 Applied to
 
@@ -78,8 +74,8 @@ Applied to
 
 Thanks!
 
-[1/1] ASoC: tegra: Use non-atomic timeout for ADX status register
-      commit: f1d742c35b659fb0122da0a8ff09ad9309cb29d8
+[1/1] ASoC: amd: acp: Fix leak in acp_pci_probe()
+      commit: 02026aabaa8225bd7dfdcb8ae106453e002cb0a8
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
