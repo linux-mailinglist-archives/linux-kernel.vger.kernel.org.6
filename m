@@ -1,150 +1,240 @@
-Return-Path: <linux-kernel+bounces-563715-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB162A6471C
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:23:39 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F501A6472B
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:24:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 70C21167E56
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 09:23:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DEBF1171330
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 09:24:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9CF72236F7;
-	Mon, 17 Mar 2025 09:23:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 934472253E4;
+	Mon, 17 Mar 2025 09:24:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="o6ME4Bjl"
-Received: from linux1587.grserver.gr (linux1587.grserver.gr [185.138.42.100])
+	dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b="OwbuXlLD"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FEDD2222D5;
-	Mon, 17 Mar 2025 09:23:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.138.42.100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92FBC221F1B
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 09:23:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742203404; cv=none; b=KbcVISHS+V2OvHQNOrS8Becb+uNpdZtjQL3MvQvi2+W0RVIx+cBC7rHOGet3bBuRQGTzAaYKDSL3irxtm5gjNUb45uzvsoB/ZMGWrB4fgeP/b49Ov4MMkTw/FhWiGa8yt07VH8pbT0/euzleNXoFyrzPSN6OU6n8xGBCMWN8AOk=
+	t=1742203441; cv=none; b=Ns5eiNOkQIiasaBcMUNn8vVHBirU9hqHXvvyc4oolJV5UwvK8q7A74NRmDffL4hnnEJvwIM5pH3EiV1h87Zj1Rsv1TDDLTrihE3O2c0kAzNOiegeRxEqqugrFQ4OU32sSQj0Z78FpWlAqFe5Xt38lvdqMMtWRDjcwyTViaT3rro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742203404; c=relaxed/simple;
-	bh=aq5Zls+Ijc6uFlGNIxrbDLG+JLk7nCLttjJwFfdbiMA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hgQeeUNF0bcIpkTpfOi1AdZsugjfRw2X2Aj6B5gRviG3QcXENnOXvyUzC/rQ4/CZ4jjxWy4Mi3+ka/SeNRByBezUwtpWqMOseTPqIktQ791nPmuVfZiuriArRjSuP3RPiDhOd2jx1QW+Z7pBAmPW32R/FYtycwMBJNSib5yThfk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=pass (1024-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=o6ME4Bjl; arc=none smtp.client-ip=185.138.42.100
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antheas.dev
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
-	by linux1587.grserver.gr (Postfix) with ESMTPSA id 011B62E0625C;
-	Mon, 17 Mar 2025 11:23:18 +0200 (EET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=antheas.dev;
-	s=default; t=1742203400;
-	bh=bMWZV6Y+CvWUJMijtT6uLEoH46eXhT+qDmoUd1vNxBw=;
-	h=Received:From:Subject:To;
-	b=o6ME4Bjl2fJvvawHGOQwbNQEg34H1aRS4VcDnyO4QxhStZdJkt4bS59UGezH+0iE6
-	 gy1k6+uv5dJxf+rSHm/vFWBe3n/yck6CEz4PbD2kcIEsXuxzscH//uuhRG+53A1UW0
-	 hk18RnuAgdt3LC18gDPfBkVJ3WWazY2W304BPNck=
-Authentication-Results: linux1587.grserver.gr;
-        spf=pass (sender IP is 209.85.208.170) smtp.mailfrom=lkml@antheas.dev smtp.helo=mail-lj1-f170.google.com
-Received-SPF: pass (linux1587.grserver.gr: connection is authenticated)
-Received: by mail-lj1-f170.google.com with SMTP id
- 38308e7fff4ca-30bd11bfec6so42527721fa.0;
-        Mon, 17 Mar 2025 02:23:18 -0700 (PDT)
-X-Forwarded-Encrypted: i=1;
- AJvYcCUhNhu5Bap8p2c8oFZs2AOlux6x0ww9GisE8yvtOTfPswbabiu2VTXc1pTmbZeoHGYrC9yIVWnGsmqnkg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzkPY73K4My3biT55hjyia0i1RztsZ1cpX7BfM4CXg8nqod5Fbh
-	r9IGteBzNG2HKEfy+XXrF6KktoHg+lKstNnaeCSNAa241Suk+I36fPNp/KaQxrYx1RKnPkn3wRu
-	kdh6xBDENuNLckNr+nLozSHWlU7U=
-X-Google-Smtp-Source: 
- AGHT+IGnX0Dxok6dcb+rjWQwufCJAoqGhc6ZRb6GFGcDlijV4M5H5bpenR0zhTIAvk4LfpODCGWQbJmvgBgIb4j1so0=
-X-Received: by 2002:a2e:bc09:0:b0:30b:b78e:c473 with SMTP id
- 38308e7fff4ca-30c4a754732mr55899831fa.7.1742203398342; Mon, 17 Mar 2025
- 02:23:18 -0700 (PDT)
+	s=arc-20240116; t=1742203441; c=relaxed/simple;
+	bh=EVq1AhucL0DSGBtjqCNwBk9bQ+p1L1JBDrICPMXBitY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SaAzPBDabRVcv0liASSBHO95tohKFHlnD4Mdh8PnrVtt7huW/n20RyHeWqpgim1JEXD4iuJjhvSqHrnRVvvtALWWQ+qm6WZC8Zsq72SucKt9cV0Qt/YYkNtbJinihVrP7HwpVlYnkGNNwLWVIvhSrsh4ST10phazd543jfss4+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net; spf=pass smtp.mailfrom=openvpn.com; dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b=OwbuXlLD; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=openvpn.com
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-ac2b10bea16so183151666b.0
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 02:23:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=openvpn.net; s=google; t=1742203438; x=1742808238; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=WiCx14/fbOpW7YT89TZj+10cBQJw3y3n1vD7ajH4XHY=;
+        b=OwbuXlLD7e41dVYezsTOgT1fBYR5ARQqcbB8eDUiKqwGRD3d24IvSsQWF8STTXp6zF
+         DCgNePEtVT23aeAAcuHRHqAujAeQoPGydACZcpMG4bJl1/gee1sxSMFrQkbI63hH2Aim
+         yLzh7qnmSRWzo+lLlaJnhn0wxBh85MFUoH42cSRcxbxVJ6lYO0D8I2EZ6jVEAIYWvWpm
+         wI1cgIgQDpQu4fFMgplecijo8AKwNcdGXGcr7+QiuuIHa+8WzmTh7ZIif7v3XMB2g69P
+         kjUPVOJehfF8/s8UjUywhFiyao1k2V9ajvXs9T/CDhm5FDmkAB2gam7hEllgk5booIO8
+         fzig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742203438; x=1742808238;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WiCx14/fbOpW7YT89TZj+10cBQJw3y3n1vD7ajH4XHY=;
+        b=ojWBeBSq0PmbHv0qKV0/cmMcYe+sxBnWjo0u+QYRlAGSur5qSflTMMsw2ZyFncRXm1
+         kg5VvHlbhVEc58yS8itA8ktITw7UhsL4lcssXNaQsT38wQAl5vpj8ZuQ3ZWeHTy65Oox
+         swbaiUlJPE4lL7L+fCGm5GunV1+/bAAPyoZ7Y+jG9+CGmDda7f449QqKwuTmmi8u1LpY
+         /cSTJUDQW4LJXAJ5uTLgqmHUCHxsKJA5nGttk6kYjTBYQvaM8ZSByCMq3iKefpy++SpP
+         OWxfU52As4Gu7ntWBIGDPiKp98O5Hh8l6CYLCNjhanZV/ZPbXnO1qowA9zuPFVYdLA7S
+         t+8A==
+X-Forwarded-Encrypted: i=1; AJvYcCXBqo2gchH+jrzGzZBK3Kd1Npyv9WoBj6xVVyilWf99/TDMNa6Ug78f0ag+Ff3tesf3MFo/CdbAzc+1lbw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyXbnCH1DYC3pJb2XP2xWu3FadKC4dQJDBFgYM5yOJPEYtqdSSk
+	PzupjtRVu29B0zPTXG+xtvCQlCD1zPHp4aphEl1781aYEI8omXmL1a6uCc9DHyy8JpK4bcpZQdD
+	eml5yyoKQNc0Cvt1K5zn2ukyC/uBirVE1rxeeKOKoH2+56hW4T+Hsuoc=
+X-Gm-Gg: ASbGncvVszGRrXZ8WG4NUOban/7pBNFr8cjnVW5oMzsokB8mtXJireEaSjXtpuBFySs
+	VPtp9bzCjsh8WeqPMYbM2FFVt1BmwrWEIl+IqTO6i4tEdM1eRNu2GTBADOevCpXa7ao5iX/L5HA
+	+uxEUYpl4+JI6uu8VOQB2rZ52MReU3DE4qoeqpxzE2cxrkaMGHveULURthytR0jPZYLHfkPFaW5
+	9Od10jeojxrqnH7Cw1t9ZckEsdpWrucsZKodADz+p6BVbXfnfg6jWJ1XPAihNEs/+X2K2Z16+IG
+	Dx7Zw5n7obMGQ46ZrAnaGcoW6umqC5xJs22ZCQwsIOcPBert2V6k59tCS6G7YMf2Sr3Eu8XMv3G
+	WEGX93h8=
+X-Google-Smtp-Source: AGHT+IErvInbMhT7sGTTX0jJhg0JlOT6PImo4k31XW/PWatNvrne26uyWDQoJh/nc1ZBX2hWlTdBaQ==
+X-Received: by 2002:a17:906:4795:b0:ac3:17bb:34f8 with SMTP id a640c23a62f3a-ac330108af4mr1375864166b.4.1742203437660;
+        Mon, 17 Mar 2025 02:23:57 -0700 (PDT)
+Received: from ?IPV6:2001:67c:2fbc:1:23e9:a6ad:805e:ca75? ([2001:67c:2fbc:1:23e9:a6ad:805e:ca75])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac314a489e0sm626534366b.151.2025.03.17.02.23.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 17 Mar 2025 02:23:57 -0700 (PDT)
+Message-ID: <f4c9a29f-a5c6-464a-a659-c7ffeaf123c1@openvpn.net>
+Date: Mon, 17 Mar 2025 10:23:55 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250222164321.181340-1-lkml@antheas.dev>
- <20250222164321.181340-6-lkml@antheas.dev>
- <65813e62-aa0f-4167-83c1-49200fc4ca20@redhat.com>
-In-Reply-To: <65813e62-aa0f-4167-83c1-49200fc4ca20@redhat.com>
-From: Antheas Kapenekakis <lkml@antheas.dev>
-Date: Mon, 17 Mar 2025 10:23:06 +0100
-X-Gmail-Original-Message-ID: 
- <CAGwozwE9=Vh6M5CVAkTCDj5x8twtm3n_28DH1DFbbBKekhn9hw@mail.gmail.com>
-X-Gm-Features: AQ5f1JrQiT3dbA-hsykAHt-BAHevZp__oLHonDIs7jMsVuuegGkdIf4udvIsUfo
-Message-ID: 
- <CAGwozwE9=Vh6M5CVAkTCDj5x8twtm3n_28DH1DFbbBKekhn9hw@mail.gmail.com>
-Subject: Re: [PATCH 5/5] drm: panel-orientation-quirks: Add Zotac Gaming Zone
- quirk
-To: Hans de Goede <hdegoede@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>,
-	Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-PPP-Message-ID: 
- <174220339987.22458.11008987463524674951@linux1587.grserver.gr>
-X-PPP-Vhost: antheas.dev
-X-Virus-Scanned: clamav-milter 0.103.11 at linux1587.grserver.gr
-X-Virus-Status: Clean
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v23 03/23] ovpn: add basic interface
+ creation/destruction/management routines
+To: Qingfang Deng <dqfext@gmail.com>
+Cc: andrew+netdev@lunn.ch, donald.hunter@gmail.com, edumazet@google.com,
+ horms@kernel.org, kuba@kernel.org, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com,
+ ryazanov.s.a@gmail.com, sd@queasysnail.net, shaw.leon@gmail.com,
+ shuah@kernel.org
+References: <20250312-b4-ovpn-v23-3-76066bc0a30c@openvpn.net>
+ <20250317060947.2368390-1-dqfext@gmail.com>
+Content-Language: en-US
+From: Antonio Quartulli <antonio@openvpn.net>
+Autocrypt: addr=antonio@openvpn.net; keydata=
+ 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
+Organization: OpenVPN Inc.
+In-Reply-To: <20250317060947.2368390-1-dqfext@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, 17 Mar 2025 at 10:20, Hans de Goede <hdegoede@redhat.com> wrote:
->
-> Hi,
->
-> On 22-Feb-25 17:43, Antheas Kapenekakis wrote:
-> > The Zotac Gaming Zone handheld features a 1080p portrait OLED screen.
-> > Add the rotation to the panel orientation quirks.
-> >
-> > Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
-> > ---
-> >  drivers/gpu/drm/drm_panel_orientation_quirks.c | 6 ++++++
-> >  1 file changed, 6 insertions(+)
-> >
-> > diff --git a/drivers/gpu/drm/drm_panel_orientation_quirks.c b/drivers/gpu/drm/drm_panel_orientation_quirks.c
-> > index f08cdc81dd9a..bbbe707f541d 100644
-> > --- a/drivers/gpu/drm/drm_panel_orientation_quirks.c
-> > +++ b/drivers/gpu/drm/drm_panel_orientation_quirks.c
-> > @@ -479,6 +479,12 @@ static const struct dmi_system_id orientation_data[] = {
-> >                 DMI_EXACT_MATCH(DMI_PRODUCT_NAME, "ONEXPLAYER F1 EVA-02"),
-> >               },
-> >               .driver_data = (void *)&lcd1080x1920_leftside_up,
-> > +     }, {    /* Zotac Gaming Zone (OLED) */
-> > +             .matches = {
-> > +               DMI_EXACT_MATCH(DMI_SYS_VENDOR, "ZOTAC"),
-> > +               DMI_EXACT_MATCH(DMI_PRODUCT_NAME, "ZOTAC GAMING ZONE"),
-> > +             },
-> > +             .driver_data = (void *)&lcd1080x1920_leftside_up,
-> >       }, {    /* OrangePi Neo */
->
-> The entries in this list are alphabetically sorted. Please post
-> a v2 (of just this patch) with this entry moved to the end, just
-> above the special "One Mix 2S" entry which is at the very end
-> because its DMI matches are all "Default string".
->
-> Note another entry for another Zotac device, with a board name of
-> "G0A1W" has been added in drm-misc/next, so please base your v2
-> on top of drm-misc/next.
->
-> Also the freedesktop.org infra is currently being migrated to
-> another data center, so the drm-misc tree currently is not
-> available I think.
->
-> Regards,
->
-> Hans
->
->
->
->
-> >               .matches = {
-> >                 DMI_EXACT_MATCH(DMI_SYS_VENDOR, "OrangePi"),
->
+Hi Qingfang and thanks for chiming in,
 
-Ok thanks. I will do that in a few days. Patches 1-4 hopefully should
-be good to merge.
+On 17/03/2025 07:09, Qingfang Deng wrote:
+> Hi Antonio,
+> 
+> On Wed, 12 Mar 2025 21:54:32 +0100, Antonio Quartulli Wrote:
+>> diff --git a/drivers/net/ovpn/main.c b/drivers/net/ovpn/main.c
+>> index 28133e7e15e74b8a4a937ed03f70d9f83d7a14c8..e71183e6f42cd801861caaec9eb0f6828b64cda9 100644
+>> --- a/drivers/net/ovpn/main.c
+>> +++ b/drivers/net/ovpn/main.c
+>> @@ -10,14 +10,42 @@
+>>   #include <linux/genetlink.h>
+>>   #include <linux/module.h>
+>>   #include <linux/netdevice.h>
+>> +#include <linux/inetdevice.h>
+>> +#include <net/ip.h>
+>>   #include <net/rtnetlink.h>
+>> -#include <uapi/linux/ovpn.h>
+>> +#include <uapi/linux/if_arp.h>
+>>   
+>>   #include "ovpnpriv.h"
+>>   #include "main.h"
+>>   #include "netlink.h"
+>> +#include "io.h"
+>> +#include "proto.h"
+>> +
+>> +static int ovpn_net_open(struct net_device *dev)
+>> +{
+>> +	netif_tx_start_all_queues(dev);
+> 
+> This is not required as the virtual interface does not have a queue
+> (marked as IFF_NO_QUEUE).
 
-Antheas
+ACK
+
+> 
+>> +	return 0;
+>> +}
+>> +
+>> +static int ovpn_net_stop(struct net_device *dev)
+>> +{
+>> +	netif_tx_stop_all_queues(dev);
+> 
+> Same as above.
+
+ACK
+
+> 
+>> +	return 0;
+>> +}
+>>   
+>>   static const struct net_device_ops ovpn_netdev_ops = {
+>> +	.ndo_open		= ovpn_net_open,
+>> +	.ndo_stop		= ovpn_net_stop,
+>> +	.ndo_start_xmit		= ovpn_net_xmit,
+>> +};
+>> +
+>> +static const struct device_type ovpn_type = {
+>> +	.name = OVPN_FAMILY_NAME,
+>> +};
+>> +
+>> +static const struct nla_policy ovpn_policy[IFLA_OVPN_MAX + 1] = {
+>> +	[IFLA_OVPN_MODE] = NLA_POLICY_RANGE(NLA_U8, OVPN_MODE_P2P,
+>> +					    OVPN_MODE_MP),
+>>   };
+>>   
+>>   /**
+>> @@ -31,44 +59,120 @@ bool ovpn_dev_is_valid(const struct net_device *dev)
+>>   	return dev->netdev_ops == &ovpn_netdev_ops;
+>>   }
+>>   
+>> +static void ovpn_setup(struct net_device *dev)
+>> +{
+>> +	netdev_features_t feat = NETIF_F_SG | NETIF_F_HW_CSUM | NETIF_F_RXCSUM |
+> 
+> Do not advertise NETIF_F_HW_CSUM or NETIF_F_RXCSUM, as TX/RX checksum is
+> not handled in hardware.
+
+The idea behind these flags was that the OpenVPN protocol will take care 
+of authenticating packets, thus substituting what the CSUM would do here.
+For this I wanted to avoid the stack to spend time computing the CSUM in 
+software.
+
+I believe wireguard sets those flags for the same reason.
+
+Does it make sense to you?
+
+> 
+>> +				 NETIF_F_GSO | NETIF_F_GSO_SOFTWARE |
+>> +				 NETIF_F_HIGHDMA;
+
+
+Regards,
+
+-- 
+Antonio Quartulli
+OpenVPN Inc.
+
 
