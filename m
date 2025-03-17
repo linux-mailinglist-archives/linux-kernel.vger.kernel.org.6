@@ -1,112 +1,160 @@
-Return-Path: <linux-kernel+bounces-564697-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 226FFA65971
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 18:03:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07A9FA65989
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 18:05:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A71BF189035F
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 16:58:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0F518869BC
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 17:01:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2280D20487F;
-	Mon, 17 Mar 2025 16:53:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="G3Y6SovF"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10226204597
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 16:53:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CD41207658;
+	Mon, 17 Mar 2025 16:54:05 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1615F1FDA97;
+	Mon, 17 Mar 2025 16:54:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742230408; cv=none; b=XsT99Qcsj45tjonq4z2+LI/6YeLmlNDVbD57J11IYmE6ccfVinJhUtD4V1M0mJj/k1XPmXXSXLVJtwsiGZ/z1Z+6jso6ZGHmK6gp/e96fDlQYXAfVH1IrAN6ldfYKafHk1We/32wQ2XPLQUNqd7GAWGKhCLKcVDFUlu4NwVnbgY=
+	t=1742230445; cv=none; b=rFVkaPZUjZ4U/PSBGkXrUhH+DhV00kK3a+x8IPP+ASfNIyjF4mqPPpumUiDJamFnG9HxMpN/bQPFJgU4Z2Up0uupYKi0zgA4v/JCy7TaKqI0VMULMZBjUObylakdbJCVM9CwoSioismkj2R8ED/KQypCZIDV/bZawBqYyn2UXHk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742230408; c=relaxed/simple;
-	bh=qXnVOgqYG1FQiAJ7DrIUcFxKM+SXGAYFBrMi0yRhVLE=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=VBNzCRvsWlWAxwp0Tb6BVEPjqrdf6X0JXKFbapSwSkbAChpfJCN8gKsCTJsv/BfZma1CEoljmUPtXXZ3UsDNylsVGdR6B98qtuE7/M+msWACdOII9+9RD48LKcjB4LsAuip5pbFzOfceL5GhNF0B3NvPp570193Mxa3wViHue48=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=G3Y6SovF; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2ff605a7a43so6276244a91.3
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 09:53:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1742230406; x=1742835206; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=v444Ih8Wrl3P9CM41VrD5YikquTct6TP/BZ+x7IqEJw=;
-        b=G3Y6SovF+SS2UXIOsTCgWKScWPrmOHoD9kfv6i5s2qv3KL2EO545T4qI0XeA9mJJlx
-         YlqWGkPuqSMwIkDxFjZUNzKIsj2uiVgsqhDQpeekpXMb5VgOOlCuGblSc7nYGvwAH7uj
-         MzyLDXaeoc4OIZDzMYz2OeArIqOOH1giH87UMAGHQCsKpLSLKpnL0OfOqQDMhg9zrEoH
-         XOdlf28YV1+vZzrPmdbzTJ6S0fEuUQwJLd8p2LVumexoI3FDGkppoBkzveE15BnajrDm
-         wmrgHN5pXLr6RQyFH9D2tbs3LKfYKkoB29mCBBCiw+Rc/0ZAo7wt1lucSTDE3pmx9p5N
-         DPVA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742230406; x=1742835206;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=v444Ih8Wrl3P9CM41VrD5YikquTct6TP/BZ+x7IqEJw=;
-        b=enSEzLA1uqKlUOoARPmNHZMOOY/agI7YuFdKFqwIHGZl17qxEYN738IvCmHcDM6ncV
-         uybK713XRejrnwFWBT6PaIgEl9oEIYDeomvZO6OaOkIcrnOOEYWdk8/ZfH/2qjDRcmqi
-         NLhmEj2xdLVgwAFGu+PvxBmNP4DYAWLh04dHpFKlGuHp2YexY2aUAqZ3iGL5oq5rAHlt
-         njqFvOj7ydtTd4lQzZr6mfev1JXS7COzkI9MutFy7r+S8MCgKTp9wINK2WyuPmUE7DAs
-         aCQuETGsF7tk77IS0f5KXjAw5KvgtXwKEkYvQnBC3efNVDnM2qq7j0BZi4vq4cN7KDqO
-         Macw==
-X-Forwarded-Encrypted: i=1; AJvYcCUttDhzzm9da3YzfCDCsaS+xT5xlqYUd4yw3bjVMyFvlCocfmzy2wWP2+6Gw1YF7nQEFgk2U17RsW4P9uw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx2V5zBIaKWvic7woz8KO3vYtTGE9JNh4pfa0A9RriF3sCN2OGV
-	5uEKT4mysSc/Bg0AqC8hA4jVmuJNpdbmAtc+BK9AfIvDTPWiwgr73KGExgL/DcnZa+XzO+6t0OX
-	PaQ==
-X-Google-Smtp-Source: AGHT+IFOoYATiC/rIu32xRtF+lQHMNYL63/M8Ury4RfsKkWn2hqTxV2zJEn9dcXHvExkZwAcFk/2LTNCnBE=
-X-Received: from pgvo23.prod.google.com ([2002:a65:6157:0:b0:ad5:45a5:644c])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a21:3397:b0:1f5:769a:a4b2
- with SMTP id adf61e73a8af0-1fa4428f019mr428693637.17.1742230406330; Mon, 17
- Mar 2025 09:53:26 -0700 (PDT)
-Date: Mon, 17 Mar 2025 09:53:24 -0700
-In-Reply-To: <87wmcn4x78.ffs@tglx>
+	s=arc-20240116; t=1742230445; c=relaxed/simple;
+	bh=KpU/PnNszW7hE8D8K45gNzAsaAMaaigdwtGIBChY8ds=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=E9ImK82Fj9SEhiMeCVTiRRed4Q2MuD7fCJvwPZQhFFcE8polwY2J0nQ6/4JE7zJqByD0hv1fkCdg33RgUADmoLe6TvTjKVAaBJ7sC+Q45WexjRUk1HBL5zHSsJjQmnVTec+AqBS6i4ASSEFL+wkxr2xriLAiYCMTrpEuypiKU1E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com; spf=none smtp.mailfrom=foss.arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=foss.arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 19B6913D5;
+	Mon, 17 Mar 2025 09:54:11 -0700 (PDT)
+Received: from bogus (e133711.arm.com [10.1.196.55])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DF99A3F694;
+	Mon, 17 Mar 2025 09:54:00 -0700 (PDT)
+Date: Mon, 17 Mar 2025 16:53:57 +0000
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-kernel@vger.kernel.org, Andre Przywara <andre.przywara@arm.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
+	linux-crypto@vger.kernel.org
+Subject: Re: [PATCH 2/9] hwrng: arm-smccc-trng - transition to the faux
+ device interface
+Message-ID: <Z9hTpRGisJcQknwv@bogus>
+References: <20250317-plat2faux_dev-v1-0-5fe67c085ad5@arm.com>
+ <20250317-plat2faux_dev-v1-2-5fe67c085ad5@arm.com>
+ <2025031748-deface-wasting-b635@gregkh>
+ <Z9gwNaUoTmqViPrh@bogus>
+ <2025031709-unmoved-carton-c130@gregkh>
+ <Z9g1CV6jgea8VpW4@bogus>
+ <2025031731-anyhow-askew-5731@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250315030630.2371712-1-seanjc@google.com> <20250315030630.2371712-3-seanjc@google.com>
- <87wmcn4x78.ffs@tglx>
-Message-ID: <Z9hThFNFrrbXjkjc@google.com>
-Subject: Re: [PATCH 2/8] x86/irq: Track if IRQ was found in PIR during initial
- loop (to load PIR vals)
-From: Sean Christopherson <seanjc@google.com>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	Paolo Bonzini <pbonzini@redhat.com>, linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
-	Jacob Pan <jacob.jun.pan@linux.intel.com>, Jim Mattson <jmattson@google.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2025031731-anyhow-askew-5731@gregkh>
 
-On Mon, Mar 17, 2025, Thomas Gleixner wrote:
-> On Fri, Mar 14 2025 at 20:06, Sean Christopherson wrote:
-> > @@ -409,25 +409,28 @@ static __always_inline bool handle_pending_pir(u64 *pir, struct pt_regs *regs)
-> >  {
-> >  	int i, vec = FIRST_EXTERNAL_VECTOR;
-> >  	unsigned long pir_copy[4];
-> > -	bool handled = false;
-> > +	bool found_irq = false;
-> >  
-> > -	for (i = 0; i < 4; i++)
-> > +	for (i = 0; i < 4; i++) {
-> >  		pir_copy[i] = READ_ONCE(pir[i]);
-> > +		if (pir_copy[i])
-> > +			found_irq = true;
-> > +	}
+On Mon, Mar 17, 2025 at 05:46:46PM +0100, Greg Kroah-Hartman wrote:
+> On Mon, Mar 17, 2025 at 02:43:21PM +0000, Sudeep Holla wrote:
+> > On Mon, Mar 17, 2025 at 03:30:15PM +0100, Greg Kroah-Hartman wrote:
+> > > On Mon, Mar 17, 2025 at 02:22:45PM +0000, Sudeep Holla wrote:
+> > > > On Mon, Mar 17, 2025 at 02:04:27PM +0100, Greg Kroah-Hartman wrote:
+> > > > > On Mon, Mar 17, 2025 at 10:13:14AM +0000, Sudeep Holla wrote:
+> > > > > > +MODULE_ALIAS("faux:smccc_trng");
+> > > > > 
+> > > > > Why do you need a branch new alias you just made up?  Please don't add
+> > > > > that for these types of devices, that's not going to work at all (just
+> > > > > like the platform alias really doesn't work well.
+> > > > > 
+> > > > 
+> > > > Sure I will drop all of those alias. One question I have if the idea of
+> > > > creating a macro for this is good or bad ? I need this initial condition
+> > > > flag to make use of such a macro, so I didn't go for it, but it does
+> > > > remove some boiler-plate code.
+> > > > 
+> > > > Let me know what do you think of it ?
+> > > > 
+> > > > Regards,
+> > > > Sudeep
+> > > > 
+> > > > -->8 
+> > > > diff --git i/include/linux/device/faux.h w/include/linux/device/faux.h
+> > > > index 9f43c0e46aa4..8af3eaef281a 100644
+> > > > --- i/include/linux/device/faux.h
+> > > > +++ w/include/linux/device/faux.h
+> > > > @@ -66,4 +66,30 @@ static inline void faux_device_set_drvdata(struct faux_device *faux_dev, void *d
+> > > >  	dev_set_drvdata(&faux_dev->dev, data);
+> > > >  }
+> > > >  
+> > > > +#define module_faux_driver(name, tag, init_cond)			\
+> > > > +static struct faux_device_ops tag##_ops = {				\
+> > > > +	.probe = tag##_probe,						\
+> > > > +	.remove = tag##_remove,						\
+> > > > +};									\
+> > > > +									\
+> > > > +static struct faux_device *tag##_dev;					\
+> > > > +									\
+> > > > +static int __init tag##_init(void)					\
+> > > > +{									\
+> > > > +	if (!(init_cond))						\
+> > > > +		return 0;						\
+> > > > +	tag##_dev = faux_device_create(name, NULL, &tag##_ops);		\
+> > > > +	if (!tag##_dev)							\
+> > > > +		return -ENODEV;						\
+> > > > +									\
+> > > > +	return 0;							\
+> > > > +}									\
+> > > > +module_init(tag##_init);						\
+> > > > +									\
+> > > > +static void __exit tag##_exit(void)					\
+> > > > +{									\
+> > > > +	faux_device_destroy(tag##_dev);					\
+> > > > +}									\
+> > > > +module_exit(tag##_exit);						\
+> > > 
+> > > Yes, I see that some of your changes could be moved to use this, so I
+> > > think it is worth it.
+> > > 
+> > > But why can't you use module_driver() here?  Ah, that init_cond?  And
+> > > the device.  Hm, why not put the init_cond in the probe callback?  That
+> > > should make this macro simpler.
+> > > 
+> > 
+> > I tried to keep the creation of the device itself conditional the way
+> > it is today. Deferring the check to probe means the device gets created
+> > unconditionally but won't be probed which is fine I guess. I was thinking
+> > that device shouldn't show up on the bus if the condition is not met to
+> > match the current scenario. I might be overthinking there.
 > 
-> That's four extra conditional branches. You can avoid them completely. See
-> delta patch below.
+> It will not show up anywhere if the probe call fails.
 
-Huh.  gcc elides the conditional branches when computing found_irq regardless of
-the approach; the JEs in the changelog are from skipping the XCHG.
+Ah, nice. I somehow didn't realise that. Thanks for that info.
 
-But clang-14 does not.  I'll slot this in.
+> 
+> > > And don't use "tag", that's an odd term here, just copy what
+> > > module_driver() does instead please.
+> > > 
+> > 
+> > Sure, I will not use it. It was just a name that came to my mind.
+> > 
+> > Also creating the macro builds the dependency. Do you prefer to push the
+> > changes as is and the macro in one release and make use of the macro later.
+> 
+> Let's see a series that adds the macro and uses it and we can figure it
+> out from there.  If the macro is sane, I can just take that now for
+> 6.15-rc1 and then you can send the others to the different subsystems
+> after that shows up.
+> 
 
-Thanks!
+Sure, thanks again.
+
+-- 
+Regards,
+Sudeep
 
