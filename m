@@ -1,312 +1,201 @@
-Return-Path: <linux-kernel+bounces-564017-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564018-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE729A64C17
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 12:16:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4556DA64C1E
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 12:17:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E452B3A3630
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:16:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 461413A571E
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:17:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9651C23717D;
-	Mon, 17 Mar 2025 11:16:09 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BCA32356DB;
+	Mon, 17 Mar 2025 11:17:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=it-klinger.de header.i=@it-klinger.de header.b="cKtWN5YO"
+Received: from www571.your-server.de (www571.your-server.de [78.46.3.230])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27C2C1D79B3
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 11:16:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBE131D79B3;
+	Mon, 17 Mar 2025 11:17:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.46.3.230
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742210169; cv=none; b=ZniK/ff/qlwgc+t4Y9rvJ0j19TmRZkoc24hoZauQdK6tmC1aAWP+T7JtKG8+jG+nMUhfg2rRX5yysWW3dPy/ZusPbxJehOVH/OigOdmivPVErAm/QW7kx/D+v46oItTARZeh78QFF5EcCBgOT229alWpE2n9L7vosoFmsHAP+Bw=
+	t=1742210248; cv=none; b=cXJ360xRlOHN8hln06qKgqyGuSoI00jTVL1s4HVW+JWQcgVnmqLHIAn4yn8iCVesUMKDzPUy0+qkg90eE8fFKAzj2cEbr0pLY+VDj/a+kkEiuqb8SY3Mc0+3qdQV1aIm/2gRZ4Xkd//RDE9wE3NAO8cMgfwkMGDxfkeChmfctd8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742210169; c=relaxed/simple;
-	bh=fjv4AQZkwau5k7p11QuUzqeIb3FE5P+Kcmon5+Vb+8c=;
-	h=Subject:To:References:CC:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=XGBRRkRQbpXclSNM37LfG29BRGF70Ahj4s3yPaALkGqcgwfvG4tOeBVPX4DlRMbbltfNJ0H0ymPQ+djyCy4do61rsah50QfrtFq0ReFyqHfAS7t47fhP9oYhfO+QmOrj0cJeLL7NEE1LoG1CAUFM2rvjEqVGWjkyjsJnKVRD6ng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.105])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4ZGXRt548lztQq3;
-	Mon, 17 Mar 2025 19:14:34 +0800 (CST)
-Received: from dggemv704-chm.china.huawei.com (unknown [10.3.19.47])
-	by mail.maildlp.com (Postfix) with ESMTPS id 0197D140159;
-	Mon, 17 Mar 2025 19:16:03 +0800 (CST)
-Received: from kwepemn500004.china.huawei.com (7.202.194.145) by
- dggemv704-chm.china.huawei.com (10.3.19.47) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Mon, 17 Mar 2025 19:16:02 +0800
-Received: from [10.67.120.218] (10.67.120.218) by
- kwepemn500004.china.huawei.com (7.202.194.145) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 17 Mar 2025 19:16:02 +0800
-Subject: Re: [PATCH] coresight: Fixes device's owner field for registered
- using coresight_init_driver()
-To: Suzuki K Poulose <suzuki.poulose@arm.com>, <james.clark@arm.com>,
-	<anshuman.khandual@arm.com>
-References: <20240918035327.9710-1-hejunhao3@huawei.com>
- <e2194d2a-0f51-4e59-a1ca-b4563b3389ec@arm.com>
- <c3744062-f7c1-82df-2fa1-591da3b2dc5e@huawei.com>
- <1a030491-5bc6-4122-baed-faf123f0f872@arm.com>
-CC: <coresight@lists.linaro.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <linuxarm@huawei.com>,
-	<jonathan.cameron@huawei.com>, <yangyicong@huawei.com>,
-	<prime.zeng@hisilicon.com>
-From: hejunhao <hejunhao3@huawei.com>
-Message-ID: <2a681949-3053-8ae6-597b-49b16e1e87af@huawei.com>
-Date: Mon, 17 Mar 2025 19:16:01 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.7.1
+	s=arc-20240116; t=1742210248; c=relaxed/simple;
+	bh=uYoF2XU04ed3cUfLW0Zv5oZ4ni4Gbd2nEZjhSx/oo3c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UsAVZt/IuB10JEM8RpO+vz1sxwi51Japnu4MYAB/SlTyKxfSGaeIcmxNQXvIc1iFQE8HmuMvrDktCZzgolfnTJZAPHHqGkm+SdEg/9k3SaQpCWjGTmZDFvPoF5v05n9noNVkK+AJ2Ehsy+/z3npLs8mOUzPS+I8u3frhxyh4huk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=it-klinger.de; spf=pass smtp.mailfrom=it-klinger.de; dkim=pass (2048-bit key) header.d=it-klinger.de header.i=@it-klinger.de header.b=cKtWN5YO; arc=none smtp.client-ip=78.46.3.230
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=it-klinger.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=it-klinger.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=it-klinger.de; s=default2502; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=XE0nklv5FnGcO0JcWnNv2Mt7qztg3JvxQsyWfUqHEME=; b=cKtWN5YOCkrZIyY9o5Xa0JW0T6
+	fYKwfZ1BbksJSQHb35XcdgRkifJDyPiEFuO8RtmDI1rkEIOKHDrb+GHcKK4qiKircGrC+8w76X9PL
+	ieL2IdKXmYljon5XV8XvQGRNRrqxBdQh87gZp+JSjhVOJ9zPhdac3GjvYzI1XhLoGiBqBBjOMsqKS
+	wgsDBE/npELYE6gd0b6jQqsCwe5eDcTQaEhp3zE2DAd+ZRA9lbhD/Eiebo2qQoA9jjyryJw7K1+88
+	2rWx/qr2ged3Ljm0qqHSqRoGf9YlurbrTQDMBRTEU70qGzB1PfW1DnRPbSbS3o/74BbQV0neKqY+U
+	L5r0U1qA==;
+Received: from sslproxy03.your-server.de ([88.198.220.132])
+	by www571.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96.2)
+	(envelope-from <ak@it-klinger.de>)
+	id 1tu8TA-0006DP-20;
+	Mon, 17 Mar 2025 12:17:20 +0100
+Received: from [2a0f:6480:1:600:fc64:4dfc:9829:9e5f] (helo=mail.your-server.de)
+	by sslproxy03.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <ak@it-klinger.de>)
+	id 1tu8TA-0003Yc-2H;
+	Mon, 17 Mar 2025 12:17:20 +0100
+Date: Mon, 17 Mar 2025 12:17:17 +0100
+From: Andreas Klinger <ak@it-klinger.de>
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	lars@metafoo.de, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	javier.carrasco.cruz@gmail.com, mazziesaccount@gmail.com,
+	subhajit.ghosh@tweaklogic.com, muditsharma.info@gmail.com,
+	arthur.becker@sentec.com, ivan.orlov0322@gmail.com
+Subject: Re: [PATCH 1/3] dt-bindings: iio: light: veml6046x00: add color
+ sensor
+Message-ID: <Z9gEveqC91o8Ojks@mail.your-server.de>
+References: <20250316113131.62884-1-ak@it-klinger.de>
+ <20250316113131.62884-2-ak@it-klinger.de>
+ <20250317110012.2ad89cb9@jic23-huawei>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <1a030491-5bc6-4122-baed-faf123f0f872@arm.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- kwepemn500004.china.huawei.com (7.202.194.145)
-
-Hi Suzuki,
-
-
-On 2025/3/14 18:38, Suzuki K Poulose wrote:
-> Hi
->
-> On 14/03/2025 07:44, hejunhao wrote:
->> Hi Suzuki,
->>
->> Could you confirm if this patch was queued in coresight/next or 
->> upstream of the mainline?
->>
->> I couldn't find it in: kernel/git/coresight/linux.git or Kernel 
->> v6.14.0- rc4.
->>
->> Maybe am I missing some information?
->
-> Apologies, I missed queueing this. That said, I have a minor comment 
-> on the patch below.
->
->>
->> Best regards,
->> Junhao.
->>
->>
->> On 2024/9/18 16:29, Suzuki K Poulose wrote:
->>> On 18/09/2024 04:53, Junhao He wrote:
->>>> The coresight_init_driver() of the coresight-core module is called 
->>>> from
->>>> the sub coresgiht device (such as tmc/stm/funnle/...) module. It calls
->>>> amba_driver_register() and Platform_driver_register(), which are macro
->>>> functions that use the coresight-core's module to initialize the 
->>>> caller's
->>>> owner field.  Therefore, when the sub coresight device calls
->>>> coresight_init_driver(), an incorrect THIS_MODULE value is captured.
->>>>
->>>> The sub coesgiht modules can be removed while their callbacks are
->>>> running, resulting in a general protection failure.
->>>>
->>>> Add module parameter to coresight_init_driver() so can be called
->>>> with the module of the callback.
->>>>
->>>> Fixes: 075b7cd7ad7d ("coresight: Add helpers registering/removing 
->>>> both AMBA and platform drivers")
->>>> Signed-off-by: Junhao He <hejunhao3@huawei.com>
->>>
->>> Thanks for the fix, looks good to me. I will queue this for v6.13
->>>
->>> Suzuki
->>>
->>>> ---
->>>>   drivers/hwtracing/coresight/coresight-catu.c       | 2 +-
->>>>   drivers/hwtracing/coresight/coresight-core.c       | 6 +++---
->>>>   drivers/hwtracing/coresight/coresight-cpu-debug.c  | 3 ++-
->>>>   drivers/hwtracing/coresight/coresight-funnel.c     | 3 ++-
->>>>   drivers/hwtracing/coresight/coresight-replicator.c | 3 ++-
->>>>   drivers/hwtracing/coresight/coresight-stm.c        | 2 +-
->>>>   drivers/hwtracing/coresight/coresight-tmc-core.c   | 2 +-
->>>>   drivers/hwtracing/coresight/coresight-tpiu.c       | 2 +-
->>>>   include/linux/coresight.h                          | 2 +-
->>>>   9 files changed, 14 insertions(+), 11 deletions(-)
->>>>
->>>> diff --git a/drivers/hwtracing/coresight/coresight-catu.c 
->>>> b/drivers/ hwtracing/coresight/coresight-catu.c
->>>> index bfea880d6dfb..337668f9cfd4 100644
->>>> --- a/drivers/hwtracing/coresight/coresight-catu.c
->>>> +++ b/drivers/hwtracing/coresight/coresight-catu.c
->>>> @@ -702,7 +702,7 @@ static int __init catu_init(void)
->>>>   {
->>>>       int ret;
->>>>   -    ret = coresight_init_driver("catu", &catu_driver, 
->>>> &catu_platform_driver);
->>>> +    ret = coresight_init_driver("catu", &catu_driver, 
->>>> &catu_platform_driver, THIS_MODULE);
->>>>       tmc_etr_set_catu_ops(&etr_catu_buf_ops);
->>>>       return ret;
->>>>   }
->>>> diff --git a/drivers/hwtracing/coresight/coresight-core.c 
->>>> b/drivers/ hwtracing/coresight/coresight-core.c
->>>> index 9fc6f6b863e0..c546a417836c 100644
->>>> --- a/drivers/hwtracing/coresight/coresight-core.c
->>>> +++ b/drivers/hwtracing/coresight/coresight-core.c
->>>> @@ -1399,17 +1399,17 @@ module_init(coresight_init);
->>>>   module_exit(coresight_exit);
->>>>     int coresight_init_driver(const char *drv, struct amba_driver 
->>>> *amba_drv,
->>>> -              struct platform_driver *pdev_drv)
->>>> +              struct platform_driver *pdev_drv, struct module *owner)
->>>>   {
->>>>       int ret;
->>>>   -    ret = amba_driver_register(amba_drv);
->>>> +    ret = __amba_driver_register(amba_drv, owner);
->>>>       if (ret) {
->>>>           pr_err("%s: error registering AMBA driver\n", drv);
->>>>           return ret;
->>>>       }
->>>>   -    ret = platform_driver_register(pdev_drv);
->>>> +    ret = __platform_driver_register(pdev_drv, owner);
->>>>       if (!ret)
->>>>           return 0;
->>>>   diff --git a/drivers/hwtracing/coresight/coresight-cpu-debug.c b/ 
->>>> drivers/hwtracing/coresight/coresight-cpu-debug.c
->>>> index 75962dae9aa1..cc599c5ef4b2 100644
->>>> --- a/drivers/hwtracing/coresight/coresight-cpu-debug.c
->>>> +++ b/drivers/hwtracing/coresight/coresight-cpu-debug.c
->>>> @@ -774,7 +774,8 @@ static struct platform_driver 
->>>> debug_platform_driver = {
->>>>     static int __init debug_init(void)
->>>>   {
->>>> -    return coresight_init_driver("debug", &debug_driver, 
->>>> &debug_platform_driver);
->>>> +    return coresight_init_driver("debug", &debug_driver, 
->>>> &debug_platform_driver,
->>>> +                     THIS_MODULE);
->
-> minor nit:
->
-> Could we make the coresight_init_driver() a static inline or even a
-> macro to automatically add the THIS_MODULE param ?
->
-> Something like:
->
-> #define coresight_init_driver(name, amba_drv, pdev_drv)
->     coresight_init_driver_owner(name, amba_drv, pdev_drv, THIS_MODULE)
->
-> I could respin this and queue the change.
->
->
-
-Yes, thanks for the review.  Will fix in next version.
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="XEGLpz3pfiqoz7zZ"
+Content-Disposition: inline
+In-Reply-To: <20250317110012.2ad89cb9@jic23-huawei>
+X-Authenticated-Sender: ak@it-klinger.de
+X-Virus-Scanned: Clear (ClamAV 1.0.7/27580/Mon Mar 17 10:42:01 2025)
 
 
+--XEGLpz3pfiqoz7zZ
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
->
->
->>>>   }
->>>>     static void __exit debug_exit(void)
->>>> diff --git a/drivers/hwtracing/coresight/coresight-funnel.c b/ 
->>>> drivers/hwtracing/coresight/coresight-funnel.c
->>>> index 5a819c8970fb..8f451b051ddc 100644
->>>> --- a/drivers/hwtracing/coresight/coresight-funnel.c
->>>> +++ b/drivers/hwtracing/coresight/coresight-funnel.c
->>>> @@ -433,7 +433,8 @@ static struct amba_driver dynamic_funnel_driver 
->>>> = {
->>>>     static int __init funnel_init(void)
->>>>   {
->>>> -    return coresight_init_driver("funnel", &dynamic_funnel_driver, 
->>>> &funnel_driver);
->>>> +    return coresight_init_driver("funnel", &dynamic_funnel_driver, 
->>>> &funnel_driver,
->>>> +                     THIS_MODULE);
->>>>   }
->>>>     static void __exit funnel_exit(void)
->>>> diff --git a/drivers/hwtracing/coresight/coresight-replicator.c b/ 
->>>> drivers/hwtracing/coresight/coresight-replicator.c
->>>> index 3e55be9c8418..f7607c72857c 100644
->>>> --- a/drivers/hwtracing/coresight/coresight-replicator.c
->>>> +++ b/drivers/hwtracing/coresight/coresight-replicator.c
->>>> @@ -438,7 +438,8 @@ static struct amba_driver 
->>>> dynamic_replicator_driver = {
->>>>     static int __init replicator_init(void)
->>>>   {
->>>> -    return coresight_init_driver("replicator", 
->>>> &dynamic_replicator_driver, &replicator_driver);
->>>> +    return coresight_init_driver("replicator", 
->>>> &dynamic_replicator_driver, &replicator_driver,
->>>> +                     THIS_MODULE);
->>>>   }
->>>>     static void __exit replicator_exit(void)
->>>> diff --git a/drivers/hwtracing/coresight/coresight-stm.c b/drivers/ 
->>>> hwtracing/coresight/coresight-stm.c
->>>> index 117dbb484543..403eea8f95d4 100644
->>>> --- a/drivers/hwtracing/coresight/coresight-stm.c
->>>> +++ b/drivers/hwtracing/coresight/coresight-stm.c
->>>> @@ -1046,7 +1046,7 @@ static struct platform_driver 
->>>> stm_platform_driver = {
->>>>     static int __init stm_init(void)
->>>>   {
->>>> -    return coresight_init_driver("stm", &stm_driver, 
->>>> &stm_platform_driver);
->>>> +    return coresight_init_driver("stm", &stm_driver, 
->>>> &stm_platform_driver, THIS_MODULE);
->>>>   }
->>>>     static void __exit stm_exit(void)
->>>> diff --git a/drivers/hwtracing/coresight/coresight-tmc-core.c b/ 
->>>> drivers/hwtracing/coresight/coresight-tmc-core.c
->>>> index b54562f392f3..e31e36635394 100644
->>>> --- a/drivers/hwtracing/coresight/coresight-tmc-core.c
->>>> +++ b/drivers/hwtracing/coresight/coresight-tmc-core.c
->>>> @@ -742,7 +742,7 @@ static struct platform_driver 
->>>> tmc_platform_driver = {
->>>>     static int __init tmc_init(void)
->>>>   {
->>>> -    return coresight_init_driver("tmc", &tmc_driver, 
->>>> &tmc_platform_driver);
->>>> +    return coresight_init_driver("tmc", &tmc_driver, 
->>>> &tmc_platform_driver, THIS_MODULE);
->>>>   }
->>>>     static void __exit tmc_exit(void)
->>>> diff --git a/drivers/hwtracing/coresight/coresight-tpiu.c 
->>>> b/drivers/ hwtracing/coresight/coresight-tpiu.c
->>>> index b048e146fbb1..f9ecd05cbe5c 100644
->>>> --- a/drivers/hwtracing/coresight/coresight-tpiu.c
->>>> +++ b/drivers/hwtracing/coresight/coresight-tpiu.c
->>>> @@ -318,7 +318,7 @@ static struct platform_driver 
->>>> tpiu_platform_driver = {
->>>>     static int __init tpiu_init(void)
->>>>   {
->>>> -    return coresight_init_driver("tpiu", &tpiu_driver, 
->>>> &tpiu_platform_driver);
->>>> +    return coresight_init_driver("tpiu", &tpiu_driver, 
->>>> &tpiu_platform_driver, THIS_MODULE);
->>>>   }
->>>>     static void __exit tpiu_exit(void)
->>>> diff --git a/include/linux/coresight.h b/include/linux/coresight.h
->>>> index f09ace92176e..e6c26952ddc2 100644
->>>> --- a/include/linux/coresight.h
->>>> +++ b/include/linux/coresight.h
->>>> @@ -660,7 +660,7 @@ coresight_find_output_type(struct 
->>>> coresight_platform_data *pdata,
->>>>                  union coresight_dev_subtype subtype);
->>>>     int coresight_init_driver(const char *drv, struct amba_driver 
->>>> *amba_drv,
->>>> -              struct platform_driver *pdev_drv);
->>>> +              struct platform_driver *pdev_drv, struct module 
->>>> *owner);
->>>>     void coresight_remove_driver(struct amba_driver *amba_drv,
->>>>                    struct platform_driver *pdev_drv);
->>>
->>>
->>> .
->>>
->>
->
->
-> .
->
+Hi Jonathan,
 
+
+Jonathan Cameron <jic23@kernel.org> schrieb am Mo, 17. M=C3=A4r 11:00:
+> On Sun, 16 Mar 2025 12:31:29 +0100
+> Andreas Klinger <ak@it-klinger.de> wrote:
+>=20
+> > Add a new compatible for Vishay high accuracy RGBIR color sensor
+> > veml6046x00.
+> >=20
+> > Signed-off-by: Andreas Klinger <ak@it-klinger.de>
+> > ---
+> >  .../iio/light/vishay,veml6046x00.yaml         | 49 +++++++++++++++++++
+> >  1 file changed, 49 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/iio/light/vishay,=
+veml6046x00.yaml
+> >=20
+> > diff --git a/Documentation/devicetree/bindings/iio/light/vishay,veml604=
+6x00.yaml b/Documentation/devicetree/bindings/iio/light/vishay,veml6046x00.=
+yaml
+> > new file mode 100644
+> > index 000000000000..3207800fc539
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/iio/light/vishay,veml6046x00.ya=
+ml
+> > @@ -0,0 +1,49 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/iio/light/vishay,veml6046x00.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Vishay VEML6046X00 High accuracy RGBIR color sensor
+> > +
+> > +maintainers:
+> > +  - Andreas Klinger <ak@it-klinger.de>
+> > +
+> > +description:
+> > +  VEML6046X00 datasheet at https://www.vishay.com/docs/80173/veml6046x=
+00.pdf
+> > +
+> > +properties:
+> > +  compatible:
+> > +    enum:
+> > +      - vishay,veml6046x00
+> > +
+> > +  reg:
+> > +    maxItems: 1
+> > +
+> > +  vdd-supply: true
+> > +
+> > +  interrupts:
+> > +    maxItems: 1
+> > +
+> > +required:
+> > +  - compatible
+> > +  - reg
+> > +  - vdd-supply
+> > +
+> > +additionalProperties: false
+> > +
+> > +examples:
+> > +  - |
+> > +    i2c {
+> > +        #address-cells =3D <1>;
+> > +        #size-cells =3D <0>;
+> > +
+> > +        color-sensor@29 {
+> > +            compatible =3D "vishay,veml6046x00";
+> > +            reg =3D <0x29>;
+> > +            vdd-supply =3D <&vdd_reg>;
+> > +            interrupt-parent =3D <&gpio2>;
+> > +            interrupts =3D <3 IRQ_TYPE_EDGE_FALLING>;
+> Need an include for this I think.  Make sure to test build your
+> bindings following the instructions in the bot message.
+
+I already sent out an version 2 yesterday which is with the include, tested=
+ and
+already reviewed by Krzysztof.
+
+Andreas
+
+>=20
+> Thanks,
+>=20
+> Jonathan
+>=20
+> > +        };
+> > +    };
+> > +...
+>=20
+
+--XEGLpz3pfiqoz7zZ
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQGzBAABCgAdFiEE7/NrAFtB/Pj7rTUyyHDM+xwPAVEFAmfYBL0ACgkQyHDM+xwP
+AVE2lQv9GdwIjbFFQpSvLsazG5OU3K07IvPqo35rsS/LWbOon1cgXXLdLbpO/qZY
+uz6I/70wIzNxh2TFTKBZZYwMGJW76erVQbnRQV1tb+OLDqYgvGNIa7BAqqsrYGcP
+t1VTvDoiR5+xawWbaeiIaAMtNtaM2jDBJRslmdmx7zwCSsHaTRLCEe83oiuEDlYL
+FmcIQqixuiupDtjdXkj8dTciGUAtpS9pOqihxT/5EOueA6+e8B0LAlhLcKhNKEKD
+qKx5VTwWU8F1gaX/4BawUXhMY9ZmJzuEwMqQkMIWtOYVDTIT/2WMyowrQJ998vQ5
+F0CqB+P9lmnOnrMX7rK8kw6b0qJgNMm1nX3weyE8QSZfhktHyjide90SqREbsENn
+r05jziiGjpCrJwOO0FizygmA/3xs3cr4f6YzGt3viE9tjXmeMpK/6fFjATmReTXP
+DVaduXUwY5v2vj3jnU90aEBJn2gVCrtB/8inSCqAUSH+IBekuLh+K9W3PWrCEVr6
+Ft/LQ0id
+=H3cW
+-----END PGP SIGNATURE-----
+
+--XEGLpz3pfiqoz7zZ--
 
