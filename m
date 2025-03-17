@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-564324-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564325-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1524A652B4
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 15:19:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C72FA652B2
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 15:19:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 42C4A170C63
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 14:18:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 09BD7188401B
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 14:18:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 112382940D;
-	Mon, 17 Mar 2025 14:18:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6426241C8C;
+	Mon, 17 Mar 2025 14:18:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PS6meNfW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KRliIwH7"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 696FF156236;
-	Mon, 17 Mar 2025 14:18:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E598D2417D2;
+	Mon, 17 Mar 2025 14:18:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742221112; cv=none; b=Ahr3JXUg6nIHEIhxmLKcO0eIiZsbwSChO18AJ2+SzYXh9Of6xVYDe8utwsZ4UjtUrddpLjaMSgoNJQ334UE7soXX1LRM7C5smMKtv5L//aWeyLWCbZLOnvQuXlQikciABl/ovHNGsmoG33DpmQ6IITYZjkIKivZWK9UTb89k0+Q=
+	t=1742221114; cv=none; b=eEJo+TmzXci4yDpqfGRYZ53qgVd0eLJ7Oh0I65dy8g4Gb9xBJgh1dDLtToqVQE3mtY8Z1UW6v87H/BgVuBj/1D6WosXCGGQlDiACOOtJSrLrDGNTvSH4UIFWlIcuvD3yM0gJIWGn7Vy7sJFJiH7DlsyzDCsmfcYBhfbOiG7/u1s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742221112; c=relaxed/simple;
-	bh=bt5Rs3CT2xOnZB+3O1psIp5mxD6SXnBsevglCHt+RAQ=;
+	s=arc-20240116; t=1742221114; c=relaxed/simple;
+	bh=IM+geYv9I4lQxYv0svGAAXnD8Yh3yBQXBX8Re0+OfXM=;
 	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=XZ29+k/r4aWN/+6VkziVgz6nCUhK3i0XovmiJtO1qExNtSXTXXZJlX+Z+lDf50GF+IUvO/tXN9c5XF3NctyJNd7/LXk4T9s96nI+koLuEkTdWSrW3fG5joLOAnBCs6Z9v5ATBMtk75T/Eaw9lqjssuiZLUnXyHv2eRVtiR9pvfk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PS6meNfW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9102BC4CEE3;
-	Mon, 17 Mar 2025 14:18:31 +0000 (UTC)
+	 Message-Id:Subject; b=FeHhgMhkzFK0vqoTSS/+LDafrS3Klc7T4U0fABybsVCa8v5Vpqq3v+ZfjASnK1Ovao72Z9oE07C5VVzJkIO+t+VBL/2f0Qt6vBZHCTZMim7O0lwSxZmo9MfXyXYR0eSJghyirLyTnRcu0WMNtdA6fHxn/UBTVuD8V4pigQtiSfU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KRliIwH7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24269C4CEE3;
+	Mon, 17 Mar 2025 14:18:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742221111;
-	bh=bt5Rs3CT2xOnZB+3O1psIp5mxD6SXnBsevglCHt+RAQ=;
+	s=k20201202; t=1742221113;
+	bh=IM+geYv9I4lQxYv0svGAAXnD8Yh3yBQXBX8Re0+OfXM=;
 	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=PS6meNfWV6lN4wqhCx9MeXUy//H4oQJnnvhmo46oj68s7rRkIEfp35krN5tmEFntJ
-	 RDyLahZXR/JKQg+mA7MNNfMFMUVOQ+A01urO9h6TvdBjWLjuO5JqcWt4q/i78orFqy
-	 6orNDDWLHtoYbZP3U7bI7ucfKma4bEZsbD3s9UCoABeTcZjbTVHbe6r15YVGhHcRzU
-	 IXnT2BVaMDbWqJ8BMKKZih3HPd5FtfgTNgt5Dqv+7Kl+oRFE2i75mqCPY7p7S4LZRO
-	 HFqzEc+yHuYQV8eLoXDC5O+2FW/VX4ydoW/H4FzzeSeyuOsOxYIoS2inLDQLPqk64L
-	 lP5zUz5r79KzA==
-Date: Mon, 17 Mar 2025 09:18:30 -0500
+	b=KRliIwH7lSQSVNuW+ytxs9t6HzgpmCdyYfcBuuG66XAYWMXDfzzPeYg9smYtzYSJJ
+	 EqT3VAUhiER8BL3KBHhXTobwuDcW4YO3sDtbxbQNuk1gdlv0X5Pz7F3nhdGLoKdy/F
+	 ynbGCHoE/8sXyWvmBbjPPE1ei2m1zElzgiEt8MElHokxrirbwDTYsBmzV1IRpGESr9
+	 obhvyRMy4SWlp7XvhAGSnp9CtEl3Dtx9CcA/+mrubYkjxd7pelEXVqtylWrUsLS3C6
+	 QamIHJAMQ/j5QUGXn4YxZTJDCDkvlQ+GWqueeU+cxLg5V6RmfZOYfa9T4Mxx67HyOq
+	 MabOTKrqjVelQ==
+Date: Mon, 17 Mar 2025 09:18:32 -0500
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -50,37 +50,111 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Dara Stotland <dstotland@nvidia.com>, 
- Thierry Reding <treding@nvidia.com>, Conor Dooley <conor+dt@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-kernel@vger.kernel.org, 
- Maxim Schwalm <maxim.schwalm@gmail.com>, linux-tegra@vger.kernel.org, 
- Ion Agorria <ion@agorria.com>, Thierry Reding <thierry.reding@gmail.com>, 
- Brad Griffis <bgriffis@nvidia.com>, devicetree@vger.kernel.org, 
- Jonathan Hunter <jonathanh@nvidia.com>, David Heidelberg <david@ixit.cz>
-To: Svyatoslav Ryhel <clamor95@gmail.com>
-In-Reply-To: <20250315074416.8067-1-clamor95@gmail.com>
-References: <20250315074416.8067-1-clamor95@gmail.com>
-Message-Id: <174221817975.3957151.15051687182580298463.robh@kernel.org>
-Subject: Re: [PATCH v1 0/2] ARM: tegra: Add device-tree for ASUS
- Transformer Pad LTE TF300TL
+Cc: sophgo@lists.linux.dev, Will Deacon <will@kernel.org>, 
+ Jisheng Zhang <jszhang@kernel.org>, Chao Wei <chao.wei@sophgo.com>, 
+ Chen Wang <unicorn_wang@outlook.com>, soc@lists.linux.dev, 
+ Arnd Bergmann <arnd@arndb.de>, Paul Walmsley <paul.walmsley@sifive.com>, 
+ linux-arm-kernel@lists.infradead.org, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Haylen Chu <heylenay@outlook.com>, 
+ Alexandre Ghiti <alex@ghiti.fr>, Conor Dooley <conor+dt@kernel.org>, 
+ linux-kernel@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>, 
+ linux-riscv@lists.infradead.org, Inochi Amaoto <inochiama@gmail.com>, 
+ devicetree@vger.kernel.org, Albert Ou <aou@eecs.berkeley.edu>, 
+ Palmer Dabbelt <palmer@dabbelt.com>
+To: Alexander Sverdlin <alexander.sverdlin@gmail.com>
+In-Reply-To: <20250316185640.3750873-1-alexander.sverdlin@gmail.com>
+References: <20250316185640.3750873-1-alexander.sverdlin@gmail.com>
+Message-Id: <174221818050.3957183.18032992749339066585.robh@kernel.org>
+Subject: Re: [PATCH v5 0/7] arm64 support for Milk-V Duo Module 01 EVB
 
 
-On Sat, 15 Mar 2025 09:44:14 +0200, Svyatoslav Ryhel wrote:
-> Add device-tree for ASUS Transformer Pad LTE TF300TL, which is NVIDIA
-> Tegra30-based tablet device.
+On Sun, 16 Mar 2025 19:56:30 +0100, Alexander Sverdlin wrote:
+> This series adds very basic support for Milk-V Duo Module 01 EVB [1] in
+> arm64 mode. The SoC (SG2000) is dual-arch, RiscV and ARM64, the latter has
+> been chosen because the upstream toolchain can be utilized.
 > 
-> Svyatoslav Ryhel (2):
->   dt-bindings: arm: tegra: Add Asus Transformer Pad TF300TL
->   ARM: tegra: Add device-tree for ASUS Transformer Pad LTE TF300TL
+> Sophgo SG2000 seems to be a continuation of the Cvitek CV18xx series, same
+> peripherals with an addition of ARM64 core. Therefore it would be
+> beneficial not to copy-paste the peripherals' device-tree, but rather split
+> the most suitable riscv DT into ARCH-specific and peripherals parts and
+> just include the latter on the arm64 side.
 > 
->  .../devicetree/bindings/arm/tegra.yaml        |   3 +
->  arch/arm/boot/dts/nvidia/Makefile             |   1 +
->  .../boot/dts/nvidia/tegra30-asus-tf300tl.dts  | 857 ++++++++++++++++++
->  3 files changed, 861 insertions(+)
->  create mode 100644 arch/arm/boot/dts/nvidia/tegra30-asus-tf300tl.dts
+> This series adds the device-tree for Milk-V Duo Module 01 EVB, which
+> in turn contains Milk-V Duo Module 01 (separate .dtsi) on it, which has
+> SG2000 SoC inside (separate .dtsi).
+> 
+> This series has been tested with Sophgo-provided U-Boot binary [2]: it
+> boots from SD card; pinctrl, serial, GPIO drivers are functional (same
+> as for RiscV-based CV18xx SoCs).
+> 
+> Partial SoC documentation is available [3].
+> 
+> This series lacks the support of:
+> - USB
+> - Audio
+> - Ethernet
+> - WiFi
+> - Bluetooth
+> - eMMC
+> - Video
+> 
+> Changelog:
+> v5:
+> - PSCI node in DT
+> v4:
+> - minimized patch 1/7 (cleanups dropped)
+> - cv18xx-cpu-intc.dtsi instead of cv18xx-cpu.dtsi+cv18xx-intc.dtsi in
+> patch 1/7
+> v3:
+> - &cpus node has been moved into cv18xx-cpu.dtsi, &plic and &clint nodes
+> were moved into cv18xx-intc.dtsi to reduce code duplication;
+> v2:
+> - dropped all patches related to the new reboot driver and corresponding DT
+> and bindings;
+> - grouped DT-related and config-related patches together;
+> - added patch moving sophgo.yaml from riscv into soc (to share it with
+> ARM); added SG2000 SoC and Milk-V Duo Module 01 EVB into it;
+> - other changes are documented in the corresponding patches;
+> 
+> [1] https://milkv.io/docs/duo/getting-started/duo-module-01
+> [2] https://github.com/milkv-duo/duo-buildroot-sdk-v2/releases/
+> [3] https://github.com/sophgo/sophgo-doc/releases/download/sg2000-trm-v1.01/sg2000_trm_en.pdf
+> 
+> Alexander Sverdlin (7):
+>   riscv: dts: sophgo: cv18xx: Move RiscV-specific part into SoCs' .dtsi
+>     files
+>   dt-bindings: soc: sophgo: Move SoCs/boards from riscv into soc, add
+>     SG2000
+>   arm64: dts: sophgo: Add initial SG2000 SoC device tree
+>   arm64: dts: sophgo: Add Duo Module 01
+>   arm64: dts: sophgo: Add Duo Module 01 Evaluation Board
+>   arm64: Add SOPHGO SOC family Kconfig support
+>   arm64: defconfig: Enable rudimentary Sophgo SG2000 support
+> 
+>  .../{riscv => soc/sophgo}/sophgo.yaml         |  7 +-
+>  arch/arm64/Kconfig.platforms                  |  6 ++
+>  arch/arm64/boot/dts/Makefile                  |  1 +
+>  arch/arm64/boot/dts/sophgo/Makefile           |  2 +
+>  .../sophgo/sg2000-milkv-duo-module-01-evb.dts | 31 +++++++
+>  .../sophgo/sg2000-milkv-duo-module-01.dtsi    | 85 +++++++++++++++++
+>  arch/arm64/boot/dts/sophgo/sg2000.dtsi        | 81 +++++++++++++++++
+>  arch/arm64/configs/defconfig                  |  4 +
+>  arch/riscv/boot/dts/sophgo/cv1800b.dtsi       |  5 +
+>  arch/riscv/boot/dts/sophgo/cv1812h.dtsi       |  5 +
+>  arch/riscv/boot/dts/sophgo/cv181x.dtsi        |  2 +-
+>  .../boot/dts/sophgo/cv18xx-cpu-intc.dtsi      | 54 +++++++++++
+>  arch/riscv/boot/dts/sophgo/cv18xx.dtsi        | 91 +++++--------------
+>  arch/riscv/boot/dts/sophgo/sg2002.dtsi        |  5 +
+>  14 files changed, 309 insertions(+), 70 deletions(-)
+>  rename Documentation/devicetree/bindings/{riscv => soc/sophgo}/sophgo.yaml (80%)
+>  create mode 100644 arch/arm64/boot/dts/sophgo/Makefile
+>  create mode 100644 arch/arm64/boot/dts/sophgo/sg2000-milkv-duo-module-01-evb.dts
+>  create mode 100644 arch/arm64/boot/dts/sophgo/sg2000-milkv-duo-module-01.dtsi
+>  create mode 100644 arch/arm64/boot/dts/sophgo/sg2000.dtsi
+>  create mode 100644 arch/riscv/boot/dts/sophgo/cv18xx-cpu-intc.dtsi
 > 
 > --
-> 2.43.0
+> 2.48.1
 > 
 > 
 > 
@@ -100,21 +174,12 @@ make sure dt-schema is up to date:
   pip3 install dtschema --upgrade
 
 
-New warnings running 'make CHECK_DTBS=y for arch/arm/boot/dts/nvidia/' for 20250315074416.8067-1-clamor95@gmail.com:
+New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/sophgo/' for 20250316185640.3750873-1-alexander.sverdlin@gmail.com:
 
-arch/arm/boot/dts/nvidia/tegra30-asus-tf300tl.dtb: /pcie@3000: failed to match any schema with compatible: ['nvidia,tegra30-pcie']
-arch/arm/boot/dts/nvidia/tegra30-asus-tf300tl.dtb: /interrupt-controller@60004000: failed to match any schema with compatible: ['nvidia,tegra30-ictlr']
-arch/arm/boot/dts/nvidia/tegra30-asus-tf300tl.dtb: /dma@6000a000: failed to match any schema with compatible: ['nvidia,tegra30-apbdma', 'nvidia,tegra20-apbdma']
-arch/arm/boot/dts/nvidia/tegra30-asus-tf300tl.dtb: /dma@6000a000: failed to match any schema with compatible: ['nvidia,tegra30-apbdma', 'nvidia,tegra20-apbdma']
-arch/arm/boot/dts/nvidia/tegra30-asus-tf300tl.dtb: /gmi@70009000: failed to match any schema with compatible: ['nvidia,tegra30-gmi']
-arch/arm/boot/dts/nvidia/tegra30-asus-tf300tl.dtb: /i2c@7000d000/pmic@2d: failed to match any schema with compatible: ['ti,tps65911']
-arch/arm/boot/dts/nvidia/tegra30-asus-tf300tl.dtb: core-regulator@60: Unevaluated properties are not allowed ('nvidia,tegra-core-regulator' was unexpected)
-	from schema $id: http://devicetree.org/schemas/regulator/ti,tps62360.yaml#
-arch/arm/boot/dts/nvidia/tegra30-asus-tf300tl.dtb: /kbc@7000e200: failed to match any schema with compatible: ['nvidia,tegra30-kbc', 'nvidia,tegra20-kbc']
-arch/arm/boot/dts/nvidia/tegra30-asus-tf300tl.dtb: /kbc@7000e200: failed to match any schema with compatible: ['nvidia,tegra30-kbc', 'nvidia,tegra20-kbc']
-arch/arm/boot/dts/nvidia/tegra30-asus-tf300tl.dtb: /ahub@70080000: failed to match any schema with compatible: ['nvidia,tegra30-ahub']
-arch/arm/boot/dts/nvidia/tegra30-asus-tf300tl.dtb: sound: Unevaluated properties are not allowed ('assigned-clock-parents', 'assigned-clocks' were unexpected)
-	from schema $id: http://devicetree.org/schemas/sound/nvidia,tegra-audio-rt5631.yaml#
+arch/arm64/boot/dts/sophgo/sg2000-milkv-duo-module-01-evb.dtb: psci: 'cpu_off' is a required property
+	from schema $id: http://devicetree.org/schemas/arm/psci.yaml#
+arch/arm64/boot/dts/sophgo/sg2000-milkv-duo-module-01-evb.dtb: psci: 'cpu_on' is a required property
+	from schema $id: http://devicetree.org/schemas/arm/psci.yaml#
 
 
 
