@@ -1,145 +1,133 @@
-Return-Path: <linux-kernel+bounces-563571-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563572-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83BA7A64459
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 08:52:10 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E961A64465
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 08:54:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4EC9C3A7A1B
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 07:51:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE82516FF2A
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 07:54:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D2A221B910;
-	Mon, 17 Mar 2025 07:52:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2D7C21B909;
+	Mon, 17 Mar 2025 07:54:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ILlSOgq1"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="VRmLEKwH"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B23D219A63;
-	Mon, 17 Mar 2025 07:52:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DDB35789D
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 07:54:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742197923; cv=none; b=j3+NhZwuYbzan8YijbC1Tze+hq4eJ6np2Uvq9MuUic5WKUQe120+u9y18w33k/HrbpcTFTQbHN2ABoKzXgQHEGbvdwa2cToIcB3SUvlG3o/mWfLZnSPdTPQ7nHsDmlEZeVSz2drDXS+7BYMerX33zdAKgZOUJENrNW7rfM/fk6o=
+	t=1742198092; cv=none; b=N2nmWp4eWgmlZvCVviY45CCzphN9rpG4xF/CLtaPjnDBxddiP2HNo98PJnZas+lVvXiORK2yrUHfbqzCICSybf9y3XwNSQfxkfbpIOtorhzh3ymvY3SHOcmpUhU4km1hoHJdaxkTXz10G0/KRn1CkBglr7GPkjEx7ApXoL0YXhc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742197923; c=relaxed/simple;
-	bh=ZHa6ERJ7NFArEGUz2GyKEAKlA9PEk/2XjeW1JUGRc4Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FFeV7Vwb9eGDSsPLrI9u2Z7QGXjVIFc4m/CZdpuLtGtbUYar3awbhKoGEEBoLPJx8thQCwrP4FbJztDDK4Qb+ThObwDH2bCDB+bozmNWUqgACyxKjag9wQKUWw23N+FMwpufAzToNTsJzD1rADFHICafV0ZAes9NijgSFKDYjDg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ILlSOgq1; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742197922; x=1773733922;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=ZHa6ERJ7NFArEGUz2GyKEAKlA9PEk/2XjeW1JUGRc4Q=;
-  b=ILlSOgq1GXMA1rw9MxMGunF+5p1yHt7xk/LcohkqJdTeBgSx/JBSjuZM
-   pEIRfqRGvJqnxb144/gQt8C8eVwyo/yWFZgL7AR8moaJiSFCXsgitwFQ1
-   NhQ/L8ldhunIZckZzV6ZNNdTRefBBpopuC+PXcSu6TrLdNWEyaLtE+dYq
-   JixG0atp7GfOAyUHmzubuQGNBldmypC1BVx10RdIkao07HcMxkoM2ZpsV
-   Bp9jNUtp7PvDfrMR+49CgytW7jgqn8yqT5wq9hehkueQE5WTvlRSovMMZ
-   Zb9dbYRHQtW/5Vu/ZKwnfpNpqbfOu8C/7V1xiPMJll1OEHTqPrP0/uKsC
-   Q==;
-X-CSE-ConnectionGUID: kyaJYhLuRWWxwOyHNfo1ow==
-X-CSE-MsgGUID: V2613K45Qq6shAs2lfD82w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11375"; a="68638749"
-X-IronPort-AV: E=Sophos;i="6.14,253,1736841600"; 
-   d="scan'208";a="68638749"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Mar 2025 00:52:01 -0700
-X-CSE-ConnectionGUID: vBGt1R1iRZmxKRlgsciK1g==
-X-CSE-MsgGUID: ZjVdBA2qRUKjxLSCoLq+qg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,253,1736841600"; 
-   d="scan'208";a="122375993"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Mar 2025 00:51:57 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tu5GM-00000003FCZ-2dgX;
-	Mon, 17 Mar 2025 09:51:54 +0200
-Date: Mon, 17 Mar 2025 09:51:54 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
-	Lars-Peter Clausen <lars@metafoo.de>, Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>, Nuno Sa <nuno.sa@analog.com>,
-	David Lechner <dlechner@baylibre.com>,
-	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
-	Olivier Moysan <olivier.moysan@foss.st.com>,
-	Guillaume Stols <gstols@baylibre.com>,
-	Dumitru Ceclan <mitrutzceclan@gmail.com>,
-	Trevor Gamblin <tgamblin@baylibre.com>,
-	Matteo Martelli <matteomartelli3@gmail.com>,
-	Alisa-Dariana Roman <alisadariana@gmail.com>,
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev
-Subject: Re: [PATCH v7 05/10] iio: adc: sun20i-gpadc: Use adc-helpers
-Message-ID: <Z9fUmo5wp3EcNWzm@smile.fi.intel.com>
-References: <cover.1741849323.git.mazziesaccount@gmail.com>
- <df0b2b53affbef5ccb7219328cc15db3ba843737.1741849323.git.mazziesaccount@gmail.com>
- <Z9LQ0O34EUM8WZku@smile.fi.intel.com>
- <20250316094112.6731bd01@jic23-huawei>
- <50b126c5-248e-4694-9782-4f28d6db5fce@gmail.com>
+	s=arc-20240116; t=1742198092; c=relaxed/simple;
+	bh=MrqHrpOxtBdNPctpsoz+sTFWqBqGBrTaNSgz51e6ycY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=GRl2YjyP1BijmNGdGVUpZw/Rbr9k33w1g3swFmA7CtknwjQisY+hF6CbTrV/1KV2TMHld0DEsWrozsIk37Bn1CTemn9soo+mUm5AJj/ymPVZ6v6FoMpE+VcA0UGrfK+VBqmQzTski11aUsQ1Boy5MQMsNfjuKJ9gM9T1jPQHQhE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=VRmLEKwH; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1742198088;
+	bh=MrqHrpOxtBdNPctpsoz+sTFWqBqGBrTaNSgz51e6ycY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=VRmLEKwHK+OW2XCnum5+CrFE3OuRsYISsNPm4mkpo38z8ti8p/xhcc4gOjBn4aSMj
+	 oMKCVGTBoco54jWF2b577qm3azcR5A3uuFgokEYp1cirgLphdne5fea4MeeVyY4TKi
+	 DeCZoNwemkLRCgaoJUSI00VeH0TpuqSz17jngPXItiOBSNs+wR9JoehsB9EBslnfYj
+	 mZBAEqVT9dxckEl9iiLG9CjQr8xOEbFxsFufFlL0Az6Qj2H/0z4j81UMkqB7xcRH2A
+	 NO3IE67Njvu4/HGpe0wcf5UXcW7UwySm1viDuso/gB9V9VHZIP8JH/nLCFCgYCeYfK
+	 i1Wnb1wfR+LoQ==
+Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bbrezillon)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id DD49B17E05C8;
+	Mon, 17 Mar 2025 08:54:47 +0100 (CET)
+Date: Mon, 17 Mar 2025 08:54:36 +0100
+From: Boris Brezillon <boris.brezillon@collabora.com>
+To: =?UTF-8?B?QWRyacOhbg==?= Larumbe <adrian.larumbe@collabora.com>
+Cc: Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+ <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
+ <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, kernel@collabora.com,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/4] drm/panthor: Add driver IOCTL for setting BO labels
+Message-ID: <20250317085436.35edbf47@collabora.com>
+In-Reply-To: <20250316215139.3940623-3-adrian.larumbe@collabora.com>
+References: <20250316215139.3940623-1-adrian.larumbe@collabora.com>
+	<20250316215139.3940623-3-adrian.larumbe@collabora.com>
+Organization: Collabora
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <50b126c5-248e-4694-9782-4f28d6db5fce@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Mar 17, 2025 at 09:11:08AM +0200, Matti Vaittinen wrote:
-> On 16/03/2025 11:41, Jonathan Cameron wrote:
-> > On Thu, 13 Mar 2025 14:34:24 +0200
-> > Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
-> > > On Thu, Mar 13, 2025 at 09:18:49AM +0200, Matti Vaittinen wrote:
+On Sun, 16 Mar 2025 21:51:33 +0000
+Adri=C3=A1n Larumbe <adrian.larumbe@collabora.com> wrote:
 
-...
+> Allow UM to label a BO for which it possesses a DRM handle.
+>=20
+> Signed-off-by: Adri=C3=A1n Larumbe <adrian.larumbe@collabora.com>
+> ---
+>  drivers/gpu/drm/panthor/panthor_drv.c | 31 +++++++++++++++++++++++++++
+>  include/uapi/drm/panthor_drm.h        | 14 ++++++++++++
+>  2 files changed, 45 insertions(+)
+>=20
+> diff --git a/drivers/gpu/drm/panthor/panthor_drv.c b/drivers/gpu/drm/pant=
+hor/panthor_drv.c
+> index 310bb44abe1a..f41b8946258f 100644
+> --- a/drivers/gpu/drm/panthor/panthor_drv.c
+> +++ b/drivers/gpu/drm/panthor/panthor_drv.c
+> @@ -1330,6 +1330,35 @@ static int panthor_ioctl_vm_get_state(struct drm_d=
+evice *ddev, void *data,
+>  	return 0;
+>  }
+> =20
+> +static int panthor_ioctl_label_bo(struct drm_device *ddev, void *data,
+> +				  struct drm_file *file)
+> +{
+> +	struct drm_panthor_label_bo *args =3D data;
+> +	struct drm_gem_object *obj;
+> +	const char *label;
+> +	int ret =3D 0;
+> +
+> +	obj =3D drm_gem_object_lookup(file, args->handle);
+> +	if (!obj)
+> +		return -ENOENT;
+> +
+> +	if (args->len && args->label) {
 
-> > > > +	num_channels = devm_iio_adc_device_alloc_chaninfo_se(dev,
-> > > > +				&sun20i_gpadc_chan_template, -1, &channels);
-> > > > +	if (num_channels < 0)
-> > > > +		return num_channels;
-> > > > +
-> > > >   	if (num_channels == 0)
-> > > >   		return dev_err_probe(dev, -ENODEV, "no channel children\n");
-> > > 
-> > > Note, this what I would expected in your helper to see, i.e. separated cases
-> > > for < 0 (error code) and == 0, no channels.
-> > > 
-> > > Also, are all users going to have this check? Usually in other similar APIs
-> > > we return -ENOENT. And user won't need to have an additional check in case of
-> > > 0 being considered as an error case too.
-> > In a few cases we'll need to do the dance the other way in the caller.
-> > So specifically check for -ENOENT and not treat it as an error.
-> > 
-> > That stems from channel nodes being optionally added to drivers after
-> > they have been around a while (usually to add more specific configuration)
-> > and needing to maintain old behaviour of presenting all channels with default
-> > settings.
-> > 
-> > I agree that returning -ENOENT is a reasonable way to handle this.
-> 
-> I agree - but I'm going to use -ENODEV instead of -ENOENT because that's
-> what the current callers return if they find no channels. That way the
-> drivers can return the value directly without converting -ENOENT to -ENODEV.
+We probably want to have a limit on the label length (PAGE_SIZE or
+less?). I would also return -EINVAL if the length is not zero and the
+label is NULL instead of silently setting the label to NULL.
 
-ENODEV can be easily clashed with other irrelevant cases, ENOENT is the correct
-error code. If drivers return this instead of another error code, nothing bad
-happen, it's not an ABI path, correct?
+> +		label =3D strndup_user(u64_to_user_ptr(args->label), args->len + 1);
+> +		if (IS_ERR(label)) {
+> +			ret =3D PTR_ERR(label);
+> +			goto err_label;
+> +		}
+> +	} else
+> +		label =3D NULL;
 
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+	} else {
+		label =3D NULL;
+	}
+> +
+> +	panthor_gem_label_bo(obj, label);
+> +
+> +err_label:
+> +	drm_gem_object_put(obj);
+> +
+> +	return ret;
+> +}
+> +
 
