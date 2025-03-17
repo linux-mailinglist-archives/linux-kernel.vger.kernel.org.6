@@ -1,55 +1,53 @@
-Return-Path: <linux-kernel+bounces-563487-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563490-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B52DA642BB
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 08:07:06 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80E33A642BA
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 08:07:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E00BC188DB59
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 07:06:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D65B016E9C6
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 07:07:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F09DD21B180;
-	Mon, 17 Mar 2025 07:01:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DF2E2356CE;
+	Mon, 17 Mar 2025 07:01:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WVjPKMyC"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KBt8sZDi"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37A2D233128;
-	Mon, 17 Mar 2025 07:01:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D48E2356B4;
+	Mon, 17 Mar 2025 07:01:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742194895; cv=none; b=CaivoPzLCbR3vdtVppPnvk1vZcpvfjm+a7LlUTOuvGZP7itQMi2TdgKNfSXsgK64h1T79+L52iTz63oOE7joWES3NeKV8NfwX1vz57cmwU8EgbeRj5vdTYR3GKQext8OaVDlOHC961oZetz9CySOYTs8HWYz+3kXgFoNAoFHr9U=
+	t=1742194899; cv=none; b=cf/DNcd3rUsJcjjqnyPIURhvd3qrJwJK2LcIuAkQ6RuDyXGQpOcFP77InMjmq9pHkT4Woo0L/1ISDM/xa4LuWdJ4Io6cRC62IVspWffF1zKrynzUPqau3+Dt6/al4HCrmL+V0cX/TaKo4MilRJLpujNOJGtVx3uKUhC4iiviWOk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742194895; c=relaxed/simple;
-	bh=Rmc+5nPUH6BKMjZs2vwDRk8Yfd9ZMuQr6K56At2pRfI=;
+	s=arc-20240116; t=1742194899; c=relaxed/simple;
+	bh=cuQaYOtw2y+3qDg1BeXkGnsveeCxWpGEEUYWxY7aM9I=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SD8Y5/3vnmsbx4I3lWgb2SxB6DcR2g0T0mFZFS7j0quYnqFjSyByt4XIyquTQMW6vYv1XTcpQEz8BGbNqJnp+uGn6/M/nPb2l9qk2p12f6Sl2yH1YPlvFc5/vNkal3PccBveRgWvBoznZTJARzH1d3T5e/1pE1c7RTmnU4frmL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WVjPKMyC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A167C4CEEC;
-	Mon, 17 Mar 2025 07:01:33 +0000 (UTC)
+	 MIME-Version; b=j7HtG376cxJ7Da0uzTOmz8r5qLJOYipqwi+Pj04ANMRSdHbEsvXFQN4zpdbGoK21ZndrPRCvyzQiRC1LMLHPCrmg9hL4UpJoBr973H9+LG1nABk59+YnnsG6ca0JC0NlcJ8tAjftykgDrWDIAFHM7BvaSWp8Hqb6IXuZsVtcqqo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KBt8sZDi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71653C4CEEC;
+	Mon, 17 Mar 2025 07:01:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742194895;
-	bh=Rmc+5nPUH6BKMjZs2vwDRk8Yfd9ZMuQr6K56At2pRfI=;
+	s=k20201202; t=1742194899;
+	bh=cuQaYOtw2y+3qDg1BeXkGnsveeCxWpGEEUYWxY7aM9I=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=WVjPKMyCD09L+0K23Lk3T2iZKylANfwSMqOpOL1KthouxSvE1ZcAsmZNzPC8Oe8Np
-	 BCR4IcZnLjnDeoteDrSBkg5l0RJFL9Lg3Zj83TImfXoy5BSDK83s93LTZptdybRRfX
-	 BklP694g82p+RU4Wag2JA4m5MdB34TYDttSFvXJCSJh/MvIsx55dahcLt8pdi0bntJ
-	 GNn8Uzb5nkix5Ld98A2CnXx1DStq2tJhnH1dz6yKyD2NWq7BMbklmMRRMyZuhhm2aJ
-	 lu7LukKbGtpz95A4Owm2dSLUxNWx8TYV+qeMT8BrEFLItajweMWF8US1VDJfJFwx0k
-	 8N4NQP6J930Ww==
+	b=KBt8sZDiRv4f12v5K52JY/j4W3LNhiMhCv3uNSRYulvoWx1E6WPc5FINYo7oJj2fm
+	 hyZre930m5KwXRNKNwqpO/L1A24rXHj+9zmeCgdvs/GfAY0ZHKCZXp9gCyVzyliF0R
+	 KUECf/KDgBBhp0roE9Uajcc/NWVgSzQ78/XEm3cPfRz3GnBNIyoVv0eShSoL5pb8Uq
+	 MaRwui5mLYpfug6nDFSW/8gghsouHTL260l8PX1GxYforE2A7zLMvGBUeExZTTQYHT
+	 134pTwQvRqVbHAZUHpr/924rNRol34jglbEb1ntHlJ46Oe9Loyslv2IukKLMqT0F2e
+	 viLZBD3cdmaGA==
 From: "Jiri Slaby (SUSE)" <jirislaby@kernel.org>
 To: gregkh@linuxfoundation.org
 Cc: linux-serial@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	"Jiri Slaby (SUSE)" <jirislaby@kernel.org>,
-	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v2 27/31] serial: 8250: use serial_port_in/out() helpers
-Date: Mon, 17 Mar 2025 08:00:42 +0100
-Message-ID: <20250317070046.24386-28-jirislaby@kernel.org>
+	"Jiri Slaby (SUSE)" <jirislaby@kernel.org>
+Subject: [PATCH v2 30/31] serial: 8250_port: simplify serial8250_request_std_resource()
+Date: Mon, 17 Mar 2025 08:00:45 +0100
+Message-ID: <20250317070046.24386-31-jirislaby@kernel.org>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250317070046.24386-1-jirislaby@kernel.org>
 References: <20250317070046.24386-1-jirislaby@kernel.org>
@@ -59,148 +57,71 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-There are serial_port_in/out() helpers to be used instead of direct
-p->serial_in/out(). Use them in various 8250 drivers.
+Return immediately from the error locations or switch-case ends. It is
+therefore easier to see the flow.
 
 Signed-off-by: Jiri Slaby (SUSE) <jirislaby@kernel.org>
-Cc: "Ilpo Järvinen" <ilpo.jarvinen@linux.intel.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-
---
-[v2]
-* Use serial_port_in/out() and not serial_in/out() [Andy]
 ---
- drivers/tty/serial/8250/8250_dw.c   | 16 ++++++++--------
- drivers/tty/serial/8250/8250_fsl.c  |  8 ++++----
- drivers/tty/serial/8250/8250_omap.c |  2 +-
- 3 files changed, 13 insertions(+), 13 deletions(-)
+ drivers/tty/serial/8250/8250_port.c | 25 ++++++++++---------------
+ 1 file changed, 10 insertions(+), 15 deletions(-)
 
-diff --git a/drivers/tty/serial/8250/8250_dw.c b/drivers/tty/serial/8250/8250_dw.c
-index af24ec25d976..f068b8d7840a 100644
---- a/drivers/tty/serial/8250/8250_dw.c
-+++ b/drivers/tty/serial/8250/8250_dw.c
-@@ -120,12 +120,12 @@ static void dw8250_force_idle(struct uart_port *p)
- 	 * enabled.
- 	 */
- 	if (up->fcr & UART_FCR_ENABLE_FIFO) {
--		lsr = p->serial_in(p, UART_LSR);
-+		lsr = serial_port_in(p, UART_LSR);
- 		if (!(lsr & UART_LSR_DR))
- 			return;
- 	}
+diff --git a/drivers/tty/serial/8250/8250_port.c b/drivers/tty/serial/8250/8250_port.c
+index 6466f60416a9..8ac452cea36c 100644
+--- a/drivers/tty/serial/8250/8250_port.c
++++ b/drivers/tty/serial/8250/8250_port.c
+@@ -2966,7 +2966,6 @@ static int serial8250_request_std_resource(struct uart_8250_port *up)
+ {
+ 	unsigned int size = serial8250_port_size(up);
+ 	struct uart_port *port = &up->port;
+-	int ret = 0;
  
--	(void)p->serial_in(p, UART_RX);
-+	serial_port_in(p, UART_RX);
+ 	switch (port->iotype) {
+ 	case UPIO_AU:
+@@ -2975,32 +2974,28 @@ static int serial8250_request_std_resource(struct uart_8250_port *up)
+ 	case UPIO_MEM32BE:
+ 	case UPIO_MEM16:
+ 	case UPIO_MEM:
+-		if (!port->mapbase) {
+-			ret = -EINVAL;
+-			break;
+-		}
++		if (!port->mapbase)
++			return -EINVAL;
+ 
+-		if (!request_mem_region(port->mapbase, size, "serial")) {
+-			ret = -EBUSY;
+-			break;
+-		}
++		if (!request_mem_region(port->mapbase, size, "serial"))
++			return -EBUSY;
+ 
+ 		if (port->flags & UPF_IOREMAP) {
+ 			port->membase = ioremap(port->mapbase, size);
+ 			if (!port->membase) {
+ 				release_mem_region(port->mapbase, size);
+-				ret = -ENOMEM;
++				return -ENOMEM;
+ 			}
+ 		}
+-		break;
+-
++		return 0;
+ 	case UPIO_HUB6:
+ 	case UPIO_PORT:
+ 		if (!request_region(port->iobase, size, "serial"))
+-			ret = -EBUSY;
+-		break;
++			return -EBUSY;
++		return 0;
+ 	}
+-	return ret;
++
++	return 0;
  }
  
- static void dw8250_check_lcr(struct uart_port *p, int offset, int value)
-@@ -139,7 +139,7 @@ static void dw8250_check_lcr(struct uart_port *p, int offset, int value)
- 
- 	/* Make sure LCR write wasn't ignored */
- 	while (tries--) {
--		unsigned int lcr = p->serial_in(p, offset);
-+		unsigned int lcr = serial_port_in(p, offset);
- 
- 		if ((value & ~UART_LCR_SPAR) == (lcr & ~UART_LCR_SPAR))
- 			return;
-@@ -260,7 +260,7 @@ static int dw8250_handle_irq(struct uart_port *p)
- {
- 	struct uart_8250_port *up = up_to_u8250p(p);
- 	struct dw8250_data *d = to_dw8250_data(p->private_data);
--	unsigned int iir = p->serial_in(p, UART_IIR);
-+	unsigned int iir = serial_port_in(p, UART_IIR);
- 	bool rx_timeout = (iir & 0x3f) == UART_IIR_RX_TIMEOUT;
- 	unsigned int quirks = d->pdata->quirks;
- 	unsigned int status;
-@@ -281,7 +281,7 @@ static int dw8250_handle_irq(struct uart_port *p)
- 		status = serial_lsr_in(up);
- 
- 		if (!(status & (UART_LSR_DR | UART_LSR_BI)))
--			(void) p->serial_in(p, UART_RX);
-+			serial_port_in(p, UART_RX);
- 
- 		uart_port_unlock_irqrestore(p, flags);
- 	}
-@@ -303,7 +303,7 @@ static int dw8250_handle_irq(struct uart_port *p)
- 
- 	if ((iir & UART_IIR_BUSY) == UART_IIR_BUSY) {
- 		/* Clear the USR */
--		(void)p->serial_in(p, d->pdata->usr_reg);
-+		serial_port_in(p, d->pdata->usr_reg);
- 
- 		return 1;
- 	}
-@@ -390,7 +390,7 @@ static void dw8250_set_termios(struct uart_port *p, struct ktermios *termios,
- static void dw8250_set_ldisc(struct uart_port *p, struct ktermios *termios)
- {
- 	struct uart_8250_port *up = up_to_u8250p(p);
--	unsigned int mcr = p->serial_in(p, UART_MCR);
-+	unsigned int mcr = serial_port_in(p, UART_MCR);
- 
- 	if (up->capabilities & UART_CAP_IRDA) {
- 		if (termios->c_line == N_IRDA)
-@@ -398,7 +398,7 @@ static void dw8250_set_ldisc(struct uart_port *p, struct ktermios *termios)
- 		else
- 			mcr &= ~DW_UART_MCR_SIRE;
- 
--		p->serial_out(p, UART_MCR, mcr);
-+		serial_port_out(p, UART_MCR, mcr);
- 	}
- 	serial8250_do_set_ldisc(p, termios);
- }
-diff --git a/drivers/tty/serial/8250/8250_fsl.c b/drivers/tty/serial/8250/8250_fsl.c
-index 1b7bd55619c6..649ae5c8304d 100644
---- a/drivers/tty/serial/8250/8250_fsl.c
-+++ b/drivers/tty/serial/8250/8250_fsl.c
-@@ -32,7 +32,7 @@ int fsl8250_handle_irq(struct uart_port *port)
- 
- 	uart_port_lock_irqsave(&up->port, &flags);
- 
--	iir = port->serial_in(port, UART_IIR);
-+	iir = serial_port_in(port, UART_IIR);
- 	if (iir & UART_IIR_NO_INT) {
- 		uart_port_unlock_irqrestore(&up->port, flags);
- 		return 0;
-@@ -54,12 +54,12 @@ int fsl8250_handle_irq(struct uart_port *port)
- 	if (unlikely((iir & UART_IIR_ID) == UART_IIR_RLSI &&
- 		     (up->lsr_saved_flags & UART_LSR_BI))) {
- 		up->lsr_saved_flags &= ~UART_LSR_BI;
--		port->serial_in(port, UART_RX);
-+		serial_port_in(port, UART_RX);
- 		uart_port_unlock_irqrestore(&up->port, flags);
- 		return 1;
- 	}
- 
--	lsr = orig_lsr = up->port.serial_in(&up->port, UART_LSR);
-+	lsr = orig_lsr = serial_port_in(port, UART_LSR);
- 
- 	/* Process incoming characters first */
- 	if ((lsr & (UART_LSR_DR | UART_LSR_BI)) &&
-@@ -71,7 +71,7 @@ int fsl8250_handle_irq(struct uart_port *port)
- 	if ((orig_lsr & UART_LSR_OE) && (up->overrun_backoff_time_ms > 0)) {
- 		unsigned long delay;
- 
--		up->ier = port->serial_in(port, UART_IER);
-+		up->ier = serial_port_in(port, UART_IER);
- 		if (up->ier & (UART_IER_RLSI | UART_IER_RDI)) {
- 			port->ops->stop_rx(port);
- 		} else {
-diff --git a/drivers/tty/serial/8250/8250_omap.c b/drivers/tty/serial/8250/8250_omap.c
-index c2b75e3f106d..2a0ce11f405d 100644
---- a/drivers/tty/serial/8250/8250_omap.c
-+++ b/drivers/tty/serial/8250/8250_omap.c
-@@ -692,7 +692,7 @@ static irqreturn_t omap8250_irq(int irq, void *dev_id)
- 
- 		/* Synchronize UART_IER access against the console. */
- 		uart_port_lock(port);
--		up->ier = port->serial_in(port, UART_IER);
-+		up->ier = serial_port_in(port, UART_IER);
- 		if (up->ier & (UART_IER_RLSI | UART_IER_RDI)) {
- 			port->ops->stop_rx(port);
- 		} else {
+ static void serial8250_release_std_resource(struct uart_8250_port *up)
 -- 
 2.49.0
 
