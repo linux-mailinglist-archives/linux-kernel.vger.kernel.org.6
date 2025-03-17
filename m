@@ -1,137 +1,296 @@
-Return-Path: <linux-kernel+bounces-563578-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563580-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7E98A6448D
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 09:00:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC388A644A0
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 09:02:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7DA63A8676
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 08:00:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE6891894205
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 08:02:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13E5621B8F7;
-	Mon, 17 Mar 2025 08:00:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 680DE21B8F7;
+	Mon, 17 Mar 2025 08:02:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UoNuZaB6"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E428F21B9C5;
-	Mon, 17 Mar 2025 08:00:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="LXYa6rJh"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0144F71747;
+	Mon, 17 Mar 2025 08:02:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742198413; cv=none; b=BPIwmYXla+mx1C5bpKlrrqg8vAJBObMS1hrHbsE68A66PUM6fgYmhwG0wZG+WIAGXbHl3xp204BX2fY9ndhtxwBHA+8NfVG8HHZezrs8bEIZWVNEThpH4KtaKZiEB5/dHnWgM+rfYwYLyLsSkXb12Zwcnf6ip8bloC9UrL0HrP8=
+	t=1742198526; cv=none; b=CfBpCYeumlk5iTd/WGkME6xf1FI7hI8DAYh72kxVOl81SOt+eOA9EHNSX84UW1OMeUeE5VEyE71mj6M7IB+JZ4yrme9uGw59kSO/Ka5bG4OvdUlxmXAA+txVPe8x0t6GwTHQK9Dut7FkYQ1sJXrIZZLdvi3/zHGZAp2+qN2j+M4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742198413; c=relaxed/simple;
-	bh=WcJorY7PCd1uLYcrL2Xac0peBqgqcHLr4/yCJRQ9DGw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a9xtJCAvBysoyn7akm61Su9Nlhen1n+btkSTJ/GEaaf5OM4dtrMer7X3+LVeR7bz8pR/N2EHXJh5yJUbxyioc7fPSz+NoNdb0jwC1kBWKxl/JrVA6jvxQ6XXPGqUEuEaFujtHV8/6gP/WDrrLSKRHHD2q+J5tPFwJmnHVwz7YGc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UoNuZaB6; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742198412; x=1773734412;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=WcJorY7PCd1uLYcrL2Xac0peBqgqcHLr4/yCJRQ9DGw=;
-  b=UoNuZaB6iW8IYBgwdpzCHwtS+Bqj0wEwx+v6xUzdNIKONSixxAMniOsT
-   xJsYwQ5CLf3bFH85zQacBdtAsUnk/upjELg5loOkGe9U8DX5ljDTuS1jb
-   iLSI9q5ImoDOvt43Bzx+Z/LSREEsDMSP4531u17CouP8xxGey4grHA4ID
-   omVYfj0ers0xRQ9FI35Lzcx/GHIPC2zvGnvF0Tg3pCMny5jjfwiy27Iem
-   MksYvvc7SPn9GT86pi0qR0ncU31GNRN0CTD2w3u8OWhSAzkMiXuHbZWYD
-   CrQnuhkfma2LuFG5tqW4/UxMzzT2xpn7BTjeebJBljU8RB2RIhvf4T9sC
-   g==;
-X-CSE-ConnectionGUID: 3/tAbM+tSWqTYQNfqni4VA==
-X-CSE-MsgGUID: YBQ8tqM1Rtu1eQFdU/FgiQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11375"; a="43383613"
-X-IronPort-AV: E=Sophos;i="6.14,253,1736841600"; 
-   d="scan'208";a="43383613"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Mar 2025 01:00:12 -0700
-X-CSE-ConnectionGUID: aE6cL5gsQ3avEEOtd25fgg==
-X-CSE-MsgGUID: U1U/tNhnTbWmIps9Wc5uMQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,253,1736841600"; 
-   d="scan'208";a="121674712"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Mar 2025 01:00:07 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tu5OG-00000003FIn-2NTM;
-	Mon, 17 Mar 2025 10:00:04 +0200
-Date: Mon, 17 Mar 2025 10:00:04 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: kernel test robot <lkp@intel.com>, Ryan Chen <ryan_chen@aspeedtech.com>,
-	benh@kernel.crashing.org, joel@jms.id.au, andi.shyti@kernel.org,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	andrew@codeconstruct.com.au, p.zabel@pengutronix.de,
-	linux-i2c@vger.kernel.org, openbmc@lists.ozlabs.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-	oe-kbuild-all@lists.linux.dev
-Subject: Re: [PATCH v16 2/3] i2c: aspeed: support AST2600 i2c new register
- mode driver
-Message-ID: <Z9fWhGDrUbAmGRl0@smile.fi.intel.com>
-References: <20250224055936.1804279-3-ryan_chen@aspeedtech.com>
- <202502280902.U0gLDhve-lkp@intel.com>
- <Z8GuOT5bJL7CdXX6@smile.fi.intel.com>
- <fec0a1c8-251b-491e-893d-11a8186a2128@kernel.org>
+	s=arc-20240116; t=1742198526; c=relaxed/simple;
+	bh=M+Kw1B2DoYfbyTL0dVZrjviFZjE6yvLuLW9vZ2ZIIsw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=LFcSs5Bx3Q9S38QXNwswPCi9MD+sGayJbWufXf9/7UjXLA6MGjTld7t6pQG+xTy6QbCGnGYy/NSsDsKV/N4We4MtYHJ9guK4LZ2BXxMUN/7ueWL4CN/xqymOYg/YX9s+4rhGU0dksXcjzz0oS6jawRxDR0EVrEP0/cp68pc26mA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=LXYa6rJh; arc=none smtp.client-ip=220.197.31.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=RJsWC
+	v23zVbdpMXgJm8MXsao+iQkz5wN6dYN/CaaUcA=; b=LXYa6rJhwaB5lu4thZvy2
+	OltLovenY8xOtcl+RjJaQYwy04OmMawhU1xbnGewiCRNkDglIkjK5p4n1g7/4EJx
+	4S7g14OS5engNE15mgAbfk4hzYVrhEe/NVo0FIG4N1WErgRRCZ0wYIy/WKd/WXu2
+	bcLt88lThX2FKmVyN0nQPk=
+Received: from localhost.localdomain (unknown [])
+	by gzsmtp1 (Coremail) with SMTP id PCgvCgD3n4LP1tdnYeUzBQ--.3873S2;
+	Mon, 17 Mar 2025 16:01:21 +0800 (CST)
+From: Liu Ye <liuyerd@163.com>
+To: akpm@linux-foundation.org
+Cc: willy@infradead.org,
+	david@redhat.com,
+	ran.xiaokai@zte.com.cn,
+	dan.carpenter@linaro.org,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	Liu Ye <liuyerd@163.com>,
+	Liu Ye <liuye@kylinos.cn>
+Subject: [PATCH] fs/proc/page: Refactoring to reduce code duplication.
+Date: Mon, 17 Mar 2025 16:01:18 +0800
+Message-Id: <20250317080118.95696-1-liuyerd@163.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <fec0a1c8-251b-491e-893d-11a8186a2128@kernel.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:PCgvCgD3n4LP1tdnYeUzBQ--.3873S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxKr48urW8AryrXFy8Kr1xKrg_yoW7ZFWkpF
+	s8XayUArs5Wrn0kw1xJ398Zas8W34fZa1Yy3y7G34fZ3WUJrnIkFySyFn0vFy8G34UZw4U
+	ua909ry5CF4UtFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07USoGdUUUUU=
+X-CM-SenderInfo: 5olx5vlug6il2tof0z/1tbiKBETTGfXzsDMtAAAsg
 
-On Mon, Mar 17, 2025 at 08:48:03AM +0100, Krzysztof Kozlowski wrote:
-> On 28/02/2025 13:38, Andy Shevchenko wrote:
-> > On Fri, Feb 28, 2025 at 09:28:59AM +0800, kernel test robot wrote:
-> >> Hi Ryan,
-> >>
-> >> kernel test robot noticed the following build warnings:
-> >>
-> >> [auto build test WARNING on andi-shyti/i2c/i2c-host]
-> >> [also build test WARNING on linus/master v6.14-rc4 next-20250227]
-> >> [If your patch is applied to the wrong git tree, kindly drop us a note.
-> >> And when submitting patch, we suggest to use '--base' as documented in
-> >> https://git-scm.com/docs/git-format-patch#_base_tree_information]
-> >>
-> >> url:    https://github.com/intel-lab-lkp/linux/commits/Ryan-Chen/dt-bindings-i2c-aspeed-support-for-AST2600-i2cv2/20250224-140221
-> >> base:   https://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux.git i2c/i2c-host
-> >> patch link:    https://lore.kernel.org/r/20250224055936.1804279-3-ryan_chen%40aspeedtech.com
-> >> patch subject: [PATCH v16 2/3] i2c: aspeed: support AST2600 i2c new register mode driver
-> >> config: mips-allyesconfig (https://download.01.org/0day-ci/archive/20250228/202502280902.U0gLDhve-lkp@intel.com/config)
-> >> compiler: mips-linux-gcc (GCC) 14.2.0
-> >> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250228/202502280902.U0gLDhve-lkp@intel.com/reproduce)
-> >>
-> >> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> >> the same patch/commit), kindly add following tags
-> >> | Reported-by: kernel test robot <lkp@intel.com>
-> >> | Closes: https://lore.kernel.org/oe-kbuild-all/202502280902.U0gLDhve-lkp@intel.com/
-> >>
-> >> All warnings (new ones prefixed by >>):
-> > 
-> > My gosh, this is valid report. But it looks like a preexisted issue.
-> > Can somebody fix this, please?
-> 
-> 
-> That was three weeks ago and still no responses from Aspeed or
-> contributors from here.
-> 
-> I think this tells a lot about aspeedtech.com patchsets on the list.
+From: Liu Ye <liuye@kylinos.cn>
 
-Yeah...
+The function kpageflags_read and kpagecgroup_read is quite similar
+to kpagecount_read. Consider refactoring common code into a helper
+function to reduce code duplication.
 
+Signed-off-by: Liu Ye <liuye@kylinos.cn>
+---
+ fs/proc/page.c | 158 ++++++++++++++++---------------------------------
+ 1 file changed, 50 insertions(+), 108 deletions(-)
+
+diff --git a/fs/proc/page.c b/fs/proc/page.c
+index a55f5acefa97..f413016ebe67 100644
+--- a/fs/proc/page.c
++++ b/fs/proc/page.c
+@@ -37,19 +37,17 @@ static inline unsigned long get_max_dump_pfn(void)
+ #endif
+ }
+ 
+-/* /proc/kpagecount - an array exposing page mapcounts
+- *
+- * Each entry is a u64 representing the corresponding
+- * physical page mapcount.
+- */
+-static ssize_t kpagecount_read(struct file *file, char __user *buf,
+-			     size_t count, loff_t *ppos)
++static ssize_t kpage_read(struct file *file, char __user *buf,
++		size_t count, loff_t *ppos,
++		u64 (*get_page_info)(struct page *))
+ {
+ 	const unsigned long max_dump_pfn = get_max_dump_pfn();
+ 	u64 __user *out = (u64 __user *)buf;
++	struct page *ppage;
+ 	unsigned long src = *ppos;
+ 	unsigned long pfn;
+ 	ssize_t ret = 0;
++	u64 info;
+ 
+ 	pfn = src / KPMSIZE;
+ 	if (src & KPMMASK || count & KPMMASK)
+@@ -59,19 +57,14 @@ static ssize_t kpagecount_read(struct file *file, char __user *buf,
+ 	count = min_t(unsigned long, count, (max_dump_pfn * KPMSIZE) - src);
+ 
+ 	while (count > 0) {
+-		struct page *page;
+-		u64 mapcount = 0;
+-
+-		/*
+-		 * TODO: ZONE_DEVICE support requires to identify
+-		 * memmaps that were actually initialized.
+-		 */
+-		page = pfn_to_online_page(pfn);
+-		if (page)
+-			mapcount = folio_precise_page_mapcount(page_folio(page),
+-							       page);
+-
+-		if (put_user(mapcount, out)) {
++		ppage = pfn_to_online_page(pfn);
++
++		if (ppage)
++			info = get_page_info(ppage);
++		else
++			info = 0;
++
++		if (put_user(info, out)) {
+ 			ret = -EFAULT;
+ 			break;
+ 		}
+@@ -89,17 +82,28 @@ static ssize_t kpagecount_read(struct file *file, char __user *buf,
+ 	return ret;
+ }
+ 
++static u64 get_page_count(struct page *page)
++{
++	return folio_precise_page_mapcount(page_folio(page), page);
++}
++
++/* /proc/kpagecount - an array exposing page mapcounts
++ *
++ * Each entry is a u64 representing the corresponding
++ * physical page mapcount.
++ */
++static ssize_t kpagecount_read(struct file *file, char __user *buf,
++		size_t count, loff_t *ppos)
++{
++	return kpage_read(file, buf, count, ppos, get_page_count);
++}
++
+ static const struct proc_ops kpagecount_proc_ops = {
+ 	.proc_flags	= PROC_ENTRY_PERMANENT,
+ 	.proc_lseek	= mem_lseek,
+ 	.proc_read	= kpagecount_read,
+ };
+ 
+-/* /proc/kpageflags - an array exposing page flags
+- *
+- * Each entry is a u64 representing the corresponding
+- * physical page flags.
+- */
+ 
+ static inline u64 kpf_copy_bit(u64 kflags, int ubit, int kbit)
+ {
+@@ -220,47 +224,22 @@ u64 stable_page_flags(const struct page *page)
+ #endif
+ 
+ 	return u;
+-};
++}
+ 
+-static ssize_t kpageflags_read(struct file *file, char __user *buf,
+-			     size_t count, loff_t *ppos)
++static u64 get_page_flags(struct page *page)
+ {
+-	const unsigned long max_dump_pfn = get_max_dump_pfn();
+-	u64 __user *out = (u64 __user *)buf;
+-	unsigned long src = *ppos;
+-	unsigned long pfn;
+-	ssize_t ret = 0;
+-
+-	pfn = src / KPMSIZE;
+-	if (src & KPMMASK || count & KPMMASK)
+-		return -EINVAL;
+-	if (src >= max_dump_pfn * KPMSIZE)
+-		return 0;
+-	count = min_t(unsigned long, count, (max_dump_pfn * KPMSIZE) - src);
+-
+-	while (count > 0) {
+-		/*
+-		 * TODO: ZONE_DEVICE support requires to identify
+-		 * memmaps that were actually initialized.
+-		 */
+-		struct page *page = pfn_to_online_page(pfn);
+-
+-		if (put_user(stable_page_flags(page), out)) {
+-			ret = -EFAULT;
+-			break;
+-		}
+-
+-		pfn++;
+-		out++;
+-		count -= KPMSIZE;
+-
+-		cond_resched();
+-	}
++	return stable_page_flags(page);
++}
+ 
+-	*ppos += (char __user *)out - buf;
+-	if (!ret)
+-		ret = (char __user *)out - buf;
+-	return ret;
++/* /proc/kpageflags - an array exposing page flags
++ *
++ * Each entry is a u64 representing the corresponding
++ * physical page flags.
++ */
++static ssize_t kpageflags_read(struct file *file, char __user *buf,
++		size_t count, loff_t *ppos)
++{
++	return kpage_read(file, buf, count, ppos, get_page_flags);
+ }
+ 
+ static const struct proc_ops kpageflags_proc_ops = {
+@@ -270,54 +249,17 @@ static const struct proc_ops kpageflags_proc_ops = {
+ };
+ 
+ #ifdef CONFIG_MEMCG
+-static ssize_t kpagecgroup_read(struct file *file, char __user *buf,
+-				size_t count, loff_t *ppos)
+-{
+-	const unsigned long max_dump_pfn = get_max_dump_pfn();
+-	u64 __user *out = (u64 __user *)buf;
+-	struct page *ppage;
+-	unsigned long src = *ppos;
+-	unsigned long pfn;
+-	ssize_t ret = 0;
+-	u64 ino;
+-
+-	pfn = src / KPMSIZE;
+-	if (src & KPMMASK || count & KPMMASK)
+-		return -EINVAL;
+-	if (src >= max_dump_pfn * KPMSIZE)
+-		return 0;
+-	count = min_t(unsigned long, count, (max_dump_pfn * KPMSIZE) - src);
+-
+-	while (count > 0) {
+-		/*
+-		 * TODO: ZONE_DEVICE support requires to identify
+-		 * memmaps that were actually initialized.
+-		 */
+-		ppage = pfn_to_online_page(pfn);
+-
+-		if (ppage)
+-			ino = page_cgroup_ino(ppage);
+-		else
+-			ino = 0;
+ 
+-		if (put_user(ino, out)) {
+-			ret = -EFAULT;
+-			break;
+-		}
+-
+-		pfn++;
+-		out++;
+-		count -= KPMSIZE;
+-
+-		cond_resched();
+-	}
+-
+-	*ppos += (char __user *)out - buf;
+-	if (!ret)
+-		ret = (char __user *)out - buf;
+-	return ret;
++static u64 get_page_cgroup(struct page *page)
++{
++	return page_cgroup_ino(page);
+ }
+ 
++static ssize_t kpagecgroup_read(struct file *file, char __user *buf,
++		size_t count, loff_t *ppos)
++{
++	return kpage_read(file, buf, count, ppos, get_page_cgroup);
++}
+ static const struct proc_ops kpagecgroup_proc_ops = {
+ 	.proc_flags	= PROC_ENTRY_PERMANENT,
+ 	.proc_lseek	= mem_lseek,
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.25.1
 
 
