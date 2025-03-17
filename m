@@ -1,158 +1,140 @@
-Return-Path: <linux-kernel+bounces-563734-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563735-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 544A1A6476B
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:31:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E820A6476D
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:31:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E3DC3AE45E
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 09:29:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A2F41891DA9
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 09:29:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D674222562;
-	Mon, 17 Mar 2025 09:28:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xb7LNp3m"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC601221D8B;
-	Mon, 17 Mar 2025 09:28:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A3E7226D1F;
+	Mon, 17 Mar 2025 09:28:56 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17B9F222570;
+	Mon, 17 Mar 2025 09:28:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742203725; cv=none; b=BR/xzixOSQ5FJemrUNC2uGdVKtgVZFO4CNzjGkKVIbllDHie9w2OGbPgcP3L+ibZ4GDi0bIYkX/YC0+e2/xlQK62z6nzKhBPfQ+oBvDBxZ3RhRnZ/tZMD5Hxec1M2oGCpmNH4hRcyTO9hQEUVh8e4A6/o3wq1drOyNzrx6Ip4D8=
+	t=1742203736; cv=none; b=u/oqC6rR1ZcABQwIgogEh3f/7zpHUCrDEM11qKBod/1ptI+EwZ7IrkXpLfD1ECjUvVClU3r/OTMuEIL4tAzXszvOd/bng7a/T2rldoqr/vAqtEHihQsHmBHe/zU4ljRKSLXGpyb7LyZCk3K9xOYdX03asZPfx4z9wX2e3tk/t6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742203725; c=relaxed/simple;
-	bh=VrQP9zv6me9y/ttzDtGZKAyPHxugPahSMAz9MlLhgD0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n1hI8N86q0k1H+F00wNp1z7vgd2TTEr6JJAqxjiTndd/0WOEk/noakiW7J027N+/w81VZI4iHl1jNPhyYaux4AqwT37unvxRXyDIy8qWetCVhZoillSjWCx+JVxVHVRvzkVdI57x7XwRS/xID+DRoQk+jyCfCx5ZYKD8Or3YeQg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xb7LNp3m; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76896C4CEE3;
-	Mon, 17 Mar 2025 09:28:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742203724;
-	bh=VrQP9zv6me9y/ttzDtGZKAyPHxugPahSMAz9MlLhgD0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Xb7LNp3mg2qW45yC1vAuxlQBRlu8+pLU4uozZMk7dGKtioy+V0XdwhnMKTcRYUkpx
-	 NZMdIN208ZPFLSebQbCHAeDgdeJVERGOQtezEBT4/SK5Go5najpMV8408VH+KamDXD
-	 FoAs+47VOcJ+Axskkv35IgBxN4aoxGTm/mytrLS82cQ7r8fVSg8J8Y/xH3K2BxF0Xw
-	 URzYQCSGteh7QT7P+gdKNlcpGH6X+mvmx4QNdQPa5oKH7t9t3eHlZIjXtGjW3J2XwN
-	 hpUJoR5MqepIHT7Q2ns0mC3hToXqinCTJASatIWYsq+T9VWKm93C+pxmTJ9WLrslJt
-	 3D4EiSY2hyv0A==
-Date: Mon, 17 Mar 2025 10:28:40 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: John Madieu <john.madieu.xa@bp.renesas.com>
-Cc: geert+renesas@glider.be, conor+dt@kernel.org, krzk+dt@kernel.org, 
-	robh@kernel.org, rafael@kernel.org, daniel.lezcano@linaro.org, 
-	magnus.damm@gmail.com, devicetree@vger.kernel.org, john.madieu@gmail.com, 
-	rui.zhang@intel.com, linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	sboyd@kernel.org, biju.das.jz@bp.renesas.com, linux-pm@vger.kernel.org, 
-	lukasz.luba@arm.com
-Subject: Re: [PATCH v3 2/6] dt-bindings: thermal: r9a09g047-tsu: Document the
- TSU unit
-Message-ID: <20250317-ubiquitous-acrid-gorilla-71d726@krzk-bin>
-References: <20250315081225.92118-1-john.madieu.xa@bp.renesas.com>
- <20250315081225.92118-3-john.madieu.xa@bp.renesas.com>
+	s=arc-20240116; t=1742203736; c=relaxed/simple;
+	bh=12f2cJnOY4QhppoXQT5hEoVPJ3WVgbGxJKf5/TUNUOc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QjHwYye26+z30SzXoF5ygf1c0AmTiYRphYB/8dWySyeoH4Pbe5DCALajsnkFegeVsVGug/FWdfHllWqgApR3Fzeyo/tntITaq9FWbB9kdh01ng7Y/VFm+a4V/bjDfUVgohuR+kI6dI7lFRp47f5pVYM/yEDd5zbIMIeRy4azbi0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1E81913D5;
+	Mon, 17 Mar 2025 02:29:02 -0700 (PDT)
+Received: from [10.57.84.137] (unknown [10.57.84.137])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F070E3F694;
+	Mon, 17 Mar 2025 02:28:49 -0700 (PDT)
+Message-ID: <16c12c3f-f2c2-45fa-9db6-4dfaeb002059@arm.com>
+Date: Mon, 17 Mar 2025 09:28:48 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250315081225.92118-3-john.madieu.xa@bp.renesas.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] arm64/ptdump: Replace u64 with pteval_t
+Content-Language: en-GB
+To: Anshuman Khandual <anshuman.khandual@arm.com>, linux-mm@kvack.org
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Steven Price <steven.price@arm.com>,
+ Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Nicholas Piggin <npiggin@gmail.com>, Paul Walmsley
+ <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>,
+ Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+ Heiko Carstens <hca@linux.ibm.com>, Peter Zijlstra <peterz@infradead.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
+ linux-s390@vger.kernel.org, Marc Zyngier <maz@kernel.org>
+References: <20250317061818.16244-1-anshuman.khandual@arm.com>
+ <20250317061818.16244-3-anshuman.khandual@arm.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <20250317061818.16244-3-anshuman.khandual@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Sat, Mar 15, 2025 at 09:12:12AM +0100, John Madieu wrote:
-> The Renesas RZ/G3E SoC includes a Thermal Sensor Unit (TSU) block designed
-> to measure the junction temperature. The device provides real-time temperature
-> measurements for thermal management, utilizing a single dedicated channel
-> (channel 1) for temperature sensing.
-
-Please wrap commit message according to Linux coding style / submission
-process (neither too early nor over the limit):
-https://elixir.bootlin.com/linux/v6.4-rc1/source/Documentation/process/submitting-patches.rst#L597
-
-Please run scripts/checkpatch.pl and fix reported warnings. After that,
-run also 'scripts/checkpatch.pl --strict' and (probably) fix more
-warnings. Some warnings can be ignored, especially from --strict run,
-but the code here looks like it needs a fix. Feel free to get in touch
-if the warning is not clear.
-
+On 17/03/2025 06:18, Anshuman Khandual wrote:
+> Page table entry's value, mask and protection are represented with pteval_t
+> data type format not u64 that has been assumed while dumping the page table
+> entries. Replace all such u64 instances with pteval_t instead as required.
 > 
-> Signed-off-by: John Madieu <john.madieu.xa@bp.renesas.com>
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Will Deacon <will@kernel.org>
+> Cc: Marc Zyngier <maz@kernel.org>
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-kernel@vger.kernel.org
+> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
 > ---
-> v1 -> v2:
->  * Fix reg property specifier to get rid of yamlint warnings
->  * Fix IRQ name to reflect TSU expectations
+>  arch/arm64/include/asm/ptdump.h | 8 ++++----
+>  arch/arm64/mm/ptdump.c          | 2 +-
+>  2 files changed, 5 insertions(+), 5 deletions(-)
+> 
+> diff --git a/arch/arm64/include/asm/ptdump.h b/arch/arm64/include/asm/ptdump.h
+> index e5da9ce8a515..476a870489b9 100644
+> --- a/arch/arm64/include/asm/ptdump.h
+> +++ b/arch/arm64/include/asm/ptdump.h
+> @@ -24,8 +24,8 @@ struct ptdump_info {
+>  };
+>  
+>  struct ptdump_prot_bits {
+> -	u64		mask;
+> -	u64		val;
+> +	pteval_t	mask;
+> +	pteval_t	val;
 
-... 
+Given Ard's suggestion of using "ptdesc" as a generic term for PTDESC_SHIFT (or
+PTDESC_ORDER, or whatever we ended up calling it), I wonder if it would be
+cleaner to do the same with the types? We could have a ptdesc_t, which is
+typedef'ed as u64 (or u128), then pteval_t, pmdval_t, ..., could all be
+typedef'ed as ptdesc_t. Then for code that just wants a generic pgtable
+descriptor value, we can use that type to indicate that it can be at any level.
 
-> +  interrupts:
-> +    description: |
-> +      Interrupt specifiers for the TSU:
-> +      - S12TSUADI1: Conversion complete interrupt signal (pulse)
-> +      - S12TSUADCMPI1: Comparison result interrupt signal (level)
+Thanks,
+Ryan
 
-Same problems as before - you need to list and describe items to have
-constraints. Otherwise why 5 interrupts are allowed but only two
-interrupt-names (test this)?
-
-There is no syntax like above in any other bindings. If you found such,
-please share the filename so we can fix it.
-
-> +
-> +  interrupt-names:
-> +    items:
-> +      - const: adi
-> +      - const: adcmpi
-> +
-> +  "#thermal-sensor-cells":
-> +    const: 0
-> +
-> +  renesas,tsu-calibration-sys:
-> +    $ref: /schemas/types.yaml#/definitions/phandle
-> +    description: |
-> +      Phandle to the system controller (sys) that contains the TSU
-> +      calibration values used for temperature calculations.
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - clocks
-> +  - resets
-> +  - power-domains
-> +  - interrupts
-> +  - interrupt-names
-> +  - "#thermal-sensor-cells"
-> +  - renesas,tsu-calibration-sys
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/clock/renesas,r9a09g047-cpg.h>
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +
-> +    tsu: thermal@14002000 {
-> +        compatible = "renesas,r9a09g047-tsu";
-> +        reg = <0x14002000 0x1000>;
-> +        clocks = <&cpg CPG_MOD 0x10a>;
-> +        resets = <&cpg 0xf8>;
-> +        power-domains = <&cpg>;
-> +        interrupts = <GIC_SPI 250 IRQ_TYPE_EDGE_RISING>,
-> +                     <GIC_SPI 251 IRQ_TYPE_LEVEL_HIGH>;
-> +        interrupt-names = "adi", "adcmpi";
-> +        #thermal-sensor-cells = <0>;
-> +        renesas,tsu-calibration-sys = <&sys>;
-> +    };
-> +
-> +    thermal-zones {
-
-Drop the node, no need to show how to use provider binding.
-
-Best regards,
-Krzysztof
+>  	const char	*set;
+>  	const char	*clear;
+>  };
+> @@ -34,7 +34,7 @@ struct ptdump_pg_level {
+>  	const struct ptdump_prot_bits *bits;
+>  	char name[4];
+>  	int num;
+> -	u64 mask;
+> +	pteval_t mask;
+>  };
+>  
+>  /*
+> @@ -51,7 +51,7 @@ struct ptdump_pg_state {
+>  	const struct mm_struct *mm;
+>  	unsigned long start_address;
+>  	int level;
+> -	u64 current_prot;
+> +	pteval_t current_prot;
+>  	bool check_wx;
+>  	unsigned long wx_pages;
+>  	unsigned long uxn_pages;
+> diff --git a/arch/arm64/mm/ptdump.c b/arch/arm64/mm/ptdump.c
+> index fd1610b4fd15..a5651be95868 100644
+> --- a/arch/arm64/mm/ptdump.c
+> +++ b/arch/arm64/mm/ptdump.c
+> @@ -194,7 +194,7 @@ void note_page(struct ptdump_state *pt_st, unsigned long addr, int level,
+>  	struct ptdump_pg_state *st = container_of(pt_st, struct ptdump_pg_state, ptdump);
+>  	struct ptdump_pg_level *pg_level = st->pg_level;
+>  	static const char units[] = "KMGTPE";
+> -	u64 prot = 0;
+> +	pteval_t prot = 0;
+>  
+>  	/* check if the current level has been folded dynamically */
+>  	if (st->mm && ((level == 1 && mm_p4d_folded(st->mm)) ||
 
 
