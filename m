@@ -1,165 +1,251 @@
-Return-Path: <linux-kernel+bounces-564403-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564405-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C6C3A65428
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 15:46:52 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD593A65435
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 15:49:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9340B3AA504
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 14:46:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 684A0188943C
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 14:49:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF24B2417F2;
-	Mon, 17 Mar 2025 14:46:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE8B524337D;
+	Mon, 17 Mar 2025 14:48:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="Wtb81bW1"
-Received: from mail-24416.protonmail.ch (mail-24416.protonmail.ch [109.224.244.16])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="frIrh6lK"
+Received: from AS8PR03CU001.outbound.protection.outlook.com (mail-westeuropeazon11012067.outbound.protection.outlook.com [52.101.71.67])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F24D54652
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 14:46:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.224.244.16
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742222804; cv=none; b=b7R9cWpFT0w2oLDqiXVm67zxSQ+KdYjpvvGnD30nYUhrwLYu5+v1KBu1unR/cYSW44cqj59xMUKqogXa1XP1UfNEji0FhpqmAlax9Qfe4QpBPJZEofUQ015YSRx+X44oeyZ4h3usxFuwmb2wtOi5u5Zeriz3/HSn2kHEa8nifNA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742222804; c=relaxed/simple;
-	bh=dBrC1u0IiUOyDfFTSQe3LuUdm91RasyufM6i//hsVp8=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=W9K44afU5/upznbeYBH5Qdbbl0loW0JJmwwRByERm93ssScI7JmG2qJkyumkTSvvHCs/+jSaSA81Ni2y8cYAg99x5gHi2bh60ve0JEMfCZ7FGufgdKe66mwRTiv887UdKbFy1sT0taqDu64c4ru3/lBfwc6WHhk0buu2/dvHJzE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=Wtb81bW1; arc=none smtp.client-ip=109.224.244.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1742222794; x=1742481994;
-	bh=QY+djW/K3/3fwrxQnWk5eIq6mklf+YPdlaYKCGAZlxE=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
-	b=Wtb81bW1n4BY/CP+BVk766mWLsb/m3xGn2EFocEA56KUW2Hd4+Da/lQRKfWc/N8fW
-	 zYHg2Kx+JlIPcDTXEbwmaokAM9Yz5HwXI1jnGe01vg42hLM8vlN6ApY2bBJVvC+u8i
-	 Om1delJfOJUfZb4yyBTarHovfYcnnAT9jLZTnikPc4d2JIUstx8zVM0g22RV0gI4i2
-	 CoNgGm6hy/P8NamSteO5XRQNCvVm4zuT6W1j2wG9SLsVZfYC7MxFJeNvxB0W/x+IUO
-	 5AZ/ZNhkfhDb85Dxd8Ie05mNvK35oSRSJ/t2CUre06zn2BYkkCqKSoYe09eH8fvBnk
-	 G3RuG4K1gaOFg==
-Date: Mon, 17 Mar 2025 14:46:30 +0000
-To: Tamir Duberstein <tamird@gmail.com>, Alice Ryhl <aliceryhl@google.com>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: Danilo Krummrich <dakr@kernel.org>, Andrew Ballance <andrewjballance@gmail.com>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] rust: alloc: replace `Vec::set_len` with `inc_len`
-Message-ID: <D8IMFM8UTOV6.1EYIRMPNAZ7I7@proton.me>
-In-Reply-To: <CAJ-ks9nSNweaSCVAruo-zWxMAFKcRxcJRScV06NRNBoeEZggfA@mail.gmail.com>
-References: <20250316-vec-set-len-v1-0-60f98a28723f@gmail.com> <20250316-vec-set-len-v1-1-60f98a28723f@gmail.com> <D8IGB61NVPBT.1I3IZYPVPIEMU@proton.me> <Z9f96iXE0xxj8th7@google.com> <CAJ-ks9nSNweaSCVAruo-zWxMAFKcRxcJRScV06NRNBoeEZggfA@mail.gmail.com>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: 3b514c4267c74f0f38a70d821dda0b9b73e4ab0c
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE87954652;
+	Mon, 17 Mar 2025 14:48:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.71.67
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742222931; cv=fail; b=ImHNt81GQ7eVG9v4GN6WQck9iJK3qvUNiA2cRecYGFCAP+yU2TnK7ipge5l5T6w2znS9OgtyWvjJhlMRr6TJIpdl93EoHOzIu00WmqPjsCkkoPN3cafMSmmrSKziJTttwNvuPYI3kznsdhKBtgSxFwO/OsfpLjWql0fkUxNbMWs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742222931; c=relaxed/simple;
+	bh=Zx61BPBcXBJPl6qc1sE193LSivREJ2m3p0btMNnqC7g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=CWozDLiRWyfD+D2y2m2G+V33Nn89PnZ1BeWqkqJckvcIE4vt9yGkks++iK0c2rxJiMV6csrN22TYRpTEgZprHBOUVEzofo2ozvP+TTcKIrfrXRJMBoPZhSiy5xSOMBZWy05bLmduLR9AN1LrlikYGXNBg1/8U+NHFGfJZk3uPio=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=frIrh6lK; arc=fail smtp.client-ip=52.101.71.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Ko3NYBx8nBpmS7T5HuVlLf5AZBt4TotUvRrBH/Fwf3id07+SuF2XFkduszx+sVXDJkfEeOFaNOZHwa3Kz7BzNtpIekaPW7oM+PmlA03wggJOJsXR97aFPWegWHi7dVIRO+LYcrTjHPLY/6Ri8UNnkRoc9C35ue95SZHN7dN80k0EUTJdd681jhei3mmH1/shHwGX8iHz8KtmSKySykOTSEuqdlSOmlSz5W1LKRxPC8utLXzpk5jUko9k579bAm9UPKMRAAFyfpNRnD8ui8vxT+YxssHg5Gi3C70dmOP4L4TLLd5c2CMd9duj2qXUIpIP+furJ9fVSGAuX+GDcORYUQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=kVGYg1Op/a0GV1T1ULU8Vge6xxXF/AbXXXgUYScOq7Y=;
+ b=YdP0wXHa2wSKoR8EoZq5vb5WEV9FP/0dwSgn+EGBPJU/JNFwmUog6pJ48W7DxD1r9DYmWZkC7zwZnyxMR8bfjNb4Mh1MymSqjIoooPD9ymXPtkFZwnrtKAgUufgWBBgs3OeEKsNZTLeCPVT8bxFrBALM++WtiIz3MZ3CFR55vlVIwj0tRVDB34+YO+XZogN8Q2G9HR6CPHrWXs4lVSgHt8YZaryOt7sT6+kUoJh608PqBcoUZK+BJ8XnjR75GL0U+oB+U/MM2rTuUeZ6cNIi/ixmkGWkJoex3LasmbbiDya3CX2S0ECEGbI+2dptDH975oj4A6AZtN0PVRaOP5FGKA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=kVGYg1Op/a0GV1T1ULU8Vge6xxXF/AbXXXgUYScOq7Y=;
+ b=frIrh6lKhP4TZB5kf09uLACvolm337YGmfksz9OF3ZSyDUI8wS33gc5IlXccX5ypl5HarSqbS9hZma/bu4TwOlSiBDrNuNzto4/8kRyJVhXK8xz9W/idioScdjj1Ie4e4glj66vnkYtd79Q1baaTPnDubiSmjfdSLz8wq1o1hVccZNT77rjP+ND6edBD+NHRJne1KWbTZG4OsnZR9Vgetpfip8OUpxuHHgl1ZwAwB6RgHqK6ZcFA9Aoj7pjq+pMYzuVTRPI4ddnyH+eQiZNBbzfcGcIKwMeOH+zWBbMNlSdi1CFSJliFlnX9BwQhOXKf8cEt2vwfS8GaBcTrH3g8Zg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AM8PR04MB7779.eurprd04.prod.outlook.com (2603:10a6:20b:24b::14)
+ by DU0PR04MB9635.eurprd04.prod.outlook.com (2603:10a6:10:31f::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.33; Mon, 17 Mar
+ 2025 14:48:46 +0000
+Received: from AM8PR04MB7779.eurprd04.prod.outlook.com
+ ([fe80::7417:d17f:8d97:44d2]) by AM8PR04MB7779.eurprd04.prod.outlook.com
+ ([fe80::7417:d17f:8d97:44d2%6]) with mapi id 15.20.8534.031; Mon, 17 Mar 2025
+ 14:48:46 +0000
+Date: Mon, 17 Mar 2025 16:48:43 +0200
+From: Vladimir Oltean <vladimir.oltean@nxp.com>
+To: Wei Fang <wei.fang@nxp.com>
+Cc: claudiu.manoil@nxp.com, xiaoning.wang@nxp.com, andrew+netdev@lunn.ch,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, christophe.leroy@csgroup.eu,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev, linuxppc-dev@lists.ozlabs.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v4 net-next 05/14] net: enetc: add debugfs interface to
+ dump MAC filter
+Message-ID: <20250317144843.wp432pgodn4vjejf@skbuf>
+References: <20250311053830.1516523-1-wei.fang@nxp.com>
+ <20250311053830.1516523-1-wei.fang@nxp.com>
+ <20250311053830.1516523-6-wei.fang@nxp.com>
+ <20250311053830.1516523-6-wei.fang@nxp.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250311053830.1516523-6-wei.fang@nxp.com>
+ <20250311053830.1516523-6-wei.fang@nxp.com>
+X-ClientProxiedBy: VI1PR0102CA0088.eurprd01.prod.exchangelabs.com
+ (2603:10a6:803:15::29) To AM8PR04MB7779.eurprd04.prod.outlook.com
+ (2603:10a6:20b:24b::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM8PR04MB7779:EE_|DU0PR04MB9635:EE_
+X-MS-Office365-Filtering-Correlation-Id: 37714767-1403-469d-be59-08dd6562d21b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?BzEUanxrLUGrWqmpA64U09MV85u2Tb5bAsHOdKnpPpUF6dzMP3uH649r44Tk?=
+ =?us-ascii?Q?SI7CThM0+uBM7JdvJ0rQE/9lPHtON1ZHfOdXeb+2Rwa60k2t1RVOAIm4UfnX?=
+ =?us-ascii?Q?HsU39xS1hgEYK69Jle/+NMln56APR3jRv3Hn30jk184sdERN+SpZTsj+d1/w?=
+ =?us-ascii?Q?T+zFKXDgZcQ2cDAlNatsrXQhp2dk0XnP9k0w+ryHU7gB3haIKfdOzus6aosn?=
+ =?us-ascii?Q?NF29ma7t5EoAgWr3jNzAQ+EjbAKMjFhVqz3STXHwx5t9Qh3Q/3bPqCxJLSKI?=
+ =?us-ascii?Q?GOcTyhtE5/FmpetuWpXEkOGOdytoApLP3ggnmOyzJnjgLwplRNrd7CG1t7Yw?=
+ =?us-ascii?Q?HqpvscPA0rCX8TmB3fma+qqoRMELDgP5b4iNvFAIAjDtBofpl+Lvu0HrGcBz?=
+ =?us-ascii?Q?FhAoDtXGwG4AJVYSlQjpaAPIKrMgfM9ZRz5nUuzUr0XP7ejdewlMrcP/IyLU?=
+ =?us-ascii?Q?MN4mMAUTVU40ExVS7GPbMRg6QwIzVx6x13B77KtWBBeZ3Ytadh1lNWMbIn2f?=
+ =?us-ascii?Q?TrjJ2hJb6PQtEvsw+yrxBh1cIsN79Fwg+dlbHJpbnKXUUHzYOgbZsN7u+2cO?=
+ =?us-ascii?Q?IxkRVqrjqnDbY3mkNcxoY/hTXA621AHpASG2xtNlTzbQrxyIiNzho96ni0Nz?=
+ =?us-ascii?Q?2cj/ZhVl5YvegCEV4DSqsWDHbh7H/hR5eds1s0Q/j1Ys2gaj4ToPkxkvuHxo?=
+ =?us-ascii?Q?FkekCWMjkIALotfO3q+bUUvzwp1BGeTwrNh1S1IpVTPMY51TnOLJ6HPQQTPw?=
+ =?us-ascii?Q?T7IZG+QmwFNgdYfszny+IsyR5JrEXlgVi+ZIvwlsyUPTLnIyXsX+oVfhvuWp?=
+ =?us-ascii?Q?XPgeGg6EiPJZssMMw8hWlnKW/prUFmDBAOrDEuJa6CS7qzX1O8xxJ2CAQByV?=
+ =?us-ascii?Q?/SA/UTOAdYa0N60p/gvzv6Xux4iMS+x7Dgpz757PSvVXKy7ISEDQJ8P1DaBm?=
+ =?us-ascii?Q?b1WQQn8OxH6Xl1Dt9s2NPciFIXjoDzwHnFdrH4rYFkMkkcm6Lv/LaycXFByi?=
+ =?us-ascii?Q?4y8DvrOR/BwTYokR2lGODxD+J4c7FTYWFEJwzfJZRMkS2MitlinSCJZ2/mK5?=
+ =?us-ascii?Q?SI80o25m7xmGoEs8FtjTWOmWHeH8VufEqqT3eyOMM9E787V1TUg/6+AyAoel?=
+ =?us-ascii?Q?aYQjBKkZxyqnsjvaHJ951kDHljhEmnvrH2xjuyL9S8UEzhH1jIK8B6fPBZ7l?=
+ =?us-ascii?Q?iCvRUU1ihxDMVefUB6dtgKktpRoEU80jdJ3Y41/YV5V9UoJFaSvJ9b1Hv79O?=
+ =?us-ascii?Q?iJMU7JNPhmAqFZ6UlhAzt9SbjUdqYJVCzlqV6UUM5gt8rfLIPXN6fQTwTHLJ?=
+ =?us-ascii?Q?FJKLiVLu01+i52NSqXKhHMXtpAz3oqop0DKOA3Vb8fgIqeb0BrwyPSXUgdLv?=
+ =?us-ascii?Q?lx5uaupKrWA7sfA2YEm4MisRHMxr?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM8PR04MB7779.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?rM+cOxyWFoDcAOl4dGtYJMkzo0hN28khplRPdxpy+WU4+VoqbAkHTsCyWZwg?=
+ =?us-ascii?Q?pMj1eX7eXzOfpZtL5jGHCpPfPAKgW5IIIUdw4ULiR0IIjTK9K5aWdwN/hgRa?=
+ =?us-ascii?Q?o5PvbilFdBQNHx5b1RsgjZX6TgluTh+R1f05wftYFMTkmIl5q5NnyR6Gthtu?=
+ =?us-ascii?Q?VUd+FKp46FU4zzTrVRUtDTc1g1q8GttnD2wwpqCz7V/HPTSaR259Ih54tdBd?=
+ =?us-ascii?Q?QhxPHt5xVEP4eMM+8OTNBbkGjgxD1tdnrteE/W+b2x0j/pj7L2PGKCBXHYf7?=
+ =?us-ascii?Q?pGqSxuFMLO4f0mGb10us6gR0PGbSB/axzOj+z0xX0ClLSahcJj2yGSacWLrR?=
+ =?us-ascii?Q?dc7tJlhO31X+Hjzcpn2HXgUd8LfbUUt++TMeBXNnIgO5fEJ0qSN5tdnt/TFE?=
+ =?us-ascii?Q?uo7bL+zSS81e8LP3zX7K/A4WuU3JM32J69f22iyxMIZnHgUCV24Hog0OnPK+?=
+ =?us-ascii?Q?C95Sr6AidkHRWNA9b6dIQwGil5ghvBcKbZctPNE6h1I+uRaX6GM1bMX3FZNO?=
+ =?us-ascii?Q?YcHbTHt2BRtc91YCmLHheOz78CJewSm5wszawhVnixGZcC4hTCWkEC04foiI?=
+ =?us-ascii?Q?P7Lx6/gPJ5O7RMiJHcqqszBv+iVJH5NHhnDxTPttzqhMiecfN47Ua3kJvaMV?=
+ =?us-ascii?Q?XpaVC5Nn3UpbfC24/ZwPLhcV7wN/x9FJHp1P4IZLC3Ad878HFI8ybOxAU8jY?=
+ =?us-ascii?Q?OG7AhVjgrjviDwYCGhtTDzo2M0wU9qXiCsKMLmMbjJH5m3iyr2PpMYd3LvR6?=
+ =?us-ascii?Q?TfzQ2qitISH85Kqt/rRaUUgeTGnFfjXIz7Vc3bkh0x9eLmUYK655nQYxr6D8?=
+ =?us-ascii?Q?qAgHHUbdoq2qjfMCXHlQ6S7NXItwJbGU4yXtwxSqY7jsj38xWlu/SY5Pg5+u?=
+ =?us-ascii?Q?GCbuZgLOo/MvgyubqtgNsCLr+pv1e2OgFyCl0BOPi6QFRF10alz92/z/qx0V?=
+ =?us-ascii?Q?S71RuyRyVHzQW71Hg3dJuxvrXERqZ32jqYbY0uUu6MBBQnM/L6nowTDmtj9W?=
+ =?us-ascii?Q?2ynQ7f2ulMmxRWFNz2CUnSXbqsJYNd/dPhY3xIRhjIdXNg6STyZntSu541MS?=
+ =?us-ascii?Q?gKfzNxRZVfCEhEtj//cNNHYxJblNeZ6F1v5waWBYtoyW9WvSJMi4I1sHjG1B?=
+ =?us-ascii?Q?/h5AszFGbbUvYVV9vv4dcGNh8Dcz7xo82yNE4PO51velvRKRGYZewfFwgR/9?=
+ =?us-ascii?Q?mOxQ4j6759LO0fFIsnf38jOWEV3YbY5oT2z5bG2BHZgNv6JTlDS4mchURM0F?=
+ =?us-ascii?Q?SwwV4FfB98pjHEJr54++bfQw1Gal7mqKQp5gp4iLeoK4iTXmzzGChH9nvU6U?=
+ =?us-ascii?Q?eF1GHonqmJKV4FtgRK/mJ4iCgJRbfbM4cd3dl2mDmdRSrAUZnXN54xoCV0Id?=
+ =?us-ascii?Q?XqUeFqZCbyIVCZf9eUgAnC5jDuL4EsMeVMLVuVh+Fe35B7EL7M67j2Uf3Pzu?=
+ =?us-ascii?Q?ImgC0bEOSICzFuwCHRb4q5hz/rCDQA3iBaqOYnwUsJS+Dr6sBtuc7TO1UX46?=
+ =?us-ascii?Q?bpbJZaQNfMVWMQQ1MP//zj6TbtcmWloF9vBxMu79Xcfk09//c1fvVwYV82wM?=
+ =?us-ascii?Q?fs4ccuzjlrQ+cdTTtd9M4taeRRtI/mdhHoO30rr9nh2+Ip2De19mbtChvFF3?=
+ =?us-ascii?Q?ew=3D=3D?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 37714767-1403-469d-be59-08dd6562d21b
+X-MS-Exchange-CrossTenant-AuthSource: AM8PR04MB7779.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Mar 2025 14:48:46.4312
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: gGPteDPfowMybgEd8UFakXdOlIcjbI2NoKotwB8FAXAEBiaAInwog9jE7LQXIM495VcobxQggUijBy13oWC67w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU0PR04MB9635
 
-On Mon Mar 17, 2025 at 12:25 PM CET, Tamir Duberstein wrote:
-> On Mon, Mar 17, 2025 at 6:48=E2=80=AFAM Alice Ryhl <aliceryhl@google.com>=
- wrote:
->>
->> On Mon, Mar 17, 2025 at 09:58:35AM +0000, Benno Lossin wrote:
->> > On Sun Mar 16, 2025 at 11:32 PM CET, Tamir Duberstein wrote:
->> > > Rename `set_len` to `inc_len` and simplify its safety contract.
->> > > ---
->> > >  rust/kernel/alloc/kvec.rs | 19 +++++++++----------
->> > >  rust/kernel/str.rs        |  2 +-
->> > >  rust/kernel/uaccess.rs    |  2 +-
->> > >  3 files changed, 11 insertions(+), 12 deletions(-)
->> > >
->> > > diff --git a/rust/kernel/alloc/kvec.rs b/rust/kernel/alloc/kvec.rs
->> > > index ae9d072741ce..d43a1d609434 100644
->> > > --- a/rust/kernel/alloc/kvec.rs
->> > > +++ b/rust/kernel/alloc/kvec.rs
->> > > @@ -183,17 +183,16 @@ pub fn len(&self) -> usize {
->> > >          self.len
->> > >      }
->> > >
->> > > -    /// Forcefully sets `self.len` to `new_len`.
->> > > +    /// Increments `self.len` by `additional`.
->> >
->> > I would keep the "Forcefully".
->
-> Why? Is it possible to set it any other way?
+On Tue, Mar 11, 2025 at 01:38:21PM +0800, Wei Fang wrote:
+> diff --git a/drivers/net/ethernet/freescale/enetc/enetc4_debugfs.c b/drivers/net/ethernet/freescale/enetc/enetc4_debugfs.c
+> new file mode 100644
+> index 000000000000..3a660c80344a
+> --- /dev/null
+> +++ b/drivers/net/ethernet/freescale/enetc/enetc4_debugfs.c
+> @@ -0,0 +1,93 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+> +/* Copyright 2025 NXP */
+> +
+> +#include <linux/device.h>
+> +#include <linux/debugfs.h>
+> +#include <linux/seq_file.h>
+> +
+> +#include "enetc_pf.h"
+> +#include "enetc4_debugfs.h"
+> +
+> +#define is_en(x)	(x) ? "Enabled" : "Disabled"
 
-Yeah when `truncate` and `resize` land. It conveys that this is a
-low-level operation.
+str_enabled_disabled()
 
->> > >      ///
->> > >      /// # Safety
->> > >      ///
->> > > -    /// - `new_len` must be less than or equal to [`Self::capacity`=
-].
->> > > -    /// - If `new_len` is greater than `self.len`, all elements wit=
-hin the interval
->> > > -    ///   [`self.len`,`new_len`) must be initialized.
->> > > +    /// - `self.len + additional` must be less than or equal to [`S=
-elf::capacity`].
->> > > +    /// - All elements within the interval [`self.len`,`self.len + =
-additional`) must be initialized.
->> > >      #[inline]
->> > > -    pub unsafe fn set_len(&mut self, new_len: usize) {
->> > > -        debug_assert!(new_len <=3D self.capacity());
->> > > -        self.len =3D new_len;
->> > > +    pub unsafe fn inc_len(&mut self, additional: usize) {
->> > > +        debug_assert!(self.len() + additional <=3D self.capacity())=
-;
->> >
->> > What if this overflows? Do we always have overflow debugging on when
->> > debug assertions are enabled? If yes, then this is fine.
->>
->> I don't think we do.
->
-> Rearranged as
->
->         debug_assert!(additional <=3D self.capacity() - self.len());
+> +
+> +static void enetc_show_si_mac_hash_filter(struct seq_file *s, int i)
+> +{
+> +	struct enetc_si *si = s->private;
+> +	struct enetc_hw *hw = &si->hw;
+> +	u32 hash_h, hash_l;
+> +
+> +	hash_l = enetc_port_rd(hw, ENETC4_PSIUMHFR0(i));
+> +	hash_h = enetc_port_rd(hw, ENETC4_PSIUMHFR1(i));
+> +	seq_printf(s, "SI %d unicast MAC hash filter: 0x%08x%08x\n",
+> +		   i, hash_h, hash_l);
 
-LGTM
+Maybe the ":" separator between the high and low 32 bits is clearer than "x".
 
-> It should be impossible for this to underflow because capacity must be
->>=3D len. Interestingly this isn't a documented invariant, but it is
-> relied upon by `spare_capacity_mut`.
+> +
+> +	hash_l = enetc_port_rd(hw, ENETC4_PSIMMHFR0(i));
+> +	hash_h = enetc_port_rd(hw, ENETC4_PSIMMHFR1(i));
+> +	seq_printf(s, "SI %d multicast MAC hash filter: 0x%08x%08x\n",
+> +		   i, hash_h, hash_l);
+> +}
+> +
+> +static int enetc_mac_filter_show(struct seq_file *s, void *data)
+> +{
+> +	struct maft_entry_data maft_data;
+> +	struct enetc_si *si = s->private;
+> +	struct enetc_hw *hw = &si->hw;
+> +	struct maft_keye_data *keye;
+> +	struct enetc_pf *pf;
+> +	int i, err, num_si;
+> +	u32 val;
+> +
+> +	pf = enetc_si_priv(si);
+> +	num_si = pf->caps.num_vsi + 1;
+> +
+> +	val = enetc_port_rd(hw, ENETC4_PSIPMMR);
+> +	for (i = 0; i < num_si; i++) {
+> +		seq_printf(s, "SI %d Unicast Promiscuous mode: %s\n",
+> +			   i, is_en(PSIPMMR_SI_MAC_UP(i) & val));
+> +		seq_printf(s, "SI %d Multicast Promiscuous mode: %s\n",
+> +			   i, is_en(PSIPMMR_SI_MAC_MP(i) & val));
+> +	}
+> +
+> +	/* MAC hash filter table */
+> +	for (i = 0; i < num_si; i++)
+> +		enetc_show_si_mac_hash_filter(s, i);
+> +
+> +	if (!pf->num_mfe)
+> +		return 0;
+> +
+> +	/* MAC address filter table */
+> +	seq_puts(s, "Show MAC address filter table\n");
 
-Oh yeah that should be an invariant. Feel free to open an issue or send
-a patch.
+The word "show" seems superfluous.
 
->> > > diff --git a/rust/kernel/str.rs b/rust/kernel/str.rs
->> > > index 28e2201604d6..005713839e9e 100644
->> > > --- a/rust/kernel/str.rs
->> > > +++ b/rust/kernel/str.rs
->> > > @@ -840,7 +840,7 @@ pub fn try_from_fmt(args: fmt::Arguments<'_>) ->=
- Result<Self, Error> {
->> > >
->> > >          // SAFETY: The number of bytes that can be written to `f` i=
-s bounded by `size`, which is
->> > >          // `buf`'s capacity. The contents of the buffer have been i=
-nitialised by writes to `f`.
->> > > -        unsafe { buf.set_len(f.bytes_written()) };
->> > > +        unsafe { buf.inc_len(f.bytes_written()) };
->> >
->> > This change seems wrong unless the code was wrong to begin with.
->> >
->> > Otherwise the change looks good.
->>
->> The buffer has length zero as it was just created with:
->>
->> let mut buf =3D KVec::with_capacity(size, GFP_KERNEL)?;
-
-Ahh, I didn't look at the context. Makes sense.
-
-> Indeed. Added to the commit message.
-
-Thanks.
-
----
-Cheers,
-Benno
-
+> +	for (i = 0; i < pf->num_mfe; i++) {
+> +		memset(&maft_data, 0, sizeof(maft_data));
+> +		err = ntmp_maft_query_entry(&si->ntmp.cbdrs, i, &maft_data);
+> +		if (err)
+> +			return err;
+> +
+> +		keye = &maft_data.keye;
+> +		seq_printf(s, "Entry %d, MAC: %pM, SI bitmap: 0x%04x\n", i,
+> +			   keye->mac_addr, le16_to_cpu(maft_data.cfge.si_bitmap));
+> +	}
+> +
+> +	return 0;
+> +}
+> +DEFINE_SHOW_ATTRIBUTE(enetc_mac_filter);
 
