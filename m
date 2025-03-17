@@ -1,165 +1,184 @@
-Return-Path: <linux-kernel+bounces-564534-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564535-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FCBAA6570B
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 17:01:43 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EA56A656FD
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 17:00:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58FCA3BD3C4
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 15:54:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F3261683A8
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 15:55:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7BE51953BB;
-	Mon, 17 Mar 2025 15:52:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FE9114A09C;
+	Mon, 17 Mar 2025 15:54:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UbjHMKZS"
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+	dkim=pass (1024-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="J7l8RECT"
+Received: from linux1587.grserver.gr (linux1587.grserver.gr [185.138.42.100])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AD67191F6D;
-	Mon, 17 Mar 2025 15:52:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ECD01714AC;
+	Mon, 17 Mar 2025 15:53:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.138.42.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742226769; cv=none; b=fWelHsCPR/Mgm5bohMjwU8dgWZ3vyPf0mshW2OCdKhutarPvyljAKrB+gc+WcP0h4zD+lEVu+wCXL+iax9PBoJAkC0UnKKRKOa7iDy9hRk7BMsNNjQ78flTukxjI0O/6wBx93EMmf1O7bibqoKDn0POq2OXW32m7Z1j60p2UvaM=
+	t=1742226843; cv=none; b=EgP1rGYx3hl3E6YRRG2Zp+05V2Y2mIc4C9mAljtga6zfwDTXRu//0T3PwtOnz1/YDZw98rt3sHmQK8xZ2QWTWRSION0kCxFC1mZhHlJBT3nR2di0MD6XJghKqF7AuRUAiTz+KjasW2r1EHN4mDMU4v2S/dLr5kuEO8tjvyy2OBc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742226769; c=relaxed/simple;
-	bh=LQPXhVdsd27bls7Z9gs1cfAmX7yOsRJezTgCGdhIcJQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mEi43mUGOk9RDeHCwgY7dOUe+2Fic3Y86QZS7aHS5TjF4/ttMObF5glM7LvgE8ZkwpLfAVkCzoXlh18MyI8nqUpSckJo2i7509whYSSCXP4cANnU6i8ELA0upMQWQpgWMJp+wXC82m4C4M6dZk2FcnyVoEw5jC7kSN5NqZg8PVM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UbjHMKZS; arc=none smtp.client-ip=209.85.208.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-30b83290b7bso46821611fa.1;
-        Mon, 17 Mar 2025 08:52:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742226765; x=1742831565; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=wOrgpCesyo7K8PeHYtDUc+GcqoK6FTDWO+S3bjh5O+E=;
-        b=UbjHMKZSSg8mPGC4WifIgB5wQTM2vTrbT08X0MR11V/yGcjR8uN0m6UzNe2xyTC4uY
-         rrBC1kZC/cuMPMY5q0Tj9yRrZ1E3g6m5TulfVaxW4MVsNTS1U4fOKg4hasjpBQnZp8nY
-         +rdSNHIdH1318tpmBa47NaozevV7wYtoYCn8CPEP131aiA/g3nEhgVqr24rRDNr/zqWM
-         XmTGM2zSN3n1BXBpWWNBFzczFbz4dHv8nTkDesio6pZj00ReaAF/z5b9WjbbQhSPoYFe
-         3sPuyQIyY5yUYzMJplyAW18g/fJudn82nLyh0mviKDKc0VeNU+Vh4tZE5x2vQ//5eUIO
-         ycfg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742226765; x=1742831565;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wOrgpCesyo7K8PeHYtDUc+GcqoK6FTDWO+S3bjh5O+E=;
-        b=JAHijT7LDgFH8o4msEp7ecPMTPMIRAY2kFaQ2llu5LDXT81+WN0w4MzXoOqeb7K2HT
-         pAWVpb2+1luNzi9kAGlmhbhnuZqzBAmuDVRUBF8yTpzj3XI7A3ntw5dcfw0B3x2G/aKQ
-         oQ0Ta9G+YQR3P3gbYxa4eQk8ghYG+ewET0eFqBc/DvLzvI87keHagPDcml8qdaLBbg2Q
-         PDQzwoH+BoXElK4x8vqhsyfAkuX0fvyYntjJZunzqWlIhCwCoBEwQtwX/f9kqMh0yCM5
-         ppK9LVK6KUnKtg3IxD4+ShYpGlMICMk14gJrH3TumSIQYvuqgIp64F8HNu7bVzuIK2TX
-         QIMA==
-X-Forwarded-Encrypted: i=1; AJvYcCVHLEBwr/v/YgrGNf8eYr33RJaIGp0/HjAALwmO1xQLsXofwwtE8iInj3z+1y0DucYjVJkmH8GUGAPXE84=@vger.kernel.org, AJvYcCVHa6jdK3r3v4vucVb9uwHksJZaJRtan4Tv4Dy2A8z0fcYOV3Gbu1XM2pIE4LfchX1zCza0zhorDIF872Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwEeouLZUfPOLG5Q2psMLOJJZDW2W0zSklEmuQbiH+2uBvmlfst
-	N1VVbQbj3X+y8+xgbJGCg+AkRg9JbW3dNDMjy/QTrBOCL5KHWU0b
-X-Gm-Gg: ASbGncuh34Z3vGblQzvL1ty17YDK/P43nxTR0/AYoFTV176ovdxo/jagZlfHIm79c5E
-	haBitkIBOYk3S1LfKCvV2UttPZ+Vto4nA6aDWSXkOYGElmfG52RAwg2w1gMbegYQU47sKFczWSi
-	LZqK9TqzRjhvvu3oW7q2a+stcnxi4hRgbYnFO0sufOF7btMVJiRZ77NbDdz7k70Qih6wJ5J3KI1
-	mUjRpkI/6qOkYSGoa5xvwYg1qPmsJQt0X/RYXI760y7RwSM45Sn+jUSpVk4OxtzYMAKRrChtH2b
-	0CUIqoi/p/GwA6Xv++ydT4EA7mZW44KGWX1+GvxejwM2CVwd90g=
-X-Google-Smtp-Source: AGHT+IGRYCFC8hQbVstyD1wJakOvjN7IcgkwHKz76OTVUgOUkMwv6DHUAUr5Q3dOkgqL0JjlJYsV8A==
-X-Received: by 2002:a05:6512:2345:b0:549:5c5f:c0c0 with SMTP id 2adb3069b0e04-54a03cf6b13mr284125e87.41.1742226765325;
-        Mon, 17 Mar 2025 08:52:45 -0700 (PDT)
-Received: from mva-rohm ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-549ba8a92f3sm1342796e87.237.2025.03.17.08.52.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Mar 2025 08:52:44 -0700 (PDT)
-Date: Mon, 17 Mar 2025 17:52:39 +0200
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-To: Matti Vaittinen <mazziesaccount@gmail.com>,
-	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Matti Vaittinen <mazziesaccount@gmail.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Paul Elder <paul.elder@ideasonboard.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v8 10/10] media: thp7312: Use helper for iterating named
- child nodes
-Message-ID: <ecb1a801749418c8b6e451b5bd4161057a3a3077.1742225817.git.mazziesaccount@gmail.com>
-References: <cover.1742225817.git.mazziesaccount@gmail.com>
+	s=arc-20240116; t=1742226843; c=relaxed/simple;
+	bh=n5wYDqdGMEJRH5NUhJc+2NwvLbn09ZJbYxSxcI8GrSw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=J8+qUq4L7mN6U+2IXNdMOizXKWWe+tzuemRbau/U0wzX/P92s8e5pd8ZhRF0cpotBmcUHXVwVyPlMeV48Cfja58qImUF0CmSJ3/A8pq83ZWxcH1SxOGYd13P+GfZjTD609Fmf10vvKQiHHDmav7mdzMbs98BUcyybKFkK5WFeVE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=pass (1024-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=J7l8RECT; arc=none smtp.client-ip=185.138.42.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antheas.dev
+Received: from localhost.localdomain (unknown [IPv6:2a05:f6c2:511b:0:cbc0:999f:73ad:33bd])
+	by linux1587.grserver.gr (Postfix) with ESMTPSA id 57FAD2E09477;
+	Mon, 17 Mar 2025 17:53:55 +0200 (EET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=antheas.dev;
+	s=default; t=1742226837;
+	bh=VRDj7bi2CG45dn9CIeYEDKL2Bxp5rzeEmni4go+yChY=; h=From:To:Subject;
+	b=J7l8RECT3LwTkTZCnQpDsX+YU0E2gH9nLSLP35bTBWJ4C95UWmDPG4DsYhawQVUgS
+	 tyqBN/WKdf3tfV2uNNARQOGIEz9CrNml1IpN8xl4V4VmCa3B3ITSTdwrsChjwp5N1v
+	 fUwyXgc1y9p7M5dsvMukUZZHdgrFn5nJFXz1QdCc=
+Authentication-Results: linux1587.grserver.gr;
+	spf=pass (sender IP is 2a05:f6c2:511b:0:cbc0:999f:73ad:33bd) smtp.mailfrom=lkml@antheas.dev smtp.helo=localhost.localdomain
+Received-SPF: pass (linux1587.grserver.gr: connection is authenticated)
+From: Antheas Kapenekakis <lkml@antheas.dev>
+To: platform-driver-x86@vger.kernel.org
+Cc: linux-hwmon@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	Guenter Roeck <linux@roeck-us.net>,
+	Jean Delvare <jdelvare@suse.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Joaquin Ignacio Aramendia <samsagax@gmail.com>,
+	Derek J Clark <derekjohn.clark@gmail.com>,
+	Kevin Greenberg <kdgreenberg234@protonmail.com>,
+	Joshua Tam <csinaction@pm.me>,
+	Parth Menon <parthasarathymenon@gmail.com>,
+	Eileen <eileen@one-netbook.com>,
+	linux-kernel@vger.kernel.org,
+	sre@kernel.org,
+	linux@weissschuh.net,
+	Antheas Kapenekakis <lkml@antheas.dev>
+Subject: [PATCH v5 00/13] hwmon: (oxpsensors) Add devices, features,
+ fix ABI and move to platform/x86
+Date: Mon, 17 Mar 2025 16:53:36 +0100
+Message-ID: <20250317155349.1236188-1-lkml@antheas.dev>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="xMS6GVxvdFtwhp2p"
-Content-Disposition: inline
-In-Reply-To: <cover.1742225817.git.mazziesaccount@gmail.com>
+Content-Transfer-Encoding: 8bit
+X-PPP-Message-ID: 
+ <174222683684.22311.8452196421546063515@linux1587.grserver.gr>
+X-PPP-Vhost: antheas.dev
+X-Virus-Scanned: clamav-milter 0.103.11 at linux1587.grserver.gr
+X-Virus-Status: Clean
 
+This four part series updates the oxpsensors module to bring it in line
+with its Windows OneXPlayer counterpart. First, it adds support for all
+2024, 2025 OneXPlayer handhelds and their special variants. Then, it moves
+the module to platform/x86 to allow for including more EC features.
 
---xMS6GVxvdFtwhp2p
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Then, it adds the new charge limiting and bypass features that were first
+introduced in the X1 and retrofit to older OneXFly variants and for
+controlling the turbo led found in the X1 models. For Bypass, it adds a new
+charge_behaviour variant called inhibit-charge-s0.
 
-Slightly simplify code iterating the child nodes with specific names
-using the new fwnode_for_each_available_named_child_node().
+Finally, it performs a minor refactor by moving around switch statements
+into their own functions, in order to allow for fixing the pwm1_enable ABI
+in the final patch. Currently, pwm1_enable sets the fan to auto with the
+value 0 and allows manual control with the value 1. This patch makes it
+so 0 sets the fan to full speed, 1 sets the fan to manual control, and
+2 sets the fan to auto. This requires both setting enable and the fan
+speed when the enable sysfs is written to as 0, hence the refactor.
 
-Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+As this is a minor ABI break and there is userspace software relying
+on this previous behavior, the last patch also changes the /name of the
+hwmon endpoint to "oxp_ec" from "oxpec" (mirroring WMI module conventions)
+such that userspace software that relied on the previous behavior can be
+retrofit to the new kernel while enabling correct functionality on old
+and new kernels. Failing that, software that is not updated will just
+stop controlling the fans, ensuring no malignant behavior.
+
 ---
-Revision history:
-v6 =3D>:
- - No changes
-v5 =3D> v6:
- - New patch
+V4: https://lore.kernel.org/all/20250311165406.331046-1-lkml@antheas.dev/
+V3: https://lore.kernel.org/all/20250309112114.1177361-1-lkml@antheas.dev/
 
-NOTE: This patch depends on the patch:
-[2/10] "property: Add functions to iterate named child"
+Changes since V4:
+    - Fix nits by Hans
+    - change inhibit-charge-s0 to inhibit-charge-awake
+    - use devm_battery_hook_register and power_supply_unregister_extension
+      (based on cros driver)
+    - move charge behavior patches to the end to make the rest of the series
+      easier to merge
+    - CC platform-x86 and power maintainers
 
-Compile-tested only!
----
- drivers/media/i2c/thp7312.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+Changes since V3:
+    - Fix nits by Derek
+    - Remove the hwmon documentation as it is not required for platform
+      drivers (suggested by Guenter)
+    - Add ACPI_BATTERY and HWMON depends to Kconfig
+      (reported by kernel robot)
+    - Homogenize driver into following reverse xmas convention
 
-diff --git a/drivers/media/i2c/thp7312.c b/drivers/media/i2c/thp7312.c
-index 8852c56431fe..104754b2ace2 100644
---- a/drivers/media/i2c/thp7312.c
-+++ b/drivers/media/i2c/thp7312.c
-@@ -2067,11 +2067,9 @@ static int thp7312_parse_dt(struct thp7312_device *t=
-hp7312)
- 		return -EINVAL;
- 	}
-=20
--	fwnode_for_each_available_child_node(sensors, node) {
--		if (fwnode_name_eq(node, "sensor")) {
--			if (!thp7312_sensor_parse_dt(thp7312, node))
--				num_sensors++;
--		}
-+	fwnode_for_each_available_named_child_node(sensors, node, "sensor") {
-+		if (!thp7312_sensor_parse_dt(thp7312, node))
-+			num_sensors++;
- 	}
-=20
- 	fwnode_handle_put(sensors);
---=20
+Changes since V2:
+    - Add ack by Guenter, move platform move patch to be third (not first
+      to allow for device support backport to lts kernels)
+    - Rework patch text, especially in the refactor patches as per Derek
+    - Change bypass to use charge_behaviour instead of charge_type, as that
+      ABI supports capability detection and is more appropriate
+    - Move battery attach to probe instead of init
+    - Fix bug where reading tt_led would instead use the turbo register
+
+Changes since V1:
+    - Add X1 Pro, F1 Pro variants
+    - Fix minor typo in initial patches
+    - Convert oxp-sensors into a platform driver, as it is no longer
+      considered a hwmon driver.
+    - Add sysfs documentation and myself to the MAINTAINERS file
+    - Update documentation to state that this is the OneXPlayer/AOKZOE
+      platform driver, and that support for Ayaneo/OPI is provided until
+      they gain their own platform driver.
+
+Antheas Kapenekakis (13):
+  hwmon: (oxp-sensors) Distinguish the X1 variants
+  hwmon: (oxp-sensors) Add all OneXFly variants
+  platform/x86: oxpec: Move hwmon/oxp-sensors to platform/x86
+  ABI: testing: add tt_toggle and tt_led entries
+  platform/x86: oxpec: Rename ec group to tt_toggle
+  platform/x86: oxpec: Add turbo led support to X1 devices
+  platform/x86: oxpec: Move pwm_enable read to its own function
+  platform/x86: oxpec: Move pwm value read/write to separate functions
+  platform/x86: oxpec: Move fan speed read to separate function
+  platform/x86: oxpec: Adhere to sysfs-class-hwmon and enable pwm on 2
+  platform/x86: oxpec: Follow reverse xmas convention for tt_toggle
+  power: supply: add inhibit-charge-awake to charge_behaviour
+  platform/x86: oxpec: Add charge threshold and behaviour to OneXPlayer
+
+ Documentation/ABI/testing/sysfs-class-power   |  11 +-
+ Documentation/ABI/testing/sysfs-platform-oxp  |  26 +
+ Documentation/hwmon/index.rst                 |   2 +-
+ Documentation/hwmon/oxp-sensors.rst           |  89 ---
+ MAINTAINERS                                   |   7 +-
+ drivers/hwmon/Kconfig                         |  11 -
+ drivers/hwmon/Makefile                        |   1 -
+ drivers/platform/x86/Kconfig                  |  13 +
+ drivers/platform/x86/Makefile                 |   3 +
+ .../oxp-sensors.c => platform/x86/oxpec.c}    | 628 ++++++++++++++----
+ drivers/power/supply/power_supply_sysfs.c     |   1 +
+ drivers/power/supply/test_power.c             |   1 +
+ include/linux/power_supply.h                  |   1 +
+ 13 files changed, 542 insertions(+), 252 deletions(-)
+ create mode 100644 Documentation/ABI/testing/sysfs-platform-oxp
+ delete mode 100644 Documentation/hwmon/oxp-sensors.rst
+ rename drivers/{hwmon/oxp-sensors.c => platform/x86/oxpec.c} (52%)
+
+
+base-commit: 4701f33a10702d5fc577c32434eb62adde0a1ae1
+-- 
 2.48.1
 
-
---xMS6GVxvdFtwhp2p
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEIx+f8wZb28fLKEhTeFA3/03aocUFAmfYRUcACgkQeFA3/03a
-ocWgSAgAnpPv8dWlx1uYpTGvnhRGyaLoVRhyW0lJ96uonnfocB4S9FpfSX4ptNMy
-XUYuGNjknUR5rOzpBdnjYAWXHVgAoBiujIkB+t3ogxXsdHvw+p54wvsKYWG52USd
-SbqosGTZRU1tC8+SG5zWcA/aYg5zn5n4rxH86UKLV1djkuH6V7BLIdS/xhX49jWQ
-gq2TvftieqYIalhv8uSA+S9oTKB1dIkI6iYNH310+V8NKwVY8v8D9MJKH5CP15I8
-1A+rIsbWThFEPpwGlrGAKaHQDjawS0rFbmuZAYCMuVvNNfHPjTbrnHsiZzUoy14F
-+rBBhw3eqpdJ0AO0OZZ83LFxItR1pg==
-=FnX6
------END PGP SIGNATURE-----
-
---xMS6GVxvdFtwhp2p--
 
