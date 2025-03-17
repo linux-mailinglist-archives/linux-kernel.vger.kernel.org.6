@@ -1,184 +1,123 @@
-Return-Path: <linux-kernel+bounces-563881-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563882-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1CAEA64A0B
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:33:09 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7A31A649D7
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:29:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E554C188C4AC
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:29:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 17C2816C930
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:29:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C858236426;
-	Mon, 17 Mar 2025 10:28:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1AB722F155;
+	Mon, 17 Mar 2025 10:29:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cueQOBAa"
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CzKNJU91"
+Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1BB42253AE;
-	Mon, 17 Mar 2025 10:28:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75F06219A67
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 10:29:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742207330; cv=none; b=tshjFnhIwxFQXCf/gAcmHOb3Jr0s1hIksnjGJdhmpNcEHQeCshfrPogp64nUjfvUnT7TS0cAZBX0EGyLoicuIP+hHeSYPvnIgLyeP//gJzG/IXcvPC4dKf+v/HgtLcM0I8q2+L2fKqLXKuw+MOPD+WIMEGzS68u/PrFiqdfedn8=
+	t=1742207363; cv=none; b=qJd3qCoxHcuOb8rx3wUFblIs5zVMp8TMUR6Oct25ITIXcJd7ZTPmMt4IeHLoaHR+zp/lCPqWqwSh689jRmYWEfCyZ9BcTe3W7Ed4EmxehA06p8hegJe9WoAAVR8zKA3VYNE4AX2wIAfCXrH+xKI1OiidVHqen4M8tr2G8K33jAQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742207330; c=relaxed/simple;
-	bh=L34jB4X9J4PZF6KWyGeB6Jx7x+Zl35dwlBDiykQHLjY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NCB+f3whp8y94maCL1wlBzksocomdmZSlLhfxExiNmFHbrYaitxoBEO4rrF+S+E8wyekuSfIRAirizQrceXCMrMc2PxfWnByG/ITsfoYJV2jZF9P9UeILZs52lf5JuNxR7yt+JOuynR8wLD7rfO0d+xT/5oxa6D2zHwUV8ROhHo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cueQOBAa; arc=none smtp.client-ip=209.85.208.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-30bf1d48843so40602361fa.2;
-        Mon, 17 Mar 2025 03:28:48 -0700 (PDT)
+	s=arc-20240116; t=1742207363; c=relaxed/simple;
+	bh=BmHlcVeyDTGath6xJ5BkH3jTeyFsKHcpnCcAQlKKzB0=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=euPj7rGATezTs/sQFMatmvq2i6KjRhMwc/riOgsebMrzM025pJBZf0/enXagWKC6sYB9/vXgkbmSHdzPQfnU8Q5Ng0CWfhtUepUFsXmsZxoIvuzhBYBPH/1V8WMBybrmLjp4ex9Ho9tNk+YM0ESqPUdLOzVmXGLkCladMdXhl9I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=CzKNJU91; arc=none smtp.client-ip=209.85.128.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-438da39bb69so15961585e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 03:29:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742207327; x=1742812127; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yX6QzfcRz1cLG12S1tGWCTgUvcgx+pPDbW34AvRgEOc=;
-        b=cueQOBAaRPwNs46et8k80dwvTwRNQ6UTEwqd/pqjfs/6z1KGK4AGL3qEJeCYwmwhNW
-         8r03DymCUcqy3HLfad5BxDyx/rFzxjcPVECkh7jKLLL2Yjbpffg6KTjHZzWVdburXq8d
-         9RtswQU4SpaY/Mffs+/3ySW1QOdFUL15p7seYIkzM9zJLhr+NOXUESWL3rp7dAlV/urp
-         /Ua5cFbwoc9h8QqvRl3MR87JK7oyfrnBbB583vPftXtRKBHfu4Xjat6KAJEtHHd8stXi
-         cJufQLv8Cqvm8eIMHRwWtNpo1XXnO3nT18aJFcJdzIDrQYiGxTg5z4nNWCXAWLsLQ75u
-         OtqA==
+        d=google.com; s=20230601; t=1742207360; x=1742812160; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=yZNMaIMiKoZDo5cQ6GyfS8+tsfIDXP/+Z/RHe17Imqk=;
+        b=CzKNJU91Ku7SQqzYR9j+CnBmPiR213fxwdeYYnpiCP2UJq1XATNMMqp114S55tLZCK
+         FYgu856YDGjuiJXK3UOfgcpaOWQqLBONd6PjeZHTkm75xIOJvpJH8mDDebGiUrWLJci1
+         bOeb1sdiJWLiw+G8kwpSrWM+gEVL9sgBCnnNauZE0kYob//9LzYJRKbA6TwFsmcy4n+w
+         w8Blc0GWXkRvlXMRKaYvrnzN/3H+kicsYFPsgyOq8CgH4QMV7tHds4QuogkXb0B/vw6R
+         +sbffl3QwUmTtGUQOjCO0KTTk1FB0HA1Be+1SNLfRFS0W/APSs7jhc8jMTTiHjlGWXBR
+         dDyQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742207327; x=1742812127;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yX6QzfcRz1cLG12S1tGWCTgUvcgx+pPDbW34AvRgEOc=;
-        b=H8+qFgFRwrOrckrMg36xHZxX1L4SOZBviJbvpXIUUysE99pEUkTcM/2n6pcH4BcNEE
-         MoR3+5IGUtU0BU48TAufffUbAQt6EVYJGO3XLvtYQAnSPCzoViAcwNbFR8QTmn0knaBJ
-         fd6bQ7VX4NhiSDrvlzWqRdnR3J3rSjzCJxxJ2EMx8KBpeQYarGB0tSKpArbNzzFyZyEI
-         gu5iSDBqX+rSLhBlBiL8Ls2u+W1xo/lSudiyvLZXQ3S9uqUhz77Ez7aFuTQJsP33a7xb
-         6VuQ+u6zeL2s1Ppff15o0S3ob8Da5Zvg5NhblOZ62dqdrK2SBZpLxWX9fv7Dhup5pB/z
-         PHhA==
-X-Forwarded-Encrypted: i=1; AJvYcCWij3oanz+1mBDdHhODw+sqE0wZIFW9PlGSQlbNkelQLFwoT1SzDvZausCyXJJ/HSli/HrR/KpoVwAHyBF7JFMgCQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7v/xNBSJ9N+hX7m7Jq6L+cAA16jC8yKD+bOCl7zVX0h+A2NB9
-	9gLort6n11NjBJ+EZwnCSMoTfznqbYDWCGBPI2oRvbGwWXReGdoIq9O2KohgeBxsZbdFG14Esbp
-	l6atbCVOZZq9cfV33FfSbf5DYdN685jcs
-X-Gm-Gg: ASbGnctjYrOdNoLgFC7PzzzORbPSO7UjX7nmV0JPjz0VeRNkxYMBVYESN8JM9+bdNIf
-	E3xZv5qLwAMG7UQCCOyPW974naNTAvozJsdupU6lnT2nbGH+5/L3pusA3IgcainOcZ1PtsqdiuT
-	5uBrfB3KfRpSVORbAOpkBH8hICoA==
-X-Google-Smtp-Source: AGHT+IGtJsdfASo1y5f5AiQd1PN5VoHhf+fGkskM+nRARafy/0ttN4WxuSfGQwNtc4VqigOk0W1XJfkhJR0TWa59A1w=
-X-Received: by 2002:a05:651c:210a:b0:30a:2a8a:e4b5 with SMTP id
- 38308e7fff4ca-30c4a8d1e1amr60541301fa.27.1742207326612; Mon, 17 Mar 2025
- 03:28:46 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1742207360; x=1742812160;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=yZNMaIMiKoZDo5cQ6GyfS8+tsfIDXP/+Z/RHe17Imqk=;
+        b=cVNdbLCA8cTsWMD76unJ0YCsyvqE5adZHV9d/4g8qm5u+/nrWtDKa7kmYWkw5WDWKJ
+         yZH7FxkiwR+Qm38GcL/FVGgUtdZofrsMwWl5ToxdPwoP0Q0mIJU84ALN5L3NGwVPTt1S
+         uKJ6A1rHL8luKss0GACvXHbVoWWd1wZZSVldglW3Y/QVxdricvHai5ERw0O6fT484isu
+         6v+vXA+Xlbq0sJLwBB6d8a7mMVSIkzAAEhowcy0SKVYAIRAPiZJK+vVK2eGSw7i4kKJl
+         ygyrOi1GflqiXJ+F4rq1XZRAk+sAJq/BTLyVMUyo4Cg+K6vkdl+zRmrjjONjumK8H4qc
+         ifmQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWoxmqk56sjAN029ATk0olKGO65DjBdIkFunSHxd2Jgc3IaR64fnige0ZUngnqhFQbYEA9IwM8j+k8sh/w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXInoa6Wtnc+BAkG7FCvAMOSRMTlb5oial8yMIA53stCMuoyqP
+	feymwOUYbd2jB4SPNUF7VZDyTKaNcJabSN19GzeXQFExtf1RaCJQOst5wpihZX8L0TAYIyLx7zo
+	3q2x19jocOEaDOQ==
+X-Google-Smtp-Source: AGHT+IFN0mg3rfLnL9s+jfrXP1fPxsq6jKqq7a5CxuQ9zdvV/QwOOR7cfyj2a84t+UVdZyooaIvYicO+MWpTJRI=
+X-Received: from wmbfs18.prod.google.com ([2002:a05:600c:3f92:b0:43c:e51c:1a5a])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:3b84:b0:43c:fcb1:528a with SMTP id 5b1f17b1804b1-43d1ec622c1mr109294525e9.6.1742207359884;
+ Mon, 17 Mar 2025 03:29:19 -0700 (PDT)
+Date: Mon, 17 Mar 2025 10:29:17 +0000
+In-Reply-To: <20250317081351.2503049-1-kunwu.chan@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250313130251.383204-1-ubizjak@gmail.com> <174188823430.14745.17591986001259957573.tip-bot2@tip-bot2>
- <20250317101415.GBZ9f198PAh90nMWDf@fat_crate.local>
-In-Reply-To: <20250317101415.GBZ9f198PAh90nMWDf@fat_crate.local>
-From: Uros Bizjak <ubizjak@gmail.com>
-Date: Mon, 17 Mar 2025 11:28:58 +0100
-X-Gm-Features: AQ5f1Jr75R0dKtWfeXD10vh_mXTYQbuMEKe0rum7dfiueZyr8dno-rCoH-AIJbc
-Message-ID: <CAFULd4b-sZucEtvx19==5wcOfOCzj5fuZ2SHS7ZMboZQXdVycg@mail.gmail.com>
-Subject: Re: [tip: x86/fpu] x86/fpu: Use XSAVE{,OPT,C,S} and XRSTOR{,S}
- mnemonics in xstate.h
-To: Borislav Petkov <bp@alien8.de>
-Cc: linux-kernel@vger.kernel.org, linux-tip-commits@vger.kernel.org, 
-	Ingo Molnar <mingo@kernel.org>, Andy Lutomirski <luto@kernel.org>, Brian Gerst <brgerst@gmail.com>, 
-	"H. Peter Anvin" <hpa@zytor.com>, Dave Hansen <dave.hansen@linux.intel.com>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, x86@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+References: <20250317081351.2503049-1-kunwu.chan@linux.dev>
+Message-ID: <Z9f5fehO186xoNAV@google.com>
+Subject: Re: [PATCH] rust: sync: optimize rust symbol generation for CondVar
+From: Alice Ryhl <aliceryhl@google.com>
+To: Kunwu Chan <kunwu.chan@linux.dev>
+Cc: ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com, 
+	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me, 
+	a.hindborg@kernel.org, tmgross@umich.edu, dakr@kernel.org, nathan@kernel.org, 
+	nick.desaulniers+lkml@gmail.com, morbo@google.com, justinstitt@google.com, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	llvm@lists.linux.dev, Kunwu Chan <kunwu.chan@hotmail.com>, 
+	Grace Deng <Grace.Deng006@gmail.com>
+Content-Type: text/plain; charset="utf-8"
 
-On Mon, Mar 17, 2025 at 11:14=E2=80=AFAM Borislav Petkov <bp@alien8.de> wro=
-te:
->
-> On Thu, Mar 13, 2025 at 05:50:34PM -0000, tip-bot2 for Uros Bizjak wrote:
-> > The following commit has been merged into the x86/fpu branch of tip:
-> >
-> > Commit-ID:     2883b4c2169a435488f7845e1b6fdc6f3438c7c6
-> > Gitweb:        https://git.kernel.org/tip/2883b4c2169a435488f7845e1b6fd=
-c6f3438c7c6
-> > Author:        Uros Bizjak <ubizjak@gmail.com>
-> > AuthorDate:    Thu, 13 Mar 2025 14:02:27 +01:00
-> > Committer:     Ingo Molnar <mingo@kernel.org>
-> > CommitterDate: Thu, 13 Mar 2025 18:36:52 +01:00
-> >
-> > x86/fpu: Use XSAVE{,OPT,C,S} and XRSTOR{,S} mnemonics in xstate.h
-> >
-> > Current minimum required version of binutils is 2.25, which
-> > supports XSAVE{,OPT,C,S} and XRSTOR{,S} instruction mnemonics.
-> >
-> > Replace the byte-wise specification of XSAVE{,OPT,C,S}
-> > and XRSTOR{,S} with these proper mnemonics.
-> >
-> > No functional change intended.
-> >
-> > Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
-> > Signed-off-by: Ingo Molnar <mingo@kernel.org>
-> > Cc: Andy Lutomirski <luto@kernel.org>
-> > Cc: Brian Gerst <brgerst@gmail.com>
-> > Cc: H. Peter Anvin <hpa@zytor.com>
-> > Cc: Dave Hansen <dave.hansen@linux.intel.com>
-> > Cc: Linus Torvalds <torvalds@linux-foundation.org>
-> > Link: https://lore.kernel.org/r/20250313130251.383204-1-ubizjak@gmail.c=
-om
-> > ---
-> >  arch/x86/kernel/fpu/xstate.h | 27 +++++++++++++--------------
-> >  1 file changed, 13 insertions(+), 14 deletions(-)
-> >
-> > diff --git a/arch/x86/kernel/fpu/xstate.h b/arch/x86/kernel/fpu/xstate.=
-h
-> > index aa16f1a..1418423 100644
-> > --- a/arch/x86/kernel/fpu/xstate.h
-> > +++ b/arch/x86/kernel/fpu/xstate.h
-> > @@ -94,18 +94,17 @@ static inline int update_pkru_in_sigframe(struct xr=
-egs_state __user *buf, u64 ma
-> >  /* XSAVE/XRSTOR wrapper functions */
-> >
-> >  #ifdef CONFIG_X86_64
-> > -#define REX_PREFIX   "0x48, "
-> > +#define REX_SUFFIX   "64"
-> >  #else
-> > -#define REX_PREFIX
-> > +#define REX_SUFFIX
-> >  #endif
-> >
-> > -/* These macros all use (%edi)/(%rdi) as the single memory argument. *=
-/
-> > -#define XSAVE                ".byte " REX_PREFIX "0x0f,0xae,0x27"
-> > -#define XSAVEOPT     ".byte " REX_PREFIX "0x0f,0xae,0x37"
-> > -#define XSAVEC               ".byte " REX_PREFIX "0x0f,0xc7,0x27"
-> > -#define XSAVES               ".byte " REX_PREFIX "0x0f,0xc7,0x2f"
-> > -#define XRSTOR               ".byte " REX_PREFIX "0x0f,0xae,0x2f"
-> > -#define XRSTORS              ".byte " REX_PREFIX "0x0f,0xc7,0x1f"
-> > +#define XSAVE                "xsave" REX_SUFFIX " %[xa]"
-> > +#define XSAVEOPT     "xsaveopt" REX_SUFFIX " %[xa]"
-> > +#define XSAVEC               "xsavec" REX_SUFFIX " %[xa]"
-> > +#define XSAVES               "xsaves" REX_SUFFIX " %[xa]"
-> > +#define XRSTOR               "xrstor" REX_SUFFIX " %[xa]"
-> > +#define XRSTORS              "xrstors" REX_SUFFIX " %[xa]"
-> >
-> >  /*
-> >   * After this @err contains 0 on success or the trap number when the
-> > @@ -114,10 +113,10 @@ static inline int update_pkru_in_sigframe(struct =
-xregs_state __user *buf, u64 ma
-> >  #define XSTATE_OP(op, st, lmask, hmask, err)                         \
-> >       asm volatile("1:" op "\n\t"                                     \
-> >                    "xor %[err], %[err]\n"                             \
-> > -                  "2:\n\t"                                           \
-> > +                  "2:\n"                                             \
-> >                    _ASM_EXTABLE_TYPE(1b, 2b, EX_TYPE_FAULT_MCE_SAFE)  \
-> >                    : [err] "=3Da" (err)                                =
- \
-> > -                  : "D" (st), "m" (*st), "a" (lmask), "d" (hmask)    \
-> > +                  : [xa] "m" (*(st)), "a" (lmask), "d" (hmask)       \
->
-> This [xa] needs documenting in the comment above this.
->
-> What does "xa" even mean?
+On Mon, Mar 17, 2025 at 04:13:50PM +0800, Kunwu Chan wrote:
+> From: Kunwu Chan <kunwu.chan@hotmail.com>
+> 
+> When build the kernel using the llvm-18.1.3-rust-1.85.0-x86_64
+> with ARCH=arm64, the following symbols are generated:
+> 
+> $nm vmlinux | grep ' _R'.*CondVar | rustfilt
+> ... T <kernel::sync::condvar::CondVar>::notify_all
+> ... T <kernel::sync::condvar::CondVar>::notify_one
+> ... T <kernel::sync::condvar::CondVar>::notify_sync
+> ... T <kernel::sync::condvar::CondVar>::new::{closure#0}::{closure#0}::panic_cold_explicit
+> ... T <kernel::sync::condvar::CondVar>::new::{closure#0}::{closure#0}::panic_cold_explicit
+> ... T <kernel::sync::poll::PollCondVar>::new::{closure#0}::{closure#0}::panic_cold_explicit
+> ... T <kernel::sync::poll::PollCondVar as core::ops::drop::Drop>::drop
+> 
+> These notify* symbols are trivial wrappers around the C functions
+> __wake_up and __wake_up_sync.
+> It doesn't make sense to go through a trivial wrapper for these
+> functions, so mark them inline.
 
-xsave area.
+You don't need to send a new version just for this, but please format
+the paragraphs better in the future. For example:
 
-Uros.
+The notify* symbols are trivial wrappers around the C functions
+__wake_up and __wake_up_sync. It doesn't make sense to go through a
+trivial wrapper for these functions, so mark them inline.
+
+> Link: https://github.com/Rust-for-Linux/linux/issues/1145
+> Suggested-by: Alice Ryhl <aliceryhl@google.com>
+> Co-developed-by: Grace Deng <Grace.Deng006@Gmail.com>
+> Signed-off-by: Grace Deng <Grace.Deng006@Gmail.com>
+> Signed-off-by: Kunwu Chan <kunwu.chan@hotmail.com>
+
+Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+
 
