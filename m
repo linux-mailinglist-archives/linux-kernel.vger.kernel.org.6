@@ -1,112 +1,118 @@
-Return-Path: <linux-kernel+bounces-563885-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563886-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38A2CA64A25
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:36:09 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AB9FA64A18
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:34:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1AC7B3A8E99
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:31:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 211AA1897035
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:32:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FEFB21A42C;
-	Mon, 17 Mar 2025 10:31:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22294226CF0;
+	Mon, 17 Mar 2025 10:32:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="aXlsJW0f"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (1024-bit key) header.d=rosa.ru header.i=@rosa.ru header.b="kVRyhvY9"
+Received: from forward206b.mail.yandex.net (forward206b.mail.yandex.net [178.154.239.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79A9838B
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 10:31:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3690222257F;
+	Mon, 17 Mar 2025 10:31:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742207481; cv=none; b=At9EMfrgEiXxtN85y+bxMQfhoPkRsgHpkJOUJz9QMbFBqAPG0av2W9o8Bzh2jJN2hIHTz5n5sSsmSbG5cQgt0jZWwaK+b4UGd8Qzv0pVW8Z8WnSwFBrrUqTm5n5eDA7VY1N3KKy9UOB/la81EZeF58ds7qlOZrdWBaQjcnCDHEQ=
+	t=1742207526; cv=none; b=Suh+E+aGUWGwccMUtZ6PY1eARhaNdQABh+aVdVW75Z1GeOlQrz06IT9fihNcfYTGeat42qO0+AJqR1q1blrUmdAsoNM45F5D3zt7OOZQVEgZj6tjqL6ZGduLntAsTbMrPcajEGzippGjtdZ53wmLTTjCOuMRY1vLhStcLHrfsH8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742207481; c=relaxed/simple;
-	bh=p1kK8xRdVkgvTjsOb10aZe0DSNAANoFdjSyf/TKkmAA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=epMMgEc6YcmfrZbhi8nJ2609PqC9lBC6fQxN+GpDKGvB4A+1K/ZbbufSeBibNigdPMMCkcCpRVhTXh3bihVvrFN2qNAoXWGHjw+20/4+OvdacjAht0Hl7JZrv6wI2KpRsP0WStgn+Df82aLNikJeFllcLLu2xTUHDDWQ0VDL4Wc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=aXlsJW0f; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=+fhTvmuo/XJpQAoRNZixWJv0sOe/uwdvXPJsR9JrbwE=; b=aXlsJW0f1pTvcXWHh9oZMonMTT
-	t89FJZPqAHSUT8JTE6uADzaKRWPF5c8sfZYutvQHdtrX4/27L/KMFMBEUNlV6SVwjtOiNnjZ5nxYu
-	dDIM2dEFVEfZDtPzATge6e9V6606sQTE8cUjGr+qqlyQsmVvnrc+KYPefDUDqri9ZeKdrEA56NfvJ
-	Cg0XoNI8yXES9DGD/1ftoQPiYPJdVcAvRAjUnveSBrrgNuOYutW4ajNkpldhM5CF6cQoAlIU97Fo0
-	3+NlElpDleIRBmw7N3dXhDUzZlnnB3B9zB87b7D0oAs0C1/CClMN4sRPQQgxBT4h58mfjLhzfRCOY
-	+/Sv5uWQ==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tu7kM-00000008V67-22Mz;
-	Mon, 17 Mar 2025 10:31:02 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 6F141300783; Mon, 17 Mar 2025 11:31:01 +0100 (CET)
-Date: Mon, 17 Mar 2025 11:31:01 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Joel Fernandes <joelagnelf@nvidia.com>
-Cc: linux-kernel@vger.kernel.org, Andrea Righi <arighi@nvidia.com>,
-	Tejun Heo <tj@kernel.org>, Ingo Molnar <mingo@redhat.com>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	David Vernet <void@manifault.com>,
-	Changwoo Min <changwoo@igalia.com>,
-	Luigi De Matteis <ldematteis123@gmail.com>, paulmck@kernel.org,
-	boqun.feng@gmail.com
-Subject: Re: [PATCH RFC 3/8] sched/ext: Add a DL server for sched_ext tasks
-Message-ID: <20250317103101.GC34541@noisy.programming.kicks-ass.net>
-References: <20250315022158.2354454-1-joelagnelf@nvidia.com>
- <20250315022158.2354454-4-joelagnelf@nvidia.com>
- <20250315072225.GG36322@noisy.programming.kicks-ass.net>
- <3b244939-6d55-4d86-8b77-a9a7629f8239@nvidia.com>
+	s=arc-20240116; t=1742207526; c=relaxed/simple;
+	bh=jET+Zyh1y8nrRIS3OXbjRZuZGNjL5oCFgBMDHxziibQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pC0Z2/J28q7wMauzv4BZM2a3zFhaVKo82J0xJnhvb9QowT4IiTUElLJ1y2t1Mri++t7Zl78IYgLVqP498sQR5mgVGYQOW4EEHAyC8mkGDV7d7/6oP0CviZu830c9duCzIKXj7MZ7wyzaSsvVLv+jv3pZDFcMXeDdFmfI+8KmJss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rosa.ru; spf=pass smtp.mailfrom=rosa.ru; dkim=pass (1024-bit key) header.d=rosa.ru header.i=@rosa.ru header.b=kVRyhvY9; arc=none smtp.client-ip=178.154.239.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rosa.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rosa.ru
+Received: from forward102b.mail.yandex.net (forward102b.mail.yandex.net [IPv6:2a02:6b8:c02:900:1:45:d181:d102])
+	by forward206b.mail.yandex.net (Yandex) with ESMTPS id DBE6B63C27;
+	Mon, 17 Mar 2025 13:31:50 +0300 (MSK)
+Received: from mail-nwsmtp-smtp-production-main-95.iva.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-95.iva.yp-c.yandex.net [IPv6:2a02:6b8:c0c:1197:0:640:483c:0])
+	by forward102b.mail.yandex.net (Yandex) with ESMTPS id ADAA960D7F;
+	Mon, 17 Mar 2025 13:31:42 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-95.iva.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id fVEFdrTLmCg0-Elyelz8t;
+	Mon, 17 Mar 2025 13:31:42 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rosa.ru; s=mail;
+	t=1742207502; bh=BMnk+T7PyZ+YAEEVJakHyC7Oto5jKGTwpp7qVFsesHU=;
+	h=Message-ID:Date:Cc:Subject:To:From;
+	b=kVRyhvY9di75KJ+gGbP/RlmdrvxsBo+RByiEIUXoOE2EUMtlOQGwgqAUi1A7npHNg
+	 4Jlw8LDpMRWemNBfRCzc2bFM+EqMAL6hUP9omH66zwXJmu8mcDWsvv9eNCQlQ51K2E
+	 w6veXbyuQLv1SzdPo5OYxrbV7hhdwC+Rn6A6whuI=
+Authentication-Results: mail-nwsmtp-smtp-production-main-95.iva.yp-c.yandex.net; dkim=pass header.i=@rosa.ru
+From: Mikhail Lobanov <m.lobanov@rosa.ru>
+To: Johannes Berg <johannes@sipsolutions.net>
+Cc: Mikhail Lobanov <m.lobanov@rosa.ru>,
+	Shaul Triebitz <shaul.triebitz@intel.com>,
+	Christophe Jaillet <christophe.jaillet@wanadoo.fr>,
+	linux-wireless@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	lvc-project@linuxtesting.org
+Subject: [PATCH v4] wifi: mac80211: check basic rates validity in sta_link_apply_parameters
+Date: Mon, 17 Mar 2025 13:31:37 +0300
+Message-ID: <20250317103139.17625-1-m.lobanov@rosa.ru>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3b244939-6d55-4d86-8b77-a9a7629f8239@nvidia.com>
+Content-Transfer-Encoding: 8bit
 
-On Sat, Mar 15, 2025 at 07:15:27PM -0400, Joel Fernandes wrote:
-> 
-> 
-> On 3/15/2025 3:22 AM, Peter Zijlstra wrote:
-> > On Fri, Mar 14, 2025 at 10:21:50PM -0400, Joel Fernandes wrote:
-> >> sched_ext currently suffers starvation due to RT. The same workload when
-> >> converted to EXT can get zero runtime if RT is 100% running, causing EXT
-> >> processes to stall. Fix it by adding a DL server for EXT.
-> > 
-> > This needs a lot more words on why you need a second server. Because I
-> > don't think you do.
-> 
-> Sure, I will add more words to the change log to explain rationale. When you say
-> "I don't think you do", do you mean that both FAIR and EXT could be served by
-> the same server? 
+When userspace sets supported rates for a new station via
+NL80211_CMD_NEW_STATION, it might send a list that's empty
+or contains only invalid values. Currently, we process these
+values in sta_link_apply_parameters() without checking the result of
+ieee80211_parse_bitrates(), which can lead to an empty rates bitmap.
 
-Yeah, because now you get two deadline entities both having a
-reservation on bandwidth. One of which is not going to be used -- this
-is not nice.
+A similar issue was addressed for NL80211_CMD_SET_BSS in commit
+ce04abc3fcc6 ("wifi: mac80211: check basic rates validity").
+This patch applies the same approach in sta_link_apply_parameters()
+for NL80211_CMD_NEW_STATION, ensuring there is at least one valid
+rate by inspecting the result of ieee80211_parse_bitrates().
 
-> If so, that will not handle the case where the system has both
-> FAIR and EXT tasks in the mix (EXT has a partial mode where certain tasks can be
-> made EXT with certain others left as FAIR) and FAIR runs 100% and starves EXT.
+Found by Linux Verification Center (linuxtesting.org) with Syzkaller.
 
-Well, you did not mention that issue, you only babbled about RT.
+Fixes: b95eb7f0eee4 ("wifi: cfg80211/mac80211: separate link params from station params")
+Signed-off-by: Mikhail Lobanov <m.lobanov@rosa.ru>
+---
+v2: Fixed the patch subject to provide a complete description.
+v3: added the missing if as Christophe Jaillet (christophe.jaillet@wanadoo.fr) noticed.
+v4: put all braces into a single if statement as Johannes Berg (johannes@sipsolutions.net) noticed.
 
-I did point out that issue with ext, and TJ said this mixed mode wasn't
-really meant to be used or somesuch.
+ net/mac80211/cfg.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-So if that's changed, this needs a separate discussion.
+diff --git a/net/mac80211/cfg.c b/net/mac80211/cfg.c
+index 9351c64608a9..b766472703b1 100644
+--- a/net/mac80211/cfg.c
++++ b/net/mac80211/cfg.c
+@@ -1908,12 +1908,12 @@ static int sta_link_apply_parameters(struct ieee80211_local *local,
+ 	}
+ 
+ 	if (params->supported_rates &&
+-	    params->supported_rates_len) {
+-		ieee80211_parse_bitrates(link->conf->chanreq.oper.width,
+-					 sband, params->supported_rates,
+-					 params->supported_rates_len,
+-					 &link_sta->pub->supp_rates[sband->band]);
+-	}
++	    params->supported_rates_len &&
++	    !ieee80211_parse_bitrates(link->conf->chanreq.oper.width,
++				      sband, params->supported_rates,
++				      params->supported_rates_len,
++				      &link_sta->pub->supp_rates[sband->band]))
++		return -EINVAL;
+ 
+ 	if (params->ht_capa)
+ 		ieee80211_ht_cap_ie_to_sta_ht_cap(sdata, sband,
+-- 
+2.47.2
 
-Also; I gotta ask, why is nvidia looking at ext ?
 
