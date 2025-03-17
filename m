@@ -1,133 +1,143 @@
-Return-Path: <linux-kernel+bounces-564401-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564404-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8686CA65426
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 15:46:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F721A6542C
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 15:47:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A3251898D55
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 14:46:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CDD951898392
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 14:47:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0159D245019;
-	Mon, 17 Mar 2025 14:44:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E723A2459D9;
+	Mon, 17 Mar 2025 14:46:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="W6M9urUR"
-Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HcN0nLDs"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 485092459FE;
-	Mon, 17 Mar 2025 14:44:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EC3D22CBFC;
+	Mon, 17 Mar 2025 14:46:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742222688; cv=none; b=Hmbd14FFQGC1wJz1OPpgWrLEMZZTQ/6CzrUR77BYhN/OafWrToyOXPheU2mWwoz0du2rv/0sSPK/Td8/Wabpdp/HLel+8SeiAJOkB3GPN5EpMQqnLeWHmm86Qb7+mGiVv7gaPkrhj37gjOtIcN962umOu6dUcPqyaS6Ojx35BU8=
+	t=1742222806; cv=none; b=ZwVBJS24b0JnUggX47t8ORF7D2tDvANH3Cnura3HsT14p+zR3cLEbxDOiIHbDnmp6okXLWOUeFpycp+qoYMKv56j/ZMvKCS6hOFe/gQy50VGmFHX5nyJ9jH2vKtEo2z0IFu4aR+eC/Bc6SrQ5iKLsFgjNKM7XGJCdfzwXuR6HwY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742222688; c=relaxed/simple;
-	bh=VkpWTCYEICFBtQwKpzObrfzZpr0tvkzC5CozTqVThw8=;
-	h=Content-Type:Date:Message-Id:Subject:Cc:From:To:Mime-Version:
-	 References:In-Reply-To; b=RXW7sfWbt6wSz/8rIPS+EKDigNGESzh44Otn7QqsvKY0FRNtYQ7ZzH0Dr1JMIYf3COnz9rq1xTVSHkx7/tiS6bRARHF0fX/1O4sq7d4Ulwt5tYSoOcCKrSZCTMeBYO7OJb5su3Q8x3R4VTiQj7/F1iJRziq6H+IzQnvaC4+Sdm8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=W6M9urUR; arc=none smtp.client-ip=217.70.183.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 77F2520580;
-	Mon, 17 Mar 2025 14:44:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1742222683;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VkpWTCYEICFBtQwKpzObrfzZpr0tvkzC5CozTqVThw8=;
-	b=W6M9urUROw0JcmJwg0uLFTceqVb2aMnrVlkiX3lY1gjOhP/3UxUQJez9m4DyvL06W/4cQV
-	JzvtW9fqe9DBvq5NlabZ/0F3qCE9JhsiE8YLFltJ/gp5r5na7PIK7zP132ukz6DZFkcB7K
-	3nYMgphUPTvJglJGgaK/DAdgMItyxD1MPqvO+AhV8RVOvdLJbcZ2j44gHe0iUkhxZP921h
-	Za/yDv/ouvlzVVchP1dOeTIygGI5KvrJTKo3YvAV/WY/L6alTmzFKEne0GN78BmfHjlj7b
-	iVIZy/ppP8C2qV2xivMwmVFkUha0fAxLWcGqiIfSrwKmwC4BQMXvdryCRszylA==
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 17 Mar 2025 15:44:42 +0100
-Message-Id: <D8IMEB2UP6KS.2GOJ4M6INKKN8@bootlin.com>
-Subject: Re: [PATCH v4 07/10] gpio: max7360: Add MAX7360 gpio support
-Cc: "Andy Shevchenko" <andriy.shevchenko@intel.com>, "Lee Jones"
- <lee@kernel.org>, "Rob Herring" <robh@kernel.org>, "Krzysztof Kozlowski"
- <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>, "Kamel Bouhara"
- <kamel.bouhara@bootlin.com>, "Linus Walleij" <linus.walleij@linaro.org>,
- "Bartosz Golaszewski" <brgl@bgdev.pl>, "Dmitry Torokhov"
- <dmitry.torokhov@gmail.com>, =?utf-8?q?Uwe_Kleine-K=C3=B6nig?=
- <ukleinek@kernel.org>, "Michael Walle" <mwalle@kernel.org>, "Mark Brown"
- <broonie@kernel.org>, "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>, "Danilo Krummrich"
- <dakr@kernel.org>, <devicetree@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
- <linux-input@vger.kernel.org>, <linux-pwm@vger.kernel.org>,
- =?utf-8?q?Gr=C3=A9gory_Clement?= <gregory.clement@bootlin.com>, "Thomas
- Petazzoni" <thomas.petazzoni@bootlin.com>
-From: "Mathieu Dubois-Briand" <mathieu.dubois-briand@bootlin.com>
-To: "Andy Shevchenko" <andy.shevchenko@gmail.com>
+	s=arc-20240116; t=1742222806; c=relaxed/simple;
+	bh=KEmS1iazSZ7MW4u0s0WffWWZI/F30vXJvZhHvLypmnE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=abbccbcLnyw+OyvafPwypjNd4Scc3Gf3EPk8u4N3XeFW+vN6uBoFjBaJcvyxrq9fYHoAqBi04RAU2DCvnm63gOifVKgSS6uRFSWiigXq7ZqAtkmX8DzJycNH4z6QcfNqhNJVNSnjSVb5H71kaB4iR3uvTw/SH/gxjmr5UKUc/c4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HcN0nLDs; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-390fdaf2897so4255071f8f.0;
+        Mon, 17 Mar 2025 07:46:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742222803; x=1742827603; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=HEE7cJguboNfIM/ImN+bEQAuxRuRsoshNhnvPdF6CRk=;
+        b=HcN0nLDs4AimQH8YzhjWDKN+y9adOGi233YcpIQ1Xq4+xeojr1emNBp9inuBnrTJtF
+         vSyxe9mmnq7RFJ+Qk/0xJ90TwQXAVWc40oNS7m5r8SbdAE1XnV752dVxUczzYT6vVKN+
+         x1qGQHM0KXQk0pthbSIS0Adt0JfPBIh3/kNIM4EL5L1TABB0/VDj4+v0yyWOuYF9+vlL
+         QLU4tSDkrj41TqjEeU9veyPiYWCtUufwwt1XVzldoz1HBpK64yXRUT8Y/b/v/R60mXWU
+         4+n9rrncSnrX1fOe2xyER6coUpr2TTbTBiAbWaAi2y/yLXheuAJ5jM/t1EjV/hPG7M+f
+         TTxw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742222803; x=1742827603;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=HEE7cJguboNfIM/ImN+bEQAuxRuRsoshNhnvPdF6CRk=;
+        b=NlfdUWAyqwhLoruDHrgJGldwtkTP+PITT/vShtid1E8fXLNZBKdSFqrpKTFU+X1he6
+         +WJrbdXsr8zbCcbU06MG9EIn4uy7hjtSVZZUJBkrddn6k4WpvcuDALV61iLSH1GiURy0
+         yhHAp1VXa2N79puW7uQIpTgJ+lCdeEbL3Ws/NE8EKKDzT82oUuZJfMmM9nNzJMB3N5E4
+         Mmv3PaC7T1b03rDIejhlDKTD7VQnGYB9Jk/5x5dytoKqMSf2faXu/ApF3qHT76SgBj+w
+         gViwprkk9zMAl0vGBOf7vf7gvT2znux5y0WnemC27uZXH2fwdNb6SeP8oB6607qTXyq1
+         trFA==
+X-Forwarded-Encrypted: i=1; AJvYcCVDJTGnZVPtyv4BVyGnig+glYy4hnrysSv5f51cmcUBLjXETxQNJu6sBfCbYMC9qhTJB37XNaQ4Y7ipXKc=@vger.kernel.org, AJvYcCWcPiUUF9q66ZKl92LgRZJQLKVW+JEJJ/CsoKii6KYNY186R8uuc3U4qWLEHgd3y1kjNzfL3zcW@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3Z/H997Dav0uWHHLSbt1HGNgcjgH/3bIQ+mKcO5gz7kEfHwLG
+	Is3W6xOYiXNwcLyHDMUy+ljoArdfVErHxSxg/8160A+eNu5VVKut
+X-Gm-Gg: ASbGncvQm96ZRw21QYePwTkW7DtXVQTVlxTasRnJCXnCKvs1p1/GdRMY2fVFumqw6Ng
+	OS5snhzzhaS1kjIekxTiRD+q6WKfoUFJwkne0dplErl+JVsVa1+909Jb/A6NxYJrxJIsrTrUYzX
+	VcMczzSBpYI8nhtIFvkFflqwhynU1EZQHs4oolWs0Vj8kjTInf7fhFjiKnMzEY8m8LD7dlloThX
+	gHd4AsFoOKBjEdAGp8y4Jv+OcspZjV8exs+WgkjNHt02GvGuLfTJ6jOgX6kmbauAbDZ4yyGPQzu
+	AESJTw09B36aGIxkzB/zSoM4uurSrDwZp4Y9fptLaU0K4w==
+X-Google-Smtp-Source: AGHT+IFivRZ2EUR5/RimYhdOCuEzRooY6An887/W/KkgBBJttW2RvsoNsxmtBckobWqWYaquB0gK1w==
+X-Received: by 2002:a05:6000:18ae:b0:391:40bd:621e with SMTP id ffacd0b85a97d-39720398fe7mr13511129f8f.44.1742222802524;
+        Mon, 17 Mar 2025 07:46:42 -0700 (PDT)
+Received: from localhost ([194.120.133.58])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-395cb7ec14bsm15130948f8f.100.2025.03.17.07.46.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Mar 2025 07:46:42 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Jani Nikula <jani.nikula@linux.intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Tony Nguyen <anthony.l.nguyen@intel.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	intel-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	intel-wired-lan@lists.osuosl.org,
+	netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] ice: make const read-only array dflt_rules static
+Date: Mon, 17 Mar 2025 14:46:06 +0000
+Message-ID: <20250317144606.478431-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: aerc 0.18.2-0-ge037c095a049
-References: <20250214-mdb-max7360-support-v4-0-8a35c6dbb966@bootlin.com>
- <20250214-mdb-max7360-support-v4-7-8a35c6dbb966@bootlin.com>
- <Z69oa8_LKFxUacbj@smile.fi.intel.com>
- <D7UOIHL2WOZP.LLGRKMILNJFU@bootlin.com>
- <Z7OXQqyPjtGgTySf@smile.fi.intel.com>
- <D8FAEPI26C8F.397VN87KK9VIO@bootlin.com>
- <Z9PikuvAR-XsYhPF@surfacebook.localdomain>
-In-Reply-To: <Z9PikuvAR-XsYhPF@surfacebook.localdomain>
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddufeeljeekucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpegtfffkufevhffvggfgofhfjgesthhqredtredtjeenucfhrhhomhepfdforghthhhivghuucffuhgsohhishdquehrihgrnhgufdcuoehmrghthhhivghurdguuhgsohhishdqsghrihgrnhgusegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpefhtdeuhfehtdekueeltdejffdtuefgueffhfeiueegleffueevvefgtedtkeegjeenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepvdgrtddumegtsgdugeemheehieemjegrtddtmeeffhgtfhemfhgstdgumeduvdeivdemvdgvjeeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgdugeemheehieemjegrtddtmeeffhgtfhemfhgstdgumeduvdeivdemvdgvjeeipdhhvghloheplhhotggrlhhhohhsthdpmhgrihhlfhhrohhmpehmrghthhhivghurdguuhgsohhishdqsghrihgrnhgusegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedvfedprhgtphhtthhopegrnhguhidrshhhvghvtghhvghnkhhosehgmhgrihhlrdgtohhmpdhrtghpthhtoheprghnughrihihrdhshhgvvhgth
- hgvnhhkohesihhnthgvlhdrtghomhdprhgtphhtthhopehlvggvsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehrohgshheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhhriihkodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheptghonhhorhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkrghmvghlrdgsohhuhhgrrhgrsegsohhothhlihhnrdgtohhmpdhrtghpthhtoheplhhinhhushdrfigrlhhlvghijheslhhinhgrrhhordhorhhg
-X-GND-Sasl: mathieu.dubois-briand@bootlin.com
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Fri Mar 14, 2025 at 9:02 AM CET, Andy Shevchenko wrote:
-> Thu, Mar 13, 2025 at 05:43:00PM +0100, Mathieu Dubois-Briand kirjoitti:
-> > On Mon Feb 17, 2025 at 9:08 PM CET, Andy Shevchenko wrote:
-> > > On Mon, Feb 17, 2025 at 12:20:13PM +0100, Mathieu Dubois-Briand wrote=
-:
->
-> ...
->
-> > > But what I have read above sounds to me like the following:
-> > >
-> > > 1) the PORT0-PORT7 should be just a regular pin control with the resp=
-ective
-> > > function being provided (see pinctrl-cy8c95x0.c as an example);
-> >=20
-> > Ok, so I created a pin control driver for the PORT pins. This will
-> > effectively help to prevent concurrent use of pins in place of the
-> > request()/free() callbacks.
-> >=20
-> > My only concern is: as there is no real pin muxing on the chip, my
-> > .set_mux callabck in pinmux_ops structure is not doing anything. It
-> > looks like I'm not the only one
-> > (drivers/pinctrl/pinctrl-microchip-sgpio.c does the same thing), but I
-> > hope this is OK.
->
-> Hmm... This is strange. The PWM/GPIO block has 3 functions (GPIO/PWM/rota=
-ry),
-> How comes you have no switch between them?
->
-> As far as I read in the datasheet this is controlled by register 0x40
-> (and seems implicitly by other registers when it's in PWM mode).
->
+Don't populate the const read-only array dflt_rules on the stack at run
+time, instead make it static.
 
-Yes, on pins 6 and 7, we do switch between rotary encoder and other
-modes by writing in the register at 0x40, but that's all. My point was
-more about all other modes. There is no difference between PWM and GPIO,
-at least in output mode: GPIO level is just a PWM with duty cycle either
-to 0% or 100%.
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/gpu/drm/i915/intel_memory_region.c        | 2 +-
+ drivers/net/ethernet/intel/ice/ice_ethtool_fdir.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-
---=20
-Mathieu Dubois-Briand, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+diff --git a/drivers/gpu/drm/i915/intel_memory_region.c b/drivers/gpu/drm/i915/intel_memory_region.c
+index d40ee1b42110..7f4102edc75b 100644
+--- a/drivers/gpu/drm/i915/intel_memory_region.c
++++ b/drivers/gpu/drm/i915/intel_memory_region.c
+@@ -62,7 +62,7 @@ static int iopagetest(struct intel_memory_region *mem,
+ 		      resource_size_t offset,
+ 		      const void *caller)
+ {
+-	const u8 val[] = { 0x0, 0xa5, 0xc3, 0xf0 };
++	static const u8 val[] = { 0x0, 0xa5, 0xc3, 0xf0 };
+ 	void __iomem *va;
+ 	int err;
+ 	int i;
+diff --git a/drivers/net/ethernet/intel/ice/ice_ethtool_fdir.c b/drivers/net/ethernet/intel/ice/ice_ethtool_fdir.c
+index 1d118171de37..aceec184e89b 100644
+--- a/drivers/net/ethernet/intel/ice/ice_ethtool_fdir.c
++++ b/drivers/net/ethernet/intel/ice/ice_ethtool_fdir.c
+@@ -1605,7 +1605,7 @@ void ice_fdir_replay_fltrs(struct ice_pf *pf)
+  */
+ int ice_fdir_create_dflt_rules(struct ice_pf *pf)
+ {
+-	const enum ice_fltr_ptype dflt_rules[] = {
++	static const enum ice_fltr_ptype dflt_rules[] = {
+ 		ICE_FLTR_PTYPE_NONF_IPV4_TCP, ICE_FLTR_PTYPE_NONF_IPV4_UDP,
+ 		ICE_FLTR_PTYPE_NONF_IPV6_TCP, ICE_FLTR_PTYPE_NONF_IPV6_UDP,
+ 	};
+-- 
+2.47.2
 
 
