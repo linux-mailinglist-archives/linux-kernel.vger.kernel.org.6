@@ -1,99 +1,98 @@
-Return-Path: <linux-kernel+bounces-564713-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564714-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F2F6A65999
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 18:06:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1197A659A2
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 18:07:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2E9F3B3329
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 17:02:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46FE8188CE42
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 17:02:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA1D91AF0D0;
-	Mon, 17 Mar 2025 16:56:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6893D1B0F30;
+	Mon, 17 Mar 2025 16:57:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Dk9u3bw9"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rxyGTeG+"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 411B41ACEDA
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 16:56:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8B441A83FB
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 16:57:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742230616; cv=none; b=XaI3y7ZR6jqatvjVVhxTjM0eV80DDJ5WwU+MJw0OVlfujobrx4jZ6+yJKZQ6Zl+RBLcsz8ucEd18wfMSttEviYFw7nGp38TdpF4penObZygb39oxi/KgMWt0IXQNRvNliQmZzgz6J7tv9plMQtVelKV74d/ISnl03dRIyGE7os0=
+	t=1742230640; cv=none; b=qxpdDmfpDE0TZkxAz1ulk0M9K5dGvQ9zae3t7aYXNgknFYr1EeyYppZPsqHin0c/TWLVRk4kQ+NpF43avFV9P1SnOAxLQ+mtoxbovq7aix3sGTtAlX9GPHDLo09uZ2w0UTXTrtgB54o5+URBKCpW0OFr48+u63ltxTyMH3Xqq98=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742230616; c=relaxed/simple;
-	bh=UdmHp0x7Q+PEra47aZVNnBrTe8NrJz3zaOmmjmyVkXA=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=NDqXXrNrFTLWr3KGlfOgfk05iCxZsMasMN/awEfhdQMdvXsW6wcPRrwIUbe17lE0SH7nkVsz1b0fAcjps+VaREIqCdhtZQzZDiHy2m2mvWww6UwA6c2zXlyIgvo8lqRTGbczTQwF79e+OexAOBauJ95wahEDZhBjehMKqrjgxPg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Dk9u3bw9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79302C4CEE3;
-	Mon, 17 Mar 2025 16:56:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1742230615;
-	bh=UdmHp0x7Q+PEra47aZVNnBrTe8NrJz3zaOmmjmyVkXA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Dk9u3bw9QGnsqhjtsO/5/kdE3in4E4KT7wbCY0jAlQHHQgC1KK209Gc61hQduQtGc
-	 jdzOg2RwFDoawC9TL4mSpFnyxaJUh/wRFsq7ZtkQEFcU0AyaBQKEI69888MpZPUoeP
-	 fw1t54QWKhZiyD4rH42qoUInulbrLBTrp5YHB1/I=
-Date: Mon, 17 Mar 2025 09:56:54 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Ilpo =?ISO-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- linux-kernel@vger.kernel.org, Andy Shevchenko <andy@kernel.org>
-Subject: Re: [PATCH v1 1/1] resource: Split DEFINE_RES_NAMED_DESC() out of
- DEFINE_RES_NAMED()
-Message-Id: <20250317095654.28fee435e7e29712006682d6@linux-foundation.org>
-In-Reply-To: <20250313160940.414931-1-andriy.shevchenko@linux.intel.com>
-References: <20250313160940.414931-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1742230640; c=relaxed/simple;
+	bh=OAjlU0Gz65Q0UCSzk8Pc3sou4cltFCl4F2yVDcU/gMw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=o+u2BUiq0njmkhsMB6l97Hl7etPHIX2fjYz09yvjdFfWLtQ/u7P3ZFNHo3knQqjHxvIapcKFRaTkvHfSNXew18pt+E0YAhkRI7OqRwVkqAOTAPwOQlf50AZNmS+R/W18ujuAVW9VY1SafTjyUYbC73F3+gzQcNMEG4Y/fJ5aAgA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rxyGTeG+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0DB27C4CEE3;
+	Mon, 17 Mar 2025 16:57:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742230640;
+	bh=OAjlU0Gz65Q0UCSzk8Pc3sou4cltFCl4F2yVDcU/gMw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rxyGTeG+bfC6h1PufP79txV0QH0Is0R9wp1RMXDgxAedfiHWSpCpRffpc9ChNA+zE
+	 UUFwUpkuCU2AIr1URx3e0adQO3YNWmi2cRsMGS7DEvY67xIM8gLEF2TOub0ZjfBEYm
+	 mxZPdcd5cMtaEoo0A/MWb2MIwAYncy9/Fnzjp9naPHHvaw0x4oNDbt9VFnbT4vMcL+
+	 ODMMtDa4ctpTkjuiHHav1vCB1ynTxcAJNOHm4XR/JGZXsQIv0RY7Dje2uWvCyOe5go
+	 k11s4kCeR2yiE+kE0zBm/G61GtUTRZqIpWYpFCSGjh7ZzM1Okg26J9dRA4k5wgqHv8
+	 fobgKJwZGOcMA==
+Date: Mon, 17 Mar 2025 06:57:19 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Joel Fernandes <joelagnelf@nvidia.com>, linux-kernel@vger.kernel.org,
+	Andrea Righi <arighi@nvidia.com>, Ingo Molnar <mingo@redhat.com>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	David Vernet <void@manifault.com>,
+	Changwoo Min <changwoo@igalia.com>,
+	Luigi De Matteis <ldematteis123@gmail.com>, paulmck@kernel.org,
+	boqun.feng@gmail.com
+Subject: Re: [PATCH RFC 3/8] sched/ext: Add a DL server for sched_ext tasks
+Message-ID: <Z9hUby9e1JYaE6iC@slm.duckdns.org>
+References: <20250315022158.2354454-1-joelagnelf@nvidia.com>
+ <20250315022158.2354454-4-joelagnelf@nvidia.com>
+ <20250315072225.GG36322@noisy.programming.kicks-ass.net>
+ <3b244939-6d55-4d86-8b77-a9a7629f8239@nvidia.com>
+ <20250317103101.GC34541@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250317103101.GC34541@noisy.programming.kicks-ass.net>
 
-On Thu, 13 Mar 2025 18:09:40 +0200 Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
+Hello,
 
-> In some cases it would be useful to supply predefined descriptor
-> of the resource. For this, introduce DEFINE_RES_NAMED_DESC() macro.
+On Mon, Mar 17, 2025 at 11:31:01AM +0100, Peter Zijlstra wrote:
+> On Sat, Mar 15, 2025 at 07:15:27PM -0400, Joel Fernandes wrote:
+> > If so, that will not handle the case where the system has both
+> > FAIR and EXT tasks in the mix (EXT has a partial mode where certain tasks can be
+> > made EXT with certain others left as FAIR) and FAIR runs 100% and starves EXT.
 > 
-> While at it, provide DEFINE_RES() that takes only start, size,
-> and flags.
+> Well, you did not mention that issue, you only babbled about RT.
 > 
-> ...
->
-> --- a/include/linux/ioport.h
-> +++ b/include/linux/ioport.h
-> @@ -157,15 +157,20 @@ enum {
->  };
->  
->  /* helpers to define resources */
-> -#define DEFINE_RES_NAMED(_start, _size, _name, _flags)			\
-> +#define DEFINE_RES_NAMED_DESC(_start, _size, _name, _flags, _desc)	\
->  (struct resource) {							\
->  		.start = (_start),					\
->  		.end = (_start) + (_size) - 1,				\
->  		.name = (_name),					\
->  		.flags = (_flags),					\
-> -		.desc = IORES_DESC_NONE,				\
-> +		.desc = (_desc),					\
->  	}
->  
-> +#define DEFINE_RES_NAMED(_start, _size, _name, _flags)			\
-> +	DEFINE_RES_NAMED_DESC(_start, _size, _name, _flags, IORES_DESC_NONE)
-> +#define DEFINE_RES(_start, _size, _flags)				\
-> +	DEFINE_RES_NAMED(_start, _size, NULL, _flags)
-> +
->  #define DEFINE_RES_IO_NAMED(_start, _size, _name)			\
->  	DEFINE_RES_NAMED((_start), (_size), (_name), IORESOURCE_IO)
->  #define DEFINE_RES_IO(_start, _size)					\
+> I did point out that issue with ext, and TJ said this mixed mode wasn't
+> really meant to be used or somesuch.
 
-But the new DEFINE_RES_NAMED_DESC() has no users.  Can we add some?  To
-demonstrate the usefulness of the new macro and to test it.
+It's true that most of the current use cases don't use mixed mode. That
+said, some folks are interested in it and if we can prevent starvation from
+fair saturating CPUs in mixed mode with a DL server, that'd be really nice.
+Would it be possible to toggle the reservations depending on the ext's
+operation mode?
 
+Thanks.
+
+-- 
+tejun
 
