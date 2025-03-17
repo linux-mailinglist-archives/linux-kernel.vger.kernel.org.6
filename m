@@ -1,77 +1,102 @@
-Return-Path: <linux-kernel+bounces-565072-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565073-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 319DCA66051
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 22:17:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1CC1A66053
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 22:18:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8686616F320
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 21:17:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 674CB3AEAF7
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 21:17:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BF321FFC55;
-	Mon, 17 Mar 2025 21:17:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65FDF200120;
+	Mon, 17 Mar 2025 21:17:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="VFsEwAzK"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="AK21o6Fu"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD4A21F1934;
-	Mon, 17 Mar 2025 21:17:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D9931F7916;
+	Mon, 17 Mar 2025 21:17:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742246244; cv=none; b=Hr82wwzQE+H9/YbI77XXhDWAGN98Yiv8QfCqdByLILY9oMaOZl52FFmSwjXR7lWuGf3C3ZB73A96tpyPZvbsbmxNwLiBzFdd62Sbi3i7F7vyeO+xj2ayfpnOh28lcKEMNA4FYhs2vPDCZSjcT+o3kRnyldOTCzItQ4cGKJgjDx8=
+	t=1742246268; cv=none; b=texJNhXuby62uprWsXFsYSRv4V62QoNAFM0D4tNJazoV9qOCRovA162N4Lk5FtlB69chzveEzM3rN6XRIkqKCgbnXplvD6nRcExGsgfoXDuidZq22SSWPeSUkm1s/i4zNaxjLFkH5E8lTVBJbVCfRycqj55nSfaJbzMbfeRrWGo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742246244; c=relaxed/simple;
-	bh=AhuNXOClJp+HEiCevhvQABx+Y2H7f15GPg4jNyqYiyM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hLXxhoe823IbtjQ+gpBBo28y2vLZ4SqVLJglGN50LeZw37JCQCGuIpz95rSvx5kOlgmyBKwIyKdsgAQ2IxG9akhBGubkg7oLaQu9Ctg3u9ey7JoauJrH7gwRDY7kuK7WPTrFyBG7yeT5B2mInmuZKcuHWwCj16ZbOA5sF4WPEto=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=VFsEwAzK; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=Fg+hPke6K4wOXBqUji6DjB8wFbyYq2c3YR5VbleUfu4=; b=VFsEwAzKeYJG9k2k5DXrjFZD0o
-	4oAhwBf0mrIWIMS2efoxIMq3xShJFihl4jkbOFow5ZSXKXbg11tJTOna6o66gL3UuYgttCK5FqPlo
-	1E53MP+llxgBTyUZYwrZmyMzKEg5FYoBf8Noy2F45BpbEkDdtCaI5SCXhuPM2GLiv8fA=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1tuHpi-006BN3-58; Mon, 17 Mar 2025 22:17:14 +0100
-Date: Mon, 17 Mar 2025 22:17:14 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Maxime Chevallier <maxime.chevallier@bootlin.com>
-Cc: davem@davemloft.net, Jakub Kicinski <kuba@kernel.org>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com,
-	Russell King <linux@armlinux.org.uk>,
-	Simon Horman <horms@kernel.org>
-Subject: Re: [PATCH net-next] MAINTAINERS: Add dedicated entries for
- phy_link_topology
-Message-ID: <e0cd1666-ab61-492d-a72c-dbd418633f3d@lunn.ch>
-References: <20250313153008.112069-1-maxime.chevallier@bootlin.com>
+	s=arc-20240116; t=1742246268; c=relaxed/simple;
+	bh=QYLOUBEjdnyfT54iqSQ4S6A7SnHgRiCZJRpueifzRyI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=maUGfQTVvFwHaYtmn80sBYOw0FQWKxteIP2HVZwaGk1G+kj2FEibaHKOPVrw9KcRDCLBPqTFb2viQB2rvHsQXTl9vFlK/eLBJINzrUB+6hBd2t9j0bOww1Akx51bWjUI+mcZ7HefrCVBPT6XsYJDfcpE+OB7yQTTFR1mHcRjXq8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=AK21o6Fu; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1742246264;
+	bh=YU9quJPTIYISwNZ6rh3ERFz67+zPDglhQfl5TTdQQUE=;
+	h=Date:From:To:Cc:Subject:From;
+	b=AK21o6FuccvpM3RHkWYr84AqlmOqAdMeatQX/95grkz/tLT6Jw4vUdYaPFW3tRD7I
+	 6JMjMMNSIXj3b0YrJQ48uduY7qae/Y+CXQKrlnpVOV1UqDQjGTTzhG1xA6s/zy1oqB
+	 QCZ2ldBI8WIGzZ2p2w9Pt2ROZX7xe6Sk548zTCndpzyy8JUpZlE4lV0HN7jCoV/4vW
+	 il/D3GHD3kBTTQ0gv/XrUTwUgDhyTn3n2HdpNE/mwhAlRJF/jF6YK2gzwtIqzVVTj3
+	 eRr7lg5yRJlLBGttUOfkSUe1bQ57mastcNEsF3qq7NEwpJrJAboyGIw/wZR4QeghLt
+	 BJN+KFys4YRZw==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZGnqq6gvGz4wc4;
+	Tue, 18 Mar 2025 08:17:43 +1100 (AEDT)
+Date: Tue, 18 Mar 2025 08:17:43 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: Signed-off-by missing for commit in the tpmdd tree
+Message-ID: <20250318081743.32c72c1c@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250313153008.112069-1-maxime.chevallier@bootlin.com>
+Content-Type: multipart/signed; boundary="Sig_/dD38/NjlR76YegvWRU3o2rX";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Thu, Mar 13, 2025 at 04:30:06PM +0100, Maxime Chevallier wrote:
-61;7991;1c> The infrastructure to handle multi-phy devices is fairly standalone.
-> Add myself as maintainer for that part as well as the netlink uAPI
-> that exposes it.
-> 
-> Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
+--Sig_/dD38/NjlR76YegvWRU3o2rX
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Hi all,
 
-    Andrew
+Commits
+
+  04c72b01f618 ("Documentation: tpm: Add documentation for the CRB FF-A int=
+erface")
+  cebcb37cc882 ("tpm_crb: Add support for the ARM FF-A start method")
+  1cfb6e10a755 ("ACPICA: Add start method for ARM FF-A")
+  abf6e84648dd ("tpm_crb: ffa_tpm: Implement driver compliant to CRB over F=
+F-A")
+
+are missing a Signed-off-by from their committers.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/dD38/NjlR76YegvWRU3o2rX
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfYkXcACgkQAVBC80lX
+0GzCNgf/eAWalAyQWo4mw0DOd2qqQu75FVrqpwiojYy2tR5bN25Hm8cphuOEZ76l
+O8cFydKRcrCAo1zvflMCtvDOWIVlCxLAxbvBnLNRp/ITD6R5+0vsfvXTn3o6K1uu
+H6Wjt2E83DKqNlVbbdmbikqxPBUWDFJ2p4IEgGOcjn0G6hyNVkhPDs6DusYWvX+L
+e1O5ZiV2dRja/3b5EhdTiZuipRevotiTG9zyV19QyIu/E5o+Igs91Ga2+QKJbiep
+RZwBUPCQvcnL0+ymKBM6AM2K/g6JIsjuhmL1JD4c7qPbRz/BZVOrSlZUO5uMncij
+Ov5PtnG2o60LEnfodRGCUFJzSMWwLw==
+=8Gkf
+-----END PGP SIGNATURE-----
+
+--Sig_/dD38/NjlR76YegvWRU3o2rX--
 
