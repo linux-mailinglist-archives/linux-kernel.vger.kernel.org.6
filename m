@@ -1,82 +1,55 @@
-Return-Path: <linux-kernel+bounces-563849-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563805-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14D03A64975
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:21:30 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A7EBA648CD
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:08:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 388E27A4A74
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:20:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EFB63169FA9
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:08:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B5812405E0;
-	Mon, 17 Mar 2025 10:18:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52693230BDB;
+	Mon, 17 Mar 2025 10:08:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=richtek.com header.i=@richtek.com header.b="UjlMnIZF";
-	dkim=pass (2048-bit key) header.d=richtek.com header.i=@richtek.com header.b="XlHN6XJz"
-Received: from mg.richtek.com (mg.richtek.com [220.130.44.152])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F90F22FF39;
-	Mon, 17 Mar 2025 10:18:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.130.44.152
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="d/+Ze295"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 557E6227BB2;
+	Mon, 17 Mar 2025 10:08:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742206686; cv=none; b=YEXXH9CWSvHZZnT5nBssTp6aal0+7n4wtjwHL+8VS5PXRIskjIIWBXRuEIHx+w1ASb2KwmDEBzF58921swjYbc4mr4EVgMNyJDYQAnOIYkR9JyZQTpVJKPI49Y6HfpbsRN+VkrRB3gtCIWE6UJ0k+dPsrFDyAGRbbsAgOBfzxRc=
+	t=1742206112; cv=none; b=EDH+xBSKN7ZcPq6tG/pUDu55TzG2efgGMr3Y9CKq/LF13pF2w1ocQ6kvgctB5rvBTAu/rMa0kyTh6BlIVu5cUzrxvOxRTBdVWvkqZ3MyPJ+tEwM44WvCJLMP9mdDettpRpOVyDV6beoZO1OXn32XKCjfiO889n5ZLRQ+pdHoTuA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742206686; c=relaxed/simple;
-	bh=2VsTy8c8XLPO7On7Fj05WnP0izo3zONJErudj6K9Gnw=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=roKBQ6F3jsnvHjLo/mK7wr7JiFLRKDWksonR7kG5BAw2BkWI0TOtGtSSiLCnvcxZjfU6+eIFKeudpqeCPvpnRjY71d+U8eCzezfLKMf8va0prOm4DhMZxsFIPxvKkxepPgFv8noxwP1YrqBVNz+pJdr3SPum3lrFTNJFrFnm80g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=richtek.com; spf=pass smtp.mailfrom=richtek.com; dkim=pass (2048-bit key) header.d=richtek.com header.i=@richtek.com header.b=UjlMnIZF; dkim=pass (2048-bit key) header.d=richtek.com header.i=@richtek.com header.b=XlHN6XJz; arc=none smtp.client-ip=220.130.44.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=richtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=richtek.com
-X-MailGates: (SIP:2,PASS,NONE)(compute_score:DELIVER,40,3)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=richtek.com;
-	s=richtek; t=1742206682;
-	bh=o0SUnxH7TH+uR9swaSzIuxKQA7MmHPp+RPHamZ6KPBI=; l=1215;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=UjlMnIZFrj/wTlTyUmwkxBunV22eu8eyrTFyjGWyOkWVg7IYE9063YJbvXZnUfcim
-	 xu4ki1lOLCPRA43IuNzxiUjhKvVvXtyBxS+Za75yE2Ae2dDp3o6tMpiyeCXNkOoJRB
-	 xg0UbYG2aOq0hyxiPDq4GqZfkc4ZixDZmX+EWpg6MisoCdudgfsDCzQ0ETBJ9IdmXG
-	 IDtfN7Ba3awlfO20/125zyZLdjQyUG8K4XHVk/LRgCidnudBLLqRBvIj1P4crO5rUF
-	 8opqWAdrfTWsXmGXmMyUxdG5sqAFcX2AzapgPPZtceIpVM+jSOQT/w0FjOqtYb34I5
-	 2n1cf1WGKbYmg==
-Received: from 192.168.8.21
-	by mg.richtek.com with MailGates ESMTP Server V3.0(1128079:0:AUTH_RELAY)
-	(envelope-from <prvs=1170D5C545=cy_huang@richtek.com>); Mon, 17 Mar 2025 18:17:55 +0800 (CST)
-X-MailGates: (compute_score:DELIVER,40,3)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=richtek.com;
-	s=richtek; t=1742206675;
-	bh=o0SUnxH7TH+uR9swaSzIuxKQA7MmHPp+RPHamZ6KPBI=; l=1215;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=XlHN6XJzDdttOAKWlXXogBovncnV+7cSWfoQsZVpBDq9MZGSNvHEeivTRacoKyS59
-	 d7b1uveR0C6hvc1fgCS7UwhD7iVRq6ny/BccQu+ZbhCyJQue3D3Vn44wSNlmdh2PpJ
-	 CBONH3syXmwuL77Xa0h602yNwfSQkkY6aiDr7sYL3FiWZkIl7fOujQ/USULu0ox1NQ
-	 Vc/73BmEDdmR6Z2Lz4zHM5NX1jTmyAp0+IRahniIimf5fd/ANqzPhM/PbXTjKfYnux
-	 LBUGZJdhSaFxn7taMS4US5XDjPptx4j0QzXt5at36IJHBojiswCRsXMSmXbwTiSSw5
-	 rqboTxlWeKF2Q==
-Received: from 192.168.10.46
-	by mg.richtek.com with MailGates ESMTPS Server V6.0(3810274:0:AUTH_RELAY)
-	(envelope-from <cy_huang@richtek.com>)
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256/256); Mon, 17 Mar 2025 18:05:18 +0800 (CST)
-Received: from ex4.rt.l (192.168.10.47) by ex3.rt.l (192.168.10.46) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 17 Mar
- 2025 18:05:18 +0800
-Received: from git-send.richtek.com (192.168.10.154) by ex4.rt.l
- (192.168.10.45) with Microsoft SMTP Server id 15.2.1544.11 via Frontend
- Transport; Mon, 17 Mar 2025 18:05:18 +0800
-From: <cy_huang@richtek.com>
-To: Mark Brown <broonie@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-CC: Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>,
-	ChiYuan Huang <cy_huang@richtek.com>, <linux-kernel@vger.kernel.org>,
-	<devicetree@vger.kernel.org>
-Subject: [PATCH 3/3] regulator: dt-bindings: rtq2208: Remove unnecessary property of fixed LDO VOUT
-Date: Mon, 17 Mar 2025 18:06:23 +0800
-Message-ID: <d90e57c14869415e6322e8b0bbff14da480a0adb.1742204502.git.cy_huang@richtek.com>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <cover.1742204502.git.cy_huang@richtek.com>
-References: <cover.1742204502.git.cy_huang@richtek.com>
+	s=arc-20240116; t=1742206112; c=relaxed/simple;
+	bh=EoDMSk/uZoc+aBuMdaL+cawQNKJAp0fZlO0qTZlAZs4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=e88pk2OpMjuCr5abFencq70NzV7lK1XB4vv5Bh/z7krQuXTqlCle6dkw+6QgLhiikL0SLfn8SJShA94Xqfe2x+R4aLsNTvnw5Et3KmE8EDytjM4cI5TAzn0cqXLAXqR7+yIy0ngYLa9F+apr2XfyO+mZfu9crm9QIVyS94ROgK8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=d/+Ze295; arc=none smtp.client-ip=117.135.210.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=hSrL7
+	2kyJ4w71tnbQx1PoNgGMbMtpK3UhW5whSP5BrY=; b=d/+Ze295qDG4VDuB552Zh
+	DQG7TJiLNxTCwhCpWSIDuqSOmDau00Z3r5tP1aZiyYW82z89cAK4pskY9CQqfstB
+	VMVYppFDGf5opJ4CJdjz/xOqAxdtI0LxZ5QsmXBzyMdhVkYDMGrFAtCNyhVcvYnd
+	GclFigDOB6BBUksS7olRkw=
+Received: from localhost.localdomain (unknown [])
+	by gzga-smtp-mtada-g1-4 (Coremail) with SMTP id _____wBnZkda9NdnI4yRSQ--.7624S2;
+	Mon, 17 Mar 2025 18:07:24 +0800 (CST)
+From: Liu Ye <liuyerd@163.com>
+To: akpm@linux-foundation.org
+Cc: willy@infradead.org,
+	david@redhat.com,
+	ran.xiaokai@zte.com.cn,
+	dan.carpenter@linaro.org,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	Liu Ye <liuyerd@163.com>,
+	Liu Ye <liuye@kylinos.cn>
+Subject: [PATCH v2] fs/proc/page: Refactoring to reduce code duplication.
+Date: Mon, 17 Mar 2025 18:07:19 +0800
+Message-Id: <20250317100719.134558-1-liuyerd@163.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,49 +57,260 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+X-CM-TRANSID:_____wBnZkda9NdnI4yRSQ--.7624S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxKr48XF47XFWDWF4xtrWfAFb_yoW7trWrpF
+	s8WF4jyws3W3sYkw1xJ398Zas8G3s3Aa1Yy3y7G34fZa4UJrnIkFySyFnYvFy7G34UZw1U
+	u3909ry3Ca1UtaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07USeHgUUUUU=
+X-CM-SenderInfo: 5olx5vlug6il2tof0z/1tbiKAoTTGfX4r-onwABsm
 
-From: ChiYuan Huang <cy_huang@richtek.com>
+From: Liu Ye <liuye@kylinos.cn>
 
-The 'richtek,fixed-microvolt' is unnecessary. Remove it on the document.
+The function kpageflags_read and kpagecgroup_read is quite similar
+to kpagecount_read. Consider refactoring common code into a helper
+function to reduce code duplication.
 
-Signed-off-by: ChiYuan Huang <cy_huang@richtek.com>
+Signed-off-by: Liu Ye <liuye@kylinos.cn>
+
 ---
-Hi,
-
-The major change is to remove the property. The minor one is to remove one
-trailing whitespace that 'checkpatch' found.
+V2 : Use an enumeration to indicate the operation to be performed
+to avoid passing functions.
 ---
- .../devicetree/bindings/regulator/richtek,rtq2208.yaml    | 8 +-------
- 1 file changed, 1 insertion(+), 7 deletions(-)
+---
+ fs/proc/page.c | 166 +++++++++++++++++--------------------------------
+ 1 file changed, 58 insertions(+), 108 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/regulator/richtek,rtq2208.yaml b/Documentation/devicetree/bindings/regulator/richtek,rtq2208.yaml
-index 87accc6f13b8..6466406d9096 100644
---- a/Documentation/devicetree/bindings/regulator/richtek,rtq2208.yaml
-+++ b/Documentation/devicetree/bindings/regulator/richtek,rtq2208.yaml
-@@ -39,7 +39,7 @@ properties:
+diff --git a/fs/proc/page.c b/fs/proc/page.c
+index a55f5acefa97..66f454330a87 100644
+--- a/fs/proc/page.c
++++ b/fs/proc/page.c
+@@ -22,6 +22,14 @@
+ #define KPMMASK (KPMSIZE - 1)
+ #define KPMBITS (KPMSIZE * BITS_PER_BYTE)
  
-   interrupts:
-     maxItems: 1
--    
++enum kpage_operation {
++	KPAGE_FLAGS,
++	KPAGE_COUNT,
++#ifdef CONFIG_MEMCG
++	KPAGE_CGROUP,
++#endif
++};
 +
-   richtek,mtp-sel-high:
-     type: boolean
-     description:
-@@ -75,12 +75,6 @@ properties:
-         description:
-           regulator description for ldo[1-2].
+ static inline unsigned long get_max_dump_pfn(void)
+ {
+ #ifdef CONFIG_SPARSEMEM
+@@ -37,19 +45,17 @@ static inline unsigned long get_max_dump_pfn(void)
+ #endif
+ }
  
--        properties:
--          richtek,fixed-microvolt:
--            description: |
--              This property can be used to set a fixed operating voltage that lies outside
--              the range of the regulator's adjustable mode.
+-/* /proc/kpagecount - an array exposing page mapcounts
+- *
+- * Each entry is a u64 representing the corresponding
+- * physical page mapcount.
+- */
+-static ssize_t kpagecount_read(struct file *file, char __user *buf,
+-			     size_t count, loff_t *ppos)
++static ssize_t kpage_read(struct file *file, char __user *buf,
++		size_t count, loff_t *ppos,
++		enum kpage_operation op)
+ {
+ 	const unsigned long max_dump_pfn = get_max_dump_pfn();
+ 	u64 __user *out = (u64 __user *)buf;
++	struct page *ppage;
+ 	unsigned long src = *ppos;
+ 	unsigned long pfn;
+ 	ssize_t ret = 0;
++	u64 info;
+ 
+ 	pfn = src / KPMSIZE;
+ 	if (src & KPMMASK || count & KPMMASK)
+@@ -59,19 +65,29 @@ static ssize_t kpagecount_read(struct file *file, char __user *buf,
+ 	count = min_t(unsigned long, count, (max_dump_pfn * KPMSIZE) - src);
+ 
+ 	while (count > 0) {
+-		struct page *page;
+-		u64 mapcount = 0;
 -
- required:
-   - compatible
-   - reg
+-		/*
+-		 * TODO: ZONE_DEVICE support requires to identify
+-		 * memmaps that were actually initialized.
+-		 */
+-		page = pfn_to_online_page(pfn);
+-		if (page)
+-			mapcount = folio_precise_page_mapcount(page_folio(page),
+-							       page);
+-
+-		if (put_user(mapcount, out)) {
++		ppage = pfn_to_online_page(pfn);
++
++		if (ppage) {
++			switch (op) {
++			case KPAGE_FLAGS:
++				info = stable_page_flags(ppage);
++				break;
++			case KPAGE_COUNT:
++				info = folio_precise_page_mapcount(page_folio(ppage), ppage);
++				break;
++#ifdef CONFIG_MEMCG
++			case KPAGE_CGROUP:
++				info = page_cgroup_ino(ppage);
++				break;
++#endif
++			default:
++				info = 0;
++				break;
++			}
++		} else
++			info = 0;
++
++		if (put_user(info, out)) {
+ 			ret = -EFAULT;
+ 			break;
+ 		}
+@@ -89,17 +105,23 @@ static ssize_t kpagecount_read(struct file *file, char __user *buf,
+ 	return ret;
+ }
+ 
++/* /proc/kpagecount - an array exposing page mapcounts
++ *
++ * Each entry is a u64 representing the corresponding
++ * physical page mapcount.
++ */
++static ssize_t kpagecount_read(struct file *file, char __user *buf,
++		size_t count, loff_t *ppos)
++{
++	return kpage_read(file, buf, count, ppos, KPAGE_COUNT);
++}
++
+ static const struct proc_ops kpagecount_proc_ops = {
+ 	.proc_flags	= PROC_ENTRY_PERMANENT,
+ 	.proc_lseek	= mem_lseek,
+ 	.proc_read	= kpagecount_read,
+ };
+ 
+-/* /proc/kpageflags - an array exposing page flags
+- *
+- * Each entry is a u64 representing the corresponding
+- * physical page flags.
+- */
+ 
+ static inline u64 kpf_copy_bit(u64 kflags, int ubit, int kbit)
+ {
+@@ -220,47 +242,17 @@ u64 stable_page_flags(const struct page *page)
+ #endif
+ 
+ 	return u;
+-};
++}
+ 
++/* /proc/kpageflags - an array exposing page flags
++ *
++ * Each entry is a u64 representing the corresponding
++ * physical page flags.
++ */
+ static ssize_t kpageflags_read(struct file *file, char __user *buf,
+-			     size_t count, loff_t *ppos)
++		size_t count, loff_t *ppos)
+ {
+-	const unsigned long max_dump_pfn = get_max_dump_pfn();
+-	u64 __user *out = (u64 __user *)buf;
+-	unsigned long src = *ppos;
+-	unsigned long pfn;
+-	ssize_t ret = 0;
+-
+-	pfn = src / KPMSIZE;
+-	if (src & KPMMASK || count & KPMMASK)
+-		return -EINVAL;
+-	if (src >= max_dump_pfn * KPMSIZE)
+-		return 0;
+-	count = min_t(unsigned long, count, (max_dump_pfn * KPMSIZE) - src);
+-
+-	while (count > 0) {
+-		/*
+-		 * TODO: ZONE_DEVICE support requires to identify
+-		 * memmaps that were actually initialized.
+-		 */
+-		struct page *page = pfn_to_online_page(pfn);
+-
+-		if (put_user(stable_page_flags(page), out)) {
+-			ret = -EFAULT;
+-			break;
+-		}
+-
+-		pfn++;
+-		out++;
+-		count -= KPMSIZE;
+-
+-		cond_resched();
+-	}
+-
+-	*ppos += (char __user *)out - buf;
+-	if (!ret)
+-		ret = (char __user *)out - buf;
+-	return ret;
++	return kpage_read(file, buf, count, ppos, KPAGE_FLAGS);
+ }
+ 
+ static const struct proc_ops kpageflags_proc_ops = {
+@@ -270,54 +262,12 @@ static const struct proc_ops kpageflags_proc_ops = {
+ };
+ 
+ #ifdef CONFIG_MEMCG
++
+ static ssize_t kpagecgroup_read(struct file *file, char __user *buf,
+-				size_t count, loff_t *ppos)
++		size_t count, loff_t *ppos)
+ {
+-	const unsigned long max_dump_pfn = get_max_dump_pfn();
+-	u64 __user *out = (u64 __user *)buf;
+-	struct page *ppage;
+-	unsigned long src = *ppos;
+-	unsigned long pfn;
+-	ssize_t ret = 0;
+-	u64 ino;
+-
+-	pfn = src / KPMSIZE;
+-	if (src & KPMMASK || count & KPMMASK)
+-		return -EINVAL;
+-	if (src >= max_dump_pfn * KPMSIZE)
+-		return 0;
+-	count = min_t(unsigned long, count, (max_dump_pfn * KPMSIZE) - src);
+-
+-	while (count > 0) {
+-		/*
+-		 * TODO: ZONE_DEVICE support requires to identify
+-		 * memmaps that were actually initialized.
+-		 */
+-		ppage = pfn_to_online_page(pfn);
+-
+-		if (ppage)
+-			ino = page_cgroup_ino(ppage);
+-		else
+-			ino = 0;
+-
+-		if (put_user(ino, out)) {
+-			ret = -EFAULT;
+-			break;
+-		}
+-
+-		pfn++;
+-		out++;
+-		count -= KPMSIZE;
+-
+-		cond_resched();
+-	}
+-
+-	*ppos += (char __user *)out - buf;
+-	if (!ret)
+-		ret = (char __user *)out - buf;
+-	return ret;
++	return kpage_read(file, buf, count, ppos, KPAGE_CGROUP);
+ }
+-
+ static const struct proc_ops kpagecgroup_proc_ops = {
+ 	.proc_flags	= PROC_ENTRY_PERMANENT,
+ 	.proc_lseek	= mem_lseek,
 -- 
-2.34.1
+2.25.1
 
 
