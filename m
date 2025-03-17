@@ -1,156 +1,160 @@
-Return-Path: <linux-kernel+bounces-564572-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564573-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CFCEA6579B
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 17:12:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C881A6579D
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 17:12:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D94418880F0
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 16:08:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3BEE9189B597
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 16:08:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB66219CD13;
-	Mon, 17 Mar 2025 16:07:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED8CF190470;
+	Mon, 17 Mar 2025 16:08:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cTuwUHwm"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3B6TmCqY"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44B93199931
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 16:07:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE1701CFBC
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 16:08:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742227652; cv=none; b=KFtKTFc0+PwV7/ruLKQdeBByxQNHN9pGWnlEbvndzoP8Jataxshk0fGdtgx6eiUN5sc3McmVA8QgOtFWKs5tlfBXkz8ipmIAu8EMtI0/p6qKM1ZHLUw2nJ5WlYmDd5D/FdBIScuusyHhpw7VVvhYMqo4q6dAqG3mRfjSINuT91I=
+	t=1742227691; cv=none; b=EYJ7B1M0y7Kc4wLQUsQIZX1Cf/cEnE4yJK6AdPRMX8Aj/bRb/uc7wIhYTkbuUhJzfPO3En7w2hsmyOeQJxHt3kqNiiOBsSKIn9BZV8TG9n780WzWqD8EsYAveOrxgqEqugcsciF0l8v8kSZ6ZU8fdeke+xglOGhhXiMv1C4FqBA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742227652; c=relaxed/simple;
-	bh=9XuRFGO9jLnurGDGxXbu9n9FnOFT9RbV+4eCVyZvpAg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CPSAuq9T+p4K4j9iAD1idWa5Cg/YHmuRDvIkG1glzO6E/Ki7DHV8Bi2kh9QNGRFw3PHoabL2Iqp13PY3XxNKsHG4sohjEJsJOZ3vdDRNz1S9lSF85FpUKjuM2XbbrVDh5hxYkDH3v3TnX8m3GhIf6P431NEV67gzNDSake5qmq4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cTuwUHwm; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-ac24ec112fcso75729766b.0
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 09:07:29 -0700 (PDT)
+	s=arc-20240116; t=1742227691; c=relaxed/simple;
+	bh=egIWuxBaIjnaXMdoXaDCft2vbzvuOzWQFmi9GgQvLBE=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=iLNlKcVU5uxvQjr+tfCPHVsS9Hf7ti3zmpG0/L7OtFLFYaHwXe6mvYZO7gbTYiOHGqGNWQHNkmV3jL+zJPzyiTFCjvU60lNTcYgoTmyu5RTwa2wTyDfJJE9sTvWU26cL7VfTwvR0LxwK9+iP/2yCs+j2BSUpRwLfhXK4xQ6EnMg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3B6TmCqY; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2ff8a2c7912so3424821a91.1
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 09:08:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1742227648; x=1742832448; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=UuHbh4MYV3gTJ0X4cZQ8+nBi40Q4Lk1nrGFJC9SvTOQ=;
-        b=cTuwUHwmH1sxwK8Mr5q/vRYXRXXXZs+LNHfMabecOaMjDPPlpor3C8xxnSLZVK411y
-         3V9B7QPRacBUT3XdO0+OS+ji/RX5ACFLtbNsmDVCdEmxko3UrD+ILWuzUTt4sUuw7HDi
-         pCATb+n6zRGYMmyfL4K4bbgS+qneLZKMsJHWlXSDQsrZZ8Nb0zub1/PmP5Zdzc0+yNMd
-         nSHaf+77thrNyoBszxhTCjrj1qTyVPPREyCpIPvRgbY2u0eUoXB8TbGw1ZcpYhQWPk3t
-         WBUKbN7KG255gydp8QBMV9Uc5/myDGbjaLKb4+j6Pd1tARqjxtReOqvZ148yE/OtXFcf
-         GHIg==
+        d=google.com; s=20230601; t=1742227689; x=1742832489; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=kFGsIS9GUasJNsr+AyNzSWrAC+Oat7GEq5DJqh+FPjE=;
+        b=3B6TmCqY/xB7CV5e9CNaSuiXYHC29peBFDE1xoRUgRGFwB5N7FlNnRPZ4iOa8No7xl
+         FbhkT5HtaJEajavFPKbTiGR/d8dMOZqb4/NhcYF+R1elyLV2jH+BKikIHX1UsdWvwEF0
+         yX8RAg0cg+aQCsyQaOOFlRS6yxYKaZdnXxaqyy6SgKzc+BGkBneFUelU1HxoupDw89AO
+         HDMAo/hBtV4jHHuX8JBkNLVTMXdh1K2zBZnyit2ObPZCPW+YMaY6h495yeIY8cgiZeVM
+         lpmoI52qfp/KS+avL9J7M0yjN72VNvW0b5+JzhE9zD9tDuq7EpCpwutSU1LhzeIGofXn
+         QR+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742227648; x=1742832448;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UuHbh4MYV3gTJ0X4cZQ8+nBi40Q4Lk1nrGFJC9SvTOQ=;
-        b=uY0lSsAmp67cWotFV4SJYliblj6GAs/WpRfbGG+GrZ5YBQ9w40DY0dqVQBVt6S6vAB
-         W0KR4x83l7d0EjFP0w3HyQTUPulUGSCJbB1WiMhYsu4/LkUSkd2icI2KYswnNrHWT+e+
-         DcuqVXIch4ZTvyBbXtrLqyYuzFfjwmCCqlfLOweU6gmIqFqcQFjyLKb0781JHpcAxPjf
-         YSp0J5pZyJ/5gdvPFJc1FBuv6mUbYHmCWNHEnmrEFXEisp8I/zqEy1MsAdlP4yP9kob8
-         eSfRPHmt/gwuBDKBvld6F3hoQxc4osuYC6CQJihx2yXqQ7kq0XgJuE6Sa+bE5P1qw4Cs
-         8QHQ==
-X-Gm-Message-State: AOJu0YwthzpKbP3BIO3Z0BECMBTCioTFUc0qHqHi0wm6XZnY2/IC9JZM
-	CLZUCpZfUVW9Ru+C7khrSeFeDp8wA66f4YnQdI/d/+M4gWah1rB6ZYMh8N4fuHw=
-X-Gm-Gg: ASbGncs5TnllXJBqKauCbvI3StgtZJpoZ9HfVAEri4yfkRMzHDISksXlQCeiwSQKPkv
-	H7f9W5kY1RgMlGAHjLC6iYGBgQw1Y27FNKSjLO47obq+jMIuZEKaNywMOprkLS7h2UGVDGYupwI
-	/ImnSrUohO0U26QaHLcLe7WxkCL7HD2o1bwkrZQV54RGfiDpIcKyBDYIkGUkLg0Hl5gq77Jn6Wl
-	pJb+WECdLJwqS0ZVeLMbce9iiXsCJZsm9ERNHMHBLi483rNWwR7OMtTFEk8KfpGElRQOBrDSlZ9
-	4Tb6eZhS1UCK9gzIbmIeF85GQe0DhSWxR6xwrFxLhq8FfGSdsN+Uid+/+Ia94E8=
-X-Google-Smtp-Source: AGHT+IEUcabQmU7N1TkMij7G556EuNjnPQ9Y37gUtsBadxWZgY7a5v7ADjlBJypctwLLzxgaf83Hgw==
-X-Received: by 2002:a17:907:ec8c:b0:ac3:79ed:7bf0 with SMTP id a640c23a62f3a-ac379ed7c5amr119005866b.0.1742227648257;
-        Mon, 17 Mar 2025 09:07:28 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.198.86])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac31484b234sm684404066b.77.2025.03.17.09.07.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 17 Mar 2025 09:07:27 -0700 (PDT)
-Message-ID: <935028c6-ce56-46e0-96ff-46fa91c8f66a@linaro.org>
-Date: Mon, 17 Mar 2025 17:07:26 +0100
+        d=1e100.net; s=20230601; t=1742227689; x=1742832489;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=kFGsIS9GUasJNsr+AyNzSWrAC+Oat7GEq5DJqh+FPjE=;
+        b=oR9f5nDChpAckAakUNOD35MEDZQq+Tk4XLTo5ePRuUGRe9617pLMxPkduDSG7iPdQL
+         OfOcMON16jB4wyZ1DWdxsqy7QePR7zMUtendlMx9RE+j5F2NgNKBR11wCtEy0vvl265M
+         jex2fcx3kb0k00okz+BgOO4lvrVi1YyoJqImM1orb3LBDcck0g1Z+DZT3oMhS5vwowk9
+         73q3J11U3J3Q2agfKS9ZMFRmWdDUwBsMknPvixMVzQ8qQozsaFiol8M2arYssVxDUlSV
+         SPzrN+dTpyFAQqRaN0d6jp0vHSaRySvbgq4NdUxNiYo8z9qjP17rat3WadnD+LY/H4AJ
+         k11w==
+X-Forwarded-Encrypted: i=1; AJvYcCV5VUVeViECwDwDMAGQD2dKm5/Z1U2O31lafdFqwdKL/CHYA3+095nDzRTVyAxfL9SqwpgsyuOUM1X1PrA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyWKpjn+/lid8Jic77j6CQbSoA9bwKoqdz5DcWzxrddEN5sr0cT
+	ncJ8DDCtmh9VfOrBQjtLVdpzGVlCBi+CrGbrsXoFe/rZyu9z2FWVHTC+iu6g40zkPVPC4OBeozR
+	Dd85gSF7f1+RRdAAsUDbckdoWsWaFqDgW7ZPUyzPZkopuRW6xOMpYImJ8j1HbOaROMHA=
+X-Google-Smtp-Source: AGHT+IF+hruQfmOR7ShC4vLyikmFYkRsFWDD656xmQF7xQnZ3FiYAQLSOrsH0dqIoNXqWj4kGILXNWg7yAo=
+X-Received: from pjbli15.prod.google.com ([2002:a17:90b:48cf:b0:2ef:d136:17fc])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:2e48:b0:2fa:4926:d18d
+ with SMTP id 98e67ed59e1d1-3019f4f043cmr10445a91.13.1742227688937; Mon, 17
+ Mar 2025 09:08:08 -0700 (PDT)
+Date: Mon, 17 Mar 2025 09:08:06 -0700
+In-Reply-To: <20250317-kvm_exit_fix-v1-1-aa5240c5dbd2@rivosinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: OCOTP and DWMAC builtin modules are needed for imx93-11x11-evk
- kernel dev via TFTP and NFS
-To: Alberto Merciai <alb3rt0.m3rciai@gmail.com>, shawnguo@kernel.org
-Cc: linux-kernel@vger.kernel.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org
-References: <Z9fhuVltKwqgHdLp@alb3rt0-ThinkPad-P15-Gen-1>
-Content-Language: en-US
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <Z9fhuVltKwqgHdLp@alb3rt0-ThinkPad-P15-Gen-1>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+References: <20250317-kvm_exit_fix-v1-1-aa5240c5dbd2@rivosinc.com>
+Message-ID: <Z9hI5vEHngcKvvRa@google.com>
+Subject: Re: [PATCH] RISC-V: KVM: Teardown riscv specific bits after kvm_exit
+From: Sean Christopherson <seanjc@google.com>
+To: Atish Patra <atishp@rivosinc.com>
+Cc: Anup Patel <anup@brainfault.org>, Atish Patra <atishp@atishpatra.org>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Alexandre Ghiti <alex@ghiti.fr>, Andrew Jones <ajones@ventanamicro.com>, 
+	Anup Patel <apatel@ventanamicro.com>, kvm@vger.kernel.org, 
+	kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+X-ccpol: medium
 
-On 17/03/2025 09:47, Alberto Merciai wrote:
-> While playing with linux-next and imx93-11x11-evk via NFS and TFTP
-> I found that the dwmac-imx, nvmem-imx-ocotp-ele drivers by default are
-> not builtin then the I was not able to reach userland. 
+On Mon, Mar 17, 2025, Atish Patra wrote:
+> During a module removal, kvm_exit invokes arch specific disable
+> call which disables AIA. However, we invoke aia_exit before kvm_exit
+> resulting in the following warning. KVM kernel module can't be inserted
+> afterwards due to inconsistent state of IRQ.
 > 
-> The following configs were needed to reach my goal:
-> CONFIG_DWMAC_IMX8=y
-> CONFIG_STMMAC_ETH=y
-> CONFIG_NVMEM_IMX_OCOTP_ELE=y
+> [25469.031389] percpu IRQ 31 still enabled on CPU0!
+> [25469.031732] WARNING: CPU: 3 PID: 943 at kernel/irq/manage.c:2476 __free_percpu_irq+0xa2/0x150
+> [25469.031804] Modules linked in: kvm(-)
+> [25469.031848] CPU: 3 UID: 0 PID: 943 Comm: rmmod Not tainted 6.14.0-rc5-06947-g91c763118f47-dirty #2
+> [25469.031905] Hardware name: riscv-virtio,qemu (DT)
+> [25469.031928] epc : __free_percpu_irq+0xa2/0x150
+> [25469.031976]  ra : __free_percpu_irq+0xa2/0x150
+> [25469.032197] epc : ffffffff8007db1e ra : ffffffff8007db1e sp : ff2000000088bd50
+> [25469.032241]  gp : ffffffff8131cef8 tp : ff60000080b96400 t0 : ff2000000088baf8
+> [25469.032285]  t1 : fffffffffffffffc t2 : 5249207570637265 s0 : ff2000000088bd90
+> [25469.032329]  s1 : ff60000098b21080 a0 : 037d527a15eb4f00 a1 : 037d527a15eb4f00
+> [25469.032372]  a2 : 0000000000000023 a3 : 0000000000000001 a4 : ffffffff8122dbf8
+> [25469.032410]  a5 : 0000000000000fff a6 : 0000000000000000 a7 : ffffffff8122dc10
+> [25469.032448]  s2 : ff60000080c22eb0 s3 : 0000000200000022 s4 : 000000000000001f
+> [25469.032488]  s5 : ff60000080c22e00 s6 : ffffffff80c351c0 s7 : 0000000000000000
+> [25469.032582]  s8 : 0000000000000003 s9 : 000055556b7fb490 s10: 00007ffff0e12fa0
+> [25469.032621]  s11: 00007ffff0e13e9a t3 : ffffffff81354ac7 t4 : ffffffff81354ac7
+> [25469.032664]  t5 : ffffffff81354ac8 t6 : ffffffff81354ac7
+> [25469.032698] status: 0000000200000100 badaddr: ffffffff8007db1e cause: 0000000000000003
+> [25469.032738] [<ffffffff8007db1e>] __free_percpu_irq+0xa2/0x150
+> [25469.032797] [<ffffffff8007dbfc>] free_percpu_irq+0x30/0x5e
+> [25469.032856] [<ffffffff013a57dc>] kvm_riscv_aia_exit+0x40/0x42 [kvm]
+> [25469.033947] [<ffffffff013b4e82>] cleanup_module+0x10/0x32 [kvm]
+> [25469.035300] [<ffffffff8009b150>] __riscv_sys_delete_module+0x18e/0x1fc
+> [25469.035374] [<ffffffff8000c1ca>] syscall_handler+0x3a/0x46
+> [25469.035456] [<ffffffff809ec9a4>] do_trap_ecall_u+0x72/0x134
+> [25469.035536] [<ffffffff809f5e18>] handle_exception+0x148/0x156
 > 
-> is that something expected?
+> Invoke aia_exit and other arch specific cleanup functions after kvm_exit
+> so that disable gets a chance to be called first before exit.
+> 
+> Fixes: 54e43320c2ba ("RISC-V: KVM: Initial skeletal support for AIA")
+> 
+> Signed-off-by: Atish Patra <atishp@rivosinc.com>
+> ---
 
-You mean they are disabled or you just did not put them inside your
-initramfs?
+FWIW,
 
-Best regards,
-Krzysztof
+Reviewed-by: Sean Christopherson <seanjc@google.com>
+
+>  arch/riscv/kvm/main.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/riscv/kvm/main.c b/arch/riscv/kvm/main.c
+> index 1fa8be5ee509..4b24705dc63a 100644
+> --- a/arch/riscv/kvm/main.c
+> +++ b/arch/riscv/kvm/main.c
+> @@ -172,8 +172,8 @@ module_init(riscv_kvm_init);
+>  
+>  static void __exit riscv_kvm_exit(void)
+>  {
+> -	kvm_riscv_teardown();
+> -
+>  	kvm_exit();
+> +
+> +	kvm_riscv_teardown();
+
+I wonder if there's a way we can guard against kvm_init()/kvm_exit() being called
+too early/late.  x86 had similar bugs for a very long time, e.g. see commit
+e32b120071ea ("KVM: VMX: Do _all_ initialization before exposing /dev/kvm to userspace").
+
+E.g. maybe we do something like create+destroy a VM at the end of kvm_init() and
+the beginning of kvm_exit()?  Not sure if that would work for kvm_exit(), but it
+should definitely be fine for kvm_init().
+
+It wouldn't prevent bugs, but maybe it would help detect them during development?
 
