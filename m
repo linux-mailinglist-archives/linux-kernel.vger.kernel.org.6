@@ -1,129 +1,148 @@
-Return-Path: <linux-kernel+bounces-565065-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565066-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E14C1A66043
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 22:12:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADF44A66047
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 22:13:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B7B616E0CF
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 21:12:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B8EB83B291F
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 21:13:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 737561F5852;
-	Mon, 17 Mar 2025 21:12:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 851E51FBEA6;
+	Mon, 17 Mar 2025 21:13:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ee7LXzJ+"
-Received: from out-180.mta0.migadu.com (out-180.mta0.migadu.com [91.218.175.180])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="YvBgPm8a";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="VC3oWJl8"
+Received: from fhigh-a2-smtp.messagingengine.com (fhigh-a2-smtp.messagingengine.com [103.168.172.153])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EA417E9
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 21:12:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F02A223AD;
+	Mon, 17 Mar 2025 21:13:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742245926; cv=none; b=BvUjjuqMbj+9MllAIPpVqdUDumCCwPbuN539qEvuQEv2Z2dsUlLrGriVhDhwGkNLiGvig2wnbXMrD3NAqitaff8lQrEBWORUaIT5cz/weOMOZZI8kV9q7J/mKgPHVW2cxaKoqnnhptJyGgo1ktX/znQOcSJ/zf+NPIjBX58VMlg=
+	t=1742246012; cv=none; b=KAw+9CvpV/h0z+d0RsGgf9QtsBKW91kBPjmAxtts1SJ07BuqA5m0Tz9jtvVS3P+2p5dg3fluosx7m+8wR7GIC/hBZEMNkIuIg1urKmqf7QPUb3p9BIdXB+sv0kXzaPzy3utrwXofq45kSf4McH6pArHYEy5r0kTAYTlK+SZIUt4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742245926; c=relaxed/simple;
-	bh=Q44OiKPmtCXgGHbf4MCJCUBX1K59+ZC7S1QYVgcaWBY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rZWVYVsV6PZE0sXQ2OxKLzRpdxOkz3Hv0OZn0842uXDX4pCyfOojZ9+rAHWfgxrCZzTdyMIP0hVfuQglgseZYepT3JvIQX4YyD8Tuo2iQAjcQKzWIDNxvzTt2DK3BlOCY0b8YFzMQFZ6pvRZukaMk2nfFo/ESpFF6pUGwBs4z+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ee7LXzJ+; arc=none smtp.client-ip=91.218.175.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Mon, 17 Mar 2025 21:11:45 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1742245910;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0U39mg1m03nP3wbLf9xV2iS796N9j66PGE+5QWYWutw=;
-	b=ee7LXzJ+86r2fS7arMi0dkwCzskYbLNWx6Vuokox7Bzu1tNcGNEOnZGvrAicSA+wv6v554
-	8c9+aZSlwYKkP00O1OFArFG2Ns8Zjm/FXbZu3XxhwIGlcXFy7LPJGX35GM0a57TivXKOoW
-	U1niGqWu+JR24ufZk++UxpWL6OjC8B0=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yosry Ahmed <yosry.ahmed@linux.dev>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>,
-	Maxim Levitsky <mlevitsk@redhat.com>, x86@kernel.org,
-	kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 6/7] KVM: SVM: Use a single ASID per VM
-Message-ID: <Z9iQEV9SQYjtLT8V@google.com>
-References: <20250313215540.4171762-1-yosry.ahmed@linux.dev>
- <20250313215540.4171762-7-yosry.ahmed@linux.dev>
+	s=arc-20240116; t=1742246012; c=relaxed/simple;
+	bh=yYOd3jMreLhh96SHlZjP/An9FJpVwIyNal1m2L4/Dsw=;
+	h=MIME-Version:Date:From:To:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=XAgRgasuUW9Iq7D4LknIuUgWVDW3fuIGUqk5cEfdnHgjuRedlA34zCi6cPBDBAASxOGIicMsY5a1g+iY5ZCW3d4jFiR5xMqI6TAb1cFgEJrCu565AjvcvSBoBtwkPnX2vMBNqViB/Wj93Tuh5IHPiY5SK7KSIp8pwK4pzwcOLk8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=YvBgPm8a; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=VC3oWJl8; arc=none smtp.client-ip=103.168.172.153
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-07.internal (phl-compute-07.phl.internal [10.202.2.47])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id D6139114013B;
+	Mon, 17 Mar 2025 17:13:28 -0400 (EDT)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-07.internal (MEProxy); Mon, 17 Mar 2025 17:13:28 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:content-transfer-encoding:content-type:content-type:date:date
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1742246008;
+	 x=1742332408; bh=csQL3jgaHqAa0cerUaY+ms6uzsjDBQaO5zpY9KxUV1k=; b=
+	YvBgPm8atMAF2SFjAC8MaOiBXyOl99RxIhsRfKDs+4A9unKivIAttUeS5ZBpxVB3
+	2rphVMQL0ahKdbnYXA0MpUuG9jpdyYBo73hSgbbZw4hc7VBgz0UZl7F/ML0PlMuy
+	bOCptRX/GlkCMradLGPhDicQPnfVO2dJh2GGvbv9kmddMStkO8TYr2mPe5nygFfk
+	FECA/vTiJTJ7MshvSisaBixph3F2kc9N1DDZDM/YAVh0NRywSCgO3F3sZ8HySIEJ
+	sQCUOXnc+y6iqOTE7I5XhKwIjeWaDIJl9/EVD+zAIr1p2pjeV+AiFKi+hKH4fq6C
+	5xpc5xVQskwoCayI6DtCaQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:content-transfer-encoding:content-type
+	:content-type:date:date:feedback-id:feedback-id:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
+	:x-me-sender:x-sasl-enc; s=fm1; t=1742246008; x=1742332408; bh=c
+	sQL3jgaHqAa0cerUaY+ms6uzsjDBQaO5zpY9KxUV1k=; b=VC3oWJl84/YL/xcgF
+	D89ia5ggLY5bbm/WCxrQlQntKtEwPHlFuwowku/i9OqDVT0T9Nnv4yRh6sQbZlO8
+	IvV4obaXfYlz18kNr1PLRwS/8rCWThbdYX6FVIgvBPd9v4abQSLhqYRCB8iMPY6W
+	ZOzV9O3A3wKUJG17dh53rF383QxVeRXozrlAv1EUxVePlrda+6CS4XL5MoteGSvy
+	oVHkWdfwDq0sm2mK2G0RYT3QgodULFWeZMIRsXFU9ZvVMrj1wTcmkyLNcFqCztOW
+	/F7M1riwcgTyRHh+TrHuVEKKjB4m+dH5wkctNOA7B3m7QGEcJ2l6VKrh0YH0+37M
+	oBzCg==
+X-ME-Sender: <xms:eJDYZ1QVqaNepJ1B77Br42ie11iYONF-jRA6FeTy9qIPDikZXlKwYA>
+    <xme:eJDYZ-yojWEPZTUzqMFG-DZNOGuO1IweLSP-mqnXv4qVf1yW382-bx2x2yuDhz_4S
+    y34QzFRLFHPwbDTqc8>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddugedtheekucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+    gvnhhtshculddquddttddmnecujfgurhepofggfffhvffkjghfufgtgfesthejredtredt
+    tdenucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusg
+    druggvqeenucggtffrrghtthgvrhhnpefhkeeltdfffefhgffhteetheeuhffgteeghfdt
+    ueefudeuleetgfehtdejieffhfenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
+    epmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopedu
+    uddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepghhithesrghmugdrtghomhdprh
+    gtphhtthhopehnrghvrgdrkhhishhhohhrvgdrmhgrnhhnvgesrghmugdrtghomhdprhgt
+    phhtthhopehsrghrrghvrghnrghksehgohhoghhlvgdrtghomhdprhgtphhtthhopehhrg
+    hordifuhesihhnthgvlhdrtghomhdprhgtphhtthhopeihihhluhhnrdiguhesihhnthgv
+    lhdrtghomhdprhgtphhtthhopehmughfsehkvghrnhgvlhdrohhrghdprhgtphhtthhope
+    hrohgshheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepthhrihigsehrvgguhhgrthdr
+    tghomhdprhgtphhtthhopeguvghvihgtvghtrhgvvgesvhhgvghrrdhkvghrnhgvlhdroh
+    hrgh
+X-ME-Proxy: <xmx:eJDYZ61MBShKX2Iv-ezs1q8gd8IxzWSTK7jwk40j5meGeoPlffuUbA>
+    <xmx:eJDYZ9B_hMc-2x3cktxAsp8T0C8bXo1-7u2SGOSzJ9wQFu9dk8ccqw>
+    <xmx:eJDYZ-gPQ26HVxKbIZ5y0xBS-p0EhNvegAxg3frAhzQmBBlvYLjAvw>
+    <xmx:eJDYZxrSno14T-SlBEklpuubFC4n5QdWx86pOPmN1GE914Jq4IcHpA>
+    <xmx:eJDYZzZsrUolXAqhUDIqZE4gAToEKkk5e_Cnyp2H0vsc6FmGsCDH49WV>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 557B72220072; Mon, 17 Mar 2025 17:13:28 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250313215540.4171762-7-yosry.ahmed@linux.dev>
-X-Migadu-Flow: FLOW_OUT
+Date: Mon, 17 Mar 2025 22:12:46 +0100
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Nava kishore Manne" <nava.kishore.manne@amd.com>, git@amd.com,
+ mdf@kernel.org, hao.wu@intel.com, yilun.xu@intel.com,
+ "Tom Rix" <trix@redhat.com>, "Rob Herring" <robh@kernel.org>,
+ "Saravana Kannan" <saravanak@google.com>, linux-kernel@vger.kernel.org,
+ linux-fpga@vger.kernel.org, devicetree@vger.kernel.org
+Message-Id: <7f818704-d40c-42da-b2c5-942d31e1d9dc@app.fastmail.com>
+In-Reply-To: <20241029091734.3288005-2-nava.kishore.manne@amd.com>
+References: <20241029091734.3288005-1-nava.kishore.manne@amd.com>
+ <20241029091734.3288005-2-nava.kishore.manne@amd.com>
+Subject: Re: [RFC v2 1/1] fpga-region: Add generic IOCTL interface for runtime FPGA
+ programming
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Thu, Mar 13, 2025 at 09:55:39PM +0000, Yosry Ahmed wrote:
-> The ASID generation and dynamic ASID allocation logic is now only used
-> by initialization the generation to 0 to trigger a new ASID allocation
-> per-vCPU on the first VMRUN, so the ASID is more-or-less static
-> per-vCPU.
-> 
-> Moreover, having a unique ASID per-vCPU is not required. ASIDs are local
-> to each physical CPU, and the ASID is flushed when a vCPU is migrated to
-> a new physical CPU anyway. SEV VMs have been using a single ASID per VM
-> already for other reasons.
-> 
-> Use a static ASID per VM and drop the dynamic ASID allocation logic. The
-> ASID is allocated during vCPU reset (SEV allocates its own ASID), and
-> the ASID is always flushed on first use in case it was used by another
-> VM previously.
-> 
-> On VMRUN, WARN if the ASID in the VMCB does not match the VM's ASID, and
-> update it accordingly. Also, flush the ASID on every VMRUN if the VM
-> failed to allocate a unique ASID. This would probably wreck performance
-> if it happens, but it should be an edge case as most AMD CPUs have over
-> 32k ASIDs.
-> 
-> Suggested-by: Sean Christopherson <seanjc@google.com>
-> Signed-off-by: Yosry Ahmed <yosry.ahmed@linux.dev>
-> ---
-[..]
-> @@ -3622,7 +3613,7 @@ static int svm_handle_exit(struct kvm_vcpu *vcpu, fastpath_t exit_fastpath)
->  
->  static int pre_svm_run(struct kvm_vcpu *vcpu)
->  {
-> -	struct svm_cpu_data *sd = per_cpu_ptr(&svm_data, vcpu->cpu);
-> +	struct kvm_svm *kvm_svm = to_kvm_svm(vcpu->kvm);
->  	struct vcpu_svm *svm = to_svm(vcpu);
->  
->  	/*
-> @@ -3639,9 +3630,15 @@ static int pre_svm_run(struct kvm_vcpu *vcpu)
->  	if (sev_guest(vcpu->kvm))
->  		return pre_sev_run(svm, vcpu->cpu);
->  
-> -	/* FIXME: handle wraparound of asid_generation */
-> -	if (svm->current_vmcb->asid_generation != sd->asid_generation)
-> -		new_asid(svm, sd);
-> +	/* Flush the ASID on every VMRUN if kvm_svm->asid allocation failed */
-> +	if (unlikely(!kvm_svm->asid))
-> +		svm_vmcb_set_flush_asid(svm->vmcb);
+> + * FPGA Region Control IOCTLs.
+> + */
+> +#define FPGA_REGION_MAGIC	'f'
+> +#define FPGA_IOW(num, dtype)	_IOW(FPGA_REGION_MAGIC, num, dtype)
+> +#define FPGA_IOR(num, dtype)	_IOR(FPGA_REGION_MAGIC, num, dtype)
+> +
+> +#define FPGA_REGION_IOCTL_LOAD		FPGA_IOW(0, __u32)
+> +#define FPGA_REGION_IOCTL_REMOVE        FPGA_IOW(1, __u32)
+> +#define FPGA_REGION_IOCTL_STATUS        FPGA_IOR(2, __u32)
 
-This is wrong. I thought we can handle ASID allocation failures by just
-reusing ASID=0 and flushing it on every VMRUN, but using ASID=0 is
-illegal according to the APM. Also, in this case we also need to flush
-the ASID on every VM-exit, which I failed to do here.
+The definition does not appear to match the usage in the driver,
+since you don't pass a __u32 structure but instead a 
+fpga_region_config_info.
 
-There are two ways to handle running out of ASIDs:
+Please also remove the extra FPGA_IOW/FPGA_IOR macros and just use
+_IOW/IOR directly so it is possible to process the headers when
+identifying ioctl command codes.
 
-(a) Failing to create the VM. This will impose a virtual limit on the
-number of VMs that can be run concurrently. The number of ASIDs was
-quite high on the CPUs I checked (2^15 IIRC), so it's probably not
-an issue, but I am not sure if this is considered breaking userspace.
+The 'f' range seems to be rather overloaded already with filesystem
+ioctls:
 
-(b) Designating a specific ASID value as the "fallback ASID". This value
-would be used by any VMs created after running out of ASIDs, and we
-flush it on every VMRUN, similar to what I am trying to do here for
-ASID=0.
+'f'   00-1F  linux/ext2_fs.h                                         conflict!
+'f'   00-1F  linux/ext3_fs.h                                         conflict!
+'f'   00-0F  fs/jfs/jfs_dinode.h                                     conflict!
+'f'   00-0F  fs/ext4/ext4.h                                          conflict!
+'f'   00-0F  linux/fs.h                                              conflict!
+'f'   00-0F  fs/ocfs2/ocfs2_fs.h                                     conflict!
 
-Any thoughts on which way we should take? (a) is simpler if we can get
-away with it and all AMD CPUs have a sufficiently large number of ASIDs.
+In particular, the numbers you have defined are very similar to these:
+some of these:
+
+#define FS_IOC_GETFLAGS                 _IOR('f', 1, long)
+#define FS_IOC_SETFLAGS                 _IOW('f', 2, long)
+
+      Arnd
 
