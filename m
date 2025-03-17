@@ -1,332 +1,328 @@
-Return-Path: <linux-kernel+bounces-563226-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563227-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE3B8A63A01
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 02:20:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17104A63A20
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 02:24:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB2AC188E2D9
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 01:20:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 173733AE5D0
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 01:24:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CAC54EB38;
-	Mon, 17 Mar 2025 01:20:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C975C86331;
+	Mon, 17 Mar 2025 01:24:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="byxmmYCc"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="f6ZEtcUy"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F8A49475
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 01:20:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.10
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742174408; cv=fail; b=jIUw2tsufuLFvVklAoJk/7SjTJb/CYt1jJQWj8XD0dtc7kxhEij0YPGhcnqwuFlQZu3aNFj1C4QyiqStY9BmJZRe4xt7iy5E21MvU2RZvHpX63/HTpNu9+IeCvNw2GMHZjCXdQ27nxVjboOuzE5eqC6wJSETPA5kDG/ydXLsWPY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742174408; c=relaxed/simple;
-	bh=vN2f4WhnLYiNqIHididqhpe7lklVZkUU5qPDUEoatdo=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=cgqMNvfRgwnm3wSaomD1mzsja/sFCIDLnQx4+VoSBqvOVenXLgpHJDJfyGZUQ69vPJL48q39bXKnL0x+yU8Zd5q3AFCi/lNwWUI1FWaaqf486kOmzU+cAKO2/sXjZXXtx2+QXRM4viCSD99OTTkxrc9uT7iVty/w5LnEQtOVehA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=byxmmYCc; arc=fail smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742174406; x=1773710406;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-id:content-transfer-encoding:
-   mime-version;
-  bh=vN2f4WhnLYiNqIHididqhpe7lklVZkUU5qPDUEoatdo=;
-  b=byxmmYCcwne7hrl7mFbxnLg1739ch7TUJ6caCmiYK+GbJuY9NyxSfBGt
-   ky0J+r/GelBbvWSOitYOJylk7CkS5LTgiTpw11R8z9fxZOuF/dCqIM+Sb
-   8vcwIkN+ZHLd/gK28//1S66Xb3E3siT0C+ihvoOdjkhpnqL/QBBENntrp
-   0SXlKcpuCq0kPoAKkfV1rjMlEv5zx5GeWIpRw/xmgtMBATqpn39FNVFvI
-   jqGU8uhCNEMEFAjT9GnSxiqC/2d00siL+T0xgTG/fcUtiPLiMo0ytr5TT
-   hk8EVkZDUzwHpPbt4XbzjwR9vmNBBZoSTkaXcLxQ20HUfCD4hxgzuK6F+
-   Q==;
-X-CSE-ConnectionGUID: 9qKV9XbuSrKHMeB3McM4JA==
-X-CSE-MsgGUID: UzTjv+6aTE+jbK1f806tRw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11375"; a="60649564"
-X-IronPort-AV: E=Sophos;i="6.14,252,1736841600"; 
-   d="scan'208";a="60649564"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Mar 2025 18:20:01 -0700
-X-CSE-ConnectionGUID: s0ic/RVaSb+yLSYNltKA/w==
-X-CSE-MsgGUID: Qg5oXQ2ESv6yGNGatOlA+A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,252,1736841600"; 
-   d="scan'208";a="126877641"
-Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
-  by fmviesa004.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 16 Mar 2025 18:20:00 -0700
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44; Sun, 16 Mar 2025 18:20:00 -0700
-Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14 via Frontend Transport; Sun, 16 Mar 2025 18:20:00 -0700
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (104.47.55.40) by
- edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.44; Sun, 16 Mar 2025 18:19:59 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=gRIUnRmMUqURdIPVubzYlbH8+EPGCe7bcbuto+BVZ+uBkVQPnwh7eWxaPawl9NZioylX3x35m8KunHTFhix4JBev/v4q015uXdmSGX76fuvDkOE7860vGdjpofB2AjAZT+RKDnJA4gck5qictwDqEsKx5LjsVNb/94gJhpbnMRkUDEZcbzFNhnne/k9mqWl3sIN3t99L3qoObJkTnhcXU21jjDU4dNWbqw6mrl7VRuRmxY2juz0v/FZgo6SWyWqJ3x0IOKz92hnHXxdI60tRx2gKwGeWlNXMyWfxF0CchKQGHrzhtGcyO87WBf/MYrpW+MQdgL/gz3pHSdm1vJWX5g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=vN2f4WhnLYiNqIHididqhpe7lklVZkUU5qPDUEoatdo=;
- b=hZp/HH1+AZO00cifY4qhGJ9dhZ/uxogaGWuFqmT688O1YAESi6lM9UzK87AubpPj0YOyCaBxXqNgfVjL6o7Tv9QPKiGet6oj26z7crhYWmBfl6ecIAflH4GnfRwpf4WOOs+uVoo20mJYYKHB4u00JcRZBiO+4e6kQ6iPLoGW2kfkm6w3y3OJVDmoaE6cNcIYM/Y0dhYmwetYyumdIKT1KlwRe4iBCXf9brs9hwNLc+EJ0/eMnWqMXaR7Oc7CXEGK8Nz/5dmKLc1Ea7OZQJwbqQAtNatScfVSjCo+PLFALxVDYNpESqdgfzHEf40RxaV0fbN17/hPKM3jm8D17hfPVg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from BL1PR11MB5978.namprd11.prod.outlook.com (2603:10b6:208:385::18)
- by PH7PR11MB7513.namprd11.prod.outlook.com (2603:10b6:510:270::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.33; Mon, 17 Mar
- 2025 01:19:57 +0000
-Received: from BL1PR11MB5978.namprd11.prod.outlook.com
- ([fe80::fdb:309:3df9:a06b]) by BL1PR11MB5978.namprd11.prod.outlook.com
- ([fe80::fdb:309:3df9:a06b%6]) with mapi id 15.20.8534.031; Mon, 17 Mar 2025
- 01:19:57 +0000
-From: "Huang, Kai" <kai.huang@intel.com>
-To: "tglx@linutronix.de" <tglx@linutronix.de>, "peterz@infradead.org"
-	<peterz@infradead.org>, "mingo@redhat.com" <mingo@redhat.com>, "Hansen, Dave"
-	<dave.hansen@intel.com>, "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
-	"bp@alien8.de" <bp@alien8.de>, "kirill.shutemov@linux.intel.com"
-	<kirill.shutemov@linux.intel.com>
-CC: "dwmw@amazon.co.uk" <dwmw@amazon.co.uk>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "seanjc@google.com" <seanjc@google.com>,
-	"x86@kernel.org" <x86@kernel.org>, "sagis@google.com" <sagis@google.com>,
-	"hpa@zytor.com" <hpa@zytor.com>, "Chatre, Reinette"
-	<reinette.chatre@intel.com>, "Williams, Dan J" <dan.j.williams@intel.com>,
-	"thomas.lendacky@amd.com" <thomas.lendacky@amd.com>, "bhe@redhat.com"
-	<bhe@redhat.com>, "pbonzini@redhat.com" <pbonzini@redhat.com>,
-	"nik.borisov@suse.com" <nik.borisov@suse.com>, "ashish.kalra@amd.com"
-	<ashish.kalra@amd.com>, "Yamahata, Isaku" <isaku.yamahata@intel.com>
-Subject: Re: [RFC PATCH 3/5] x86/kexec: Disable kexec/kdump on platforms with
- TDX partial write erratum
-Thread-Topic: [RFC PATCH 3/5] x86/kexec: Disable kexec/kdump on platforms with
- TDX partial write erratum
-Thread-Index: AQHbk0Li0j4hIZraA0O6rldQIQB4e7NwJfwAgAAZWQCAARIBAIAAV9SAgAAEJwCAABOXgIABQD0AgAONsYA=
-Date: Mon, 17 Mar 2025 01:19:57 +0000
-Message-ID: <912df0c6bd8f42d92ccc11d9fdda1e108576a5e5.camel@intel.com>
-References: <cover.1741778537.git.kai.huang@intel.com>
-		 <408103f145360dfa04a41bc836ca2c724f29deb0.1741778537.git.kai.huang@intel.com>
-		 <4ac689506269e907774806a484e15171b04ffc63.camel@intel.com>
-		 <e1b3da33446178861ca34e61675f184b439101e2.camel@intel.com>
-		 <5e736c6d7794b8642d020350e302ead0d6ca13ae.camel@intel.com>
-		 <da02e1d5a489526770ec737eac41237226cdb5cd.camel@intel.com>
-		 <e7b259b0a986f3cf1578b000f9113933ef80a324.camel@intel.com>
-		 <1a6b44f3fb23d0a35bb3c24d755fb2ae6f74b1bb.camel@intel.com>
-	 <a6b3a87eba30fdb79423306da538b9c8bb7b8634.camel@intel.com>
-In-Reply-To: <a6b3a87eba30fdb79423306da538b9c8bb7b8634.camel@intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-user-agent: Evolution 3.54.3 (3.54.3-1.fc41) 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: BL1PR11MB5978:EE_|PH7PR11MB7513:EE_
-x-ms-office365-filtering-correlation-id: 180a5d01-2458-4e43-86ef-08dd64f1d4cc
-x-ld-processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014|38070700018;
-x-microsoft-antispam-message-info: =?utf-8?B?cnJURWRyOGE3WjlPaVV0USt1ajB0Vm45bjFXUVZOTE9RNGpJTVFJTHhnUmNk?=
- =?utf-8?B?R3RBUUJ2VGZPazhBZkMxV0NncVBzdXFBSVRkOXYxYTFhVDh0R05PVHozbDly?=
- =?utf-8?B?L1F1cTJsYmRDQXVPYVpUdThPVHdXc2FTOVk2a2RRaTB6dlZhbzVyYjJ2cTJB?=
- =?utf-8?B?UzRHUjRtUkY5WnZpWTNMNm5uNDRObVlsSFlyVDJzR2VGNGZmSkFkWGFzQnQw?=
- =?utf-8?B?N1ZQeXVYTXZ0Q056MUZraTNGRVJub1dRRjZoS2wzMEE0Z1VZblVSVzBQZXpx?=
- =?utf-8?B?UlFSVncxNDE3VytwT3VzNmhuSjJwOTB2R3V5akZOdFIrZE1hejNxSDRzTmRL?=
- =?utf-8?B?emFOM0pCVDhrT3JwbndDZWZvWlR0dEhmNmF1a2oyN1FUR1orZ2w4cXpLdzhW?=
- =?utf-8?B?d25RL08rb2JBZUsrTEUwWDRWdi9UdXdZMzJKbmNIUHdUN0hOZ0I3M2w2djJ1?=
- =?utf-8?B?OVVBbGJUWUp3UDdROTZCbXNQL1lNWlE3RWY3Ris0dC9NcStNN25CNjNNL21D?=
- =?utf-8?B?alNFVVBNYm1NN0R4RmpScXJueE94TmhxbkErcWFZazkwYnR2SENnekx5bDBB?=
- =?utf-8?B?ZThybXBaNWV6N1B2aTgwL2pKL0o5N0tJc1FMQmJlNXJ6QjdHckNKWFpMUERn?=
- =?utf-8?B?UFVEWk9Ka1BaZkNsOVdiSGYvVDRGT0hNTExWOUhERHBWT3hZRlpsSWVhNFpD?=
- =?utf-8?B?dVJWYmZrU3BZalZOb0hnVTB0N2p5RUU2QkJETVBVczY2YzBDNDlncVc3Qm1X?=
- =?utf-8?B?V0NZVW5xL21udjVOZ0ZJYVVkdGlOOEF1YkV1RUF5RzJoeGVTUE9ub1BGZGVO?=
- =?utf-8?B?cUI3QzlyazlROGVobVBuTTI0TzZYeStpTG9VWlJ6aGNRRTJDSStmdUlvRW8w?=
- =?utf-8?B?YXVFYjV1UnBrK1BrUytKSGsyUUNOVS9POGJsZCtMb1RWWklFbkRPK2NGSTdT?=
- =?utf-8?B?SFJDdmw4OW5sdGtYa0JhRjBFWWhzVlRXZWt2dnJoN1NaRTVYd2I2SnhORzlw?=
- =?utf-8?B?c1BneTVRNkphU09WaUNWVDlqeUp3dmFlTHpzd1hwL0U1WkJiaU4wQWRhdVNl?=
- =?utf-8?B?cWJkcmU2WU5MSUVkSHlueXFvOVlqaHovK0ZyUVIyR0lKL0FtblZyMlRzZHhs?=
- =?utf-8?B?SW1rbFNSTFpaTGdlYy9Oajdhc2s4c0dyNnNQTzJid014akhONitUaDBpc3Ry?=
- =?utf-8?B?clJ0VGgyOE9ldmF5cTRqcHhZSGV4dGFXeGJrZ0ZNRno2N29mRWIvQ0FOVUpT?=
- =?utf-8?B?Q3JmbDVBQXIxOGlINytzSEk0dSs2Q05oMnFKL0svOStncStzYnFNTU9JQXJh?=
- =?utf-8?B?K2t0aGNDU21zNTlZNmlPOG8xbndObGlCdSs1cENGZ285WE9lU0x5dmYrUXcx?=
- =?utf-8?B?UEV2Zkg1NS96U3lPb1pIUUFxd2NiM3Z3M2x6NzhkdWVZNWpCRHcrODhGZUtS?=
- =?utf-8?B?U2RwTWlDcVVwN1lsRHdhZXpreGQzR0RSaFovMjNwRkovV2ZRVXdhWVB4UExW?=
- =?utf-8?B?Qi9RMnhMV1VTclJDWmNSc01kK1NBSUFCRHcrMENwd1hRWW9oNzlXVzRYSGx3?=
- =?utf-8?B?clIySmowb0VwUnE3eW1weFE5bUU3bktkR3FHL0dORGNrci90aXFoaUk5QkUr?=
- =?utf-8?B?U21tRlNJcTRYUW9uMDRnZnRzQWZhamhTN0NrSFd4WVFTTFd5YVBzRXRQTXFS?=
- =?utf-8?B?eU1YWm1XWnJkdTVLZGFnRXRvY0UvYVdKa1VONStndWFiQmdtM1hnZ2JWZWho?=
- =?utf-8?B?aWJjU1ZwUXJ0WUdDUzJzYkpLNEdlZ1g4c3dwVlYxaWRGbjcza3RUc2drZWdu?=
- =?utf-8?B?SWlQTlJDSU1zY1g5VWlJTEZpY0FUMGxkVFdZNFlnajAwbExURmo5ekgweHdS?=
- =?utf-8?B?UWI4bGMxSU5jaVkrVEE4MzNUQzNpVEhPd29zdGs2TnFlM2c9PQ==?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR11MB5978.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?TndNK25kckNaajgxUU9vandqbmxZRWRiUWNLRmtFc0x2WEhBdG1PZkROTm1I?=
- =?utf-8?B?a0I0UjgyZGp5ejcya2tmbDZyWWpsZkx6SGNIMjdoeFpoSVdKTXovcGEzWUhi?=
- =?utf-8?B?ZitWZVZueXdqQ04zZWVrRlpBMnBWZkh6UzUwSU92d1F6TVl3MGdNZUttNTZj?=
- =?utf-8?B?Rjh5K3JyMzVtT2hEd0hrVXFkVHMwYUlLWit5RDU1ck5qU0tYVXM0Y0l5ZG0r?=
- =?utf-8?B?MWVGWXFiWWpZbWN1VVpGbHFVQnRRT1hsQTV5MStXS040cVY2bVJici9FaVZZ?=
- =?utf-8?B?VzFyL2pvV1cyMlZUQkdoZHpKSU9VRHFpUGxhWE12YkRvMkZ3WWhPS1NjL2tz?=
- =?utf-8?B?SVpTK0JGdGp0M3ZJWVNWbkVvOW5QNHhMY0FySTIvSVhEaWp1bVllRGgvcW1U?=
- =?utf-8?B?VEFGd3d1R1JYaVBGcUJpSkN3S0g5LzJFdnRpMDZ2Q1RWSDREMWlFQStybUQx?=
- =?utf-8?B?NFlqOHIyS1lWS0J3UDd0K1AvZUhqTGpBM3dKWXQ0WXpZME5sOXhkd1ZYR1Jz?=
- =?utf-8?B?VWpDK0wvSG5VSjBvWjE4L2xMclNtUWx6Ym92Q3c5cGRYaVJEVkUrbHJoOGxx?=
- =?utf-8?B?MFB1OEhtNU1jdzB1WHZ2UyswMndUNmRadGxZc2EyRzM4SlV2L3l2SHU3K2dR?=
- =?utf-8?B?Y2JmM0RlL0xkM0RrZFcyK0F5MWxZaDZ1Z0x1Z3dxcmZZcmRaUEU5MjBJcXU2?=
- =?utf-8?B?NXFtckRRYy9FL2lKVWhRMTlmRm5sK3kyRDVPSHFPQ1hjdDBMemtKZTA1WWlw?=
- =?utf-8?B?TGExWEFLTEgwWXNqbEpYTmN3MkE5UGwyOFR1RzlJTlFsKzFnalFYU2h1VU9o?=
- =?utf-8?B?N0UxTERTOHowU3dteVc2VlZBcHBiWkVIN1pSMm4rQVV2QjhiZGRTWmhDR2kz?=
- =?utf-8?B?cFFwaUVwclBFd3YxRGJNamhXN1FtTGo2a3dkY0VsNEMvNjZNem1DOGhEME14?=
- =?utf-8?B?d2RlMFFHUjFnTFp1RU55S09TNEhCR0EyQURBczFiQjZZZ0pLZkMzQ3ZGeWFG?=
- =?utf-8?B?OEZTem5rVG0zWGU1MERvZi9mbzI3c3NkVGhQcWcvRGxoemQ1cXJrcWxZOXcw?=
- =?utf-8?B?REhjdkJsQlpiRlh6Vml4T1YyQitUMXRZNWZuaDBYQ0hhS2FReXBBUUNuL2hM?=
- =?utf-8?B?R0pOcUUrMG90c0IwZzAveXJITW5tVVJOMmtRS1Q4aFk0VElaRnFJZGJTM0R0?=
- =?utf-8?B?RmJGYzExcit0MjY0MkJhZVBlU2pDQmhPa2gvN0FLYmRXK21TcnRPSGxnZUo3?=
- =?utf-8?B?RGFxdWlxTUF0NTg3b2ttSVE4YU40ekxSaVFGSmlnMTRRaUFWbzRCOTZHK2Z3?=
- =?utf-8?B?ZzNjbndkMit4OExBWmp6LzdhR3ZLRG1BcTl6N2hwY2tyYitxMVZmMnNsTHBC?=
- =?utf-8?B?TEM0MmFvYjBLSUJqT2xKSGgwK0t0Nnc3UEtXVUt4STZOSmlGSVplRXVrRjRp?=
- =?utf-8?B?U1k0ZG12dkNDS3FuV0F6eVl6Q1JuQmhFZkJOVTRWV0JxQ0pxbVBmTzJNRlV4?=
- =?utf-8?B?dHk0dlFhcENLVlJycVNRSXJMaCtNTlBqenpkT0JTR0JFeEZMOTU4MkljZU1Z?=
- =?utf-8?B?ZlFTSWxKNFVLRkl4SFlvWTVwN3pUS2crdU1Kd01aZDk4d0EvTVRkL2JyWDJv?=
- =?utf-8?B?NHB4cVpscVhhbkg2aUtOQlE4OWNrZVZiZTR1TGF5NkdaNWtOSmhyVjM5RVR1?=
- =?utf-8?B?QjNSc3NJck12cExsR3JOS3E1NGFzb0RwSmcxOUIvZVBWT291NjluNEh4T2Fi?=
- =?utf-8?B?OWFsNm9OU01zMkEvZlJHTm92RXk5T0xqRjZTUjlDRmJ3REtIaTAySHJHVjg0?=
- =?utf-8?B?QkdtZ0t4bmhpYlNUdHVCTDl6QUtFWUNQNzdDQ2FPbXJDWGh1U0wyQkdYZk5L?=
- =?utf-8?B?N2RBeDI5U0s1Y3ZhWG1EdkhLR3I1dWVkUUkzQndTOXZpalRnTnJlU0FWZXRx?=
- =?utf-8?B?Tzg1a3JPTDUyc2taWFNPNGxKOExFeUtmVWdQSFIrOUNZVXlueUl2SGdYUkE4?=
- =?utf-8?B?NTZkbG9MZkVOczJaQjNHVVE3dzdSMEo5aTIxUkMvUzVpWkMvVEdFTGtaQmlB?=
- =?utf-8?B?b2pwQmpFOXE1K3ZuZytCek1EQjZzaEtrUmtDMDlac3hZVjc2aDdMQ1BWY3Rj?=
- =?utf-8?Q?8SDfakKgPz0WFvR9o2uG8UnbF?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <CB87C322BD385742B58503D86F08A547@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C1C4481B1
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 01:24:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742174660; cv=none; b=EoFJqPY5vPr/ERfxAG75uyYlAhAagxrS861vQHlsiLUvKUhbCWk5edVGSPEL1RCGfT15Der6AeQn0cKRqtnph1qXbpmo4I+knQc5wm+LSEazXuW+hmi8NEk+WvvbGM6eHYLGYfZ95M+l98Guh0bKQoj1Np7bdbrn3dmGyTCmmU8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742174660; c=relaxed/simple;
+	bh=wr5705vY/nP2UC9VWATWaf62F8wYzdpPjoyNpsn0P4I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=p/NcE2V4LqJ7I0YbpDL8suXXZUMeKmRfQPrG/cSf+i3JbEXIbCsIMGN1pz1DXUHquypmLuHYMXJOe2NzoxMyW1pllp0zcoJmVkH0IEYcWjtXdPpfoMSLPZQCJK1MO7rEZryBgU7lRGN3tYKP7hJCEPv2huGKytzG9E1pmoogI7w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=f6ZEtcUy; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1742174657;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=iqjIRX75JyFvC1kWSb5JfMC4rfb0SrVX1WUN6W9PP0E=;
+	b=f6ZEtcUy1rjxGSUIp9xYLyMZoj1u44uyrJa5Lyy9p8eAUVaHmQTR8iFbt0qOPIl7UCFEv9
+	SkxI+668fyEEIhSEVTq9YHFscDOP594yg1D8jYQetBz/yqAHwYxVNTlrN40q6PBDOQR5Vw
+	TXPxno8SjzjuYbtKCDwroBpMdO76fQ0=
+Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com
+ [209.85.216.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-556-blScKE3uPdyo1RS8T7Xm9g-1; Sun, 16 Mar 2025 21:24:16 -0400
+X-MC-Unique: blScKE3uPdyo1RS8T7Xm9g-1
+X-Mimecast-MFC-AGG-ID: blScKE3uPdyo1RS8T7Xm9g_1742174655
+Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-2ff55176edcso1891051a91.1
+        for <linux-kernel@vger.kernel.org>; Sun, 16 Mar 2025 18:24:16 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742174655; x=1742779455;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=iqjIRX75JyFvC1kWSb5JfMC4rfb0SrVX1WUN6W9PP0E=;
+        b=ML6ngADTJk2WgVdWWcffdhye/NzGlxfxtQ7d4RsEizARNhuc9r51eXfBe5sh0FSa0V
+         WfxNwq/y2hs3UkB2cw7jHs3sGzmHeErQA1+6ZgaOkWeQAhMmcZeLfXSY+uuuPVTwdfyF
+         7g06ss4QjiLe0UThxyoCL9HrIBEnto7dzWHotd+cvSxMwwEawZR9nzxw0+w2kzjHLAr6
+         UAMMmw8jV+j13N/YAz/ykI9ktYQ9pMX763sRbdifSGcqfwI0Yb8ry644jUF4kju+01Pe
+         TjIjh9NPwtsP2k+dsHuJvGb93TOY6d1zamKnz0F35Y3w8/ZxggaM3Ruw48TXrUAm0blB
+         8cww==
+X-Forwarded-Encrypted: i=1; AJvYcCUNe9Qf/0PwViHz4/rnhygVM5s0O0MPb0rzWAsxxYKk0S1pSGplybBdo0l0c7s2G9npelzEQIJHMyv0ldg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YytJm6JM1wR6dtetGrJYGU9SrSvFwuy02HI9imEzyNKbXgN5cKK
+	Y7CyET2RBNRVkhbNrt3A4M9jc9cV92N5tlMNjHI9SA2Pjru8rHRvTj5emJ3Turly4/XirRh5Mz/
+	hQdND8x2+Vx/qV7VR/VOeouCmGczOBcH4X0ZLP5Rzt00xAXbDGQZ9+vqAa+gYnFdxeF3ugss2g/
+	FbfbAe8FmunhqyhCKbCIixrN1Nl1SUuFJ8v1Sf
+X-Gm-Gg: ASbGncvGxMpP0XKlcb65LxqLu/VqCw5z5A35sGD2OEZSVkDQ6j4vemccg3zNQp2ZTnx
+	B8nLbMMV4GI9fEY12Cy/+Q1JT+4Elebpoal7lk+LqTqZZcMT0YHWNaNL4sjL9RNG7BMA2CZhLvw
+	==
+X-Received: by 2002:a17:90b:2d4e:b0:2ee:c04a:4276 with SMTP id 98e67ed59e1d1-30151c560d3mr11874663a91.5.1742174655233;
+        Sun, 16 Mar 2025 18:24:15 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGNuLTYcAFNsErMybv5eaXjSgyuDeUoOaJqeP+U8oqio3kP/m6M5ZI6zah2RONXWHXVhQ17o6TrOQOKO8cZ5rQ=
+X-Received: by 2002:a17:90b:2d4e:b0:2ee:c04a:4276 with SMTP id
+ 98e67ed59e1d1-30151c560d3mr11874640a91.5.1742174654798; Sun, 16 Mar 2025
+ 18:24:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BL1PR11MB5978.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 180a5d01-2458-4e43-86ef-08dd64f1d4cc
-X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Mar 2025 01:19:57.6121
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: M0Z24XEpUOPSYwzaH4frIWaiFzPrvQXiGzj8TxGQEtU2DfcYV2bC4Fb+lB4h+PDoKKt13x/OvUWuAzDD7uGpQA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR11MB7513
-X-OriginatorOrg: intel.com
+References: <20250307-rss-v9-0-df76624025eb@daynix.com> <20250307-rss-v9-1-df76624025eb@daynix.com>
+ <CACGkMEvxkwe9OJRZPb7zz-sRfVpeuoYSz4c2kh9_jjtGbkb_qA@mail.gmail.com>
+ <2e27f18b-1fc9-433d-92e9-8b2e3b1b65dc@daynix.com> <CACGkMEssbh0-BKJq7M=T1z9seMu==4OJzmDPU+HEx4OA95E3ng@mail.gmail.com>
+ <26592324-c1f0-4ff5-918b-7a9366c4cf71@daynix.com>
+In-Reply-To: <26592324-c1f0-4ff5-918b-7a9366c4cf71@daynix.com>
+From: Jason Wang <jasowang@redhat.com>
+Date: Mon, 17 Mar 2025 09:24:02 +0800
+X-Gm-Features: AQ5f1JryPj-hCWP_uaH6cYjv69oLlSYyQNPiVp3RjP0NCgptSjazOnHXHVW7xb4
+Message-ID: <CACGkMEtapdjiXCPd1JZUF8JP3F1Ks-AtrbFBNGtORYnXPPrBEQ@mail.gmail.com>
+Subject: Re: [PATCH net-next v9 1/6] virtio_net: Add functions for hashing
+To: Akihiko Odaki <akihiko.odaki@daynix.com>
+Cc: Jonathan Corbet <corbet@lwn.net>, Willem de Bruijn <willemdebruijn.kernel@gmail.com>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	"Michael S. Tsirkin" <mst@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
+	Shuah Khan <shuah@kernel.org>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	netdev@vger.kernel.org, kvm@vger.kernel.org, 
+	virtualization@lists.linux-foundation.org, linux-kselftest@vger.kernel.org, 
+	Yuri Benditovich <yuri.benditovich@daynix.com>, Andrew Melnychenko <andrew@daynix.com>, 
+	Stephen Hemminger <stephen@networkplumber.org>, gur.stavi@huawei.com, 
+	Lei Yang <leiyang@redhat.com>, Simon Horman <horms@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-T24gRnJpLCAyMDI1LTAzLTE0IGF0IDE5OjAzICswMDAwLCBFZGdlY29tYmUsIFJpY2sgUCB3cm90
-ZToNCj4gT24gVGh1LCAyMDI1LTAzLTEzIGF0IDIzOjU3ICswMDAwLCBIdWFuZywgS2FpIHdyb3Rl
-Og0KPiA+ID4gU28gdGhpcyB3aWxsIHN3aXRjaCBhbGwgb2YgVERYIHRvIGJlIGRlZmF1bHQgb2Zm
-IHRoZW4sIHVubGVzcyB0aGUga2VybmVsDQo+ID4gPiBnZXRzIGENCj4gPiA+IHBhcmFtZXRlciBz
-ZXQuwqANCj4gPiA+IA0KPiA+IA0KPiA+IEN1cnJlbnRseSBpbiBLVk0gVERYIGlzIGFsc28gZGVm
-YXVsdCBvZmYuDQo+IA0KPiBHb29kIHBvaW50LiBJdCBiZWdzIHRoZSBxdWVzdGlvbiBvZiBob3cg
-bWFueSBjb21tYW5kIGxpbmUgb3B0aW9ucyB0aGUgdXNlcg0KPiBzaG91bGQgaGF2ZSB0byBwYXNz
-IHRvIGVuYWJsZSBURFguDQo+IA0KPiA+IA0KPiA+ID4gSW4gd2hpY2ggY2FzZSB3ZSBjb3VsZCBh
-bHNvIGp1c3QgdW5sb2NrIHRoZSBLY29uZmlnIHdpdGgganVzdCBvbmUNCj4gPiA+IHNtYWxsIGNo
-YW5nZS4gVERYIGFuZCBrZXhlYyB3b3VsZCBzdGlsbCBtdXR1YWxseSBleGNsdXNpdmUsIGJ1dCBq
-dXN0IGF0DQo+ID4gPiBydW50aW1lLg0KPiA+IA0KPiA+IFllYWggSSBhbSB0aGlua2luZyB0aGlz
-IHRvbywgZ2l2ZW4gdGhlICJrZXlJRCAwIGludGVncml0eSIgdGhpbmcgYXJlIHN0aWxsIG9uLQ0K
-PiA+IGdvaW5nLg0KPiANCj4gWW91IG1lbnRpb25lZCBvZmZsaW5lIHRoYXQgdGhlcmUgdXNlZCB0
-byBiZSBhIGNvbW1hbmQgbGluZSBvcHRpb24sIGJ1dCBpdCB3YXMNCj4gcmVtb3ZlZCBhZnRlciBk
-aXNjdXNzaW9uIHdpdGggRGF2ZS4gSSB3ZW50IHRvIGxvb2sgZm9yIGl0IGFuZCBvbmx5IGZvdW5k
-IHRoaXM6DQo+IGh0dHBzOi8vbG9yZS5rZXJuZWwub3JnL2xrbWwvN2U2MzkxMmEtODk1Zi1kM2Iz
-LTMxNzMtMzM2YmVhYTg2ZDA4QGludGVsLmNvbS8NCj4gDQo+IC4uLndoZXJlIERhdmUganVzdCBh
-c2tzIHdoeSBpdCdzIG5lZWRlZC4gSW4gdGhlIG5leHQgdmVyc2lvbiBpdCdzIGRyb3BwZWQuDQo+
-IFVubGVzcyB0aGVyZSBpcyBhbnl0aGluZyBtb3JlLCBpdCBkb2Vzbid0IHNlZW0gbGlrZSB0aGVy
-ZSB3YXMgcmVhbGx5IGFueQ0KPiBvYmplY3Rpb24uDQoNClRoYW5rcyBmb3IgZGlnZ2luZy4gOi0p
-DQoNCkkgY291bGRuJ3QgZmluZCBhbnkgc29saWQgcmVhc29uIHRvIGFyZ3VlIGFnYWluc3QgRGF2
-ZSBzbyBJIGp1c3QgZHJvcHBlZCBpdC4gIEkNCmNvdWxkIGFyZ3VlIHRoYXQgInRoaXMgYWxsb3dz
-IHBlb3BsZSB0byBkaXNhYmxlIFREWCBvbmNlIGZvciBhbGwiIGJ1dCBpdCB3YXMgbm90DQpzb21l
-dGhpbmcgbWFuZGF0b3J5IGF0IHRoYXQgdGltZS4NCg0KPiANCj4gPiANCj4gPiA+IFdlIHNob3Vs
-ZCB0cnkgdG8gZmxhZyBQYW9sbyBhbmQgc2VlIHdoYXQgaGUgdGhpbmtzLg0KPiA+IA0KPiA+IEkg
-YXBwcmVjaWF0ZSBpZiB5b3UgY291bGQgaGVscCB0byBkby4NCj4gPiANCj4gPiA+IA0KPiA+ID4g
-T3IgaXMgdGhlIHByb3Bvc2FsIHRvIG9ubHkgYmUgZGVmYXVsdCB0ZHhfaG9zdD1vZmYgb24gdGhl
-IGVycmF0YSBwbGF0Zm9ybXM/DQo+ID4gPiBBbmQNCj4gPiA+IHRkeF9ob3N0PW9uIG90aGVyd2lz
-ZT8NCj4gPiANCj4gPiBUaGUgdHJpY2t5IHRoaW5nIGlzLCBuYXR1cmFsbHksIHdlIHdhbnQgdG8g
-c2tpcCBhbGwgdGhlIGNvZGUgaW4gdGR4X2luaXQoKSBpZg0KPiA+IHRkeF9ob3N0PW9mZiwgYmVj
-YXVzZSB0aGVyZSdzIG5vIHJlYXNvbiB0byBkbyB0aG9zZSBkZXRlY3Rpb24vaW5pdGlhbGl6YXRp
-b24NCj4gPiBpZg0KPiA+IHdlIGFyZSBub3QgZ29pbmcgdG8gdXNlIFREWCwgZS5nLiwgd2UgZG9u
-J3QgbmVlZCB0byB0aGlzIG9uZToNCj4gPiANCj4gPiAJcmVnaXN0ZXJfbWVtb3J5X25vdGlmaWVy
-KCZ0ZHhfbWVtb3J5X25iKTsNCj4gPiANCj4gPiAuLiB0aGF0IG1lYW5zIHRoZSBjb2RlIG9mIGRl
-dGVjdGluZyBlcnJhdHVtIHdpbGwgYmUgc2tpcHBlZCB0b28uDQo+ID4gDQo+ID4gSWYgd2Ugb25s
-eSB0byBvbmx5IG1ha2UgdGR4X2hvc3Q9b2ZmIGFzIGRlZmF1bHQgZm9yIGVycmF0dW0gcGxhdGZv
-cm1zLCB0aGVuIHdlDQo+ID4gbmVlZCB0byBkbyBjbGVhbnVwIChlLmcuLCB0byB1bnJlZ2lzdGVy
-IHRoZSBhYm92ZSBtZW1vcnkgbm90aWZpZXIpLg0KPiANCj4gVGhpcyBpcyBhIHN0cmFuZ2UgcG9p
-bnQuIFRoZSBlcnJhdGEgZGV0ZWN0aW9uIGlzIG5vdCBkZXBlbmRlbnQgb24gdGhlIGVhcmxpZXIN
-Cj4gY29kZSBpbiBURFggaW5pdC4gSXQgY291bGRuJ3QganVzdCBiZSBtb3ZlZD8NCg0KU29ycnkg
-SSBkb24ndCBxdWl0ZSBmb2xsb3cgeW91ciBwb2ludCwgYnV0IHNlZW1zIHlvdSBhZ3JlZWQgaXQn
-cyBub3QgYSBnb29kDQppZGVhLg0KDQo+IA0KPiA+IA0KPiA+IFRoaXMgaXNuJ3QgbmljZSBhbmQg
-c2VlbXMgaGFja3kuDQo+ID4gDQo+ID4gSSBkb24ndCBzZWUgbWFraW5nIHRkeF9ob3N0PW9mZiBh
-cyBkZWZhdWx0IGhhcyBwcm9ibGVtLCBhbnl3YXksIGFzIG1lbnRpb25lZA0KPiA+IGFib3ZlIFRE
-WCBpcyBvZmYgYnkgZGVmYXVsdCBpbiBLVk0uDQo+IA0KPiBZZWEsIHRkeF9ob3N0PSFlcnJhdGEg
-YXMgYSBkZWZhdWx0IHZhbHVlIG1ha2VzIGl0IG1vcmUgY29tcGxpY2F0ZWQuDQoNClllcy4NCg0K
-PiANCj4gDQo+IFNvIEkgdGhpbmsgdGhlIHNpdHVhdGlvbiBpcyB3ZSBuZWVkIGF0IG9uZSBrZXJu
-ZWwgcGFyYW1ldGVyLiBXZSBhbHJlYWR5IGhhdmUgb25lDQo+IGZvciBLVk0sIHdoaWNoIGNvbnRy
-b2xzIHRoZSBsYXRlIGluaXRpYWxpemF0aW9uIHBhcnRzIG9mIFREWCB0aGF0IHdlIGNhcmUgYWJv
-dXQNCj4gaGVyZS4gU28gd2hhdCBhYm91dCBqdXN0IHVzaW5nIHRoZSBleGlzdGluZyBvbmU/IEkg
-dGhpbmsgd2UgZG9uJ3Qgd2FudCB0d28uDQoNCkxvZ2ljYWxseSwgS1ZNIGlzIG9uZSB1c2VyIG9m
-IFREWC4gIEkgdGhpbmsgd2hldGhlciBLVk0gaGFzIGEgcGFyYW1ldGVyIHNob3VsZA0Kbm90IGlt
-cGFjdCB3aGV0aGVyIHdlIHNob3VsZCBpbnRyb2R1Y2Ugb25lIGtlcm5lbCBwYXJhbWV0ZXIgZm9y
-IFREWCBob3N0IGNvcmUtDQprZXJuZWwuDQoNCkRhbiBhbHNvIG1hZGUgYSBwb2ludCB0aGF0IGlu
-IHRoZSBjb250ZXh0IG9mIFREWCBDb25uZWN0LCB0aGVyZSdzIHJlcXVpcmVtZW50IHRvDQptYWtl
-IFNFQU1DQUxMcyBldmVuIEtWTSBpcyBub3QgZ29pbmcgdG8gcnVuIGFueSBURFggZ3Vlc3Q6DQoN
-Cmh0dHBzOi8vbG9yZS5rZXJuZWwub3JnL2t2bS9jb3Zlci4xNzMwMTIwODgxLmdpdC5rYWkuaHVh
-bmdAaW50ZWwuY29tL1QvI202OTI4ZjU1MTlkZTI1ZGVmOTdkNDdmYzZiYmI3N2Y1YzNlOTU4Zjdi
-DQoNClNvIEkgYWdyZWUgaWRlYWxseSB3ZSBkb24ndCB3YW50IHR3bywgYnV0IEkgdGhpbmsgaXQg
-aXMgYWxzbyBPSyBpZiB0aGVyZSdzIGdvb2QNCnJlYXNvbiB0byBkbyBzby4NCg0KPiANCj4gSWYg
-S1ZNIGhhcyBub3QgaW5pdGlhbGl6ZWQgVERYIChiYXNlZCBvbiBpdHMgb3duIFREWCBwYXJhbWV0
-ZXIpLCB0aGVuIGtleGVjIGlzDQo+IGZpbmUuwqANCj4gDQoNCkZvciBub3cuICBJbiB0aGUgZnV0
-dXJlIFREWCBtb2R1bGUgY291bGQgYmUgaW5pdGlhbGl6ZWQgYnkgb3RoZXIga2VybmVsDQpjb21w
-b25lbnRzLg0KDQo+IEl0IGNvdWxkIHdvcmsgYnkgZXhwb3NpbmcgYW4gaW50ZXJmYWNlIGZvciBm
-ZWF0dXJlcyB0byBiZSBleGNsdXNpdmUgd2l0aA0KPiBURFguwqBTaW5jZSByZWFsIFREWCBtb2R1
-bGUgaW5pdGlhbGl6YXRpb24gaGFwcGVucyBsYXRlIGFueXdheS4gSSBkb24ndCBrbm93IGlmDQo+
-IGl0J3MgYmV0dGVyIHRoYW4gYSBrZXJuZWwgb25lLCBidXQgSSBkb24ndCBzZWUgYWRkaW5nIGEg
-c2Vjb25kIG9uZSBnb2luZyB3ZWxsLg0KPiANCj4gDQo+IFZlcnksIHZlcnkgcm91Z2g6DQo+IA0K
-PiBkaWZmIC0tZ2l0IGEvYXJjaC94ODYva2VybmVsL21hY2hpbmVfa2V4ZWNfNjQuYw0KPiBiL2Fy
-Y2gveDg2L2tlcm5lbC9tYWNoaW5lX2tleGVjXzY0LmMNCj4gaW5kZXggYTY4ZjVhMGE5ZjM3Li5i
-ZmVhNGU3OGM1NzcgMTAwNjQ0DQo+IC0tLSBhL2FyY2gveDg2L2tlcm5lbC9tYWNoaW5lX2tleGVj
-XzY0LmMNCj4gKysrIGIvYXJjaC94ODYva2VybmVsL21hY2hpbmVfa2V4ZWNfNjQuYw0KPiBAQCAt
-MzE1LDYgKzMxNSwxMiBAQCBpbnQgbWFjaGluZV9rZXhlY19wcmVwYXJlKHN0cnVjdCBraW1hZ2Ug
-KmltYWdlKQ0KPiAgICAgICAgIHJlc3VsdCA9IGluaXRfcGd0YWJsZShpbWFnZSwgX19wYShjb250
-cm9sX3BhZ2UpKTsNCj4gICAgICAgICBpZiAocmVzdWx0KQ0KPiAgICAgICAgICAgICAgICAgcmV0
-dXJuIHJlc3VsdDsNCj4gKw0KPiArICAgICAgIGlmICh0ZHhfZXhjbHVkZV9mZWF0dXJlKCkpIHsN
-Cj4gKyAgICAgICAgICAgICAgIHByX2luZm9fb25jZSgiTm90IGFsbG93ZWQgb25jZSBURFggaGFz
-IGJlZW4gdXNlZC5cbiIpOw0KPiArICAgICAgICAgICAgICAgcmV0dXJuIC1FT1BOT1RTVVBQOw0K
-PiArICAgICAgIH0NCj4gKw0KPiAgICAgICAgIGtleGVjX3ZhX2NvbnRyb2xfcGFnZSA9ICh1bnNp
-Z25lZCBsb25nKWNvbnRyb2xfcGFnZTsNCj4gICAgICAgICBrZXhlY19wYV90YWJsZV9wYWdlID0g
-KHVuc2lnbmVkIGxvbmcpX19wYShpbWFnZS0+YXJjaC5wZ2QpOw0KPiAgDQo+IGRpZmYgLS1naXQg
-YS9hcmNoL3g4Ni92aXJ0L3ZteC90ZHgvdGR4LmMgYi9hcmNoL3g4Ni92aXJ0L3ZteC90ZHgvdGR4
-LmMNCj4gaW5kZXggZjVlMmE5MzdjMWU3Li45YjFmNDJhMTA1OWMgMTAwNjQ0DQo+IC0tLSBhL2Fy
-Y2gveDg2L3ZpcnQvdm14L3RkeC90ZHguYw0KPiArKysgYi9hcmNoL3g4Ni92aXJ0L3ZteC90ZHgv
-dGR4LmMNCj4gQEAgLTEyMTUsNiArMTIxNSwyMSBAQCBpbnQgdGR4X2VuYWJsZSh2b2lkKQ0KPiAg
-fQ0KPiAgRVhQT1JUX1NZTUJPTF9HUEwodGR4X2VuYWJsZSk7DQo+ICANCj4gK2Jvb2wgdGR4X2V4
-Y2x1ZGVfZmVhdHVyZSh2b2lkKQ0KPiArew0KPiArICAgICAgIGJvb2wgcmV0ID0gZmFsc2U7DQo+
-ICsNCj4gKyAgICAgICBtdXRleF9sb2NrKCZ0ZHhfbW9kdWxlX2xvY2spOw0KPiArICAgICAgIGlm
-ICh0ZHhfbW9kdWxlX3N0YXR1cyA9PSBURFhfTU9EVUxFX0lOSVRJQUxJWkVEKQ0KPiArICAgICAg
-ICAgICAgICAgcmV0ID0gdHJ1ZTsNCj4gKyAgICAgICBlbHNlDQo+ICsgICAgICAgICAgICAgICB0
-ZHhfbW9kdWxlX3N0YXR1cyA9IFREWF9NT0RVTEVfRVhDTFVERUQ7DQo+ICsgICAgICAgbXV0ZXhf
-bG9jaygmdGR4X21vZHVsZV9sb2NrKTsNCj4gKw0KPiArICAgICAgIHJldHVybiByZXQ7DQo+ICt9
-DQoNCkFzc3VtaW5nIHNldHRpbmcgbW9kdWxlIHN0YXR1cyB0byAiZXhjbHVkZWQiIG1lYW5zIHdl
-IGFyZSBub3QgYWJsZSB0byBpbml0aWFsaXplDQpURFggbW9kdWxlIGZvciBldmVyLg0KDQpUaGUg
-dGhpbmcgaXMgS2V4ZWMgaGFzIHR3byBwaGFzZXM6IDEpIGxvYWRpbmcga2VybmVsIGltYWdlLCBh
-bmQgMikgYWN0dWFsbHkgZG8NCmtleGVjLiAgWW91ciBhcHByb2FjaCBiYXNpY2FsbHkgbWFya3Mg
-VERYIHVudXNhYmxlIGZvciBldmVyIHdoZW4gYSB1c2VyIHRyaWVzIHRvDQpsb2FkIGEga3hlYyBr
-ZXJuZWwgaW1hZ2UsIGJ1dCB0aGlzIGlzIGEgbGl0dGxlIGJpdCBuYXN0eSBiZWNhdXNlIGxvYWRp
-bmcga2V4ZWMNCmtlcm5lbCBpbWFnZSBzdWNjZXNzZnVsbHkgZG9lc24ndCBtZWFuIHlvdSBoYXZl
-IHRvIGFjdHVhbGx5IGRvIHRoZSBrZXhlYywgaS5lLiwNCnlvdSBjYW4gdW5sb2FkIHRoZSBpbWFn
-ZSBhbmQgbW92ZSBvbi4NCg0KSSBhbSBub3Qgc2F5aW5nIHRoaXMgZG9lc24ndCB3b3JrLCBidXQg
-SU1ITyBpdCBpcyBtb3JlIHN0cmFpZ2h0Zm9yd2FyZCB0byBqdXN0DQpsZXQgdXNlciBtYWtlIGRl
-Y2lzaW9uIHZpYSBrZXJuZWwgcGFyYW1ldGVyLg0K
+On Tue, Mar 11, 2025 at 1:49=E2=80=AFPM Akihiko Odaki <akihiko.odaki@daynix=
+.com> wrote:
+>
+> On 2025/03/11 9:47, Jason Wang wrote:
+> > On Mon, Mar 10, 2025 at 2:53=E2=80=AFPM Akihiko Odaki <akihiko.odaki@da=
+ynix.com> wrote:
+> >>
+> >> On 2025/03/10 12:55, Jason Wang wrote:
+> >>> On Fri, Mar 7, 2025 at 7:01=E2=80=AFPM Akihiko Odaki <akihiko.odaki@d=
+aynix.com> wrote:
+> >>>>
+> >>>> They are useful to implement VIRTIO_NET_F_RSS and
+> >>>> VIRTIO_NET_F_HASH_REPORT.
+> >>>>
+> >>>> Signed-off-by: Akihiko Odaki <akihiko.odaki@daynix.com>
+> >>>> Tested-by: Lei Yang <leiyang@redhat.com>
+> >>>> ---
+> >>>>    include/linux/virtio_net.h | 188 ++++++++++++++++++++++++++++++++=
++++++++++++++
+> >>>>    1 file changed, 188 insertions(+)
+> >>>>
+> >>>> diff --git a/include/linux/virtio_net.h b/include/linux/virtio_net.h
+> >>>> index 02a9f4dc594d02372a6c1850cd600eff9d000d8d..426f33b4b82440d61b2a=
+f9fdc4c0b0d4c571b2c5 100644
+> >>>> --- a/include/linux/virtio_net.h
+> >>>> +++ b/include/linux/virtio_net.h
+> >>>> @@ -9,6 +9,194 @@
+> >>>>    #include <uapi/linux/tcp.h>
+> >>>>    #include <uapi/linux/virtio_net.h>
+> >>>>
+> >>>> +struct virtio_net_hash {
+> >>>> +       u32 value;
+> >>>> +       u16 report;
+> >>>> +};
+> >>>> +
+> >>>> +struct virtio_net_toeplitz_state {
+> >>>> +       u32 hash;
+> >>>> +       const u32 *key;
+> >>>> +};
+> >>>> +
+> >>>> +#define VIRTIO_NET_SUPPORTED_HASH_TYPES (VIRTIO_NET_RSS_HASH_TYPE_I=
+Pv4 | \
+> >>>> +                                        VIRTIO_NET_RSS_HASH_TYPE_TC=
+Pv4 | \
+> >>>> +                                        VIRTIO_NET_RSS_HASH_TYPE_UD=
+Pv4 | \
+> >>>> +                                        VIRTIO_NET_RSS_HASH_TYPE_IP=
+v6 | \
+> >>>> +                                        VIRTIO_NET_RSS_HASH_TYPE_TC=
+Pv6 | \
+> >>>> +                                        VIRTIO_NET_RSS_HASH_TYPE_UD=
+Pv6)
+> >>>
+> >>> Let's explain why
+> >>>
+> >>> #define VIRTIO_NET_HASH_REPORT_IPv6_EX         7
+> >>> #define VIRTIO_NET_HASH_REPORT_TCPv6_EX        8
+> >>> #define VIRTIO_NET_HASH_REPORT_UDPv6_EX        9
+> >>>
+> >>> are missed here.
+> >>
+> >> Because they require parsing IPv6 options and I'm not sure how many we
+> >> need to parse. QEMU's eBPF program has a hard-coded limit of 30 option=
+s;
+> >> it has some explanation for this limit, but it does not seem definitiv=
+e
+> >> either:
+> >> https://gitlab.com/qemu-project/qemu/-/commit/f3fa412de28ae3cb31d38811=
+d30a77e4e20456cc#6ec48fc8af2f802e92f5127425e845c4c213ff60_0_165
+> >>
+> >
+> > How about the usersapce datapath RSS in Qemu? (We probably don't need
+> > to align with eBPF RSS as it's just a reference implementation)
+>
+> The userspace datapath RSS has no limit.
+>
+> The reference implementation is the userspace datapath. The eBPF program
+>   is intended to bring real performance benefit to Windows guests in
+> contrary.
+>
+> The userspace implementation does its best to provide defined RSS
+> capabilities but may not be performant. Parsing all IPv6 options have a
+> performance implication, but it is fine because it is not intended to be
+> performant in the first place.
+>
+> The performance problem is inherent to the userspace implementation,
+> which adds an extra overhead to the datapath. The eBPF program on the
+> other hand does not incur such overhead because it replaces the existing
+> steering algorithm (automq) instead of adding another layer. Hence the
+> eBPF program can be practical.
+>
+> That said, it is not that important to align with the userspace and eBPF
+> RSS in QEMU because they are still experimental anyway; the eBPF RSS has
+> potential to become a practical implementation but it is still in
+> development. The libvirt integration for the eBPF RSS is still not
+> complete, and we occasionally add fixes for RSS and hash reporting
+> without backporting to the stable branch.
+>
+> I'm adding interfaces to negotiate hash types rather for the future
+> extensibility. The specification may gain more hash types in the future
+> and other vhost backends may have a different set of hash types
+> supported. Figuring out how to deal with different sets of supported
+> hash typs is essential for both the kernel and QEMU.
+>
+> >
+> >> In this patch series, I add an ioctl to query capability instead; it
+> >> allows me leaving those hash types unimplemented and is crucial to
+> >> assure extensibility for future additions of hash types anyway. Anyone
+> >> who find these hash types useful can implement in the future.
+> >
+> > Yes, but we need to make sure no userspace visible behaviour changes
+> > after migration.
+>
+> Indeed, the goal is to make extensibility and migration compatible.
+
+So I see this part:
+
++ uint32_t supported_hash_types =3D n->rss_data.supported_hash_types;
++ uint32_t peer_hash_types =3D n->rss_data.peer_hash_types;
++ bool use_own_hash =3D
++ (supported_hash_types & VIRTIO_NET_RSS_SUPPORTED_HASHES) =3D=3D
++ supported_hash_types;
++ bool use_peer_hash =3D
++ n->rss_data.peer_hash_available &&
++ (supported_hash_types & peer_hash_types) =3D=3D supported_hash_types;
+
+It looks like it would be a challenge to support vhost-user in the
+future if vhost-user supports hash feature others than source?
+
+>
+> >
+> >>
+> >>>
+> >>> And explain how we could maintain migration compatibility
+> >>>
+> >>> 1) Does those three work for userspace datapath in Qemu? If yes,
+> >>> migration will be broken.
+> >>
+> >> They work for userspace datapath so my RFC patch series for QEMU uses
+> >> TUNGETVNETHASHCAP to prevent breaking migration:
+> >> https://patchew.org/QEMU/20240915-hash-v3-0-79cb08d28647@daynix.com/
+> >>
+> >
+> > Ok, let's mention this in the cover letter. Another interesting thing
+> > is the migration from 10.0 to 9.0.
+>
+> The patch series is already mentioned in the cover letter. A description
+> of the intended use case of TUNGETVNETHASHCAP will be a good addition.
+> I'll add it to this patch so that it will be kept in tree after it gets
+> merged.
+>
+> Migration between two different QEMU versions should be handled with
+> versioned machine types.
+>
+> When a machine created in 9.0 is being migrated to 10.0, the machine
+> must set the hash type properties to match with the hash types supported
+> by the existing implementations, which means it sets the property for
+> VIRTIO_NET_HASH_REPORT_IPv6_EX to true, for example. Because this hash
+> type is currently not included in TUNGETVNETHASHCAP, the machine will
+> keep using the implementation used previously. The machine can be also
+> migrated back to 9.0 again.
+>
+> A machine type with version 10.0 cannot be migrated to 9.0 by design so
+> there is no new problem.
+
+I meant migrate qemu 11.0 with machine type 10.0 to qemu 10.0 with
+machine 10.0 etc.
+
+>
+> >
+> >> This patch series first adds configuration options for users to choose
+> >> hash types. QEMU then automatically picks one implementation from the
+> >> following (the earlier one is the more preferred):
+> >> 1) The hash capability of vhost hardware
+> >> 2) The hash capability I'm proposing here
+> >> 3) The eBPF program
+> >> 4) The pure userspace implementation
+> >>
+> >> This decision depends on the following:
+> >> - The required hash types; supported ones are queried for 1) and 2)
+> >> - Whether vhost is enabled or not and what vhost backend is used
+> >> - Whether hash reporting is enabled; 3) is incompatible with this
+> >>
+> >> The network device will not be realized if no implementation satisfies
+> >> the requirements.
+> >
+> > This makes sense, let's add this in the cover letter.
+>
+> I'll add it to the QEMU patch as it's more about details of QEMU.
+> The message of this patch will explain how TUNGETVNETHASHCAP and
+> TUNSETVNETHASH makes extensibility and migrattion compatible in general.
+>
+> Regards,
+> Akihiko Odaki
+>
+> >
+> >>
+> >>> 2) once we support those three in the future. For example, is the qem=
+u
+> >>> expected to probe this via TUNGETVNETHASHCAP in the destination and
+> >>> fail the migration?
+> >>
+> >> QEMU is expected to use TUNGETVNETHASHCAP, but it can selectively enab=
+le
+> >> hash types with TUNSETVNETHASH to keep migration working.
+> >>
+> >> In summary, this patch series provides a sufficient facility for the
+> >> userspace to make extensibility and migration compatible;
+> >> TUNGETVNETHASHCAP exposes all of the kernel capabilities and
+> >> TUNSETVNETHASH allows the userspace to limit them.
+> >>
+> >> Regards,
+> >> Akihiko Odaki
+> >
+> > Fine.
+> >
+> > Thanks
+> >
+
+Thanks
+
 
