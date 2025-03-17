@@ -1,107 +1,184 @@
-Return-Path: <linux-kernel+bounces-563880-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563881-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88F20A64A17
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:34:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1CAEA64A0B
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:33:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4AD83B6117
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:29:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E554C188C4AC
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:29:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F00A233720;
-	Mon, 17 Mar 2025 10:28:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C858236426;
+	Mon, 17 Mar 2025 10:28:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="x+bhBU1o"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cueQOBAa"
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39C7313B7A3;
-	Mon, 17 Mar 2025 10:28:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1BB42253AE;
+	Mon, 17 Mar 2025 10:28:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742207329; cv=none; b=QkysIlZJZjHfv7Mben8gydjhfOnEEeZP89hFVDR2pC5xlMsi7hXpFeu/7LPtn6u33uTtNxeIus4q9prdLd171jd2/3L57QQVLY5czLmHYY70KQKJyxpWdK0b+QK1oqtd3JenF33phWcAFbfc1YQpr8OLWT/9OR9g31UPg8Sk/Ko=
+	t=1742207330; cv=none; b=tshjFnhIwxFQXCf/gAcmHOb3Jr0s1hIksnjGJdhmpNcEHQeCshfrPogp64nUjfvUnT7TS0cAZBX0EGyLoicuIP+hHeSYPvnIgLyeP//gJzG/IXcvPC4dKf+v/HgtLcM0I8q2+L2fKqLXKuw+MOPD+WIMEGzS68u/PrFiqdfedn8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742207329; c=relaxed/simple;
-	bh=D475GWEV9xZkUiRyncrmvUAsUnBc2KaZ13XrCGru9zM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QhjenMTA76+UoCm2sC1trQUXalT46oQoGYJSXx5TPiIBjBK4l2wbvB8k1zWhMOe4Esf5MJHVeRXWpbeC9sCQPqJISBwqtBaSML0+Xa4AG5Ihe4IkhyqLgjQH5BNojNQ1NXNYM2BkMeXqx/HF1coz2dED5szYlMxmYvZHRklZn6s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=x+bhBU1o; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=tzhM71c7XeDXnGaEMVePBynM75aidEmqvkMrNMTXDQI=; b=x+bhBU1ozAin+2pMbdUoolbzcR
-	1tX9ivxR2w4CSndXSYOkO5+ofjj2hAwRUz84zpzsZ5dsxVJTvAxC+GNIaiSL0zd4wwNDGU+ikEeVu
-	BdbNJDByWGYrQHs3kLGFjSG28wG8ZACc33HVSuG76dToZo1BdiP6DCXR/xzngvWxd+TRtXvf8DQYU
-	0QsVEhG/X1Zl7ryUyFsCX0eItCYNHFksGz58gKP/Cwzrdr0oPiYILhiCEzST1dgGSYFEvQOln5UCN
-	nr6nIs1c1af+w8D1HiWbRDz6EYdj8Q+A82eE7ymRgQRM9MEeyLJxws60pBKLJ9oyE3f3qP+ToYsCh
-	GiOgrpMA==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:54150)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1tu7i0-0003Ll-1n;
-	Mon, 17 Mar 2025 10:28:36 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1tu7hx-0003U7-1w;
-	Mon, 17 Mar 2025 10:28:33 +0000
-Date: Mon, 17 Mar 2025 10:28:33 +0000
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
-Cc: Jim Liu <jim.t90615@gmail.com>, JJLIU0@nuvoton.com,
-	florian.fainelli@broadcom.com, andrew@lunn.ch, hkallweit1@gmail.com,
-	kuba@kernel.org, edumazet@google.com, pabeni@redhat.com,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1] net: phy: broadcom: Correct BCM5221 PHY model
- detection failure
-Message-ID: <Z9f5UQPRTPT8lbXm@shell.armlinux.org.uk>
-References: <20250317035005.3064083-1-JJLIU0@nuvoton.com>
- <Z9fhqbfoQGSm1Njx@mev-dev.igk.intel.com>
+	s=arc-20240116; t=1742207330; c=relaxed/simple;
+	bh=L34jB4X9J4PZF6KWyGeB6Jx7x+Zl35dwlBDiykQHLjY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NCB+f3whp8y94maCL1wlBzksocomdmZSlLhfxExiNmFHbrYaitxoBEO4rrF+S+E8wyekuSfIRAirizQrceXCMrMc2PxfWnByG/ITsfoYJV2jZF9P9UeILZs52lf5JuNxR7yt+JOuynR8wLD7rfO0d+xT/5oxa6D2zHwUV8ROhHo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cueQOBAa; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-30bf1d48843so40602361fa.2;
+        Mon, 17 Mar 2025 03:28:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742207327; x=1742812127; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yX6QzfcRz1cLG12S1tGWCTgUvcgx+pPDbW34AvRgEOc=;
+        b=cueQOBAaRPwNs46et8k80dwvTwRNQ6UTEwqd/pqjfs/6z1KGK4AGL3qEJeCYwmwhNW
+         8r03DymCUcqy3HLfad5BxDyx/rFzxjcPVECkh7jKLLL2Yjbpffg6KTjHZzWVdburXq8d
+         9RtswQU4SpaY/Mffs+/3ySW1QOdFUL15p7seYIkzM9zJLhr+NOXUESWL3rp7dAlV/urp
+         /Ua5cFbwoc9h8QqvRl3MR87JK7oyfrnBbB583vPftXtRKBHfu4Xjat6KAJEtHHd8stXi
+         cJufQLv8Cqvm8eIMHRwWtNpo1XXnO3nT18aJFcJdzIDrQYiGxTg5z4nNWCXAWLsLQ75u
+         OtqA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742207327; x=1742812127;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=yX6QzfcRz1cLG12S1tGWCTgUvcgx+pPDbW34AvRgEOc=;
+        b=H8+qFgFRwrOrckrMg36xHZxX1L4SOZBviJbvpXIUUysE99pEUkTcM/2n6pcH4BcNEE
+         MoR3+5IGUtU0BU48TAufffUbAQt6EVYJGO3XLvtYQAnSPCzoViAcwNbFR8QTmn0knaBJ
+         fd6bQ7VX4NhiSDrvlzWqRdnR3J3rSjzCJxxJ2EMx8KBpeQYarGB0tSKpArbNzzFyZyEI
+         gu5iSDBqX+rSLhBlBiL8Ls2u+W1xo/lSudiyvLZXQ3S9uqUhz77Ez7aFuTQJsP33a7xb
+         6VuQ+u6zeL2s1Ppff15o0S3ob8Da5Zvg5NhblOZ62dqdrK2SBZpLxWX9fv7Dhup5pB/z
+         PHhA==
+X-Forwarded-Encrypted: i=1; AJvYcCWij3oanz+1mBDdHhODw+sqE0wZIFW9PlGSQlbNkelQLFwoT1SzDvZausCyXJJ/HSli/HrR/KpoVwAHyBF7JFMgCQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy7v/xNBSJ9N+hX7m7Jq6L+cAA16jC8yKD+bOCl7zVX0h+A2NB9
+	9gLort6n11NjBJ+EZwnCSMoTfznqbYDWCGBPI2oRvbGwWXReGdoIq9O2KohgeBxsZbdFG14Esbp
+	l6atbCVOZZq9cfV33FfSbf5DYdN685jcs
+X-Gm-Gg: ASbGnctjYrOdNoLgFC7PzzzORbPSO7UjX7nmV0JPjz0VeRNkxYMBVYESN8JM9+bdNIf
+	E3xZv5qLwAMG7UQCCOyPW974naNTAvozJsdupU6lnT2nbGH+5/L3pusA3IgcainOcZ1PtsqdiuT
+	5uBrfB3KfRpSVORbAOpkBH8hICoA==
+X-Google-Smtp-Source: AGHT+IGtJsdfASo1y5f5AiQd1PN5VoHhf+fGkskM+nRARafy/0ttN4WxuSfGQwNtc4VqigOk0W1XJfkhJR0TWa59A1w=
+X-Received: by 2002:a05:651c:210a:b0:30a:2a8a:e4b5 with SMTP id
+ 38308e7fff4ca-30c4a8d1e1amr60541301fa.27.1742207326612; Mon, 17 Mar 2025
+ 03:28:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z9fhqbfoQGSm1Njx@mev-dev.igk.intel.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+References: <20250313130251.383204-1-ubizjak@gmail.com> <174188823430.14745.17591986001259957573.tip-bot2@tip-bot2>
+ <20250317101415.GBZ9f198PAh90nMWDf@fat_crate.local>
+In-Reply-To: <20250317101415.GBZ9f198PAh90nMWDf@fat_crate.local>
+From: Uros Bizjak <ubizjak@gmail.com>
+Date: Mon, 17 Mar 2025 11:28:58 +0100
+X-Gm-Features: AQ5f1Jr75R0dKtWfeXD10vh_mXTYQbuMEKe0rum7dfiueZyr8dno-rCoH-AIJbc
+Message-ID: <CAFULd4b-sZucEtvx19==5wcOfOCzj5fuZ2SHS7ZMboZQXdVycg@mail.gmail.com>
+Subject: Re: [tip: x86/fpu] x86/fpu: Use XSAVE{,OPT,C,S} and XRSTOR{,S}
+ mnemonics in xstate.h
+To: Borislav Petkov <bp@alien8.de>
+Cc: linux-kernel@vger.kernel.org, linux-tip-commits@vger.kernel.org, 
+	Ingo Molnar <mingo@kernel.org>, Andy Lutomirski <luto@kernel.org>, Brian Gerst <brgerst@gmail.com>, 
+	"H. Peter Anvin" <hpa@zytor.com>, Dave Hansen <dave.hansen@linux.intel.com>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, x86@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Mar 17, 2025 at 09:47:37AM +0100, Michal Swiatkowski wrote:
-> It will be nice to have wider explanation what it is fixing in commit
-> message. Is phydev->phy_id different than phydev->driver->phy_id? Looks
-> like masking isn't crucial as phydev->driver->phy_id is initialized by
-> PHY_ID_BCM5221 which is already masked.
+On Mon, Mar 17, 2025 at 11:14=E2=80=AFAM Borislav Petkov <bp@alien8.de> wro=
+te:
+>
+> On Thu, Mar 13, 2025 at 05:50:34PM -0000, tip-bot2 for Uros Bizjak wrote:
+> > The following commit has been merged into the x86/fpu branch of tip:
+> >
+> > Commit-ID:     2883b4c2169a435488f7845e1b6fdc6f3438c7c6
+> > Gitweb:        https://git.kernel.org/tip/2883b4c2169a435488f7845e1b6fd=
+c6f3438c7c6
+> > Author:        Uros Bizjak <ubizjak@gmail.com>
+> > AuthorDate:    Thu, 13 Mar 2025 14:02:27 +01:00
+> > Committer:     Ingo Molnar <mingo@kernel.org>
+> > CommitterDate: Thu, 13 Mar 2025 18:36:52 +01:00
+> >
+> > x86/fpu: Use XSAVE{,OPT,C,S} and XRSTOR{,S} mnemonics in xstate.h
+> >
+> > Current minimum required version of binutils is 2.25, which
+> > supports XSAVE{,OPT,C,S} and XRSTOR{,S} instruction mnemonics.
+> >
+> > Replace the byte-wise specification of XSAVE{,OPT,C,S}
+> > and XRSTOR{,S} with these proper mnemonics.
+> >
+> > No functional change intended.
+> >
+> > Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
+> > Signed-off-by: Ingo Molnar <mingo@kernel.org>
+> > Cc: Andy Lutomirski <luto@kernel.org>
+> > Cc: Brian Gerst <brgerst@gmail.com>
+> > Cc: H. Peter Anvin <hpa@zytor.com>
+> > Cc: Dave Hansen <dave.hansen@linux.intel.com>
+> > Cc: Linus Torvalds <torvalds@linux-foundation.org>
+> > Link: https://lore.kernel.org/r/20250313130251.383204-1-ubizjak@gmail.c=
+om
+> > ---
+> >  arch/x86/kernel/fpu/xstate.h | 27 +++++++++++++--------------
+> >  1 file changed, 13 insertions(+), 14 deletions(-)
+> >
+> > diff --git a/arch/x86/kernel/fpu/xstate.h b/arch/x86/kernel/fpu/xstate.=
+h
+> > index aa16f1a..1418423 100644
+> > --- a/arch/x86/kernel/fpu/xstate.h
+> > +++ b/arch/x86/kernel/fpu/xstate.h
+> > @@ -94,18 +94,17 @@ static inline int update_pkru_in_sigframe(struct xr=
+egs_state __user *buf, u64 ma
+> >  /* XSAVE/XRSTOR wrapper functions */
+> >
+> >  #ifdef CONFIG_X86_64
+> > -#define REX_PREFIX   "0x48, "
+> > +#define REX_SUFFIX   "64"
+> >  #else
+> > -#define REX_PREFIX
+> > +#define REX_SUFFIX
+> >  #endif
+> >
+> > -/* These macros all use (%edi)/(%rdi) as the single memory argument. *=
+/
+> > -#define XSAVE                ".byte " REX_PREFIX "0x0f,0xae,0x27"
+> > -#define XSAVEOPT     ".byte " REX_PREFIX "0x0f,0xae,0x37"
+> > -#define XSAVEC               ".byte " REX_PREFIX "0x0f,0xc7,0x27"
+> > -#define XSAVES               ".byte " REX_PREFIX "0x0f,0xc7,0x2f"
+> > -#define XRSTOR               ".byte " REX_PREFIX "0x0f,0xae,0x2f"
+> > -#define XRSTORS              ".byte " REX_PREFIX "0x0f,0xc7,0x1f"
+> > +#define XSAVE                "xsave" REX_SUFFIX " %[xa]"
+> > +#define XSAVEOPT     "xsaveopt" REX_SUFFIX " %[xa]"
+> > +#define XSAVEC               "xsavec" REX_SUFFIX " %[xa]"
+> > +#define XSAVES               "xsaves" REX_SUFFIX " %[xa]"
+> > +#define XRSTOR               "xrstor" REX_SUFFIX " %[xa]"
+> > +#define XRSTORS              "xrstors" REX_SUFFIX " %[xa]"
+> >
+> >  /*
+> >   * After this @err contains 0 on success or the trap number when the
+> > @@ -114,10 +113,10 @@ static inline int update_pkru_in_sigframe(struct =
+xregs_state __user *buf, u64 ma
+> >  #define XSTATE_OP(op, st, lmask, hmask, err)                         \
+> >       asm volatile("1:" op "\n\t"                                     \
+> >                    "xor %[err], %[err]\n"                             \
+> > -                  "2:\n\t"                                           \
+> > +                  "2:\n"                                             \
+> >                    _ASM_EXTABLE_TYPE(1b, 2b, EX_TYPE_FAULT_MCE_SAFE)  \
+> >                    : [err] "=3Da" (err)                                =
+ \
+> > -                  : "D" (st), "m" (*st), "a" (lmask), "d" (hmask)    \
+> > +                  : [xa] "m" (*(st)), "a" (lmask), "d" (hmask)       \
+>
+> This [xa] needs documenting in the comment above this.
+>
+> What does "xa" even mean?
 
-The two are very different, and this driver just gets it totally wrong.
+xsave area.
 
-phydev->phy_id is the ID read from the PHY. It includes the revision
-field.
-
-phydev->drv is one of the phy_driver entries at the bottom of the file.
-These contain whatever the driver author puts there, which in this
-case would be PHY_ID_BCM5221, and PHY_ID_BCM5221 is defined without
-the revision number.
-
-So doing the masking is entirely redundant if you're comparing the
-drv->phy_id that was initialised with a definition against the same
-definition.
-
-As pointed out in my review with v2, there's more problems in this
-driver _because_ this has not been understood. In an attempt to get
-rid of some of this stuff, I introduced phydev_id_compare() and
-phy_id_compare() helpers into core phylib code, but didn't get
-around to updating broadcom.c. See my comments against v2.
-
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+Uros.
 
