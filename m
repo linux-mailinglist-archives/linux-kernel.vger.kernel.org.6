@@ -1,135 +1,160 @@
-Return-Path: <linux-kernel+bounces-563806-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563808-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 509BFA648D7
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:09:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 371BFA64901
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:10:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A8AE71884F33
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:09:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5BD541888560
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:10:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78BBC233726;
-	Mon, 17 Mar 2025 10:08:37 +0000 (UTC)
-Received: from mail-vk1-f182.google.com (mail-vk1-f182.google.com [209.85.221.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A95A230BF2;
+	Mon, 17 Mar 2025 10:10:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="Dlo/SJqL"
+Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FFA1231CAE;
-	Mon, 17 Mar 2025 10:08:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76E14229B28;
+	Mon, 17 Mar 2025 10:10:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742206117; cv=none; b=KOykb2Kr9dCU+HefuI9bllXEhO+L8CvTYOLipHHXC/1sUa1+8MjegfHzR7MWyxG/9mC9tkbHpL2F8gDIkBaZp6ch7/FD8E3e8oUmEV1Ew/pyNT7VPsE+Ve46fDibYrfctqi0FDK5n2X0/f+cOYZgvpdcylAygNZh0x8D+b4/QRU=
+	t=1742206207; cv=none; b=b3IW84+pjB5RqzxdrXj7351RZXPNT0LZj8LDOlh/8ww8YOi1YxO8mgMiItvyLk0RaPZDESTkzVLqI/u35+15xZhXJVhA5FC34JMeTy2V8OpuOuz119u6VqJ6Fx4f2QKs+n0aPPlO9dBLLOzbhF38gTe/D8A/Pt+cDUnXy6+qtTw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742206117; c=relaxed/simple;
-	bh=LYQnVVghqHNBeBZC9M3qcSQzc999kxd9dUjJydn7Zzs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kn7zHJywVDPW8R/n+zcN7GioVgzu22IWME1bMWnlSXJHoCfCsxpDXPF9xvD/52rJ3LrjT5DbGSuCjkQB8f8pwId5bKAQOU+jNxS1Zhoagt00R9ZrsO5oiLdXSjfBvHeW46RT0kSaGgxWkKZFVlNGJicGvYkNCEFf4m4EQ6Q4BJY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f182.google.com with SMTP id 71dfb90a1353d-523f1b31cf8so1680433e0c.0;
-        Mon, 17 Mar 2025 03:08:34 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742206113; x=1742810913;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=nV0APjSl3A+QsJgQqRhAxvwjeltjb78Ah9QdJdDOGkI=;
-        b=vYIL5iXMs59uI4v1sk9gCg3tRg2VXx1el+RO3A+SauUD/dJMdr+lU268aRGNuXDbQt
-         Y8UZk0ONjmCjt/p/ZkKLYIDPI/jB1MHX0ElW5U9lCaslfWZKXki8wWm7sTRWCoCfo5kP
-         rhxO/n1/81dL0IATbhrhRyP1vw3BThBPtnKdQFanNKat7pnlDe/aLFQlpJmIxx8WiQf7
-         48h7A4d22JVVpVjtEtH2vBdqqRDzkhUnFCoX9sDIpKm/zgap7qDUgCqMzX8QoSMrBM7J
-         T1ftPzLWBebUuOv/ELVAjszk3dQDJHxG0w/4ewjQvz+YKuJ77c7wsI9tRzWSGuJCObWZ
-         1KqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUFOsaGquIdxZTDkwavDFhc9BKuo+ER/u4vL7gczo+I6bTS+feGqhPbbm/54+DbDbxS9/TPOp2otEkl@vger.kernel.org, AJvYcCUv/4p3M7YXNbcP1BE4cbu+9GZ8OhBe7HcZC+u8Q9wd5OeAB9YZBuMxbckZfe8Ot0x3p9LsCU2mdnDeNsSu@vger.kernel.org, AJvYcCXXX9UoDbP7UcBk9lrrtvDPAIYO3bPQ8fzrkxdDVI813yLNuAxhTK7uZ/M82CK+nCbeG0ZBHBtA76yzPFdJGr4qPHg=@vger.kernel.org, AJvYcCXjdMlkm3wBLoItMsPl/w0LNHTJXz+Wg0DXvEaycP1t3zDBnOeSbZ4xhJjFvtZflg4KKUQ/lfy7OKjr@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy3ZmE10ODAD9WlyKNyf7jSGy6kKqYUnZgMOlfOKJ4Sb28am+9+
-	hctv91VJ/rnFpOXhdRcL8PP6InjLzTNSBEkOCZswH9ArncWL3iM3fM7uf6FT
-X-Gm-Gg: ASbGnctlRz4P3J+BgggOQJgxQYL8+XifuK57+dG/+AwH5NbeCDpzlmZl2fRmTFsKjWM
-	Z9QTu98hYqq2wD52ODV8HlXkE+aTzD6QiVMr8sNKr+aZKAzjyYTNxtmBdXqqYgcPN0WIUnmAvao
-	lC+6Hf/0S/8/CST2WZnV3rv58BVuiu0dGDs2wCnaE8W55CB7U//4q0vEkvZHGJbk6BhLigZH9g5
-	zXh4x+qTe3KBS0etDLKc/5DUvoBBZMRp9MqfvqDkXHvl0YymTnE6NH9V2vgpHo2zSvfsBkxHIjN
-	ZrVFr1ktLA/RCRZMEAWlMIC8Hrf1XvMKmoMi1FGbGSBnC6MRjliMVpzW427yQa+G4XnaxnBEQM7
-	wZvFIo80=
-X-Google-Smtp-Source: AGHT+IFN+LqCGUuC3TWRqYuo4aCnCNZO3sAsS8uQsurlmemoSaLoPVKu1He9xV9RB8djRMfvcrG5fA==
-X-Received: by 2002:a05:6122:3d13:b0:520:42d3:91c1 with SMTP id 71dfb90a1353d-52449a48ccdmr5687552e0c.10.1742206112800;
-        Mon, 17 Mar 2025 03:08:32 -0700 (PDT)
-Received: from mail-ua1-f42.google.com (mail-ua1-f42.google.com. [209.85.222.42])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5243a581473sm1548661e0c.3.2025.03.17.03.08.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 17 Mar 2025 03:08:32 -0700 (PDT)
-Received: by mail-ua1-f42.google.com with SMTP id a1e0cc1a2514c-86b68e51af4so1603642241.1;
-        Mon, 17 Mar 2025 03:08:32 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUgCQpKjgdkaV8d1Tl5XwnUwN7p5u979l59bB/HZHDu307NdJGDhA8caLajA79PQiO+U5lx3WQjPEbVEZJ6NVJ/80o=@vger.kernel.org, AJvYcCWSKu3hRUsUi6ygWJEPNjONENakq0aj+P0lnxWNz6g+rylP14J7mEE0dPd+SPUVMeB+oSLYM4HbdpqB7nN4@vger.kernel.org, AJvYcCWT6mVDlOrgURUag2WDpjfrcxeYVFYULTIh3se0sxowgCAvXxM/jFfcZUsW+q8Hq8IkUBMwzS14etvE@vger.kernel.org, AJvYcCX7lGqVcPxfZJ3tXy7S+CtPNE/aKIaGWiMmxv0Fbs35YyqQOMva9C39Fh6u8gNDUbE9qFSA/diE25ad@vger.kernel.org
-X-Received: by 2002:a05:6102:3c96:b0:4b1:1eb5:8ee3 with SMTP id
- ada2fe7eead31-4c38322a633mr7665016137.22.1742206112108; Mon, 17 Mar 2025
- 03:08:32 -0700 (PDT)
+	s=arc-20240116; t=1742206207; c=relaxed/simple;
+	bh=3Szj5wF5ZbUz39jIYuPbndv9xsYb6DgjUSNqDwEMsNg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TOladDsWe+S3BayPvB3c+GDlEHKDUaxnr04UN7rcXmSSHH0LVJvZaecWCzfBEyNLQcV2sFj5rb85o6ZjeRk1fFfUnWYwkooBjWbl6ru8Y+Va3olHXH4TObUPZrOLWwOISbzTryJ5+TdfqAkDMpwpngJaSbupFdsrZpk6kWrgiqo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=Dlo/SJqL; arc=none smtp.client-ip=217.194.8.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
+Received: from francesco-nb (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
+	by mail11.truemail.it (Postfix) with ESMTPA id A721A1F9C6;
+	Mon, 17 Mar 2025 11:08:59 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
+	s=default; t=1742206197;
+	bh=P8Ujcum6E5ZyBkLtNFz3d+3PSE+5NcMmFP0XdAoXkTA=; h=From:To:Subject;
+	b=Dlo/SJqLa+P+LMV5xO6L6O/4+Ulk9QlNrapzC/mGCPVv4EPNTRkIi7xFRujd8aXvV
+	 L6OogSWKuRxLz1pWGMTNDGYJmf6KVwqAsSweu+JlYnyeVDyGtQ/Td5tnRSrmOWNx5S
+	 1NODWvTgYktH8wGHQhNARQ3YppG3kjL8cyPX25UPJF1rixCB7JmlMIKGtvE1DV0hlC
+	 soj3iSTa4h28gbj4B9av3+Df1z3xswRFberuFnM2N0AImutvfUNrrBvjcw8ExgjCIC
+	 zV0CqPAC95+EusZxmOjzDwaMI+MUZvbQN413zE9DfhFCKYTWnNJrkOmXBaJVBYsnxH
+	 KRvz1a9quwdnQ==
+Date: Mon, 17 Mar 2025 11:08:56 +0100
+From: Francesco Dolcini <francesco@dolcini.it>
+To: Hans de Goede <hdegoede@redhat.com>
+Cc: Francesco Dolcini <francesco@dolcini.it>,
+	Emanuele Ghidoli <ghidoliemanuele@gmail.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Francesco Dolcini <francesco.dolcini@toradex.com>,
+	Emanuele Ghidoli <emanuele.ghidoli@toradex.com>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-i2c@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+	soc@kernel.org, Andy Shevchenko <andy@kernel.org>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Subject: Re: [RFC PATCH v1 0/2] platform: toradex: Add toradex embedded
+ controller
+Message-ID: <20250317100856.GC17428@francesco-nb>
+References: <20250313144331.70591-1-francesco@dolcini.it>
+ <4596db59-51fc-4497-9e94-670e9533e7aa@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250317083213.371614-1-tommaso.merciai.xr@bp.renesas.com> <20250317083213.371614-2-tommaso.merciai.xr@bp.renesas.com>
-In-Reply-To: <20250317083213.371614-2-tommaso.merciai.xr@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 17 Mar 2025 11:08:19 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdV4SyviVU0+WhgFD_vCO43BQ31tx8az-JihWDAB9EJS+g@mail.gmail.com>
-X-Gm-Features: AQ5f1JpGenG55qVJIf1KTw9AQgufZanrRWkQNAtQMcFuCWyLnmEnMBpT-qpGwzw
-Message-ID: <CAMuHMdV4SyviVU0+WhgFD_vCO43BQ31tx8az-JihWDAB9EJS+g@mail.gmail.com>
-Subject: Re: [PATCH 1/3] dt-bindings: clock: renesas: Fix description section
-To: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-Cc: tomm.merciai@gmail.com, linux-renesas-soc@vger.kernel.org, 
-	biju.das.jz@bp.renesas.com, Pavel Machek <pavel@denx.de>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4596db59-51fc-4497-9e94-670e9533e7aa@redhat.com>
 
-Hi Tommaso,
+Hello Hans,
+first thanks for the feedback.
 
-On Mon, 17 Mar 2025 at 09:32, Tommaso Merciai
-<tommaso.merciai.xr@bp.renesas.com> wrote:
-> Remove not needed "and" into description section.
->
-> Reported-by: Pavel Machek <pavel@denx.de>
-> Closes: https://lore.kernel.org/cip-dev/Z9P%2F51qOlq2B46FK@duo.ucw.cz/
-> Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+On Thu, Mar 13, 2025 at 04:08:14PM +0100, Hans de Goede wrote:
+> On 13-Mar-25 3:43 PM, Francesco Dolcini wrote:
+> > From: Francesco Dolcini <francesco.dolcini@toradex.com>
+> > 
+> > This series adds support for the Toradex Embedded Controller, currently used
+> > on Toradex SMARC iMX95 and iMX8MP boards, with more to come in the future.
+> > 
+> > The EC provides board power-off, reset and GPIO expander functionalities.
+> > 
+> > Sending it as an RFC to gather initial feedback on it before investing more
+> > time in testing and adding the remaining functionalities, with that said both
+> > the code and the binding are in condition to be wholly reviewed.
+> > 
+> > Emanuele Ghidoli (2):
+> >   dt-bindings: firmware: add toradex,embedded-controller
+> >   platform: toradex: add preliminary support for Embedded Controller
+> 
+> Thank you for your patches.
+> 
+> 2 remarks, as Andy already hinted at drivers/platform/arm64/ likely
+> is a better location for this.
 
-Thanks for your patch!
+Ack.
 
-> --- a/Documentation/devicetree/bindings/clock/renesas,rzv2h-cpg.yaml
-> +++ b/Documentation/devicetree/bindings/clock/renesas,rzv2h-cpg.yaml
-> @@ -12,7 +12,7 @@ maintainers:
->  description:
->    On Renesas RZ/{G3E,V2H(P)} SoCs, the CPG (Clock Pulse Generator) handles
->    generation and control of clock signals for the IP modules, generation and
-> -  control of resets, and control over booting, low power consumption and power
-> +  control of resets, control over booting, low power consumption and power
->    supply domains.
->
->  properties:
+This driver is not going to be specific of ARM64, but today we have only
+ARM64 systems that would benefit from it. We might as well use it on a
+RISCV based SoM in a few years.
 
-I think the original is fine.  When emphasizing the structure:
+With that said we'll move it there, we can always move it out if
+anything changes on this regard.
 
-    The CPG handles:
-      A. generation and control of clock signals for the IP modules,
-      B. generation and control of resets, and
-      C. control over booting, low power consumption and power supply domains.
+> The reason for having ARM EC drivers there is that these are for
+> x86-pc-like laptops with all the typical laptops bells and whistles
+> like EC handled battery charging limits / spk/mic mute-leds built
+> into keys on the keyboards. Special key handling (like mute, kbd
+> backlight) done by the EC etc.
+> 
+> Since all the experience for dealing with those laptop-esque features
+> and exporting them to userspace with a consistent userspace API is
+> in hands of the maintainers of drivers/platform/x86 it was decided to
+> add a new drivers/platform/arm64 directory maintained by the same folks.
+> 
+> If this EC driver's only functionality is: "The EC provides board
+> power-off, reset and GPIO expander functionalities." I'm not sure
+> that drivers/platform/arm64 is the best place for this.
 
-i.e. the "and" is part of the typical "A, B, and C" construct?
+The directory decision / architecture was mainly inspired by
+`drivers/platform/cznic`.
 
-Gr{oetje,eeting}s,
+This EC is used on a SMARC SoM [1][2], so we are not talking about a
+laptop nor a device with a keyboard.
 
-                        Geert
+But we do have a power button, a LID switch, some handling and
+coordination of low power mode and more.
+This device is between the SOC, the PMIC, and various IOs used for
+low-power, power-up/down, boot configuration (selecting the boot
+device), ...
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+The short term goal is just the 2 basic functionalities mentioned in
+the cover letter available to the driver:
+ - power/reset (already implemented)
+ - GPIO (working on it as we speak)
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Starting small, and adding features when/if required.
+
+> Also you mention GPIO expander, but that does not seem to be
+> supported yet?
+Correct, coming soon.
+
+> 1. A drivers/mfd/ MFD driver with the regmap stuff,
+>    registering "board-reset" and "gpio" cells
+
+So, we considered the idea of going with an MFD driver, but looking at
+drivers/platform/cznic, that is doing something relatively close to what
+we are doing (just more feature rich, as of now), drivers/platform/
+seemed a better fit.
+
+I am not 100% sure what's Andy opinion on this topic, from what I can
+understand his concerns are about the toradex directory (that we'll get
+rid of), not the drivers/platform/ parent you are concerned about.
+
+Francesco
+
 
