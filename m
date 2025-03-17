@@ -1,108 +1,140 @@
-Return-Path: <linux-kernel+bounces-563458-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563459-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68601A64264
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 08:00:38 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EE3BA64267
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 08:00:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C8EC3AAE94
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 07:00:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6841516F2F0
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 07:00:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E66021A426;
-	Mon, 17 Mar 2025 07:00:31 +0000 (UTC)
-Received: from mail-m49197.qiye.163.com (mail-m49197.qiye.163.com [45.254.49.197])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B479221A427;
+	Mon, 17 Mar 2025 07:00:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ruVum5IF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9D7C215046;
-	Mon, 17 Mar 2025 07:00:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B3F915E5C2;
+	Mon, 17 Mar 2025 07:00:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742194831; cv=none; b=MXfgpbphnWcWXx81V+PWf9i8wfn6I3IijH7YKAEpKYI2pbcQtRMmzWLmAWexO1tpkM8M+q4ZMqrB46JvyiWdDQPKFbAa2m5oVHGcpzf3exK6SVq/Nx05UinxvpO5IlKQ9cslSBmMfBLMcF95WRHgn6hg/+i6p+3XUDtyXVTVSRg=
+	t=1742194850; cv=none; b=LK6o8XFY7g2l6YelOVEXRXj4fcXxRXuN0Jh2CAk6n963cQ4a6nuXDMeR4c1KnWJ4GHYQJA0J4rwHBB2xu1M0jNtMPum4za1YdX+jnYH4+B1uz3Xud8XSXmKSNoFSQBDJTMacE/+YdhSMfYqxBgts6SlTLqtchdg2Ur0GRwQZhks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742194831; c=relaxed/simple;
-	bh=Zpaf/pJV1J99D1wD14Wnn0N60Xlfht3DiiblH2GvNK4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=iwg62O72SOVi3n9+boCM/GJhnulUbB8s5JpRm9Qrhuhe2kZQSEGO4hs3tijD/kwF6h5+0hUPjyHmp0rZ+YgTRNezTR/mrdmhiJNzIlQ/xaaGzIm/L/I77+8m/x2ZhP6d8lnrOq59WdpJoZBG0ChS8pWgyBjz6y5Q/QvPIWludhY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn; spf=pass smtp.mailfrom=jmu.edu.cn; arc=none smtp.client-ip=45.254.49.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jmu.edu.cn
-Received: from localhost.localdomain (unknown [116.25.94.202])
-	by smtp.qiye.163.com (Hmail) with ESMTP id e81d55a5;
-	Mon, 17 Mar 2025 15:00:16 +0800 (GMT+08:00)
-From: Chukun Pan <amadeus@jmu.edu.cn>
-To: jonas@kwiboo.se
-Cc: conor+dt@kernel.org,
-	devicetree@vger.kernel.org,
-	heiko@sntech.de,
-	krzk+dt@kernel.org,
-	ziyao@disroot.org,
-	linus.walleij@linaro.org,
-	linux-gpio@vger.kernel.org,
+	s=arc-20240116; t=1742194850; c=relaxed/simple;
+	bh=3xlgiwnCx9ACqoF762hkPvtcJJShUF6Q9QE5Xiop/BA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=HgIFmzydZvLRmQJBfoRMDzZqQJUCDoD/OrFSgOBLk6HXpKX4JSN4G3ygM5u3tJkrxQHj0S6MmnVdWeb+q16lhQY4h9nP6vRZhtjmcbQiwUbRYeL13lnJApGbj3cjSkgBRv63gnXoB9b1WHT1wAx1ew2RYHDEATuQswT9tGeF1N0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ruVum5IF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7DE0FC4CEE3;
+	Mon, 17 Mar 2025 07:00:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742194849;
+	bh=3xlgiwnCx9ACqoF762hkPvtcJJShUF6Q9QE5Xiop/BA=;
+	h=From:To:Cc:Subject:Date:From;
+	b=ruVum5IFQsLcoPcsC+Tf2/lLCMEwjDxCzLvalVqmJ29KImQKd9VQcT+DUPhylQtG8
+	 bIlBaEWUi8digtTuWRyNLRC1cMSQ+mm0Nsm++O0eMdJfsmidlt2931CrCtbF6/gyL5
+	 1Y0UEj6VL91gzW184aODCmCWqJtpfPhtQwgd2jQXwhKJXDLeXIPVWn7oSdzF+RL4AI
+	 fj5+rEkZkI07H7eELkOaDje3VWiELHpwJtuo+6jMYAF573GkI/lKfRloKz77zykeVg
+	 28MGg8SyhLx5xIpvrh3sMxhyyBLRj5M0JJnzU0OF8Mq5AO2JxIA5cC+96cVURiKCpU
+	 IG+h2o4eF8yFQ==
+From: "Jiri Slaby (SUSE)" <jirislaby@kernel.org>
+To: gregkh@linuxfoundation.org
+Cc: linux-serial@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	Chukun Pan <amadeus@jmu.edu.cn>
-Subject: Re: [PATCH 3/7] pinctrl: rockchip: Add support for RK3528
-Date: Mon, 17 Mar 2025 15:00:02 +0800
-Message-Id: <20250317070002.707674-1-amadeus@jmu.edu.cn>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250228064024.3200000-4-jonas@kwiboo.se>
-References: <20250228064024.3200000-4-jonas@kwiboo.se>
+	"Jiri Slaby (SUSE)" <jirislaby@kernel.org>
+Subject: [PATCH v2 00/31] tty: cleanup no. 99
+Date: Mon, 17 Mar 2025 08:00:15 +0100
+Message-ID: <20250317070046.24386-1-jirislaby@kernel.org>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVlDS0IfVkpMGBkaSEweTB5KHlYeHw5VEwETFhoSFy
-	QUDg9ZV1kYEgtZQVlKSk1VSU5VQk9VSUtJWVdZFhoPEhUdFFlBWU9LSFVKS0hKTkxOVUpLS1VKQk
-	tLWQY+
-X-HM-Tid: 0a95a2e7360503a2kunme81d55a5
-X-HM-MType: 10
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6PC46TTo*LzJPLgwKMDMCKhRK
-	OC9PCxlVSlVKTE9JSkJPQ0pMTEpMVTMWGhIXVRoWGh8eDgg7ERYOVR4fDlUYFUVZV1kSC1lBWUpK
-	TVVJTlVCT1VJS0lZV1kIAVlBSkpITzcG
 
 Hi,
 
-> Add gpio and pinctrl support for the 5 GPIO banks on RK3528.
+this is (again) a series of cleanup in tty. I am trying to rework
+tty+serial to avoid limitations of devices (so called NR_UART or
+tty_alloc_driver()'s first parameter). And the below popped up while
+crawling through the code. So this is only a prep cleanup.
 
-https://source.denx.de/u-boot/contributors/kwiboo/u-boot/-/blob/rk3528/drivers/pinctrl/rockchip/pinctrl-rk3528.c#L204-L207
+* many tty flags are now enums
+* many functions were improved for readability
+* quite a few unused or old code dropped
 
-I noticed that there is a little difference between u-boot and kernel
-pinctrl driver. Does kernel need to sync this changes from u-boot?
+In particular, the runtime behaviour of the kernel before and after the
+changes is supposed to be bug to bug compatible (except moxa's ioctl
+and ISA evils dropped). That is, noone should notice.
 
-```
-diff --git a/drivers/pinctrl/pinctrl-rockchip.c b/drivers/pinctrl/pinctrl-rockchip.c
-index 930c454e0cec..c77d9a6cd535 100644
---- a/drivers/pinctrl/pinctrl-rockchip.c
-+++ b/drivers/pinctrl/pinctrl-rockchip.c
-@@ -3070,6 +3070,7 @@ static int rockchip_get_schmitt(struct rockchip_pin_bank *bank, int pin_num)
- 
- 	data >>= bit;
- 	switch (ctrl->type) {
-+	case RK3528:
- 	case RK3562:
- 	case RK3568:
- 		return data & ((1 << RK3568_SCHMITT_BITS_PER_PIN) - 1);
-@@ -3100,6 +3101,7 @@ static int rockchip_set_schmitt(struct rockchip_pin_bank *bank,
- 
- 	/* enable the write to the equivalent lower bits */
- 	switch (ctrl->type) {
-+	case RK3528:
- 	case RK3562:
- 	case RK3568:
- 		data = ((1 << RK3568_SCHMITT_BITS_PER_PIN) - 1) << (bit + 16);
-```
+[v2]
+ * use serial_port_in/out() helpers in 26/30 (and not use serial_in/out())
+ * the last patch is new
 
-Thanks,
-Chukun
+Jiri Slaby (SUSE) (31):
+  tty: convert "TTY Struct Flags" to an enum
+  tty: audit: do not use N_TTY_BUF_SIZE
+  tty: caif: do not use N_TTY_BUF_SIZE
+  tty: move N_TTY_BUF_SIZE to n_tty
+  tty: n_tty: use uint for space returned by tty_write_room()
+  tty: n_tty: simplify process_output()
+  tty: n_tty: clean up process_output_block()
+  tty: n_tty: drop n_tty_trace()
+  tty: n_tty: extract n_tty_continue_cookie() from n_tty_read()
+  tty: n_tty: extract n_tty_wait_for_input()
+  tty: n_tty: move more_to_be_read to the end of n_tty_read()
+  tty: tty_driver: move TTY macros to the top
+  tty: tty_driver: convert "TTY Driver Flags" to an enum
+  tty: tty_driver: document both {,__}tty_alloc_driver() properly
+  tty: tty_driver: introduce TTY driver sub/types enums
+  tty: serdev: drop serdev_controller_ops::write_room()
+  tty: mmc: sdio: use bool for cts and remove parentheses
+  tty: moxa: drop version dump to logs
+  tty: moxa: drop ISA support
+  tty: moxa: carve out special ioctls and extra tty_port
+  tty: srmcons: fix retval from srmcons_init()
+  tty: staging/greybus: pass tty_driver flags to tty_alloc_driver()
+  tty: sunsu: drop serial_{in,out}p()
+  tty: sunsu: remove unused serial_icr_read()
+  serial: remove redundant tty_port_link_device()
+  serial: pass struct uart_state to uart_line_info()
+  serial: 8250: use serial_port_in/out() helpers
+  serial: 8250_rsa: simplify rsa8250_{request/release}_resource()
+  serial: 8250_port: do not use goto for UPQ_NO_TXEN_TEST code flow
+  serial: 8250_port: simplify serial8250_request_std_resource()
+  serial: switch change_irq and change_port to bool in uart_set_info()
 
---
-2.25.1
+ Documentation/driver-api/tty/tty_driver.rst |   4 +-
+ Documentation/driver-api/tty/tty_struct.rst |   2 +-
+ arch/alpha/kernel/srmcons.c                 |  62 ++---
+ drivers/mmc/core/sdio_uart.c                |   2 +-
+ drivers/net/caif/caif_serial.c              |   2 +-
+ drivers/staging/greybus/uart.c              |   4 +-
+ drivers/tty/Kconfig                         |   2 +-
+ drivers/tty/moxa.c                          | 251 +-------------------
+ drivers/tty/n_tty.c                         | 212 ++++++++---------
+ drivers/tty/serdev/core.c                   |  11 -
+ drivers/tty/serdev/serdev-ttyport.c         |   9 -
+ drivers/tty/serial/8250/8250_dw.c           |  16 +-
+ drivers/tty/serial/8250/8250_fsl.c          |   8 +-
+ drivers/tty/serial/8250/8250_omap.c         |   2 +-
+ drivers/tty/serial/8250/8250_port.c         |  59 ++---
+ drivers/tty/serial/8250/8250_rsa.c          |  21 +-
+ drivers/tty/serial/serial_core.c            |  10 +-
+ drivers/tty/serial/sunsu.c                  | 178 ++++++--------
+ drivers/tty/tty_audit.c                     |  10 +-
+ drivers/tty/tty_io.c                        |   8 +-
+ include/linux/serdev.h                      |   6 -
+ include/linux/tty.h                         |  53 +++--
+ include/linux/tty_driver.h                  | 180 +++++++-------
+ 23 files changed, 412 insertions(+), 700 deletions(-)
+
+-- 
+2.49.0
 
 
