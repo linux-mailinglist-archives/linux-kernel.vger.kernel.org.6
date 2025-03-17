@@ -1,174 +1,135 @@
-Return-Path: <linux-kernel+bounces-565173-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565174-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C0B9A6625A
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 00:03:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 700B5A6625D
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 00:03:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 82A267A3AED
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 23:02:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 99DCF189D890
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 23:03:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EA8620468F;
-	Mon, 17 Mar 2025 23:03:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2287B18C33B;
+	Mon, 17 Mar 2025 23:03:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="auYfnhGk";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="+zLC+Hk8"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="o66rMn0y"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC9FF14900F;
-	Mon, 17 Mar 2025 23:03:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 331C1376;
+	Mon, 17 Mar 2025 23:03:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742252594; cv=none; b=PqIn6j17GBfMbryaWWx8rIdZB96CTolXiiXuiBhV9PRTZp/7vlTIEbrrPevsHfWdgw1jetkTC1xqedT1QhLI1GYJzAgGjZuzs2eUdrin1D6svhCdcmcpNFyLqB5NkQyeO/ESAVa9i9vhHY6xHP0/MfqxUIYMQA7xvUs82YFxAVw=
+	t=1742252611; cv=none; b=uzm18Eg/nhnDWU7vTh0uMEp5+GlAhGIMl46v8Cl2L5lMd7NnY28TJndZXCZUx49gp7ExYGtio3lFAh7a0bAQbbV5hxDcTtTDdmE4w/NWqMbeyngsk3RiK2q1At0OrBFhS8Xz3oarIi1Pip9cqSLJ8dAvPPq7XW4Db558uMhkDdo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742252594; c=relaxed/simple;
-	bh=V1OIXrs9CUjf000cBLJK2Je9iZkKCRv2mHPPsfho/Nc=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=Am5NbO3p+zCYi3T9YFtXtgZ9NMVB4DZg1mFYasZjYI+PL5E5iH1wUPhoPEmOM3lTeQ2RThYQLHLuLYsg7FchI6JoGSigjs9hYkk+AhyCHZ1GCo4JDLboqugt3cPqiOyUkJu6GGv7fNRL71M3ODkXVtz4bK/Jbd0+/SY9Ae9NqBE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=auYfnhGk; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=+zLC+Hk8; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 17 Mar 2025 23:03:05 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1742252587;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jeRRP/YAk4qoANrW+AA8uw4nMpTz/q7kbyeAnwmntLE=;
-	b=auYfnhGku10DhHcBiddoy+ABDwwA7F0bjo6OSMxzOeNaUXc4gm+AxU6hM0h+DzD3/vXcah
-	8d+Eq2zBW0/cpy5XKkY54qfAfL7LJihMzvf8RmaDE45n47vF78ReFnh/QUjnQuTkSCZp84
-	5N7QBUAWtR0Zs92tD355FDosAOm3OVa5aowkdWu25N4QMhbKM5qMokXvH5Y9FTbOAsogU7
-	Rj2lOojvcQU5Wb+RmRXvUqYGG47Vymucvx9rx90Ftv7geiN/zFvWrD3+RMg3nC2c3z2Nhf
-	jCOL+rpMlRmZWPNiTl44KisN4YjIKQyQngZ7bXxLB6veuXDpdSw+ZZ6CJv8kig==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1742252587;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jeRRP/YAk4qoANrW+AA8uw4nMpTz/q7kbyeAnwmntLE=;
-	b=+zLC+Hk82PXncIxkVyL3+Coq5+WRaK90ScYuzdnHuTHy35SsTAd5rbUkt5LKgBa55mCmrF
-	KPvh12Sa7fKbu6CA==
-From: "tip-bot2 for Chao Gao" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: x86/fpu] x86/fpu/xstate: Fix inconsistencies in guest FPU xfeatures
-Cc: "Chang S. Bae" <chang.seok.bae@intel.com>, Chao Gao <chao.gao@intel.com>,
- Ingo Molnar <mingo@kernel.org>, Andy Lutomirski <luto@kernel.org>,
- "H. Peter Anvin" <hpa@zytor.com>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Oleg Nesterov <oleg@redhat.com>, Dave Hansen <dave.hansen@linux.intel.com>,
- Juergen Gross <jgross@suse.com>, Stefano Stabellini <sstabellini@kernel.org>,
- Paolo Bonzini <pbonzini@redhat.com>, Vitaly Kuznetsov <vkuznets@redhat.com>,
- Sean Christopherson <seanjc@google.com>,
- David Woodhouse <dwmw2@infradead.org>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250317140613.1761633-1-chao.gao@intel.com>
-References: <20250317140613.1761633-1-chao.gao@intel.com>
+	s=arc-20240116; t=1742252611; c=relaxed/simple;
+	bh=h3reA+aWlA6dgBfBWlL0U5BYECup4bVKgKKBy4OkOLY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=GvYaymPj/q9cb7QmJLxfvN4MuZzhw5ntRb0mv4sKRgkiO3vAhUYV18OlUnlZQFe2CtsTO5f9mt3U8pu/W0po322uAxOeVVvdYEHkJWemZ7LjdNaHt+2J0mp2sz/3W0f0bXDVXxIhfX3U4+6VpsE9JF5mFmZ6GZv6OhTxVRStZ6c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=o66rMn0y; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 331DF41061
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1742252609; bh=Bn+dVkNzGPe0Z7ovmJwNwQJS6CVQZAD2/ACJeTPZJbc=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=o66rMn0yPNUuvIyQSiQf7ptnYAMzEdFN7OsleDrB2CQagQTgTljykJk2FfhjD/LQ9
+	 UgSKjgC4POLxWyEHB6PWok4M/IZxbqATub5bXDMkk12CZgnFrKoExgCxD2Sr69hjl3
+	 PY0ROqle6kFVnuU3rCHDlN/tK/y1wis0hy6oe2IYZqWE7/ovoovOFWU7OtsX5KYS67
+	 qq28oM9VCprG39gqqPHXENOUU+S8wi//2PMnVMO+R/fYGrNpe8kmEwdrqoL9+qpABd
+	 dBqlYuMBqAQ+Le355hqT6ACIr7yrV5WP2/+1j8wkV/GV1V0xVjtcRi4wF6UdGVBX7q
+	 Xf3mFqY6fxW8A==
+Received: from localhost (unknown [IPv6:2601:280:4600:2da9::1fe])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id 331DF41061;
+	Mon, 17 Mar 2025 23:03:29 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Ignacio Encinas Rubio <ignacio@iencinas.com>, Akira Yokosawa
+ <akiyks@gmail.com>
+Cc: dvyukov@google.com, elver@google.com, kasan-dev@googlegroups.com,
+ linux-doc@vger.kernel.org, linux-kernel-mentees@lists.linux.dev,
+ linux-kernel@vger.kernel.org, skhan@linuxfoundation.org,
+ workflows@vger.kernel.org
+Subject: Re: [PATCH] Documentation: kcsan: fix "Plain Accesses and Data
+ Races" URL in kcsan.rst
+In-Reply-To: <9c6298a2-4efa-4f77-81c0-b2132f48c1b0@iencinas.com>
+References: <1d66a62e-faee-4604-9136-f90eddcfa7c0@iencinas.com>
+ <c6a697af-281a-4a91-8885-a4478dfe2cef@gmail.com>
+ <9c6298a2-4efa-4f77-81c0-b2132f48c1b0@iencinas.com>
+Date: Mon, 17 Mar 2025 17:03:28 -0600
+Message-ID: <87zfhjcla7.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174225258602.14745.15224724000760257268.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-The following commit has been merged into the x86/fpu branch of tip:
+Ignacio Encinas Rubio <ignacio@iencinas.com> writes:
 
-Commit-ID:     dda366083e5ff307a4a728757db874bbfe7550be
-Gitweb:        https://git.kernel.org/tip/dda366083e5ff307a4a728757db874bbfe7550be
-Author:        Chao Gao <chao.gao@intel.com>
-AuthorDate:    Mon, 17 Mar 2025 22:06:11 +08:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Mon, 17 Mar 2025 23:52:31 +01:00
+> On 15/3/25 3:41, Akira Yokosawa wrote:
+>> This might be something Jon would like to keep secret, but ...
+>> 
+>> See the message and the thread it belongs at:
+>> 
+>>     https://lore.kernel.org/lkml/Pine.LNX.4.44L0.1907310947340.1497-100000@iolanthe.rowland.org/
+>> 
+>> It happened in 2019 responding to Mauro's attempt to conversion of
+>> LKMM docs.
+>> 
+>> I haven't see any change in sentiment among LKMM maintainers since.
+>
+> Thanks for the information!
 
-x86/fpu/xstate: Fix inconsistencies in guest FPU xfeatures
+FWIW, I don't think it has really been discussed since.
 
-Guest FPUs manage vCPU FPU states. They are allocated via
-fpu_alloc_guest_fpstate() and are resized in fpstate_realloc() when XFD
-features are enabled.
+>> Your way forward would be to keep those .txt files *pure plain text"
+>> and to convert them on-the-fly into reST.  Of course only if such an
+>> effort sounds worthwhile to you.
+>
+> With this you mean producing a .rst from the original .txt file using an 
+> script before building the documentation, right? I'm not sure how hard 
+> this is, but I can look into it.
+>
+>> Another approach might be to include those docs literally.
+>> Similar approach has applied to
+>> 
+>>     Documentation/
+>> 	atomic_t.txt
+>> 	atomic_bitops.txt
+>>         memory-barriers.txt
+>
+> Right, I got to [1]. 
+>
+> It looks like there are several options here:
+>
+>   A) Include the text files like in [1]
+>   B) Explore the "on-the-fly" translation
+>   C) Do A) and then B)
+>
+> Does any of the above sound good, Jon?
 
-Since the introduction of guest FPUs, there have been inconsistencies in
-the kernel buffer size and xfeatures:
+Using the wrapper technique will surely work and should be an
+improvement over what we have now.  I don't hold out much hope for "on
+the fly" mangling of the text - it sounds brittle and never quite good
+enough, but I'm willing to be proved wrong on that front.
 
- 1. fpu_alloc_guest_fpstate() uses fpu_user_cfg since its introduction. See:
+The original discussion from all those years ago centered around worries
+about inserting lots of markup into the plain-text file.  But I'm not
+convinced that anything requires all that markup; indeed, the proposed
+conversion at the time didn't do that.  The question was quickly dropped
+because we had so much to do back then...
 
-    69f6ed1d14c6 ("x86/fpu: Provide infrastructure for KVM FPU cleanup")
-    36487e6228c4 ("x86/fpu: Prepare guest FPU for dynamically enabled FPU features")
+I think there might be value in trying another minimal-markup
+conversion; it would be *nicer* to use more fonts in the HTML version,
+but not doing so seems better than not having an HTML version at all.
+But, obviously, there are no guarantees that it will clear the bar.
 
- 2. __fpstate_reset() references fpu_kernel_cfg to set storage attributes.
+Thanks,
 
- 3. fpu->guest_perm uses fpu_kernel_cfg, affecting fpstate_realloc().
-
-A recent commit in the tip:x86/fpu tree partially addressed the inconsistency
-between (1) and (3) by using fpu_kernel_cfg for size calculation in (1),
-but left fpu_guest->xfeatures and fpu_guest->perm still referencing
-fpu_user_cfg:
-
-  https://lore.kernel.org/all/20250218141045.85201-1-stanspas@amazon.de/
-
-  1937e18cc3cf ("x86/fpu: Fix guest FPU state buffer allocation size")
-
-The inconsistencies within fpu_alloc_guest_fpstate() and across the
-mentioned functions cause confusion.
-
-Fix them by using fpu_kernel_cfg consistently in fpu_alloc_guest_fpstate(),
-except for fields related to the UABI buffer. Referencing fpu_kernel_cfg
-won't impact functionalities, as:
-
- 1. fpu_guest->perm is overwritten shortly in fpu_init_guest_permissions()
-    with fpstate->guest_perm, which already uses fpu_kernel_cfg.
-
- 2. fpu_guest->xfeatures is solely used to check if XFD features are enabled.
-    Including supervisor xfeatures doesn't affect the check.
-
-Fixes: 36487e6228c4 ("x86/fpu: Prepare guest FPU for dynamically enabled FPU features")
-Suggested-by: Chang S. Bae <chang.seok.bae@intel.com>
-Signed-off-by: Chao Gao <chao.gao@intel.com>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Oleg Nesterov <oleg@redhat.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Juergen Gross <jgross@suse.com>
-Cc: Stefano Stabellini <sstabellini@kernel.org>
-Cc: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Vitaly Kuznetsov <vkuznets@redhat.com>
-Cc: Sean Christopherson <seanjc@google.com>
-Cc: David Woodhouse <dwmw2@infradead.org>
-Link: https://lore.kernel.org/r/20250317140613.1761633-1-chao.gao@intel.com
----
- arch/x86/kernel/fpu/core.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/arch/x86/kernel/fpu/core.c b/arch/x86/kernel/fpu/core.c
-index 422c98c..1b734a9 100644
---- a/arch/x86/kernel/fpu/core.c
-+++ b/arch/x86/kernel/fpu/core.c
-@@ -239,8 +239,8 @@ bool fpu_alloc_guest_fpstate(struct fpu_guest *gfpu)
- 	fpstate->is_guest	= true;
- 
- 	gfpu->fpstate		= fpstate;
--	gfpu->xfeatures		= fpu_user_cfg.default_features;
--	gfpu->perm		= fpu_user_cfg.default_features;
-+	gfpu->xfeatures		= fpu_kernel_cfg.default_features;
-+	gfpu->perm		= fpu_kernel_cfg.default_features;
- 
- 	/*
- 	 * KVM sets the FP+SSE bits in the XSAVE header when copying FPU state
+jon
 
