@@ -1,181 +1,126 @@
-Return-Path: <linux-kernel+bounces-564907-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6FD1A65CA6
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 19:34:07 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58833A65D80
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 20:02:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF1993BA617
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 18:33:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88F33189A8A6
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 19:02:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 549F21DE8A7;
-	Mon, 17 Mar 2025 18:33:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A56B71C5F3F;
+	Mon, 17 Mar 2025 19:02:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xq7BStlh"
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FctDCp8N"
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C915119048F;
-	Mon, 17 Mar 2025 18:33:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9BE04A06;
+	Mon, 17 Mar 2025 19:02:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742236434; cv=none; b=TVyj3QqAuJU0Z/e0MG7WBa0lYNMfOxgEI/qxIWuLkCeiR3ybmM1DSbS9BgXxw/JWdrDbam8h+s+4F98aHM3yu+zRIW9z/JMDm63YInaSNFVAzOAYUz/R5aVeLGZD+FYdZiFi19AQOCE4FsoWHsGcOdJm2dbNFNZZHSLMH7HWsts=
+	t=1742238133; cv=none; b=q9VRVzfnflt/RXMeaJxxlJDMjrxnKO8IhPXmm0CjXR3qIOABhj50dHBZyrXGBWDCD3S7vhmE733ubjiR3LwYxcnMn+fVLlMTavvM2grS81JdP3SxYw4b5ZeL77Ku6tp4z9qeiuFjYa84pXBBSB/QyBPs1+2N+UhWlkm4e360A7I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742236434; c=relaxed/simple;
-	bh=ehOGcmrGZaJQniQGWoH0A1zU6UMeQK1IbOtzAOin1lY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jf4fHc0KDwqL7fu5m6Z+InUZNofIJOE3hGKU7yTfzrWrwCRPO1dHzhFLcZ0xgrrW6CXJMJ5dSGUgii9zs3e1wLIaUvYdIn7cdE0znFCVcgVsEfebNQo4e5WDQoGVQCs7bChAIbxh0vusdywCN/2zB9UtThbCLTtfc90i7C7gL9E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Xq7BStlh; arc=none smtp.client-ip=209.85.208.171
+	s=arc-20240116; t=1742238133; c=relaxed/simple;
+	bh=Hvttu3ONsKCVI+zX+/ec6G/+a20ZSKSWdAO/LAA+zDg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jI6qOW/5BEC31YPqyd0j4arh23lU5RHkwSwEx1K+8RlJDA/wRruCQjIV6IsEJyX6iofy2/umnK4wD+R+cAzJLhL3E7D6QhVYETlb1taW7xEhHfG9OiA3LWUom1eQDQy1+HO2yFkVyAd1xIYiPp+kNx+l6ziJ/3plzwdQe4vC/54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FctDCp8N; arc=none smtp.client-ip=209.85.216.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-3061513d353so59395991fa.2;
-        Mon, 17 Mar 2025 11:33:52 -0700 (PDT)
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2fecba90cc3so5569221a91.2;
+        Mon, 17 Mar 2025 12:02:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742236431; x=1742841231; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+RgH8a/UTVf+jUM886CjeJ+7fFyfFZ683ptFNfGfQ4E=;
-        b=Xq7BStlhC2uV+7o/89RKvcRLCLmppScbfvZ/eWDMNgkfFlcHKxObU45wkw4xs9VPIp
-         psb9CbihFbBjP3+lWk/gZrYW46q18kB5sfAc2Oj3EGYhh5YpeHQTgsWl+ya4eV3QviYY
-         uTJceN9XW+hrrK9Vddn0bBgwMDDCV/N2ENHHNoj3rRC52F1AhA0LO0NZZgkLYApViZAk
-         1rmEeG/GIVaMvkJwPFfek8IyORFb039hSE46IRKqAQXp0XfmCxMDOAQ9HO1Cr5FeePEI
-         b8EDAmDisPDjNQVtl+NgDeowq08hC6Rm5OAMbRP8pHVXIumyfClpZoJ603rSbTeDAdmI
-         YyiQ==
+        d=gmail.com; s=20230601; t=1742238131; x=1742842931; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=gVCXkbbka6K+VZe0MGxgjrGWBkeWob34kqWL102MXy4=;
+        b=FctDCp8NhceW3lJ/wwc4Pu7fviTdnlw0xvoasaOXhoW6z9A0rFrkP6aF4igALkqFRz
+         XKSg1Z2Bp+LbK6Ndf+3Q8nwBo6XTxCqSHwyoQNASaJN9UYfoIDCSSVX2agrzG5R/cczJ
+         eGvgC7IHAZVaa9TMv2FykHCQ6QGUkCjTUQtySpgzmgwUVZjiCpV72Lzl5svCr0u/LF4p
+         +8W9NIlcFq+PWGYvpE3Je+ZJwwb/c/qXv0j5pe2NgBRWj7LQRN7+ZN30Mj+rYwE6BAVc
+         9+dNTCMr5+TIJ8CYieiFfd22XRhVaOtgkG+kVTrcSXzINPnXQtQDcM5DhxhzcHg/OZy4
+         yOUg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742236431; x=1742841231;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+RgH8a/UTVf+jUM886CjeJ+7fFyfFZ683ptFNfGfQ4E=;
-        b=d/t1cZiYhgLrJOn27oZPrBeGkZ3FVbyl4KKfho8cm0JlySJGsWVi3d5iuKZwb0cm8F
-         I74cdpL8JeViugwRueUbhuOmfG7ElEtTVFCONw3QglX6H1w0QJdBVRantEQvI7cIFYO2
-         eKmxlIkKomIZoAu+vg+rqojP5pomLVujrKByaCvyHDMaK0BS6DU+7o7i/v9p12rj5rKX
-         tAeY8VIFMAqEEFocpbHX8fhDhx72QK6InZyVQswkHTJne7uHY3zGJwa/UlGooWc8iYoU
-         +hQuwNb2ypRE24aG4TujLcFDIY2OH8RGYe8gPSftmI0cKrUBC0tnxVH1k1nIY9oZqflC
-         7W/A==
-X-Forwarded-Encrypted: i=1; AJvYcCVAqH8Wg5tPAUlnBzExLDCv57Uto2Qd5VHeOgQ1SGsHSavOgW/IVaEHfkTl33zzNp9CvxfR9kx9YA4N1Us8fJXa@vger.kernel.org, AJvYcCVXigdoblaqLcGKpPaF9+fglXfLJCjtH75Si3xTQTcHFgimeIhAjjHP9+eBrOU7elz6dqrHDiHQW4UEBra8@vger.kernel.org, AJvYcCVgYl4jU8aYaF+tfwiHJASxcji5fqNIc0xGgxu0xw0yOQmMzVuziR2q5w+tOk5M/1GbFgcssoOi4CUja/Cg@vger.kernel.org, AJvYcCVr806qnfmtjgfoqScQD+EGxS8myD6Cgz8aXQRv+ECzoTH+6KsW30tIL8RJ2bZlfNDy0D0WLqpHuEQNrmM=@vger.kernel.org, AJvYcCW+pr9F+ww50tK4+d4ccYlVSLQ7k4jL6VAZK8vKyB8ddTPicp0Wf/33+/ngFFLGzakvcRoyz7YvVxLp@vger.kernel.org, AJvYcCWwQagfSD1i7QAx8TPkxgUryOzAcKVW1UdGXLVS3fklxj3PtBPp0YTBW1bsws9dKL8nFX7gWvLF7OW339xJz+o=@vger.kernel.org, AJvYcCXF8Tqmw8leeb27OGdjFKWzzKHswBpBiacxHZZe9ErNp98pmuQLWAXf+TGnJJrCmTn2oQ6DNQJuossj@vger.kernel.org
-X-Gm-Message-State: AOJu0YyPRIWILSn/aEBEg7rxCXkhxjf3E10AehE8fV8V2SWmKv1V+WdS
-	/uE6u6kN4wlg1+RxslDCqhKNL4APFYSPeRh+HVmEu+xDlw58+68tRmkdhAOfgw//1q+udw6vm/T
-	QL7ltdiLg/2tZukCm2bjOyoNY8pg=
-X-Gm-Gg: ASbGnctZ0Dw1vBqU/m66tamo9h8njQdFrW7qlrHrS0Emk6AdQOR61Gf9tCwffTm6pkA
-	uM7t/FsI6wfQzaq4tzHTAVIUwoAObRduagV2nORoKpmjkiUwa4t0JvEpSp9haMbEAH/yQztZIxl
-	S4SpjN2P8SxsfXTSeUgeUmpL1aaSOYgNp5mWXZAQEN/Zw3JHaqjJyZ+DEFmBmR
-X-Google-Smtp-Source: AGHT+IEuOyU1EAIZGNPcU1UQpVvmze5Fv4puhAbwE4i2xu3ParhHBig+KUJCu/9ANLld3Xe0NJ1pTjvfSHUJlGkg4r0=
-X-Received: by 2002:a2e:7819:0:b0:30b:b204:6b98 with SMTP id
- 38308e7fff4ca-30c97543facmr9366801fa.12.1742236430751; Mon, 17 Mar 2025
- 11:33:50 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1742238131; x=1742842931;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gVCXkbbka6K+VZe0MGxgjrGWBkeWob34kqWL102MXy4=;
+        b=hPxWH2X4s4dMw2j0SVJSrZu6+bOCPlpp5vUmJfUl5N4thVLnENwzukND6BZCXWtHu8
+         C/esfW3zUjLU9ekTSynOX61djmq0tZ8Rg5D3cXyYeze5D+bN1x4u5vK5td+6beKmtMRA
+         J3d9dI9MkHLdkgFaDVP1LfXKxXpEu7wpZFxDukKVywEOCpwD2Ya336N6aRxURS12lL61
+         8OPIL/sSQ++GxU1OrGaIrh2ORb43iFLGiR0cVcaZ7X56IAAGZCH7okC2f7IXmqRctGHb
+         HqhlVUO0BmbKarKcvL3lgAXBHpZz8kJ5qzrOlfEuVHVSm+VwlXocJtClx4hOD/u8lhjf
+         jFsQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW/wv5dF4mNYBqn5vU7/maYxncV3vOn2HIe2THorVLq51O4YYj79HWSbTE8M+zRAKs91Qcxyq198viw@vger.kernel.org, AJvYcCWrStmASUqZ6e0G67lLg2QmJnjn5y6Ds1NyEjlY7c858owgFv6XheR64uD+mewtQH/65e+aaHPo9/8k5o4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxgEHO3oEYNis5X2bF8BkR5wchBI1ft7GAgmT1WQXCrFrwi0cZx
+	3w/uTD4C0s7oYvInn/Vy8kOIjOLNL6Pykb6qHiN5uy0Oq4hJtrav
+X-Gm-Gg: ASbGncsxh2iBTn88zC7jH3bxSa0CdgWv70URfUjxzfYXoyrOy7Vh3p5+lMw4rafowAk
+	bzSJ7k2I6LjqPM07PkDCzb3I9t1SiJe8KtAb5r4UPLvh2UglHF0V78T8DY6EgnEy0/0EkoWroKi
+	tTdXldJYX+8ndawIFBrh3NB2Ia5dw/q/7vpf+qJxG7jG1eXLCZyV/ips4efXKDEalSs7Psj+jE5
+	NuxJWJ9K0oYjsIb86Dhwz/YW/mKt7I508ml+QuNZpy/2jUL3RTJYIcTg0raJxQ6wTQPHn5Tvqf0
+	glIDGp0lKiuAARtJ7qu8+sJS5ZxGlggBOCeV9j8gIW2B8QgtLNlTGt+cA221TVJYyQ==
+X-Google-Smtp-Source: AGHT+IGwW94/c+nWHi2B2aO2rPj0vPspA7nN6VmmEbHkP3+uGtj1SqduHMk+oLRnKzvqVpsyVbzStg==
+X-Received: by 2002:a17:90b:1f90:b0:2f8:49ad:4079 with SMTP id 98e67ed59e1d1-30151c5df91mr14364174a91.6.1742238130859;
+        Mon, 17 Mar 2025 12:02:10 -0700 (PDT)
+Received: from localhost.localdomain ([14.139.69.34])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-301535196e5sm6473747a91.16.2025.03.17.12.02.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Mar 2025 12:02:10 -0700 (PDT)
+From: Bharadwaj Raju <bharadwaj.raju777@gmail.com>
+To: alexandre.belloni@bootlin.com
+Cc: Bharadwaj Raju <bharadwaj.raju777@gmail.com>,
+	linux-rtc@vger.kernel.org,
+	shuah@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-kernel-mentees@lists.linux.dev
+Subject: [PATCH] rtc: fix use of uninit struct in rtc_read_alarm_internal
+Date: Tue, 18 Mar 2025 00:03:43 +0530
+Message-ID: <20250317183349.346399-1-bharadwaj.raju777@gmail.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250317-ptr-as-ptr-v5-0-5b5f21fa230a@gmail.com>
- <20250317-ptr-as-ptr-v5-6-5b5f21fa230a@gmail.com> <D8IQCJHJWPNJ.1J2UO4OK0D0B3@proton.me>
- <CAJ-ks9=cBEZqPHMWsh7-c16LTg+i+RmDFigwy81o9yOj2J+jFA@mail.gmail.com>
-In-Reply-To: <CAJ-ks9=cBEZqPHMWsh7-c16LTg+i+RmDFigwy81o9yOj2J+jFA@mail.gmail.com>
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Mon, 17 Mar 2025 14:33:14 -0400
-X-Gm-Features: AQ5f1JrVwUf05ntBkD98vS-EcZTcBLddhaoJo6_SZObmEIDvKFbJY6SKC0TNZzk
-Message-ID: <CAJ-ks9nCdcn7ajG69m+2QTgYxvELd2h7kdBb_bLpTwQbnZ8X_Q@mail.gmail.com>
-Subject: Re: [PATCH v5 6/6] rust: use strict provenance APIs
-To: Benno Lossin <benno.lossin@proton.me>
-Cc: Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
-	Nicolas Schier <nicolas@fjasle.eu>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
-	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, 
-	Rae Moar <rmoar@google.com>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Luis Chamberlain <mcgrof@kernel.org>, Russ Weight <russ.weight@linux.dev>, Rob Herring <robh@kernel.org>, 
-	Saravana Kannan <saravanak@google.com>, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, 
-	linux-pci@vger.kernel.org, linux-block@vger.kernel.org, 
-	devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Mon, Mar 17, 2025 at 2:31=E2=80=AFPM Tamir Duberstein <tamird@gmail.com>=
- wrote:
->
-> On Mon, Mar 17, 2025 at 1:50=E2=80=AFPM Benno Lossin <benno.lossin@proton=
-.me> wrote:
-> >
-> > On Mon Mar 17, 2025 at 3:23 PM CET, Tamir Duberstein wrote:
-> > > Throughout the tree, use the strict provenance APIs stabilized in Rus=
-t
-> > > 1.84.0[1]. Retain backwards-compatibility by introducing forwarding
-> > > functions at the `kernel` crate root along with polyfills for rustc <
-> > > 1.84.0.
-> > >
-> > > Use `#[allow(clippy::incompatible_msrv)]` to avoid warnings on rustc =
-<
-> > > 1.84.0 as our MSRV is 1.78.0.
-> > >
-> > > In the `kernel` crate, enable the strict provenance lints on rustc >=
-=3D
-> > > 1.84.0; do this in `lib.rs` rather than `Makefile` to avoid introduci=
-ng
-> > > compiler flags that are dependent on the rustc version in use.
-> > >
-> > > Link: https://blog.rust-lang.org/2025/01/09/Rust-1.84.0.html#strict-p=
-rovenance-apis [1]
-> > > Suggested-by: Benno Lossin <benno.lossin@proton.me>
-> > > Link: https://lore.kernel.org/all/D8EIXDMRXMJP.36TFCGWZBRS3Y@proton.m=
-e/
-> > > Signed-off-by: Tamir Duberstein <tamird@gmail.com>
-> >
-> > One comment below, with that fixed:
-> >
-> > Reviewed-by: Benno Lossin <benno.lossin@proton.me>
-> >
-> > > ---
-> > >  init/Kconfig           |   3 ++
-> > >  rust/kernel/alloc.rs   |   2 +-
-> > >  rust/kernel/devres.rs  |   4 +-
-> > >  rust/kernel/io.rs      |  14 +++----
-> > >  rust/kernel/lib.rs     | 108 +++++++++++++++++++++++++++++++++++++++=
-++++++++++
-> > >  rust/kernel/of.rs      |   2 +-
-> > >  rust/kernel/pci.rs     |   4 +-
-> > >  rust/kernel/str.rs     |  16 +++-----
-> > >  rust/kernel/uaccess.rs |  12 ++++--
-> > >  9 files changed, 138 insertions(+), 27 deletions(-)
-> >
-> >
-> > > +#[cfg(not(CONFIG_RUSTC_HAS_STABLE_STRICT_PROVENANCE))]
-> > > +mod strict_provenance {
-> > > +    /// Gets the "address" portion of the pointer.
-> > > +    ///
-> > > +    /// See https://doc.rust-lang.org/stable/core/primitive.pointer.=
-html#method.addr.
-> > > +    #[inline]
-> > > +    pub fn addr<T>(ptr: *const T) -> usize {
-> > > +        // This is core's implementation from
-> > > +        // https://github.com/rust-lang/rust/commit/4291332175d12e79=
-e6061cdc3f5dccac2e28b969 through
-> > > +        // https://github.com/rust-lang/rust/blob/1.84.0/library/cor=
-e/src/ptr/const_ptr.rs#L172
-> > > +        // which is the first version that satisfies `CONFIG_RUSTC_H=
-AS_STABLE_STRICT_PROVENANCE`.
-> > > +        #[allow(clippy::undocumented_unsafe_blocks)]
-> > > +        unsafe {
-> > > +            #[allow(clippy::transmutes_expressible_as_ptr_casts)]
-> > > +            core::mem::transmute(ptr.cast::<()>())
-> > > +        }
-> >
-> > I think we should just use `ptr as usize` here instead. It's going away
-> > at some point and it will only affect optimizations (I don't even know
-> > if they exist at the moment) of old versions.
->
-> Why get cute? I'd rather defer to the standard library.
+The trace call invokes rtc_tm_to_time64 on a
+potentially uninitialized alarm->time. Move the
+trace call to the path where we do successfully
+initialize and read that struct.
 
-Ah, this is gone anyway with Boqun's suggestion - this function exists in 1=
-.78.
+This fixes a KMSAN warning.
+
+Fixes: 29a1f599c0cc ("rtc: Add tracepoints for RTC system")
+
+Signed-off-by: Bharadwaj Raju <bharadwaj.raju777@gmail.com>
+---
+ drivers/rtc/interface.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/rtc/interface.c b/drivers/rtc/interface.c
+index aaf76406cd7d..82ba33bf478b 100644
+--- a/drivers/rtc/interface.c
++++ b/drivers/rtc/interface.c
+@@ -201,11 +201,12 @@ static int rtc_read_alarm_internal(struct rtc_device *rtc,
+ 		alarm->time.tm_yday = -1;
+ 		alarm->time.tm_isdst = -1;
+ 		err = rtc->ops->read_alarm(rtc->dev.parent, alarm);
++		if (!err)
++			trace_rtc_read_alarm(rtc_tm_to_time64(&alarm->time), err);
+ 	}
+ 
+ 	mutex_unlock(&rtc->ops_lock);
+ 
+-	trace_rtc_read_alarm(rtc_tm_to_time64(&alarm->time), err);
+ 	return err;
+ }
+ 
+-- 
+2.48.1
+
 
