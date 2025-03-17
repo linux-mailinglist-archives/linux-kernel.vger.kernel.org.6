@@ -1,135 +1,139 @@
-Return-Path: <linux-kernel+bounces-563592-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563593-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16CE3A644E8
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 09:16:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D92E2A644EA
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 09:16:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F32213B0215
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 08:16:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E71818942AD
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 08:16:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01A6D21B8EC;
-	Mon, 17 Mar 2025 08:16:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF5A421C18C;
+	Mon, 17 Mar 2025 08:16:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UtK2JJ9T"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TnWaUoDB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BBF3847B
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 08:16:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5585721C177;
+	Mon, 17 Mar 2025 08:16:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742199376; cv=none; b=bS0Zsw+NmnvKRw3+VGmg90JfZwJqBX9MP6/gqNQ3QPoV+nqI6M7Z3Tf3sCBgKbMwAXv+Xq35Aj0uRg3HvmhgMIgcVnSgz39RoXBQpN4+GtJHKm8O5SxNkhDzZaeRpBMkTjwxf4E6bUeJHcZZhU5HlBqowgPSsIQl48NKz6VE8ig=
+	t=1742199379; cv=none; b=tuYPTplXdiMNHzX3cqTFvEkvbtixthJKvqkQx3iK+VviBMTovoSwJecI7K73a4TRwAbRhHJ8N2SuMHL7l+cFjxIfniNhE6FCo0MwmGami3bx84MhSW059Qd6Sb4OHZ5OHpP9ph3GjayoXmXz0n7RJv4uYSdWU1k0V7JSaegQ4Z4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742199376; c=relaxed/simple;
-	bh=0aexZ8p/UfBpfkmvdM5J6umkMXuw2qZoDMMfIOS7uNQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eykM2YrdlUDzwTMfSB4rh7u3rNYrkewJ1Y+Jxv4nlWKBc45uZfdNFzPyXB3UocOn/LbepbRIEM1Kc14zufFE4/grK3VIOqEdl/HT8+ngR49X63RaMwAy8FLLnJjjueKbLVMh81gskgltOAs6E1Ef1IwJyro+w2QK5ateO4SPS+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UtK2JJ9T; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1742199373;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Pk3Z6MT/rM/rR8SSxVws+PD86WIVAU1t8UCCgCigTfc=;
-	b=UtK2JJ9TLM82AKKPNvLd7GkqlE1YWknFbSdaeBKvP4dNW+K0+H7pdYdJqthK0HtvNZg5Y+
-	kXmqfKc1pUiEsIpmYh3/o3xEDcubNP8bhTgPJrfD+6B67KnYIxMH/Oll4rNH+XNxlJkIgB
-	C+beglnoHu08pItbXRCW2kYaRtLz/Bw=
-Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
- [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-452-oj50330TNiKfKt7uOdn8DA-1; Mon, 17 Mar 2025 04:16:11 -0400
-X-MC-Unique: oj50330TNiKfKt7uOdn8DA-1
-X-Mimecast-MFC-AGG-ID: oj50330TNiKfKt7uOdn8DA_1742199370
-Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-ac28f255a36so319129366b.3
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 01:16:11 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742199370; x=1742804170;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Pk3Z6MT/rM/rR8SSxVws+PD86WIVAU1t8UCCgCigTfc=;
-        b=CeAlRz7PE/SKobWrGiMOEbqw0+i8rDGvIGJRWi+EumxKYONnykPB5H9022JghcNben
-         rmE6yMt+3Ln4mAR0mORoUs+upGHmHY0VzhiJUey0tZPiZld/sDSVrp2si4m2a83YWyHA
-         IRQY0Eg0soyY/NpQLZvNi5ZOKJU9oLlOdupEiJrIZle3iCpiJLOKngnthcLllZjLSIZ3
-         D0E3KJFQh5iaaKjYI//usIkqEKj698erGvu3QHdY22/xrEfWnPWTyHHtCMGwX7Sf2kZe
-         3PmKJHaXbWEq9W/obRvhW5ImoOz5CEFb6nCgp4uLq+x4wQzjpMhl/6VQijcvUadzq7AI
-         JIww==
-X-Forwarded-Encrypted: i=1; AJvYcCXoGZHiMhvzWRwhPN+zYel1JFKLPjwrv9WZkBU/Do7OzYst3AQPvHoK4hqbLIxaBa+CMK6b3ZJblBWccJU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy4t1OqQgaNpLdY5551ATzsrlppxee4jTlNdWhgcXZXb72ehvki
-	EckcePSNPbnEKhxO31TohRl4C2J0IY3cmwddJ/nMi6cWAq+/0ugLUluqWQ1nypdsbBmutx/l7IC
-	EVX6pcIcfuxiSWKOaYKVx3N6ZKrgTEi/qSbhPDcwjmkRqzYCFloaVCa1u40rx1JBC+wUqxtHbig
-	leouoz9UuIOhT9Dtj+hXwGMx8ub8L/ShNZMWCd
-X-Gm-Gg: ASbGncveNrocSH9vc8zAR+7w31LVfsCSbF6x9iv+M5IjGy047Hr//oxuYGTji7qu3LF
-	uFAUcP62IGLZnSaUJVdrx+t5g3FhrDcG5OzGLAgxAHEaqXKcH6LZplgUTdryhotCn7sGPzGjpFQ
-	==
-X-Received: by 2002:a17:906:c10d:b0:ac2:cae8:e153 with SMTP id a640c23a62f3a-ac3301dd86bmr1393076866b.4.1742199370301;
-        Mon, 17 Mar 2025 01:16:10 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFZ+ANShCU4w+973f+bO4wSWXHgTROJUNB6d4D2jlOtA47ZbMlXsZlAyMzOugVcO6O70RQMZNgc+7nWLej/uM0=
-X-Received: by 2002:a17:906:c10d:b0:ac2:cae8:e153 with SMTP id
- a640c23a62f3a-ac3301dd86bmr1393074066b.4.1742199369946; Mon, 17 Mar 2025
- 01:16:09 -0700 (PDT)
+	s=arc-20240116; t=1742199379; c=relaxed/simple;
+	bh=CMk1a0pEu5bIDrnvv9XsvLO5nY5HnRPtoexQTQ1KoQs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Dt0VHP/SmwTLxBrTsS1s5NImLuaA8O/MZ8sRpqhN0jI9WQEWebQLKF3Fh8/+maka8JpCNCdP2lixpA331QDIvEPBQaGABgnHZ60vm/7Bgltbkx9+dTLXxeJC81ToqY4ACC2sawBHRrHjxHy5t24ow6Fmjlb0125q8KXA04jUErA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TnWaUoDB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 592A4C4CEE3;
+	Mon, 17 Mar 2025 08:16:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742199375;
+	bh=CMk1a0pEu5bIDrnvv9XsvLO5nY5HnRPtoexQTQ1KoQs=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=TnWaUoDBjQMvsQqkI9/bG4octEIKURGO8P0/kOetwvzPbCllY7BawoGqNtKI/oXWX
+	 sz7TQDxb/D6gkjWcnmvtnhgxnwuS+oxxpbMpGhBRO0b7x0kwo1PPQSzMI/Glw5YitZ
+	 K2GbOVbMjdi6Q1LgBfdwcVrvfDjkkCYNXUCdZqovS1N5fM8B32mw4Mjuxq4MMgViOY
+	 slcWrLlw29UeVI55lqTCcYPbDpdzRYR5w/51D81gD5ELycYUVrWLO50P4sWL8jYaZG
+	 XkVoxJ8UqmlNQFnYQ8uD78PUkP0K1sHb8KAAbz/E8azXtTN5jBEVZf8LJlxT3Cd/n6
+	 A2JBVK4wEnclw==
+Message-ID: <e0204a28-7e3a-48f9-aea9-20b35294ada6@kernel.org>
+Date: Mon, 17 Mar 2025 09:16:09 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250312190513.1252045-1-sdf@fomichev.me>
-In-Reply-To: <20250312190513.1252045-1-sdf@fomichev.me>
-From: Lei Yang <leiyang@redhat.com>
-Date: Mon, 17 Mar 2025 16:15:32 +0800
-X-Gm-Features: AQ5f1JrIt2rqvywyLUfYM86c8DkeHlgoLJ6dpuNwUnqQNMtcO8XVVleRuUoD934
-Message-ID: <CAPpAL=z9WgrdYNTbKqus+nknfW00HLLZ1VpdowvTfMDAx-Cdfw@mail.gmail.com>
-Subject: Re: [PATCH net-next v2 0/2] net: bring back dev_addr_sem
-To: Stanislav Fomichev <sdf@fomichev.me>
-Cc: netdev@vger.kernel.org, davem@davemloft.net, edumazet@google.com, 
-	kuba@kernel.org, pabeni@redhat.com, linux-kernel@vger.kernel.org, 
-	willemdebruijn.kernel@gmail.com, jasowang@redhat.com, andrew+netdev@lunn.ch, 
-	horms@kernel.org, jdamato@fastly.com, kory.maincent@bootlin.com, 
-	kuniyu@amazon.com, atenart@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] net: atm: use sysfs_emit_at() instead of scnprintf()
+To: tang.dongxing@zte.com.cn, davem@davemloft.net, feng.wei8@zte.com.cn,
+ shao.mingyin@zte.com.cn, xie.ludan@zte.com.cn
+Cc: edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ horms@kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ yang.guang5@zte.com.cn, yang.yang29@zte.com.cn, ye.xingchen@zte.com.cn,
+ xu.xin16@zte.com.cn
+References: <20250317155102808MZdMkiovw52X0oY7n47wI@zte.com.cn>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20250317155102808MZdMkiovw52X0oY7n47wI@zte.com.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-QE tested this series of patches with virtio-net regression tests,
-everything works fine.
+On 17/03/2025 08:51, tang.dongxing@zte.com.cn wrote:
+> From: TangDongxing <tang.dongxing@zte.com.cn>
+> 
+> Follow the advice in Documentation/filesystems/sysfs.rst:
+> show() should only use sysfs_emit() or sysfs_emit_at() when formatting
+> the value to be returned to user space.
+> 
+> Signed-off-by: TangDongxing <tang.dongxing@zte.com.cn>
 
-Tested-by: Lei Yang <leiyang@redhat.com>
+Dear ZTE,
 
-On Thu, Mar 13, 2025 at 3:05=E2=80=AFAM Stanislav Fomichev <sdf@fomichev.me=
-> wrote:
->
-> Kohei reports an issue with dev_addr_sem conversion to netdev instance
-> lock in [0]. Based on the discussion, switching to netdev instance
-> lock to protect the address might not work for the devices that
-> are not using netdev ops lock.
-> Bring dev_addr_sem instance lock back but fix the ordering.
->
-> 0: https://lore.kernel.org/netdev/20250308203835.60633-2-enjuk@amazon.com
->
-> Stanislav Fomichev (2):
->   Revert "net: replace dev_addr_sem with netdev instance lock"
->   net: reorder dev_addr_sem lock
->
->  drivers/net/tap.c         |  2 +-
->  drivers/net/tun.c         |  2 +-
->  include/linux/netdevice.h |  4 +++-
->  net/core/dev.c            | 41 +++++++++++++--------------------------
->  net/core/dev.h            |  3 ++-
->  net/core/dev_api.c        | 19 ++++++++++++++++--
->  net/core/dev_ioctl.c      |  2 +-
->  net/core/net-sysfs.c      |  7 +++++--
->  net/core/rtnetlink.c      | 17 +++++++++++-----
->  9 files changed, 56 insertions(+), 41 deletions(-)
->
-> --
-> 2.48.1
->
->
+Can you slow down? You sent a bunch of emails with similar issues which
+means that dozen of maintainers will deal with the same issues
+independently. This looks like another vivo or huawei style submission,
+leading to bugs sneaked via flood of patches.
 
+First, fix the name used in the SoB (see submitting patches) to match
+Latin transcription.
+
+Second, use proper SoB chain, see submitting patches.
+
+Third, really, really be sure that what you send is correct. You already
+got quite responses, but you still keep sending patches.
+
+Fourth, respond to received feedback instead of flooding us with more of
+this!
+
+
+Best regards,
+Krzysztof
 
