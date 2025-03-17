@@ -1,97 +1,93 @@
-Return-Path: <linux-kernel+bounces-564162-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564163-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8EFCA64F02
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 13:36:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FE78A64F18
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 13:37:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 942A87A2314
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 12:35:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3BFC518904E0
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 12:37:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 849C223A9AA;
-	Mon, 17 Mar 2025 12:36:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B1FA23A9BE;
+	Mon, 17 Mar 2025 12:37:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qpSGRI4k"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PyI9QFKt"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBB90239096;
-	Mon, 17 Mar 2025 12:36:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A29A23959F
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 12:37:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742214975; cv=none; b=p6lT5mvMCLln+YVteUA/rycEX8A/jVBSDC89g82K5hQKjGWP/Ac57TGR++2NMoTgQxIwsEfmsxuhSlgD5SgTPK5A5IEKFMdhmtcmaCO4nn8rdOb4g3Y1aNmdqLFyI100DSNgtWgVUT5+mnQio3BqMRWJerI4XJUVpRkxtvnVuqg=
+	t=1742215020; cv=none; b=dctMph8LfXO++w59p3xYxESenKChh7z/4bhxMjJ0unW7pUgYbkrNu3Qmi6OlE3Atdujt5aREewlk6drsgKyzoWDs1AHR8EDu7uCaQo4pmfo8mFKs2eWw4wPjbM6bMNkiX4bWygwCeEmnbHj0c8xNsYchCTWD72K6l/7O9O0PTz8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742214975; c=relaxed/simple;
-	bh=GGeUu/qHq7ctkvz7APKdufbJEDMrfDRBBej2b3v+epw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PMo4yl8pm+wjxCkotusM7B6hv+eeOFj2uL4eDD/n922mBa3QLob5qcr28tX/ZgAaKIaL6Jtcotx7gwmkyGBgsWM2IorKDS8Qw/KLry/s5ngcEI1XIeL2FIaJerTx7PEJ4rDAh7Dj8xYDMwnwpltLrn1+l2FRsXrNvtHwarwzJJI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qpSGRI4k; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA190C4CEE3;
-	Mon, 17 Mar 2025 12:36:12 +0000 (UTC)
+	s=arc-20240116; t=1742215020; c=relaxed/simple;
+	bh=wdAdrTTIhxph6P8xOMWnSIdCqGUFHm3B9OhuPUTNQNg=;
+	h=Date:From:To:Cc:Subject:Message-Id:Mime-Version:Content-Type; b=oNAe8PNt0Hxo1eIYPweOfofchKvwh7QJuztUGNuYSd05j4hwrEnf/0ykFqu1M/ipn7JTk7s2ywovr1OaYnqKGjEZykh1KVSBzpuYwLic0DY3YC/cFcABwZRM7PcvrpK0o4jjutYrbmNt8Ph156CnpKwT3jeIobKBSCh9e+mWOdk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PyI9QFKt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AEF3EC4CEE3;
+	Mon, 17 Mar 2025 12:36:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742214974;
-	bh=GGeUu/qHq7ctkvz7APKdufbJEDMrfDRBBej2b3v+epw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qpSGRI4kJhUEnsCcy/8CpzXnlMWUIBo1cSH4DF2IEzWQdqcOZ95jO4rGZMjFPqlxm
-	 eS2XbjNbuQARU8BhL/3S/YHuo7jha0/NlPfVQ5KyV8i7ItlRS8s5KBzsgaDgLkLyE9
-	 o64qP0A6dPMI7gvsMaOviI2VsE8nuNgtr3hKQw41LphkRdt+wIx6p1D3YkmlZhBs+q
-	 bg+vRODyWgooFpZjscrCnqABFcJGVQv3/lPXPgGeZSSX3AbHjtwSpXJvDdZ8eeKIBm
-	 iNoflGUtkaBG+pmgCic+OXPizvDBTyqiLjLA3LQf0UNEAxOzZpa0Ooyq/a/57ctmKe
-	 K8tmC/ZgSS3nQ==
-Date: Mon, 17 Mar 2025 12:36:08 +0000
-From: Mark Brown <broonie@kernel.org>
-To: cy_huang@richtek.com
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH 3/3] regulator: dt-bindings: rtq2208: Remove unnecessary
- property of fixed LDO VOUT
-Message-ID: <857ca1fd-f7d2-41ec-963d-2b6250ac2cca@sirena.org.uk>
-References: <cover.1742204502.git.cy_huang@richtek.com>
- <d90e57c14869415e6322e8b0bbff14da480a0adb.1742204502.git.cy_huang@richtek.com>
+	s=k20201202; t=1742215020;
+	bh=wdAdrTTIhxph6P8xOMWnSIdCqGUFHm3B9OhuPUTNQNg=;
+	h=Date:From:To:Cc:Subject:From;
+	b=PyI9QFKt65ellLhU4W+1ZGOUrSaI9sQOzmLZ+BFFmQNCfqoQStKvF0nu365ZYt3o6
+	 wlS0ApAzzdRweghwlzcGBcSaKd97i9weGHKTtvKVu5sCHl76Z3PTw6s7PhI1+J7BkW
+	 OFLOOSyhvlzRyDKPCjeR0HNpTW0AoITuLrPcQ7I3rTM2D9euAXqpBpMYjc8zsPfiVB
+	 7qpeTGRLBXaHotZEYahx8CdxA2FFUdrEEfGIbuyvk7ZvivwznxAfbfBxdMk834Q3t1
+	 mkVM57F7WOf2d++76VKYlJgx9iO7LMVOJoORog4bqlUVZWvlRasyERjGu78s+pw5KU
+	 OlV5+2LnYc+Yw==
+Date: Mon, 17 Mar 2025 21:36:56 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Masami Hiramatsu (Google) <mhiramat@kernel.org>, Steven Rostedt
+ <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>,
+ linux-kernel@vger.kernel.org
+Subject: [GIT PULL] probes: Fixes for v6.14-rc6
+Message-Id: <20250317213656.3c684cdad49b4751d623fb77@kernel.org>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="rPU7mO5AV4U9+wRZ"
-Content-Disposition: inline
-In-Reply-To: <d90e57c14869415e6322e8b0bbff14da480a0adb.1742204502.git.cy_huang@richtek.com>
-X-Cookie: I know how to do SPECIAL EFFECTS!!
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+
+Hi Linus,
+
+Probes fixes for v6.14-rc6:
+
+- tprobe-events: Fix to clean up tprobe correctly when module unload
+  tprobe (Tracepoint probe) event does not set TRACEPOINT_STUB to its
+  'tpoint' pointer when unloading module, thus it is shown as a normal
+  'fprobe' instead of 'tprobe' and never comes back.
+- tprobe-events: Fix leakage of module refcount
+  When a tprobe's target module is loaded, it gets the module's refcount
+  in the module notifier but forgot to put it after registering the probe
+  on it. Fix to get the refcount only when registering tprobe.
 
 
---rPU7mO5AV4U9+wRZ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Please pull the latest probes-fixes-v6.14-rc6 tree, which can be found at:
 
-On Mon, Mar 17, 2025 at 06:06:23PM +0800, cy_huang@richtek.com wrote:
-> From: ChiYuan Huang <cy_huang@richtek.com>
->=20
-> The 'richtek,fixed-microvolt' is unnecessary. Remove it on the document.
 
-This will make any existing DTs buggy, we should mark the property as
-deprecated but valid.
+  git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
+probes-fixes-v6.14-rc6
 
---rPU7mO5AV4U9+wRZ
-Content-Type: application/pgp-signature; name="signature.asc"
+Tag SHA1: 74f50e8db2a9d8eb99f1dd8b8286d11bb4099f97
+Head SHA1: ac91052f0ae5be9e46211ba92cc31c0e3b0a933a
 
------BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmfYFzcACgkQJNaLcl1U
-h9CVHwf/QfAnMJEcABurm/VTBBbfT0kWSqivM37rkxYl6/Xj7mRjaxU6E+TkSZgc
-EaiTpH/hXdvHNeN4az2wO8zm+cT9OInl1PzGDmXeXMyUjadiaAy/TPH3L95BumjE
-CRAXXs+ikVvff/99h42y1b/eHXHZLobVzOhygaf1C3u7rE76qqas3XBLNMae1DQi
-OllhPCGuIfrB9ajeLUAFJJXirQ+Rz1LYk34WRgXs1whlhHn6k3+GzcXGXHExyu5o
-tdNWdpXl89jRw5xcrWx+Kf1/Xu46VCge/VayLstuSj2NIZN9Ct1mhx6xfHhS13+s
-fng3/x+YDGPEK21z3BoWgbMhdLvVAQ==
-=lgtk
------END PGP SIGNATURE-----
+Masami Hiramatsu (Google) (2):
+      tracing: tprobe-events: Fix to clean up tprobe correctly when module unload
+      tracing: tprobe-events: Fix leakage of module refcount
 
---rPU7mO5AV4U9+wRZ--
+----
+ kernel/trace/trace_fprobe.c | 30 ++++++++++++++----------------
+ 1 file changed, 14 insertions(+), 16 deletions(-)
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
