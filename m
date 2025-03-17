@@ -1,79 +1,82 @@
-Return-Path: <linux-kernel+bounces-563935-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563937-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CF25A64AC3
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:50:33 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82053A64AAA
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:46:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2071C3A8E11
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:46:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A46717A28B6
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:45:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B9DD233127;
-	Mon, 17 Mar 2025 10:46:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A8AE2356D5;
+	Mon, 17 Mar 2025 10:46:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="sRF4FFxH";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="YAp0cmrf"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="EKkj/iIk";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="faVBFcMn"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84D5E22D4F7;
-	Mon, 17 Mar 2025 10:46:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02773219301;
+	Mon, 17 Mar 2025 10:46:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742208389; cv=none; b=nGKBjkhUwav5LkVgUBw8h0oQontZKIWJ2gSS+UlcwxGSeNM4/Xl9rr9Xp7nG5wieGy6k8bbs0/B+lVu/DpIuiibjuJsVE05+IY4Dqm/B7YAlnntbMLcV9Fu4R2FC9MkPQS90fgRtZ6UPJQjgo4B0eCtu0mvQrHb901YAUd355Rc=
+	t=1742208390; cv=none; b=ZztWT9vOlaRSbCwLnPpZpB5WUmNcOWPZJ1G7oyw+ylzGB/1eoaQl+SeryBzRi/K3FNkbxJtf/3X83sEuYbJPFOF7k7Bv4iLgC9MuKuaqhfKrwq0f7iFNlTZcSooidStHKjvkMCQZbHjc1dv7kdpsGcHWDWg8Q7HjtACkzK5N4ZQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742208389; c=relaxed/simple;
-	bh=T1rKO4WNGPKX+O5/XaMWf7roFS7E0FOf8uotEinZgkA=;
+	s=arc-20240116; t=1742208390; c=relaxed/simple;
+	bh=E2ZsEza58MCCwYGHHMeocjIojzgSWQfzCRb0qJ15128=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=tpbSeRL4IrJMMTrVLh7GFGQnFc7UOycuZF6Pp9rMkrTQE+33Ot4gxX7qXhDZskQGGyIPdpDHRHLTgap6uNNisx/64Oqu6PruYCxMZeiSCAp1IPnrcnJHhigcUPBHoIwk6QBvr4cKFuuEjQ+CV5IO2dB7w3grRVJ3DzlPyiiDMmA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=sRF4FFxH; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=YAp0cmrf; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=MlJzgwTeKK4FAEifB2SA1/CyqFoGJXKan3a+5PCA28tcN0zkRhrNtqaQFcsYpIlwUj8J2aGD3cNLuDtgl/Xp/8LMQkWR95Fbjmi2GoSCZhVyqdOHMLG4hiMIU0pKBhuwX5Hc+6e9XM9+F806pcAJ5dYMw2Ma8H6UxSkD/qy2slo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=EKkj/iIk; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=faVBFcMn; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 17 Mar 2025 10:46:21 -0000
+Date: Mon, 17 Mar 2025 10:46:25 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1742208385;
+	s=2020; t=1742208386;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=yfjoXO3j7Thg4ryA6P8iUMyvEXmrUciuNhM0VLujHYs=;
-	b=sRF4FFxHpdJsaku2zVMAOKkfvcpj1PHA3tOzckkb8CwL6QU9AbErmXp2yhGaN0asIMh8O+
-	Q9IkqmbkztrbUQKOmsB9Dmti5YazFvQD2mnIt3gfuzeaRpDMhMiqTgMEqT8GCL0ZF8gdi+
-	8uBHb7Wv6ErmxfidXHKY6P5iLOKIfAAl6tHQPGkWOlPeEzoY9XW7qZfOxNVC0MKk68vxDr
-	iPr+J9iWHCU8RY7fP2tLDsLPD6bCTZa/EA/th6RSwtAT9+JWTHjbFBc9NQ5PbFuYgMPG6j
-	K4EfxZycKRy+zQQuKu7fdNazKEQ1BEtCRn8UlLTwbXiEgGWSM/MS9DIbDu9Wmg==
+	bh=iuBC1KwXb6H4RgZJPBx6mRAYWZASgB532UX/SNLfTUg=;
+	b=EKkj/iIkRihIBS02gWd/Qsn5NmD7Qcrr6CQZr2RUv2pDGsppEI9mPAPJIffPmLKbCA6SW3
+	McxpePbcpFPTZEq8r9Vfox+Vokjhu8SNey/COE2cHKQp4C5QnwFBK7nlURQbmCb1a2peGX
+	eKxwPxlLa49syE2c2Ia77ISgjx2xDDoig0aWgomENPgIZ4adQVK3x2ehVBO5A5eip8eMkk
+	UbEMfrk8NKqepSCp3Mn2unMZifquvD+X+AdvVfNz1/bm9dJf6OOWRQ6SQ4ncL6ipgnsHeP
+	nPVxlC3Qv0IZmrCXmgRqNwGHgjX9xd3U4qsFDT+gtcrGGkYRyghGD6xRQFFbLg==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1742208385;
+	s=2020e; t=1742208386;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=yfjoXO3j7Thg4ryA6P8iUMyvEXmrUciuNhM0VLujHYs=;
-	b=YAp0cmrfVrky83KWQUKY9qLEf7A3TYGeq8RGsHrHWqTFoqKdTOjr0tPWu9YL2OPMvpJ/cv
-	c7L1Mu3pLmTN8nBg==
+	bh=iuBC1KwXb6H4RgZJPBx6mRAYWZASgB532UX/SNLfTUg=;
+	b=faVBFcMnHD2Bpt6rXcrtWs3l4p2GpGof2DyoAH3+qJFuEYIux1a2otH+iCrmtbJR3ny1XH
+	M8HWkSmTMcqFQjDw==
 From: "tip-bot2 for Josh Poimboeuf" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip: objtool/core] objtool: Add CONFIG_OBJTOOL_WERROR
-Cc: Josh Poimboeuf <jpoimboe@kernel.org>,
- "Peter Zijlstra (Intel)" <peterz@infradead.org>, x86@kernel.org,
+Subject:
+ [tip: objtool/core] objtool: Change "warning:" to "error:" for --Werror
+Cc: Nathan Chancellor <nathan@kernel.org>,
+ Josh Poimboeuf <jpoimboe@kernel.org>,
+ "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+ Brendan Jackman <jackmanb@google.com>, x86@kernel.org,
  linux-kernel@vger.kernel.org
 In-Reply-To:
- <3e7c109313ff15da6c80788965cc7450115b0196.1741975349.git.jpoimboe@kernel.org>
+ <56f0565b15b4b4caa9a08953fa9c679dfa973514.1741975349.git.jpoimboe@kernel.org>
 References:
- <3e7c109313ff15da6c80788965cc7450115b0196.1741975349.git.jpoimboe@kernel.org>
+ <56f0565b15b4b4caa9a08953fa9c679dfa973514.1741975349.git.jpoimboe@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174220838111.14745.231849484340843711.tip-bot2@tip-bot2>
+Message-ID: <174220838596.14745.7784753134023257234.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -83,68 +86,42 @@ Content-Transfer-Encoding: 7bit
 
 The following commit has been merged into the objtool/core branch of tip:
 
-Commit-ID:     9103328c993b0d4f6a4fe483b29b7800855d6960
-Gitweb:        https://git.kernel.org/tip/9103328c993b0d4f6a4fe483b29b7800855d6960
+Commit-ID:     a307dd28b1c6655b67b2367663331034ac8da79c
+Gitweb:        https://git.kernel.org/tip/a307dd28b1c6655b67b2367663331034ac8da79c
 Author:        Josh Poimboeuf <jpoimboe@kernel.org>
-AuthorDate:    Fri, 14 Mar 2025 12:29:11 -07:00
+AuthorDate:    Fri, 14 Mar 2025 12:29:09 -07:00
 Committer:     Peter Zijlstra <peterz@infradead.org>
 CommitterDate: Mon, 17 Mar 2025 11:36:02 +01:00
 
-objtool: Add CONFIG_OBJTOOL_WERROR
+objtool: Change "warning:" to "error:" for --Werror
 
-Objtool warnings can be indicative of crashes, broken live patching, or
-even boot failures.  Ignoring them is not recommended.
+This is similar to GCC's behavior and makes it more obvious why the
+build failed.
 
-Add CONFIG_OBJTOOL_WERROR to upgrade objtool warnings to errors by
-enabling the objtool --Werror option.  Also set --backtrace to print the
-branches leading up to the warning, which can help considerably when
-debugging certain warnings.
-
-To avoid breaking bots too badly for now, make it the default for real
-world builds only (!COMPILE_TEST).
-
-Co-developed-by: Brendan Jackman <jackmanb@google.com>
+Suggested-by: Nathan Chancellor <nathan@kernel.org>
 Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Link: https://lore.kernel.org/r/3e7c109313ff15da6c80788965cc7450115b0196.1741975349.git.jpoimboe@kernel.org
+Reviewed-by: Brendan Jackman <jackmanb@google.com>
+Link: https://lore.kernel.org/r/56f0565b15b4b4caa9a08953fa9c679dfa973514.1741975349.git.jpoimboe@kernel.org
 ---
- lib/Kconfig.debug    | 12 ++++++++++++
- scripts/Makefile.lib |  1 +
- 2 files changed, 13 insertions(+)
+ tools/objtool/include/objtool/warn.h | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-index 35796c2..bbfb9d5 100644
---- a/lib/Kconfig.debug
-+++ b/lib/Kconfig.debug
-@@ -545,6 +545,18 @@ config FRAME_POINTER
- config OBJTOOL
- 	bool
+diff --git a/tools/objtool/include/objtool/warn.h b/tools/objtool/include/objtool/warn.h
+index 6180288..e72b9d6 100644
+--- a/tools/objtool/include/objtool/warn.h
++++ b/tools/objtool/include/objtool/warn.h
+@@ -43,8 +43,10 @@ static inline char *offstr(struct section *sec, unsigned long offset)
  
-+config OBJTOOL_WERROR
-+	bool "Upgrade objtool warnings to errors"
-+	default y
-+	depends on OBJTOOL && !COMPILE_TEST
-+	help
-+	  Fail the build on objtool warnings.
-+
-+	  Objtool warnings can indicate kernel instability, including boot
-+	  failures.  This option is highly recommended.
-+
-+	  If unsure, say Y.
-+
- config STACK_VALIDATION
- 	bool "Compile-time stack metadata validation"
- 	depends on HAVE_STACK_VALIDATION && UNWINDER_FRAME_POINTER
-diff --git a/scripts/Makefile.lib b/scripts/Makefile.lib
-index cad20f0..99e2819 100644
---- a/scripts/Makefile.lib
-+++ b/scripts/Makefile.lib
-@@ -277,6 +277,7 @@ objtool-args-$(CONFIG_HAVE_STATIC_CALL_INLINE)		+= --static-call
- objtool-args-$(CONFIG_HAVE_UACCESS_VALIDATION)		+= --uaccess
- objtool-args-$(CONFIG_GCOV_KERNEL)			+= --no-unreachable
- objtool-args-$(CONFIG_PREFIX_SYMBOLS)			+= --prefix=$(CONFIG_FUNCTION_PADDING_BYTES)
-+objtool-args-$(CONFIG_OBJTOOL_WERROR)			+= --Werror --backtrace
+ #define WARN(format, ...)				\
+ 	fprintf(stderr,					\
+-		"%s: warning: objtool: " format "\n",	\
+-		objname, ##__VA_ARGS__)
++		"%s: %s: objtool: " format "\n",	\
++		objname,				\
++		opts.werror ? "error" : "warning",	\
++		##__VA_ARGS__)
  
- objtool-args = $(objtool-args-y)					\
- 	$(if $(delay-objtool), --link)					\
+ #define WARN_FUNC(format, sec, offset, ...)		\
+ ({							\
 
