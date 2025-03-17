@@ -1,135 +1,177 @@
-Return-Path: <linux-kernel+bounces-564873-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564879-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9C89A65C28
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 19:14:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3548EA65C2E
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 19:15:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B432188E96E
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 18:14:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 326F019A13EB
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 18:15:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37DFB18A95A;
-	Mon, 17 Mar 2025 18:14:15 +0000 (UTC)
-Received: from 1wt.eu (ded1.1wt.eu [163.172.96.212])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 824DA1A83FB;
-	Mon, 17 Mar 2025 18:14:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=163.172.96.212
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB1B21D61A4;
+	Mon, 17 Mar 2025 18:14:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="DrKnPnNw"
+Received: from mail-oo1-f41.google.com (mail-oo1-f41.google.com [209.85.161.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81A411CAA92
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 18:14:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742235254; cv=none; b=DsanGjejqqsFWgf0Ybo0t3UY6SwU49qHApYwGQQCZQRfhnFg69e8ljvhfYxo8RH7Nv8S3sPuO4zPHdw292baPvMu32w3FK0W4u6uHbIrewvCmVKiA+RUN/nPuqH9L/yh5naoKEXAf3cIGtM/dFebSWSiPEbKvftDqp0LgCho7uk=
+	t=1742235290; cv=none; b=jpFpWqFvkdCVZRrP2cTAvlUVZAGd4rDE+5+iUM22iV1VfvemZZ8kUGPIGEkKYDM4zY2dsnIhLPNudOjyTrKYlkgXzj8V20fNLL9A1WCDYk9Ui2Ay4u0ojEciQcRZAX+LrPra3b88bQh4lHwTi1Nb3aCLNdBQJRFzbSGUR/GpMv4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742235254; c=relaxed/simple;
-	bh=zR7F1wCaZgFJ5vBc/vilMOpQNA8DV6k2v1fnEC7BpMc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mova/PKZX7xrBhY/JZmkRfvT3v1E+WWorJTOQ7yM/lo8TVFSLmrFy93kzA50b+mIbk3UCSqFCDkIH9Z5aJ7r5XHI6XbarxFkr7vp9McgWPhV9KuVWyGN81OA/OpnK9+EkKZJtjTJ1/sxSjT8LvEoJy4G8W+XQy8FKEbYsTa0pLo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=1wt.eu; spf=pass smtp.mailfrom=1wt.eu; arc=none smtp.client-ip=163.172.96.212
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=1wt.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=1wt.eu
-Received: (from willy@localhost)
-	by pcw.home.local (8.15.2/8.15.2/Submit) id 52HIE2eh008577;
-	Mon, 17 Mar 2025 19:14:02 +0100
-Date: Mon, 17 Mar 2025 19:14:02 +0100
-From: Willy Tarreau <w@1wt.eu>
-To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
-Cc: Shuah Khan <shuah@kernel.org>, "David S. Miller" <davem@davemloft.net>,
-        Andreas Larsson <andreas@gaisler.com>, linux-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, sparclinux@vger.kernel.org
-Subject: Re: [PATCH] tools/nolibc: Add support for SPARC
-Message-ID: <20250317181402.GB8377@1wt.eu>
-References: <20250316-nolibc-sparc-v1-1-2e97022d5e2c@weissschuh.net>
- <20250317073746.GB5114@1wt.eu>
- <dacaa712-08a8-4fd6-ad47-2226040f02aa@t-8ch.de>
+	s=arc-20240116; t=1742235290; c=relaxed/simple;
+	bh=z0RJ2vq5BFM+TwAdCAzQmXT2Np1rybm8jXQU+12aXh0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KEQAFxF1s1DV2nJYbdpNBvwbInXztaJCiCCA3rIAYUE7O1KiszhkSyvOZpzkqfb0j2heeEFFl1AU4lNi0W8v/+gxt/ga6wgDJke54u5rQ1AmnQMLeDtTuupsdOGktmgRiJaFc42N/uSgpT0x0rfaklz+rUBJBQZydxPkQLHSs1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=DrKnPnNw; arc=none smtp.client-ip=209.85.161.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-oo1-f41.google.com with SMTP id 006d021491bc7-6000f9179f8so586027eaf.3
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 11:14:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1742235287; x=1742840087; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=d6G5kH1/17mAckBVSQ+0GeycayRC8uYE+FPvjcc3V28=;
+        b=DrKnPnNw6/5qrQxbLZ7qLlGGMQxtRAEWTTGT773nUELhAxyKiy5aGvqAbezOJdVjhT
+         QD80epzImVS47Jc/u72zg60tdNBgTg1k7GzQOknWZJNF/j5kuKEHLC+4Uqoqfe5fJW2W
+         0X76TAkyPgirzxBFM8AK33+dk/dEIyIhyQjYw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742235287; x=1742840087;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=d6G5kH1/17mAckBVSQ+0GeycayRC8uYE+FPvjcc3V28=;
+        b=UA8U8I2rpIf86Lc4F0+oHrHiEA58pjqe4qJZhm7u9uoXJSrMDiO8ofss5ufWx64yXy
+         7bUQX9MV5Pp1kX3gDqaztLV/uZ3Ern7Oyw0jqTCW+hTXAuoMnl7Z8zMEyRUQ2wfm/sGh
+         dYGh836RHyMX+52xIyZe7mE/tFH+7LpnyI/PqacpD6eVBIzBQj9EjL6bsytSUPLYwbUL
+         IJznU4vxMIQ1okv3CD+Cxw6zkfZgBQkdt6XiABR447/smYr4t5q6m59HzCUneQ/nws2e
+         xRjVF60tglOUBLbmuMlPzMMtW4TkhRQN58eUyR6eRjHy7/2Za7S8Q4wWvOtK9PVzpSuk
+         wnfA==
+X-Forwarded-Encrypted: i=1; AJvYcCUagLUpu+Ltw65F//38BhVsi9trTrRGFHl54umz0w1/zI5fTqTNJBgt2ndx2x9Nq3DbUSpsiCGoVo8CFpo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzjJGKJmw4/7YPQy66K1GaHRioyXQTNRmAAJs8cj0evQKN+jtG8
+	C8xHwF2HpFBaanqbUWJaJgroSbttVgJbeQpU+ACI9sNk5pIlFTs0cN5H5hm3S+8SflzQFvzMMj4
+	oky8qwA7MKiaGjofTU5yLFBag4X57H1Fzdcol
+X-Gm-Gg: ASbGncsAbGQJS7gEcY444Ox7bBxagz/TBqiSDUVDTyQoDolPOLuMoqeRuh1haTc/HxA
+	gokPuYI0fF6ZOeOrF5e0CijND4ZGSlqLCHbQQgPcsozNYgCSW0Qr1wE1AblF+W+bE2Ev3/m86RG
+	yi6lERfcd/n4qV4NT43OBfSh3attcAa3AEdkUvhZkyvdfdonqODlPIgjwG+Wrq7fClmA==
+X-Google-Smtp-Source: AGHT+IEIdIYyMphC9KIRv92mrEbk+JX8VcCMwxxmGXlhbHWC4pSDXwXa/exE7SgnK3ZFiIrx1hS6WPeWtb5d+k0lU44=
+X-Received: by 2002:a05:6871:723:b0:296:c3e9:507c with SMTP id
+ 586e51a60fabf-2c691117825mr2878352fac.10.1742235287446; Mon, 17 Mar 2025
+ 11:14:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <dacaa712-08a8-4fd6-ad47-2226040f02aa@t-8ch.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20250313000623.3192896-1-jeffxu@google.com> <1bbce89c-1efe-40cf-9085-ec4ec16f7996@lucifer.local>
+ <CABi2SkVKxyX0uDabg+wHiq_vTBFbUST-nRdur7cCPB2myhCWhg@mail.gmail.com> <CAMuHMdWLjX-OavON-rj50kZyvV5+Pf0x34WJbcdKsCgAQA7TwQ@mail.gmail.com>
+In-Reply-To: <CAMuHMdWLjX-OavON-rj50kZyvV5+Pf0x34WJbcdKsCgAQA7TwQ@mail.gmail.com>
+From: Jeff Xu <jeffxu@chromium.org>
+Date: Mon, 17 Mar 2025 11:14:36 -0700
+X-Gm-Features: AQ5f1Jr_ytqLHdovq4sBSX1pY1QSS_G7YR5AiuDQM9up-FcK9NgtAti-NP6kOSg
+Message-ID: <CABi2SkWU6orm-wBFKVt9rsSpYURHPb7fjHRzkOiPGd=Lh-DdkA@mail.gmail.com>
+Subject: Re: [PATCH] mseal sysmap: add arch-support txt
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, akpm@linux-foundation.org, 
+	Liam.Howlett@oracle.com, agordeev@linux.ibm.com, borntraeger@linux.ibm.com, 
+	gor@linux.ibm.com, hca@linux.ibm.com, kees@kernel.org, 
+	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, svens@linux.ibm.com, thomas.weissschuh@linutronix.de
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Mar 17, 2025 at 06:52:57PM +0100, Thomas Weiﬂschuh wrote:
-> On 2025-03-17 08:37:46+0100, Willy Tarreau wrote:
-> > On Sun, Mar 16, 2025 at 02:55:02PM +0100, Thomas Weiﬂschuh wrote:
-> > > Add support for 32bit and 64bit SPARC to nolibc.
-> > 
-> > Oh nice!
-> > 
-> > > Signed-off-by: Thomas Weiﬂschuh <linux@weissschuh.net>
-> > > ---
-> > > This is only tested on QEMU.
-> > > Any tests on real hardware would be very welcome.
-> > 
-> > I still have a working U60 here, but under solaris. Such machines are
-> > not trivial to boot on alternate OSes (and when you find a working
-> > image usually it's based on an old kernel).
-> 
-> An old kernel should be perfectly fine, no?
+On Fri, Mar 14, 2025 at 3:41=E2=80=AFAM Geert Uytterhoeven <geert@linux-m68=
+k.org> wrote:
+>
+> Hi Jeff,
+>
+> On Thu, 13 Mar 2025 at 23:26, Jeff Xu <jeffxu@chromium.org> wrote:
+> > On Wed, Mar 12, 2025 at 10:21=E2=80=AFPM Lorenzo Stoakes
+> > <lorenzo.stoakes@oracle.com> wrote:
+> > > On Thu, Mar 13, 2025 at 12:06:23AM +0000, jeffxu@chromium.org wrote:
+> > > > From: Jeff Xu <jeffxu@chromium.org>
+> > > > Add Documentation/features/core/mseal_sys_mappings/arch-support.txt
+> > > >
+> > > > Signed-off-by: Jeff Xu <jeffxu@chromium.org>
+>
+> Thanks for your patch!
+>
+> > > > --- /dev/null
+> > > > +++ b/Documentation/features/core/mseal_sys_mappings/arch-support.t=
+xt
+> > > > @@ -0,0 +1,30 @@
+> > > > +#
+> > > > +# Feature name:          mseal-system-mappings
+> > > > +#         Kconfig:       ARCH_SUPPORTS_MSEAL_SYSTEM_MAPPINGS
+> > > > +#         description:   arch supports mseal system mappings
+> > > > +#
+> > > > +    -----------------------
+> > > > +    |         arch |status|
+> > > > +    -----------------------
+> > > > +    |       alpha: | TODO |
+> > > > +    |         arc: | TODO |
+> > > > +    |         arm: |  N/A |
+> > > > +    |       arm64: |  ok  |
+> > > > +    |        csky: | TODO |
+> > > > +    |     hexagon: | TODO |
+> > > > +    |   loongarch: | TODO |
+> > > > +    |        m68k: | TODO |
+> > > > +    |  microblaze: | TODO |
+> > > > +    |        mips: | TODO |
+> > > > +    |       nios2: | TODO |
+> > > > +    |    openrisc: | TODO |
+> > > > +    |      parisc: | TODO |
+> > > > +    |     powerpc: | TODO |
+> > > > +    |       riscv: | TODO |
+> > > > +    |        s390: |  ok  |
+> > > > +    |          sh: | TODO |
+> > > > +    |       sparc: | TODO |
+> > > > +    |          um: | TODO |
+> > > > +    |         x86: |  ok  |
+> > > > +    |      xtensa: | TODO |
+> > > > +    -----------------------
+>
+> > > Plus I feel this need expansion a bit 'N/A' is because of being non-6=
+4 bit
+> > > right?
+> > >
+> > Below is the definition of N/A in Documentation/features/arch-support.t=
+xt
+> >    | N/A|  # feature doesn't apply to the architecture
+> >
+> > It fits the arm case because mseal is not supported in 32 bit.
+>
+> IIUIC, you can already s@TODO@N/A@ for all other 32-bit architectures,
+> so we don't accidentally spend time on looking into adding the support?
+>
+Sure, my architecture knowledge is limited.
 
-I don't think so (it depends how old in fact), keep in mind that
-we've removed support for a number of legacy syscalls.
+I just checked this, it seems to me that csky, m68k, nios2, sh, xtensa
+doesn't have 64 bits support, the rest have 64 bits. Is this correct ?
 
-> > > +/* startup code */
-> > > +void __attribute__((weak, noreturn)) __nolibc_entrypoint __no_stack_protector _start(void)
-> > > +{
-> > > +	__asm__ volatile (
-> > > +		/*
-> > > +		 * Save stack pointer to o0, as arg1 of _start_c.
-> > > +		 * Account for window save area and stack bias.
-> > > +		 */
-> > > +#ifdef __arch64__
-> > > +		"add %sp, 128 + 2047, %o0\n"
-> > 
-> > It's really unclear where this magical 2047 comes from, I think it must
-> > be explained in the comment above so that someone disagreeing with it
-> > later can figure whether it's right or wrong.
-> 
-> 128 is the context window and 2047 is the stack bias.
-> I'll try to make it clearer.
+Thanks
+-Jeff
 
-OK thanks, but that remains quite strange to me. How can we end up
-here with such an unaligned stack ? At the very minimum I'd expect
-all offsets to be multiple of 8.
 
-> > Also, I could be wrong, but from my old memories of playing with the
-> > stack on SPARC long ago, I seem to remember that the stack is growing
-> > down. Thus I find these "add" suspicious or at least confusing. You
-> > mention "window save area and stack bias" above, I'm not sure what it
-> > refers to, but if we can safely erase parts of the stack because too
-> > much was preserved, maybe some more explanation about the initial and
-> > target layouts is deserved here.
-> 
-> There is a graphic in the psABI [0] under "Process Stack and Registers".
 
-Thanks for the link! Are you sure you can get rid of the window save
-area ? I'm seeing that apparently it's used with save / restore, which
-*if I remember well (30 years ago)* were used along with register bank
-switches. In 3-12 it's written:
-
-  Some registers have assigned roles.
-    %sp or %o6 The stack pointer holds the limit of the current stack frame,
-    %which is the address of the stacks bottommost, valid word. Stack contents
-    %below the stack pointer are undened. At all times the stack pointer must
-    %point to a doubleword aligned, 16- word window save area.
-
-> I'll write something based on that.
-
-Thanks!
-
-> > > +		"b,a _start_c\n"     /* transfer to c runtime */
-> > 
-> > OK great, the delayed slot is covered! (that type of thing can work
-> > by pure luck in one test and fail in another one depending on what
-> > bytes follow the jump).
-> 
-> Yeah, it brings memories to the work on MIPS support.
-
-absolutely!
-
-Thanks,
-Willy
+> Gr{oetje,eeting}s,
+>
+>                         Geert
+>
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m6=
+8k.org
+>
+> In personal conversations with technical people, I call myself a hacker. =
+But
+> when I'm talking to journalists I just say "programmer" or something like=
+ that.
+>                                 -- Linus Torvalds
 
