@@ -1,120 +1,136 @@
-Return-Path: <linux-kernel+bounces-564285-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564290-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D223EA651EC
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 14:56:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 38C47A651FC
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 14:58:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 31251173283
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 13:56:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8CE07173F83
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 13:58:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F81323FC5A;
-	Mon, 17 Mar 2025 13:55:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9383A2405ED;
+	Mon, 17 Mar 2025 13:57:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="kiypk5GZ"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="pqIZga1S";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="m9W/EPsC"
+Received: from fout-a3-smtp.messagingengine.com (fout-a3-smtp.messagingengine.com [103.168.172.146])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AA6723F422
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 13:55:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC3CA23F397;
+	Mon, 17 Mar 2025 13:57:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.146
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742219758; cv=none; b=YVHNVNVWXuzK0bLO49EtK9Q7G0KeODtWFxfiIEJrE6McXFfmFTfZJEMQ+wRELvPymcpS8cLx3AOYnESaFfz/8txu6+zI7GSDzVYHvhFurIqp5z72GcXh0Os+BSuundZOi5TvGOicjjn/ch8BE1OUDBK6oRJeuEmHk6NkJ2B77/8=
+	t=1742219875; cv=none; b=c06da4AtZZqD2iTbFzx/L4GAzkiIeRuzAywz6hWR41AMfWeZh+fgVleQW7U/R4wFfAu6rF+GAv2R+xiTAA9piPsToFHyxc6TfcMeUazkoDHZ0iaOl2JHcom2VPwn9BNQmU/nXPA7gkFa/cEZGzHTokBy4S9/GpOriyTavrP8sWU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742219758; c=relaxed/simple;
-	bh=zvWJh3DSRJyVsIm7BvHAKzWU7gO86oXNSSAUpE5SCZM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=ozgY75V/YfhGd+Rank0bSeSV30tXADRNC65SR6qd0l3YBTn1vrYffyVOKibDzyayffFz/SJ6O+rHPdJzg3KcKZIW6Bt+5obkuPslXN1SRZ0YZYSxB3TBnDzazDzQTHBTtDNW1o16ZiDPqo2XIUoidvuVWJlIreJ6SWOz/j9pZxM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=kiypk5GZ; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 0E8FC40E021E;
-	Mon, 17 Mar 2025 13:55:54 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id VZbPGyYK4-Pu; Mon, 17 Mar 2025 13:55:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1742219749; bh=5qo7vzYg2Dakc/vFLLeDg9RMYanszlPYu0u56xmeYQ8=;
-	h=Date:From:To:Cc:Subject:From;
-	b=kiypk5GZLyUWoXeMljSXjjYYn+QAbNVPnemjD0/D15MQSOX6ratMnm3VSlBsWL3kJ
-	 /pKbSsUwngJvRBWiVoqJidMSu8brN+YqEFRd+bg1Rx1xzbI5n1gwlf5ERQnqK0MC02
-	 bR6uHzsTkNuUi1Rc+zTiligeH6X4s6yCOQv84ZP0d+LWQr1R851mW6AzyyO8wc8I6O
-	 qxsFGs97jlE0czMFpLtOvqhfXt9pf2dqaChsbZTeGHEOuTToRNN7biCBWES2K0H3lc
-	 cDQlanOqapo18EmxZagt/T35VmA5GwspTTTUDbPpuONUvSdBY8mCR2fU8VnhqrXFKw
-	 d/X5fn+YcszwMtYAjrUnezn9PxVE6jJIWvIhSo40hvL3R0YBg0l65NwwqamtN4k7v0
-	 ZuzdruMaOcpKJeg9MiMht0IHgHllsBttcH3gksTsMmwNYEEjvrSpOO+t7VJdyHVE5J
-	 ZvGL/AiARKtAFfbTQa1ZX7Q8SNTBK5eNKtjZaF3nElnBNJtK61YzJSPtSA5vHu1G4e
-	 FvKHzG405xbK2h0VVqZN3xOPLg9qVunzYjUN6aCTaCgkNRZi6TbYj4N0b0BVO5w0b2
-	 /WrY+TLba913JGWuTlQd5jHRIIUI08BB3drmWUtBA/zoMf+8Tuo1gU17Zu/0DAF3LN
-	 cNCSVZ0mHBS7GGPs1zetxi2U=
-Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 228ED40E0216;
-	Mon, 17 Mar 2025 13:55:45 +0000 (UTC)
-Date: Mon, 17 Mar 2025 14:55:39 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Nick Terrell <terrelln@fb.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, x86-ml <x86@kernel.org>,
-	lkml <linux-kernel@vger.kernel.org>
-Subject: lib/zstd/compress/huf_compress.c:1033:1: internal compiler error:
- Segmentation fault
-Message-ID: <20250317135539.GDZ9gp24DhTKBGmkd8@fat_crate.local>
+	s=arc-20240116; t=1742219875; c=relaxed/simple;
+	bh=yn74oDPEllu48np5VpXOGrW927upfcFuDeKKraWCvfw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gBDoUl4dxAuSbPZLT2fkvJeYqSd4v5V5+fBcV4nrbQ8cKGvX0cgw76TaMHnWVzH6zgM7WSMtwpvtTMZ36nTHExhAN0ahrEQ0mFZDTbGMBJUr24sBZbl1oCwv9bgYKFNIQhne1GPY2DDk1JfAZFl6kdrJRQ1T7dWdCVU1KU6oaEM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com; spf=pass smtp.mailfrom=kroah.com; dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b=pqIZga1S; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=m9W/EPsC; arc=none smtp.client-ip=103.168.172.146
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kroah.com
+Received: from phl-compute-03.internal (phl-compute-03.phl.internal [10.202.2.43])
+	by mailfout.phl.internal (Postfix) with ESMTP id B97D91382D0B;
+	Mon, 17 Mar 2025 09:57:52 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-03.internal (MEProxy); Mon, 17 Mar 2025 09:57:52 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm1; t=1742219872; x=1742306272; bh=5WY1ykl3TH
+	oF2b5rAp3efM/WqrwRJ29J83R0Uskvz3g=; b=pqIZga1SvcXpeNuH+CCJlK/MsB
+	/NGxJcz0hyM3b2fq58yzH6s3L0E/bBR8Wi4k5MD+jto3QrH5t+R87Ah5YA4PtL5v
+	BZnZV6t2UuovR5dBouKL5snzrCfqwAS5DmBbHvjRwQpqR/szCFQCW+B0oqpD7UzS
+	sxA7TGcfoCupvcWzJl635N3KZ2xyj6J5Cp3XrqtWeVMsg9kXKyNJYeDUblJcts+S
+	vNG7TzMW4Ksjpl637Afc/9xvOFN5bIzMqA1bbKsB/WWxOmV7f0/wXVYAfH4TFbwL
+	c6ORCthIn0FmWl8KiXTlcIzr8zWC6vYeovR2zhp8T2TAszjKgO4HSlNbQbsg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
+	1742219872; x=1742306272; bh=5WY1ykl3THoF2b5rAp3efM/WqrwRJ29J83R
+	0Uskvz3g=; b=m9W/EPsCBDOTroyLPjSACCBweQa4HCSeNY33Bp3Ddw2YmUBPtdP
+	GO5Pal8+NOUmXiR4TM/xuY9RDYsitkOZ02GVzVYSFdn6u4gWAEkfYmnGKV+Ix5v7
+	vOOrMGHj/cbJwRgagwJ606p03VBY2GRGZl42yaWqAXs533lRrxK12K7TrvYBP5Ti
+	NhqJP6bHK2BEKEpulyoIUu6AuIlRgGfxznFvOMChlSJpdpecVDmqhfTPB7XALv78
+	IbcLiq4B0buo6beIIuravzzDAkdZ4f1FnjcVwQL1w0sV4AD7a6XblSE+C39yEjaT
+	v7QG3EMyKZRnTvMAMQ4J+2jOTnp0d1SKA2Q==
+X-ME-Sender: <xms:XyrYZ4FlZ_StJyhqJKwCoEtW07fCLkyFAYfxtjFBqF_KFoPGAOChgg>
+    <xme:XyrYZxU6Gq6MbzBmSgT7VdragOhJwbDhR950JR9U3ocKHlQNWWTCC1Dua1jknigu1
+    Ol8jFt3U3GO6w>
+X-ME-Received: <xmr:XyrYZyLxFWqgmwG0h811isE3eS_zZuKAMywQAMU8fF2wzqeupMTfBK3gUg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddufeelieelucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+    gvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddt
+    vdenucfhrhhomhepifhrvghgucfmjfcuoehgrhgvgheskhhrohgrhhdrtghomheqnecugg
+    ftrfgrthhtvghrnhepheegvdevvdeljeeugfdtudduhfekledtiefhveejkeejuefhtdeu
+    fefhgfehkeetnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrh
+    homhepghhrvghgsehkrhhorghhrdgtohhmpdhnsggprhgtphhtthhopedugedpmhhouggv
+    pehsmhhtphhouhhtpdhrtghpthhtohepshhfrhestggrnhgsrdgruhhughdrohhrghdrrg
+    hupdhrtghpthhtoheprghrnhgusegrrhhnuggsrdguvgdprhgtphhtthhopegsrhhoohhn
+    ihgvsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlghhirhgufihoohgusehgmhgrih
+    hlrdgtohhmpdhrtghpthhtoheptggvghhgvghrshesrghrrhhirdguvgdprhgtphhtthho
+    pehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtth
+    hopehlihhnuhigqdhnvgigthesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:XyrYZ6GjN-7FDnVy6PRY4vPF3g90zKO4_jkzOmfPtyylO7uhPDjcDA>
+    <xmx:XyrYZ-UVYx0EOiSd28WpIgEWSh_cIYDNoMzq7VSeo7RIoh_WXxAphg>
+    <xmx:XyrYZ9Os3s59eplzZ2OOf0plhOcRo9MtjoxKeeBYpIIOoKQQlPMuUw>
+    <xmx:XyrYZ125NuMfTNZ6olGrCuRvxxt6mN809tT5MJ_aZvYXS4K9ioRUrQ>
+    <xmx:YCrYZ_vywwBRAz2nup1jRo8tqx1lk3fBlJj3wTCI70RSshMxufakXAY0>
+Feedback-ID: i787e41f1:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 17 Mar 2025 09:57:50 -0400 (EDT)
+Date: Mon, 17 Mar 2025 14:56:27 +0100
+From: Greg KH <greg@kroah.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Christian Eggers <ceggers@arri.de>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: manual merge of the char-misc tree with the
+ regulator-fixes tree
+Message-ID: <2025031712-cash-animating-4313@gregkh>
+References: <20250317181843.59127ac9@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20250317181843.59127ac9@canb.auug.org.au>
 
-Hi,
+On Mon, Mar 17, 2025 at 06:18:43PM +1100, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Today's linux-next merge of the char-misc tree got a conflict in:
+> 
+>   drivers/regulator/dummy.c
+> 
+> between commit:
+> 
+>   8619909b38ee ("regulator: dummy: force synchronous probing")
+> 
+> from the regulator-fixes tree and commit:
+> 
+>   dcd2a9a5550e ("regulator: dummy: convert to use the faux device interface")
+> 
+> from the char-misc tree.
+> 
+> I fixed it up (I just used the latter - since that seems to always use
+> synchronous probing) and can carry the fix as necessary. This is now fixed
+> as far as linux-next is concerned, but any non trivial conflicts should
+> be mentioned to your upstream maintainer when your tree is submitted for
+> merging.  You may also want to consider cooperating with the maintainer
+> of the conflicting tree to minimise any particularly complex conflicts.
 
-so the below is new. Kernel is -rc7 + tip/master.
+Resolution sounds good to me, thanks!
 
-gcc is:
-
-gcc (Debian 10.3.0-9) 10.3.0
-Copyright (C) 2020 Free Software Foundation, Inc.
-This is free software; see the source for copying conditions.  There is NO
-warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-
-and it built -rc3 just fine on that particular test box so it could be
-something funky has happened in-between.
-
-lib/zstd/compress/huf_compress.c:1033:1: internal compiler error: Segmentation fault
- 1033 | {
-      | ^
-0x7f8dd185af8f ???
-        ./signal/../sysdeps/unix/sysv/linux/x86_64/libc_sigaction.c:0
-0x7f8dd1846189 __libc_start_call_main
-        ../sysdeps/x86/libc-start.c:58
-0x7f8dd1846244 __libc_start_main_impl
-        ../sysdeps/nptl/libc_start_call_main.h:381
-Please submit a full bug report,
-with preprocessed source if appropriate.
-Please include the complete backtrace with any bug report.
-See <file:///usr/share/doc/gcc-10/README.Bugs> for instructions.
-make[4]: *** [scripts/Makefile.build:207: lib/zstd/compress/huf_compress.o] Error 1
-make[3]: *** [scripts/Makefile.build:465: lib/zstd] Error 2
-make[2]: *** [scripts/Makefile.build:465: lib] Error 2
-make[2]: *** Waiting for unfinished jobs....
-make[1]: *** [/mnt/kernel/kernel/linux/Makefile:1997: .] Error 2
-make: *** [Makefile:251: __sub-make] Error 2
-
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+greg k-h
 
