@@ -1,85 +1,39 @@
-Return-Path: <linux-kernel+bounces-563633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563634-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F3D4A645B3
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 09:35:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5ACB7A645B6
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 09:35:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0919A3A4987
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 08:34:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 593083A53DF
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 08:35:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB46F221710;
-	Mon, 17 Mar 2025 08:34:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EfAwxosm"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7F9021D3F6
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 08:34:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB06821D5B8;
+	Mon, 17 Mar 2025 08:35:46 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFC8B191499;
+	Mon, 17 Mar 2025 08:35:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742200498; cv=none; b=fDNaL+5m2cVSNX43iwS9+lLcIX2iItvWEVWW8JtBlG9WSKvZneCHsiiI4HIGLwCrQZ9ARhv0mZ3dJ+SQCH9+KGQWQAqLuUJQCJAoN+Y2vBNrwZyt4ze7bj4KVwoT4WZXh6gl7RZMB1JVJ3ULkRnBNQyhYUW8MwXnGzxXnj0j01s=
+	t=1742200546; cv=none; b=Mu3GZSODxN/teM/PHudq0oaNDqP6bbJPuDxaTcd/mxNG0Z82OlkZTwpT76DJ+r1E9Dah4WRCG2kbsUKlfIn7U2zFqlmteWr+tKTuMiu2FtQ6eaCTgevMA+n0aPz/vGN032Tlg6wMWLDVpetcg6qR7xFFiqoISKXrudb8in+fa3U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742200498; c=relaxed/simple;
-	bh=c2n1Fx835UhBJSllbwffn7zGDt95tdAKPpRn0ntoO54=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=M9YLpttB7bvjMB+FRUp+GNLs8tK+stvyMcrySOgEZ2zkXwXi5t8yUiUUqTQJPEhhqTbL4rupWwlvnB8Z827cS+qms7jSGY6jAASadCR6p8wuw5BhnCmOhWH7cBnkmt0D55C8jDqEDxV+aQ0H9dte+zY6qAaF8CR4+Pzc4mEEoE0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EfAwxosm; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1742200495;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=K8fFsxESP3H629nCG6gkvjmwLt+3pqm+G1ABejpl59E=;
-	b=EfAwxosmi2kuQHPFTccyZ/hzPapseqk7aATs16x3QEEFIoDFVzkopbMjLm3bqQlxTGx0rx
-	XvvkLWSgCCephjVsZKdAqRCKI83X45+gw9iMlo7Ik4+wUHig4AJYFl8h8b7t3i0xtSvvGq
-	pK+uf6fjwLimgrKzYJm68G+5cYv55Pg=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-589-WINWNw24PuCJs-PPfX-t8A-1; Mon, 17 Mar 2025 04:34:53 -0400
-X-MC-Unique: WINWNw24PuCJs-PPfX-t8A-1
-X-Mimecast-MFC-AGG-ID: WINWNw24PuCJs-PPfX-t8A_1742200492
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3912d5f6689so2604621f8f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 01:34:53 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742200492; x=1742805292;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=K8fFsxESP3H629nCG6gkvjmwLt+3pqm+G1ABejpl59E=;
-        b=dxqYwi2/RiA5cfaNL5NSC4JcovPdkSiHfchBZmNhh7xrRMzEyXFkBkx8x/PgQwqb5S
-         TMY0dF/YMsjlalXmlN7bbWHDuvFahgoZQhDwrfyztYWw2/eu3dwsZXCV84VT6eGjbQnN
-         /SKtij36CZ8LXQEWDawaOM92OcUD+vJ2Nas4tKWuSZXUJ4t3B10hOtcdS0wzKtUEMpFO
-         EwyfIkZun1XI+lnXgdKBqXZNtmGEtu8ouKjr955W/JPJPwQF7S8QsKeA5lN5YrbZHJvM
-         NsYrIp5aoXnYKAtWBl8nnkmZTJTOWfavH9wQiI6U1NOQjZL1sVmxQNnGGLGDTa9B+0g0
-         Mb4w==
-X-Forwarded-Encrypted: i=1; AJvYcCWcDmzSqzk4L68vtI6bZS8unQEp4eeYaqor40KY+zdkAJOKf6faXOq4ZwKws/90wcwtARXFNwEGcq6AU8U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyRlGXU5E4ABLIXZFzyP3Q5B44Szc4FCZMWJXXAldGFOH2HbKnG
-	WyXphxQ/UjMFcUaAD9jRT71R9v40RuupewciZ2wWGd7jWKsKNGOJ5Mj8rLQH0s47RlpiWkRHDar
-	ITdx+mpX1CbHSo02pRuSuaM8nU4e/dp47noIM5ap6re2EAXdWH5RlBrfgnDgECg==
-X-Gm-Gg: ASbGncvwKIhCaQfrkUK1U4m+hpJIoppvRGb9LCjCP6a3Th7k/J6p0R7uMVV2comnYwV
-	s5/8hCa8mNUmxhsaB88/F3043hbqIqVR5Mb936ypoZdzJa6a3/eaj/k/difOBdas6hkkxlE7rVB
-	JS+ojlfgbs25dBfmv6eyKfO525e6wTzRjBEnG0QhIZ1p+SQaqUlwG4rh7hGBWwyb0EqR6wxspiS
-	ZcXbu5cgGMo1XUDA6X+n8IEm1oi2L/EfVp03B8MzKu6UViHi9jW9z8cxfi65QJRb4pabn6bm4ks
-	FrFSchQKzA+89ap3IpDD9IEdQLQiD0QFgICBOgzU1NhqvQ==
-X-Received: by 2002:a5d:6c6c:0:b0:38d:e6b6:508b with SMTP id ffacd0b85a97d-3971d23508dmr10794764f8f.9.1742200492282;
-        Mon, 17 Mar 2025 01:34:52 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGV3AlBDqXOJvZL9/HUdYQCvelee3VTZFcDu+UlzkczKdH898voG07Nf0T2P5NkPsevzif4lw==
-X-Received: by 2002:a5d:6c6c:0:b0:38d:e6b6:508b with SMTP id ffacd0b85a97d-3971d23508dmr10794744f8f.9.1742200491924;
-        Mon, 17 Mar 2025 01:34:51 -0700 (PDT)
-Received: from [192.168.88.253] (146-241-10-172.dyn.eolo.it. [146.241.10.172])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d200fae4asm98193875e9.27.2025.03.17.01.34.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 17 Mar 2025 01:34:51 -0700 (PDT)
-Message-ID: <5b9d622e-7404-490a-a13c-1181d196d7c6@redhat.com>
-Date: Mon, 17 Mar 2025 09:34:49 +0100
+	s=arc-20240116; t=1742200546; c=relaxed/simple;
+	bh=PNCX0IbECCUET8eDzILsETuGYO44sI8lDbE99Xe/R34=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rXo9UM8ooywL+wkUPY6nRbUMQdKcfqXQoo5H+MdGIF+snmgyn1DSSQaqL/18fsu1EFU5Zw8mnGfpTzfmLuWPZ9a6XrDbYKwpzZWrT6CQSxuapyTg1dGi6tTuTiRJ9t5RAug8UU+CNnNMCaQY8nluaBSVQLthQL4LW3762MzG7o8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7EA1C13D5;
+	Mon, 17 Mar 2025 01:35:49 -0700 (PDT)
+Received: from [192.168.188.123] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BC26A3F673;
+	Mon, 17 Mar 2025 01:35:38 -0700 (PDT)
+Message-ID: <525a2352-dc57-45ca-adb2-f7039c37145e@arm.com>
+Date: Mon, 17 Mar 2025 08:35:34 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,63 +41,106 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v10 06/10] tap: Introduce virtio-net hash feature
-To: Akihiko Odaki <akihiko.odaki@daynix.com>, Jonathan Corbet
- <corbet@lwn.net>, Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
- Jason Wang <jasowang@redhat.com>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- "Michael S. Tsirkin" <mst@redhat.com>, Xuan Zhuo
- <xuanzhuo@linux.alibaba.com>, Shuah Khan <shuah@kernel.org>,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org, kvm@vger.kernel.org,
- virtualization@lists.linux-foundation.org, linux-kselftest@vger.kernel.org,
- Yuri Benditovich <yuri.benditovich@daynix.com>,
- Andrew Melnychenko <andrew@daynix.com>,
- Stephen Hemminger <stephen@networkplumber.org>, gur.stavi@huawei.com,
- Lei Yang <leiyang@redhat.com>, Simon Horman <horms@kernel.org>
-References: <20250313-rss-v10-0-3185d73a9af0@daynix.com>
- <20250313-rss-v10-6-3185d73a9af0@daynix.com>
+Subject: Re: [PATCH v2 1/1] cpuidle: menu: Prefer polling state for short idle
+ durations
+To: Aboorva Devarajan <aboorvad@linux.ibm.com>,
+ "Rafael J . Wysocki" <rafael@kernel.org>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Gautam Menghani <gautam@linux.ibm.com>, linux-pm@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250317060357.29451-1-aboorvad@linux.ibm.com>
 Content-Language: en-US
-From: Paolo Abeni <pabeni@redhat.com>
-In-Reply-To: <20250313-rss-v10-6-3185d73a9af0@daynix.com>
+From: Christian Loehle <christian.loehle@arm.com>
+In-Reply-To: <20250317060357.29451-1-aboorvad@linux.ibm.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 3/13/25 8:01 AM, Akihiko Odaki wrote:
-> @@ -998,6 +1044,16 @@ static long tap_ioctl(struct file *file, unsigned int cmd,
->  		rtnl_unlock();
->  		return ret;
+On 3/17/25 06:03, Aboorva Devarajan wrote:
+> Avoid selecting deep idle state when the predicted idle duration is
+> shorter than its target residency, as this leads to unnecessary state
+> transitions without energy savings.
+> 
+> On virtualized PowerPC (pseries) systems, where only one polling state
+> (Snooze) and one deep state (CEDE) are available, selecting CEDE when
+> its target residency exceeds the predicted idle duration hurts
+> performance.
+> 
+> For example, if the predicted idle duration is 15 us and the first
+> non-polling state has a target residency of 120 us, selecting it
+> would be suboptimal.
+> 
+> Remove the condition introduced in commit 69d25870f20c
+> ("cpuidle: fix the menu governor to boost IO performance") that
+> prioritized non-polling states even when their target residency
+> exceeded the predicted idle duration and allow polling states to
+> be selected when appropriate.
+> 
+> Performance improvement observed with pgbench on PowerPC (pseries)
+> system:
+> +---------------------------+------------+------------+------------+
+> | Metric                    | Baseline   | Patched    | Change (%) |
+> +---------------------------+------------+------------+------------+
+> | Transactions/sec (TPS)    | 494,834    | 538,707    | +8.85%     |
+> | Avg latency (ms)          | 0.162      | 0.149      | -8.02%     |
+> +---------------------------+------------+------------+------------+
+> 
+> CPUIdle state usage:
+> +--------------+--------------+-------------+
+> | Metric       | Baseline     | Patched     |
+> +--------------+--------------+-------------+
+> | Total usage  | 12,703,630   | 13,941,966  |
+> | Above usage  | 11,388,990   | 1,620,474   |
+> | Below usage  | 19,973       | 684,708     |
+> +--------------+--------------+-------------+
+> 
+> Above/Total and Below/Total usage percentages:
+> +------------------------+-----------+---------+
+> | Metric                 | Baseline  | Patched |
+> +------------------------+-----------+---------+
+> | Above % (Above/Total)  | 89.67%    | 11.63%  |
+> | Below % (Below/Total)  | 0.16%     | 4.91%   |
+> | Total cpuidle miss (%) | 89.83%    | 16.54%  |
+> +------------------------+-----------+---------+
+> 
+> Signed-off-by: Aboorva Devarajan <aboorvad@linux.ibm.com>
+> 
+> ---
+> 
+> v1: https://lore.kernel.org/all/20240809073120.250974-1-aboorvad@linux.ibm.com/
+> 
+> v1 -> v2:
+> 
+> - Drop cover letter and improve commit message.
+> ---
+>  drivers/cpuidle/governors/menu.c | 11 -----------
+>  1 file changed, 11 deletions(-)
+> 
+> diff --git a/drivers/cpuidle/governors/menu.c b/drivers/cpuidle/governors/menu.c
+> index 28363bfa3e4c..4b199377e4be 100644
+> --- a/drivers/cpuidle/governors/menu.c
+> +++ b/drivers/cpuidle/governors/menu.c
+> @@ -296,17 +296,6 @@ static int menu_select(struct cpuidle_driver *drv, struct cpuidle_device *dev,
+>  			idx = i; /* first enabled state */
 >  
-> +	case TUNGETVNETHASHCAP:
-> +		return tun_vnet_ioctl_gethashcap(argp);
-> +
-> +	case TUNSETVNETHASH:
-> +		rtnl_lock();
-> +		tap = rtnl_dereference(q->tap);
-> +		ret = tap ? tun_vnet_ioctl_sethash(&tap->vnet_hash, argp) : -EBADFD;
+>  		if (s->target_residency_ns > predicted_ns) {
+> -			/*
+> -			 * Use a physical idle state, not busy polling, unless
+> -			 * a timer is going to trigger soon enough.
+> -			 */
+> -			if ((drv->states[idx].flags & CPUIDLE_FLAG_POLLING) &&
+> -			    s->exit_latency_ns <= latency_req &&
+> -			    s->target_residency_ns <= data->next_timer_ns) {
+> -				predicted_ns = s->target_residency_ns;
+> -				idx = i;
+> -				break;
+> -			}
+>  			if (predicted_ns < TICK_NSEC)
+>  				break;
+>  
 
-
-Not really a review, but apparently this is causing intermittent memory
-leak in self tests:
-
-xx__-> echo scan > /sys/kernel/debug/kmemleak && cat
-/sys/kernel/debug/kmemleak
-unreferenced object 0xffff88800c6ec248 (size 8):
-  comm "tap", pid 21124, jiffies 4299141559
-  hex dump (first 8 bytes):
-    00 00 00 00 00 00 00 00                          ........
-  backtrace (crc 0):
-    __kmalloc_cache_noprof+0x2df/0x390
-    tun_vnet_ioctl_sethash+0xbf/0x3a0
-    tap_ioctl+0x6f2/0xc10
-    __x64_sys_ioctl+0x11f/0x180
-    do_syscall_64+0xc1/0x1d0
-    entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Could you please have a look?
-
-Thanks!
-
-Paolo
-
+I'm still fine with this and don't see a better way to solve the reported
+issue generally, see the discussion on v1.
+Rafael, do you have any objections?
+We could make this conditional on there being a high latency difference between
+polling and non-polling to keep x86 behavior.
 
