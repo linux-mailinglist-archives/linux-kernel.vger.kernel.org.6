@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-563502-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563503-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6154AA642FC
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 08:11:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF912A6430B
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 08:13:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D418A3A39D9
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 07:11:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E1C33A8818
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 07:12:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 938D621A931;
-	Mon, 17 Mar 2025 07:11:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CD5621A45E;
+	Mon, 17 Mar 2025 07:12:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I2fg9cRy"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LF62dsWd"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9ECD1C6FF3
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 07:11:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7146F18A6B5
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 07:12:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742195482; cv=none; b=m+jlJxdmAF4RG691nWz8ZDbtH+p3sOz5ZocPuCXfVx/RIGZeoYuwew4jOm5wicd338s8XV4O0HvplceClS9VV7fEsfT2PMfdEASfSmFk1/GlSSUR4ZgN/0QLU6GC4qXqN5Stl0IARxX4++0ZV6ivZr5lZMoFIw3/lftspahD7Cs=
+	t=1742195576; cv=none; b=jbPY9MyIP/JzBEhxwb3pXEMvLfsgiAW4UV562YDh+NuId8BatlCrHI0YEhD4tnlOLKnA00cagIIgun+11a4oPSFWo4/fsX/1o7s+lI0Mp8ciaDST7g9MznWDz9ppYjb1dbb+wKbvt9H1YXJXTQEYIIYb3u3EsPQ+z6l/ORy0VpQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742195482; c=relaxed/simple;
-	bh=BlDhQuCVuSbyyiPlqh5uRtnwin5bxEqTTI5pWG072vM=;
+	s=arc-20240116; t=1742195576; c=relaxed/simple;
+	bh=8CS4msPxk4DCirERvuRrksmNRWtm494ZCr116H0cv0I=;
 	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=m05FQMvhc1HxwDGw3kF9hVZyj3ljOZ3Dl94awuzcPt8y9wFRzVFBWK0ZnlpN4PHIoseOmvRfRxGVCFRzXlnJQZZAZu3AB9Ih63C8SdGMsShK5qfsF12wxX3Qjl2nyXFcJuZCLHTMYcsj/7WGJw91BzM9CQbo7iDwxHpNdcDr7Ag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I2fg9cRy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64E5FC4CEE3;
-	Mon, 17 Mar 2025 07:11:20 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=nI7AmLbWTQlB5R5lpBy1N+4qMg8X5L8prnyDdI4SQk8PKdFU7hQUbsxzZF7X0cjHxAbR+3ALhNkhrryMNkRHt8zqSA9hBRaO2LXi0B/3xeY7pX8H+bzEJgYhfvf0JkKssmc1GfKtyjPQpDaqc1tl9i6u/7Idh2/N3ZQUCv869Hk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LF62dsWd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B2DFC4CEE3;
+	Mon, 17 Mar 2025 07:12:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742195481;
-	bh=BlDhQuCVuSbyyiPlqh5uRtnwin5bxEqTTI5pWG072vM=;
+	s=k20201202; t=1742195576;
+	bh=8CS4msPxk4DCirERvuRrksmNRWtm494ZCr116H0cv0I=;
 	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=I2fg9cRy9+Q5lpZPxdRHQFu2n3pJzl1FUFXAqA8A+MPW3H8tCeM009l6/Pe5XVUOK
-	 4ZImmgOc6Ltqbx/eQzAhm2U5C593Pk345W5S1KFIIN637QiBnzl9ZDz2FrFXpGbiMS
-	 EHz1A8U89A5eY5sFv0F35VrwrvehAsuuGdvQoeUVBPjE9n2+8z8ie8jOzSTVe6QYYK
-	 l1bFi4wJh2yJrcHVRag5Yl0MPLknSL54cEpfBKVsPOUk9mSY0sI4HXsKx/9F7iiTmr
-	 2K1HD/25zWkrNOdLC+4nGkRLUZzieCgToXJgN7wBQp8mDwJZFd1KtKsvShLybv5NU5
-	 Dgw6ftTUJY5GQ==
-Message-ID: <610d08c6-fe48-4013-98d0-867d23da506d@kernel.org>
-Date: Mon, 17 Mar 2025 15:11:18 +0800
+	b=LF62dsWd9hmoMcCslTEilzyXJHFy/cmN8CxKod0XPZRyzzmfvTheXhT9/p+iFgH4B
+	 v4UFJHUrh0HrqZfW8i0M3gL6Zlb9Ltw1VREPojlOiXryU0D4sFQI0AiXpPSosWHgnx
+	 /Wq/AcGHdbB8M4JCsS2oDgPjDeFcHNukHBvFsggRIwoBdkQle6RWeNFN10doNU2A4+
+	 SeRZLScE4awskkiblmxaoTBzbe7zQsroyGJvPIbmfU9hzwMuTE3ubrc5CxEDJyxTM3
+	 BoxOCb9kIqH/UGs4Xes0EU/pYSauaVSI+yHvJObNIU6kfdnbu15muYAobrHOOdbEZ3
+	 skboG043PBhOw==
+Message-ID: <6ad02c17-a175-43fd-bce4-d3cd2dc01338@kernel.org>
+Date: Mon, 17 Mar 2025 15:12:53 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,17 +92,17 @@ On 3/13/25 10:25, Chunhai Guo wrote:
 > # dump.f2fs /dev/nvme2n1 | grep "checkpoint state"
 > Info: checkpoint state = 45 :  crc compacted_summary unmount ----
 > 'trimmed' flag is missing
-
-Chunhai,
-
-Thank you for providing testcase, are you interest in upstream this
-as a f2fs testcase to xfstests?
-
-Thanks,
-
 > 
 > The pending discard count in that segment indeed falls within the range
 > of (0, 512).
+
+Please add this testcase into commit message, otherwise it looks
+good to me, feel free to add:
+
+Reviewed-by: Chao Yu <chao@kernel.org>
+
+Thanks,
+
 > 
 > Thanks,
 >> Thanks,
