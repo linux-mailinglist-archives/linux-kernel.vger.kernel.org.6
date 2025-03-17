@@ -1,168 +1,203 @@
-Return-Path: <linux-kernel+bounces-563823-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563824-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F859A6492C
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:15:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 60CA6A64932
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:16:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C83FF17327B
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:15:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 93B1A173830
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:16:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5F11239589;
-	Mon, 17 Mar 2025 10:14:05 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C66AC2376E1
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 10:14:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66244233731;
+	Mon, 17 Mar 2025 10:14:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SCLEPjLw"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3BDE233726
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 10:14:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742206445; cv=none; b=beHNIUxSKnCFbXOHMXNsCHl1WNzO3ujNcT7uR4aMYQYMWxo7i2QGPtm171YCX5Sc4BnHNvtKP8lr3yFB3F+JYA1xKv1IJUK3u7Tx1QIw5+uuqstEbS/ESEcJxmn5Rl+/1BMx/N8pLvFGEDgVH+bgT3VB0jbuuYf6OY3XMB6TcBA=
+	t=1742206458; cv=none; b=Vu3m7RzKeQiimMru+5JrJYei8X2W5dJOHmRy+T6/D8abSsVIloQgBz9FuHxN0zaqpIzw8D3Mb+EN1EiqtqFUbhezaQW3fypm6kAc+Sq7XkyMfBp9bocqHDkwkTH+xDVeixPzdMz2GsaAh2epiHXia/XPL/30LdZY6KuOUaiTK3k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742206445; c=relaxed/simple;
-	bh=xV5MMTtJh2o/E03BwDcI4WhIzb9LIMQcGRUOsL8ojRg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=c8OVHl3QYmhaQXm6WqtTWVDtLvzWbutbkBpcyL9DBsnW+q5+hkXx49TnHFtsof3xQQEjiSkAwJioiusCSQsfv9ajQsa/GAT8gn1ud9eRmMPFW6QHzq2Cj0x80cO+72oKMvXAnlS8jFK9l9vJUXnpf8/fyquHnm0tvLM7GRaqZmU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8191913D5;
-	Mon, 17 Mar 2025 03:14:12 -0700 (PDT)
-Received: from e133711.arm.com (e133711.arm.com [10.1.196.55])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B20E13F673;
-	Mon, 17 Mar 2025 03:14:02 -0700 (PDT)
-From: Sudeep Holla <sudeep.holla@arm.com>
-Date: Mon, 17 Mar 2025 10:13:21 +0000
-Subject: [PATCH 9/9] regulator: dummy: convert to use the faux device
- interface
+	s=arc-20240116; t=1742206458; c=relaxed/simple;
+	bh=sZB0Xl2Pp1TkHFdbxGqYaPZTq/4+leRWWiqvKWe5oLE=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=nRNur7q9SpqNuRdI5Zk6bfjxLYYzdCiGTjLxMkCGwH4PqRXaO7tLIT5H4mhMsizfSQ5CLwfvvFXSFpTvRISn6Rl8j1hEGUs3GdFD84SyS6zYx+RQvDmR0hgPgoQ6fx3LbX+jepArbvhzpBDCnBDz5XWG2YhdvKEadCmD1kA7DEQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SCLEPjLw; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-39727fe912cso885312f8f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 03:14:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1742206455; x=1742811255; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MkFf4kCvzevanXv5Ra3CouyTzGW5e0hWlak1EUbm37A=;
+        b=SCLEPjLwCpeVqrB7A4HqcHwctCEWEJjo6fkvG04erA/h5lHZE2dgHEQrlwnO1dV6po
+         /i5m4syyjqyWFJmXlj4rt+3Mu+OoE4iSvhxWRRryq/tPRvzIZw3TdzmNz5HmpnBMigiu
+         89hPKpsONSN/JjLFkOTRzfAWimXwj23Ekcrg+ntPrLhsihIgOeLg6yDOuCivZeK9WkW6
+         TXIIL97HyBJT4BYnnzbrqKj9quWFNhx0IrWpH6kwd5MzmNzfq61vflRYdBCdjpafImIP
+         vRDfnyY4Ijpc2ajH8YWtacZ6xQ90KN2yvlMcUh5JnxpN5NvznniA4GLATspGY5R7kcrP
+         Ozrg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742206455; x=1742811255;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=MkFf4kCvzevanXv5Ra3CouyTzGW5e0hWlak1EUbm37A=;
+        b=h/zd+mT/OhJghaGeNYR95JMsRA9XCFsB/V45M0qBVrHX4u87bZx6opwp/Cwxa1+8PK
+         zD7ZsTkViPZGJlq9u80z60YeKVH10GI0VMHL+dBNtV8kNMjs1PkLusV6wAfjg/S/e2GF
+         ujDv2/r02GP60MUCXNgMQOO1IlgC/ZcrIVNTcSG5c61XvIGmq/K+tgRe3q34/scap1/N
+         C2qYkmDhv1knPxrmD4OhdOjnuWiwiaAp44s05Jusdl50pN4SlT1HZ6o+ZJEcdZPYybSa
+         z0C8ucuINyPIp/MBU0bSXJ6+X/xi+Ncm+RerkXwoutFDi3UgVF9CyGI/b4nfk6wGpQkW
+         aSVw==
+X-Forwarded-Encrypted: i=1; AJvYcCVyn5kRkrYpbN0w/+wDmYH0UPxupZ/zRtVPQxiur3Gsjn6rl6ArDckxwYk308I4zeYDpA1KdDrGzdcbSUU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwDhguvwdIZns+NszSInHHg8JSTHvyN/mWGcOX+GzNaLaLnEmQa
+	Vn4ABcKxkuN8RiVpS4lP/sN5kWh7ewzK4rx8YHPG1wORDWAxgRpur90kTUU5pBY=
+X-Gm-Gg: ASbGnctAGEOB9MYP2cbH/eDsWJUF9IWkO1L6dWrV16qdrGs5f4Uizny7aWddDz7TmSg
+	iJ8CMZz5XW/t0ubBVD0k9vtihixGe1h9koTOh2eQI75gl/35/ILIUHhr4MYDjD3gs1rylCjccJm
+	FPj79f+WHy82IXeIu/gnxdv1JdJrpA14VGFnLazvoh6Vm7jCERiRVrtGKIoWZdFcncGbIq03/BZ
+	1fbgOTw61x6qJ0zt8XGsDblDw0OC5X1DD3Y8fsrnyAxQ3e8+HyzuabGDn6pQCadMBUdENEPsDct
+	BktOYBXN0kEvYVqyD0wpQbY/s6KOy9+/kMe2s1JEYgLYV3h1aM4qI8SNIsiQzvmb35vI1dUA59x
+	pYhj7Ru2Po5UXUWJUDDUO+w==
+X-Google-Smtp-Source: AGHT+IFg8DYdHdUMxV4ttCgnYaZlXCiwiHVT/Zz0plPz8BiWoKXgYkhHYAZJWNOA3PzN0BKVDvL6AQ==
+X-Received: by 2002:a5d:64c9:0:b0:391:39ea:7866 with SMTP id ffacd0b85a97d-3971d8faedcmr15996408f8f.19.1742206454898;
+        Mon, 17 Mar 2025 03:14:14 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:3d9:2080:55a6:4776:6e68:e626? ([2a01:e0a:3d9:2080:55a6:4776:6e68:e626])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d1fe6a1c7sm100284585e9.39.2025.03.17.03.14.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 17 Mar 2025 03:14:14 -0700 (PDT)
+Message-ID: <78758343-b9f9-4920-977c-cab4b5f84679@linaro.org>
+Date: Mon, 17 Mar 2025 11:14:13 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250317-plat2faux_dev-v1-9-5fe67c085ad5@arm.com>
-References: <20250317-plat2faux_dev-v1-0-5fe67c085ad5@arm.com>
-In-Reply-To: <20250317-plat2faux_dev-v1-0-5fe67c085ad5@arm.com>
-To: linux-kernel@vger.kernel.org
-Cc: Sudeep Holla <sudeep.holla@arm.com>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Mark Brown <broonie@kernel.org>, 
- Jonathan Cameron <Jonathan.Cameron@huawei.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3008; i=sudeep.holla@arm.com;
- h=from:subject:message-id; bh=99Apj0NBoQeeN4bVc+HR7nRC+LgtFnkO/+yRk88Cfq4=;
- b=owEBbQKS/ZANAwAIAQBBurwxfuKYAcsmYgBn1/Xbul7UMAeus237x3bLZHa7lEFN1fNczVeGs
- Ot5xC6C34OJAjMEAAEIAB0WIQS6ceUSBvMeskPdk+EAQbq8MX7imAUCZ9f12wAKCRAAQbq8MX7i
- mFgRD/4tSvHl+/pfVasVtz+76+ymy2wgGTFqzFdW9gxjXKXVvnK86HZ2cWErXjlvIALKguOA2Pj
- eEv7HJA6CKTHBWenqOCOQ8GfVej5vybeZC23RVzFhy3AQMkkkfxTnB4ISMKBzvX9F2aujy+aj5z
- kJS4MpymHjMiLLtArIq/LOgr3AxhEdpr2OEq3G/ucXwS0kMFeKd2dKr/4TkGa58ukCseIxqg7+Y
- u/nuPE24Pv9mGKwQBjZTcZCEjKY2RYkAetW9J0VUKYeWgZmAkQYV1BCZf1ax05NC1LY3BT1GyN7
- P+0qu8NTzro8JMIp6DKGZPYwrL7TwiSI33HoWChFqssJ2ufrNt7w57PcayG7304TWdZUlKFMJjQ
- HmDjrzS4no3eraa+VyE/havbcgvGdyvHye+xVy33wLIRLpcRGx3WP4YQy7iPUkBmYh8y4/e7SL3
- U3VDtMjNW/E4+W2z2PrLAynsdbcsy/LnKB4XTRl5P5/OcYI5hL6F9uCJfqv/yiyjjQAu8w1EuLl
- rGh3xDlXZbg5SOMgpa0STxaJwJuKkJFjRTM104WgH8CXKYnVoDGmV3IpqsMY5fDUxMPDtF/cOMr
- GnckETGzeiAhKhUpmHvLyDZvmBNxWVhqo6jdGUXNwh5+uUxNJrgo6TA3mvS4xJUmU3u5H86jzM0
- oI8YpHuKyW9igUg==
-X-Developer-Key: i=sudeep.holla@arm.com; a=openpgp;
- fpr=7360A21742ADF5A11767C1C139CFD4755FE2D5B4
+User-Agent: Mozilla Thunderbird
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH] drm/panel/synaptics-r63353: Use _multi variants
+To: Anusha Srivatsa <asrivats@redhat.com>,
+ Doug Anderson <dianders@chromium.org>
+Cc: Michael Trimarchi <michael@amarulasolutions.com>,
+ Jessica Zhang <quic_jesszhan@quicinc.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Tejas Vipin <tejasvipin76@gmail.com>
+References: <20250314-b4-mipi-synaptic-v1-1-a64ccb5e5c66@redhat.com>
+ <CAD=FV=XUN7CcnjURs6xfVAFqvZ1WR86y8nQm=OMcrV_hYjq5RQ@mail.gmail.com>
+ <CAN9Xe3TpwwBtfXD7oii3VR8-ijDN_WQe9JUTC5bE_7vFQVRN3w@mail.gmail.com>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <CAN9Xe3TpwwBtfXD7oii3VR8-ijDN_WQe9JUTC5bE_7vFQVRN3w@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+On 16/03/2025 18:40, Anusha Srivatsa wrote:
+> 
+> 
+> On Fri, Mar 14, 2025 at 10:20 AM Doug Anderson <dianders@chromium.org <mailto:dianders@chromium.org>> wrote:
+> 
+>     Hi,
+> 
+>     On Thu, Mar 13, 2025 at 9:47 PM Anusha Srivatsa <asrivats@redhat.com <mailto:asrivats@redhat.com>> wrote:
+>      >
+>      > @@ -181,24 +162,15 @@ static int r63353_panel_prepare(struct drm_panel *panel)
+>      >  static int r63353_panel_deactivate(struct r63353_panel *rpanel)
+>      >  {
+>      >         struct mipi_dsi_device *dsi = rpanel->dsi;
+>      > -       struct device *dev = &dsi->dev;
+>      > -       int ret;
+>      > +       struct mipi_dsi_multi_context dsi_ctx = { .dsi = dsi };
+>      >
+>      > -       ret = mipi_dsi_dcs_set_display_off(dsi);
+>      > -       if (ret < 0) {
+>      > -               dev_err(dev, "Failed to set display OFF (%d)\n", ret);
+>      > -               return ret;
+>      > -       }
+>      > +       mipi_dsi_dcs_set_display_off_multi(&dsi_ctx);
+>      >
+>      > -       usleep_range(5000, 10000);
+>      > +       mipi_dsi_usleep_range(&dsi_ctx, 5000, 10000);
+>      >
+>      > -       ret = mipi_dsi_dcs_enter_sleep_mode(dsi);
+>      > -       if (ret < 0) {
+>      > -               dev_err(dev, "Failed to enter sleep mode (%d)\n", ret);
+>      > -               return ret;
+>      > -       }
+>      > +       mipi_dsi_dcs_enter_sleep_mode_multi(&dsi_ctx);
+>      >
+>      > -       return 0;
+>      > +       return dsi_ctx.accum_err;
+> 
+>     nit: the one caller of r63353_panel_deactivate() doesn't actually look
+>     at the error code, so this could be a function that returns "void".
+>     That was true even before your patch, though. I wouldn't mind a
+>     followup patch that fixed this. ;-)
+> 
+> 
+> This is anyway not merged, Maybe better to fix right now instead of a follow up patch?
 
-The dummy regulator driver does not need to create a platform device, it
-only did so because it was simple to do.  Change it over to use the
-faux bus instead as this is NOT a real platform device, and it makes
-the code even smaller than before.
+If you can, yeah fix it now !
 
-Reviewed-by: Mark Brown <broonie@kernel.org>
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Message-Id: <2025021027-outclass-stress-59dd@gregkh>
-(sudeep.holla: Made dummy_regulator_driver static)
-Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
----
- drivers/regulator/dummy.c | 37 +++++++++----------------------------
- 1 file changed, 9 insertions(+), 28 deletions(-)
+> 
+>     In any case, the patch looks reasonable to me now.
+> 
+>     Reviewed-by: Douglas Anderson <dianders@chromium.org <mailto:dianders@chromium.org>>
+> 
+> 
+> Thanks :)
+> 
+> Anusha
 
-diff --git a/drivers/regulator/dummy.c b/drivers/regulator/dummy.c
-index 5b9b9e4e762d52151847bb1880377d51b04eeb9d..c3e416fd3c3e29d54278eb65600ab79d828edbde 100644
---- a/drivers/regulator/dummy.c
-+++ b/drivers/regulator/dummy.c
-@@ -13,7 +13,7 @@
- 
- #include <linux/err.h>
- #include <linux/export.h>
--#include <linux/platform_device.h>
-+#include <linux/device/faux.h>
- #include <linux/regulator/driver.h>
- #include <linux/regulator/machine.h>
- 
-@@ -37,15 +37,15 @@ static const struct regulator_desc dummy_desc = {
- 	.ops = &dummy_ops,
- };
- 
--static int dummy_regulator_probe(struct platform_device *pdev)
-+static int dummy_regulator_probe(struct faux_device *fdev)
- {
- 	struct regulator_config config = { };
- 	int ret;
- 
--	config.dev = &pdev->dev;
-+	config.dev = &fdev->dev;
- 	config.init_data = &dummy_initdata;
- 
--	dummy_regulator_rdev = devm_regulator_register(&pdev->dev, &dummy_desc,
-+	dummy_regulator_rdev = devm_regulator_register(&fdev->dev, &dummy_desc,
- 						       &config);
- 	if (IS_ERR(dummy_regulator_rdev)) {
- 		ret = PTR_ERR(dummy_regulator_rdev);
-@@ -56,36 +56,17 @@ static int dummy_regulator_probe(struct platform_device *pdev)
- 	return 0;
- }
- 
--static struct platform_driver dummy_regulator_driver = {
--	.probe		= dummy_regulator_probe,
--	.driver		= {
--		.name		= "reg-dummy",
--		.probe_type	= PROBE_PREFER_ASYNCHRONOUS,
--	},
-+static struct faux_device_ops dummy_regulator_driver = {
-+	.probe = dummy_regulator_probe,
- };
- 
--static struct platform_device *dummy_pdev;
-+static struct faux_device *dummy_fdev;
- 
- void __init regulator_dummy_init(void)
- {
--	int ret;
--
--	dummy_pdev = platform_device_alloc("reg-dummy", -1);
--	if (!dummy_pdev) {
-+	dummy_fdev = faux_device_create("reg-dummy", NULL, &dummy_regulator_driver);
-+	if (!dummy_fdev) {
- 		pr_err("Failed to allocate dummy regulator device\n");
- 		return;
- 	}
--
--	ret = platform_device_add(dummy_pdev);
--	if (ret != 0) {
--		pr_err("Failed to register dummy regulator device: %d\n", ret);
--		platform_device_put(dummy_pdev);
--		return;
--	}
--
--	ret = platform_driver_register(&dummy_regulator_driver);
--	if (ret != 0) {
--		pr_err("Failed to register dummy regulator driver: %d\n", ret);
--		platform_device_unregister(dummy_pdev);
--	}
- }
 
--- 
-2.34.1
+Thanks,
+Neil
+> 
+> 
+>     Happy for someone else to apply it if they want. If not, I'll snooze
+>     this for ~a week to give others a chance to comment and then plan to
+>     push to drm-misc-next. 
+> 
+> 
+> 
+>     -Doug
+> 
 
 
