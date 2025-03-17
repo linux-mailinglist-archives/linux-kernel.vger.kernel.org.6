@@ -1,143 +1,94 @@
-Return-Path: <linux-kernel+bounces-563244-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563245-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67468A63AD7
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 02:56:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69168A63AFB
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 03:04:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B790316CF09
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 01:56:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 888E3188D915
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 02:04:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AAF7149E17;
-	Mon, 17 Mar 2025 01:56:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sgO6gic3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4B3113C8F3;
+	Mon, 17 Mar 2025 02:04:16 +0000 (UTC)
+Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [63.216.63.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EC2E79D2;
-	Mon, 17 Mar 2025 01:56:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D2114A24
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 02:04:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.216.63.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742176570; cv=none; b=LWjNrQ5ujv0mnGa51/sd8jNtfwly6MiXp+8zWJmb1ov3zoBYPWj4NTChrk2oAs+GeS7Q7QDvd8dVWl0ZGwAI0BbOKYKPXKiCtTA0tiu7qhe7GH456b816v7VpSQKqOkT0JYOz1HZJpjvR2DX9bGBWJbtCoJD2Hqi3o9qfwnRuvg=
+	t=1742177056; cv=none; b=Ark5Cej6JICHqRC5YIHP/kReM5493XHP10luY6LdffspB0GFVC46tIZD3KNM6wrm9q47VBLefPe3TEWwSbOLPcGWVrv+xNa2JAaL3aI4KQ0VZC7MJv8Z1mqj/NXFDVK9l0jFvF5F9GzrESmGqFdOCqT4TFSpmc+R6VUS6BXAmUI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742176570; c=relaxed/simple;
-	bh=DW/PqvX6IeUImr+orrmNc0CoOSwyap646QVZ5Tbd3sU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WU48FuQMvkeuR+qBdvD2IkMDoClrahJxFkOuglF5Pr80gDrlOX2C9CI4iN6xrE63tgzoeGrsR3rIysXxmUMkRhoWrhJfStVORvElVWnv6E+j2jc+gITJkAKnWZ1GBtd4uwJDyu4nWlWo/HqtaqFmcPlVUXKZLD4oUH8F73TBp30=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sgO6gic3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA194C4CEDD;
-	Mon, 17 Mar 2025 01:56:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742176569;
-	bh=DW/PqvX6IeUImr+orrmNc0CoOSwyap646QVZ5Tbd3sU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sgO6gic3aLP5WD4qeK/GnvwCiJSitTz2Gt1erDNWLnNrEkznxdXhqdc+O75VTAdxr
-	 61ZnvHhdUVMXBt5XeFtR9/A0H/OpeEG5Dg5ery/d6mRbPS3IIPbVr2NauH2bds90Xb
-	 oF5pg6/M568SpedRB0+4TCbcBKrbV7CVXP7XXSeerfOMCq5HQ2OcMlHSTHgASYe4WI
-	 ROiiBVv2ivwoe8mv9X89u2tpEWAsr/qZWwp0ADenS+DlqtIz8iXTJMSByy0k1QGhGc
-	 cue4kBlKeuA+rX6fTqLdLjoQSnM0MZqTTEvemDBE31VX4R5tCbBV3Wf/o8SEFaDY4f
-	 9expRlxM54ztg==
-Date: Mon, 17 Mar 2025 09:56:01 +0800
-From: "Peter Chen (CIX)" <peter.chen@kernel.org>
-To: Fedor Pchelkin <pchelkin@ispras.ru>
-Cc: Frank Li <Frank.li@nxp.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Joe Hattori <joe@pf.is.s.u-tokyo.ac.jp>,
-	Sebastian Reichel <sre@kernel.org>,
-	Fabien Lahoudere <fabien.lahoudere@collabora.co.uk>,
-	linux-usb@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	lvc-project@linuxtesting.org, stable@vger.kernel.org
-Subject: Re: [PATCH v2 3/3] usb: chipidea: ci_hdrc_imx: implement
- usb_phy_init() error handling
-Message-ID: <20250317015601.GC218167@nchen-desktop>
-References: <20250316102658.490340-1-pchelkin@ispras.ru>
- <20250316102658.490340-4-pchelkin@ispras.ru>
+	s=arc-20240116; t=1742177056; c=relaxed/simple;
+	bh=GDjFx2ZSW6UlP+/snnNSPHU7c4PhpKJv6NxFtV6RBNM=;
+	h=Date:Message-ID:Mime-Version:From:To:Cc:Subject:Content-Type; b=A24n7gwyId48SRKtcD3It8DOkLBfnoef49Rl35QzVcdAwib4D86p1xp2dWU49te5HRKes2e5z36hMynNOXX2M2oRBMgvj1KZxrpTcJJEfvkXWPLsMdJzdrq9mX2OL/X8+fSwP91npSi01Nul6Iczl/P1Ipiohq+9U55c527wcIQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=63.216.63.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
+Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4ZGJDq4Wdnz5B1Gr;
+	Mon, 17 Mar 2025 10:04:11 +0800 (CST)
+Received: from xaxapp02.zte.com.cn ([10.88.97.241])
+	by mse-fl1.zte.com.cn with SMTP id 52H23bl8092409;
+	Mon, 17 Mar 2025 10:03:37 +0800 (+08)
+	(envelope-from xie.ludan@zte.com.cn)
+Received: from mapi (xaxapp04[null])
+	by mapi (Zmail) with MAPI id mid32;
+	Mon, 17 Mar 2025 10:03:39 +0800 (CST)
+Date: Mon, 17 Mar 2025 10:03:39 +0800 (CST)
+X-Zmail-TransId: 2afb67d782fbffffffffd21-03382
+X-Mailer: Zmail v1.0
+Message-ID: <202503171003390456Yg6kZ_SCP4juDHanCR7J@zte.com.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250316102658.490340-4-pchelkin@ispras.ru>
+Mime-Version: 1.0
+From: <xie.ludan@zte.com.cn>
+To: <akpm@linux-foundation.org>
+Cc: <jbaron@akamai.com>, <jim.cromie@gmail.com>,
+        <linux-kernel@vger.kernel.org>, <xie.ludan@zte.com.cn>
+Subject: =?UTF-8?B?W1BBVENIXSBkeW5kYmc6IHVzZSBzeXNmc19lbWl0KCkgaW5zdGVhZCBvZiBzY25wcmludGYoKQ==?=
+Content-Type: text/plain;
+	charset="UTF-8"
+X-MAIL:mse-fl1.zte.com.cn 52H23bl8092409
+X-Fangmail-Anti-Spam-Filtered: true
+X-Fangmail-MID-QID: 67D7831B.001/4ZGJDq4Wdnz5B1Gr
 
-On 25-03-16 13:26:56, Fedor Pchelkin wrote:
-> usb_phy_init() may return an error code if e.g. its implementation fails
-> to prepare/enable some clocks. And properly rollback on probe error path
-> by calling the counterpart usb_phy_shutdown().
-> 
-> Found by Linux Verification Center (linuxtesting.org).
-> 
-> Fixes: be9cae2479f4 ("usb: chipidea: imx: Fix ULPI on imx53")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Fedor Pchelkin <pchelkin@ispras.ru>
+From: XieLudan <xie.ludan@zte.com.cn>
 
-Acked-by: Peter Chen <peter.chen@kernel.org>
+Follow the advice in Documentation/filesystems/sysfs.rst:
+show() should only use sysfs_emit() or sysfs_emit_at() when formatting
+the value to be returned to user space.
 
-> ---
->  drivers/usb/chipidea/ci_hdrc_imx.c | 13 ++++++++++---
->  1 file changed, 10 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/usb/chipidea/ci_hdrc_imx.c b/drivers/usb/chipidea/ci_hdrc_imx.c
-> index d942b3c72640..4f8bfd242b59 100644
-> --- a/drivers/usb/chipidea/ci_hdrc_imx.c
-> +++ b/drivers/usb/chipidea/ci_hdrc_imx.c
-> @@ -484,7 +484,11 @@ static int ci_hdrc_imx_probe(struct platform_device *pdev)
->  	    of_usb_get_phy_mode(np) == USBPHY_INTERFACE_MODE_ULPI) {
->  		pdata.flags |= CI_HDRC_OVERRIDE_PHY_CONTROL;
->  		data->override_phy_control = true;
-> -		usb_phy_init(pdata.usb_phy);
-> +		ret = usb_phy_init(pdata.usb_phy);
-> +		if (ret) {
-> +			dev_err(dev, "Failed to init phy\n");
-> +			goto err_clk;
-> +		}
->  	}
->  
->  	if (pdata.flags & CI_HDRC_SUPPORTS_RUNTIME_PM)
-> @@ -493,7 +497,7 @@ static int ci_hdrc_imx_probe(struct platform_device *pdev)
->  	ret = imx_usbmisc_init(data->usbmisc_data);
->  	if (ret) {
->  		dev_err(dev, "usbmisc init failed, ret=%d\n", ret);
-> -		goto err_clk;
-> +		goto phy_shutdown;
->  	}
->  
->  	data->ci_pdev = ci_hdrc_add_device(dev,
-> @@ -502,7 +506,7 @@ static int ci_hdrc_imx_probe(struct platform_device *pdev)
->  	if (IS_ERR(data->ci_pdev)) {
->  		ret = PTR_ERR(data->ci_pdev);
->  		dev_err_probe(dev, ret, "ci_hdrc_add_device failed\n");
-> -		goto err_clk;
-> +		goto phy_shutdown;
->  	}
->  
->  	if (data->usbmisc_data) {
-> @@ -536,6 +540,9 @@ static int ci_hdrc_imx_probe(struct platform_device *pdev)
->  
->  disable_device:
->  	ci_hdrc_remove_device(data->ci_pdev);
-> +phy_shutdown:
-> +	if (data->override_phy_control)
-> +		usb_phy_shutdown(data->phy);
->  err_clk:
->  	clk_disable_unprepare(data->clk_wakeup);
->  err_wakeup_clk:
-> -- 
-> 2.48.1
-> 
+Signed-off-by: XieLudan <xie.ludan@zte.com.cn>
+---
+lib/dynamic_debug.c | 4 ++--
+1 file changed, 2 insertions(+), 2 deletions(-)
 
--- 
+diff --git a/lib/dynamic_debug.c b/lib/dynamic_debug.c
+index 5a007952f7f2..83ce3f310ab9 100644
+--- a/lib/dynamic_debug.c
++++ b/lib/dynamic_debug.c
+@@ -795,11 +795,11 @@ int param_get_dyndbg_classes(char *buffer, const struct kernel_param *kp)
 
-Best regards,
-Peter
+case DD_CLASS_TYPE_DISJOINT_NAMES:
+case DD_CLASS_TYPE_DISJOINT_BITS:
+- return scnprintf(buffer, PAGE_SIZE, "0x%lx\n", *dcp->bits);
++ return sysfs_emit(buffer, "0x%lx\n", *dcp->bits);
+
+case DD_CLASS_TYPE_LEVEL_NAMES:
+case DD_CLASS_TYPE_LEVEL_NUM:
+- return scnprintf(buffer, PAGE_SIZE, "%d\n", *dcp->lvl);
++ return sysfs_emit(buffer, "%d\n", *dcp->lvl);
+default:
+return -1;
+}
+--
+2.25.1
 
