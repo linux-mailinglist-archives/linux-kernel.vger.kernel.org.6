@@ -1,93 +1,122 @@
-Return-Path: <linux-kernel+bounces-564311-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E162A65282
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 15:13:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55E4BA65292
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 15:15:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D6A361887A12
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 14:13:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0154A3B9B91
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 14:14:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D34F5241124;
-	Mon, 17 Mar 2025 14:13:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAFF62417C9;
+	Mon, 17 Mar 2025 14:14:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="38wMzcOV";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="MbNC3vgG"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F6OtoGuQ"
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C90042405E7
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 14:13:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F34F24167B;
+	Mon, 17 Mar 2025 14:14:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742220801; cv=none; b=DWBCKRtJQVsmzOn+MU9vDk+4XCAVwhHzvE0Ff3nIHHnV+AqNlVVAjq2frUW/5cBgJHHMfwyDgLMIoGuEJLZ3OqXxWCHEf4rbKdSoX21rPmAf8f4qG2G7/49qeLZF5TTwSUCJ9Txu6Egdz7cRMewgfoPVm6Anne0JRc6VWzcQx7o=
+	t=1742220842; cv=none; b=olfMYCCp2HEC0uLzmxMyyS/7XSmMlvvsuQjKml8TxmkCE78S16wkOuFY9fvkPzAofJ6s/KhqMtFqgPrYBlC3S8fhgc229UDFsn+vgqJ0TsFAiSIIauuBVBTQrIDsqybp0ZilpvoaCVkt99hug5Ek07OZJc0w20Y0BjhxSOBYg2I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742220801; c=relaxed/simple;
-	bh=nttrMiC22XUOZZeCE6J+OZeJmt21H3KZf0SpIOcrUp4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=H/CgRTuwO0T6ylwaTr8NRlkn456jgLeVjdTQm15bFxE8xPlETW7+BbMqKvZB4tpPQSALLKgKR+wnbqnqTeSeMdv5vs3k6R5abZ6F+xpx9/1qIb1AoiCBaREgqmbLXd575bEUcHqOQO/WDAUnqIZ16yQUIHdi6L6fFmtJNtFjPJ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=38wMzcOV; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=MbNC3vgG; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: John Ogness <john.ogness@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1742220798;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mE08OqTuzsR2/w5zN3sp1pgCrBWoxVxCSSigXCl2u9E=;
-	b=38wMzcOVPjNcvdZA4sw4ard8aWVbf8WEwkTwsfWwggtHvL1yPoxCIinzRpSRjPeMlb0yNu
-	8nZHoIk8GtYSHbeG2DsaL0DBlrgBb4fJwCONxGHwwtznfyLZxR5aaIYbXq12AA+9I90bUD
-	vaZuYb4XmI+K34fFXnHx5AEO7FQy2zI5TcfUQOaKRcsp1A2cOyzoAgS6wVmyDESvSB1gyl
-	btO8HEkLSYu/xEIx11t41lucSeSzltABseheKL21mpEGCZCUHUS4IuGnA2hBzcfs8eZiGa
-	LCwU3VQeKv1eFRRFmSkSKlnc4OWJHxiWSnCqGlysQgiQ1da+1Cz7grgEGTpevA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1742220798;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mE08OqTuzsR2/w5zN3sp1pgCrBWoxVxCSSigXCl2u9E=;
-	b=MbNC3vgGngFVhLFUKUrXmi8zNYsFaZGhNyorF7fUqF+ezWuXa8/fev3ERWyjXFb7c+LZiB
-	uCaJqdTlsojiCMBw==
-To: Petr Mladek <pmladek@suse.com>, Donghyeok Choe <d7271.choe@samsung.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>, Sergey Senozhatsky
- <senozhatsky@chromium.org>, linux-kernel@vger.kernel.org,
- takakura@valinux.co.jp, youngmin.nam@samsung.com, hajun.sung@samsung.com,
- seungh.jung@samsung.com, jh1012.choi@samsung.com
-Subject: Re: [PATCH] printk/panic: Add option allow non panic cpus logging
- to ringbuffer
-In-Reply-To: <Z9gnfSYnX3r0wwci@pathway.suse.cz>
-References: <CGME20250305044241epcas2p45a526aecf91f33b9ac253f561e909978@epcas2p4.samsung.com>
- <20250305044046.1249972-1-d7271.choe@samsung.com>
- <Z9gnfSYnX3r0wwci@pathway.suse.cz>
-Date: Mon, 17 Mar 2025 15:19:17 +0106
-Message-ID: <84senbpwxu.fsf@jogness.linutronix.de>
+	s=arc-20240116; t=1742220842; c=relaxed/simple;
+	bh=CVOajz0SswfE5RdPvrmC6YAfTKi/WwrIPgt8fN6yta8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Vw6/qSLU8ykQqWSBVQhV0e8UtqqBNHp/X7G4hlkXu5fcJlOeEWcj2ckmB3/ICphPXSRDAI+9ar3MfjrgHEqqrFzhVFAKjUV0iXw1vvXm1FjgJh1QAq6Q7dnSx2pFh0ezatD680LxA3mz0UaLeR4IihXIoWHEwsP771twyY7S4oY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F6OtoGuQ; arc=none smtp.client-ip=209.85.208.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-30c091b54aaso41852061fa.3;
+        Mon, 17 Mar 2025 07:13:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742220838; x=1742825638; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DfFVIXEKkQVbIszXnDVMJcC2+/nJ/AFJtrMqjwVFnME=;
+        b=F6OtoGuQ1vbhLl90fMRgvPDydu59e+mJ03zqn3o6g8T7Nu6tW/njKtwqBK8ocVFMpb
+         wG5jcpXnAUb6r1z4k6VQC0L4mbKgKoUq1ftndLnXkyY2h2K1VPkCJHzFymClvTeq5v6T
+         7I0aFI8mr0oTXOQ0VicaZTXC3AFJeV8ibkRlURpqHeR1gdYdbJok2wP46Mh33DzPbAJX
+         Q1H6w/PGKyGuiQyLbhmLiwreYhGROl41eTD3mia56so50f2pqxFXGXIepoxF2NRBQ/yw
+         Hk929vCCyHN0q/aI+oXm5N/R8507Os1v9v/5n+PxXTKrsLyMiPMMrUrYNozw8kVDGzHZ
+         VbeQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742220838; x=1742825638;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=DfFVIXEKkQVbIszXnDVMJcC2+/nJ/AFJtrMqjwVFnME=;
+        b=nxc7nVChFlbbDq/Il7HZeGrDwqCLS0/cahc3+hS4kuy6cGGJkoZs5gDap5c3dUicDl
+         B+8SDPq0QGJ0Hxd8AbQgMlhSOkT3YN3pMLY8okdHzuO0YuySeil643dR2mTXVeBwU1S3
+         QtSYV3jov668C6IFU6Z9lBEbpZlJee7H98X40h+uQ2Jm328XoknZfbuMenKcGMkPrJfJ
+         wa4xbg2Y+LAuiLUcVw1K23n+C+TaG+HiuYVen6xsutjvsX8CzCu4z+70raTenKdygquD
+         BrRehdBmF3TKBWT7OcmcABeqXitnvSDepQPxnVFmxLvYjIEF11Qxj+WGf19llqBS3cwp
+         8mLw==
+X-Forwarded-Encrypted: i=1; AJvYcCULLaQ0G7w8TA/1RCE+aaF/jN/8o+zDJNXnw1de+SmirmEWq2zb38VovNVCCMkIqV8+SNJplcbd6NKOfJWx@vger.kernel.org, AJvYcCUa5iprp2dvlswLqejKaeDwu/wlibkj+oTKsNlgcKznOI77uU/oJzGnXlHcMo+5mtjhbXdNISF4SgCa@vger.kernel.org, AJvYcCVj93oO9dgwQPph6+ddU1Gdmi6+kRGIVhynQkBLSk3bktjfQE3KYBpMR/PlL5AwSI3oSdXy51Ym2lrnCxx2y/I=@vger.kernel.org, AJvYcCVp2gvftT1iN0gFJ6XuagFjmUFeaH+eqzuI5V6SpDvKe7ssEdmJJm8xSoFMoQyBMDJiT5KBK3R22CgWUuJLDol5@vger.kernel.org, AJvYcCW1X1FiSQdyrtsLvg7oLCUyjPNG22t75wNWeFiabSbHcPh8bDAci3oBjPC+xi0bZDSuJFyriOTDWIN22ON+@vger.kernel.org, AJvYcCXf3NCxE4v8WCayXAPz3Xe5+Jy6Md60TL8YC37/LgIIxG44IJbe8VLp97Yqyx1WM4ZsRveYBpLLLBrWmdE=@vger.kernel.org, AJvYcCXg35VC0Y8qzEgr27YTV9F/7PlyX2p67IJQt06xjXazMzk0o8cNM/9otwnBMA5ikToe+cYFrydQGnKR@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZ3e3wYyBH2uaNUjmrr2JjyzJPnavUwv3ATWBdwT+oPQfp02FH
+	Epr8so0Xd6WT1Tj5KbyvnfH1+y0K779/dJ/rJesDePms6kIoBt69UOMvDe/drHjhaZ3h+BRwaHB
+	veFd66iupicvSplXqXfnaTyI8FA8=
+X-Gm-Gg: ASbGnctSCPiicIq+s35z8mwCI+p1OlDYc5JRUASCi9hAL4H78LgIOiV1pKIlj93+4E4
+	KBofl2n+Znk2k45VqsZNpx30+APo/9LEYAlGiay9LKXmVKk9JDLRu9TAyhB/n/auDkMj8+9qOzI
+	BrTVcPMkUr3hyOkw1mQHgWROdQmGZyvhxm9fkPNgieEk3jGbolOPg5XhoHFbsCxNRBoOLpdtc=
+X-Google-Smtp-Source: AGHT+IFzkocQJqEpLAgVqhznM9G/c3svmZ3XdUy82l82HgzT7cMT4RMKww3UccU4uaWF5zmyfhHhEJgkJu0nmVO2QMg=
+X-Received: by 2002:a2e:a541:0:b0:30c:2efb:6608 with SMTP id
+ 38308e7fff4ca-30c4a8d99dfmr80436951fa.34.1742220838076; Mon, 17 Mar 2025
+ 07:13:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20250315-ptr-as-ptr-v4-0-b2d72c14dc26@gmail.com>
+ <20250315-ptr-as-ptr-v4-6-b2d72c14dc26@gmail.com> <D8IFS7175NNQ.3VAP8WA2QC8WF@proton.me>
+ <CAJ-ks9mXzM6D++vq0QCugaFOS9ES0j7GpeWZqckY0dA3JwpnJw@mail.gmail.com>
+In-Reply-To: <CAJ-ks9mXzM6D++vq0QCugaFOS9ES0j7GpeWZqckY0dA3JwpnJw@mail.gmail.com>
+From: Tamir Duberstein <tamird@gmail.com>
+Date: Mon, 17 Mar 2025 10:13:20 -0400
+X-Gm-Features: AQ5f1JqznMa6k2lJIiCnZwHn6x-b5GCvJwIRUhiNMHYfyIvOPnUOor0S-U9RHGU
+Message-ID: <CAJ-ks9kH3SE91XSadBx1qFaG5dem93o_ctR0t2FwW-0ZfkRNwQ@mail.gmail.com>
+Subject: Re: [PATCH v4 6/6] rust: use strict provenance APIs
+To: Benno Lossin <benno.lossin@proton.me>
+Cc: Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
+	Nicolas Schier <nicolas@fjasle.eu>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, 
+	Rae Moar <rmoar@google.com>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Luis Chamberlain <mcgrof@kernel.org>, Russ Weight <russ.weight@linux.dev>, Rob Herring <robh@kernel.org>, 
+	Saravana Kannan <saravanak@google.com>, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, 
+	linux-pci@vger.kernel.org, linux-block@vger.kernel.org, 
+	devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2025-03-17, Petr Mladek <pmladek@suse.com> wrote:
->> +#ifdef CONFIG_PRINTK_CALLER
->> +static int __init printk_debug_non_panic_cpus_setup(char *str)
->> +{
->> +	printk_debug_non_panic_cpus = true;
->> +	pr_info("printk: keep printk all cpu in panic.\n");
+On Mon, Mar 17, 2025 at 6:53=E2=80=AFAM Tamir Duberstein <tamird@gmail.com>=
+ wrote:
 >
-> I would update the message:
+> On Mon, Mar 17, 2025 at 5:34=E2=80=AFAM Benno Lossin <benno.lossin@proton=
+.me> wrote:
+> >
+> > > +    pub fn expose_provenance<T>(addr: *const T) -> usize {
+> > > +        addr.expose_provenance()
+> >
+> > Instead of having these stubs here, you can probably just do
+> >
+> >     pub use core::ptr::expose_provenance;
 >
-> 	pr_info("printk: allow messages from non-panic CPUs in panic()\n");
+> This doesn't work for the methods on primitives, but it works for the
+> free functions. Done.
 
-Note that every printk message in printk.c is automatically prepended
-with "printk: " (see #define pr_fmt(fmt) at the top of printk.c) so
-please just use:
-
-	pr_info("allow messages from non-panic CPUs in panic()\n");
-
-John Ogness
+Have to revert this, writing `pub use ...` directly causes the MSRV
+clippy lint to fire at the caller.
 
