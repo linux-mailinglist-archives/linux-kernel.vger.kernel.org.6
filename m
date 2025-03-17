@@ -1,187 +1,171 @@
-Return-Path: <linux-kernel+bounces-563199-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563198-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3188A638A0
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 01:20:31 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7601AA63890
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 01:19:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC810188E9A4
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 00:20:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A6B687A5EAA
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 00:18:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7639EBA49;
-	Mon, 17 Mar 2025 00:20:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EF0FBA49;
+	Mon, 17 Mar 2025 00:19:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="WznEAxi/"
-Received: from out203-205-221-221.mail.qq.com (out203-205-221-221.mail.qq.com [203.205.221.221])
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="oBs63bR6"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C8D979E1
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 00:20:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.221
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA5E3C2E0;
+	Mon, 17 Mar 2025 00:18:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742170824; cv=none; b=ORS9uURQMDLJ+hUD4dzfrzBoexELvi5dF8XWTAmtEEd8Nhwj5xdFZjgWjbbkvcUx/jRPmfMJN4oxjXJfhh4hEqYkieaTbDyOOi63T6POCTq5cxBoSPuvEurd4Uunb40wHZAGqpTFItx21MSneuKw5M0y/JrQuFxwnYisoeipfx4=
+	t=1742170740; cv=none; b=sHg8DCZWm66r2veQ2jjS9zbZns6cErjBFu8LXmGyahxXr0d17G/NkWUaXKhKa/zMh6hpBTaa7RnZ7E4BlcWxyb6R5XjjvUYSfkSORCJcNeZz7DUrMl87f11jYGaAGv/URybmMxzzlqrZZbv1t10T5lad02WKPxEqK5eM6V65t6I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742170824; c=relaxed/simple;
-	bh=rgeJWWGHpRlAk1p1cDzSmfx2GFLV+qoYmNqTRBxZq/E=;
-	h=From:To:Cc:Subject:Mime-Version:Content-Type:Date:Message-ID; b=gzrfXMxIFPgKZ8BGLg6SZuqJNu7aqR23wojxg1SDwxhLY7VuLm3/PPEjR1fFYdhx/1RYlUj4FURobkhzUntuHsfJlMwBQAJdr06ubwM59T8Hz2w3vOQ+svMd2Hvx9bTvVJtmFvEfACdbCYNU3Huv+1SKqPbC/MD3kkQCuPpj3Z0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=WznEAxi/; arc=none smtp.client-ip=203.205.221.221
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1742170809; bh=rgeJWWGHpRlAk1p1cDzSmfx2GFLV+qoYmNqTRBxZq/E=;
-	h=From:To:Cc:Subject:Date;
-	b=WznEAxi/pTA4fTuxUGVqCKOrCCzpBPAUjhrd+pH+JcPCKvRnHfkqFEFgRMRgbMAaB
-	 mRMCxvY+Kn3Y2+2Zhm93+SrNVcKtNx1D27eOIn49K+qSwQuPxvnLO6s7mSTrpn3IcX
-	 8G05e17o8ipYNqwrW5qeenT8j6diOeskipSwJ87U=
-X-QQ-FEAT: oHWrrGTW1dCGJEu1CuC8+nIWkvSYK6n9
-X-QQ-SSF: 00000000000000F0000000000000
-X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
-X-QQ-XMAILINFO: M1eBIME5pxciiCWYgTOFJJVfgodcHROaIMW0SrPh2VHKXDtrnOw2jXUIJrQPPx
-	 Q0OoSs9CH7Y9N/FV6fL+e0ty/jGKYsrknhcSXF5Qkms9Ezk8KIRqWJBqL0Te81wQ6Phu5dEucIkXH
-	 8LlsWWRO3znbO+XedQxZhWtdvyw5IBw3QY7LCvx8O2zvX5XKSY4F8jsJiEfwk2wAAwHnl7QyGEEVW
-	 vBZkWOfDM2ZFn+Cy9VYwHRtaRsB+ObCym4QrhT1SYstLAL5g1hjuskFg2O7UL8/g+fZzIYCYO+Bvj
-	 feioVPrrojPWdI7/I3KXnjUZgr5t2oBbDogY2fE3kwD8Sm+z5UQqYrj5d3rHwIIu4f4PLwIDXZLFp
-	 QW1njKry+4cEVVgpq9lXfqxtS8pfoA4GArq831hPkH9GlehQ3pn7K8H9n4m9lHuhqCAPWfcXLWqfW
-	 lGWVohmXY39W4bq2LFVnHvAZacZgs3Rll7ieJKxpCmiN+ILvTQ9w3KE0qSqPOzru4uJqVwibKTleR
-	 YXvC2y5tWRVqWzK3gvo2vBYY/yd6X6g5vi8waswGEaJo+QzrBcuArODF7Sh/4iKq4PhhzyntKNbHC
-	 KwGD1cGwVg3+O83QPXhSDMAHhc0WMSKWF55IDeIEpqKFIfZV89ltj+OTCHnMeil995Xyo16ts6bMT
-	 xqZ1KxfaLjc2fYwCXpTHlgwNeTTRZLlMm1DnMooKj8hh2OwwHlKV4HWJ7NITgqPLcp6HuMor8Cg97
-	 XNFwkgg6F2CnBBBZu06OUKjsKM1/T8C9OExHd+w87bbd0MPvUaX4xTynUEFeg3eJKv0dheqDLfE6N
-	 TpmdQbdW52w56tod8grNn2m+vZBgM7q4UJjAR8WJNXFeRxmZykU40D8RedIrumxRCc0Jr8xgLK3vf
-	 8QaClvbMDfIrw7j8lLf9eEQsy9ooYRmTGe5T6uW5+k0/o8tYk4K3+0TjND4WKP4kug0nYyeUVgjeO
-	 O0sv+Hf7yh027Y6VPVNw+LgjXPNYY6KLsa2dKvhA==
-X-HAS-ATTACH: no
-X-QQ-BUSINESS-ORIGIN: 2
-X-QQ-STYLE: 
-X-QQ-mid: webmail284t1742170402t3728811
-From: "=?ISO-8859-1?B?ZmZoZ2Z2?=" <xnxc22xnxc22@qq.com>
-To: "=?ISO-8859-1?B?aGFubmVz?=" <hannes@cmpxchg.org>, "=?ISO-8859-1?B?eW9zcnkuYWhtZWQ=?=" <yosry.ahmed@linux.dev>, "=?ISO-8859-1?B?bnBoYW1jcw==?=" <nphamcs@gmail.com>, "=?ISO-8859-1?B?Y2hlbmdtaW5nLnpob3U=?=" <chengming.zhou@linux.dev>, "=?ISO-8859-1?B?YWtwbQ==?=" <akpm@linux-foundation.org>
-Cc: "=?ISO-8859-1?B?bGludXgtbW0=?=" <linux-mm@kvack.org>, "=?ISO-8859-1?B?bGludXgta2VybmVs?=" <linux-kernel@vger.kernel.org>
-Subject: Linux6.14-rc5:   KASAN: use-after-free Read in zswap_store 
+	s=arc-20240116; t=1742170740; c=relaxed/simple;
+	bh=hbpPhso1wVwmnKgxYXI3aP8Aky9+xH/tEaNE+s5b2v4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=o6ySRvA3su7rzwB01+uOg8fRKRqQYMHBFiQJivTQm4vmuz92yl/QF9nhw/9oserWYeR9PE35fbLgGdY//ZUJu0Hp5fllqPsZvD7zja6HgfSejw2XbjvUONRzYAOvG22/U6bg6zjasGw2g543k+4tkBELesQmzeMv97fvHhbWRzQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=oBs63bR6; arc=none smtp.client-ip=212.227.15.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1742170729; x=1742775529; i=w_armin@gmx.de;
+	bh=13079H0FVo1jR9XznP83rieuugxrmdQU/sLlv3uJayA=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=oBs63bR6sYyhxujt7jpRQnWFVxVx1wyMf1B87tmXahx3AQdaskU0bwp8TW1QsszH
+	 5j5t22zyxXoTsRTFl61HXoQCDSizyRLOby165KrITHcPEMmPpjp+avRnQOMB/ZKPR
+	 x5eG5GWJSvQna6dWEabCx3PzVStNshhWvJr5aIMjgiNYWJe4kgBg/ooO8tiz/eGx9
+	 1N/UBZL0RN715Nf7ceG3kREHinWW+8OnY248V/SX3YGAWuiAaIHR5rTUJApl7IVk+
+	 spOGVyJfezP9Y/ioFXV7t8URrEhMXMPpL2j8PgBzyloFmcAVVwZL9efp1RupGg5lo
+	 ewJY/cT7uUilyKBF7A==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.0.69] ([87.177.78.219]) by mail.gmx.net (mrgmx004
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1Mz9Yv-1sy29b3tbP-00tBzo; Mon, 17
+ Mar 2025 01:18:49 +0100
+Message-ID: <4ed90f54-bf42-4372-951a-b33f457ffa22@gmx.de>
+Date: Mon, 17 Mar 2025 01:18:47 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain;
-	charset="ISO-8859-1"
-Content-Transfer-Encoding: base64
-Date: Sun, 16 Mar 2025 20:13:21 -0400
-X-Priority: 3
-Message-ID: <tencent_49DA3E780998A9B96ADC9FF658CC84641808@qq.com>
-X-QQ-MIME: TCMime 1.0 by Tencent
-X-Mailer: QQMail 2.x
-X-QQ-Mailer: QQMail 2.x
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v2 0/3] platform/x86: acer-wmi: Add fan control
+ support
+To: Rayan Margham <rayanmargham4@gmail.com>
+Cc: jlee@suse.com, basak.sb2006@gmail.com, kuurtb@gmail.com,
+ hdegoede@redhat.com, ilpo.jarvinen@linux.intel.com,
+ platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <f5d8b82d-c711-4611-b257-b4297f172bb1@gmx.de>
+ <637B90F3-58C6-43B6-9822-5314C62138C6@gmail.com>
+ <eaeaef7a-570e-4738-a420-4d5f61adf0bf@gmx.de>
+ <CACzB==4QC+khEpw99ekp-DK=jzMebroCw5PeXmgS9GsHmPYfSw@mail.gmail.com>
+Content-Language: en-US
+From: Armin Wolf <W_Armin@gmx.de>
+In-Reply-To: <CACzB==4QC+khEpw99ekp-DK=jzMebroCw5PeXmgS9GsHmPYfSw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:yrqxPUBbGL5Y4qzC2qISsk4prvqguZ7fGFNPZ5hUtetOilDCPBx
+ Kw1HCz3wrTxxPifGWa3/hEK77V4m/n01yUpdfSHtq3zAXzMdNhT9xiouiawPGX3CjpjIyM4
+ YTLmrq9IiwHMGHhTfHzcS60UluwIoRP7WABgupYYRJqTkVFEj9inKeKSU2AD+pX1qurTzQK
+ bZmVwWG8EmZ8RBO/29P/w==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:1XTNh/yEvhM=;umEM4e9pLCW6rRmu83ygWzbmr9t
+ K7ZA1bMSABoQsztegHd3KtGei9sEnYZ4zWos904SBH5KpfTIJaOKqmWdgqh/nuBRX3r1PdBHN
+ rnCNc9iP57GvT8j/jYbDogAZVBRA70hceZ36LIRKNHUZCHMmG9pKDZyKB8lcrD0uNTN4v+JLQ
+ RaLB5JmOHvm+3JIdNnV5wzF2S6fRIwWBEhkraMcJU7gAXCVxz1aHqHvXBKkGsHEvUo3wBHesI
+ +rSi2IISBxjxtHWUOyDMVHgH6ygJbBYpBVB5/fsISG+4yBi0OnGgf5b3N8iMd22IgI2L+0s3Q
+ ExHRLDfqZ5Qht06S16Xrn5cCz4f53j9lPoPCSvQh3oCBTQYYeMX6Xi9pzsKPrRocQEa7b6JNl
+ hN5hyo0QnMZFWTSoGNmfL82tSE+wZAhq2v9IR+FJ/wYm0T/Tnz+UvGzx/RXLSeeDvIEVw5DZ2
+ x2K9AeVEpPGfHv4MK6lQ7FGJtAgzzzHVcHHUw7DaMcLMP6JO4Mha7t4cFMm2TjlolzxdF0uid
+ TPmUhoXEtvZ5Ms+Zgts4mwACY12RNvmViPICUy0sCm9WVUk+kTUoz0wXZLcujmGGamFvegNyr
+ XFYkeQm7OrSvMCOo4We4HG+sjBY6xvKBc2Qs6iRa+enQjGIU3MW43B/MIF66017hQqQlnSkGP
+ yg+zmKkVD6D1d6mIewY5sToNrNnjX/WQazpwffOKpVBuFrbWLcMoQvaYXSX52Qkz+2rPCUYel
+ oJBhDU8/D8atvKMKWP7zTcJLfGOeXRf9fELDIrCZRxrzrEai8/npuU6cbgArWx1KmvUCWSY/N
+ hHzagLuoE8TASVveErV8uju9wh0cs6xny5+E5ZrMone1vcEFmAhh7rE7Lxbw0G7wqeB672hUs
+ 5hPeTh7LBBfnlmE5YZVKCeVeQemYxl3NVgTCHwPP2ss6sHUF8cOb0OmtmeyvUj/yZ3NkMlHNp
+ G75eCNcIi45X3Kbi2skGOYJeF4GUJ3cYp7QApsgoWnfkUO/yoORfAf2LRF06q33Ny/5egxM5U
+ SixqNm0imhgJjvSFrFCN+XlNoQ8t/RI8FIihvOWMRsl3ttKOu2oKKBkP6wIf+ZGiKlTg6MU4a
+ Ew1nqL/AxYtEfWxpNhRodIGhoe80rE2NxwhAD1AgShYYswrhRGAG0qKv2aK3tlcjUgyMUkl5t
+ 1zC7lSu923OpeUOGICTL879p0RhaLFlRcrsEJln26kGmnSEE98Iqhh2cxg9aqqGuF0Vgu1v6U
+ HNU0iP/eAzB7W5SIeA2rs56qyDGseb/UngKjpn08nzsGILlhRnpm4jXKMmahjCm+tck1hcagk
+ 0U++AyeosYEcPXLjXCXrEvaj8mZLwiJC/QO7Jkr8Ngx8F7m1JzSP+AMz1zJeotx+iFgw6WbfI
+ qWZK7oPYu9tmicN9Oj1FB18prH0+FsW5R8slJf1W96Ud7WOBASqypej6IwTohpbewC2IzX5Yg
+ LNmB7sXv6aPjKMxPP5p/3eJNUjKY=
 
-SGVsbG8sIEkgZm91bmQgYSBidWcgdGl0bGVkICIgS0FTQU46IHVzZS1hZnRlci1mcmVlIFJl
-YWQgaW4genN3YXBfc3RvcmUgIiB3aXRoIG1vZGlmaWVkIHN5emthbGxlciBpbiB0aGUgTGlu
-dXg2LjE0LXJjNS4KSWYgeW91IGZpeCB0aGlzIGlzc3VlLCBwbGVhc2UgYWRkIHRoZSBmb2xs
-b3dpbmcgdGFnIHRvIHRoZSBjb21taXQ6ICBSZXBvcnRlZC1ieTogSmlhbnpob3UgWmhhbyA8
-eG54YzIyeG54YzIyQHFxLmNvbT4sICAgIHhpbmd3ZWkgbGVlIDx4cml2ZW5kZWxsN0BnbWFp
-bC5jb20+LCBaaGl6aHVvIFRhbmcgPHN0cmZvcmV4Y3R6emNoYW5nZUBmb3htYWlsLmNvbT4K
-CkkgdXNlIHRoZSBzYW1lIGtlcm5lbCBhcyBzeXpib3QgaW5zdGFuY2UgdXBzdHJlYW06IDdl
-YjE3MjE0M2Q1NTA4YjRkYTQ2OGVkNTllZTg1N2M2ZTVlMDFkYTYKa2VybmVsIGNvbmZpZzog
-aHR0cHM6Ly9zeXprYWxsZXIuYXBwc3BvdC5jb20vdGV4dD90YWc9S2VybmVsQ29uZmlnJmFt
-cDt4PWRhNGIwNGFlNzk4YjdlZjYKY29tcGlsZXI6IGdjYyB2ZXJzaW9uIDExLjQuMAotLS0t
-LS0tLS0tLS1bIGN1dCBoZXJlIF0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLQogVElUTEU6ICAgS0FTQU46IHVzZS1hZnRlci1mcmVlIFJlYWQgaW4genN3YXBf
-c3RvcmUgCj09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09
-PT09PT09PT09PT09PT09PT09PQo9PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09
-PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT0KQlVHOiBLQVNBTjogdXNlLWFmdGVy
-LWZyZWUgaW4gZGVidWdfc3Bpbl9sb2NrX2JlZm9yZSBrZXJuZWwvbG9ja2luZy9zcGlubG9j
-a19kZWJ1Zy5jOjg2IFtpbmxpbmVdCkJVRzogS0FTQU46IHVzZS1hZnRlci1mcmVlIGluIGRv
-X3Jhd19zcGluX2xvY2srMHgyODUvMHgyZTAga2VybmVsL2xvY2tpbmcvc3BpbmxvY2tfZGVi
-dWcuYzoxMTUKUmVhZCBvZiBzaXplIDQgYXQgYWRkciBmZmZmODg4MDRlNzhlMDE0IGJ5IHRh
-c2sga3N3YXBkMC85OAoKQ1BVOiAwIFVJRDogMCBQSUQ6IDk4IENvbW06IGtzd2FwZDAgTm90
-IHRhaW50ZWQgNi4xNC4wLXJjNS1kaXJ0eSAjMTEKSGFyZHdhcmUgbmFtZTogUUVNVSBTdGFu
-ZGFyZCBQQyAoaTQ0MEZYICsgUElJWCwgMTk5NiksIEJJT1MgMS4xNS4wLTEgMDQvMDEvMjAx
-NApDYWxsIFRyYWNlOgogPHRhc2s+CiBfX2R1bXBfc3RhY2sgbGliL2R1bXBfc3RhY2suYzo5
-NCBbaW5saW5lXQogZHVtcF9zdGFja19sdmwrMHgxMTYvMHgxYjAgbGliL2R1bXBfc3RhY2su
-YzoxMjAKIHByaW50X2FkZHJlc3NfZGVzY3JpcHRpb24gbW0va2FzYW4vcmVwb3J0LmM6NDA4
-IFtpbmxpbmVdCiBwcmludF9yZXBvcnQrMHhjMS8weDYzMCBtbS9rYXNhbi9yZXBvcnQuYzo1
-MjEKIGthc2FuX3JlcG9ydCsweDkzLzB4YzAgbW0va2FzYW4vcmVwb3J0LmM6NjM0CiBkZWJ1
-Z19zcGluX2xvY2tfYmVmb3JlIGtlcm5lbC9sb2NraW5nL3NwaW5sb2NrX2RlYnVnLmM6ODYg
-W2lubGluZV0KIGRvX3Jhd19zcGluX2xvY2srMHgyODUvMHgyZTAga2VybmVsL2xvY2tpbmcv
-c3BpbmxvY2tfZGVidWcuYzoxMTUKIHNwaW5fbG9jayBpbmNsdWRlL2xpbnV4L3NwaW5sb2Nr
-Lmg6MzUxIFtpbmxpbmVdCiB6M2ZvbGRfcGFnZV9sb2NrIG1tL3ozZm9sZC5jOjIyMyBbaW5s
-aW5lXQogejNmb2xkX2FsbG9jIG1tL3ozZm9sZC5jOjEwNjAgW2lubGluZV0KIHozZm9sZF96
-cG9vbF9tYWxsb2MrMHg5YjEvMHgxNDEwIG1tL3ozZm9sZC5jOjEzODgKIHpzd2FwX2NvbXBy
-ZXNzIG1tL3pzd2FwLmM6OTcxIFtpbmxpbmVdCiB6c3dhcF9zdG9yZV9wYWdlIG1tL3pzd2Fw
-LmM6MTQ2MiBbaW5saW5lXQogenN3YXBfc3RvcmUrMHhlNDYvMHg0MWUwIG1tL3pzd2FwLmM6
-MTU3MQogc3dhcF93cml0ZXBhZ2UrMHgzYTcvMHgxNDMwIG1tL3BhZ2VfaW8uYzoyNzgKIHBh
-Z2VvdXQrMHgzYmYvMHhhYzAgbW0vdm1zY2FuLmM6Njk2CiBzaHJpbmtfZm9saW9fbGlzdCsw
-eDM1MDkvMHg0NDgwIG1tL3Ztc2Nhbi5jOjE0MDIKIGV2aWN0X2ZvbGlvcysweDg0OS8weDIx
-MDAgbW0vdm1zY2FuLmM6NDY2MAogdHJ5X3RvX3Nocmlua19scnV2ZWMrMHg2MDgvMHg5YjAg
-bW0vdm1zY2FuLmM6NDgyMQogc2hyaW5rX29uZSsweDQxMi8weDdkMCBtbS92bXNjYW4uYzo0
-ODY2CiBzaHJpbmtfbWFueSBtbS92bXNjYW4uYzo0OTI5IFtpbmxpbmVdCiBscnVfZ2VuX3No
-cmlua19ub2RlIG1tL3Ztc2Nhbi5jOjUwMDcgW2lubGluZV0KIHNocmlua19ub2RlKzB4MjM1
-NS8weDNjMTAgbW0vdm1zY2FuLmM6NTk3OAoga3N3YXBkX3Nocmlua19ub2RlIG1tL3Ztc2Nh
-bi5jOjY4MDcgW2lubGluZV0KIGJhbGFuY2VfcGdkYXQrMHhhODUvMHgxNzQwIG1tL3Ztc2Nh
-bi5jOjY5OTkKIGtzd2FwZCsweDRjMC8weGJlMCBtbS92bXNjYW4uYzo3MjY0CiBrdGhyZWFk
-KzB4NDI3LzB4ODgwIGtlcm5lbC9rdGhyZWFkLmM6NDY0CiByZXRfZnJvbV9mb3JrKzB4NDUv
-MHg4MCBhcmNoL3g4Ni9rZXJuZWwvcHJvY2Vzcy5jOjE0OAogcmV0X2Zyb21fZm9ya19hc20r
-MHgxYS8weDMwIGFyY2gveDg2L2VudHJ5L2VudHJ5XzY0LlM6MjQ0CiA8L3Rhc2s+CgpUaGUg
-YnVnZ3kgYWRkcmVzcyBiZWxvbmdzIHRvIHRoZSBwaHlzaWNhbCBwYWdlOgpwYWdlOiByZWZj
-b3VudDowIG1hcGNvdW50OjAgbWFwcGluZzowMDAwMDAwMDAwMDAwMDAwIGluZGV4OjB4NTY0
-YzljZDBhIHBmbjoweDRlNzhlCmZsYWdzOiAweDRmZmYwMDAwMDAwMDAwMChub2RlPTF8em9u
-ZT0xfGxhc3RjcHVwaWQ9MHg3ZmYpCnJhdzogMDRmZmYwMDAwMDAwMDAwMCBmZmZmZWEwMDAx
-MzllNTA4IGZmZmZlYTAwMDEzOWUyNDggMDAwMDAwMDAwMDAwMDAwMApyYXc6IDAwMDAwMDA1
-NjRjOWNkMGEgMDAwMDAwMDAwMDAwMDAwMCAwMDAwMDAwMGZmZmZmZmZmIDAwMDAwMDAwMDAw
-MDAwMDAKcGFnZSBkdW1wZWQgYmVjYXVzZToga2FzYW46IGJhZCBhY2Nlc3MgZGV0ZWN0ZWQK
-cGFnZV9vd25lciB0cmFja3MgdGhlIHBhZ2UgYXMgZnJlZWQKcGFnZSBsYXN0IGFsbG9jYXRl
-ZCB2aWEgb3JkZXIgMCwgbWlncmF0ZXR5cGUgVW5tb3ZhYmxlLCBnZnBfbWFzayAweDEyODAw
-KEdGUF9OT1dBSVR8X19HRlBfTk9SRVRSWSksIHBpZCA5OCwgdGdpZCA5OCAoa3N3YXBkMCks
-IHRzIDQzMTEyNDkyNDE2MCwgZnJlZV90cyA0MzExMzEyNTIwMjUKIHNldF9wYWdlX293bmVy
-IGluY2x1ZGUvbGludXgvcGFnZV9vd25lci5oOjMyIFtpbmxpbmVdCiBwb3N0X2FsbG9jX2hv
-b2sgbW0vcGFnZV9hbGxvYy5jOjE1NTEgW2lubGluZV0KIHByZXBfbmV3X3BhZ2UrMHgxYjAv
-MHgxZTAgbW0vcGFnZV9hbGxvYy5jOjE1NTkKIGdldF9wYWdlX2Zyb21fZnJlZWxpc3QrMHgx
-OWEyLzB4MzI1MCBtbS9wYWdlX2FsbG9jLmM6MzQ3NwogX19hbGxvY19mcm96ZW5fcGFnZXNf
-bm9wcm9mKzB4MzI0LzB4NmIwIG1tL3BhZ2VfYWxsb2MuYzo0NzM5CiBhbGxvY19wYWdlc19t
-cG9sKzB4MjBhLzB4NTUwIG1tL21lbXBvbGljeS5jOjIyNzAKIGFsbG9jX3BhZ2VzX25vcHJv
-ZisweDFjLzB4MjUwIG1tL21lbXBvbGljeS5jOjIzNjEKIHozZm9sZF9hbGxvYyBtbS96M2Zv
-bGQuYzoxMDM2IFtpbmxpbmVdCiB6M2ZvbGRfenBvb2xfbWFsbG9jKzB4N2FhLzB4MTQxMCBt
-bS96M2ZvbGQuYzoxMzg4CiB6c3dhcF9jb21wcmVzcyBtbS96c3dhcC5jOjk3MSBbaW5saW5l
-XQogenN3YXBfc3RvcmVfcGFnZSBtbS96c3dhcC5jOjE0NjIgW2lubGluZV0KIHpzd2FwX3N0
-b3JlKzB4ZTQ2LzB4NDFlMCBtbS96c3dhcC5jOjE1NzEKIHN3YXBfd3JpdGVwYWdlKzB4M2E3
-LzB4MTQzMCBtbS9wYWdlX2lvLmM6Mjc4CiBwYWdlb3V0KzB4M2JmLzB4YWMwIG1tL3Ztc2Nh
-bi5jOjY5Ngogc2hyaW5rX2ZvbGlvX2xpc3QrMHgzNTA5LzB4NDQ4MCBtbS92bXNjYW4uYzox
-NDAyCiBldmljdF9mb2xpb3MrMHg4NDkvMHgyMTAwIG1tL3Ztc2Nhbi5jOjQ2NjAKIHRyeV90
-b19zaHJpbmtfbHJ1dmVjKzB4NjA4LzB4OWIwIG1tL3Ztc2Nhbi5jOjQ4MjEKIHNocmlua19v
-bmUrMHg0MTIvMHg3ZDAgbW0vdm1zY2FuLmM6NDg2Ngogc2hyaW5rX21hbnkgbW0vdm1zY2Fu
-LmM6NDkyOSBbaW5saW5lXQogbHJ1X2dlbl9zaHJpbmtfbm9kZSBtbS92bXNjYW4uYzo1MDA3
-IFtpbmxpbmVdCiBzaHJpbmtfbm9kZSsweDIzNTUvMHgzYzEwIG1tL3Ztc2Nhbi5jOjU5NzgK
-IGtzd2FwZF9zaHJpbmtfbm9kZSBtbS92bXNjYW4uYzo2ODA3IFtpbmxpbmVdCiBiYWxhbmNl
-X3BnZGF0KzB4YTg1LzB4MTc0MCBtbS92bXNjYW4uYzo2OTk5CiBrc3dhcGQrMHg0YzAvMHhi
-ZTAgbW0vdm1zY2FuLmM6NzI2NApwYWdlIGxhc3QgZnJlZSBwaWQgMzggdGdpZCAzOCBzdGFj
-ayB0cmFjZToKIHJlc2V0X3BhZ2Vfb3duZXIgaW5jbHVkZS9saW51eC9wYWdlX293bmVyLmg6
-MjUgW2lubGluZV0KIGZyZWVfcGFnZXNfcHJlcGFyZSBtbS9wYWdlX2FsbG9jLmM6MTEyNyBb
-aW5saW5lXQogZnJlZV9mcm96ZW5fcGFnZXMrMHg3YWEvMHgxMjkwIG1tL3BhZ2VfYWxsb2Mu
-YzoyNjYwCiBfX2ZvbGlvX3B1dCsweDMwNC8weDNkMCBtbS9zd2FwLmM6MTEyCiBmb2xpb19w
-dXQgaW5jbHVkZS9saW51eC9tbS5oOjE0ODkgW2lubGluZV0KIG1pZ3JhdGVfZm9saW9fZG9u
-ZSsweDI5Yi8weDM0MCBtbS9taWdyYXRlLmM6MTE4MAogbWlncmF0ZV9mb2xpb19tb3ZlIG1t
-L21pZ3JhdGUuYzoxNDAyIFtpbmxpbmVdCiBtaWdyYXRlX2ZvbGlvc19tb3ZlIG1tL21pZ3Jh
-dGUuYzoxNzEyIFtpbmxpbmVdCiBtaWdyYXRlX3BhZ2VzX2JhdGNoKzB4MWMwYi8weDJmMzAg
-bW0vbWlncmF0ZS5jOjE5NTkKIG1pZ3JhdGVfcGFnZXNfc3luYysweDExMC8weDhkMCBtbS9t
-aWdyYXRlLmM6MTk4OQogbWlncmF0ZV9wYWdlcysweDFiMTkvMHgyMmQwIG1tL21pZ3JhdGUu
-YzoyMDk4CiBjb21wYWN0X3pvbmUrMHgxYjQwLzB4M2VkMCBtbS9jb21wYWN0aW9uLmM6MjY2
-MwogY29tcGFjdF9ub2RlKzB4MTljLzB4MmQwIG1tL2NvbXBhY3Rpb24uYzoyOTMyCiBrY29t
-cGFjdGQrMHgzMjgvMHg5NDAgbW0vY29tcGFjdGlvbi5jOjMyMjYKIGt0aHJlYWQrMHg0Mjcv
-MHg4ODAga2VybmVsL2t0aHJlYWQuYzo0NjQKIHJldF9mcm9tX2ZvcmsrMHg0NS8weDgwIGFy
-Y2gveDg2L2tlcm5lbC9wcm9jZXNzLmM6MTQ4CiByZXRfZnJvbV9mb3JrX2FzbSsweDFhLzB4
-MzAgYXJjaC94ODYvZW50cnkvZW50cnlfNjQuUzoyNDQKCk1lbW9yeSBzdGF0ZSBhcm91bmQg
-dGhlIGJ1Z2d5IGFkZHJlc3M6CiBmZmZmODg4MDRlNzhkZjAwOiAwMCAwMCAwMCAwMCAwMCAw
-MCAwMCAwMCAwMCAwMCAwMCAwMCAwMCAwMCAwMCAwMAogZmZmZjg4ODA0ZTc4ZGY4MDogMDAg
-MDAgMDAgMDAgMDAgMDAgMDAgMDAgMDAgMDAgMDAgMDAgMDAgMDAgMDAgMDAKJmd0O2ZmZmY4
-ODgwNGU3OGUwMDA6IGZmIGZmIGZmIGZmIGZmIGZmIGZmIGZmIGZmIGZmIGZmIGZmIGZmIGZm
-IGZmIGZmCiAgICAgICAgICAgICAgICAgICAgICAgICBeCiBmZmZmODg4MDRlNzhlMDgwOiBm
-ZiBmZiBmZiBmZiBmZiBmZiBmZiBmZiBmZiBmZiBmZiBmZiBmZiBmZiBmZiBmZgogZmZmZjg4
-ODA0ZTc4ZTEwMDogZmYgZmYgZmYgZmYgZmYgZmYgZmYgZmYgZmYgZmYgZmYgZmYgZmYgZmYg
-ZmYgZmYKPT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09
-PT09PT09PT09PT09PT09PT09CgoKSSBob3BlIGl0IGhlbHBzLgpCZXN0IHJlZ2FyZHMKSmlh
-bnpob3UgWmhhbzwvc3RyZm9yZXhjdHp6Y2hhbmdlQGZveG1haWwuY29tPjwveHJpdmVuZGVs
-bDdAZ21haWwuY29tPjwveG54YzIyeG54YzIyQHFxLmNvbT4=
+Am 13.03.25 um 19:21 schrieb Rayan Margham:
 
+> Could i have the deb package, I can try to install it.
+
+Alright, the .deb files for both the kernel image and the kernel headers a=
+re available here:
+
+	https://nextcloud.thetwins.xyz/s/oatc9DaW5XtiP9E
+
+Thanks,
+Armin Wolf
+
+> On Tue, Mar 11, 2025 at 9:53=E2=80=AFPM Armin Wolf <W_Armin@gmx.de> wrot=
+e:
+>> Am 09.03.25 um 13:51 schrieb Rayan Margham:
+>>
+>>> I=E2=80=99m so sorry I=E2=80=99ve been in a mental health unit for the=
+ past month, are you still working on the driver I would love to test anyt=
+hing you provide me now
+>>>
+>>> Bestest regards
+>>> Rayan Margham
+>> Oh my, i wish you all the best for recovery.
+>>
+>> Can you compile the current -rc kernel with this patch series applied? =
+If no then i can give you a .deb package containing the kernel and the
+>> modified acer-wmi driver.
+>>
+>> Thanks,
+>> Armin Wolf
+>>
+>>>> On 5 Mar 2025, at 00:24, Armin Wolf <W_Armin@gmx.de> wrote:
+>>>>
+>>>> =EF=BB=BFAm 15.02.25 um 18:45 schrieb Armin Wolf:
+>>>>
+>>>>> This experimental patch series aims to add fan control support to th=
+e
+>>>>> acer-wmi driver. The patches are compile-tested only and need to be
+>>>>> tested on real hardware to verify that they actually work.
+>>>>>
+>>>>> I CCed two users who requested support for this feature. I would be
+>>>>> very happy if both of you could test those patches and report back.
+>>>>>
+>>>>> I am ready to help you both with compiling a custom linux kernel for
+>>>>> testing this series.
+>>>> Any updates from the two people with Acer hardware?
+>>>>
+>>>> Thanks,
+>>>> Armin Wolf
+>>>>
+>>>>> Changes since v2:
+>>>>> - remove duplicate include and replace hwmon_pwm_mode with
+>>>>>     hwmon_pwm_enable in second patch
+>>>>>
+>>>>> Armin Wolf (3):
+>>>>>     platform/x86: acer-wmi: Fix setting of fan behavior
+>>>>>     platform/x86: acer-wmi: Add fan control support
+>>>>>     platform/x86: acer-wmi: Enable fan control for PH16-72 and PT14-=
+51
+>>>>>
+>>>>>    drivers/platform/x86/acer-wmi.c | 298 +++++++++++++++++++++++++++=
+++---
+>>>>>    1 file changed, 273 insertions(+), 25 deletions(-)
+>>>>>
+>>>>> --
+>>>>> 2.39.5
+>>>>>
+>>>>>
 
