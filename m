@@ -1,176 +1,137 @@
-Return-Path: <linux-kernel+bounces-564682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564671-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 053FDA6594E
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 18:00:01 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93C94A6590F
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 17:53:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6787F3BB293
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 16:55:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 65D5E1698A1
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 16:52:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13F391CCEC8;
-	Mon, 17 Mar 2025 16:52:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99BAE1DD0D5;
+	Mon, 17 Mar 2025 16:47:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Dqsa8BB4";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="d+lU0vpK"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="afYQVAIq"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 015C31C84C5
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 16:52:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64F511DD0C7
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 16:47:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742230368; cv=none; b=u20ihMXUQ1CxXPvnuvDkMgVBBBid6O7S8HRGsOcuBdDpPWrTY4nEZfcq5M+wO4S+NawkjxuEhzaTVWCCZjMqIBaBiqKyTfH6xJlGCAc8vj2aoQi0zavyrLSIBL1btsFDgSlJbA9p+dNGa5uqRxPQZhGU4906XMZCkHayl9ElmtA=
+	t=1742230050; cv=none; b=swOu+GiRJqHfcVRt+/PBjTY0e+Q9CywnO2/+nV1cHIJIZ69QpXMuhhHgkqLroAeUEPsYYpzoSnSjTnKF2Dhb2lxh/KnP8vm0isydZT8bFV0hU9Xzn81Crf/qAy1XxYCGgyaszu8lSYdDVihBmX9SXSrwY5qr7UDlHzI2Fo10Sfg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742230368; c=relaxed/simple;
-	bh=W2prbeleO7CZ2jyqXPaYjzTIRLUOo8EZt3Nsn6LDAvg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=RzwEERF3BJ22Cn0tprYs+P9FHSzCwpKUs3Azp8yYBlwgxwTYwKv6KVS5INOnuyelxV/59vULT2pV70GBFg6ZkL9OHIWHqx1jI7vzTcuT8g1uujkRUYbxEwofeSY8Siq85rAuqOl/g94aCRNdPYagEoHaqLEqXQXfckCiZ6T2ogE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Dqsa8BB4; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=d+lU0vpK; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: "Ahmed S. Darwish" <darwi@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1742230365;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=V+eCc36ij0h2Cy4MVk4v7AsAAWFDxsm4OiZDh3DyaOY=;
-	b=Dqsa8BB4qUAoql0q6IbkmmVMdHdm6tt5Eu2lYwXX/K2yOdNQY+kycH4C69KfV4Ac+6NtcU
-	ZeLw5I8LZiTqyz0tZjtNQUMUOci4ARJhUClzP6D1k8YsPWMCOfu/CTzRPldj6CfXZQaJxO
-	ocrm6Zs5viYTLuTChpfkanjU5sq7lsELwj3+lJGmAGrEortFTnRzm9Li/+M2eAU9N7I1nI
-	DdcSDaOrF/P5q+h3BYTIsxMl+T3cfq5Q8SQ5rkLsVdQ7/LnrHlaBrcUQOmuIUhMXwtuBzU
-	VXcBdxyGkaFaYPyvztlskX+/NPB213m44di8534VJZSE7MRRIYhkxcjfrVUHzw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1742230365;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=V+eCc36ij0h2Cy4MVk4v7AsAAWFDxsm4OiZDh3DyaOY=;
-	b=d+lU0vpKJ2Fxgfg/+rAA2aH6g7nFjeJnrnkXxYH8PbR8R+anN5HSnvZmteAtRUerSEWlsS
-	uH9R8yjJqyPe4tBQ==
-To: Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Borislav Petkov <bp@alien8.de>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	Andrew Cooper <andrew.cooper3@citrix.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	John Ogness <john.ogness@linutronix.de>,
-	x86@kernel.org,
-	x86-cpuid@lists.linux.dev,
-	LKML <linux-kernel@vger.kernel.org>,
-	"Ahmed S. Darwish" <darwi@linutronix.de>
-Subject: [PATCH v2 05/29] x86/cacheinfo: Refactor leaf 0x2 cache descriptor lookup
-Date: Mon, 17 Mar 2025 17:47:21 +0100
-Message-ID: <20250317164745.4754-6-darwi@linutronix.de>
-In-Reply-To: <20250317164745.4754-1-darwi@linutronix.de>
-References: <20250317164745.4754-1-darwi@linutronix.de>
+	s=arc-20240116; t=1742230050; c=relaxed/simple;
+	bh=bCHSORnW89me9g4PcakXu6c12xa6roHEa5IzL6WKpig=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NORAuWI4EA0glaGY5NToaSG0S9GLJealxM5O/QnU7QQXSyWNRhaIevju/itB5uE5XFuLzV0IRJChn1PO2mMmD6fcWoaoEwHu3TSpbPBr2KNuhGOuWytK/EzFPpG4ETntUaCIMlu+F6p7KRxmI/odGNYcV7jOaCTB6ydsBLkXgY0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=afYQVAIq; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742230049; x=1773766049;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=bCHSORnW89me9g4PcakXu6c12xa6roHEa5IzL6WKpig=;
+  b=afYQVAIq5dr2x5qGQa4eLO0obH1AtBctToMHbVUuSYGTLYxlEXrAM2HD
+   +lJkHDKY3Y8BhARl7SLry8qljHm3JcB/k9Ij4RNOHnQ7tQeXJsJ1W99c3
+   G+xx6NrAlKOJM+jugdME77l4SCaGzWIrf1RQxDOdBj8fNdNP4PMAzfE9F
+   DbrdJY5hCxlE0D4iOsM6EK9KRlYgdmslFffrvDJa3ewFUPwHE6ssuvtAV
+   p0VPBWAS9hoFefZ9zXQ5YZtOEG3pz4C8MXrRMeZYuwHcMM2Gv0ogzwS3G
+   JcNHV+472Mlfa4ep+MQmmGwkecRjtlgoluWkp3bVzJCVHFXLCrTw0keAV
+   g==;
+X-CSE-ConnectionGUID: pybqK6gcQFOAUH650mDM3w==
+X-CSE-MsgGUID: 5pdcES/IQr2onSZwzHxIbQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11376"; a="42582673"
+X-IronPort-AV: E=Sophos;i="6.14,254,1736841600"; 
+   d="scan'208";a="42582673"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Mar 2025 09:47:28 -0700
+X-CSE-ConnectionGUID: P4OUCInFQaC1FzVEY+4Qhw==
+X-CSE-MsgGUID: JJR+wYaoRG+mjtucAabHCQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,254,1736841600"; 
+   d="scan'208";a="127165363"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Mar 2025 09:47:26 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tuDcZ-00000003MWR-0JUm;
+	Mon, 17 Mar 2025 18:47:23 +0200
+Date: Mon, 17 Mar 2025 18:47:22 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Raag Jadav <raag.jadav@intel.com>
+Cc: giometti@enneenne.com, gregkh@linuxfoundation.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] pps: generators: tio: fix platform_set_drvdata()
+Message-ID: <Z9hSGgu1ZHEWLy7x@smile.fi.intel.com>
+References: <20250317155452.2038020-1-raag.jadav@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250317155452.2038020-1-raag.jadav@intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-From: Thomas Gleixner <tglx@linutronix.de>
+On Mon, Mar 17, 2025 at 09:24:52PM +0530, Raag Jadav wrote:
+> Currently driver_data user is expecting a pointer to pps_tio while
 
-Extract the cache descriptor lookup logic out of the leaf 0x2 parsing
-code and into a dedicated function.  This disentangles such lookup from
-the deeply nested leaf 0x2 parsing loop.
+struct pps_tio
 
-Remove the cache table termination entry, as it is no longer needed
-after the ARRAY_SIZE()-based lookup.
+> platform_set_drvdata() is setting a double pointer to it.
 
-[ darwi: Move refactoring logic into this separate commit + commit log.
-	 Remove the cache table termination entry. ]
+"...which will point to the local stack of the probe function."
 
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Ahmed S. Darwish <darwi@linutronix.de>
----
- arch/x86/kernel/cpu/cacheinfo.c | 45 +++++++++++++++------------------
- 1 file changed, 20 insertions(+), 25 deletions(-)
+> Make them
+> consistent and fix illegal memory access in driver ->remove() path.
+> 
+> [  156.254066] BUG: unable to handle page fault for address: ffffc9000117b738
 
-diff --git a/arch/x86/kernel/cpu/cacheinfo.c b/arch/x86/kernel/cpu/cacheinfo.c
-index 53f51acefac6..44bc044aa9a2 100644
---- a/arch/x86/kernel/cpu/cacheinfo.c
-+++ b/arch/x86/kernel/cpu/cacheinfo.c
-@@ -123,7 +123,6 @@ static const struct _cache_table cache_table[] =
- 	{ 0xea, LVL_3,      MB(12) },	/* 24-way set assoc, 64 byte line size */
- 	{ 0xeb, LVL_3,      MB(18) },	/* 24-way set assoc, 64 byte line size */
- 	{ 0xec, LVL_3,      MB(24) },	/* 24-way set assoc, 64 byte line size */
--	{ 0x00, 0, 0}
- };
- 
- 
-@@ -727,6 +726,16 @@ void init_hygon_cacheinfo(struct cpuinfo_x86 *c)
- 	ci->num_leaves = find_num_cache_leaves(c);
- }
- 
-+static const struct _cache_table *cache_table_get(u8 desc)
-+{
-+	for (int i = 0; i < ARRAY_SIZE(cache_table); i++) {
-+		if (cache_table[i].descriptor == desc)
-+			return &cache_table[i];
-+	}
-+
-+	return NULL;
-+}
-+
- void init_intel_cacheinfo(struct cpuinfo_x86 *c)
- {
- 	/* Cache sizes */
-@@ -783,35 +792,21 @@ void init_intel_cacheinfo(struct cpuinfo_x86 *c)
- 
- 	/* Don't use CPUID(2) if CPUID(4) is supported. */
- 	if (!ci->num_leaves && c->cpuid_level > 1) {
-+		const struct _cache_table *entry;
- 		union leaf_0x2_regs regs;
- 		u8 *desc;
- 
- 		cpuid_get_leaf_0x2_regs(&regs);
- 		for_each_leaf_0x2_desc(regs, desc) {
--			unsigned char k = 0;
--
--			/* look up this descriptor in the table */
--			while (cache_table[k].descriptor != 0) {
--				if (cache_table[k].descriptor == *desc) {
--					switch (cache_table[k].cache_type) {
--					case LVL_1_INST:
--						l1i += cache_table[k].size;
--						break;
--					case LVL_1_DATA:
--						l1d += cache_table[k].size;
--						break;
--					case LVL_2:
--						l2 += cache_table[k].size;
--						break;
--					case LVL_3:
--						l3 += cache_table[k].size;
--						break;
--					}
--
--					break;
--				}
--
--					k++;
-+			entry = cache_table_get(*desc);
-+			if (!entry)
-+				continue;
-+
-+			switch (entry->cache_type) {
-+			case LVL_1_INST: l1i += entry->size; break;
-+			case LVL_1_DATA: l1d += entry->size; break;
-+			case LVL_2:	 l2  += entry->size; break;
-+			case LVL_3:	 l3  += entry->size; break;
- 			}
- 		}
- 	}
+> [  156.254099] #PF: supervisor read access in kernel mode
+> [  156.254111] #PF: error_code(0x0000) - not-present page
+
+These lines are not needed...
+
+> [  156.254197] RIP: 0010:hrtimer_active+0x2b/0x60
+> [  156.254367] Call Trace:
+
+> [  156.254375]  <TASK>
+> [  156.254382]  ? show_regs+0x6d/0x80
+> [  156.254393]  ? __die+0x29/0x70
+> [  156.254402]  ? page_fault_oops+0x15f/0x4e0
+> [  156.254415]  ? hrtimer_active+0x2b/0x60
+> [  156.254425]  ? search_exception_tables+0x65/0x70
+> [  156.254437]  ? kernelmode_fixup_or_oops.constprop.0+0x61/0x80
+> [  156.254451]  ? __bad_area_nosemaphore+0x195/0x2c0
+> [  156.254462]  ? __lock_acquire+0xaaf/0x2840
+> [  156.254475]  ? bad_area_nosemaphore+0x16/0x20
+> [  156.254486]  ? do_kern_addr_fault.part.0+0x64/0x80
+> [  156.254498]  ? exc_page_fault+0x190/0x2c0
+> [  156.254511]  ? asm_exc_page_fault+0x2b/0x30
+> [  156.254527]  ? __pfx_pps_gen_tio_remove+0x10/0x10 [pps_gen_tio]
+
+...neither these.
+
+> [  156.254541]  ? hrtimer_active+0x2b/0x60
+> [  156.254551]  hrtimer_cancel+0x19/0x50
+> [  156.254561]  pps_gen_tio_remove+0x1e/0x80 [pps_gen_tio]
+
+As I said, ~3-5, okay maybe 7 lines is enough.
+
+> Fixes: c89755d1111f ("pps: generators: Add PPS Generator TIO Driver")
+> Signed-off-by: Raag Jadav <raag.jadav@intel.com>
+> Acked-by: Rodolfo Giometti <giometti@enneenne.com>
+
 -- 
-2.48.1
+With Best Regards,
+Andy Shevchenko
+
 
 
