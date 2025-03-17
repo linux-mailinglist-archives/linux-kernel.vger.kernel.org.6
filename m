@@ -1,106 +1,252 @@
-Return-Path: <linux-kernel+bounces-563826-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563863-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B329AA64947
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:17:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BD33A649D4
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:29:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF61F1894950
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:16:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91C0C3B7EDC
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:25:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71B66235BF8;
-	Mon, 17 Mar 2025 10:14:42 +0000 (UTC)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7045A235BE1;
+	Mon, 17 Mar 2025 10:21:35 +0000 (UTC)
+Received: from smtpbgau2.qq.com (smtpbgau2.qq.com [54.206.34.216])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D50A2356BF;
-	Mon, 17 Mar 2025 10:14:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D2072356B5;
+	Mon, 17 Mar 2025 10:21:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.206.34.216
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742206482; cv=none; b=qDuk8tdDOlkfudMz0tonleGoOCSrDLTQgZiHFRrUEasTSZVDYcDdsTd4YDimr6vdl0wLC3VtPPosLOWuDiBETZ4CdoPTE+sCnxS8lVccy1kwwtmFRnakJfuFnzd+bYiKqbCpnovtuLlrKx+zVx1T2oFVc3PSRtQtHwjboe+z7QQ=
+	t=1742206894; cv=none; b=cZzU1To5RzClcDWpceGS5x4B3kJE8aiIRtIsKRNClIDYG6cPSW3GnNl9391rfggUphKAAtl+MVWql30MMRmsWE9KdGZ1+XK031b7u6hj70IYXJ1Skk72khg8b4bNPTilrY67OXFoVxFkPsGTGQWoYHEs/0tcg2kN9chYTU+FKjs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742206482; c=relaxed/simple;
-	bh=1gZtLBxayCdf5ZFM8fCyYmj67ZQlt8beW6Ly4XUj3qM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pY8HipgNhP7RBbX+m8KBBkxykP1TfsH6lmYUrh6QY4UhMDebISND0WqxhgDAEdGYt5bOCq79G2Qjc9tetuRre8DCs2pmUHEc90gsFSt+lEcofU6Gf2raDw/woNkRYaYg3FwsaZooKJV9GRJJmjMOKnCMH637PymSNDzeFUaKtwo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=fail smtp.mailfrom=kernel.org; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=kernel.org
-X-CSE-ConnectionGUID: Z5bg+506SFqAJBM9FObF6Q==
-X-CSE-MsgGUID: P2UaP82qQXmXYrS9ADMIeA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11375"; a="43426468"
-X-IronPort-AV: E=Sophos;i="6.14,253,1736841600"; 
-   d="scan'208";a="43426468"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Mar 2025 03:14:40 -0700
-X-CSE-ConnectionGUID: nu+r8NFwSt21pzBBJiyiug==
-X-CSE-MsgGUID: vgoUrolKS1CIjqT885NVtA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,253,1736841600"; 
-   d="scan'208";a="126761470"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Mar 2025 03:14:36 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andy@kernel.org>)
-	id 1tu7UP-00000003HEL-1Ug0;
-	Mon, 17 Mar 2025 12:14:33 +0200
-Date: Mon, 17 Mar 2025 12:14:32 +0200
-From: Andy Shevchenko <andy@kernel.org>
-To: Francesco Dolcini <francesco@dolcini.it>
-Cc: Hans de Goede <hdegoede@redhat.com>,
-	Emanuele Ghidoli <ghidoliemanuele@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Francesco Dolcini <francesco.dolcini@toradex.com>,
-	Emanuele Ghidoli <emanuele.ghidoli@toradex.com>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-i2c@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-	soc@kernel.org,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Subject: Re: [RFC PATCH v1 0/2] platform: toradex: Add toradex embedded
- controller
-Message-ID: <Z9f2CE7cI4ODkM8O@smile.fi.intel.com>
-References: <20250313144331.70591-1-francesco@dolcini.it>
- <4596db59-51fc-4497-9e94-670e9533e7aa@redhat.com>
- <20250317100856.GC17428@francesco-nb>
+	s=arc-20240116; t=1742206894; c=relaxed/simple;
+	bh=U837RjvHyqJR3NZVbuSILd/Dyfs80zJOUM3qdXAfa68=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GbiUwa/vJFVepLCj7vNlMEhujlPtc6gJ/X8s4gffWB057XoKftrf/yt9ysCOXTKCXk+W7dh1jkEFce4Q3WfEAckJoVVApYs+HHWOG/kzoJT1+GULGYmU0W96jiw8EtrHenMhCmz1H7UtD94BvPCF3I553BVvbhMpc9C8IrzF5Dw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinsec.com.cn; spf=none smtp.mailfrom=kylinsec.com.cn; arc=none smtp.client-ip=54.206.34.216
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinsec.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=kylinsec.com.cn
+X-QQ-mid: bizesmtpsz9t1742206857tnk4565
+X-QQ-Originating-IP: fAQAPivMZcpfE1jWjItifzjDTQuPzY/G62Js0ufJpCw=
+Received: from localhost.localdomain ( [175.10.25.237])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Mon, 17 Mar 2025 18:20:55 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 4273478174350150020
+From: Luo Qiu <luoqiu@kylinsec.com.cn>
+To: Maxim Levitsky <maximlevitsky@gmail.com>,
+	Alex Dubov <oakad@yahoo.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>
+Cc: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	linux-mmc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] memstick: rtsx_usb_ms: Fix slab-use-after-free in rtsx_usb_ms_drv_remove
+Date: Mon, 17 Mar 2025 18:14:38 +0800
+Message-ID: <4B7BC3E6E291E6F2+20250317101438.25650-1-luoqiu@kylinsec.com.cn>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250317100856.GC17428@francesco-nb>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtpsz:kylinsec.com.cn:qybglogicsvrgz:qybglogicsvrgz7a-0
+X-QQ-XMAILINFO: NGbdgxYCWWEIaOOm/RYCpAi45Q+x9v5ShG51/Y0cYHBKn6yikYrmssPC
+	miTRqRO0qood5OYARvSv/6nT+D2QAI2J0CxqtAIlR6qUhuJJjAcgYIfTxouogKYmPa3oa+H
+	PbFg4G636dwTb4cOQ+8Q5S6q9wTuXFZNUwhfX88BJOfG6AYgL1ly61KGjsWu5G6Zr42urFc
+	GauJHvzWc4mhhBbIudeR5fw57vRyBsTvXS5XV+6O9sU1CtjcfRpm+6y2E0G7q5p/Y4CJeE+
+	teMy14XPCS8iTDVEpNPCZEuj5UEzwWAI44QIJqYv2pfQhc706OocTaaH7dCXKw6Nadf7yB4
+	ArPltzJ3wPW6HeYBYSxWtmrpH+g4woQP2mq7qMy9PP0MKi+a2nnGSEPDQpZ0BM0xpDCCRLd
+	kws/oVaGun+Q5g4RMOaHYEIj1tI0MKxjEvsgYQtgSfoz67CZvW7HKya2o4HUybnLhZRyZ8S
+	h5B/dSYL6AHfDeOcBKyNMSKooJOPMHJxAQ7GQQC0T+hzwTRM+Y+hWtiqdFKfTUUPf1+Oyy5
+	uBq0zQZCNJd8yY62B0Qs9Ygfw2g6KKoldkWBLGmRVZly1aK2K5OGNDfILKojHLafMduZgi1
+	jwvv1SD6iXNbgEZfj/1spvFWhu6iq/EJRhJK9J7wPLBIsiqc9HRd9ZrDX8gI68WG3lQFolG
+	ArRFb38HzTByKH21JuFLTjaKKteiAtPNSJxVOaOw6bluMOH1gqlAXtVR33gnEnNeD67gm0n
+	e3T93Z33u5/D/wDXcemAPnSKoM5HHCeswNg0EA+9frHplJTbUUNY/MZWZh1UDQ/wHPaqZoB
+	A0rYw2+lp0R6J/nGNI8WRilfQAKqakpjnrmaHknePPhi5i9S+mOzUSlGP2Dva84kYxtxph8
+	zVYJRSrlT9/7od/1YQxXV+5cMPn2ajoKNHeHK+tw/4p0FWmLP/srYkOPUA4Utge/Iw9ZRVs
+	KMOZQOuvtY291Xw+0oBrzmWhl6PhjIjuagBRVQMbts1j2oWMLpN7HUOmv7v1rqmg3Qbj6L9
+	BprkULKEQ2Qt+xxP3grnKzwx+uykA=
+X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
+X-QQ-RECHKSPAM: 0
 
-On Mon, Mar 17, 2025 at 11:08:56AM +0100, Francesco Dolcini wrote:
-> On Thu, Mar 13, 2025 at 04:08:14PM +0100, Hans de Goede wrote:
-> > On 13-Mar-25 3:43 PM, Francesco Dolcini wrote:
+This fixes the following crash:
 
-...
+==================================================================
+BUG: KASAN: slab-use-after-free in rtsx_usb_ms_poll_card+0x159/0x200 [rtsx_usb_ms]
+Read of size 8 at addr ffff888136335380 by task kworker/6:0/140241
 
-> > 1. A drivers/mfd/ MFD driver with the regmap stuff,
-> >    registering "board-reset" and "gpio" cells
-> 
-> So, we considered the idea of going with an MFD driver, but looking at
-> drivers/platform/cznic, that is doing something relatively close to what
-> we are doing (just more feature rich, as of now), drivers/platform/
-> seemed a better fit.
-> 
-> I am not 100% sure what's Andy opinion on this topic, from what I can
-> understand his concerns are about the toradex directory (that we'll get
-> rid of), not the drivers/platform/ parent you are concerned about.
+CPU: 6 UID: 0 PID: 140241 Comm: kworker/6:0 Kdump: loaded Tainted: G            E      6.14.0-rc6+ #1
+Tainted: [E]=UNSIGNED_MODULE
+Hardware name: LENOVO 30FNA1V7CW/1057, BIOS S0EKT54A 07/01/2024
+Workqueue: events rtsx_usb_ms_poll_card [rtsx_usb_ms]
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x51/0x70
+ print_address_description.constprop.0+0x27/0x320
+ ? rtsx_usb_ms_poll_card+0x159/0x200 [rtsx_usb_ms]
+ print_report+0x3e/0x70
+ kasan_report+0xab/0xe0
+ ? rtsx_usb_ms_poll_card+0x159/0x200 [rtsx_usb_ms]
+ rtsx_usb_ms_poll_card+0x159/0x200 [rtsx_usb_ms]
+ ? __pfx_rtsx_usb_ms_poll_card+0x10/0x10 [rtsx_usb_ms]
+ ? __pfx___schedule+0x10/0x10
+ ? kick_pool+0x3b/0x270
+ process_one_work+0x357/0x660
+ worker_thread+0x390/0x4c0
+ ? __pfx_worker_thread+0x10/0x10
+ kthread+0x190/0x1d0
+ ? __pfx_kthread+0x10/0x10
+ ret_from_fork+0x2d/0x50
+ ? __pfx_kthread+0x10/0x10
+ ret_from_fork_asm+0x1a/0x30
+ </TASK>
 
-Yes, my point is to have this inside existing folder whatever you decide
-with the maintainers of the respective subsystem to be.
+Allocated by task 161446:
+ kasan_save_stack+0x20/0x40
+ kasan_save_track+0x10/0x30
+ __kasan_kmalloc+0x7b/0x90
+ __kmalloc_noprof+0x1a7/0x470
+ memstick_alloc_host+0x1f/0xe0 [memstick]
+ rtsx_usb_ms_drv_probe+0x47/0x320 [rtsx_usb_ms]
+ platform_probe+0x60/0xe0
+ call_driver_probe+0x35/0x120
+ really_probe+0x123/0x410
+ __driver_probe_device+0xc7/0x1e0
+ driver_probe_device+0x49/0xf0
+ __device_attach_driver+0xc6/0x160
+ bus_for_each_drv+0xe4/0x160
+ __device_attach+0x13a/0x2b0
+ bus_probe_device+0xbd/0xd0
+ device_add+0x4a5/0x760
+ platform_device_add+0x189/0x370
+ mfd_add_device+0x587/0x5e0
+ mfd_add_devices+0xb1/0x130
+ rtsx_usb_probe+0x28e/0x2e0 [rtsx_usb]
+ usb_probe_interface+0x15c/0x460
+ call_driver_probe+0x35/0x120
+ really_probe+0x123/0x410
+ __driver_probe_device+0xc7/0x1e0
+ driver_probe_device+0x49/0xf0
+ __device_attach_driver+0xc6/0x160
+ bus_for_each_drv+0xe4/0x160
+ __device_attach+0x13a/0x2b0
+ rebind_marked_interfaces.isra.0+0xcc/0x110
+ usb_reset_device+0x352/0x410
+ usbdev_do_ioctl+0xe5c/0x1860
+ usbdev_ioctl+0xa/0x20
+ __x64_sys_ioctl+0xc5/0xf0
+ do_syscall_64+0x59/0x170
+ entry_SYSCALL_64_after_hwframe+0x76/0x7e
 
+Freed by task 161506:
+ kasan_save_stack+0x20/0x40
+ kasan_save_track+0x10/0x30
+ kasan_save_free_info+0x36/0x60
+ __kasan_slab_free+0x34/0x50
+ kfree+0x1fd/0x3b0
+ device_release+0x56/0xf0
+ kobject_cleanup+0x73/0x1c0
+ rtsx_usb_ms_drv_remove+0x13d/0x220 [rtsx_usb_ms]
+ platform_remove+0x2f/0x50
+ device_release_driver_internal+0x24b/0x2e0
+ bus_remove_device+0x124/0x1d0
+ device_del+0x239/0x530
+ platform_device_del.part.0+0x19/0xe0
+ platform_device_unregister+0x1c/0x40
+ mfd_remove_devices_fn+0x167/0x170
+ device_for_each_child_reverse+0xc9/0x130
+ mfd_remove_devices+0x6e/0xa0
+ rtsx_usb_disconnect+0x2e/0xd0 [rtsx_usb]
+ usb_unbind_interface+0xf3/0x3f0
+ device_release_driver_internal+0x24b/0x2e0
+ proc_disconnect_claim+0x13d/0x220
+ usbdev_do_ioctl+0xb5e/0x1860
+ usbdev_ioctl+0xa/0x20
+ __x64_sys_ioctl+0xc5/0xf0
+ do_syscall_64+0x59/0x170
+ entry_SYSCALL_64_after_hwframe+0x76/0x7e
+
+Last potentially related work creation:
+ kasan_save_stack+0x20/0x40
+ kasan_record_aux_stack+0x85/0x90
+ insert_work+0x29/0x100
+ __queue_work+0x34a/0x540
+ call_timer_fn+0x2a/0x160
+ expire_timers+0x5f/0x1f0
+ __run_timer_base.part.0+0x1b6/0x1e0
+ run_timer_softirq+0x8b/0xe0
+ handle_softirqs+0xf9/0x360
+ __irq_exit_rcu+0x114/0x130
+ sysvec_apic_timer_interrupt+0x72/0x90
+ asm_sysvec_apic_timer_interrupt+0x16/0x20
+
+Second to last potentially related work creation:
+ kasan_save_stack+0x20/0x40
+ kasan_record_aux_stack+0x85/0x90
+ insert_work+0x29/0x100
+ __queue_work+0x34a/0x540
+ call_timer_fn+0x2a/0x160
+ expire_timers+0x5f/0x1f0
+ __run_timer_base.part.0+0x1b6/0x1e0
+ run_timer_softirq+0x8b/0xe0
+ handle_softirqs+0xf9/0x360
+ __irq_exit_rcu+0x114/0x130
+ sysvec_apic_timer_interrupt+0x72/0x90
+ asm_sysvec_apic_timer_interrupt+0x16/0x20
+
+The buggy address belongs to the object at ffff888136335000
+ which belongs to the cache kmalloc-2k of size 2048
+The buggy address is located 896 bytes inside of
+ freed 2048-byte region [ffff888136335000, ffff888136335800)
+
+The buggy address belongs to the physical page:
+page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x136330
+head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
+flags: 0x17ffffc0000040(head|node=0|zone=2|lastcpupid=0x1fffff)
+page_type: f5(slab)
+raw: 0017ffffc0000040 ffff888100042f00 ffffea000417a000 dead000000000002
+raw: 0000000000000000 0000000000080008 00000000f5000000 0000000000000000
+head: 0017ffffc0000040 ffff888100042f00 ffffea000417a000 dead000000000002
+head: 0000000000000000 0000000000080008 00000000f5000000 0000000000000000
+head: 0017ffffc0000003 ffffea0004d8cc01 ffffffffffffffff 0000000000000000
+head: 0000000000000008 0000000000000000 00000000ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+ ffff888136335280: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff888136335300: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>ffff888136335380: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                   ^
+ ffff888136335400: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff888136335480: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
+
+Fixes: 6827ca573c03 ("memstick: rtsx_usb_ms: Support runtime power management")
+
+Signed-off-by: Luo Qiu <luoqiu@kylinsec.com.cn>
+---
+ drivers/memstick/host/rtsx_usb_ms.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/memstick/host/rtsx_usb_ms.c b/drivers/memstick/host/rtsx_usb_ms.c
+index 6eb892fd4d34..3878136227e4 100644
+--- a/drivers/memstick/host/rtsx_usb_ms.c
++++ b/drivers/memstick/host/rtsx_usb_ms.c
+@@ -813,6 +813,7 @@ static void rtsx_usb_ms_drv_remove(struct platform_device *pdev)
+ 
+ 	host->eject = true;
+ 	cancel_work_sync(&host->handle_req);
++	cancel_delayed_work_sync(&host->poll_card);
+ 
+ 	mutex_lock(&host->host_mutex);
+ 	if (host->req) {
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.48.1
 
 
