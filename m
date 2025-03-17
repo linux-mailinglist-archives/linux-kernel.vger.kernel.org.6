@@ -1,130 +1,123 @@
-Return-Path: <linux-kernel+bounces-564558-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564559-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31FE3A65703
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 17:01:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BAC3A65767
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 17:08:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 448F17AC47D
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 16:00:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C369C88320A
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 16:01:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42A4917A2E6;
-	Mon, 17 Mar 2025 16:01:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FB29171092;
+	Mon, 17 Mar 2025 16:01:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YxgHr6u3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JykFVUJr"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9620C149E17;
-	Mon, 17 Mar 2025 16:01:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29E07C8EB;
+	Mon, 17 Mar 2025 16:01:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742227263; cv=none; b=EzmT2UHpoB2Wqr7AeGpLset9PqJ+Y8vKFD/Jus2jAyknAJO62CD7EEZ7/kBdzVrZmun1IRF2TsLnXyQtIw23/ML/g92HcsXGJ5mDCP9DGiL8QR4C8WBv1QzeeMBNSBv2PPkfdsfAsapZBr1dB6yeYLAUGj7AFBjo3xb2pNUciFw=
+	t=1742227286; cv=none; b=Tq9IPblCiaszJNDO1ZGSWcI9+CWnM3wYSWVAZ8Ad2bzHink+n1nEQ7U/7GGCZO0l0KKv3C6HaHNcimRM3Kgz3yw3RXI4M1umTI+fthhfQlJMiugt8WBB7U7/CWNcF93MdsJsP2OW9TfLfPVnnlTFBGb2QJu67ntEsL4qbT1wQaQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742227263; c=relaxed/simple;
-	bh=sQONLY3EvvXe/kR6sXDFs5LjOhiIS3Jxz4mhJSCwegg=;
+	s=arc-20240116; t=1742227286; c=relaxed/simple;
+	bh=rJe8kVKyH077ow1Mw00nxnv3bgj5DDeZ/UYwSoiFKZk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CdXsakEniJSPLSX0/2BzzVxLECecQverjz2Tc+w4lOs/6HSRZQwPgdMcl6ua4yHJzyD8J87rt+uqlDJpWyEC2FB7fOhC+Mdho2EpZsdIEq4DzYuwYuBYBzW3+GItTtJ7mEhuYuVAxpf4gFAM2WrnTYGvIcvb8y/MAGa23atmhBw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YxgHr6u3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5EB0C4CEE3;
-	Mon, 17 Mar 2025 16:01:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742227263;
-	bh=sQONLY3EvvXe/kR6sXDFs5LjOhiIS3Jxz4mhJSCwegg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YxgHr6u3MFKq8HA9gdvjI50exZGENaHPgU6j3kYvM9J1dWxQaMGq5by/xXPLQgFYt
-	 ISrk03QXtpaO5tyEKYyoSPyGhiJLnJLqWA/KlTS0N0Xs/2FlEroYw4A+VGTKHrPcJ7
-	 87ln8WTTPBix6rZms5xFu2+G8L/TABIBJLMSdnKbT5ColCdRDmf1kaPSbNYBNBB5TB
-	 OBcAyQuQ8ZSyX/kRWmMq+v0ceTVcty24+9nmmxQ65nFhhNmj2P/HFqvKzkfQsP4AcV
-	 Vyba0RVliRfRsJl36aliEsthI3ZJ0JkNwe57Mck70PW7hlTxR+3RA9bK1IGoSZT5LP
-	 jRdGWwgPL+OOA==
-Date: Mon, 17 Mar 2025 09:01:00 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: linux-kernel@vger.kernel.org, linux-tip-commits@vger.kernel.org,
-	Matteo Rizzo <matteorizzo@google.com>,
-	Ingo Molnar <mingo@kernel.org>, x86@kernel.org
-Subject: Re: [tip: perf/urgent] perf/x86: Check data address for IBS software
- filter
-Message-ID: <Z9hHPA5MwrIDtJFm@google.com>
-References: <20250317081058.1794729-1-namhyung@kernel.org>
- <174220290574.14745.9132867025462242568.tip-bot2@tip-bot2>
- <20250317101504.GB34541@noisy.programming.kicks-ass.net>
+	 Content-Type:Content-Disposition:In-Reply-To; b=D0Rqj1m6UzvwSLH1hy0vvedU3MoA9ofyD03ffaGNGI7ODkeXzjp0ep1231gwpmSay/omNn+1TBiq7y27jGa3g778rsBUEqCIb3he9/feBOBnvSDpeD6ACmQvhD4/czMZHQhWJ8tiPh1MdXcr/lE6n32O+kuFLD2ALayyFFNlxbM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JykFVUJr; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742227284; x=1773763284;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=rJe8kVKyH077ow1Mw00nxnv3bgj5DDeZ/UYwSoiFKZk=;
+  b=JykFVUJrMSpbfI8tF3irXoqPIkZXcom1JfsSsPIXxzmMuNP/6+hrmmT+
+   06gWCJittSCMdIPAZbxXAB1UcxbHRvcgOhWMPmJzR6KjJ55IO0U27yIVi
+   Npfd/QLoLEPaktGobeAhlV4RjCGyCfpoz49MjYJtrLQ4ZAWmDE3sS1eIE
+   /AvLUsvoQB1IAC6B5ZadKhv60XFA1PbkIBF0o35Wm/nx8RoDE0G4lfORa
+   QlwWSuEq7Z/WlbRwSdgLpvzfSsglEziMztJOojhQK/IocUaGQSWikiadc
+   uBw6oERafxEDemIJ4Gtpi8caByorQQQ4yzCuRyB8OjFHIRiwDdzSLJoxY
+   g==;
+X-CSE-ConnectionGUID: pXeAeHBHTY6rITBzQ4bXzA==
+X-CSE-MsgGUID: Qgoo6TGqQy+V5+ImbOAZDQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11376"; a="54703329"
+X-IronPort-AV: E=Sophos;i="6.14,254,1736841600"; 
+   d="scan'208";a="54703329"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Mar 2025 09:01:14 -0700
+X-CSE-ConnectionGUID: 63yQND79Scmjk8NuLdValg==
+X-CSE-MsgGUID: DHM8kifPQZSKZYZM2QSPpA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,254,1736841600"; 
+   d="scan'208";a="122479989"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Mar 2025 09:01:08 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tuCtk-00000003Lvv-0VD0;
+	Mon, 17 Mar 2025 18:01:04 +0200
+Date: Mon, 17 Mar 2025 18:01:03 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Hugo Villeneuve <hvilleneuve@dimonoff.com>,
+	Nuno Sa <nuno.sa@analog.com>, David Lechner <dlechner@baylibre.com>,
+	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+	Guillaume Stols <gstols@baylibre.com>,
+	Dumitru Ceclan <mitrutzceclan@gmail.com>,
+	Trevor Gamblin <tgamblin@baylibre.com>,
+	Matteo Martelli <matteomartelli3@gmail.com>,
+	Alisa-Dariana Roman <alisadariana@gmail.com>,
+	Ramona Alexandra Nechita <ramona.nechita@analog.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev
+Subject: Re: [PATCH v8 03/10] iio: adc: add helpers for parsing ADC nodes
+Message-ID: <Z9hHP3vdCm0WFoyH@smile.fi.intel.com>
+References: <cover.1742225817.git.mazziesaccount@gmail.com>
+ <e556f152a9cff2ff61e7b7a4b42feffb400cb1f9.1742225817.git.mazziesaccount@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250317101504.GB34541@noisy.programming.kicks-ass.net>
+In-Reply-To: <e556f152a9cff2ff61e7b7a4b42feffb400cb1f9.1742225817.git.mazziesaccount@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Hi Peter,
-
-On Mon, Mar 17, 2025 at 11:15:04AM +0100, Peter Zijlstra wrote:
-> On Mon, Mar 17, 2025 at 09:15:05AM -0000, tip-bot2 for Namhyung Kim wrote:
-> > The following commit has been merged into the perf/urgent branch of tip:
-> > 
-> > Commit-ID:     b0be17d8108bf3448a58be319d085155a128cf3a
-> > Gitweb:        https://git.kernel.org/tip/b0be17d8108bf3448a58be319d085155a128cf3a
-> > Author:        Namhyung Kim <namhyung@kernel.org>
-> > AuthorDate:    Mon, 17 Mar 2025 01:10:58 -07:00
-> > Committer:     Ingo Molnar <mingo@kernel.org>
-> > CommitterDate: Mon, 17 Mar 2025 10:04:31 +01:00
-> > 
-> > perf/x86: Check data address for IBS software filter
-> > 
-> > The IBS software filter is filtering kernel samples for regular users in
-> > PMI handler.  It checks the instruction address in the IBS register to
-> > determine if it was in the kernel mode or not.
-> > 
-> > But it turns out that it's possible to report a kernel data address even
-> > if the instruction address belongs to the user space.  Matteo Rizzo
-> > found that when an instruction raises an exception, IBS can report some
-> > kernel data address like IDT while holding the faulting instruction's
-> > RIP.  To prevent an information leak, it should double check if the data
-> > address in PERF_SAMPLE_DATA is in the kernel space as well.
-> > 
-> > Suggested-by: Matteo Rizzo <matteorizzo@google.com>
-> > Signed-off-by: Namhyung Kim <namhyung@kernel.org>
-> > Signed-off-by: Ingo Molnar <mingo@kernel.org>
-> > Cc: Peter Zijlstra <peterz@infradead.org>
-> > Link: https://lore.kernel.org/r/20250317081058.1794729-1-namhyung@kernel.org
-> > ---
-> >  arch/x86/events/amd/ibs.c | 7 +++++++
-> >  1 file changed, 7 insertions(+)
-> > 
-> > diff --git a/arch/x86/events/amd/ibs.c b/arch/x86/events/amd/ibs.c
-> > index e7a8b87..24985c7 100644
-> > --- a/arch/x86/events/amd/ibs.c
-> > +++ b/arch/x86/events/amd/ibs.c
-> > @@ -1147,6 +1147,13 @@ fail:
-> >  	if (perf_ibs == &perf_ibs_op)
-> >  		perf_ibs_parse_ld_st_data(event->attr.sample_type, &ibs_data, &data);
-> >  
-> > +	if ((event->attr.config2 & IBS_SW_FILTER_MASK) &&
-> > +	    (event->attr.sample_type & PERF_SAMPLE_ADDR) &&
-> > +	    event->attr.exclude_kernel && !access_ok(data.addr)) {
+On Mon, Mar 17, 2025 at 05:50:49PM +0200, Matti Vaittinen wrote:
+> There are ADC ICs which may have some of the AIN pins usable for other
+> functions. These ICs may have some of the AIN pins wired so that they
+> should not be used for ADC.
 > 
-> If only you'd looked at all the other filter code :/ everybody uses
-> kernel_ip() helper for this, not access_ok().
-
-I thought it also needs __KERNEL_CS but now I see it only checks the
-address.  Will change in v2.
-
-Thanks,
-Namhyung
-
-
+> (Preferred?) way for marking pins which can be used as ADC inputs is to
+> add corresponding channels@N nodes in the device tree as described in
+> the ADC binding yaml.
 > 
-> > +		throttle = perf_event_account_interrupt(event);
-> > +		goto out;
-> > +	}
-> > +
-> >  	/*
-> >  	 * rip recorded by IbsOpRip will not be consistent with rsp and rbp
-> >  	 * recorded as part of interrupt regs. Thus we need to use rip from
+> Add couple of helper functions which can be used to retrieve the channel
+> information from the device node.
+
+LGTM now, thanks!
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
