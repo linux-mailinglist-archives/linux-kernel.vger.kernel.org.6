@@ -1,245 +1,124 @@
-Return-Path: <linux-kernel+bounces-565099-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565100-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C79A2A660DA
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 22:43:04 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A47CBA660DF
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 22:44:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CFF9F189D215
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 21:43:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C48C73A52A3
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 21:44:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A23D2040BE;
-	Mon, 17 Mar 2025 21:42:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C693120468E;
+	Mon, 17 Mar 2025 21:44:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ieee.org header.i=@ieee.org header.b="YCiELPm5"
-Received: from mail-il1-f182.google.com (mail-il1-f182.google.com [209.85.166.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="RIM8uLs/"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C83AE2040B3
-	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 21:42:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C05591FFC44
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 21:44:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742247778; cv=none; b=F5RypxzLe9ji2dGnCU/QE7+owqEdZpcVBRTdgyiFQYIZHqqj5/jqQoKBEwyErSiAn1+F+SozengLIff7n3Rw+sz/erd+ufAzrN1ZSc7La+QFvoCRCoYcubKYpyOZBTTC2uHkIocXKFz4UyRqzZo/cwGtRuGOmPwZ47AipZ5eu14=
+	t=1742247860; cv=none; b=cpQrGMQEzFl9ztSKlHq6o2RJO8r5tB/EVuFRCUqYuI35hq9jG5lY0WZDJEnrqvMd0ZpYWlI2YM2gMbUfBjyaNWxL7ybYvubSxhI3mCgZ8bb9uz0cwZx/JtfqFB8kj+n+OPDq+ektY+38QkhwwsgSMi2T0bvV2dbeRknezvmIhRw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742247778; c=relaxed/simple;
-	bh=zPMLSIbcEHCIBbYioUkgyTeI/GFgQyoai43qShSaFtU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ju11ydCoE8DJq2PBEESimwZio7/NMAKiaDqBO908E9H2+Vq8RpX/JOp3SbqP4ykLlhJc4qtZo9LGyXWK0ETjv0fs4xmCL1bjDpzps75TFtK5u5sTDW8aJlyBIrmXH7H77CMfCVVPHg3MemiSl89cQC0//zg39I9aivBhjw+F5Gg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ieee.org; spf=pass smtp.mailfrom=ieee.org; dkim=pass (1024-bit key) header.d=ieee.org header.i=@ieee.org header.b=YCiELPm5; arc=none smtp.client-ip=209.85.166.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ieee.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ieee.org
-Received: by mail-il1-f182.google.com with SMTP id e9e14a558f8ab-3d46aaf36a2so39243475ab.3
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 14:42:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ieee.org; s=google; t=1742247774; x=1742852574; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=/3xQ5zZmXUjhGDYgf9JDZwTpw40dRx5XKZ5GtTioiJg=;
-        b=YCiELPm5aTZ6Cm1g2zocOaViTNxhIlGmkq09l09Y/Nsq6AR8kITMJ4uXZKU0HAg2jn
-         1AyQH98dmJ6FOK5HyOvHqh8t82ugggpswQBbZM2DHCBLE1bbLrocSkY2o6k7fvfCrkkW
-         y8QFLAbimd0VFXvc24lr0HLxF1fMn6+s2Dhz0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742247774; x=1742852574;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/3xQ5zZmXUjhGDYgf9JDZwTpw40dRx5XKZ5GtTioiJg=;
-        b=EMnJLxGJeibWAxa980rrrdFLLpt+qGYD++AnYcyhSgb+ml+hqiqMHDaja5zrHpojto
-         WW4bsDKBjkcQaiMt5XAZSy7/GmJNF+HvqgTmgyQECTFS7aoZ7S0N1Z8xcVGsJgYRbK6W
-         uAFnWSH/gcJhyWNIW91qNJ2Wj9t+pk637X3vBD4ArROEA6fyBjarFb08TDPfH0lfu2tm
-         SbfLqIQPeUjcmvtqBlS3hS0oDGnal/TxRjy2o/fVopCd+xUPX2h/6UfcyRNokPGq9vEz
-         8lO8DGF98pDCwSljvJqYNfcAoh6m5CBujjJRSIwskfywgBdFBKTnCVqbAEakGwx1Ytwb
-         YRwQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVt63rNrqvQTbp0waM2AesRsh8nZVp6W65QLPbURCddKwh9lI1wuHOFm5MSng8CsELyPTgpMg9goWGotOE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxT23lEO0TkebwA6QOQ6AXCvGQPrNUfEUEYA2EzosWjdpwm4dMS
-	gAHzwhQWqU7Ug+oNjo5bXguX7wbOA9nky+jUtlXSerseIX/AivPX9o0k4BRXNw==
-X-Gm-Gg: ASbGncusL4N/5raKJgyzRAuJ49ekN10pffo2DxnNyfkh4tPKjlw0YWQZqnl9uSyYc21
-	OLnYIqs21EAxIX9R/ri2ZXH/AXOHQSmRh+7QA2tF6WqHiiAu4+Ca8dBiivKVG0cClG+YvESbZEa
-	9L28GA0ciIB66gX4cZI8S1jFuAykk0GSDzR4QSWr+NG7NjB7ybFrbh39IiH0l3VgfYqJJBrlTaT
-	j/pNkXjvzKO6mdGfisi3NfRhd8DaUy0AaNefLaVthETXIk0Zt+Jbl+rU1IssL+O4ehTNCkFHH/1
-	vKYeie/0054A4y2n8HxlKIhT5bWxC/jCnt41Ki6LdNOLzHfSNmU0CQCUKbFiNfSVk7LNYWBIgT9
-	bD/o=
-X-Google-Smtp-Source: AGHT+IFodoEZ0iTIZiA6FhVLkShreO9KYufA0wdJJTCzNeJU0iLZRijzbSwcc1+/UDyTpRTIB0KdFg==
-X-Received: by 2002:a05:6e02:12e8:b0:3d4:6f37:3748 with SMTP id e9e14a558f8ab-3d483a6ef52mr154160345ab.16.1742247773772;
-        Mon, 17 Mar 2025 14:42:53 -0700 (PDT)
-Received: from [172.22.22.28] (c-73-228-159-35.hsd1.mn.comcast.net. [73.228.159.35])
-        by smtp.googlemail.com with ESMTPSA id 8926c6da1cb9f-4f2637faa36sm2431266173.77.2025.03.17.14.42.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 17 Mar 2025 14:42:53 -0700 (PDT)
-Message-ID: <401059d0-6b2c-4c40-8c4d-51749dca27f3@ieee.org>
-Date: Mon, 17 Mar 2025 16:42:51 -0500
+	s=arc-20240116; t=1742247860; c=relaxed/simple;
+	bh=kjFMmMJneInhZkEqfeFTWZ2lT3byx21zcfOU1fur+Rc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=N9CqLN36NarMHprPomNjYZt1NM6Ik78MVuwYpCdJ/ARpROq7P0Vo8+gZPn6rc0j/nSmjVkmww1aysXQNDO1z1L3qeOTLc5CEVquxLewQD6tUmfp1PIiHJJTMA1gfCUTeQsdgUbS/ZIqJXFTKojQfxGxL6JNd+0sdobhdMBklXcs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=RIM8uLs/; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1742247853;
+	bh=kjFMmMJneInhZkEqfeFTWZ2lT3byx21zcfOU1fur+Rc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=RIM8uLs/Rx++lH/IkmuW39PTnLkmwdfZsnJUnWeQIwcJuEeXvXGkNpxsYkWwJUi/d
+	 HptH29XqeJBm6uEKBoemTA06VTgsoo35ydB0AC0Xuy2zLYcKwMXPToRfivQpOxT9+d
+	 VyQai7k/XkPADke5bxAC6HR94A0g55MB243ByzXOJF/t0JGGNtD6lwFCAeiABpDhdG
+	 isUYIhKbXeBE32biyWffVk34bqObZw9qweRI4mUvBUlsYKt56VHEgigI6CUuOfQYvc
+	 1/Bo/a0Sk4uz2bjyQ1GXkphFv1AOzGeEQnQaYuc1XkET7DoqCqmViRh+FLGsXHOzwV
+	 DE+BrCeDYr/iQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZGpQL5MMjz4xCW;
+	Tue, 18 Mar 2025 08:44:10 +1100 (AEDT)
+Date: Tue, 18 Mar 2025 08:44:10 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Kees Cook <kees@kernel.org>, linux-kernel@vger.kernel.org, Bruno
+ Sobreira =?UTF-8?B?RnJhbsOnYQ==?= <brunofrancadevsec@gmail.com>, Danilo
+ Pereira <dpereira@lkcamp.dev>, David Gow <davidgow@google.com>, Diego
+ Vieira <diego.daniel.professional@gmail.com>, Gabriela Bittencourt
+ <gbittencourt@lkcamp.dev>, Gabriel Krisman Bertazi <krisman@suse.de>, Jakub
+ Kicinski <kuba@kernel.org>, kernel test robot <oliver.sang@intel.com>,
+ Kuan-Wei Chiu <visitorckw@gmail.com>, Luis Felipe Hernandez
+ <luis.hernandez093@gmail.com>, Lukas Bulwahn <lukas.bulwahn@redhat.com>,
+ Masami Hiramatsu <mhiramat@kernel.org>, Nathan Chancellor
+ <nathan@kernel.org>, Nicolas Pitre <npitre@baylibre.com>, Pedro Orlando
+ <porlando@lkcamp.dev>, Petr Mladek <pmladek@suse.com>, Rae Moar
+ <rmoar@google.com>, Shuah Khan <skhan@linuxfoundation.org>, Steven Rostedt
+ <rostedt@goodmis.org>, Tamir Duberstein <tamird@gmail.com>, Thomas
+ =?UTF-8?B?V2Vpw59zY2h1aA==?= <linux@weissschuh.net>, Vlastimil Babka
+ <vbabka@suse.cz>, Yu-Chun Lin <eleanor15x@gmail.com>
+Subject: Re: [GIT PULL] move-lib-kunit for v6.15-rc1
+Message-ID: <20250318084326.7ede18e2@canb.auug.org.au>
+In-Reply-To: <202503170842.FFEE75351@keescook>
+References: <202503170842.FFEE75351@keescook>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 2/2] i2c: spacemit: add support for SpacemiT K1 SoC
-To: Troy Mitchell <troymitchell988@gmail.com>,
- Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Yixun Lan <dlan@gentoo.org>
-Cc: linux-riscv@lists.infradead.org, linux-i2c@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- spacemit@lists.linux.dev, Alex Elder <elder@riscstar.com>
-References: <20250316-k1-i2c-master-v7-0-f2d5c43e2f40@gmail.com>
- <20250316-k1-i2c-master-v7-2-f2d5c43e2f40@gmail.com>
-Content-Language: en-US
-From: Alex Elder <elder@ieee.org>
-In-Reply-To: <20250316-k1-i2c-master-v7-2-f2d5c43e2f40@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; boundary="Sig_/veluDy7n/6Q5eiqrUmaphew";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On 3/16/25 2:43 AM, Troy Mitchell wrote:
-> This patch introduces basic I2C support for the SpacemiT K1 SoC,
-> utilizing interrupts for transfers.
-> 
-> The driver has been tested using i2c-tools on a Bananapi-F3 board,
-> and basic I2C read/write operations have been confirmed to work.
-> 
-> Reviewed-by: Alex Elder <elder@riscstar.com>
-> Link: https://lore.kernel.org/all/20250128-k1-maintainer-1-v1-1-e5dec4f379eb@gentoo.org [1]
-> Signed-off-by: Troy Mitchell <troymitchell988@gmail.com>
+--Sig_/veluDy7n/6Q5eiqrUmaphew
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I know I said it was fine, but I'm going to reiterate two comments in
-the probe function.
+Hi all,
 
-> ---
->   drivers/i2c/busses/Kconfig  |  17 ++
->   drivers/i2c/busses/Makefile |   1 +
->   drivers/i2c/busses/i2c-k1.c | 605 ++++++++++++++++++++++++++++++++++++++++++++
->   3 files changed, 623 insertions(+)
-> 
+On Mon, 17 Mar 2025 08:47:13 -0700 Kees Cook <kees@kernel.org> wrote:
+>
+> Please pull the move-lib-kunit tree for v6.15-rc1. This is a one-off tree
+> to coordinate the move of selftests out of lib/ and into lib/tests/. A
+> separate tree was used for this to keep the paths sane with all the
+> work in the same place. Doing this across multiple trees was going to
+> be very difficult, so any on-going updates were collected here to try to
+> avoid merge conflicts. I think only one small conflict remains, just
+> today, detailed here:
+> https://lore.kernel.org/linux-next/20250317213953.01ca90e9@canb.auug.org.=
+au/
+> sfr's resolution looks correct.
 
-. . .
+There was also
 
-> diff --git a/drivers/i2c/busses/i2c-k1.c b/drivers/i2c/busses/i2c-k1.c
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..ae43dcd31e8aa480766b44be91656657c7aaaf4a
-> --- /dev/null
-> +++ b/drivers/i2c/busses/i2c-k1.c
-> @@ -0,0 +1,605 @@
+https://lore.kernel.org/linux-next/20250213151927.1674562e@canb.auug.org.au/
 
-. . .
+--=20
+Cheers,
+Stephen Rothwell
 
-> +static int spacemit_i2c_probe(struct platform_device *pdev)
-> +{
-> +	struct clk *clk;
-> +	struct device *dev = &pdev->dev;
-> +	struct device_node *of_node = pdev->dev.of_node;
-> +	struct spacemit_i2c_dev *i2c;
-> +	int ret;
-> +
-> +	i2c = devm_kzalloc(dev, sizeof(*i2c), GFP_KERNEL);
-> +	if (!i2c)
-> +		return -ENOMEM;
-> +
-> +	ret = of_property_read_u32(of_node, "clock-frequency", &i2c->clock_freq);
-> +	if (ret)
-> +		dev_warn(dev, "failed to read clock-frequency property\n");
+--Sig_/veluDy7n/6Q5eiqrUmaphew
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-If the property doesn't exist, I don't think this warrants a warning,
-because it's optional.  Perhaps if a different error (something other
-than -EINVAL) is returned it would warrant a warning.
+-----BEGIN PGP SIGNATURE-----
 
-> +
-> +	/* For now, this driver doesn't support high-speed. */
-> +	if (!i2c->clock_freq || i2c->clock_freq < 1 ||
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfYl6oACgkQAVBC80lX
+0GxJyQf/QCWQeZxFohQZc00vwUBme6P9fYQo2rzu0PfrXqyIccYR7zzT1ZHDzES6
+BwHOuz6m0ssr8FAYORcvTHTa8QpzCImzWhpaNyWjeWy4bhy71sY/UHbwu9ly2wpn
+t1D/IbYiQbdvleeESWubcgplsJX0NDKbpbeGTw9CcZbi1NXIZHoaQYrw0DpTCx/h
+zhGHNfBsjxYge/XBSyoXkQg/uj7QpR97Q20B5fIV7gEHHoKeg2VmdP1MgLT26o1m
+L4XpvLPKo5hjqcauVf6B4oh2Vmx8NtUEjpWbe5+kQBPFFTl4t7wMWJjyuWVUFxO+
+Sp+KNCHnaPsZ1W+qF+KlN4cv58atYw==
+=2dE2
+-----END PGP SIGNATURE-----
 
-For an unsigned value, !i2c->clock_freq is *the same as*
-i2c->clock_freq < 1.  Get rid of the latter.
-
-I'll leave it up to the maintainer to decide whether these
-comments can just be ignored--my Reviewed-by is fine, even
-if you don't change these.
-
-					-Alex
-
-> +	    i2c->clock_freq > SPACEMIT_I2C_MAX_FAST_MODE_FREQ) {
-> +		dev_warn(dev, "unsupported clock frequency %u; using %u\n",
-> +			 i2c->clock_freq, SPACEMIT_I2C_MAX_FAST_MODE_FREQ);
-> +		i2c->clock_freq = SPACEMIT_I2C_MAX_FAST_MODE_FREQ;
-> +	} else if (i2c->clock_freq < SPACEMIT_I2C_MAX_STANDARD_MODE_FREQ) {
-> +		dev_warn(dev, "unsupported clock frequency %u; using %u\n",
-> +			 i2c->clock_freq,  SPACEMIT_I2C_MAX_STANDARD_MODE_FREQ);
-> +		i2c->clock_freq = SPACEMIT_I2C_MAX_STANDARD_MODE_FREQ;
-> +	}
-> +
-> +	i2c->dev = &pdev->dev;
-> +
-> +	i2c->base = devm_platform_ioremap_resource(pdev, 0);
-> +	if (IS_ERR(i2c->base))
-> +		return dev_err_probe(dev, PTR_ERR(i2c->base), "failed to do ioremap");
-> +
-> +	i2c->irq = platform_get_irq(pdev, 0);
-> +	if (i2c->irq < 0)
-> +		return dev_err_probe(dev, i2c->irq, "failed to get irq resource");
-> +
-> +	ret = devm_request_irq(i2c->dev, i2c->irq, spacemit_i2c_irq_handler,
-> +			       IRQF_NO_SUSPEND | IRQF_ONESHOT, dev_name(i2c->dev), i2c);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "failed to request irq");
-> +
-> +	clk = devm_clk_get_enabled(dev, "func");
-> +	if (IS_ERR(clk))
-> +		return dev_err_probe(dev, PTR_ERR(clk), "failed to enable func clock");
-> +
-> +	clk = devm_clk_get_enabled(dev, "bus");
-> +	if (IS_ERR(clk))
-> +		return dev_err_probe(dev, PTR_ERR(clk), "failed to enable bus clock");
-> +
-> +	spacemit_i2c_reset(i2c);
-> +
-> +	i2c_set_adapdata(&i2c->adapt, i2c);
-> +	i2c->adapt.owner = THIS_MODULE;
-> +	i2c->adapt.algo = &spacemit_i2c_algo;
-> +	i2c->adapt.dev.parent = i2c->dev;
-> +	i2c->adapt.nr = pdev->id;
-> +
-> +	i2c->adapt.dev.of_node = of_node;
-> +
-> +	strscpy(i2c->adapt.name, "spacemit-i2c-adapter", sizeof(i2c->adapt.name));
-> +
-> +	init_completion(&i2c->complete);
-> +
-> +	platform_set_drvdata(pdev, i2c);
-> +
-> +	ret = i2c_add_numbered_adapter(&i2c->adapt);
-> +	if (ret)
-> +		return dev_err_probe(&pdev->dev, ret, "failed to add i2c adapter");
-> +
-> +	return 0;
-> +}
-> +
-> +static void spacemit_i2c_remove(struct platform_device *pdev)
-> +{
-> +	struct spacemit_i2c_dev *i2c = platform_get_drvdata(pdev);
-> +
-> +	i2c_del_adapter(&i2c->adapt);
-> +}
-> +
-> +static const struct of_device_id spacemit_i2c_of_match[] = {
-> +	{ .compatible = "spacemit,k1-i2c", },
-> +	{ /* sentinel */ }
-> +};
-> +MODULE_DEVICE_TABLE(of, spacemit_i2c_of_match);
-> +
-> +static struct platform_driver spacemit_i2c_driver = {
-> +	.probe = spacemit_i2c_probe,
-> +	.remove = spacemit_i2c_remove,
-> +	.driver = {
-> +		.name = "i2c-k1",
-> +		.of_match_table = spacemit_i2c_of_match,
-> +	},
-> +};
-> +module_platform_driver(spacemit_i2c_driver);
-> +
-> +MODULE_LICENSE("GPL");
-> +MODULE_DESCRIPTION("I2C bus driver for SpacemiT K1 SoC");
-> 
-
+--Sig_/veluDy7n/6Q5eiqrUmaphew--
 
