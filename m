@@ -1,167 +1,115 @@
-Return-Path: <linux-kernel+bounces-564511-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564508-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9453A65694
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 16:53:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 75FEEA65681
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 16:52:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D9DC3B9360
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 15:48:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B2A23ABF7E
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 15:47:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A6D5191F7F;
-	Mon, 17 Mar 2025 15:46:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EB48171092;
+	Mon, 17 Mar 2025 15:46:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="S59wFdQe"
-Received: from relay.smtp-ext.broadcom.com (relay.smtp-ext.broadcom.com [192.19.166.231])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bmvQmwst"
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EF8C323D;
-	Mon, 17 Mar 2025 15:46:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.19.166.231
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 897E5155322;
+	Mon, 17 Mar 2025 15:46:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742226408; cv=none; b=qOwd1CdprKc18GtF/q0dOEFrCv3XBgbniD9Alx0bMvQ2ieUc/ah/DV0dZVWPG7/vqmnHbBCoWdDQS7S3nzFzY92n1MwoogZLsn42g62si41LVYJ9HgJe6HUwVN+SWk70fDFhd2oyPgklpypZCzJH0Nyk+XW0yHOQfSmUoLHgzSs=
+	t=1742226372; cv=none; b=GLghyQ7ZEoqyR2P1QrRgY5qhkpPDDo5dxDNjnpKRYTXVy8O9i7+M89xVvWF9spSih8EzXSKbQKlfmB0nBriciA8c9rPzrU+kAjWi/Ou4EX1x22m9mtxh0NkXVkaXycNEO+MpPOBLenG1vbIuLY9g+Fy4rOoR6YYtu9LEKKfLBbA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742226408; c=relaxed/simple;
-	bh=095jg2ukZa2ajcA3WqCTU0eu5rb7U0HAMD7VWL1sGbk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=JztJSAmWGD7MN5NamY+B3JJGfsnXTVrFFxrGdHIZt4M9pC1rr035IPR2Xggr0Xmu4Gr8BFgMbAj9PZsWlIxtAr5acYBQjmV4T2KstV6hiR4nDSc73xmL8GY434XonyhJCoJIxtjefgDbQL3n5OTNamgtuPrxpzUJKi8JyAsfjfU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=S59wFdQe; arc=none smtp.client-ip=192.19.166.231
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: from mail-acc-it-01.broadcom.com (mail-acc-it-01.acc.broadcom.net [10.35.36.83])
-	by relay.smtp-ext.broadcom.com (Postfix) with ESMTP id 41449C0005A5;
-	Mon, 17 Mar 2025 08:46:46 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 relay.smtp-ext.broadcom.com 41449C0005A5
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=broadcom.com;
-	s=dkimrelay; t=1742226406;
-	bh=095jg2ukZa2ajcA3WqCTU0eu5rb7U0HAMD7VWL1sGbk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=S59wFdQenNUcObABsb6nZjaGJPGkqZN/7DNaasEcbEndYaYqbrLFd8OZuGxg7ICCT
-	 X3RA0jhOav91XaX+GLZFOeWkH3XglJS94dgO8F2lHsPxg7JHsenR3nwFEPwQuFkIQ6
-	 831XTfP0JzVVJZhfnL12m43KxWcesVVuxC4faG7g=
-Received: from stbirv-lnx-1.igp.broadcom.net (stbirv-lnx-1.igp.broadcom.net [10.67.48.32])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail-acc-it-01.broadcom.com (Postfix) with ESMTPSA id 149624002F44;
-	Mon, 17 Mar 2025 11:45:44 -0400 (EDT)
-From: Florian Fainelli <florian.fainelli@broadcom.com>
-To: stable@vger.kernel.org
-Cc: Ilya Maximets <i.maximets@ovn.org>,
-	Friedrich Weber <f.weber@proxmox.com>,
-	Aaron Conole <aconole@redhat.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Sasha Levin <sashal@kernel.org>,
-	Carlos Soto <carlos.soto@broadcom.com>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Pravin B Shelar <pshelar@ovn.org>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Martin KaFai Lau <kafai@fb.com>,
-	Song Liu <songliubraving@fb.com>,
-	Yonghong Song <yhs@fb.com>,
-	Andrii Nakryiko <andriin@fb.com>,
-	Eric Dumazet <edumazet@google.com>,
-	Willem de Bruijn <willemb@google.com>,
-	David Ahern <dsahern@kernel.org>,
-	=?UTF-8?q?Beno=C3=AEt=20Monin?= <benoit.monin@gmx.fr>,
-	Xin Long <lucien.xin@gmail.com>,
-	Felix Huettner <felix.huettner@mail.schwarz>,
-	netdev@vger.kernel.org (open list:NETWORKING [GENERAL]),
-	linux-kernel@vger.kernel.org (open list),
-	dev@openvswitch.org (open list:OPENVSWITCH),
-	bpf@vger.kernel.org (open list:BPF (Safe dynamic programs and tools))
-Subject: [PATCH stable 5.10 2/2] openvswitch: fix lockup on tx to unregistering netdev with carrier
-Date: Mon, 17 Mar 2025 08:45:37 -0700
-Message-Id: <20250317154537.3633540-3-florian.fainelli@broadcom.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250317154537.3633540-1-florian.fainelli@broadcom.com>
-References: <20250317154537.3633540-1-florian.fainelli@broadcom.com>
+	s=arc-20240116; t=1742226372; c=relaxed/simple;
+	bh=N0XXHSoerCz+fkW0gAlHMYillsKvgy/L8Pvju8fyza0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QA3jvLhby/jcbKLY7DYDQyd9OPEIeMXD+vTMlAlAPQAmps4e0btIUR4fEGTvF9isvlrPyKOruVNTutQaEYdV+B+yTKXeB3MIfz8AwxyKIvwIET1GoAgm82vb2J2bStOPiXBDzWXbFOdSmDZ6aSnrRpW0Z1V+lGwaD5McJ6Xfh6c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bmvQmwst; arc=none smtp.client-ip=209.85.216.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2ff62f9b6e4so615864a91.0;
+        Mon, 17 Mar 2025 08:46:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742226371; x=1742831171; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=N0XXHSoerCz+fkW0gAlHMYillsKvgy/L8Pvju8fyza0=;
+        b=bmvQmwstYYy3u0cj7D34fJ4uxtp8I3Jp7yHRO1WdoDkjqXbduyxW++v/Ry7EyP0h56
+         NF3nqSM+GgFE4YfjYaFiVBckIjMNiFMEbpGh8rsixilm/M8UiK4egdl/4ArYju+zJ6GU
+         01PvlHcvds7AcoM/xwE+ianEFMjzWvduBgXyE9eahDonBL2VkdOVURRMJwdT6wG/5Uqz
+         PF0NtT1feRa41ptXFati0P2SsdNBm6llaRy/6NReCIhdIGMsTeQrPDbGs4XWydc/IwlG
+         Eh3H2RQ3+lk8ln8M6f/NvS5G0LQsRZDn+mJd/1Qe+4y31OkkFAzWZ+GhfW7PIw2ihal6
+         qjrA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742226371; x=1742831171;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=N0XXHSoerCz+fkW0gAlHMYillsKvgy/L8Pvju8fyza0=;
+        b=qgYS2RiKD9EG4SBV7gJckvfSneaDSLSchgDqhwSzYnwctWGvE/J4Hb7WZL6Lp42miQ
+         rbRpMfokg2YTav338iJzOR55gqeLHG7DnOn2TwXgj+VL2r0xcLUWNzkVE65/SipxV624
+         p9u0997RsbeVEtCUt7Bn3BUeW5QlbCFCpb54+Ndya+LDXXb+FNC1NhfMKAZ5gfPmwRPi
+         a2l/2fsBmaEsORCn2yGF0TbwgE++jfToNclZDImtx8Nu7sLj0vc/OG9T+aP3wEF3luT3
+         GHoaBIUblUxwbdHSGg3rrRtmTvgv2vC1s/PhLJO2kXucGHr+UIi2ZDn3MOM3K4UpSzIZ
+         vSUw==
+X-Forwarded-Encrypted: i=1; AJvYcCV7lEYHT+ry6cKN/0ZEoFlmRkU5hLeiZSAUgisRsdH9bqC7nlXaSrZ+shw0UL9eltDqg47oHNg3G2mwTbxOVp8=@vger.kernel.org, AJvYcCWejVatFYlrrMfHnOR2CaFZ3c3FdRdmEBiWBITt21vRbJDHJbYVqz+e+BaWi8MUTEYI4nOd38Nxj8shuIA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwhmlHPey1CAlt8CzNUiRKKp2qP2B/E4ksC58tNet0xcVdFtstI
+	NZZCetKzkhKD7zfDqgRhICN2j5Azz88IJotDRMqUWwmeu8Kncal/erHflYtVSnhVDPZUMLBT0U1
+	pYEwWdKQ4Y4TxRXoeJa3UV5WSp4I=
+X-Gm-Gg: ASbGncvzyUGsy+MeJUsfKqXTHQ1D2HLl+a40ph3tHlvQK9DS2WBT84mHy658oigymQQ
+	r+/nDUD+FPBIhOZvwpd//hd7QQlA+iKXYhdem7eC3KxVF0suLk/yZ1lfYbjR4QN039z4QKJ2DDC
+	6aV2sYF4pRvQ3RjsD438vkwoZ1JIErPI//G89Z
+X-Google-Smtp-Source: AGHT+IGsWrTravBcGZquqTChLJG6sZsrdkGgwDZjO6DsTAiQ2OaxrCp+Yf91E1I1j0SrEDrf6Qq5rvoM9jANoIT8Hk0=
+X-Received: by 2002:a17:90b:38ce:b0:2ee:acea:9ec4 with SMTP id
+ 98e67ed59e1d1-30151d68999mr5992647a91.3.1742226370592; Mon, 17 Mar 2025
+ 08:46:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <D8HVNR3Q3UL8.1007IZIZTQ0XB@proton.me> <20250316185439.913013-1-contact@antoniohickey.com>
+ <D8IMV6MH4EVX.3BWHLLY5UGLC0@proton.me>
+In-Reply-To: <D8IMV6MH4EVX.3BWHLLY5UGLC0@proton.me>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Mon, 17 Mar 2025 16:45:56 +0100
+X-Gm-Features: AQ5f1Jp_2ofObKoGGIUEWuo2lRMEHek0QXhzl1jwrCncDSj8dSCFentnj4Z5HAo
+Message-ID: <CANiq72kgNJGqe+3yNHj96UPcA8i7ozbQGf5FWBQcOytZqZ6ZMw@mail.gmail.com>
+Subject: Re: [PATCH v2] rust: uaccess: mark UserSliceWriter method inline
+To: Benno Lossin <benno.lossin@proton.me>
+Cc: Antonio Hickey <contact@antoniohickey.com>, a.hindborg@kernel.org, alex.gaynor@gmail.com, 
+	aliceryhl@google.com, bjorn3_gh@protonmail.com, boqun.feng@gmail.com, 
+	dakr@kernel.org, gary@garyguo.net, justinstitt@google.com, 
+	linux-kernel@vger.kernel.org, llvm@lists.linux.dev, morbo@google.com, 
+	nathan@kernel.org, nick.desaulniers+lkml@gmail.com, ojeda@kernel.org, 
+	rust-for-linux@vger.kernel.org, tmgross@umich.edu
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Ilya Maximets <i.maximets@ovn.org>
+On Mon, Mar 17, 2025 at 4:07=E2=80=AFPM Benno Lossin <benno.lossin@proton.m=
+e> wrote:
+>
+> I don't 100% know what to do here, maybe Miguel can help. Personally,
+> I'd think that another v1 is confusing, but I have seen people in the
+> past add patches to their already existing series (while incrementing
+> the version number). I think it's a good idea to merge the patches into
+> a single one that handles the entire file though.
 
-[ Upstream commit 82f433e8dd0629e16681edf6039d094b5518d8ed ]
+I would say that what is most important is to mention what was done,
+i.e. linking to the previous thread(s) and saying it was merged or not
+so that it is clear what is being done.
 
-Commit in a fixes tag attempted to fix the issue in the following
-sequence of calls:
+If this is just `UserSliceWriter` and `UserSliceReader`, then yeah, a
+single patch seems good enough. It is not a fix, which could require
+different `Fixes:` tags or things like that.
 
-    do_output
-    -> ovs_vport_send
-       -> dev_queue_xmit
-          -> __dev_queue_xmit
-             -> netdev_core_pick_tx
-                -> skb_tx_hash
+Thanks!
 
-When device is unregistering, the 'dev->real_num_tx_queues' goes to
-zero and the 'while (unlikely(hash >= qcount))' loop inside the
-'skb_tx_hash' becomes infinite, locking up the core forever.
-
-But unfortunately, checking just the carrier status is not enough to
-fix the issue, because some devices may still be in unregistering
-state while reporting carrier status OK.
-
-One example of such device is a net/dummy.  It sets carrier ON
-on start, but it doesn't implement .ndo_stop to set the carrier off.
-And it makes sense, because dummy doesn't really have a carrier.
-Therefore, while this device is unregistering, it's still easy to hit
-the infinite loop in the skb_tx_hash() from the OVS datapath.  There
-might be other drivers that do the same, but dummy by itself is
-important for the OVS ecosystem, because it is frequently used as a
-packet sink for tcpdump while debugging OVS deployments.  And when the
-issue is hit, the only way to recover is to reboot.
-
-Fix that by also checking if the device is running.  The running
-state is handled by the net core during unregistering, so it covers
-unregistering case better, and we don't really need to send packets
-to devices that are not running anyway.
-
-While only checking the running state might be enough, the carrier
-check is preserved.  The running and the carrier states seem disjoined
-throughout the code and different drivers.  And other core functions
-like __dev_direct_xmit() check both before attempting to transmit
-a packet.  So, it seems safer to check both flags in OVS as well.
-
-Fixes: 066b86787fa3 ("net: openvswitch: fix race on port output")
-Reported-by: Friedrich Weber <f.weber@proxmox.com>
-Closes: https://mail.openvswitch.org/pipermail/ovs-discuss/2025-January/053423.html
-Signed-off-by: Ilya Maximets <i.maximets@ovn.org>
-Tested-by: Friedrich Weber <f.weber@proxmox.com>
-Reviewed-by: Aaron Conole <aconole@redhat.com>
-Link: https://patch.msgid.link/20250109122225.4034688-1-i.maximets@ovn.org
-Signed-off-by: Jakub Kicinski <kuba@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
-Signed-off-by: Carlos Soto <carlos.soto@broadcom.com>
-Signed-off-by: Florian Fainelli <florian.fainelli@broadcom.com>
----
- net/openvswitch/actions.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/net/openvswitch/actions.c b/net/openvswitch/actions.c
-index 1eb444585d34..14d7fe004948 100644
---- a/net/openvswitch/actions.c
-+++ b/net/openvswitch/actions.c
-@@ -912,7 +912,9 @@ static void do_output(struct datapath *dp, struct sk_buff *skb, int out_port,
- {
- 	struct vport *vport = ovs_vport_rcu(dp, out_port);
- 
--	if (likely(vport && netif_carrier_ok(vport->dev))) {
-+	if (likely(vport &&
-+		   netif_running(vport->dev) &&
-+		   netif_carrier_ok(vport->dev))) {
- 		u16 mru = OVS_CB(skb)->mru;
- 		u32 cutlen = OVS_CB(skb)->cutlen;
- 
--- 
-2.34.1
-
+Cheers,
+Miguel
 
