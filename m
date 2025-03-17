@@ -1,76 +1,62 @@
-Return-Path: <linux-kernel+bounces-563525-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563526-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39DBEA64372
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 08:25:28 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CF12A64378
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 08:25:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8BD0116CB4E
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 07:25:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 881D8188E2A6
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 07:26:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41ADE21ABAF;
-	Mon, 17 Mar 2025 07:25:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C94621ABCA;
+	Mon, 17 Mar 2025 07:25:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ck7xdoP+"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="jqGWUzt8"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E95D215046;
-	Mon, 17 Mar 2025 07:25:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77B4621ABA4;
+	Mon, 17 Mar 2025 07:25:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742196321; cv=none; b=A65C3k8eeM79EoHfyAh2/DCxdIu8IIbV+/j7lLoVVgVIP1E9XNvrptbYCPNWiyplb55ARN7eyvhqclG5LYUzm8owH++AoGD1Q2ZOrXqTD9OmHDcAEYK8NG7GNfaeII3Hk7dIVACWDhcE6rOsF0eNyQXYRbn54t8KdX5u8YbH8mg=
+	t=1742196348; cv=none; b=rlumcJUQKHjRWVVVCtxpleiXGntTcSK8wJK0a5A8cq5yh2pCF/rhEPw54bqP8pkQ/kNmt1R8qCbni21Ez+EnpPJQFwHQ71ITxsbZOoqiFXEUUkuymk8sEMegGHJb4lBbg8thBpjRlHXLcA0ncbHoGa15ftatXJRe6MD1Rs69+jI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742196321; c=relaxed/simple;
-	bh=SQ3aQHK/R5aXylk6u6ADSjtXUE05/8nCsoOT8V+akm4=;
+	s=arc-20240116; t=1742196348; c=relaxed/simple;
+	bh=JzoP5yzKpTJ7PuP2QtN1xaA+IYoWEmYujuhmEHGzY9I=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VVN5DESLgOqzMozAQIO7fnr+KT8c1Ngo6lumzbWotnyi4LH8LZdQJQbmE7mjRIl64+DP06QRjyg4X8eZQz8lH4Ogfr5unIa1EWgk/IbHxBz3KLNuPNXLzgACg2s1AVhH7VsBDyp5TmCtH/V68es+NI8ShTV4UsIiMNrwHskg5c8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ck7xdoP+; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742196321; x=1773732321;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=SQ3aQHK/R5aXylk6u6ADSjtXUE05/8nCsoOT8V+akm4=;
-  b=ck7xdoP+QVzBp3364q6IaQoYpYHsI/MV8wbGwpi9GHAQ8tafUpuOd04G
-   huOzsn2jwSNtLsKRm9vQyz5aOL8a/xiMeH9PMWQswV4uGs0fsNrc5Q43u
-   R9CqjeSUFJo3ugn/klLNvCS9/KqZGedeUkWCZkeXQi1M4cGERpl2CRvNM
-   74q1EhFpYs6e7R4P1HE33Ej6Jfltgyee9g0D9+NxlzSx1FBmAwOYuJ/u0
-   jX/dc+kteOf32jqhJmUqv1oh0YheOpAu0KfkpOJkmsaTTlgHeDK8Qv8Tp
-   YT6akpqdTeI+72BlcdcQjJPN3ZdPOq1fC2pAbRh4RiL4tqIoCABVAu5DU
-   Q==;
-X-CSE-ConnectionGUID: Cno9N1Q+Ta2hsdNzZ7caBQ==
-X-CSE-MsgGUID: uaN2QaytRGa5Uy8E733n4A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11375"; a="43188043"
-X-IronPort-AV: E=Sophos;i="6.14,253,1736841600"; 
-   d="scan'208";a="43188043"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Mar 2025 00:25:20 -0700
-X-CSE-ConnectionGUID: i//2C4NgRiiadOgXf6NCKg==
-X-CSE-MsgGUID: vw7g2Wb0Q/KEQCPvdmooOQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,253,1736841600"; 
-   d="scan'208";a="152783901"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Mar 2025 00:25:18 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tu4qZ-00000003Em6-3ZjI;
-	Mon, 17 Mar 2025 09:25:15 +0200
-Date: Mon, 17 Mar 2025 09:25:15 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: "Jiri Slaby (SUSE)" <jirislaby@kernel.org>
-Cc: gregkh@linuxfoundation.org, linux-serial@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Subject: Re: [PATCH v2 27/31] serial: 8250: use serial_port_in/out() helpers
-Message-ID: <Z9fOW2eZ4bEdlOzu@smile.fi.intel.com>
-References: <20250317070046.24386-1-jirislaby@kernel.org>
- <20250317070046.24386-28-jirislaby@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=happRtmZTcvUYWw202Dql3N1xmVtiM/Xhh4zbITi+VeJ5fhiXMvzC9B3DfoTlV+jdfzz3Kx62sWyWT1vo/uoEYZVkf4OwNovj9u+w7AtAGo90mB3prQdYMtuLl5BSa9iqrK16mU9EEPY+fRPaMAIziqpef5GsAD4Wu3Cj4Jj3iU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=jqGWUzt8; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=EGbSg0bG5fPXPVKWZzh9nWVVFmYOorGZJPYkwHy6xo4=; b=jqGWUzt8DmwByL+khi3b6qCsAc
+	H7Hfn7uQIWTXAi98RHCKlqis44R16mpXnoQbkqW5hH/tgjuxHXQbrYTjmjaRt6xxqXAig3RBJgnR1
+	No0W8srsw6uOCABuEqh6kIcn4aZ3VrSzi6/Z+yWbRFgaCII9oh3/EFpaHzPfzEOY5Q7xfmq5eNjW6
+	OwUTpxTEELaiCef5rcAxSB6ZuRL3UzOQ+FAUfi4xSahjib8PxyeKw+AqwuAAhrLkUuOsOE7+NhNPo
+	cljX4Mao2J4hKlH5QEXynUgZGkobyCT66Ls2ojS9xSwmjyQhU86sohlogRraAMiQr2GZI3Jf3/mKK
+	M91pRdtQ==;
+Received: from [2001:4bb8:2dd:73af:768b:3020:1cfb:1718] (helo=localhost)
+	by bombadil.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tu4r2-00000001YjZ-082y;
+	Mon, 17 Mar 2025 07:25:45 +0000
+Date: Mon, 17 Mar 2025 08:25:36 +0100
+From: Christoph Hellwig <hch@infradead.org>
+To: John Garry <john.g.garry@oracle.com>
+Cc: brauner@kernel.org, djwong@kernel.org, cem@kernel.org,
+	dchinner@redhat.com, linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	ojaswin@linux.ibm.com, ritesh.list@gmail.com,
+	martin.petersen@oracle.com, tytso@mit.edu,
+	linux-ext4@vger.kernel.org, Carlos Maiolino <cmaiolino@redhat.com>
+Subject: Re: [PATCH v6 13/13] xfs: update atomic write max size
+Message-ID: <Z9fOcFB5dhpK4Lsw@infradead.org>
+References: <20250313171310.1886394-1-john.g.garry@oracle.com>
+ <20250313171310.1886394-14-john.g.garry@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,21 +65,40 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250317070046.24386-28-jirislaby@kernel.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20250313171310.1886394-14-john.g.garry@oracle.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Mon, Mar 17, 2025 at 08:00:42AM +0100, Jiri Slaby (SUSE) wrote:
-> There are serial_port_in/out() helpers to be used instead of direct
-> p->serial_in/out(). Use them in various 8250 drivers.
+On Thu, Mar 13, 2025 at 05:13:10PM +0000, John Garry wrote:
+> For simplicity, limit at the max of what the mounted bdev can support in
+> terms of atomic write limits. Maybe in future we will have a better way
+> to advertise this optimised limit.
 
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com> # 8250_dw
+You'll still need to cover limit this by the amount that can
+be commited in a single transactions.  And handle the case where there
+is no hardware support at all.
 
-We also discussed adding some comments. Would you like to send an additional
-patch or do you rely on me adding them?
+>  xfs_get_atomic_write_max_attr(
 
--- 
-With Best Regards,
-Andy Shevchenko
+I missed it in the previous version, but can be drop the
+pointless _attr for these two helpers?
 
+> +static inline void
+> +xfs_compute_awu_max(
+
+And use a more descriptive name than AWU, wich really just is a
+nvme field name.
+
+> +	awu_max = 1;
+> +	while (1) {
+> +		if (agsize % (awu_max * 2))
+> +			break;
+
+	while ((agsize % (awu_max * 2) == 0)) {
+
+?
+
+> +	xfs_extlen_t		m_awu_max;	/* data device max atomic write */
+
+overly long line.
 
 
