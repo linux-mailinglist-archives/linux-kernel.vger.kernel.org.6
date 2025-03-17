@@ -1,137 +1,98 @@
-Return-Path: <linux-kernel+bounces-563964-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563965-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8645A64AF6
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:53:23 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1D71A64AFA
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:53:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CDFDA188D5A4
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:52:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B3F64164DAB
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:52:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 675DA22CBE3;
-	Mon, 17 Mar 2025 10:52:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79A2E2356DF;
+	Mon, 17 Mar 2025 10:52:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="aWBcFQef"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="c78jfA78"
+Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 167732343B6;
-	Mon, 17 Mar 2025 10:52:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9115B2356C7
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 10:52:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742208733; cv=none; b=XbnL41KXthkKGx0B7VBT5qMXPsPsKFGTypUooB000/q48USnMV4zJOOEnq50dVQujpYNnZ6h4vbTJGvRAxNpIZRscMNFe3ihgU/tCFg/0XgKj+9ouJ6AX+1aPq1kGTkVy3e4ILzO4JBTJckyOGQCK4K9fQiU2yhu3pZHBX8p284=
+	t=1742208737; cv=none; b=ltCTnszVaTYn/z8e6RyO14qAn9/uf4YZCrWXQQsm2rpjFGtskpDxNE7Gd9K1cPpTCqDQ4Cs4w/KB6GSPnzRN5XKOl84xCX+LYceOz32do8o16zjva2Huj4IeKCOiTyWEMSc63YLIn20Cc3aBjITa+8LVM6AVyktRSCWCvmAovbo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742208733; c=relaxed/simple;
-	bh=sh/KyfAnziY9OsFZk47IIPWbid4Ev8+60ek/aHfQZhY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dj1jN1QO5Uvqzg8L6jjAaK2AtxS/rDWSJXXbA6a1lfOEMYO4OZpDYTpQZsMMqQFisEdh4LpDSSb18zoP6F7R7VVytoCAEHgUEGG6ZOWAt2sLFieE6F+tA0UK6aIijauDrT4gFxLgCA2CR6JwnpR1rKfMcwY7y08xNyWUz0lD8E4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=aWBcFQef; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1742208728;
-	bh=pxvRw1vscXy0SIWcxb/cIfbElhBR8dbrzl6eY4xjZtc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=aWBcFQefURK3BjHTU56sBQd0399vy7dzODCOaN6yDZBFAhRB4DrXN5Brtq8aWTBfY
-	 N+Vs3WlOKa/qYqveB81otneQtr3qatQD6aJa4EtMGoQGQBCD18e21KwBoDqPrcb7Bz
-	 h37Q4kfCYQscYiASarOQUi5mnp/65Itf5BNNXp1iTdTJDqCj18mhhB4o1AB5B9zDYp
-	 WFcQvqhXZJbafHQCavfDLpXv3n9D2Kxckcim+1AlDtMEIqPfi5hW6DQsg1OKBMIOwu
-	 pWL1FJxC13fWpuvyJTzdoTo+GL9VmIYwB5FVXQhlL/8EWp3gfYgppvoKJO8KiZL/xl
-	 yKJHufuxc0Jlw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4ZGWy00Dwpz4wcZ;
-	Mon, 17 Mar 2025 21:52:08 +1100 (AEDT)
-Date: Mon, 17 Mar 2025 21:52:07 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Peter Zijlstra <peterz@infradead.org>, Andrew Morton
- <akpm@linux-foundation.org>
-Cc: jirislaby@kernel.org, ubizjak@gmail.com, Thomas Gleixner
- <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin"
- <hpa@zytor.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the tip tree
-Message-ID: <20250317215207.2d4fe178@canb.auug.org.au>
-In-Reply-To: <20250317093856.GA34541@noisy.programming.kicks-ass.net>
-References: <20250304162402.475eb3bc@canb.auug.org.au>
-	<20250317093856.GA34541@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1742208737; c=relaxed/simple;
+	bh=eeuK4xT93WvjWp0Gg8f91YaCZEctTHOwolyCA3Zg9Ak=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=BoHw6mzIC19cW9u0pa6ZVAl3Yo6uqn3IgF8PeihX3BJ8261TAZWVKWiq5knFvsiMf1C3tlRgp+AvxavIFoWR56ibde65bqkwGkke57B6fC3dHS5P1Grk8FoCKmDcyDc6wT6YTB/O6NP4tJGWb7L3H9MrlX/KlEqsRwJy2ajfw8Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=c78jfA78; arc=none smtp.client-ip=209.85.128.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-43ceed237efso15775175e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 03:52:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1742208734; x=1742813534; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Tcva91qbc81FGn1vXLB54WTmevbL6p5VxkTw10IeAI0=;
+        b=c78jfA78iTgjZbNr3HrLU/QKMsz6MBBES3vMgULWBhhEGY+LLsGPOfaB76dCAqJPS9
+         4qtMQd4jhi2L2rFu5sB3xtIKh9Btbz6SxVKmH/oEIr33SxkPCJrHOD+I9HuDp98WejIF
+         CL1wftCc+zJ1FtJsFVRWXzsAbqBOXUAKM5X+tq53t2ikNmwaXa8AutrvCNqTfY4KANzb
+         reyw7SXK5EfVUrM4rl9APYt7DXz+q0vf+x80aMAQ+EOoaVhx5iZ0geJa2l0bCmdi14cn
+         vOm4gUXx6NyAJZhqDusySAuFa9c5Z8/ns/uhgJQ7qJ7ovnbxoBWyTVB79eZn/dNtWDWq
+         kZig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742208734; x=1742813534;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Tcva91qbc81FGn1vXLB54WTmevbL6p5VxkTw10IeAI0=;
+        b=eiyPBUyxlQ/wzkLqXXWvKobumDjzIh/YHt6jJcqUk4xY63PSI5ov5NKmQAhqgUy7UN
+         yXtMO+FG2VpKnUgd20qvY2+TmgqdyvO1f9Eka6oR+Bc7ZMvkq2OItfshCIYx/yFz0I79
+         o7mpyvuZolu9iGVrbIHcp5mGr1CWW5RCu7rSxfpbHtj97r2A8EVu1BX1P3EGHEWNU3xX
+         Nx42MpVUulgWxml6a0+KP8KsxphitMIOthllryXuG//mCMUdFydhtXBYgKGrFnYUYw4A
+         t2X60yTFJPQAxwFrrct+rnjhInrHD0Srqk5iQyBeInrsjVz8d/r6GlA7KTouzxGruoM2
+         tXkQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX15HxVLrJcuEy8YZS5MicuCPI1udcrWMkZrrmlUMIXDpx6kxwPsvyWL3RjWXd56hJ7KJrP+p+A7XrmEr4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwoCot+Vr8PfuepJyM5rUumZDrPC1Dqf0MJAsAIDJVBQSVe2hWh
+	Aor3y7dxoADqBTlp9iQiEiQtLjFiLeD4bXopd2eP1Vv3TAeYyl8HyWLfCFMU5HYe2jvvjhkNUSb
+	0RrltTn3cR1o/5w==
+X-Google-Smtp-Source: AGHT+IFQtLHmlkFGovhLbUUKxy0zWAm5TQqWXbx/kptXecEGH7yZZmlZwUeVlgdPVdE6B96JSpXhAC2rNrEEQ08=
+X-Received: from wrbch14.prod.google.com ([2002:a5d:5d0e:0:b0:38f:40d1:8309])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a5d:5f8f:0:b0:390:fe05:da85 with SMTP id ffacd0b85a97d-3971d23750dmr14173105f8f.16.1742208734052;
+ Mon, 17 Mar 2025 03:52:14 -0700 (PDT)
+Date: Mon, 17 Mar 2025 10:52:12 +0000
+In-Reply-To: <20250307-no-offset-v1-1-0c728f63b69c@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/2M7dWpnKKfgXzaOAo1qJ8HJ";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Mime-Version: 1.0
+References: <20250307-no-offset-v1-0-0c728f63b69c@gmail.com> <20250307-no-offset-v1-1-0c728f63b69c@gmail.com>
+Message-ID: <Z9f-3Aj3_FWBZRrm@google.com>
+Subject: Re: [PATCH 1/2] rust: retain pointer mut-ness in `container_of!`
+From: Alice Ryhl <aliceryhl@google.com>
+To: Tamir Duberstein <tamird@gmail.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
 
---Sig_/2M7dWpnKKfgXzaOAo1qJ8HJ
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Fri, Mar 07, 2025 at 04:58:48PM -0500, Tamir Duberstein wrote:
+> Avoid casting the input pointer to `*const _`, allowing the output
+> pointer to be `*mut` if the input is `*mut`. This allows a number of
+> `*const` to `*mut` conversions to be removed at the cost of slightly
+> worse ergonomics when the macro is used with a reference rather than a
+> pointer; the only example of this was in the macro's own doctest.
+> 
+> Signed-off-by: Tamir Duberstein <tamird@gmail.com>
 
-Hi Peter,
-
-On Mon, 17 Mar 2025 10:38:56 +0100 Peter Zijlstra <peterz@infradead.org> wr=
-ote:
->
-> Right. Sorry for not noticing before, and thanks Jiri for poking me.
->=20
-> So the below resolution make it go for me. The problem appears to be
-> that due to:
->=20
->   bcecd5a529c1 ("percpu: repurpose __percpu tag as a named address space =
-qualifier")
->=20
-> this makes that this_cpu_ptr() wants a '__percpu *', instead we feed it
-> '__percpu**' which confuses things.
->=20
-> What would be the best way around to getting this resolved, should I
-> stick the below in a fixup patch in tip/perf/core, or do we carry this
-> in a merge resolution somewhere?
-
-Its a conflict between the mm tree and the tip tree, so I will carry it
-as a resolution in -next and you all should let Linus know when the
-pull requests get sent.
-
-I will use your resolution from tomorrow.
-
-> diff --cc include/linux/perf_event.h
-> index 4d0b0b007498,76f4265efee9..000000000000
-> --- a/include/linux/perf_event.h
-> +++ b/include/linux/perf_event.h
-> @@@ -343,7 -343,7 +343,7 @@@ struct pmu=20
->   	 */
->   	unsigned int			scope;
->  =20
-> - 	struct perf_cpu_pmu_context __percpu *cpu_pmu_context;
->  -	struct perf_cpu_pmu_context __percpu **cpu_pmu_context;
-> ++	struct perf_cpu_pmu_context * __percpu *cpu_pmu_context;
->   	atomic_t			exclusive_cnt; /* < 0: cpu; > 0: tsk */
->   	int				task_ctx_nr;
->   	int				hrtimer_interval_ms;
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/2M7dWpnKKfgXzaOAo1qJ8HJ
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfX/tcACgkQAVBC80lX
-0GwdVwf+N7d/R06zfOQIrjVEwJIlPatzsv5HP5/4XKlXr9yZV6nT1cmZR9aamEuY
-goPgzeCQ32Pu1Ge1BW9uteU/cWC/8sdr0ILqb/f7d/nIEmlNXN2ONroFCG8lejrE
-cpxnc6CZtsFV+MNc4xiC5/yLlkGDFnRloClztRGnLYoPiZyS9BRT5W7I/c6ofxUD
-lshV2LKB3vlBVMyS0YqnWQVEaX5Yw3UtF9nYbdyr7olBOrp1sDOTvWBwcY2yJ7BI
-UDFPYf9fo29IdwtlBj2gRz7/AoYlcTbunz5S3xc2K2piCNQ0OR9YoJU4IMIEJFoR
-qIbQnqzwsn8f6/zqD4BNH/LnclCj+g==
-=3LPV
------END PGP SIGNATURE-----
-
---Sig_/2M7dWpnKKfgXzaOAo1qJ8HJ--
+Reviewed-by: Alice Ryhl <aliceryhl@google.com>
 
