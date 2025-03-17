@@ -1,92 +1,145 @@
-Return-Path: <linux-kernel+bounces-563570-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563571-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCE6BA64457
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 08:51:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83BA7A64459
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 08:52:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B72C3A78F4
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 07:51:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4EC9C3A7A1B
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 07:51:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3458921B909;
-	Mon, 17 Mar 2025 07:51:22 +0000 (UTC)
-Received: from mxct.zte.com.cn (mxct.zte.com.cn [183.62.165.209])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D2A221B910;
+	Mon, 17 Mar 2025 07:52:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ILlSOgq1"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AA2D145B3F;
-	Mon, 17 Mar 2025 07:51:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=183.62.165.209
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B23D219A63;
+	Mon, 17 Mar 2025 07:52:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742197881; cv=none; b=SVqrd96nPal8uXaLZvtJhT9m/gURKctGSbR4x+cxHRvfZ25zPzyThhjO564304TgN9pDL5faKhfGYL7jJ0Q8T2HTfDXOJzx6KINZZJWe8RZUUpG6YbBYJ2dGkzeif9bfab+i8R1qGEivelfl22SzTdWVP+R1T+RkQLiBbA72DyA=
+	t=1742197923; cv=none; b=j3+NhZwuYbzan8YijbC1Tze+hq4eJ6np2Uvq9MuUic5WKUQe120+u9y18w33k/HrbpcTFTQbHN2ABoKzXgQHEGbvdwa2cToIcB3SUvlG3o/mWfLZnSPdTPQ7nHsDmlEZeVSz2drDXS+7BYMerX33zdAKgZOUJENrNW7rfM/fk6o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742197881; c=relaxed/simple;
-	bh=F0hTaMgLVM15/Ktu0T1omVNrLBE5Owg1sxOiHJ/dQhM=;
-	h=Date:Message-ID:Mime-Version:From:To:Cc:Subject:Content-Type; b=qZbvDv7rGwjEIg4c8ZkaEfonZr6EWFMf4XD6gne2pMR1US9IBwainmcafHNcrEwi8NXAlwDE1XQRzK/UbqrT2cW110TcsekbLPVNZ+JoEe+hV28+lDhOsNmRQ26jXuQaG7srvj7Vhm39p8NiixyXKTD6w9PTzO7fKM6yEo0o1uw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=183.62.165.209
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
-Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mxct.zte.com.cn (FangMail) with ESMTPS id 4ZGRxF5Ryfz501gR;
-	Mon, 17 Mar 2025 15:51:13 +0800 (CST)
-Received: from xaxapp02.zte.com.cn ([10.88.97.241])
-	by mse-fl1.zte.com.cn with SMTP id 52H7p07k031691;
-	Mon, 17 Mar 2025 15:51:00 +0800 (+08)
-	(envelope-from tang.dongxing@zte.com.cn)
-Received: from mapi (xaxapp01[null])
-	by mapi (Zmail) with MAPI id mid32;
-	Mon, 17 Mar 2025 15:51:02 +0800 (CST)
-Date: Mon, 17 Mar 2025 15:51:02 +0800 (CST)
-X-Zmail-TransId: 2af967d7d466ffffffffa84-93e56
-X-Mailer: Zmail v1.0
-Message-ID: <20250317155102808MZdMkiovw52X0oY7n47wI@zte.com.cn>
+	s=arc-20240116; t=1742197923; c=relaxed/simple;
+	bh=ZHa6ERJ7NFArEGUz2GyKEAKlA9PEk/2XjeW1JUGRc4Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FFeV7Vwb9eGDSsPLrI9u2Z7QGXjVIFc4m/CZdpuLtGtbUYar3awbhKoGEEBoLPJx8thQCwrP4FbJztDDK4Qb+ThObwDH2bCDB+bozmNWUqgACyxKjag9wQKUWw23N+FMwpufAzToNTsJzD1rADFHICafV0ZAes9NijgSFKDYjDg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ILlSOgq1; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742197922; x=1773733922;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ZHa6ERJ7NFArEGUz2GyKEAKlA9PEk/2XjeW1JUGRc4Q=;
+  b=ILlSOgq1GXMA1rw9MxMGunF+5p1yHt7xk/LcohkqJdTeBgSx/JBSjuZM
+   pEIRfqRGvJqnxb144/gQt8C8eVwyo/yWFZgL7AR8moaJiSFCXsgitwFQ1
+   NhQ/L8ldhunIZckZzV6ZNNdTRefBBpopuC+PXcSu6TrLdNWEyaLtE+dYq
+   JixG0atp7GfOAyUHmzubuQGNBldmypC1BVx10RdIkao07HcMxkoM2ZpsV
+   Bp9jNUtp7PvDfrMR+49CgytW7jgqn8yqT5wq9hehkueQE5WTvlRSovMMZ
+   Zb9dbYRHQtW/5Vu/ZKwnfpNpqbfOu8C/7V1xiPMJll1OEHTqPrP0/uKsC
+   Q==;
+X-CSE-ConnectionGUID: kyaJYhLuRWWxwOyHNfo1ow==
+X-CSE-MsgGUID: V2613K45Qq6shAs2lfD82w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11375"; a="68638749"
+X-IronPort-AV: E=Sophos;i="6.14,253,1736841600"; 
+   d="scan'208";a="68638749"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Mar 2025 00:52:01 -0700
+X-CSE-ConnectionGUID: vBGt1R1iRZmxKRlgsciK1g==
+X-CSE-MsgGUID: ZjVdBA2qRUKjxLSCoLq+qg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,253,1736841600"; 
+   d="scan'208";a="122375993"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Mar 2025 00:51:57 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tu5GM-00000003FCZ-2dgX;
+	Mon, 17 Mar 2025 09:51:54 +0200
+Date: Mon, 17 Mar 2025 09:51:54 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Jonathan Cameron <jic23@kernel.org>,
+	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+	Lars-Peter Clausen <lars@metafoo.de>, Chen-Yu Tsai <wens@csie.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>, Nuno Sa <nuno.sa@analog.com>,
+	David Lechner <dlechner@baylibre.com>,
+	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+	Olivier Moysan <olivier.moysan@foss.st.com>,
+	Guillaume Stols <gstols@baylibre.com>,
+	Dumitru Ceclan <mitrutzceclan@gmail.com>,
+	Trevor Gamblin <tgamblin@baylibre.com>,
+	Matteo Martelli <matteomartelli3@gmail.com>,
+	Alisa-Dariana Roman <alisadariana@gmail.com>,
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev
+Subject: Re: [PATCH v7 05/10] iio: adc: sun20i-gpadc: Use adc-helpers
+Message-ID: <Z9fUmo5wp3EcNWzm@smile.fi.intel.com>
+References: <cover.1741849323.git.mazziesaccount@gmail.com>
+ <df0b2b53affbef5ccb7219328cc15db3ba843737.1741849323.git.mazziesaccount@gmail.com>
+ <Z9LQ0O34EUM8WZku@smile.fi.intel.com>
+ <20250316094112.6731bd01@jic23-huawei>
+ <50b126c5-248e-4694-9782-4f28d6db5fce@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-From: <tang.dongxing@zte.com.cn>
-To: <davem@davemloft.net>
-Cc: <edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>,
-        <horms@kernel.org>, <tang.dongxing@zte.com.cn>,
-        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <yang.guang5@zte.com.cn>, <yang.yang29@zte.com.cn>,
-        <ye.xingchen@zte.com.cn>, <xu.xin16@zte.com.cn>
-Subject: =?UTF-8?B?W1BBVENIXSBuZXQ6IGF0bTogdXNlIHN5c2ZzX2VtaXRfYXQoKSBpbnN0ZWFkIG9mIHNjbnByaW50Zigp?=
-Content-Type: text/plain;
-	charset="UTF-8"
-X-MAIL:mse-fl1.zte.com.cn 52H7p07k031691
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 67D7D471.005/4ZGRxF5Ryfz501gR
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <50b126c5-248e-4694-9782-4f28d6db5fce@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-From: TangDongxing <tang.dongxing@zte.com.cn>
+On Mon, Mar 17, 2025 at 09:11:08AM +0200, Matti Vaittinen wrote:
+> On 16/03/2025 11:41, Jonathan Cameron wrote:
+> > On Thu, 13 Mar 2025 14:34:24 +0200
+> > Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
+> > > On Thu, Mar 13, 2025 at 09:18:49AM +0200, Matti Vaittinen wrote:
 
-Follow the advice in Documentation/filesystems/sysfs.rst:
-show() should only use sysfs_emit() or sysfs_emit_at() when formatting
-the value to be returned to user space.
+...
 
-Signed-off-by: TangDongxing <tang.dongxing@zte.com.cn>
----
- net/atm/atm_sysfs.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> > > > +	num_channels = devm_iio_adc_device_alloc_chaninfo_se(dev,
+> > > > +				&sun20i_gpadc_chan_template, -1, &channels);
+> > > > +	if (num_channels < 0)
+> > > > +		return num_channels;
+> > > > +
+> > > >   	if (num_channels == 0)
+> > > >   		return dev_err_probe(dev, -ENODEV, "no channel children\n");
+> > > 
+> > > Note, this what I would expected in your helper to see, i.e. separated cases
+> > > for < 0 (error code) and == 0, no channels.
+> > > 
+> > > Also, are all users going to have this check? Usually in other similar APIs
+> > > we return -ENOENT. And user won't need to have an additional check in case of
+> > > 0 being considered as an error case too.
+> > In a few cases we'll need to do the dance the other way in the caller.
+> > So specifically check for -ENOENT and not treat it as an error.
+> > 
+> > That stems from channel nodes being optionally added to drivers after
+> > they have been around a while (usually to add more specific configuration)
+> > and needing to maintain old behaviour of presenting all channels with default
+> > settings.
+> > 
+> > I agree that returning -ENOENT is a reasonable way to handle this.
+> 
+> I agree - but I'm going to use -ENODEV instead of -ENOENT because that's
+> what the current callers return if they find no channels. That way the
+> drivers can return the value directly without converting -ENOENT to -ENODEV.
 
-diff --git a/net/atm/atm_sysfs.c b/net/atm/atm_sysfs.c
-index 54e7fb1a4ee5..d06ffadc5139 100644
---- a/net/atm/atm_sysfs.c
-+++ b/net/atm/atm_sysfs.c
-@@ -37,7 +37,7 @@ static ssize_t atmaddress_show(struct device *cdev,
+ENODEV can be easily clashed with other irrelevant cases, ENOENT is the correct
+error code. If drivers return this instead of another error code, nothing bad
+happen, it's not an ABI path, correct?
 
- 	spin_lock_irqsave(&adev->lock, flags);
- 	list_for_each_entry(aaddr, &adev->local, entry) {
--		count += scnprintf(buf + count, PAGE_SIZE - count,
-+		count += sysfs_emit_at(buf, count,
- 				   "%1phN.%2phN.%10phN.%6phN.%1phN\n",
- 				   &aaddr->addr.sas_addr.prv[0],
- 				   &aaddr->addr.sas_addr.prv[1],
 -- 
-2.25.1
+With Best Regards,
+Andy Shevchenko
+
+
 
