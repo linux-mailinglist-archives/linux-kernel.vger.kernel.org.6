@@ -1,134 +1,145 @@
-Return-Path: <linux-kernel+bounces-563611-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79DFAA64550
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 09:25:26 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66F47A64552
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 09:25:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94CF23A6DC4
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 08:24:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A83A18853D1
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 08:25:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 140CE21D3FE;
-	Mon, 17 Mar 2025 08:24:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QOyr/a4s"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 685FA21D3D6;
+	Mon, 17 Mar 2025 08:25:43 +0000 (UTC)
+Received: from mail-ua1-f42.google.com (mail-ua1-f42.google.com [209.85.222.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D313664C6;
-	Mon, 17 Mar 2025 08:24:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C170664C6;
+	Mon, 17 Mar 2025 08:25:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742199896; cv=none; b=mi8xWCxm9zpKchYs/Dwa796lVjxtWOqPwpgfR8nWptz6vHdNf0FBZXCsEPLjZ/sX/5ogJLaW78ImQuQ5EeBCOWvPJRs25WDOoR6BJQ8nbVfl7tQPCEDoYxBBUitBNfC3AD+jT0BbC2QqmoBAKW9VbQCFKO6taQgZ5awO8hBAYrg=
+	t=1742199943; cv=none; b=PnBASBW1xK0XPjUHXZ7NjtRse3tSzmuMT+ogTF26rSunuRsM01nA7CQkQRzwfR0bBd45LH8qZS9u4RQkyNVcyRTi6kSODopVGFUSfA1VK4gn5O0vGlbOyRAJfhJMrS5o4k4O4gU5b8MwmjHmwGrVG7AH+SQN0PpHq6p9f8MjWUA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742199896; c=relaxed/simple;
-	bh=wA0+c1P5/BwcDYtx6mUHdieuC2tjdlLGiihDrVP5uBM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EzhZ4r6oyhRtj4nXR1mRAkbaX7avGHHpp2WCZlgr+KvR2fXr/VU+7qWroWuCEMxih1ebdBLPmDuOtUhk+oq/SECZX802kSuVaoRqdN9nGBLDEYWd9ihwG65OwQ6GuXWeC+du0o57Jgukc9qb7tKt6ZjbVC7ZnyMOtKlsTiOYdm8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QOyr/a4s; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E33DC4CEE3;
-	Mon, 17 Mar 2025 08:24:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742199895;
-	bh=wA0+c1P5/BwcDYtx6mUHdieuC2tjdlLGiihDrVP5uBM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=QOyr/a4sT0dsoQ95s1x9tDo3UUCh1LAdjg1P8TDN6vbQuJzDVaU0Pi25fA0vZY1a0
-	 zU81egKdiy/NbtLkMg2SQw1r2Y/afChjlPSnF8lonAZWCRUnYAL3/JiHlrJNv54bc6
-	 hvJbth+lTVFiMC/j6OoJjtR+klED2JSsIrh+rtOL1Q9leFU4KIihuSGBy220y7aB2B
-	 qOO4jgLe2GtylDmd8JT+7qrExRIjZ5BhSKuOnFry46C7UBao38LVEFCj0Ar/0xaec0
-	 KuGkMQ/MouYPmcIAprA3UujW5CXLnFiwTWcxbc4SGSiv0feN5Wd3FLOnSbFMkhcEvm
-	 WTiQnFHp6Mhgg==
-Message-ID: <663a958b-3847-41e3-9710-897446694bc2@kernel.org>
-Date: Mon, 17 Mar 2025 09:24:48 +0100
+	s=arc-20240116; t=1742199943; c=relaxed/simple;
+	bh=kVW/MV6dUV63B0iRH5b+vhs9+OeINTzn8vCjGyUd0go=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IW6hPKeVYYFt4R3WlBgaWR7/l3ptzgsLvFtnF2LMFTKrfwiAKpRtObDA1mUAfkaxI8aN5GydR6jkH7VzJ7eWaswYx3rw/bb0BiuR7Hk8iPaQw3Oq9i8H3GxW/07EENUAhm+y8JQG2UV2mjP1j8N4hF4Xn5Nw46ZbklOJqOel/n4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f42.google.com with SMTP id a1e0cc1a2514c-86b9d1f729eso1626362241.3;
+        Mon, 17 Mar 2025 01:25:41 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742199940; x=1742804740;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gAP4wT3KAbxvAG1pjCowNTM2gsMSibcHnaVmmOIurLg=;
+        b=sU69MOXzLCXOaiH2DR/NYznxSlHp7f8vw0vDttOexip4EQ9NLsnYQjxjaJnxvjyVWU
+         I1Wm9knOmPxc6Ot67N2pzeIaiYZpOXJ/s7pM7ZwIq/rjcxu558A9nCPZiio8Zfmf9oRy
+         LDIwNKJ5CgWYrl5aIRh37JSXF/aiZS2UHD3cZm9/8hW5ckSYDBK5mRg2Js+vGAqeSzXf
+         iEUNpCnFAdWA52h3UeWbY7SL5tP0yPRBs368WwycQHgdnf4rIzLuTacJKEgrRw9xcPhs
+         gY4ixJx6cqqj0US68HY667J7lbWWLVPBjwzfjzC7QMKaaXetcYXaEsZ89shPBBTiIB10
+         ZpZg==
+X-Forwarded-Encrypted: i=1; AJvYcCWE5f4mi6S4eIV3HU5ICulYQYURHQ+7wHdXlVtzDHv1032Wb5cUV82OQeBHMmBDu+PZq2T8/IU4VPYiUL5N/Qg=@vger.kernel.org, AJvYcCX8Qq0UMPMDi3Zuyhf2+pKWi2xLjvdnLpMfyeR2w2h5xklBQI8jX04GjzSH3r29ifMYW3g7rcRYHcMrIXs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxkNCueKeaMGzcI0DjbolzTJSvUUyQmkQE4+c3XD/c57VCu9OX5
+	cdGWDxjATJL6p2PrSrzYlEX68kLpMt++2nr2U+dERPcA3tHuYRw03HTZouEn
+X-Gm-Gg: ASbGncvXe2Xs9ra5JXZR1Nmz7GQvK6mv18boKCXiA1h05bQ0BxLHnC+6e8X/8QZ4EBF
+	XinXE99j173iq2W+/QDs1ez9lXP0Ovxls4nMRpzmQgLh1spmZyjy0ZhE+Fx9dKiF6DPui2Pp+Tu
+	GQhbm1S0QWF1lAReIMrJx91RALazTbre0rY8g7Ytsi41eqg5Rb/kpG59xsiQaDOphVlOen2dvWp
+	WXKeVDJCNNvvDZuyEjszgTDK4t2rdXnSWpqGWqwNWopis3fLGWVYm53jqQN+E40g6RkjbUvNIP3
+	M28dS2MGdEQUpa1FPJ6s6umFfHQcKJe0LRMMppk64lK1d0t0RV9M/rqavIC1Me5crGfhz5zXAQw
+	R8hATrI4=
+X-Google-Smtp-Source: AGHT+IEqYou1/K0XlSfTD/M77OLoi9/3rdfl3pB+6A8ylbzP19vhwl4ji/UJvcA8/0bpReIzkWTNnA==
+X-Received: by 2002:a05:6102:442c:b0:4bb:db41:3b6c with SMTP id ada2fe7eead31-4c383165298mr6551602137.12.1742199939614;
+        Mon, 17 Mar 2025 01:25:39 -0700 (PDT)
+Received: from mail-ua1-f44.google.com (mail-ua1-f44.google.com. [209.85.222.44])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4c374f5b988sm1390236137.13.2025.03.17.01.25.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 17 Mar 2025 01:25:39 -0700 (PDT)
+Received: by mail-ua1-f44.google.com with SMTP id a1e0cc1a2514c-86cce5dac90so1735958241.0;
+        Mon, 17 Mar 2025 01:25:39 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCX6ToFhJKNEgIcaR/reFgdVw7F6cv5P9chCMTz4bAbLQKemY3U0uEIeBOOw7nW5qNWr2oWvcgx89ELEw90=@vger.kernel.org, AJvYcCXt6altgXDT1LOO/UviJZsTJgIuceQR4QTpYeEXCRJE2xDHkPwBG26UnPzMDt20IreIbMnZY0dR5XptmJ9fXxI=@vger.kernel.org
+X-Received: by 2002:a05:6102:c08:b0:4c3:577:a8e7 with SMTP id
+ ada2fe7eead31-4c383201fd7mr6871445137.16.1742199938943; Mon, 17 Mar 2025
+ 01:25:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4] dma-buf: heap: Replace nested max() with single max3()
-To: feng.wei8@zte.com.cn, sumit.semwal@linaro.org, xie.ludan@zte.com.cn,
- shao.mingyin@zte.com.cn, tang.dongxing@zte.com.cn
-Cc: benjamin.gaignard@collabora.com, brian.starkey@arm.com,
- jstultz@google.com, tjmercier@google.com, christian.koenig@amd.com,
- linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linaro-mm-sig@lists.linaro.org, linux-kernel@vger.kernel.org
-References: <20250317103702708UdayAw742BADL4gzNYcle@zte.com.cn>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20250317103702708UdayAw742BADL4gzNYcle@zte.com.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250315203937.77017-1-sahilcdq@proton.me> <Z9Z2sjWQHKgGJyGo@antec>
+In-Reply-To: <Z9Z2sjWQHKgGJyGo@antec>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 17 Mar 2025 09:25:26 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdWh=oo6JykPGD3DNEL=GcfgyKw2UK7vb8XMbH19GcdrwA@mail.gmail.com>
+X-Gm-Features: AQ5f1JrYhoTwRipqDAPS7e9Nqyxba02OtyaULWdsQFq8eBnJoiGYz10iD2mY_CA
+Message-ID: <CAMuHMdWh=oo6JykPGD3DNEL=GcfgyKw2UK7vb8XMbH19GcdrwA@mail.gmail.com>
+Subject: Re: [PATCH v2] openrisc: Add cacheinfo support
+To: Stafford Horne <shorne@gmail.com>
+Cc: Sahil Siddiq <icegambit91@gmail.com>, jonas@southpole.se, 
+	stefan.kristiansson@saunalahti.fi, linux-openrisc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Sahil Siddiq <sahilcdq@proton.me>
+Content-Type: text/plain; charset="UTF-8"
 
-On 17/03/2025 03:37, feng.wei8@zte.com.cn wrote:
-> From: FengWei <feng.wei8@zte.com.cn>
-> 
-> Use max3() macro instead of nesting max() to simplify the return
-> statement.
-> 
-> Signed-off-by: FengWei <feng.wei8@zte.com.cn>
-> ---
-> v3 -> v4
-> fix the format of this patch.
->  drivers/dma-buf/dma-heap.c | 2 +-
-You sent five versions per day of the same patch.
+Hi Stafford,
 
-Look what was in v3:
+On Sun, 16 Mar 2025 at 07:59, Stafford Horne <shorne@gmail.com> wrote:
+> On Sun, Mar 16, 2025 at 02:09:37AM +0530, Sahil Siddiq wrote:
+> > Add cacheinfo support for OpenRISC.
+> >
+> > Currently, a few CPU cache attributes pertaining to OpenRISC processors
+> > are exposed along with other unrelated CPU attributes in the procfs file
+> > system (/proc/cpuinfo). However, a few cache attributes remain unexposed.
+> > An attempt is also made to pull these CPU cache attributes without
+> > detecting if the relevant cache exists.
+> >
+> > This patch provides a mechanism that the generic cacheinfo infrastructure
+> > can employ to expose these attributes via the sysfs file system. These
+> > attributes are exposed in /sys/devices/system/cpu/cpuX/cache/indexN.
+> > Cache attributes are pulled only when the cache component is detected.
+> >
+> > The implementation to pull cache attributes from the processor's
+> > registers has been moved from arch/openrisc/kernel/setup.c with a few
+> > modifications.
+> >
+> > The patch also moves cache-related fields out of struct cpuinfo_or1k and
+> > into its own struct to keep the implementation straightforward. This
+> > reduces duplication of cache-related fields while keeping cpuinfo_or1k
+> > extensible in case more cache descriptors are added in the future.
+> >
+> > This implementation is based on similar work done for MIPS and LoongArch.
+> >
+> > Signed-off-by: Sahil Siddiq <sahilcdq@proton.me>
 
-	v2 -> v3
-	fix the format of this patch
+> > --- a/arch/openrisc/include/asm/cpuinfo.h
+> > +++ b/arch/openrisc/include/asm/cpuinfo.h
+> > @@ -15,16 +15,18 @@
+> >  #ifndef __ASM_OPENRISC_CPUINFO_H
+> >  #define __ASM_OPENRISC_CPUINFO_H
+> >
+> > +struct cache_desc {
+> > +     u32 size;
+> > +     u32 sets;
+> > +     u32 block_size;
+> > +     u32 ways;
+>
+> Considering the changes below to add cache available checks, maybe we
+> want to add a field here, such as `bool present`.  Or a flags field like
+> is used in loongarch?
 
-So you are doing the same over and over and sending it to us?
+I assume cache_desc.size is zero when the cache is not present?
 
-Srsly, ZTE, slow down and be sure you follow the process BEFORE you send
-flood of patches like that and learn on the go.
+Gr{oetje,eeting}s,
 
-Best regards,
-Krzysztof
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
