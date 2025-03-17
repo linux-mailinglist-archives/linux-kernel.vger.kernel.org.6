@@ -1,130 +1,132 @@
-Return-Path: <linux-kernel+bounces-565077-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565078-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D29CA66073
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 22:26:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 80238A66074
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 22:26:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5DE9016E006
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 21:26:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6537617556B
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 21:26:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CF882036E5;
-	Mon, 17 Mar 2025 21:25:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D11B5202C47;
+	Mon, 17 Mar 2025 21:26:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="UFmKUQ++";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="cPOhIKkE"
-Received: from fhigh-a2-smtp.messagingengine.com (fhigh-a2-smtp.messagingengine.com [103.168.172.153])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wnMhQeaW"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C437201278;
-	Mon, 17 Mar 2025 21:25:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.153
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98716202984
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 21:26:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742246757; cv=none; b=OlwJS7vpFC9B1rrB7x4GvznEQSGiPQG8DxUDHOy3KYdPHRnaycBTEbp+lY/yY1eKGiYdtDcQ5UH6b4fEY4PSD9uaRa9B+0dOxDPNaoE+TLk5AYU5sx2l/dIBa9rYblYdGhaTgraMOWUDvathec7v/SsrOgVPMzhDA/e7SH6gQvE=
+	t=1742246773; cv=none; b=lwnnM36MLH+QdXC0QgOE+7euztPhHnEIJpL0uLdGxosV5Nw+I4tdG4MAE2AEPOSmd8RvP5B+mgmlYOFXn7Y+of4crGBRyq6bPLvtyXAOVtwR2w9/NduulId74QxBwpLV67fYueJxEjALxQWrDfOaGMd9MgpoYKbHL/LoJybUv3E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742246757; c=relaxed/simple;
-	bh=hidze6Lmm2kEBDShJAmbSCXjiyYDNNZa1xFsxR7Xits=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=rgK+08MJ4HYBkzPXZGauV51OdyNHIqkXcukN0/3Rv1+xRf6Kn9AFAjyb/mYoGnCWqVuRa0deurOJlQWnH0QDjO9NQXJE4vRRIeAL1JzGvTxdWBQruMCb9HVk/SEMFY6HOxJtxN1aMCW9kGa/ik+bSLf8AW36HitHd2sc4HJxZPk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=UFmKUQ++; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=cPOhIKkE; arc=none smtp.client-ip=103.168.172.153
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-07.internal (phl-compute-07.phl.internal [10.202.2.47])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 286141140274;
-	Mon, 17 Mar 2025 17:25:55 -0400 (EDT)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-07.internal (MEProxy); Mon, 17 Mar 2025 17:25:55 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1742246755;
-	 x=1742333155; bh=hidze6Lmm2kEBDShJAmbSCXjiyYDNNZa1xFsxR7Xits=; b=
-	UFmKUQ++TBS2I3IIsIXwAXRy9Sq8XRu05gL8aG/W6NDl+zLH8k81CrCjZMAYFeLI
-	OtY3QDcz/ZTPCzH9CDJOd3VZNoXH84fdUMFe1g1kB3TucdtleQPoCnnLufRb0acA
-	HOuwwBG9UUmGdwolZG0oHngWDpmti/0PX7NhuRApPymwFVBmZ5JAI76dxCq14PsL
-	P7PLnSCbHB7Sy6Pf/wOX7ZqE65HWoHf4msAx2ktEsGfiJxWT8WIXJljG+QNQIUbd
-	zxvhqDKoaX0uqupvCb1HDyXJNLQrYpi/AmXMjKoK9zlS2bTjIr0GOWL4ChARx6TR
-	VVo2EOvUJWtMAWJdXgR73w==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1742246755; x=
-	1742333155; bh=hidze6Lmm2kEBDShJAmbSCXjiyYDNNZa1xFsxR7Xits=; b=c
-	POhIKkEx1gqYmHDwULePhMJI3H5VrJHyp9Cp2eYDRvVmYN6S9NigCWb6VcH6LX2n
-	TswyW9pcXqISrYYdQi5cfnj1wEZkuCLtaVVMV0D4RHBz0yco0rpn+KPE54dzID3l
-	rO6Eq2lcAHDWvGRdCr1wuJVy+DK4Ufbh7z96AhwrLtA7Ham1knTXAniDwr/CWRam
-	n0XWNY7gTaejt7dK6HebRdSmmcrB/7iW55D+z+3+KfkukU8kaXEJ3UFwqogKuHam
-	kpcwKY2nMGMwEzlBase2kgzEpXn7QLmZLDfRdpjTVy+BteFhkUuCqwq2GEq4F5au
-	NlD0XO4BsrdDBDI9UjB6w==
-X-ME-Sender: <xms:YpPYZ_qqGQZQOPRTRzKVjOZp3bTqqQPXQgdQ5kduSmVfGYIiZwt7WA>
-    <xme:YpPYZ5qE-FpB3Ple67LdTYaC3MQawx4M2GXnrGfO3E8v4JvLkmw2xab-f2tZAKX7B
-    S_wh90MA7ruNjPAh0w>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddugedtiedtucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertder
-    tddtnecuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnug
-    gsrdguvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeet
-    fefggfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
-    hmpehmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohep
-    hedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheprhhosghhsehkvghrnhgvlhdroh
-    hrghdprhgtphhtthhopehgrhgvghhkhheslhhinhhugihfohhunhgurghtihhonhdrohhr
-    ghdprhgtphhtthhopehlkhhunhgurhgrkhesvhefrdhskhdprhgtphhtthhopehlihhnuh
-    igqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhn
-    uhigqdhushgssehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:YpPYZ8MpS8QW-Kukar9pKO723yLpHAm0rzRI9AMgySBLmK-tdlJ_iQ>
-    <xmx:YpPYZy5mLfoa6ymnDOE9hYoon-cCCCZxzwn4d_cZYjHKEpZQBaUBbw>
-    <xmx:YpPYZ-6ZzaE0LZtjT_nAfg2WXlDRELpdoe7N0T2lRTgT39FHguXznQ>
-    <xmx:YpPYZ6j6JGm2xe2EbYkOUySj2UU0kWlu5mp-Aoxh07AG5EIdOm9U4Q>
-    <xmx:Y5PYZ53d-0b6GdHUVkSaxQ7xzW8-QQFRtFFe2I1nRLW1ALfEevVuvsHw>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 814CC2220072; Mon, 17 Mar 2025 17:25:54 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1742246773; c=relaxed/simple;
+	bh=QV6NeSSrSuc1N9LG/u//TUlnETuTUQO6//M4Xzp8orY=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=t4UjHEEYGtOqnobc08WsYJrzkBPJVCZW0toX4S+Pfpjg1zHD4fIgpHGBP497AyRV914SR6wotfgO61Mvjt6/eZl+pf1DN3CHlqI3NU6ElP+kAqsYX4CVvBoEgoxEiKe5PU6pBb8OndC0vr23vCJa9GrkNAP1vA2iWxm7NGCJWu0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wnMhQeaW; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-2242ac37caeso6835ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 14:26:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1742246771; x=1742851571; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=CtcFHptsmprlxPmeOniAk13c6ZRerTHBG0RZgJHM97U=;
+        b=wnMhQeaW8sQMdoVBiQfqwiBdZYdekumE9n0NqBQ7fF5tRK+IZ5O8pZZRC27TH/i+e3
+         dVsQsUw1a/83cGT9g3m6hMRh0O2xl+1ax27YJ1W232MQs+Jr8rRqiMPCS+DfiaJvAepm
+         hKCSupWvmNHpdFJzcgm5jZUN5Bvu+bRWmIGMgdGPktTkSbw3oZB53qHZgUboDHQvcmPc
+         0liK1ZEjzD4mUJwD3AfIxBDhwu+DioT0YQQkMWI8rY0XQHLm9LDp+psYPO/5zmkU+RPl
+         FGtnJQRNtz98CdnRQoNEfDj6dqqab4QxASMibKKH6t+U+m4evJvOO1BlmROvtZdo8Dc9
+         jaRw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742246771; x=1742851571;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=CtcFHptsmprlxPmeOniAk13c6ZRerTHBG0RZgJHM97U=;
+        b=pK3t3m4EqYBGEeMEgivhfot1wnaOKtFS69c6hMM8iq8c1yPczNUg1oF3H3Bsu3Rs64
+         Ui0K8sFB+KL6t0tUWz5wFuij3s0/RdAS4jgR9A4/v+bfey5fWziXrJiPHr768k9e4EHX
+         +ZJsRzfTqJ9Z/eukUC9PU7DUJ+LjRXGRQ/uG0Y8IC2c9pFbM7vlWfWopThjlkKU2GATF
+         urYQiQOSpA7h7rFKoyphlaE/6DR1G/Z54WbMM//kHAxC3W8mKG+gML5i96APjC4k+IkE
+         HvIUICA1HfE1kHTNbdyiIB/OQZ0oQZEPgiEdOE2CKiYMEUcrTekhIL8crKN70crVw3Yy
+         PW5A==
+X-Forwarded-Encrypted: i=1; AJvYcCXqY4b2hyppIXOIDNXySfw/YGewQw5KGRnNsndzghnjApHBQgzUYE2Pdaw8oH4Tz11NUrfrRcbj1fIAU2s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YztFA8QGExjUpmi08Itzgk64pqMeN9/0MuPmnKX48rYsoSeC2EB
+	1XiMZBgWQ6NBTim5LfR9i0yGMoF11SbJ/8YIxBSKSOkIAx81UGq0GmXODR0Powe4TH6V4GgE9DH
+	Kt19Qvpd5jGnX8/XCZuxBWO5A6O4lU3D+IlV6
+X-Gm-Gg: ASbGnctl3u9jN1NvQ8CuL+GzOoLGrJD729zi/vzzjLtmB+hRIo4PrYUBUCGXSNenM3U
+	dfzhRvPWpYrTjKMKZTQ3N6Sh7JWU5LRGeQ6j28oW8DIgExxOzHoclAuHiJ5QVWqqSBon+B3FFdS
+	Y2pHMQjoq54os9tv6U7l1lC5VjyPNTerAP+E95iPezwBkg7AV7nV5VvQ4=
+X-Google-Smtp-Source: AGHT+IGIchyGjZ/inrviM0LUA3al8hizGh73RtGe6gUpvsgk8pAeBXPh8SETEHrVpJdH+kJyF8I9ZH4nKIs7ZG1cmGs=
+X-Received: by 2002:a17:903:40c9:b0:224:6c8:8d84 with SMTP id
+ d9443c01a7336-22631018660mr106935ad.4.1742246770603; Mon, 17 Mar 2025
+ 14:26:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Mon, 17 Mar 2025 22:25:33 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Rob Herring" <robh@kernel.org>,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
-Cc: "Lubomir Rintel" <lkundrak@v3.sk>, linux-kernel@vger.kernel.org,
- linux-usb@vger.kernel.org
-Message-Id: <a46ecbcd-4c1d-4a04-8c7f-6d7e97670ccd@app.fastmail.com>
-In-Reply-To: <20250317200941.563287-1-robh@kernel.org>
-References: <20250317200941.563287-1-robh@kernel.org>
-Subject: Re: [PATCH] usb: Remove orphaned Marvell UDC drivers
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+From: Ian Rogers <irogers@google.com>
+Date: Mon, 17 Mar 2025 14:25:59 -0700
+X-Gm-Features: AQ5f1Jqwcxj8BNxx3Vc7N1w_2aDIUnPEv8jRsk7v8wJCPx94S2CeHFS7o1XaXfc
+Message-ID: <CAP-5=fV-t6j9SOSUHLO8H8LWEmB1E4KZtKa3fQWiMx7y12gjhQ@mail.gmail.com>
+Subject: Remove the "perf" hard lock up detector (watchdog) from the kernel?
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, 
+	linux-perf-users <linux-perf-users@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	Doug Anderson <dianders@chromium.org>
+Cc: "Liang, Kan" <kan.liang@linux.intel.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Namhyung Kim <namhyung@kernel.org>, 
+	Stephane Eranian <eranian@google.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Leo Yan <leo.yan@arm.com>, 
+	James Clark <james.clark@linaro.org>, Will Deacon <will@kernel.org>, 
+	Thomas Richter <tmricht@linux.ibm.com>, Vince Weaver <vincent.weaver@maine.edu>
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Mar 17, 2025, at 21:09, Rob Herring (Arm) wrote:
-> These drivers have no way to probe as there are no match tables nor
-> devices created with a matching name in the kernel tree.
->
-> UDC was only ever supported by board files which were removed in 2022.
->
-> For U3D, which was added in 2012, the PXA2128 aka MMP3 support was
-> never upstreamed with board files and only revived in 2019 with DT
-> support. No U3D DT support has been added since then.
->
-> Cc: Arnd Bergmann <arnd@arndb.de>
-> Cc: Lubomir Rintel <lkundrak@v3.sk>
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+Hi,
 
-Looks ok to me,
+The kernel tree has two hard lockup detectors. The perf one uses a
+perf counter to generate NMI interrupts and detect a lack of forward
+progress, whereas the buddy approach uses the soft lockup hrtimer to
+check the next CPU is progressing. Doug Anderson
+<dianders@chromium.org> recently questioned:
 
-Acked-by: Arnd Bergmann <arnd@arndb.de>
+https://lore.kernel.org/all/CAD=FV=WfB6inJPuwfhbw4mtFBYpr+3ot2J+SJAZ3pT3t4fW7cw@mail.gmail.com/
+  ...but I'd also have to ask: is there a reason you're using the "perf"
+  hard-lockup detector instead of the buddy one? In my mind, the "buddy"
+  watchdog is better in almost all ways (I believe it's lower power,
+  doesn't waste a "perf" controller, and doesn't suffer from frequency
+  issues). It's even crossed my mind whether the "perf" lockup detector
+  should be deprecated. ;-)
 
-I see two additional udc drivers without users:
+In the perf tool there are warnings associated with the NMI watchdog.
+The metric code also has a flag on metrics where events aren't grouped
+when the NMI watchdog is enabled. For example:
+https://web.git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tree/tools/perf/pmu-events/arch/x86/sapphirerapids/spr-metrics.json?h=perf-tools-next#n1916
 
-drivers/usb/gadget/udc/fusb300_udc.c (could not find any users)
-drivers/usb/gadget/udc/net2272.c (formerly used on blackfin)
+The warning and breaking of groups is currently inaccurate for the
+buddy hard lockup detector as /proc/sys/kernel/nmi_watchdog is still
+present to enable or disable the buddy detector. That is the perf tool
+is currently warning and breaking event groups stating the NMI
+watchdog is a problem but the kernel is configured to use the buddy
+watchdog.
 
+I'm unaware of a way to determine if the buddy or "perf" counter based
+approach is in use and to correct perf's behavior. A patch adding such
+an ability (say a new file in /proc/sys/kernel), and perhaps new
+abilities to switch watchdog at runtime, seem less desirable than just
+deleting the "perf" counter based hard lock up detector. The perf tool
+could make the NMI warnings and breaking of event groups conditional
+on the running kernel version then.
+
+Are there objections to just deleting the "perf" hard lock up detector
+(watchdog) from the kernel tree? Are there reasons to keep it around
+but just not default?
+
+Thanks,
+Ian
 
