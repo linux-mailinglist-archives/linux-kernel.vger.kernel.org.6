@@ -1,116 +1,213 @@
-Return-Path: <linux-kernel+bounces-563766-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563767-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4949A647EE
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:45:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBA13A647F1
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:45:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 67D9C3B30BE
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 09:45:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA8AE3B3770
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 09:45:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 754A722ACD3;
-	Mon, 17 Mar 2025 09:45:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vc5R1QmP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA5C71AAA32;
+	Mon, 17 Mar 2025 09:45:30 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDAA61AAA32;
-	Mon, 17 Mar 2025 09:45:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D99A282D98
+	for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 09:45:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742204719; cv=none; b=JbYXAkoYpnft99qeVP3Cdo+prehtAl6VeWijJnqur5GvMAejd/0OR7Q+MCP1WgCH3EW5kF5Rxw+ktC4VhWpnE31tMDQKW/oQdA2r6ycEagGWAH/EjaAST8OspJ2k8RJ4Qrfq41k0J5GajR3zRhHZpttlF8aES10qMc5S9e1bSTw=
+	t=1742204730; cv=none; b=N34uMhVqtFbyobI/PmZoNQBfstqPRv0uv5CMYz2usZho3PnyfN90dgfvXBaqA0hzT3DlhLubj1YF8ashcQ9UddHsE0jEc57EVGO1yvB75djTvYiAMSDep1LSCsOe+qtr/LLym0BS4TzcBooCxzAF9fHRekocXZaxdAjmaFoih64=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742204719; c=relaxed/simple;
-	bh=IDfEO9ixbAv5kWVNwF8BvMXACU0glZwpuOKgM/NINyM=;
+	s=arc-20240116; t=1742204730; c=relaxed/simple;
+	bh=oTTljZWBVhyMYOri5e1Sd4AdjNYMYL5t/xz1a6HBDHQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nYcQFKa3IjG4UOmYswWoGGSVnKqi7q2AJ8g1lSN3pDn64r/j7I36w8j2eW6kA52gBZWhUWE+0FyfPdwYeCTFhaiSUjSCUIhSgLdO4k8e2cuXWTd7SU1TlhwQtSyekxFZxighth7aTguMpXsi3tQnbucR11kbZ10EHCCDjp1wWaA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Vc5R1QmP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9377C4CEF0;
-	Mon, 17 Mar 2025 09:45:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742204719;
-	bh=IDfEO9ixbAv5kWVNwF8BvMXACU0glZwpuOKgM/NINyM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Vc5R1QmPHOTrhSdJtjbXjn3Q/pVsWLlIO/2wjHWiT71fsu3wrrUDlsbP/CPZXw+mc
-	 xysGjRvhtSwfdQA7HGJt+RsKNKcxEBhM6/R8SmwI47z5/kKsgxaSoneE4b6337Kx/S
-	 q29zb4BgGaWy9Qun1/SXXBOv4DEQWAk0xS038Xs+ce/2+w3rg3YTC20kityrcogz6z
-	 YP6/VILT5UbbeNCTguFiYnXZ2Tpaqa/ZbTBIEViVGHFSJqOudQTjAM6x9yYNcJPurG
-	 VLYLFVMq+ZIaNNcvvUNSE6050QM1p9nJenFIgDe2tf1Qp4VUnagqewQiw3BvpA4WHx
-	 uGNkNd+wpqZVA==
-Date: Mon, 17 Mar 2025 10:45:16 +0100
-From: Maxime Ripard <mripard@kernel.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Abhinav Kumar <quic_abhinavk@quicinc.com>, Andrzej Hajda <andrzej.hajda@intel.com>, 
-	David Airlie <airlied@gmail.com>, Dmitry Baryshkov <lumag@kernel.org>, 
-	Hermes Wu <Hermes.wu@ite.com.tw>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Jonas Karlman <jonas@kwiboo.se>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Marijn Suijten <marijn.suijten@somainline.org>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Rob Clark <robdclark@gmail.com>, Robert Foss <rfoss@kernel.org>, 
-	Sean Paul <sean@poorly.run>, Simona Vetter <simona@ffwll.ch>, 
-	Thomas Zimmermann <tzimmermann@suse.de>
-Subject: Re: [PATCH v6 2/4] drm/bridge: add function interface for
- DisplayPort audio implementation
-Message-ID: <20250317-dancing-loyal-malkoha-ad5a36@houat>
-References: <20250314-dp-hdmi-audio-v6-2-dbd228fa73d7@oss.qualcomm.com>
- <d5b8a7fa506ed3026c19b383edf160d6@kernel.org>
- <otidtln4pjb47azr7zhllxkqmwocdnbdiay6xcg6psphz3436i@fn5hxgaflgv6>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ktxz1sVXIiqN3vYBgw6Mf77Lj1yZ3fI5A+Zec/Af1m2zECT9FapYFsEu+3LB7wzE02UVPzrodtnkG1eI+6AkQuIo0707HgDn51gw4i6sOtYHVS2fDf6lpd7ctBaCgf8DLn6xWVP03eoIVIVRfubJNC+17NqOTLFfsSa4mySJYzo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1tu727-00042i-9p; Mon, 17 Mar 2025 10:45:19 +0100
+Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1tu726-000Dre-1k;
+	Mon, 17 Mar 2025 10:45:18 +0100
+Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1tu726-0018Bq-2l;
+	Mon, 17 Mar 2025 10:45:18 +0100
+Date: Mon, 17 Mar 2025 10:45:18 +0100
+From: Marco Felsch <m.felsch@pengutronix.de>
+To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+Cc: shawnguo@kernel.org, s.hauer@pengutronix.de, marex@denx.de,
+	imx@lists.linux.dev, Peng Fan <peng.fan@nxp.com>,
+	linux-kernel@vger.kernel.org, kernel@pengutronix.de,
+	festevam@gmail.com, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] soc: imx: Dump higher 64bits UID
+Message-ID: <20250317094518.yf2hbq5sjl7lgfwb@pengutronix.de>
+References: <20250314065225.442717-1-peng.fan@oss.nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="ixvl3eaawni5mk5e"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <otidtln4pjb47azr7zhllxkqmwocdnbdiay6xcg6psphz3436i@fn5hxgaflgv6>
+In-Reply-To: <20250314065225.442717-1-peng.fan@oss.nxp.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mfe@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
+Hi Peng,
 
---ixvl3eaawni5mk5e
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v6 2/4] drm/bridge: add function interface for
- DisplayPort audio implementation
-MIME-Version: 1.0
+On 25-03-14, Peng Fan (OSS) wrote:
+> From: Peng Fan <peng.fan@nxp.com>
+> 
+> i.MX8MP UID is actually 128bits and partitioned into two parts.
+> The 1st 64bits are at 0x410 and 0x420, and 2nd 64bits are at 0xE00
+> and 0xE10.
+> 
+> Dump the whole 128bits for i.MX8MP, by introducing soc_uid_h.
 
-On Fri, Mar 14, 2025 at 08:55:05PM +0200, Dmitry Baryshkov wrote:
-> On Fri, Mar 14, 2025 at 05:54:14PM +0000, Maxime Ripard wrote:
-> > On Fri, 14 Mar 2025 11:36:49 +0200, Dmitry Baryshkov wrote:
-> > > It is common for the DisplayPort bridges to implement audio support. =
-In
-> > > preparation to providing a generic framework for DP audio, add
-> > > corresponding interface to struct drm_bridge. As suggested by Maxime
-> > > for now this is mostly c&p of the corresponding HDMI audio API.
-> > >=20
-> > >=20
-> > > [ ... ]
-> >=20
-> > Reviewed-by: Maxime Ripard <mripard@kernel.org>
->=20
-> You've sent two r-b's for patch 2. Is there a chance that one of those
-> was for patch 3?
+Thanks for taking care of this :) We noticed that this is crucial for
+burning the field-return fuse to keep the LOCK fuse unlocked.
 
-Did I? Sorry, it was indeed meant for patch 3
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> ---
+>  drivers/soc/imx/soc-imx8m.c | 29 +++++++++++++++++++++--------
+>  1 file changed, 21 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/soc/imx/soc-imx8m.c b/drivers/soc/imx/soc-imx8m.c
+> index 3ed8161d7d28..02d8c85e9a28 100644
+> --- a/drivers/soc/imx/soc-imx8m.c
+> +++ b/drivers/soc/imx/soc-imx8m.c
+> @@ -24,13 +24,15 @@
+>  #define OCOTP_UID_HIGH			0x420
+>  
+>  #define IMX8MP_OCOTP_UID_OFFSET		0x10
+> +#define IMX8MP_OCOTP_UID_HIGH		0xE00
+>  
+>  /* Same as ANADIG_DIGPROG_IMX7D */
+>  #define ANADIG_DIGPROG_IMX8MM	0x800
+>  
+>  struct imx8_soc_data {
+>  	char *name;
+> -	int (*soc_revision)(u32 *socrev, u64 *socuid);
+> +	int (*soc_revision)(u32 *socrev, u64 *socuid, u64 *socuid_h);
+> +	bool uid_len_128;
 
-Maxime
+Albeit your patch is not wrong, it could be far simpler if we redefine
+the soc_revision to serial_number. This way each SoC can specify 
+the dedicated mechanism of setting the serial number. Going this way we
+need two patches, the first one is converting the logic and the 2nd one
+is adding a dedicated hook for the i.MX8MP.
 
---ixvl3eaawni5mk5e
-Content-Type: application/pgp-signature; name="signature.asc"
+Regards,
+  Marco
 
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZ9fvJwAKCRAnX84Zoj2+
-dnNVAYDhZWYDGXn7oAB0Fo0Lf64zRQfKXIpnqEHJYJiwjUC3bU8WN/EHUFxqFVpX
-epcnHMkBf1TqVVJjt8AS9ICP0MFlT1pGgiaFWa2B8bah6LI77fyFdkT67q5xD9JQ
-oz5+buRd4w==
-=mQjr
------END PGP SIGNATURE-----
-
---ixvl3eaawni5mk5e--
+>  };
+>  
+>  #ifdef CONFIG_HAVE_ARM_SMCCC
+> @@ -49,7 +51,7 @@ static u32 imx8mq_soc_revision_from_atf(void)
+>  static inline u32 imx8mq_soc_revision_from_atf(void) { return 0; };
+>  #endif
+>  
+> -static int imx8mq_soc_revision(u32 *socrev, u64 *socuid)
+> +static int imx8mq_soc_revision(u32 *socrev, u64 *socuid, u64 *socuid_h)
+>  {
+>  	struct device_node *np __free(device_node) =
+>  		of_find_compatible_node(NULL, NULL, "fsl,imx8mq-ocotp");
+> @@ -102,7 +104,7 @@ static int imx8mq_soc_revision(u32 *socrev, u64 *socuid)
+>  	return ret;
+>  }
+>  
+> -static int imx8mm_soc_uid(u64 *socuid)
+> +static int imx8mm_soc_uid(u64 *socuid, u64 *socuid_h)
+>  {
+>  	struct device_node *np __free(device_node) =
+>  		of_find_compatible_node(NULL, NULL, "fsl,imx8mm-ocotp");
+> @@ -131,6 +133,12 @@ static int imx8mm_soc_uid(u64 *socuid)
+>  	*socuid <<= 32;
+>  	*socuid |= readl_relaxed(ocotp_base + OCOTP_UID_LOW + offset);
+>  
+> +	if (offset) {
+> +		*socuid_h = readl_relaxed(ocotp_base + IMX8MP_OCOTP_UID_HIGH + 0x10);
+> +		*socuid_h <<= 32;
+> +		*socuid_h |= readl_relaxed(ocotp_base + IMX8MP_OCOTP_UID_HIGH);
+> +	}
+> +
+>  	clk_disable_unprepare(clk);
+>  	clk_put(clk);
+>  
+> @@ -139,7 +147,7 @@ static int imx8mm_soc_uid(u64 *socuid)
+>  	return ret;
+>  }
+>  
+> -static int imx8mm_soc_revision(u32 *socrev, u64 *socuid)
+> +static int imx8mm_soc_revision(u32 *socrev, u64 *socuid, u64 *socuid_h)
+>  {
+>  	struct device_node *np __free(device_node) =
+>  		of_find_compatible_node(NULL, NULL, "fsl,imx8mm-anatop");
+> @@ -156,7 +164,7 @@ static int imx8mm_soc_revision(u32 *socrev, u64 *socuid)
+>  
+>  	iounmap(anatop_base);
+>  
+> -	return imx8mm_soc_uid(socuid);
+> +	return imx8mm_soc_uid(socuid, socuid_h);
+>  }
+>  
+>  static const struct imx8_soc_data imx8mq_soc_data = {
+> @@ -177,6 +185,7 @@ static const struct imx8_soc_data imx8mn_soc_data = {
+>  static const struct imx8_soc_data imx8mp_soc_data = {
+>  	.name = "i.MX8MP",
+>  	.soc_revision = imx8mm_soc_revision,
+> +	.uid_len_128 = true,
+>  };
+>  
+>  static __maybe_unused const struct of_device_id imx8_soc_match[] = {
+> @@ -211,7 +220,7 @@ static int imx8m_soc_probe(struct platform_device *pdev)
+>  	const struct of_device_id *id;
+>  	struct soc_device *soc_dev;
+>  	u32 soc_rev = 0;
+> -	u64 soc_uid = 0;
+> +	u64 soc_uid = 0, soc_uid_h = 0;
+>  	int ret;
+>  
+>  	soc_dev_attr = devm_kzalloc(dev, sizeof(*soc_dev_attr), GFP_KERNEL);
+> @@ -232,7 +241,7 @@ static int imx8m_soc_probe(struct platform_device *pdev)
+>  	if (data) {
+>  		soc_dev_attr->soc_id = data->name;
+>  		if (data->soc_revision) {
+> -			ret = data->soc_revision(&soc_rev, &soc_uid);
+> +			ret = data->soc_revision(&soc_rev, &soc_uid, &soc_uid_h);
+>  			if (ret)
+>  				return ret;
+>  		}
+> @@ -242,7 +251,11 @@ static int imx8m_soc_probe(struct platform_device *pdev)
+>  	if (!soc_dev_attr->revision)
+>  		return -ENOMEM;
+>  
+> -	soc_dev_attr->serial_number = devm_kasprintf(dev, GFP_KERNEL, "%016llX", soc_uid);
+> +	if (data && data->uid_len_128)
+> +		soc_dev_attr->serial_number = kasprintf(GFP_KERNEL, "%016llX%016llX",
+> +							soc_uid_h, soc_uid);
+> +	else
+> +		soc_dev_attr->serial_number = devm_kasprintf(dev, GFP_KERNEL, "%016llX", soc_uid);
+>  	if (!soc_dev_attr->serial_number)
+>  		return -ENOMEM;
+>  
+> -- 
+> 2.37.1
+> 
+> 
+> 
 
