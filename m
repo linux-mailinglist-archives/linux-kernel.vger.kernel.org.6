@@ -1,47 +1,63 @@
-Return-Path: <linux-kernel+bounces-563457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563479-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 930B2A64240
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 07:57:10 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26FBAA6429A
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 08:05:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B99E71890954
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 06:57:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C61D3B01E2
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 07:04:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5027C21A422;
-	Mon, 17 Mar 2025 06:56:59 +0000 (UTC)
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E74CC2253AE;
+	Mon, 17 Mar 2025 07:01:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="F5VBEoTF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE4241E1E0F;
-	Mon, 17 Mar 2025 06:56:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17A7A222589;
+	Mon, 17 Mar 2025 07:01:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742194618; cv=none; b=TIPKNJytQ3Sl2cXqSGPaupNbt30U/PfK0P6MsxjJU4JBpFUjUjStjGOGbgpGKvJ+ncXm6aWnMeQzVsMDnj5MUpVxndoGBXCxRoW/9xIHk+dAhRHpFNjgB84I7eZilqqCVEwuaAkCJUFopjtzmH1rV9TR0JOQxUvlCMCaZ0J7GRY=
+	t=1742194881; cv=none; b=N9PcXRzMcFUkjD0exx4QUxj+j1+SIBsE0qYbmhlt5ceQdOIG5Tzivlu0gEp26eNvkFKPKRlxy7zLlMGf9+Z2/vBg/9qbGQAjAHksyf/fU5PzzkMl2BFJr/b2YKn0moJZSzF0mgJcbV/ZdDprohFs1l4GtTqn9zQglELAQcWv7Qs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742194618; c=relaxed/simple;
-	bh=v8N6JXkgUTdf++cxQmfupfXXXAgagRCUspNqW8n+L4k=;
+	s=arc-20240116; t=1742194881; c=relaxed/simple;
+	bh=aBPpmUcGDUxtVqNYBJ0y1S8mhJ2vEs38pfC3bkBgSxs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UykzRY+OhBHOq0ynTh7uc+2BIknbxx5ZhnflV1kRsllmVPe2LwwyjM5d6H+bybLRt4dHG+i9DlQd2zmAC6QEg+6757FbREESi8qzCHUEkFtEVJI/y0PgQHCsqVIbywPL9gQff58x9POlbIoMXS4LRJ5GjEBTSplbXkFIrbHtpX8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id AFB2668AFE; Mon, 17 Mar 2025 07:56:51 +0100 (CET)
-Date: Mon, 17 Mar 2025 07:56:51 +0100
-From: Christoph Hellwig <hch@lst.de>
-To: John Garry <john.g.garry@oracle.com>
-Cc: brauner@kernel.org, djwong@kernel.org, cem@kernel.org,
-	dchinner@redhat.com, hch@lst.de, linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	ojaswin@linux.ibm.com, ritesh.list@gmail.com,
-	martin.petersen@oracle.com, tytso@mit.edu,
-	linux-ext4@vger.kernel.org
-Subject: Re: [PATCH v6 12/13] xfs: commit CoW-based atomic writes atomically
-Message-ID: <20250317065651.GA28079@lst.de>
-References: <20250313171310.1886394-1-john.g.garry@oracle.com> <20250313171310.1886394-13-john.g.garry@oracle.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=MoqIyjcGrz9F5j1VhDDWJnlTMxMb4bcugRbEWhRNyYsQi35MZgMkU0syXmGyfOAs4IYxheAv5Ca/B6d9JtqQo302O0HIWWj5lAGu5mNe+mT69H4Eiqcc7PrK4gaGJ4aXnDpXi32CqVAu+Rm0ji352qq8wPI26Dt5oUI9aqmAlTE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=F5VBEoTF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E96FC4CEEC;
+	Mon, 17 Mar 2025 07:01:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1742194880;
+	bh=aBPpmUcGDUxtVqNYBJ0y1S8mhJ2vEs38pfC3bkBgSxs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=F5VBEoTF11phoho4ypFGxNctozFRv+i9J46Vxp2mq479IyHBO7fyElGFis6V1TKlh
+	 5JWjBPsa8D3NCl3F5KnUxekvFFMtb2rKKywyaJAAPgjfrNAeCSeTawyk4V7Xo4vqmT
+	 EpbLzb1LWK1bJ6Hq1yoKYAGJNdO1bGYOPi0Q/fa8=
+Date: Mon, 17 Mar 2025 08:00:01 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Jiri Slaby <jirislaby@kernel.org>
+Cc: linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Alex Elder <elder@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	David Lin <dtwlin@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, greybus-dev@lists.linaro.org,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Jakub Kicinski <kuba@kernel.org>, Johan Hovold <johan@kernel.org>,
+	linux-alpha@vger.kernel.org, linux-staging@lists.linux.dev,
+	Matt Turner <mattst88@gmail.com>, netdev@vger.kernel.org,
+	Paolo Abeni <pabeni@redhat.com>,
+	Richard Henderson <richard.henderson@linaro.org>,
+	Rob Herring <robh@kernel.org>, sparclinux@vger.kernel.org
+Subject: Re: [PATCH 00/29] tty: cleanup no. 99
+Message-ID: <2025031738-variable-desecrate-ec2f@gregkh>
+References: <20250220111606.138045-1-jirislaby@kernel.org>
+ <2025031738-fabric-alright-6a32@gregkh>
+ <e8fb71ea-84cb-427a-9dc9-9c44ec0db08f@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -50,16 +66,36 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250313171310.1886394-13-john.g.garry@oracle.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <e8fb71ea-84cb-427a-9dc9-9c44ec0db08f@kernel.org>
 
->  		trace_xfs_reflink_end_cow_error(ip, error, _RET_IP_);
->  	return error;
->  }
-> +int
+On Mon, Mar 17, 2025 at 05:59:01AM +0100, Jiri Slaby wrote:
+> On 17. 03. 25, 5:28, Greg KH wrote:
+> > On Thu, Feb 20, 2025 at 12:15:37PM +0100, Jiri Slaby (SUSE) wrote:
+> > > Hi,
+> > > 
+> > > this is (again) a series of cleanup in tty. I am trying to rework
+> > > tty+serial to avoid limitations of devices (so called NR_UART or
+> > > tty_alloc_driver()'s first parameter). And the below popped up while
+> > > crawling through the code. So this is only a prep cleanup.
+> > > 
+> > > * many tty flags are now enums
+> > > * many functions were improved for readability
+> > > * quite a few unused or old code dropped
+> > > 
+> > > In particular, the runtime behaviour of the kernel before and after the
+> > > changes is supposed to be bug to bug compatible (except moxa's ioctl
+> > > and ISA evils dropped). That is, noone should notice.
+> > 
+> > Were you going to do a new respin of this, or do you want me to take
+> > this as-is and you will send a follow-up ones for the commented-on
+> > changes?
+> 
+> I planned to send a v2 on Fri, but did not make it. I will today.
 
-Still a missing empty line after the previous function.   Also
-please add a comment what is atomic about this function and why
-the regular path doesn't use it.
+Not a problem, just wanted to make sure I didn't drop these on my side
+accidentally.
 
+thanks,
+
+greg k-h
 
