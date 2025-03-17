@@ -1,133 +1,150 @@
-Return-Path: <linux-kernel+bounces-564205-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-564207-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54264A65033
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 14:05:50 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29D4DA65039
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 14:07:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B8EE1176A75
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 13:05:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7043916A58C
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 13:07:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6180B23E34D;
-	Mon, 17 Mar 2025 13:04:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DaCJ5tGf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B89D4239082;
+	Mon, 17 Mar 2025 13:06:52 +0000 (UTC)
+Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA70B239089;
-	Mon, 17 Mar 2025 13:04:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE5742356B0;
+	Mon, 17 Mar 2025 13:06:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742216693; cv=none; b=mSCMNa/F69P7qw1UPVraOYHELgVZKieDoH/S0KcgfGCeSz/0UPymc4quLhONY+KoBTjHjQM6C4452gbusrq/n+gRFPhrLHVPTF7p4SksTY6daBIkCYN1rWw6x2z4A/N/UL4ld0lB6Jbu+SNMokYwH1nUSQBUzRwMLck+X/azvwo=
+	t=1742216812; cv=none; b=G7vM8i8fI1UT9k/oJLQswkuGfW5aX+71sCFWfluuJIzMFJRxIvoMzzlUWgSp1CPAPDXsZRpX/kBrWKTvcatr6wTJRnhlCSX9PjN2OqvBkQ/DlT3V/Fr3nuf1JNqgz1wSK4mh6dNVwqcBm9W4tfq3/8dGXKvOlD038+vhGPb8hGw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742216693; c=relaxed/simple;
-	bh=08/mbPZq69oi0MPCJBNrNKVVKfY/AcsPcbrj1BV7nKQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RQgKWsm6f7R+j495xZiyAdBdad0j1dx6HuobHIYexKXh8FU/L3JlAXPL7waMCRzIJ974PDEY5S1D+Zq01G4YnwDSlsxUEcMLot28bXP0gV3QnmrxWlveEVPUKZ8hC86Ly9ErIzPXEB4rGCUIM4QQ3/PP8c4TOXWOau0HHyOqlG0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DaCJ5tGf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1CE46C4CEE3;
-	Mon, 17 Mar 2025 13:04:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742216693;
-	bh=08/mbPZq69oi0MPCJBNrNKVVKfY/AcsPcbrj1BV7nKQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DaCJ5tGf1S5GGUAmNH+e9/xX3imM5/QsD7zEHFUFr+XbeqW++o5U42Y+USXpRF8MB
-	 GrReIXM0ntTnyn/puhLoAkze+/FH9vnLBZB/Ybd907mkXBdc5Y46lOgno71XyvicAc
-	 JUQjk8pbLZQjn6y0J4qmpsSR6nxOnsUyiJb4X20uyHqVKvB+Ot8YdgqQG1JKQ00twp
-	 0sL6Fi17CE9PTwyLXg5AB0FxCNUXSm9MOPjPdjDGoi56LxtrhMsMCfEAlf+NlMQbzX
-	 1pusoQuySYxBczB36aNbmYXQZ4MALX/EuuKbJSv5cJUkOywzRV09d1tlEHY08+io1e
-	 7LGfQPPVC7WLg==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1tuA9E-000000008V6-0o8n;
-	Mon, 17 Mar 2025 14:04:52 +0100
-Date: Mon, 17 Mar 2025 14:04:52 +0100
-From: Johan Hovold <johan@kernel.org>
-To: Miaoqing Pan <quic_miaoqing@quicinc.com>
-Cc: Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
-	ath11k@lists.infradead.org, linux-wireless@vger.kernel.org,
-	linux-kernel@vger.kernel.org, johan+linaro@kernel.org
-Subject: Re: [PATCH v2 ath-next 2/2] wifi: ath11k: fix HTC rx insufficient
- length
-Message-ID: <Z9gd9Aw5Bug8IKSV@hovoldconsulting.com>
-References: <Z866cCj8SWyZjCoP@hovoldconsulting.com>
- <7b1c5e40-b11d-421b-8c8b-117a2a53298b@quicinc.com>
- <c0cdcaf2-655b-4d22-a949-1519c552e6a4@oss.qualcomm.com>
- <72d95d77-674e-4ae7-83b0-ab58748b8251@quicinc.com>
- <Z9G5zEOcTdGKm7Ei@hovoldconsulting.com>
- <8ea7fe7c-7b4d-4a6f-ae03-b9ca127c23f8@quicinc.com>
- <Z9METTzUJe9yqVEI@hovoldconsulting.com>
- <b1c79589-4fcd-4630-9551-a620087e0c23@quicinc.com>
- <Z9PjjDFBuSJ7exVj@hovoldconsulting.com>
- <ecfe850c-b263-4bee-b888-c34178e690fc@quicinc.com>
+	s=arc-20240116; t=1742216812; c=relaxed/simple;
+	bh=qLLnqbUdQc9QQW9rNrgFZooAzxlpgOV67H1WdYcrmsw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PcUEpvElYTARkHU3MXJMC66Q7GjyL1pSRgZUQmaz0FNkAR8Irt5yhLL5JcSKlRe3HlmuAs2zaaxNPqCSPK+EQYRavqERfpeoZozDM1jRVPmlAGqA6Zelr1YADONRyQryggopk3eqVsoA9TkIUVFitgmnVwd9j+EcPwDbC49zNbQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-7c592764e24so56387885a.0;
+        Mon, 17 Mar 2025 06:06:50 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742216808; x=1742821608;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=O716qHSqjIZ+TTPaEOmQdWi3YCLXAx4bTootKFbaaeY=;
+        b=HHPNNUreEhVYIraK/+vx7FjSVCRrrcJuXaYVls6w7NPjKT9cT5zg4l2pwMqkBLKfrE
+         k1KE4g+Pn4ZcOnsKhKlDy08IDWfl+Ht/qJncCrUZzwmTedS+laWbV5Dfik7InsoUuwUm
+         GUru64Sd/m6MOcuzbbaVVcIySGkU6LRMzdTL0yD9wadwCLe4ScmT96o1qxx3Q7t9WuDt
+         gMHj5taPgJ6Zor1rlbqRqfYDv9tQqA599HW5YBWKpK1Dl2iO5CHrwAfHfew3zrqTNGx6
+         dFuWyYyQcw1SW82lA5rKL0K5DEMjOqdMEgaqq4htbGzdGho2qmoWUZagNNZvC9E8xVEI
+         2Acg==
+X-Forwarded-Encrypted: i=1; AJvYcCVH6YW4iyrlm9tU1K/0NjB57d3qSZmUP0fNz0gmK9ubSIiJUPUCRpfwNxcED1xoKBInYPPa3OVuOuk+FpvO10MW7HY=@vger.kernel.org, AJvYcCWWD0tEBXd/8V98zAvh91xJW9bvexsRTv9iZobHS+KiZQ1450bosS45NHyAQPWIyVIeY+tHJ4Tz2BO/bkpv@vger.kernel.org, AJvYcCXQJtUMn+esj5194f31C9ATpgZ9wmHpLjmy/s1+PsNE9Rih1nO5IwtcxLaqr4D5gAAcIdL3p4r3STg=@vger.kernel.org, AJvYcCXRF20itvs01v8LQkgknkjynO0QsViiubOG9pcLzy4gskIU7SAe7Z9Qx6KJj77YvyWpLx9FVYM5vaW1@vger.kernel.org
+X-Gm-Message-State: AOJu0YzmR+Cak5U6aC5iByn5NZNbJn3+nBsI32IP+lazV41LzL8zyS0f
+	otkO+UgTXZMD75bic9VEV9VqosaLN+jSD8oQ3OAaI4v/d8qcNAwvfdswqpcr
+X-Gm-Gg: ASbGnctrjCi/7dl8afpradCzIoT07XXH4nADEWvgu58r8hCW/+15Jutx6QBOOXGTIBs
+	4UcClrWv0USPi/ef8MQchodTY1DHsRaCAOq04PfOgYAjYJ+hj3lfDAwtBpUW0+alRQGbp/KCNYk
+	CiCB1r28mievatzqHLyj4ycjNaehsjFGsayhUgpaYZFNhT7XCvN5pm+K51qAOIQA2EEMEmyhD7O
+	QSACbMF6Zl5wqykZVkbP6XL39hTz0ecg151RTg3dzkYi27DvGB70qG7rVv2kQSFP+2Xj0YwCtt5
+	JlaYlZxhQ7vN8As51TiW3qU3rNurFudMDZ7UZba8xAy6pEyLjoTj3HfUGiG+XPfF2cztFBPNGaD
+	mqAqdNOQNC5E=
+X-Google-Smtp-Source: AGHT+IEfq4DsBnaJ1NgW3Gz9MymASWkZW2hXaU0TsChLfQTAs2T+Vz6ILemYCBZRX9uH8vE88cZaUQ==
+X-Received: by 2002:a05:620a:d93:b0:7c5:95cb:59ac with SMTP id af79cd13be357-7c595cb5b5fmr154355185a.28.1742216807784;
+        Mon, 17 Mar 2025 06:06:47 -0700 (PDT)
+Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com. [209.85.160.175])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c573d6fb39sm581509585a.85.2025.03.17.06.06.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 17 Mar 2025 06:06:46 -0700 (PDT)
+Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-4766cb762b6so40845161cf.0;
+        Mon, 17 Mar 2025 06:06:46 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVQZ7EsvYjt42HFcQgO+Cx8LMfOwvRp0KIrYitloSISDUsUro7vqECEvOzKvrktddzEzJeeW4/R+mk=@vger.kernel.org, AJvYcCVbh9DNqfQaMZN8uzvJit8onyLgwcdEjiLP2oV56iSSfxFuDuvi9wNX0t79a49Kt2fHdKQAFl7utnswuK98GoLfHYs=@vger.kernel.org, AJvYcCWYmRwy5cuJFIwB63PLpK8i5NXLUMrFkMZ77b1LHH7qobHk0XHiicN8MbOxCTIX8EYlzE7WIi2Dbo0gzZ8D@vger.kernel.org, AJvYcCXhCXBWlOT2yNKU+5fDvz/lb7sM/Dcf3TQZioh+0eiwoLHBFBINP0fGhvC2a8qqqOcWZDKmwifgDHwC@vger.kernel.org
+X-Received: by 2002:ac8:7d4d:0:b0:476:add4:d2c7 with SMTP id
+ d75a77b69052e-476ba3a2503mr286445171cf.0.1742216806135; Mon, 17 Mar 2025
+ 06:06:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ecfe850c-b263-4bee-b888-c34178e690fc@quicinc.com>
+References: <20250315081225.92118-1-john.madieu.xa@bp.renesas.com>
+ <20250315081225.92118-7-john.madieu.xa@bp.renesas.com> <20250317-bipedal-inchworm-of-poetry-b60fc9@krzk-bin>
+ <OSBPR01MB2775B7252468BCE234BFF7D5FFDF2@OSBPR01MB2775.jpnprd01.prod.outlook.com>
+In-Reply-To: <OSBPR01MB2775B7252468BCE234BFF7D5FFDF2@OSBPR01MB2775.jpnprd01.prod.outlook.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 17 Mar 2025 14:06:34 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdXxWCG-9tE7MsO3i+VXSjj6cZvH50fnQA=xvNfcQw842g@mail.gmail.com>
+X-Gm-Features: AQ5f1JqJN9njXYPbrlhYUCLeIXSPDCUMX-_U49TlAyAAPE5dm5sX_GhqYhuToiE
+Message-ID: <CAMuHMdXxWCG-9tE7MsO3i+VXSjj6cZvH50fnQA=xvNfcQw842g@mail.gmail.com>
+Subject: Re: [PATCH v3 6/6] arm64: defconfig: Enable RZ/G3E thermal
+To: John Madieu <john.madieu.xa@bp.renesas.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, "geert+renesas@glider.be" <geert+renesas@glider.be>, 
+	"conor+dt@kernel.org" <conor+dt@kernel.org>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>, 
+	"robh@kernel.org" <robh@kernel.org>, "rafael@kernel.org" <rafael@kernel.org>, 
+	"daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>, "magnus.damm@gmail.com" <magnus.damm@gmail.com>, 
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
+	"john.madieu@gmail.com" <john.madieu@gmail.com>, "rui.zhang@intel.com" <rui.zhang@intel.com>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, "sboyd@kernel.org" <sboyd@kernel.org>, 
+	Biju Das <biju.das.jz@bp.renesas.com>, 
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "lukasz.luba@arm.com" <lukasz.luba@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Mar 17, 2025 at 01:52:15PM +0800, Miaoqing Pan wrote:
-> On 3/14/2025 4:06 PM, Johan Hovold wrote:
-> > On Fri, Mar 14, 2025 at 09:01:36AM +0800, Miaoqing Pan wrote:
- 
-> >> I think the hardware has already ensured synchronization between
-> >> descriptor and head pointer, which isn't difficult to achieve. The issue
-> >> is likely caused by something else and requires further debugging.
-> > 
-> > Yeah, but you still need memory barriers on the kernel side.
-> > 
-> > It could be that we are looking at two different causes for those
-> > zero-length descriptors.
-> > 
-> > The error handling for that obviously needs to be fixed either way, but
-> > I haven't heard anyone hitting the corruption with the memory barriers
-> > in place on the X13s yet (even if we'd need some more time to test
-> > this).
+Hi John,
 
-> After multiple and prolonged verifications, adding dma_rmb() did not 
-> improve the issue at all. I think this Status Descriptor is updated by 
-> hardware (Copy Engine) controlled by another system, not involving DMA 
-> or out-of-order CPU access within the same system, so memory barriers do 
-> not take effect.
+On Mon, 17 Mar 2025 at 12:14, John Madieu <john.madieu.xa@bp.renesas.com> wrote:
+> > From: Krzysztof Kozlowski <krzk@kernel.org>
+> > On Sat, Mar 15, 2025 at 09:12:16AM +0100, John Madieu wrote:
+> > > Enable the CONFIG_RZG3E_THERMAL flag for the RZ/G3E SoC.
+> >
+> > s/RZ/Renesas RZ/ and which *upstream* board uses it? This is not your
+> > platform defconfig, but all platforms and all users defconfig.
+> >
+>
+> Noted for the fix.
+>
+> However, most thermal drivers use SOC-specific config options,
+> as we can see in arm64 defconfig:
+>
+> [...]
+> CONFIG_IMX8MM_THERMAL=m
+> CONFIG_K3_THERMAL=m
+> CONFIG_QORIQ_THERMAL=m
+> CONFIG_SUN8I_THERMAL=y
+> CONFIG_ROCKCHIP_THERMAL=m
+> CONFIG_RCAR_THERMAL=y
+> CONFIG_RCAR_GEN3_THERMAL=y
+> CONFIG_RZG2L_THERMAL=y
+> CONFIG_ARMADA_THERMAL=y
+> CONFIG_MTK_THERMAL=m
+> CONFIG_MTK_LVTS_THERMAL=m
+> CONFIG_BCM2711_THERMAL=m
+> CONFIG_BCM2835_THERMAL=m
+> CONFIG_BRCMSTB_THERMAL=m
+> [...]
+>
+> Hence my choice for RZG3E_THERMAL, or did I miss something in your comment?
 
-Then it seems we are looking at two separate root causes for the
-corruption as the memory barrier appears to be all that is needed to fix
-the X13s issue.
+I think Krzysztof is complaining about "RZ/G3E SoC" in the patch
+description, not about the name of the config symbol (which is fixed).
+In addition, he asks for mentioning the board this will be used on.
 
-A user who hit the corruption after 2 h without the fix has been running
-over the weekend with the memory barrier without any problems. I'll ask
-further users to test, but it certainly looks like it is working as
-intended.
+E.g.:
 
-And the memory barrier is de-facto missing as the head pointer and
-descriptor are accessed through (two separate) coherent mappings so
-there are no ordering guarantees without explicit barriers.
+    Enable the Renesas RZ/G3E thermal driver, as used on the Renesas
+    RZ/G3E SMARC EVK board.
 
-Now obviously there are further issues in your system, which we should
-make sure we understand before adding workarounds to the driver.
+Gr{oetje,eeting}s,
 
-Do you have a pointer to the downstream kernel sources you are testing
-with? Or even better, can you reproduce the issue with mainline after
-adding the PCIe patches that were posted to the lists for these
-platforms?
+                        Geert
 
-Apparently the descriptors can also be passed in non-coherent memory
-for some devices (.alloc_cacheable_memory / HAL_SRNG_FLAGS_CACHED). That
-implementation looks suspicious and could possibly result in similar
-problems. Are you using .alloc_cacheable_memory in your setup?
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Does it make any difference if you use a full rmb() barrier?
-
-And after modifying ath11k_hal_ce_dst_status_get_length() so that it
-does not clear the length, how many times you need to retry? Does it
-always work on the second try?
-
-Johan
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
