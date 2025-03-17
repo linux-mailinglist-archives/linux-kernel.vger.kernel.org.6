@@ -1,146 +1,103 @@
-Return-Path: <linux-kernel+bounces-563900-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-563898-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67171A64A42
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:38:44 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20F80A64A1F
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 11:35:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 923C618946E4
-	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:36:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 74B1A16F1EF
+	for <lists+linux-kernel@lfdr.de>; Mon, 17 Mar 2025 10:35:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D76B823A560;
-	Mon, 17 Mar 2025 10:34:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 787D2238169;
+	Mon, 17 Mar 2025 10:34:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="nBHjDeGZ";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Aow1ohVI"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pl5wTHlu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F02B23875D;
-	Mon, 17 Mar 2025 10:34:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C547C238144;
+	Mon, 17 Mar 2025 10:34:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742207660; cv=none; b=i2wvJkDmPaiXweGSQ81sdGa2iD8LxqY+kflEvyS8BMT2dsq0weX1c2DyhIkEZQmBxHUU0iVYQoei8M2LMppnEcxv7cdgze1TUjelGQSQ5LH83JFGNooMF6PbzDdPghNOt3Llso3rLFFl5WymQcT6Z4wSco+/8+c144wyKeW9H8E=
+	t=1742207657; cv=none; b=D6z92krPzFDVDcWfCUSdP5hHC3As4Kpa+iaC7ITXdcnTjmOOfIKxTo7ZuSiW13L3w+9kwR0PhqBfLNL+j21BQr4QHcGe3XgUQcxW/guzLAS7U5p+03KQ5VP9fnCgQllPsHmKG36vPGuFfizoim7PSGkGElL5gjEIcxc/Z9xTf3g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742207660; c=relaxed/simple;
-	bh=K+MAAu83MnlQNYc/Y/I4Nmy2O7OhGcCCZw7XQitO9Ao=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=IeATEQSAlUGolJ2R3aw/4ebsKrMnRNPrPE+Rz6wyaIikzF9irJNvCiy2LTnLLWQHleRKCpghpELxRU3MdD/R79xXMMS4BgKAUA6KP0pmxt4FmJUKisFQaSbHWSBgmhu1EL6WnhIxBNTBvsbPsu9VCMQkf0ZS+nXyLCTm7H6Tjc8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=nBHjDeGZ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Aow1ohVI; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 17 Mar 2025 10:34:13 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1742207653;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=AmMFzDKBi9Js0RTuzKF0O+tsKKHdbX7WKWJ9lj8hk8U=;
-	b=nBHjDeGZmCRgagAYSSFcyxQRVDXn7R35E8Xibg/4QUo8m4WZQAqCYGltcTNN3J3xFA+fjM
-	lgOO9v9uqVWqwB0z2lK+vBp+m2fjpOJad+PpMi8eV+UdvL534Pv2VmwQ/R8elVmkUHG2aG
-	Z+77v9qxTIjpN8VdY9vG4GiYqy8VAkw3quBNTlRn+3C++PiNrjAXYngDO8B44CjY18lnvg
-	IHo/5G0DSu/uZuC/h2gJAm+VoWfCxeJUI1fzsedBIvY1q65Ifym+l/UoaYVjnNr5UuMRqw
-	cdBUY4Z9+Cg6YIPgUol/XuEe8HxEt+CO2iNy3zzheElvzbTuW/8+9HpmTXa+CA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1742207653;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=AmMFzDKBi9Js0RTuzKF0O+tsKKHdbX7WKWJ9lj8hk8U=;
-	b=Aow1ohVItlPW7W4KqFw4alzDlKV1tqcWfSxe/61G/A7OW4kmn33t2Zk1jDTm1Zto1sBDjA
-	StFLu30b4KTJogAA==
-From: "tip-bot2 for Kan Liang" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: perf/core] perf: Extend per event callchain limit to branch stack
-Cc: Kan Liang <kan.liang@linux.intel.com>,
- "Peter Zijlstra (Intel)" <peterz@infradead.org>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250310181536.3645382-1-kan.liang@linux.intel.com>
-References: <20250310181536.3645382-1-kan.liang@linux.intel.com>
+	s=arc-20240116; t=1742207657; c=relaxed/simple;
+	bh=PKtSN/G3Q8z6f3hwaks/+EjBJFqkYSjfjT9iRRKWNWs=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=uiGDHlPLYfVB7EpcZwPAtIaK1mY75jZV8V6RXjCUkmiqyiWktYnvw5JEBJm/nEKP9HHp/+91Sffg9x+IZY4QWOJO4y5yQxYxY/XpHGN9tErqp+vFri9txnIdQ76KH4dbfSPNyL2GY7HwWYWac8bhl7F7kinYGIPHwTnE4iVKbjI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Pl5wTHlu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 508EAC4AF0B;
+	Mon, 17 Mar 2025 10:34:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742207657;
+	bh=PKtSN/G3Q8z6f3hwaks/+EjBJFqkYSjfjT9iRRKWNWs=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=Pl5wTHluGgMlvEewCTRIUrYO7JLcO2XAmeHxV1GvkEc4Hw3QxWiYTuWGh3mg17+o2
+	 04uXEp0F3R/vhGZY9s2KV2E2zJykl2Wj0Rbbp5mP+3dNw5S2oXrKGA5T2QYXLCoddX
+	 FNaO/+L1ylZanGRJ83O9yQZhwuVUdFGZZpzhH7eF1lMQvV2oWjqtnO5tsJNc3xPw0F
+	 axDTblTOBmwlWtueHvFDEdPkiJFoVSSucqV2DFUeoLRl0LJ/lPBh4sysGJWBuod6hM
+	 vX98P1/Nr1IMWieweLP64IMXwQ5rPiqQ6f0urwk4Y18s6t0W2jmMtAhFTv+NyaSPCW
+	 U9qWkCkXFdcng==
+From: Mark Brown <broonie@kernel.org>
+To: Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Joy Zou <joy.zou@nxp.com>, 
+ Frank Li <Frank.Li@nxp.com>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+ imx@lists.linux.dev, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20250218-pf9453-v4-0-ddfd34e02da0@nxp.com>
+References: <20250218-pf9453-v4-0-ddfd34e02da0@nxp.com>
+Subject: Re: [PATCH RESEND v4 0/2] regulator: add new PMIC PF9453 support
+Message-Id: <174220765500.94847.12810276460362366874.b4-ty@kernel.org>
+Date: Mon, 17 Mar 2025 10:34:15 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174220765325.14745.6631883305185568129.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-1b0d6
 
-The following commit has been merged into the perf/core branch of tip:
+On Tue, 18 Feb 2025 12:38:38 -0500, Frank Li wrote:
+> Add binding doc and driver.
+> 
+> DTS part wait for
+> https://lore.kernel.org/imx/Z04W5chGq5TitB9f@lizhi-Precision-Tower-5810/
+> 
+> 
 
-Commit-ID:     c53e14f1ea4a8f8ddd9b2cd850fcbc0d934b79f5
-Gitweb:        https://git.kernel.org/tip/c53e14f1ea4a8f8ddd9b2cd850fcbc0d934b79f5
-Author:        Kan Liang <kan.liang@linux.intel.com>
-AuthorDate:    Mon, 10 Mar 2025 11:15:36 -07:00
-Committer:     Peter Zijlstra <peterz@infradead.org>
-CommitterDate: Mon, 17 Mar 2025 11:23:36 +01:00
+Applied to
 
-perf: Extend per event callchain limit to branch stack
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
 
-The commit 97c79a38cd45 ("perf core: Per event callchain limit")
-introduced a per-event term to allow finer tuning of the depth of
-callchains to save space.
+Thanks!
 
-It should be applied to the branch stack as well. For example, autoFDO
-collections require maximum LBR entries. In the meantime, other
-system-wide LBR users may only be interested in the latest a few number
-of LBRs. A per-event LBR depth would save the perf output buffer.
+[1/2] regulator: dt-bindings: pca9450: Add nxp,pf9453 compatible string
+      commit: 276c2fe14632a393c1b4d418e4fc2d9d656e1c30
+[2/2] regulator: pf9453: add PMIC PF9453 support
+      commit: 0959b6706325bf147f253841eea312e27a3bf013
 
-The patch simply drops the uninterested branches, but HW still collects
-the maximum branches. There may be a model-specific optimization that
-can reduce the HW depth for some cases to reduce the overhead further.
-But it isn't included in the patch set. Because it's not useful for all
-cases. For example, ARCH LBR can utilize the PEBS and XSAVE to collect
-LBRs. The depth should have less impact on the collecting overhead.
-The model-specific optimization may be implemented later separately.
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
 
-Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Link: https://lkml.kernel.org/r/20250310181536.3645382-1-kan.liang@linux.intel.com
----
- include/linux/perf_event.h      | 3 +++
- include/uapi/linux/perf_event.h | 2 ++
- 2 files changed, 5 insertions(+)
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
-index 76f4265..3e27082 100644
---- a/include/linux/perf_event.h
-+++ b/include/linux/perf_event.h
-@@ -1347,6 +1347,9 @@ static inline void perf_sample_save_brstack(struct perf_sample_data *data,
- 
- 	if (branch_sample_hw_index(event))
- 		size += sizeof(u64);
-+
-+	brs->nr = min_t(u16, event->attr.sample_max_stack, brs->nr);
-+
- 	size += brs->nr * sizeof(struct perf_branch_entry);
- 
- 	/*
-diff --git a/include/uapi/linux/perf_event.h b/include/uapi/linux/perf_event.h
-index 0524d54..5fc753c 100644
---- a/include/uapi/linux/perf_event.h
-+++ b/include/uapi/linux/perf_event.h
-@@ -385,6 +385,8 @@ enum perf_event_read_format {
-  *
-  * @sample_max_stack: Max number of frame pointers in a callchain,
-  *		      should be < /proc/sys/kernel/perf_event_max_stack
-+ *		      Max number of entries of branch stack
-+ *		      should be < hardware limit
-  */
- struct perf_event_attr {
- 
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
 
