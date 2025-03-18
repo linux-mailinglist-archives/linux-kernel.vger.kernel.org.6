@@ -1,145 +1,120 @@
-Return-Path: <linux-kernel+bounces-565842-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565843-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5012DA66FF8
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 10:38:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12A6CA66FFD
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 10:39:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 45B9E7A2D43
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 09:37:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E3C588147E
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 09:38:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D285B207A26;
-	Tue, 18 Mar 2025 09:36:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B6501E5B77;
+	Tue, 18 Mar 2025 09:38:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="iG0iEvUL"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="EDobSb3W"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D788A79E1
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 09:36:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EAE91EF365
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 09:38:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742290604; cv=none; b=WZZNES6mYycXfsRTI9FwIZbMkSJpJZYoTbVEGPi3/J0oCb738u14sBzlog+0xCSDrb4DEdARQZfZJOhgnYHwPoO2LnPgyudlzvsG7epNf10OgjVuXZp6LxURKkWQTmLbuyQkrGb0s0Dg/TCzZbs4sCou6gjO8AQuQlw0Pc8y+uo=
+	t=1742290684; cv=none; b=bcJL2k40mrN7PnhVru8qPAm6T2GU5/cMeLK2/n2OrFXX92YMLwo6R1l+CP3Xs31qVDvDnsZZNx1n0c9TtUX92KIH5Xx65IC2ZwlD962lAcATwAhsEGf4bUPF3ObkoPy2odmF6uEWT+CIJXaGVGdSyqbz6sAm1jS9i3qnjH/qV6I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742290604; c=relaxed/simple;
-	bh=mzBMBkkZzeq6MOHImrnUvgj4qWJoLUYsd5OZKQZmC1A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=peplcq6L0Q6wZLSiGbJ6VRpJYLHzgu1tAJnkXf8f+wWgU7glIVuXtdPiWt6PfXS2StiFuW4h7lFqqm5fVEKn2kYVlsB4dBIH7ChSrQdnL04oyLdHUEwW7maWu0roGCKwTT40hQrClmrXvJUUGNbk8uAqjIbTy2iRaha+chEBAz8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=iG0iEvUL; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1742290597;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=CvKDg3JDHn9jOPRmkfFXXZUafsnEo6j8hP0TAoVHOek=;
-	b=iG0iEvUL8+VtbE6zdFVucDa037degQVqv658HHC5kf1BECEbMRf048UYfDFyIHQPLs+Qb/
-	lW290sToxyACbUk0oObJSSR8cIgv6fyJXrL/TkcpzPIx+mLtBVMQ2h6zo/miiQ4UdII0tm
-	GFNfG/FRE/4KVJuHZ5w5SogkNKF7nMs=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-368-e1X8DayaOF2Um_tRKCKMPw-1; Tue, 18 Mar 2025 05:36:36 -0400
-X-MC-Unique: e1X8DayaOF2Um_tRKCKMPw-1
-X-Mimecast-MFC-AGG-ID: e1X8DayaOF2Um_tRKCKMPw_1742290595
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-43d3b211d0eso2563925e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 02:36:36 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742290595; x=1742895395;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=CvKDg3JDHn9jOPRmkfFXXZUafsnEo6j8hP0TAoVHOek=;
-        b=pC0cn0XdR/7SCxLdqrz8LrIJXKHyMYh3HQNhB+XJJIWRsxR+rQUyKc38XkWLxpBzxl
-         swm1+SR6US6Gp7tkcg8wXHQuH5h+l3Vde4G4Qly/Es6kmW1l4hS2BxaaOCWQTWw5ffCR
-         l55TYpnaTQyrV/2vhqQ14W0UNetS61x8TB2DZM7YBsR19BnFdyjEnhO+ZUIDrHk6Di3i
-         B3WXIWnBQgjQbqHOCpLSryczGc2WacFR+5nleve3enXB0wuSapUOFvLufJPKcK6XH54S
-         ADu+I7lX3/pGJJ2FTcUInz6d0jZXYS9WOXOOolMnv6ewCq3wcWbzt9knZRUrxOZnM3oP
-         NuYg==
-X-Forwarded-Encrypted: i=1; AJvYcCWuGlATdraVnGfQAWMfXH9hYlM9Q8+J9RmhKc5sZXDxBMjdhs/w4KNwI42IglEFOEMvLGdGGOjVYnP6egY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzNOnMdfWNBGlgJ0DwYzpkc+E9qeIIls9rS2UsRPsM88xKYcPzz
-	g+Qee5XrLYrv7YKN44RiyYaDnDYRpnDjp1flKMnxLMR27wgG/XZGDAVEp81BMsrjkf4i69UiYkr
-	KJ+117i1Lry+ymfXYGrsL3V/Ykqc7+WZ50pSyDYeJI1KqrFCXIKfCZrrLHYTM+w==
-X-Gm-Gg: ASbGnctkMAOVtfeUKA75931ECmDhnEV/rBzIqQzgPe5R85XqEYif7QVfvNi9cYZEH4Y
-	V4E9yOhQ4C/oRg6yP7inlUVZpFk0l1Q4clPih4AQAeVui8n4YzPXjvGeWN9enYDySBCSgIiaDG7
-	sUm4d33WA+TcRzks3yGXDeAty4gSlE8Yka5PJ4ZdP6yXLxyzq4gs51MuMjnsjnmcZyLEUNWLeoc
-	gGMsT5yUwz6lKRe3YogZUaPYr56+Qbn1boOJE4IcdWBUKLS9S7fYn/5RVCvIzZS2EjXE9zGP9V4
-	Zp67xvJj6dL2mYL4nRe1HBiUqLFiUz8qrFNh7qsgXBTM1A==
-X-Received: by 2002:a05:600c:4f4a:b0:439:8490:d1e5 with SMTP id 5b1f17b1804b1-43d3b981324mr14252825e9.4.1742290595254;
-        Tue, 18 Mar 2025 02:36:35 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE3vTKKmwKw0Z8Ob8YbB5NUPivxHGNKx120DzCxn23HNlzcDtLNTUy32hinrYTNPH+w/sR52A==
-X-Received: by 2002:a05:600c:4f4a:b0:439:8490:d1e5 with SMTP id 5b1f17b1804b1-43d3b981324mr14252415e9.4.1742290594821;
-        Tue, 18 Mar 2025 02:36:34 -0700 (PDT)
-Received: from [192.168.88.253] (146-241-10-172.dyn.eolo.it. [146.241.10.172])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d28565b17sm94485335e9.37.2025.03.18.02.36.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 18 Mar 2025 02:36:34 -0700 (PDT)
-Message-ID: <65bfbea3-8007-43ec-af58-2d61f5488a88@redhat.com>
-Date: Tue, 18 Mar 2025 10:36:32 +0100
+	s=arc-20240116; t=1742290684; c=relaxed/simple;
+	bh=Rbg+ojlRqO/nHfcpa4/9P0fv4/bKdu4hEzmTwe+n5Bc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hFrpOwdp+EmSraJ2Ze3HR34lJ+Nn4xYgCHp+qXtII1On5GAHrOA2yUsR1p/h1BeX9laBRloso1jxqormTwvvBgsmFgbUx6uhCXCwMCFB8PAHZ1MKAIhtiEjREULuTVDm1C/9ahA7zhvSgOHtZDvBAogWzPh2hXOfqSw2+c1kjDA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=EDobSb3W; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 4062140E01D1;
+	Tue, 18 Mar 2025 09:37:58 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id 0mXVTzEWhNJZ; Tue, 18 Mar 2025 09:37:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1742290669; bh=MHwhiXkMKDlkMVwh66Gzjy0rB5tKGs6VIFBFZDmhtwE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=EDobSb3WnrZt94eLWWy11XpPhv/glaSL2QUGvofdY2HrHG2k2tWFiZaIZc6w2Am2X
+	 O6GC4yAv8bC0hAF8PxvhTlHi87EGasPdviWSVhX5G1nDWba3GPYLMSXphK9ThtOfF7
+	 907BvjfMGkor1HkdAZbSwNwgguCg9QbDks4nXQq/lxtVsJxkyIYi5e6/xHMspVCFJE
+	 60KU9+mvZCfmWt01j1yDNkZAKVZtRMJx6K7wyUdNImhrHkR5jd0G/c3055ckUTZQrJ
+	 ILSRLWBAH3UOnHeDh1foRCz7mSqdPfnlNRmjhkb8WOy6irXNF5VrE0r+22V3DZXD0s
+	 x5Z9615N2sGHCdTVOi7jorfEJ7cHpBRogJnvjSO6KtbIwSelkPWn6TP+Z9oh5Ecw9F
+	 3x2S0edq1zSTCAIpv7PA4G2nZq5RjoGFz0yqiqa4ltB97kTBbPnYhu2IFlat8ASaaE
+	 a/+9ARNDwDY6TnHY86OOm4s2E2/yxKYgDt4vPs4/29lcqM/1SYtcaLnKhr+tFwoTTm
+	 rACQliOApJBuVUtygSauHmGU22ue+N15j/VnhnJoP3TWyuSl7npxjn9XJHkbBERGDE
+	 evvwxQigqfMfTillO3o/iQ0YDmWHoKUuXMSW1vhObLjz55SZSpxwxODj7OYs5ooSFI
+	 X4NFlHiA4FZMXxbJZMucLo/E=
+Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 4FE0B40E0215;
+	Tue, 18 Mar 2025 09:37:37 +0000 (UTC)
+Date: Tue, 18 Mar 2025 10:37:36 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: Xin Li <xin@zytor.com>, linux-kernel@vger.kernel.org,
+	Juergen Gross <jgross@suse.com>,
+	Stefano Stabellini <sstabellini@kernel.org>,
+	"Ahmed S . Darwish" <darwi@linutronix.de>,
+	Andrew Cooper <andrew.cooper3@citrix.com>,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	John Ogness <john.ogness@linutronix.de>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH 5/5] x86/cpuid: Use u32 in instead of uint32_t in
+ <asm/cpuid/api.h>
+Message-ID: <20250318093736.GBZ9k-4Fu_CqwhgYt1@fat_crate.local>
+References: <20250317221824.3738853-1-mingo@kernel.org>
+ <20250317221824.3738853-6-mingo@kernel.org>
+ <b7920c2c-1051-4674-994c-d1b681cf7988@zytor.com>
+ <Z9kwIYrOwO8nOpAE@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next 4/4] net/mlx5: Add support for setting parent of
- nodes
-To: Tariq Toukan <tariqt@nvidia.com>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>
-Cc: Gal Pressman <gal@nvidia.com>, Mark Bloch <mbloch@nvidia.com>,
- Moshe Shemesh <moshe@nvidia.com>, Saeed Mahameed <saeedm@nvidia.com>,
- Leon Romanovsky <leon@kernel.org>, netdev@vger.kernel.org,
- linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
- Carolina Jubran <cjubran@nvidia.com>, Cosmin Ratiu <cratiu@nvidia.com>,
- Dragos Tatulea <dtatulea@nvidia.com>
-References: <1741642016-44918-1-git-send-email-tariqt@nvidia.com>
- <1741642016-44918-5-git-send-email-tariqt@nvidia.com>
-Content-Language: en-US
-From: Paolo Abeni <pabeni@redhat.com>
-In-Reply-To: <1741642016-44918-5-git-send-email-tariqt@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <Z9kwIYrOwO8nOpAE@gmail.com>
 
-On 3/10/25 10:26 PM, Tariq Toukan wrote:
-> @@ -1018,3 +1018,105 @@ int mlx5_esw_devlink_rate_leaf_parent_set(struct devlink_rate *devlink_rate,
->  	node = parent_priv;
->  	return mlx5_esw_qos_vport_update_parent(vport, node, extack);
->  }
-> +
-> +static int
-> +mlx5_esw_qos_node_validate_set_parent(struct mlx5_esw_sched_node *node,
-> +				      struct mlx5_esw_sched_node *parent,
-> +				      struct netlink_ext_ack *extack)
-> +{
-> +	u8 new_level, max_level;
-> +
-> +	if (parent && parent->esw != node->esw) {
-> +		NL_SET_ERR_MSG_MOD(extack,
-> +				   "Cannot assign node to another E-Switch");
-> +		return -EOPNOTSUPP;
-> +	}
-> +
-> +	if (!list_empty(&node->children)) {
-> +		NL_SET_ERR_MSG_MOD(extack,
-> +				   "Cannot reassign a node that contains rate objects");
-> +		return -EOPNOTSUPP;
-> +	}
-> +
-> +	new_level = parent ? parent->level + 1 : 2;
-> +	max_level = 1 << MLX5_CAP_QOS(node->esw->dev, log_esw_max_sched_depth);
-> +	if (new_level > max_level) {
-> +		NL_SET_ERR_MSG_MOD(extack,
-> +				   "Node hierarchy depth exceeds the maximum supported level");
+On Tue, Mar 18, 2025 at 09:34:41AM +0100, Ingo Molnar wrote:
+> That's a stupid rule, I don't know where it came from, and I never 
+> enforced it. It's not in Documentation/process/coding-style.rst.
 
-Minor nit for a possible small follow-up: it could be possibly useful to
-add to the extact the current and max level.
+I believe tglx came up with it - section "Changelog" in
 
-/P
+Documentation/process/maintainer-tip.rst
 
+Read the examples there.
+
+And you and I have had this conversation already on IRC. I happen to agree
+with him that "we" is ambiguous - with all those companies submitting patches
+you don't know who's "we" interests are being taken care of.
+
+And if you formulate your commit message in impersonal tone, it reads a lot
+clearer. It is simply a lot better this way.
+
+Is it a hard rule? Ofc not - there are exceptions to that rule depending on
+the context. But most if the time and IMNSVHO, impersonal formulations read
+a lot better and clearer.
+
+Thx.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
