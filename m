@@ -1,141 +1,164 @@
-Return-Path: <linux-kernel+bounces-566202-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566203-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D703A674D5
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 14:20:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D2A1A674D6
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 14:20:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F5ED423C7E
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 13:19:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA9DF188ECFD
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 13:19:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F13B20D4F6;
-	Tue, 18 Mar 2025 13:18:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="czhU9c+x"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B377020CCE8;
+	Tue, 18 Mar 2025 13:19:32 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D1B4AD2C;
-	Tue, 18 Mar 2025 13:18:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3576D13DBA0
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 13:19:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742303938; cv=none; b=oeGpuDwHBg4RLt8oyFjPilS/PB5WpdCXGdlmBEjfMF7NNREabhB0BvitiuNMhRktmH5vRP7gJFYrTZO6EpqPfXLrEptbyOCRodt8eaB5gCL0y2HWcRuaU6w8PhZM59gCoTxSwjWLlNLWX2z2fE1v/yatiOVElyUe5DA73y5SA/0=
+	t=1742303972; cv=none; b=YEeIL6AO94nH9vXWD6CjTmAuNIXxHCmdbI7tT5p9Pocdbzp0XYzf0B2rIeHXlA8GxHPpaFFUbaP2IRqNF0n+7Roy441JVJL4or+gTt4D0oqsCsGTRZ6C+aBdBlHl/UslQEC+lH2EXaRD+hGzyEBthLMkCpxMqsTdjHuz7opDQLI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742303938; c=relaxed/simple;
-	bh=3Oi8jiFqgl+aEYI1HZI2J5pcnohFtSR2tEqDeV0RWqU=;
+	s=arc-20240116; t=1742303972; c=relaxed/simple;
+	bh=pMKTPI3CtphXn0aZ69uxiZeoXzDanrh/Zv+eCgGWMGg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dlSEHilFg2PGoLhKl9zPHPlTWnNSmlWy/s6Rpi8ppoQwXKM1Z6us2n5dtyD8NHNxuwk25tiTZI3gBKYfMM8Bn0kQ4hECj9kql7YHh1jL9UUDWL31oIm3qelqm2TRJAjJzWQ1BAYznU42cT0oAwuPjn+X0zxS/lZanOoDdhhguWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=czhU9c+x; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742303933; x=1773839933;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=3Oi8jiFqgl+aEYI1HZI2J5pcnohFtSR2tEqDeV0RWqU=;
-  b=czhU9c+xjanu8QqHL7xX8wt4597RTKbcVbxPT03hMDW36Dhp2RLzeZoK
-   PO2UNSBu25Txpzu7BWaNYSZ/w7zYds0CFJYcxhbpFZHQvQcSk8OrpJpmw
-   zte8yGNt8tu8A/lEZr1tqrBDC885NPQsgt0jLX+KdxNA1ZpiBQ9EGbQCH
-   ue/E/rSgMXXL3WhN4ZuZ9ZjYsxGtJA5uK4Whs3hrhvjiEOfn9iDW458kI
-   cvbXgM37M7AIK6SOlSQrpkAu3GtTertXSHqxCsfP4PTT49nLkXtcA/Dvc
-   nKilIGjOjYwi0NYNHlQMPM1siWmRKjDLrIgaBF9ZKiNuJ5ssn1jL8BBX1
-   g==;
-X-CSE-ConnectionGUID: f9+2qQVZQ1W+sE3Nr6tQ3A==
-X-CSE-MsgGUID: +m7ZGvrESMeY85Ft4NT6TQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11377"; a="43359897"
-X-IronPort-AV: E=Sophos;i="6.14,256,1736841600"; 
-   d="scan'208";a="43359897"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2025 06:18:52 -0700
-X-CSE-ConnectionGUID: glzh0WzESBmuMqdayJU9ew==
-X-CSE-MsgGUID: oaV8qNn3QgKXR5Bk48/n4Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,256,1736841600"; 
-   d="scan'208";a="122231949"
-Received: from sgruszka-mobl.ger.corp.intel.com (HELO localhost) ([10.245.112.43])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2025 06:18:48 -0700
-Date: Tue, 18 Mar 2025 14:18:45 +0100
-From: Stanislaw Gruszka <stanislaw.gruszka@linux.intel.com>
-To: Ma Ke <make24@iscas.ac.cn>
-Cc: mchehab@kernel.org, hverkuil@xs4all.nl, sebastian.fricke@collabora.com,
-	ribalda@chromium.org, benjamin.gaignard@collabora.com,
-	viro@zeniv.linux.org.uk, bartosz.golaszewski@linaro.org,
-	hljunggr@cisco.com, sakari.ailus@linux.intel.com,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH v2] media: v4l2-dev: fix error handling in
- __video_register_device()
-Message-ID: <Z9lytZ0bOk4Fjk83@linux.intel.com>
-References: <20250318090945.1655458-1-make24@iscas.ac.cn>
+	 Content-Type:Content-Disposition:In-Reply-To; b=YvdsRDWMGuDGmSMYT0AflWGheuJcp0neuUIO2mlMweabmM07/WmNj8smvRSkOqdrVnyBc6n7KbswjMHwqsGoSOaIliv3rxixtWWeDd+9ffURKa8gvoqtIkwxVqMyvsAqeCzoPZ5A9+mCc/uRlpuZl2Liybg99ZKOfKsF7/Z1eeI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1tuWqo-0004E2-2F; Tue, 18 Mar 2025 14:19:22 +0100
+Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1tuWqm-000Qyj-2W;
+	Tue, 18 Mar 2025 14:19:21 +0100
+Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1tuWqn-00333k-0E;
+	Tue, 18 Mar 2025 14:19:21 +0100
+Date: Tue, 18 Mar 2025 14:19:21 +0100
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Sebastian Reichel <sre@kernel.org>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Benson Leung <bleung@chromium.org>,
+	Tzung-Bi Shih <tzungbi@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	chrome-platform@lists.linux.dev,
+	Ahmad Fatoum <a.fatoum@pengutronix.de>,
+	"Rafael J. Wysocki" <rafael@kernel.org>, linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>, kernel@pengutronix.de,
+	=?utf-8?B?U8O4cmVu?= Andersen <san@skov.dk>,
+	Guenter Roeck <groeck@chromium.org>,
+	Zhang Rui <rui.zhang@intel.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Lukasz Luba <lukasz.luba@arm.com>
+Subject: Re: [PATCH v7 3/7] power: reset: Introduce PSCR Recording Framework
+ for Non-Volatile Storage
+Message-ID: <Z9ly2eC0_r3gyToy@pengutronix.de>
+References: <20250318094716.3053546-1-o.rempel@pengutronix.de>
+ <20250318094716.3053546-4-o.rempel@pengutronix.de>
+ <ea681b76-db1c-4529-bd53-09e4bf384977@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250318090945.1655458-1-make24@iscas.ac.cn>
+In-Reply-To: <ea681b76-db1c-4529-bd53-09e4bf384977@gmail.com>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Tue, Mar 18, 2025 at 05:09:45PM +0800, Ma Ke wrote:
-> Once device_register() failed, we should call put_device() to
-> decrement reference count for cleanup. Or it could cause memory leak.
-> And move callback function before put_device().
+On Tue, Mar 18, 2025 at 01:01:30PM +0200, Matti Vaittinen wrote:
+> On 18/03/2025 11:47, Oleksij Rempel wrote:
+> > This commit introduces the Power State Change Reasons Recording (PSCRR)
+> > framework into the kernel. The framework is vital for systems where
+> > PMICs or watchdogs cannot provide information on power state changes. It
+> > stores reasons for system shutdowns and reboots, like under-voltage or
+> > software-triggered events, in non-volatile hardware storage. This
+> > approach is essential for postmortem analysis in scenarios where
+> > traditional storage methods (block devices, RAM) are not feasible. The
+> > framework aids bootloaders and early-stage system components in recovery
+> > decision-making, although it does not cover resets caused by hardware
+> > issues like system freezes or watchdog timeouts.
 > 
-> As comment of device_register() says, 'NOTE: _Never_ directly free
-> @dev after calling this function, even if it returned an error! Always
-> use put_device() to give up the reference initialized in this function
-> instead.'
-> 
-> Found by code review.
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: baa057e29b58 ("media: v4l2-dev: use pr_foo() for printing messages")
+> We might want to rephrase this if we envision that boot reason could be read
+> from PMICs (or other devices able to store the boot reason) using PSCRR
+> interface. (Because a few PMICs can store the boot reason even for the
+> hardware initiated shutdowns like Watchdog or voltage/current protection).
 
-This tag does not seems to be right, the commit just change printk calls.
+ack.
 
-Regards
-Stanislaw
+> > It is primarily intended for controlled power
+> > +	  state transitions.
+> > +
+> > +	  If unsure, say N.
+> > diff --git a/drivers/power/reset/Makefile b/drivers/power/reset/Makefile
+> > index 10782d32e1da..dbd6ae6b26a4 100644
+> > --- a/drivers/power/reset/Makefile
+> > +++ b/drivers/power/reset/Makefile
+> > @@ -32,6 +32,7 @@ obj-$(CONFIG_POWER_RESET_KEYSTONE) += keystone-reset.o
+> >   obj-$(CONFIG_POWER_RESET_SYSCON) += syscon-reboot.o
+> >   obj-$(CONFIG_POWER_RESET_SYSCON_POWEROFF) += syscon-poweroff.o
+> >   obj-$(CONFIG_POWER_RESET_RMOBILE) += rmobile-reset.o
+> > +obj-$(CONFIG_PSCRR) += pscrr.o
+> >   obj-$(CONFIG_REBOOT_MODE) += reboot-mode.o
+> >   obj-$(CONFIG_SYSCON_REBOOT_MODE) += syscon-reboot-mode.o
+> >   obj-$(CONFIG_POWER_RESET_SC27XX) += sc27xx-poweroff.o
+> > diff --git a/drivers/power/reset/pscrr.c b/drivers/power/reset/pscrr.c
+> > new file mode 100644
+> > index 000000000000..466eca0e4f7f
+> > --- /dev/null
+> > +++ b/drivers/power/reset/pscrr.c
+> > @@ -0,0 +1,417 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +/*
+> > + * pscrr_core.c - Core Power State Change Reason Recording
+> > + *
+> > + * This framework provides a method for recording the cause of the last system
+> > + * reboot, particularly in scenarios where **hardware protection events** (e.g.,
+> > + * undervoltage, overcurrent, thermal shutdown) force an immediate reset.
+> 
+> Is this contradicting the Kconfig / commit message?
 
+There is so many redundant text, i already lost track of it.  What do
+you mean?
 
-> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
-> ---
-> Changes in v2:
-> - modified the patch as no callback function before put_device().
-> ---
->  drivers/media/v4l2-core/v4l2-dev.c | 7 +++----
->  1 file changed, 3 insertions(+), 4 deletions(-)
 > 
-> diff --git a/drivers/media/v4l2-core/v4l2-dev.c b/drivers/media/v4l2-core/v4l2-dev.c
-> index 5bcaeeba4d09..4a8fdf8115c0 100644
-> --- a/drivers/media/v4l2-core/v4l2-dev.c
-> +++ b/drivers/media/v4l2-core/v4l2-dev.c
-> @@ -1054,17 +1054,16 @@ int __video_register_device(struct video_device *vdev,
->  	vdev->dev.class = &video_class;
->  	vdev->dev.devt = MKDEV(VIDEO_MAJOR, vdev->minor);
->  	vdev->dev.parent = vdev->dev_parent;
-> +	vdev->dev.release = v4l2_device_release;
->  	dev_set_name(&vdev->dev, "%s%d", name_base, vdev->num);
->  	mutex_lock(&videodev_lock);
->  	ret = device_register(&vdev->dev);
->  	if (ret < 0) {
->  		mutex_unlock(&videodev_lock);
->  		pr_err("%s: device_register failed\n", __func__);
-> -		goto cleanup;
-> +		put_device(&vdev->dev);
-> +		return ret;
->  	}
-> -	/* Register the release callback that will be called when the last
-> -	   reference to the device goes away. */
-> -	vdev->dev.release = v4l2_device_release;
->  
->  	if (nr != -1 && nr != vdev->num && warn_if_nr_in_use)
->  		pr_warn("%s: requested %s%d, got %s\n", __func__,
-> -- 
-> 2.25.1
+> > Unlike
+> > + * traditional logging mechanisms that rely on block storage (e.g., NAND, eMMC),
+> > + * PSCRR ensures shutdown reasons are preserved in a way that survives power
+> > + * loss for later analysis.
 > 
-> 
+> Here, the 'level of power-loss' plays a role, right? I assume some level of
+> power must be retained for the 'storage' to stay alive.
+
+Yes, on the system I'm working on, there is designed capacity and
+voltage drop detector to do $THINGS before the system will go off. To
+get the full picture you may take a look to following patches:
+
+https://lore.kernel.org/all/20231026144824.4065145-1-o.rempel@pengutronix.de
+https://lore.kernel.org/all/20250310102229.381887-1-o.rempel@pengutronix.de
+
+-- 
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
