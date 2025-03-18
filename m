@@ -1,204 +1,222 @@
-Return-Path: <linux-kernel+bounces-566402-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566401-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A20AA67798
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 16:21:46 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63ABBA67774
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 16:16:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 98BE318972A9
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 15:16:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D1DA17E959
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 15:15:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AACB920F092;
-	Tue, 18 Mar 2025 15:15:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3A8D20E718;
+	Tue, 18 Mar 2025 15:15:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T8F8yrZW"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hn6/kt0p"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27DAAC2C8;
-	Tue, 18 Mar 2025 15:15:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CD1B146D65
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 15:15:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742310948; cv=none; b=et+XncyHZz9mcsg2ey9CRbjB9TxersbgH/POxAJxASuWKFjnKzoO3P3EQlY1TI8mlzs6x850S5tJq1+CJazBxvmkwy+/KGRZoTjx8px/1kIxMnv6BnXPT+P693RIOzUOGblNPhnlXXLozeBE/sOU+PUIMbh9jevWGnwwys0j9F4=
+	t=1742310947; cv=none; b=o5G7PlAxVK1KzlCERnKXLVGEHz29SUrPAJgEutXBXcUfE4ceaxzktudVFm853+2kZpQLT/HsCg+PD63/cMfDYPIbWIqxpKJNF4FaolUurpN9wrsloLWRTLrz2xYGjPO9sybtCSLgDfCHiU4jqSFksCE5v67ka44zS/EXOOziHbw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742310948; c=relaxed/simple;
-	bh=MTvGD/HLFcaWAg3V8FM8ucXkDq1L3xRV98aw/ozj9gU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ohpakS2G7VnjJ/BaKGfj1Or1oG4BVsczWa+BGEqHd83T8i50io1qLkXyxT5R1Qg9U6IH5qV42XZLqBQBJCWSDnnNfXh+qiQ4AA3A6fUwO5k/BeXjihwrpCRlaw4WDgiNAKIdHFDdN5a/6V+CdSKJf0h5Musw1tVn7WazM3f6lYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T8F8yrZW; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-43935d1321aso2212635e9.1;
-        Tue, 18 Mar 2025 08:15:46 -0700 (PDT)
+	s=arc-20240116; t=1742310947; c=relaxed/simple;
+	bh=fgXbCRcr4nJjHuNPsXc54RP+jPfsRrPjWrKCJPX6Xas=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=VZtPZdIO8zIY19CKktOCNYa6VUmmKe6BLMS2FoVUtHsDQ9km/nW0qAiK90RCq9+Kd9IwWi3D/exx9h872iRX+3Hibz3tcCXrFt4WcPoFAayFYz6ei0fTPIL7FduMAFr0xg+/cpwEmdrYymvIwm0GCxLH1smKqKBjSSxGtB+hOLE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hn6/kt0p; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3913d129c1aso4629519f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 08:15:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742310945; x=1742915745; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=vfsZ4Hr0wmB5sa2cUchGQZzT0be/9tuArc+VqsT04RU=;
-        b=T8F8yrZWlGt8n0Pv+/I6dhtw5AEyFPghYBLTyCc2iZxZVTIIw+ZkuZvwC+34rpSl0k
-         Fsms1Velu/3zFxlBm8EWZRc4rWyuUrjCMcnB1aNjk4dQwKJqfJEW9jmB7g9BaOtezjCr
-         Bn/iYMtfNwkHHw9jZjOUCCE0n+W22gE8/HAklA93Dh3Tjd7pdhoSMdfQ6q4tdGM4Cj+4
-         rsJV5AfNeALjH+gWDGOlzIeGxdh8BmbuJVFfMlt1vE++USknXO0suJKS80dDBOpb3apj
-         w8WasNtg1/MgAFnZAFPNXrU9uX7p4bfNz3UBelI9sPjWBGPSwx0NZgiG4vI5wGvFCjFv
-         SgAw==
+        d=linaro.org; s=google; t=1742310944; x=1742915744; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nMAu6MQINuflXuKN4gs2ELPnPkzz6J51pp9nuweT/JU=;
+        b=hn6/kt0pEXG2rkl2eswfJkeq+AAGVwB954CHegzZ6eSMOnAaAASDe5k0HwNCeAgzAM
+         y4+y1zG80oD5mo5PaJvObdHAzcoiXcInT0NSnvhpYC402+i53gzZR5rzN9FQxNkO3Y+T
+         rIeuPX0z2l1lFVttNZt+9VkoBCm2CCo5H/4He8/AlLhjtKQvUtjvNJu3DPnQWXTfczn8
+         3UGxF0PIT+oJ1HELbS8vb7BkDfXvPHvI+ws6rgzPl5SaHldi3bY/3uox/RYqj0P+LlM1
+         yG+JO1c1BrH8RHg/Hd/gQCk4T0iWVoJDzZ6ROAGmx1roRQ2b8xBbb4lUzpr+HWI0UBde
+         ozXA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742310945; x=1742915745;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vfsZ4Hr0wmB5sa2cUchGQZzT0be/9tuArc+VqsT04RU=;
-        b=K3O7uEdpy5astgN1JrLVahn40se13WFLC9NR4KDKBRSxxlGwlqQrk3NqcYevdpWRxa
-         zrUrPKy/FvUNJqmWSnk0gzMSTI8PPZWjwP5ZjeVBj6efheUFax6LjPG2u+wJlRD+FNQ5
-         y2h7i1V0cE1KWyJvLmEEZDpMZcnXYUrra78rxVd1qwOlSj+V9hYDF1PcBq7CllezUO7p
-         PQI+yqNREXw1M6lG3IM2GDG+64ZT+/a+vfgUqs9zeYEvyC+1e6u5rNtStck6oOU3vchM
-         fwtipjnd8fTHGEBghpB5KtVTiwRMVmBNoCf8ZooWEX6I/AmnipM1q4WAUlY0wu6w28j/
-         jEhw==
-X-Forwarded-Encrypted: i=1; AJvYcCVCFWynPY7ZHVFCCqzOFXkw0+W+iTkOu5XSCWF4IxGUnQ6XmXt3eIooelOOOBQXwcsholLxLgHahp7P@vger.kernel.org, AJvYcCWchxhdvxO/SfWa/HwxW5J9DoeCg9Cnulz2+i9p3Q+0JQX8H8n/MHcxzje+4LFKiKMPFnEIs0Pq@vger.kernel.org, AJvYcCWk1c7BzTYWncytSYIT6ilriKN8R9Uc6SgVapDdBD2OkEKafAVQtyDNRYwsco8q9DUnXP97Bsn6Ziq0VP4U@vger.kernel.org
-X-Gm-Message-State: AOJu0YwOymsPWlxJ06ISrXwtuUZC906mKLhpPp0sPuUojvZYfD2ANZyW
-	f8OV1yeIBG+7FsSHtZnBeaP9kzQUpoL0qQjl+rJmvMJPIhW7Yt5F
-X-Gm-Gg: ASbGncvZDI2SWmcdZT9sKzqou9WJaDr5VYwiwHMqVqPyLDsgisRSZoweMau3FE93IHR
-	XahGanv1/5NsIncmmzADuDu4wu0kbHQmFNaM+b3MmlUWY4ENBRAtveFs3QXqgKML/Grc76V5GqG
-	UUrLcZXDYYV9BFK6Toohlc4iBJllN8FhgvGcpjgWONnN2kLiDzH+YBdbZyPn0a+pJL9SOF/9lcL
-	DgUzMWIfRE40NLvgjTv6ann3DGsAOBNfje7Ymnp5iCl8kPzk7McIRBiMKq2MF+wv3VbEkbU90dh
-	vSAK5dSB2pLtCs7JMN8hAT4l0WwcmQg+
-X-Google-Smtp-Source: AGHT+IFoFkrvmKX6oudoUNLDCMY8f1EeKRpKsVXrfH4lPyc9AssKZHYKJOieMoARGtgxMGgZdLntEA==
-X-Received: by 2002:a5d:59a9:0:b0:382:4e71:1a12 with SMTP id ffacd0b85a97d-3971d239c31mr6323034f8f.1.1742310944949;
-        Tue, 18 Mar 2025 08:15:44 -0700 (PDT)
-Received: from skbuf ([86.127.125.88])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d2bb5f987sm82930845e9.24.2025.03.18.08.15.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        d=1e100.net; s=20230601; t=1742310944; x=1742915744;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=nMAu6MQINuflXuKN4gs2ELPnPkzz6J51pp9nuweT/JU=;
+        b=ZOisOnHSmeVJb9ixWBw++gH4kTmvSV2lh6dCOuRiDMppdDsoTMtGqHZt/NFKY9w91Q
+         itsvayVPfra14WYtb2Bt36T+8pz/Jpjg7R7jLITuMFagnEDOevDLC1GeEpyaMMLiATmy
+         xMlQs+xs5P3JBu2YhekH71Pf0B2KPBj8MqMID/BCxvKwJ9L8P8cvIYA/lnkWkv1I89LV
+         IBlee9mXo9mIytk2DXStXaQU3XPhiLV2ZCe55OmI+v8iH0zMetMJwYgDrJzdsOJrYOan
+         4czSWuWZaV/p5yfqBNlyRUijvAf0uq0TabbSrJp1c0R2YNjFCeVoxUAtws+rq0Rn+vZ9
+         /OMg==
+X-Forwarded-Encrypted: i=1; AJvYcCWRIXpGuuIClNG6rN9CDv73vSB/e/o59jJ0FZ/fLxwoszparwIPKWOMVcB/4EdYOYYIvNuTXXq0OUE1psM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyhwIxlpFiTAlhlMfHh0G2izJxnNekaaiioDf2YwbNyViU9gG3n
+	UlfiMRAunsBK8D/AjLlIuRsnCSYNH7rxFUm9bW144eWgQXV2+fpUJrLEQ3fxAes=
+X-Gm-Gg: ASbGncsuM10zwmWyv0cK9xZfTCtWi+CXBxC+TlDDkj0h75JbP4YtvwJrBczEfaufIgf
+	r0u9kKC4IIw+0s6fG7PIgyE5X+9f0KAeRykkZiveS6u2Hgh0I5KoMmq6y6ujzdwvUFioVvpS96F
+	JXNo+44IO4NIFgUa8tNm25WagqUdiSOv2scSFsoyIsnS5fe8i4tmlvQpghmxgNiTotPdjg9aybf
+	vaf1x4Nx2sWW4LiJIUSyPVsfBwNuq4AT0/Du5cy45NFQocOyoMON4lU+yS2h3zqEj+PLKNOxzkI
+	OHd7tkbV431+0VdzUDEg1Hj6SqK0gheReOplQzGeG590npBEl4Mq6xFaW5qk2gEejdiOhUEa27d
+	/mMVd1wJYAMzr0n9ZTXhbww==
+X-Google-Smtp-Source: AGHT+IEdAuoBBa6rqdfXyXVPdfsyoNBKCU13VR5rdKO1AHzkVgoZcyHxlV5xdWf54kCgyzIi1YY4cg==
+X-Received: by 2002:a5d:5f93:0:b0:390:ec6e:43ea with SMTP id ffacd0b85a97d-3996bb51f57mr3474100f8f.15.1742310943702;
         Tue, 18 Mar 2025 08:15:43 -0700 (PDT)
-Date: Tue, 18 Mar 2025 17:15:40 +0200
-From: Vladimir Oltean <olteanv@gmail.com>
-To: Christian Marangi <ansuelsmth@gmail.com>
-Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	upstream@airoha.com
-Subject: Re: [net-next PATCH v13 13/14] net: dsa: Add Airoha AN8855 5-Port
- Gigabit DSA Switch driver
-Message-ID: <20250318151540.4rmw6jj5hh2rp4b4@skbuf>
-References: <20250315154407.26304-1-ansuelsmth@gmail.com>
- <20250315154407.26304-14-ansuelsmth@gmail.com>
+Received: from ?IPV6:2a01:e0a:3d9:2080:eac1:f2d4:84a8:c5ff? ([2a01:e0a:3d9:2080:eac1:f2d4:84a8:c5ff])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-395cb318a96sm18690639f8f.69.2025.03.18.08.15.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 18 Mar 2025 08:15:43 -0700 (PDT)
+Message-ID: <73dd1253-1b73-436f-af1b-94c724b2069e@linaro.org>
+Date: Tue, 18 Mar 2025 16:15:42 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250315154407.26304-14-ansuelsmth@gmail.com>
+User-Agent: Mozilla Thunderbird
+From: neil.armstrong@linaro.org
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH V2 4/6] phy: qcom-qmp-ufs: Refactor qmp_ufs_exit callback.
+To: Nitin Rawat <quic_nitirawa@quicinc.com>, vkoul@kernel.org,
+ kishon@kernel.org, manivannan.sadhasivam@linaro.org,
+ James.Bottomley@HansenPartnership.com, martin.petersen@oracle.com,
+ konrad.dybcio@oss.qualcomm.com
+Cc: quic_rdwivedi@quicinc.com, linux-arm-msm@vger.kernel.org,
+ linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-scsi@vger.kernel.org
+References: <20250318144944.19749-1-quic_nitirawa@quicinc.com>
+ <20250318144944.19749-5-quic_nitirawa@quicinc.com>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <20250318144944.19749-5-quic_nitirawa@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Sat, Mar 15, 2025 at 04:43:53PM +0100, Christian Marangi wrote:
-> +/* Similar to MT7530 also trap link local frame and special frame to CPU */
-> +static int an8855_trap_special_frames(struct an8855_priv *priv)
-> +{
-> +	int ret;
-> +
-> +	/* Trap BPDUs to the CPU port(s) and egress them
-> +	 * VLAN-untagged.
-> +	 */
-> +	ret = regmap_update_bits(priv->regmap, AN8855_BPC,
-> +				 AN8855_BPDU_BPDU_FR | AN8855_BPDU_EG_TAG |
-> +				 AN8855_BPDU_PORT_FW,
-> +				 AN8855_BPDU_BPDU_FR |
-> +				 FIELD_PREP(AN8855_BPDU_EG_TAG, AN8855_VLAN_EG_UNTAGGED) |
-> +				 FIELD_PREP(AN8855_BPDU_PORT_FW, AN8855_BPDU_CPU_ONLY));
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* Trap 802.1X PAE frames to the CPU port(s) and egress them
-> +	 * VLAN-untagged.
-> +	 */
-> +	ret = regmap_update_bits(priv->regmap, AN8855_PAC,
-> +				 AN8855_PAE_BPDU_FR | AN8855_PAE_EG_TAG |
-> +				 AN8855_PAE_PORT_FW,
-> +				 AN8855_PAE_BPDU_FR |
-> +				 FIELD_PREP(AN8855_PAE_EG_TAG, AN8855_VLAN_EG_UNTAGGED) |
-> +				 FIELD_PREP(AN8855_PAE_PORT_FW, AN8855_BPDU_CPU_ONLY));
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* Trap frames with :01 MAC DAs to the CPU port(s) and egress
-> +	 * them VLAN-untagged.
-> +	 */
-> +	ret = regmap_update_bits(priv->regmap, AN8855_RGAC1,
-> +				 AN8855_R01_BPDU_FR | AN8855_R01_EG_TAG |
-> +				 AN8855_R01_PORT_FW,
-> +				 AN8855_R01_BPDU_FR |
-> +				 FIELD_PREP(AN8855_R01_EG_TAG, AN8855_VLAN_EG_UNTAGGED) |
-> +				 FIELD_PREP(AN8855_R01_PORT_FW, AN8855_BPDU_CPU_ONLY));
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* Trap frames with :02 MAC DAs to the CPU port(s) and egress
-> +	 * them VLAN-untagged.
-> +	 */
-> +	ret = regmap_update_bits(priv->regmap, AN8855_RGAC1,
-> +				 AN8855_R02_BPDU_FR | AN8855_R02_EG_TAG |
-> +				 AN8855_R02_PORT_FW,
-> +				 AN8855_R02_BPDU_FR |
-> +				 FIELD_PREP(AN8855_R02_EG_TAG, AN8855_VLAN_EG_UNTAGGED) |
-> +				 FIELD_PREP(AN8855_R02_PORT_FW, AN8855_BPDU_CPU_ONLY));
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* Trap frames with :03 MAC DAs to the CPU port(s) and egress
-> +	 * them VLAN-untagged.
-> +	 */
-> +	ret = regmap_update_bits(priv->regmap, AN8855_RGAC1,
-> +				 AN8855_R03_BPDU_FR | AN8855_R03_EG_TAG |
-> +				 AN8855_R03_PORT_FW,
-> +				 AN8855_R03_BPDU_FR |
-> +				 FIELD_PREP(AN8855_R03_EG_TAG, AN8855_VLAN_EG_UNTAGGED) |
-> +				 FIELD_PREP(AN8855_R03_PORT_FW, AN8855_BPDU_CPU_ONLY));
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* Trap frames with :0E MAC DAs to the CPU port(s) and egress
-> +	 * them VLAN-untagged.
-> +	 */
-> +	return regmap_update_bits(priv->regmap, AN8855_RGAC1,
-> +				  AN8855_R0E_BPDU_FR | AN8855_R0E_EG_TAG |
-> +				  AN8855_R0E_PORT_FW,
-> +				  AN8855_R0E_BPDU_FR |
-> +				  FIELD_PREP(AN8855_R0E_EG_TAG, AN8855_VLAN_EG_UNTAGGED) |
-> +				  FIELD_PREP(AN8855_R0E_PORT_FW, AN8855_BPDU_CPU_ONLY));
-> +}
+On 18/03/2025 15:49, Nitin Rawat wrote:
+> Rename qmp_ufs_disable to qmp_ufs_power_off and refactor
+> the code to move all the power off sequence to qmp_ufs_power_off.
+> 
+> Co-developed-by: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>
+> Signed-off-by: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>
+> Signed-off-by: Nitin Rawat <quic_nitirawa@quicinc.com>
+> ---
+>   drivers/phy/qualcomm/phy-qcom-qmp-ufs.c | 41 ++-----------------------
+>   1 file changed, 3 insertions(+), 38 deletions(-)
+> 
+> diff --git a/drivers/phy/qualcomm/phy-qcom-qmp-ufs.c b/drivers/phy/qualcomm/phy-qcom-qmp-ufs.c
+> index 3a80c2c110d2..675fef106d3b 100644
+> --- a/drivers/phy/qualcomm/phy-qcom-qmp-ufs.c
+> +++ b/drivers/phy/qualcomm/phy-qcom-qmp-ufs.c
+> @@ -1757,19 +1757,6 @@ static void qmp_ufs_init_registers(struct qmp_ufs *qmp, const struct qmp_phy_cfg
+>   	qmp_ufs_init_all(qmp, &cfg->tbls_hs_b);
+>   }
+> 
+> -static int qmp_ufs_com_exit(struct qmp_ufs *qmp)
+> -{
+> -	const struct qmp_phy_cfg *cfg = qmp->cfg;
+> -
+> -	reset_control_assert(qmp->ufs_reset);
+> -
+> -	clk_bulk_disable_unprepare(qmp->num_clks, qmp->clks);
+> -
+> -	regulator_bulk_disable(cfg->num_vregs, qmp->vregs);
+> -
+> -	return 0;
+> -}
+> -
+>   static int qmp_ufs_power_on(struct phy *phy)
+>   {
+>   	struct qmp_ufs *qmp = phy_get_drvdata(phy);
+> @@ -1839,39 +1826,17 @@ static int qmp_ufs_power_off(struct phy *phy)
+>   	struct qmp_ufs *qmp = phy_get_drvdata(phy);
+>   	const struct qmp_phy_cfg *cfg = qmp->cfg;
+> 
+> -	/* PHY reset */
+> -	if (!cfg->no_pcs_sw_reset)
+> -		qphy_setbits(qmp->pcs, cfg->regs[QPHY_SW_RESET], SW_RESET);
+> -
+> -	/* stop SerDes */
+> -	qphy_clrbits(qmp->pcs, cfg->regs[QPHY_START_CTRL], SERDES_START);
+> -
+>   	/* Put PHY into POWER DOWN state: active low */
+>   	qphy_clrbits(qmp->pcs, cfg->regs[QPHY_PCS_POWER_DOWN_CONTROL],
+>   			SW_PWRDN);
 
-Is there a way in which you could group the registers a bit more?
-The function occupies 2 screens :-/
+So where goes this code ? I think it should go in a new exit PHY op.
 
-There are 4 read-modify-write operations in succession to the RGAC1
-register. Maybe you can converge them into a single regmap_update_bits()
-call.
+> 
+> -	return 0;
+> -}
+> -
+> -static int qmp_ufs_exit(struct phy *phy)
+> -{
+> -	struct qmp_ufs *qmp = phy_get_drvdata(phy);
+> +	clk_bulk_disable_unprepare(qmp->num_clks, qmp->clks);
+> 
+> -	qmp_ufs_com_exit(qmp);
+> +	regulator_bulk_disable(cfg->num_vregs, qmp->vregs);
+> 
+>   	return 0;
+>   }
+> 
+> -static int qmp_ufs_disable(struct phy *phy)
+> -{
+> -	int ret;
+> -
+> -	ret = qmp_ufs_power_off(phy);
+> -	if (ret)
+> -		return ret;
+> -	return qmp_ufs_exit(phy);
+> -}
+> -
+>   static int qmp_ufs_set_mode(struct phy *phy, enum phy_mode mode, int submode)
+>   {
+>   	struct qmp_ufs *qmp = phy_get_drvdata(phy);
+> @@ -1890,7 +1855,7 @@ static int qmp_ufs_set_mode(struct phy *phy, enum phy_mode mode, int submode)
+> 
+>   static const struct phy_ops qcom_qmp_ufs_phy_ops = {
+>   	.power_on	= qmp_ufs_power_on,
+> -	.power_off	= qmp_ufs_disable,
+> +	.power_off	= qmp_ufs_power_off,
+>   	.calibrate	= qmp_ufs_phy_calibrate,
+>   	.set_mode	= qmp_ufs_set_mode,
+>   	.owner		= THIS_MODULE,
+> --
+> 2.48.1
+> 
+> 
 
-Also, for packets which reach the CPU via a trap, we shouldn't set
-skb->offload_fwd_mark = 1. In other words, if the bridge layer wants to
-forward them in software (including to other an8855 ports), let it do so.
-The common example given in commit 515853ccecc6 ("bridge: allow
-forwarding some link local frames") is 802.1X PAE (01-80-C2-00-00-03).
-
-I notice mtk_tag_rcv() calls dsa_default_offload_fwd_mark() with no
-pre-condition. Do you know whether there exists any bit in the RX tag
-which signifies whether the packet was received because of a trap
-(or if it was autonomously forwarded by the switch to the other bridge
-ports as well)? The offload_fwd_mark bit should be set based on
-something like that.
 
