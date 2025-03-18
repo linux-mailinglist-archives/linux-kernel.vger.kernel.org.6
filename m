@@ -1,151 +1,147 @@
-Return-Path: <linux-kernel+bounces-565452-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565453-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C206A66865
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 05:32:34 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA5EFA6686C
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 05:37:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 98865189B489
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 04:32:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 22017176ADA
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 04:37:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C39E71C5D6C;
-	Tue, 18 Mar 2025 04:32:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0IWX/TnC"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81F731BC099;
+	Tue, 18 Mar 2025 04:37:32 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3DFF19ABAB
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 04:32:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EC1D19ABAB;
+	Tue, 18 Mar 2025 04:37:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742272324; cv=none; b=RoYxlabGcyvfB2hqpMLtmp6u5XFr/olZ2xu+Z+icQbRNfj378KCmH/bu0CY0MLvGaMo3ITr18TiLX9rDAuyn36ajv/HV9+hKr20n2cNhLx04pKfWCKhM3Cc88A2dm83wt95tfqpObEgVB6fL6eLdOCj09J3Lt8NQR93+MIztBF8=
+	t=1742272652; cv=none; b=pBRDbLgo0SAg4zQVyJj5eB1O0mEFD/rZhUeyDJDuSAol9BR0P0Hh6MrPrOeEdfEoq5W6VvfePn+m3rx1Orww7N0nRsyCXdVv0eG28aIwh3iHLGJmMTz4br4Txg2YGfkEHkoTJoo0ZBIASEs2Yz27RHsUBoyCBXtPs6VppD2PG54=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742272324; c=relaxed/simple;
-	bh=d5/SPH6Xszn1gnN5qqSdZHDkkc8zw3ZG8Oun46aesZk=;
-	h=Date:In-Reply-To:Message-Id:Mime-Version:References:Subject:From:
-	 To:Content-Type; b=XuLMhwDmntlM4b94gXy/vlDtALEZ4WuzRlejrFrUkkHAXgbQ6PWfPQKdiYce5XXZEX/RNsrK4c36qH4MV+DgKy6w0LektAlkbEsUSB1ctE7nybNtYxUl+xpEiVf+w5OE9ZGHKyHAd4YDVBfyioTbOC5hIBiq89GoHLV6pEDy2Ys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0IWX/TnC; arc=none smtp.client-ip=209.85.128.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6fec6c91630so73288677b3.2
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 21:32:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1742272321; x=1742877121; darn=vger.kernel.org;
-        h=to:from:subject:references:mime-version:message-id:in-reply-to:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=EUkAIINDzOsP+PuNVteX8o8oIwqX+sSmcLnHXIaoPro=;
-        b=0IWX/TnCQZK7vslD49s0JHa2D3hZRsB5MJ7Tl0priZ97uaPaMOt3X33rExPJZuLg9N
-         cUbvLed6Dd71o2LIgMbR/4JxPmlnt+L6DKv7WigLqAH4GyHFahZbLO1esvyWCHefxxMv
-         Tegpjb8NQJAQLj4RJSOtOqSl4RtdY7Ot2zwwfaEBDSMednD/DFyKJIfQJn3+tO6BF97b
-         gj6ieM04ttXT5gAfoU/XO8lP/Dq59k9hG4WN2dJf6auXr0jXsdvc8T7lU/kRIxcaaGwn
-         cRQPWZ8fnYfjPjNgqLwGsb81qZUkdcxhysEtHYrE57/6HAVSJ9AfJ2SyTYwWiSp4yO8H
-         ctWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742272321; x=1742877121;
-        h=to:from:subject:references:mime-version:message-id:in-reply-to:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=EUkAIINDzOsP+PuNVteX8o8oIwqX+sSmcLnHXIaoPro=;
-        b=dtJgfPfuqokXD0L4srswGIY6D3759L7Ty6aTHWQwNd0NfEWFzx2vdrqyi4VbjJbwip
-         wcPr7iFujUzgC0gP+4EsmSu/B8MgfGdqp0OUiOkFjdu+CAfXbpkwFfZJ3SfSdCIS/4Tm
-         dKHcmN5ZnlMkGkiwYuxBgSHZHYznXzpufu76bsvNMvy4sC0rh/OcAuqT61lJiyVu9wRb
-         sWRGKRSC4uddIkU+UZjPrmx120cGBCjteG4CLC2xv38iMJDCu7TKi2dDjz/a53ol/p7w
-         c+vVBY2+ivUqYrokSUcWvE+MBeL26RRv1He178sf7gDEORFyd2jBsm/fmJP/cOELwUfA
-         Kr1A==
-X-Forwarded-Encrypted: i=1; AJvYcCUoAjHVgXtEXg8M/8BEJQBFxrduldpiYavlXs0SxuONA9gsAW0TrTGvuo+0CqZ6aI7GZ6S/e5ZmyTEQ4vw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwCzgNlSV0ggJXaBkvKkkQKk15nO4/wng50cUZ+zs87pquSzwfz
-	OTkW6cVKb+A9DDrG9dkxf+aeUEWktynp+Pf1QqY4G9KnsDn6U7k2K0V2zpWpzzl44uc2ZpB4VaC
-	uYp8jNg==
-X-Google-Smtp-Source: AGHT+IEcfXSAohVmxzPknUUIX08jwASTAN/GzdnD1c7IYI76WLUVAzrBv5lIoiUiC2EvtM1IH2Qkcs87+T4e
-X-Received: from irogers.svl.corp.google.com ([2620:15c:2c5:11:ef29:15ce:a42a:b69f])
- (user=irogers job=sendgmr) by 2002:a05:690c:2c05:b0:6fe:c5cc:e1ab with SMTP
- id 00721157ae682-6ff46024ae2mr176667b3.6.1742272321267; Mon, 17 Mar 2025
- 21:32:01 -0700 (PDT)
-Date: Mon, 17 Mar 2025 21:31:51 -0700
-In-Reply-To: <20250318043151.137973-1-irogers@google.com>
-Message-Id: <20250318043151.137973-4-irogers@google.com>
+	s=arc-20240116; t=1742272652; c=relaxed/simple;
+	bh=Qh7kP66RGTGxKhNObUyde6HxN3TQhHvkFPc6LTNlBZU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uZJuCO1iv/1tWpVTBMF2mk/YiBB4IlySC0a34ZeWJZTPvqZbCE5Zhwj/1Vm6Kq70I2J3sBkqIjPqlpsZCHjL7OcAXITd1t+0i3hA6gEXN9dgo122lAvqtT7VxohODbUbuCpbvLtOzKP6fUVyZcmsh1Xtlq+gWZL/nWKrmvWLcng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4ZGzZc6407z4f3jY9;
+	Tue, 18 Mar 2025 12:36:56 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 7090D1A058E;
+	Tue, 18 Mar 2025 12:37:19 +0800 (CST)
+Received: from [10.174.179.80] (unknown [10.174.179.80])
+	by APP4 (Coremail) with SMTP id gCh0CgAni199+NhnGRVMGw--.2509S3;
+	Tue, 18 Mar 2025 12:37:19 +0800 (CST)
+Message-ID: <81ae9161-8403-4e6d-a3da-1b52bd989ac9@huaweicloud.com>
+Date: Tue, 18 Mar 2025 12:37:17 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250318043151.137973-1-irogers@google.com>
-X-Mailer: git-send-email 2.49.0.rc1.451.g8f38331e32-goog
-Subject: [PATCH v2 3/3] perf test dso-data: Correctly free test file in read test
-From: Ian Rogers <irogers@google.com>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Kan Liang <kan.liang@linux.intel.com>, Athira Rajeev <atrajeev@linux.vnet.ibm.com>, 
-	Stephen Brennan <stephen.s.brennan@oracle.com>, James Clark <james.clark@linaro.org>, 
-	Yunseong Kim <yskelg@gmail.com>, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] jbd2: add a missing data flush during file and fs
+ synchronization
+To: tytso@mit.edu
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ adilger.kernel@dilger.ca, jack@suse.cz, yi.zhang@huawei.com,
+ chengzhihao1@huawei.com, yukuai3@huawei.com, yangerkun@huawei.com,
+ linux-ext4@vger.kernel.org
+References: <20241206111327.4171337-1-yi.zhang@huaweicloud.com>
+Content-Language: en-US
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+In-Reply-To: <20241206111327.4171337-1-yi.zhang@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:gCh0CgAni199+NhnGRVMGw--.2509S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxZrWkuF1kurykKw15Zw13urg_yoW5Gry7pr
+	W8C3WYkrWvvFyxAr18XF4fJFWF9F40y34UWry09Fn8tw43Xwn2krWftr1Yy3WqkFs5Ww4r
+	Xw1UC34qg34qk3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUkEb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
+	wI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
+	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
+	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
+	0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
+	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07UAwI
+	DUUUUU=
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-The DSO data read test opens a file but as dsos__exit is used the test
-file isn't closed. This causes the subsequent subtests in don't fork
-(-F) mode to fail as one more than expected file descriptor is open.
+Hi, Ted.
 
-Signed-off-by: Ian Rogers <irogers@google.com>
----
- tools/perf/tests/dso-data.c | 24 ++++++++++++------------
- 1 file changed, 12 insertions(+), 12 deletions(-)
+Just wanted to kindly check if this patch might have been
+overlooked?
 
-diff --git a/tools/perf/tests/dso-data.c b/tools/perf/tests/dso-data.c
-index 06be7c5d8495..a1fff4203b75 100644
---- a/tools/perf/tests/dso-data.c
-+++ b/tools/perf/tests/dso-data.c
-@@ -114,6 +114,17 @@ static int dso__data_fd(struct dso *dso, struct machine *machine)
- 	return fd;
- }
- 
-+static void dsos__delete(struct dsos *dsos)
-+{
-+	for (unsigned int i = 0; i < dsos->cnt; i++) {
-+		struct dso *dso = dsos->dsos[i];
-+
-+		dso__data_close(dso);
-+		unlink(dso__name(dso));
-+	}
-+	dsos__exit(dsos);
-+}
-+
- static int test__dso_data(struct test_suite *test __maybe_unused, int subtest __maybe_unused)
- {
- 	struct machine machine;
-@@ -172,7 +183,7 @@ static int test__dso_data(struct test_suite *test __maybe_unused, int subtest __
- 	}
- 
- 	dso__put(dso);
--	dsos__exit(&machine.dsos);
-+	dsos__delete(&machine.dsos);
- 	unlink(file);
- 	return 0;
- }
-@@ -222,17 +233,6 @@ static int dsos__create(int cnt, int size, struct dsos *dsos)
- 	return 0;
- }
- 
--static void dsos__delete(struct dsos *dsos)
--{
--	for (unsigned int i = 0; i < dsos->cnt; i++) {
--		struct dso *dso = dsos->dsos[i];
--
--		dso__data_close(dso);
--		unlink(dso__name(dso));
--	}
--	dsos__exit(dsos);
--}
--
- static int set_fd_limit(int n)
- {
- 	struct rlimit rlim;
--- 
-2.49.0.rc1.451.g8f38331e32-goog
+Thanks,
+Yi.
+
+On 2024/12/6 19:13, Zhang Yi wrote:
+> From: Zhang Yi <yi.zhang@huawei.com>
+> 
+> When the filesystem performs file or filesystem synchronization (e.g.,
+> ext4_sync_file()), it queries the journal to determine whether to flush
+> the file device through jbd2_trans_will_send_data_barrier(). If the
+> target transaction has not started committing, it assumes that the
+> journal will submit the flush command, allowing the filesystem to bypass
+> a redundant flush command. However, this assumption is not always valid.
+> If the journal is not located on the filesystem device, the journal
+> commit thread will not submit the flush command unless the variable
+> ->t_need_data_flush is set to 1. Consequently, the flush may be missed,
+> and data may be lost following a power failure or system crash, even if
+> the synchronization appears to succeed.
+> 
+> Unfortunately, we cannot determine with certainty whether the target
+> transaction will flush to the filesystem device before it commits.
+> However, if it has not started committing, it must be the running
+> transaction. Therefore, fix it by always set its t_need_data_flush to 1,
+> ensuring that the committing thread will flush the filesystem device.
+> 
+> Fixes: bbd2be369107 ("jbd2: Add function jbd2_trans_will_send_data_barrier()")
+> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+> ---
+>  fs/jbd2/journal.c | 12 +++++++++++-
+>  1 file changed, 11 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/jbd2/journal.c b/fs/jbd2/journal.c
+> index 97f487c3d8fc..37632ae18a4e 100644
+> --- a/fs/jbd2/journal.c
+> +++ b/fs/jbd2/journal.c
+> @@ -609,7 +609,7 @@ int jbd2_journal_start_commit(journal_t *journal, tid_t *ptid)
+>  int jbd2_trans_will_send_data_barrier(journal_t *journal, tid_t tid)
+>  {
+>  	int ret = 0;
+> -	transaction_t *commit_trans;
+> +	transaction_t *commit_trans, *running_trans;
+>  
+>  	if (!(journal->j_flags & JBD2_BARRIER))
+>  		return 0;
+> @@ -619,6 +619,16 @@ int jbd2_trans_will_send_data_barrier(journal_t *journal, tid_t tid)
+>  		goto out;
+>  	commit_trans = journal->j_committing_transaction;
+>  	if (!commit_trans || commit_trans->t_tid != tid) {
+> +		running_trans = journal->j_running_transaction;
+> +		/*
+> +		 * The query transaction hasn't started committing,
+> +		 * it must still be running.
+> +		 */
+> +		if (WARN_ON_ONCE(!running_trans ||
+> +				 running_trans->t_tid != tid))
+> +			goto out;
+> +
+> +		running_trans->t_need_data_flush = 1;
+>  		ret = 1;
+>  		goto out;
+>  	}
 
 
