@@ -1,155 +1,227 @@
-Return-Path: <linux-kernel+bounces-566901-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566902-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85A9FA67E10
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 21:37:15 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DFB2A67E16
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 21:39:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E633D42396D
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 20:37:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B10D717AF17
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 20:39:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3348E20C021;
-	Tue, 18 Mar 2025 20:37:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C9E220FA8B;
+	Tue, 18 Mar 2025 20:39:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DV3rC62O"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jmmQG2jQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B92A31991A9
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 20:37:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89C451DC9B4;
+	Tue, 18 Mar 2025 20:39:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742330229; cv=none; b=EMQJ0vSwIJ3xm2A74jVLBM0P6xOsHLkLIVa5g0pJSkOaEnD0/9rs39dHhw+WKoFbtXTmF8rQliTAlcrgWBUKJV6WM3FYV06x1IoneN3AhRPj5SQ2aO1CyAh4mZOkR7uNziOzDGWaGeOvPYDKidX082VXs4hgP4uBfIDLxI5MRTs=
+	t=1742330354; cv=none; b=ArfR+PXEzuWGFFZxU5FuyEUM78GwMMu/u7MUkhh3tjgi6fkJxXs3DEX4Od5UZyOPoize+QhZIl/6o+h+anCYmyZo+wZZPOgC5o14pDsiuyeY/QY5G51/0A5WMGY1z/Jb4ItfdYCND1oSvfWAlGs3GadsQs+TLLaOFs87shPEeKs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742330229; c=relaxed/simple;
-	bh=lNR5VvElIEgV/xFpc8FqtIXn/kLNjMvbzxoCJsOYSPM=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Um2EqQeul+8AnU6W5xkeGXHRVLprxK2e00t737sMw2tbEFiE7hUJ34PoNJZybTvGfqBHr0YIwxCjLAZwDtSNaXWG1kzAyQo2EqN30zYbcwahTqArAcfF31AEjYBLBSWpqXgUplnWaCQBM4gzEC/LYec1DpTvojptartlqvM+TrM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DV3rC62O; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-43d0359b1fcso317145e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 13:37:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1742330226; x=1742935026; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=jfIx/dOVNK3Zui69zoqhnyuZ295+o15UNvhExnoCsjM=;
-        b=DV3rC62O8JJlkN/WYAujnvPSiaa2OwWxrBFMwJMeYVa79AAakDH86fAtWSstC/UHNz
-         FlVBrJnKGVnwY6sOy/xc4sX4AsPNL7awAr3ru3btwH0OJb7XQw2mRivd5fPaFu+64cGq
-         RUU/iqMx4rWmYLrSCUjF3wL3zHCsWmIbxamGYGjVyZFHR/l8zaiuGOOryMYS6U+yJ2oI
-         zkF9cELGhR2t28/fwJC1jSrYR4Ih7hPIz7l+/NhINz81QLV7TCjZmPlVx/mwASirq7b1
-         zXIVEfSNgkRMuqoQKl6N+5ltFcxBTPToWgPcOI+Hl/SWSGDOa/cda6/f5YPyqtz8P53Z
-         cPAw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742330226; x=1742935026;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=jfIx/dOVNK3Zui69zoqhnyuZ295+o15UNvhExnoCsjM=;
-        b=KmtKYZSIrPx6ykpt9u591XK7XQp5ME/ycPwjHAWcnGFCQbuxuROZHvaMDpUxRVMTIQ
-         KJfsooKXsEu7wdEa1SGM/g0UzjOdMS3lgcmcZoZUVe/SpThadmCzxcsPTFtqh5mZCboK
-         cnmaCUw6lFW5zi4jiQ59ikjneBe7BbBF5WSFXXIQKmxKDl4QtaN9NTvszItdiBWCy/qM
-         MFcrUYq0cTw6CWD95AKOIMUH/+TsyIi+O2XPcNWfgtxaArb8dfON7TWWepEoPkWBTQEi
-         TnIYd1lAF9+6S0psdKnVh3DEZc2J+mBciXatFNAHAVgM1A5l4rCxX95FS04WXRXLQoj6
-         U2XQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUXfLRwpP+dM/ePqMUVEIcYG9VbCIfMXw8BERdP/DFWlmkbchHQoantW92KdV+e3xBrxpAtXWNLsRT6hvs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxU4BGcucy2eKGQj9bXwJZeHUd67Gyq71oiZ2dVVtcl5orqmd4+
-	H4cEo1BMJTrz5ElyBvZ9z38JN/iKGew5y/PYbUEbMvP0RXxiqXYaEsZwh9sos/4=
-X-Gm-Gg: ASbGncuchXVo2diBcfZukUaSe1iID/uifgYJyt/AEuHzz9gnXo/PlXDGb8UNmqoqvgl
-	cEQtRjf3lOa/hMLdzjgnKt1j5pdK5igXDWnLOGdLLzbGRr9Ihwa/HL9bxjYWewDGtechdUXi6dI
-	WZSoT6/Cz1YQw8yEfawGLp2j9o/fAu2b+GG6davkT9MMpy1njqhTIqFLNYC3HUCfC4GWo4d94qM
-	Q/lZqR1viHH4BdBNyWzQgcfbCv//wgLK5aLanXcdgQH4lrmKnYxAKcKhx31vRmX2gMYs3xV2t+n
-	AdPUcRbILtxdG5KDHtVH27bJf33KtlO9K7kBGy7pqLNJFgrP
-X-Google-Smtp-Source: AGHT+IGKaVnWmA6ubAmSh6+AGtDNLhVaSjlQLGrz3oxVZZzlKeEgo0GAHVg/nYm/WzGxiXM4Eel1zA==
-X-Received: by 2002:a05:600c:1c9b:b0:439:4c1e:d810 with SMTP id 5b1f17b1804b1-43d43034b2bmr1001245e9.9.1742330226048;
-        Tue, 18 Mar 2025 13:37:06 -0700 (PDT)
-Received: from draszik.lan ([80.111.64.44])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d33f5771dsm54780805e9.38.2025.03.18.13.37.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Mar 2025 13:37:05 -0700 (PDT)
-Message-ID: <2d38d2f242bbcce452f6c29f4ee79aa9c5703b7d.camel@linaro.org>
-Subject: Re: [PATCH 3/3] firmware: exynos-acpm: convert to dev_err_probe()
- in client API
-From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>, Tudor Ambarus
-	 <tudor.ambarus@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>
-Cc: Peter Griffin <peter.griffin@linaro.org>, Will McVicker
-	 <willmcvicker@google.com>, kernel-team@android.com, 
-	linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, Krzysztof Kozlowski
-	 <krzysztof.kozlowski@linaro.org>
-Date: Tue, 18 Mar 2025 20:37:04 +0000
-In-Reply-To: <801a9754-cd57-42c6-9569-16d9a99bfed9@kernel.org>
-References: <20250314-acpm-fixes-v1-0-ab03ca8e723f@linaro.org>
-	 <20250314-acpm-fixes-v1-3-ab03ca8e723f@linaro.org>
-	 <801a9754-cd57-42c6-9569-16d9a99bfed9@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.53.2-1 
+	s=arc-20240116; t=1742330354; c=relaxed/simple;
+	bh=qOyqx98uYZaxnz8iL9sLUntJPSrsmCPx493u7R+Lnjk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cOGtwWVAyFSuJjMA599/Rs32b7i3xyAsVVJR5MsODFj+tIted+V5+BnCoSbDC2mlYg134CQQwe/KE9TURCQvtLCqYcH1L1DcJo8YzBSE68k6BDq+/xjTrJlK11wj1De91x+nW+NjUUw7njUl9KPuOu9b3icxqG6tGv3DE2buToQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jmmQG2jQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3B08C4CEDD;
+	Tue, 18 Mar 2025 20:39:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742330354;
+	bh=qOyqx98uYZaxnz8iL9sLUntJPSrsmCPx493u7R+Lnjk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jmmQG2jQTeVh/Wo0UkAwvIfRQMT2BJv/NcHjMw9/oC0Ydce8fyHd1L+aw+8KMafl3
+	 daX59WrcnM3SoKrzxsQacaGdCwHn7j0cgltFaXcG0FWxhVFtnkslrkuZDIzDoRzRx4
+	 IjWJucl8viLRZjB6jNb8ziUAEg2ZashS5lFUm9KOgrzWbB46qr5FlcAk0+otns60zv
+	 zhA+c7L2jF0UYcCtQPFuEa7cxrT2KfcgPaV1RSsgFeoXx2cdHyoL6Za5yJerW6sxM+
+	 ny/JMURbcz1jhTP1rnK9+tp3IAUvGeP8ZRwA/QKlgFzadPDgO1TfdclmN0zu740gQG
+	 fWnpzczIdmTNw==
+Date: Tue, 18 Mar 2025 13:39:06 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: linux-arch@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+	Richard Henderson <richard.henderson@linaro.org>,
+	Matt Turner <mattst88@gmail.com>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Greg Ungerer <gerg@linux-m68k.org>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+	Helge Deller <deller@gmx.de>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Naveen N Rao <naveen@kernel.org>,
+	Yoshinori Sato <ysato@users.sourceforge.jp>,
+	Rich Felker <dalias@libc.org>,
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+	Julian Vetter <julian@outer-limits.org>,
+	Bjorn Helgaas <bhelgaas@google.com>, linux-alpha@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
+	linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org, linux-sh@vger.kernel.org
+Subject: Re: [PATCH 5/6] mips: drop GENERIC_IOMAP wrapper
+Message-ID: <20250318203906.GA4089579@ax162>
+References: <20250315105907.1275012-1-arnd@kernel.org>
+ <20250315105907.1275012-6-arnd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250315105907.1275012-6-arnd@kernel.org>
 
-Hi Krzysztof,
+Hi Arnd,
 
-On Tue, 2025-03-18 at 20:23 +0100, Krzysztof Kozlowski wrote:
-> On 14/03/2025 17:40, Andr=C3=A9 Draszik wrote:
-> > dev_err_probe() exists to simplify code and unify error messages by
-> > using its message template.
-> >=20
-> > Convert the remaining dev_err() in acpm_get_by_phandle() to
-> > dev_err_probe().
-> >=20
-> > Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
-> > ---
-> > =C2=A0drivers/firmware/samsung/exynos-acpm.c | 10 ++++++----
-> > =C2=A01 file changed, 6 insertions(+), 4 deletions(-)
-> >=20
-> > diff --git a/drivers/firmware/samsung/exynos-acpm.c b/drivers/firmware/=
-samsung/exynos-acpm.c
-> > index 48f1e3cacaa709ae703115169df138b659ddae44..03f907a95c6acd66d89cd8a=
-f2f52e7c6dadf492a 100644
-> > --- a/drivers/firmware/samsung/exynos-acpm.c
-> > +++ b/drivers/firmware/samsung/exynos-acpm.c
-> > @@ -701,12 +701,14 @@ static const struct acpm_handle *acpm_get_by_phan=
-dle(struct device *dev,
-> > =C2=A0
-> > =C2=A0	link =3D device_link_add(dev, &pdev->dev, DL_FLAG_AUTOREMOVE_SUP=
-PLIER);
-> > =C2=A0	if (!link) {
-> > -		dev_err(&pdev->dev,
-> > -			"Failed to create device link to consumer %s.\n",
-> > -			dev_name(dev));
-> > +		int ret =3D -EINVAL;
-> > +
-> > +		dev_err_probe(&pdev->dev, ret,
-> > +			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 "Failed to create device link to con=
-sumer %s.\n",
-> > +			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dev_name(dev));
->=20
-> I do not see how it is simpler. Three lines (statement) is now 5 lines
-> with two statements.
+On Sat, Mar 15, 2025 at 11:59:06AM +0100, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
+> 
+> All PIO on MIPS platforms is memory mapped, so there is no benefit in
+> the lib/iomap.c wrappers that switch between inb/outb and readb/writeb
+> style accessses.
+> 
+> In fact, the '#define PIO_RESERVED 0' setting completely disables
+> the GENERIC_IOMAP functionality, and the '#define PIO_OFFSET
+> mips_io_port_base' setting is based on a misunderstanding of what the
+> offset is meant to do.
+> 
+> MIPS started using GENERIC_IOMAP in 2018 with commit b962aeb02205 ("MIPS:
+> Use GENERIC_IOMAP") replacing a simple custom implementation of the same
+> interfaces, but at the time the asm-generic/io.h version was not usable
+> yet. Since the header is now always included, it's now possible to go
+> back to the even simpler version.
+> 
+> Use the normal GENERIC_PCI_IOMAP functionality for all mips platforms
+> without the hacky GENERIC_IOMAP, and provide a custom pci_iounmap()
+> for the CONFIG_PCI_DRIVERS_LEGACY case to ensure the I/O port base never
+> gets unmapped.
+> 
+> The readsl() prototype needs an extra 'const' keyword to make it
+> compatible with the generic ioread32_rep() alias.
+> 
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  arch/mips/Kconfig          |  2 +-
+>  arch/mips/include/asm/io.h | 21 ++++++++-------------
+>  arch/mips/lib/iomap-pci.c  |  9 +++++++++
+>  3 files changed, 18 insertions(+), 14 deletions(-)
+> 
+> diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
+> index 1924f2d83932..2a2120a6d852 100644
+> --- a/arch/mips/Kconfig
+> +++ b/arch/mips/Kconfig
+> @@ -38,7 +38,6 @@ config MIPS
+>  	select GENERIC_CMOS_UPDATE
+>  	select GENERIC_CPU_AUTOPROBE
+>  	select GENERIC_GETTIMEOFDAY
+> -	select GENERIC_IOMAP
+>  	select GENERIC_IRQ_PROBE
+>  	select GENERIC_IRQ_SHOW
+>  	select GENERIC_ISA_DMA if EISA
+> @@ -47,6 +46,7 @@ config MIPS
+>  	select GENERIC_LIB_CMPDI2
+>  	select GENERIC_LIB_LSHRDI3
+>  	select GENERIC_LIB_UCMPDI2
+> +	select GENERIC_PCI_IOMAP
+>  	select GENERIC_SCHED_CLOCK if !CAVIUM_OCTEON_SOC
+>  	select GENERIC_SMP_IDLE_THREAD
+>  	select GENERIC_IDLE_POLL_SETUP
+> diff --git a/arch/mips/include/asm/io.h b/arch/mips/include/asm/io.h
+> index 0bddb568af7c..1fe56d1870a6 100644
+> --- a/arch/mips/include/asm/io.h
+> +++ b/arch/mips/include/asm/io.h
+> @@ -66,17 +66,6 @@ static inline void set_io_port_base(unsigned long base)
+>  	mips_io_port_base = base;
+>  }
+>  
+> -/*
+> - * Provide the necessary definitions for generic iomap. We make use of
+> - * mips_io_port_base for iomap(), but we don't reserve any low addresses for
+> - * use with I/O ports.
+> - */
+> -
+> -#define HAVE_ARCH_PIO_SIZE
+> -#define PIO_OFFSET	mips_io_port_base
+> -#define PIO_MASK	IO_SPACE_LIMIT
+> -#define PIO_RESERVED	0x0UL
+> -
+>  /*
+>   * Enforce in-order execution of data I/O.  In the MIPS architecture
+>   * these are equivalent to corresponding platform-specific memory
+> @@ -397,8 +386,8 @@ static inline void writes##bwlq(volatile void __iomem *mem,		\
+>  	}								\
+>  }									\
+>  									\
+> -static inline void reads##bwlq(volatile void __iomem *mem, void *addr,	\
+> -			       unsigned int count)			\
+> +static inline void reads##bwlq(const volatile void __iomem *mem,	\
+> +			       void *addr, unsigned int count)		\
+>  {									\
+>  	volatile type *__addr = addr;					\
+>  									\
+> @@ -555,6 +544,12 @@ extern void (*_dma_cache_inv)(unsigned long start, unsigned long size);
+>  
+>  void __ioread64_copy(void *to, const void __iomem *from, size_t count);
+>  
+> +#ifdef CONFIG_PCI_DRIVERS_LEGACY
+> +struct pci_dev;
+> +void pci_iounmap(struct pci_dev *dev, void __iomem *addr);
+> +#define pci_iounmap pci_iounmap
+> +#endif
+> +
+>  #include <asm-generic/io.h>
+>  
+>  static inline void *isa_bus_to_virt(unsigned long address)
+> diff --git a/arch/mips/lib/iomap-pci.c b/arch/mips/lib/iomap-pci.c
+> index a9cb28813f0b..2f82c776c6d0 100644
+> --- a/arch/mips/lib/iomap-pci.c
+> +++ b/arch/mips/lib/iomap-pci.c
+> @@ -43,4 +43,13 @@ void __iomem *__pci_ioport_map(struct pci_dev *dev,
+>  	return (void __iomem *) (ctrl->io_map_base + port);
+>  }
+>  
+> +void pci_iounmap(struct pci_dev *dev, void __iomem *addr)
+> +{
+> +	struct pci_controller *ctrl = dev->bus->sysdata;
+> +	void __iomem *base = (void __iomem *)ctrl->io_map_base;
+> +
+> +	if (addr < base || addr > (base + resource_size(ctrl->io_resource)))
+> +		iounmap(addr);
+> +}
+> +
+>  #endif /* CONFIG_PCI_DRIVERS_LEGACY */
+> -- 
+> 2.39.5
+> 
 
-This was part of some patches converting to scoped cleanup, and
-there it was shorter. Shouldn't have taken this change out of
-that context...
+This change as commit 976bf3aec388 ("mips: drop GENERIC_IOMAP wrapper") in
+-next introduces new instances of -Wnull-pointer-arithmetic when building
+certain mips configurations with clang.
 
-> What's more important, dev_err_probe is supposed to be used only in
-> probe context, while this could be called in other contexts.
-
-True. dev_err_probe is nice though in that it gives us unified
-error messages.
-
-Happy to drop for now.
+  $ make -skj"$(nproc)" ARCH=mips LLVM=1 mrproper malta_defconfig init/main.o
+  ...
+  In file included from init/main.c:17:
+  In file included from include/linux/module.h:17:
+  In file included from include/linux/kmod.h:9:
+  In file included from include/linux/umh.h:4:
+  In file included from include/linux/gfp.h:7:
+  In file included from include/linux/mmzone.h:22:
+  In file included from include/linux/mm_types.h:5:
+  In file included from include/linux/mm_types_task.h:14:
+  In file included from arch/mips/include/asm/page.h:181:
+  In file included from arch/mips/include/asm/io.h:553:
+  include/asm-generic/io.h:1175:55: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+   1175 |         return (port > MMIO_UPPER_LIMIT) ? NULL : PCI_IOBASE + port;
+        |                                                   ~~~~~~~~~~ ^
+  1 warning generated.
 
 Cheers,
-A.
-
+Nathan
 
