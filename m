@@ -1,107 +1,119 @@
-Return-Path: <linux-kernel+bounces-566755-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566753-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7A3CA67C27
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 19:38:48 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E419A67C1B
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 19:37:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 767B38823B7
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 18:37:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3F0DA7A4A15
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 18:36:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDECC21480C;
-	Tue, 18 Mar 2025 18:36:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C6B82144C0;
+	Tue, 18 Mar 2025 18:36:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GAUaNLb3"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GGIlcnf0"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DFD72144CE;
-	Tue, 18 Mar 2025 18:36:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8486A2144A6;
+	Tue, 18 Mar 2025 18:36:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742322968; cv=none; b=Wba9z826UMYZeq13EXK+rRIgQJvOp4z97UtU/1nbD8QonnL8E797pHA+G4c7BCSvGpLj1s19dYz7j2X5G0oeqjttpWMFSnoDLchqEwH7FBn4dVhsJqS7FS/eWb6zp6tyElqEIQ7KSL7B9mMMEKtknQGOFPLRPZLA2r/ffSdXMfk=
+	t=1742322961; cv=none; b=Ud7ttgJe4zIEwJo74npM0GZ9ijKpZRQ6/JpsU7yq4qH3IoBIujrser5tkxrzLS9NyOWsObV3PeudZdZ6EEuuMFJvRqNYrfrJyzpe9GDnd7l0VwWzIxXMEHXJGbIiF5ItAGU6OuCqw+aLGeJsHkS3UDw2M6ndG4jtdtsEl3N8i1Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742322968; c=relaxed/simple;
-	bh=0TL5c4/F2LfP2/9HiBcUHsXw/71RIFD+HeT4WJHriGg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Fy4yoqCv2/bTvK+TWaTdEFgiYmLJvvk5WkjJuKi3QcJRtd0o4+jJzxtWLIHUmKZ7u2GN+k72QqLdZ6Yq4rl0cZkcJTC7q1omof2FPAzAA6OByzyJaDHwxg9JYXQqPSylIUYWSpPTDMyh+aF/z9XMTvgpcrCtI0cyYi+xlaBR06o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GAUaNLb3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB9C0C4CEDD;
-	Tue, 18 Mar 2025 18:36:03 +0000 (UTC)
+	s=arc-20240116; t=1742322961; c=relaxed/simple;
+	bh=pwoLy758tJWHhrF4rsg554mdoSJp4CwDBOkScT2rZfs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=coC6mJEWlkOCblyczmitxEsIwhYYnkQ1C34MXAUciwEDP5mxTNbpBb06fAnwO8h/xFepIH0m0MuLAHR23rgmKxwTetlXu5K3dOWrBFBLnzS33HiPPTbQDyaFaGMZo5Ef4UoFE+8uktIjyqHXP+bKEGkpkQV9x4RRw42GYqrtlNE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GGIlcnf0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50958C4CEEE;
+	Tue, 18 Mar 2025 18:35:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742322967;
-	bh=0TL5c4/F2LfP2/9HiBcUHsXw/71RIFD+HeT4WJHriGg=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=GAUaNLb3vMmIRk2u6bol7bcO1b4/PtMOU0hNBoFdNtUTDdB2r6sepp20Vt19wdBND
-	 0pTqRJzOXD/L+RTgJ4v8j8BrcMYsa6oSfjusFbBUMIVNfYTX1x7qc1AC7uYR6FF6vJ
-	 eauT+fWpLOKHHGqndEFLl1156uE0+EiSsQf3+dgQs0Io/isY0uKa1mxkDWQfbLEWY+
-	 T7mrObCtCD9KQdD8XK/gdTjWSxpGL/PInNCy6e2UyEwwjrwPoe4bRYtZrTod6wdp9H
-	 VEB3hkhnweF/uTxkG1cZWkahchm2r4M96R9Ssqcd0kTBYwu2pAdP/ysPXNpflC5ZiC
-	 qoyMU3E+CgFVw==
-From: Konrad Dybcio <konradybcio@kernel.org>
-Date: Tue, 18 Mar 2025 19:35:21 +0100
-Subject: [PATCH 8/8] arm64: dts: qcom: msm8998-yoshino: Add QUSB2PHY VDD
- supply
+	s=k20201202; t=1742322961;
+	bh=pwoLy758tJWHhrF4rsg554mdoSJp4CwDBOkScT2rZfs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GGIlcnf0XAs7uNt/KYI82slLCMCem5pYXQZ/akHFyMfFVheXjPEFbFWSseIpLOB1Z
+	 bFHBoXkOPL1xAWqjK6hLiron4SjTFIY4Km49fPSHxbmnZCyucg+l5URG2zWjZ8WWVn
+	 nxEvIIPd1ObqKYKbofcRWZZq6G/vbheZ4sJMy7GZEhik4D/vDGnKlr5iPVbjnaaQmp
+	 S6mGJOPfv2hY2Pg2m1Ck7tvIlMqL1+Tf6MJVHsijrmAikXLoUqoLl5Q241NWWOjIgi
+	 lo9aaTlk1YoP9tJBldVo19eY3aDzMmnKJvpqgowOnNzOYxmJHOJA0lePpoLWn0H54L
+	 5TxtMPErN05Tw==
+Date: Tue, 18 Mar 2025 19:35:51 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: Sohil Mehta <sohil.mehta@intel.com>
+Cc: x86@kernel.org, Dave Hansen <dave.hansen@linux.intel.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Borislav Petkov <bp@alien8.de>, "H . Peter Anvin" <hpa@zytor.com>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>, Andy Lutomirski <luto@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>, Zhang Rui <rui.zhang@intel.com>,
+	Andrew Cooper <andrew.cooper3@citrix.com>,
+	David Laight <david.laight.linux@gmail.com>,
+	Dapeng Mi <dapeng1.mi@linux.intel.com>,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-acpi@vger.kernel.org, linux-pm@vger.kernel.org,
+	Tony Luck <tony.luck@intel.com>
+Subject: Re: [PATCH v3 00/15] Prepare for new Intel Family numbers
+Message-ID: <Z9m9B7BmoItsfjiM@gmail.com>
+References: <20250219184133.816753-1-sohil.mehta@intel.com>
+ <df1b95d7-c953-4757-b742-3072f65539f7@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250318-topic-more_dt_bindings_fixes-v1-8-cb36882ea9cc@oss.qualcomm.com>
-References: <20250318-topic-more_dt_bindings_fixes-v1-0-cb36882ea9cc@oss.qualcomm.com>
-In-Reply-To: <20250318-topic-more_dt_bindings_fixes-v1-0-cb36882ea9cc@oss.qualcomm.com>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, cros-qcom-dts-watchers@chromium.org, 
- Marc Gonzalez <mgonzalez@freebox.fr>, Dmitry Baryshkov <lumag@kernel.org>, 
- Arnaud Vrac <avrac@freebox.fr>
-Cc: Marijn Suijten <marijn.suijten@somainline.org>, 
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1742322925; l=970;
- i=konrad.dybcio@oss.qualcomm.com; s=20230215; h=from:subject:message-id;
- bh=dC2jEsfN9bBWEvSA1LOnhWyfC6YBmMM7GtAk2EOkUzs=;
- b=0skw9UrTkXBBQ7RExySa5KY52xR5kOURlFe8yXLLtYORf6TRxWt41u2NP4bL2xxsXomD00h9d
- K2fKI+PQNx0DcfOHo1PqcR9rSSBYbtsjYjw9w8vIFrtIF2kA73TmAHs
-X-Developer-Key: i=konrad.dybcio@oss.qualcomm.com; a=ed25519;
- pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <df1b95d7-c953-4757-b742-3072f65539f7@intel.com>
 
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
-Set the supply as required by bindings, to silence the warning:
+* Sohil Mehta <sohil.mehta@intel.com> wrote:
 
-'vdd-supply' is a required property
+> On 2/19/2025 10:41 AM, Sohil Mehta wrote:
+> > ---Summary---
+> > Mainstream Intel processors have been using Family 6 for a couple of decades.
+> > This series is an audit of all the arch/x86 Intel Family-model checks to get
+> > ready for the upcoming Family 18 and 19 models. It also converts the last
+> > reamaining Intel x86_model checks to VFM ones.
+> > 
+> > Patch 1-8 : Include Dave Hansen's Acked-by.
+> > Patch 9-15: Almost ready to merge but don't have review tags yet.
+> > 
+> 
+> Is there any additional feedback?
 
-The value is inferred from MTP schematics, but it shouldn't change
-between boards due to specific electrical characteristics.
+Looks mostly good to me.
 
-Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
----
- arch/arm64/boot/dts/qcom/msm8998-sony-xperia-yoshino.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+> Most patches have review tags now or are simple enough that they might
+> not need one. Patch 11 can probably use another look.
 
-diff --git a/arch/arm64/boot/dts/qcom/msm8998-sony-xperia-yoshino.dtsi b/arch/arm64/boot/dts/qcom/msm8998-sony-xperia-yoshino.dtsi
-index d8cc0d729e99c5ead32f38c12bf65a930d369c08..3650f2501886bdde23c500bf5fce205de33fccc4 100644
---- a/arch/arm64/boot/dts/qcom/msm8998-sony-xperia-yoshino.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8998-sony-xperia-yoshino.dtsi
-@@ -450,6 +450,7 @@ led@5 {
- &qusb2phy {
- 	status = "okay";
- 
-+	vdd-supply = <&vreg_l1a_0p875>;
- 	vdda-pll-supply = <&vreg_l12a_1p8>;
- 	vdda-phy-dpdm-supply = <&vreg_l24a_3p075>;
- };
+LGTM, but I've extended the Cc: list to make more people aware.
 
--- 
-2.48.1
+(I did the same for some of the other patches that could use extra eyes.)
 
+> Patch 14 is the only one that has a minor change. Seeking additional
+> input before spinning another revision.
+
+I've applied the first 13 patches to tip:x86/cpu to help move this 
+along. I fixed a handful of typos, but haven't noticed any functional 
+problems so far, so unless there's problems in -next this might be OK
+for the merge window. (Famous last words.)
+
+Thanks,
+
+	Ingo
 
