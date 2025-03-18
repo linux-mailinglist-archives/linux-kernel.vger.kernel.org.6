@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-566715-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566714-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECE37A67B9C
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 19:07:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 600D9A67B99
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 19:07:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7BA891883F00
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 18:05:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C2D3A19C71DD
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 18:05:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5356214A98;
-	Tue, 18 Mar 2025 18:03:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22E54214212;
+	Tue, 18 Mar 2025 18:03:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="T5eWFTnN"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZT2M8kRa"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B0652144C0
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 18:03:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7C772147E3
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 18:03:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742321006; cv=none; b=LGbY2AjH77YNHnnz8jb969l13KFaXjKgPQbu0NsAQJ2i9MTlDRPReqkIMGS7V/ZVkF+f3TaEfg6WG0Q9wDf5gw8TRabCOWhQKgAtmpTFUiSeBK4ZjQaP8UPHQB070sz3k+cl5A8Djgj/lrJHOHrTBi+CxEKvs3YQm7WkTRATj9Y=
+	t=1742321003; cv=none; b=KwyvzXP/bcjwg0RMGP12aE3Sw/FHWR/ZLy4fiXHcu03aW92OtljFWVWa4YlCfytllCRzIL2VSaYnd7ju+wh4ojhwaSNbCYeze7lcU1ATilcBt1GmaygivNhYG+JBssL7t8ob2XXfQ6LFl4LCZ19WENaIqCABJ43wkVRbViUJOVs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742321006; c=relaxed/simple;
-	bh=TeLXYFvo5qSy4bl+vgw6Bf41OfZnXdJRvk2bbFernx8=;
+	s=arc-20240116; t=1742321003; c=relaxed/simple;
+	bh=vIjqe14c0RNfUySlFRGhO3NbU8KsbO/xK6TEyVXoxlM=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=uT7Zgu3khgWbJf2WdSE/0v6NkaIZQr8x8I1yJx1nH/Vm2TRaAjqudp7ctzAkJO2cSABiTQGmuuWXV0v8Wu/u56cJkwAFbn/27437joWBIOzqIZIg3B0253xmGNrgLAPMF5AjgRHEL5dMfSrT8X/klwzlwmZ0mN8n6xXpnVUiC3E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=T5eWFTnN; arc=none smtp.client-ip=209.85.216.74
+	 To:Cc:Content-Type; b=F/EimshqyWmXFUIVr5+JB+S7r1mfi1YObmmlf7wxls72FCCjInIa7jaeBEJY6Mlq7Loj8WusH9Wo1JOZEI+DkbVUVShGuyCpSQjkOk06y97akBfGJ83DSgst0nazo+717U5lgFlgJSYHK/Dyd+xU1rc6Y9QE0TDsaqzW/Hlsq/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ZT2M8kRa; arc=none smtp.client-ip=209.85.216.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2ff55176edcso5273640a91.1
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 11:03:20 -0700 (PDT)
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2feb47c6757so3893431a91.3
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 11:03:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1742321000; x=1742925800; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1742321001; x=1742925801; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=bf+fu/7ON1B84p+IvqDQDkS4LKXFcc8bKyeZflk0FSo=;
-        b=T5eWFTnNA8uRWjKRR9BJ3yhGhZUQ/x0wm554HfRccTGxbdISI6cD/B90dJ67hc+6Sr
-         /y4zRFCGi4dPpdzxjrS1+kkCnhSF+maaFsVHRv6IdomV3wPq36Rt6QeFaiZC1mxcBAHU
-         J5XPB8SD93lh5tk/zN8ip4UIqVoDvA7d4tTKgyS/5iZAct+BPKDaWNMzLhSeHs+vqZeZ
-         THzCYC1Sf5vvZ3IGNS5D+Klu0FSCbul21rC41JfE/XrIUR/PQXC6P2cboY74h2gBSV73
-         gU2ogpoNMMMthFI11muywN7NscMkbfZdMi8kbbZGbj8yUwYUSMgCF2d4DbsvU76SELk/
-         bmZg==
+        bh=IT302M+FVQY9sewvC6bjI5Mn+MvLFGrIcg+szg8Yono=;
+        b=ZT2M8kRabwlk2iEhwXRhS/ppHqgPlmvR/kYjd9Yl0boL3tSWUaaw5FWAuE8gUR734N
+         mF7FZBlECbzEznbxkwnP5KY7+BhoX3LZlJTqzO8ulVVI2FpbGSLpIWjdiKudAFKivuzN
+         4znVISczHY+rqdXaEMyM6qGzVt253O1rlzv4bHbhI7t+V/OAEAuEPpRNWQ/UV8MYgBEw
+         70pQ8hHiW6ugNjdo8z+dcnmoVC1hSx+djUFCQye17EGUneazVMwACnR/7WKpDwQAigDI
+         t4mk81yPwgFF54zaBVkuJ5L5y0rYZd9Cqy90r6MRryBttXiRY2S+6ez2MNrjkLwcBb9m
+         9QYg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742321000; x=1742925800;
+        d=1e100.net; s=20230601; t=1742321001; x=1742925801;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=bf+fu/7ON1B84p+IvqDQDkS4LKXFcc8bKyeZflk0FSo=;
-        b=vW3Pjq/r9NgANdYvzsRuRq3nLKYXBX/7v/b4MIUgnx+gEe0plXBUCBZrw7Epk3a68c
-         y2hb1GZICGuO9tbta+gtDaG02XRTE5MS5qeoqPdqSNtaYVTFyqANAPbjZv9xLxts0Nne
-         BCnNIka1r12gErVwX/xNu/NuIz4k/IU0VdhfvzssWvEmivm6OwaSHR/yzi8zXOLY+TmQ
-         J+7FPg3XygPj2i0VCc3HRot2/Avc2BQUMsWv82jNy9duNq0pgDOH0H3z9onx9UHOr2Zg
-         z7MkhW5khSaxJmZDkc2yDNlOlZBc0TSBDJrKAI3Q64ksVrK/7knnL1EMKeAhNgo9YvPP
-         74aw==
-X-Forwarded-Encrypted: i=1; AJvYcCVf+UHR29CTULoSYkQ3vJNEjyDU8aRJ+s7frzhwLwB2nsmCCeHefA8PWRCQ3+ItC/ox8gd7Z3dU7nlHRAE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyKZm1Gtia3jQuR23E9diEn7ruSHYoUg+FcjPrWETlXIudLTMji
-	b6flGcBX7iDau8vmjYPlqYxxOpVwVE4g+Ocdj+m+k6+QZcqCw46lMTOv7xoPfmNn92kUR+8MBZO
-	5SQ==
-X-Google-Smtp-Source: AGHT+IEyLGQ0lqlpljp92FTVfkcLktufylzUeatq4YgD7FVpBzaQch/i/1l3dzeMtZJD/Z3GGw77t0WB2hI=
-X-Received: from pjj3.prod.google.com ([2002:a17:90b:5543:b0:2ea:5613:4d5d])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:55cc:b0:2fa:f8d:65de
- with SMTP id 98e67ed59e1d1-301a5b87b6amr3915192a91.22.1742320999879; Tue, 18
- Mar 2025 11:03:19 -0700 (PDT)
+        bh=IT302M+FVQY9sewvC6bjI5Mn+MvLFGrIcg+szg8Yono=;
+        b=cUyXCQvptXjnNlJSQUoYqgyItxgKkg/VG8gn0/DG+MCQkeaTUG3EfA+yT13PpkbuIc
+         2LUe+QtzhUEnWFMkwrLx1W9TcxDbritq+zOWPnkrVSllZpvXWuL85pbJ3wg9CcXxkbrK
+         hyqEzogeuH3XfUTNvT8afyKovB2vpoOHoex3GPfOGP7VuWfXQ2cyzaRE3O2NfAEL4YBd
+         12hKgUxw25IB2r1CFp4nH2skoX4P9z+aV4D9aRJd5Q+helnuq++muU0DcGguFQJswJLC
+         0diiaJnQETMf20IjdPdjRXEIZyL8QvHcM4/OI3QE+KIdgmKi3pU4q/e0sAZIDajaWQs1
+         TMSQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUjqUMUNmG2m/+1Z4DdbB7Ru7bUMxJ0Sc6wTztNWoYgDiYEJMViEhcpCOlx+ndid98mvabdzyxOGHk/gxI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx8EUSeLmcFB/c2E7vekTOGl9ATRMqtJ6UNwbgYY1gnnrSdPb6T
+	25RCTsA/PcDSmwfKRN2RRF4TWZgi+Rjp2kYgB1J53zVfI682Cg1yjKkU3thrbWdbwMQOJXilYC8
+	J7Q==
+X-Google-Smtp-Source: AGHT+IGTi12zBNscf00G47hXQDPJPN/IGQpF4zQKmAap+oOue+uk/UXuOBX0o4O/LU5EKKlFNLTOYrGynXY=
+X-Received: from pjbnw1.prod.google.com ([2002:a17:90b:2541:b0:2ff:6132:8710])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:3cd0:b0:2f6:dcc9:38e0
+ with SMTP id 98e67ed59e1d1-301a52908d0mr5763909a91.0.1742321001312; Tue, 18
+ Mar 2025 11:03:21 -0700 (PDT)
 Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Tue, 18 Mar 2025 11:03:02 -0700
+Date: Tue, 18 Mar 2025 11:03:03 -0700
 In-Reply-To: <20250318180303.283401-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -75,15 +75,19 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250318180303.283401-1-seanjc@google.com>
 X-Mailer: git-send-email 2.49.0.rc1.451.g8f38331e32-goog
-Message-ID: <20250318180303.283401-8-seanjc@google.com>
-Subject: [GIT PULL] KVM: x86: VMX changes for 6.15
+Message-ID: <20250318180303.283401-9-seanjc@google.com>
+Subject: [GIT PULL] KVM: x86: Xen changes for 6.15
 From: Sean Christopherson <seanjc@google.com>
 To: Paolo Bonzini <pbonzini@redhat.com>
 Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
 	Sean Christopherson <seanjc@google.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Nothing major for VMX, mostly prep work for FRED virtualization.
+Harden and optimize KVM's handling of the Xen hypercall MSR; syzkaller discovered
+that setting the userspace-configurable index to collide with XSS could coerce
+KVM into writing guest memory during vCPU creation.
+
+The other change is to fix a flaw related to Xen TSC CPUID emulation.
 
 The following changes since commit a64dcfb451e254085a7daee5fe51bf22959d52d3:
 
@@ -91,45 +95,53 @@ The following changes since commit a64dcfb451e254085a7daee5fe51bf22959d52d3:
 
 are available in the Git repository at:
 
-  https://github.com/kvm-x86/linux.git tags/kvm-x86-vmx-6.15
+  https://github.com/kvm-x86/linux.git tags/kvm-x86-xen-6.15
 
-for you to fetch changes up to 0c3566b63de860f6d42e3d9254890c00ac0970d7:
+for you to fetch changes up to a2b00f85d7839d74a2f6fcbf547d4bf2e82c34e5:
 
-  KVM: VMX: Extract checks on entry/exit control pairs to a helper macro (2025-03-03 07:45:54 -0800)
-
-----------------------------------------------------------------
-KVM VMX changes for 6.15
-
- - Fix a bug where KVM unnecessarily reads XFD_ERR from hardware and thus
-   modifies the vCPU's XFD_ERR on a #NM due to CR0.TS=1.
-
- - Pass XFD_ERR as a psueo-payload when injecting #NM as a preparatory step
-   for upcoming FRED virtualization support.
-
- - Decouple the EPT entry RWX protection bit macros from the EPT Violation bits
-   as a general cleanup, and in anticipation of adding support for emulating
-   Mode-Based Execution (MBEC).
-
- - Reject KVM_RUN if userspace manages to gain control and stuff invalid guest
-   state while KVM is in the middle of emulating nested VM-Enter.
-
- - Add a macro to handle KVM's sanity checks on entry/exit VMCS control pairs
-   in anticipation of adding sanity checks for secondary exit controls (the
-   primary field is out of bits).
+  KVM: x86: Update Xen TSC leaves during CPUID emulation (2025-02-25 07:09:55 -0800)
 
 ----------------------------------------------------------------
-Nikolay Borisov (1):
-      KVM: VMX: Remove EPT_VIOLATIONS_ACC_*_BIT defines
+KVM Xen changes for 6.15
+
+ - Don't write to the Xen hypercall page on MSR writes that are initiated by
+   the host (userspace or KVM) to fix a class of bugs where KVM can write to
+   guest memory at unexpected times, e.g. during vCPU creation if userspace has
+   set the Xen hypercall MSR index to collide with an MSR that KVM emulates.
+
+ - Restrict the Xen hypercall MSR indx to the unofficial synthetic range to
+   reduce the set of possible collisions with MSRs that are emulated by KVM
+   (collisions can still happen as KVM emulates Hyper-V MSRs, which also reside
+   in the synthetic range).
+
+ - Clean up and optimize KVM's handling of Xen MSR writes and xen_hvm_config.
+
+ - Update Xen TSC leaves during CPUID emulation instead of modifying the CPUID
+   entries when updating PV clocks, as there is no guarantee PV clocks will be
+   updated between TSC frequency changes and CPUID emulation, and guest reads
+   of Xen TSC should be rare, i.e. are not a hot path.
+
+----------------------------------------------------------------
+David Woodhouse (1):
+      KVM: x86/xen: Only write Xen hypercall page for guest writes to MSR
+
+Fred Griffoul (1):
+      KVM: x86: Update Xen TSC leaves during CPUID emulation
 
 Sean Christopherson (5):
-      KVM: VMX: Don't modify guest XFD_ERR if CR0.TS=1
-      KVM: VMX: Pass XFD_ERR as pseudo-payload when injecting #NM
-      KVM: nVMX: Decouple EPT RWX bits from EPT Violation protection bits
-      KVM: VMX: Reject KVM_RUN if userspace forces emulation during nested VM-Enter
-      KVM: VMX: Extract checks on entry/exit control pairs to a helper macro
+      KVM: x86/xen: Restrict hypercall MSR to unofficial synthetic range
+      KVM: x86/xen: Add an #ifdef'd helper to detect writes to Xen MSR
+      KVM: x86/xen: Consult kvm_xen_enabled when checking for Xen MSR writes
+      KVM: x86/xen: Bury xen_hvm_config behind CONFIG_KVM_XEN=y
+      KVM: x86/xen: Move kvm_xen_hvm_config field into kvm_xen
 
- arch/x86/include/asm/vmx.h     |  28 ++++++-----
- arch/x86/kvm/mmu/paging_tmpl.h |   3 +-
- arch/x86/kvm/vmx/vmx.c         | 106 +++++++++++++++++++++++++++++------------
- 3 files changed, 92 insertions(+), 45 deletions(-)
+ Documentation/virt/kvm/api.rst  |  4 ++++
+ arch/x86/include/asm/kvm_host.h |  4 ++--
+ arch/x86/include/uapi/asm/kvm.h |  3 +++
+ arch/x86/kvm/cpuid.c            | 16 +++++++++++++
+ arch/x86/kvm/x86.c              | 13 +++++++----
+ arch/x86/kvm/x86.h              |  1 +
+ arch/x86/kvm/xen.c              | 52 +++++++++++++++--------------------------
+ arch/x86/kvm/xen.h              | 30 ++++++++++++++++++++----
+ 8 files changed, 80 insertions(+), 43 deletions(-)
 
