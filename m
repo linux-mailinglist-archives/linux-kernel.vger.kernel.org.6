@@ -1,144 +1,130 @@
-Return-Path: <linux-kernel+bounces-565589-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565591-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E66CA66B5F
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 08:16:31 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55B05A66B63
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 08:17:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 251853BB622
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 07:16:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B9C75174871
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 07:17:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DD901EB5C4;
-	Tue, 18 Mar 2025 07:16:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BB6043151;
+	Tue, 18 Mar 2025 07:17:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="un2cPy5t"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PScaWVPs"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D271B43151;
-	Tue, 18 Mar 2025 07:16:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF566195808
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 07:17:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742282182; cv=none; b=UAFaZzh3FFx0dKDAqya80NwVI8cylnaj0cl7PrcUDRiDb2CWSNOzRrpvduA0u82KG5EO83l5Bvi+jqcQsQ/CFyJ+hdaqJrVsodxZ5Au2BPE0bBONWDKUGfxf6TIMODKjLqKIoEMT2Z32akL4fQlLZWXwBj2LZLWgpd6r9nrC950=
+	t=1742282266; cv=none; b=kkU9iGCtCtL5uDsEPgwPY56VS1jfHf1F6H7MBgpr2VuTFrN7eiYurO4LGkSCtcD4JO2qfoIC+SVwtufoThWS9Gwx0YCKW3VfEsW2YdzuGhLarAlJk+RmVxIgcFnzDLz0/0f+HWaH9PIMFHXMMT51twstbIeZ/DrCJ+LV4UcfLeg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742282182; c=relaxed/simple;
-	bh=LU6JclCBLUaoQuSonflokixNYds3pgNH+xAd19ZpkQo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hrx20p962rsgIT1JeBEEG71WapN4WrTh0vfLiunecLYX5eHcxHrLCHM826sqFXOtvrhyyhoUZFH54lJC4WjxdoWOf8ARLJfSiWDG10+htG3xrju3MApSVlEKw0/lZXqUIUm2ouzECkeb2USdAHOBbw3MaXcjzYcxd6JLFK3xMos=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=un2cPy5t; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB8DEC4CEDD;
-	Tue, 18 Mar 2025 07:16:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742282181;
-	bh=LU6JclCBLUaoQuSonflokixNYds3pgNH+xAd19ZpkQo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=un2cPy5tA8UXpJPlo9ZW9Cl8TG4/P5SD9Ez8PghonDabkYBau6EBhmH0RdEwxa7CS
-	 7qBMvOGmly3ZcFJqA7ewEzr2V8cHex29IcLVN4DkMMInU7om33QkDt215gfCZaA1+V
-	 v1u8gRYTGlLtvfIAwPe3lugbtf2ZWc/6+4u8ry/g1idim3IXbvtPl1H3JP7LJCvg6y
-	 dN4A7oZWnRmV19CpVsG4Nr4uniLxpclrT3TFt3KSOBuHtx8kGbBnaERtAn0r3oyn/H
-	 oMa9fEdkLrur/Q0KP11GE1T0nJN0Nt+wLMudHuEgnQSSreGNrb2rahCKjE3LxD6joq
-	 3NF0P7W/bNhiA==
-Message-ID: <f2899540-f9ac-4013-a703-25800429f97d@kernel.org>
-Date: Tue, 18 Mar 2025 08:16:11 +0100
+	s=arc-20240116; t=1742282266; c=relaxed/simple;
+	bh=xGvakVQ4I7CIAbFh6Dj+N2h/vlvQZwPGNMNIWGbMvZg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=H6QfkNzY6GvS7r3vhsbGFKqwpZBLSau7H2M37aBBhLy6nHlUmsq2JHDGpCpLm2qNUyOIH+UKeqD6ghVVUiowfam4c6DinhrM+3qFUvu/AQGgTjSee287q08vB6+KXrcrZbeDrNaMOZ3dE+Qk80WIUyX/SAOucFlP0MomJt2d+RU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PScaWVPs; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742282265; x=1773818265;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=xGvakVQ4I7CIAbFh6Dj+N2h/vlvQZwPGNMNIWGbMvZg=;
+  b=PScaWVPsOMqAnteIdm1rRSNCp3kgN0WDF85w9MH54a7bHuEJ9eEyk8km
+   HXjewFJ9i0AP6klXrjRpB8zR7Bp/DS5rndmRR+b2NC6FHDxrd+kO1FuOq
+   f8208yzzMl31LiOzmtvviPM/BopbaLEkVw+oBZ0hbi9nXf0RoDPd8jZuM
+   lqmpejqaITTalcwJ7eDh4YtHpDY5t662bjeV7uwdKlaPDyg3oLbLJEPLC
+   Tzs8oGzYZVHy/da0Acy5cKINcTz80a4hU1GmNG62xbSk9W/iAXpk+tnBn
+   fGgJFrZs69d7u/YWzvYK7ACKZqY6KIqNEHBljFQ0hO9GHcw3COZNtg5R5
+   g==;
+X-CSE-ConnectionGUID: YGmvldQ6Qz+5O0+YuimPPQ==
+X-CSE-MsgGUID: 1sGjO4b2SlSFyxV1/I80VA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11376"; a="47054521"
+X-IronPort-AV: E=Sophos;i="6.14,256,1736841600"; 
+   d="scan'208";a="47054521"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2025 00:17:44 -0700
+X-CSE-ConnectionGUID: e6jCVCkDSyCbPdQ1d6HTmQ==
+X-CSE-MsgGUID: i7sqDo8NRMCF/nlO8e4iGg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,256,1736841600"; 
+   d="scan'208";a="123121590"
+Received: from lkp-server02.sh.intel.com (HELO a4747d147074) ([10.239.97.151])
+  by orviesa008.jf.intel.com with ESMTP; 18 Mar 2025 00:17:43 -0700
+Received: from kbuild by a4747d147074 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tuRCm-000DVk-2m;
+	Tue, 18 Mar 2025 07:17:40 +0000
+Date: Tue, 18 Mar 2025 15:16:48 +0800
+From: kernel test robot <lkp@intel.com>
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Alexei Starovoitov <ast@kernel.org>
+Subject: kernel/bpf/kmem_cache_iter.c:25:1: warning: 'retain' attribute
+ ignored
+Message-ID: <202503181537.syuSFzVo-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/2] media: dt-bindings: Add qcom,qcs8300-camss
-To: Vikram Sharma <quic_vikramsa@quicinc.com>
-Cc: rfoss@kernel.org, todor.too@gmail.com, bryan.odonoghue@linaro.org,
- mchehab@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, andersson@kernel.org, konradybcio@kernel.org,
- hverkuil-cisco@xs4all.nl, cros-qcom-dts-watchers@chromium.org,
- catalin.marinas@arm.com, will@kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250214094747.2483058-1-quic_vikramsa@quicinc.com>
- <20250214094747.2483058-2-quic_vikramsa@quicinc.com>
- <20250223-observant-auspicious-basilisk-d78ba9@krzk-bin>
- <66c35bce-c657-4c12-ad02-58c995ae385a@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <66c35bce-c657-4c12-ad02-58c995ae385a@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 18/03/2025 06:52, Vikram Sharma wrote:
-> 
-> On 2/23/2025 5:03 PM, Krzysztof Kozlowski wrote:
->> On Fri, Feb 14, 2025 at 03:17:46PM +0530, Vikram Sharma wrote:
->>> +properties:
->>> +  compatible:
->>> +    const: qcom,qcs8300-camss
->>> +
->>> +  reg:
->>> +    maxItems: 21
->>> +
->>> +  reg-names:
->>> +    items:
->>> +      - const: csid_wrapper
->> Why different order of entries than sm8550?
-> 
-> Hi Krzysztof,
-> 
-> Thanks for your review.
-> I did this change to address a comment from Bryan on another series.
-> https://lore.kernel.org/linux-arm-msm/e152ff78-caa5-493a-88da-96a6670eb2a2@linaro.org/
-> 
-> Please suggest if I should keep the order same as sm8550?
-If you chosen the same order as x1e80100 then it is fine, but that file
-is not merged so it is your responsibility to track any differences and
-be sure whatever you send is always in sync with x1e.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   76b6905c11fd3c6dc4562aefc3e8c4429fefae1e
+commit: 2e9a548009c2d804e55cdd5b0e9903756cf7d9b3 bpf: Add open coded version of kmem_cache iterator
+date:   5 months ago
+config: mips-allmodconfig (https://download.01.org/0day-ci/archive/20250318/202503181537.syuSFzVo-lkp@intel.com/config)
+compiler: mips-linux-gcc (GCC) 11.5.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250318/202503181537.syuSFzVo-lkp@intel.com/reproduce)
 
-Best regards,
-Krzysztof
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202503181537.syuSFzVo-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> kernel/bpf/kmem_cache_iter.c:25:1: warning: 'retain' attribute ignored [-Wattributes]
+      25 | {
+         | ^
+   kernel/bpf/kmem_cache_iter.c:36:1: warning: 'retain' attribute ignored [-Wattributes]
+      36 | {
+         | ^
+   kernel/bpf/kmem_cache_iter.c:81:1: warning: 'retain' attribute ignored [-Wattributes]
+      81 | {
+         | ^
+
+Kconfig warnings: (for reference only)
+   WARNING: unmet direct dependencies detected for GET_FREE_REGION
+   Depends on [n]: SPARSEMEM [=n]
+   Selected by [m]:
+   - RESOURCE_KUNIT_TEST [=m] && RUNTIME_TESTING_MENU [=y] && KUNIT [=m]
+
+
+vim +/retain +25 kernel/bpf/kmem_cache_iter.c
+
+    23	
+    24	__bpf_kfunc int bpf_iter_kmem_cache_new(struct bpf_iter_kmem_cache *it)
+  > 25	{
+    26		struct bpf_iter_kmem_cache_kern *kit = (void *)it;
+    27	
+    28		BUILD_BUG_ON(sizeof(*kit) > sizeof(*it));
+    29		BUILD_BUG_ON(__alignof__(*kit) != __alignof__(*it));
+    30	
+    31		kit->pos = KMEM_CACHE_POS_START;
+    32		return 0;
+    33	}
+    34	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
