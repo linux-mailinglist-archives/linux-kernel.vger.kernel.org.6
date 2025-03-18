@@ -1,131 +1,124 @@
-Return-Path: <linux-kernel+bounces-566075-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566077-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 534ACA672D0
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 12:36:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A58CA672D2
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 12:36:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AAB1217D3B1
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 11:36:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B160817DC01
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 11:36:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7847C20B811;
-	Tue, 18 Mar 2025 11:35:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iX0YmYwN"
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B05320B7ED;
-	Tue, 18 Mar 2025 11:35:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB6D620B7E8;
+	Tue, 18 Mar 2025 11:36:04 +0000 (UTC)
+Received: from mailgw1.hygon.cn (mailgw.hygon.cn [110.188.70.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DEF5171658
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 11:35:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=110.188.70.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742297748; cv=none; b=BTI7j/42oF5NDkifalMWIdPs7oonYWVKyARgMCvpOuwFeDz+wS+vK3ERyWpTi73fmBwlrYx+zWzkbH4wMKOHpEdG9o0+g/ArIXWc2BDO9OXG6N1dcmLAaSBuhRFT+MiGH39fok0etdPnWSO3kL92jn2kbESRK+3BlhU/Uzlgh8U=
+	t=1742297764; cv=none; b=YgNfssJAvfKaD+9QWyVjc1DJO8CrGPXy+ZEoOoDNM31dlCrE8dKF91iFlyCJG62iFJLrrgAeYSQz9w1LbB64BV/KN6NojmcwZwax9zRwGdxTQtlb7QaOR3nnpg5D8DiefIUfPmgYs23nuzqdfsB9JJm1ZHZcRZosfBmAbrupJWQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742297748; c=relaxed/simple;
-	bh=Oo5Rb8+Ng9GPmuJ70nHR1J7BG8YZnuFUuDLGpMRu5Ls=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=L1wsjQKuIWYnz+yEHK087PpkHb9+KJe3H0lWZZ2vlkxWmx76QNWteTmE02oVy5QAcWQei5LBhWtiJ4iy4WjzZjpnO64EZd+iy1CNuXSGxps9Lfy6ntp7LRW56UuVpox/gEm1eyqVs5YxrhQwL+M1zF4P+vqL5JPo7O44VqzN9CE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iX0YmYwN; arc=none smtp.client-ip=209.85.216.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2ff80290debso4704597a91.3;
-        Tue, 18 Mar 2025 04:35:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742297747; x=1742902547; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=lt93u+3xE/W+Cmzf7bmN03zxBQ/l7okUOSYfUSihUhQ=;
-        b=iX0YmYwN1WU7Vkj9ZpNTNxx0gEp6c4IMHldeyCJFC6RiUM3POYaLBlWnRHJ/mPuXvd
-         Crt3Ba1DB/Qg08l700PtUuhsIqEkLsaMv1O1MYG99n5nL7QHiPbaW3y5njeGaNK4/+za
-         P/npgveTgPStStEwMXV309fG/5mxspGMfZPCmfd8Uywr7qwAl+B2d6SIKg96Czqx1jQM
-         /rLGPMtm3cXdyz15HvBflqxpCtwMmabBuEol6FoEstzK3aDJaeDmh8CFM8cijgRHnuPZ
-         A9QSC9qCAi4Zf4415lFg0eQa26UOilJh87UqvtMXJq0rzMOflC0boLsZ2cFBO7wSG1dU
-         0ORA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742297747; x=1742902547;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lt93u+3xE/W+Cmzf7bmN03zxBQ/l7okUOSYfUSihUhQ=;
-        b=vdE7ey0jg2dPzcyQrDmfWttXq10GbaP1KawI045S5i5uRhKkvDRHMz4gqoOxL/iDfz
-         dd0nazbhlHy2KNkT5Uin4pRP0j3I/2o4UzE1nlhW+rh6Rn68lnB5dX+L2TCi9CnhGgdM
-         I7DIaz4Hxit4SMomlfEliHsWq09vYuDeWB8iQKpQn/a5c7DVbDKB1igxrI7+lIPNYf43
-         KRIe6ZqfoPQ+pDTLFlBhe8yne085h8B9tJXzvFud3OJWIiYQsJuUXFeiw9x/5XgwDP98
-         UnOrM4OgIGInq9nQcLWGyuq0BnggXbmo61iayn0r/7DD+N5Ylnr3O1SEczABC5GINTmK
-         +WiQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUD07Iu0w58mITKlNYUfo1V/vrS06+GBVixJg1Y00xSpR27gopXW/srrD3Gp+7Z6Pnu3ILzm4TApZ3AMyZtjPHT3Guc@vger.kernel.org, AJvYcCVsQqvNLOmt0+CX4V8tO5nGETEftWhtLlJpFGizziOf9n+ekPiGuAIxqZPX+sTVkBuM5gR8IQXLMeu1BGDv@vger.kernel.org, AJvYcCWQRIGCm3Yje/biRNlAdAcntJ6cgdeFLHHnwO04OBK8Kde/ThZhqKHQHEUPkPu3GhnR7yqwI/A6lLk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyTzh4v6RCObbTrn2hJszO+O2ImKylBRFSK6ZdHXogjCGwfF5uR
-	4wOHPwX2Sa/ZuMa0nihByJe5Pf6ULkNA2yyQ+kTC2wyWa/tGti7A
-X-Gm-Gg: ASbGncuaPzOIrtvanXEB2a9FO1NxgR0s3mhX6lhcF8FNwqqxRXVBMBs5mynLt7WNomo
-	sW086GlIPvPA33MKBFJ4OIsj2UBMW3MnifuIBjOx2kMv3Wo8ieF5q5Od+H9V+fUP0T8LXhA7DU7
-	NPLKxzitDYS/3w14zaWqs7dUs3kIOW9UQpIgm4RfRkwMNLGv3chq64iuoc6hgoenRd2BEzDaPzj
-	wBEo9cQPd+vbYfk1r3xOI9kEGuoMXMQvIgtIF8MYCQDAp9u8fdzETJAGEIo2bOajzOXN+FjakzU
-	w6mTDUbjwkGcPOMMKvecLjZJtrfvnCd/+kRdc35gBae7SFstA42O4A==
-X-Google-Smtp-Source: AGHT+IFVaY96rQ1MIKrGux34tD4f7j0/KybkBdC4jQu1kYtIggPHmETgmVeeIdlXlbNhYJBdy9z39A==
-X-Received: by 2002:a17:90b:3d06:b0:2ff:7cb8:6eca with SMTP id 98e67ed59e1d1-301a5b8a043mr3242659a91.24.1742297746631;
-        Tue, 18 Mar 2025 04:35:46 -0700 (PDT)
-Received: from [192.168.0.125] ([14.139.108.62])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3015364ebe0sm7910944a91.43.2025.03.18.04.35.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 18 Mar 2025 04:35:46 -0700 (PDT)
-Message-ID: <23f1706f-e12e-4a4a-9919-6e654df8cc31@gmail.com>
-Date: Tue, 18 Mar 2025 17:05:39 +0530
+	s=arc-20240116; t=1742297764; c=relaxed/simple;
+	bh=A9z+0riGGgw2t4zNCs7S2YiHkDIkBJ6j9rLDEGeB3iw=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=J9QKij25Hj7F4SCMxmmbL8xfW53JX5Pwwa2wtaKU4aXZAOQDP3zAMS2nZiiUzqDMihsj0v09KUEgxelZi6VcxT2DY5AX2f3/FaQh0bIB+O7spL51Caaj1NCT3eVF2FkX1XNwbzxxcLjxhnheUwYUeZTncyOOYSZLQUmXwxUng6w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hygon.cn; spf=pass smtp.mailfrom=hygon.cn; arc=none smtp.client-ip=110.188.70.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hygon.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hygon.cn
+Received: from maildlp1.hygon.cn (unknown [172.23.18.60])
+	by mailgw1.hygon.cn (Postfix) with ESMTP id D7062F999;
+	Tue, 18 Mar 2025 19:35:36 +0800 (CST)
+Received: from cncheex03.Hygon.cn (unknown [172.23.18.113])
+	by maildlp1.hygon.cn (Postfix) with ESMTPS id BFFC416EC;
+	Tue, 18 Mar 2025 19:35:36 +0800 (CST)
+Received: from cncheex04.Hygon.cn (172.23.18.114) by cncheex03.Hygon.cn
+ (172.23.18.113) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 18 Mar
+ 2025 19:35:40 +0800
+Received: from cncheex04.Hygon.cn ([fe80::1b6f:6c58:58a4:430d]) by
+ cncheex04.Hygon.cn ([fe80::1b6f:6c58:58a4:430d%6]) with mapi id
+ 15.02.1544.011; Tue, 18 Mar 2025 19:35:40 +0800
+From: Jianyong Wu <wujianyong@hygon.cn>
+To: Peter Zijlstra <peterz@infradead.org>
+CC: "mingo@redhat.com" <mingo@redhat.com>, "vincent.guittot@linaro.org"
+	<vincent.guittot@linaro.org>, "jianyong.wu@outlook.com"
+	<jianyong.wu@outlook.com>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] SCHED: scatter nohz idle balance target cpus
+Thread-Topic: [PATCH] SCHED: scatter nohz idle balance target cpus
+Thread-Index: AQHbl61OpENeMFSo9kSeuaXOI4AsgbN361aAgADT7pA=
+Date: Tue, 18 Mar 2025 11:35:40 +0000
+Message-ID: <5cb53e48ade14fbaab3e2940df7ed0d5@hygon.cn>
+References: <20250318022358.195154-1-wujianyong@hygon.cn>
+ <20250318063847.GA25930@noisy.programming.kicks-ass.net>
+In-Reply-To: <20250318063847.GA25930@noisy.programming.kicks-ass.net>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/2] docs: tracing: Reduce maxdepth in index
- documentation
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Bagas Sanjaya <bagasdotme@gmail.com>,
- Masami Hiramatsu <mhiramat@kernel.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, linux-doc@vger.kernel.org
-References: <20250312124717.7208-1-purvayeshi550@gmail.com>
- <20250312134907.06d27d78@batman.local.home> <Z9JKqVvG1iw0bFXR@archie.me>
- <20250313070457.647c8c57@batman.local.home>
- <4cc0a072-3eaf-4fbf-a334-012aacf9039f@gmail.com>
- <b1882a1f-3ed0-4307-8a34-3236bdfb79a6@gmail.com>
- <20250314084155.20c3e662@batman.local.home>
-Content-Language: en-US
-From: Purva Yeshi <purvayeshi550@gmail.com>
-In-Reply-To: <20250314084155.20c3e662@batman.local.home>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
 
-On 14/03/25 18:11, Steven Rostedt wrote:
-> On Fri, 14 Mar 2025 14:26:37 +0530
-> Purva Yeshi <purvayeshi550@gmail.com> wrote:
-> 
->> Thanks for the reference. I will keep this in mind for future patch
->> series and include a cover letter.
-> 
-> Note, a cover letter isn't really necessary here. Why? because these
-> are pretty much two agnostic patches. One fixes the maxdepth, the other
-> is changing the layout for readability.
-> 
-> Cover letters are best when there's a bigger picture being had. That
-> is, the patch series is set out to accomplish a single goal that is
-> broken up into little steps. A cover letter explains what the goal is
-> and why and how. Each patch after that explains what that patch is
-> doing (why and how), but from the focus of that particular change.
-> 
-> As these patches could theoretically be sent as two separate patches
-> and not as a series as they don't really share the same goal, a cover
-> letter's only purpose here would be to make the email thread look a 
-> little nicer ;-)  But that's about it.
-> 
-> -- Steve
+Hi Peter,
 
-Got it! Thanks for the clarification Steve.
+Thanks for replay.
 
-Best Regards,
-Purva Yeshi
+> -----Original Message-----
+> From: Peter Zijlstra <peterz@infradead.org>
+> Sent: Tuesday, March 18, 2025 2:39 PM
+> To: Jianyong Wu <wujianyong@hygon.cn>
+> Cc: mingo@redhat.com; vincent.guittot@linaro.org; jianyong.wu@outlook.com=
+;
+> linux-kernel@vger.kernel.org
+> Subject: Re: [PATCH] SCHED: scatter nohz idle balance target cpus
+>=20
+> On Tue, Mar 18, 2025 at 02:23:58AM +0000, Jianyong Wu wrote:
+>=20
+> Re subject; if you look at other patches for sched, you'll note that we d=
+o not
+> capitalize it.
+[Jianyong Wu]=20
+OK, will correct it.
+
+> Also, what you're doing is not scatter, it is rotation.
+[Jianyong Wu]=20
+It seems. However, as nohz idle balance occurs quite frequently, in proport=
+ion to the value of "HZ" and CPUs number, the selected CPU will spread to t=
+he whole system soon. Compared with current situation where mostly only cpu=
+0 is selected, the change in this patch is more like a "scattering" effect.=
+ But it doesn't matter, "rotation" is fine. I can change it according your =
+wish.
+
+>=20
+> > Currently, cpu selection logic for nohz idle balance lacks history
+> > info that leads to cpu0 is always chosen if it's in nohz cpu mask.
+> > It's not fair fot the tasks reside in numa node0. It's worse in the
+> > machine with large cpu number, nohz idle balance may be very heavy.
+>=20
+> Since you seem to care about ilb and numa; there is this _very_ old patch=
+ set
+> that never got finished:
+>=20
+> 	https://lore.kernel.org/all/20091211013056.305998000@intel.com/
+>=20
+[Jianyong Wu]=20
+Thanks for this. I'll look into it (may take some time)
+
+> IIRC there was a problem where it would simply stop running the per-node =
+ilb
+> when the node went idle, leading to node level imbalances. This should be
+> curable by picking one such idle node and keeping its ILB active or somes=
+uch.
+[Jianyong Wu]=20
+I think this patch is simple enough to achieve the "fairness". WDYT?
+>
+> Something to poke at if you're interested..
+>=20
 
