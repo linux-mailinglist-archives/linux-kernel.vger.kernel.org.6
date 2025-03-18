@@ -1,131 +1,160 @@
-Return-Path: <linux-kernel+bounces-566834-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566835-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 482C2A67D1A
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 20:27:12 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 954DBA67D1D
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 20:27:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F42037AC635
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 19:26:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 00BB916B2DD
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 19:27:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18C491E521A;
-	Tue, 18 Mar 2025 19:27:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iuyui4pT"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70AE11E1DF1;
+	Tue, 18 Mar 2025 19:27:37 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63C80154425;
-	Tue, 18 Mar 2025 19:27:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03C881AC892;
+	Tue, 18 Mar 2025 19:27:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742326020; cv=none; b=dm0iywDtwjadtm4r+7lP8Xtk8j4SpqruuzsuvDZfz0mqDS+f3PVgu5EEJWJomquWTZhu1HKLOmOIbKZHbu5wE68V2nwOhU0/kqaS3XQVyc+J5eJzh8p+o7zbaKUqPfKyQ1QhB72U3dt3uh4qRqbsaJKUSPjtfnmqLwxehyzlSPg=
+	t=1742326057; cv=none; b=OgCv/fzTiHEl4VOj0dKvfbI5IR/TjooUgy2GIqrDrm6EV71E8NqvpTSYAe/6+ccahY5ENnGWVaISCw8o/zp5kEbd6QZWY9SR0WWNknA2NGk9WTzPibBk8kcDMLJXEnmMx90pgps7nOa9ygU3MSpZ+z70Q3k6CxqHsl3Pp5x/02o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742326020; c=relaxed/simple;
-	bh=HcpPBMONhitl56bp5F0RR7mimHNgclhIc79by5IL1Zo=;
+	s=arc-20240116; t=1742326057; c=relaxed/simple;
+	bh=RGtNuqVmMKoyKd4JA6dWAay60qdpiyiwM7/ip1A2oEU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hhczIR3XAoHtkbApUZ1+vYFKqWIfJFyp46KZrYW3n8KPonoFSQgmVxzxVMhEjzTvmw/1U+TwqVArmsKhpYB26D4PgWs23dOGsKKNciu7I3Cns2MDMTQ+DGzrueIetOzcoBM94/2BREtVUqwndLXBbfRbhy4vKWUdOr6W1sJ3h6k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iuyui4pT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4CCBBC4CEDD;
-	Tue, 18 Mar 2025 19:26:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742326019;
-	bh=HcpPBMONhitl56bp5F0RR7mimHNgclhIc79by5IL1Zo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iuyui4pTNA/21jsSGNTak1MaoYLoVi1v4NdO5dYebSyCAfi7lMavoMKFTOx0lisBP
-	 kh3WQei9qMDXBnhU2aw6KgJOM0qwd3v+W3MK/GgVI4OAqQc6LkXaUH3a56te3NgCGE
-	 Kj4clbZ6HzRz57KkyFuQ4JHTvCOoc+C0bvsmANwbFxltY/E8UOMYvWJjhcLtPoIFHr
-	 vUJ1t1/8vkre6WBCGmtPz/jL3DjZNDEwJouWbHc5d15j3cn18uQaVnX/DjWEXjvdfz
-	 MqApemIgwO/FXSI4xpvNLioLhYdxk4T8OMsUvgD0EzPAMjrvr9CGvfEtVdPFUCtmnt
-	 GjaSCFc3HnC1Q==
-Date: Tue, 18 Mar 2025 20:26:54 +0100
-From: Danilo Krummrich <dakr@kernel.org>
-To: Tamir Duberstein <tamird@gmail.com>
-Cc: Alice Ryhl <aliceryhl@google.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andrew Ballance <andrewjballance@gmail.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] rust: alloc: add `Vec::dec_len`
-Message-ID: <Z9nI_kM6LPELbodm@cassiopeiae>
-References: <CAJ-ks9=oq+c_pMg41QgGWsj=phWYfntXQgpSrFmz16Vifofn3g@mail.gmail.com>
- <Z9gL5hQWvCNy5XNH@google.com>
- <Z9gcqHihXLg6kcZb@google.com>
- <CAJ-ks9n=7fqtNr88co-EU7d9Wo1Dz1Wmp0p3K0b8RQE9mjrbHQ@mail.gmail.com>
- <Z9k9I6mp11Z358vz@google.com>
- <CAJ-ks9kcNvGqGrU1nKjYs_4XPbdxo2cW8Tj9JOGJesGO4StdAw@mail.gmail.com>
- <Z9mGv6ir4c96Of0Q@google.com>
- <CAJ-ks9mHvjPn98mcXh3q18nB5pPH6YBj3jf1YH6510bP-mtFtQ@mail.gmail.com>
- <Z9m_mfg5b0XE_HCF@cassiopeiae>
- <CAJ-ks9=YSN8VRUW6VTfThkN8uh42rbq9pBwvrG=EuW2wpuXx5A@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=TtrI7D+wFMs0yO+g2JKCcZ7h9PbD7PXV3mDqohI1plMIXkPTXnUD9VviYCVqFG0Mb+AU7Sr+ZcS5J6Kk+Q5IbCYBQi4TWxO6f6VzqrEHalC5c7w/u7ZWZ/9WawPRjG5bCNFWBwWlnNUz46T3Run4iCSfVdP45Au88E1w0ffJcdI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8352C4CEEE;
+	Tue, 18 Mar 2025 19:27:29 +0000 (UTC)
+Date: Tue, 18 Mar 2025 19:27:27 +0000
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: Marc Zyngier <maz@kernel.org>, Ankit Agrawal <ankita@nvidia.com>,
+	"oliver.upton@linux.dev" <oliver.upton@linux.dev>,
+	"joey.gouly@arm.com" <joey.gouly@arm.com>,
+	"suzuki.poulose@arm.com" <suzuki.poulose@arm.com>,
+	"yuzenghui@huawei.com" <yuzenghui@huawei.com>,
+	"will@kernel.org" <will@kernel.org>,
+	"ryan.roberts@arm.com" <ryan.roberts@arm.com>,
+	"shahuang@redhat.com" <shahuang@redhat.com>,
+	"lpieralisi@kernel.org" <lpieralisi@kernel.org>,
+	"david@redhat.com" <david@redhat.com>,
+	Aniket Agashe <aniketa@nvidia.com>, Neo Jia <cjia@nvidia.com>,
+	Kirti Wankhede <kwankhede@nvidia.com>,
+	"Tarun Gupta (SW-GPU)" <targupta@nvidia.com>,
+	Vikram Sethi <vsethi@nvidia.com>, Andy Currid <acurrid@nvidia.com>,
+	Alistair Popple <apopple@nvidia.com>,
+	John Hubbard <jhubbard@nvidia.com>, Dan Williams <danw@nvidia.com>,
+	Zhi Wang <zhiw@nvidia.com>, Matt Ochs <mochs@nvidia.com>,
+	Uday Dhoke <udhoke@nvidia.com>, Dheeraj Nigam <dnigam@nvidia.com>,
+	Krishnakant Jaju <kjaju@nvidia.com>,
+	"alex.williamson@redhat.com" <alex.williamson@redhat.com>,
+	"sebastianene@google.com" <sebastianene@google.com>,
+	"coltonlewis@google.com" <coltonlewis@google.com>,
+	"kevin.tian@intel.com" <kevin.tian@intel.com>,
+	"yi.l.liu@intel.com" <yi.l.liu@intel.com>,
+	"ardb@kernel.org" <ardb@kernel.org>,
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+	"gshan@redhat.com" <gshan@redhat.com>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>,
+	"ddutile@redhat.com" <ddutile@redhat.com>,
+	"tabba@google.com" <tabba@google.com>,
+	"qperret@google.com" <qperret@google.com>,
+	"seanjc@google.com" <seanjc@google.com>,
+	"kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v3 1/1] KVM: arm64: Allow cacheable stage 2 mapping using
+ VMA flags
+Message-ID: <Z9nJH38Em9XEx3U7@arm.com>
+References: <861pv5p0c3.wl-maz@kernel.org>
+ <SA1PR12MB7199DD985C45943A663E7003B0D12@SA1PR12MB7199.namprd12.prod.outlook.com>
+ <86r033olwv.wl-maz@kernel.org>
+ <SA1PR12MB7199500A3683B15A64B663D6B0D12@SA1PR12MB7199.namprd12.prod.outlook.com>
+ <87tt7y7j6r.wl-maz@kernel.org>
+ <SA1PR12MB7199B320DAE42A8D7038A78EB0D32@SA1PR12MB7199.namprd12.prod.outlook.com>
+ <8634fcnh0n.wl-maz@kernel.org>
+ <Z9h98RhunemcFhhz@arm.com>
+ <86wmcmn0dp.wl-maz@kernel.org>
+ <20250318125527.GP9311@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJ-ks9=YSN8VRUW6VTfThkN8uh42rbq9pBwvrG=EuW2wpuXx5A@mail.gmail.com>
+In-Reply-To: <20250318125527.GP9311@nvidia.com>
 
-On Tue, Mar 18, 2025 at 02:53:48PM -0400, Tamir Duberstein wrote:
-> On Tue, Mar 18, 2025 at 2:46 PM Danilo Krummrich <dakr@kernel.org> wrote:
-> >
-> > On Tue, Mar 18, 2025 at 02:28:02PM -0400, Tamir Duberstein wrote:
-> > > On Tue, Mar 18, 2025 at 10:44 AM Alice Ryhl <aliceryhl@google.com> wrote:
-> > > >
-> > > > On Tue, Mar 18, 2025 at 10:12:28AM -0400, Tamir Duberstein wrote:\
-> > > > >
-> > > > > The methods you're describing are all on Vec, right? In other words,
-> > > > > their usage calls for a private `dec_len` or `set_len`. As I've said
-> > > > > repeatedly in the course of this discussion: I would prefer not to
-> > > > > introduce `dec_len` at all here. It (or `set_len`) can be introduced
-> > > > > in the series that adds truncate or your patch that adds clear, where
-> > > > > its signature can be properly scrutinized in the context of an actual
-> > > > > caller.
-> > > >
-> > > > Oh I did not see that you said that. Dropping patch 2 is fine with me.
-> > > >
-> > > > Alice
-> > >
-> > > Benno, Danilo: are you both OK with this? I'll discard this patch on
-> > > the respin and prepend the patch adding the len <= cap invariant.
-> >
-> > I mean, the whole reason to switch set_len() to inc_len() and have a separate
-> > dec_len() was to properly cover things like [1] and Alice' patch by having
-> > dec_len() return the abandoned entries.
-> >
-> > If we now only switch set_len() to inc_len() and drop dec_len() then what should
-> > Andrew do?
+On Tue, Mar 18, 2025 at 09:55:27AM -0300, Jason Gunthorpe wrote:
+> On Tue, Mar 18, 2025 at 09:39:30AM +0000, Marc Zyngier wrote:
+> > The memslot must also be created with a new flag ((2c) in the taxonomy
+> > above) that carries the "Please map VM_PFNMAP VMAs as cacheable". This
+> > flag is only allowed if (1) is valid.
+> > 
+> > This results in the following behaviours:
+> > 
+> > - If the VMM creates the memslot with the cacheable attribute without
+> >   (1) being advertised, we fail.
+> > 
+> > - If the VMM creates the memslot without the cacheable attribute, we
+> >   map as NC, as it is today.
 > 
-> I'd be completely fine with Andrew (or Alice) taking this patch into
-> the truncate/resize series[1] (or the series that introduces clear
-> [2]). It can be properly reviewed there in context.
+> Is that OK though?
+> 
+> Now we have the MM page tables mapping this memory as cachable but KVM
+> and the guest is accessing it as non-cached.
 
-Sorry, I'm not willing to make this Andrew's responsibility; set_len() worked
-for his patches before.
+I don't think we should allow this.
 
-If you're uncomfortable implementing your proposal without the existence of
-truncate(), please rebase onto Andrew's patches.
+> I thought ARM tried hard to avoid creating such mismatches? This is
+> why the pgprot flags were used to drive this, not an opt-in flag. To
+> prevent userspace from forcing a mismatch.
 
-I think Alice' patch can also go on top of that, since it should just be
-truncate(0).
+We have the vma->vm_page_prot when the memslot is added, so we could use
+this instead of additional KVM flags. If it's Normal Cacheable and the
+platform does not support FWB, reject it. If the prot bits say
+cacheable, it means that the driver was ok with such mapping. Some extra
+checks for !MTE or MTE_PERM.
 
+As additional safety, we could check this again in user_mem_abort() in
+case the driver played with the vm_page_prot field in the meantime (e.g.
+in the .fault() callback).
+
+I'm not particularly keen on using the vm_page_prot but we probably need
+to do this anyway to avoid aliases as we can't fully trust the VMM. The
+alternative is a VM_* flag that says "cacheable everywhere" and we avoid
+the low-level attributes checking.
+
+> > What this doesn't do is *automatically* decide for the VMM what
+> > attributes to use. The VMM must know what it is doing, and only
+> > provide the memslot flag when appropriate. Doing otherwise may eat
+> > your data and/or take the machine down (cacheable mapping on a device
+> > can be great fun).
 > 
-> > Maybe we should just revert to Tamir's first proposal, i.e. keep set_len() as it
-> > is, but make it return the abandoned entries, if any.
-> 
-> This wouldn't be my preference.
-> 
-> > [1] https://lore.kernel.org/rust-for-linux/20250316111644.154602-1-andrewjballance@gmail.com/
-> 
-> [2] https://lore.kernel.org/all/20250311-iov-iter-v1-4-f6c9134ea824@google.com/
+> Again, this is why we followed the VMA flags. The thing creating the
+> VMA already made this safety determination when it set pgprot
+> cachable. We should not allow KVM to randomly make any PGPROT
+> cachable!
+
+Can this be moved to kvm_arch_prepare_memory_region() and maybe an
+additional check in user_mem_abort()?
+
+Thinking some more about a KVM capability that the VMM can check, I'm
+not sure what it can do with this. The VMM simply maps something from a
+device and cannot probe the cacheability - that's a property of the
+device that's not usually exposed to user by the driver. The VMM just
+passes this vma to KVM. As with the Normal NC, we tried to avoid
+building device knowledge into the VMM (and ended up with
+VM_ALLOW_ANY_UNCACHED since the VFIO driver did not allow such user
+mapping and probably wasn't entirely safe either).
+
+I assume with the cacheable pfn mapping, the whole range covered by the
+vma is entirely safe to be mapped as such in user space.
+
+-- 
+Catalin
 
