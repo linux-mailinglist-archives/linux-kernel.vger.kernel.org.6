@@ -1,128 +1,133 @@
-Return-Path: <linux-kernel+bounces-566064-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566065-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95B50A672B0
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 12:28:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2AA32A672B2
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 12:29:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B1555188A972
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 11:28:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1210E189EA1E
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 11:28:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B06E20ADEC;
-	Tue, 18 Mar 2025 11:27:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50B6320AF80;
+	Tue, 18 Mar 2025 11:27:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iqpOCCaT"
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DRXeEfck"
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83C51207656;
-	Tue, 18 Mar 2025 11:27:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5075205507;
+	Tue, 18 Mar 2025 11:27:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742297267; cv=none; b=pIr/dEHndp1IAZC+U0bvXFydOalMnfF5APY0y41IcpUmga3nva+s69PgOUZ064HoCcsNr6d0CbdDzbm2nC0d1u0qwa+B7z5GOOA/dsjgzGU+c6h1BRVjHPKKZvNwRYQJFr2B/Pr98epxrFKnWcsx/+sOzRf7InD21bhYLKB3eFI=
+	t=1742297275; cv=none; b=gnkwN8y9occkztisL2c+hePyW81msT5cMyWnh3WJUn75pAacZdw4uZyMZzhQQfAqSbFzssoTifj7eE+6cEyeJMZ2Buts+xuDV3FzpWjJEdDqJboBHB01GQ3FqECC8UuiJ/8ocuKbucrxdnWk5ZNvk+v5HBT2kCxSXUuEY7JM2hk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742297267; c=relaxed/simple;
-	bh=7grknlphHpAkNnmLwLYUSBqyQUugIdELO0U72gMOS/w=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=WJrGnp2ykySECnvpX4fhwoWRmioNj2PGOxpRKKf7UPW0pNkxSG/HrSZW4G+CBhmIGKTrOGQ8SV503tv7UW/qUz+USN9GgLt1VQlcpFQ0z9Cahsqjon30Wb1BplQ5zOqgMNYdu4CXxI9wq/lBndKZBlJAAjivmg5gR+CskMHWzrM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iqpOCCaT; arc=none smtp.client-ip=209.85.216.53
+	s=arc-20240116; t=1742297275; c=relaxed/simple;
+	bh=1btfEb0nhExcNTi2rYAFFqhfEYGkL8D2ne7lYeiVgz4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nTcNPMuW3Ua4YNmeFzuo2U3gVNBcxP1KDpz+iucoWRERmLK5KPuPxi+oHQnRSD7J2Q2y38q30HhOH0pzFV5RSpZ46XT4XyGLfDmlvuQslA9UVm8Pk3BK6bYvlzVNwYXfUSvCLNNSM8zChOfmDOHU3ju9qGVdGUc2CxtjTFo4ieY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DRXeEfck; arc=none smtp.client-ip=209.85.208.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-300f92661fcso4927565a91.3;
-        Tue, 18 Mar 2025 04:27:46 -0700 (PDT)
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-30613802a59so61264081fa.0;
+        Tue, 18 Mar 2025 04:27:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742297266; x=1742902066; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=IcvcsPCsb52a0zF8mgEmM6gyp48rWfVJrSpx8wGcdyI=;
-        b=iqpOCCaTZxS7pdt6yQLsENCjJ+XH8Nhqq/HTH1kvD1/Y0jXxgPxYLhBRw+OQNA9B9P
-         OG23Be7oOu6sOT5Ng08fuS7pytstzr3xD4/sI74EOaU4ihEVeUQDOCT1aNx5N4Hhe7hJ
-         9Uj1GL2HIr/dO4LxonOELveM5OwjvGihRzDXV7p01n93LK7ADOS/s4jvtKJS0g7bYxFf
-         8UMEng3QMUCCKzvpsF6ScY9PRkkebv5TO9BYt61HUiyLHnjg7ATqpdJgTvHRRaQsRQXN
-         BjraNHmOufqROAh5HSTkNzGqx+4AFvKfHNRwaEz8sbVa4xRg/8HzBJo6+R9EjGQqGs/m
-         lgAg==
+        d=gmail.com; s=20230601; t=1742297272; x=1742902072; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Zcnl5GlKCMfJmW1p4sjVmtozHXscsIgYow35rf7G1GY=;
+        b=DRXeEfckHKFwv1G1H9iKYW+9ZCweGoEkvJYe5xoCozvT86KAcjEmbEX7udr7jHOhMi
+         htnxHMJSrJmsigtowMic0zR7B7B4IlhV8OSnIC+R1WK7ieeE4exDSvh6/iEGZ2OWAdb+
+         5QlSruWaK1hPaApQ6PosO8b7mlv+/c9atRK4g14rF/QGvTKyfP3Fw1nx5tTSLVDGVNa/
+         2HPGdREQvhRSwoGkf9fmr8W2YnuMgz7ZojilGo7mNyy2fcCRT2UXkkYuWaoAxQiBWlv0
+         7aU1nb681esM+wgZNLPXC9/nqppGswV0iRUpzL/CrpCmbPM4dDAF7w5W++9Mu20/7fD+
+         fRiw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742297266; x=1742902066;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=IcvcsPCsb52a0zF8mgEmM6gyp48rWfVJrSpx8wGcdyI=;
-        b=ZZTeGYMWDPuTJ3yOcFJPawfE5VGedwv9U9aVXl7AHyER3HHupzaSXHUX2Z0FXgpfja
-         MhzVlLqQz4m8Ht9yoYpM5BFIUPcg79tKKKp5M0VKxdiTcIcnJQN2Aeg9PJ97c+g1F577
-         pPNN8/NNcyhfQYi4buJKdiM3VkFLX1D6q0ep7z6EPaIpGS+fzu3o/DqQic++lr/2h6nq
-         WuH5hl2XkRZDqq65BM+uYWkEN7ZN6W9fhI28KaRxLhntv7tbR1oQhSEHuK0kPX4p1ZHv
-         bcfrEbmKzNnPKJMJiaNCxK2mEle1cw3udplpdA1lYdxNjhSV6YrRT/SHDAR75KJKuvUx
-         LvgQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVPKC0SGmsX/tteITsivH2efitIMP8RQC/APwhug0jwlv909HGSqu4f4Wua48pnZYb+epe6Ye/bYoZSUJ6CDYzGMmTW@vger.kernel.org, AJvYcCWMxTszBbeOYfrC6QLDXGN/T3cQTnP+yXL+2tSTlcpJ6fSlFb8XSIP4mvndEb/5mDRMWTl430JOPYhq540=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyoYok6f5xR3BNu+OAvKMgEL593sW/8U6PdfTbwqVOY3TSiVOU2
-	rqY52zqopU7uAemxG1gF13DfnXYeFNIcIpwpyMYlP9Fw1KG4+S1odnVRJdjNeWPKPg==
-X-Gm-Gg: ASbGncsmKx0+jl7GFBx4Y4NsKYb35pANzxY6+RO7tV0BS8ZFT2Srb7yPfAryuIPShoZ
-	q2pGD5R6Phhh9IC/pYXc2W+5770bayCg67r7pV/7YkG7l0/T/h4XORQfWVN3Deuqrm6sZdvfuAa
-	5HdY32EEblv77CpFLruINp9EnijnuMNQ+IQ4naVBXFPBYm3rT5hGYg8PULFEkhHjIF2y/lmvH64
-	YwX1AS4bPb1pz2Q7LWD2LSHZIQNl2VzYp+p4uVIKyW5S1xzqkvhQyCOy0FEF1yjCfbqJfBPAN9v
-	ZbAi5JtGGu33vb7wUpSwYMlXbqfTsJD+IWR9YKczqB/dM5DT9GoU30/EvIdttOdovxNM
-X-Google-Smtp-Source: AGHT+IE++RFcy6kw6hUjKVp1ZoCBUNo8R8FXnlvnWyV9smNvJP8u/r5hHiAs8ThA5ytPoND6N4rDHg==
-X-Received: by 2002:a17:90a:e7ce:b0:2ea:5dea:eb0a with SMTP id 98e67ed59e1d1-301a5b0065dmr2577387a91.4.1742297265271;
-        Tue, 18 Mar 2025 04:27:45 -0700 (PDT)
-Received: from localhost.localdomain ([183.242.254.176])
-        by smtp.googlemail.com with ESMTPSA id 98e67ed59e1d1-3015353462asm7885564a91.27.2025.03.18.04.27.41
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Tue, 18 Mar 2025 04:27:44 -0700 (PDT)
-From: Miaoqian Lin <linmq006@gmail.com>
-To: Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Tom Zanussi <zanussi@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org
-Cc: linmq006@gmail.com
-Subject: [PATCH] tracing: Fix error handling in event_trigger_parse
-Date: Tue, 18 Mar 2025 19:27:37 +0800
-Message-Id: <20250318112737.4174-1-linmq006@gmail.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+        d=1e100.net; s=20230601; t=1742297272; x=1742902072;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Zcnl5GlKCMfJmW1p4sjVmtozHXscsIgYow35rf7G1GY=;
+        b=UM9WKMDwEFExBr+hkav8B7Lk/ZNUn3CZcTzyFAI5XrR9KbmeSj94f6NrmKONbHmV64
+         QB99SW58XKB6o8dSTryE7T+fqTDIZPK6xSJuMLYZKZR1BRJ2n2UJuV72pEfCIikZGv8G
+         7tuRQxgE2H3eN9wi06QCoxa2wVteE1QY2BpeA0NYzQ3b0PLYwcRKZdwwZuEjEtXUqSR3
+         ugcst6ubLvWkyDrjJneXUhdN0/bkbur6EYT3o5DIn6fOGrzKMZU+R/u0y4lC1RHfHKWL
+         vOR4a7WIQrZNVn/KstgD1DBcrnzoQgOxijRTM3pp+saDv1C6Gz/nG8Yx74cL2FhwQKsy
+         ivBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWGkOXsd+t7y6Av6TTTU7+HYXRo8mDxfZA3A4GlJOFpgl1T4GJZXQL/hgEp5WhU/mfFZQnpqYqFZ7LgqHc=@vger.kernel.org, AJvYcCXCXr/BhXQNu7JNUK+oDmGJIm2IhGJYeIfE0JRX2ss5RBDSIxamiFzytkS3Rs15qOydxiAAlCEY1ZU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyPUAhSXjV0GTwgGaD5GopjeM1++vGPBvuaaFTKG8pQRjAv6K2M
+	kDWfcEEkuBjxXtMfV1+LPZzPygCIuuyUu4o0LtA6cR1ijiYNb7ei
+X-Gm-Gg: ASbGncuPg/EeKd9iTzpyfqKRzGpp7vRb+mpX9RcmsjQjpGmuf40FXKBLRAjsoUwedsi
+	3f1BCwdQ0/If5YunnXb2zpyH8eP3WXqXzFTCjXI8MIID/2daVvleBcCkeM5zaHNEsPER4SSexL+
+	gt/ezRBIYSbtFqhzA4+uKKgQz7vf10JvYWQKFqsJxUd9VAyXbh8YJxBsw7hnMYSg2ePCzy//eTD
+	nnzdDioK748zHwWX19aG8U8cZyxlffNCk/qSCS6B08QdauZ8qcMEPtS/EwtPKe+Cq/uUeLKL8Bq
+	nPU3FDbjGmYpuyjKCoWIllA9hT8hGITt8zMByxUlnIIw+xZyi4ERaAlWqA==
+X-Google-Smtp-Source: AGHT+IEvZc01ulZSub0QgeTOuwAOi7z7tliPNhgrvh4e5mEa0+pNv/UfnHT4a0tcm+JYufa1tEjSnQ==
+X-Received: by 2002:a2e:a9a6:0:b0:30b:ca48:108e with SMTP id 38308e7fff4ca-30c4a74da96mr99734661fa.5.1742297271619;
+        Tue, 18 Mar 2025 04:27:51 -0700 (PDT)
+Received: from [172.16.183.207] ([213.255.186.46])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30c3f0e9990sm19630921fa.26.2025.03.18.04.27.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 18 Mar 2025 04:27:51 -0700 (PDT)
+Message-ID: <50205854-b8fc-4022-8a07-ec36d8203f87@gmail.com>
+Date: Tue, 18 Mar 2025 13:27:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 7/7] Documentation: Add sysfs documentation for PSCRR
+ reboot reason tracking
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: Sebastian Reichel <sre@kernel.org>,
+ Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+ Benson Leung <bleung@chromium.org>, Tzung-Bi Shih <tzungbi@kernel.org>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>, kernel@pengutronix.de,
+ linux-kernel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
+ Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
+ linux-pm@vger.kernel.org, =?UTF-8?Q?S=C3=B8ren_Andersen?= <san@skov.dk>,
+ Guenter Roeck <groeck@chromium.org>, Ahmad Fatoum <a.fatoum@pengutronix.de>,
+ Andrew Morton <akpm@linux-foundation.org>, chrome-platform@lists.linux.dev
+References: <20250318094716.3053546-1-o.rempel@pengutronix.de>
+ <20250318094716.3053546-8-o.rempel@pengutronix.de>
+ <cda899c6-4330-465c-80b2-63c9da73505b@gmail.com>
+ <Z9lYA9yUx62wNISq@pengutronix.de>
+Content-Language: en-US, en-AU, en-GB, en-BW
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+In-Reply-To: <Z9lYA9yUx62wNISq@pengutronix.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-According to event_trigger_alloc() doc, event_trigger_free() should be
-used to free an event_trigger_data object. This fixes a mismatch introduced
-when kzalloc was replaced with event_trigger_alloc without updating
-the corresponding deallocation calls.
+On 18/03/2025 13:24, Oleksij Rempel wrote:
+> On Tue, Mar 18, 2025 at 01:17:38PM +0200, Matti Vaittinen wrote:
+>> On 18/03/2025 11:47, Oleksij Rempel wrote:
 
-Fixes: e1f187d09e11 ("tracing: Have existing event_command.parse() implementations use helpers")
-Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
----
- kernel/trace/trace_events_trigger.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+>> A side note which you can consider if you feel like:
+>> This, as far as I understand, will also make the ABI out of this. So,
+>> perhaps there should be comments in enum psc_reason and the defines in
+>> Defined in 'include/linux/reboot.h' that they are part of an ABI, and must
+>> not be changed? I suppose user-space tools may get unhappy if these values
+>> change between the kernel versions.
+> 
+> Yes, there is already: "Importantly, the order of these values **must
+> remain stable**, as bootloaders, user-space tools, or post-mortem
+> investigation utilities may rely on their numerical representation for
+> consistent behavior." :)
 
-diff --git a/kernel/trace/trace_events_trigger.c b/kernel/trace/trace_events_trigger.c
-index d45448947094..8389314b8c2d 100644
---- a/kernel/trace/trace_events_trigger.c
-+++ b/kernel/trace/trace_events_trigger.c
-@@ -995,7 +995,7 @@ event_trigger_parse(struct event_command *cmd_ops,
- 
- 	if (remove) {
- 		event_trigger_unregister(cmd_ops, file, glob+1, trigger_data);
--		kfree(trigger_data);
-+		event_trigger_free(trigger_data);
- 		ret = 0;
- 		goto out;
- 	}
-@@ -1022,7 +1022,7 @@ event_trigger_parse(struct event_command *cmd_ops,
- 
-  out_free:
- 	event_trigger_reset_filter(cmd_ops, trigger_data);
--	kfree(trigger_data);
-+	event_trigger_free(trigger_data);
- 	goto out;
- }
- 
--- 
-2.39.5 (Apple Git-154)
+Just noticed this. My bad, I did reviewing in wrong order :)
+
+>>
+>> Reviewed-by: Matti Vaittinen <mazziesaccount@gmail.com>
+>>
+>> Yours,
+>> 	-- Matti
+>>
+>>
+> 
 
 
