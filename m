@@ -1,157 +1,220 @@
-Return-Path: <linux-kernel+bounces-566218-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10C5FA67513
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 14:27:43 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49522A6751E
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 14:29:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D08A73B3191
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 13:24:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DBA9A16EA2E
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 13:28:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79E4420CCE9;
-	Tue, 18 Mar 2025 13:24:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CBA520D51D;
+	Tue, 18 Mar 2025 13:28:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="p2J7/ekc"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YdbmWyaB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB163206F22
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 13:24:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32EB120D502;
+	Tue, 18 Mar 2025 13:28:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742304297; cv=none; b=ZPKZ2oU4ZmEjQJxgrLLNCF1yVj0aOuoXolki3yVUPpJCtSu7HcxY7VZJneWU2YCtlJP89a85RGLKKfxdC9w/biHIMR0uLGI+Z+RCYHKKShy5Anb47BPuouDPluyxWwei3ZOe1bnbIIfevMVkx8XojcnjVTFpZMiax+Dl133Boww=
+	t=1742304492; cv=none; b=rXknN7yxFRqmN5gHNQf1qFv3bZunnbA3Mae05bSRTM7y2ggdyp5aBV9iUPljGjbTb4/uETI75rEJ8lcKMA0D9D2Qu+t0fugHsVdWR/cMimUTsldm25/FqSdwAkwUIpaicBrGq0+x/be3TX0glfFQOvcafcAfIE58ei10YaFdFzM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742304297; c=relaxed/simple;
-	bh=BuOvW7eyYaT5DbhjI637N0geQsyWJU5agQ+gp1GmwEM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EGLF5MPJgepPE9Ee2+a/B7xhYcLgnD0amx1mDaQKV6HeuiYHHr6EsbCF4iDDgR2ZB090rMc/9v/ieobyu0/q3HFi0p4kY5tLRgmNXZBb/t/BTSwclWOUv7Ufsoi1Rn0LIX1ITIO5CXFIz1zxcv4bmixkcg4++R1CMFnMDM6Tibw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=p2J7/ekc; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52ID2EhB008725;
-	Tue, 18 Mar 2025 13:24:29 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=AHLgZ5
-	XycjmAhaOgRjAzdPYu9We1Fze8Zvp5Pfd4LAo=; b=p2J7/ekcJ8xp2d5vImzwSt
-	9zurhpLtc9I80ZDnAAlCsVQfvj8ZgO+nsKVqCKWS7BN/PKxIkaQc0UG7H/AQ0Ci+
-	b5MOcJcUPvBbHqTLxt/MzHiTUeOYKlO7WZBrnPxgmD+dP91aqRGXB5fridYlcoaC
-	lfZUwA9lYVz3X8pUYw9hsrKo/mAqqYi6+NWvf/uZc9+rlJMMX9OIXcATd6ZIOn2A
-	QbPJ4UJQSH9+ip/L5gbcnQRkTxYxpeo9A0qrGrGjFtQu9/oboQYIHUggt1Y+BM6+
-	uWLh4YETFapRs8s79bsAPmPui9sUrBDToGqWcLGSTEU/AFbEJOsKdYCyum8TjflA
-	==
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45etwqbxhu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 18 Mar 2025 13:24:28 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52ID6q96005664;
-	Tue, 18 Mar 2025 13:24:28 GMT
-Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 45dm8yv5sh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 18 Mar 2025 13:24:28 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52IDOQPl29426292
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 18 Mar 2025 13:24:26 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 246DB20040;
-	Tue, 18 Mar 2025 13:24:26 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id E2C2020043;
-	Tue, 18 Mar 2025 13:24:23 +0000 (GMT)
-Received: from [9.124.211.142] (unknown [9.124.211.142])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Tue, 18 Mar 2025 13:24:23 +0000 (GMT)
-Message-ID: <0713a015-b8dc-49db-a329-30891a10378c@linux.ibm.com>
-Date: Tue, 18 Mar 2025 18:54:22 +0530
+	s=arc-20240116; t=1742304492; c=relaxed/simple;
+	bh=Y19lGFqI1feFU+EfLxPKy0E333YJeT3tALgbehX6FA4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=AvbNKMxBO5tdySy78RcMRPNP/8PBYifJ9cIUb95LOm9dTESUR66Bsd1E8Msu07MvxUwA0j4jpPu9jGpAWLjLY+soNIE8XfbJo7D5O/IjpvUmZWFUnGHY3HmVv6P5N5wq2ai0ZhaT9pEtgmIIiYqifqH5nFkC09PffsxAHYYffkg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YdbmWyaB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C160EC4CEE3;
+	Tue, 18 Mar 2025 13:28:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742304491;
+	bh=Y19lGFqI1feFU+EfLxPKy0E333YJeT3tALgbehX6FA4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=YdbmWyaBKCX17M+dS+mJYXo2PtJQ84WswFCHk287ISI1T5wivztkiz0IyOk1mKpO8
+	 xBu5F0YzmLqgo3NtunoLNjDek/U1U/HhZIbg+F8PhYQHABQdDKILDLurbOyjsjkc2G
+	 SI5UfY4l2J/3irW5H+AH0YUU+y4rZRJTcHa66aIU147XKqYAyTNn7JNr21P/46VQgL
+	 TMOUBRYU6sZvFP0mJHW3SMulP/vaBjgwpWtvXBPa9+M6PRyPC9HalEh/kSEuNWJsJm
+	 UCoO3vN+s5G5kluVW84ChfxnvWGadnBb/PmTRiJAY0MxkcjF5gURdN4/OViyXF7fN0
+	 WdN/txXRNX0Fw==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: Abdiel Janulgue <abdiel.janulgue@gmail.com>
+Cc: rust-for-linux@vger.kernel.org,  daniel.almeida@collabora.com,
+  dakr@kernel.org,  robin.murphy@arm.com,  aliceryhl@google.com,  Miguel
+ Ojeda <ojeda@kernel.org>,  Alex Gaynor <alex.gaynor@gmail.com>,  Boqun
+ Feng <boqun.feng@gmail.com>,  Gary Guo <gary@garyguo.net>,  =?utf-8?Q?Bj?=
+ =?utf-8?Q?=C3=B6rn?= Roy
+ Baron <bjorn3_gh@protonmail.com>,  Benno Lossin <benno.lossin@proton.me>,
+  Trevor Gross <tmgross@umich.edu>,  Valentin Obst
+ <kernel@valentinobst.de>,  linux-kernel@vger.kernel.org (open list),
+  Christoph Hellwig <hch@lst.de>,  Marek Szyprowski
+ <m.szyprowski@samsung.com>,  airlied@redhat.com,  iommu@lists.linux.dev
+ (open list:DMA MAPPING HELPERS)
+Subject: Re: [PATCH v14 03/11] samples: rust: add Rust dma test sample driver
+In-Reply-To: <20250311174930.2348813-4-abdiel.janulgue@gmail.com> (Abdiel
+	Janulgue's message of "Tue, 11 Mar 2025 19:47:59 +0200")
+References: <20250311174930.2348813-1-abdiel.janulgue@gmail.com>
+	<20250311174930.2348813-4-abdiel.janulgue@gmail.com>
+User-Agent: mu4e 1.12.7; emacs 29.4
+Date: Tue, 18 Mar 2025 14:26:45 +0100
+Message-ID: <87frjajwq2.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v10 00/21] futex: Add support task local hash maps,
- FUTEX2_NUMA and FUTEX2_MPOL
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar <mingo@redhat.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Valentin Schneider <vschneid@redhat.com>,
-        Waiman Long <longman@redhat.com>, linux-kernel@vger.kernel.org
-References: <20250312151634.2183278-1-bigeasy@linutronix.de>
-From: Shrikanth Hegde <sshegde@linux.ibm.com>
-Content-Language: en-US
-In-Reply-To: <20250312151634.2183278-1-bigeasy@linutronix.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: 6Brk4DRwFZBfFnBuQzn5KRMr8O86BuET
-X-Proofpoint-ORIG-GUID: 6Brk4DRwFZBfFnBuQzn5KRMr8O86BuET
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-18_06,2025-03-17_03,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- spamscore=0 clxscore=1011 impostorscore=0 mlxscore=0 malwarescore=0
- phishscore=0 adultscore=0 mlxlogscore=981 suspectscore=0
- lowpriorityscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2502280000 definitions=main-2503180096
+Content-Type: text/plain
+
+Abdiel Janulgue <abdiel.janulgue@gmail.com> writes:
+
+> Add a simple driver to excercise the basics of the Rust DMA
+> coherent allocator bindings.
+>
+> Suggested-by: Danilo Krummrich <dakr@kernel.org>
+> Signed-off-by: Abdiel Janulgue <abdiel.janulgue@gmail.com>
+> ---
+>  samples/rust/Kconfig     | 11 +++++
+>  samples/rust/Makefile    |  1 +
+>  samples/rust/rust_dma.rs | 97 ++++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 109 insertions(+)
+>  create mode 100644 samples/rust/rust_dma.rs
+>
+> diff --git a/samples/rust/Kconfig b/samples/rust/Kconfig
+> index 3b6eae84b297..e2d14aa6beec 100644
+> --- a/samples/rust/Kconfig
+> +++ b/samples/rust/Kconfig
+> @@ -78,4 +78,15 @@ config SAMPLE_RUST_HOSTPROGS
+>  
+>  	  If unsure, say N.
+>  
+> +config SAMPLE_RUST_DRIVER_DMA
+> +	tristate "DMA Test Driver"
+> +	depends on PCI
+> +	help
+> +	  This option builds the Rust dma test driver sample.
+> +
+> +	  To compile this as a module, choose M here:
+> +	  the module will be called dma.
+> +
+> +	  If unsure, say N.
+> +
+>  endif # SAMPLES_RUST
+> diff --git a/samples/rust/Makefile b/samples/rust/Makefile
+> index 0dbc6d90f1ef..1a9aff6e8d6a 100644
+> --- a/samples/rust/Makefile
+> +++ b/samples/rust/Makefile
+> @@ -7,6 +7,7 @@ obj-$(CONFIG_SAMPLE_RUST_PRINT)			+= rust_print.o
+>  obj-$(CONFIG_SAMPLE_RUST_DRIVER_PCI)		+= rust_driver_pci.o
+>  obj-$(CONFIG_SAMPLE_RUST_DRIVER_PLATFORM)	+= rust_driver_platform.o
+>  obj-$(CONFIG_SAMPLE_RUST_DRIVER_FAUX)		+= rust_driver_faux.o
+> +obj-$(CONFIG_SAMPLE_RUST_DRIVER_DMA)		+= rust_dma.o
+>  
+>  rust_print-y := rust_print_main.o rust_print_events.o
+>  
+> diff --git a/samples/rust/rust_dma.rs b/samples/rust/rust_dma.rs
+> new file mode 100644
+> index 000000000000..1740140faba6
+> --- /dev/null
+> +++ b/samples/rust/rust_dma.rs
+> @@ -0,0 +1,97 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +//! Rust DMA api test (based on QEMU's `pci-testdev`).
+> +//!
+> +//! To make this driver probe, QEMU must be run with `-device pci-testdev`.
+> +
+> +use kernel::{bindings, dma::CoherentAllocation, pci, prelude::*};
+> +
+> +struct DmaSampleDriver {
+> +    pdev: pci::Device,
+> +    ca: CoherentAllocation<MyStruct>,
+> +}
+> +
+> +const TEST_VALUES: [(u32, u32); 5] = [
+> +    (0xa, 0xb),
+> +    (0xc, 0xd),
+> +    (0xe, 0xf),
+> +    (0xab, 0xba),
+> +    (0xcd, 0xef),
+> +];
+> +
+> +struct MyStruct {
+> +    h: u32,
+> +    b: u32,
+> +}
+> +
+> +impl MyStruct {
+> +    fn new(h: u32, b: u32) -> Self {
+> +        Self { h, b }
+> +    }
+> +}
+> +// SAFETY: All bit patterns are acceptable values for `MyStruct`.
+> +unsafe impl kernel::transmute::AsBytes for MyStruct {}
+> +// SAFETY: Instances of `MyStruct` have no uninitialized portions.
+> +unsafe impl kernel::transmute::FromBytes for MyStruct {}
+> +
+> +kernel::pci_device_table!(
+> +    PCI_TABLE,
+> +    MODULE_PCI_TABLE,
+> +    <DmaSampleDriver as pci::Driver>::IdInfo,
+> +    [(
+> +        pci::DeviceId::from_id(bindings::PCI_VENDOR_ID_REDHAT, 0x5),
+> +        ()
+> +    )]
+> +);
+> +
+> +impl pci::Driver for DmaSampleDriver {
+> +    type IdInfo = ();
+> +    const ID_TABLE: pci::IdTable<Self::IdInfo> = &PCI_TABLE;
+> +
+> +    fn probe(pdev: &mut pci::Device, _info: &Self::IdInfo) -> Result<Pin<KBox<Self>>> {
+> +        dev_info!(pdev.as_ref(), "Probe DMA test driver.\n");
+> +
+> +        let ca: CoherentAllocation<MyStruct> =
+> +            CoherentAllocation::alloc_coherent(pdev.as_ref(), TEST_VALUES.len(), GFP_KERNEL)?;
+> +
+> +        || -> Result {
+> +            for (i, value) in TEST_VALUES.into_iter().enumerate() {
+> +                kernel::dma_write!(ca[i] = MyStruct::new(value.0, value.1));
+> +            }
+> +
+> +            Ok(())
+> +        }()?;
+
+Why is this placed in a closure? Left over from deferred error for pin-init?
+
+> +
+> +        let drvdata = KBox::new(
+> +            Self {
+> +                pdev: pdev.clone(),
+> +                ca,
+> +            },
+> +            GFP_KERNEL,
+> +        )?;
+> +
+> +        Ok(drvdata.into())
+> +    }
+> +}
+> +
+> +impl Drop for DmaSampleDriver {
+> +    fn drop(&mut self) {
+> +        dev_info!(self.pdev.as_ref(), "Unload DMA test driver.\n");
+> +
+> +        let _ = || -> Result {
+> +            for (i, value) in TEST_VALUES.into_iter().enumerate() {
+> +                assert_eq!(kernel::dma_read!(self.ca[i].h), value.0);
+> +                assert_eq!(kernel::dma_read!(self.ca[i].b), value.1);
+
+We should probably change `dma_read!`/`dma_write!` to return `Result`,
+so that we don't have to wrap these calls in a closure for obscure reasons.
 
 
-
-On 3/12/25 20:46, Sebastian Andrzej Siewior wrote:
-> Hi,
-> 
-> this is a follow up on
->          https://lore.kernel.org/ZwVOMgBMxrw7BU9A@jlelli-thinkpadt14gen4.remote.csb
-> 
-> and adds support for task local futex_hash_bucket.
-> 
-> This is the local hash map series based on v9 extended with PeterZ
-> FUTEX2_NUMA and FUTEX2_MPOL plus a few fixes on top.
-> 
-> The complete tree is at
-> 	https://git.kernel.org/pub/scm/linux/kernel/git/bigeasy/staging.git/log/?h=futex_local_v10
-> 	https://git.kernel.org/pub/scm/linux/kernel/git/bigeasy/staging.git futex_local_v10
-> 
-
-Hi Sebastian. Thanks for working on this (along with bringing back FUTEX2 NUMA) which
-might help large systems with many futexes.
-
-I tried this in one of our systems(Single NUMA, 80 CPUs), I see significant reduction in futex/hash.
-Maybe i am missing some config or doing something stupid w.r.t to benchmarking.
-I am trying to understand this stuff.
-
-I ran "perf bench futex all" as is. No change has been made to perf.
-=========================================
-Without patch: at 6575d1b4a6ef3336608127c704b612bc5e7b0fdc
-# Running futex/hash benchmark...
-Run summary [PID 45758]: 80 threads, each operating on 1024 [private] futexes for 10 secs.
-Averaged 1556023 operations/sec (+- 0.08%), total secs = 10   <<--- 1.5M
-
-=========================================
-With the Series: I had to make PR_FUTEX_HASH=78 since 77 is used for TIMERs.
-
-# Running futex/hash benchmark...
-Run summary [PID 8644]: 80 threads, each operating on 1024 [private] futexes for 10 secs.
-Averaged 150382 operations/sec (+- 0.42%), total secs = 10   <<-- 0.15M, close to 10x down.
-
-=========================================
-
-Did try a git bisect based on the futex/hash numbers. It narrowed it to this one.
-first bad commit: [5dc017a816766be47ffabe97b7e5f75919756e5c] futex: Allow automatic allocation of process wide futex hash.
-
-Is this expected given the complexity of hash function change?
+Best regards,
+Andreas Hindborg
 
 
-Also, is there a benchmark that could be run to evaluate FUTEX2_NUMA, I would like to
-try it on multi-NUMA system to see the benefit.
 
