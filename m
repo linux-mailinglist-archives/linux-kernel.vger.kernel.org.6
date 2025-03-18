@@ -1,100 +1,73 @@
-Return-Path: <linux-kernel+bounces-566252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566253-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF15DA6757B
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 14:46:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50359A6757F
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 14:46:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0BD9881FDB
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 13:44:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D022B3AE801
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 13:45:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F005D20D515;
-	Tue, 18 Mar 2025 13:44:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC0B820DD50;
+	Tue, 18 Mar 2025 13:45:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="FyFKpzo4";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="1yjJhnj9";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="FyFKpzo4";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="1yjJhnj9"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="TIykPaMS"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B298020D512
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 13:44:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAF5220DD51;
+	Tue, 18 Mar 2025 13:45:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742305462; cv=none; b=qdchs5TQ6PeNZIOcfKqeTnuGRYVbko8d5WXTEgjvHnJBZCdDDLeScIoyaV7wQtD2GXl2STraayxxybGQlzLuJMd4idc6wCToH8KsCxFTIWy5O0MKULMTBEGDdUXID9Q9kwh31k8fO+9pZgLnGPXHGz51/r46K9jfki12C0KGG00=
+	t=1742305517; cv=none; b=QJXLyUGGa9rpfz67vUwpUdLc6w9lNIgCFGpwGbI6UwvV+nVtaTV6dDjm+S7FRR+FZPB7jm423cT4afx5VLEtPqOpgrxRziG4boMsTlAJQb426+zKeyemUJDmj1l011qcgxWBQFNJ2gImFhAI2JbcuyBA5c5LN/KjRplT2tBSIzs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742305462; c=relaxed/simple;
-	bh=PDhSugmhXBSZ52jALcMjafAWtjZhtL8gSIEEafLBw34=;
+	s=arc-20240116; t=1742305517; c=relaxed/simple;
+	bh=Kz6FQ/HReAI51U2V9CzlGPsu8I8OwqeEBhYdpAoKzCc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CwhoECpm2mtFCFR0aI0elz3uxjmYOfAab2URbTGezUexKtuvlkMclhjPQQE8fQlyEbU9BgkQx3tA4vAqbiNnV1kF30lBvexhn1kGvXGKfnWBAEyHVaVDPEqAUkyTW8h/GWpqDlNxOmvhYq+1DmkQNJalaVtV3OWGTHg6yfbZHGM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=FyFKpzo4; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=1yjJhnj9; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=FyFKpzo4; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=1yjJhnj9; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id D8F1F1FCFA;
-	Tue, 18 Mar 2025 13:44:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1742305458; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Gx94z57EDJL61j391zhUGB+b5vNvyl4XRAtfqiFyack=;
-	b=FyFKpzo4GGf6wQCABIkQuuGZpZyDQDQktEi9VMIb4YWf4XVWN2ttf1BMlE6eLz37aIpQPN
-	PFlmEcBXPHxCmjauqUsRb/ju8IWpaGTemdf8kGND5rwkqc/GCj2GykruC8DBNYz9F1Qdu0
-	QjQhPHwoNZBC51ZesDlqyn2VSD0lQyU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1742305458;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Gx94z57EDJL61j391zhUGB+b5vNvyl4XRAtfqiFyack=;
-	b=1yjJhnj9hdu2la0F3CqnOYZC3Vbes2WEIAHS/cgw5U4bKzP1ZL3n96kexnp2M28apuas/7
-	PN073tFoCZQXDkCw==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1742305458; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Gx94z57EDJL61j391zhUGB+b5vNvyl4XRAtfqiFyack=;
-	b=FyFKpzo4GGf6wQCABIkQuuGZpZyDQDQktEi9VMIb4YWf4XVWN2ttf1BMlE6eLz37aIpQPN
-	PFlmEcBXPHxCmjauqUsRb/ju8IWpaGTemdf8kGND5rwkqc/GCj2GykruC8DBNYz9F1Qdu0
-	QjQhPHwoNZBC51ZesDlqyn2VSD0lQyU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1742305458;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Gx94z57EDJL61j391zhUGB+b5vNvyl4XRAtfqiFyack=;
-	b=1yjJhnj9hdu2la0F3CqnOYZC3Vbes2WEIAHS/cgw5U4bKzP1ZL3n96kexnp2M28apuas/7
-	PN073tFoCZQXDkCw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C99C2139D2;
-	Tue, 18 Mar 2025 13:44:18 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id KkalMLJ42WdydwAAD6G6ig
-	(envelope-from <dwagner@suse.de>); Tue, 18 Mar 2025 13:44:18 +0000
-Date: Tue, 18 Mar 2025 14:44:18 +0100
-From: Daniel Wagner <dwagner@suse.de>
-To: Hannes Reinecke <hare@suse.de>
-Cc: Daniel Wagner <wagi@kernel.org>, 
-	James Smart <james.smart@broadcom.com>, Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>, 
-	Chaitanya Kulkarni <kch@nvidia.com>, Keith Busch <kbusch@kernel.org>, linux-nvme@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 05/18] nvmet-fcloop: track ref counts for nports
-Message-ID: <030b7827-5060-44bc-b5ee-b1833063b835@flourine.local>
-References: <20250318-nvmet-fcloop-v3-0-05fec0fc02f6@kernel.org>
- <20250318-nvmet-fcloop-v3-5-05fec0fc02f6@kernel.org>
- <181c5e4c-f25c-46aa-9be0-06e515f14543@suse.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=nm4gRkzwSC+llfAxCYfVL68+IhZABsNluiH8hn72ZWN6witEBJ1/DqS0uftDJsJC7AG5JX+veuH3Rvsn6UZIou6OmOWWIcnvijTBPRzJuixLjlk073zRuGPtQ3n9PXih3GhcF8FoRgVKhpHhOPiQRLBTNsryg+7sk7HljUdCCMk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=TIykPaMS; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=8/RzstvQ9BWwLvvMkrQEWveUn5iG+OyCk6DBs4Rad9Y=; b=TIykPaMSpNNvt2P5/a+iJhCdkH
+	ZDU27yEMxC6rC9OBHfa9CLX+uTPrfzKx89lqkaTMu80DUdw+cgNe/cB87UYF5GoGvpaKYXa51093A
+	Pv6f1eCCR9DEwQr3pZC1oPxCHdW0uc5m3ke99tB6mi7Q9b2N0Zt2MkC/rl1UySGgT60Q=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1tuXFE-006GSZ-5r; Tue, 18 Mar 2025 14:44:36 +0100
+Date: Tue, 18 Mar 2025 14:44:36 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Jacky Chou <jacky_chou@aspeedtech.com>
+Cc: "andrew+netdev@lunn.ch" <andrew+netdev@lunn.ch>,
+	"davem@davemloft.net" <davem@davemloft.net>,
+	"edumazet@google.com" <edumazet@google.com>,
+	"kuba@kernel.org" <kuba@kernel.org>,
+	"pabeni@redhat.com" <pabeni@redhat.com>,
+	"robh@kernel.org" <robh@kernel.org>,
+	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+	"conor+dt@kernel.org" <conor+dt@kernel.org>,
+	"joel@jms.id.au" <joel@jms.id.au>,
+	"andrew@codeconstruct.com.au" <andrew@codeconstruct.com.au>,
+	"ratbert@faraday-tech.com" <ratbert@faraday-tech.com>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
+	BMC-SW <BMC-SW@aspeedtech.com>
+Subject: Re: =?utf-8?B?5Zue6KaG?= =?utf-8?Q?=3A?= [net-next 4/4] net:
+ ftgmac100: add RGMII delay for AST2600
+Message-ID: <1a2dab82-ddb1-4c38-a576-abd1edd8d5e1@lunn.ch>
+References: <20250317025922.1526937-1-jacky_chou@aspeedtech.com>
+ <20250317025922.1526937-5-jacky_chou@aspeedtech.com>
+ <dc7296b2-e7aa-4cc3-9aa7-44e97ec50fc3@lunn.ch>
+ <SEYPR06MB513471FBFDEAFAA3308000699DDE2@SEYPR06MB5134.apcprd06.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -103,66 +76,61 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <181c5e4c-f25c-46aa-9be0-06e515f14543@suse.de>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	URIBL_BLOCKED(0.00)[imap1.dmz-prg2.suse.org:helo,flourine.local:mid];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	ARC_NA(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[flourine.local:mid,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Score: -4.30
-X-Spam-Flag: NO
+In-Reply-To: <SEYPR06MB513471FBFDEAFAA3308000699DDE2@SEYPR06MB5134.apcprd06.prod.outlook.com>
 
-On Tue, Mar 18, 2025 at 12:06:54PM +0100, Hannes Reinecke wrote:
-> On 3/18/25 11:39, Daniel Wagner wrote:
-> > A nport object is always used in association with targerport,
-> > remoteport, tport and rport objects. Add explicit references for any of
-> > the associated object. This ensures that nport is not removed too early
-> > on shutdown sequences.
+On Tue, Mar 18, 2025 at 10:46:58AM +0000, Jacky Chou wrote:
+> Hi Andrew,
+> 
+> Thank you for your reply.
+> 
+> > > +	u32 rgmii_tx_delay, rgmii_rx_delay;
+> > > +	u32 dly_reg, tx_dly_mask, rx_dly_mask;
+> > > +	int tx, rx;
+> > > +
+> > > +	netdev = platform_get_drvdata(pdev);
+> > > +	priv = netdev_priv(netdev);
+> > > +
+> > > +	tx = of_property_read_u32(np, "tx-internal-delay-ps", &rgmii_tx_delay);
+> > > +	rx = of_property_read_u32(np, "rx-internal-delay-ps",
+> > > +&rgmii_rx_delay);
 > > 
-> > Signed-off-by: Daniel Wagner <wagi@kernel.org>
-> > ---
-> >   drivers/nvme/target/fcloop.c | 106 +++++++++++++++++++++++++------------------
-> >   1 file changed, 63 insertions(+), 43 deletions(-)
+> > > +	if (!tx) {
 > > 
-> > diff --git a/drivers/nvme/target/fcloop.c b/drivers/nvme/target/fcloop.c
-> > index 245bfe08d91ec81f1979251e8c757a0d46fd09e9..69121a5f0f280936d1b720e9e994d6e5eb9186ff 100644
-> > --- a/drivers/nvme/target/fcloop.c
-> > +++ b/drivers/nvme/target/fcloop.c
-> > @@ -1054,8 +1054,15 @@ static void
-> >   fcloop_remoteport_delete(struct nvme_fc_remote_port *remoteport)
-> >   {
-> >   	struct fcloop_rport *rport = remoteport->private;
-> > +	unsigned long flags;
-> >   	flush_work(&rport->ls_work);
-> > +
-> > +	spin_lock_irqsave(&fcloop_lock, flags);
-> > +	rport->nport->rport = NULL;
-> > +	spin_unlock_irqrestore(&fcloop_lock, flags);
-> > +
-> > +	/* nport ref put: rport */
-> >   	fcloop_nport_put(rport->nport);
-> >   }
-> The comment is a bit odd; obviously fcloop_nport_put() puts the nport
-> reference for the rport.
-> Maybe just remove them?
+> > The documentation for of_property_read_u32() says:
+> > 
+> >  * Return: 0 on success, -EINVAL if the property does not exist,
+> >  * -ENODATA if property does not have a value, and -EOVERFLOW if the
+> >  * property data isn't large enough.
+> > 
+> > You need to handle EINVAL different to the other errors, which are real errors
+> > and should fail the probe.
+> > 
+> > The commit message, and probably the binding needs to document what
+> > happens when the properties are not in the DT blob. This needs to be part of
+> > the bigger picture of how you are going to sort out the mess with existing .dts
+> > files listing 'rgmii' when in fact they should be 'rgmii-id'.
+> 
+> Why can't the MAC add internal delay to RGMII? Is it necessary to add on PHY side?
 
-Sure, I left in it, to figure out which of the get/put pair up. This was
-not so clear during the various stages of this series. Now that there is
-a rport->nport and tport->nport is left, it's indeed a bit useles.
+The MAC could, but that is not the point. You need to explain how you
+are going to solve the mess you have in DT, why all aspeed boards have
+the wrong phy-mode. You need to fix that, and i will continue to NACK
+new boards until the correct rgmii-id value can be used to indicate
+there do not have extra long clock lines on the PCB.
+
+> > > +		/* Use tx-internal-delay-ps as index to configure tx delay
+> > > +		 * into scu register.
+> > > +		 */
+> > > +		if (rgmii_tx_delay > 64)
+> > > +			dev_warn(&pdev->dev, "Get invalid tx delay value");
+> > 
+> > Return EINVAL and fail the probe.
+> 
+> Agreed.
+> I just show warning here, because sometimes the RGMII delay value will configure at bootloader.
+
+That is a different issue. If there is a value in DT, it must be
+valid, fail the probe otherwise.
+
+	Andrew
 
