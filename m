@@ -1,81 +1,82 @@
-Return-Path: <linux-kernel+bounces-566390-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566391-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8339BA67736
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 16:05:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 863EEA67748
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 16:09:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B545D1755EF
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 15:05:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51FD43B1A2E
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 15:09:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 649BC20E6E6;
-	Tue, 18 Mar 2025 15:05:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D07720E706;
+	Tue, 18 Mar 2025 15:09:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bhB138d/"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OgaFYLO1"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4546081749
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 15:05:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55E3D20E328
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 15:09:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742310323; cv=none; b=Gu8KNWfG9KEpKCux+YP5hBe4G2unOPx5stvh9jq7NmDCQmA80OA6p4Su7r0RC9bjaLOh6S6RbdYhu4YavQBpiDQ4IESN1E3AKfJpd4703C3HU10WsatBSM/cv4P0CSiXIvJsX/t/Ph0nT4wiDiFR/KIqO1ZgZK72DrHbYgsHmZg=
+	t=1742310558; cv=none; b=YgX4pVT8xQOJgCryAMokcVQxUVJPNhNxifMPSyzr3wpAi19c9dB7BWasNOYEadoErefVFaUa/+6boD3nbnuEKl41yyeP1x3r/sIOrkBncOLGDPi6ISa4KlFC/isqBcRNXPMys90o1Lq5Py7vuI4TiADWqce4fwSOnC1RLG9qXBg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742310323; c=relaxed/simple;
-	bh=X1fIwXQ6nnTOxW8T62IeQHo4HyPTrgZeN4zniCvGBGE=;
+	s=arc-20240116; t=1742310558; c=relaxed/simple;
+	bh=s/H9HZSs6M0weh76yvA9lZ2ytdsjlwGeag8D2WC3Q1M=;
 	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=DEYxhNarKtl4aL3HqGTJze0h1qOmvpuxBr3nSLqkpl2Iej30ctuou2LoeQ7/fBoWfYmmif8IUrQnCyribX5Gz4qWBLFoxqUzi12X/2uRYYI5iFCYkB7Wvyv6adWW2K6DO4Turk1yE+g7WV6HhS88VA1pWEe2d53imffC0bWoKXc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bhB138d/; arc=none smtp.client-ip=209.85.128.41
+	 In-Reply-To:Content-Type; b=NqxgrrGNXs70VJJzfCKKMoaKsvvoujYxnObzuN6QyfIDHnp28VBIRysntYk0OJezvPgqVGeMwWcvQga1mxjepqDdiCHXsbe1CTLcV/oSxGtJNulF4wulSK29Y96gfZfSaNd4syI2Dw3eW2VEdeeXApfmINesHAepmQXYsSucAmQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OgaFYLO1; arc=none smtp.client-ip=209.85.221.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-43cf3192f3bso36740545e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 08:05:17 -0700 (PDT)
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-39104c1cbbdso3329292f8f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 08:09:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1742310316; x=1742915116; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1742310551; x=1742915351; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:references:cc:to:subject:reply-to:from:user-agent
          :mime-version:date:message-id:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=s7z3efMccsfKBdFpHk+eX1kiGNX1+yreBt4Fj6qD5jo=;
-        b=bhB138d/cj2BDeutQskCH79Y4tq8Tk0ILsimQ06e0/AswlX5r55xNZ1tYQj8FHEjOY
-         dZRowEBgTe6fvzPjChCPkcy7ccE/2DN6AerU80+kVa31BjYsyflbyxKKKZLPP2y4N5ib
-         61pQlEJMt12wxiS3v0I20sd8R7Vy5pcaph2xY/srLDsbcQt4bLlYBkh0had4u01B812e
-         iQIQyFn4zVWIxKfkXWiHnf+fMLkTdDBFu4GN9hBusUwrLF0f8aa6Q8D86oZmCE070UK/
-         /2esqp3fx6zBfvTyOa/cfsR6rcCfILS0a6tCosTSX7TvltqtyUDjZ5obBJL8l6C8QZID
-         WzPg==
+        bh=l9FvcL11IhRXEvcchOW8/VG/LDph+/nqjxi32WaTfiU=;
+        b=OgaFYLO1IZWCM485+lNPKrMVNp8mllz14Tcjo9Mp7awYnvu8FRI1TVkVKl+CfQKh/g
+         gMJ1qAvc0GDcN1SXkd1uBrUSfCjbwxhDJPvmbbhO0Q+2sG2XD73Kwp2Qpp5DJ1QjtgSY
+         NRmh4J/eNQG771DFqzvwWceNWlXeF7c+aPOwGwuQWkj9eHvqY6zK337KMgaBU4/dGNhK
+         KkVcE+2CVIs4vuLSSFtLdr+q4Y9939uUdwDjlH5apv4YYUgycFtK/rsZ6tFzYYpUCuDZ
+         iPrS1sCs3NbmuRwOvLQnj6Funqb7X0sLFFmp5Tp+xApDHFPnJWrQcZD8hT7L3aDrQb6q
+         ovbg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742310316; x=1742915116;
+        d=1e100.net; s=20230601; t=1742310551; x=1742915351;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:references:cc:to:subject:reply-to:from:user-agent
          :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=s7z3efMccsfKBdFpHk+eX1kiGNX1+yreBt4Fj6qD5jo=;
-        b=LKNxuNYljm328p9GZo1VgDLVTuuWEu/Z/JQ1bGoSmx6eOOtFOZsbMbt/gGi3Z+3e7l
-         ovrSMlwGnDhzdysuy1sN0IG0SDu4bYOhQS2Z0D4eYUbe+Phaok5RJAv9HgHqj9rfWcIP
-         V6WHwc3xFvTEQTerw1lkYvHfXbq0Y4PIpWsmfX6wn4M9V7Pok7pEyrKKsdtwnijTKn/h
-         D42+tKmNx1XyW020OmggwDDKbQxVJEWDWX3BBoAZnxP2XS5JuywXCD2lv/r2BGGkkeQZ
-         N5xYNENue2UTsVoSsV5y8hEQlY1T3E5TjmnFDJLpgDQ7LYdBtXIw7HKXjeAbd6hrMLzz
-         p7cw==
-X-Forwarded-Encrypted: i=1; AJvYcCXQpjKunGSlfz1PfCTtyuTeGCQWWk3blrQ0IJjTX46pPmTv2LkLRJ6hZrYxmoboSKM4Y9W71iX+VLU6Gbg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw6FUenSCRbKN5c9rx6t7fxYmN2AOgBadNq+xN3zdJnDdkohZM2
-	CuMDt4hbZ2lGU8ta74dutbHnus/uooyqn9ux1akbiWKBKAHzFSAhu7b91qBPWI4=
-X-Gm-Gg: ASbGncufxvjuqpyFcIegvizi+FriMiEsF4O5Pq0PyHDRv/bQP4MtwKWhm3BuOr0ec1p
-	clPxjFHs8/U6THaqHgTkGGJOld3SoxSG7wb9I0X8Olv1EfzsSD1u0CoMXKkG4ZpqLyw/8vnTAD0
-	fNLjihh5L3KSiXXqXHYIdFskEG3w9mZav54HmC1DMdE5MhfRUek+cZc4B766tTf1ZPXcub7/sJy
-	BT9Mtm73Uf80Zh5YJdveeV5jL9ll+m7HQmyhIwlYtFFLU42ksZgiexabTrBNtTcLULe1kDt+7eA
-	zlcxOd4P3RkpW2yRwqzArLwhQ/yVUCKOa5cEeoh2Uhe2cJkNMRN6267McpANSwhenqMZbq4gET5
-	MdAm4bQYKgybug6xFxVw+mA==
-X-Google-Smtp-Source: AGHT+IFvHjliDhhrMFfSHKDFTbiDpIfzsiyAIrlmrzEJuRyFcEuNWlnzrwIPGgDXN2d4wUB2n4VJZA==
-X-Received: by 2002:a05:600c:4587:b0:43c:eb63:415d with SMTP id 5b1f17b1804b1-43d3b9a4273mr24879565e9.14.1742310311971;
-        Tue, 18 Mar 2025 08:05:11 -0700 (PDT)
+        bh=l9FvcL11IhRXEvcchOW8/VG/LDph+/nqjxi32WaTfiU=;
+        b=ercTY77KLwSJLbpJX2DEfQs9MT3QlPRIGFYdrAjq9xAJVYASN9BCf3eCGEMrExv1dv
+         SSrmB5oNLOS3AqaOpVOmMVeVKits9E87v7PlSZPEi6HSjITd8i1GJGPHv8hAFBVv7ASD
+         pFRyPRvBYvSK8fHUvWb7BKCm2qyh3M1DPz2aHr7Km1FO3ng/aZoXIxlhNMu8s299fE1G
+         sPhi2A347W+AdFztcXo5VzT2Bp6A0hVYTImtEwMopp63rC06oB+DKVIYPv5QcZMl7pOB
+         grmYjEp7ehb9r5Alz+NnC0gBUO4X46AtxJiZmQFYLHjRmk7CdaoLQFtNdTZSP+AeniWl
+         wQhw==
+X-Forwarded-Encrypted: i=1; AJvYcCXcFMrpiypJ1ROuNGzfRzYETyW8j8T9S+cLB7u6I829iw+QwlmC0Zb006EUZSPx1dmfhRUuXYKGlUpO+Q8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy4dr/ZUWBkhj7fgqPoRzXtTSiCqCOIjJJfBxCJdG8RXzx5/bNs
+	9idtelv++FrfTUA+ISS1kzjl9WxSZ+USodaJAifjc3Ch4kb4uIyOGCfI0/hnXWT1LUqT8W1sqjp
+	R
+X-Gm-Gg: ASbGncv8PMZpgFk2fAqZqPKowGe5Bwsnzr53xB3znDocEUgFcg6hK5oQ2DJOJQf1XBI
+	Pyh/JghacG706xZnuB6maxPkpzK8brvrPKS3g/Bg3zY/D6y6hvtiw0DZD15VRTr/ZeDBWPdMXQL
+	6naRXxrdKANAteCs8JeMwj4Y/P2YmApVWT7fWxto3c0BGFxSfIG26MJBT9Lo09NDxsZ3aOC8TNt
+	6thkZUzLNM1ThhBKldk2XBKQfDEv8owfxxM2ffw1ENquNSRB5s+E89P63QV4vVNNCl7ChaqeUYS
+	Iwz1CrZVFvjbWQYc51wYrHJFjaYPJw3eiPWprSRPdDKRsnkfELEfmQSM/yx6FTkx5zMIc47BGRz
+	uzxcqTNnS/TXATagfD2lmbg==
+X-Google-Smtp-Source: AGHT+IHbtr+9S+oor3PLqFFIkT9ev1XX2FkdR7McQ0/Nli+raQ51d4FH0a0etvq/qd5v5iYmXtWD2A==
+X-Received: by 2002:a05:6000:4020:b0:391:31f2:b99a with SMTP id ffacd0b85a97d-3971d13607fmr18401484f8f.5.1742310551515;
+        Tue, 18 Mar 2025 08:09:11 -0700 (PDT)
 Received: from ?IPV6:2a01:e0a:3d9:2080:eac1:f2d4:84a8:c5ff? ([2a01:e0a:3d9:2080:eac1:f2d4:84a8:c5ff])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d3ae040f9sm18471835e9.0.2025.03.18.08.05.10
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-395cb7ebe3csm18709729f8f.99.2025.03.18.08.09.10
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 18 Mar 2025 08:05:11 -0700 (PDT)
-Message-ID: <89e743e5-7ff6-43fe-bd52-97f0ca6ab07e@linaro.org>
-Date: Tue, 18 Mar 2025 16:05:10 +0100
+        Tue, 18 Mar 2025 08:09:11 -0700 (PDT)
+Message-ID: <ab3639e0-61bb-46f0-9e54-f1bbd034b939@linaro.org>
+Date: Tue, 18 Mar 2025 16:09:10 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,17 +86,17 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 From: neil.armstrong@linaro.org
 Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH V2 1/6] phy: qcom-qmp-ufs: Rename qmp_ufs_enable and
- qmp_ufs_power_on
+Subject: Re: [PATCH V2 2/6] phy: qcom-qmp-ufs: Refactor phy_power_on and
+ phy_calibrate callbacks
 To: Nitin Rawat <quic_nitirawa@quicinc.com>, vkoul@kernel.org,
  kishon@kernel.org, manivannan.sadhasivam@linaro.org,
  James.Bottomley@HansenPartnership.com, martin.petersen@oracle.com,
  konrad.dybcio@oss.qualcomm.com
 Cc: quic_rdwivedi@quicinc.com, linux-arm-msm@vger.kernel.org,
  linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-scsi@vger.kernel.org
+ linux-scsi@vger.kernel.org, Can Guo <quic_cang@quicinc.com>
 References: <20250318144944.19749-1-quic_nitirawa@quicinc.com>
- <20250318144944.19749-2-quic_nitirawa@quicinc.com>
+ <20250318144944.19749-3-quic_nitirawa@quicinc.com>
 Content-Language: en-US, fr
 Autocrypt: addr=neil.armstrong@linaro.org; keydata=
  xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
@@ -122,66 +123,91 @@ Autocrypt: addr=neil.armstrong@linaro.org; keydata=
  4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
  QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
 Organization: Linaro
-In-Reply-To: <20250318144944.19749-2-quic_nitirawa@quicinc.com>
+In-Reply-To: <20250318144944.19749-3-quic_nitirawa@quicinc.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 On 18/03/2025 15:49, Nitin Rawat wrote:
-> Rename qmp_ufs_enable to qmp_ufs_power_on and qmp_ufs_power_on to
-> qmp_ufs_phy_calibrate to better reflect functionality. Also
-> update function calls and structure assignments accordingly.
+> Commit 052553af6a31 ("ufs/phy: qcom: Refactor to use phy_init call")
+> puts enabling regulators & clks, calibrating UFS PHY, starting serdes
+> and polling PCS ready status into phy_power_on.
 > 
-> Co-developed-by: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>
-> Signed-off-by: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>
+> In Current code regulators enable, clks enable, calibrating UFS PHY,
+> start_serdes and polling PCS_ready_status are part of phy_power_on.
+> 
+> UFS PHY registers are retained after power collapse, meaning calibrating
+> UFS PHY, start_serdes and polling PCS_ready_status can be done only when
+> hba is powered_on, and not needed every time when phy_power_on is called
+> during resume. Hence keep the code which enables PHY's regulators & clks
+> in phy_power_on and move the rest steps into phy_calibrate function.
+> 
+> Refactor the code to retain PHY regulators & clks in phy_power_on and
+> move out rest of the code to new phy_calibrate function.
+> 
+> Co-developed-by: Can Guo <quic_cang@quicinc.com>
+> Signed-off-by: Can Guo <quic_cang@quicinc.com>
 > Signed-off-by: Nitin Rawat <quic_nitirawa@quicinc.com>
 > ---
->   drivers/phy/qualcomm/phy-qcom-qmp-ufs.c | 8 ++++----
->   1 file changed, 4 insertions(+), 4 deletions(-)
+>   drivers/phy/qualcomm/phy-qcom-qmp-ufs.c | 18 ++----------------
+>   1 file changed, 2 insertions(+), 16 deletions(-)
 > 
 > diff --git a/drivers/phy/qualcomm/phy-qcom-qmp-ufs.c b/drivers/phy/qualcomm/phy-qcom-qmp-ufs.c
-> index 45b3b792696e..bb836bc0f736 100644
+> index bb836bc0f736..0089ee80f852 100644
 > --- a/drivers/phy/qualcomm/phy-qcom-qmp-ufs.c
 > +++ b/drivers/phy/qualcomm/phy-qcom-qmp-ufs.c
-> @@ -1837,7 +1837,7 @@ static int qmp_ufs_init(struct phy *phy)
+> @@ -1796,7 +1796,7 @@ static int qmp_ufs_com_exit(struct qmp_ufs *qmp)
+>   	return 0;
+>   }
+> 
+> -static int qmp_ufs_init(struct phy *phy)
+> +static int qmp_ufs_power_on(struct phy *phy)
+>   {
+>   	struct qmp_ufs *qmp = phy_get_drvdata(phy);
+>   	const struct qmp_phy_cfg *cfg = qmp->cfg;
+> @@ -1898,21 +1898,6 @@ static int qmp_ufs_exit(struct phy *phy)
 >   	return 0;
 >   }
 > 
 > -static int qmp_ufs_power_on(struct phy *phy)
-> +static int qmp_ufs_phy_calibrate(struct phy *phy)
->   {
->   	struct qmp_ufs *qmp = phy_get_drvdata(phy);
->   	const struct qmp_phy_cfg *cfg = qmp->cfg;
-> @@ -1898,7 +1898,7 @@ static int qmp_ufs_exit(struct phy *phy)
->   	return 0;
->   }
-> 
-> -static int qmp_ufs_enable(struct phy *phy)
-> +static int qmp_ufs_power_on(struct phy *phy)
+> -{
+> -	int ret;
+> -
+> -	ret = qmp_ufs_init(phy);
+> -	if (ret)
+> -		return ret;
+> -
+> -	ret = qmp_ufs_phy_calibrate(phy);
+> -	if (ret)
+> -		qmp_ufs_exit(phy);
+> -
+> -	return ret;
+> -}
+> -
+>   static int qmp_ufs_disable(struct phy *phy)
 >   {
 >   	int ret;
-> 
-> @@ -1906,7 +1906,7 @@ static int qmp_ufs_enable(struct phy *phy)
->   	if (ret)
->   		return ret;
-> 
-> -	ret = qmp_ufs_power_on(phy);
-> +	ret = qmp_ufs_phy_calibrate(phy);
->   	if (ret)
->   		qmp_ufs_exit(phy);
-> 
-> @@ -1940,7 +1940,7 @@ static int qmp_ufs_set_mode(struct phy *phy, enum phy_mode mode, int submode)
->   }
-> 
+> @@ -1942,6 +1927,7 @@ static int qmp_ufs_set_mode(struct phy *phy, enum phy_mode mode, int submode)
 >   static const struct phy_ops qcom_qmp_ufs_phy_ops = {
-> -	.power_on	= qmp_ufs_enable,
-> +	.power_on	= qmp_ufs_power_on,
+>   	.power_on	= qmp_ufs_power_on,
 >   	.power_off	= qmp_ufs_disable,
+> +	.calibrate	= qmp_ufs_phy_calibrate,
+
+Ok so this will break the UFS until patch 5 is applied,
+breaking bisectability.
+
+Make sure UFS host driver calls calibrate first, and then
+do the refactor in the PHY driver.
+
+And either all would go in a single tree or either PHY
+or SCSI maintainer would need to provide an immutable
+branch for the final merge.
+
 >   	.set_mode	= qmp_ufs_set_mode,
 >   	.owner		= THIS_MODULE,
+>   };
 > --
 > 2.48.1
 > 
 > 
 
-Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
 
