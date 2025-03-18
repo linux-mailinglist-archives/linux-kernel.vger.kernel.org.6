@@ -1,117 +1,311 @@
-Return-Path: <linux-kernel+bounces-566120-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566121-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05018A67376
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 13:06:20 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46A16A67375
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 13:06:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 563CF42301E
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 12:04:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F18C188A3E4
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 12:06:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 229FE20B7E7;
-	Tue, 18 Mar 2025 12:04:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0ED0820AF98;
+	Tue, 18 Mar 2025 12:06:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="xAfzF9yx"
-Received: from mail-il1-f170.google.com (mail-il1-f170.google.com [209.85.166.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nbFbj6Bc"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 061EE2080E3
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 12:04:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B02D202F8E
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 12:06:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742299463; cv=none; b=Fl/qd8NmKK/5IvTXRv9IXCnwtAYQw11LCHhJ4xIyMarPID7jbBdf3PShQ62raamtpzam3Wgq7sb1AmR6pnLktq4GKPj4C73A61zyGzmHw02GImcGKbkTAOA/U+Qg4KAQ49B7W/kwPUdMoYdLdhhfNQQwfDglwcWQ9zvGTTgSrW4=
+	t=1742299571; cv=none; b=EktKzWi56wvk4Pfn2NtkV52Pq+oBvetkh3dvhPFQvsLqLHr3tHncrp/0OM4f80Pj23TpyhgU4E2pGnw7I09ogAgLm+8SUr05FLpENZSKaGXdaNKLvVqalXkKQsqSseXsZh3auNKfnstedR7rxJXtARluzvP1NwEKshJnNgmO6HI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742299463; c=relaxed/simple;
-	bh=Q4mZtFR/Tt7/i4AsUspqof7CvawdukYJTvPRyJptRhg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XxVfP5J6OsWcjfEOCf2LoDtw7f1epucxawwKlctL51/N34QK3kW+MoNsIezO4ohdj7OV2FiRiZ//PHrL+lgf0FV5kBqDL478KN1wgcOz6PMJxnB5uH89/uRwqkkWmcMfrbfvyeVrURYbd78RDBt9CSXgybsdeXULKE8S+zXxWeI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=xAfzF9yx; arc=none smtp.client-ip=209.85.166.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=riscstar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
-Received: by mail-il1-f170.google.com with SMTP id e9e14a558f8ab-3ce87d31480so30133465ab.2
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 05:04:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1742299461; x=1742904261; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=8CJnOafkcvrR/l5VXbCtNpeHL6EGqqxqILSUHXldXfI=;
-        b=xAfzF9yxDV/Yjhk23XMpBGHkYWyY2FZsfUjrpefD3isTK3ZQeMNscwqXLohnTg243w
-         QKQ+I3hSNVrz6rnmM5xivHBHVCCxEyOgdJ3ETw0sF2EgYbrP0tZMX9ya0VMdEvbxS8gz
-         B9dv0jbRcsaU4qIUtX3SN8/T9RXnpwWBBaGEj93EyU0HINi7fDlU8I766KfDMIuf/l9R
-         DdVcrgaPZkmcxCBFHaE9d0JBiII7jd+X9pXATyxf9qN28byGFLqOJ7AuxBGH1p6hFmiq
-         bXTjOUM+pNtb6uUsRJ4oBu0Dw9NpCqLUjF2z3eXANwl/8idOKRjn9cMYKsKcBssvPCIu
-         HOxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742299461; x=1742904261;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8CJnOafkcvrR/l5VXbCtNpeHL6EGqqxqILSUHXldXfI=;
-        b=Y9mkX0L9ZjNiH9yKsmBDl11KsbCEoxelzVdvkq8xPCDpLn4H/OobGVTkOVaUuUtAvk
-         s8o57yt0MWwJuvnEEjS8FqTY4C+GzaMtFyWBP+B0yFq4UPEmAJ6AcN7nriFW8X2i9MBU
-         mDWNhyjMU4ZN4j5aeIm3UMTnB2doyWlDVuJYG0+AfzWilejSTrrwz1qdyZx5pQLPWsZ4
-         FFV5CG8vF0iMrjP0TRTDlZlILaiB9JVtk0FyWzikWbR0dS6FNz9MBGosxT/ovSidZpCH
-         d7P7CiPa3j3NC3NB81zTynp23EDO+esxphPTq2Bgcwv/4a+bc6j1VYZO3N2BtVY1zK1Y
-         10Gw==
-X-Forwarded-Encrypted: i=1; AJvYcCXig/A1QUZSljJJiNqFwUhyVkjWVHD3bbYWPBkfLIto5hfJEqKTJNx3iyh4x9QgF7yMYf2ei2rFVejL3zA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyKm9VDiArBPdgSLAUgP8nZVPWOQoM3NcRbrQ5yN2VX6mo2SY+H
-	hlSMAFVrvUY1MI6rVq6pfO3vSob+N5kRElL/+6Nhch7nvzVdy2a5VwHF0PcE0zE=
-X-Gm-Gg: ASbGncsrinewCoy5ykYA8it2lK5lgHS9+QBT/DwQyKcMS/eDu81nHbDGvavISEzGYnc
-	MW1/aUBOkvSnb2W35pPRM6A2H9SN1emZvMyBSPFc5bju0RWvf463Khny4JQ+i+DGVo0Uf1jidSR
-	fNEO3Hz+SkTpmNxDIFrbuvmeefm+7rCxu/R98kQrfMMUD601xIi/lsLAsjaMt2jGELWCUxn9mnw
-	ZNYwITS+mNEdLh9nU95MrIZlKZYzScgX/P8fwnCFuRLzlz7jeBTHP3ODplwLuN8eREG0BgeiR7x
-	3ocEGAARDGv5AdGr+TT8+8kZfPg9W14d9gF4F7m8uUgaVUAZR0/zxQ/B6b6dq7nTlcJtTO7DfpN
-	XkMBIpAGH
-X-Google-Smtp-Source: AGHT+IFS/pxfjNPDqJhNcLq/lECG72AhDNrlffrBV2L3kxYV1244Sdx32ia+HQiIA8St61CQNBlH4A==
-X-Received: by 2002:a05:6e02:b46:b0:3d3:dfc2:912c with SMTP id e9e14a558f8ab-3d483a75837mr164324675ab.17.1742299460874;
-        Tue, 18 Mar 2025 05:04:20 -0700 (PDT)
-Received: from [172.22.22.28] (c-73-228-159-35.hsd1.mn.comcast.net. [73.228.159.35])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3d47a6683e1sm31287795ab.19.2025.03.18.05.04.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 18 Mar 2025 05:04:20 -0700 (PDT)
-Message-ID: <a7862a8b-4d81-4b1b-90d9-3cedde0699a5@riscstar.com>
-Date: Tue, 18 Mar 2025 07:04:19 -0500
+	s=arc-20240116; t=1742299571; c=relaxed/simple;
+	bh=VfPwRuGYVN525gojjUjFNEEOjX4llgFlWxeMzGA/EYc=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=rocfXzRtQxkTzMMhFvK7PdMpRv400mVR+cbU+NZ0Gu2+jbvqs2cH9rishkXWiSZKMFbP6IWt0PheZMtCJVvS7kW9M+H76VcBnNSlW8YD/33wuH+jWy/HDqOfE1PBRcTfj4dSMzeZkcINs3y3UOTlnPaVEKziQf4QDmxyfLuE5Sg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nbFbj6Bc; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742299570; x=1773835570;
+  h=date:from:to:cc:subject:message-id;
+  bh=VfPwRuGYVN525gojjUjFNEEOjX4llgFlWxeMzGA/EYc=;
+  b=nbFbj6BcinTrBzfuCbNV4BMFjiWczQd+ndhg5VnkQ+/5+MmMHq5OuMu0
+   yitVRzsas9HNhcALrIsYz9hu4S37I4bzdyK07cB6T3YJCkuq1XUQ2u/+Y
+   hOjD/7s82kpC+d4WWE+spXlF3r+SEh/b2g0+zqm764xgfZ0a5KF9xwTod
+   FEXiVakWI5e/gT0biOPPtp8HY9PiHWsh+S3bGy3TarII08zQmGzjfwpnF
+   IfuplW4/iS9W6JnjmWzjkzrzcWLrkxxrbFS5Mc2plAlCh4Q7EdBOhv+yp
+   DW+j3T7AcpKlaz01XV8w8qcomcOgCC459KKwm9BNM5FJBZw9AGpg7AHab
+   Q==;
+X-CSE-ConnectionGUID: TtPQ1/ksSWGYQ4x4+1eRmA==
+X-CSE-MsgGUID: XYF0ZpGISCal+OuIuDznDw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11376"; a="54428021"
+X-IronPort-AV: E=Sophos;i="6.14,256,1736841600"; 
+   d="scan'208";a="54428021"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2025 05:06:09 -0700
+X-CSE-ConnectionGUID: eTReKuCSRY+HUZl+pBxuug==
+X-CSE-MsgGUID: ZgxgERJaS2iUd6+/MSG+7g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,256,1736841600"; 
+   d="scan'208";a="121971994"
+Received: from lkp-server02.sh.intel.com (HELO a4747d147074) ([10.239.97.151])
+  by orviesa009.jf.intel.com with ESMTP; 18 Mar 2025 05:06:08 -0700
+Received: from kbuild by a4747d147074 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tuVht-000DjJ-0h;
+	Tue, 18 Mar 2025 12:06:05 +0000
+Date: Tue, 18 Mar 2025 20:05:46 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:objtool/core] BUILD REGRESSION
+ 73070466ed3b5e4620e03c159ee12a570b171d08
+Message-ID: <202503182025.DlkuWWdm-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 2/2] i2c: spacemit: add support for SpacemiT K1 SoC
-To: Troy Mitchell <troymitchell988@gmail.com>, Alex Elder <elder@ieee.org>,
- Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Yixun Lan <dlan@gentoo.org>
-Cc: linux-riscv@lists.infradead.org, linux-i2c@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- spacemit@lists.linux.dev
-References: <20250316-k1-i2c-master-v7-0-f2d5c43e2f40@gmail.com>
- <20250316-k1-i2c-master-v7-2-f2d5c43e2f40@gmail.com>
- <401059d0-6b2c-4c40-8c4d-51749dca27f3@ieee.org>
- <c7dc26a0-7cbc-4909-b2ac-582d108fc5e7@gmail.com>
-Content-Language: en-US
-From: Alex Elder <elder@riscstar.com>
-In-Reply-To: <c7dc26a0-7cbc-4909-b2ac-582d108fc5e7@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
 
-On 3/18/25 12:44 AM, Troy Mitchell wrote:
->> I'll leave it up to the maintainer to decide whether these
->> comments can just be ignored--my Reviewed-by is fine, even
->> if you don't change these.
->>
->>                      -Alex
-> I know it's right what you said.
-> But I don't know if it's worth to send v8?
-> Maybe I can fix it when I add FIFO function?
-> If I'm wrong, let me know.
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git objtool/core
+branch HEAD: 73070466ed3b5e4620e03c159ee12a570b171d08  objtool: Use O_CREAT with explicit mode mask
 
-Unless the maintainer wants you do do v8, please just
-address these suggestions later.  Thank you.
+Error/Warning (recently discovered and may have been fixed):
 
-					-Alex
+    https://lore.kernel.org/oe-kbuild-all/202503181736.zkZUBv4N-lkp@intel.com
+
+    arch/x86/mm/fault.o: warning: objtool: do_user_addr_fault+0x1e1: skipping duplicate warning(s)
+
+Error/Warning ids grouped by kconfigs:
+
+recent_errors
+`-- x86_64-randconfig-074-20250318
+    `-- arch-x86-mm-fault.o:warning:objtool:do_user_addr_fault:skipping-duplicate-warning(s)
+
+elapsed time: 1448m
+
+configs tested: 210
+configs skipped: 4
+
+tested configs:
+alpha                             allnoconfig    gcc-14.2.0
+alpha                            allyesconfig    gcc-14.2.0
+arc                              allmodconfig    clang-19
+arc                              allmodconfig    gcc-13.2.0
+arc                               allnoconfig    gcc-13.3.0
+arc                               allnoconfig    gcc-14.2.0
+arc                              allyesconfig    clang-19
+arc                              allyesconfig    gcc-13.2.0
+arc                   randconfig-001-20250317    gcc-13.2.0
+arc                   randconfig-002-20250317    gcc-13.2.0
+arm                              allmodconfig    clang-19
+arm                              allmodconfig    gcc-14.2.0
+arm                               allnoconfig    clang-21
+arm                               allnoconfig    gcc-14.2.0
+arm                              allyesconfig    clang-19
+arm                              allyesconfig    gcc-14.2.0
+arm                      integrator_defconfig    gcc-14.2.0
+arm                      jornada720_defconfig    clang-21
+arm                          pxa3xx_defconfig    gcc-14.2.0
+arm                   randconfig-001-20250317    gcc-14.2.0
+arm                   randconfig-002-20250317    gcc-14.2.0
+arm                   randconfig-003-20250317    gcc-14.2.0
+arm                   randconfig-004-20250317    clang-21
+arm                         socfpga_defconfig    gcc-14.2.0
+arm                        spear3xx_defconfig    clang-17
+arm64                            allmodconfig    clang-19
+arm64                             allnoconfig    gcc-14.2.0
+arm64                             allnoconfig    gcc-8.5.0
+arm64                 randconfig-001-20250317    gcc-14.2.0
+arm64                 randconfig-002-20250317    gcc-14.2.0
+arm64                 randconfig-003-20250317    gcc-14.2.0
+arm64                 randconfig-004-20250317    gcc-14.2.0
+csky                              allnoconfig    gcc-14.2.0
+csky                  randconfig-001-20250317    gcc-14.2.0
+csky                  randconfig-001-20250318    gcc-8.5.0
+csky                  randconfig-002-20250317    gcc-14.2.0
+csky                  randconfig-002-20250318    gcc-8.5.0
+hexagon                          allmodconfig    clang-17
+hexagon                           allnoconfig    clang-21
+hexagon                           allnoconfig    gcc-14.2.0
+hexagon                          allyesconfig    clang-21
+hexagon               randconfig-001-20250317    clang-21
+hexagon               randconfig-001-20250318    gcc-8.5.0
+hexagon               randconfig-002-20250317    clang-21
+hexagon               randconfig-002-20250318    gcc-8.5.0
+i386                             allmodconfig    clang-20
+i386                             allmodconfig    gcc-12
+i386                              allnoconfig    clang-20
+i386                              allnoconfig    gcc-12
+i386                             allyesconfig    clang-20
+i386        buildonly-randconfig-001-20250317    gcc-12
+i386        buildonly-randconfig-002-20250317    clang-20
+i386        buildonly-randconfig-003-20250317    clang-20
+i386        buildonly-randconfig-004-20250317    clang-20
+i386        buildonly-randconfig-005-20250317    gcc-12
+i386        buildonly-randconfig-006-20250317    clang-20
+i386                                defconfig    clang-20
+i386                  randconfig-001-20250318    clang-20
+i386                  randconfig-002-20250318    clang-20
+i386                  randconfig-003-20250318    clang-20
+i386                  randconfig-004-20250318    clang-20
+i386                  randconfig-005-20250318    clang-20
+i386                  randconfig-006-20250318    clang-20
+i386                  randconfig-007-20250318    clang-20
+i386                  randconfig-011-20250318    clang-20
+i386                  randconfig-012-20250318    clang-20
+i386                  randconfig-013-20250318    clang-20
+i386                  randconfig-014-20250318    clang-20
+i386                  randconfig-015-20250318    clang-20
+i386                  randconfig-016-20250318    clang-20
+i386                  randconfig-017-20250318    clang-20
+loongarch                        allmodconfig    gcc-14.2.0
+loongarch                         allnoconfig    gcc-14.2.0
+loongarch             randconfig-001-20250317    gcc-14.2.0
+loongarch             randconfig-001-20250318    gcc-8.5.0
+loongarch             randconfig-002-20250317    gcc-14.2.0
+loongarch             randconfig-002-20250318    gcc-8.5.0
+m68k                             allmodconfig    gcc-14.2.0
+m68k                              allnoconfig    gcc-11.5.0
+m68k                              allnoconfig    gcc-14.2.0
+m68k                             allyesconfig    gcc-14.2.0
+m68k                       m5475evb_defconfig    gcc-6.5.0
+m68k                        mvme147_defconfig    gcc-14.2.0
+m68k                            q40_defconfig    gcc-11.5.0
+m68k                           virt_defconfig    gcc-14.2.0
+microblaze                       allmodconfig    gcc-14.2.0
+microblaze                       allmodconfig    gcc-9.3.0
+microblaze                        allnoconfig    gcc-11.5.0
+microblaze                        allnoconfig    gcc-14.2.0
+microblaze                       allyesconfig    gcc-14.2.0
+mips                              allnoconfig    gcc-11.5.0
+mips                              allnoconfig    gcc-14.2.0
+mips                         rt305x_defconfig    clang-15
+nios2                             allnoconfig    gcc-11.5.0
+nios2                             allnoconfig    gcc-14.2.0
+nios2                 randconfig-001-20250317    gcc-14.2.0
+nios2                 randconfig-001-20250318    gcc-8.5.0
+nios2                 randconfig-002-20250317    gcc-14.2.0
+nios2                 randconfig-002-20250318    gcc-8.5.0
+openrisc                         alldefconfig    gcc-14.2.0
+openrisc                          allnoconfig    gcc-14.2.0
+openrisc                         allyesconfig    gcc-14.2.0
+openrisc                         allyesconfig    gcc-5.5.0
+openrisc                            defconfig    gcc-12
+openrisc                       virt_defconfig    gcc-14.2.0
+parisc                           allmodconfig    gcc-14.2.0
+parisc                           allmodconfig    gcc-5.5.0
+parisc                            allnoconfig    gcc-14.2.0
+parisc                           allyesconfig    gcc-14.2.0
+parisc                           allyesconfig    gcc-5.5.0
+parisc                              defconfig    gcc-12
+parisc                randconfig-001-20250317    gcc-14.2.0
+parisc                randconfig-001-20250318    gcc-8.5.0
+parisc                randconfig-002-20250317    gcc-14.2.0
+parisc                randconfig-002-20250318    gcc-8.5.0
+powerpc                    adder875_defconfig    gcc-13.3.0
+powerpc                          allmodconfig    gcc-10.5.0
+powerpc                          allmodconfig    gcc-5.5.0
+powerpc                           allnoconfig    gcc-14.2.0
+powerpc                          allyesconfig    clang-21
+powerpc                          allyesconfig    gcc-5.5.0
+powerpc                        cell_defconfig    gcc-14.2.0
+powerpc                      ppc44x_defconfig    gcc-14.2.0
+powerpc               randconfig-001-20250317    clang-15
+powerpc               randconfig-001-20250318    gcc-8.5.0
+powerpc               randconfig-002-20250317    clang-21
+powerpc               randconfig-002-20250318    gcc-8.5.0
+powerpc               randconfig-003-20250317    gcc-14.2.0
+powerpc               randconfig-003-20250318    gcc-8.5.0
+powerpc64             randconfig-001-20250317    gcc-14.2.0
+powerpc64             randconfig-001-20250318    gcc-8.5.0
+powerpc64             randconfig-002-20250317    gcc-14.2.0
+powerpc64             randconfig-002-20250318    gcc-8.5.0
+powerpc64             randconfig-003-20250317    clang-21
+powerpc64             randconfig-003-20250318    gcc-8.5.0
+riscv                            allmodconfig    clang-21
+riscv                            allmodconfig    gcc-5.5.0
+riscv                             allnoconfig    gcc-14.2.0
+riscv                            allyesconfig    clang-16
+riscv                            allyesconfig    gcc-5.5.0
+riscv                               defconfig    gcc-12
+riscv                 randconfig-001-20250317    gcc-14.2.0
+riscv                 randconfig-002-20250317    gcc-14.2.0
+s390                             allmodconfig    clang-18
+s390                             allmodconfig    gcc-14.2.0
+s390                              allnoconfig    clang-15
+s390                             allyesconfig    gcc-14.2.0
+s390                                defconfig    gcc-12
+s390                  randconfig-001-20250317    clang-15
+s390                  randconfig-002-20250317    clang-15
+sh                               allmodconfig    gcc-14.2.0
+sh                                allnoconfig    gcc-11.5.0
+sh                                allnoconfig    gcc-14.2.0
+sh                               allyesconfig    gcc-14.2.0
+sh                                  defconfig    gcc-12
+sh                         ecovec24_defconfig    gcc-14.2.0
+sh                          lboxre2_defconfig    gcc-14.2.0
+sh                    randconfig-001-20250317    gcc-14.2.0
+sh                    randconfig-002-20250317    gcc-14.2.0
+sh                      rts7751r2d1_defconfig    gcc-14.2.0
+sh                        sh7785lcr_defconfig    gcc-14.2.0
+sh                              ul2_defconfig    gcc-14.2.0
+sparc                            allmodconfig    gcc-14.2.0
+sparc                             allnoconfig    gcc-11.5.0
+sparc                             allnoconfig    gcc-14.2.0
+sparc                 randconfig-001-20250317    gcc-14.2.0
+sparc                 randconfig-002-20250317    gcc-14.2.0
+sparc64                             defconfig    gcc-12
+sparc64               randconfig-001-20250317    gcc-14.2.0
+sparc64               randconfig-002-20250317    gcc-14.2.0
+um                               allmodconfig    clang-19
+um                                allnoconfig    clang-21
+um                               allyesconfig    gcc-12
+um                                  defconfig    gcc-12
+um                             i386_defconfig    gcc-12
+um                    randconfig-001-20250317    gcc-12
+um                    randconfig-002-20250317    clang-21
+um                           x86_64_defconfig    gcc-12
+x86_64                            allnoconfig    clang-20
+x86_64                           allyesconfig    clang-20
+x86_64      buildonly-randconfig-001-20250317    gcc-12
+x86_64      buildonly-randconfig-002-20250317    clang-20
+x86_64      buildonly-randconfig-003-20250317    gcc-12
+x86_64      buildonly-randconfig-004-20250317    gcc-12
+x86_64      buildonly-randconfig-005-20250317    gcc-12
+x86_64      buildonly-randconfig-006-20250317    gcc-12
+x86_64                              defconfig    clang-20
+x86_64                              defconfig    gcc-11
+x86_64                                  kexec    clang-20
+x86_64                randconfig-001-20250318    gcc-12
+x86_64                randconfig-002-20250318    gcc-12
+x86_64                randconfig-003-20250318    gcc-12
+x86_64                randconfig-004-20250318    gcc-12
+x86_64                randconfig-005-20250318    gcc-12
+x86_64                randconfig-006-20250318    gcc-12
+x86_64                randconfig-007-20250318    gcc-12
+x86_64                randconfig-008-20250318    gcc-12
+x86_64                randconfig-071-20250318    gcc-12
+x86_64                randconfig-072-20250318    gcc-12
+x86_64                randconfig-073-20250318    gcc-12
+x86_64                randconfig-074-20250318    gcc-12
+x86_64                randconfig-075-20250318    gcc-12
+x86_64                randconfig-076-20250318    gcc-12
+x86_64                randconfig-077-20250318    gcc-12
+x86_64                randconfig-078-20250318    gcc-12
+x86_64                               rhel-9.4    clang-20
+xtensa                            allnoconfig    gcc-11.5.0
+xtensa                            allnoconfig    gcc-14.2.0
+xtensa                randconfig-001-20250317    gcc-14.2.0
+xtensa                randconfig-002-20250317    gcc-14.2.0
+
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
