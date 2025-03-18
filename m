@@ -1,156 +1,116 @@
-Return-Path: <linux-kernel+bounces-565519-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565520-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F2F9A66A0B
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 07:02:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D149EA66A0C
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 07:04:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F98219A084D
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 06:02:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7635C1892CDD
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 06:04:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 081151991CF;
-	Tue, 18 Mar 2025 06:02:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25EE41991CF;
+	Tue, 18 Mar 2025 06:04:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="xWMGQN/+"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NJFOX7+a"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4B3725569
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 06:02:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C425C25569
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 06:04:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742277739; cv=none; b=c3wdFzURUjVIi7hANoJsObWr72taZKM+izoontq+lS5RL8Vhw7HHL2ux4Qcht/mhp+YWP5Zutwc62Aac7br3bMlWDDszn3kBrKNNpgT7/81GR5FWgCa/ywnHqiC8YO1ia0Rfwx+Pxwfp4xm9dZadqFbIouwRpUwGfefIeehSRKM=
+	t=1742277847; cv=none; b=Lhn2WE2Anrm3VDQji/8jDjS/RuCsQD4fxJxUYrLsOzdbyE2cuTq2bBwWSrL+VhpGFJBB6fuYz98tA+gvyLdcnyUTJLBr4RPQMW/R2nTeSpVTFuh6MsT1uzRkL1vM9BqWJaGlxv0imPcX/r5QVDEXsPnatP4GXXTJBWQO2migRmU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742277739; c=relaxed/simple;
-	bh=QTwtoZ4DAHQ+3MbYCZBPNhnDNesv0UZoi+e9JpgOy4E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MzfIODQH/c8JuSsDsIZuG8knHvq7tclzsVH/+taD4+CCxSbxt9/Mx+dN+PDJjXDulybSuhjFZMa6v9kL1FN4a3mZE29xJgPrZybzgls8u4hGs2PUq32K3k9isXFIu0ZNRdTBztthJaOGZJJ/P3ql31zvqwo4Jk5TARbLIdb3sfw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=xWMGQN/+; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [192.168.7.202] ([71.202.166.45])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 52I61n6N879231
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Mon, 17 Mar 2025 23:01:50 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 52I61n6N879231
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025021701; t=1742277710;
-	bh=J0XNuiByNztZkYJnBVTtSd3+t8y5ED+ZoRg6F/VhOwE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=xWMGQN/+Sc85FnXgAqCcaP2kIB1e54c4HN/19T3NwZaBBGcbVPCBB6q95m5Lwducl
-	 0SQ+VGFCoDzew/HcMAX5ak1bUdmlk18bET0f8296XDzzNwlFSpxKdxka3TqYFmYZjP
-	 3bJj3OeAiWfmrsKZLglOCp3534j1sHiYwtanJ1zK7u9t2UVbwEppiIF2ehehoC2fpO
-	 BGNBiNtDlEJR1Dr0BFJFbTysB3MM8IkSGaxp1MftfxXRgxLYsj1j85Qh6YDWUXkclb
-	 dqU3DP6O2uP+R9honVlTyR1pb374ntZaNav1O2fWekTlLnxzbGHXimkw4hVYeFenHu
-	 3cXPKkBBRPYpw==
-Message-ID: <b7920c2c-1051-4674-994c-d1b681cf7988@zytor.com>
-Date: Mon, 17 Mar 2025 23:01:49 -0700
+	s=arc-20240116; t=1742277847; c=relaxed/simple;
+	bh=Nc42K92CVl+uiPt/6lr6gr0MEZMspPzn6kDQjUE4FxY=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=DMY/dTg/5QA8qJTTB+CfDWVPAfhv/vhlAgCSrxLQPHLg8argGmHvlH/MSEHc+b6wDkzY/r/NOlk9EbZVE+4xeRCMlimaaqQsOb0oj3nW4va9ZYqZzh6M/nYZGnv0OdgWHG6+B3FhwrbLVrLvsP2StJuDYsJoA6JngAz4qXJzP34=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NJFOX7+a; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-43cef035a3bso20354095e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 23:04:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1742277844; x=1742882644; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1g+Tb8k187ah12xwHjcwaeqOrObo+UBL2qoUGuE4BoY=;
+        b=NJFOX7+a6kwsvav9rPx7PmEl2oWWizKN2xinrAA8yrQgMySmU7EzTFTADcMRXXBizz
+         jBF5Wo8GyI1hUZYFt2f6k68kUUPLadNou9Z1uzu2jS6B4pcxXMsk16UyqOJcBSOTFjbT
+         SlUTAaDIn+TROjdhDABnf69huoQgjQCQIf5t2YQg9HgHz8j/POMNlvXoJ0jfmXKEcL59
+         JdE/ujA6lgEEu2rouKq3ej2EEPIRBJ6//kPSujz0agVH6L2Wn9AM2gVTM5Raope4I7cW
+         q7DEzsRZh+3bZFwLV/pn1/cJooIgcdA/HwePE13KNcao6dUArrOyc114r9IUJmUGtLXN
+         Yz3Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742277844; x=1742882644;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1g+Tb8k187ah12xwHjcwaeqOrObo+UBL2qoUGuE4BoY=;
+        b=NM/VGdD4LZUkFM6kxqR89ox47GkryfM/66C1gV7ORWi8YuP2Xv4WPrjRPZtqL9HrPR
+         zY79c2EZhcSDjS+sSTMeEmjsae/Ge+WW1Kff2IBYE3/zwL9UCMMf9ixsdKbHVhj/7L3N
+         G+hxmIpsAKHY47WMTpQkCGMqGYM8+ZjQCxgdm5Hx9dfinw8hRFf0kY0OoKYavPRT2BOH
+         4RcTRWNWFlRjY4UucLLjLGjMy2RU3jjE0PaWD3+Y/AvV1idx6drbEot1Aqet5kI2c0jB
+         yFHZ5xChAkXj+ZquFM+B/Xk63nWdc6OUFuaUUCxWTizN4e/hLECY6bWXy4I5tY6GMiNS
+         VpJg==
+X-Forwarded-Encrypted: i=1; AJvYcCWe2LOPbs3b/KzqhGGB/a7IvI8jArNFRF+fLlvPbKMybmc1VvY1UoI4y0iNg3+n+5iMzdzZ/ABheV6Uk9E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwoFWkewRVwewKILOjBJNNRj7lnS8w7W3giQq2isxersFQy1dHL
+	7ppuPCNnK/t2VtuU/z+EXMWg+3rCqKPBM+EySTDIyeVtLlH9e0oZO4uOBR2Vw+0=
+X-Gm-Gg: ASbGnctXcpweTkfy0UTOYY+AXoPTUJVw1zjPUN2bHBnN6LegPZ0EJJ7blcXDqgChIo5
+	TIa2Hu8W3OXPGxquh4lbivq9WGDYt4DwI1vaAsIs1fFh92pJc1f7yECPH7HAhoGZYxstVTuwP/G
+	rCNShI3aSdlX8VA09MgplV6lApftvvEeY44BRUqLJjcT64oN6TL0PyKp4r51nMmyoLTYQkjanip
+	gMbD4RKQ2+Vwku38iXPISABWHwB/opX1ClaCVPmnEX2wSv+eB2qXE6e/4ALslTAuz83j94ZAjhr
+	q/U1Tf0igT7nIsKn3H+tiHpeXlkuqL7bEwVnA2Ptetxdlasqow==
+X-Google-Smtp-Source: AGHT+IFbyTkPinde7wLwd/W58jzF64zIuyDfczPKLei8Yh8MaGxhX+owDIhdDBV/gPygD7ceQtHm6A==
+X-Received: by 2002:a05:600c:3d0d:b0:43c:f689:dd with SMTP id 5b1f17b1804b1-43d3b9ce0b5mr7045515e9.19.1742277844004;
+        Mon, 17 Mar 2025 23:04:04 -0700 (PDT)
+Received: from 1.. ([79.115.63.206])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d1fe524ccsm125273685e9.0.2025.03.17.23.04.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Mar 2025 23:04:03 -0700 (PDT)
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+To: Pratyush Yadav <pratyush@kernel.org>,
+	Michael Walle <mwalle@kernel.org>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Tudor Ambarus <tudor.ambarus@linaro.org>
+Cc: linux-mtd@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: (subset)Re: [PATCH 0/3] mtd: spi-nor: headers cleanup
+Date: Tue, 18 Mar 2025 08:04:00 +0200
+Message-Id: <174227766032.7108.15802730859556045790.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250307-spi-nor-headers-cleanup-v1-0-c186a9511c1e@linaro.org>
+References: <20250307-spi-nor-headers-cleanup-v1-0-c186a9511c1e@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/5] x86/cpuid: Use u32 in instead of uint32_t in
- <asm/cpuid/api.h>
-To: Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org
-Cc: Juergen Gross <jgross@suse.com>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        "Ahmed S . Darwish" <darwi@linutronix.de>,
-        Andrew Cooper <andrew.cooper3@citrix.com>,
-        "H . Peter Anvin"
- <hpa@zytor.com>,
-        John Ogness <john.ogness@linutronix.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>, Borislav Petkov <bp@alien8.de>,
-        Thomas Gleixner <tglx@linutronix.de>
-References: <20250317221824.3738853-1-mingo@kernel.org>
- <20250317221824.3738853-6-mingo@kernel.org>
-Content-Language: en-US
-From: Xin Li <xin@zytor.com>
-Autocrypt: addr=xin@zytor.com; keydata=
- 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
- l75w1xInsg==
-In-Reply-To: <20250317221824.3738853-6-mingo@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=413; i=tudor.ambarus@linaro.org; h=from:subject:message-id; bh=HlLLQLsByKXcavvJyx6pbP9SOdDO77wVIVQKDq1JG6k=; b=owEBbQGS/pANAwAKAUtVT0eljRTpAcsmYgBn2QzOhZNmhrPPIrcdkjB3ZDzjBThH0aBV4xdXY /hb0QvuR1GJATMEAAEKAB0WIQQdQirKzw7IbV4d/t9LVU9HpY0U6QUCZ9kMzgAKCRBLVU9HpY0U 6WZPB/oCcTa3wPdNyytdQNwshMnMrDCzbeAOAtm7PB8EISA2agkRxXnNwY4qU+7vXE5NtZh4BXm fsKRFoD62qYVgru50oUR0q9Zm1IWNH1kreBT4ZAgucTcPRADoXSqGUTklp/zBz8uaVcibBchBtE 3Tdm5JW8yKTV9p5lUOQ/fcbE9K/gad2JFjDzu/RrxiLEhS0emU6AIMjIDRuM64S01QkWmmHnV84 +/H6+k9Ykm9bL9QGpx+moQMWfSvAhIwZE6rmtPBjAIi/66s52YWTIA4ReyhGhPrEHYOU3/0NToD zOb98mQG99W9vFWA+kpnrURNjB/rZsgUP20zAphSAOAd3R/4
+X-Developer-Key: i=tudor.ambarus@linaro.org; a=openpgp; fpr=280B06FD4CAAD2980C46DDDF4DB1B079AD29CF3D
+Content-Transfer-Encoding: 8bit
 
-On 3/17/2025 3:18 PM, Ingo Molnar wrote:
-> Use u32 instead of uint32_t in hypervisor_cpuid_base().
-> 
-> Yes, I realize uint32_t is used in Xen code et al, but this is
-> a core x86 architecture header and we should standardize on the
 
-no "we", right?
+On Fri, 07 Mar 2025 09:09:04 +0200, Tudor Ambarus wrote:
+> A bunch of header cleanups, no dependencies.
+> 
+> 
 
-> type that is being used overwhelmingly in related x86 architecture
-> code.
-> 
-> The two types are the same so there should be no build warnings.
-> 
-> Signed-off-by: Ingo Molnar <mingo@kernel.org>
-> Cc: Juergen Gross <jgross@suse.com>
-> Cc: Stefano Stabellini <sstabellini@kernel.org>
-> Cc: Ahmed S. Darwish <darwi@linutronix.de>
-> Cc: Andrew Cooper <andrew.cooper3@citrix.com>
-> Cc: "H. Peter Anvin" <hpa@zytor.com>
-> Cc: John Ogness <john.ogness@linutronix.de>
-> Cc: x86-cpuid@lists.linux.dev
-> Link: https://lore.kernel.org/r/20250317164745.4754-3-darwi@linutronix.de
-> ---
->   arch/x86/include/asm/cpuid/api.h | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/x86/include/asm/cpuid/api.h b/arch/x86/include/asm/cpuid/api.h
-> index 356db1894588..9c180c9cc58e 100644
-> --- a/arch/x86/include/asm/cpuid/api.h
-> +++ b/arch/x86/include/asm/cpuid/api.h
-> @@ -187,9 +187,9 @@ static __always_inline bool cpuid_function_is_indexed(u32 function)
->   #define for_each_possible_hypervisor_cpuid_base(function) \
->   	for (function = 0x40000000; function < 0x40010000; function += 0x100)
->   
-> -static inline uint32_t hypervisor_cpuid_base(const char *sig, uint32_t leaves)
-> +static inline u32 hypervisor_cpuid_base(const char *sig, u32 leaves)
->   {
-> -	uint32_t base, eax, signature[3];
-> +	u32 base, eax, signature[3];
->   
->   	for_each_possible_hypervisor_cpuid_base(base) {
->   		cpuid(base, &eax, &signature[0], &signature[1], &signature[2]);
+Subset applied, thanks!
 
+[1/3] mtd: spi-nor: explicitly include <linux/of.h>
+      https://git.kernel.org/mtd/c/fafa240a1798
+[3/3] mtd: spi-nor: drop unused <linux/of_platform.h>
+      https://git.kernel.org/mtd/c/eec373688d91
+
+Best regards,
+-- 
+Tudor Ambarus <tudor.ambarus@linaro.org>
 
