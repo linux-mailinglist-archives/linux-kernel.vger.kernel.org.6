@@ -1,277 +1,143 @@
-Return-Path: <linux-kernel+bounces-566845-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566848-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B93DA67D47
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 20:46:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71161A67D4E
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 20:48:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F61B189E870
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 19:46:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48CA0880AFE
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 19:48:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D12020E6F9;
-	Tue, 18 Mar 2025 19:46:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A298321146F;
+	Tue, 18 Mar 2025 19:48:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hKxEFzI4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=pereznus.es header.i=@pereznus.es header.b="PrLDBle+"
+Received: from p00-icloudmta-asmtp-us-central-1k-60-percent-4.p00-icloudmta-asmtp-vip.icloud-mail-production.svc.kube.us-central-1k.k8s.cloud.apple.com (p-east1-cluster7-host2-snip4-10.eps.apple.com [57.103.88.23])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 830E51A9B52;
-	Tue, 18 Mar 2025 19:46:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ABCF1E1E02
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 19:48:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=57.103.88.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742327177; cv=none; b=phWtkYOsCG4hha7syOk3d8yIj0Dtjj/EsVNTkE0W5zSx2OoiM2qfwJ3+wdPiPATTeB3xcIPZllZ5Kv5kpTI+E+GVJXlVycRpf0bSIyCXElBBcQI4pOF8wyumrmPkxYkEeqP7/fZhSvcZvtY9Fh8+oDf/JnQ2iNiA3F/ww8sJU0Q=
+	t=1742327301; cv=none; b=TRSAgmh5TaD21Vqp4P9Aw/lOuTmSf2OuyQOKWwWXmPiAIGQGr81qtnbDAoJBXkgubfnl09ZbI22AbW1+twXBCBajlnwk27O1tc+nIoDPxQtibNfSBIZ4BPD400Cv2qJ7HsCIbnNSMa5BQ13haF3RLLz1Kz/fUFiTc6i8LImFWOc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742327177; c=relaxed/simple;
-	bh=lEKbj7qrSRjeNGVY4SRKByN692s3IiIjiIa6ElYv0SQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QzVXHHMuyr6x9KN6p0348KnpujCo5pNd7DPBq+GZCt5SYpyD6pbIqDu6TkXETs9gWW4D8AVs/RtvlXqkOQ1y5Y0IrFWtkKm6Gd7C3ahQikZqBKHrSee0/Kbi9WtzBe1hIppMq5t6J9QdxUI8t54adk0gUsR0EHwwmEwA9axTrxI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hKxEFzI4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1886FC4CEDD;
-	Tue, 18 Mar 2025 19:46:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742327175;
-	bh=lEKbj7qrSRjeNGVY4SRKByN692s3IiIjiIa6ElYv0SQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hKxEFzI4269RyrslzX6RBJfahrwMkeMcZ7IDGJNxY7R5O0/6KFt1KQV34UYHBjClv
-	 jSmDwB7YaoiFvGtw18ohBXalAdhlQKjVVKn0qSqNfKdivO5ovMOsN7nOyywND/fFzz
-	 88lidbIYxHbh0QzqHeE5sJyioZL8HyVbtxrUwnE2sQAiD8ADjU0LgGr0chArRczLFt
-	 Mhi/ryxgy6HqlzOypB0deT4Nj+RFJlIqkctF9tuoNgXTj4AhAFjrDe9viQI1PbGqnU
-	 PqGcyHXgZN1PCRUnurKFA7i7NOsgTWH7Stlk4AIeJ5OYwTB21/LdSkDy6TI3+hlkT6
-	 Jc1dg37l11GxQ==
-Date: Tue, 18 Mar 2025 14:46:13 -0500
-From: Bjorn Andersson <andersson@kernel.org>
-To: Nitin Rawat <quic_nitirawa@quicinc.com>
-Cc: vkoul@kernel.org, kishon@kernel.org, manivannan.sadhasivam@linaro.org, 
-	James.Bottomley@hansenpartnership.com, martin.petersen@oracle.com, konrad.dybcio@oss.qualcomm.com, 
-	quic_rdwivedi@quicinc.com, linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org
-Subject: Re: [PATCH V2 3/6] phy: qcom-qmp-ufs: Refactor UFS PHY reset
-Message-ID: <w3si5lpps5nzpyxjulxynl3fxwobtbnfsqwau6et5s2pkgehub@vcmkdaevbf5w>
-References: <20250318144944.19749-1-quic_nitirawa@quicinc.com>
- <20250318144944.19749-4-quic_nitirawa@quicinc.com>
+	s=arc-20240116; t=1742327301; c=relaxed/simple;
+	bh=3z981oMbZZh1KSvC1SA/RqKrhFPX0Y9yVhpd/Uj2H3k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OuxF3t2gJtPbW18xr2zVtgcT8VI8yFpbyGpMVvmqIm1MEdtDGkMmkbF3OnoQfYZLAMArUxISX409nctxr8WXexb8vYFT9nKfNGeTMu7WAoBQqB1ftJ/8U2KhO86q5F7ztB+oFE00LMHnLS6bCbKhzdaHiYjzmv3mbYH6nPd4QBk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pereznus.es; spf=pass smtp.mailfrom=pereznus.es; dkim=pass (2048-bit key) header.d=pereznus.es header.i=@pereznus.es header.b=PrLDBle+; arc=none smtp.client-ip=57.103.88.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pereznus.es
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pereznus.es
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pereznus.es; s=sig1;
+	bh=hfZZp3kpPm7fvDpAPnOLgcg1yvSUVxC5CPDbowrM7u8=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:x-icloud-hme;
+	b=PrLDBle+bjbJNu4E+ZwoTXKpNTqiKiXZCzHSRBlKyAYzuLvBhHG/pQPWdHexD/ppC
+	 5OWa72LTJIkF1lIdqUiEz29PzNaQ8EzitQutO8ZLVm+L9hbgghgI1JlUi5VadazhXF
+	 2rnS0v3EhEF38AwNGuKmyxvdK6Pv4ntXWQIxyMr7OU5C0U1aHeshICoLWts4eWV8Kx
+	 asBB77ztEOj1gE8Qwx7d0oZekWpykyuWH2TijUdk/lPiXkRnDZFUB8pBKngkJTCpdv
+	 V3afUQG2g6AqesHCQVkI++SlX289NSPwhrxK7EKPf3A9rm+GFDA3mrsgXk6UalcF8A
+	 kmrJr0+nJqjIA==
+Received: from localhost.localdomain (ci-asmtp-me-k8s.p00.prod.me.com [17.57.156.36])
+	by p00-icloudmta-asmtp-us-central-1k-60-percent-4.p00-icloudmta-asmtp-vip.icloud-mail-production.svc.kube.us-central-1k.k8s.cloud.apple.com (Postfix) with ESMTPSA id 4988318000B8;
+	Tue, 18 Mar 2025 19:48:16 +0000 (UTC)
+From: Sergio Perez <sergio@pereznus.es>
+To: linux-iio@vger.kernel.org
+Cc: Sergio Perez <sergio@pereznus.es>,
+	Tomasz Duszynski <tduszyns@gmail.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v4 2/2] iio: light: bh1750: Add hardware reset support via GPIO
+Date: Tue, 18 Mar 2025 20:47:21 +0100
+Message-ID: <20250318194751.7669-1-sergio@pereznus.es>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250318144944.19749-4-quic_nitirawa@quicinc.com>
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-ORIG-GUID: Pa-7hPnG3EBeq8sbkiByyRl7t7uVU-Uw
+X-Proofpoint-GUID: Pa-7hPnG3EBeq8sbkiByyRl7t7uVU-Uw
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-18_09,2025-03-17_03,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 clxscore=1030 mlxscore=0
+ mlxlogscore=999 bulkscore=0 spamscore=0 adultscore=0 malwarescore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2308100000 definitions=main-2503180143
 
-On Tue, Mar 18, 2025 at 08:19:41PM +0530, Nitin Rawat wrote:
-> Refactor the UFS PHY reset handling to parse the reset logic only once
-> during probe, instead of every resume.
-> 
+Some BH1750 sensors require a hardware reset before they can be
+detected on the I2C bus. This implementation adds support for an
+optional reset GPIO that can be specified in the device tree.
 
-This looks very reasonable! But it would be preferred to see the commit
-messages following the what format outlines in
-https://docs.kernel.org/process/submitting-patches.html#describe-your-changes
-with a clear problem description followed by a description of the
-technical solution.
+The reset sequence pulls the GPIO low and then high before initializing
+the sensor, which enables proper detection with tools like i2cdetect.
+This is particularly important for sensors that power on in an
+undefined state.
 
-> Move the UFS PHY reset parsing logic from qmp_phy_power_on to
-> qmp_ufs_probe to avoid unnecessary parsing during resume.
+Signed-off-by: Sergio Perez <sergio@pereznus.es>
+---
+ drivers/iio/light/bh1750.c | 23 +++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
 
-Please add ()-suffix to function names in your commit messages.
+diff --git a/drivers/iio/light/bh1750.c b/drivers/iio/light/bh1750.c
+index 4b869fa9e5b1..1852467e96cf 100644
+--- a/drivers/iio/light/bh1750.c
++++ b/drivers/iio/light/bh1750.c
+@@ -22,12 +22,16 @@
+ #include <linux/iio/iio.h>
+ #include <linux/iio/sysfs.h>
+ #include <linux/module.h>
++#include <linux/gpio/consumer.h>
+ 
+ #define BH1750_POWER_DOWN		0x00
+ #define BH1750_ONE_TIME_H_RES_MODE	0x20 /* auto-mode for BH1721 */
+ #define BH1750_CHANGE_INT_TIME_H_BIT	0x40
+ #define BH1750_CHANGE_INT_TIME_L_BIT	0x60
+ 
++/* Define the reset delay time in microseconds */
++#define BH1750_RESET_DELAY_US 10000 /* 10ms */
++
+ enum {
+ 	BH1710,
+ 	BH1721,
+@@ -40,6 +44,7 @@ struct bh1750_data {
+ 	struct mutex lock;
+ 	const struct bh1750_chip_info *chip_info;
+ 	u16 mtreg;
++	struct gpio_desc *reset_gpio;
+ };
+ 
+ struct bh1750_chip_info {
+@@ -248,6 +253,24 @@ static int bh1750_probe(struct i2c_client *client)
+ 	data->client = client;
+ 	data->chip_info = &bh1750_chip_info_tbl[id->driver_data];
+ 
++	/* Get reset GPIO from device tree */
++	data->reset_gpio = devm_gpiod_get_optional(&client->dev,
++									"reset", GPIOD_OUT_HIGH);
++	if (IS_ERR(data->reset_gpio))
++		return dev_err_probe(&client->dev, PTR_ERR(data->reset_gpio),
++							"Failed to get reset GPIO\n");
++
++	/* Perform hardware reset if GPIO is provided */
++	if (data->reset_gpio) {
++		/* Perform reset sequence: low-high */
++		gpiod_set_value_cansleep(data->reset_gpio, 0);
++		fsleep(BH1750_RESET_DELAY_US);
++		gpiod_set_value_cansleep(data->reset_gpio, 1);
++		fsleep(BH1750_RESET_DELAY_US);
++
++		dev_dbg(&client->dev, "BH1750 reset completed via GPIO\n");
++	}
++
+ 	usec = data->chip_info->mtreg_to_usec * data->chip_info->mtreg_default;
+ 	ret = bh1750_change_int_time(data, usec);
+ 	if (ret < 0)
+-- 
+2.43.0
 
-Also, this series moves things around a lot, can you confirm that UFS is
-working inbetween each one of this patches, so that the branch is
-bisectable when this is being picked up?
-
-> 
-> Co-developed-by: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>
-> Signed-off-by: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>
-> Signed-off-by: Nitin Rawat <quic_nitirawa@quicinc.com>
-> ---
->  drivers/phy/qualcomm/phy-qcom-qmp-ufs.c | 104 ++++++++++++------------
->  1 file changed, 50 insertions(+), 54 deletions(-)
-> 
-> diff --git a/drivers/phy/qualcomm/phy-qcom-qmp-ufs.c b/drivers/phy/qualcomm/phy-qcom-qmp-ufs.c
-> index 0089ee80f852..3a80c2c110d2 100644
-> --- a/drivers/phy/qualcomm/phy-qcom-qmp-ufs.c
-> +++ b/drivers/phy/qualcomm/phy-qcom-qmp-ufs.c
-> @@ -1757,32 +1757,6 @@ static void qmp_ufs_init_registers(struct qmp_ufs *qmp, const struct qmp_phy_cfg
->  	qmp_ufs_init_all(qmp, &cfg->tbls_hs_b);
->  }
-> 
-> -static int qmp_ufs_com_init(struct qmp_ufs *qmp)
-> -{
-> -	const struct qmp_phy_cfg *cfg = qmp->cfg;
-> -	void __iomem *pcs = qmp->pcs;
-> -	int ret;
-> -
-> -	ret = regulator_bulk_enable(cfg->num_vregs, qmp->vregs);
-> -	if (ret) {
-> -		dev_err(qmp->dev, "failed to enable regulators, err=%d\n", ret);
-> -		return ret;
-> -	}
-> -
-> -	ret = clk_bulk_prepare_enable(qmp->num_clks, qmp->clks);
-> -	if (ret)
-> -		goto err_disable_regulators;
-> -
-> -	qphy_setbits(pcs, cfg->regs[QPHY_PCS_POWER_DOWN_CONTROL], SW_PWRDN);
-> -
-> -	return 0;
-> -
-> -err_disable_regulators:
-> -	regulator_bulk_disable(cfg->num_vregs, qmp->vregs);
-> -
-> -	return ret;
-> -}
-> -
->  static int qmp_ufs_com_exit(struct qmp_ufs *qmp)
->  {
->  	const struct qmp_phy_cfg *cfg = qmp->cfg;
-> @@ -1800,41 +1774,27 @@ static int qmp_ufs_power_on(struct phy *phy)
->  {
->  	struct qmp_ufs *qmp = phy_get_drvdata(phy);
->  	const struct qmp_phy_cfg *cfg = qmp->cfg;
-> +	void __iomem *pcs = qmp->pcs;
-
-This is only used once, perhaps not worth a local variable to save 5
-characters on that line?
-
->  	int ret;
-> -	dev_vdbg(qmp->dev, "Initializing QMP phy\n");
-> -
-> -	if (cfg->no_pcs_sw_reset) {
-> -		/*
-> -		 * Get UFS reset, which is delayed until now to avoid a
-> -		 * circular dependency where UFS needs its PHY, but the PHY
-> -		 * needs this UFS reset.
-> -		 */
-> -		if (!qmp->ufs_reset) {
-> -			qmp->ufs_reset =
-> -				devm_reset_control_get_exclusive(qmp->dev,
-> -								 "ufsphy");
-> -
-> -			if (IS_ERR(qmp->ufs_reset)) {
-> -				ret = PTR_ERR(qmp->ufs_reset);
-> -				dev_err(qmp->dev,
-> -					"failed to get UFS reset: %d\n",
-> -					ret);
-> -
-> -				qmp->ufs_reset = NULL;
-> -				return ret;
-> -			}
-> -		}
-> 
-> -		ret = reset_control_assert(qmp->ufs_reset);
-> -		if (ret)
-> -			return ret;
-> +	ret = regulator_bulk_enable(cfg->num_vregs, qmp->vregs);
-> +	if (ret) {
-> +		dev_err(qmp->dev, "failed to enable regulators, err=%d\n", ret);
-
-regulator_bulk_enable() will already have printed a more useful error
-message, letting you know which of the vregs[] it was that failed to
-enable.
-
-> +		return ret;
->  	}
-> 
-> -	ret = qmp_ufs_com_init(qmp);
-> +	ret = clk_bulk_prepare_enable(qmp->num_clks, qmp->clks);
->  	if (ret)
-> -		return ret;
-> +		goto err_disable_regulators;
-> +
-> +	qphy_setbits(pcs, cfg->regs[QPHY_PCS_POWER_DOWN_CONTROL], SW_PWRDN);
-> 
->  	return 0;
-> +
-> +err_disable_regulators:
-> +	regulator_bulk_disable(cfg->num_vregs, qmp->vregs);
-> +
-> +	return ret;
->  }
-> 
->  static int qmp_ufs_phy_calibrate(struct phy *phy)
-> @@ -1846,6 +1806,10 @@ static int qmp_ufs_phy_calibrate(struct phy *phy)
->  	unsigned int val;
->  	int ret;
-> 
-> +	ret = reset_control_assert(qmp->ufs_reset);
-> +	if (ret)
-> +		return ret;
-> +
->  	qmp_ufs_init_registers(qmp, cfg);
-> 
->  	ret = reset_control_deassert(qmp->ufs_reset);
-> @@ -2088,6 +2052,34 @@ static int qmp_ufs_parse_dt(struct qmp_ufs *qmp)
->  	return 0;
->  }
-> 
-> +static int qmp_ufs_get_phy_reset(struct qmp_ufs *qmp)
-> +{
-> +	const struct qmp_phy_cfg *cfg = qmp->cfg;
-> +	int ret;
-> +
-> +	if (!cfg->no_pcs_sw_reset)
-> +		return 0;
-> +
-> +	/*
-> +	 * Get UFS reset, which is delayed until now to avoid a
-> +	 * circular dependency where UFS needs its PHY, but the PHY
-> +	 * needs this UFS reset.
-
-This is invoked only once, from qcom_ufs_probe(), so it doesn't seem
-accurate anymore. How come this is no longer needed? Please describe
-what changed int he commit message.
-
-> +	 */
-> +	if (!qmp->ufs_reset) {
-> +		qmp->ufs_reset =
-> +		devm_reset_control_get_exclusive(qmp->dev, "ufsphy");
-
-The line break here is really weird, are you sure checkpatch --strict
-didn't complain about this one?
-
-> +
-> +		if (IS_ERR(qmp->ufs_reset)) {
-> +			ret = PTR_ERR(qmp->ufs_reset);
-> +			dev_err(qmp->dev, "failed to get PHY reset: %d\n", ret);
-
-return dev_err_probe(qmp->dev, PTR_ERR(qmp->ufs_reset), "failed to...: %pe\n", qmp->ufs_reset);
-
-While being more succinct, it also stores the reason for failing the
-probe so that you can find it in /sys/kernel/debug/devices_deferred
-
-> +			qmp->ufs_reset = NULL;
-
-Use a local variable if you're worried about someone accessing the stale
-error code after returning here.
-
-Regards,
-Bjorn
-
-> +			return ret;
-> +		}
-> +	}
-> +
-> +	return 0;
-> +}
-> +
->  static int qmp_ufs_probe(struct platform_device *pdev)
->  {
->  	struct device *dev = &pdev->dev;
-> @@ -2114,6 +2106,10 @@ static int qmp_ufs_probe(struct platform_device *pdev)
->  	if (ret)
->  		return ret;
-> 
-> +	ret = qmp_ufs_get_phy_reset(qmp);
-> +	if (ret)
-> +		return ret;
-> +
->  	/* Check for legacy binding with child node. */
->  	np = of_get_next_available_child(dev->of_node, NULL);
->  	if (np) {
-> --
-> 2.48.1
-> 
-> 
 
