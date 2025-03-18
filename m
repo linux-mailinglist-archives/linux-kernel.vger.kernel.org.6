@@ -1,117 +1,373 @@
-Return-Path: <linux-kernel+bounces-566076-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566078-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5B99A672D3
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 12:36:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8D41A672D4
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 12:36:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD28D189F67A
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 11:36:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 600AC189E98F
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 11:36:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B2A520C016;
-	Tue, 18 Mar 2025 11:35:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8B4620B210;
+	Tue, 18 Mar 2025 11:36:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="JjoaLZnt"
-Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bszd/Xx9"
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A83F20B7E9;
-	Tue, 18 Mar 2025 11:35:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2562720B7E6
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 11:36:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742297752; cv=none; b=HKyBYQa3iFW8pqpGrpzA2ssAe4preHK3mBmBX4yeS+tqWOwscd0GmXvYmlxlmSW0CrZr7K0ZUeeZLsshbUM6cJGCQipu5u/FfBUvkf5FGORlFAxnqnM4LLTzhD9icfZVM71HBhJfB2d7m0FUecbk8f1oKWYwT0SGDXDZovGIw5Q=
+	t=1742297773; cv=none; b=nhy1Ba1F+43mw0ZC3f1v3DbQKq2E8x/9USgAJm2DtRpEZFDZJ16sTG92TFhWKBk+snHT2tmqP0PLQzVZszh7OUD79Kr6UfjF4TRGHvfObzFtlSGFYFqRO4OUy+9lcCP301cxUVVCuGw9npem+U2jezUvj9qiIVTYQFstr0kR0iQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742297752; c=relaxed/simple;
-	bh=/6CF2wMzbpy7fKpS53DJ5LlhZBb3PsXTEdnWg8I9YkY=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=RjgMGQDYn2VdQPh3+9dFT8fL6Iu5NyOiGw92Odf0Keaf6u28c0yeEowxp5vANn7WukxdI+eG3FhvyFVW7rR79ITQEpOye9/2IHqplTFp7f7Fw+HJgFpz+LQbQ/W2d5pDih3jw1V4dJD7qWCK9j/LDnFpV+hVPpV60iM3x9PqzRI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=JjoaLZnt; arc=none smtp.client-ip=198.47.19.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 52IBZQeT3053345
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 18 Mar 2025 06:35:26 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1742297726;
-	bh=DsN1ncMlJ5zo/5NafwL+81jdetyHrIDDsHNQZGF7/6o=;
-	h=From:To:CC:Subject:Date;
-	b=JjoaLZntQRZ0LeHi/40id75IAoZZpZYaPjmx5gcAXlhhNYnRGWOivteR+mjihfXdQ
-	 PDOnhg09I5XAvrjLzmNqrCNrpoODyk11jAfVwBibAS6SQMt+mWRfB/Jy9e6rmz2cxK
-	 Ok9vU98qSxEbgD31N+w/y5/SlLwwRco6+8cASdeU=
-Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 52IBZQLb007471
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 18 Mar 2025 06:35:26 -0500
-Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 18
- Mar 2025 06:35:25 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 18 Mar 2025 06:35:25 -0500
-Received: from localhost (jayesh-hp-z2-tower-g5-workstation.dhcp.ti.com [10.24.68.98])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 52IBZOxL104649;
-	Tue, 18 Mar 2025 06:35:25 -0500
-From: Jayesh Choudhary <j-choudhary@ti.com>
-To: <peter.ujfalusi@gmail.com>, <lgirdwood@gmail.com>, <broonie@kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC: <perex@perex.cz>, <tiwai@suse.com>, <linux-sound@vger.kernel.org>,
-        <j-choudhary@ti.com>
-Subject: [PATCH] ASoC: ti: j721e-evm: Fix clock configuration for ti,j7200-cpb-audio compatible
-Date: Tue, 18 Mar 2025 17:05:24 +0530
-Message-ID: <20250318113524.57100-1-j-choudhary@ti.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1742297773; c=relaxed/simple;
+	bh=MooOZBjnKa3eOXJRAkG1TbbXmGn7z1BSAcJjhp0XE6w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WedRxMHcKnCWDSJEbKHDy3+ySRSTMWgrShecFyYaobw3QxjgROGe8/EULXyI6JC8GeQDcNo4EnxF5UDanfnlaOd/kEZNVADXBPN0rRhQ+/ReBZ7J4sEe+21gQzfii3MnYHG6uUOwTb3ABoYr6CfPm7me0NEiZh6RYhVXuOPi2yk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bszd/Xx9; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5e5c7d6b96fso998396a12.3
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 04:36:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742297769; x=1742902569; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ThlJbEalfK2xtbJtUuT/lT5PVoKxTwbse0vzB0NBORs=;
+        b=bszd/Xx9ZaVjqEAqkoUrTZqCGej+PY1HPbDTx5gY2gRfCm1G7vdnS9iTyf5XiO1V/z
+         2qh7blI+HV4qdc4f5Yn//aT/yOUw2mgQA0XPcGbOJQ1tNWiklLjvVKGcN8NmWqlOiThP
+         w3b6ZM66xA9az0Yd4mHxpI/BJEBFV1r7oOdU/LRPWGGwW3cwFOSV4NQB6MrkzhD5fD1Q
+         dOVAFEWADQBqRE6mhea1alBKwi5ehIYhD5s8VH9pg14bOSN9Y11IWUCy2ZpKiuk0jEi/
+         xJVNt3MZtehTPQ1M7+6dHGj2ah0Qx+AeBtxLj28eI2rT4NFeU2I26vZGA3l1zjiiC/15
+         nsHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742297769; x=1742902569;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ThlJbEalfK2xtbJtUuT/lT5PVoKxTwbse0vzB0NBORs=;
+        b=XQQVb7eD0oId7jqq8p8T/e5Ygh1Hq8KcKl9XY+dWzvYOE5cUtcVpfp73CqNTuV3XOL
+         X7nr2fa8wnOCa3W7Z+LyxzCcE2Fc+uqRyJyPWGXn6nLqvc311dQq0KZBCzXssroDdS33
+         mAcgkQKERw4AQOmrJPmFZHpiL1NR6wORNuIY5qWUZylpsi9ssOzZgbmaLoyOnRx8ZaeE
+         s8y0Dyj4wSx2KV4pOwl9Cx3ipvDti8/3Q6DmIq9MwnseM/0CWOIekP5VS2l1hyVHgoR2
+         3lgu/u7Q4dMJT1SGkUgYCh8d7Srgd46n8i2vCi80W2Av3XWJnnmBfNBRvtHDkgQ6EX7s
+         cYCg==
+X-Forwarded-Encrypted: i=1; AJvYcCVC43pfVGGUT3MnzWz8+WCn/71qqcyX3QrcmWYXPkc3owxlixsQ5kqx36zDKgFoynb78eAqw/pbpQ3lBQM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwO4pWuJzz/x89u9EkGv3rLUxgFEkfSvzBlhEXXfSg79VytpuUg
+	dgOjbb0iQhGesWqb2zOUEEHCc7R5Q17G4I4puoEL5vy7rqPeWl6HqJFKSFJ47t184JyQ/E0mgyq
+	Mcu/GHmAqb9h/C3fqtqphU3ts0Fk=
+X-Gm-Gg: ASbGnctcDURw/ODibFmu2oAJ3Lu+EOYDmLeNMsjIVy62cDZwHy9XEos4vROwTzxZVDK
+	lTUbqYFBJccKzSSLRGsnG3KDwG5zf8fOu/C04QZSK39xAMCYgOw4AbYeEd22bQ3YDdRlJkvD+Gw
+	BuKsY+ASa9zHGthoLjLx0wfhkR0R2stTWRLNXK9QQ=
+X-Google-Smtp-Source: AGHT+IGSeFj/f/d85J+o4uPGPgxXJdKvNNRpMArXOFVpwl1HxboJ8oRGWf1HN2ucAV+UE9W3Drgxeq5I09xGDtzIOis=
+X-Received: by 2002:a05:6402:3550:b0:5e5:dea5:3eb0 with SMTP id
+ 4fb4d7f45d1cf-5e89e6afcf8mr16072700a12.7.1742297768996; Tue, 18 Mar 2025
+ 04:36:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+References: <20250314144300.32542-1-ioworker0@gmail.com> <20250314144300.32542-2-ioworker0@gmail.com>
+ <20250318184158.e6c1b2d28e2fee311bcd2c30@kernel.org>
+In-Reply-To: <20250318184158.e6c1b2d28e2fee311bcd2c30@kernel.org>
+From: Lance Yang <ioworker0@gmail.com>
+Date: Tue, 18 Mar 2025 19:35:32 +0800
+X-Gm-Features: AQ5f1JpN94WMX5lx9VRssOBEsnKGWsKjE6hfOamcFJV-Rgi06l7tdTJPWesqZBQ
+Message-ID: <CAK1f24k7hRD5SZD92tv+DgSakhA8vRjtLibGTymd9AsHizTBAg@mail.gmail.com>
+Subject: Re: [PATCH RESEND v2 1/3] hung_task: replace blocker_mutex with
+ encoded blocker
+To: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: akpm@linux-foundation.org, will@kernel.org, peterz@infradead.org, 
+	mingo@redhat.com, longman@redhat.com, anna.schumaker@oracle.com, 
+	boqun.feng@gmail.com, joel.granados@kernel.org, kent.overstreet@linux.dev, 
+	leonylgao@tencent.com, linux-kernel@vger.kernel.org, rostedt@goodmis.org, 
+	senozhatsky@chromium.org, tfiga@chromium.org, amaindex@outlook.com, 
+	Mingzhe Yang <mingzhe.yang@ly.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-For 'ti,j7200-cpb-audio' compatible, there is support for only one PLL for
-48k. For 11025, 22050, 44100 and 88200 sampling rates, due to absence of
-J721E_CLK_PARENT_44100, we get EINVAL while running any audio application.
-Add support for these rates by using the 48k parent clock and adjusting
-the clock for these rates later in j721e_configure_refclk.
+On Tue, Mar 18, 2025 at 5:42=E2=80=AFPM Masami Hiramatsu <mhiramat@kernel.o=
+rg> wrote:
+>
+> On Fri, 14 Mar 2025 22:42:58 +0800
+> Lance Yang <ioworker0@gmail.com> wrote:
+>
+> > This patch replaces 'struct mutex *blocker_mutex' with 'unsigned long
+> > blocker', as only one blocker is active at a time.
+> >
+> > The blocker filed can store both the lock addrees and the lock type, wi=
+th
+> > LSB used to encode the type as Masami suggested, making it easier to ex=
+tend
+> > the feature to cover other types of locks.
+> >
+> > Also, once the lock type is determined, we can directly extract the add=
+ress
+> > and cast it to a lock pointer ;)
+>
+> Hi Lance,
+>
+> Thanks for update. I added some comments.
 
-Fixes: 6748d0559059 ("ASoC: ti: Add custom machine driver for j721e EVM (CPB and IVI)")
-Signed-off-by: Jayesh Choudhary <j-choudhary@ti.com>
----
+Thanks for taking time to review!
 
-Error log for J784S4-EVM platform which uses this compatible:
-<https://gist.github.com/Jayesh2000/22784d790f493ca182bb78c8d5015c9b>
+>
+> >
+> > Suggested-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> > Signed-off-by: Mingzhe Yang <mingzhe.yang@ly.com>
+> > Signed-off-by: Lance Yang <ioworker0@gmail.com>
+> > ---
+> >  include/linux/hung_task.h | 94 +++++++++++++++++++++++++++++++++++++++
+> >  include/linux/sched.h     |  2 +-
+> >  kernel/hung_task.c        | 15 ++++---
+> >  kernel/locking/mutex.c    |  8 +++-
+> >  4 files changed, 111 insertions(+), 8 deletions(-)
+> >  create mode 100644 include/linux/hung_task.h
+> >
+> > diff --git a/include/linux/hung_task.h b/include/linux/hung_task.h
+> > new file mode 100644
+> > index 000000000000..64ced33b0d1f
+> > --- /dev/null
+> > +++ b/include/linux/hung_task.h
+> > @@ -0,0 +1,94 @@
+> > +/* SPDX-License-Identifier: GPL-2.0-only */
+> > +/*
+> > + * Detect Hung Task: detecting tasks stuck in D state
+> > + *
+> > + * Copyright (C) 2025 Tongcheng Travel (www.ly.com)
+> > + * Author: Lance Yang <mingzhe.yang@ly.com>
+> > + */
+> > +#ifndef __LINUX_HUNG_TASK_H
+> > +#define __LINUX_HUNG_TASK_H
+> > +
+> > +#include <linux/bug.h>
+> > +#include <linux/sched.h>
+> > +#include <linux/compiler.h>
+> > +
+> > +/*
+> > + * @blocker: Combines lock address and blocking type.
+> > + *
+> > + * Since lock pointers are at least 4-byte aligned(32-bit) or 8-byte
+> > + * aligned(64-bit). This leaves the 2 least bits (LSBs) of the pointer
+> > + * always zero. So we can use these bits to encode the specific blocki=
+ng
+> > + * type.
+> > + *
+> > + * Type encoding:
+> > + * 00 - Blocked on mutex        (BLOCKER_TYPE_MUTEX)
+> > + * 01 - Blocked on semaphore    (BLOCKER_TYPE_SEM)
+> > + * 10 - Blocked on rt-mutex     (BLOCKER_TYPE_RTMUTEX)
+> > + * 11 - Blocked on rw-semaphore (BLOCKER_TYPE_RWSEM)
+> > + */
+> > +#define BLOCKER_TYPE_MUTEX      0x00UL
+> > +#define BLOCKER_TYPE_SEM        0x01UL
+> > +#define BLOCKER_TYPE_RTMUTEX    0x02UL
+> > +#define BLOCKER_TYPE_RWSEM      0x03UL
+> > +
+> > +#define BLOCKER_TYPE_MASK       0x03UL
+> > +
+> > +#ifdef CONFIG_DETECT_HUNG_TASK_BLOCKER
+> > +static inline void hung_task_set_blocker(void *lock, unsigned long typ=
+e)
+> > +{
+> > +     unsigned long lock_ptr =3D (unsigned long)lock;
+> > +
+> > +     WARN_ON_ONCE(!lock_ptr);
+> > +     WARN_ON_ONCE(lock_ptr & BLOCKER_TYPE_MASK);
+> > +     WARN_ON_ONCE(READ_ONCE(current->blocker));
+>
+> The last one needs a comment why it is problem.
+>
+> WARN_ON_ONCE(READ_ONCE(current->blocker),
+>         "Task blocker is not cleared. Maybe forgot to clear it somewhere?=
+ Type: %d\n",
+>         current->blocker);
+>
+> But I don't think this isn't needed to be checked usually.
 
-After this fix, test log for 44100 rate:
-<https://gist.github.com/Jayesh2000/13ab5852109f899fa2ceb466f8c130d9>
+Hmm... Looking back, adding it was probably overkill. So let's drop it in
+the next version ;)
 
-For rates 8k, 16k, 24k, 32k, 48k, 96k the scki used is the default
-value i.e. 24576000 Hz. When any application request sampling rate from
-11025, 22050, 44100 or 88200, the clk_set_rate calls are invoked in
-j721e_configure_refclk and the scki is modified to 22579200 Hz.
+>
+> > +
+> > +     /*
+> > +      * If the lock pointer matches the BLOCKER_TYPE_MASK, return
+> > +      * without writing anything.
+> > +      */
+> > +     if (lock_ptr & BLOCKER_TYPE_MASK)
+> > +             return;
+>
+> You can use WARN_ON_ONCE for 'if' condition.
+>
+>   if (WARN_ON_ONCE(lock_ptr & BLOCKER_TYPE_MASK))
+>         return;
 
- sound/soc/ti/j721e-evm.c | 2 ++
- 1 file changed, 2 insertions(+)
+Ah, I didn't realize we could do it that way before. That's nice to know!
 
-diff --git a/sound/soc/ti/j721e-evm.c b/sound/soc/ti/j721e-evm.c
-index 2057d46ad884..0e7e4ff950b5 100644
---- a/sound/soc/ti/j721e-evm.c
-+++ b/sound/soc/ti/j721e-evm.c
-@@ -182,6 +182,8 @@ static int j721e_configure_refclk(struct j721e_priv *priv,
- 		clk_id = J721E_CLK_PARENT_48000;
- 	else if (!(rate % 11025) && priv->pll_rates[J721E_CLK_PARENT_44100])
- 		clk_id = J721E_CLK_PARENT_44100;
-+	else if (!(rate % 11025) && priv->pll_rates[J721E_CLK_PARENT_48000])
-+		clk_id = J721E_CLK_PARENT_48000;
- 	else
- 		return ret;
- 
--- 
-2.34.1
+>
+> > +
+> > +     WRITE_ONCE(current->blocker, lock_ptr | type);
+> > +}
+> > +
+> > +static inline void hung_task_clear_blocker(void)
+> > +{
+> > +     WARN_ON_ONCE(!READ_ONCE(current->blocker));
+> > +
+> > +     WRITE_ONCE(current->blocker, 0UL);
+> > +}
+> > +
+> > +static inline bool hung_task_blocker_is_type(unsigned long blocker,
+> > +                                       unsigned long type)
+> > +{
+> > +     WARN_ON_ONCE(!blocker);
+> > +
+> > +     return (blocker & BLOCKER_TYPE_MASK) =3D=3D type;
+> > +}
+> > +
+> > +static inline void *hung_task_blocker_to_lock(unsigned long blocker)
+> > +{
+> > +     WARN_ON_ONCE(!blocker);
+> > +
+> > +     return (void *)(blocker & ~BLOCKER_TYPE_MASK);
+> > +}
+> > +#else
+> > +static inline void hung_task_set_blocker(void *lock, unsigned long typ=
+e)
+> > +{
+> > +}
+> > +static inline void hung_task_clear_blocker(void)
+> > +{
+> > +}
+> > +static inline bool hung_task_blocker_is_type(unsigned long blocker,
+> > +                                          unsigned long type)
+> > +{
+> > +     return false;
+> > +}
+> > +static inline void *hung_task_blocker_to_lock(unsigned long blocker)
+> > +{
+> > +     return NULL;
+> > +}
+> > +#endif
+> > +
+> > +#endif /* __LINUX_HUNG_TASK_H */
+> > diff --git a/include/linux/sched.h b/include/linux/sched.h
+> > index 1419d94c8e87..f27060dac499 100644
+> > --- a/include/linux/sched.h
+> > +++ b/include/linux/sched.h
+> > @@ -1218,7 +1218,7 @@ struct task_struct {
+> >  #endif
+> >
+> >  #ifdef CONFIG_DETECT_HUNG_TASK_BLOCKER
+> > -     struct mutex                    *blocker_mutex;
+> > +     unsigned long                   blocker;
+> >  #endif
+> >
+> >  #ifdef CONFIG_DEBUG_ATOMIC_SLEEP
+> > diff --git a/kernel/hung_task.c b/kernel/hung_task.c
+> > index dc898ec93463..46eb6717564d 100644
+> > --- a/kernel/hung_task.c
+> > +++ b/kernel/hung_task.c
+> > @@ -25,6 +25,10 @@
+> >
+> >  #include <trace/events/sched.h>
+> >
+> > +#ifdef CONFIG_DETECT_HUNG_TASK_BLOCKER
+> > +#include <linux/hung_task.h>
+> > +#endif
+>
+> We don't need this #ifdef, since it is already checked in the
+> header file.
 
+Good catch! I completely missed it ;(
+
+>
+> > +
+> >  /*
+> >   * The number of tasks checked:
+> >   */
+> > @@ -98,16 +102,17 @@ static struct notifier_block panic_block =3D {
+> >  static void debug_show_blocker(struct task_struct *task)
+> >  {
+> >       struct task_struct *g, *t;
+> > -     unsigned long owner;
+> > -     struct mutex *lock;
+> > +     unsigned long owner, blocker;
+> >
+> >       RCU_LOCKDEP_WARN(!rcu_read_lock_held(), "No rcu lock held");
+> >
+> > -     lock =3D READ_ONCE(task->blocker_mutex);
+> > -     if (!lock)
+> > +     blocker =3D READ_ONCE(task->blocker);
+> > +     if (!blocker || !hung_task_blocker_is_type(blocker, BLOCKER_TYPE_=
+MUTEX))
+> >               return;
+> >
+> > -     owner =3D mutex_get_owner(lock);
+> > +     owner =3D mutex_get_owner(
+> > +             (struct mutex *)hung_task_blocker_to_lock(blocker));
+> > +
+> >       if (unlikely(!owner)) {
+> >               pr_err("INFO: task %s:%d is blocked on a mutex, but the o=
+wner is not found.\n",
+> >                       task->comm, task->pid);
+> > diff --git a/kernel/locking/mutex.c b/kernel/locking/mutex.c
+> > index 6a543c204a14..642d6398e0dd 100644
+> > --- a/kernel/locking/mutex.c
+> > +++ b/kernel/locking/mutex.c
+> > @@ -42,6 +42,10 @@
+> >  # define MUTEX_WARN_ON(cond)
+> >  #endif
+> >
+> > +#ifdef CONFIG_DETECT_HUNG_TASK_BLOCKER
+> > +#include <linux/hung_task.h>
+> > +#endif
+>
+> Ditto.
+
+Yes, you're right. Will remove that as you suggested.
+
+Thanks,
+Lance
+
+>
+> > +
+> >  void
+> >  __mutex_init(struct mutex *lock, const char *name, struct lock_class_k=
+ey *key)
+> >  {
+> > @@ -189,7 +193,7 @@ __mutex_add_waiter(struct mutex *lock, struct mutex=
+_waiter *waiter,
+> >                  struct list_head *list)
+> >  {
+> >  #ifdef CONFIG_DETECT_HUNG_TASK_BLOCKER
+> > -     WRITE_ONCE(current->blocker_mutex, lock);
+> > +     hung_task_set_blocker(lock, BLOCKER_TYPE_MUTEX);
+> >  #endif
+> >       debug_mutex_add_waiter(lock, waiter, current);
+> >
+> > @@ -207,7 +211,7 @@ __mutex_remove_waiter(struct mutex *lock, struct mu=
+tex_waiter *waiter)
+> >
+> >       debug_mutex_remove_waiter(lock, waiter, current);
+> >  #ifdef CONFIG_DETECT_HUNG_TASK_BLOCKER
+> > -     WRITE_ONCE(current->blocker_mutex, NULL);
+> > +     hung_task_clear_blocker();
+> >  #endif
+> >  }
+> >
+> > --
+> > 2.45.2
+> >
+>
+> Thank you,
+>
+>
+> --
+> Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
