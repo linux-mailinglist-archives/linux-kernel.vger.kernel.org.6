@@ -1,240 +1,280 @@
-Return-Path: <linux-kernel+bounces-565326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565327-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13C8DA665EA
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 03:01:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 78665A665EB
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 03:02:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D84961895029
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 02:01:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F068189D7E8
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 02:01:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 403CB15B554;
-	Tue, 18 Mar 2025 02:00:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5546417A319;
+	Tue, 18 Mar 2025 02:01:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="AHmfcYpP"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F6E83A1DB;
-	Tue, 18 Mar 2025 02:00:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.3
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GBq1ZUFR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B00D81749;
+	Tue, 18 Mar 2025 02:01:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742263250; cv=none; b=kUsiH9JAKGBxDSxXWvdl8sm/Jqx3o/ixONTpRYWfML1X8Qb/ql1Yz+igjH1nPOdBDWeJz0JssSE8kc3iS83plg+tvanRZ9EKm8OmpPIx+dS2qtQ45L6M9QB2H7iTGu6Hu5V/I4Q7V+GftTTBYl/r5/nZUj/Aqfv7nPACPU7TMdA=
+	t=1742263263; cv=none; b=FVxNwGDi847OsAPDNn40RAam92m7d/D1PsizxyaaGPlR0ooTnbD/YVUcf0FJQz6Qo4OsFxUt+PP/bAt6lt+QY6y2AyM2HuwtpJeLOle59Pb5rSXMdJxxSHjJn2L6S1UDU7+gYWmS5Ki8/1NEE6RMiGmMfIPlu+u4aBmkLISj2dc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742263250; c=relaxed/simple;
-	bh=h6DxCv8KCQCCwl330zqTekHMwkW9BBmhURXCAhubH+A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IirSk9NYImhbC905QQY2fmmj6igj7wvmnjIaUczCjcHOKJcojA0UIXohOwEKVyMouze1dFTr9nI+gqpLRAJ5yNmm4z907JWfzjnONEb/7CpiH/852Yis3yrJSMIJhQTG5NspqjHheg8o++Bv5jlqXRKhyTxCp8CJKSzNfgJtiFU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=AHmfcYpP; arc=none smtp.client-ip=117.135.210.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:
-	Content-Type; bh=h6DxCv8KCQCCwl330zqTekHMwkW9BBmhURXCAhubH+A=;
-	b=AHmfcYpPlJtC1vOwUXsDFy11Om8PiFvxXTnX/XEG5VyKYVYN2E23NmLnAiNjWp
-	mLvVlBxDoDG3rwdyZRICiUUtm/jyFbWm9sth3lo2/CVE2zQbB5140fQ7YIQxZKE7
-	+JObgheOgvn0IhKGBY7ghlaye4Owa5cNGs6WaE6iS9Q6E=
-Received: from [192.168.22.248] (unknown [])
-	by gzga-smtp-mtada-g1-1 (Coremail) with SMTP id _____wD3P_Cz09hnajuAAA--.18397S2;
-	Tue, 18 Mar 2025 10:00:21 +0800 (CST)
-Message-ID: <0693eb9c-226b-4233-9d60-dcd65967222a@163.com>
-Date: Tue, 18 Mar 2025 10:00:18 +0800
+	s=arc-20240116; t=1742263263; c=relaxed/simple;
+	bh=MWRHRY/KicIe1xNDW3dbQ8Vzru7zkxfpt/pE9dHmM2g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Yj2uy2oRaaxR1kTashl8k5P4qFtTR74gGm+XvlrpWt0hSKMHe87m+OZbupWtQQo9raPMeBTiIuouIUE5VeihyZLZJZXmLJJlempK+QqKnHa6w5ABuvaLdOyOU31thCNMHcaKrUXSceGV+OaFuax9yw63/xlwjaDSv5pseOghFbU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GBq1ZUFR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9ACECC4CEE3;
+	Tue, 18 Mar 2025 02:01:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742263263;
+	bh=MWRHRY/KicIe1xNDW3dbQ8Vzru7zkxfpt/pE9dHmM2g=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GBq1ZUFRib5mLBwAmD7VkKcic50/2prf4zdxZDOLEw0nV8FHBRE6bJSyL1ml0+XHc
+	 TFlm4KGdFTpVgA19kqhR1bNG8gaA1djf1xjF3m2PLQkSE/A55Bkfq92vNVe4nbMj//
+	 sAEaePZInj4FMeDKPPzGxwMI1B3nBTZMzVOZ8nZNaXtX/d0FIVhZ40OlJviTFIQISB
+	 NTNVXi1F2VhdyhS51g/7gCup3QbCEY3bRI6k2MuZmZdGprXIGQ5Z2M1Uqpx8AbI0Jd
+	 +Mcf5Z/ug+lhgu+TZFGAuybY/y8BDMvHl9bkJQ+zWrMKj0jRJMmLaQ/khTEIbVoIWB
+	 xAOnP2ogPAzkQ==
+Date: Mon, 17 Mar 2025 19:01:01 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Li Huafei <lihuafei1@huawei.com>
+Cc: acme@kernel.org, leo.yan@linux.dev, james.clark@linaro.org,
+	mark.rutland@arm.com, john.g.garry@oracle.com, will@kernel.org,
+	irogers@google.com, mike.leach@linaro.org, peterz@infradead.org,
+	mingo@redhat.com, alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org, kjain@linux.ibm.com, mhiramat@kernel.org,
+	atrajeev@linux.vnet.ibm.com, sesse@google.com,
+	adrian.hunter@intel.com, kan.liang@linux.intel.com,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH 6/7] perf annotate-data: Handle arm64 global variable
+ access
+Message-ID: <Z9jT3e2j8HDMLcYh@google.com>
+References: <20250314162137.528204-1-lihuafei1@huawei.com>
+ <20250314162137.528204-7-lihuafei1@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] fs/proc/page: Refactoring to reduce code duplication.
-To: David Hildenbrand <david@redhat.com>, akpm@linux-foundation.org
-Cc: willy@infradead.org, ran.xiaokai@zte.com.cn, dan.carpenter@linaro.org,
- linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- Liu Ye <liuye@kylinos.cn>
-References: <20250317100719.134558-1-liuyerd@163.com>
- <a43ff37d-497c-4508-b6e5-667e060908cc@redhat.com>
-Content-Language: en-US
-From: Liu Ye <liuyerd@163.com>
-In-Reply-To: <a43ff37d-497c-4508-b6e5-667e060908cc@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wD3P_Cz09hnajuAAA--.18397S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxWrW3uw4fWw4rJr15Xw4ruFg_yoWrKr17pF
-	s8GF42ka18Ja45KrWxJaykZry5ZrykGF4UtrW7Gw1fXa47twna9a4FyFnYvFyxGryUAF1x
-	ua9I9ry3uFWjyaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jB1vxUUUUU=
-X-CM-SenderInfo: 5olx5vlug6il2tof0z/1tbiKBMUTGfY0I5n2QAAs8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250314162137.528204-7-lihuafei1@huawei.com>
 
+On Sat, Mar 15, 2025 at 12:21:36AM +0800, Li Huafei wrote:
+> Arm64 uses the 'adrp' and 'add' instructions to load the address of a
+> global variable. For example:
+> 
+>  adrp    x19, ffff8000819c3000
+>  add     x19, x19, #0x3e8
+>  <<after some sequence>>
+>  ldr     x22, [x19, #8]
 
-在 2025/3/17 18:24, David Hildenbrand 写道:
-> On 17.03.25 11:07, Liu Ye wrote:
->> From: Liu Ye <liuye@kylinos.cn>
->>
->> The function kpageflags_read and kpagecgroup_read is quite similar
->> to kpagecount_read. Consider refactoring common code into a helper
->> function to reduce code duplication.
->>
->> Signed-off-by: Liu Ye <liuye@kylinos.cn>
->>
->> ---
->> V2 : Use an enumeration to indicate the operation to be performed
->> to avoid passing functions.
->> ---
->> ---
->>   fs/proc/page.c | 166 +++++++++++++++++--------------------------------
->>   1 file changed, 58 insertions(+), 108 deletions(-)
->>
->> diff --git a/fs/proc/page.c b/fs/proc/page.c
->> index a55f5acefa97..66f454330a87 100644
->> --- a/fs/proc/page.c
->> +++ b/fs/proc/page.c
->> @@ -22,6 +22,14 @@
->>   #define KPMMASK (KPMSIZE - 1)
->>   #define KPMBITS (KPMSIZE * BITS_PER_BYTE)
->>   +enum kpage_operation {
->> +    KPAGE_FLAGS,
->> +    KPAGE_COUNT,
->> +#ifdef CONFIG_MEMCG
->> +    KPAGE_CGROUP,
->> +#endif
->> +};
->> +
->>   static inline unsigned long get_max_dump_pfn(void)
->>   {
->>   #ifdef CONFIG_SPARSEMEM
->> @@ -37,19 +45,17 @@ static inline unsigned long get_max_dump_pfn(void)
->>   #endif
->>   }
->>   -/* /proc/kpagecount - an array exposing page mapcounts
->> - *
->> - * Each entry is a u64 representing the corresponding
->> - * physical page mapcount.
->> - */
->> -static ssize_t kpagecount_read(struct file *file, char __user *buf,
->> -                 size_t count, loff_t *ppos)
->> +static ssize_t kpage_read(struct file *file, char __user *buf,
->> +        size_t count, loff_t *ppos,
->> +        enum kpage_operation op)
->>   {
->>       const unsigned long max_dump_pfn = get_max_dump_pfn();
->>       u64 __user *out = (u64 __user *)buf;
->> +    struct page *ppage;
->>       unsigned long src = *ppos;
->>       unsigned long pfn;
->>       ssize_t ret = 0;
->> +    u64 info;
->>         pfn = src / KPMSIZE;
->>       if (src & KPMMASK || count & KPMMASK)
->> @@ -59,19 +65,29 @@ static ssize_t kpagecount_read(struct file *file, char __user *buf,
->>       count = min_t(unsigned long, count, (max_dump_pfn * KPMSIZE) - src);
->>         while (count > 0) {
->> -        struct page *page;
->> -        u64 mapcount = 0;
->> -
->> -        /*
->> -         * TODO: ZONE_DEVICE support requires to identify
->> -         * memmaps that were actually initialized.
->> -         */
->> -        page = pfn_to_online_page(pfn);
->> -        if (page)
->> -            mapcount = folio_precise_page_mapcount(page_folio(page),
->> -                                   page);
->> -
->> -        if (put_user(mapcount, out)) {
->> +        ppage = pfn_to_online_page(pfn);
->> +
->> +        if (ppage) {
->> +            switch (op) {
->> +            case KPAGE_FLAGS:
->> +                info = stable_page_flags(ppage);
->> +                break;
->> +            case KPAGE_COUNT:
->> +                info = folio_precise_page_mapcount(page_folio(ppage), ppage);
->> +                break;
->> +#ifdef CONFIG_MEMCG
->> +            case KPAGE_CGROUP:
->> +                info = page_cgroup_ino(ppage);
->> +                break;
->> +#endif
->
-> In general, LGTM.
->
-> I do wonder if we should just get rid of the two "#ifdef CONFIG_MEMCG" by adding
-> a stub for page_cgroup_ino().
->
-> diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
-> index 57664e2a8fb7b..24248f4dcc971 100644
-> --- a/include/linux/memcontrol.h
-> +++ b/include/linux/memcontrol.h
-> @@ -1788,6 +1788,11 @@ static inline void count_objcg_events(struct obj_cgroup *objcg,
->  {
->  }
->  
-> +static inline ino_t page_cgroup_ino(struct page *page)
-> +{
-> +       return 0;
-> +}
+You can try perf annotate --stdio --code-with-type and see if it finds a
+correct type.  It'd be nice if you include the result in the commit log.
+
+> 
+> Here, 'adrp' retrieves the base address of the page where the global
+> variable is located, and 'add' adds the offset within the page. If PMU
+> sampling occurs at the instruction 'ldr x22, [x19, #8]', we need to
+> trace the preceding 'adrp' and 'add' instructions to obtain the status
+> information of x19.
+> 
+> A new register status type 'TSR_KIND_GLOBAL_ADDR' is introduced,
+> indicating that the register holds the address of a global variable, and
+> this address is also stored in the 'type_state_reg' structure. After
+> obtaining the status information of x19, we use
+> get_global_var_type() to search for a matching global variable and
+> verify whether the returned offset is equal to 8. If it is, then we have
+> identified the data type and offset of the accessed global variable.
+> 
+> Signed-off-by: Li Huafei <lihuafei1@huawei.com>
+> ---
+>  tools/perf/arch/arm64/annotate/instructions.c | 90 ++++++++++++++++++-
+>  tools/perf/util/annotate-data.c               | 20 +++++
+>  tools/perf/util/annotate-data.h               |  2 +
+>  3 files changed, 111 insertions(+), 1 deletion(-)
+> 
+> diff --git a/tools/perf/arch/arm64/annotate/instructions.c b/tools/perf/arch/arm64/annotate/instructions.c
+> index f70d93001fe7..f2053e7f60a8 100644
+> --- a/tools/perf/arch/arm64/annotate/instructions.c
+> +++ b/tools/perf/arch/arm64/annotate/instructions.c
+> @@ -262,6 +262,94 @@ update_insn_state_arm64(struct type_state *state, struct data_loc_info *dloc,
+>  	struct type_state_reg *tsr;
+>  	Dwarf_Die type_die;
+>  	int sreg, dreg;
+> +	u32 insn_offset = dl->al.offset;
 > +
->  #endif /* CONFIG_MEMCG */
->  
->  #if defined(CONFIG_MEMCG) && defined(CONFIG_ZSWAP)
->
->
-Agreed. I’ll add a stub for page_cgroup_ino() and remove the #ifdef CONFIG_MEMCG.
+> +	/* Access global variables via PC relative addressing, for example:
+> +	 *
+> +	 *  adrp    x19, ffff800082074000
+> +	 *  add     x19, x19, #0x380
+> +	 *
+> +	 * The adrp instruction locates the page base address, and the add
+> +	 * instruction adds the offset within the page.
+> +	 */
+> +	if (!strncmp(dl->ins.name, "adrp", 4)) {
+> +		sreg = get_arm64_regnum(dl->ops.source.raw);
+> +		if (sreg < 0 || !has_reg_type(state, sreg))
+> +			return;
+> +
+> +		tsr = &state->regs[sreg];
+> +		tsr->ok = true;
+> +		tsr->kind = TSR_KIND_GLOBAL_ADDR;
+> +		/*
+> +		 * The default arm64_mov_ops has already parsed the adrp
+> +		 * instruction and saved the target address.
+> +		 */
+> +		tsr->addr = dl->ops.target.addr;
+> +
+> +		pr_debug_dtp("adrp [%x] global addr=%#"PRIx64" -> reg%d\n",
+> +			     insn_offset, tsr->addr, sreg);
+> +		return;
+> +	}
+> +
+> +	/* Add the offset within the page. */
+> +	if (!strncmp(dl->ins.name, "add", 3)) {
+> +		regmatch_t match[4];
+> +		char *ops = strdup(dl->ops.raw);
+> +		u64 offset;
+> +		static regex_t add_regex;
+> +		static bool regex_compiled;
+> +
+> +		/*
+> +		 * Matching the operand assembly syntax of the add instruction:
+> +		 *
+> +		 *  <Xd|SP>, <Xn|SP>, #<imm>
+> +		 */
+> +		if (!regex_compiled) {
+> +			regcomp(&add_regex,
+> +				"^([xw][0-9]{1,2}|sp), ([xw][0-9]{1,2}|sp), #(0x[0-9a-f]+)",
+> +				REG_EXTENDED);
+> +			regex_compiled = true;
 
-like this.
+Similarly you could put it in the arch and free later.
 
-diff --git a/fs/proc/page.c b/fs/proc/page.c
-index 66f454330a87..cbadbf9568a1 100644
---- a/fs/proc/page.c
-+++ b/fs/proc/page.c
-@@ -25,9 +25,7 @@
- enum kpage_operation {
-        KPAGE_FLAGS,
-        KPAGE_COUNT,
--#ifdef CONFIG_MEMCG
-        KPAGE_CGROUP,
--#endif
- };
- 
- static inline unsigned long get_max_dump_pfn(void)
-@@ -75,11 +73,9 @@ static ssize_t kpage_read(struct file *file, char __user *buf,
-                        case KPAGE_COUNT:
-                                info = folio_precise_page_mapcount(page_folio(ppage), ppage);
-                                break;
--#ifdef CONFIG_MEMCG
-                        case KPAGE_CGROUP:
-                                info = page_cgroup_ino(ppage);
-                                break;
--#endif
-                        default:
-                                info = 0;
-                                break;
-@@ -262,7 +258,6 @@ static const struct proc_ops kpageflags_proc_ops = {
- };
- 
- #ifdef CONFIG_MEMCG
--
- static ssize_t kpagecgroup_read(struct file *file, char __user *buf,
-                size_t count, loff_t *ppos)
- {
-diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
-index 6e74b8254d9b..e806e2ebf5b8 100644
---- a/include/linux/memcontrol.h
-+++ b/include/linux/memcontrol.h
-@@ -1794,6 +1794,10 @@ static inline void count_objcg_events(struct obj_cgroup *objcg,
- {
- }
- 
-+static inline ino_t page_cgroup_ino(struct page *page)
-+{
-+       return 0;
-+}
- #endif /* CONFIG_MEMCG */
- 
- #if defined(CONFIG_MEMCG) && defined(CONFIG_ZSWAP)
+Thanks.
+Namhyung
 
 
-
-
+> +		}
+> +
+> +		if (!ops)
+> +			return;
+> +
+> +		if (regexec(&add_regex, dl->ops.raw, 4, match, 0))
+> +			return;
+> +
+> +		/*
+> +		 * Parse the source register first. If it is not of the type
+> +		 * TSR_KIND_GLOBAL_ADDR, further parsing is not required.
+> +		 */
+> +		ops[match[2].rm_eo] = '\0';
+> +		sreg = get_arm64_regnum(ops + match[2].rm_so);
+> +		if (sreg < 0 || !has_reg_type(state, sreg) ||
+> +		    state->regs[sreg].kind != TSR_KIND_GLOBAL_ADDR) {
+> +			free(ops);
+> +			return;
+> +		}
+> +
+> +		ops[match[1].rm_eo] = '\0';
+> +		dreg = get_arm64_regnum(ops + match[1].rm_so);
+> +		if (dreg < 0 || !has_reg_type(state, dreg)) {
+> +			free(ops);
+> +			return;
+> +		}
+> +
+> +		ops[match[3].rm_eo] = '\0';
+> +		offset = strtoul(ops + match[3].rm_so, NULL, 16);
+> +
+> +		tsr = &state->regs[dreg];
+> +		tsr->ok = true;
+> +		tsr->kind = TSR_KIND_GLOBAL_ADDR;
+> +		tsr->addr = state->regs[sreg].addr + offset;
+> +
+> +		pr_debug_dtp("add [%x] global addr=%#"PRIx64"(reg%d) -> reg%d\n",
+> +			     insn_offset, tsr->addr, sreg, dreg);
+> +
+> +		free(ops);
+> +		return;
+> +	}
+>  
+>  	if (strncmp(dl->ins.name, "ld", 2))
+>  		return;
+> @@ -287,7 +375,7 @@ update_insn_state_arm64(struct type_state *state, struct data_loc_info *dloc,
+>  		tsr->ok = true;
+>  
+>  		pr_debug_dtp("load [%x] %#x(reg%d) -> reg%d",
+> -			     (u32)dl->al.offset, dst->offset, dreg, sreg);
+> +			     insn_offset, dst->offset, dreg, sreg);
+>  		pr_debug_type_name(&tsr->type, tsr->kind);
+>  	}
+>  }
+> diff --git a/tools/perf/util/annotate-data.c b/tools/perf/util/annotate-data.c
+> index 2bc8d646eedc..aaca08bb9097 100644
+> --- a/tools/perf/util/annotate-data.c
+> +++ b/tools/perf/util/annotate-data.c
+> @@ -65,6 +65,9 @@ void pr_debug_type_name(Dwarf_Die *die, enum type_state_kind kind)
+>  	case TSR_KIND_CANARY:
+>  		pr_info(" stack canary\n");
+>  		return;
+> +	case TSR_KIND_GLOBAL_ADDR:
+> +		pr_info(" global address\n");
+> +		return;
+>  	case TSR_KIND_TYPE:
+>  	default:
+>  		break;
+> @@ -1087,6 +1090,23 @@ static enum type_match_result check_matching_type(struct type_state *state,
+>  		return PERF_TMR_OK;
+>  	}
+>  
+> +	if (state->regs[reg].kind == TSR_KIND_GLOBAL_ADDR) {
+> +		int var_offset;
+> +		u64 var_addr;
+> +
+> +		pr_debug_dtp("global var by address");
+> +
+> +		var_addr = state->regs[reg].addr + dloc->op->offset;
+> +
+> +		if (get_global_var_type(cu_die, dloc, dloc->ip, var_addr,
+> +					&var_offset, type_die)) {
+> +			dloc->type_offset = var_offset;
+> +			return PERF_TMR_OK;
+> +		}
+> +
+> +		return PERF_TMR_BAIL_OUT;
+> +	}
+> +
+>  	if (state->regs[reg].kind == TSR_KIND_CANARY) {
+>  		pr_debug_dtp("stack canary");
+>  
+> diff --git a/tools/perf/util/annotate-data.h b/tools/perf/util/annotate-data.h
+> index 717f394eb8f1..e3e877313207 100644
+> --- a/tools/perf/util/annotate-data.h
+> +++ b/tools/perf/util/annotate-data.h
+> @@ -36,6 +36,7 @@ enum type_state_kind {
+>  	TSR_KIND_CONST,
+>  	TSR_KIND_POINTER,
+>  	TSR_KIND_CANARY,
+> +	TSR_KIND_GLOBAL_ADDR,
+>  };
+>  
+>  /**
+> @@ -177,6 +178,7 @@ struct type_state_reg {
+>  	bool caller_saved;
+>  	u8 kind;
+>  	u8 copied_from;
+> +	u64 addr;
+>  };
+>  
+>  /* Type information in a stack location, dynamically allocated */
+> -- 
+> 2.25.1
+> 
 
