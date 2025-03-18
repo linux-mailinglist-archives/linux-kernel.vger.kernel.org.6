@@ -1,132 +1,147 @@
-Return-Path: <linux-kernel+bounces-565850-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565854-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85369A67012
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 10:44:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79A65A6701B
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 10:45:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8830A1888A5F
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 09:44:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F8FF3AAEB0
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 09:44:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5F2C205514;
-	Tue, 18 Mar 2025 09:43:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F639207675;
+	Tue, 18 Mar 2025 09:44:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="livyB0fx"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nRJ+VON8"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBE9D203716;
-	Tue, 18 Mar 2025 09:43:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CF47202C2B;
+	Tue, 18 Mar 2025 09:44:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742291036; cv=none; b=ScCg6idAEmatNJ95z4ON1YewoLF0QtCMk//Fe6TF4McVACSpQ3thvTVCBjGmkfPOg3x2Z+Ki1TQwdNYaE6fe+NEbzkc5VfTamTiIoHWc5HKP8SUGE96GQZGHpnZtdRDXZ6HcBxTz3+Ga8OAHCrIrtxPWw6r2fpiVdIIv26GpyA0=
+	t=1742291093; cv=none; b=Q62zZWjORwF3wUyw//O7iAadYL43XEDQZhtqFY1fVr9C4PjjVdDB+TdSgo/sTeVK0MmEL+Dq0IlxKtQv94P8Fhl4chGZEws/dGPCZM5d1GXV3SJPXVqLgSF9nM6QAxJevc3R3Fog3yD08MeiTR4ZwKUa/iirA2gegtyN3FUAi04=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742291036; c=relaxed/simple;
-	bh=XaCMPcxZPpx3RjmzjLh33LTCkrAMEaVOGoAlykO+ERk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=hxLnoiv86PnCpXrkvQ3lTkC0cw1RM1psvz7G+8F6FkrSx7rJRPEDxPNCXD86SYWLBblZu12IY2KQO76seeQmoMY95GX3dTYT7YaXs3EXM6M1NFGW2IzChHx8Ma89MVAxgA0NQUGiMy0Kj+dzEGSV07V+FYaMyyd0rIx21+HLk+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=livyB0fx; arc=none smtp.client-ip=209.85.214.180
+	s=arc-20240116; t=1742291093; c=relaxed/simple;
+	bh=9dseCUgfawFHDhoNUQBKZC9vwAGc9hCxkFUNPU0iZpg=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UDgu6RcwcaKQPVAsl8K4x4W92IFEiENAUkn9aYlA2BdWwDoquvjz63yo4ENCJUe3y6hSz6xga17lACMOSo2PfRI5gGGAelWcljsMZ7COU/K1qcBK+K8MilRRONqQNHCW4CCCWvBMVjbdHhkxWpzCjCCjmFdtoJwBXk9HL/QVSGs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nRJ+VON8; arc=none smtp.client-ip=209.85.218.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-22403cbb47fso98240885ad.0;
-        Tue, 18 Mar 2025 02:43:54 -0700 (PDT)
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-ac34257295dso142731966b.2;
+        Tue, 18 Mar 2025 02:44:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742291034; x=1742895834; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=hJbWkSZND/K3t/quPIPTfxuwMu7Us16mwzx5pshvALk=;
-        b=livyB0fxNLh4TV7fDAuXqNYD4fRpMU+Xbtpt4eMCDmExKEvtI4G6RnyYNhY8VPPjsw
-         BnE2dxfZ9b1KPaWqiFtXijS7vrudJ6OTazW8G3fiLB8jtapuxZkhqaLmcpYGumVR0puf
-         j/7BUjJfvaAIvylfsHo+qy1XzPa22bmY3lYaYTFAAwZeRMjiGMePRvMvKB5XJ8gHy9cX
-         k0rUU2jpCR1cGdq6bboO/0C1MVqToaN97ntSqSGNGjGZhC/MZoOi2psfZ0xSG4Pa1JSx
-         uPYdeAps7k7/vTt/A6Sc8hbuE3qWeX3MBRqlsPb+Pu9V4kkyEr6yv7Co1hdx6gRhd3km
-         /ytQ==
+        d=gmail.com; s=20230601; t=1742291090; x=1742895890; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=s04vWbS/+IELd1isfxtGM2wXxsUsxWYm6LzkaytObnU=;
+        b=nRJ+VON8lZNs5yFAAWd+pWzT6b5WFj9XU6tdQ3WVlSPPSb1ap027ojzWoXvACtJpgg
+         O5C55mzEbzFPY+HlqMNppFNHQ1ymGtRsiAHXD0GSJ+7+IC7EVYrIu5Kfnq8sxtvPJA5q
+         Moe4XNA+BUGMWYUgzNiLxRnsPOPWGTJwbFx+mKqQA5G5x/8b+Z8E6fOa/fFyCX9j4PP9
+         QH0nV8uKtdZZG7dnzsLiApfnJUdbFeG1x7ZNdXoKKhqIU4a+2KB2seF090YK5Y8Qorgy
+         rJUj9yb12TryfrF+f8cS2FoaamBZIuIdkVyGLcG4oNZx6WVzd54paToybK6FXrad1k/3
+         Rw3g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742291034; x=1742895834;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=hJbWkSZND/K3t/quPIPTfxuwMu7Us16mwzx5pshvALk=;
-        b=TumfS9QAW2uYTzTGgyA4IRDchqtRSbsH2C1NOlZ2Ro6vVc8ICZIoAuBrQgB9SH+xQx
-         4cW08sMN1y+XwCGTr/zMkhKsF8jt81eRtPvsWj6e3o5/t2NI4gQ7xvb7TJK/4hyj5IQq
-         7/95DsYpjxKAEpwWCbgy5PSU8OXn4zcO+j6HvtFOKA9XKVh5Lzi9HfS+lMqj1OujCVgA
-         q/nnb/Ke4ubs9KG6kwU/Ytut6UcFTzazrA0jl43a9q1n4WyTl6GBH9aIkX2psi4PVLVF
-         I99ehItzyLiePGgZWzl0nV1JAVvzKRrkrE+HPgqt+X0GPnuz9eHuDMLYxZoVC1p6EftY
-         hElQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVypRh6iJIf3tl4z7fa1/pRup6+lliDGTP1Bas3ZtOe0v+tS7Mck9ouvC8ZjpAzF2eGjTOyHE0fh8lwfD0=@vger.kernel.org, AJvYcCWDfWmuRBg49oap8pQ2ahuUuFELeELbPEZajT5KQC2kCeHqd3kMwM41RDu0p/L25wGUIAUiWTCWuzVAuA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFxHIAG90dnzBskBgvpAyZTuo1wXly8TGYBWSjjMFWUgMoacSY
-	JEx0wwBPQ+UflVwMqHQSiK621RXTRAwIPJAYp/jYooNzGplzHl01
-X-Gm-Gg: ASbGncsTZOEgsZ/RQ8/WApH9LPZ2m0S+ltd7goNvIWVgGHYt4+ngMaIAzrhurH2E6k8
-	uzwTV90KIOTQ67m2kXoyivVYrnEwBA4uvBufebydnhg4hj6lO2beJ99NSFA8uVFHZUCruLye7hc
-	zZ68s4Gv4oi7wBNpmcXMUU/UZ2Xt+4XV3mP4MsyFuaGdXOZWUHTrQYoTu5VTzJjlW7I+rXI+sVz
-	yi6+ZxWf5T+b/RNwsHmCZMbMAXlQvlIf7ViKYfjcprrvojkTQv9ldlnusue3I1iNDSQBZ5v2wh0
-	W7Kh9mw5GyZW0QGpQJvxY2ug6ZL3NNM1WG35s/EajikXxLkwXxylyMQwjPJM8l5QgUS2jd/dyUW
-	B7XY=
-X-Google-Smtp-Source: AGHT+IH2ALjYAcNZFxFSk+UFw+JaT6R9liUb9JM6KsyABh3Uh+bIRYXRzCmoq6U09VGIyXm4x+WI+Q==
-X-Received: by 2002:a17:903:18e:b0:223:325c:89de with SMTP id d9443c01a7336-225e0a5282bmr189640685ad.1.1742291033856;
-        Tue, 18 Mar 2025 02:43:53 -0700 (PDT)
-Received: from localhost.localdomain ([114.246.238.36])
-        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-225c6bd3c59sm89848815ad.218.2025.03.18.02.43.49
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Tue, 18 Mar 2025 02:43:53 -0700 (PDT)
-From: linmq006@gmail.com
-To: Lee Duncan <lduncan@suse.com>,
-	Chris Leech <cleech@redhat.com>,
-	Mike Christie <michael.christie@oracle.com>,
-	"James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	Lin Ma <linma@zju.edu.cn>,
-	open-iscsi@googlegroups.com,
-	linux-scsi@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: linmq006@gmail.com
-Subject: [PATCH] scsi: iscsi: Fix missing scsi_host_put in error path
-Date: Tue, 18 Mar 2025 17:43:43 +0800
-Message-Id: <20250318094344.91776-1-linmq006@gmail.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+        d=1e100.net; s=20230601; t=1742291090; x=1742895890;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=s04vWbS/+IELd1isfxtGM2wXxsUsxWYm6LzkaytObnU=;
+        b=wKNwnftCKB6lHf805pcHS1gxEU2/+P7JF/YoVMQnyLyFMLJIXLOPrZFwPRhFdYLfhV
+         rZiVUxqpJdAqPSDXtIkL3EKgK8malpUNfeS1FUhmcpM5zajibzIYwh6esiQebH9oURPZ
+         yqcjDQOV+DtWu4i/2fdI4/s1+GmOFbavGfTaeA4agNv40N+Tt4NpgQX0QuByWgJ4+FoB
+         8vtaMYJho0vkAav6wPpwD6KeaIOpTAvyE5TFlKHA3PvJb1sG9BcZjEtJOA7Rxu/gERCs
+         vEEAYNX/Bj4W3LimTEQBzdPmlEu5s809bzIfw7XhAjKSWpoKju0vCk6xlsnUqhZ5E6/4
+         xzqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV4y4mDURpl4cvxxQljRx3H10GK1RISZ8obCViSzlapXe5XYmeIcKxtbRUwrkHZz7AjJe4PTO3H7Mr40Glv@vger.kernel.org, AJvYcCWWLZ+tLgtl+XKuYiXOACtbqXIQHPZXQQW0o89A7KEjo2NsB+jtdzgMouwG5vG/zotaJRk=@vger.kernel.org, AJvYcCX8bNe8dXNqQojNt+zfWOc0skp2og6lWYJT+rgUsRSf5w7QSqAsyI72jfO3ZuflHirzu/i8iRuHt8VYV6gxKE61@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy9ceGVqlJoSK/XnHL1PPE+72Bm901r5sihPXZQACxYXb/mDb+b
+	Lu8ZkknvuPjeBYPeAqomqrtqgNRiJstiZAef+7lgrFwlhcwHXXvf
+X-Gm-Gg: ASbGncui8Ymzw6PAjp2YhYIJOdA0V7Dv5fGzJ78xys9KNjMZRo6mmbRLm/1p8Urye8a
+	H7LWxZpKDwi7RNIQzBLp7mmwgtMq9+043l+lDfLH83UIomK0KnJjo4z4CLAMETqJksJ02PR4b2J
+	AiYyKxBeMsTFjSwIc2pzV0Gq5IEc9hHU0U2mYzz9YCcJfjzBP4bGdMl4P9sZWJJ4bjZlXCDdBZa
+	w0FzgCBv4XyGG0msb+Zi5OLb+9IpNbLQ6gyzjbAFazOsZcZJRhY5doWecY2HGcs1qCK1zVKsNLA
+	Z5xW5mOa3eiKDeakEiOPIaeGnjDQ0gs=
+X-Google-Smtp-Source: AGHT+IFepVwFcfXs2vuS35E7cRvymbh0mZHbilkMAE6IL4hvEQz4oLQRWeCIgwZ3GbrhCKcxaRLFHg==
+X-Received: by 2002:a17:907:c27:b0:ac3:4370:f6d2 with SMTP id a640c23a62f3a-ac34370f77bmr1085273166b.4.1742291089794;
+        Tue, 18 Mar 2025 02:44:49 -0700 (PDT)
+Received: from krava ([173.38.220.48])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3149cdec8sm816734266b.112.2025.03.18.02.44.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Mar 2025 02:44:49 -0700 (PDT)
+From: Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date: Tue, 18 Mar 2025 10:44:47 +0100
+To: =?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn@kernel.org>
+Cc: Andrii Nakryiko <andrii@kernel.org>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Mykola Lysenko <mykolal@fb.com>, bpf@vger.kernel.org,
+	=?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn@rivosinc.com>,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH bpf-next] selftests/bpf: Sanitize pointer prior fclose()
+Message-ID: <Z9lAj-1COhR82P_O@krava>
+References: <20250318081648.122523-1-bjorn@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250318081648.122523-1-bjorn@kernel.org>
 
-From: Miaoqian Lin <linmq006@gmail.com>
+On Tue, Mar 18, 2025 at 09:16:47AM +0100, Björn Töpel wrote:
+> From: Björn Töpel <bjorn@rivosinc.com>
+> 
+> There are scenarios where env.{sub,}test_state->stdout_saved, can be
+> NULL, e.g. sometimes when the watchdog timeout kicks in, or if the
+> open_memstream syscall is not available.
+> 
+> Avoid crashing test_progs by adding an explicit NULL check prior the
+> fclose() call.
+> 
+> Signed-off-by: Björn Töpel <bjorn@rivosinc.com>
 
-Add goto to ensure scsi_host_put is called in all error paths of
-iscsi_set_host_param function. This fixes a potential memory leak when
-strlen check fails.
+Acked-by: Jiri Olsa <jolsa@kernel.org>
 
-Fixes: ce51c8170084 ("scsi: iscsi: Add strlen() check in iscsi_if_set{_host}_param()")
-Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
----
- drivers/scsi/scsi_transport_iscsi.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+jirka
 
-diff --git a/drivers/scsi/scsi_transport_iscsi.c b/drivers/scsi/scsi_transport_iscsi.c
-index 9c347c64c315..0b8c91bf793f 100644
---- a/drivers/scsi/scsi_transport_iscsi.c
-+++ b/drivers/scsi/scsi_transport_iscsi.c
-@@ -3182,11 +3182,14 @@ iscsi_set_host_param(struct iscsi_transport *transport,
- 	}
- 
- 	/* see similar check in iscsi_if_set_param() */
--	if (strlen(data) > ev->u.set_host_param.len)
--		return -EINVAL;
-+	if (strlen(data) > ev->u.set_host_param.len) {
-+		err = -EINVAL;
-+		goto out;
-+	}
- 
- 	err = transport->set_host_param(shost, ev->u.set_host_param.param,
- 					data, ev->u.set_host_param.len);
-+out:
- 	scsi_host_put(shost);
- 	return err;
- }
--- 
-2.39.5 (Apple Git-154)
+> ---
+>  tools/testing/selftests/bpf/test_progs.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+> 
+> diff --git a/tools/testing/selftests/bpf/test_progs.c b/tools/testing/selftests/bpf/test_progs.c
+> index d4ec9586b98c..309d9d4a8ace 100644
+> --- a/tools/testing/selftests/bpf/test_progs.c
+> +++ b/tools/testing/selftests/bpf/test_progs.c
+> @@ -103,12 +103,14 @@ static void stdio_restore(void)
+>  	pthread_mutex_lock(&stdout_lock);
+>  
+>  	if (env.subtest_state) {
+> -		fclose(env.subtest_state->stdout_saved);
+> +		if (env.subtest_state->stdout_saved)
+> +			fclose(env.subtest_state->stdout_saved);
+>  		env.subtest_state->stdout_saved = NULL;
 
+nit, setting to NULL could be inside the condition
+
+>  		stdout = env.test_state->stdout_saved;
+>  		stderr = env.test_state->stdout_saved;
+>  	} else {
+> -		fclose(env.test_state->stdout_saved);
+> +		if (env.test_state->stdout_saved)
+> +			fclose(env.test_state->stdout_saved);
+>  		env.test_state->stdout_saved = NULL;
+>  		stdout = env.stdout_saved;
+>  		stderr = env.stderr_saved;
+> 
+> base-commit: f3f8649585a445414521a6d5b76f41b51205086d
+> -- 
+> 2.45.2
+> 
+> 
 
