@@ -1,55 +1,98 @@
-Return-Path: <linux-kernel+bounces-566630-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566631-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11BB0A67A9B
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 18:19:08 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B8F5A67A9C
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 18:19:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA4A1174CCE
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 17:18:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BCC5916A9A5
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 17:18:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5D93211A27;
-	Tue, 18 Mar 2025 17:16:05 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FB2C199235;
-	Tue, 18 Mar 2025 17:16:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C86B3212D84;
+	Tue, 18 Mar 2025 17:16:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GQZwKIaN"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 809B0212B17
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 17:16:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742318165; cv=none; b=HibVVmGYsSh2nS24aBZC8KU1QKajzDXtOFYaRd6FFnFGJgSqBLM8/KuxWKVa7lVCYsBFhiJiZLQx8yKK5XMWb2g1/OHi/5nfdv8dRtFIxOf48kyEikJFEfsG0OXHIHdQpg3YnqvIQfq1fsNAzYOiL5nsmTYaPeZhnsz83EJvcdU=
+	t=1742318168; cv=none; b=sIcUv4QyVNkx8fehUUmDsyycupx/3wH7AYkpm4qJQUJ1MebkT54j8d3+Brt8vM2tno1SY/Gz8WpZpGg7SMTxQIiA2njmZO8GsmocRsXtnX89tN50ukUqmZNtY+xacWOxRYoipaavwlr+X/KHRQUJw/LoGaUxQ3f+xpgUXz38cr4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742318165; c=relaxed/simple;
-	bh=VP7iP0w8pYe4gFKC31cVKPEWIkG0F79bgmlPVBhf2Ts=;
+	s=arc-20240116; t=1742318168; c=relaxed/simple;
+	bh=hqRLaDNKogUaRmHf/2iO107dAumC350vozHUmTiqcdg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gJUDZ/Cd0QcSwfJX/5xxJB71w4dHJV7rFm48DhfO+FuFZZZYG6CaRaOp59TA0a5nOdiVdxjFZsf/B8bEOPuv34kR/cgdfwrAR+mbY+jsX/ZIQ2feg7ko0l/N+mvRnexfuCSXcnT0Xa4u2eTYtY+eo8QIUj9ySCHsb7kv4q58JBU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 31080113E;
-	Tue, 18 Mar 2025 10:16:11 -0700 (PDT)
-Received: from localhost (e132581.arm.com [10.1.196.87])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 51F8E3F673;
-	Tue, 18 Mar 2025 10:16:02 -0700 (PDT)
-Date: Tue, 18 Mar 2025 17:15:57 +0000
-From: Leo Yan <leo.yan@arm.com>
-To: Li Huafei <lihuafei1@huawei.com>
-Cc: namhyung@kernel.org, acme@kernel.org, leo.yan@linux.dev,
-	james.clark@linaro.org, mark.rutland@arm.com,
-	john.g.garry@oracle.com, will@kernel.org, irogers@google.com,
-	mike.leach@linaro.org, peterz@infradead.org, mingo@redhat.com,
-	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-	kjain@linux.ibm.com, mhiramat@kernel.org,
-	atrajeev@linux.vnet.ibm.com, sesse@google.com,
-	adrian.hunter@intel.com, kan.liang@linux.intel.com,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH 1/7] perf annotate: Handle arm64 load and store
- instructions
-Message-ID: <20250318171557.GA2860028@e132581.arm.com>
-References: <20250314162137.528204-1-lihuafei1@huawei.com>
- <20250314162137.528204-2-lihuafei1@huawei.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=b126RseP1VDujDtPEy7ww4ON8p1dZcxjQrNeVBINyonNzySp60Q0K8GyOCOACVK2mOudiOxsIOFoH78x3dnM1bfyLHoUYUFhXLfru9mtzzquqcrp+2H0hoGWqHVGk3QIYT25BMmX4aCX3Tx256+4b+GpajdRdfyM4HowBuK1xVE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GQZwKIaN; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-224019ad9edso67162175ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 10:16:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742318166; x=1742922966; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Fv88hBBxZboXJONdl4LSqe3F+xHiocOTgQ4YrefHaSc=;
+        b=GQZwKIaN/LGY0cXRCxQ/f1oN/0WrCeSKu79Wx2VbL/JQG9Ir+9i4wlUe+ICE51PrXE
+         oj80kpFSy3Gh7LTPvcOitBAlCReE7Day8RZHrU34wn/8vYJzPXnR9ASPl0okYjUSNhR6
+         W6ByWQPj/cZloMYP8YlPcEsHfHTxBo7YR0/8pfaV1bUevpDrk5ZGBt2t5mXrwx/InJr3
+         CgQoiFiJyuofAJ6lcRB0TbfaPWsZ1kugfSOC8g60HwI7xrLlLNeU73czPU+rwcHySh7M
+         2jgmFIAjHfw56YFDH5R3V+rmTAM7wDCisZz0+1Qi+TWGs6O90LO3vKMxbut9z6VA4kWe
+         5t1w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742318166; x=1742922966;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Fv88hBBxZboXJONdl4LSqe3F+xHiocOTgQ4YrefHaSc=;
+        b=rtOJ0W4otUEqDfG+JrS0X4ZLQxVNBR8fCEUJGuYXdkx0JTe2EXMZcDv7q/fJyxRyZw
+         gF3rRg0hqb+gilE2KF82e7RBAW6EaZgkfKgYazVdvyTZgr3/ea3bMBSaIZBPfHHKo0fM
+         0KhVQyrHAPOr8TBqRkkYC89rpqH2N5qxxZyzkg6qUV81T2XN2mUEkn0HhMXtkB0c7clt
+         H17jZCbfK9zROvFYKEefqN0N5O/zqOLybM1QaACm+yZ4hkBb5oVQbCFsSI6dQiEHG4Ax
+         6k4Y3Fz/A2f4qMy/IkdIiOG2mOplPzRVGv3nlLLojjoZwdaYqAhb1w/d4TOjmKugd8PH
+         mdLA==
+X-Forwarded-Encrypted: i=1; AJvYcCXjgR7i75LOiiaQ2aPUJGdMi130684EZMCcEYbg7Y/GAIS2gPc5JDPnskPysBGTuNxUEWmqquSkSXOJ8fE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzqJWvV8Sp56T+QRocvWAhwNX2vGenfZhoV0T+DhUWkNBLWg3Z3
+	Rp3HgPuEI4/Z/SZ7ivaalE9N0xlFYiB+O3XTbwY9vAU935Irondk
+X-Gm-Gg: ASbGnctHUvArJSSNZhllYWIxbTD+HKzILd+O5dVOTQviJ2xvmj8VkEf6goy9yP5vknQ
+	+tghOSRWm8b2MjSs4KSMUIoHMtk0P7MyerDxyMPgoH6y99yBjXeVcWRkefT2hDzl45sDlZ2OdBF
+	DvTvwHlHxdcn9LYBR0CLlcnqYVxaR797phea77zC3Ykw2pjzTJcflFOH8faOGHs4nVVDdKsZTjU
+	uDJFxWakA5K189lvrHea+22l63VY2gp8OblAOdvOgfXy7eSAkiFbJkBr5ee5VS3SoOSoEsA+ebJ
+	utXYRBBUYoWLFLVDSBOhNDpg3v5vRiCBkxe4HuYDHhK+uTaiT3LsQElpLffwKzBDSsxm
+X-Google-Smtp-Source: AGHT+IEiuxfM7CMCU8uN8rrGdd6ky409oPSqP147XRFz3wH1huV0wzqx/w2kjY4U0AMw0iZ6RBeVxQ==
+X-Received: by 2002:a17:903:2287:b0:21f:52e:939e with SMTP id d9443c01a7336-2262c580c48mr65250955ad.28.1742318165591;
+        Tue, 18 Mar 2025 10:16:05 -0700 (PDT)
+Received: from localhost (maglev-oncall.nvidia.com. [216.228.125.128])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-225c6bbca45sm97083145ad.166.2025.03.18.10.16.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Mar 2025 10:16:05 -0700 (PDT)
+Date: Tue, 18 Mar 2025 13:16:01 -0400
+From: Yury Norov <yury.norov@gmail.com>
+To: mailhol.vincent@wanadoo.fr
+Cc: Lucas De Marchi <lucas.demarchi@intel.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	Andi Shyti <andi.shyti@linux.intel.com>,
+	David Laight <David.Laight@aculab.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Jani Nikula <jani.nikula@intel.com>
+Subject: Re: [PATCH v6 4/7] drm/i915: Convert REG_GENMASK*() to fixed-width
+ GENMASK_U*()
+Message-ID: <Z9mqUZX4H-CzqbW4@thinkpad>
+References: <20250308-fixed-type-genmasks-v6-0-f59315e73c29@wanadoo.fr>
+ <20250308-fixed-type-genmasks-v6-4-f59315e73c29@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,164 +101,68 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250314162137.528204-2-lihuafei1@huawei.com>
+In-Reply-To: <20250308-fixed-type-genmasks-v6-4-f59315e73c29@wanadoo.fr>
 
-Hi Huafei,
-
-On Sat, Mar 15, 2025 at 12:21:31AM +0800, Li Huafei wrote:
-> Add ldst_ops to handle load and store instructions in order to parse
-> the data types and offsets associated with PMU events for memory access
-> instructions. There are many variants of load and store instructions in
-> ARM64, making it difficult to match all of these instruction names
-> completely. Therefore, only the instruction prefixes are matched. The
-> prefix 'ld|st' covers most of the memory access instructions, 'cas|swp'
-> matches atomic instructions, and 'prf' matches memory prefetch
-> instructions.
-
-Thanks a lot for working on this!
-
-> Signed-off-by: Li Huafei <lihuafei1@huawei.com>
+On Sat, Mar 08, 2025 at 01:48:51AM +0900, Vincent Mailhol via B4 Relay wrote:
+> From: Lucas De Marchi <lucas.demarchi@intel.com>
+> 
+> Now that include/linux/bits.h implements fixed-width GENMASK_U*(), use
+> them to implement the i915/xe specific macros. Converting each driver
+> to use the generic macros are left for later, when/if other
+> driver-specific macros are also generalized.
+> 
+> Signed-off-by: Lucas De Marchi <lucas.demarchi@intel.com>
+> Acked-by: Jani Nikula <jani.nikula@intel.com>
+> Signed-off-by: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
 > ---
->  tools/perf/arch/arm64/annotate/instructions.c | 67 ++++++++++++++++++-
->  1 file changed, 66 insertions(+), 1 deletion(-)
+> Changelog:
 > 
-> diff --git a/tools/perf/arch/arm64/annotate/instructions.c b/tools/perf/arch/arm64/annotate/instructions.c
-> index d465d093e7eb..c212eb7341bd 100644
-> --- a/tools/perf/arch/arm64/annotate/instructions.c
-> +++ b/tools/perf/arch/arm64/annotate/instructions.c
-> @@ -6,7 +6,8 @@
->  
->  struct arm64_annotate {
->  	regex_t call_insn,
-> -		jump_insn;
-> +		jump_insn,
-> +		ldst_insn; /* load and store instruction */
->
->  };
->  
->  static int arm64_mov__parse(struct arch *arch __maybe_unused,
-> @@ -67,6 +68,57 @@ static struct ins_ops arm64_mov_ops = {
->  	.scnprintf = mov__scnprintf,
->  };
->  
-> +static int arm64_ldst__parse(struct arch *arch __maybe_unused,
-> +			     struct ins_operands *ops,
-> +			     struct map_symbol *ms __maybe_unused,
-> +			     struct disasm_line *dl __maybe_unused)
-> +{
-> +	char *s, *target;
-> +
-> +	/*
-> +	 * The part starting from the memory access annotation '[' is parsed
-> +	 * as 'target', while the part before it is parsed as 'source'.
-> +	 */
-> +	target = s = strchr(ops->raw, '[');
-> +	if (!s)
-> +		return -1;
-
-I am wandering if this is sufficient for handling different load /
-store instructions.
-
-A simple case is an instruction "ldr x1, [x2]", the handling above
-should can work well.  How about instructions below with offsets:
-
-    ldr     x2, [x0, #968]
-    ldr     w3, [x25], #4
-
-Could you also confirm if the parsing can fit the pattern for
-load/store pair instructions?
-
-    ldp     x29, x30, [sp], #16
-
-The instruction loads paired 64-bit data into two registers.
-
-> +	while (s > ops->raw && *s != ',')
-> +		--s;
-> +
-> +	if (s == ops->raw)
-> +		return -1;
-> +
-> +	*s = '\0';
-> +	ops->source.raw = strdup(ops->raw);
->
-> +
-> +	*s = ',';
-> +	if (!ops->source.raw)
-> +		return -1;
-> +
-> +	ops->target.raw = strdup(target);
-> +	if (!ops->target.raw) {
-> +		zfree(ops->source.raw);
-> +		return -1;
-> +	}
-> +	ops->target.mem_ref = true;
-> +
-> +	return 0;
-> +}
-> +
-> +static int ldst__scnprintf(struct ins *ins, char *bf, size_t size,
-> +			   struct ins_operands *ops, int max_ins_name)
-> +{
-> +	return scnprintf(bf, size, "%-*s %s,%s", max_ins_name, ins->name,
-> +			 ops->source.name ?: ops->source.raw,
-> +			 ops->target.name ?: ops->target.raw);
-> +}
-> +
-> +static struct ins_ops arm64_ldst_ops = {
-> +	.parse	   = arm64_ldst__parse,
-> +	.scnprintf = ldst__scnprintf,
-> +};
-> +
->  static struct ins_ops *arm64__associate_instruction_ops(struct arch *arch, const char *name)
->  {
->  	struct arm64_annotate *arm = arch->priv;
-> @@ -77,6 +129,8 @@ static struct ins_ops *arm64__associate_instruction_ops(struct arch *arch, const
->  		ops = &jump_ops;
->  	else if (!regexec(&arm->call_insn, name, 2, match, 0))
->  		ops = &call_ops;
-> +	else if (!regexec(&arm->ldst_insn, name, 2, match, 0))
-> +		ops = &arm64_ldst_ops;
->  	else if (!strcmp(name, "ret"))
->  		ops = &ret_ops;
->  	else
-> @@ -107,6 +161,15 @@ static int arm64__annotate_init(struct arch *arch, char *cpuid __maybe_unused)
->  		      REG_EXTENDED);
->  	if (err)
->  		goto out_free_call;
-> +	/*
-> +	 * The ARM64 architecture has many variants of load/store instructions.
-> +	 * It is quite challenging to match all of them completely. Here, we
-> +	 * only match the prefixes of these instructions.
-> +	 */
-> +	err = regcomp(&arm->ldst_insn, "^(ld|st|cas|prf|swp)",
-> +		      REG_EXTENDED);
-
-As a first step, it is fine for me to support these memory types.
-
-After I review the whole series, I might go back to check if we can
-support other memory instructions (e.g. SVE, Memory Copy and
-Memory Set instructions, etc).  At least, we need to avoid any
-barriers for extending these instructions.
-
-Thanks,
-Leo
-
-> +	if (err)
-> +		goto out_free_jump;
->  
->  	arch->initialized = true;
->  	arch->priv	  = arm;
-> @@ -117,6 +180,8 @@ static int arm64__annotate_init(struct arch *arch, char *cpuid __maybe_unused)
->  	arch->e_flags = 0;
->  	return 0;
->  
-> +out_free_jump:
-> +	regfree(&arm->jump_insn);
->  out_free_call:
->  	regfree(&arm->call_insn);
->  out_free_arm:
+>   v5 -> v6:
 > 
-> -- 
-> 2.25.1
+>     - No changes.
 > 
+>   v4 -> v5:
+> 
+>     - Add braket to macro names in patch description,
+>       e.g. 'REG_GENMASK*' -> 'REG_GENMASK*()'
+> 
+>   v3 -> v4:
+> 
+>     - Remove the prefixes in macro parameters,
+>       e.g. 'REG_GENMASK(__high, __low)' -> 'REG_GENMASK(high, low)'
+> ---
+>  drivers/gpu/drm/i915/i915_reg_defs.h | 108 ++++-------------------------------
+>  1 file changed, 11 insertions(+), 97 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/i915/i915_reg_defs.h b/drivers/gpu/drm/i915/i915_reg_defs.h
+> index e251bcc0c89f5710125bc70f07851b2cb978c89c..39e5ed9511174b8757b9201bff735fa362651b34 100644
+> --- a/drivers/gpu/drm/i915/i915_reg_defs.h
+> +++ b/drivers/gpu/drm/i915/i915_reg_defs.h
+> @@ -9,76 +9,19 @@
+>  #include <linux/bitfield.h>
+>  #include <linux/bits.h>
+>  
+> -/**
+> - * REG_BIT() - Prepare a u32 bit value
+> - * @__n: 0-based bit number
+> - *
+> - * Local wrapper for BIT() to force u32, with compile time checks.
+> - *
+> - * @return: Value with bit @__n set.
+> +/*
+> + * Wrappers over the generic BIT_* and GENMASK_* implementations,
+> + * for compatibility reasons with previous implementation
+>   */
+> -#define REG_BIT(__n)							\
+> -	((u32)(BIT(__n) +						\
+> -	       BUILD_BUG_ON_ZERO(__is_constexpr(__n) &&		\
+> -				 ((__n) < 0 || (__n) > 31))))
+> +#define REG_GENMASK(high, low)		GENMASK_U32(high, low)
+> +#define REG_GENMASK64(high, low)	GENMASK_U64(high, low)
+> +#define REG_GENMASK16(high, low)	GENMASK_U16(high, low)
+> +#define REG_GENMASK8(high, low)		GENMASK_U8(high, low)
+
+Nit. Maybe just
+
+ #define REG_GENMASK		GENMASK_U32
 
