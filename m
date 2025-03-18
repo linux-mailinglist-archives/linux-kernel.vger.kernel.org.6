@@ -1,175 +1,198 @@
-Return-Path: <linux-kernel+bounces-565573-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565572-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB770A66AE5
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 07:50:45 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39E0FA66AE0
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 07:50:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6FBD63BC02A
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 06:50:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C30117D232
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 06:50:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88D221E7C12;
-	Tue, 18 Mar 2025 06:50:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="aJAbdy20"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 146411DF743;
+	Tue, 18 Mar 2025 06:50:19 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6397A1E51FE;
-	Tue, 18 Mar 2025 06:50:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B6051DE880;
+	Tue, 18 Mar 2025 06:50:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742280626; cv=none; b=pmhnec0hLCz7ZZf3QRBHd9NmHFY1U6R2kwcB/edgHBi0isAmGTEigkFUZhv95ErlQSlSTumH4XO5ZK3WcGrbKqpXHwSZRHApf+26wfHUhGuKq3hy5vS6fM7BuOLS7jNp77YSun9ljilAmwJ7nws4AoR0B1GExMeRumo6+pHYLn8=
+	t=1742280618; cv=none; b=LxzrGLK5zY8qJxT3avyUqTN3HQrNTcc4rKjtI/8otwv69owHo1DWsqhpoEveTpS3JDtFHFTuij5uuQtn1a2El05SDsEAjxwoGbek7aTQnY4RpYSmueVWvWmVOV+eCTlFSD3SRci4QAVF7jmt4j8cUzdNvxjD3ysTNIaFyCSdo1U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742280626; c=relaxed/simple;
-	bh=YBWTCJsyjRVvr+Y7JsfSHvxVmVgi5aTJlg5IF6SL9oc=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=nBUicn+PshyxGCgUjzkjneQUuOb9ovh33LICODkat3PamQbYtRNVtDxgPbx38dLG+45lA6uM8IKrjkqBTmpR+WugXpexcp7FiUptj/+iGnoFATYhHqXlDCwoz5Yw+SOgmdjXhbdj3O0H7Oby04+XPINrT7S8JhQgqz13G5R3D8I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=aJAbdy20; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52HLkxW2026060;
-	Tue, 18 Mar 2025 06:50:21 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=TJCCnvRUJBx/FcWEdpLFuA
-	1pGnh3q199UpcalaSQzt0=; b=aJAbdy20mgXVTWIEWlwrVAWNFu8RicKmRDm8UD
-	S3DOwOX6bXkfEj/YvxBaJzvpBRAPYH9798R9kQBWKGtJCHAtCOlP6/D+5S0XwAQG
-	mmcqJhug52NtpvwqofrY8ZC4ej8ha27+9Jl6e4vkRqp2yhnSgtLes1wjI4bUwtKv
-	Mg1BHFDm2W6oCZu24NM2Dc9SYQZ0Wbbv19OEIFdvjjVlHtAg7HbiFED8Ssgj+CXw
-	YGNVDjfYiPTcNTnZsYaodKWKq6EjjDKtiiak3OyHFdVPo/lo5BBf+Kq2AdOAV3Z9
-	WSHwC8RwyyZRWgZeMFEXM2AeNk2KsLKobfVmUr78BGObaHTw==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45d1sxy5ux-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 18 Mar 2025 06:50:21 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52I6oKVp012176
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 18 Mar 2025 06:50:20 GMT
-Received: from hu-mmanikan-blr.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+	s=arc-20240116; t=1742280618; c=relaxed/simple;
+	bh=RjbR+qoqPHGhyvEjVqVR/Fl/pkTbqueGH69RzYFxo4g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=QGlOPNZ8LAmC269/Fiq+DPxMDa8O8tonEf0qr/xriCXIG8o/VgySUqYSG9ieq2K4+s5gcwp+MEW9Nc2tSaPdcJ0uRDShnLz2thIGZwkE69YpwYgfuZmD+PpTHk1+5NAEhqLHGZ4cUgqpXRFUYVWx5m09bIIttnddGCoh8JMiVME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.234])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4ZH2SY5xByz2CcpP;
+	Tue, 18 Mar 2025 14:46:53 +0800 (CST)
+Received: from kwepemg200005.china.huawei.com (unknown [7.202.181.32])
+	by mail.maildlp.com (Postfix) with ESMTPS id 3488C14022D;
+	Tue, 18 Mar 2025 14:50:07 +0800 (CST)
+Received: from [10.174.176.70] (10.174.176.70) by
+ kwepemg200005.china.huawei.com (7.202.181.32) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Mon, 17 Mar 2025 23:50:16 -0700
-From: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
-To: <andersson@kernel.org>, <konradybcio@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <quic_srichara@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: <quic_varada@quicinc.com>
-Subject: [PATCH v2] arm64: dts: qcom: ipq5424: fix and relocate uart1 gpio configurations
-Date: Tue, 18 Mar 2025 12:19:39 +0530
-Message-ID: <20250318064939.3638381-1-quic_mmanikan@quicinc.com>
-X-Mailer: git-send-email 2.34.1
+ 15.2.1544.11; Tue, 18 Mar 2025 14:50:05 +0800
+Message-ID: <ef48d387-fb22-4059-a887-c9438c6e33b1@huawei.com>
+Date: Tue, 18 Mar 2025 14:50:04 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net] bonding: check xdp prog when set bond mode
+To: Nikolay Aleksandrov <razor@blackwall.org>,
+	=?UTF-8?Q?Toke_H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>,
+	<jv@jvosburgh.net>, <andrew+netdev@lunn.ch>, <davem@davemloft.net>,
+	<edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>,
+	<ast@kernel.org>, <daniel@iogearbox.net>, <hawk@kernel.org>,
+	<john.fastabend@gmail.com>, <joamaki@gmail.com>
+CC: <yuehaibing@huawei.com>, <zhangchangzhong@huawei.com>,
+	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<bpf@vger.kernel.org>
+References: <20250314073549.1030998-1-wangliang74@huawei.com>
+ <87y0x7rkck.fsf@toke.dk> <21d52659-622a-4b2a-b091-787bf0f5d67f@blackwall.org>
+ <96a4043b-fdac-4ca1-a7b9-a6352b1d7dfe@blackwall.org>
+ <fad4cb08-be38-4f43-ba61-db147e4d26d0@huawei.com>
+ <6ea34ad0-8456-4e49-8eb1-372cf571d91b@blackwall.org>
+From: Wang Liang <wangliang74@huawei.com>
+In-Reply-To: <6ea34ad0-8456-4e49-8eb1-372cf571d91b@blackwall.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: gW1C8LM_Hk8RNw4ekJeumjz8fZWFv5FJ
-X-Proofpoint-ORIG-GUID: gW1C8LM_Hk8RNw4ekJeumjz8fZWFv5FJ
-X-Authority-Analysis: v=2.4 cv=XKcwSRhE c=1 sm=1 tr=0 ts=67d917ad cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=Vs1iUdzkB0EA:10 a=COk6AnOGAAAA:8 a=EwbgSTejZl1M597PQjwA:9 a=HVqvvCGUhjtjaAmPp66E:22
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-18_03,2025-03-17_03,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- mlxlogscore=561 priorityscore=1501 clxscore=1015 phishscore=0
- impostorscore=0 adultscore=0 mlxscore=0 malwarescore=0 suspectscore=0
- spamscore=0 bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503180046
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ kwepemg200005.china.huawei.com (7.202.181.32)
 
-Update the bias configuration for UART1 TX and RX pins to ensure correct
-settings for RDP466.
 
-Additionally, move the UART1 GPIO configurations from the common .dtsi
-file to the RDP-specific .dts files to account for differing bias
-configurations across RDPs of IPQ5424.
+在 2025/3/17 15:39, Nikolay Aleksandrov 写道:
+> On 3/17/25 06:07, Wang Liang wrote:
+>> 在 2025/3/14 18:44, Nikolay Aleksandrov 写道:
+>>> On 3/14/25 12:22 PM, Nikolay Aleksandrov wrote:
+>>>> On 3/14/25 12:13 PM, Toke Høiland-Jørgensen wrote:
+>>>>> Wang Liang <wangliang74@huawei.com> writes:
+>>>>>
+>>>>>> Following operations can trigger a warning[1]:
+>>>>>>
+>>>>>>       ip netns add ns1
+>>>>>>       ip netns exec ns1 ip link add bond0 type bond mode balance-rr
+>>>>>>       ip netns exec ns1 ip link set dev bond0 xdp obj af_xdp_kern.o sec xdp
+>>>>>>       ip netns exec ns1 ip link set bond0 type bond mode broadcast
+>>>>>>       ip netns del ns1
+>>>>>>
+>>>>>> When delete the namespace, dev_xdp_uninstall() is called to remove xdp
+>>>>>> program on bond dev, and bond_xdp_set() will check the bond mode. If bond
+>>>>>> mode is changed after attaching xdp program, the warning may occur.
+>>>>>>
+>>>>>> Some bond modes (broadcast, etc.) do not support native xdp. Set bond mode
+>>>>>> with xdp program attached is not good. Add check for xdp program when set
+>>>>>> bond mode.
+>>>>>>
+>>>>>>       [1]
+>>>>>>       ------------[ cut here ]------------
+>>>>>>       WARNING: CPU: 0 PID: 11 at net/core/dev.c:9912 unregister_netdevice_many_notify+0x8d9/0x930
+>>>>>>       Modules linked in:
+>>>>>>       CPU: 0 UID: 0 PID: 11 Comm: kworker/u4:0 Not tainted 6.14.0-rc4 #107
+>>>>>>       Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.15.0-0-g2dd4b9b3f840-prebuilt.qemu.org 04/01/2014
+>>>>>>       Workqueue: netns cleanup_net
+>>>>>>       RIP: 0010:unregister_netdevice_many_notify+0x8d9/0x930
+>>>>>>       Code: 00 00 48 c7 c6 6f e3 a2 82 48 c7 c7 d0 b3 96 82 e8 9c 10 3e ...
+>>>>>>       RSP: 0018:ffffc90000063d80 EFLAGS: 00000282
+>>>>>>       RAX: 00000000ffffffa1 RBX: ffff888004959000 RCX: 00000000ffffdfff
+>>>>>>       RDX: 0000000000000000 RSI: 00000000ffffffea RDI: ffffc90000063b48
+>>>>>>       RBP: ffffc90000063e28 R08: ffffffff82d39b28 R09: 0000000000009ffb
+>>>>>>       R10: 0000000000000175 R11: ffffffff82d09b40 R12: ffff8880049598e8
+>>>>>>       R13: 0000000000000001 R14: dead000000000100 R15: ffffc90000045000
+>>>>>>       FS:  0000000000000000(0000) GS:ffff888007a00000(0000) knlGS:0000000000000000
+>>>>>>       CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>>>>>>       CR2: 000000000d406b60 CR3: 000000000483e000 CR4: 00000000000006f0
+>>>>>>       Call Trace:
+>>>>>>        <TASK>
+>>>>>>        ? __warn+0x83/0x130
+>>>>>>        ? unregister_netdevice_many_notify+0x8d9/0x930
+>>>>>>        ? report_bug+0x18e/0x1a0
+>>>>>>        ? handle_bug+0x54/0x90
+>>>>>>        ? exc_invalid_op+0x18/0x70
+>>>>>>        ? asm_exc_invalid_op+0x1a/0x20
+>>>>>>        ? unregister_netdevice_many_notify+0x8d9/0x930
+>>>>>>        ? bond_net_exit_batch_rtnl+0x5c/0x90
+>>>>>>        cleanup_net+0x237/0x3d0
+>>>>>>        process_one_work+0x163/0x390
+>>>>>>        worker_thread+0x293/0x3b0
+>>>>>>        ? __pfx_worker_thread+0x10/0x10
+>>>>>>        kthread+0xec/0x1e0
+>>>>>>        ? __pfx_kthread+0x10/0x10
+>>>>>>        ? __pfx_kthread+0x10/0x10
+>>>>>>        ret_from_fork+0x2f/0x50
+>>>>>>        ? __pfx_kthread+0x10/0x10
+>>>>>>        ret_from_fork_asm+0x1a/0x30
+>>>>>>        </TASK>
+>>>>>>       ---[ end trace 0000000000000000 ]---
+>>>>>>
+>>>>>> Fixes: 9e2ee5c7e7c3 ("net, bonding: Add XDP support to the bonding driver")
+>>>>>> Signed-off-by: Wang Liang <wangliang74@huawei.com>
+>>>>>> ---
+>>>>>>    drivers/net/bonding/bond_options.c | 3 +++
+>>>>>>    1 file changed, 3 insertions(+)
+>>>>>>
+>>>>>> diff --git a/drivers/net/bonding/bond_options.c b/drivers/net/bonding/bond_options.c
+>>>>>> index 327b6ecdc77e..127181866829 100644
+>>>>>> --- a/drivers/net/bonding/bond_options.c
+>>>>>> +++ b/drivers/net/bonding/bond_options.c
+>>>>>> @@ -868,6 +868,9 @@ static bool bond_set_xfrm_features(struct bonding *bond)
+>>>>>>    static int bond_option_mode_set(struct bonding *bond,
+>>>>>>                    const struct bond_opt_value *newval)
+>>>>>>    {
+>>>>>> +    if (bond->xdp_prog)
+>>>>>> +        return -EOPNOTSUPP;
+>>>>>> +
+>>>>> Should we allow changing as long as the new mode also supports XDP?
+>>>>>
+>>>>> -Toke
+>>>>>
+>>>>>
+>>>> +1
+>>>> I think we should allow it, the best way probably is to add a new option
+>>>> BOND_VALFLAG_XDP_UNSUPP (for example) as a bond option flag and to set
+>>>> it in bond_options.c for each mode that doesn't support XDP, then you
+>>>> can do the check in a generic way (for any option) in
+>>>> bond_opt_check_deps. Any bond option that can't be changed with XDP prog
+>>> err, I meant any bond option's value that isn't supported with XDP, for
+>>> a whole option it would be a bit different
+>> Thanks for your suggestions!
+>>
+>> When install xdp prog, bond_xdp_set() use bond_xdp_check() to check whether the bond mode support xdp.
+>>
+>> When uninstall xdp prog, the paramter prog of bond_xdp_set() is NULL. How about not call bond_xdp_check() to avoid the warning when the prog is NULL, like:
+>>
+>> static int bond_xdp_set(struct net_device *dev, struct bpf_prog *prog,
+>>              struct netlink_ext_ack *extack)
+>>      ...
+>>      if (prog && !bond_xdp_check(bond))
+> No, this could cause other problems. Actually, for -net I think the best would be to stick to
+> a simpler fix and just do bond_xdp_check() if there's a XDP program attached when changing
+> the mode so it can be backported easier. The option value flag can be done in the future
+> if more option values (or options) need to be disabled for XDP.
+>
+> Cheers,
+>   Nik
+Excuse me again. I hope that I haven't misunderstood your suggestions.
 
-Fixes: 1a91d2a6021e ("arm64: dts: qcom: add IPQ5424 SoC and rdp466 board support")
-Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
----
-Changes in V2:
-	- Consolidated uart1_tx_state and uart1_rx_state nodes into a
-	  single qup_uart1_default_state node, which includes the
-	  configuration for both UART1 TX and RX pins.
-	- Inserted a blank line before the status property in the UART1
-	  node.
-	- Fixed review comments from Kathiravan Thirumoorthy.
+When I try to do bond_xdp_check() if there's a XDP program attached when
+changing the mode in function bond_option_mode_set(). bond_xdp_check()
+visit bond->params.mode and bond->params.xmit_policy, should I create a
+new function, whose paramter is int mode?
 
- arch/arm64/boot/dts/qcom/ipq5424-rdp466.dts | 19 ++++++++++++++++++-
- arch/arm64/boot/dts/qcom/ipq5424.dtsi       |  7 -------
- 2 files changed, 18 insertions(+), 8 deletions(-)
-
-diff --git a/arch/arm64/boot/dts/qcom/ipq5424-rdp466.dts b/arch/arm64/boot/dts/qcom/ipq5424-rdp466.dts
-index b9752e8d579e..f0cba6b2be70 100644
---- a/arch/arm64/boot/dts/qcom/ipq5424-rdp466.dts
-+++ b/arch/arm64/boot/dts/qcom/ipq5424-rdp466.dts
-@@ -102,6 +102,22 @@ &ssphy_0 {
- };
- 
- &tlmm {
-+	qup_uart1_default_state: qup-uart1-default-state {
-+		uart1-tx-pins {
-+			pins = "gpio44";
-+			function = "uart1";
-+			drive-strength = <8>;
-+			bias-pull-down;
-+		};
-+
-+		uart1-rx-pins {
-+			pins = "gpio43";
-+			function = "uart1";
-+			drive-strength = <8>;
-+			bias-pull-up;
-+		};
-+	};
-+
- 	spi0_default_state: spi0-default-state {
- 		clk-pins {
- 			pins = "gpio6";
-@@ -157,8 +173,9 @@ data-pins {
- };
- 
- &uart1 {
--	pinctrl-0 = <&uart1_pins>;
-+	pinctrl-0 = <&qup_uart1_default_state>;
- 	pinctrl-names = "default";
-+
- 	status = "okay";
- };
- 
-diff --git a/arch/arm64/boot/dts/qcom/ipq5424.dtsi b/arch/arm64/boot/dts/qcom/ipq5424.dtsi
-index 402d0a2c7bcc..0117f6422347 100644
---- a/arch/arm64/boot/dts/qcom/ipq5424.dtsi
-+++ b/arch/arm64/boot/dts/qcom/ipq5424.dtsi
-@@ -262,13 +262,6 @@ tlmm: pinctrl@1000000 {
- 			gpio-ranges = <&tlmm 0 0 50>;
- 			interrupt-controller;
- 			#interrupt-cells = <2>;
--
--			uart1_pins: uart1-state {
--				pins = "gpio43", "gpio44";
--				function = "uart1";
--				drive-strength = <8>;
--				bias-pull-up;
--			};
- 		};
- 
- 		gcc: clock-controller@1800000 {
-
-base-commit: da920b7df701770e006928053672147075587fb2
--- 
-2.34.1
-
+Looking forward to getting more replies. Thanks.
+>>>> should have that flag set.
+>>>>
+>>>> Cheers,
+>>>>    Nik
+>>>>
+>
 
