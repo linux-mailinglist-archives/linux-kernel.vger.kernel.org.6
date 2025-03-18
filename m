@@ -1,90 +1,222 @@
-Return-Path: <linux-kernel+bounces-565227-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565228-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89E60A6640C
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 01:42:33 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A35BA6640F
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 01:43:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B38817D689
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 00:42:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 470471896B6A
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 00:43:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9117013EFE3;
-	Tue, 18 Mar 2025 00:42:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD96F46447;
+	Tue, 18 Mar 2025 00:43:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="VCrCjVVy"
-Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="U6fXmtTo"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 486EDD528;
-	Tue, 18 Mar 2025 00:42:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E2B72B9A4
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 00:43:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742258535; cv=none; b=LJ8elBb8IiFW+PlJmWFcHyXMfxDVF7NvikRF3LC1HXvNeDZnicXuUlKedVWrCwBUwYV4yu0ay8tcTv4nd+A1M7c2RSlEsD20w8DXM6iShhN8fGKJGsbAhJRH9JSqWDj2PH7jc2iYdpAWmD0vjP0ZsYjpgIsNCdR7DyuSmzKI7A4=
+	t=1742258616; cv=none; b=Jb/TAmOVH1hiWBLMLC3cslH0ymQkFxuYiHTiOH7vGwOrMn/dNzTmRYAN2rnjwWn6GiCWeMF8vYgw3l/OOdH4G2+s3N4Pc909GxfBx2Id1GaORSZ9pNgq4IaOhjOo2bCuHcMwL+Mn36i3s0fCksrYZb76kcKy7GqGTfGltN122b8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742258535; c=relaxed/simple;
-	bh=lR8t+yS8heBlVgKW1sJz63d4wBD18a6lsgVnNjdDSVQ=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ScBNoBrVipo4Zmzk/JIP57CD11u+JzuJVO+JL4NzX7I+nhI2plMUEDuWQyJ311TbxO5tJSWG+3Ts1zHKMRfhDbLnoE7J7QlX5TTKAb4jEuprj4WENJ8HTJHCLhBrUFQuCk+QyJNFbT9xy9BL8HE9aXZziLTZ8M0z6OsGuTF7vk4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=VCrCjVVy; arc=none smtp.client-ip=203.29.241.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
+	s=arc-20240116; t=1742258616; c=relaxed/simple;
+	bh=w29BhJqQzuRcVIETH6oSX4A0cP6qYWWIdguFoCMWO6U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jbkKovLPvSiRO5kBXd4zYhNa3p/yHjCbqwieE0bBdkfVNmM0cJfO2UYSRRz5MvpnzuNEqbNRzHMSC1IxuiyKd5sS9LvqfSm5vV0v6z/3EIQkOESbTypjGGzqmEBpoKIjJfbsNoD/J0m3vUzn3DuY+FXEcnNqYLZVh29ezTDaD18=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=U6fXmtTo; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-2232aead377so112052405ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 17:43:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=codeconstruct.com.au; s=2022a; t=1742258531;
-	bh=lR8t+yS8heBlVgKW1sJz63d4wBD18a6lsgVnNjdDSVQ=;
-	h=Subject:From:To:Date:In-Reply-To:References;
-	b=VCrCjVVyQloxxKR8/vCcZEWhl5wH0TbTJ4YXNsdM1m459vlb+65LMjGKP9CX0nAE3
-	 tJVaa65qgKEVGMBQaMuBNgaUr2xf4SwItxGtuNyXBJkewIzvA5uR7erUJtb8sgEzpk
-	 bCLcwZCAnwgGIpGHa4WgGbF36CygZqJb3KrWPqYAUxhJI6gYa8dJD3qzxuItCr8tr5
-	 swVtXVVcdY1W60feoPSNlo2DZwjj/AzN5xf9RO7oa1o855/zcvlLazk2hUIpYMSI2D
-	 7eyN38fQyZ0ny1Tox+1N2Tv3H9aRHFKruU9MNJ0ShUS8gKOyIwRx8usmnzVYMmyZ1E
-	 1kpKwxR4WSWrw==
-Received: from [192.168.68.112] (unknown [180.150.112.225])
-	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 5A04377BB4;
-	Tue, 18 Mar 2025 08:42:10 +0800 (AWST)
-Message-ID: <3270a7ea55fa28253b435da0b0bbce3adfdc00eb.camel@codeconstruct.com.au>
-Subject: Re: [PATCH v4 3/3] soc: aspeed: lpc-pcc: Add PCC controller support
-From: Andrew Jeffery <andrew@codeconstruct.com.au>
-To: Kevin Chen <kevin_chen@aspeedtech.com>, lee@kernel.org, robh@kernel.org,
-  krzk+dt@kernel.org, conor+dt@kernel.org, joel@jms.id.au,
- derek.kiernan@amd.com,  dragan.cvetic@amd.com, arnd@arndb.de,
- gregkh@linuxfoundation.org,  devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org,  linux-aspeed@lists.ozlabs.org,
- linux-kernel@vger.kernel.org
-Date: Tue, 18 Mar 2025 11:12:09 +1030
-In-Reply-To: <20250314112113.953238-4-kevin_chen@aspeedtech.com>
-References: <20250314112113.953238-1-kevin_chen@aspeedtech.com>
-	 <20250314112113.953238-4-kevin_chen@aspeedtech.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
-User-Agent: Evolution 3.46.4-2 
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1742258613; x=1742863413; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=jxCs1+ldC/reIzUbUw3Ji2xhPawqyhgThPM8fN/x0aY=;
+        b=U6fXmtTo3O7+Qam0rRC5+8pBlyfqMbTRnQQrFzzcF6MSbbrIVxJb3SZVBqugFPBGtC
+         xXfN0eq7XfRx8mGEUuDVdSSL8T/9TvkWRUtYHEohXsK7QMNIC+jsiBLPxZ7aDZQU1c/f
+         TbonNp/1lVuJJ6qWGXUXgYoCsPW3/dX0xjBmKcy4wRMua60UNMnA4cmtlfvFkfldEzz3
+         /yrZdyaBTw2sFbE6IU/bmpC6SpYQ2bEYN8p40Ia95+j60NNe073pIF2O35pi3DDl3y7F
+         T3ko038arAAjX//+SR0MIgoXmXKasv1enG31cb4WmmsjRdctK2gr1EchFs/B9xL7ppCh
+         kbDw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742258613; x=1742863413;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jxCs1+ldC/reIzUbUw3Ji2xhPawqyhgThPM8fN/x0aY=;
+        b=nendtesZpzW6nRIyTSZstyRCrFw6vknDO+ZzPP/BQ36OUoxMbsEcejdV0pXPX/WYMa
+         AKEgtxsPG0Kp+v9ah0HhZuOsVRkpvAXkVD6UcLCfNSluT9vq/sNojyQfTb1+/exPvLai
+         0pFh5ZEwHKggIfpn5iHK45+2FSlc34Iv4ZnnEIPyb3xl8fcc2cFz4a5ct/XjfSyddSCA
+         Rzo0Wt0b5+P7WIIV7xx49a4wGsKAEkNoLFe4iBdnRddr+RPC2/BztKH/MrJdG1nwC2Xh
+         Kb9t+j9DsRAZpWQIjTsExSdl3IGoswPSZPeGLKmxBnGibXsAdq21PqBNxSLGHmyyqNAU
+         L+8A==
+X-Forwarded-Encrypted: i=1; AJvYcCWQWxO+i9KNfJfLGMyPHPP+Yd70Zuh47xVsyfmVZk6v16ExeAVlo+29OT6swqodCe1NODyzIRF8Oow9tgY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwvDujyF6yPg7t+eLyCCs1T5WjhYv9+pdsUf3x08e4EDf4mfh52
+	OZjs9vLUkpJqekWOeyZH0TlL7tTTPQkpgsRq6KKHvHjRam+/21uYcSEqcmebbkI=
+X-Gm-Gg: ASbGncvkGOp1SNVS49umvohDpjsslLfMkymElBfv4GUVoI03+Vs39qLb86PiY3TMTAS
+	uBeVoYb5uNMIsXpT8EjZo1J55nd0C1Q+VhksqdX8oHuOyeW+rjMI5Cth5TDxd42Lh4uJOsQy6bI
+	fm6tpKAYNAsivis3U9+Iq020i+Rye7PjBQ6I4PQzK+TdeBcmyrM0kWhU3snEylV63bTqJnr0uVI
+	wAk6xmXBO3qqrX8tnF52FFhuDSZBUEBHoHwCZ5uwHAt6TOb2UdwEWQQiYGSgSiLDhGVbNm/dI3o
+	MU3PGNElOvBf1v229E1AAEiBDXk2B76cyzHCzsXLLimgLDCjQxMpnKe0+GTyJtzif5UU0eQikCk
+	EwA/V65u9ACi6cGLfnrI/
+X-Google-Smtp-Source: AGHT+IE8OsE6HgPjTeAy9p47YdWtvXUbWVrbbOGF4Q9zHkp00HJ9HRbHg+fTuQKbY0WQdTzulXiAEA==
+X-Received: by 2002:a17:902:f689:b0:223:4b88:780f with SMTP id d9443c01a7336-225e0a3ae99mr153283535ad.17.1742258613560;
+        Mon, 17 Mar 2025 17:43:33 -0700 (PDT)
+Received: from dread.disaster.area (pa49-186-36-239.pa.vic.optusnet.com.au. [49.186.36.239])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-225c6ba710dsm82157305ad.128.2025.03.17.17.43.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Mar 2025 17:43:32 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.98)
+	(envelope-from <david@fromorbit.com>)
+	id 1tuL3K-0000000EUvw-0cEY;
+	Tue, 18 Mar 2025 11:43:30 +1100
+Date: Tue, 18 Mar 2025 11:43:30 +1100
+From: Dave Chinner <david@fromorbit.com>
+To: John Garry <john.g.garry@oracle.com>
+Cc: "Darrick J. Wong" <djwong@kernel.org>,
+	Christoph Hellwig <hch@infradead.org>, brauner@kernel.org,
+	cem@kernel.org, linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	ojaswin@linux.ibm.com, ritesh.list@gmail.com,
+	martin.petersen@oracle.com
+Subject: Re: [PATCH v5 03/10] xfs: Refactor xfs_reflink_end_cow_extent()
+Message-ID: <Z9jBsrMM3V5Z7rGT@dread.disaster.area>
+References: <20250310183946.932054-1-john.g.garry@oracle.com>
+ <20250310183946.932054-4-john.g.garry@oracle.com>
+ <Z9E2kSQs-wL2a074@infradead.org>
+ <589f2ce0-2fd8-47f6-bbd3-28705e306b68@oracle.com>
+ <Z9FHSyZ7miJL7ZQM@infradead.org>
+ <20250312154636.GX2803749@frogsfrogsfrogs>
+ <Z9I0Ab5TyBEdkC32@dread.disaster.area>
+ <20250313045121.GE2803730@frogsfrogsfrogs>
+ <68adae58-459e-488a-951c-127cc472f123@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <68adae58-459e-488a-951c-127cc472f123@oracle.com>
 
-T24gRnJpLCAyMDI1LTAzLTE0IGF0IDE5OjIxICswODAwLCBLZXZpbiBDaGVuIHdyb3RlOgo+ICvC
-oMKgwqDCoMKgwqDCoHBjYy0+bWRldi5wYXJlbnQgPSBkZXY7Cj4gK8KgwqDCoMKgwqDCoMKgcGNj
-LT5tZGV2Lm1pbm9yID0gTUlTQ19EWU5BTUlDX01JTk9SOwo+ICvCoMKgwqDCoMKgwqDCoHBjYy0+
-bWRldi5uYW1lID0gZGV2bV9rYXNwcmludGYoZGV2LCBHRlBfS0VSTkVMLCAiJXMlZCIsCj4gREVW
-SUNFX05BTUUsCj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHBjYy0+bWRldl9pZCk7Cj4gK8KgwqDC
-oMKgwqDCoMKgcGNjLT5tZGV2LmZvcHMgPSAmcGNjX2ZvcHM7Cj4gK8KgwqDCoMKgwqDCoMKgcmMg
-PSBtaXNjX3JlZ2lzdGVyKCZwY2MtPm1kZXYpOwo+ICvCoMKgwqDCoMKgwqDCoGlmIChyYykgewo+
-ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBkZXZfZXJyKGRldiwgIkNvdWxkbid0IHJl
-Z2lzdGVyIG1pc2MgZGV2aWNlXG4iKTsKPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-Z290byBlcnJfZnJlZV9pZGE7Cj4gK8KgwqDCoMKgwqDCoMKgfQoKSnVzdCBhIG5vdGUgdGhhdCB0
-aGlzIHN0aWxsIGlzbid0IGFjY291bnRpbmcgZm9yIGRpc2N1c3Npb24gb24gdGhlCnByZXZpb3Vz
-IHBvc3Rpbmcgb2YgdGhlIHNlcmllcyBwdXR0aW5nIHRoZSBkcml2ZXIgdW5kZXIKZHJpdmVycy9z
-b2MvYXNwZWVkOgoKaHR0cHM6Ly9sb3JlLmtlcm5lbC5vcmcvYWxsL2Y3MzY5ZDYyMDVlMDVjN2Fh
-YzNmM2RlN2NiZDA4YzNiMDg5NjBkNzUuY2FtZWxAY29kZWNvbnN0cnVjdC5jb20uYXUvCgpJZiB3
-ZSdyZSBub3QgZ29pbmcgdG8gdHJ5IG1ha2UgYSBjb21tb24gdXNlcnNwYWNlIGJlaGF2aW91ciBv
-dmVyIHRoZQpBc3BlZWQgc25vb3AgYW5kIFBDQyBmdW5jdGlvbnMgYW5kIHRoZSBOdXZvdG9uIEJQ
-QyBmdW5jdGlvbiB0aGVuIEkKdGhpbmsgdGhlIGJlaGF2aW91ciBvZiB0aGUgY2hhcmRldiBzaG91
-bGQgYXQgbGVhc3QgYmUgZG9jdW1lbnRlZC4gQnV0IEkKd291bGQgcmF0aGVyIHRoYXQgaXQgd2Vy
-ZSBjb21tb24gdG8gYXZvaWQgaGVhZGFjaGVzIGluIHVzZXJzcGFjZS4KCkFuZHJldwo=
+On Thu, Mar 13, 2025 at 06:11:12AM +0000, John Garry wrote:
+> On 13/03/2025 04:51, Darrick J. Wong wrote:
+> > > Hence if we are walking a range of extents in the BMBT to unmap
+> > > them, then we should only be generating 2 intents per loop - a BUI
+> > > for the BMBT removal and a CUI for the shared refcount decrease.
+> > > That means we should be able to run at least a thousand iterations
+> > > of that loop per transaction without getting anywhere near the
+> > > transaction reservation limits.
+> > > 
+> > > *However!*
+> > > 
+> > > We have to relog every intent we haven't processed in the deferred
+> > > batch every-so-often to prevent the outstanding intents from pinning
+> > > the tail of the log. Hence the larger the number of intents in the
+> > > initial batch, the more work we have to do later on (and the more
+> > > overall log space and bandwidth they will consume) to relog them
+> > > them over and over again until they pop to the head of the
+> > > processing queue.
+> > > 
+> > > Hence there is no real perforamce advantage to creating massive intent
+> > > batches because we end up doing more work later on to relog those
+> > > intents to prevent journal space deadlocks. It also doesn't speed up
+> > > processing, because we still process the intent chains one at a time
+> > > from start to completion before moving on to the next high level
+> > > intent chain that needs to be processed.
+> > > 
+> > > Further, after the first couple of intent chains have been
+> > > processed, the initial log space reservation will have run out, and
+> > > we are now asking for a new resrevation on every transaction roll we
+> > > do. i.e. we now are now doing a log space reservation on every
+> > > transaction roll in the processing chain instead of only doing it
+> > > once per high level intent chain.
+> > > 
+> > > Hence from a log space accounting perspective (the hottest code path
+> > > in the journal), it is far more efficient to perform a single high
+> > > level transaction per extent unmap operation than it is to batch
+> > > intents into a single high level transaction.
+> > > 
+> > > My advice is this: we should never batch high level iterative
+> > > intent-based operations into a single transaction because it's a
+> > > false optimisation.  It might look like it is an efficiency
+> > > improvement from the high level, but it ends up hammering the hot,
+> > > performance critical paths in the transaction subsystem much, much
+> > > harder and so will end up being slower than the single transaction
+> > > per intent-based operation algorithm when it matters most....
+> > How specifically do you propose remapping all the extents in a file
+> > range after an untorn write?  The regular cow ioend does a single
+> > transaction per extent across the entire ioend range and cannot deliver
+> > untorn writes.  This latest proposal does, but now you've torn that idea
+> > down too.
+> > 
+> > At this point I have run out of ideas and conclude that can only submit
+> > to your superior intellect.
+> > 
+> > --D
+> 
+> I'm hearing that we can fit thousands without getting anywhere the limits -
+> this is good.
+> 
+> But then also it is not optimal in terms of performance to batch, right?
+> Performance is not so important here. This is for a software fallback, which
+> we should not frequently hit. And even if we do, we're still typically not
+> going to have many extents.
+> 
+> For our specific purpose, we want 16KB atomic writes - that is max of 4
+> extents. So this does not really sound like something to be concerned with
+> for these atomic write sizes.
 
+Apart from the fact that we should not be overloading some other
+transaction reservation definition for this special case? Saying
+"it should work" does not justify not thinking about constraints,
+layered design, application exposure to error cases, overruns, etc.
+
+i.e. the whole point of the software fallback is to make atomic
+writes largely generic. Saying "if we limit them to 16kB" it's not
+really generic, is it?
+
+> We can add some arbitrary FS awu max, like 64KB, if that makes people feel
+> more comfortable.
+
+I was thinking more like 4-16MB as a usable maximum size for atomic
+writes. i.e. allow for whole file atomic overwrites for small-medium
+sized files, and decent IO sizes for performance when overwriting
+large files.
+
+If we set the max at 4MB, that's 1024 extents on a 4kB
+block size filesystem. That gives us 2048 intents in a single unmap
+operation which we can directly calculate the transaction
+reservation size it will need. We need to do this as two separate
+reservation steps with a max() calculation, because the processing
+reservation size reduces with filesystem block size but the extent
+unmap intent overhead goes up as the block count increases with
+decreasing block size. i.e. the two components of the transacation
+reservation scale in different directions.
+
+If we are adding a new atomic transaction, we really need to design
+it properly from the ground up, not hack around an existing
+transaction reservation whilst handwaving about how "it should be
+enough".
+
+This "maximum size" is going to be exposed directly to userspace,
+hence we need to think carefully about what the maximum supported
+limits are going to be and how we can support them with a minimum of
+effort long into the future. Hacking around the existing write
+transaction isn't the way to do this, especially as that may change
+in future as we modify internal allocation behaviour over time.
+
+Saying "we only need 16kB right now, so that's all we should
+support" isn't the right approach to take here....
+
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
 
