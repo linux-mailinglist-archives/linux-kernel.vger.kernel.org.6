@@ -1,236 +1,176 @@
-Return-Path: <linux-kernel+bounces-565681-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565759-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71262A66D4D
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 09:04:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3D68A66EC2
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 09:45:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D791169175
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 08:03:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1F023B62C2
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 08:43:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 339901EF362;
-	Tue, 18 Mar 2025 08:02:57 +0000 (UTC)
-Received: from invmail4.hynix.com (exvmail4.hynix.com [166.125.252.92])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F32381AA791;
-	Tue, 18 Mar 2025 08:02:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3B822040AD;
+	Tue, 18 Mar 2025 08:43:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=codethink.co.uk header.i=@codethink.co.uk header.b="pq5bzkLi"
+Received: from imap4.hz.codethink.co.uk (imap4.hz.codethink.co.uk [188.40.203.114])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 132D61993B2
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 08:43:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.203.114
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742284976; cv=none; b=VJa+11eyyQeU7y4f6YYVjAGtszn37AdOB3f2SJsrQ7VUxnl8u3wAKDFW0ahXS9pqUvQ9/ozzDDPZJH/Od/69A3775mWmT0phAp4sLSgurIJ3DKFPz95yCH6B+HaZm3uTvcz7r713Ya/PBFwI4Hox4JkhntThtSkZW8SMGdLyePQ=
+	t=1742287412; cv=none; b=XF9BCbMJBwlfkqxn3Ml58KkgHmOU0e/EsMjKwxUHWbwCFONqBdwl4OfPWW+BXpWvn5OLR4rDaGLEkRtZ6xPKj3PwuFtzUHCoNSRzPCeAvioDpKk8WI/Ry6ReUI0u1SiT0ydr8/FjS80d7StfB9Ld3bOB2X4puRnLlDR8AZZdLYw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742284976; c=relaxed/simple;
-	bh=6tmfjSUaa+b8uAjt/O5vSHnSI8u+YZ48edARkdy8ZzU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JZNmKWTdjj2smR3lJiCS7OWJCEyelJpzT2sk4LwLnQuXU+Kc+caJ8zk6Pdch83gpdB9RDge/03OT3cnB72Z+v/CvoNJ9HtoL/SV7OgMWszTUf9jh/mJav3RWXDzZ995qUnh9af/h8+KybuaE9I8/I+6tMkmt+dfEhnVb7jFlNfc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc5b-681ff7000002311f-09-67d928a8ae53
-From: Yunjeong Mun <yunjeong.mun@sk.com>
-To: Gregory Price <gourry@gourry.net>
-Cc: kernel_team@skhynix.com,
-	Joshua Hahn <joshua.hahnjy@gmail.com>,
-	harry.yoo@oracle.com,
-	ying.huang@linux.alibaba.com,
-	gregkh@linuxfoundation.org,
-	rakie.kim@sk.com,
-	akpm@linux-foundation.org,
-	rafael@kernel.org,
-	lenb@kernel.org,
-	dan.j.williams@intel.com,
-	Jonathan.Cameron@huawei.com,
-	dave.jiang@intel.com,
-	horen.chuang@linux.dev,
-	hannes@cmpxchg.org,
-	linux-kernel@vger.kernel.org,
-	linux-acpi@vger.kernel.org,
-	linux-mm@kvack.org,
-	kernel-team@meta.com,
-	Honggyu Kim <honggyu.kim@sk.com>
-Subject: Re: [PATCH 2/2 v6] mm/mempolicy: Don't create weight sysfs for memoryless nodes
-Date: Tue, 18 Mar 2025 17:02:38 +0900
-Message-ID: <20250318080246.1058-1-yunjeong.mun@sk.com>
-X-Mailer: git-send-email 2.48.1.windows.1
-In-Reply-To: <Z8-_SXm0JGjXTegL@gourry-fedora-PF4VCD3F>
-References: 
+	s=arc-20240116; t=1742287412; c=relaxed/simple;
+	bh=3kae9PDchkzx2XRsRhSJiA5Y2AzPkdgojbRNeLN+k9k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sGwKkt9mkflHfvS97GhO86A9eYMZGF8B/NegWPOEWke8ytAbGxFThDsrnApS6r6zIVoGBMrJhZuGHqHjm2zCB/blzEsC86v0j8c5FbGBXUvo/tzgZm1pKWL/obUWKGKBOY38vCqBgjZI7wD/KNPLNlFR4N12CcF9JTCJw408v88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=codethink.co.uk; spf=pass smtp.mailfrom=codethink.co.uk; dkim=pass (2048-bit key) header.d=codethink.co.uk header.i=@codethink.co.uk header.b=pq5bzkLi; arc=none smtp.client-ip=188.40.203.114
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=codethink.co.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codethink.co.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=codethink.co.uk; s=imap4-20230908; h=Sender:Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=bVnYcV85zatttdVWEcG8loEvcr+gkH1XrFyQXfytOEI=; b=pq5bzkLi3D0CWPwuv9eCvPRhx1
+	tCNPOD1necWsIdsHZ7mNeoTxY6vDKFAeCp8u+y3myCBHn53mQPwWgLffQQYp5dV+9N8fCsTGZk2+t
+	aeQZsX7+tco6n03o/0wp6Q+HY9kSfhHQzHyR9srPuF8D4N0tELFdjBVDCPuLzJ3lmtUOXUx9cO1EH
+	ef4QGphUwCc0fmsuGHyiehhTT+lDNAX5eH9IilBLbtjipWGd+mQ3/Cwgw0cdy9jdVWUW3VKO2ulSL
+	XSr2G7USZnrEna9f8N7i9qurQ1r5SxGLYoHdG1pDGa6HJ+hRc4rgiukMauv9K+X5A9fWt0bghuKO3
+	c7w6BZ7w==;
+Received: from [167.98.27.226] (helo=[10.35.6.194])
+	by imap4.hz.codethink.co.uk with esmtpsa  (Exim 4.94.2 #2 (Debian))
+	id 1tuRuL-00HYKY-Gg; Tue, 18 Mar 2025 08:02:41 +0000
+Message-ID: <8ee4944a-01d3-49e7-8934-e4a866ccc628@codethink.co.uk>
+Date: Tue, 18 Mar 2025 08:02:40 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+User-Agent: Mozilla Thunderbird
+Subject: Re: [EXT] Re: [PATCH v3 0/4] riscv: uaccess: optimizations
+To: Cyril Bur <cyrilbur@tenstorrent.com>, Alexandre Ghiti <alex@ghiti.fr>,
+ palmer@dabbelt.com, aou@eecs.berkeley.edu, paul.walmsley@sifive.com,
+ charlie@rivosinc.com, jrtc27@jrtc27.com
+Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+ jszhang@kernel.org
+References: <20250221000924.734006-1-cyrilbur@tenstorrent.com>
+ <4f6c83c0-39f6-467d-83c6-13d37440fb20@ghiti.fr>
+ <5a81a72d-550d-42b4-8549-176f2b27ffc9@codethink.co.uk>
+ <ac5b93be-5b9c-4d39-bce6-a78032e43fbf@tenstorrent.com>
+Content-Language: en-GB
+From: Ben Dooks <ben.dooks@codethink.co.uk>
+Organization: Codethink Limited.
+In-Reply-To: <ac5b93be-5b9c-4d39-bce6-a78032e43fbf@tenstorrent.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrAIsWRmVeSWpSXmKPExsXC9ZZnke4KjZvpBptOcFrMWb+GzWL61AuM
-	FiduNrJZ/Lx7nN2iefF6NovVm3wt7i97xmJxu/8cq8WqhdfYLI5vncduse8iUMPOh2/ZLJbv
-	62e0uLxrDpvFvTX/WS3mfpnKbLF6TYaDoMfhN++ZPXbOusvu0d12md2j5chbVo/Fe14yeWxa
-	1cnmsenTJHaPEzN+s3jsfGjpsbBhKrPH/rlr2D3OXazw+Pj0FovH501yAXxRXDYpqTmZZalF
-	+nYJXBlta8IL1upV/Dqwjq2BcYZKFyMnh4SAicT6Rd+YYexrXQuYQGw2AQ2Jg4dOAsU5OEQE
-	VCXarrh3MXJxMAu0sUjcfLWYEaRGWCBC4tyj0ywgNgtQTd/sl+wgNq+AucT5/nnsEDM1JRou
-	3QObySlgJjHtyG2wuJAAj8SrDfsZIeoFJU7OfMICsotZQF1i/TwhkDCzgLxE89bZzCB7JQSO
-	sUusefwfaqakxMEVN1gmMArMQtI+C6F9FpL2BYzMqxiFMvPKchMzc0z0MirzMiv0kvNzNzEC
-	43FZ7Z/oHYyfLgQfYhTgYFTi4d3BfiNdiDWxrLgy9xCjBAezkgiv+5Pr6UK8KYmVValF+fFF
-	pTmpxYcYpTlYlMR5jb6VpwgJpCeWpGanphakFsFkmTg4pRoYRefF9+vN0RQInrXH/I3NxMVa
-	fy9KG8d3nHo4M+h62JV1J9/fnXmx/ZHe7wWMEWlrq1Ysa7eT6PvhtV70Vts6O2P981e6Nk78
-	sb+05TOP6tY71ny9zyP/xW0L/HP3SbHSHemUgJ4t4vKrq53uTcjZvFdhaXVSjfDRjRWCz4MY
-	xLec5ixpm5u7Q4mlOCPRUIu5qDgRAMCmBzHDAgAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrKIsWRmVeSWpSXmKPExsXCNUNWR3e5xs10g+4L5hZz1q9hs5g+9QKj
-	xYmbjWwWP+8eZ7doXryezWL1Jl+L+8uesVh8fvaa2eJ2/zlWi1ULr7FZHN86j91i30WgrsNz
-	T7Ja7Hz4ls1i+b5+RovLu+awWdxb85/VYu6XqcwWh649Z7VYvSbDQcTj8Jv3zB47Z91l9+hu
-	u8zu0XLkLavH4j0vmTw2repk89j0aRK7x4kZv1k8dj609FjYMJXZY//cNewe5y5WeHx8eovF
-	49ttD4/FLz4weXzeJBcgEMVlk5Kak1mWWqRvl8CV0bYmvGCtXsWvA+vYGhhnqHQxcnJICJhI
-	XOtawARiswloSBw8dJK5i5GDQ0RAVaLtinsXIxcHs0Abi8TNV4sZQWqEBSIkzj06zQJiswDV
-	9M1+yQ5i8wqYS5zvn8cOMVNTouHSPbCZnAJmEtOO3AaLCwnwSLzasJ8Rol5Q4uTMJywgu5gF
-	1CXWzxMCCTMLyEs0b53NPIGRdxaSqlkIVbOQVC1gZF7FKJKZV5abmJljqlecnVGZl1mhl5yf
-	u4kRGHnLav9M3MH45bL7IUYBDkYlHt4d7DfShVgTy4orcw8xSnAwK4nwuj+5ni7Em5JYWZVa
-	lB9fVJqTWnyIUZqDRUmc1ys8NUFIID2xJDU7NbUgtQgmy8TBKdXAqO3q8NsoN/mrx6LJs/+z
-	c87PbPVY93N1mnJz5l9TXrarnrd/Cbs+zLguFZnW+cJiW07t/kl/P39c9uxK7bHfbEatW+v3
-	f/vYKdPSkhRk883bMa5+i4t6wYTNcrsKysMkefbULD8qupl/g8vj9ufLjWo2/C/UePP3raDw
-	d4tyh0/sh0JdzJtvKLEUZyQaajEXFScCALU/Yo+4AgAA
-X-CFilter-Loop: Reflected
+Sender: ben.dooks@codethink.co.uk
 
-Hi Gregory, I have one more question below.
+On 17/03/2025 23:52, Cyril Bur wrote:
+> 
+> 
+> On 15/3/2025 12:49 am, Ben Dooks wrote:
+>> On 14/03/2025 13:28, Alexandre Ghiti wrote:
+>>> Hi Cyril,
+>>>
+>>> On 21/02/2025 01:09, Cyril Bur wrote:
+>>>> This series tries to optimize riscv uaccess by allowing the use of
+>>>> user_access_begin() and user_access_end() which permits grouping 
+>>>> user accesses
+>>>> and avoiding the CSR write penalty for each access.
+>>>>
+>>>> The error path can also be optimised using asm goto which patches 3 
+>>>> and 4
+>>>> achieve. This will speed up jumping to labels by avoiding the need 
+>>>> of an
+>>>> intermediary error type variable within the uaccess macros
+>>>>
+>>>> I did read the discussion this series generated. It isn't clear to me
+>>>> which direction to take the patches, if any.
+>>>>
+>>>> V2:
+>>>> I've taken on this series as there isn't any response from Jisheng. No
+>>>> significant changes other than build fixes.
+>>>> - Fixes build breakage in patch 3 to do with not having used 'goto' 
+>>>> keyword.
+>>>> - Fixes build breakage in patch 4 on 32bit not having delcared __ptr 
+>>>> in the
+>>>>    macro.
+>>>>
+>>>> V3:
+>>>> Significant commit message rewrites.
+>>>>   - Corrected the justification for patch 2
+>>>>   - Better explained/justified patches 3 and 4
+>>>> Minor code changes for legibility and more comments.
+>>>>
+>>>> Jisheng Zhang (4):
+>>>>    riscv: implement user_access_begin() and families
+>>>>    riscv: uaccess: use input constraints for ptr of __put_user()
+>>>>    riscv: uaccess: use 'asm goto' for put_user()
+>>>>    riscv: uaccess: use 'asm_goto_output' for get_user()
+>>>>
+>>>>   arch/riscv/include/asm/uaccess.h | 205 ++++++++++++++++++++++ 
+>>>> +--------
+>>>>   1 file changed, 152 insertions(+), 53 deletions(-)
+>>>>
+>>> Following up on Ben's comment here https://lore.kernel.org/linux- 
+>>> riscv/ b45aab1e-6d37-4027-9a15-4fa917d806b9@codethink.co.uk/
+>>>
+>>> The problem that Ben mentions is caused by the use of *macros* which 
+>>> used to make the evaluation of the parameter inside the user- 
+>>> accessible section, and since this parameter could be a sleeping 
+>>> function, we could schedule another process with the SUM bit set, 
+>>> which could be cleared by this process, which would make the first 
+>>> process fault when trying to access user memory. I did not find any 
+>>> macro using unsafe_XXX() functions which could cause a problem right 
+>>> now, but I may have missed one and new could come up later, so we 
+>>> have multiple solutions here:
+>>>
+>>> - suppose that a macro using unsafe_get/put_user() and passing a 
+>>> sleeping function as argument won't happen and then do nothing
+>>> - or save/restore CSR sstatus when switching processes
+>>> - or simply check that SUM is not set when switching processes
+>>>
+>>> Let me know what you think.
+>>
+>> I'm on the save the flag side, for these reasons:
+>>
+>> #1 sleeping functions can happen more often when various checks
+>>     get enabled in the kernel (this was why the original fault
+>>     was found).  Adding larger sections is just going to make
+>>     the fault pop up again at some point in the future.
+>>
+>> #2 the save/restore is a small addition to the swap registers
+>>
+>> #3 saving SUM over a regs swap is always going to make sure we
+>>     never see this gremlin turn up again
+>>
+>> FYI, I think I may have posted our original test thread at some
+>> point, but I could do so again.
+> 
+> Yes, after Ben pointed out the issue I came to the conclusion we 
+> probably want Bens patch which saves the bit. Apologies if I didn't 
+> express this thought in email.
+> 
+> I'm happy to take the patch and put it on the front of this series, 
+> although perhaps it makes more sense you to revive the patch since 
+> you're still around Ben?
 
-On Tue, 11 Mar 2025 00:42:49 -0400 Gregory Price <gourry@gourry.net> wrote:
-> On Tue, Mar 11, 2025 at 01:02:07PM +0900, Yunjeong Mun wrote:
-> 
-> forenote - Hi Andrew, please hold off on the auto-configuration patch
-> for now, the sk group has identified a hotplug issue we need to work out
-> and we'll likely need to merge these two patch set together.  I really
-> appreciate your patience with this feature.
-> 
-> > Hi Gregory,
-> >
-> > In my understanding, the reason we are seeing 12 NUMA node is because
-> > it loops through node_states[N_POSSIBLE] and its value is 4095 (twelves ones)
-> > in the code [1]  below:
-> > 
-> ... snip ...
-> 
-> Appreciated, so yes this confirms what i thought was going on.  There's
-> 4 host bridges, 2 devices on each host bridge, and an extra CFMWS per
-> socket that is intended to interleave across the host bridges.
-> 
+Yes, I'm currently very busy so happy for someone else to get this
+merged and tested.
 
-Thanks for confirm. Honggyu represented it as a tree sturcture:
-rootport/ 
-├── socket0
-│   ├── cross-host-bridge0 -> SRAT && CEDT (interleave on) --> NODE 2
-│   │   ├── host-bridge0 -> CEDT
-│   │   │   ├── cxl0 -> CEDT
-│   │   │   └── cxl1-> CEDT
-│   │   └── host-bridge1 -> CEDT
-│   │       ├── cxl2 -> CEDT
-│   │       └── cxl3 -> CEDT
-│   └── dram0 -> SRAT ---------------------------------------> NODE 0
-└── socket1
-    ├── cross-host-bridge1 -> SRAT && CEDT (interleave on)---> NODE 3
-    │   ├── host-bridge2 -> CEDT
-    │   │   ├── cxl4 -> CEDT
-    │   │   └── cxl5 -> CEDT
-    │   └── host-bridge3 -> CEDT
-    │       ├── cxl6 -> CEDT
-    │       └── cxl7 -> CEDT
-    └── dram1 -> SRAT ---------------------------------------> NODE 1
+We could do with some better testing on whether we leak flags on
+task switches (possibly), but that's a side quest and not for now.
 
-> As you mention below, the code in acpi/numa/srat.c will create 1 NUMA
-> node per SRAT Memory Affinity Entry - and then also 1 NUMA node per
-> CFMWS that doesn't have a matching SRAT entry (with a known corner case
-> for a missing SRAT which doesn't apply here).
-> 
-> So essentialy what the system is doing is marking that it's absolutely
-> possible to create 1 region per device and also 1 region that
-> interleaves across host each pair of host bridges (I presume this is a
-> dual socket system?).
-> 
-> So, tl;dr: All these nodes are valid and this configuration is correct.
+-- 
+Ben Dooks				http://www.codethink.co.uk/
+Senior Engineer				Codethink - Providing Genius
 
-I am wondering if all 12 nodes specifed as 'possible' is indeed correct.
-The definiton of 'possible' is:
- - 'Nodes that could be possibly become online at some point'. 
-IMHO, it seems like there should only be 4 nodes specified as 'possible'.
-
-> 
-> Weighted interleave presently works fine as intended, but with the
-> inclusion of the auto-configuration, there will be issues for your
-> system configuration. This means we probably need to consider
-> merging these as a group.
-> 
-> During boot, the following will occur
-> 
-> 1) drivers/acpi/numa/srat.c marks 12 nodes as possible
->    0-1) Socket nodes
->    2-3) Cross-host-bridge interleave nodes
->    4-11) single region nodes
-> 
-> 2) drivers/cxl/* will probe the various devices and create
->    a root decoder for each CXL Fixed Memory Window
->    decoder0.0 - decoder11.0  (or maybe decoder0.0 - decoder0.11)
-> 
-> 3) during probe auto-configuration of wieghted interleave occurs as a
->    result of this code being called with hmat or cdat data:
-> 
-> void node_set_perf_attrs() {
-> ...
-> 	/* When setting CPU access coordinates, update mempolicy */
-> 	if (access == ACCESS_COORDINATE_CPU) {
-> 		if (mempolicy_set_node_perf(nid, coord)) {
-> 			pr_info("failed to set mempolicy attrs for node %d\n",
-> 				nid);
-> 		}
-> 	}
-> ...
-> }
-> 
-> under the current system, since we calculate with N_POSSIBLE, all nodes
-> will be assigned weights (assuming HMAT or CDAT data is available for
-> all of them).
-> 
-> We actually have a few issues here
-> 
-> 1) If all nodes are included in the weighting reduction, we're actually
->    over-representing a particular set of hardware.  The interleave node
->    and the individual device nodes would actually over-represent the
->    bandwidth available (comparative to the CPU nodes).
-> 
-> 2) As stated on this patch line, just switching to N_MEMORY causes
->    issues with hotplug - where the bandwidth can be reported, but if
->    memory hasn't been added yet then we'll end up with wrong weights
->    because it wasn't included in the calculation.
-> 
-> 3) However, not exposing the nodes because N_MEMORY isn't set yet
->    a) prevents pre-configuration before memory is onlined, and
->    b) hides the implications of hotplugging memory into a node from the
->       user (adding memory causes a re-weight and may affect an
->       interleave-all configuration).
-> 
-> but - i think it's reasonable that anyone using weighted-interleave is
-> *probably* not going to have nodes come and go.  It just seems like a
-> corner case that isn't reasonable to spend time supporting.
-> 
-> So coming back around to the hotplug patch line, I do think it's
-> reasonable hide nodes marked !N_MEMORY, but consider two issues:
-> 
-> 1) In auto mode, we need to re-weight on hotplug to only include
->    onlined nodes.  This is because the reduction may be sensitive
->    to the available bandwidth changes.
-> 
->    This behavior needs to be clearly documented.
-> 
-> 2) We need to clearly define what the weight of a node will be when
->    in manual mode and a node goes (memory -> no memory -> memory)
->    a) does it retain it's old, manually set weight?
->    b) does it revert to 1?
-> 
-> Sorry for the long email, just working through all the implications.
-> 
-> I think the proposed hotplug patch is a requirement for the
-> auto-configuration patch set.
-> 
-> ~Gregory
-> 
-
-Best regards,
-Yunjeong
+https://www.codethink.co.uk/privacy.html
 
