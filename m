@@ -1,139 +1,117 @@
-Return-Path: <linux-kernel+bounces-565719-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565720-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEDC3A66E0D
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 09:22:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C117EA66E0F
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 09:22:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B73A23ABAB3
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 08:21:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D33193AD60B
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 08:22:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B25231F582A;
-	Tue, 18 Mar 2025 08:21:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="iDM9JV2+"
-Received: from mx.denx.de (mx.denx.de [89.58.32.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EEE81F418A;
+	Tue, 18 Mar 2025 08:22:35 +0000 (UTC)
+Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 919BC146D6A;
-	Tue, 18 Mar 2025 08:21:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.32.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79932146D6A;
+	Tue, 18 Mar 2025 08:22:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742286094; cv=none; b=ill9k5dpO4LnZwsgF6sXhKbtcek9oplENfktEJLLlB00UAMTh+b0j8YfNtTmDTGK5uB6uk8A3uEj4TNOlZHh14Qt/9tHzKIpjUIsH9OtlJ49aRyrL+CKfsO4+7UHonZQe1ZG66TdF4u6xBRpn8Mu+PUu5/6c8DozZQ5VOYDi6kE=
+	t=1742286154; cv=none; b=aHmFXI7BxVDCTooJ+IE1zzcs9v1AWCOWmKYZm2rqka8uub5nbsTKX3ep8m/WaGJcZd2Glan8SAM/ShstvXvnsDnTyNgnRstFDDEbU6dj0zrQaoSe5a5/bI8YYKDNyrWGWSN1N+xxKRtjkRKTyvxQUzTiVIlpZGJbBOPKnSD7DsE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742286094; c=relaxed/simple;
-	bh=eCJ30kUReItZP7bmYeQDT82DJqArPXR0CBt8PMLpJas=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KZ/0dSYk/WmMZYkyg4d/skQLUpgL2c9t2xVaoIEhc+TW3ONBdf7iiH6x9OphSHPQf2ZSZ1hxEEgJEUGnED5xPbTIin1G22958RCHzUNX26UbTLyYvdGDacwKeeYSBHmLFw8dcu5LcdPpkWMOSslqhOa8/xSPBG9ITzjkFFix2DM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=iDM9JV2+; arc=none smtp.client-ip=89.58.32.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 66F3C101F71FB;
-	Tue, 18 Mar 2025 09:21:21 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
-	t=1742286087; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=fOy1Wxy3azMA6TiGoR+RRut2UatAJVAPSMjGHc7ZRy8=;
-	b=iDM9JV2+81qI8V9uyIv5w97/sCAv90DBaGLwapHqTusZe8Yl3wt+0+8HF7BAGpJkQD3kUw
-	//017VwBGQy9LRXfPdqAG6XSWCGglQq014Fz54yFvIMSMqzb4ecpsSNlCG51N3A+f0XZaq
-	dgaVp8cRcKSZZ/7Uz4IqmMAL3hNqPbEWqVQy1RNICGkFY7Qk3WY/JaUpW39opd7Dh1rf6H
-	c60UtAG860ZehDe2/AOTY6DZefr/DsLlSVTSduZ2qKnllWlTQqArw533LB+FPKxEFfHLSm
-	cbGmDm68thypjScZTFMc76YXeDzaWG+hFMfns/2Jr9q+rJXEJJbsAfVl91OKXQ==
-Date: Tue, 18 Mar 2025 09:21:18 +0100
-From: Pavel Machek <pavel@denx.de>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>,
-	tomm.merciai@gmail.com, linux-renesas-soc@vger.kernel.org,
-	biju.das.jz@bp.renesas.com, Pavel Machek <pavel@denx.de>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] dt-bindings: clock: renesas: Fix description section
-Message-ID: <Z9ks/pBQCWXUDO78@duo.ucw.cz>
-References: <20250317083213.371614-1-tommaso.merciai.xr@bp.renesas.com>
- <20250317083213.371614-2-tommaso.merciai.xr@bp.renesas.com>
- <CAMuHMdV4SyviVU0+WhgFD_vCO43BQ31tx8az-JihWDAB9EJS+g@mail.gmail.com>
+	s=arc-20240116; t=1742286154; c=relaxed/simple;
+	bh=Lg/kjQ8+BXnYP2pnKclvS2rFLRLs9Np0/eWDe1t6oRw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=gHTv2vfhI9OBPjYGABBfyweDMuPhr0EqeB3sXrLErs+EZB7863XXigMZlHuWco+PnEilCxOMTwpjAPf8Tlxe0Dvw3h2yV29eLRz+FgrM9idUAZ0pnzVqFzwJKe1bDlS+D1SfsSpqx3ShvxOl2/ZyIorAbiy7AM2eYhjP5jGoaKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from icess-ProLiant-DL380-Gen10.. (unknown [183.174.60.14])
+	by APP-01 (Coremail) with SMTP id qwCowAAXHNAwLdlnivc7Fg--.12711S2;
+	Tue, 18 Mar 2025 16:22:20 +0800 (CST)
+From: Ma Ke <make24@iscas.ac.cn>
+To: eajames@linux.ibm.com,
+	ninad@linux.ibm.com,
+	joel@jms.id.au,
+	jk@ozlabs.org
+Cc: linux-fsi@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org,
+	Ma Ke <make24@iscas.ac.cn>,
+	stable@vger.kernel.org
+Subject: [PATCH] fsi/core: fix error handling in fsi_slave_init()
+Date: Tue, 18 Mar 2025 16:22:07 +0800
+Message-Id: <20250318082207.1644582-1-make24@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="rOTIEJHNjUEpLBx2"
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdV4SyviVU0+WhgFD_vCO43BQ31tx8az-JihWDAB9EJS+g@mail.gmail.com>
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qwCowAAXHNAwLdlnivc7Fg--.12711S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7WryrKw4rWw17XFW8GFyDJrb_yoW8Wr4kpa
+	1DGa4FyrWUGr1kKrsrZas7Z3s8CrWIv34furW8Gw1IkrZxX34Yyryjg340ya48JaykJF48
+	Xr9rXrykWF1DXaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvC14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
+	6r4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC
+	0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr
+	1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IE
+	rcIFxwCY1x0262kKe7AKxVWUAVWUtwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbV
+	WUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF
+	67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42
+	IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF
+	0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2Kf
+	nxnUUI43ZEXa7VUbsYFJUUUUU==
+X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
 
+Once cdev_device_add() failed, we should use put_device() to decrement
+reference count for cleanup. Or it could cause memory leak. Although
+operations in err_free_ida are similar to the operations in callback
+function fsi_slave_release(), put_device() is a correct handling
+operation as comments require when cdev_device_add() fails.
 
---rOTIEJHNjUEpLBx2
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+As comment of device_add() says, 'if device_add() succeeds, you should
+call device_del() when you want to get rid of it. If device_add() has
+not succeeded, use only put_device() to drop the reference count'.
 
-Hi!
+Found by code review.
 
-> On Mon, 17 Mar 2025 at 09:32, Tommaso Merciai
-> <tommaso.merciai.xr@bp.renesas.com> wrote:
-> > Remove not needed "and" into description section.
-> >
-> > Reported-by: Pavel Machek <pavel@denx.de>
-> > Closes: https://lore.kernel.org/cip-dev/Z9P%2F51qOlq2B46FK@duo.ucw.cz/
-> > Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
->=20
-> Thanks for your patch!
->=20
-> > --- a/Documentation/devicetree/bindings/clock/renesas,rzv2h-cpg.yaml
-> > +++ b/Documentation/devicetree/bindings/clock/renesas,rzv2h-cpg.yaml
-> > @@ -12,7 +12,7 @@ maintainers:
-> >  description:
-> >    On Renesas RZ/{G3E,V2H(P)} SoCs, the CPG (Clock Pulse Generator) han=
-dles
-> >    generation and control of clock signals for the IP modules, generati=
-on and
-> > -  control of resets, and control over booting, low power consumption a=
-nd power
-> > +  control of resets, control over booting, low power consumption and p=
-ower
-> >    supply domains.
-> >
-> >  properties:
->=20
-> I think the original is fine.  When emphasizing the structure:
->=20
->     The CPG handles:
->       A. generation and control of clock signals for the IP modules,
->       B. generation and control of resets, and
->       C. control over booting, low power consumption and power supply dom=
-ains.
->=20
-> i.e. the "and" is part of the typical "A, B, and C" construct?
+Cc: stable@vger.kernel.org
+Fixes: 371975b0b075 ("fsi/core: Fix error paths on CFAM init")
+Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+---
+ drivers/fsi/fsi-core.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-Well, it is still horid sentence. What about making it into list, as
-you did?
+diff --git a/drivers/fsi/fsi-core.c b/drivers/fsi/fsi-core.c
+index e2e1e9df6115..1373e05e3659 100644
+--- a/drivers/fsi/fsi-core.c
++++ b/drivers/fsi/fsi-core.c
+@@ -1084,7 +1084,8 @@ static int fsi_slave_init(struct fsi_master *master, int link, uint8_t id)
+ 	rc = cdev_device_add(&slave->cdev, &slave->dev);
+ 	if (rc) {
+ 		dev_err(&slave->dev, "Error %d creating slave device\n", rc);
+-		goto err_free_ida;
++		put_device(&slave->dev);
++		return rc;
+ 	}
+ 
+ 	/* Now that we have the cdev registered with the core, any fatal
+@@ -1110,8 +1111,6 @@ static int fsi_slave_init(struct fsi_master *master, int link, uint8_t id)
+ 
+ 	return 0;
+ 
+-err_free_ida:
+-	fsi_free_minor(slave->dev.devt);
+ err_free:
+ 	of_node_put(slave->dev.of_node);
+ 	kfree(slave);
+-- 
+2.25.1
 
-Best regards,
-								Pavel
---=20
-DENX Software Engineering GmbH,        Managing Director: Erika Unter
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-
---rOTIEJHNjUEpLBx2
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZ9ks/gAKCRAw5/Bqldv6
-8qHbAJ9E6sbZEBaY5Hnj3ncRRxq+5+thZACeL4Q5k5rVBovXxPpd0nDd8ZlnIzo=
-=a6PE
------END PGP SIGNATURE-----
-
---rOTIEJHNjUEpLBx2--
 
