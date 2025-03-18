@@ -1,60 +1,92 @@
-Return-Path: <linux-kernel+bounces-566660-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566659-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65262A67AE3
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 18:28:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9D0FA67AE2
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 18:28:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE6F219C74D8
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F35219C74AD
 	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 17:25:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23E4F20B815;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0597921324E;
 	Tue, 18 Mar 2025 17:24:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gaFP+2w3"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WPR+akmk"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65559212FB5;
-	Tue, 18 Mar 2025 17:24:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FF90212FA2;
+	Tue, 18 Mar 2025 17:24:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742318687; cv=none; b=XgrMTAHn8sVk5HXNLE5EPgXYgeqNT+2z9PpP1hX4vIN8z2V+P214D21ra4x+IR5URzwvcAi2hOPQDqMwGAqAIXo68XVK9OvA7SptxO4Nta8o3GZrC8nzt2nJQC2baC373ulaITPRybqsUWkRg7IW8Pmm9095Nt/GX2C5ATBO8VI=
+	t=1742318687; cv=none; b=XS8fhZyv742RqaUD4v6eZld2j00mNfa9Vwy0G0H0QINcSR+Kt4LpWxzKDdlDPwnHokjom/APl2iim56rofr3vyo/00LHq9pgBffEgIc3BoGH/VJiEit/nbEOHOsrwFeyay+XekUpIf7U++bxXHMRSD44m2oFnhNh3AR88qIDigY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1742318687; c=relaxed/simple;
-	bh=eNRbARQO/NBxSyCIsware9rPcDE+jN9aIN0gNmZNUCo=;
+	bh=hAfc3CbbDwRvHKrCd7OuWigsJ3MYwZKHBkgn7FHypEc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cjicJSU1t4ETdFUT7ocUHvQ2bSaKUf3UUxu7Wi0fJqJYioHe8Ep1CNBdAFM02IT8xoo72NYDiKyRjPKXEqatooPTHvbCY5G4ZKpmfb0v2bL9qIWN76LX/RaNPokqi+LrXJV5bvYfSpWZ7nAAy4e+cY6qrr44reoYuatfvPouMzI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gaFP+2w3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E981C4CEF1;
-	Tue, 18 Mar 2025 17:24:44 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=JZAsoYGoD/QMZfzHift/RVJeNtgvbV4ywTdVoqzwryRzQxhuudnhHUw5UFEaIqiUv3mT50FEnKMi7nZstQILew8gozzb+rFuXVPzDHAjGQFVx1FomO0FF9wP00RIOLHOjFiVWgnd1KSODqFyjYgfJKHGQVFo2TvLuhHv5DtxsuY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WPR+akmk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 422B9C4CEE3;
+	Tue, 18 Mar 2025 17:24:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742318687;
-	bh=eNRbARQO/NBxSyCIsware9rPcDE+jN9aIN0gNmZNUCo=;
+	s=k20201202; t=1742318685;
+	bh=hAfc3CbbDwRvHKrCd7OuWigsJ3MYwZKHBkgn7FHypEc=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gaFP+2w3qgEdItTl2UZohZFyTyMYJOqvthTdGKooymXJqnHgmTzIbluHaL3QMZ/G7
-	 /mZSDYTVxe6g7qtEQrP0mliV9AcB5p/zsAz5JwhXNNEO0e+a+n80si4K4Ijsmqf63X
-	 m87bfX4c+3+LJZb4hptpkMttCY9L+DIFG4aYjZjxxDZEJFabVz/+zcZrw9f1pP5Lr6
-	 QlyXyquGUY9LpkhETRX7CJr4Ua35RQ/nTRy44CWryXr5Aj2o8Fuu6LXZp5Ll00+0w/
-	 qYbXADXD4q1f8WITWiBRQORpJAOmPkmLFpdVxkYIhmSTNUMjG40TM1vi6wxxc7y8t2
-	 D3V1xPLj8e6mw==
-Date: Tue, 18 Mar 2025 17:24:42 +0000
-From: Simon Horman <horms@kernel.org>
-To: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
-Cc: mptcp@lists.linux.dev, Mat Martineau <martineau@kernel.org>,
-	Geliang Tang <geliang@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH net-next 10/12] mptcp: sysctl: map pm_type to path_manager
-Message-ID: <20250318172442.GO688833@kernel.org>
-References: <20250313-net-next-mptcp-pm-ops-intro-v1-0-f4e4a88efc50@kernel.org>
- <20250313-net-next-mptcp-pm-ops-intro-v1-10-f4e4a88efc50@kernel.org>
+	b=WPR+akmk9jwF9CPNO3dML5on0woeUsOjt9vsbGZYoaTdLEpTev/VWp5rIfUehnH/R
+	 MPoZvsNcGJvDnlNBvbILCwCv6TgO95qbILJtXlpQj3zWW/RABviZ9AumcN74HuGt3t
+	 w6Mg+MXdVHTNwZ8ImKFV68ZQuipY9EA9KX4lyJ9ltK0fSAM3oJX4ri3e85R5q7igR9
+	 ySA+E+8LVpT9770jKKgt6GJHfrE9NRb/9P1vK0+E65pHMFQofj8fmRXoeKR6zbfwnV
+	 bLotyTt+KSOgT4advCwVqVXUMhC8YPfEWO8V3yYjBDiZBskJwZmsvlzifkrLsV4vVM
+	 08ahh5+S3/+Kg==
+Date: Tue, 18 Mar 2025 17:24:44 +0000
+From: Wei Liu <wei.liu@kernel.org>
+To: Michael Kelley <mhklinux@outlook.com>
+Cc: Nuno Das Neves <nunodasneves@linux.microsoft.com>,
+	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+	"x86@kernel.org" <x86@kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+	"kys@microsoft.com" <kys@microsoft.com>,
+	"haiyangz@microsoft.com" <haiyangz@microsoft.com>,
+	"wei.liu@kernel.org" <wei.liu@kernel.org>,
+	"decui@microsoft.com" <decui@microsoft.com>,
+	"catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+	"will@kernel.org" <will@kernel.org>,
+	"tglx@linutronix.de" <tglx@linutronix.de>,
+	"mingo@redhat.com" <mingo@redhat.com>,
+	"bp@alien8.de" <bp@alien8.de>,
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+	"hpa@zytor.com" <hpa@zytor.com>,
+	"daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
+	"joro@8bytes.org" <joro@8bytes.org>,
+	"robin.murphy@arm.com" <robin.murphy@arm.com>,
+	"arnd@arndb.de" <arnd@arndb.de>,
+	"jinankjain@linux.microsoft.com" <jinankjain@linux.microsoft.com>,
+	"muminulrussell@gmail.com" <muminulrussell@gmail.com>,
+	"skinsburskii@linux.microsoft.com" <skinsburskii@linux.microsoft.com>,
+	"mrathor@linux.microsoft.com" <mrathor@linux.microsoft.com>,
+	"ssengar@linux.microsoft.com" <ssengar@linux.microsoft.com>,
+	"apais@linux.microsoft.com" <apais@linux.microsoft.com>,
+	"Tianyu.Lan@microsoft.com" <Tianyu.Lan@microsoft.com>,
+	"stanislav.kinsburskiy@gmail.com" <stanislav.kinsburskiy@gmail.com>,
+	"gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+	"vkuznets@redhat.com" <vkuznets@redhat.com>,
+	"prapal@linux.microsoft.com" <prapal@linux.microsoft.com>,
+	"muislam@microsoft.com" <muislam@microsoft.com>,
+	"anrayabh@linux.microsoft.com" <anrayabh@linux.microsoft.com>,
+	"rafael@kernel.org" <rafael@kernel.org>,
+	"lenb@kernel.org" <lenb@kernel.org>,
+	"corbet@lwn.net" <corbet@lwn.net>
+Subject: Re: [PATCH v5 10/10] Drivers: hv: Introduce mshv_root module to
+ expose /dev/mshv to VMMs
+Message-ID: <Z9msXAClr-vGn3GR@liuwe-devbox-ubuntu-v2.lamzopl0uupeniq2etz1fddiyg.xx.internal.cloudapp.net>
+References: <1740611284-27506-1-git-send-email-nunodasneves@linux.microsoft.com>
+ <1740611284-27506-11-git-send-email-nunodasneves@linux.microsoft.com>
+ <SN6PR02MB4157BE8AF5A1CDD39CF31124D4DF2@SN6PR02MB4157.namprd02.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,26 +95,63 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250313-net-next-mptcp-pm-ops-intro-v1-10-f4e4a88efc50@kernel.org>
+In-Reply-To: <SN6PR02MB4157BE8AF5A1CDD39CF31124D4DF2@SN6PR02MB4157.namprd02.prod.outlook.com>
 
-On Thu, Mar 13, 2025 at 11:20:59AM +0100, Matthieu Baerts (NGI0) wrote:
-> From: Geliang Tang <tanggeliang@kylinos.cn>
+On Mon, Mar 17, 2025 at 11:51:52PM +0000, Michael Kelley wrote:
+> From: Nuno Das Neves <nunodasneves@linux.microsoft.com> Sent: Wednesday, February 26, 2025 3:08 PM
+[...]
+> > +static long
+> > +mshv_vp_ioctl_get_set_state(struct mshv_vp *vp,
+> > +			    struct mshv_get_set_vp_state __user *user_args,
+> > +			    bool is_set)
+> > +{
+> > +	struct mshv_get_set_vp_state args;
+> > +	long ret = 0;
+> > +	union hv_output_get_vp_state vp_state;
+> > +	u32 data_sz;
+> > +	struct hv_vp_state_data state_data = {};
+> > +
+> > +	if (copy_from_user(&args, user_args, sizeof(args)))
+> > +		return -EFAULT;
+> > +
+> > +	if (args.type >= MSHV_VP_STATE_COUNT || mshv_field_nonzero(args, rsvd) ||
+> > +	    !args.buf_sz || !PAGE_ALIGNED(args.buf_sz) ||
+> > +	    !PAGE_ALIGNED(args.buf_ptr))
+> > +		return -EINVAL;
+> > +
+> > +	if (!access_ok((void __user *)args.buf_ptr, args.buf_sz))
+> > +		return -EFAULT;
+> > +
+> > +	switch (args.type) {
+> > +	case MSHV_VP_STATE_LAPIC:
+> > +		state_data.type = HV_GET_SET_VP_STATE_LAPIC_STATE;
+> > +		data_sz = HV_HYP_PAGE_SIZE;
+> > +		break;
+> > +	case MSHV_VP_STATE_XSAVE:
 > 
-> This patch adds a new proc_handler "proc_pm_type" for "pm_type" to
-> map old path manager sysctl "pm_type" to the newly added "path_manager".
+> Just FYI, you can put a semicolon after the colon on the above line, which
+> adds a null statement, and then the C compiler will accept the definition
+> of local variable data_sz_64 without needing the odd-looking braces. 
 > 
-> 	path_manager		   pm_type
+> See https://stackoverflow.com/questions/92396/why-cant-variables-be-declared-in-a-switch-statement/19830820
 > 
-> 	MPTCP_PM_TYPE_KERNEL    -> "kernel"
-> 	MPTCP_PM_TYPE_USERSPACE -> "userspace"
-> 
-> It is important to add this to keep a compatibility with the now
-> deprecated pm_type sysctl knob.
-> 
-> Signed-off-by: Geliang Tang <tanggeliang@kylinos.cn>
-> Reviewed-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
-> Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
 
-Reviewed-by: Simon Horman <horms@kernel.org>
+This is a rarely seen pattern in the kernel, so I would prefer to keep
+the braces for clarity.
 
+ $ git grep -A5 -P 'case\s+\w+:;$'
+
+This shows a few places are using this pattern. But they are not
+declaring variables afterwards.
+
+> I learn something new every day! :-)
+> 
+
+Yep, me too.
+
+Thanks for reviewing the code. Nuno will address the comments. I can fix
+them up.
+
+Thanks,
+Wei.
 
