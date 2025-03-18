@@ -1,133 +1,152 @@
-Return-Path: <linux-kernel+bounces-565664-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565665-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 679FFA66CFE
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 08:58:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02981A66D2E
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 09:01:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4B6D3B33CA
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 07:58:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3CECE1881782
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 07:58:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28B891EF378;
-	Tue, 18 Mar 2025 07:58:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=furiosa.ai header.i=@furiosa.ai header.b="k1kq3hUL"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCDF31EF379;
+	Tue, 18 Mar 2025 07:58:44 +0000 (UTC)
+Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CC6A1C3BE2
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 07:58:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92E461DFE04;
+	Tue, 18 Mar 2025 07:58:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742284706; cv=none; b=mc+Gth05CDvoDhnPayv/J8NfPP0o3ZEc+/J+s0+1QxrpBOvgLUix2XdtVzbesItAtOWdHNHC/Qc7jjh7r90So+ppKGj3NQG22CIgIVXY3XcHYOwCgCvNz496MxWiKmAtDWtyTZxvo79i/mfjH106GD2GhIE6LHHVLjZ4Q5Tjp6I=
+	t=1742284724; cv=none; b=UwSQ9d+6LGtr/3/YreAdnUXvm5EO0epwVJB+h2O2DVRF2gn5H60pIFULpn6m4UqOnAZ/xAJI3ivAP7DtNsxD0H49Kqi41sIcgYK6Zu1d3ZKDUUCdBT8e4CCeRoZEZ3wKkGC+zTaTbkQUkYd+VKzj4YgTQUc9zS/pb2mpbCjjsmI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742284706; c=relaxed/simple;
-	bh=al49eM+1tgW5ACzH7lMAhrHbpJE/ZKJWrX8DKNsNMbg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d4LANlKsWIKtjNVAznHhF+CDJtXvlJABxmwaK+QaOWTfyY50q7jK2s7iaM+sOym47/ET4e29oAoZuC7zBJ3hSnG8dArW9gRZr/fVPqjEvGxKg2uVTSxFZMhEDrgYQSSXl4rRg/GYGksVqS57AQgs/eNxXvei0PpYnWOYkaNmvbg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=furiosa.ai; spf=none smtp.mailfrom=furiosa.ai; dkim=pass (1024-bit key) header.d=furiosa.ai header.i=@furiosa.ai header.b=k1kq3hUL; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=furiosa.ai
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=furiosa.ai
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-22359001f1aso53694715ad.3
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 00:58:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=furiosa.ai; s=google; t=1742284704; x=1742889504; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=JjqSNVE0Cph4A/90eA+y7Se4Hin9uKNNKIYlFXcRpQc=;
-        b=k1kq3hULFaIoP60zLinyPlm/oWo3dzLfE6C/8xathyU6CcfVrKNNf72Z4uGsMSV3un
-         IGt3+dLehqa64pOQym5tZIbF3jNhvBUH3jfrAemiyfFa+bYlDuS1F/8jLMYg2MlEmo44
-         y+AwC5WMR5BmSw6/XcqJtnAH1RblIEvmWx3mc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742284704; x=1742889504;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JjqSNVE0Cph4A/90eA+y7Se4Hin9uKNNKIYlFXcRpQc=;
-        b=aEdurfctLjVJJzjdG+SrYkgLVlTqCc77n4Kt4L99AIg0Mo7KmHp0ihkXAy5FgKIdP0
-         DNLiTWHuejaJ4gQ3zfQLRoDMVVa0uzOCLcS2CNlgGbpPUfGfu1vn2ewTttX5+QvW62lX
-         OcACLUrxb8EfxFqwSNXLLO2JQhDw83b7/j5uJ6tYXv0XghsDcc23wav1zsdvhwtLRdzo
-         bgNFxYMQ65XWIP7ycBRzAyoVHX7qRtNcXbdvpflghCuSPBjB2Nrirlgwe92O6IAfOZm6
-         r4sJMFl9OGQPQteWg3VVfWpIEcp5cH8p7iqjDtCzaX8pw8Q51ryJB+fnXfoprR+Zna4k
-         jH+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXIsS1O/Unx8Y0mPu0/qnYuuHJfAkB9vmY5PoLkjeqNBSNDTDtQ/5x7O1Cb0JbXns0i3tizuYQx8Vio82o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyCU33LdNqbgk+WcSmk25W5d/JERgr1PiUb6gjQrOTXDZvMn+QZ
-	srfEsIRxNTCxQxYT5MTWHEjSJbhJKOVWXyYfM9ZMRTbOf/nTyYbeHt6vmFJ1S/k=
-X-Gm-Gg: ASbGncumN4VmSWQUiMBYh5kuMGAmu/p6QB4XVClUwlwxSthva1zxB3JLyuOEPQj/MpB
-	xxEbIzb2otPlBAk5S3N9bCwXLY1xyCHfhppQdey55dhUFQK+dCtrdEP1NyWbqwGp/JkqI+Jajq0
-	6DhjcCFxNPkHwP+Zty4oF+YWS1QJ23P3P58NO+W9eItNlt0qARedA+8+iSb4/H7s6m5Y/Z4fH2k
-	47416lSgE35V1TSgeGgy/by4ZryGtpDzs4WAJX/ipKBC2LsTWYQp3uU4mo8dSQeFhpR8z3BL6p6
-	P/ESgOwera2aDMyU44DNqxkHxmWYCvsWmbaxZEtfC3utOmeGjfpj1P0MO6YwMcSmmMO04ZpSDqi
-	P
-X-Google-Smtp-Source: AGHT+IFoYIbKKLN/4JYODjVS6d9sUEzicBL53lbs5mcV9y8CEd9goF6jVujShbqHMNdGwaaPjoahMQ==
-X-Received: by 2002:a17:902:f711:b0:224:b60:3ce0 with SMTP id d9443c01a7336-2262c515130mr30785105ad.5.1742284704551;
-        Tue, 18 Mar 2025 00:58:24 -0700 (PDT)
-Received: from sidongui-MacBookPro.local ([221.148.76.1])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-225c6889eeesm88219725ad.29.2025.03.18.00.58.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Mar 2025 00:58:24 -0700 (PDT)
-Date: Tue, 18 Mar 2025 16:58:20 +0900
-From: Sidong Yang <sidong.yang@furiosa.ai>
-To: Pavel Begunkov <asml.silence@gmail.com>
-Cc: Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
-	Jens Axboe <axboe@kernel.dk>, linux-btrfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org, io-uring@vger.kernel.org,
-	Mark Harmstone <maharmstone@meta.com>
-Subject: Re: [RFC PATCH v4 5/5] btrfs: ioctl: don't free iov when -EAGAIN in
- uring encoded read
-Message-ID: <Z9knnGBRQVdFh6nO@sidongui-MacBookPro.local>
-References: <20250317135742.4331-1-sidong.yang@furiosa.ai>
- <20250317135742.4331-6-sidong.yang@furiosa.ai>
- <849ce82d-d87a-428a-be79-abdeb53a1a99@gmail.com>
+	s=arc-20240116; t=1742284724; c=relaxed/simple;
+	bh=/DhwVu8DKF/R610pyPOmLKSv2pleUHx+A2HvVxAwuJs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gWGF6L5Dmy5ZVhpzamVX46hO/AjhFpAwhxIyctIjp+K/e2A1s26yjnZiUoUXaQS8lQT/ThAbrMK90JOvYAeUrbupeTedBVVd0Id261jYjVgP+SYVz4JbqtlZ3C9S9I06f78jhysnHuumvqam6GYXZiawWG3ok7aQWqafwpeehfg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
+Received: from [192.168.0.2] (ip5f5af679.dynamic.kabel-deutschland.de [95.90.246.121])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: pmenzel)
+	by mx.molgen.mpg.de (Postfix) with ESMTPSA id B1EB361E6479F;
+	Tue, 18 Mar 2025 08:58:22 +0100 (CET)
+Message-ID: <9a533395-f991-469d-a916-c1ee39d8bc5d@molgen.mpg.de>
+Date: Tue, 18 Mar 2025 08:58:21 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <849ce82d-d87a-428a-be79-abdeb53a1a99@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 02/19] cpufreq/amd-pstate: Show a warning when a CPU
+ fails to setup
+To: Mario Limonciello <superm1@kernel.org>
+Cc: "Gautham R . Shenoy" <gautham.shenoy@amd.com>,
+ Perry Yuan <perry.yuan@amd.com>,
+ Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>, linux-kernel@vger.kernel.org,
+ linux-pm@vger.kernel.org, Mario Limonciello <mario.limonciello@amd.com>
+References: <20250226074934.1667721-1-superm1@kernel.org>
+ <20250226074934.1667721-3-superm1@kernel.org>
+Content-Language: en-US
+From: Paul Menzel <pmenzel@molgen.mpg.de>
+In-Reply-To: <20250226074934.1667721-3-superm1@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, Mar 18, 2025 at 07:21:00AM +0000, Pavel Begunkov wrote:
-> On 3/17/25 13:57, Sidong Yang wrote:
-> > This patch fixes a bug on encoded_read. In btrfs_uring_encoded_read(),
-> > btrfs_encoded_read could return -EAGAIN when receiving requests concurrently.
-> > And data->iov goes to out_free and it freed and return -EAGAIN. io-uring
-> > subsystem would call it again and it doesn't reset data. And data->iov
-> > freed and iov_iter reference it. iov_iter would be used in
-> > btrfs_uring_read_finished() and could be raise memory bug.
-> 
-> Fixes should go first. Please send it separately, and CC Mark.
-> A "Fixes" tag would also be good to have.
+Dear Mario,
 
-Okay, I'll remove this from patch series.
 
-Thanks,
-Sidong
+Thank you for the patch.
 
+Am 26.02.25 um 08:49 schrieb Mario Limonciello:
+> From: Mario Limonciello <mario.limonciello@amd.com>
 > 
-> > Signed-off-by: Sidong Yang <sidong.yang@furiosa.ai>
-> > ---
-> >   fs/btrfs/ioctl.c | 3 +++
-> >   1 file changed, 3 insertions(+)
-> > 
-> > diff --git a/fs/btrfs/ioctl.c b/fs/btrfs/ioctl.c
-> > index a7b52fd99059..02fa8dd1a3ce 100644
-> > --- a/fs/btrfs/ioctl.c
-> > +++ b/fs/btrfs/ioctl.c
-> > @@ -4922,6 +4922,9 @@ static int btrfs_uring_encoded_read(struct io_uring_cmd *cmd, unsigned int issue
-> >   	ret = btrfs_encoded_read(&kiocb, &data->iter, &data->args, &cached_state,
-> >   				 &disk_bytenr, &disk_io_size);
-> > +
-> > +	if (ret == -EAGAIN)
-> > +		goto out_acct;
-> >   	if (ret < 0 && ret != -EIOCBQUEUED)
-> >   		goto out_free;
+> I came across a system that MSR_AMD_CPPC_CAP1 for some CPUs isn't
+> populated.  This is an unexpected behavior that is most likely a
+> BIOS bug. In the event it happens I'd like users to report bugs
+> to properly root cause and get this fixed.
 > 
-> -- 
-> Pavel Begunkov
+> Reviewed-by: Gautham R. Shenoy <gautham.shenoy@amd.com>
+> Reviewed-by: Dhananjay Ugwekar <dhananjay.ugwekar@amd.com>
+> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+> ---
+>   drivers/cpufreq/amd-pstate.c | 2 ++
+>   1 file changed, 2 insertions(+)
 > 
+> diff --git a/drivers/cpufreq/amd-pstate.c b/drivers/cpufreq/amd-pstate.c
+> index a093389a8fe3e..1b98f5d76894d 100644
+> --- a/drivers/cpufreq/amd-pstate.c
+> +++ b/drivers/cpufreq/amd-pstate.c
+> @@ -1034,6 +1034,7 @@ static int amd_pstate_cpu_init(struct cpufreq_policy *policy)
+>   free_cpudata2:
+>   	freq_qos_remove_request(&cpudata->req[0]);
+>   free_cpudata1:
+> +	pr_warn("Failed to initialize CPU %d: %d\n", policy->cpu, ret);
+
+ From a user/operator point of view, having a recommended action in the 
+log message would help a lot, as I am not able to judge the 
+consequences, and where to go to. So, I’d propose:
+
+Failed to initialize CPU %d: %d. This is likely a firmware error, and 
+should be reported to the vendor.
+
+The Linux kernel also has some macros. From `include/linux/printk.h`:
+
+```
+/*
+  * FW_BUG
+  * Add this to a message where you are sure the firmware is buggy or 
+behaves
+  * really stupid or out of spec. Be aware that the responsible BIOS 
+developer
+  * should be able to fix this issue or at least get a concrete idea of the
+  * problem by reading your message without the need of looking at the 
+kernel
+  * code.
+  *
+  * Use it for definite and high priority BIOS bugs.
+  *
+  * FW_WARN
+  * Use it for not that clear (e.g. could the kernel messed up things 
+already?)
+  * and medium priority BIOS bugs.
+  *
+  * FW_INFO
+  * Use this one if you want to tell the user or vendor about something
+  * suspicious, but generally harmless related to the firmware.
+  *
+  * Use it for information or very low priority BIOS bugs.
+  */
+#define FW_BUG          "[Firmware Bug]: "
+#define FW_WARN         "[Firmware Warn]: "
+#define FW_INFO         "[Firmware Info]: "
+```
+
+For ACPI:
+
+     drivers/acpi/acpica/acutils.h:#define ACPI_MSG_BIOS_ERROR 
+"Firmware Error (ACPI): "
+
+>   	kfree(cpudata);
+>   	return ret;
+>   }
+> @@ -1527,6 +1528,7 @@ static int amd_pstate_epp_cpu_init(struct cpufreq_policy *policy)
+>   	return 0;
+>   
+>   free_cpudata1:
+> +	pr_warn("Failed to initialize CPU %d: %d\n", policy->cpu, ret);
+>   	kfree(cpudata);
+>   	return ret;
+>   }
+
+
+Kind regards,
+
+Paul
 
