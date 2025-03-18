@@ -1,242 +1,78 @@
-Return-Path: <linux-kernel+bounces-566639-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566638-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB3CDA67AAD
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 18:21:14 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0F42A67AAA
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 18:21:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2386417DD37
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 17:20:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 39218172C29
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 17:20:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E46ED20F096;
-	Tue, 18 Mar 2025 17:19:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B61DC211A11;
+	Tue, 18 Mar 2025 17:19:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="iLx8crY8"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tuMY49yo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85BEA199235
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 17:19:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 127721AB50D;
+	Tue, 18 Mar 2025 17:19:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742318362; cv=none; b=WJ18JGNNFwzNNcOo+tr9NszNS1AueZ0/q7Y0pqaFO6X1UORsW2YBBGAu61+ylLSCsWH6ICY7MADiVT4abWw7I6SJhzbvUrejWEcAewCMwFuixpdbDZjCbtXUjNtfLXacyrWcV6MZk2oDDiUy//ZQzwK3Rd1iFXQ2VKKiHijKaH0=
+	t=1742318345; cv=none; b=bBwVMBgUFdW1uTCwSje8T36imMhCcITckVrKMl8fMcl2UxSLPfxrfU+rq0hF6GWWegkgkiCYf04ZqmPcQP7hMbjToiQl5k/ggajAsh/PyIYachqHC5dPFGOtrIQXYHmb0UbL8hABi8ehjK497j+4bjmMnbPUFUV/xXIhrbg/9+8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742318362; c=relaxed/simple;
-	bh=L4LywadbE5mYY8mu02wFC7XHQywI/d157uAGv7GqMZY=;
-	h=Date:Message-Id:Mime-Version:Subject:From:To:Content-Type; b=fSDD24COYG4AwVPHEyu17tOwcAFVV9xGW+FDQVpnDmNIjfUG6zPmczmQFCovo3Ly7PFnnnpRnc2ShrQINaWfjRUE8LTElBc7dGgXcTNePos37ucjjJBQ61qiXpRoNlWzXjRP7txHOOfCouz65T1aq3FkZLveHTwHx2ZlM0ckjLo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=iLx8crY8; arc=none smtp.client-ip=209.85.128.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6fd541f4b43so64681847b3.0
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 10:19:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1742318359; x=1742923159; darn=vger.kernel.org;
-        h=to:from:subject:mime-version:message-id:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=KvYyFj2nG1/TQMfnz/J5XJ8/WMEVshs5kPWwTWXCuSU=;
-        b=iLx8crY80/EeWtU0OF58dHtcv+nz2t7U67jm0hRqWErAIVO1B50Ad0yhaWRKDck6UW
-         PqUWy4OKHR5YQpBuFz/gEGvcMHWzj0t0SxCBSvEDZr6J/wh8Pck4awl+oX55F727OXCS
-         lZo2A3cz0MGhKqGxqqPOnBVNHbBrr7iCFqlPRZ0rfA/YR3sMot86Vv3YJ1xpUhoKnQWZ
-         wu80PhTUCbFENKVw5E5Mqd6WA9xG5cJVpVrt3vLsJw5DYGmPRxF6YipIYgtZ2XeEjrUD
-         cjfBK/yj0cvCe/TBL2SSy7YLBNexoVjLIevWIrnqIujZPSZfelDos+9Vtx0aHTgoMR0h
-         oQEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742318359; x=1742923159;
-        h=to:from:subject:mime-version:message-id:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=KvYyFj2nG1/TQMfnz/J5XJ8/WMEVshs5kPWwTWXCuSU=;
-        b=PXwCJObN6FPa0w3t+Ckn1OTiZVz8zzenk+XX2DwMdVUvGJWM8ws/Vq0xoNNSIFoE2c
-         MqArtLxZtOUdpvojYWIjRaWQAaKB53PFtPvf8Jdk095oZ01F8+r9PzlBYezX57iQFAhc
-         H1ls4f5NH1cTouTuu2Hr/td6tXTUmJQPzzsx1B8XQjEb+Dj+14tuBGnWMub5VwHMzqJA
-         SSrNhArhuW9zRNmZDnsgbC/xEJwPGO8TenE67CIJEvvh1cmEJEKw2KTcdCey0O20UQgE
-         l9k0dPQ3m232279F7k9s4RC+bs5hDmmn9YSaWmQbQETCCxuVIkyklVPZ+CrIaFkqLC4z
-         ZAWw==
-X-Forwarded-Encrypted: i=1; AJvYcCVXfxrqrCl3BNl089qVwjyhFHVStS6IHUvy4rGIS2K+gd/zA6DDYbLv0tJm7ndscEGuFGtLeYnO1aPYv5Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFYsoBUZ7pp4PHLaqvLZu1Cz5Zm42lyGWZtCc6VbTL/qR4X72R
-	kWkSsAgmeR2NDFHJjxLISUY93pF1pLTCZTwFf57i8lnvuZTjpTG0xxR51AXtzPxzGajnwU7N7K5
-	T+ysf8Q==
-X-Google-Smtp-Source: AGHT+IFPSXtbSEWitohgO7VMQCfcTTqptJqeHL+kp6kVB+7zkOLZaeS6VlTaqfbk3dWQLiZNfbrkJc6CPvLj
-X-Received: from irogers.svl.corp.google.com ([2620:15c:2c5:11:ef29:15ce:a42a:b69f])
- (user=irogers job=sendgmr) by 2002:a25:d801:0:b0:e60:89be:c33a with SMTP id
- 3f1490d57ef6-e63f5bdea0cmr8923276.0.1742318359222; Tue, 18 Mar 2025 10:19:19
- -0700 (PDT)
-Date: Tue, 18 Mar 2025 10:19:14 -0700
-Message-Id: <20250318171914.145616-1-irogers@google.com>
+	s=arc-20240116; t=1742318345; c=relaxed/simple;
+	bh=8Z7SgxoCJA+GSUt4Ui7Aw65TeOzoEivKQZ1WDkvRvq8=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=gBcxRLYe4LyRo6KfIKBHXlGC5a+Hp1aI+kQJ43jm1O/9TlTgwpOSbfQioIUjXV5b9y6uv5zHaYNmdJdzRG+cPS3vZvaFLK0ojomJMYMC+Jo5h2JBgrXUPoFjSVNZ60+4xq7XgD+CrFsqF4wNsNFuTwH5XtrYasoO04FzhWwPj9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tuMY49yo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78397C4CEDD;
+	Tue, 18 Mar 2025 17:19:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742318344;
+	bh=8Z7SgxoCJA+GSUt4Ui7Aw65TeOzoEivKQZ1WDkvRvq8=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=tuMY49yoMizIEu9aK2Tyhr8gCdqWPR1hhVEOR4FQDntvgHuD4zDRIu6g2z3U5HYdL
+	 U2Aw2T4c014FyFUi4V6XXcKFtQgyCcJz6m4UKEdVY/+7t+uoo37PlWThXntAGDKw+C
+	 OXn6GfzpHvHrZJ/MAPSUoD67CZEiveSe5ivMSLE74uaQGH+hO5HnEBHuYq9so0VYHH
+	 KOEBWZmolp9zQYlOn5/HCp6N18porp4Q1I05HoMYuOPXJeYoHPff8XFtot3QT+gUkM
+	 3DZByPRj9bQRClpcfszVU9hGNLYjoNuCZ6H/YNjJcbHSCXpAhUwz5krArWvXsnaoH/
+	 aSRzwszjPvk/A==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33F11380DBE8;
+	Tue, 18 Mar 2025 17:19:41 +0000 (UTC)
+Subject: Re: [GIT PULL] pmdomain fixes for v6.14-rc8
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <20250318122548.1328552-1-ulf.hansson@linaro.org>
+References: <20250318122548.1328552-1-ulf.hansson@linaro.org>
+X-PR-Tracked-List-Id: <linux-arm-kernel.lists.infradead.org>
+X-PR-Tracked-Message-Id: <20250318122548.1328552-1-ulf.hansson@linaro.org>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/linux-pm.git tags/pmdomain-v6.14-rc4
+X-PR-Tracked-Commit-Id: ef17b519088ee0c167cf507820609732ec8bad1a
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 81e4f8d68c66da301bb881862735bd74c6241a19
+Message-Id: <174231837963.393299.6404503405685975618.pr-tracker-bot@kernel.org>
+Date: Tue, 18 Mar 2025 17:19:39 +0000
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Linus <torvalds@linux-foundation.org>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>, linux-arm-kernel@lists.infradead.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.49.0.rc1.451.g8f38331e32-goog
-Subject: [PATCH v1] perf cpumap: Increment reference count for online cpumap
-From: Ian Rogers <irogers@google.com>
-To: Suzuki K Poulose <suzuki.poulose@arm.com>, Mike Leach <mike.leach@linaro.org>, 
-	James Clark <james.clark@linaro.org>, John Garry <john.g.garry@oracle.com>, 
-	Will Deacon <will@kernel.org>, Leo Yan <leo.yan@linux.dev>, 
-	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Kan Liang <kan.liang@linux.intel.com>, Howard Chu <howardchu95@gmail.com>, 
-	Levi Yun <yeoreum.yun@arm.com>, "Dr. David Alan Gilbert" <linux@treblig.org>, 
-	Thomas Falcon <thomas.falcon@intel.com>, coresight@lists.linaro.org, 
-	linux-arm-kernel@lists.infradead.org, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
 
-Thomas Richter <tmricht@linux.ibm.com> reported a double put on the
-cpumap for the placeholder core PMU:
-https://lore.kernel.org/lkml/20250318095132.1502654-3-tmricht@linux.ibm.com/
-Requiring the caller to get the cpumap is not how these things are
-usually done, switch cpu_map__online to do the get and then fix up any
-use cases where a put is needed.
+The pull request you sent on Tue, 18 Mar 2025 13:25:48 +0100:
 
-Signed-off-by: Ian Rogers <irogers@google.com>
----
- tools/perf/arch/arm/util/pmu.c | 5 +++--
- tools/perf/util/cpumap.c       | 2 +-
- tools/perf/util/evlist.c       | 5 +++--
- tools/perf/util/mem-events.c   | 5 ++++-
- tools/perf/util/mmap.c         | 4 ++--
- tools/perf/util/pmu.c          | 2 +-
- tools/perf/util/tool_pmu.c     | 1 +
- 7 files changed, 15 insertions(+), 9 deletions(-)
+> git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/linux-pm.git tags/pmdomain-v6.14-rc4
 
-diff --git a/tools/perf/arch/arm/util/pmu.c b/tools/perf/arch/arm/util/pmu.c
-index 57dc94a6e38c..f70075c89aa0 100644
---- a/tools/perf/arch/arm/util/pmu.c
-+++ b/tools/perf/arch/arm/util/pmu.c
-@@ -18,7 +18,7 @@
- 
- void perf_pmu__arch_init(struct perf_pmu *pmu)
- {
--	struct perf_cpu_map *intersect;
-+	struct perf_cpu_map *intersect, *online = cpu_map__online();
- 
- #ifdef HAVE_AUXTRACE_SUPPORT
- 	if (!strcmp(pmu->name, CORESIGHT_ETM_PMU_NAME)) {
-@@ -41,7 +41,8 @@ void perf_pmu__arch_init(struct perf_pmu *pmu)
- 	}
- #endif
- 	/* Workaround some ARM PMU's failing to correctly set CPU maps for online processors. */
--	intersect = perf_cpu_map__intersect(cpu_map__online(), pmu->cpus);
-+	intersect = perf_cpu_map__intersect(online, pmu->cpus);
-+	perf_cpu_map__put(online);
- 	perf_cpu_map__put(pmu->cpus);
- 	pmu->cpus = intersect;
- }
-diff --git a/tools/perf/util/cpumap.c b/tools/perf/util/cpumap.c
-index 9bc5e0370234..89570397a4b3 100644
---- a/tools/perf/util/cpumap.c
-+++ b/tools/perf/util/cpumap.c
-@@ -722,7 +722,7 @@ struct perf_cpu_map *cpu_map__online(void) /* thread unsafe */
- 	if (!online)
- 		online = perf_cpu_map__new_online_cpus(); /* from /sys/devices/system/cpu/online */
- 
--	return online;
-+	return perf_cpu_map__get(online);
- }
- 
- bool aggr_cpu_id__equal(const struct aggr_cpu_id *a, const struct aggr_cpu_id *b)
-diff --git a/tools/perf/util/evlist.c b/tools/perf/util/evlist.c
-index 49e10d6981ad..c1a04141aed0 100644
---- a/tools/perf/util/evlist.c
-+++ b/tools/perf/util/evlist.c
-@@ -2534,10 +2534,10 @@ void evlist__warn_user_requested_cpus(struct evlist *evlist, const char *cpu_lis
- 		return;
- 
- 	evlist__for_each_entry(evlist, pos) {
--		struct perf_cpu_map *intersect, *to_test;
-+		struct perf_cpu_map *intersect, *to_test, *online = cpu_map__online();
- 		const struct perf_pmu *pmu = evsel__find_pmu(pos);
- 
--		to_test = pmu && pmu->is_core ? pmu->cpus : cpu_map__online();
-+		to_test = pmu && pmu->is_core ? pmu->cpus : online;
- 		intersect = perf_cpu_map__intersect(to_test, user_requested_cpus);
- 		if (!perf_cpu_map__equal(intersect, user_requested_cpus)) {
- 			char buf[128];
-@@ -2547,6 +2547,7 @@ void evlist__warn_user_requested_cpus(struct evlist *evlist, const char *cpu_lis
- 				cpu_list, pmu ? pmu->name : "cpu", buf, evsel__name(pos));
- 		}
- 		perf_cpu_map__put(intersect);
-+		perf_cpu_map__put(online);
- 	}
- 	perf_cpu_map__put(user_requested_cpus);
- }
-diff --git a/tools/perf/util/mem-events.c b/tools/perf/util/mem-events.c
-index 9011784b950d..884d9aebce91 100644
---- a/tools/perf/util/mem-events.c
-+++ b/tools/perf/util/mem-events.c
-@@ -303,12 +303,15 @@ int perf_mem_events__record_args(const char **rec_argv, int *argv_nr, char **eve
- 	}
- 
- 	if (cpu_map) {
--		if (!perf_cpu_map__equal(cpu_map, cpu_map__online())) {
-+		struct perf_cpu_map *online = cpu_map__online();
-+
-+		if (!perf_cpu_map__equal(cpu_map, online)) {
- 			char buf[200];
- 
- 			cpu_map__snprint(cpu_map, buf, sizeof(buf));
- 			pr_warning("Memory events are enabled on a subset of CPUs: %s\n", buf);
- 		}
-+		perf_cpu_map__put(online);
- 		perf_cpu_map__put(cpu_map);
- 	}
- 
-diff --git a/tools/perf/util/mmap.c b/tools/perf/util/mmap.c
-index a7ef4d8d57d8..a34726219af3 100644
---- a/tools/perf/util/mmap.c
-+++ b/tools/perf/util/mmap.c
-@@ -244,9 +244,8 @@ static void build_node_mask(int node, struct mmap_cpu_mask *mask)
- {
- 	int idx, nr_cpus;
- 	struct perf_cpu cpu;
--	const struct perf_cpu_map *cpu_map = NULL;
-+	struct perf_cpu_map *cpu_map = cpu_map__online();
- 
--	cpu_map = cpu_map__online();
- 	if (!cpu_map)
- 		return;
- 
-@@ -256,6 +255,7 @@ static void build_node_mask(int node, struct mmap_cpu_mask *mask)
- 		if (cpu__get_node(cpu) == node)
- 			__set_bit(cpu.cpu, mask->bits);
- 	}
-+	perf_cpu_map__put(cpu_map);
- }
- 
- static int perf_mmap__setup_affinity_mask(struct mmap *map, struct mmap_params *mp)
-diff --git a/tools/perf/util/pmu.c b/tools/perf/util/pmu.c
-index 57450c73fb63..b7ebac5ab1d1 100644
---- a/tools/perf/util/pmu.c
-+++ b/tools/perf/util/pmu.c
-@@ -779,7 +779,7 @@ static struct perf_cpu_map *pmu_cpumask(int dirfd, const char *pmu_name, bool is
- 	}
- 
- 	/* Nothing found, for core PMUs assume this means all CPUs. */
--	return is_core ? perf_cpu_map__get(cpu_map__online()) : NULL;
-+	return is_core ? cpu_map__online() : NULL;
- }
- 
- static bool pmu_is_uncore(int dirfd, const char *name)
-diff --git a/tools/perf/util/tool_pmu.c b/tools/perf/util/tool_pmu.c
-index 9156745ea180..b60ac390d52d 100644
---- a/tools/perf/util/tool_pmu.c
-+++ b/tools/perf/util/tool_pmu.c
-@@ -355,6 +355,7 @@ bool tool_pmu__read_event(enum tool_pmu_event ev, u64 *result)
- 
- 		if (online) {
- 			*result = perf_cpu_map__nr(online);
-+			perf_cpu_map__put(online);
- 			return true;
- 		}
- 		return false;
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/81e4f8d68c66da301bb881862735bd74c6241a19
+
+Thank you!
+
 -- 
-2.49.0.rc1.451.g8f38331e32-goog
-
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
