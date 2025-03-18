@@ -1,152 +1,184 @@
-Return-Path: <linux-kernel+bounces-566717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566718-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4A38A67BA6
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 19:08:49 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F1CFA67BA9
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 19:09:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F34284220CF
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 18:07:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 71895167102
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 18:08:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4718212B31;
-	Tue, 18 Mar 2025 18:07:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="DBzlswaw"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BB52212B07;
-	Tue, 18 Mar 2025 18:06:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCE5F212F83;
+	Tue, 18 Mar 2025 18:08:26 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79A7220B807;
+	Tue, 18 Mar 2025 18:08:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742321227; cv=none; b=iYTitGZ+ICqTcbh38BM2r1cyXLK08wU/y0cNXMby34rYAEajgKXjiF4FPaIZ2nNZ2bJw1qVgBfhwv5Ap0vElmibgPm3GQpntsuGJJvUeGtumDP/m93KtX+zLcpfxQgMVz6cAUIUOsF2Qbb/JO6oa6YKQ25azc1lDmYJjnBo6ezw=
+	t=1742321306; cv=none; b=M2+Kc8VYuqvR+RkqJWnhO0D0Rx5C65ktxAILfcMzyCw9YedekblS0NiLJ1iFrIPgCESwFav5Q16HSUOH59a8R0sBrSBdSn2adcb4VexvAig1KXt2PUfhePT/u6TCMUl7ZDYa9rurVIl24ksnut1mdVL8h3pS2pzNr83b09KGPRc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742321227; c=relaxed/simple;
-	bh=ObvK4V5+WTs9GjlkzhLf22kOTTKhjSK/UvNK71fc+iI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=avuzkEjro65qZSENMPFIXhXmm1KWMlREGug9aBqD2gtfuOvF3Sp53YeBwgMvMCMzQW6md4TJzqsKmI8KEaweCCH92ELIyD0jy7O7JLuNTjJjXo0XNNyGUth5Z/6jmYxwYZ3Chd2EqSHvN2CenYdiaAuXiV0Wd0/RclVy6YQBS+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=DBzlswaw; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=xi5z/098n3s55drfJnQC0KGieJT8vR+QHgsSyHMCSwc=; b=DBzlswawCpcdwZoCIaLOvmz4bR
-	f0qEhXAdTinfikQUSQKatFmc4DOOS06n8K1sJFrOSNcUeLsXDHdJtNOOqIoE8tMVCawIxhjr7V0il
-	wj7gIb8Wa/bOAL4CwOk29espYzdobGhMYvbkCHF6VHxQtcfoa7ax0Pyk3HAHtUSu/fg/xTpJm1xTt
-	IiNOB4hK2IvroqdJaIkKfy3UKumgrzzhUswjeq0+prccirjOKyNlc3/hOJZX8zgnN5eKsjqjMl02e
-	ARHGKMUHhTSXc/fvmwe4vsdSRTzB13/2bXVwzUV6PAVlRDiOf2K221sWXTZQAwmOS33ro4q6Qysbs
-	/dIdWobg==;
-Received: from [223.233.76.123] (helo=[192.168.1.12])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1tubKz-002s83-Kp; Tue, 18 Mar 2025 19:06:49 +0100
-Message-ID: <24766119-3aa2-fe88-878a-90a2794cca8f@igalia.com>
-Date: Tue, 18 Mar 2025 23:36:40 +0530
+	s=arc-20240116; t=1742321306; c=relaxed/simple;
+	bh=V+vhLflQe8SoONzGndBpNmZuBsHX7Q94126ykNZwbL8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=k6OUmwDarWKGPX17nHyU8OBMo+ilBJM/CEB2Z+qdCPWyHi9OJolLocIQkd0nvTD8BSJbwAfu3EEZCx+YmvdIubehUq0xcpwi17GmU39ZqYnyyOk/RJnHj/U6Xk5tRsJb7aNQyjE6wcL6Yj6gR3YG/2oZ9wpWRPhFKRullNzsQoY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 28E1F13D5;
+	Tue, 18 Mar 2025 11:08:31 -0700 (PDT)
+Received: from e132430.arm.com (unknown [10.57.85.21])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 14F6E3F694;
+	Tue, 18 Mar 2025 11:08:20 -0700 (PDT)
+From: Douglas RAILLARD <douglas.raillard@arm.com>
+To: rostedt@goodmis.org
+Cc: douglas.raillard@arm.com,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org
+Subject: [PATCH 1/3] tracing: Expose functions to trace a synth event
+Date: Tue, 18 Mar 2025 18:08:10 +0000
+Message-ID: <20250318180814.226644-1-douglas.raillard@arm.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.5.0
-Subject: Re: [PATCH RFC 0/2] Dynamically allocate memory to store task's full
- name
-Content-Language: en-US
-To: Kees Cook <kees@kernel.org>
-Cc: Andres Rodriguez <andresx7@gmail.com>, Bhupesh <bhupesh@igalia.com>,
- akpm@linux-foundation.org, kernel-dev@igalia.com,
- linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
- linux-perf-users@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-mm@kvack.org, oliver.sang@intel.com, lkp@intel.com,
- laoar.shao@gmail.com, pmladek@suse.com, rostedt@goodmis.org,
- mathieu.desnoyers@efficios.com, arnaldo.melo@gmail.com,
- alexei.starovoitov@gmail.com, andrii.nakryiko@gmail.com,
- mirq-linux@rere.qmqm.pl, peterz@infradead.org, willy@infradead.org,
- david@redhat.com, viro@zeniv.linux.org.uk, ebiederm@xmission.com,
- brauner@kernel.org, jack@suse.cz, mingo@redhat.com, juri.lelli@redhat.com,
- bsegall@google.com, mgorman@suse.de, vschneid@redhat.com
-References: <20250314052715.610377-1-bhupesh@igalia.com>
- <202503141420.37D605B2@keescook>
- <a73ea646-0a24-474a-9e14-d59ea5eaa662@gmail.com>
- <8b11d5f6-bb16-7af6-8377-bb0951fcfb60@igalia.com>
- <202503180846.EAB79290D@keescook>
-From: Bhupesh Sharma <bhsharma@igalia.com>
-In-Reply-To: <202503180846.EAB79290D@keescook>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Hi Kees,
+From: Douglas Raillard <douglas.raillard@arm.com>
 
-On 3/18/25 9:21 PM, Kees Cook wrote:
-> On Tue, Mar 18, 2025 at 04:49:28PM +0530, Bhupesh Sharma wrote:
->> On 3/15/25 1:13 PM, Andres Rodriguez wrote:
->>> On 3/14/25 14:25, Kees Cook wrote:
->>>> On Fri, Mar 14, 2025 at 10:57:13AM +0530, Bhupesh wrote:
->>>>> While working with user-space debugging tools which work especially
->>>>> on linux gaming platforms, I found that the task name is truncated due
->>>>> to the limitation of TASK_COMM_LEN.
->>>>>
->>>>> For example, currently running 'ps', the task->comm value of a long
->>>>> task name is truncated due to the limitation of TASK_COMM_LEN.
->>>>>       create_very_lon
->>>>>
->>>>> This leads to the names passed from userland via pthread_setname_np()
->>>>> being truncated.
->>>> So there have been long discussions about "comm", and it mainly boils
->>>> down to "leave it alone". For the /proc-scraping tools like "ps" and
->>>> "top", they check both "comm" and "cmdline", depending on mode. The more
->>>> useful (and already untruncated) stuff is in "cmdline", so I suspect it
->>>> may make more sense to have pthread_setname_np() interact with that
->>>> instead. Also TASK_COMM_LEN is basically considered userspace ABI at
->>>> this point and we can't sanely change its length without breaking the
->>>> world.
->>>>
->>> Completely agree that comm is best left untouched. TASK_COMM_LEN is
->>> embedded into the kernel and the pthread ABI changes here should be
->>> avoided.
->>>
->> So, basically my approach _does not_ touch TASK_COMM_LEN at all. The normal
->> 'TASK_COMM_LEN' 16byte design remains untouched.
->> Which means that all the legacy / existing ABi which uses 'task->comm' and
->> hence are designed / written to handle 'TASK_COMM_LEN' 16-byte name,
->> continue to work as before using '/proc/$pid/task/$tid/comm'.
->>
->> This change-set only adds a _parallel_ dynamically allocated
->> 'task->full_name' which can be used by interested users via
->> '/proc/$pid/task/$tid/full_name'.
-> I don't want to add this to all processes at exec time as the existing
-> solution works for those processes: read /proc/$pid/cmdline.
->
-> That said, adding another pointer to task_struct isn't to bad I guess,
-> and it could be updated by later calls. Maybe by default it just points
-> to "comm".
-Sure.
+The current API for synth event only allow tracing by getting a "struct
+trace_event_file *", which is associated with a specific ftrace instance
+that has to be looked up ahead of time. In order to be able to emit such
+synth event in all instances where the event has been enabled by a user,
+another function is required, using a "struct synth_event *" that then
+uses the underlying tracepoint system that the tracefs interface
+manipulates.
 
->
->> I am fine with adding either '/proc/$pid/task/$tid/full_name' or
->> '/proc/$pid/task/$tid/debug_name' (actually both of these achieve the same).
->> The new / modified users (especially the debug applications you listed
->> above) can switch easily to using '/proc/$pid/task/$tid/full_name' instead
->> of ''/proc/$pid/task/$tid/comm'
->>
->> AFAIK we already achieved for the kthreads using d6986ce24fc00 ("kthread:
->> dynamically allocate memory to store kthread's full name"), which adds
->> 'full_name' in parallel to 'comm' for kthread names.
-> If we do this for task_struct, we should remove "full_name" from kthread
-> and generalize it for all processes.
->
-Got it. Ok, let me rework the series so that we have a unified 
-'full_name' inside 'task_struct' and have kthread use it as well.
+Such function already exists for the histogram feature, so simply move
+it to the common trace_events_synth.c code.
 
-I will send a v2 accordingly.
+Signed-off-by: Douglas Raillard <douglas.raillard@arm.com>
+---
+ include/linux/trace_events.h      |  7 +++++++
+ kernel/trace/trace_events_hist.c  | 27 ---------------------------
+ kernel/trace/trace_events_synth.c | 29 +++++++++++++++++++++++++++++
+ kernel/trace/trace_synth.h        |  2 --
+ 4 files changed, 36 insertions(+), 29 deletions(-)
 
-Thanks,
-Bhupesh
+diff --git a/include/linux/trace_events.h b/include/linux/trace_events.h
+index 5caea596fef0..cbe389d0e144 100644
+--- a/include/linux/trace_events.h
++++ b/include/linux/trace_events.h
+@@ -517,6 +517,13 @@ struct dynevent_cmd {
+ 
+ extern int dynevent_create(struct dynevent_cmd *cmd);
+ 
++struct synth_event;
++
++extern struct synth_event *find_synth_event(const char *name);
++
++extern void trace_synth(struct synth_event *event, u64 *var_ref_vals,
++			       unsigned int *var_ref_idx);
++
+ extern int synth_event_delete(const char *name);
+ 
+ extern void synth_event_cmd_init(struct dynevent_cmd *cmd,
+diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
+index 53dc6719181e..a2bc7a972763 100644
+--- a/kernel/trace/trace_events_hist.c
++++ b/kernel/trace/trace_events_hist.c
+@@ -814,33 +814,6 @@ static void hist_err_clear(void)
+ 	last_cmd_loc[0] = '\0';
+ }
+ 
+-typedef void (*synth_probe_func_t) (void *__data, u64 *var_ref_vals,
+-				    unsigned int *var_ref_idx);
+-
+-static inline void trace_synth(struct synth_event *event, u64 *var_ref_vals,
+-			       unsigned int *var_ref_idx)
+-{
+-	struct tracepoint *tp = event->tp;
+-
+-	if (unlikely(static_key_enabled(&tp->key))) {
+-		struct tracepoint_func *probe_func_ptr;
+-		synth_probe_func_t probe_func;
+-		void *__data;
+-
+-		if (!(cpu_online(raw_smp_processor_id())))
+-			return;
+-
+-		probe_func_ptr = rcu_dereference_sched((tp)->funcs);
+-		if (probe_func_ptr) {
+-			do {
+-				probe_func = probe_func_ptr->func;
+-				__data = probe_func_ptr->data;
+-				probe_func(__data, var_ref_vals, var_ref_idx);
+-			} while ((++probe_func_ptr)->func);
+-		}
+-	}
+-}
+-
+ static void action_trace(struct hist_trigger_data *hist_data,
+ 			 struct tracing_map_elt *elt,
+ 			 struct trace_buffer *buffer, void *rec,
+diff --git a/kernel/trace/trace_events_synth.c b/kernel/trace/trace_events_synth.c
+index e3f7d09e5512..9f0817eec3c2 100644
+--- a/kernel/trace/trace_events_synth.c
++++ b/kernel/trace/trace_events_synth.c
+@@ -845,6 +845,35 @@ struct synth_event *find_synth_event(const char *name)
+ 
+ 	return NULL;
+ }
++EXPORT_SYMBOL_GPL(find_synth_event);
++
++typedef void (*synth_probe_func_t) (void *__data, u64 *var_ref_vals,
++				    unsigned int *var_ref_idx);
++
++void trace_synth(struct synth_event *event, u64 *var_ref_vals,
++			       unsigned int *var_ref_idx)
++{
++	struct tracepoint *tp = event->tp;
++
++	if (unlikely(static_key_enabled(&tp->key))) {
++		struct tracepoint_func *probe_func_ptr;
++		synth_probe_func_t probe_func;
++		void *__data;
++
++		if (!(cpu_online(raw_smp_processor_id())))
++			return;
++
++		probe_func_ptr = rcu_dereference_sched((tp)->funcs);
++		if (probe_func_ptr) {
++			do {
++				probe_func = probe_func_ptr->func;
++				__data = probe_func_ptr->data;
++				probe_func(__data, var_ref_vals, var_ref_idx);
++			} while ((++probe_func_ptr)->func);
++		}
++	}
++}
++EXPORT_SYMBOL_GPL(trace_synth);
+ 
+ static struct trace_event_fields synth_event_fields_array[] = {
+ 	{ .type = TRACE_FUNCTION_TYPE,
+diff --git a/kernel/trace/trace_synth.h b/kernel/trace/trace_synth.h
+index 43f6fb6078db..425a0ec7c773 100644
+--- a/kernel/trace/trace_synth.h
++++ b/kernel/trace/trace_synth.h
+@@ -36,6 +36,4 @@ struct synth_event {
+ 	struct module				*mod;
+ };
+ 
+-extern struct synth_event *find_synth_event(const char *name);
+-
+ #endif /* __TRACE_SYNTH_H */
+-- 
+2.43.0
+
 
