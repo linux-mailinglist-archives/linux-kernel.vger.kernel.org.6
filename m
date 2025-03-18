@@ -1,124 +1,131 @@
-Return-Path: <linux-kernel+bounces-566420-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566426-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEB76A677C0
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 16:29:10 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9ACE5A677DB
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 16:31:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C7CE97A8FDF
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 15:28:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 713B53B876E
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 15:31:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C0ED20F062;
-	Tue, 18 Mar 2025 15:29:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC5C6210F5B;
+	Tue, 18 Mar 2025 15:30:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AutyH700"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XUoW4tge"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A2234A23;
-	Tue, 18 Mar 2025 15:28:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B87320FABC;
+	Tue, 18 Mar 2025 15:30:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742311740; cv=none; b=NYzwbLqmQh89BFDWC1xGI658Tr/Yqn5C+VUkfI9EYIC9FT/vKXCQM+qLJZi+D9bHlaf4wn4STE8k7rCR/6nZwLlHl2fBCv4RmZsoId9Y3CyzSFBzB+H3ABKT1mcEVpPgAM1eaLasTKXl4f98VGeBAYJfLhIFqKIAAHI2fpQyN98=
+	t=1742311848; cv=none; b=dKX2nyr8ttPrMyeW7WaMiFG7FJ3PRiBg6ubibQ5bLR0Q7UOUiouqxU5kSnto9gg2M1Pn9y5MVAakRDsHz9W8sYl2tcmp+kfXymWh6HK4bDd9g71BIMBop/AP15z7d6wwTSl2+Qi0EfB/3QFBw6MUWBAhPUSH4NK5S3Dh+nFCU1o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742311740; c=relaxed/simple;
-	bh=r7fk/DriJ2/2c/bZZQW+F0HjmnZv3rTWKgs7GKDvBTI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=pzsvTm6P/IOxj+/Kvs5M4Y2juMStzj9kNMnd03yQi8Nf922gVOMMDpfF47K+w32FncR4GIy61IWK1Hm0oJ8ZambpDRWUh1nalkb3qbIHQ/2XjnQFIT2ui7RXsv/KjdqgsxvEK6V1zchiTGDnJ1OIgk5OHMSfQnisWK/XPSs+RHA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AutyH700; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-22409077c06so146527245ad.1;
-        Tue, 18 Mar 2025 08:28:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742311739; x=1742916539; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=3GIoY6hZd8z2MO+gbh2+3E+yi4866iekF90s7ppxoV8=;
-        b=AutyH700oZcQKGvdk6wlvGr2DCh80TRGrnoud42OKGFCZmI/vGsQzulztgJ6peSXz7
-         5fggi3nonMywKXaQ4BC46oI25cde41hfw0udO7/UrrRYLSJE1nQzCUfskUWKc/W/k4jl
-         HOcxQhh5kLqo9/tF8dhJAwPgi/Mkvrbn8wG/wQU3M5Hn7Ab654HesRrMh+rRCk5Bp0R9
-         VhlZxzsssVNqiAn2infgZwDCPsajB8cUbfKLZd1h7VUTYUP8K4nz7VnuSFzAl0yqVIgU
-         FeO2iS3SPDACGObVWJUQ53eu1ks0fxvgLH26mlG0KfMK+Ikq88wzcu++NZ5hlyYwqDwP
-         2blg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742311739; x=1742916539;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=3GIoY6hZd8z2MO+gbh2+3E+yi4866iekF90s7ppxoV8=;
-        b=tJ5ZG0EU+sea1qxczLxFtLKW+/5YPwKZlusWtBvS0Wg1zLrb2tT80LuHtGLjBigCH5
-         t5RgfZx4ECP3b1gch3iL6v79a4BxiIvOap0IBQ6TvYTr5KxvDLMZU982aS4t2QbGEbxN
-         IFrnPIEEJYJcVKtEG1htOWjiRjYZA4ooHGhgF2D2hqv2PQ5ll1QYzQAhF4goeCo2MNU3
-         q1KHocAROLpx9cdv1DJu8QXPEzrasC2TuooFgqNTDKbBg4Js1hTDfHcf3fuT5yBF2sPN
-         NP1aG8az076CmGniP4zC5dYvt+ekQ+C0oEYB4/E7oqo6/lnMNgGMA1N3HELqlfaQ+6+K
-         y4vw==
-X-Forwarded-Encrypted: i=1; AJvYcCVI5J+eACxiaIxLS4fsF0MvW/4TJp3p3uk+5g9EAEUMumyN1Uj3lPrBeVdxQ1bTeu0E9StSsyD9lCVLA/w=@vger.kernel.org, AJvYcCWTdj3ko+jC7QHO5cgjTE9jZsZtZ7MvLRHqt0uZQULEjeZKUOnf/yxDYJLiHs5c1ol2Cqxt+7HuBpSIZAw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwVMbSpOKigFRL6dlOcCwIFuoGwz50j3dHZO3Irg11n64c+mi/d
-	DIfgg9aa0RNd33AWUwXKUljXxgJ5o6g8khqs+LSUbS0jRcYhmBVM
-X-Gm-Gg: ASbGncutpDGh1lE2Wh7XJPCDGbDge0FCKk/KHgHpP/mcS4rzfrlMB4papanyJwfQ7nE
-	kAhtIXyMSCZOeeEm2bFxY18E1frZ8A15LtOsTjwo1ysBLuGJTunPff8X9616PU1e4xu8ciMNIk7
-	QLwkHK1fapkma+L8vvBPu+WdENmTCNwgR4bE3/z/6PkeY4EwlZIaNjcUA3WiKKlswjRnlEAE841
-	FPGbntsxwlQpvpr0bDXkKoeNgQw4eQSXBXhw79h9+/1gX5kmIJJj4MAFMtXQeQMR63p3tbKjCQK
-	6PbTm0FlDVfEXc5yD/bpgk5VERULFPIqPugU1YFfnDVnjik9CrEBntoxR7/ikxU/b9I6
-X-Google-Smtp-Source: AGHT+IGm8xA0NnVzynAsWM0O5Q7/Bnh0NImG4nypFjz6JgDaGn4zEGVo6frikkIaETlzSTvVl0nHzQ==
-X-Received: by 2002:a17:903:19ed:b0:223:2aab:4626 with SMTP id d9443c01a7336-225e0a15b42mr242532475ad.11.1742311738697;
-        Tue, 18 Mar 2025 08:28:58 -0700 (PDT)
-Received: from localhost.localdomain ([183.242.254.176])
-        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-225c6bbfdb2sm95680465ad.168.2025.03.18.08.28.54
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Tue, 18 Mar 2025 08:28:58 -0700 (PDT)
-From: Miaoqian Lin <linmq006@gmail.com>
-To: Sumit Semwal <sumit.semwal@linaro.org>,
-	Gustavo Padovan <gustavo@padovan.org>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Rob Clark <robdclark@chromium.org>,
-	Pekka Paalanen <pekka.paalanen@collabora.com>,
-	linux-media@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linaro-mm-sig@lists.linaro.org,
-	linux-kernel@vger.kernel.org
-Cc: linmq006@gmail.com
-Subject: [PATCH] dma-buf/sw_sync: Fix refcount leak in sw_sync_ioctl_get_deadline
-Date: Tue, 18 Mar 2025 23:28:47 +0800
-Message-Id: <20250318152847.30380-1-linmq006@gmail.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+	s=arc-20240116; t=1742311848; c=relaxed/simple;
+	bh=HVBz2aT+/RHcd9VZQ6XrEog43pPGxZQceGs8IeJP6oc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=n2lyeSIOmBFI8YJmkufdqXNF2r27xJXut8GcvErvsLfjnSCQQBqEflFHjyzR9cdOO/i8F5K1JpXvO4SjH746Uv0aI6UPs59lHoO2g4FrVa2ZFdwxs4JOMFZJBF7AfgVkRzzlAHV/+wOWZIYga88fbX/LfdHH+gqmvIPGCCdXq34=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XUoW4tge; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0244DC4CEDD;
+	Tue, 18 Mar 2025 15:30:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742311848;
+	bh=HVBz2aT+/RHcd9VZQ6XrEog43pPGxZQceGs8IeJP6oc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XUoW4tgeJI1qkqHA8wzUVgYQSoY+aOz8Q2mvlmnDsT5jlUIWvVvsDrwcAh+mvdJcm
+	 FchVJjLo9kTuxGacsk79c7OAUx7NJO7BGusb58YMjDYBAaFqR3a5jariprgb4DkfTH
+	 Y4Abf0av5IvwjG3TkwPUayTU/4+zYb3JUSs5x20FqUwAe5P9ifDprpWqiqeJZING8T
+	 NT1bfAo3ZBnaTXUfdUFYE/P3Q4koEGvV4PrKANZ4bk+PMB93RQTfbHOAf5evdgKIqy
+	 t/cBbkemhscPWWaViv47JUZikUvLqPE6HgfRL4/G5oymAbGbo3Hlvc93ImhCmfDcKF
+	 iWkA4ztEDM2fA==
+Date: Tue, 18 Mar 2025 15:30:43 +0000
+From: Simon Horman <horms@kernel.org>
+To: Jonas Karlman <jonas@kwiboo.se>
+Cc: Heiko Stuebner <heiko@sntech.de>, Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	David Wu <david.wu@rock-chips.com>, Yao Zi <ziyao@disroot.org>,
+	netdev@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 0/5] net: stmmac: dwmac-rk: Add GMAC support for RK3528
+Message-ID: <20250318153043.GE688833@kernel.org>
+References: <20250309232622.1498084-1-jonas@kwiboo.se>
+ <20250317194309.GL688833@kernel.org>
+ <db3bf1cb-3385-4676-8ba4-41fea0212bf2@kwiboo.se>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <db3bf1cb-3385-4676-8ba4-41fea0212bf2@kwiboo.se>
 
-Fix reference count leak in by adding dma_fence_put() when
-dma_fence_to_sync_pt() fails after the call to sync_file_get_fence().
+On Mon, Mar 17, 2025 at 08:50:34PM +0100, Jonas Karlman wrote:
+> Hi Simon,
+> 
+> On 2025-03-17 20:43, Simon Horman wrote:
+> > On Sun, Mar 09, 2025 at 11:26:10PM +0000, Jonas Karlman wrote:
+> >> The Rockchip RK3528 has two Ethernet controllers, one 100/10 MAC to be
+> >> used with the integrated PHY and a second 1000/100/10 MAC to be used
+> >> with an external Ethernet PHY.
+> >>
+> >> This series add initial support for the Ethernet controllers found in
+> >> RK3528 and initial support to power up/down the integrated PHY.
+> >>
+> >> This series depends on v2 of the "net: stmmac: dwmac-rk: Validate GRF
+> >> and peripheral GRF during probe" [1] cleanup series.
+> >>
+> >>
+> >> Changes in v2:
+> >> - Restrict the minItems: 4 change to rockchip,rk3528-gmac
+> >> - Add initial support to power up/down the integrated PHY in RK3528
+> >> - Split device tree changes into a separate series
+> >>
+> >> [1] https://lore.kernel.org/r/20250308213720.2517944-1-jonas@kwiboo.se/
+> > 
+> > Hi Jonas,
+> > 
+> > This patchset looks reasonable to me. However it will need
+> > to be reposted once it's dependencies ([1]) are present in net-next.
+> 
+> The dependent series ([1]) has already been merged into net-next [2].
 
-Fixes: 70e67aaec2f4 ("dma-buf/sw_sync: Add fence deadline support")
-Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
----
- drivers/dma-buf/sw_sync.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Thanks, and sorry for not noticing that.
 
-diff --git a/drivers/dma-buf/sw_sync.c b/drivers/dma-buf/sw_sync.c
-index f5905d67dedb..b7615c5c6cac 100644
---- a/drivers/dma-buf/sw_sync.c
-+++ b/drivers/dma-buf/sw_sync.c
-@@ -438,8 +438,10 @@ static int sw_sync_ioctl_get_deadline(struct sync_timeline *obj, unsigned long a
- 		return -EINVAL;
- 
- 	pt = dma_fence_to_sync_pt(fence);
--	if (!pt)
-+	if (!pt) {
-+		dma_fence_put(fence);
- 		return -EINVAL;
-+	}
- 
- 	spin_lock_irqsave(fence->lock, flags);
- 	if (test_bit(SW_SYNC_HAS_DEADLINE_BIT, &fence->flags)) {
--- 
-2.39.5 (Apple Git-154)
+> Do I still need to repost this series?
 
+Yes, I think that would be best so there is a CI run over the series
+(the CI doesn't understand dependencies).
+
+> [2] https://lore.kernel.org/r/174186063226.1446759.12026198009173732573.git-patchwork-notify@kernel.org/
+> 
+> > 
+> > And on the topic of process:
+> > 
+> > * As this is a patch-set for net-next it would be best to
+> >   target it accordingly:
+> > 
+> >   Subject: [PATCH net-next] ...
+> > 
+> > * Please post patches for net/net-next which have dependencies as RFCs.
+> > 
+> > For more information on Netdev processes please take a look at
+> > https://docs.kernel.org/process/maintainer-netdev.html
+> > 
+> 
+> Thanks, I see, netdev seem to use a slight different process than what
+> I am familiar with compared to other Linux subsystems and U-Boot :-)
+> 
+> Regards,
+> Jonas
+> 
 
