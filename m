@@ -1,280 +1,100 @@
-Return-Path: <linux-kernel+bounces-565327-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565334-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78665A665EB
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 03:02:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDF76A66611
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 03:10:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F068189D7E8
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 02:01:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C70BE189915D
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 02:10:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5546417A319;
-	Tue, 18 Mar 2025 02:01:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0319189902;
+	Tue, 18 Mar 2025 02:10:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GBq1ZUFR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="Dq0RF1xa"
+Received: from out162-62-57-87.mail.qq.com (out162-62-57-87.mail.qq.com [162.62.57.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B00D81749;
-	Tue, 18 Mar 2025 02:01:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EEFB15573A
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 02:10:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742263263; cv=none; b=FVxNwGDi847OsAPDNn40RAam92m7d/D1PsizxyaaGPlR0ooTnbD/YVUcf0FJQz6Qo4OsFxUt+PP/bAt6lt+QY6y2AyM2HuwtpJeLOle59Pb5rSXMdJxxSHjJn2L6S1UDU7+gYWmS5Ki8/1NEE6RMiGmMfIPlu+u4aBmkLISj2dc=
+	t=1742263832; cv=none; b=AIaYSuzk4ILfXtKt+2WP5Ve2H7yl5zJByq9qeaC4q+7DKwJIj1Tsg0ABC81QZqVPcD+T6zvJivkBy410aUZDM2x0abrmRVNjxwxTa3BcyPOlULZ/QDulMDjMmSUSZlR3XKTo3MNb9Q0FG5M9SKKLyUU/IhpCt02jdJT+WhQICIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742263263; c=relaxed/simple;
-	bh=MWRHRY/KicIe1xNDW3dbQ8Vzru7zkxfpt/pE9dHmM2g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Yj2uy2oRaaxR1kTashl8k5P4qFtTR74gGm+XvlrpWt0hSKMHe87m+OZbupWtQQo9raPMeBTiIuouIUE5VeihyZLZJZXmLJJlempK+QqKnHa6w5ABuvaLdOyOU31thCNMHcaKrUXSceGV+OaFuax9yw63/xlwjaDSv5pseOghFbU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GBq1ZUFR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9ACECC4CEE3;
-	Tue, 18 Mar 2025 02:01:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742263263;
-	bh=MWRHRY/KicIe1xNDW3dbQ8Vzru7zkxfpt/pE9dHmM2g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GBq1ZUFRib5mLBwAmD7VkKcic50/2prf4zdxZDOLEw0nV8FHBRE6bJSyL1ml0+XHc
-	 TFlm4KGdFTpVgA19kqhR1bNG8gaA1djf1xjF3m2PLQkSE/A55Bkfq92vNVe4nbMj//
-	 sAEaePZInj4FMeDKPPzGxwMI1B3nBTZMzVOZ8nZNaXtX/d0FIVhZ40OlJviTFIQISB
-	 NTNVXi1F2VhdyhS51g/7gCup3QbCEY3bRI6k2MuZmZdGprXIGQ5Z2M1Uqpx8AbI0Jd
-	 +Mcf5Z/ug+lhgu+TZFGAuybY/y8BDMvHl9bkJQ+zWrMKj0jRJMmLaQ/khTEIbVoIWB
-	 xAOnP2ogPAzkQ==
-Date: Mon, 17 Mar 2025 19:01:01 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Li Huafei <lihuafei1@huawei.com>
-Cc: acme@kernel.org, leo.yan@linux.dev, james.clark@linaro.org,
-	mark.rutland@arm.com, john.g.garry@oracle.com, will@kernel.org,
-	irogers@google.com, mike.leach@linaro.org, peterz@infradead.org,
-	mingo@redhat.com, alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org, kjain@linux.ibm.com, mhiramat@kernel.org,
-	atrajeev@linux.vnet.ibm.com, sesse@google.com,
-	adrian.hunter@intel.com, kan.liang@linux.intel.com,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH 6/7] perf annotate-data: Handle arm64 global variable
- access
-Message-ID: <Z9jT3e2j8HDMLcYh@google.com>
-References: <20250314162137.528204-1-lihuafei1@huawei.com>
- <20250314162137.528204-7-lihuafei1@huawei.com>
+	s=arc-20240116; t=1742263832; c=relaxed/simple;
+	bh=90DBI5YNp4rJum24NkptVTueHbYngQW0QPFQ4qoBBv0=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=qQ36sjQTUKwz+RJJwey3gvZlY/aQzNQhwab5byXvePgVGhpAnjpXCzKm+W8k0wPN02NfHKbe6JiSRUa77d3fQ7JEHIlbhsVgr4N2mzGU6hO253+QpbwpxFwXcLMCrJZhTemz0MwvtT/162f+jdloOpj/nh9n8uEOxr6PYhDCkNA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=Dq0RF1xa; arc=none smtp.client-ip=162.62.57.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1742263811; bh=PWAg6wqR4aDaunrenpIwbqBjEpt1Xb0TgbEUFi9Zb+Q=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=Dq0RF1xarjpFo8AeS/VVg+fhqaMqVuT/YRiOAf1Hh1qEED5hVLQ/9xaxA4EwRWjas
+	 uKRjXPcPaBL51mYm1n/fVP7oZKjOoSWBjyjVVg0eGezpJdTlX/48XwpC0f854o9/7F
+	 8KSJqSwuHwMWSoEitubkPU8nV7YeM3DQv8g6q+M0=
+Received: from pek-lxu-l1.wrs.com ([114.244.57.157])
+	by newxmesmtplogicsvrszb16-1.qq.com (NewEsmtp) with SMTP
+	id 75B28D4; Tue, 18 Mar 2025 10:01:53 +0800
+X-QQ-mid: xmsmtpt1742263313t13o6kae3
+Message-ID: <tencent_4C2A333C9EDB1B264B0E1B0425E2BACBBB08@qq.com>
+X-QQ-XMAILINFO: MAcVqULX7QQ1SDpNTn6Eo0n9SFs52VrR+m6f1NwBJjtKusl13a4eD4GHwJg1zX
+	 Jhv9YgzU0xSOxDcxDg6BK/wRW56AuKJBwNMep+h/fMAHTZLN4965Dx6o9AEc6XRwaTky8kJJXfsX
+	 XdBNsj2EChUAMCvbVuTmipGi2RdCY31cehenyscMFfxK+x5iTbWhFikP19lWaFQ+gmIv/UFuxxAK
+	 XlrJ8okgze9WC/h5pwc6js+xe5SGoeSaIWgQClvTXbYZz5UtGGqcRaENxpPKz2nrkjxi3xn+qvy1
+	 wPD3/8PjQAd/GflAZGdWAeO92if5Fi2pta5pSSp+VHs6OoGwcGffkq3bhilxhfrwQN9tHQwNdMLU
+	 otMrTETk95ILzoke0p+Ed8CRXYzkP4F1EpdBxVEgm8o5NqPqZ4OoAyyCn2bvaYPhjUpD4edRV6gJ
+	 c4tRpxjDXtPn8zOZzjJpns9YqjO7j6AhDUmsi7K7+gJvREo3h7cVSg847gbHTvddfUcnDQu7KwSM
+	 xK74hrtSQNKxkrWNhDVH9HjmwaRzekM01v3TuMlknO13X4lmyhV2IKG7qhvv/fscP3CCy1Q67+qi
+	 51UhziqAXr9xRFs9TIf+q0yyKPSTtsL+iq09ZqCPwXWek+0Vuc0hgva3zceXNmemGqiBEU/nObUm
+	 56l2RmxyCr7G+NVwkTrG2ryYDTFRo142hsdcL2AEUEKAeJfI03/oVZiG9XDRsjFNWDoHCJaAfcUA
+	 YTLQk9sg9ti1nS8SW4Ey0SJINlRbMFpPb/nVM9XrVh8aZUitkLfoQmDXiLiHCUcQmYCIlxdSZuNj
+	 KrulKUEnu2qrlUl4fR9SwJ37BI4+MyY8tyWQNV9xezaESs7PpKv0sZOswQLBN6s9kTuynI/ZxUkN
+	 hIDtyCD9TwMmK4quvf/aIWNp3xllkSa0flE7kzmZXC
+X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+aaf0488c83d1d5f4f029@syzkaller.appspotmail.com
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [wireless?] INFO: trying to register non-static key in cfg80211_dev_free
+Date: Tue, 18 Mar 2025 10:01:54 +0800
+X-OQ-MSGID: <20250318020153.3042145-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <67d8804b.050a0220.2ca2c6.006b.GAE@google.com>
+References: <67d8804b.050a0220.2ca2c6.006b.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250314162137.528204-7-lihuafei1@huawei.com>
+Content-Transfer-Encoding: 8bit
 
-On Sat, Mar 15, 2025 at 12:21:36AM +0800, Li Huafei wrote:
-> Arm64 uses the 'adrp' and 'add' instructions to load the address of a
-> global variable. For example:
-> 
->  adrp    x19, ffff8000819c3000
->  add     x19, x19, #0x3e8
->  <<after some sequence>>
->  ldr     x22, [x19, #8]
+#syz test
 
-You can try perf annotate --stdio --code-with-type and see if it finds a
-correct type.  It'd be nice if you include the result in the commit log.
+diff --git a/net/wireless/core.c b/net/wireless/core.c
+index 828e29872633..df3ea9ee3ee9 100644
+--- a/net/wireless/core.c
++++ b/net/wireless/core.c
+@@ -1193,10 +1193,12 @@ void cfg80211_dev_free(struct cfg80211_registered_device *rdev)
+ 	struct cfg80211_beacon_registration *reg, *treg;
+ 	unsigned long flags;
+ 
+-	spin_lock_irqsave(&rdev->wiphy_work_lock, flags);
+-	WARN_ON(!list_empty(&rdev->wiphy_work_list));
+-	spin_unlock_irqrestore(&rdev->wiphy_work_lock, flags);
+-	cancel_work_sync(&rdev->wiphy_work);
++	if (!rdev->wiphy.rfkill) {
++		spin_lock_irqsave(&rdev->wiphy_work_lock, flags);
++		WARN_ON(!list_empty(&rdev->wiphy_work_list));
++		spin_unlock_irqrestore(&rdev->wiphy_work_lock, flags);
++		cancel_work_sync(&rdev->wiphy_work);
++	}
+ 
+ 	rfkill_destroy(rdev->wiphy.rfkill);
+ 	list_for_each_entry_safe(reg, treg, &rdev->beacon_registrations, list) {
 
-> 
-> Here, 'adrp' retrieves the base address of the page where the global
-> variable is located, and 'add' adds the offset within the page. If PMU
-> sampling occurs at the instruction 'ldr x22, [x19, #8]', we need to
-> trace the preceding 'adrp' and 'add' instructions to obtain the status
-> information of x19.
-> 
-> A new register status type 'TSR_KIND_GLOBAL_ADDR' is introduced,
-> indicating that the register holds the address of a global variable, and
-> this address is also stored in the 'type_state_reg' structure. After
-> obtaining the status information of x19, we use
-> get_global_var_type() to search for a matching global variable and
-> verify whether the returned offset is equal to 8. If it is, then we have
-> identified the data type and offset of the accessed global variable.
-> 
-> Signed-off-by: Li Huafei <lihuafei1@huawei.com>
-> ---
->  tools/perf/arch/arm64/annotate/instructions.c | 90 ++++++++++++++++++-
->  tools/perf/util/annotate-data.c               | 20 +++++
->  tools/perf/util/annotate-data.h               |  2 +
->  3 files changed, 111 insertions(+), 1 deletion(-)
-> 
-> diff --git a/tools/perf/arch/arm64/annotate/instructions.c b/tools/perf/arch/arm64/annotate/instructions.c
-> index f70d93001fe7..f2053e7f60a8 100644
-> --- a/tools/perf/arch/arm64/annotate/instructions.c
-> +++ b/tools/perf/arch/arm64/annotate/instructions.c
-> @@ -262,6 +262,94 @@ update_insn_state_arm64(struct type_state *state, struct data_loc_info *dloc,
->  	struct type_state_reg *tsr;
->  	Dwarf_Die type_die;
->  	int sreg, dreg;
-> +	u32 insn_offset = dl->al.offset;
-> +
-> +	/* Access global variables via PC relative addressing, for example:
-> +	 *
-> +	 *  adrp    x19, ffff800082074000
-> +	 *  add     x19, x19, #0x380
-> +	 *
-> +	 * The adrp instruction locates the page base address, and the add
-> +	 * instruction adds the offset within the page.
-> +	 */
-> +	if (!strncmp(dl->ins.name, "adrp", 4)) {
-> +		sreg = get_arm64_regnum(dl->ops.source.raw);
-> +		if (sreg < 0 || !has_reg_type(state, sreg))
-> +			return;
-> +
-> +		tsr = &state->regs[sreg];
-> +		tsr->ok = true;
-> +		tsr->kind = TSR_KIND_GLOBAL_ADDR;
-> +		/*
-> +		 * The default arm64_mov_ops has already parsed the adrp
-> +		 * instruction and saved the target address.
-> +		 */
-> +		tsr->addr = dl->ops.target.addr;
-> +
-> +		pr_debug_dtp("adrp [%x] global addr=%#"PRIx64" -> reg%d\n",
-> +			     insn_offset, tsr->addr, sreg);
-> +		return;
-> +	}
-> +
-> +	/* Add the offset within the page. */
-> +	if (!strncmp(dl->ins.name, "add", 3)) {
-> +		regmatch_t match[4];
-> +		char *ops = strdup(dl->ops.raw);
-> +		u64 offset;
-> +		static regex_t add_regex;
-> +		static bool regex_compiled;
-> +
-> +		/*
-> +		 * Matching the operand assembly syntax of the add instruction:
-> +		 *
-> +		 *  <Xd|SP>, <Xn|SP>, #<imm>
-> +		 */
-> +		if (!regex_compiled) {
-> +			regcomp(&add_regex,
-> +				"^([xw][0-9]{1,2}|sp), ([xw][0-9]{1,2}|sp), #(0x[0-9a-f]+)",
-> +				REG_EXTENDED);
-> +			regex_compiled = true;
-
-Similarly you could put it in the arch and free later.
-
-Thanks.
-Namhyung
-
-
-> +		}
-> +
-> +		if (!ops)
-> +			return;
-> +
-> +		if (regexec(&add_regex, dl->ops.raw, 4, match, 0))
-> +			return;
-> +
-> +		/*
-> +		 * Parse the source register first. If it is not of the type
-> +		 * TSR_KIND_GLOBAL_ADDR, further parsing is not required.
-> +		 */
-> +		ops[match[2].rm_eo] = '\0';
-> +		sreg = get_arm64_regnum(ops + match[2].rm_so);
-> +		if (sreg < 0 || !has_reg_type(state, sreg) ||
-> +		    state->regs[sreg].kind != TSR_KIND_GLOBAL_ADDR) {
-> +			free(ops);
-> +			return;
-> +		}
-> +
-> +		ops[match[1].rm_eo] = '\0';
-> +		dreg = get_arm64_regnum(ops + match[1].rm_so);
-> +		if (dreg < 0 || !has_reg_type(state, dreg)) {
-> +			free(ops);
-> +			return;
-> +		}
-> +
-> +		ops[match[3].rm_eo] = '\0';
-> +		offset = strtoul(ops + match[3].rm_so, NULL, 16);
-> +
-> +		tsr = &state->regs[dreg];
-> +		tsr->ok = true;
-> +		tsr->kind = TSR_KIND_GLOBAL_ADDR;
-> +		tsr->addr = state->regs[sreg].addr + offset;
-> +
-> +		pr_debug_dtp("add [%x] global addr=%#"PRIx64"(reg%d) -> reg%d\n",
-> +			     insn_offset, tsr->addr, sreg, dreg);
-> +
-> +		free(ops);
-> +		return;
-> +	}
->  
->  	if (strncmp(dl->ins.name, "ld", 2))
->  		return;
-> @@ -287,7 +375,7 @@ update_insn_state_arm64(struct type_state *state, struct data_loc_info *dloc,
->  		tsr->ok = true;
->  
->  		pr_debug_dtp("load [%x] %#x(reg%d) -> reg%d",
-> -			     (u32)dl->al.offset, dst->offset, dreg, sreg);
-> +			     insn_offset, dst->offset, dreg, sreg);
->  		pr_debug_type_name(&tsr->type, tsr->kind);
->  	}
->  }
-> diff --git a/tools/perf/util/annotate-data.c b/tools/perf/util/annotate-data.c
-> index 2bc8d646eedc..aaca08bb9097 100644
-> --- a/tools/perf/util/annotate-data.c
-> +++ b/tools/perf/util/annotate-data.c
-> @@ -65,6 +65,9 @@ void pr_debug_type_name(Dwarf_Die *die, enum type_state_kind kind)
->  	case TSR_KIND_CANARY:
->  		pr_info(" stack canary\n");
->  		return;
-> +	case TSR_KIND_GLOBAL_ADDR:
-> +		pr_info(" global address\n");
-> +		return;
->  	case TSR_KIND_TYPE:
->  	default:
->  		break;
-> @@ -1087,6 +1090,23 @@ static enum type_match_result check_matching_type(struct type_state *state,
->  		return PERF_TMR_OK;
->  	}
->  
-> +	if (state->regs[reg].kind == TSR_KIND_GLOBAL_ADDR) {
-> +		int var_offset;
-> +		u64 var_addr;
-> +
-> +		pr_debug_dtp("global var by address");
-> +
-> +		var_addr = state->regs[reg].addr + dloc->op->offset;
-> +
-> +		if (get_global_var_type(cu_die, dloc, dloc->ip, var_addr,
-> +					&var_offset, type_die)) {
-> +			dloc->type_offset = var_offset;
-> +			return PERF_TMR_OK;
-> +		}
-> +
-> +		return PERF_TMR_BAIL_OUT;
-> +	}
-> +
->  	if (state->regs[reg].kind == TSR_KIND_CANARY) {
->  		pr_debug_dtp("stack canary");
->  
-> diff --git a/tools/perf/util/annotate-data.h b/tools/perf/util/annotate-data.h
-> index 717f394eb8f1..e3e877313207 100644
-> --- a/tools/perf/util/annotate-data.h
-> +++ b/tools/perf/util/annotate-data.h
-> @@ -36,6 +36,7 @@ enum type_state_kind {
->  	TSR_KIND_CONST,
->  	TSR_KIND_POINTER,
->  	TSR_KIND_CANARY,
-> +	TSR_KIND_GLOBAL_ADDR,
->  };
->  
->  /**
-> @@ -177,6 +178,7 @@ struct type_state_reg {
->  	bool caller_saved;
->  	u8 kind;
->  	u8 copied_from;
-> +	u64 addr;
->  };
->  
->  /* Type information in a stack location, dynamically allocated */
-> -- 
-> 2.25.1
-> 
 
