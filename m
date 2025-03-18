@@ -1,118 +1,149 @@
-Return-Path: <linux-kernel+bounces-566741-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566742-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C68C1A67BF1
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 19:32:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDEB2A67BF4
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 19:32:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C42B176E83
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 18:32:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 28AC91893C6A
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 18:33:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3B281DE2C8;
-	Tue, 18 Mar 2025 18:32:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="rzaXjIVc"
-Received: from mail-il1-f182.google.com (mail-il1-f182.google.com [209.85.166.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A0101CF5E2;
+	Tue, 18 Mar 2025 18:32:47 +0000 (UTC)
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79BE3183098
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 18:32:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A7F7151990;
+	Tue, 18 Mar 2025 18:32:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742322748; cv=none; b=fncyevfMjEr3BIBfORhSnynMcP9wzx/UliGJxCuzj38jp0G29VH0nOTY8qk6oBw0XncM4VQNWcMBR3SDXfVzUnSlWsMCpGew7zZTbqe44Rbv/QpfNXTIQxwi7EZiF3Yf1hCwNtvGXWRA1xZLYA7MvzRwbCbtw9iogCCvXPuLieY=
+	t=1742322767; cv=none; b=ARl6RO4fj8I3YVyKXBNjo3QhYncVuLD2xUXXClFmP4gxsd0bgMnJnB3+alSLYqYJoWrah56IV5roA3Vd3lq3sssSQNyrFrxSl0tVKXi1fDNI/p+u4QZE3duufClYz3TcOvkLqDy0ZxELOLngE2F/PZBn8ArfWjD3EKRqf31ivEM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742322748; c=relaxed/simple;
-	bh=qrv+DU81gmi1ENITv/uf+Y+QCljkGvrsvRaZ1EA/ctg=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=sQUGVvKW4AfW0lAfVsFwpRuk27KgMn+J3ATQNCrnmp25LUA+NqAy9zImHDtggAj/yBjiTZL+hdqSq7Es609PBxeas4udl3POclzcI5EtCjsLX+H7ayn0vVwDJie7fTfpjaVAgJd0PJ8ZrjbyG2bJEMd9PxitkDpJaQktkJ6+ldw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=rzaXjIVc; arc=none smtp.client-ip=209.85.166.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f182.google.com with SMTP id e9e14a558f8ab-3d03d2bd7d2so69966265ab.0
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 11:32:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1742322745; x=1742927545; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Vn8c/8xY9hsur5GaIQZhhu6nfpmRkGa6zZ/5hcfFcwg=;
-        b=rzaXjIVcQHYIjeJ3Xdgtk1GmciRjSBQ39CYSKJoazF5y19GOwh5x8hzUgCUKwc3wNz
-         3tk666LGtdCTmIULCw6wuLliIJw9T6sWNc6uj3kFjohjvhTjLz1TI66V1BnNeLu6xwtc
-         p6vXU8PVkUV1YV+C2JoUb/mpDixF/CaJgkWpTGXbspsRtxu2OclllK1TWWNxQdQbk9SM
-         xUIrBEKNXqnYvxyxAneYdvucWbmkxP63w/aJUS3nQwz9O/UGPzmD9h2TMtezHmTw815K
-         UUORKyNiWThlfskW/AK0SoY8YMyf48cFMjMFw8JvHTbMGwAamuZUpXacbn5NHGZ+rOn6
-         XM0A==
+	s=arc-20240116; t=1742322767; c=relaxed/simple;
+	bh=JqI0iFFNiB4IH3PEsiZwINZ5Ndy+RJYc4p0rp9yRLWI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oD4vYJuIISTzmUsEVD+LSB3yWYJAE/b4rSlQTUpKMUovqhJCPkLiYIY88YKdXSaEVtnt4Zo1j08yIIE0VnnAHlnymEK71dAL5NTVi6n85jLVEpWpJOgt5fFEHUZUZbbtpOo3MLCU4KXnUHW12YsSCcgNoJZCZNfl3Jf1nC7WWY0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-aaeec07b705so937571566b.2;
+        Tue, 18 Mar 2025 11:32:45 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742322745; x=1742927545;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Vn8c/8xY9hsur5GaIQZhhu6nfpmRkGa6zZ/5hcfFcwg=;
-        b=HGSLgepvHaw70ZCTJ0RvD61uBck2rpGdp5Rhr3yUz0+8bvF2Iiq8jSMh7qglaTqSWg
-         QH3Ld7I1NmnhE0SPp1GSHBcBqUUcFJImyHRzkEVq+EmRlnpSGipbN2clDwD/GllRH6dr
-         2AkfGUNCinp3hirSbsHtVBF1000NVxDUDz6UGEeZbr5KVCK5Om1PG0yrVsST8Bj0GNCj
-         iWDp+swGfQ8qLjiYhrIW4MD2IB0oUntjPTIOpJXVR5eGor/95nQSl0ps5DlNF8hvs70P
-         OFT6FRGeWK6yhXzeL9zjZ+Icl1vn3t36fqQoB5AJ6e7Zf+1FJbtJexnIU0BuXjfclPXu
-         7k4A==
-X-Forwarded-Encrypted: i=1; AJvYcCV08Zg12WouE140+GU/EX5xVbsybzlmAzUJzKXtvRVaOF+ruTlDgU75hTSfRD1SIA431iibLd8KJRZS0cs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwqaHBYm+DsFXuhSYtsJ5BljsVXHft7ytTrtfr1fmQpsA1F4GN9
-	ugu9KJkbvz0tTF3Ivw27LQOU0fvcCyMU8xTdFl8BW4TJ+zgRopUhXj8Bc2jhwiw=
-X-Gm-Gg: ASbGnct09EpJM8hyhsvHxoshSW5br313frv3G1X9fgz5/HI6KwIT88C90lbmCq5Caxk
-	Kn7cyooixwfPtKOdHibF51Yj7/jyirMEBBFTFK1ScoTMrKLtfOfdHpVdpXyA6OqPBiW0KXUZNmr
-	12vWUZ/HrnzwAP+LkXIfADQ3HonGrSmUGlwZgc3cO4C9QKgSFL7Cjuvws+9qZYPI/ewwGY0o4wu
-	4Wilz+p2aeeqcHE9J5WfGtqiYmwQrih43WmkoYysPNBOU5Ik/Lea5NLzIPzbf8LeyUnLbFZXAew
-	wDWwlCgIvfw5hBST4L3cCtUc7gF/uDyAGoPJ
-X-Google-Smtp-Source: AGHT+IHgYCKrD3peKrbdSEm1B+JO8dbCq7dov1VEXaRpVsSj3E7NIaJGpVqJEmXprxOB8OJUpmk3kQ==
-X-Received: by 2002:a05:6e02:1d8e:b0:3cf:bb6e:3065 with SMTP id e9e14a558f8ab-3d48397f585mr168752655ab.0.1742322745570;
-        Tue, 18 Mar 2025 11:32:25 -0700 (PDT)
-Received: from [127.0.0.1] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3d47a67e5besm33337665ab.31.2025.03.18.11.32.24
+        d=1e100.net; s=20230601; t=1742322764; x=1742927564;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kMS+hiRhtQW64OwJHH62Y+RuDNXIO5eGz38BBMChwO0=;
+        b=lC6y2oqbm5reiQeBoOtAdgNRbMJ46kBVUeestSmM7gnMaql6lmnLq3VYdKbXSqZ5ns
+         7DqocMdbxTysTV35viOhTWrIWhvFxcvDZfwNTotU1wnoOdBhEP79mCnzF6wPuJ+xmEeF
+         Dq0CELC7/kuP6wcJMadxNGPEIAgYi4RMBbz6kycB3eOhryITFKeuP1o/TShvlaAMdzvq
+         7D1SZahsOc4zJMhBysa/lnrbLnwRcunsCCEMq1vXPc0wPnWHwGQpSAl6tk6UksVkOVPC
+         +GUjLqT8L8lFWRYLteO8sE+Zwi6wEdfz54gkeLViQ9kZRyjMNqDgRNzQPMIKN3xMx4LK
+         ycKw==
+X-Forwarded-Encrypted: i=1; AJvYcCU3vunTjprRscIoaNwPiRhk5e+oW3vxi6d6bMgGqyBK8QUkuCbLpbQRdHNUFFm4a20dFJkLjrXK2aXnyJ4=@vger.kernel.org, AJvYcCW5kBSb7Bq+acVS5aoZAtZLgIfX7YD5904i1featfrFJibYwpsNiSUS9sEAqL0coNAhRtUdIIyVwizDqEQ=@vger.kernel.org, AJvYcCXWJz9NGz0YXnp9YJy8x+WO7GH9VHlkkaZllkbY+xIOgIJBMxIrtCZ+Lw2ixYVtQZ45gd1fF6u5OFNX@vger.kernel.org
+X-Gm-Message-State: AOJu0YzpTU4Zxj7TfdtsGf8KWuhrDN9XjasWNOsYXCEzh1hGTzvDt2TU
+	6CDaqNciMROc/Jdqtq35FLcXGPwDWgL9xpfEoZuPkgBxNt0Z9XOo
+X-Gm-Gg: ASbGncsz7cVzsTgpiwKqF0qLxmU7VEKDkjk8Z5z099h39j2gVLhqi6cvkcYR7I67pCo
+	yp1WVZ8+GOUAblHqN+sWzYkRcZ85KUEbMde0kJNndoGQR/sKxeCcBvdFTvwwXW1NICs6iGs7ajZ
+	w+pm0hXcMEKDAyRtr4UeFJGIh8w0DjzgGYo0n3HqwolPqnlh2WIDAsRkhfl8W6E1VY8jAWyBNV3
+	Dm9780SiazJCFLD8zOgT9y4dE0ZjZKnVwsL2jacMtC4+4spUPAEnEkvbXeNlCDJ3odI5u6HF87L
+	Abeag9rkuUUbFdIilxWVQC6uHpYq4+fVXPw=
+X-Google-Smtp-Source: AGHT+IH87svm/sWe/ibvNzw0jLJOxbsLaNLq729RaCN0RvGdfJE8rNMTwuSwWUV4gDon4j6NlMfcKA==
+X-Received: by 2002:a17:907:36c1:b0:abf:7406:a5c3 with SMTP id a640c23a62f3a-ac38d8d216dmr552092666b.51.1742322763761;
+        Tue, 18 Mar 2025 11:32:43 -0700 (PDT)
+Received: from gmail.com ([2a03:2880:30ff:3::])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3146aea1fsm877951066b.22.2025.03.18.11.32.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Mar 2025 11:32:24 -0700 (PDT)
-From: Jens Axboe <axboe@kernel.dk>
-To: Tejun Heo <tj@kernel.org>, Josef Bacik <josef@toxicpanda.com>, 
- Chen Linxuan <chenlinxuan@uniontech.com>
-Cc: Wen Tao <wentao@uniontech.com>, cgroups@vger.kernel.org, 
- linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <3E333A73B6B6DFC0+20250317022924.150907-1-chenlinxuan@uniontech.com>
-References: <3E333A73B6B6DFC0+20250317022924.150907-1-chenlinxuan@uniontech.com>
-Subject: Re: [PATCH RESEND v2] blk-cgroup: improve policy registration
- error handling
-Message-Id: <174232274456.158569.739528900664075776.b4-ty@kernel.dk>
-Date: Tue, 18 Mar 2025 12:32:24 -0600
+        Tue, 18 Mar 2025 11:32:43 -0700 (PDT)
+Date: Tue, 18 Mar 2025 11:32:40 -0700
+From: Breno Leitao <leitao@debian.org>
+To: Mark Brown <broonie@debian.org>, arnd@arndb.de
+Cc: Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Sowjanya Komatineni <skomatineni@nvidia.com>,
+	Laxman Dewangan <ldewangan@nvidia.com>, linux-tegra@vger.kernel.org,
+	linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	rmikey@meta.com, kernel-team@meta.com, gregkh@linuxfoundation.org,
+	noodles@earth.li, jarkko@kernel.org, peterhuewe@gmx.de, jgg@ziepe.c
+Subject: Re: [PATCH 1/3] spi: tegra210-quad: use device_reset_optional()
+ instead of device_reset()
+Message-ID: <20250318-psychedelic-thundering-guppy-22bba2@leitao>
+References: <20250317-tegra-v1-0-78474efc0386@debian.org>
+ <20250317-tegra-v1-1-78474efc0386@debian.org>
+ <22ffa8f5-6590-4602-853d-ceffed580f22@sirena.org.uk>
+ <20250317-solemn-debonair-sambar-f04fa7@leitao>
+ <f3e47d12-f6be-4bb5-b87b-84aa0037e1ef@sirena.org.uk>
+ <20250318-cuddly-translucent-teal-e2ac2d@leitao>
+ <6355bbb3-a4b1-4fdc-8a97-d81bc5e1cf65@sirena.org.uk>
+ <20250318-furry-piquant-orca-da28c2@leitao>
+ <47c40ec0-291c-4664-a66e-d76bd6360c0d@sirena.org.uk>
+ <20250318-boisterous-adorable-chowchow-cea03b@leitao>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.3-dev-7b9b9
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250318-boisterous-adorable-chowchow-cea03b@leitao>
 
-
-On Mon, 17 Mar 2025 10:29:24 +0800, Chen Linxuan wrote:
-> This patch improve the returned error code of blkcg_policy_register().
+On Tue, Mar 18, 2025 at 11:29:26AM -0700, Breno Leitao wrote:
+> On Tue, Mar 18, 2025 at 05:34:55PM +0000, Mark Brown wrote:
+> > On Tue, Mar 18, 2025 at 10:02:47AM -0700, Breno Leitao wrote:
+> > 
+> > > Makes sense. Another question, for platforms like this one that doesn't
+> > > have the device reset methods, what can we do to stop the bleed?
+> > 
+> > > Basically every message that is sent to the SPI controller will fail,
+> > > which will trigger the device_reet() which is a no-op, but the device
+> > > will continue to be online. Should we disable the device after some
+> > > point?
+> > 
+> > The SPI controller is only going to be doing something because some
+> > driver for an attached SPI device is trying to do something.  Presumably
+> > whatever driver that is won't be having a good time and can hopefully
+> > figure something out, though given that SPI is simple and not
+> > hotpluggable this isn't really something that comes up a lot in
+> > production so I'd be unsurprised to see things just keep on retrying.
+> > I'd expect to see any substantial error handling in the driver for the
+> > device rather than in the controller.
 > 
-> 1. Move the validation check for cpd/pd_alloc_fn and cpd/pd_free_fn
->    function pairs to the start of blkcg_policy_register(). This ensures
->    we immediately return -EINVAL if the function pairs are not correctly
->    provided, rather than returning -ENOSPC after locking and unlocking
->    mutexes unnecessarily.
+> Good point. In my specific case, this is coming from tpm_tis,
+> which is not aware that the device is totally dead, and continues to ask
+> for random numbers:
 > 
-> [...]
+>             tegra_qspi_transfer_one_message
+>             __spi_pump_transfer_message
+>             __spi_sync
+>             spi_sync
+>             tpm_tis_spi_transfer
+>             tpm_tis_spi_read_bytes
+>             tpm_tis_request_locality
+>             tpm_chip_start
+>             tpm_try_get_ops
+>             tpm_find_get_ops
+>             tpm_get_random
+>             tpm_hwrng_read
+>             hwrng_fillfn
+>             kthread
+>             ret_from_fork
+> 
+> Looking at tpm_tis, it seems it doesn't care if the the SPI is dead, and
+> just forward through the requests, which never complete. Adding Arnd to
+> see if he has any idea about this.
+> 
+> Arnd,
+> 
+> Summary of the proiblem: tpm_tis is trying to read random numbers
+> through a dead SPI controller. That causes infinite amounts of warnings
+> on the kernel, given that the controller is WARNing on time outs (which
+> is being fixed in one of the patches in this patchset).
+> 
+> Question: Should tpm_tis be aware that the underneath SPI controller is
+> dead, and eventually get unplugged?
 
-Applied, thanks!
-
-[1/1] blk-cgroup: improve policy registration error handling
-      commit: e1a0202c6bfda24002a3ae2115154fa90104c649
-
-Best regards,
--- 
-Jens Axboe
-
-
-
+Adding Arnd to the email.
 
