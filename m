@@ -1,234 +1,216 @@
-Return-Path: <linux-kernel+bounces-566295-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566296-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3536CA67606
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 15:11:42 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3911A6762C
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 15:20:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7FBD883051
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 14:10:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A8AC19C06C3
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 14:10:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9AEB20E009;
-	Tue, 18 Mar 2025 14:10:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C2DB20E012;
+	Tue, 18 Mar 2025 14:10:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="kbcBOGrc"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="lAAaoRY/"
+Received: from out-173.mta0.migadu.com (out-173.mta0.migadu.com [91.218.175.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE84D20E002
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 14:10:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88AB220DD5C
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 14:10:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742307012; cv=none; b=Kh1ttOntr6vJLVTHtqTYNx0UliCfGJIjaEXAaY5A+E3D+Qd5hKY+ZSLXEgBpLPSf2xrzuDN7IMwOTXVx/gh9Rz87oPu8g4oOZE0HKc3te4vPATZWJAxbEftX6aWyGery8vPvz0Eqy+aS6xtFqk/Dl85BDIR9bDfyNQsi5V6uWro=
+	t=1742307025; cv=none; b=N6YZhKilnCFapmaTkwwbRtIDsnRA3iaeimny5jZBRJCLwvqD3IVwWcY43lugEYA5NtIqvQuYRK4VPPNHyPY1upi/I2sSZ+NS9TH/ubhDA0oGBnJkA7WigApq8X588OOsAcyT//lsiSMRQ3ujYetHawM4VzPPOmdjVWcJCj4MHHQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742307012; c=relaxed/simple;
-	bh=XePCahPsZSpbQWsXf0CcR37O6zVZm17Sm32cogwHUok=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ewqumWkG4sNvDvy5LZSnPjLvn+lBLyvKRInCHuEoAq+7EPcS/lJ9CbjUY/R959LkDJWhqyoVZT0KpRp2JrsStZXQM4EQAZ9iS50uLKNAU6As8jJh/xXz/ZzME3zdiawmcDt8HnYkYYVN0c0QON/lNqbljOR0QAMVS2pfus4DPKs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=kbcBOGrc; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-22401f4d35aso106374555ad.2
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 07:10:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1742307009; x=1742911809; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=KJlfQbKkZaT5zgjtlKURf8XEWEevxg5b6NR+MnbaBy4=;
-        b=kbcBOGrce+CNPiDcNYIkAHJC6SpRp2Y70bns6JT9LUszlXxzIufB7Hndh1EFQgqpBG
-         1Qsgr2uLVwk/GOjyz1Wmfb/+EvieZPFUyTJpFOf9gTqJdXXGhWTDzUjVxvmtfTAsa9Lr
-         hk3nZ2tL+8ca2KfHfxaVV/kMovok36W5enjXLK5xT4yUWjyZczlIXkMVaf5D+G8hg0B+
-         NW+G6mKGFXqVQ0C0hnBRLnzPvpIuCYtTkyD5eFbzuv34NxOfV/5+NdDYkeFlpFVmQxq4
-         zBI7oncawDZ+xFRRApRMIcn9rvblbRRCXuWoPHsPSf20Fbqk39NAc32jjVmvrvi9UtVb
-         ibkg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742307009; x=1742911809;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KJlfQbKkZaT5zgjtlKURf8XEWEevxg5b6NR+MnbaBy4=;
-        b=QM+avkblxnErLRJyAzyzACjuMLwkr8oDpMZtMfpW9l+RQenm7qBFIRSzfZFMNLFO67
-         8Q5Qpw14EAwfe7Z0pERzZjMCRhOReKkvy9Szl9x5xOvJLHqkKeRMCAPLfpH1e2EdlrSv
-         l7Xqd+EE9cvPveW3QUD540+rIl1Tk0CkPraITPubH0bGwwWlol1HJwXXkeBRZpTnjC3h
-         DBjO/28BGLn0FhJdPQx2UeDE5UJ51e988dPleYJe7satOkbE1819kCgrQhhtEkLTULW/
-         C3DedEO3LDsEcQMeHQWwYepY45qrJXyHcRywixPp+yFmzmzmEjyaWpnP5ekP/gtAg/ey
-         WXXg==
-X-Forwarded-Encrypted: i=1; AJvYcCWOP1XWwHv26IpLYzOUaoZcbhJkKXAfg6a0oADt6onV1R8jegNl01Y6yn9Jw0DuczvlA8gU3BQruKE/Sew=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyuvsBf94GO1mh3mDObIJqaQXO1R1U8Pkxe1oX3D7125PdV9nrz
-	89/uDwlc9i/noJM1GP+t9Z+fcDXjegk6EMuzPNqb86FJG64Y0CKZ2RMj5koHH0A=
-X-Gm-Gg: ASbGnctGW0QttRB9T0CnTiF3MANklvKAnk200rLv31ukELTBFkS/2ahKwfCA+k9ws35
-	RTi0Lrk3hdtEz+bB3GiQjCFRAvGkBD19KHncnEUf2L4aPRyRnTxoelFZybsUOe0rMtmMNctR37+
-	t52d3LKvABR2KREx/h7hZ6SahCKwoigHquW0QlUauKA+jz4V2S25a5bbafANj1iKn7FgI7n43F1
-	U7syFKAcGyUY/HYthqrP2CWFgtSqNb2xKkeHBKvtfk8bGAmCsDTv/411IwWsYVl/Q0VDw8wt72F
-	ui/lS8tvWEOC7fVBeUOmi2bn3xlWBi7bp8Ee5rbU4SU7tCKeGn1OdlvCF8f7rrieTN6NG81ZhBq
-	gGXv24vzsqQRN/BWJUF2IcQlw
-X-Google-Smtp-Source: AGHT+IFUuNSszPzOvVIhdNPMgT9jchMGQU0sWHBhn3LDIjOpNzyeuRpJ5c0eiUiE0ijqUFJKnU7/7A==
-X-Received: by 2002:a17:902:ecc3:b0:223:325c:89f6 with SMTP id d9443c01a7336-2262c51bc89mr46644695ad.10.1742307008987;
-        Tue, 18 Mar 2025 07:10:08 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:e17:9700:16d2:7456:6634:9626? ([2a01:e0a:e17:9700:16d2:7456:6634:9626])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-225c6ba6f2dsm94391105ad.140.2025.03.18.07.10.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 18 Mar 2025 07:10:07 -0700 (PDT)
-Message-ID: <ee650a6c-eed8-4a2b-82ee-868a784f26b3@rivosinc.com>
-Date: Tue, 18 Mar 2025 15:09:58 +0100
+	s=arc-20240116; t=1742307025; c=relaxed/simple;
+	bh=L/s03vrxGi8wDre+KKeUbgbJXRYK5FL3hEEpvhZlSsY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jFE40Kr/bFY2sDbkZ3ZWY/glT67PQQbUn9HvXZIjxbWcETC/mQucITpPB4p0aZx/Mch0oDQ13vKjeo4dZ3dFh22XkkuTGyScq7RhqRmrgTS1MH00zBtJHtxfmWBw/2RGbmfGjBP8RTY7T4AgH1YdXRV1fRUMd9y3ESlMoE/swUI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=lAAaoRY/; arc=none smtp.client-ip=91.218.175.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Tue, 18 Mar 2025 14:10:15 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1742307020;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/yh8Ym+ECWzQ1Tx2CMjrE4Vg5wnvaSOPbsBq3IpvaIM=;
+	b=lAAaoRY/wdVvq+G5Z0aQ7RPljrBAVKz4psTXspaaz8OHii4FtoiNVPOZxKTRmMJ0SrGVEt
+	fHIaAePt57dmK905b/oRE98zXZj9HkQeTgHlPpH/Vjc0dM7e+NcSvufkBHsrRLjbCwL3ea
+	t6v9oec4XFwNH1m2yedXc7gOY6zu2Is=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yosry Ahmed <yosry.ahmed@linux.dev>
+To: Zhongkun He <hezhongkun.hzk@bytedance.com>
+Cc: akpm@linux-foundation.org, hannes@cmpxchg.org, yuzhao@google.com,
+	mhocko@suse.com, muchun.song@linux.dev, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm: add swappiness=max arg to memory.reclaim for only
+ anon reclaim
+Message-ID: <Z9l-x-b9W32vE8Qn@google.com>
+References: <20250318135330.3358345-1-hezhongkun.hzk@bytedance.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 7/8] riscv: Add parameter for skipping access speed
- tests
-To: Andrew Jones <ajones@ventanamicro.com>, Alexandre Ghiti <alex@ghiti.fr>
-Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org, paul.walmsley@sifive.com, palmer@dabbelt.com,
- charlie@rivosinc.com, Anup Patel <apatel@ventanamicro.com>, corbet@lwn.net
-References: <20250304120014.143628-10-ajones@ventanamicro.com>
- <20250304120014.143628-17-ajones@ventanamicro.com>
- <1b7e3d0f-0526-4afb-9f7a-2695e4166a9b@ghiti.fr>
- <20250318-1b03e58fe508b077e5d38233@orel>
- <20250318-61be6a5455ea164b45d6dc64@orel>
-Content-Language: en-US
-From: =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>
-In-Reply-To: <20250318-61be6a5455ea164b45d6dc64@orel>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250318135330.3358345-1-hezhongkun.hzk@bytedance.com>
+X-Migadu-Flow: FLOW_OUT
 
-
-
-On 18/03/2025 10:00, Andrew Jones wrote:
-> On Tue, Mar 18, 2025 at 09:48:21AM +0100, Andrew Jones wrote:
->> On Mon, Mar 17, 2025 at 03:39:01PM +0100, Alexandre Ghiti wrote:
->>> Hi Drew,
->>>
->>> On 04/03/2025 13:00, Andrew Jones wrote:
->>>> Allow skipping scalar and vector unaligned access speed tests. This
->>>> is useful for testing alternative code paths and to skip the tests in
->>>> environments where they run too slowly. All CPUs must have the same
->>>> unaligned access speed.
->>>
->>> I'm not a big fan of the command line parameter, this is not where we should
->>> push uarch decisions because there could be many other in the future, the
->>> best solution to me should be in DT/ACPI and since the DT folks, according
->>> to Palmer, shut down this solution, it remains using an extension.
->>>
->>> I have been reading a bit about unaligned accesses. Zicclsm was described as
->>> "Even though mandated, misaligned loads and stores might execute extremely
->>> slowly. Standard software distributions should assume their existence only
->>> for correctness, not for performance." in rva20/22 but *not* in rva23. So
->>> what about using this "hole" and consider that a platform that *advertises*
->>> Zicclsm means its unaligned accesses are fast? After internal discussion, It
->>> actually does not make sense to advertise Zicclsm if the platform accesses
->>> are slow right?
->>
->> This topic pops up every so often, including in yesterday's server
->> platform TG call. In that call, and, afaict, every other time it has
->> popped up, the result is to reiterate that ISA extensions never say
->> anything about performance. So, Zicclsm will never mean fast and we
->> won't likely be able to add any extension that does.
->>
->>>
->>> arm64 for example considers that armv8 has fast unaligned accesses and can
->>> then enable HAVE_EFFICIENT_ALIGNED_ACCESS in the kernel, even though some
->>> uarchs are slow. Distros will very likely use rva23 as baseline so they will
->>> enable Zicclsm which would allow us to take advantage of this too, without
->>> this, we lose a lot of perf improvement in the kernel, see
->>> https://lore.kernel.org/lkml/20231225044207.3821-1-jszhang@kernel.org/.
->>>
->>> Or we could have a new named feature for this, even though it's weird to
->>> have a named feature which would basically  mean "Zicclsm is fast". We don't
->>> have, for example, a named feature to say "Zicboz is fast" but given the
->>> vague wording in the profile spec, maybe we can ask for one in that case?
->>>
->>> Sorry for the late review and for triggering this debate...
->>
->> No problem, let's try to pick the best option. I'll try listing all the
->> options and there pros/cons.
->>
->> 1. Leave as is, which is to always probe
->>    pro: Nothing to do
->>    con: Not ideal in all environments
->>
->> 2. New DT/ACPI description
->>    pro: Describing whether or not misaligned accesses are implemented in
->>         HW (which presumably means fast) is something that should be done
->> 	in HW descriptions
->>    con: We'll need to live with probing until we can get the descriptions
->>         defined, which may be never if there's too much opposition
->>
->> 3. Command line
->>    pro: Easy and serves its purpose, which is to skip probing in the
->>         environments where probing is not desired
->>    con: Yet another command line option (which we may want to deprecate
->>         someday)
->>
->> 4. New ISA extension
->>    pro: Easy to add to HW descriptions
->>    con: Not likely to get it through ratification
->>
->> 5. New SBI FWFT feature
->>    pro: Probably easier to get through ratification than an ISA extension
->>    con: Instead of probing, kernel would have to ask SBI -- would that
->>         even be faster? Will all the environments that want to skip
->> 	probing even have a complete SBI?
-
-Hi Andrew
-
-FWFT is not really meant to "query" information from the firmware,
-fwft_set() wouldn't have anything to actually set. The problem would
-also just be pushed away from Linux but would probably still require
-specification anyway.
-
->>
->> 6. ??
+On Tue, Mar 18, 2025 at 09:53:30PM +0800, Zhongkun He wrote:
+> With this patch 'commit <68cd9050d871> ("mm: add swappiness= arg to
+> memory.reclaim")', we can submit an additional swappiness=<val> argument
+> to memory.reclaim. It is very useful because we can dynamically adjust
+> the reclamation ratio based on the anonymous folios and file folios of
+> each cgroup. For example,when swappiness is set to 0, we only reclaim
+> from file folios.
 > 
-> I forgot one, which was v1 of this series and already rejected,
+> However,we have also encountered a new issue: when swappiness is set to
+> the MAX_SWAPPINESS, it may still only reclaim file folios.
 > 
->  6. Use ID registers
->     pro: None of the above cons, including the main con with the command
->          line, which is that there could be many other decisions in the
-> 	 future, implying we could need many more command line options.
->     con: A slippery slope. We don't want to open the door to
->          features-by-idregs. (However, we can at least always close the
-> 	 door again if better mechanisms become available. Command
-> 	 lines would need to be deprecated, but feature-by-idreg code
-> 	 can just be deleted.)
+> So, we hope to add a new arg 'swappiness=max' in memory.reclaim where
+> proactive memory reclaim only reclaims from anonymous folios when
+> swappiness is set to max. The swappiness semantics from a user
+> perspective remain unchanged.
+> 
+> For example, something like this:
+> 
+> echo "2M swappiness=max" > /sys/fs/cgroup/memory.reclaim
+> 
+> will perform reclaim on the rootcg with a swappiness setting of 'max' (a
+> new mode) regardless of the file folios. Users have a more comprehensive
+> view of the application's memory distribution because there are many
+> metrics available. For example, if we find that a certain cgroup has a
+> large number of inactive anon folios, we can reclaim only those and skip
+> file folios, because with the zram/zswap, the IO tradeoff that
+> cache_trim_mode or other file first logic is making doesn't hold -
+> file refaults will cause IO, whereas anon decompression will not.
+> 
+> With this patch, the swappiness argument of memory.reclaim has a new
+> mode 'max', means reclaiming just from anonymous folios both in traditional
+> LRU and MGLRU.
 
-My preferred option would have been option 2. BTW, what are the
-arguments to push away the description of misaligned access speed out of
-device-tree ? that's almost exactly what the device-tree is meant to do,
-ie describe hardware.
-
-As a last resort solution, I'm for option 3. There already exists a
-command line option to preset the jiffies. This is almost the same use
-case that we have, ie have a faster boot time by presetting the
-misaligned access probing.
-
-IMHO, skipping misaligned access probing speed is orthogonal to
-EFFICIENT_UNALIGNED_ACCESS. one is done at runtime and allows the
-userspace to know the speed of misaligned accesses, the other one at
-compile time to improve kernel speed. Depending on which system we want
-to support, we might need to enable EFFICIENT_UNALIGNED_ACCESS as a
-default, allowing for the most Linux "capable" chips to have full
-performances.
-
-Thanks,
-
-Clément
+Is MGLRU handled in this patch?
 
 > 
-> Thanks,
-> drew
+> Here is the previous discussion:
+> https://lore.kernel.org/all/20250314033350.1156370-1-hezhongkun.hzk@bytedance.com/
+> https://lore.kernel.org/all/20250312094337.2296278-1-hezhongkun.hzk@bytedance.com/
 > 
->>
->> I'm voting for (3), which is why I posted this patchset, but I'm happy
->> to hear other votes or other proposals and discuss.
->>
->> Thanks,
->> drew
+> Suggested-by: Yosry Ahmed <yosry.ahmed@linux.dev>
+> Signed-off-by: Zhongkun He <hezhongkun.hzk@bytedance.com>
+> ---
+>  Documentation/admin-guide/cgroup-v2.rst |  4 ++++
+>  include/linux/swap.h                    |  4 ++++
+>  mm/memcontrol.c                         |  5 +++++
+>  mm/vmscan.c                             | 10 ++++++++++
+>  4 files changed, 23 insertions(+)
+> 
+> diff --git a/Documentation/admin-guide/cgroup-v2.rst b/Documentation/admin-guide/cgroup-v2.rst
+> index cb1b4e759b7e..c39ef4314499 100644
+> --- a/Documentation/admin-guide/cgroup-v2.rst
+> +++ b/Documentation/admin-guide/cgroup-v2.rst
+> @@ -1343,6 +1343,10 @@ The following nested keys are defined.
+>  	same semantics as vm.swappiness applied to memcg reclaim with
+>  	all the existing limitations and potential future extensions.
+>  
+> +	If set swappiness=max, memory reclamation will exclusively
+> +	target the anonymous folio list for both traditional LRU and
+> +	MGLRU reclamation algorithms.
+> +
 
+I don't think we need to specify LRU and MGLRU here. What about:
+
+Setting swappiness=max exclusively reclaims anonymous memory.
+
+>    memory.peak
+>  	A read-write single value file which exists on non-root cgroups.
+>  
+> diff --git a/include/linux/swap.h b/include/linux/swap.h
+> index b13b72645db3..a94efac10fe5 100644
+> --- a/include/linux/swap.h
+> +++ b/include/linux/swap.h
+> @@ -419,6 +419,10 @@ extern unsigned long try_to_free_pages(struct zonelist *zonelist, int order,
+>  #define MEMCG_RECLAIM_PROACTIVE (1 << 2)
+>  #define MIN_SWAPPINESS 0
+>  #define MAX_SWAPPINESS 200
+> +
+> +/* Just recliam from anon folios in proactive memory reclaim */
+> +#define ONLY_ANON_RECLAIM_MODE (MAX_SWAPPINESS + 1)
+> +
+
+This is a swappiness value so let's keep that clear, e.g.
+SWAPPINESS_ANON_ONLY or similar.
+
+>  extern unsigned long try_to_free_mem_cgroup_pages(struct mem_cgroup *memcg,
+>  						  unsigned long nr_pages,
+>  						  gfp_t gfp_mask,
+> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+> index 4de6acb9b8ec..0d0400f141d1 100644
+> --- a/mm/memcontrol.c
+> +++ b/mm/memcontrol.c
+> @@ -4291,11 +4291,13 @@ static ssize_t memory_oom_group_write(struct kernfs_open_file *of,
+>  
+>  enum {
+>  	MEMORY_RECLAIM_SWAPPINESS = 0,
+> +	MEMORY_RECLAIM_ONLY_ANON_MODE,
+>  	MEMORY_RECLAIM_NULL,
+>  };
+>  
+>  static const match_table_t tokens = {
+>  	{ MEMORY_RECLAIM_SWAPPINESS, "swappiness=%d"},
+> +	{ MEMORY_RECLAIM_ONLY_ANON_MODE, "swappiness=max"},
+
+MEMORY_RECLAIM_SWAPPINESS_MAX?
+
+>  	{ MEMORY_RECLAIM_NULL, NULL },
+>  };
+>  
+> @@ -4329,6 +4331,9 @@ static ssize_t memory_reclaim(struct kernfs_open_file *of, char *buf,
+>  			if (swappiness < MIN_SWAPPINESS || swappiness > MAX_SWAPPINESS)
+>  				return -EINVAL;
+>  			break;
+> +		case MEMORY_RECLAIM_ONLY_ANON_MODE:
+> +			swappiness = ONLY_ANON_RECLAIM_MODE;
+> +			break;
+>  		default:
+>  			return -EINVAL;
+>  		}
+> diff --git a/mm/vmscan.c b/mm/vmscan.c
+> index c767d71c43d7..779a9a3cf715 100644
+> --- a/mm/vmscan.c
+> +++ b/mm/vmscan.c
+> @@ -2438,6 +2438,16 @@ static void get_scan_count(struct lruvec *lruvec, struct scan_control *sc,
+>  		goto out;
+>  	}
+>  
+> +	/*
+> +	 * Do not bother scanning file folios if the memory reclaim
+> +	 * invoked by userspace through memory.reclaim and set
+> +	 * 'swappiness=max'.
+> +	 */
+
+/* Proactive reclaim initiated by userspace for anonymous memory only */
+
+> +	if (sc->proactive && (swappiness == ONLY_ANON_RECLAIM_MODE)) {
+
+Do we need to check sc->proactive here? Supposedly this swappiness value
+can only be passed in from proactive reclaim. Instead of silently
+ignoring the value from other paths, I wonder if we should WARN on
+!sc->proactive instead.
+
+> +		scan_balance = SCAN_ANON;
+> +		goto out;
+> +	}
+> +
+>  	/*
+>  	 * Do not apply any pressure balancing cleverness when the
+>  	 * system is close to OOM, scan both anon and file equally
+> -- 
+> 2.39.5
+> 
 
