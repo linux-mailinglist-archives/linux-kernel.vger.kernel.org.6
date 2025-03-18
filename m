@@ -1,113 +1,197 @@
-Return-Path: <linux-kernel+bounces-567396-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567504-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FAFCA6856F
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 08:06:00 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3F4DA6871F
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 09:42:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E40D8179BB1
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 07:04:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 120451891075
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 08:42:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6001E24E007;
-	Wed, 19 Mar 2025 07:04:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98FB82512FA;
+	Wed, 19 Mar 2025 08:42:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RlEmjcmB"
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rxH53aJT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 735F3849C;
-	Wed, 19 Mar 2025 07:04:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE5DC15A85A;
+	Wed, 19 Mar 2025 08:42:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742367886; cv=none; b=ZsGznRnaULEinHhEVbKopQ4dK7iZYPW7NnowYZ6XNFEjVwf3eA84NEJi9Tb567Lc2kg0Li58H9ioov3mSbPMMEikhfN5H7H9mTzJXNmnVTHrTzCA4ZqmcD14RErfcnTM/D6okj5WDgc9QlZvn61TRaR+PNn7Hpk/hXKHNKXQScw=
+	t=1742373752; cv=none; b=RYn37gYjhXfk9lw6UPDGKXtRHmWLDJ6sTaxgXouV861pmnxH2lpFzbeOT9Rf6ID+9qSb6uvU2HkqpLyF2Yl1chbuP210RpdBQuFaG/MnkhKnYYjWfU0S5RVRt1qFqJR3+f+jGNDXv0uXWAA9sA5cZc2w5fxmMyTMgf9gmjUFAa4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742367886; c=relaxed/simple;
-	bh=jiAfj4IElgBqEg5+PLChSU4IpIj1nxRfVkLGRm2D6Bk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kWXtT0NlLwitLQ5aTIahhbgS6acfTC8U94j9D/jRwBPeOefXN/LOp3RHAZQs3wjse6c4xawVTTiNjmqIx4nbwYVbYmc+dJ/yT+/GxNNzkuKVY6YGNtOZTr3312WGvPi+/Mb7BllDrr5xB6IR152L+4RQ5XM5z54Z+P+MrJv85Fw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RlEmjcmB; arc=none smtp.client-ip=209.85.216.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-301918a4e3bso5435486a91.3;
-        Wed, 19 Mar 2025 00:04:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742367885; x=1742972685; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=jiAfj4IElgBqEg5+PLChSU4IpIj1nxRfVkLGRm2D6Bk=;
-        b=RlEmjcmBMO3Yjf7BSxkhA3YIH23Wvne0HmCRlvT4JSJQg09CHKkozt/IaJd854qWsI
-         OCyJ+YEM8EnM/JwfF61HY+VTTrcfPjC3Sz2S4S6wkdiB25+4CYNUKwtvHsoB4EIkr+nn
-         rRHGoXa1Ga3Ene+E/wRtF/eJex/KbgDgA0j+bk817tFW3IupOHE2Uyk2nXohpHvqy2hg
-         NLL1lyzw2UK60qZERRn9bCISUNyOgUtFoCXdGa0yQLEg2+vU+vzmu84TXQTOdcf4kqwK
-         H8fmqKRFnQCUVXf4XvN68OdySoYTR+UfSrkpCwzBzabHgrQKJQkGCaD0ctV+lfVtMEyN
-         0rbg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742367885; x=1742972685;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=jiAfj4IElgBqEg5+PLChSU4IpIj1nxRfVkLGRm2D6Bk=;
-        b=pHaVltXP0OZNNql0k9ykq9ccFuWYUb6W+bXQqP68YHCZe/7G1QEb1UPuqTWd/guI69
-         JkSPRmY9Y/WE8irWnf62W6/1Y/5tMMqXPaFAsmzQZ2R4zxIJO54NN2VhyvfRFA/GU6rM
-         jIZP1agkXaTvMhffj/roFxlHf+Vpc4iPI4iKQEvDzfUpCxZ26qpygQFZ/YPdK/JLLHSV
-         ninpURcIQTlNAhHzMj0CslydAAlgZ9Mxr/VACDtADtjTe9lfCsZJHWUk7pkKePoQPg1p
-         lxbV0IVNR7tPo5v+OFbukN5tgIVyAIwip8qGz29l5+z45PmJlBeqoXlqTQMidEtXnzIP
-         8opg==
-X-Forwarded-Encrypted: i=1; AJvYcCUMUpW0yluVHfTxd4r5Y3IWCLdd3LgHDy0dsa/t5puDKytD1zSSutW6EHBgmrVAi4QhkAJYnBpUWfQJD962@vger.kernel.org, AJvYcCVjnnoF2oNPhB3MT2N4K5zSAJesG8iQaxeIgAnCOJdxi8n1r4Mw4ITztUAeYiv6viraqCshZ2naPpkM@vger.kernel.org, AJvYcCXXYWtU6rWnS8wJo82heq7FQ/vv3rTFfItwb1GfK/nKGAwNgNG70d16SgeekFp512VX/b1OZ1Eq5hm/JNA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzAxMWX43dmLP2RL3lnN4fB442EONN6KjXVoNNQg5e45reJhrxi
-	yb65MpsiAHqIbJ1pPpz7kprn3BT704HfB/8rACQLrP9SDLasqcGDJTURHOdgvkVagKaspVqLKDn
-	4bi4IbSm0ewW0fEvyY3F93ZE1pHM=
-X-Gm-Gg: ASbGnctIaurPL/aQQrOECHQoywHrOft0gnhLrDI6//Xh/RLWOMhSnhe7XZfW9hqRoXI
-	E1rVUvIUpS0DwortKEmUHJ878e1jVPwO3OTxpIiMQ8BKhSUe1XuPSxzK+eSiSeQdKJnwReracxs
-	C1yTuYHrTcyp/d+K73b/FFJ3U=
-X-Google-Smtp-Source: AGHT+IF7sF+rEHN+McOd/gdhxtrQC1m+FhYZvpf4dWKwkOdb9hKSjw3U2gTtL2CCTwVJ/KBH2mS5pciMbrLsv3G0xEU=
-X-Received: by 2002:a17:90b:4c4e:b0:2ee:d193:f3d5 with SMTP id
- 98e67ed59e1d1-301bde41b97mr2645278a91.7.1742367884632; Wed, 19 Mar 2025
- 00:04:44 -0700 (PDT)
+	s=arc-20240116; t=1742373752; c=relaxed/simple;
+	bh=6LMYV1EcNVP4RLB4G/cnTptkg0+5ruZ++sYU8wJXn40=;
+	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
+	 MIME-Version:Date; b=NF7/rhjHaColj3xa6+vCzIy1RVIEKRLJs8aiTqM1TgKF1qPaGR6ZLAB9tmQPsEFRHPp1CcMswjG6PmSX/ufMTtvlU0JmQqcqQgkOP1DzFS+QF1lNeTnr41aiNTVPePLPEVA5bOUgneFOlYQjRXJ/6+ZhmIoVLXcHmuJD2TQW00o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rxH53aJT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8AA14C4CEE9;
+	Wed, 19 Mar 2025 08:42:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742373750;
+	bh=6LMYV1EcNVP4RLB4G/cnTptkg0+5ruZ++sYU8wJXn40=;
+	h=Subject:From:To:Cc:In-Reply-To:References:Date:From;
+	b=rxH53aJTPsR3bwJmSmWtzJlYyBcZU4RjuHgPlasPe3McP0+Fyz3kLWj4xt5pqNjbT
+	 3rUCBjQ7z8egRU9f7w9qq7QtXtX5APvsU6hV1kGfpjCNaGMQYjGDTVKdRk9m1Ey/aY
+	 an1TWEjPQjhiNEjbSvhPqfyWZLpssXNAMgPVUskuDwGuekvT6V2rzJJx9HNORrHUoN
+	 Gvf3JI6DFl4v+L9Pt4zURyeJIClvSklZTvgEO5byob/cUrbjhYUqHAjiEsI1fmexNW
+	 M3ushc9JO2W2597IOtGsyCfe458vK1RQVq63gZFWrIcuJFn2vDeE4sUH8OOYzTuDxd
+	 i51hVuUoTKYAw==
+Message-ID: <f27debf87882df65574f21cfced31fecf1dd1da3.camel@kernel.org>
+Subject: Re: [PATCH] virtio: console: Make resizing compliant with virtio
+ spec
+From: Amit Shah <amit@kernel.org>
+To: Maximilian Immanuel Brandtner <maxbr@linux.ibm.com>, 
+	linux-kernel@vger.kernel.org, virtualization@lists.linux.dev
+Cc: arnd@arndb.de, gregkh@linuxfoundation.org, brueckner@linux.ibm.com, 
+	schnelle@linux.ibm.com, pasic@linux.ibm.com
+In-Reply-To: <649563cf1b8abd42401ed78d84bfd576d48bdbb8.camel@linux.ibm.com>
+References: <20250225092135.1200551-1-maxbr@linux.ibm.com>
+		 <f5ab160dadc2219b9576e50588dce88f22e9bcb1.camel@kernel.org>
+	 <649563cf1b8abd42401ed78d84bfd576d48bdbb8.camel@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250318085444.3459380-1-florin.leotescu@oss.nxp.com>
- <20250318085444.3459380-2-florin.leotescu@oss.nxp.com> <7afcd224-1154-4e2f-b383-10f6a89fdae0@roeck-us.net>
- <CAEnQRZBmYdLh29ha1FKz8=CbxjFBFFTgDkjrEmwTxW2WcxodfA@mail.gmail.com> <ca734f66-593f-4e7c-bc76-e343a7eb88d7@roeck-us.net>
-In-Reply-To: <ca734f66-593f-4e7c-bc76-e343a7eb88d7@roeck-us.net>
-From: Daniel Baluta <daniel.baluta@gmail.com>
-Date: Wed, 19 Mar 2025 09:06:17 +0200
-X-Gm-Features: AQ5f1JqTh1OKvsFHXWbBK7NlMP4RU0DewPez1R29Ybz774cJu_EpcSsA7szRxbU
-Message-ID: <CAEnQRZDf_ko2p50EwR6q=dfkwdqE=c7fZe0jO2JdSmbaDa=j3Q@mail.gmail.com>
-Subject: Re: [PATCH v5 1/3] dt-bindings: hwmon: Add Microchip emc2305 support
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: florin.leotescu@oss.nxp.com, Jean Delvare <jdelvare@suse.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Michael Shych <michaelsh@nvidia.com>, linux-hwmon@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	viorel.suman@nxp.com, carlos.song@nxp.com, 
-	linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev, festevam@gmail.com, 
-	Florin Leotescu <florin.leotescu@nxp.com>, Frank Li <Frank.Li@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
+Date: Tue, 18 Mar 2025 15:25:54 +0100
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
 
-> >> Is it necessary to make 'pwms' mandatory ? The current code works
-> >> just fine with defaults.
-> >
-> > The code adding OF support is added just in the next patch, so the
-> > current code isn't event
-> > probed when trying to use dts.
-> >
-> > Or am I missing something?
-> >
->
-> The patch introducing devicetree support to the driver doesn't evaluate
-> the pwm property. That makes it quite obvious that, from driver perspective,
-> it isn't needed. I don't immediately see why it would add value to _force_
-> users to provide pwm frequency, polarity, and the output configuration
-> if the defaults work just fine.
->
+On Tue, 2025-03-18 at 11:07 +0100, Maximilian Immanuel Brandtner wrote:
+> On Mon, 2025-03-03 at 12:54 +0100, Amit Shah wrote:
+> > On Tue, 2025-02-25 at 10:21 +0100, Maximilian Immanuel Brandtner
+> > wrote:
+> > > According to the virtio spec[0] the virtio console resize struct
+> > > defines
+> > > cols before rows. In the kernel implementation it is the other
+> > > way
+> > > around
+> > > resulting in the two properties being switched.
+> >=20
+> > Not true, see below.
+> >=20
+> > > While QEMU doesn't currently support resizing consoles, TinyEMU
+> >=20
+> > QEMU does support console resizing - just that it uses the
+> > classical
+> > way of doing it: via the config space, and not via a control
+> > message
+> > (yet).
+> >=20
+> > https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/=
+tree/drivers/char/virtio_console.c#n1787
+> >=20
+> > https://lists.nongnu.org/archive/html/qemu-devel/2010-05/msg00031.html
+> >=20
+> > > diff --git a/drivers/char/virtio_console.c
+> > > b/drivers/char/virtio_console.c
+> > > index 24442485e73e..9668e89873cf 100644
+> > > --- a/drivers/char/virtio_console.c
+> > > +++ b/drivers/char/virtio_console.c
+> > > @@ -1579,8 +1579,8 @@ static void handle_control_message(struct
+> > > virtio_device *vdev,
+> > > =C2=A0		break;
+> > > =C2=A0	case VIRTIO_CONSOLE_RESIZE: {
+> > > =C2=A0		struct {
+> > > -			__u16 rows;
+> > > =C2=A0			__u16 cols;
+> > > +			__u16 rows;
+> > > =C2=A0		} size;
+> > > =C2=A0
+> > > =C2=A0		if (!is_console_port(port))
+> >=20
+> > This VIRTIO_CONSOLE_RESIZE message is a control message, as opposed
+> > to
+> > the config space row/col values that is documented in the spec.
+> >=20
+> > Maybe more context will be helpful:
+> >=20
+> > Initially, virtio_console was just a way to create one hvc console
+> > port
+> > over the virtio transport.=C2=A0 The size of that console port could be
+> > changed by changing the size parameters in the virtio device's
+> > configuration space.=C2=A0 Those are the values documented in the spec.=
+=20
+> > These are read via virtio_cread(), and do not have a struct
+> > representation.
+> >=20
+> > When the MULTIPORT feature was added to the virtio_console.c
+> > driver,
+> > more than one console port could be associated with the single
+> > device.
+> > Eg. we could have hvc0, hvc1, hvc2 all as part of the same device.=20
+> > With this, the single config space value for row/col could not be
+> > used
+> > for the "extra" hvc1/hvc2 devices -- so a new VIRTIO_CONSOLE_RESIZE
+> > control message was added that conveys each console's dimensions.
+> >=20
+> > Your patch is trying to change the control message, and not the
+> > config
+> > space.
+> >=20
+> > Now - the lack of the 'struct size' definition for the control
+> > message
+> > in the spec is unfortunate, but that can be easily added -- and I
+> > prefer we add it based on this Linux implementation (ie. first
+> > rows,
+> > then cols).
+>=20
+> Under section 5.3.6.2 multiport device operation for
+> VIRTIO_CONSOLE_RESIZE the spec says the following
+>=20
+> ```
+> Sent by the device to indicate a console size change. value is
+> unused.
+> The buffer is followed by the number of columns and rows:
+>=20
+> struct virtio_console_resize {=20
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 le16 cols;=20
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 le16 rows;=20
+> };
+> ```
+
+Indeed.
 
 
-Got your point now! Thanks.
+> It would be extremely surprising to me if the section `multiport
+> device
+> operation` does not document resize for multiport control messages,
+> but
+> rather config messages, especially as VIRTIO_CONSOLE_RESIZE is
+> documented as a virtio_console_control event.
+
+You're right.
+
+I was mistaken in my earlier reply - I had missed this
+virtio_console_resize definition in the spec.  So indeed there's a
+discrepancy in Linux kernel and the spec's ordering for the control
+message.
+
+OK, that needs fixing someplace.  Perhaps in the kernel (like your
+orig. patch), but with an accurate commit message.
+
+Like I said, I don't think anyone is using this control message to
+change console sizes.  I don't even think anyone's using multiple
+console ports on the same device.
+
+> In fact as far as I can tell this is the only part of the spec that
+> documents resize. I would be legitimately interested in resizing
+> without multiport and I would genuinely like to find out about how it
+> could be used. In what section of the documentation could I find it?
+
+See section 5.3.4 that describes `struct virtio_console_config` and
+this note:
+
+```
+    If the VIRTIO_CONSOLE_F_SIZE feature is negotiated, the driver can
+read the console dimensions from cols and rows.=20
+```
+
+		Amit
 
