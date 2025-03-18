@@ -1,196 +1,220 @@
-Return-Path: <linux-kernel+bounces-566433-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566422-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9690FA677FE
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 16:35:58 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 553B2A677CF
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 16:30:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 99F861892E2E
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 15:33:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C467117BD2C
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 15:30:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6663211477;
-	Tue, 18 Mar 2025 15:31:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FCD720E6F6;
+	Tue, 18 Mar 2025 15:30:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qs+29R09"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="H1zgCviM"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F9D820E6F6;
-	Tue, 18 Mar 2025 15:31:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BD9B17A30D;
+	Tue, 18 Mar 2025 15:30:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742311910; cv=none; b=XUCsKIQY1CZAFa7JxU4v+fFiMiLCBBkAUeSvmfjupo7hLLFNe2TTeFLMJE2Q4iu3Y/nTtkhR0W9XnICE/Upgg2W5Bvd2PnEmHiiV51HetRof9b5TBkRgrV3i7ol/tUJa9i7osDatj3jj0GwP7fsLzuWQFM2dxXecGFDHexuXbSI=
+	t=1742311823; cv=none; b=LtD5yu9ytSs37uKOlOmuIG1rFeSdkDngvkeEFQ0Oj4Kvmq3vPoIPK0LUFtO1cl4Q7w60WlxlPYojdg/UjVpmVUglEDkxNuvMtNrhyycYAkg/NCr1bKypR0wst2Eg73RV/Om5qc9VtmVAyHl4IfjZg3Rjh4Vlo/jthY4vMNLKWgw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742311910; c=relaxed/simple;
-	bh=xfVP5X6JUhbI8KG9gpiy9o/m49qsXUbi7Lo3C+GZ7vY=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=ArdthW8tPrw0AADhvEfac1VVZVtanQgUwssxpv1/tE0GJ899lifqfCqOwScotL8RQmZ/+weqFPdpr/YOsPv7vd6ut/IrO+x0zibyaJwgooXAvhog6SgDegIoJLuszBuJK3RT8o7xEwz6IZWqmGDbMsj7TRCnqA0tYL+Ni/+BFr0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qs+29R09; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84D57C4CEDD;
-	Tue, 18 Mar 2025 15:31:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742311909;
-	bh=xfVP5X6JUhbI8KG9gpiy9o/m49qsXUbi7Lo3C+GZ7vY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=Qs+29R09M/HjOvbEO9IttVjrc2c7gUuI2msCv+/OQoRlHDeU037m8qOF2+baNjxjx
-	 ckPCjPUDjqkT4EZAdSzhjb1OeFFedsNLEB9S64U+XnxuCBovC0Z7OkloLNjMUClMfp
-	 TSb8WkMOF3ak7mjsSz5ybjEuUUTZBy9GCWYBeBIoqbnRv3HhdsF81JlXKfKisJevuP
-	 03P/jP+g2o8GhXiq1wMl8+6WkeVC4tkkdTfXIRrPclVf93FiSUdgvz+hLYuZH/IVxP
-	 sFuHGwYyqLYRQS+8xhKIgSq54DDAz77Q08p39dYJZjv1XHNI+jP3x7Fy/MEeCkFa7d
-	 q8IpALC1sbbAA==
-Date: Tue, 18 Mar 2025 10:31:48 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Lei Chuan Hua <lchuanhua@maxlinear.com>
-Cc: Frank Li <Frank.Li@nxp.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	"linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH RFC NOT TESTED] PCI: intel-gw: Use use_parent_dt_ranges
- and clean up intel_pcie_cpu_addr_fixup()
-Message-ID: <20250318153148.GA1000275@bhelgaas>
+	s=arc-20240116; t=1742311823; c=relaxed/simple;
+	bh=+SIo73UTTU2z5Vf1k6pxRbo/XOAy9cklFGnqrVYlfpQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IntEPEroFLUJkcrZ69m0OsMspxtd9pd5s8cdQtvLEXtBBYybdfJmiymK09N8lusJMzqUz8PWxSO4WjEko6aeIL2osrrfnvC21iraZ4gElMw84lhk5V8Uer4wkM9ez2UleIfYkwRwgCV+knwQ6EFTda5DWMoScpGaI8XQwlONEBQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=H1zgCviM; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742311821; x=1773847821;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=+SIo73UTTU2z5Vf1k6pxRbo/XOAy9cklFGnqrVYlfpQ=;
+  b=H1zgCviM4/vC3wKS3wOybSk/Q7HwY0gsM39tRAmlikf8fPa7xmfrNmjD
+   AWGtoPOcEqIXPQMAyDpyl87T5l/yeSURaF/a5JCbIfMTyAqRtzldUyuQO
+   A2JY3yDu+Dhas2gHoBLkkjuQCXtmAO0PN1RLDM24Mq4jhXZSqddzhmAVC
+   M6o5akCnr0FMMjxP35e+cD7ZaC/vmtZEK9kuLIs4qenMaug0Df/cYywHC
+   z+covZSceM13zMuBGwc08j70KikOthJgQ5IC3JwVnhu8pinN1E9Vsjr1S
+   cOeaPppd3pWd+5J226XzL3sxU8w7+rDMlRszFW63WTbFtXLwUSVI1pmj/
+   A==;
+X-CSE-ConnectionGUID: mWZ6+p6HTMqBY69vCAUG5Q==
+X-CSE-MsgGUID: Y1MJ04k7T4q+eXGNPr3VfQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11377"; a="46224081"
+X-IronPort-AV: E=Sophos;i="6.14,257,1736841600"; 
+   d="scan'208";a="46224081"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2025 08:30:20 -0700
+X-CSE-ConnectionGUID: 7rFWyapITSGRVQkQT70p4w==
+X-CSE-MsgGUID: okfQd0iKQmOttwcNx41GhQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,257,1736841600"; 
+   d="scan'208";a="122121754"
+Received: from spr.sh.intel.com ([10.239.53.19])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2025 08:30:09 -0700
+From: Chao Gao <chao.gao@intel.com>
+To: x86@kernel.org,
+	linux-kernel@vger.kernel.org,
+	kvm@vger.kernel.org,
+	tglx@linutronix.de,
+	dave.hansen@intel.com,
+	seanjc@google.com,
+	pbonzini@redhat.com
+Cc: peterz@infradead.org,
+	rick.p.edgecombe@intel.com,
+	weijiang.yang@intel.com,
+	john.allen@amd.com,
+	bp@alien8.de,
+	chang.seok.bae@intel.com,
+	xin3.li@intel.com,
+	Chao Gao <chao.gao@intel.com>,
+	Adamos Ttofari <attofari@amazon.de>,
+	Aruna Ramakrishna <aruna.ramakrishna@oracle.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Eric Biggers <ebiggers@google.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Li RongQing <lirongqing@baidu.com>,
+	Maxim Levitsky <mlevitsk@redhat.com>,
+	Mitchell Levy <levymitchell0@gmail.com>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Stanislav Spassov <stanspas@amazon.de>,
+	Uros Bizjak <ubizjak@gmail.com>,
+	Vignesh Balasubramanian <vigbalas@amd.com>,
+	Zhao Liu <zhao1.liu@intel.com>
+Subject: [PATCH v4 0/8] Introduce CET supervisor state support
+Date: Tue, 18 Mar 2025 23:31:50 +0800
+Message-ID: <20250318153316.1970147-1-chao.gao@intel.com>
+X-Mailer: git-send-email 2.46.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <BY3PR19MB5076A8D664FAA83E7C168300BDDE2@BY3PR19MB5076.namprd19.prod.outlook.com>
 
-On Tue, Mar 18, 2025 at 01:49:46AM +0000, Lei Chuan Hua wrote:
-> Hi Bjorn,
-> 
-> I did a quick test with necessary change in dts. It worked, please move on.
+==Changelog==
+v3->v4:
+ - Remove fpu_guest_cfg.
+   The fact that only the default_features and default_size fields of
+   fpu_guest_cfg are used suggests that a full fpu_guest_cfg may not be
+   necessary. Adding two members, "guest_default_xfeatures" and
+   "guest_default_size", or even a single "guest_only_xfeatures" member in
+   fpu_kernel_cfg, similar to "independent_xfeatures", is more logical. To
+   facilitate discussion, implement this approach in this version.
+ - Extract the fix for inconsistencies in fpu_guest and post it separately
+   (Chang)
+ - Rename XFEATURE_MASK_KERNEL_DYNAMIC to XFEATURE_MASK_SUPERVISOR_GUEST as
+   tglx noted "this dynamic naming is really bad":
 
-What does this mean?  By "move on", do you mean that I should merge
-the patch below (the removal of intel_pcie_cpu_addr())?
+   https://lore.kernel.org/all/87sg1owmth.ffs@nanos.tec.linutronix.de/
 
-I do not want to merge a change that will break any existing intel-gw
-platform.  When you say "with necessary change in dts", it makes me
-think the removal of intel_pcie_cpu_addr() forces a change to dts,
-which would not be acceptable.  We can't force users to upgrade the
-dts just to run a newer kernel.
+ - Rerun performance tests and update the performance claims in the cover-letter
+   (Dave)
+ - Tighten down the changelogs and drop useless comments (Dave)
+ - Reorder the patches to put the CET supervisor state patch before the
+   "guest-only" optimization, allowing maintainers to easily adopt or omit the
+   optimization.
+ - v3: https://lore.kernel.org/kvm/20250307164123.1613414-1-chao.gao@intel.com/
 
-I assume 250318 linux-next, which includes Frank's v12 series, should
-work with no change to dts required.  (It would be awesome if you can
-verify that.)
+v2->v3:
+ - reorder patches to add fpu_guest_cfg first and then introduce dynamic kernel
+   feature concept (Dave)
+ - Revise changelog for all patches except the first and the last one (Dave)
+ - Split up patches that do multiple things into separate patches.
+ - collect tags for patch 1
+ - v2: https://lore.kernel.org/kvm/20241126101710.62492-1-chao.gao@intel.com/
 
-If you apply this patch to remove intel_pcie_cpu_addr() on top of
-250318 linux-next, does it still work with no changes to dts?
+v1->v2:
+ - rebase onto the latest kvm-x86/next
+ - Add performance data to the cover-letter
+ - v1: https://lore.kernel.org/kvm/73802bff-833c-4233-9a5b-88af0d062c82@intel.com/
 
-If you have to make a dts change for it to work after removing
-intel_pcie_cpu_addr(), then we have a problem.
+==Background==
 
-I do not see a .dts file in the upstream tree that contains
-"intel,lgm-pcie", so I don't know what the .dts contains or how it is
-distributed.
+This series spins off from CET KVM virtualization enabling series [1].
+The purpose is to get these preparation work resolved ahead of KVM part
+landing. There was a discussion about introducing CET supervisor state
+support [2] [3].
 
-I do see the binding at
-Documentation/devicetree/bindings/pci/intel-gw-pcie.yaml,
-but the example there does not include anything about address
-translation between the CPU and the PCI controller, so my guess is
-that there are .dts files in the field that will not work if we remove
-intel_pcie_cpu_addr().
+CET supervisor state, i.e., IA32_PL{0,1,2}_SSP, are xsave-managed MSRs,
+it can be enabled via IA32_XSS[bit 12]. KVM relies on host side CET
+supervisor state support to fully enable guest CET MSR contents storage.
+The benefits are: 1) No need to manually save/restore the 3 MSRs when
+vCPU fpu context is sched in/out. 2) Omit manually swapping the three
+MSRs at VM-Exit/VM-Entry for guest/host. 3) Make guest CET user/supervisor
+states managed in a consistent manner within host kernel FPU framework.
 
-> ________________________________________
-> From: Bjorn Helgaas <helgaas@kernel.org>
-> Sent: Tuesday, March 18, 2025 1:59 AM
-> To: Frank Li <Frank.Li@nxp.com>
-> Cc: Lei Chuan Hua <lchuanhua@maxlinear.com>; Lorenzo Pieralisi <lpieralisi@kernel.org>; Krzysztof Wilczyński <kw@linux.com>; Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>; Rob Herring <robh@kernel.org>; Bjorn Helgaas <bhelgaas@google.com>; linux-pci@vger.kernel.org <linux-pci@vger.kernel.org>; linux-kernel@vger.kernel.org <linux-kernel@vger.kernel.org>
-> Subject: Re: [PATCH RFC NOT TESTED] PCI: intel-gw: Use use_parent_dt_ranges and clean up intel_pcie_cpu_addr_fixup()
-> 
-> 
-> 
-> On Wed, Mar 05, 2025 at 12:07:54PM -0500, Frank Li wrote:
-> > Remove intel_pcie_cpu_addr_fixup() as the DT bus fabric should provide correct
-> > address translation. Set use_parent_dt_ranges to allow the DWC core driver to
-> > fetch address translation from the device tree.
-> >
-> > Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> 
-> Any update on this, Chuanhua?
-> 
-> I plan to merge v12 of Frank's series [1] for v6.15.  We need to know
-> ASAP if that would break intel-gw.
-> 
-> If we knew that it was safe to also apply this patch to remove
-> intel_pcie_cpu_addr(), that would be even better.
-> 
-> I will plan to apply the patch below on top of Frank's series [1] for
-> v6.15 unless I hear that it would break something.
-> 
-> Bjorn
-> 
-> [1] https://lore.kernel.org/r/20250315201548.858189-1-helgaas@kernel.org
-> 
-> > ---
-> > This patches basic on
-> > https://lore.kernel.org/imx/20250128-pci_fixup_addr-v9-0-3c4bb506f665@nxp.com/
-> >
-> > I have not hardware to test and there are not intel,lgm-pcie in kernel
-> > tree.
-> >
-> > Your dts should correct reflect hardware behavor, ref:
-> > https://lore.kernel.org/linux-pci/Z8huvkENIBxyPKJv@axis.com/T/#mb7ae78c3a22324b37567d24ecc1c810c1b3f55c5
-> >
-> > According to your intel_pcie_cpu_addr_fixup()
-> >
-> > Basically, config space/io/mem space need minus SZ_256. parent bus range
-> > convert it to original value.
-> >
-> > Look for driver owner, who help test this and start move forward to remove
-> > cpu_addr_fixup() work.
-> > ---
-> > Frank Li <Frank.Li@nxp.com>
-> > ---
-> >  drivers/pci/controller/dwc/pcie-intel-gw.c | 8 +-------
-> >  1 file changed, 1 insertion(+), 7 deletions(-)
-> >
-> > diff --git a/drivers/pci/controller/dwc/pcie-intel-gw.c b/drivers/pci/controller/dwc/pcie-intel-gw.c
-> > index 9b53b8f6f268e..c21906eced618 100644
-> > --- a/drivers/pci/controller/dwc/pcie-intel-gw.c
-> > +++ b/drivers/pci/controller/dwc/pcie-intel-gw.c
-> > @@ -57,7 +57,6 @@
-> >       PCIE_APP_IRN_INTA | PCIE_APP_IRN_INTB | \
-> >       PCIE_APP_IRN_INTC | PCIE_APP_IRN_INTD)
-> >
-> > -#define BUS_IATU_OFFSET                      SZ_256M
-> >  #define RESET_INTERVAL_MS            100
-> >
-> >  struct intel_pcie {
-> > @@ -381,13 +380,7 @@ static int intel_pcie_rc_init(struct dw_pcie_rp *pp)
-> >       return intel_pcie_host_setup(pcie);
-> >  }
-> >
-> > -static u64 intel_pcie_cpu_addr(struct dw_pcie *pcie, u64 cpu_addr)
-> > -{
-> > -     return cpu_addr + BUS_IATU_OFFSET;
-> > -}
-> > -
-> >  static const struct dw_pcie_ops intel_pcie_ops = {
-> > -     .cpu_addr_fixup = intel_pcie_cpu_addr,
-> >  };
-> >
-> >  static const struct dw_pcie_host_ops intel_pcie_dw_ops = {
-> > @@ -409,6 +402,7 @@ static int intel_pcie_probe(struct platform_device *pdev)
-> >       platform_set_drvdata(pdev, pcie);
-> >       pci = &pcie->pci;
-> >       pci->dev = dev;
-> > +     pci->use_parent_dt_ranges = true;
-> >       pp = &pci->pp;
-> >
-> >       ret = intel_pcie_get_resources(pdev);
-> >
-> > ---
-> > base-commit: 1552be4855dacca5ea39b15b1ef0b96c91dbea0d
-> > change-id: 20250305-intel-7c25bfb498b1
-> >
-> > Best regards,
-> >
+==Solution==
+
+This series tries to:
+1) Fix existing issue regarding enabling guest supervisor states support.
+2) Add CET supervisor state support in core kernel.
+3) Introduce guest default features and size for guest fpstate setup.
+
+With the preparation work landed, for guest fpstate, we have xstate_bv[12]
+== xcomp_bv[12] == 1 and CET supervisor state is saved/reloaded when
+xsaves/xrstors executes on guest fpstate.
+For non-guest/normal fpstate, we have xstate_bv[12] == xcomp_bv[12] == 0,
+then HW can optimize xsaves/xrstors operations.
+
+==Performance==
+
+We measured context-switching performance with the benchmark [4] in following
+three cases.
+
+case 1: the baseline. i.e., this series isn't applied
+case 2: baseline + this series. CET-S space is allocated for guest fpu only.
+case 3: baseline + allocate CET-S space for all tasks. Hardware init
+        optimization avoids writing out CET-S space on each XSAVES.
+
+The performance differences in the three cases are very small and fall within the
+run-to-run variation.
+
+Case 2 is preferred over Case 3 because it can save 24B of CET-S space for all
+non-vCPU threads with just a one-line change:
+
++	fpu_kernel_cfg.default_features &= ~XFEATURE_MASK_SUPERVISOR_GUEST
+
+We believe adding guest defaults has its own merits. It improves readability,
+decouples host FPUs and guest FPUs, and arguably enhances extensibility.
+
+[1]: https://lore.kernel.org/all/20240219074733.122080-1-weijiang.yang@intel.com/
+[2]: https://lore.kernel.org/all/ZM1jV3UPL0AMpVDI@google.com/
+[3]: https://lore.kernel.org/all/2597a87b-1248-b8ce-ce60-94074bc67ea4@intel.com/
+[4]: https://github.com/antonblanchard/will-it-scale/blob/master/tests/context_switch1.c
+
+
+Chao Gao (4):
+  x86/fpu: Drop @perm from guest pseudo FPU container
+  x86/fpu/xstate: Differentiate default features for host and guest FPUs
+  x86/fpu: Initialize guest FPU permissions from guest defaults
+  x86/fpu: Initialize guest fpstate and FPU pseudo container from guest
+    defaults
+
+Sean Christopherson (1):
+  x86/fpu/xstate: Always preserve non-user xfeatures/flags in
+    __state_perm
+
+Yang Weijiang (3):
+  x86/fpu/xstate: Add CET supervisor xfeature support
+  x86/fpu/xstate: Introduce "guest-only" supervisor xfeature set
+  x86/fpu/xstate: Warn if guest-only supervisor states are detected in
+    normal fpstate
+
+ arch/x86/include/asm/fpu/types.h  | 58 ++++++++++++++++++++++---------
+ arch/x86/include/asm/fpu/xstate.h |  9 +++--
+ arch/x86/kernel/fpu/core.c        | 36 ++++++++++++-------
+ arch/x86/kernel/fpu/xstate.c      | 42 +++++++++++++++-------
+ arch/x86/kernel/fpu/xstate.h      |  2 ++
+ 5 files changed, 102 insertions(+), 45 deletions(-)
+
+-- 
+2.46.1
+
 
