@@ -1,112 +1,158 @@
-Return-Path: <linux-kernel+bounces-565728-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565729-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 169B8A66E20
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 09:27:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F35EA66E24
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 09:27:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F52E16E6F0
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 08:27:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 74CD9189773F
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 08:28:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F6AB1F63F0;
-	Tue, 18 Mar 2025 08:27:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05E961F872B;
+	Tue, 18 Mar 2025 08:27:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p7MqOfFn"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nwyedMt3"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E68A01C6FF4;
-	Tue, 18 Mar 2025 08:27:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 551521C6FF4;
+	Tue, 18 Mar 2025 08:27:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742286428; cv=none; b=b5Ufnxb2TLPOWNRQplGUxCPNm9wABAdiB8b0og17E7fOWVr/QZPj3Xvp/wbTzePiZrc2XZEkyRmojerqvb5vkN3a+ngnateM+Tjt6X1h6WcBEruBKRQ/6U7NL9f7EFUGLv5XLeKrCbgDW5mjWwiSGaDgLszKRprAyMwfqXFBGfI=
+	t=1742286463; cv=none; b=Sw3klnrkzXi52nsSirrxHOhCZwqiO744nLy6E3AWDJCDyiD30Rw1tOngF3J/rJwCXRn+3l2rPq1fJPBvmeuMzHYEALPHVi7d1/VQSR9knKQUzkrkh1vc7SfzGwOcEP2z2Leox36JhE3drhTRgmJ/jHLT9YT8OEm4+vFl+ukS3sM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742286428; c=relaxed/simple;
-	bh=ROlfKfFEYmVi6Jef/7Ul9oBfKnMqC5hiSH7wMJxghcA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=owzHhspvgxnQ4lGGkPIhHKQ+9wraffOhJDfpfuJmvY2OMxgu8P6QDU3eFooTFPgCcvs2uhK2OT+KHn38qiyhylkgsmp3bMC3ix8+dN00O4zY6koiZ8yfoH85GAzsSqEhogUUlQTzZE931o8ekc5991dxM/nOy5pU9mL+J4RPO2k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p7MqOfFn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 678DBC4CEEF;
-	Tue, 18 Mar 2025 08:27:01 +0000 (UTC)
+	s=arc-20240116; t=1742286463; c=relaxed/simple;
+	bh=7lWJUOh5+tuck6WiqVNukyuVjEdMtSkNOW0wDpF/GbA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Zzp0pWA5yK83Ck3ZXCj14sbLkUtYWWDyZBCJN6W2xNqEbRprJngsWy3NxwlSGEVlCZ5BG7XzKkBdsFkRonMVLUtVLmIJWDF1h6lDw1aWCOVN6qjEzBCXDm3vRL2j1spf3morukUdU11zjJwxavsZumwqMdjNBFLF2lhyM0c5yRs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nwyedMt3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DED6AC4CEF0;
+	Tue, 18 Mar 2025 08:27:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742286427;
-	bh=ROlfKfFEYmVi6Jef/7Ul9oBfKnMqC5hiSH7wMJxghcA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=p7MqOfFn4kqcyAfz3rAusBuZrGFrnaC4v03ejlxPvyfVA+4L8LHF6K3mVzqyHKJ3x
-	 1AAAc7aFsmegnMD3TAP4hUX5VnoDtT/0w2DsAOL3EP/OfIObLIzsHj7fSu7hHhhprd
-	 BbZ5Gwuvyc5Ih6zKmuccd689aCKqLZKVyqQ6HcmLY0SITXEyoooapCX1vWcCxuRJKB
-	 bmAXNUkqkVHrmFFOV9QrQjpzn1ODTrtArXbfncBtQ7o0sIci8jfZl0LMBvjAQOeCWj
-	 t5zqDPOYb/oFIzZVl7JtjKWbn0slbiKA6mrwie+5/9/U+qmX6T8nUXjOWQTfXt9A+1
-	 dHQgZcjLjDq7w==
-From: Christian Brauner <brauner@kernel.org>
-To: ojeda@kernel.org,
-	alex.gaynor@gmail.com,
-	boqun.feng@gmail.com,
-	gary@garyguo.net,
-	bjorn3_gh@protonmail.com,
-	benno.lossin@proton.me,
-	a.hindborg@kernel.org,
-	aliceryhl@google.com,
-	tmgross@umich.edu,
-	dakr@kernel.org,
-	nathan@kernel.org,
-	nick.desaulniers+lkml@gmail.com,
-	morbo@google.com,
-	justinstitt@google.com,
-	Kunwu Chan <kunwu.chan@linux.dev>
-Cc: Christian Brauner <brauner@kernel.org>,
-	rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev,
-	Kunwu Chan <kunwu.chan@hotmail.com>,
-	Grace Deng <Grace.Deng006@Gmail.com>
-Subject: Re: [PATCH v2] rust: optimize rust symbol generation for SeqFile
-Date: Tue, 18 Mar 2025 09:26:46 +0100
-Message-ID: <20250318-delfin-bleichen-c931856104dd@brauner>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250317030418.2371265-1-kunwu.chan@linux.dev>
-References: <20250317030418.2371265-1-kunwu.chan@linux.dev>
+	s=k20201202; t=1742286462;
+	bh=7lWJUOh5+tuck6WiqVNukyuVjEdMtSkNOW0wDpF/GbA=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=nwyedMt3CIqn9K96+vAu25tgRaMDZbQgBopXOw49HDLAFOxY1/WnwgLz+noq+PtlR
+	 Ed0788Lt3agA1MFc6xa+GCCQFBHWhHlsVgvklJ6LxtyvKGXOVmwxMbdNBK5cYHOFUS
+	 +4Cd6RgnDQBbSDENP4b/U3sGUDrimp5Qnq7Q13fs0BgQkk4nTWopVfmHL/RUbPOuH3
+	 imW/U2iEWWXPQ2StrYrgEMiiZRj0Dm/mojmizlyDI17AQ35vKwdnaKs9KrcIvcOSYK
+	 akHTqj64DfuMXzIRC5XP5EjKFXZlsSmuKhg0sAXBzQoqdvAkjqcUIDMZDGqZQBcvXr
+	 itZ+gbK7SmVeQ==
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-54943bb8006so4865120e87.0;
+        Tue, 18 Mar 2025 01:27:42 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCW7CLqoUdRU7fCQC3ECxl534t4vRnXE7R/i+P2Lc8yWw8lwJS2R2I4m6JWAq9V6yZY1y8tY/LRIFOtYgQ==@vger.kernel.org, AJvYcCWWWHHXi2S8ADF5SulhGXApXw/fHVrnuPu1KEmzG0MMeEs8xwVQC0tv9oITlTdAPoPt/j2jPpepH6SgsA==@vger.kernel.org, AJvYcCWxe8HhEOtokX3VsOYB9I0Fh/CrjXlNg3NKyCA6+haos9ik9tZrHUcfANqthE8K5T8Ak8H9qnjUeW+Vs/Vu@vger.kernel.org, AJvYcCXX7APjCdgRl8LZpvKrgZypvOP0k6xflyJ41iwHTJay44sLiYW35/b8jrNyl+gOuay1f96erUz/FyUSQTM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yym059Sxo1CIJfw9/dwb+3TNzWQ/llgsCUa2S5WOndWnaqPw+wz
+	PKNmNgZi1ItxXfSWN/Lo3DC0D0UlFV3VDCNiyDDdHya+hhfCbn6Faon7M3ERNPT15ONB1acOiBi
+	7NXZLvQ2qENx5HNfwTmZovReXUnw=
+X-Google-Smtp-Source: AGHT+IFm2NNGJ0oxJGat/+Vip0VVv53VVyEJlM96ngexdcI0hc7G/jRjzyAak+F4mkF5WVC6pr9Xly+ALZj24JosKH4=
+X-Received: by 2002:a05:6512:3d05:b0:549:8d07:ff13 with SMTP id
+ 2adb3069b0e04-549c3989d78mr9351478e87.51.1742286461210; Tue, 18 Mar 2025
+ 01:27:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1259; i=brauner@kernel.org; h=from:subject:message-id; bh=ROlfKfFEYmVi6Jef/7Ul9oBfKnMqC5hiSH7wMJxghcA=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTf1PNkaLvR0XFW4n1mtv7nKo+g3dOrTeQSrm7bdkx68 c26D+7cHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhvCxSkAE/HjY/in+T1DR07bvem2/LU1 265rHnbP3s12S0/DOj/9xZWlHmtKGf4ZnGLlFYlZMGXXTXu5cJO/Tyc6pZaFbD3t76fLtdgoUoI XAA==
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+References: <20250311110616.148682-9-ardb+git@google.com> <202503131715.Fb6CfjhT-lkp@intel.com>
+ <CAMj1kXGBLV6W7mJcELmsQuDUi0u-DofyD985znmVoHoZKZTuxA@mail.gmail.com>
+ <CAMj1kXEZccymq1OhXErSK+prS3L7sygm7_5_1v+j2cypncQuzA@mail.gmail.com>
+ <CAK7LNAT_NRio2pkR1Km5Nq8KM38zYF7VCoGP0OjEP_Owg-ukpQ@mail.gmail.com> <20250318081753.8448Abd-hca@linux.ibm.com>
+In-Reply-To: <20250318081753.8448Abd-hca@linux.ibm.com>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Tue, 18 Mar 2025 09:27:29 +0100
+X-Gmail-Original-Message-ID: <CAMj1kXHoCgRu5werVnEJs+w4nkuiHA1SAyhwxqPyPF6Mk6Js3w@mail.gmail.com>
+X-Gm-Features: AQ5f1Jq6lyUmwBDAkReAZ_3PGo-n5HOZWmjSnQq5Gzgz1VOVXF1vvkqoyEHCz6E
+Message-ID: <CAMj1kXHoCgRu5werVnEJs+w4nkuiHA1SAyhwxqPyPF6Mk6Js3w@mail.gmail.com>
+Subject: Re: [PATCH v2 3/4] Kbuild: Create intermediate vmlinux build with
+ relocations preserved
+To: Heiko Carstens <hca@linux.ibm.com>
+Cc: Masahiro Yamada <masahiroy@kernel.org>, kernel test robot <lkp@intel.com>, 
+	Ard Biesheuvel <ardb+git@google.com>, linux-kernel@vger.kernel.org, llvm@lists.linux.dev, 
+	oe-kbuild-all@lists.linux.dev, linux-kbuild@vger.kernel.org, x86@kernel.org, 
+	Ingo Molnar <mingo@kernel.org>, Alexander Gordeev <agordeev@linux.ibm.com>, 
+	Vasily Gorbik <gor@linux.ibm.com>, linux-s390@vger.kernel.org, linux-next@vger.kernel.org, 
+	Stephen Rothwell <sfr@canb.auug.org.au>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 17 Mar 2025 11:04:18 +0800, Kunwu Chan wrote:
-> When build the kernel using the llvm-18.1.3-rust-1.85.0-x86_64
-> with ARCH=arm64, the following symbols are generated:
-> 
-> $nm vmlinux | grep ' _R'.*SeqFile | rustfilt
-> ffff8000805b78ac T <kernel::seq_file::SeqFile>::call_printf
-> 
-> This Rust symbol is trivial wrappers around the C functions seq_printf.
-> It doesn't make sense to go through a trivial wrapper for its functions,
-> so mark it inline.
-> 
-> [...]
+On Tue, 18 Mar 2025 at 09:18, Heiko Carstens <hca@linux.ibm.com> wrote:
+>
+> On Thu, Mar 13, 2025 at 07:29:41PM +0900, Masahiro Yamada wrote:
+> > On Thu, Mar 13, 2025 at 7:18=E2=80=AFPM Ard Biesheuvel <ardb@kernel.org=
+> wrote:
+> > > On Thu, 13 Mar 2025 at 10:34, Ard Biesheuvel <ardb@kernel.org> wrote:
+> > > > On Thu, 13 Mar 2025 at 10:21, kernel test robot <lkp@intel.com> wro=
+te:
+> > > > > kernel test robot noticed the following build errors:
+> > > > >
+> > > > > [auto build test ERROR on masahiroy-kbuild/for-next]
+> > > > > [also build test ERROR on masahiroy-kbuild/fixes tip/x86/core s39=
+0/features linus/master v6.14-rc6 next-20250312]
+> > > > > [If your patch is applied to the wrong git tree, kindly drop us a=
+ note.
+> > > > > And when submitting patch, we suggest to use '--base' as document=
+ed in
+> > > > > https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> > > > >
+> > > > > url:    https://github.com/intel-lab-lkp/linux/commits/Ard-Bieshe=
+uvel/Kbuild-link-vmlinux-sh-Make-output-file-name-configurable/20250311-190=
+926
+> > > > > base:   https://git.kernel.org/pub/scm/linux/kernel/git/masahiroy=
+/linux-kbuild.git for-next
+> > > > > patch link:    https://lore.kernel.org/r/20250311110616.148682-9-=
+ardb%2Bgit%40google.com
+> > > > > patch subject: [PATCH v2 3/4] Kbuild: Create intermediate vmlinux=
+ build with relocations preserved
+> > > > > config: x86_64-randconfig-076-20250313 (https://download.01.org/0=
+day-ci/archive/20250313/202503131715.Fb6CfjhT-lkp@intel.com/config)
+> > > > > compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+> > > > > reproduce (this is a W=3D1 build): (https://download.01.org/0day-=
+ci/archive/20250313/202503131715.Fb6CfjhT-lkp@intel.com/reproduce)
+> > > > >
+> > > > > If you fix the issue in a separate patch/commit (i.e. not just a =
+new version of
+> > > > > the same patch/commit), kindly add following tags
+> > > > > | Reported-by: kernel test robot <lkp@intel.com>
+> > > > > | Closes: https://lore.kernel.org/oe-kbuild-all/202503131715.Fb6C=
+fjhT-lkp@intel.com/
+> > > > >
+> > > > > All errors (new ones prefixed by >>):
+> > > > >
+> > > > > >> gawk: scripts/generate_builtin_ranges.awk:82: fatal: cannot op=
+en file `vmlinux.map' for reading: No such file or directory
+> > > > >
+> > > >
+> > > > Hmm it seems I missed some things in link-vmlinux.sh - I will take =
+a look.
+> > >
+> > > We'd need something like the below applied on top - shall I send a v3=
+?
+> >
+> > I will insert this before you patch set.
+> > https://lore.kernel.org/linux-kbuild/20250313102604.1491732-1-masahiroy=
+@kernel.org/T/#u
+> ...
+> > > --- a/scripts/link-vmlinux.sh
+> > > +++ b/scripts/link-vmlinux.sh
+> ...
+> > > -vmlinux_link "${VMLINUX}"
+> > > +vmlinux_link "${VMLINUX}" vmlinux.map
+> > >
+> > >  # fill in BTF IDs
+> > >  if is_enabled CONFIG_DEBUG_INFO_BTF; then
+>
+> Building linux-next breaks on s390 with DEBUG_INFO_BTF enabled because
+> of this; just where your addon patch ends:
+>
 
-Applied to the vfs-6.15.rust branch of the vfs/vfs.git tree.
-Patches in the vfs-6.15.rust branch should appear in linux-next soon.
+Apologies for the breakage - this should already have been fixed in
+the kbuild tree [0] but the fix does not appear to have landed yet.
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+[0] https://lore.kernel.org/all/202503161833.ytx1ivfu-lkp@intel.com
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs-6.15.rust
-
-[1/1] rust: optimize rust symbol generation for SeqFile
-      https://git.kernel.org/vfs/vfs/c/0b9817caac1d
+Masahiro?
 
