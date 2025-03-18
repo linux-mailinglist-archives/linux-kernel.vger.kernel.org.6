@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-567044-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567045-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26B24A68051
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 00:01:41 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DDCCA6805C
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 00:02:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E3763B7A7F
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 23:01:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CDF3119C54EC
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 23:01:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41A08206F12;
-	Tue, 18 Mar 2025 23:01:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E441F2144BB;
+	Tue, 18 Mar 2025 23:01:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="RwW0M0A0"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="UqMxC/Ws"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94E82213E6D
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 23:00:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEFFA214213
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 23:01:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742338860; cv=none; b=Ly9NiNSghcacQp1wE7CvtfvA4EsZKFwkkHeqJA/cjmEPHI5jSaixo2Y4YVCmoPrWfgNsrZRvQxxu/FEwHJxxsB8keI1f1Fu01x+qYjPMPZYDNkbtPPMo8dinkem0yHqnBsTX4I8xURVuVtXpTpeW81+IqgH/8YRLCNY4Xs8Vxgs=
+	t=1742338862; cv=none; b=tfCPX+DW5S+50nBfw+PI7DvwBT7lw8/O7yCjv7VGak82TzFvu9v2A8Ylr1COwtvqu98QLyqO+qeETIuoMd9fhCGT2BtOU5NIgM2hWnDKIvUHkbtRrObCjMBxNIcuCPEisVx4LNyCKxHYHW+8jw94Qepont2/wnqLqTFN2f/8QJs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742338860; c=relaxed/simple;
-	bh=KjTL/kc1eYTfSVbF1Y/4qPazi4UmfcO2nDxBcYIa/nU=;
+	s=arc-20240116; t=1742338862; c=relaxed/simple;
+	bh=Dlk5H4z+VhU5Q7nLlJ6DokEx98BkmTjtJY03Wn8wrdM=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=BhLCf870TKzFhjGUWPCXRSgmMsTeGvxllYj0Q5j0p4V2EoTXI6zn2bQcSJf233WMLYQQ88dkLfD39+frhayz6B4gNM5cDKKxVpMTHYlCe0Q0fAlbpiBf2i6SeG/F3wqKf1j0il11fBQXCZs9vuAAlT8ieOrAzk4T63RaZoILYfo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=RwW0M0A0; arc=none smtp.client-ip=209.85.214.170
+	 MIME-Version; b=lcs8uK8WxK8rk5JvfBEYsm4aubV3F7RezVa+TXe3zNxFZDQXUJfjLTsLUmCm4s1SDWnJEHxNifamYKzsNl5CQw6UdDnSI7O1mbCEhPQUUykwv2y9HElXzIHk0uLA+5mHE4CU2of3NHpThJ1D+X5bWX39SmnXIiaKl++nW4pWuM8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=UqMxC/Ws; arc=none smtp.client-ip=209.85.214.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2235189adaeso2532325ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 16:00:58 -0700 (PDT)
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-22548a28d0cso17411585ad.3
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 16:01:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1742338858; x=1742943658; darn=vger.kernel.org;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1742338860; x=1742943660; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=rsyWzi3KnCZDSIQ4SscmiQvCbCr+L8MktGb1FOBdF5k=;
-        b=RwW0M0A0Y0a7zz2P4pEXs1H+dRCAgMyR+j9r+uuNFu1UL+LHBA/waleHBEjrpySV9a
-         m42tz+7DF7WfEstgp3/4xZYeuFaAN+wZu9C9Y3QiZ4hONqeKN7240CxiTi0dwZm/O2lR
-         HCxhRhze9uZ3+sSV9/YXBAv5395MulGA4lOXxN0XFkxj4sETLRQ36HtvE7KHlfNteKUc
-         dGSupnZlmjdQqdQsVtqisUAHaSyb2CcZSiXUDm2SWKHdZAKxpYeqL/llkOnuEeQC0I86
-         IfGRiI6mhwZs4wDg7tPU3dr5vslzur63/SV+1tHJQ+UaHzZJYAbjOC33IdOYKKpT83/b
-         uiNQ==
+        bh=fmCr9y/zny2ubL+q+EvXUgJdImEUCfchERMe1C0cWbE=;
+        b=UqMxC/Ws/KRLfEqF7NZkXoWc9+4bWSLVKult+CEP3cZQKHDNcxgcGaMLZyAsprJv/w
+         O/Vwirgo8gX8ZZRjDWEjEhmgB95VCSMAySKO3BG8vZvJtBDQp5mL8JwNbx3jJOmZlO+a
+         FvOfoEprIdD7T7++LJVzBXQ7yh8iMWlIfzt3cIczoUXx38zovzMIHouaWMtvvmK3d4aJ
+         XuxJHLP8OgcoF9gCq4giyW4Gi7l30uK2d6RcHxqLAbj1HcyA10BCGqA/+vJuqcPRSuLy
+         J95mQP3CtDh1H7lk+tZrGuVpF3Pw3EAs1/lvGa3w2BOy51HzRzYfBayEUVnpNKtth5Pu
+         VejQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742338858; x=1742943658;
+        d=1e100.net; s=20230601; t=1742338860; x=1742943660;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=rsyWzi3KnCZDSIQ4SscmiQvCbCr+L8MktGb1FOBdF5k=;
-        b=ui+s1i54FpIFEM19yc6f8ZhUzvVrcn+ZfDe3ceO3zutZgXAcHOrD7Mm9ddBuiekfIm
-         VJZDXpZB7u5DOla8ZAKQjUZTUua8xQW32zNfe64nmIfOvOjIne81bQ+jp0T4UEbMCvTL
-         3lDDnYuQSCTE2tnhiphjRTXc/dukjl9NTnH+s9mOIWj9XwIzrexlXgRE3fPYQGN6xia4
-         9+OZ2BrB+CRu9Gaq6KwjYkSkTgkXOWAWjXP5pSemd4jYxI1vgntDw5We4+K5JZ98UWsQ
-         E25twUqU8gw5mgvnpSSZdAt516qCjsEDXGHiknbm5UAmg9db0mqCgkc4ikFgKRaR4ugC
-         ZfXg==
-X-Forwarded-Encrypted: i=1; AJvYcCUIc/ErtoJgpWqBi/WOFhb3HEBBWK+5lW85hizAeoFOx4HIrteIDgd0gPKKLmNhZQX2Nd00t1zWEKLUZcU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx3O0Kt1QgyQoLg+KAoxfEFDl8cpRADX/paEjEQlYjnfaaSgUM3
-	zWqA7+w6I10yfsKDmcgCDgZHHm67jZZCmrc0NR8w5pYZ7tJtuj8CCwqoiULP7jw=
-X-Gm-Gg: ASbGncv+Ty3TIUdzRRKmdOOmQUkfZ+xp2HSv/jdFJpURSu9kmw9Bg3alnDtZGp0lGRk
-	2l3QwKZqpmIRnH7rxDcEZzhDQ60HAJw1ULjE6unNwc/NbmW5hcRGNXf6Qr4hiTYANAkaS5IStM/
-	HBQCs6ynF0vEO7T3A51exdWAOX14tX0DarWkF1UZ53sKrbgY/SylT7z6xvLsBS/f7kMiGDFl0rJ
-	0g6Ds97rxL0kCsAhKeWYvrc1pVBGWpJAlwF17VB8zd8b+2gmxy4Hn8TzzXfG5wX+Jz5aUj1CnZg
-	l4G28PQJrYAygChCw+4WpW/PK8tNzD1TzEU4B8hKzEbURDf3ygA+yAy1e9pJacAe6TenTNnbSmq
-	iA9Rb3m0=
-X-Google-Smtp-Source: AGHT+IHUNJViFXE4mZINOgNDoCllQmqZOnocHLrF3VCSwCnt9Ce0i+DvhytxOw5IATvfS/lSW8+VYA==
-X-Received: by 2002:a17:903:2301:b0:220:cfb7:56eb with SMTP id d9443c01a7336-226491f957dmr7833935ad.26.1742338857707;
-        Tue, 18 Mar 2025 16:00:57 -0700 (PDT)
+        bh=fmCr9y/zny2ubL+q+EvXUgJdImEUCfchERMe1C0cWbE=;
+        b=g2xXvLLzt5ASTKQ+74PUC6vBjzbBVwDBL5e7z2F0ZKz6DdL0XLuk4alJtFK5onRW2j
+         2R6T+PdEnkdGVaL3v0tVnGYCkF/DPsn1oInPqzbOESoLClSNGb7ydRfoFbDpF+dZ2PtX
+         w0ucJIh7WJRLa2S8c5L5/eLnekxRN3BbImwANyQ4odxJlZbTKTrhSlInwEd8YDo2d6dd
+         06geK6Tpm6lO9d2pkJ/HnBOnAfz4hpGtw7Ju+/xS/LzC4XgiH1Vo4rcCv4pTq1Nbb1TF
+         paBvucYF3fMtUX6bk0RF9Azt9NFodL9HEJ0N1wP+3uFlrD/on686XYEhzq8v8wl3etad
+         RF5w==
+X-Forwarded-Encrypted: i=1; AJvYcCU6aPAHCQn5K8aM6YqdQs1+rlOQ6pkch4hPEbu02Yh4CZqsJeEGanrWBVReV+uVIIaNv//brHTPKLinNcU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyalyayARQQHopRZdTitVvaQek+cfoy0qMefru9ttCtneoqoD6U
+	rExFrKDkDm1D/h0Yof9Q10twi0Gb6RUvXgPLrq+Wvdissfq7l2KpkXPmAQf1tdo=
+X-Gm-Gg: ASbGncsTW3khvfvecOOo+cKj3xkb1I037ntsbOnNWYWSmlcNG+usPaajfbDBDhWUs3r
+	4XdFyoqP9Y7gsFUsyhDzfEEgx/axIljwzVFvusToggRi4SR/LR6f8gKfp2BDeubW3toW2QTYrhw
+	Sir9z1ZKLfHLZDeXlVF0hHYCukUJSN0L2IYT+I6rfD0nhiD9gZxmQUaoluHtTakYly5W37isfbo
+	edwsxivvLJzyNJEwPIw/tqQsmH/E851tvtmFubCM40pxhfeZi3j8BJp0w533w02grSJlA4LCZDn
+	IBbJt0hy93OTfkQLBE1SOkoccmd21U97kbKBVC6GSafeu9Jx1TbNXMKTL7OMmy0ki+XDEjsQ53N
+	z29ezqxwMlKUdk84fJw==
+X-Google-Smtp-Source: AGHT+IHoN+lflWvy8IsxGNjvVcOT3P03WGhfooUosnPSGHOlgyWeNcf/Uk7lY1kmD1/bWRv0OH1Aeg==
+X-Received: by 2002:a17:902:f647:b0:224:f12:3734 with SMTP id d9443c01a7336-22649a43b2amr6644945ad.30.1742338860084;
+        Tue, 18 Mar 2025 16:01:00 -0700 (PDT)
 Received: from dev-linux.. (syn-076-088-115-008.res.spectrum.com. [76.88.115.8])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-225c6ba6f14sm100739465ad.111.2025.03.18.16.00.55
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-225c6ba6f14sm100739465ad.111.2025.03.18.16.00.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Mar 2025 16:00:56 -0700 (PDT)
+        Tue, 18 Mar 2025 16:00:59 -0700 (PDT)
 From: Sukrut Bellary <sbellary@baylibre.com>
 To: Kevin Hilman <khilman@baylibre.com>,
 	Russell King <linux@armlinux.org.uk>,
@@ -94,9 +94,9 @@ Cc: Sukrut Bellary <sbellary@baylibre.com>,
 	linux-omap@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	linux-pm@vger.kernel.org
-Subject: [PATCH 2/4] pmdomain: ti: Fix STANDBY handling of PER power domain
-Date: Tue, 18 Mar 2025 16:00:40 -0700
-Message-Id: <20250318230042.3138542-3-sbellary@baylibre.com>
+Subject: [PATCH 3/4] ARM: dts: am335x: Set wakeup-source for UART0
+Date: Tue, 18 Mar 2025 16:00:41 -0700
+Message-Id: <20250318230042.3138542-4-sbellary@baylibre.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250318230042.3138542-1-sbellary@baylibre.com>
 References: <20250318230042.3138542-1-sbellary@baylibre.com>
@@ -108,49 +108,31 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Per AM335x TRM[1](section 8.1.4.3 Power mode), in case of STANDBY,
-PER domain should be ON. So, fix the PER power domain handling on standby.
+On am335x evm[1], UART0(UART1-HW) has a wakeup capability.
+Set wakeup-source, which will be used in the omap serial driver to enable
+the device wakeup capability.
 
-[1] https://www.ti.com/lit/ug/spruh73q/spruh73q.pdf
+[1] https://www.ti.com/tool/TMDXEVM3358
+[2] AM335x TRM - https://www.ti.com/lit/ug/spruh73q/spruh73q.pdf
 
 Signed-off-by: Sukrut Bellary <sbellary@baylibre.com>
 ---
- drivers/pmdomain/ti/omap_prm.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/ti/omap/am335x-evm.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/pmdomain/ti/omap_prm.c b/drivers/pmdomain/ti/omap_prm.c
-index b8ceb3c2b81c..7e36e675a8c6 100644
---- a/drivers/pmdomain/ti/omap_prm.c
-+++ b/drivers/pmdomain/ti/omap_prm.c
-@@ -18,7 +18,9 @@
- #include <linux/pm_domain.h>
- #include <linux/reset-controller.h>
- #include <linux/delay.h>
+diff --git a/arch/arm/boot/dts/ti/omap/am335x-evm.dts b/arch/arm/boot/dts/ti/omap/am335x-evm.dts
+index 61bf8bcd4c4e..20222f82f21b 100644
+--- a/arch/arm/boot/dts/ti/omap/am335x-evm.dts
++++ b/arch/arm/boot/dts/ti/omap/am335x-evm.dts
+@@ -388,7 +388,7 @@ AM33XX_PADCONF(AM335X_PIN_UART0_RTSN, PIN_INPUT_PULLDOWN, MUX_MODE2) /* uart0_rt
+ &uart0 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&uart0_pins>;
 -
-+#if IS_ENABLED(CONFIG_SUSPEND)
-+#include <linux/suspend.h>
-+#endif
- #include <linux/platform_data/ti-prm.h>
++	wakeup-source;
+ 	status = "okay";
+ };
  
- enum omap_prm_domain_mode {
-@@ -88,6 +90,7 @@ struct omap_reset_data {
- #define OMAP_PRM_HAS_RSTST	BIT(1)
- #define OMAP_PRM_HAS_NO_CLKDM	BIT(2)
- #define OMAP_PRM_RET_WHEN_IDLE	BIT(3)
-+#define OMAP_PRM_ON_WHEN_STANDBY	BIT(4)
- 
- #define OMAP_PRM_HAS_RESETS	(OMAP_PRM_HAS_RSTCTRL | OMAP_PRM_HAS_RSTST)
- 
-@@ -404,7 +407,8 @@ static const struct omap_prm_data am3_prm_data[] = {
- 		.name = "per", .base = 0x44e00c00,
- 		.pwrstctrl = 0xc, .pwrstst = 0x8, .dmap = &omap_prm_noinact,
- 		.rstctrl = 0x0, .rstmap = am3_per_rst_map,
--		.flags = OMAP_PRM_HAS_RSTCTRL, .clkdm_name = "pruss_ocp"
-+		.flags = OMAP_PRM_HAS_RSTCTRL | OMAP_PRM_ON_WHEN_STANDBY,
-+		.clkdm_name = "pruss_ocp",
- 	},
- 	{
- 		.name = "wkup", .base = 0x44e00d00,
 -- 
 2.34.1
 
