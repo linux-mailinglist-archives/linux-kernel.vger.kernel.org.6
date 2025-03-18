@@ -1,150 +1,170 @@
-Return-Path: <linux-kernel+bounces-566384-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566386-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4203AA67738
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 16:05:59 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65850A6771E
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 16:01:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 74C22188EEEF
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 15:00:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 26E1416B378
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 15:00:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D12B20E6EC;
-	Tue, 18 Mar 2025 14:59:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5765F20E71F;
+	Tue, 18 Mar 2025 15:00:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Tcl1EMrK"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	dkim=pass (2048-bit key) header.d=framepointer.org header.i=@framepointer.org header.b="Z8fAa0BZ"
+Received: from out-09.pe-a.jellyfish.systems (out-09.pe-a.jellyfish.systems [198.54.127.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38DC720E32D;
-	Tue, 18 Mar 2025 14:59:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A33DB191F92;
+	Tue, 18 Mar 2025 15:00:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.54.127.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742309983; cv=none; b=LJ1GYn5TnK2H6LX6ffrQJnpX2dCChmAbxPn7eiOjl1PbQDlEgwPAnXGmiR5Xx0R54SVBywHc0WfS6oUC9/X5Apae4+6ZTKssz/rqQsmGCfL34bG0vl77Fco0pMLYEBw62faj5RStwrbD2PnGK85znjyHt1guyytUVx+XuWHK8zE=
+	t=1742310046; cv=none; b=d5+XiU3BjuRXB67LW0pR3aL/WgMg4lOxf1BVg05UhRpFH64A9NXmHQueAvmXQl0F3voI6Kl4fYSs0MbnanrvqJf7DUkZzntQqidYf54utavBSJE/7uFUV96SS0A5UPJCldhRms09Gu3uBmPX5qB36hKg9PmnIH10GDB/NBBlsnM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742309983; c=relaxed/simple;
-	bh=XwilzGJMW8mM4pGtyarra4CPyHRb5PyQklPDZcCkCH4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jriavGUsTBBQH6EGPlxw6OuDQSl1xSP8Kdy+mCpqoC5+kezMeL7Qae9JqUD78p2JyoW7Pgj2BZFQyMHhRrufroNzTIPQ/0EvS4Kp6SGxGAdoDpk0qg0u0yojulJljTr3+veCMra7fsGhXGvzabYTKKNBJyI0qmd/C1rXLxM8I2k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Tcl1EMrK; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3913fdd003bso2881698f8f.1;
-        Tue, 18 Mar 2025 07:59:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742309980; x=1742914780; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Z3IbVGPp8x3aPQM/NAuxeO0wEhGFzpjK3YTpNlFq24U=;
-        b=Tcl1EMrK9ChWzO72ExZkUbbQzJeutybX622KJJanVqLABjsA66TWHAxRGNJmnqeH+H
-         231EYm1ATdRVcPRrAIkxOU0M8hg1GSNanBU6Ftvk+ygOh4KhmCFfw26t0KxbV3V7HRlM
-         ixRIgAh2oSzpMVgPWhYVk/YOLhNT0sBwznBHpeXF6FhwCP0tHzrtVOCn+7ZxTtett0sJ
-         /Vs3BrcYITfP/tn3s0QeeGSiScG0yqYSLJ9iDfIi/XcIuH2WX1fV3nobAVMcal3+Fz4u
-         4o5+wIn07cOJ/9u/nrM9bR7HcT2M90oGZq7Hb0+JG9OkwQL0aZsdEcALQgxavKrd+Vy+
-         AFEA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742309980; x=1742914780;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Z3IbVGPp8x3aPQM/NAuxeO0wEhGFzpjK3YTpNlFq24U=;
-        b=qkAis8xLJ9n6Gb/R4w3wea38qIR9wbcfYeJI+AgcYwgO30kiqY4s3BSqJF2Zh90uHr
-         EMR8/TP1yNv0ygL9txJuGOnSHJGO9+cmw92+O/V4xehkejbLoaNAfLtLnc2BB90zR0fA
-         D+PmysC9BHOfDyNiIapn557LhLLy1ebJ0v4nyz4drrdoVvcmy/8VKfZUb8jir4h3Mwg1
-         bArZYAmLHt0BMXdEcTPACFihESm5hK/V/jyWtCYBuqMjKMP8sb6U0GMXpZDpor6yQxy1
-         IN/W4DdwdhsrVKnOxoSWFCLeo5Fp7RimJZAvDNq/qYRS0SH6cyFmBCmhxLdiCwHgJzHM
-         h9Pg==
-X-Forwarded-Encrypted: i=1; AJvYcCV7rN6s9FF2yLoOmFwWuMqO/MMv5w8dOuiPZwPyFre/45sZp6lQF2nxOa0H0+7qS6g+Nw21J6uZo6ea1MdB@vger.kernel.org, AJvYcCWXZ+rntcwa/qKDpGd6ui4B65Mv3aOzlLkvAFPxePG8mgiaqFc454BX94lhOsLPf7I6NUM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzhOs17Z2rpticXTy06qAKo1snz5aQzlwavCMjC3nkxem+rfDRR
-	PDy51TAAah9WGt4wPuh0iNW/B2LGGniu9hVQ37mvkq0TNMIMMPPrvaLgR/4UY5ebBlOJC3+u/FU
-	MibvRxS19qQEzW9G12AIq/gNyTpM=
-X-Gm-Gg: ASbGncvNQLhEwi5LgkdemXQak1x4oz9+hkD3swVK0Y88HL5O4TG0ouQL3neYyMIOhaR
-	l+2o0tu8bvbCnvUfQWEKSLrwhr5QJ2SnWlwoS2gm8e4XiBRjg60CVyrgNe+xvg2T1fHPeTDFneS
-	DG+1blfYxP6+czY4HwqMcK52kWcEhqOmu0EKjte7Mlmg==
-X-Google-Smtp-Source: AGHT+IH4VMrSU8CH3fHTu3TWM9X4Y+Aj4OA/wwwq1QoM9Pr2Bm3kF1mnBySxJ6FOPRPrTiWS44zHpNl8ysPSefs7OYo=
-X-Received: by 2002:a05:6000:156f:b0:390:e904:63ee with SMTP id
- ffacd0b85a97d-3996bb772d8mr3319530f8f.17.1742309980223; Tue, 18 Mar 2025
- 07:59:40 -0700 (PDT)
+	s=arc-20240116; t=1742310046; c=relaxed/simple;
+	bh=27Pc74ha1MeynY0b4VpFjOnyMErp9nGgnqQ6z090Eto=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cdtopwrPSwdpMSHwIE1P0CU/HFFe/2BiNhyOaJ6LwJtky6iTK37ScfPw5fGTfcrExPj6I34pSWuZ+qeA041vKxE2fYS8wo0VHrB9qqHWgBUP6aetHDP8cvXTO3/wkJNOwjM6nngOtB7QrJTB3t545g3IRBb6XAxAfMxDb48IWEo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=framepointer.org; spf=pass smtp.mailfrom=framepointer.org; dkim=pass (2048-bit key) header.d=framepointer.org header.i=@framepointer.org header.b=Z8fAa0BZ; arc=none smtp.client-ip=198.54.127.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=framepointer.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=framepointer.org
+Received: from prod-lbout-phx.jellyfish.systems (new-01-3.privateemail.com [66.29.159.56])
+	by pe-a.jellyfish.systems (Postfix) with ESMTPA id 4ZHFQ86vvPz9sWw;
+	Tue, 18 Mar 2025 15:00:32 +0000 (UTC)
+Received: from MTA-08.privateemail.com (unknown [10.50.14.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits))
+	(No client certificate requested)
+	by NEW-01-3.privateemail.com (Postfix) with ESMTPS id 4ZHFQ85ycJz2Sd0W;
+	Tue, 18 Mar 2025 11:00:32 -0400 (EDT)
+Received: from mta-08.privateemail.com (localhost [127.0.0.1])
+	by mta-08.privateemail.com (Postfix) with ESMTP id 4ZHFQ849Ncz3hhVb;
+	Tue, 18 Mar 2025 11:00:32 -0400 (EDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=framepointer.org;
+	s=default; t=1742310032;
+	bh=27Pc74ha1MeynY0b4VpFjOnyMErp9nGgnqQ6z090Eto=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Z8fAa0BZYPdG5FK5LYPp00BmnUwoEOFdxyC1NnulMuGjyHEhz5XlJ5F2tPFm+G8fV
+	 5FN1GzBPy8X61zdkf+BkE9BtCeimzn0Gti2dEdKGR75d1w2sMm6EqnmLzyZwKkwngm
+	 sulaLfXP6vYKSmlUrgyDz53ZMs+Ri2OmKQDC5qk619m6P1/xGn3R0SuZvA9koCEp+P
+	 2XSELC/qEKe/t7azSFkJYHQal3l7OER1wHZfp8c596t2TzmLM3eeix4sa8DiK6sVGb
+	 z4EzZAsn5Ph96L0hNIaTXkkJw1ExDC4ZllgDH69BB7mzvAOljkq4F2qOdAGXz/KvK6
+	 sm5rBABRh8esg==
+Received: from 65YTFL3.secure.tethers.com (unknown [152.44.190.141])
+	by mta-08.privateemail.com (Postfix) with ESMTPA;
+	Tue, 18 Mar 2025 11:00:17 -0400 (EDT)
+Date: Tue, 18 Mar 2025 11:00:18 -0400
+From: Sam Winchenbach <sam.winchenbach@framepointer.org>
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, linux-kernel@vger.kernel.org,
+	lars@metafoo.de, Michael.Hennerich@analog.com,
+	antoniu.miclaus@analog.com, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, bpellegrino@arka.org,
+	Sam Winchenbach <swinchenbach@arka.org>
+Subject: Re: [PATCH v7 1/6] dt-bindings: iio: filter: Add lpf/hpf freq margins
+Message-ID: <Z9mKghgKk9vuHUyF@65YTFL3.secure.tethers.com>
+References: <20250316135008.155304-1-sam.winchenbach@framepointer.org>
+ <20250316-sexy-tested-cheetah-c4a2f8@krzk-bin>
+ <Z9g6tPqhAoTckFBh@65YTFL3.secure.tethers.com>
+ <20250317185535.7d00444d@jic23-huawei>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250318062557.3001333-1-chen.dylane@linux.dev> <Z9k8216IwpMZnHaA@krava>
-In-Reply-To: <Z9k8216IwpMZnHaA@krava>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Tue, 18 Mar 2025 07:59:28 -0700
-X-Gm-Features: AQ5f1JpuNmApueA2NblJk1D2carJ_ymdqh37wITwJgxYi2WYSF0p3vX9smBPYGw
-Message-ID: <CAADnVQLULbENAnJqOVn4m_xmS+T7FvYSFf70mxVSdusgL85m8Q@mail.gmail.com>
-Subject: Re: [PATCH bpf-next] bpf: Define bpf_token_show_fdinfo with CONFIG_PROC_FS
-To: Jiri Olsa <olsajiri@gmail.com>
-Cc: Tao Chen <chen.dylane@linux.dev>, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Eddy Z <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
-	Christian Brauner <brauner@kernel.org>, bpf <bpf@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250317185535.7d00444d@jic23-huawei>
+X-Virus-Scanned: ClamAV using ClamSMTP
 
-On Tue, Mar 18, 2025 at 2:29=E2=80=AFAM Jiri Olsa <olsajiri@gmail.com> wrot=
-e:
->
-> On Tue, Mar 18, 2025 at 02:25:57PM +0800, Tao Chen wrote:
-> > Protect bpf_token_show_fdinfo with CONFIG_PROC_FS check, follow the
-> > pattern used with other *_show_fdinfo functions.
-> >
-> > Fixes: 35f96de04127 ("bpf: Introduce BPF token object")
-> > Signed-off-by: Tao Chen <chen.dylane@linux.dev>
-> > ---
-> >  kernel/bpf/token.c | 4 ++++
-> >  1 file changed, 4 insertions(+)
-> >
-> > diff --git a/kernel/bpf/token.c b/kernel/bpf/token.c
-> > index 26057aa13..104ca37e9 100644
-> > --- a/kernel/bpf/token.c
-> > +++ b/kernel/bpf/token.c
-> > @@ -65,6 +65,7 @@ static int bpf_token_release(struct inode *inode, str=
-uct file *filp)
-> >       return 0;
-> >  }
-> >
-> > +#ifdef CONFIG_PROC_FS
-> >  static void bpf_token_show_fdinfo(struct seq_file *m, struct file *fil=
-p)
-> >  {
-> >       struct bpf_token *token =3D filp->private_data;
-> > @@ -98,6 +99,7 @@ static void bpf_token_show_fdinfo(struct seq_file *m,=
- struct file *filp)
-> >       else
-> >               seq_printf(m, "allowed_attachs:\t0x%llx\n", token->allowe=
-d_attachs);
-> >  }
-> > +#endif
-> >
-> >  #define BPF_TOKEN_INODE_NAME "bpf-token"
-> >
-> > @@ -105,7 +107,9 @@ static const struct inode_operations bpf_token_iops=
- =3D { };
-> >
-> >  static const struct file_operations bpf_token_fops =3D {
-> >       .release        =3D bpf_token_release,
-> > +#ifdef CONFIG_PROC_FS
-> >       .show_fdinfo    =3D bpf_token_show_fdinfo,
-> > +#endif
->
-> there's many more of such cases.. I'm not sure if it makes sense to fix t=
-hat,
-> because it does not break the build and only save space for !CONFIG_PROC_=
-FS
-> kernels
+On Mon, Mar 17, 2025 at 06:55:35PM +0000, Jonathan Cameron wrote:
+> On Mon, 17 Mar 2025 11:07:32 -0400
+> Sam Winchenbach <sam.winchenbach@framepointer.org> wrote:
+> 
+> > On Sun, Mar 16, 2025 at 05:38:42PM +0100, Krzysztof Kozlowski wrote:
+> > > On Sun, Mar 16, 2025 at 09:50:03AM -0400, Sam Winchenbach wrote:  
+> > > > From: Sam Winchenbach <swinchenbach@arka.org>
+> > > > 
+> > > > Adds two properties to add a margin when automatically finding the
+> > > > corner frequencies.
+> > > > 
+> > > > Signed-off-by: Sam Winchenbach <swinchenbach@arka.org>
+> > > > ---
+> > > >  .../bindings/iio/filter/adi,admv8818.yaml     | 20 +++++++++++++++++++
+> > > >  1 file changed, 20 insertions(+)  
+> > > 
+> > > I don't understand. You got my tag. No changelog here, no cover letter,
+> > > nothing explains what happened here and why the tag is being removed.
+> > >   
+> > 
+> > Apologies,
+> > 
+> > I am still quite new to this workflow, and it deviates significantly
+> > from my day-to-day work. I mentioned in the previous patch set that I
+> > would like to update my email address and change:
+> > "driver core: -> iio: core:"
+> > I wasn't aware more than that was needed. Sorry for any confusion
+> > this may have caused.
+> > 
+> > In the future what is the preferred way to handle a
+> > situation like this? I wasn't aware of the cover letter feature but
+> > that looks like a promising option.
+> 
+> Either add stuff below the --- above as that doesn't end up in the
+> eventual git log, or --cover-letter on your git-format-patch and
+> put useful things like that in there.
+> 
+> > 
+> > It looks like another option is to add commentary to each patch.
+> > 
+> > I am less certain about your tag being removed - I don't fully
+> > understand that. Is there a way to preserve that if changes are made
+> > after you sign-off?
+> 
+> Once a tag is given it is up to the patch author to add it to the
+> patches for future versions.  That should only be dropped if the
+> author thinks there are significant enough changes to warrant a fresh
+> review.  If you do drop a tag like that, then the change log
+> under --- on the particular patch should clearly state why.
+> > 
 
-+1.
-let's keep the code as-is.
+Thanks for the guidance - I see the part I missed:
 
-pw-bot: cr
+
+"Both Tested-by and Reviewed-by tags, once received on mailing list
+from tester or reviewer, should be added by author to the applicable
+patches when sending next versions. However if the patch has changed
+substantially in following version, these tags might not be
+applicable anymore and thus should be removed. Usually removal of
+someone’s Tested-by or Reviewed-by tags should be mentioned in the
+patch changelog (after the ‘---’ separator)."
+
+In my situation I made a mistake by not including his "Reviewed-by"
+in the changes I pushed up. How does this work if no further changes
+are required? Does it call onto the maintainer to apply the tag when
+merging in the change set?
+
+Is there anything I should do at this point to correct my error?
+
+Thanks,
+-Sam
+
+> > Sorry again about the confusion this caused,
+> No problem, takes a while for everyone to get used to a different
+> process. There are extensive docs, but it is still easy to miss
+> things!
+> 
+> Jonathan
+> 
+> > -Sam
+> > 
+> > > Best regards,
+> > > Krzysztof
+> > >   
+> 
 
