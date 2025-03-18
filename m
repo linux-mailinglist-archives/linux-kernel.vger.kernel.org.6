@@ -1,158 +1,163 @@
-Return-Path: <linux-kernel+bounces-566280-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566282-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6387EA675CE
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 15:02:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 834FFA675CF
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 15:02:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 853AC420459
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 14:01:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2B063A9B11
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 14:01:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7464E20DD7D;
-	Tue, 18 Mar 2025 14:01:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A1E920E03C;
+	Tue, 18 Mar 2025 14:01:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ScYDcNdZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="v9hqxq63";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="0+KX8ytf";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="v9hqxq63";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="0+KX8ytf"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9D8020CCF2;
-	Tue, 18 Mar 2025 14:01:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0CDB20DD71
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 14:01:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742306492; cv=none; b=HAGrZDeoer3TkyVo/zPl0ReYo3sTseeLyxrN1jgVyQUqvXJLqGszT+EtccF5v36b7D5SGDTqLT/wydOnDLxlHfEGyy+tEZKMndAwvFayhUeZpw6x4LdjBmvGiOGv3/c9o+IcMWltK/9DkginHLW4DvjJK2IXatFXpAKI01QteAA=
+	t=1742306496; cv=none; b=WBVsnQWriDvxQwEQXixfkneIzT1KTwonyck0n5drdufRcHvwpOS85FtZQfM/HrJS/7bAfqHme4xPiJbWK+jYq44vZTz4RLaDQBbTp0QsI9KimyQQo/85z5laFrlmKUvykb3Dt514gj1p7tRofcQ8hI+CjKrwRMAP3EQSs95U/6E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742306492; c=relaxed/simple;
-	bh=NOx4Rsl32vZVRPya08wPUcqbZZLByyXHlZ0bv3+F8/o=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=EKqaowpEDRxlrhmL0FtZEk5kqWCXo4hqmf7GL5X5Ozdq62pKYdGIl5tuhwsUgRRMgzJ0BrmMujNVYKDYVEgmj5x1LkNOs2YHgRcAzA9hXb1s9W2XbJ6ahLXJ8g375LFBvHIEC4f65PCIfp2WozFMPe6DYPE3Al+Kg/pSKZGMTHY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ScYDcNdZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C2A7C4CEDD;
-	Tue, 18 Mar 2025 14:01:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742306491;
-	bh=NOx4Rsl32vZVRPya08wPUcqbZZLByyXHlZ0bv3+F8/o=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=ScYDcNdZzwtK7Gc8sLGTC/LgL5OL/fVAXzw1VYvwOOgERdXP3Dt3cl2sJiTLtoZY3
-	 mfE5u2lnmkKAOiVj1jocl+Cm2HkrgxPzNjhIK+bD3x1L9DckChfUkV9vTXpoD6Nz/Q
-	 dh4qHCgl7Dj059BEvCezDpSMqCT2APZGO0CjDAwSlhpGAeP7GPz/gPqWFnI88L4k1i
-	 7v3p8HBkH+YlhDMNtxCCAtXG7n2WvKUXi/Uwbpeoh6xjvXxBd6ciCOvuachtsbRz77
-	 9SFWmrjQpmczT9ar7MA6v5ioo0nEjVGOQ12NgIEG4A+IWJNHg+wTgypusrf2rpZsDd
-	 4FgJq0X85oQ1A==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: Abdiel Janulgue <abdiel.janulgue@gmail.com>
-Cc: rust-for-linux@vger.kernel.org,  daniel.almeida@collabora.com,
-  dakr@kernel.org,  robin.murphy@arm.com,  aliceryhl@google.com,  Miguel
- Ojeda <ojeda@kernel.org>,  Alex Gaynor <alex.gaynor@gmail.com>,  Boqun
- Feng <boqun.feng@gmail.com>,  Gary Guo <gary@garyguo.net>,  =?utf-8?Q?Bj?=
- =?utf-8?Q?=C3=B6rn?= Roy
- Baron <bjorn3_gh@protonmail.com>,  Benno Lossin <benno.lossin@proton.me>,
-  Trevor Gross <tmgross@umich.edu>,  Valentin Obst
- <kernel@valentinobst.de>,  linux-kernel@vger.kernel.org (open list),
-  Christoph Hellwig <hch@lst.de>,  Marek Szyprowski
- <m.szyprowski@samsung.com>,  airlied@redhat.com,  iommu@lists.linux.dev
- (open list:DMA MAPPING HELPERS)
-Subject: Re: [PATCH v14 09/11] rust: dma: use `dma::Device` in
- `CoherentAllocation`
-In-Reply-To: <20250311174930.2348813-10-abdiel.janulgue@gmail.com> (Abdiel
-	Janulgue's message of "Tue, 11 Mar 2025 19:48:05 +0200")
-References: <20250311174930.2348813-1-abdiel.janulgue@gmail.com>
-	<20250311174930.2348813-10-abdiel.janulgue@gmail.com>
-User-Agent: mu4e 1.12.7; emacs 29.4
-Date: Tue, 18 Mar 2025 15:01:20 +0100
-Message-ID: <87y0x2igjz.fsf@kernel.org>
+	s=arc-20240116; t=1742306496; c=relaxed/simple;
+	bh=BDaWRU99uiV2M6mUh3+uoHB8WVlTs2nkHZItIDLjaHw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hZgpSLWex9d63NnAq0oQXjksk1Mnq26ZxJdvgKT/ZMtC7FJQ2n8WpDTXocvBHfQ21B0OzcCf6OYkz5qUMV2ZCMw2qnLvbw29tSti66BwxSw9p5Mk4DQU3BFT97QpFG4NMR2Qb1sf94KU9Ds9QEsugGgi0Jlm+sJyu0y+ZtNmSos=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=v9hqxq63; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=0+KX8ytf; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=v9hqxq63; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=0+KX8ytf; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 0CB011FD16;
+	Tue, 18 Mar 2025 14:01:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1742306492; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GWr7o71sQMwFqcKXA8+RJoouKBa8brCDPFdGjvFtJOs=;
+	b=v9hqxq63DCxLTradvk/kwqurZlTJk+077UFHE/GHhtN9JKCtoz+AUMe74KaF/jBDD/9eZW
+	I1fI7soJi0CR6JaZFIUtUspE/KS6qBu1rh6IHI3tRolj6fZp3CFC7vHBLSeteOq0Gjfk7c
+	eU/QqaLdf7CUeehpYjNJ8oeD67J9l+g=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1742306492;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GWr7o71sQMwFqcKXA8+RJoouKBa8brCDPFdGjvFtJOs=;
+	b=0+KX8ytfF0yZw007bk9QxkJYretMKbViZ8s9sjUpLRUKogNStSL/X0YysMoXNMrlY4N9QE
+	Y/DK4qT4Ggd03BAQ==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=v9hqxq63;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=0+KX8ytf
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1742306492; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GWr7o71sQMwFqcKXA8+RJoouKBa8brCDPFdGjvFtJOs=;
+	b=v9hqxq63DCxLTradvk/kwqurZlTJk+077UFHE/GHhtN9JKCtoz+AUMe74KaF/jBDD/9eZW
+	I1fI7soJi0CR6JaZFIUtUspE/KS6qBu1rh6IHI3tRolj6fZp3CFC7vHBLSeteOq0Gjfk7c
+	eU/QqaLdf7CUeehpYjNJ8oeD67J9l+g=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1742306492;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GWr7o71sQMwFqcKXA8+RJoouKBa8brCDPFdGjvFtJOs=;
+	b=0+KX8ytfF0yZw007bk9QxkJYretMKbViZ8s9sjUpLRUKogNStSL/X0YysMoXNMrlY4N9QE
+	Y/DK4qT4Ggd03BAQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E660F13A82;
+	Tue, 18 Mar 2025 14:01:31 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id DPhSN7t82WdlAgAAD6G6ig
+	(envelope-from <dwagner@suse.de>); Tue, 18 Mar 2025 14:01:31 +0000
+Date: Tue, 18 Mar 2025 15:01:31 +0100
+From: Daniel Wagner <dwagner@suse.de>
+To: Hannes Reinecke <hare@suse.de>
+Cc: Daniel Wagner <wagi@kernel.org>, 
+	James Smart <james.smart@broadcom.com>, Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>, 
+	Chaitanya Kulkarni <kch@nvidia.com>, Keith Busch <kbusch@kernel.org>, linux-nvme@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 18/18] nvme-fc: do not reference lsrsp after failure
+Message-ID: <9ad5635d-48b2-45d5-9ba2-9e1fead2ea14@flourine.local>
+References: <20250318-nvmet-fcloop-v3-0-05fec0fc02f6@kernel.org>
+ <20250318-nvmet-fcloop-v3-18-05fec0fc02f6@kernel.org>
+ <e4d7f84a-dd29-4b7a-a831-a8555125bf43@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e4d7f84a-dd29-4b7a-a831-a8555125bf43@suse.de>
+X-Rspamd-Queue-Id: 0CB011FD16
+X-Spam-Score: -4.51
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	MISSING_XM_UA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,flourine.local:mid];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-Abdiel Janulgue <abdiel.janulgue@gmail.com> writes:
+On Tue, Mar 18, 2025 at 12:33:22PM +0100, Hannes Reinecke wrote:
+>         ret = lport->ops->xmt_ls_rsp(&lport->localport, &rport->remoteport,
+>                                      lsop->lsrsp);
+>         if (ret) {
+>                 dev_warn(lport->dev,
+>                         "LLDD rejected LS RSP xmt: LS %d status %d\n",
+>                         w0->ls_cmd, ret);
+>                 nvme_fc_xmt_ls_rsp_done(lsop->lsrsp);
+>                 return;
+>         }
+> 
+> so ->xmt_ls_rsp() would have invalidated one of the arguments.
+> Plus 'nvme_fc_xmt_ls_rsp_done()' is now a wrapper around
+> 'nvme_fc_xmt_ls_rsp_free()'.
+> So why not go the full length and kill nvme_fc_xmt_ls_rsp_done()
+> completely?
 
-> From: Danilo Krummrich <dakr@kernel.org>
->
-> Require a `&dyn dma::Device` in `CoherentAllocation`, such that DMA
-> memory can only be allocated with devices on potentially DMA capable
-> busses.
->
-> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
-> Signed-off-by: Abdiel Janulgue <abdiel.janulgue@gmail.com>
-> ---
->  rust/kernel/dma.rs       | 16 ++++++++--------
->  samples/rust/rust_dma.rs |  2 +-
->  2 files changed, 9 insertions(+), 9 deletions(-)
->
-> diff --git a/rust/kernel/dma.rs b/rust/kernel/dma.rs
-> index ac3ec0042327..d0c6569cfc70 100644
-> --- a/rust/kernel/dma.rs
-> +++ b/rust/kernel/dma.rs
-> @@ -57,10 +57,9 @@ fn dma_set_mask(&mut self, mask: u64) -> Result {
->  /// # Examples
->  ///
->  /// ```
-> -/// use kernel::device::Device;
-> -/// use kernel::dma::{attrs::*, CoherentAllocation};
-> +/// use kernel::dma::{attrs::*, Device, CoherentAllocation};
->  ///
-> -/// # fn test(dev: &Device) -> Result {
-> +/// # fn test(dev: &dyn Device) -> Result {
->  /// let attribs = DMA_ATTR_FORCE_CONTIGUOUS | DMA_ATTR_NO_WARN;
->  /// let c: CoherentAllocation<u64> =
->  ///     CoherentAllocation::alloc_attrs(dev, 4, GFP_KERNEL, attribs)?;
-> @@ -178,16 +177,15 @@ impl<T: AsBytes + FromBytes> CoherentAllocation<T> {
->      /// # Examples
->      ///
->      /// ```
-> -    /// use kernel::device::Device;
-> -    /// use kernel::dma::{attrs::*, CoherentAllocation};
-> +    /// use kernel::dma::{attrs::*, Device, CoherentAllocation};
->      ///
-> -    /// # fn test(dev: &Device) -> Result {
-> +    /// # fn test(dev: &dyn Device) -> Result {
->      /// let c: CoherentAllocation<u64> =
->      ///     CoherentAllocation::alloc_attrs(dev, 4, GFP_KERNEL, DMA_ATTR_NO_WARN)?;
->      /// # Ok::<(), Error>(()) }
->      /// ```
->      pub fn alloc_attrs(
-> -        dev: &device::Device,
-> +        dev: &dyn Device,
->          count: usize,
->          gfp_flags: kernel::alloc::Flags,
->          dma_attrs: Attrs,
-> @@ -197,6 +195,8 @@ pub fn alloc_attrs(
->              "It doesn't make sense for the allocated type to be a ZST"
->          );
->  
-> +        let dev = dev.as_ref();
-> +
->          let size = count
->              .checked_mul(core::mem::size_of::<T>())
->              .ok_or(EOVERFLOW)?;
-> @@ -229,7 +229,7 @@ pub fn alloc_attrs(
->      /// Performs the same functionality as [`CoherentAllocation::alloc_attrs`], except the
->      /// `dma_attrs` is 0 by default.
->      pub fn alloc_coherent(
-> -        dev: &device::Device,
-> +        dev: &dyn Device,
+nvme_fc_xmt_ls_rsp_done will be called when the LS has been processed.
+We still need it.
 
-Is it possible (and would it make sense?) to make these methods, or even
-`CoherentAllocation` generic over the `D: Device` to get rid of the
-dynamic dispatch:
+> Hmm?
 
-    pub fn alloc_coherent(
-        dev: &impl Device,
-        count: usize,
-        gfp_flags: kernel::alloc::Flags,
-    ) -> Result<CoherentAllocation<T>> {
-
-
-Best regards,
-Andreas Hindborg
-
-
-
-
+It is very confusing with all these callbacks and the name scheme.
 
