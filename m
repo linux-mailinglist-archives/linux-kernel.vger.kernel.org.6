@@ -1,80 +1,94 @@
-Return-Path: <linux-kernel+bounces-565776-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565777-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0C8AA66EF1
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 09:50:16 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB2EEA66F02
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 09:50:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CDCB93AC1F4
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 08:50:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A6801780A4
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 08:50:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EE34204F7E;
-	Tue, 18 Mar 2025 08:50:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C88C5204F65;
+	Tue, 18 Mar 2025 08:50:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S+6YJkp6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=seltendoof.de header.i=@seltendoof.de header.b="DUEnB2zL"
+Received: from server02.seltendoof.de (server02.seltendoof.de [168.119.48.163])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A54691581EE;
-	Tue, 18 Mar 2025 08:50:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FDE61F8753;
+	Tue, 18 Mar 2025 08:50:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.48.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742287806; cv=none; b=QHfcMxCbA6pLgSdTqk2QtiNYFM4qIH0v8zSPa0NfNgJiDqZ02nRU3/iQORpYGa0WdzSz0gwKE9w5ZYstEGllNLA2ouTJHEemDsUDIYWeyJFAM2HLcK+fBN+Ve/94EX+42kKsxQe26bdunT8S2P4MEKBadSdWU4kZCndVY309MIE=
+	t=1742287818; cv=none; b=WXYNTb9g1XLnBMS0yYlcGT/7dF3+YoRGIBdgsLphNScqFWzN5aBckZj4j/6Z7FoiO2IEjBBtBkS4bMesv1xCMafYJfBSbVmkrsZHSw9yqptkFL6SwWIuKk9y7xjc5T9rZWXXHAN1qnqXqf+KpH5s8IubiIDeq4NuZuU4o2mU5tU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742287806; c=relaxed/simple;
-	bh=muVfotdBVkgMqpFob4WAELBMk0aNg3mJPn4XqjMIXXg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pCNlfzJie/J+GMCQIDKfnrreMgUFm7MnPM4IyDK4xRo5lTPelNYN4R4Fr9wKKyJmv/uJ4TtOsXIsGX7FrU1cY13u3EVlQObIGTBLjAhivTxO8RF2lLXlHbkni4QXQIW76kmBygnNEHlc4htbz/VOHiJHJ55vQKkx8B39MsKz9TY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S+6YJkp6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 449CDC4CEEF;
-	Tue, 18 Mar 2025 08:50:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742287805;
-	bh=muVfotdBVkgMqpFob4WAELBMk0aNg3mJPn4XqjMIXXg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=S+6YJkp63UNGN2FX4jJzXrHc/yzzH+EK/cS7L+SZrLmk5BkobWYvSKOnC/WTSrSyS
-	 DLinzHSFM/0dVmRiH886cbsADDTvVKQWzjb+kYOe5FSDaRXtOxAYcWVwNRfm63Gr9m
-	 fucrnOpd2AaSy4kHXmAzqf/+v/ZRg8Skk17nmyjgGNrLYwQ/t0vo1g0+LWH8lU4HkK
-	 gqffAH4o0B+3DO6R92ylua25PM/eLloy4/d8MMklEAsYqRF4UT3h2cN842q1YfshPB
-	 LBsjC7HDZyfZRI8I5vYJ+rGG0yVPOqFnEQYv3xklQtLUkYlrK6Fva2G4YYM+U/SBmw
-	 cv++zmtoKs0PA==
-Date: Tue, 18 Mar 2025 09:50:01 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Tiffany Lin <tiffany.lin@mediatek.com>, 
-	Andrew-CT Chen <andrew-ct.chen@mediatek.com>, Yunfei Dong <yunfei.dong@mediatek.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, linux-media@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH] media: dt-bindings: mediatek,vcodec-encoder: Drop
- assigned-clock properties
-Message-ID: <20250318-rebel-voracious-tuna-3a9f53@krzk-bin>
-References: <20250317214621.794674-1-robh@kernel.org>
+	s=arc-20240116; t=1742287818; c=relaxed/simple;
+	bh=ZDC8GEiQ6rmdIGlvnIoFQNX9pEXFq2GhsMSmsZGomgw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=tQ6gsd7/ngAZ+9Ih1BnhBwRl9V8LlKfQ5+ftKP3pIL7LtBaCrldWnPGL7GbtIczoqnI+juytj1IXp0KoPDZd1AK24FdXnmCIJulzfpgdKPrvZYW2/re7HKGUevJV1CpnJa4a0M7HIlUWIuhUlDdLOzCn1NZ3WZP40J9ooUw0TSc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=seltendoof.de; spf=pass smtp.mailfrom=seltendoof.de; dkim=pass (2048-bit key) header.d=seltendoof.de header.i=@seltendoof.de header.b=DUEnB2zL; arc=none smtp.client-ip=168.119.48.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=seltendoof.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=seltendoof.de
+From: =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgoettsche@seltendoof.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=seltendoof.de;
+	s=2023072701; t=1742287810;
+	h=from:from:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
+	bh=sHPhayGKOKXkiuvLCTBF/hyQNwoYElajGndyiv3Mn24=;
+	b=DUEnB2zLrjKim1TILca6oGnvOwkMpP0Vs60tuPHvYJY98czhZjHq51A26hyzTuXKPq1+KB
+	CE6JTxtItJNQhcAQDU2u69Iq7WwmNgYDX4dpwMVgQ+gRbPfQX2PDzQ2BfFlFMa2XASU25h
+	mQ85HwyhEeHc+b3wxeaeywcyCma/8hmHJ/YTX6A3i27XP+mX22IxnN5Y8/XfpLnEGog+Fq
+	KasJIFlKy13nD61ju0Q0BVeiOngBzWFXkAh74yWRMfDK0kfiXD2wA8QuxnmWUTGUBi8k59
+	YtfLoJfBRSnwPIHkmOFXPVjLhFpVa/cE+98uI9ehBW+ecHIDRqcQd2jYojEoYw==
+To: 
+Cc: =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgzones@googlemail.com>,
+	Paul Moore <paul@paul-moore.com>,
+	Stephen Smalley <stephen.smalley.work@gmail.com>,
+	Ondrej Mosnacek <omosnace@redhat.com>,
+	selinux@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [RFC PATCH 7/7] selinux: drop copy-paste comment
+Date: Tue, 18 Mar 2025 09:50:05 +0100
+Message-ID: <20250318085007.26887-1-cgoettsche@seltendoof.de>
+Reply-To: cgzones@googlemail.com
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250317214621.794674-1-robh@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon, Mar 17, 2025 at 04:46:20PM -0500, Rob Herring (Arm) wrote:
-> The assigned-clock properties are always allowed on nodes with
-> 'clocks' and generally not required. Additionally the mt8183 doesn't
-> define them, so they must not be required in that case.
-> 
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-> ---
+From: Christian Göttsche <cgzones@googlemail.com>
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Port labeling is based on port number and protocol (TCP/UDP/...) but not
+based on network family (IPv4/IPv6).
 
-Best regards,
-Krzysztof
+Signed-off-by: Christian Göttsche <cgzones@googlemail.com>
+---
+ security/selinux/netport.c | 6 ------
+ 1 file changed, 6 deletions(-)
+
+diff --git a/security/selinux/netport.c b/security/selinux/netport.c
+index 2a315dcc4344..cfa55d703ce1 100644
+--- a/security/selinux/netport.c
++++ b/security/selinux/netport.c
+@@ -47,12 +47,6 @@ struct sel_netport {
+ 	struct rcu_head rcu;
+ };
+ 
+-/* NOTE: we are using a combined hash table for both IPv4 and IPv6, the reason
+- * for this is that I suspect most users will not make heavy use of both
+- * address families at the same time so one table will usually end up wasted,
+- * if this becomes a problem we can always add a hash table for each address
+- * family later */
+-
+ static DEFINE_SPINLOCK(sel_netport_lock);
+ static struct sel_netport_bkt sel_netport_hash[SEL_NETPORT_HASH_SIZE];
+ 
+-- 
+2.49.0
 
 
