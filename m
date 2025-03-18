@@ -1,143 +1,163 @@
-Return-Path: <linux-kernel+bounces-566960-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566961-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E66ABA67F08
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 22:44:52 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1C33A67F05
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 22:44:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 052A53B7476
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 21:43:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7454D189A960
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 21:44:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22084202C5C;
-	Tue, 18 Mar 2025 21:43:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 983992063D3;
+	Tue, 18 Mar 2025 21:44:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="zBrOpuDq"
-Received: from submarine.notk.org (submarine.notk.org [62.210.214.84])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 598C71D61A4
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 21:43:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NyOZVXNv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00CFC205E36;
+	Tue, 18 Mar 2025 21:44:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742334195; cv=none; b=Xv6tDWhYz/DTO7ZU5XOe7NC1YE3NsNwEbfbWN1zwjnJg7LJSpXYPKtd9fwNjg9U7fZvvQdwl3dMwXAHA3XNMtvv0FBBAtHj6zr4l4BAwquNhgNO3alZjRdmGqTnzocI4tu+B/0fLUTOyJtgi4Su5PR9vydFxddrdcIO/L7mznUM=
+	t=1742334252; cv=none; b=o2UxVf90PQO1+9Mti5Rn0UeMMKH/zdbiCghS75fv1CATbPiqS2MOMz2eSxpKtVodYl/9oLU3UkQL7Bg/5nwsFO6828lGnsntFWzavDzci77fXQITCCE4db4TVLO2DPa5j6xylMzHEAbKHxCBhDeceiJ1SuvviUyV8/tSq/weZ2U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742334195; c=relaxed/simple;
-	bh=4dED7hVpq6gqnyJY9EEsncwP5zvCmbRoN0mpyCdZkYo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BCO5yvlQvmzuLjY16YofY51lygZPJ5alO1b7Jvq573mG7CuMb/GWz70pV3KnNTfA0liywRzg7m0GeZujN4yjcPJYequamlFmsk8B4B1bSS/di1FU6qYLaK/3qI6kIdpuPIX3Gi6OJtj7vWVaQAKroa16gqZBNdS9olYTlRtl5dY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=zBrOpuDq; arc=none smtp.client-ip=62.210.214.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
-Received: from gaia.codewreck.org (localhost [127.0.0.1])
-	by submarine.notk.org (Postfix) with ESMTPS id 1E04714C2D3;
-	Tue, 18 Mar 2025 22:43:09 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
-	s=2; t=1742334191;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LTUYU9liPUrdPI70A5WeQvjUdz06iAyhiJ219fE6h24=;
-	b=zBrOpuDqTavkvjhQyTFaBgB+74ujwo6psdMCJb5JSuuNFEgDJ+6JsUjuyBKu4OlBihbiSH
-	6ZNtNJiMeewh00IbwXcrXvssRhoffbf9qO/nJLdHwzYkE32/wApnLwp711zyRlZ09ERtCP
-	Yk7x/N+bngTjRG+XB5rcFCnpnJt4e3byiNEtlyaqvcitenl229PfTYCI2iFvs0my49AcRe
-	KfwFycZvQt9pBRlCVnCQ2Ix3SNLMkqi3U1ZxdZIOBsK7JZE2i+jo1sVF2zp71HbcOpBHsQ
-	Iq8tcBYtVHyVry25smDZHEUj14Ijm6l1MEvcs06Tkucljak8VVNOVq8dViu/nQ==
-Received: from localhost (gaia.codewreck.org [local])
-	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id 6693bcdb;
-	Tue, 18 Mar 2025 21:43:08 +0000 (UTC)
-Date: Wed, 19 Mar 2025 06:42:53 +0900
-From: Dominique Martinet <asmadeus@codewreck.org>
-To: Ignacio Encinas Rubio <ignacio@iencinas.com>
-Cc: Ignacio Encinas Rubio <ignacio.encinas@semidynamics.com>,
-	linux-kernel-mentees@lists.linux.dev, v9fs@lists.linux.dev,
-	linux-kernel@vger.kernel.org, skhan@linuxfoundation.org
-Subject: Re: [PATCH v2] 9p/trans_fd: mark concurrent read and writes to
- p9_conn->err
-Message-ID: <Z9no3dnDt2mkd2MJ@codewreck.org>
-References: <20250313-p9_conn_err_benign_data_race-v2-1-0bb9f45f6bb2@iencinas.com>
- <Z9dBfEf0naCsNrNv@codewreck.org>
- <0807e0cc-457b-49bd-bce5-a961ad7f0ffb@semidynamics.com>
- <fd13d2e0-1ed2-4b63-ab3a-4cb650b45a2c@iencinas.com>
+	s=arc-20240116; t=1742334252; c=relaxed/simple;
+	bh=bv6s88Bkp0DZ32hkN0ynJBF2j1COTVuFqZh7ys88D9w=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Mp3305lTgWRhcvBOlwxsGnbiUZz0vAvg1fcol712ztYa8HixE4gL5Wf+Iu/e72Q+nUFejg6fF2XF5k/BdcqeV2DJDnQiAYqwqns1GW0FW5WlNwuF1oiCITO9NfujEDzvi2KBCEjffXCMdIYtzhNkOM1FoWdqgoLt7zxKi3us1Ps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NyOZVXNv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A6D6C4CEDD;
+	Tue, 18 Mar 2025 21:44:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742334250;
+	bh=bv6s88Bkp0DZ32hkN0ynJBF2j1COTVuFqZh7ys88D9w=;
+	h=From:To:Cc:Subject:Date:From;
+	b=NyOZVXNvJLjMCQhn0QPioRGG2XppkCNfwp9QSCVxWN/8SmnRqMCRh8EMihmqjob58
+	 gS44WCFEzDiiOOloZ2eWJTX13uTcWNn6R7LlW/hr5ahm8idylk5TrCNmVAgGk3zRZ6
+	 8b+vwWd/9VwThP0O61O1zHcg27HBat9eCjHRfbv455uUB/MAcljwuioajIY7K0tt55
+	 Ff6AEG/483Dh0X4XRx6/ZkUAP1a/zipfal+s1vCdLfriUtPbWupEX4WmOmDkUBHDwQ
+	 LnhURLYBf0GHBpqSDSdhHnBmMWQWREAHlEecjEUrbPmfVhptCa3hlKOWxNhJm2Hbxi
+	 5xUyEZo0xPz9w==
+From: Arnd Bergmann <arnd@kernel.org>
+To: Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Huacai Chen <chenhuacai@kernel.org>,
+	Jiaxun Yang <jiaxun.yang@flygoat.com>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	linux-mips@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] mips: fix PCI_IOBASE definition
+Date: Tue, 18 Mar 2025 22:43:59 +0100
+Message-Id: <20250318214406.874733-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <fd13d2e0-1ed2-4b63-ab3a-4cb650b45a2c@iencinas.com>
+Content-Transfer-Encoding: 8bit
 
-Ignacio Encinas Rubio wrote on Tue, Mar 18, 2025 at 10:21:52PM +0100:
-> Trimming CC to avoid spamming people (I hope that's ok)
+From: Arnd Bergmann <arnd@arndb.de>
 
-Probably fine :)
+After my previous patch, the ioport_map() function changed from
+the lib/iomap.c version to the asm-generic/io.h version, which
+requires a correct PCI_IOBASE definition.
 
-> > This is weird... I'll double check because it shouldn't generate the
-> > same code as far as I know.
-> 
-> I had a bit of time to check this. I understood you said that (A)
-> 
-> 	err = READ_ONCE(m->err);
-> 	if (err < 0) {
-> 		spin_unlock(&m->req_lock);
-> 		return READ_ONCE(m->err);
-> 	}
-> 
-> compiles to the same thing as (B)
-> 
-> 	err = READ_ONCE(m->err);
-> 	if (err < 0) {
-> 		spin_unlock(&m->req_lock);
-> 		return err;
-> 	}
-> 
-> if you didn't say this, just ignore this email :).
+Unfortunately the types are also different, so add the correct
+definition for ioport_map() in asm/io.h and change the machine
+specific ones to have the correct type.
 
-Right, I checked by looking at `objdump -D` output after rebuilding the
-.o.
-I've just double-checked and these two are identical:
-```
-err = READ_ONCE(m->err);
-if (err < 0) {
-    spin_unlock(&m->req_lock);
-    return m->err;
-}
-```
-```
-err = READ_ONCE(m->err);
-if (err < 0) {
-    spin_unlock(&m->req_lock);
-    return READ_ONCE(m->err);
-}
-```
-but now I'm double-checking returning the local variable
-```
-```
-err = READ_ONCE(m->err);
-if (err < 0) {
-    spin_unlock(&m->req_lock);
-    return err;
-}
-```
-is properly different (and is the right thing to do), so I must have
-checked the wrong .o, sorry for the confusion.
-(that or the minor gcc upgrade I did this morning change this, but I'd
-rather inclined to think I screwed up...)
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+This is not pretty, but it seems to address the remaining problems.
+I've applied it on top of my cross-architecture io.h cleanup that
+has the other mips patch.
 
-> With gcc (GCC) 14.2.1 20250110 (Red Hat 14.2.1-7) I'm seeing a difference:
-> (A) performs another memory read after the spinlock has been unlocked
-> while (B) reuses the value from the register. If you're using an old GCC
-> it might have bugs. I can't recall where exactly but I have seen links
-> to GCC bugs regarding this issues somewhere (LWN posts or kernel docs?)
+Let me know if there are still any other concerns.
 
-Right, I'm seeing one less mov as well
 
-So, yeah, v3 with this would be great :)
-I don't have a strong opinion on the READ_ONCE within the lock, so if
-you think it's clearer without it then I'm fine with that.
+ arch/mips/include/asm/io.h                     | 6 +++++-
+ arch/mips/include/asm/mach-loongson64/spaces.h | 5 +++--
+ arch/mips/include/asm/mach-ralink/spaces.h     | 2 +-
+ arch/mips/loongson64/init.c                    | 4 ++--
+ 4 files changed, 11 insertions(+), 6 deletions(-)
 
-Thanks for taking the time to check!
+diff --git a/arch/mips/include/asm/io.h b/arch/mips/include/asm/io.h
+index 1fe56d1870a6..78c6573f91f2 100644
+--- a/arch/mips/include/asm/io.h
++++ b/arch/mips/include/asm/io.h
+@@ -544,12 +544,16 @@ extern void (*_dma_cache_inv)(unsigned long start, unsigned long size);
+ 
+ void __ioread64_copy(void *to, const void __iomem *from, size_t count);
+ 
+-#ifdef CONFIG_PCI_DRIVERS_LEGACY
++#if defined(CONFIG_PCI) && defined(CONFIG_PCI_DRIVERS_LEGACY)
+ struct pci_dev;
+ void pci_iounmap(struct pci_dev *dev, void __iomem *addr);
+ #define pci_iounmap pci_iounmap
+ #endif
+ 
++#ifndef PCI_IOBASE
++#define PCI_IOBASE ((void __iomem *)mips_io_port_base)
++#endif
++
+ #include <asm-generic/io.h>
+ 
+ static inline void *isa_bus_to_virt(unsigned long address)
+diff --git a/arch/mips/include/asm/mach-loongson64/spaces.h b/arch/mips/include/asm/mach-loongson64/spaces.h
+index ce04e998a37b..dbd26db5f2c5 100644
+--- a/arch/mips/include/asm/mach-loongson64/spaces.h
++++ b/arch/mips/include/asm/mach-loongson64/spaces.h
+@@ -7,9 +7,10 @@
+ #endif /* CONFIG_64BIT */
+ 
+ /* Skip 128k to trap NULL pointer dereferences */
+-#define PCI_IOBASE	_AC(0xc000000000000000 + SZ_128K, UL)
++#define PCI_PORT_BASE	_AC(0xc000000000000000 + SZ_128K, UL)
++#define PCI_IOBASE	(void __iomem *)PCI_PORT_BASE
+ #define PCI_IOSIZE	SZ_16M
+-#define MAP_BASE	(PCI_IOBASE + PCI_IOSIZE)
++#define MAP_BASE	(PCI_PORT_BASE + PCI_IOSIZE)
+ 
+ #define IO_SPACE_LIMIT  (PCI_IOSIZE - 1)
+ 
+diff --git a/arch/mips/include/asm/mach-ralink/spaces.h b/arch/mips/include/asm/mach-ralink/spaces.h
+index a9f0570d0f04..a63d106c89c6 100644
+--- a/arch/mips/include/asm/mach-ralink/spaces.h
++++ b/arch/mips/include/asm/mach-ralink/spaces.h
+@@ -2,7 +2,7 @@
+ #ifndef __ASM_MACH_RALINK_SPACES_H_
+ #define __ASM_MACH_RALINK_SPACES_H_
+ 
+-#define PCI_IOBASE	mips_io_port_base
++#define PCI_IOBASE	(void __iomem *)mips_io_port_base
+ #define PCI_IOSIZE	SZ_64K
+ #define IO_SPACE_LIMIT	(PCI_IOSIZE - 1)
+ 
+diff --git a/arch/mips/loongson64/init.c b/arch/mips/loongson64/init.c
+index a35dd7311795..b9f90f33fc9a 100644
+--- a/arch/mips/loongson64/init.c
++++ b/arch/mips/loongson64/init.c
+@@ -128,7 +128,7 @@ void __init prom_init(void)
+ 	}
+ 
+ 	/* init base address of io space */
+-	set_io_port_base(PCI_IOBASE);
++	set_io_port_base((unsigned long)PCI_IOBASE);
+ 
+ 	if (loongson_sysconf.early_config)
+ 		loongson_sysconf.early_config();
+@@ -178,7 +178,7 @@ static int __init add_legacy_isa_io(struct fwnode_handle *fwnode, resource_size_
+ 		return -EINVAL;
+ 	}
+ 
+-	vaddr = PCI_IOBASE + range->io_start;
++	vaddr = (unsigned long)PCI_IOBASE + range->io_start;
+ 
+ 	vmap_page_range(vaddr, vaddr + size, hw_start, pgprot_device(PAGE_KERNEL));
+ 
 -- 
-Dominique Martinet | Asmadeus
+2.39.5
+
 
