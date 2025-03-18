@@ -1,59 +1,90 @@
-Return-Path: <linux-kernel+bounces-566451-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566452-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6445BA6782B
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 16:43:54 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41386A6782E
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 16:45:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 577C816B387
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 15:42:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4DC73B5C8A
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 15:43:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B26820F082;
-	Tue, 18 Mar 2025 15:42:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 528E920CCE2;
+	Tue, 18 Mar 2025 15:43:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GiDLmn4e"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b="y4eREmwl"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CD5428FD;
-	Tue, 18 Mar 2025 15:42:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F0FDC13D
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 15:43:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742312565; cv=none; b=lyuOnD4wixrzQwwNqdAIkPLp1fjxPNqhuHfJjow2Q8j7gN3b0eu0+Ifu1Wsnc8prrJDyNExscdVriOEo5vUI0lQfzvYP8yPihGo7JwPH9ZmAgohqmVRJ+vhMsMQGNKg5qD+mq7iUS1UGq4uoblmlJwYE1fyZHJ7gX3dHsMfACbc=
+	t=1742312590; cv=none; b=WwvLLftljEug2lHglcs7fscYQ8jc+wVU5PF1g0O1z8WOtb2IgSBTXNq1PKD8hIstG1WZ8+WvqowI3uqTEdsqf/aW8/vk+TBJ/sLEnDVvF2aN35iDm6qF5dZdDiNaMIclhQ0fk9QWY7c+RE/8N7fzX1Abex+Dk7syfaxGP1xMIqc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742312565; c=relaxed/simple;
-	bh=bFYECgxboP4+QjxLmRsuA/NSM0Shj/GKwwVegaDxJYg=;
+	s=arc-20240116; t=1742312590; c=relaxed/simple;
+	bh=d435AHZtuTLEGL1nqnjHLieFtvDf9lop14Ye+nMsIDM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RJKr8L842mCgvfT5GlxBC51aaMirn+39t7OIxq0eg364o8n10xMzHgmXPwqlqs5Fp1VadpcnnB0seL+KzrFo6Yjxvs5cPgoJ136ksUZZYao41ctatLHglrtMwkDIAQ7Dk+v5QfNeWQcF0Tpqz96EpGMG5c65gbDGxmqW3vQmmlk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GiDLmn4e; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E19E0C4CEE3;
-	Tue, 18 Mar 2025 15:42:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742312565;
-	bh=bFYECgxboP4+QjxLmRsuA/NSM0Shj/GKwwVegaDxJYg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GiDLmn4eS05wFXdJc5BT57uAh2r/acIxX5f59PS0sd0ZUNJt/UNlyfLfJ4XxvtIqJ
-	 CeN5q+vb7P7Wp0ULDZCmYersbzLyE7dHzwIXfZ/urlF5D+3kgXEtZJYc7TbLUPa8gv
-	 aifB0fXhlaVShbH+IJ4vOCSNvaygdUMOI+oWdU6DNyXNs86YS1zD+4unPmrugnyJyi
-	 nf8ABJnVL4HkPvKomIS2JH8mkwMvhnYMT5j5ldg/ruLuvG+upJUuRW4ckYqJGnHoPf
-	 h8b89iamAIO+o5zTNV3jTry0O/XW/uPdoXdWWAg/mmqs2nTX/+AC8+uwpNaR9dEyBw
-	 nCrkxfRvoF1lA==
-Date: Tue, 18 Mar 2025 08:42:41 -0700
-From: Kees Cook <kees@kernel.org>
-To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Benson Leung <bleung@chromium.org>,
-	Guenter Roeck <groeck@chromium.org>,
-	Tzung-Bi Shih <tzungbi@kernel.org>, linux-iio@vger.kernel.org,
-	chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH v2][next] iio: cros_ec: Avoid
- -Wflex-array-member-not-at-end warning
-Message-ID: <202503180840.77F2F47DE8@keescook>
-References: <Z9lE6IVDeC5lnChN@kspp>
+	 Content-Type:Content-Disposition:In-Reply-To; b=cDcQO5r9S+qIcMZynqBQCzIlu85IU6kSQz3i1GZ6kuMY0XtVei8kiB5m+roIfZZ9QFL71/F7LHWep38TTlHhYm13Rs43tSYCrAegTf19c39TAMsxmtb1DP7jqirMOM+cHtPo0kbNePMSSTQrYSYKU/95joIfh2/lE41N0PH+Ir4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us; spf=none smtp.mailfrom=resnulli.us; dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b=y4eREmwl; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=resnulli.us
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-43cfba466b2so35859505e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 08:43:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=resnulli-us.20230601.gappssmtp.com; s=20230601; t=1742312587; x=1742917387; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=T2msgjxCz2DcPYQE12074YoE2WnARoI0a5JesfxOEjE=;
+        b=y4eREmwlk1oO8/rsvaQM2yPukGtp6mqy+H4rANURxdOLqr7TlqCAb6P+VsPHyws8vi
+         qadOFNbty1bvhT+OQIlpASQAMZpYPS2+zg7QxRwF+0/TwpMgOays+sDopwAu4z85WzPZ
+         TX8aoB/4b95A3GUzGxP8dZYmM3yGCUOfva6M4abTviw2mtcgpNoWiSW5fo2wnsZgox/z
+         3Ldk26Z+62KItJIElqte2w0H+Dd0UKajZfwD5u4WgcJ7o74Rmb/4T2SSFOGGES7d389H
+         D3y48yAQ2ZmdKwNc+vrNoYLlMjfRqiIOc9TYCxXyJDidZKAvVNHjdg8a1tWWKXl6bR9C
+         45Zg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742312587; x=1742917387;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=T2msgjxCz2DcPYQE12074YoE2WnARoI0a5JesfxOEjE=;
+        b=tNPSubJ7WPdS1iYVnnL2Jq+0W5CAZGEZG+9RYvxgL+hWKM6vMFaA/1gArpxVQfp8uH
+         Csjmfh8dso+w0/YQbhBEuoqb4GcbpcPQbKWqDDc5U1ROaOhRznHCtILFtcZ0fNwonLpw
+         uBo745SQ4MFtHzItqaOR3XblVzOueESSyK/KFlF7dGW42UYsFxtgq9J43fjkXD0G5PYP
+         EB43vfEkKX8+X9S7bSyQ8ck5UJx+qF2tJRWXhj8Iwtk8t3AyJN0BOwmtDEgZYov52251
+         HKq70ggst5hkKL7NAUReJP7Y+ovN495zn9q1pEm3Lk0s7xKRcszulQx4HPdFmrsLPaPH
+         NCwQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXfeEMnAfX45yxcID9up6okESDQTJooXcm5X4EHxUGC4So9+W4eCYm530sgvpdMBkp6oJ3TYBFKY6bQOOY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyaHdeT81j6k7eurAokLDSw+opSolPYcy0uwV/fRCGtWkJ+sXhz
+	3iVzjQoIPXFMKnGCdfxMgMQQku84y5VyXQGhdTt1E03ECgxsmMIB2M8BB9kRJkM=
+X-Gm-Gg: ASbGnctDgknJmU3he5vn51fB6Il4kc4+NagauMCp9Mx+6tycNaURVae4gNOJIAXs9OI
+	wzKvcjYRT3twMeb/yWRF0xcJdhjiGZA8LrgM2k/aUVkW+qSVBbM8BQ+v5qpAcabMOkR5G9AFIPs
+	VuwiYzajnQmc1a2ZUB9XvM/CKSXMMK3Csl+sJ/GhM0Uduyxt+IMSoqH5vF6nw/3KvWG+8QMHVrz
+	7M3zGH3H1EPTSAPP3PH/gTaPJA/BTgvs5bL+N0Vfg+VIpnde7Fzk7+6E1s+e9CM/Mw/3b8P2c1S
+	zOgN/JDcYXHeRkpDUyc8IbfnmKmQRT9oLIsBVv5+2PidnPDZvjD2KBg6vpZ5x3Jq7uRpATXZNNT
+	c
+X-Google-Smtp-Source: AGHT+IFYgyumGr+fp7DYJkr3lnZZ0Wg+ROxQga4Jqlf85DUT7rg0dECXHPfzOdbnhe950EIsNaSwng==
+X-Received: by 2002:a05:600c:46c5:b0:43c:fb95:c752 with SMTP id 5b1f17b1804b1-43d3b9620ddmr27754325e9.3.1742312587310;
+        Tue, 18 Mar 2025 08:43:07 -0700 (PDT)
+Received: from jiri-mlt.client.nvidia.com ([193.47.165.251])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d1ffbf901sm136872725e9.15.2025.03.18.08.43.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Mar 2025 08:43:06 -0700 (PDT)
+Date: Tue, 18 Mar 2025 16:42:57 +0100
+From: Jiri Pirko <jiri@resnulli.us>
+To: Przemek Kitszel <przemyslaw.kitszel@intel.com>
+Cc: intel-wired-lan@lists.osuosl.org, 
+	Tony Nguyen <anthony.l.nguyen@intel.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Cosmin Ratiu <cratiu@nvidia.com>, Tariq Toukan <tariqt@nvidia.com>, netdev@vger.kernel.org, 
+	Konrad Knitter <konrad.knitter@intel.com>, Jacob Keller <jacob.e.keller@intel.com>, davem@davemloft.net, 
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Andrew Lunn <andrew@lunn.ch>, 
+	linux-kernel@vger.kernel.org, ITP Upstream <nxne.cnse.osdt.itp.upstreaming@intel.com>, 
+	Carolina Jubran <cjubran@nvidia.com>
+Subject: Re: [RFC net-next v2 1/2] devlink: add whole device devlink instance
+Message-ID: <olhqg2npoigaebjnwp5ddqoaegnafizk7jrtshs44v7ytrai7x@6yhpydbawdwn>
+References: <20250219164410.35665-1-przemyslaw.kitszel@intel.com>
+ <20250219164410.35665-2-przemyslaw.kitszel@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,88 +93,43 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Z9lE6IVDeC5lnChN@kspp>
+In-Reply-To: <20250219164410.35665-2-przemyslaw.kitszel@intel.com>
 
-On Tue, Mar 18, 2025 at 08:33:20PM +1030, Gustavo A. R. Silva wrote:
-> -Wflex-array-member-not-at-end was introduced in GCC-14, and we are
-> getting ready to enable it, globally.
-> 
-> Use the `DEFINE_RAW_FLEX()` helper for an on-stack definition of
-> a flexible structure where the size of the flexible-array member
-> is known at compile-time, and refactor the rest of the code,
-> accordingly.
-> 
-> So, with these changes, fix the following warning:
-> 
-> drivers/iio/common/cros_ec_sensors/cros_ec_sensors_core.c:39:40: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-> 
-> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
-> ---
-> Changes in v2:
->  - Use MAX() to calculate the number of bytes for the flex array. (Kees)
-> 
-> v1:
->  - Link: https://lore.kernel.org/linux-hardening/Z9dy43vUUh4goi-Q@kspp/
-> 
->  .../cros_ec_sensors/cros_ec_sensors_core.c    | 28 ++++++++-----------
->  1 file changed, 11 insertions(+), 17 deletions(-)
-> 
-> diff --git a/drivers/iio/common/cros_ec_sensors/cros_ec_sensors_core.c b/drivers/iio/common/cros_ec_sensors/cros_ec_sensors_core.c
-> index 7751d6f69b12..40d5b10c74e0 100644
-> --- a/drivers/iio/common/cros_ec_sensors/cros_ec_sensors_core.c
-> +++ b/drivers/iio/common/cros_ec_sensors/cros_ec_sensors_core.c
-> @@ -34,25 +34,19 @@
->  static int cros_ec_get_host_cmd_version_mask(struct cros_ec_device *ec_dev,
->  					     u16 cmd_offset, u16 cmd, u32 *mask)
->  {
-> +	DEFINE_RAW_FLEX(struct cros_ec_command, buf, data,
-> +			MAX(sizeof(struct ec_response_get_cmd_versions),
-> +			    sizeof(struct ec_params_get_cmd_versions)));
->  	int ret;
-> -	struct {
-> -		struct cros_ec_command msg;
-> -		union {
-> -			struct ec_params_get_cmd_versions params;
-> -			struct ec_response_get_cmd_versions resp;
-> -		};
-> -	} __packed buf = {
-> -		.msg = {
-> -			.command = EC_CMD_GET_CMD_VERSIONS + cmd_offset,
-> -			.insize = sizeof(struct ec_response_get_cmd_versions),
-> -			.outsize = sizeof(struct ec_params_get_cmd_versions)
-> -			},
-> -		.params = {.cmd = cmd}
-> -	};
-> -
-> -	ret = cros_ec_cmd_xfer_status(ec_dev, &buf.msg);
-> +
-> +	buf->command = EC_CMD_GET_CMD_VERSIONS + cmd_offset;
-> +	buf->insize = sizeof(struct ec_response_get_cmd_versions);
-> +	buf->outsize = sizeof(struct ec_params_get_cmd_versions);
-> +	((struct ec_params_get_cmd_versions *)buf->data)->cmd = cmd;
-> +
-> +	ret = cros_ec_cmd_xfer_status(ec_dev, buf);
->  	if (ret >= 0)
-> -		*mask = buf.resp.version_mask;
-> +		*mask = ((struct ec_response_get_cmd_versions *)buf->data)->version_mask;
->  	return ret;
->  }
+Wed, Feb 19, 2025 at 05:32:54PM +0100, przemyslaw.kitszel@intel.com wrote:
+>Add a support for whole device devlink instance. Intented as a entity
+>over all PF devices on given physical device.
+>
+>In case of ice driver we have multiple PF devices (with their devlink
+>dev representation), that have separate drivers loaded. However those
+>still do share lots of resources due to being the on same HW. Examples
+>include PTP clock and RSS LUT. Historically such stuff was assigned to
+>PF0, but that was both not clear and not working well. Now such stuff
+>is moved to be covered into struct ice_adapter, there is just one instance
+>of such per HW.
+>
+>This patch adds a devlink instance that corresponds to that ice_adapter,
+>to allow arbitrage over resources (as RSS LUT) via it (further in the
+>series (RFC NOTE: stripped out so far)).
+>
+>Thanks to Wojciech Drewek for very nice naming of the devlink instance:
+>PF0:		pci/0000:00:18.0
+>whole-dev:	pci/0000:00:18
+>But I made this a param for now (driver is free to pass just "whole-dev").
+>
+>$ devlink dev # (Interesting part of output only)
+>pci/0000:af:00:
+>  nested_devlink:
+>    pci/0000:af:00.0
+>    pci/0000:af:00.1
+>    pci/0000:af:00.2
+>    pci/0000:af:00.3
+>    pci/0000:af:00.4
+>    pci/0000:af:00.5
+>    pci/0000:af:00.6
+>    pci/0000:af:00.7
 
-Since "params" is used twice, I'd say do like the other patch and assign
-it to a new variable:
+Please check my RFC attempt to solve this for mlx5:
+https://lore.kernel.org/all/20250318124706.94156-1-jiri@resnulli.us/
 
-	struct ec_response_get_cmd_versions *params = buf->data;
-	...
-	params->cmd = cmd;
-	...
-		*mask = params->version_mask;
-
-
->  
-> -- 
-> 2.43.0
-> 
-
--- 
-Kees Cook
+I believe that the same could work for you too.
 
