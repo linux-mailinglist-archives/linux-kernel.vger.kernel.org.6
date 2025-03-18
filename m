@@ -1,283 +1,186 @@
-Return-Path: <linux-kernel+bounces-566144-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566145-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7212A673C9
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 13:25:07 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8B64A673CE
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 13:25:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 86E62179D84
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 12:24:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C68C619A437A
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 12:24:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 873E520C02D;
-	Tue, 18 Mar 2025 12:24:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEE3F20C013;
+	Tue, 18 Mar 2025 12:24:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J/QrPyCr"
-Received: from mail-vk1-f172.google.com (mail-vk1-f172.google.com [209.85.221.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="cP/aKPBG"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EB621E8355;
-	Tue, 18 Mar 2025 12:23:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 330A220C002
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 12:24:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742300641; cv=none; b=qt/1I7fh4WWBYgpgvxzRXTZzCMBNwl5Rs2tNgWTNZUa/aG1FcusNgVlYGHbTvCOPK0Qut5gN3ptANdeDpIODVPBrstuRYukffi6G1dSQ/y9wzuq/AljJDZXa7Sc8DMkUcS7KdMqCUmAHYWwojtQmdwGU8jNU73MpgltOcmuBqgE=
+	t=1742300663; cv=none; b=lLBvuNPCy3oil+eiXKTpjrGUtOj17ROhg2KnBdwIPzj1ckVhDUMDh0mHi0vrjc8d8pchiGf4eEPxsEm1Dz5u2ieoHe32ywuX4imMAdOP2segDIwVuNDw7I+k1C2Dto9ycjfByeLciDkIAd4ktvd2EXatDIDVQb7h/Ik77tEbJoI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742300641; c=relaxed/simple;
-	bh=fRZbe/+HzZNfk3pwQ7sB5DnvN7+Rx4LsTVhQU/VPSQ4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CIkuPXhDcyTvpzbtpoc8L8OJc7iduort8NCjYn7RcZRVG0DapR4b0+tcpQ2Nv5v5ad54XpzaiLHmXJKlk+fdpi2TGi1mN/vxJPmFKPRF12KXk26VMWHi4OWpwDIivTDUTif3tpcLFDTn/fBVm49SUBNit8me2kM4MmJjfGR5TuU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J/QrPyCr; arc=none smtp.client-ip=209.85.221.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f172.google.com with SMTP id 71dfb90a1353d-523b8881d31so2370162e0c.2;
-        Tue, 18 Mar 2025 05:23:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742300635; x=1742905435; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6O/Z/b5BuUx5IhmAv2S9TTBkrqyul/vNarr3/Lu9dmY=;
-        b=J/QrPyCrgA5pa0spaI72l3oslbn7jAUUG+ZH5JNotPP1uKhnTSE9GxK8BvGsUfnYT9
-         +CIDjKZfPFc0Qkoqo7eP9vTdlY2recG1eRAA5oujWRtUkn2jOHV9V/E2T3rj8AjgHtou
-         JzAN5rRkjpi+Tc32heL9seMhn3uOFbZiXkiFRfZlgaE2TNSeURe+pwV892ftQWIZjmf1
-         r7PNi7jXmrnjjcBn3bd4qGUg07+z7rsst6k8+doQ6cQhPtl0x/C7ImFtQmHjdVSHJK/8
-         GsO8pNUGwHqAs8B4Al3Cd8aHgSRzQuSPrGiO5FdsAifnxBnhO+CAgFkq3tJ14IsgDV5s
-         F1Fg==
+	s=arc-20240116; t=1742300663; c=relaxed/simple;
+	bh=sNvJN2vGT2RT+QbgWURA39suTphTrFu0EeK6I0taKiI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QhkIA39uRj2spBhjY638fsRODKAsKRPEKUEOMGKAS9vKYyvPCCaGHoYUFj5kfWXZ0PIQIB2Q6sWfmiTlR3ha5fStQlrN40h6WjVAvos5En9zzHAboG2YTYfDcjEJHF/XPdBqhgmMMef7i7IsUGsKgkRG0cgvJzl2R20bFFUHMVE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=cP/aKPBG; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52I9HjVY008239
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 12:24:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=EDN4zD1N+DunuKV6N3O+L5Yt
+	WP/lxLEnoiHEUOXeOZo=; b=cP/aKPBG9s3vx4Hdf72/D3QdvS1KhRO5zz17XOnk
+	7cjlNesi62VajSyHwTUYBfZ0xRhoOdp1/Oct7T3ABolIZ+39zcc2CetYT9SnVata
+	y29IhJSV4MrjFv7KpcPrYOitMsdbuKDTUfuHd1lM49gkivSu/ag5rXprxfYeeAJV
+	jPN2ZRnKb8VOwUmbKxP07dOQbg1Rc7at7Olr7smEA4TGo02DYTAHr6snVWfFCAEl
+	p1xTyQH1os5oXAgISy/XorPaGgp/GMG3AIIAlTbQE3UhKqO5XuuO8NFakOXhY+0/
+	EFN7U5mT/+bkB2ggfiXhff+0d5+ARnt3dKgvjn323KGNCQ==
+Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com [209.85.219.69])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45d1rdr6bj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 12:24:20 +0000 (GMT)
+Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-6e91f6bb296so102145466d6.1
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 05:24:20 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742300635; x=1742905435;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6O/Z/b5BuUx5IhmAv2S9TTBkrqyul/vNarr3/Lu9dmY=;
-        b=Zg6YNw187v+f/mS9CkO+4AkH+qa9JoqbXN12e10Anz/h+Eu6OOlB+Lt2HiS7WyEFhy
-         w63Zb4q5QWUHskRMizwyrolC533eJjsFA4imKtuPXugTFOzAcFddswvOh0xzww2TesIf
-         +aCL1/jtqQsa6w06waTcW3XE3uWtXIGIcRM1Z1klaz0QdlpcaXtvu0q2DWW0wy6byre4
-         zIuWDwr8tPOZF/ipvrq+Pt/hm3UKJ8/FqZ85hxlJTy0anCvdABWV4bN/UA9JQWc/ldc8
-         qONnjP6I4IbcD/moP0CVixlmkBWrfST2R/rst94NblM1sa0kPE3u5oLsTARAp7CFMrXf
-         V9kw==
-X-Forwarded-Encrypted: i=1; AJvYcCVzOrCjZKyTSE1ZcbGtjwVs3IINbXrGTQ+dY9ZetNEpzSW6UM/kTvZNdezXdRib3JiykFA2HDxWZjF5Nemk@vger.kernel.org, AJvYcCWu2CMZNq5zTvh/Q8FOv0XNyA59gSG66m7KwC7eE4s55n3HOmUOw13Y+LWxANY8Q5mg1YWcippMpCmF@vger.kernel.org, AJvYcCXDq/czrSgmkeydB86zWLYRsMIof56AZr0pkysk+mUEBySDY4Jq3QWQ2LJhCWR9tYSdP9NAUsvO0TKxZS4sYyTEN48=@vger.kernel.org, AJvYcCXch75afQzWPtD/o8zPVcd8kq0VGp5610byOSyosHRNtgjI/m+l2Hi448erFi6uwE06DVhD2RYx@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw6/wlhfMISrDGEa49BzDImzmc7U/0KBDvMOfWHzNn0GjLInEwg
-	nk13NkTKW/r+mlOk3Q7fmuA+o05+/PTrfMzgjySk87zyXW7+DaIEwSK5tUkkgWOCICUjqlla3sK
-	etejZxn0rxfuFHyTLtQQ8giDfAZ8=
-X-Gm-Gg: ASbGncuFRDHPIfzdATkz3p9v76z9JVSpz4AblkOH4iO0CqZfrzlQQdKSQVarBz6Zdf3
-	PZgZ/ignj4uzKcBZ4RA3BMD4TPBRsd4mVnaxV9xDsCNpwwE+BY4r1Q4OtvpTfYJ2kLehhZXg2K6
-	fnLA9GspfITzuYXw8vkLck3LB820Jtq4kwrSfoV8KP62eTHrT9QUi8fzQVz88=
-X-Google-Smtp-Source: AGHT+IE3BxI5o0DjGdvVHeSwDlSlXaoWGn5F40YKwfm1U+fGgWP9nGn4F1cFBKoqh/AcT3ohaiYPRz5/CfEzKrS6JVQ=
-X-Received: by 2002:a05:6122:2385:b0:523:8230:70db with SMTP id
- 71dfb90a1353d-52449a0f263mr10101912e0c.10.1742300635141; Tue, 18 Mar 2025
- 05:23:55 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1742300659; x=1742905459;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EDN4zD1N+DunuKV6N3O+L5YtWP/lxLEnoiHEUOXeOZo=;
+        b=w1Ewumpsr9iViV6fWRl+GjzPmy7Q6GJ3R6WISXgFcxyZVFkR/7AESclSUkEheZXQ0l
+         sXcIZtaL80FsJWMl3WJ6SWK1VT2GB7ATil7+CT465HcrS8Yqr30+2BnoXsFmKLMmetVf
+         +mmR82WPFapsZ4ubtxDBbl7FVBMP5WeINL/oZrLWKFtFoWIusYBSyJqif5Az5k8GOYCv
+         MdI64aPC3jOZaJ+6bM4GU5aKgMRjhUgkBg5DWPJmfuRD09P0DTxf6VY9QI0OBxSVy4m3
+         KVxarCRT9KF0EqNQw7AbQg2LoPJg1xaWSjo9yDxIDoXvoZo9bLYyHu7ZV21ZSztLQKF6
+         5t1A==
+X-Forwarded-Encrypted: i=1; AJvYcCVh0mGPwsR2JzA1uzktByGHhYB7HcryzQ4C+EGbK78Aho4nDX/hd8GoueTtz84i9wphQQPvbni2SImBjpM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yysqa9e43eceaNfM8THdKl1zdI8yOPceHKUFUdflqmH1ivvvKv+
+	q5U7q6yeqQDqNNeFEsDcEBrzMwxn03nUeKaFeVHA6a5adYMdwRQ41O0xFDXQedMsIAZ2Aoiqg3U
+	tYB0KojHaEFdqqQeuRT3+4WayjPrdNApeOZ4E5m/D5IJ4g2nLAdoITv0SNF8B0mY=
+X-Gm-Gg: ASbGncszoftoTtcCPLtxSFDn44P9P8oyL7Z4Nbw50E4TM607WLv93aiVOJy9OEjZWur
+	qB84xg77x5DIOmg6lX4eKanc//+36JYbUJcF3e+ZTo4+iANdfzA7M3VVMhW5G7U/y+wob+zYAXD
+	OBWDlhykltlnY+/Zr9IGYyWtioHP3jgFHa7yPWYkJfQI9G0pebRT/FkulYYCV22DOTn78X99YqY
+	NoMxJyO7PHau6ZyWex/kgOtH8FUyJ8uSwXkO7JDd69SooXm3Seh/xUU8vyYwqvNz0Mch+KGz6dY
+	2cWCW+S8+XKSE1+ZV3olAmI3Y4OlxooJd88vht0cmgNzWR+NLLMsiYPiC+VXRntFNbSuWOSG9Tk
+	x8J4=
+X-Received: by 2002:a05:6214:21a9:b0:6d8:ada3:26c9 with SMTP id 6a1803df08f44-6eaeaa4282emr238045496d6.10.1742300658853;
+        Tue, 18 Mar 2025 05:24:18 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFPP6bwgBzTV1pHyJ776Y2OqHo+uHrhx19IfFmQmbn8H0Ej5qHdf7EgW3rLl5dPKhTFj/jdAQ==
+X-Received: by 2002:a05:6214:21a9:b0:6d8:ada3:26c9 with SMTP id 6a1803df08f44-6eaeaa4282emr238044836d6.10.1742300658446;
+        Tue, 18 Mar 2025 05:24:18 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30c3f1170dbsm19027101fa.64.2025.03.18.05.24.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Mar 2025 05:24:17 -0700 (PDT)
+Date: Tue, 18 Mar 2025 14:24:14 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Rob Clark <robdclark@gmail.com>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Sean Paul <sean@poorly.run>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Mike Leach <mike.leach@linaro.org>,
+        James Clark <james.clark@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Leo Yan <leo.yan@linux.dev>, Kumar Gala <galak@codeaurora.org>,
+        Andy Gross <agross@codeaurora.org>,
+        "Ivan T. Ivanov" <ivan.ivanov@linaro.org>,
+        Andy Gross <andy.gross@linaro.org>, Georgi Djakov <djakov@kernel.org>,
+        David Heidelberg <david@ixit.cz>, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+        coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 6/9] ARM: dts: qcom: apq8064 merge hw splinlock into
+ corresponding syscon device
+Message-ID: <5g5ni3xoeliy4xs7wlhjjeust32qerutt4tdkkdvgeisdvbc6d@shlkxbzsw3vw>
+References: <20250317-fix-nexus-4-v1-0-655c52e2ad97@oss.qualcomm.com>
+ <20250317-fix-nexus-4-v1-6-655c52e2ad97@oss.qualcomm.com>
+ <579cd909-8a0f-4998-88a6-47073ecc0eae@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250311221730.40720-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20250311221730.40720-4-prabhakar.mahadev-lad.rj@bp.renesas.com> <8e804715-3123-4ab5-94ce-625060df4835@redhat.com>
-In-Reply-To: <8e804715-3123-4ab5-94ce-625060df4835@redhat.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Tue, 18 Mar 2025 12:23:28 +0000
-X-Gm-Features: AQ5f1Jo2rD_t0J1KDzOZ4KdJEWX72SMSsRDCD7fwSLTf8fVxfjdjAQQiheYyxDc
-Message-ID: <CA+V-a8vc0rdtHrFW1VTE-mgQrWsvbZ0DQc2ZxQMMcD+KJpWYOg@mail.gmail.com>
-Subject: Re: [PATCH net-next v3 3/3] net: stmmac: Add DWMAC glue layer for
- Renesas GBETH
-To: Paolo Abeni <pabeni@redhat.com>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>, Giuseppe Cavallaro <peppe.cavallaro@st.com>, 
-	Jose Abreu <joabreu@synopsys.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
-	netdev@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <579cd909-8a0f-4998-88a6-47073ecc0eae@oss.qualcomm.com>
+X-Authority-Analysis: v=2.4 cv=Fe83xI+6 c=1 sm=1 tr=0 ts=67d965f4 cx=c_pps a=wEM5vcRIz55oU/E2lInRtA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=Vs1iUdzkB0EA:10 a=EUspDBNiAAAA:8 a=DJPKDmouk0REp9whk4oA:9 a=CjuIK1q_8ugA:10 a=IFyWz7IVXAM99tgoijJH:22
+ a=OIgjcC2v60KrkQgK7BGD:22
+X-Proofpoint-ORIG-GUID: z70O1F3RzRZG5wCe65hmCd_R4HqS9CFD
+X-Proofpoint-GUID: z70O1F3RzRZG5wCe65hmCd_R4HqS9CFD
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-18_06,2025-03-17_03,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ lowpriorityscore=0 bulkscore=0 mlxscore=0 mlxlogscore=605 spamscore=0
+ clxscore=1015 suspectscore=0 adultscore=0 phishscore=0 malwarescore=0
+ priorityscore=1501 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503180092
 
-Hi Paolo,
+On Tue, Mar 18, 2025 at 01:08:00PM +0100, Konrad Dybcio wrote:
+> On 3/17/25 6:44 PM, Dmitry Baryshkov wrote:
+> > Follow up the expected way of describing the SFPB hwspinlock and merge
+> > hwspinlock node into corresponding syscon node, fixing several dt-schema
+> > warnings.
+> > 
+> > Fixes: 24a9baf933dc ("ARM: dts: qcom: apq8064: Add hwmutex and SMEM nodes")
+> > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+> > ---
+> >  arch/arm/boot/dts/qcom/qcom-apq8064.dtsi | 11 +++--------
+> >  1 file changed, 3 insertions(+), 8 deletions(-)
+> > 
+> > diff --git a/arch/arm/boot/dts/qcom/qcom-apq8064.dtsi b/arch/arm/boot/dts/qcom/qcom-apq8064.dtsi
+> > index ba99e794dcd2236f65f2f3d8c49213cfdaee5f6e..3728875a5506397b36a4c0d6a5ad12c067bbdd8c 100644
+> > --- a/arch/arm/boot/dts/qcom/qcom-apq8064.dtsi
+> > +++ b/arch/arm/boot/dts/qcom/qcom-apq8064.dtsi
+> > @@ -213,12 +213,6 @@ sleep_clk: sleep_clk {
+> >  		};
+> >  	};
+> >  
+> > -	sfpb_mutex: hwmutex {
+> > -		compatible = "qcom,sfpb-mutex";
+> > -		syscon = <&sfpb_wrapper_mutex 0x604 0x4>;
+> > -		#hwlock-cells = <1>;
+> > -	};
+> > -
+> >  	smem {
+> >  		compatible = "qcom,smem";
+> >  		memory-region = <&smem_region>;
+> > @@ -305,9 +299,10 @@ tlmm_pinmux: pinctrl@800000 {
+> >  			pinctrl-0 = <&ps_hold_default_state>;
+> >  		};
+> >  
+> > -		sfpb_wrapper_mutex: syscon@1200000 {
+> > -			compatible = "syscon";
+> > +		sfpb_mutex: hwmutex@1200000 {
+> > +			compatible = "qcom,sfpb-mutex";
+> >  			reg = <0x01200000 0x8000>;
+> 
+> The mutex is at +0x600
 
-Thank you for the review.
+Indeed...
 
-On Tue, Mar 18, 2025 at 11:49=E2=80=AFAM Paolo Abeni <pabeni@redhat.com> wr=
-ote:
->
-> On 3/11/25 11:17 PM, Prabhakar wrote:
-> > @@ -0,0 +1,166 @@
-> > +// SPDX-License-Identifier: GPL-2.0+
-> > +/*
-> > + * dwmac-renesas-gbeth.c - DWMAC Specific Glue layer for Renesas GBETH
-> > + *
-> > + * The Rx and Tx clocks are supplied as follows for the GBETH IP.
-> > + *
-> > + *                         Rx / Tx
-> > + *   -------+------------- on / off -------
-> > + *          |
-> > + *          |            Rx-180 / Tx-180
-> > + *          +---- not ---- on / off -------
-> > + *
-> > + * Copyright (C) 2025 Renesas Electronics Corporation
-> > + */
-> > +
-> > +#include <linux/clk.h>
-> > +#include <linux/device.h>
-> > +#include <linux/module.h>
-> > +#include <linux/platform_device.h>
-> > +#include <linux/reset.h>
-> > +
-> > +#include "dwmac4.h"
-> > +#include "stmmac_platform.h"
-> > +
-> > +struct renesas_gbeth {
-> > +     struct plat_stmmacenet_data *plat_dat;
-> > +     struct reset_control *rstc;
-> > +     struct device *dev;
-> > +     void __iomem *regs;
-> > +};
-> > +
-> > +static const char *const renesas_gbeth_clks[] =3D {
-> > +     "tx", "tx-180", "rx", "rx-180",
-> > +};
-> > +
-> > +static struct clk *renesas_gbeth_find_clk(struct plat_stmmacenet_data =
-*plat_dat,
-> > +                                       const char *name)
-> > +{
-> > +     for (unsigned int i =3D 0; i < plat_dat->num_clks; i++)
-> > +             if (!strcmp(plat_dat->clks[i].id, name))
-> > +                     return plat_dat->clks[i].clk;
-> > +
-> > +     return NULL;
-> > +}
-> > +
-> > +static int renesas_gbeth_clks_config(void *priv, bool enabled)
-> > +{
-> > +     struct renesas_gbeth *gbeth =3D priv;
-> > +     struct plat_stmmacenet_data *plat_dat =3D gbeth->plat_dat;
->
-> Minor nit: please respect the reverse christmas tree order above:
->
-Agreed, I will fix that.
-
->         struct plat_stmmacenet_data *plat_dat;
->         struct renesas_gbeth *gbeth =3D priv;
->
-> and init plat_dat later.
->
-OK.
-
-> > +     int ret;
-> > +
-> > +     if (enabled) {
-> > +             ret =3D reset_control_deassert(gbeth->rstc);
-> > +             if (ret) {
-> > +                     dev_err(gbeth->dev, "Reset deassert failed\n");
-> > +                     return ret;
-> > +             }
-> > +
-> > +             ret =3D clk_bulk_prepare_enable(plat_dat->num_clks, plat_=
-dat->clks);
-> > +             if (ret)
-> > +                     reset_control_assert(gbeth->rstc);
-> > +     } else {
-> > +             clk_bulk_disable_unprepare(plat_dat->num_clks, plat_dat->=
-clks);
-> > +             ret =3D reset_control_assert(gbeth->rstc);
-> > +             if (ret)
-> > +                     dev_err(gbeth->dev, "Reset assert failed\n");
-> > +     }
-> > +
-> > +     return ret;
-> > +}
-> > +
-> > +static int renesas_gbeth_probe(struct platform_device *pdev)
-> > +{
-> > +     struct plat_stmmacenet_data *plat_dat;
-> > +     struct stmmac_resources stmmac_res;
-> > +     struct device *dev =3D &pdev->dev;
-> > +     struct renesas_gbeth *gbeth;
-> > +     unsigned int i;
-> > +     int err;
-> > +
-> > +     err =3D stmmac_get_platform_resources(pdev, &stmmac_res);
-> > +     if (err)
-> > +             return dev_err_probe(dev, err,
-> > +                                  "failed to get resources\n");
-> > +
-> > +     plat_dat =3D devm_stmmac_probe_config_dt(pdev, stmmac_res.mac);
-> > +     if (IS_ERR(plat_dat))
-> > +             return dev_err_probe(dev, PTR_ERR(plat_dat),
-> > +                                  "dt configuration failed\n");
-> > +
-> > +     gbeth =3D devm_kzalloc(dev, sizeof(*gbeth), GFP_KERNEL);
-> > +     if (!gbeth)
-> > +             return -ENOMEM;
-> > +
-> > +     plat_dat->num_clks =3D ARRAY_SIZE(renesas_gbeth_clks);
-> > +     plat_dat->clks =3D devm_kcalloc(dev, plat_dat->num_clks,
-> > +                                   sizeof(*plat_dat->clks), GFP_KERNEL=
-);
-> > +     if (!plat_dat->clks)
-> > +             return -ENOMEM;
-> > +
-> > +     for (i =3D 0; i < plat_dat->num_clks; i++)
-> > +             plat_dat->clks[i].id =3D renesas_gbeth_clks[i];
-> > +
-> > +     err =3D devm_clk_bulk_get(dev, plat_dat->num_clks, plat_dat->clks=
-);
-> > +     if (err < 0)
-> > +             return err;
-> > +
-> > +     plat_dat->clk_tx_i =3D renesas_gbeth_find_clk(plat_dat, "tx");
-> > +     if (!plat_dat->clk_tx_i)
-> > +             return dev_err_probe(dev, -EINVAL,
-> > +                                  "error finding tx clock\n");
-> > +
-> > +     gbeth->rstc =3D devm_reset_control_get_exclusive(dev, NULL);
-> > +     if (IS_ERR(gbeth->rstc))
-> > +             return PTR_ERR(gbeth->rstc);
-> > +
-> > +     gbeth->dev =3D dev;
-> > +     gbeth->regs =3D stmmac_res.addr;
-> > +     gbeth->plat_dat =3D plat_dat;
-> > +     plat_dat->bsp_priv =3D gbeth;
-> > +     plat_dat->set_clk_tx_rate =3D stmmac_set_clk_tx_rate;
-> > +     plat_dat->clks_config =3D renesas_gbeth_clks_config;
-> > +     plat_dat->flags |=3D STMMAC_FLAG_HWTSTAMP_CORRECT_LATENCY |
-> > +                        STMMAC_FLAG_EN_TX_LPI_CLK_PHY_CAP |
->
-> The above does not compile:
->
-> ../drivers/net/ethernet/stmicro/stmmac/dwmac-renesas-gbeth.c:124:7:
-> error: use of undeclared identifier 'STMMAC_FLAG_EN_TX_LPI_CLK_PHY_CAP'
->
-As pointed out by Russell it depends on patch [0].
-
-https://lore.kernel.org/all/E1tsITp-005vG9-Px@rmk-PC.armlinux.org.uk/
-
->
-> > +                        STMMAC_FLAG_SPH_DISABLE;
-> > +
-> > +     err =3D renesas_gbeth_clks_config(gbeth, true);
-> > +     if (err)
-> > +             return err;
-> > +
-> > +     err =3D stmmac_dvr_probe(dev, plat_dat, &stmmac_res);
-> > +     if (err) {
-> > +             renesas_gbeth_clks_config(gbeth, false);
-> > +             return err;
->
-> Just:
->
->         if (err)
->                 renesas_gbeth_clks_config(gbeth, false);
->
->         return err;
->
-Ok, I will update the code as above.
-
-Cheers,
-Prabhakar
+-- 
+With best wishes
+Dmitry
 
