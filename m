@@ -1,108 +1,106 @@
-Return-Path: <linux-kernel+bounces-566281-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566260-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0522BA675E9
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 15:07:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 77C2CA67599
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 14:53:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D74AD19A7799
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 14:02:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D8D47188994B
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 13:51:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 947A820D4EF;
-	Tue, 18 Mar 2025 14:01:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NLkmW779"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8288A20D509;
+	Tue, 18 Mar 2025 13:51:29 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC7ED20CCF2;
-	Tue, 18 Mar 2025 14:01:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26E2E19E7FA;
+	Tue, 18 Mar 2025 13:51:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742306496; cv=none; b=MYRE8mmG3PYGi2K/kILbvwv68PTC4WoYbRFhv7FD4N92GiJ9pkAglEGzjWW23iOBp+CNcBOhk3UGmtQssPGVh0sdnSOh0erGwc25nY7Zte1eaFUdwJEziK0Q1cJiL6mDjpvAR/uf4/iPjF3MRE2Sx+LjtzeM2Fc59qwaOr+V4yk=
+	t=1742305889; cv=none; b=TC1AVZjqFjI1hRd19CzX+cTyfIovalBVDgKUFbqkvLOZ3WTbs+lGBtzXQor14B8IB9DQjJ3eEm28Lf/83I/4kW5qkvm7Wowfy9TBHiP1+SI1ne2pFHRGjeJ8rvEUdPsj7R1b6kSzqxOJ66ysXYFcK3s0mnN15J6dOhf0lla+QP4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742306496; c=relaxed/simple;
-	bh=3cmRnMYukVAIeZVGYalyMJ4UjuQ2TRhzGHCptcLjrfQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=TxdyOcK62HtKyuHBAcJblI8ZH6HHoTi7+zxAjOEqxIt3nuaTZD/pPFE9egKtdCK5OkN/7+YoY3JlabH0fy1P6q/Ml+wfZXpZgzeaZEXMRHLFtyx0LnyAcH+Vtj0v4nG5gTwlaDiEixFVcxOX8jj76snUundP/J6Yy7FbdKna1mw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NLkmW779; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED768C4CEE3;
-	Tue, 18 Mar 2025 14:01:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742306495;
-	bh=3cmRnMYukVAIeZVGYalyMJ4UjuQ2TRhzGHCptcLjrfQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=NLkmW7796Wtwdh0pu84meFsUfJ/4VV2ZW2c4tSf8AOP1ionVbwWPuQS1ur4di8dNe
-	 4BARn8fBK8GmDggvlLVQ6Xh8keXIiQXv6WP2wKCwspQ18FMtk2t2y/iG0kDUBfJPKm
-	 bsUs3QrAdhEeBuRPJ+FZBVzqU8Z9I/MdsK0TmQyqJJXixvSHIU8tzI3xhbdAj9L+e8
-	 NaeREM5/QcYoow+f0gcn6fLldFUL+9OLpDZ6g6FvMs5wIrykNJu/wEXeUmdrHYduT8
-	 QsSrq2jCS7Onnf7iXMFJDHOqLu3g3gc3cnBxXZ7fUjfGHzqF+frN9AGhSRYSaTAj3+
-	 r92OjX3HT+fZg==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: Abdiel Janulgue <abdiel.janulgue@gmail.com>
-Cc: rust-for-linux@vger.kernel.org,  daniel.almeida@collabora.com,
-  dakr@kernel.org,  robin.murphy@arm.com,  aliceryhl@google.com,  Miguel
- Ojeda <ojeda@kernel.org>,  Alex Gaynor <alex.gaynor@gmail.com>,  Boqun
- Feng <boqun.feng@gmail.com>,  Gary Guo <gary@garyguo.net>,  =?utf-8?Q?Bj?=
- =?utf-8?Q?=C3=B6rn?= Roy
- Baron <bjorn3_gh@protonmail.com>,  Benno Lossin <benno.lossin@proton.me>,
-  Trevor Gross <tmgross@umich.edu>,  Valentin Obst
- <kernel@valentinobst.de>,  linux-kernel@vger.kernel.org (open list),
-  Christoph Hellwig <hch@lst.de>,  Marek Szyprowski
- <m.szyprowski@samsung.com>,  airlied@redhat.com,  iommu@lists.linux.dev
- (open list:DMA MAPPING HELPERS)
-Subject: Re: [PATCH v14 06/11] rust: dma: add dma addressing capabilities
-In-Reply-To: <20250311174930.2348813-7-abdiel.janulgue@gmail.com> (Abdiel
-	Janulgue's message of "Tue, 11 Mar 2025 19:48:02 +0200")
-References: <20250311174930.2348813-1-abdiel.janulgue@gmail.com>
-	<20250311174930.2348813-7-abdiel.janulgue@gmail.com>
-User-Agent: mu4e 1.12.7; emacs 29.4
-Date: Tue, 18 Mar 2025 14:50:23 +0100
-Message-ID: <874izqjvmo.fsf@kernel.org>
+	s=arc-20240116; t=1742305889; c=relaxed/simple;
+	bh=5uyufKA0Lw5iJw0PGCK7xtNCK3JfWODSy+ObVHkflrY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sq0sJqYjOXh7CjyNVSn1Ax4bXiifkT/aafIxwXOQ3vG87u0bjYeW833cZXfq/V8Q0rd36l2/Ubkg/2nGpZXeY3P9WPrVpYeOqxryZqPDJOz2JuLrHA8/IdvP4IOGBkdJUwsHKyVdhrwCUt6qx3MbAHbHhJRq2afu01xBSVkVD48=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C91DEC4CEDD;
+	Tue, 18 Mar 2025 13:51:26 +0000 (UTC)
+Message-ID: <0eb40ff7-7123-477f-a477-6d537195346b@xs4all.nl>
+Date: Tue, 18 Mar 2025 14:51:24 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] media: i2c: lt6911uxe: Fix Kconfig dependencies:
+To: Arnd Bergmann <arnd@arndb.de>, "Yan, Dongcheng"
+ <dongcheng.yan@intel.com>, Arnd Bergmann <arnd@kernel.org>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Sakari Ailus <sakari.ailus@linux.intel.com>,
+ "laurent.pinchart" <laurent.pinchart@ideasonboard.com>,
+ Umang Jain <umang.jain@ideasonboard.com>, linux-media@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250314154738.3983798-1-arnd@kernel.org>
+ <ecb959fe-69e3-4265-9e4b-326bff421153@intel.com>
+ <3bb730a9-5d8a-41c6-8a27-e099561b5890@app.fastmail.com>
+Content-Language: en-US
+From: Hans Verkuil <hverkuil@xs4all.nl>
+In-Reply-To: <3bb730a9-5d8a-41c6-8a27-e099561b5890@app.fastmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Abdiel Janulgue <abdiel.janulgue@gmail.com> writes:
+Hi all,
 
-> From: Danilo Krummrich <dakr@kernel.org>
->
-> Implement `dma_set_mask()` and `dma_set_mask_and_coherent()` in the
-> `dma::Device` trait.
->
-> Those methods are used to inform the kernel about the device's DMA
-> addressing capabilities.
->
-> Co-developed-by: Abdiel Janulgue <abdiel.janulgue@gmail.com>
-> Signed-off-by: Abdiel Janulgue <abdiel.janulgue@gmail.com>
-> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+On 3/17/25 11:32, Arnd Bergmann wrote:
+> On Mon, Mar 17, 2025, at 11:17, Yan, Dongcheng wrote:
+>> On 3/14/2025 11:46 PM, Arnd Bergmann wrote:
+>>> From: Arnd Bergmann <arnd@arndb.de>
+> 
+>>> @@ -1149,8 +1149,9 @@ config VIDEO_ISL7998X
+>>>  
+>>>  config VIDEO_LT6911UXE
+>>>  	tristate "Lontium LT6911UXE decoder"
+>>> -	depends on ACPI && VIDEO_DEV
+>>> +	depends on ACPI && VIDEO_DEV && I2C
+>>>  	select V4L2_FWNODE
+>>> +	select V4L2_CCI_I2C
+>>>  	help
+>>>  	  This is a Video4Linux2 sensor-level driver for the Lontium
+>>>  	  LT6911UXE HDMI to MIPI CSI-2 bridge.
+>>
+>> Thanks for your fix.
+>>
+>> Lkp is a bit weird to me, because it tested a warning in patch v6 likes
+>> below:
+>>
+>>     kismet: WARNING: unmet direct dependencies detected for V4L2_CCI_I2C
+>> when selected by VIDEO_LT6911UXE
+> 
+> What was the full warning? The only dependency I see in V4L2_CCI_I2C
+> is CONFIG_I2C itself, and that is what I add above.
+> 
+>> So I remove this select flag and passed lkp build test in patch v7.
+>> But now it encounters build error again, I'm curious why...
+> 
+> I don't currently get any more build errors with my patch
+> added in, and I think this should be sufficient. Can you forward
+> me the errors and config you get with my patch?
 
-[...]
+FYI: I plan to take Arnd's patch tomorrow to be in time for the merge window.
 
-> +
-> +/// Helper function to set the bit mask for DMA addressing.
-> +pub const fn dma_bit_mask(n: usize) -> u64 {
-> +    if n > 64 {
-> +        return 0;
-> +    }
-> +    if n == 64 {
-> +        !0
-> +    } else {
-> +        (1 << (n)) - 1
-> +    }
-> +}
+If more issues are found, then they can be on top later.
 
-I think this is dead code?
+Regards,
 
+	Hans
 
-Best regards,
-Andreas Hindborg
-
+> 
+>      Arnd
+> 
 
 
