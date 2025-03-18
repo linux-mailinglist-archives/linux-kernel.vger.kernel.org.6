@@ -1,61 +1,58 @@
-Return-Path: <linux-kernel+bounces-567074-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567073-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10CC6A680C2
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 00:35:53 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B120A680BF
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 00:35:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DABEC3B78E9
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 23:35:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2AF907AB53E
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 23:34:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D01A2080EE;
-	Tue, 18 Mar 2025 23:35:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E1452080FE;
+	Tue, 18 Mar 2025 23:34:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="idYD+lgT"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ma8z723P"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8009C1DED62;
-	Tue, 18 Mar 2025 23:35:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B93E7205E36;
+	Tue, 18 Mar 2025 23:34:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742340944; cv=none; b=qACVwL3WNJ55iq2yhLrEAKVv2bOPXYzQMZtykxvxrRx67BDpGSkeTxk0U9oJJCQbpmBWc9aMpMLREpGiUnA15DWMFlFTMBmu0RHD2OoCsLMpeW+k+klM3Dm4jNiWhygac/hv7vn7b3Yt6LDg3j//dohl1T/b/shhfoIzFM++Yco=
+	t=1742340897; cv=none; b=OrU8c+/ncZLrrc97W/vsdwwi7ZMWe4Ro+TEYphIzF/iW6qOXWv7t48e9xL4P01hedtL0oKy8DBpDSEgwLRMIk4VRdxJbJohICCYr5I3uJ+FsM3QGLTlZSRywKZDn1+nJl4Ruz8BXbYFhK4a0AeO1cxcawTB8DE/w21VD7d+2Rd4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742340944; c=relaxed/simple;
-	bh=4IVcs9YZr3otoyqBA+adK0IyFOywTE4SWOr0nExun5g=;
+	s=arc-20240116; t=1742340897; c=relaxed/simple;
+	bh=pMn93BCYx8Yd/sNKAxUy368DN98GPccSOpgU0WBYfvk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JuNunFxRReh9fXMJWAAufe7UM/Y0g9hWDyyYsDGKVJdE79BsOFPJ/9qmA7fdJPyjlNhDrAxiEt/rrV6s4MXWH6oQ2JioJ9pilu6KpzDxi6PichHVwA/NIZWgMkmFCmvqCqPx5MDdKUxZTeasdnLLvGHDjssB7NNlz1mtwdrRrso=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=idYD+lgT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA6BCC4CEDD;
-	Tue, 18 Mar 2025 23:35:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1742340939;
-	bh=4IVcs9YZr3otoyqBA+adK0IyFOywTE4SWOr0nExun5g=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=ASZGX0mEhLDQb3UcJuU7i/XI4IB7t4pH0AxQAPmAYkrYQN4mfa+uTXT1i9Q+k2MpdA3XgoC7PvPqXioVIDalJ4GndKUj3rN67DWv9cf3zR6JumxoIIYwv8q9yy8O/rqAfsRGUjLsfnsGqRajexjthb7DR0zteIUfdv7xexPUIkM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ma8z723P; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3461C4CEE9;
+	Tue, 18 Mar 2025 23:34:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742340897;
+	bh=pMn93BCYx8Yd/sNKAxUy368DN98GPccSOpgU0WBYfvk=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=idYD+lgTiQ8etxPoLwzo/bFdbKC+Hz1XU0jd2LvYX9TjiOXPstG18HbME+pqDTLc6
-	 2xMbcaWWqTev1HGYalywJjUoRj4rqFCkk9BZS5U5KAVPLQTH33G82S1nkJHh4afFPB
-	 ShnUwNnHEsHK3VPJ5KNUVaFXDnwMsNYFLkqgzfho=
-Date: Tue, 18 Mar 2025 16:34:21 -0700
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Andreas Hindborg <a.hindborg@kernel.org>
-Cc: Alice Ryhl <aliceryhl@google.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Arnd Bergmann <arnd@arndb.de>, Miguel Ojeda <ojeda@kernel.org>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Matthew Maurer <mmaurer@google.com>, Lee Jones <lee@kernel.org>,
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH 0/5] Rust support for `struct iov_iter`
-Message-ID: <2025031804-eardrum-surplus-5ff9@gregkh>
-References: <20250311-iov-iter-v1-0-f6c9134ea824@google.com>
- <9pOFLtAJ1ScEHfLe7L2KqghIKBzL8sTupJttIVRB70ZmvdUpiEYrxCxIpJD_cBJVwv-TKxosDL-l6cq3qt563Q==@protonmail.internalid>
- <2025031140-saffron-kilobyte-bd2e@gregkh>
- <878qp2hx9o.fsf@kernel.org>
+	b=Ma8z723PtjSDzA2o+p77HmCpTJX4ju6WX+CjS6LUcxG96CpWq32+ZfhY03OVdZfxP
+	 SqKNCq35x5v7tsPOfZk1UZWc/yR5hUCAZOhyRu0SX4PuASaXrMhyOXcj9a6mxsE0X4
+	 v6LM0d0mnjjVgklNNskiyKXvuHHtGZt8OLibTuDWSzuCJMcxywDRqUju9giscYQhU5
+	 Q2lJK/0ZqX92Vh7zurs+49Bnvs0XW2o/6CeO5KvqPffQXRObGesnQIcEBHFICqXnk/
+	 HP03ZRR3JdFb3n2PiowiQXCu/8XXXDvcXuM2qqIqzeqD7/0EDwIHsJRS0PLzrJOQND
+	 u6/KFxAn9xSRw==
+Date: Wed, 19 Mar 2025 00:34:53 +0100
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Zoie Lin <zoie.lin@mediatek.com>
+Cc: Qii Wang <qii.wang@mediatek.com>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Project_Global_Chrome_Upstream_Group@mediatek.com, 
+	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, teddy.chen@mediatek.com, 
+	joseph-cc.chang@mediatek.com, leilk.liu@mediatek.com
+Subject: Re: [PATCH v5 1/1] i2c: mediatek: add runtime PM operations and bus
+ regulator control
+Message-ID: <fqicrglyug7gmkmysok7hilhmkyhxmnkztzv4iffgry6xce6t3@2i6b2ihfu4rb>
+References: <20250314145407.2900190-1-zoie.lin@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,46 +61,25 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <878qp2hx9o.fsf@kernel.org>
+In-Reply-To: <20250314145407.2900190-1-zoie.lin@mediatek.com>
 
-On Tue, Mar 18, 2025 at 09:57:55PM +0100, Andreas Hindborg wrote:
-> "Greg Kroah-Hartman" <gregkh@linuxfoundation.org> writes:
+Hi Zoie,
+
+On Fri, Mar 14, 2025 at 10:53:43PM +0800, Zoie Lin wrote:
+> Introduce support for runtime PM operations in
+> the I2C driver, enabling runtime suspend and resume functionality.
 > 
-> > On Tue, Mar 11, 2025 at 02:25:11PM +0000, Alice Ryhl wrote:
-> >> This series adds support for the `struct iov_iter` type. This type
-> >> represents an IO buffer for reading or writing, and can be configured
-> >> for either direction of communication.
-> >>
-> >> In Rust, we define separate types for reading and writing. This will
-> >> ensure that you cannot mix them up and e.g. call copy_from_iter in a
-> >> read_iter syscall.
-> >>
-> >> To use the new abstractions, miscdevices are given new methods read_iter
-> >> and write_iter that can be used to implement the read/write syscalls on
-> >> a miscdevice. The miscdevice sample is updated to provide read/write
-> >> operations.
-> >
-> > Nice, this is good to have, but what's the odds of tieing in the
-> > "untrusted buffer" logic here so that all misc drivers HAVE to properly
-> > validate the data sent to them before they can touch it:
-> > 	https://lore.kernel.org/r/20240925205244.873020-1-benno.lossin@proton.me
-> >
-> > I'd like to force drivers to do this, otherwise it's just going to force
-> > us to audit all paths from userspace->kernel that happen.
-> >
+> Although in most platforms, the bus power of i2c is always
+> on, some platforms disable the i2c bus power in order to meet
+> low power request.
 > 
-> I think that for user backed iterators (`user_backed_iter(iter) != 0`)
-> we will have the same problems as discussed in [1]. To validate, we
-> would have to copy the data to another buffer and then validate it
-> there, in a race free place. But the copying is apparently a problem.
+> This implementation includes bus regulator control to facilitate
+> proper handling of the bus power based on platform requirements.
+> 
+> Signed-off-by: Zoie Lin <zoie.lin@mediatek.com>
 
-We already copy all data first, that's not an issue.  Validate it after
-it has been copied before you do something with it, just like we do
-today for normal ioctl C code.  Same goes for data coming from hardware,
-it's already been copied into a buffer that you can use, no need to copy
-it again, just "validate" it before using it.
+merged to i2c/i2c-host.
 
-thanks,
-
-greg k-h
+Thanks,
+Andi
 
