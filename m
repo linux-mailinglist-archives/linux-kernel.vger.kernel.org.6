@@ -1,132 +1,247 @@
-Return-Path: <linux-kernel+bounces-565594-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565600-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94E86A66B71
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 08:20:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0AD0A66B86
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 08:21:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84F0118964C3
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 07:20:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B01EF1896EE9
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 07:22:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEFE81EB5FF;
-	Tue, 18 Mar 2025 07:20:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 397771EB5F0;
+	Tue, 18 Mar 2025 07:21:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OYusHWAg"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="HfTMyk4a"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B53E81E98F8;
-	Tue, 18 Mar 2025 07:20:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0CDA7E1;
+	Tue, 18 Mar 2025 07:21:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742282407; cv=none; b=imtipma0YDN1MEHJWaaNIOec8FLcSbKRYjAIdTQEtJOvgNmHYuuXLXOuiBL+tdz0JdC2GiFprVo3sXk7eDnP0Wjtnn80jFt7E/40ccHSo9gKLPt5thChbxsXEJ/D6SYXbV4bfj0D3U5Ybk2QyY8vSCbIBpyeoB8mGISne5YLZ7U=
+	t=1742282507; cv=none; b=N/DERHf96m4N479dXJ0+Vyz0Ig4OYwsS3ssvsItCXw6ejIpKI3I5bG0bzGmPGhXgObVZn9PDrX3NCt8ePgT/N5STVpFLebdPKrJryvqs9F5zfu7TbIob6AEYwPpKz7DJFKInQZ1F2OQwAgffgPQB+JbR+bNnqDM0RB4HjIPu6Is=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742282407; c=relaxed/simple;
-	bh=/LXv9pdnd7fkRKmq695RDAHG14ww5Sa2dHTbmSsXSf8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ov7x4ceQ3wDSjXtqdfffmog0d+hNJanWj4asypweIjBCh3+vrRcAR4VH4RHSA4z+ByjtYs3xiGdhDf7BT19rYOMEOsvYzl3nZPfoiiqazH4jOgeIvQUotvqWSVs+Q1qQeLTl7COJBRMuDUK502ip8gCf5/tlG+WqqbYb9kddCLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OYusHWAg; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-390fdaf2897so4880687f8f.0;
-        Tue, 18 Mar 2025 00:20:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742282404; x=1742887204; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=XubnwXg9oRuAD+ZcoKjTcthnYvYFSBjX2054cK7Xw+M=;
-        b=OYusHWAg0NIYzVnBnXIVFJiqRtE61/Hp7Lxwvc6H78lA8nLhD7kzOkUzwBN409uwD1
-         kTh1UUrMPU61QARnP8tY6E+fUaKWS/6TNnV5nkeIF+a777CGZpCK04+eWJgoQ1g9nOnc
-         6q0BB/PVL2x7ePJRqJFdPbc93vg/mhJ2C773fRTOS3FrDuwkelQ/mDcESzLUuGg4K83k
-         tdcCqc7po3tsFn7bkebZ2oq00oKZmzljx97+7fI7IM1WeIAQ+1Zyb7kdH/pKRZ8GbwMK
-         I07jvGf9mxLCefi8rHyKr0JXIiEAgKK/JKg5+NTuuDH0BtGwrYGvH0h9kCnNqplmHLC4
-         XMLg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742282404; x=1742887204;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XubnwXg9oRuAD+ZcoKjTcthnYvYFSBjX2054cK7Xw+M=;
-        b=Nf5M4YiHCRSNCg55k12lM1yLm5yRNsaXXYWlBsGPq/9G9CjOpR0sLkudYT2uUm8qkl
-         vLcMiwuvjsMVOHauxX0E1wWRfAWeA3Cz+n2wqa+xL5u/xwzAXsQ0OA8ZnuMhMEp2UdCx
-         z25gD2npxTjbVly9MPb1OHcAoefcA25pYk0DzCKaVGcACJZkethfF5Oso2i13cwclda6
-         4uQ0Qy7LAEyGOK5vpFkBEw62r2o2bxSbZGxv/K3VG5Xag7OsMmGQ58Jp3oLzw04+Zhp2
-         K9DfqXFNYYCj1scBOXGvbPj6OGDzTJIybTeNOK4CFAVa8zbN5ioRre8cR433moo4P6+/
-         uLfg==
-X-Forwarded-Encrypted: i=1; AJvYcCVAqH4OIWNQUcHXdMUa/jrx423Pb+KbRZZo5tM8zUdsEJh151jddFQxXr6iEw06Su8s4BFZuiEtkg==@vger.kernel.org, AJvYcCWxsSS+jSZQGBOT4U353HUjZI0xplc8DeSXbqYHxHv67nEMIKR4evAjsxU0/1mdKYIweAXNNHZz2Oo4mQ8B@vger.kernel.org
-X-Gm-Message-State: AOJu0YzUKjMS38XtkTgeaU7xZ32sEAjUboOqZu/klhJRQddEom4WW97L
-	4v7akCmmmQu1AIjLeOOCuj7QeEAFlvabbo7l2GF16eF9BQCWDIpj
-X-Gm-Gg: ASbGnctm+TRooOttCUAW34bfjzBvXoCG7EKC9XY8gT5ma4fQXcBLp2jAa7VIAilWiQf
-	UWADvLXDbbuiJVIMj4Fmif8a3M1c+bbXHY8PevXyPgIDRjyejMTKeJMoiEQVa+b4fMW4zQPKEyq
-	nPqPsiOwuyHZindPxMcDM8Yt1PyQ2wwZBaFvOaa3mlRrZ6jRd8Dk76TvZ1UzZ01qzvVYmT9GXvG
-	2H89zUyFDRyWzBggnDZR9mo7rdojSSzyuEzk6HN0xqG0mRE3UGGWtGHRA/srj6mRZgWUX8+oi3g
-	yu+0mfuh3BNFfI6LSNzDZCI0GdjiD6xolBEtXnb4Li0+CBMNCtYRCOM+gImBmHSsakVP5H6FVQ=
-	=
-X-Google-Smtp-Source: AGHT+IHGiFWEAOgf9TJoZBrkofxAEIYgBpfiWN7VsO9dIj4d7h/UmVwrPdgP+onuolUUPTI++sg76Q==
-X-Received: by 2002:a05:6000:1563:b0:391:298c:d673 with SMTP id ffacd0b85a97d-3972029eb48mr19912766f8f.40.1742282403770;
-        Tue, 18 Mar 2025 00:20:03 -0700 (PDT)
-Received: from [172.17.3.89] (philhot.static.otenet.gr. [79.129.48.248])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-395c83b6a1csm16923529f8f.28.2025.03.18.00.20.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 18 Mar 2025 00:20:03 -0700 (PDT)
-Message-ID: <849ce82d-d87a-428a-be79-abdeb53a1a99@gmail.com>
-Date: Tue, 18 Mar 2025 07:21:00 +0000
+	s=arc-20240116; t=1742282507; c=relaxed/simple;
+	bh=nLiUrkSEAtV4YFJNW+wAuqzsKoD6bIiGGwewymLXb4A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=cJTtDyK3EL1ExYZ3h3uQC5/V02+xEbq7ZBOZeiPXXjoQpZleBctEGJRpB0zL8ZeBajMMeTQ2yDpJtQte6288U2g8ES3easGobiQC/M44LsXXdFua1ZnKXpNn7AF8buprSp4kt2q4RtTPOLEOLyn9rKtzxW6LPXIbWqA7o1UEB1o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=HfTMyk4a; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52HLpQsp026106;
+	Tue, 18 Mar 2025 07:21:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Li0MNn7ZrEOOD0vThX+KqWitMZLUv/ZYpvkQwGchqQE=; b=HfTMyk4aNUMqCD3Z
+	wGqkrBsuw0DMj/7/zUZgN0FHZvJb6JH+ZFCPHH3BkyVpK8k2lhCzcL9yCFIVL4Cp
+	ds0od3pkVgpc8GzYeeSphAJV6YmB20lhRXO2hx7OvImqH1GeVDJ1gdEcIOu0QajO
+	PsnAhA5Zlw9Umk759dbzEWQBM0N+UD6SanqPD4r2dNX+myybIPbMO5RzazeXDhoW
+	tMoWSb+7Hq/CGxhNkVN6VqUSutIefenkdxEM8mmI2TToYxGk8689PljMD4PYZITy
+	IoBL4G+muf4APhFg4ZFdjSUROCfMKjbmjTDPyfWWPaC9r9nmit9BnQn3LMyozs+L
+	NcCeZA==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45d1x7y8wf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 18 Mar 2025 07:21:40 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52I7Ldh9025028
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 18 Mar 2025 07:21:39 GMT
+Received: from [10.204.100.69] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 18 Mar
+ 2025 00:21:36 -0700
+Message-ID: <120b4f09-9145-b9c5-14b9-927086d44e71@quicinc.com>
+Date: Tue, 18 Mar 2025 12:51:33 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v4 5/5] btrfs: ioctl: don't free iov when -EAGAIN in
- uring encoded read
-To: Sidong Yang <sidong.yang@furiosa.ai>, Josef Bacik <josef@toxicpanda.com>,
- David Sterba <dsterba@suse.com>, Jens Axboe <axboe@kernel.dk>
-Cc: linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
- io-uring@vger.kernel.org, Mark Harmstone <maharmstone@meta.com>
-References: <20250317135742.4331-1-sidong.yang@furiosa.ai>
- <20250317135742.4331-6-sidong.yang@furiosa.ai>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH v4 1/2] venus: pm_helpers: add compatibility for
+ dev_pm_genpd_set_hwmode on V4
 Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <20250317135742.4331-6-sidong.yang@furiosa.ai>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+To: Renjiang Han <quic_renjiang@quicinc.com>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        "Stephen
+ Boyd" <sboyd@kernel.org>,
+        Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Mauro Carvalho Chehab
+	<mchehab@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-media@vger.kernel.org>
+References: <20250218-switch_gdsc_mode-v4-0-546f6c925ae0@quicinc.com>
+ <20250218-switch_gdsc_mode-v4-1-546f6c925ae0@quicinc.com>
+From: Vikash Garodia <quic_vgarodia@quicinc.com>
+In-Reply-To: <20250218-switch_gdsc_mode-v4-1-546f6c925ae0@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: eyVkrTMd7AIUWpOyAyRF4wfzcW2przSd
+X-Proofpoint-ORIG-GUID: eyVkrTMd7AIUWpOyAyRF4wfzcW2przSd
+X-Authority-Analysis: v=2.4 cv=Jem8rVKV c=1 sm=1 tr=0 ts=67d91f04 cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=COk6AnOGAAAA:8 a=gF5d3Xu8TQ-Je0CE9tcA:9 a=QEXdDO2ut3YA:10
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-18_03,2025-03-17_03,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ mlxlogscore=999 spamscore=0 mlxscore=0 malwarescore=0 adultscore=0
+ phishscore=0 impostorscore=0 priorityscore=1501 lowpriorityscore=0
+ bulkscore=0 clxscore=1011 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503180051
 
-On 3/17/25 13:57, Sidong Yang wrote:
-> This patch fixes a bug on encoded_read. In btrfs_uring_encoded_read(),
-> btrfs_encoded_read could return -EAGAIN when receiving requests concurrently.
-> And data->iov goes to out_free and it freed and return -EAGAIN. io-uring
-> subsystem would call it again and it doesn't reset data. And data->iov
-> freed and iov_iter reference it. iov_iter would be used in
-> btrfs_uring_read_finished() and could be raise memory bug.
 
-Fixes should go first. Please send it separately, and CC Mark.
-A "Fixes" tag would also be good to have.
-
-> Signed-off-by: Sidong Yang <sidong.yang@furiosa.ai>
-> ---
->   fs/btrfs/ioctl.c | 3 +++
->   1 file changed, 3 insertions(+)
+On 2/18/2025 4:03 PM, Renjiang Han wrote:
+> There are two ways to switch GDSC mode. One is to write the POWER_CONTROL
+> register and the other is to use dev_pm_genpd_set_hwmode(). However, they
+> rely on different clock driver flags. dev_pm_genpd_set_hwmode() depends on
+> the HW_CTRL_TRIGGER flag and POWER_CONTROL register depends on the HW_CTRL
+> flag.
 > 
-> diff --git a/fs/btrfs/ioctl.c b/fs/btrfs/ioctl.c
-> index a7b52fd99059..02fa8dd1a3ce 100644
-> --- a/fs/btrfs/ioctl.c
-> +++ b/fs/btrfs/ioctl.c
-> @@ -4922,6 +4922,9 @@ static int btrfs_uring_encoded_read(struct io_uring_cmd *cmd, unsigned int issue
->   
->   	ret = btrfs_encoded_read(&kiocb, &data->iter, &data->args, &cached_state,
->   				 &disk_bytenr, &disk_io_size);
+> By default, the dev_pm_genpd_set_hwmode() is used to switch the GDSC mode.
+> If it fails and dev_pm_genpd_set_hwmode() returns -EOPNOTSUPP, it means
+> that the clock driver uses the HW_CTRL flag. At this time, the GDSC mode
+> is switched to write the POWER_CONTROL register.
+> 
+> Clock driver is using HW_CTRL_TRIGGER flag with V6. So hwmode_dev is
+> always true on using V6 platform. Conversely, if hwmode_dev is false, this
+> platform must be not using V6. Therefore, replace IS_V6 in poweroff_coreid
+> with hwmode_dev. Also, with HW_CTRL_TRIGGER flag, the vcodec gdsc gets
+> enabled in SW mode by default. Therefore, before disabling the GDSC, GDSC
+> should be switched to SW mode so that GDSC gets enabled in SW mode in the
+> next enable.
+> 
+> Signed-off-by: Renjiang Han <quic_renjiang@quicinc.com>
+> ---
+>  drivers/media/platform/qcom/venus/core.h       |  2 ++
+>  drivers/media/platform/qcom/venus/pm_helpers.c | 38 ++++++++++++++------------
+>  2 files changed, 23 insertions(+), 17 deletions(-)
+> 
+> diff --git a/drivers/media/platform/qcom/venus/core.h b/drivers/media/platform/qcom/venus/core.h
+> index 43532543292280be15adf688fc0c30f44e207c7f..0ccce89d3f54cf685ecce5b339a51e44f6ea3704 100644
+> --- a/drivers/media/platform/qcom/venus/core.h
+> +++ b/drivers/media/platform/qcom/venus/core.h
+> @@ -168,6 +168,7 @@ struct venus_format {
+>   * @root:	debugfs root directory
+>   * @venus_ver:	the venus firmware version
+>   * @dump_core:	a flag indicating that a core dump is required
+> + * @hwmode_dev:	a flag indicating that HW_CTRL_TRIGGER is used in clock driver
+>   */
+>  struct venus_core {
+>  	void __iomem *base;
+> @@ -230,6 +231,7 @@ struct venus_core {
+>  		u32 rev;
+>  	} venus_ver;
+>  	unsigned long dump_core;
+> +	bool hwmode_dev;
+>  };
+>  
+>  struct vdec_controls {
+> diff --git a/drivers/media/platform/qcom/venus/pm_helpers.c b/drivers/media/platform/qcom/venus/pm_helpers.c
+> index 33a5a659c0ada0ca97eebb5522c5f349f95c49c7..409aa9bd0b5d099c993eedb03177ec5ed918b4a0 100644
+> --- a/drivers/media/platform/qcom/venus/pm_helpers.c
+> +++ b/drivers/media/platform/qcom/venus/pm_helpers.c
+> @@ -412,9 +412,17 @@ static int vcodec_control_v4(struct venus_core *core, u32 coreid, bool enable)
+>  	u32 val;
+>  	int ret;
+>  
+> -	if (IS_V6(core))
+> -		return dev_pm_genpd_set_hwmode(core->pmdomains->pd_devs[coreid], !enable);
+> -	else if (coreid == VIDC_CORE_ID_1) {
+> +	ret = dev_pm_genpd_set_hwmode(core->pmdomains->pd_devs[coreid], !enable);
+> +	if (ret == -EOPNOTSUPP) {
+> +		core->hwmode_dev = false;
+> +		goto legacy;
+> +	}
 > +
-> +	if (ret == -EAGAIN)
-> +		goto out_acct;
->   	if (ret < 0 && ret != -EIOCBQUEUED)
->   		goto out_free;
->   
+> +	core->hwmode_dev = true;
+> +	return ret;
+> +
+> +legacy:
+> +	if (coreid == VIDC_CORE_ID_1) {
+>  		ctrl = core->wrapper_base + WRAPPER_VCODEC0_MMCC_POWER_CONTROL;
+>  		stat = core->wrapper_base + WRAPPER_VCODEC0_MMCC_POWER_STATUS;
+>  	} else {
+> @@ -450,7 +458,7 @@ static int poweroff_coreid(struct venus_core *core, unsigned int coreid_mask)
+>  
+>  		vcodec_clks_disable(core, core->vcodec0_clks);
+>  
+> -		if (!IS_V6(core)) {
+> +		if (!core->hwmode_dev) {
+>  			ret = vcodec_control_v4(core, VIDC_CORE_ID_1, false);
+>  			if (ret)
+>  				return ret;
+> @@ -468,7 +476,7 @@ static int poweroff_coreid(struct venus_core *core, unsigned int coreid_mask)
+>  
+>  		vcodec_clks_disable(core, core->vcodec1_clks);
+>  
+> -		if (!IS_V6(core)) {
+> +		if (!core->hwmode_dev) {
+>  			ret = vcodec_control_v4(core, VIDC_CORE_ID_2, false);
+>  			if (ret)
+>  				return ret;
+> @@ -491,11 +499,9 @@ static int poweron_coreid(struct venus_core *core, unsigned int coreid_mask)
+>  		if (ret < 0)
+>  			return ret;
+>  
+> -		if (!IS_V6(core)) {
+> -			ret = vcodec_control_v4(core, VIDC_CORE_ID_1, true);
+> -			if (ret)
+> -				return ret;
+> -		}
+> +		ret = vcodec_control_v4(core, VIDC_CORE_ID_1, true);
+> +		if (ret)
+> +			return ret;
+>  
+>  		ret = vcodec_clks_enable(core, core->vcodec0_clks);
+>  		if (ret)
+> @@ -511,11 +517,9 @@ static int poweron_coreid(struct venus_core *core, unsigned int coreid_mask)
+>  		if (ret < 0)
+>  			return ret;
+>  
+> -		if (!IS_V6(core)) {
+> -			ret = vcodec_control_v4(core, VIDC_CORE_ID_2, true);
+> -			if (ret)
+> -				return ret;
+> -		}
+> +		ret = vcodec_control_v4(core, VIDC_CORE_ID_2, true);
+> +		if (ret)
+> +			return ret;
+>  
+>  		ret = vcodec_clks_enable(core, core->vcodec1_clks);
+>  		if (ret)
+> @@ -811,7 +815,7 @@ static int vdec_power_v4(struct device *dev, int on)
+>  	else
+>  		vcodec_clks_disable(core, core->vcodec0_clks);
+>  
+> -	vcodec_control_v4(core, VIDC_CORE_ID_1, false);
+> +	ret = vcodec_control_v4(core, VIDC_CORE_ID_1, false);
+>  
+>  	return ret;
+>  }
+> @@ -856,7 +860,7 @@ static int venc_power_v4(struct device *dev, int on)
+>  	else
+>  		vcodec_clks_disable(core, core->vcodec1_clks);
+>  
+> -	vcodec_control_v4(core, VIDC_CORE_ID_2, false);
+> +	ret = vcodec_control_v4(core, VIDC_CORE_ID_2, false);
+>  
+>  	return ret;
+>  }
 
--- 
-Pavel Begunkov
-
+Reviewed-by: Vikash Garodia <quic_vgarodia@quicinc.com>
 
