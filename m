@@ -1,137 +1,295 @@
-Return-Path: <linux-kernel+bounces-566321-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566323-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A099AA67659
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 15:27:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08025A67642
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 15:24:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B2E2C19C2966
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 14:22:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A0A93A566D
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 14:24:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC4D820E00A;
-	Tue, 18 Mar 2025 14:22:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9F3F20E306;
+	Tue, 18 Mar 2025 14:24:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ePBB5nTX"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="mj4tt69B"
+Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A548220CCDE;
-	Tue, 18 Mar 2025 14:22:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB58F20CCDE
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 14:24:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742307757; cv=none; b=oV0YjsROnaEkePq2hDlHUC/8ad0q4CMXQmHAUA/fxBXtER2AdvVP47lnWJqcNBC99+CZEQ4SXf586Fz7OyXaYsXP68DsZPDT/Bz5xEAnYVoxxKYsB3Pi7AJvNi+Z/Bb3ESWUHY6r0tRhb7SWPMxibLCRlYsq9A4Hq+nZh4qXwco=
+	t=1742307845; cv=none; b=llQCCbai/fjqQJfbX0GOqdlgxWctOEOxiTWZVhzXf2u+vW86AmvSvN8ePYv8PNK6HVTaT2n+XcXsGANADB/lHd36BpS1dbGElRJ2/qkukXKvSu+jS1aBtetr8znbCpEeUpBAcA7iCMLgQ59Ud+vRPnYqHAVH77A4ZIQoZRlRNg4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742307757; c=relaxed/simple;
-	bh=bhxjBtgp4kDQksgqi1xMuHbxYBdn6tncSJ72WND0hEM=;
+	s=arc-20240116; t=1742307845; c=relaxed/simple;
+	bh=3l7/+w0Cqrj84kKZHIfTbz64aZ88NXHvCOE+ukXY7dY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aATVvpCDwunAqrg63TfE5UgNMxuz6uLWmlBwl/aT+iIYM7RgejAtUm/L2+UYP4u+EunWAq3zXpN8dekzl91uRk6pE8WNcKNhMM2jxoMIl9oXbpOd+Z5+XGZLTa8ldMbssqFSvvvLZQei8GkEUz40hlobbITYfL+XulAHkThz6tQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ePBB5nTX; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-22622ddcc35so43413555ad.2;
-        Tue, 18 Mar 2025 07:22:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742307754; x=1742912554; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=38DYhU9NeR63OPkTYaO3IDcR1iMpXAwYZ8MimJ8MOoY=;
-        b=ePBB5nTXoEW3nM0MNbWQ8BUiSex8V5KKP1SjIIbv0Hd/NBq1+9mn2wy1meQMKvTojW
-         X6V2oQg9UkAGAE7dOhAiUgw+kyDpR9rqlXcApm9OuFteXGJgdilAOnojoZ0P4p6faqyU
-         Dt9V1I50I61ija6T5ybG8PaetmqT712TuXhdNxPDBrCo9jPB6gW/1Cd65bfidIbb3IeT
-         /oUiVLija5kX2yPxLZDXG0of16p2u1suY7YxVgJP+Edz4qgF5SxmdX4Lz+ISgHuTq5cc
-         z5nJ5Fc6HlKl/ewV28/ZP/6F32FMgcfG3hCoERsG4odFKa93qn5839ytDKh72H67U5Wh
-         xp4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742307754; x=1742912554;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=38DYhU9NeR63OPkTYaO3IDcR1iMpXAwYZ8MimJ8MOoY=;
-        b=EfCKKmRemx6oCxCfilGg2hLfdHOoUHjDwZaEY2T+5DviJHoZ6Ynt7gO3uCWwOSKCEL
-         /W41cwRBdI5z5AP7oSIRZIFYCKmqskaBH2AD7pM92G5L+DH2ktibYttL4BiTOFV6FI0K
-         CfTVJviFoooNxzwHlqj+3V6XXXVvjePeXbYjIMjtVdOP8Bgcx5Qabc2+GYYs7vKTDbBQ
-         6YDWAs4NgnQsE963A+GHTBbMXi7s5fr/m5OsJgXw6VIr9/BuqIWclWFYqi/dNxBNoJUT
-         pM+oTIsc251QQTBXLEtKysD74CN8FF1IXDCEpfpBzgB7Z3xCsYhKnM2MlT6dz/6vjXZu
-         rm8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU2NCxLRbv5Q2FmmD2evSISCx3xOqddvilu4qvrJALgisrgCrIlnUEQSDQP2ireXKDgPdWv4XjVFuo=@vger.kernel.org, AJvYcCWr1aVBlt+9Zow+/4H1prQ79bTZj8nlg2ZbJij5m9YUyk9riiiVRcth3/3wdS0R73wjYQClI4SWdcws6qmsU+f+gzcY@vger.kernel.org
-X-Gm-Message-State: AOJu0YyY0EjC6iA3/K4JcxLeJbDlPP99mZ428ZsWNpYSrmLRIrv8Pys+
-	2FwWRXGfVUl9NuCmTGbeeF9399hNEGpngs3dwolQZwcZkqoVdoHI
-X-Gm-Gg: ASbGnctkkM6cYsZh5E9bQWfweVGHGrbM5XvdlKSMfRbNu+2/Phy8YEDLLFqMhQRXcbS
-	z+C0DNtn+i3NNTBWVWYMRSIh3oUt8DMN1uAlp8pSxoaCn3fmspliizguO2oNw4/0cBehOJ9KoO9
-	aXoLULhqVKdDxXf9MYrmJFEcaNGEUYbf/kUVVRtOcS/Q/5a675E+vKNKozQaBslkBMOp1vA8bMx
-	nhChvcx5J2xWEym2GqCVed8b1oj0IAi8jwyDdbNIa8q1oMfx32lkivlqAjol2I28jFGW5icwqKk
-	z+HYcinYrOYgKzUKY1Iyhoyp6EdBjXDG8ucxW4dFU1OjsIV/I4uER24=
-X-Google-Smtp-Source: AGHT+IHfn0YOiCrJgDVT6D9vqLwbLWYvefBjGXOzK93X9X8ZKF+gyG7wU5swUF3rcICsNkfF/3qi5Q==
-X-Received: by 2002:a05:6a00:1398:b0:736:3e50:bfec with SMTP id d2e1a72fcca58-737572301a9mr6633064b3a.8.1742307753469;
-        Tue, 18 Mar 2025 07:22:33 -0700 (PDT)
-Received: from archie.me ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73711694e40sm9868696b3a.139.2025.03.18.07.22.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Mar 2025 07:22:32 -0700 (PDT)
-Received: by archie.me (Postfix, from userid 1000)
-	id 1D388420A74B; Tue, 18 Mar 2025 21:22:30 +0700 (WIB)
-Date: Tue, 18 Mar 2025 21:22:29 +0700
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: Purva Yeshi <purvayeshi550@gmail.com>, rostedt@goodmis.org,
-	mhiramat@kernel.org, mathieu.desnoyers@efficios.com, corbet@lwn.net
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org
-Subject: Re: [PATCH v4 1/2] docs: tracing: Reduce maxdepth in index.rst for
- clarity
-Message-ID: <Z9mBpct7G7FigDjB@archie.me>
-References: <20250318113230.24950-1-purvayeshi550@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=pPkogrBmoXgjR++IgU5rb9cQPoc0CM5sZgwQD3whWdp29gFMosPrrYsYIAHOgs4KiQzQ4vFIriix9zoJwhDGt07L2a7/a4zoWULBCI+p+3+Vs1/51WNJeyC9WZBHJCsDwseJcTastd2FzFDYyPfs+U05q4WXdhLODn/dD5PSKaw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=mj4tt69B; arc=none smtp.client-ip=95.215.58.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Tue, 18 Mar 2025 14:23:32 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1742307828;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Ls7Y8UAc4E5oYUHdeF3Zui0XA8kiPNXgDdqTzRTlvAE=;
+	b=mj4tt69BP31yx1XmC0KXe2ExEfhJaFB0CID9iWDRqJ/7x7RQ6gRKgjovCn/2yTHDpriF3n
+	3Bbj1+EbTbDq5nulMG3EeHNObhLL3B2Mwvw0+VkBaaxKNrdujUJoWEqvjbFkkyq2STiAfq
+	I+VAx6cvm7jwkFUwZPVolYzEqY5uSWQ=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yosry Ahmed <yosry.ahmed@linux.dev>
+To: "Sridhar, Kanchana P" <kanchana.p.sridhar@intel.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>,
+	"hannes@cmpxchg.org" <hannes@cmpxchg.org>,
+	"nphamcs@gmail.com" <nphamcs@gmail.com>,
+	"chengming.zhou@linux.dev" <chengming.zhou@linux.dev>,
+	"usamaarif642@gmail.com" <usamaarif642@gmail.com>,
+	"ryan.roberts@arm.com" <ryan.roberts@arm.com>,
+	"21cnbao@gmail.com" <21cnbao@gmail.com>,
+	"ying.huang@linux.alibaba.com" <ying.huang@linux.alibaba.com>,
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+	"linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+	"herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
+	"davem@davemloft.net" <davem@davemloft.net>,
+	"clabbe@baylibre.com" <clabbe@baylibre.com>,
+	"ardb@kernel.org" <ardb@kernel.org>,
+	"ebiggers@google.com" <ebiggers@google.com>,
+	"surenb@google.com" <surenb@google.com>,
+	"Accardi, Kristen C" <kristen.c.accardi@intel.com>,
+	"Feghali, Wajdi K" <wajdi.k.feghali@intel.com>,
+	"Gopal, Vinodh" <vinodh.gopal@intel.com>
+Subject: Re: [PATCH v8 12/14] mm: zswap: Simplify acomp_ctx resource
+ allocation/deletion and mutex lock usage.
+Message-ID: <Z9mB5IbNEdNdtmUp@google.com>
+References: <20250303084724.6490-1-kanchana.p.sridhar@intel.com>
+ <20250303084724.6490-13-kanchana.p.sridhar@intel.com>
+ <Z8n5CCmELvpUwi3B@google.com>
+ <PH8SPRMB004414B5E1E0765C18F9A89DC9D52@PH8SPRMB0044.namprd11.prod.outlook.com>
+ <Z8tJOi5G_3dpK31v@google.com>
+ <PH8SPRMB00447B066A769C76F57F8800C9D42@PH8SPRMB0044.namprd11.prod.outlook.com>
+ <Z88h1mPkYNM6yOGE@google.com>
+ <SA3PR11MB812082535F1E6D63BC0F1412C9DF2@SA3PR11MB8120.namprd11.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="UJyZX/jSXsbpe7Bj"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250318113230.24950-1-purvayeshi550@gmail.com>
+In-Reply-To: <SA3PR11MB812082535F1E6D63BC0F1412C9DF2@SA3PR11MB8120.namprd11.prod.outlook.com>
+X-Migadu-Flow: FLOW_OUT
 
+On Mon, Mar 17, 2025 at 09:15:09PM +0000, Sridhar, Kanchana P wrote:
+> 
+> > -----Original Message-----
+> > From: Yosry Ahmed <yosry.ahmed@linux.dev>
+> > Sent: Monday, March 10, 2025 10:31 AM
+> > To: Sridhar, Kanchana P <kanchana.p.sridhar@intel.com>
+> > Cc: linux-kernel@vger.kernel.org; linux-mm@kvack.org;
+> > hannes@cmpxchg.org; nphamcs@gmail.com; chengming.zhou@linux.dev;
+> > usamaarif642@gmail.com; ryan.roberts@arm.com; 21cnbao@gmail.com;
+> > ying.huang@linux.alibaba.com; akpm@linux-foundation.org; linux-
+> > crypto@vger.kernel.org; herbert@gondor.apana.org.au;
+> > davem@davemloft.net; clabbe@baylibre.com; ardb@kernel.org;
+> > ebiggers@google.com; surenb@google.com; Accardi, Kristen C
+> > <kristen.c.accardi@intel.com>; Feghali, Wajdi K <wajdi.k.feghali@intel.com>;
+> > Gopal, Vinodh <vinodh.gopal@intel.com>
+> > Subject: Re: [PATCH v8 12/14] mm: zswap: Simplify acomp_ctx resource
+> > allocation/deletion and mutex lock usage.
+> > 
+> > On Sat, Mar 08, 2025 at 02:47:15AM +0000, Sridhar, Kanchana P wrote:
+> > >
+> > [..]
+> > > > > > >  	u8 *buffer;
+> > > > > > > +	u8 nr_reqs;
+> > > > > > > +	struct crypto_wait wait;
+> > > > > > >  	struct mutex mutex;
+> > > > > > >  	bool is_sleepable;
+> > > > > > > +	bool __online;
+> > > > > >
+> > > > > > I don't believe we need this.
+> > > > > >
+> > > > > > If we are not freeing resources during CPU offlining, then we do not
+> > > > > > need a CPU offline callback and acomp_ctx->__online serves no
+> > purpose.
+> > > > > >
+> > > > > > The whole point of synchronizing between offlining and
+> > > > > > compress/decompress operations is to avoid UAF. If offlining does not
+> > > > > > free resources, then we can hold the mutex directly in the
+> > > > > > compress/decompress path and drop the hotunplug callback
+> > completely.
+> > > > > >
+> > > > > > I also believe nr_reqs can be dropped from this patch, as it seems like
+> > > > > > it's only used know when to set __online.
+> > > > >
+> > > > > All great points! In fact, that was the original solution I had implemented
+> > > > > (not having an offline callback). But then, I spent some time
+> > understanding
+> > > > > the v6.13 hotfix for synchronizing freeing of resources, and this comment
+> > > > > in zswap_cpu_comp_prepare():
+> > > > >
+> > > > > 	/*
+> > > > > 	 * Only hold the mutex after completing allocations, otherwise we
+> > > > may
+> > > > > 	 * recurse into zswap through reclaim and attempt to hold the mutex
+> > > > > 	 * again resulting in a deadlock.
+> > > > > 	 */
+> > > > >
+> > > > > Hence, I figured the constraint of "recurse into zswap through reclaim"
+> > was
+> > > > > something to comprehend in the simplification (even though I had a
+> > tough
+> > > > > time imagining how this could happen).
+> > > >
+> > > > The constraint here is about zswap_cpu_comp_prepare() holding the
+> > mutex,
+> > > > making an allocation which internally triggers reclaim, then recursing
+> > > > into zswap and trying to hold the same mutex again causing a deadlock.
+> > > >
+> > > > If zswap_cpu_comp_prepare() does not need to hold the mutex to begin
+> > > > with, the constraint naturally goes away.
+> > >
+> > > Actually, if it is possible for the allocations in zswap_cpu_comp_prepare()
+> > > to trigger reclaim, then I believe we need some way for reclaim to know if
+> > > the acomp_ctx resources are available. Hence, this seems like a potential
+> > > for deadlock regardless of the mutex.
+> > 
+> > I took a closer look and I believe my hotfix was actually unnecessary. I
+> > sent it out in response to a syzbot report, but upon closer look it
+> > seems like it was not an actual problem. Sorry if my patch confused you.
+> > 
+> > Looking at enum cpuhp_state in include/linux/cpuhotplug.h, it seems like
+> > CPUHP_MM_ZSWP_POOL_PREPARE is in the PREPARE section. The comment
+> > above
+> > says:
+> > 
+> >  * PREPARE: The callbacks are invoked on a control CPU before the
+> >  * hotplugged CPU is started up or after the hotplugged CPU has died.
+> > 
+> > So even if we go into reclaim during zswap_cpu_comp_prepare(), it will
+> > never be on the CPU that we are allocating resources for.
+> > 
+> > The other case where zswap_cpu_comp_prepare() could race with
+> > compression/decompression is when a pool is being created. In this case,
+> > reclaim from zswap_cpu_comp_prepare() can recurse into zswap on the
+> > same
+> > CPU AFAICT. However, because the pool is still under creation, it will
+> > not be used (i.e. zswap_pool_current_get() won't find it).
+> > 
+> > So I think we don't need to worry about zswap_cpu_comp_prepare() racing
+> > with compression or decompression for the same pool and CPU.
+> 
+> Thanks Yosry, for this observation! You are right, when considered purely
+> from a CPU hotplug perspective, zswap_cpu_comp_prepare() and
+> zswap_cpu_comp_dead() in fact run on a control CPU, because the state is
+> registered in the PREPARE section of "enum cpuhp_state" in cpuhotplug.h.
+> 
+> The problem however is that, in the current architecture, CPU onlining/ 
+> zswap_pool creation, and CPU offlining/zswap_pool deletion have the
+> same semantics as far as these resources are concerned. Hence, although
+> zswap_cpu_comp_prepare() is run on a control CPU, the CPU for which
+> the "hotplug" code is called is in fact online. It is possible for the memory
+> allocation calls in zswap_cpu_comp_prepare() to recurse into
+> zswap_compress(), which now needs to be handled by the current pool,
+> since the new pool has not yet been added to the zswap_pools, as you
+> pointed out.
+> 
+> The ref on the current pool has not yet been dropped. Could there be
+> a potential for a deadlock at pool transition time: the new pool is blocked
+> from allocating acomp_ctx resources, triggering reclaim, which the old
+> pool needs to handle?
 
---UJyZX/jSXsbpe7Bj
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I am not sure how this could lead to a deadlock. The compression will be
+happening in a different pool with a different acomp_ctx.
 
-On Tue, Mar 18, 2025 at 05:02:29PM +0530, Purva Yeshi wrote:
-> diff --git a/Documentation/trace/index.rst b/Documentation/trace/index.rst
-> index 2c991dc96..fecc4adf7 100644
-> --- a/Documentation/trace/index.rst
-> +++ b/Documentation/trace/index.rst
-> @@ -3,7 +3,7 @@ Linux Tracing Technologies
->  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D
-> =20
->  .. toctree::
-> -   :maxdepth: 2
-> +   :maxdepth: 1
-> =20
->     ftrace-design
->     tracepoint-analysis
+> 
+> I see other places in the kernel that use CPU hotplug for resource allocation,
+> outside of the context of CPU onlining. IIUC, it is difficult to guarantee that
+> the startup/teardown callbacks are modifying acomp_ctx resources for a
+> dysfunctional CPU.
 
-LGTM, thanks!
+IIUC, outside the context of CPU onlining, CPU hotplug callbacks get
+called when they are added. In this case, only the newly added callbacks
+will be executed. IOW, zswap's hotplug callback should not be randomly
+getting called when irrelevant code adds hotplug callbacks. It should
+only happen during zswap pool initialization or CPU onlining.
 
-Reviewed-by: Bagas Sanjaya <bagasdotme@gmail.com>
+Please correct me if I am wrong.
 
---=20
-An old man doll... just what I always wanted! - Clara
+> 
+> Now that I think about it, the only real constraint is that the acomp_ctx
+> resources are guaranteed to exist for a functional CPU which can run zswap
+> compress/decompress.
 
---UJyZX/jSXsbpe7Bj
-Content-Type: application/pgp-signature; name=signature.asc
+I believe this is already the case as I previously described, because
+the hotplug callback can only be called in two scenarios:
+- Zswap pool initialization, in which case compress/decompress
+  operations cannot run on the pool we are initializing.
+- CPU onlining, in which case compress/decompress operations cannot run
+  on the CPU we are onlining.
 
------BEGIN PGP SIGNATURE-----
+Please correct me if I am wrong.
 
-iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZ9mBnwAKCRD2uYlJVVFO
-o0jEAQC7OPAraS6ohemlhA4Ek88bLqk2VU+WWwCNlNJwUj8qgwD/eIMVDcV/FFZW
-IS4ho0D+usixVNFETzxpIw4cnm7UwQE=
-=YS9d
------END PGP SIGNATURE-----
+> 
+> I think we can simplify this as follows, and would welcome suggestions
+> to improve the proposed solution:
+> 
+> 1) We dis-associate the acomp_ctx from the pool, and instead, have this
+>     be a global percpu zswap resource that gets allocated once in zswap_setup(),
+>     just like the zswap_entry_cache.
+> 2) The acomp_ctx resources will get allocated during zswap_setup(), using
+>     the cpuhp_setup_state_multi callback() in zswap_setup(), that registers
+>     zswap_cpu_comp_prepare(), but no teardown callback.
+> 3) We call cpuhp_state_add_instance() for_each_possible_cpu(cpu) in
+>      zswap_setup(). 
+> 4) The acomp_ctx resources persist through subsequent "real CPU offline/online
+>      state transitions".
+> 5) zswap_[de]compress() can go ahead and lock the mutex, and use the
+>     reqs/buffers without worrying about whether these resources are
+>     initialized or still exist/are being deleted.
+> 6) "struct zswap_pool" is now de-coupled from this global percpu zswap
+>     acomp_ctx.
+> 7) To address the issue of how many reqs/buffers to allocate, there could
+>      potentially be a memory cost for non-batching compressors, if we want
+>      to always allocate ZSWAP_MAX_BATCH_SIZE acomp_reqs and buffers.
+>      This would allow the acomp_ctx to seamlessly handle batching
+>      compressors, non-batching compressors, and transitions among the
+>      two compressor types in a pretty general manner, that relies only on
+>      the ZSWAP_MAX_BATCH_SIZE, which we define anyway.
+> 
+>      I believe we can maximize the chances of success for the allocation of
+>      the acomp_ctx resources if this is done in zswap_setup(), but please
+>      correct me if I am wrong.
+> 
+>      The added memory cost for platforms without IAA would be
+>      ~57 KB per cpu, on x86. Would this be acceptable?
 
---UJyZX/jSXsbpe7Bj--
+I think that's a lot of memory to waste per-CPU, and I don't see a good
+reason for it.
+
+>      If not, I don't believe this simplification would be worth it, because
+>      allocating for one req/buffer, then dynamically adding more resources
+>      if a newly selected compressor requires more resources, would run
+>      into the same race conditions and added checks as in
+>      acomp_ctx_get_cpu_lock(), which I believe, seem to be necessary because
+>      CPU onlining/zswap_pool creation and CPU offlining/zswap_pool
+>      deletion have the same semantics for these resources.
+
+Agree that using a single acomp_ctx per-CPU but making the resources
+resizable is not a win.
+
+> 
+>     The only other fallback solution in lieu of the proposed simplification that
+>     I can think of is to keep the lifespan of these resources from pool creation
+>     to deletion, using the CPU hotplug code. Although, it is not totally clear
+>     to me if there is potential for deadlock during pool transitions, as noted above.
+
+I am not sure what's the deadlock scenario you're worried about, please
+clarify.
 
