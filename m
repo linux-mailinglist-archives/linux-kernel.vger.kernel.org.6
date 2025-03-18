@@ -1,104 +1,132 @@
-Return-Path: <linux-kernel+bounces-567005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB6ECA67FB8
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 23:25:31 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BB2BA67FBA
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 23:26:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92C423B59E6
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 22:25:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F13B4423956
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 22:26:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2FE4213E97;
-	Tue, 18 Mar 2025 22:24:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D6AE1F8756;
+	Tue, 18 Mar 2025 22:25:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="aJatjFct"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZyXz4HsK"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A88FF2139C8;
-	Tue, 18 Mar 2025 22:24:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16A911F4C80
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 22:25:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742336690; cv=none; b=Hm5pEJoqJ4AI16+0hVTwBImINQbeYArrAWosbUujrcxmeETNvOeHR1Em+aRGJgvnwCHwZilyZ/pLJGn8gPLqwgbv48sUa6pCZ+8Nep91w7Jhxk4JKhpv7iICs6OUnTmeNsdFFcYj/4cHXBzPVtnPsaW0cLZ7wDyhoiELTvtFeuo=
+	t=1742336754; cv=none; b=hsyBqcGNZ2zQMqni9FW+UlwsWNQgJOnbwjwlN0OJ50nec/KTKIYwjEqeRi0n39heez98iesl3cFbb6V1Cle4ZmZD/vqOkuL4aHcPD1xCEaBWSY+QljGdZcY2HcJpwUshdeJhiCGXiGqGRVqBXjhJjHUpqCJ7rCmLev5RGxjne6o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742336690; c=relaxed/simple;
-	bh=P1vtmk+9u5G+Zjiu2jlC44IrlzgRmSDtGJusM9LFedk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=BYOh082A4mf1nztGposombtU4yJFJEqHwUzfKFEUr0U/Xobh9GmulSDSq6DHXaDqjlMs31aFSYXddIfDilvyZEY/QZfui95tyzB5fkN8HRpOoGHoFuM4LEhKELvTj/A2+MBXWoEt7SMZvpMesvSBEOjwm8rsqQLwM6RNJQiFUK0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=aJatjFct; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1742336686;
-	bh=P1vtmk+9u5G+Zjiu2jlC44IrlzgRmSDtGJusM9LFedk=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=aJatjFct7ueDLUvYjXrczWUQf/Kjw0f9PhAE4Er+3AZ7E6nfd+0SdMGwfK60GtHCD
-	 /Cr97lnTp3Vlv/K+l6dvmsNpajw5+uOYadyUQGeDy539Tbm6bFjB1czcXIq49wGWWn
-	 vJp7BspKP9GtRYJ1eQtaUwEv49Fyjk4Y2xAC9gy8IUvmYL5IPBknNfuz1aEbuyOlDS
-	 3BXhJdLYDH9wIroXA2B2Ds8izBS6OI+wTMvDg/RPsmnsqgAdy9iA7PNHuvpyDdy2/l
-	 /KTyCRXm6LwIzBh4dE+qrGw5iHGr5Luy5lUVDG/cTX/jv5gUaKadzB6GcjSizELErK
-	 cUyNzfRZGC4/w==
-Received: from [192.168.1.63] (unknown [70.107.117.78])
+	s=arc-20240116; t=1742336754; c=relaxed/simple;
+	bh=WYttGZXmD4cKFkUXnUNkffMsh2E75ADt+rGXc7/+aAg=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=nq1honoSF2iELArwvFBKKkqsLaksRJqNcz0TdZixdrgT/4HS3liHsEvAlIFRBmvkEyFcu0WAABp264jSQ/PqgZAC2EgKenhvFZVz16R0uTlKwrgQteTPYAAypPTrzbzFObEThAx7y7dqeW+X1nP/rB6nzWP1KT8ExQa8tGIEzL0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZyXz4HsK; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1742336750;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=tXP1KeTdnfZjUbQUXpsqMI81bUzhxqR/ZEJh3ypYI5Q=;
+	b=ZyXz4HsKjICAtDbSLhoZ1kxlKvw95HiT4lS74gkRMQBFj0Zzt/vRan7ekBIYoN/Y4eEMT4
+	hDs90ri8YVuIqq8JhiNJcoLfDTsbzLSKR0WRJ7HRXMUdJNfEGrET2lIQY5HzTnYsCNPRzv
+	lmrjqzIv74olX/NarjjcB9vVSY6lTl8=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-336-MCodP1_pPhu8Y-IsTOg3Cw-1; Tue,
+ 18 Mar 2025 18:25:47 -0400
+X-MC-Unique: MCodP1_pPhu8Y-IsTOg3Cw-1
+X-Mimecast-MFC-AGG-ID: MCodP1_pPhu8Y-IsTOg3Cw_1742336744
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	(Authenticated sender: nfraprado)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 80A1017E0B25;
-	Tue, 18 Mar 2025 23:24:44 +0100 (CET)
-From: =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
-Date: Tue, 18 Mar 2025 18:22:18 -0400
-Subject: [PATCH 4/4] arm64: dts: mediatek: mt8390-genio-common: Add
- firmware-name for scp0
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9FDCA19560B8;
+	Tue, 18 Mar 2025 22:25:44 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.61])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id A7BAE19560AD;
+	Tue, 18 Mar 2025 22:25:41 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <4413c4ed03696b76ccd7903a87bd4c72ad9c883e.camel@ibm.com>
+References: <4413c4ed03696b76ccd7903a87bd4c72ad9c883e.camel@ibm.com> <20250313233341.1675324-1-dhowells@redhat.com> <20250313233341.1675324-19-dhowells@redhat.com>
+To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+Cc: dhowells@redhat.com, Alex Markuze <amarkuze@redhat.com>,
+    "slava@dubeyko.com" <slava@dubeyko.com>,
+    "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+    "idryomov@gmail.com" <idryomov@gmail.com>,
+    "jlayton@kernel.org" <jlayton@kernel.org>,
+    "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+    "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>,
+    "dongsheng.yang@easystack.cn" <dongsheng.yang@easystack.cn>,
+    "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH 18/35] libceph, rbd: Convert some page arrays to ceph_databuf
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250318-scp-dual-core-mt8390-v1-4-8733e192cc73@collabora.com>
-References: <20250318-scp-dual-core-mt8390-v1-0-8733e192cc73@collabora.com>
-In-Reply-To: <20250318-scp-dual-core-mt8390-v1-0-8733e192cc73@collabora.com>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Tinghan Shen <tinghan.shen@mediatek.com>, 
- Olivia Wen <olivia.wen@mediatek.com>
-Cc: kernel@collabora.com, linux-remoteproc@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
- =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
-X-Mailer: b4 0.14.2
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2680899.1742336740.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date: Tue, 18 Mar 2025 22:25:40 +0000
+Message-ID: <2680900.1742336740@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-Add the firmware-name property for SCP core0 so the firmware can be
-loaded from its canonical location in the linux-firmware repository.
+Viacheslav Dubeyko <Slava.Dubeyko@ibm.com> wrote:
 
-Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
----
- arch/arm64/boot/dts/mediatek/mt8390-genio-common.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+> >  	/*
+> >  	 * The response data for a STAT call consists of:
+> > @@ -2118,14 +2118,12 @@ static int rbd_osd_setup_stat(struct ceph_osd_=
+request *osd_req, int which)
+> >  	 *         le32 tv_nsec;
+> >  	 *     } mtime;
+> >  	 */
+> > -	pages =3D ceph_alloc_page_vector(1, GFP_NOIO);
+> > -	if (IS_ERR(pages))
+> > -		return PTR_ERR(pages);
+> > +	dbuf =3D ceph_databuf_reply_alloc(1, 8 + sizeof(struct ceph_timespec=
+), GFP_NOIO);
+> =
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt8390-genio-common.dtsi b/arch/arm64/boot/dts/mediatek/mt8390-genio-common.dtsi
-index 65952bcf5d03e3b22984dd3e997e7107e74dac72..53951817df468ee27d20db1f1028c21a1832b880 100644
---- a/arch/arm64/boot/dts/mediatek/mt8390-genio-common.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt8390-genio-common.dtsi
-@@ -1060,6 +1060,7 @@ &scp_cluster {
- };
- 
- &scp_c0 {
-+	firmware-name = "mediatek/mt8188/scp.img";
- 	memory-region = <&scp_mem>;
- 	status = "okay";
- };
+> What this 8 + sizeof(struct ceph_timespec) means? Why do we use 8 here? =
+:)
 
--- 
-2.49.0
+See the comment that's partially obscured by the patch hunk line:
+
+	/*
+	 * The response data for a STAT call consists of:
+	 *     le64 length;
+	 *     struct {
+	 *         le32 tv_sec;
+	 *         le32 tv_nsec;
+	 *     } mtime;
+	 */
+
+If you want to clean up and formalise all of these sorts of things, you mi=
+ght
+need to invest in an rpcgen-like tool.  I've occasionally toyed with the i=
+dea
+for afs in the kernel (I've hand-written all the marshalling/unmarshalling
+code in fs/afs/fsclient.c, fs/afs/yfsclient.c and fs/afs/vlclient.c, but t=
+here
+are some not-so-simple RPC calls to handle - FetchData and StoreData for
+example).
+
+David
 
 
