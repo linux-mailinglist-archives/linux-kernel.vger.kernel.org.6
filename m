@@ -1,122 +1,149 @@
-Return-Path: <linux-kernel+bounces-566450-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566451-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76977A67822
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 16:42:35 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6445BA6782B
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 16:43:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AAC37188382B
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 15:42:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 577C816B387
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 15:42:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF36C20E71B;
-	Tue, 18 Mar 2025 15:42:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B26820F082;
+	Tue, 18 Mar 2025 15:42:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=omnibond-com.20230601.gappssmtp.com header.i=@omnibond-com.20230601.gappssmtp.com header.b="tUJxnqu8"
-Received: from mail-il1-f179.google.com (mail-il1-f179.google.com [209.85.166.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GiDLmn4e"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C06201A3159
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 15:42:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CD5428FD;
+	Tue, 18 Mar 2025 15:42:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742312549; cv=none; b=F4LEmriLyztxhnCShDZcgwxMSWCHQO74RDoxPOkafJrLa69O8dgebSQaZV3rr9thTR6M56JjcyjddGlmztU6m+zvBLrCpn9u4duALUtP6pzchPbsrcA4APtTqSVARVPHlXER8i3LwYjHIatT04GantcXiA0VJMfBacB8u4V3Q0Q=
+	t=1742312565; cv=none; b=lyuOnD4wixrzQwwNqdAIkPLp1fjxPNqhuHfJjow2Q8j7gN3b0eu0+Ifu1Wsnc8prrJDyNExscdVriOEo5vUI0lQfzvYP8yPihGo7JwPH9ZmAgohqmVRJ+vhMsMQGNKg5qD+mq7iUS1UGq4uoblmlJwYE1fyZHJ7gX3dHsMfACbc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742312549; c=relaxed/simple;
-	bh=Hwdtp4nHusm0bzMZH2sjJxFzaX4iEMDSAD2WQE8AUow=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ne7ucglr1JJRtNpvnZeIG/hALW/q9HdrFDYEwqxfmxbuhOWx2zYjvDbqtcRmpKqSoHSn4W80zN58Xsh8b6eOiuoK9Bg/ZwWnoS4wshQ8YAVEG01GqjLb4r2OHPz9H9s+ERE+mSh7OzXb4i4KQmW/dbz3ZLdcRpY0sRXuzIzMJA4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omnibond.com; spf=pass smtp.mailfrom=omnibond.com; dkim=pass (2048-bit key) header.d=omnibond-com.20230601.gappssmtp.com header.i=@omnibond-com.20230601.gappssmtp.com header.b=tUJxnqu8; arc=none smtp.client-ip=209.85.166.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omnibond.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omnibond.com
-Received: by mail-il1-f179.google.com with SMTP id e9e14a558f8ab-3d46fbfab10so15832575ab.0
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 08:42:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=omnibond-com.20230601.gappssmtp.com; s=20230601; t=1742312547; x=1742917347; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bhhBaUByL11Eg/L/aJ0UGIONk2f7UqBYF49j1/2iJBc=;
-        b=tUJxnqu8S0+oEDg6jzoJrNoRRn9bstd1RHp0l+lDmdoYKRBxqWFOm9RoLIGMtlmEkG
-         7W1tYwXt7IbjuFgUw0I4KpBWZQOt3QfZqxF/SlpB3qMp7iAP3ENrgBNYRZ+INnIasbiB
-         AMhw/ulidChlErQzuqcghPHF45oahhb7LYz7aooAMlZ9HJjl9rtL2BVLUAzxULtpt8OH
-         Ypx0aHoMFVnzillnrIc1gbRLwobSGlFGCHxrzL63MhFelgapc+eL9k6sKgY7dzuutela
-         YlyCuljIzmatLNCnTkHTGfiQ8E5RWg9kcoKDNuOB7riTa14NPdoZE7rUuGIL1OIHFqY/
-         tSCA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742312547; x=1742917347;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bhhBaUByL11Eg/L/aJ0UGIONk2f7UqBYF49j1/2iJBc=;
-        b=rDcLAhZwaEiTP/kfxshVfAceuiHwWuxnsR/NytAZa5ej1NMOdCqyMQBZhrkH7R+qpl
-         Z+wXsREeI9WVuJcoqXGT3Y0pCwDfDeBBiDKwCrtbYl1AP/O1TqLz6AdML2cyGBmjyvJS
-         D/Z9LuhKnVJD+tadTvhWKFE/rc69Sg1ahOVOZcQcFvOIKNqOAlu0y6/teJOkc5CUBkVc
-         nUN8X4l/RAhwzf0+iJnv6UD7iw8tIbmAX2W9YzImmef/VzJRs9DWyBw9wOiR4v+T15uu
-         UUz8isXPokX4OclU9x88if4MMrTDBSk6k6jXJ96I90C0nEsNQcR937VmBuye35LWjHke
-         VpEw==
-X-Forwarded-Encrypted: i=1; AJvYcCWD72V8pBE9i9G4vyKZrpW3pe7G4ebbmxKb3QA7e5NGz8U7DY98uJIvfaVDiT9wsDty66GSATq0xAgbJak=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy5G+CvWveIQWy7QJat4cTRtlM0YUgkBqvzZD4eeK6R9dUYIfWk
-	Gy5cTAfXTyv7aGKXImcKYY/9m/UKT0A6oyPGMOpItMn9AI8AHp8DYzXAbB8w/07AgvJT5lqgiNb
-	iMLOqk6xl6P3hyU7S0ZlDMHkE9j6fXXDbEjqZ
-X-Gm-Gg: ASbGncu8nZXJ80oL6hf1U0cofIQn/YqFdzde3tcKOIBF4yRfjnlbbBhSCw3VQWSFzCY
-	GtdW1durqHf1oRfjReB2izGLjf0bxLLMgUik3yat9oEyt1QihFFdRAdhc510TrsUb3tSIUBtyeA
-	HO5aBWAVTEKiM5SjjCWxrzprvGpBq6D8zCtD0+9wLvBKIGNxOX
-X-Google-Smtp-Source: AGHT+IFxnYvCAuvPU42m6/QC1ywQA85OXr0FTCGOwuudEBHkzLK3cxIzbtf8pL2zy7+O30GTiOC2JUsE+fj6fWoxR44=
-X-Received: by 2002:a05:6e02:198b:b0:3d3:e2a1:1f23 with SMTP id
- e9e14a558f8ab-3d483a75f20mr199628305ab.20.1742312546859; Tue, 18 Mar 2025
- 08:42:26 -0700 (PDT)
+	s=arc-20240116; t=1742312565; c=relaxed/simple;
+	bh=bFYECgxboP4+QjxLmRsuA/NSM0Shj/GKwwVegaDxJYg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RJKr8L842mCgvfT5GlxBC51aaMirn+39t7OIxq0eg364o8n10xMzHgmXPwqlqs5Fp1VadpcnnB0seL+KzrFo6Yjxvs5cPgoJ136ksUZZYao41ctatLHglrtMwkDIAQ7Dk+v5QfNeWQcF0Tpqz96EpGMG5c65gbDGxmqW3vQmmlk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GiDLmn4e; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E19E0C4CEE3;
+	Tue, 18 Mar 2025 15:42:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742312565;
+	bh=bFYECgxboP4+QjxLmRsuA/NSM0Shj/GKwwVegaDxJYg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GiDLmn4eS05wFXdJc5BT57uAh2r/acIxX5f59PS0sd0ZUNJt/UNlyfLfJ4XxvtIqJ
+	 CeN5q+vb7P7Wp0ULDZCmYersbzLyE7dHzwIXfZ/urlF5D+3kgXEtZJYc7TbLUPa8gv
+	 aifB0fXhlaVShbH+IJ4vOCSNvaygdUMOI+oWdU6DNyXNs86YS1zD+4unPmrugnyJyi
+	 nf8ABJnVL4HkPvKomIS2JH8mkwMvhnYMT5j5ldg/ruLuvG+upJUuRW4ckYqJGnHoPf
+	 h8b89iamAIO+o5zTNV3jTry0O/XW/uPdoXdWWAg/mmqs2nTX/+AC8+uwpNaR9dEyBw
+	 nCrkxfRvoF1lA==
+Date: Tue, 18 Mar 2025 08:42:41 -0700
+From: Kees Cook <kees@kernel.org>
+To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+Cc: Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Benson Leung <bleung@chromium.org>,
+	Guenter Roeck <groeck@chromium.org>,
+	Tzung-Bi Shih <tzungbi@kernel.org>, linux-iio@vger.kernel.org,
+	chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: Re: [PATCH v2][next] iio: cros_ec: Avoid
+ -Wflex-array-member-not-at-end warning
+Message-ID: <202503180840.77F2F47DE8@keescook>
+References: <Z9lE6IVDeC5lnChN@kspp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250318101256.01afbb47@canb.auug.org.au> <CAOg9mSTNLVWjqU4DnHFhBjAfJ7Do_Lfj1Oxe0cn55TBb-hYPwA@mail.gmail.com>
- <09c18763-7a60-4eea-b77b-85260b8b6b02@app.fastmail.com>
-In-Reply-To: <09c18763-7a60-4eea-b77b-85260b8b6b02@app.fastmail.com>
-From: Mike Marshall <hubcap@omnibond.com>
-Date: Tue, 18 Mar 2025 11:42:15 -0400
-X-Gm-Features: AQ5f1JrPIfXgu_k4Po3vsh9qy_T5bnnvC4odhum41Kh6EH0sFSxEyeqjpkgtViw
-Message-ID: <CAOg9mSRB05JSF9nfruWov+Os8tfXE8KyE4GVk5Pgp3pnA-4jow@mail.gmail.com>
-Subject: Re: linux-next: build failure after merge of the vfs-brauner tree
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Christian Brauner <brauner@kernel.org>, 
-	Matthew Wilcox <willy@infradead.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>, 
-	Mike Marshall <hubcap@omnibond.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z9lE6IVDeC5lnChN@kspp>
 
-Arnd... thanks, I'll get 'er done...
+On Tue, Mar 18, 2025 at 08:33:20PM +1030, Gustavo A. R. Silva wrote:
+> -Wflex-array-member-not-at-end was introduced in GCC-14, and we are
+> getting ready to enable it, globally.
+> 
+> Use the `DEFINE_RAW_FLEX()` helper for an on-stack definition of
+> a flexible structure where the size of the flexible-array member
+> is known at compile-time, and refactor the rest of the code,
+> accordingly.
+> 
+> So, with these changes, fix the following warning:
+> 
+> drivers/iio/common/cros_ec_sensors/cros_ec_sensors_core.c:39:40: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+> 
+> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+> ---
+> Changes in v2:
+>  - Use MAX() to calculate the number of bytes for the flex array. (Kees)
+> 
+> v1:
+>  - Link: https://lore.kernel.org/linux-hardening/Z9dy43vUUh4goi-Q@kspp/
+> 
+>  .../cros_ec_sensors/cros_ec_sensors_core.c    | 28 ++++++++-----------
+>  1 file changed, 11 insertions(+), 17 deletions(-)
+> 
+> diff --git a/drivers/iio/common/cros_ec_sensors/cros_ec_sensors_core.c b/drivers/iio/common/cros_ec_sensors/cros_ec_sensors_core.c
+> index 7751d6f69b12..40d5b10c74e0 100644
+> --- a/drivers/iio/common/cros_ec_sensors/cros_ec_sensors_core.c
+> +++ b/drivers/iio/common/cros_ec_sensors/cros_ec_sensors_core.c
+> @@ -34,25 +34,19 @@
+>  static int cros_ec_get_host_cmd_version_mask(struct cros_ec_device *ec_dev,
+>  					     u16 cmd_offset, u16 cmd, u32 *mask)
+>  {
+> +	DEFINE_RAW_FLEX(struct cros_ec_command, buf, data,
+> +			MAX(sizeof(struct ec_response_get_cmd_versions),
+> +			    sizeof(struct ec_params_get_cmd_versions)));
+>  	int ret;
+> -	struct {
+> -		struct cros_ec_command msg;
+> -		union {
+> -			struct ec_params_get_cmd_versions params;
+> -			struct ec_response_get_cmd_versions resp;
+> -		};
+> -	} __packed buf = {
+> -		.msg = {
+> -			.command = EC_CMD_GET_CMD_VERSIONS + cmd_offset,
+> -			.insize = sizeof(struct ec_response_get_cmd_versions),
+> -			.outsize = sizeof(struct ec_params_get_cmd_versions)
+> -			},
+> -		.params = {.cmd = cmd}
+> -	};
+> -
+> -	ret = cros_ec_cmd_xfer_status(ec_dev, &buf.msg);
+> +
+> +	buf->command = EC_CMD_GET_CMD_VERSIONS + cmd_offset;
+> +	buf->insize = sizeof(struct ec_response_get_cmd_versions);
+> +	buf->outsize = sizeof(struct ec_params_get_cmd_versions);
+> +	((struct ec_params_get_cmd_versions *)buf->data)->cmd = cmd;
+> +
+> +	ret = cros_ec_cmd_xfer_status(ec_dev, buf);
+>  	if (ret >= 0)
+> -		*mask = buf.resp.version_mask;
+> +		*mask = ((struct ec_response_get_cmd_versions *)buf->data)->version_mask;
+>  	return ret;
+>  }
 
--Mike
+Since "params" is used twice, I'd say do like the other patch and assign
+it to a new variable:
 
-On Tue, Mar 18, 2025 at 11:38=E2=80=AFAM Arnd Bergmann <arnd@arndb.de> wrot=
-e:
->
-> On Tue, Mar 18, 2025, at 16:24, Mike Marshall wrote:
-> > Hi Stephen... is there something I should do differently? I might be
-> > using an older
-> > version of the patch, it was sent to me around three weeks ago.
-> >
-> >>>Caused by commit
-> >  >> 50fb0a7f43c0 ("orangefs: Move s_kmod_keyword_mask_map to
-> > orangefs-debugfs.c")
-> >>>merging badly with commit
-> >  >> 063f8013373a ("orangefs: move s_kmod_keyword_mask_map[] into debugf=
-s.c")
-> >
-> > One has "Move" the one I'm using has "move", as if the author (Arnd)
-> > made an update
-> > to the patch and maybe I missed it...?
->
-> The earlier patch was from Matthew Wilcox. Our two patches are
-> almost identical (they add the same data in different parts of the
-> file) but sent independently, and the problem was that both got
-> applied instead of just one. I think the easiest fix would be
-> if you just drop my patch from your tree.
->
->      Arnd
+	struct ec_response_get_cmd_versions *params = buf->data;
+	...
+	params->cmd = cmd;
+	...
+		*mask = params->version_mask;
+
+
+>  
+> -- 
+> 2.43.0
+> 
+
+-- 
+Kees Cook
 
