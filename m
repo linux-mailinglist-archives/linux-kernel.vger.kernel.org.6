@@ -1,112 +1,165 @@
-Return-Path: <linux-kernel+bounces-565808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565810-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAC43A66F84
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 10:18:48 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B5BCA66F9E
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 10:24:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1089B1891334
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 09:18:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 63211173D08
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 09:23:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE091206F2C;
-	Tue, 18 Mar 2025 09:18:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kpkjVPfA"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED907207A0D;
+	Tue, 18 Mar 2025 09:23:12 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AB5B148857;
-	Tue, 18 Mar 2025 09:18:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD412207667
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 09:23:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742289520; cv=none; b=DNUKAcLHuiXoT3Hwr/3Jp3A3cJ6X+dw3sfPdT0wVdj3y93bS6+TbB6khsNcaSi9ZSNR4mDBaZRR4yqNcf7uvDQdQDINPezoRGbEmEMZ4QZF2y2Ot6emOatRsE7qWUIQWHsADGaBQdnG85L61stodk46ruzPWjT21SrWsHciIF0U=
+	t=1742289792; cv=none; b=hVv6cqORi2b0mMEQJylNhn/ahd4hwNqIZ9WTD0pnHw4pvw0qM+a/Bz/iy72sE4IGx18BgpqOjZ2ownJfN47r7K6HHFDGz1crcgvG7OtjFnJtalKqD266Jz5rjcig0fPWl47Q2OpeqCyKDmoXc2Xb+x+R/1iA5A96Iy+XVwL1bsI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742289520; c=relaxed/simple;
-	bh=oyoXlL9IzzSXFl5qWJg2CSmmwr34k4pqXRJBoD9ptT8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=ibm5f5KM5/WRP0bMjHqf593d6rLaBw10GCEpHQ6FkvnAHWdeOhBo4fUjQ/5AjXTQqTwcpuKvlgeE94o2YuxyY+dL6z8l6A09p/URLMWYArtb24+c7KLZMBl6QmIhjUqof6z9zzuvN4hyNzI9If79yalbPAuWl2cvONUoisjnmnI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kpkjVPfA; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-5499659e669so5889442e87.3;
-        Tue, 18 Mar 2025 02:18:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742289516; x=1742894316; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:subject:cc:to
-         :from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=iUTzmIuRjC2JAfNwka8eNB59m5yfPsonXucEEZCt/jc=;
-        b=kpkjVPfAq8NV5J28ayEgJHPFLFKK0OE264IZWmEN62Euf7uDR8DqIJlzEYV0raxGYU
-         USbsOcsNv6egFTAfvNEnpWVY32s+XIgpVjC6A2yq8yQKgA+r+qf3m4bI5rSvqgKt/NKl
-         N/zQTjGuynqkrA70usqW+9GrH6PhejW3frMdUsNkAwmULZqeTmRPjlBV4cIpGj1usxwC
-         6Xky4EseEz5uSQP4P8toORAXGqwcRnQngok/pbqHmksca5+M9K5EkfGZQogZADqX/FkH
-         i4BiDrzjBBFnn0ByxPtSibx+Zgm9pG09omYxsP3rtFUGT4u0LHSnEDzwhgfBFC6GChu7
-         gZVw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742289516; x=1742894316;
-        h=content-transfer-encoding:mime-version:message-id:subject:cc:to
-         :from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=iUTzmIuRjC2JAfNwka8eNB59m5yfPsonXucEEZCt/jc=;
-        b=vHSdoiY3ROiwEphk3VSkPAveND5gBHSoetFWCm7CwYKTySrxh5gLMXPH4wgQiSEH5J
-         6TM7fDxI383vCkCzih8fspW8hhpwYZRgT0VO6XGizYpVEdMzC61NxhJfOIfMojG7SR/Z
-         L9KW4PExTQaxWK+Wdw2m5SpJx8qCUykZPlGBHVgRKd6C3iJ8jCLpyX+6aPnE1c2AG/qT
-         Z2llLcNx6ErnM/zBmx2ofW4uPKmGVnQmvTCmkReFfNpBledkuq7zVrOPVU6G07zcKF0E
-         wL4nvqcGl9wamqi8zYEA4Ns2pd5XhuJkogqiem/WqtLg+zUqgU/BA6vE3qIMSFK+CbdB
-         9xQw==
-X-Forwarded-Encrypted: i=1; AJvYcCWZap+2VRis1P31LmYQlEPVxIfrlq8o5WEQDwIOnmWPHKoKpP7ClhZchtrqzj9DfgYaNWOgZykmXBoC2Tc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx7+R1YP+JpfAp/bFQQF9yCJNmZA6l0H1lKME3BZfgfGjmVWWnS
-	nVh/YoLi5A19IR2ImOl//Ouhpd+2HEyi46l/glAlzeexqlwiv8el
-X-Gm-Gg: ASbGnctPtGs1fp8qp7V2M3xkNT5Penjzt3U1LmMLbHjQk/jpApw6bswSDUxEqCrFCZa
-	EgJ0QZUXyPPEwji7NCD+VPZVvmi92MlTrZ6aGeZvflHmYAZpxMXtAzVZJVGfTxbXdiAN6FhNmlk
-	u9s2v+otoqPxNhBYmC3uQ34MXpd+KV1ozwsgGqBqfQGqhBRKSujTQWSFbqogeteKTEZuvIvF5bn
-	TsRYZVPT/GexkMN4tlewiG8oowhkupuHMN88BfImPxqyX7ImX93ab+QfR/NeENY3Het8n98hTDd
-	POpneoGtHB/JoiSw1AXFveiFswm1kMhT1bTu/3Y1bDu5TaFE0d2Nj4wJgF8=
-X-Google-Smtp-Source: AGHT+IGHwBr3z+X5KybLHAm4VLxQ6zBuSIuEK+aXOsN7Kzieot+b02V/4BG29JCWDwYNaB7fV6VFbw==
-X-Received: by 2002:a05:6512:3da8:b0:549:490e:240d with SMTP id 2adb3069b0e04-549c391a8c8mr10131590e87.28.1742289516250;
-        Tue, 18 Mar 2025 02:18:36 -0700 (PDT)
-Received: from foxbook (adqh54.neoplus.adsl.tpnet.pl. [79.185.141.54])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-549ba7ce823sm1602244e87.105.2025.03.18.02.18.33
-        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
-        Tue, 18 Mar 2025 02:18:34 -0700 (PDT)
-Date: Tue, 18 Mar 2025 10:18:30 +0100
-From: Michal Pecio <michal.pecio@gmail.com>
-To: Mathias Nyman <mathias.nyman@intel.com>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] usb: xhci: Fix double newline in a debug message
-Message-ID: <20250318101830.49e7a37a@foxbook>
+	s=arc-20240116; t=1742289792; c=relaxed/simple;
+	bh=HusUqhTPS0ciCqs9HxS4PCOCLqPSEuv5F2xcjnnFGig=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TJ3uBYpEXHoOIJ5VqXKM7FfgjAIbDglATgqW15xHAzWl92qFEgdSOXtUiTGOcsuUqJ+ndT3g4beukrG6Bjo0BiHqJWBlkakffsNFgQiCXrA7XCp4QQsTcsoRjEiM3SkP3pi/0WgU+T2OAj4QkgS3HivgjUXx6ylgIf9AeXKhukk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1tuT9j-0004T2-KA; Tue, 18 Mar 2025 10:22:39 +0100
+Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1tuT9h-000Owg-1u;
+	Tue, 18 Mar 2025 10:22:38 +0100
+Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1tuT9h-002yVr-2r;
+	Tue, 18 Mar 2025 10:22:37 +0100
+Date: Tue, 18 Mar 2025 10:22:37 +0100
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Sebastian Reichel <sre@kernel.org>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Benson Leung <bleung@chromium.org>,
+	Tzung-Bi Shih <tzungbi@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>, kernel@pengutronix.de,
+	linux-kernel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
+	linux-pm@vger.kernel.org,
+	=?utf-8?B?U8O4cmVu?= Andersen <san@skov.dk>,
+	Guenter Roeck <groeck@chromium.org>,
+	Ahmad Fatoum <a.fatoum@pengutronix.de>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	chrome-platform@lists.linux.dev
+Subject: Re: [PATCH v6 7/7] Documentation: Add sysfs documentation for PSCRR
+ reboot reason tracking
+Message-ID: <Z9k7XaPEFcPm34Xc@pengutronix.de>
+References: <20250314113604.1776201-1-o.rempel@pengutronix.de>
+ <20250314113604.1776201-8-o.rempel@pengutronix.de>
+ <a8f76dd0-56be-46a5-9cc1-2d17d013127d@gmail.com>
+ <Z9Q4z2dPdpqVcu6u@pengutronix.de>
+ <a34c14c1-875d-40a4-8019-67f7b9aa4133@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <a34c14c1-875d-40a4-8019-67f7b9aa4133@gmail.com>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-xhci_dbg_trace() appends a newline to the format string,
-don't call it with a newline terminated string - it only
-adds a blank line to the log.
+On Mon, Mar 17, 2025 at 10:46:01AM +0200, Matti Vaittinen wrote:
+> On 14/03/2025 16:10, Oleksij Rempel wrote:
+> > On Fri, Mar 14, 2025 at 03:38:55PM +0200, Matti Vaittinen wrote:
+> > > On 14/03/2025 13:36, Oleksij Rempel wrote:
+> > > > Add documentation for the Power State Change Reason Recorder (PSCRR)
+> > > > sysfs interface, which allows tracking of system shutdown and reboot
+> > > > reasons. The documentation provides details on available sysfs entries
+> > > > under `/sys/kernel/pscrr/`, explaining their functionality, example usage,
+> > > > and how they interact with different backend storage options (e.g., NVMEM).
+> > > > 
+> > > > Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+> > > > ---
+> > > >    .../ABI/testing/sysfs-kernel-reboot-pscrr     | 46 +++++++++++++++++++
+> > > >    1 file changed, 46 insertions(+)
+> > > >    create mode 100644 Documentation/ABI/testing/sysfs-kernel-reboot-pscrr
+> > > > 
+> > > > diff --git a/Documentation/ABI/testing/sysfs-kernel-reboot-pscrr b/Documentation/ABI/testing/sysfs-kernel-reboot-pscrr
+> > > > new file mode 100644
+> > > > index 000000000000..7cc643f89675
+> > > > --- /dev/null
+> > > > +++ b/Documentation/ABI/testing/sysfs-kernel-reboot-pscrr
+> > > > @@ -0,0 +1,46 @@
+> > > > +What:		/sys/kernel/pscrr/reason
+> > > > +Date:		April 2025
+> > > > +KernelVersion:  6.15
+> > > > +Contact:	Oleksij Rempel <o.rempel@pengutronix.de>
+> > > > +Description:
+> > > > +		This file provides access to the last recorded power state
+> > > > +		change reason. The storage backend is configurable and, if
+> > > > +		supported, the reason may be stored persistently in an
+> > > > +		NVMEM cell or another backend.
+> > > > +
+> > > > +		Reading this file returns an integer representing the last
+> > > > +		recorded shutdown or reboot cause.
+> > > > +
+> > > > +		Writing an integer value to this file sets the reason to be
+> > > > +		stored and recorded for system analysis.
+> > > > +
+> > > > +		Example usage (values are for illustration and may not reflect
+> > > > +		actual reasons used in a given system):
+> > > > +		  Read:
+> > > > +			$ cat /sys/kernel/pscrr/reason
+> > > > +			3   # (Example: Power loss event, may differ per system)
+> > > > +
+> > > > +		  Write:
+> > > > +			$ echo 5 > /sys/kernel/pscrr/reason
+> > > > +			# Sets the reason to 5 (Example: User-triggered reboot,
+> > > > +			# this may not be a real value in your system)
+> > > > +
+> > > > +		Values are defined in:
+> > > > +		  - `include/linux/reboot.h` (enum psc_reason)
+> > > 
+> > > Is it possible to provide the reason (also) as string?
+> > > 
+> > > I believe we should fix the meaning of the numbers so the ABI is not
+> > > changing for the users. Hence we could as well document the meaning of the
+> > > values(?) If I read the suggestion right, we will in any case have
+> > > predefined set of reasons in the kernel side.
+> > > 
+> > > Or, am I missing something?
+> > 
+> > Yes, it is correct, the values should be fixed for user space. Should
+> > they be documented in this documentation too?
+> 
+> I believe it could be helpful for both the user-space users and potential
+> pscrr provider driver writers. It could also set things to stone.
 
-Signed-off-by: Michal Pecio <michal.pecio@gmail.com>
----
- drivers/usb/host/xhci-ring.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Ok, i'll send updated patch set. I'll be happy to have your Reviewed-by
+:)
 
-diff --git a/drivers/usb/host/xhci-ring.c b/drivers/usb/host/xhci-ring.c
-index dc674bc24a89..b565c9f7e036 100644
---- a/drivers/usb/host/xhci-ring.c
-+++ b/drivers/usb/host/xhci-ring.c
-@@ -789,7 +789,7 @@ static int xhci_move_dequeue_past_td(struct xhci_hcd *xhci,
- 	ep->queued_deq_ptr = new_deq;
- 
- 	xhci_dbg_trace(xhci, trace_xhci_dbg_cancel_urb,
--		       "Set TR Deq ptr 0x%llx, cycle %u\n", addr, new_cycle);
-+		       "Set TR Deq ptr 0x%llx, cycle %u", addr, new_cycle);
- 
- 	/* Stop the TD queueing code from ringing the doorbell until
- 	 * this command completes.  The HC won't set the dequeue pointer
 -- 
-2.48.1
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
