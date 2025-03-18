@@ -1,87 +1,85 @@
-Return-Path: <linux-kernel+bounces-565888-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565889-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87220A670A6
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 11:00:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60232A670A7
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 11:00:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B593189A6EE
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 10:00:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05DFA3A83F9
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 10:00:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 131612080DC;
-	Tue, 18 Mar 2025 10:00:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="WvVnHM5g"
-Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59448206F37;
+	Tue, 18 Mar 2025 10:00:28 +0000 (UTC)
+Received: from mail-m49198.qiye.163.com (mail-m49198.qiye.163.com [45.254.49.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F9F0207667;
-	Tue, 18 Mar 2025 10:00:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E754E1EF366;
+	Tue, 18 Mar 2025 10:00:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742292005; cv=none; b=jj1qitwNReZtSKSHAUfYMOiRBhkVTfpUbG5LfJUDsk28Z/wTEzHmhtPDUsRkWCHcek/qfb3D7Fqus6ZJtnoAVtT/iYHQ0Fju5d2dThfA8w3UKu9xEoQIqz9T3mv6yn+U/W9tXUaJmT0w/8kOSS6VC187KNBasCzAy5HZZr37VRk=
+	t=1742292027; cv=none; b=GvWXGIRwkL+bVI1F/LvAW1hDpe8MLFPU2mLLoG+e5XqTiCuE6PrNsDAmqqzkPgjLw1DkpQz7ZqoQYqZqFWtsoZZZz089t2UsAqEyDk3PKF0ElFompcxvL5LXsZ27zATZBp49dG0BYLqjyNRvaQWyUbQlKf+wGrNJSEgr0lNPkgg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742292005; c=relaxed/simple;
-	bh=vJv1KkdXbPcvAghM29T8PsBL8Lb4ASjOFhvS2uQ91tE=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=pbET7aaDOZVBn1m6787sRR6qZKPSO2xUD/2vXV/ISz2Ab9Ap0DXFnzQ+xHCYKD8rXya4kV9/nEraB1IqvzPSMfuNEM0rvxdYm0j5XSEB4yPtslIBmMLSLHyWyyoOSi6/ewnI1yQAP0QH5CQN5D+BHS8J7pLKnHwFnrgUzhx0Rdk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=WvVnHM5g; arc=none smtp.client-ip=168.119.38.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
-	Resent-Cc:Resent-Message-ID; bh=vJv1KkdXbPcvAghM29T8PsBL8Lb4ASjOFhvS2uQ91tE=;
-	t=1742292004; x=1743501604; b=WvVnHM5gN2mh20b4ydGc3t/AKz0KrOgl1NTaVmS8kZ+JS8k
-	V+Ql6nFvWbdamRIROixnwDQgOKJo1j4KAlkHZiKCKvuQUrPeUKhdsGvH7vHuNGNjy9D7ilCHqB3+V
-	3FKvmAOqZpg9Pph4hl2CovMxVDOc85jJYgSvEfD76cp36vJC2+u/b2RERfaJL8/1XXCWmE5r6lFVf
-	HXwKOFxIEdHLGuIkvfgtUqailHJWAhB10/UzEoKli1Z4w0vHpXTB9MWa/eH+Nm0cjo0ffVP/kqJuv
-	LzqPzkov2dkvnKdhMGgok3AE1Fkt/pLZDVoHK5pPHPUuEN9LcX0/Y+YWvKA4SvgA==;
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.98)
-	(envelope-from <johannes@sipsolutions.net>)
-	id 1tuTjs-0000000FCgD-2h9m;
-	Tue, 18 Mar 2025 11:00:00 +0100
-Message-ID: <45e2f8f566539a766bc7e089e71211e320bc4fa6.camel@sipsolutions.net>
-Subject: Re: [PATCH 35/41] um: Replace __ASSEMBLY__ with __ASSEMBLER__ in
- the usermode headers
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Thomas Huth <thuth@redhat.com>, linux-kernel@vger.kernel.org
-Cc: Arnd Bergmann <arnd@arndb.de>, linux-arch@vger.kernel.org, Richard
- Weinberger <richard@nod.at>, Anton Ivanov
- <anton.ivanov@cambridgegreys.com>, 	linux-um@lists.infradead.org
-Date: Tue, 18 Mar 2025 10:59:59 +0100
-In-Reply-To: <20250314071013.1575167-36-thuth@redhat.com>
-References: <20250314071013.1575167-1-thuth@redhat.com>
-	 <20250314071013.1575167-36-thuth@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
+	s=arc-20240116; t=1742292027; c=relaxed/simple;
+	bh=eGvltnHtvp+4GBgsbVX8GpomyE71UOMZi+G9uiLe95g=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=invkhTpxUlBnIWNO6Gu360xHKjlazAEUz5k+J4pfMy7CL3916+qfaK8nn3/52G3YX6vLwu7Bl/CBqFVHyO7L8109iauFBlRVNfpSUbAb1+vW/5caoL8dTEH2WS0JRYHc4p5HVR7SI3T4rfsMpje8MeiO4EYvQMX9W90LIt6kxw0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn; spf=pass smtp.mailfrom=jmu.edu.cn; arc=none smtp.client-ip=45.254.49.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jmu.edu.cn
+Received: from amadeus-Vostro-3710.lan (unknown [116.25.94.202])
+	by smtp.qiye.163.com (Hmail) with ESMTP id eac37604;
+	Tue, 18 Mar 2025 18:00:15 +0800 (GMT+08:00)
+From: Chukun Pan <amadeus@jmu.edu.cn>
+To: Yao Zi <ziyao@disroot.org>
+Cc: Rob Herring <robh@kernel.org>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Chukun Pan <amadeus@jmu.edu.cn>
+Subject: [PATCH 0/3] arm64: dts: rockchip: Add DMA controller for RK3528
+Date: Tue, 18 Mar 2025 18:00:07 +0800
+Message-Id: <20250318100010.2253408-1-amadeus@jmu.edu.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-malware-bazaar: not-scanned
+Content-Transfer-Encoding: 8bit
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVkZGBgeVhhLTBpMSUlNT0saSlYeHw5VEwETFhoSFy
+	QUDg9ZV1kYEgtZQVlKSk1VSU5VQk9VSUtJWVdZFhoPEhUdFFlBWU9LSFVKS0hKTkxOVUpLS1VKQk
+	tLWQY+
+X-HM-Tid: 0a95a8b257fa03a2kunmeac37604
+X-HM-MType: 10
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6N0k6Mxw4TTJDHEsPAg4XGBEc
+	OQgwC05VSlVKTE9JSUJJS0pNSk1LVTMWGhIXVRoWGh8eDgg7ERYOVR4fDlUYFUVZV1kSC1lBWUpK
+	TVVJTlVCT1VJS0lZV1kIAVlBTEhONwY+
 
-On Fri, 2025-03-14 at 08:10 +0100, Thomas Huth wrote:
-> While the GCC and Clang compilers already define __ASSEMBLER__
-> automatically when compiling assembly code, __ASSEMBLY__ is a
-> macro that only gets defined by the Makefiles in the kernel.
-> This can be very confusing when switching between userspace
-> and kernelspace coding, so let's standardize on the __ASSEMBLER__
-> macro that is provided by the compilers now.
->=20
-> This is a completely mechanical patch (done with a simple "sed -i"
-> statement).
->=20
+First commit adds missing uart3 interrupt for uart3 node.
+The next commit adds the DMA controller that can be used
+for spi and uart. And add DMA description for uart nodes.
 
-Looks fine, I guess - I'll assume that since it's part of a larger
-series you'll merge it elsewhere.
+~# dmesg | grep dma
+[    0.103466] dma-pl330 ffd60000.dma-controller: Loaded driver for PL330 DMAC-241330
+[    0.104212] dma-pl330 ffd60000.dma-controller:       DBUFF-128x8bytes Num_Chans-8 Num_Peri-32 Num_Events-16
 
-johannes
+Chukun Pan (3):
+  arm64: dts: rockchip: Add missing uart3 interrupt for RK3528
+  arm64: dts: rockchip: Add DMA controller for RK3528
+  arm64: dts: rockchip: Add UART DMA support for RK3528
+
+ arch/arm64/boot/dts/rockchip/rk3528.dtsi | 29 +++++++++++++++++++++++-
+ 1 file changed, 28 insertions(+), 1 deletion(-)
+
+-- 
+2.25.1
+
 
