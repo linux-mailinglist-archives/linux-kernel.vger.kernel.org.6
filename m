@@ -1,84 +1,56 @@
-Return-Path: <linux-kernel+bounces-566221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566226-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FC33A6751C
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 14:28:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 082BFA6752F
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 14:32:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D45DD3AD99F
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 13:28:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7833189DB65
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 13:30:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E335420D4E4;
-	Tue, 18 Mar 2025 13:28:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03BA320CCF1;
+	Tue, 18 Mar 2025 13:30:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KoXOBXwZ"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="cY1YWrZz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC3F417A311;
-	Tue, 18 Mar 2025 13:28:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F2A920C47B;
+	Tue, 18 Mar 2025 13:30:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742304489; cv=none; b=co2bJzsmFNzXYTUdHRYbZkppAFvDBTbru9Sifm1GHYkuo1nSza4DUKpzEne4Vzeww/LlW+NlnwMwV+eD8DYVj1LpvCP/HeTgvD6LIKOxqZxzlfCnrINUB1P6ltJu3lQDrXDlLiTDLI2OrnuRxhG5PvYYUioLJyylASMeF7no/GU=
+	t=1742304607; cv=none; b=oDL06DLpMTFiwW1lSG2Pvb+1qG0Sx6nkUMK9PhElsSyv3JfvmQtY81PY3Drj0oxhn3frzPj4Ln466DxwZ2uV1C8X5J4G+8ykp0E0eC9UR03sBm6SRxIoaXid/jMsHPOLgIc20R15eTMlQZpGKLgmVEgMkMBGStPouaab/TSAZls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742304489; c=relaxed/simple;
-	bh=XIFQgKXLvgcn11mpSEh8HygsxPKLUzk5wzTI0vGCpj0=;
+	s=arc-20240116; t=1742304607; c=relaxed/simple;
+	bh=mDVrv+ZGtwsPbLusk7fCoVYkuo/yPrEWMMSYpMxxbRo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nxa960/jhpjpbHAOZ7ipjXS8wN8fHFueEpAhSvHXGrn2Pk1hmmAEXlNLLrXYWi/3bmfu/HKzeFpCtrv7bRY0zN0Ysz1d/W/HAbn/XdTzpr81+d4ABJHBe26kyVS5YV33F84FhawBvdR94tfVKScMdYD3XrLraoXGj9fWX85vuR8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KoXOBXwZ; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742304488; x=1773840488;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=XIFQgKXLvgcn11mpSEh8HygsxPKLUzk5wzTI0vGCpj0=;
-  b=KoXOBXwZvBR5cdic/RJjGUzuPsGQGlajSY+ktNXoLYaaIIlcYbjMxw9K
-   w4hK+A9HFzzm3zJ9IJpJpd3FGx1m49Zmd3RILW5mOMn26Abaq1J/kY5d+
-   ltTBKnEIuvErTV3aWNNOU2puuashqv26zeKweyRZsVVxlLOpHHeFNFSUr
-   YCSTvBNalsG3oM7/ofl2HY+cYM6v3om13xVMsisjKJZ6iJiKASHdCyLnG
-   7Eqx9DZBB01ho/i3vFcB0sYzCxwMr7/vsec71bnjlK5zJJQCCCmFq0GxQ
-   I4abQU6Yp9qWpLZlJewt2yMwKLCDIRFaQWpORDuZKomtM015NL4q8ODGC
-   w==;
-X-CSE-ConnectionGUID: bZ5XA+thQJSrj/jvS54P2Q==
-X-CSE-MsgGUID: Z4SzYWYNRKy2ikulIWylIg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11377"; a="43460093"
-X-IronPort-AV: E=Sophos;i="6.14,257,1736841600"; 
-   d="scan'208";a="43460093"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2025 06:28:07 -0700
-X-CSE-ConnectionGUID: /FznNnb4Tve6hnL8E3lqIQ==
-X-CSE-MsgGUID: HGQqv6VLQz+AyRL+jqpLHw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,257,1736841600"; 
-   d="scan'208";a="153245820"
-Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2025 06:28:04 -0700
-Received: from kekkonen.localdomain (localhost [127.0.0.1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id EF65611F74E;
-	Tue, 18 Mar 2025 15:28:01 +0200 (EET)
-Date: Tue, 18 Mar 2025 13:28:01 +0000
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Richard Leitner <richard.leitner@linux.dev>
-Cc: Dave Stevenson <dave.stevenson@raspberrypi.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-leds@vger.kernel.org
-Subject: Re: [PATCH v2 1/8] media: v4l: ctrls: add a control for flash/strobe
- duration
-Message-ID: <Z9l04b5ZGy877j32@kekkonen.localdomain>
-References: <20250314-ov9282-flash-strobe-v2-0-14d7a281342d@linux.dev>
- <20250314-ov9282-flash-strobe-v2-1-14d7a281342d@linux.dev>
- <Z9P01zU_Kg0U62wa@kekkonen.localdomain>
- <bx4p2hycva2rqywgglqluus6o7jbmfa2jjbc4k5d6aw6wsfkxd@zrtckmwtphuq>
- <Z9QwT7n7D09BEfqa@kekkonen.localdomain>
- <3dkwhfqxjhu3w4hpcl4gfsi22kwauo6s5urxrorezaw323yygq@nujmlkie5rpd>
+	 Content-Type:Content-Disposition:In-Reply-To; b=eT0W4ibxrVbRTQkPAlJ/nLW9Tq5BJPappCTKgV/OjTMGDlwB31FhQUg4hmGcrTLo7Z0ndbEgtv2+GYDZJg5ItYdNGhcCq+shoiLpEfQYLr8Acr6L2njy1+EiESyvQOcX1XJDJvYPnjkb1paKtR9Oa5KLVpdiGqjcuy6ua0y7dVU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=cY1YWrZz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CAAD0C4CEDD;
+	Tue, 18 Mar 2025 13:30:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1742304607;
+	bh=mDVrv+ZGtwsPbLusk7fCoVYkuo/yPrEWMMSYpMxxbRo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=cY1YWrZzX88C8qKZ+uA8ixLBsd3LpQ/t6t2ieODZ8EUlbNmYSX1nGa7QAf82LXAtn
+	 FUpL6bVyx7ID2zAlBfIzbEPbbLrFqyMrZy3MbCObLEoFS3yF2rECuzwTxdL7HQ3R5a
+	 pdzg5b8hNvlN+zrLNoSOyfOgtVlsWw/ktYKzXqdI=
+Date: Tue, 18 Mar 2025 14:28:48 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Naman Jain <namjain@linux.microsoft.com>
+Cc: "K . Y . Srinivasan" <kys@microsoft.com>,
+	Haiyang Zhang <haiyangz@microsoft.com>,
+	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
+	Stephen Hemminger <stephen@networkplumber.org>,
+	linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
+	stable@kernel.org, Saurabh Sengar <ssengar@linux.microsoft.com>,
+	Michael Kelley <mhklinux@outlook.com>
+Subject: Re: [PATCH v2] uio_hv_generic: Fix sysfs creation path for ring
+ buffer
+Message-ID: <2025031859-overwrite-tidy-f8ef@gregkh>
+References: <20250318061558.3294-1-namjain@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,85 +59,61 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <3dkwhfqxjhu3w4hpcl4gfsi22kwauo6s5urxrorezaw323yygq@nujmlkie5rpd>
+In-Reply-To: <20250318061558.3294-1-namjain@linux.microsoft.com>
 
-Hi Richard,
-
-On Fri, Mar 14, 2025 at 05:08:16PM +0100, Richard Leitner wrote:
-> Hi Sakari,
+On Tue, Mar 18, 2025 at 11:45:58AM +0530, Naman Jain wrote:
+> On regular bootup, devices get registered to vmbus first, so when
+> uio_hv_generic driver for a particular device type is probed,
+> the device is already initialized and added, so sysfs creation in
+> uio_hv_generic probe works fine. However, when device is removed
+> and brought back, the channel rescinds and device again gets
+> registered to vmbus. However this time, the uio_hv_generic driver is
+> already registered to probe for that device and in this case sysfs
+> creation is tried before the device gets initialized completely.
 > 
-> On Fri, Mar 14, 2025 at 01:34:07PM +0000, Sakari Ailus wrote:
-> > Hi Richard,
-> > 
-> > On Fri, Mar 14, 2025 at 11:25:09AM +0100, Richard Leitner wrote:
-> > > On Fri, Mar 14, 2025 at 09:20:23AM +0000, Sakari Ailus wrote:
-> [...]
-> > > > On Fri, Mar 14, 2025 at 09:49:55AM +0100, Richard Leitner wrote:
-> > > > > Add a control V4L2_CID_FLASH_DURATION to set the duration of a
-> > > > > flash/strobe pulse. This is different to the V4L2_CID_FLASH_TIMEOUT
-> > > > > control, as the timeout defines a limit after which the flash is
-> > > > > "forcefully" turned off again.
-> > > > > 
-> > > > > On the other hand the new V4L2_CID_FLASH_DURATION is the desired length
-> > > > > of the flash/strobe pulse
-> > > > 
-> > > > What's the actual difference between the two? To me they appear the same,
-> > > > just expressed in a different way.
-> > > 
-> > > According to FLASH_TIMEOUT documentation:
-> > > 
-> > > 	Hardware timeout for flash. The flash strobe is stopped after this
-> > > 	period of time has passed from the start of the strobe. [1]
-> > > 
-> > > This is a little bit unspecific, but as also discussed with Dave [2]
-> > > according to the documentation of V4L2_FLASH_FAULT_TIMEOUT it seems to
-> > > be targeted at providing a "real timeout" control, not settings the
-> > > desired duration:
-> > > 
-> > > 	The flash strobe was still on when the timeout set by the user
-> > > 	--- V4L2_CID_FLASH_TIMEOUT control --- has expired. Not all flash
-> > > 	controllers may set this in all such conditions. [1]
-> > > 
-> > > If I understood that wrong, I'm also happy to use FLASH_TIMEOUT for this
-> > > use-case. But tbh I think FLASH_DURATION would be more specific.
-> > > 
-> > > As this still seems unclear: Should the documentation be
-> > > changed/rewritten if we stick with the FLASH_DURATION approach?
-> > > 
-> > > [1] https://www.kernel.org/doc/html/latest/userspace-api/media/v4l/ext-ctrls-flash.html
-> > > [2] https://lore.kernel.org/lkml/CAPY8ntB8i4OyUWAL8k899yUd5QsRifJXiOfWXKceGQ7TNZ4OUw@mail.gmail.com/
-> > 
-> > Right, I think I can see what you're after.
-> > 
-> > How does the sensor determine when to start the strobe, i.e. on which frame
-> > and which part of the exposure of that frame?
-> 
-> In general I think it's not part of V4L2_CID_FLASH_DURATION to take any
-> assumptions on that, as that's sensor/flash specific IMHO.
-> 
-> In case of the ov9282 sensor driver (which is also part of this series)
-> the strobe is started synchronously with the exposure on each frame
-> start.
-> Being even more specific on the ov9292, the sensor also offers the
-> possibility to shift that strobe start in in either direction using a
-> register. Implementing this "flash shift" (as it's called in the sensors
-> datasheet) is currently under test on my side. I will likely send a
-> series for that in the coming weeks.
+> Fix this by moving the core logic of sysfs creation for ring buffer,
+> from uio_hv_generic to HyperV's vmbus driver, where rest of the sysfs
+> attributes for the channels are defined. While doing that, make use
+> of attribute groups and macros, instead of creating sysfs directly,
+> to ensure better error handling and code flow. While at it, configure
+> size of ring sysfs based on ring buffer's actual size and not 2MB default.
 
-Ok, so you get a single frame exposed with a flash when you start
-streaming, is that correct?
+When you say stuff like "while at it..." that's a huge hint that the
+patch should be broken up into smaller pieces and made a patch series.
 
-> 
-> > > > > Signed-off-by: Richard Leitner <richard.leitner@linux.dev>
-> > > > > ---
-> > > > >  drivers/media/v4l2-core/v4l2-ctrls-defs.c | 1 +
-> > > > >  include/uapi/linux/v4l2-controls.h        | 1 +
-> > > > >  2 files changed, 2 insertions(+)
-> [...]
-> > 
+> Problem path:
+> vmbus_device_register
+>     device_register
+>         uio_hv_generic probe
+>                     sysfs_create_bin_file (fails here)
 
--- 
-Regards,
+Why does it fail?
 
-Sakari Ailus
+>         kset_create_and_add (dependency)
+>         vmbus_add_channel_kobj (dependency)
+
+I don't understand this "graph", sorry.
+
+> +/*
+> + * hv_create_ring_sysfs - create ring sysfs entry corresponding to ring buffers for a channel
+> + */
+
+Kerneldoc?
+
+> +int hv_create_ring_sysfs(struct vmbus_channel *channel,
+> +			 int (*hv_mmap_ring_buffer)(struct vmbus_channel *channel,
+> +						    struct vm_area_struct *vma))
+> +{
+> +	struct kobject *kobj = &channel->kobj;
+> +
+> +	channel->mmap_ring_buffer = hv_mmap_ring_buffer;
+> +	channel->ring_sysfs_visible = true;
+> +	return sysfs_update_group(kobj, &vmbus_chan_group);
+> +}
+> +EXPORT_SYMBOL_GPL(hv_create_ring_sysfs);
+
+You just raced userspace and created a file without telling it that it
+showed up, right?  Something still feels really wrong here.
+
+greg k-h
 
