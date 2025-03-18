@@ -1,129 +1,125 @@
-Return-Path: <linux-kernel+bounces-566532-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566533-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C485A6796B
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 17:30:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F120A67972
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 17:31:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0DA118865A4
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 16:25:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C35B73AB43D
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 16:25:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C59AA20E715;
-	Tue, 18 Mar 2025 16:25:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20E1620F07B;
+	Tue, 18 Mar 2025 16:25:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZHeIf52c"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="LVXBAlVj"
+Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC2FC20DD7B
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 16:25:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BAE41BCA0E
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 16:25:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742315114; cv=none; b=k/fMVcGD0x8y54MjUZHW3uyhFfVuH+4mRaGe5C+W0H6dNvxG3Hwz0o64NwgAh3oHgxQRRRXEL3eSbvddY7vTWglf9mDJBNIIQ8e+UGe3EHURUjk0LM0A7BfKzIhV82i9JztYjcA7n3miYfq7jlBfnMXuDeWe/vX4BUhLo5rM53A=
+	t=1742315133; cv=none; b=WbW6lcI5I/GNQDP4O+DGHNoJNWJYzJYkZ1xQflGuO7clXnmqRiQEpo+SG5MIihflyYyEpc7DOwsPy9O/AXGDPgr/04skbe4wYJUF+Zu/bF5RTR8uRDWYG+qTTqZS/gSGMfH7GWJHeqk9DysTNGuZxsIIUQY9yit3b30U2PsUISk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742315114; c=relaxed/simple;
-	bh=uuN8TNeJbrbvmRgycVT/eao89jaTOkR+7JhDHz399oA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kMBS67+g7ChJz/Mcvsq4CmsGNGyXyHXVhVqC2jW6G6w+Fe5RfGMvASzLRUR5pMPmcpKgT9M+1iqVAS96iYeAqL2I2iskn5IbLj1ryOstHYxkw8PrlvPLaf2+6A3xEv+EjuqDFlNDT+u58mhYYhOzJ3KYiDkkv/oVj/7tSRnYd/U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZHeIf52c; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742315112; x=1773851112;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=uuN8TNeJbrbvmRgycVT/eao89jaTOkR+7JhDHz399oA=;
-  b=ZHeIf52cybQgmr3ER73rBEAX5AHPX0WAqZtWztMMSrkWXqnEeONAZd60
-   xofqGYOD4HU+hAxQv2PX+bu6XNVF3Tevnf3emtJ8by0AHVOwkPHPeZm+9
-   W+47MO1shyqMGn5SKI2egVgI82dV+mrmil6RdBQyGYWnDY1sIeJCoA2WZ
-   W0tDTmhyfPweLBOl46gXo8Tk1DsIKyUGrg3FygBd91gX3s+vJ9VyqXYQ1
-   2fe+2KQegHNY4fKHl4HKbSbCnzSrM5Wr/fOjudp4y4LB/xLR8XR+sqKFc
-   mjpG/0Y9jHE60OoNLwrLiPhK44Ub80UDk7yjOWNYOV0QENRKhZrYgeF/j
-   g==;
-X-CSE-ConnectionGUID: aEvJdOKgSG6vFa9ZwCrDkA==
-X-CSE-MsgGUID: aT4WYkQFQHa8uv9HuSqbIw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11377"; a="47115688"
-X-IronPort-AV: E=Sophos;i="6.14,257,1736841600"; 
-   d="scan'208";a="47115688"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2025 09:25:12 -0700
-X-CSE-ConnectionGUID: N6F56dRNS5OtFvykoqQgyQ==
-X-CSE-MsgGUID: DPXPVFc2QAyTQdMR13pN5Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,257,1736841600"; 
-   d="scan'208";a="123064882"
-Received: from eballerx-mobl.amr.corp.intel.com (HELO desk) ([10.125.145.191])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2025 09:25:11 -0700
-Date: Tue, 18 Mar 2025 09:25:05 -0700
-From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-To: Borislav Petkov <bp@alien8.de>
-Cc: David Kaplan <david.kaplan@amd.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H . Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
-	Brendan Jackman <jackmanb@google.com>,
-	Derek Manwaring <derekmn@amazon.com>
-Subject: Re: MMIO and VERW
-Message-ID: <20250318162505.3ptnegnjz46hchep@desk>
-References: <20250310164023.779191-1-david.kaplan@amd.com>
- <20250310164023.779191-4-david.kaplan@amd.com>
- <20250313093617.GHZ9KnEXpdM4dwLYFz@fat_crate.local>
- <20250313192606.iijythngqtpx4tyy@desk>
- <20250318141659.GDZ9mAWwa3dkQDHkCk@fat_crate.local>
+	s=arc-20240116; t=1742315133; c=relaxed/simple;
+	bh=jA9/pAbxqptglOxtKo0sDE1a1PEPVIV4GYrCMWoNmhE=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=oak0J91j1ls1fAQV6z7fpNQAzFs0Epz8MKIQPcEo0zsJGVaGX4EmIBP0Gm/J0IiGbZNPw1G4PNnFfEoWCN25NSf8Z4X9LYK6E8cUBa/Oy/p+8QCEFBFrkhEzyYbDKSEZEtdTPeipTs0acy4Vy6JPJsMd2L2Xg4pcGUnTBpUhc8I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--sebastianene.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=LVXBAlVj; arc=none smtp.client-ip=209.85.128.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--sebastianene.bounces.google.com
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-43cf3168b87so19596885e9.2
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 09:25:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1742315130; x=1742919930; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=nkv4hTOrWEP1mAK28D1kEzJd6tzvvXvQPHgbpNeN9YY=;
+        b=LVXBAlVjHJugIKCWrOycnQEz+eAva9bUjJsfpBdbrG0vvC2434WCGS6tJnuoBzV1q+
+         923sfwYNen0Pm2Zp3P5kJHO61b4l1nD2Y8SbxruYqHvQts6PuGjE3eLSf8M1V5uuBuiZ
+         rTOH30UBloANCJbC4bnNzkqr//+gJ6XGDMNNYJ//89gWpXcYoZRKq8odWl76ygRGXROe
+         HmIl0utzvwuroTLn79ez9ftGRPLF05hCAJB1XfPWVY4QPcpTBpmXdt300UjZlP4DqjuL
+         Og07IdYNN+zOq88AaC7vBjqFl1ulk0w5uIh/FIfamrZYUJ7rGa15hHWSUI1YdBHlio6r
+         U9xw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742315130; x=1742919930;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=nkv4hTOrWEP1mAK28D1kEzJd6tzvvXvQPHgbpNeN9YY=;
+        b=epvqncaGkETVwbmj3m5G9vwqKBmbNxb2MWhCRe1iGofABMjHqtk3NJSiadtEX6VTb8
+         7j4kJmYYXj/vAVuI8QjfvvG1R2BV/+6fKfUUGVCFnrFdkhrvR+b3cgtza8yJLyzQNjGp
+         NcYfwcNKtCMG53kiLGnyi/AbkOZnSo8BUhOahjzSsEcqx9tpXysRE+9Bn+XtSDGuLfbl
+         QtsuVJQOH7440vt8bd3krJThr0B5Lz/1O01yquf1aydfLHnhhSHL7RCMSV5FVK/ZR3XI
+         Xmbe5ktA77Qe/QoY9/J7GLudzZDACgYKolodwdaeOIEFcutzVjlQ10ch/Pusi6CPR4vR
+         M8AA==
+X-Forwarded-Encrypted: i=1; AJvYcCVmtLqLFLN3mh0uLfBFf4JWb6TTESZPRAj19TRk7gII/m7zCm47ZjXmYADPzlq+p988pWkNXqfoMhMCKeg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyemMnQIZLuUg++PHi9uMpnDhYX5RgIQLH29uryYxsk19wpmzU6
+	fk3YsmcuBeymXdCsP0tEjjQyjEI1sfkFAQt5ze9gjXoBpn+R72lnjyBR89+sFD666QBDzafq57X
+	Lvt1EhbjLOoc8THSVvD8NHz4ARg==
+X-Google-Smtp-Source: AGHT+IENQSIN9p8sk8M/fR1ObxL5U7dDuJO08/B2zEw9mK4FB92c5Di/ycqjo4nkJ+gmvyvHR+E0wirYkTH4pVs9RFQ=
+X-Received: from wmbbe15.prod.google.com ([2002:a05:600c:1e8f:b0:43d:1d5:26e6])
+ (user=sebastianene job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:3ca0:b0:43b:c95f:fd9 with SMTP id 5b1f17b1804b1-43d3b94ff9fmr30314205e9.5.1742315129825;
+ Tue, 18 Mar 2025 09:25:29 -0700 (PDT)
+Date: Tue, 18 Mar 2025 16:25:07 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250318141659.GDZ9mAWwa3dkQDHkCk@fat_crate.local>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.49.0.rc1.451.g8f38331e32-goog
+Message-ID: <20250318162510.3280359-1-sebastianene@google.com>
+Subject: [PATCH v3 0/3] KVM: arm64: Separate the hyp FF-A buffers init from
+ the host
+From: Sebastian Ene <sebastianene@google.com>
+To: catalin.marinas@arm.com, joey.gouly@arm.com, maz@kernel.org, 
+	oliver.upton@linux.dev, sebastianene@google.com, snehalreddy@google.com, 
+	sudeep.holla@arm.com, suzuki.poulose@arm.com, vdonnefort@google.com, 
+	will@kernel.org, yuzenghui@huawei.com
+Cc: kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Mar 18, 2025 at 03:16:59PM +0100, Borislav Petkov wrote:
-> Carving this thing out into a separate thread:
-> 
-> On Thu, Mar 13, 2025 at 12:26:06PM -0700, Pawan Gupta wrote:
-> > On Thu, Mar 13, 2025 at 10:36:17AM +0100, Borislav Petkov wrote:
-> > > I'd expect to see:
-> > > 
-> > > 	if (mmio_mitigation == MMIO_MITIGATION_AUTO) {
-> > >                 mmio_mitigation = MMIO_MITIGATION_VERW;
-> > > 		verw_mitigation_selected = true;
-> > > 	}
-> > > 
-> > >         if (boot_cpu_has_bug(X86_BUG_MDS) || taa_vulnerable())
-> > >                 verw_mitigation_selected = true;
-> > > 
-> > > because the above branch already selected MMIO_MITIGATION_VERW so we might as
-> > > well set verw_mitigation_selected, right?
-> > 
-> > There is a subtle difference between setting verw_mitigation_selected and
-> > MMIO_MITIGATION_VERW. The former is a system-wide switch that indicates
-> > VERW is needed at both kernel-exit and VMenter. MMIO Stale Data is
-> > different from other VERW based mitigations because it only requires VERW
-> > at VMenter, when not affected by MDS/TAA. So, turning the system-wide knob
-> > here would be wrong.
-> 
-> Realistically speaking, do we have a machine where you *only* enable VERW on
-> VMENTER?
+Hello,
 
-Yes, more on it below.
+This moves the initialization of the hypervisor FF-A buffers
+away from the host FF-A map calling path. If the hypervisor
+cannot map the buffers with Trustzone, it rejects any FF-A call
+when it runs under protected mode. 
+Other than that it moves the definitions of the ffa_to_linux_err
+map from the arm_ffa driver to the ffa header so that the hyp code
+can make use of it.
 
-> I'm not talking about some experimentation scenario where one measures which
-> mitigations cost how much.
-> 
-> Do we have a real-life hw configuration where the *only* VERW mitigation
-> needed is at VMENTER because that machine is affected *only* by MMIO and no
-> other VERW-based mitigation is needed?
+*** Changelog ***
 
-Rocket Lake, Comet Lake, Ice Lake with tsx=off only require VERW at
-VMENTER. There are other MMIO affected CPUs that are not affected by MDS
-and do not support TSX or disable it by default.
+v2 -> this version:
+
+- dropped the "Map the hypervisor FF-A buffers on ffa init" patch
+- added ack & reviewed-by tags
+- don't release the ownership of the RX buffer if the flag from
+ FFA_GET_PARTITION is (1)
+
+v1 -> v2:
+
+Split the patch that maps the ff-a buffers of ffa init and introduce
+"Move the ffa_to_linux definition to the ffa header".
+
+Thanks,
+
+
+Sebastian Ene (3):
+  KVM: arm64: Use the static initializer for the version lock
+  firmware: arm_ffa: Move the ffa_to_linux definition to the ffa header
+  KVM: arm64: Release the ownership of the hyp rx buffer to Trustzone
+
+ arch/arm64/kvm/hyp/nvhe/ffa.c     | 12 +++++++-----
+ drivers/firmware/arm_ffa/driver.c | 24 ------------------------
+ include/linux/arm_ffa.h           | 27 +++++++++++++++++++++++++++
+ 3 files changed, 34 insertions(+), 29 deletions(-)
+
+-- 
+2.49.0.rc1.451.g8f38331e32-goog
+
 
