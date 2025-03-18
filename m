@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-565427-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565428-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F937A667F6
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 05:01:43 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FF08A667F4
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 05:01:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B347188B68C
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 04:00:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 05D5517AC59
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 04:00:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CD0D1ADC67;
-	Tue, 18 Mar 2025 03:59:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E3A91C5F10;
+	Tue, 18 Mar 2025 04:00:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="ABoydGab"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="GBCkQqy0"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 860401C3BF7
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 03:59:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE0461C5D6C
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 04:00:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742270398; cv=none; b=BEbXkboeH1g9JXes3bZgoPkWNyO20JVKWwc4L/ylEM8k5u5QCy/0+9wDpST/MNa1O29o/C8I6cmq8e7UNJAKJhLEa+ubofsCjjhyySwdI7v8Mab7U1X2CZIc1mDGe5DjxKZCWNVYB/Rw/zrJ7l+eKKatDITQhwE5BNYZy+xsu04=
+	t=1742270403; cv=none; b=dlz0kUyesjLVs7hdP63x1JwT3D8beLRo54v64ltUrO/bZeYlQQ0fiLJeLUIEIrQ56HmPeRPDPse2tdrjl6GXxrHADRQGikgkS/h47puXnPgHHRZ8Y31W5OkbaoKkwm1+0iw1pugATqBWqZNkciTWSkKY710MNfxeGoc23UxaopU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742270398; c=relaxed/simple;
-	bh=+wRpuN0A/HjofcnYPeltvF9g4Pbwgb7sI3k1r3yDo7A=;
+	s=arc-20240116; t=1742270403; c=relaxed/simple;
+	bh=EBw0pp0DQXvs46s1Cun5L7W7ygqXcv2euwtVQoMQwxM=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=tCHWMQXe6V2mkJ7XgROoaL/ZGNIwl/fAmAgMz79rH1SQAOdb/UeV3zbHJrQ/JclbYGNoyjGibiEk0dsPJqQE9BMACn/2BpB6Roqt/aBHU4dM9VMovF2H2nOkEA/FDfJTJY0rzt0gjGz1ge1+pN9fVrJI2VP6mmnWkSXaxZT4xXA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=ABoydGab; arc=none smtp.client-ip=209.85.214.180
+	 MIME-Version; b=nhsmCcYGBQIQlykgyOq4LVeECNo+GS0n3xQ0eN9uOaumjbEQaesPmGRAXEPjtfWmtSgXTRafBuYrzsu3sfPCOpuzu/4eE//gvTBLuIAX7BUsQ3i+zWXGDJK2aIBmY38RwNy7qDUNZd0+SMP6iqmYsBzjmK53hWpNr69IY5bhUcM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=GBCkQqy0; arc=none smtp.client-ip=209.85.214.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2241053582dso47153595ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 20:59:56 -0700 (PDT)
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-22438c356c8so89154685ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 21:00:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1742270396; x=1742875196; darn=vger.kernel.org;
+        d=bytedance.com; s=google; t=1742270401; x=1742875201; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=xaRB3Z7Zn9kGyUKfUpl8WYZaXTZf5T6vpq1GZf0TWl4=;
-        b=ABoydGab2xRkj0xcnWwrvCHU9yOm/4PQVDimTTBJTEs6Rti/axjNRJkMGLHGcIU83u
-         w00s+n9RMAJxrhm3mbP3Yax+PgFHdATR6fmNxvhSVxTsnYMXTGaAB61+s4i/t1tihyj+
-         J0ExMtN0yN9EmFouOfRjdbK33flCigCb/OOQMCy4z4XS0JYaZaksB1EtRjvq6UXPb/3M
-         GDDHk2ulUcFEMIScq1qDLQUq/VR7W/kpS+uoGpfqvQmm1iwH/iO7O6dYK2n46HXNqosz
-         jwRfw4aHVMvyfLUOwCU4ofQdMBl9SMa5ixcQhDxR++z3RjLQ9ZFjKhFgAO/xoS/P41rx
-         O0eA==
+        bh=25EEGwiFn3VnbkwivdTLYPKqZQgF1BeYiMnWI1gQipU=;
+        b=GBCkQqy0oppsha48UjqLp0WzZblMXlAGQzNKEI8/Ekc2xMWxGPBxqNJATT3x146NAm
+         ax3PGuJvyZsLvjO+25CYmddiSL5uwzn2Yh9jxKn7/C/G4KgAhQ6NX8Ue2rJ9l4OVXoUc
+         IiJJfTFrtPI6QPIKVqpruh4zMuGPVdR0tyWjNhE99D4s0t528AAg0QLPPWK2YtLhGhCb
+         XvdCHdwzpaat/IGtDq3+8F2ir90Ub6UF28U39R3uCHBwAVFg7fA8t6vGGnH2zqH8X6Ey
+         9vD6ZeJmWW+0cR/y/3Btiak05bQ2ahT3Bqn2VGx4q4tfpuAW3AGfIxRXm0OEa6e4395p
+         6rtw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742270396; x=1742875196;
+        d=1e100.net; s=20230601; t=1742270401; x=1742875201;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=xaRB3Z7Zn9kGyUKfUpl8WYZaXTZf5T6vpq1GZf0TWl4=;
-        b=j3q6M976ubr9jt9cfrwfkZzFzb0OQwR5rxUDTrF0tf9L7+/uIyElzNqh6k3VFTZTky
-         OD2lDLg6oo1O6RdigUOKODaZQfHrfUEay/vKg+8Ndv5f/ojxpNqjSSRCl5u74YrhdoYc
-         srA4OKFm2EUIPKwAVK/NgBfvAldzjUxzUv3GjBtUtdCvsq96w69VIk7Lftr/2JYevC7+
-         S7NTcW8tR4RF1cb/PR37rqIoK6qx85Xl9NdYAm5nqWkHlVNuJuG1ApBwuPhOKYA7+HyO
-         WtaTUncFNQrnu/FIumX0W3v9BB0wy/BDAmEeDv7qvY0MipXxxgmr4T6Wmm58RhSTk38v
-         HC/g==
-X-Forwarded-Encrypted: i=1; AJvYcCXXDHxXVWC45QHE+aKRJ/F11KKrJS+fGdYcPTVjDsUB0S53JouwdiuksHQdx965r+5QbHkLjOnR5CU9UTA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/kc7XzqiIJ1VkGykO1/03o8cDomp2BxUU+jghZlflAQe4Efac
-	XweZqsFY0aLZqygIEus3SvIz9Cx9oUqD2tHuwPuKgX+ILVHVtJu4/1xpI4/KRvI=
-X-Gm-Gg: ASbGncvbI3YLmdMVSwMEvW0BFTBYXkoyre3aexYvKnGKs8WEP6Ev6sEc1pEkqAJ+q8H
-	w0TgL7a/FQG5gc/+GbUL5wNmpl+RYbe48L6E+JWClqf8V46vqxJAuX1sxHbgP8nhnm/9QXU+Z3F
-	1ScP5iPGGdmb4T3qzv23UvsJFuv+QybZL4vyHqNLgD925vwYXiKDMB1wwQsaM/7f65BSbYTVSK7
-	5cg9+6gSNAI9S29DfvltiNyDKaSh21aYXRnvEj6UuRKXV6SPuxVVT1iIXkLyDeEYa5pAlE+Yfbe
-	HAgNBiETFTrr+OMYxZhv53hAuEJocadKms1wtSy4C3gMfYXD+s6FZ0pTKBSp1ZW4jeCU2SVPIEU
-	vog096bSxoVyIlv5MQc9K8OOimG0=
-X-Google-Smtp-Source: AGHT+IExX+iDrDCGHA8Aq12SWZuDNNckGnu8pihoRkyjLOg0HP1RuQ216rkdL14FWV3g+VDeX680Yg==
-X-Received: by 2002:a17:903:238b:b0:223:6180:1bf7 with SMTP id d9443c01a7336-225e0b2fba7mr186404745ad.42.1742270395708;
-        Mon, 17 Mar 2025 20:59:55 -0700 (PDT)
+        bh=25EEGwiFn3VnbkwivdTLYPKqZQgF1BeYiMnWI1gQipU=;
+        b=mJjjaos0ZdSR3f7fq3XKtYxghS3q4OJ109L9ehrEDssuzsWctGzTPKl30t+A8TvWVq
+         18+PQNKhUNOw9ngtx02Z17t9fvR56WUXccqP6QK1C6CMYHWTktHB7JSy7pjJkyAJCr3P
+         CRDo1ujVB7Z1duokXY8dLfIYzySsblLiyiUUgg+hzHoXGFzA8D9O+pVumLPbZOpyp2Nj
+         ObgV6yUbWXgNEb9W4YIpwPX4wtV0noNWKfemVGqdDZ9Sv5UhOciClnWkCDFUTqE86xgI
+         mPCWBWh0xMwy3QGHh+Dq5D91HnVbhMy0TKfGTWNzNgl+cjMGqsPtQbwnaf6O5+9UGVHe
+         vIbQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWy2gXTIh+R9tcGk44jFgM7J7Q5Wcs6n9f5aK8PorF0rQCQ4dc5bGYVcpmLvJWImu3AOyK38VE4jZ3ADjY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxG88EKLEjzzZYtZ8HYXnLl1xfFucmolymr0SM+GL65SQzz1T2C
+	o5Z6z3Wj3kM52JGFoIQ9uBQd21KgAZN8ip5UyCLo5wMCApcBbAM857fG4Ks3SjA=
+X-Gm-Gg: ASbGncsPbhezskVpiR8pphuRGxnkIhKN5t78+fAT6qGxbZqZ2qx6j0vjWe3E40PgG7U
+	pKJ3SnZLib+XHx2wN6Q6uzOYh+wJ8nBRGOpArgAG/Yd7uzFQXItRyQWutlwAeXsV8l2dDwPa9Nk
+	rssKUB2duXmIeXw1ve2DBendduMqz8lx02BmDjlrT0W3d5koe+3vvnzbykQgCD7M86YqPaqSXl+
+	ReQNWjpmRy8LK20mx7rJCL1fMECxjro7pDsJMLgiM4x3ZWyGFE9LeWwADCFua1VicEGl+eml8b2
+	Wgk4P9KwdVG62RLQ+vdhxg70CV7f7JTBuqTf7tRQFP78Bz62rOH0aQH78+nxnGoZRGpC/T1XKNS
+	lNF0g2/QPmOjqUuZJ84o2Y02g32ZNu7Dob1FsGQ==
+X-Google-Smtp-Source: AGHT+IFBc6TvuWKKSrWPTLSErVQ1GkoHiMOoKLD8NwCVFkbU9sjHFxonJru7yaMaEU5aIspYftiubw==
+X-Received: by 2002:a17:903:230f:b0:223:5e54:c521 with SMTP id d9443c01a7336-225e0859fafmr199239715ad.0.1742270400974;
+        Mon, 17 Mar 2025 21:00:00 -0700 (PDT)
 Received: from J9GPGXL7NT.bytedance.net ([61.213.176.55])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-225c6bd4b30sm83720135ad.235.2025.03.17.20.59.50
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-225c6bd4b30sm83720135ad.235.2025.03.17.20.59.56
         (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Mon, 17 Mar 2025 20:59:54 -0700 (PDT)
+        Mon, 17 Mar 2025 20:59:59 -0700 (PDT)
 From: Xu Lu <luxu.kernel@bytedance.com>
 To: akpm@linux-foundation.org,
 	jhubbard@nvidia.com,
@@ -86,9 +86,9 @@ Cc: lihangjing@bytedance.com,
 	linux-kernel@vger.kernel.org,
 	linux-mm@kvack.org,
 	Xu Lu <luxu.kernel@bytedance.com>
-Subject: [PATCH RESEND v2 3/4] iommu/riscv: Introduce IOMMU page table lock
-Date: Tue, 18 Mar 2025 11:59:29 +0800
-Message-Id: <20250318035930.11855-4-luxu.kernel@bytedance.com>
+Subject: [PATCH RESEND v2 4/4] iommu/riscv: Add support for Svnapot
+Date: Tue, 18 Mar 2025 11:59:30 +0800
+Message-Id: <20250318035930.11855-5-luxu.kernel@bytedance.com>
 X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 In-Reply-To: <20250318035930.11855-1-luxu.kernel@bytedance.com>
 References: <20250318035930.11855-1-luxu.kernel@bytedance.com>
@@ -100,256 +100,171 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Introduce page table lock to address competition issues when modifying
-multiple PTEs, for example, when applying Svnapot. We use fine-grained
-page table locks to minimize lock contention.
+Add Svnapot size as supported page size and apply Svnapot when it is
+possible.
 
 Signed-off-by: Xu Lu <luxu.kernel@bytedance.com>
 ---
- drivers/iommu/riscv/iommu.c | 123 +++++++++++++++++++++++++++++++-----
- 1 file changed, 107 insertions(+), 16 deletions(-)
+ drivers/iommu/riscv/iommu.c | 86 +++++++++++++++++++++++++++++++++----
+ 1 file changed, 77 insertions(+), 9 deletions(-)
 
 diff --git a/drivers/iommu/riscv/iommu.c b/drivers/iommu/riscv/iommu.c
-index 3b0c934decd08..ce4cf6569ffb4 100644
+index ce4cf6569ffb4..7cc736abd2a61 100644
 --- a/drivers/iommu/riscv/iommu.c
 +++ b/drivers/iommu/riscv/iommu.c
-@@ -808,6 +808,7 @@ struct riscv_iommu_domain {
- 	struct iommu_domain domain;
- 	struct list_head bonds;
- 	spinlock_t lock;		/* protect bonds list updates. */
-+	spinlock_t page_table_lock;	/* protect page table updates. */
- 	int pscid;
- 	bool amo_enabled;
- 	int numa_node;
-@@ -1086,8 +1087,80 @@ static void riscv_iommu_iotlb_sync(struct iommu_domain *iommu_domain,
- #define _io_pte_none(pte)	(pte_val(pte) == 0)
- #define _io_pte_entry(pn, prot)	(__pte((_PAGE_PFN_MASK & ((pn) << _PAGE_PFN_SHIFT)) | (prot)))
+@@ -1158,6 +1158,26 @@ static int pgsize_to_level(size_t pgsize)
+ 	return level;
+ }
  
-+#define RISCV_IOMMU_PMD_LEVEL		1
-+
-+static bool riscv_iommu_ptlock_init(struct ptdesc *ptdesc, int level)
++static unsigned long napot_size_to_order(unsigned long size)
 +{
-+	if (level <= RISCV_IOMMU_PMD_LEVEL)
-+		return ptlock_init(ptdesc);
-+	return true;
-+}
++	unsigned long order;
 +
-+static void riscv_iommu_ptlock_free(struct ptdesc *ptdesc, int level)
-+{
-+	if (level <= RISCV_IOMMU_PMD_LEVEL)
-+		ptlock_free(ptdesc);
-+}
++	if (!has_svnapot())
++		return 0;
 +
-+static spinlock_t *riscv_iommu_ptlock(struct riscv_iommu_domain *domain,
-+				      pte_t *pte, int level)
-+{
-+	spinlock_t *ptl; /* page table page lock */
-+
-+#ifdef CONFIG_SPLIT_PTE_PTLOCKS
-+	if (level <= RISCV_IOMMU_PMD_LEVEL)
-+		ptl = ptlock_ptr(page_ptdesc(virt_to_page(pte)));
-+	else
-+#endif
-+		ptl = &domain->page_table_lock;
-+	spin_lock(ptl);
-+
-+	return ptl;
-+}
-+
-+static void *riscv_iommu_alloc_pagetable_node(int numa_node, gfp_t gfp, int level)
-+{
-+	struct ptdesc *ptdesc;
-+	void *addr;
-+
-+	addr = iommu_alloc_page_node(numa_node, gfp);
-+	if (!addr)
-+		return NULL;
-+
-+	ptdesc = page_ptdesc(virt_to_page(addr));
-+	if (!riscv_iommu_ptlock_init(ptdesc, level)) {
-+		iommu_free_page(addr);
-+		addr = NULL;
++	for_each_napot_order(order) {
++		if (size == napot_cont_size(order))
++			return order;
 +	}
 +
-+	return addr;
++	return 0;
 +}
 +
-+static void riscv_iommu_free_pagetable(void *addr, int level)
++static bool is_napot_size(unsigned long size)
 +{
-+	struct ptdesc *ptdesc = page_ptdesc(virt_to_page(addr));
-+
-+	riscv_iommu_ptlock_free(ptdesc, level);
-+	iommu_free_page(addr);
-+}
-+
-+static int pgsize_to_level(size_t pgsize)
-+{
-+	int level = RISCV_IOMMU_DC_FSC_IOSATP_MODE_SV57 -
-+			RISCV_IOMMU_DC_FSC_IOSATP_MODE_SV39 + 2;
-+	int shift = PAGE_SHIFT + PT_SHIFT * level;
-+
-+	while (pgsize < ((size_t)1 << shift)) {
-+		shift -= PT_SHIFT;
-+		level--;
-+	}
-+
-+	return level;
++	return napot_size_to_order(size) != 0;
 +}
 +
  static void riscv_iommu_pte_free(struct riscv_iommu_domain *domain,
--				 pte_t pte, struct list_head *freelist)
-+				 pte_t pte, int level,
-+				 struct list_head *freelist)
- {
- 	pte_t *ptr;
- 	int i;
-@@ -1102,10 +1175,11 @@ static void riscv_iommu_pte_free(struct riscv_iommu_domain *domain,
- 		pte = ptr[i];
- 		if (!_io_pte_none(pte)) {
- 			ptr[i] = __pte(0);
--			riscv_iommu_pte_free(domain, pte, freelist);
-+			riscv_iommu_pte_free(domain, pte, level - 1, freelist);
- 		}
- 	}
- 
-+	riscv_iommu_ptlock_free(page_ptdesc(virt_to_page(ptr)), level);
- 	if (freelist)
- 		list_add_tail(&virt_to_page(ptr)->lru, freelist);
- 	else
-@@ -1117,8 +1191,9 @@ static pte_t *riscv_iommu_pte_alloc(struct riscv_iommu_domain *domain,
- 				    gfp_t gfp)
- {
- 	pte_t *ptr = domain->pgd_root;
--	pte_t pte, old;
-+	pte_t pte;
- 	int level = domain->pgd_mode - RISCV_IOMMU_DC_FSC_IOSATP_MODE_SV39 + 2;
-+	spinlock_t *ptl; /* page table page lock */
- 	void *addr;
- 
- 	do {
-@@ -1146,14 +1221,21 @@ static pte_t *riscv_iommu_pte_alloc(struct riscv_iommu_domain *domain,
- 		 * page table. This might race with other mappings, retry.
+ 				 pte_t pte, int level,
+ 				 struct list_head *freelist)
+@@ -1205,7 +1225,8 @@ static pte_t *riscv_iommu_pte_alloc(struct riscv_iommu_domain *domain,
+ 		 * existing mapping with smaller granularity. Up to the caller
+ 		 * to replace and invalidate.
  		 */
- 		if (_io_pte_none(pte)) {
--			addr = iommu_alloc_page_node(domain->numa_node, gfp);
-+			addr = riscv_iommu_alloc_pagetable_node(domain->numa_node, gfp,
-+								level - 1);
- 			if (!addr)
- 				return NULL;
--			old = ptep_get(ptr);
--			if (!_io_pte_none(old))
-+
-+			ptl = riscv_iommu_ptlock(domain, ptr, level);
-+			pte = ptep_get(ptr);
-+			if (!_io_pte_none(pte)) {
-+				spin_unlock(ptl);
-+				riscv_iommu_free_pagetable(addr, level - 1);
- 				goto pte_retry;
-+			}
- 			pte = _io_pte_entry(virt_to_pfn(addr), _PAGE_TABLE);
- 			set_pte(ptr, pte);
-+			spin_unlock(ptl);
+-		if (((size_t)1 << shift) == pgsize)
++		if ((((size_t)1 << shift) == pgsize) ||
++		    (is_napot_size(pgsize) && pgsize_to_level(pgsize) == level))
+ 			return ptr;
+ pte_retry:
+ 		pte = ptep_get(ptr);
+@@ -1256,7 +1277,10 @@ static pte_t *riscv_iommu_pte_fetch(struct riscv_iommu_domain *domain,
+ 		ptr += ((iova >> shift) & (PTRS_PER_PTE - 1));
+ 		pte = ptep_get(ptr);
+ 		if (_io_pte_present(pte) && _io_pte_leaf(pte)) {
+-			*pte_pgsize = (size_t)1 << shift;
++			if (pte_napot(pte))
++				*pte_pgsize = napot_cont_size(napot_cont_order(pte));
++			else
++				*pte_pgsize = (size_t)1 << shift;
+ 			return ptr;
  		}
- 		ptr = (pte_t *)pfn_to_virt(pte_pfn(pte));
- 	} while (level-- > 0);
-@@ -1193,9 +1275,10 @@ static int riscv_iommu_map_pages(struct iommu_domain *iommu_domain,
+ 		if (_io_pte_none(pte))
+@@ -1274,13 +1298,18 @@ static int riscv_iommu_map_pages(struct iommu_domain *iommu_domain,
+ {
  	struct riscv_iommu_domain *domain = iommu_domain_to_riscv(iommu_domain);
  	size_t size = 0;
- 	pte_t *ptr;
--	pte_t pte, old;
-+	pte_t pte;
- 	unsigned long pte_prot;
--	int rc = 0;
-+	int rc = 0, level;
-+	spinlock_t *ptl; /* page table page lock */
+-	pte_t *ptr;
+-	pte_t pte;
+-	unsigned long pte_prot;
+-	int rc = 0, level;
++	pte_t *ptr, old, pte;
++	unsigned long pte_prot, order = 0;
++	int rc = 0, level, i;
+ 	spinlock_t *ptl; /* page table page lock */
  	LIST_HEAD(freelist);
  
++	if (iova & (pgsize - 1))
++		return -EINVAL;
++
++	if (is_napot_size(pgsize))
++		order = napot_size_to_order(pgsize);
++
  	if (!(prot & IOMMU_WRITE))
-@@ -1212,11 +1295,12 @@ static int riscv_iommu_map_pages(struct iommu_domain *iommu_domain,
- 			break;
- 		}
+ 		pte_prot = _PAGE_BASE | _PAGE_READ;
+ 	else if (domain->amo_enabled)
+@@ -1297,9 +1326,27 @@ static int riscv_iommu_map_pages(struct iommu_domain *iommu_domain,
  
--		old = ptep_get(ptr);
-+		level = pgsize_to_level(pgsize);
-+		ptl = riscv_iommu_ptlock(domain, ptr, level);
-+		riscv_iommu_pte_free(domain, ptep_get(ptr), level, &freelist);
+ 		level = pgsize_to_level(pgsize);
+ 		ptl = riscv_iommu_ptlock(domain, ptr, level);
+-		riscv_iommu_pte_free(domain, ptep_get(ptr), level, &freelist);
++
++		old = ptep_get(ptr);
++		if (pte_napot(old) && napot_cont_size(napot_cont_order(old)) > pgsize) {
++			spin_unlock(ptl);
++			rc = -EFAULT;
++			break;
++		}
++
  		pte = _io_pte_entry(phys_to_pfn(phys), pte_prot);
- 		set_pte(ptr, pte);
--
--		riscv_iommu_pte_free(domain, old, &freelist);
-+		spin_unlock(ptl);
+-		set_pte(ptr, pte);
++		if (order) {
++			pte = pte_mknapot(pte, order);
++			for (i = 0; i < napot_pte_num(order); i++, ptr++) {
++				old = ptep_get(ptr);
++				riscv_iommu_pte_free(domain, old, level, &freelist);
++				set_pte(ptr, pte);
++			}
++		} else {
++			riscv_iommu_pte_free(domain, old, level, &freelist);
++			set_pte(ptr, pte);
++		}
++
+ 		spin_unlock(ptl);
  
  		size += pgsize;
- 		iova += pgsize;
-@@ -1251,6 +1335,7 @@ static size_t riscv_iommu_unmap_pages(struct iommu_domain *iommu_domain,
- 	pte_t *ptr;
+@@ -1336,6 +1383,9 @@ static size_t riscv_iommu_unmap_pages(struct iommu_domain *iommu_domain,
  	size_t unmapped = 0;
  	size_t pte_size;
-+	spinlock_t *ptl; /* page table page lock */
+ 	spinlock_t *ptl; /* page table page lock */
++	unsigned long pte_num;
++	pte_t pte;
++	int i;
  
  	while (unmapped < size) {
  		ptr = riscv_iommu_pte_fetch(domain, iova, &pte_size);
-@@ -1261,7 +1346,9 @@ static size_t riscv_iommu_unmap_pages(struct iommu_domain *iommu_domain,
- 		if (iova & (pte_size - 1))
+@@ -1347,7 +1397,21 @@ static size_t riscv_iommu_unmap_pages(struct iommu_domain *iommu_domain,
  			return unmapped;
  
-+		ptl = riscv_iommu_ptlock(domain, ptr, pgsize_to_level(pte_size));
- 		set_pte(ptr, __pte(0));
-+		spin_unlock(ptl);
+ 		ptl = riscv_iommu_ptlock(domain, ptr, pgsize_to_level(pte_size));
+-		set_pte(ptr, __pte(0));
++		if (is_napot_size(pte_size)) {
++			pte = ptep_get(ptr);
++
++			if (!pte_napot(pte) ||
++			    napot_cont_size(napot_cont_order(pte)) != pte_size) {
++				spin_unlock(ptl);
++				return unmapped;
++			}
++
++			pte_num = napot_pte_num(napot_cont_order(pte));
++			for (i = 0; i < pte_num; i++, ptr++)
++				set_pte(ptr, __pte(0));
++		} else {
++			set_pte(ptr, __pte(0));
++		}
+ 		spin_unlock(ptl);
  
  		iommu_iotlb_gather_add_page(&domain->domain, gather, iova,
- 					    pte_size);
-@@ -1291,13 +1378,14 @@ static void riscv_iommu_free_paging_domain(struct iommu_domain *iommu_domain)
- {
- 	struct riscv_iommu_domain *domain = iommu_domain_to_riscv(iommu_domain);
- 	const unsigned long pfn = virt_to_pfn(domain->pgd_root);
-+	int level = domain->pgd_mode - RISCV_IOMMU_DC_FSC_IOSATP_MODE_SV39 + 2;
- 
- 	WARN_ON(!list_empty(&domain->bonds));
- 
- 	if ((int)domain->pscid > 0)
- 		ida_free(&riscv_iommu_pscids, domain->pscid);
- 
--	riscv_iommu_pte_free(domain, _io_pte_entry(pfn, _PAGE_TABLE), NULL);
-+	riscv_iommu_pte_free(domain, _io_pte_entry(pfn, _PAGE_TABLE), level, NULL);
- 	kfree(domain);
- }
- 
-@@ -1358,7 +1446,7 @@ static struct iommu_domain *riscv_iommu_alloc_paging_domain(struct device *dev)
- 	struct riscv_iommu_device *iommu;
+@@ -1447,6 +1511,7 @@ static struct iommu_domain *riscv_iommu_alloc_paging_domain(struct device *dev)
  	unsigned int pgd_mode;
  	dma_addr_t va_mask;
--	int va_bits;
-+	int va_bits, level;
+ 	int va_bits, level;
++	size_t order;
  
  	iommu = dev_to_iommu(dev);
  	if (iommu->caps & RISCV_IOMMU_CAPABILITIES_SV57) {
-@@ -1381,11 +1469,14 @@ static struct iommu_domain *riscv_iommu_alloc_paging_domain(struct device *dev)
+@@ -1506,6 +1571,9 @@ static struct iommu_domain *riscv_iommu_alloc_paging_domain(struct device *dev)
+ 	domain->domain.geometry.aperture_end = va_mask;
+ 	domain->domain.geometry.force_aperture = true;
+ 	domain->domain.pgsize_bitmap = va_mask & (SZ_4K | SZ_2M | SZ_1G | SZ_512G);
++	if (has_svnapot())
++		for_each_napot_order(order)
++			domain->domain.pgsize_bitmap |= napot_cont_size(order) & va_mask;
  
- 	INIT_LIST_HEAD_RCU(&domain->bonds);
- 	spin_lock_init(&domain->lock);
-+	spin_lock_init(&domain->page_table_lock);
- 	domain->numa_node = dev_to_node(iommu->dev);
- 	domain->amo_enabled = !!(iommu->caps & RISCV_IOMMU_CAPABILITIES_AMO_HWAD);
- 	domain->pgd_mode = pgd_mode;
--	domain->pgd_root = iommu_alloc_page_node(domain->numa_node,
--						 GFP_KERNEL_ACCOUNT);
-+	level = domain->pgd_mode - RISCV_IOMMU_DC_FSC_IOSATP_MODE_SV39 + 2;
-+	domain->pgd_root = riscv_iommu_alloc_pagetable_node(domain->numa_node,
-+							    GFP_KERNEL_ACCOUNT,
-+							    level);
- 	if (!domain->pgd_root) {
- 		kfree(domain);
- 		return ERR_PTR(-ENOMEM);
-@@ -1394,7 +1485,7 @@ static struct iommu_domain *riscv_iommu_alloc_paging_domain(struct device *dev)
- 	domain->pscid = ida_alloc_range(&riscv_iommu_pscids, 1,
- 					RISCV_IOMMU_MAX_PSCID, GFP_KERNEL);
- 	if (domain->pscid < 0) {
--		iommu_free_page(domain->pgd_root);
-+		riscv_iommu_free_pagetable(domain->pgd_root, level);
- 		kfree(domain);
- 		return ERR_PTR(-ENOMEM);
- 	}
+ 	domain->domain.ops = &riscv_iommu_paging_domain_ops;
+ 
 -- 
 2.20.1
 
