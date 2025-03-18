@@ -1,78 +1,71 @@
-Return-Path: <linux-kernel+bounces-565616-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7795A66BFD
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 08:39:07 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06FCFA66BF9
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 08:38:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E7FE19A234B
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 07:38:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C78317DF13
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 07:38:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F4A31F8748;
-	Tue, 18 Mar 2025 07:36:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5751A202967;
+	Tue, 18 Mar 2025 07:37:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="r6Rq1oRA"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2067.outbound.protection.outlook.com [40.107.237.67])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="z9hijtL3"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2058.outbound.protection.outlook.com [40.107.94.58])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 965E21E8356;
-	Tue, 18 Mar 2025 07:36:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.67
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96E471F0983;
+	Tue, 18 Mar 2025 07:37:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.58
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742283394; cv=fail; b=PTevebt2ui79DU0TLzCPZwWptisPzxT7wRI++8K3faKqFAAVbWAhStuhpfnwccOawXYpxIkEaHTyFroDTLE8O/yFuk4Re7DXtQ9pt79FxtSqxe1Zp6jiDwZB4Y5Jj6fW7/FxoF2vxCOruM8uon4dxhPzcL56/KuF7s1vxdAoqSg=
+	t=1742283423; cv=fail; b=PohbOHNNNs+uaT/RnV1mN68EgGVPXGoKdtDsMxyUUHaPihwf9adAjfPDBy1JLW2498RnmXJxxPASKgwNwSODyumVM1ohZhdngAkIQUWpS7/HteokD8csjGYWVJWInrqhRsVzroe+Jwuq7bNGXdIawbuZMz6ura1G7M/TAEq9Tg8=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742283394; c=relaxed/simple;
-	bh=HnKSQuvL41bcPZTe/VHgsAn/o26pB4zGzgBdXkt48XI=;
+	s=arc-20240116; t=1742283423; c=relaxed/simple;
+	bh=xMuqMTZNxhtsX/VfqZwgtq7FIIsP34TfNrMfuYzzKvo=;
 	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=H8fOFJw+Q93HMMidc7bBXMTkWYVZjVJUWT8JvVvIQ/y/HhaYGqJQcXi8BCjJbVK2ObguzGBRhZzj2BYtWzGnHQxrYLu7LQlvZ/vFLwEjTo4qF6NXMP+QEn1pxegNF/BJy3FzexYDF09XWsknzCGdD+kLgmMs8vR2znkNjcPXPIw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=r6Rq1oRA; arc=fail smtp.client-ip=40.107.237.67
+	 Content-Type:MIME-Version; b=RXZgXhTZeLFNy3lVT8JnvhVGFxDX19mHKMhol0V5bD7f/xD7n0zGma3nROgiJJsPhOqw92xVUy63JEvLvtqVUheSi2hqpTlSorVMaJmgQOkrxH0VzY3qe0IxkFR+mOmiSURAhQOmCu64jew93/0bpT2dso5vsC6MCQ7gfl+z5ZU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=z9hijtL3; arc=fail smtp.client-ip=40.107.94.58
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=WOZfnbHZSPtrcX6XvjRqUiuyExFrQ5O+hIdnmU7zidoThXhdlG66m4xPxBEb4ufa7m9/t3y+RcJOHKpbHNH9VMWAaKpVYNwLPPpuWTUPnzxin/+m6sNqcrniobkP0M5/FGkm+8bmRHjXO6AFI0/LnRORwjLaqko99ykdb2YKC0qhbUlt1sgkimrv+39ZnYPgKcEgQdEwe66EJZK7UhdsNfn14QENHXGS9bUQyGYNubUN1N9cPs4kK1WBws1q2jWhx81vfH91Buk4E8LZUtjn5sZn0hzhw+xn/iydZPZBWGlBj08QZLQb386hUkl/h56p7Ed1LQG6NKGF/CH5H/hrrQ==
+ b=IXTRAuSQMvoFUDebFv+YSlHL7rWa+Rn4tOpGUVLPiPULpU0Z1AToCQ7l5Rf+UorgEyJzBx68fwWLDWlNaWzvu3Py+zPFOs9EkG0gqNXoIHIno0/FCFoqAuj+2ZhcXzBvwC77/5Xljl72cfMlgpdbMIf+fJd9VimzEkwD2P8Ln5+VnCC6zCgBvvgqTISts6/ZJZrZPu1G8iIl0a7SN8I4gUel+ojz84ZthsvMNcu57k/F0UEQAkK26FHgGiV6L28OC/M43ooTdbjik1d1gzeYZlCWb9aCCiwgp43xXfl6DcWPDSOJoRc15K+S6wwQFEo0i7CUNO3KcwG8Re2AcQMRWQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=f/Fk30w6hevCaQmWOf0nLP7kQt8i2CFwmfOzM674etY=;
- b=LrN5mpcHTBn/rxfEIlP1HX1luZNIL5DJIbp6q1eQrZnkwwIIGvUjU4b5HVi63REXtNUI9NXbC+pVOCWRiF1mlYnXrBDLhAjyDL6jK2i73WMk6jLz7fMT/4blPtSAS9tUg9mi3ZSgG+DIaGsFZ1aJ/jk7gl10oGvACV7YfaQk9u8RKoItwv3PYnsx9iFf17xc2aUX2ZDQwO/jsSjH2IabzpGn5ldSSIac8VB9DWMDfNiAn6NLwC5N+u0qTn6t7APAS2PQIsQMA5YrvJuBtu4kHuT6BD225lbiwdJQRuEV8sda/Inur/BfbTOmuk9cR/zgDdkuzP5l/wIm1lFz4dOe9w==
+ bh=ZMYlhe+/Q5JtUxhtPdCRzbxVgXC1OjTHVGZ/OeJSaj8=;
+ b=gxQa62yMlBL8pG4fDH8OGkdy2vJs1kyh2mhWtmjiUZRw6u38G6CujsNTYuYH9Vhbwb60doXARHo+90OKi/QhvmVa7NFf9/G6v3yipTZiDJui3e/q2iS2OgvZVQXq4ksepdVlQ4OJb80ECpGofv+zCqFH3nqIUrBIszShxvvfhp/oadsCfptSDTiBFXHh1nAKEpzIU91OJ3Ui9nkLNMs8OZ3Aw61lHldugwTXum7Jgn8AV3ar4+66MtEzTiwvAE43ZDOwE1O/53TlKnSKjtjE3mFjq81em4EVS24QmUWNpDQH9o/cwx6+Irf3goB4qleguAYj/kGt4OrLQ2fQJBnnNw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
  header.d=amd.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=f/Fk30w6hevCaQmWOf0nLP7kQt8i2CFwmfOzM674etY=;
- b=r6Rq1oRAoyqYYqxxaK1WPBSVrs3zQklNNnpcf+QwA6BDs8bo3fOuW008ltkUB76hTFTxFvwm7J4lP1UNb6Vtc6mJYACzBwNuRevjXcCopDHcPKp18ZGzYH5YnJtQyB53t53D4EYDHSu6oF6ZgQKC6S9C4eITAvTq6SjPJKi20eM=
+ bh=ZMYlhe+/Q5JtUxhtPdCRzbxVgXC1OjTHVGZ/OeJSaj8=;
+ b=z9hijtL3gWcLKBeNklcGhLh8gctF86q7Y8cLhGqQuT6u/4BGSfoi6pMrf+NVGPIuyA1neKl2tKpGAqMT1uZxBGlWa3CXVOTLkfhV+yquFeJ58P6VqcmFhvaJsI7nphXG+s/zRmeUYUWAsyP+8tHgN5IyValmC2qKiopd38PJl7k=
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=amd.com;
 Received: from SN7PR12MB8101.namprd12.prod.outlook.com (2603:10b6:806:321::7)
  by IA1PR12MB6186.namprd12.prod.outlook.com (2603:10b6:208:3e6::5) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.33; Tue, 18 Mar
- 2025 07:36:28 +0000
+ 2025 07:36:59 +0000
 Received: from SN7PR12MB8101.namprd12.prod.outlook.com
  ([fe80::fdb:e120:f99c:c899]) by SN7PR12MB8101.namprd12.prod.outlook.com
  ([fe80::fdb:e120:f99c:c899%4]) with mapi id 15.20.8534.031; Tue, 18 Mar 2025
- 07:36:27 +0000
-Message-ID: <a8be82ee-b6c8-4308-bf3a-d18050dd043a@amd.com>
-Date: Tue, 18 Mar 2025 08:36:22 +0100
+ 07:36:59 +0000
+Message-ID: <b106b46b-f00f-40bc-aafc-f57a879fe090@amd.com>
+Date: Tue, 18 Mar 2025 08:36:49 +0100
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] usb: dwc3: xilinx: Prevent spike in reset signal
-To: Mike Looijmans <mike.looijmans@topic.nl>,
- Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
+Subject: Re: [PATCH v2] usb: dwc3: xilinx: Prevent spike in reset signal
+To: Mike Looijmans <mike.looijmans@topic.nl>, linux-usb@vger.kernel.org,
  Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
-Cc: "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <1b153bce-a66a-45ee-a5c6-963ea6fb1c82.949ef384-8293-46b8-903f-40a477c056ae.323aeebd-1577-4c21-85a6-ff9262fb6cb7@emailsignatures365.codetwo.com>
- <20250314155706.31058-1-mike.looijmans@topic.nl>
- <20250314211411.l5taj5nysvcalfyz@synopsys.com>
- <8ee2ce74-dc6b-463a-ba95-ad25669a1179@topic.nl>
- <20250318001211.tnjwfckt5j4fbvjf@synopsys.com>
- <a9812897-2c79-4a1c-9431-c6f184233a57@topic.nl>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <1b153bce-a66a-45ee-a5c6-963ea6fb1c82.949ef384-8293-46b8-903f-40a477c056ae.92a20336-7677-4cd7-9893-b0e0da853ba9@emailsignatures365.codetwo.com>
+ <20250318064518.9320-1-mike.looijmans@topic.nl>
 Content-Language: en-US
 From: Michal Simek <michal.simek@amd.com>
 Autocrypt: addr=michal.simek@amd.com; keydata=
@@ -119,11 +112,11 @@ Autocrypt: addr=michal.simek@amd.com; keydata=
  y7RkYPOpmElF2pwWI/SXKOgMUgigedGCl1QRUio7iifBmXHkRrTgNT0PWQmeGsWTmfRit2+i
  l2dpB2lxha72cQ6MTEmL65HaoeANhtfO1se2R9dej57g+urO9V2v/UglZG1wsyaP/vOrgs+3
  3i3l5DA=
-In-Reply-To: <a9812897-2c79-4a1c-9431-c6f184233a57@topic.nl>
+In-Reply-To: <20250318064518.9320-1-mike.looijmans@topic.nl>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: DM6PR03CA0039.namprd03.prod.outlook.com
- (2603:10b6:5:100::16) To SN7PR12MB8101.namprd12.prod.outlook.com
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: CPYP284CA0005.BRAP284.PROD.OUTLOOK.COM
+ (2603:10d6:103:68::10) To SN7PR12MB8101.namprd12.prod.outlook.com
  (2603:10b6:806:321::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -133,202 +126,163 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: SN7PR12MB8101:EE_|IA1PR12MB6186:EE_
-X-MS-Office365-Filtering-Correlation-Id: edcc5b58-0c9a-4ca6-20aa-08dd65ef97db
+X-MS-Office365-Filtering-Correlation-Id: 4c72ba84-0155-4588-3b05-08dd65efaa92
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016|7053199007;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?cXNQQTYxZ1JRVk1QRTBkY2JGSHNqU0hXTWFTV0g2VGNRWVN1OFZ3OGVLVDln?=
- =?utf-8?B?VFBheUsrTzllK2V1WXJreVVrMklRcHprVTJzb0Iyd2JFTEx0Mk9YVHM2SU8v?=
- =?utf-8?B?dmNKd25MWjRlNXg4ZVdVd3JSSFNsM3VlT3ptZTNvelF1R25sWkZiZ0FDQWFZ?=
- =?utf-8?B?SVkzTkxXUFI4b3pyaUxqYituUXo2VFJ5d0pSWFFLeXRRanBXcVVxWHBGbk5R?=
- =?utf-8?B?NjlYS0JCRlk1YjBVYzkwNFk0NjRKUVNMRGhCME51dHFFSlpieG5zM3gxSGQ3?=
- =?utf-8?B?dWpmTVFGV1ptcGpOUnZaUGtUZnZqSDlyMXg0OVRVRlptazJENFdzM2lYTi96?=
- =?utf-8?B?U2FiS0hHMHpPNXF4a0JjNDRSQ2RQN3lEaGNSWEE4K1RFRFhhc213S05vZGdQ?=
- =?utf-8?B?QSs2RkZGMnllMlFQa210YnhNVjgyYnB5cmtnV3FOQ0xYUWNJWVkwRjh5UjNG?=
- =?utf-8?B?cWtmc0lrR043YU9iT0Q3ZHE3WFR5MkEyS2J2dWU2U3Q2WTk3UDVpWHRPWlBu?=
- =?utf-8?B?aHp5c0JTRWNBWHM3ZnpvM3J3ekFiV25yd01OTlRnSVBXdnFvUmYzeFpnRnFx?=
- =?utf-8?B?bWxnTERXZXlvTDJLTjFmTU8ramI3c1pvaEtxNS9FRXkya3M3TFZLRkJBeGZ2?=
- =?utf-8?B?REpUQmdsamhWVG9yclpscGhCOWZRTmY5b3NaNnNyUFVJY05hb1BYS090MjYr?=
- =?utf-8?B?R2k3RDFNNSticW5IRnhWVndxUm1scDB6NmVwa1RLRFBPODdoUGkrNjhKUEFw?=
- =?utf-8?B?VkhBdmVoc055K2ZLYjB6Z0R0S2JtaVNlSWxNa0hqT2Uva0lGbThUZWNjMVZR?=
- =?utf-8?B?WkxITjFTWHI1NXZaZVAyMkNJKzFDN292N3o2a0Z5cEJTZy9rS3dNVnRnOVZo?=
- =?utf-8?B?Ym90OHJmNkVRYnJxTnZ0c2hoRjJNQVBDbEh1ejdaZkowd1JFLytKMkxhajdH?=
- =?utf-8?B?RERVOXNGS2xqUlNTbmxFd3F1ditkaVRweVJMZSs0ZytrTDU3UjgxT2JWWGty?=
- =?utf-8?B?UnFtaUplaW5taml3c0F1SlZMUzIvUldtUzQ3Q3RidlVnenRmUnNCOEVMeVI4?=
- =?utf-8?B?N2NDc3NtVFVuRXAzaXFxK3kxUnI3SUpYZk1tMEtwZ2ZaQWNyUUJESHRCaWVv?=
- =?utf-8?B?K3lZNG9Vc3NSL0Z3ZzBOYWR6VE1XRnVUYXZrL2FtSkJ1U0IwRnpqQmhZNTNN?=
- =?utf-8?B?UkFqMW9RVHdmYlJKZDkxdm5WN0Yvc1loUGNjWEpoNmZvR0VSTnVRaVpjbEl4?=
- =?utf-8?B?a25ZRXAxL3hnMEhqYVpTUjRzdGJKRnNoV3JaenNUbFlLOGVlRWZnZmhsd0wv?=
- =?utf-8?B?Y3RCNmRtSm9EWHZvSzNVM3FsSFFzNVFMSmZqSVJRMnpKRC9MdThjbTR4S3Fo?=
- =?utf-8?B?Zy9EaCtjYUwzTmpNanBsbGkyU2VSenZNbGYyVDVHNTcwT3F6N0llTFhTdTdQ?=
- =?utf-8?B?ZzROQmR5MmZCZEpBamVlTk5PS1Brc0IySWloSk5qYm1TOTZpUThWakc1WlZo?=
- =?utf-8?B?Znh4YzVIdE5hdWVEVTF0WDBFb3o5UWZzNTM3TGp6ZCt1NmFqeTJYa1NVdmFM?=
- =?utf-8?B?bVIvZGlXbEhmczdwd2FSUzBPUStjUmFNT05VeklSdEZlc1FGdWZyN2JqYUJW?=
- =?utf-8?B?Yys3SUZRT2NzMXh1cndvWjVkZm43UWlzYnQ5cEFzQjZYOXhjUnFteG1UTVVt?=
- =?utf-8?B?TXVBY3NSUGZXZWQrMUFyR1BjMHYzZFFrTHBlYUhhSWs0TEk0bFkvVUNmWVBp?=
- =?utf-8?B?aEZMZ2VnNDE5QnVWVDE1d2JPejMwUVdSZWxvblBFR2g3aXBiak9tMUlxWFRs?=
- =?utf-8?B?VU5GdkFkQ2lOYlN0ZHJhM1Y2d3hSZjBHQ1VWUGtaajB5TWMwbmRYZ3E2bGs4?=
- =?utf-8?Q?5FL3BcrN+yRCj?=
+	=?utf-8?B?bFRsUkhsWXZkZFRTcFdZZW1UZzFuVjhQUGFRbEJjbDl5TE5wSDFnU0JsK1h6?=
+ =?utf-8?B?VGRJeUlBT0hZNTVhd0x1TGdDSlBOeHpKMG43WkJSN1RKWGRGbUlzckgvTVlZ?=
+ =?utf-8?B?QkJpS2t1UDJuRkdXRExNeVQrMXZBdy9halIwc1IwbmcweFJ4VVhiWmlmL01P?=
+ =?utf-8?B?K29GWUxUV1A4a0NUSFUvVnkyNXg3WU1lcnlTOUNZZHVaT3UrbEMzYzN4SlJI?=
+ =?utf-8?B?N3JzQy90WEk0QkszcjdDSEdSY3l1WGVFNDM5bjR4UW5uV211bEtRL1pIKzd4?=
+ =?utf-8?B?TlBtQkwvaUNFWjNlRDRyak1KTDZVRU5Gb3RJWnNKazhKTzlkZFVHZS9uWU1n?=
+ =?utf-8?B?ZkhMcXNLY2xhaFJ6YjM4SjZLS0tXakhnMEc0dDh4eG1wamtCUW1YczNYRWxw?=
+ =?utf-8?B?MTU4LzFQbUZKUGZVUGwvSzdnU1o0eWNhRmJlYzRnelBtaWt5QlpQUDIwNnVl?=
+ =?utf-8?B?Y2dYRU9xZWlJQWdOQkR0eDJKWDdqNFp6N2x3MDVCTVF2QWtCSldjdkJMQmpH?=
+ =?utf-8?B?T0ZWUmxIWE5MODFmSmNUYnc1bjhZSzVYUysvbmxXMW5GYjVkTlUrQ0w3SEFI?=
+ =?utf-8?B?MFhuOXNaZ1gzdUR0akNOblZjMTQ4OUk0L1BwNzRXc2Nra3krRThFRWNtQ1oy?=
+ =?utf-8?B?d1J5N1M5UnNMOWZNLzFPOHJMM3U4MEh4RE5VRjlPbXUwYW90Mk4wc0pqVGdX?=
+ =?utf-8?B?WWZaRkZNYklTMjBxejA2NHlyM3hORUhGb0xkOTNrNjR0VmZpcXVGblR2S0M5?=
+ =?utf-8?B?L25tczlOeTJJSyt1TzhnMmsxOHFEaHcrWEt0SVpCM0FjSWJZMS9HR1hDUWJu?=
+ =?utf-8?B?NnBUMEt1SWM0SmlpY0Z5aGZ5ZGxtSG9WVHZPVWQ2MU5wYW1OMmg4TVBxQmRo?=
+ =?utf-8?B?c043NHNDYjNRYUd4NlRyc1hoYWFTeERSbzJNdVJMYlJwWkJCamhIQXU3bk40?=
+ =?utf-8?B?d1hJbFVjNy81VFE0VlREVjBGVkZvUVdGeFRTUFhSTlFiVnZ6SVBoaHV0VEhv?=
+ =?utf-8?B?MGFrMU56aVNCNEc1Qno4cVdSU01ZYkk4citUZ2J1QzRpQ0lQVEtybXYyL0RG?=
+ =?utf-8?B?WnNuSVdLNC9XZ3NhV2E1ZndpcTBqdFN4T0hWcmFjenhQTENzL2JRTUtWV3lw?=
+ =?utf-8?B?akhDd2F5dGE5N0x1ekpuK0FFV2tqNVhYeXYzU1BGN3lEZzBhVEx0V3luQzhF?=
+ =?utf-8?B?WTVwckNPSXhBTVdRMDBKbWtoSFo5d3p3RkpoWXlLdGhiMmFyN2MxOXIxalJw?=
+ =?utf-8?B?SWR5Ui9WUjBZM0YxWnlhampoQWRNb0kwZGRjd0dRNXRPUzU2MHBiM3lvZjdi?=
+ =?utf-8?B?cFp0RTBjZ0tIV2dtSEpNWm1nVlB4NnNLNi9KTlZkbURlcS9NTlZjTCtOQVkr?=
+ =?utf-8?B?WFNsMWpWcnhONUMxUlNJeVBZQzFtbGVieVc1dnROOFVlSUVJcys5Z2tuRTlF?=
+ =?utf-8?B?WFNkMnJlVCtGUURqM1NRT1dlWW9tcmc1bWdQRDdnOWRVWnk2V2V4RHA4cUNi?=
+ =?utf-8?B?Um84aWJrb2xSN3QwUitVamR1UWhWeW5JNFNReldmUXhBSkxRNkd6d2Nqd1JB?=
+ =?utf-8?B?elJwZjBMUXE5R0szajJyMUIyVzM1eUFJOHYvZllNRGdiTFFLQi9jd1lQbTlu?=
+ =?utf-8?B?Q1p1cWpYRGxzZGdWZ3U4Qzh2RTBqY01DQmFud3dwNkVUcGRyNEhEd2I4dk9D?=
+ =?utf-8?B?eXhka0NkOUxRdWc3bDZpVGZLRFg1QTREZkxYZkpDWEZ4T29GOTlHQjNSck5T?=
+ =?utf-8?B?VkdyWDZlWXlybzI5eUt0Qk9FTHpTQVdDRThxekZEa3BpQUlaazU4OHluUDRj?=
+ =?utf-8?B?V05XQmpuMHl1bkFLek1iaVFCaWQxMVluczJyalhpY1F6cWtGdmU3ek1ROGJp?=
+ =?utf-8?Q?PXGhKlnSFTVTT?=
 X-Forefront-Antispam-Report:
 	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR12MB8101.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(7053199007);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?Y1g2cWZ3bUtRUnVONnRCOU5rUmlyZHlwVHRmcjVQT2gybUZPYVVTYWk5RHZm?=
- =?utf-8?B?My9YMjNjZzJlcmJ0YkxTWHNmUkp1cW5MZTVZSTZReUxFMXFacitGemwwVi82?=
- =?utf-8?B?RFNJR0tjWUVkM3FUMVF3Z2U3b0RxYkNQTVpwVWgveVg4MHdGTFlHd1gvZFlW?=
- =?utf-8?B?WnRwZmZWM2xScEhrM3pMSDA5b3JEZStIK1FTK1pKTEJnWFRCbm5OcEVwd0o3?=
- =?utf-8?B?eWFRdS8zdFF4TDRVVmU1M0xXQ281c1hMcDd0SG1VcW41RDhYK3RlNmZUTnpT?=
- =?utf-8?B?VXE1TnNnMGUwWUY3RXVrTkJ2SFlWM1hLRkEyZUZ0M3FwaXFaUVFQcWsvT3pI?=
- =?utf-8?B?cnJ4cDdJQjhCNmZOQ3BSUEg5YVJ5ZzliTTU4SFRzWVpCMEZwS3Y1ZmhSQ0RH?=
- =?utf-8?B?a0p5c0JQQVZUOERxbmRlenBpRFZKejdtdnozc0lZbEh0WC9heWNBaXgwTjl5?=
- =?utf-8?B?NFloRTdRdTZTYUFEVnhJY0kwWWFTOHJOc2trS2pGY2VOa1lKU1BSM1NoRmt3?=
- =?utf-8?B?VGJxMkI3UG5nQkVZMnJIVzR5dzZHUHp4YXVienNCRXNWeC9LamZwQ3dDdVNP?=
- =?utf-8?B?SmhWWmRjRCs4Q3ZvR2xkQXcvVDAxbXBoajQvdEZOZWlkcGpGRlJPVGU2ckJr?=
- =?utf-8?B?ZWxyL3VCdmpFYWEzajloTmN5MXpjcW82OW8wZVVZWnR3UGtUZFNVQ2ZMS2Iz?=
- =?utf-8?B?TDM4N1c4QXZjZ2dCYkt4OWx5Znp3bE9ETWkwNktwSzF6U3M1blQ0NWVRY0pZ?=
- =?utf-8?B?VVVLR1NmVCs0d0dGUkh0VkxMU2VoZWVSeW8wZnE1VU1PRG1XL1VQamM3Zkoy?=
- =?utf-8?B?YkRQUFVPTFZJaVlteTBkZEhRem1Nd2hlYkVkcHYzYUxPV2pDUzgzc1I0eFhm?=
- =?utf-8?B?U0o2UmNEK2RVZ3Y2bDdqZ0hzU0xneG85cjNSK1Vyc3Z4QkRGdDhsZ0IwcUY0?=
- =?utf-8?B?UWVTZSt1TThseWRMNXZQempneFdmZVRYdjR5WEN3UWd2b0lRZGZ0aC96YW1L?=
- =?utf-8?B?d2ZVTm9hbDk4b3piaUtDeUUwTzE5NDgrWFpaaEF6SVQvZG95N0dZWjI3MXQy?=
- =?utf-8?B?Snp1RGFwZ2pEN2EyWFpDaHg5YkVjMytFTzF2VE1zcGdwWXZ3MnVoSmNDUUt6?=
- =?utf-8?B?MjgrOElWLzJ1U2JGRm9FREpnak9Ydk96L2ZIbEp0K0JoQ2dxZ1VHNFluZkRy?=
- =?utf-8?B?RUNnV0JqTWkwdDhGdU5UNjZ0TjRDWjhuQlFKRkNWSUlic3lIUXdyZ3QwSHRQ?=
- =?utf-8?B?bVc1WTBUdFdJSWRqMkY2d0E4VlNTRksrSG85aW0vSjN2VDBqSzQ2WDFCc3lE?=
- =?utf-8?B?SFZhK3ZjdmlXd1loRTUxQTdLN2RZUHRDMHVlU1JBU0gvMU45UVNsemhFdW03?=
- =?utf-8?B?YkNzWUk1bzFsZXBXVUtwNUhKMXEveGJaK0Z4bXhJTEw5YlZnN0xFZHF2b3Jv?=
- =?utf-8?B?dTJjbnFjU1VDYis1T3Zsdm1jWjMrMzdwc2paVzlwNmptRkFZYm5DVEdLcDF3?=
- =?utf-8?B?Smx0M3g1NGgwWDZ5eHFUS0ZpNWhKRi82WHhQRWNKUjN0WGx5bjZhQnZMcFVo?=
- =?utf-8?B?RXF5TEpGTjg2S0NPSXNjdGZVbmhGWk84N08wS2l5ditweHdiSTVOMlQvQWdu?=
- =?utf-8?B?dC94OUxXeHNxbldvZjlsay9ycUpYaU8wYnNGYkFndHk3MEIyS1ZlMmMrK25i?=
- =?utf-8?B?YjkyL2tnRFJEb1pJOGNIdzVObTNHQkZRQlpTMll3bEpVVk1RTGpseXduRUxl?=
- =?utf-8?B?L1l0NWZVVHRmWXhiTVp4Y1NmVnRDZXlEOW9kRGFhdldpd2xJQVlNUEc3ZXZY?=
- =?utf-8?B?S2piYmZES2JTM0RsUE9mZjB2bEZieTl3dy9lMW5hd0ppTnFmcDNJN3BwdFcx?=
- =?utf-8?B?M3ZCa3dFMjhldERmSGZCS3BsK3h2aHY0WkliS1hkRkdLWStDYWZRYVFFSEVI?=
- =?utf-8?B?aE5xTjEvQ2l5SVg1KytCbHQxMnNFcG1vLzY1V3dqQTMyN3J5Y0ZmcE9XMGda?=
- =?utf-8?B?OEY4NDYrMG9FS3hYTDJLeDM2T3lZeHhPelhQd01IaDVWNk1VTmQvS0UrbVAr?=
- =?utf-8?B?d0t5TTd0eGJUUm5YWlQ4eWlYeFBsRVgrUXc1TVAwUXNiM2NKd2lzcjgweXVY?=
- =?utf-8?Q?urCbowjVJAJzBh5FY5PQ/nvwZ?=
+	=?utf-8?B?YWREanV5NjIvdTBqNnFwMFV6L3VIdnlVVkcrOTVjR2VINlQ4LzU1cEczdURk?=
+ =?utf-8?B?dUVqczNmNTY1SG9jb2dqQmtNOG5hVHpZcnlGZ0FBNVZuMXFzNzkvemNGc2FR?=
+ =?utf-8?B?dVFPbU1SRHFqclRhTmQwNytXVW1QL1dJY1FqZ2JXRFRoVkhVaFl3eW9hZzJr?=
+ =?utf-8?B?TDA2MXFrbyswZTRvVnB2LzB5aHJHQkc5ckU3LzJIa0ZNYzhZSkdWc2g4MTBs?=
+ =?utf-8?B?aHZpeDlUQUtpaUdzaVJrbEtycHRDdERETm1UWjNVa2l5Sk9uRDRUb29HTnl5?=
+ =?utf-8?B?eVJUTU5iOWUzWHNJYytPcFV4SlY1VDU2V1YyV3Q0UDZ6Y3ZrR25sOWlWVktV?=
+ =?utf-8?B?MEE3ZjdzMWVzSUtrTVhSTHUwMnBRb1pXZ3o4NHdPZG5QdmxWNlpTNHRNMFpJ?=
+ =?utf-8?B?S0FxVE5NU0RJckVacktUd1ZpT0huRmoyWW1XeXNiSGY5QVJNenJidmRoZzdR?=
+ =?utf-8?B?UTJ3UThRR0l5bmwzSkhibVJHbFVqTnk5OElBQkRpT3NxMWJVaXUvTm16NnN4?=
+ =?utf-8?B?SEdsak9JYzFvUlJXR21KYWlCVStTYnJvOUJpZGJEUmxFOWNBYVk2Skh3eDl3?=
+ =?utf-8?B?Nk5qbm8yVVRORldzeW5XY292Z1AwZHVNTTZjejNFZjlBUkdVUXF3a2V0NDVv?=
+ =?utf-8?B?ZTFDcEk1d0ZNd001WXB3ZVE1K25SR3ZCWFZhRjZWditsSzRtK2V6bmFDODZp?=
+ =?utf-8?B?N1R0d3d6YW9MbWxORmswaS9OK1hJNHB4dHVXQWtVOGU3dDczQXpqakNwckk2?=
+ =?utf-8?B?YXNPWnEvVHNReEhDS0JGaWlxejVOZG1RanI4SzdKWW13aDk3Q0pqTGhNRWsr?=
+ =?utf-8?B?c283TzN1K0lzQnR0d3VHOC9kTVhrcHdGbm0wdi9NMUlTaFplUWtTM1dINDBX?=
+ =?utf-8?B?ODRHbnJYVkEvZzZOZmJ6MTRLKzlXVEZueHBpckhsQmUyMHlpNkVHQkJTekxF?=
+ =?utf-8?B?ZnJ5YWlNMXAzSEsxbVJJeHptTnQwSlp3RG5UQTk0RWZHQU1IL1N5MWdUaFl5?=
+ =?utf-8?B?aWU0aVZXMTJ2WkZacWNlMmN6bjNERUpsSUhHK24xTmxPclBxL0dnRzVvcDFu?=
+ =?utf-8?B?SzFPVDdMQW9WbDdVbnRCSmpHRUxWYlI2dHJRWU43Mjc1NCt3UTh2Y1g1Y3BR?=
+ =?utf-8?B?dW14YmZQUENkZzEvZ1AzNUtBWjRkVEQ0aFQvbHdjVTZRc3NqZHowcGpGdHBh?=
+ =?utf-8?B?NnljUmJpQnZmZG4rSzF5VEZoZFhVdVBIOS8zaElCck9oQlVqNUVRT01yeUkr?=
+ =?utf-8?B?LzRzaStUK0xZVGtjeWRDTmsxRjlXL1ljMkxNMk9ZOXN6RzI4QnFCZ084QUlv?=
+ =?utf-8?B?ZTliRnVZQitTeFpUTmVXeFVENWRwc1FiSEtXVFBoN1A4UmZzbW1NeGtibzNu?=
+ =?utf-8?B?T1ZRMHRUd3NSZ0lLY0Z2ZWw3QitucHVYNHAxdDR1QmdtMGlDRjNtTlRvQlFo?=
+ =?utf-8?B?MytSd2pSWTk4N3NGdEZVVEZyOUcrbGpIYXowWUkxMGx5ZEN4U2xGUmtGanAx?=
+ =?utf-8?B?ZzlxdnFhellIc1NadndtekhMNVVsdFl1dHcrSk1pMlM1VGpHWXROMFljOUJa?=
+ =?utf-8?B?NDQvU0JUcjJuK2N3VlE5MXVwdVJHdUFiTjh1MjBtMXhJOUZ1MkJqSUJ4M0wr?=
+ =?utf-8?B?ekFqTzhjdjVFdDNPZVk0YmVVQWl0UkdxWVNhcnRHRms5MEMxV2VUSms4Q0Ex?=
+ =?utf-8?B?ZDZBc3B3d0xXZTFJMndLMjF2RmI1b2JmUXd1QTd3YlpmdytnTENCVVZkakNu?=
+ =?utf-8?B?VnI5SGZaVCtjd1FPK0xBSG9CWmFYZEVGQWY5UnJ1SlJhQ2x4MENxZlJzQU5h?=
+ =?utf-8?B?WGhJc1BVMU1LZFhuTVhxMVM4NlQ2aTJxUGFVL3hWWHdmVEdoQThibENIWFJQ?=
+ =?utf-8?B?bVp2akR0eGg4blRreUhCQUVsUFVtVU1IOFNHSDlnQUlKbmVyQ3owNGJ5dGdr?=
+ =?utf-8?B?R29SbHpPaGs1NHFqWDk3MENFUHdQVGdBYm94WjA0dWxSVXlTRzBDeEZRMzh6?=
+ =?utf-8?B?bDRyeFJEaGIxVFZXZUdHRzZTRGxaOG81VE4zYk9NVkRCY0Q0RkdkZHpoSlM0?=
+ =?utf-8?B?a0tOcDNRc3d2bUdRMjZwY1VCZkU3VjkvWFZWeG5nS0N1VVVXTDBKN0VzWGtI?=
+ =?utf-8?Q?urPNCbL0TH4HHiH+VhceWE6Ls?=
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: edcc5b58-0c9a-4ca6-20aa-08dd65ef97db
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4c72ba84-0155-4588-3b05-08dd65efaa92
 X-MS-Exchange-CrossTenant-AuthSource: SN7PR12MB8101.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Mar 2025 07:36:27.6947
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Mar 2025 07:36:59.2002
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: F4NjamplJjKtUnpQg7z0tyMoF/emDzp/VXrdgOTq8DkJeyCilCIWjFuNJS0q8FTY
+X-MS-Exchange-CrossTenant-UserPrincipalName: +CvJUfkJsTHGhD3NJ7x7BL6QeNY/pC+57hpjCy87wZvOxYrvoO62/fu9Y3Sm6cw/
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB6186
 
 +Radhey
 
-On 3/18/25 07:21, Mike Looijmans wrote:
-> On 18-03-2025 01:12, Thinh Nguyen wrote:
->> On Mon, Mar 17, 2025, Mike Looijmans wrote:
->>> On 14-03-2025 22:14, Thinh Nguyen wrote:
->>>> On Fri, Mar 14, 2025, Mike Looijmans wrote:
->>>>> Set the gpio to "high" on acquisition, instead of acquiring it in low
->>>>> state and then immediately setting it high again. This prevents a
->>>>> short "spike" on the reset signal.
->>>> How does this affect the current programming flow beside preventing a
->>>> spike to the reset signal?
->>> I don't understand your question. What "programming flow" are you referring
->>> to?
->> It's not obvious to me if this is an error in Xilinx documentation, the
->> driver issue, or whether this is found through experiment. Since I don't
->> have the info of this platform, it would help to know where the source
->> of error is so we can document this in the code or change-log.
+On 3/18/25 07:44, Mike Looijmans wrote:
+> The "reset" GPIO controls the RESET signal to an external, usually
+> ULPI PHY, chip. The original code path acquires the signal in LOW
+> state, and then immediately asserts it HIGH again, if the reset
+> signal defaulted to asserted, there'd be a short "spike" before the
+> reset.
 > 
-> It's a bug in the driver, found through code inspection.
+> Here is what happens depending on the pre-existing state of the reset
+> signal:
+> Reset (previously asserted):   ~~~|_|~~~~|_______
+> Reset (previously deasserted): _____|~~~~|_______
+>                                    ^ ^    ^
+>                                    A B    C
 > 
-> The reset GPIO here is to control the reset signal to an external, usually ULPI 
-> PHY, chip. This external chip is not part of the Xilinx hardware.
+> At point A, the low going transition is because the reset line is
+> requested using GPIOD_OUT_LOW. If the line is successfully requested,
+> the first thing we do is set it high _without_ any delay. This is
+> point B. So, a glitch occurs between A and B.
 > 
->>> The reset sequence was just plain wrong, the issue is almost the same as the
->> Do we need a fix tag and add to stable then?
+> Requesting the line using GPIOD_OUT_HIGH eliminates the A and B
+> transitions. Instead we get:
 > 
-> That would be appropriate I think.
+> Reset (previously asserted)  : ~~~~~~~~~~|______
+> Reset (previously deasserted): ____|~~~~~|______
+>                                     ^     ^
+>                                     A     C
 > 
+> Where A and C are the points described above in the code. Point B
+> has been eliminated.
 > 
->>
->>> one described in this commit:
->>> e0183b974d30 "net: mdiobus: Prevent spike on MDIO bus reset signal"
->>>
->>> Note that I see this high-low-high-low double reset toggle in many Xilinx
->>> software drivers, they seem to teach that at the Xilinx academy or so.
->>>
->>>
->>>>> Signed-off-by: Mike Looijmans <mike.looijmans@topic.nl>
->>>>> ---
->>>>>
->>>>>    drivers/usb/dwc3/dwc3-xilinx.c | 3 +--
->>>>>    1 file changed, 1 insertion(+), 2 deletions(-)
->>>>>
->>>>> diff --git a/drivers/usb/dwc3/dwc3-xilinx.c b/drivers/usb/dwc3/dwc3-xilinx.c
->>>>> index a33a42ba0249..a159a511483b 100644
->>>>> --- a/drivers/usb/dwc3/dwc3-xilinx.c
->>>>> +++ b/drivers/usb/dwc3/dwc3-xilinx.c
->>>>> @@ -207,7 +207,7 @@ static int dwc3_xlnx_init_zynqmp(struct dwc3_xlnx 
->>>>> *priv_data)
->>>>>    skip_usb3_phy:
->>>>>        /* ulpi reset via gpio-modepin or gpio-framework driver */
->>>>> -    reset_gpio = devm_gpiod_get_optional(dev, "reset", GPIOD_OUT_LOW);
->>>>> +    reset_gpio = devm_gpiod_get_optional(dev, "reset", GPIOD_OUT_HIGH);
->>>>>        if (IS_ERR(reset_gpio)) {
->>>>>            return dev_err_probe(dev, PTR_ERR(reset_gpio),
->>>>>                         "Failed to request reset GPIO\n");
->>>>> @@ -215,7 +215,6 @@ static int dwc3_xlnx_init_zynqmp(struct dwc3_xlnx 
->>>>> *priv_data)
->>>>>        if (reset_gpio) {
->>>>>            /* Toggle ulpi to reset the phy. */
->>>> Does the comment above still apply?
->>> Now you mention it, the comment never made any sense anyway.
->>>
->> Then can we remove it?
+> The issue was found during code inspection.
 > 
-> Removing would be better, yes. I'll make a v2 patch.
+> Also remove the cryptic "toggle ulpi .." comment.
 > 
+> Fixes: ca05b38252d7 ("usb: dwc3: xilinx: Add gpio-reset support")
+> Signed-off-by: Mike Looijmans <mike.looijmans@topic.nl>
+> ---
 > 
->>>>> -        gpiod_set_value_cansleep(reset_gpio, 1);
->>>>>            usleep_range(5000, 10000);
->>>> Do we still need this usleep_range here?
->>> Yes, this is the "reset active" time.
->>>
->> But why do we need 2 calls to usleep_range? From just looking at this
->> here, it appears that the first was intended for the removed
->> gpiod_set_value_cansleep(reset_gpio, 1). If this "reset active" time is
->> needed irrespective of the existent reset_gpio, then shouldn't it be set
->> outside of this if statement?
+> Changes in v2:
+> Add "Fixes" tag
+> Remove "toggle ulpi" comment
+> Extend comment to explain what is happening in detail
 > 
-> It helps to see the whole thing instead of just the patch.
+>   drivers/usb/dwc3/dwc3-xilinx.c | 4 +---
+>   1 file changed, 1 insertion(+), 3 deletions(-)
 > 
-> If I omit error handling and comments then the original code reads:
-> 
->          reset_gpio = devm_gpiod_get_optional(dev, "reset", GPIOD_OUT_LOW);
->          if (reset_gpio) {
->                  gpiod_set_value_cansleep(reset_gpio, 1);
->                  usleep_range(5000, 10000);
->                  gpiod_set_value_cansleep(reset_gpio, 0);
->                  usleep_range(5000, 10000);
->          }
-> 
-> So the gpio is acquired in a LOW state and then, without delay, is set to a high 
-> state again. This causes the "spike" I'm mentioning here. The correct procedure 
-> is to acquire it in the HIGH state immediately, so the sequence becomes:
-> 
->          reset_gpio = devm_gpiod_get_optional(dev, "reset", GPIOD_OUT_HIGH);
->          if (reset_gpio) {
->                  usleep_range(5000, 10000);
->                  gpiod_set_value_cansleep(reset_gpio, 0);
->                  usleep_range(5000, 10000);
->          }
-> 
-> This patch does exactly that.
+> diff --git a/drivers/usb/dwc3/dwc3-xilinx.c b/drivers/usb/dwc3/dwc3-xilinx.c
+> index a33a42ba0249..4ca7f6240d07 100644
+> --- a/drivers/usb/dwc3/dwc3-xilinx.c
+> +++ b/drivers/usb/dwc3/dwc3-xilinx.c
+> @@ -207,15 +207,13 @@ static int dwc3_xlnx_init_zynqmp(struct dwc3_xlnx *priv_data)
+>   
+>   skip_usb3_phy:
+>   	/* ulpi reset via gpio-modepin or gpio-framework driver */
+> -	reset_gpio = devm_gpiod_get_optional(dev, "reset", GPIOD_OUT_LOW);
+> +	reset_gpio = devm_gpiod_get_optional(dev, "reset", GPIOD_OUT_HIGH);
+>   	if (IS_ERR(reset_gpio)) {
+>   		return dev_err_probe(dev, PTR_ERR(reset_gpio),
+>   				     "Failed to request reset GPIO\n");
+>   	}
+>   
+>   	if (reset_gpio) {
+> -		/* Toggle ulpi to reset the phy. */
+> -		gpiod_set_value_cansleep(reset_gpio, 1);
+>   		usleep_range(5000, 10000);
+>   		gpiod_set_value_cansleep(reset_gpio, 0);
+>   		usleep_range(5000, 10000);
 
-Please keep Radhey in loop. He will take a look at it from our side.
-
-Thanks,
-Michal
 
