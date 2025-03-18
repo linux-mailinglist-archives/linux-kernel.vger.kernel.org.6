@@ -1,94 +1,78 @@
-Return-Path: <linux-kernel+bounces-566037-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566038-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B919A67263
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 12:17:19 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36879A67266
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 12:17:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 76EB13AAE62
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 11:17:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8515717A8F5
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 11:17:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EEF5204F75;
-	Tue, 18 Mar 2025 11:17:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72C2A2080FC;
+	Tue, 18 Mar 2025 11:17:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="KhCoPgYp";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="zKsdBgnk";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="KhCoPgYp";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="zKsdBgnk"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TE9sb8UL"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08E311EF372
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 11:17:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6D551AA1E0;
+	Tue, 18 Mar 2025 11:17:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742296635; cv=none; b=FPSAuXqBSvnIbXcxbGKypSbdW7VsXyNowzihzs+a4hjrScwAzcgBkzShnyjUkXSA94UvtdMT01kxjrQKW106Ot7npdkcL1P0CtKog/hQIkKqYcfzKJjD6PWdX6Rdc/Ui8WM7OEiiuUNcXy+8T4IjgnVs9vCjaqUmU0O6RDHUYFo=
+	t=1742296664; cv=none; b=KUXYGfJEVUkeSqNSQgnFz+QiQlVx0zs4iyvIJzMQhFv/ItYTRU6CAFMikEXUPHqAvn0sgdRj8E80/2OqZHjFIFCXMzk+WFDJXClVR9xYZIuoQikTBblQhnU2vW2dsNdIvdxF/cHoCbSdyGtkqRsE4R8/5S1ch9Tgwtxwf5palJM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742296635; c=relaxed/simple;
-	bh=u9MX8Xb6I5AnGDs+7m/bLN93H8OltfgHtqh5bYMUprY=;
+	s=arc-20240116; t=1742296664; c=relaxed/simple;
+	bh=2Ec7Z1ZyLJXW2zP9y6qMMcTSwNBqwQ7NVjLvy+7iE8Y=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UCID8510HJEXG6v3SKlY4uMJ5gzo7hViTvTKNViJDrsD6/iidTdG7tQ97XzEksMJAWXKyVsX3/ahNC1x0ALH/UY6FofI/BsCDd1gToLsBy3/RZrlKgEUDOvKzDOhvJcEE7RHdWl8hwqhDvdfnUaeNrdbAApmCfCAtfTTpxom9Eo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=KhCoPgYp; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=zKsdBgnk; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=KhCoPgYp; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=zKsdBgnk; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 018391F441;
-	Tue, 18 Mar 2025 11:17:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1742296632; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GehszHWI99/sxb/kvmlBARoadr4kOpS/NnlA1LkESrk=;
-	b=KhCoPgYpGODvjWEs+MBJuyrM2lxjxuAPY0U/I1f34/Oq1pOdZgxUOhdlpPm2m6Hlxwa4ju
-	5HoSEFZMBxLchydo9TFeigBt3PcUfBLtRal4zO4IfSLpPxhzaPNm8K6tg7yb+h8BIF5cVM
-	EJMtGJt30xlEsuypZdJcuCazOojsUDs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1742296632;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GehszHWI99/sxb/kvmlBARoadr4kOpS/NnlA1LkESrk=;
-	b=zKsdBgnk2xli1TKL5XD80qRZsuVN8M9XC+3Fo7bNV0QuqqnCkwkSNmOUajw9HZRXyMd9M1
-	N8jjhCB+NUugx5Bg==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1742296632; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GehszHWI99/sxb/kvmlBARoadr4kOpS/NnlA1LkESrk=;
-	b=KhCoPgYpGODvjWEs+MBJuyrM2lxjxuAPY0U/I1f34/Oq1pOdZgxUOhdlpPm2m6Hlxwa4ju
-	5HoSEFZMBxLchydo9TFeigBt3PcUfBLtRal4zO4IfSLpPxhzaPNm8K6tg7yb+h8BIF5cVM
-	EJMtGJt30xlEsuypZdJcuCazOojsUDs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1742296632;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GehszHWI99/sxb/kvmlBARoadr4kOpS/NnlA1LkESrk=;
-	b=zKsdBgnk2xli1TKL5XD80qRZsuVN8M9XC+3Fo7bNV0QuqqnCkwkSNmOUajw9HZRXyMd9M1
-	N8jjhCB+NUugx5Bg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id DB838139D2;
-	Tue, 18 Mar 2025 11:17:11 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id KvwfNTdW2WdwRwAAD6G6ig
-	(envelope-from <hare@suse.de>); Tue, 18 Mar 2025 11:17:11 +0000
-Message-ID: <603b438e-02f6-4f01-8ffa-12ab6ec8e745@suse.de>
-Date: Tue, 18 Mar 2025 12:17:11 +0100
+	 In-Reply-To:Content-Type; b=OCvtXH/fmaX0puSO1p0VQyKQF4q5kX2B8cQvDwix58KY0hH0WlFKsDmsBoUmGisb+gqZwB3Gib0AWmj0zBu2/vqy+nC21NgCC/kfGPJTjYk//HGFfxHnIP9lzAGTN022nsNHoJcoMdIXGqoQ0wsTTBSTv/I4fqyd9uczbTd3UMc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TE9sb8UL; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-5497e7bf2e0so6302327e87.3;
+        Tue, 18 Mar 2025 04:17:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742296660; x=1742901460; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=mOlZvPQ7plTaQIDmVp+CNwq3xUPH59xTsSW9rNTGInQ=;
+        b=TE9sb8ULiGxVjvgZeuPas3bYAye5lP6DLvBL9gHQmWmc+D+tVu4f4rRpSUb9BmrS/V
+         cl5HxH4miK8KAOW+5nMkgAhZxaKDbB/F2GR7HRt+23nPjKYpao2uQa95dV0ecSfL/0kD
+         ba5mVeAwJAjyT6Z5E8SBCz8V1CAGb5+5teMNRDRcbHldgyPo0mIhZp9ghgGCYyQWTqRO
+         7NYYnstV/wlzmLTTyVdMHTB/e2zoiDUQJweHcGDsYTp7qeIiDnhR9/cx+FOZd0/0p7+K
+         B4J6VhK3/A0AqQCI/qgK4iTeYtPPsZ3zLFGSEOa5DLosqUZMf4zIU8HQ8dB0a0+rIUFM
+         e7bQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742296660; x=1742901460;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=mOlZvPQ7plTaQIDmVp+CNwq3xUPH59xTsSW9rNTGInQ=;
+        b=LqEmD9eXwJOVx/qvpfmfq+L1o6gtMrgISJv8XJcpJYqLiuvAPWYE68lSEQ9pVS3mWJ
+         8BQlbCYibhfbtEUo0jmqreJLpfeBz8QrUYsuwgsFVAus8P9MW3PZFWe1U2yxSm9F/diJ
+         c0Iy4ClDytK3EwTVrZO7/eq+/hHE6JMKt49UD24xwXrndrZySPXZI7oQ+oHoIxtmXNdY
+         +72ARUCoZMvdCRiv3JNEop34QfcnWcrciuzu86jjHltw2Q4Fqoj7nJzXIq+3D0naZbFY
+         5iaL1NbOS3gP4jcvmndoo7JpwLO3MLZ96McY1VQcf8HyKnWPxItuws0jVDUgPwv3bcv6
+         JlKg==
+X-Forwarded-Encrypted: i=1; AJvYcCUXrI0sTOiE7bV6+q3ePohU8BXmYChtR4j5X/JW4oBW7923EgDFyu7hQmoldcbUfDv0HiSdY4vfohE=@vger.kernel.org, AJvYcCXIpKMUxCoGSvwzjYfxT+Re8G6JHknCMqCAWzeDf4nE07v/lKMBUQuxVD6VJD1UDhiGgWgy0ewjVhQ5hRI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8a/9PMkCV0Rf9K4e+urKc+YWHBuwTy09ZQglnZwYQg/heJ0eH
+	5llk+Lqm9Rg+1ltW/dWjCh3XpkL3kpqfkCOup/mW5WxNmAXOwUOG
+X-Gm-Gg: ASbGncsGPOYLKy7acU1POCFIl4xFHbu6mU8TrRdyo2j+ngRtbgJ2GRZgnG9GqTGLKWS
+	RxFG6K5PD+wMlWXBgsCAWCJM1WYQHvFpOQ3Lp70NarpFQ5rzZzOIctO9oCYP6eaXCnU7q+RqT3s
+	E2+Tzx+gouoXg0UuERp7LHdUUquEgagECmNpZqhZwALYJ6ppOKUkmme3NV8pMaSLQg6vFG4nzw6
+	xDarTX5WiNScXcBo5ntvOKElV5b5gWSmwu0u104LN/WiWxjvdfNBA67YsboTqFVg5mhHGyigG8T
+	76jJu209XTsawUSNF9kRsftyImF5NY7pUoUO9FG9yJKB9etVib+fzB1NkPjs0NP0m0Gc
+X-Google-Smtp-Source: AGHT+IHp+pjQHewdxhxdhXjAb7AHr19mAfFloImy7dF2DkvFzyLcoPPgreehc44oS0N8uADZE3CHGQ==
+X-Received: by 2002:a05:6512:308f:b0:549:86c8:113a with SMTP id 2adb3069b0e04-54a03b8d777mr2826078e87.15.1742296659689;
+        Tue, 18 Mar 2025 04:17:39 -0700 (PDT)
+Received: from [172.16.183.207] ([213.255.186.46])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-549ba864de4sm1621258e87.139.2025.03.18.04.17.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 18 Mar 2025 04:17:39 -0700 (PDT)
+Message-ID: <cda899c6-4330-465c-80b2-63c9da73505b@gmail.com>
+Date: Tue, 18 Mar 2025 13:17:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,99 +80,161 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 10/18] nvmet-fcloop: allocate/free fcloop_lsreq
- directly
-To: Daniel Wagner <wagi@kernel.org>, James Smart <james.smart@broadcom.com>,
- Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
- Chaitanya Kulkarni <kch@nvidia.com>
-Cc: Keith Busch <kbusch@kernel.org>, linux-nvme@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20250318-nvmet-fcloop-v3-0-05fec0fc02f6@kernel.org>
- <20250318-nvmet-fcloop-v3-10-05fec0fc02f6@kernel.org>
-Content-Language: en-US
-From: Hannes Reinecke <hare@suse.de>
-In-Reply-To: <20250318-nvmet-fcloop-v3-10-05fec0fc02f6@kernel.org>
+Subject: Re: [PATCH v7 7/7] Documentation: Add sysfs documentation for PSCRR
+ reboot reason tracking
+To: Oleksij Rempel <o.rempel@pengutronix.de>,
+ Sebastian Reichel <sre@kernel.org>,
+ Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+ Benson Leung <bleung@chromium.org>, Tzung-Bi Shih <tzungbi@kernel.org>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: kernel@pengutronix.de, linux-kernel@vger.kernel.org,
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
+ Lukasz Luba <lukasz.luba@arm.com>, linux-pm@vger.kernel.org,
+ =?UTF-8?Q?S=C3=B8ren_Andersen?= <san@skov.dk>,
+ Guenter Roeck <groeck@chromium.org>, Ahmad Fatoum <a.fatoum@pengutronix.de>,
+ Andrew Morton <akpm@linux-foundation.org>, chrome-platform@lists.linux.dev
+References: <20250318094716.3053546-1-o.rempel@pengutronix.de>
+ <20250318094716.3053546-8-o.rempel@pengutronix.de>
+Content-Language: en-US, en-AU, en-GB, en-BW
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+In-Reply-To: <20250318094716.3053546-8-o.rempel@pengutronix.de>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:email,suse.de:mid]
-X-Spam-Score: -4.30
-X-Spam-Flag: NO
+Content-Transfer-Encoding: 7bit
 
-On 3/18/25 11:40, Daniel Wagner wrote:
-> fcloop depends on the host or the target to allocate the fcloop_lsreq
-> object. This means that the lifetime of the fcloop_lsreq is tied to
-> either the host or the target. Consequently, the host or the target must
-> cooperate during shutdown.
+On 18/03/2025 11:47, Oleksij Rempel wrote:
+> Add documentation for the Power State Change Reason Recorder (PSCRR)
+> sysfs interface, which allows tracking of system shutdown and reboot
+> reasons. The documentation provides details on available sysfs entries
+> under `/sys/kernel/pscrr/`, explaining their functionality, example usage,
+> and how they interact with different backend storage options (e.g., NVMEM).
 > 
-> Unfortunately, this approach does not work well when the target forces a
-> shutdown, as there are dependencies that are difficult to resolve in a
-> clean way.
-> 
-> The simplest solution is to decouple the lifetime of the fcloop_lsreq
-> object by managing them directly within fcloop. Since this is not a
-> performance-critical path and only a small number of LS objects are used
-> during setup and cleanup, it does not significantly impact performance
-> to allocate them during normal operation.
-> 
-> Signed-off-by: Daniel Wagner <wagi@kernel.org>
+> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
 > ---
->   drivers/nvme/target/fcloop.c | 53 +++++++++++++++++++++++++++++---------------
->   1 file changed, 35 insertions(+), 18 deletions(-)
+> changes v7:
+> - document expected values
+> ---
+>   .../ABI/testing/sysfs-kernel-reboot-pscrr     | 79 +++++++++++++++++++
+>   1 file changed, 79 insertions(+)
+>   create mode 100644 Documentation/ABI/testing/sysfs-kernel-reboot-pscrr
 > 
- > diff --git a/drivers/nvme/target/fcloop.c b/drivers/nvme/target 
-fcloop.c> index 
-06f42da6a0335c53ae319133119d057aab12e07e..537fc6533a4cf5d39855cf850b82af739eeb3056 
-100644
-> --- a/drivers/nvme/target/fcloop.c
-> +++ b/drivers/nvme/target/fcloop.c
-> @@ -342,6 +342,7 @@ fcloop_rport_lsrqst_work(struct work_struct *work)
->   		 * callee may free memory containing tls_req.
->   		 * do not reference lsreq after this.
->   		 */
-> +		kfree(tls_req);
->   
->   		spin_lock(&rport->lock);
->   	}
-> @@ -353,10 +354,13 @@ fcloop_h2t_ls_req(struct nvme_fc_local_port *localport,
->   			struct nvme_fc_remote_port *remoteport,
->   			struct nvmefc_ls_req *lsreq)
->   {
-> -	struct fcloop_lsreq *tls_req = lsreq->private;
->   	struct fcloop_rport *rport = remoteport->private;
-> +	struct fcloop_lsreq *tls_req;
->   	int ret = 0;
->   
-> +	tls_req = kmalloc(sizeof(*tls_req), GFP_KERNEL);
-> +	if (!tls_req)
-> +		return -ENOMEM;
+> diff --git a/Documentation/ABI/testing/sysfs-kernel-reboot-pscrr b/Documentation/ABI/testing/sysfs-kernel-reboot-pscrr
+> new file mode 100644
+> index 000000000000..9aa3df8f2fc7
+> --- /dev/null
+> +++ b/Documentation/ABI/testing/sysfs-kernel-reboot-pscrr
+> @@ -0,0 +1,79 @@
+> +What:		/sys/kernel/pscrr/reason
+> +Date:		April 2025
+> +KernelVersion:  6.15
+> +Contact:	Oleksij Rempel <o.rempel@pengutronix.de>
+> +Description:
+> +		This file provides access to the last recorded power state
+> +		change reason. The storage backend is configurable and, if
+> +		supported, the reason may be stored persistently in an
+> +		NVMEM cell or another backend.
+> +
+> +		Reading this file returns an integer representing the last
+> +		recorded shutdown or reboot cause.
+> +
+> +		Writing an integer value to this file sets the reason to be
+> +		stored and recorded for system analysis.
+> +
+> +		Example usage (values are for illustration and may not reflect
+> +		actual reasons used in a given system):
+> +		  Read:
+> +			$ cat /sys/kernel/pscrr/reason
+> +			3   # (Example: Power loss event, may differ per system)
+> +
+> +		  Write:
+> +			$ echo 5 > /sys/kernel/pscrr/reason
+> +			# Sets the reason to 5 (Example: User-triggered reboot,
+> +			# this may not be a real value in your system)
 
-This cries out for kmem_cache_alloc() ...
+nit:
+Now that the 'number' <=> 'reason' relation is fixed, we might drop the 
+"may differ" etc. Perhaps just:
 
-Cheers,
+		Example usage:
+		  Read:
+			$ cat /sys/kernel/pscrr/reason
+			3   # (Example: Power loss event)
 
-Hannes
--- 
-Dr. Hannes Reinecke                  Kernel Storage Architect
-hare@suse.de                                +49 911 74053 688
-SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
-HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
+		  Write:
+			$ echo 5 > /sys/kernel/pscrr/reason
+			# Sets the reason to 5 (Example: User-triggered reboot)
+
+Maybe adding a note that not all values are supported on all systems.
+
+
+> +
+> +		Values are defined in:
+> +		  - `include/linux/reboot.h` (enum psc_reason)
+> +
+> +		Supported Values:
+> +		Defined in `include/linux/reboot.h` (enum psc_reason):
+> +
+> +		+-------+---------------------------+--------------------------+
+> +		| Value | Symbol                    | Description              |
+> +		+-------+---------------------------+--------------------------+
+> +		| 0     | PSCR_UNKNOWN              | Unknown or unspecified   |
+> +		|       |                           | power state change reason|
+> +		+-------+---------------------------+--------------------------+
+> +		| 1     | PSCR_UNDER_VOLTAGE        | Supply voltage drop below|
+> +		|       |                           | safe threshold.          |
+> +		+-------+---------------------------+--------------------------+
+> +		| 2     | PSCR_OVER_CURRENT         | Excessive current draw,  |
+> +		|       |                           | potential short circuit. |
+> +		+-------+---------------------------+--------------------------+
+> +		| 3     | PSCR_REGULATOR_FAILURE    | Failure in voltage       |
+> +		|       |                           | regulator, preventing    |
+> +		|       |                           | stable power delivery.   |
+> +		+-------+---------------------------+--------------------------+
+> +		| 4     | PSCR_OVER_TEMPERATURE     | Unsafe system temperature|
+> +		|       |                           | detected by sensors.     |
+> +		+-------+---------------------------+--------------------------+
+> +		| 5     | PSCR_EC_PANIC             | Shutdown/reboot triggered|
+> +		|       |                           | by Embedded Controller   |
+> +		|       |                           | (EC) panic.              |
+> +		+-------+---------------------------+--------------------------+
+> +
+> +		(Note: The actual reason codes used on a specific system depend
+> +		on hardware capabilities and configuration.)
+
+I like this. Nice and clean.
+
+A side note which you can consider if you feel like:
+This, as far as I understand, will also make the ABI out of this. So, 
+perhaps there should be comments in enum psc_reason and the defines in 
+Defined in 'include/linux/reboot.h' that they are part of an ABI, and 
+must not be changed? I suppose user-space tools may get unhappy if these 
+values change between the kernel versions.
+
+> +
+> +What:		/sys/kernel/pscrr/reason_boot
+> +Date:		April 2025
+> +KernelVersion:  6.15
+> +Contact:	Oleksij Rempel <o.rempel@pengutronix.de>
+> +Description:
+> +		This file provides the last recorded power state change reason
+> +		from before the current system boot. If a supported backend
+> +		(e.g., NVMEM) is configured, this value is retained across
+> +		reboots.
+> +
+> +		Example usage (values are for illustration and may not reflect
+> +		actual reasons used in a given system):
+> +		  Read:
+> +			$ cat /sys/kernel/pscrr/reason_boot
+> +			2   # (Example: Over-temperature shutdown, may differ per system)
+> +
+> +		Supported Values:
+> +		Same as `/sys/kernel/pscrr/reason` (see above).
+> +
+
+All in all, this looks very good to me.
+
+Reviewed-by: Matti Vaittinen <mazziesaccount@gmail.com>
+
+Yours,
+	-- Matti
 
