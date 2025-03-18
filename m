@@ -1,111 +1,157 @@
-Return-Path: <linux-kernel+bounces-566357-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566367-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8A82A676D6
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 15:51:34 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D24D2A676F6
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 15:55:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED1C219A4493
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 14:50:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9202319A567B
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 14:52:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D803120E334;
-	Tue, 18 Mar 2025 14:49:53 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1A7E20E6E1;
+	Tue, 18 Mar 2025 14:51:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H4oxc0Pv"
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2EC020E016
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 14:49:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3F4520C47B;
+	Tue, 18 Mar 2025 14:50:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742309393; cv=none; b=kxTtyqBVUn5+FEP4R9Ar3EwxKJxTU5KPYr5hXrV3dSbrhuHpV8ELSo5cm/Bz5BEQKCK0XMw0d3L0Pc9OHbkXvIS+9XqEIPB8NBjTZSsMopwWLoxPWQ/GfZMjyWZSUtDVB/caAsU2u0vJQo4JPX4hZyOOCjqI6IJ8u+l/iO3t2Zo=
+	t=1742309460; cv=none; b=ONqKOHSg6g/6SLLUlU+eAp3dXyys11vaTYAcazGmoygRZw6OnW2x5rOoi3N82+Ihhu3JjqBEa3sOAO5S6qGCx8W6Gblpc8G4h89WXs4MLzpYzr7XvoL9IQT+XwKd1SAVn8DM11GyxUxddsRvdyQcIPUhkrKDmFf6qZFTZLDTFS8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742309393; c=relaxed/simple;
-	bh=6odYDy/WzoLJB1dmBWgEDOpufGqtMVPdGIhz8jVMsEw=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=GXGBKOk3eEj/45msAMhnBZYpQNH6k0sWYPHRDnTE1axluWuJPk/NPTynrQqvPzOPXRE4lHDxYqW1WxHJ/kJ/3Y3AHjPfQDg1vUgXPVFSoY1KDuR405hsbVzKcn4/TPqVbBtw15KfNaJLQATYQpFCItdIraCwnNLzmySNAvgcXxg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3d44ba1c2b5so55869395ab.2
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 07:49:51 -0700 (PDT)
+	s=arc-20240116; t=1742309460; c=relaxed/simple;
+	bh=AV1Nxik7JBkOIVEYVNlGI3SIY7/qAIdx7hP6IDQ9sHw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SRl+OVte8SUGGPwHWkXPDlpKeb2iWjvrUE4DoaOkxTeXjjFjTezXgajuD2H/PMagzETa5qoA3pzhPZUjRUbknORw2dHT5TYa25NCxwZXM2PJZP9fo707RQljZpiWHgR0baqr9KYIqHoszbFQdD37ioYe2mUsuqYsKz/iIjE9SsQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H4oxc0Pv; arc=none smtp.client-ip=209.85.208.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-30bf3f3539dso57204491fa.1;
+        Tue, 18 Mar 2025 07:50:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742309453; x=1742914253; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AV1Nxik7JBkOIVEYVNlGI3SIY7/qAIdx7hP6IDQ9sHw=;
+        b=H4oxc0PvCeDDPsJArDnxVmZV9LI/er2Ez4zQlfQ+13cnk0XCAq6B5b7Usw1GoNraT/
+         GoFSGsMEVCME632Cus2a4lW42GDMNbqqHCX0QHdsZpPJtxoE8qjUYA4HhvenrVzRB0mY
+         AcgcSlNhPkCBpmfpPZmnMPPn24FeBzlFPkOZVMWpbNI4VHrkmxcm19PCbXrjG9/pZS2G
+         I6KX7ifVLYFi0+AaAeVjl8m19ALMKRcat7BVa8G+YByo7nb9psRgvJbrywSd4s2uNKat
+         XLEpmNyJyvgVOGoT6BqHZDmDSfqKZ3xzyliK/Pp6BAO8GnESgwC7C+H/KO9RnAMxfJZ3
+         OMdA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742309391; x=1742914191;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Svpb8PP6bZBAtbgaSvAJuXTALbR5zT82p2qdsD8Izlk=;
-        b=kr9IkIWRVreqhBGQAQzqp4Il4gkd8ATlmMyCYBgIbzB3Fyecpe8/D5YcDHTwvvt+p1
-         sEGD6SozyesiHYGJ1QyIQ2VpXE+eQCp7ZBNIvVgyvO8ZMQQVvO3S/3B2+FGGkISXwYBP
-         LcdIF6Zn3nrAGXJtmKvaRi8EYPmeHcfOu7Swb/p8hMTx/iaPY1gSjNGMX2HYRwAGDzSL
-         /1GCubihMT5SeKuBSWUtnfPJ4K1tpSLPAx+pylbhzvRryu+HbtVu2tdg8iE/V/zgVACW
-         zSUlRA3k8tNiJT9REfpdmfFDZgixMtujWCv5n0EBlUIETmsFimC9rmAOxwXnDhuA38O3
-         j+Jw==
-X-Gm-Message-State: AOJu0Yw5/o9wDl8w9meePFmwbsLrMJyVJVmjfZQdQ76zENWDmDBuhV61
-	rknqROa7RtIRk0geRnLcXc5O3FJeYwBnWf5JCYCoTwL+SSK4sYAOpElZZH7geNfe5JozRI2/h4y
-	NwI3wZw7eO0pVrH0IG9AhBPdKL7Srkxs8r+1lajBgaM/yUcUl9OdUrtY=
-X-Google-Smtp-Source: AGHT+IFDs/o3eedmzhMw6Yzzrqxh3GBYltN/cYObP4ptRO7nE4JJcEBYePc11P3ivmib9uw7EuNw2I5rm4LmA7fqY6U6BjJvn8OJ
+        d=1e100.net; s=20230601; t=1742309453; x=1742914253;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=AV1Nxik7JBkOIVEYVNlGI3SIY7/qAIdx7hP6IDQ9sHw=;
+        b=uQGl49eggbc4ry7wa/IGCGHqIsgFTQWHm8kUjHtP0ocAhBiy3/UmLRVsFv6260/Ls6
+         tYel5DCPZyuIfbTdypWRh6ZXW/QGruMp90MndYwnmMGBJKjgssvAePhVeCsj8eMiwlZo
+         WNm8V7Gz0rnaEXc2GUEawuL7q+nIM9j/5JlXIBTRN0Fvluh8isFPhcNRG7mspYJlUq97
+         KOuWQUru6fi1RdGquQOmgUmXNO2Jjli/W6Vm5p8cBoTR4TFJCftUWgpqnOnlvoL8BANg
+         0XnkdZxxGqVtk/+qK9iGwGbohJr0AYjXa7jnTMKP9yHTU4gxSMk+0hPwm0x3xDVQGFVl
+         IK0w==
+X-Forwarded-Encrypted: i=1; AJvYcCVMCz1XFXQjmAlTIYeXxMnTY5XsGQJ/0kgvUcO/hN3YDxPSztMafEc7Qlg2RT7TW/D85/ZoVbWnmBJs78IOVAM=@vger.kernel.org, AJvYcCW0cpqSAkeI6OlNpYaLKxGgWLlxSFeIHoq3Zf/u67Sj/gE0HIry3AZ3RCs1YtjpFIe74pxW7hJzXlj5@vger.kernel.org, AJvYcCWZUyQQTMyq3YXKrTqcUUPPf2/Cz4yqamok4EavW42WZ8ywSNV857sXpyey3VtkQTZ+gfEKnuD7LR4=@vger.kernel.org, AJvYcCWbwe/FZqsJKw66wqhBpkNpvr3/OGFJ+vHHmtGyC7NKrVTi1Oj5lHzlF/VAo/LDrISGUd/vp/IGxFHK488K@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw0OH0Swj/gS6Bf3lT++KBhVGjiwvYfia6ehKSoZn7vVbz9zZgr
+	62RWeWaqYkOjNpqPInOLFCjCISHrPoEaUFAehQ2FZ7d0MZKtqmRoqZYw6IZFIxrT0OGektSj7NR
+	Qb3EoSfZfMUsEcl6JmESOVAYi/kI=
+X-Gm-Gg: ASbGnctdZE6+EX8fakrifKDZNZpgISbDoKdfvHDSaEwN85875rS5vmpngab+LkDouYH
+	jx5eUv/LOcnkJUj7GbUtrLlK6bXRA9WeM9yzJoNl2IFslj4nAgaUy4+YUjvw/621Gu605ZPaz78
+	SnUmuPawb4DXIr8eeUJIZLXpDojIlhpuspTv5fM5qvBQ==
+X-Google-Smtp-Source: AGHT+IHoYcofaDV167At8gyTlcxgahoKqecaiJRiqZIsUp3WL1jI7jHwfGXN+eAotV8neRNb+frmdsSnmpBQRfzAEi4=
+X-Received: by 2002:a2e:a781:0:b0:30c:12b8:fb97 with SMTP id
+ 38308e7fff4ca-30cd95cdfb0mr22215931fa.11.1742309452463; Tue, 18 Mar 2025
+ 07:50:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1648:b0:3d3:f19c:77c7 with SMTP id
- e9e14a558f8ab-3d483a79cc6mr169890705ab.16.1742309391155; Tue, 18 Mar 2025
- 07:49:51 -0700 (PDT)
-Date: Tue, 18 Mar 2025 07:49:51 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67d9880f.050a0220.2ca2c6.018b.GAE@google.com>
-Subject: [syzbot] Monthly wireless report (Mar 2025)
-From: syzbot <syzbot+list454c6e9dbba22fe541cf@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org, 
-	netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
+References: <PsAMnW6hScU1fLV8ucb6wOkHECGXCrwXeSEfeVs3Hc-zbwrML674jGT8H_XNvWiF6EdymYJZSusanBrtAsZjAg==@protonmail.internalid>
+ <20250107035058.818539-1-alistair@alistair23.me> <878qrm6e2p.fsf@kernel.org>
+ <CAKmqyKO+O6H8+Y2ybz+qiAtgGbLeHMzswo9weWbg0Wc--gEiMA@mail.gmail.com> <CAKmqyKMFAUp0=FzNfhs+r+RfLK0n_Fp7YhUhjY2m=p7wSgFONg@mail.gmail.com>
+In-Reply-To: <CAKmqyKMFAUp0=FzNfhs+r+RfLK0n_Fp7YhUhjY2m=p7wSgFONg@mail.gmail.com>
+From: Tamir Duberstein <tamird@gmail.com>
+Date: Tue, 18 Mar 2025 10:50:15 -0400
+X-Gm-Features: AQ5f1Jpsgdw9M0V8e3T4BspLDyv9RIhRJmXxkp78APBJs9vA4fZG8z3nwGNCckY
+Message-ID: <CAJ-ks9mtG+QcGNpSgZ2Wh-wgXtFiJ-7Xrr4-07xe9hxxdRuTSA@mail.gmail.com>
+Subject: Re: [PATCH v5 00/11] rust: bindings: Auto-generate inline static functions
+To: Alistair Francis <alistair23@gmail.com>
+Cc: Andreas Hindborg <a.hindborg@kernel.org>, Alistair Francis <alistair@alistair23.me>, bhelgaas@google.com, 
+	rust-for-linux@vger.kernel.org, lukas@wunner.de, gary@garyguo.net, 
+	akpm@linux-foundation.org, tmgross@umich.edu, boqun.feng@gmail.com, 
+	ojeda@kernel.org, linux-cxl@vger.kernel.org, bjorn3_gh@protonmail.com, 
+	me@kloenk.dev, linux-kernel@vger.kernel.org, aliceryhl@google.com, 
+	alistair.francis@wdc.com, linux-pci@vger.kernel.org, benno.lossin@proton.me, 
+	alex.gaynor@gmail.com, Jonathan.Cameron@huawei.com, wilfred.mallawa@wdc.com
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello wireless maintainers/developers,
+On Tue, Mar 18, 2025 at 2:53=E2=80=AFAM Alistair Francis <alistair23@gmail.=
+com> wrote:
+>
+> On Tue, Jan 14, 2025 at 4:02=E2=80=AFPM Alistair Francis <alistair23@gmai=
+l.com> wrote:
+> >
+> > On Tue, Jan 7, 2025 at 9:48=E2=80=AFPM Andreas Hindborg <a.hindborg@ker=
+nel.org> wrote:
+> > >
+> > > Thanks! Since Gary just sent v2 of the LTO patch [1], could you rebas=
+e
+> > > on that and list it as a dependency? If you are using b4 there is a n=
+ice
+> >
+> > I can't get Gary's series to apply on rust-next (it does apply on
+> > master though).
+> >
+> > I might just wait until Gary's series gets picked up to rust-next as
+> > there is already a lot of manual rebasing going on and my series
+> > currently applies on rust-next.
+> >
+> > Unfortunately there are just constant conflicts as the number of
+> > manual C helpers are continually growing.
+> >
+> > Obviously when/if this series is approved I can do a final rebase, I
+> > would just like to avoid unnecessary churn in the meantime
+>
+> Any more thoughts on this?
 
-This is a 31-day syzbot report for the wireless subsystem.
-All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/wireless
+Hi Alistair,
 
-During the period, 4 new issues were detected and 1 were fixed.
-In total, 58 issues are still open and 156 have already been fixed.
+I can't speak for Gary as I don't know what his plans are for that LTO
+series, but I did review that series and this one, and at first glance
+the two seem orthogonal. The goal of Gary's series is to LTO C helpers
+into Rust, while the goal of this series is to machine-generate those
+helpers. Do I have that right?
 
-Some of the still happening issues:
+If yes, I think it's important to think about how the two fit
+together, at least conceptually. Mechanically I think there's an issue
+with this trick:
 
-Ref  Crashes Repro Title
-<1>  101957  Yes   WARNING in __ieee80211_beacon_get
-                   https://syzkaller.appspot.com/bug?extid=18c783c5cf6a781e3e2c
-<2>  8431    Yes   WARNING in rate_control_rate_init (3)
-                   https://syzkaller.appspot.com/bug?extid=9bdc0c5998ab45b05030
-<3>  7317    Yes   WARNING in ath6kl_bmi_get_target_info (2)
-                   https://syzkaller.appspot.com/bug?extid=92c6dd14aaa230be6855
-<4>  6350    Yes   WARNING in __cfg80211_ibss_joined (2)
-                   https://syzkaller.appspot.com/bug?extid=7f064ba1704c2466e36d
-<5>  5147    Yes   WARNING in __rate_control_send_low (3)
-                   https://syzkaller.appspot.com/bug?extid=34463a129786910405dd
-<6>  2991    Yes   WARNING in plfxlc_mac_release
-                   https://syzkaller.appspot.com/bug?extid=51a42f7c2e399392ea82
-<7>  1205    Yes   WARNING in ieee80211_start_next_roc
-                   https://syzkaller.appspot.com/bug?extid=c3a167b5615df4ccd7fb
-<8>  899     Yes   INFO: task hung in rfkill_global_led_trigger_worker (3)
-                   https://syzkaller.appspot.com/bug?extid=50499e163bfa302dfe7b
-<9>  558     Yes   INFO: task hung in crda_timeout_work (8)
-                   https://syzkaller.appspot.com/bug?extid=d41f74db64598e0b5016
-<10> 428     Yes   INFO: task hung in reg_check_chans_work (7)
-                   https://syzkaller.appspot.com/bug?extid=a2de4763f84f61499210
+#ifdef __BINDGEN__
+#define __rust_helper
+#else
+#define __rust_helper inline
+#endif
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+which the LTO series uses to generate Rust stubs for these functions
+while also keeping them marked inline in LLVM IR/bitcode.
 
-To disable reminders for individual bugs, reply with the following command:
-#syz set <Ref> no-reminders
+That said, I see some discussion of cross-language LTO in "How to
+handle static inline functions" [1], so maybe there's another way that
+makes more sense in light of this series.
 
-To change bug's subsystems, reply with:
-#syz set <Ref> subsystems: new-subsystem
+Updating the cover letter to elucidate these details is where I'd
+suggest you start.
 
-You may send multiple commands in a single email message.
+Cheers.
+Tamir
+
+[1] https://github.com/rust-lang/rust-bindgen/discussions/2405
 
