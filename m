@@ -1,147 +1,196 @@
-Return-Path: <linux-kernel+bounces-566676-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566677-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82A3FA67B17
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 18:37:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA9FCA67B19
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 18:39:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C779617B09F
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 17:37:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7BAB119C633C
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 17:39:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A850E211A00;
-	Tue, 18 Mar 2025 17:37:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE3B32116E7;
+	Tue, 18 Mar 2025 17:38:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="HWw7tk7J"
-Received: from BN8PR05CU002.outbound.protection.outlook.com (mail-eastus2azon11021073.outbound.protection.outlook.com [52.101.57.73])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XUuKF6PY"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61889191F92;
-	Tue, 18 Mar 2025 17:37:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.57.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55D3720B80A;
+	Tue, 18 Mar 2025 17:38:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.10
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742319463; cv=fail; b=PkGso3Pl176uxwuRgxnVk+JKfDYvQkkUwH+/7+f1qFQAiyxdqL8VGVflBfs3Y6dbz5HTKNeGehmLHSga/FCz+QmycDJEqWGuA5EaWdZUAdEjbSEbfMZKPBwUmCCQkVeTmBo/6h035pUxvBd5hkg5QY/QQe5KxEJ85yTo2VbKUaU=
+	t=1742319537; cv=fail; b=nAMRCRSsoBTTqDrcFdrxAcYcXUFUWJeiDV3praf9TKstI2zd5W3vvUBLWKBHv9zdqeWrZmOUzm/81p/m2cbVL+DqDUVZJiJXTXy6ctLbOk/isuqXLsbHTFdkuiZAMgwu6y0DFyYL6/kHgjipAbgSYIv0VHYoh9IZLs0m8Z6pEys=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742319463; c=relaxed/simple;
-	bh=ch2ISjKp0JXilmxMyCHzEhXPKbHqo4y1dFyZDWH4Xtk=;
+	s=arc-20240116; t=1742319537; c=relaxed/simple;
+	bh=AwEjEY3poQhYyVSK2TlpDsMxpjtll3NC0rdiC++/6Sk=;
 	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=IVNQFybBNXJmuL3Cpk5joNKJnArofGGmHbjW8Qz3hhs5FR2EHPhXv4x8QfuzHVItheJpVa492TgbgLLpcuz3rAJ4+7Se1z4Gx5kZZ4Dws2pNxYYOT/AgjcNYTyH9weIttE2LEcFsly6RE9B5ocjL97gMOd+hiw8cTi5lamtDqF0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microsoft.com; spf=pass smtp.mailfrom=microsoft.com; dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b=HWw7tk7J; arc=fail smtp.client-ip=52.101.57.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microsoft.com
+	 Content-Type:MIME-Version; b=B5ZNjUr+yZq+TUw8FC+vrwOHbDbQXk7YPrle7NPmu7fxbxxbzb+efDbrDAwMmEN4fGCk4POhR3zXtL7qk4QcyRbSg1OBf/6Xt8Kxawqqf1rW7uLTRLRD0ji4uVdSiOKV+nQjjG29ZxS6v7iynqWvmb6v99HZlANuRNx50Po9uYg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XUuKF6PY; arc=fail smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742319536; x=1773855536;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=AwEjEY3poQhYyVSK2TlpDsMxpjtll3NC0rdiC++/6Sk=;
+  b=XUuKF6PYETixTpRwIjL+ZxzjuFQ6L/L16opvA2ymd3rChWuWEnKgXy+f
+   2ti4ZEEOIP1ct0BxA+0Kq/5N5CnAJPsk40tkDzC7Vl4oxaeuk/XGoYFX8
+   W0HdRNnYgHb2AGzRvTco4RwKsWeQEq5ctLNKZsUFAwoogQ69JwCKFpkFu
+   GsIy87ZoK+zj4VFiICF9X+DkFk2izlMb6AIfT/aXWTTNQBdMmoBh0JSel
+   J2IHzAAIcSTTLSJPexzsMry1WDW0coEsbNxKLzDwQ2JU0d/7KSmGxNDlF
+   odH1xbf9wriKw5w3KkJzaf+ibIePOuokLTJQk/a3cGZLfYdrhfXzx2kF3
+   A==;
+X-CSE-ConnectionGUID: 5L0FwfLuRkW+UZBFSYZJmg==
+X-CSE-MsgGUID: sSQtkqsDR8qwroCv11r/TQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11377"; a="60868591"
+X-IronPort-AV: E=Sophos;i="6.14,257,1736841600"; 
+   d="scan'208";a="60868591"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2025 10:38:54 -0700
+X-CSE-ConnectionGUID: YouJnVXqRUO7xeUnNvn8Tw==
+X-CSE-MsgGUID: DurZsEj9RQaDAu+xgial5Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,257,1736841600"; 
+   d="scan'208";a="127378086"
+Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
+  by orviesa004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2025 10:38:54 -0700
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14; Tue, 18 Mar 2025 10:38:53 -0700
+Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14 via Frontend Transport; Tue, 18 Mar 2025 10:38:53 -0700
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (104.47.70.45) by
+ edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.44; Tue, 18 Mar 2025 10:38:52 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=fFd8spm/1mPud82vl3KrsjdvtwCzaVj126TkSOtoUdhe1Q0PlISisTgTWSPCcRXBy7nBWdcvSKjoJ4MS2AogNM9S67DcDDbTsviVtFtX0uc8lWbaUmJJKedMKekGgtoQ+3jLKc9KdlUN53tbDbqEIMRXRk7VqmUzqdNlm7tUM/9SjcdMVik3Hny7+bzMP07TJvYorvPgxpe2G4qS667sZ1vhHKZ2v3aT8hIEbZV1NLd8XkaqFZ0FbnWu9fEr0RnoaoSLAYDin0IsIcCFV7gXJqY9FPIDD6GvZVjy0OSCuVgKFE3XtEju6x6boKaN/1gFLjIvKglZ0jCPYyVhBKD5OA==
+ b=Ed3ZhgOKh1yVEsyVZNiv7OKC9rSrVbHKQQa9o2EAyF077Kled1ZPq5I+bi1MecEUB0rO8ilebWt4RXBYJDj8ahITpfKFn8qrb7BTI6pXuR79QvFl8at7pilx3m/VBJ1eQv73P0hXvG/igJupKhWQ/cL1sIswov6hX2Ozk9XMObAuBDbpBCn0rnoxXe+xC7lzD5l+5/RJ/QBS8Oe4BjHa/jxPcDl25hev4eq64qKmCGEIaIXMKXBFtijopEhUK+Sisan9OVVIhg6HEGd/1ij/xDMovzcwOlo6VnSjzdN4hG9aWdmlgK8KgvzWVt3EOAsfj8L+fcjMeztzTCDB6bAD3Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=QE3wqlS4zHjyXSnUvOGaC3QIupx9wddIiHzP+p+fmHY=;
- b=pk0YcOUrlWQyipVXxoMyOimHnkAl5JIysEEzzhuiuJJW+v7RtG8aUlLeDeurEuARxeSp7iYInUbXNiUb6GtIssGgMRRjL0Oy7F9hIJy3OI6yZVR6nk/K4GtOSNdTWZKxaRL9QM/eJ78ggHUGkm9+l1UJ+pAUuMBXopVS9tp7T+R9X7tPC/gh48w+x6anUrnLofIHQ/agXpjYzNtdxy3bxQXUp/kH8stDsQqIugHJdC4bCOZdDHcSe8ZhHogYsbLUzDmKsNjgfg2581EN1JfrTr6Wuv7YiSzk79I1udXOLaUSzUlnZZR/fsz5ZSi8atRmH1rOLllBRiU9uuyPUnPX3Q==
+ bh=pD92lxNHC32gJbPbCyTDMfNgbYgfZJW9My2Why5Xv1M=;
+ b=D8331WL4ax0urSGYULhQGgXoKXEP3tjerWkPalWw99fU3AqmuZgXkPGb2SkiZMK2JWvCXvdJlBHF6T2c78BY6mpMFJVgu+iqDErNmtif36hyPP3nmAWhKeVxXa5Lrj6S3nCJWc2km84E8+vtx0zPnWdOZtdxlvzOhR61fYbeNUO0D1Ad/AS/7NQgK1NFj/ap+H8j1BycyKCdxmwrbyEOVVVYPZ+9AS41lFviLKkUgyYfOZwKzMTF90b9+Rg4IvGs9ONOrXabS6Efd2lqLr0foikvEiroHeuL003cYxWDL7Z+hgDbApboK+TwYFtB+PrvPLZ75hN4eXZ0SMmH+E4YOA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=microsoft.com; dmarc=pass action=none
- header.from=microsoft.com; dkim=pass header.d=microsoft.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=QE3wqlS4zHjyXSnUvOGaC3QIupx9wddIiHzP+p+fmHY=;
- b=HWw7tk7JepEimFaCfiivreohE+2PDtq5fAgLZzngdpxVmNnbhnh/V03r03Q+zTgQZY4PzDl48Ef/DXzCAk+BTVsI2fvRCZxQD3F8FN1TnA0/ijGBh13B8g0vlmds8PHqTLkyqL4cvrfhi0CTJz1uiSF8CDSM12oPr3W+lNwneQA=
-Received: from LV8PR21MB4236.namprd21.prod.outlook.com (2603:10b6:408:263::19)
- by LV8PR21MB4275.namprd21.prod.outlook.com (2603:10b6:408:25c::22) with
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from SA3PR11MB8120.namprd11.prod.outlook.com (2603:10b6:806:2f3::7)
+ by SA2PR11MB4876.namprd11.prod.outlook.com (2603:10b6:806:119::13) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8583.9; Tue, 18 Mar
- 2025 17:37:39 +0000
-Received: from LV8PR21MB4236.namprd21.prod.outlook.com
- ([fe80::fbfa:6b1b:d4eb:1671]) by LV8PR21MB4236.namprd21.prod.outlook.com
- ([fe80::fbfa:6b1b:d4eb:1671%5]) with mapi id 15.20.8558.024; Tue, 18 Mar 2025
- 17:37:39 +0000
-From: Long Li <longli@microsoft.com>
-To: Konstantin Taranov <kotaranov@linux.microsoft.com>, Konstantin Taranov
-	<kotaranov@microsoft.com>, Shiraz Saleem <shirazsaleem@microsoft.com>,
-	"jgg@ziepe.ca" <jgg@ziepe.ca>, "leon@kernel.org" <leon@kernel.org>
-CC: "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH rdma-next v2 1/1] RDMA/mana_ib: Fix integer overflow
- during queue creation
-Thread-Topic: [PATCH rdma-next v2 1/1] RDMA/mana_ib: Fix integer overflow
- during queue creation
-Thread-Index: AQHbmBzRl5iH4j6VWUyWc8UjUaY85LN5KIaw
-Date: Tue, 18 Mar 2025 17:37:39 +0000
-Message-ID:
- <LV8PR21MB4236C2474B900EB82EAA49CDCEDE2@LV8PR21MB4236.namprd21.prod.outlook.com>
-References: <1742312744-14370-1-git-send-email-kotaranov@linux.microsoft.com>
-In-Reply-To: <1742312744-14370-1-git-send-email-kotaranov@linux.microsoft.com>
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.33; Tue, 18 Mar
+ 2025 17:38:50 +0000
+Received: from SA3PR11MB8120.namprd11.prod.outlook.com
+ ([fe80::3597:77d7:f969:142c]) by SA3PR11MB8120.namprd11.prod.outlook.com
+ ([fe80::3597:77d7:f969:142c%5]) with mapi id 15.20.8534.031; Tue, 18 Mar 2025
+ 17:38:49 +0000
+From: "Sridhar, Kanchana P" <kanchana.p.sridhar@intel.com>
+To: Yosry Ahmed <yosry.ahmed@linux.dev>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>, "hannes@cmpxchg.org"
+	<hannes@cmpxchg.org>, "nphamcs@gmail.com" <nphamcs@gmail.com>,
+	"chengming.zhou@linux.dev" <chengming.zhou@linux.dev>,
+	"usamaarif642@gmail.com" <usamaarif642@gmail.com>, "ryan.roberts@arm.com"
+	<ryan.roberts@arm.com>, "21cnbao@gmail.com" <21cnbao@gmail.com>,
+	"ying.huang@linux.alibaba.com" <ying.huang@linux.alibaba.com>,
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+	"linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+	"herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
+	"davem@davemloft.net" <davem@davemloft.net>, "clabbe@baylibre.com"
+	<clabbe@baylibre.com>, "ardb@kernel.org" <ardb@kernel.org>,
+	"ebiggers@google.com" <ebiggers@google.com>, "surenb@google.com"
+	<surenb@google.com>, "Accardi, Kristen C" <kristen.c.accardi@intel.com>,
+	"Feghali, Wajdi K" <wajdi.k.feghali@intel.com>, "Gopal, Vinodh"
+	<vinodh.gopal@intel.com>, "Sridhar, Kanchana P"
+	<kanchana.p.sridhar@intel.com>
+Subject: RE: [PATCH v8 12/14] mm: zswap: Simplify acomp_ctx resource
+ allocation/deletion and mutex lock usage.
+Thread-Topic: [PATCH v8 12/14] mm: zswap: Simplify acomp_ctx resource
+ allocation/deletion and mutex lock usage.
+Thread-Index: AQHbjBjx1q5dleb6eEq5EZF781nDprNmhasAgAA86hCAAVPdAIAAYjdggAQziACACyMtkIABOxcAgAAmLoA=
+Date: Tue, 18 Mar 2025 17:38:49 +0000
+Message-ID: <SA3PR11MB81206531E9B3C7F13F5740A2C9DE2@SA3PR11MB8120.namprd11.prod.outlook.com>
+References: <20250303084724.6490-1-kanchana.p.sridhar@intel.com>
+ <20250303084724.6490-13-kanchana.p.sridhar@intel.com>
+ <Z8n5CCmELvpUwi3B@google.com>
+ <PH8SPRMB004414B5E1E0765C18F9A89DC9D52@PH8SPRMB0044.namprd11.prod.outlook.com>
+ <Z8tJOi5G_3dpK31v@google.com>
+ <PH8SPRMB00447B066A769C76F57F8800C9D42@PH8SPRMB0044.namprd11.prod.outlook.com>
+ <Z88h1mPkYNM6yOGE@google.com>
+ <SA3PR11MB812082535F1E6D63BC0F1412C9DF2@SA3PR11MB8120.namprd11.prod.outlook.com>
+ <Z9mB5IbNEdNdtmUp@google.com>
+In-Reply-To: <Z9mB5IbNEdNdtmUp@google.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach:
 X-MS-TNEF-Correlator:
-msip_labels:
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ActionId=0302c7b9-cc79-4d6e-9fb0-ea9916dbdd9a;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ContentBits=0;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=true;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Method=Standard;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=Internal;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2025-03-18T17:37:09Z;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Tag=10,
- 3, 0, 1;
 authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=microsoft.com;
+ header.d=none;dmarc=none action=none header.from=intel.com;
 x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: LV8PR21MB4236:EE_|LV8PR21MB4275:EE_
-x-ms-office365-filtering-correlation-id: e2f6df05-d745-4c31-504a-08dd66439448
+x-ms-traffictypediagnostic: SA3PR11MB8120:EE_|SA2PR11MB4876:EE_
+x-ms-office365-filtering-correlation-id: 8b9414cc-a52e-4daf-687f-08dd6643be48
 x-ms-exchange-senderadcheck: 1
 x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|376014|1800799024|366016|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?UUgcyx2CgbqlST2bE/Dsdm9WTK+ZxinfQfVNE8r0Jt1BXy2rxma9QfpGMOM/?=
- =?us-ascii?Q?90aIKEZEiO0XIfxsYq3aVfKxeMJGDAihaimxsjhwZ+WjjnP0nnHYJC+WqMo/?=
- =?us-ascii?Q?zLFLSRENiNkHWKNuCAV0YbgMpsFeX5EoHzTLhEcdrvjMb7VMQKZXli34JV7I?=
- =?us-ascii?Q?GUMfKz2xX0GlVrGIaeUa0tTFUENHyVGpm/5RXIF2nI2rvI0ttadrYeZbPb3T?=
- =?us-ascii?Q?YgdwJB3bhgnKNvjrHT19AQEroVgQg6Ra+QH/ngq8/ZwNpga/ElXT9MJ2p3yb?=
- =?us-ascii?Q?w3amvb2BWMf/Loqy373QnzLqG/LNKB6R6W9olcX6OiU/eg4CbI3pOpwkLY+d?=
- =?us-ascii?Q?ZnlGA2eyHBSBMWwP9TDDwYPDL6JhWouoMeMCuhdRZCvEIZt6LDtBI0diq3/5?=
- =?us-ascii?Q?DlxUfHAajgEckMvMXyXete1pUc1HoJfakhiUiuQP4uzrJtYBXOyvQGbMD3+D?=
- =?us-ascii?Q?FA8rZg4lZ8zYsjbriWvRtHclzqFy2pxMmlnIKnG7g+sjI7HOY/9n8CV3WN0u?=
- =?us-ascii?Q?hPB/RRSXD96H8AnSNwFM3h6q30CUwU74rQw7KXxDb3rZX5frAn81GOzj8NtG?=
- =?us-ascii?Q?Ce4meJOr+uvRIf57M6DTGW899262yM41qc3X0yJFhQ0CefxzwpHmQV3HJEy3?=
- =?us-ascii?Q?ij5hmaDnRCQE4XAahBI9R0OuPy5DSMmiOnwcOqntuYvuyoHWNRtCH5N10ico?=
- =?us-ascii?Q?DYLAIedEHIEQroGI/vBOEI5/ZDZdlAX4uwL51hllq8ZW71KLRxSWxrzw04vN?=
- =?us-ascii?Q?JXtfeh+VN2wXt+aJ0xFGYBiXLQumctqtD/m1QHzAldn5Oqx6aORnbQ28NRFV?=
- =?us-ascii?Q?7ukomXF4IzBf7co09OrGNehe5PYuQMTvrbrB7uqak8ShU8XdfIGs9XufmSwq?=
- =?us-ascii?Q?5rmvuKtHbghUPu0yJGO8wTWXMzYq+hndNS9CxrfuhxuemYn4q35UiAjgW+aV?=
- =?us-ascii?Q?14gzgfcFECYb5n+J37rJRQn41wTfvu9rTTPExOp97AvDBlX3AIWqjAjVCm9I?=
- =?us-ascii?Q?baX8xt4JqgFw5RIZjRslxGYUkPHSWvwcxj/pnzuVMKDQ0hzodPsBvWm8ER+c?=
- =?us-ascii?Q?7wQYnmD2b7NqvXC74lW8ozkSZRLw910ggT+tF2hb0fNP183RSGMypkVhOyxl?=
- =?us-ascii?Q?NzEOIoxpnVY1djY7jz+LSytBLVS4rMbHIUAP0I13H2+YBdytuB4YFithEDaC?=
- =?us-ascii?Q?p3G8sd+kDR80f8gPmjaVRrQqpVkL3waVtY1is0tHzVQJWmmIwiYKP4Xj+c6C?=
- =?us-ascii?Q?1FG0yq31eXPy/l9KE7G7uxhtmJGLYoS/M88Xu4nBmPKKa1bBXfN9uNSFuY9z?=
- =?us-ascii?Q?xie6v6wiKqHRIox3Y+UHHgJZ8R2pTEFMUQGBVfUQA/1on87oUaAPyjKVKLVO?=
- =?us-ascii?Q?25bxbuQ01CGIOOtSFpSrK9k1v9tJPVPMDD+9WiKx3q30ZiDCmzdf1E0cxTm1?=
- =?us-ascii?Q?ipSkXofkaR6rNkdXF0LmFFAUBvtcwpDg?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV8PR21MB4236.namprd21.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(38070700018);DIR:OUT;SFP:1102;
+x-microsoft-antispam: BCL:0;ARA:13230040|7416014|366016|376014|1800799024|38070700018;
+x-microsoft-antispam-message-info: =?us-ascii?Q?FbUFxgtEbRSimt3IcHAxtuUPHAbIujF8AsnKtsgaeMPGe3LTMWhi8Jqm7bId?=
+ =?us-ascii?Q?/RuQKsJZPBt7nA/0XbNWWjCqaciFfX7r3NXOMmqiUW4gDjiUyGLEMiJjUPvt?=
+ =?us-ascii?Q?teC5/w1uX8O5xAdlvP0cowQQ6wxi/15TjlViilVSwR+hw8W19G/TQQ6ePtjm?=
+ =?us-ascii?Q?ptC6Vt6vFfP5ngDBHCSQ6fiRv5g24UZr4cIoZTrs4BjlN2BWGKQE4xSVEfCj?=
+ =?us-ascii?Q?xdtD9CJU4Gw7lUz+qZCn0d8qcr6EOBDC4PzoM5u2O8Yw04QH/8NXULhINdFa?=
+ =?us-ascii?Q?iQr2Gyo4QpIRaJxVg07aows2qxWcO08i4pun4BgufbZwLsalW0KgVnY/8vr5?=
+ =?us-ascii?Q?T3bizt1X0yjmqQqNfyvGCfMxmWdSIpB4ApnBIzXdXh9j3xPsa9QHKfZCINP4?=
+ =?us-ascii?Q?jtysy8gCDf7VBRorzM+YiSqp2AQ9ju0SQVx6JWIq45gVc/Hm8s6fXX0p27EP?=
+ =?us-ascii?Q?BD2JTInJiK9yntIDkh8lhLiRwUelIxQpQZQW+cyMaOvpNoNFCTp09nF8z4G6?=
+ =?us-ascii?Q?Y0kvESWr6y0WYLTzuD1Yeom4dTaY0DxJdUGrOxjM+4K7bIg5cxZEjb6FOoJk?=
+ =?us-ascii?Q?UwAIfVIAoVOZarZEcRxMSgNWN5/Gav1Aavsa8qK4UpqTPSAGZ/jIkVztJJJi?=
+ =?us-ascii?Q?yN1ZzSPRLH5AZOsABuOHq3evzYOPfuGQRcNCMj2iz2Tk+MdqXU8ooV8HcJ24?=
+ =?us-ascii?Q?vWX5NCpBUXGqj9EfcBGh0CredsRulQgwoRwg2O5OreDu6439UIAB5fBDrkjn?=
+ =?us-ascii?Q?e6R8Tda+noNoJ4fpaWcVNuS+ZDpdJeBB4xg0SeEzs6tr0/fFqiU4kDzzTYBe?=
+ =?us-ascii?Q?4/4jCxZITtY9GoEPKy+rDzk/zd2tnCgbOpX1WGmfJtuI3UXZju/jXBr0BS76?=
+ =?us-ascii?Q?rElvR65+SV5HtycnlOsbyKLR8XJQpahp0C060wcmCTBkSzKQkocbYu3hdU6t?=
+ =?us-ascii?Q?7H18zmiGVoRDhAg9/bvbWO1S33RJL/BYmi162330R0agEuK99+aLxh74A9Ek?=
+ =?us-ascii?Q?958BsQ7JIHjWLCDZGo5cU09KOsy8i/+YPCL8NcI8TIhmI8YYH7EDyrtkz80Q?=
+ =?us-ascii?Q?5JDCwgUIvpQc7NHcY/LC9eQxqjeHGS628iW9mN/+KBZvlJF2Aoxz17vL56bd?=
+ =?us-ascii?Q?YcSpRxsefTDS5hdskD1r8JIUJlP/Al2KK6HZkLJm1UrxsID/UoSkItPDs0PY?=
+ =?us-ascii?Q?RsDAwrTTgj4zOIoBLfMpbjZ4vGPm2N6MWzhoGg9WscsYPbkucd2RtvE3CVJ8?=
+ =?us-ascii?Q?REL9rhMEAMp/rNGfVXN3aOL4Nvdpku/8giix/hLIX+I+i4WPqrHeWMPMkAR+?=
+ =?us-ascii?Q?lsAS7FipZpNZDN83Ym87Tlo62tt3TBD1UabP1aZ1rbLKaylJQfPMWdMnFHFk?=
+ =?us-ascii?Q?Q8DNl2+w6EnvmmP/caIZNRBbrkjIejgeANf9gQv0jU77MpLNasuOZF9hvMjQ?=
+ =?us-ascii?Q?9oOlrhZRU5mLaE+YZbgH/UDyOoBF45tn?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA3PR11MB8120.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(366016)(376014)(1800799024)(38070700018);DIR:OUT;SFP:1101;
 x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?mD8k5gPN8SxeYLA6FaZ2jop0QCY4X3SgFYDCs59dKKX8b/tJzv/8s2jLZbLN?=
- =?us-ascii?Q?XM59f2+vPr1QG7a7xYqC6DZJyScZyiuZgCgcHPmbji37oGhHTrmNor9kFBon?=
- =?us-ascii?Q?GZ5ilmzg541DgjyqYjhpPH8JL5awlVYglyVj50Aon4P6m/EatefW07yVg1Jf?=
- =?us-ascii?Q?Hu++l7+imDpOz6vd068aQJSgJSpDswMrSjh22YCAo6KSC4qISFUbuXEH+i3v?=
- =?us-ascii?Q?NeOTlzRNKoS6pYOew8dlG64TCcT7ONFQ1PRgngi+wrL8w9h5YJEOJT6dlXTE?=
- =?us-ascii?Q?ezrprXmRx2uCbyvlzmd3TiGjuOXBeCl78UakgNlKIcwgPk+0Aje/d+hFiL4x?=
- =?us-ascii?Q?E8EPg3L2fZFQVGCiHxvUdwkcpHmHGI5b0FCId7O763VpfcXisZCO+dez7kym?=
- =?us-ascii?Q?CwGWP3Ec52JXy6D//F7CtyOpFK4uSl7q+ukO/cerfT+Ezq4+YwNlugS4lzwn?=
- =?us-ascii?Q?BIomkcOscW8uD/jlQkmwZRI0ygxh2y81CfaIKL/symcFhyWLdmHjLk+UeKw1?=
- =?us-ascii?Q?JVia0m56uuaLVMrQtpzV/YmJZPn2b+P0J1GOV72CgkRtjgmUiOhHOSB7pBFk?=
- =?us-ascii?Q?5Z1w+H8HdiJcZgnpyjtyAku5Dldtu58EBAoQAifCVq49hfRN982r/qOGl9DJ?=
- =?us-ascii?Q?fcsBtEmo2+rwhKJSZfik3c2AGdMO8/f/llcrZpKAEYmXtRRBJ/Hu6/YWF8K5?=
- =?us-ascii?Q?jBMEEvJanHvq8g8Z3NvJhFUVmPYk75bzxRqE87mt0s54BNr8rx3ryGmqupPa?=
- =?us-ascii?Q?qTQrn7l48itz2s5lvOZy1prVHSmr/fTDgWfu2PorOY/bcRCP7q7zsEUs5oij?=
- =?us-ascii?Q?iYpBqEw1BAPrJHZmyBsd0bi+gT3zPOW7aVvJBrik4v0MgMpAQ5rCU12EmljB?=
- =?us-ascii?Q?e2ur7qNtlzr7elUcpWqCge1SJf8ZgvSFior/gf6t6KyE3oeNatN/GhcuX3Bg?=
- =?us-ascii?Q?qpqlrqJK9My2Ny/QMUJX4Ck2v3rUhsHdNhCUEeCxqVzjfjWWIdhmtOsRRxLi?=
- =?us-ascii?Q?fHgMIePlfoEEcnjWaaxq0voEwWhqjA28NmpiUei6tXSJYRVxf4k64UHCdffh?=
- =?us-ascii?Q?igtc8t6kZAUVFVN0t1Sn4bLyyFu4layRjpxaSIABhpHA0YL8AXs7f/0RL0zt?=
- =?us-ascii?Q?c15ntG9ljEhr+oeq304goChAMseBde4y0wMfTjA556AcBLnuCfNITt5OPOj/?=
- =?us-ascii?Q?RKfwJK+LoGXxlOoZ8pglK4JI9CsC1V7+taU/69c4YkexhcwTxPw5K9UxVPKt?=
- =?us-ascii?Q?GaUIeZOtNC72shdHhx5vgpTm8zT/mfuDj1tFDECZblh53NIrOByeN3kHeiTa?=
- =?us-ascii?Q?jc3PXnsbvCUU/OtaYYUrCHMoQ9V64f8YOu5vk7YjrdvtpGIJv3qkWgcq3usU?=
- =?us-ascii?Q?TbSNLFnqN3SJmB25ex1wKEDzP1XRg2seKlm9IYYzFNQ1yYjbwRDKjGSpI1c9?=
- =?us-ascii?Q?w19t1VdHnncxP0SkwBbdv9tXt9G1v+CFliAJyUspR3ntNJyk0dXfWBk/A//a?=
- =?us-ascii?Q?EQ0tqQWN96uuF2JhtfS+wY+QxfzYXUXYaJsU1h36HFzR47N0kjOBNFVeRjFn?=
- =?us-ascii?Q?NHel02MMqKJpOTjCZFqbOI/SblnFouX3D41BsRW9?=
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?S44V5SEAIwMEicXJziOjB0nYOtpWQGaM6J6rSQ4PBBUyOla9nL1UOgJGs3uN?=
+ =?us-ascii?Q?FLTusnBvpHWutJIwSFJg59j1gmO0H7rU4fYdU2DiPNOCbyQjpqpZU5q2pDPA?=
+ =?us-ascii?Q?JLGySFx72xXjYxP6Egr+Ah2ObE/omlupDk8zwLFO8nBFMkSamYZwkmYrpUWp?=
+ =?us-ascii?Q?Lfye2BydY2qQ58NNKVSDNVHmdIYHwPuP3moSuGF+QMHOWvSWpiQQ1jiCkBoB?=
+ =?us-ascii?Q?KqSJgtth4qKIuXZCXVlFvoHZCTaT/85XKC4WpLwnwG3iPGLiXmH3olry8iGm?=
+ =?us-ascii?Q?CL92/QMRmp3T0BmVWWcIBcfaLQfg2jecATi3O3Q03Cp25y0+Y1ZGnIQ7BE5i?=
+ =?us-ascii?Q?EQSwkW0whAs1lK7X+Lna5ONSXIs2GnNTYP8FBXhJXoY/SWcb19wJcLHBZwTx?=
+ =?us-ascii?Q?RuKx5RbzugVNfa4+6xY4+spQDWOTe7Qu0iMGFUxSereO8E5uDYRFO3a3BWlV?=
+ =?us-ascii?Q?RqJedAwOimqI0KawrLPNMqamK5CXpnT9s1gq0/N++Dnr1uD2ECEBAo4W25oY?=
+ =?us-ascii?Q?jJTQYmEvNbZmc8w/AjY9G6EY00viSbDQFlsIouuq8M+hr9245233OOSYhH3s?=
+ =?us-ascii?Q?1TUYKVPN8Jl5caoAAu4Pm28oHhy3qdcPT9qoXOlGOQkFfDE/jNRjJi+gfqXZ?=
+ =?us-ascii?Q?HtYsTpSkgvlUAIUt6ZL/c/yLKpfGNXSE4Tp/bE4vokY5PQiUkxAaqcNUFZ9Z?=
+ =?us-ascii?Q?STdDNxNnp81OQWSFbd7TsKbNed1Otb5ZZptn3vQasRFyy8DyJMjO2t/XrW5S?=
+ =?us-ascii?Q?jVWIEWXN8oLMa+0+H3t1ML2W6bDGxbiQ3UkYTs7bqu83bgPlUkCFHN0d9KJE?=
+ =?us-ascii?Q?bkI9GTi6Kox9VXQ4CixtsprET2r+iMSIaRXZKFBhBSeerLX9aCUeNZe33WeF?=
+ =?us-ascii?Q?CciFt6MtAGeRC7/YXFQSy8ruGcq41XU8JBX6NDeljNRwepvkWh1fFSE2svoC?=
+ =?us-ascii?Q?CpuBu2GWx/zYqtZMut2+ccDGK+o5YkUq/kBagnDekFHXgI59qVAj4mcq/p56?=
+ =?us-ascii?Q?Uh+59RZX4tlq6RaB+ENisBhMSO9IqNPDHenFGgzehcd5dvTdvPwyqRhm5770?=
+ =?us-ascii?Q?nnUTpoW6Q3pLTxb9YGOGiT5mD+xbcp8fMXGZrb0abVmNeZK7FKtM435Q19wz?=
+ =?us-ascii?Q?ewscMqmJ04w0a5XSBUVOHN4C8KfAzLkSQOH/jjr8lGfNdYvtoVeSX86hYNvE?=
+ =?us-ascii?Q?HrUbS4Fj5OD6W5HZdAynEEUk9i4RMZj7dkaP24LAhfkQw392JQBbXegp/lq3?=
+ =?us-ascii?Q?9+KVVnkeY7Dl+pb1eoPGBjyGNbltm0xHxg8yLLZx5YgYhn50uGDYYjfFdoZX?=
+ =?us-ascii?Q?hnMJEAwskbB4dxnFmpji2D0+5cTepxmCacwkT+MYEmlTytBuq63bKQM+4xhG?=
+ =?us-ascii?Q?UtXKFd1l3sQ3VpuYGso9l9Xq7ESHcSzB0lKttpVVdamB5W8lAwtC6ImdLHy6?=
+ =?us-ascii?Q?+C+0m6t0Nfxmf/t/riKMHLABtAQK5crGyC74FRp/9GLC0Ds7w7QfnJJQfV63?=
+ =?us-ascii?Q?crSykT/GruB4DBq0Q5zksOyCzk7TrC5nD/+gFhteb8YA0226YDR03V5aHoKh?=
+ =?us-ascii?Q?QVeAPAbvESg1U35b4XyUEjSQquLgBdG8Fdyq5f2B2O3B3ZzwJIkiFGiB9NPB?=
+ =?us-ascii?Q?Cg=3D=3D?=
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
@@ -150,56 +199,354 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: LV8PR21MB4236.namprd21.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e2f6df05-d745-4c31-504a-08dd66439448
-X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Mar 2025 17:37:39.2864
+X-MS-Exchange-CrossTenant-AuthSource: SA3PR11MB8120.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8b9414cc-a52e-4daf-687f-08dd6643be48
+X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Mar 2025 17:38:49.7585
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: FXrw5ZLQwTsGo3vrod3J9LE2LtR+MdHkaMHqvyJimldtPzpl3nfyAawmtfrYsgFsJPVOJy+F6JnVa6saGl1mxQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR21MB4275
+X-MS-Exchange-CrossTenant-userprincipalname: eZPruIR5Oti1BN3BcOh6a7kLTio+oVGKBFUT7TcnoNmsYqqN/IPLBoe5tV+J1Ts5GSsBc7PvUGqIdZql//d6uUw71pqJmG1ZkKiYGVbMI4Q=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA2PR11MB4876
+X-OriginatorOrg: intel.com
 
-> Subject: [PATCH rdma-next v2 1/1] RDMA/mana_ib: Fix integer overflow duri=
+
+> -----Original Message-----
+> From: Yosry Ahmed <yosry.ahmed@linux.dev>
+> Sent: Tuesday, March 18, 2025 7:24 AM
+> To: Sridhar, Kanchana P <kanchana.p.sridhar@intel.com>
+> Cc: linux-kernel@vger.kernel.org; linux-mm@kvack.org;
+> hannes@cmpxchg.org; nphamcs@gmail.com; chengming.zhou@linux.dev;
+> usamaarif642@gmail.com; ryan.roberts@arm.com; 21cnbao@gmail.com;
+> ying.huang@linux.alibaba.com; akpm@linux-foundation.org; linux-
+> crypto@vger.kernel.org; herbert@gondor.apana.org.au;
+> davem@davemloft.net; clabbe@baylibre.com; ardb@kernel.org;
+> ebiggers@google.com; surenb@google.com; Accardi, Kristen C
+> <kristen.c.accardi@intel.com>; Feghali, Wajdi K <wajdi.k.feghali@intel.co=
+m>;
+> Gopal, Vinodh <vinodh.gopal@intel.com>
+> Subject: Re: [PATCH v8 12/14] mm: zswap: Simplify acomp_ctx resource
+> allocation/deletion and mutex lock usage.
+>=20
+> On Mon, Mar 17, 2025 at 09:15:09PM +0000, Sridhar, Kanchana P wrote:
+> >
+> > > -----Original Message-----
+> > > From: Yosry Ahmed <yosry.ahmed@linux.dev>
+> > > Sent: Monday, March 10, 2025 10:31 AM
+> > > To: Sridhar, Kanchana P <kanchana.p.sridhar@intel.com>
+> > > Cc: linux-kernel@vger.kernel.org; linux-mm@kvack.org;
+> > > hannes@cmpxchg.org; nphamcs@gmail.com;
+> chengming.zhou@linux.dev;
+> > > usamaarif642@gmail.com; ryan.roberts@arm.com; 21cnbao@gmail.com;
+> > > ying.huang@linux.alibaba.com; akpm@linux-foundation.org; linux-
+> > > crypto@vger.kernel.org; herbert@gondor.apana.org.au;
+> > > davem@davemloft.net; clabbe@baylibre.com; ardb@kernel.org;
+> > > ebiggers@google.com; surenb@google.com; Accardi, Kristen C
+> > > <kristen.c.accardi@intel.com>; Feghali, Wajdi K
+> <wajdi.k.feghali@intel.com>;
+> > > Gopal, Vinodh <vinodh.gopal@intel.com>
+> > > Subject: Re: [PATCH v8 12/14] mm: zswap: Simplify acomp_ctx resource
+> > > allocation/deletion and mutex lock usage.
+> > >
+> > > On Sat, Mar 08, 2025 at 02:47:15AM +0000, Sridhar, Kanchana P wrote:
+> > > >
+> > > [..]
+> > > > > > > >  	u8 *buffer;
+> > > > > > > > +	u8 nr_reqs;
+> > > > > > > > +	struct crypto_wait wait;
+> > > > > > > >  	struct mutex mutex;
+> > > > > > > >  	bool is_sleepable;
+> > > > > > > > +	bool __online;
+> > > > > > >
+> > > > > > > I don't believe we need this.
+> > > > > > >
+> > > > > > > If we are not freeing resources during CPU offlining, then we=
+ do
+> not
+> > > > > > > need a CPU offline callback and acomp_ctx->__online serves no
+> > > purpose.
+> > > > > > >
+> > > > > > > The whole point of synchronizing between offlining and
+> > > > > > > compress/decompress operations is to avoid UAF. If offlining =
+does
+> not
+> > > > > > > free resources, then we can hold the mutex directly in the
+> > > > > > > compress/decompress path and drop the hotunplug callback
+> > > completely.
+> > > > > > >
+> > > > > > > I also believe nr_reqs can be dropped from this patch, as it =
+seems
+> like
+> > > > > > > it's only used know when to set __online.
+> > > > > >
+> > > > > > All great points! In fact, that was the original solution I had
+> implemented
+> > > > > > (not having an offline callback). But then, I spent some time
+> > > understanding
+> > > > > > the v6.13 hotfix for synchronizing freeing of resources, and th=
+is
+> comment
+> > > > > > in zswap_cpu_comp_prepare():
+> > > > > >
+> > > > > > 	/*
+> > > > > > 	 * Only hold the mutex after completing allocations,
+> otherwise we
+> > > > > may
+> > > > > > 	 * recurse into zswap through reclaim and attempt to hold the
+> mutex
+> > > > > > 	 * again resulting in a deadlock.
+> > > > > > 	 */
+> > > > > >
+> > > > > > Hence, I figured the constraint of "recurse into zswap through
+> reclaim"
+> > > was
+> > > > > > something to comprehend in the simplification (even though I ha=
+d a
+> > > tough
+> > > > > > time imagining how this could happen).
+> > > > >
+> > > > > The constraint here is about zswap_cpu_comp_prepare() holding the
+> > > mutex,
+> > > > > making an allocation which internally triggers reclaim, then recu=
+rsing
+> > > > > into zswap and trying to hold the same mutex again causing a
+> deadlock.
+> > > > >
+> > > > > If zswap_cpu_comp_prepare() does not need to hold the mutex to
+> begin
+> > > > > with, the constraint naturally goes away.
+> > > >
+> > > > Actually, if it is possible for the allocations in
+> zswap_cpu_comp_prepare()
+> > > > to trigger reclaim, then I believe we need some way for reclaim to =
+know
+> if
+> > > > the acomp_ctx resources are available. Hence, this seems like a
+> potential
+> > > > for deadlock regardless of the mutex.
+> > >
+> > > I took a closer look and I believe my hotfix was actually unnecessary=
+. I
+> > > sent it out in response to a syzbot report, but upon closer look it
+> > > seems like it was not an actual problem. Sorry if my patch confused y=
+ou.
+> > >
+> > > Looking at enum cpuhp_state in include/linux/cpuhotplug.h, it seems l=
+ike
+> > > CPUHP_MM_ZSWP_POOL_PREPARE is in the PREPARE section. The
+> comment
+> > > above
+> > > says:
+> > >
+> > >  * PREPARE: The callbacks are invoked on a control CPU before the
+> > >  * hotplugged CPU is started up or after the hotplugged CPU has died.
+> > >
+> > > So even if we go into reclaim during zswap_cpu_comp_prepare(), it wil=
+l
+> > > never be on the CPU that we are allocating resources for.
+> > >
+> > > The other case where zswap_cpu_comp_prepare() could race with
+> > > compression/decompression is when a pool is being created. In this ca=
+se,
+> > > reclaim from zswap_cpu_comp_prepare() can recurse into zswap on the
+> > > same
+> > > CPU AFAICT. However, because the pool is still under creation, it wil=
+l
+> > > not be used (i.e. zswap_pool_current_get() won't find it).
+> > >
+> > > So I think we don't need to worry about zswap_cpu_comp_prepare()
+> racing
+> > > with compression or decompression for the same pool and CPU.
+> >
+> > Thanks Yosry, for this observation! You are right, when considered pure=
+ly
+> > from a CPU hotplug perspective, zswap_cpu_comp_prepare() and
+> > zswap_cpu_comp_dead() in fact run on a control CPU, because the state i=
+s
+> > registered in the PREPARE section of "enum cpuhp_state" in cpuhotplug.h=
+.
+> >
+> > The problem however is that, in the current architecture, CPU onlining/
+> > zswap_pool creation, and CPU offlining/zswap_pool deletion have the
+> > same semantics as far as these resources are concerned. Hence, although
+> > zswap_cpu_comp_prepare() is run on a control CPU, the CPU for which
+> > the "hotplug" code is called is in fact online. It is possible for the =
+memory
+> > allocation calls in zswap_cpu_comp_prepare() to recurse into
+> > zswap_compress(), which now needs to be handled by the current pool,
+> > since the new pool has not yet been added to the zswap_pools, as you
+> > pointed out.
+> >
+> > The ref on the current pool has not yet been dropped. Could there be
+> > a potential for a deadlock at pool transition time: the new pool is blo=
+cked
+> > from allocating acomp_ctx resources, triggering reclaim, which the old
+> > pool needs to handle?
+>=20
+> I am not sure how this could lead to a deadlock. The compression will be
+> happening in a different pool with a different acomp_ctx.
+
+I was thinking about this from the perspective of comparing the trade-offs
+between these two approaches:
+a) Allocating acomp_ctx resources for a pool when a CPU is functional, vs.
+b) Allocating acomp_ctx resources once upfront.
+
+With (a), when the user switches zswap to use a new compressor, it is possi=
+ble
+that the system is already in a low memory situation and the CPU could be d=
+oing
+a lot of swapouts. It occurred to me that in theory, the call to switch the
+compressor through the sysfs interface could never return if the acomp_ctx
+allocations trigger direct reclaim in this scenario. This was in the contex=
+t of
+exploring if a better design is possible, while acknowledging that this cou=
+ld still
+happen today.
+
+With (b), this situation is avoided by design, and we can switch to a new p=
+ool
+without triggering additional reclaim. Sorry, I should have articulated thi=
+s better.
+
+>=20
+> >
+> > I see other places in the kernel that use CPU hotplug for resource allo=
+cation,
+> > outside of the context of CPU onlining. IIUC, it is difficult to guaran=
+tee that
+> > the startup/teardown callbacks are modifying acomp_ctx resources for a
+> > dysfunctional CPU.
+>=20
+> IIUC, outside the context of CPU onlining, CPU hotplug callbacks get
+> called when they are added. In this case, only the newly added callbacks
+> will be executed. IOW, zswap's hotplug callback should not be randomly
+> getting called when irrelevant code adds hotplug callbacks. It should
+> only happen during zswap pool initialization or CPU onlining.
+>=20
+> Please correct me if I am wrong.
+
+Yes, this is my understanding as well.
+
+>=20
+> >
+> > Now that I think about it, the only real constraint is that the acomp_c=
+tx
+> > resources are guaranteed to exist for a functional CPU which can run zs=
+wap
+> > compress/decompress.
+>=20
+> I believe this is already the case as I previously described, because
+> the hotplug callback can only be called in two scenarios:
+> - Zswap pool initialization, in which case compress/decompress
+>   operations cannot run on the pool we are initializing.
+> - CPU onlining, in which case compress/decompress operations cannot run
+>   on the CPU we are onlining.
+>=20
+> Please correct me if I am wrong.
+
+Agreed, this is my understanding too.
+
+>=20
+> >
+> > I think we can simplify this as follows, and would welcome suggestions
+> > to improve the proposed solution:
+> >
+> > 1) We dis-associate the acomp_ctx from the pool, and instead, have this
+> >     be a global percpu zswap resource that gets allocated once in
+> zswap_setup(),
+> >     just like the zswap_entry_cache.
+> > 2) The acomp_ctx resources will get allocated during zswap_setup(), usi=
 ng
-> queue creation
+> >     the cpuhp_setup_state_multi callback() in zswap_setup(), that regis=
+ters
+> >     zswap_cpu_comp_prepare(), but no teardown callback.
+> > 3) We call cpuhp_state_add_instance() for_each_possible_cpu(cpu) in
+> >      zswap_setup().
+> > 4) The acomp_ctx resources persist through subsequent "real CPU
+> offline/online
+> >      state transitions".
+> > 5) zswap_[de]compress() can go ahead and lock the mutex, and use the
+> >     reqs/buffers without worrying about whether these resources are
+> >     initialized or still exist/are being deleted.
+> > 6) "struct zswap_pool" is now de-coupled from this global percpu zswap
+> >     acomp_ctx.
+> > 7) To address the issue of how many reqs/buffers to allocate, there cou=
+ld
+> >      potentially be a memory cost for non-batching compressors, if we w=
+ant
+> >      to always allocate ZSWAP_MAX_BATCH_SIZE acomp_reqs and buffers.
+> >      This would allow the acomp_ctx to seamlessly handle batching
+> >      compressors, non-batching compressors, and transitions among the
+> >      two compressor types in a pretty general manner, that relies only =
+on
+> >      the ZSWAP_MAX_BATCH_SIZE, which we define anyway.
+> >
+> >      I believe we can maximize the chances of success for the allocatio=
+n of
+> >      the acomp_ctx resources if this is done in zswap_setup(), but plea=
+se
+> >      correct me if I am wrong.
+> >
+> >      The added memory cost for platforms without IAA would be
+> >      ~57 KB per cpu, on x86. Would this be acceptable?
 >=20
-> From: Konstantin Taranov <kotaranov@microsoft.com>
->=20
-> Check queue size during CQ creation for users to prevent overflow of u32.
->=20
-> Fixes: bec127e45d9f ("RDMA/mana_ib: create kernel-level CQs")
-> Signed-off-by: Konstantin Taranov <kotaranov@microsoft.com>
+> I think that's a lot of memory to waste per-CPU, and I don't see a good
+> reason for it.
 
-Reviewed-by: Long Li <longli@microsoft.com>
+Yes, it appears so. Towards trying to see if a better design is possible
+by de-coupling the acomp_ctx from zswap_pool:
+Would this cost be acceptable if it is incurred based on a build config
+option, saying CONFIG_ALLOC_ZSWAP_BATCHING_RESOURCES (default OFF)?
+If this is set, we go ahead and allocate ZSWAP_MAX_BATCH_SIZE
+acomp_ctx resources once, during zswap_setup(). If not, we allocate
+only one req/buffer in the global percpu acomp_ctx?=20
 
-> ---
-> v2: Only check the size of user CQs
->=20
->  drivers/infiniband/hw/mana/cq.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->=20
-> diff --git a/drivers/infiniband/hw/mana/cq.c b/drivers/infiniband/hw/mana=
-/cq.c
-> index 5c325ef..0fc4e26 100644
-> --- a/drivers/infiniband/hw/mana/cq.c
-> +++ b/drivers/infiniband/hw/mana/cq.c
-> @@ -39,7 +39,8 @@ int mana_ib_create_cq(struct ib_cq *ibcq, const struct
-> ib_cq_init_attr *attr,
->=20
->  		is_rnic_cq =3D !!(ucmd.flags & MANA_IB_CREATE_RNIC_CQ);
->=20
-> -		if (!is_rnic_cq && attr->cqe > mdev->adapter_caps.max_qp_wr)
-> {
-> +		if ((!is_rnic_cq && attr->cqe > mdev->adapter_caps.max_qp_wr)
-> ||
-> +		    attr->cqe > U32_MAX / COMP_ENTRY_SIZE) {
->  			ibdev_dbg(ibdev, "CQE %d exceeding limit\n", attr->cqe);
->  			return -EINVAL;
->  		}
-> --
-> 2.43.0
+Since we are comprehending that other compressors may want to
+do batching in future, I thought a more general config option name
+would be more appropriate.
 
+>=20
+> >      If not, I don't believe this simplification would be worth it, bec=
+ause
+> >      allocating for one req/buffer, then dynamically adding more resour=
+ces
+> >      if a newly selected compressor requires more resources, would run
+> >      into the same race conditions and added checks as in
+> >      acomp_ctx_get_cpu_lock(), which I believe, seem to be necessary
+> because
+> >      CPU onlining/zswap_pool creation and CPU offlining/zswap_pool
+> >      deletion have the same semantics for these resources.
+>=20
+> Agree that using a single acomp_ctx per-CPU but making the resources
+> resizable is not a win.
+
+Yes, this makes sense: resizing is not the way to go.
+
+>=20
+> >
+> >     The only other fallback solution in lieu of the proposed simplifica=
+tion that
+> >     I can think of is to keep the lifespan of these resources from pool=
+ creation
+> >     to deletion, using the CPU hotplug code. Although, it is not totall=
+y clear
+> >     to me if there is potential for deadlock during pool transitions, a=
+s noted
+> above.
+>=20
+> I am not sure what's the deadlock scenario you're worried about, please
+> clarify.
+
+My apologies: I was referring to triggering direct reclaim during pool crea=
+tion,
+which could, in theory, run into a scenario where the pool switching would
+have to wait for reclaim to free up enough memory for the acomp_ctx
+resources allocation: this could cause the system to hang, but not a deadlo=
+ck.
+This can happen even today, hence trying to see if a better design is possi=
+ble.
+
+Thanks,
+Kanchana
 
