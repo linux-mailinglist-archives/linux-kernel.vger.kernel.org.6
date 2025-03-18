@@ -1,169 +1,136 @@
-Return-Path: <linux-kernel+bounces-567081-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567080-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B8BFA680E0
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 00:48:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7486A680DE
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 00:47:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8463C420E53
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 23:48:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B30D3AA248
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 23:47:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC142207E02;
-	Tue, 18 Mar 2025 23:47:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0661C207E02;
+	Tue, 18 Mar 2025 23:47:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cHd9zayb"
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wgzrg50d"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF7861E1E03;
-	Tue, 18 Mar 2025 23:47:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6459F1E1E03;
+	Tue, 18 Mar 2025 23:47:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742341677; cv=none; b=RVmubueiI8gCnTF21JDxd4zuz5NpQV7tp4eSIrxgS94Nm+P3VGDm+94OUfw2I4PEhaLwxGSKTD0iQCWHXLytSogyKbhr0P0YdubvmC/e2l5jGrDTNBp3/4T5GWM07Wpx5mFe7mJ9p82IZ69eb3kS4eaZxPm+arif2jeInFujh/U=
+	t=1742341670; cv=none; b=jEEqcYUTvLejt82aZ0YfMCFdOzoVAozxqke8Mw3VBbqs53jrbWmJTqAseLigFmqsqMDwaHVhm7kwgBU1egYynnQjYlWNe6dHqxtR6HoJJd9xxHsNdNuCmqVQhkGDn9Zwlng0BtQhYqMIFS+4aZEFYIczS0X2pMEpiaLGcWqtI8E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742341677; c=relaxed/simple;
-	bh=uABu4VpJ68Cd6Wyqkr/mvdUD+3ZnBlkIHcZpVXOWSEU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZI7uw77Zk6o6Ln3tMIUTmpJnHObimrnpy3O+V6J6SDerVwl04u+sVCjAvGhU0kjHe46cH0dtQ8rkp7yh2B3jNELWPslhciGOq0+JSTBe0kIWze4FyqnAhUQgt1ecsKqIHTy2KcjxwqGm5jSTzOnFxAq+gx0rmksAXHMskTfEVJw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cHd9zayb; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-301001bc6a8so763107a91.1;
-        Tue, 18 Mar 2025 16:47:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742341674; x=1742946474; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EZqxNld5GNrtG/vE4Q4w5lmArPu7nbTLApG5Qyu9zYE=;
-        b=cHd9zaybHruf+jluYzhoO7OZobWX1j8iT6twjjI4ZOLUhxv/HVklMQ3qfshuBB37i7
-         PME//VYJNsB0B9SIsUKruoN1ZmQJc2bAZnXOsr6g6rMkPl+VxFemwOnt98KEZRkYoSwf
-         RZMH3HP3ceSdWRwG537R572yfhybleSw7lIucKhLgqWgXbkiLBo3wGCOa+zHjsFMWXwJ
-         mTGuhqus06IgsnyLhShbY3AsnaXNN2TtkgvVYEiSzwKYQLsDMlp8NK/Ta+lGGkF7qc77
-         K05+TD2yc473G75xs9Hq3BPmKd1rtTQdr89ypNK1mJw8GjN7b6GonLT7Rlc1knonanXo
-         BZ4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742341674; x=1742946474;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EZqxNld5GNrtG/vE4Q4w5lmArPu7nbTLApG5Qyu9zYE=;
-        b=rSDKZFYcQwnPw91CdYUX1wZAPnwJfNaHVqFMBNE9J2tLIMJJ9RH984WCy30mfESOZe
-         1d6kkiFxQAx/ykkcDwaBx53Bf2afOLf2344DtsKXfcg1wG4zr97u58FQrPZ5EXUCUSwE
-         8NEEEQXRUlgRq/0f9I8h49c+6h91DMRNuKUa8TN3hRDcBdqf/dZXeWQH4ucCXnFqCuIk
-         7t2erOzkMz+vTNvPel5VGivdaFi+B4kKTb3rYbSwYY8jcxbOwYq+7vg9eZ+srd+GiHcT
-         8jcCh1UqBwVkg2vEektTrUK5D1+heLkR2qNo3S5u8jvpvLpaZXXSWjwLOwr5r7YAJNb0
-         XQfw==
-X-Forwarded-Encrypted: i=1; AJvYcCU4Gr5vbR28sJovd5Uswh3pDUEZ/u8XrKY91tuFX7TsDH9VqGc2H/U6AVGjndy/w2OEjkvd75YfC2YGF1Y=@vger.kernel.org, AJvYcCUdMjTQS+d9gn34I1DI7Q2fClC4Hz5p4aIUzqsV2BmwbcidUqfxffWN1CJHfAszMVh8acijLX/iDxI2sg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwVBbqsSrEZ7Oc00FfsZuneFGRzBtL1noMKjzSCwmnxHvtGbo5V
-	qP78L5+6saZFm0cc87KOLDBDZKUqoN162prRMRezG+x51nJz/bNlTCw2nH6CdsnWJs26mqaI4d/
-	8hWUkF30vHnrIh0CXMr3HWg8PYHnK3v9XKSc=
-X-Gm-Gg: ASbGncvUJ9AJ8PxCL4cLvMo7BESXX3X99OVyO+DkVaFAa25PRKJYVy9jIhUZih1eq64
-	rqzvTwHnrnZksRXGhEx+bucTvsEPtsd9q0yoGCTCPfxsPMTw89EQYULBfuQ8ItvPkBsrViJSkj2
-	1PB0ysDi75dDvmVcTWeTtlje0+Ug==
-X-Google-Smtp-Source: AGHT+IEfEyYb9YjIz1GGHs94TEl9g13UPfi0dFT8xk+cORNZPtx3v/X/XGbHVh365Wcwq54qxdIC5Hi1chNHJZajjE4=
-X-Received: by 2002:a17:90b:1a91:b0:2ff:4b7a:f0a4 with SMTP id
- 98e67ed59e1d1-301bfce7ef0mr21409a91.3.1742341673845; Tue, 18 Mar 2025
- 16:47:53 -0700 (PDT)
+	s=arc-20240116; t=1742341670; c=relaxed/simple;
+	bh=x3rp+Z/eTbo64Q6GyZW2o56/PCgzaRs5h98VZxSVlJs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Xtzp4sXcHyuXuT9hEvz6zS0HiYGDMudLTYLoNF4UJ/gpnmZ6La/N58gt8G0G0nlBuqYgmKtvNxCnRyl31Xc+FchnluwWkhZnHQQXhaEva7zyU0BnuRnudnB59LcJnDWmfezgoxye3QSp3lG9dfX7I/aRX0AAXR6hN4yL3NxMbfA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wgzrg50d; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 368E4C4CEDD;
+	Tue, 18 Mar 2025 23:47:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742341669;
+	bh=x3rp+Z/eTbo64Q6GyZW2o56/PCgzaRs5h98VZxSVlJs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Wgzrg50dMr1PD/vmdO0fWGdTYr3eps/lN/8KBk4jcAG6i3IR1zWJPlo3+BlD1AEKa
+	 dxPx6xOL5AkFwb4x+PuqySN/fIiK52Ds2gpJP3TM5LipX8Di0kjwFFoueEfJhjgalW
+	 Rxub79Nvb6gkgSw8igZZKqY5N7I6PmU9dBMrYBdEdhHcmrJV+gsH6awqujAFNb9SGc
+	 GYc2VmbnLC+qNeAgzErTEmEpp32nRICvlgyafOehTUC8IrINpghxJTLaLoq/4EvQFv
+	 R9QTlDmLiraImceDcUSaLdFtA/ziCjUvWUFnOu6oFlSmC3w5PPvgQxcs/YPwuzzZ1U
+	 1Nw2RtS7CF0OQ==
+Date: Tue, 18 Mar 2025 16:47:47 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Ian Rogers <irogers@google.com>, Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	James Clark <james.clark@linaro.org>,
+	Yicong Yang <yangyicong@hisilicon.com>,
+	Howard Chu <howardchu95@gmail.com>, Andi Kleen <ak@linux.intel.com>,
+	Michael Petlan <mpetlan@redhat.com>,
+	Anne Macedo <retpolanne@posteo.net>,
+	"Dr. David Alan Gilbert" <linux@treblig.org>,
+	Dmitry Vyukov <dvyukov@google.com>,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 1/2] perf machine: Factor creating a "live" machine
+ out of dwarf-unwind
+Message-ID: <Z9oGI8G3cOoluIKf@google.com>
+References: <20250313052952.871958-1-irogers@google.com>
+ <Z9Rk-YdoK-fK_62d@x1>
+ <Z9SK96s4PAp680k6@x1>
+ <Z9SLL50yuiLOGGYI@x1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250317215757.2412aef1@canb.auug.org.au> <CANiq72n05i322FfpSjFX=Wz3-9AgVRKLkKs1CHa-LxzWQ7-pew@mail.gmail.com>
- <20250318103504.4cbfe7e1@canb.auug.org.au> <20250318223706.604bc4c5@canb.auug.org.au>
-In-Reply-To: <20250318223706.604bc4c5@canb.auug.org.au>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Wed, 19 Mar 2025 00:47:40 +0100
-X-Gm-Features: AQ5f1Jpj7o6mJycS_sa_DcVfctwPvMr8aT5rb67wnTFX2grJVHYYQcgaZGMFPM4
-Message-ID: <CANiq72=mC67W_O9u6-HpAnqmy5L_A+-t9fW0YYR_0UR+hFvopQ@mail.gmail.com>
-Subject: Re: linux-next: build failure after merge of the rust tree
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Miguel Ojeda <ojeda@kernel.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>, Benno Lossin <benno.lossin@proton.me>, 
-	Boqun Feng <boqun.feng@gmail.com>, Andreas Hindborg <a.hindborg@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <Z9SLL50yuiLOGGYI@x1>
 
-On Tue, Mar 18, 2025 at 12:37=E2=80=AFPM Stephen Rothwell <sfr@canb.auug.or=
-g.au> wrote:
->
-> When I merge the rust tree into linux-next, the complete resolution now
-> looks like this:
-> (the hunk in rust/kernel/sync.rs is needed due to a commit in the tip
-> tree)
+On Fri, Mar 14, 2025 at 05:01:51PM -0300, Arnaldo Carvalho de Melo wrote:
+> On Fri, Mar 14, 2025 at 05:00:58PM -0300, Arnaldo Carvalho de Melo wrote:
+> > On Fri, Mar 14, 2025 at 02:18:49PM -0300, Arnaldo Carvalho de Melo wrote:
+> > > On Wed, Mar 12, 2025 at 10:29:51PM -0700, Ian Rogers wrote:
+> > > > Factor out for use in places other than the dwarf unwinding tests for
+> > > > libunwind.
+> > > 
+> > > Testing with another patchset being reviewed/tested, seems to work, if
+> > > it showed the line number would be even better!
+> > 
+> > But it gets the lines, at least in this secoond attempt, after applying
+> > Namhyungs fix for the previous problem (int16_t):
+> 
+> Nevermind, this time I built with DEBUG=1, so DWARF, probably.
 
-Thanks!
+Can I get your Tested-by?
 
-I have redone the 2 merges on my side again, following the ones you
-did (i.e. starting on the previous merge you had on 20250318, then
-rust-next, then hrtimer-next) and then compared. I saved it for you
-at:
+Thanks,
+Namhyung
 
-    https://github.com/ojeda/linux.git rust-test-merge
-
-There are a few differences, a couple important, another one not much
--- all coming from the first merge (rust-next one).
-
-1) When merging rust-next, the first one is needed to pass `rustfmt`
-in `rust/kernel/sync.rs`:
-
--use pin_init;
- use crate::prelude::*;
- use crate::types::Opaque;
-+use pin_init;
-
-Would it be possible for you to run `make ...... rustfmt` after
-merges? It is quite fast (with the amount of code we have :). As far
-as I know, Linus is also doing it, so it is not a huge deal, but it is
-nicer nevertheless to have it clean in linux-next so that CIs can do
-`make ....... rustfmtcheck` (which checks if it is clean).
-
-By the way, concerning this change, we could actually remove that
-line, but since it was in the original commit, I kept it in the merge
--- we can clean it up in a proper commit later on.
-
-2) More importantly, there are a couple changed needed to keep the
-examples building (which are KUnit tests, i.e. under
-`CONFIG_RUST_KERNEL_DOCTESTS`). In `rust/kernel/sync.rs`:
-
--    /// # use kernel::{c_str, stack_pin_init};
-+    /// # use kernel::c_str;
-     /// # use kernel::alloc::KBox;
-     /// # use kernel::types::ForeignOwnable;
-     /// # use kernel::sync::{LockClassKey, SpinLock};
-+    /// # use pin_init::stack_pin_init;
-
-And in `rust/kernel/sync/lock.rs`:
-
--    /// # use kernel::{new_spinlock, stack_pin_init,
-sync::lock::{Backend, Guard, Lock}};
-+    /// # use kernel::{new_spinlock, sync::lock::{Backend, Guard, Lock}};
-+    /// # use pin_init::stack_pin_init;
-
-3) A trivial difference is that I kept the removal of this newline in
-`rust/pin-init/src/lib.rs`, because the original fix did so (which was
-likely done because the "SAFETY" comment is supposed to "cover" it
-too), but it is not a big deal to keep it as you have it.
-
-     Option<NonZeroI128>, Option<NonZeroIsize>,
--
-     {<T>} Option<NonNull<T>>,
-
-Would it be possible to fix at least 1) and 2)? Thanks a lot!
-
-With these changes, it all passes my usual tests for x86_64 (I found
-an issue, unrelated to linux-next, in hrtimer-next, for riscv64 and
-loongarch64, but Andreas and I agreed to fix it when I merge his tag
-with a commit on top).
-
-Cc'ing Benno, Boqun, and Andreas so that they are all aware of these
-resolutions and can check if they see any issue.
-
-Cheers,
-Miguel
+>  
+> > root@number:~# perf trace -e landlock_add_rule perf test -w landlock
+> > perf: Segmentation fault
+> >     #0 0x6698d0 in dump_stack debug.c:355
+> >     #1 0x66994c in sighandler_dump_stack debug.c:367
+> >     #2 0x7f784be95fd0 in __restore_rt libc.so.6[40fd0]
+> >     #3 0x4d0e56 in trace__find_usable_bpf_prog_entry builtin-trace.c:3882
+> >     #4 0x4cf3de in trace__init_syscalls_bpf_prog_array_maps builtin-trace.c:4040
+> >     #5 0x4bf626 in trace__run builtin-trace.c:4477
+> >     #6 0x4bb7a9 in cmd_trace builtin-trace.c:5741
+> >     #7 0x4d873f in run_builtin perf.c:351
+> >     #8 0x4d7df3 in handle_internal_command perf.c:404
+> >     #9 0x4d860f in run_argv perf.c:451
+> >     #10 0x4d7a4f in main perf.c:558
+> >     #11 0x7f784be7f088 in __libc_start_call_main libc.so.6[2a088]
+> >     #12 0x7f784be7f14b in __libc_start_main@@GLIBC_2.34 libc.so.6[2a14b]
+> >     #13 0x410ff5 in _start perf[410ff5]
+> > Segmentation fault (core dumped)
+> > root@number:~# 
+> >  
+> > > I'll continue working on that other case with this applied just before
+> > > that series and finally will give my Tested-by.
+> > > 
+> > > - Arnaldo
+> > > 
+> > > root@number:~# perf trace -e landlock_add_rule perf test -w landlock
+> > > perf: Segmentation fault
+> > >     #0 0x5be81d in dump_stack perf[5be81d]
+> > >     #1 0x5be879 in sighandler_dump_stack perf[5be879]
+> > >     #2 0x7f313d24efd0 in __restore_rt libc.so.6[40fd0]
+> > >     #3 0x491bc1 in cmd_trace perf[491bc1]
+> > >     #4 0x497090 in run_builtin perf.c:0
+> > >     #5 0x4973ab in handle_internal_command perf.c:0
+> > >     #6 0x413483 in main perf[413483]
+> > >     #7 0x7f313d238088 in __libc_start_call_main libc.so.6[2a088]
+> > >     #8 0x7f313d23814b in __libc_start_main@@GLIBC_2.34 libc.so.6[2a14b]
+> > >     #9 0x413ad5 in _start perf[413ad5]
+> > > Segmentation fault (core dumped)
+> > > root@number:~#
 
