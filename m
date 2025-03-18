@@ -1,128 +1,90 @@
-Return-Path: <linux-kernel+bounces-565226-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565227-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8ADC0A6640A
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 01:42:21 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89E60A6640C
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 01:42:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C622117DB5B
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 00:42:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B38817D689
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 00:42:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 193EE61FF2;
-	Tue, 18 Mar 2025 00:42:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9117013EFE3;
+	Tue, 18 Mar 2025 00:42:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qw7StJyc"
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="VCrCjVVy"
+Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0130D528;
-	Tue, 18 Mar 2025 00:42:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 486EDD528;
+	Tue, 18 Mar 2025 00:42:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742258528; cv=none; b=qX6ghlp4UZ9MRc3uChxEPMfvJxhvyAo3R1cWu6s37wt+EJh/F6Qzvy6UGL/+Rmio/HNhjMNH5nMlC1mKgNTFMYhSRIn7A93wuxrLzjwz769R9BxlpC64pbRZqERAiHRxNpf1atvJX3DJc7mdCS7VQiJRkwblOxNRbG06A/9FYY8=
+	t=1742258535; cv=none; b=LJ8elBb8IiFW+PlJmWFcHyXMfxDVF7NvikRF3LC1HXvNeDZnicXuUlKedVWrCwBUwYV4yu0ay8tcTv4nd+A1M7c2RSlEsD20w8DXM6iShhN8fGKJGsbAhJRH9JSqWDj2PH7jc2iYdpAWmD0vjP0ZsYjpgIsNCdR7DyuSmzKI7A4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742258528; c=relaxed/simple;
-	bh=PgzC/F33BYAA53t0eSb8TLPna6imarmpm+vWugeqXCY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dzdwmsK40zrzZvBlTHMQ8tvKvCnGciukIoHtyeAM9KoJOKit5lh0rQXiz14FLJKxOElEK3k183lq+Uy/7uG0YkQCBRW3xwZegBnDAZv0V4u35hp6f0rrdwRL1ta7ByXmikgNdgRa2lQF+V8LhN02MpD3sBzF8d1xZMXpRBqMoNI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Qw7StJyc; arc=none smtp.client-ip=209.85.208.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-30795988ebeso52112181fa.3;
-        Mon, 17 Mar 2025 17:42:06 -0700 (PDT)
+	s=arc-20240116; t=1742258535; c=relaxed/simple;
+	bh=lR8t+yS8heBlVgKW1sJz63d4wBD18a6lsgVnNjdDSVQ=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=ScBNoBrVipo4Zmzk/JIP57CD11u+JzuJVO+JL4NzX7I+nhI2plMUEDuWQyJ311TbxO5tJSWG+3Ts1zHKMRfhDbLnoE7J7QlX5TTKAb4jEuprj4WENJ8HTJHCLhBrUFQuCk+QyJNFbT9xy9BL8HE9aXZziLTZ8M0z6OsGuTF7vk4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=VCrCjVVy; arc=none smtp.client-ip=203.29.241.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742258525; x=1742863325; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=B7IfKOPhAlS//llZDZ8iu5ShHju61/9HzEhonjMXx+s=;
-        b=Qw7StJycBI7mWjgQpc6ky6N7gIAmD3ev7RIaMuDfW7ioBGCk4pWfFo+tGqnCYIy6Ax
-         Ijh+TWl/48z78hJ6QfsHpPZ9lzWZFTNPqpw5AGGECHVsDwVvPxa7otrcO+8sfh5JWiyP
-         5xSHz9KjTKQNU9ZoZpsGWzpfdbOjhO+O42dV/n/HqKtKB6HmccORC/XHZX2dvmNjU/6v
-         jh6ZZK+t6urhPGu7tq9Sjq+xjwKqXXPpwJ7gdheUyO/WC0ZhLL/x90I8svKkVrnHYsw1
-         HDeCyYCQ0yQf1iFJZwpNGmlERbxzxPRsULqix160gxkrzMxvFffSsM45R6cx+miDy/j0
-         0DAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742258525; x=1742863325;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=B7IfKOPhAlS//llZDZ8iu5ShHju61/9HzEhonjMXx+s=;
-        b=Qm4e3bQpi4U/4T5QC8EjrqzIEZF4JjiIV4x3XBB+dp6YODxv14NWfubFQdyapFFGEg
-         36AU7+cXeJYpSrpw9kioh9CEo+eplZ0j9E9N8mowKzljr5tyrKBvX8iOmIN9JKHp9GXW
-         djBgRGdbTJSDMUW/LtXp+ZPr+ussc2YvWsiz6G/X3WVuw/qbeUrFsr68JnXrnAVTRzNp
-         Aoi+/HcbAmIsNkh1XwMJoBpLvmcO7mRMifBA1BbqhAsi/oXmVVa1tpYMUyI7TLpn9zJg
-         ARzOWIRjty5uxykf+D2txuWd9o7b6vAi3+7vuF+3mBEc4HEGcQu9WLTeH08rzmrF8sr8
-         fUBw==
-X-Forwarded-Encrypted: i=1; AJvYcCUO5KwCEsYD35cZzdIQNEbwZa78SS+Ra/obJt0ERJ+2j9+P8QwCJ3FGQByuXKcrJA+I52nW5kdWzcuLtqMm@vger.kernel.org, AJvYcCVYkMozWUZk1m2CFAfIKdU/Vnp+2InnFolnwHc0QE3+5zDDcVIHjzAnhZx2ZvqHYN+RJu6q69qa1OadYQpAoq0=@vger.kernel.org, AJvYcCVtR64EvI8P7O5FNn8SyHjhjyM4M4YY5zZDAT38VOwj2xMLOXsf9FOiTN8OQJo6sHbpvCj5GRwB76Iuues=@vger.kernel.org, AJvYcCW0lxuQpcVrCWASUtPxhf3fnpkvtKzdn2PJwKNbvD1P5BYJgkKDVGQWzwheZcgpwrCRPSvUoXmjhBPlfPkDIzY8@vger.kernel.org, AJvYcCWATtWO76muUPyfGFgwi+FYoDC/yTDVBan9CZY9AzZOeQDlyn+5ze5eotmbNvkuoIqocCsqvcsV7i7tTRdL@vger.kernel.org, AJvYcCXah9vW6lD6Jp4QqbooTx8HeSNtPHNRDldHHjeuWOJMrGZiAEQa7XFBLasD0ng8uEbxa/iZNTXLTzVl@vger.kernel.org, AJvYcCXo2tst5mLk8G+JHcoiysN9la+s9zLuTiChJq8ldYOKYcUkJjjr1YED4KkVQIM2p0g8pFXP/BP3rE+b@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/3sw9BkEf8Y9pqIRm3jTqAe5mo5WNOKpn22MR671ajjjSsFXO
-	HyafM8WxMdqjh8HArlksxQZkIn0yneZwPEyfOloHNJU9TQZOomm6xcyCc4JCHXp35K+KutIFxq1
-	PfYPbdwtQE1gySoWEgCIalvHHejA=
-X-Gm-Gg: ASbGncsy+cQC59TxL2XQIcvGv2hPBqB8DkaUOFnnreIjGAq5oUcH5JheOtfZZ+eVUeR
-	0inYcDaThjbvsrcJrQqlQjxStCA04qcnchqP478zrj32rmG/G1W/bAGdkSBXL6w5rV9Mf2d6BHZ
-	tuBhBVhhCM38wz9wlLoxpg28M2/wNp3II5lrTcNDeoXkQ5jll6rQUtLSDmI0N+LToDND9Repk=
-X-Google-Smtp-Source: AGHT+IF5vCiDQ8UvKh1Yne26mi3NIgR+bYUhG99rsvoK4CRqZFLHBICrHc5mvPXVOh74lH0hTvVBsz+mo/B6+Mv42Wo=
-X-Received: by 2002:a05:651c:2108:b0:300:5c57:526b with SMTP id
- 38308e7fff4ca-30c4a861dc9mr89186201fa.11.1742258524555; Mon, 17 Mar 2025
- 17:42:04 -0700 (PDT)
+	d=codeconstruct.com.au; s=2022a; t=1742258531;
+	bh=lR8t+yS8heBlVgKW1sJz63d4wBD18a6lsgVnNjdDSVQ=;
+	h=Subject:From:To:Date:In-Reply-To:References;
+	b=VCrCjVVyQloxxKR8/vCcZEWhl5wH0TbTJ4YXNsdM1m459vlb+65LMjGKP9CX0nAE3
+	 tJVaa65qgKEVGMBQaMuBNgaUr2xf4SwItxGtuNyXBJkewIzvA5uR7erUJtb8sgEzpk
+	 bCLcwZCAnwgGIpGHa4WgGbF36CygZqJb3KrWPqYAUxhJI6gYa8dJD3qzxuItCr8tr5
+	 swVtXVVcdY1W60feoPSNlo2DZwjj/AzN5xf9RO7oa1o855/zcvlLazk2hUIpYMSI2D
+	 7eyN38fQyZ0ny1Tox+1N2Tv3H9aRHFKruU9MNJ0ShUS8gKOyIwRx8usmnzVYMmyZ1E
+	 1kpKwxR4WSWrw==
+Received: from [192.168.68.112] (unknown [180.150.112.225])
+	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 5A04377BB4;
+	Tue, 18 Mar 2025 08:42:10 +0800 (AWST)
+Message-ID: <3270a7ea55fa28253b435da0b0bbce3adfdc00eb.camel@codeconstruct.com.au>
+Subject: Re: [PATCH v4 3/3] soc: aspeed: lpc-pcc: Add PCC controller support
+From: Andrew Jeffery <andrew@codeconstruct.com.au>
+To: Kevin Chen <kevin_chen@aspeedtech.com>, lee@kernel.org, robh@kernel.org,
+  krzk+dt@kernel.org, conor+dt@kernel.org, joel@jms.id.au,
+ derek.kiernan@amd.com,  dragan.cvetic@amd.com, arnd@arndb.de,
+ gregkh@linuxfoundation.org,  devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org,  linux-aspeed@lists.ozlabs.org,
+ linux-kernel@vger.kernel.org
+Date: Tue, 18 Mar 2025 11:12:09 +1030
+In-Reply-To: <20250314112113.953238-4-kevin_chen@aspeedtech.com>
+References: <20250314112113.953238-1-kevin_chen@aspeedtech.com>
+	 <20250314112113.953238-4-kevin_chen@aspeedtech.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <67d864b2.0c0a0220.39fb6f.4df4@mx.google.com> <CAJ-ks9n8mwt5q9unqfkfSHj9=ELJHtqsXM-xQ8jsbXeJX6Uyfg@mail.gmail.com>
- <67d8671d.050a0220.3305ab.6372@mx.google.com> <CAJ-ks9=uHjJrzM0ruvm4v4wr8LygRMP-1orWBy_9OiNNeQr0ow@mail.gmail.com>
- <CAJ-ks9=Qcmvbm=YGJ=jrX_+YdMsftk=FAimszYZB1OUuV4diZw@mail.gmail.com>
- <67d885ff.0c0a0220.111215.5644@mx.google.com> <CAJ-ks9kYB1b4XsQcFb=NScPq+R+13U+Sv-6opi-yp6=ZjuLD_g@mail.gmail.com>
- <67d88a1d.050a0220.2cdacf.4adf@mx.google.com> <CAJ-ks9kg4Br=56HT7T5sWpoMKhRqT_2x+cpQAWoyrEG3qyqQ6Q@mail.gmail.com>
- <67d895cc.050a0220.99d33.5adc@mx.google.com> <67d8ba3e.050a0220.39b3b5.753c@mx.google.com>
-In-Reply-To: <67d8ba3e.050a0220.39b3b5.753c@mx.google.com>
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Mon, 17 Mar 2025 20:41:28 -0400
-X-Gm-Features: AQ5f1JoEGp_5o1WcOYKQ7KQIGBB5nqYglySnTY7b-xENR_n0SAcUGZzOBrzhgus
-Message-ID: <CAJ-ks9n57P=NnMAAvLr9dnZhs2zT8cvD_gdLkSmnFtSQR4b-Jw@mail.gmail.com>
-Subject: Re: [PATCH v5 6/6] rust: use strict provenance APIs
-To: Boqun Feng <boqun.feng@gmail.com>
-Cc: Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
-	Nicolas Schier <nicolas@fjasle.eu>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Brendan Higgins <brendan.higgins@linux.dev>, 
-	David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Luis Chamberlain <mcgrof@kernel.org>, 
-	Russ Weight <russ.weight@linux.dev>, Rob Herring <robh@kernel.org>, 
-	Saravana Kannan <saravanak@google.com>, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, 
-	linux-pci@vger.kernel.org, linux-block@vger.kernel.org, 
-	devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Mar 17, 2025 at 8:11=E2=80=AFPM Boqun Feng <boqun.feng@gmail.com> w=
-rote:
->
-> diff --git a/scripts/rustdoc_test_gen.rs b/scripts/rustdoc_test_gen.rs
-> index 036635fb1621..331ed32adc35 100644
-> --- a/scripts/rustdoc_test_gen.rs
-> +++ b/scripts/rustdoc_test_gen.rs
-> @@ -224,6 +224,8 @@ macro_rules! assert_eq {{
->          BufWriter::new(File::create("rust/doctests_kernel_generated.rs")=
-.unwrap()),
->          r#"//! `kernel` crate documentation tests.
->
-> +#![allow(clippy::incompatible_msrv)]
+T24gRnJpLCAyMDI1LTAzLTE0IGF0IDE5OjIxICswODAwLCBLZXZpbiBDaGVuIHdyb3RlOgo+ICvC
+oMKgwqDCoMKgwqDCoHBjYy0+bWRldi5wYXJlbnQgPSBkZXY7Cj4gK8KgwqDCoMKgwqDCoMKgcGNj
+LT5tZGV2Lm1pbm9yID0gTUlTQ19EWU5BTUlDX01JTk9SOwo+ICvCoMKgwqDCoMKgwqDCoHBjYy0+
+bWRldi5uYW1lID0gZGV2bV9rYXNwcmludGYoZGV2LCBHRlBfS0VSTkVMLCAiJXMlZCIsCj4gREVW
+SUNFX05BTUUsCj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHBjYy0+bWRldl9pZCk7Cj4gK8KgwqDC
+oMKgwqDCoMKgcGNjLT5tZGV2LmZvcHMgPSAmcGNjX2ZvcHM7Cj4gK8KgwqDCoMKgwqDCoMKgcmMg
+PSBtaXNjX3JlZ2lzdGVyKCZwY2MtPm1kZXYpOwo+ICvCoMKgwqDCoMKgwqDCoGlmIChyYykgewo+
+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBkZXZfZXJyKGRldiwgIkNvdWxkbid0IHJl
+Z2lzdGVyIG1pc2MgZGV2aWNlXG4iKTsKPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+Z290byBlcnJfZnJlZV9pZGE7Cj4gK8KgwqDCoMKgwqDCoMKgfQoKSnVzdCBhIG5vdGUgdGhhdCB0
+aGlzIHN0aWxsIGlzbid0IGFjY291bnRpbmcgZm9yIGRpc2N1c3Npb24gb24gdGhlCnByZXZpb3Vz
+IHBvc3Rpbmcgb2YgdGhlIHNlcmllcyBwdXR0aW5nIHRoZSBkcml2ZXIgdW5kZXIKZHJpdmVycy9z
+b2MvYXNwZWVkOgoKaHR0cHM6Ly9sb3JlLmtlcm5lbC5vcmcvYWxsL2Y3MzY5ZDYyMDVlMDVjN2Fh
+YzNmM2RlN2NiZDA4YzNiMDg5NjBkNzUuY2FtZWxAY29kZWNvbnN0cnVjdC5jb20uYXUvCgpJZiB3
+ZSdyZSBub3QgZ29pbmcgdG8gdHJ5IG1ha2UgYSBjb21tb24gdXNlcnNwYWNlIGJlaGF2aW91ciBv
+dmVyIHRoZQpBc3BlZWQgc25vb3AgYW5kIFBDQyBmdW5jdGlvbnMgYW5kIHRoZSBOdXZvdG9uIEJQ
+QyBmdW5jdGlvbiB0aGVuIEkKdGhpbmsgdGhlIGJlaGF2aW91ciBvZiB0aGUgY2hhcmRldiBzaG91
+bGQgYXQgbGVhc3QgYmUgZG9jdW1lbnRlZC4gQnV0IEkKd291bGQgcmF0aGVyIHRoYXQgaXQgd2Vy
+ZSBjb21tb24gdG8gYXZvaWQgaGVhZGFjaGVzIGluIHVzZXJzcGFjZS4KCkFuZHJldwo=
 
-Ah, this is the reason this works for you (and the one in the kernel
-root). When I said it didn't work, I was referring to not being able
-to convincingly avoid these lints without disabling the check
-altogether. Let's see what Miguel thinks. I agree that the options
-are: extension trait + stubs/reexports + suppressing
-`incompatible_msrv` or just dropping the last patch until MSRV bump.
 
