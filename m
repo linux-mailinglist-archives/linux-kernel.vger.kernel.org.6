@@ -1,140 +1,173 @@
-Return-Path: <linux-kernel+bounces-565321-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565322-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCF76A665CB
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 02:58:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E6BCA665D0
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 02:59:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 38AB5188F713
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 01:57:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 668E63A1261
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 01:57:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5794914EC60;
-	Tue, 18 Mar 2025 01:57:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7B02186294;
+	Tue, 18 Mar 2025 01:57:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X6zQSoqR"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="hpNCSpJL"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02D00290F;
-	Tue, 18 Mar 2025 01:57:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94D6D17A30C;
+	Tue, 18 Mar 2025 01:57:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742263036; cv=none; b=qntDjaJg/owG4w+hzsna/XoD/rhi5b9Mo1tcjKjm5V12rf+pNy9wot9CtF5Lle36ISHb6PiWiXzw1deqT9p1VaOaKG+tM+lKRza/JMM0+8NsmSKAULuC4gHAlSJzPSx69Fu+H3LNlfNZkCz+48YbyXnVIOwqMwflGWDWrUSIHs0=
+	t=1742263041; cv=none; b=EDTgjaULobqUa1xAVWEkLGCe+14KCOTBzbPadVeBbCRXpmnw4AhFiKr2J4LBxuudOk20vmJUTBVYHMzM/GSXRYkW9zU35eY2j531WuUS/16aLE7NGovNHluSATHnrZ4oYe7Su2+wnV73PAuxoXSL40Sl7BFyRTTovFYbBRUORp8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742263036; c=relaxed/simple;
-	bh=j08dy6Ls6K1QUKVpOOpSx9Ni12kdiHmtqn2Gz5Oybw0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mt2enkCK4KwSDMCl13uNzvMyLWHlclNid1il8ZNNXEIYSGnXKg4o4Lff4Tnwfyt6PRh7L/4oKtxp2Vk9wdcfnom8O/wnr6DZmw5dVRW9gSXhz6x0elgGn4of1qbZchATNOQcGtpcEi1xG7HsXFOA3xbguNathB7WmZAbmjWPqj0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X6zQSoqR; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-5499e3ec54dso5160747e87.0;
-        Mon, 17 Mar 2025 18:57:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742263033; x=1742867833; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eE7qX8FuCLcfXgHupd4BYIbEoHm+HsFfQFBSZENcXDM=;
-        b=X6zQSoqRpPeDFhRwtSmbCiUNo66lIh+hre0L/VEhBDKdfeJLhwTBpuZl/QWuonOpIb
-         9dQv57ptW8woWV+wzuKSELlXSB0Ks+pGZtJSTDhOe3IzaOUvURqmUU3N565jsABGAY4R
-         RoWHAh2XhajI/BuNgdpU2iBQ8dU94oltFYZAC+weQq2K/0LUCjw2NK4Fq9pYwvSWv/LJ
-         qyBTwLfisR4vODh/GV8mgnN69rKtX/dM2pSkQRCE8gmZtjSx6H4fXry6FyJkcyRRyAnN
-         8V0Y0bYu/2NJfLmXQUY4k+4iwP6eLn2mtJXG7WTWOCT4zfd0rPrUdDgLVwf4II99hh69
-         tmrw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742263033; x=1742867833;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=eE7qX8FuCLcfXgHupd4BYIbEoHm+HsFfQFBSZENcXDM=;
-        b=TS/d166gRG7XBvj7EIfeZDIiA+FmOlctKLh3qK6CLKF0Lhf1ppYcJ63IuI5pR0404g
-         FQTuLio2ChEAIAKeJBP0YliruBSjzrAmFlKfQkwnv/71INXhB/NPl9ZVYqF+bHHa92Wv
-         3Wfz14NbyMinSNhNvj1zwRxFP4M6DJu4fSicSJ722DtK4dU8j6teF6jbFIQlAxsS4Qax
-         f1yYB3pLqIxPc6kjCnJLPoFh0YZA17sSP+tZJAommcq/b5rH2RubT6CHDcQ0RY0n/Rbj
-         TtotmnJJ6mM707q4aj5uov4MPzbqETncxzpYTPSIePGGankYBBavEU0vw90pN/6eSDB+
-         XRSA==
-X-Forwarded-Encrypted: i=1; AJvYcCUVRq1hq5P1Y+5eiO1RrO0nHD9KQemrHkjrscqalbDz9oCRR08yN5woNrP0yqG6r4n1J21QCjcqx2CVJ/U1Vy90@vger.kernel.org, AJvYcCWHApdHgLG3bcrAiyLno5aB4c5kPg/roLxjF6kxhqvBFV1AFKH02tj3GE3WROtwnr6lSiH9avE85ERWMQ==@vger.kernel.org, AJvYcCWQkCRbqjCaNHqaloENH/0RPB/Lqlq0RawDROJPv7fF3PN1zpXVwm9d0B6lUT+5xbB6T29qQnBFPaDtZwQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzUJDY3YAhXS5v24/8LCaWeUUBsEmfIgomz+VS/I1xrtUdStKNl
-	vPMQSeEjh+KK8QVRCQ4HTLh3C9g+RCYoVSGkWx541e4JUt1MHFNjqN2AyJ9udKGNDZ82q+fbIY6
-	NA4DCLAGjrW5NOI37bSjWk904MFzK/g==
-X-Gm-Gg: ASbGncsqPncRCYUq6rkFzmnF5MDhU/RluicQYnLxzNxuB/bgm5CdwFQ5n6+7AANjuZX
-	aPdtwOFl+/LbUcNE2wHbMiylyyCd0zqHfkxcQRSlzx371HEX7C0SR3KTD2le4EKGdV+xg29qLor
-	uJxZ64gws7Z6LkAPCKK5x1A7ULrNs=
-X-Google-Smtp-Source: AGHT+IHV3VMsmkp5g1hvQ1dAI+2OHwFGehDZeJZWpaqHPHNWDue+oqFrkH836Z70y/AALTvehw/mpTpqODtk/ZbEa04=
-X-Received: by 2002:a05:6512:10d6:b0:549:b0f3:43a0 with SMTP id
- 2adb3069b0e04-549c391a806mr8314430e87.27.1742263032621; Mon, 17 Mar 2025
- 18:57:12 -0700 (PDT)
+	s=arc-20240116; t=1742263041; c=relaxed/simple;
+	bh=/iBmV1cXQoWTW1R5ATObPFcGTqqYcJQHsoPrlpEpZ5A=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Z5XTK7QKlDxNTHBQu8CmWV05uEbdeY9Vz5qR+JoVA0vdfMeB+0oHVOKNZhS9DX4vuM2+psYYN9H6TTKbWfVsdUISau7kL71+1mYvQqvUg63a4IF/yOeBBTNjE1S2TE20E8oxUmTjOLiTcZs8yOMKDW/YKqTBY9Hy5PeeyNm8HPU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=hpNCSpJL; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52HKWmtU013021;
+	Tue, 18 Mar 2025 01:57:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=v8WC45
+	Oi6UTAujif7QXeW5fwBszpSKjT+aq0rVJo5hA=; b=hpNCSpJLklwprbY8IyD+lh
+	YNUVU/FgAhCJ5q53s0EDnB9/e/yFSr9VSTq3whnlveXSBEcSWG6Q7qCCj6M4mtxi
+	eERds/zWrepVsI3FXkAfyVcWc7JicltEWNLrXEI327410kh4F8tEj2LQXCc0npBG
+	w+NG9+z/99WHMef7b9NP92pAlgkUGXZnFbuqfbR+EBUWLyquMh06YvbmC3zCacek
+	TSIkuCrERtjCHXxgkir5Ha+5NwcKjh7VU0ZQWMntuF0sMvIqCdwJ7TtCabXiv/8k
+	JQ7c0L54Ig/cx9md5VwKCafBvw//UZD4rKD0AabCakFAzmhqANtWlfVx2SDKGPGQ
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45ec49dmqs-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 18 Mar 2025 01:57:05 +0000 (GMT)
+Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 52I1ustW018855;
+	Tue, 18 Mar 2025 01:57:05 GMT
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45ec49dmqp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 18 Mar 2025 01:57:04 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52HMCcQg009577;
+	Tue, 18 Mar 2025 01:57:03 GMT
+Received: from smtprelay06.dal12v.mail.ibm.com ([172.16.1.8])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 45dm8ysgun-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 18 Mar 2025 01:57:03 +0000
+Received: from smtpav03.dal12v.mail.ibm.com (smtpav03.dal12v.mail.ibm.com [10.241.53.102])
+	by smtprelay06.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52I1v3Ze33686128
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 18 Mar 2025 01:57:03 GMT
+Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 0326158056;
+	Tue, 18 Mar 2025 01:57:03 +0000 (GMT)
+Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 6F1BD5805A;
+	Tue, 18 Mar 2025 01:57:02 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.183.137])
+	by smtpav03.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Tue, 18 Mar 2025 01:57:02 +0000 (GMT)
+Message-ID: <7e7d730961ee65dd063755f6a1ff9aefdcdff430.camel@linux.ibm.com>
+Subject: Re: [RFC PATCH v1 3/7] ima: move INVALID_PCR() to ima.h
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Nicolai Stange <nstange@suse.de>,
+        Roberto Sassu
+ <roberto.sassu@huawei.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+Cc: Eric Snowberg <eric.snowberg@oracle.com>, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Mon, 17 Mar 2025 21:57:02 -0400
+In-Reply-To: <20250313173339.3815589-4-nstange@suse.de>
+References: <20250313173339.3815589-1-nstange@suse.de>
+	 <20250313173339.3815589-4-nstange@suse.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250316-nolibc-sparc-v1-1-2e97022d5e2c@weissschuh.net>
- <20250317073746.GB5114@1wt.eu> <dacaa712-08a8-4fd6-ad47-2226040f02aa@t-8ch.de>
- <20250317181402.GB8377@1wt.eu>
-In-Reply-To: <20250317181402.GB8377@1wt.eu>
-From: Chris Torek <chris.torek@gmail.com>
-Date: Mon, 17 Mar 2025 18:57:01 -0700
-X-Gm-Features: AQ5f1Jo5OANH4Dh7e4judxh1shyUPCsyiAeZ8qg50Am6PaK9PjuWJk5A1PlnCDo
-Message-ID: <CAPx1Gvd5JHE6c_de+ZGY4BLPw25Rn1jTd-G9XMhK9xn+cAfbJA@mail.gmail.com>
-Subject: Re: [PATCH] tools/nolibc: Add support for SPARC
-To: Willy Tarreau <w@1wt.eu>
-Cc: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>, 
-	Shuah Khan <shuah@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
-	Andreas Larsson <andreas@gaisler.com>, linux-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, sparclinux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: zqgMWr-Ui97ZSANoVVtI_CR8IQTTLhiE
+X-Proofpoint-ORIG-GUID: w5N93VrmQGHyaqgUAhq6136PR6usp9lG
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-18_01,2025-03-17_03,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 spamscore=0
+ adultscore=0 phishscore=0 bulkscore=0 lowpriorityscore=0
+ priorityscore=1501 suspectscore=0 mlxscore=0 impostorscore=0
+ malwarescore=0 mlxlogscore=955 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2502280000 definitions=main-2503180012
 
-On Mon, Mar 17, 2025 at 11:38=E2=80=AFAM Willy Tarreau <w@1wt.eu> wrote:
-> OK thanks, but that remains quite strange to me. How can we end up
-> here with such an unaligned stack ? At the very minimum I'd expect
-> all offsets to be multiple of 8.
+On Thu, 2025-03-13 at 18:33 +0100, Nicolai Stange wrote:
+> Make the INVALID_PCR() #define available to other compilation units
+> by moving it from ima_policy.c to ima.h and renaming it to
+> IMA_INVALID_PCR() in the course.
+>=20
+> Signed-off-by: Nicolai Stange <nstange@suse.de>
 
-It's a peculiar feature of the version 9 SPARC architecture and runtime.
-This also ties into your window save area question.  Let's start with these=
-:
+Restoring the IMA measurement list doesn't involve extending the TPM.  The =
+hash
+specific measurements have already been extended into the respective TPM ba=
+nks.
+Is this and the subsequent patch necessary?
 
- * There are 16 save-able registers in a window.
- * Before V9, registers were 32 bits wide.
- * V9 and later, registers are 64 bits wide.
- * Each stack frame must provide an area for register data.
+Mimi
 
-Now 32 bits =3D 4 bytes, times 16 regs =3D 64 bytes. So for V8 and lower, t=
-he
-register save area is  [%sp+0] through [%sp+63] inclusive.
 
-Now V9 comes along and we need 128 bytes. But we're going to
-run old V8 code in compatibility mode! How will we tell that some
-function f() is running in V8 mode instead of V9 mode? [footnote]
+> ---
+>  security/integrity/ima/ima.h        | 4 ++++
+>  security/integrity/ima/ima_policy.c | 5 +----
+>  2 files changed, 5 insertions(+), 4 deletions(-)
+>=20
+> diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+> index a4f284bd846c..1158a7b8bf6b 100644
+> --- a/security/integrity/ima/ima.h
+> +++ b/security/integrity/ima/ima.h
+> @@ -198,6 +198,10 @@ struct ima_iint_cache {
+>  	struct ima_digest_data *ima_hash;
+>  };
+> =20
+> +#define IMA_INVALID_PCR(a) (((a) < 0) || \
+> +	(a) >=3D (sizeof_field(struct ima_iint_cache, measured_pcrs) * 8))
+> +
+> +
+>  extern struct lsm_blob_sizes ima_blob_sizes;
+> =20
+>  static inline struct ima_iint_cache *
+> diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima=
+/ima_policy.c
+> index 128fab897930..d9e4210ea814 100644
+> --- a/security/integrity/ima/ima_policy.c
+> +++ b/security/integrity/ima/ima_policy.c
+> @@ -48,9 +48,6 @@
+>  #define HASH		0x0100
+>  #define DONT_HASH	0x0200
+> =20
+> -#define INVALID_PCR(a) (((a) < 0) || \
+> -	(a) >=3D (sizeof_field(struct ima_iint_cache, measured_pcrs) * 8))
+> -
+>  int ima_policy_flag;
+>  static int temp_ima_appraise;
+>  static int build_ima_appraise __ro_after_init;
+> @@ -1855,7 +1852,7 @@ static int ima_parse_rule(char *rule, struct ima_ru=
+le_entry *entry)
+>  			ima_log_string(ab, "pcr", args[0].from);
+> =20
+>  			result =3D kstrtoint(args[0].from, 10, &entry->pcr);
+> -			if (result || INVALID_PCR(entry->pcr))
+> +			if (result || IMA_INVALID_PCR(entry->pcr))
+>  				result =3D -EINVAL;
+>  			else
+>  				entry->flags |=3D IMA_PCR;
 
-Someone decided that the way to tell would be to use a deliberate
-weird alignment of the stack pointer. If the stack pointer was 7 mod 8,
-then we're in 64 bit V9 mode and [%sp+2047+0] through
-[%sp+2047+127] inclusive are the register save area. If not, it
-must be 0 mod 8 and we're in V8 mode and things are as before.
-
-Why 2047? Well, by observation, it's more common to need negative
-offsets from the stack pointer (for a large stack-area array for instance)
-than it is to need positive ones (register window save area and
-overflow function argument area beyond that). But the instruction
-set is more or less symmetric, with a 13-bit immediate constant
-offset of -4096 to +4095.  Solution: add some offset to the stack
-pointer so that function-stack memory is [%sp-4096] through [%sp+2046],
-a 6 kilobyte range instead of a 4k one.
-
-The stack offset therefore helps solve both problems: the offset
-indicates whether to use V8 or V9 register dump conventions
-and, at the same time, increases the amount of easily-accessed
-stack memory.
-
-[footnote] This provides the ability to dynamically link V8 and V9
-code together.  As far as I know this was never used, so that a per
-process mode bit suffices just as well. Still, the offset went in.
-
-Chris
 
