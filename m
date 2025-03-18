@@ -1,308 +1,110 @@
-Return-Path: <linux-kernel+bounces-565448-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565449-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0425CA66861
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 05:30:46 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18FD2A66862
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 05:32:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7ACF93B03BE
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 04:30:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 200627A4F8B
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 04:31:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62EA9190470;
-	Tue, 18 Mar 2025 04:30:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3128145B24;
+	Tue, 18 Mar 2025 04:31:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aM7QayES"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ufCJH+zi"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93F341EA73;
-	Tue, 18 Mar 2025 04:30:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE4461EA73
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 04:31:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742272238; cv=none; b=ND2TkOM2anVaWd686W6xYT9uJeHQZbhpcoiQwg4R72Jf/f/TQQvohfQC1W6NQjnXmQrLUOSgFLDu8JGWiKNV7Q6SUwGIonlCpshYiqpMBd0HKQylkYGhpgMsrHS/gyIbI2lFIpAW2hknYqFfQzOjVjamoc4RgQhyV59M5CDrW/Y=
+	t=1742272317; cv=none; b=dcAnJQcp5o/9aFBqjACeuU0jYvVwwaoFRiYjx1Ak7OXN8ygpRMmRwL8CaCa1gUzsjVEcEQP7JvxHijnnFpKNPmemS2PWqcS0oNtv8R3LoD/hNUkkk0yjLaZsp6VKUdpkLqQ6K/JfUl9bXATcCkQZpHnSfLGP83Iwvi3qrW1mrSk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742272238; c=relaxed/simple;
-	bh=BuW8ZREzm4bWfSsImU71MMuDMBa4txYGx2mqLkO3lew=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=smjdzZKxAfbFgn0id3HbWVqRJLalUNkTDmFcCmIXRnzpnq1xwZNfTqxYZFlBRl4m5cyQBFtFLOEw5/o8neeArV9se3YQUs9x/Y6edLKtIcHs7NnkS3G+lrcsbTrvIDyHalwNC2STgYND3PMEJpPJcovfuhCfA0/z7RbLvAegix8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aM7QayES; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 731EFC4CEDD;
-	Tue, 18 Mar 2025 04:30:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742272238;
-	bh=BuW8ZREzm4bWfSsImU71MMuDMBa4txYGx2mqLkO3lew=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=aM7QayESxnYT0wN44/cKR/Dtqqwc0CYeMAwYECmIltqH/WcGHs1NExu+OQSCrax2P
-	 HvlBrp8p2tAyN67KPVgzynBGogjQLlagYNWioEetEecXQxpXEHf2tmH7t+bIXzh1J+
-	 KWE1AmLwXxHBQzP/7jSYzAPguinFluk2OdLgiVJKXnSCDdOznTSIfGnPZL71Cts0t6
-	 65lwyoAv1hptv814qK5ZF6Wm6rxsi0sXuYCVfkI6DIMxkNGDHq1ynYf2byEMogNCDN
-	 0rNgpCIvQ2KxUego6matlwXLJhNgdyMlp8n9X40xPQA0/Qt1e+DTrGBbxT5xbEmRja
-	 howXfJFqT3O3w==
-Message-ID: <6192b12d-43fb-44d9-9e7b-0c4e2da541c9@kernel.org>
-Date: Mon, 17 Mar 2025 23:30:30 -0500
+	s=arc-20240116; t=1742272317; c=relaxed/simple;
+	bh=+UkeB7YpP0OBVMmI/mJkEjigeE+kVTwIpdr350ZRFLY=;
+	h=Date:Message-Id:Mime-Version:Subject:From:To:Content-Type; b=dr0/IpQ7A6uCokISKO39k79g69enXTqZtmrS5FFROvYpZW2uXfE0BoOdV4MBnsG4oWY8+kAcMXMu+EIc8Q48AILKysYJHbkp8OWdpZBiBRh0XrY4QKXW/iJYxZY0rG3538nijlg9B/u1fo+zK9jjBFmVpx0DCYGFbQTcuuS/ygw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ufCJH+zi; arc=none smtp.client-ip=209.85.128.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6fec94421f8so78698437b3.0
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 21:31:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1742272315; x=1742877115; darn=vger.kernel.org;
+        h=to:from:subject:mime-version:message-id:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=DLgrXyVAAq0ptL7ULtEAJamCo17E8DS8LodpQQRTOTU=;
+        b=ufCJH+ziZ16P9Hn6Dr6zKhgi1pzVH5YmUrEyJz0BSKSWuX8N4SXrWV7U+XXLkJaRE/
+         +IYRw06Ezn3FqE2nL24h8o6LifDfXTCPaqlRd2LLLrmqGphxVht4kagnezDMONEGrof2
+         nd24VjMazcqbAwBPcHR01VVnGHWrblBXben1q2nAoeOo4idMND/wV7ELsX/BiCGAoTJF
+         hF721d8TL55cA6vHaGHYkuTrqEfySdWkpLlC430a8mNrrnXGjCcnvSFRwVQ12AnlZCUt
+         mVFbq+6Mr6H44KRNM7FJg7i5zIO9FJjR4mRmInl4BLGkNcKBDZnPEIt6CoSs3QnyEy23
+         9wHQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742272315; x=1742877115;
+        h=to:from:subject:mime-version:message-id:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=DLgrXyVAAq0ptL7ULtEAJamCo17E8DS8LodpQQRTOTU=;
+        b=KY2WmXSkL3SsPu1wYuiCsCJg77Ou6HWrYLwelsSpCjhfNy+IQDyrScep/lte9m3dbq
+         DkI6rPk0B6XhNf1ngheWztpKrbCOi9vClc2oUcO/KkOgIdotdN2NsVaifKlGRZ39uTVG
+         k9HarjxUAEf289RIId6t5b0EWqy8ZIjN/W3gxtdupTdGyHrnHYWym+ESD+8zgxwvuOPx
+         H8koRZ2vkl8yjpLNSp5ccb010bHViGD+HV6TxUJ8WfD/SotZkgJH9dfXxDBRD4N4mSKg
+         V9/Aqpj7FL6miuQekX9IrDVYa0/RJwuGtvG+dgWugjEBDVn5qSyQgI6ER/z63ivLIjZu
+         2nWQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWjtv9oXRfe1xxto9LeN3mKs/yWO8gOB4ae+2rsflpKz9wdCgYeVWZCQzc3Piu6bESj48XJWvtvIn6tacA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw2JoYeDzStoIddQo3dlhjnv0VAxCSklkaT30VC8y8bXjxtwOf3
+	jEHhRSAFlZIUd6OSdfwbfSh+5RbfSWEXTvry06BbtfuF1N1PpA7IKPkBjtN1RIXrd91LKw8csDv
+	wNMmkdw==
+X-Google-Smtp-Source: AGHT+IEKgnscg/W60T4TaV9VDLaP6m+5M5ZZxzZN444+f2mNJwgVIaBoIcQw25QmOjtfOFXKSxSPAmw5TKz6
+X-Received: from irogers.svl.corp.google.com ([2620:15c:2c5:11:ef29:15ce:a42a:b69f])
+ (user=irogers job=sendgmr) by 2002:a05:690c:6302:b0:6fd:4950:1784 with SMTP
+ id 00721157ae682-6ff45e39b85mr905207b3.2.1742272314725; Mon, 17 Mar 2025
+ 21:31:54 -0700 (PDT)
+Date: Mon, 17 Mar 2025 21:31:48 -0700
+Message-Id: <20250318043151.137973-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 3/6 RESEND] platform/x86: Add Lenovo WMI Events Driver
-To: "Derek J. Clark" <derekjohn.clark@gmail.com>,
- Hans de Goede <hdegoede@redhat.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: Armin Wolf <W_Armin@gmx.de>, Jonathan Corbet <corbet@lwn.net>,
- Luke Jones <luke@ljones.dev>, Xino Ni <nijs1@lenovo.com>,
- Zhixin Zhang <zhangzx36@lenovo.com>, Mia Shao <shaohz1@lenovo.com>,
- Mark Pearson <mpearson-lenovo@squebb.ca>,
- "Pierre-Loup A . Griffais" <pgriffais@valvesoftware.com>,
- "Cody T . -H . Chiu" <codyit@gmail.com>, John Martens <johnfanv2@gmail.com>,
- platform-driver-x86@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250317144326.5850-1-derekjohn.clark@gmail.com>
- <20250317144326.5850-4-derekjohn.clark@gmail.com>
-Content-Language: en-US
-From: Mario Limonciello <superm1@kernel.org>
-In-Reply-To: <20250317144326.5850-4-derekjohn.clark@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.49.0.rc1.451.g8f38331e32-goog
+Subject: [PATCH v2 0/3] dso__data asan and test fixes
+From: Ian Rogers <irogers@google.com>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Kan Liang <kan.liang@linux.intel.com>, Athira Rajeev <atrajeev@linux.vnet.ibm.com>, 
+	Stephen Brennan <stephen.s.brennan@oracle.com>, James Clark <james.clark@linaro.org>, 
+	Yunseong Kim <yskelg@gmail.com>, linux-perf-users@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
+The dso__data logic could deadlock with itself when build with asan or
+reference count checking due to trying to recurively take a
+non-recursive mutex. Use clang's thread safety analysis to find/fix
+the problem. Running the tests would fail with -F no-fork mode as a
+file descriptor wasn't cleaned up.
 
+v2: Remove an unnecessary if as suggested by Namhyung.
 
-On 3/17/25 09:43, Derek J. Clark wrote:
-> Adds lenovo-wmi-events driver. The events driver is designed as a
-> general entrypoint for all Lenovo WMI Events. It acts as a notification
-> chain head that will process event data and pass it on to registered
-> drivers so they can react to the events.
-> 
-> Currently only the Gamezone interface Thermal Mode Event GUID is
-> implemented in this driver. It is documented in the Gamezone
-> documentation.
-> 
-> Suggested-by: Armin Wolf <W_Armin@gmx.de>
-> Signed-off-by: Derek J. Clark <derekjohn.clark@gmail.com>
+Ian Rogers (3):
+  perf mutex: Add annotations for LOCKS_EXCLUDED and LOCKS_RETURNED
+  perf dso: Use lock annotations to fix asan deadlock
+  perf test dso-data: Correctly free test file in read test
 
-Reviewed-by: Mario Limonciello <mario.limonciello@amd.com>
+ tools/perf/tests/dso-data.c              | 28 ++++-----
+ tools/perf/util/dso.c                    | 74 +++++++++++++++---------
+ tools/perf/util/dso.h                    | 15 +++--
+ tools/perf/util/mutex.h                  |  8 +++
+ tools/perf/util/unwind-libunwind-local.c | 16 ++---
+ 5 files changed, 86 insertions(+), 55 deletions(-)
 
-> ---
-> v4:
->   - Remove the Thermal Mode Event GUID from Gamezone and add this driver.
-> ---
->   MAINTAINERS                              |   2 +
->   drivers/platform/x86/Kconfig             |   4 +
->   drivers/platform/x86/Makefile            |   1 +
->   drivers/platform/x86/lenovo-wmi-events.c | 132 +++++++++++++++++++++++
->   drivers/platform/x86/lenovo-wmi-events.h |  21 ++++
->   5 files changed, 160 insertions(+)
->   create mode 100644 drivers/platform/x86/lenovo-wmi-events.c
->   create mode 100644 drivers/platform/x86/lenovo-wmi-events.h
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 3a370a18b806..6dde75922aaf 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -13164,6 +13164,8 @@ L:	platform-driver-x86@vger.kernel.org
->   S:	Maintained
->   F:	Documentation/wmi/devices/lenovo-wmi-gamezone.rst
->   F:	Documentation/wmi/devices/lenovo-wmi-other.rst
-> +F:	drivers/platform/x86/lenovo-wmi-events.c
-> +F:	drivers/platform/x86/lenovo-wmi-events.h
->   F:	drivers/platform/x86/lenovo-wmi-helpers.c
->   F:	drivers/platform/x86/lenovo-wmi-helpers.h
->   
-> diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
-> index bece1ba61417..13b8f4ac5dc5 100644
-> --- a/drivers/platform/x86/Kconfig
-> +++ b/drivers/platform/x86/Kconfig
-> @@ -459,6 +459,10 @@ config IBM_RTL
->   	 state = 0 (BIOS SMIs on)
->   	 state = 1 (BIOS SMIs off)
->   
-> +config LENOVO_WMI_EVENTS
-> +	tristate
-> +	depends on ACPI_WMI
-> +
->   config LENOVO_WMI_HELPERS
->   	tristate
->   	depends on ACPI_WMI
-> diff --git a/drivers/platform/x86/Makefile b/drivers/platform/x86/Makefile
-> index 5a9f4e94f78b..fc039839286a 100644
-> --- a/drivers/platform/x86/Makefile
-> +++ b/drivers/platform/x86/Makefile
-> @@ -69,6 +69,7 @@ obj-$(CONFIG_THINKPAD_LMI)	+= think-lmi.o
->   obj-$(CONFIG_YOGABOOK)		+= lenovo-yogabook.o
->   obj-$(CONFIG_YT2_1380)		+= lenovo-yoga-tab2-pro-1380-fastcharger.o
->   obj-$(CONFIG_LENOVO_WMI_CAMERA)	+= lenovo-wmi-camera.o
-> +obj-$(CONFIG_LENOVO_WMI_EVENTS)	+= lenovo-wmi-events.o
->   obj-$(CONFIG_LENOVO_WMI_HELPERS)	+= lenovo-wmi-helpers.o
->   
->   # Intel
-> diff --git a/drivers/platform/x86/lenovo-wmi-events.c b/drivers/platform/x86/lenovo-wmi-events.c
-> new file mode 100644
-> index 000000000000..3ea0face3c0d
-> --- /dev/null
-> +++ b/drivers/platform/x86/lenovo-wmi-events.c
-> @@ -0,0 +1,132 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later
-> +/*
-> + * Lenovo WMI Events driver. Lenovo WMI interfaces provide various
-> + * hardware triggered events that many drivers need to have propagated.
-> + * This driver provides a uniform entrypoint for these events so that
-> + * any driver that needs to respond to these events can subscribe to a
-> + * notifier chain.
-> + *
-> + * Copyright(C) 2025 Derek J. Clark <derekjohn.clark@gmail.com>
-> + */
-> +
-> +#include <linux/list.h>
-> +#include <linux/notifier.h>
-> +#include <linux/types.h>
-> +#include <linux/wmi.h>
-> +#include "lenovo-wmi-events.h"
-> +
-> +/* Interface GUIDs */
-> +#define THERMAL_MODE_EVENT_GUID "D320289E-8FEA-41E0-86F9-911D83151B5F"
-> +
-> +#define LENOVO_WMI_EVENT_DEVICE(guid, type)                        \
-> +	.guid_string = (guid), .context = &(enum lwmi_events_type) \
-> +	{                                                          \
-> +		type                                               \
-> +	}
-> +
-> +static BLOCKING_NOTIFIER_HEAD(events_chain_head);
-> +
-> +struct lwmi_events_priv {
-> +	struct wmi_device *wdev;
-> +	enum lwmi_events_type type;
-> +};
-> +
-> +/* Notifier Methods */
-> +int lwmi_events_register_notifier(struct notifier_block *nb)
-> +{
-> +	return blocking_notifier_chain_register(&events_chain_head, nb);
-> +}
-> +EXPORT_SYMBOL_NS_GPL(lwmi_events_register_notifier, "LENOVO_WMI_EVENTS");
-> +
-> +int lwmi_events_unregister_notifier(struct notifier_block *nb)
-> +{
-> +	return blocking_notifier_chain_unregister(&events_chain_head, nb);
-> +}
-> +EXPORT_SYMBOL_NS_GPL(lwmi_events_unregister_notifier, "LENOVO_WMI_EVENTS");
-> +
-> +static void devm_lwmi_events_unregister_notifier(void *data)
-> +{
-> +	struct notifier_block *nb = data;
-> +
-> +	lwmi_events_unregister_notifier(nb);
-> +}
-> +
-> +int devm_lwmi_events_register_notifier(struct device *dev,
-> +				       struct notifier_block *nb)
-> +{
-> +	int ret;
-> +
-> +	ret = lwmi_events_register_notifier(nb);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	return devm_add_action_or_reset(dev,
-> +				devm_lwmi_events_unregister_notifier, nb);
-> +}
-> +EXPORT_SYMBOL_NS_GPL(devm_lwmi_events_register_notifier, "LENOVO_WMI_EVENTS");
-> +
-> +/* Driver Methods */
-> +static void lwmi_events_notify(struct wmi_device *wdev, union acpi_object *obj)
-> +{
-> +	struct lwmi_events_priv *priv = dev_get_drvdata(&wdev->dev);
-> +	int sel_prof;
-> +	int ret;
-> +
-> +	switch (priv->type) {
-> +	case THERMAL_MODE_EVENT:
-> +		if (obj->type != ACPI_TYPE_INTEGER)
-> +			return;
-> +
-> +		sel_prof = obj->integer.value;
-> +		ret = blocking_notifier_call_chain(&events_chain_head,
-> +						   THERMAL_MODE_EVENT, &sel_prof);
-> +		if (ret == NOTIFY_BAD)
-> +			dev_err(&wdev->dev,
-> +				"Failed to send notification to call chain for WMI Events\n");
-> +		break;
-> +	default:
-> +		return;
-> +	}
-> +}
-> +
-> +static int lwmi_events_probe(struct wmi_device *wdev, const void *context)
-> +{
-> +	struct lwmi_events_priv *priv;
-> +
-> +	priv = devm_kzalloc(&wdev->dev, sizeof(*priv), GFP_KERNEL);
-> +	if (!priv)
-> +		return -ENOMEM;
-> +
-> +	if (!context)
-> +		return -EINVAL;
-> +
-> +	priv->wdev = wdev;
-> +	priv->type = *(enum lwmi_events_type *)context;
-> +
-> +	dev_set_drvdata(&wdev->dev, priv);
-> +	return 0;
-> +}
-> +
-> +static const struct wmi_device_id lwmi_events_id_table[] = {
-> +	{ LENOVO_WMI_EVENT_DEVICE(THERMAL_MODE_EVENT_GUID,
-> +				  THERMAL_MODE_EVENT) },
-> +	{}
-> +};
-> +
-> +static struct wmi_driver lwmi_events_driver = {
-> +	.driver = {
-> +		.name = "lenovo_wmi_events",
-> +		.probe_type = PROBE_PREFER_ASYNCHRONOUS,
-> +	},
-> +	.id_table = lwmi_events_id_table,
-> +	.probe = lwmi_events_probe,
-> +	.notify = lwmi_events_notify,
-> +	.no_singleton = true,
-> +};
-> +
-> +module_wmi_driver(lwmi_events_driver);
-> +
-> +MODULE_DEVICE_TABLE(wmi, lwmi_events_id_table);
-> +MODULE_AUTHOR("Derek J. Clark <derekjohn.clark@gmail.com>");
-> +MODULE_DESCRIPTION("Lenovo WMI Events Driver");
-> +MODULE_LICENSE("GPL");
-> diff --git a/drivers/platform/x86/lenovo-wmi-events.h b/drivers/platform/x86/lenovo-wmi-events.h
-> new file mode 100644
-> index 000000000000..a3fa934eaa10
-> --- /dev/null
-> +++ b/drivers/platform/x86/lenovo-wmi-events.h
-> @@ -0,0 +1,21 @@
-> +/* SPDX-License-Identifier: GPL-2.0-or-later
-> + *
-> + * Copyright(C) 2025 Derek J. Clark <derekjohn.clark@gmail.com>
-> + */
-> +
-> +#include <linux/notifier.h>
-> +#include <linux/types.h>
-> +
-> +#ifndef _LENOVO_WMI_EVENTS_H_
-> +#define _LENOVO_WMI_EVENTS_H_
-> +
-> +enum lwmi_events_type {
-> +	THERMAL_MODE_EVENT = 1,
-> +};
-> +
-> +int lwmi_events_register_notifier(struct notifier_block *nb);
-> +int lwmi_events_unregister_notifier(struct notifier_block *nb);
-> +int devm_lwmi_events_register_notifier(struct device *dev,
-> +				       struct notifier_block *nb);
-> +
-> +#endif /* !_LENOVO_WMI_EVENTS_H_ */
+-- 
+2.49.0.rc1.451.g8f38331e32-goog
 
 
