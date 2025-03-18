@@ -1,155 +1,150 @@
-Return-Path: <linux-kernel+bounces-566773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566793-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3B69A67C4F
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 19:54:28 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FEAFA67C8B
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 20:02:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC6C93B96C9
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 18:54:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8BA5E19C389A
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 19:03:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 294E6211A3D;
-	Tue, 18 Mar 2025 18:54:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 445322139C8;
+	Tue, 18 Mar 2025 19:02:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tgr1jxaU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ywI64C/m";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="L3CPCY6z"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75C741898FB;
-	Tue, 18 Mar 2025 18:54:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 789A21D63CD;
+	Tue, 18 Mar 2025 19:02:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742324060; cv=none; b=TLn0X9m3zV5K6+u5PdvDFpTNltdN7E1nHl0o1/qC2pfYkcCa20Ox2maJEVfNZ34jakk1SezQ9xWaozlEvEF2e8S7XH0FKQhxxnkMKCmsWf3vfbY4qB15sN2lsDRtWNz/dvHK3CCk+j6N5vijafjlXzUzRQTFex7WviOPvRjdeRM=
+	t=1742324540; cv=none; b=Ju1S0FNpJ4CUS0wcPqTgb4s3Z3+PKlQ5wR1/UL7Qv82yhZDV+kKHrTQVcP6L4FuGbkBl10D36jj/grA4msxD6HQFBkb2+H3fXmeOuyOYzAzfGug5nbc3Pmeb/vL1zGWo5YDdukzws/lWIvwvul3c4RsThQZBIzVD0Zpx+DvidW0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742324060; c=relaxed/simple;
-	bh=O23vvaesE9TG13bOJkKyDesmG9gO+6GvQMeyiKeQed4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=s5+dk2C0mrdOTMhpLxqCEqo9cIFVekLnkIV4MAw4hQ07MGbQJSpyDpqfwkHhAWmuTJrGWHgcxSriVGp7LdhCbZjkz4DGgKk6Qh7IyRS5Ni9XKoZb8nX1xHL4q2yOgHGeHPOrqnDR4ggLp7knojWEWtx5SeDGQTn0absQU+9hPe0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Tgr1jxaU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ECC03C4CEDD;
-	Tue, 18 Mar 2025 18:54:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742324060;
-	bh=O23vvaesE9TG13bOJkKyDesmG9gO+6GvQMeyiKeQed4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Tgr1jxaUKVydwCBocumoth6rTi/HDOLe4qshroG++A7dtTAu02N3OOpevzLUf2bqT
-	 GnbgMdL38vST3fAnyr2RIlvqCPo9kRoaLcJOOZvK7Cs4R5sQQWUgUX1oJpW572k8ft
-	 kVESDRzg/zU6Qw48txNKYu4Wjah3LyLFhTsJ2HKtexJJTKcNPQqBBOLts5NUuwMl9Z
-	 ulWp8SYe4zboMHuM5kKxByjr+B03Drsn35qNLLbNmuEUjU6V6U4pQKiyHAUU3XPxSh
-	 0ETZ2cha0EZoIkQiHX35w+rRpMBCMlLIyF91L7ecklG+ehbnE3HC+OzrwbTMfU0FgV
-	 j1TpGt1+1jocw==
-Message-ID: <2507f003-c4f1-44be-93cd-176697f0bc8c@kernel.org>
-Date: Tue, 18 Mar 2025 19:54:15 +0100
+	s=arc-20240116; t=1742324540; c=relaxed/simple;
+	bh=KeKv9yBzckGL1DbKLcNxhQlKyhJZhjwQhjZdD2InWuE=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=kcidowGWDzPXc4K6X8ZuAhn/BmeJFHS/ELqzisAEthYMe1SWUXxLgff8TKbL9nlEB8UliNPDccCWUQBBqzpsAVxWDqy23WpABCpn1i/eaNHJrypCZXnjI5ByLXFjsw38brmt/lt7PHU6ggCaLY7OHAf5RGtrG44tfBpKAlFnP+U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ywI64C/m; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=L3CPCY6z; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 18 Mar 2025 18:54:20 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1742324067;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=K/F9CV9HjZs/fV+lN4zy7fMkf2qGn9QGyAA84KyYvwE=;
+	b=ywI64C/mGyqKFJQpBwD17Nk6bSM0ut+xq9GCUUOpv7RiaQ1tIThR0s+svy7Cj/5Te+t4fE
+	Oju3rD3a0AlrpxnMf1/KULRFal6KxYeFYNpAQsV8abqf8plOb0TC7cyLegqLRPbcmfh7zC
+	O/RRh7+a/qxs+kT+2uOlitpvMc+H7GG51PJNzL6rD1Zi7dIriMzvcKcDOfKF/Uj1xps19v
+	hqCmAmAuiYRPK2FBcIq09Ugg1TEQhbDKZMta1+6n5PmdVTXVV3pglGF+znIeZqFdzOlEY9
+	CKrX2WcZVcsbY9cjFY6KZoCoASCWh2+DkY8mUWkYXYudMjeV5mvwTVST/f/kIA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1742324067;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=K/F9CV9HjZs/fV+lN4zy7fMkf2qGn9QGyAA84KyYvwE=;
+	b=L3CPCY6zWPjVM/Wf31KWZXXJF6RoMv16uyAWURjyoi6ssjBSxNvTzxqR/cyUGudORiv4QY
+	Z+5TEMjZfTL+ogCw==
+From: "tip-bot2 for Sohil Mehta" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/cpu] x86/cpu/intel: Limit the non-architectural
+ constant_tsc model checks
+Cc: Sohil Mehta <sohil.mehta@intel.com>, Ingo Molnar <mingo@kernel.org>,
+ Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250219184133.816753-14-sohil.mehta@intel.com>
+References: <20250219184133.816753-14-sohil.mehta@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/3] leds: add new LED driver for TI LP5812
-To: Nam Tran <trannamatk@gmail.com>, krzk+dt@kernel.org
-Cc: pavel@kernel.org, lee@kernel.org, robh@kernel.org, conor+dt@kernel.org,
- devicetree@vger.kernel.org, linux-leds@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250306172126.24667-4-trannamatk@gmail.com>
- <20250318133508.4531-1-trannamatk@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20250318133508.4531-1-trannamatk@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Message-ID: <174232406170.14745.11104170478814576697.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On 18/03/2025 14:35, Nam Tran wrote:
-> From: Nam Tran <trannamatk@gmail.com>
-> To: Krzysztof Kozlowski <krzk+dt@kernel.org>
-> Cc: Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org> Pavel Machek <pavel@kernel.org>, Lee Jones <lee@kernel.org>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-> 
-> I sincerely apologize for not addressing all of your previous comments earlier. That was not my intention, and I truly appreciate the time and effort you have put into reviewing my patch. Below, I would like to properly address your concerns.
-> 
-> On Fri, Mar 07, 2025 at 12:21:26AM +0700, Nam Tran wrote:
->> The chip can drive LED matrix 4x3.
->> This driver enables LED control via I2C.
-> 
-> You still did not respond to comments from v1. I don't see it being addressed.
-> 
-> Nam: I am sorry. This is my mistake. I think that I just need to update source code based on your comments and submit a new patch. This is the first time I try to update a new thing to the Linux Kernel. I will give answer inline your message for tracing easily.
-> 
-> In previous comment you have a question
->  "Why none of the 10 existing drivers fit for your device?"
-> 
-> Nam: I have carefully reviewed the existing LED drivers in the kernel, but none of them fully support the advanced capabilities of the LP5812. Unlike basic LED controllers, the LP5812 has difference features and register
-> For more detail, please refer to this documentation https://www.ti.com/lit/ds/symlink/lp5812.pdf?ts=1741765622088&ref_url=https%253A%252F%252Fwww.ti.com%252Fproduct%252FLP5812
+The following commit has been merged into the x86/cpu branch of tip:
 
-So you read my question and decided to not give an answer. Great.
+Commit-ID:     08d9bb5b0d89826fedc5204c8bd2463220465996
+Gitweb:        https://git.kernel.org/tip/08d9bb5b0d89826fedc5204c8bd2463220465996
+Author:        Sohil Mehta <sohil.mehta@intel.com>
+AuthorDate:    Wed, 19 Feb 2025 18:41:31 
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Tue, 18 Mar 2025 19:33:47 +01:00
 
-The burden of proving this is on you. Do not expect me to read this and
-10 other datasheets for existing LP devices. Maybe they fit, maybe they
-don't but based on style of this submission and style of the code I feel
-you just want to push your patches instead of integrate.
+x86/cpu/intel: Limit the non-architectural constant_tsc model checks
 
-That's not how it works.
+X86_FEATURE_CONSTANT_TSC is a Linux-defined, synthesized feature flag.
+It is used across several vendors. Intel CPUs will set the feature when
+the architectural CPUID.80000007.EDX[1] bit is set. There are also some
+Intel CPUs that have the X86_FEATURE_CONSTANT_TSC behavior but don't
+enumerate it with the architectural bit.  Those currently have a model
+range check.
 
+Today, virtually all of the CPUs that have the CPUID bit *also* match
+the "model >= 0x0e" check. This is confusing. Instead of an open-ended
+check, pick some models (INTEL_IVYBRIDGE and P4_WILLAMETTE) as the end
+of goofy CPUs that should enumerate the bit but don't.  These models are
+relatively arbitrary but conservative pick for this.
 
+This makes it obvious that later CPUs (like Family 18+) no longer need
+to synthesize X86_FEATURE_CONSTANT_TSC.
 
-> 
->>
->> The driver is implemented in two parts:
->> - Core driver logic in leds-lp5812.c
->> - Common support functions in leds-lp5812-common.c
-> 
-> Why do you make two modules? This looks really unneccessary. Just compile them into one module. No, use proper kerneldoc Missing kerneldoc. Every exported symbol must have kerneldoc. Why this is not static?
-> 
-> Nam: I will merge source code into a file only. Therefore, I don’t need to export symbols here.
+Signed-off-by: Sohil Mehta <sohil.mehta@intel.com>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lore.kernel.org/r/20250219184133.816753-14-sohil.mehta@intel.com
+---
+ arch/x86/kernel/cpu/intel.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-I cannot parse this. Use standard email quotes and replies. Like every
-email client since 30 years.
-
-Best regards,
-Krzysztof
+diff --git a/arch/x86/kernel/cpu/intel.c b/arch/x86/kernel/cpu/intel.c
+index 2181304..4cbb2e6 100644
+--- a/arch/x86/kernel/cpu/intel.c
++++ b/arch/x86/kernel/cpu/intel.c
+@@ -201,10 +201,6 @@ static void early_init_intel(struct cpuinfo_x86 *c)
+ {
+ 	u64 misc_enable;
+ 
+-	if ((c->x86 == 0xf && c->x86_model >= 0x03) ||
+-		(c->x86 == 0x6 && c->x86_model >= 0x0e))
+-		set_cpu_cap(c, X86_FEATURE_CONSTANT_TSC);
+-
+ 	if (c->x86 >= 6 && !cpu_has(c, X86_FEATURE_IA64))
+ 		c->microcode = intel_get_microcode_revision();
+ 
+@@ -257,10 +253,16 @@ static void early_init_intel(struct cpuinfo_x86 *c)
+ 	 *
+ 	 * It is also reliable across cores and sockets. (but not across
+ 	 * cabinets - we turn it off in that case explicitly.)
++	 *
++	 * Use a model-specific check for some older CPUs that have invariant
++	 * TSC but may not report it architecturally via 8000_0007.
+ 	 */
+ 	if (c->x86_power & (1 << 8)) {
+ 		set_cpu_cap(c, X86_FEATURE_CONSTANT_TSC);
+ 		set_cpu_cap(c, X86_FEATURE_NONSTOP_TSC);
++	} else if ((c->x86_vfm >= INTEL_P4_PRESCOTT && c->x86_vfm <= INTEL_P4_WILLAMETTE) ||
++		   (c->x86_vfm >= INTEL_CORE_YONAH  && c->x86_vfm <= INTEL_IVYBRIDGE)) {
++		set_cpu_cap(c, X86_FEATURE_CONSTANT_TSC);
+ 	}
+ 
+ 	/* Penwell and Cloverview have the TSC which doesn't sleep on S3 */
 
