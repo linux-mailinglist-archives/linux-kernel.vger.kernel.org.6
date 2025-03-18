@@ -1,147 +1,121 @@
-Return-Path: <linux-kernel+bounces-566714-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566716-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 600D9A67B99
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 19:07:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 851B1A67BA5
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 19:08:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C2D3A19C71DD
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 18:05:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C141A3BB56B
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 18:05:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22E54214212;
-	Tue, 18 Mar 2025 18:03:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA3B7211A0C;
+	Tue, 18 Mar 2025 18:04:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZT2M8kRa"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HogBgfUN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7C772147E3
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 18:03:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 183B6169AE6
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 18:04:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742321003; cv=none; b=KwyvzXP/bcjwg0RMGP12aE3Sw/FHWR/ZLy4fiXHcu03aW92OtljFWVWa4YlCfytllCRzIL2VSaYnd7ju+wh4ojhwaSNbCYeze7lcU1ATilcBt1GmaygivNhYG+JBssL7t8ob2XXfQ6LFl4LCZ19WENaIqCABJ43wkVRbViUJOVs=
+	t=1742321076; cv=none; b=iYE3iDtHAuf0wooYcKv/FATfjHWMdUFWKkTjjy+CNMqdB/5JTxVqf3hGMdb0ssPp9m5agHq0KPvI18ej6FwkZgyehS3TgL1z62feFVA1zmu1fSngIYKCsd40WNQyPTTlV4wfiP57clYVwQXNj14C7yNZYYhTwGqYXkk5VYDJQrw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742321003; c=relaxed/simple;
-	bh=vIjqe14c0RNfUySlFRGhO3NbU8KsbO/xK6TEyVXoxlM=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=F/EimshqyWmXFUIVr5+JB+S7r1mfi1YObmmlf7wxls72FCCjInIa7jaeBEJY6Mlq7Loj8WusH9Wo1JOZEI+DkbVUVShGuyCpSQjkOk06y97akBfGJ83DSgst0nazo+717U5lgFlgJSYHK/Dyd+xU1rc6Y9QE0TDsaqzW/Hlsq/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ZT2M8kRa; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2feb47c6757so3893431a91.3
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 11:03:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1742321001; x=1742925801; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=IT302M+FVQY9sewvC6bjI5Mn+MvLFGrIcg+szg8Yono=;
-        b=ZT2M8kRabwlk2iEhwXRhS/ppHqgPlmvR/kYjd9Yl0boL3tSWUaaw5FWAuE8gUR734N
-         mF7FZBlECbzEznbxkwnP5KY7+BhoX3LZlJTqzO8ulVVI2FpbGSLpIWjdiKudAFKivuzN
-         4znVISczHY+rqdXaEMyM6qGzVt253O1rlzv4bHbhI7t+V/OAEAuEPpRNWQ/UV8MYgBEw
-         70pQ8hHiW6ugNjdo8z+dcnmoVC1hSx+djUFCQye17EGUneazVMwACnR/7WKpDwQAigDI
-         t4mk81yPwgFF54zaBVkuJ5L5y0rYZd9Cqy90r6MRryBttXiRY2S+6ez2MNrjkLwcBb9m
-         9QYg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742321001; x=1742925801;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=IT302M+FVQY9sewvC6bjI5Mn+MvLFGrIcg+szg8Yono=;
-        b=cUyXCQvptXjnNlJSQUoYqgyItxgKkg/VG8gn0/DG+MCQkeaTUG3EfA+yT13PpkbuIc
-         2LUe+QtzhUEnWFMkwrLx1W9TcxDbritq+zOWPnkrVSllZpvXWuL85pbJ3wg9CcXxkbrK
-         hyqEzogeuH3XfUTNvT8afyKovB2vpoOHoex3GPfOGP7VuWfXQ2cyzaRE3O2NfAEL4YBd
-         12hKgUxw25IB2r1CFp4nH2skoX4P9z+aV4D9aRJd5Q+helnuq++muU0DcGguFQJswJLC
-         0diiaJnQETMf20IjdPdjRXEIZyL8QvHcM4/OI3QE+KIdgmKi3pU4q/e0sAZIDajaWQs1
-         TMSQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUjqUMUNmG2m/+1Z4DdbB7Ru7bUMxJ0Sc6wTztNWoYgDiYEJMViEhcpCOlx+ndid98mvabdzyxOGHk/gxI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx8EUSeLmcFB/c2E7vekTOGl9ATRMqtJ6UNwbgYY1gnnrSdPb6T
-	25RCTsA/PcDSmwfKRN2RRF4TWZgi+Rjp2kYgB1J53zVfI682Cg1yjKkU3thrbWdbwMQOJXilYC8
-	J7Q==
-X-Google-Smtp-Source: AGHT+IGTi12zBNscf00G47hXQDPJPN/IGQpF4zQKmAap+oOue+uk/UXuOBX0o4O/LU5EKKlFNLTOYrGynXY=
-X-Received: from pjbnw1.prod.google.com ([2002:a17:90b:2541:b0:2ff:6132:8710])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:3cd0:b0:2f6:dcc9:38e0
- with SMTP id 98e67ed59e1d1-301a52908d0mr5763909a91.0.1742321001312; Tue, 18
- Mar 2025 11:03:21 -0700 (PDT)
-Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Tue, 18 Mar 2025 11:03:03 -0700
-In-Reply-To: <20250318180303.283401-1-seanjc@google.com>
+	s=arc-20240116; t=1742321076; c=relaxed/simple;
+	bh=maNKmg0A+Z6mydVQMG3bAPxqFjR26T+JDGfjw8XJ5No=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nO7LA5eunAfDNBsClfQpyvI+6qdQY/T8Lk3TgtvEsSXARGnvvA8BoGsVV2DsNa3oWt2ZO66JQlu0f349YEBCvyD1ZZSDVGYuosQ7d3dpj8V22N/oSlOL08lddiiA+9p6femARg15ulafMYNat55ce+alIoEv7dDtnq3ycFE5iFA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HogBgfUN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6168C4CEE3;
+	Tue, 18 Mar 2025 18:04:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742321075;
+	bh=maNKmg0A+Z6mydVQMG3bAPxqFjR26T+JDGfjw8XJ5No=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HogBgfUNRy0B/iap7Qac2iaD3NNM+j+kV7T8NYiy/d3+URx8VimcbevF8KLXBjSn3
+	 nUrxpqJ6pyoN1jX3VDytYc1MG6a/RKJHaUpupuu1DM1GxeSBSLKMbOra3rujZYBnis
+	 K6gQk74TUMAv57Nq2wcPFtRrAE/6IZW5jpndQDyS10EPm7bH/9LVl0kO4Cv4iqSNQc
+	 flIy17PXc1TU4yHJTT5ejJTk0f60UBVezvzo49TK7iU7RS8jvkBQ3nTwPvaBGwL5uZ
+	 nT4vIC03WIbjI+i4LSmLk0ZuGoDt/vqvv8CtvhKOFXTVsdY294lcFtJa0EWnWtapqE
+	 B0hRxaSHgkCNQ==
+Date: Tue, 18 Mar 2025 19:04:30 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: "H. Peter Anvin" <hpa@zytor.com>
+Cc: linux-kernel@vger.kernel.org, Juergen Gross <jgross@suse.com>,
+	Stefano Stabellini <sstabellini@kernel.org>,
+	"Ahmed S . Darwish" <darwi@linutronix.de>,
+	Andrew Cooper <andrew.cooper3@citrix.com>,
+	John Ogness <john.ogness@linutronix.de>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Borislav Petkov <bp@alien8.de>,
+	Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH 0/5] x86/cpu: Introduce <asm/cpuid/types.h> and
+ <asm/cpuid/api.h> and clean them up
+Message-ID: <Z9m1rtmlk1PxGIQA@gmail.com>
+References: <20250317221824.3738853-1-mingo@kernel.org>
+ <5A417EE0-8DF3-4C6E-A7E9-9EE6705282F1@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250318180303.283401-1-seanjc@google.com>
-X-Mailer: git-send-email 2.49.0.rc1.451.g8f38331e32-goog
-Message-ID: <20250318180303.283401-9-seanjc@google.com>
-Subject: [GIT PULL] KVM: x86: Xen changes for 6.15
-From: Sean Christopherson <seanjc@google.com>
-To: Paolo Bonzini <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Sean Christopherson <seanjc@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5A417EE0-8DF3-4C6E-A7E9-9EE6705282F1@zytor.com>
 
-Harden and optimize KVM's handling of the Xen hypercall MSR; syzkaller discovered
-that setting the userspace-configurable index to collide with XSS could coerce
-KVM into writing guest memory during vCPU creation.
 
-The other change is to fix a flaw related to Xen TSC CPUID emulation.
+* H. Peter Anvin <hpa@zytor.com> wrote:
 
-The following changes since commit a64dcfb451e254085a7daee5fe51bf22959d52d3:
+> It would be nice to get rid of the bleacherous use of *eax and *ecx 
+> as input-output operands. The use of four separate pointers is just 
+> barely tolerable because the compiler can remove them when the asm is 
+> inlined.
 
-  Linux 6.14-rc2 (2025-02-09 12:45:03 -0800)
+So we have a nice structure of:
 
-are available in the Git repository at:
+ struct cpuid_regs {
+         u32 eax;
+         u32 ebx;
+         u32 ecx;
+         u32 edx;
+ };
 
-  https://github.com/kvm-x86/linux.git tags/kvm-x86-xen-6.15
+So instead of:
 
-for you to fetch changes up to a2b00f85d7839d74a2f6fcbf547d4bf2e82c34e5:
+ static inline void cpuid_count(unsigned int op, int count,
+                               unsigned int *eax, unsigned int *ebx,
+                               unsigned int *ecx, unsigned int *edx)
 
-  KVM: x86: Update Xen TSC leaves during CPUID emulation (2025-02-25 07:09:55 -0800)
+... we could have:
 
-----------------------------------------------------------------
-KVM Xen changes for 6.15
+ static inline void cpuid_count(unsigned int op, int count, struct cpuid_regs *cregs)
 
- - Don't write to the Xen hypercall page on MSR writes that are initiated by
-   the host (userspace or KVM) to fix a class of bugs where KVM can write to
-   guest memory at unexpected times, e.g. during vCPU creation if userspace has
-   set the Xen hypercall MSR index to collide with an MSR that KVM emulates.
+or so?
 
- - Restrict the Xen hypercall MSR indx to the unofficial synthetic range to
-   reduce the set of possible collisions with MSRs that are emulated by KVM
-   (collisions can still happen as KVM emulates Hyper-V MSRs, which also reside
-   in the synthetic range).
+plus we could implement the main CPUID call as:
 
- - Clean up and optimize KVM's handling of Xen MSR writes and xen_hvm_config.
+ static inline void native_cpuid(struct cpuid_regs *cregs)
+ {
+        /* ecx is often an input as well as an output. */
+        asm volatile("cpuid"
+            : "=a" (cregs->eax),
+              "=b" (cregs->ebx),
+              "=c" (cregs->ecx),
+              "=d" (cregs->edx)
+            : "0" (cregs->eax), "2" (cregs->ecx)
+            : "memory");
+ }
 
- - Update Xen TSC leaves during CPUID emulation instead of modifying the CPUID
-   entries when updating PV clocks, as there is no guarantee PV clocks will be
-   updated between TSC frequency changes and CPUID emulation, and guest reads
-   of Xen TSC should be rare, i.e. are not a hot path.
+and thus we give the asm() statement only a single pointer in essence, 
+'cregs'?
 
-----------------------------------------------------------------
-David Woodhouse (1):
-      KVM: x86/xen: Only write Xen hypercall page for guest writes to MSR
+Or do you mean something else?
 
-Fred Griffoul (1):
-      KVM: x86: Update Xen TSC leaves during CPUID emulation
+Thanks,
 
-Sean Christopherson (5):
-      KVM: x86/xen: Restrict hypercall MSR to unofficial synthetic range
-      KVM: x86/xen: Add an #ifdef'd helper to detect writes to Xen MSR
-      KVM: x86/xen: Consult kvm_xen_enabled when checking for Xen MSR writes
-      KVM: x86/xen: Bury xen_hvm_config behind CONFIG_KVM_XEN=y
-      KVM: x86/xen: Move kvm_xen_hvm_config field into kvm_xen
-
- Documentation/virt/kvm/api.rst  |  4 ++++
- arch/x86/include/asm/kvm_host.h |  4 ++--
- arch/x86/include/uapi/asm/kvm.h |  3 +++
- arch/x86/kvm/cpuid.c            | 16 +++++++++++++
- arch/x86/kvm/x86.c              | 13 +++++++----
- arch/x86/kvm/x86.h              |  1 +
- arch/x86/kvm/xen.c              | 52 +++++++++++++++--------------------------
- arch/x86/kvm/xen.h              | 30 ++++++++++++++++++++----
- 8 files changed, 80 insertions(+), 43 deletions(-)
+	Ingo
 
