@@ -1,198 +1,187 @@
-Return-Path: <linux-kernel+bounces-565656-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565655-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 828E5A66CFA
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 08:58:05 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD612A66CD9
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 08:55:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 90E2A18985E5
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 07:54:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 090687AB102
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 07:53:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D0141F4CB3;
-	Tue, 18 Mar 2025 07:54:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 443341EF378;
+	Tue, 18 Mar 2025 07:53:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QlX5DoxL"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="SGXCR2Tw"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B20FB1EF39B;
-	Tue, 18 Mar 2025 07:53:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C768A1A7045;
+	Tue, 18 Mar 2025 07:53:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742284439; cv=none; b=tAWMH8kQ80X67VpM17as20wVgyj7P8d312wL2n3nvv3OUbHc4vutSDS0d5xqKixGqf2bYoAgR0EoFpvnb5BqJBBvEmq4qx7iFyG2ZO9hT416Yu/coT1dlUOnqNoik/ZGYdcnwk7gs9uso2e4+MkT3jrzJawQY9rw8m/5+8U1e6o=
+	t=1742284436; cv=none; b=pp+UYB2oDqt2/lS91X9Rdy+0+3JSmDEJXqLFMeNUJRpy/lRJ67+Me6JhYrvyYDhzSnrODyRUsFsLj4km15F5b7PeBmlSITTgGLSHiClR/fPfHyMqmc+ti6DCFYr4IZJ8fKb6fLH0/Rvkj2MS5oV9fL5pT/CXOjsF8Bu2jeNl7qk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742284439; c=relaxed/simple;
-	bh=mLpG53z/+xYRI+C6koH5UavmowUagfMKoYxc/VnZjA4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dIkeq3Acbd//l9vSIhovlshAWj9guEa1p5MvgCPiTD80DX5sEPAF6lbsdyTfB4nyTRVQZ4q6O64CmpIFmsoEXCEHYPy4Xxz6LqKidEAAUf69pMuwIq5Nm0vQYr9TdgZ22HIVz0o1dPUTC6WqApwbwA81ScCRJyOeeeM39Vua/6c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QlX5DoxL; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742284438; x=1773820438;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=mLpG53z/+xYRI+C6koH5UavmowUagfMKoYxc/VnZjA4=;
-  b=QlX5DoxLAJBR4K22jNCY+qiBxe7UtnjVu5Dc6RhNGnYq1eg+brbkOUN5
-   2HFNMFziRjrSfSiB8QJG96cNZPrjISQqxj3plvvqwYfjyp9pZZwqLVcHI
-   2gBubQR1gWbmf2SjIoVy16688ifjqQeoYrJl+c0y1h7t+7iRPybR6wTpT
-   TlryU9CLlmBFVICwpjxS73byYqidCkhispebYuEbxaOXOI/1UIZBAA6th
-   6hREYxopHptMBTdkYxH5nTWoSdKGlpIIfrBgGE8l45CkheoNbQBOkgYnc
-   CK1Sh5JHjnq8fpBtGMFyockoTOfPGeYkcEby19RLfI8NZBS5s9FzVRSF6
-   w==;
-X-CSE-ConnectionGUID: fWGAZXcLS2qNUu95AGN7jQ==
-X-CSE-MsgGUID: JioroM82RrmflDRZBdYUSA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11376"; a="43541650"
-X-IronPort-AV: E=Sophos;i="6.14,256,1736841600"; 
-   d="scan'208";a="43541650"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2025 00:53:54 -0700
-X-CSE-ConnectionGUID: grYtw6pDRzqsPrdhUg2U4w==
-X-CSE-MsgGUID: Uo8I6aSzQF6FxPM0Zx+8ag==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,256,1736841600"; 
-   d="scan'208";a="122123923"
-Received: from lkp-server02.sh.intel.com (HELO a4747d147074) ([10.239.97.151])
-  by orviesa010.jf.intel.com with ESMTP; 18 Mar 2025 00:53:51 -0700
-Received: from kbuild by a4747d147074 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tuRll-000DY0-0U;
-	Tue, 18 Mar 2025 07:53:49 +0000
-Date: Tue, 18 Mar 2025 15:53:24 +0800
-From: kernel test robot <lkp@intel.com>
-To: marius.cristea@microchip.com, jic23@kernel.org, lars@metafoo.de,
-	robh@kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, krzk+dt@kernel.org, conor+dt@kernel.org,
-	oskar.andero@gmail.com, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	marius.cristea@microchip.com
-Subject: Re: [PATCH v2 2/2] iio: adc: adding support for PAC194X
-Message-ID: <202503181545.znULdV4G-lkp@intel.com>
-References: <20250317090803.30003-3-marius.cristea@microchip.com>
+	s=arc-20240116; t=1742284436; c=relaxed/simple;
+	bh=iNUOvA3sag629Y3TB7XcMbbNr4GLpvbf9SCKMm/uukE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=atGQ5XXy4s1LM7183RTMp74nc4902fkjSJDix1Jyj2PstEzjy9wif5Ar5DhUdQSwz8IU3Vz79lfg7oNQ8+exIcsl1aRrvvtV+U0QEBlX41z91SDUd7ZxRn6M5IAgsAzAqmkt9YNr+iROBps23eFKT/MunxghSeZPP486T1LSAnU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=SGXCR2Tw; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52HLe2LG024976;
+	Tue, 18 Mar 2025 07:53:47 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	zOVwMdkFvGuOZ9cWNHAiMuAvOwL6TqB2abgcw+wNOh8=; b=SGXCR2Twy+xbgD8T
+	PGF4PpwfnTpxXsm9h+/KHOdp6mKVwvID0JvXhorEWK4HTmEEwpN2h4mEuI4Xf9fq
+	8bJnli0Unawz7diC+UzEkiAF7LSefLS8U3ieNeSopP+nfXEGLIsypBrO5NYY+byh
+	KKL0Zix/QzJOrPQTxRZqN8AVvUJUEm2ilSPqiRmz2ckmbGu4mOOe8WQh0k9LC0s8
+	tkeJk/ENF+DvIaEVlSaJvyyuUXIWKkOCjMeHGYElR0HZrh8uMH3JtwchOAfo21Xl
+	LgN42WS7ZsjI7zTjt3RYMinJeFrUbfTFCW/cmWkbrgPx/myU8qevFOEjVwBY8iI/
+	6y7nMw==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45d1utyavr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 18 Mar 2025 07:53:47 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52I7rkB1022369
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 18 Mar 2025 07:53:46 GMT
+Received: from [10.239.29.24] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 18 Mar
+ 2025 00:53:44 -0700
+Message-ID: <f30cf771-a9cd-4d8f-8d10-1640afd33c23@quicinc.com>
+Date: Tue, 18 Mar 2025 15:53:39 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250317090803.30003-3-marius.cristea@microchip.com>
-
-Hi,
-
-kernel test robot noticed the following build warnings:
-
-[auto build test WARNING on 577a66e2e634f712384c57a98f504c44ea4b47da]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/marius-cristea-microchip-com/dt-bindings-iio-adc-adding-support-for-PAC194X/20250317-171150
-base:   577a66e2e634f712384c57a98f504c44ea4b47da
-patch link:    https://lore.kernel.org/r/20250317090803.30003-3-marius.cristea%40microchip.com
-patch subject: [PATCH v2 2/2] iio: adc: adding support for PAC194X
-config: riscv-randconfig-r072-20250318 (https://download.01.org/0day-ci/archive/20250318/202503181545.znULdV4G-lkp@intel.com/config)
-compiler: clang version 21.0.0git (https://github.com/llvm/llvm-project 87916f8c32ebd8e284091db9b70339df57fd1e90)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250318/202503181545.znULdV4G-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202503181545.znULdV4G-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   In file included from drivers/iio/adc/pac1944.c:20:
-   In file included from include/linux/i2c.h:19:
-   In file included from include/linux/regulator/consumer.h:35:
-   In file included from include/linux/suspend.h:5:
-   In file included from include/linux/swap.h:9:
-   In file included from include/linux/memcontrol.h:13:
-   In file included from include/linux/cgroup.h:26:
-   In file included from include/linux/kernel_stat.h:8:
-   In file included from include/linux/interrupt.h:22:
-   In file included from arch/riscv/include/asm/sections.h:9:
-   In file included from include/linux/mm.h:2223:
-   include/linux/vmstat.h:504:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-     504 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-     505 |                            item];
-         |                            ~~~~
-   include/linux/vmstat.h:511:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-     511 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-     512 |                            NR_VM_NUMA_EVENT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-     518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
-         |                               ~~~~~~~~~~~ ^ ~~~
-   include/linux/vmstat.h:524:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-     524 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-     525 |                            NR_VM_NUMA_EVENT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~~
->> drivers/iio/adc/pac1944.c:1689:6: warning: variable 'ret' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
-    1689 |         if (time_after(jiffies, info->chip_reg_data.jiffies_tstamp +
-         |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    1690 |                        msecs_to_jiffies(PAC1944_MIN_POLLING_TIME_MS))) {
-         |                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/jiffies.h:128:2: note: expanded from macro 'time_after'
-     128 |         (typecheck(unsigned long, a) && \
-         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     129 |          typecheck(unsigned long, b) && \
-         |          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     130 |          ((long)((b) - (a)) < 0))
-         |          ~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/iio/adc/pac1944.c:1707:9: note: uninitialized use occurs here
-    1707 |         return ret;
-         |                ^~~
-   drivers/iio/adc/pac1944.c:1689:2: note: remove the 'if' if its condition is always true
-    1689 |         if (time_after(jiffies, info->chip_reg_data.jiffies_tstamp +
-         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    1690 |                        msecs_to_jiffies(PAC1944_MIN_POLLING_TIME_MS))) {
-         |                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/iio/adc/pac1944.c:1683:9: note: initialize the variable 'ret' to silence this warning
-    1683 |         int ret;
-         |                ^
-         |                 = 0
-   5 warnings generated.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 ath-next 2/2] wifi: ath11k: fix HTC rx insufficient
+ length
+To: Johan Hovold <johan@kernel.org>
+CC: Jeff Johnson <jeff.johnson@oss.qualcomm.com>, <ath11k@lists.infradead.org>,
+        <linux-wireless@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <johan+linaro@kernel.org>
+References: <Z866cCj8SWyZjCoP@hovoldconsulting.com>
+ <7b1c5e40-b11d-421b-8c8b-117a2a53298b@quicinc.com>
+ <c0cdcaf2-655b-4d22-a949-1519c552e6a4@oss.qualcomm.com>
+ <72d95d77-674e-4ae7-83b0-ab58748b8251@quicinc.com>
+ <Z9G5zEOcTdGKm7Ei@hovoldconsulting.com>
+ <8ea7fe7c-7b4d-4a6f-ae03-b9ca127c23f8@quicinc.com>
+ <Z9METTzUJe9yqVEI@hovoldconsulting.com>
+ <b1c79589-4fcd-4630-9551-a620087e0c23@quicinc.com>
+ <Z9PjjDFBuSJ7exVj@hovoldconsulting.com>
+ <ecfe850c-b263-4bee-b888-c34178e690fc@quicinc.com>
+ <Z9gd9Aw5Bug8IKSV@hovoldconsulting.com>
+Content-Language: en-US
+From: Miaoqing Pan <quic_miaoqing@quicinc.com>
+In-Reply-To: <Z9gd9Aw5Bug8IKSV@hovoldconsulting.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=H8Pbw/Yi c=1 sm=1 tr=0 ts=67d9268b cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=NEAV23lmAAAA:8 a=2M5b3jNWWK1cOhy4hzQA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-GUID: JN3mFfdcbY7wxtnhoottWP2pIq8HRbxq
+X-Proofpoint-ORIG-GUID: JN3mFfdcbY7wxtnhoottWP2pIq8HRbxq
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-18_03,2025-03-17_03,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
+ lowpriorityscore=0 bulkscore=0 adultscore=0 spamscore=0 priorityscore=1501
+ mlxscore=0 suspectscore=0 malwarescore=0 clxscore=1015 impostorscore=0
+ phishscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503180055
 
 
-vim +1689 drivers/iio/adc/pac1944.c
 
-  1680	
-  1681	static int pac1944_retrieve_data(struct pac1944_chip_info *info, u32 wait_time)
-  1682	{
-  1683		int ret;
-  1684	
-  1685		/*
-  1686		 * Check if the minimal elapsed time has passed and if so,
-  1687		 * re-read the chip, otherwise the cached info is just fine
-  1688		 */
-> 1689		if (time_after(jiffies, info->chip_reg_data.jiffies_tstamp +
-  1690			       msecs_to_jiffies(PAC1944_MIN_POLLING_TIME_MS))) {
-  1691			/*
-  1692			 * We need to re-read the chip values
-  1693			 * call the pac1944_reg_snapshot
-  1694			 */
-  1695			ret = pac1944_reg_snapshot(info, true,
-  1696						   PAC1944_REFRESH_REG_ADDR,
-  1697						   wait_time);
-  1698			/*
-  1699			 * Re-schedule the work for the read registers timeout
-  1700			 * (to prevent chip regs saturation)
-  1701			 */
-  1702			cancel_delayed_work_sync(&info->work_chip_rfsh);
-  1703			schedule_delayed_work(&info->work_chip_rfsh,
-  1704					      msecs_to_jiffies(PAC1944_MAX_RFSH_LIMIT_MS));
-  1705		}
-  1706	
-  1707		return ret;
-  1708	}
-  1709	
+On 3/17/2025 9:04 PM, Johan Hovold wrote:
+> On Mon, Mar 17, 2025 at 01:52:15PM +0800, Miaoqing Pan wrote:
+>> On 3/14/2025 4:06 PM, Johan Hovold wrote:
+>>> On Fri, Mar 14, 2025 at 09:01:36AM +0800, Miaoqing Pan wrote:
+>   
+>>>> I think the hardware has already ensured synchronization between
+>>>> descriptor and head pointer, which isn't difficult to achieve. The issue
+>>>> is likely caused by something else and requires further debugging.
+>>>
+>>> Yeah, but you still need memory barriers on the kernel side.
+>>>
+>>> It could be that we are looking at two different causes for those
+>>> zero-length descriptors.
+>>>
+>>> The error handling for that obviously needs to be fixed either way, but
+>>> I haven't heard anyone hitting the corruption with the memory barriers
+>>> in place on the X13s yet (even if we'd need some more time to test
+>>> this).
+> 
+>> After multiple and prolonged verifications, adding dma_rmb() did not
+>> improve the issue at all. I think this Status Descriptor is updated by
+>> hardware (Copy Engine) controlled by another system, not involving DMA
+>> or out-of-order CPU access within the same system, so memory barriers do
+>> not take effect.
+> 
+> Then it seems we are looking at two separate root causes for the
+> corruption as the memory barrier appears to be all that is needed to fix
+> the X13s issue.
+> 
+> A user who hit the corruption after 2 h without the fix has been running
+> over the weekend with the memory barrier without any problems. I'll ask
+> further users to test, but it certainly looks like it is working as
+> intended.
+> 
+> And the memory barrier is de-facto missing as the head pointer and
+> descriptor are accessed through (two separate) coherent mappings so
+> there are no ordering guarantees without explicit barriers.
+> 
+This situation should occur when there is only one descriptor in the 
+ring. If, as you mentioned, the CPU tries to load the descriptor first, 
+but the descriptor fetch fails before the HP load because the ring 
+returns empty, it won't trigger the current issue.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+The Copy Engine hardware module copies the metadata to the Status 
+Descriptor after the DMA is complete, then updates the HP to trigger an 
+interrupt. I think there might be some issues in this process, such as 
+the lack of a wmb instruction after the copy is complete, causing the HP 
+to be updated first.
+
+
+> Now obviously there are further issues in your system, which we should
+> make sure we understand before adding workarounds to the driver.
+> 
+> Do you have a pointer to the downstream kernel sources you are testing
+> with? Or even better, can you reproduce the issue with mainline after
+> adding the PCIe patches that were posted to the lists for these
+> platforms?
+> 
+https://github.com/qualcomm-linux/meta-qcom-hwe/blob/scarthgap/recipes-kernel/linux/linux-qcom-base_6.6.bb
+
+> Apparently the descriptors can also be passed in non-coherent memory
+> for some devices (.alloc_cacheable_memory / HAL_SRNG_FLAGS_CACHED). That
+> implementation looks suspicious and could possibly result in similar
+> problems. Are you using .alloc_cacheable_memory in your setup?
+> 
+No.
+
+> Does it make any difference if you use a full rmb() barrier?
+> 
+I've also tried rmb() and mb(), but they didn't work either.
+
+> And after modifying ath11k_hal_ce_dst_status_get_length() so that it
+> does not clear the length, how many times you need to retry? Does it> always work on the second try?
+>
+
+Yes, the test has been running continuously for over 48 hours, always 
+work on the second try, updated in patch v4.
+
+
 
