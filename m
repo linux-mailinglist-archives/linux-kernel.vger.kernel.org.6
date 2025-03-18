@@ -1,197 +1,303 @@
-Return-Path: <linux-kernel+bounces-566319-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566320-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 277D6A6763C
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 15:22:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A361A67656
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 15:27:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CFB86169689
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 14:22:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3183E189AA60
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 14:22:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D7A720DD43;
-	Tue, 18 Mar 2025 14:22:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A35F20E003;
+	Tue, 18 Mar 2025 14:22:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="cQcOPhlI"
-Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2047.outbound.protection.outlook.com [40.107.21.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="CRyaMmwc"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC88E20D4FE
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 14:22:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.47
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742307734; cv=fail; b=hHHSzSuKNZiZxRkOaZ3Mi7T0bqaLMK+9MHh9yEaByeeTBzPFWKcHVVFMu/cWMuFk0jKmbod8mo/jFExYPJRv1da1fvcpxZ5KKxUt6+8vBG2+wTI4o4undDtiFPnoAAyZFpAlo9U6zYowOL1XR9x3GPHVUCFB5c70fI5rAsfsUfA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742307734; c=relaxed/simple;
-	bh=kNqcrIC2uXF2rPkRU7AcZdy4F0LM9YE0eIKN0Wjfa/Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=n571xtdcLs54rZEL3rgGQQl7WIdXG7HOen6i6ooCSId6B6WTZx1msokXF4Am58fCnWshbxC3KeDnHBQKLLDkC7GHsK4Aoe20kWNcNrJDhPgQSF7371C2GFx0uXv78/IIpAb9yW2uyrvf1btEW7xDTSMd4psEmQruzEgqq9A3CyI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=fail (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=cQcOPhlI reason="signature verification failed"; arc=fail smtp.client-ip=40.107.21.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=mB6WP3rh3ZcjzUIgfMPyc3IM190sxs9mYeLcDzMCy4Z7/AnZ+wb6d+MtaRAmBUKowBbuF3dGA42bfqmXNmNIh/3L604ZrAoHe0jx/b2hg899ZTIuldUgpSW0jjzZmY+KkEhRAM8yaW3nOSqXguxHeIXMf3cILdkhbNSKzQKltJj9QRzd+r+puMFsCCSRXZGDM5UoihzxQrnTMah7RagjGZbtcmDJIBPtYWkeCppsIJ1NsCQcin/1P+yrkttdXqNUMF4aF2ARVmVLh7+Ss6Pwt/kRxRF07GltNy8hbGGOyksan4VecZKUCzYynW3NiTV5KO6fECeddgUuub7r5ISUIw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=tLyYx/I2Tqs1ckQbty2ys1JUPD8q9priUHHgwPLsxwY=;
- b=U7dBYykvbzUf2IBcDJK+CtX1ybp356StCUqt5HKHdfIpUoB3h3Ic34ATge0W1Dl5V+ECZjurPvW1kGWsrUh/pmZrlmbff3Yw7Zz4jqhlP44VW8w1q5xw6fiBB1KHdy/aDi0TlR3bKSHY3v9XWIsXL8wkF/orsX96Pe2mff6yH6vFGy6d4/H6yIZmcQ7OgioaYMYu5qq2+AXWIos8LLvQUopmEKpdVbiwrIchiEz1khDtMXZjClIv2uss5tQxaBZViPaJCdBxg0kwWmMvNlp0aMGAIlLP/rfME4h+ewA7qWixM85cm7Lg+WzWhaCuJVr8DzlF4vaU5egNeL9IzcTHUA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=tLyYx/I2Tqs1ckQbty2ys1JUPD8q9priUHHgwPLsxwY=;
- b=cQcOPhlIIvmZTlyJbYr4M0nz7XdHSYBciQrXSXvy2fMpNagYacmZJDKfgYRn5oNwQeU6juhyF6OMwvf5Z9yLhwIc5Znw3BQxlUpAVU/OOPDfdlwPJQbXFQ6ulHSuCHL5SDQQr3yAq8J+uJAYL0wo8b+H2cC8LcSUhh5XJZ6NmV4f9WbN/XCXma8MnjLgYisvlhwhmHCyVmiDpxWYWITe+iA+rG14sUII73iN5eVT28OnOK87+2FVNM/CA/XT1KXQA0TawmgxyXQBSCuIhzi+SuHO1ECap3K+qT20dSTTojtgyXmyFI1v8R6U0J+d3K2dnVdZqR60cx9KUwyRRTDdzQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AS8PR04MB8868.eurprd04.prod.outlook.com (2603:10a6:20b:42f::6)
- by PAXPR04MB8621.eurprd04.prod.outlook.com (2603:10a6:102:218::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.33; Tue, 18 Mar
- 2025 14:22:06 +0000
-Received: from AS8PR04MB8868.eurprd04.prod.outlook.com
- ([fe80::b317:9c26:147f:c06e]) by AS8PR04MB8868.eurprd04.prod.outlook.com
- ([fe80::b317:9c26:147f:c06e%5]) with mapi id 15.20.8534.031; Tue, 18 Mar 2025
- 14:22:06 +0000
-Date: Tue, 18 Mar 2025 16:22:03 +0200
-From: Ioana Ciornei <ioana.ciornei@nxp.com>
-To: Christophe Leroy <christophe.leroy@csgroup.eu>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Stuart Yoder <stuyoder@gmail.com>, Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org, 
-	"linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
-Subject: Re: Maintenance path for the fsl-mc bus
-Message-ID: <j6vj5xreo2ub2mf2saabh6hxvcpqkgboj26wgmi4y5iecboddo@5urri6jzvue6>
-References: <2xzljdzktgpsyag5jhfwbxc2sroaacljecsq36hlxefu6jnz6g@zlorxu7niqnq>
- <1d822960-85a7-42b3-88cf-9d3dbc75a831@csgroup.eu>
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1d822960-85a7-42b3-88cf-9d3dbc75a831@csgroup.eu>
-X-ClientProxiedBy: AM0PR02CA0103.eurprd02.prod.outlook.com
- (2603:10a6:208:154::44) To AS8PR04MB8868.eurprd04.prod.outlook.com
- (2603:10a6:20b:42f::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53E5C20D4FE
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 14:22:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742307747; cv=none; b=AqlFaeHpnL+hyvbvXS95YChKPLCXtgwFILRO1Lr2A/cQA7p1tVCY1OYsufYQThGW6zxwjHphr14wo8ciySJ55Z8NSd02Mu5wkiOwad93QUfvnfaqbOn0mMdwPIjrKwA6EyMM/6cH9D/85RtHnf83jOkIfmCQxDt1c9bPRQ9rPDI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742307747; c=relaxed/simple;
+	bh=73nN0j197f6pTnfXPfLn0FzhOjp+DBuhsH+ogA2bt1k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lbRqZdB9RzJcIVbFiw0LEKelcEItSmkn+cFOWxfe0nccOy9/RjooPx682ajIjxvjZJWLfHO1ZVe7MtPWir1Xq2ah5kXf+mDVOnmOmc06QU8AB8niDX2vcxGsdjAoj2LuUqz79Bi6mfYNw9yPGd/pbyRw+UG7V7qxQVAmdLEJlR8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=CRyaMmwc; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-224100e9a5cso109232335ad.2
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 07:22:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1742307744; x=1742912544; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=xGpINx731Tmb96Qe0VWFaWPTECmsS+PdS8emXnbhmLs=;
+        b=CRyaMmwcbwH0vGnpmrFGljMiXwP7fBwH6GUEwlGbXlXWHIez0/3R9pcvQlHhzWQDsV
+         n8PGdhj97wfkeUoMQVLNweZcVmaJY0HIQ9hE0mdzodrP3x9FlHFZ2GeF5md53mHXMhWB
+         OL7MRMZIN/hypWAAD8rTg8mZJMS7VuWxjjB9uzcS23x1vwZmUJp2f3zSCIs7gGa/o3W1
+         mXreAQEHU8NVAfTUcxDh1YGo7w2G7nv0OUB2++oCqsYHGaG+1NcciwF4Z+PfQ27HEqtE
+         m9C6AXuwN45tySbO+7pOs/J01MFVcXkJTmV/5x4vEsvNIbQYO8nDVr6RXFtPzIW31NMK
+         9gHg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742307744; x=1742912544;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xGpINx731Tmb96Qe0VWFaWPTECmsS+PdS8emXnbhmLs=;
+        b=wpjOaipRczqUmxpS7N5+XwZJq/OBSsHKLgBOexlQuhUoeqWBp4mxT2FpcRn6UTBR70
+         ABdQv79UFyMe4JweHbXYf/tz1UGtQtzD1Zzvj2/4DJaZZ3KOH/PcaHfg9WTATU6s97w8
+         a022MERV9+6KMsfIXpZQ8Um+Ze271+/lPKes13lNv6dpJMXzkaNH1N15sih/ht6MaYVX
+         CmRGVvOSa72AoYX+F4/l5DNFcknJkCjunGqwTKgP/Hwrb3cO6Z3BfY/dHueHdoX9rziQ
+         LCHs6BzMejFy2P3N3fKwEZgYxC/rMhM6yXwXyis3aQyP602nyQmW5cxzI6vGhiKYC7Pu
+         gGEw==
+X-Forwarded-Encrypted: i=1; AJvYcCX1Tpjw5c4/0XWlhOTLc2pZZ4RiaosEib6cuHf1JkG52ir96daBgGcesE5SVpGA03/qkCrXAMlkBbswLYs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzk0S2M8XhyvXc+yW/J6W13E2ZEcfA1rCvTS7kwXqyPguUR/pvr
+	kSpm+jB7Hjuz7wRnVPJBIzbL7ltR/0+ER3hxyFwUzkJymWuaOq7j85zQWI78vEM=
+X-Gm-Gg: ASbGncvo8JMMZixHdYfiSohVJJD3SJJ8LT+PrA6ubgNdHgSOk9XPMGQPEhc9X2Iw186
+	hUhC8ZsLm3TCmWm5OzNXUQUFDEuPkDUn6M/zbDuOEHnfp0aomp38XEwvkNW982Ey0wzyDMKrwFP
+	I2cV7sUDJw38a0nc1nWMk1trrVKrhDRf0CRf+eRCYwqyspTJNQQ1QF6O8+d3Qm3WxhITQUNvXVc
+	EfC1iCdwW1zO9PJ8GOc4Yz6eIV47ND9VBy+18LraoRNT711z9wQGz9V50SZ8NGq4rYtuPG+i+7y
+	zGb1+HlcH2BTK1gNXSYVAgM5iZdAB78kjN4drUGPXGWrGv/GOggBXpw2sJV0vMFITHCBgyh+TTw
+	NFl8kJrHCvPz/lA==
+X-Google-Smtp-Source: AGHT+IFEi0TRz0hE3pZlW2uv3/pl5phfAMhd9vaZ7+UlbHxqBQC4Z8iGvu+5+IushiykE4M6pVxcYQ==
+X-Received: by 2002:a17:903:40c7:b0:224:191d:8a87 with SMTP id d9443c01a7336-225e0a82f1cmr208441955ad.26.1742307744477;
+        Tue, 18 Mar 2025 07:22:24 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:e17:9700:16d2:7456:6634:9626? ([2a01:e0a:e17:9700:16d2:7456:6634:9626])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-225c68a7f5fsm94698925ad.80.2025.03.18.07.22.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 18 Mar 2025 07:22:23 -0700 (PDT)
+Message-ID: <05bdf6c3-9d60-4b1c-add3-79b4f7d25189@rivosinc.com>
+Date: Tue, 18 Mar 2025 15:22:16 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS8PR04MB8868:EE_|PAXPR04MB8621:EE_
-X-MS-Office365-Filtering-Correlation-Id: f88c254d-5377-41de-a9e4-08dd66284290
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?iso-8859-1?Q?H/vrLVR2JEX7g2qnkDAypHOPkkA393yVUZ5HKC1TNSgyDrIUWn8O0feAWQ?=
- =?iso-8859-1?Q?lRddaKuozWsAzIK8/6VOFI4YnHyFClVqiON2vpZeFt1SZjD83Yo9RYAEy/?=
- =?iso-8859-1?Q?wt+a4JoCRW2Y7Bv5ZR354hrWEtmSInrq+qeU8K+Fq1UrF6rUX905AvN4tV?=
- =?iso-8859-1?Q?NQ75tSW0ciXm230Vs6Yy1c2ZAJUBcqm85eh7cqF6ru++p+/8jdu0ceknHw?=
- =?iso-8859-1?Q?G0q1ow0HieyzqZtYwW9o4rgpJj3D1yGCD1yg3JQyKgF0Cjnb7e9l1k7tqy?=
- =?iso-8859-1?Q?Pge8dVHDR+EyMVNwLH+nIs8NYXjUoIJAR9GSodmEIB6btM5zNYw7AQzg5T?=
- =?iso-8859-1?Q?fItd1j9v8dV18BDMOHsuezS87Zr75VCd519fSljbGawkWRn71PRGHc/eSU?=
- =?iso-8859-1?Q?aGuuEjDOjATulKA91Jor2PahA7BpcGc4hKd2hFNK2lEJjIKo52jObInS+K?=
- =?iso-8859-1?Q?RF/gXtx4P7DRvid0B5vQvVCSQwHp4c9Gxo1tqsjlcvt/oa3+U50q7Y5nfU?=
- =?iso-8859-1?Q?c57XSwQQh5yNcYaPAh7b2XaGt6WvqGre+x1F3taXnZCziH+Zmh19w7pbs3?=
- =?iso-8859-1?Q?o3E2mz0HkdtK0nIlkB89qyzcBEcJ1HRk/hSxZNpxH16GutKR2ZmGIE5hb7?=
- =?iso-8859-1?Q?yS15xzrVwEToBSfkfGO0WSNHXfKMkBp/3ZYy76SGujg91uT+BfNdW3Zols?=
- =?iso-8859-1?Q?4uilEmkZM2n3j1fJNbhunlzBv6gwNzY2cLKT87IEfYdXM/TSiM41oKSEBq?=
- =?iso-8859-1?Q?P/AtWjXrYXuZ233zCzHfnnDXdiOS9tZoEvDKRIZw3fM3UidOywORwHmdqL?=
- =?iso-8859-1?Q?+aay7+apkQpJ4S8/ZBMmAag4euwWM5iua1FhOfz2hyXwyPfPJpj228rm32?=
- =?iso-8859-1?Q?KIjDjqdc6BUfNP7euhsho0oiM1+MX2L+lm2gG7HkWjrX0RkPUrGJFp6FOY?=
- =?iso-8859-1?Q?maF3MDqQuYgEWNxB0JShgfXzJCbiZuKacUOVkzY9oVPq0W5s5tzTSJ9bsG?=
- =?iso-8859-1?Q?4raIDr4sMWcFZGh/coTW+YxjMbTKuN3nVBpzDG6nka4BUtkRLh8nPu3+Tu?=
- =?iso-8859-1?Q?kklf534Z8LrXz14z/mozFrzOApulcJa7yKUypmmKgO5diyrHpOEgoW2HAm?=
- =?iso-8859-1?Q?QACd2hvPBIjHl48UudIg9h5ox5i3+Sr8G+5iu2aBf+xs/rT5nJN7osEU+L?=
- =?iso-8859-1?Q?1JB5zs6pe3ZZ/th2oXC8BUw3MotxOdhfFs8gqOFaFgjKmINhDDpRR+I864?=
- =?iso-8859-1?Q?43EmXIOMGD8iAyETy5IdCJrlXJsJK71t2g94Ve5Nint5fO9yH9DTVD9BF3?=
- =?iso-8859-1?Q?7rrCbt1K6QjKWbOM576BcHICf0mwbOQNduKpcFcnjPeUEpZ3fudAK1Adla?=
- =?iso-8859-1?Q?fbETA4JpiDdHS8HS3bQwF6lMKq+/1rjmmbD06WlzvLs6N10ep4ikceN2GX?=
- =?iso-8859-1?Q?X4Fk1XT/b5Vnrac6?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR04MB8868.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?iso-8859-1?Q?CZpsQdGv4QBJ9iaiCAQ/lbuhPVQBmrauXvJvKVRGSW1HUdiK/NGudflUkc?=
- =?iso-8859-1?Q?QD6AZ13gtmzRMpVtWJxe8KlZD6WZInctljubpgrE3y1GpPLrXCUN3OMdNc?=
- =?iso-8859-1?Q?Su1nr/6x0XjtI0LuYfDC72biDJlD4twyJql4YZyW0ZhoJisFsh+wvTCo2/?=
- =?iso-8859-1?Q?fO7N8rBcbBNrSiv4kDglPChexbbX04egwtLDELRfdYZO+NcSYnQo7BoK7T?=
- =?iso-8859-1?Q?SN9U/TbgDlnnUZJFHOJq/UXg7cVyRVrHPRmiaMYSs1UbVTSIXoUWySBuJq?=
- =?iso-8859-1?Q?y3qXQwNSgqiPxZsHBK1r44mWJTXN+4UqcHroYRqoUV3r0KodSYqWkZdFYz?=
- =?iso-8859-1?Q?NcXjjYFLkWvvbBS1D/aU5ZuCOOfZP954dGOPbb7aa0Vipj4OyVBYpIH1vJ?=
- =?iso-8859-1?Q?3Xox5rJY1J7ZxJSAB/wGz4f7Q/FnQyETUEpjoC0wdfCMYW6yBEIK3tYpMn?=
- =?iso-8859-1?Q?7uT7ZnBfMFWJj+AbCvE5GaPO0UfjuqBZzI4UOVXOJmbWZLkmDy/18Wlww0?=
- =?iso-8859-1?Q?+yJf61JZNhNusH8xzXuMVQk1pkVkJY4M4CHGHKvWZ/3M/PT0YQDG6UsKvK?=
- =?iso-8859-1?Q?oxKSYLS50d8iimMnBBhV121KbC7GN6qXt6p0/g1t2H0kXS73jebz+C9wXq?=
- =?iso-8859-1?Q?HHPKJ4OZfyUZTWAheP3jWCh3o4lS1GtL6JfmJXykFfk5sxx3Vy6lrik9iN?=
- =?iso-8859-1?Q?NeCzdbSouup2JRwABIFoWmd4wv1Xi8zH+FueoBrHVDcj99Oo++nLhA7cwT?=
- =?iso-8859-1?Q?zTClNsavpy2LUzQ8DN/EzVqC7DGPBQMKIgkidfF6uPBRT0dIP3CFbjvFxs?=
- =?iso-8859-1?Q?3Gf/bYI8r3fw7ZGZcFRcRhXtRky82vTqZjHBZrj5oUtqjxCvU5R50hs6dY?=
- =?iso-8859-1?Q?nVHYzN4EF8FLE7RshmCRWQkRiz2VsKewoPag54RAJQfcpwtFaHjeYwycfn?=
- =?iso-8859-1?Q?LY/nII0ydKWdI0ZgUR5/bAGWed3IjNsGDDlFq6FroW2Dck38O0gIR5QF/2?=
- =?iso-8859-1?Q?0LD6pw0Asi6qdJ3yXjw2sUpylzsWRA5eFpdEaVNHncwmKZ8hol3fJwJh/X?=
- =?iso-8859-1?Q?K+mnb0aouYLlMytWqTzhFbBDhmHLJvTry+3XLL901KsyNCwgO0hrq48f8E?=
- =?iso-8859-1?Q?3IxLCNfSrOZ6dsLA4cQgrhI6ZbJvrhunixanx8KmA5XMQ9HnBbAdHFEgIW?=
- =?iso-8859-1?Q?XBaYUADG68ZjtvPYITAQ1YQE46tNWbjiWmfEY8Y6zqFOZ4P7hDG2bx+2gp?=
- =?iso-8859-1?Q?ml3liVX43yABATeMTWCmRUYRqake0NiN9CkKdexu++zKSlAcTQAln0RvOi?=
- =?iso-8859-1?Q?LlqU+o1cSu7g/vstZ7VF71Wu+IIkJkijt+DYHFH8xY/Ds/mr+q+hzymiBQ?=
- =?iso-8859-1?Q?BmSHlnl+GJJD42H28jqepgapUhPH8rycC4NMzBJNDn+XE82GSHLG0Uo3X/?=
- =?iso-8859-1?Q?KKv+kw2zwjSTSMJWSEX5QW58McPdWljCQvsdWV+xwW5vN1xuQXGa+PPCro?=
- =?iso-8859-1?Q?DKT7DkVRcG1xFI11+LmrDolM7RIvAKwZSqMCg6klRTJToSQr/QnqPuANwJ?=
- =?iso-8859-1?Q?cUNDxq9vt3Sen4Sk3CJMj2H/0XapJ5Hpw4scIOpOfhWNQGcvyChF3XPW1A?=
- =?iso-8859-1?Q?2+bFDX61qXnrjhgPqYz3uIijkygg0pA9aC?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f88c254d-5377-41de-a9e4-08dd66284290
-X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB8868.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Mar 2025 14:22:05.9621
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: qVreZG9SuG52cZ1HfGh7Q3QNlbvpvoIolQNINeotk7gCMi0wJwEGlE+DU56fAXbBxTjYIoDJMzqfvrtNla+JRg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB8621
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 7/8] riscv: Add parameter for skipping access speed
+ tests
+To: Alexandre Ghiti <alex@ghiti.fr>, Andrew Jones <ajones@ventanamicro.com>
+Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org, paul.walmsley@sifive.com, palmer@dabbelt.com,
+ charlie@rivosinc.com, Anup Patel <apatel@ventanamicro.com>, corbet@lwn.net
+References: <20250304120014.143628-10-ajones@ventanamicro.com>
+ <20250304120014.143628-17-ajones@ventanamicro.com>
+ <1b7e3d0f-0526-4afb-9f7a-2695e4166a9b@ghiti.fr>
+ <20250318-1b03e58fe508b077e5d38233@orel>
+ <c5e174e4-4fce-4c7f-821a-cf3781becab4@ghiti.fr>
+ <20250318-18b96818299ef211ef8ca620@orel>
+ <d7a04d06-766b-4b43-8c42-2b681629c35d@ghiti.fr>
+ <20250318-ec2a990d55378039a863b94b@orel>
+ <44304bca-b30a-4c0b-b242-3a54ac021e40@ghiti.fr>
+Content-Language: en-US
+From: =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>
+In-Reply-To: <44304bca-b30a-4c0b-b242-3a54ac021e40@ghiti.fr>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, Mar 18, 2025 at 02:46:55PM +0100, Christophe Leroy wrote:
-> Hi Ioana,
-> 
-> Le 18/03/2025 � 11:40, Ioana Ciornei a �crit�:
-> > [Vous ne recevez pas souvent de courriers de ioana.ciornei@nxp.com. D?couvrez pourquoi ceci est important ? https://aka.ms/LearnAboutSenderIdentification ]
-> > 
-> > Hi,
-> > 
-> > As highlighted by the discussion in the following thread, the
-> > maintenance path for the fsl-mc bus is not clear.
-> > 
-> > https://lore.kernel.org/linux-arm-kernel/Z9Lj9_yM1EK5pKee@gallifrey
-> > 
-> > The fsl-mc bus driver was first added to drivers/staging and because of
-> > that, Greg was to one to pick up patches through his tree. Once it was
-> > moved to drivers/bus/fsl-mc, patches on this driver were picked either
-> > by Greg or by the Freescale SOC maintainer at that time - Li Yang.
-> > 
-> > Conceptually speaking, the fsl-mc bus driver is contributing to the same
-> > infrastructure level as the SoC drivers maintained now by Christophe.
-> > 
-> > Christophe, would you be open to pick up patches for this bus driver
-> > through your tree?
-> 
-> Yes its fine for me to take it via my soc fsl subtree unless Arnd tells
-> different. But be aware that it will be purely administrative. I will have
-> no mean to check whether any changes are actually working properly.
 
-Of course, I will take care of review and testing.
+
+On 18/03/2025 15:09, Alexandre Ghiti wrote:
+> On 18/03/2025 14:04, Andrew Jones wrote:
+>> On Tue, Mar 18, 2025 at 01:58:10PM +0100, Alexandre Ghiti wrote:
+>>> On 18/03/2025 13:45, Andrew Jones wrote:
+>>>> On Tue, Mar 18, 2025 at 01:13:18PM +0100, Alexandre Ghiti wrote:
+>>>>> On 18/03/2025 09:48, Andrew Jones wrote:
+>>>>>> On Mon, Mar 17, 2025 at 03:39:01PM +0100, Alexandre Ghiti wrote:
+>>>>>>> Hi Drew,
+>>>>>>>
+>>>>>>> On 04/03/2025 13:00, Andrew Jones wrote:
+>>>>>>>> Allow skipping scalar and vector unaligned access speed tests. This
+>>>>>>>> is useful for testing alternative code paths and to skip the
+>>>>>>>> tests in
+>>>>>>>> environments where they run too slowly. All CPUs must have the same
+>>>>>>>> unaligned access speed.
+>>>>>>> I'm not a big fan of the command line parameter, this is not
+>>>>>>> where we should
+>>>>>>> push uarch decisions because there could be many other in the
+>>>>>>> future, the
+>>>>>>> best solution to me should be in DT/ACPI and since the DT folks,
+>>>>>>> according
+>>>>>>> to Palmer, shut down this solution, it remains using an extension.
+>>>>>>>
+>>>>>>> I have been reading a bit about unaligned accesses. Zicclsm was
+>>>>>>> described as
+>>>>>>> "Even though mandated, misaligned loads and stores might execute
+>>>>>>> extremely
+>>>>>>> slowly. Standard software distributions should assume their
+>>>>>>> existence only
+>>>>>>> for correctness, not for performance." in rva20/22 but *not* in
+>>>>>>> rva23. So
+>>>>>>> what about using this "hole" and consider that a platform that
+>>>>>>> *advertises*
+>>>>>>> Zicclsm means its unaligned accesses are fast? After internal
+>>>>>>> discussion, It
+>>>>>>> actually does not make sense to advertise Zicclsm if the platform
+>>>>>>> accesses
+>>>>>>> are slow right?
+>>>>>> This topic pops up every so often, including in yesterday's server
+>>>>>> platform TG call. In that call, and, afaict, every other time it has
+>>>>>> popped up, the result is to reiterate that ISA extensions never say
+>>>>>> anything about performance. So, Zicclsm will never mean fast and we
+>>>>>> won't likely be able to add any extension that does.
+>>>>> Ok, I should not say "fast". Usually, when an extension is
+>>>>> advertised by a
+>>>>> platform, we don't question its speed (zicboz, zicbom...etc), we
+>>>>> simply use
+>>>>> it and it's up to the vendor to benchmark its implementation and act
+>>>>> accordingly (i.e. do not set it in the isa string).
+>>>>>
+>>>>>
+>>>>>>> arm64 for example considers that armv8 has fast unaligned
+>>>>>>> accesses and can
+>>>>>>> then enable HAVE_EFFICIENT_ALIGNED_ACCESS in the kernel, even
+>>>>>>> though some
+>>>>>>> uarchs are slow. Distros will very likely use rva23 as baseline
+>>>>>>> so they will
+>>>>>>> enable Zicclsm which would allow us to take advantage of this
+>>>>>>> too, without
+>>>>>>> this, we lose a lot of perf improvement in the kernel, see
+>>>>>>> https://lore.kernel.org/lkml/20231225044207.3821-1-
+>>>>>>> jszhang@kernel.org/.
+>>>>>>>
+>>>>>>> Or we could have a new named feature for this, even though it's
+>>>>>>> weird to
+>>>>>>> have a named feature which would basically  mean "Zicclsm is
+>>>>>>> fast". We don't
+>>>>>>> have, for example, a named feature to say "Zicboz is fast" but
+>>>>>>> given the
+>>>>>>> vague wording in the profile spec, maybe we can ask for one in
+>>>>>>> that case?
+>>>>>>>
+>>>>>>> Sorry for the late review and for triggering this debate...
+>>>>>> No problem, let's try to pick the best option. I'll try listing
+>>>>>> all the
+>>>>>> options and there pros/cons.
+>>>>>>
+>>>>>> 1. Leave as is, which is to always probe
+>>>>>>       pro: Nothing to do
+>>>>>>       con: Not ideal in all environments
+>>>>>>
+>>>>>> 2. New DT/ACPI description
+>>>>>>       pro: Describing whether or not misaligned accesses are
+>>>>>> implemented in
+>>>>>>            HW (which presumably means fast) is something that
+>>>>>> should be done
+>>>>>>     in HW descriptions
+>>>>>>       con: We'll need to live with probing until we can get the
+>>>>>> descriptions
+>>>>>>            defined, which may be never if there's too much opposition
+>>>>>>
+>>>>>> 3. Command line
+>>>>>>       pro: Easy and serves its purpose, which is to skip probing
+>>>>>> in the
+>>>>>>            environments where probing is not desired
+>>>>>>       con: Yet another command line option (which we may want to
+>>>>>> deprecate
+>>>>>>            someday)
+>>>>>>
+>>>>>> 4. New ISA extension
+>>>>>>       pro: Easy to add to HW descriptions
+>>>>>>       con: Not likely to get it through ratification
+>>>>>>
+>>>>>> 5. New SBI FWFT feature
+>>>>>>       pro: Probably easier to get through ratification than an ISA
+>>>>>> extension
+>>>>>>       con: Instead of probing, kernel would have to ask SBI --
+>>>>>> would that
+>>>>>>            even be faster? Will all the environments that want to
+>>>>>> skip
+>>>>>>     probing even have a complete SBI?
+>>>>>>
+>>>>>> 6. ??
+>>>>> So what about:
+>>>>>
+>>>>> 7. New enum value describing the performance as "FORCED" or "HW" (or
+>>>>> anything better)
+>>>>>       pro: We only use the existing Zicclsm
+>>>>>       con: It's not clear that the accesses are fast but it
+>>>>> basically says to
+>>>>> SW "don't think too much, I'm telling you that you can use it", up
+>>>>> to us to
+>>>>> describe this correctly for users to understand.
+>>>> But Zicclsm doesn't mean misaligned accesses are in HW, it just means
+>>>> they're not going to explode.
+>>>
+>>> They never explode since if they are not supported by the HW, we rely on
+>>> S-mode emulation already.
+>> Exactly. Zicclsm is just a new name for that behavior. Profiles try to
+>> name every behavior, even the ones we take for granted. Unfortunately,
+>> like in the case of Zicclsm, we don't necessarily gain anything from
+>> the new name. In this case, we don't gain a way to avoid probing.
+> 
+> 
+> I understand your point but given the misaligned traps exist, I can't
+> find another meaning to Zicclsm than "I'm telling you to use it".
+> Zicclsm can't be used to describe an OS behaviour (ie the emulation of
+> misaligned accesses).
+
+Hi Alex,
+
+Some SBI implementation might decide not to delegate the misaligned trap
+and not emulate it or partially emulate it. IMHO, Zicclsm should
+actually be advertised by SBI to actually tell the OS that misaligned
+accesses are supported (even though they are slow) since Zicclsm is a
+profile extension (at least in its first definition). I think we can not
+rely on Zicclsm to determine that accesses are fast. Moreover, it seems
+like its definition evolved over time and lacks clarity to be reliable.
 
 > 
-> In that case please add the following entry in MAINTAINERS:
-> 
-> L:	linuxppc-dev@lists.ozlabs.org
-> 
-> 
+> I'm also insisting because we need a compile-time hint which allows us
+> to enable HAVE_EFFICIENT_UNALIGNED_ACCESS in the kernel and Zicclsm is
+> great since it is required in RVA23. if that's not Zicclsm, that must be
+> another named feature/extension.
 
-Thank you,
+As said in the other thread, I think we might have to enable
+HAVE_EFFICIENT_UNALIGNED_ACCESS as a default (or whatever option selects
+that CONFIG). HW without misaligned access support implementation would
+suffer from that choice but would still work (although poorly) thanks to
+S-mode emulation. If one wants to run the kernel more efficiently on
+some smaller chip without any hardware support for it, then it should
+disable that config. I think that we can not accommodate both world
+without hurting one side or the other, a choice needs to be made.
 
-Ioana
+Thanks,
+
+Clément
+
+> 
+> What do you suggest to make progress here?
+> 
+> Thanks,
+> 
+> Alex
+> 
+> 
+>>
+>> Thanks,
+>> drew
+>>
+>>>
+>>>> We'd still need the probing to find out
+>>>> if the accesses are emulated (slow) or hw (fast). We at least want to
+>>>> know the answer to that question because we advertise it to userspace
+>>>> through hwprobe.
+>>>>
+>>>> (BTW, another pro of the command line is that it can be used to test
+>>>> both slow and fast paths without recompiling.)
+>>>>
+>>>> Thanks,
+>>>> drew
+>> _______________________________________________
+>> linux-riscv mailing list
+>> linux-riscv@lists.infradead.org
+>> http://lists.infradead.org/mailman/listinfo/linux-riscv
+
 
