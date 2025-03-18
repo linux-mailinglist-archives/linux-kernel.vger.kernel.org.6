@@ -1,117 +1,161 @@
-Return-Path: <linux-kernel+bounces-565720-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565721-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C117EA66E0F
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 09:22:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91157A66E11
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 09:23:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D33193AD60B
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 08:22:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AAC10189685D
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 08:23:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EEE81F418A;
-	Tue, 18 Mar 2025 08:22:35 +0000 (UTC)
-Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09D671F63F0;
+	Tue, 18 Mar 2025 08:23:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TGEaYkq4"
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79932146D6A;
-	Tue, 18 Mar 2025 08:22:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE5711C6FF4;
+	Tue, 18 Mar 2025 08:22:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742286154; cv=none; b=aHmFXI7BxVDCTooJ+IE1zzcs9v1AWCOWmKYZm2rqka8uub5nbsTKX3ep8m/WaGJcZd2Glan8SAM/ShstvXvnsDnTyNgnRstFDDEbU6dj0zrQaoSe5a5/bI8YYKDNyrWGWSN1N+xxKRtjkRKTyvxQUzTiVIlpZGJbBOPKnSD7DsE=
+	t=1742286179; cv=none; b=Oy5VkKvxSWF8UqSVL1LE2cvsdX/QK6S127K670od53LsYuCampClbEiOXzMlaJXB2ev15bK4Xc5W2vGsPy67GtmEGxEu3TsYpzPpJ0GuzTX2Br3nAMFR1sAMzDiq0Y+F0/TWh/v/+GjcATbjW8IKfFcMoUqAklILIDZidwWSy/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742286154; c=relaxed/simple;
-	bh=Lg/kjQ8+BXnYP2pnKclvS2rFLRLs9Np0/eWDe1t6oRw=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=gHTv2vfhI9OBPjYGABBfyweDMuPhr0EqeB3sXrLErs+EZB7863XXigMZlHuWco+PnEilCxOMTwpjAPf8Tlxe0Dvw3h2yV29eLRz+FgrM9idUAZ0pnzVqFzwJKe1bDlS+D1SfsSpqx3ShvxOl2/ZyIorAbiy7AM2eYhjP5jGoaKA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from icess-ProLiant-DL380-Gen10.. (unknown [183.174.60.14])
-	by APP-01 (Coremail) with SMTP id qwCowAAXHNAwLdlnivc7Fg--.12711S2;
-	Tue, 18 Mar 2025 16:22:20 +0800 (CST)
-From: Ma Ke <make24@iscas.ac.cn>
-To: eajames@linux.ibm.com,
-	ninad@linux.ibm.com,
-	joel@jms.id.au,
-	jk@ozlabs.org
-Cc: linux-fsi@lists.ozlabs.org,
-	linux-kernel@vger.kernel.org,
-	Ma Ke <make24@iscas.ac.cn>,
-	stable@vger.kernel.org
-Subject: [PATCH] fsi/core: fix error handling in fsi_slave_init()
-Date: Tue, 18 Mar 2025 16:22:07 +0800
-Message-Id: <20250318082207.1644582-1-make24@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1742286179; c=relaxed/simple;
+	bh=MCjh2nLgKcoaLG5kdK+Wb5APkkLoIjS8PqH45EtRxnM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=u3wFa8ZEcfhZ4ilt534G4p7LQRL4aSt40xXc6ukdS49aLqN7/D8SIFSuYiNTxcvAG+V5G3clL8DcyBJR/wSeVkczGAibQSimNpZDbzP55m94kvFs1OUCvZTt8iqP45HaFztaVz6qxiknpd1oVB4GCGhzpvmrZZtcZYkmWxR6Y3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TGEaYkq4; arc=none smtp.client-ip=209.85.216.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2ff799d99dcso4924848a91.1;
+        Tue, 18 Mar 2025 01:22:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742286177; x=1742890977; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=66gdttRajZWJvR9DIeRu0efVzTG1k2XN5Qke5urMoJQ=;
+        b=TGEaYkq4mDJIftlhahJDsWdcQ68ETkjwiIwI2kjwFbNmF2NPrBGAYC/2eVBceAIL43
+         zqpoT/WsXqQbnwmIUOQYsjfBvV9AtQAKsX/Q0ahfniakqw8OiTcH2q7d6ogbA0nwbyT0
+         845RYhzSX2AytHvMD9UB9jCvyfcyZMmUSQwRZkUFb1o6aYe/HHi22+bLRLFSH7k6RdLg
+         D8qBy7KpjwFY+Pm7+erp0on7hXRwsoy/cTJ9MiWCnxavUcEHgstkjoNNrZUgOOuggYvd
+         OJ9j1IemLOeA9sdMRV2lpuZI9ZGos/UVQ/QhEo/LRWXSOQiumbfHETfA5/1a0Y/0Ub73
+         gNHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742286177; x=1742890977;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=66gdttRajZWJvR9DIeRu0efVzTG1k2XN5Qke5urMoJQ=;
+        b=WC3LQqKX/1Fn3w/EvaPIedS8OfNU8fj7Qz+pFiLHX9c8w2k37u6lezK16lcivkf3KU
+         4RaV2X5SmLuLeb7ECpFg74LqVDQ7PZnhSisGH48kQqmj4xal5bbLU+5cNDqzcpc+3gGL
+         mme52+2Kg0JzZ1ABvHSjWJFsZeEnNYJhpFr+Q0XW//h7kyzrWrfSQzD/WC0jD2XkMOeD
+         NOlK/8HRSV/Q9lC2z6Gv6X/uuSGb/46G4c/NmO2w8SsfEdOc7eMxcC7xXcVtp/B+SOEJ
+         qSZWtKYcSzIVHvz1XZLdsTPncBOb7Qj+Cdu3JUCXzYkj81nc9t1nvM5wowllpSrD2OtE
+         TSWA==
+X-Forwarded-Encrypted: i=1; AJvYcCUJoJbAxvfl5gXbeYN+OYSBU44uO0u0h1GA/u6QwlamEArIgDJZzeemdU6YOZLJY/7btk3WCz0J93J25AQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwtZKIy4nOcwP0auo6Z9675IBh7LMmkyw3B7EAyIoTsCAqMeTpF
+	lFvMZEvNWaLsQgi7DoucDLECQW1Msd5Rmb+fWMM6Sa3N2WaBA5ul
+X-Gm-Gg: ASbGncuOIuRt4gYMTEvqYl9hiHscMEmoY2THUhFWR7hKQdB6rfFPlzIE87Hee2SZGFR
+	nc1DgMzHCxrVLb8aCYEUbUxYBYocg4KZ/3qp8DgEkCME+uScPV8CWMoQGroY/RubwZdV2O2l10K
+	Dr8MxeGyZvfB+/wVLirT1pYI02nrpx+NjLWSV8mGlHv1FGpOsL/NspAbyxAZ6ogphAuYrgO0A+8
+	hHmNJNeFjC/uRA8etfGSnJNOcAy4LPl8VgehOUVAFphTAEsQcE/nDzqPB7xIea8mIqJiT1fRIdH
+	9rRZkfGS69/qzyBa3FIClyJRYY7WWeinxuVjwl5T+Lbaet58BQ==
+X-Google-Smtp-Source: AGHT+IEtHpGsBp0BgxcS9kaaMvlR/hXT7EDrkIPt4HkA2hT2e/dgaUHfpGO24IMLTWaArAhnmg77IQ==
+X-Received: by 2002:a17:90b:388c:b0:2ff:69d4:6fe2 with SMTP id 98e67ed59e1d1-301a5b2b4bfmr2007594a91.16.1742286177145;
+        Tue, 18 Mar 2025 01:22:57 -0700 (PDT)
+Received: from fedora ([43.228.180.230])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-30153b9949asm7526680a91.38.2025.03.18.01.22.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Mar 2025 01:22:56 -0700 (PDT)
+Date: Tue, 18 Mar 2025 08:22:50 +0000
+From: Hangbin Liu <liuhangbin@gmail.com>
+To: Jay Vosburgh <jv@jvosburgh.net>
+Cc: netdev@vger.kernel.org, Andy Gospodarek <andy@greyhouse.net>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Nikolay Aleksandrov <razor@blackwall.org>,
+	Simon Horman <horms@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCHv2 net] bonding: add ns target multicast address to slave
+ device
+Message-ID: <Z9ktWpfepFclm-b-@fedora>
+References: <20241023123215.5875-1-liuhangbin@gmail.com>
+ <213367.1730305265@vermin>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qwCowAAXHNAwLdlnivc7Fg--.12711S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7WryrKw4rWw17XFW8GFyDJrb_yoW8Wr4kpa
-	1DGa4FyrWUGr1kKrsrZas7Z3s8CrWIv34furW8Gw1IkrZxX34Yyryjg340ya48JaykJF48
-	Xr9rXrykWF1DXaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvC14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
-	6r4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC
-	0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr
-	1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IE
-	rcIFxwCY1x0262kKe7AKxVWUAVWUtwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbV
-	WUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF
-	67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42
-	IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF
-	0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2Kf
-	nxnUUI43ZEXa7VUbsYFJUUUUU==
-X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
+In-Reply-To: <213367.1730305265@vermin>
 
-Once cdev_device_add() failed, we should use put_device() to decrement
-reference count for cleanup. Or it could cause memory leak. Although
-operations in err_free_ida are similar to the operations in callback
-function fsi_slave_release(), put_device() is a correct handling
-operation as comments require when cdev_device_add() fails.
+On Wed, Oct 30, 2024 at 05:21:05PM +0100, Jay Vosburgh wrote:
+> Hangbin Liu <liuhangbin@gmail.com> wrote:
+> 
+> >Commit 4598380f9c54 ("bonding: fix ns validation on backup slaves")
+> >tried to resolve the issue where backup slaves couldn't be brought up when
+> >receiving IPv6 Neighbor Solicitation (NS) messages. However, this fix only
+> >worked for drivers that receive all multicast messages, such as the veth
+> >interface.
+> >
+> >For standard drivers, the NS multicast message is silently dropped because
+> >the slave device is not a member of the NS target multicast group.
+> >
+> >To address this, we need to make the slave device join the NS target
+> >multicast group, ensuring it can receive these IPv6 NS messages to validate
+> >the slave’s status properly.
+> >
+> >There are three policies before joining the multicast group:
+> >1. All settings must be under active-backup mode (alb and tlb do not support
+> >   arp_validate), with backup slaves and slaves supporting multicast.
+> >2. We can add or remove multicast groups when arp_validate changes.
+> >3. Other operations, such as enslaving, releasing, or setting NS targets,
+> >   need to be guarded by arp_validate.
+> >
+> >Fixes: 4e24be018eb9 ("bonding: add new parameter ns_targets")
+> >Signed-off-by: Hangbin Liu <liuhangbin@gmail.com>
+> >---
+> >v2: only add/del mcast group on backup slaves when arp_validate is set (Jay Vosburgh)
+> 
+> 	Sorry for the delay in responding, I've been traveling.
+> 
+> 	For the above, I suspect I wasn't sufficiently clear in my
+> commentary; what I meant wasn't just checking arp_validate being
+> enabled, but that the implementation could be much less complex if it
+> simply kept all of the multicast addresses added to the backup interface
+> (in addition to the active interface) when arp_validate is enabled.
+> 
+> 	I suspect the set of multicast addresses involved is likely to
+> be small in the usual case, so the question then is whether the
+> presumably small amount of traffic that inadvertently passes the filter
+> (and is then thrown away by the kernel RX logic) is worth the complexity
+> added here.
 
-As comment of device_add() says, 'if device_add() succeeds, you should
-call device_del() when you want to get rid of it. If device_add() has
-not succeeded, use only put_device() to drop the reference count'.
+Hi Jan,
 
-Found by code review.
+Apologies for troubling you so many times with the same issue. Recently, we
+discovered another corner case related to IPv6 NS target validation.
 
-Cc: stable@vger.kernel.org
-Fixes: 371975b0b075 ("fsi/core: Fix error paths on CFAM init")
-Signed-off-by: Ma Ke <make24@iscas.ac.cn>
----
- drivers/fsi/fsi-core.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+Previously, I mainly focused on backup validation when arp_validate is set
+to 2, 3, or 6. However, if arp_validate is set to 0, bond_rcv_validate()
+updates last_rx directly upon receiving any packet. The problem occurs when
+the backup slave only receives IPv6 NS messages sent by the active slave,
+these messages are dropped because the backup slave hasn't joined the NS
+multicast group.
 
-diff --git a/drivers/fsi/fsi-core.c b/drivers/fsi/fsi-core.c
-index e2e1e9df6115..1373e05e3659 100644
---- a/drivers/fsi/fsi-core.c
-+++ b/drivers/fsi/fsi-core.c
-@@ -1084,7 +1084,8 @@ static int fsi_slave_init(struct fsi_master *master, int link, uint8_t id)
- 	rc = cdev_device_add(&slave->cdev, &slave->dev);
- 	if (rc) {
- 		dev_err(&slave->dev, "Error %d creating slave device\n", rc);
--		goto err_free_ida;
-+		put_device(&slave->dev);
-+		return rc;
- 	}
- 
- 	/* Now that we have the cdev registered with the core, any fatal
-@@ -1110,8 +1111,6 @@ static int fsi_slave_init(struct fsi_master *master, int link, uint8_t id)
- 
- 	return 0;
- 
--err_free_ida:
--	fsi_free_minor(slave->dev.devt);
- err_free:
- 	of_node_put(slave->dev.of_node);
- 	kfree(slave);
--- 
-2.25.1
+So, should we remove the limitation that restricts joining the NS multicast
+group only when arp_validate is set?
 
+By the way, another question unrelated to this topic. Does target_last_arp_rx
+have any usage? I couldn't find any references to it being used anywhere.
+
+Thanks
+Hangbin
 
