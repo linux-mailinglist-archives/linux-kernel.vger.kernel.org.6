@@ -1,136 +1,128 @@
-Return-Path: <linux-kernel+bounces-565225-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565226-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8EAFA66401
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 01:40:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8ADC0A6640A
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 01:42:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B15417D734
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 00:40:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C622117DB5B
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 00:42:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D480C3596A;
-	Tue, 18 Mar 2025 00:40:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 193EE61FF2;
+	Tue, 18 Mar 2025 00:42:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="HJMjpjZZ"
-Received: from mail-oo1-f44.google.com (mail-oo1-f44.google.com [209.85.161.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qw7StJyc"
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADA631C28E
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 00:40:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0130D528;
+	Tue, 18 Mar 2025 00:42:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742258438; cv=none; b=F6IhbGJu9MnaZoKFMXYSvwPQN49g9TN6O4DrfaNbGtINBF13gIRCGK5qbNNoKH4bYC27gUvxv++6KoCUyGda2WPPEfgE6c5g4fV85iyAjQLkak6pB89akdT3vAnt8ff0+glQw2vmuwGfkBpj4wPjF7IOLrr2PS70Lam3TlHgx6Q=
+	t=1742258528; cv=none; b=qX6ghlp4UZ9MRc3uChxEPMfvJxhvyAo3R1cWu6s37wt+EJh/F6Qzvy6UGL/+Rmio/HNhjMNH5nMlC1mKgNTFMYhSRIn7A93wuxrLzjwz769R9BxlpC64pbRZqERAiHRxNpf1atvJX3DJc7mdCS7VQiJRkwblOxNRbG06A/9FYY8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742258438; c=relaxed/simple;
-	bh=aF1eAkjgcCapdV4LaVeUeqIvJD+3wVpYt9I5HsPkM5o=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=WgO7AO71mt3d3bkNayDdyvOSNW6xsnY2V6iy/YEf6bR3lBOpAY2d6Ok+GsP/XRsb/EApWoy7FiNSc7OHuD3GLfs3QrUl0YYU1nu11UuCxFc5b1BPd8xbiLTC+EN0fUwigv/tp3npU2fwPY8n0qj+ro6WCTbTjc0su0Zw7Q6Fct0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=HJMjpjZZ; arc=none smtp.client-ip=209.85.161.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-oo1-f44.google.com with SMTP id 006d021491bc7-601b1132110so2401640eaf.3
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 17:40:36 -0700 (PDT)
+	s=arc-20240116; t=1742258528; c=relaxed/simple;
+	bh=PgzC/F33BYAA53t0eSb8TLPna6imarmpm+vWugeqXCY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dzdwmsK40zrzZvBlTHMQ8tvKvCnGciukIoHtyeAM9KoJOKit5lh0rQXiz14FLJKxOElEK3k183lq+Uy/7uG0YkQCBRW3xwZegBnDAZv0V4u35hp6f0rrdwRL1ta7ByXmikgNdgRa2lQF+V8LhN02MpD3sBzF8d1xZMXpRBqMoNI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Qw7StJyc; arc=none smtp.client-ip=209.85.208.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-30795988ebeso52112181fa.3;
+        Mon, 17 Mar 2025 17:42:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1742258435; x=1742863235; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=9vQclP5cvHTI1P3oWqFAri9BqwPEN+gIHprekZKw4CY=;
-        b=HJMjpjZZ4FE6tODfEa019mQeBfjY96cDWvitTUJ3JpH/Bn4AE4XjHzA/76aPW6UlTL
-         Qomlw+Wr6oFj3JdPdSorri91vK86EIOjhZWSQqHi4paueT1POxdTWxQF49HvrhDrd2eK
-         vF3REaOn/uQy8G7fO8jdsPIMLRoxlIHN3LrE8=
+        d=gmail.com; s=20230601; t=1742258525; x=1742863325; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=B7IfKOPhAlS//llZDZ8iu5ShHju61/9HzEhonjMXx+s=;
+        b=Qw7StJycBI7mWjgQpc6ky6N7gIAmD3ev7RIaMuDfW7ioBGCk4pWfFo+tGqnCYIy6Ax
+         Ijh+TWl/48z78hJ6QfsHpPZ9lzWZFTNPqpw5AGGECHVsDwVvPxa7otrcO+8sfh5JWiyP
+         5xSHz9KjTKQNU9ZoZpsGWzpfdbOjhO+O42dV/n/HqKtKB6HmccORC/XHZX2dvmNjU/6v
+         jh6ZZK+t6urhPGu7tq9Sjq+xjwKqXXPpwJ7gdheUyO/WC0ZhLL/x90I8svKkVrnHYsw1
+         HDeCyYCQ0yQf1iFJZwpNGmlERbxzxPRsULqix160gxkrzMxvFffSsM45R6cx+miDy/j0
+         0DAA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742258435; x=1742863235;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9vQclP5cvHTI1P3oWqFAri9BqwPEN+gIHprekZKw4CY=;
-        b=wsYFCfsZY2pwQDOrY1OFpZy1Qromg7gNDe4F5gZsiAVzgXx7EesuN/1iykoE6C3woZ
-         FNhCVzgG6k6Eh3em1Wx8aFy3BCa8HZQWAmBWsikIVIAOB5c5UR87QRTYLxTiPqnilKyq
-         ZwkJhIMLZCDwOt29mecXZgYuOymKdeiIuDnYEnIQ9LGpBBEsnxOZSx2WMYDdsxALyLxv
-         xy6d7Aae5ay5UJ4L93FWsQMp/sszRYCJeMaR/BKC0kHWK35EZFPUJrCCzlNsPyV7596W
-         MGFprgiF7ON4t7Gjo/FNLI4kkBK2KDeJldZ51a2d1/iKiPRgLOdmx+WwdZR4FhAX2BOP
-         fiiw==
-X-Gm-Message-State: AOJu0Yzg8Uz2RJBxtWuR1zDxpDGg+5buZmlNuOUDVYCz0HHIB6TwpyYH
-	QZ0Hja3mJ/+hLShhcSxn/JGY8szfPVswvsOC+b0kiy5n0LwseoffFctiGHUU5f3bbP3jHrJXMGo
-	SfTt1bXS6M38EooQap30agWvkz/JHknlx6/fAo6nSgWG9bFfB1Lj0OpF77YclSX5ItBkCn3iRh1
-	Hl5J6sPSAg33BzV0b+7caDoM57sI05OmwSJJAFcptTEhqvi6xeT8Ps
-X-Gm-Gg: ASbGncv+dWLS+OiomVxdaE/veCiHUOxsMSMmxXOTNqTBitRnfWSGe4ETaXelstw53pN
-	qh4AVIvkWosrJXhaBNnGJcGIqvgJnsq+hJa2CRrd+mM7pKo9jSefNCetyLdUK06cg5StKzGlVBY
-	lC18x3a3yueeaJWzhdalJ/sMz2f4oj5yTQlAkGn5HfRLSwN1ct7gSEDQ/fV92EuD693zhhpr+lU
-	I/S7UixvU3ABCLBKjx5IC4NLl4C2KAdZ/b0GCSU9Nayczoq1avq+wFRwxs9g0TxQoYxqLIBxU/5
-	PnqfFyrORtrleEcr8mSDZnISdCWF38pvmjxgVWmzuFhh8ciomFvbQ34o6eKMH+ldUHML0gxS5Mb
-	6oiS0mVRvG5qOuYE8NIKlK7oYrw==
-X-Google-Smtp-Source: AGHT+IHIaAa69q2Z8ANXe30r/tizHQHT896S2VWLzIZ4VMEnQe4ojb43pU2xocXU645TgXl4SoKLuw==
-X-Received: by 2002:a05:6808:38cf:b0:3f8:cf10:f113 with SMTP id 5614622812f47-3fdee36f68fmr8838131b6e.5.1742258435416;
-        Mon, 17 Mar 2025 17:40:35 -0700 (PDT)
-Received: from amakhalov-build-vm.. ([192.19.161.250])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-3fcd5c0007esm1999044b6e.37.2025.03.17.17.40.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Mar 2025 17:40:34 -0700 (PDT)
-From: Alexey Makhalov <alexey.makhalov@broadcom.com>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org,
-	virtualization@lists.linux.dev
-Cc: gregkh@linuxfoundation.org,
-	bp@alien8.de,
-	ajay.kaher@broadcom.com,
-	Alexey Makhalov <alexey.makhalov@broadcom.com>,
-	Konstantin Ryabitsev <konstantin@linuxfoundation.org>
-Subject: [PATCH] MAINTAINERS: update Alexey Makhalov's email address
-Date: Tue, 18 Mar 2025 00:40:31 +0000
-Message-Id: <20250318004031.2703923-1-alexey.makhalov@broadcom.com>
-X-Mailer: git-send-email 2.39.4
+        d=1e100.net; s=20230601; t=1742258525; x=1742863325;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=B7IfKOPhAlS//llZDZ8iu5ShHju61/9HzEhonjMXx+s=;
+        b=Qm4e3bQpi4U/4T5QC8EjrqzIEZF4JjiIV4x3XBB+dp6YODxv14NWfubFQdyapFFGEg
+         36AU7+cXeJYpSrpw9kioh9CEo+eplZ0j9E9N8mowKzljr5tyrKBvX8iOmIN9JKHp9GXW
+         djBgRGdbTJSDMUW/LtXp+ZPr+ussc2YvWsiz6G/X3WVuw/qbeUrFsr68JnXrnAVTRzNp
+         Aoi+/HcbAmIsNkh1XwMJoBpLvmcO7mRMifBA1BbqhAsi/oXmVVa1tpYMUyI7TLpn9zJg
+         ARzOWIRjty5uxykf+D2txuWd9o7b6vAi3+7vuF+3mBEc4HEGcQu9WLTeH08rzmrF8sr8
+         fUBw==
+X-Forwarded-Encrypted: i=1; AJvYcCUO5KwCEsYD35cZzdIQNEbwZa78SS+Ra/obJt0ERJ+2j9+P8QwCJ3FGQByuXKcrJA+I52nW5kdWzcuLtqMm@vger.kernel.org, AJvYcCVYkMozWUZk1m2CFAfIKdU/Vnp+2InnFolnwHc0QE3+5zDDcVIHjzAnhZx2ZvqHYN+RJu6q69qa1OadYQpAoq0=@vger.kernel.org, AJvYcCVtR64EvI8P7O5FNn8SyHjhjyM4M4YY5zZDAT38VOwj2xMLOXsf9FOiTN8OQJo6sHbpvCj5GRwB76Iuues=@vger.kernel.org, AJvYcCW0lxuQpcVrCWASUtPxhf3fnpkvtKzdn2PJwKNbvD1P5BYJgkKDVGQWzwheZcgpwrCRPSvUoXmjhBPlfPkDIzY8@vger.kernel.org, AJvYcCWATtWO76muUPyfGFgwi+FYoDC/yTDVBan9CZY9AzZOeQDlyn+5ze5eotmbNvkuoIqocCsqvcsV7i7tTRdL@vger.kernel.org, AJvYcCXah9vW6lD6Jp4QqbooTx8HeSNtPHNRDldHHjeuWOJMrGZiAEQa7XFBLasD0ng8uEbxa/iZNTXLTzVl@vger.kernel.org, AJvYcCXo2tst5mLk8G+JHcoiysN9la+s9zLuTiChJq8ldYOKYcUkJjjr1YED4KkVQIM2p0g8pFXP/BP3rE+b@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/3sw9BkEf8Y9pqIRm3jTqAe5mo5WNOKpn22MR671ajjjSsFXO
+	HyafM8WxMdqjh8HArlksxQZkIn0yneZwPEyfOloHNJU9TQZOomm6xcyCc4JCHXp35K+KutIFxq1
+	PfYPbdwtQE1gySoWEgCIalvHHejA=
+X-Gm-Gg: ASbGncsy+cQC59TxL2XQIcvGv2hPBqB8DkaUOFnnreIjGAq5oUcH5JheOtfZZ+eVUeR
+	0inYcDaThjbvsrcJrQqlQjxStCA04qcnchqP478zrj32rmG/G1W/bAGdkSBXL6w5rV9Mf2d6BHZ
+	tuBhBVhhCM38wz9wlLoxpg28M2/wNp3II5lrTcNDeoXkQ5jll6rQUtLSDmI0N+LToDND9Repk=
+X-Google-Smtp-Source: AGHT+IF5vCiDQ8UvKh1Yne26mi3NIgR+bYUhG99rsvoK4CRqZFLHBICrHc5mvPXVOh74lH0hTvVBsz+mo/B6+Mv42Wo=
+X-Received: by 2002:a05:651c:2108:b0:300:5c57:526b with SMTP id
+ 38308e7fff4ca-30c4a861dc9mr89186201fa.11.1742258524555; Mon, 17 Mar 2025
+ 17:42:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <67d864b2.0c0a0220.39fb6f.4df4@mx.google.com> <CAJ-ks9n8mwt5q9unqfkfSHj9=ELJHtqsXM-xQ8jsbXeJX6Uyfg@mail.gmail.com>
+ <67d8671d.050a0220.3305ab.6372@mx.google.com> <CAJ-ks9=uHjJrzM0ruvm4v4wr8LygRMP-1orWBy_9OiNNeQr0ow@mail.gmail.com>
+ <CAJ-ks9=Qcmvbm=YGJ=jrX_+YdMsftk=FAimszYZB1OUuV4diZw@mail.gmail.com>
+ <67d885ff.0c0a0220.111215.5644@mx.google.com> <CAJ-ks9kYB1b4XsQcFb=NScPq+R+13U+Sv-6opi-yp6=ZjuLD_g@mail.gmail.com>
+ <67d88a1d.050a0220.2cdacf.4adf@mx.google.com> <CAJ-ks9kg4Br=56HT7T5sWpoMKhRqT_2x+cpQAWoyrEG3qyqQ6Q@mail.gmail.com>
+ <67d895cc.050a0220.99d33.5adc@mx.google.com> <67d8ba3e.050a0220.39b3b5.753c@mx.google.com>
+In-Reply-To: <67d8ba3e.050a0220.39b3b5.753c@mx.google.com>
+From: Tamir Duberstein <tamird@gmail.com>
+Date: Mon, 17 Mar 2025 20:41:28 -0400
+X-Gm-Features: AQ5f1JoEGp_5o1WcOYKQ7KQIGBB5nqYglySnTY7b-xENR_n0SAcUGZzOBrzhgus
+Message-ID: <CAJ-ks9n57P=NnMAAvLr9dnZhs2zT8cvD_gdLkSmnFtSQR4b-Jw@mail.gmail.com>
+Subject: Re: [PATCH v5 6/6] rust: use strict provenance APIs
+To: Boqun Feng <boqun.feng@gmail.com>
+Cc: Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
+	Nicolas Schier <nicolas@fjasle.eu>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Brendan Higgins <brendan.higgins@linux.dev>, 
+	David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Luis Chamberlain <mcgrof@kernel.org>, 
+	Russ Weight <russ.weight@linux.dev>, Rob Herring <robh@kernel.org>, 
+	Saravana Kannan <saravanak@google.com>, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, 
+	linux-pci@vger.kernel.org, linux-block@vger.kernel.org, 
+	devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Fix a typo in an email address.
+On Mon, Mar 17, 2025 at 8:11=E2=80=AFPM Boqun Feng <boqun.feng@gmail.com> w=
+rote:
+>
+> diff --git a/scripts/rustdoc_test_gen.rs b/scripts/rustdoc_test_gen.rs
+> index 036635fb1621..331ed32adc35 100644
+> --- a/scripts/rustdoc_test_gen.rs
+> +++ b/scripts/rustdoc_test_gen.rs
+> @@ -224,6 +224,8 @@ macro_rules! assert_eq {{
+>          BufWriter::new(File::create("rust/doctests_kernel_generated.rs")=
+.unwrap()),
+>          r#"//! `kernel` crate documentation tests.
+>
+> +#![allow(clippy::incompatible_msrv)]
 
-Cc: stable@vger.kernel.org
-Reported-by: Konstantin Ryabitsev <konstantin@linuxfoundation.org>
-Closes: https://lore.kernel.org/all/20240925-rational-succinct-vulture-cca9fb@lemur/T/
-Signed-off-by: Alexey Makhalov <alexey.makhalov@broadcom.com>
----
- MAINTAINERS | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index c9763412a508..c2eb78c1ab75 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -17945,7 +17945,7 @@ F:	include/uapi/linux/ppdev.h
- PARAVIRT_OPS INTERFACE
- M:	Juergen Gross <jgross@suse.com>
- R:	Ajay Kaher <ajay.kaher@broadcom.com>
--R:	Alexey Makhalov <alexey.amakhalov@broadcom.com>
-+R:	Alexey Makhalov <alexey.makhalov@broadcom.com>
- R:	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>
- L:	virtualization@lists.linux.dev
- L:	x86@kernel.org
-@@ -25341,7 +25341,7 @@ F:	drivers/misc/vmw_balloon.c
- 
- VMWARE HYPERVISOR INTERFACE
- M:	Ajay Kaher <ajay.kaher@broadcom.com>
--M:	Alexey Makhalov <alexey.amakhalov@broadcom.com>
-+M:	Alexey Makhalov <alexey.makhalov@broadcom.com>
- R:	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>
- L:	virtualization@lists.linux.dev
- L:	x86@kernel.org
-@@ -25369,7 +25369,7 @@ F:	drivers/scsi/vmw_pvscsi.h
- VMWARE VIRTUAL PTP CLOCK DRIVER
- M:	Nick Shi <nick.shi@broadcom.com>
- R:	Ajay Kaher <ajay.kaher@broadcom.com>
--R:	Alexey Makhalov <alexey.amakhalov@broadcom.com>
-+R:	Alexey Makhalov <alexey.makhalov@broadcom.com>
- R:	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>
- L:	netdev@vger.kernel.org
- S:	Supported
--- 
-2.39.4
-
+Ah, this is the reason this works for you (and the one in the kernel
+root). When I said it didn't work, I was referring to not being able
+to convincingly avoid these lints without disabling the check
+altogether. Let's see what Miguel thinks. I agree that the options
+are: extension trait + stubs/reexports + suppressing
+`incompatible_msrv` or just dropping the last patch until MSRV bump.
 
