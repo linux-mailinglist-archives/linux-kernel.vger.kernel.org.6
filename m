@@ -1,326 +1,249 @@
-Return-Path: <linux-kernel+bounces-566564-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566565-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54FEBA679D6
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 17:42:33 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D138A679B7
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 17:37:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 527A33AC95D
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 16:37:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 273A67A4CD4
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 16:36:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C009D19B3CB;
-	Tue, 18 Mar 2025 16:37:29 +0000 (UTC)
-Received: from mail-ua1-f52.google.com (mail-ua1-f52.google.com [209.85.222.52])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15425211486;
+	Tue, 18 Mar 2025 16:37:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bG3i7Rdb"
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA4F9849C;
-	Tue, 18 Mar 2025 16:37:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBEBA2116E1;
+	Tue, 18 Mar 2025 16:37:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742315849; cv=none; b=HXp6oIDQXptEQ+gSfMKchIr0WNncV+Dda7CZutVelIjhtf+ZLwIK0z1/BJCwwUdh5c8vMU5/pxcsOHnVuYCaupS/YATksRJrVH0MkKE+TU//dwRL8Ln1XgPk9yPPt5SjsDDZi7c18pO70t9S/Ng8Vq1QPHSJRu362X0sm1xJPlI=
+	t=1742315858; cv=none; b=ZC7cEvAs6GM4JOS7Dz7py0fmEepn/x6/vqAfZXY0QjTZ7C4q5PAU8RqS+RVXOUHzsKbeOlOPVjZCI4yBp1LXFTTjTYZ4Z4Z1cRbls6TgtaiXi/oqISCb3M7eOAixbAIm1xCH0qgFzlapqQnwPjjmSEEcWErkBTLlNHgDtLgPQhY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742315849; c=relaxed/simple;
-	bh=pPyUzTUQGRfTQOHKidMaOzFFq6KMWWpkAT+NqF0KJBs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bBbNC+K/hFi10kbG7gNMF07o3lDWkrriKVH2JnVYWXAURyrdhbMzT9zjBx9r6v0/gnVJLWO0u1IkHRr1xaqKys1h1dfSUMiw3XLFF6ZPXAH+ys08yccXvBXgATd32zk50yf+ToSBLoqdMdg5NRWFIVQ7BwYkywqQiB7rU3yGSG0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	s=arc-20240116; t=1742315858; c=relaxed/simple;
+	bh=0qDP6EQsWN062W7kH85IFiHUOEPw6iXqikml60E1P6U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DJocqENtd+Exg2bTNED4nW9yNrFsoYwstDc42vF1d6J+KwATh45VIMIJM4nrUQeQWSKGDDX4fMq6aFMlYIgDeybIgY+7jhm/REkG2ZXzFKj0IrZPFOtib/xf4qJXnO9NCon0ZFNlCAoj5ShsMNqcB0Y6741GWdFt5C8DraLD1oI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bG3i7Rdb; arc=none smtp.client-ip=209.85.216.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f52.google.com with SMTP id a1e0cc1a2514c-86dde90e7a3so447191241.1;
-        Tue, 18 Mar 2025 09:37:22 -0700 (PDT)
+Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-3011737dda0so4669161a91.1;
+        Tue, 18 Mar 2025 09:37:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742315852; x=1742920652; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=RX5YGFbVgU4B7bQVgIXWTMqxSJNIzkC7ef+oNs3DsRY=;
+        b=bG3i7RdbECR6YIORTpSoz8C1XCJkE1By3hu0NE4Kaxe/IsRqVY84r8SafmhjnVDQO5
+         EtapI5sZqdZHz3qo7FiyPRdl3t78SIHx9nI3m59uIRgz49GBH5UO/oBHxHjfi0BJRB02
+         zVt4ztlbzPvxJntmlG+9BzUDP5KWC4esdK97BCLNpnirOrhM3IFCgjEmgslb/U6Bl6gR
+         cOY7EqugVnVbw4rIYzmiJYmuYC7aUUmw7cqwVsnWtx9jy+n8rBB6yD7G3ClPwp4pUj1K
+         SP9LK4jca6SSOEDbUIMxVjvToo93shTJNQpWALsUqZy13/cy8ON03yaC3lsdCNGsS038
+         PdTg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742315840; x=1742920640;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=jwRBrAn95ue33W6DszvlK1HReXU3uB5HdQrOlS7LOnE=;
-        b=kVqIYoqQs2ZNcN79m2LjCCNaJ/PNI7oVjGP6eJKcIzZRV6BaIq+8mg1cIluQjsm7lh
-         JicWOczOVMtZYoy57WPxFwNjmNraTSWiX7ttq4NkOeB7dnN8Ell+Sg7XYNLW2Qx9QZ91
-         DhXCmwo8DV113Nbxk2aiRfg0JhEqaIKL53bFmrPE0JMeh4ZgAVzNSj2JMUIys1HoeXDZ
-         RiElwzWSkwrAWHKYo18uwnnCkKo4Abyzgd5sr72E5aXdyJbcJxRinSKH75vl2J44jNdA
-         WtELPuaPVRuPF5eEsllqp6/wuUyBbCXn7FIGSSsK5Ce0mDQVPjfR4uhvO0bBMSc3FFhs
-         6DBQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV4m8ypb6ImNnRaGsxkEI5HWqmGdraAyKCkFLurUzdW4iZICTEMONCEgLrenPt1wjDomTEVKDleyoOIC0XtXE5rODY=@vger.kernel.org, AJvYcCWTYFhuFWhf4BgehykZjev1b1z/l13XWuZoprOrcRo83RYVq/9RGiwHAubFHpcCphmTBMTPs3vk/TrFR9n7@vger.kernel.org, AJvYcCXICbfDuBzlPzhBlf7SGv1kuLdBUaIfv3kHPYPxYM2Ej3dwMMwxUr+M/4goXGJEpt9ulHBUjwVEx/FL@vger.kernel.org, AJvYcCXKguxNQqOH1Z/Oucqid5SDN6oLNIE9gjg9qSIU5dYbE/BKfn1+BR/bR8XpsDmEPynuS1I9fJAMeXalbg==@vger.kernel.org, AJvYcCXP/qgt+X3Tmv0myV7Azgg8zCanbTrX/EjPFbGa50zJADq/WJ576mT83SlmD12NVVqVMkc5fqnOzxPb@vger.kernel.org
-X-Gm-Message-State: AOJu0YwBHfjWPJ6J6woNAnPmyFRIjTZwUv6g6JZFmG08OgOr5Qdts0do
-	QWV1rTiJOniKWhHxJOADmoKgvoj5ax5DJlSti+j9QlY6VNDiPanJWdKbbmXP
-X-Gm-Gg: ASbGncsB49fJ0xXgdlcOLZYuNDCds+rBkJ+Zn1IsdsMmBi8/16Mx9dTf/OPt8tXFAdR
-	2ew3vByYyEu4vJMQJzGqipmDCmEIHZNzzetXScbhlb8yGEvH+HKXznssn9yRd2dxfyTxSmOjTq8
-	b1YFTRmc5xIb4Yjj3xvLUFwOe13X6dzskg+hT11eZaVyqqd9NaJTzKPijIgNhxGJLkOEY+svdqm
-	tctuJPmXhioti9/4fNBvvGBZuFYG5JuH2AD0ndQOJfMTkpekIDebwlH0Eu39UOE2Wzzj8s2RgGN
-	A9oXNoBfCPrbKenICEnibjnjWC7KuoWazsttcay0R477RsvmTGl6XuCStfuZwzsgjaofltr9YTj
-	gvT5vDdDX6ks=
-X-Google-Smtp-Source: AGHT+IGKepBz4RvZZlkeUFjlxu4iTv1Iu8HtPoZcXr7bDrDWIYZBpwJBRT+H91YKGhsehM2fEaxIQg==
-X-Received: by 2002:a05:6102:5492:b0:4c1:a395:c57b with SMTP id ada2fe7eead31-4c4d91b1210mr3860545137.24.1742315840006;
-        Tue, 18 Mar 2025 09:37:20 -0700 (PDT)
-Received: from mail-vk1-f170.google.com (mail-vk1-f170.google.com. [209.85.221.170])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4c375141121sm1923642137.20.2025.03.18.09.37.18
+        d=1e100.net; s=20230601; t=1742315852; x=1742920652;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RX5YGFbVgU4B7bQVgIXWTMqxSJNIzkC7ef+oNs3DsRY=;
+        b=vCE+8JPzobjmIEbfUcE8jpUFoXUBUFGI0+OnQwIPAYNWFPnr9crbZucwqGabQ7PY8l
+         CFYuvJRV2LkbeQXMd1vDB13+bo4nhSkH3ZENTJ4gTw3qwLJXfCU5TPC3eU7ed1MiHXV+
+         KvjhLUjACLodt4ikL9kzd7aPg8hY1Ccy5KX2NfddtRJOLcFzfquX3F5QEseXff+aV9sV
+         gzRJcKzi84r2KQFzHrd+B2QTH1HuJZ4kT9BcaXhaHa3ubiO3oxIdWkITA9ZpGKjHAbD9
+         5Bqos+lS4kMwdumHwmuwAsdUDTGzw29f3oQ++7pL5+FaGmSZHrZaaTlKc8+fY2QGwBpD
+         E6oQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU71GJcynZ68NC4nbZpLDxve7JyTT3IUehaZmSDVe5H+CE9qvrAtvENdpw8P2d6tWJMmMxgSmtDZNcs@vger.kernel.org, AJvYcCVQOIhYq6xDqCjioXz56PJ9sDEQSBQKgJ2Ki2wEIUF0leOjbP6EAz39h1/ICxCe9FaGVhIhd3Pf/iBCAKo=@vger.kernel.org, AJvYcCXtFEEUs4i1BzUkBC1Br5jGrwwzljakYHQOh0hQDpJ+88yZ5hN5zFWItNBo6DDn/iSHTFTa1DB5jQ/PTzLe@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywxi33WPLQ1b9KTFLNDTZpYsV4UXovwAJpGqaGfIyv0JxtqM/0b
+	to20iMMPYLf4LoQMBMdF+SBMPaN+f5+UEwyzUEAh3flH5L+XWzsf
+X-Gm-Gg: ASbGnctYG9nhjmtPNF/hchpr4jtwcPK8qqp0gl64NxJbVjMUUQrU0aDO0WotInOAyFQ
+	xq+cPFXYUzdSUn6OfJU6Kvz/SgpvOTDq9gWZ2ErOfZvD7sNJT5lA+fZzM1HKMumKqN+FKCxcs+0
+	Fc8/SkjygCKsYcCE/uQWlmaf7e9gPeCAW3fUW7AiYkT3KPjkvm37s68sBqqvvnL+NQrPZafbDf6
+	oaO+dFRGDLQIvbGsrlJOdiqOXtUX2OY0iQOte4Q09rQ4jggkJ4rq552+akYk8BDG68T9B+Fda0O
+	nFvXr3Uen5PePhbgZ5FvJj15OQ0gQwD68l7SJBanFkXHb3Hwxkubm6raFz2jHQjsrmMvNrVVscb
+	f9EctXMOuQxLSud0EWA==
+X-Google-Smtp-Source: AGHT+IEz2mE1n6qLna/bcwWtLqNzBsV58RfTXND5Fpx8ZSvD076I5rzelZDBeEfv4UsqUmvwKng7lw==
+X-Received: by 2002:a17:90b:1b47:b0:2ee:e113:815d with SMTP id 98e67ed59e1d1-301a5b14938mr4268197a91.8.1742315851830;
+        Tue, 18 Mar 2025 09:37:31 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-30153532d7asm8443252a91.21.2025.03.18.09.37.29
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 18 Mar 2025 09:37:18 -0700 (PDT)
-Received: by mail-vk1-f170.google.com with SMTP id 71dfb90a1353d-523efb24fb9so2384036e0c.3;
-        Tue, 18 Mar 2025 09:37:18 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU1hYNGHht6LrFxwutiyoWW3OiAcPyMqEpcU2hGET4Jams0wSUQ9Y342PdBIZEKWk4L47tJCDBpz7N1@vger.kernel.org, AJvYcCV+AAMMGtbCiH5/FweVTm+Zxu1JfDY23DI8JM1f79zproq9+31bG0yLkOwjv6Shd0TxfpMhQBFSY9Kg@vger.kernel.org, AJvYcCW/uMHyiJroypxdnVvzSU0Fz1qdwQvBxv10JUg/W/3AFQTsApR3AVLGbWNf+8WQgv6feV0fin5semeJA7gGwLpTyWA=@vger.kernel.org, AJvYcCW8etn+KsinPpYVM4U0hoG895sRmQYxYXvMWH6OYRNpiamAoksX0GVpqvv6ITz71JICmg2MgSVelrmd0w==@vger.kernel.org, AJvYcCWeNNfSINH2/yOiGScjs6x1I5f3x/b7/H7RMPSuHBai352WDDCI4wRAFqXitOCpL3bgrAvenyc0G0VD/W6L@vger.kernel.org
-X-Received: by 2002:a05:6122:3c8c:b0:520:5a87:66ed with SMTP id
- 71dfb90a1353d-52480e7f34fmr3607589e0c.5.1742315838042; Tue, 18 Mar 2025
- 09:37:18 -0700 (PDT)
+        Tue, 18 Mar 2025 09:37:31 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <ca734f66-593f-4e7c-bc76-e343a7eb88d7@roeck-us.net>
+Date: Tue, 18 Mar 2025 09:37:29 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1740753261.git.robin.murphy@arm.com> <e3b191e6fd6ca9a1e84c5e5e40044faf97abb874.1740753261.git.robin.murphy@arm.com>
-In-Reply-To: <e3b191e6fd6ca9a1e84c5e5e40044faf97abb874.1740753261.git.robin.murphy@arm.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 18 Mar 2025 17:37:06 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdWPFnHTFeeWL2-BU8tKOL-E5K2ROOz=LLBLTJJLCK9NgA@mail.gmail.com>
-X-Gm-Features: AQ5f1JoM657_qcXASxrgwKY3sd-GA64e6coLQEp-A0NEDn3ArAoI-Pzo7CTBLaA
-Message-ID: <CAMuHMdWPFnHTFeeWL2-BU8tKOL-E5K2ROOz=LLBLTJJLCK9NgA@mail.gmail.com>
-Subject: Re: [PATCH v2 4/4] iommu: Get DT/ACPI parsing into the proper probe path
-To: Robin Murphy <robin.murphy@arm.com>
-Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>, Hanjun Guo <guohanjun@huawei.com>, 
-	Sudeep Holla <sudeep.holla@arm.com>, "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, 
-	Russell King <linux@armlinux.org.uk>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Danilo Krummrich <dakr@kernel.org>, Stuart Yoder <stuyoder@gmail.com>, 
-	Laurentiu Tudor <laurentiu.tudor@nxp.com>, Nipun Gupta <nipun.gupta@amd.com>, 
-	Nikhil Agarwal <nikhil.agarwal@amd.com>, Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, 
-	Bjorn Helgaas <bhelgaas@google.com>, linux-acpi@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	iommu@lists.linux.dev, devicetree@vger.kernel.org, linux-pci@vger.kernel.org, 
-	Charan Teja Kalla <quic_charante@quicinc.com>, 
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 1/3] dt-bindings: hwmon: Add Microchip emc2305 support
+To: Daniel Baluta <daniel.baluta@gmail.com>
+Cc: florin.leotescu@oss.nxp.com, Jean Delvare <jdelvare@suse.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Michael Shych <michaelsh@nvidia.com>,
+ linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, viorel.suman@nxp.com, carlos.song@nxp.com,
+ linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev,
+ festevam@gmail.com, Florin Leotescu <florin.leotescu@nxp.com>,
+ Frank Li <Frank.Li@nxp.com>
+References: <20250318085444.3459380-1-florin.leotescu@oss.nxp.com>
+ <20250318085444.3459380-2-florin.leotescu@oss.nxp.com>
+ <7afcd224-1154-4e2f-b383-10f6a89fdae0@roeck-us.net>
+ <CAEnQRZBmYdLh29ha1FKz8=CbxjFBFFTgDkjrEmwTxW2WcxodfA@mail.gmail.com>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <CAEnQRZBmYdLh29ha1FKz8=CbxjFBFFTgDkjrEmwTxW2WcxodfA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi Robin,
+On 3/18/25 08:33, Daniel Baluta wrote:
+> On Tue, Mar 18, 2025 at 5:22 PM Guenter Roeck <linux@roeck-us.net> wrote:
+>>
+>> On 3/18/25 01:54, florin.leotescu@oss.nxp.com wrote:
+>>> From: Florin Leotescu <florin.leotescu@nxp.com>
+>>>
+>>> Introduce yaml schema for Microchip emc2305 pwm fan controller.
+>>>
+>>> Signed-off-by: Florin Leotescu <florin.leotescu@nxp.com>
+>>> Reviewed-by: Frank Li <Frank.Li@nxp.com>
+>>> ---
+>>>    .../bindings/hwmon/microchip,emc2305.yaml     | 113 ++++++++++++++++++
+>>>    1 file changed, 113 insertions(+)
+>>>    create mode 100644 Documentation/devicetree/bindings/hwmon/microchip,emc2305.yaml
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/hwmon/microchip,emc2305.yaml b/Documentation/devicetree/bindings/hwmon/microchip,emc2305.yaml
+>>> new file mode 100644
+>>> index 000000000000..e61ef97e63af
+>>> --- /dev/null
+>>> +++ b/Documentation/devicetree/bindings/hwmon/microchip,emc2305.yaml
+>>> @@ -0,0 +1,113 @@
+>>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>>> +%YAML 1.2
+>>> +---
+>>> +
+>>> +$id: http://devicetree.org/schemas/hwmon/microchip,emc2305.yaml#
+>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>>> +
+>>> +title: Microchip EMC2305 SMBus compliant PWM fan controller
+>>> +
+>>> +maintainers:
+>>> +  - Michael Shych <michaelsh@nvidia.com>
+>>> +
+>>> +description:
+>>> +  Microchip EMC2301/2/3/5 pwm controller which supports
+>>> +  up to five programmable fan control circuits.
+>>> +
+>>> +properties:
+>>> +  compatible:
+>>> +    oneOf:
+>>> +      - enum:
+>>> +          - microchip,emc2305
+>>> +      - items:
+>>> +          - enum:
+>>> +              - microchip,emc2303
+>>> +              - microchip,emc2302
+>>> +              - microchip,emc2301
+>>> +          - const: microchip,emc2305
+>>> +
+>>> +  reg:
+>>> +    maxItems: 1
+>>> +
+>>> +  '#address-cells':
+>>> +    const: 1
+>>> +
+>>> +  '#size-cells':
+>>> +    const: 0
+>>> +
+>>> +  '#pwm-cells':
+>>> +    const: 3
+>>> +    description: |
+>>> +      Number of cells in a PWM specifier.
+>>> +      - cell 0: The PWM frequency
+>>> +      - cell 1: The PWM polarity: 0 or PWM_POLARITY_INVERTED
+>>> +      - cell 2: The PWM output config:
+>>> +           - 0 (Open-Drain)
+>>> +           - 1 (Push-Pull)
+>>> +
+>>> +
+>>> +patternProperties:
+>>> +  '^fan@[0-4]$':
+>>> +    $ref: fan-common.yaml#
+>>> +    unevaluatedProperties: false
+>>> +    properties:
+>>> +      reg:
+>>> +        description:
+>>> +          The fan number used to determine the associated PWM channel.
+>>> +
+>>> +    required:
+>>> +      - reg
+>>> +      - pwms
+>>
+>> Is it necessary to make 'pwms' mandatory ? The current code works
+>> just fine with defaults.
+> 
+> The code adding OF support is added just in the next patch, so the
+> current code isn't event
+> probed when trying to use dts.
+> 
+> Or am I missing something?
+> 
 
-On Fri, 28 Feb 2025 at 16:51, Robin Murphy <robin.murphy@arm.com> wrote:
-> In hindsight, there were some crucial subtleties overlooked when moving
-> {of,acpi}_dma_configure() to driver probe time to allow waiting for
-> IOMMU drivers with -EPROBE_DEFER, and these have become an
-> ever-increasing source of problems. The IOMMU API has some fundamental
-> assumptions that iommu_probe_device() is called for every device added
-> to the system, in the order in which they are added. Calling it in a
-> random order or not at all dependent on driver binding leads to
-> malformed groups, a potential lack of isolation for devices with no
-> driver, and all manner of unexpected concurrency and race conditions.
-> We've attempted to mitigate the latter with point-fix bodges like
-> iommu_probe_device_lock, but it's a losing battle and the time has come
-> to bite the bullet and address the true source of the problem instead.
->
-> The crux of the matter is that the firmware parsing actually serves two
-> distinct purposes; one is identifying the IOMMU instance associated with
-> a device so we can check its availability, the second is actually
-> telling that instance about the relevant firmware-provided data for the
-> device. However the latter also depends on the former, and at the time
-> there was no good place to defer and retry that separately from the
-> availability check we also wanted for client driver probe.
->
-> Nowadays, though, we have a proper notion of multiple IOMMU instances in
-> the core API itself, and each one gets a chance to probe its own devices
-> upon registration, so we can finally make that work as intended for
-> DT/IORT/VIOT platforms too. All we need is for iommu_probe_device() to
-> be able to run the iommu_fwspec machinery currently buried deep in the
-> wrong end of {of,acpi}_dma_configure(). Luckily it turns out to be
-> surprisingly straightforward to bootstrap this transformation by pretty
-> much just calling the same path twice. At client driver probe time,
-> dev->driver is obviously set; conversely at device_add(), or a
-> subsequent bus_iommu_probe(), any device waiting for an IOMMU really
-> should *not* have a driver already, so we can use that as a condition to
-> disambiguate the two cases, and avoid recursing back into the IOMMU core
-> at the wrong times.
->
-> Obviously this isn't the nicest thing, but for now it gives us a
-> functional baseline to then unpick the layers in between without many
-> more awkward cross-subsystem patches. There are some minor side-effects
-> like dma_range_map potentially being created earlier, and some debug
-> prints being repeated, but these aren't significantly detrimental. Let's
-> make things work first, then deal with making them nice.
->
-> With the basic flow finally in the right order again, the next step is
-> probably turning the bus->dma_configure paths inside-out, since all we
-> really need from bus code is its notion of which device and input ID(s)
-> to parse the common firmware properties with...
->
-> Acked-by: Bjorn Helgaas <bhelgaas@google.com> # pci-driver.c
-> Acked-by: Rob Herring (Arm) <robh@kernel.org> # of/device.c
-> Signed-off-by: Robin Murphy <robin.murphy@arm.com>
+The patch introducing devicetree support to the driver doesn't evaluate
+the pwm property. That makes it quite obvious that, from driver perspective,
+it isn't needed. I don't immediately see why it would add value to _force_
+users to provide pwm frequency, polarity, and the output configuration
+if the defaults work just fine.
 
-Thanks for your patch, which is now commit bcb81ac6ae3c2ef9 ("iommu:
-Get DT/ACPI parsing into the proper probe path") in iommu/next.
+Guenter
 
-This patch triggers two issues on R-Car Gen3 platforms:
-
-1. I am seeing a warning on Renesas Salvator-XS with R-Car M3N
-(but not on the similar board with R-Car H3), and only for SATA[1].
-Unfortunately commit 73d2f10957f517e5 ("iommu: Don't warn prematurely
-about dodgy probes") does not help:
-
-    ------------[ cut here ]------------
-    sata_rcar ee300000.sata: late IOMMU probe at driver bind,
-something fishy here!
-    WARNING: CPU: 1 PID: 13 at drivers/iommu/iommu.c:571
-__iommu_probe_device+0x208/0x38c
-    Modules linked in:
-    CPU: 1 UID: 0 PID: 13 Comm: kworker/u8:1 Not tainted
-6.14.0-rc3-rcar3-00020-g73d2f10957f5-dirty #315
-    Hardware name: Renesas Salvator-X 2nd version board based on r8a77965 (DT)
-    Workqueue: events_unbound deferred_probe_work_func
-    pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-    pc : __iommu_probe_device+0x208/0x38c
-    lr : __iommu_probe_device+0x208/0x38c
-    sp : ffffffc086da39a0
-    x29: ffffffc086da39b0 x28: 0000000000000000 x27: 0000000000000000
-    x26: 0000000000000001 x25: ffffffc080e0e0ae x24: ffffffc080e0e0bb
-    x23: 0000000000000000 x22: ffffff800bd3d090 x21: ffffffc080acf680
-    x20: ffffff8008e8f780 x19: ffffff800aca8810 x18: 00000000e9f55e4c
-    x17: 6874656d6f73202c x16: 646e696220726576 x15: 0720072007200720
-    x14: 0720072007200720 x13: 0720072007200720 x12: 0720072007200720
-    x11: 00000000000001ac x10: ffffffc086da3700 x9 : ffffffc083edb140
-    x8 : ffffffc086da3698 x7 : ffffffc086da36a0 x6 : 00000000fff7ffff
-    x5 : c0000000fff7ffff x4 : 0000000000000000 x3 : 0000000000000001
-    x2 : 0000000000000000 x1 : 0000000000000000 x0 : ffffff80083d5380
-    Call trace:
-     __iommu_probe_device+0x208/0x38c (P)
-     iommu_probe_device+0x34/0x74
-     of_iommu_configure+0x128/0x200
-     of_dma_configure_id+0xdc/0x1d4
-     platform_dma_configure+0x48/0x6c
-     really_probe+0xf0/0x260
-     __driver_probe_device+0xec/0x104
-     driver_probe_device+0x3c/0xc0
-     __device_attach_driver+0x58/0xcc
-     bus_for_each_drv+0xb8/0xe0
-     __device_attach+0xdc/0x138
-     device_initial_probe+0x10/0x18
-     bus_probe_device+0x38/0xa0
-     deferred_probe_work_func+0xb4/0xcc
-     process_scheduled_works+0x2e4/0x4a8
-     worker_thread+0x144/0x1cc
-     kthread+0x188/0x198
-     ret_from_fork+0x10/0x20
-    irq event stamp: 49052
-    hardirqs last  enabled at (49051): [<ffffffc0800fb6a8>]
-__up_console_sem+0x50/0x74
-    hardirqs last disabled at (49052): [<ffffffc0809eb65c>] el1_dbg+0x20/0x6c
-    softirqs last  enabled at (49046): [<ffffffc080096c50>]
-handle_softirqs+0x1b0/0x3b4
-    softirqs last disabled at (48839): [<ffffffc080010168>]
-__do_softirq+0x10/0x18
-    ---[ end trace 0000000000000000 ]---
-
-I added debug prints to sata_rcar_probe(), and verified SATA is
-probed at about the same time on R-Car H3 and M3N, and the probe is
-never deferred.
-
-Do you have a clue?
-
-
-2. The IOMMU driver's iommu_ops.of_xlate() callback is called about
-three times as much as before:
-
-    +platform ec700000.dma-controller: ipmmu_of_xlate
-    +platform ec720000.dma-controller: ipmmu_of_xlate
-    +platform ec700000.dma-controller: ipmmu_of_xlate
-    +platform ec720000.dma-controller: ipmmu_of_xlate
-    +platform ec700000.dma-controller: ipmmu_of_xlate
-    +platform ec720000.dma-controller: ipmmu_of_xlate
-    +platform ec700000.dma-controller: ipmmu_of_xlate
-    +platform ec720000.dma-controller: ipmmu_of_xlate
-    +platform ec700000.dma-controller: ipmmu_of_xlate
-    +platform ec720000.dma-controller: ipmmu_of_xlate
-    +platform fea27000.fcp: ipmmu_of_xlate
-    +platform fea2f000.fcp: ipmmu_of_xlate
-    +platform ec700000.dma-controller: ipmmu_of_xlate
-    +platform ec720000.dma-controller: ipmmu_of_xlate
-    +platform fe950000.fcp: ipmmu_of_xlate
-    +platform fe96f000.fcp: ipmmu_of_xlate
-    +platform fea27000.fcp: ipmmu_of_xlate
-    +platform fea2f000.fcp: ipmmu_of_xlate
-    +platform fe9af000.fcp: ipmmu_of_xlate
-     rcar-fcp fe950000.fcp: ipmmu_of_xlate
-     rcar-fcp fe96f000.fcp: ipmmu_of_xlate
-     rcar-fcp fea27000.fcp: ipmmu_of_xlate
-     rcar-fcp fea2f000.fcp: ipmmu_of_xlate
-     rcar-fcp fe9af000.fcp: ipmmu_of_xlate
-     rcar-dmac ec700000.dma-controller: ipmmu_of_xlate
-     rcar-dmac ec720000.dma-controller: ipmmu_of_xlate
-    +platform e6700000.dma-controller: ipmmu_of_xlate
-    +platform e6800000.ethernet: ipmmu_of_xlate
-    +platform e6700000.dma-controller: ipmmu_of_xlate
-    +platform e7300000.dma-controller: ipmmu_of_xlate
-    +platform e7310000.dma-controller: ipmmu_of_xlate
-    +platform e6800000.ethernet: ipmmu_of_xlate
-    +platform ee100000.mmc: ipmmu_of_xlate
-    +platform ee140000.mmc: ipmmu_of_xlate
-    +platform ee160000.mmc: ipmmu_of_xlate
-    +platform e6700000.dma-controller: ipmmu_of_xlate
-    +platform e7300000.dma-controller: ipmmu_of_xlate
-    +platform e7310000.dma-controller: ipmmu_of_xlate
-    +platform e6800000.ethernet: ipmmu_of_xlate
-    +platform ee100000.mmc: ipmmu_of_xlate
-    +platform ee140000.mmc: ipmmu_of_xlate
-    +platform ee160000.mmc: ipmmu_of_xlate
-    +platform ee300000.sata: ipmmu_of_xlate
-     sata_rcar ee300000.sata: ipmmu_of_xlate
-     ravb e6800000.ethernet: ipmmu_of_xlate
-    -renesas_sdhi_internal_dmac ee100000.mmc: ipmmu_of_xlate
-    -renesas_sdhi_internal_dmac ee140000.mmc: ipmmu_of_xlate
-    -renesas_sdhi_internal_dmac ee160000.mmc: ipmmu_of_xlate
-     rcar-dmac e6700000.dma-controller: ipmmu_of_xlate
-     rcar-dmac e7300000.dma-controller: ipmmu_of_xlate
-     rcar-dmac e7310000.dma-controller: ipmmu_of_xlate
-
-For some devices, it can be called up to 6 times. All of the duplicates
-happen before the device is bound (cfr. "platform" instead of the
-actual driver name):
-
-      6 platform ec720000.dma-controller: ipmmu_of_xlate
-      6 platform ec700000.dma-controller: ipmmu_of_xlate
-      3 platform e6800000.ethernet: ipmmu_of_xlate
-      3 platform e6700000.dma-controller: ipmmu_of_xlate
-      2 platform fea2f000.fcp: ipmmu_of_xlate
-      2 platform fea27000.fcp: ipmmu_of_xlate
-      2 platform ee160000.mmc: ipmmu_of_xlate
-      2 platform ee140000.mmc: ipmmu_of_xlate
-      2 platform ee100000.mmc: ipmmu_of_xlate
-      2 platform e7310000.dma-controller: ipmmu_of_xlate
-      2 platform e7300000.dma-controller: ipmmu_of_xlate
-      1 platform fe9af000.fcp: ipmmu_of_xlate
-      1 platform fe96f000.fcp: ipmmu_of_xlate
-      1 platform fe950000.fcp: ipmmu_of_xlate
-      1 platform ee300000.sata: ipmmu_of_xlate
-      1 sata_rcar ee300000.sata: ipmmu_of_xlate
-      1 rcar-fcp fea2f000.fcp: ipmmu_of_xlate
-      1 rcar-fcp fea27000.fcp: ipmmu_of_xlate
-      1 rcar-fcp fe9af000.fcp: ipmmu_of_xlate
-      1 rcar-fcp fe96f000.fcp: ipmmu_of_xlate
-      1 rcar-fcp fe950000.fcp: ipmmu_of_xlate
-      1 rcar-dmac ec720000.dma-controller: ipmmu_of_xlate
-      1 rcar-dmac ec700000.dma-controller: ipmmu_of_xlate
-      1 rcar-dmac e7310000.dma-controller: ipmmu_of_xlate
-      1 rcar-dmac e7300000.dma-controller: ipmmu_of_xlate
-      1 rcar-dmac e6700000.dma-controller: ipmmu_of_xlate
-      1 ravb e6800000.ethernet: ipmmu_of_xlate
-
-Before, the callback was called just once for each DMA slave device.
-
-Is this intentional?
-
-Thanks!
-
-[1] SATA IOMMU on R-Car Gen3 needs an out-of-tree patch to add it to
-    drivers/iommu/ipmmu-vmsa.c:devices_allowlist[].
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
 
