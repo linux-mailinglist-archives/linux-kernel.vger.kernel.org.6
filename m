@@ -1,77 +1,144 @@
-Return-Path: <linux-kernel+bounces-565738-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565742-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D25CA66E56
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 09:33:42 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5281AA66E61
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 09:36:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48C023A38D5
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 08:33:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1C6C175F92
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 08:35:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17B9A1DF260;
-	Tue, 18 Mar 2025 08:33:37 +0000 (UTC)
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4665C1F4CA4;
+	Tue, 18 Mar 2025 08:35:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=seltendoof.de header.i=@seltendoof.de header.b="psFYS8UF"
+Received: from server02.seltendoof.de (server02.seltendoof.de [168.119.48.163])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C5B2749C
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 08:33:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6927D2046B2;
+	Tue, 18 Mar 2025 08:34:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.48.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742286816; cv=none; b=lM3ii4+RnkKykcND1xIizzpVQoBHmy+lPlH7TOEDJVIQmPKP7kcwZ5yLgYIipbCo0/apmSpJm0Jmr6d4/CQs++I//lKZXF9vLjmDleMUe11mVNrg09h4kSF3JDVZSiWA30O5OUegYq19reCdzdeSuv9akC4wxA6Ci6ukhBwZdMA=
+	t=1742286901; cv=none; b=ZXumY2H+gvATTOvN1wmdBEiHJLLeUdKIpY9f8eBNOXpZ14Gs1RFb5MhpMqZ5KMZlsZEepB0xSHJPZsk+YX00SjPaObci3LpL8hyf8uutatrabwYg1UAdSf8eIczTYo546RQ1tWYsNrzkC7MTyaB8x09NZsUhOeug+CSr/uD/A/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742286816; c=relaxed/simple;
-	bh=k+jhoDGf0CtbnXKWHyWGrWpKW7UFfmRs59cee1LMCEg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BfDnfEQ8Az3pSG8NGq4IiEpdefulJRVEvMYZeN4CLAh6tbwwBYjZ6YUJG77Wq4JwvzzF6ASJLO/zE+hKxuDakHBWvvDmvPBxsRjGEgMZG+ogy6sqdO4yueTmnmnpEhNFoBb4hDlAb3Rsu1q2hjq2c3jbh9lCKItV5fvpoavdK1M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id C08A968AFE; Tue, 18 Mar 2025 09:33:30 +0100 (CET)
-Date: Tue, 18 Mar 2025 09:33:30 +0100
-From: Christoph Hellwig <hch@lst.de>
-To: Huan Yang <link@vivo.com>
-Cc: Christoph Hellwig <hch@lst.de>, akpm@linux-foundation.org,
-	bingbu.cao@linux.intel.com, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, lorenzo.stoakes@oracle.com,
-	opensource.kernel@vivo.com, rppt@kernel.org, ryan.roberts@arm.com,
-	urezki@gmail.com, ziy@nvidia.com, vivek.kasireddy@intel.com
-Subject: Re: [PATCH] mm/vmalloc: fix mischeck pfn valid in vmap_pfns
-Message-ID: <20250318083330.GB18902@lst.de>
-References: <20250317055304.GB26662@lst.de> <5a12454c-16a1-4400-a764-f49293d8dece@vivo.com> <20250318064805.GA16121@lst.de> <5229b24f-1984-4225-ae03-8b952de56e3b@vivo.com>
+	s=arc-20240116; t=1742286901; c=relaxed/simple;
+	bh=uvMHnXlZ6C++Ug/lwkoepOst++U5iRmTmeQR1KQbFUw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=cNEA3mzYYvPfexVxUzVH5ugkiu6FkElDTrVwfTOdA0Lh+OpnSwNt9ok2QNP5GFUSAbfbo6cq7dB7t/Zjp+lmA/Lfo3oaU/VB2MDZ9J3dBkLw2OyVJoyoCNSZUyhB1plEsXIvYmXV4NhemOEdTvhcOg1frBMdho62x26o+vikNQY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=seltendoof.de; spf=pass smtp.mailfrom=seltendoof.de; dkim=pass (2048-bit key) header.d=seltendoof.de header.i=@seltendoof.de header.b=psFYS8UF; arc=none smtp.client-ip=168.119.48.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=seltendoof.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=seltendoof.de
+From: =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgoettsche@seltendoof.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=seltendoof.de;
+	s=2023072701; t=1742286896;
+	h=from:from:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CJzsqiQzoZATgBAE4Jue8N4gJvoM7rHqr8Tb1P4sHhw=;
+	b=psFYS8UFIpnjhHKJqGbH6vEcTh1oryH0xoSlQOuQbaMTh6V2SznjISDh+ZpjsilbAHGuNB
+	wE/8/tPSWEbOVfwViors8rlfRtXKpRlz19S3+z+zNA7uPVbIh6cXOvseski7H/U4b5cd5s
+	hADT6w4q/P7UNSRLL+MvQ9nsrHFAXLt2PSJH7rsdeEc3dqMup3MjEybcIZDbimh37Dlq6a
+	ae1dqFCqGIQ8eaiz1bzJ4VyxxGMud07Y0CaGUIIGO4gtyPeggOsAGn2sYFUIahs1Eq91qM
+	kexL9JoBTbd1Qt5LV5xk+KXrr0Izrc3vBNrfxqDCy5k8ARbYPjJZPdzVOUloQw==
+To: 
+Cc: =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgzones@googlemail.com>,
+	Paul Moore <paul@paul-moore.com>,
+	Stephen Smalley <stephen.smalley.work@gmail.com>,
+	Ondrej Mosnacek <omosnace@redhat.com>,
+	=?UTF-8?q?Thi=C3=A9baud=20Weksteen?= <tweek@google.com>,
+	=?UTF-8?q?Bram=20Bonn=C3=A9?= <brambonne@google.com>,
+	Casey Schaufler <casey@schaufler-ca.com>,
+	GUO Zihua <guozihua@huawei.com>,
+	Canfeng Guo <guocanfeng@uniontech.com>,
+	selinux@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [RFC PATCH 4/6] selinux: improve network lookup failure warnings
+Date: Tue, 18 Mar 2025 09:33:31 +0100
+Message-ID: <20250318083422.21489-3-cgoettsche@seltendoof.de>
+In-Reply-To: <20250318083422.21489-1-cgoettsche@seltendoof.de>
+References: <20250318083422.21489-1-cgoettsche@seltendoof.de>
+Reply-To: cgzones@googlemail.com
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5229b24f-1984-4225-ae03-8b952de56e3b@vivo.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, Mar 18, 2025 at 04:20:17PM +0800, Huan Yang wrote:
-> This prevents us from properly invoking vmap, which is why we have turned to using vmap_pfn instead.
->
-> Even if a folio-based vmap is implemented, it still cannot handle mapping multiple folio ranges of physical
->
-> memory to vmalloc regions. A range of folio is important, it maybe an offset in memfd, no need entire folio.
->
-> So, I still consider vmap_pfn to be the optimal solution for this specific scenario. :)
+From: Christian Göttsche <cgzones@googlemail.com>
 
-No, vmap_pfn is entirely for memory not backed by pages or folios,
-i.e. PCIe BARs and similar memory.  This must not be mixed with proper
-folio backed memory.
+Rate limit the warnings and include additional available information.
 
-So you'll need a vmap for folios to support this use case.
+Signed-off-by: Christian Göttsche <cgzones@googlemail.com>
+---
+ security/selinux/netif.c   | 8 ++++----
+ security/selinux/netnode.c | 4 ++--
+ security/selinux/netport.c | 4 ++--
+ 3 files changed, 8 insertions(+), 8 deletions(-)
 
->
->> historically backed by pages and now folios.
->
-> So by HVO, it also not backed by pages, only contains folio head, each tail pfn's page struct go away.
-
-And a fully folios based vmap solves that problem.
+diff --git a/security/selinux/netif.c b/security/selinux/netif.c
+index 43a0d3594b72..38fdba1e64bf 100644
+--- a/security/selinux/netif.c
++++ b/security/selinux/netif.c
+@@ -141,8 +141,8 @@ static int sel_netif_sid_slow(struct net *ns, int ifindex, u32 *sid)
+ 
+ 	dev = dev_get_by_index(ns, ifindex);
+ 	if (unlikely(dev == NULL)) {
+-		pr_warn("SELinux: failure in %s(), invalid network interface (%d)\n",
+-			__func__, ifindex);
++		pr_warn_ratelimited("SELinux: failure in %s(), invalid network interface (%d)\n",
++				    __func__, ifindex);
+ 		return -ENOENT;
+ 	}
+ 
+@@ -169,8 +169,8 @@ static int sel_netif_sid_slow(struct net *ns, int ifindex, u32 *sid)
+ 	spin_unlock_bh(&sel_netif_lock);
+ 	dev_put(dev);
+ 	if (unlikely(ret))
+-		pr_warn("SELinux: failure in %s(), unable to determine network interface label (%d)\n",
+-			__func__, ifindex);
++		pr_warn_ratelimited("SELinux: failure in %s(), unable to determine network interface label (%d):  %d\n",
++				    __func__, ifindex, ret);
+ 	return ret;
+ }
+ 
+diff --git a/security/selinux/netnode.c b/security/selinux/netnode.c
+index 8bb456d80dd5..76cf531af110 100644
+--- a/security/selinux/netnode.c
++++ b/security/selinux/netnode.c
+@@ -228,8 +228,8 @@ static int sel_netnode_sid_slow(const void *addr, u16 family, u32 *sid)
+ 
+ 	spin_unlock_bh(&sel_netnode_lock);
+ 	if (unlikely(ret))
+-		pr_warn("SELinux: failure in %s(), unable to determine network node label\n",
+-			__func__);
++		pr_warn_ratelimited("SELinux: failure in %s(), unable to determine network node label (%d):  %d\n",
++				    __func__, family, ret);
+ 	return ret;
+ }
+ 
+diff --git a/security/selinux/netport.c b/security/selinux/netport.c
+index 7d2207384d40..dadf14984fb4 100644
+--- a/security/selinux/netport.c
++++ b/security/selinux/netport.c
+@@ -162,8 +162,8 @@ static int sel_netport_sid_slow(u8 protocol, u16 pnum, u32 *sid)
+ out:
+ 	spin_unlock_bh(&sel_netport_lock);
+ 	if (unlikely(ret))
+-		pr_warn("SELinux: failure in %s(), unable to determine network port label\n",
+-			__func__);
++		pr_warn_ratelimited("SELinux: failure in %s(), unable to determine network port label (%d:%d):  %d\n",
++				    __func__, protocol, pnum, ret);
+ 	return ret;
+ }
+ 
+-- 
+2.49.0
 
 
