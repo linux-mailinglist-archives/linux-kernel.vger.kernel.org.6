@@ -1,94 +1,87 @@
-Return-Path: <linux-kernel+bounces-566004-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3938CA671FF
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 12:02:11 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AC68A67207
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 12:03:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 43EAE422956
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 11:01:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A197423CD3
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 11:02:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8167920AF92;
-	Tue, 18 Mar 2025 10:59:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0B9D20AF69;
+	Tue, 18 Mar 2025 11:00:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I0iw2/mn"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HcxPDd6H"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8095209692;
-	Tue, 18 Mar 2025 10:59:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 082E720967E;
+	Tue, 18 Mar 2025 11:00:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742295597; cv=none; b=RKQ5eEbKEquTiT5MvMNC7DJ6370oznU8IETL3kZmYbkPxuoTIJLhXXGTKcTYRiMKgDd7uQZgWgsbMIh5iwbKs8zi30sRYi6xlcglbDcm5EUtNHesNs3/QCaWvt3gZgGGYANwgnEYIe797BAMa0+v9glYkjNgnyL5TNvR3Teq538=
+	t=1742295648; cv=none; b=TMZpWyIydkZkRcLUIUdQePBJouoUfqUcaDZnl9ZW+A+6Zt7N50xKzH1CnKbf3Kcoa80UONUWWqZoIhI951krU++RDgaTYN3+uG2i34eoRQP6NDdmIFMc+Bbq8ozFZziwnPkCLXdc9fWULAT5vTiTB13HeO+mDlyUJgeBKOu+Tuw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742295597; c=relaxed/simple;
-	bh=MeKQa9xnUmCm2pC1tiMZl/r5ZF1OOAcA2J4UFNSacu4=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=NKfYlir95CVuHv5/lUUHYOZccrCabZ9en5kg5StikwFTdfQ6yikMmo68im1ELSjJHko6pAXSfB76HTE8yF9sOWZ4zek8FSHAgFWhXOGMW7S5bRImOxqalWrnHnb47LgGxj1wj+VFI8wY+Ndppjf4ybawIUUjoKAwhQUPhALg2M4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I0iw2/mn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E7ECC4CEEE;
-	Tue, 18 Mar 2025 10:59:57 +0000 (UTC)
+	s=arc-20240116; t=1742295648; c=relaxed/simple;
+	bh=SSa1m9L33kjPcKtiIXG6xCneGSovTtn8WOFeg6y3sWg=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=ZgfIJROAkiJSTThpN8zfSy1FEUiSw6BvJv3bwnjbGWXym5bTJs7R74Cy1CHkGT66p6WxTtYO1Hdkh6R6XLl5xbHdDyxttg/EmoepVeAvu11JkLOIa8uTVrPaf6vCA+67NoGZ7hj+/foY2s8+nu3dTBdbzeXFv9jgqCQw66kReh4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HcxPDd6H; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B77FEC4CEDD;
+	Tue, 18 Mar 2025 11:00:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742295597;
-	bh=MeKQa9xnUmCm2pC1tiMZl/r5ZF1OOAcA2J4UFNSacu4=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=I0iw2/mnNmaiY9UxRrdx/j/AUSLCNx657uVPjxGjSuOd+ifhlXVIKCNwULSYB8OC9
-	 b90uBOUetnIP1cshelJwU6Syp68CkO1YFcZnxPkUT/H7XdVF9wLWfKp+weiznRDYex
-	 fU7BvHCPt5dMcFcw4IisW3z1eep3n1SCRnPr31fLIPNG5tdnShk3m1Kj/JOF7VEVeP
-	 ZZXummXjvtLaTPflXfVSLQ7AZvBq6kGvwqHl1Fky9jDLZTc4dhmIGLbD6gORg/Itb1
-	 JPyKshJICpgic0R930MSj1FNVMsa7qjj3PDOriEmQXlipSffJZzvlAVzXt2LW4Mu0z
-	 iiMCNqtvP8JFA==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EBD37380DBE8;
-	Tue, 18 Mar 2025 11:00:33 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1742295647;
+	bh=SSa1m9L33kjPcKtiIXG6xCneGSovTtn8WOFeg6y3sWg=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=HcxPDd6H86uoYCA1xj6Qi/ROzNfXRs8d5lPyfdh+Huvr0l0NL8y+vIXG/bVPkpO4L
+	 dpOkwvpTuVrsaRJ8mSu/u5LeoGai1ZM+c0slqbElhWQ3kcZjhBZZ+ZQwPpfBwQSHN8
+	 oB7fETK5Ufe+IsMOnBRtUjjrW9Nznzbc3PF4HvBNdhFHTiLLZQS+XIwGPBP5mu35wb
+	 znLKkw1zIxjaTon+nbOOSwvpPXG883JLtZnsxnZS3/DDfer8dDkRc8frZYbBfEVGis
+	 4stNO583M1BkatHixfTIdQq9g0U3H2+fyvRPyn+Ez+juDk1yFSZcxjO5LSjhW7OwzJ
+	 7yhPWAIMNWhkw==
+From: Niklas Cassel <cassel@kernel.org>
+To: Damien Le Moal <dlemoal@kernel.org>, 
+ Huacai Chen <chenhuacai@kernel.org>
+Cc: linux-ide@vger.kernel.org, Huacai Chen <chenhuacai@kernel.org>, 
+ Xuerui Wang <kernel@xen0n.name>, Daniel Kral <d.kral@proxmox.com>, 
+ linux-kernel@vger.kernel.org, Yuli Wang <wangyuli@uniontech.com>, 
+ Jie Fan <fanjie@uniontech.com>, Erpeng Xu <xuerpeng@uniontech.com>
+In-Reply-To: <20250318104314.2160526-1-chenhuacai@loongson.cn>
+References: <20250318104314.2160526-1-chenhuacai@loongson.cn>
+Subject: Re: [PATCH V4] ahci: Marvell 88SE9215 controllers prefer DMA for
+ ATAPI
+Message-Id: <174229564547.1892572.8787195454245116821.b4-ty@kernel.org>
+Date: Tue, 18 Mar 2025 12:00:45 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net v3] net: ipv6: fix TCP GSO segmentation with NAT
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <174229563276.4127989.1515899663358533031.git-patchwork-notify@kernel.org>
-Date: Tue, 18 Mar 2025 11:00:32 +0000
-References: <20250311212530.91519-1-nbd@nbd.name>
-In-Reply-To: <20250311212530.91519-1-nbd@nbd.name>
-To: Felix Fietkau <nbd@nbd.name>
-Cc: netdev@vger.kernel.org, edumazet@google.com, ncardwell@google.com,
- kuniyu@amazon.com, davem@davemloft.net, dsahern@kernel.org, kuba@kernel.org,
- pabeni@redhat.com, horms@kernel.org, willemb@google.com,
- linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
 
-Hello:
-
-This patch was applied to netdev/net.git (main)
-by Paolo Abeni <pabeni@redhat.com>:
-
-On Tue, 11 Mar 2025 22:25:30 +0100 you wrote:
-> When updating the source/destination address, the TCP/UDP checksum needs to
-> be updated as well.
+On Tue, 18 Mar 2025 18:43:14 +0800, Huacai Chen wrote:
+> We use CD/DVD drives under Marvell 88SE9215 SATA controller on many
+> Loongson-based machines. We found its PIO doesn't work well, and on the
+> opposite its DMA seems work very well.
 > 
-> Fixes: bee88cd5bd83 ("net: add support for segmenting TCP fraglist GSO packets")
-> Signed-off-by: Felix Fietkau <nbd@nbd.name>
-> ---
-> v2: move code to make it similar to __tcpv4_gso_segment_list_csum
-> v3: fix uninitialized variable
+> We don't know the detail of the 88SE9215 SATA controller, but we have
+> tested different CD/DVD drives and they all have problems under 88SE9215
+> (but they all work well under an Intel SATA controller). So, we consider
+> this problem is bound to 88SE9215 SATA controller rather than bound to
+> CD/DVD drives.
 > 
 > [...]
 
-Here is the summary with links:
-  - [net,v3] net: ipv6: fix TCP GSO segmentation with NAT
-    https://git.kernel.org/netdev/net/c/daa624d3c2dd
+Applied to libata/linux.git (for-6.15), thanks!
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+[1/1] ahci: Marvell 88SE9215 controllers prefer DMA for ATAPI
+      https://git.kernel.org/libata/linux/c/0507c777
 
+Kind regards,
+Niklas
 
 
