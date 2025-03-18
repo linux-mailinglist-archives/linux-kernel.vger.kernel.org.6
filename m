@@ -1,86 +1,134 @@
-Return-Path: <linux-kernel+bounces-566756-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566757-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0C41A67C24
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 19:38:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 092C5A67C25
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 19:38:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7BFC219C0F94
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 18:38:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA2A919C1564
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 18:38:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A14B820322;
-	Tue, 18 Mar 2025 18:37:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA0DD17548;
+	Tue, 18 Mar 2025 18:37:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="CKZkYIQR"
-Received: from mail-4316.protonmail.ch (mail-4316.protonmail.ch [185.70.43.16])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nqnikBan"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 896F5211A33
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 18:37:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12783211A33;
+	Tue, 18 Mar 2025 18:37:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742323032; cv=none; b=VRuVx7WDYCEIdwSedqVB8m0TaJ5JvWnE0g2thnZPKuPM1g9zwztakaIbrJDt1WpYjxjeHfQxjjXA5EyqkPCBnAKjSpO0P3bGSc6FClUwTsIqfvliu2WpXrP7fydxQujnEKGt1jH3Ps7HICRpndYQFTMsqwqdjSf2G/FvwE75iyI=
+	t=1742323059; cv=none; b=QoKkDICJQfUYgojMW4MycVaF5r6S2G0UT3IQvWKSLl4VFezP502RhFePCWrnb1girlCETPMinpjfoAVRlmoUK27lMq5jqKozwn3ru/HxQmpvaZJ9FJqQc3kTi8dzD3+ctfTYKjjSsyvYRmywfpoU+yO8AY7A2PST+Gogv1GNDis=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742323032; c=relaxed/simple;
-	bh=i7GuafmWBBFxpauQdZaROHEcBUjPAdboz1fmHtgeylA=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=OgahsOBp2MWqnGCnTFLsAIhJesApSGxI9J3uf8/MYLzyiCvkYNsLt9kwfJHsuqDnAzlklsUOdF8OFkLyWhuMqS8+PEq/kZ7ZHYpw2Ng8ipM1vCM6RSG2OyUa6ANfznLL6ZeXaAI2m9omQO3uEdpyTOjRqVGl0qvT5/cbxVM/i+I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=CKZkYIQR; arc=none smtp.client-ip=185.70.43.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1742323020; x=1742582220;
-	bh=Yqjw4oYBMyP+agQT2xlzF7ZEejJZSYZaTAXHjkwEyvo=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
-	b=CKZkYIQRmel8zrpAeShCHV6LCC0P/elui7Y3GMW/++qszLvbDeng9caIx05kWj5Yr
-	 A+q74S/EgDyd7gCsL3PgS2lV+gjaR5GgZz6GFu0iHzX0H97W3Xk6gBwykbRj+lZP2e
-	 4RPoVYtWFIFkQtnwJqor2fLgX8LmsW15HzHeaNy5oioCZnCsIjy3wdY+mJ8M9HOTlf
-	 ltvqT37p5z/397VQpODCVK9O8k9Lz6I3Mj2SsVpCizqYGGsAweyPZ4sLI9gjceBR4e
-	 PrLQsdrlkfa/SI3rmgAJ4c+2ALZYHsQqFw59/wBwoQDXSCYgU7/Zf3Log2i6I6XYT8
-	 dqjiQhroS3ZuA==
-Date: Tue, 18 Mar 2025 18:36:52 +0000
-To: =?utf-8?Q?Beno=C3=AEt_du_Garreau?= <benoit@dugarreau.fr>, Danilo Krummrich <dakr@kernel.org>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: gregkh@linuxfoundation.org, rafael@kernel.org, ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, a.hindborg@kernel.org, aliceryhl@google.com, tmgross@umich.edu, airlied@gmail.com, acourbot@nvidia.com, jhubbard@nvidia.com, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH v2 3/4] rust: auxiliary: add auxiliary registration
-Message-ID: <D8JLYJIT03KN.25S8FOEO26DOH@proton.me>
-In-Reply-To: <20250317204310.7804-1-benoit@dugarreau.fr>
-References: <20250317204310.7804-1-benoit@dugarreau.fr>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: 52341dd8e7b999e11b7fcbcd4b0fa06e7b6ef2d4
+	s=arc-20240116; t=1742323059; c=relaxed/simple;
+	bh=NQNyYuQ0gDwFBiLl4iNEd16gJk/XuNGSs7cGNUPV+v8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oFC8EN8+tVfMqhLhcsf7vmmKOhJEPybNvKovoTfH5z21LacPeZy8zGymHEPz2IecTggyXeqxr8J9na+03b+4XP3GhNKxAGOIGqxDxxXghwdlbYhwqSFUA3X1liYBQIB9chd9HVJhnLJXBkVFBld5kQ5B7SPZKVH7ivClqXtRRpA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nqnikBan; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4EBDC4CEDD;
+	Tue, 18 Mar 2025 18:37:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742323058;
+	bh=NQNyYuQ0gDwFBiLl4iNEd16gJk/XuNGSs7cGNUPV+v8=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=nqnikBan2Fe3d5NWhuRT4/5yf7SnVtSfLTTx8VhHEMOGYTNr+pYvohz4qbGAb5aFH
+	 sP0PaaBJL9aJ2dQqHu+GkxamNqIhurNtGSuhxvUMYUfd8FEdRLq3andnyvvUzMDUoO
+	 rUv6b0GKZa0HocdNvxVkXqQjCtw3AOlmTPwUjdFM1okJiyk52Q2vFCdSo4+doTghF6
+	 t4Ix8TCuJKaQA75NHeFq41BQ+tC9mEHXVC9Dlr3UXKQEp0Jw6keJVWObZsbjOzG5mr
+	 Hi/nsr1G6IRx2mGQzp7WQSNL5CuC/KsoyHuq+LbXKctrme1GiuR1w9hoXu/gxABubr
+	 R8wDoll1pppmA==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 7401DCE0843; Tue, 18 Mar 2025 11:37:38 -0700 (PDT)
+Date: Tue, 18 Mar 2025 11:37:38 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Frederic Weisbecker <frederic@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
+	Joel Fernandes <joelagnelf@nvidia.com>,
+	Neeraj Upadhyay <neeraj.upadhyay@amd.com>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>, rcu <rcu@vger.kernel.org>
+Subject: Re: [PATCH 1/2] rcu: Comment on the extraneous delta test on
+ rcu_seq_done_exact()
+Message-ID: <322b052d-0f1f-45a3-bfef-226b15f3a8fd@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <20250318135619.4300-1-frederic@kernel.org>
+ <20250318135619.4300-2-frederic@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250318135619.4300-2-frederic@kernel.org>
 
-On Mon Mar 17, 2025 at 9:42 PM CET, Beno=C3=AEt du Garreau wrote:
-> On Thu, 13 Mar 2025 03:23:52 +0100 Danilo Krummrich <dakr@kernel.org> wro=
-te:
->> Implement the `auxiliary::Registration` type, which provides an API to
->> +impl Registration {
->> +    /// Create and register a new auxiliary device.
->> +    pub fn new(parent: &device::Device, name: &CStr, id: u32, modname: =
-&CStr) -> Result<Self> {
->> +        let boxed =3D KBox::new(Opaque::<bindings::auxiliary_device>::z=
-eroed(), GFP_KERNEL)?;
->
-> You can use `KBox::init(kernel::init::zeroed(), GFP_KERNEL)` here. It avo=
-ids
-> the need for the first patch.
+On Tue, Mar 18, 2025 at 02:56:18PM +0100, Frederic Weisbecker wrote:
+> The numbers used in rcu_seq_done_exact() lack some explanation behind
+> their magic. Especially after the commit:
+> 
+>     85aad7cc4178 ("rcu: Fix get_state_synchronize_rcu_full() GP-start detection")
+> 
+> which reported a subtle issue where a new GP sequence snapshot was taken
+> on the root node state while a grace period had already been started and
+> reflected on the global state sequence but not yet on the root node
+> sequence, making a polling user waiting on a wrong already started grace
+> period that would ignore freshly online CPUs.
+> 
+> The fix involved taking the snaphot on the global state sequence and
+> waiting on the root node sequence. And since a grace period is first
+> started on the global state and only afterward reflected on the root
+> node, a snapshot taken on the global state sequence might be two full
+> grace periods ahead of the root node as in the following example:
+> 
+> rnp->gp_seq = rcu_state.gp_seq = 0
+> 
+>     CPU 0                                           CPU 1
+>     -----                                           -----
+>     // rcu_state.gp_seq = 1
+>     rcu_seq_start(&rcu_state.gp_seq)
+>                                                     // snap = 8
+>                                                     snap = rcu_seq_snap(&rcu_state.gp_seq)
+>                                                     // Two full GP differences
+>                                                     rcu_seq_done_exact(&rnp->gp_seq, snap)
+>     // rnp->gp_seq = 1
+>     WRITE_ONCE(rnp->gp_seq, rcu_state.gp_seq);
+> 
+> Add a comment about those expectations and to clarify the magic within
+> the relevant function.
+> 
+> Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
 
-We probably should have the zeroed function on the `Zeroable` trait...
+Reviewed-by: Paul E. McKenney <paulmck@kernel.org>
 
----
-Cheers,
-Benno
+But it would of course be good to get reviews from the others.
 
-
+> ---
+>  kernel/rcu/rcu.h | 7 +++++++
+>  1 file changed, 7 insertions(+)
+> 
+> diff --git a/kernel/rcu/rcu.h b/kernel/rcu/rcu.h
+> index eed2951a4962..7acf1f36dd6c 100644
+> --- a/kernel/rcu/rcu.h
+> +++ b/kernel/rcu/rcu.h
+> @@ -157,6 +157,13 @@ static inline bool rcu_seq_done(unsigned long *sp, unsigned long s)
+>   * Given a snapshot from rcu_seq_snap(), determine whether or not a
+>   * full update-side operation has occurred, but do not allow the
+>   * (ULONG_MAX / 2) safety-factor/guard-band.
+> + *
+> + * The token returned by get_state_synchronize_rcu_full() is based on
+> + * rcu_state.gp_seq but it is tested in poll_state_synchronize_rcu_full()
+> + * against the root rnp->gp_seq. Since rcu_seq_start() is first called
+> + * on rcu_state.gp_seq and only later reflected on the root rnp->gp_seq,
+> + * it is possible that rcu_seq_snap(rcu_state.gp_seq) returns 2 full grace
+> + * periods ahead of the root rnp->gp_seq.
+>   */
+>  static inline bool rcu_seq_done_exact(unsigned long *sp, unsigned long s)
+>  {
+> -- 
+> 2.48.1
+> 
 
