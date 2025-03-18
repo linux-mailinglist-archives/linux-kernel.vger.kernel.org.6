@@ -1,58 +1,60 @@
-Return-Path: <linux-kernel+bounces-566477-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566478-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D55B1A67889
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 16:58:26 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 451CCA6788E
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 16:59:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A8D9F1889D1D
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 15:58:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0486A175D5F
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 15:58:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0859120FAAD;
-	Tue, 18 Mar 2025 15:58:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E78020FA91;
+	Tue, 18 Mar 2025 15:58:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m/DKkdPc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="l7+txS75"
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E50D1586C8;
-	Tue, 18 Mar 2025 15:58:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CDC020E313
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 15:58:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742313498; cv=none; b=qJolWvD/u3LH2embPDJChZkkyJYfIsGbdwKbSKxxZRyS9MD+DmktCgER9u04WasqeuKphsSoF8Fgw+Xb/U/F+A7x9H8Jbut4a3fWaOdbIQl5sm7HLZPaml6O53a4CP8xyIa2CCLhFZLR7UNS53KKWBmhx2H224aKse7BYaiKGA0=
+	t=1742313521; cv=none; b=Ltdv30sTgZgZcFFFO4VbB+Oueb3EOoHHz/Cw/iHwXxPZ/vsZpWtI3xDQHnU40uXkBfCUIvuShejsZhFmL4FG9+geQouYcNcV/EFNJ5F/aXt3Ozpv/ZkHP6T0i9d7Res8CT20VJOs4zI9EucsMbgn05BrwjbJLjxv4mw9m1ztVZc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742313498; c=relaxed/simple;
-	bh=N0n6ms3ZI7zDaW6aE8PBo8XfeGw9n2N1VrQkoiW+A0U=;
+	s=arc-20240116; t=1742313521; c=relaxed/simple;
+	bh=oiLsLLlStK47sOZdC3VVn2G5zwWXnqET/C5jjC0qvmA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fuXtSgW5ty0zanoL6B8KHjuan3Sqnv2mZfbYq2VQ1p71IRQam8Cclvkcoi0Su0tbVkbnleKqo7YChbMRPOt+xNj8rNkP9WKeyHJRcsxEY8FJwcL2Lez/UEfJC/HjwZoKCSFIOzqQhQsajNMVcTepKLdLYfzj7IC2IFdcBrOPXcg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m/DKkdPc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E9E4C4CEDD;
-	Tue, 18 Mar 2025 15:58:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742313496;
-	bh=N0n6ms3ZI7zDaW6aE8PBo8XfeGw9n2N1VrQkoiW+A0U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=m/DKkdPcuG++9S0mZCpsvi8X7G86SWSi0jje3deY9ZpmJx+T51yBNZF7oH9o92+TE
-	 /8mNV6CtZ7SOhzbDyegMB+bQ/iCNUjwRLWDSKWHpYmdbrx6eJTEKYvbl8Il/20LQFd
-	 phc5Mbt819lCKk/Nnf8eGWaeDtkglK3Ky4FzuP5Eecmg8Vj6fA7gh720e1+RPsOo+Q
-	 rK55GX7YvI1IR1w+VMjUfU2B0ilUSHzPNLxfV56rVZ1zQYMv7m1WAg6/hp52pb0huB
-	 LVO+L01cstzbc04Q+dvC5RG4YTnRYIgukSHAwf6y572nPTvySpNfwfptKwHqtSI6Jv
-	 lQlC1IlTzZiyA==
-Date: Tue, 18 Mar 2025 05:58:15 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Hao Jia <jiahao.kernel@gmail.com>
-Cc: hannes@cmpxchg.org, akpm@linux-foundation.org, corbet@lwn.net,
-	mhocko@kernel.org, roman.gushchin@linux.dev, shakeel.butt@linux.dev,
-	muchun.song@linux.dev, mkoutny@suse.com, cgroups@vger.kernel.org,
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, Hao Jia <jiahao1@lixiang.com>
-Subject: Re: [PATCH 2/2] cgroup: docs: Add pswpin and pswpout items in cgroup
- v2 doc
-Message-ID: <Z9mYFw0-Q6e5Mjph@slm.duckdns.org>
-References: <20250318075833.90615-1-jiahao.kernel@gmail.com>
- <20250318075833.90615-3-jiahao.kernel@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=m99osCjwx5kNC9azq00at04BED/U6LtmewCavQoN/Yw2LJN3iJgKkYd/LkNzfdQKsAkXEPUJvFRERedEqLTRnhI4V2ohfJDXgjDje5QrNpFNubdB+4KD/xTLqMP2nPmPTsJcpat2EtJDT13jU+Nc6lEJsQcp/51QkV+5AuSvfPo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=l7+txS75; arc=none smtp.client-ip=217.70.183.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 532C944338;
+	Tue, 18 Mar 2025 15:58:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1742313514;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fP4ry+VLHXbxhxlQCKXjcIOOhVgHzKoDLPahcV+SBW8=;
+	b=l7+txS75TzzQJ7j92uC3S7/c6sUR3CfA5jujJbbhZz/oXe5isRcJz4X2F5qL6dbvoWTYBj
+	ggOKABa3a9W6tiMG4hAWo1g0n3OWrpWU3LpEvK/aDaTC4v2p4wneOh5hIPgjKSxuihO7hp
+	OTl8hgKCTVGm2fX3Mvb+Ue46JgaVeOl6OEso39CFOYKZ9K24H4ZsunzicHRJTAJLw2NlGb
+	7Lk6UdwO1UD/u/Gjp/iHmLcGA7XN4T8i+9UNt+Jhz04Uwfu/PMSFzIc7l9324gUTDaaqNm
+	cx4mk9a5zkcfXlCTLrtPtCm2haiTRL+cJVQXu6vHb3aIn6u9xLyuhn82gaDDfg==
+Date: Tue, 18 Mar 2025 16:58:31 +0100
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Qasim Ijaz <qasdev00@gmail.com>
+Cc: miquel.raynal@bootlin.com, Frank.Li@nxp.com,
+	linux-i3c@lists.infradead.org, imx@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 1/1] i3c: master: svc: Fix i3c_master_get_free_addr
+ return check
+Message-ID: <202503181558316ef27a06@mail.local>
+References: <20250310023304.2335792-1-yschu@nuvoton.com>
+ <174225158210.1593610.10018812780731849409.b4-ty@bootlin.com>
+ <Z9mIUc6Ln59umJtT@qasdev.system>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,25 +63,55 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250318075833.90615-3-jiahao.kernel@gmail.com>
+In-Reply-To: <Z9mIUc6Ln59umJtT@qasdev.system>
+X-GND-State: clean
+X-GND-Score: 0
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddugedvkeeiucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecunecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomheptehlvgigrghnughrvgcuuegvlhhlohhnihcuoegrlhgvgigrnhgurhgvrdgsvghllhhonhhisegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeeijeefhfffkeejueehveeuveejvdelveejteduffehuedtffdufeejudffuedvtdenucffohhmrghinhepkhgvrhhnvghlrdhorhhgpdgsohhothhlihhnrdgtohhmnecukfhppedvrgdtudemtggsudegmeehheeimeejrgdttdemugdujeefmegsjegstdemjeeitgegmeefudefgeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemtggsudegmeehheeimeejrgdttdemugdujeefmegsjegstdemjeeitgegmeefudefgedphhgvlhhopehlohgtrghlhhhoshhtpdhmrghilhhfrhhomheprghlvgigrghnughrvgdrsggvlhhlohhnihessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepiedprhgtphhtthhopehqrghsuggvvhdttdesghhmrghilhdrtghomhdprhgtphhtthhopehmihhquhgvlhdrrhgrhihnrghlsegsohhothhlihhnrdgtohhmpdhrtghpthhtohephfhrrghnkhdrnfhisehng
+ ihprdgtohhmpdhrtghpthhtoheplhhinhhugidqiheftgeslhhishhtshdrihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehimhigsehlihhsthhsrdhlihhnuhigrdguvghvpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-GND-Sasl: alexandre.belloni@bootlin.com
 
-On Tue, Mar 18, 2025 at 03:58:33PM +0800, Hao Jia wrote:
-> From: Hao Jia <jiahao1@lixiang.com>
+On 18/03/2025 14:51:49+0000, Qasim Ijaz wrote:
+> On Mon, Mar 17, 2025 at 11:46:29PM +0100, Alexandre Belloni wrote:
+> > On Mon, 10 Mar 2025 10:33:04 +0800, Stanley Chu wrote:
+> > > The return value of i3c_master_get_free_addr is assigned to a variable
+> > > with wrong type, so it can't be negative. Use a signed integer for the
+> > > return value. If the value is negative, break the process and propagate
+> > > the error code.
+> > > 
+> > > This commit also fixes the uninitialized symbol 'dyn_addr', reported
+> > > by Smatch static checker.
+> > > 
+> > > [...]
+> > 
+> > Applied, thanks!
+> > 
+> > [1/1] i3c: master: svc: Fix i3c_master_get_free_addr return check
+> >       https://git.kernel.org/abelloni/c/d6cb667b8e15
+> > 
+> > Best regards,
+> > 
+> > -- 
+> > Alexandre Belloni, co-owner and COO, Bootlin
+> > Embedded Linux and Kernel engineering
+> > https://bootlin.com
 > 
-> The commit 15ff4d409e1a ("mm/memcontrol: add per-memcg pgpgin/pswpin
-> counter") introduced the pswpin and pswpout items in the memory.stat
-> of cgroup v2. Therefore, update them accordingly in the cgroup-v2
-> documentation.
+> Hi Alexandre,
 > 
-> Signed-off-by: Hao Jia <jiahao1@lixiang.com>
+> I sent a fix for this issue on the 9th March, which is before the patch
+> Stanley sent which was sent on the 10th March.
+> 
+> You can view my orignal patch here:
+> 
+> https://lore.kernel.org/all/20250309164314.15039-1-qasdev00@gmail.com/
+> 
 
-Acked-by: Tejun Heo <tj@kernel.org>
+The issue is that you then resent the patch with the same topic which
+superseded your original patch. But the resend was missing a blank line
+so I could not apply it immediately and I later applied the other one.
 
-Probably best to route it through -mm. If this should go through cgroup,
-please let me know.
-
-Thanks.
 
 -- 
-tejun
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
