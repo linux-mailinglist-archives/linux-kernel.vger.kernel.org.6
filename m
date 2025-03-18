@@ -1,199 +1,130 @@
-Return-Path: <linux-kernel+bounces-566325-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566326-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10FE8A6765D
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 15:29:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 42AE3A67667
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 15:31:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB84A18970EC
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 14:25:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6558C1889536
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 14:25:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E778F20CCEA;
-	Tue, 18 Mar 2025 14:24:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F81320E01D;
+	Tue, 18 Mar 2025 14:25:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Yv/E3eUw"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eM8GGehu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACBDE20AF7C;
-	Tue, 18 Mar 2025 14:24:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3A6C20DD5C;
+	Tue, 18 Mar 2025 14:25:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742307899; cv=none; b=WDZyo60lIZ/iQPi1AWDexmbxvNTi39TLerR/S/rzwTYpitmUYe8o4jMMBnjyYsjf2lGXlk8sET6pArO3F2y+yt6eNg82zoo0K+lgiCtziptS1gNmyVuf5fZkc2mxzMOxWmBFyoXJPh8xLEDP0i6mG+Q25gY0CRZYhJttADzkcQE=
+	t=1742307934; cv=none; b=HLhfF+RhML0gO6V07//D5R2r/96zSdBYP5AYyEP5ogBqQxg9iMcskWZthzJVqhEf0kxMMHGduxeasyja1a5tXZhL+T6zJjb5HbVARyrGV/t59PFyOBuXOFIO81I03kPYfwQQAyjtAEAIsi8ZIJHOBSFEkwEmlhmeisScb2qLoxA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742307899; c=relaxed/simple;
-	bh=0vWEOSgAWC2OK9GLXIOx42CXDAs4ETuJxHSdMv03wa0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=uirUA007m2ygeaZb1mffWn0hphjAvT39S68UZZfw5aN7DhawXiwsdj3DiuEO64OQUIUHz3MjPds+x0PdFaQ1Rl8vpF3hTz/Tc+w1pu4erdG/W4nYYIncf6F77q9B9pUpEhFDym999/zC6bUTU4SFBAscI2mGr0lmeQkO8VL8LOM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Yv/E3eUw; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52I9kYPB021228;
-	Tue, 18 Mar 2025 14:24:53 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	ThU9IQRy4eqH0cT3srdF8lldlckVmWSkhvbZ1vu/0IA=; b=Yv/E3eUwmvVtIPHw
-	atvGPnIPM+bG9DFcJ7Q9dfkw6zwZkpJMsEMkySD0VIkqbCLosx8E+AWsGJzEoXRu
-	QUB2m/J149v4dESEREBn7tGABKWJVoxjs8txLAPsyImDKOQw87CpEyj7yIdwQ1Cx
-	NjrKXYRnaawSsKcwg0MEisOL0C14sGPYQMnpxdNtpeV8S2aQxFHJCKx9AV+bYrJ8
-	XqSEURYXesh9aEwrz1wLNz5+0Ggws1mmqvB2URILj6zgxWq/XuHY9Z3Nd0PecdEV
-	tpJSEWb1BGFXumCwasdhgoi4iC7qIYCGloZdCz5ZrgueSbrjtgLLt52N/fmYjNR/
-	nukTHA==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45d1x80ksj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 18 Mar 2025 14:24:53 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52IEOquH011684
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 18 Mar 2025 14:24:52 GMT
-Received: from [10.216.0.149] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 18 Mar
- 2025 07:24:47 -0700
-Message-ID: <8f7c1c08-6776-968c-530e-b640ded940b3@quicinc.com>
-Date: Tue, 18 Mar 2025 19:54:44 +0530
+	s=arc-20240116; t=1742307934; c=relaxed/simple;
+	bh=nZIVy8rDifxs0gFezfDSsyY7SSuvanD4bNKBzieVH6U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RdvXG1ecr5KRiGBwXJrr7A1kT+AjCFqNS4hNBmB+aMELWG4ouTCS3JVZGSZI3RBu540PdPEVCx9kTuOSLYGn+WuhcsTn7n/v+/R9g9sIMlu2nZ8oA1lhd4IFtkckVT8cSBUgZ7ASujRqzpgPAjei/the5bCGpwTNtHEFPalEz9o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eM8GGehu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9CDB4C4CEE3;
+	Tue, 18 Mar 2025 14:25:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742307933;
+	bh=nZIVy8rDifxs0gFezfDSsyY7SSuvanD4bNKBzieVH6U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=eM8GGehuJpGvKpivoD4QSR+KNpQOrsTrQe+Eub+aqiMOwfDX+Sd0MybIJqruOhLex
+	 biGvEmTGReQmgJ0IFMiGSlsFCq55zmnjRdh9Dlq8a6caIHoCMo3/rPvEJL08UzkuDN
+	 toN9B7pWXLt+twkHsRTlar9Rfb66Cl4bQcgCIOS8cFxXk2uIFCHgdYG8XQb4ijRSm1
+	 w0PNZNXJFIdg+wPtVYcf+3mmQxVsJ26tSr9ThAZwKrW6wApcHfaFvTr2sYnUovdUby
+	 vejqSYllChZiA15Jx6PSxONI+qOkHqf4Bvr4azaaeG/UCSBsE68OPkVC5lNPRzkyLS
+	 65BarMYc5GzlQ==
+Date: Tue, 18 Mar 2025 15:25:25 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: Pratyush Yadav <ptyadav@amazon.de>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, 
+	Eric Biederman <ebiederm@xmission.com>, Arnd Bergmann <arnd@arndb.de>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Jan Kara <jack@suse.cz>, Hugh Dickins <hughd@google.com>, 
+	Alexander Graf <graf@amazon.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, 
+	David Woodhouse <dwmw2@infradead.org>, James Gowans <jgowans@amazon.com>, 
+	Mike Rapoport <rppt@kernel.org>, Paolo Bonzini <pbonzini@redhat.com>, 
+	Pasha Tatashin <tatashin@google.com>, Anthony Yznaga <anthony.yznaga@oracle.com>, 
+	Dave Hansen <dave.hansen@intel.com>, David Hildenbrand <david@redhat.com>, 
+	Matthew Wilcox <willy@infradead.org>, Wei Yang <richard.weiyang@gmail.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-mm@kvack.org, kexec@lists.infradead.org
+Subject: Re: [RFC PATCH 1/5] misc: introduce FDBox
+Message-ID: <20250318-toppen-elfmal-968565e93e69@brauner>
+References: <20250307005830.65293-1-ptyadav@amazon.de>
+ <20250307005830.65293-2-ptyadav@amazon.de>
+ <20250307-sachte-stolz-18d43ffea782@brauner>
+ <mafs0ikokidqz.fsf@amazon.de>
+ <20250309-unerwartet-alufolie-96aae4d20e38@brauner>
+ <20250317165905.GN9311@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH 3/4] arm64: dts: qcom: sa8775p: add support for video node
-Content-Language: en-US
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Dikshita Agarwal
-	<quic_dikshita@quicinc.com>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        "Mauro Carvalho Chehab" <mchehab@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-media@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20250311-dtbinding-v1-0-5c807d33f7ae@quicinc.com>
- <20250311-dtbinding-v1-3-5c807d33f7ae@quicinc.com>
- <3ec71075-b1ef-4366-b595-80fe41cd1e13@oss.qualcomm.com>
-From: Vikash Garodia <quic_vgarodia@quicinc.com>
-In-Reply-To: <3ec71075-b1ef-4366-b595-80fe41cd1e13@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 3cYOyg668_HaSOs1P1XioAW1WQ-brk_y
-X-Proofpoint-ORIG-GUID: 3cYOyg668_HaSOs1P1XioAW1WQ-brk_y
-X-Authority-Analysis: v=2.4 cv=Jem8rVKV c=1 sm=1 tr=0 ts=67d98235 cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=COk6AnOGAAAA:8 a=HdOZ2FAD_XOJwypVLEMA:9 a=oBbwvKzCPJ49F153:21
- a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-18_07,2025-03-17_03,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- mlxlogscore=999 spamscore=0 mlxscore=0 malwarescore=0 adultscore=0
- phishscore=0 impostorscore=0 priorityscore=1501 lowpriorityscore=0
- bulkscore=0 clxscore=1015 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503180106
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250317165905.GN9311@nvidia.com>
 
+On Mon, Mar 17, 2025 at 01:59:05PM -0300, Jason Gunthorpe wrote:
+> On Sun, Mar 09, 2025 at 01:03:31PM +0100, Christian Brauner wrote:
+> 
+> > So either that work is done right from the start or that stashing files
+> > goes out the window and instead that KHO part is implemented in a way
+> > where during a KHO dump relevant userspace is notified that they must
+> > now serialize their state into the serialization stash. And no files are
+> > actually kept in there at all.
+> 
+> Let's ignore memfd/shmem for a moment..
+> 
+> It is not userspace state that is being serialized, it is *kernel*
+> state inside device drivers like VFIO/iommufd/kvm/etc that is being
+> serialized to the KHO.
+> 
+> The file descriptor is simply the handle to the kernel state. It is
+> not a "file" in any normal filesystem sense, it is just an uAPI handle
+> for a char dev that is used with IOCTL.
+> 
+> When KHO is triggered triggered whatever is contained inside the FD is
+> serialized into the KHO.
+> 
+> So we need:
+>  1) A way to register FDs to be serialized. For instance, not every
+>     VFIO FD should be retained.
+>  2) A way for the kexecing kernel to make callbacks to the char dev
+>     owner (probably via struct file operations) to perform the
+>     serialization
+>  3) A way for the new kernel to ask the char dev owner to create a new
+>     struct file out of the serialized data. Probably allowed to happen
+>     only once, ie you can't clone these things. This is not the same
+>     as just opening an empty char device, it would also fill the char
+>     device with whatever data was serialized.
+>  4) A way to get the struct file into a process fd number so userspace
+>     can route it to the right place.
+> 
+> It is not really a stash, it is not keeping files, it is hardwired to
 
-On 3/15/2025 7:13 PM, Konrad Dybcio wrote:
-> On 3/11/25 1:03 PM, Vikash Garodia wrote:
->> Video node enables video on Qualcomm SA8775P platform.
->>
->> Signed-off-by: Vikash Garodia <quic_vgarodia@quicinc.com>
->> ---
->>  arch/arm64/boot/dts/qcom/sa8775p.dtsi | 67 +++++++++++++++++++++++++++++++++++
->>  1 file changed, 67 insertions(+)
->>
->> diff --git a/arch/arm64/boot/dts/qcom/sa8775p.dtsi b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
->> index 3394ae2d13003417a15e64c9e47833725ec779e6..09db8e2eb578f1cada0f4a15e3f844dc097bd46d 100644
->> --- a/arch/arm64/boot/dts/qcom/sa8775p.dtsi
->> +++ b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
->> @@ -10,6 +10,7 @@
->>  #include <dt-bindings/clock/qcom,sa8775p-dispcc.h>
->>  #include <dt-bindings/clock/qcom,sa8775p-gcc.h>
->>  #include <dt-bindings/clock/qcom,sa8775p-gpucc.h>
->> +#include <dt-bindings/clock/qcom,sa8775p-videocc.h>
->>  #include <dt-bindings/dma/qcom-gpi.h>
->>  #include <dt-bindings/interconnect/qcom,sa8775p-rpmh.h>
->>  #include <dt-bindings/mailbox/qcom-ipcc.h>
->> @@ -3783,6 +3784,72 @@ llcc: system-cache-controller@9200000 {
->>  			interrupts = <GIC_SPI 580 IRQ_TYPE_LEVEL_HIGH>;
->>  		};
->>  
->> +		iris: video-codec@aa00000 {
->> +			compatible = "qcom,sa8775p-iris";
->> +
->> +			reg = <0 0x0aa00000 0 0xf0000>;
->> +			interrupts = <GIC_SPI 174 IRQ_TYPE_LEVEL_HIGH>;
->> +
->> +			power-domains = <&videocc VIDEO_CC_MVS0C_GDSC>,
->> +					<&videocc VIDEO_CC_MVS0_GDSC>,
->> +					<&rpmhpd SA8775P_MXC>,
->> +					<&rpmhpd SA8775P_MMCX>;
->> +			power-domain-names = "venus",
->> +					     "vcodec0",
->> +					     "mx",
->> +					     "mmcx";
->> +			operating-points-v2 = <&iris_opp_table>;
->> +
->> +			clocks = <&gcc GCC_VIDEO_AXI0_CLK>,
->> +				 <&videocc VIDEO_CC_MVS0C_CLK>,
->> +				 <&videocc VIDEO_CC_MVS0_CLK>;
->> +			clock-names = "iface",
->> +				      "core",
->> +				      "vcodec0_core";
->> +
->> +			interconnects = <&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
->> +					&config_noc SLAVE_VENUS_CFG QCOM_ICC_TAG_ALWAYS>,
-> 
-> This path should use QCOM_ICC_TAG_ACTIVE_ONLY on both endpoints
-What is the advantage of "ALWAYS" vs "ACTIVE_ONLY". Thinking of a possibility of
-APSS power collapsed, while video hardware is processing a frame ?
+Right now as written it is keeping references to files in these fdboxes
+and thus functioning both as a crippled high-privileged fdstore and a
+serialization mechanism. Please get rid of the fdstore bits and
+implement it in a way that it serializes files without stashing
+references to live files that can at arbitrary points in time before the
+fdbox is "sealed" be pulled out and installed into the caller's fdtable
+again.
 
-Regards,
-Vikash
+> KHO to drive it's serialize/deserialize mechanism around char devs in
+> a very limited way.
 > 
->> +					<&mmss_noc MASTER_VIDEO_P0 QCOM_ICC_TAG_ALWAYS
->> +					&mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>;
->> +			interconnect-names = "cpu-cfg",
->> +					     "video-mem";
->> +
->> +			firmware-name = "qcom/vpu/vpu30_p4_s6.mbn";
+> If you have that then feeding an anonymous memfd/guestmemfd through
+> the same machinery is a fairly small and logical step.
 > 
-> If it needs different firmware, I have my doubts over why 8550's data
-> would be fully reused. Are you sure everything in iris_platform_sm8550.c
-> applies?
-> 
->> +			memory-region = <&pil_video_mem>;
->> +
->> +			resets = <&gcc GCC_VIDEO_AXI0_CLK_ARES>;
->> +			reset-names = "bus";
->> +
->> +			iommus = <&apps_smmu 0x0880 0x0400>,
->> +				 <&apps_smmu 0x0887 0x0400>;
->> +			dma-coherent;
->> +
->> +			iris_opp_table: opp-table {
->> +				compatible = "operating-points-v2";
->> +
->> +				opp-366000000 {
->> +					opp-hz = /bits/ 64 <366000000>;
->> +					required-opps = <&rpmhpd_opp_svs_l1>,
->> +							<&rpmhpd_opp_svs_l1>;
->> +				};
-> 
-> Please add a newline between subsequent subnodes
-> 
-> Konrad
+> Jason
 
