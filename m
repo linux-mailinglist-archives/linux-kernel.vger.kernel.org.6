@@ -1,77 +1,90 @@
-Return-Path: <linux-kernel+bounces-566285-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566284-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F658A675DC
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 15:04:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D1E9A675FB
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 15:10:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8879F423A02
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 14:03:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8EF6619C03EA
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 14:02:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C10820D519;
-	Tue, 18 Mar 2025 14:02:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ACBD20DD5C;
+	Tue, 18 Mar 2025 14:02:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="K6uxwC5q"
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PoHP/ZBM"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C8A91DE4D4
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 14:02:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAFB51A2C0E;
+	Tue, 18 Mar 2025 14:02:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742306577; cv=none; b=Pvgb1CXWzbnH4LCjQeaC5DmbeE2fkoa3wm/PbkwCY587YKeVd/YefgM0PC8SJr9EtBe+m4nLp4PLUXwycrIwAEYXB70WLz1ifqIb2Atkl/mzc5DbYQR1zZukHX1zxKYIj12gazNCoLdHx5Pc1WKT+uUhuCqyFFgERozWDzFRdAo=
+	t=1742306558; cv=none; b=N0tvmHgP++SJmWznQCXibyxkIsI9BsSInGkWU9Pt0TfyFjwuI8oCD20vX08+HrPAxzG1gDPIhfO6PRAePPfRVvPYUG9wcGnD5/Gi2m9J4B9DIiER8ylPI/5c0DnrB5123eVHQYT5txyl+lQeqsOiIAUNBI0MnTsZh62rkR3asZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742306577; c=relaxed/simple;
-	bh=dNTjmfuA/ZjJEEPEFuY+ygtEQ3Nckbitp//3iG2ciQQ=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=uUVhCsjv0PQUe93evXAfDGh1cqcpXcHHRwMz1jUYTVytXMIDTm3i/Ld675bplDGpNA9jJdqizulo27uw4g8Dh71XQRnsH+JKcmlF6sgje1RMWOodvBIXnCHEzXO7ukjWcR4Ldf5TH2c90FtYFqE0k8uslWs8z6NXPeZ1Yak/YCs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=K6uxwC5q; arc=none smtp.client-ip=60.244.123.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: ae631046040111f0aae1fd9735fae912-20250318
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=n1N1uor0+xs1/4OgUrk3Wvc3O6AFf/tYcx3ythp+XII=;
-	b=K6uxwC5qWU2y7xkv1Cf1z0vDAEh7AYyqm+nmMlh6BqaEHL49+zEDwXibTo/qpQrpEXkQD09BTk5y/99jvG3okJJA44fBDCfyVL2ECzfB6XSWXYQFmqIZxs+WHgLeIDdrUcu2bPYhI/e4U019b/Mz/ilf5DXQc7lZAHhcmrJ124Y=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.2.1,REQID:5e62f628-c1ea-4736-9622-37cba7915dc5,IP:0,UR
-	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
-	elease,TS:0
-X-CID-META: VersionHash:0ef645f,CLOUDID:b8d3878c-f5b8-47d5-8cf3-b68fe7530c9a,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:81|82|102,TC:nil,Content:0|50,EDM:-3
-	,IP:nil,URL:1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV
-	:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULS
-X-UUID: ae631046040111f0aae1fd9735fae912-20250318
-Received: from mtkmbs14n1.mediatek.inc [(172.21.101.75)] by mailgw01.mediatek.com
-	(envelope-from <liankun.yang@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 1992630280; Tue, 18 Mar 2025 22:02:51 +0800
-Received: from mtkmbs13n2.mediatek.inc (172.21.101.108) by
- mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.39; Tue, 18 Mar 2025 22:02:50 +0800
-Received: from mszsdclx1211.gcn.mediatek.inc (10.16.7.31) by
- mtkmbs13n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1258.39 via Frontend Transport; Tue, 18 Mar 2025 22:02:49 +0800
-From: Liankun Yang <liankun.yang@mediatek.com>
-To: <chunkuang.hu@kernel.org>, <p.zabel@pengutronix.de>, <airlied@gmail.com>,
-	<simona@ffwll.ch>, <matthias.bgg@gmail.com>,
-	<angelogioacchino.delregno@collabora.com>, <jitao.shi@mediatek.com>,
-	<mac.shen@mediatek.com>, <peng.liu@mediatek.com>,
-	<liankun.yang@mediatek.com>,
-	<Project_Global_Chrome_Upstream_Group@mediatek.com>
-CC: <dri-devel@lists.freedesktop.org>, <linux-mediatek@lists.infradead.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v3 1/1] drm/mediatek: Adjust bandwidth limit for DP
-Date: Tue, 18 Mar 2025 22:02:21 +0800
-Message-ID: <20250318140236.13650-2-liankun.yang@mediatek.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250318140236.13650-1-liankun.yang@mediatek.com>
-References: <20250318140236.13650-1-liankun.yang@mediatek.com>
+	s=arc-20240116; t=1742306558; c=relaxed/simple;
+	bh=5/H/RkdYCVBAtDQuOfxdiSWDTWx6gAPojS0OJOoPcU8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=h2iMdFHBKJPKo5ijdQ9W26W0lFZL9E/dsXhTtwm9a8S/eFfNpAIJDc9y3Q/LCVwDtwgNOA2zX3gfOvD2zkWKkRNka6eZt+3zwocJEtngg8lJt8R6p7hNLMPGT83cHmtn8aKDXEvfUOHOpMNCqPcoN0dXK0v9Ua4kH75iDsZ53Kk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PoHP/ZBM; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-22423adf751so97069165ad.2;
+        Tue, 18 Mar 2025 07:02:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742306556; x=1742911356; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=5ZJUD9hlXsfSxFciC6LxZ0uWYlsr5EYH2X9weMPvlrs=;
+        b=PoHP/ZBMTVaddrPEMmkuA/WhRYU5HgfgrlUY8DhaGeKEZjhr7RfgUEH453MPioe+aK
+         BCvDWViSI3FH9goqKcGdEwgeuUQxkawoqYhTqAnHvGf0dZSaFhFFre+9Q0wfiXSk03vk
+         /ySY/2GhqH4xkeifvy65a5vAUg3rxZEGahUwd1VQXdwfYBlYYc00Rd0z5bTSFiY1Q4Vm
+         E1Wf2nLTNxmgFBHImP6LYJJTtNrv5KebylYGHg+mfOVhJl5rE88+HHHcRz05ENKiamcC
+         ZNesPRpxlJiivCMngORPDi2TXHFbVjXu8W8Agx6QpRGFckN5Dk82LIv8SV3O9jC9Q0It
+         RY0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742306556; x=1742911356;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5ZJUD9hlXsfSxFciC6LxZ0uWYlsr5EYH2X9weMPvlrs=;
+        b=qjPx6fPMNyF9vJJMi0j1Rt7hm/2pClaOPEN8jkATMVO1KEQczbCgUpJLu667ZbDSE+
+         hhsnXEvr4mGDz+FbWtzE+rgkwZlPBRNmZ0d7xLM7wp9NgKaAEZLE3GSsFyFSUue44iiD
+         rotFGwIuOTOncwxJsMhZUuFL7szr1t4CRo2zD8+V1M0uv3uvPd41QYroSNmKKdhZ83Oy
+         yhUH3UfFcw+YbEFIVBetZzOEoBadc0END7pXp2WefKxa3Kf1jLGQFQ8DcJfytATwHdrC
+         R+X+ipjFwhrxrLHaYKryjfXuCXumZmjCZXz0StcdhnRFE+SVmDiTOTAFvhz5IG35H+J/
+         ToPQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUh20IHe9dUTKTY6QZX+E92N4FcRazTjhyPK6fg9k8g/ZML8gv2c8DoTyaC/zHRZirUYyavrFCWgcWEbA==@vger.kernel.org, AJvYcCUlu3Ad/bVDrLSwovqFo5MDsnzHzqba8J7SEZBEkC+uLjvSTbnDwu4Etu8c6NJwBmcX7ospARDMLl0p@vger.kernel.org, AJvYcCXvzpsZSTrme6EgjtlDhI7v7KuVFGp4+D3HBtd18LYdnqb0xQs2a+waSL/wzmb1q8yyLwoE4+/7RkxC1W8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzu/OJRnVuQZjTMnpsEVj0IHBeA8z2MxWnAMLLjEnUIBX7mrlCV
+	LivN9FzgMpTYjUmqyOyYQEWbh7xHD5GE+tMMEn4F+/bWEOSXfOkX
+X-Gm-Gg: ASbGncsrBVcdvzajJq7DnYGfEKIw/JL28mERukcaRGaixynwIfT+1y9/iNa8mqsFOdm
+	rAmSr/IqbI1yOlbDJ9pbNaoI+3HVU2YndI2r7zo+SFW9IuDqavK2Pw7xOOnuRbjE9M5HFOmP6j3
+	ODSlKEdklAjf3TxyVPz11LfrFbxqtdW5nKg+Fqn8gZuBP6gr/ZnssYVV/wwOetdoBJhZrHuftUc
+	u15dzGboEbNUr14rq9bbHn67ZXJh6lIuDGraTztBGwZ2SwaB8dCaG0m7JQ6qhl/PMCOUPesi506
+	Mx+OvbT6d6sJ8sa3vxcYGNgqnsJr1AcUHL7il3OLhAHCv6qPxIap7d0Qh+lkm2JRNKA4
+X-Google-Smtp-Source: AGHT+IFBMrJUOeX6rBVBtMeZCzWcnrPnjlWcpCe5GLKn61z7Cz4IG3HfxXUVA8uXqfUqXzbnDgPFsQ==
+X-Received: by 2002:a17:903:3c50:b0:224:1579:5e8e with SMTP id d9443c01a7336-225e0a3635emr228282065ad.1.1742306556109;
+        Tue, 18 Mar 2025 07:02:36 -0700 (PDT)
+Received: from localhost.localdomain ([183.242.254.176])
+        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-225c6bd547asm93998755ad.248.2025.03.18.07.02.31
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Tue, 18 Mar 2025 07:02:35 -0700 (PDT)
+From: Miaoqian Lin <linmq006@gmail.com>
+To: Aaro Koskinen <aaro.koskinen@iki.fi>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Aubin Constans <aubin.constans@microchip.com>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+	Christian Loehle <christian.loehle@arm.com>,
+	Allen Pais <allen.lkml@gmail.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	linux-omap@vger.kernel.org,
+	linux-mmc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: linmq006@gmail.com
+Subject: [PATCH] mmc: omap: Fix memory leak in mmc_omap_new_slot
+Date: Tue, 18 Mar 2025 22:02:25 +0800
+Message-Id: <20250318140226.19650-1-linmq006@gmail.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,127 +92,62 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-MTK: N
 
-By adjusting the order of link training and relocating it to HPD,
-link training can identify the usability of each lane in the current link.
+Add err_free_host label to properly pair mmc_alloc_host() with
+mmc_free_host() in GPIO error paths. The allocated host memory was
+leaked when GPIO lookups failed.
 
-It also supports handling signal instability and weakness due to
-environmental issues, enabling the acquisition of a stable bandwidth
-for the current link. Subsequently, DP work can proceed based on
-the actual maximum bandwidth.
-
-It should training in the hpd event thread.
-Check the mode with lane count and link rate of training.
-
-Signed-off-by: Liankun Yang <liankun.yang@mediatek.com>
+Fixes: e519f0bb64ef ("ARM/mmc: Convert old mmci-omap to GPIO descriptors")
+Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
 ---
-Change in V3:
-- Remove 'mtk_dp->enabled = false" in atomic disable.
-- Remove 'mtk_dp->enabled = true" in atomic enable.
-Per suggestion from the previous thread:
-https://patchwork.kernel.org/project/linux-mediatek/patch/20241025083036.8829-4-liankun.yang@mediatek.com/
+ drivers/mmc/host/omap.c | 19 +++++++++++++------
+ 1 file changed, 13 insertions(+), 6 deletions(-)
 
-Change in V2:
-- Adjust DP training timing.
-- Adjust parse capabilities timing.
-- Add power on/off for connect/disconnect.
-Per suggestion from the previous thread:
-https://patchwork.kernel.org/project/linux-mediatek/patch/20240315015233.2023-1-liankun.yang@mediatek.com/
----
- drivers/gpu/drm/mediatek/mtk_dp.c | 39 ++++++++++++++++---------------
- 1 file changed, 20 insertions(+), 19 deletions(-)
-
-diff --git a/drivers/gpu/drm/mediatek/mtk_dp.c b/drivers/gpu/drm/mediatek/mtk_dp.c
-index 3d4648d2e15f..fb76fc1bf497 100644
---- a/drivers/gpu/drm/mediatek/mtk_dp.c
-+++ b/drivers/gpu/drm/mediatek/mtk_dp.c
-@@ -1976,6 +1976,7 @@ static irqreturn_t mtk_dp_hpd_event_thread(int hpd, void *dev)
- 	struct mtk_dp *mtk_dp = dev;
- 	unsigned long flags;
- 	u32 status;
-+	int ret;
+diff --git a/drivers/mmc/host/omap.c b/drivers/mmc/host/omap.c
+index 62252ad4e20d..3cdb2fc44965 100644
+--- a/drivers/mmc/host/omap.c
++++ b/drivers/mmc/host/omap.c
+@@ -1272,19 +1272,25 @@ static int mmc_omap_new_slot(struct mmc_omap_host *host, int id)
+ 	/* Check for some optional GPIO controls */
+ 	slot->vsd = devm_gpiod_get_index_optional(host->dev, "vsd",
+ 						  id, GPIOD_OUT_LOW);
+-	if (IS_ERR(slot->vsd))
+-		return dev_err_probe(host->dev, PTR_ERR(slot->vsd),
++	if (IS_ERR(slot->vsd)) {
++		r = dev_err_probe(host->dev, PTR_ERR(slot->vsd),
+ 				     "error looking up VSD GPIO\n");
++		goto err_free_host;
++	}
+ 	slot->vio = devm_gpiod_get_index_optional(host->dev, "vio",
+ 						  id, GPIOD_OUT_LOW);
+-	if (IS_ERR(slot->vio))
+-		return dev_err_probe(host->dev, PTR_ERR(slot->vio),
++	if (IS_ERR(slot->vio)) {
++		r = dev_err_probe(host->dev, PTR_ERR(slot->vio),
+ 				     "error looking up VIO GPIO\n");
++		goto err_free_host;
++	}
+ 	slot->cover = devm_gpiod_get_index_optional(host->dev, "cover",
+ 						    id, GPIOD_IN);
+-	if (IS_ERR(slot->cover))
+-		return dev_err_probe(host->dev, PTR_ERR(slot->cover),
++	if (IS_ERR(slot->cover)) {
++		r = dev_err_probe(host->dev, PTR_ERR(slot->cover),
+ 				     "error looking up cover switch GPIO\n");
++		goto err_free_host;
++	}
  
- 	if (mtk_dp->need_debounce && mtk_dp->train_info.cable_plugged_in)
- 		msleep(100);
-@@ -1994,9 +1995,28 @@ static irqreturn_t mtk_dp_hpd_event_thread(int hpd, void *dev)
- 			memset(&mtk_dp->info.audio_cur_cfg, 0,
- 			       sizeof(mtk_dp->info.audio_cur_cfg));
+ 	host->slots[id] = slot;
  
-+			mtk_dp->enabled = false;
-+			/* power off aux */
-+			mtk_dp_update_bits(mtk_dp, MTK_DP_TOP_PWR_STATE,
-+			       DP_PWR_STATE_BANDGAP_TPLL,
-+			       DP_PWR_STATE_MASK);
-+
- 			mtk_dp->need_debounce = false;
- 			mod_timer(&mtk_dp->debounce_timer,
- 				  jiffies + msecs_to_jiffies(100) - 1);
-+		} else {
-+			mtk_dp_aux_panel_poweron(mtk_dp, true);
-+
-+			ret = mtk_dp_parse_capabilities(mtk_dp);
-+			if (ret)
-+				drm_err(mtk_dp->drm_dev, "Can't parse capabilities\n");
-+
-+			/* Training */
-+			ret = mtk_dp_training(mtk_dp);
-+			if (ret)
-+				drm_err(mtk_dp->drm_dev, "Training failed, %d\n", ret);
-+
-+			mtk_dp->enabled = true;
- 		}
- 	}
- 
-@@ -2162,16 +2182,6 @@ static const struct drm_edid *mtk_dp_edid_read(struct drm_bridge *bridge,
- 
- 	drm_edid = drm_edid_read_ddc(connector, &mtk_dp->aux.ddc);
- 
--	/*
--	 * Parse capability here to let atomic_get_input_bus_fmts and
--	 * mode_valid use the capability to calculate sink bitrates.
--	 */
--	if (mtk_dp_parse_capabilities(mtk_dp)) {
--		drm_err(mtk_dp->drm_dev, "Can't parse capabilities\n");
--		drm_edid_free(drm_edid);
--		drm_edid = NULL;
--	}
--
- 	if (drm_edid) {
- 		/*
- 		 * FIXME: get rid of drm_edid_raw()
-@@ -2365,13 +2375,6 @@ static void mtk_dp_bridge_atomic_enable(struct drm_bridge *bridge,
- 
- 	mtk_dp_aux_panel_poweron(mtk_dp, true);
- 
--	/* Training */
--	ret = mtk_dp_training(mtk_dp);
--	if (ret) {
--		drm_err(mtk_dp->drm_dev, "Training failed, %d\n", ret);
--		goto power_off_aux;
--	}
--
- 	ret = mtk_dp_video_config(mtk_dp);
- 	if (ret)
- 		goto power_off_aux;
-@@ -2389,7 +2392,6 @@ static void mtk_dp_bridge_atomic_enable(struct drm_bridge *bridge,
- 		       sizeof(mtk_dp->info.audio_cur_cfg));
- 	}
- 
--	mtk_dp->enabled = true;
- 	mtk_dp_update_plugged_status(mtk_dp);
- 
- 	return;
-@@ -2404,7 +2406,6 @@ static void mtk_dp_bridge_atomic_disable(struct drm_bridge *bridge,
- {
- 	struct mtk_dp *mtk_dp = mtk_dp_from_bridge(bridge);
- 
--	mtk_dp->enabled = false;
- 	mtk_dp_update_plugged_status(mtk_dp);
- 	mtk_dp_video_enable(mtk_dp, false);
- 	mtk_dp_audio_mute(mtk_dp, true);
+@@ -1344,6 +1350,7 @@ static int mmc_omap_new_slot(struct mmc_omap_host *host, int id)
+ 		device_remove_file(&mmc->class_dev, &dev_attr_slot_name);
+ err_remove_host:
+ 	mmc_remove_host(mmc);
++err_free_host:
+ 	mmc_free_host(mmc);
+ 	return r;
+ }
 -- 
-2.45.2
+2.39.5 (Apple Git-154)
 
 
