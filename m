@@ -1,205 +1,280 @@
-Return-Path: <linux-kernel+bounces-565456-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565457-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD6C7A66888
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 05:43:34 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A33FA6688C
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 05:47:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BFE7B19A16F7
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 04:43:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44A1519A248A
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 04:47:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 661FD1BEF97;
-	Tue, 18 Mar 2025 04:43:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65AB31A2658;
+	Tue, 18 Mar 2025 04:47:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="anFfo59h"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2042.outbound.protection.outlook.com [40.107.223.42])
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="Se6HfJzt"
+Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04olkn2036.outbound.protection.outlook.com [40.92.45.36])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 180C319ABAB;
-	Tue, 18 Mar 2025 04:43:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABACBC2F2;
+	Tue, 18 Mar 2025 04:47:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.45.36
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742273005; cv=fail; b=f+TKjARX6GsEBpPZSQplsZDVPuF0nZzPuv32q9WTBpckU+D1vm04VnoAmMQi0HyqoOtYyKledXTKIMd7VhSaW29PUKI4jfeyfYQK1UanSUTXTM8BAGIbm1msJAJCoxGqz5j8hdCBMK6w4Xb8t90+eZ6DyOphVnjzGEzn8O+br8A=
+	t=1742273231; cv=fail; b=a+Y0O+eKH+hKdofpniALSpzU9mHAV/AZD+GcHCR9brkFds0XOm4J9WrQdwLKNhXve7caLwhSECCZKmnQorHizlWcIGy1y7tp9hwidzu9yvdW3QLHVrR6TBE1v3Rvs5wBZCHhn2NOyWsjZSghbZYH+N70OOf9CFPeMOyfRTytxKM=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742273005; c=relaxed/simple;
-	bh=FZrsxqqVQPFlNY61GoAFqEweFSbIWvBTZhQIciCp2aY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=SgB+pgMlmgRyoOSIb77ssJR13kb1YjFzrlt2dVJhg8NfaQwk3SyeKDR6rcwvzqr9O8tW4PeFrfSLpR4VgI/mTOy4IvKRqU8sAwj0YT6KqBqLjPAryMz+N38fUL3VjzTZb2IS6yvW7KZqlnxmDpWNuZI+Xn4TEpQTLl8YpVbptUw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=anFfo59h; arc=fail smtp.client-ip=40.107.223.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	s=arc-20240116; t=1742273231; c=relaxed/simple;
+	bh=4fIs79Jb42/7drmhfvQu2GVdOLqdrEU8m8ZkNmTmfco=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=WzmbA0JUMHYiBGjqGq6bcFdNmIGyXaoW+Vxp8hNG3Idfpx030zglzU9uuEN2CTMfZz9H9iucLutlAXa2pglq1/j3pXlB7v4eQCVogERF+/aLeDpB4nspbMSDmVe/klNVVWl0NVW/v6hX0vbWI1DpRRaSRa7OYG5uUjSzNUAy4x0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=Se6HfJzt; arc=fail smtp.client-ip=40.92.45.36
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=CoAx2xoV4dvyA5+CBl8NeMXfrXDt+d3QBttNQDioayTuWKWYVig6kcQae7B5s6V1oTCoPKmxbqToopmX2vnmB9NEXV6zOGVvOHxjASq4enVrVJLJAMiMZfglm58xF3FKc08JqYycl+zateYzfywNGbXZMJ8us5yzSgSAInruHKcUcaqwC3wounXIkQLNoDVip2ELjNTa2e0trZ81IAUO2FwXPt7gHkPYN+hdhDi5GgJvlw3gAxtGS/wzNCBixaFOh5Qh1BHL9CQnPudJqPYxbVCpoCvuwQC536Uox9TeQjvl5/7mGcRT/+JeERLgs7J6zbeo42iRi8mVrznIqC1Acw==
+ b=B8/k7SqxhS/0UJ7Zqa3ltgsrG6625+dQyVj9FX4kNUmLa2jLVFWGgVxkxZkS9CHXZNbI3w4ds2LHInj6PxzBljI/XXWiFrNhau7hc0EgQVruDxf4E0bR9qhzQM0Vyq7DuxXuEyov9YbkZyf/Ihcf1woeACNVyYWM9F2/G8eZOXiQbXvBRe9xBCD/V/AwKK/ky6KxKdRKYvJvhtxaXG0PqEyBwhlDaA24zHzFU7XclGKw61E97nBDbSRH0clYfLosBvvna2+adEUsBrU1t2URc97LASh1Zd6GSLf35K73pX8mgWFQaB+BI2DhQqBN7/OqCrouUPVQI44NuAxIAxBiKA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=XACfIBqclQ2dLXZCi5Z+yYfU3dRdA/pBdzRurLAXRLc=;
- b=XifQYUtPAdgKutp+BczaET9kt6TTjxFUrDc9dFBLvrblIa1OeFf2tgkW2/dOJqc6mJVJUerV+GWWRpQfPvhim81N2TmsCq9wzDTPGXtHxdceryWKC3E8dizs/ikyrM5zP2M7WO2J+Z4+3Gt7tUAxvZAeSUNqlsUaqB+jahmjazcJGZH6WIIKHPtU0Gwo2ot/C7pWVuabUpl7YodeD+w7cgzbuddqjoyO02F53dzwb6uJ6DpZbCoAzh8Cj6y4TW3ghABtHmqpZP72wKPFL1Mup3D79+X+T3UphWjwSIorrhEEE43T1MqRTnqeOqQ56I/VWTOXUSfcZ4Q/z/aGaAGAQw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
+ bh=4fIs79Jb42/7drmhfvQu2GVdOLqdrEU8m8ZkNmTmfco=;
+ b=YBN2KBpYdFQnv1NPhyB2nzXaxcYCsz0jOtTM1xpb/u88U0tdu+kSU4OKLkjI3NG7vTd5LP2aOB+gW8tbsw8GG9n8uSSFF4pyDd+jSkPS/38df9UNZWH2D3DeyvgtBOJRujaqR5whbTuCkDurd3ogqCnyf2t+nDiYj3NAKmGh4F2KuzB6kJavJjqtyVVdByRdvo5BHSUgWrDlY2Cw97KTg15vQjs/Ou7m5p7p8iS/MVBOzg179ZvJhUWXTEmC9QXFaJfh45uWQECI81W9B+SSuEoh8H8NfH+usw140C6hBJ7wZe/I/YWOknO5y5QsEAd4mY6inGgOVY5lh1ST+5N+DA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=XACfIBqclQ2dLXZCi5Z+yYfU3dRdA/pBdzRurLAXRLc=;
- b=anFfo59hhsFBRYO25ofbIwJt/6PikDMLfFDOnGYyx9OK1mTref5y1f7FD0wC7pqdkUlXH8ZUQtf1h7iK7KRkapAViiNwYMtRA0fN6pC77WU0V8Q8Wud6UPCBCWeANXU/1n8Pa1imNNz1tfnC+Fr3KLQMvi0hnEIdDJMmSfSoPCJthg7aWQk01p33hn2p7yYprLfRVMD3ucBKTKRnxrFtAHM1NVF7l1srIQyUBwT7oNUbJi3QgOHqHpzSI1ENi8b5EnrSxGo/VoMvYiDnJE2QAQSlzgLYc4hr1NZFROiOsStdhsG4rtTquUTXx70vYoMR7QOZAdYqw7W2oSQowDQjcQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CY5PR12MB6405.namprd12.prod.outlook.com (2603:10b6:930:3e::17)
- by PH0PR12MB7792.namprd12.prod.outlook.com (2603:10b6:510:281::21) with
+ bh=4fIs79Jb42/7drmhfvQu2GVdOLqdrEU8m8ZkNmTmfco=;
+ b=Se6HfJzthNsZU+gafNcvt8sAmG21tG3aGyvACl0FX/ClN/5V+0n3BVOht5fOGpE4yhbHEO/VamWSurPUbNNK7hyuk5qe/iYz6WK/kleeaqPKYvf/OAX+jqwgf1ICfSc5AdtM8YNeNM+pi+1dqWBy61ZhaIIymLiMpolunG7xvrast2nDl/s8gf/GVXj6YvpwC1OQxotn79ZX5efm4+iA0WODxKLv6qQJ4GTmlqf3azMbzCrBXqhX4peMGxVYCVEeNQThQBJA1HCZMWbJCz/IF+U9cy3V8Ixt12calDQDh1RaBVVjd6e+SV/hKr3fM5xDqW0f2uDqqOwaHAOXyd7fgA==
+Received: from BYAPR12MB3205.namprd12.prod.outlook.com (2603:10b6:a03:134::32)
+ by DS4PR12MB9636.namprd12.prod.outlook.com (2603:10b6:8:27f::13) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.33; Tue, 18 Mar
- 2025 04:43:18 +0000
-Received: from CY5PR12MB6405.namprd12.prod.outlook.com
- ([fe80::2119:c96c:b455:53b5]) by CY5PR12MB6405.namprd12.prod.outlook.com
- ([fe80::2119:c96c:b455:53b5%6]) with mapi id 15.20.8534.031; Tue, 18 Mar 2025
- 04:43:18 +0000
-Date: Tue, 18 Mar 2025 05:43:12 +0100
-From: Andrea Righi <arighi@nvidia.com>
-To: Tejun Heo <tj@kernel.org>
-Cc: David Vernet <void@manifault.com>, Changwoo Min <changwoo@igalia.com>,
-	Joel Fernandes <joelagnelf@nvidia.com>, bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/6] sched_ext: idle: Extend topology optimizations to
- all tasks
-Message-ID: <Z9j54Jbgqsqyf1OY@gpd3>
-References: <20250317175717.163267-1-arighi@nvidia.com>
- <20250317175717.163267-2-arighi@nvidia.com>
- <Z9hoa5iPpDEOnXKt@slm.duckdns.org>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z9hoa5iPpDEOnXKt@slm.duckdns.org>
-X-ClientProxiedBy: FR2P281CA0108.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:9c::19) To CY5PR12MB6405.namprd12.prod.outlook.com
- (2603:10b6:930:3e::17)
+ 2025 04:47:07 +0000
+Received: from BYAPR12MB3205.namprd12.prod.outlook.com
+ ([fe80::489:5515:fcf2:b991]) by BYAPR12MB3205.namprd12.prod.outlook.com
+ ([fe80::489:5515:fcf2:b991%5]) with mapi id 15.20.8534.031; Tue, 18 Mar 2025
+ 04:47:06 +0000
+From: Stephen Eta Zhou <stephen.eta.zhou@outlook.com>
+To: David Disseldorp <ddiss@suse.de>
+CC: "jsperbeck@google.com" <jsperbeck@google.com>, "akpm@linux-foundation.org"
+	<akpm@linux-foundation.org>, "gregkh@linuxfoundation.org"
+	<gregkh@linuxfoundation.org>, "lukas@wunner.de" <lukas@wunner.de>,
+	"wufan@linux.microsoft.com" <wufan@linux.microsoft.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Subject: Re: [RFC PATCH] initramfs: Add size validation to prevent tmpfs
+ exhaustion
+Thread-Topic: [RFC PATCH] initramfs: Add size validation to prevent tmpfs
+ exhaustion
+Thread-Index: AQHblJ3gvljUi14PpUKtURVssHl1u7N28UyAgAAdT5aAAQ5UAIAAMmVp
+Date: Tue, 18 Mar 2025 04:47:06 +0000
+Message-ID:
+ <BYAPR12MB320504EE908AABFD1600AB87D5DE2@BYAPR12MB3205.namprd12.prod.outlook.com>
+References:
+ <BYAPR12MB3205F96E780AA2F00EAD16E8D5D22@BYAPR12MB3205.namprd12.prod.outlook.com>
+	<20250317182157.7adbc168.ddiss@suse.de>
+	<BYAPR12MB3205A7903D8EF06EFF8F575AD5DF2@BYAPR12MB3205.namprd12.prod.outlook.com>
+ <20250318121424.614148e1.ddiss@suse.de>
+In-Reply-To: <20250318121424.614148e1.ddiss@suse.de>
+Accept-Language: en-US, zh-CN
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+msip_labels:
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: BYAPR12MB3205:EE_|DS4PR12MB9636:EE_
+x-ms-office365-filtering-correlation-id: 4ccf1c0f-2f90-41d9-2e27-08dd65d7ef6a
+x-microsoft-antispam:
+ BCL:0;ARA:14566002|15080799006|19110799003|15030799003|461199028|8060799006|8062599003|102099032|3412199025|440099028|12091999003;
+x-microsoft-antispam-message-info:
+ =?iso-8859-1?Q?fHK5uScLH32ZSzV/frs2oCUq/CKVVdKMOk4gwy/TYRwakew9WPeH8D55KE?=
+ =?iso-8859-1?Q?pSbKE7EcVJ4mfDiOGZA1oAE+9pQSY3fiim9CcWJ4cmLhQwIVakqk5JK/sQ?=
+ =?iso-8859-1?Q?Uvv2SwnCITkx4ays6+UXl5CM7CX3UQxTxAXuHFEgnXPIN0altjKk9/mImm?=
+ =?iso-8859-1?Q?j2x0mkWq790DkvqluLU4KGWgn1qURd5yyIm/CCCn8RW5m4bDzeU0utRkL5?=
+ =?iso-8859-1?Q?Q5D93PotwUe5AzAvMvjJc+FOTkU9dYKbOL13jGvrlk2b3n/RM4pW6uebFX?=
+ =?iso-8859-1?Q?7QNwp74FDBeSQ1iUose4PnWILZ/v8pqrdHE4vp7UVRoEEvUfp+bR1rDF1r?=
+ =?iso-8859-1?Q?hwgjzZANe7xzUyIbwMP/+IeUn3+uySoFQYVahu5v3030DBwwYsHalReAQS?=
+ =?iso-8859-1?Q?NFAcaO7tZYuyDBXLLMnXy9gJ8mZ+qhIXh4aouVivYPymV0oiUqD1k7vwQe?=
+ =?iso-8859-1?Q?KLdsaKhn0AV/dD2t/FtwverRjVoX2qAgA/4HTlr+nTwyu4ptzheSHlrgCz?=
+ =?iso-8859-1?Q?JQanC9176vXitMvaj+kKIpXgtshgBRoAjhseKKcdPIqXuJXbsPVX9cAkEx?=
+ =?iso-8859-1?Q?n1WNtanXMkpH6gpA8qnjNcOgsgMqBJgmTxypA8j9CFtR+yHR5m00fFGGOf?=
+ =?iso-8859-1?Q?9xe83OMo2FSQM15jwNuaATaOFoNvK97GHq2yvbWVnl0pdUDxXOjmGGp4ib?=
+ =?iso-8859-1?Q?gf+ZXoGrId3Byt054xN4g/UXxsTNB4hZZhx+K7IgB9Q0aXNml0TGUachVG?=
+ =?iso-8859-1?Q?A0oCqBl112KIzlKL1DrnMLox180XA8VQRTGo7JWfF2Qm4/Io6LT3Jj3F9K?=
+ =?iso-8859-1?Q?oCZIPGbNsbfHcwrZd6IirflAOUE5j0rHW5HuF8xm1Qd4gAJBWTxO2HQcPj?=
+ =?iso-8859-1?Q?0I4sfHhPWzkr0O13dSeLLhGet5xrC2mZtS1gT3wNN3xxajBjoUmWkPUphZ?=
+ =?iso-8859-1?Q?n1wsjy14BrVPqFfH423iRkBYPS4m7XpA9yl6pkBNH6jX3+R3drsh3PSVwa?=
+ =?iso-8859-1?Q?Ls/r48b7FR0o++G9pFRZL7oSFeI9iUwMQZIoeVL60M444Fr/me4mALqiKI?=
+ =?iso-8859-1?Q?wZ83laTaEnLkpQE815le74iKFIN0VEJKwyoD/bf+RHRCsZwqRx1B5Rr4lM?=
+ =?iso-8859-1?Q?dG0JPw/Pskt23KGzFfiFrKEwn/+CMIj68Qcd9PMMGMWW4OGAer7ZvTngZX?=
+ =?iso-8859-1?Q?pYd6BFdPOb3qHw=3D=3D?=
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?iso-8859-1?Q?q0odnzSBl5flmXLOKrTo8gSfjCZ1jNk+mFSNBQVFh82hLns/vRzCNBAeax?=
+ =?iso-8859-1?Q?HccR8Fhzifh7WpnO4FJRlyYz3RK5/6TdOZYVefW0XWN+n/jdnNUtPvR2vY?=
+ =?iso-8859-1?Q?irYNjPjR18gRIGFbc+/IC67SwzbvNbXwNDES3Z7/uc0XwH6szYasZXnUjW?=
+ =?iso-8859-1?Q?dLUndYLm3pXnb4AMbCExxiPWUt+VXC3kcJtPs8W/odQPnnLFu/nWhg4fF7?=
+ =?iso-8859-1?Q?5QM62TZPUuIPxmdRGDyWTt4Zpd294pEt0rwI0pRVlfi/CqAIm0b2rWpIOr?=
+ =?iso-8859-1?Q?fSTUxpYUP5ZwR/fyDV1hM/WRi40n1oCcsCJw8eztT96jb+jC+52dfB3uFK?=
+ =?iso-8859-1?Q?JwjDcgcr2DkU1yByR/otk1O7q1qrPo5JB7UZfgmjo1hpI9FJSn0TmF8p4P?=
+ =?iso-8859-1?Q?cU4VXjbJ17RHtwFDfj7zJRtYosgeHxLquHxi1+Jtb9pF8sGYRJEt6YqEs0?=
+ =?iso-8859-1?Q?Aw02utGER3YSK6y2Vxxa4lGd0tz3SS2ijTDqE+fl7KHV6RET1phqy3EnBK?=
+ =?iso-8859-1?Q?XpYA4OcQMQdnx26DRBkrk30L+PNXCBADpp7t6VCTs0UxyrPxOtVOHJbpzx?=
+ =?iso-8859-1?Q?kc/elvuNHwEQ1ijlIB1ozZ78razAadOt3MtwK3H9vzuSVRpK+XzLzYJc4R?=
+ =?iso-8859-1?Q?PF1xE6grGlzIA+vggNzBRKkUHMEFsaTc1K+glrZbWwcWdfpYGEbeFsBWXF?=
+ =?iso-8859-1?Q?xn2Lm/idWV9aaEQpCRCoGqfutFbtUE8SFHq+2+nIX1qheQH4f0rsTSjBvg?=
+ =?iso-8859-1?Q?lpe+D2Ru//vZyPMOaji9/yPxLOe4Gkkv3HF3O1Fh4CK1WrcAFX87XTpjVm?=
+ =?iso-8859-1?Q?C64mAwqnRHCcvstbBQSS8eg3ztBzcOH3Z5B4Bn3NHvP2XHlggkcdUCWTvo?=
+ =?iso-8859-1?Q?odv6YAWuyxfvW3EibvkmBWpSBHCRj9feuI58yG7paMuxg/ZHBoD0Irw31w?=
+ =?iso-8859-1?Q?xGwLbO+XUPfLwqO07n3NYJfJ72iT1HgjDe7tSgSJnJH0F2Yysdvv3s+xK9?=
+ =?iso-8859-1?Q?bDRq1P+WqMfE+jrIRw2I70tQ99wClZybea6LiE1dJJqaRWH7lmJ/5D1se+?=
+ =?iso-8859-1?Q?ZwllRXfQBZ+TPh/uRinXCNVQeasTvZLAbUqtT+8VJEHJ+ABQnYGc+ElsZ9?=
+ =?iso-8859-1?Q?5bnfZavHGheIr37CSvgPCnnn82zhAO6FA1HwxXactjT86MYTXCchjgpUwa?=
+ =?iso-8859-1?Q?MfujcLIxtpjGWEa0L2mVpzI8YY2akWGhvnBcGhtUIeXonjO/WG4bxdv8kF?=
+ =?iso-8859-1?Q?jA+YgmnZ4d8+yjM/msyjYxT6oGB/BDzFSr4s9OEd8=3D?=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY5PR12MB6405:EE_|PH0PR12MB7792:EE_
-X-MS-Office365-Filtering-Correlation-Id: 036a42fd-e0cc-489a-f479-08dd65d7673f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?bVVAThm+CGBVUuyUxPrbMa58JgQeRb4767xFoMm+qwJaVPPdPTL8HninC8vw?=
- =?us-ascii?Q?gNmktSv98/D0zgBttqsa+RHPGyxD5793Aku2FT63vnrwz6mUdicHVsdC3+Zv?=
- =?us-ascii?Q?p+rvAYhGLnJddnUqqGzL75bBZ+IiFAqTJazCSMcIBP1AWhOej6k3D7YSOiSX?=
- =?us-ascii?Q?oBwV486rsRhCqK/xC5nPxA//88kSJQbtPKYDZUUsBYu2ICz1HC5sAoMwNXzr?=
- =?us-ascii?Q?G1gYe6BjTWNE5iGGMokC+WgyeiRo/NDKeC1iNbg7ZjSUvsOSmjIQlK1GSirX?=
- =?us-ascii?Q?l81N+Aj0pojaLXLTH8YxOi21cCGS25EgCzliv0fEKRIP8PzHVxQWzd4Qq4RQ?=
- =?us-ascii?Q?H8afP5hE9VrZ5DXcddmAqwj+VIr7yYUZ+7VerAKC/Klp05RhWzj7B5JYXcef?=
- =?us-ascii?Q?IU02hKB8lmffZecF0e+KQ1SfV1BR/9jnw62IjvdQrkzojwGQhqfFNlasYSZc?=
- =?us-ascii?Q?K3hB2JVFUEkRpQFs+p84oAIsIkQ7IYNx3Pp7hMV+PN0PlfNuFbF6Sx6X0P/H?=
- =?us-ascii?Q?ujwFngHYzcF979gKJrtRi0P7+KvNH6yD3wU7qJa4G4ikgSeYpcZCGX+LmKzP?=
- =?us-ascii?Q?zp31PNlhvFoAYvlJ46bX9Yhm3e8uN5ADOVeTsRDRyXMJ9MGlDJx2x3ClIO3J?=
- =?us-ascii?Q?XSUtd1lE3C3neRDAIXrKFy5Fzjd9SfWP053CDdZF47aQHqWKWyxQZBPNn+ZF?=
- =?us-ascii?Q?oyFHle9QLyH+c81XRVpl+DzC/RaT1ZV9r3Bgx8rAdLCtevRSCrIcARmFFeV0?=
- =?us-ascii?Q?eGwBZLlcl5qgr7+qgOAfFWgsd/YKfh+aspV7bhDoWL8264j7lDOacEd0+orm?=
- =?us-ascii?Q?VuV86vABvtvqKjmhfXGUFkXmvRh0mTyrVATVKN2aWOcFJQTPfOtq5TG6NejV?=
- =?us-ascii?Q?u1AVfeQo3LrIDYbidl5//HyVFQcwe9tLOhAd3OOPdlyqbP5snbmxhYWsXNvz?=
- =?us-ascii?Q?es7psx7shQyFTwvILHmKkHky2QYKC6tI+z3WAW7aHlfXTyVajP9gfhIOxZu+?=
- =?us-ascii?Q?fyA0s1iHJnvNDj2km09EzbOxQEYk2BKogVzS7ZT82M0zdGL+N9i4lkr/YV4u?=
- =?us-ascii?Q?zULOLF1Nvr2yrf9IBy/L+Xb+OwnzdcfFFLr4jGUf2N9os0zq++MC7TkCQc1z?=
- =?us-ascii?Q?bnC4FTH22MNB5REuk6/om7AS2F30Dq6bBguUyTblxkwdIHP8XJtLNMGxtDSW?=
- =?us-ascii?Q?Au/28FaISsa5hSJw80Kxm6zTWJMRioT1StXGL8s7QI54EGRqoNxV7kAk+vEn?=
- =?us-ascii?Q?JttfgxtJpGckoclFRvugIxeSpyuVjMWTOF6K+AW6TyIvSaNGyb2Zz4bS+WwE?=
- =?us-ascii?Q?nZv5GaiGz6WWWtKNFGnyWi9DiLiXwAwbPIp9ulFCkUyDFe4Ra5gtf1uGgeoJ?=
- =?us-ascii?Q?ubGObEx0SK9cijl1HtnkRRCE3b5u?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY5PR12MB6405.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?SBIau7P7IqDn6wfpGIkOlxyq3m8oFYANzFHzSoD8lLBLeaG4ntaQYsWN4XBx?=
- =?us-ascii?Q?JC134Cuv8MbjdWBdx6rofbelQTv1SzpUd2tBOXmCOIWlH0K4Oxsxyx2pqcl2?=
- =?us-ascii?Q?kfOtAdEuIdJQkufz0y8DOxdaSAj1R8eTLLuixpZAAw4UnLPk3Ic4davEDcUS?=
- =?us-ascii?Q?tYa1PKSaqlzgMOzOhBDNhhmyo5ULHK1dMGriJS/TrpLHIs1fHLHyYHKjf1qN?=
- =?us-ascii?Q?ByNLfPn5zMPLsjky5QxEuwsblWyHCXiU6eoLivsnn4B/O7B1019WnxZatXH9?=
- =?us-ascii?Q?pf5cK/FBZjcbA07KvdDE6eK4iVOO1Pq/dR5hemQ6SY3lnH8j3ije86ECXuP9?=
- =?us-ascii?Q?dLVwm8pxjt1r5PBGr3PdW9f5g0ZJh+Djdl8sntMmYjH8gAA8Kwo2/b2tgOO9?=
- =?us-ascii?Q?1vZonzxYECmGynomxYtV8gkjAG//kFdGNPq7ZHOSBMJb5jAmRzOU2pJhyRwQ?=
- =?us-ascii?Q?PyPgyYOa2vXlEC4l6rhYGz30bffu49Sp6lVGquhzdS+UUdNtsFGM9ZfNdq+g?=
- =?us-ascii?Q?pOhR0x7nFeTfy+b9yQBdfUi/80tLfZxP5/vsovTuhtebHceAMrouMpNOKZUc?=
- =?us-ascii?Q?Bxnj0qh9CYEsEj+bvfxIuLQ19ksVxps2hkYBHQhNRa+cO9jSSy+6ExYlW5JO?=
- =?us-ascii?Q?hlq9Ie+/w3pyKaDl13qvOYI24ohXSv1B5QOFH2JIQe32NtVkdCbUPoFHQxtM?=
- =?us-ascii?Q?iVN2fVIDHWRuMHq3N0RFBiGUV+xe8LQ4sgQ9rANKlswPc8UQ2eXD0qDjGHBf?=
- =?us-ascii?Q?GAruVKh5x0ZvSJ4a9fo4SII8i/lk57sbTLxSweVSOYq1n2iWFBpodcgIJ3ad?=
- =?us-ascii?Q?Jaa0eK4yiqe1Ny3OgD7ykFsEsLHopO7cr8eRGC3SFENczK8vLieM2kIVxO1q?=
- =?us-ascii?Q?zhCmMqwNcuYMQ8RpaWifBIHBExmP28m+qSfHXFl8LzrEgcPG/rN5X5R/GyXt?=
- =?us-ascii?Q?l9rvCfdZTG6aA/NZ9TNP6kIyYTGtep4DJbMMJOED4snFX8uzOd2Oc/cKrqcJ?=
- =?us-ascii?Q?ntjNGILZD/IePd1PX+KRKHXWYzws+D5D9Haxc+Rjfm3gQFKUeMHn6PKob51C?=
- =?us-ascii?Q?0CiRuMgN4oKjv9FY7731SGm5w79NYp3aQ8th2DV4Ar2F558c8frRai67727J?=
- =?us-ascii?Q?iXTZQh9IpjmvoE2RJBYWpbsif7uDmQmD9osw7Vd/UwhczZ8xeBevBQPc4Fma?=
- =?us-ascii?Q?dPRj89uRhBT97tVcv1+G9jYNk6IGnTKbJTyeZksseCn51fFF7QZkXuB1kJBB?=
- =?us-ascii?Q?V7FroPrZKZMJW1hRwDQZL89QWp1V9VyzFzKfG6Wcg8uxnHidOVLdw5lwSitD?=
- =?us-ascii?Q?Fkf5xXkI+tLXZ/hCFGFUhi5r1cSIyoR5YbN0UBDc2ZnM88JGwY7b+xfCOHSs?=
- =?us-ascii?Q?lMRez36kvG72PkMN9w0aQMWIiIZnq6vwALGXlZ5+M9m4rIaqsV1aeKzRPTyl?=
- =?us-ascii?Q?tmRQx+EacFXR3SkCmL+egrtOCL+V9PtQrKGDXAADaaNwI5uCNK3LwV5Joiz6?=
- =?us-ascii?Q?rNJGyOfKoPIOAjNwf3KotB5Ui0Pc56lXHUqlBTARRMGuUj70EkdJ7iiPwSYp?=
- =?us-ascii?Q?IolzwgjKro67C4Pau9zIlbVda0K7vfHAq/7McyUk?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 036a42fd-e0cc-489a-f479-08dd65d7673f
-X-MS-Exchange-CrossTenant-AuthSource: CY5PR12MB6405.namprd12.prod.outlook.com
+X-OriginatorOrg: outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Mar 2025 04:43:18.2607
+X-MS-Exchange-CrossTenant-AuthSource: BYAPR12MB3205.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4ccf1c0f-2f90-41d9-2e27-08dd65d7ef6a
+X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Mar 2025 04:47:06.5008
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 2xBJfqY+XNNL6ZBYqT3YXXBVUgrVK1cnEytBBWXikTes9YacBQ7GE6/3sZVeVHqyBGsc9fTnWkSRfwQNKCM/tw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR12MB7792
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS4PR12MB9636
 
-On Mon, Mar 17, 2025 at 08:22:35AM -1000, Tejun Heo wrote:
-> Hello,
-> 
-> On Mon, Mar 17, 2025 at 06:53:24PM +0100, Andrea Righi wrote:
-> > +/*
-> > + * Return the subset of @cpus that task @p can use or NULL if none of the
-> > + * CPUs in the @cpus cpumask can be used.
-> > + */
-> > +static const struct cpumask *task_cpumask(const struct task_struct *p, const struct cpumask *cpus,
-> > +					  struct cpumask *local_cpus)
-> 
-> task_cpus_allowed_and()? It also would help to add comment explaining the
-> parameters as the function is a bit unusual.
-
-Ack.
-
-> 
-> > +{
-> > +	/*
-> > +	 * If the task is allowed to run on all CPUs, simply use the
-> > +	 * architecture's cpumask directly. Otherwise, compute the
-> > +	 * intersection of the architecture's cpumask and the task's
-> > +	 * allowed cpumask.
-> > +	 */
-> > +	if (!cpus || p->nr_cpus_allowed >= num_possible_cpus() ||
-> > +	    cpumask_subset(cpus, p->cpus_ptr))
-> > +		return cpus;
-> > +
-> > +	if (!cpumask_equal(cpus, p->cpus_ptr) &&
-> 
-> Hmm... isn't this covered by the preceding cpumask_subset() test? Here, cpus
-> is not a subset of p->cpus_ptr, so how can it be the same as p->cpus_ptr?
-
-Oh that's right, I missed that between all the refactoring, thanks for
-catching it. Will remove it.
-
-> 
-> > +	    cpumask_and(local_cpus, cpus, p->cpus_ptr))
-> > +		return local_cpus;
-> > +
-> > +	return NULL;
-> 
-> and return values need some explanation too.
-
-Ok.
-
-Thanks,
--Andrea
+=0A=
+> I0t's still not clear to me why early-user-space can't determine this=0A=
+> before attempting to mount, etc. It's in a better position to know the=0A=
+> resource requirements of what it's going to run.=0A=
+=0A=
+Before init runs, initramfs is unpacked to tmpfs, and if tmpfs runs out of =
+resources, the system may already be in an unrecoverable state (crash or pa=
+nic), which can cause problems: the system may be in an unrecoverable state=
+ before init has a chance to check.=0A=
+Unrecoverable state can come from drivers or subsystems that cannot create =
+files in tmpfs. For example, if the rootfs is created on a system with very=
+ limited RAM (e.g., an embedded device with 64MB RAM), unpacking a large in=
+itramfs may leave so little space that even init cannot allocate memory.=0A=
+The kernel error log may show OOM errors, but the underlying problem is tha=
+t the initramfs is too large and there is not enough space left to support =
+subsequent programs.=0A=
+=0A=
+So I think the kernel should provide protection during decompression, so th=
+at if tmpfs is insufficient, the kernel can handle the error gracefully and=
+ accurately, without running at the risk of panic or crash. At least when s=
+uch a situation occurs, developers will know where the problem is at a glan=
+ce, and spend too much energy to gradually troubleshoot the problem, and it=
+ can also strengthen the kernel's ability to handle problems early.=0A=
+=0A=
+Sometimes when we troubleshoot errors, we always check step by step, and fi=
+nally find that the problem may have occurred in the first link or some par=
+ameter configuration at the beginning of startup. In this case, why can't w=
+e expose the problem as soon as possible?=0A=
+=0A=
+=0A=
+> There's room for improvement WRT how out-of-memory failures are reported=
+=0A=
+=0A=
+> and handled during decompression and I/O. However, adding an extra pass=
+=0A=
+=0A=
+> and some arbitrary free-space logic doesn't improve the situation IMO.=0A=
+=0A=
+My intention is that pre-checking free space before unpacking ensures that =
+failures are predictable and recoverable. This check can be a simple size c=
+omparison between the initramfs archive and the free tmpfs space, which has=
+ minimal overhead compared to a full unpack and subsequent failure.=0A=
+Proactive checking prevents unnecessary I/O operations and reduces the comp=
+lexity of debugging at boot time.=0A=
+This is done to provide early assurance to the kernel.=0A=
+=0A=
+Thanks,=0A=
+Stephen=0A=
+________________________________________=0A=
+From:=A0David Disseldorp=0A=
+Sent:=A0Tuesday, March 18, 2025 09:14=0A=
+To:=A0Stephen Eta Zhou=0A=
+Cc:=A0jsperbeck@google.com; akpm@linux-foundation.org; gregkh@linuxfoundati=
+on.org; lukas@wunner.de; wufan@linux.microsoft.com; linux-kernel@vger.kerne=
+l.org; linux-fsdevel@vger.kernel.org=0A=
+Subject:=A0Re: [RFC PATCH] initramfs: Add size validation to prevent tmpfs =
+exhaustion=0A=
+=0A=
+=0A=
+On Mon, 17 Mar 2025 09:41:35 +0000, Stephen Eta Zhou wrote:=0A=
+=0A=
+...=0A=
+=0A=
+> Before the init process runs, initramfs needs to be decompressed to tmpfs=
+ and become the root file system (rootfs). If there is insufficient tmpfs s=
+pace after decompression, init may not be able to run at all, causing the s=
+ystem to crash or panic.=0A=
+=0A=
+>=0A=
+=0A=
+> Letting the init process decide whether it is sufficient means that the i=
+nitramfs must be decompressed first, which may have filled up tmpfs, making=
+ the entire system unusable, rather than a controllable error handling proc=
+ess.=0A=
+=0A=
+>=0A=
+=0A=
+> This problem is more obvious in extreme cases, for example:=0A=
+=0A=
+>=0A=
+=0A=
+> 1. After initramfs is decompressed, there is only a small amount of avail=
+able space in tmpfs, causing early-user-space tasks such as mount and udeva=
+dm to fail, affecting device initialization.=0A=
+=0A=
+=0A=
+=0A=
+It's still not clear to me why early-user-space can't determine this=0A=
+=0A=
+before attempting to mount, etc. It's in a better position to know the=0A=
+=0A=
+resource requirements of what it's going to run.=0A=
+=0A=
+=0A=
+=0A=
+> 2. On embedded devices, tmpfs is usually configured small, and insufficie=
+nt space is found after decompression, which directly leads to boot failure=
+.=0A=
+=0A=
+>=0A=
+=0A=
+> The reason why the check is performed before decompression is to expose t=
+he problem in advance to avoid the passive failure mode of insufficient spa=
+ce after decompression.=0A=
+=0A=
+> Calculating the theoretically required tmpfs resources and making judgmen=
+ts in advance can reduce unnecessary I/O operations and provide clearer err=
+or reports to help users adjust the initramfs size or tmpfs configuration.=
+=0A=
+=0A=
+> My idea is to expose problems as early as possible. If problems occur dur=
+ing operation, it may be more troublesome to troubleshoot or bring unnecess=
+ary risks.=0A=
+=0A=
+=0A=
+=0A=
+There's room for improvement WRT how out-of-memory failures are reported=0A=
+=0A=
+and handled during decompression and I/O. However, adding an extra pass=0A=
+=0A=
+and some arbitrary free-space logic doesn't improve the situation IMO.=0A=
+=0A=
+=0A=
+=0A=
+Cheers, David=0A=
+=0A=
 
