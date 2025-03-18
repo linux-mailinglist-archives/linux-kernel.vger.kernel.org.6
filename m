@@ -1,60 +1,82 @@
-Return-Path: <linux-kernel+bounces-565509-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565512-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30C81A669C9
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 06:48:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CBAC5A669E4
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 06:55:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62D573BB3BD
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 05:48:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ACD7A3BB117
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 05:54:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A9651A5BAB;
-	Tue, 18 Mar 2025 05:48:19 +0000 (UTC)
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 582522B9A4;
-	Tue, 18 Mar 2025 05:48:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA1F719F115;
+	Tue, 18 Mar 2025 05:54:54 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49FCD1C36
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 05:54:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742276898; cv=none; b=TGKQqk41lXdXjC4MaUpQRFLt1NS82W11x5DdAkKLbpEpb7cQjLb16y8DLLNSGf6Tgsjj4iDgvI2CzHFSaI8Kq1LcCiEcDqlK79HWQpjGnTDKi1ZxNtMhXSO8PZCqTOXyfL+ye0MheRYptbLBt3bTY4qQtF7xysMno7DNZrLKRRs=
+	t=1742277294; cv=none; b=pXwkZZXpcgWs3TknOiEmKLBpybzKadqbKkHoyzOjpc9xysYHfrhWG89iBxI6XhUuBGkDUqa/nsjmQf+nBtSugyq8GYOpw4pyrC0AUO2Vs+gs/GNZde5wxE6wjknYQNBW9i+a/bhx/zimm2lHHBEAlDLJ9Em/1witIBhj8qQRJ7c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742276898; c=relaxed/simple;
-	bh=PzCTHjbY0fUQicJKKISAkxkhKKZ8hkI5yL9VcpGAeH8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jC39fsR3++Ky7P2mzQlmn3qZsV4BCs2KHidecxjUsmwsIumZO29zN4wyNWPfnAi+PB53Fh5grNen8Xmv/LxlhspePb5JtXqBcO2rF9eKIu2TQh/OBFo0VkYXqfRYTeymNrgbFlqBZRqYO25r0F8gYVynD88IfFF8puE8xWCyelk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 2977B68AA6; Tue, 18 Mar 2025 06:48:11 +0100 (CET)
-Date: Tue, 18 Mar 2025 06:48:10 +0100
-From: Christoph Hellwig <hch@lst.de>
-To: John Garry <john.g.garry@oracle.com>
-Cc: brauner@kernel.org, djwong@kernel.org, cem@kernel.org,
-	dchinner@redhat.com, hch@lst.de, linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	ojaswin@linux.ibm.com, ritesh.list@gmail.com,
-	martin.petersen@oracle.com, tytso@mit.edu,
-	linux-ext4@vger.kernel.org
-Subject: Re: [PATCH v6 00/13] large atomic writes for xfs with CoW
-Message-ID: <20250318054810.GA14955@lst.de>
-References: <20250313171310.1886394-1-john.g.garry@oracle.com>
+	s=arc-20240116; t=1742277294; c=relaxed/simple;
+	bh=LeDl/wb2FB0mMxlDMsasaf/IqG7uAFRimvjuHCuQtNg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fuQr+aQv74p+EDitcLVMGOKsannnqA6mia4Nebo9L82vS98Gzu7isNEKM9PTTTgXYTDZUXGVYhHEe65Mvueo8DIRCj2G6dNHhD/vXpOF6f+sakSUfE8dAxPnM7QWfmsa/KVRYPzk5pAtMjFx/M8oPAHDHhlNw5ujv3O5GVO0Ym0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CD1A0152B;
+	Mon, 17 Mar 2025 22:54:59 -0700 (PDT)
+Received: from [10.163.44.33] (unknown [10.163.44.33])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B70BA3F63F;
+	Mon, 17 Mar 2025 22:54:48 -0700 (PDT)
+Message-ID: <9abeecc3-2b19-43ba-8619-ea286d54db8e@arm.com>
+Date: Tue, 18 Mar 2025 11:24:45 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250313171310.1886394-1-john.g.garry@oracle.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/2] arm64/mm/hotplug: Drop some redundant WARN_ON()
+To: linux-arm-kernel@lists.infradead.org
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Ard Biesheuvel <ardb@kernel.org>, Ryan Roberts <ryan.roberts@arm.com>,
+ Mark Rutland <mark.rutland@arm.com>, linux-kernel@vger.kernel.org
+References: <20250221094449.1188427-1-anshuman.khandual@arm.com>
+Content-Language: en-US
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+In-Reply-To: <20250221094449.1188427-1-anshuman.khandual@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-As said before what I'd really like to see going along with this is
-a good set of test for xfstests, including exercising the worst case
-of the atomic always COW writes.
+On 2/21/25 15:14, Anshuman Khandual wrote:
+> This series drops some redundant WARN_ON() tests which are not required any
+> more while unmapping and freeing up kernel page table pages during a memory
+> hot remove operation.
+> 
+> This series applies on v6.14-rc3
+> 
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Will Deacon <will@kernel.org>
+> Cc: Ard Biesheuvel <ardb@kernel.org>
+> Cc: Ryan Roberts <ryan.roberts@arm.com>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-kernel@vger.kernel.org
+> 
+> Anshuman Khandual (2):
+>   arm64/mm/hotplug: Drop redundant [pgd|p4d]_present()
+>   arm64/mm/hotplug: Replace pxx_present() with pxx_valid()
+> 
+>  arch/arm64/mm/mmu.c | 14 +++++---------
+>  1 file changed, 5 insertions(+), 9 deletions(-)
+> 
 
+Gentle ping, any updates on this series ? This simplifies WARN_ON()
+checks during memory hotplug operation, after subsequent changes to
+page table helpers such as pxd_present() etc.
 
