@@ -1,96 +1,171 @@
-Return-Path: <linux-kernel+bounces-566222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566221-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3885A6751D
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 14:28:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FC33A6751C
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 14:28:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A26419A2AD4
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 13:28:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D45DD3AD99F
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 13:28:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D844220D518;
-	Tue, 18 Mar 2025 13:28:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E335420D4E4;
+	Tue, 18 Mar 2025 13:28:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dv8zn6XI"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KoXOBXwZ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8983420B7ED
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 13:28:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC3F417A311;
+	Tue, 18 Mar 2025 13:28:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742304492; cv=none; b=pLkUkgZG2hjqV5FeNTh6ECAFRhXcDgNnwA0Wv+Pc3sKFFqjNYsHRFE04i+d3GaOD5DGram9qKee3m0aJWWU60L9gLBu43cman2JRnUT3C2OZnyLFNzR0CgHfd6kIJN3WPSawnNclFDo2It1+QEw5NjLcdMtMZgwdKSyVM8RiPR8=
+	t=1742304489; cv=none; b=co2bJzsmFNzXYTUdHRYbZkppAFvDBTbru9Sifm1GHYkuo1nSza4DUKpzEne4Vzeww/LlW+NlnwMwV+eD8DYVj1LpvCP/HeTgvD6LIKOxqZxzlfCnrINUB1P6ltJu3lQDrXDlLiTDLI2OrnuRxhG5PvYYUioLJyylASMeF7no/GU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742304492; c=relaxed/simple;
-	bh=K28A5Iqks9eUdQnH/UFHyuM5lvviHy9zwChNneKoG0k=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=NV2Sdfimis3V57MxHuG9nDAZIJ4BXQQtel6pVZcttecMEN7uvPpzH/m3Sw1Yt5pgnfPKLu00aF8A5N4eO5RmB6GckrzmYOsyhAst6PR1y8n6QctFEsI1IkyDx2luDtkmYYl55WDeLEMO3jMNqieNFdRTDj9I0u+F2QYuIJ141G8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dv8zn6XI; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1742304489;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Beeev61c7/gahsqlvIiUDN5d6/87COyb0m7dxtmgRck=;
-	b=dv8zn6XIuavJyNRlNv1rcvnYtVN7O9wXA/DCy1uKK3OZlr1DCDtLcMy6BY5EiGlbrT40Hz
-	W1D0eFALgJPWIdT9yTSxrWpq5RDGxlTG3rqtf4IASMuVMu+6oN3NYiSJ8/8x5Y832N36G6
-	oYkjK86i41ZQTrFWyY/yNYlp9MOMHpg=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-656-YQnjInrDNcW76Md3_ibxKw-1; Tue,
- 18 Mar 2025 09:28:06 -0400
-X-MC-Unique: YQnjInrDNcW76Md3_ibxKw-1
-X-Mimecast-MFC-AGG-ID: YQnjInrDNcW76Md3_ibxKw_1742304484
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 723FA1956055;
-	Tue, 18 Mar 2025 13:28:04 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.61])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 554491955DCD;
-	Tue, 18 Mar 2025 13:28:00 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <20250318113655.GB14792@redhat.com>
-References: <20250318113655.GB14792@redhat.com> <2477454.1742292885@warthog.procyon.org.uk> <20250318112245.GA14792@redhat.com>
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: dhowells@redhat.com, Jarkko Sakkinen <jarkko@kernel.org>,
-    Kees Cook <kees@kernel.org>, Greg KH <gregkh@linuxfoundation.org>,
-    Josh Drake <josh@delphoslabs.com>,
-    Suraj Sonawane <surajsonawane0215@gmail.com>,
-    keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
-    security@kernel.org, stable@vger.kernel.org,
-    linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] keys: Fix UAF in key_put()
+	s=arc-20240116; t=1742304489; c=relaxed/simple;
+	bh=XIFQgKXLvgcn11mpSEh8HygsxPKLUzk5wzTI0vGCpj0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nxa960/jhpjpbHAOZ7ipjXS8wN8fHFueEpAhSvHXGrn2Pk1hmmAEXlNLLrXYWi/3bmfu/HKzeFpCtrv7bRY0zN0Ysz1d/W/HAbn/XdTzpr81+d4ABJHBe26kyVS5YV33F84FhawBvdR94tfVKScMdYD3XrLraoXGj9fWX85vuR8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KoXOBXwZ; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742304488; x=1773840488;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=XIFQgKXLvgcn11mpSEh8HygsxPKLUzk5wzTI0vGCpj0=;
+  b=KoXOBXwZvBR5cdic/RJjGUzuPsGQGlajSY+ktNXoLYaaIIlcYbjMxw9K
+   w4hK+A9HFzzm3zJ9IJpJpd3FGx1m49Zmd3RILW5mOMn26Abaq1J/kY5d+
+   ltTBKnEIuvErTV3aWNNOU2puuashqv26zeKweyRZsVVxlLOpHHeFNFSUr
+   YCSTvBNalsG3oM7/ofl2HY+cYM6v3om13xVMsisjKJZ6iJiKASHdCyLnG
+   7Eqx9DZBB01ho/i3vFcB0sYzCxwMr7/vsec71bnjlK5zJJQCCCmFq0GxQ
+   I4abQU6Yp9qWpLZlJewt2yMwKLCDIRFaQWpORDuZKomtM015NL4q8ODGC
+   w==;
+X-CSE-ConnectionGUID: bZ5XA+thQJSrj/jvS54P2Q==
+X-CSE-MsgGUID: Z4SzYWYNRKy2ikulIWylIg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11377"; a="43460093"
+X-IronPort-AV: E=Sophos;i="6.14,257,1736841600"; 
+   d="scan'208";a="43460093"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2025 06:28:07 -0700
+X-CSE-ConnectionGUID: /FznNnb4Tve6hnL8E3lqIQ==
+X-CSE-MsgGUID: HGQqv6VLQz+AyRL+jqpLHw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,257,1736841600"; 
+   d="scan'208";a="153245820"
+Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2025 06:28:04 -0700
+Received: from kekkonen.localdomain (localhost [127.0.0.1])
+	by kekkonen.fi.intel.com (Postfix) with SMTP id EF65611F74E;
+	Tue, 18 Mar 2025 15:28:01 +0200 (EET)
+Date: Tue, 18 Mar 2025 13:28:01 +0000
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Richard Leitner <richard.leitner@linux.dev>
+Cc: Dave Stevenson <dave.stevenson@raspberrypi.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-leds@vger.kernel.org
+Subject: Re: [PATCH v2 1/8] media: v4l: ctrls: add a control for flash/strobe
+ duration
+Message-ID: <Z9l04b5ZGy877j32@kekkonen.localdomain>
+References: <20250314-ov9282-flash-strobe-v2-0-14d7a281342d@linux.dev>
+ <20250314-ov9282-flash-strobe-v2-1-14d7a281342d@linux.dev>
+ <Z9P01zU_Kg0U62wa@kekkonen.localdomain>
+ <bx4p2hycva2rqywgglqluus6o7jbmfa2jjbc4k5d6aw6wsfkxd@zrtckmwtphuq>
+ <Z9QwT7n7D09BEfqa@kekkonen.localdomain>
+ <3dkwhfqxjhu3w4hpcl4gfsi22kwauo6s5urxrorezaw323yygq@nujmlkie5rpd>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2526767.1742304474.1@warthog.procyon.org.uk>
-Date: Tue, 18 Mar 2025 13:27:54 +0000
-Message-ID: <2526768.1742304474@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3dkwhfqxjhu3w4hpcl4gfsi22kwauo6s5urxrorezaw323yygq@nujmlkie5rpd>
 
-Oleg Nesterov <oleg@redhat.com> wrote:
+Hi Richard,
 
-> and since key_user_put() takes key_user_lock with irqs enabled,
-> key_put()->key_user_put() doesn't look correct...
+On Fri, Mar 14, 2025 at 05:08:16PM +0100, Richard Leitner wrote:
+> Hi Sakari,
+> 
+> On Fri, Mar 14, 2025 at 01:34:07PM +0000, Sakari Ailus wrote:
+> > Hi Richard,
+> > 
+> > On Fri, Mar 14, 2025 at 11:25:09AM +0100, Richard Leitner wrote:
+> > > On Fri, Mar 14, 2025 at 09:20:23AM +0000, Sakari Ailus wrote:
+> [...]
+> > > > On Fri, Mar 14, 2025 at 09:49:55AM +0100, Richard Leitner wrote:
+> > > > > Add a control V4L2_CID_FLASH_DURATION to set the duration of a
+> > > > > flash/strobe pulse. This is different to the V4L2_CID_FLASH_TIMEOUT
+> > > > > control, as the timeout defines a limit after which the flash is
+> > > > > "forcefully" turned off again.
+> > > > > 
+> > > > > On the other hand the new V4L2_CID_FLASH_DURATION is the desired length
+> > > > > of the flash/strobe pulse
+> > > > 
+> > > > What's the actual difference between the two? To me they appear the same,
+> > > > just expressed in a different way.
+> > > 
+> > > According to FLASH_TIMEOUT documentation:
+> > > 
+> > > 	Hardware timeout for flash. The flash strobe is stopped after this
+> > > 	period of time has passed from the start of the strobe. [1]
+> > > 
+> > > This is a little bit unspecific, but as also discussed with Dave [2]
+> > > according to the documentation of V4L2_FLASH_FAULT_TIMEOUT it seems to
+> > > be targeted at providing a "real timeout" control, not settings the
+> > > desired duration:
+> > > 
+> > > 	The flash strobe was still on when the timeout set by the user
+> > > 	--- V4L2_CID_FLASH_TIMEOUT control --- has expired. Not all flash
+> > > 	controllers may set this in all such conditions. [1]
+> > > 
+> > > If I understood that wrong, I'm also happy to use FLASH_TIMEOUT for this
+> > > use-case. But tbh I think FLASH_DURATION would be more specific.
+> > > 
+> > > As this still seems unclear: Should the documentation be
+> > > changed/rewritten if we stick with the FLASH_DURATION approach?
+> > > 
+> > > [1] https://www.kernel.org/doc/html/latest/userspace-api/media/v4l/ext-ctrls-flash.html
+> > > [2] https://lore.kernel.org/lkml/CAPY8ntB8i4OyUWAL8k899yUd5QsRifJXiOfWXKceGQ7TNZ4OUw@mail.gmail.com/
+> > 
+> > Right, I think I can see what you're after.
+> > 
+> > How does the sensor determine when to start the strobe, i.e. on which frame
+> > and which part of the exposure of that frame?
+> 
+> In general I think it's not part of V4L2_CID_FLASH_DURATION to take any
+> assumptions on that, as that's sensor/flash specific IMHO.
+> 
+> In case of the ov9282 sensor driver (which is also part of this series)
+> the strobe is started synchronously with the exposure on each frame
+> start.
+> Being even more specific on the ov9292, the sensor also offers the
+> possibility to shift that strobe start in in either direction using a
+> register. Implementing this "flash shift" (as it's called in the sensors
+> datasheet) is currently under test on my side. I will likely send a
+> series for that in the coming weeks.
 
-Meh.  Yeah.  I think it's time to do it the other way (i.e. putting keys to be
-destroyed onto an explicit cleanup queue).
+Ok, so you get a single frame exposed with a flash when you start
+streaming, is that correct?
 
-David
+> 
+> > > > > Signed-off-by: Richard Leitner <richard.leitner@linux.dev>
+> > > > > ---
+> > > > >  drivers/media/v4l2-core/v4l2-ctrls-defs.c | 1 +
+> > > > >  include/uapi/linux/v4l2-controls.h        | 1 +
+> > > > >  2 files changed, 2 insertions(+)
+> [...]
+> > 
 
+-- 
+Regards,
+
+Sakari Ailus
 
