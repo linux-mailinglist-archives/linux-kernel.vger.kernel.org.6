@@ -1,92 +1,114 @@
-Return-Path: <linux-kernel+bounces-566481-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566482-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10172A6789F
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 17:01:49 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58D47A678A2
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 17:02:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7506619C1AF9
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 16:00:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B764D177677
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 16:02:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 142E5210F58;
-	Tue, 18 Mar 2025 16:00:26 +0000 (UTC)
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00DDF20E6FA;
+	Tue, 18 Mar 2025 16:02:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bW2uinO2"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 940EA20E6FF
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 16:00:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1C6E1E8334;
+	Tue, 18 Mar 2025 16:02:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742313625; cv=none; b=cFL6PgH5iWCBASsvsOK9wrbDnSevQfV+2spmVXlGdCr7Ou1P6jXuVlBJ/ZlrBVZtXJA4JXC7YnS7K60ePM/zxz/UzPjluuar4Ml1Z+oxDCMKf5coBXGwUimere9gcR+VkiTWvtrSDGiuEE5P2brRivbQy2SgY17Cay5DsUKQ9BE=
+	t=1742313756; cv=none; b=jDW2Uf0X1VO5cD8+PCMAIDDeQAI4zBItxiYMRIQHKhH/3AqP9SzDM7IShOZzSoT/+k6vQgb0TUvviuCCJzIYC5XuoVOcK9GXQzgQxRsyt1xriyLV1hg5FJ7sQprpthb/KrLjKugrZcUPbCe5lB8anZF2gEjr9RgxrV0DI56bTPw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742313625; c=relaxed/simple;
-	bh=qfMZojHGQ7hMeNGHUlk4JiGvsujlrj9fFIjKj/xLexQ=;
+	s=arc-20240116; t=1742313756; c=relaxed/simple;
+	bh=dfmo9ocKclAv0Jn97DtWPWsXzMUgahYEcZ+x+X4fqtg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B8Xcjyo3GHL9Af6ajrUqClIsVLHvqRAB3e1LbL1G+HOjfF0kzrkBlMW0j8mziFPHzqxACI9qJDhL4XToyRT2n6uLh0SNUzYTU4AALtJJDS0iJa5QJHJzOOxxy4INnFEFZPyA+xCvWLc6W2s/8p3wiaccWkms3dEwRg/1CIgQG9Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id CBD5F21A68;
-	Tue, 18 Mar 2025 16:00:18 +0000 (UTC)
-Authentication-Results: smtp-out1.suse.de;
-	none
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B77721379A;
-	Tue, 18 Mar 2025 16:00:18 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id wmeTLJKY2WfTLQAAD6G6ig
-	(envelope-from <dsterba@suse.cz>); Tue, 18 Mar 2025 16:00:18 +0000
-Date: Tue, 18 Mar 2025 17:00:17 +0100
-From: David Sterba <dsterba@suse.cz>
-To: Daniel Vacek <neelx@suse.com>
-Cc: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-	David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZN+7m+VIEjNtWP5pc/4O7/YlhOOKmNrDrztXSacL5ViWJGEkj/e1ReDoaz+CFjkxZvlit4bzmhGj90AcEcyzRhZxmJtsbOf+DGq1ks8pgEaxifj2gHzBPNwi5wqd28DxuvhO70lW7YaKGNNmxp/g8z29im9VbcoKYAbcgn4pP68=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bW2uinO2; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742313755; x=1773849755;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=dfmo9ocKclAv0Jn97DtWPWsXzMUgahYEcZ+x+X4fqtg=;
+  b=bW2uinO2oKF80P6SpduElYfO4ZXKT6sj5NmhWUYwR0D+8iM0sXQ6MAyx
+   jN+B1j3mwDp6362f4ydpxs10ndY8vsNFcTTj7xkOb/wXC8cFf2dDgJoGq
+   9YIg/NBUkLqrvFYSpnzfjAFy3EKA05kQpg+Trnigx09ELOpSrkPI3cbAq
+   im8bszBWiwddUlOc5U6jzrTUe604jV3q6U2KpyhkX2OrIA25SON7WPSUj
+   3Mt8d7R3n+0TffyjJs5r3DDmtymi0o1acyJxxelw/XAntUyKbvbIO1ebT
+   dshyuLWYb2+mzgP8YW27KomebllEVEeIsi44kF1QUSyU/rRSHyNhqq1m7
+   A==;
+X-CSE-ConnectionGUID: sUcQ1uNaTbumjhoipeJhbg==
+X-CSE-MsgGUID: CjTOxOL2TaOJ7mwB8zdqSw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11377"; a="60995972"
+X-IronPort-AV: E=Sophos;i="6.14,257,1736841600"; 
+   d="scan'208";a="60995972"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2025 09:02:34 -0700
+X-CSE-ConnectionGUID: jeXy0aHYQ5S89K9HbwcyRQ==
+X-CSE-MsgGUID: nWX83bvXTlCRSt6WrHow5A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,257,1736841600"; 
+   d="scan'208";a="127123864"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2025 09:02:33 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tuZOg-00000003fki-29VA;
+	Tue, 18 Mar 2025 18:02:30 +0200
+Date: Tue, 18 Mar 2025 18:02:30 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Lee Jones <lee@kernel.org>, linux-leds@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] btrfs: remove EXTENT_BUFFER_IN_TREE flag
-Message-ID: <20250318160017.GF32661@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-References: <20250318095440.436685-1-neelx@suse.com>
+Cc: Pavel Machek <pavel@kernel.org>
+Subject: Re: [PATCH v1 1/1] leds: core: Bail out when composed name can't fit
+ the buffer
+Message-ID: <Z9mZFlDN9CegMVmH@smile.fi.intel.com>
+References: <20250318155126.2974905-1-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250318095440.436685-1-neelx@suse.com>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-X-Rspamd-Pre-Result: action=no action;
-	module=replies;
-	Message is reply to one we originated
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.00 / 50.00];
-	REPLY(-4.00)[];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU]
-X-Spam-Score: -4.00
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: CBD5F21A68
-X-Rspamd-Pre-Result: action=no action;
-	module=replies;
-	Message is reply to one we originated
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250318155126.2974905-1-andriy.shevchenko@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Tue, Mar 18, 2025 at 10:54:38AM +0100, Daniel Vacek wrote:
-> This flag is set after inserting the eb to the buffer tree and cleared on
-> it's removal. But it does not bring any added value. Just kill it for good.
+On Tue, Mar 18, 2025 at 05:51:25PM +0200, Andy Shevchenko wrote:
+> GCC compiler complains about snprintf() calls that may potentially cut
+> the output:
+> 
+>  drivers/leds/led-core.c:551:78: error: ‘snprintf’ output may be truncated before the last format character [-Werror=format-truncation=]
+>  drivers/leds/led-core.c:554:78: error: ‘snprintf’ output may be truncated before the last format character [-Werror=format-truncation=]
+>  ...
+> 
+> Fix these by checking for the potential overflow. This requires
+> to align all the branches to use the same callee, i.e. snprintf(),
+> otherwise the code will be blown up and return different error codes
+> for the different branches.
 
-I na similar way the flag EXTENT_BUFFER_READ_ERR is unused (was removed
-in eb/io rework in 046b562b20a5cf ("btrfs: use a separate end_io handler
-for read_extent_buffer").
+...
+
+> -		strscpy(led_classdev_name, to_of_node(fwnode)->name,
+> -			LED_MAX_NAME_SIZE);
+> +		n = snprintf(led_classdev_name, LED_MAX_NAME_SIZE, "%pfw", fwnode);
+
+Actually this is not an equivalent, should still have that ugly
+to_of_node()->name...
+
+I'll fix it in v2.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
