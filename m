@@ -1,143 +1,177 @@
-Return-Path: <linux-kernel+bounces-566965-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566966-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6117DA67F15
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 22:49:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7219EA67F18
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 22:49:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 00038175134
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 21:48:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 379EA3B1EDF
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 21:49:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F0B92063DB;
-	Tue, 18 Mar 2025 21:48:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 136DC20550A;
+	Tue, 18 Mar 2025 21:49:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cfhtXEwu"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cE3UKyX+"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7C6C1F4C86
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 21:48:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0783E1DEFDA;
+	Tue, 18 Mar 2025 21:49:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742334526; cv=none; b=DK92FClZj9eoIGsYyDfpDap3hVLY+2rHfm8/FSvjkv4mIPKrP3I3o1kr1+w77pCBFaPz3wYskBx4p1TbkF1DshTZVTEK5OqYVvxAzdBg+rZaEZQPuOmFQqv7/0s2R4UFrJntttMXuiogj7XfIQFQlvB8EpeZs/GGuhE6E+Cjvys=
+	t=1742334571; cv=none; b=avOOSG3limcp5j9UHlShaAgc54+UYUKHD/Gv2FzIyAgKmXH6PP1UHM40UPx8wnaTBnxZaKG4EPcu8UbkQ9WUXCafj103zB2lREfpwqfom0MA2ciqKu9hp6/qDpGrmedfBbft/0y5bK2nx03xyLIPvJ5OZD/u8a73KVWg7mOrobA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742334526; c=relaxed/simple;
-	bh=9QWi9Jbu2T/CyKwbiyJQWuyZbY48B9JmNpyjsuhsu70=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MhwHtqMbIb6tdPLSVzqY/ZqQ1Bt5SO90yrn3fVzf+hZoAmt9ua+WgvX94nKhEdStjvcZVLlxmWkeP3nEMNT+d1faUjXQiPlf/dkNzGcqpLf8qxlPcaszX4YMNBsC92qaRtuUl83U4qE1hSL1WV3gzf9+/FiM8HQTk/Rr3eDq+6c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cfhtXEwu; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-ac2a089fbbdso16642766b.1
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 14:48:44 -0700 (PDT)
+	s=arc-20240116; t=1742334571; c=relaxed/simple;
+	bh=2HkJ1PLBhckuzMKVjGMsI63fnslGi1fgDibj3H7qz8k=;
+	h=From:To:Subject:Date:Message-Id:MIME-Version; b=mO59ymuyTQoBYKZ5+a1ORokQzKpH4CUyH5eKUWxVfz5tzm9xpZ/bQXbIB0xd1C/DFXbSs+YfqDhwCcu8ubqPZ7ljfeKinoj1os2unYh2fILmaVDAir3Z/vjBiZihx/9OH+EukYu2PA8e9Ueu3Y4zEHJkeutypXdUkqvyajBEzq8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cE3UKyX+; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-225d66a4839so1159845ad.1;
+        Tue, 18 Mar 2025 14:49:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1742334523; x=1742939323; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=duoNyUPDpZ35AJzrwQXSbOfWB68wwqzf/wrWJgrnJcc=;
-        b=cfhtXEwu2LdGKmKztXYwu9hsns9j6UgYEwbAQuhomB08WLLs8Rk1jQQ75ymRgIpUev
-         Ec2lHjJu42hoRduOq0sKg2ZO4kD3lh8FVIqC6qQ74Ca286iZGsg/cgo3cE/Vj/onLc3T
-         8iV2an/UN00eyCtRs0JTlY1yvXcbd/Z6MRVlrg1cWlqPCYbnxhU0yy2OjE/QIj1xNvab
-         dibQljxjX95KFclCUeSfR3wyNHVEHqiuW7WW8LBOjs4g3UK8rcQri3XxnyjozkuUmX5e
-         4g9mwveFRzoYatgZQV6ewoS3+kjulVr7/gTGIH4d6xB03geaVyhoMhf/xAXxDlblzwWL
-         5yqA==
+        d=gmail.com; s=20230601; t=1742334569; x=1742939369; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:reply-to:message-id:date
+         :subject:to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=apFSN+iYdUjJ/ySgc4tYDPoBJZPQHCUTufgccs2slIM=;
+        b=cE3UKyX+fdGfmiCrls+2/PCkqdkWgxVs2lgnD6JtFxAw754EnYUS0iPMhKlNH/1MtA
+         ZXhA9cDWrjUKsTk41H5QB53TVvmPreShNyY0K0r6zitst3g4tLjGNWk34tijgZMYdq9R
+         7fOiDB4OfP6Y0aD23kpWHeeYg99qrXKujGmsJ6S4oc2g0e+ecKXNc8aknruYp9V0yfkm
+         9ah4jLpHRV3qXt4/U5Ct9YaLeLKGP1JoRUEdDWjX2FzGIV9RH5i8SZahkvBsSqz2TFp4
+         9QKXqM0QCBKuD3RMqV8TewrFFdZKWwM0zomG62GMtKZ7C63xH1oqKJ+PknLNf8+xlVIv
+         PlFw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742334523; x=1742939323;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=duoNyUPDpZ35AJzrwQXSbOfWB68wwqzf/wrWJgrnJcc=;
-        b=WggtigSxLwdpJhu7rhywyka6j/iCOXmDBq7OHo7NgX4S1m1cgQxfBNSr/eRKoRBYQy
-         +SyKRXVfHfH89AMhVplYNe4kzCcRQYslYyVAru/V+RetpueFfnFZG/r6CrUNiB06X3aE
-         rJHNO8J+ZMKUFYKwlM6fGz2MeO0lRbmD4YfxwcnEQE6ktR+uYVMLeFLhQaLoeD0k1uhb
-         Nbfj76AU8f0Oqe6RGO53TgOqjs+I7mhoz1lnyevvfBtDpwsJ0vrbn6G5Z5W0xou5DVfe
-         pM/54Ghpa8CFCAN8LzAzRZK53Cmh2gc39uhmuzu76mYHHVi6fct3mAp1j6pd5/EqnUu5
-         WneQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXHa12F5MKrPrGZd2mIXDh/uayYB1VJkpQi6GKAzOersdy0arxcnGr9UMPk2XOKmBWlaqla0b8fdkZ02JQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwNCj4kfjWTLpZDTgsMRfnpiGNkAyzp1CTFhOqqLhYbXmDD9Za7
-	C+6z0hF56njma+HgATWscpOOySqx9bZ/wnKW8tE1aYjjl7Vy67yT8rkUWq25CRQ=
-X-Gm-Gg: ASbGncsC0maG5DJ1Rd3H/VpsfsaQzpwxkhHIUNmE8Izu9Z/5UHhduMpV3nlzrS4gsY5
-	dNWLypwz3Db6rp5ZnjBKNsLNzCDl+CmF7pRgryhDlA7bu1NOho8vSBW/jKLVshkGxazaDpyNLNB
-	Nm0T2F42/IjUgfn/Ip8WMbmWGrRnTZPQKomxXDwu3SYrguntEeSP74PiMyNzHMifwgqg4N0lX0u
-	/pNkmg7i8zITi61NFP/HXvfPga9tmbQI5+UaGJugCfRxhoif/N3RWcljx//aBxHiCX6Ek2vcqQ0
-	ezBN1H6OBQiF4vvTIan/sBrX+wnlrfJlbE9hhJQ1aIGlYuTEYs8huRqnwyR8G3s/qrQ76F1CGk5
-	wNhjF/ObnZqAbJwM2M0V+vOOiLDKV89pXdv7sP0LCTEJYc/lwvHEcjK4a42A2VvcRdQpag92M1V
-	E85r7ZFzotCGmb7L28jsCPpXIAVm598dk=
-X-Google-Smtp-Source: AGHT+IF06W/HXbWDQcnvIov2Jj/jxhVUXmUlc3LWIaSEPfb9UpbLNwCGC29SRRaa+u05btkXLemWAA==
-X-Received: by 2002:a17:907:f50a:b0:ac3:3e43:f451 with SMTP id a640c23a62f3a-ac3b6abe286mr34843266b.5.1742334522980;
-        Tue, 18 Mar 2025 14:48:42 -0700 (PDT)
-Received: from ?IPV6:2001:1c06:2302:5600:7555:cca3:bbc4:648b? (2001-1c06-2302-5600-7555-cca3-bbc4-648b.cable.dynamic.v6.ziggo.nl. [2001:1c06:2302:5600:7555:cca3:bbc4:648b])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3147ef34asm921171966b.68.2025.03.18.14.48.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 18 Mar 2025 14:48:42 -0700 (PDT)
-Message-ID: <b1ea0500-595f-48d6-9358-649c25fd4ee9@linaro.org>
-Date: Tue, 18 Mar 2025 21:48:40 +0000
+        d=1e100.net; s=20230601; t=1742334569; x=1742939369;
+        h=content-transfer-encoding:mime-version:reply-to:message-id:date
+         :subject:to:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=apFSN+iYdUjJ/ySgc4tYDPoBJZPQHCUTufgccs2slIM=;
+        b=caWdTQYjGNBNmkGSZPBeoHKd0yLE9vmS+XZMLTKUXLaKR7n4r/tw38ipU8HcOg4NaI
+         Rp8JVI81GdK8G5mCQrVzu/VuGUSqhJd2ZyYPTS5shPyoW8JW7BNGue9BIJYArswYyH+o
+         99gqmn0A/h+pXgh1FAln3bPyIBXpQIpaF6KDU0BD6kIjgj/wRAP/cH3YneIQyz9RQN8b
+         AEkHBAQdTtIp/nomSdK9XUTvK2DrTDq92UsKlxyuRGvXYy0OtAzjqTkAL0pg1fKoZYM/
+         m9h8kwusBYWNUcoQB+TelRa1AuejklNGllvm2MhpEvvusH+4PYnRD2C1aE8EwA8U8oz7
+         yEOA==
+X-Forwarded-Encrypted: i=1; AJvYcCVuRfYu/jQ6FnK5D2u4HI2Ji5DGCCTfGvhIM2MgdQIqFXr+athbKwjWJ92tfpLkwiZWBmpHarAZpV431aI=@vger.kernel.org, AJvYcCWjl1dcEOMxen84qR+Qv038QvlvT+PvSfQRbQJnMJ7DKPtTiR07fmUPFXT5KTbBh788vV6+3sUheIdoFZiO@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyu+QB6ccezzIW8LDOKrn3thdIDSVLcOA5xHEBQPFdtTxpq31g4
+	OccBmRVCIIK/2tcf84rGSyZxwOCNOHuGG2Y+9eIXEs0RBDYQSL9R
+X-Gm-Gg: ASbGncvS+ePVkHtkmdFsMOAeOB+2DwnDhmULWNPThVloc/L9bN5cKczG7EwKBNt5uAY
+	pvKlSdtXROdU6MTLk/AJD+ZaC8BLytoi7sgFIIjQpStA86z2qkG9zncHcTn+91Wwdwh5gSI+XP/
+	WUXG0ZHWH/5YqxkKLi7H9SuKL0IzNsoGZ58ErwWBaa5SAwtGd+Lowts5e20ISMWfBZWZkGE9imJ
+	9UZw2eBL1ULuY3cUTR9ZvJXBCseBUPte2XGbAuTIxrR6NENoJAtOyM/JfzARch1NfK1pJcRnAMj
+	UK4HPIkJ3jl3RVQo4oJVgFIbPZYfJc+orzFW096twWPzUyG38wI7VsSHkrqWCjCA4h+0eyvwOGL
+	0a+a7U+90d99lS83N9/iizVk=
+X-Google-Smtp-Source: AGHT+IHYwbXImWFFem7kEVrNNUP4SJh431CKrSr061fj5qip32ZxLac/LmwZYzmQ2+HLmwvUs1JSlA==
+X-Received: by 2002:a05:6a20:9f8f:b0:1f3:1e5c:c655 with SMTP id adf61e73a8af0-1fbe0519cbamr578249637.6.1742334569224;
+        Tue, 18 Mar 2025 14:49:29 -0700 (PDT)
+Received: from localhost.localdomain (c-67-160-120-253.hsd1.wa.comcast.net. [67.160.120.253])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-af56ea7bd0csm9558743a12.47.2025.03.18.14.49.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Mar 2025 14:49:28 -0700 (PDT)
+From: mhkelley58@gmail.com
+X-Google-Original-From: mhklinux@outlook.com
+To: kys@microsoft.com,
+	haiyangz@microsoft.com,
+	wei.liu@kernel.org,
+	decui@microsoft.com,
+	tglx@linutronix.de,
+	mingo@redhat.com,
+	bp@alien8.de,
+	dave.hansen@linux.intel.com,
+	x86@kernel.org,
+	hpa@zytor.com,
+	linux-hyperv@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 1/1] x86/hyperv: Add comments about hv_vpset and var size hypercall input args
+Date: Tue, 18 Mar 2025 14:49:19 -0700
+Message-Id: <20250318214919.958953-1-mhklinux@outlook.com>
+X-Mailer: git-send-email 2.25.1
+Reply-To: mhklinux@outlook.com
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/2] media: dt-bindings: Add qcom,qcs8300-camss
-To: Krzysztof Kozlowski <krzk@kernel.org>,
- Vikram Sharma <quic_vikramsa@quicinc.com>
-Cc: rfoss@kernel.org, todor.too@gmail.com, mchehab@kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- andersson@kernel.org, konradybcio@kernel.org, hverkuil-cisco@xs4all.nl,
- cros-qcom-dts-watchers@chromium.org, catalin.marinas@arm.com,
- will@kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250214094747.2483058-1-quic_vikramsa@quicinc.com>
- <20250214094747.2483058-2-quic_vikramsa@quicinc.com>
- <20250223-observant-auspicious-basilisk-d78ba9@krzk-bin>
- <66c35bce-c657-4c12-ad02-58c995ae385a@quicinc.com>
- <f2899540-f9ac-4013-a703-25800429f97d@kernel.org>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <f2899540-f9ac-4013-a703-25800429f97d@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 18/03/2025 07:16, Krzysztof Kozlowski wrote:
-> On 18/03/2025 06:52, Vikram Sharma wrote:
->>
->> On 2/23/2025 5:03 PM, Krzysztof Kozlowski wrote:
->>> On Fri, Feb 14, 2025 at 03:17:46PM +0530, Vikram Sharma wrote:
->>>> +properties:
->>>> +  compatible:
->>>> +    const: qcom,qcs8300-camss
->>>> +
->>>> +  reg:
->>>> +    maxItems: 21
->>>> +
->>>> +  reg-names:
->>>> +    items:
->>>> +      - const: csid_wrapper
->>> Why different order of entries than sm8550?
->>
->> Hi Krzysztof,
->>
->> Thanks for your review.
->> I did this change to address a comment from Bryan on another series.
->> https://lore.kernel.org/linux-arm-msm/e152ff78-caa5-493a-88da-96a6670eb2a2@linaro.org/
->>
->> Please suggest if I should keep the order same as sm8550?
-> If you chosen the same order as x1e80100 then it is fine, but that file
-> is not merged so it is your responsibility to track any differences and
-> be sure whatever you send is always in sync with x1e.
-> 
-> Best regards,
-> Krzysztof
+From: Michael Kelley <mhklinux@outlook.com>
 
-My mistake, I hadn't realised/remembered what we merged for 8550.
+Current code varies in how the size of the variable size input header
+for hypercalls is calculated when the input contains struct hv_vpset.
+Surprisingly, this variation is correct, as different hypercalls make
+different choices for what portion of struct hv_vpset is treated as part
+of the variable size input header. The Hyper-V TLFS is silent on these
+details, but the behavior has been confirmed with Hyper-V developers.
 
-Vikram, please follow latest committed example @ 8550.
+To avoid future confusion about these differences, add comments to
+struct hv_vpset, and to hypercall call sites with input that contains
+a struct hv_vpset. The comments describe the overall situation and
+the calculation that should be used at each particular call site.
 
+No functional change as only comments are updated.
+
+Signed-off-by: Michael Kelley <mhklinux@outlook.com>
 ---
-bod
+ arch/x86/hyperv/hv_apic.c   | 5 +++++
+ arch/x86/hyperv/mmu.c       | 4 ++++
+ include/hyperv/hvgdk_mini.h | 9 ++++++++-
+ 3 files changed, 17 insertions(+), 1 deletion(-)
+
+diff --git a/arch/x86/hyperv/hv_apic.c b/arch/x86/hyperv/hv_apic.c
+index f022d5f64fb6..6d91ac5f9836 100644
+--- a/arch/x86/hyperv/hv_apic.c
++++ b/arch/x86/hyperv/hv_apic.c
+@@ -145,6 +145,11 @@ static bool __send_ipi_mask_ex(const struct cpumask *mask, int vector,
+ 		ipi_arg->vp_set.format = HV_GENERIC_SET_ALL;
+ 	}
+ 
++	/*
++	 * For this hypercall, Hyper-V treats the valid_bank_mask field
++	 * of ipi_arg->vp_set as part of the fixed size input header.
++	 * So the variable input header size is equal to nr_bank.
++	 */
+ 	status = hv_do_rep_hypercall(HVCALL_SEND_IPI_EX, 0, nr_bank,
+ 				     ipi_arg, NULL);
+ 
+diff --git a/arch/x86/hyperv/mmu.c b/arch/x86/hyperv/mmu.c
+index 1f7c3082a36d..cfcb60468b01 100644
+--- a/arch/x86/hyperv/mmu.c
++++ b/arch/x86/hyperv/mmu.c
+@@ -205,6 +205,10 @@ static u64 hyperv_flush_tlb_others_ex(const struct cpumask *cpus,
+ 	/*
+ 	 * We can flush not more than max_gvas with one hypercall. Flush the
+ 	 * whole address space if we were asked to do more.
++	 *
++	 * For these hypercalls, Hyper-V treats the valid_bank_mask field
++	 * of flush->hv_vp_set as part of the fixed size input header.
++	 * So the variable input header size is equal to nr_bank.
+ 	 */
+ 	max_gvas =
+ 		(PAGE_SIZE - sizeof(*flush) - nr_bank *
+diff --git a/include/hyperv/hvgdk_mini.h b/include/hyperv/hvgdk_mini.h
+index 735329859f21..abf0bd76e370 100644
+--- a/include/hyperv/hvgdk_mini.h
++++ b/include/hyperv/hvgdk_mini.h
+@@ -205,7 +205,14 @@ union hv_reference_tsc_msr {
+ /* The number of vCPUs in one sparse bank */
+ #define HV_VCPUS_PER_SPARSE_BANK (64)
+ 
+-/* Some of Hyper-V structs do not use hv_vpset where linux uses them */
++/*
++ * Some of Hyper-V structs do not use hv_vpset where linux uses them.
++ *
++ * struct hv_vpset is usually used as part of hypercall input. The portion
++ * that counts as "fixed size input header" vs. "variable size input header"
++ * varies per hypercall. See comments at relevant hypercall call sites as to
++ * how the "valid_bank_mask" field should be accounted.
++ */
+ struct hv_vpset {	 /* HV_VP_SET */
+ 	u64 format;
+ 	u64 valid_bank_mask;
+-- 
+2.25.1
+
 
