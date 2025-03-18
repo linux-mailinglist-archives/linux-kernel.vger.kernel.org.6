@@ -1,161 +1,180 @@
-Return-Path: <linux-kernel+bounces-566950-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566953-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8ADFA67ED5
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 22:36:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC198A67EF0
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 22:40:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8054D7A2F7A
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 21:35:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B8F1C3B0EC9
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 21:39:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FE3F205E3C;
-	Tue, 18 Mar 2025 21:36:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55D292063C6;
+	Tue, 18 Mar 2025 21:40:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="opfCFub+"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=iencinas.com header.i=@iencinas.com header.b="TLFcM4E4"
+Received: from out-177.mta1.migadu.com (out-177.mta1.migadu.com [95.215.58.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93E912046B0
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 21:36:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEAD01F8758
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 21:40:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742333801; cv=none; b=OxxY95xspd2t+aprDfobnQZnyUf8DD0KZw5FQmVljOaMykhfmYU42CcwWOczxf7HOzxcI51iKJdA9Ms8k4/7X/pFyBv0WJGrYYasidCrZcmM13wzxz7q/STv2wKo3TcBvsDMXWK/F2PgxeWptN6howucdKWwHBTVA+eYXHQMkRU=
+	t=1742334008; cv=none; b=Gor+iWbuBPAimrVLLmQeRHQt+VfFB9ZCPU0+S0gLcaY7x9L9EJOO22DzLcxjK9lRvLMtlMM6/6gur2gEnJjpQUX6n2YHlElF1LVJdWiu1+Qt1BCcwlY1v0GyqZUcsljJnHtSG2imZLnobV1T+F9jiCz8TZv2xVDGRdwEyVc0LRk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742333801; c=relaxed/simple;
-	bh=tMitTEqQw4Kms3E3oLuanNeRnAwfAUaWFSBpeuDWX5E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nkkIjDc3LiaqK4AY8WZ8ZC3nuYNtBBqkaPeIiRN972wMurO2s5bfjNzJlzDnD6g45/mejBBxmjzjvgWXGxffcmGctxIT2zpalLhSd487A5AIH9+yO7ZmZOPrUGJm0qH0apP9ORUG4BsAcTALMRVk4fTg2lhB866a3gfZ+dD58QY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=opfCFub+; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52IJFBl5021042
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 21:36:38 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=Y2vcgzW1emQX/7iFJLX2wg5r
-	EcXOlkERAyCkxjphyso=; b=opfCFub+SeAlKpeinR8f9Uuk3HLK48q1OGZdyYH3
-	f3hz6vwZ2UPXbobD+ZcDDtizUHdN9bgRlz22P940riZbtQwOqSkKmZw1PmiLGrqW
-	mEHKs/Sv1BjPac4DDHqFmMrt0jFl4sOPRAeNkZW3e128D75MyUt5Mv0YQgdAgQBv
-	6bYdO16uLKmlzBJJ4CKWZzZyIUYW0IcPXjzGjyFgilSr+NjVtfC85dnvHv8pHpKb
-	cuP8Si2JEZTJ5icOX4hu8gP+aeaPsGZ6du4bQuUGvYxhzxl3/NDfpEBlJxsvmXRV
-	98hWkAHngN9gYBIFf6kYAszIsxzZveNRDjXta/rTDV/bdg==
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45d1uu1jpt-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 21:36:38 +0000 (GMT)
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-7c3cbb51f03so1093824485a.1
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 14:36:38 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742333797; x=1742938597;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Y2vcgzW1emQX/7iFJLX2wg5rEcXOlkERAyCkxjphyso=;
-        b=E7F6hA6uyc4YEpVGnfD27pS1DpnyNFiXuubyV/GYBkUQz/E30QtL+Tmsms+RXpN8U/
-         O8XQyxRGnsVYv91egIsg8wO7ZgS6FJlQxMTprE8loGuNvVa8rubkg9KwTX8nucHWA8Vy
-         LJqEcSv1OUWFFJkT0ttyZM0GHrtnPcY5FRZkERWJiD8j/eImzXGsf3bxO3UV/tXFKxof
-         6v4NZaQFXF5ewyQa8SkPrxQjdSf45AAid88Vx/4hI5FaIKjE2wOPFepyYJJsvaA0Q4vL
-         rpqsPhil7xdMlXf5lL1H6zuENjmHu3OTaCLXPZVCqIBC+Q3HSjEvKYco/Eie3mAV5jbc
-         foxA==
-X-Forwarded-Encrypted: i=1; AJvYcCUYaxwIxgq5Xwm2yIbEs1xkIB03gooyb9qjcMXZQPaohICGFlD+lRtU1UwVTfu3QU5jPNUiLF6+NCnIz7s=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyz3J99o6O7pIurAq3n9mAhDIvLUkePX6ogX1UpKG1+3SPCq3gK
-	OsThTD2JXhOn6dD6MU+IMwYW70b/w4Qay8HFPAvd0rnuHoYyJ8B2dmzXoCxXIHn93joiMDB1znI
-	UQhTPpmVRNlVp5urYcVi4jhECNkavVF5pHXfn026UHPi0sB+r3YJDE/ndL5h+Lmk=
-X-Gm-Gg: ASbGncvYpfS8Is0z6QTUaLuVx9SkpN6L5IAI7iOU9iEWOqs5GHS34/I7lmL+e7Og96B
-	Qi2sDEJTmVrXlB7Reiy2wJhwiDM4AACCA+dYOu6uW7GXLdoyk+moGYz6AvK7eAo03D5NiVzlrjj
-	PbS9hz0jSVbQvQI9cl35ygKD0E6GYMe+6HoYfKOvOc3ZCFnNVxaewojju1Jnuq7dwNp9OduboMj
-	CcJo2nRTbK5oDyyz0+VSZI3/MH0aFMpXbR7AJA0l6U17z7Am6poWAvrq8U7UHmZIb6+v5LHwwm9
-	uXynM/8WD7nQcpG5WI2UY/CKFtOV6Ub6O8WTPxypNERK+Hptzig2IJT255PCZj029rXJAVVoQCv
-	Ki7U=
-X-Received: by 2002:a05:620a:2a11:b0:7c5:42c8:ac82 with SMTP id af79cd13be357-7c5a8396c44mr35133485a.23.1742333797664;
-        Tue, 18 Mar 2025 14:36:37 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF/vmeLV1QqNZOMnRz1Pxtv/XOfA8xE0/NtFtVMXjjnCWpm8PwSrKmdkweulpjAZxtvhFClTw==
-X-Received: by 2002:a05:620a:2a11:b0:7c5:42c8:ac82 with SMTP id af79cd13be357-7c5a8396c44mr35131185a.23.1742333797372;
-        Tue, 18 Mar 2025 14:36:37 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-549ba864e43sm1821851e87.145.2025.03.18.14.36.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Mar 2025 14:36:35 -0700 (PDT)
-Date: Tue, 18 Mar 2025 23:36:32 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Georg Gottleuber <g.gottleuber@tuxedocomputers.com>
-Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Georg Gottleuber <ggo@tuxedocomputers.com>,
-        Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        wse@tuxedocomputers.com, cs@tuxedocomputers.com
-Subject: Re: [PATCH] arm64: dts: qcom: Add device tree for TUXEDO Elite 14
- Gen1
-Message-ID: <l77iickvroov7crzg6s2i7nq3kakqgdtbqki74stavqkiwyjfs@rv2oegbwogxi>
-References: <57589859-fec1-4875-9127-d1f99e40a827@tuxedocomputers.com>
- <5e72992c-170c-48b9-8df4-2caf31c4ae44@oss.qualcomm.com>
- <5hvghahezqms6x4pi3acgaujyhiql6mzl2xhzph5phhki2yiyq@oi3xjatj7r64>
- <129bf442-2505-41c8-9254-ad7cacefab89@tuxedocomputers.com>
+	s=arc-20240116; t=1742334008; c=relaxed/simple;
+	bh=svKDdvW9PxA2BAq1vnizll3MRYiwphrpq4h+SIM66ko=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Abl0NvTZR6ylQJckMdnEJNZPeJtLVfoGQ9yB8Uh47bRy/8jQ2b9Y/iw73MNz9+bxOyq8KE5fIQfZvojcklEytkSkkr6ZNfEhb9icg997F9ayHKTsTj/Nfxp6zn9GpvFKMTGfxvii5b5VU/2+1XnHPlx5CYvsf3J8osqAC69lF2I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=iencinas.com; spf=pass smtp.mailfrom=iencinas.com; dkim=pass (2048-bit key) header.d=iencinas.com header.i=@iencinas.com header.b=TLFcM4E4; arc=none smtp.client-ip=95.215.58.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=iencinas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iencinas.com
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iencinas.com;
+	s=key1; t=1742333991;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=tcdRdc/J1ZCSv1ssITMDV1GQ06l6DuoiBSFRfa6vlnE=;
+	b=TLFcM4E4/5yRfPZDEayxjJjSwi8HWNVKgSemCzRAtwtcgEgg2bKB62AhNvuf84JkOCPC46
+	sCpdmCduaxroe/GvZqjqyIdH3vsx1nvh7cBLF/41JOsW1ly5QC1zujbalE6U+r+61YKxpJ
+	hokkMBVnLM67EnQsYBL1j8QsqUAs6nOZLHFiU1yECayfCcqdXJVsihHA3hjKGrGLupDVHf
+	RaXaqkp5/Hdarg9JRXFccyt+6eSsP/jbDJ9QiTs7O/7wBAjQioI52gjgEGTxf7iq+StxMv
+	0k0BJGjv7X3iJxrkp76//79l08Q8Sch2RmGGttWkJMjOuSUS5fBr1T1p7kGCag==
+From: Ignacio Encinas <ignacio@iencinas.com>
+Date: Tue, 18 Mar 2025 22:39:02 +0100
+Subject: [PATCH v3] 9p/trans_fd: mark concurrent read and writes to
+ p9_conn->err
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <129bf442-2505-41c8-9254-ad7cacefab89@tuxedocomputers.com>
-X-Authority-Analysis: v=2.4 cv=H8Pbw/Yi c=1 sm=1 tr=0 ts=67d9e766 cx=c_pps a=50t2pK5VMbmlHzFWWp8p/g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=Vs1iUdzkB0EA:10 a=prfVWYIJzO_NFut4FmcA:9 a=CjuIK1q_8ugA:10 a=IoWCM6iH3mJn3m4BftBB:22
-X-Proofpoint-GUID: SqnLIGr0azc_Sv-3ajaZaZrKa5gMkU-y
-X-Proofpoint-ORIG-GUID: SqnLIGr0azc_Sv-3ajaZaZrKa5gMkU-y
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-18_10,2025-03-17_03,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
- lowpriorityscore=0 bulkscore=0 adultscore=0 spamscore=0 priorityscore=1501
- mlxscore=0 suspectscore=0 malwarescore=0 clxscore=1015 impostorscore=0
- phishscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503180156
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250318-p9_conn_err_benign_data_race-v3-1-290bb18335cc@iencinas.com>
+X-B4-Tracking: v=1; b=H4sIAPXn2WcC/43NsQ6CMBSF4Vchna0pxQo4+R7GNL3lAnewJS1pN
+ IR3tzAZFx3/M3xnYREDYWSXYmEBE0XyLkd1KJgdjRuQU5ebSSGVqETDp1Zb75zGEDSgo8Hpzsx
+ GB2ORy1o1PTYA2AmWiSlgT8+dv91zjxRnH177Wyq39U84lbzktWxR1Z1qKglXQmfJmXi0/sE2O
+ 8kPr6x+eDJ7AqDtT6o/A8gvb13XN+1HcPQbAQAA
+X-Change-ID: 20250308-p9_conn_err_benign_data_race-2758fe8bbed0
+To: Eric Van Hensbergen <ericvh@kernel.org>, 
+ Latchesar Ionkov <lucho@ionkov.net>, 
+ Dominique Martinet <asmadeus@codewreck.org>, 
+ Christian Schoenebeck <linux_oss@crudebyte.com>
+Cc: Sishuai Gong <sishuai.system@gmail.com>, Marco Elver <elver@google.com>, 
+ v9fs@lists.linux.dev, linux-kernel@vger.kernel.org, 
+ linux-kernel-mentees@lists.linux.dev, skhan@linuxfoundation.org, 
+ syzbot+d69a7cc8c683c2cb7506@syzkaller.appspotmail.com, 
+ syzbot+483d6c9b9231ea7e1851@syzkaller.appspotmail.com, 
+ Ignacio Encinas <ignacio@iencinas.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, Mar 18, 2025 at 04:24:27PM +0100, Georg Gottleuber wrote:
-> Am 07.03.25 um 07:45 schrieb Dmitry Baryshkov:
-> [...]
-> >>> diff --git a/arch/arm64/boot/dts/qcom/x1e80100-tuxedo-elite-14-gen1.dts b/arch/arm64/boot/dts/qcom/x1e80100-tuxedo-elite-14-gen1.dts
-> >>> new file mode 100644
-> >>> index 000000000000..86bdec4a2dd8
-> >>> --- /dev/null
-> >>> +++ b/arch/arm64/boot/dts/qcom/x1e80100-tuxedo-elite-14-gen1.dts
-> >>
-> >>> +&gpu {
-> >>> +       status = "okay";
-> >>> +
-> >>> +       zap-shader {
-> >>> +               firmware-name = "qcom/a740_zap.mbn";
-> >>
-> >> Are the laptop's OEM key/security fuses not blown?
-> > 
-> > Can this laptop use "qcom/x1e80100/gen70500_zap.mbn" which is already a
-> > part of linux-firmware?
-> 
-> It seems so.
-> 
-> Because there were no logs about loading zap.mbn, I activated dyndbg
-> (dyndbg="file drivers/base/firmware_loader/main.c +fmp"). See attachment
-> for dmesg output. But GUI freezes after sddm login.
+Writes for the error value of a connection are spinlock-protected inside
+p9_conn_cancel, but lockless reads are present elsewhere to avoid
+performing unnecessary work after an error has been met.
 
-Does it happen only with this ZAP or does it happen with the ZAP from
-WIndows too? Can you run some simple GPU workload, like kmscube from the
-console?
+Mark the write and lockless reads to make KCSAN happy. Mark the write as
+exclusive following the recommendation in "Lock-Protected Writes with
+Lockless Reads" in tools/memory-model/Documentation/access-marking.txt
+while we are at it.
 
-> 
-> Best regards,
-> Georg
+Mark p9_fd_request and p9_conn_cancel m->err reads despite the fact that
+they do not race with concurrent writes for stylistic reasons.
 
+Reported-by: syzbot+d69a7cc8c683c2cb7506@syzkaller.appspotmail.com
+Reported-by: syzbot+483d6c9b9231ea7e1851@syzkaller.appspotmail.com
+Signed-off-by: Ignacio Encinas <ignacio@iencinas.com>
+---
+Changes in v3:
 
+- Introduce a couple of extra READ_ONCEs to maintain consistency across
+  m->err reads (noted in the commit message too for future reference)
+- Remove racy read from p9_fd_request by reusing the previously read
+  error (arguably, the lock was never of much use)
 
+- Link to v2: https://lore.kernel.org/r/20250313-p9_conn_err_benign_data_race-v2-1-0bb9f45f6bb2@iencinas.com
+- Link to v1: https://lore.kernel.org/r/20250308-p9_conn_err_benign_data_race-v1-1-729e57d5832b@iencinas.com
+---
+ net/9p/trans_fd.c | 17 ++++++++++-------
+ 1 file changed, 10 insertions(+), 7 deletions(-)
+
+diff --git a/net/9p/trans_fd.c b/net/9p/trans_fd.c
+index 196060dc6138af10e99ad04a76ee36a11f770c65..791e4868f2d4e16b87bfc6038132b4e8a2a5fb9d 100644
+--- a/net/9p/trans_fd.c
++++ b/net/9p/trans_fd.c
+@@ -191,12 +191,13 @@ static void p9_conn_cancel(struct p9_conn *m, int err)
+ 
+ 	spin_lock(&m->req_lock);
+ 
+-	if (m->err) {
++	if (READ_ONCE(m->err)) {
+ 		spin_unlock(&m->req_lock);
+ 		return;
+ 	}
+ 
+-	m->err = err;
++	WRITE_ONCE(m->err, err);
++	ASSERT_EXCLUSIVE_WRITER(m->err);
+ 
+ 	list_for_each_entry_safe(req, rtmp, &m->req_list, req_list) {
+ 		list_move(&req->req_list, &cancel_list);
+@@ -283,7 +284,7 @@ static void p9_read_work(struct work_struct *work)
+ 
+ 	m = container_of(work, struct p9_conn, rq);
+ 
+-	if (m->err < 0)
++	if (READ_ONCE(m->err) < 0)
+ 		return;
+ 
+ 	p9_debug(P9_DEBUG_TRANS, "start mux %p pos %zd\n", m, m->rc.offset);
+@@ -450,7 +451,7 @@ static void p9_write_work(struct work_struct *work)
+ 
+ 	m = container_of(work, struct p9_conn, wq);
+ 
+-	if (m->err < 0) {
++	if (READ_ONCE(m->err) < 0) {
+ 		clear_bit(Wworksched, &m->wsched);
+ 		return;
+ 	}
+@@ -622,7 +623,7 @@ static void p9_poll_mux(struct p9_conn *m)
+ 	__poll_t n;
+ 	int err = -ECONNRESET;
+ 
+-	if (m->err < 0)
++	if (READ_ONCE(m->err) < 0)
+ 		return;
+ 
+ 	n = p9_fd_poll(m->client, NULL, &err);
+@@ -665,6 +666,7 @@ static void p9_poll_mux(struct p9_conn *m)
+ static int p9_fd_request(struct p9_client *client, struct p9_req_t *req)
+ {
+ 	__poll_t n;
++	int err;
+ 	struct p9_trans_fd *ts = client->trans;
+ 	struct p9_conn *m = &ts->conn;
+ 
+@@ -673,9 +675,10 @@ static int p9_fd_request(struct p9_client *client, struct p9_req_t *req)
+ 
+ 	spin_lock(&m->req_lock);
+ 
+-	if (m->err < 0) {
++	err = READ_ONCE(m->err);
++	if (err < 0) {
+ 		spin_unlock(&m->req_lock);
+-		return m->err;
++		return err;
+ 	}
+ 
+ 	WRITE_ONCE(req->status, REQ_STATUS_UNSENT);
+
+---
+base-commit: 2a520073e74fbb956b5564818fc5529dcc7e9f0e
+change-id: 20250308-p9_conn_err_benign_data_race-2758fe8bbed0
+
+Best regards,
 -- 
-With best wishes
-Dmitry
+Ignacio Encinas <ignacio@iencinas.com>
+
 
