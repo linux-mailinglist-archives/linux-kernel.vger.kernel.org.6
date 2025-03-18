@@ -1,116 +1,92 @@
-Return-Path: <linux-kernel+bounces-565748-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565749-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEFE4A66E78
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 09:38:03 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D70AA66E79
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 09:38:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 530073A7C92
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 08:37:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0E6EC7A8302
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 08:36:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF2C220485F;
-	Tue, 18 Mar 2025 08:37:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 010BB202967;
+	Tue, 18 Mar 2025 08:37:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="3amw0Cyu";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="WRj1eVa/"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b="ijJUJkWP"
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60703202965;
-	Tue, 18 Mar 2025 08:37:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C6E71A262A;
+	Tue, 18 Mar 2025 08:37:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742287045; cv=none; b=Ux8ufOhIBaudJJZO9PGf1/b5qsRAJsbVhad6lSgW+e/h4QqWTiyjsdVK4iNDRxib6jezWBvwYOsKL6p81Ur2jnicnjRd5iMXptUct4LVis1LzmQkgiXmNoXZvYHTqtDCFb4TLtKdK+oSV+tBDSGAMmSUf0sHFOlwufP1I7OD4Nk=
+	t=1742287064; cv=none; b=YQRthzT2N4nzUDg3GGgpNqkcAI+uTbHZCtdr2WlfOWRiaQw7o7g5QW6fENpYZ3HNIX1RTo7lOuTxL86U4OZrdcfGEb+/E5UiPgwVLPECFWVaR5SPL1+nWvAQmXh/MdtSTbC12kgFdVsuR08FqtvMGYy+aGgf2kbQ5f4M2cup6zw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742287045; c=relaxed/simple;
-	bh=rG11UNZBVJ1KkEF1+Gss/7La8ypbqms1pnRBr0mUDU4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=mqX4gyAq1Sag0dlnjzFRW7GfawpkLwGqv3eIbYCRZc0D76Hgjr65mYSvOe4QnCaDXSyR18xj9fpOyfsV4eXrRY4yVIZbW9MRIemMlEydzTkOtXUBckby6LWZfr9XGpoYsOMfV6kgGnmlycC+n3wkgBIrRieXQI1fn2GqV12Q0Ms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=3amw0Cyu; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=WRj1eVa/; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1742287041;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=x5Ux5DDZ722AHEGEPlRVneQLCXL4UKBN2OiVk+yaoB0=;
-	b=3amw0CyuRj/3XZJIV8Lwe+4nAkeVMAoSgJeBZlfnk2p1v+LsnzMiMa2FW36Lu+zjgufVGA
-	EqHivtQUx5JtK7LiV6QsINzk0AOOLkf0qlGMO5eAq4bP1ok4kG0MW6J1yByltysrdHglxp
-	GBZGg+NZLWQ1U+bwiJVrupJPOnRFS0hOpawMaMpVk/+34B1Jrq+fGX8cfTaMSx0fNsB94S
-	jcB4PfodpetbDB1XSZM916bMlr+VI9Z8xGCSVO5R+d6ALmN48CQkZKIeo6Ak0IWWuM8tVf
-	3XhpgyDMFFigNP8SshDy1Qm+r5C2oldM/nVhcBoQSuxiSxCCZr9PJO52gxDqWQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1742287041;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=x5Ux5DDZ722AHEGEPlRVneQLCXL4UKBN2OiVk+yaoB0=;
-	b=WRj1eVa/xw3Y4RXocS0EToFEwbENQkqjdodbTM2y/3dGgQPB5IjuM98CQcyN4QJMR0FgXY
-	97qUuqivpM18TAAA==
-To: James Bottomley <James.Bottomley@HansenPartnership.com>, LKML
- <linux-kernel@vger.kernel.org>
-Cc: Marc Zyngier <maz@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>, Nishanth Menon
- <nm@ti.com>, Dhruva Gole <d-gole@ti.com>, Tero Kristo <kristo@kernel.org>,
- Santosh
- Shilimkar <ssantosh@kernel.org>, Logan Gunthorpe <logang@deltatee.com>,
- Dave Jiang <dave.jiang@intel.com>, Jon Mason <jdmason@kudzu.us>, Allen
- Hubbe <allenbh@gmail.com>, ntb@lists.linux.dev, Bjorn Helgaas
- <bhelgaas@google.com>, linux-pci@vger.kernel.org, Michael Kelley
- <mhklinux@outlook.com>, Wei Liu <wei.liu@kernel.org>, Haiyang Zhang
- <haiyangz@microsoft.com>, linux-hyperv@vger.kernel.org, Wei Huang
- <wei.huang2@amd.com>, Manivannan Sadhasivam
- <manivannan.sadhasivam@linaro.org>, "Martin K. Petersen"
- <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, Jonathan Cameron
- <Jonathan.Cameron@huwei.com>
-Subject: Re: [patch V3 01/10] cleanup: Provide retain_ptr()
-In-Reply-To: <4a6efcf37b3cf8812dcfaaa66d4c1760b3e2a95a.camel@HansenPartnership.com>
-References: <20250317092919.008573387@linutronix.de>
- <20250317092945.764490535@linutronix.de>
- <4a6efcf37b3cf8812dcfaaa66d4c1760b3e2a95a.camel@HansenPartnership.com>
-Date: Tue, 18 Mar 2025 09:37:14 +0100
-Message-ID: <87r02u4tvp.ffs@tglx>
+	s=arc-20240116; t=1742287064; c=relaxed/simple;
+	bh=iDHSJrRMpJCglksEroC9F2aKcUHY9EStjzQR8fDaTqA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=dPG+OCYt6Ltc55I4y7QDskN+uZhxU1R4z7RYyRgRTWrKPNszigUI0OYpX6xSAuoJpjjLaAx1FjbWTPO5WRnSt+VnCiswqYyFmgVR6pZpZtU7bySu8v9YchmRH/0foTSfuAACRGXYwQw4pF2V4Cm5PmkMV9dpBwPkCNvKHDgjWIs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b=ijJUJkWP; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 52I8bMyH52588602, This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=realtek.com; s=dkim;
+	t=1742287043; bh=iDHSJrRMpJCglksEroC9F2aKcUHY9EStjzQR8fDaTqA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:
+	 Content-Transfer-Encoding:Content-Type;
+	b=ijJUJkWPIov7InuEl8QcwPhHdVV8KMRjAlJDA/WD5eJf0WhaUYdBMdHXj/uADvh9R
+	 dXS0CmYTTgkj1e9jjX5xG48F4Ew0+ldRJk3wKKqLeTc2t8nQYlULHhXUYddXNqGMR0
+	 FgS/W1GUlVTYb0eLN43gj/vW9Gcy6wybue2IgOcscCeQcq4mImhPWPro+PUhxoR/uH
+	 4W2eYdehx2ZvGdw+/S68b0+0MyobzJS73CMaj5AFm9OiQW3Z23F1dFyZ4tHzYI+YO8
+	 ASLif1sJNbRO9tDi5EfQn0cqDqjUfkjnblnskSmJlqqed9W+8SCQR/HGs4wo3maWwH
+	 4dS8ZqwJ8rnfA==
+Received: from RSEXH36502.realsil.com.cn (doc.realsil.com.cn[172.29.17.3])
+	by rtits2.realtek.com.tw (8.15.2/3.06/5.92) with ESMTPS id 52I8bMyH52588602
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=FAIL);
+	Tue, 18 Mar 2025 16:37:23 +0800
+Received: from RSEXH36502.realsil.com.cn (172.29.17.3) by
+ RSEXH36502.realsil.com.cn (172.29.17.3) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Tue, 18 Mar 2025 16:37:22 +0800
+Received: from 172.29.32.27 (172.29.32.27) by RSEXH36502.realsil.com.cn
+ (172.29.17.3) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
+ Transport; Tue, 18 Mar 2025 16:37:22 +0800
+From: ChunHao Lin <hau@realtek.com>
+To: <hkallweit1@gmail.com>, <nic_swsd@realtek.com>, <andrew+netdev@lunn.ch>,
+        <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+        <pabeni@redhat.com>
+CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        ChunHao Lin
+	<hau@realtek.com>
+Subject: [PATCH net-next v3 0/2] r8169: enable more devices ASPM support
+Date: Tue, 18 Mar 2025 16:37:19 +0800
+Message-ID: <20250318083721.4127-1-hau@realtek.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 
-On Mon, Mar 17 2025 at 09:57, James Bottomley wrote:
-> On Mon, 2025-03-17 at 14:29 +0100, Thomas Gleixner wrote:
->> +#define retain_ptr(p)				\
->> +	__get_and_null(p, NULL)
->
-> This doesn't score very highly on the Rusty API design scale because it
-> can be used anywhere return_ptr() should be used.  To force the
-> distinction between the two cases at the compiler level, should there
-> be a cast to void in the above to prevent using the return value?
+This series of patches will enable more devices ASPM support.
+It also fix a RTL8126 cannot enter L1 substate issue when ASPM is
+enabled.
 
-Indeed. Delta patch below seems to do the trick.
 
-Thanks,
+V2 -> V3: Fix code format issue.
+V1 -> V2: Add name for pcie extended config space 0x890 and bit 0.
 
-        tglx
+ChunHao Lin (2):
+  r8169: enable RTL8168H/RTL8168EP/RTL8168FP ASPM support
+  r8169: disable RTL8126 ZRX-DC timeout
 
----
-diff --git a/include/linux/cleanup.h b/include/linux/cleanup.h
-index 6537f8dfe1bb..859b06d4ad7a 100644
---- a/include/linux/cleanup.h
-+++ b/include/linux/cleanup.h
-@@ -231,8 +231,7 @@ const volatile void * __must_check_fn(const volatile void *val)
-  *		retain_ptr(f);
-  *	return ret;
-  */
--#define retain_ptr(p)				\
--	__get_and_null(p, NULL)
-+#define retain_ptr(p)		((void)__get_and_null(p, NULL))
- 
- /*
-  * DEFINE_CLASS(name, type, exit, init, init_args...):
+ drivers/net/ethernet/realtek/r8169_main.c | 29 ++++++++++++++++++++++-
+ 1 file changed, 28 insertions(+), 1 deletion(-)
+
+--
+2.43.0
+
 
