@@ -1,138 +1,118 @@
-Return-Path: <linux-kernel+bounces-565593-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565595-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE758A66B6B
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 08:19:51 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44AAAA66B75
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 08:20:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0CB7A189698B
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 07:20:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E0D916E110
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 07:20:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CDA51E51FE;
-	Tue, 18 Mar 2025 07:19:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DD851EB5D3;
+	Tue, 18 Mar 2025 07:20:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="neBeT5pa"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="Bpzl3pkM"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D5E37E1;
-	Tue, 18 Mar 2025 07:19:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 649E51B0402
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 07:20:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742282385; cv=none; b=NByH/tCruaAL+dz8yUFZUoyOVlTad5/xXFgsnst6eiK5e88TY4rqzPZkTkCES0FKmhtfCQ8wt4DzdOYCJhrWC+7BqzwWfOtBFc2VdxZsafUTE/2WNWNFyGy6qYUuYYUj4+N+gVIuqjgOeLzpvAqbMeu7Sw4m6fJG1Nf3x0KaSfk=
+	t=1742282421; cv=none; b=Y/y0M1HuEwaRd/SnwkS1bYlg6yuJyxjc06B8OEObvRqP7BLfNndgICi55E5nDn8EDLeFoaN2iZE/kAFXZkg9u+n946yCK/ywqRiIRZe6M/b+L7GmYLjxLOveupISBFOhUh02+Q1tse0DW6oGd+mCrZXdwptYsdlWm9a/oOyZdCk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742282385; c=relaxed/simple;
-	bh=1XSF49bWXlA7q+fO9byqRvsu3JfBmcFWtJOPNETfSCg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iL5kuy4AhWkyoZjzT53B96Xdc2chsHIJJLDTppRp/kfJ9CA4Oa/Db0oBrlGM6r1vA94Vw4gUfNy9iDDu/5lWako6trhJaVdvZzf44R6u2oeUari3Dc2RFlEg9ZCyFc2liGZ1MisfBnaLQi4XDOQKaHsmv/HWSPdy4GryNN1Xqcw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=neBeT5pa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ACE75C4CEDD;
-	Tue, 18 Mar 2025 07:19:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742282385;
-	bh=1XSF49bWXlA7q+fO9byqRvsu3JfBmcFWtJOPNETfSCg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=neBeT5paGNkLh1r/l/+1+SLHjjCpSLUdy7a8YIRGK3FgPOMEtGlx5WYTuoKsyGUGK
-	 77JBtNsKm0Sgx9V38qHl/OzFHFvG2RBpgqABbeol5XBkDriICXvc57UwBqOplm1Fve
-	 /hvVXuEtt1OUjhKi+WzbXT9M4h2JgsWrYl0vaE6BisFvYrFgE4r02jDDrKsS8a26yb
-	 B7g04DTZ3TOxy99oFn9KCnIxuySfT3yJG7ryLPCUn9gW7aQMrhAJ/Bjjf8CKPQTZ9+
-	 CeknKf3dkqRLDNR9SM4hqPkG6fb78v3UHW+A1qJnnFBJZx8OQelrmdFuK8LQNOApbM
-	 9i/3VXuqiDkBg==
-Message-ID: <658c00e2-e8ef-4997-bb91-9620e97bafae@kernel.org>
-Date: Tue, 18 Mar 2025 08:19:39 +0100
+	s=arc-20240116; t=1742282421; c=relaxed/simple;
+	bh=LIM/cWYgkWDrAFT8YOpT+er8DQIJr0pEkJ/j0Zb+0vQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=u9RvruVNibC3tDnzObQqnujlbsF8r414jajZkGHXgRppG5KWcCz3v4ROyJ7y7C67geV35x+hzFlArhw820jVsZEMwh/HAjxB3MwIH96o/5+ChV8wrks8nC/0OkYBWs8WYyNHzq0Mlh5ounCvCXeIojtW4cpAg2EHcw5wfq/a+sM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=Bpzl3pkM; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from terminus.zytor.com (terminus.zytor.com [IPv6:2607:7c80:54:3:0:0:0:136])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 52I7JmWU907380
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+	Tue, 18 Mar 2025 00:19:53 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 52I7JmWU907380
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025021701; t=1742282395;
+	bh=mWRHHFiv6g2eViKELPH0G6am+Z6+jx1pEJOSe/BpwGw=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Bpzl3pkML+KKFEVqMiZQmVb1qGS3pzNf/+DDLHvvjYBcv1Jr0W3JIWWIZF55VNxEH
+	 nVmd+lriMqoeeS40na6H8oqf1v1Xor1obcYPvwzvg2KU9EWtJLEtfW+WMZ3tDvoNBg
+	 NHAwa9fxAiM+7JFdaNNOR9BjdCly4JnKA7mTl8vOPb2uhBBA9vNFM957oH3y/F7fk1
+	 WTRntb7NyeYXXs5024JsBzXA2zNTJNPblRiYSUXUYPptJ57jDM2NB+3HcAJSHioOI9
+	 aYW1kz5BIkD18Zn8NE85ZHduLkp8xpffPFYms+x+FF1u5VtaNsutLaqgb1gXCWJNGo
+	 nO5M/uPwQ12KQ==
+From: "Xin Li (Intel)" <xin@zytor.com>
+To: linux-kernel@vger.kernel.org
+Cc: luto@kernel.org, tglx@linutronix.de, mingo@kernel.org, bp@alien8.de,
+        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+        peterz@infradead.org, brgerst@gmail.com
+Subject: [RESEND PATCH v2 0/3] x86: Allow variable-sized event frame
+Date: Tue, 18 Mar 2025 00:19:44 -0700
+Message-ID: <20250318071947.907364-1-xin@zytor.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] watchdog: s3c2410_wdt: Fix PMU register bits for
- ExynosAutoV920 SoC
-To: Sangwook Shin <sw617.shin@samsung.com>, alim.akhtar@samsung.com,
- wim@linux-watchdog.org, linux@roeck-us.net
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org,
- Kyunghwan Seo <khwan.seo@samsung.com>
-References: <9c94a771-b3e6-4ba4-9b7f-dcd93b53f924@kernel.org>
- <CGME20250318005143epcas2p40ebb1954bed8890aaf8d0a641f710423@epcas2p4.samsung.com>
- <20250318004411.695786-1-sw617.shin@samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20250318004411.695786-1-sw617.shin@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 18/03/2025 01:44, Sangwook Shin wrote:
-> From: Kyunghwan Seo <khwan.seo@samsung.com>
-> 
-> Fix the PMU register bits for the ExynosAutoV920 SoC.
-> This SoC has different bit information compared to its previous
-> version, ExynosAutoV9, and we have made the necessary adjustments.
-> 
-> rst_stat_bit:
->     - ExynosAutoV920 cl0 : 0
->     - ExynosAutoV920 cl1 : 1
-> 
-> cnt_en_bit:
->     - ExynosAutoV920 cl0 : 8
->     - ExynosAutoV920 cl1 : 8
-> 
-> Signed-off-by: Kyunghwan Seo <khwan.seo@samsung.com>
-> Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-> Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
-> Signed-off-by: Sangwook Shin <sw617.shin@samsung.com>
-> ---
-> v1 -> v2: Restore previous email history and tags.
-> 
 
-Why do you send patches which were applied?
+Sorry, used the v1 directory to send v2 accidently.  So resend.
 
-Best regards,
-Krzysztof
+
+This was initially posted as part of the FRED patch series and turned
+down due to its unacceptable quality:
+  https://lore.kernel.org/lkml/20230410081438.1750-31-xin3.li@intel.com/
+
+Now try another attempt to meet the bar.
+
+
+A FRED event frame could contain different amount of information for
+different event types, e.g., #MCE could push extra bytes of information,
+or perhaps even for different instances of the same event type. Thus
+the size of an event frame pushed by a FRED CPU is not fixed and the
+address of a pt_regs structure that is used to save the user level
+context of current task is not at a fixed offset from top of current
+task kernel stack.
+
+This patch set adds a new field named 'user_pt_regs' in the thread_info
+structure to save the address of user level context pt_regs structure,
+thus to eliminate the need of any advance information of event frame
+size and allow a FRED CPU to push variable-sized event frame.
+
+With the above change, we can
+1) Remove the padding space at top of the init stack because there is
+   no user level context for init task.
+2) Get rid of TOP_OF_KERNEL_STACK_PADDING on x86_64, which was defined
+   to 0 for IDT to keep the code consistent with 32bit.
+
+Link to v1: https://lore.kernel.org/lkml/20240617084516.1484390-1-xin@zytor.com/
+
+
+Xin Li (Intel) (3):
+  x86/fred: Allow variable-sized event frame
+  x86: Remove the padding space at top of the init stack
+  x86: Zap TOP_OF_KERNEL_STACK_PADDING on x86_64
+
+ arch/x86/entry/entry_fred.c        | 10 ++++++++++
+ arch/x86/include/asm/fred.h        |  2 +-
+ arch/x86/include/asm/processor.h   | 32 +++++++++++++++++++++---------
+ arch/x86/include/asm/thread_info.h | 19 ++++++------------
+ arch/x86/kernel/process.c          | 21 ++++++++++++++++++++
+ arch/x86/kernel/vmlinux.lds.S      |  7 +++++--
+ include/linux/thread_info.h        |  1 +
+ kernel/fork.c                      |  6 ++++++
+ 8 files changed, 73 insertions(+), 25 deletions(-)
+
+
+base-commit: 6575d1b4a6ef3336608127c704b612bc5e7b0fdc
+-- 
+2.48.1
+
 
