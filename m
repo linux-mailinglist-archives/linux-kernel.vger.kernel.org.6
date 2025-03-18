@@ -1,206 +1,125 @@
-Return-Path: <linux-kernel+bounces-565280-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565284-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61C5EA66522
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 02:32:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D05C3A6652D
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 02:35:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B547217C509
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 01:32:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F314188B2D7
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 01:34:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B3AC8248C;
-	Tue, 18 Mar 2025 01:32:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0B9613D62B;
+	Tue, 18 Mar 2025 01:34:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bz+WNGpy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Hf+XGVFA"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABB124C7C;
-	Tue, 18 Mar 2025 01:32:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A12BC335C0;
+	Tue, 18 Mar 2025 01:34:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742261566; cv=none; b=LSRaMM3hCyOJCLTzmPDvmTwQIYZ1zII4FWWzTeg9TtmSLCPdhwKiXprefF5V/CxwoMALI9Ci8Y5C4iIzo9pwPTKD5zBksdGG5dPtazPJ8Q/uFywS77RfejAmxQnediwsuzfwjKRkR+E8lUJhIh6/Rt9SIq0y5LknojJTr1huHOY=
+	t=1742261679; cv=none; b=Gnd+UYO4dy99XSEr1ZYFe1QoPWxBj5Rws69JnQ/r1tVlCxYP+2mZACTtWF5vKDZF4quylb1RZjDm3GCwj44hx/Mdgnnp6nFrAJwgKOL5Shpk4s2liOBV0qiShG9aC31RAx9g10IJwBtg9HaDO89+odfuZkQMvkikhYxODhNZ+Rg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742261566; c=relaxed/simple;
-	bh=I4iPKp8yRcIiMxB58gWCtiaL8IYeA1sBlvQ8GEEr2ro=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mBTl6kJO4Hc//7IQD6N5pcxVVfDrhBz2bQo0WF9Uo4AFQF0oMWMWYCSRVdJaIauMmVszjn59ISG2gTTkiv1USSpxfM9U/TQkXfXT/UV5bu1PiLwtVSiWwGivwZ203e1XwebUjfroCokK0PxYP19FL5a0/cqr6YiE5TEdphT460g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bz+WNGpy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 627C7C4CEE3;
-	Tue, 18 Mar 2025 01:32:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742261565;
-	bh=I4iPKp8yRcIiMxB58gWCtiaL8IYeA1sBlvQ8GEEr2ro=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Bz+WNGpy3DiqOcNSNNKSA8b38dxVYc3AKHHXKeGHvmFuRzrqfemSycGz7KKUSarTu
-	 u/yEXl5UzRCGGcEZjurrDvFelS2yZHF0eGW1mjjPO61Pi39MW7RAruySMk4E95xlA+
-	 fvMaJ9ZTWMeVjN2dJs9OZ0EcStk5etqcreSsdrL1CE/ff+lnK4k70cY2T/MwxZnU0B
-	 ysNJlm+C1Xu91XE/hAQjiVNBQlKLMF26+SMreJsmd0gkwHC0LSVSCB9LDiv8a5zpqC
-	 fSy5qnQ+yagTYcbh4n/WUdcxNg03iFQrumm6gfExut7KVL6YxkcIwcPhEBZq2NraBr
-	 5lnxwxvYIX0hQ==
-Date: Mon, 17 Mar 2025 18:32:42 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Li Huafei <lihuafei1@huawei.com>
-Cc: acme@kernel.org, leo.yan@linux.dev, james.clark@linaro.org,
-	mark.rutland@arm.com, john.g.garry@oracle.com, will@kernel.org,
-	irogers@google.com, mike.leach@linaro.org, peterz@infradead.org,
-	mingo@redhat.com, alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org, kjain@linux.ibm.com, mhiramat@kernel.org,
-	atrajeev@linux.vnet.ibm.com, sesse@google.com,
-	adrian.hunter@intel.com, kan.liang@linux.intel.com,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH 1/7] perf annotate: Handle arm64 load and store
- instructions
-Message-ID: <Z9jNOgbZj_ZCx-9-@google.com>
-References: <20250314162137.528204-1-lihuafei1@huawei.com>
- <20250314162137.528204-2-lihuafei1@huawei.com>
+	s=arc-20240116; t=1742261679; c=relaxed/simple;
+	bh=vvkZUaLrHnUJHGxnetVQdXOSxMK2s/AEG29SSV0tqc0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=HFyRPu74Q368/JpSxk710qOnVmBzb1ATaKUGnpek+Pq0MTtjof97S/ivDEDOHkHKsd/EFu2zGeCWJWqVsGrGdjOAmmbbdM77ezsIC0MvXR32lUIXm5lQHSJNx9KoOuqdNKXRI1rRA+G/JEsya2bClQ1cdVUK9i9NhgoRZWwsiWI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Hf+XGVFA; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742261678; x=1773797678;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=vvkZUaLrHnUJHGxnetVQdXOSxMK2s/AEG29SSV0tqc0=;
+  b=Hf+XGVFA2n5R2d42UH5nolEapapT6OVwgwsU/cUjSGq0WvX/20nOk7A/
+   9f/eWw8JndEC9DkPMjamVGaPBr/ZZKaxM4c2yunfecoicc41e1qwBF5WA
+   n+c8wXUTYIwpQmkmCreUQFizl8xpb3DxScQuEl7sdnLHxSiybqopvbpKP
+   hSA9Fsarw9qm5txil1sfYm1LyFp/8oFp1mUCGHPOvjRrsoSpupiMa1baK
+   w+ElmakP0JV7G/QdnltaVpM0adcG5Iyr5rhTqQRw4dXqEv5VzByfAjWv7
+   zh3Az6G7Cp6C+J0oLiRwUAsr0lwdXZxBMzkDu+Mmh5fhDzRBe0g6HLGCE
+   A==;
+X-CSE-ConnectionGUID: 9XMKcNb6Tuagua1kwILeGA==
+X-CSE-MsgGUID: 6tvOL6YPSE2eWUrKlDuNOw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11376"; a="47269874"
+X-IronPort-AV: E=Sophos;i="6.14,255,1736841600"; 
+   d="scan'208";a="47269874"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Mar 2025 18:34:37 -0700
+X-CSE-ConnectionGUID: NDAEbuUDR2uGardIrFORsA==
+X-CSE-MsgGUID: fiedTt/KRaWdBpeKeQapgA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,255,1736841600"; 
+   d="scan'208";a="122131390"
+Received: from yzhao56-desk.sh.intel.com ([10.239.159.62])
+  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Mar 2025 18:34:35 -0700
+From: Yan Zhao <yan.y.zhao@intel.com>
+To: pbonzini@redhat.com,
+	seanjc@google.com
+Cc: linux-kernel@vger.kernel.org,
+	kvm@vger.kernel.org,
+	Yan Zhao <yan.y.zhao@intel.com>
+Subject: [PATCH v2 4/5] KVM: x86/mmu: Warn if PFN changes on shadow-present SPTE in shadow MMU
+Date: Tue, 18 Mar 2025 09:33:10 +0800
+Message-ID: <20250318013310.5781-1-yan.y.zhao@intel.com>
+X-Mailer: git-send-email 2.43.2
+In-Reply-To: <20250318013038.5628-1-yan.y.zhao@intel.com>
+References: <20250318013038.5628-1-yan.y.zhao@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250314162137.528204-2-lihuafei1@huawei.com>
+Content-Transfer-Encoding: 8bit
 
-On Sat, Mar 15, 2025 at 12:21:31AM +0800, Li Huafei wrote:
-> Add ldst_ops to handle load and store instructions in order to parse
-> the data types and offsets associated with PMU events for memory access
-> instructions. There are many variants of load and store instructions in
-> ARM64, making it difficult to match all of these instruction names
-> completely. Therefore, only the instruction prefixes are matched. The
-> prefix 'ld|st' covers most of the memory access instructions, 'cas|swp'
-> matches atomic instructions, and 'prf' matches memory prefetch
-> instructions.
-> 
-> Signed-off-by: Li Huafei <lihuafei1@huawei.com>
-> ---
->  tools/perf/arch/arm64/annotate/instructions.c | 67 ++++++++++++++++++-
->  1 file changed, 66 insertions(+), 1 deletion(-)
-> 
-> diff --git a/tools/perf/arch/arm64/annotate/instructions.c b/tools/perf/arch/arm64/annotate/instructions.c
-> index d465d093e7eb..c212eb7341bd 100644
-> --- a/tools/perf/arch/arm64/annotate/instructions.c
-> +++ b/tools/perf/arch/arm64/annotate/instructions.c
-> @@ -6,7 +6,8 @@
->  
->  struct arm64_annotate {
->  	regex_t call_insn,
-> -		jump_insn;
-> +		jump_insn,
-> +		ldst_insn; /* load and store instruction */
->  };
->  
->  static int arm64_mov__parse(struct arch *arch __maybe_unused,
-> @@ -67,6 +68,57 @@ static struct ins_ops arm64_mov_ops = {
->  	.scnprintf = mov__scnprintf,
->  };
->  
-> +static int arm64_ldst__parse(struct arch *arch __maybe_unused,
-> +			     struct ins_operands *ops,
-> +			     struct map_symbol *ms __maybe_unused,
-> +			     struct disasm_line *dl __maybe_unused)
-> +{
-> +	char *s, *target;
-> +
-> +	/*
-> +	 * The part starting from the memory access annotation '[' is parsed
-> +	 * as 'target', while the part before it is parsed as 'source'.
-> +	 */
-> +	target = s = strchr(ops->raw, '[');
-> +	if (!s)
-> +		return -1;
-> +
-> +	while (s > ops->raw && *s != ',')
-> +		--s;
-> +
-> +	if (s == ops->raw)
-> +		return -1;
-> +
-> +	*s = '\0';
-> +	ops->source.raw = strdup(ops->raw);
-> +
-> +	*s = ',';
-> +	if (!ops->source.raw)
-> +		return -1;
-> +
-> +	ops->target.raw = strdup(target);
-> +	if (!ops->target.raw) {
-> +		zfree(ops->source.raw);
+Warn if PFN changes on shadow-present SPTE in mmu_set_spte().
 
-I think you need 'zfree(&ops->source.raw)' instead.
+KVM should _never_ change the PFN of a shadow-present SPTE. In
+mmu_set_spte(), there is a WARN_ON_ONCE() on pfn changes on shadow-present
+SPTE in mmu_spte_update() to detect this condition. However, that
+WARN_ON_ONCE() is not hittable since mmu_set_spte() invokes drop_spte()
+earlier before mmu_spte_update(), which clears SPTE to a !shadow-present
+state. So, before invoking drop_spte(), add a WARN_ON_ONCE() in
+mmu_set_spte() to warn PFN change of a shadow-present SPTE.
 
+For the spurious prefetch fault, only return RET_PF_SPURIOUS directly when
+PFN is not changed. When PFN changes, fall through to follow the sequence
+of drop_spte(), warn of PFN change, make_spte(), flush tlb, rmap_add().
 
-> +		return -1;
-> +	}
-> +	ops->target.mem_ref = true;
-> +
-> +	return 0;
-> +}
-> +
-> +static int ldst__scnprintf(struct ins *ins, char *bf, size_t size,
-> +			   struct ins_operands *ops, int max_ins_name)
-> +{
-> +	return scnprintf(bf, size, "%-*s %s,%s", max_ins_name, ins->name,
-> +			 ops->source.name ?: ops->source.raw,
-> +			 ops->target.name ?: ops->target.raw);
-> +}
-> +
-> +static struct ins_ops arm64_ldst_ops = {
-> +	.parse	   = arm64_ldst__parse,
-> +	.scnprintf = ldst__scnprintf,
-> +};
-> +
->  static struct ins_ops *arm64__associate_instruction_ops(struct arch *arch, const char *name)
->  {
->  	struct arm64_annotate *arm = arch->priv;
-> @@ -77,6 +129,8 @@ static struct ins_ops *arm64__associate_instruction_ops(struct arch *arch, const
->  		ops = &jump_ops;
->  	else if (!regexec(&arm->call_insn, name, 2, match, 0))
->  		ops = &call_ops;
-> +	else if (!regexec(&arm->ldst_insn, name, 2, match, 0))
-> +		ops = &arm64_ldst_ops;
->  	else if (!strcmp(name, "ret"))
->  		ops = &ret_ops;
->  	else
-> @@ -107,6 +161,15 @@ static int arm64__annotate_init(struct arch *arch, char *cpuid __maybe_unused)
->  		      REG_EXTENDED);
->  	if (err)
->  		goto out_free_call;
-> +	/*
-> +	 * The ARM64 architecture has many variants of load/store instructions.
-> +	 * It is quite challenging to match all of them completely. Here, we
-> +	 * only match the prefixes of these instructions.
-> +	 */
-> +	err = regcomp(&arm->ldst_insn, "^(ld|st|cas|prf|swp)",
-> +		      REG_EXTENDED);
-> +	if (err)
-> +		goto out_free_jump;
->  
->  	arch->initialized = true;
->  	arch->priv	  = arm;
-> @@ -117,6 +180,8 @@ static int arm64__annotate_init(struct arch *arch, char *cpuid __maybe_unused)
->  	arch->e_flags = 0;
->  	return 0;
->  
-> +out_free_jump:
-> +	regfree(&arm->jump_insn);
->  out_free_call:
->  	regfree(&arm->call_insn);
+Signed-off-by: Yan Zhao <yan.y.zhao@intel.com>
+---
+ arch/x86/kvm/mmu/mmu.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-It seems we leak these on the success path.  Probably we need arch
-annotate_exit() to free the resources.
+diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
+index 94c677f8cc05..607cbb19ea96 100644
+--- a/arch/x86/kvm/mmu/mmu.c
++++ b/arch/x86/kvm/mmu/mmu.c
+@@ -2846,7 +2846,8 @@ static int mmu_set_spte(struct kvm_vcpu *vcpu, struct kvm_memory_slot *slot,
+ 	}
+ 
+ 	if (is_shadow_present_pte(*sptep)) {
+-		if (prefetch && is_last_spte(*sptep, level))
++		if (prefetch && is_last_spte(*sptep, level) &&
++		    pfn == spte_to_pfn(*sptep))
+ 			return RET_PF_SPURIOUS;
+ 
+ 		/*
+@@ -2860,7 +2861,7 @@ static int mmu_set_spte(struct kvm_vcpu *vcpu, struct kvm_memory_slot *slot,
+ 			child = spte_to_child_sp(pte);
+ 			drop_parent_pte(vcpu->kvm, child, sptep);
+ 			flush = true;
+-		} else if (pfn != spte_to_pfn(*sptep)) {
++		} else if (WARN_ON_ONCE(pfn != spte_to_pfn(*sptep))) {
+ 			drop_spte(vcpu->kvm, sptep);
+ 			flush = true;
+ 		} else
+-- 
+2.43.2
 
-Thanks,
-Namhyung
-
-
->  out_free_arm:
-> -- 
-> 2.25.1
-> 
 
