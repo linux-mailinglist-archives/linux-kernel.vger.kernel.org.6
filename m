@@ -1,365 +1,207 @@
-Return-Path: <linux-kernel+bounces-566891-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03330A67DF3
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 21:18:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8838CA67DF7
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 21:23:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0911F18965DE
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 20:18:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A7C1F19C434D
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 20:23:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65F8E20E6F9;
-	Tue, 18 Mar 2025 20:17:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C17A420E6F9;
+	Tue, 18 Mar 2025 20:23:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cx64QfkP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="reo7Cfop"
+Received: from BL2PR02CU003.outbound.protection.outlook.com (mail-eastusazolkn19010015.outbound.protection.outlook.com [52.103.11.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DD251F4C99;
-	Tue, 18 Mar 2025 20:17:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742329075; cv=none; b=aSZWSFKgi0zoBw882dbNY5jnQLQVI7GKb94tdjBKLVETCsu+YGFAJCwLthp6tgHcjAJ+2qlvLdlTgPwDIafjrEGY+AKNFIpT6lup6UP9uPAYgIXvTnguA+IjFKWtWlJkIauga1xudTi/z90pXRPqM/Dv1hvY0Yf1Y/8UwciBwDs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742329075; c=relaxed/simple;
-	bh=qjoI51DvAkOY4VBqJdc/V5YA+NOO+//yNH4o3cRoKfU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=I2/nieCeKGx35gqsdFr2rl5CibyImtzSK7coEzU+IDfE6yiWR9zK2UsrtR5mrEP/ITfwO9PLHzVJ7HpO75TUaZ7jQd+aQnI/gxUjUaYbJnU/+hHtKtColKMQWJsmiArFcvasUrPtZolgpZCVUrzrREsY2FTNLJ1miK/JjBht5kc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cx64QfkP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97090C4CEEE;
-	Tue, 18 Mar 2025 20:17:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742329073;
-	bh=qjoI51DvAkOY4VBqJdc/V5YA+NOO+//yNH4o3cRoKfU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=Cx64QfkP3BvtV2i0Kqdrf3DzFFqNj7jsSp4qxnaGHj7oAyt+ragXbM2cvI1WBARR4
-	 BcymFmMGqaw0+IhNEo/tOdqWwIcnGYLTnluFZD1Vm1spmQyveS3SmK5FP/JNnsctKP
-	 WKVsM5SUk2CmJlIeoiEu2IX5u0x4PHTzQlS0MuYw4+yxliP7086U36yQqidQfBlG+v
-	 G0IK6zSc7OL5dWWjXkMS7hl2A+rZQf7kS963ly1pG6pB9Ctk1xMnV3+TwQ5NkxAy9e
-	 oK8Y17XCv1R8Bk/Myp/8PBBbE4F5jgR5hpjYgQhN7tRvFJL+blQNLnka+2TpJ/Yk6J
-	 Mr+EFO5dyPobA==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: "Abdiel Janulgue" <abdiel.janulgue@gmail.com>
-Cc: <rust-for-linux@vger.kernel.org>,  <daniel.almeida@collabora.com>,
-  <dakr@kernel.org>,  <robin.murphy@arm.com>,  <aliceryhl@google.com>,
-  "Miguel Ojeda" <ojeda@kernel.org>,  "Alex Gaynor"
- <alex.gaynor@gmail.com>,  "Boqun Feng" <boqun.feng@gmail.com>,  "Gary Guo"
- <gary@garyguo.net>,  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
- <bjorn3_gh@protonmail.com>,  "Benno
- Lossin" <benno.lossin@proton.me>,  "Trevor Gross" <tmgross@umich.edu>,
-  "Valentin Obst" <kernel@valentinobst.de>,  "open list"
- <linux-kernel@vger.kernel.org>,  "Christoph Hellwig" <hch@lst.de>,  "Marek
- Szyprowski" <m.szyprowski@samsung.com>,  <airlied@redhat.com>,  "open
- list:DMA MAPPING HELPERS" <iommu@lists.linux.dev>
-Subject: Re: [PATCH v14 03/11] samples: rust: add Rust dma test sample driver
-In-Reply-To: <03902487-5cd3-45ed-b3cb-cabfd0ac5cb7@gmail.com> (Abdiel
-	Janulgue's message of "Tue, 18 Mar 2025 20:42:39 +0200")
-References: <20250311174930.2348813-1-abdiel.janulgue@gmail.com>
-	<20250311174930.2348813-4-abdiel.janulgue@gmail.com>
-	<87frjajwq2.fsf@kernel.org>
-	<wAjk3jNcvGi573b_S5kGahtGLyPKgJbhc2ZaLDfmh3IBKD-smledIpK_5r5-5R8t3l9okVmH7gZx7QcRHZVjmA==@protonmail.internalid>
-	<03902487-5cd3-45ed-b3cb-cabfd0ac5cb7@gmail.com>
-User-Agent: mu4e 1.12.7; emacs 29.4
-Date: Tue, 18 Mar 2025 21:17:41 +0100
-Message-ID: <87h63qhz4q.fsf@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 466871DC9B4;
+	Tue, 18 Mar 2025 20:23:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.11.15
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742329405; cv=fail; b=LzJf6LjL/hZ12NnUFLYZ7Uci0RlKJSrXoMK5xi+nlLs2RdM5p4OWQAKsvdFVLwPsUs2cPnicgXbfwONaO5VGeGpJ6RGHw2FgCdgwLwmbD1+x75Qtzk+nBCtEStwmTs3P8G3fkZBpRs5s8LoyOTxYtyMrhec9t57iS2cEZ1Rg0QY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742329405; c=relaxed/simple;
+	bh=dl1pymMAa6aIrvCBIP/F1bo2g1vIX9avNqOp3F0BOxo=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=qHQug9Q5W0xYdCPOpd/DADZyq51pXMZca9gmvbcpH912fxgIzlPQRcLLNWUpD0IG599un5RxfvzLFrlcODSJGsGt6wtAXp0A1Rgokx4wSQxx+Am/lAN/a/huaKAtmKwNJKnujXxBGVVq5vm6hIib2AKEx6Jd2IOnGcYnGcOPMYI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=reo7Cfop; arc=fail smtp.client-ip=52.103.11.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=JeqNe5wA7uctBr1KPxoNfLIpLF1mwmI2A0gZoqgQaY2aWPpok2OUYrIQZIS5Xw4gc/wQo13cyHIYGnZ5sOCCWL9z4epE9nSy9LOQoYrZ+o9cWWXyETJWRUhd6UQKlEUfJdLwTWTj1sHZoaI3/RPBlEAo8ZTclgjwRG/Eu9eB5M55A3n2lW61vFYUJvjGmQ+TOjBFa7knL8lMuCnrT+0iLq/SqeVoyiMCSAsaapKchXc3Jw5r30uEX+SvxaKYl/wi9BsoqQljvtmSMq6sCN5gdo0KvViosGOiLH+z+5t2o90RtnJ9iFhBhD8PlvbcujdYm21+7nUkmtzzJX0s+kWxOA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=jr3OaZ4LSp5pwntgspKPjNuXu3VN+TIfYWbMqx1m69o=;
+ b=JxO5SEXS6gf3EkxTgDkRTFzv8STBln6LQRbmFNaNxtlEEztE6LDpqCk3x/XEltag/hJTQjQoCLCzNoP7F0SpyFAQjZX1XBK7CQSTv8lj2QOl081jYp3d+pM4deCxkmuEz+/iZjvcWfV4VSG87VsIB2KlvFNhexLinnT3Ex44kRSlTPIzEELwb+KBUiD68KyvhgkI3wd2elkE5Qy4PaDecgolNWoiMKdawm1YJznWqEwYWiYepLyA6nbF6rPmEVLrH1UTmYnQadNPMh6UUntJ2UPeARhoVxzCj1T37SmLjMxwfL8e90tgpUSzHsCtFGL77KbKFrc/Jkguuy2TI/RYMg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=jr3OaZ4LSp5pwntgspKPjNuXu3VN+TIfYWbMqx1m69o=;
+ b=reo7CfoptGRw5r1xcpPqLpJ6rDJ08YsSnD+JNQaLwCpPcjMVnP3EAIhm8wGmS6+4IvB0uCzlUhuMOo6WORCF3Vak2rWBFpvxR2/k1xGv+YLAOy6xtAVJSKhC+njCwiGDK4xBXL9rLvSotuIfApOJ9mDFW9GmKziwaSKKQrDSEGzfNJvF9ZHpeR5sKE0jTZDpX7ML9b3ti/aVm3xO1iCPfih2TledD6W0VegNPhfErvgyb525wH4xB5HaOix/mjIWl0q1tvLV6Z4e/XFkIxe4vCiIYvVwQGcQV27JCr9ISkm2ueZVWMaSQi5921A0lJsuGW/KtgtCS+lJqogLdmq7Hg==
+Received: from SN6PR02MB4157.namprd02.prod.outlook.com (2603:10b6:805:33::23)
+ by MW6PR02MB9693.namprd02.prod.outlook.com (2603:10b6:303:23f::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.33; Tue, 18 Mar
+ 2025 20:23:19 +0000
+Received: from SN6PR02MB4157.namprd02.prod.outlook.com
+ ([fe80::cedd:1e64:8f61:b9df]) by SN6PR02MB4157.namprd02.prod.outlook.com
+ ([fe80::cedd:1e64:8f61:b9df%3]) with mapi id 15.20.8534.031; Tue, 18 Mar 2025
+ 20:23:19 +0000
+From: Michael Kelley <mhklinux@outlook.com>
+To: Wei Liu <wei.liu@kernel.org>
+CC: Nuno Das Neves <nunodasneves@linux.microsoft.com>,
+	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+	"x86@kernel.org" <x86@kernel.org>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linux-arch@vger.kernel.org"
+	<linux-arch@vger.kernel.org>, "ltykernel@gmail.com" <ltykernel@gmail.com>,
+	"stanislav.kinsburskiy@gmail.com" <stanislav.kinsburskiy@gmail.com>,
+	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+	"eahariha@linux.microsoft.com" <eahariha@linux.microsoft.com>,
+	"jeff.johnson@oss.qualcomm.com" <jeff.johnson@oss.qualcomm.com>,
+	"kys@microsoft.com" <kys@microsoft.com>, "haiyangz@microsoft.com"
+	<haiyangz@microsoft.com>, "decui@microsoft.com" <decui@microsoft.com>,
+	"catalin.marinas@arm.com" <catalin.marinas@arm.com>, "will@kernel.org"
+	<will@kernel.org>, "tglx@linutronix.de" <tglx@linutronix.de>,
+	"mingo@redhat.com" <mingo@redhat.com>, "bp@alien8.de" <bp@alien8.de>,
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>, "hpa@zytor.com"
+	<hpa@zytor.com>, "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
+	"joro@8bytes.org" <joro@8bytes.org>, "robin.murphy@arm.com"
+	<robin.murphy@arm.com>, "arnd@arndb.de" <arnd@arndb.de>,
+	"jinankjain@linux.microsoft.com" <jinankjain@linux.microsoft.com>,
+	"muminulrussell@gmail.com" <muminulrussell@gmail.com>,
+	"skinsburskii@linux.microsoft.com" <skinsburskii@linux.microsoft.com>,
+	"mrathor@linux.microsoft.com" <mrathor@linux.microsoft.com>,
+	"ssengar@linux.microsoft.com" <ssengar@linux.microsoft.com>,
+	"apais@linux.microsoft.com" <apais@linux.microsoft.com>,
+	"gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+	"vkuznets@redhat.com" <vkuznets@redhat.com>, "prapal@linux.microsoft.com"
+	<prapal@linux.microsoft.com>, "anrayabh@linux.microsoft.com"
+	<anrayabh@linux.microsoft.com>, "rafael@kernel.org" <rafael@kernel.org>,
+	"lenb@kernel.org" <lenb@kernel.org>, "corbet@lwn.net" <corbet@lwn.net>
+Subject: RE: [PATCH v6 10/10] Drivers: hv: Introduce mshv_root module to
+ expose /dev/mshv to VMMs
+Thread-Topic: [PATCH v6 10/10] Drivers: hv: Introduce mshv_root module to
+ expose /dev/mshv to VMMs
+Thread-Index: AQHblRdnpUjohn3xT068AvEhHN692rN5UJDAgAAF7gCAAAXbAA==
+Date: Tue, 18 Mar 2025 20:23:19 +0000
+Message-ID:
+ <SN6PR02MB41578462FA9CE129979F604DD4DE2@SN6PR02MB4157.namprd02.prod.outlook.com>
+References:
+ <1741980536-3865-1-git-send-email-nunodasneves@linux.microsoft.com>
+ <1741980536-3865-11-git-send-email-nunodasneves@linux.microsoft.com>
+ <SN6PR02MB4157261B9C4AA8CF89A30317D4DE2@SN6PR02MB4157.namprd02.prod.outlook.com>
+ <Z9nQxOD1N2HZIyaF@liuwe-devbox-ubuntu-v2.lamzopl0uupeniq2etz1fddiyg.xx.internal.cloudapp.net>
+In-Reply-To:
+ <Z9nQxOD1N2HZIyaF@liuwe-devbox-ubuntu-v2.lamzopl0uupeniq2etz1fddiyg.xx.internal.cloudapp.net>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SN6PR02MB4157:EE_|MW6PR02MB9693:EE_
+x-ms-office365-filtering-correlation-id: de8ff147-e532-4268-dfda-08dd665ab914
+x-microsoft-antispam:
+ BCL:0;ARA:14566002|8062599003|8060799006|19110799003|461199028|15080799006|3412199025|440099028|102099032;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?qzSVFQST3EWhBucvhFo30Yj/gS5JAzSxsk4tSWST0x7ApcwCn7+rgw5IQ6Q/?=
+ =?us-ascii?Q?uSN/JYtwapLPqoTHqhmpFcbfobRhoG4A4kn862JlDTJrAmIw5sB+32NAQY7E?=
+ =?us-ascii?Q?EFe/tKSMy+E3cngWF4wie25coo9a6h1o+0rEoOLbaf9xkNct/DmpXm5eOFk2?=
+ =?us-ascii?Q?XJvKUnZbJzXdgpJuXeJtyDCeX5qcqBPPVA+yPAMDljFydQKXhROF6wRj9+P1?=
+ =?us-ascii?Q?iIJr6keTtAlf9jrju3aGEH/aYsiHR+FTnuIcHInIb6xBgBoQnnxnFSjES+v+?=
+ =?us-ascii?Q?uTyBZOh+hjr84Szti61b7AmAq8AQA3U2hZyu48NyojVVJDLgPaZjSLVnMZAS?=
+ =?us-ascii?Q?jzsgVICDThDqiuRoJoKTrVnkaiQNeuf3KN/jUpBUByD77nTUSXeacVJXRWBt?=
+ =?us-ascii?Q?m8pxE5aNGQJ2gSweNr/o3U28BboD/X2XuuDNJ0TmoJYYqGSx+U3QsYg2HfvS?=
+ =?us-ascii?Q?WzshOksEcqdw5nvMjTfzbWevlyAGBmtwrwbFJlS1TqnjwEdP7Zx3axtKJuhm?=
+ =?us-ascii?Q?AuPqom1NlpEI1A9SMOr5iEy7yCHYI7fq9lIm/C83NEEtiO1LarNqGiiBCb3d?=
+ =?us-ascii?Q?osJORvRpm2dBXmhnR9OY10cOk4pgZFB/ldHz88fPBJ5H+0hM7elXeZ0ockL/?=
+ =?us-ascii?Q?ipWAwywsGhuIbzY2SrSQfrMunujuGOXGHLmZoO5qM+4ZjL31hCp2DjGzmf6g?=
+ =?us-ascii?Q?hlIYdm9G9ihhanpByakZPOUjWbhP6setK/yY8X8ctPcy/HqeiFw+woMD8IFC?=
+ =?us-ascii?Q?ssicB73dX7VT5iR6cM0XEN9w0xqT3+2uGUu1kNinP4QgwYPMQ5kZgSYl9uAm?=
+ =?us-ascii?Q?x+6vWO2b6xc2IRwrmCrWwnYvige2qBQ/7YpKlM1GCUuFceIzmmcAb22TbKJe?=
+ =?us-ascii?Q?7OgzLOhT+I9Xj9ztSCc1Ytjoz4gFuq/NaZvrO+ExPjveueK6OsNB3DBB3+IV?=
+ =?us-ascii?Q?8yIEVtZExx2iwUol4cGkwbQm9BogIqyPlnJ53nJ4aMQaxcpjAq7QmZS1/dZV?=
+ =?us-ascii?Q?dTq3q3ETDFjoNBTJj4qx58m/4KeWabgYcXcz0s7ikyx90XOgdDiRMFFeq+qy?=
+ =?us-ascii?Q?sux2gQjX3iRF4gStzAwT1S4hnrR5Lw=3D=3D?=
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?mQmXI4EglrgI9Xe7ZeCLPQaD7vYMLYnMcbACg2wn8wBfH6FOKRhNfDQ5sq6K?=
+ =?us-ascii?Q?0iAsCx83ndZ72JNgaSK53+ktJ6ATqbAUQ6InkxP0nWp+pJq8sSU0kH83VrbB?=
+ =?us-ascii?Q?dk9+eN+Dtn3XZScKdI/BjymxELX0zOXg2YoKSXFvu6dxPSTZDcBSrNvDBqdy?=
+ =?us-ascii?Q?hmnnnyuL2fHZDdJX2UqaQbIY2yFA1cDiJ/w9WcWJbOyw0uxP9wLUiiOxXY9h?=
+ =?us-ascii?Q?pDDECx4M9QDT7BpWQhQfVG/TbII934Prhi987EnD897DGjfvgNfBIt9R2sjZ?=
+ =?us-ascii?Q?eP204zUWkzmOEGI2Gi9pLmsfAy5Lqx0HBLV2m6Kuou25ysfRb7HVB4U3Dhm0?=
+ =?us-ascii?Q?oSzGLjRUc6+tajTsEW9P8fGww/h/EjdpE4gS4RcoOpc5qp9t0iOQp+zLnayQ?=
+ =?us-ascii?Q?CVxAqkY6vPCRED+6TBLmFtnHS26HX7/dgbqdCf6H8RAl4ZFhIKOI4AAuGl8t?=
+ =?us-ascii?Q?b5vzbKPNO+I8u/mhB0MjuH+E5eaAo3ipXHxIFAZeB4MUdJIZ/d+u0QCn30Nh?=
+ =?us-ascii?Q?yyYJ3/aKcWKiTFNb4dcm4nDm/6yg9lhSBFEsknMzP7lWM+QcPNRx7mL4OWe6?=
+ =?us-ascii?Q?EpDC3Eom1hXHXhEnE0XKIwPB1lUdizDtStyI0dPiBkq4PvkZrR21UruCRZO8?=
+ =?us-ascii?Q?e38qnrTPXtP461+CzsV96CQgKc6qfQBhRySdoQ6TSFKzNZOPddwV2vz+omjz?=
+ =?us-ascii?Q?c1ul2U7eqWXney0icl2ZWG5NHVHqwdD9MfvjUOvZ/gedWSF9VnTt0eQxIi9P?=
+ =?us-ascii?Q?Hjkn6SZnwosFf9D5ld82yjNLXk3+DBbRng40RRS7Vj1teJn98eSoaJrU6Wl7?=
+ =?us-ascii?Q?4Blu9jKdG8egzoPYhcQ4VGixzYg0Afvwc/makntkFwuNWnq3TgNEftiJYZ/U?=
+ =?us-ascii?Q?+53ZCtYBmMysB9IaIvLLQVpVqEBgv/8KquoqQf1X0fiFoafVw/mycIafSj3x?=
+ =?us-ascii?Q?69JeJlpySp5ctukTI2uG9SiS39rmKR0NYQ7eoGB5+nD+K5o3GCauFlVS/nCV?=
+ =?us-ascii?Q?9Ii0pMicQlwdnDmUk3IILEaz/ROsWSZeXo7SeftFwqmy2FZThe7BpvWJmDzL?=
+ =?us-ascii?Q?otZHQoEoX0hf3WJmAeQwt6eA1dOuTT6Br2EBrFP3IpbFE/wULKCRBEnXN24c?=
+ =?us-ascii?Q?BoVnpiYv+IJ858D6Ay2s9Ax97W7oEGUjgrj7a8Ws2OJcGoftWvIU7EjW5R8u?=
+ =?us-ascii?Q?0bnclDe1gcAgDZYkUVTWltnMbomxUiMyTUZAxy3XVQDxCoLUlcYJMgoBgpw?=
+ =?us-ascii?Q?=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SN6PR02MB4157.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: de8ff147-e532-4268-dfda-08dd665ab914
+X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Mar 2025 20:23:19.4696
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW6PR02MB9693
 
-"Abdiel Janulgue" <abdiel.janulgue@gmail.com> writes:
+From: Wei Liu <wei.liu@kernel.org> Sent: Tuesday, March 18, 2025 1:00 PM
+>=20
+> On Tue, Mar 18, 2025 at 07:54:49PM +0000, Michael Kelley wrote:
+> > From: Nuno Das Neves <nunodasneves@linux.microsoft.com> Sent: Friday, M=
+arch 14,
+> 2025 12:29 PM
+> > >
+> > > Provide a set of IOCTLs for creating and managing child partitions wh=
+en
+> > > running as root partition on Hyper-V. The new driver is enabled via
+> > > CONFIG_MSHV_ROOT.
+> > >
+> >
+> > [snip]
+> >
+> > > +
+> > > +int
+> > > +hv_call_clear_virtual_interrupt(u64 partition_id)
+> > > +{
+> > > +	unsigned long flags;
+> >
+> > This local variable is now unused and will generate a compile warning.
+>=20
+> FWIW I noticed the same thing too and fixed them all while I committed
+> the patch.
+>=20
 
-> Hi,
->
-> On 18/03/2025 15:26, Andreas Hindborg wrote:
->> Abdiel Janulgue <abdiel.janulgue@gmail.com> writes:
->>
->>> Add a simple driver to excercise the basics of the Rust DMA
->>> coherent allocator bindings.
->>>
->>> Suggested-by: Danilo Krummrich <dakr@kernel.org>
->>> Signed-off-by: Abdiel Janulgue <abdiel.janulgue@gmail.com>
->>> ---
->>>   samples/rust/Kconfig     | 11 +++++
->>>   samples/rust/Makefile    |  1 +
->>>   samples/rust/rust_dma.rs | 97 ++++++++++++++++++++++++++++++++++++++++
->>>   3 files changed, 109 insertions(+)
->>>   create mode 100644 samples/rust/rust_dma.rs
->>>
->>> diff --git a/samples/rust/Kconfig b/samples/rust/Kconfig
->>> index 3b6eae84b297..e2d14aa6beec 100644
->>> --- a/samples/rust/Kconfig
->>> +++ b/samples/rust/Kconfig
->>> @@ -78,4 +78,15 @@ config SAMPLE_RUST_HOSTPROGS
->>>
->>>   	  If unsure, say N.
->>>
->>> +config SAMPLE_RUST_DRIVER_DMA
->>> +	tristate "DMA Test Driver"
->>> +	depends on PCI
->>> +	help
->>> +	  This option builds the Rust dma test driver sample.
->>> +
->>> +	  To compile this as a module, choose M here:
->>> +	  the module will be called dma.
->>> +
->>> +	  If unsure, say N.
->>> +
->>>   endif # SAMPLES_RUST
->>> diff --git a/samples/rust/Makefile b/samples/rust/Makefile
->>> index 0dbc6d90f1ef..1a9aff6e8d6a 100644
->>> --- a/samples/rust/Makefile
->>> +++ b/samples/rust/Makefile
->>> @@ -7,6 +7,7 @@ obj-$(CONFIG_SAMPLE_RUST_PRINT)			+= rust_print.o
->>>   obj-$(CONFIG_SAMPLE_RUST_DRIVER_PCI)		+= rust_driver_pci.o
->>>   obj-$(CONFIG_SAMPLE_RUST_DRIVER_PLATFORM)	+= rust_driver_platform.o
->>>   obj-$(CONFIG_SAMPLE_RUST_DRIVER_FAUX)		+= rust_driver_faux.o
->>> +obj-$(CONFIG_SAMPLE_RUST_DRIVER_DMA)		+= rust_dma.o
->>>
->>>   rust_print-y := rust_print_main.o rust_print_events.o
->>>
->>> diff --git a/samples/rust/rust_dma.rs b/samples/rust/rust_dma.rs
->>> new file mode 100644
->>> index 000000000000..1740140faba6
->>> --- /dev/null
->>> +++ b/samples/rust/rust_dma.rs
->>> @@ -0,0 +1,97 @@
->>> +// SPDX-License-Identifier: GPL-2.0
->>> +
->>> +//! Rust DMA api test (based on QEMU's `pci-testdev`).
->>> +//!
->>> +//! To make this driver probe, QEMU must be run with `-device pci-testdev`.
->>> +
->>> +use kernel::{bindings, dma::CoherentAllocation, pci, prelude::*};
->>> +
->>> +struct DmaSampleDriver {
->>> +    pdev: pci::Device,
->>> +    ca: CoherentAllocation<MyStruct>,
->>> +}
->>> +
->>> +const TEST_VALUES: [(u32, u32); 5] = [
->>> +    (0xa, 0xb),
->>> +    (0xc, 0xd),
->>> +    (0xe, 0xf),
->>> +    (0xab, 0xba),
->>> +    (0xcd, 0xef),
->>> +];
->>> +
->>> +struct MyStruct {
->>> +    h: u32,
->>> +    b: u32,
->>> +}
->>> +
->>> +impl MyStruct {
->>> +    fn new(h: u32, b: u32) -> Self {
->>> +        Self { h, b }
->>> +    }
->>> +}
->>> +// SAFETY: All bit patterns are acceptable values for `MyStruct`.
->>> +unsafe impl kernel::transmute::AsBytes for MyStruct {}
->>> +// SAFETY: Instances of `MyStruct` have no uninitialized portions.
->>> +unsafe impl kernel::transmute::FromBytes for MyStruct {}
->>> +
->>> +kernel::pci_device_table!(
->>> +    PCI_TABLE,
->>> +    MODULE_PCI_TABLE,
->>> +    <DmaSampleDriver as pci::Driver>::IdInfo,
->>> +    [(
->>> +        pci::DeviceId::from_id(bindings::PCI_VENDOR_ID_REDHAT, 0x5),
->>> +        ()
->>> +    )]
->>> +);
->>> +
->>> +impl pci::Driver for DmaSampleDriver {
->>> +    type IdInfo = ();
->>> +    const ID_TABLE: pci::IdTable<Self::IdInfo> = &PCI_TABLE;
->>> +
->>> +    fn probe(pdev: &mut pci::Device, _info: &Self::IdInfo) -> Result<Pin<KBox<Self>>> {
->>> +        dev_info!(pdev.as_ref(), "Probe DMA test driver.\n");
->>> +
->>> +        let ca: CoherentAllocation<MyStruct> =
->>> +            CoherentAllocation::alloc_coherent(pdev.as_ref(), TEST_VALUES.len(), GFP_KERNEL)?;
->>> +
->>> +        || -> Result {
->>> +            for (i, value) in TEST_VALUES.into_iter().enumerate() {
->>> +                kernel::dma_write!(ca[i] = MyStruct::new(value.0, value.1));
->>> +            }
->>> +
->>> +            Ok(())
->>> +        }()?;
->>
->> Why is this placed in a closure? Left over from deferred error for pin-init?
->>
->
-> The macro expands into a block which needs to validate the function
-> item_from_index()?
+Ah, good. That just leaves the uninitialized "ret" in hv_call_map_stat_page=
+().
 
-It is not required here, since we are already in a function that returns
-result.
-
->
->>> +
->>> +        let drvdata = KBox::new(
->>> +            Self {
->>> +                pdev: pdev.clone(),
->>> +                ca,
->>> +            },
->>> +            GFP_KERNEL,
->>> +        )?;
->>> +
->>> +        Ok(drvdata.into())
->>> +    }
->>> +}
->>> +
->>> +impl Drop for DmaSampleDriver {
->>> +    fn drop(&mut self) {
->>> +        dev_info!(self.pdev.as_ref(), "Unload DMA test driver.\n");
->>> +
->>> +        let _ = || -> Result {
->>> +            for (i, value) in TEST_VALUES.into_iter().enumerate() {
->>> +                assert_eq!(kernel::dma_read!(self.ca[i].h), value.0);
->>> +                assert_eq!(kernel::dma_read!(self.ca[i].b), value.1);
->>
->> We should probably change `dma_read!`/`dma_write!` to return `Result`,
->> so that we don't have to wrap these calls in a closure for obscure reasons.
->>
->
-> Changing `dma_read!`/`dma_write!` to return `Result` is probably not a
-> trivial change, would it be okay to have this fixed in a subsequent patch?
-
-It is actually trivial:
-
-diff --git a/rust/kernel/dma.rs b/rust/kernel/dma.rs
-index 027ef75a461a..52d235f61886 100644
---- a/rust/kernel/dma.rs
-+++ b/rust/kernel/dma.rs
-@@ -446,20 +446,22 @@ fn drop(&mut self) {
- #[macro_export]
- macro_rules! dma_read {
-     ($dma:expr, $idx: expr, $($field:tt)*) => {{
--        let item = $crate::dma::CoherentAllocation::item_from_index(&$dma, $idx)?;
--        // SAFETY: `item_from_index` ensures that `item` is always a valid pointer and can be
--        // dereferenced. The compiler also further validates the expression on whether `field`
--        // is a member of `item` when expanded by the macro.
--        unsafe {
--            let ptr_field = ::core::ptr::addr_of!((*item) $($field)*);
--            $crate::dma::CoherentAllocation::field_read(&$dma, ptr_field)
--        }
-+        (|| -> Result<_> {
-+            let item = $crate::dma::CoherentAllocation::item_from_index(&$dma, $idx)?;
-+            // SAFETY: `item_from_index` ensures that `item` is always a valid pointer and can be
-+            // dereferenced. The compiler also further validates the expression on whether `field`
-+            // is a member of `item` when expanded by the macro.
-+            unsafe {
-+                let ptr_field = ::core::ptr::addr_of!((*item) $($field)*);
-+                ::core::result::Result::Ok($crate::dma::CoherentAllocation::field_read(&$dma, ptr_field))
-+            }
-+        })()
-     }};
-     ($dma:ident [ $idx:expr ] $($field:tt)* ) => {
--        $crate::dma_read!($dma, $idx, $($field)*);
-+        $crate::dma_read!($dma, $idx, $($field)*)
-     };
-     ($($dma:ident).* [ $idx:expr ] $($field:tt)* ) => {
--        $crate::dma_read!($($dma).*, $idx, $($field)*);
-+        $crate::dma_read!($($dma).*, $idx, $($field)*)
-     };
- }
- 
-@@ -486,25 +488,31 @@ macro_rules! dma_read {
- #[macro_export]
- macro_rules! dma_write {
-     ($dma:ident [ $idx:expr ] $($field:tt)*) => {{
--        $crate::dma_write!($dma, $idx, $($field)*);
-+        $crate::dma_write!($dma, $idx, $($field)*)
-     }};
-     ($($dma:ident).* [ $idx:expr ] $($field:tt)* ) => {{
--        $crate::dma_write!($($dma).*, $idx, $($field)*);
-+        $crate::dma_write!($($dma).*, $idx, $($field)*)
-     }};
-     ($dma:expr, $idx: expr, = $val:expr) => {
--        let item = $crate::dma::CoherentAllocation::item_from_index(&$dma, $idx)?;
--        // SAFETY: `item_from_index` ensures that `item` is always a valid item.
--        unsafe { $crate::dma::CoherentAllocation::field_write(&$dma, item, $val) }
-+        (|| -> Result {
-+            let item = $crate::dma::CoherentAllocation::item_from_index(&$dma, $idx)?;
-+            // SAFETY: `item_from_index` ensures that `item` is always a valid item.
-+            unsafe { $crate::dma::CoherentAllocation::field_write(&$dma, item, $val) }
-+            ::core::result::Result::Ok(())
-+        })()
-     };
-     ($dma:expr, $idx: expr, $(.$field:ident)* = $val:expr) => {
--        let item = $crate::dma::CoherentAllocation::item_from_index(&$dma, $idx)?;
--        // SAFETY: `item_from_index` ensures that `item` is always a valid pointer and can be
--        // dereferenced. The compiler also further validates the expression on whether `field`
--        // is a member of `item` when expanded by the macro.
--        unsafe {
--            let ptr_field = ::core::ptr::addr_of_mut!((*item) $(.$field)*);
--            $crate::dma::CoherentAllocation::field_write(&$dma, ptr_field, $val)
--        }
-+        (|| -> Result {
-+            let item = $crate::dma::CoherentAllocation::item_from_index(&$dma, $idx)?;
-+            // SAFETY: `item_from_index` ensures that `item` is always a valid pointer and can be
-+            // dereferenced. The compiler also further validates the expression on whether `field`
-+            // is a member of `item` when expanded by the macro.
-+            unsafe {
-+                let ptr_field = ::core::ptr::addr_of_mut!((*item) $(.$field)*);
-+                $crate::dma::CoherentAllocation::field_write(&$dma, ptr_field, $val)
-+            }
-+            ::core::result::Result::Ok(())
-+        })()
-     };
- }
- 
-diff --git a/samples/rust/rust_dma.rs b/samples/rust/rust_dma.rs
-index 39b6050aa3b6..962e65322893 100644
---- a/samples/rust/rust_dma.rs
-+++ b/samples/rust/rust_dma.rs
-@@ -61,13 +61,10 @@ fn probe(pdev: &mut pci::Device, _info: &Self::IdInfo) -> Result<Pin<KBox<Self>>
-         let ca: CoherentAllocation<MyStruct> =
-             CoherentAllocation::alloc_coherent(pdev, TEST_VALUES.len(), GFP_KERNEL)?;
- 
--        || -> Result {
--            for (i, value) in TEST_VALUES.into_iter().enumerate() {
--                kernel::dma_write!(ca[i] = MyStruct::new(value.0, value.1));
--            }
-+        for (i, value) in TEST_VALUES.into_iter().enumerate() {
-+            kernel::dma_write!(ca[i] = MyStruct::new(value.0, value.1))?;
-+        }
- 
--            Ok(())
--        }()?;
- 
-         let drvdata = KBox::new(
-             Self {
-@@ -85,13 +82,10 @@ impl Drop for DmaSampleDriver {
-     fn drop(&mut self) {
-         dev_info!(self.pdev.as_ref(), "Unload DMA test driver.\n");
- 
--        let _ = || -> Result {
--            for (i, value) in TEST_VALUES.into_iter().enumerate() {
--                assert_eq!(kernel::dma_read!(self.ca[i].h), value.0);
--                assert_eq!(kernel::dma_read!(self.ca[i].b), value.1);
--            }
--            Ok(())
--        }();
-+        for (i, value) in TEST_VALUES.into_iter().enumerate() {
-+            assert_eq!(kernel::dma_read!(self.ca[i].h).unwrap(), value.0);
-+            assert_eq!(kernel::dma_read!(self.ca[i].b).unwrap(), value.1);
-+        }
-     }
- }
- 
-
-
-
-Best regards,
-Andreas Hindborg
-
-
+Michael
 
