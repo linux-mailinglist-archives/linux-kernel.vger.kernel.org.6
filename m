@@ -1,150 +1,136 @@
-Return-Path: <linux-kernel+bounces-565849-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8823CA6700B
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 10:42:43 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2007DA67013
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 10:44:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F145189E7A0
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 09:42:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E28D27A3BA1
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 09:43:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FB971FC7D2;
-	Tue, 18 Mar 2025 09:42:37 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AC55207A11;
+	Tue, 18 Mar 2025 09:44:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="GAV+Q6NI"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52C161A83FB
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 09:42:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D0481F4C90;
+	Tue, 18 Mar 2025 09:44:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742290956; cv=none; b=YMybqTRzQ+SqL/LtCQ7F8q+VnqR5lsrwSSCaDJ+qaqw/eVlIkpCTJ2YDyG+N9owpccvsTpM5OrLMBy5rfarz9WelR113yr1RUtJhnph2GwDTmXR47hvT0zLS7rSwsPkchvM20KD5kLqDO+Mok8fdh809/EljTNfXDOPFupKu+IA=
+	t=1742291048; cv=none; b=h5OLYkfHJJyGIltjbBpWu7Lm/U9EIVPImnmcqdFO1YMYfKlQzHo/btEEFYCxrfPtX9r82bqWCtKj5KhIqUa5OpkvJTNvTuoyqUn0zjV9H05FyGnsCpzA9+hbSHUP3uX6/BxlXy61Y41Dmkf2/E9JRFNdn2Lj5y++iR4ayL2SH+Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742290956; c=relaxed/simple;
-	bh=y8jL4qekQfiGukKg+ROrGvBhtZJLqKiazo6PakAQMcE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HNm7Z+K/z/J8j0h/KQC2bvpxmnGXAf7CdgosFkBHIoBn20I6RB9f/Nw48XRGK2RF295NMmec78GnHluRD7skTY4207D01qbsElzcmex0yeliHts2q1y0KeBflh523zrD+k8GVA0BjkomevK3az1fZgJtka1K2Qi89+Lb95KjC44=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1tuTSp-0007k8-Sr; Tue, 18 Mar 2025 10:42:23 +0100
-Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1tuTSp-000P5E-0c;
-	Tue, 18 Mar 2025 10:42:23 +0100
-Received: from pengutronix.de (p5b1645f7.dip0.t-ipconnect.de [91.22.69.247])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id 321633DF4DB;
-	Tue, 18 Mar 2025 09:42:23 +0000 (UTC)
-Date: Tue, 18 Mar 2025 10:42:22 +0100
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, Woojung Huh <woojung.huh@microchip.com>, 
-	Andrew Lunn <andrew+netdev@lunn.ch>, Russell King <rmk+kernel@armlinux.org.uk>, 
-	Thangaraj Samynathan <Thangaraj.S@microchip.com>, Rengarajan Sundararajan <Rengarajan.S@microchip.com>, 
-	Simon Horman <horms@kernel.org>, netdev@vger.kernel.org, Phil Elwell <phil@raspberrypi.org>, 
-	linux-kernel@vger.kernel.org, UNGLinuxDriver@microchip.com, kernel@pengutronix.de, 
-	Maxime Chevallier <maxime.chevallier@bootlin.com>
-Subject: Re: [PATCH net-next v4 04/10] net: usb: lan78xx: improve error
- reporting on PHY attach failure
-Message-ID: <20250318-belligerent-emu-of-authority-0beddf-mkl@pengutronix.de>
-References: <20250318093410.3047828-1-o.rempel@pengutronix.de>
- <20250318093410.3047828-5-o.rempel@pengutronix.de>
+	s=arc-20240116; t=1742291048; c=relaxed/simple;
+	bh=JjVAJWfNcUmUHfZDuG775cDyTvwRyadV+Hxz6xa70C0=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=VKm1dOU6faHLibY3QbU1lxDJYj+mcVLPmorEDp268UKkVAnHupsdblgWcwmcdGXjKtgGKX7PnJhdBVDkaLl4MSob1YS8O1IAiCtqD5szcYmYwH80FsKGTpZdeFW3F8VE0K0kkUbejcGn0+dC7AmY38LdHABUw7+V/iBUgmxB2DY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=GAV+Q6NI; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52I8pWub019356;
+	Tue, 18 Mar 2025 09:43:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=hYUQroS/oLSOh5hulogfyJ
+	nLYKTD2nX6fZSPa1jF3dQ=; b=GAV+Q6NIgXlo453i7qu23rK18IqCuyZuW6dfbY
+	rGOrA+O5rb9TKb32hOIaUj5/IcRy4S6xIS39b4RkdxTH40npLyvcmGtKHpdjGIWb
+	ATNlnWA4la763EsRUqHQd4rHoQCeiuW7e0eZqaozXwvFjmPL0o7LbmPuitCaKWde
+	lnAJnK8aLiouNdad+lXgMxmtlbR3buqi1qoTt2ubdOx1493Qd+yoqSXdTmEDzXMM
+	qt0tlM+N5YQnaAaCzx9DO4SCqUVj/p44a4+0kACeOdiWvCLT6wUvrj737AfvO6+R
+	RONLNeYVXw2y083xNNtrRxJ5nYN8hfUsuyTtTOTcpTSX2bhg==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45d1utynfe-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 18 Mar 2025 09:43:54 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52I9hrg2021680
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 18 Mar 2025 09:43:53 GMT
+Received: from hu-arakshit-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 18 Mar 2025 02:43:48 -0700
+From: Abhinaba Rakshit <quic_arakshit@quicinc.com>
+Subject: [PATCH v2 0/2] Enable Qualcomm Crypto Engine for QCS615
+Date: Tue, 18 Mar 2025 15:13:22 +0530
+Message-ID: <20250318-enable-qce-for-qcs615-v2-0-c5e05fe22572@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="35643vawmk6esmbi"
-Content-Disposition: inline
-In-Reply-To: <20250318093410.3047828-5-o.rempel@pengutronix.de>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIADpA2WcC/4WNQQ6CMBBFr0Jm7ZjSUjCuvIdhgdOpTKKttEo0h
+ LtbuYCrn/eT//4CmZNwhmO1QOJZssRQQO8qoHEIV0ZxhUErbZXWDXIYLjfGiRh9TCVzW1t0bIY
+ DGaus01C2j8Re3pv33BceJT9j+mw3c/1r/xnnGhVyR21rTdMx+9P0EpJAe4p36Nd1/QLREtryv
+ AAAAA==
+X-Change-ID: 20250224-enable-qce-for-qcs615-de3a8c3505d2
+To: Thara Gopinath <thara.gopinath@gmail.com>,
+        Herbert Xu
+	<herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        "Rob
+ Herring" <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        "Conor
+ Dooley" <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        "Konrad Dybcio" <konradybcio@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-crypto@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        "Abhinaba
+ Rakshit" <quic_arakshit@quicinc.com>
+X-Mailer: b4 0.14.2
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=H8Pbw/Yi c=1 sm=1 tr=0 ts=67d9405a cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=mX54yU45kmd6GtLZQYwA:9
+ a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: GYs2seRQbdHK41dShdBuKuOjtj8NwW28
+X-Proofpoint-ORIG-GUID: GYs2seRQbdHK41dShdBuKuOjtj8NwW28
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-18_04,2025-03-17_03,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=720
+ lowpriorityscore=0 bulkscore=0 adultscore=0 spamscore=0 priorityscore=1501
+ mlxscore=0 suspectscore=0 malwarescore=0 clxscore=1015 impostorscore=0
+ phishscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503180070
 
+Document QCS615 support for QCrypto driver and add QCE
+and Crypto BAM DMA nodes.
 
---35643vawmk6esmbi
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH net-next v4 04/10] net: usb: lan78xx: improve error
- reporting on PHY attach failure
-MIME-Version: 1.0
+This patch series depends on the below patch series:
+https://lore.kernel.org/all/20241104-add_initial_support_for_qcs615-v5-0-9dde8d7b80b0@quicinc.com/ - Reviewed
 
-On 18.03.2025 10:34:04, Oleksij Rempel wrote:
-> Include error code in the log message when PHY attachment fails,
-> providing better debugging information.
->=20
-> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
-> ---
-> changes v3:
-> - update commit message
-> ---
->  drivers/net/usb/lan78xx.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->=20
-> diff --git a/drivers/net/usb/lan78xx.c b/drivers/net/usb/lan78xx.c
-> index e54b1ac2c4fc..d2bc6cbdbb66 100644
-> --- a/drivers/net/usb/lan78xx.c
-> +++ b/drivers/net/usb/lan78xx.c
-> @@ -2693,8 +2693,8 @@ static int lan78xx_phy_init(struct lan78xx_net *dev)
-> =20
->  	ret =3D phylink_connect_phy(dev->phylink, phydev);
->  	if (ret) {
-> -		netdev_err(dev->net, "can't attach PHY to %s\n",
-> -			   dev->mdiobus->id);
-> +		netdev_err(dev->net, "can't attach PHY to %s, error %pe\n",
-> +			   dev->mdiobus->id, ERR_PTR(ret));
->  		return -EIO;
+Signed-off-by: Abhinaba Rakshit <quic_arakshit@quicinc.com>
+---
+Changes in v2:
+- Remove additional entry for iommu.
+- Align interconnects.
+- Link to v1: https://lore.kernel.org/r/20250224-enable-qce-for-qcs615-v1-0-e7c665347eef@quicinc.com
 
-Probably unrelated to this patch, but what about propagating the error
-value?
+---
+Abhinaba Rakshit (2):
+      dt-bindings: crypto: qcom-qce: document QCS615 crypto engine
+      arm64: dts: qcom: qcs615: add QCrypto nodes
 
-Marc
+ .../devicetree/bindings/crypto/qcom-qce.yaml       |  1 +
+ arch/arm64/boot/dts/qcom/qcs615.dtsi               | 23 ++++++++++++++++++++++
+ 2 files changed, 24 insertions(+)
+---
+base-commit: 50a0c754714aa3ea0b0e62f3765eb666a1579f24
+change-id: 20250224-enable-qce-for-qcs615-de3a8c3505d2
 
->  	}
-> =20
-> --=20
-> 2.39.5
->=20
->=20
->=20
+Best regards,
+-- 
+Abhinaba Rakshit <quic_arakshit@quicinc.com>
 
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
-
---35643vawmk6esmbi
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAmfZP/wACgkQDHRl3/mQ
-kZysRgf/ZK7iXPm8CUv1sZbinwkHKzA8Tw6N6ZzYr6SN42E0NJiLzlfojaBXtSON
-u3GbRQM8pU0pr24x/uLJqgQX1jh6MqN9gJD/Bsdqr8IjueJpEvu7Dsxn1RX+31Re
-KlKY83uF5H63tKtJduhqCoFYekU4hQsfyS6TI2T/aotOv/KB7t4Svr/BrUJ0Wv6Y
-kWil/63ZOAl0AjVZkXikg71g4VLl6pvs2Wdtsvp8nkRg2y+NTLBULGc4DRj53r5f
-nOabsASMgYTa8ThMcwYMILevAPUSGXelWA7dMCBydM5YmwNnwf5Ig89Ow073qEj6
-U3tX+JS1ncOwl9TxGRtvX/omGny6eQ==
-=s1r8
------END PGP SIGNATURE-----
-
---35643vawmk6esmbi--
 
