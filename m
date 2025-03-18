@@ -1,126 +1,173 @@
-Return-Path: <linux-kernel+bounces-565929-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565930-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FA08A67131
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 11:26:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 064A4A67132
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 11:26:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 833DA4224C3
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 10:25:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 336FC19A28F1
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 10:25:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DB402080D4;
-	Tue, 18 Mar 2025 10:25:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BC42208962;
+	Tue, 18 Mar 2025 10:25:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y9Cn2E0L"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="IASshelC"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAABD204F97;
-	Tue, 18 Mar 2025 10:25:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BA45204C0F
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 10:25:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742293507; cv=none; b=Z3bPyMOP5nVa8cgDweAnEtf4iK7p2wxOtpDT38562+4tuayZFhPn0/DiHi+MvzI0P3eizX9ZW1b9vZSR77NV4l0eyVprdCD9Q46OsJwhYg82CAPhR/6K8DpapJQI1jw+t1WfqUMW/hLY48lkzuSE+QnlxENNoD7KwX25TgDICHg=
+	t=1742293509; cv=none; b=GAiZjzNIawcn/on10Pkaw72aczneJf5aPjJSxbGBX5EsACc4qWKc6GBX/9jvhsn9lqkbUyHlFS3M5Th5QFk0z1q6+AgVSj5/iGB5h6SL3eGarEL2VxRJwRVcGDP8Rqkl5K/X5Qcodwt+0ZAu6+EDo1HtL+I/LNUOqKguysy3mYI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742293507; c=relaxed/simple;
-	bh=L642RSwY3Rs3Y6ml+gWQYS1/2YS01C+t38KIsfFZw7U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dlH8AWmxPRNFfV5UH57eD9cuumsddH5aXa76QhzbhIJUSbfu4GtcMiO36eoiMfxdXvSHrcijAn+PyDbTjWgjXbXWajbLqEujowALRZT8ZlVunGBSONjTZ5AM+aLPYVwuXaZ1xtPe1Y+b6lcHvJkM9hr1/Dn3oRwYBMDATRskE7E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y9Cn2E0L; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-224341bbc1dso99939195ad.3;
-        Tue, 18 Mar 2025 03:25:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742293505; x=1742898305; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=vHJpZP+ouwvFF8IfLMmV8qW0ir9r9wU3clAjxfEY604=;
-        b=Y9Cn2E0LwqT5JQQCuTK2KxyXsbqwLQN5rG+HlhM0dr8M5dU+W5aVlQXpeKaJYEoQs3
-         1bxvMNA6S1HPcXLE6cPw9ne1BIlATJ5RYjIrjwwyiERCgKg5uwKIcZMGMxI7E+cxMhnL
-         yxNcX6ay5mB0YdWWXOcbQvxsod1KfbeGig4cNtxoY7/tloOKjG6DhTz0Zq8dfpf0Xc8T
-         ij6s1N0k4l2lQ7RXJ+VYukyJULYvtvH/OYDgppmxscCQuV8w/KttAIrtrtszADAPSK9g
-         ilcwSxj8WmWSXpRs13MxID8Svzm67A+krt6qG2m9FKtLgMquK2roIowh+6EICOIWDR+0
-         gyDw==
+	s=arc-20240116; t=1742293509; c=relaxed/simple;
+	bh=viI7y/zKVyvSQat5yicr/ZP4aQMPwYcfsOE3HA4N1zM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Czz0C+VcCPg5cW81BNrD9DaZH1YqgYzSiZi10RSVlRp3D6+dyzS6YnKfTgmY0bn24m1XUw/nqAL9EVw+DBKniKr3GVzHcIiza/Fu64K0TGgmKgFMb+9rzFualMGYN+F4iaMcvLp+kApNiDM5VRQVKU7jasElg+P5xywSgkQqU6g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=IASshelC; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52I8U0kv004561
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 10:25:02 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	9tGWEqzwTs/fY6RPkduOMFdSME0M9poWROeZ179aC8E=; b=IASshelCF92cIw4f
+	A1dPhjICdvIqb6ufrw2KWwm9tA871vKxWyLLy+V69JZFMSQIyzibEEd6RSEqxV/g
+	HVJje31jJw5qEq2eLZshtfd/m8/eqZ7juPPbU9Ypaw8hyWX54PKSCm81CWy0Lim9
+	aFqB5Gv9APizKnl0hPt09l/RjD9gLSYTHEEEhUm04pMg3XQvVOOpQGeK/CnvcFee
+	ljSrAtFPz8oIWVcI4/acLvDrPkfvQ3Y3uhIMoQJvO7qWIxnFrjtmGICsqA3JSG3/
+	W6v5STl/Ib/kyzfCCX3ahR3rPpxv/xDxHoLoPSpjDmDwXhQWWCql8tk6X22y7uCs
+	13aKpA==
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45etmbsy9m-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 10:25:02 +0000 (GMT)
+Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-476783cbdb8so10098891cf.1
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 03:25:02 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742293505; x=1742898305;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vHJpZP+ouwvFF8IfLMmV8qW0ir9r9wU3clAjxfEY604=;
-        b=OU/A44gnl1FKd463Tit9jdTyizDTlVT2THcjJNx4EcXTc8Pb1WFfdLq1fkp+3/S2N4
-         pKLUjH71PP76Waf7VCxVoj2P3CaOSFmUXliaLpqxp/gBc8ly4Yhe1eL21hkn2vCVPgR8
-         VbU4EBo7NrtfZaChP4yVJkAZ6mzalRCrA0m4qXXRGzUQnNdUixuitCrQANUgOS8UdadV
-         hPAKOmN1576o/i9UTpwIWPJIyOmfonIhgoiwuy7iHsODGsT74uCm1HV8rAXl4wpM4BFu
-         M2+r5zIeG/4+Wa6DmvjnRY1JwzhFiJ7DS18hyuNPl4YzP5k72k80sSkhekXKE5b72qOh
-         fr5Q==
-X-Forwarded-Encrypted: i=1; AJvYcCV97SV/4baFhKPNR9v+fL/HXZmHvKyh9o6cGg0Wek3WSf97+sb0Yri4wY7jAurSKec4iRM=@vger.kernel.org, AJvYcCWsr82XFYIcU5n0defP92hohxzpfod6NXIHKfQKexTWsujbd3ACVMjnH+GGk0MEIzdsabZEwi3d@vger.kernel.org, AJvYcCXHER7oGbzfXdPX397cizmMRoajAwKPgupiLT8pElrlssSQ3UHDfzRbp5gVDQsi/B9OI1xdFf9yByGC9DZq@vger.kernel.org, AJvYcCXk/otUKiEsIxecwkfWnrM9cyI9M88rUP+Gssi8AgFaVx6UNlRSn4TMaM2YlX4LelAc6lIrcFkP8Hxz0dyX5mif@vger.kernel.org
-X-Gm-Message-State: AOJu0YzNLjZD0lfOLWMP9nVcbCAmNP1wJou/JLEiNDqJRLJRVKn2W6wk
-	d76U8jEazt8N/X9KkFbHd+w2nDLEjsxQyYH9o1uGln4bHtTHWkA1pUUC5dy7syoOwg==
-X-Gm-Gg: ASbGncvwJU0NclE9/VqbiKYw4n0ApONBLRpycZsyPGUbBHIOSBOlxfRCS1yBnTLdljR
-	g0uMWk5RK7Fg97wdyzrGZ/+icYqy6FsZHCGvpx9Z/bjyoPVdRFX8d+x53fCYu1CZwIKHfz69WqA
-	XF5MU8o59hAnIv/JG82NP37FeWpMMTV2YacG5Tu8TtXmQC+o6P2o3gex1wH5eZc0h3aarpyrPPi
-	veFzs++fR97miypS72Lii/nRwqjcciajZ4/jHNOf2KYw6p8KYVAuw0Sf1qMij2pVCRS+WX3Z0kJ
-	FQOvfAJ0vRZ0KIgeISdbwW4CdvHiUtAYJmcnC6Hyukw7SX+gCw==
-X-Google-Smtp-Source: AGHT+IE6gdO1UuE0ixmpB6cazW3Pjzhx+tIz6PbNhLSt1J2XBNAgq1vv++MsWYhJd831LrG0jM1yLg==
-X-Received: by 2002:a17:902:d2ce:b0:210:fce4:11ec with SMTP id d9443c01a7336-2262c51bc7dmr45795425ad.1.1742293505083;
-        Tue, 18 Mar 2025 03:25:05 -0700 (PDT)
-Received: from fedora ([43.228.180.230])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-225c6ba6a38sm90449665ad.108.2025.03.18.03.24.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Mar 2025 03:25:03 -0700 (PDT)
-Date: Tue, 18 Mar 2025 10:24:40 +0000
-From: Hangbin Liu <liuhangbin@gmail.com>
-To: "Jason A. Donenfeld" <Jason@zx2c4.com>, netdev@vger.kernel.org
-Cc: Jakub Kicinski <kuba@kernel.org>, Shuah Khan <shuah@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Simon Horman <horms@kernel.org>, Phil Sutter <phil@nwl.cc>,
-	Florian Westphal <fw@strlen.de>, Petr Mladek <pmladek@suse.com>,
-	Yoann Congal <yoann.congal@smile.fr>, wireguard@lists.zx2c4.com,
-	bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCHv4 RESEND net-next 0/2] selftests: wireguards: use
- nftables for testing
-Message-ID: <Z9lJ6PXHeL7tfhUf@fedora>
-References: <20250106081043.2073169-1-liuhangbin@gmail.com>
+        d=1e100.net; s=20230601; t=1742293501; x=1742898301;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=9tGWEqzwTs/fY6RPkduOMFdSME0M9poWROeZ179aC8E=;
+        b=kQs7VGBHvelzXggNVXLO83xnok9t2ecQI35ZKjZJn766bzlOjb9MKB3PPKE9MZZ2Hv
+         yc/BiOV/W0Cs/9svXsV2Nx+5mxULHRgKN4OptuW303qRB7ZtZceXoyWGm6elf43mGw+e
+         Afm014rzncZdD+NvA/FjFLZEpp3upSZkZnpUC9kKuiRP9OGrOdwBhidc/a30dK6w0t8a
+         uuqbnIWLqH7wrFoZGmTLse1UWam5Ihv0W+L7XMp634el9Y+EO9t9mDCo0S+ZANWpVXl8
+         4e6g/n78pYNbwZQHEiXmdts2pYLigrN/Hob06igy72fbChaY8vQxdD+WS/Wx4oNuoE7v
+         brrA==
+X-Forwarded-Encrypted: i=1; AJvYcCVMhzSFLDl/buiC0byZHpba+ICwLml7thW9qiUo3KEyofnZ5cPvTPgT4BY9tv2l+RPDmNXULuHcY9vFNhY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxSyPGETYcLnHymEYid/3zf9BlzaF31WjMV+dPPmIxtBJmkhLfe
+	fAk2vdKlPO66mAI5swuXEVVaVIWXPnhQtoNVPtVAfeaEoPVgnaFA9PcQ4v+2Xv8a7pGgtO3qsGP
+	njmjKXq6KGFgsYRy8hs5t367vl+A1FqwKcwVFRd2kw7yV6oRKx4rotfiMeCAcdLw=
+X-Gm-Gg: ASbGnctlj5ge5YFGy+tY2zWa6/QNqavyADgylAf3nXuWfSY8iAk1QOachG42c2MtOt6
+	ZhSPEduP/G4NfwC6kUwZkYMuxzX0tf+0FS7qF86D+W19PwXeZdUM/ksKSW4xLXxsbzmiM+d3OS4
+	cvqn8fNKKLjxXbJrYxZrnFGZdAjtef32gf4ZfnIbhFgt6JO5lX5CwiiBvGlezi1qXM/VD6tVySk
+	siHR8xWmRyAzD1Z6FvG6S9V1p3YCgW+/wKWCyEIRlZo5kr1NuvUwNHTMApslKZP2smJxohJGGom
+	TTMjWWuaCdZ7iak1mfaYRG1H8q/UwT4plSp08Etod/k3ExzUlaegC+sKt3k4GlJTYemh+Q==
+X-Received: by 2002:ac8:58c1:0:b0:471:fe93:4b5f with SMTP id d75a77b69052e-476c81b622emr86278501cf.13.1742293501466;
+        Tue, 18 Mar 2025 03:25:01 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGDsMQDOS+0HDILyNXHIvpznOD0Y7l4AYvNrP+8R89ZspJwFSR2+cZXNbEUsjSQJ6tnA8Zr6g==
+X-Received: by 2002:ac8:58c1:0:b0:471:fe93:4b5f with SMTP id d75a77b69052e-476c81b622emr86278321cf.13.1742293501043;
+        Tue, 18 Mar 2025 03:25:01 -0700 (PDT)
+Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e816968bfbsm7331474a12.17.2025.03.18.03.24.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 18 Mar 2025 03:25:00 -0700 (PDT)
+Message-ID: <8e830d99-61d1-43c0-bcd3-a8b669fcc2bb@oss.qualcomm.com>
+Date: Tue, 18 Mar 2025 11:24:57 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250106081043.2073169-1-liuhangbin@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/3] arm64: dts: qcom: sm6350: Add OPP table support to
+ UFSHC
+To: Luca Weiss <luca.weiss@fairphone.com>,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
+        Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250314-sm6350-ufs-things-v1-0-3600362cc52c@fairphone.com>
+ <20250314-sm6350-ufs-things-v1-2-3600362cc52c@fairphone.com>
+ <cddcd851-5e8c-4202-baad-e56a09d5775a@oss.qualcomm.com>
+ <D8IJ5TEHREW1.2FK88ACT1JPYQ@fairphone.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <D8IJ5TEHREW1.2FK88ACT1JPYQ@fairphone.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: ZA4tzLo94QTOeG9UoHKzfxBruytAXTKq
+X-Proofpoint-GUID: ZA4tzLo94QTOeG9UoHKzfxBruytAXTKq
+X-Authority-Analysis: v=2.4 cv=aMLwqa9m c=1 sm=1 tr=0 ts=67d949fe cx=c_pps a=EVbN6Ke/fEF3bsl7X48z0g==:117 a=FpWmc02/iXfjRdCD7H54yg==:17 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=6H0WHjuAAAAA:8 a=EUspDBNiAAAA:8 a=4oVbTNSGWYtvGuB_2MIA:9 a=QEXdDO2ut3YA:10
+ a=a_PwQJl-kcHnX1M80qC6:22 a=Soq9LBFxuPC4vsCAQt-j:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-18_05,2025-03-17_03,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ priorityscore=1501 spamscore=0 clxscore=1015 phishscore=0 mlxscore=0
+ suspectscore=0 malwarescore=0 mlxlogscore=999 bulkscore=0 adultscore=0
+ lowpriorityscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503180076
 
-Hi Jason,
+On 3/17/25 1:12 PM, Luca Weiss wrote:
+> Hi Konrad,
+> 
+> On Fri Mar 14, 2025 at 11:08 PM CET, Konrad Dybcio wrote:
+>> On 3/14/25 10:17 AM, Luca Weiss wrote:
+>>> UFS host controller, when scaling gears, should choose appropriate
+>>> performance state of RPMh power domain controller along with clock
+>>> frequency. So let's add the OPP table support to specify both clock
+>>> frequency and RPMh performance states replacing the old "freq-table-hz"
+>>> property.
+>>>
+>>> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
+>>> ---
+>>
+>> [...]
+>>
+>>> +
+>>> +			ufs_opp_table: opp-table {
+>>> +				compatible = "operating-points-v2";
+>>> +
+>>> +				opp-50000000 {
+>>> +					opp-hz = /bits/ 64 <50000000>,
+>>> +						 /bits/ 64 <0>,
+>>> +						 /bits/ 64 <0>,
+>>> +						 /bits/ 64 <37500000>,
+>>
+>> This rate on this clk requires opp_svs (not low_svs)
+> 
+> Not sure where you're seeing this?
+> 
+> This is from my msm-4.19 tree:
+> 
+> gcc_ufs_phy_axi_clk_src:
+>     .rate_max = (unsigned long[VDD_NUM]) { [VDD_LOWER] = 50000000,
+> gcc_ufs_phy_unipro_core_clk_src:
+>     .rate_max = (unsigned long[VDD_NUM]) { [VDD_LOWER] = 37500000,
+> gcc_ufs_phy_ice_core_clk_src:
+>     .rate_max = (unsigned long[VDD_NUM]) { [VDD_LOWER] = 75000000,
+> 
+> [VDD_LOWER] = RPMH_REGULATOR_LEVEL_LOW_SVS,
+> 
+> My intepretation for this is we need low_svs?
 
-I saw the patch status[1] is still "Awaiting Upstream".
-Is there anything I need to do?
+Hm, I took another look and it seems you're right, I must have misread
 
-https://patchwork.kernel.org/project/netdevbpf/patch/20250106081043.2073169-2-liuhangbin@gmail.com/
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
-Thanks
-Hangbin
-On Mon, Jan 06, 2025 at 08:10:41AM +0000, Hangbin Liu wrote:
-> This patch set convert iptables to nftables for wireguard testing, as
-> iptables is deparated and nftables is the default framework of most releases.
-> 
-> v3: drop iptables directly (Jason A. Donenfeld)
->     Also convert to using nft for qemu testing (Jason A. Donenfeld)
-> v2: use one nft table for testing (Phil Sutter)
-> 
-> Hangbin Liu (2):
->   selftests: wireguards: convert iptables to nft
->   selftests: wireguard: update to using nft for qemu test
-> 
->  tools/testing/selftests/wireguard/netns.sh    | 29 +++++++++-----
->  .../testing/selftests/wireguard/qemu/Makefile | 40 ++++++++++++++-----
->  .../selftests/wireguard/qemu/kernel.config    |  7 ++--
->  3 files changed, 53 insertions(+), 23 deletions(-)
-> 
-> -- 
-> 2.46.0
-> 
+Konrad
 
