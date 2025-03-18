@@ -1,155 +1,113 @@
-Return-Path: <linux-kernel+bounces-566530-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566531-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D105A67964
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 17:30:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 75EE9A6796E
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 17:30:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 534533A7D64
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 16:24:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F02388618A
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 16:25:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 272E5210192;
-	Tue, 18 Mar 2025 16:23:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FCF1211476;
+	Tue, 18 Mar 2025 16:23:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FACBxXmG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6914720E033;
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="WtYCInzU"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 375D521127E;
 	Tue, 18 Mar 2025 16:23:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742315025; cv=none; b=E09xiFE2NPTX+L7buRMwOgt3pIzoD5Swx3RIwqZH32Wcudg0gkieZ0kJX2OqvFKUCQd3zFvzmLMN/boDvdd8uilyXDe4+/W5hFL65x7yUsM/pNhaDJF1COGLMu6fEFaTL31K+tSTVkZQQl0OX6IaBuPoi1eZIjNqaCycVToPv94=
+	t=1742315027; cv=none; b=Ndk8qNAx3iVfT7RdZlx1YjEOaWQlNZFInrrhlr8WY0EawEF17m9BDQP7NeosekPCOngqykhGszRG5dCsrX/jUTVuWDwEy3ce34k0RZu+FZaYk5SOg86RIiuzO0kwrlzLhsIcvGN7Yn/x0WD97+1qLKECtDCjZDzly4kRqphDCbo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742315025; c=relaxed/simple;
-	bh=EKLOaay0qi1TNNq5twhyc/GBHUQCaTIC2Dib6kn6Qwc=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=P9JUYEjzBzOV+fKq41kD5EHBZMwuQU2OII25J4madmGgAoJAgvVX39NNpezdDVaQrpMcNaoLcAtAeD/ZoB7+z43btjz4derjW4+r44R1ULAcU4X+Mf6QXS0zSWS30WX3OjpMT/8d2A8FWGVdhtBpZD8p7aGqrshLPFtLdMHSaCc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FACBxXmG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76778C4CEE3;
-	Tue, 18 Mar 2025 16:23:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742315024;
-	bh=EKLOaay0qi1TNNq5twhyc/GBHUQCaTIC2Dib6kn6Qwc=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=FACBxXmG5+pBh21YK3N51xqWxNk3jgOBoy+3I/zLiua9TkKuytN/8neYyTTGPKWx+
-	 /fZOOCGZ+cLDpV7CMf0ZT4n6fFpL7lc/7M0VgPHuPNsJC/PUM+VvLnCTX1f4rCBTpQ
-	 DvAVGLd6KvWNR4KNXoEhLm+fjzDc/OgaCTRVTrFp9ppXKXMEl1X1azoTYYeTQSpEaD
-	 yX6SA7xV9aGlyF5gGRfHuo5HeSk5up0XmhJSW/6omVIfRxne895RcHogG0ZOAhX8Wk
-	 O91Du95ygWc+3fQajUkiEGnhRqPtcD+XxBJJ+fahJFBRFb9Uq+pdFg4h4yVu/HQLn1
-	 /AIcbpCIMP2EA==
-Message-ID: <bde38364-5c20-4030-ad7d-9ae38971b260@kernel.org>
-Date: Tue, 18 Mar 2025 17:23:39 +0100
+	s=arc-20240116; t=1742315027; c=relaxed/simple;
+	bh=H0VyU5niPt2Corc3rgjQq4JMZQW1ybxG++hZ0Pgp9lA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IamuT6v4UBuzB1iXZaTkkyQMckNLUmqDfavnnJAG6fF1d87wyXK8J8itpaB4LKNaiBVNuOs5D8Z9lggQS64JfoD5K6aBC79ll88YfWX7FN+NHqwbW+UN/gggyRN9Wy1raS8RPq+0gDQhNsFpfwWHuEjtrnXiFrRr/ULz5QPZf2U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=WtYCInzU; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: by linux.microsoft.com (Postfix, from userid 1152)
+	id C1547210B142; Tue, 18 Mar 2025 09:23:44 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com C1547210B142
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1742315024;
+	bh=UYVcYJMuH7XdIAr0gl7kC0+gfugmYJMN1BRCXLDbk1g=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WtYCInzUBtOxmwdCZuliQKhgyN3DcFxVBeU4m+M2qQ7uv54cpwFSffVWBEl318FTp
+	 JqdcpNXI+HOvFpkC5ANXDoWqmvTqiyfUyWfYJDHa3m0j5lgTNc9Y9Pef7X4kmZQPZt
+	 fB/KhvAA0JKnAPnmL9U6XnwipWGgkBEIfSQ4d75c=
+Date: Tue, 18 Mar 2025 09:23:44 -0700
+From: Shyam Saini <shyamsaini@linux.microsoft.com>
+To: Petr Pavlu <petr.pavlu@suse.com>, gregkh@linuxfoundation.org
+Cc: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+	linux-modules@vger.kernel.org, code@tyhicks.com,
+	linux@rasmusvillemoes.dk, christophe.leroy@csgroup.eu,
+	hch@infradead.org, mcgrof@kernel.org, frkaya@linux.microsoft.com,
+	vijayb@linux.microsoft.com, linux@weissschuh.net,
+	samitolvanen@google.com, da.gomez@samsung.com, rafael@kernel.org,
+	dakr@kernel.org
+Subject: Re: [PATCH v4 0/4] Properly handle module_kobject creation
+Message-ID: <20250318162344.GA21474@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+References: <20250227184930.34163-1-shyamsaini@linux.microsoft.com>
+ <ae1f74bd-4e8c-4031-8175-240f5f8d7f17@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] iio: light: bh1750: Add hardware reset support via GPIO
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: =?UTF-8?Q?Sergio_P=C3=A9rez?= <sergio@pereznus.es>,
- linux-iio@vger.kernel.org
-Cc: tduszyns@gmail.com, jic23@kernel.org, lars@metafoo.de, robh@kernel.org,
- conor+dt@kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-References: <20250316145514.627-1-sergio@pereznus.es>
- <01f48f6d-55a4-4dbe-b1ae-ef8c54dcc1ff@kernel.org>
- <f0536d74-5433-4086-9dfc-1ce6aeeebe00@pereznus.es>
- <8992a79d-0859-4d7f-9b47-52e20b11260a@kernel.org>
- <144b5c43-f8c6-44d1-bcff-83158ac29781@pereznus.es>
- <202b4446-0ce4-4288-8588-6edfc32125d1@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <202b4446-0ce4-4288-8588-6edfc32125d1@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ae1f74bd-4e8c-4031-8175-240f5f8d7f17@suse.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 
-On 18/03/2025 17:21, Krzysztof Kozlowski wrote:
-> On 18/03/2025 17:06, Sergio Pérez wrote:
->>
->> El 18/03/2025 a las 16:16, Krzysztof Kozlowski escribió:
->>> On 18/03/2025 15:16, Sergio Pérez wrote:
->>>> Hello,
->>>>
->>>> El 17/03/2025 a las 8:24, Krzysztof Kozlowski escribió:
->>>>> On 16/03/2025 15:55, Sergio Perez wrote:
->>>>>> Some BH1750 sensors require a hardware reset before they can be
->>>>>> detected on the I2C bus. This patch adds support for an optional
->>>>>> reset GPIO that can be specified in the device tree.
->>>>>>
->>>>>> The reset sequence pulls the GPIO low and then high before
->>>>>> initializing the sensor, which enables proper detection with
->>>>>> tools like i2cdetect.
->>>>>>
->>>>>> Update the devicetree binding documentation to include the new
->>>>>> reset-gpios property with examples.
->>>>>>
->>>>>> Signed-off-by: Sergio Perez <sergio@pereznus.es>
->>>>> Please run scripts/checkpatch.pl and fix reported warnings. After that,
->>>>> run also `scripts/checkpatch.pl --strict` and (probably) fix more
->>>>> warnings. Some warnings can be ignored, especially from --strict run,
->>>>> but the code here looks like it needs a fix. Feel free to get in touch
->>>>> if the warning is not clear.
->>> You keep ignoring paragraphs. Did you read this?
->>
->> I pass this check several times and every time I do any step to make 
->> sure I am well.
->>
->> scripts/checkpatch.pl -f drivers/iio/light/bh1750.c
->> total: 0 errors, 0 warnings, 354 lines checked
-> 
-> 
-> That's not how you run checkpatch. Read the submitting patches. Just
-> like the name tells you, check the patch, you run it on the patch.
-BTW, I wonder which guideline told you to run it on the file? Because
-checkpatch description and submitting patches tell about running it on
-the patches, so I wonder where did you get suggestion to run it like that?
+Hi Greg,
 
-Best regards,
-Krzysztof
+> On 2/27/25 19:49, Shyam Saini wrote:
+> > Hi Everyone,
+> > 
+> > This patch series fixes handling of module_kobject creation.
+> > A driver expect module_kset list populated with its corresponding
+> > module_kobject to create its /sys/module/<built-in-module>/drivers
+> > directory.
+> > 
+> > Since,
+> > [1] commit 96a1a2412acb ("kernel/params.c: defer most of param_sysfs_init() to late_initcall time")
+> > Call to populate module_kset list is deferred to save init time so that
+> > external watchdog doesn't fireup on some boards and Linux can take
+> > responsibility of feeding watchdog before it spuriously resets the
+> > system. However, [1] this fix caused another issue i.e, consumers
+> > of module_kset can't get related module_kobject during driver
+> > initialisation and hence can't create their
+> > /sys/module/<built-in-module>/drivers directory.
+> > 
+> > Consequently, [1] breaks user-space applications for eg: DPDK, which
+> > expects /sys/module/vfio_pci/drivers/pci:vfio-pci/new_id to be present.
+> > 
+> > The second issue was reported and the [2] revert of [1] was
+> > proposed. However, [2] the Revert doesn't address the original issue
+> > reported in [1].
+> > 
+> > This patch series addresses both issues reported in [1] and [2].
+> > 
+> > [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=96a1a2412acb
+> > [2] https://lore.kernel.org/lkml/20250130225803.321004-1-shyamsaini@linux.microsoft.com/
+> 
+> This looks ok to me. I only think the Fixes: tag should have remained
+> solely on the last patch in the series as that is the actual fix. I'll
+> adjust it when picking up the patches.
+> 
+> I'm going to wait for a few days if others still would like to comment
+> and then plan to queue this on modules-next.
+> 
+> @Greg, could I please get an Acked-by from you on the last patch in the
+> series as this affects the code in the driver core?
+>
+
+do you have any feedback on last patch of this series?
+
+Thanks,
+Shyam
 
