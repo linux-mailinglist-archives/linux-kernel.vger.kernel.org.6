@@ -1,147 +1,186 @@
-Return-Path: <linux-kernel+bounces-565854-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79A65A6701B
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 10:45:08 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 854A5A67028
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 10:46:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F8FF3AAEB0
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 09:44:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC33A1897260
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 09:45:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F639207675;
-	Tue, 18 Mar 2025 09:44:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19057203716;
+	Tue, 18 Mar 2025 09:45:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nRJ+VON8"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z7A/dh9m"
+Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CF47202C2B;
-	Tue, 18 Mar 2025 09:44:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C30917A2E5;
+	Tue, 18 Mar 2025 09:45:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742291093; cv=none; b=Q62zZWjORwF3wUyw//O7iAadYL43XEDQZhtqFY1fVr9C4PjjVdDB+TdSgo/sTeVK0MmEL+Dq0IlxKtQv94P8Fhl4chGZEws/dGPCZM5d1GXV3SJPXVqLgSF9nM6QAxJevc3R3Fog3yD08MeiTR4ZwKUa/iirA2gegtyN3FUAi04=
+	t=1742291140; cv=none; b=Il1jjiFiDKFy91gHXWqXQwJkXN9OnNDSICrYCnKZcEhtAHQBGweNbm/JdJXNllwixLxsgH6MIphS4gFF+MC9ZCo/kU91rh44hjrHdo07cLASY2tlAqF54Vq2PX/xgzYzsW2u0KAY3qGxVgOy8GEljax8ox9+L48EyJETQ8RKTCc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742291093; c=relaxed/simple;
-	bh=9dseCUgfawFHDhoNUQBKZC9vwAGc9hCxkFUNPU0iZpg=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UDgu6RcwcaKQPVAsl8K4x4W92IFEiENAUkn9aYlA2BdWwDoquvjz63yo4ENCJUe3y6hSz6xga17lACMOSo2PfRI5gGGAelWcljsMZ7COU/K1qcBK+K8MilRRONqQNHCW4CCCWvBMVjbdHhkxWpzCjCCjmFdtoJwBXk9HL/QVSGs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nRJ+VON8; arc=none smtp.client-ip=209.85.218.51
+	s=arc-20240116; t=1742291140; c=relaxed/simple;
+	bh=NI+icNdHE/kjJDSc1Rv9EnAjGk02C1vXFp7hrpGJnJs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Q36U1i6pHOvI7mAyLdh0yYuig2VujDuJKYEWF4FCx4LrfcHtWsARgl9hOSnI+Z6O48FvsL1NIhtYvt7OewhBg7yy00ozlYv/BrTCZCKn3mDIdBDwnDQc0zUZBVKirHKzpRK0EBr+L+88sIi3tfNmt3wNtDoexJkhF5sU1VWPK10=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z7A/dh9m; arc=none smtp.client-ip=209.85.219.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-ac34257295dso142731966b.2;
-        Tue, 18 Mar 2025 02:44:51 -0700 (PDT)
+Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e6092c91a04so574174276.1;
+        Tue, 18 Mar 2025 02:45:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742291090; x=1742895890; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=s04vWbS/+IELd1isfxtGM2wXxsUsxWYm6LzkaytObnU=;
-        b=nRJ+VON8lZNs5yFAAWd+pWzT6b5WFj9XU6tdQ3WVlSPPSb1ap027ojzWoXvACtJpgg
-         O5C55mzEbzFPY+HlqMNppFNHQ1ymGtRsiAHXD0GSJ+7+IC7EVYrIu5Kfnq8sxtvPJA5q
-         Moe4XNA+BUGMWYUgzNiLxRnsPOPWGTJwbFx+mKqQA5G5x/8b+Z8E6fOa/fFyCX9j4PP9
-         QH0nV8uKtdZZG7dnzsLiApfnJUdbFeG1x7ZNdXoKKhqIU4a+2KB2seF090YK5Y8Qorgy
-         rJUj9yb12TryfrF+f8cS2FoaamBZIuIdkVyGLcG4oNZx6WVzd54paToybK6FXrad1k/3
-         Rw3g==
+        d=gmail.com; s=20230601; t=1742291134; x=1742895934; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/Qn84JDuDA3xLk2r2LMBqE1c86PWyWTSDKpLau5Rwic=;
+        b=Z7A/dh9mRWul6+Y3Y6tDOPZKHaDbTh6siopY0DOaFz9/+PWFIuK0f4ZRId3Mgc7CXG
+         /4bM8FI/samtLkQrsM60xSu+kVBqLFjsp8AwsEsHNoQjo2Z/jOfeh4BMSQw97QQpM7jQ
+         fOxjye78nhRy+pG5yaPQYve7dwGx+Nwil9syu09ptDxvjGdbdBMdXwu4NeYHugk/rH4U
+         Vx0FFxzz/1iQpsBJWikeUpuapuKazoPNRm0xw8ci7kSaH+voGoOiVnHBI1byxg61TWHb
+         wSP7AUHT4XI69JQsVt8V3rrgscMfx79Ohtu9axIPg6HjLJ4aL7WGzbmVy5/RppGmiRRn
+         kSdw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742291090; x=1742895890;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=s04vWbS/+IELd1isfxtGM2wXxsUsxWYm6LzkaytObnU=;
-        b=wKNwnftCKB6lHf805pcHS1gxEU2/+P7JF/YoVMQnyLyFMLJIXLOPrZFwPRhFdYLfhV
-         rZiVUxqpJdAqPSDXtIkL3EKgK8malpUNfeS1FUhmcpM5zajibzIYwh6esiQebH9oURPZ
-         yqcjDQOV+DtWu4i/2fdI4/s1+GmOFbavGfTaeA4agNv40N+Tt4NpgQX0QuByWgJ4+FoB
-         8vtaMYJho0vkAav6wPpwD6KeaIOpTAvyE5TFlKHA3PvJb1sG9BcZjEtJOA7Rxu/gERCs
-         vEEAYNX/Bj4W3LimTEQBzdPmlEu5s809bzIfw7XhAjKSWpoKju0vCk6xlsnUqhZ5E6/4
-         xzqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV4y4mDURpl4cvxxQljRx3H10GK1RISZ8obCViSzlapXe5XYmeIcKxtbRUwrkHZz7AjJe4PTO3H7Mr40Glv@vger.kernel.org, AJvYcCWWLZ+tLgtl+XKuYiXOACtbqXIQHPZXQQW0o89A7KEjo2NsB+jtdzgMouwG5vG/zotaJRk=@vger.kernel.org, AJvYcCX8bNe8dXNqQojNt+zfWOc0skp2og6lWYJT+rgUsRSf5w7QSqAsyI72jfO3ZuflHirzu/i8iRuHt8VYV6gxKE61@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy9ceGVqlJoSK/XnHL1PPE+72Bm901r5sihPXZQACxYXb/mDb+b
-	Lu8ZkknvuPjeBYPeAqomqrtqgNRiJstiZAef+7lgrFwlhcwHXXvf
-X-Gm-Gg: ASbGncui8Ymzw6PAjp2YhYIJOdA0V7Dv5fGzJ78xys9KNjMZRo6mmbRLm/1p8Urye8a
-	H7LWxZpKDwi7RNIQzBLp7mmwgtMq9+043l+lDfLH83UIomK0KnJjo4z4CLAMETqJksJ02PR4b2J
-	AiYyKxBeMsTFjSwIc2pzV0Gq5IEc9hHU0U2mYzz9YCcJfjzBP4bGdMl4P9sZWJJ4bjZlXCDdBZa
-	w0FzgCBv4XyGG0msb+Zi5OLb+9IpNbLQ6gyzjbAFazOsZcZJRhY5doWecY2HGcs1qCK1zVKsNLA
-	Z5xW5mOa3eiKDeakEiOPIaeGnjDQ0gs=
-X-Google-Smtp-Source: AGHT+IFepVwFcfXs2vuS35E7cRvymbh0mZHbilkMAE6IL4hvEQz4oLQRWeCIgwZ3GbrhCKcxaRLFHg==
-X-Received: by 2002:a17:907:c27:b0:ac3:4370:f6d2 with SMTP id a640c23a62f3a-ac34370f77bmr1085273166b.4.1742291089794;
-        Tue, 18 Mar 2025 02:44:49 -0700 (PDT)
-Received: from krava ([173.38.220.48])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3149cdec8sm816734266b.112.2025.03.18.02.44.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Mar 2025 02:44:49 -0700 (PDT)
-From: Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date: Tue, 18 Mar 2025 10:44:47 +0100
-To: =?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn@kernel.org>
-Cc: Andrii Nakryiko <andrii@kernel.org>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Mykola Lysenko <mykolal@fb.com>, bpf@vger.kernel.org,
-	=?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn@rivosinc.com>,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH bpf-next] selftests/bpf: Sanitize pointer prior fclose()
-Message-ID: <Z9lAj-1COhR82P_O@krava>
-References: <20250318081648.122523-1-bjorn@kernel.org>
+        d=1e100.net; s=20230601; t=1742291134; x=1742895934;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/Qn84JDuDA3xLk2r2LMBqE1c86PWyWTSDKpLau5Rwic=;
+        b=dZUA0eeEcnvI98HY22e5uu/Yn1B7WvaCBcWivUV/5g+YdAd9bnkOlv52DBCqNZG2sm
+         5FfRC9jHR8xmtbHy9oyuTD5dkogNBGNtwdeHN5pG3Mu3GWmWM7mY9AmlTfnrw0FdPrQx
+         aWBIJc30obcIfYRqY7OMHB3rH6eAcWCGO4fOPV0a7TbmQExh5WHTrP3Y16rO+7ctLXoW
+         Gabi7JnhTC1v2Yml/Qwl5JSBPVK9NTNAvNHwwcoLa6a4hVpfpuq/twrzML7ixX8sJJ/s
+         2pXWnIMBdC+wsmNbB6nw12sMG9OfYBi4ocXk7lpPg4Rc1iJKqjTnEGF/EvVbiPNp6vtZ
+         4XFA==
+X-Forwarded-Encrypted: i=1; AJvYcCVr7a+yhof1BrVExLkKU8XgXzEKnoHiyEauF8n77Up/Eqxv4oZzSy/uAyT27BPjWEj+c+JanX+PTN8=@vger.kernel.org, AJvYcCWU1Xu0DXTerCRB/l1GP7neqyiCRofgU9ygVpmzQGzriBmUI81G0MXxldVi7D2gK58QHkSSjiZATOt/Cvxa@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyr4D7bW5gLpiIzo/pln3065m1rBDgmGM+uEF4be8VQRDvMmXr4
+	bIwNaFlCEf5b+OJBbg0O+HzjdI7pOfgcoywSReFEJdwiVLqzKEEwCNVkqxIRdZDcY9OmfmF6WH8
+	mKi/+su96nODfqa/5FSx9aa16tAY=
+X-Gm-Gg: ASbGncvG7NosNQSznJNAPiBmT4jg0EvfhepL5jD5xLxH0K7OWaW7lw3shbGGsPcv7cw
+	cFKJn/sN2v11SpU7AnWDAJKUsvbs8PNShGlxBLznQ5yBX21l4xYmNiz2MGM/BgvIRteMK/IlFLd
+	eMxHSrMtr+bbVXIo9vB3u4tmfVCw==
+X-Google-Smtp-Source: AGHT+IFSAlgMamzFOCoXfjaQGVzSafCF9qvzhVznUeZX2L++PcI5pep9UYdaYo16f0PeoPMfE6rRnPf1VdViqrA/iFA=
+X-Received: by 2002:a05:6902:c0c:b0:e63:d1f5:b933 with SMTP id
+ 3f1490d57ef6-e63f64ee1damr9558401276.3.1742291133953; Tue, 18 Mar 2025
+ 02:45:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250318081648.122523-1-bjorn@kernel.org>
+References: <20250313165049.48305-1-l.rubusch@gmail.com> <20250313165049.48305-5-l.rubusch@gmail.com>
+ <Z9ctSODRTxI53jAY@surfacebook.localdomain> <20250317105540.4b4a586f@jic23-huawei>
+ <CAHp75Vc=c=0yhtaKuiE4mZTTzQdrPywt89E7A1GuHha9=V=GUQ@mail.gmail.com>
+In-Reply-To: <CAHp75Vc=c=0yhtaKuiE4mZTTzQdrPywt89E7A1GuHha9=V=GUQ@mail.gmail.com>
+From: Lothar Rubusch <l.rubusch@gmail.com>
+Date: Tue, 18 Mar 2025 10:44:57 +0100
+X-Gm-Features: AQ5f1JrBxAZfBdrAtWxp08TdjIs0DoPG4EvIEstqyKFgVYM4AEguMcYoIlXCvjE
+Message-ID: <CAFXKEHacRWoGz59FYJJyYjOsg5CBTAFYPdwobvmF4jUqZJJAqw@mail.gmail.com>
+Subject: Re: [PATCH v4 04/14] iio: accel: adxl345: introduce
+ adxl345_push_event function
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Jonathan Cameron <jic23@kernel.org>, lars@metafoo.de, Michael.Hennerich@analog.com, 
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, eraretuya@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Mar 18, 2025 at 09:16:47AM +0100, Björn Töpel wrote:
-> From: Björn Töpel <bjorn@rivosinc.com>
-> 
-> There are scenarios where env.{sub,}test_state->stdout_saved, can be
-> NULL, e.g. sometimes when the watchdog timeout kicks in, or if the
-> open_memstream syscall is not available.
-> 
-> Avoid crashing test_progs by adding an explicit NULL check prior the
-> fclose() call.
-> 
-> Signed-off-by: Björn Töpel <bjorn@rivosinc.com>
+Hi Andy, Jonathan and IIO ML!
 
-Acked-by: Jiri Olsa <jolsa@kernel.org>
+Pls, can you help me clarify a bit what to do best here.  Questions
+inlined down below.
 
-jirka
+On Mon, Mar 17, 2025 at 4:52=E2=80=AFPM Andy Shevchenko
+<andy.shevchenko@gmail.com> wrote:
+>
+> On Mon, Mar 17, 2025 at 12:56=E2=80=AFPM Jonathan Cameron <jic23@kernel.o=
+rg> wrote:
+> > On Sun, 16 Mar 2025 21:58:00 +0200
+> > Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
+> > > Thu, Mar 13, 2025 at 04:50:39PM +0000, Lothar Rubusch kirjoitti:
+>
+> ...
+>
+> > > > +static int adxl345_push_event(struct iio_dev *indio_dev, int int_s=
+tat)
+> > > > +{
+> > > > +   struct adxl345_state *st =3D iio_priv(indio_dev);
+> > > > +   int samples;
+>
+> > > > +   int ret =3D -ENOENT;
+>
+> Also note, this variable is redundant as far as I can see, just return
+> the error code directly.
 
-> ---
->  tools/testing/selftests/bpf/test_progs.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/tools/testing/selftests/bpf/test_progs.c b/tools/testing/selftests/bpf/test_progs.c
-> index d4ec9586b98c..309d9d4a8ace 100644
-> --- a/tools/testing/selftests/bpf/test_progs.c
-> +++ b/tools/testing/selftests/bpf/test_progs.c
-> @@ -103,12 +103,14 @@ static void stdio_restore(void)
->  	pthread_mutex_lock(&stdout_lock);
->  
->  	if (env.subtest_state) {
-> -		fclose(env.subtest_state->stdout_saved);
-> +		if (env.subtest_state->stdout_saved)
-> +			fclose(env.subtest_state->stdout_saved);
->  		env.subtest_state->stdout_saved = NULL;
+The pre-initialization of ret is actually needed in the follow up
+patches. Anyway, I can return -ENOENT directly here.
 
-nit, setting to NULL could be inside the condition
+Evaluation of the sensor events in follow up patches then uses the
+ret. It is also possible that reading sensor events fails, then the
+error is returned. It is possible, that no sensor event happened, then
+it will fallback to -ENOENT. And, of course, if sensor event happened
+and could be handled - no error is returned.
 
->  		stdout = env.test_state->stdout_saved;
->  		stderr = env.test_state->stdout_saved;
->  	} else {
-> -		fclose(env.test_state->stdout_saved);
-> +		if (env.test_state->stdout_saved)
-> +			fclose(env.test_state->stdout_saved);
->  		env.test_state->stdout_saved = NULL;
->  		stdout = env.stdout_saved;
->  		stderr = env.stderr_saved;
-> 
-> base-commit: f3f8649585a445414521a6d5b76f41b51205086d
-> -- 
-> 2.45.2
-> 
-> 
+Is this approach acceptable? Say, if I'd describe it better in the
+commit comment? Could you think of a better approach here? I think
+returning 'samples' here does not make fully sense, though. First,
+'samples' is not be used outside the called function. Second, I have
+to distinguish a case "no event handled" - This covers then all
+remaining events like e.g. OVERRUN, DATA READY,... which still need to
+have status registers reset, but won't be pushed - currently this is
+coveredy by the 'return -ENOENT;' fallback. Third, I need to be able
+to return error codes.
+
+>
+> > > > +
+> > > > +   if (FIELD_GET(ADXL345_INT_WATERMARK, int_stat)) {
+> > > > +           samples =3D adxl345_get_samples(st);
+> > > > +           if (samples < 0)
+> > >
+> > > > +                   return -EINVAL;
+> > >
+> > > In the original code it makes no difference, but if you are going to =
+share
+> > > this, I would expect to see
+> > >
+> > >                       return samples;
+> > >
+> > > here. Why the error code is shadowed? If it's trully needed, it has t=
+o be
+> > > explained in the comment.
+
+As said above, 'samples' is just internally used inside this function.
+Basic question here also,
+since intuitively you'd expect it rather returning a samples number -
+should I rename the function
+to make it clearer?
+
+Best,
+L
+
+> > >
+> > >
+> > > > +           if (adxl345_fifo_push(indio_dev, samples) < 0)
+> > > > +                   return -EINVAL;
+> > > > +   }
+> > > > +
+> > > > +   return ret;
+> > > > +}
+>
+> ...
+>
+> > > Jonathan, I saw that you had applied it, but I guess the above needs
+> > > a clarification.
+> > Was right at the top of a tree I don't mind rebasing. So dropped
+> > this patch (kept 1-3)
+>
+> Thank you!
+>
+> --
+> With Best Regards,
+> Andy Shevchenko
 
