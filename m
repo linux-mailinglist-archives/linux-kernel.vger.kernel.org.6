@@ -1,131 +1,170 @@
-Return-Path: <linux-kernel+bounces-565576-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565577-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72AD3A66AEF
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 07:56:28 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8036A66AF1
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 07:57:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE3F1189FECF
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 06:56:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20CF217C2FE
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 06:57:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22FEC1DF723;
-	Tue, 18 Mar 2025 06:56:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 809D31DF742;
+	Tue, 18 Mar 2025 06:57:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="naLjqb+w"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ITt+fbPD"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E77D938FA6
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 06:56:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D70A38FA6;
+	Tue, 18 Mar 2025 06:57:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742280982; cv=none; b=n0D+/4BJdtC2HAyRhsKt0P+bV+6YHfgPZAjk0JzQcABc3sATgOJnFYeGk5IgcUzfIPxjb3kIdjQoWFya0uq/T/NUW71B62k0aZSsXaHdE8dnpGM/bGJIszMjvFyWU3DXj6Bs6XGzEaOR/XOJeumk75FVepmIbE1CRGOTFR8OZ1M=
+	t=1742281033; cv=none; b=T2ETqIlezIRwBP3+OTxBVBaK/lZWNMU5F5NRWO7s9at8hnrg4G6iekWrFxx8GG7dSTfUlnWgHqI61fVq9YY5bdhrAOfE62isWjD6jO+1kI9o7GfwRqYJ+2DtHwv3g4Qk4oNRDk5PpjJicPB0JYfJbCWaJrAwNMrBZBQw0FivhnY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742280982; c=relaxed/simple;
-	bh=2uO8v8ygGh+vmFJg/PzkAuTzo+G7jTPm/LwNHL88dBE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Kwdc2sHu1KFh4gOHuGL/7EjfuJp62bbkOaMx5PfOXcd1bmN/upwQYCWeZnugTyI77OIgOPOMXaSxSw5yZQ2wOmYZy6DX2TjwszMB4VFGqwfFIzeTQul2sNQIGd4Lru288HffHGmxCOliANur9sI6EyFR+hrbAPDZSLuOmtRu19c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=naLjqb+w; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-aaee2c5ee6eso809783066b.1
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 23:56:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742280979; x=1742885779; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=qwcG0nkjUDlN5Bh/rhj3k2ZPiTcT+O714WWyKryB05o=;
-        b=naLjqb+w8FMiuQX1vbfEWHjR0lkGrBWmcm1naToX73kBBW/o/mpSjA7yj9fjDi9cS9
-         x8TAmQ17dQOcd7UWfE+fBDfklj7RN9V2jXUaqZ2fDuKJNm4nZ8kad2LtTk2ChxSkHaMn
-         U2CyYJfL9COb+w//6DSOhphF75eMYPh+0+vXVJYY62G4hxq2U7x4KBuIfUlysL2Zv8q0
-         /mwkQ7Y+Eg3/+xGzsYRSDWNDn3wZhYmmqBJapwfFsx7eYM+iBB2MtJ4oYoWUTR+IM7vT
-         +arT47VhjgGNResV5ODSGTS1T/2zaqJh0T0fkjaMqY1eGU7B9/HPIpMMphPV0/NVGccs
-         9FIg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742280979; x=1742885779;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qwcG0nkjUDlN5Bh/rhj3k2ZPiTcT+O714WWyKryB05o=;
-        b=npmHInb726ZPTXm8ek5VZOIrzmH8QQmK8dfyvtelf0e0ell/k1/E3fBCjP0uKzfLQz
-         upmw1pfqWfV/J/TRajEw0Qyz37QETVl3TPCmp8Yx39AiAWmsOe51eL9Z1FDXYVEb0jsq
-         saIN7hF6oXaHqP+mCdgrgYQ0t7k9CC3lkMgRZI8mPtbrIZs3zt7NN5z0ZWWp0PhsMY5g
-         pnG8enMO0/fkSRm6Sx1QwMhza8hNjK3WuOuWWoiVNduv/dGXPnhCaOACVt3CpVd5ZNc8
-         SLTFH2+otJ2whCnBhGZGpuWWg2moZ8rPc70n0bocibic8NtFEna70fbLMyjMbYkaTDhB
-         6gvg==
-X-Forwarded-Encrypted: i=1; AJvYcCXMnA33/EDSWwGfL0kmi3DZcQgE9ijsg2bNgS8L/acedhY2R5ipgriSQAjoh29UMRH9J1vVsRuTGXMuUXU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxW8O0kMrwtPSACQtRRrhJ3WILW3rrztHgZJDtCb6H3jnrk+Z6+
-	2axPrhl3tf8iCISAxDGkNbUSS0IA+9JUy56W9GvCoIU+RAwbvXuI
-X-Gm-Gg: ASbGncu+/2IQSNN4/2zWWP8+OVTMjjmX4wJDk5yKBOLLLHKEFFbu65iD3U8YMkNVjH9
-	pin/vSlI1Fuh1dptH7sBD1KfuXyw2CDjiE1T3UhnCcU1pghIMbboQniq/tUrBfl8Ey8N+fokjpL
-	oLaKv1raioED5x2KeYo5X3ritvtxmgRcpLqTrPanJJPrO1oXNUqIv2khbfiODAg2tjEnVTEIRCu
-	EyXj9MW1/3bgOhFaOmB3EJs3UpA1cLjHs5yVOv1lEATJAIBYdlALi/xuuZX8SnLywIPgFvN2YeW
-	hschPJUKjYAbl0uUpJDlZpFm45eF9V5O7QN9jMIMftd8wzaQNnQFPTYR7CU/D0ywTxPknRbvcDV
-	diciO4TUdgyYbf0jpZvKPNXGbBCzPjKYHh6HliGJQ82caxA==
-X-Google-Smtp-Source: AGHT+IEFPFabopy2MYvkvMtlIv02ESYxo7QfPaSYD2btK+WSLZa3CANNpz53pkWjwY2mwptKmEPudQ==
-X-Received: by 2002:a17:907:96a1:b0:ac1:effd:f2ea with SMTP id a640c23a62f3a-ac3302d1dc1mr1648297366b.24.1742280978900;
-        Mon, 17 Mar 2025 23:56:18 -0700 (PDT)
-Received: from alb3rt0-ThinkPad-P15-Gen-1 (host-95-251-108-181.retail.telecomitalia.it. [95.251.108.181])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac38f091c7bsm106906766b.38.2025.03.17.23.56.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Mar 2025 23:56:17 -0700 (PDT)
-Date: Tue, 18 Mar 2025 07:56:15 +0100
-From: Alberto Merciai <alb3rt0.m3rciai@gmail.com>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: shawnguo@kernel.org, linux-kernel@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: OCOTP and DWMAC builtin modules are needed for imx93-11x11-evk
- kernel dev via TFTP and NFS
-Message-ID: <Z9kZD0vEsrrIftk5@alb3rt0-ThinkPad-P15-Gen-1>
-References: <Z9fhuVltKwqgHdLp@alb3rt0-ThinkPad-P15-Gen-1>
- <935028c6-ce56-46e0-96ff-46fa91c8f66a@linaro.org>
- <Z9hkDqcKG1xOmIB5@alb3rt0-ThinkPad-P15-Gen-1>
- <ef163f08-35f9-4d1d-8082-c826c6cd0aa0@linaro.org>
- <Z9hxKlrrqW4QyzdJ@alb3rt0-ThinkPad-P15-Gen-1>
- <88c66c98-7ea3-4172-9c99-405fe449cc5b@linaro.org>
+	s=arc-20240116; t=1742281033; c=relaxed/simple;
+	bh=B79hWRC83eGiu5Us8zEC3wzsZMhhRA/WHNbAoSnN/qU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=CgqvOEaJdbGB/HWN2J0x+4YmtVM/fHChuEcFpHSaYpobp0GHRsVZwxGMZWx6VvzuAF0w4GYmjLhBbClhgOKTeAeCmIgjvoeFnwDVO7RqJewSjqQ4ECb4avE2tcF33bu5b5YrejypZCd2g0uw17VvFKvw4e1srlPx+zUj+oDht5U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ITt+fbPD; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52HKMeYd019356;
+	Tue, 18 Mar 2025 06:57:00 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	n+7xQ8wAsM+96+JpI461aw5SP7lBsC/LRCDDb2WWtSw=; b=ITt+fbPD3Rn2w1xs
+	nIAtYuiRCLxSHtWxSb+UfdEDBkGs+zgzaD0kSNtIrATHf/1zd2HEl6QiGXrJYKO8
+	RbBYy3bYgTsQgoGXwERvafMzZ5qJD9o89de8dF+ErJzBt5MgYA2kUNMMxATwp65s
+	vrLHVhYg9e99BLrAMSC2F/kg9UqgBrX9Ubzgo5KjubmopbCC5H3X/xscT8RoMpVM
+	KR83SRaiPM6RswvR9HkAU6ru7Gi0Y69aOy9Pe0tmT3TCst+VNJ56+gYFGyLXdwVY
+	P71GFCnlOHLyVBh2yWluDmY1fRBw3b8ffIapMTx3wSVkZBuNwtiCca063HjvB4+4
+	1O5P2w==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45d1uty60j-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 18 Mar 2025 06:57:00 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52I6ux0J002503
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 18 Mar 2025 06:56:59 GMT
+Received: from [10.233.19.224] (10.80.80.8) by nasanex01c.na.qualcomm.com
+ (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 17 Mar
+ 2025 23:56:55 -0700
+Message-ID: <4fc69ebf-1bd4-428b-bae9-a4f67edee0f5@quicinc.com>
+Date: Tue, 18 Mar 2025 14:56:51 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <88c66c98-7ea3-4172-9c99-405fe449cc5b@linaro.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 2/2] phy: qcom: qmp-pcie: Add PHY register retention
+ support
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+CC: <vkoul@kernel.org>, <kishon@kernel.org>, <p.zabel@pengutronix.de>,
+        <dmitry.baryshkov@linaro.org>, <abel.vesa@linaro.org>,
+        <quic_qianyu@quicinc.com>, <neil.armstrong@linaro.org>,
+        <quic_devipriy@quicinc.com>, <konrad.dybcio@oss.qualcomm.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-phy@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20250226103600.1923047-1-quic_wenbyao@quicinc.com>
+ <20250226103600.1923047-3-quic_wenbyao@quicinc.com>
+ <20250314145035.h3nybvvko3ew37wl@thinkpad>
+Content-Language: en-US
+From: "Wenbin Yao (Consultant)" <quic_wenbyao@quicinc.com>
+In-Reply-To: <20250314145035.h3nybvvko3ew37wl@thinkpad>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=H8Pbw/Yi c=1 sm=1 tr=0 ts=67d9193c cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=COk6AnOGAAAA:8 a=KKAkSRfTAAAA:8 a=GV8YIVLR6thIHoP4uU0A:9
+ a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22 a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-GUID: T0rQ1fDVlKvzzSXpiM4jgq6Pz45WpJVT
+X-Proofpoint-ORIG-GUID: T0rQ1fDVlKvzzSXpiM4jgq6Pz45WpJVT
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-18_03,2025-03-17_03,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
+ lowpriorityscore=0 bulkscore=0 adultscore=0 spamscore=0 priorityscore=1501
+ mlxscore=0 suspectscore=0 malwarescore=0 clxscore=1015 impostorscore=0
+ phishscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503180048
 
-On Mon, Mar 17, 2025 at 08:14:30PM +0100, Krzysztof Kozlowski wrote:
-> On 17/03/2025 19:59, Alberto Merciai wrote:
-> >>>
-> >>> By default they are enabled as external modules, then until we don't
-> >>
-> >> So everything is as expected...
-> >>
-> >>> reach userland they are not loaded thus eth and all the mechanism behind
-> >>> that are out.
-> >>>
-> >>> I'm not using initramfs just tftp and NFS as follows:
-> >>
-> >> All arm64 platforms are supposed to use initramfs on defconfig with
-> >> necessary modules.
-> > Thanks a lot, I was not aware of that.
-> > Do you have any reference?
-> Reference for what? initramfs?
-> 
-> I am using meta-qcom initramfs:
-> https://github.com/krzk/yocto-qcom
-> with copy_modules argument:
-> 
-> https://github.com/krzk/tools/blob/7c0d1cacad06aa0cae8c2983ae26889471a9aaa6/linux/build.sh#L543
-> 
-> And here is how I append stuff, but simple `cat` one cpio archive to
-> another cpio archive would work as well, just be sure some paths are not
-> symlinks (/bin /usr/bin) because then `cat` has issues:
-> 
-> https://github.com/krzk/tools/blob/7c0d1cacad06aa0cae8c2983ae26889471a9aaa6/linux/build.sh#L504
-> 
-> Best regards,
-> Krzysztof
-Really appreciate, Thanks a lot!
+On 3/14/2025 10:50 PM, Manivannan Sadhasivam wrote:
+> On Wed, Feb 26, 2025 at 06:36:00PM +0800, Wenbin Yao wrote:
+>> From: Qiang Yu <quic_qianyu@quicinc.com>
+>>
+>> Some QCOM PCIe PHYs support no_csr reset. Unlike BCR reset which resets the
+>> whole PHY (hardware and register), no_csr reset only resets PHY hardware
+>> but retains register values, which means PHY setting can be skipped during
+>> PHY init if PCIe link is enabled in booltloader and only no_csr is toggled
+>> after that.
+>>
+>> Hence, determine whether the PHY has been enabled in bootloader by
+>> verifying QPHY_START_CTRL register. If it's programmed and no_csr reset is
+>> available, skip BCR reset and PHY register setting to establish the PCIe
+>> link with bootloader - programmed PHY settings.
+>>
+>> Signed-off-by: Qiang Yu <quic_qianyu@quicinc.com>
+>> Signed-off-by: Wenbin Yao <quic_wenbyao@quicinc.com>
+> Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+>
+> One nit below.
+>
+>> ---
+>>   drivers/phy/qualcomm/phy-qcom-qmp-pcie.c | 69 ++++++++++++++++++++----
+>>   1 file changed, 59 insertions(+), 10 deletions(-)
+>>
+>> diff --git a/drivers/phy/qualcomm/phy-qcom-qmp-pcie.c b/drivers/phy/qualcomm/phy-qcom-qmp-pcie.c
+>> index 219266125cf2..c3642d1807e4 100644
+>> --- a/drivers/phy/qualcomm/phy-qcom-qmp-pcie.c
+>> +++ b/drivers/phy/qualcomm/phy-qcom-qmp-pcie.c
+>> @@ -2805,6 +2805,7 @@ struct qmp_pcie {
+>>   
+>>   	const struct qmp_phy_cfg *cfg;
+>>   	bool tcsr_4ln_config;
+>> +	bool skip_init;
+>>   
+>>   	void __iomem *serdes;
+>>   	void __iomem *pcs;
+>> @@ -3976,18 +3977,38 @@ static int qmp_pcie_init(struct phy *phy)
+>>   {
+>>   	struct qmp_pcie *qmp = phy_get_drvdata(phy);
+>>   	const struct qmp_phy_cfg *cfg = qmp->cfg;
+>> +	void __iomem *pcs = qmp->pcs;
+>> +	bool phy_initialized = !!(readl(pcs + cfg->regs[QPHY_START_CTRL]));
+>>   	int ret;
+>>   
+>> +	qmp->skip_init = qmp->nocsr_reset && phy_initialized;
+>> +	/*
+>> +	 * We need to check the existence of init sequences in two cases:
+>> +	 * 1. The PHY doesn't support no_csr reset.
+>> +	 * 2. The PHY supports no_csr reset but isn't initialized by bootloader.
+>> +	 * As we can't skip init in these two cases.
+>> +	 */
+>> +	if (!qmp->skip_init && !cfg->tbls.serdes_num) {
+>> +		dev_err(qmp->dev, "no init sequences are available\n");
+> "Init sequence not available\n"
+>
+>> +		return -EINVAL;
+> -ENODATA
+
+Will fix in the next version.
+
+>
+> - Mani
+>
+-- 
+With best wishes
+Wenbin
+
 
