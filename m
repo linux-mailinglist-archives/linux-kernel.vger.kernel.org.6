@@ -1,230 +1,118 @@
-Return-Path: <linux-kernel+bounces-566365-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566359-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6A6BA676F0
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 15:54:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 830E9A676D3
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 15:51:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7706519A6BC5
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 14:51:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 615B53B1C88
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 14:50:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC6D22116E0;
-	Tue, 18 Mar 2025 14:50:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB9DD20F06F;
+	Tue, 18 Mar 2025 14:50:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="R1Z0qkrm"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="efeQBD1l"
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42B10210186;
-	Tue, 18 Mar 2025 14:50:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74B5E20E01E;
+	Tue, 18 Mar 2025 14:49:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742309408; cv=none; b=INBkDNorxvAi/LBBwE+aD8qCIwuTrMdZVugToUTFVLqSlJPNtLcopdrj8ph+/iJi9ECyXsrr2ZNRLiqQpLjuNcMgI78zhgN4y/A4SMZsACtPlZGTprt+3msDo5pYgnM2I4zk+KCSizpsU/W6U1iY07VZR6moNAyBW5aVzdb1hyo=
+	t=1742309400; cv=none; b=mdpmpYDQda+x/MQwJffSbbMHoxfyM/P/EoiIAf2CBblSpQJDM+dNgtpjHwr4SDyU3QkUPWIbn24KB8msh94jmYY7Cq3rt8Rsp+0CaM7OxWYENcNRfAC+MCuRBPlzfsewzL7XuY2o0D2nWgIpmuTrzlu4M+4PIhTjUOVntmv9iBM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742309408; c=relaxed/simple;
-	bh=ns5XGacYh+EIZsGY98O/M+pjK07EgFDJQD2Go3xbYpg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=gQ1uNKrLJzDeSy1pDnci8I9bRxXSsgiyj5RTlAwF4AvvJyJdCPnjivopxcGzgYSuLoRKVCIWpT28eFi71kEgO32/yegf14uiWtY7BVMSWbe9RAZf3Cww9sfXZoLX7BSWD+jIOh+7FIR+oqS57idu9pXGklTw+GIpf0D9Kc2LgXI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=R1Z0qkrm; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52I8pHcP005608;
-	Tue, 18 Mar 2025 14:49:55 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=qcppdkim1; bh=4bNYjrybVRl
-	RDBuG+fzQfTBGaozaDxuhECWkqz0hNe4=; b=R1Z0qkrmE1BnYbGFXJ6JDAdQno/
-	UmMa2DVF789u7E3/bBYP2zmscZDlsKEi7YWBQiybh7xsJ5cwE4Xj03shbSHf2XlN
-	MDO+zcTe6cdoe5X3iNrsNXJk3WwaiSE6DSIJITUapzenDyy0QEctqf0xq7qntCLA
-	Dg1PYed3DHO/QOuTVninDI8iMbbOQEOHphFckHZssdFQ/PZ/jqcwc84bZ+KchQgg
-	XdCGsBvpLAnLjMTM3tAhvYOs1gLMG/e2GU1DCyEBDuPB20XFZnf2/OLGT96wUTCA
-	T55UkxjZ0mx18WwNtWR/050OFFULSqWRyQ79kBo4TK92lKUjJpSr2U6eIFw==
-Received: from apblrppmta02.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45etmbttdx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 18 Mar 2025 14:49:54 +0000 (GMT)
-Received: from pps.filterd (APBLRPPMTA02.qualcomm.com [127.0.0.1])
-	by APBLRPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 52IEnlVo004267;
-	Tue, 18 Mar 2025 14:49:51 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTP id 45dkgmfv9d-1;
-	Tue, 18 Mar 2025 14:49:51 +0000
-Received: from APBLRPPMTA02.qualcomm.com (APBLRPPMTA02.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 52IEnmWX004296;
-	Tue, 18 Mar 2025 14:49:51 GMT
-Received: from hu-maiyas-hyd.qualcomm.com (hu-nitirawa-hyd.qualcomm.com [10.213.109.152])
-	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTP id 52IEnmLc004293;
-	Tue, 18 Mar 2025 14:49:51 +0000
-Received: by hu-maiyas-hyd.qualcomm.com (Postfix, from userid 2342877)
-	id 67007501582; Tue, 18 Mar 2025 20:19:50 +0530 (+0530)
-From: Nitin Rawat <quic_nitirawa@quicinc.com>
-To: vkoul@kernel.org, kishon@kernel.org, manivannan.sadhasivam@linaro.org,
-        James.Bottomley@HansenPartnership.com, martin.petersen@oracle.com,
-        konrad.dybcio@oss.qualcomm.com
-Cc: quic_rdwivedi@quicinc.com, linux-arm-msm@vger.kernel.org,
-        linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-scsi@vger.kernel.org, Nitin Rawat <quic_nitirawa@quicinc.com>,
-        Can Guo <quic_cang@quicinc.com>
-Subject: [PATCH V2 6/6] scsi: ufs: host : Introduce phy_power_on/off wrapper function
-Date: Tue, 18 Mar 2025 20:19:44 +0530
-Message-ID: <20250318144944.19749-7-quic_nitirawa@quicinc.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250318144944.19749-1-quic_nitirawa@quicinc.com>
-References: <20250318144944.19749-1-quic_nitirawa@quicinc.com>
+	s=arc-20240116; t=1742309400; c=relaxed/simple;
+	bh=ojwe79lXDc549NuRjE4GGY8lgkydSAa35Rb3ZzF1h5w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rZPixamOgCkLYwW0j5DX7R5S4joEt2FyfPeWUoQLJVAp452ATmbi9OnbnoxLgRa03MrpR/qJBrhugy7UY7S2dHOt7WyIddqlnwjyoksrMDb1RVKop8KlgfNg0aWCbKIlfBLkzTCLouUq66dYyW6teLmBh0wQRigpn4xZ1qgV5lM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=efeQBD1l; arc=none smtp.client-ip=209.85.208.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-30bfca745c7so58882571fa.0;
+        Tue, 18 Mar 2025 07:49:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742309396; x=1742914196; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4eHXb1JJwKi8XY92UdpcdgsAgcnXJDjXq8FHMGreXxE=;
+        b=efeQBD1lfvMQl7qkepDv/wvck3LqAbPVlP6H+IkmCas3JTHSmTfBCOfkGgB0+eJUqV
+         sq3oPMOCE0v+j5iIUSVKptOK9kMpdxae+91kVD0lhloKvn7QuidlcoHxKlt6VrTnUVhp
+         7AUpk5EZPh/kde4kSBcNxdwvktqDdpwZU8HbFCLHU3Ybw13bWQ+hfPemJrOG9FIcF++s
+         ak/4kvqJZgkLZJEzFtB7mNV8KDfX/oSJFdCcHxhZv9FINt5CnquXU5JdklYIwgYoCUSc
+         Fjdt/BBgojrhwwpNoAFdZ3N8ovIh4AFPN5uApMobusxThKB59zGUh9Cq7LBCrZZjhVXP
+         +P3w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742309396; x=1742914196;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4eHXb1JJwKi8XY92UdpcdgsAgcnXJDjXq8FHMGreXxE=;
+        b=uvhKA92xYWEy3oDXuXLsxgtm08ZyeaBI8PZPuYgfeC70iLlBxT5fz8rdzaWw4klDNU
+         pdS9ZvYr6EwfsBoI1edsxOX5+XjiiftltxXz+sEySK8AM1dhRYShy1CYIAeCdB7EBFWc
+         aLpprwhAPweHrjb3uyjAxVlk9RaS/cYHc3k/H85r9goi/rsY1gG0G9Yau2W8tDpq2W1L
+         Q1np7xn0fQZplfZPKjickLL3hl3cX9Ebm0UJLnvBObWOoD9Qqd6UPWK6KNenCrRp0jHq
+         KwwKswEtSGIU+ETxn9NO6v5UxtiRZihiYRcynSbxKdT8Hnk8PD/MjA5Qxn5F5mErMVB1
+         5xgw==
+X-Forwarded-Encrypted: i=1; AJvYcCVVpH7RQfn6LtTUQrrL2qull1UfB1Cz2nf1sTikgAuIxKFq8z5sIv9cfwbuYwB4ou1652jiBp8qiESw@vger.kernel.org, AJvYcCWLt3aMTn0Ys94GlZn+0e8gKxGYZeTOPyeBTyulvCebhUc++Awx4XnbcpG3xyf727YIGGsMXCJQjKvGmTPs@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw0x9U4OyU0SqRRO2/QzvB34gons7PaDbG1rdHdEpMby17bqv3t
+	gJ3LESzxbfg/oXTaKj14FE2+zbwaXmj8ZhUcrAipRJuZ34OD5XcSEm5PLfrSrZedZgiaB8zaMbY
+	/Xs5gCRvHOXZDH4JklXi/8acTIp8=
+X-Gm-Gg: ASbGncv92mrbR7vvBoWUrjyi/+toX5pbnQo09uE5+GdztR/yn1ZlwxFk5Os62j509ds
+	zzUnGigYr2KJNxcVJtMh/+yeKWx3ZU6vYpcdnqE4IlBS0EXtnDjULecN3Fa8QfPMj2iI1pU/eke
+	zUyvLromFPxjO4fqPxVwYEjj/w5q6r5A0Jpc8=
+X-Google-Smtp-Source: AGHT+IH09hK0CrkfFyl72Ymld0x3NZIGZ9dWZ5oVaXZJT27nn59ki999I3o9tnuOR/rBdx5gTNoLwLJHRyHSud7cD6c=
+X-Received: by 2002:a2e:a36d:0:b0:30b:c5e7:6e61 with SMTP id
+ 38308e7fff4ca-30c97559f05mr30289621fa.20.1742309396361; Tue, 18 Mar 2025
+ 07:49:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: QS5i6desbJK_NXXjAiLvF8OMGpN0-plh
-X-Proofpoint-GUID: QS5i6desbJK_NXXjAiLvF8OMGpN0-plh
-X-Authority-Analysis: v=2.4 cv=aMLwqa9m c=1 sm=1 tr=0 ts=67d98812 cx=c_pps a=Ou0eQOY4+eZoSc0qltEV5Q==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17 a=Vs1iUdzkB0EA:10 a=COk6AnOGAAAA:8 a=Dj_YmL__GzIFt5dFpcoA:9 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-18_07,2025-03-17_03,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- priorityscore=1501 spamscore=0 clxscore=1015 phishscore=0 mlxscore=0
- suspectscore=0 malwarescore=0 mlxlogscore=999 bulkscore=0 adultscore=0
- lowpriorityscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503180109
+References: <20250218143005.1318886-1-wangzhaolong1@huawei.com>
+ <CAH2r5mstBkj5-aHcXLpb8YzrDHS+nWhW+i_Kf8eJK15sFmJx8A@mail.gmail.com>
+ <c056ce12-2b02-fe11-5f61-ce913b6de5d9@huawei.com> <6ae36cf1-a1a8-065e-d884-fe0810e607cf@huawei.com>
+In-Reply-To: <6ae36cf1-a1a8-065e-d884-fe0810e607cf@huawei.com>
+From: Steve French <smfrench@gmail.com>
+Date: Tue, 18 Mar 2025 09:49:45 -0500
+X-Gm-Features: AQ5f1JoGXRKdUtVIs4RvMg5cTVqczq2w70ZRM9pm-3pDJhklYUNzk_zlQ1qVruA
+Message-ID: <CAH2r5msH0-PrzW7rR07cbm99FWTSR4QXyycHLpUaAv9GiDELVg@mail.gmail.com>
+Subject: Re: [PATCH] smb: client: Fix netns refcount imbalance causing leaks
+ and use-after-free
+To: Wang Zhaolong <wangzhaolong1@huawei.com>
+Cc: tom@talpey.com, kuniyu@amazon.com, ematsumiya@suse.de, 
+	linux-cifs@vger.kernel.org, samba-technical@lists.samba.org, 
+	linux-kernel@vger.kernel.org, yi.zhang@huawei.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Introduce ufs_qcom_phy_power_on and ufs_qcom_phy_power_off wrapper
-functions with mutex protection to ensure safe usage of is_phy_pwr_on
-and prevent possible race conditions.
+This was excellent work, and the test to reproduce the problem looks
+excellent but didn't run on the systems I have tried so far - but main
+thing I am waiting on is someone who is able to  1) run the tests you
+provided and show the patch fixed it for them  and/or 2) additional
+review feedback (the namespace refcounting is more confusing than I
+expected) and if there is a good way to debug the namespace refcounts
+that would be even more helpful
 
-Co-developed-by: Can Guo <quic_cang@quicinc.com>
-Signed-off-by: Can Guo <quic_cang@quicinc.com>
-Signed-off-by: Nitin Rawat <quic_nitirawa@quicinc.com>
----
- drivers/ufs/host/ufs-qcom.c | 44 +++++++++++++++++++++++++++++++------
- drivers/ufs/host/ufs-qcom.h |  4 ++++
- 2 files changed, 41 insertions(+), 7 deletions(-)
+I would like to include the patch - but badly need others who are able
+to reproduce the same problem and verify the fix
 
-diff --git a/drivers/ufs/host/ufs-qcom.c b/drivers/ufs/host/ufs-qcom.c
-index 5c7b6c75d669..8f80724e64b9 100644
---- a/drivers/ufs/host/ufs-qcom.c
-+++ b/drivers/ufs/host/ufs-qcom.c
-@@ -421,6 +421,38 @@ static u32 ufs_qcom_get_hs_gear(struct ufs_hba *hba)
- 	return UFS_HS_G3;
- }
+On Tue, Mar 18, 2025 at 8:48=E2=80=AFAM Wang Zhaolong <wangzhaolong1@huawei=
+.com> wrote:
+>
+> Friendly piug.
+>
+> Best regards,
+> Wang Zhaolong
 
-+static int ufs_qcom_phy_power_on(struct ufs_hba *hba)
-+{
-+	struct ufs_qcom_host *host = ufshcd_get_variant(hba);
-+	struct phy *phy = host->generic_phy;
-+	int ret = 0;
-+
-+	guard(mutex)(&host->phy_mutex);
-+	if (!host->is_phy_pwr_on) {
-+		ret = phy_power_on(phy);
-+		if (!ret)
-+			host->is_phy_pwr_on = true;
-+	}
-+
-+	return ret;
-+}
-+
-+static int ufs_qcom_phy_power_off(struct ufs_hba *hba)
-+{
-+	struct ufs_qcom_host *host = ufshcd_get_variant(hba);
-+	struct phy *phy = host->generic_phy;
-+	int ret = 0;
-+
-+	guard(mutex)(&host->phy_mutex);
-+	if (host->is_phy_pwr_on) {
-+		ret = phy_power_off(phy);
-+		if (!ret)
-+			host->is_phy_pwr_on = false;
-+	}
-+
-+	return ret;
-+}
-+
- static int ufs_qcom_power_up_sequence(struct ufs_hba *hba)
- {
- 	struct ufs_qcom_host *host = ufshcd_get_variant(hba);
-@@ -449,7 +481,7 @@ static int ufs_qcom_power_up_sequence(struct ufs_hba *hba)
- 		return ret;
 
- 	if (phy->power_count) {
--		phy_power_off(phy);
-+		ufs_qcom_phy_power_off(hba);
- 		phy_exit(phy);
- 	}
 
-@@ -466,7 +498,7 @@ static int ufs_qcom_power_up_sequence(struct ufs_hba *hba)
- 		goto out_disable_phy;
+--=20
+Thanks,
 
- 	/* power on phy - start serdes and phy's power and clocks */
--	ret = phy_power_on(phy);
-+	ret = ufs_qcom_phy_power_on(hba);
- 	if (ret) {
- 		dev_err(hba->dev, "%s: phy power on failed, ret = %d\n",
- 			__func__, ret);
-@@ -1017,7 +1049,6 @@ static int ufs_qcom_setup_clocks(struct ufs_hba *hba, bool on,
- 				 enum ufs_notify_change_status status)
- {
- 	struct ufs_qcom_host *host = ufshcd_get_variant(hba);
--	struct phy *phy = host->generic_phy;
- 	int err;
-
- 	/*
-@@ -1037,7 +1068,7 @@ static int ufs_qcom_setup_clocks(struct ufs_hba *hba, bool on,
- 				/* disable device ref_clk */
- 				ufs_qcom_dev_ref_clk_ctrl(host, false);
- 			}
--			err = phy_power_off(phy);
-+			err = ufs_qcom_phy_power_off(hba);
- 			if (err) {
- 				dev_err(hba->dev, "phy power off failed, ret=%d\n", err);
- 					return err;
-@@ -1046,7 +1077,7 @@ static int ufs_qcom_setup_clocks(struct ufs_hba *hba, bool on,
- 		break;
- 	case POST_CHANGE:
- 		if (on) {
--			err = phy_power_on(phy);
-+			err = ufs_qcom_phy_power_on(hba);
- 			if (err) {
- 				dev_err(hba->dev, "phy power on failed, ret = %d\n", err);
- 				return err;
-@@ -1233,10 +1264,9 @@ static int ufs_qcom_init(struct ufs_hba *hba)
- static void ufs_qcom_exit(struct ufs_hba *hba)
- {
- 	struct ufs_qcom_host *host = ufshcd_get_variant(hba);
--	struct phy *phy = host->generic_phy;
-
- 	ufs_qcom_disable_lane_clks(host);
--	phy_power_off(phy);
-+	ufs_qcom_phy_power_off(hba);
- 	phy_exit(host->generic_phy);
- }
-
-diff --git a/drivers/ufs/host/ufs-qcom.h b/drivers/ufs/host/ufs-qcom.h
-index d0e6ec9128e7..3db29fbcd40b 100644
---- a/drivers/ufs/host/ufs-qcom.h
-+++ b/drivers/ufs/host/ufs-qcom.h
-@@ -252,6 +252,10 @@ struct ufs_qcom_host {
- 	u32 phy_gear;
-
- 	bool esi_enabled;
-+	/* flag to check if phy is powered on */
-+	bool is_phy_pwr_on;
-+	/* Protect the usage of is_phy_pwr_on against racing */
-+	struct mutex phy_mutex;
- };
-
- struct ufs_qcom_drvdata {
---
-2.48.1
-
+Steve
 
