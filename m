@@ -1,197 +1,155 @@
-Return-Path: <linux-kernel+bounces-565790-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565791-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A43D9A66F33
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 10:00:57 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EEA9A66F37
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 10:01:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 807243A9DB7
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 09:00:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A44E3178E98
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 09:01:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DB891F866A;
-	Tue, 18 Mar 2025 09:00:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9BCD1F4179;
+	Tue, 18 Mar 2025 09:01:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="cMz/KWHd"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O6Xn37c9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 457B842AB4
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 09:00:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1216442AB4;
+	Tue, 18 Mar 2025 09:01:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742288451; cv=none; b=mtlrzjPCK+SiVxwRRVjDPLCfl1IL05I+o0F0vsa8uPrOgtT1ky0XgvQBjWy8EcHHuBjY6lXpDXpiRaIUMiV64lX9vxFIJeC6sMt2ufCGF+Yv1dd4FXBmflFMTk5+L4kil6D9IFPS4hHlQv+OkNMAvBsCPS+nkTzWNSZLN/+itAk=
+	t=1742288503; cv=none; b=JHbP3qfcRuKF8E7vI/X55C5OcpQuMvVL4LiAcXM1GJMFW0kBGfKwUXEBy6aThmnGUQH+prIY3JXLOoT7K+L13lT4ScFZltguIb/I08AxN5LEFz1ZjkRHEriOOUBVqnjmt1Wn3YBHryuKkw0/IHvlyOOxbh/EbTR0WKOphbzQedI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742288451; c=relaxed/simple;
-	bh=auc9jjfBR0pJGmOxvxfAmYDcKoS37G5b9kYn+O7PffE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZJQp+uCV2dzK7kIEsysjIndXGeP5gWtai69RH2NI4VQwCHGJ6DVLnes6g8zZBKxm5LDz9YIqW0FU3DePLBjVwnU01ZsXzUXxv+kaxiiRuZM5stMukh/FJ5GCSzf0tsXFQh8vgQ2xiM1Z3iSyfWp663jwSyn5MOVHJPKzHRCsda8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=cMz/KWHd; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5e6c18e2c7dso9115409a12.3
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 02:00:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1742288447; x=1742893247; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Wr4dUiqaKywBCUa33frJJ04baPImRwSaV0A/LlSiREE=;
-        b=cMz/KWHd06iaaU/MRfvfXUXeeF66lHNq75wWkopvw92M60yU4TzpwP0h2hu+IXiM14
-         k/6WS2kR2sa/X1n/fvtTMn+4Oci8jRpkAsQ5rAekYBGNmrzTh4x1AFWt8Y9K2xWkf0a1
-         5FkX2rx+UngHAhWuo9D1Qpg4sqoDC9/rVYEG6CBAsDyCHnHNbi++DGqcoTmYkuXBqOqW
-         XI1K8b2+XNGlOEdIy5yRQgLYRUTqkwInW4zbokrx0Dp7sAD9rGcaznSn14CdTrneZN4w
-         H3V1qADY+pCwaZfQRbcBMT42LLXHsd1zB7MDX0V1qSg8YwkRq4ogGldiObTHYMXv/CFi
-         j02g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742288447; x=1742893247;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Wr4dUiqaKywBCUa33frJJ04baPImRwSaV0A/LlSiREE=;
-        b=LQfPmcRfk/E8phMlTmd6MyagmDOKiBz1oX7dlxFCvPieWdmX/w/Hsqp2KiUVpsIVgw
-         SWZ/r0Tkg4Cx/HEXFYszKbvDevVxWkWjX1Wb4Dxsn+sJtqPzV5cHgL+lUUgcb9M+jBIE
-         QOuc2cfzVh9LEouJj+7LCoFakYYUeupe/xMidkdWvVKl4Ubgpe+hv9Tmt14yxk+LlAQx
-         sBNSRLIlYxcZUyNByC/VhKt3GbvyOVTcfA6apR96ZuU4hhZkTc1bawEzm5g6off/OAxO
-         0wE5K5w7ZEPvwXOUJFDkqmviwZQC41sBvMxzc3cGj/x4T4vGz7K4FS2DjKgA+/cHjaBs
-         QSew==
-X-Forwarded-Encrypted: i=1; AJvYcCXgUfOCxW8MbD2ljIlnVGUvOjzYGvUr0+foTeNhwPYOO5jzXgg9JUgzGP2/Ey47JjJifBZwQPWf+6kdRLw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx2xlnc8C4+m6ACBClAYtVtg37tCEJDxFkwFmGWyBugRN9wVp+a
-	+nYhien9d0SpE5eghfnp3+AQ7ywIjz5nu7ba6NAPIOtB/IohtpF1am8Uv0RCamA=
-X-Gm-Gg: ASbGncsew1+N42gyeghLCvJOOilwjQJW7uPPY3FztS/wxv1v+7J9RJ0kTt0NaKF66+e
-	xmkgCxn3EyBL+W4MmDE3s2r/agjMKJT4UikS/r1PhCiitHhsySvhsfj33IckNvgMVaHuniKKocj
-	8Dml9WVx2uI6xBYkE8PTWSGgF0WN2VZGpqFSGl3OiMKESQD7g7RaKpyAE15qtTiQJkNIcst1Q/9
-	Z6DdxNypj92i+oJ448WOdA4goQibJ5z168DU9+/dRBEpdH0EXycbTDifNQlnISHopfRmjpTdFto
-	ZRNHmyyH03rstY/nIHP+74WapLdZgsH9420Y9c1+Ieg=
-X-Google-Smtp-Source: AGHT+IGBsklbulm+vYAotQHhh8oVdp47PW9k6WK8XOOUPLWd/0Ehy9b34njTBzMzUsYjAPB/A6Vdow==
-X-Received: by 2002:a05:6402:51ca:b0:5dc:c943:7b6 with SMTP id 4fb4d7f45d1cf-5eb1dec1a1bmr2420615a12.3.1742288447279;
-        Tue, 18 Mar 2025 02:00:47 -0700 (PDT)
-Received: from localhost ([2a02:8308:a00c:e200::59a5])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e816977a5fsm7228660a12.32.2025.03.18.02.00.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Mar 2025 02:00:46 -0700 (PDT)
-Date: Tue, 18 Mar 2025 10:00:46 +0100
-From: Andrew Jones <ajones@ventanamicro.com>
-To: Alexandre Ghiti <alex@ghiti.fr>
-Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-doc@vger.kernel.org, paul.walmsley@sifive.com, palmer@dabbelt.com, 
-	charlie@rivosinc.com, cleger@rivosinc.com, Anup Patel <apatel@ventanamicro.com>, 
-	corbet@lwn.net
-Subject: Re: [PATCH v3 7/8] riscv: Add parameter for skipping access speed
- tests
-Message-ID: <20250318-61be6a5455ea164b45d6dc64@orel>
-References: <20250304120014.143628-10-ajones@ventanamicro.com>
- <20250304120014.143628-17-ajones@ventanamicro.com>
- <1b7e3d0f-0526-4afb-9f7a-2695e4166a9b@ghiti.fr>
- <20250318-1b03e58fe508b077e5d38233@orel>
+	s=arc-20240116; t=1742288503; c=relaxed/simple;
+	bh=C2+M5veEyZV9MTOuODLI0U5TuuyRSNZ9tvlDBTASTzg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pAHgU7s45/cKP/4MqpD5tugbCscVce7Lfz9MHT395d/KVcIZvw0EsTIZeH2ye3QGFGNAXL8klr6L+5RkUiDguvc4yLf4jbMFudUHAa7cpk2zxDPyi/HENQF4x2QVGePd7yz2G5w14rQIE/WyVdTvtYxNUjVKXWwDxSzxRAk1O6U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O6Xn37c9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A175C4CEEF;
+	Tue, 18 Mar 2025 09:01:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742288502;
+	bh=C2+M5veEyZV9MTOuODLI0U5TuuyRSNZ9tvlDBTASTzg=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=O6Xn37c9YChD6fjdOKjDnR4BhlBzMI7v2qAQAt1BsSip+oS4gZq3OqvGyTCkSLeRZ
+	 OHKszQvtuRPRKzhKMM8Tzbk4KP2IOsdWp9PJZkD7Xy1UL6wUrK5W4ws817igwVlOcF
+	 5pPcFrXcQvGTS1yXO/A+yFFS2q7gVcWznZywKDyaANofz4vGj/fYEVQElpw0qykktF
+	 FLKtsE1krKwj8muSHOfOTqTXLCgW1LuIO5SUte3HLJfCNJSXKIqdqUP7Fa3XQ+Px5o
+	 4jWTHhIAcu1SDjqdj+66p66Fn38pfxMeAsCfQZyqmNHgPQOc5/k1yvFK9QBbk5xhPV
+	 ng9xS8SuO10Kg==
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-aaecf50578eso987877466b.2;
+        Tue, 18 Mar 2025 02:01:42 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXY6eR0+3LxR2xc8lQ1gszxaofgYqH+9owQZ6356vmbXi0u9A5LtXU68mn5jn7NHAkMShiXsfPF2r8S0Ed4@vger.kernel.org, AJvYcCXYmsdxv5jd/hAJPqGUW7C+F2ZSde2U7/XV7C5PngwWifqjvIj0wyj77GFxNJzjKxlQPx08ybdkKKE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwMmy7ohU8pJcEuEa7YdfkLrZbCUJCxzwmuijS0L2uCcH3Y1/wV
+	P9odPer82U9yFHrMtAONe4QFqdiZYGtSHEJpyEaUJKgIf2nh/qjWPYnzKqqBc9VZ3HVjSZrJXbU
+	FmbV2NsLG4YBJ3Eyfw20TFDZdtjM=
+X-Google-Smtp-Source: AGHT+IEuUXf2+sUNkOFpmiuq4nz0aWaZFm5xNxgnL8CvPNPRsULoqEPFybTgXtrR1PNhBtoi5yFjiAHOlH9+RnPTtnU=
+X-Received: by 2002:a17:907:d9f:b0:abf:749f:f719 with SMTP id
+ a640c23a62f3a-ac38d3894afmr254215066b.7.1742288501023; Tue, 18 Mar 2025
+ 02:01:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250318-1b03e58fe508b077e5d38233@orel>
+References: <20250312134654.6699-1-chenhuacai@loongson.cn> <Z9Gsq9Yz7nDQ_fOx@ryzen>
+ <Z9koefNibN99tslN@ryzen>
+In-Reply-To: <Z9koefNibN99tslN@ryzen>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Tue, 18 Mar 2025 17:01:28 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H4f_ypLDceRe4KwscJGCKE6OLuRrtnwhCC5MJSAFQSS8A@mail.gmail.com>
+X-Gm-Features: AQ5f1JqhPtZZ6NlO_jpLuvn1sKPW-MavzmrfvRXQrzAbvpYLFLfmANJyJWZhI3k
+Message-ID: <CAAhV-H4f_ypLDceRe4KwscJGCKE6OLuRrtnwhCC5MJSAFQSS8A@mail.gmail.com>
+Subject: Re: [PATCH V3] ahci: Marvell 88SE9215 controllers prefer DMA for ATAPI
+To: Niklas Cassel <cassel@kernel.org>
+Cc: Huacai Chen <chenhuacai@loongson.cn>, Damien Le Moal <dlemoal@kernel.org>, 
+	linux-ide@vger.kernel.org, Xuerui Wang <kernel@xen0n.name>, 
+	Daniel Kral <d.kral@proxmox.com>, linux-kernel@vger.kernel.org, 
+	Yuli Wang <wangyuli@uniontech.com>, Jie Fan <fanjie@uniontech.com>, 
+	Erpeng Xu <xuerpeng@uniontech.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Mar 18, 2025 at 09:48:21AM +0100, Andrew Jones wrote:
-> On Mon, Mar 17, 2025 at 03:39:01PM +0100, Alexandre Ghiti wrote:
-> > Hi Drew,
-> > 
-> > On 04/03/2025 13:00, Andrew Jones wrote:
-> > > Allow skipping scalar and vector unaligned access speed tests. This
-> > > is useful for testing alternative code paths and to skip the tests in
-> > > environments where they run too slowly. All CPUs must have the same
-> > > unaligned access speed.
-> > 
-> > I'm not a big fan of the command line parameter, this is not where we should
-> > push uarch decisions because there could be many other in the future, the
-> > best solution to me should be in DT/ACPI and since the DT folks, according
-> > to Palmer, shut down this solution, it remains using an extension.
-> > 
-> > I have been reading a bit about unaligned accesses. Zicclsm was described as
-> > "Even though mandated, misaligned loads and stores might execute extremely
-> > slowly. Standard software distributions should assume their existence only
-> > for correctness, not for performance." in rva20/22 but *not* in rva23. So
-> > what about using this "hole" and consider that a platform that *advertises*
-> > Zicclsm means its unaligned accesses are fast? After internal discussion, It
-> > actually does not make sense to advertise Zicclsm if the platform accesses
-> > are slow right?
-> 
-> This topic pops up every so often, including in yesterday's server
-> platform TG call. In that call, and, afaict, every other time it has
-> popped up, the result is to reiterate that ISA extensions never say
-> anything about performance. So, Zicclsm will never mean fast and we
-> won't likely be able to add any extension that does.
-> 
-> > 
-> > arm64 for example considers that armv8 has fast unaligned accesses and can
-> > then enable HAVE_EFFICIENT_ALIGNED_ACCESS in the kernel, even though some
-> > uarchs are slow. Distros will very likely use rva23 as baseline so they will
-> > enable Zicclsm which would allow us to take advantage of this too, without
-> > this, we lose a lot of perf improvement in the kernel, see
-> > https://lore.kernel.org/lkml/20231225044207.3821-1-jszhang@kernel.org/.
-> > 
-> > Or we could have a new named feature for this, even though it's weird to
-> > have a named feature which would basically  mean "Zicclsm is fast". We don't
-> > have, for example, a named feature to say "Zicboz is fast" but given the
-> > vague wording in the profile spec, maybe we can ask for one in that case?
-> > 
-> > Sorry for the late review and for triggering this debate...
-> 
-> No problem, let's try to pick the best option. I'll try listing all the
-> options and there pros/cons.
-> 
-> 1. Leave as is, which is to always probe
->    pro: Nothing to do
->    con: Not ideal in all environments
-> 
-> 2. New DT/ACPI description
->    pro: Describing whether or not misaligned accesses are implemented in
->         HW (which presumably means fast) is something that should be done
-> 	in HW descriptions
->    con: We'll need to live with probing until we can get the descriptions
->         defined, which may be never if there's too much opposition
-> 
-> 3. Command line
->    pro: Easy and serves its purpose, which is to skip probing in the
->         environments where probing is not desired
->    con: Yet another command line option (which we may want to deprecate
->         someday)
-> 
-> 4. New ISA extension
->    pro: Easy to add to HW descriptions
->    con: Not likely to get it through ratification
-> 
-> 5. New SBI FWFT feature
->    pro: Probably easier to get through ratification than an ISA extension
->    con: Instead of probing, kernel would have to ask SBI -- would that
->         even be faster? Will all the environments that want to skip
-> 	probing even have a complete SBI?
-> 
-> 6. ??
+On Tue, Mar 18, 2025 at 4:02=E2=80=AFPM Niklas Cassel <cassel@kernel.org> w=
+rote:
+>
+> Hello Huacai,
+>
+> On Wed, Mar 12, 2025 at 04:47:55PM +0100, Niklas Cassel wrote:
+> > On Wed, Mar 12, 2025 at 09:46:54PM +0800, Huacai Chen wrote:
+> > > We use CD/DVD drives under Marvell 88SE9215 SATA controller on many
+> > > Loongson-based machines. We found its PIO doesn't work well, and on t=
+he
+> > > opposite its DMA seems work very well. We don't know the detail of th=
+e
+> > > 88SE9215 SATA controller, but we have tested different CD/DVD drives
+> > > and they all have problems under 88SE9215 (but they all work well und=
+er
+> > > an Intel SATA controller). So we can define a new dedicated AHCI boar=
+d
+> > > id named board_ahci_yes_fbs_atapi_dma for 88SE9215, and for this id w=
+e
+> > > set the AHCI_HFLAG_ATAPI_DMA_QUIRK and ATA_QUIRK_ATAPI_MOD16_DMA flag=
+s
+> > > on the SATA controller to prefer ATAPI DMA.
+> >
+> > This is a wall of text.
+> >
+> > Could you please use paragraphs? (with an empty line between paragraphs=
+).
+> >
+> > (There can be multiple sentences in one paragraph.)
+> >
+> > This is a good example:
+> >
+> > commit 6bdbb73dc8d99fbb77f5db79dbb6f108708090b4
+> > Author: Bibo Mao <maobibo@loongson.cn>
+> > Date:   Sat Mar 8 13:52:04 2025 +0800
+> >
+> >     LoongArch: KVM: Fix GPA size issue about VM
+> >
+> >     Physical address space is 48 bit on Loongson-3A5000 physical machin=
+e,
+> >     however it is 47 bit for VM on Loongson-3A5000 system. Size of phys=
+ical
+> >     address space of VM is the same with the size of virtual user space=
+ (a
+> >     half) of physical machine.
+> >
+> >     Variable cpu_vabits represents user address space, kernel address s=
+pace
+> >     is not included (user space and kernel space are both a half of tot=
+al).
+> >     Here cpu_vabits, rather than cpu_vabits - 1, is to represent the si=
+ze of
+> >     guest physical address space.
+> >
+> >     Also there is strict checking about page fault GPA address, inject =
+error
+> >     if it is larger than maximum GPA address of VM.
+> >
+> >     Cc: stable@vger.kernel.org
+> >     Signed-off-by: Bibo Mao <maobibo@loongson.cn>
+> >     Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
+> >
+> >
+> >
+> > Otherwise, this looks good to me.
+>
+>
+> If you want this patch to be queued up for 6.15, please send a new versio=
+n
+> this week, because after this week, it will instead be queued up for 6.16=
+.
+OK, I will send V4 today, sorry for the delay.
 
-I forgot one, which was v1 of this series and already rejected,
-
- 6. Use ID registers
-    pro: None of the above cons, including the main con with the command
-         line, which is that there could be many other decisions in the
-	 future, implying we could need many more command line options.
-    con: A slippery slope. We don't want to open the door to
-         features-by-idregs. (However, we can at least always close the
-	 door again if better mechanisms become available. Command
-	 lines would need to be deprecated, but feature-by-idreg code
-	 can just be deleted.)
-
-Thanks,
-drew
-
-> 
-> I'm voting for (3), which is why I posted this patchset, but I'm happy
-> to hear other votes or other proposals and discuss.
-> 
-> Thanks,
-> drew
+Huacai
+>
+>
+> Kind regards,
+> Niklas
 
