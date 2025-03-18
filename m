@@ -1,131 +1,120 @@
-Return-Path: <linux-kernel+bounces-566667-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566666-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2978DA67AF9
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 18:30:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 336D2A67AF7
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 18:29:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BADFD176C48
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 17:29:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C08D17DE03
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 17:29:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3306B212D66;
-	Tue, 18 Mar 2025 17:29:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B126211A39;
+	Tue, 18 Mar 2025 17:29:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="nZs4DP7H"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oISihzR0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4081113C908;
-	Tue, 18 Mar 2025 17:29:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E61E1211A20;
+	Tue, 18 Mar 2025 17:29:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742318984; cv=none; b=Kxb/awfmiWztAeZG/VfxF5zHfNSwN8zgm9CB1xbLDMIjcjmzCUoCMXJtzaazqi76duFQIJ+s7jojo66uMsjUzZaidJqb3HKsVYbaXXj29fqpNO9WePUkCCvWoMpi6FxjvEPawQ0Drlzl3Y7OL5Fh2c05R0N5v9iYWCZFGpMEwVc=
+	t=1742318982; cv=none; b=LGCEJ2ec2W+fF7ujGtdtwg2RXoynBfGc+sHNsTmmS3lB+LKW9fc8+TtR7I0kHFw2xf+ah3m3OrXJKz0i2HkZruhocgLQvnX9IMPQ+bBYW2lF5QBnYhDNyxfupmE8xKskOr2gfZ3NQCfKmfRjAu+QMf/cECKo5CPFaEEVxI/rPDg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742318984; c=relaxed/simple;
-	bh=l+3cKI1Pbb9aYDDHtKWGxSIx2x/V6YyBxyEjqF+ZFk0=;
-	h=Subject:From:To:Cc:Date:Message-ID:MIME-Version:Content-Type; b=lJr9H8KxPpTFgky3uPQietm/aFUOaeZjJdA5bTvWvAIXc3k4FICb58OpJEVXPeTFuMj1o5y8aYFlsiznSM+F4pCDQqYqY7TRhpy/ChHIMp5I6iOS88sC3lnl55Lwwt+mmW4w95YrvnY4v+BJBxHN2Y72qvRbytDN1MzJZr2CTtQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=nZs4DP7H; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52IH0CmN011598;
-	Tue, 18 Mar 2025 17:29:29 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=pp1; bh=9ehkTcd0d43Pw/Xfl6py7gyh3x8O
-	mdwtD261Y4DK4V8=; b=nZs4DP7HD/JYIUdO4l3LuAjn0J8SbQas17+w6+dmDR42
-	u06rMHFb69K0pWq10yzAFf7DyeZIOlotlELcuGxGjEDLrgBOMmtzREQ5xAjwZGcA
-	tLKPWw8/PbMzk4GIyAOkAPqexvAjbqJGisMwyd+bS3mu61t1anmm1XcTjB4Eg86L
-	Wtbx/8S/MKtWhdfYi5GnXlH/VRE011GawCHuNJS/wqUOsnGEeE6md47ZuLJQIvZq
-	nlOmdlpYoMqzkyW1d6xvi/pyyq+9GidPsoa7WOSukkPyUztNDdSu2AiTWU0wrYAw
-	lM72HMqT8v5uqh6Rq20dtIErD60Dpng/yUgWopoATQ==
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45eu55w7yc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 18 Mar 2025 17:29:28 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52IH0XNh031974;
-	Tue, 18 Mar 2025 17:29:28 GMT
-Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 45dkvtdap1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 18 Mar 2025 17:29:28 +0000
-Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
-	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52IHTOOF19202428
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 18 Mar 2025 17:29:24 GMT
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 5332320043;
-	Tue, 18 Mar 2025 17:29:24 +0000 (GMT)
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 95BA120040;
-	Tue, 18 Mar 2025 17:29:22 +0000 (GMT)
-Received: from [172.17.0.2] (unknown [9.3.101.137])
-	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Tue, 18 Mar 2025 17:29:22 +0000 (GMT)
-Subject: [PATCH] vfio: pci: Advertise INTx only if LINE is connected
-From: Shivaprasad G Bhat <sbhat@linux.ibm.com>
-To: alex.williamson@redhat.com, jgg@ziepe.ca, kevin.tian@intel.com
-Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org, yi.l.liu@intel.com,
-        Yunxiang.Li@amd.com, pstanner@redhat.com, maddy@linux.ibm.com,
-        linuxppc-dev@lists.ozlabs.org, sbhat@linux.ibm.com
-Date: Tue, 18 Mar 2025 17:29:21 +0000
-Message-ID: <174231895238.2295.12586708771396482526.stgit@linux.ibm.com>
-User-Agent: StGit/1.1
+	s=arc-20240116; t=1742318982; c=relaxed/simple;
+	bh=Cio401m5J8j6/Hx5tMo+Hm7yebMVzz/u47TvF8D9QvM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=G0iD918X8Rk5q6X9rXWkZ4uPXPYlwddWYO+kI3A2Q0eJ3ejDrzBks3vdyAHjhbsgLQ/l/fSuD/jhRNEWyFiDKZMwpp3p5s+3UvhY1goAAH9XmKO4GhXm/rGlME7khNAVAPUvc24g+eXPAar2oufQcPDo+QLuIGB2s2Mgs3E/6mk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oISihzR0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5AB76C4CEDD;
+	Tue, 18 Mar 2025 17:29:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742318981;
+	bh=Cio401m5J8j6/Hx5tMo+Hm7yebMVzz/u47TvF8D9QvM=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=oISihzR0AuizwReOex7jaJZZM03k3l+Zw4XqdLmkV4B4iG8g7E6NXKw+Yi5JkLtVm
+	 0GxZbEDQLdbNYY+cS0Zzsh2Y+/ukVlh6GRPHn4fBhxSES7qtFVb2Uc/fOCrlJN0o1N
+	 FVCbvGJAcXKyZEvlAU51nrFnbDarA9uAYk5twZsdqCOfM15xW6o57Pmc+h150HxRxM
+	 yWWUPPDpceAdPrKEaAqulRv689PWiuhesiVxd1Lcs3EGgkC7LIpDUg7/rpA/MG2gtO
+	 24Gngi+UCIh6jeuefsf4o2ksVRKbnx5GYk5ufPPsy1MwWKGYKFR/13jtoxSDDmVq90
+	 A9rxswD53nhVQ==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 08641CE0843; Tue, 18 Mar 2025 10:29:41 -0700 (PDT)
+Date: Tue, 18 Mar 2025 10:29:41 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Frederic Weisbecker <frederic@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
+	Joel Fernandes <joelagnelf@nvidia.com>,
+	Neeraj Upadhyay <neeraj.upadhyay@amd.com>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>, rcu <rcu@vger.kernel.org>
+Subject: Re: [PATCH] rcu/nocb: Dump gp state even if rdp gp itself is not
+ offloaded
+Message-ID: <f65f89b2-ce50-471f-b948-5869df69c197@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <20250318092336.5794-1-frederic@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: GDDIVZyl4q0rZUaHaDFiqrzscpzhIBL1
-X-Proofpoint-GUID: GDDIVZyl4q0rZUaHaDFiqrzscpzhIBL1
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-18_08,2025-03-17_03,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 bulkscore=0
- mlxlogscore=999 priorityscore=1501 adultscore=0 suspectscore=0
- impostorscore=0 mlxscore=0 lowpriorityscore=0 clxscore=1011 phishscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502280000 definitions=main-2503180127
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250318092336.5794-1-frederic@kernel.org>
 
-On POWER systems, when the device is behind the io expander,
-not all PCI slots would have the PCI_INTERRUPT_LINE connected.
-The firmware assigns a valid PCI_INTERRUPT_PIN though. In such
-configuration, the irq_info ioctl currently advertizes the
-irq count as 1 as the PCI_INTERRUPT_PIN is valid.
+On Tue, Mar 18, 2025 at 10:23:36AM +0100, Frederic Weisbecker wrote:
+> When a stall is detected, the state of each NOCB CPU is dumped along
+> with the state of each NOCB group. The latter part however is
+> incidentally ignored if the NOCB group leader happens not to be
+> offloaded itself.
+> 
+> Fix this to make sure related precious informations aren't lost over
+> a stall report.
+> 
+> Reported-by: Paul E. McKenney <paulmck@kernel.org>
+> Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
 
-The patch adds the additional check[1] if the irq is assigned
-for the PIN which is done iff the LINE is connected.
+Much better, thank you!
 
-[1]: https://lore.kernel.org/qemu-devel/20250131150201.048aa3bf.alex.williamson@redhat.com/
+Reviewed-by: Paul E. McKenney <paulmck@kernel.org>
 
-Signed-off-by: Shivaprasad G Bhat <sbhat@linux.ibm.com>
-Suggested-By: Alex Williamson <alex.williamson@redhat.com>
----
- drivers/vfio/pci/vfio_pci_core.c |    4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/drivers/vfio/pci/vfio_pci_core.c b/drivers/vfio/pci/vfio_pci_core.c
-index 586e49efb81b..4ce70f05b4a8 100644
---- a/drivers/vfio/pci/vfio_pci_core.c
-+++ b/drivers/vfio/pci/vfio_pci_core.c
-@@ -734,6 +734,10 @@ static int vfio_pci_get_irq_count(struct vfio_pci_core_device *vdev, int irq_typ
- 			return 0;
- 
- 		pci_read_config_byte(vdev->pdev, PCI_INTERRUPT_PIN, &pin);
-+#if IS_ENABLED(CONFIG_PPC64)
-+		if (!vdev->pdev->irq)
-+			pin = 0;
-+#endif
- 
- 		return pin ? 1 : 0;
- 	} else if (irq_type == VFIO_PCI_MSI_IRQ_INDEX) {
-
-
+> ---
+>  kernel/rcu/tree_nocb.h  | 3 +++
+>  kernel/rcu/tree_stall.h | 3 +--
+>  2 files changed, 4 insertions(+), 2 deletions(-)
+> 
+> diff --git a/kernel/rcu/tree_nocb.h b/kernel/rcu/tree_nocb.h
+> index 4a954ecf1c36..56baa78c6e85 100644
+> --- a/kernel/rcu/tree_nocb.h
+> +++ b/kernel/rcu/tree_nocb.h
+> @@ -1564,6 +1564,9 @@ static void show_rcu_nocb_state(struct rcu_data *rdp)
+>  	if (rdp->nocb_gp_rdp == rdp)
+>  		show_rcu_nocb_gp_state(rdp);
+>  
+> +	if (!rcu_segcblist_is_offloaded(&rdp->cblist))
+> +		return;
+> +
+>  	nocb_next_rdp = list_next_or_null_rcu(&rdp->nocb_gp_rdp->nocb_head_rdp,
+>  					      &rdp->nocb_entry_rdp,
+>  					      typeof(*rdp),
+> diff --git a/kernel/rcu/tree_stall.h b/kernel/rcu/tree_stall.h
+> index 56b21219442b..f96235d51642 100644
+> --- a/kernel/rcu/tree_stall.h
+> +++ b/kernel/rcu/tree_stall.h
+> @@ -927,8 +927,7 @@ void show_rcu_gp_kthreads(void)
+>  	for_each_possible_cpu(cpu) {
+>  		rdp = per_cpu_ptr(&rcu_data, cpu);
+>  		cbs += data_race(READ_ONCE(rdp->n_cbs_invoked));
+> -		if (rcu_segcblist_is_offloaded(&rdp->cblist))
+> -			show_rcu_nocb_state(rdp);
+> +		show_rcu_nocb_state(rdp);
+>  	}
+>  	pr_info("RCU callbacks invoked since boot: %lu\n", cbs);
+>  	show_rcu_tasks_gp_kthreads();
+> -- 
+> 2.48.1
+> 
 
