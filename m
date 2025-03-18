@@ -1,142 +1,122 @@
-Return-Path: <linux-kernel+bounces-565279-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565278-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A47CA66520
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 02:32:26 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D33FA6651F
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 02:31:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 408BC3A1619
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 01:32:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB4D017A470
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 01:31:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52FC078F2E;
-	Tue, 18 Mar 2025 01:32:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mVEGsyI7"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF8551487F6;
+	Tue, 18 Mar 2025 01:31:03 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A1E14A1E;
-	Tue, 18 Mar 2025 01:32:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7A824A1E;
+	Tue, 18 Mar 2025 01:30:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742261537; cv=none; b=BHu5B9UBvrJnZ6Pra0uhpIhrK6tweQWvvkgTTX/P4Id0HgvLG+6hoiOvvvXVxELqZ7PA5+wVyPwmxhiSJpuffi2nge0wZDGvr07D+gvI8i81bkogCbDrVVvTGd2cp1gImnMiMpsTymG0WCfEpP5tQ6aWTK/cP7UXN4bZcqAqxIg=
+	t=1742261463; cv=none; b=tSDaLjdPHZAvpvSVjvGT2P4UVX+3RikFj0U/2OXf2i/cpLny7fZu/citF8d5XMdwXtPbijY5BIxCmK80lUu/UZjOhPzOuxGIPAWnQa/fo0B7oyZVMclT8y9P+qnUirZDNLJfj/DnM/ivsIKvQjWfCWOWW+a9hBQN23tc1BheGIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742261537; c=relaxed/simple;
-	bh=JqoOq8Gr37++ZkptHw5jlUSyMIDAfo5oUptOSpaWASc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Cz1RvTAVnKp42YzBKEKhrkJvojwhMbiCE95dCeVA6bW6xxvqH3XOwhWBbzBSRJGUUDDlxPJewTTmEeDj3aryDp+9BzdUjbNJaKuR8OiMc7Qqji2naJxxi2tq+ZhIuurwZpuFd1HD1BAh91wrzSfYor22kmClB92pkF7E4RMjp+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mVEGsyI7; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742261536; x=1773797536;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=JqoOq8Gr37++ZkptHw5jlUSyMIDAfo5oUptOSpaWASc=;
-  b=mVEGsyI7MVUTCx22LxqGJxOEi0Fy+YFqIaXojHkk2xy4ZeXLQjZ59nCp
-   e03+tiraZC5CeB/q4+73k9GKUIvTA7tdI012n2J8VCWAwhaUeJKceK7ah
-   2Z0Fztzs9c9rFsmiixuRMXvfymUDXeDOUePExiOG6UmCLJQdPS+wNRcA4
-   5+udzTb0LNONuAY0Ikm3NPltQk9iAu1T73g1wX4UBeDjEukuAMbBx/FmN
-   h9c939f5VM7/pM4hrq1RvTopoXgAoh2xwBKRtKh4Bo0Ewhj6pDZ9/DBfJ
-   CWwtggEUrdj/otqDUkpJ6lb/E2r4Y3gw9cQkSEUMJNH4hlaUliYg4r8jO
-   A==;
-X-CSE-ConnectionGUID: Hml0xSutRpq9+LCMGdM0DQ==
-X-CSE-MsgGUID: 4fCmZeCFQRGGpbT4jqszHg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11376"; a="42627954"
-X-IronPort-AV: E=Sophos;i="6.14,255,1736841600"; 
-   d="scan'208";a="42627954"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Mar 2025 18:32:15 -0700
-X-CSE-ConnectionGUID: 9QX0+Jz6STe4sAjFd6Jwjg==
-X-CSE-MsgGUID: FK3WfwW2T8ajngI1rtXR3w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,255,1736841600"; 
-   d="scan'208";a="122052992"
-Received: from yzhao56-desk.sh.intel.com ([10.239.159.62])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Mar 2025 18:32:14 -0700
-From: Yan Zhao <yan.y.zhao@intel.com>
-To: pbonzini@redhat.com,
-	seanjc@google.com
-Cc: linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org,
-	Yan Zhao <yan.y.zhao@intel.com>
-Subject: [PATCH v2 0/5] Small changes related to prefetch and spurious faults
-Date: Tue, 18 Mar 2025 09:30:37 +0800
-Message-ID: <20250318013038.5628-1-yan.y.zhao@intel.com>
-X-Mailer: git-send-email 2.43.2
+	s=arc-20240116; t=1742261463; c=relaxed/simple;
+	bh=GqOqPhNmpDOOBJ70eh1A+FKAbrzAzBJOSmr6fthvsnE=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=BOUg/xDHZmH1Smjabv0we6PI9UoSJS7gPmJAiLzgdPoYr6BpcLdiU64d2BHpw7YKWcCiI7psN4RWz/Oc55xbk5yrtd6g+g2tYsZfEKLIhG1ddBqTn7S9xRQokFqdmPZcTsGRerHbWlbZyuWt0Ldkzq4q9BrhmPq7hk1r0zJs3zI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4ZGvRf5ktDz4f3jkr;
+	Tue, 18 Mar 2025 09:30:38 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.75])
+	by mail.maildlp.com (Postfix) with ESMTP id 078F91A01A6;
+	Tue, 18 Mar 2025 09:30:56 +0800 (CST)
+Received: from [10.174.178.129] (unknown [10.174.178.129])
+	by APP2 (Coremail) with SMTP id Syh0CgAnMGPPzNhnGXEYGw--.15476S2;
+	Tue, 18 Mar 2025 09:30:55 +0800 (CST)
+Subject: Re: [PATCH RESEND] ext4: Fix potential NULL pointer dereferences in
+ test_mb_mark_used() and test_mb_free_blocks()
+To: Qasim Ijaz <qasdev00@gmail.com>, adilger.kernel@dilger.ca, tytso@mit.edu
+Cc: linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org
+References: <20250313000021.18170-1-qasdev00@gmail.com>
+From: Kemeng Shi <shikemeng@huaweicloud.com>
+Message-ID: <cb138f5d-2470-bfcc-9939-fcaec24de100@huaweicloud.com>
+Date: Tue, 18 Mar 2025 09:30:55 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250313000021.18170-1-qasdev00@gmail.com>
+Content-Type: text/plain; charset=gbk
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:Syh0CgAnMGPPzNhnGXEYGw--.15476S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7AFWkJw4DAr4kJr4DCFyUJrb_yoW8AFy5pw
+	s5KF1jkr15Wr18uw47uw48Wa4xK3yFkr45WrWfWw1jvF9xJFyfC3ZIvw1UWF18AFWxXa15
+	Z3WaqrWDWr4IkrUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxk0xIA0c2IEe2xFo4CEbIxvr21lc7CjxVAaw2AF
+	wI0_JF0_Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
+	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1D
+	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
+	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
+	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUwz
+	uWDUUUU
+X-CM-SenderInfo: 5vklyvpphqwq5kxd4v5lfo033gof0z/
 
-Hi
 
-This is v2 of the series for some small changes related to
-prefetch/prefault and spurious faults.
 
-Patch 1: Checks if a shadow-present old SPTE is leaf to determine a
-         prefetch fault is spurious.
+on 3/13/2025 8:00 AM, Qasim Ijaz wrote:
+> test_mb_mark_used() and test_mb_free_blocks() call kunit_kzalloc() to 
+> allocate memory, however both fail to ensure that the allocations 
+> succeeded. If kunit_kzalloc() returns NULL, then dereferencing the 
+> corresponding pointer without checking for NULL will lead to 
+> a NULL pointer dereference.
+> 
+> To fix this call KUNIT_ASSERT_NOT_ERR_OR_NULL() to ensure 
+> the allocation succeeded.
+Reviewed-by: Kemeng Shi <shikemeng@huaweicloud.com>
+> 
+> Fixes: ac96b56a2fbd ("ext4: Add unit test for mb_mark_used")
+> Fixes: b7098e1fa7bc ("ext4: Add unit test for mb_free_blocks")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Qasim Ijaz <qasdev00@gmail.com>
+> ---
+>  fs/ext4/mballoc-test.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/fs/ext4/mballoc-test.c b/fs/ext4/mballoc-test.c
+> index bb2a223b207c..d634c12f1984 100644
+> --- a/fs/ext4/mballoc-test.c
+> +++ b/fs/ext4/mballoc-test.c
+> @@ -796,6 +796,7 @@ static void test_mb_mark_used(struct kunit *test)
+>  	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, buddy);
+>  	grp = kunit_kzalloc(test, offsetof(struct ext4_group_info,
+>  				bb_counters[MB_NUM_ORDERS(sb)]), GFP_KERNEL);
+> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, grp);
+>  
+>  	ret = ext4_mb_load_buddy(sb, TEST_GOAL_GROUP, &e4b);
+>  	KUNIT_ASSERT_EQ(test, ret, 0);
+> @@ -860,6 +861,7 @@ static void test_mb_free_blocks(struct kunit *test)
+>  	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, buddy);
+>  	grp = kunit_kzalloc(test, offsetof(struct ext4_group_info,
+>  				bb_counters[MB_NUM_ORDERS(sb)]), GFP_KERNEL);
+> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, grp);
+>  
+>  	ret = ext4_mb_load_buddy(sb, TEST_GOAL_GROUP, &e4b);
+>  	KUNIT_ASSERT_EQ(test, ret, 0);
+> 
 
-Patch 2: Merges the checks for prefetch and is_access_allowed() for
-         spurious faults into a common path.
-
-Patch 3: Adds a warning when the PFN changes on a spurious fault in the TDP
-         MMU
-
-Patch 4: Adds a warning when the PFN changes on a shadow-present SPTE in
-         the shadow MMU. This implementation differs from the v1
-         discussion. Upon reconsideration, I realized that WARN_ON_ONCE()
-         in mmu_spte_update() cannot warn when the PFN changes on a
-         shadow-present SPTE. Add the warning in mmu_set_spte() and have 
-         the prefetch fault to leverage the warning.
-
-Patch 5: Checks req and frees obsolete roots in each MMU reload.
-
-With below scenario
-1. add a memslot with size 4K
-2. prefault GPA A in the memslot
-3. delete the memslot
-4. re-add the memslot with size 2M
-5. prefault GPA A again.
-
-Patch 1 is required if zap all quirk is disabled in step 3.
-Patch 5 is required if zap all is performed in step 3 and if step 2/5 are
-        executed before any vcpu_run().
-
-Change log:
-v2:
-- Check both fault->prefetch and is_access_allowed() in patch 2. (Sean)
-- Split patch 3 in v1 into patches 3 and 4.
-- Only warn on PFN changes in case of spurious fault in TDP MMU in patch 3.
-  (Sean).
-- Add patch 4 to warn on PFN changes on shadow-present SPTE in shadow MMU.
-- Move kvm_mmu_free_obsolete_roots() from kvm_arch_vcpu_pre_fault_memory()
-  to kvm_mmu_reload() in patch 5. (Sean)
-
-Thanks
-Yan
-
-v1: https://lore.kernel.org/all/20250207030640.1585-1-yan.y.zhao@intel.com
-
-Yan Zhao (5):
-  KVM: x86/mmu: Further check old SPTE is leaf for spurious prefetch
-    fault
-  KVM: x86/tdp_mmu: Merge prefetch and access checks for spurious faults
-  KVM: x86/tdp_mmu: WARN if PFN changes for spurious faults
-  KVM: x86/mmu: Warn if PFN changes on shadow-present SPTE in shadow MMU
-  KVM: x86/mmu: Check and free obsolete roots in kvm_mmu_reload()
-
- arch/x86/kvm/mmu.h         | 3 +++
- arch/x86/kvm/mmu/mmu.c     | 6 ++++--
- arch/x86/kvm/mmu/tdp_mmu.c | 9 ++++-----
- 3 files changed, 11 insertions(+), 7 deletions(-)
-
-base-commit: c9ea48bb6ee6b28bbc956c1e8af98044618fed5e
--- 
-2.43.2
 
