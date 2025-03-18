@@ -1,313 +1,150 @@
-Return-Path: <linux-kernel+bounces-565848-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565849-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCEA1A6700A
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 10:42:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8823CA6700B
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 10:42:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CC0337A31FF
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 09:41:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F145189E7A0
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 09:42:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4CC4203716;
-	Tue, 18 Mar 2025 09:42:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HjHRkDco"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FB971FC7D2;
+	Tue, 18 Mar 2025 09:42:37 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04A761F666B
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 09:42:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52C161A83FB
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 09:42:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742290923; cv=none; b=Q0Nnv/nfbYgxb481v+uuRSuWayZV6MnmhTLRqbZZHWgCvGWirBI2YzRE2nwqetI7MLQXn1Hb8II4B20P7hsCO9lJkUQPuoCM+qAzR9BzvPt3E+WgAnyMw8suMRnk603WQmRAT/bAQvYblx/N6yvvhazXbQlSSGxSTPFeD0rnSxU=
+	t=1742290956; cv=none; b=YMybqTRzQ+SqL/LtCQ7F8q+VnqR5lsrwSSCaDJ+qaqw/eVlIkpCTJ2YDyG+N9owpccvsTpM5OrLMBy5rfarz9WelR113yr1RUtJhnph2GwDTmXR47hvT0zLS7rSwsPkchvM20KD5kLqDO+Mok8fdh809/EljTNfXDOPFupKu+IA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742290923; c=relaxed/simple;
-	bh=cZDupBysulvKilI5D3mHkFNmjEi0eARAN+TKzJpQ4a4=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=Lw5QW/gYMfT8UW92gTgvCVjqDL27P/+A0j5a4WkNd7xWwuERiJRdWOSZDfqG/Uw5irHpseIGlQYVR133bKNhdtdiW9cDDU2QukVSPQeezV7rXKI2sqKay0BSB4U11Ihb84sFi31VaR0WaZWFm9lajRPtZPWaRz5AOYxRf/AvLBk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HjHRkDco; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47348C4CEDD;
-	Tue, 18 Mar 2025 09:42:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742290922;
-	bh=cZDupBysulvKilI5D3mHkFNmjEi0eARAN+TKzJpQ4a4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=HjHRkDcoWoOC6OCYt1gIOvym0f7cXpwm9VG6boF4p9udmQ+XKrubkpzCW/Psse9lb
-	 ek8hZNhFV+qJzVSja4wgRgwoaDxALYaYFHzVooTptpc2Aoy6GtUjXM4rFnNdwApgCt
-	 YBWmorsiGPKx9qZBwljy4iO1NWYHiZNE8HFhmupegmwKrKAK+/j41M/tn25ekbmyrz
-	 Lk26AduBWfMC1gg+C+izcM1z483uFXE9xcb/pA/+5oqxMK4VgFHBEOe5NXVS7fe4lo
-	 87Pjc0Umc6anZbImYTJrSrgROuhn8/Tnt7wieo+c/AEU8x3Hgcv2olpU1srbM6P8Ly
-	 Wtg51U0Va8Xlg==
-Date: Tue, 18 Mar 2025 18:41:58 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Lance Yang <ioworker0@gmail.com>
-Cc: akpm@linux-foundation.org, will@kernel.org, peterz@infradead.org,
- mingo@redhat.com, longman@redhat.com, mhiramat@kernel.org,
- anna.schumaker@oracle.com, boqun.feng@gmail.com, joel.granados@kernel.org,
- kent.overstreet@linux.dev, leonylgao@tencent.com,
- linux-kernel@vger.kernel.org, rostedt@goodmis.org,
- senozhatsky@chromium.org, tfiga@chromium.org, amaindex@outlook.com, Mingzhe
- Yang <mingzhe.yang@ly.com>
-Subject: Re: [PATCH RESEND v2 1/3] hung_task: replace blocker_mutex with
- encoded blocker
-Message-Id: <20250318184158.e6c1b2d28e2fee311bcd2c30@kernel.org>
-In-Reply-To: <20250314144300.32542-2-ioworker0@gmail.com>
-References: <20250314144300.32542-1-ioworker0@gmail.com>
-	<20250314144300.32542-2-ioworker0@gmail.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1742290956; c=relaxed/simple;
+	bh=y8jL4qekQfiGukKg+ROrGvBhtZJLqKiazo6PakAQMcE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HNm7Z+K/z/J8j0h/KQC2bvpxmnGXAf7CdgosFkBHIoBn20I6RB9f/Nw48XRGK2RF295NMmec78GnHluRD7skTY4207D01qbsElzcmex0yeliHts2q1y0KeBflh523zrD+k8GVA0BjkomevK3az1fZgJtka1K2Qi89+Lb95KjC44=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1tuTSp-0007k8-Sr; Tue, 18 Mar 2025 10:42:23 +0100
+Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1tuTSp-000P5E-0c;
+	Tue, 18 Mar 2025 10:42:23 +0100
+Received: from pengutronix.de (p5b1645f7.dip0.t-ipconnect.de [91.22.69.247])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id 321633DF4DB;
+	Tue, 18 Mar 2025 09:42:23 +0000 (UTC)
+Date: Tue, 18 Mar 2025 10:42:22 +0100
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, Woojung Huh <woojung.huh@microchip.com>, 
+	Andrew Lunn <andrew+netdev@lunn.ch>, Russell King <rmk+kernel@armlinux.org.uk>, 
+	Thangaraj Samynathan <Thangaraj.S@microchip.com>, Rengarajan Sundararajan <Rengarajan.S@microchip.com>, 
+	Simon Horman <horms@kernel.org>, netdev@vger.kernel.org, Phil Elwell <phil@raspberrypi.org>, 
+	linux-kernel@vger.kernel.org, UNGLinuxDriver@microchip.com, kernel@pengutronix.de, 
+	Maxime Chevallier <maxime.chevallier@bootlin.com>
+Subject: Re: [PATCH net-next v4 04/10] net: usb: lan78xx: improve error
+ reporting on PHY attach failure
+Message-ID: <20250318-belligerent-emu-of-authority-0beddf-mkl@pengutronix.de>
+References: <20250318093410.3047828-1-o.rempel@pengutronix.de>
+ <20250318093410.3047828-5-o.rempel@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="35643vawmk6esmbi"
+Content-Disposition: inline
+In-Reply-To: <20250318093410.3047828-5-o.rempel@pengutronix.de>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Fri, 14 Mar 2025 22:42:58 +0800
-Lance Yang <ioworker0@gmail.com> wrote:
 
-> This patch replaces 'struct mutex *blocker_mutex' with 'unsigned long
-> blocker', as only one blocker is active at a time.
-> 
-> The blocker filed can store both the lock addrees and the lock type, with
-> LSB used to encode the type as Masami suggested, making it easier to extend
-> the feature to cover other types of locks.
-> 
-> Also, once the lock type is determined, we can directly extract the address
-> and cast it to a lock pointer ;)
+--35643vawmk6esmbi
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH net-next v4 04/10] net: usb: lan78xx: improve error
+ reporting on PHY attach failure
+MIME-Version: 1.0
 
-Hi Lance,
-
-Thanks for update. I added some comments.
-
-> 
-> Suggested-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-> Signed-off-by: Mingzhe Yang <mingzhe.yang@ly.com>
-> Signed-off-by: Lance Yang <ioworker0@gmail.com>
+On 18.03.2025 10:34:04, Oleksij Rempel wrote:
+> Include error code in the log message when PHY attachment fails,
+> providing better debugging information.
+>=20
+> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
 > ---
->  include/linux/hung_task.h | 94 +++++++++++++++++++++++++++++++++++++++
->  include/linux/sched.h     |  2 +-
->  kernel/hung_task.c        | 15 ++++---
->  kernel/locking/mutex.c    |  8 +++-
->  4 files changed, 111 insertions(+), 8 deletions(-)
->  create mode 100644 include/linux/hung_task.h
-> 
-> diff --git a/include/linux/hung_task.h b/include/linux/hung_task.h
-> new file mode 100644
-> index 000000000000..64ced33b0d1f
-> --- /dev/null
-> +++ b/include/linux/hung_task.h
-> @@ -0,0 +1,94 @@
-> +/* SPDX-License-Identifier: GPL-2.0-only */
-> +/*
-> + * Detect Hung Task: detecting tasks stuck in D state
-> + *
-> + * Copyright (C) 2025 Tongcheng Travel (www.ly.com)
-> + * Author: Lance Yang <mingzhe.yang@ly.com>
-> + */
-> +#ifndef __LINUX_HUNG_TASK_H
-> +#define __LINUX_HUNG_TASK_H
-> +
-> +#include <linux/bug.h>
-> +#include <linux/sched.h>
-> +#include <linux/compiler.h>
-> +
-> +/*
-> + * @blocker: Combines lock address and blocking type.
-> + *
-> + * Since lock pointers are at least 4-byte aligned(32-bit) or 8-byte
-> + * aligned(64-bit). This leaves the 2 least bits (LSBs) of the pointer
-> + * always zero. So we can use these bits to encode the specific blocking
-> + * type.
-> + *
-> + * Type encoding:
-> + * 00 - Blocked on mutex        (BLOCKER_TYPE_MUTEX)
-> + * 01 - Blocked on semaphore    (BLOCKER_TYPE_SEM)
-> + * 10 - Blocked on rt-mutex     (BLOCKER_TYPE_RTMUTEX)
-> + * 11 - Blocked on rw-semaphore (BLOCKER_TYPE_RWSEM)
-> + */
-> +#define BLOCKER_TYPE_MUTEX      0x00UL
-> +#define BLOCKER_TYPE_SEM        0x01UL
-> +#define BLOCKER_TYPE_RTMUTEX    0x02UL
-> +#define BLOCKER_TYPE_RWSEM      0x03UL
-> +
-> +#define BLOCKER_TYPE_MASK       0x03UL
-> +
-> +#ifdef CONFIG_DETECT_HUNG_TASK_BLOCKER
-> +static inline void hung_task_set_blocker(void *lock, unsigned long type)
-> +{
-> +	unsigned long lock_ptr = (unsigned long)lock;
-> +
-> +	WARN_ON_ONCE(!lock_ptr);
-> +	WARN_ON_ONCE(lock_ptr & BLOCKER_TYPE_MASK);
-> +	WARN_ON_ONCE(READ_ONCE(current->blocker));
+> changes v3:
+> - update commit message
+> ---
+>  drivers/net/usb/lan78xx.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/net/usb/lan78xx.c b/drivers/net/usb/lan78xx.c
+> index e54b1ac2c4fc..d2bc6cbdbb66 100644
+> --- a/drivers/net/usb/lan78xx.c
+> +++ b/drivers/net/usb/lan78xx.c
+> @@ -2693,8 +2693,8 @@ static int lan78xx_phy_init(struct lan78xx_net *dev)
+> =20
+>  	ret =3D phylink_connect_phy(dev->phylink, phydev);
+>  	if (ret) {
+> -		netdev_err(dev->net, "can't attach PHY to %s\n",
+> -			   dev->mdiobus->id);
+> +		netdev_err(dev->net, "can't attach PHY to %s, error %pe\n",
+> +			   dev->mdiobus->id, ERR_PTR(ret));
+>  		return -EIO;
 
-The last one needs a comment why it is problem.
+Probably unrelated to this patch, but what about propagating the error
+value?
 
-WARN_ON_ONCE(READ_ONCE(current->blocker),
-	"Task blocker is not cleared. Maybe forgot to clear it somewhere? Type: %d\n",
-	current->blocker);
+Marc
 
-But I don't think this isn't needed to be checked usually.
+>  	}
+> =20
+> --=20
+> 2.39.5
+>=20
+>=20
+>=20
 
-> +
-> +	/*
-> +	 * If the lock pointer matches the BLOCKER_TYPE_MASK, return
-> +	 * without writing anything.
-> +	 */
-> +	if (lock_ptr & BLOCKER_TYPE_MASK)
-> +		return;
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
 
-You can use WARN_ON_ONCE for 'if' condition.
+--35643vawmk6esmbi
+Content-Type: application/pgp-signature; name="signature.asc"
 
-  if (WARN_ON_ONCE(lock_ptr & BLOCKER_TYPE_MASK))
-	return; 
+-----BEGIN PGP SIGNATURE-----
 
-> +
-> +	WRITE_ONCE(current->blocker, lock_ptr | type);
-> +}
-> +
-> +static inline void hung_task_clear_blocker(void)
-> +{
-> +	WARN_ON_ONCE(!READ_ONCE(current->blocker));
-> +
-> +	WRITE_ONCE(current->blocker, 0UL);
-> +}
-> +
-> +static inline bool hung_task_blocker_is_type(unsigned long blocker,
-> +					  unsigned long type)
-> +{
-> +	WARN_ON_ONCE(!blocker);
-> +
-> +	return (blocker & BLOCKER_TYPE_MASK) == type;
-> +}
-> +
-> +static inline void *hung_task_blocker_to_lock(unsigned long blocker)
-> +{
-> +	WARN_ON_ONCE(!blocker);
-> +
-> +	return (void *)(blocker & ~BLOCKER_TYPE_MASK);
-> +}
-> +#else
-> +static inline void hung_task_set_blocker(void *lock, unsigned long type)
-> +{
-> +}
-> +static inline void hung_task_clear_blocker(void)
-> +{
-> +}
-> +static inline bool hung_task_blocker_is_type(unsigned long blocker,
-> +					     unsigned long type)
-> +{
-> +	return false;
-> +}
-> +static inline void *hung_task_blocker_to_lock(unsigned long blocker)
-> +{
-> +	return NULL;
-> +}
-> +#endif
-> +
-> +#endif /* __LINUX_HUNG_TASK_H */
-> diff --git a/include/linux/sched.h b/include/linux/sched.h
-> index 1419d94c8e87..f27060dac499 100644
-> --- a/include/linux/sched.h
-> +++ b/include/linux/sched.h
-> @@ -1218,7 +1218,7 @@ struct task_struct {
->  #endif
->  
->  #ifdef CONFIG_DETECT_HUNG_TASK_BLOCKER
-> -	struct mutex			*blocker_mutex;
-> +	unsigned long			blocker;
->  #endif
->  
->  #ifdef CONFIG_DEBUG_ATOMIC_SLEEP
-> diff --git a/kernel/hung_task.c b/kernel/hung_task.c
-> index dc898ec93463..46eb6717564d 100644
-> --- a/kernel/hung_task.c
-> +++ b/kernel/hung_task.c
-> @@ -25,6 +25,10 @@
->  
->  #include <trace/events/sched.h>
->  
-> +#ifdef CONFIG_DETECT_HUNG_TASK_BLOCKER
-> +#include <linux/hung_task.h>
-> +#endif
+iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAmfZP/wACgkQDHRl3/mQ
+kZysRgf/ZK7iXPm8CUv1sZbinwkHKzA8Tw6N6ZzYr6SN42E0NJiLzlfojaBXtSON
+u3GbRQM8pU0pr24x/uLJqgQX1jh6MqN9gJD/Bsdqr8IjueJpEvu7Dsxn1RX+31Re
+KlKY83uF5H63tKtJduhqCoFYekU4hQsfyS6TI2T/aotOv/KB7t4Svr/BrUJ0Wv6Y
+kWil/63ZOAl0AjVZkXikg71g4VLl6pvs2Wdtsvp8nkRg2y+NTLBULGc4DRj53r5f
+nOabsASMgYTa8ThMcwYMILevAPUSGXelWA7dMCBydM5YmwNnwf5Ig89Ow073qEj6
+U3tX+JS1ncOwl9TxGRtvX/omGny6eQ==
+=s1r8
+-----END PGP SIGNATURE-----
 
-We don't need this #ifdef, since it is already checked in the
-header file.
-
-> +
->  /*
->   * The number of tasks checked:
->   */
-> @@ -98,16 +102,17 @@ static struct notifier_block panic_block = {
->  static void debug_show_blocker(struct task_struct *task)
->  {
->  	struct task_struct *g, *t;
-> -	unsigned long owner;
-> -	struct mutex *lock;
-> +	unsigned long owner, blocker;
->  
->  	RCU_LOCKDEP_WARN(!rcu_read_lock_held(), "No rcu lock held");
->  
-> -	lock = READ_ONCE(task->blocker_mutex);
-> -	if (!lock)
-> +	blocker = READ_ONCE(task->blocker);
-> +	if (!blocker || !hung_task_blocker_is_type(blocker, BLOCKER_TYPE_MUTEX))
->  		return;
->  
-> -	owner = mutex_get_owner(lock);
-> +	owner = mutex_get_owner(
-> +		(struct mutex *)hung_task_blocker_to_lock(blocker));
-> +
->  	if (unlikely(!owner)) {
->  		pr_err("INFO: task %s:%d is blocked on a mutex, but the owner is not found.\n",
->  			task->comm, task->pid);
-> diff --git a/kernel/locking/mutex.c b/kernel/locking/mutex.c
-> index 6a543c204a14..642d6398e0dd 100644
-> --- a/kernel/locking/mutex.c
-> +++ b/kernel/locking/mutex.c
-> @@ -42,6 +42,10 @@
->  # define MUTEX_WARN_ON(cond)
->  #endif
->  
-> +#ifdef CONFIG_DETECT_HUNG_TASK_BLOCKER
-> +#include <linux/hung_task.h>
-> +#endif
-
-Ditto.
-
-> +
->  void
->  __mutex_init(struct mutex *lock, const char *name, struct lock_class_key *key)
->  {
-> @@ -189,7 +193,7 @@ __mutex_add_waiter(struct mutex *lock, struct mutex_waiter *waiter,
->  		   struct list_head *list)
->  {
->  #ifdef CONFIG_DETECT_HUNG_TASK_BLOCKER
-> -	WRITE_ONCE(current->blocker_mutex, lock);
-> +	hung_task_set_blocker(lock, BLOCKER_TYPE_MUTEX);
->  #endif
->  	debug_mutex_add_waiter(lock, waiter, current);
->  
-> @@ -207,7 +211,7 @@ __mutex_remove_waiter(struct mutex *lock, struct mutex_waiter *waiter)
->  
->  	debug_mutex_remove_waiter(lock, waiter, current);
->  #ifdef CONFIG_DETECT_HUNG_TASK_BLOCKER
-> -	WRITE_ONCE(current->blocker_mutex, NULL);
-> +	hung_task_clear_blocker();
->  #endif
->  }
->  
-> -- 
-> 2.45.2
-> 
-
-Thank you,
-
-
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+--35643vawmk6esmbi--
 
