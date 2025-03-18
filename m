@@ -1,142 +1,124 @@
-Return-Path: <linux-kernel+bounces-566789-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566794-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63EE2A67C82
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 20:01:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53FB8A67C90
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 20:04:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C7AB617F505
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 19:01:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0ACA1894594
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 19:04:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C87D1898FB;
-	Tue, 18 Mar 2025 19:01:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5389E212D63;
+	Tue, 18 Mar 2025 19:04:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TLR9knhl"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AEJkeNyn"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F9361531E1;
-	Tue, 18 Mar 2025 19:01:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAACC1531E1;
+	Tue, 18 Mar 2025 19:04:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742324493; cv=none; b=rMCUU9sbQuOl4yqvPqLWNkXbwa9RiJTRUIs5cbAXAuE1lul41z/kW2A1Pe1sWhoGNPC7/+Rz06JkVEBnJYy//B2uO/6zOFLdSqpctN10lMt4DDvrPLZeBmfqryOPmFM6sE1BvYke7ws2HG8LS20uUF7surPjvNTAYOW2pH30Wz0=
+	t=1742324663; cv=none; b=kavPx6uzWfs1VZtsdlSfJ9/ykSThLnOP9JumzpNgIUj0Yi0HclCk/hieAd/ejMosrfQ7QIYsivhCTzAOpjZlbPTXsdh0Suf0SCamRRzmllXU4cDWkhNPdGBtwiUj/TDZ8GPLuypVh7s/4mBy7CqfpWPhtUFknkMJdhItlZ72P+U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742324493; c=relaxed/simple;
-	bh=OMs5aVL4NRSgKrZLoPZm/15L2U76ZKU/MNbrAGOy48U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=r8hFtyqpcmrWSTj0Tbjzpe6o0b96uiE8POqPI0FAsbPEXUIkXCZt+jFTQN3RO/KyOMlbpEkY+W/8gewXw0E4NrlbqGm6OJoygZA+LgXtC786k2qHnsJONfc8v47PmBWhVoTT0WkU0RuDX3oCpP+8mykqLqWMEJwtiadbHD+cLEg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TLR9knhl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82242C4CEDD;
-	Tue, 18 Mar 2025 19:01:27 +0000 (UTC)
+	s=arc-20240116; t=1742324663; c=relaxed/simple;
+	bh=q8oOp41cHl33YfGvOaDk6/xbHYWsX2yx6+8wUa0yDHg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uuaQHkQ0j9iushXNRNmrgNhrfp87LXdOZixhcvb8svELO4kUP2jxLM+FUZ9L3fLPv01hHDLmQxKkSF+qpvFLFCfspsqNJP1jHGW79hjywVCz1lhOiwL2qYkBYyaOJSnMMywlIBmIq19ESrTcbhscAoWpYXfTPoFP3qbr3lby+TQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AEJkeNyn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9514CC4CEDD;
+	Tue, 18 Mar 2025 19:04:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742324492;
-	bh=OMs5aVL4NRSgKrZLoPZm/15L2U76ZKU/MNbrAGOy48U=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=TLR9knhlXaKWd9luXt/2WM7Q7XTjrQBUJ5wWA9Ej5P10+0fo9UplOwk7NJmnw4QXo
-	 a2gvS0v58NzaAqIK1aNoE/wDecHLHP8l+nMC/a2ys1FZVOM6WW0dBJxx6nRYelY930
-	 WS+6XWHhk8CO0s6KU3zooM5YFNUCqtgBeAM3rsdtfREUvNZ2rqI7MpEJFSQDz5MJOO
-	 FVWVjUGbWdXA0G8xosl0i30HJzIlWpdM5ILep16gi6kARzZEDQnj9m3Sr6LOlH4Jfw
-	 nV4w7FwFpFzCBUHJO0s4uDKeVxu9a3R+lXXlfasUNglFHoQ8PUXiP8xlT0YHYn2dWF
-	 NBqKkygpm4jFQ==
-Message-ID: <ebba0044-053c-4d72-8ea1-e8c1f2bf0a96@kernel.org>
-Date: Tue, 18 Mar 2025 20:01:24 +0100
+	s=k20201202; t=1742324663;
+	bh=q8oOp41cHl33YfGvOaDk6/xbHYWsX2yx6+8wUa0yDHg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=AEJkeNyn8a4ZrsAPb8DRhFNwI2U050JwzDRxBsfpmEsMpvv9kTob/NUbhpWIIugn5
+	 4cpDRdE+pN1pJ0QvBuA3rlcH/Qzak7OZmUVOQ5BJcb1p1n5t8NKwnY8YseJ93ATUyY
+	 YyUqD3Np3LvcrBf+IlDFQB90KXtymd4mnuXx1vS56gFlTS+M2KoOS09izWC03RpDVq
+	 x6MNaW+CiHXW5tYTHhFn+hC0XYyo//h7PKFixoeb0hJOK2BGF0WNebgpWo5u1gN2VQ
+	 LABMVs/ujFoE9y9A57vJnVsPaa+W/SSmd4GIumkSbtXvoLjYoZOZvE736hJPm49vd7
+	 vs3CB19du7HEw==
+Date: Tue, 18 Mar 2025 16:04:20 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
+	James Clark <james.clark@linaro.org>,
+	Mike Leach <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>,
+	guoren <guoren@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Charlie Jenkins <charlie@rivosinc.com>,
+	Bibo Mao <maobibo@loongson.cn>, Huacai Chen <chenhuacai@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	=?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn@rivosinc.com>,
+	Howard Chu <howardchu95@gmail.com>, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	"linux-csky@vger.kernel.org" <linux-csky@vger.kernel.org>,
+	linux-riscv@lists.infradead.org, Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH v6 13/13] perf trace: Fix BTF memory leak
+Message-ID: <Z9nDtMyoARGiHAGg@x1>
+References: <20250318033150.119174-1-irogers@google.com>
+ <20250318033150.119174-14-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH] initramfs: Add size validation to prevent tmpfs
- exhaustion
-To: Stephen Eta Zhou <stephen.eta.zhou@outlook.com>,
- David Disseldorp <ddiss@suse.de>
-Cc: "jsperbeck@google.com" <jsperbeck@google.com>,
- "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
- "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
- "lukas@wunner.de" <lukas@wunner.de>,
- "wufan@linux.microsoft.com" <wufan@linux.microsoft.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-References: <BYAPR12MB3205F96E780AA2F00EAD16E8D5D22@BYAPR12MB3205.namprd12.prod.outlook.com>
- <20250317182157.7adbc168.ddiss@suse.de>
- <872d008e-8412-4351-a954-29ee7c7c8315@kernel.org>
- <BYAPR12MB320544939A73966CC84D5020D5DE2@BYAPR12MB3205.namprd12.prod.outlook.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <BYAPR12MB320544939A73966CC84D5020D5DE2@BYAPR12MB3205.namprd12.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250318033150.119174-14-irogers@google.com>
 
-On 18/03/2025 13:46, Stephen Eta Zhou wrote:
-> Hi Krzysztof
+On Mon, Mar 17, 2025 at 08:31:50PM -0700, Ian Rogers wrote:
+> Add missing btf__free in trace__exit.
 > 
->> Just in case before anyone tries to actually apply it: the entire patch
->> has both corrupted header and actual patch is corrupted - all
->> indentation messed.
+> Signed-off-by: Ian Rogers <irogers@google.com>
+> ---
+>  tools/perf/builtin-trace.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
 > 
-> Sorry, this is my oversight.....
-> I checked it locally using checkpatch.pl and it was fine, but I just used it to import and found that there is a problem. Sorry for wasting your time. I will regenerate this patch and resend it in the correct format.
-> 
-> Krzysztof, thanks for pointing this out.
-> 
-> Thanks,
-> Stephen
-> ________________________________________
-> From: Krzysztof Kozlowski <krzk@kernel.org>
-> Sent: Tuesday, March 18, 2025 19:55
-> To: David Disseldorp <ddiss@suse.de>; Stephen Eta Zhou <stephen.eta.zhou@outlook.com>
-> Cc: jsperbeck@google.com <jsperbeck@google.com>; akpm@linux-foundation.org <akpm@linux-foundation.org>; gregkh@linuxfoundation.org <gregkh@linuxfoundation.org>; lukas@wunner.de <lukas@wunner.de>; wufan@linux.microsoft.com <wufan@linux.microsoft.com>; linux-kernel@vger.kernel.org <linux-kernel@vger.kernel.org>; linux-fsdevel@vger.kernel.org <linux-fsdevel@vger.kernel.org>
-> Subject: Re: [RFC PATCH] initramfs: Add size validation to prevent tmpfs exhaustion
->  
-What is this header doing this? Use standard mailing list response
-style, not some copy-paste and then quote entire irrelevant context.
+> diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
+> index a5f31472980b..d4bbb6a1e817 100644
+> --- a/tools/perf/builtin-trace.c
+> +++ b/tools/perf/builtin-trace.c
+> @@ -5339,6 +5339,12 @@ static void trace__exit(struct trace *trace)
+>  		zfree(&trace->syscalls.table);
+>  	}
+>  	zfree(&trace->perfconfig_events);
+> +#ifdef HAVE_LIBBPF_SUPPORT
+> +	if (trace->btf != NULL) {
 
-Best regards,
-Krzysztof
+No need for the check, btf__free() does:
+
+void btf__free(struct btf *btf)
+{
+        if (IS_ERR_OR_NULL(btf))
+                return;
+
+Up to Namhyung to turn this into the simpler:
+
+	btf__free(trace->btf);
+	trace->btf = NULL;
+
+> +		btf__free(trace->btf);
+> +		trace->btf = NULL;
+> +	}
+> +#endif
+>  }
+>  
+>  #ifdef HAVE_BPF_SKEL
+> -- 
+> 2.49.0.rc1.451.g8f38331e32-goog
 
