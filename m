@@ -1,148 +1,87 @@
-Return-Path: <linux-kernel+bounces-565222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CF2DA663DE
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 01:31:14 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99292A663D9
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 01:30:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB8BB4210CD
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 00:29:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 91B947A504A
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 00:29:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D015F1CFBC;
-	Tue, 18 Mar 2025 00:29:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 365B12628D;
+	Tue, 18 Mar 2025 00:30:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Se7yO4wP"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="hiwJHTyI"
+Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C08B15AF6
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 00:29:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78C2329B0;
+	Tue, 18 Mar 2025 00:30:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742257768; cv=none; b=RqiFx+h7af78XUbball6ZHOsiKp+1IOfFDgjUAyTxpNXras2fTnaa9J4K4KIS7CpOX/hxWwEvJvjpvntxxcc1ODZwxn+I0urBC2ETGTGXqZA23ZwLoZ1NcByrfEnKZBA9Vs8VpgUsk84vpRq3kqU6ebT4ZHWV50hIHpomUHSAhA=
+	t=1742257838; cv=none; b=qRdG4L6p3hQqS5H8V0p1ZJCfIdEHK7Th31d95cB4JfR20vjH63n4rm7Zjtgbko3tgca7wAp/yYXf0e1cMWEcof6gX0Ah5qDFcZ5H+aMoZ4zYF8gcUj3ar1XRdUZzTurWaZRgK/cgVh8V5byuQ5CJQ0unizJcHqY2gXCiiOp6Anw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742257768; c=relaxed/simple;
-	bh=Iq6VTTpZ7kMw4sehGuzpV0DZTLHk3gC3ZjUxf5EpShY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SG054b9hUU4HiodW1o3txbmwt/4/WudPRT39wKArIxk9I8fxZsIecmi9PKGZWouY1g/mCPAGCj9fajTMEvYEF6R7sANUjambEqMB8BDO8ZlKv40DXTOz7YHLXqbUhJpjtoqH2cudEw9/QXPQ/GNe2m58GnJCqlI2m2WwR3Y0guU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Se7yO4wP; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1742257765;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uGlyUD8vqNUb+95XWNLKTz4/ExHYTFqRQ19vbWD0q9U=;
-	b=Se7yO4wP6Q86jgXj8j9GJzlj4leGqxxsZSLnykxduCBia0XGw3x6aPjFan8MTv4otyTnGb
-	govatW4RAJMPD6iuYJIq6QrUINMJiV7P+3a9JhLl+2ppDi+n+vmn/F/9nKHEAGKwH8nhqv
-	oCc+IGjoqC8MGgIbxLfmxB5WZd+pcjA=
-Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com
- [209.85.216.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-630-6riIYDJbNmmY3sOytViTKQ-1; Mon, 17 Mar 2025 20:29:24 -0400
-X-MC-Unique: 6riIYDJbNmmY3sOytViTKQ-1
-X-Mimecast-MFC-AGG-ID: 6riIYDJbNmmY3sOytViTKQ_1742257763
-Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-2ff78dd28ecso6735031a91.1
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 17:29:24 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742257763; x=1742862563;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uGlyUD8vqNUb+95XWNLKTz4/ExHYTFqRQ19vbWD0q9U=;
-        b=iFz4eZayot4zA00GbowTbOm5bZXqBkU1e554GH/OXHcuaAUzI8w6yfhaTWzAUWSwB4
-         YilVFIZi0kYLUGslqYEG4vrPTpHD86HMvzq+gol0BmUXfEBF/SDI1iS8xcKkte8dzy4F
-         cEt0ziML6ga088hyrcCTAp9K5ZmSu/bpBGnYArEXt+f+8xKJMPxCtK3cR57wb6QtKmxJ
-         c4x94jVOgcANCC+LRL9vLr7GHdduCu1AjwnGpRW62k0CV66ACRXCmzeZXUkluc6SumbA
-         OOB/HqumqtI12xgvBSAJky35/D6qiQEYP6e204DLHIJEaBTpU5YCtAQMdVjA7ZBXRKgS
-         SFtg==
-X-Forwarded-Encrypted: i=1; AJvYcCURuZFcjq6FYls49gHwg1zFRLvau8FLC4NkJHtDa2fmbbY+Iwhe9DeFRMMJgefOPwL/Ly2mlX6u25aDIpY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzYm+YEu/3kl46rZ/360SE6RcU0bKFLy8Oi95/N4P5JG5+yyq3P
-	ZKilNFK34y6fMAmfHf+gU9hnljGacgoSCe16o/HRsGSSNd0gXuWssjbvGJo1F8lU9dmntnRk7n7
-	smO7oACPQfpvrwEScDLQ5Ku2Ab9WqdRl2UUGYAnButm/qtmT1wh0uB57rsWkAVDbh9XF2ivbiqu
-	wvKkfO51TBqjO+fQY9kN6AuMlZI1Lz9p3Y878N
-X-Gm-Gg: ASbGncug6olkw6RNveEVa2iCFdEWLKGmLiDVPYkrcAucC9JMpADFNWzj1htPyZMllzd
-	UVKjjY+RWNPC0OFwUbp0dq6qDfZEh64YRIU9MkSFA9KWKe7iV73DQMxXqBiArDjOwejhv1A==
-X-Received: by 2002:a17:90b:184e:b0:2ff:4f04:4261 with SMTP id 98e67ed59e1d1-301a5ba9e76mr360763a91.34.1742257763157;
-        Mon, 17 Mar 2025 17:29:23 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFOGBbCKgtLfnNUEqdVYBOyaNX4J8YQ0wrsnqj7PZlK8HAfiTPLx5TPUO4ZzYQvRfRq3UkxLbm7lMIv7cr07dk=
-X-Received: by 2002:a17:90b:184e:b0:2ff:4f04:4261 with SMTP id
- 98e67ed59e1d1-301a5ba9e76mr360742a91.34.1742257762833; Mon, 17 Mar 2025
- 17:29:22 -0700 (PDT)
+	s=arc-20240116; t=1742257838; c=relaxed/simple;
+	bh=qrJOuxJutwKayDAiU7200Ih6LBL1oWuqiTNfvlEeLSg=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=dRED1EU0WJd/NM2IKe7DWS3ofXuqc4flcW1B4Sii/JRIrVkA0JkLw5RqlGrR9bOkE9hXzfdC60+Ul6yBENIy9j0BoPaxvBMjDgGWLxLR+OIOKFr5S71pNLqVtJAT0+c6WZ4wMZoYzYHV+U8eccKv2Jjo9wtLkFOHb35vP4xlxJQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=hiwJHTyI; arc=none smtp.client-ip=203.29.241.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=codeconstruct.com.au; s=2022a; t=1742257827;
+	bh=qrJOuxJutwKayDAiU7200Ih6LBL1oWuqiTNfvlEeLSg=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References;
+	b=hiwJHTyIEKAeof16Bs2vj34PRfatLyOQG/jqDqNY5IoqgH4o7JRAgU4RVKn9R9lkq
+	 uzsMqS0GQjqPAHjj81SjHn6QGVre4DQY9WH0mWU8cK2uvurZwecbYObQNbhWTHxRVq
+	 Z5HtIZ/pV5uD5ImuWEayi+CnXqofCABoRR9/iBqbuvfcobTRiw6xYmZCMer7GQhP05
+	 7Cu6wSrfZ4Kz83e5bnljLZRcOwL1oN0ePXUaiVPLBfExbYgEuj8Db864ZnSUVeGK3j
+	 q5U01uGiB0r8wYGjpz10hlsbkXRN9LqHlJJ6TREpRy6BUwbM1uAH1ot2DVvKDvZBBy
+	 30nZnWwU5mZzg==
+Received: from [192.168.68.112] (unknown [180.150.112.225])
+	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 0F7D977BB4;
+	Tue, 18 Mar 2025 08:30:21 +0800 (AWST)
+Message-ID: <3c16b98f113fa8918c879a16580811556b0c35c1.camel@codeconstruct.com.au>
+Subject: Re: [PATCH] watchdog: aspeed: fix 64-bit division
+From: Andrew Jeffery <andrew@codeconstruct.com.au>
+To: Arnd Bergmann <arnd@kernel.org>, Wim Van Sebroeck
+ <wim@linux-watchdog.org>,  Guenter Roeck <linux@roeck-us.net>, Joel Stanley
+ <joel@jms.id.au>, Chin-Ting Kuo <chin-ting_kuo@aspeedtech.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, linux-watchdog@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org, 
+	linux-kernel@vger.kernel.org
+Date: Tue, 18 Mar 2025 11:00:21 +1030
+In-Reply-To: <20250314160248.502324-1-arnd@kernel.org>
+References: <20250314160248.502324-1-arnd@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250317-rss-v11-0-4cacca92f31f@daynix.com>
-In-Reply-To: <20250317-rss-v11-0-4cacca92f31f@daynix.com>
-From: Jason Wang <jasowang@redhat.com>
-Date: Tue, 18 Mar 2025 08:29:09 +0800
-X-Gm-Features: AQ5f1JpeJNqrDdWSKhpRoLtJXf8LNGibcE3CCqsOw8cQQUTRxkqjeK2TKIkholg
-Message-ID: <CACGkMEu=pPTd-QHKRDw7noRCTu-18c7JLJNKZCEu5=BHAE0aJQ@mail.gmail.com>
-Subject: Re: [PATCH net-next v11 00/10] tun: Introduce virtio-net hashing feature
-To: Akihiko Odaki <akihiko.odaki@daynix.com>
-Cc: Jonathan Corbet <corbet@lwn.net>, Willem de Bruijn <willemdebruijn.kernel@gmail.com>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	"Michael S. Tsirkin" <mst@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
-	Shuah Khan <shuah@kernel.org>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	netdev@vger.kernel.org, kvm@vger.kernel.org, 
-	virtualization@lists.linux-foundation.org, linux-kselftest@vger.kernel.org, 
-	Yuri Benditovich <yuri.benditovich@daynix.com>, Andrew Melnychenko <andrew@daynix.com>, 
-	Stephen Hemminger <stephen@networkplumber.org>, gur.stavi@huawei.com, 
-	Lei Yang <leiyang@redhat.com>, Simon Horman <horms@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Mar 17, 2025 at 6:58=E2=80=AFPM Akihiko Odaki <akihiko.odaki@daynix=
-.com> wrote:
->
-> virtio-net have two usage of hashes: one is RSS and another is hash
-> reporting. Conventionally the hash calculation was done by the VMM.
-> However, computing the hash after the queue was chosen defeats the
-> purpose of RSS.
->
-> Another approach is to use eBPF steering program. This approach has
-> another downside: it cannot report the calculated hash due to the
-> restrictive nature of eBPF.
->
-> Introduce the code to compute hashes to the kernel in order to overcome
-> thse challenges.
->
-> An alternative solution is to extend the eBPF steering program so that it
-> will be able to report to the userspace, but it is based on context
-> rewrites, which is in feature freeze. We can adopt kfuncs, but they will
-> not be UAPIs. We opt to ioctl to align with other relevant UAPIs (KVM
-> and vhost_net).
->
-> The patches for QEMU to use this new feature was submitted as RFC and
-> is available at:
-> https://patchew.org/QEMU/20250313-hash-v4-0-c75c494b495e@daynix.com/
->
-> This work was presented at LPC 2024:
-> https://lpc.events/event/18/contributions/1963/
->
-> V1 -> V2:
->   Changed to introduce a new BPF program type.
->
-> Signed-off-by: Akihiko Odaki <akihiko.odaki@daynix.com>
-> ---
-> Changes in v11:
-> - Added the missing code to free vnet_hash in patch
->   "tap: Introduce virtio-net hash feature".
-> - Link to v10: https://lore.kernel.org/r/20250313-rss-v10-0-3185d73a9af0@=
-daynix.com
->
+On Fri, 2025-03-14 at 17:02 +0100, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
+>=20
+> On 32-bit architectures, the new calculation causes a build failure:
+>=20
+> ld.lld-21: error: undefined symbol: __aeabi_uldivmod
+>=20
+> Since neither value is ever larger than a register, cast both
+> sides into a uintptr_t.
+>=20
+> Fixes: 5c03f9f4d362 ("watchdog: aspeed: Update bootstatus handling")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-We only have 2 or 3 points that need to be sorted out. Let's hold on
-to the iteration until we had an agreement.
+Reviewed-by: Andrew Jeffery <andrew@codeconstruct.com.au>
 
-Thanks
+Thanks,
+
+Andrew
 
 
