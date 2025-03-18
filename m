@@ -1,131 +1,127 @@
-Return-Path: <linux-kernel+bounces-566247-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566246-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9107FA6756A
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 14:43:57 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FF76A67562
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 14:42:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 347443AD5C4
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 13:42:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A85DD17916B
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 13:42:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16C6C20D4E8;
-	Tue, 18 Mar 2025 13:42:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBC1820D50A;
+	Tue, 18 Mar 2025 13:42:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=crpt.ru header.i=@crpt.ru header.b="jAGSr8Kf"
-Received: from mail.crpt.ru (mail1.crpt.ru [91.236.205.1])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WYjgZU31"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9558520D508
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 13:42:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.236.205.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A555020B21A;
+	Tue, 18 Mar 2025 13:42:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742305361; cv=none; b=pJHRQ/DnDNipU2OSmoEDgtM6UaFGyWAXkhCbQo/VHjMfDFOx8wT99hUNBv0jWW6ctHeZQDVoXrkkc1ed/hC4pAd7bJ2Q9AdHXBHGpumTus5Gsa6hZo/DK7w49Jhp58+NZy20nHfvIJL+psA9vhrA6Fb6BfeZMEYj6miw7f8NCog=
+	t=1742305352; cv=none; b=eePKmM2WR6kz8sRDNIp0rnyZ4QVBRs/eH0j2l0ShiVIpwIoxaCYTs+RdV/xuhgrLVMSM18n2Tve8LFvx/kJAOI3/bUMH88QltI62qai5IIv8kj91ULtN7jII/TbI9yYjzU/4HQeVoB/cadRV8oU8DmsJGYAfhs3zoGf4A1+oH3g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742305361; c=relaxed/simple;
-	bh=zHBz2NzGYeN8kH4fiaKRZfcg7nVFrjGejjkp7DglSnM=;
-	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=IVTSl9y9jNuAXbFLBsezb3F+pp1A9kdwxkKoLkZGO3rabPcKQehq0nD9wemvaWlqc58w4TCNuTMlaIlhnga3ao7Ce8z4nROsEOyrxK+Sy+och7SKiUqUuzE5hxVaESdS9AAiNr/6LUjgViy9aslwDjyQi/LE/X6UGBGP2S8bwS0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crpt.ru; spf=pass smtp.mailfrom=crpt.ru; dkim=pass (2048-bit key) header.d=crpt.ru header.i=@crpt.ru header.b=jAGSr8Kf; arc=none smtp.client-ip=91.236.205.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crpt.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=crpt.ru
-Received: from mail.crpt.ru ([192.168.60.4])
-	by mail.crpt.ru  with ESMTP id 52IDgI81019229-52IDgI83019229
-	(version=TLSv1.2 cipher=AES256-SHA256 bits=256 verify=OK);
-	Tue, 18 Mar 2025 16:42:18 +0300
-Received: from EX2.crpt.local (192.168.60.4) by ex2.crpt.local (192.168.60.4)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.44; Tue, 18 Mar
- 2025 16:42:18 +0300
-Received: from EX2.crpt.local ([192.168.60.4]) by EX2.crpt.local
- ([192.168.60.4]) with mapi id 15.01.2507.044; Tue, 18 Mar 2025 16:42:18 +0300
-From: =?koi8-r?B?98HUz9LP0MnOIOHOxNLFyg==?= <a.vatoropin@crpt.ru>
-To: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-CC: =?koi8-r?B?98HUz9LP0MnOIOHOxNLFyg==?= <a.vatoropin@crpt.ru>,
-	"ntfs3@lists.linux.dev" <ntfs3@lists.linux.dev>,
+	s=arc-20240116; t=1742305352; c=relaxed/simple;
+	bh=y3YYBQxE6Pi8b1Gs2Cz7fhOvcqgaZix7CEOA616y3t4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=I1KtlmkvtoHf/OK3c2lPndnVCsQYHTviLLY7oDe2ke5PMeTNPD0BlqGq0DT5VyxvAUOWP/EBCGigbxA1zhf3xb3RTOCm8n+G+5OrHVetwlz4o37MwQO27MCC+xaBabIOieHcKVARID3fu20KeK/kzSMfSmoZBHBtiIk3vTrSgjk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WYjgZU31; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742305350; x=1773841350;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=y3YYBQxE6Pi8b1Gs2Cz7fhOvcqgaZix7CEOA616y3t4=;
+  b=WYjgZU31gvMUrrJfTkRefc694uQEJSq2jN5g0IVXk5zYrbYPQJjV40Ql
+   +UZrkUhYknotEXS0U/DKHIkCkCzS5b+T6tnZkFpBHT0AdCncjMjAtd4Z0
+   LhAS2eX2qNxmL/aGUyTHPWrHHn2mh74C00G3bxX03Fro6HRDKrh/6A6ZB
+   4obIW/IevTGfhl/Ws7HEAAjq1YHPwPeBbYsVbsvQul2fow5IcqSxoJsEi
+   PaN7XRI0OrDdxA70F6SqzfvpomLVLUw20T14j4VKnLNFyHj0CXAqJ70g6
+   T9CA60mZwh8ZFGtyeknt4y1d/VRWZU8idB5SakiET4Yt86ZM/WmDhWqwD
+   Q==;
+X-CSE-ConnectionGUID: Rzm2rj51QBSx9mD/dai94w==
+X-CSE-MsgGUID: 4h8Jz5UtRpKsDRFQajVOCw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11377"; a="43583214"
+X-IronPort-AV: E=Sophos;i="6.14,257,1736841600"; 
+   d="scan'208";a="43583214"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2025 06:42:30 -0700
+X-CSE-ConnectionGUID: 3HJ57cDLSzeglBHIN89uNw==
+X-CSE-MsgGUID: M7wA4lfnTFS8UnrypWJmdQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,257,1736841600"; 
+   d="scan'208";a="126934731"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by fmviesa005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2025 06:42:28 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1tuXD6-00000003dNM-3I7m;
+	Tue, 18 Mar 2025 15:42:24 +0200
+Date: Tue, 18 Mar 2025 15:42:24 +0200
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Peng Fan <peng.fan@nxp.com>
+Cc: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
+	"krzk@kernel.org" <krzk@kernel.org>,
+	"lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+	"broonie@kernel.org" <broonie@kernel.org>,
+	"linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+	"brgl@bgdev.pl" <brgl@bgdev.pl>,
 	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"lvc-project@linuxtesting.org" <lvc-project@linuxtesting.org>
-Subject: [PATCH v2] fs/ntfs3: handle hdr_first_de() return value
-Thread-Topic: [PATCH v2] fs/ntfs3: handle hdr_first_de() return value
-Thread-Index: AQHbmAuQAyfNJudJa0SRheQB6mnCWA==
-Date: Tue, 18 Mar 2025 13:42:18 +0000
-Message-ID: <20250318134211.149170-1-a.vatoropin@crpt.ru>
-Accept-Language: ru-RU, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-kse-serverinfo: EX2.crpt.local, 9
-x-kse-antivirus-interceptor-info: scan successful
-x-kse-antivirus-info: Clean, bases: 3/18/2025 10:14:00 AM
-x-kse-attachment-filter-triggered-rules: Clean
-x-kse-attachment-filter-triggered-filters: Clean
-x-kse-bulkmessagesfiltering-scan-result: protection disabled
-Content-Type: text/plain; charset="koi8-r"
-Content-Transfer-Encoding: quoted-printable
+	"linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>,
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Subject: Re: [PATCH] regulator: s5m8767: Convert to GPIO descriptors
+Message-ID: <Z9l4QBJQkOaMxw73@smile.fi.intel.com>
+References: <20250318052709.1731747-1-peng.fan@oss.nxp.com>
+ <Z9lJETLh2y27934q@black.fi.intel.com>
+ <PAXPR04MB8459A44864B9213E8265137188DE2@PAXPR04MB8459.eurprd04.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-FEAS-Client-IP: 192.168.60.4
-X-FE-Policy-ID: 2:4:0:SYSTEM
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; d=crpt.ru; s=crpt.ru; c=relaxed/relaxed;
- h=from:to:cc:subject:date:message-id:content-type:mime-version;
- bh=VrN5ggXU+9ieg/XF+YNQbzdFaG3OPBPHUDO8pb+HC5g=;
- b=jAGSr8KfziJ4q7X3/WbDcNYYlVIG95qByWIysHPzrIB1lIDZomy2SvhnT1QX6aj0QDoFy6v/PKhD
-	xtGc8/cJIgwmetqlMmDHIArgd3oLX3BVrl4EqeY5NHvY+GkPLa2BaPlT3QXtiLbcdbmy49/pK851
-	iYfPikJKaOg2Vux6OpruOMwsXnuFJjm+4DLppLbPHUsqmpMaGn7nynLAyskdjiFOIoA5Z6eGBWRF
-	QrR5Bt7R3dlwGIXrftzaKMs49igm8QTcl/79eJepV6We3MK6DXKjjEH8lR7ihfqLYU//wjgFMGge
-	oZE4PVWc6KmyuDS3jyncoOTxDqdswSjlNfGyNQ==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <PAXPR04MB8459A44864B9213E8265137188DE2@PAXPR04MB8459.eurprd04.prod.outlook.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-From: Andrey Vatoropin <a.vatoropin@crpt.ru>
+On Tue, Mar 18, 2025 at 12:38:15PM +0000, Peng Fan wrote:
 
-The hdr_first_de() function returns a pointer to a struct NTFS_DE. This
-pointer may be NULL. To handle the NULL error effectively, it is important
-to implement an error handler. This will help manage potential errors
-consistently.
+...
 
-Additionally, error handling for the return value already exists at other=20
-points where this function is called.
+> > Also the commit message doesn't tell anything about the existing DTS
+> > files.
+> > Do we have this device described in any in the kernel? Do we have any
+> > googled examples? Why I'm asking because often the issue is the
+> > incorrect setting of the polarity, which needs to be carefully checked,
+> > esp. for the voltage regulators case.
+> 
+> Under arch/arm/boot/dts/samsung/, a few dtsi files have the property 
+> with results from output of
+> `grep "s5m8767" ./arch/arm/boot/dts/samsung/ -rn | grep gpios`
 
-Found by Linux Verification Center (linuxtesting.org) with SVACE.
+Side note: `git grep -n s5m8767` is a better command. You can just look for the
+exact GPIOs, usually not so bit amount of them, or do it recursively with
 
-Fixes: 82cae269cfa9 ("fs/ntfs3: Add initialization of super block")
-Signed-off-by: Andrey Vatoropin <a.vatoropin@crpt.ru>
----
-v1->v2: Fixed memory leak.
- fs/ntfs3/index.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+`git grep -n 'gpios' -- $(git grep -lw s5m8767 -- Documentation/devicetree/bindings)`
 
-diff --git a/fs/ntfs3/index.c b/fs/ntfs3/index.c
-index 7eb9fae22f8d..12bea99da3dc 100644
---- a/fs/ntfs3/index.c
-+++ b/fs/ntfs3/index.c
-@@ -2182,6 +2182,10 @@ static int indx_get_entry_to_replace(struct ntfs_ind=
-ex *indx,
-=20
- 		e =3D hdr_first_de(&n->index->ihdr);
- 		fnd_push(fnd, n, e);
-+		if (!e) {
-+			err =3D -EINVAL;
-+			goto out;
-+		}
-=20
- 		if (!de_is_last(e)) {
- 			/*
-@@ -2203,6 +2207,10 @@ static int indx_get_entry_to_replace(struct ntfs_ind=
-ex *indx,
-=20
- 	n =3D fnd->nodes[level];
- 	te =3D hdr_first_de(&n->index->ihdr);
-+	if (!te) {
-+		err =3D -EINVAL;
-+		goto out;
-+	}
- 	/* Copy the candidate entry into the replacement entry buffer. */
- 	re =3D kmalloc(le16_to_cpu(te->size) + sizeof(u64), GFP_NOFS);
- 	if (!re) {
---=20
-2.43.0
+> Exynos5250-spring.dts uses GPIO_ACTIVE_LOW.
+> Others use GPIO_ACTIVE_HIGH.
+
+So, one of this needs to be fixed.
+
+> The current changing to using GPIO descriptors should be ok per
+> my understanding.
+> 
+> Not able to find any public datasheet for this pmic (:
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
