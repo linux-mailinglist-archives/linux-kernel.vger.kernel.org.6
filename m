@@ -1,79 +1,78 @@
-Return-Path: <linux-kernel+bounces-565550-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565551-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC57AA66A6B
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 07:30:13 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 199C4A66A7F
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 07:31:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 20E5B18983E1
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 06:30:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D73517ACE4
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 06:31:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0F5A1DED57;
-	Tue, 18 Mar 2025 06:30:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D33F14EC62;
+	Tue, 18 Mar 2025 06:31:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="j8bTaW7S"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bqJmK8i7"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E3F33CF58
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 06:30:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBA696FBF
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 06:31:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742279404; cv=none; b=IGQsy7ZS0SHxD21Av4lCZDUvoJxWMd24SZ2S/Vuo82yIRdvfM+Q+JHD866Byn666/7vprYmc5VU5q/OD3Wj2BOot8aM3p7FlvIzmgdh4u1m7yY85+BsbwqhNM7yEi4ESEcmOEA+D4Tqa6TQ+e1JPPuyD++uHYIOwb57gTMT8Q8I=
+	t=1742279462; cv=none; b=YdEotq8aCFrBCKNyJp6zQwn4F530x4r/cRlbCblVaKvp8OVwqRjNv1zmkD8hVq+xRSdHmGCQGUHng0tAGG7VYftJl2iWL1SopzRmLrDSNupux36qzLunXVu28MVG750JNDkX7u1gTflbcNgYl03r2mcNjMnPw6wkuKnBwdSvp3E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742279404; c=relaxed/simple;
-	bh=gQUIlx1Zg5+nexoGHiMLl7DClG+NSiyXp/N85MNvyZc=;
+	s=arc-20240116; t=1742279462; c=relaxed/simple;
+	bh=sWRavboZOPMDQYy8rO56oVINpm5jyxeLBzt/P7E6CvM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XJo+8WAy0SN3jicYbnBDFC0GfbSDMo2LT91UDKKWUmuDbT8Fxe76EfoL4lhg/EMdW+Xmykzcz6nPh6g8qPQcACLPOW33lSyL+K86y7ZXhQffPBJuJR0FtuimucUnbGX/xLDy2XZ9yhM8InY7EoryGEk3ShKZ7gSQ6/p5pczsz4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=j8bTaW7S; arc=none smtp.client-ip=209.85.128.53
+	 In-Reply-To:Content-Type; b=CywIptuQt1uCId97SEAJrcnRIPmScNznPApgvEcvnF4sSsV2/aMhz7O47pEgvk084YLeerC1sG59bzD7fj0Xja+1mgIQ9gHb7QWP/t1GHROb/19na+/MlLY3zwkC4zzUIybw28BUbpe7YWSKsvoP1rDacIryFVkUsG1a45hZ+48=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bqJmK8i7; arc=none smtp.client-ip=209.85.221.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-43cf05f0c3eso20852075e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 23:30:01 -0700 (PDT)
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3912fdddf8fso3922927f8f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 23:31:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1742279400; x=1742884200; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1742279459; x=1742884259; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:content-language:from
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=xjlGvph9FbeHzoqEjT5wXcJBYP4G9CrB0xyfis6EXwg=;
-        b=j8bTaW7S/dYAboiVY4z5GWmVbJX+V6CvKoorL4OWHeWGGGi581NXWMh/y1/8/CZtDA
-         6yyNj2cZgosfPyaWyB83oOEDQN2skk9M+eMslo1GexvIUJvjfkYGpA3pae+06Y4eugZz
-         OTUfXbCnC1r58bkfJHg5hBlKPqIv6vFbFWEVeO38D2HswxeCYGwB1+KPPZmhHAvdLAD0
-         eKdiEgQhNJZCIOZLamR6ey/lxPZPWzaqUxtA1bvTLYguLmc0K5XIFUq/thwkWEiSWM66
-         Yee4yy94zwKhQ6CQfBvar0oFWrYiwUIPfluG+0lGT7DgrO8WLOSs69Q92aD7xzU1MpV6
-         drsw==
+        bh=WXsRVC7+O52roT2qjifznXtTujlYjDhziLvEJ4ugGCE=;
+        b=bqJmK8i772wyv/WLYg4t107Bs8+7OQUhf2LWAx2R2SevjcGOGK/IwXlvlvC1VSc4x+
+         gupjeDbt7D13FOBTEjmFG8dl61vlnUp4DctIvq3l/9efp5sDoBFXPJRXqXtHryAdKl5k
+         +yC2BURlPeTDEEZqoo1ToY9EYlG4dQTEs1lOC9An3gnPzHT9oxwkx8lFUy0gATGNjcF7
+         6/mJExt3EEg0xzUorqF5YhgDEAklXomkuQrj8rRpSZx7yJWoMcubT4hvxDtK3difdd9v
+         jI8dpAOiL1z1lstL/dRIpFC0my0Mc4Md32jvbRccs0I2Dd3zRIPUCwp3czs6WMInhNx1
+         A09A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742279400; x=1742884200;
+        d=1e100.net; s=20230601; t=1742279459; x=1742884259;
         h=content-transfer-encoding:in-reply-to:content-language:from
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xjlGvph9FbeHzoqEjT5wXcJBYP4G9CrB0xyfis6EXwg=;
-        b=I2tF26l2WApAPmQOL7XcQjz5nOOF+BuP3SxfxDHxk8FNovHkRsjvzDUd+R+TrnNLAc
-         SiAExwyL04kwglqh2Wq5rxBvRBs02VCRWTdJi1j77YGqCqY8mHu87krOpLMJd2rTSn7K
-         sp4/lovBdzuxFlt+EbFwGbQWsXd09fqFlsyU1DEMm4PXWucVVsKLILHeZ4DkpJHJqfw6
-         hvx9W2/wOpOblNoQXpQnb4VULDLGd37dtpHhshwV36rsOozxewHzs0FYiXRO1ElSFoIP
-         oYVZmx8CulweDMv2O58+CLuRJ12IX7uxcJ5T3wpHb4UpDEgAR3c+2m4KCq72YgACXlbr
-         vphg==
-X-Forwarded-Encrypted: i=1; AJvYcCVRDkJ1VDjfHbd6IRVhrj3A/8fUeiexCCUNghONRHcHgRKYqf2w5d/uj1zYuwHUZobprpLFBv4yH0KNiJ0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxWzkECMOW4A7yerimhC+t1acxIBWHLDesZaOOIjCf3kIjJNczX
-	LVTENBmXH+CYG1FaFFrQK0Fd8mUOufnjN0R/qYxs5m9Iyp//pXTwN/77MdcWOml+o6YBgD30XH5
-	z
-X-Gm-Gg: ASbGncs0CfpubM9JisBP0I5Zz1/UAfBZSGbmNXa4a+E/Raa5EwNERuBCG9FmFcT/t7X
-	3Zjbpg/1hg8Fqgd7htNGEK/5loTUSAPUf1wh84GBqZbwtYEs6buRiV0iy99YfybuB3iTqvTXHN8
-	UwuX8KS/790Yl0UjEi6QCYFAflw80aWXRRnrBoaLFRyfB5W5TjaPx/Pe0fMyPwsOvOtLrDI+XYP
-	3+ObdjJDDjjZwggowlHK5VSTEVA/U1c/hLDaD7CcAy3P7IyK68lF69bBPSrVpD+2w1nQS5PZEXP
-	0LSM8Y3F6p+k68lrUFNoNx6vd8n7suEqOq7Yn05/736uhtPC6yXiVg==
-X-Google-Smtp-Source: AGHT+IGvkDQyai2xtZeXLR1F8esFYWuLjTmm+NlpTt1JcTgeasTcJhfvy1fpJlRGxBNpxuafLcoMZA==
-X-Received: by 2002:a05:600c:310e:b0:43c:fc04:6d48 with SMTP id 5b1f17b1804b1-43d3b7c9a0fmr7634995e9.0.1742279400388;
-        Mon, 17 Mar 2025 23:30:00 -0700 (PDT)
+        bh=WXsRVC7+O52roT2qjifznXtTujlYjDhziLvEJ4ugGCE=;
+        b=uAJ4/K9yALtUQkXMp5u6ODqhjWV0V6zop96VtO7IUNmQnG6Wq8uO2KIEtLFxz3SVAO
+         pnOaJDaCQ6+XMOaZxnL05Nf7LTbvMW7bI06xi+6Ne/GZNEJgDSAzWcsQnnuRll6IQanv
+         a5Wo6mbqAZ/chrMeEw4nwGMdOFm5s9jrQ05pwZ03jMH5tG37QxOBXu1GX5RqoiHUpmp2
+         a7BDgv0YAyEbXWtKKoBEuVBH1WI/kE02d/w2BiAYkv3NPHBK/VHQ86eb4dfmAIs6q9AI
+         YzwHMsj3fd6ZVtIsABnmx1Sw1NtEPtox1awZPhZYS1VjIA0IPP42J+2zROHPbRmzHckN
+         kT9g==
+X-Forwarded-Encrypted: i=1; AJvYcCX2HVzhBjshgaecfx/LjC/naMFidEXqYc+5vCbfYrGwjgyzoDpgRs5SVWcaQvzsKiUcAb0fFNjeLAPQl5g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyQ8MH+DmvP/3oc6YS/r08KABsf4gueSKtgt+zyGq95fFWejcae
+	pfFOLZrjpZbL17gwo0mPcoppEe3YaXqm/0c/gv5BO0rTHKxKL0ZOgpK3r5pEuBg=
+X-Gm-Gg: ASbGncufAIPcQcGMQCEh3Zw9TX3hK6dHWO2CknmGM9lTyO2kBMsxzvMKgt7ejQmHt/k
+	hMAePWHsZvCkHIZ+J0dQqY60LVraPOC+0wMl5rKR2LtF41FOhfA6PbIq+6SYAEYoCR3Jo1oohFi
+	tzm8qn2Bo1lfdJnYavj84IyQPevq+8d/+wva6nUZlmc2jvlnznFxqxoGoudWX0pl9yHT+wOVH3E
+	i+q1NPSE36DvdKCNhIuuRSLBdKJfDbojd6jX6+/yzh6LtP8Y4jai/FeApG15xkSYrbfAwo7KYR7
+	a2ocndOY6rjZvSKwY3f7HIWSRVLnyRa6OWHd7MEFbdq7EQVU2Fk/Hw==
+X-Google-Smtp-Source: AGHT+IEvxvjjCIFKWh3dRxXm3eYkJA+qlr6RAryA7+n3CuEq0jX4K981fmJidDv6Ey2as6qSMTEnOQ==
+X-Received: by 2002:a05:6000:2ce:b0:391:bc8:564a with SMTP id ffacd0b85a97d-3996bb7747dmr1627926f8f.22.1742279459362;
+        Mon, 17 Mar 2025 23:30:59 -0700 (PDT)
 Received: from [192.168.0.62] ([79.115.63.206])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d1ffbf901sm124206115e9.15.2025.03.17.23.29.59
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-395c83b6b2bsm16752377f8f.26.2025.03.17.23.30.58
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 17 Mar 2025 23:29:59 -0700 (PDT)
-Message-ID: <93f5e13d-2a4d-4528-9c55-37a79eae3da3@linaro.org>
-Date: Tue, 18 Mar 2025 08:29:58 +0200
+        Mon, 17 Mar 2025 23:30:58 -0700 (PDT)
+Message-ID: <b3065eda-e224-48e5-a5fe-2d5c8f4e5b6c@linaro.org>
+Date: Tue, 18 Mar 2025 08:30:57 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,86 +80,65 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mtd: spi-nor: winbond: fix W25Q256 and W25Q512 chips
- configuration
+Subject: Re: [PATCH] mtd: spi-nor: macronix: add MX77U25650F, MX77U25655F and
+ MX77U51250F
 To: Jakub Czapiga <czapiga@google.com>
 Cc: Pratyush Yadav <pratyush@kernel.org>, Michael Walle <mwalle@kernel.org>,
  Miquel Raynal <miquel.raynal@bootlin.com>,
  Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>,
  linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20250317182103.2060524-1-czapiga@google.com>
+References: <20250317182058.2060277-1-czapiga@google.com>
 From: Tudor Ambarus <tudor.ambarus@linaro.org>
 Content-Language: en-US
-In-Reply-To: <20250317182103.2060524-1-czapiga@google.com>
+In-Reply-To: <20250317182058.2060277-1-czapiga@google.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 
 
-On 17.03.2025 20:21, Jakub Czapiga wrote:
-> Fill and fix configuration of Winbond chips:
-> - W25Q512JVQ (+lock, +tb)
-> - W25Q256JW (+lock, +tb)
-> - W25Q256JVM (+lock, +tb, +4k, +dual, +quad)
-> - W25Q512JWM (+lock, +tb)
-> 
-> Top-Bottom selection bit is SR(6). All mentioned chips have 4-bit long
-> Block-Protection field.
+On 17.03.2025 20:20, Jakub Czapiga wrote:
+> MX77U25650F and MX77U25655F are 256Mbit chips with SFDP and block
+> protection support. MX77U51250F is 512Mbit chip with SFDP and block
+> protection support.
+> All chips also support top-bottom lock configuration, however this bit
+> is SR2(3) and is also OTP (defaults to top). Due to lack of API to
+> support TB in SR2(3) and due to it being OTP these chips will only
+> support top blocks protection.
 > 
 > Signed-off-by: Jakub Czapiga <czapiga@google.com>
 > ---
->  drivers/mtd/spi-nor/winbond.c | 7 ++++++-
->  1 file changed, 6 insertions(+), 1 deletion(-)
+>  drivers/mtd/spi-nor/macronix.c | 17 ++++++++++++++++-
+>  1 file changed, 16 insertions(+), 1 deletion(-)
 > 
-> diff --git a/drivers/mtd/spi-nor/winbond.c b/drivers/mtd/spi-nor/winbond.c
-> index 8d0a00d69e12..8ebb1461a4e9 100644
-> --- a/drivers/mtd/spi-nor/winbond.c
-> +++ b/drivers/mtd/spi-nor/winbond.c
-> @@ -145,6 +145,7 @@ static const struct flash_info winbond_nor_parts[] = {
->  		.id = SNOR_ID(0xef, 0x40, 0x20),
->  		.name = "w25q512jvq",
-drop the name on next version and add it as a comment
-
->  		.size = SZ_64M,
-drop size if flash supports SFDP
-> +		.flags = SPI_NOR_HAS_LOCK | SPI_NOR_HAS_TB | SPI_NOR_TB_SR_BIT6 | SPI_NOR_4BIT_BP,
->  		.no_sfdp_flags = SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ,
-drop no_sfdp_flags if flash supports SFDP.
-
-Btw, switching to SFDP shall be done in a dedicated patch, then come
-with the BP patch on top of it. Comment applies to all patches.
-
->  	}, {
->  		.id = SNOR_ID(0xef, 0x50, 0x12),
-> @@ -190,6 +191,7 @@ static const struct flash_info winbond_nor_parts[] = {
->  		.id = SNOR_ID(0xef, 0x60, 0x19),
->  		.name = "w25q256jw",
->  		.size = SZ_32M,
-> +		.flags = SPI_NOR_HAS_LOCK | SPI_NOR_HAS_TB | SPI_NOR_TB_SR_BIT6 | SPI_NOR_4BIT_BP,
->  		.no_sfdp_flags = SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ,
-same comments as above for this flash and all from below.
-
-Cheers,
-ta
->  	}, {
->  		.id = SNOR_ID(0xef, 0x60, 0x20),
-> @@ -221,6 +223,9 @@ static const struct flash_info winbond_nor_parts[] = {
->  	}, {
->  		.id = SNOR_ID(0xef, 0x70, 0x19),
->  		.name = "w25q256jvm",
+> diff --git a/drivers/mtd/spi-nor/macronix.c b/drivers/mtd/spi-nor/macronix.c
+> index 99936fd25d43..c65e7cdab5cf 100644
+> --- a/drivers/mtd/spi-nor/macronix.c
+> +++ b/drivers/mtd/spi-nor/macronix.c
+> @@ -193,7 +193,22 @@ static const struct flash_info macronix_nor_parts[] = {
+>  		.name = "mx25l3255e",
+>  		.size = SZ_4M,
+>  		.no_sfdp_flags = SECT_4K,
+> -	},
+> +	}, {
+> +		.id = SNOR_ID(0xc2, 0x75, 0x39),
+> +		.name = "mx77u25650f",
 > +		.size = SZ_32M,
-> +		.flags = SPI_NOR_HAS_LOCK | SPI_NOR_HAS_TB | SPI_NOR_TB_SR_BIT6 | SPI_NOR_4BIT_BP,
-> +		.no_sfdp_flags = SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ,
->  	}, {
->  		.id = SNOR_ID(0xef, 0x71, 0x19),
->  		.name = "w25m512jv",
-> @@ -249,7 +254,7 @@ static const struct flash_info winbond_nor_parts[] = {
->  		.id = SNOR_ID(0xef, 0x80, 0x19),
->  		.name = "w25q256jwm",
->  		.size = SZ_32M,
-> -		.flags = SPI_NOR_HAS_LOCK | SPI_NOR_HAS_TB,
-> +		.flags = SPI_NOR_HAS_LOCK | SPI_NOR_HAS_TB | SPI_NOR_TB_SR_BIT6 | SPI_NOR_4BIT_BP,
->  		.no_sfdp_flags = SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ,
->  	}, {
->  		.id = SNOR_ID(0xef, 0x80, 0x20),
+> +		.flags = SPI_NOR_HAS_LOCK | SPI_NOR_4BIT_BP,
+> +	}, {
+> +		.id = SNOR_ID(0xc2, 0x76, 0x39),
+> +		.name = "mx77u25655f",
+> +		.size = SZ_32M,
+> +		.flags = SPI_NOR_HAS_LOCK | SPI_NOR_4BIT_BP,
+> +	}, {
+> +		.id = SNOR_ID(0xc2, 0x75, 0x3a),
+> +		.name = "mx77u51250f",
+> +		.size = SZ_64M,
+> +		.flags = SPI_NOR_HAS_LOCK | SPI_NOR_4BIT_BP,
+
+drop name and size, add name as a comment and do the tests for the next
+version.
+> +	}
+>  	/*
+>  	 * This spares us of adding new flash entries for flashes that can be
+>  	 * initialized solely based on the SFDP data, but still need the
 
