@@ -1,161 +1,127 @@
-Return-Path: <linux-kernel+bounces-565788-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565785-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A20E4A66F2D
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 09:58:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22DC1A66F25
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 09:57:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8859916B3C6
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 08:58:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5FC2819A16EE
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 08:57:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 374E02054F2;
-	Tue, 18 Mar 2025 08:58:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 487D1204F8B;
+	Tue, 18 Mar 2025 08:57:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="bnaGcj9z"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11A8C1F180C;
-	Tue, 18 Mar 2025 08:58:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ktGyBXci"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F4381F09B1;
+	Tue, 18 Mar 2025 08:57:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742288290; cv=none; b=DPmr4poCaujO0Kipua8QDICLOR8JZT3kGfQreltWMh29DlJKTmevV/Mk1KDtsEFMMyGN43NKpNLK1Ga/5NMC5TWQIAVMYd2PvRk8NbxJC6AJtN9FaMfG6zC617yRD2BEkGCso41KAheTRTzw1tr8nixnZmT65/J0UWa9T1rzzHo=
+	t=1742288253; cv=none; b=laeWIxUJjbPHkqCi5X/Yx50RIVi7Cubwxm1x5dhsGyrRk84DZ73IUMC2ZZzGf6FvKF0B5at7XQFXH7hCYpqWZ/o5a6I1OGfoGAsOkmcghrQzg78x4vKLMey3kftLqc6MH84Pn58HK1GkG0NVXs2BtraL0QQPHS3ZaMIibkw3NFc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742288290; c=relaxed/simple;
-	bh=3AncosxsLamCWiHCEmH1zsWJ5Ucoxtb5R4+Ij2PmXdI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=HNUOsaVrkTkAiwOfphNFxMmdBO4W1ckhoLzb6mpfyPYu+GFgnwFufppBfTW7+NVoYR2wU9jDEdZeD7CewKHrNgUKIywtu2vin4UW94aWUNIeRzPlEY7QdI7rDrHT8jpMMnKIUIl9IH5HNMz0J5fSK+DT5DNSUSZ5Sc0IBEsgDgA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=bnaGcj9z; arc=none smtp.client-ip=220.197.31.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=NiuG1
-	rRVfu3yTyRAvwmrFoMC5cJiKVxVCSB6tApsb6g=; b=bnaGcj9z1+gv8UuXUbUpG
-	nQ1szrldbQsJ6bN73aIgJXbyLucGrv+Q66fcGxIQl+WlOcmi3MT6AMfKfzTk1Uq+
-	8f5a4rsWUyC1omIx7Z0fv5hTtqX5HzaIDB0I2Bo13aZRLCYHOsWBVFk7VqQT6WVG
-	arLHu4t1aJTslrdMaOmajQ=
-Received: from localhost.localdomain (unknown [])
-	by gzsmtp4 (Coremail) with SMTP id PygvCgDXU+58NdlnhYFWDQ--.25180S2;
-	Tue, 18 Mar 2025 16:57:34 +0800 (CST)
-From: chenchangcheng <ccc194101@163.com>
-To: laurent.pinchart@ideasonboard.com,
-	hdegoede@redhat.com,
-	mchehab@kernel.org
-Cc: linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	chenchangcheng <chenchangcheng@kylinos.cn>
-Subject: [PATCH v2] media: uvcvideo: Fix bandwidth issue for Alcor camera
-Date: Tue, 18 Mar 2025 16:57:24 +0800
-Message-Id: <20250318085724.1151547-1-ccc194101@163.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1742288253; c=relaxed/simple;
+	bh=3zZk2oCWReReEzN/FmUmB+RAWcgx2Mhojm2zZi/STT0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WIwvJcvqNmVPPUIasftV2WoY7Wx/+3ininRBsIIfkBiWWutXz/P0n3315626EYZ61VhO8HiLx4aK2qSpAX2rliysdaqWXAnK/WQFXlORM2F4GQIZK5WEat+pal6GNEF+ZLmBYqdPLUl3XQn9LxpLVBWLKcHQ7dhmEX8LOmrfW44=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ktGyBXci; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61E64C4CEE9;
+	Tue, 18 Mar 2025 08:57:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742288253;
+	bh=3zZk2oCWReReEzN/FmUmB+RAWcgx2Mhojm2zZi/STT0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=ktGyBXciC594TVYC9ZEiklSReBim0xQwZ2XL0nQGjGSegs+uk7vYOkyFkn8YfnnGz
+	 BUSqfhEbK7FsRxadCt7CrLA32GDSfinUelXKmzGDOz97UQcZC442hSR13Swj6OkgZ1
+	 ZS70MORtXSFkUiT2sPTW09uDZpoBArBvXBhD8s0oGs2Qcgqx6urnK6AmbMrlisngOU
+	 1mzvaiZy9iW3aAaRhrn/7I2SUJqOvj9vfAFeMa+VLVCU1c6hrbhKBBWrcKtSLZNuEi
+	 4yEfqrsiaxwh+uKnNAntfDbTRdX9KM9LGyicL7iw8LkPXUpFSGlhAVf94jVOodjtqv
+	 7Kxg+cFf0s6zg==
+Message-ID: <81ce5a24-70b4-4dc7-af1c-3a193c5033e8@kernel.org>
+Date: Tue, 18 Mar 2025 09:57:26 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:PygvCgDXU+58NdlnhYFWDQ--.25180S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW3WFykXr1fKry8XrW3AF13urg_yoW7CF1fpa
-	s8ArWFyry8GrW8Gw17J3WvvFy5Ganakay2krZ3Ka4kZF1UAr18XF45KayIgFW0k3ZF9rnF
-	yF1Yvr4Uu34jqF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jnKsUUUUUU=
-X-CM-SenderInfo: 5fffimiurqiqqrwthudrp/1tbiTRgU3mfZLqTOYgAAsH
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] watchdog: s3c2410_wdt: Fix PMU register bits for
+ ExynosAutoV920 SoC
+To: sw617.shin@samsung.com, alim.akhtar@samsung.com, wim@linux-watchdog.org,
+ linux@roeck-us.net
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org,
+ 'Kyunghwan Seo' <khwan.seo@samsung.com>
+References: <9c94a771-b3e6-4ba4-9b7f-dcd93b53f924@kernel.org>
+ <CGME20250318005143epcas2p40ebb1954bed8890aaf8d0a641f710423@epcas2p4.samsung.com>
+ <20250318004411.695786-1-sw617.shin@samsung.com>
+ <658c00e2-e8ef-4997-bb91-9620e97bafae@kernel.org>
+ <000001db97e0$f2ef9e60$d8cedb20$@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <000001db97e0$f2ef9e60$d8cedb20$@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: chenchangcheng <chenchangcheng@kylinos.cn>
+On 18/03/2025 09:37, sw617.shin@samsung.com wrote:
+>> Why do you send patches which were applied?
+>>
+>> Best regards,
+>> Krzysztof
+> 
+> I can't see this patch in -next yet.
+> Could you please advise me where it is? Then, I will check again.
+> If there are any missing parts that I need to handle on my end,
+> please let me know.
+I don't think you tried enough.
 
-Some broken device return wrong dwMaxPayloadTransferSize fields,
-as follows:
-[  218.211425] [pid:20391,cpu4,guvcview,3]uvcvideo: Trying format 0x47504a4d (MJPG): 640x480.
-[  218.211425] [pid:20391,cpu4,guvcview,4]uvcvideo: Using default frame interval 33333.3 us (30.0 fps).
-[  218.252532] [pid:20391,cpu4,guvcview,1]uvcvideo: Trying format 0x47504a4d (MJPG): 640x480.
-[  218.252532] [pid:20391,cpu4,guvcview,2]uvcvideo: Using default frame interval 33333.3 us (30.0 fps).
-[  218.293426] [pid:20391,cpu7,guvcview,8]videobuf2_common: __setup_offsets: buffer 0, plane 0 offset 0x00000000
-[  218.294067] [pid:20391,cpu7,guvcview,9]videobuf2_common: __setup_offsets: buffer 1, plane 0 offset 0x000e1000
-[  218.294433] [pid:20391,cpu7,guvcview,0]videobuf2_common: __setup_offsets: buffer 2, plane 0 offset 0x001c2000
-[  218.294677] [pid:20391,cpu7,guvcview,1]videobuf2_common: __setup_offsets: buffer 3, plane 0 offset 0x002a3000
-[  218.294677] [pid:20391,cpu7,guvcview,2]videobuf2_common: __vb2_queue_alloc: allocated 4 buffers, 1 plane(s) each
-[  218.294738] [pid:20391,cpu7,guvcview,3]uvcvideo: uvc_v4l2_mmap
-[  218.294799] [pid:20391,cpu7,guvcview,4]videobuf2_common: vb2_mmap: buffer 0, plane 0 successfully mapped
-[  218.294799] [pid:20391,cpu7,guvcview,5]uvcvideo: uvc_v4l2_mmap
-[  218.294830] [pid:20391,cpu7,guvcview,6]videobuf2_common: vb2_mmap: buffer 1, plane 0 successfully mapped
-[  218.294830] [pid:20391,cpu7,guvcview,7]uvcvideo: uvc_v4l2_mmap
-[  218.294830] [pid:20391,cpu7,guvcview,8]videobuf2_common: vb2_mmap: buffer 2, plane 0 successfully mapped
-[  218.294860] [pid:20391,cpu7,guvcview,9]uvcvideo: uvc_v4l2_mmap
-[  218.294860] [pid:20391,cpu7,guvcview,0]videobuf2_common: vb2_mmap: buffer 3, plane 0 successfully mapped
-[  218.294860] [pid:20391,cpu7,guvcview,1]videobuf2_common: vb2_core_qbuf: qbuf of buffer 0 succeeded
-[  218.294891] [pid:20391,cpu7,guvcview,2]videobuf2_common: vb2_core_qbuf: qbuf of buffer 1 succeeded
-[  218.294891] [pid:20391,cpu7,guvcview,3]videobuf2_common: vb2_core_qbuf: qbuf of buffer 2 succeeded
-[  218.294891] [pid:20391,cpu7,guvcview,4]videobuf2_common: vb2_core_qbuf: qbuf of buffer 3 succeeded
-[  218.294891] [pid:20391,cpu7,guvcview,5]uvcvideo: Setting frame interval to 1/25 (400000).
-[  218.632537] [pid:20427,cpu6,guvcview,8]uvcvideo: Device requested 2752512 B/frame bandwidth.
-[  218.632598] [pid:20427,cpu6,guvcview,9]uvcvideo: No fast enough alt setting for requested bandwidth.
-
-The maximum packet size of the device is 3 * 1024,
-but according to the logs above, the device needs to apply for a bandwidth of 0x2a0000.
-
-Signed-off-by: chenchangcheng <chenchangcheng@kylinos.cn>
----
- drivers/media/usb/uvc/uvc_driver.c |  9 +++++++++
- drivers/media/usb/uvc/uvc_video.c  | 10 ++++++++++
- drivers/media/usb/uvc/uvcvideo.h   |  1 +
- 3 files changed, 20 insertions(+)
-
-diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
-index deadbcea5e22..6d739c3cc88f 100644
---- a/drivers/media/usb/uvc/uvc_driver.c
-+++ b/drivers/media/usb/uvc/uvc_driver.c
-@@ -3188,6 +3188,15 @@ static const struct usb_device_id uvc_ids[] = {
- 	  .bInterfaceSubClass	= 1,
- 	  .bInterfaceProtocol	= 0,
- 	  .driver_info		= UVC_INFO_META(V4L2_META_FMT_D4XX) },
-+	/* Alcor Corp. Slave camera */
-+	{ .match_flags		= USB_DEVICE_ID_MATCH_DEVICE
-+				| USB_DEVICE_ID_MATCH_INT_INFO,
-+	  .idVendor		= 0x1b17,
-+	  .idProduct		= 0x6684,
-+	  .bInterfaceClass	= USB_CLASS_VIDEO,
-+	  .bInterfaceSubClass	= 1,
-+	  .bInterfaceProtocol	= 0,
-+	  .driver_info		= UVC_INFO_QUIRK(UVC_QUIRK_OVERFLOW_BANDWIDTH) },
- 	/* Generic USB Video Class */
- 	{ USB_INTERFACE_INFO(USB_CLASS_VIDEO, 1, UVC_PC_PROTOCOL_UNDEFINED) },
- 	{ USB_INTERFACE_INFO(USB_CLASS_VIDEO, 1, UVC_PC_PROTOCOL_15) },
-diff --git a/drivers/media/usb/uvc/uvc_video.c b/drivers/media/usb/uvc/uvc_video.c
-index e3567aeb0007..463d6bf2c7df 100644
---- a/drivers/media/usb/uvc/uvc_video.c
-+++ b/drivers/media/usb/uvc/uvc_video.c
-@@ -262,6 +262,16 @@ static void uvc_fixup_video_ctrl(struct uvc_streaming *stream,
- 
- 		ctrl->dwMaxPayloadTransferSize = bandwidth;
- 	}
-+
-+	if (format->flags & UVC_FMT_FLAG_COMPRESSED &&
-+	    stream->dev->quirks & UVC_QUIRK_OVERFLOW_BANDWIDTH &&
-+	    ctrl->dwMaxPayloadTransferSize > stream->maxpsize) {
-+		uvc_printk(KERN_WARNING, "the max payload transmission size [%d]
-+			   exceededs the size of the ep max packet.
-+			   use the default value of 1024 bytes.\n",
-+			   ctrl->dwMaxPayloadTransferSize);
-+		ctrl->dwMaxPayloadTransferSize = 1024;
-+	}
- }
- 
- static size_t uvc_video_ctrl_size(struct uvc_streaming *stream)
-diff --git a/drivers/media/usb/uvc/uvcvideo.h b/drivers/media/usb/uvc/uvcvideo.h
-index 5e388f05f3fc..20be830d37c0 100644
---- a/drivers/media/usb/uvc/uvcvideo.h
-+++ b/drivers/media/usb/uvc/uvcvideo.h
-@@ -77,6 +77,7 @@
- #define UVC_QUIRK_DISABLE_AUTOSUSPEND	0x00008000
- #define UVC_QUIRK_INVALID_DEVICE_SOF	0x00010000
- #define UVC_QUIRK_MJPEG_NO_EOF		0x00020000
-+#define UVC_QUIRK_OVERFLOW_BANDWIDTH 0x00040000
- 
- /* Format flags */
- #define UVC_FMT_FLAG_COMPRESSED		0x00000001
-
-base-commit: 4701f33a10702d5fc577c32434eb62adde0a1ae1
--- 
-2.25.1
-
+Best regards,
+Krzysztof
 
