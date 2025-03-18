@@ -1,268 +1,279 @@
-Return-Path: <linux-kernel+bounces-566089-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566094-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0E4DA67314
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 12:47:48 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA214A6731A
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 12:49:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D3B24200AD
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 11:47:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D8890172F9D
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 11:49:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CBF71AA782;
-	Tue, 18 Mar 2025 11:46:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 440E520B1EA;
+	Tue, 18 Mar 2025 11:49:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D+vbsHtj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Nadjre71"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70705204F80
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 11:46:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22E9A204F80
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 11:49:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742298395; cv=none; b=E9XoobtvY/JoSi99+Z0c/CoOEEfqozZFwIB4vtXu/0cFtLtvCe7hoS/VgmCzJiWoONQofpQp8f5xeTnxXzT0Z36f9WDcx/kt/nWBiqIUDqz/Cg8vwgNvaCTywCtIoG7TwDJxLbRmIN920wHQvK4KXRzcag8ZOOMscmY/HaTVojk=
+	t=1742298563; cv=none; b=KOokOIxY1xt0EoClmi5gnlWaiLoq4WkvGVy3FWEImvPDh8Zit+/JMBpxrd1vmcB6W+CG5NS3uNZMSfDpS8WFw89An1serNUSY93cWBlwHuP0+e3t4coPcSVrgAXchMT4AiHc0Jlx0mRl+iiJ+8XXqCoe74BSk99DxCAczA902A4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742298395; c=relaxed/simple;
-	bh=RVZ4oNZHRKsyA+Vc/2YPc3LAGOmEPF93TejIVjz5dcg=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=EeoknxJBoBBZmbwsxKrNZylQUA0Xpz1Ad4l9sRkmXupEuVbfphgJH8vKtPN+bIJUUAI5/n4c7+eKNarO1HEL1OnN2jaRs3H/GeKZD2WDd45F2/KE331aCBFcs0BJQ93WUM40HAlWna3gYosHfWceBDTLVpJpBEsOi0ieeJ3Ba94=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D+vbsHtj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1B31C4CEDD;
-	Tue, 18 Mar 2025 11:46:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742298395;
-	bh=RVZ4oNZHRKsyA+Vc/2YPc3LAGOmEPF93TejIVjz5dcg=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=D+vbsHtj7g+ePNxCBw74gZETVj0v85SMcMG+Cn2aBLmNh/at33tHecIvhz0/ZkC9w
-	 nX21jpsfqNCQutkq5aVjgBVp/eJBzudvxJVx3vsorSAuj+xUf2nPcmRlagnOZzFz8o
-	 qafBL56j89uvgW3XWjiuRWYio12JIMH1tp/ExDfV6/t/lNzvPryq2X6Jpr8IwRSLrf
-	 yZMTk/6VG0ooepeFCcx89EJl3Q/IxE532C/m6Tz5O2wpx1cQgptaFaROpM5aDn4B/N
-	 UwI9hE2PuhHkvZTR2hYiGJ/vyfVWwXZ5wR8LSrs1Tfs2ieVxV/B/pdA8rXut5MfiF2
-	 gRlaYMcZbNL3w==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1tuVOy-00EesV-Fq;
-	Tue, 18 Mar 2025 11:46:32 +0000
-Date: Tue, 18 Mar 2025 11:46:31 +0000
-Message-ID: <86tt7qmui0.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Will Deacon <will@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	catalin.marinas@arm.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	kernel-team@android.com,
-	rananta@google.com
-Subject: Re: [GIT PULL] arm64 fixes for -rc7
-In-Reply-To: <20250317160034.GA12267@willie-the-truck>
-References: <20250314160458.GA9438@willie-the-truck>
-	<CAHk-=wgiX0q0WCL+SFwVCYtG7JR3=2Rshse-5J3AO2Y4AgT7Jw@mail.gmail.com>
-	<20250317160034.GA12267@willie-the-truck>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1742298563; c=relaxed/simple;
+	bh=KxoYITn417uyN3i8B3pdy3asxQq3DsyDyfN10Wrb9IY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Vxwfgas7Kg+SMP780ODUCikzMaOwZlSEorrOFJvpq8FBBg1H/f0oorKSbDu2w4IVjch16vzpceSzHQIjcRkMBPGSipUnMBIu2Z0r77/NIIy8cWwxuEULD0rolXEnjM0kB3u9gbW9EIsSFRjlVsPZk6QvvRxNt/iaN9zKd3hoiA8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Nadjre71; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1742298548;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+98WTI3qimtBwRWvbDj1dFBf/uuxSj736wvi5kpnIIE=;
+	b=Nadjre71NtXXU5j62ssd2AteL2nyaJFzg4/Roag+jjASrKv7LjvcBcTAh8ZkwvHmL0qr/M
+	En6CvxFeYl90S28XiEdIsR/mIGzVj0zePS78YrWx+PXdPQqcYaxgpWyQx5k49HDZgsSKy0
+	ILv9ZnBuwF4bktv4qgNBL7a83BoqDhk=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-561-Z9A0o35NPD6BsNOD96dNAw-1; Tue, 18 Mar 2025 07:49:07 -0400
+X-MC-Unique: Z9A0o35NPD6BsNOD96dNAw-1
+X-Mimecast-MFC-AGG-ID: Z9A0o35NPD6BsNOD96dNAw_1742298543
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3933ab5b1d5so3304297f8f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 04:49:07 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742298543; x=1742903343;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+98WTI3qimtBwRWvbDj1dFBf/uuxSj736wvi5kpnIIE=;
+        b=upKYuGr9LIXZWho01ugWq6Wd29qeAQDtBJV+O7YLq40Z93/r4hj8VOq014LePuD/UX
+         z2zSofWzla0iXc+XqvrVlAO5yTN88kuhYhY8058RU/isTJJQCuVqTOYdEcZSOW3zj18U
+         G5+5PNsR0/A/qblvPZDqy6AWwcHG0QZjzN+SQn+VWF4rFd7/RWaoXwgXYv+r8QLA6b/U
+         Xy1YHsP/T2XAZPAkgf0kJfO+IiDWXcf34r1F5grsctodpNFeDbAUjyIs4+Cqq9DJ/9OZ
+         XlWrqxuKvirMOzIucqhEfdxp2I0ZlYJtv62yCYKZyDWccQShBHQ4ZeYRuU2/2nDaLcDe
+         C9Vw==
+X-Forwarded-Encrypted: i=1; AJvYcCXATXW9JD8cxqdWZi+94XtEYUPQ/GgKOz1oxcASOVujgnaCjCvaNKKnTGXBZw8FbWC1Nn9H1RBQzMlvlDQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxyVskYWL5KPmKN4/GL/S+jsPSguSHu9e5nuwN5uGEVJSBU+W88
+	Bil4J0c9SdowDopYgwCWXgkVEH3C34BiGL7sEUHSLP9bZ+AUGYu6q21Qb6zRFMsvcxz6ztfst7N
+	IN4XsxU+KD9FJo3eU/zQ6D2WupED644Mq160vtMFvnM+nZW5G7rRcehbclgRWhA==
+X-Gm-Gg: ASbGnctimncUGnj+wtXTOsawaXXYmuEa1ni/3x2hiRQ7p66/UCkLeVsPTx3rnIYqtpD
+	2nKvVnjutYCQWtDaAXIyH8qvpX3CUQze8FHm0SdFz9ZnNU+xx43CdIUUBg464NJ35bGq1VunWs1
+	Ig4PAe29HzltfzOD6HTMIFZ7Hjw37bNAdUwGPdewfeZKTuVqObkLlo14/H4f2SgU2jYcA1Xuc7U
+	dYcNvdQSbrEhklfIE+Y4z9gwnSUP6rAlEeNMVbRSKTGIoHAXbHe+9tSynFoMEEA4G7hMpSdHzX0
+	SBs7hGz8JZoHj9d/LSirLn7SPHQ6qAbsKh72ew2a1ZPgzA==
+X-Received: by 2002:adf:8bdb:0:b0:391:1923:5a91 with SMTP id ffacd0b85a97d-3971fadd9e3mr13002759f8f.55.1742298542984;
+        Tue, 18 Mar 2025 04:49:02 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGx0IeMONgddVVQsqatQ0bl5f81F+UWy6bvMWzQp6yAeocvppNFdnjEe8Tw47M/ZBSdf4PCXg==
+X-Received: by 2002:adf:8bdb:0:b0:391:1923:5a91 with SMTP id ffacd0b85a97d-3971fadd9e3mr13002740f8f.55.1742298542568;
+        Tue, 18 Mar 2025 04:49:02 -0700 (PDT)
+Received: from [192.168.88.253] (146-241-10-172.dyn.eolo.it. [146.241.10.172])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-395c8975b83sm18462397f8f.52.2025.03.18.04.49.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 18 Mar 2025 04:49:02 -0700 (PDT)
+Message-ID: <8e804715-3123-4ab5-94ce-625060df4835@redhat.com>
+Date: Tue, 18 Mar 2025 12:49:00 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: will@kernel.org, torvalds@linux-foundation.org, catalin.marinas@arm.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-team@android.com, rananta@google.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v3 3/3] net: stmmac: Add DWMAC glue layer for
+ Renesas GBETH
+To: Prabhakar <prabhakar.csengg@gmail.com>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
+ Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+ Jose Abreu <joabreu@synopsys.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>
+Cc: netdev@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+ Biju Das <biju.das.jz@bp.renesas.com>,
+ Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+ Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20250311221730.40720-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250311221730.40720-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Language: en-US
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <20250311221730.40720-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, 17 Mar 2025 16:00:35 +0000,
-Will Deacon <will@kernel.org> wrote:
-> 
-> Hi Linus,
-> 
-> On Fri, Mar 14, 2025 at 10:34:57AM -1000, Linus Torvalds wrote:
-> > On Fri, 14 Mar 2025 at 06:05, Will Deacon <will@kernel.org> wrote:
-> > >
-> > > Summary in the tag, but the main one is a horrible macro fix for our
-> > > TLB flushing code which resulted in over-invalidation on the MMU
-> > > notifier path.
-> > 
-> > From a quick look, that macro is still quite broken. Maybe not in ways
-> > that matter, but still...
-> > 
-> > In particular, the 'stride' argument is used multiple times, and
-> > without parentheses.
-> > 
-> > The 'lpa' argument is also used multiple times, and the input to that
-> > is typically something like kvm_lpa2_is_enabled(), so I think it
-> > potentially generates lots of pointless duplicate code with that
-> > BUG_ON() in system_supports_lpa2() -> cpus_have_final_cap().
-> > 
-> > Maybe the compiler figures it out. But that macro is bad, bad, bad.
-> > When it looks like a function, it should act like a function, and not
-> > evaluate its arguments multiple times.
-> > 
-> > The most immediate bug may have been fixed, but not the actual real
-> > horror of that thing.
-> 
-> Yes, the minimal fix for -rc7 avoids explicitly mutating the macro
-> arguments but we still have the multiple-evaluation problem you point
-> out above.
-> 
-> Ideally, this function would be rewritten as a 'static inline' but it
-> was moved from C code into a macro as part of 360839027a6e ("arm64: tlb:
-> Refactor the core flush algorithm of __flush_tlb_range") because we need
-> to propagate the 'op' argument down to the low-level asm where it's
-> stringified as part of the instruction mnemonic.
-> 
-> I'll have a crack at reworking things to take a 'const char *' instead,
-> but it won't be for 6.14 as it'll be reasonably invasive.
+On 3/11/25 11:17 PM, Prabhakar wrote:
+> @@ -0,0 +1,166 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+> +/*
+> + * dwmac-renesas-gbeth.c - DWMAC Specific Glue layer for Renesas GBETH
+> + *
+> + * The Rx and Tx clocks are supplied as follows for the GBETH IP.
+> + *
+> + *                         Rx / Tx
+> + *   -------+------------- on / off -------
+> + *          |
+> + *          |            Rx-180 / Tx-180
+> + *          +---- not ---- on / off -------
+> + *
+> + * Copyright (C) 2025 Renesas Electronics Corporation
+> + */
+> +
+> +#include <linux/clk.h>
+> +#include <linux/device.h>
+> +#include <linux/module.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/reset.h>
+> +
+> +#include "dwmac4.h"
+> +#include "stmmac_platform.h"
+> +
+> +struct renesas_gbeth {
+> +	struct plat_stmmacenet_data *plat_dat;
+> +	struct reset_control *rstc;
+> +	struct device *dev;
+> +	void __iomem *regs;
+> +};
+> +
+> +static const char *const renesas_gbeth_clks[] = {
+> +	"tx", "tx-180", "rx", "rx-180",
+> +};
+> +
+> +static struct clk *renesas_gbeth_find_clk(struct plat_stmmacenet_data *plat_dat,
+> +					  const char *name)
+> +{
+> +	for (unsigned int i = 0; i < plat_dat->num_clks; i++)
+> +		if (!strcmp(plat_dat->clks[i].id, name))
+> +			return plat_dat->clks[i].clk;
+> +
+> +	return NULL;
+> +}
+> +
+> +static int renesas_gbeth_clks_config(void *priv, bool enabled)
+> +{
+> +	struct renesas_gbeth *gbeth = priv;
+> +	struct plat_stmmacenet_data *plat_dat = gbeth->plat_dat;
 
-I had a go at the 'const char *' approach, but couldn't make it work
-reliably without making it very invasive.
+Minor nit: please respect the reverse christmas tree order above:
 
-I ended up with a slightly bigger hammer (see below) that survived
-booting on a test box and running a couple of VMs. I wouldn't trust it
-with anything more important than that though.
+	struct plat_stmmacenet_data *plat_dat;
+	struct renesas_gbeth *gbeth = priv;
 
-	M.
+and init plat_dat later.
 
-diff --git a/arch/arm64/include/asm/tlbflush.h b/arch/arm64/include/asm/tlbflush.h
-index 8104aee4f9a08..0ff635cf8abf5 100644
---- a/arch/arm64/include/asm/tlbflush.h
-+++ b/arch/arm64/include/asm/tlbflush.h
-@@ -393,45 +393,93 @@ static inline void arch_tlbbatch_flush(struct arch_tlbflush_unmap_batch *batch)
-  *    operations can only span an even number of pages. We save this for last to
-  *    ensure 64KB start alignment is maintained for the LPA2 case.
-  */
-+typedef void (*tlbi_level_fn_t)(u64, int);
-+typedef void (*tlbi_fn_t)(u64);
-+
-+#define __TLBI_LEVEL_FN(t, s)						\
-+static inline void tlbi_level_##t##s(u64 addr, int level)		\
-+{									\
-+	__tlbi_level(t##s, addr, level);				\
-+}									\
-+static inline void tlbi_user_level_##t##s(u64 addr, int level)		\
-+{									\
-+	__tlbi_user_level(t##s, addr, level);				\
-+}
-+
-+#define __TLBI_FN(t, s)							\
-+static inline void tlbi_##t##s(u64 addr)				\
-+{									\
-+	__tlbi(t##s, addr);						\
-+}									\
-+static inline void tlbi_user_##t##s(u64 addr)				\
-+{									\
-+	__tlbi_user(t##s, addr);					\
-+}
-+
-+#define TLBI_FNS(t)					\
-+	__TLBI_FN(t, )					\
-+	__TLBI_FN(t, is)				\
-+	__TLBI_FN(r##t, )				\
-+	__TLBI_FN(r##t, is)				\
-+	__TLBI_LEVEL_FN(t, )				\
-+	__TLBI_LEVEL_FN(t, is)				\
-+	__TLBI_LEVEL_FN(r##t, )				\
-+	__TLBI_LEVEL_FN(r##t, is)
-+
-+/* These are the TLBI instructions we allow for range operation */
-+TLBI_FNS(ipas2e1)
-+TLBI_FNS(vae1)
-+TLBI_FNS(vale1)
-+TLBI_FNS(vaale1)
-+
-+static __always_inline
-+void __flush_tlb_range_by_op(tlbi_level_fn_t il, tlbi_level_fn_t iul,
-+			     tlbi_fn_t ri, tlbi_fn_t riu,
-+			     u64 start, u64 pages, int stride,
-+			     u16 asid, int tlb_level,
-+			     bool tlbi_user, bool lpa2)
-+{
-+	int num = 0;
-+	int scale = 3;
-+	int shift = lpa2 ? 16 : PAGE_SHIFT;
-+	unsigned long addr;
-+
-+	while (pages > 0) {
-+		if (!system_supports_tlb_range() ||
-+		    pages == 1 ||
-+		    (lpa2 && start != ALIGN(start, SZ_64K))) {
-+			addr = __TLBI_VADDR(start, asid);
-+			il(addr, tlb_level);
-+			if (tlbi_user)
-+				iul(addr, tlb_level);
-+			start += stride;
-+			pages -= stride >> PAGE_SHIFT;
-+			continue;
-+		}
-+
-+		num = __TLBI_RANGE_NUM(pages, scale);
-+		if (num >= 0) {
-+			addr = __TLBI_VADDR_RANGE(start >> shift, asid,
-+						scale, num, tlb_level);
-+			ri(addr);
-+			if (tlbi_user)
-+				riu(addr);
-+			start += __TLBI_RANGE_PAGES(num, scale) << PAGE_SHIFT;
-+			pages -= __TLBI_RANGE_PAGES(num, scale);
-+		}
-+		scale--;
-+	}
-+}
-+
- #define __flush_tlb_range_op(op, start, pages, stride,			\
--				asid, tlb_level, tlbi_user, lpa2)	\
--do {									\
--	typeof(start) __flush_start = start;				\
--	typeof(pages) __flush_pages = pages;				\
--	int num = 0;							\
--	int scale = 3;							\
--	int shift = lpa2 ? 16 : PAGE_SHIFT;				\
--	unsigned long addr;						\
--									\
--	while (__flush_pages > 0) {					\
--		if (!system_supports_tlb_range() ||			\
--		    __flush_pages == 1 ||				\
--		    (lpa2 && __flush_start != ALIGN(__flush_start, SZ_64K))) {	\
--			addr = __TLBI_VADDR(__flush_start, asid);	\
--			__tlbi_level(op, addr, tlb_level);		\
--			if (tlbi_user)					\
--				__tlbi_user_level(op, addr, tlb_level);	\
--			__flush_start += stride;			\
--			__flush_pages -= stride >> PAGE_SHIFT;		\
--			continue;					\
--		}							\
--									\
--		num = __TLBI_RANGE_NUM(__flush_pages, scale);		\
--		if (num >= 0) {						\
--			addr = __TLBI_VADDR_RANGE(__flush_start >> shift, asid, \
--						scale, num, tlb_level);	\
--			__tlbi(r##op, addr);				\
--			if (tlbi_user)					\
--				__tlbi_user(r##op, addr);		\
--			__flush_start += __TLBI_RANGE_PAGES(num, scale) << PAGE_SHIFT; \
--			__flush_pages -= __TLBI_RANGE_PAGES(num, scale);\
--		}							\
--		scale--;						\
--	}								\
--} while (0)
-+			     asid, tlb_level, tlbi_user, lpa2)		\
-+	__flush_tlb_range_by_op(tlbi_level_##op, tlbi_user_level_##op,	\
-+				tlbi_r##op, tlbi_user_r##op,		\
-+				start, pages, stride, asid,		\
-+				tlb_level, tlbi_user, lpa2)
- 
- #define __flush_s2_tlb_range_op(op, start, pages, stride, tlb_level) \
--	__flush_tlb_range_op(op, start, pages, stride, 0, tlb_level, false, kvm_lpa2_is_enabled());
-+	__flush_tlb_range_op(op, start, pages, stride, 0, tlb_level, false, kvm_lpa2_is_enabled())
- 
- static inline bool __flush_tlb_range_limit_excess(unsigned long start,
- 		unsigned long end, unsigned long pages, unsigned long stride)
+> +	int ret;
+> +
+> +	if (enabled) {
+> +		ret = reset_control_deassert(gbeth->rstc);
+> +		if (ret) {
+> +			dev_err(gbeth->dev, "Reset deassert failed\n");
+> +			return ret;
+> +		}
+> +
+> +		ret = clk_bulk_prepare_enable(plat_dat->num_clks, plat_dat->clks);
+> +		if (ret)
+> +			reset_control_assert(gbeth->rstc);
+> +	} else {
+> +		clk_bulk_disable_unprepare(plat_dat->num_clks, plat_dat->clks);
+> +		ret = reset_control_assert(gbeth->rstc);
+> +		if (ret)
+> +			dev_err(gbeth->dev, "Reset assert failed\n");
+> +	}
+> +
+> +	return ret;
+> +}
+> +
+> +static int renesas_gbeth_probe(struct platform_device *pdev)
+> +{
+> +	struct plat_stmmacenet_data *plat_dat;
+> +	struct stmmac_resources stmmac_res;
+> +	struct device *dev = &pdev->dev;
+> +	struct renesas_gbeth *gbeth;
+> +	unsigned int i;
+> +	int err;
+> +
+> +	err = stmmac_get_platform_resources(pdev, &stmmac_res);
+> +	if (err)
+> +		return dev_err_probe(dev, err,
+> +				     "failed to get resources\n");
+> +
+> +	plat_dat = devm_stmmac_probe_config_dt(pdev, stmmac_res.mac);
+> +	if (IS_ERR(plat_dat))
+> +		return dev_err_probe(dev, PTR_ERR(plat_dat),
+> +				     "dt configuration failed\n");
+> +
+> +	gbeth = devm_kzalloc(dev, sizeof(*gbeth), GFP_KERNEL);
+> +	if (!gbeth)
+> +		return -ENOMEM;
+> +
+> +	plat_dat->num_clks = ARRAY_SIZE(renesas_gbeth_clks);
+> +	plat_dat->clks = devm_kcalloc(dev, plat_dat->num_clks,
+> +				      sizeof(*plat_dat->clks), GFP_KERNEL);
+> +	if (!plat_dat->clks)
+> +		return -ENOMEM;
+> +
+> +	for (i = 0; i < plat_dat->num_clks; i++)
+> +		plat_dat->clks[i].id = renesas_gbeth_clks[i];
+> +
+> +	err = devm_clk_bulk_get(dev, plat_dat->num_clks, plat_dat->clks);
+> +	if (err < 0)
+> +		return err;
+> +
+> +	plat_dat->clk_tx_i = renesas_gbeth_find_clk(plat_dat, "tx");
+> +	if (!plat_dat->clk_tx_i)
+> +		return dev_err_probe(dev, -EINVAL,
+> +				     "error finding tx clock\n");
+> +
+> +	gbeth->rstc = devm_reset_control_get_exclusive(dev, NULL);
+> +	if (IS_ERR(gbeth->rstc))
+> +		return PTR_ERR(gbeth->rstc);
+> +
+> +	gbeth->dev = dev;
+> +	gbeth->regs = stmmac_res.addr;
+> +	gbeth->plat_dat = plat_dat;
+> +	plat_dat->bsp_priv = gbeth;
+> +	plat_dat->set_clk_tx_rate = stmmac_set_clk_tx_rate;
+> +	plat_dat->clks_config = renesas_gbeth_clks_config;
+> +	plat_dat->flags |= STMMAC_FLAG_HWTSTAMP_CORRECT_LATENCY |
+> +			   STMMAC_FLAG_EN_TX_LPI_CLK_PHY_CAP |
 
--- 
-Without deviation from the norm, progress is not possible.
+The above does not compile:
+
+../drivers/net/ethernet/stmicro/stmmac/dwmac-renesas-gbeth.c:124:7:
+error: use of undeclared identifier 'STMMAC_FLAG_EN_TX_LPI_CLK_PHY_CAP'
+
+
+> +			   STMMAC_FLAG_SPH_DISABLE;
+> +
+> +	err = renesas_gbeth_clks_config(gbeth, true);
+> +	if (err)
+> +		return err;
+> +
+> +	err = stmmac_dvr_probe(dev, plat_dat, &stmmac_res);
+> +	if (err) {
+> +		renesas_gbeth_clks_config(gbeth, false);
+> +		return err;
+
+Just:
+
+	if (err)
+		renesas_gbeth_clks_config(gbeth, false);
+
+	return err;
+
+Thanks,
+
+Paolo
+
 
