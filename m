@@ -1,170 +1,159 @@
-Return-Path: <linux-kernel+bounces-565660-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565658-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90DFAA66CF9
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 08:58:02 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6413FA66D00
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 08:58:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 06EE41646EE
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 07:56:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F862189E0FD
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 07:56:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C4E61F8740;
-	Tue, 18 Mar 2025 07:55:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 597EA1C860C;
+	Tue, 18 Mar 2025 07:55:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="QNRcJzBH"
-Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=furiosa.ai header.i=@furiosa.ai header.b="J/7qt6eg"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08D251E5211;
-	Tue, 18 Mar 2025 07:55:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C91C1DF742
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 07:55:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742284557; cv=none; b=ElbMescjw9VZ7M1siNSgNlvFJuc8z/Jlk7r0NJ24JNQjZhpvE/KCx6Sp3OTapKDCHPYq1fDUcs+c+SFt336T8p2rls4ksNDFPqeRuAz2N58rATiq15A6onBnbfsWOE3hXLw9qcX4yBeICXgWTJR3ZrUNDfxtXUJNBlxXRkb3E80=
+	t=1742284555; cv=none; b=f5cbzbC5Wt9kRsVe/eNHMRC1tbQ47fIY4nHQbrUN4OduNJ+l09X34SKz+dtZjsZ4a596NHRUu21nwhotgamyD0HZqvgeE35zjOaHQ5QVpWqlt9GO9t/mEfHmfphG+plQJy4ysqbutPvswyj/LkOHj57B52dckPCpKM0qnS952Ss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742284557; c=relaxed/simple;
-	bh=Q9XS3ty0/aXYtJXED4wsgr2je5RhzpU7+HOT1r/45VE=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aVVpZ2Vb3hJDt7b/ZHkcj5u6Dcmst1iVwv0B02W/EliOb8bryKQ1TcNX0SO7BRYagYM9maV8jj8mPTI5du6ItoV0z+eoTYfgZQXFkL91iDXOPPamfFlJD0itKKqbZsEah4oXtEvLzGNXUSnIGFDZuEq53oJTJ/2KIeMJ6duo6nI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=QNRcJzBH; arc=none smtp.client-ip=198.47.19.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 52I7tXJP2533552
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 18 Mar 2025 02:55:33 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1742284533;
-	bh=XUxU6JIqlPthBK/qLkde7SD61X0GZkgbE6F2VVDgg+Y=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=QNRcJzBHHj4VsJWRWtyQ8zYYJ9hfBGOYs8A5nrPiYHZU7SkuBzatVCwSRSva7zX1E
-	 JBeq6x/+sICyz82/tp01Efn1yDOPU92IolB2tcOMP96Q4BcHDGpwK5cwNLLKGFHXe8
-	 PdmDjs/5Tkl5QYdFb+iwocQH2TS8tBFAf2k5sHg4=
-Received: from DLEE104.ent.ti.com (dlee104.ent.ti.com [157.170.170.34])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 52I7tWvk023106
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 18 Mar 2025 02:55:33 -0500
-Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE104.ent.ti.com
- (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 18
- Mar 2025 02:55:32 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 18 Mar 2025 02:55:32 -0500
-Received: from localhost (uda0492258.dhcp.ti.com [10.24.72.113])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 52I7tVjr004880;
-	Tue, 18 Mar 2025 02:55:31 -0500
-Date: Tue, 18 Mar 2025 13:25:30 +0530
-From: Siddharth Vadapalli <s-vadapalli@ti.com>
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-CC: Siddharth Vadapalli <s-vadapalli@ti.com>, <lpieralisi@kernel.org>,
-        <kw@linux.com>, <robh@kernel.org>, <bhelgaas@google.com>,
-        <vigneshr@ti.com>, <kishon@kernel.org>, <cassel@kernel.org>,
-        <wojciech.jasko-EXT@continental-corporation.com>,
-        <thomas.richard@bootlin.com>, <bwawrzyn@cisco.com>,
-        <linux-pci@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <srk@ti.com>
-Subject: Re: [PATCH 1/4] PCI: cadence: Add support to build pcie-cadence
- library as a kernel module
-Message-ID: <20250318075530.ca663uwlj7uqf2tr@uda0492258>
-References: <20250307103128.3287497-1-s-vadapalli@ti.com>
- <20250307103128.3287497-2-s-vadapalli@ti.com>
- <20250313174416.n3c4srf6hb2l3bvg@thinkpad>
- <20250314065444.fmvhyqmuefnm4mcq@uda0492258>
- <20250318074917.inhspuuypxmaioqe@thinkpad>
+	s=arc-20240116; t=1742284555; c=relaxed/simple;
+	bh=N+vhNC0jMyh202u4Nzngi+/YScqdgkuR1GpsqEXNxTk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RC+nKjvtnyMVJTXLk11tsRV/GEIl1Ny/H50GnDUrB+ttm+VRMqcu7RGaf2nc04Kk9rH6WNRhRTpKCNI5ksuFOCnJ1rwJ0JY4enbhqepxN5W0VQDbl9u0oYxKBZXR5qvZgAmJwx2ObLBzzbuT2EIv7xG+UcA5asezdWK4KVrSUkU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=furiosa.ai; spf=none smtp.mailfrom=furiosa.ai; dkim=pass (1024-bit key) header.d=furiosa.ai header.i=@furiosa.ai header.b=J/7qt6eg; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=furiosa.ai
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=furiosa.ai
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-225d66a4839so64612595ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 00:55:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=furiosa.ai; s=google; t=1742284553; x=1742889353; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=AWqw/1YNqpsUiTasqbG4aqWj2NMVBNVnLiGA9t51nRU=;
+        b=J/7qt6egEm8xpLU14Nfwpl4aCF+YBSLKG2siRAZg+zTk9E6g8PpB0hbAyrNJjDJjlE
+         WFTRj0nXHIDOBY6t37Qb6IQgVk5QIBxDbSv9JIUqp+g2EWQbRhWf8UK1+vI95U2QC7x7
+         f4fWS1VkpAqm0veTij9zd1ghlaaSu/R0ont/k=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742284553; x=1742889353;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AWqw/1YNqpsUiTasqbG4aqWj2NMVBNVnLiGA9t51nRU=;
+        b=mUyzWZjGLYKDZFKbgjbf2rtjvDYV39DWD4QGH9Q+lfhlYZSJmb1DzLyQm6KqrnPAAE
+         g5pY9vAN6zb5mmLNSPG6/lUUHCYB/SZqVPR6MM00t8BRAiP4i72qFX0xE3bzdSF9IpUl
+         6560FwpL8TB6ekQtBWrSUIjIIIWpAlq9zwfm3x73mWdL9gLx2opshknnMwbbjCHUEL59
+         qhSKIqcMXfXyuNzmSpvP90ZJa16EgHqjJs908OtXJBIw+mTzq4KoadctDWpd/Es8ygB0
+         vkuAZi+oL2iP9mWoPq4w0TPOH0RFeEwpaeq6FMUkn0EVkYIppmB+8ZMiqP7x4fCmWZ9l
+         A2pQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUUIgCOZUE6wREJGO7VoCaFPZk0woty1tP9++YeHiaUdu9N+N/ws2pp843FMkpRDEjWOLFFAZPy1dBid+E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YywQAnWitJfhprjQBpz/MFNNYr/NVJd6rMpRg0Gah8D2MfjhfII
+	FdEawYn2NJiAg5sWTG/AGcnUlCjr3MU0pG5zeUVPI7ERTq4NAOsCuyNeMIKSrHU=
+X-Gm-Gg: ASbGncu6a1sGui+ZEoG0V5Eqkkx/QwOqE0pY7RhRWyLW7fWZ1NmW1/HxYrf7uereHdI
+	0BYAbLUr5jD5lFMLnyS/Nt85z3VturPANJOsNxmo9zgkwvAjsVbEMjSaPdg+vUh23IJGT2GQ8Hp
+	PIBZoz049fjN4kkW3vpQkik9j3rhBxBkX4SZuZtdL29H8+VChA4SQLcUUH4QGCKHQILUrkjcecR
+	Ex94eYA47BUT9o9rK5TbwhIJULzFPd50iBz7eScdHIzPSNV0IBcAmVyVY27nfqk+EHf4X08I9we
+	p0tKJYajqcgWwiROFkAsLl3S4fYbPGbNcYQf4PRrkIVdLqKfHKanNr2kakFydc9ADJmAh48sdEC
+	4
+X-Google-Smtp-Source: AGHT+IGLSujM6CyWqFOh57z55RWygpWHWUeBFLDSwNoV+Z1DhMnmwP9sY/TJGMmFDBV3BlyR8M6DEQ==
+X-Received: by 2002:a05:6a00:4fc3:b0:736:b3cb:5db with SMTP id d2e1a72fcca58-73757a53663mr3191488b3a.11.1742284553335;
+        Tue, 18 Mar 2025 00:55:53 -0700 (PDT)
+Received: from sidongui-MacBookPro.local ([221.148.76.1])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7371169c3desm8846112b3a.155.2025.03.18.00.55.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Mar 2025 00:55:52 -0700 (PDT)
+Date: Tue, 18 Mar 2025 16:55:43 +0900
+From: Sidong Yang <sidong.yang@furiosa.ai>
+To: Pavel Begunkov <asml.silence@gmail.com>
+Cc: Jens Axboe <axboe@kernel.dk>, Josef Bacik <josef@toxicpanda.com>,
+	David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
+Subject: Re: [RFC PATCH v4 4/5] btrfs: ioctl: introduce
+ btrfs_uring_import_iovec()
+Message-ID: <Z9km_8ai2zq86JKI@sidongui-MacBookPro.local>
+References: <20250317135742.4331-1-sidong.yang@furiosa.ai>
+ <20250317135742.4331-5-sidong.yang@furiosa.ai>
+ <3a883e1e-d822-4c89-a7b0-f8802b8cc261@kernel.dk>
+ <Z9jTYWAvcWJNyaIN@sidongui-MacBookPro.local>
+ <566c700c-d3d5-4899-8de1-87092e76310c@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250318074917.inhspuuypxmaioqe@thinkpad>
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+In-Reply-To: <566c700c-d3d5-4899-8de1-87092e76310c@gmail.com>
 
-On Tue, Mar 18, 2025 at 01:19:17PM +0530, Manivannan Sadhasivam wrote:
-> On Fri, Mar 14, 2025 at 12:24:44PM +0530, Siddharth Vadapalli wrote:
-> > On Thu, Mar 13, 2025 at 11:14:16PM +0530, Manivannan Sadhasivam wrote:
-> > 
-> > Hello Mani,
-> > 
-> > > On Fri, Mar 07, 2025 at 04:01:25PM +0530, Siddharth Vadapalli wrote:
-> > > > From: Kishon Vijay Abraham I <kishon@ti.com>
+On Tue, Mar 18, 2025 at 07:25:51AM +0000, Pavel Begunkov wrote:
+> On 3/18/25 01:58, Sidong Yang wrote:
+> > On Mon, Mar 17, 2025 at 09:40:05AM -0600, Jens Axboe wrote:
+> > > On 3/17/25 7:57 AM, Sidong Yang wrote:
+> > > > This patch introduces btrfs_uring_import_iovec(). In encoded read/write
+> > > > with uring cmd, it uses import_iovec without supporting fixed buffer.
+> > > > btrfs_using_import_iovec() could use fixed buffer if cmd flags has
+> > > > IORING_URING_CMD_FIXED.
 > > > > 
-> > > > Currently, the Cadence PCIe controller driver can be built as a built-in
-> > > > module only. Since PCIe functionality is not a necessity for booting, add
-> > > > support to build the Cadence PCIe driver as a loadable module as well.
-> > > > 
-> > > > Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
-> > > > Signed-off-by: Siddharth Vadapalli <s-vadapalli@ti.com>
-> > > 
-> > > Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> > > 
+> > > > Signed-off-by: Sidong Yang <sidong.yang@furiosa.ai>
 > > > > ---
-> > > >  drivers/pci/controller/cadence/Kconfig             |  6 +++---
-> > > >  drivers/pci/controller/cadence/pcie-cadence-ep.c   |  6 ++++++
-> > > >  drivers/pci/controller/cadence/pcie-cadence-host.c |  9 +++++++++
-> > > >  drivers/pci/controller/cadence/pcie-cadence.c      | 12 ++++++++++++
-> > > >  drivers/pci/controller/cadence/pcie-cadence.h      |  4 ++--
-> > > >  5 files changed, 32 insertions(+), 5 deletions(-)
+> > > >   fs/btrfs/ioctl.c | 32 ++++++++++++++++++++++++--------
+> > > >   1 file changed, 24 insertions(+), 8 deletions(-)
 > > > > 
-> > > > diff --git a/drivers/pci/controller/cadence/Kconfig b/drivers/pci/controller/cadence/Kconfig
-> > > > index 8a0044bb3989..82b58096eea0 100644
-> > > > --- a/drivers/pci/controller/cadence/Kconfig
-> > > > +++ b/drivers/pci/controller/cadence/Kconfig
-> > > > @@ -4,16 +4,16 @@ menu "Cadence-based PCIe controllers"
-> > > >  	depends on PCI
-> > > >  
-> > > >  config PCIE_CADENCE
-> > > > -	bool
-> > > > +	tristate
-> > > >  
-> > > >  config PCIE_CADENCE_HOST
-> > > > -	bool
-> > > > +	tristate
-> > > >  	depends on OF
-> > > >  	select IRQ_DOMAIN
+> > > > diff --git a/fs/btrfs/ioctl.c b/fs/btrfs/ioctl.c
+> > > > index 6c18bad53cd3..a7b52fd99059 100644
+> > > > --- a/fs/btrfs/ioctl.c
+> > > > +++ b/fs/btrfs/ioctl.c
+> > > > @@ -4802,6 +4802,28 @@ struct btrfs_uring_encoded_data {
+> > > >   	struct iov_iter iter;
+> > > >   };
+> > > > +static int btrfs_uring_import_iovec(struct io_uring_cmd *cmd,
+> > > > +				    unsigned int issue_flags, int rw)
+> > > > +{
+> > > > +	struct btrfs_uring_encoded_data *data =
+> > > > +		io_uring_cmd_get_async_data(cmd)->op_data;
+> > > > +	int ret;
+> > > > +
+> > > > +	if (cmd && (cmd->flags & IORING_URING_CMD_FIXED)) {
+> > > > +		data->iov = NULL;
+> > > > +		ret = io_uring_cmd_import_fixed_vec(cmd, data->args.iov,
+> > > > +						    data->args.iovcnt,
+> > > > +						    ITER_DEST, issue_flags,
+> > > > +						    &data->iter);
+> > > > +	} else {
+> > > > +		data->iov = data->iovstack;
+> > > > +		ret = import_iovec(rw, data->args.iov, data->args.iovcnt,
+> > > > +				   ARRAY_SIZE(data->iovstack), &data->iov,
+> > > > +				   &data->iter);
+> > > > +	}
+> > > > +	return ret;
+> > > > +}
 > > > 
-> > > Even though this was added earlier, looks like not needed.
+> > > How can 'cmd' be NULL here?
 > > 
-> > Thank you for reviewing this patch.
-> > 
-> > drivers/pci/controller/cadence/Kconfig has the following:
-> > ...
-> > 	config PCIE_CADENCE_HOST
-> > 		bool
-> > 		depends on OF
-> > 		select IRQ_DOMAIN
-> > 		select PCIE_CADENCE
-> > ...
-> > 	config PCI_J721E_HOST
-> > 		bool "TI J721E PCIe controller (host mode)"
-> > 		depends on ARCH_K3 || COMPILE_TEST
-> > 		depends on OF
-> > 		select PCIE_CADENCE_HOST
-> > 		select PCI_J721E
-> > ...
-> > So PCI_J721E_HOST selects PCIE_CADENCE_HOST which in turn selects
-> > PCIE_CADENCE. As of now, none of these configs are enabled in
-> > arm64-defconfig, and they also will not be accepted as built-in modules
-> > as it will bloat the Linux Image for everyone. For that reason, they are
-> > all being converted to loadable modules, and their configs will eventually
-> > be enabled in arm64-defconfig as loadable modules.
-> > 
-> > Please let me know if I misunderstood your comment regarding the quoted
-> > change not being required.
-> > 
+> > It seems that there is no checkes for 'cmd' before and it works same as before.
+> > But I think it's better to add a check in function start for safety.
 > 
-> Yes, you misunderstood indeed :) My earlier comment was about IRQ_DOMAIN symbol
-> which looked like not needed at all.
+> The check goes two lines after you already dereferenced it, and it
+> seems to be called from io_uring cmd specific code. The null check
+> only adds to confusion.
 
-Thank you for clarifying. I (mis)interpret your comment in the context of
-the entire "config PCIE_CADENCE_HOST" block and the change made in it :)
+You mean 'cmd' already dereferenced for async_data. Is it okay to just delete code
+checking 'cmd' like below?
 
-Regards,
-Siddharth.
+if (cmd->flags & IORING_URING_CMD_FIXED) {
+
+Thanks,
+Sidong
+
+> 
+> -- 
+> Pavel Begunkov
+> 
 
