@@ -1,75 +1,77 @@
-Return-Path: <linux-kernel+bounces-567042-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-567043-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 567F2A6804A
-	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 00:01:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id EAE6AA6804D
+	for <lists+linux-kernel@lfdr.de>; Wed, 19 Mar 2025 00:01:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BDDBD3B6AF4
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 23:00:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E9633B8358
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 23:01:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F24B5212FB3;
-	Tue, 18 Mar 2025 23:00:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D97D213E85;
+	Tue, 18 Mar 2025 23:00:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="tXJB/EAw"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="nlIkKEIH"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAB8920FAAB
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 23:00:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BF491FA261
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 23:00:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742338851; cv=none; b=ZamixllQr27wfyOJL55XPHvNi7kA4QSCQzeu0VAzGWwrV9X4gf+y5whEtJURlrrOcLwlkC3ob0wSSW72p/pLY66vXUD9MQ2dWwLr/no6isHSJ5+tNGYXjb4OuT4SDB+O3Z0VaQC7ik46uwOaTXKqFwyrUdgx0SY/R3JbImcxsWw=
+	t=1742338858; cv=none; b=Ab9I3KNoeCI6gQeONbO3y6C41ntJlOGbLifmfQwrB96YRY+wMyJmcvwYH3sUyJfXFw9vaT5puWA6UHpJJd02KEnv3AyPpkaCeHhvEDOl3BNqHv8/Ud01ySk7lHLyvjXfr6xK/WYDiUlP8yY4/CtRr1k2TiZdccn/Uowt6BnB5tU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742338851; c=relaxed/simple;
-	bh=Ya379Ijr2ofj10+RRG61gqv1ZJJPtyVebxeOMcaN51U=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=aaJamqrdqiCCaYlSwU17uMimVDMJO3SW+bIuNoxEwuzCXRRRU/6BWV8n1VwMVapueScOlBzXzIDwg9CiFoN7qvfhncOaOT72Ev13whFgI3ZAvXPBLwEdWRLIj3oWN4Taa7axTNMsf+BmQzCq0lFn9F/hAavRDrkVNoHGlmKlBJA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=tXJB/EAw; arc=none smtp.client-ip=209.85.214.176
+	s=arc-20240116; t=1742338858; c=relaxed/simple;
+	bh=rE41wxgzlKpGpaGBnybaNjCM4MuLIzqRK5L9RODPghQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=F1ro2NWqhT0k1lmdpMxsJsiOD8N1tdqJWxuW2+0uu33eLHstoXTxdS58bRtMAT3LE8tUHBjtcH0A8ZrSBB4I3iP05PFiCWcIIbCIzkpO0glXfSAkH2X7+pcmZ95kPbQNpLghxb8UFEyzbuC/JW1kQEq/3Kyn3FNJnIBrii3OVik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=nlIkKEIH; arc=none smtp.client-ip=209.85.214.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-22403cbb47fso117390135ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 16:00:48 -0700 (PDT)
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-22423adf751so109605785ad.2
+        for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 16:00:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1742338848; x=1742943648; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=FYFuZAXLZfyhQ6Ofp04NHjTY3u72Upe1i27dNGQ4bgY=;
-        b=tXJB/EAwlLWnvEMZ0+wcOO3OQ0yjxiGe1FiILgTu0OlX3ceTueTlTVfOifrYI7wASA
-         K6tLlsOjZRn/Hx7/r13U7a1Ibm5gQbJQ0mvL54sG5X8U62CYpYS0eAX+/AwTPqBywKpr
-         bKS6YixmG9xxObsnhQzNEU2zwesBpNbPnOm0GLge0uRleYGl5dRTBFJkvim7UvE5CVLC
-         6EG63NvRnZ6eKBVtDgdf6Sa+uiHtN9ix4lZqOWxl3iP3jYjheNoQ3WvQDNLaTpp9gJq+
-         WTik6WkiFvnvRRGTc+ikLeCK3Pbduv25FJ/81NgghjZlvD1NalrcY/OgFAkDNEE7/EcZ
-         frJA==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1742338855; x=1742943655; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NRK1BYeq9oENOjqMtHoyse0xgVkJUai4Nnq/5BnLYx4=;
+        b=nlIkKEIHwMf3cR4Wk3WJjBcUVgZxE+HKLvJNp+cei7lFycQs8fI6bl4zC8qtoeinUn
+         NMrOBHTFrc2HpG+mKoCL21nG3h8l/uMsKwDx1HkDzUX0BXzXoE3vrWzOZDbjDioMbk9R
+         X4vrMkRAtpEPxYqHbKsMApSP7aCBNK5AKZ5QwZHkBV+BXhlUDydjG5Bh1Q2e7iVI9I2w
+         ttNUKF4Q0CXIW2fNmLk8clxzZG9nWHMdTT0femhHz0UOngkhaEN4F/VRXRXysq03iIb0
+         elKF3FjoUTRWtMPfOr0gQ6gA4zJGl0mMagmisUaLRoL6BCExH6ymVZ8uu57yxSLk14CN
+         icjg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742338848; x=1742943648;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=FYFuZAXLZfyhQ6Ofp04NHjTY3u72Upe1i27dNGQ4bgY=;
-        b=qOxTfRSqVODXHwy+XiyKJzT7TLMiVqOaXBAd6C0RUQMZeMemxIDh21aZ0Zof3QPnbJ
-         VMKfEVrHSpTkWbLPTx75T7GwQGYLLrQ5au/8Rvx/6KFXXI1z4Iq6fjFOUDK3HDO3azSf
-         DQmQnXfFbM4AFpGDmbKFkSim4GoeIkf7R6FVU/KspbUhbPGobmlOw5/DS2SrARqFRRvr
-         CZMNxyUhC20eDIrrXbFrmK9Vd1vWOb/Aq94Y0oKhKPI/X9uSY+D+7BUfM3sgbaTIWzS9
-         9FGbNwXNooa6fIjFLKnzGHmL10w79+KkToB0WzuamwhDL5oxn9DaoRIszT6djntcqMZZ
-         yYOw==
-X-Forwarded-Encrypted: i=1; AJvYcCXCd/RdM6hA4sKCiDFv/5tOAUZbXOh34O4VEag/nv4uGd4/Zlgkj8Qm71uw7sF0HCwUuURihb/ygUXrvIk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxN5wX1fxs9kDMEBPa4Nim3naecqdtbdh635ZPSh9eMUs68/g2G
-	NmuX9Wfrm+Q4gIsPbAzDxQSRcCHII91f/aimbjGBEUZtim73XPqkc3z4BkWfLU4=
-X-Gm-Gg: ASbGncvds2SVzsWYc/8j1Vuf6qcsQFPemVi1rlzo5M1Uo8xX/W2BAZTCBNC6eUlxCfc
-	lO7dnJTghdLiUukrEL2+E0xirdbujB3fenYfKQIWPcAy+62/gk90E3RFekuUFsZh0ICpNL0XvpL
-	QRSxkiEOxj80P65u8RIKhXuBUMbQa1FxkQuLC7HOO50Fq7ykMM35aP4gRQervSfEg6D+y/2I2U4
-	nbAohF7cY+eqncQxdTW1iFPmdbnNCP187sOTeBJeR8uPMZFxYBCWiH+mNLTms+RB/om2ZCDX/LN
-	KvhlZj0sI0OmjQGC/umLR0lgp5A5NYx7pDugZCyHEZekBmsI1x8k6OID/uLjJTYJA083UDwteqV
-	ja89FdFk=
-X-Google-Smtp-Source: AGHT+IFTfJJcr07mnjzLqCop80WxhC5Pssj38zY+A8XR2rKWIc2cYcEXx8f4iEqqmQsjWdqm+Dpo5Q==
-X-Received: by 2002:a17:902:d2c6:b0:215:acb3:3786 with SMTP id d9443c01a7336-2264993661fmr6691435ad.19.1742338847956;
-        Tue, 18 Mar 2025 16:00:47 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1742338855; x=1742943655;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=NRK1BYeq9oENOjqMtHoyse0xgVkJUai4Nnq/5BnLYx4=;
+        b=anndBB+ejrrwyac69ThM+JH5ANgYl6VyXQ3Dm8qkI/KOUmfByHy68ZP5Sx8Ets5XGg
+         iey8LGlPO+DgBvHmKKqqEmnqEAzN4KnBjbYRXJKlOJ5D6CBQ4R4CD96xVOofWPvZgj8D
+         Q7k/0NAlMNKINKD3otEKXWWxZRR565/ZjZZIU1Kj8mj43JoOVuO4SZuTSXyNsPIKe55r
+         gcio5mIKQivmZjr2ftwP8v17Gr5I2OfNTEQFYjX6EkecubWHS1uLRTqU7tNca6OOcxMd
+         pFp8s9vBqxO8CVhBBwUWsvCpKzGr+IrvaXJ3u1SIwpJ5bpVWSYSw9VC5kkDC43cmwnTO
+         wnnw==
+X-Forwarded-Encrypted: i=1; AJvYcCU9Uvua21p1ePnGJW1gBrR+yCFS2oe6hlKCk1ePLz/W+yllwg2nGPF/jf4HX13sBrMU+peFUyw8vvbdLZo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyLMQl/H2t3VcbHWNAz75taGv+XvfLKxPHMG/uDReOVcmYyywOt
+	rlJdDq1rwuRQXECyBLMrEkbIttukN0JD7d61b13pQW9q8F0xcpryevH+8id9iyI=
+X-Gm-Gg: ASbGncvxRp1Kll5YDtGc7x61toVGyJgtSoBHFFjOniP0UzeLM6YT2VPjk17XLnbfqEU
+	1qoQNwxM7EhloYy6BUKG0Cc023XeTD2FfORXmIDxjDP6iHXXjC4RF3SvIyJbxrXccY/f/qtzay4
+	crvRn1SvVMjFsoqo9IHSDI+hOQ74/f64+4Omw3ridF2tGWn3YahLZSE8mc/2EqkhKfr6VhTlfT5
+	/2cyvIsfAcVnTpAph69G90pLzEv9Cbna6rNDo0C4pKS2z7c+QGPh0++Gi/AjFpQaUQTzQp1E7fv
+	5kapm9jPGSQgmzf4TVe/XFvu5F3BWKo020otWjbbJ+7KVakKWU+cJ4wcE+7k1gj5ZKrqIk4QN6x
+	dSKBHPpKSiaDh4MsROg==
+X-Google-Smtp-Source: AGHT+IHdNYudNQrKRJYbNO8tKZv7fexJeXFTkUuajSjQrqfC+IP76hd/8HGEo15LPdOK5Ylw/STnrA==
+X-Received: by 2002:a17:903:41c2:b0:223:2630:6b82 with SMTP id d9443c01a7336-2264981b460mr7589085ad.10.1742338855286;
+        Tue, 18 Mar 2025 16:00:55 -0700 (PDT)
 Received: from dev-linux.. (syn-076-088-115-008.res.spectrum.com. [76.88.115.8])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-225c6ba6f14sm100739465ad.111.2025.03.18.16.00.45
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-225c6ba6f14sm100739465ad.111.2025.03.18.16.00.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Mar 2025 16:00:47 -0700 (PDT)
+        Tue, 18 Mar 2025 16:00:54 -0700 (PDT)
 From: Sukrut Bellary <sbellary@baylibre.com>
 To: Kevin Hilman <khilman@baylibre.com>,
 	Russell King <linux@armlinux.org.uk>,
@@ -92,10 +94,12 @@ Cc: Sukrut Bellary <sbellary@baylibre.com>,
 	linux-omap@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	linux-pm@vger.kernel.org
-Subject: [PATCH 0/4] PM: TI: AM335x: PM STANDBY fixes
-Date: Tue, 18 Mar 2025 16:00:38 -0700
-Message-Id: <20250318230042.3138542-1-sbellary@baylibre.com>
+Subject: [PATCH 1/4] ARM: OMAP2+: Fix l4ls clk domain handling in STANDBY
+Date: Tue, 18 Mar 2025 16:00:39 -0700
+Message-Id: <20250318230042.3138542-2-sbellary@baylibre.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250318230042.3138542-1-sbellary@baylibre.com>
+References: <20250318230042.3138542-1-sbellary@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -104,49 +108,77 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This patch series fixes the Power management issues on TI's am335x soc.
-
-on AM335x, the wakeup doesn't work in the case of STANDBY.
-
-1. Since CM3 PM FW [1](ti-v4.1.y) doesn't enable l4ls clockdomain upon
-wakeup, it fails to wakeup the MPU.
-To fix this, don't turn off the l4ls clk domain in the STANDBY transition
-in MPU.
-
-2. Also Per AM335x TRM [2](section 8.1.4.3 Power mode), in case of STANDBY,
-PER domain should be ON. So fix PER power domain handling for 
-standby. l4ls is a part of the PER domain.
-
-Since we are not turning off the l4ls clockdomain on STANDBY in MPU,
-PER power domain would remain ON. But still, explicitly handle this
-to be in sync with the STANDBY requirement.
-
-3. On am335x evm[1], UART0 - (UART1-HW) has a wakeup capability.
-Set the wakeup-source property in DT for AM335x.
-
-4. Enable PM configs for AM335x.
+Don't put the l4ls clk domain to sleep in case of standby.
+Since CM3 PM FW[1](ti-v4.1.y) doesn't wake-up/enable the l4ls clk domain
+upon wake-up, CM3 PM FW fails to wake-up the MPU.
 
 [1] https://git.ti.com/cgit/processor-firmware/ti-amx3-cm3-pm-firmware/
-[2] https://www.ti.com/lit/ug/spruh73q/spruh73q.pdf
-[3] https://www.ti.com/tool/TMDXEVM3358
 
-Test log:
-https://gist.github.com/sukrutb/bdbfd1220fe8578a9decf87d0bac6796
-
-Sukrut Bellary (4):
-  ARM: OMAP2+: Fix l4ls clk domain handling in STANDBY
-  pmdomain: ti: Fix STANDBY handling of PER power domain
-  ARM: dts: am335x: Set wakeup-source for UART0
-  ARM: multi_v7_defconfig: Enable am335x PM configs
-
- arch/arm/boot/dts/ti/omap/am335x-evm.dts    |  2 +-
- arch/arm/configs/multi_v7_defconfig         |  5 +++++
+Signed-off-by: Sukrut Bellary <sbellary@baylibre.com>
+---
  arch/arm/mach-omap2/clockdomain.h           |  1 +
  arch/arm/mach-omap2/clockdomains33xx_data.c |  2 +-
  arch/arm/mach-omap2/cm33xx.c                | 14 +++++++++++++-
- drivers/pmdomain/ti/omap_prm.c              |  8 ++++++--
- 6 files changed, 27 insertions(+), 5 deletions(-)
+ 3 files changed, 15 insertions(+), 2 deletions(-)
 
+diff --git a/arch/arm/mach-omap2/clockdomain.h b/arch/arm/mach-omap2/clockdomain.h
+index c36fb2721261..86a2f9e5d0ef 100644
+--- a/arch/arm/mach-omap2/clockdomain.h
++++ b/arch/arm/mach-omap2/clockdomain.h
+@@ -48,6 +48,7 @@
+ #define CLKDM_NO_AUTODEPS			(1 << 4)
+ #define CLKDM_ACTIVE_WITH_MPU			(1 << 5)
+ #define CLKDM_MISSING_IDLE_REPORTING		(1 << 6)
++#define CLKDM_STANDBY_FORCE_WAKEUP		BIT(7)
+ 
+ #define CLKDM_CAN_HWSUP		(CLKDM_CAN_ENABLE_AUTO | CLKDM_CAN_DISABLE_AUTO)
+ #define CLKDM_CAN_SWSUP		(CLKDM_CAN_FORCE_SLEEP | CLKDM_CAN_FORCE_WAKEUP)
+diff --git a/arch/arm/mach-omap2/clockdomains33xx_data.c b/arch/arm/mach-omap2/clockdomains33xx_data.c
+index 87f4e927eb18..c05a3c07d448 100644
+--- a/arch/arm/mach-omap2/clockdomains33xx_data.c
++++ b/arch/arm/mach-omap2/clockdomains33xx_data.c
+@@ -19,7 +19,7 @@ static struct clockdomain l4ls_am33xx_clkdm = {
+ 	.pwrdm		= { .name = "per_pwrdm" },
+ 	.cm_inst	= AM33XX_CM_PER_MOD,
+ 	.clkdm_offs	= AM33XX_CM_PER_L4LS_CLKSTCTRL_OFFSET,
+-	.flags		= CLKDM_CAN_SWSUP,
++	.flags		= CLKDM_CAN_SWSUP | CLKDM_STANDBY_FORCE_WAKEUP,
+ };
+ 
+ static struct clockdomain l3s_am33xx_clkdm = {
+diff --git a/arch/arm/mach-omap2/cm33xx.c b/arch/arm/mach-omap2/cm33xx.c
+index acdf72a541c0..a4dd42abda89 100644
+--- a/arch/arm/mach-omap2/cm33xx.c
++++ b/arch/arm/mach-omap2/cm33xx.c
+@@ -20,6 +20,9 @@
+ #include "cm-regbits-34xx.h"
+ #include "cm-regbits-33xx.h"
+ #include "prm33xx.h"
++#if IS_ENABLED(CONFIG_SUSPEND)
++#include <linux/suspend.h>
++#endif
+ 
+ /*
+  * CLKCTRL_IDLEST_*: possible values for the CM_*_CLKCTRL.IDLEST bitfield:
+@@ -328,8 +331,17 @@ static int am33xx_clkdm_clk_disable(struct clockdomain *clkdm)
+ {
+ 	bool hwsup = false;
+ 
++#if IS_ENABLED(CONFIG_SUSPEND)
++	/*
++	 * In case of standby, Don't put the l4ls clk domain to sleep.
++	 * Since CM3 PM FW doesn't wake-up/enable the l4ls clk domain
++	 * upon wake-up, CM3 PM FW fails to wake-up th MPU.
++	 */
++	if (pm_suspend_target_state == PM_SUSPEND_STANDBY &&
++	    (clkdm->flags & CLKDM_STANDBY_FORCE_WAKEUP))
++		return 0;
++#endif
+ 	hwsup = am33xx_cm_is_clkdm_in_hwsup(clkdm->cm_inst, clkdm->clkdm_offs);
+-
+ 	if (!hwsup && (clkdm->flags & CLKDM_CAN_FORCE_SLEEP))
+ 		am33xx_clkdm_sleep(clkdm);
+ 
 -- 
 2.34.1
 
