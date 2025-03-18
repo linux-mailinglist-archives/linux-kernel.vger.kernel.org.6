@@ -1,181 +1,162 @@
-Return-Path: <linux-kernel+bounces-566470-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566468-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 477BBA67876
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 16:55:15 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1BD3A6785F
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 16:52:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5EE5D3B3FD3
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 15:52:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B616B17E71F
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 15:52:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3985420FAA1;
-	Tue, 18 Mar 2025 15:52:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B411120FAAB;
+	Tue, 18 Mar 2025 15:51:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="h79dQqYw"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E9gwtEEl"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E90A420F075;
-	Tue, 18 Mar 2025 15:52:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A09D720F07A;
+	Tue, 18 Mar 2025 15:51:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742313135; cv=none; b=Hpm68C25CnR3McicNPIkPfXujHRp3TLsNMjRvxjVPe7CKYVolexQJ5W7HN5ZtBcRXbLL3CrRDWah4UPfHlnmZfgepZFybxk82dx+DRuXuL+339HS7dkmF8+bSMCX+CyqKMXLsL1SnG7rxQmliwNxGsJssjcm7fUQF+6SfqweB7g=
+	t=1742313108; cv=none; b=BSlBiI4V+iPI7wUkqXhk69nEzgyS4CrOfZ2XZSXx8UvblUuyZJYDQ5vUU8JHzDeJFEGhN6Ev8ACQkeHjVvsE1JhImaKvf1O8b8Wc/k+ZIgL1gixJ1EUtnsOAwFNQfM+raZdae4R9uNZ8wwLSApzAdeuzVkUCyXFHpA3j+TtsBrI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742313135; c=relaxed/simple;
-	bh=ahM6Pswqga/PvNT1jwi6X90X517zBLJ9yV9xfbdvdkA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Y7ECwe95Mf6nIpIYdB38cGjCe+1mmTdogQGAGzk7AKhtd52ZAanHVywds98zXeQ4HyRQ5cyU+5LAbquHISdqTA4darXdyp54x1sgd/w3cTdrCFPDuwbNQMiw8OUqett3Vifa1an6Ra+EDUPCK2nxN4nmHhURtaRTX84md2zy5V4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=h79dQqYw; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742313134; x=1773849134;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=ahM6Pswqga/PvNT1jwi6X90X517zBLJ9yV9xfbdvdkA=;
-  b=h79dQqYwwhj0l2fuNxX8jWyN+K/XPW9NNnOtUGqISxMt7Z5h1chCeiDw
-   IG27m+GAJO+7+f3HLSl2+8OXdM3R4uN98VCseXiqoOrIWURtUE4ZWJJXb
-   waTozHBTJ1BCl8pQO8oU/JwkdqsgjlxMvriuDhFWcomgaZET3L6+RRbGT
-   /ZvZoSws53RheYvDOn7abaiAsD6KpoOO9igQf1iPNBmw8HroyPxoSJUKx
-   e7O2Y0FyuImEC3pwZ8proKE039I2CnVd/wXl+X3OXrjgq8XBQuuzb8nko
-   LIMRgG/ef758NdNMJrw/eDuAbSRSuOrwXY7dhjd21+Dcbuy6/IX9DbzUc
-   w==;
-X-CSE-ConnectionGUID: Cz/TEJtnRQWR7lHosSS0LA==
-X-CSE-MsgGUID: nJAN+aQ9SjGO4aOg7B1Zbg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11377"; a="53675315"
-X-IronPort-AV: E=Sophos;i="6.14,257,1736841600"; 
-   d="scan'208";a="53675315"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2025 08:51:29 -0700
-X-CSE-ConnectionGUID: sQGXQl98T627HwtSDI9gkQ==
-X-CSE-MsgGUID: +dz2gRIARCig5lexBMS7Yw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,257,1736841600"; 
-   d="scan'208";a="122784884"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa010.fm.intel.com with ESMTP; 18 Mar 2025 08:51:28 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id E6C081D7; Tue, 18 Mar 2025 17:51:26 +0200 (EET)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Lee Jones <lee@kernel.org>,
-	linux-leds@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Pavel Machek <pavel@kernel.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v1 1/1] leds: core: Bail out when composed name can't fit the buffer
-Date: Tue, 18 Mar 2025 17:51:25 +0200
-Message-ID: <20250318155126.2974905-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.47.2
+	s=arc-20240116; t=1742313108; c=relaxed/simple;
+	bh=3IUzgW0tqmvBtDPQEnXyodqPaV1/XSemXMh7OodnVNw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KaNHPceErXBV/EoLshhVZHBXOYMzqRYreQ7iTNe4B77Arw93gLfe8QXsiWogSJ0nzFgTcaOGectoJVlgdXKt6P7Jji+7Lu3gIr//RwAWK4Dma31+HNw+V/HxO3CnQsbYR3BXOxyw3cKGP/amx8auqkHPVZFF+QtuSX6RxPTh/r0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E9gwtEEl; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-ac2ab99e16eso219275766b.0;
+        Tue, 18 Mar 2025 08:51:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742313100; x=1742917900; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OQsfpXrf/4c4YQpb8eNn6gMWmckTaNQ66mxt9z5Ef4E=;
+        b=E9gwtEElyso6PZ/HIK0pKB6sfZISNou8ITo7h5uRZZh64tHLnJvXJe4JGYG4J/fWvo
+         zB7pfudsVDW5FqrEhXDZu9Qzw0j81MbpV9FQs/SNC1gM15vmoOSm3a9Yos+JnG5z5Ok1
+         yesHNPVv90+2QK7HhmGOPAw0YyCr0RPGprz46iHQf6oTa9p2Qbco4W+vASKDSoPEbxLH
+         7oHvxQAOD7N9aqdO9+zGsiY7neR3Zrembw1DsA1/nNinKJw2RFjAMk2arpOXyPEZ822b
+         9dxDqY7uDKEGPg0eCVxp6JGMC8e7wvdr51CfxDABKS/f1dMlfJAB4VLRImGVyxgLBqe/
+         8Lbg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742313100; x=1742917900;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=OQsfpXrf/4c4YQpb8eNn6gMWmckTaNQ66mxt9z5Ef4E=;
+        b=cNrS5qfTrJcrshGgH32pvJm/3rukLYe6VItRVK+FIztLgHiLE6gXHeP1QPkcz8QPNf
+         YbUDZ6HLRYJmp4iddcO6oatfTmU2wH/tXOnWGpkwxdDouL2lwEGAcSLj1gUMJ1EnbVU7
+         LSZ9/SbJjSTaiM2mTjOVf8YdBr7M0r4flMCXkAnbu+XFNfXeugeR1VGfFIhXRJl2xUEr
+         z0xDTYMTiEqXq/HZ8tFb70N91fSVWKzigzydhwlU199qmZIwmH9yfb1fuCHGKOMpy1iq
+         Y3Q17BowXT4DfbNtoYnWT7jAcJbh/28/6T0i1fWVMBlIXAwLRjxYdRSz6WeWOTTDkBl+
+         ZZJg==
+X-Forwarded-Encrypted: i=1; AJvYcCUqLPxM8bT72/nVjV/6S9UVz+Rx5WHTdWhokpgz6HJdkxMeCvr5kxAyUoj0gywQja3arKsode7irfo3Qvq1@vger.kernel.org, AJvYcCXNizgZymjGEdomWbL7WzKNMzLZ+Nr5MZv7GqO7poEfuDq9Pi3ClGA6N0pyvSZn7FdVITiPscNCdtRYt9UQ@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6EHeD2L3RnKBJuA+LHZ9WN1qW6TdNTAbKjopkZRbcFHtye5Vz
+	5aGduC4NoLOZZW+MXk86nnw/ut8BiLxlfnBYw0V79g7OiV43Y93n2IhsjdKCQyKzqd6ilPCebQt
+	soCdobsNoR52KAh861l5gOcO5Lyw=
+X-Gm-Gg: ASbGncump5gXjfyl74pisdrZiVrFUSg5fIpCuk7/nV246/emK8mKmcsp29p21Joe5+7
+	0/ef9BX0/LQTs2nm+4lR5WsNmwZsa+n1tL5ym/atXOmf6qVF11kVjC9sj1Zbxvo+P6WCLLa2tJQ
+	TkxbSfunopd6Lt7LlXc0hMNx0dVg==
+X-Google-Smtp-Source: AGHT+IFjG8edwwuf2mEVeTcyHLZb3BYe7dhVljkptYUqPN1fOMiWWxKawFj8Wyt+UhG++lSQFRDFKNY1P6+HUcVXn7o=
+X-Received: by 2002:a17:907:d92:b0:ac1:da09:5d32 with SMTP id
+ a640c23a62f3a-ac3301d979bmr1912910866b.6.1742313099481; Tue, 18 Mar 2025
+ 08:51:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20250115094702.504610-1-hch@lst.de> <20250115094702.504610-4-hch@lst.de>
+ <ptwb6urnzbov545jsndxa4d324ezvor5vutbcev64dwauibwaj@kammuj4pbi45>
+In-Reply-To: <ptwb6urnzbov545jsndxa4d324ezvor5vutbcev64dwauibwaj@kammuj4pbi45>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Tue, 18 Mar 2025 16:51:27 +0100
+X-Gm-Features: AQ5f1JoIV3Ekgoa3AyaPQZviu6xh4y3D7_TilsaK7QfN_pG3EjUXa6A87nuBb0M
+Message-ID: <CAGudoHEW=MmNLQSnvZ3MJy0KAnGuKKNGevOccd2LdiuUWcb0Yg@mail.gmail.com>
+Subject: Re: [PATCH 3/8] lockref: use bool for false/true returns
+To: Christoph Hellwig <hch@lst.de>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Al Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Gao Xiang <xiang@kernel.org>, Chao Yu <chao@kernel.org>, 
+	Andreas Gruenbacher <agruenba@redhat.com>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-erofs@lists.ozlabs.org, 
+	gfs2@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-GCC compiler complains about snprintf() calls that may potentially cut
-the output:
+On Tue, Mar 18, 2025 at 4:25=E2=80=AFPM Mateusz Guzik <mjguzik@gmail.com> w=
+rote:
+>
+> On Wed, Jan 15, 2025 at 10:46:39AM +0100, Christoph Hellwig wrote:
+> > Replace int used as bool with the actual bool type for return values th=
+at
+> > can only be true or false.
+> >
+> [snip]
+>
+> > -int lockref_get_not_zero(struct lockref *lockref)
+> > +bool lockref_get_not_zero(struct lockref *lockref)
+> >  {
+> > -     int retval;
+> > +     bool retval =3D false;
+> >
+> >       CMPXCHG_LOOP(
+> >               new.count++;
+> >               if (old.count <=3D 0)
+> > -                     return 0;
+> > +                     return false;
+> >       ,
+> > -             return 1;
+> > +             return true;
+> >       );
+> >
+> >       spin_lock(&lockref->lock);
+> > -     retval =3D 0;
+> >       if (lockref->count > 0) {
+> >               lockref->count++;
+> > -             retval =3D 1;
+> > +             retval =3D true;
+> >       }
+> >       spin_unlock(&lockref->lock);
+> >       return retval;
+>
+> While this looks perfectly sane, it worsens codegen around the atomic
+> on x86-64 at least with gcc 13.3.0. It bisected to this commit and
+> confirmed top of next-20250318 with this reverted undoes it.
+>
+> The expected state looks like this:
+>        f0 48 0f b1 13          lock cmpxchg %rdx,(%rbx)
+>        75 0e                   jne    ffffffff81b33626 <lockref_get_not_d=
+ead+0x46>
+>
+> However, with the above patch I see:
+>        f0 48 0f b1 13          lock cmpxchg %rdx,(%rbx)
+>        40 0f 94 c5             sete   %bpl
+>        40 84 ed                test   %bpl,%bpl
+>        74 09                   je     ffffffff81b33636 <lockref_get_not_d=
+ead+0x46>
+>
+> This is not the end of the world, but also really does not need to be
+> there.
+>
+> Given that the patch is merely a cosmetic change, I would suggest I gets
+> dropped.
 
- drivers/leds/led-core.c:551:78: error: ‘snprintf’ output may be truncated before the last format character [-Werror=format-truncation=]
- drivers/leds/led-core.c:554:78: error: ‘snprintf’ output may be truncated before the last format character [-Werror=format-truncation=]
- ...
+fwiw I confirmed clang does *not* have the problem, I don't know about gcc =
+14.
 
-Fix these by checking for the potential overflow. This requires
-to align all the branches to use the same callee, i.e. snprintf(),
-otherwise the code will be blown up and return different error codes
-for the different branches.
+Maybe I'll get around to testing it, but first I'm gonna need to carve
+out the custom asm into a standalone testcase.
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/leds/led-core.c | 44 ++++++++++++++++++++++-------------------
- 1 file changed, 24 insertions(+), 20 deletions(-)
+Regardless, 13 suffering the problem is imo a good enough reason to
+whack the change.
 
-diff --git a/drivers/leds/led-core.c b/drivers/leds/led-core.c
-index f6c46d2e5276..0eaa19edd6a2 100644
---- a/drivers/leds/led-core.c
-+++ b/drivers/leds/led-core.c
-@@ -515,6 +515,7 @@ int led_compose_name(struct device *dev, struct led_init_data *init_data,
- 	struct led_properties props = {};
- 	struct fwnode_handle *fwnode = init_data->fwnode;
- 	const char *devicename = init_data->devicename;
-+	int n;
- 
- 	if (!led_classdev_name)
- 		return -EINVAL;
-@@ -528,45 +529,48 @@ int led_compose_name(struct device *dev, struct led_init_data *init_data,
- 		 * Otherwise the label is prepended with devicename to compose
- 		 * the final LED class device name.
- 		 */
--		if (!devicename) {
--			strscpy(led_classdev_name, props.label,
--				LED_MAX_NAME_SIZE);
-+		if (devicename) {
-+			n = snprintf(led_classdev_name, LED_MAX_NAME_SIZE, "%s:%s",
-+				     devicename, props.label);
- 		} else {
--			snprintf(led_classdev_name, LED_MAX_NAME_SIZE, "%s:%s",
--				 devicename, props.label);
-+			n = snprintf(led_classdev_name, LED_MAX_NAME_SIZE, "%s", props.label);
- 		}
- 	} else if (props.function || props.color_present) {
- 		char tmp_buf[LED_MAX_NAME_SIZE];
- 
- 		if (props.func_enum_present) {
--			snprintf(tmp_buf, LED_MAX_NAME_SIZE, "%s:%s-%d",
--				 props.color_present ? led_colors[props.color] : "",
--				 props.function ?: "", props.func_enum);
-+			n = snprintf(tmp_buf, LED_MAX_NAME_SIZE, "%s:%s-%d",
-+				     props.color_present ? led_colors[props.color] : "",
-+				     props.function ?: "", props.func_enum);
- 		} else {
--			snprintf(tmp_buf, LED_MAX_NAME_SIZE, "%s:%s",
--				 props.color_present ? led_colors[props.color] : "",
--				 props.function ?: "");
-+			n = snprintf(tmp_buf, LED_MAX_NAME_SIZE, "%s:%s",
-+				     props.color_present ? led_colors[props.color] : "",
-+				     props.function ?: "");
- 		}
--		if (init_data->devname_mandatory) {
--			snprintf(led_classdev_name, LED_MAX_NAME_SIZE, "%s:%s",
--				 devicename, tmp_buf);
--		} else {
--			strscpy(led_classdev_name, tmp_buf, LED_MAX_NAME_SIZE);
-+		if (n >= LED_MAX_NAME_SIZE)
-+			return -E2BIG;
- 
-+		if (init_data->devname_mandatory) {
-+			n = snprintf(led_classdev_name, LED_MAX_NAME_SIZE, "%s:%s",
-+				     devicename, tmp_buf);
-+		} else {
-+			n = snprintf(led_classdev_name, LED_MAX_NAME_SIZE, "%s", tmp_buf);
- 		}
- 	} else if (init_data->default_label) {
- 		if (!devicename) {
- 			dev_err(dev, "Legacy LED naming requires devicename segment");
- 			return -EINVAL;
- 		}
--		snprintf(led_classdev_name, LED_MAX_NAME_SIZE, "%s:%s",
--			 devicename, init_data->default_label);
-+		n = snprintf(led_classdev_name, LED_MAX_NAME_SIZE, "%s:%s",
-+			     devicename, init_data->default_label);
- 	} else if (is_of_node(fwnode)) {
--		strscpy(led_classdev_name, to_of_node(fwnode)->name,
--			LED_MAX_NAME_SIZE);
-+		n = snprintf(led_classdev_name, LED_MAX_NAME_SIZE, "%pfw", fwnode);
- 	} else
- 		return -EINVAL;
- 
-+	if (n >= LED_MAX_NAME_SIZE)
-+		return -E2BIG;
-+
- 	return 0;
- }
- EXPORT_SYMBOL_GPL(led_compose_name);
--- 
-2.47.2
-
+--=20
+Mateusz Guzik <mjguzik gmail.com>
 
