@@ -1,88 +1,146 @@
-Return-Path: <linux-kernel+bounces-565977-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565978-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CBAEA671B2
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 11:45:58 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93BB5A671B4
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 11:46:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E47619A383A
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 10:44:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B6D119A3D8C
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 10:44:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D48A2080E8;
-	Tue, 18 Mar 2025 10:43:10 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4830D20A5D6;
+	Tue, 18 Mar 2025 10:43:32 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB72F20966B
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 10:43:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD14B209692;
+	Tue, 18 Mar 2025 10:43:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742294590; cv=none; b=CEJ4JAPNJHzIPOpgrIinR+2svsYqRQodX9H+3GVocCSvQZpyBdh58NuUAyqeh6E4JkpZjYHPZnthtHgqthApVVszVrLMdd/AoDNmkL/mlP5ifd2apbSss2HD28P5mjY3ylU24/OqCHN+eBHT+kbW0Qkkvi3JpNrMJS7qKffScaY=
+	t=1742294611; cv=none; b=hhTWRqUDiRX1QgF902UK7/srgcoXqqD0y5IlQXUrNNWDerpNS6orAIrXO8FMlNGJ/olMwehp8J4Jm+Kw+EP629rFYCVX3TMHj9UWisZoPHEIdzsoxlXbBa95oI+tPrQwex0jVQd2r2mzLAR8V6KwBS8ef5MSawABbCBZQLlZVwI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742294590; c=relaxed/simple;
-	bh=h/yR1izxvHKATEBf38IQTms4KD4sEfWBa+m7Q7F0MXg=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=r3Fs3MDW9gFiBFTIMlVLsbxEhPAS2ieRt+Uc8oF7P5OcdQiUYEPGJAkVxo/iyk/cfzbJh01nw87UQxxuiIoAT9wMJpm0HsgL6ANUo2qX81K9Hm3Cptfw5VO7+4rlXXOPy7Nvuzphj4RMuS7sE3A2q8iw3GtkwnYGeaDMp2Hg+3o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-851a991cf8bso556706539f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 03:43:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742294584; x=1742899384;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=T007/HEqle2rRgZnfvEehBiwKgMFtIfdqKP3NTZAeGE=;
-        b=Oyea8ed4FrE1wFPbCKy+BBUsJcoUiNjtSEeyo+UCCgs5x+NDHiqqkev1qjBlGDdiuf
-         mcrkuuz/nmn+y9NjfeW9o+Wc+Z6EQjm8D4b407byisYPI6Y5kOb6BBtN5MmucAjhvAoe
-         sCeI6JU8IQk4yvKTToGJB4ByJLMuDyakbqf59N18SpJdO03AMYr4TIHKad9VdqrbOlVs
-         wNhYxy+eTefvBo3ING+KlKW1SMX17h9tDLE9JuAmjuW9PWuDsG8+g+Rx2zFdQ7jyfTjC
-         +I984UrNf0dDBvQAtV3LMGg70KRBoFzR9jWXTRh/bMXVD7c7wEjryGHc/GELuNvSOVyD
-         D41w==
-X-Forwarded-Encrypted: i=1; AJvYcCWrKFQooy2DFc4vj7t5JTp3k2reEaK1MKp517o7wJHmbe3ft7Iigachuq9CFed2VEiilG74lwDYs3H3Jvc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyMIztrbXY2m26LH7vqcYK5C2vlBfXefw8jK6qe61WmiqFDqWWR
-	2KLLpo68F5KwfypWrizhRT8kyCzxrs8elzXheYaLfawdkwX2+W4ACnvoMir+bgDxyw7WtLX637Z
-	RDgBtN84sj3tFZ1gNgudowfM1LQB40Jh14kDRO3SUrzQ1yIAUuKg8w0g=
-X-Google-Smtp-Source: AGHT+IHAyYQyThrgYUqxHvUgNtBBqDHM3D+l6yPNH+CRaesYx/iGfbJPUFVs0RlwaE20dtplSMSxL84KIljthWA+II55hfQjKd9R
+	s=arc-20240116; t=1742294611; c=relaxed/simple;
+	bh=GQESFm5xXK0HxnEUgsMuSTIkriJaDW3id7OyUxuOkWQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=k7BWoJ8B50tcRf3tYqIUUerEMbNuPI9HWWKMKBcpqAgyKz1heT6yuf+0brwrMorsMO3d7LnEvfeqdteiHu1oiAJY6mgrpJxkETLNrcu1i/37xubB9dWAAdieRZ9zGxGw4vGJD0gsq12OhOPw/FGab2YdutN92oRoOpd87ReCfq0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4F0EC4CEDD;
+	Tue, 18 Mar 2025 10:43:28 +0000 (UTC)
+From: Huacai Chen <chenhuacai@loongson.cn>
+To: Damien Le Moal <dlemoal@kernel.org>,
+	Niklas Cassel <cassel@kernel.org>
+Cc: linux-ide@vger.kernel.org,
+	Huacai Chen <chenhuacai@kernel.org>,
+	Xuerui Wang <kernel@xen0n.name>,
+	Daniel Kral <d.kral@proxmox.com>,
+	linux-kernel@vger.kernel.org,
+	Huacai Chen <chenhuacai@loongson.cn>,
+	Yuli Wang <wangyuli@uniontech.com>,
+	Jie Fan <fanjie@uniontech.com>,
+	Erpeng Xu <xuerpeng@uniontech.com>
+Subject: [PATCH V4] ahci: Marvell 88SE9215 controllers prefer DMA for ATAPI
+Date: Tue, 18 Mar 2025 18:43:14 +0800
+Message-ID: <20250318104314.2160526-1-chenhuacai@loongson.cn>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:170a:b0:3d2:ed3c:67a8 with SMTP id
- e9e14a558f8ab-3d57c1c33dbmr29225835ab.4.1742294583838; Tue, 18 Mar 2025
- 03:43:03 -0700 (PDT)
-Date: Tue, 18 Mar 2025 03:43:03 -0700
-In-Reply-To: <2477988.1742293427@warthog.procyon.org.uk>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67d94e37.050a0220.2ca2c6.0172.GAE@google.com>
-Subject: Re: [syzbot] [afs?] general protection fault in afs_atcell_get_link
-From: syzbot <syzbot+76a6f18e3af82e84f264@syzkaller.appspotmail.com>
-To: dhowells@redhat.com, enjuk@amazon.com, linux-afs@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, marc.dionne@auristor.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+We use CD/DVD drives under Marvell 88SE9215 SATA controller on many
+Loongson-based machines. We found its PIO doesn't work well, and on the
+opposite its DMA seems work very well.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+We don't know the detail of the 88SE9215 SATA controller, but we have
+tested different CD/DVD drives and they all have problems under 88SE9215
+(but they all work well under an Intel SATA controller). So, we consider
+this problem is bound to 88SE9215 SATA controller rather than bound to
+CD/DVD drives.
 
-Reported-by: syzbot+76a6f18e3af82e84f264@syzkaller.appspotmail.com
-Tested-by: syzbot+76a6f18e3af82e84f264@syzkaller.appspotmail.com
+As a solution, we define a new dedicated AHCI board id which is named
+board_ahci_yes_fbs_atapi_dma for 88SE9215, and for this id we set the
+AHCI_HFLAG_ATAPI_DMA_QUIRK and ATA_QUIRK_ATAPI_MOD16_DMA flags on the
+SATA controller in order to prefer ATAPI DMA.
 
-Tested on:
+Reported-by: Yuli Wang <wangyuli@uniontech.com>
+Tested-by: Jie Fan <fanjie@uniontech.com>
+Tested-by: Erpeng Xu <xuerpeng@uniontech.com>
+Tested-by: Yuli Wang <wangyuli@uniontech.com>
+Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
+---
+ drivers/ata/ahci.c    | 11 ++++++++++-
+ drivers/ata/ahci.h    |  1 +
+ drivers/ata/libahci.c |  4 ++++
+ 3 files changed, 15 insertions(+), 1 deletion(-)
 
-commit:         76b6905c Merge tag 'mm-hotfixes-stable-2025-03-17-20-0..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=164d45e4580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=2e330e9768b5b8ff
-dashboard link: https://syzkaller.appspot.com/bug?extid=76a6f18e3af82e84f264
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=1184f278580000
+diff --git a/drivers/ata/ahci.c b/drivers/ata/ahci.c
+index 52ae8f9a7dd6..f3a6bfe098cd 100644
+--- a/drivers/ata/ahci.c
++++ b/drivers/ata/ahci.c
+@@ -63,6 +63,7 @@ enum board_ids {
+ 	board_ahci_pcs_quirk_no_devslp,
+ 	board_ahci_pcs_quirk_no_sntf,
+ 	board_ahci_yes_fbs,
++	board_ahci_yes_fbs_atapi_dma,
+ 
+ 	/* board IDs for specific chipsets in alphabetical order */
+ 	board_ahci_al,
+@@ -188,6 +189,14 @@ static const struct ata_port_info ahci_port_info[] = {
+ 		.udma_mask	= ATA_UDMA6,
+ 		.port_ops	= &ahci_ops,
+ 	},
++	[board_ahci_yes_fbs_atapi_dma] = {
++		AHCI_HFLAGS	(AHCI_HFLAG_YES_FBS |
++				 AHCI_HFLAG_ATAPI_DMA_QUIRK),
++		.flags		= AHCI_FLAG_COMMON,
++		.pio_mask	= ATA_PIO4,
++		.udma_mask	= ATA_UDMA6,
++		.port_ops	= &ahci_ops,
++	},
+ 	/* by chipsets */
+ 	[board_ahci_al] = {
+ 		AHCI_HFLAGS	(AHCI_HFLAG_NO_PMP | AHCI_HFLAG_NO_MSI),
+@@ -590,7 +599,7 @@ static const struct pci_device_id ahci_pci_tbl[] = {
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_MARVELL_EXT, 0x91a3),
+ 	  .driver_data = board_ahci_yes_fbs },
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_MARVELL_EXT, 0x9215),
+-	  .driver_data = board_ahci_yes_fbs },
++	  .driver_data = board_ahci_yes_fbs_atapi_dma },
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_MARVELL_EXT, 0x9230),
+ 	  .driver_data = board_ahci_yes_fbs },
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_MARVELL_EXT, 0x9235),
+diff --git a/drivers/ata/ahci.h b/drivers/ata/ahci.h
+index c842e2de6ef9..2c10c8f440d1 100644
+--- a/drivers/ata/ahci.h
++++ b/drivers/ata/ahci.h
+@@ -246,6 +246,7 @@ enum {
+ 	AHCI_HFLAG_NO_SXS		= BIT(26), /* SXS not supported */
+ 	AHCI_HFLAG_43BIT_ONLY		= BIT(27), /* 43bit DMA addr limit */
+ 	AHCI_HFLAG_INTEL_PCS_QUIRK	= BIT(28), /* apply Intel PCS quirk */
++	AHCI_HFLAG_ATAPI_DMA_QUIRK	= BIT(29), /* force ATAPI to use DMA */
+ 
+ 	/* ap->flags bits */
+ 
+diff --git a/drivers/ata/libahci.c b/drivers/ata/libahci.c
+index e7ace4b10f15..22afa4ff860d 100644
+--- a/drivers/ata/libahci.c
++++ b/drivers/ata/libahci.c
+@@ -1322,6 +1322,10 @@ static void ahci_dev_config(struct ata_device *dev)
+ {
+ 	struct ahci_host_priv *hpriv = dev->link->ap->host->private_data;
+ 
++	if ((dev->class == ATA_DEV_ATAPI) &&
++	    (hpriv->flags & AHCI_HFLAG_ATAPI_DMA_QUIRK))
++		dev->quirks |= ATA_QUIRK_ATAPI_MOD16_DMA;
++
+ 	if (hpriv->flags & AHCI_HFLAG_SECT255) {
+ 		dev->max_sectors = 255;
+ 		ata_dev_info(dev,
+-- 
+2.47.1
 
-Note: testing is done by a robot and is best-effort only.
 
