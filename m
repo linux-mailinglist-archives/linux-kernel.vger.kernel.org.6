@@ -1,160 +1,307 @@
-Return-Path: <linux-kernel+bounces-566540-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566548-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E87EA67989
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 17:32:12 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE662A67961
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 17:29:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E35171B60782
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 16:27:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7B4D17AD41B
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 16:28:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F608211A23;
-	Tue, 18 Mar 2025 16:26:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A251214204;
+	Tue, 18 Mar 2025 16:27:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="NVKle5np"
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2050.outbound.protection.outlook.com [40.107.243.50])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="bxVSm5BM"
+Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8B8620DD7B
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 16:26:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.50
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742315214; cv=fail; b=D936SX90uftdH93CjNjOwAWQMYnALi5hvV+sLJ0jh0PUlOElpmRXfwrwoYrFfmsk9PyDiTGFgDc8GWEPWS2G8UDmzAJsVPMlRjdkJ5irgdY4d332lCO4OmdKahoQgOdzPT7eKSLChpHu+DKTqVQj1gM+N30dsyL7XG+uCKJK7tQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742315214; c=relaxed/simple;
-	bh=ZE8Yp9w5yUJxMpfrKIBgmo5hjxDg53bJFqlLC2ChbkU=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AQCrmAbuLF8LzkNnIteUiBPX8KjnWCFUR4/nBPdqVZ9WOaQZSb77Ngzc420EDNoFfp8g2B9X0yKPK7+WkZTrI7cwoo9IY5Al/TgFn5fDE20QEPINZIb492wOVteuHskp4hrF6fQkZbmAn+7OipSYRCI5I8T7v4k4QaltJ6W9X38=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=NVKle5np; arc=fail smtp.client-ip=40.107.243.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=XWgAll/ivgJLNHGk68ZJaMmeGkMGxErzjz1n8NEsoHtO2F6iqGdtB2sPer8BkFomlUoj4i5yxhXZuM+mQ8DJVpax6mID7cJgunv8K49hgIPBDOGW7wkWNbYcW/8wtNXkZzI2rA9D0opc0hNICreEGJgXVCaVjgMsbdf6Zu1JoByJa2LhoI50a4AuKW+JuoUIHi89+U9BOXzp8RlQ9sztrLKWfNdN29QbkJASgct1MWd6dSBnZnbJdnJUWSu0n9mWIUc+5tPtO3nX07r+rV8gc0bS95U8mVQtKgITnWOhQONOAxg+2CaFONd1vYOjVsX9TWUI9DqwU7zkUnCnm4kp8w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=H3R1KlK+WiEGrYixRXIRS95vqVxuXyIITDGcXEsDdGU=;
- b=arK8QI81zMPu2plqW4KL/ngwviJnKr6PDmbQWQrgN2KRn/FsL7fVSCfiQJ1Iw2ns6VysYmiVDm0X2MaGoiiPttVmQwRw3sDAW5yTATvhi/EyW5LblO4yMg2vI8kX3FqYvIeJ+O6zAwI5K0Jo7sx0uo/xwrI3FtqhcW1iHWfYLxBvZBH5c/Plznwd2mp12KcFWlg7pHUDUar/Bc7tsMjMV1Jb+rnQfAhUz/EwUNjT0vfbMOQjIqA/xjFZjUdebKchI6JKlb7HE8Puax6d89O+bFzAmEzpmysOmTSG5xbcnyL9gCYY0sja2bHNzPkv+4IWiFW527DcvfkJiPvDcYpdNQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.118.233) smtp.rcpttodomain=ziepe.ca smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=H3R1KlK+WiEGrYixRXIRS95vqVxuXyIITDGcXEsDdGU=;
- b=NVKle5npHnbCejdzPboiSbjiNcX1ROQMbR5lfYoF8BV8A8sYraxtHMbQPkqRmHc/oMfgjFUpBbYA9xcXgzCARD59LfFRIq6wZcvNFDPApP/O7ZQ1ASVTKdWmyA/FajmzkpjZIzXBdMIBawueBOhR/ubaKSwQwEY4gdi1K1goVpfPrXHDIwzYotFI/C+/Zi8hgPRX+g/xThKv/BowoITvn2eq6ylBwRsh2PBhFZaZRijQZmh42xRDtBFoUNcGEqMjAOKy3i/zqBtw5HF4hTvn3DvwZSDTYWoNJZAAukrKyGJBccIBdQBj4SDkhHloeB2zdd4849KJbeghjUrGg5F2pA==
-Received: from SJ0PR05CA0118.namprd05.prod.outlook.com (2603:10b6:a03:334::33)
- by DS7PR12MB8345.namprd12.prod.outlook.com (2603:10b6:8:d8::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.28; Tue, 18 Mar
- 2025 16:26:42 +0000
-Received: from CY4PEPF0000EE38.namprd03.prod.outlook.com
- (2603:10b6:a03:334:cafe::60) by SJ0PR05CA0118.outlook.office365.com
- (2603:10b6:a03:334::33) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8534.33 via Frontend Transport; Tue,
- 18 Mar 2025 16:26:41 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.118.233) by
- CY4PEPF0000EE38.mail.protection.outlook.com (10.167.242.10) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8534.20 via Frontend Transport; Tue, 18 Mar 2025 16:26:41 +0000
-Received: from drhqmail202.nvidia.com (10.126.190.181) by mail.nvidia.com
- (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 18 Mar
- 2025 09:26:28 -0700
-Received: from drhqmail201.nvidia.com (10.126.190.180) by
- drhqmail202.nvidia.com (10.126.190.181) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14; Tue, 18 Mar 2025 09:26:28 -0700
-Received: from Asurada-Nvidia (10.127.8.13) by mail.nvidia.com
- (10.126.190.180) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14 via Frontend
- Transport; Tue, 18 Mar 2025 09:26:27 -0700
-Date: Tue, 18 Mar 2025 09:26:26 -0700
-From: Nicolin Chen <nicolinc@nvidia.com>
-To: <jgg@ziepe.ca>
-CC: <kevin.tian@intel.com>, <iommu@lists.linux.dev>,
-	<linux-kernel@vger.kernel.org>, <sfr@canb.auug.org.au>
-Subject: Re: [PATCH] iommufd: Fix IOMMU_VEVENTQ_FLAG_LOST_EVENTS kdoc
-Message-ID: <Z9mesnGdSWjfLaY4@Asurada-Nvidia>
-References: <20250318162017.709212-1-nicolinc@nvidia.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5237220E70F;
+	Tue, 18 Mar 2025 16:26:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742315221; cv=none; b=DkobWP6iwcZIrS/605e9a8H1G7oplteJAP1/E/rPZcnUSErUTeqnVFTPg1emQamifBo0ZIds5lkuJiB1MBsOC7Bg0z9jyUKTIRevuyS828gq5+TgVjjoED3qRoQh9OhsV1RnlsrZ0yXj1tZEdvhHBi50X84Jzn0mhwNwXercX6g=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742315221; c=relaxed/simple;
+	bh=E9PHBpu9ZKbAiUgmW3LEOqscgzGvXZ+a+oyGwIdDCAU=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=Op2ZFzDkpHP6oj45DH0kSRJYWQ9lYasL1Mxu+4TPpp/eYP0tpAIPeQ+4Q7r4H5gx2JKIafFEGKErssG9W5N7+mvC7+KPeGkOII4A9EUt1tM6PWEj/W/QMrr3KwxFMaxLYp75sDvQ/1VoxRXgBi9P6RNiS0eZZ7jxUFTuVAnlAew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=bxVSm5BM; arc=none smtp.client-ip=217.70.183.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id A60C1442B5;
+	Tue, 18 Mar 2025 16:26:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1742315216;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=uL3/HIpmNSlp7MxB6zulnKw4Zmk5z2L8IIS2h2ewCjg=;
+	b=bxVSm5BMW3Tx9Z2ln/Cq34JsjXxZQKP2V9Q3kD+9//XPOEWCVkkYx3LbAeETghOwHdfdWG
+	Y08HwCLKWwWcXwVoh69znv7mOBDw5iK6xU14F7NZn3h1YAJRPEj2UqEj305LcezNQpHA3b
+	8x0s5KN84vWi0QjouJta50PoYpKYidQnpMKzbEn3IJtVC50dx9y6NPgf5VF9q5bmzW5VV7
+	bYSzCXRjFUaS4o9n2glsJAjF0tizJNQUgpNYQ0JaKsDf429Sfrozeg2j6KENhYactRTdlp
+	hHJCZdq2nx+BIJAYp5v6u+cKDVE2qFf0K0BcfrcF4OstoDZJ2wpyP4eCDPuLkA==
+From: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
+Date: Tue, 18 Mar 2025 17:26:26 +0100
+Subject: [PATCH v5 10/11] input: misc: Add support for MAX7360 rotary
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20250318162017.709212-1-nicolinc@nvidia.com>
-X-NV-OnPremToCloud: AnonymousSubmission
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY4PEPF0000EE38:EE_|DS7PR12MB8345:EE_
-X-MS-Office365-Filtering-Correlation-Id: 178ae6c4-339c-49aa-5781-08dd6639aa9f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|36860700013|376014|1800799024|13003099007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?Ko9XmeUdHRxlxyNEuGC8lOwgXfvRA01N5uuPkxWXJvzQRgR04V5e4lzVy6EE?=
- =?us-ascii?Q?hwAjP3CXcxgheiMRTzoUxaoFUF1NKi4G3wZuaPdolQJj0/rdP5Z7dd916b+k?=
- =?us-ascii?Q?jJyMG4pZDWX5ULIVJcVnvoGTwdDwi9EMddiPbYrGrX1jNeLdCq4kS/KEXKTp?=
- =?us-ascii?Q?6DB+YHgMk7qfogU6UGQ89Uwh6C1DzSzbBBMauqtqk0nHsnOCrb8Ee07yFEHf?=
- =?us-ascii?Q?XHcB3XnX613AthwoKbjNRa9ON412NLaRzIVMwYG3dmdmvBXxBu+Gyha8IWQd?=
- =?us-ascii?Q?nQpUZF8F35FsqgGJ6Ilq3ZoLFTxJP7iMHdjhodXxe47w0UBQJGm47c7vPUzE?=
- =?us-ascii?Q?diQzm7MtQowF1yqd2dvGZW5bkpiAjRadkKXRxW5hI0ajNWl85mOP3aLR7YZU?=
- =?us-ascii?Q?DBkA/2ydnfpuTvGY8pgftGaU3dHfkYnXXPFWY3vHrMuNF+dETf8fTgE+4NTq?=
- =?us-ascii?Q?Z9/tHbS+1U2/QhvcL0fOoXByS53/l022iaCaCpbtp686fhXQ7zGIevDGY0gC?=
- =?us-ascii?Q?+BIfvZ8DNcYbrMfN52OPeGpZ9hZ6UYQVKmLuAv46BKj5u6pGsxhKm942gHMk?=
- =?us-ascii?Q?wQFx/lFIuvUOLan7BBZvoLuTG0eqkOOOHI7k1uzB8AGXuY8cvhxa9cRuRVid?=
- =?us-ascii?Q?biWHfFZ+a4aByXGHCQkBZqgJJO6ZHyYUtfWCe2hv9JEIPF8nH6w/669pTrRB?=
- =?us-ascii?Q?HuFhjI2i8ue6fr92DRtDzaiCcW1M/9WNgvST73euQajCq8C2+k3JPbh51sUt?=
- =?us-ascii?Q?3Mrw8SGK0ArUkgg+NfS6bpbyFJlPjVDglttRyCpFzTxbs6BpIPBSQeC7tAeo?=
- =?us-ascii?Q?HKb5Ww4cJXCa/RyCo5ZgNYMReeKZeiyga+E4s4PieIzCoTxMlRltJNHnApDE?=
- =?us-ascii?Q?Mi9BimkDpyi+1mo4Acxt9QMcYymczbJuo8xGAP1X4fgsHUjZLpgwB/9nNMNn?=
- =?us-ascii?Q?yaaS+8cNbC1LsUfnTsPpdvm6iWIOOKAXDfqobfwnPyKw4ADP4xPO/VbvAx9u?=
- =?us-ascii?Q?c+h9ntaXqPV6phaKmD5uvIs8d1wg18Bqw++RByNjopFLov1Ha7bcWgV7fzzw?=
- =?us-ascii?Q?vlTCrsPt3kedztsYQ/4igKa8RQ+xANqqw40fQI2CDW3IBjxr/nThhNBuiBCk?=
- =?us-ascii?Q?2rqqha82bX6rTyPkfA8ugBbP9LCu6trtjYPnFEtDynMyT+wIGUxh/hgtOHwI?=
- =?us-ascii?Q?H5X4hbPo55CpOL8sDOsHFlzXOquRWzzGL8LsI6zpwDYHVrv+Joo0gnjgAxvS?=
- =?us-ascii?Q?dv64vWqZglz9qngkHM61Lx9jr28++qHBobovGaMRPemfoCgtfqtxVqyoGtPr?=
- =?us-ascii?Q?FR7DdNQgyOJexzujr8gra6e3z8cvDhbEzbpZBFenK8eEv4aM5KnhYIp7qbmp?=
- =?us-ascii?Q?Hqn9029Y4dJDSK3lZUM8DpFRb2q0FzYBX99gVMWiM+r8Qvk0V1yCW0AV9OeU?=
- =?us-ascii?Q?2ZY1szueTGR3/vnpGMy8ljFFOIJ41IKWRpcIUF+3/5Mc3DdTmsACggTH6Sf7?=
- =?us-ascii?Q?ny1LI6bHU4vg6bI=3D?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(376014)(1800799024)(13003099007);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Mar 2025 16:26:41.7279
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 178ae6c4-339c-49aa-5781-08dd6639aa9f
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CY4PEPF0000EE38.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB8345
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250318-mdb-max7360-support-v5-10-fb20baf97da0@bootlin.com>
+References: <20250318-mdb-max7360-support-v5-0-fb20baf97da0@bootlin.com>
+In-Reply-To: <20250318-mdb-max7360-support-v5-0-fb20baf97da0@bootlin.com>
+To: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Kamel Bouhara <kamel.bouhara@bootlin.com>, 
+ Linus Walleij <linus.walleij@linaro.org>, 
+ Bartosz Golaszewski <brgl@bgdev.pl>, 
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
+ =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, 
+ Michael Walle <mwalle@kernel.org>, Mark Brown <broonie@kernel.org>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-gpio@vger.kernel.org, linux-input@vger.kernel.org, 
+ linux-pwm@vger.kernel.org, andriy.shevchenko@intel.com, 
+ =?utf-8?q?Gr=C3=A9gory_Clement?= <gregory.clement@bootlin.com>, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1742315204; l=6454;
+ i=mathieu.dubois-briand@bootlin.com; s=20241219; h=from:subject:message-id;
+ bh=E9PHBpu9ZKbAiUgmW3LEOqscgzGvXZ+a+oyGwIdDCAU=;
+ b=6fA2VTpI7/iqyaU3h7eJIgetIRs73Y+Amqwc2QuWLhnQVuR0q+1MSBjT4RSsTpzXrccL4Pp6g
+ 9hUjjZjCTobCp9IQHiEQvQ8XbwOtdUOBrJLMXnNGrlrQN56hkw/8Km2
+X-Developer-Key: i=mathieu.dubois-briand@bootlin.com; a=ed25519;
+ pk=1PVTmzPXfKvDwcPUzG0aqdGoKZJA3b9s+3DqRlm0Lww=
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddugedvledvucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhfffugggtgffkfhgjvfevofesthejredtredtjeenucfhrhhomhepofgrthhhihgvuhcuffhusghoihhsqdeurhhirghnugcuoehmrghthhhivghurdguuhgsohhishdqsghrihgrnhgusegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpedthfegtedvvdehjeeiheehheeuteejleektdefheehgfefgeelhfetgedttdfhteenucfkphepvdgrtddumegtsgdugeemheehieemjegrtddtmeeffhgtfhemfhgstdgumeduvdeivdemvdgvjeeinecuvehluhhsthgvrhfuihiivgepudenucfrrghrrghmpehinhgvthepvdgrtddumegtsgdugeemheehieemjegrtddtmeeffhgtfhemfhgstdgumeduvdeivdemvdgvjeeipdhhvghloheplgduvdejrddtrddurddungdpmhgrihhlfhhrohhmpehmrghthhhivghurdguuhgsohhishdqsghrihgrnhgusegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedvfedprhgtphhtthhopehlihhnuhigqdhinhhpuhhtsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepuggrkhhrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehrrghfrggvlhesk
+ hgvrhhnvghlrdhorhhgpdhrtghpthhtohepmhgrthhhihgvuhdrughusghoihhsqdgsrhhirghnugessghoohhtlhhinhdrtghomhdprhgtphhtthhopehukhhlvghinhgvkheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhgrmhgvlhdrsghouhhhrghrrgessghoohhtlhhinhdrtghomhdprhgtphhtthhopehgrhgvghhkhheslhhinhhugihfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopehmfigrlhhlvgeskhgvrhhnvghlrdhorhhg
+X-GND-Sasl: mathieu.dubois-briand@bootlin.com
 
-On Tue, Mar 18, 2025 at 09:20:17AM -0700, Nicolin Chen wrote:
-> The kdoc update wasn't fully saved. Fix it.
-> 
-> Fixes: 50c842dd6cd3 ("iommufd: Add IOMMUFD_OBJ_VEVENTQ and IOMMUFD_CMD_VEVENTQ_ALLOC")
-> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> Closes: https://lore.kernel.org/linux-next/20250318213359.5dc56fd1@canb.auug.org.au/
+Add driver for Maxim Integrated MAX7360 rotary encoder controller,
+supporting a single rotary switch.
 
-Oops. Looks like I should fix another warning together.
+Signed-off-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
+---
+ drivers/input/misc/Kconfig          |  11 +++
+ drivers/input/misc/Makefile         |   1 +
+ drivers/input/misc/max7360-rotary.c | 161 ++++++++++++++++++++++++++++++++++++
+ 3 files changed, 173 insertions(+)
 
-And the link isn't the clearer one. I will respin the patch.
+diff --git a/drivers/input/misc/Kconfig b/drivers/input/misc/Kconfig
+index 13d135257e06..77b07e053265 100644
+--- a/drivers/input/misc/Kconfig
++++ b/drivers/input/misc/Kconfig
+@@ -230,6 +230,17 @@ config INPUT_M68K_BEEP
+ 	tristate "M68k Beeper support"
+ 	depends on M68K
+ 
++config INPUT_MAX7360_ROTARY
++	tristate "Maxim MAX7360 Rotary Encoder"
++	depends on MFD_MAX7360
++	select PINCTRL_MAX7360
++	help
++	  If you say yes here you get support for the rotary encoder on the
++	  Maxim MAX7360 I/O Expander.
++
++	  To compile this driver as a module, choose M here: the
++	  module will be called max7360_rotary.
++
+ config INPUT_MAX77650_ONKEY
+ 	tristate "Maxim MAX77650 ONKEY support"
+ 	depends on MFD_MAX77650
+diff --git a/drivers/input/misc/Makefile b/drivers/input/misc/Makefile
+index 6d91804d0a6f..c454fba3a3ae 100644
+--- a/drivers/input/misc/Makefile
++++ b/drivers/input/misc/Makefile
+@@ -51,6 +51,7 @@ obj-$(CONFIG_INPUT_IQS7222)		+= iqs7222.o
+ obj-$(CONFIG_INPUT_KEYSPAN_REMOTE)	+= keyspan_remote.o
+ obj-$(CONFIG_INPUT_KXTJ9)		+= kxtj9.o
+ obj-$(CONFIG_INPUT_M68K_BEEP)		+= m68kspkr.o
++obj-$(CONFIG_INPUT_MAX7360_ROTARY)	+= max7360-rotary.o
+ obj-$(CONFIG_INPUT_MAX77650_ONKEY)	+= max77650-onkey.o
+ obj-$(CONFIG_INPUT_MAX77693_HAPTIC)	+= max77693-haptic.o
+ obj-$(CONFIG_INPUT_MAX8925_ONKEY)	+= max8925_onkey.o
+diff --git a/drivers/input/misc/max7360-rotary.c b/drivers/input/misc/max7360-rotary.c
+new file mode 100644
+index 000000000000..3046ef64dd56
+--- /dev/null
++++ b/drivers/input/misc/max7360-rotary.c
+@@ -0,0 +1,161 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * Copyright 2025 Bootlin
++ *
++ * Author: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
++ */
++
++#include <linux/init.h>
++#include <linux/input.h>
++#include <linux/interrupt.h>
++#include <linux/mfd/max7360.h>
++#include <linux/property.h>
++#include <linux/of.h>
++#include <linux/platform_device.h>
++#include <linux/pm_wakeirq.h>
++#include <linux/regmap.h>
++#include <linux/slab.h>
++
++struct max7360_rotary {
++	u32 axis;
++	struct input_dev *input;
++	unsigned int debounce_ms;
++	struct regmap *regmap;
++};
++
++static irqreturn_t max7360_rotary_irq(int irq, void *data)
++{
++	struct max7360_rotary *max7360_rotary = data;
++	int val;
++	int ret;
++
++	ret = regmap_read(max7360_rotary->regmap, MAX7360_REG_RTR_CNT, &val);
++	if (ret < 0) {
++		dev_err(&max7360_rotary->input->dev,
++			"Failed to read rotary counter\n");
++		return IRQ_NONE;
++	}
++
++	if (val == 0) {
++		dev_dbg(&max7360_rotary->input->dev,
++			"Got a spurious interrupt\n");
++
++		return IRQ_NONE;
++	}
++
++	input_report_rel(max7360_rotary->input, max7360_rotary->axis,
++			 (int8_t)val);
++	input_sync(max7360_rotary->input);
++
++	return IRQ_HANDLED;
++}
++
++static int max7360_rotary_hw_init(struct max7360_rotary *max7360_rotary)
++{
++	int val;
++	int ret;
++
++	val = FIELD_PREP(MAX7360_ROT_DEBOUNCE, max7360_rotary->debounce_ms) |
++		FIELD_PREP(MAX7360_ROT_INTCNT, 1) | MAX7360_ROT_INTCNT_DLY;
++	ret = regmap_write(max7360_rotary->regmap, MAX7360_REG_RTRCFG, val);
++	if (ret) {
++		dev_err(&max7360_rotary->input->dev,
++			"Failed to set max7360 rotary encoder configuration\n");
++		return ret;
++	}
++
++	return 0;
++}
++
++static int max7360_rotary_probe(struct platform_device *pdev)
++{
++	struct max7360_rotary *max7360_rotary;
++	struct input_dev *input;
++	int irq;
++	int ret;
++
++	if (!pdev->dev.parent)
++		return dev_err_probe(&pdev->dev, -ENODEV, "No parent device\n");
++
++	irq = platform_get_irq_byname(to_platform_device(pdev->dev.parent),
++				      "inti");
++	if (irq < 0)
++		return irq;
++
++	max7360_rotary = devm_kzalloc(&pdev->dev, sizeof(*max7360_rotary),
++				      GFP_KERNEL);
++	if (!max7360_rotary)
++		return -ENOMEM;
++
++	max7360_rotary->regmap = dev_get_regmap(pdev->dev.parent, NULL);
++	if (!max7360_rotary->regmap)
++		dev_err_probe(&pdev->dev, -ENODEV,
++			      "Could not get parent regmap\n");
++
++	device_property_read_u32(pdev->dev.parent, "linux,axis",
++				 &max7360_rotary->axis);
++	device_property_read_u32(pdev->dev.parent, "rotary-debounce-delay-ms",
++				 &max7360_rotary->debounce_ms);
++	if (max7360_rotary->debounce_ms > MAX7360_ROT_DEBOUNCE_MAX)
++		return dev_err_probe(&pdev->dev, -EINVAL,
++				     "Invalid debounce timing: %u\n",
++				     max7360_rotary->debounce_ms);
++
++	input = devm_input_allocate_device(&pdev->dev);
++	if (!input)
++		return -ENOMEM;
++
++	max7360_rotary->input = input;
++
++	input->id.bustype = BUS_I2C;
++	input->name = pdev->name;
++	input->dev.parent = &pdev->dev;
++
++	input_set_capability(input, EV_REL, max7360_rotary->axis);
++	input_set_drvdata(input, max7360_rotary);
++
++	ret = devm_request_threaded_irq(&pdev->dev, irq, NULL,
++					max7360_rotary_irq,
++					IRQF_TRIGGER_LOW | IRQF_ONESHOT | IRQF_SHARED,
++					"max7360-rotary", max7360_rotary);
++	if (ret)
++		return dev_err_probe(&pdev->dev, ret,
++				     "Failed to register interrupt\n");
++
++	ret = input_register_device(input);
++	if (ret)
++		return dev_err_probe(&pdev->dev, ret,
++				     "Could not register input device\n");
++
++	platform_set_drvdata(pdev, max7360_rotary);
++
++	device_init_wakeup(&pdev->dev, true);
++	ret = dev_pm_set_wake_irq(&pdev->dev, irq);
++	if (ret)
++		dev_warn(&pdev->dev, "Failed to set up wakeup irq: %d\n", ret);
++
++	ret = max7360_rotary_hw_init(max7360_rotary);
++	if (ret)
++		return dev_err_probe(&pdev->dev, ret,
++				     "Failed to initialize max7360 rotary\n");
++
++	return 0;
++}
++
++static void max7360_rotary_remove(struct platform_device *pdev)
++{
++	dev_pm_clear_wake_irq(&pdev->dev);
++}
++
++static struct platform_driver max7360_rotary_driver = {
++	.driver = {
++		.name	= "max7360-rotary",
++	},
++	.probe		= max7360_rotary_probe,
++	.remove		= max7360_rotary_remove,
++};
++module_platform_driver(max7360_rotary_driver);
++
++MODULE_DESCRIPTION("MAX7360 Rotary driver");
++MODULE_AUTHOR("Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>");
++MODULE_LICENSE("GPL");
 
-Nicolin
+-- 
+2.39.5
+
 
