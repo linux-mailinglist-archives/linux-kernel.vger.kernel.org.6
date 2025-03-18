@@ -1,40 +1,40 @@
-Return-Path: <linux-kernel+bounces-566598-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566596-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9BAEA67A44
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 18:04:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D47C2A67A4D
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 18:06:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B02B189EB9F
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 17:03:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A709A3BDAF4
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 17:03:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48D4721325A;
-	Tue, 18 Mar 2025 17:02:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CFDC212FB7;
+	Tue, 18 Mar 2025 17:02:39 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4691F212D7B;
-	Tue, 18 Mar 2025 17:02:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 908D7211A11;
+	Tue, 18 Mar 2025 17:02:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742317359; cv=none; b=u8UmCeQwgnf2uuKFQhtmTu5KS5fDkxYGYnoklYskW+DXfxPHHqcr+fvslecUgkRyHk4HQVVagSIbm9x87m2r1BR8wuBGoC/VtrfJniLclZsMpfhIih3UEyC3xeRT/PKLbE7g2aMOZ+bitHTD3KfUGvHGpS012wLTw2Vh153RtAQ=
+	t=1742317358; cv=none; b=Oj8SDEqPgmGyuVa+q/6sdWVJyULGoBsAYk4uYGjlgI1GrqzQ4xEFznuOHIovm1/7xLs04cbT/l77nFJyW5W5z27GTl1eANSj5MOkBDLvy2ye5462A9PO5Q8idqP8juV++ffA59Re33dKiD72VZb4k6xuJzy8KYs4TvxfFHqLMZQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742317359; c=relaxed/simple;
-	bh=gRkb6p8XPCkCChpfA0g/BMq90thBf9o9KpCxbQ5q/L4=;
+	s=arc-20240116; t=1742317358; c=relaxed/simple;
+	bh=G9kihMReYnuSblQmsr+d7DA+5UjTgx2Nd7YXDM3E4H0=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=iKHVaiDARdkEp+DSvD5/xMP1wMBbGY09y/pAc6MU/VxyzDPNMgIE9w89yp8OrSw9aXEZ2vonhYRu6OfqlHeysdRstLdbdGq56ygb/JaQ1WazBrqz5TJN0QewuggnzesTwzWcKP5oc/HsSXr0jK+GXWuyrOL8xN4hpvZx6QJNC+E=
+	 In-Reply-To:To:Cc; b=nw6eFbSwFq/zZ8JtzAy032AGH25ugI/dJAb464FgzL+fK77uVDqeYVKEjSfavbRfasRIj9/12UlHtyUdeUhUX9mw4tQzb8ZKPLtb+1Qen3M7peb6BDEYgbnWAsTmfGZnt4ruqV3CZGceZzjYD1BwPeMmcdihT/Z3hA5CmRNVN6I=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 84742152B;
-	Tue, 18 Mar 2025 10:02:46 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4183A16F3;
+	Tue, 18 Mar 2025 10:02:41 -0700 (PDT)
 Received: from e133711.arm.com (e133711.arm.com [10.1.196.55])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3446E3F673;
-	Tue, 18 Mar 2025 10:02:37 -0700 (PDT)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9E1433F673;
+	Tue, 18 Mar 2025 10:02:31 -0700 (PDT)
 From: Sudeep Holla <sudeep.holla@arm.com>
-Date: Tue, 18 Mar 2025 17:01:44 +0000
-Subject: [PATCH v2 6/8] efi: efivars: Transition to the faux device
+Date: Tue, 18 Mar 2025 17:01:40 +0000
+Subject: [PATCH v2 2/8] cpuidle: psci: Transition to the faux device
  interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -44,83 +44,112 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250318-plat2faux_dev-v2-6-e6cc73f78478@arm.com>
+Message-Id: <20250318-plat2faux_dev-v2-2-e6cc73f78478@arm.com>
 References: <20250318-plat2faux_dev-v2-0-e6cc73f78478@arm.com>
 In-Reply-To: <20250318-plat2faux_dev-v2-0-e6cc73f78478@arm.com>
 To: linux-kernel@vger.kernel.org
 Cc: Sudeep Holla <sudeep.holla@arm.com>, 
  Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Ard Biesheuvel <ardb@kernel.org>, linux-efi@vger.kernel.org
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Daniel Lezcano <daniel.lezcano@linaro.org>, linux-pm@vger.kernel.org
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2136; i=sudeep.holla@arm.com;
- h=from:subject:message-id; bh=gRkb6p8XPCkCChpfA0g/BMq90thBf9o9KpCxbQ5q/L4=;
- b=owEBbQKS/ZANAwAIAQBBurwxfuKYAcsmYgBn2aciI9VxHIej0aKWzdG0ZStyVb+NQKRpF5n/Q
- ttdDeVqi9WJAjMEAAEIAB0WIQS6ceUSBvMeskPdk+EAQbq8MX7imAUCZ9mnIgAKCRAAQbq8MX7i
- mIi6D/9h6GsGE8BacOX3uMQGEHySIAN9eHGjqgy+PGAtv4oy2OaTmZYwQS4j1bFA+C5x3wYbQdj
- VLXS+P/54M8C29XsUOcqyBLy4pZU4CDZKCEw+f8yTeYpLYEcrTE3OfIEi9VrYYXa3QB8p8FSqEI
- nPz7gI+OsFaHWh9QxBo7m3s6Jnw0Xp4K556IJZpUJ6C78zEHOswBNuL2LuPKkgSdP3GMsp3T5GF
- B0vVne8Un8M98XCs7QKV+1zq+j4pfVioHIuFVlMObV/RmAJeEqzCu3r3UNm2zgYLn1DDODXARvz
- j2z3TkNkqE73eSYn8E6O7Pqv2Dzr6SKsir7u6YRBPmXeAy08Mq6jmUunENoxrQwAxR/ZgJd2T3z
- D0ctTht3d/OyWUI240P807NzA/4ywnmfIJ8cWw1Tlt2e9vZyC9gccsjHTf7iFY2gbI0jGLR0aLz
- jRf+NC/cPnMBgWkyht/aFLO7PcDoATGoTihU/0WORFUK5FwMXQa9LDERwvcX3YfmROa707easdh
- jAENC68BaBnUipuIfod6Sqzj6Bdnvel9tMM7noqXMTCSlWct+YmtgyviyC/mm9KcH+E5Zk4iOWC
- GZ0NJne3WB4m0mySGYC800zg9lfVLmTxI66HaJqVwZ7H1Hm5Ood/bGsScLZ3MmEzq7KSfhxczkg
- WcsZDBwA21e70ww==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2646; i=sudeep.holla@arm.com;
+ h=from:subject:message-id; bh=G9kihMReYnuSblQmsr+d7DA+5UjTgx2Nd7YXDM3E4H0=;
+ b=owEBbQKS/ZANAwAIAQBBurwxfuKYAcsmYgBn2aciBJKtfha22avzC5Tb0MJbrWJtrCcKR73lA
+ zXDzVm2dc6JAjMEAAEIAB0WIQS6ceUSBvMeskPdk+EAQbq8MX7imAUCZ9mnIgAKCRAAQbq8MX7i
+ mO1eD/49KrYE5mjwjUXjG2S0M+aANb+/iiS/cIYRvGYXLLQPp1kIWXtPQ/iftzPP+Q3k0KLe/7z
+ fO4Kxg2+/PTc/mRXQdngAhSkkCF/ubc3w+KDtIj5kr1Jsc3NOqzut7UccjX6eY4kSEF6GyGacX0
+ V17GO5wrgRP+RdE7kHoKV/a4hK+pkq2XhnSMW4ilPKOZOnJ6+9BQ7qC6SuqmgMpnhnUsASgOJP+
+ gwfbUtnvdFsSzPjhd7iM4+uxdVR+KJjrAzlTQSKIYvHp0rNfzSQkIh0s5gy6OauH5Z93eA2qLYw
+ vwm5YNPuNnWEFFFlbKcmqJd0X9G553fy0VPilq7xX7t9vQem8rQHm2WZf51Wk9Rlr6GFAPyfHk1
+ MZlvI4+VD1F6qBoAzeGSp0T9Ukq9ilZDQgx/Bvx0updPl8BHRjgaeaQto+Tx/qAHKjd+GtMhFkW
+ 4H+ql2fBGOhT9eeBfJQkipnXTRk7rkcfvcCkiLrdr6+FfiMtIezHW4V70Gmbr+1ERhyXD9PTxy5
+ ZJChxwrY3fgxxxDTaSjsWV/1oE4Z3WmnuTgYPwi8s+zLL03ObhX8KwCMEc6tJU01WOL9RplRo9o
+ WlmGqDKpUAOOgMaV9vk9VrHI8yGzY0XnAm8hhdnZNFoiSv0r68AwviZ+taXa2XAYrFrpwizqpsV
+ AwvPJ3djSTUp4mQ==
 X-Developer-Key: i=sudeep.holla@arm.com; a=openpgp;
  fpr=7360A21742ADF5A11767C1C139CFD4755FE2D5B4
 
-The "efivars" platform device is created just to enable the efi-pstore
-module to autoload based on it. It doesn't have to be platform device
-though. Originally, this approach was chosen for simplicity when the
+The PSCI cpuidle driver does not require the creation of a platform
+device. Originally, this approach was chosen for simplicity when the
 driver was first implemented.
 
 With the introduction of the lightweight faux device interface, we now
-have a more appropriate alternative. Migrate this efivars device to
-utilize the faux bus, given that the platform device it previously
-created was not a real one anyway.
+have a more appropriate alternative. Migrate the driver to utilize the
+faux bus, given that the platform device it previously created was not
+a real one anyway. This will simplify the code, reducing its footprint
+while maintaining functionality.
 
-The modalias is retained here as efi-pstore module is dependent on it.
-
-Cc: Ard Biesheuvel <ardb@kernel.org>
-Cc: linux-efi@vger.kernel.org
+Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: linux-pm@vger.kernel.org
 Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
 ---
- drivers/firmware/efi/efi-pstore.c | 2 +-
- drivers/firmware/efi/efi.c        | 4 ++--
- 2 files changed, 3 insertions(+), 3 deletions(-)
+ drivers/cpuidle/cpuidle-psci.c | 32 ++++----------------------------
+ 1 file changed, 4 insertions(+), 28 deletions(-)
 
-diff --git a/drivers/firmware/efi/efi-pstore.c b/drivers/firmware/efi/efi-pstore.c
-index a253b61449459eca31afc6ca780a20c4557659ba..eed756a59bba3b5a58cd2e238400c3c12fd5edd5 100644
---- a/drivers/firmware/efi/efi-pstore.c
-+++ b/drivers/firmware/efi/efi-pstore.c
-@@ -301,4 +301,4 @@ module_exit(efivars_pstore_exit);
- 
- MODULE_DESCRIPTION("EFI variable backend for pstore");
- MODULE_LICENSE("GPL");
--MODULE_ALIAS("platform:efivars");
-+MODULE_ALIAS("faux:efivars");
-diff --git a/drivers/firmware/efi/efi.c b/drivers/firmware/efi/efi.c
-index 862b7744c28ecc9e5a64bbb3533c34119f50267f..dc5c24a7ca540cac342ceddcdbf75b55bf82c889 100644
---- a/drivers/firmware/efi/efi.c
-+++ b/drivers/firmware/efi/efi.c
-@@ -24,7 +24,7 @@
- #include <linux/initrd.h>
- #include <linux/io.h>
- #include <linux/kexec.h>
+diff --git a/drivers/cpuidle/cpuidle-psci.c b/drivers/cpuidle/cpuidle-psci.c
+index 2562dc001fc1de69732ef28f383d2809262a3d96..5d4d6daed36d8540ba2ce3dc54a3180731b03d22 100644
+--- a/drivers/cpuidle/cpuidle-psci.c
++++ b/drivers/cpuidle/cpuidle-psci.c
+@@ -16,7 +16,7 @@
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+ #include <linux/of.h>
 -#include <linux/platform_device.h>
 +#include <linux/device/faux.h>
- #include <linux/random.h>
- #include <linux/reboot.h>
- #include <linux/slab.h>
-@@ -443,7 +443,7 @@ static int __init efisubsys_init(void)
- 		error = efivar_ssdt_load();
- 		if (error)
- 			pr_err("efi: failed to load SSDT, error %d.\n", error);
--		platform_device_register_simple("efivars", 0, NULL, 0);
-+		faux_device_create("efivars", NULL, NULL);
- 	}
+ #include <linux/psci.h>
+ #include <linux/pm_domain.h>
+ #include <linux/pm_runtime.h>
+@@ -404,14 +404,14 @@ static int psci_idle_init_cpu(struct device *dev, int cpu)
+  * to register cpuidle driver then rollback to cancel all CPUs
+  * registration.
+  */
+-static int psci_cpuidle_probe(struct platform_device *pdev)
++static int psci_cpuidle_probe(struct faux_device *fdev)
+ {
+ 	int cpu, ret;
+ 	struct cpuidle_driver *drv;
+ 	struct cpuidle_device *dev;
  
- 	BLOCKING_INIT_NOTIFIER_HEAD(&efivar_ops_nh);
+ 	for_each_possible_cpu(cpu) {
+-		ret = psci_idle_init_cpu(&pdev->dev, cpu);
++		ret = psci_idle_init_cpu(&fdev->dev, cpu);
+ 		if (ret)
+ 			goto out_fail;
+ 	}
+@@ -431,28 +431,4 @@ static int psci_cpuidle_probe(struct platform_device *pdev)
+ 	return ret;
+ }
+ 
+-static struct platform_driver psci_cpuidle_driver = {
+-	.probe = psci_cpuidle_probe,
+-	.driver = {
+-		.name = "psci-cpuidle",
+-	},
+-};
+-
+-static int __init psci_idle_init(void)
+-{
+-	struct platform_device *pdev;
+-	int ret;
+-
+-	ret = platform_driver_register(&psci_cpuidle_driver);
+-	if (ret)
+-		return ret;
+-
+-	pdev = platform_device_register_simple("psci-cpuidle", -1, NULL, 0);
+-	if (IS_ERR(pdev)) {
+-		platform_driver_unregister(&psci_cpuidle_driver);
+-		return PTR_ERR(pdev);
+-	}
+-
+-	return 0;
+-}
+-device_initcall(psci_idle_init);
++module_faux_driver(psci_cpuidle, psci_cpuidle_probe, NULL, true);
 
 -- 
 2.34.1
