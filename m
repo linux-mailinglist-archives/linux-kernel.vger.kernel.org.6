@@ -1,270 +1,158 @@
-Return-Path: <linux-kernel+bounces-566153-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566154-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D999A673F9
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 13:35:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 525ABA673FC
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 13:37:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D15642181B
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 12:35:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 30D7F3BE4A9
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 12:36:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7FFB20C015;
-	Tue, 18 Mar 2025 12:35:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9E6320C46B;
+	Tue, 18 Mar 2025 12:37:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aISYJlYF"
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="JSY35S6C"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A82CC1714B2
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 12:35:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A72E81714B2
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 12:36:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742301344; cv=none; b=TQkz97JxqX3iGT/v7Bg37wCPlVhZNuBwgbIPO2e607cXqNM52Px/yOK+gYonaGw9JsObEScq+awNmexCr45WoEY01Egkx4gQrQ9JHCTkb9RWxqtjfa52JHdMp6u9+HzI/7WTVIB8SwEX/PgCErw/Bz7qpQBVdG+K90Mrstq7pe8=
+	t=1742301421; cv=none; b=RSyE8Q1aQsHwCUo40K2/zyj+nOTr7sSUOWV9CJWU8uMYbT1m5gYt5tjc94vU+mehvdsl8KNeyNwe8xAHHWmSG/Z5b5epuU6WgrueCqwWFUmJ10sVRP1UZ/F1589AQzisL19QxTPkH7I63el8eOALTAA53yBH8Q5eJBpQq37iiJQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742301344; c=relaxed/simple;
-	bh=usWzQaO8PHBkm1OdlB45bKfs+k8hRXYyxwXZNa9AzKg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZviwIfxQemIkH2SUZRIxZS9OAYuI18887b0y116Q7PXdnvSLlcvA5R7lMXzahZgSpsLTSjfpBXvmQ0Ebjmj/OGl4Lpy6aLrLWSsLY9yWf9iBzCPkMNmzl0hs/a7pAkAMkoEZZ1AW6WRqpBN1SGJAMmdslytsYKFXoOf5DTp/vUQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aISYJlYF; arc=none smtp.client-ip=209.85.208.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-307c13298eeso63521851fa.0
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 05:35:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742301340; x=1742906140; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HPKxNwVUlphbHZXCf6BNgjXG5yYtdP5VAcLw9XeCJSc=;
-        b=aISYJlYFioSfOyAoQl78AiH5axRF3KXrBOS88HEwX+uZT4kkv/ERrNCed1xNPmX2BH
-         I1ALTueF1EKL7Ape7Ki0k3TkcSAJFaukq+VjmlMR38gxUe/Q2n8NSrDohi3WIsLa/x1x
-         mBUN+DrI7Fv88UsU7ssZvzOUldjF37krcBo6bu5m5Nk43I0kMe2TT17tRvGFuSFjK/Ki
-         euXQfHfyyQy9FFF0Zg1tIHQwS0qTuJ4bh/24RHZqC2JBM9mpzf3CMeDSrGnb9h2qdSth
-         gfvdLqcEjZV+duPdcCDOGBH5IIFYjUO7rOhvfps7nCaEm7rF+3GOFIqoDZjRzXWi9CXn
-         iPRw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742301340; x=1742906140;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HPKxNwVUlphbHZXCf6BNgjXG5yYtdP5VAcLw9XeCJSc=;
-        b=NtgIgY4ueiUc4IjCFJ9gs/OPOhOo8quboYDLJr5eIKf/oGOQjF1b+PJ26CJH+pqsys
-         51YlUWgwN0oeqmK2jYncJ+4O9hXrEFZm7T9phNdmOGC6yoCsVmLCvZtTjCu1orAShca0
-         eP4WOY8Ccwqa09xnBw3KI6BYVl+bSkH9UFGz4pkeyIX/N1fByqJpUq1Lw1p/7wr6q2it
-         C/xul1EKU4FjjWe8nu0nq53BifZPIpBNq0sjWDPT8gAHF9OlqO7rUfQBlr2C1rkkJ2eY
-         5624ZR2cOBphjLhxCEAZm9o3ovsXIZnfrzeKeFh6QiKJjsqvXj4IZYWA0G05xApU/YSz
-         APNg==
-X-Forwarded-Encrypted: i=1; AJvYcCW7v72ULb60Uoh/tZ7Geo6lrjXkdQTD0iO+xIpRCgMmk7v6Blhc/UmS+dUX8CLhHrHFMWFkwjM8kIm2UGs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzwClw+QUOCbdJl9dmRUN96SeVQ4HdiHF968P0gQvxvpxLYzFOD
-	Ug6dANG7zwT0A17rxKtKqACTuA0VcVkYz/uOCSQ+cR6H2rqlirh16umSqCMyTmPqpyXv23rCBg2
-	fVGwSfREJoUNh2UKbbL0vS/gTL7yFwWJsRrM=
-X-Gm-Gg: ASbGnctTbhqnCEKPoQrYlUPznC/46ebS3oeXyC1lxDPjszE4r5qimgT9fy8//Plgsx9
-	Cvw3ynXdOjnzwkM/Kl6YPPgxzTOZs2j+CnpsOYukm2beirFbs27RahLXw6mJAt0OlTxiNvBiXso
-	S7yvUQWeLwbR3pGYkSKbMJ9SYGHg==
-X-Google-Smtp-Source: AGHT+IG/IW/n8isTqqAEbQzbEezSkE9pwOPGSiRX4Z+NIpxExPNrigafYV8dc7Pi0eyzuig0lNBP42YSz0Vy9P33S20=
-X-Received: by 2002:a2e:9495:0:b0:30b:fc16:d482 with SMTP id
- 38308e7fff4ca-30cd95874bemr25794451fa.3.1742301339346; Tue, 18 Mar 2025
- 05:35:39 -0700 (PDT)
+	s=arc-20240116; t=1742301421; c=relaxed/simple;
+	bh=1EPLFHDewAN8/i4J9+X/KTzzwHH36Tm6ALls+862c64=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ONYIyq991UPRPbz9YD25/3Hw90RLjH1w0qyuIWjljgwpQNeffP+KD5AMwDtinCkTm+TQ3q8Qm+A1HULlePqC4pWdFPw1dnKZISvoXjuKIekF4Fweh/rx8HymxWS9vbWmnodQkD4VxUaMAcdU9JvCAt4TqeBfTw7cgEXOpo3KTS8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=JSY35S6C; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1742301416;
+	bh=1EPLFHDewAN8/i4J9+X/KTzzwHH36Tm6ALls+862c64=;
+	h=From:Subject:Date:To:Cc:From;
+	b=JSY35S6CrgfDm8T6OIWNI8SqPLbGQslb2/CiagAlH3SfZtGgcLlQLsyfqfrMYpHYS
+	 NyZSJsB1JXaDD1zKxfHOAEE163b8FTSkewAUrOyU7ybxGOYJa0aPFUq5E/GpsoIum9
+	 HpGDEtCPspOhkkSzsQU2dFSaQ53sOaSZ+12kHBkfZzuWlGrF6rH3nWALdZrR7g25eC
+	 rddwaZpD/tk9jpFIHlvPKZ6tfmb+zNGwpbGhpdNG7ERVPlNIMi7M417jcsOW6z6TpO
+	 43AR56/50lXq9DigW3Cn6Tl/PXoMQJh+6j9XnTLG85+co8YYNjAFjujJADFI714qei
+	 qdN9bYkduteWA==
+Received: from localhost (unknown [84.232.140.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: cristicc)
+	by bali.collaboradmins.com (Postfix) with UTF8SMTPSA id 83E9317E0673;
+	Tue, 18 Mar 2025 13:36:56 +0100 (CET)
+From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Subject: [PATCH v6 00/14] phy: rockchip: samsung-hdptx: Support high color
+ depth management
+Date: Tue, 18 Mar 2025 14:35:34 +0200
+Message-Id: <20250318-phy-sam-hdptx-bpc-v6-0-8cb1678e7663@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250317113013.182359-1-ubizjak@gmail.com> <Z9iuYk-3YNKLAJip@gmail.com>
-In-Reply-To: <Z9iuYk-3YNKLAJip@gmail.com>
-From: Uros Bizjak <ubizjak@gmail.com>
-Date: Tue, 18 Mar 2025 13:35:28 +0100
-X-Gm-Features: AQ5f1JrXN4NXCuW4pCCh45LUztUkrBOTZE7ieJUbmO7afPOe2vlyGtN3vjNLp5c
-Message-ID: <CAFULd4ZvQkHzvaa_cpbt1x_RAj_7FHb1FyPJxacVOrsK_55=xw@mail.gmail.com>
-Subject: Re: [PATCH v2] x86/asm: Use asm_inline() instead of asm() in __untagged_addr()
-To: Ingo Molnar <mingo@kernel.org>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org, 
-	Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>, 
-	Linus Torvalds <torvalds@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAJZo2WcC/23OwYoDIQwG4FcpnmvRqInd077HsgdHnY7Q1kHL0
+ FLm3dcWypYiOf2B/0vurMaSYmVfmzsrcUk15XMLuN0wP7nzIfIUWmYgQEsQyOfpxqs78SnMlys
+ fZs/VIIxHIBwDsdabSxzT9Wn+/LY8pXrJ5fY8scjH9qVRR1skF1woD1EHDLSnb5+PRzfk4nY+n
+ 9hDXOBNkdBToCmGIhJ4aqN7inopRgConqKaguiMtxGtgu4v+l9RQvcU3RSLhqwmL9XYVcy7Ynu
+ KaYoywhJYGvdBfirruv4BxfK80s4BAAA=
+X-Change-ID: 20241206-phy-sam-hdptx-bpc-3b05c6276fd7
+To: Vinod Koul <vkoul@kernel.org>, 
+ Kishon Vijay Abraham I <kishon@kernel.org>, 
+ Heiko Stuebner <heiko@sntech.de>
+Cc: Algea Cao <algea.cao@rock-chips.com>, Sandor Yu <Sandor.yu@nxp.com>, 
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
+ Maxime Ripard <mripard@kernel.org>, kernel@collabora.com, 
+ linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org, 
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
+ Dmitry Baryshkov <lumag@kernel.org>
+X-Mailer: b4 0.14.2
 
-On Tue, Mar 18, 2025 at 12:21=E2=80=AFAM Ingo Molnar <mingo@kernel.org> wro=
-te:
->
->
-> * Uros Bizjak <ubizjak@gmail.com> wrote:
->
-> > Use asm_inline() to instruct the compiler that the size of asm()
-> > is the minimum size of one instruction, ignoring how many instructions
-> > the compiler thinks it is. ALTERNATIVE macro that expands to several
-> > pseudo directives causes instruction length estimate to count
-> > more than 20 instructions.
-> >
-> > bloat-o-meter reports minimal code size increase
-> > (x86_64 defconfig with CONFIG_ADDRESS_MASKING, gcc-14.2.1):
-> >
-> >   add/remove: 2/2 grow/shrink: 5/1 up/down: 2365/-1995 (370)
-> >
-> >       Function                          old     new   delta
-> >       -----------------------------------------------------
-> >       do_get_mempolicy                    -    1449   +1449
-> >       copy_nodes_to_user                  -     226    +226
-> >       __x64_sys_get_mempolicy            35     213    +178
-> >       syscall_user_dispatch_set_config  157     332    +175
-> >       __ia32_sys_get_mempolicy           31     206    +175
-> >       set_syscall_user_dispatch          29     181    +152
-> >       __do_sys_mremap                  2073    2083     +10
-> >       sp_insert                         133     117     -16
-> >       task_set_syscall_user_dispatch    172       -    -172
-> >       kernel_get_mempolicy             1807       -   -1807
-> >
-> >   Total: Before=3D21423151, After=3D21423521, chg +0.00%
-> >
-> > The code size increase is due to the compiler inlining
-> > more functions that inline untagged_addr(), e.g:
-> >
-> > task_set_syscall_user_dispatch() is now fully inlined in
-> > set_syscall_user_dispatch():
-> >
-> >       000000000010b7e0 <set_syscall_user_dispatch>:
-> >         10b7e0:       f3 0f 1e fa             endbr64
-> >         10b7e4:       49 89 c8                mov    %rcx,%r8
-> >         10b7e7:       48 89 d1                mov    %rdx,%rcx
-> >         10b7ea:       48 89 f2                mov    %rsi,%rdx
-> >         10b7ed:       48 89 fe                mov    %rdi,%rsi
-> >         10b7f0:       65 48 8b 3d 00 00 00    mov    %gs:0x0(%rip),%rdi
-> >         10b7f7:       00
-> >         10b7f8:       e9 03 fe ff ff          jmp    10b600 <task_set_s=
-yscall_user_dispatch>
->
-> So this was a tail-call optimization that jumped to a standalone
-> <task_set_syscall_user_dispatch>, right? So now we'll avoid the
-> tail-jump and maybe a bit of the register parameter shuffling? Which
-> would explain the bloatometer delta of -172 for
-> task_set_syscall_user_dispatch?
+This series relies on the new HDMI PHY configuration options [1] (patch
+included here for convenience) to provide high color depth management
+for rockchip-samsung-hdptx, and to introduce a proper solution to setup
+the TMDS character rate on this PHY.
 
-Yes, this is correct. Register shuffling is part of the call setup
-(because parameters have to be passed to the called function in
-certain registers according to the ps-ABI). Inlining avoids this
-because parameters can now be freely allocated to any register of the
-required class.
+[1] https://lore.kernel.org/lkml/d1cff6c03ec3732d2244022029245ab2d954d997.1734340233.git.Sandor.yu@nxp.com/
 
-> Could you also cite the first relevant bits of <task_set_syscall_user_dis=
-patch>?
+Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+---
+Changes in v6:
+- Collected R-b tags from Dmitry
+- Updated commit description for "phy: rockchip: samsung-hdptx: Fix
+  clock ratio setup"
+- Added new patch "phy: rockchip: samsung-hdptx: Do no set
+  rk_hdptx_phy->rate in case of errors"
+- Replaced some "unsigned long" and "u32" types with "unsigned long
+  long" in "phy: rockchip: samsung-hdptx: Avoid Hz<->hHz unit conversion
+  overhead" to match the tmds_char_rate type (Dmitry)
+- Added new patch "phy: rockchip: samsung-hdptx: Rename ambiguous
+  rk_hdptx_phy->rate", originally part of "phy: rockchip: samsung-hdptx:
+  Optimize internal rate handling" (Dmitry)
+- Rebased series onto next-20250317
+- Link to v5: https://lore.kernel.org/r/20250308-phy-sam-hdptx-bpc-v5-0-35087287f9d1@collabora.com
 
-000000000010b600 <task_set_syscall_user_dispatch>:
-  10b600:    48 89 f8                 mov    %rdi,%rax
-  10b603:    48 85 f6                 test   %rsi,%rsi
-  10b606:    74 54                    je     10b65c
-<task_set_syscall_user_dispatch+0x5c>
-  10b608:    48 83 fe 01              cmp    $0x1,%rsi
-  10b60c:    74 06                    je     10b614
-<task_set_syscall_user_dispatch+0x14>
-  10b60e:    b8 ea ff ff ff           mov    $0xffffffea,%eax
-  10b613:    c3                       ret
-  10b614:    48 85 d2                 test   %rdx,%rdx
-  10b617:    75 7b                    jne    10b694
-<task_set_syscall_user_dispatch+0x94>
-  10b619:    4d 85 c0                 test   %r8,%r8
-  10b61c:    74 1a                    je     10b638
-<task_set_syscall_user_dispatch+0x38>
-  10b61e:    4c 89 c6                 mov    %r8,%rsi
-  10b621:    48 bf ef cd ab 89 67     movabs $0x123456789abcdef,%rdi
-  10b628:    45 23 01
-  10b62b:    90                       nop
-  10b62c:    90                       nop
-  10b62d:    90                       nop
-  10b62e:    90                       nop
-  10b62f:    90                       nop
-  10b630:    90                       nop
-  10b631:    90                       nop
-  10b632:    90                       nop
-  10b633:    48 39 f7                 cmp    %rsi,%rdi
-  10b636:    72 6e                    jb     10b6a6
-<task_set_syscall_user_dispatch+0xa6>
-  10b638:    4c 89 80 48 08 00 00     mov    %r8,0x848(%rax)
-  10b63f:    48 89 90 50 08 00 00     mov    %rdx,0x850(%rax)
-  10b646:    48 89 88 58 08 00 00     mov    %rcx,0x858(%rax)
-  10b64d:    c6 80 60 08 00 00 00     movb   $0x0,0x860(%rax)
-  10b654:    f0 80 48 08 20           lock orb $0x20,0x8(%rax)
-  10b659:    31 c0                    xor    %eax,%eax
-  10b65b:    c3                       ret
-  10b65c:    49 09 c8                 or     %rcx,%r8
-  10b65f:    49 09 d0                 or     %rdx,%r8
-  10b662:    75 aa                    jne    10b60e
-<task_set_syscall_user_dispatch+0xe>
-  10b664:    48 c7 87 48 08 00 00     movq   $0x0,0x848(%rdi)
-  10b66b:    00 00 00 00
-  10b66f:    48 c7 87 50 08 00 00     movq   $0x0,0x850(%rdi)
-  10b676:    00 00 00 00
-  10b67a:    48 c7 87 58 08 00 00     movq   $0x0,0x858(%rdi)
-  10b681:    00 00 00 00
-  10b685:    c6 87 60 08 00 00 00     movb   $0x0,0x860(%rdi)
-  10b68c:    f0 80 67 08 df           lock andb $0xdf,0x8(%rdi)
-  10b691:    31 c0                    xor    %eax,%eax
-  10b693:    c3                       ret
-  10b694:    48 8d 34 0a              lea    (%rdx,%rcx,1),%rsi
-  10b698:    48 39 f2                 cmp    %rsi,%rdx
-  10b69b:    0f 82 78 ff ff ff        jb     10b619
-<task_set_syscall_user_dispatch+0x19>
-  10b6a1:    e9 68 ff ff ff           jmp    10b60e
-<task_set_syscall_user_dispatch+0xe>
-  10b6a6:    b8 f2 ff ff ff           mov    $0xfffffff2,%eax
-  10b6ab:    c3                       ret
+Changes in v5:
+- Moved the patch eliminating the unnecessary and rather confusing
+  Hz<->hHz unit conversion before all the others adding new content
+- Moved the patch adding high color depth management to the last
+  position, so that it follows the internal rate handling optimization
+- Amended description for a few patches to improve clarity
+- Performed some trivial refactoring in some cases while dealing with
+  rebase conflicts
+- Link to v4: https://lore.kernel.org/r/20250304-phy-sam-hdptx-bpc-v4-0-8657847c13f7@collabora.com
 
-> I don't seem to be able to reproduce this inlining decision, my version
-> of GCC is:
->
->   gcc version 14.2.0 (Ubuntu 14.2.0-4ubuntu2)
->
-> which is one patch version older than your 14.2.1.
->
-> I tried GCC 11, 12, 13 as well, but none did this tail optimization,
-> all appear to be inlining <task_set_syscall_user_dispatch> into
-> <set_syscall_user_dispatch>. What am I missing?
+Changes in v4:
+- Added patches to drop unnecessary phy_cfg & cfgs driver data
+- Embedded struct phy_configure_opts_hdmi in driver data (Dmitry)
+- Added new patch to provide config params validation support
+- Provided a patch to restrict altering TMDS char rate via CCF (Dmitry)
+- Made a bunch of small tweaks here and there
+- Link to v3: https://lore.kernel.org/r/20250223-phy-sam-hdptx-bpc-v3-0-66a5c8e68327@collabora.com
 
-CONFIG_ADDRESS_MASKING in current -tip depends on:
+Changes in v3:
+- Rebased series onto next-20250221 and fixed several conflicts due to
+  the recently introduced eDP support
+- Link to v2: https://lore.kernel.org/r/20241212-phy-sam-hdptx-bpc-v2-0-57e672c7c7c4@collabora.com
 
-  Depends on: X86_64 [=3Dy] && (COMPILE_TEST [=3Dn] || !CPU_MITIGATIONS [=
-=3Dy])
+Changes in v2:
+- Added new patches providing a bug fix and several driver cleanups and
+  improvements
+- Link to v1: https://lore.kernel.org/r/20241207-phy-sam-hdptx-bpc-v1-0-03c2e4d6d797@collabora.com
 
-and I chose to disable CPU_MITIGATIONS (this is the reason no __pfx
-functions are reported and the compiler is able to do sibling call
-optimization).
+---
+Cristian Ciocaltea (13):
+      phy: hdmi: Add color depth configuration
+      phy: rockchip: samsung-hdptx: Fix clock ratio setup
+      phy: rockchip: samsung-hdptx: Do no set rk_hdptx_phy->rate in case of errors
+      phy: rockchip: samsung-hdptx: Drop unused struct lcpll_config
+      phy: rockchip: samsung-hdptx: Drop unused phy_cfg driver data
+      phy: rockchip: samsung-hdptx: Drop superfluous cfgs driver data
+      phy: rockchip: samsung-hdptx: Avoid Hz<->hHz unit conversion overhead
+      phy: rockchip: samsung-hdptx: Setup TMDS char rate via phy_configure_opts_hdmi
+      phy: rockchip: samsung-hdptx: Provide config params validation support
+      phy: rockchip: samsung-hdptx: Restrict altering TMDS char rate via CCF
+      phy: rockchip: samsung-hdptx: Rename ambiguous rk_hdptx_phy->rate
+      phy: rockchip: samsung-hdptx: Optimize internal rate handling
+      phy: rockchip: samsung-hdptx: Add high color depth management
 
-BTW: I found the cited functions a representation of how the compiler
-inlines bigger functions into smaller ones (one would expect the
-opposite) depending on and respecting the code size growth factor
-criteria for combined function.
+Sandor Yu (1):
+      phy: Add HDMI configuration options
 
-> Another question, where do the size increases in these functions come
-> from:
->
-> >       __x64_sys_get_mempolicy            35     213    +178
+ drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c | 292 +++++++++++++---------
+ include/linux/phy/phy-hdmi.h                      |  21 ++
+ include/linux/phy/phy.h                           |   7 +-
+ 3 files changed, 202 insertions(+), 118 deletions(-)
+---
+base-commit: e94bd4ec45ac156616da285a0bf03056cd7430fc
+change-id: 20241206-phy-sam-hdptx-bpc-3b05c6276fd7
 
-This one now inlines kernel_get_mempolicy().
-
-> >       syscall_user_dispatch_set_config  157     332    +175
-
-This one now inlines task_set_syscall_user_dispatch().
-
-> >       __ia32_sys_get_mempolicy           31     206    +175
-
-This one now inlines kernel_get_mempolicy().
-
-> >       set_syscall_user_dispatch          29     181    +152
-
-This one now inlines task_set_syscall_user_dispatch().
-
-> (I have to ask, because I have trouble reproducing with my toolchain so
-> I cannot look at this myself.)
-
-BTW: the indication of inline changes w.r.t. __untagged_addr() is the
-number of references to the tlbstate_untag_mask variable in the
-.altinstr_replacement section. If these go up, more inlining happens.
-Also, bloat-o-meter indicates which function changes, and looking for
-a string of 8 NOPs in the function will show where the AND instruction
-is to be patched in.
-
-Uros.
 
