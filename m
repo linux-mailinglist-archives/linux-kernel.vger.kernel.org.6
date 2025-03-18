@@ -1,64 +1,53 @@
-Return-Path: <linux-kernel+bounces-566251-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-566245-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 263DDA67577
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 14:45:43 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFED4A6755F
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 14:42:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27B2D88193B
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 13:44:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD6583AB6E0
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 13:41:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EACB20E01C;
-	Tue, 18 Mar 2025 13:43:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC01720D508;
+	Tue, 18 Mar 2025 13:41:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="loQQpLRU"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	dkim=pass (2048-bit key) header.d=web.de header.i=frank.scheiner@web.de header.b="ExDJ3ppc"
+Received: from mout.web.de (mout.web.de [212.227.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3E6420D4E3;
-	Tue, 18 Mar 2025 13:43:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E9CB20B21A;
+	Tue, 18 Mar 2025 13:41:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742305438; cv=none; b=AnOqLlU+lu1EoOxPfOLId5t6qklH48OT1kQDL0mGaKRCpEj4prDQqtKGXgA0udsBTYX2J6gUvyrENJSzWx1IE7VNOoUFb74+CF/dmTEmjQu2G4YNjDfo4ZhMB3x3xR6bzJdu1cT4yHc5FoNLH1hX9jrd34TNiwJ9SNaT9KFJmsQ=
+	t=1742305274; cv=none; b=u6gPSGBo+1tLCkB7OfPWUJXch0cIwE2xHFkvXPpfoVXYjFZ141tsquqJOiimGHI7ypdCRbgVY6QuiBAEjsz0bnX/oFijkY0tXmOvZT1cM1Fk3r17fxI2k0L5clna3OiGtjxZuZ6cO447lwUHBvbrXogT7KYR+lAPBd/nvDsYGFU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742305438; c=relaxed/simple;
-	bh=vOg2SaVyBOUBq2yttyF7LJx4I0mDl+lqO/b9mqf1WtA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=QrhbISCfkQh7dUvOANH+v1rnm2Lv8NHUsyojuNbzyyx8TEzTJGfUm8LYTrjuangavaVgF7xhAynuLYpijmWaWN8ko1UsVoI8V+fBgtnUPqQaZikoqAN65aoLwj5Wznc6dn0ORrPQNNAFWURu/3couKuL8WYBp/23uNUIDDvQ0ww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=loQQpLRU; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52IC87C3027490;
-	Tue, 18 Mar 2025 14:43:16 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	whvjbsiVjRlsNphmKsAxzszWr4vi1h4OXwOIyTZ6SVs=; b=loQQpLRUyM37Cho0
-	iz6IOEYBB4Rff5EDPq/Kpliby4oh3b+PvSNBJu9W0QFygzDUwi6EEbEEW/g2u/2y
-	29DCTCJJ+fxjpt/g7UQQIz5wv0lgVva7AnDMmOlWLxoYtudXGjVBD2BD6vqJCo0t
-	etHOTpxT85kRboYU9xeX5lKtzvv+oz4PNRjnRU2+/s63EqFONiheqfR0me3084zI
-	MSXByGYUJrwddJHLIEgwoyLphfgJ9MvAOSoVQZmGh0ir/iNXKXa5RciKEvK6mCI6
-	9YmDTZ96LMWQjYj70LBuOJqapKZ9lucVNlI+AxcpqwVPgcUF+syfd867MEb8xcgW
-	9VcYnQ==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 45dm07yd44-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 18 Mar 2025 14:43:15 +0100 (CET)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id D50E640057;
-	Tue, 18 Mar 2025 14:41:53 +0100 (CET)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 1B14B7B8532;
-	Tue, 18 Mar 2025 14:40:44 +0100 (CET)
-Received: from [10.48.87.62] (10.48.87.62) by SHFDAG1NODE1.st.com
- (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 18 Mar
- 2025 14:40:43 +0100
-Message-ID: <06244bfb-1bd0-4a07-a928-3d2e68a89259@foss.st.com>
-Date: Tue, 18 Mar 2025 14:40:42 +0100
+	s=arc-20240116; t=1742305274; c=relaxed/simple;
+	bh=OjvPta/n5oLTELCWfeZVH8po1jhn6l56saTNYMpV6DU=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=Pa7m4h7cSA4QjcvClQXpy6/BLq3nbkxcSecQANv37Wkw6N/U6ilX/xqEGDKwP6tbMcwmE8bf75Onmdu0L5CzcVlumsq2XQY1I8rEOgx2tkVxNu25Q2PGNXzz1qZBWRkQe9gC8kKvZJSUR7cSsomKG14C6BBLVEwgubGJ+HITupA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=frank.scheiner@web.de header.b=ExDJ3ppc; arc=none smtp.client-ip=212.227.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1742305249; x=1742910049; i=frank.scheiner@web.de;
+	bh=gqWULTPXZo+EbXess34u0Qq7PeblGT8U0aZybYGNlaw=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:From:Subject:To:
+	 Cc:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=ExDJ3ppcV7dekWkbHx5OG91qa/Nua3xNiqVzzieIRPb2lI8PFxYyCVsNpNc9RxTk
+	 c6Mt2SXxYz2uWVxzlfwf55lXWUBT+iWcvLo4P+FaDpznzJNeMLcmy5QKQ1mq4S/8T
+	 +5/jLqSKfWDWIC+EvGqmdVKvZBayZrmXV/SwaNh66Pmv3nLczaAUvsk5XF4gZXATA
+	 NTCU6BL6VOkS5i9hStEnPBpeL64GmIx5B5AXp1+Aq9/QrWI7iYmIorZ/U2/U9kjl9
+	 XwVGXc2zrbN+VXtlmGCJ+CkAxcIKfQiEB4pnJ7fdXo0+LK5dZ0mvPrmLnNE/6ixtG
+	 ZfWFY7fQPMGplObz+g==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.22] ([87.155.230.83]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1M8T7K-1tq7LF25w0-00CY4Q; Tue, 18
+ Mar 2025 14:40:49 +0100
+Message-ID: <8c6125d7-363c-42b3-bdbb-f802cb8b4408@web.de>
+Date: Tue, 18 Mar 2025 14:40:48 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,280 +55,103 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 4/8] memory: Add STM32 Octo Memory Manager driver
-To: Krzysztof Kozlowski <krzk@kernel.org>, Mark Brown <broonie@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Alexandre Torgue
-	<alexandre.torgue@foss.st.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Catalin Marinas
-	<catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>
-CC: <linux-spi@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <christophe.kerello@foss.st.com>
-References: <20250219080059.367045-1-patrice.chotard@foss.st.com>
- <20250219080059.367045-5-patrice.chotard@foss.st.com>
- <eaf1ecca-4fde-4128-8590-6013c3a13a04@kernel.org>
- <8b1b7df5-07f4-4f95-88e7-4e95ee909ffd@foss.st.com>
- <ac119dba-6e73-496c-97e1-d59ac0fe4a27@kernel.org>
+From: Frank Scheiner <frank.scheiner@web.de>
+Subject: 6.1.132-rc1 build regression on ia64 (and possibly other
+ architectures)
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: dchinner@redhat.com, djwong@kernel.org, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org
 Content-Language: en-US
-From: Patrice CHOTARD <patrice.chotard@foss.st.com>
-In-Reply-To: <ac119dba-6e73-496c-97e1-d59ac0fe4a27@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-18_06,2025-03-17_03,2024-11-22_01
+X-Provags-ID: V03:K1:1rbs+WAu+iOyWLiRMJplyoHPy0zQccEFh4SqiFKqm6+YCqWlZkQ
+ wNARKrFRlMY7/jG4i9kbgoxqy1QVXKxIW7CG9KghilCWIYb2isgd5ojbqdKgGu3OvNjuSZD
+ f8qrM++ShNRj2yxYstZzEngkJXqxy/mNz6MnuA5/nK0LnLQPTtDV37J56hXkppGcX/7xX9U
+ ur+kW9I6H/tNdVXYhIokg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:f+e/6AIskPk=;a6/fn4ZHxIiPyJI5CYG1ou265kH
+ pzTpKf+s5R+mpuWuRbrJ/WmX/l3L1AavPgfNLfyKyceYQMQWbFkwUwDFe6ZO5tbiVXxFs8hjD
+ UqlqQafRlLweaqw9s4AEtYqwvDMlnB9TXVyq3VnEvbH6rT6KVa7GPb0dGHUCuMYQS14toqgQ6
+ +DeHjfvk3BNtvLHJAoAS34GXB2xt9gVqJKcrsOvUCLMpTKemLpuBNNYkUFQTO7JsOnOBBPzwn
+ LKOgeIL7AYyLOD3lDS111AYVwDFR/DsuDiCBKIDuHEvHL8pMFedawQu/Ngrq35l/p9uwfR4uQ
+ lxTH0jQykXQUd4N2prdGPnrRkWKQz13IFuAR6Vfzu+qdwqIsCaHDWVujpB+t+wsgFwqhkn6Hg
+ S7OjHXpgiSsmaJy4/HW8N4B8vqBqe8eMxwQV6hqm9iwOMwnyAVuowU7sCflc3HZJyXuEjKy/c
+ CHaXmMomFKvRfnXqO5PnzPEGBWUPXDwdXoCtmsxsa7LZIHdhQs8mN1XclmLA0H0VTtVqrqLe1
+ J5JGEIT3Q3M7S3/hh5MMX2UDWWO5n1tASzonHIDWXjETlR2JN7gUBOTsd/nvkK3qVuC7p7dyu
+ 6aVbqkx49AEh6pFyTcPc0plCycp94dzW42EmT7leMHxBqyorIutY6ehY/TfMZTITGTsDHDRLC
+ CegOR03vBvXWyfAmUB7QwYRgbveNH5J3LQdlXKQJzQOu/i3MgRWJSGgG0ZVX11ys7d+PsOO63
+ Bt2DmQCfI5tiFqlBw7yD/cn08WaqW96C5hVDrGXy7oPCzAaKcbXAYrs0b7NrUcwhRM08GMbS3
+ bpS8ReLg+PKCxyhCRgS2G24sMsnXiD1jRKA0X5Qxb3Y+atd1OvqF9hJbImBnAUl1tZnpZKvE0
+ 9whE4T/jS4kTdt2aAnvPIUAVB0t6lVnm+pfxTUY6lvDLxUbmCve24gIC/Gr3WnQcH9Outnbb2
+ IbmJ+vsZ1YOdZLc8cue8RxxWYNsRtJGhAv2A8jMQNnSh5dyNUBlcrw+1O7JVSrRrpF0gVPevb
+ Je48aTs1oKrIjZ35pUoFa8Kh5qvaEuijVH1eo246EmUhLDjiPRsAVn+QKhGwo9GQQHO/HMv5E
+ NU4z4jhkv//ANd3qVMQKwFwfgpfdy0aG//FLc4hbs9vO1/9s4jViOj/yB+PIU+5RJbhqjPUP1
+ 3HWQE84QJmp5u8mBk8a0T0eKxtoVtdJhY58+Cp0h48UWsyBP5x5ld1/BvJg6vD/yDrGjP0DkY
+ hkl8Wjaw2xj7u/AVA4jufS1pjlBjxske2dWzymqG0beneuJtoCexhUQA1vYsHESAcW/mMnOWW
+ MeSMqspy4lP4lAS42yvYpKZP6gYGuymN/LONlVE5ovth+sruV4JeAFvzLolNQMTIouLiWAwMk
+ xvYw2a6S7bKfD7mH84p56rOEBn2FLMyeCtwAUBmaHmEaTuocadhRqFGtdVB1FzYAwS+hFV9K3
+ hT7vBllcHZ6Nwve8DgJjkX09pV8svdrH08WxHmw/VUXcJMTGHXp6gCkLH9+rKlOKxDiVKxA==
 
+Hi again,
 
+also for 6.1.132-rc1 the review hasn't started yet, but as it was
+already available on [1], our CI has also tried to built it for ia64
+in the morning. Unfortunately that failed, too - I assume due to the
+following **missing** upstream commit:
 
-On 3/13/25 08:33, Krzysztof Kozlowski wrote:
-> On 12/03/2025 15:23, Patrice CHOTARD wrote:
->>>> +static int stm32_omm_disable_child(struct device *dev)
->>>> +{
->>>> +	struct stm32_omm *omm = dev_get_drvdata(dev);
->>>> +	struct reset_control *reset;
->>>> +	int ret;
->>>> +	u8 i;
->>>> +
->>>> +	for (i = 0; i < omm->nb_child; i++) {
->>>> +		ret = clk_prepare_enable(omm->child[i].clk);
->>>> +		if (ret) {
->>>> +			dev_err(dev, "Can not enable clock\n");
->>>> +			return ret;
->>>> +		}
->>>> +
->>>> +		reset = of_reset_control_get_exclusive(omm->child[i].node, 0);
->>>> +		if (IS_ERR(reset)) {
->>>> +			dev_err(dev, "Can't get child reset\n");
->>>
->>> Why do you get reset of child? Parent is not suppposed to poke there.
->>> You might not have the reset there in the first place and it would not
->>> be an error.
->>
->> By ressetting child (OSPI), we ensure they are disabled and in a known state.
->> See the comment below.
->>
->>>
->>>
->>>> +			return PTR_ERR(reset);
->>>> +		};
->>>> +
->>>> +		/* reset OSPI to ensure CR_EN bit is set to 0 */
->>>> +		reset_control_assert(reset);
->>>> +		udelay(2);
->>>> +		reset_control_deassert(reset);
->>>
->>> No, the child should handle this, not parent.
->>
->> Octo Memory Manager can only be configured if both child are disabled.
->> That's why here, parent handles this.
-> 
-> So if device by any chance started and is doing some useful work, then
-> you cancel that work and reset it?
+https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=f6b384631e1e3482c24e35b53adbd3da50e47e8f
 
-stm32_omm_configure() is only called if we get access granted on both children.
-That means we are authorized to use these devices, so we can reset them.
+[1]: https://web.git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git/commit/?h=linux-6.1.y
 
-> 
-> And what if child does not have reset line? Your binding allows that, so
-> how is it supposed to work then?
+Build failure (see [2]):
 
-Ah yes, you are right, the OSPI bindings need to be updated
-by requiring reset lines and the driver spi-stm32-ospi.c as well.
-I will send a fix for that.
+```
+[...]
+In file included from ./include/linux/string.h:5,
+                 from ./include/linux/uuid.h:12,
+                 from ./fs/xfs/xfs_linux.h:10,
+                 from ./fs/xfs/xfs.h:22,
+                 from fs/xfs/libxfs/xfs_alloc.c:6:
+fs/xfs/libxfs/xfs_alloc.c: In function '__xfs_free_extent_later':
+fs/xfs/libxfs/xfs_alloc.c:2551:51: error: 'mp' undeclared (first use in this function); did you mean 'tp'?
+ 2551 |         if (XFS_IS_CORRUPT(mp, !xfs_verify_fsbext(mp, bno, len)))
+      |                                                   ^~
+./include/linux/compiler.h:78:45: note: in definition of macro 'unlikely'
+   78 | # define unlikely(x)    __builtin_expect(!!(x), 0)
+      |                                             ^
+fs/xfs/libxfs/xfs_alloc.c:2551:13: note: in expansion of macro 'XFS_IS_CORRUPT'
+ 2551 |         if (XFS_IS_CORRUPT(mp, !xfs_verify_fsbext(mp, bno, len)))
+      |             ^~~~~~~~~~~~~~
+fs/xfs/libxfs/xfs_alloc.c:2551:51: note: each undeclared identifier is reported only once for each function it appears in
+ 2551 |         if (XFS_IS_CORRUPT(mp, !xfs_verify_fsbext(mp, bno, len)))
+      |                                                   ^~
+./include/linux/compiler.h:78:45: note: in definition of macro 'unlikely'
+   78 | # define unlikely(x)    __builtin_expect(!!(x), 0)
+      |                                             ^
+fs/xfs/libxfs/xfs_alloc.c:2551:13: note: in expansion of macro 'XFS_IS_CORRUPT'
+ 2551 |         if (XFS_IS_CORRUPT(mp, !xfs_verify_fsbext(mp, bno, len)))
+      |             ^~~~~~~~~~~~~~
+./fs/xfs/xfs_linux.h:225:63: warning: left-hand operand of comma expression has no effect [-Wunused-value]
+  225 |                                                __this_address), \
+      |                                                               ^
+fs/xfs/libxfs/xfs_alloc.c:2551:13: note: in expansion of macro 'XFS_IS_CORRUPT'
+ 2551 |         if (XFS_IS_CORRUPT(mp, !xfs_verify_fsbext(mp, bno, len)))
+      |             ^~~~~~~~~~~~~~
+make[5]: *** [scripts/Makefile.build:250: fs/xfs/libxfs/xfs_alloc.o] Error 1
+[...]
+```
 
-Thanks for pointing this.
+[2]: https://github.com/linux-ia64/linux-stable-rc/actions/runs/13914712427/job/38935973489#step:8:1292
 
-> 
-> This also leads me to questions about bindings - if you need to assert
-> some reset, doesn't it mean that these resets are also coming through
-> this device so they are part of this device node?
+[3] (7dfee17b13e5024c5c0ab1911859ded4182de3e5 upstream) introduced
+the XFS_IS_CORRUPT macro call now in `fs/xfs/libxfs/xfs_alloc.c:2551`,
+but the struct "mp" is only there when DEBUG is defined in 6.1.132-rc1.
+The above upstream commit (f6b3846) moves "mp" out of that guard and
+hence should fix that specific build regression IIUC. Again not
+build-tested yet, though.
 
-As we are able to retrieve children's reset from their respective node,
-if you don't mind, OMM bindings can be kept as it's currently.
+[3]: https://web.git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git/commit/?h=linux-6.1.y&id=4fc6b15f590bc7a15cb94af58668d9c938015d79
 
-And another information, on some MP2 SoCs family, there is only one 
-OSPI instance. So for these SoCs, there is no Octo Memory Manager.
-
-> 
->>
->>>
->>>> +
->>>> +		reset_control_put(reset);
->>>> +		clk_disable_unprepare(omm->child[i].clk);
->>>> +	}
->>>> +
->>>> +	return 0;
->>>> +}
->>>> +
->>>> +static int stm32_omm_probe(struct platform_device *pdev)
->>>> +{
->>>> +	struct platform_device *vdev;
->>>> +	struct device *dev = &pdev->dev;
->>>> +	struct stm32_omm *omm;
->>>> +	struct clk *clk;
->>>> +	int ret;
->>>> +	u8 child_access_granted = 0;
->>>
->>> Keep inits/assignments together
->>
->> ok
->>
->>>
->>>> +	u8 i, j;
->>>> +	bool child_access[OMM_CHILD_NB];
->>>> +
->>>> +	omm = devm_kzalloc(dev, sizeof(*omm), GFP_KERNEL);
->>>> +	if (!omm)
->>>> +		return -ENOMEM;
->>>> +
->>>> +	omm->io_base = devm_platform_ioremap_resource_byname(pdev, "regs");
->>>> +	if (IS_ERR(omm->io_base))
->>>> +		return PTR_ERR(omm->io_base);
->>>> +
->>>> +	omm->mm_res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "memory_map");
->>>> +	if (IS_ERR(omm->mm_res))
->>>> +		return PTR_ERR(omm->mm_res);
->>>> +
->>>> +	/* check child's access */
->>>> +	for_each_child_of_node_scoped(dev->of_node, child) {
->>>> +		if (omm->nb_child >= OMM_CHILD_NB) {
->>>> +			dev_err(dev, "Bad DT, found too much children\n");
->>>> +			ret = -E2BIG;
->>>> +			goto err_clk_release;
->>>> +		}
->>>> +
->>>> +		if (!of_device_is_compatible(child, "st,stm32mp25-ospi")) {
->>>> +			ret = -EINVAL;
->>>> +			goto err_clk_release;
->>>> +		}
->>>> +
->>>> +		ret = stm32_omm_check_access(dev, child);
->>>> +		if (ret < 0 && ret != -EACCES)
->>>> +			goto err_clk_release;
->>>> +
->>>> +		child_access[omm->nb_child] = false;
->>>> +		if (!ret) {
->>>> +			child_access_granted++;
->>>> +			child_access[omm->nb_child] = true;
->>>> +		}
->>>> +
->>>> +		omm->child[omm->nb_child].node = child;
->>>> +
->>>> +		clk = of_clk_get(child, 0);
->>>
->>> Why are you taking children clock? And why with this API, not clk_get?
->>
->> I need children's clock to reset them.
-> 
-> 
-> The device driver should reset its device. It is not a discoverable bus,
-> that would explain power sequencing from the parent.
-> 
->> Why of_clk_get() usage is a problem here ? i can't get your point ?
-> 
-> Because it is not the API which device drivers should use. You should
-> use clk_get or devm_clk_get.
-
-
-ok, i will update this part using clk_get().
-
-> 
-> 
->>
->>> This looks like mixing clock provider in the clock consumer.
->>>
->>>> +		if (IS_ERR(clk)) {
->>>> +			dev_err(dev, "Can't get child clock\n");
->>>
->>> Syntax is always return dev_err_probe (or ret = dev_err_probe).
->>
->> ok
->>
->>>
->>>> +			ret = PTR_ERR(clk);
->>>> +			goto err_clk_release;
->>>> +		};
->>>> +
->>>> +		omm->child[omm->nb_child].clk = clk;
->>>> +		omm->nb_child++;
->>>> +	}
->>>> +
->>>> +	if (omm->nb_child != OMM_CHILD_NB) {
->>>> +		ret = -EINVAL;
->>>> +		goto err_clk_release;
->>>> +	}
->>>> +
->>>> +	platform_set_drvdata(pdev, omm);
->>>> +
->>>> +	pm_runtime_enable(dev);
->>>> +
->>>> +	/* check if OMM's resource access is granted */
->>>> +	ret = stm32_omm_check_access(dev, dev->of_node);
->>>> +	if (ret < 0 && ret != -EACCES)
->>>> +		goto err_clk_release;
->>>> +
->>>> +	if (!ret && child_access_granted == OMM_CHILD_NB) {
->>>> +		/* Ensure both OSPI instance are disabled before configuring OMM */
->>>> +		ret = stm32_omm_disable_child(dev);
->>>> +		if (ret)
->>>> +			goto err_clk_release;
->>>> +
->>>> +		ret = stm32_omm_configure(dev);
->>>> +		if (ret)
->>>> +			goto err_clk_release;
->>>> +	} else {
->>>> +		dev_dbg(dev, "Octo Memory Manager resource's access not granted\n");
->>>> +		/*
->>>> +		 * AMCR can't be set, so check if current value is coherent
->>>> +		 * with memory-map areas defined in DT
->>>> +		 */
->>>> +		ret = stm32_omm_set_amcr(dev, false);
->>>> +		if (ret)
->>>> +			goto err_clk_release;
->>>> +	}
->>>> +
->>>> +	/* for each child, if resource access is granted and status "okay", probe it */
->>>> +	for (i = 0; i < omm->nb_child; i++) {
->>>> +		if (!child_access[i] || !of_device_is_available(omm->child[i].node))
->>>
->>> If you have a device available, why do you create one more platform device?
->>>
->>>> +			continue;
->>>> +
->>>> +		vdev = of_platform_device_create(omm->child[i].node, NULL, NULL);
->>>
->>> Why you cannot just populate the children?
->>
->> I can't use of_platform_populate(), by default it will populate all OMM's child.
->> Whereas here, we want to probe only the OMM's child which match our criteria.  
-> 
-> 
-> Why wouldn't you populate everyone? The task of bus driver is not to
-> filter out DT. If you got such DT - with all device nodes - you are
-> expected to populate all of them. Otherwise, if you do not want all of
-> them, it is expected that firmware or bootloader will give you DT
-> without these nodes.
-
-We don't want to populate every child by default because we can get 
-cases where one child is shared between Cortex A and Cortex M.
-That's why we must check if access is granted which ensure that 
-firewall semaphore is available (RIFSC semaphore in our case).
-
-Patrice
-
-> 
-> Best regards,
-> Krzysztof
+Cheers,
+Frank
 
