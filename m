@@ -1,271 +1,141 @@
-Return-Path: <linux-kernel+bounces-565428-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565429-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FF08A667F4
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 05:01:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F470A667F9
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 05:01:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 05D5517AC59
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 04:00:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2E273B32FE
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 04:01:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E3A91C5F10;
-	Tue, 18 Mar 2025 04:00:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 672D117C220;
+	Tue, 18 Mar 2025 04:01:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="GBCkQqy0"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="MQSK13NH"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE0461C5D6C
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 04:00:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4592C3BBF2
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 04:01:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742270403; cv=none; b=dlz0kUyesjLVs7hdP63x1JwT3D8beLRo54v64ltUrO/bZeYlQQ0fiLJeLUIEIrQ56HmPeRPDPse2tdrjl6GXxrHADRQGikgkS/h47puXnPgHHRZ8Y31W5OkbaoKkwm1+0iw1pugATqBWqZNkciTWSkKY710MNfxeGoc23UxaopU=
+	t=1742270501; cv=none; b=Lmyg98I71o2ZaYoflSfrYoKABMGKn0qpqA2tppcSteXkMm5Em6yWDyA1HLdXs2zjkjtPQ7L96/FQW2PzHbz55MPPr4pM5RtAe7lOWPWdbXzHiQHVmyx76tUcaqB4+NAIKbmtMEQGF4YRF7pmEVX1YZ8Nq48sraMZ3ErfjOWGAfg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742270403; c=relaxed/simple;
-	bh=EBw0pp0DQXvs46s1Cun5L7W7ygqXcv2euwtVQoMQwxM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=nhsmCcYGBQIQlykgyOq4LVeECNo+GS0n3xQ0eN9uOaumjbEQaesPmGRAXEPjtfWmtSgXTRafBuYrzsu3sfPCOpuzu/4eE//gvTBLuIAX7BUsQ3i+zWXGDJK2aIBmY38RwNy7qDUNZd0+SMP6iqmYsBzjmK53hWpNr69IY5bhUcM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=GBCkQqy0; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-22438c356c8so89154685ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 21:00:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1742270401; x=1742875201; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=25EEGwiFn3VnbkwivdTLYPKqZQgF1BeYiMnWI1gQipU=;
-        b=GBCkQqy0oppsha48UjqLp0WzZblMXlAGQzNKEI8/Ekc2xMWxGPBxqNJATT3x146NAm
-         ax3PGuJvyZsLvjO+25CYmddiSL5uwzn2Yh9jxKn7/C/G4KgAhQ6NX8Ue2rJ9l4OVXoUc
-         IiJJfTFrtPI6QPIKVqpruh4zMuGPVdR0tyWjNhE99D4s0t528AAg0QLPPWK2YtLhGhCb
-         XvdCHdwzpaat/IGtDq3+8F2ir90Ub6UF28U39R3uCHBwAVFg7fA8t6vGGnH2zqH8X6Ey
-         9vD6ZeJmWW+0cR/y/3Btiak05bQ2ahT3Bqn2VGx4q4tfpuAW3AGfIxRXm0OEa6e4395p
-         6rtw==
+	s=arc-20240116; t=1742270501; c=relaxed/simple;
+	bh=K6Q/gfJ/2Dkf+Q/weRCzrm/EdWn87ibUtjKdSrBLUMc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UMHHuuTY0eGmNWIk6duElQZxpTB5ZRCQGagPwAiozJ4Y2+IIPLiMkBFfDDDFJ1vrGLnlT7/9Sx0FMYARsDqT76vYkmHicvqNBJzho6ldgIuYkpOrPAxQKiupf+7DGqQliGJ1vAUkEbPtgMg9i2h6LwXpjIgDQD2Tcr+LEX8HQ90=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=MQSK13NH; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52HKjGlG006734
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 04:01:38 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	g1ZqIRlo/bjZwLlSypjNHtK2fYpTyQL7/nn4I11gbjo=; b=MQSK13NHPEK8SDpE
+	xAKEdG4uPGbskufICjioOU0KUOOfBLo6CT29Iv84drktTJsv6TUBFxubRdBveUCG
+	PBr2Fg3Pq2tlkrSMhppVgWFfDYj+qdezRDRTQPMNX2POsKFq67+Yk2z9p31OqEwR
+	bM9Ul/Xu8n+cmk4BVCCV9vqbV7UFjDdjJSyUEx8cfOyJbuMviym11TWzNyTYn1l3
+	p5NhQ4Nr1g4FR8x32TsLw+duu/AZtGE7X/N+70OxvQTmtnF+P/lpBC6PgiFoIdTw
+	rU9qHDhPYXxpHrAWdESUntodTnXz6odjya7gpEU/W3zqQJprhYzKamB9pglRayw6
+	9aCBQA==
+Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com [209.85.216.69])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45d1t4ptw6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 04:01:37 +0000 (GMT)
+Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-2ff7aecba07so4281605a91.2
+        for <linux-kernel@vger.kernel.org>; Mon, 17 Mar 2025 21:01:37 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742270401; x=1742875201;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=25EEGwiFn3VnbkwivdTLYPKqZQgF1BeYiMnWI1gQipU=;
-        b=mJjjaos0ZdSR3f7fq3XKtYxghS3q4OJ109L9ehrEDssuzsWctGzTPKl30t+A8TvWVq
-         18+PQNKhUNOw9ngtx02Z17t9fvR56WUXccqP6QK1C6CMYHWTktHB7JSy7pjJkyAJCr3P
-         CRDo1ujVB7Z1duokXY8dLfIYzySsblLiyiUUgg+hzHoXGFzA8D9O+pVumLPbZOpyp2Nj
-         ObgV6yUbWXgNEb9W4YIpwPX4wtV0noNWKfemVGqdDZ9Sv5UhOciClnWkCDFUTqE86xgI
-         mPCWBWh0xMwy3QGHh+Dq5D91HnVbhMy0TKfGTWNzNgl+cjMGqsPtQbwnaf6O5+9UGVHe
-         vIbQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWy2gXTIh+R9tcGk44jFgM7J7Q5Wcs6n9f5aK8PorF0rQCQ4dc5bGYVcpmLvJWImu3AOyK38VE4jZ3ADjY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxG88EKLEjzzZYtZ8HYXnLl1xfFucmolymr0SM+GL65SQzz1T2C
-	o5Z6z3Wj3kM52JGFoIQ9uBQd21KgAZN8ip5UyCLo5wMCApcBbAM857fG4Ks3SjA=
-X-Gm-Gg: ASbGncsPbhezskVpiR8pphuRGxnkIhKN5t78+fAT6qGxbZqZ2qx6j0vjWe3E40PgG7U
-	pKJ3SnZLib+XHx2wN6Q6uzOYh+wJ8nBRGOpArgAG/Yd7uzFQXItRyQWutlwAeXsV8l2dDwPa9Nk
-	rssKUB2duXmIeXw1ve2DBendduMqz8lx02BmDjlrT0W3d5koe+3vvnzbykQgCD7M86YqPaqSXl+
-	ReQNWjpmRy8LK20mx7rJCL1fMECxjro7pDsJMLgiM4x3ZWyGFE9LeWwADCFua1VicEGl+eml8b2
-	Wgk4P9KwdVG62RLQ+vdhxg70CV7f7JTBuqTf7tRQFP78Bz62rOH0aQH78+nxnGoZRGpC/T1XKNS
-	lNF0g2/QPmOjqUuZJ84o2Y02g32ZNu7Dob1FsGQ==
-X-Google-Smtp-Source: AGHT+IFBc6TvuWKKSrWPTLSErVQ1GkoHiMOoKLD8NwCVFkbU9sjHFxonJru7yaMaEU5aIspYftiubw==
-X-Received: by 2002:a17:903:230f:b0:223:5e54:c521 with SMTP id d9443c01a7336-225e0859fafmr199239715ad.0.1742270400974;
-        Mon, 17 Mar 2025 21:00:00 -0700 (PDT)
-Received: from J9GPGXL7NT.bytedance.net ([61.213.176.55])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-225c6bd4b30sm83720135ad.235.2025.03.17.20.59.56
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Mon, 17 Mar 2025 20:59:59 -0700 (PDT)
-From: Xu Lu <luxu.kernel@bytedance.com>
-To: akpm@linux-foundation.org,
-	jhubbard@nvidia.com,
-	kirill.shutemov@linux.intel.com,
-	tjeznach@rivosinc.com,
-	joro@8bytes.org,
-	will@kernel.org,
-	robin.murphy@arm.com
-Cc: lihangjing@bytedance.com,
-	xieyongji@bytedance.com,
-	linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	Xu Lu <luxu.kernel@bytedance.com>
-Subject: [PATCH RESEND v2 4/4] iommu/riscv: Add support for Svnapot
-Date: Tue, 18 Mar 2025 11:59:30 +0800
-Message-Id: <20250318035930.11855-5-luxu.kernel@bytedance.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
-In-Reply-To: <20250318035930.11855-1-luxu.kernel@bytedance.com>
-References: <20250318035930.11855-1-luxu.kernel@bytedance.com>
+        d=1e100.net; s=20230601; t=1742270496; x=1742875296;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=g1ZqIRlo/bjZwLlSypjNHtK2fYpTyQL7/nn4I11gbjo=;
+        b=G/0semuhGWp4rHYJAXt47N2tRibEtc1oDeYjad7Sz7VSPpgSBZG4ah3qcfcD1wW/P/
+         U3S1nFyM7x2NixVUbZPTdjUdkiUpAHoMuw/rmYMDEbFH5JJ0pTYwyrWU2trwCObMNrKe
+         QoHOqed3ItlVqDUGv6sB0bBFOo2Bng1oz2D9YWrmqk5/pSPLTh5AkIrCjEvYIaFHFOsp
+         Q9gIlyhWiPKEPmeFJICHOjK8WKRnWD+SJn00nSjMdlJ4XttsYEI4MLLfQh81oJVbSgM0
+         bAvhuvBNtE6R2plqHS/3SCg5X07dUT0YAg5Mv0kPTepLyLXT+0rFExIGEuIouypbGY1p
+         Pdtg==
+X-Forwarded-Encrypted: i=1; AJvYcCUpvRQv2fYhiNNG1VZeZNplSQh0V9/EhTU9FhUN/iAm7mvEzm8mOQaXEMm9JXNbtmBBHTiWwkeprN/ul50=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy1DyxkGzmsJbkpGVxK0u1pzDPbBBpi4NUQQgs32gZGKZQWpsxK
+	izh8Ygzhet3V269fvOQ1T046a0+uHl/rhKE4A5C9zubhzEIZJPy3IdA76L3Dv3VGUaOBLAM9vX0
+	A+eAxVkLF5tk60hi3PPNlF/9sl0+McVBCCPpTmDqn9jlmBAtyi7e+NxXuO7DUeqM=
+X-Gm-Gg: ASbGncslpeDWYooYIwJUEekRDxwFSy+xJebPTilqIZObYfbV2SUD7NTAMGCbUURaClE
+	LcTPrngCZHrwzkd5OQVdqKHY46ifwgf3GEK6Lema5U1NrLXHWmRpIlZqor2ElwmKaP9MogAyY4Z
+	4ehfixGO9f+i8GZLSyhRf5bEI+N2qaSclbJU00IQ7kjG2HlGYKtPofNd4IKg6TE/hLtfeYjbXvq
+	eRfCDV8spIEALe2+8h5V44jonEAwXG0QH1wyKLYL6mRhrIAq4Q3Hohg/2pUp4ShQDE/31PA/Qbc
+	0EqeQXUKHFaPFhAXCPOQZV88NCL+KDBQKRwx8Ql8QmVGymLNce2AAXbbsg==
+X-Received: by 2002:a17:90b:3dc3:b0:2ee:db8a:2a01 with SMTP id 98e67ed59e1d1-301a5bc0dbamr1228598a91.30.1742270496498;
+        Mon, 17 Mar 2025 21:01:36 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE9Edi3sDHHeZNXLncEXae5cC0YitCoPLeBGh6ElwofYcdSRsUatQjnw3qn2xTmbSGT+0Iy0Q==
+X-Received: by 2002:a17:90b:3dc3:b0:2ee:db8a:2a01 with SMTP id 98e67ed59e1d1-301a5bc0dbamr1228565a91.30.1742270496046;
+        Mon, 17 Mar 2025 21:01:36 -0700 (PDT)
+Received: from [10.152.204.0] ([202.46.23.19])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3015364ec9csm7864720a91.45.2025.03.17.21.01.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 17 Mar 2025 21:01:35 -0700 (PDT)
+Message-ID: <37a33341-a83f-6349-6bff-23b082aa46ad@oss.qualcomm.com>
+Date: Tue, 18 Mar 2025 09:31:30 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH ath-next v11 11/13] wifi: ath12k: Power up userPD
+Content-Language: en-US
+To: Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>, ath12k@lists.infradead.org
+Cc: Johannes Berg <johannes@sipsolutions.net>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Jeff Johnson <jjohnson@kernel.org>, linux-wireless@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Sowmiya Sree Elavalagan <quic_ssreeela@quicinc.com>
+References: <20250317204639.1864742-1-quic_rajkbhag@quicinc.com>
+ <20250317204639.1864742-12-quic_rajkbhag@quicinc.com>
+From: Vasanthakumar Thiagarajan <vasanthakumar.thiagarajan@oss.qualcomm.com>
+In-Reply-To: <20250317204639.1864742-12-quic_rajkbhag@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Authority-Analysis: v=2.4 cv=VLPdn8PX c=1 sm=1 tr=0 ts=67d8f021 cx=c_pps a=vVfyC5vLCtgYJKYeQD43oA==:117 a=j4ogTh8yFefVWWEFDRgCtg==:17 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8 a=WCMLO9bd9HEky8F4BQ4A:9 a=QEXdDO2ut3YA:10
+ a=rl5im9kqc5Lf4LNbBjHf:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-ORIG-GUID: 3L20uVKsRU5AFimB8Hj2pE0ZhxG3LhGj
+X-Proofpoint-GUID: 3L20uVKsRU5AFimB8Hj2pE0ZhxG3LhGj
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-18_02,2025-03-17_03,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0
+ priorityscore=1501 clxscore=1015 mlxscore=0 lowpriorityscore=0
+ phishscore=0 mlxlogscore=716 impostorscore=0 suspectscore=0 malwarescore=0
+ bulkscore=0 spamscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503180026
 
-Add Svnapot size as supported page size and apply Svnapot when it is
-possible.
 
-Signed-off-by: Xu Lu <luxu.kernel@bytedance.com>
----
- drivers/iommu/riscv/iommu.c | 86 +++++++++++++++++++++++++++++++++----
- 1 file changed, 77 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/iommu/riscv/iommu.c b/drivers/iommu/riscv/iommu.c
-index ce4cf6569ffb4..7cc736abd2a61 100644
---- a/drivers/iommu/riscv/iommu.c
-+++ b/drivers/iommu/riscv/iommu.c
-@@ -1158,6 +1158,26 @@ static int pgsize_to_level(size_t pgsize)
- 	return level;
- }
- 
-+static unsigned long napot_size_to_order(unsigned long size)
-+{
-+	unsigned long order;
-+
-+	if (!has_svnapot())
-+		return 0;
-+
-+	for_each_napot_order(order) {
-+		if (size == napot_cont_size(order))
-+			return order;
-+	}
-+
-+	return 0;
-+}
-+
-+static bool is_napot_size(unsigned long size)
-+{
-+	return napot_size_to_order(size) != 0;
-+}
-+
- static void riscv_iommu_pte_free(struct riscv_iommu_domain *domain,
- 				 pte_t pte, int level,
- 				 struct list_head *freelist)
-@@ -1205,7 +1225,8 @@ static pte_t *riscv_iommu_pte_alloc(struct riscv_iommu_domain *domain,
- 		 * existing mapping with smaller granularity. Up to the caller
- 		 * to replace and invalidate.
- 		 */
--		if (((size_t)1 << shift) == pgsize)
-+		if ((((size_t)1 << shift) == pgsize) ||
-+		    (is_napot_size(pgsize) && pgsize_to_level(pgsize) == level))
- 			return ptr;
- pte_retry:
- 		pte = ptep_get(ptr);
-@@ -1256,7 +1277,10 @@ static pte_t *riscv_iommu_pte_fetch(struct riscv_iommu_domain *domain,
- 		ptr += ((iova >> shift) & (PTRS_PER_PTE - 1));
- 		pte = ptep_get(ptr);
- 		if (_io_pte_present(pte) && _io_pte_leaf(pte)) {
--			*pte_pgsize = (size_t)1 << shift;
-+			if (pte_napot(pte))
-+				*pte_pgsize = napot_cont_size(napot_cont_order(pte));
-+			else
-+				*pte_pgsize = (size_t)1 << shift;
- 			return ptr;
- 		}
- 		if (_io_pte_none(pte))
-@@ -1274,13 +1298,18 @@ static int riscv_iommu_map_pages(struct iommu_domain *iommu_domain,
- {
- 	struct riscv_iommu_domain *domain = iommu_domain_to_riscv(iommu_domain);
- 	size_t size = 0;
--	pte_t *ptr;
--	pte_t pte;
--	unsigned long pte_prot;
--	int rc = 0, level;
-+	pte_t *ptr, old, pte;
-+	unsigned long pte_prot, order = 0;
-+	int rc = 0, level, i;
- 	spinlock_t *ptl; /* page table page lock */
- 	LIST_HEAD(freelist);
- 
-+	if (iova & (pgsize - 1))
-+		return -EINVAL;
-+
-+	if (is_napot_size(pgsize))
-+		order = napot_size_to_order(pgsize);
-+
- 	if (!(prot & IOMMU_WRITE))
- 		pte_prot = _PAGE_BASE | _PAGE_READ;
- 	else if (domain->amo_enabled)
-@@ -1297,9 +1326,27 @@ static int riscv_iommu_map_pages(struct iommu_domain *iommu_domain,
- 
- 		level = pgsize_to_level(pgsize);
- 		ptl = riscv_iommu_ptlock(domain, ptr, level);
--		riscv_iommu_pte_free(domain, ptep_get(ptr), level, &freelist);
-+
-+		old = ptep_get(ptr);
-+		if (pte_napot(old) && napot_cont_size(napot_cont_order(old)) > pgsize) {
-+			spin_unlock(ptl);
-+			rc = -EFAULT;
-+			break;
-+		}
-+
- 		pte = _io_pte_entry(phys_to_pfn(phys), pte_prot);
--		set_pte(ptr, pte);
-+		if (order) {
-+			pte = pte_mknapot(pte, order);
-+			for (i = 0; i < napot_pte_num(order); i++, ptr++) {
-+				old = ptep_get(ptr);
-+				riscv_iommu_pte_free(domain, old, level, &freelist);
-+				set_pte(ptr, pte);
-+			}
-+		} else {
-+			riscv_iommu_pte_free(domain, old, level, &freelist);
-+			set_pte(ptr, pte);
-+		}
-+
- 		spin_unlock(ptl);
- 
- 		size += pgsize;
-@@ -1336,6 +1383,9 @@ static size_t riscv_iommu_unmap_pages(struct iommu_domain *iommu_domain,
- 	size_t unmapped = 0;
- 	size_t pte_size;
- 	spinlock_t *ptl; /* page table page lock */
-+	unsigned long pte_num;
-+	pte_t pte;
-+	int i;
- 
- 	while (unmapped < size) {
- 		ptr = riscv_iommu_pte_fetch(domain, iova, &pte_size);
-@@ -1347,7 +1397,21 @@ static size_t riscv_iommu_unmap_pages(struct iommu_domain *iommu_domain,
- 			return unmapped;
- 
- 		ptl = riscv_iommu_ptlock(domain, ptr, pgsize_to_level(pte_size));
--		set_pte(ptr, __pte(0));
-+		if (is_napot_size(pte_size)) {
-+			pte = ptep_get(ptr);
-+
-+			if (!pte_napot(pte) ||
-+			    napot_cont_size(napot_cont_order(pte)) != pte_size) {
-+				spin_unlock(ptl);
-+				return unmapped;
-+			}
-+
-+			pte_num = napot_pte_num(napot_cont_order(pte));
-+			for (i = 0; i < pte_num; i++, ptr++)
-+				set_pte(ptr, __pte(0));
-+		} else {
-+			set_pte(ptr, __pte(0));
-+		}
- 		spin_unlock(ptl);
- 
- 		iommu_iotlb_gather_add_page(&domain->domain, gather, iova,
-@@ -1447,6 +1511,7 @@ static struct iommu_domain *riscv_iommu_alloc_paging_domain(struct device *dev)
- 	unsigned int pgd_mode;
- 	dma_addr_t va_mask;
- 	int va_bits, level;
-+	size_t order;
- 
- 	iommu = dev_to_iommu(dev);
- 	if (iommu->caps & RISCV_IOMMU_CAPABILITIES_SV57) {
-@@ -1506,6 +1571,9 @@ static struct iommu_domain *riscv_iommu_alloc_paging_domain(struct device *dev)
- 	domain->domain.geometry.aperture_end = va_mask;
- 	domain->domain.geometry.force_aperture = true;
- 	domain->domain.pgsize_bitmap = va_mask & (SZ_4K | SZ_2M | SZ_1G | SZ_512G);
-+	if (has_svnapot())
-+		for_each_napot_order(order)
-+			domain->domain.pgsize_bitmap |= napot_cont_size(order) & va_mask;
- 
- 	domain->domain.ops = &riscv_iommu_paging_domain_ops;
- 
--- 
-2.20.1
+On 3/18/2025 2:16 AM, Raj Kumar Bhagat wrote:
+> From: Sowmiya Sree Elavalagan <quic_ssreeela@quicinc.com>
+> 
+> UserPD firmware image is loaded and booted by ath12k driver. Get the userPD
+> memory region from DTS and load the firmware for userPD from pre-defined
+> path into io-remapped address of this region. Authenticate this image
+> using pasid which is a peripheral ID. Set the spawn bit to instruct Q6
+> to spawn userPD thread. Wait for userPD to spawn which is indicated by
+> spawn interrupt. Ready interrupt is triggered once the userPD is powered
+> up completely.
+> 
+> Tested-on: IPQ5332 hw1.0 AHB WLAN.WBE.1.3.1-00130-QCAHKSWPL_SILICONZ-1
+> 
+> Signed-off-by: Sowmiya Sree Elavalagan <quic_ssreeela@quicinc.com>
+> Signed-off-by: Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>
 
+Reviewed-by: Vasanthakumar Thiagarajan <vasanthakumar.thiagarajan@oss.qualcomm.com>
 
