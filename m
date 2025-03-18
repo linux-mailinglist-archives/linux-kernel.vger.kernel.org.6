@@ -1,163 +1,113 @@
-Return-Path: <linux-kernel+bounces-565885-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565886-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E12BA6709D
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 10:59:44 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C008A67094
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 10:58:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 545B53ADCBF
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 09:58:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D73C47A9AC2
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 09:57:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33F17209695;
-	Tue, 18 Mar 2025 09:57:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3836206F3E;
+	Tue, 18 Mar 2025 09:58:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=daynix-com.20230601.gappssmtp.com header.i=@daynix-com.20230601.gappssmtp.com header.b="oXLIOhHA"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gERZE2J6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69138209696
-	for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 09:57:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58C071F09A4;
+	Tue, 18 Mar 2025 09:58:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742291846; cv=none; b=fNccPn0E3Mki/MWZ8ep3k9i6Bb3YSalzI3doTspE4JZYafr0X/Xfz3Tvkm0YyiGpeMPcDLak3E0MoklY4jU0/IWMkAw6EYTzHjso7cv01RKoWoIowz/Iz+L+cbELpFNam6US3pmbGb8VB0/EANRoYp2l1OknMfVZakZ0/q/mQ9g=
+	t=1742291924; cv=none; b=OVyAcA8C8zIC6LKvSpBwMIfpNCnWS+ZBT0scTMi38VHwv5rcRe51wEvlEGU0/zLza8G5ivHkHAEUJWm+J2p9GdSHH1c7CP4IvrvCiwVjHxjxLg3X+aEB4l7GgQC2huV2TwLFkZiLQ1NXV6NYU8GYtU2jmhVC7oTn19Blwwh0iAs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742291846; c=relaxed/simple;
-	bh=PTPRleizS1Yo/Zj2lCHknRUrDScXS7LpuAGSZt5GrG4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=nG32m1IPdXEWIMRGpMGFcugP+CreRZDveyS/EgX/LNjpoxTobGHcOZE3cT/wp1Fgvlt9GzeK5cmK1tmOv9OcpjutJPRvbFiyTfki15JiV+ShWHlD0D1EFBfGdme8XyPpQQsEn7C+bKla41pDn1UixL7+pwjNpNEW3PrNL+E5pwQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=daynix.com; spf=pass smtp.mailfrom=daynix.com; dkim=pass (2048-bit key) header.d=daynix-com.20230601.gappssmtp.com header.i=@daynix-com.20230601.gappssmtp.com header.b=oXLIOhHA; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=daynix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=daynix.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-224171d6826so2579385ad.3
-        for <linux-kernel@vger.kernel.org>; Tue, 18 Mar 2025 02:57:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=daynix-com.20230601.gappssmtp.com; s=20230601; t=1742291840; x=1742896640; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Wp+TkaR3KA/C/LJhQd39jSgt/1NvtxrTDAfmjY+x69o=;
-        b=oXLIOhHAhV10Z2A570QWtBlOh7NEPNDR9tLgewiBfnLklZBhn56079pbqUAsBCuIif
-         wHvc7bHlPoSYzgOjJUbIrFeWpozstExJZjVE0pe47dYPgu2OfaDeBm12i3r2KPCDN+UT
-         JU2bVcqNvc5XRyliWGntIdVNpq6qlvNVCNfO5j/7kDCJdlksyWCR5chnDgmQKl2QkZ7F
-         8WBqX1W3KOXORw0h0xE1YZiiYc5Mk2KfbGNl1AmAs/dcFaV03uspdjCDuZCtaqoSv6mE
-         M1GpKNp2mI2huLCMX9HFITIz4+MbbKnTUrMblvI+SF4dyQt3WzRfkrfQioIsQJN3MhGQ
-         +mHw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742291840; x=1742896640;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Wp+TkaR3KA/C/LJhQd39jSgt/1NvtxrTDAfmjY+x69o=;
-        b=bw2iYs8c0Oh6/lnk1ofGJ+QZNpQyGKXJ0/wIcYhWtM8BiHJdA1hQNIMp4U8VJXwFn7
-         qVdjoRAr4JjPTK5zEievBNJYBigFUg2zYGMysUAwQH1HKXJuHeeehX+Iav07eyjJPc0i
-         4+TKZk/mIfDd0xZigJUqPp9DsMuM2q0KlPKGC7DwGY7Ml/VReNCjHMVBkNIUw/LZzDbk
-         nKcKBeh2MJGvzfhekRn/H26Kf5PU3qXJGr5RKP3BxdLQUzvukObSquMAjeHzQZoQvzNt
-         MRIxRzB20lXlxfYK+9/e+5YEn2jUTCM1q2l5yqXxacAVE+kRH8jjqAdWPEgv3Kh/3VyK
-         tdgg==
-X-Forwarded-Encrypted: i=1; AJvYcCVmvKIWLHPxGIadwLNLWM8Pgd9ZjPIF+mrdkDjdIaNxGM2WkaG45ThwDJESAp5MXU9Q/5IRQTmyibBvXBw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyDpN/eP9Rzp40Y+KQm3mm7go4oJPQHteZUChmuDYXKJatD3pfH
-	WjGvlwnxYdsAcVMPsrt7uFTcnjMh3lQTf87F4E91rdbdJ12Jl/uwSxYGQRDjNXM=
-X-Gm-Gg: ASbGncsYbPFlsQZ0hsqlYg6m3UJMimiNYkRke4sS/kxOilkNTZDv2SG4gJt+QaAZWht
-	cpH2GP6MmoJznFSNZk2cGPRB//sPzNJtChKU4Zs3Z8vFYqnBX6smHGfjekTMIpFPwuZqe2j5nAf
-	GU3sT06oRivwnY23pcBv31OoNgeFHe6nzIj4G3PeDBtEEZ25v5YdS7sx0wsqKzjIZTL8uodly2t
-	mLNFUzXJLH4OvMD88Pz0RcRmgQyjhN+l8N28O+vhrduiAGoS4v4yTSGRHjYyGmqGt8rQr5PnN/F
-	DMWF9qWtwWFf8+ge8dnO4SeRlQDWBDO9xgOaIJ+RVQrPu6WU
-X-Google-Smtp-Source: AGHT+IEau+wjrdRHJMlS5nyOT1rvXp0wuHKf/Prbu5sQ6Jh/4b7CF8c7TS8qmvF6EWe5N8kKungcAQ==
-X-Received: by 2002:a05:6a00:b91:b0:736:42a8:a742 with SMTP id d2e1a72fcca58-737223b9098mr15931032b3a.11.1742291840607;
-        Tue, 18 Mar 2025 02:57:20 -0700 (PDT)
-Received: from localhost ([157.82.207.107])
-        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-737116b0ec4sm9074760b3a.159.2025.03.18.02.57.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 18 Mar 2025 02:57:20 -0700 (PDT)
-From: Akihiko Odaki <akihiko.odaki@daynix.com>
-Date: Tue, 18 Mar 2025 18:56:54 +0900
-Subject: [PATCH net-next 4/4] virtio_net: Allocate rss_hdr with devres
+	s=arc-20240116; t=1742291924; c=relaxed/simple;
+	bh=rIv8VlVOxSuJur5JDCw3pSvHApUCZsZ5GDJ7zqykz5o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uV8KZIbqnvAMgRHyDVl+6prZwgJxxfz1SjQ6e7bNMTKrIbrpX4jh41ZKPNl+3QBZL49/24yvpt2KQ913t6F529e83ubiqbsr88eG6jOKYwX4SYjJlmAvroZCl8r1qJuGhh3otgFcEj6eEXFu5Wvx4BrRFn2n2vujC6vSKJ8rl2g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gERZE2J6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE103C4CEE9;
+	Tue, 18 Mar 2025 09:58:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742291923;
+	bh=rIv8VlVOxSuJur5JDCw3pSvHApUCZsZ5GDJ7zqykz5o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gERZE2J6zooGvuswzdC7FPECEuSDJ0Wrvm2iREzU/ZYNrTWiGWd2P86/GPPUDj8L5
+	 V4I3oGCRk3DKOtCBGOwZrag7KsjlP7vStV2EyaW5Q5Lrsh7/hgtmJYEzT0uFrJ/YmY
+	 1UKw4WDZFHUtIAJPkKGOxFxqmPzJ2nVPK+3XH9VYqTcA6IYIexEbBq3Uhlu3l18S6T
+	 xgOWTUs2woAlYX14MQJ6P0GGtu3735CwE2einMfYM5dsEnfmtCBxFmZCiiZx5iN0ZE
+	 XI/ceP6aUXiZMR5wpI8l+X/1JN3UudDEeEafmbHva+qyUUFSK9keln0tw2Bw8hPrPs
+	 TcQQizKS8sBvQ==
+Date: Tue, 18 Mar 2025 10:58:40 +0100
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+To: Maud Spierings <maud_spierings@hotmail.com>
+Cc: william.qiu@starfivetech.com, hal.feng@starfivetech.com, 
+	linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org, p.zabel@pengutronix.de
+Subject: Re: [PATCH v17] pwm: opencores: Add PWM driver support
+Message-ID: <a4qprb2s7kqzhgewf54oxelrr4inuka5ozsadqybnft3moe6xy@kigsy6zevieq>
+References: <20250106103540.10079-1-william.qiu@starfivetech.com>
+ <VE1P189MB1024E9669B8CFCB943D633E7E3102@VE1P189MB1024.EURP189.PROD.OUTLOOK.COM>
+ <7kfpvipnkirfacy3ro3qb3cmbw5fv5dlyjh3qowc4juvmcb2jj@43zpytio2273>
+ <AM7P189MB10091DAF204BB660E619A01FE3112@AM7P189MB1009.EURP189.PROD.OUTLOOK.COM>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250318-virtio-v1-4-344caf336ddd@daynix.com>
-References: <20250318-virtio-v1-0-344caf336ddd@daynix.com>
-In-Reply-To: <20250318-virtio-v1-0-344caf336ddd@daynix.com>
-To: "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
- Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
- =?utf-8?q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
- Andrew Lunn <andrew+netdev@lunn.ch>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Andrew Melnychenko <andrew@daynix.com>, Joe Damato <jdamato@fastly.com>, 
- Philo Lu <lulie@linux.alibaba.com>
-Cc: virtualization@lists.linux.dev, linux-kernel@vger.kernel.org, 
- netdev@vger.kernel.org, devel@daynix.com, 
- Akihiko Odaki <akihiko.odaki@daynix.com>
-X-Mailer: b4 0.15-dev-edae6
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ro5b6furdfkkey7o"
+Content-Disposition: inline
+In-Reply-To: <AM7P189MB10091DAF204BB660E619A01FE3112@AM7P189MB1009.EURP189.PROD.OUTLOOK.COM>
 
-virtnet_probe() lacks the code to free rss_hdr in its error path.
-Allocate rss_hdr with devres so that it will be automatically freed.
 
-Fixes: 86a48a00efdf ("virtio_net: Support dynamic rss indirection table size")
-Signed-off-by: Akihiko Odaki <akihiko.odaki@daynix.com>
----
- drivers/net/virtio_net.c | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
+--ro5b6furdfkkey7o
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v17] pwm: opencores: Add PWM driver support
+MIME-Version: 1.0
 
-diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
-index 4153a0a5f278..6cbeba65a4a4 100644
---- a/drivers/net/virtio_net.c
-+++ b/drivers/net/virtio_net.c
-@@ -3580,7 +3580,7 @@ static int virtnet_set_queues(struct virtnet_info *vi, u16 queue_pairs)
- 	if (vi->has_rss && !netif_is_rxfh_configured(dev)) {
- 		old_rss_hdr = vi->rss_hdr;
- 		old_rss_trailer = vi->rss_trailer;
--		vi->rss_hdr = kmalloc(virtnet_rss_hdr_size(vi), GFP_KERNEL);
-+		vi->rss_hdr = devm_kmalloc(&dev->dev, virtnet_rss_hdr_size(vi), GFP_KERNEL);
- 		if (!vi->rss_hdr) {
- 			vi->rss_hdr = old_rss_hdr;
- 			return -ENOMEM;
-@@ -3591,7 +3591,7 @@ static int virtnet_set_queues(struct virtnet_info *vi, u16 queue_pairs)
- 
- 		if (!virtnet_commit_rss_command(vi)) {
- 			/* restore ctrl_rss if commit_rss_command failed */
--			kfree(vi->rss_hdr);
-+			devm_kfree(&dev->dev, vi->rss_hdr);
- 			vi->rss_hdr = old_rss_hdr;
- 			vi->rss_trailer = old_rss_trailer;
- 
-@@ -3599,7 +3599,7 @@ static int virtnet_set_queues(struct virtnet_info *vi, u16 queue_pairs)
- 				 queue_pairs);
- 			return -EINVAL;
- 		}
--		kfree(old_rss_hdr);
-+		devm_kfree(&dev->dev, old_rss_hdr);
- 		goto succ;
- 	}
- 
-@@ -6702,7 +6702,7 @@ static int virtnet_probe(struct virtio_device *vdev)
- 			virtio_cread16(vdev, offsetof(struct virtio_net_config,
- 				rss_max_indirection_table_length));
- 	}
--	vi->rss_hdr = kmalloc(virtnet_rss_hdr_size(vi), GFP_KERNEL);
-+	vi->rss_hdr = devm_kmalloc(&vdev->dev, virtnet_rss_hdr_size(vi), GFP_KERNEL);
- 	if (!vi->rss_hdr) {
- 		err = -ENOMEM;
- 		goto free;
-@@ -6985,8 +6985,6 @@ static void virtnet_remove(struct virtio_device *vdev)
- 
- 	remove_vq_common(vi);
- 
--	kfree(vi->rss_hdr);
--
- 	free_netdev(vi->dev);
- }
- 
+Hello Maud,
 
--- 
-2.48.1
+On Tue, Jan 07, 2025 at 07:37:13AM +0100, Maud Spierings wrote:
+> I did some more digging, took a look at the pwm-backlight driver in the
+> vendor kernel, and it seems there are some tweaks there [1] (all the way =
+at
+> the bottom). And it explains some things, first off why it didn't error
+> before without the inverted polarity, because it sets this value in the
+> pwm-backlight driver in that kernel.
+>=20
+> but the interesting line is this one:
+> |brightness =3D (u8)~brightness;
 
+Huh, that confirms my prejudice that vendor trees are bad. Even in
+combination with
+
+	state.polarity =3D PWM_POLARITY_INVERSED;
+
+in the probe function this is horrible. This effectively renders your
+testing useless.
+
+Best regards
+Uwe
+
+--ro5b6furdfkkey7o
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmfZQ84ACgkQj4D7WH0S
+/k6VrAgAs7IYKuIcq+df0vCZcvdH57zh+VQ4IIA2Zhc9LvCKh1bZjgWhWPvCMRlv
+4TEJCwFA2Ntm40UMoHLfFhZ6DQ1NN3t5tsz93X79HgukqzZxztDi+4EfLirRMat/
+t+xvVJ0N6G7fE4j2f/Yh2MAmjPyOVxNnOTdVAYU2mYqKJ5fSXlXbih2bF8MTV/o9
+U5WXd65P4+IhyXhpzlGfZn7UumTLNGXiu5cNed10Am6c5ePfhECQoOdurqo1+a90
+xLHBVrE76Rq5PRPxR+EH9yRqZJoDppAGs+M1CRw4C0a2BN07Ll/k3r/DkmPzYYK1
+OvIqo78K1mt4o9OO+gttoGV+1aBkfA==
+=aEVk
+-----END PGP SIGNATURE-----
+
+--ro5b6furdfkkey7o--
 
