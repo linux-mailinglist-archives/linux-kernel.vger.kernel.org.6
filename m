@@ -1,49 +1,49 @@
-Return-Path: <linux-kernel+bounces-565690-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-565712-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A52CA66D8D
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 09:11:04 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0349A66DDA
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 09:17:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 281E416AC68
-	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 08:10:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C7850188F3F7
+	for <lists+linux-kernel@lfdr.de>; Tue, 18 Mar 2025 08:17:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F4001EF387;
-	Tue, 18 Mar 2025 08:10:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZWjcObUZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F3D21EFFAB;
+	Tue, 18 Mar 2025 08:17:01 +0000 (UTC)
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BA121E52D;
-	Tue, 18 Mar 2025 08:10:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11DE51B960;
+	Tue, 18 Mar 2025 08:16:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742285400; cv=none; b=QEzwHrdsJEvn5ssl9r0l2Ad0YBqrRVGsRwXC+Xo9XthdaT0dUrfz562MzjytUdO3Jg4lz58QEXzTFt9avJTY/QS140y6H5OdBvD676JkHRm22egd324NcNyqfFsgx2SIgfVxalpZHVP0pASmsEndU+oMBva6dDfrqMG8TIEJ+fg=
+	t=1742285820; cv=none; b=Bt4qgrYjt070bQWwlxba4pagpVLTLpkSjAyYiUVJVOKygLq22x+kBbl0ISYTR868Dfg10hUB5dj00tJcgTFcmcHyi967qTAGmZ6u9Yn+vB3DJ2jzsNt+k8UYY0F71iZdkfR22Oljv3maKbPTNaUhrFVSw+WGrHlKhga9dDV8S3w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742285400; c=relaxed/simple;
-	bh=e4UkUqezG5Edul9MR9g7cuOdXGh4POpZl16i1wixQDQ=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=SrZmgWkaHwATxjHa8r5JZG+vXRORhLspxHFSvyiQiK+Po43nH6GFZ8SnR5dHq2v5SpQmmMOSMnWwttl3uZGJMRJ4ML1z/aKI5Ss5Aw09SWyBu6n3KdA04gJ/FY6SJvDMPw3Au5pHLcNnvK55Y/YG6qdlvgXaGSn0vR4ubv9zOi8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZWjcObUZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE585C4CEDD;
-	Tue, 18 Mar 2025 08:09:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742285399;
-	bh=e4UkUqezG5Edul9MR9g7cuOdXGh4POpZl16i1wixQDQ=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=ZWjcObUZxhGiH4eIk1yWPqxDOE5HkuArp5QehkKNI6dRN9NBC7+htVOdEkVXhhUqS
-	 yZ6t/6zxWh4M7++33uZERs75I4qJMmZPg8rwPACrkP9AU768Y1BajdVFGn1B3rIf1i
-	 soZ/X1MkWoTqesRTXq6KABjtY/9szNg13Ap6lHIgA3poaB7NOYCji+pgbeQNfR5/5c
-	 Kip0rplrjKD66t39hV4AEzqv6WZK9WqPtC8W7YyGQLuTSk/J12P5UQbaeZ0Sz044VV
-	 io4OfxejnSAQToQbHLpCUAwXUYoiNp0DdFwKqiK2QE9QSgJnYHGfB2HB92nWEy53/Y
-	 /u4vLPFKKK1aw==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70E85380DBE8;
-	Tue, 18 Mar 2025 08:10:36 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1742285820; c=relaxed/simple;
+	bh=2DD+JG9gVcOW6aiW20AtH8kf2TbO3I3cuS+5cdzsQ2U=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=cChVYhPdFqi3b2CwL1BPgp+3oss1ctNrOWAkXxxJLCiCL0ndU5JZhJrTpPTqboyH6jIfBci8HW4uU5GbkNGol+1qM9YqLYwYdQI0BZtvrDI5UE0HkPv5erF9up8EHBPwM/zCay1gS8qOzzEeJLHTLuXf6tqDRhhS+d8tFjr3dMk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost (unknown [124.16.138.129])
+	by APP-05 (Coremail) with SMTP id zQCowABHsMmVKtlnqrPqFQ--.37723S2;
+	Tue, 18 Mar 2025 16:11:02 +0800 (CST)
+From: Chen Ni <nichen@iscas.ac.cn>
+To: lgirdwood@gmail.com,
+	broonie@kernel.org,
+	perex@perex.cz,
+	tiwai@suse.com,
+	ivprusov@salutedevices.com,
+	u.kleine-koenig@baylibre.com
+Cc: linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Chen Ni <nichen@iscas.ac.cn>
+Subject: [PATCH] ASoC: codecs: ntp8918: Remove duplicate clk.h header
+Date: Tue, 18 Mar 2025 16:10:43 +0800
+Message-Id: <20250318081043.2870229-1-nichen@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,73 +51,44 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next v5 00/13] net: phy: Rework linkmodes handling in a
- dedicated file
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <174228543527.4071400.14783355936899188267.git-patchwork-notify@kernel.org>
-Date: Tue, 18 Mar 2025 08:10:35 +0000
-References: <20250307173611.129125-1-maxime.chevallier@bootlin.com>
-In-Reply-To: <20250307173611.129125-1-maxime.chevallier@bootlin.com>
-To: Maxime Chevallier <maxime.chevallier@bootlin.com>
-Cc: davem@davemloft.net, andrew@lunn.ch, kuba@kernel.org, edumazet@google.com,
- pabeni@redhat.com, linux@armlinux.org.uk, hkallweit1@gmail.com,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- thomas.petazzoni@bootlin.com, linux-arm-kernel@lists.infradead.org,
- christophe.leroy@csgroup.eu, herve.codina@bootlin.com, f.fainelli@gmail.com,
- vladimir.oltean@nxp.com, kory.maincent@bootlin.com, o.rempel@pengutronix.de,
- horms@kernel.org, romain.gantois@bootlin.com
+X-CM-TRANSID:zQCowABHsMmVKtlnqrPqFQ--.37723S2
+X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUYA7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E
+	6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28Cjx
+	kF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW5JVW7JwA2z4x0Y4vE2Ix0cI8I
+	cVCY1x0267AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2js
+	IEc7CjxVAFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE
+	5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JF0_Jw1lYx0Ex4A2jsIE14v26r4UJVWxJr1lOx
+	8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIF
+	xwCY02Avz4vE14v_GFyl42xK82IYc2Ij64vIr41l4c8EcI0En4kS14v26r1Y6r17MxAqzx
+	v26xkF7I0En4kS14v26r1q6r43MxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAF
+	wI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc4
+	0Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AK
+	xVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr
+	1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUbrcTPUU
+	UUU==
+X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
 
-Hello:
+Remove duplicate header which is included twice.
 
-This series was applied to netdev/net-next.git (main)
-by Paolo Abeni <pabeni@redhat.com>:
+Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
+---
+ sound/soc/codecs/ntp8918.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-On Fri,  7 Mar 2025 18:35:57 +0100 you wrote:
-> Hello everyone,
-> 
-> This is V5 of the phy_caps series. In a nutshell, this series reworks the way
-> we maintain the list of speed/duplex capablities for each linkmode so that we
-> no longer have multiple definition of these associations.
-> 
-> That will help making sure that when people add new linkmodes in
-> include/uapi/linux/ethtool.h, they don't have to update phylib and phylink as
-> well, making the process more straightforward and less error-prone.
-> 
-> [...]
-
-Here is the summary with links:
-  - [net-next,v5,01/13] net: ethtool: Export the link_mode_params definitions
-    https://git.kernel.org/netdev/net-next/c/79f88a584e35
-  - [net-next,v5,02/13] net: phy: Use an internal, searchable storage for the linkmodes
-    https://git.kernel.org/netdev/net-next/c/d8c838a57ce2
-  - [net-next,v5,03/13] net: phy: phy_caps: Move phy_speeds to phy_caps
-    https://git.kernel.org/netdev/net-next/c/8c8c4a87933d
-  - [net-next,v5,04/13] net: phy: phy_caps: Move __set_linkmode_max_speed to phy_caps
-    https://git.kernel.org/netdev/net-next/c/4823ed060919
-  - [net-next,v5,05/13] net: phy: phy_caps: Introduce phy_caps_valid
-    https://git.kernel.org/netdev/net-next/c/87b22ce31235
-  - [net-next,v5,06/13] net: phy: phy_caps: Implement link_capabilities lookup by linkmode
-    https://git.kernel.org/netdev/net-next/c/dbcd85b05c5b
-  - [net-next,v5,07/13] net: phy: phy_caps: Allow looking-up link caps based on speed and duplex
-    https://git.kernel.org/netdev/net-next/c/fc81e257d19f
-  - [net-next,v5,08/13] net: phy: phy_device: Use link_capabilities lookup for PHY aneg config
-    https://git.kernel.org/netdev/net-next/c/c7ae89c6b4d5
-  - [net-next,v5,09/13] net: phylink: Use phy_caps_lookup for fixed-link configuration
-    https://git.kernel.org/netdev/net-next/c/de7d3f87be3c
-  - [net-next,v5,10/13] net: phy: drop phy_settings and the associated lookup helpers
-    https://git.kernel.org/netdev/net-next/c/ce60fef7fecc
-  - [net-next,v5,11/13] net: phylink: Add a mapping between MAC_CAPS and LINK_CAPS
-    https://git.kernel.org/netdev/net-next/c/3bea75002a05
-  - [net-next,v5,12/13] net: phylink: Convert capabilities to linkmodes using phy_caps
-    https://git.kernel.org/netdev/net-next/c/4ca5b8a258b6
-  - [net-next,v5,13/13] net: phylink: Use phy_caps to get an interface's capabilities and modes
-    https://git.kernel.org/netdev/net-next/c/3bd87f3b4405
-
-You are awesome, thank you!
+diff --git a/sound/soc/codecs/ntp8918.c b/sound/soc/codecs/ntp8918.c
+index a332893fc51d..5593d48ef696 100644
+--- a/sound/soc/codecs/ntp8918.c
++++ b/sound/soc/codecs/ntp8918.c
+@@ -8,7 +8,6 @@
+  */
+ 
+ #include <linux/kernel.h>
+-#include <linux/clk.h>
+ #include <linux/reset.h>
+ #include <linux/i2c.h>
+ #include <linux/regmap.h>
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.25.1
 
 
